@@ -1,0 +1,6 @@
+{
+  "ac": "AC4",
+  "scenario": "request timeout (0.8s) on a silent child",
+  "error_code": "RequestTimeout",
+  "stderr_log_exists": true
+}

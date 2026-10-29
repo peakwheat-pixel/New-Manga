@@ -1,0 +1,180 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Library.BookDetailPanel"
+             x:DataType="vm:LibraryViewModel">
+  <!-- 驻留详情面板（screen spec §2）：作品元信息 / 章节账本 / 页数 / 阅读进度 / 操作。
+       无章节时就地「新建章节」入口 = 关闭审计 F011（真实走 Core CreateChapter）。 -->
+  <Border Classes="detailpanel">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="{DynamicResource Nm.Space.4}" Margin="{DynamicResource Nm.Padding.Panel}">
+
+        <!-- 新建作品（就地表单） -->
+        <Border Classes="card"
+                Padding="{DynamicResource Nm.Padding.Card}"
+                IsVisible="{Binding IsCreateBookOpen}">
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+            <TextBlock Classes="section-title" Text="新建作品" />
+            <TextBox Watermark="作品标题" Text="{Binding NewBookTitle}" />
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <Button Classes="primary sm"
+                      Content="创建"
+                      Command="{Binding ConfirmCreateBookCommand}"
+                      IsEnabled="{Binding CanCreateBook}" />
+              <Button Classes="ghost sm"
+                      Content="取消"
+                      Command="{Binding CancelCreateBookCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- 未选择作品 -->
+        <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding !HasSelection}">
+          <ctrl:EmptyState Title="选择一本作品"
+                           Hint="右栏驻留详情：作品元信息、章节账本、页数与阅读进度；导入/阅读/新建章节都在这里。"
+                           ActionText="新建作品"
+                           ActionCommand="{Binding NewBookCommand}" />
+        </StackPanel>
+
+        <!-- 作品详情 -->
+        <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding HasSelection}">
+          <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+            <TextBlock Classes="title" Text="{Binding DetailTitle}" TextWrapping="Wrap" />
+            <TextBlock Classes="meta"
+                       Text="{Binding DetailOriginalTitle}"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasDetailOriginalTitle}" />
+            <TextBlock Classes="meta" Text="{Binding DetailMeta}" TextWrapping="Wrap" />
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <Button Classes="primary sm" Content="阅读" Command="{Binding OpenReaderCommand}" />
+            <Button Classes="ghost sm" Content="新建章节" Command="{Binding ShowCreateChapterCommand}" />
+            <Button Classes="ghost sm" Content="导入文件" Command="{Binding ImportFilesCommand}" />
+            <Button Classes="ghost sm" Content="回收站" Command="{Binding ShowRecycleBinCommand}" />
+          </StackPanel>
+
+          <!-- 新建章节（就地表单，真实 Core 命令） -->
+          <Border Classes="card"
+                  Padding="{DynamicResource Nm.Padding.Card}"
+                  IsVisible="{Binding IsCreateChapterOpen}">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="新建章节（Core CreateChapter）" />
+              <TextBox Watermark="章节标题，例如 第 13 话" Text="{Binding NewChapterTitle}" />
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                <Button Classes="primary sm"
+                        Content="确认新建"
+                        Command="{Binding ConfirmCreateChapterCommand}"
+                        IsEnabled="{Binding CanCreateChapter}" />
+                <Button Classes="ghost sm"
+                        Content="取消"
+                        Command="{Binding CancelCreateChapterCommand}" />
+              </StackPanel>
+              <TextBlock Classes="meta"
+                         Text="标题规则由 Core 裁决（空白标题被拒绝）；UI 不伪造结果。"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+          <!-- 阅读进度（双模态在阅读浮层内，这里是投影摘要） -->
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+            <TextBlock Classes="section-title" Text="阅读进度" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Classes="data"
+                       Text="{Binding DetailProgressText}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center" />
+          </Grid>
+
+          <!-- 章节账本 -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Classes="section-title" Text="章节账本" />
+              <TextBlock Grid.Column="1" Classes="meta" Text="{Binding DetailChapterCountText}" />
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Chapters}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ChapterRowViewModel">
+                  <Button Classes="detailrow"
+                          Classes.selected="{Binding IsSelected}"
+                          Command="{Binding SelectCommand}"
+                          ToolTip.Tip="{Binding Title}">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <TextBlock Classes="data" Text="{Binding IndexText}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1"
+                                 Classes="label"
+                                 Text="{Binding Title}"
+                                 TextTrimming="CharacterEllipsis"
+                                 VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2"
+                                 Classes="data"
+                                 Text="{Binding PageCountText}"
+                                 VerticalAlignment="Center" />
+                    </Grid>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Classes="meta"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding !HasChapters}"
+                       Text="本章暂无章节：点击上方「新建章节」就地创建（走 Core CreateChapter），创建成功后即可导入页面；不会伪造章节。" />
+
+            <Button Classes="secondary sm"
+                    Content="新建章节"
+                    Command="{Binding ShowCreateChapterCommand}"
+                    IsVisible="{Binding !HasChapters}" />
+          </StackPanel>
+
+          <!-- 页（多选进批量条） -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Classes="section-title" Text="页" />
+              <TextBlock Grid.Column="1" Classes="meta" Text="{Binding DetailPageCountText}" />
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Pages}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:PageRowViewModel">
+                  <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <CheckBox Grid.Column="0"
+                                IsChecked="{Binding IsMultiSelected, Mode=OneWay}"
+                                Click="OnPageMultiToggle"
+                                ToolTip.Tip="多选该页（进入底部批量条，作用域常驻）" />
+                      <Button Grid.Column="1"
+                              Classes="detailrow"
+                              Classes.selected="{Binding IsSelected}"
+                              Command="{Binding SelectCommand}"
+                              HorizontalAlignment="Stretch">
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="{DynamicResource Nm.Space.2}">
+                          <TextBlock Classes="data" Text="{Binding Label}" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1"
+                                     Classes="label"
+                                     Text="{Binding FileNameText}"
+                                     TextTrimming="CharacterEllipsis"
+                                     VerticalAlignment="Center" />
+                        </Grid>
+                      </Button>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Classes="meta"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding !HasPages}"
+                       Text="当前章节没有页面：用「导入文件 / 导入文件夹」添加页面；导入结果逐文件显示，不伪造。" />
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Border>
+</UserControl>

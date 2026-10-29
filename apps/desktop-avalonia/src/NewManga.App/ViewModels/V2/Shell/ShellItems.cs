@@ -36,6 +36,8 @@ public sealed class SpaceTabItem : ObservableObject
 public sealed record BreadcrumbItem(int Level, string Label, bool IsCurrent)
 {
     public bool IsClickable => !IsCurrent;
+
+    public bool ShowSeparator => Level > 0;
 }
 
 /// <summary>Attention aggregate (待确认 / 失败 / 阻塞 / 过期). Counts stay "—" until Run data is wired.</summary>

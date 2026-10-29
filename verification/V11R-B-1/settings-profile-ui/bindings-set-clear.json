@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "bindings set(global), set(book), clear(book)",
+  "global": "OCR-\u003Eprofile-1",
+  "book": "book:book-0 Translation-\u003Eprofile-1",
+  "clear": "book:book-0 Translation"
+}

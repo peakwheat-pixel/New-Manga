@@ -1,0 +1,12 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "empty state -\u003E create provider profile",
+  "empty_state_before": true,
+  "provider_id": "openai",
+  "display_name": "DeepSeek",
+  "capabilities": "OCR,Translation",
+  "endpoint": "https://api.deepseek.com/v1",
+  "model": "deepseek-chat",
+  "network_profile_null": true,
+  "profile_id_null_on_create": true
+}

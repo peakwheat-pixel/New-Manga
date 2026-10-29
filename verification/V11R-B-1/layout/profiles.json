@@ -1,0 +1,129 @@
+{
+  "ac": "AC1",
+  "generated_by": "ThemeLayoutsTests.ThreeMacosLayoutPacks_AreRegistered_WithDistinctLayouts_AndLegacyPacksStayOnSonoma",
+  "default_theme_id": "saber-purple",
+  "default_unchanged": true,
+  "packs_total": 9,
+  "layout_profiles_total": 3,
+  "layouts": [
+    {
+      "kind": "Sonoma",
+      "label": "macOS 风",
+      "nav_placement": "TitleBar",
+      "shelf_style": "CenteredGrid",
+      "settings_style": "TwoColumn",
+      "dock_height": 0,
+      "sidebar_width": 0,
+      "shelf_list_width": 0,
+      "settings_nav_width": 0,
+      "launchpad_card_width": 168,
+      "launchpad_card_height": 220,
+      "content_max_width": 1400,
+      "settings_max_width": 0,
+      "launchpad_bottom_inset": 0
+    },
+    {
+      "kind": "Launchpad",
+      "label": "macOS 启动台",
+      "nav_placement": "Dock",
+      "shelf_style": "LaunchpadGrid",
+      "settings_style": "SingleColumn",
+      "dock_height": 76,
+      "sidebar_width": 0,
+      "shelf_list_width": 0,
+      "settings_nav_width": 0,
+      "launchpad_card_width": 168,
+      "launchpad_card_height": 220,
+      "content_max_width": 1200,
+      "settings_max_width": 900,
+      "launchpad_bottom_inset": 120
+    },
+    {
+      "kind": "Split",
+      "label": "macOS 分栏",
+      "nav_placement": "Sidebar",
+      "shelf_style": "SplitList",
+      "settings_style": "SplitSections",
+      "dock_height": 0,
+      "sidebar_width": 220,
+      "shelf_list_width": 260,
+      "settings_nav_width": 240,
+      "launchpad_card_width": 168,
+      "launchpad_card_height": 220,
+      "content_max_width": 1400,
+      "settings_max_width": 0,
+      "launchpad_bottom_inset": 0
+    }
+  ],
+  "packs": [
+    {
+      "id": "saber-purple",
+      "label": "Saber Purple",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "saber-light",
+      "label": "Saber Light",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "midnight",
+      "label": "Midnight",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "sakura",
+      "label": "Sakura",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "emerald",
+      "label": "Emerald",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "mono",
+      "label": "Mono",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": false,
+      "supports_variants": false
+    },
+    {
+      "id": "macos-sonoma",
+      "label": "macOS 风",
+      "layout_kind": "Sonoma",
+      "is_macos_pack": true,
+      "supports_variants": true
+    },
+    {
+      "id": "macos-launchpad",
+      "label": "macOS 启动台",
+      "layout_kind": "Launchpad",
+      "is_macos_pack": true,
+      "supports_variants": true
+    },
+    {
+      "id": "macos-split",
+      "label": "macOS 分栏",
+      "layout_kind": "Split",
+      "is_macos_pack": true,
+      "supports_variants": true
+    }
+  ],
+  "checks": {
+    "three_distinct_layout_kinds": true,
+    "legacy_packs_layout_is_sonoma": true,
+    "launchpad_reserves_dock_inset": true,
+    "settings_lists_every_pack_once": true
+  }
+}

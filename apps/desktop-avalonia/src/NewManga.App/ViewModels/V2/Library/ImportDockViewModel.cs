@@ -20,6 +20,7 @@ public sealed class ImportDockViewModel : ObservableObject
     private readonly Func<string?> _chapterId;
     private readonly Func<string?> _chapterTitle;
     private readonly Func<Task> _afterImport;
+    private readonly Action _requestCreateChapter;
     private bool _isOpen;
     private bool _isRunning;
     private string _summary = string.Empty;
@@ -30,7 +31,8 @@ public sealed class ImportDockViewModel : ObservableObject
         Action<string, NmStatus> notify,
         Func<string?> chapterId,
         Func<string?> chapterTitle,
-        Func<Task> afterImport)
+        Func<Task> afterImport,
+        Action requestCreateChapter)
     {
         _controller = controller;
         _picker = picker;
@@ -38,6 +40,7 @@ public sealed class ImportDockViewModel : ObservableObject
         _chapterId = chapterId;
         _chapterTitle = chapterTitle;
         _afterImport = afterImport;
+        _requestCreateChapter = requestCreateChapter;
         Rows = new ObservableCollection<ImportRowViewModel>();
         StartCommand = new RelayCommand(() => _ = StartAsync());
         RetryFailedCommand = new RelayCommand(RetryFailed);
@@ -102,10 +105,10 @@ public sealed class ImportDockViewModel : ObservableObject
         ? $"导入到「{_chapterTitle()}」"
         : "导入：尚未选择章节";
 
-    /// <summary>Honest degradation notice (AC1: never fake a chapter creation).</summary>
+    /// <summary>Honest degradation notice: chapter creation is a real Core write (V11R-A-1).</summary>
     public string CapabilityText =>
-        "能力待接入：无章节时就地「新建章节」需要 IHostController.CreateChapterAsync（V11R-A-1 / core-bridge，尚未合入）；" +
-        "当前只能选择已有章节后导入，不会伪造成功。";
+        "当前没有章节：先在右侧就地「新建章节」（走 Core CreateChapter，V11R-A-1），创建成功后即可导入；" +
+        "不会伪造章节或伪造导入成功。";
 
     public string TargetChapterText => HasTargetChapter
         ? $"目标章节：{_chapterTitle()}"
@@ -298,9 +301,8 @@ public sealed class ImportDockViewModel : ObservableObject
 
     public void RequestCreateChapter()
     {
-        _notify(
-            "新建章节：能力待接入（CreateChapterAsync 由 core-bridge V11R-A-1 提供，尚未合入）",
-            NmStatus.Blocked);
+        _requestCreateChapter();
+        NotifyChapterContextChanged();
     }
 
     /// <summary>Raised when the Library selection changes so the dock header follows the target.</summary>

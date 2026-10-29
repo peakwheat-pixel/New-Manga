@@ -36,6 +36,9 @@ public sealed class LibraryViewModel : ObservableObject
     private string _statusMessage = string.Empty;
     private bool _isRecycleBinView;
     private bool _isCreateBookOpen;
+    private bool _isCreateChapterOpen;
+    private bool _isCreatingChapter;
+    private string _newChapterTitle = string.Empty;
     private string _newBookTitle = string.Empty;
     private string _detailProgressText = "—";
     private string _detailChapterCountText = "—";
@@ -64,7 +67,8 @@ public sealed class LibraryViewModel : ObservableObject
             notify,
             chapterId: () => SelectedChapter?.ChapterId,
             chapterTitle: () => SelectedChapter?.Title,
-            afterImport: ReloadAfterImportAsync);
+            afterImport: ReloadAfterImportAsync,
+            requestCreateChapter: ShowCreateChapter);
         Reader = new ReaderOverlayViewModel(controller, notify);
 
         FilterChips = new ObservableCollection<FilterChipItem>
@@ -80,11 +84,15 @@ public sealed class LibraryViewModel : ObservableObject
         NewBookCommand = new RelayCommand(ShowCreateBook);
         CancelCreateBookCommand = new RelayCommand(() => IsCreateBookOpen = false);
         ConfirmCreateBookCommand = new RelayCommand(() => _ = CreateBookAsync());
-        CreateChapterCommand = new RelayCommand(RequestCreateChapter);
+        ShowCreateChapterCommand = new RelayCommand(ShowCreateChapter);
+        CancelCreateChapterCommand = new RelayCommand(() => IsCreateChapterOpen = false);
+        ConfirmCreateChapterCommand = new RelayCommand(() => _ = CreateChapterAsync());
+        CreateChapterCommand = new RelayCommand(ShowCreateChapter);
         ImportFilesCommand = new RelayCommand(() => _ = ImportDock.PickFilesAsync());
         ImportFolderCommand = new RelayCommand(() => _ = ImportDock.PickFolderAsync());
         OpenReaderCommand = new RelayCommand(() => _ = OpenReaderAsync());
         ClearSelectionCommand = new RelayCommand(() => _state.ClearMultiPage());
+        ClearFiltersCommand = new RelayCommand(ClearFilters);
         RecycleRestoreCommand = new RelayCommand(() => RequestRecycleAction("恢复"));
         RecyclePurgeCommand = new RelayCommand(() => RequestRecycleAction("永久删除"));
         ExportSelectionCommand = new RelayCommand(() => _notify(
@@ -129,6 +137,12 @@ public sealed class LibraryViewModel : ObservableObject
 
     public RelayCommand ConfirmCreateBookCommand { get; }
 
+    public RelayCommand ShowCreateChapterCommand { get; }
+
+    public RelayCommand CancelCreateChapterCommand { get; }
+
+    public RelayCommand ConfirmCreateChapterCommand { get; }
+
     public RelayCommand CreateChapterCommand { get; }
 
     public RelayCommand ImportFilesCommand { get; }
@@ -138,6 +152,8 @@ public sealed class LibraryViewModel : ObservableObject
     public RelayCommand OpenReaderCommand { get; }
 
     public RelayCommand ClearSelectionCommand { get; }
+
+    public RelayCommand ClearFiltersCommand { get; }
 
     public RelayCommand RecycleRestoreCommand { get; }
 
@@ -313,6 +329,33 @@ public sealed class LibraryViewModel : ObservableObject
         private set => Set(ref _isCreateBookOpen, value);
     }
 
+    /// <summary>Inline 新建章节 form (audit F011): real when V11R-A-1 CreateChapterAsync is available.</summary>
+    public bool IsCreateChapterOpen
+    {
+        get => _isCreateChapterOpen;
+        private set => Set(ref _isCreateChapterOpen, value);
+    }
+
+    public bool IsCreatingChapter
+    {
+        get => _isCreatingChapter;
+        private set => Set(ref _isCreatingChapter, value);
+    }
+
+    public string NewChapterTitle
+    {
+        get => _newChapterTitle;
+        set
+        {
+            if (Set(ref _newChapterTitle, value))
+            {
+                OnPropertyChanged(nameof(CanCreateChapter));
+            }
+        }
+    }
+
+    public bool CanCreateChapter => !IsCreatingChapter && !string.IsNullOrWhiteSpace(NewChapterTitle) && SelectedBook is not null;
+
     public string NewBookTitle
     {
         get => _newBookTitle;
@@ -353,6 +396,11 @@ public sealed class LibraryViewModel : ObservableObject
 
     // ── Layout metrics (computed here so XAML carries no raw design values) ────────────────
 
+    /// <summary>Search field width (px). Kept in the ViewModel so XAML carries no layout magic values.</summary>
+    public double SearchBoxWidth => 220;
+
+    /// <summary>Sort combo width (px).</summary>
+    public double SortBoxWidth => 120;
     public double CardWidth
     {
         get => _cardWidth;
@@ -449,6 +497,12 @@ public sealed class LibraryViewModel : ObservableObject
                 if (restore is not null)
                 {
                     await SelectBookAsync(restore).ConfigureAwait(true);
+                }
+                else if (Books.Count > 0)
+                {
+                    // First load: land on the first visible book (and its first chapter) so the resident
+                    // detail panel is never an empty shell while data exists.
+                    await SelectBookAsync(Books[0]).ConfigureAwait(true);
                 }
                 else
                 {
@@ -648,6 +702,21 @@ public sealed class LibraryViewModel : ObservableObject
             NmStatus.Blocked);
     }
 
+    /// <summary>Clears the Library search/filter/sort context (also resets the per-space view state).</summary>
+    public void ClearFilters()
+    {
+        SearchText = string.Empty;
+        _state.SetFilter(SpaceId.Library, null, "all");
+        _state.SetSort(SpaceId.Library, null, SortUpdated);
+        OnPropertyChanged(nameof(FilterKey), nameof(SortIndex));
+        foreach (var chip in FilterChips)
+        {
+            chip.SetState(chip.Key == "all", chip.Count);
+        }
+
+        RebuildBooks();
+    }
+
     public void CloseRecycleBin() => IsRecycleBinView = false;
 
     public void ShowCreateBook()
@@ -683,11 +752,77 @@ public sealed class LibraryViewModel : ObservableObject
         }
     }
 
-    public void ShowCreateChapter() => RequestCreateChapter();
+    public void ShowCreateChapter()
+    {
+        if (SelectedBook is null)
+        {
+            _notify("新建章节需要先选择一本作品", NmStatus.Blocked);
+            return;
+        }
 
-    public void RequestCreateChapter() => _notify(
-        "新建章节：能力待接入（CreateChapterAsync 由 core-bridge V11R-A-1 提供，尚未合入；不会伪造成功）",
-        NmStatus.Blocked);
+        NewChapterTitle = string.Empty;
+        IsCreateChapterOpen = true;
+        OnPropertyChanged(nameof(CanCreateChapter));
+        _notify("在右侧填写章节标题后确认：走 Core CreateChapter（V11R-A-1，minor 8）", NmStatus.Queued);
+    }
+
+    /// <summary>
+    /// Real chapter creation through the new service method (V11R-A-1, audit F011). Returns null when
+    /// the Host is not ready / read-only / the Core refused; the typed code is surfaced, never faked.
+    /// </summary>
+    public async Task CreateChapterAsync()
+    {
+        if (SelectedBook is not { } book)
+        {
+            _notify("新建章节需要先选择一本作品", NmStatus.Blocked);
+            return;
+        }
+
+        var title = NewChapterTitle.Trim();
+        if (title.Length == 0)
+        {
+            _notify("章节标题不能为空", NmStatus.Blocked);
+            return;
+        }
+
+        IsCreatingChapter = true;
+        OnPropertyChanged(nameof(CanCreateChapter));
+        try
+        {
+            var created = await _controller.CreateChapterAsync(book.BookId, title).ConfigureAwait(true);
+            if (created is null)
+            {
+                var code = _controller.Snapshot.LastError;
+                _notify(
+                    code is { Length: > 0 }
+                        ? $"新建章节被拒绝（{code}）：Host 只读 / Core 拒绝，未写入任何数据"
+                        : "新建章节被拒绝：Host 未就绪或只读，未写入任何数据",
+                    NmStatus.Failed);
+                return;
+            }
+
+            IsCreateChapterOpen = false;
+            NewChapterTitle = string.Empty;
+            _notify($"已新建章节《{created.Title}》", NmStatus.Done);
+            await LoadChaptersAsync(book).ConfigureAwait(true);
+            if (Chapters.FirstOrDefault(chapter =>
+                    string.Equals(chapter.ChapterId, created.ChapterId, StringComparison.Ordinal)) is { } row)
+            {
+                await SelectChapterAsync(row).ConfigureAwait(true);
+            }
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            _notify("新建章节失败：" + ex.Message, NmStatus.Failed);
+        }
+        finally
+        {
+            IsCreatingChapter = false;
+            OnPropertyChanged(nameof(CanCreateChapter));
+        }
+    }
+
+    public void ShowCreateChapterEntry() => ShowCreateChapter();
 
     public void SetViewport(double width, double height)
     {
@@ -822,15 +957,13 @@ public sealed class LibraryViewModel : ObservableObject
         }
 
         RebuildBooks();
-        if (selectedId is { } bookId)
+        foreach (var book in _allBooks)
         {
-            var book = _allBooks.FirstOrDefault(item => string.Equals(item.BookId, bookId, StringComparison.Ordinal));
-            if (book is not null)
-            {
-                _state.SelectBook(book.BookId);
-            }
+            book.SetSelected(string.Equals(book.BookId, selectedId, StringComparison.Ordinal));
         }
 
+        // Do NOT re-write the selection here: SelectBook would clear the chapter/page context. The
+        // ShellState selection is already the truth; this pass only refreshes the row highlights.
         RaiseDetailStates();
     }
 
@@ -974,6 +1107,6 @@ public sealed class LibraryViewModel : ObservableObject
             IsDanger: verb.Contains("永久", StringComparison.Ordinal),
             OnConfirm: () => _notify($"{verb}：能力待接入（Host 未暴露回收站命令，未执行任何写入）", NmStatus.Blocked),
             CanConfirm: false,
-            BlockedReason: "Host 未暴露回收站读取 / 恢复 / 永久删除方法"));
+            BlockedReason: "能力待接入：Host 未暴露回收站读取 / 恢复 / 永久删除方法"));
     }
 }

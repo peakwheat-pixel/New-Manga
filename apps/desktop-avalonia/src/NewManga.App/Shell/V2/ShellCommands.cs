@@ -104,15 +104,7 @@ public static class ShellCommands
         Define(ShellCommandIds.LibraryImportFolder, "导入文件夹到章节", "资料柜 · — · 导入", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryRecycle, "回收站", "资料柜 · — · 回收站", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryNewBook, "新建作品", "资料柜 · — · 作品", SpaceId.Library, null, null),
-        Define(
-            ShellCommandIds.LibraryNewChapter,
-            "新建章节",
-            "资料柜 · — · 章节",
-            SpaceId.Library,
-            null,
-            null,
-            false,
-            NotWiredCreateChapter),
+        Define(ShellCommandIds.LibraryNewChapter, "新建章节", "资料柜 · — · 章节", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryOpenReader, "阅读选中章节", "资料柜 · — · 阅读", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryClearSelection, "清除多选", "资料柜 · — · 选择", SpaceId.Library, null, null),
 

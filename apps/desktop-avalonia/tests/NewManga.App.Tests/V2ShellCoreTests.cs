@@ -220,10 +220,10 @@ public sealed class V2KeyMapTests
     [Fact]
     public void UnavailableCommands_CarryAnExplicitReason_NeverFakeSuccess()
     {
+        // V11R-A-1 merged: chapter creation is a real Core write, so this command must be available.
         var createChapter = ShellCommands.Find(ShellCommandIds.LibraryNewChapter);
         Assert.NotNull(createChapter);
-        Assert.False(createChapter!.IsAvailable);
-        Assert.Contains("能力待接入", createChapter.UnavailableReason!, StringComparison.Ordinal);
+        Assert.True(createChapter!.IsAvailable);
 
         var export = ShellCommands.Find(ShellCommandIds.Export);
         Assert.NotNull(export);

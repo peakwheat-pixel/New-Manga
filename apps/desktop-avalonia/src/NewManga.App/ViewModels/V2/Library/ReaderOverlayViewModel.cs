@@ -113,6 +113,8 @@ public sealed class ReaderOverlayViewModel : ObservableObject
             {
                 OnPropertyChanged(
                     nameof(CurrentPage),
+                    nameof(CurrentPageHasImage),
+                    nameof(CurrentPageLabel),
                     nameof(PageLabel),
                     nameof(ProgressPercent),
                     nameof(ProgressText));
@@ -123,6 +125,11 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     public ReaderPageItem? CurrentPage => PageIndex >= 0 && PageIndex < Pages.Count ? Pages[PageIndex] : null;
 
     public string PageLabel => Pages.Count == 0 ? "—" : $"第 {PageIndex + 1} / {Pages.Count} 页";
+
+    /// <summary>Paged view state: true when the current page image really loaded through the Host channel.</summary>
+    public bool CurrentPageHasImage => CurrentPage?.HasImage == true;
+
+    public string CurrentPageLabel => CurrentPage?.Label ?? "—";
 
     public ReaderLayoutMode Layout
     {
@@ -343,6 +350,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         if (CurrentPage is { } page)
         {
             await page.LoadAsync().ConfigureAwait(true);
+            OnPropertyChanged(nameof(CurrentPageHasImage));
         }
     }
 

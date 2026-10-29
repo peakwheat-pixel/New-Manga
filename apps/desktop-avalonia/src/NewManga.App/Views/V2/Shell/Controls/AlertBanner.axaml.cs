@@ -77,7 +77,7 @@ public partial class AlertBanner : UserControl
         MessageText.Text = Message;
         foreach (var candidate in Enum.GetValues<NmStatus>())
         {
-            Root.Classes.Set(NmStatusInfo.ClassName(candidate), candidate == Severity);
+            Classes.Set(NmStatusInfo.ClassName(candidate), candidate == Severity);
         }
 
         var hasAction = !string.IsNullOrWhiteSpace(ActionText) && ActionCommand is not null;

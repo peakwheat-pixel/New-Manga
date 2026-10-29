@@ -1,0 +1,13 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "masked input -\u003E credential_put(create)",
+  "target_kind": "provider_api",
+  "owner_id": "profile-1",
+  "intent": "create",
+  "secret_length": 42,
+  "secret_forwarded_to_command": true,
+  "masked_input_password_char": true,
+  "input_cleared_after_submit": true,
+  "automation_peer_has_no_value": true,
+  "status_mentions_configured": true
+}

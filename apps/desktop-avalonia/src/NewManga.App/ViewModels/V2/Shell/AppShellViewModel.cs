@@ -69,6 +69,7 @@ public sealed class AppShellViewModel : ObservableObject
         OpenPaletteCommand = new RelayCommand(OpenPalette);
         OpenJumpCommand = new RelayCommand(OpenJump);
         OpenHelpCommand = new RelayCommand(OpenHelp);
+        CloseHelpCommand = new RelayCommand(CloseHelp);
         ToggleThemeCommand = new RelayCommand(ToggleTheme);
         DismissNoticeCommand = new RelayCommand(DismissNotice);
         ConfirmCommand = new RelayCommand(ConfirmNow);
@@ -140,6 +141,8 @@ public sealed class AppShellViewModel : ObservableObject
     public RelayCommand OpenJumpCommand { get; }
 
     public RelayCommand OpenHelpCommand { get; }
+
+    public RelayCommand CloseHelpCommand { get; }
 
     public RelayCommand ToggleThemeCommand { get; }
 
@@ -221,21 +224,19 @@ public sealed class AppShellViewModel : ObservableObject
 
     public string NoticeLabel => NmStatusInfo.Label(_noticeStatus);
 
-    public bool IsStatusBandVisible => HasNotice || Library.ImportDock.IsRunning || !IsHostReady;
+    /// <summary>
+    /// Status band is only an activity strip here (screen spec §1: it exists for a Run). Before the Run
+    /// projection lands it appears for real activity/status only; notices live in the AlertBanner.
+    /// </summary>
+    public bool IsStatusBandVisible => Library.ImportDock.IsRunning || !IsHostReady;
 
-    public string StatusBandLeft => HasNotice
-        ? $"{NmStatusInfo.Symbol(_noticeStatus)} {NoticeLabel}：{NoticeText}"
-        : Library.ImportDock.IsRunning
-            ? $"导入中 · {Library.ImportDock.Summary}"
-            : "Host 未就绪：等待 Core sidecar";
+    public string StatusBandLeft => Library.ImportDock.IsRunning
+        ? $"导入中 · {Library.ImportDock.Summary}"
+        : "Host 未就绪：等待 Core sidecar";
 
     public string StatusBandRight => $"作用域 {ScopeText} · {HostStatusText}";
 
-    public NmStatus StatusBandState => HasNotice
-        ? _noticeStatus
-        : Library.ImportDock.IsRunning
-            ? NmStatus.Running
-            : NmStatus.Blocked;
+    public NmStatus StatusBandState => Library.ImportDock.IsRunning ? NmStatus.Running : NmStatus.Blocked;
 
     public string StatusBandSymbol => NmStatusInfo.Symbol(StatusBandState);
 
@@ -303,6 +304,12 @@ public sealed class AppShellViewModel : ObservableObject
 
     public bool IsAnyOverlayOpen => IsPaletteOpen || IsJumpOpen || IsHelpOpen || IsConfirmOpen;
 
+    /// <summary>Palette panel width (px). Kept in the ViewModel so XAML carries no layout magic values.</summary>
+    public double PaletteWidth => 560;
+
+    /// <summary>Centered confirmation-modal width (px).</summary>
+    public double ConfirmWidth => 480;
+
     public ObservableCollection<CommandPaletteEntry> PaletteItems { get; } = new();
 
     public string PaletteQuery
@@ -333,8 +340,15 @@ public sealed class AppShellViewModel : ObservableObject
         ? "没有匹配的命令"
         : $"{PaletteItems.Count} 条命令 · ↑↓ 选择 · Enter 执行 · Esc 关闭";
 
-    public string PaletteScopeNote => $"当前作用域：{State.CurrentSpace.ToString().ToLowerInvariant()} · " +
-                                     $"{StudioModeLabel} · {ScopeText}";
+    public string PaletteScopeNote => $"当前作用域：{SpaceLabel()} · {StudioModeLabel} · {ScopeText}";
+
+    private string SpaceLabel() => State.CurrentSpace switch
+    {
+        SpaceId.Library => "资料柜",
+        SpaceId.Studio => "工位",
+        SpaceId.Console => "控制台",
+        _ => "资料柜",
+    };
 
     // ── Ctrl+P jump ──────────────────────────────────────────────────────────────────────
 
@@ -759,7 +773,7 @@ public sealed class AppShellViewModel : ObservableObject
                 Library.ShowCreateBook();
                 return;
             case ShellCommandIds.LibraryNewChapter:
-                Notify(ReasonOf(ShellCommandIds.LibraryNewChapter), NmStatus.Blocked);
+                Library.ShowCreateChapter();
                 return;
             case ShellCommandIds.LibraryOpenReader:
                 _ = Library.OpenReaderAsync();
