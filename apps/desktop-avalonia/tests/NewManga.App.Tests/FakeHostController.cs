@@ -1,3 +1,4 @@
+using System.Globalization;
 using NewManga.App.Services;
 using NewManga.CoreClient;
 
@@ -38,6 +39,60 @@ public sealed class FakeHostController : IHostController
     public bool CreateBookResult { get; set; } = true;
 
     public Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default) => Task.FromResult(CreateBookResult);
+
+    /// <summary>V11R-A-1: every (bookId, title) the UI asked to create, in call order.</summary>
+    public List<(string BookId, string Title)> CreateChapterRequests { get; } = new();
+
+    /// <summary>V11R-A-1: scripted results consumed in order (null scripts a refusal).</summary>
+    public Queue<ChapterSummary?> ScriptedCreateChapters { get; } = new();
+
+    public int CreateChapterCalls { get; private set; }
+
+    /// <summary>
+    /// V11R-A-1: scripted chapter creation for UI tests. Mirrors the production failure channel —
+    /// blank arguments and a cancelled token return null with a typed <c>LastError</c> — and returns
+    /// deterministic incrementing chapters otherwise, so a create-chapter dialog can be driven
+    /// headlessly. Never throws.
+    /// </summary>
+    public Task<ChapterSummary?> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        CreateChapterCalls++;
+        CreateChapterRequests.Add((bookId, title));
+
+        if (ScriptedCreateChapters.Count > 0)
+        {
+            var scripted = ScriptedCreateChapters.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(title))
+        {
+            PublishLastError("INVALID_REQUEST");
+            return Task.FromResult<ChapterSummary?>(null);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            PublishLastError("CANCELLED");
+            return Task.FromResult<ChapterSummary?>(null);
+        }
+
+        var order = CreateChapterRequests.Count;
+        var number = order.ToString(CultureInfo.InvariantCulture);
+        PublishLastError(null);
+        return Task.FromResult<ChapterSummary?>(
+            new ChapterSummary($"fake-chapter-{number}", title, number, order));
+    }
+
+    private void PublishLastError(string? code)
+    {
+        Snapshot = Snapshot with { LastError = code };
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
 
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default)
     {

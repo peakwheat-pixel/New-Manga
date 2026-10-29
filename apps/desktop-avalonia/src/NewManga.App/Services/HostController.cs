@@ -155,6 +155,57 @@ public sealed class HostController : IHostController
         }
     }
 
+    /// <summary>
+    /// V11R-A-1 (audit P-01, contract §5.1): creates one chapter through the Core
+    /// <c>CreateChapter</c> command (protocol minor 8, C037). The typing layer is
+    /// <see cref="HostRuntime.CreateChapterAsync"/>: the wire payload is exactly
+    /// <c>{"book_id", "title"}</c> and the result is <c>{chapter_id, title, chapter_number,
+    /// sort_order}</c> — verified against <c>src/bootstrap/core_service.py</c>
+    /// (<c>handle_create_chapter</c> + <c>_CREATE_FIELDS</c> + <c>_create_validation_details</c>).
+    /// Refusals never throw into the UI: they return null and publish the typed code through
+    /// <see cref="HostViewSnapshot.LastError"/>. Title semantics stay with the Core (blank title →
+    /// INVALID_REQUEST, duplicates allowed, no length limit); only an empty book id is rejected
+    /// locally before any wire frame is sent.
+    /// </summary>
+    public async Task<ChapterSummary?> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var chapter = await _runtime.CreateChapterAsync(bookId, title, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return chapter;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            // Core errors keep their typed code (INVALID_REQUEST / TARGET_NOT_FOUND / ...);
+            // read-only, transport and cancellation failures map exactly like the rest of the
+            // service layer (ErrorCodeOf), so nothing is silently swallowed.
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
     public async Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,
@@ -1410,6 +1461,22 @@ public sealed class HostController : IHostController
         value.TryGetInt32(out var parsed)
             ? parsed
             : null;
+
+    /// <summary>
+    /// V11R-A-1: publish the typed code of the last refused service-layer write (null = recovered).
+    /// Only the code travels — never a message, a path or a secret — and <see cref="Changed"/> fires
+    /// only when the value actually changes so a failing UI never gets an event storm.
+    /// </summary>
+    private void SetLastError(string? code)
+    {
+        if (string.Equals(_snapshot.LastError, code, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _snapshot = _snapshot with { LastError = code };
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
 
     public async ValueTask DisposeAsync()
     {
