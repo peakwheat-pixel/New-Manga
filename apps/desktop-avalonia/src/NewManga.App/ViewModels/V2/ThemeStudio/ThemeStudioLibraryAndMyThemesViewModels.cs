@@ -13,11 +13,11 @@ namespace NewManga.App.ViewModels.V2.ThemeStudio;
 /// </summary>
 public sealed class ThemeStudioLibraryViewModel : ThemeStudioSectionViewModel
 {
-    /// <summary>Minimum card width accepted by the grid (also the newline behaviour guard).</summary>
-    public const double MinCardWidth = 248;
+    /// <summary>Minimum card width accepted by the grid, derived from the DS tokens (≈249).</summary>
+    public static double MinCardWidth => ThemeStudioMetrics.CardMinWidth;
 
-    /// <summary>Gap between cards (design-system space step 4).</summary>
-    public const double CardGap = 12;
+    /// <summary>Gap between cards (DS spacing token <c>Nm.Space.4</c>).</summary>
+    public static double CardGap => ThemeStudioMetrics.CardGap;
 
     private readonly List<ThemeStudioFilterChip> _categoryChips = new();
     private readonly List<ThemeStudioFilterChip> _appearanceChips = new();
@@ -25,7 +25,7 @@ public sealed class ThemeStudioLibraryViewModel : ThemeStudioSectionViewModel
     private string _categoryKey = "all";
     private string _appearanceKey = "any";
     private int _columnCount = 4;
-    private double _cardWidth = 320;
+    private double _cardWidth = ThemeStudioMetrics.CardWidthDefault;
     private ThemeStudioCardViewModel? _selectedCard;
     private bool _isRefreshing;
 
@@ -152,8 +152,11 @@ public sealed class ThemeStudioLibraryViewModel : ThemeStudioSectionViewModel
         !string.Equals(CategoryKey, "all", StringComparison.Ordinal) ||
         !string.Equals(AppearanceKey, "any", StringComparison.Ordinal);
 
-    /// <summary>Frozen breakpoint rule (spec §3.1): ≥1600 → 4, ≥1280 → 3, otherwise 2.</summary>
-    public static int ColumnsForWidth(double width) => width >= 1600 ? 4 : width >= 1280 ? 3 : 2;
+    /// <summary>
+    /// Frozen breakpoint rule (spec §3.1): ≥ full → 4, ≥ compact → 3, otherwise 2. The breakpoint values
+    /// are DS tokens resolved by <see cref="ThemeStudioMetrics"/>, not literals.
+    /// </summary>
+    public static int ColumnsForWidth(double width) => ThemeStudioMetrics.ColumnsForWidth(width);
 
     /// <summary>
     /// Updates the grid metrics. The column breakpoints are defined on the <b>window</b> width

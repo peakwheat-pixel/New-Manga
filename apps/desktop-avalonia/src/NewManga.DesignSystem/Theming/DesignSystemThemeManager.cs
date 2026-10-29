@@ -558,6 +558,12 @@ public sealed class DesignSystemThemeManager : IDisposable
         return true;
     }
 
+    /// <summary>Contract floor for the <c>Nm.LineHeight.*</c> aliases (multipliers, never pixels).</summary>
+    private const double MinLineHeightMultiplier = 1.0;
+
+    /// <summary>Upper bound of the frozen multiplier range; larger values mean pixels leaked into an alias.</summary>
+    private const double MaxLineHeightMultiplier = 2.5;
+
     /// <summary>
     /// Fills in any missing absolute line box from the layer's font size and multiplier. Explicit line
     /// boxes are validated instead of silently overwritten.
@@ -567,6 +573,31 @@ public sealed class DesignSystemThemeManager : IDisposable
         string themeId,
         out string? error)
     {
+        // C-2-I1 guard: a layer that carries absolute pixels (e.g. 16.2) in the alias keys would be
+        // multiplied by the font size again below and inflate every line box. Reject it instead of
+        // silently applying a broken layer; the manager keeps the previous palette.
+        foreach (var key in ThemeLayerLineHeightKeys)
+        {
+            if (!entries.TryGetValue(key, out var value))
+            {
+                continue;
+            }
+
+            if (value is not double multiplier)
+            {
+                error = $"theme layer '{themeId}': '{key}' must be a double";
+                return false;
+            }
+
+            if (multiplier is < MinLineHeightMultiplier or > MaxLineHeightMultiplier)
+            {
+                error =
+                    $"theme layer '{themeId}': '{key}' is {multiplier}; line-height aliases must stay within " +
+                    $"[{MinLineHeightMultiplier}, {MaxLineHeightMultiplier}] (absolute pixels belong in Nm.TextLineBox.*)";
+                return false;
+            }
+        }
+
         foreach (var (lineBoxKey, fontSizeKey, lineHeightKey) in LineBoxDerivations)
         {
             if (entries.TryGetValue(lineBoxKey, out var supplied))

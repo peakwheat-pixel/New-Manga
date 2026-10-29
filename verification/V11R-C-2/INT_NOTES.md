@@ -136,6 +136,9 @@ surface.Close();
   `IThemeService.Changed`，不得绕过它直接改 `DesignSystemThemeManager`，否则会与 Studio 的
   「取消回滚/应用」互相覆盖。
 - `ShellSurface.ThemeStudio` 已存在于 `ShellState`（V11R-INT-1 只需推入/弹出）。
+- **启动路径已回归覆盖**：`ThemeService.InitializeAsync()`（v2 壳启动时调用）之后的行高/版式由
+  `tests/NewManga.ThemeEngine.Tests/LineHeightContractTests.cs` 断言（别名 ∈[1,2.5]、`Nm.TextLineBox = fontSize × multiplier`、
+  真实 `TextBlock` 行高 ≤ 字号×2.5）。C-2-I1 修复前该路径会让全局文本行高 ×12（详见 `DEVIATIONS.md` §C2-P1）。
 
 ---
 

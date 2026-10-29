@@ -1,30 +1,36 @@
-# V11R-C-2 设计系统合规自检（自动 grep，2026-10-30）
+# V11R-C-2 设计系统合规自检（自动 grep，2026-10-30，复审 r1 整改后）
 
-范围：`Views/V2/**` + `Shell/V2/**` 全部 XAML（含本任务 `ThemeStudio` 三个目录；不含测试/沙箱 fixture）。
-口径与 `V2ConformanceTests` 的 8 类正则一致。
+范围与口径与 `V2ConformanceTests` 一致：
+- XAML：`Views/V2/**` + `Shell/V2/**` 全部 `.axaml`（8 类正则）。
+- C#：conformance 的 `OwnedCSharpDirectories`（**已包含 `ViewModels/V2/ThemeStudio`、`Views/V2/ThemeStudio`**，复审 C2-P2-1 整改）+ 7 类正则。
+- 允许清单（单一令牌解析模块，理由与 ui-shell `ShellLayout` 相同）：`Shell/V2/ShellLayout.cs`、`ViewModels/V2/ThemeStudio/ThemeStudioMetrics.cs`。
 
-## 1. 裸样式数值（契约 §2.2 硬规则）
+## 1. XAML 裸样式数值
 
-**PASS**：8 类 conformance 正则在整个 V2 XAML 树（41 个文件）中 0 命中。
+**PASS**：8 类正则在整个 V2 XAML 树（39 个文件）中 0 命中。
 
-## 2. 圆角上界（>3px 视为违规）
-PASS：样式全部经 `Nm.Corner.None/Sm/Md`（0/2/3px）；编辑器输入受 0–3 校验，超界由引擎 `ThemeValidator` 拒绝。
+## 2. C# 裸设计值（ThemeStudio 已纳入扫描）
 
-## 3. 阴影 / 渐变 / 模糊（DESIGN_SYSTEM §1、§9 反面清单）
-PASS：无阴影 / 渐变 / 模糊 / backdrop（§1 forbidden effect 0 命中）。
+**PASS**：7 类正则覆盖 71 个 C# 文件（含 ThemeStudio 的 ViewModels/Views/Shell 三个目录）0 命中；允许的令牌解析模块仅 2 个。
 
-## 4. 令牌使用面
+## 3. ThemeStudio 几何来源（复审 C2-P2-1）
 
-- V2 XAML 中 `{DynamicResource Nm.*}` 引用总数：**856**
-- 主题层由引擎 `ThemePaletteComposer` 产出（59 键）；本任务不新增令牌、不发明第二套真值。
-- 未申请任何裸值例外（见 `DEVIATIONS.md`「例外申请：无」）。
+| 值 | 来源 |
+|---|---|
+| 卡片间距 | `ThemeStudioMetrics.CardGap` → `Nm.Space.4`（12） |
+| 卡片默认宽度 | `ThemeStudioMetrics.CardWidthDefault` → `Nm.Size.InspectorExpanded`（320） |
+| 断点 | `ThemeStudioMetrics.BreakpointFull/Compact` → `Nm.Size.Breakpoint.Full/Compact`（1600/1280） |
+| 最小卡片宽度 | `ThemeStudioMetrics.CardMinWidth` = (Full − TreeWidth − InspectorExpanded − 2·S7 − 3·S4) / 4（≈249，纯令牌推导） |
+| 列数 4/3/2 | THEME_STUDIO_SPEC §3.1 冻结的结构计数（非几何值） |
 
-## 5. 状态编码（禁止仅颜色）
-- 状态符号来自 `Nm.Color.Status.*` + `NmStatusInfo.Symbol`（`● ◐ ✗ ▨ · – ▲ ▮ ○`），UI 不新造符号。
-- 对比度同时显示数值（如 `14.19:1（≥7:1）`）与文字结论（`通过` / `未通过`）。
-- 主题卡明暗支持为文字徽标（`明暗均支持` / `仅浅色` / `仅深色`）。
+无新增数值例外；`DEVIATIONS.md` 的「例外申请」已同步为「无（C2-P2-1 通过令牌解析解决）」。
 
-## 6. 回归门（合入 main 后）
-- 静态合规测试：`dotnet test --filter "FullyQualifiedName~V2ConformanceTests|FullyQualifiedName~V2StudioConformanceTests"` → **10/10 通过**。
-- 触发修正：`MyThemesSectionView.axaml` 的 `ListBox BorderThickness="0"` 字面量已删除（改用控件默认 0；截图复跑视觉无变化），记录见 `DEVIATIONS.md` CONFORMANCE-1。
-- 全量串行测试：`dotnet test NewManga.sln --no-build -m:1` → 0 失败（`test.log`，`TEST_EXIT=0`）。
+## 4. 圆角 / 阴影 / 渐变 / 状态编码
+- 圆角：全部 `Nm.Corner.None/Sm/Md`（0/2/3px）；编辑器输入 0–3 校验，超界由 `ThemeValidator` 拒绝。
+- 阴影/渐变/模糊：0 命中（见 §1 forbidden effect）。
+- 状态非纯颜色：符号来自 `Nm.Color.Status.*` + `NmStatusInfo.Symbol`，并配文字（`通过`/`未通过`、`明暗均支持` 等）。
+
+## 5. 回归门（复审整改后）
+- `V2ConformanceTests`（XAML + C# 扫描，含 ThemeStudio）：6/6 通过。
+- `V2ConformanceTests + V2StudioConformanceTests`：10/10 通过。
+- 全量串行：`dotnet test NewManga.sln --no-build -m:1` → 0 失败（`test.log`，`TEST_EXIT=0`）。

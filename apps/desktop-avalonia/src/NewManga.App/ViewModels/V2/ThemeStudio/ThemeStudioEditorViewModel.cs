@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using NewManga.App.Shell.V2;
 using NewManga.DesignSystem;
 using NewManga.ThemeEngine;
@@ -13,7 +14,7 @@ public sealed class ThemeStudioColorRow : ObservableObject
 {
     private readonly ThemeStudioEditorViewModel _owner;
     private string _hexValue;
-    private IBrush _swatch = Brushes.Transparent;
+    private IBrush? _swatch;
     private string _contrastLabel = "—";
     private bool _isInvalid;
 
@@ -55,7 +56,7 @@ public sealed class ThemeStudioColorRow : ObservableObject
         }
     }
 
-    public IBrush Swatch
+    public IBrush? Swatch
     {
         get => _swatch;
         private set => Set(ref _swatch, value);
@@ -94,7 +95,7 @@ public sealed class ThemeStudioColorRow : ObservableObject
 
     private void UpdateSwatch(Color color)
     {
-        Swatch = new SolidColorBrush(color);
+        Swatch = new ImmutableSolidColorBrush(color);
         OnPropertyChanged(nameof(AccessibleLabel));
     }
 

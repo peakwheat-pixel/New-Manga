@@ -145,7 +145,7 @@ public sealed class ThemeStudioCardViewModel : ObservableObject
     private bool _isFavorite;
     private bool _isSelected;
     private ThemeStudioPalette? _palette;
-    private double _width = 320;
+    private double _width = ThemeStudioMetrics.CardWidthDefault;
 
     internal ThemeStudioCardViewModel(
         ThemePackage package,
