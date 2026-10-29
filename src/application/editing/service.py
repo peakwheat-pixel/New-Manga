@@ -998,26 +998,38 @@ class RegionEditingService:
         missing = [rid for rid in ordered_region_ids if rid not in regions]
         if missing:
             raise RegionNotFound(missing[0])
+        ordered_regions = [regions[rid] for rid in ordered_region_ids]
         expected_ids = self._expected_current_ids(
-            [regions[rid] for rid in ordered_region_ids], expected_revisions
+            ordered_regions, expected_revisions
         )
-        reordered = []
+        # V11R-F0-1 I1/P1-2: build the WHOLE batch first; the committer re-reads
+        # every expected current pointer inside ONE transaction, so a conflict
+        # on any region rolls the entire reorder back (never a partial order).
+        updates: list[tuple[Region, RegionRevision, str | None]] = []
+        checks: list[tuple[str, str]] = []
+        staged_by_id: dict[str, tuple[Region, Region]] = {}
         for position, region_id in enumerate(ordered_region_ids, start=1):
             region = regions[region_id]
+            expected_id = expected_ids.get(region_id)
             if region.reading_order == position:
-                reordered.append(region)
+                if expected_id is not None:
+                    checks.append((region_id, expected_id))
                 continue
             staged = _clone_region(region)
             staged.reading_order = position
-            self._commit_user_or_raise(
-                region,
-                staged,
-                RegionOrigin.USER,
-                ReviewState.UNREVIEWED,
-                expected_current_revision_id=expected_ids.get(region_id),
+            revision = self._build_revision(
+                staged, RegionOrigin.USER, ReviewState.UNREVIEWED
             )
-            reordered.append(region)
-        return reordered
+            updates.append((staged, revision, expected_id))
+            staged_by_id[region_id] = (region, staged)
+        if updates or checks:
+            self._commit_batch_or_raise(
+                updated_regions=updates,
+                expected_current_checks=checks,
+            )
+        for region, staged in staged_by_id.values():
+            _sync_region_state(region, staged)
+        return [regions[region_id] for region_id in ordered_region_ids]
 
     def reading_order_for_context(self, page_id: str) -> list[Region]:
         """Translation context must use the final manual reading order
