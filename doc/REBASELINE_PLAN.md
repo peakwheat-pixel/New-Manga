@@ -31,7 +31,7 @@
 |LEGACY-SHELL-ARCHIVE-1|PUBLIC-RELEASE-P0-1|closed_with_limitations（构建输出解耦到 `apps/desktop-avalonia/build/sidecar` + 归档 17 个旧壳测试/spec/dev 脚本；`apps/desktop` 受 42 条 evidence pin、`src/ui` 受产品 import 约束原位冻结；集成 `7d4c7764c`）|
 |UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|closed_with_limitations（本机无 AD-001 原始数据，用 2026-10-26 升级前备份执行 dry-run + 真实布局迁移完整性 PASS；发现升级缺口：Core 不识别旧布局 data/library.db）|
 |UPGRADE-LEGACY-LAYOUT-1|UPGRADE-REHEARSAL-1|done（Core 启动迁移旧布局：原子 staging/promote + fail-closed + 补迁；3 轮独立 Review 后 PASS；单测 12/12、全量 2612P；集成 `098c60381`）|
-|UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|in_review（合成 v1–v5 旧 schema 数据迁移测试：7 用例、全量 2619P；集成 `fd925fcf7`；待独立 Review）|
+|UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 旧 schema 数据迁移：11 用例、v5 四重建表逐列断言、全量 2623P；3 轮 Review PASS；集成 `61601dc8c`）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|

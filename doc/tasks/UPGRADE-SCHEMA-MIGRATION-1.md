@@ -3,7 +3,7 @@ id: UPGRADE-SCHEMA-MIGRATION-1
 title: 合成旧 schema（v1–v5）数据迁移测试（补 B 卡剩余验证缺口）
 kind: verification
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-29_schema_synthesis
 suggested_owner: dsh
 owner: dsh-lead
@@ -96,4 +96,11 @@ allowed_paths:
 
 ## Closeout Record
 
-- 待 round 3 复审 PASS 后填写（target: done）。
+- Closed：2026-10-29 as **done**（3 轮独立 Review：FAIL→FAIL→PASS；round 3 P0=0、P1=0、4×P2 不阻塞）。
+- 交付：	ests/storage/test_upgrade_schema_data.py（11 用例）——v1–v5 逐版本合成旧数据库并逐代 seed；v5 四张重建表
+  （pipeline_run_targets/pipeline_tasks/step_runs/step_result_candidates）全部有数据并逐列断言；全列 EXPECTED 断言；结构/索引/外键检查；
+  FROZEN_V1_TABLES 防回归；逐版本幂等。
+- 集成：main 61601dc8c（代码 43a76b204）。
+- 剩余 P2（不阻塞，可后续补齐）：region_revisions.source_run_id 未纳入 EXPECTED、未检测额外行、_assert_latest 结构检查非全量、
+  旧库仍由生产 MIGRATIONS 合成。
+- 修复了 UPGRADE-REHEARSAL-1 的剩余验证限制（真实旧 schema 数据不可得 → 合成覆盖 v1–v5 迁移链）。
