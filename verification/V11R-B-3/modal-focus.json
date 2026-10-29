@@ -1,0 +1,9 @@
+{
+  "ac": "P1-2 Modal \u771F\u5B9E\u7126\u70B9/\u9677\u9631/Esc/\u56DE\u7126",
+  "default_focus_is_cancel": true,
+  "default_focus_element": "\u53D6\u6D88",
+  "focus_trap_tab": true,
+  "esc_cancelled": true,
+  "focus_restored_to_trigger": true,
+  "error_text_has_ds_class": true
+}

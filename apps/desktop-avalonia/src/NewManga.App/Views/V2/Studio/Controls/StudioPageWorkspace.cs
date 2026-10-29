@@ -188,7 +188,9 @@ public sealed class StudioPageWorkspace : Grid
         _retryButton = StudioUi.Button("重新读取", "sm", () => _ = _viewModel.LoadAsync());
         errorRow.Children.Add(_retryButton);
         _errorBanner = StudioUi.Box(errorRow, "studio-banner-error");
-        StudioUi.TrackVisible(_errorBanner, _viewModel, () => _viewModel.HasErrorText);
+        // I1 fix: one in-place error block only — the host banner already explains a not-ready
+        // host, so the error banner must not repeat it (state-error.png showed both).
+        StudioUi.TrackVisible(_errorBanner, _viewModel, () => _viewModel.HasErrorText && !_viewModel.HostBannerVisible);
         banners.Children.Add(_errorBanner);
 
         _partialText = new TextBlock { Classes = { "meta", "studio-wrap" } };
@@ -289,7 +291,10 @@ public sealed class StudioPageWorkspace : Grid
         column.Children.Add(_emptyAction);
         card.Child = column;
         _emptyOverlay.Children.Add(card);
-        StudioUi.TrackVisible(_emptyOverlay, _viewModel, () => _viewModel.IsEmpty || _viewModel.HasError);
+        StudioUi.TrackVisible(
+            _emptyOverlay,
+            _viewModel,
+            () => _viewModel.IsEmpty || (_viewModel.HasError && !_viewModel.HostBannerVisible));
         _viewModel.PropertyChanged += (_, _) => RefreshEmptyOverlay();
         RefreshEmptyOverlay();
     }

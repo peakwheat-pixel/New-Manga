@@ -96,3 +96,10 @@ dotnet test NewManga.sln
 ```
 
 截图由 `Avalonia.Headless`（`UseHeadlessDrawing=false` + Skia）在 `[AvaloniaFact]` 内 `Window.CaptureRenderedFrame()` 生成真实像素，非占位图。
+
+## I1 返修后的证据流程（R-19）
+测试默认把证据写到 `%TEMP%\newmanga-evidence\<TASK>\`（不落仓库、不会锁文件）；需要入库时显式执行：
+```powershell
+pwsh scripts/curate-evidence.ps1 -Task V11R-B-3
+```
+或 `NEWMANGA_EVIDENCE_SYNC=1` + `dotnet test` 后再 curate。

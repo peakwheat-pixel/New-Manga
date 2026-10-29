@@ -3,9 +3,10 @@ using System.Text.Json;
 namespace NewManga.App.Tests;
 
 /// <summary>
-/// V11R-B-3/B-4 evidence sink. Writes under <c>verification/&lt;task&gt;/</c> of the repository so the
-/// evidence ships with the commit; resolves the repo root by walking up from the test binaries. Falls
-/// back to <c>%NEWMANGA_STUDIO_EVIDENCE_DIR%</c> or the temp directory when the repo root is absent.
+/// V11R-B-3/B-4 evidence sink (R-19 证据纪律). Tests write to <c>%TEMP%/newmanga-evidence/&lt;task&gt;/</c>
+/// by default — repository files are never locked mid-run. Evidence is copied into
+/// <c>verification/&lt;task&gt;/</c> only by an explicit curation step
+/// (<c>NEWMANGA_EVIDENCE_SYNC=1</c> with <c>NEWMANGA_EVIDENCE_DIR</c>, or scripts/curate-evidence.ps1).
 /// </summary>
 internal static class StudioEvidence
 {
@@ -20,10 +21,13 @@ internal static class StudioEvidence
             return overridden;
         }
 
-        _root ??= ResolveRepoRoot();
+        var sync = string.Equals(Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_SYNC"), "1", StringComparison.Ordinal);
+        _root ??= sync ? ResolveRepoRoot() : Path.Combine(Path.GetTempPath(), "newmanga-evidence");
         var path = _root is null
-            ? Path.Combine(Path.GetTempPath(), "newmanga-studio-evidence", task)
-            : Path.Combine(_root, "verification", task);
+            ? Path.Combine(Path.GetTempPath(), "newmanga-evidence", task)
+            : sync
+                ? Path.Combine(_root, "verification", task)
+                : Path.Combine(_root, task);
         System.IO.Directory.CreateDirectory(path);
         return path;
     }
