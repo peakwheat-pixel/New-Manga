@@ -89,19 +89,25 @@ public sealed class FocusRingBehaviourTests
         var window = new Window { Width = 320, Height = 200, Content = new Border { Padding = new Thickness(12), Child = textBox } };
         window.Show();
         Dispatcher.UIThread.RunJobs();
+        
 
         for (var index = 0; index < 25; index++)
         {
             FocusRing.SetIsEnabled(textBox, true);
+            Assert.True(FocusRing.IsSubscribedFor(textBox));
             textBox.Focus(NavigationMethod.Tab);
             Dispatcher.UIThread.RunJobs();
             FocusRing.SetIsEnabled(textBox, false);
             Dispatcher.UIThread.RunJobs();
+            Assert.False(FocusRing.IsSubscribedFor(textBox));
         }
 
         FocusRing.SetIsEnabled(textBox, true);
+        Assert.True(FocusRing.IsSubscribedFor(textBox));
+        var callsBeforeFocus = FocusRing.PositionCallCountFor(textBox);
         textBox.Focus(NavigationMethod.Tab);
         Dispatcher.UIThread.RunJobs();
+        Assert.True(FocusRing.PositionCallCountFor(textBox) > callsBeforeFocus, "focus must drive the ring position callback");
 
         var rings = window.GetVisualDescendants()
             .OfType<Border>()
@@ -112,7 +118,14 @@ public sealed class FocusRingBehaviourTests
 
         FocusRing.SetIsEnabled(textBox, false);
         Dispatcher.UIThread.RunJobs();
+        Assert.False(FocusRing.IsSubscribedFor(textBox));
         Assert.Null(VisibleRingOf(window));
+
+        // With the handlers removed, another focus event must not invoke the position callback.
+        var callsAfterDisable = FocusRing.PositionCallCountFor(textBox);
+        textBox.Focus(NavigationMethod.Tab);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(callsAfterDisable, FocusRing.PositionCallCountFor(textBox));
         window.Close();
     }
 
@@ -120,6 +133,7 @@ public sealed class FocusRingBehaviourTests
         .OfType<Border>()
         .FirstOrDefault(border => border.Classes.Contains("nm-focus-ring") && border.IsVisible);
 }
+
 
 
 
