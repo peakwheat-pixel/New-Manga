@@ -1,0 +1,49 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Surface ladder (DESIGN_SYSTEM §1.2): hierarchy is expressed by the five background levels plus a
+       hairline stroke. There is no shadow, gradient, blur or radius above 3px anywhere. -->
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Card}" />
+  </Style>
+
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
+  </Style>
+
+  <Style Selector="Border.raised">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="Border.overlay">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="Border.sunken">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
+  </Style>
+
+  <!-- Stroke-only modifier: keeps the element's own background, adds the hairline rule. -->
+  <Style Selector="Border.hairline">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
+  </Style>
+</Styles>

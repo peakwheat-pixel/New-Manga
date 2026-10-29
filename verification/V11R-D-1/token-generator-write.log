@@ -1,0 +1,12 @@
+tokens:  G:\CODEX\New Manga.workspace\worktrees\V11R-DESIGN-PLATFORM\doc\design\redesign-v1\40-fusion\tokens.json
+project: G:\CODEX\New Manga.workspace\worktrees\V11R-DESIGN-PLATFORM\apps\desktop-avalonia\src\NewManga.DesignSystem
+rows:    259
+wrote Themes/Tokens.Dark.axaml (2822 chars)
+wrote Themes/Tokens.Light.axaml (2823 chars)
+wrote Themes/Tokens.Global.axaml (5857 chars)
+wrote Themes/Tokens.HighContrast.axaml (5855 chars)
+wrote Themes/Density.Compact.axaml (1089 chars)
+wrote Themes/Density.Spacious.axaml (1106 chars)
+wrote Themes/Motion.Reduced.axaml (728 chars)
+wrote Generated/NmKeys.g.cs (20046 chars)
+wrote Generated/TokenMap.md (21622 chars)

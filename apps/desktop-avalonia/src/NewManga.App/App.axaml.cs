@@ -6,12 +6,20 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.App.Views;
+using NewManga.DesignSystem.Theming;
 using NewManga.Theme;
 
 namespace NewManga.App;
 
 public partial class App : Application
 {
+    /// <summary>
+    /// V11R-D-1: owns the application-wide design-system resource stack. Created in
+    /// <see cref="OnFrameworkInitializationCompleted"/> before the shell so every control resolves
+    /// <c>Nm.*</c> tokens on first layout; later theme switches only swap resource dictionaries.
+    /// </summary>
+    private DesignSystemThemeManager? _designSystemTheme;
+
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
@@ -37,6 +45,11 @@ public partial class App : Application
                         ? ThemeVariant.Dark
                         : ThemeVariant.Light);
             }
+
+            // V11R-D-1: normalize the design-system resource stack (palette + overlays) after the
+            // legacy theme pack has been applied, so the new tokens win consistently.
+            _designSystemTheme = new DesignSystemThemeManager(this);
+            _designSystemTheme.Initialize();
 
             var controller = new HostController(options.ToHostOptions());
             var window = new MainWindow(controller, options);
