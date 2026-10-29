@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留；READY 空，待用户/环境决策）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留；READY 空）。SignPath 申请已于 2026-10-29 提交，等待审核。
 - 最近完成：[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`；`public-release`=`d3dd911c4`、默认分支切换、license GPL-3.0、CI `40689279237` 全绿）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）；[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。

@@ -1,0 +1,39 @@
+{
+  "task": "PUBLIC-RELEASE-P0-1",
+  "action": "SignPath Foundation OSS application submitted",
+  "submitted_at_utc": "2026-10-29T02:55:16.0249615Z",
+  "applicant": {
+    "first_name": "peakwheat",
+    "last_name": "pixel",
+    "email": "peak.wheat@gmail.com",
+    "github": "peakwheat-pixel",
+    "role": "Individual maintainer(s)"
+  },
+  "form": {
+    "project_name": "New Manga",
+    "repository_url": "https://github.com/peakwheat-pixel/New-Manga",
+    "homepage_url": "https://github.com/peakwheat-pixel/New-Manga",
+    "download_url": "https://github.com/peakwheat-pixel/New-Manga/releases/tag/v0.1.0",
+    "privacy_policy_url": "https://github.com/peakwheat-pixel/New-Manga/blob/public-release/PRIVACY.md",
+    "tagline": "Local-first manga and comic translation for Windows.",
+    "category": "AI Tools",
+    "build_system": "GitHub Actions",
+    "maintainer_type": "Individual maintainer(s)",
+    "primary_discovery_channel": "AI / LLM tools",
+    "source": "GitHub Actions open-source code signing research",
+    "code_of_conduct_agreed": true,
+    "personal_data_storage_agreed": true,
+    "marketing_consent": false
+  },
+  "result": "Form submitted - Thank you, we will be in touch soon.",
+  "evidence": "screenshots/signpath-form-submitted.png",
+  "preconditions_done": {
+    "public_default_branch": "public-release",
+    "github_license": "GPL-3.0",
+    "release": "v0.1.0 (unsigned installer + SHA256SUMS assets; release body states SignPath Foundation signing)",
+    "readme_code_signing_policy": "yes (README Code signing policy section, public-release 9501e33e8)",
+    "privacy_policy": "PRIVACY.md (public-release 9501e33e8)",
+    "ci_green_run": "40689279237"
+  },
+  "note": "Submitted by DSH using the user-authorized browser session; no credentials stored. Approval is not guaranteed; SignPath may ask for additional information."
+}

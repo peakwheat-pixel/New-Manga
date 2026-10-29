@@ -93,6 +93,8 @@ allowed_paths:
 | report | AC1–AC5 | verification/PUBLIC-RELEASE-P0-1/REPORT.md | - | 2c1868c6422bd55560bae2e66f29cfe311df6d0b756b6844462506f03ad188fe | CANONICAL |
 | ls-tree-raw | AC1 | verification/PUBLIC-RELEASE-P0-1/ls-tree.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | 9a6fa2ea8b8a9ecb28def3a55811b128f693b483678f097570a32cbc57a8cf37 | CANONICAL |
 | ls-remote-raw | AC2 | verification/PUBLIC-RELEASE-P0-1/ls-remote.txt | 53481a9d9214d1c44434711fccfb2fb52f27792d | d899782e6c9f70a4ac1a31d6f08a7080e7fdaa78af1b0b6218e4a98265450f71 | CANONICAL |
+| signpath-submission | 后续 | verification/PUBLIC-RELEASE-P0-1/signpath-submission.json | - | e104b523ce5ba7cadd7ff0380bee9aafe7a4560dd346198becc523f51e325191 | CANONICAL |
+| signpath-submitted-screenshot | 后续 | verification/PUBLIC-RELEASE-P0-1/screenshots/signpath-form-submitted.png | - | 7a98dafca1fc432216b5c606d3e4e89cab3bbf29d5d7f399cf43f2ea2665045a | CANONICAL |
 | ci-run-success | AC4 | verification/PUBLIC-RELEASE-P0-1/ci-run-success.json | - | 961ce2e18ec74fb884d5a8c463372ec31547459234f6b132688b60b8d016c94a | CANONICAL |
 
 ## Resource Manifest
@@ -110,3 +112,10 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：0。
 - 未关闭项及保留原因：①开发机路径字符串清理（107 行/41 文件）与公开文档内链为 follow-up（非敏感、不影响 SignPath 申请）；②随后由用户提交 SignPath Foundation 申请（材料 `doc/release/SIGNPATH-APPLICATION.md` 已就绪）。
 - 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+## 后续动作记录（2026-10-29）
+
+- 资格补齐（public-release 分支 `9501e33e8`）：README 增加 **Code signing policy** 节（SignPath.io/SignPath Foundation 声明、Committers/reviewers、Approvers、隐私政策链接）+ 新增 **`PRIVACY.md`**；GitHub Release **`v0.1.0`** 已发布（asset：`NewManga-0.1.0-setup.exe` 68,611,208 B + `SHA256SUMS`；release body 声明 SignPath Foundation 签名）。
+- **SignPath Foundation 申请已提交**（用户授权，DSH 通过浏览器代填）：字段与结果见 `signpath-submission.json`；提交成功页截图 `screenshots/signpath-form-submitted.png`（“Form submitted — Thank you, we'll be in touch soon.”）。
+- 申请信息：peakwheat / pixel（peak.wheat@gmail.com，GitHub `peakwheat-pixel`，Individual maintainer(s)）；Project Name = New Manga；Category = AI Tools；Build System = GitHub Actions；Discovery = AI / LLM tools。
+- 下一步：等待 SignPath 审核（可能要求补充材料）；通过后安装 SignPath GitHub App、创建 project / artifact configuration / signing policy、配置 4 个 Actions secrets，`sign=true` 触发签名并验证 Authenticode，再收口 `V1-RELEASE-SIGNING-1`。

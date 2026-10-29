@@ -38,3 +38,9 @@
 - `public-release` 历史 = 公开快照 + 6 个 CI 修复提交，不含内部 main 历史。
 - 公开树含开发机路径字符串（非敏感）与测试假凭据 fixture（可能触发 secret-scanning 噪音，已登记）。
 - 默认分支切换与 CI 操作使用本机 GCM 凭据经 GitHub API 完成；token 仅在内存使用，未落盘、未写入证据。
+
+## 后续：SignPath 申请已提交（2026-10-29）
+
+- 资格补齐：README **Code signing policy** 节 + **PRIVACY.md**（public-release `9501e33e8`）；GitHub Release **`v0.1.0`**（unsigned installer + SHA256SUMS，body 声明 SignPath Foundation 签名）。
+- **申请已提交**：<https://signpath.org/apply>（用户授权，DSH 通过浏览器代填）；成功页 “Form submitted — Thank you, we'll be in touch soon.”；证据 `verification/PUBLIC-RELEASE-P0-1/{signpath-submission.json,screenshots/signpath-form-submitted.png}`。
+- 等待审核结果（可能要求补充材料）。通过后：安装 SignPath GitHub App → 创建 project/artifact configuration/signing policy → 配置 Actions secrets → `sign=true` 触发签名 → 验证 Authenticode → 收口 V1-RELEASE-SIGNING-1。
