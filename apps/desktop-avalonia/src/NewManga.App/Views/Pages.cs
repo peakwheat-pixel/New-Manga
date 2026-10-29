@@ -8,20 +8,20 @@ using Avalonia.Media.Immutable;
 using NewManga.App.Services;
 using NewManga.App.ViewModels;
 using NewManga.CoreClient;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
 internal static class Ui
 {
-    public static SolidColorBrush B(string token) => (SolidColorBrush)ThemePackService.Brush(token);
+    public static SolidColorBrush B(string token) => (SolidColorBrush)LegacyChrome.Brush(token);
 
     public static TextBlock Text(string text, double size, string? colorToken = "TextPrimary", bool bold = false) => new()
     {
         Text = text,
         FontSize = size,
         FontWeight = bold ? FontWeight.SemiBold : FontWeight.Normal,
-        Foreground = colorToken is null ? null : ThemePackService.Brush(colorToken),
+        Foreground = colorToken is null ? null : LegacyChrome.Brush(colorToken),
         TextWrapping = TextWrapping.Wrap,
     };
 
@@ -33,9 +33,9 @@ internal static class Ui
             Padding = new Thickness(14, 7),
             CornerRadius = new CornerRadius(8),
             FontSize = 13,
-            Background = primary ? ThemePackService.Brush("Accent") : ThemePackService.Brush("CardBg"),
-            Foreground = primary ? ThemePackService.Brush("AccentText") : ThemePackService.Brush("TextPrimary"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = primary ? LegacyChrome.Brush("Accent") : LegacyChrome.Brush("CardBg"),
+            Foreground = primary ? LegacyChrome.Brush("AccentText") : LegacyChrome.Brush("TextPrimary"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
         };
         button.Click += (_, _) => onClick();
@@ -107,7 +107,7 @@ public sealed class BookshelfPage : UserControl
     private readonly Grid _splitRightBody;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: layout currently applied to this page.</summary>
-    private LayoutProfile _layout = LayoutProfiles.Sonoma;
+    private LegacyLayoutProfile _layout = LegacyLayoutProfiles.Sonoma;
 
     public BookshelfPage(
         BookshelfViewModel viewModel,
@@ -151,7 +151,7 @@ public sealed class BookshelfPage : UserControl
         _header = new Border
         {
             Padding = new Thickness(28, 18),
-            Background = ThemePackService.Brush("HeaderGradient"),
+            Background = LegacyChrome.Brush("HeaderGradient"),
             Child = headerGrid,
         };
 
@@ -162,7 +162,7 @@ public sealed class BookshelfPage : UserControl
             FontSize = 13,
             Height = 36,
             CornerRadius = new CornerRadius(9),
-            Background = ThemePackService.Brush("SearchBg"),
+            Background = LegacyChrome.Brush("SearchBg"),
             Name = "SearchBox",
         };
         searchBox.TextChanged += (_, _) => ViewModel.SearchText = searchBox.Text ?? string.Empty;
@@ -179,11 +179,11 @@ public sealed class BookshelfPage : UserControl
                 CornerRadius = new CornerRadius(14),
                 FontSize = 12,
                 Background = string.Equals(tag, ViewModel.SelectedTag, StringComparison.Ordinal)
-                    ? ThemePackService.Brush("ChipActiveBg")
-                    : ThemePackService.Brush("ChipBg"),
+                    ? LegacyChrome.Brush("ChipActiveBg")
+                    : LegacyChrome.Brush("ChipBg"),
                 Foreground = string.Equals(tag, ViewModel.SelectedTag, StringComparison.Ordinal)
-                    ? ThemePackService.Brush("AccentText")
-                    : ThemePackService.Brush("TextSecondary"),
+                    ? LegacyChrome.Brush("AccentText")
+                    : LegacyChrome.Brush("TextSecondary"),
             };
             chip.Click += (_, _) => ViewModel.SelectedTag = tag;
             return chip;
@@ -202,8 +202,8 @@ public sealed class BookshelfPage : UserControl
         {
             Padding = new Thickness(18),
             CornerRadius = new CornerRadius(14),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = searchGrid,
         };
@@ -236,8 +236,8 @@ public sealed class BookshelfPage : UserControl
             Padding = new Thickness(20),
             HorizontalAlignment = HorizontalAlignment.Right,
             VerticalAlignment = VerticalAlignment.Stretch,
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1, 0, 0, 0),
             IsVisible = false,
             Child = new ScrollViewer { Content = _detailBody },
@@ -280,8 +280,8 @@ public sealed class BookshelfPage : UserControl
         {
             RowDefinitions = new RowDefinitions("*,Auto"),
             HorizontalAlignment = HorizontalAlignment.Center,
-            MaxWidth = LayoutProfiles.Launchpad.ContentMaxWidth,
-            Margin = new Thickness(24, 10, 24, LayoutProfiles.Launchpad.LaunchpadBottomInset),
+            MaxWidth = LegacyLayoutProfiles.Launchpad.ContentMaxWidth,
+            Margin = new Thickness(24, 10, 24, LegacyLayoutProfiles.Launchpad.LaunchpadBottomInset),
         };
         _launchpadContentHost.Children.Add(_launchpadGridSlot);
         _launchpadContentHost.Children.Add(_launchpadDetailSlot);
@@ -314,8 +314,8 @@ public sealed class BookshelfPage : UserControl
         _splitOverlaySlot = new Grid();
         _splitLeft = new Border
         {
-            Background = ThemePackService.Brush(ThemePackService.SidebarBackground),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush(LegacyChrome.SidebarBackground),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(0, 0, 1, 0),
         };
         var leftGrid = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto") };
@@ -385,7 +385,7 @@ public sealed class BookshelfPage : UserControl
                 _status.Text = ViewModel.StatusMessage!;
             }
         };
-        ApplyLayout(LayoutProfiles.Sonoma);
+        ApplyLayout(LegacyLayoutProfiles.Sonoma);
     }
 
     public BookshelfViewModel ViewModel { get; }
@@ -422,9 +422,9 @@ public sealed class BookshelfPage : UserControl
     public ItemsControl SplitBookList => _splitBookList;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to this page.</summary>
-    public LayoutProfile Layout => _layout;
+    public LegacyLayoutProfile Layout => _layout;
 
-    public LayoutKind CurrentLayout => _layout.Kind;
+    public LegacyLayoutKind CurrentLayout => _layout.Kind;
 
     /// <summary>Last import flow (tests await this; the picker itself is faked headless).</summary>
     public Task LastImportOperation { get; private set; } = Task.CompletedTask;
@@ -433,16 +433,16 @@ public sealed class BookshelfPage : UserControl
     /// THEME-MACOS-LAYOUTS-1: switches this page between the three frozen shelf structures. The public
     /// members above stay valid in every layout because the same control instances are re-parented.
     /// </summary>
-    public void ApplyLayout(LayoutProfile profile)
+    public void ApplyLayout(LegacyLayoutProfile profile)
     {
         _layout = profile;
         DetachSharedControls();
         switch (profile.Shelf)
         {
-            case ShelfStyle.LaunchpadGrid:
+            case LegacyShelfStyle.LaunchpadGrid:
                 AttachLaunchpad(profile);
                 break;
-            case ShelfStyle.SplitList:
+            case LegacyShelfStyle.SplitList:
                 AttachSplit(profile);
                 break;
             default:
@@ -461,16 +461,16 @@ public sealed class BookshelfPage : UserControl
 
     public void ApplyTheme()
     {
-        _sonomaRoot.Background = ThemePackService.Brush("AppBg");
-        _launchpadRoot.Background = ThemePackService.Brush("AppBg");
-        _splitRoot.Background = ThemePackService.Brush("AppBg");
-        _searchCard.Background = ThemePackService.Brush("CardBg");
-        _searchCard.BorderBrush = ThemePackService.Brush("CardBorder");
-        _detailPanel.Background = ThemePackService.Brush("CardBg");
-        _detailPanel.BorderBrush = ThemePackService.Brush("CardBorder");
-        _splitLeft.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
-        _splitLeft.BorderBrush = ThemePackService.Brush("CardBorder");
-        _splitListTitle.Foreground = ThemePackService.Brush("TextSecondary");
+        _sonomaRoot.Background = LegacyChrome.Brush("AppBg");
+        _launchpadRoot.Background = LegacyChrome.Brush("AppBg");
+        _splitRoot.Background = LegacyChrome.Brush("AppBg");
+        _searchCard.Background = LegacyChrome.Brush("CardBg");
+        _searchCard.BorderBrush = LegacyChrome.Brush("CardBorder");
+        _detailPanel.Background = LegacyChrome.Brush("CardBg");
+        _detailPanel.BorderBrush = LegacyChrome.Brush("CardBorder");
+        _splitLeft.Background = LegacyChrome.Brush(LegacyChrome.SidebarBackground);
+        _splitLeft.BorderBrush = LegacyChrome.Brush("CardBorder");
+        _splitListTitle.Foreground = LegacyChrome.Brush("TextSecondary");
         RebuildChips();
         ApplyShelfChrome(_layout);
     }
@@ -490,7 +490,7 @@ public sealed class BookshelfPage : UserControl
         Content = _sonomaRoot;
     }
 
-    private void AttachLaunchpad(LayoutProfile profile)
+    private void AttachLaunchpad(LegacyLayoutProfile profile)
     {
         _launchpadContentHost.MaxWidth = profile.ContentMaxWidth;
         // The shell reserves the Dock band on PageHost (MainWindow.ApplyLayout), so the page itself only
@@ -509,7 +509,7 @@ public sealed class BookshelfPage : UserControl
         Content = _launchpadRoot;
     }
 
-    private void AttachSplit(LayoutProfile profile)
+    private void AttachSplit(LegacyLayoutProfile profile)
     {
         _splitBody.ColumnDefinitions[0].Width = new GridLength(profile.ShelfListWidth > 0 ? profile.ShelfListWidth : 260);
         _splitHeaderSlot.Children.Add(_header);
@@ -548,10 +548,10 @@ public sealed class BookshelfPage : UserControl
     }
 
     /// <summary>Per-layout geometry / copy / chrome for the shared header, search card and detail panel.</summary>
-    private void ApplyShelfChrome(LayoutProfile profile)
+    private void ApplyShelfChrome(LegacyLayoutProfile profile)
     {
-        var launchpad = profile.Shelf == ShelfStyle.LaunchpadGrid;
-        var split = profile.Shelf == ShelfStyle.SplitList;
+        var launchpad = profile.Shelf == LegacyShelfStyle.LaunchpadGrid;
+        var split = profile.Shelf == LegacyShelfStyle.SplitList;
 
         ApplyHeaderChrome(profile);        _header.Padding = launchpad
             ? new Thickness(24, 12, 24, 6)
@@ -591,25 +591,25 @@ public sealed class BookshelfPage : UserControl
     }
 
     /// <summary>Header surface per layout: gradient (Sonoma), transparent (Launchpad), translucent strip (Split).</summary>
-    private void ApplyHeaderChrome(LayoutProfile profile)
+    private void ApplyHeaderChrome(LegacyLayoutProfile profile)
     {
-        _header.Background = profile.Shelf == ShelfStyle.LaunchpadGrid
+        _header.Background = profile.Shelf == LegacyShelfStyle.LaunchpadGrid
             ? Brushes.Transparent
-            : profile.Shelf == ShelfStyle.SplitList
-                ? ThemePackService.Brush("HeaderBg")
-                : ThemePackService.Brush("HeaderGradient");
+            : profile.Shelf == LegacyShelfStyle.SplitList
+                ? LegacyChrome.Brush("HeaderBg")
+                : LegacyChrome.Brush("HeaderGradient");
     }
 
     /// <summary>Columns per layout: Sonoma keeps the ViewModel's 1400-wide calculation, the other two are fixed.</summary>
-    private int EffectiveColumns(LayoutProfile profile) => profile.Shelf switch
+    private int EffectiveColumns(LegacyLayoutProfile profile) => profile.Shelf switch
     {
         // 1200-wide centred Launchpad grid with 168px cards (+16 gap) => 6 columns.
-        ShelfStyle.LaunchpadGrid => Math.Clamp(
+        LegacyShelfStyle.LaunchpadGrid => Math.Clamp(
             (int)Math.Floor((profile.ContentMaxWidth - 48 + BookshelfViewModel.CardGap) / (profile.LaunchpadCardWidth + BookshelfViewModel.CardGap)),
             2,
             8),
         // Right-hand grid of the split view: the 1280-wide default window minus the 260px list column.
-        ShelfStyle.SplitList => BookshelfViewModel.ComputeColumns(Math.Max(480, 1280 - profile.ShelfListWidth - 48)),
+        LegacyShelfStyle.SplitList => BookshelfViewModel.ComputeColumns(Math.Max(480, 1280 - profile.ShelfListWidth - 48)),
         _ => ViewModel.ColumnCount,
     };
 
@@ -632,8 +632,8 @@ public sealed class BookshelfPage : UserControl
                 Padding = new Thickness(12, 5),
                 CornerRadius = new CornerRadius(14),
                 FontSize = 12,
-                Background = ThemePackService.Brush(active ? "ChipActiveBg" : "ChipBg"),
-                Foreground = ThemePackService.Brush(active ? "AccentText" : "TextSecondary"),
+                Background = LegacyChrome.Brush(active ? "ChipActiveBg" : "ChipBg"),
+                Foreground = LegacyChrome.Brush(active ? "AccentText" : "TextSecondary"),
             };
             chip.Click += (_, _) => ViewModel.SelectedTag = tag;
             return chip;
@@ -663,13 +663,13 @@ public sealed class BookshelfPage : UserControl
             Width = 38,
             Height = 52,
             CornerRadius = new CornerRadius(6),
-            Background = ThemePackService.Brush("ChipBg"),
+            Background = LegacyChrome.Brush("ChipBg"),
             Child = new TextBlock
             {
                 Text = item.Glyph,
                 FontSize = 18,
                 FontWeight = FontWeight.SemiBold,
-                Foreground = ThemePackService.Brush("Accent"),
+                Foreground = LegacyChrome.Brush("Accent"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },
@@ -685,7 +685,7 @@ public sealed class BookshelfPage : UserControl
                     Text = item.Title,
                     FontSize = 12,
                     FontWeight = FontWeight.SemiBold,
-                    Foreground = ThemePackService.Brush("TextPrimary"),
+                    Foreground = LegacyChrome.Brush("TextPrimary"),
                     TextTrimming = TextTrimming.CharacterEllipsis,
                 },
                 Ui.Text(item.Tag, 11, "TextSecondary"),
@@ -702,8 +702,8 @@ public sealed class BookshelfPage : UserControl
             HorizontalContentAlignment = HorizontalAlignment.Stretch,
             Padding = new Thickness(10, 7),
             CornerRadius = new CornerRadius(8),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
         };
         button.Click += (_, _) => ViewModel.OpenDetails(item);
@@ -717,7 +717,7 @@ public sealed class BookshelfPage : UserControl
 
     private Control BuildCard(BookCardItem item)
     {
-        var launchpad = _layout.Shelf == ShelfStyle.LaunchpadGrid;
+        var launchpad = _layout.Shelf == LegacyShelfStyle.LaunchpadGrid;
         var cardWidth = launchpad ? _layout.LaunchpadCardWidth : BookshelfViewModel.CardWidth;
         // Launchpad cards are the frozen 168x220 icon tiles: the cover takes the remaining height and the
         // Border keeps the fixed tile height so the uniform grid cells never stretch the card.
@@ -726,13 +726,13 @@ public sealed class BookshelfPage : UserControl
         {
             Height = coverHeight,
             CornerRadius = new CornerRadius(launchpad ? 14 : 10),
-            Background = ThemePackService.Brush("ChipBg"),
+            Background = LegacyChrome.Brush("ChipBg"),
             Child = new TextBlock
             {
                 Text = item.Glyph,
                 FontSize = launchpad ? 52 : 44,
                 FontWeight = FontWeight.SemiBold,
-                Foreground = ThemePackService.Brush("Accent"),
+                Foreground = LegacyChrome.Brush("Accent"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },
@@ -759,7 +759,7 @@ public sealed class BookshelfPage : UserControl
             Text = item.Title,
             FontSize = 13,
             FontWeight = FontWeight.SemiBold,
-            Foreground = ThemePackService.Brush("TextPrimary"),
+            Foreground = LegacyChrome.Brush("TextPrimary"),
             TextTrimming = TextTrimming.CharacterEllipsis,
         });
         text.Children.Add(Ui.Text(item.Meta, 11, "TextSecondary"));
@@ -772,8 +772,8 @@ public sealed class BookshelfPage : UserControl
             Margin = new Thickness(0, 0, BookshelfViewModel.CardGap, BookshelfViewModel.CardGap),
             CornerRadius = new CornerRadius(launchpad ? 16 : 12),
             Padding = new Thickness(launchpad ? 10 : 8),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = new StackPanel { Children = { coverHost, text } },
         };
@@ -916,13 +916,11 @@ public sealed class SettingsPage : UserControl
     private readonly Action _onThemeApplied;
     private readonly TextBlock _title;
 
-    // THEME-MACOS-1: theme card geometry comes from the active pack's Metrics (old packs = corner 12, no
-    // shadow; macOS = corner 14 + soft card shadow) and the appearance row toggles Light/Dark.
+    // V11R-C-3: the legacy pack-defined metrics are replaced by the fixed LegacyChrome metric set.
     private readonly Border _themeCard;
     private readonly StackPanel _appearanceRow;
     private readonly Button _lightVariantButton;
     private readonly Button _darkVariantButton;
-    private readonly List<(ThemePack Pack, Button Button)> _themeButtons = new();
 
     // Section cards: one instance each, re-parented per layout (never rebuilt).
     private readonly Border _credentialCard;
@@ -953,7 +951,7 @@ public sealed class SettingsPage : UserControl
     private readonly Dictionary<string, StackPanel> _splitSectionPanels = new(StringComparer.Ordinal);
     private readonly List<(string Key, string Label, Button Button)> _splitSectionButtons = new();
 
-    private LayoutProfile _layout = LayoutProfiles.Sonoma;
+    private LegacyLayoutProfile _layout = LegacyLayoutProfiles.Sonoma;
     private string _splitSection = SplitSectionTheme;
 
     private const string SplitSectionTheme = "theme";
@@ -975,51 +973,36 @@ public sealed class SettingsPage : UserControl
         _themeCard = new Border
         {
             Padding = new Thickness(16),
-            CornerRadius = new CornerRadius(ThemePackService.Current.Metrics.CornerCard),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            CornerRadius = new CornerRadius(LegacyChrome.Current.Metrics.CornerCard),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
         };
         _themeList = new StackPanel { Spacing = 8 };
-        _themeList.Children.Add(Ui.Text("主题中心 · ThemePack", 13, "TextPrimary", bold: true));
-        ThemeList = new ItemsControl { ItemsSource = viewModel.ThemePacks, ItemsPanel = new FuncTemplate<Panel?>(() => new StackPanel()) };
-        ThemeList.ItemTemplate = new FuncDataTemplate<ThemePack>((pack, _) =>
-        {
-            var button = new Button
-            {
-                Content = pack.Label + (pack.Id == ThemePacks.Default.Id ? "（默认）" : string.Empty),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                Padding = new Thickness(10, 6),
-                CornerRadius = new CornerRadius(pack.Metrics.CornerButton),
-                Background = pack.Id == ThemePackService.Current.Id ? ThemePackService.Brush("ChipActiveBg") : ThemePackService.Brush("ChipBg"),
-                Foreground = pack.Id == ThemePackService.Current.Id ? ThemePackService.Brush("AccentText") : ThemePackService.Brush("TextPrimary"),
-            };
-            button.Name = "ThemePack_" + pack.Id;
-            button.Click += (_, _) => SelectTheme(pack);
-            // THEME-MACOS-LAYOUTS-1: re-parenting the theme card into another layout tree may make the
-            // ItemsControl regenerate its containers, which re-runs this factory. Keep one entry per pack
-            // so ThemeButtons never accumulates duplicates across layout switches.
-            _themeButtons.RemoveAll(entry => string.Equals(entry.Pack.Id, pack.Id, StringComparison.Ordinal));
-            _themeButtons.Add((pack, button));
-            return button;
-        });
-        _themeList.Children.Add(ThemeList);
+        _themeList.Children.Add(Ui.Text("主题中心（已退役）", 13, "TextPrimary", bold: true));
+        _themeList.Children.Add(Ui.Text(
+            "旧主题包选择器随 V11R-C-3 退役；主题库/预览/我的主题请使用新壳 Theme Studio（默认 --shell=v2）。",
+            11,
+            "TextSecondary"));
+        _themeList.Children.Add(Ui.Text(
+            "旧壳（--shell=legacy）降级为仅保留外观明暗切换，不再提供主题包切换。",
+            11,
+            "TextSecondary"));
 
-        // THEME-MACOS-1: minimal「外观：浅色 / 深色」row; visible only for packs that carry both token sets.
+        // V11R-C-3: appearance is the only remaining theme control in the degraded legacy shell.
         _appearanceRow = new StackPanel
         {
             Orientation = Orientation.Horizontal,
             Spacing = 8,
             Margin = new Thickness(0, 6, 0, 0),
-            IsVisible = false,
+            IsVisible = true,
         };
         _appearanceRow.Children.Add(new TextBlock
         {
             Text = "外观",
             FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center,
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
         });
         _lightVariantButton = CreateVariantButton("浅色");
         _darkVariantButton = CreateVariantButton("深色");
@@ -1038,8 +1021,8 @@ public sealed class SettingsPage : UserControl
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = dataBody,
         };
@@ -1061,8 +1044,8 @@ public sealed class SettingsPage : UserControl
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = deviceBody,
         };
@@ -1078,8 +1061,8 @@ public sealed class SettingsPage : UserControl
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = _nsList,
         };
@@ -1101,8 +1084,8 @@ public sealed class SettingsPage : UserControl
         {
             Padding = new Thickness(16),
             CornerRadius = new CornerRadius(12),
-            Background = ThemePackService.Brush("CardBg"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush("CardBg"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
             Child = Credentials,
         };
@@ -1201,7 +1184,7 @@ public sealed class SettingsPage : UserControl
         _launchpadStack = new StackPanel { Spacing = 14 };
         _launchpadColumnHost = new Grid
         {
-            MaxWidth = LayoutProfiles.Launchpad.SettingsMaxWidth,
+            MaxWidth = LegacyLayoutProfiles.Launchpad.SettingsMaxWidth,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 14, 0, 28),
         };
@@ -1236,8 +1219,8 @@ public sealed class SettingsPage : UserControl
                 Padding = new Thickness(12, 8),
                 CornerRadius = new CornerRadius(8),
                 FontSize = 13,
-                Background = ThemePackService.Brush("ChipBg"),
-                Foreground = ThemePackService.Brush("TextPrimary"),
+                Background = LegacyChrome.Brush("ChipBg"),
+                Foreground = LegacyChrome.Brush("TextPrimary"),
             };
             button.Name = "SettingsSection_" + key;
             button.Click += (_, _) => SelectSplitSection(key);
@@ -1247,8 +1230,8 @@ public sealed class SettingsPage : UserControl
 
         _splitNavBorder = new Border
         {
-            Background = ThemePackService.Brush(ThemePackService.SidebarBackground),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush(LegacyChrome.SidebarBackground),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(0, 0, 1, 0),
             Child = _splitNav,
         };
@@ -1283,12 +1266,10 @@ public sealed class SettingsPage : UserControl
         _splitRoot = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto"), Margin = new Thickness(24, 16, 24, 16) };
         _splitRoot.Children.Add(_splitBody);
 
-        ApplyLayout(LayoutProfiles.Sonoma);
+        ApplyLayout(LegacyLayoutProfiles.Sonoma);
     }
 
     public SettingsViewModel ViewModel { get; }
-
-    public ItemsControl ThemeList { get; }
 
     public StackPanel NsList => _nsList;
 
@@ -1323,9 +1304,7 @@ public sealed class SettingsPage : UserControl
 
     public TextBlock DeviceStatusText { get; }
 
-    public List<(ThemePack Pack, Button Button)> ThemeButtons => _themeButtons;
-
-    /// <summary>THEME-MACOS-1: theme card border (reads the active pack's Metrics).</summary>
+    /// <summary>V11R-C-3: theme card border (fixed LegacyChrome metrics).</summary>
     public Border ThemeCard => _themeCard;
 
     /// <summary>THEME-MACOS-1:「外观：浅色 / 深色」row (visible only for a dual-variant pack).</summary>
@@ -1336,9 +1315,9 @@ public sealed class SettingsPage : UserControl
     public Button DarkVariantButton => _darkVariantButton;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to this page.</summary>
-    public LayoutProfile Layout => _layout;
+    public LegacyLayoutProfile Layout => _layout;
 
-    public LayoutKind CurrentLayout => _layout.Kind;
+    public LegacyLayoutKind CurrentLayout => _layout.Kind;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: Split layout section buttons (主题/凭证/Provider/网络/绑定/登记).</summary>
     public IReadOnlyList<Button> SplitSectionButtons => _splitSectionButtons.Select(entry => entry.Button).ToList();
@@ -1354,26 +1333,12 @@ public sealed class SettingsPage : UserControl
         _settingsJson.Text = ViewModel.SettingsJson;
     }
 
-    /// <summary>THEME-MACOS-1 AC1: applies one theme pack (same path as clicking its list button).</summary>
-    public void SelectTheme(ThemePack pack)
-    {
-        if (Application.Current is { } app)
-        {
-            ThemePackService.Apply(app, pack);
-            ViewModel.SelectedPack = pack;
-            // The shell callback re-lays out this page when the pack changes the layout kind; run it
-            // before ApplyTheme so the refreshed styling lands on the new structure.
-            _onThemeApplied();
-            ApplyTheme();
-        }
-    }
-
-    /// <summary>THEME-MACOS-1: switches the Light/Dark variant of the active dual-variant pack.</summary>
+    /// <summary>V11R-C-3: switches the legacy shell's light/dark appearance (pack switching is retired).</summary>
     public void SwitchVariant(Avalonia.Styling.ThemeVariant variant)
     {
         if (Application.Current is { } app)
         {
-            ThemePackService.ApplyVariant(app, variant);
+            app.RequestedThemeVariant = variant;
             ApplyTheme();
             _onThemeApplied();
         }
@@ -1383,16 +1348,16 @@ public sealed class SettingsPage : UserControl
     /// THEME-MACOS-LAYOUTS-1: switches this page between the three frozen settings structures. The theme
     /// centre and every section card keep their instances and public members in all three layouts.
     /// </summary>
-    public void ApplyLayout(LayoutProfile profile)
+    public void ApplyLayout(LegacyLayoutProfile profile)
     {
         _layout = profile;
         DetachCards();
         switch (profile.Settings)
         {
-            case SettingsStyle.SingleColumn:
+            case LegacySettingsStyle.SingleColumn:
                 AttachLaunchpad(profile);
                 break;
-            case SettingsStyle.SplitSections:
+            case LegacySettingsStyle.SplitSections:
                 AttachSplit(profile);
                 break;
             default:
@@ -1409,31 +1374,18 @@ public sealed class SettingsPage : UserControl
     public void ApplyTheme()
     {
         _wired.Text = ViewModel.WiredSummary;
-        ViewModel.SelectedPack = ThemePackService.Current;
-        var pack = ThemePackService.Current;
 
-        // Metrics are pack-level (not per variant), so corner radius + card shadow follow the pack even
-        // during an in-place variant switch. Text/background colours of the code-built cards keep their
-        // construction-time values (pre-existing behaviour of this shell's code-built pages).
-        _themeCard.CornerRadius = new CornerRadius(pack.Metrics.CornerCard);
-        var shadow = pack.Metrics.CardShadowFor(ThemePackService.CurrentVariant);
-        _themeCard.BoxShadow = string.IsNullOrWhiteSpace(shadow) ? default : BoxShadows.Parse(shadow);
-        foreach (var (themePack, button) in _themeButtons)
-        {
-            var selected = string.Equals(themePack.Id, pack.Id, StringComparison.Ordinal);
-            button.Background = ThemePackService.Brush(selected ? "ChipActiveBg" : "ChipBg");
-            button.Foreground = ThemePackService.Brush(selected ? "AccentText" : "TextPrimary");
-            button.CornerRadius = new CornerRadius(pack.Metrics.CornerButton);
-        }
+        _themeCard.CornerRadius = new CornerRadius(LegacyChrome.Metrics.CornerCard);
+        _themeCard.BoxShadow = default;
 
-        _sonomaRoot.Background = ThemePackService.Brush("AppBg");
-        _launchpadRoot.Background = ThemePackService.Brush("AppBg");
-        _splitRoot.Background = ThemePackService.Brush("AppBg");
-        _splitNavBorder.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
-        _splitNavBorder.BorderBrush = ThemePackService.Brush("CardBorder");
+        _sonomaRoot.Background = LegacyChrome.Brush("AppBg");
+        _launchpadRoot.Background = LegacyChrome.Brush("AppBg");
+        _splitRoot.Background = LegacyChrome.Brush("AppBg");
+        _splitNavBorder.Background = LegacyChrome.Brush(LegacyChrome.SidebarBackground);
+        _splitNavBorder.BorderBrush = LegacyChrome.Brush("CardBorder");
         StyleSectionButtons();
 
-        RefreshAppearance(pack);
+        RefreshAppearance();
     }
 
     /// <summary>THEME-MACOS-LAYOUTS-1: Split directory selection (visibility only, no re-parenting).</summary>
@@ -1469,7 +1421,7 @@ public sealed class SettingsPage : UserControl
         Content = _sonomaRoot;
     }
 
-    private void AttachLaunchpad(LayoutProfile profile)
+    private void AttachLaunchpad(LegacyLayoutProfile profile)
     {
         _launchpadRoot.Children.Add(_title);
         Grid.SetRow(_wired, 1);
@@ -1486,7 +1438,7 @@ public sealed class SettingsPage : UserControl
         Content = _launchpadRoot;
     }
 
-    private void AttachSplit(LayoutProfile profile)
+    private void AttachSplit(LegacyLayoutProfile profile)
     {
         _splitRoot.Children.Add(_title);
         Grid.SetRow(_wired, 1);
@@ -1516,10 +1468,10 @@ public sealed class SettingsPage : UserControl
         }
     }
 
-    private void ApplyPageChrome(LayoutProfile profile)
+    private void ApplyPageChrome(LegacyLayoutProfile profile)
     {
-        var launchpad = profile.Settings == SettingsStyle.SingleColumn;
-        var split = profile.Settings == SettingsStyle.SplitSections;
+        var launchpad = profile.Settings == LegacySettingsStyle.SingleColumn;
+        var split = profile.Settings == LegacySettingsStyle.SplitSections;
         _title.FontSize = launchpad || split ? 22 : 26;
         _wired.FontSize = split ? 11 : 12;
         if (launchpad)
@@ -1541,20 +1493,16 @@ public sealed class SettingsPage : UserControl
         foreach (var (key, _, button) in _splitSectionButtons)
         {
             var active = string.Equals(key, _splitSection, StringComparison.Ordinal);
-            button.Background = ThemePackService.Brush(active ? "ChipActiveBg" : "ChipBg");
-            button.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextPrimary");
+            button.Background = LegacyChrome.Brush(active ? "ChipActiveBg" : "ChipBg");
+            button.Foreground = LegacyChrome.Brush(active ? "AccentText" : "TextPrimary");
         }
     }
 
-    private void RefreshAppearance(ThemePack pack)
+    private void RefreshAppearance()
     {
-        _appearanceRow.IsVisible = pack.SupportsVariants;
-        if (!pack.SupportsVariants)
-        {
-            return;
-        }
+        _appearanceRow.IsVisible = true;
 
-        var dark = ThemePackMetrics.IsDark(ThemePackService.CurrentVariant);
+        var dark = LegacyChrome.IsDark;
         StyleVariantButton(_lightVariantButton, active: !dark);
         StyleVariantButton(_darkVariantButton, active: dark);
     }
@@ -1564,18 +1512,18 @@ public sealed class SettingsPage : UserControl
         Content = label,
         FontSize = 12,
         Padding = new Thickness(10, 4),
-        CornerRadius = new CornerRadius(ThemePackService.Current.Metrics.CornerSmall),
-        Background = ThemePackService.Brush("ChipBg"),
-        Foreground = ThemePackService.Brush("TextSecondary"),
-        BorderBrush = ThemePackService.Brush("CardBorder"),
+        CornerRadius = new CornerRadius(LegacyChrome.Current.Metrics.CornerSmall),
+        Background = LegacyChrome.Brush("ChipBg"),
+        Foreground = LegacyChrome.Brush("TextSecondary"),
+        BorderBrush = LegacyChrome.Brush("CardBorder"),
         BorderThickness = new Thickness(1),
     };
 
     private static void StyleVariantButton(Button button, bool active)
     {
-        button.Background = ThemePackService.Brush(active ? "ChipActiveBg" : "ChipBg");
-        button.Foreground = ThemePackService.Brush(active ? "AccentText" : "TextSecondary");
-        button.BorderBrush = ThemePackService.Brush("CardBorder");
+        button.Background = LegacyChrome.Brush(active ? "ChipActiveBg" : "ChipBg");
+        button.Foreground = LegacyChrome.Brush(active ? "AccentText" : "TextSecondary");
+        button.BorderBrush = LegacyChrome.Brush("CardBorder");
     }
 }
 
@@ -1592,6 +1540,8 @@ public sealed class PlaceholderPage : UserControl
         };
         panel.Children.Add(Ui.Text(title, 24, "TextPrimary", bold: true));
         panel.Children.Add(Ui.Text(hint, 12, "TextSecondary"));
-        Content = new Grid { Background = ThemePackService.Brush("AppBg"), Children = { panel } };
+        Content = new Grid { Background = LegacyChrome.Brush("AppBg"), Children = { panel } };
     }
 }
+
+

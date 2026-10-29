@@ -4,7 +4,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using NewManga.App.Services;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -29,9 +29,9 @@ internal static class ProfileUi
             Padding = new Thickness(12, 5),
             CornerRadius = new CornerRadius(7),
             FontSize = 12,
-            Background = ThemePackService.Brush(primary ? "Accent" : "CardBg"),
-            Foreground = ThemePackService.Brush(primary ? "AccentText" : "TextPrimary"),
-            BorderBrush = ThemePackService.Brush("CardBorder"),
+            Background = LegacyChrome.Brush(primary ? "Accent" : "CardBg"),
+            Foreground = LegacyChrome.Brush(primary ? "AccentText" : "TextPrimary"),
+            BorderBrush = LegacyChrome.Brush("CardBorder"),
             BorderThickness = new Thickness(1),
         };
         button.Click += (_, _) => onClick();
@@ -69,8 +69,8 @@ internal static class ProfileUi
     {
         Padding = new Thickness(16),
         CornerRadius = new CornerRadius(12),
-        Background = ThemePackService.Brush("CardBg"),
-        BorderBrush = ThemePackService.Brush("CardBorder"),
+        Background = LegacyChrome.Brush("CardBg"),
+        BorderBrush = LegacyChrome.Brush("CardBorder"),
         BorderThickness = new Thickness(1),
         Child = child,
     };
@@ -399,7 +399,7 @@ public sealed class ProviderProfileSection : UserControl
     private void SetStatus(string message, bool error = false)
     {
         _status.Text = message;
-        _status.Foreground = ThemePackService.Brush(error ? "TextPrimary" : "TextSecondary");
+        _status.Foreground = LegacyChrome.Brush(error ? "TextPrimary" : "TextSecondary");
     }
 }
 
@@ -767,6 +767,7 @@ public sealed class NetworkProfileSection : UserControl
     private void SetStatus(string message, bool error = false)
     {
         _status.Text = message;
-        _status.Foreground = ThemePackService.Brush(error ? "TextPrimary" : "TextSecondary");
+        _status.Foreground = LegacyChrome.Brush(error ? "TextPrimary" : "TextSecondary");
     }
 }
+

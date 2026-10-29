@@ -11,7 +11,7 @@ using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.ViewModels;
 using NewManga.CoreClient;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -79,7 +79,7 @@ public sealed class WorkbenchPage : UserControl
             Child = new TextBlock
             {
                 Text = "单页画布（选择书 / 章 / 页后显示真实页图与 Core region 覆盖）",
-                Foreground = ThemePackService.Brush("TextSecondary"),
+                Foreground = LegacyChrome.Brush("TextSecondary"),
                 FontSize = 12,
                 TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
@@ -133,7 +133,7 @@ public sealed class WorkbenchPage : UserControl
         {
             Name = "WorkbenchReadOnlyBanner",
             FontSize = 11,
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
             TextWrapping = TextWrapping.Wrap,
             IsVisible = false,
         };
@@ -141,14 +141,14 @@ public sealed class WorkbenchPage : UserControl
         {
             Name = "WorkbenchStatusText",
             FontSize = 11,
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
             TextWrapping = TextWrapping.Wrap,
         };
         SelectionDetail = new TextBlock
         {
             Name = "WorkbenchSelectionDetail",
             FontSize = 11,
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
             TextWrapping = TextWrapping.Wrap,
         };
 
@@ -305,7 +305,7 @@ public sealed class WorkbenchPage : UserControl
 
     public void ApplyTheme()
     {
-        Background = ThemePackService.Brush("AppBg");
+        Background = LegacyChrome.Brush("AppBg");
     }
 
     /// <summary>
@@ -727,7 +727,7 @@ public sealed class WorkbenchPage : UserControl
         importRow.Children.Add(ImportFilesButton);
         importRow.Children.Add(ImportFolderButton);
         panel.Children.Add(importRow);
-        return new Border { Background = ThemePackService.Brush("CardBg"), Child = new ScrollViewer { Content = panel } };
+        return new Border { Background = LegacyChrome.Brush("CardBg"), Child = new ScrollViewer { Content = panel } };
     }
 
     private Control BuildCenter()
@@ -738,7 +738,7 @@ public sealed class WorkbenchPage : UserControl
             Orientation = Avalonia.Layout.Orientation.Horizontal,
             Spacing = 10,
             Margin = new Thickness(12, 8),
-            Background = ThemePackService.Brush("NavBg"),
+            Background = LegacyChrome.Brush("NavBg"),
         };
         toolbar.Children.Add(Ui.Text("Canvas · 单页真实页图 + Core region 覆盖（无插值）", 11, "TextSecondary"));
         DockPanel.SetDock(toolbar, Dock.Top);
@@ -746,7 +746,7 @@ public sealed class WorkbenchPage : UserControl
 
         CanvasHost = new Border
         {
-            Background = ThemePackService.Brush("ReaderBackground"),
+            Background = LegacyChrome.Brush("ReaderBackground"),
             Child = new ScrollViewer
             {
                 Content = RegionLayer,
@@ -769,7 +769,7 @@ public sealed class WorkbenchPage : UserControl
                 Padding = new Thickness(6),
                 Margin = new Thickness(0, 0, 0, 4),
                 CornerRadius = new CornerRadius(6),
-                Background = ThemePackService.Brush("ChipBg"),
+                Background = LegacyChrome.Brush("ChipBg"),
                 Child = Ui.Text(label, 11, "TextSecondary"),
             });
         panel.Children.Add(ThumbnailList);
@@ -787,7 +787,7 @@ public sealed class WorkbenchPage : UserControl
         panel.Children.Add(BubbleOrientation);
         panel.Children.Add(addBubble);
         panel.Children.Add(apply);
-        return new Border { Background = ThemePackService.Brush("CardBg"), Child = new ScrollViewer { Content = panel } };
+        return new Border { Background = LegacyChrome.Brush("CardBg"), Child = new ScrollViewer { Content = panel } };
     }
 
     // ------------------------------------------------------------------
@@ -2530,9 +2530,9 @@ public sealed class ReaderPage : UserControl
     /// <summary>CHAPTER-SELECTOR-1: make toolbar buttons readable on the black reader chrome.</summary>
     private static void StyleToolbarButton(Button button)
     {
-        button.Background = ThemePackService.Brush("CardBg");
-        button.Foreground = ThemePackService.Brush("TextPrimary");
-        button.BorderBrush = ThemePackService.Brush("CardBorder");
+        button.Background = LegacyChrome.Brush("CardBg");
+        button.Foreground = LegacyChrome.Brush("TextPrimary");
+        button.BorderBrush = LegacyChrome.Brush("CardBorder");
         button.BorderThickness = new Thickness(1);
     }
 
@@ -2706,3 +2706,4 @@ internal static class ReaderFixtureLocator
 
     public static string? TileDirectory => Root is null ? null : @"G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1/spike/avalonia/fixtures/strip-4000x60000/tiles";
 }
+

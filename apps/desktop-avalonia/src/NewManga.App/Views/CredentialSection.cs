@@ -5,7 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -351,7 +351,7 @@ public sealed class CredentialSection : UserControl
     private void SetStatus(string message, bool error = false)
     {
         _status.Text = message;
-        _status.Foreground = ThemePackService.Brush(error ? "TextPrimary" : "TextSecondary");
+        _status.Foreground = LegacyChrome.Brush(error ? "TextPrimary" : "TextSecondary");
     }
 
     private static string Describe(CredentialOperationResult result)
@@ -374,9 +374,10 @@ public sealed class CredentialSection : UserControl
         Padding = new Thickness(14, 7),
         CornerRadius = new CornerRadius(8),
         FontSize = 13,
-        Background = ThemePackService.Brush(primary ? "Accent" : "CardBg"),
-        Foreground = ThemePackService.Brush(primary ? "AccentText" : "TextPrimary"),
-        BorderBrush = ThemePackService.Brush("CardBorder"),
+        Background = LegacyChrome.Brush(primary ? "Accent" : "CardBg"),
+        Foreground = LegacyChrome.Brush(primary ? "AccentText" : "TextPrimary"),
+        BorderBrush = LegacyChrome.Brush("CardBorder"),
         BorderThickness = new Thickness(1),
     };
 }
+

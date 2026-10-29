@@ -110,11 +110,12 @@ foreach ($line in $lines) {
     }
     elseif ($symbol -in @('LayoutProfile', 'LayoutProfiles')) {
         # Same-name collision: NewManga.ThemeEngine.Models.LayoutProfile is a new-architecture type.
-        # When the file imports the ThemeEngine namespace and not the legacy NewManga.Theme namespace,
-        # the match is a new-architecture reference, not a legacy dependency.
+        # When the file references the ThemeEngine namespace (using or fully-qualified) and does not import
+        # the legacy NewManga.Theme namespace, the match is a new-architecture reference, not a dependency.
         $content = Get-FileText $path
-        if ($null -ne $content -and
-            $content -match 'using\s+NewManga\.ThemeEngine' -and
+        if ($kind -in @('legacy-shell-production', 'legacy-tests', 'legacy-theme-source') -and
+            $null -ne $content -and
+            $content -match 'NewManga\.ThemeEngine' -and
             $content -notmatch 'using\s+NewManga\.Theme\s*;') {
             $kind = if ($path -like 'apps/desktop-avalonia/tests/*') { 'new-architecture-tests' } else { 'new-architecture' }
         }
@@ -211,6 +212,8 @@ Write-Output "json        : $jsonPath"
 Write-Output "table       : $tablePath"
 $kindSummary | ForEach-Object { Write-Output "  kind  $_" }
 $fateSummary | ForEach-Object { Write-Output "  fate  $_" }
+
+
 
 
 

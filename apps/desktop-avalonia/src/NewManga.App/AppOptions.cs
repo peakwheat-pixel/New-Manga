@@ -45,9 +45,9 @@ public sealed class AppOptions
     public int WindowHeight { get; private set; } = 760;
 
     /// <summary>
-    /// THEME-MACOS-2 evidence hook: start the real shell on a given ThemePack id
-    /// (e.g. <c>macos-sonoma</c>), so real-machine screenshots of one variant are reproducible without
-    /// pointer automation. Null keeps the normal default theme (saber-purple).
+    /// V11R-C-3 compatibility hook: accepts a retired theme id via <c>--theme</c>/<c>--theme-id</c> and
+    /// maps it through <c>LegacyThemeMigration</c> to the shipped default (newmanga-default). It no longer
+    /// selects an old theme pack; null keeps the normal design-system default and appearance handling.
     /// </summary>
     public string? StartupThemeId { get; private set; }
 

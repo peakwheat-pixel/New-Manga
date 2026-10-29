@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using NewManga.CoreClient;
-using NewManga.Theme;
 
 namespace NewManga.App.ViewModels;
 
@@ -288,16 +287,9 @@ public sealed class BookshelfViewModel : INotifyPropertyChanged
     private void OnPropertyChanged(string? name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
-/// <summary>AC4 settings skeleton: theme center + wired command ledger + NS batch.</summary>
+/// <summary>AC4 settings skeleton: wired command ledger + NS batch (theme packs retired in V11R-C-3).</summary>
 public sealed class SettingsViewModel
 {
-    public IReadOnlyList<ThemePack> ThemePacks { get; } = NewManga.Theme.ThemePacks.All;
-
-    public ThemePack SelectedPack { get; set; } = ThemePackService.Current;
-
-    /// <summary>THEME-MACOS-1: true when the selected pack carries both Light and Dark token sets.</summary>
-    public bool AppearanceSwitchVisible => SelectedPack.SupportsVariants;
-
     public string WiredSummary =>
         $"已接线命令 {Shell.ShellCommandCatalog.WiredCommandCount} 条 · S2 NOT_SUPPORTED 批登记 {Shell.ShellCommandCatalog.NsRegisteredCount} 条" +
         $"（完成 {Shell.ShellCommandCatalog.NsDoneCount}/{Shell.ShellCommandCatalog.NsRegisteredCount}）";
@@ -310,3 +302,4 @@ public sealed class SettingsViewModel
 
 
 }
+

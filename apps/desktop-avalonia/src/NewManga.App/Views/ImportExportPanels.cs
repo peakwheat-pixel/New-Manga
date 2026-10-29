@@ -5,7 +5,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.CoreClient;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -40,8 +40,8 @@ public sealed class ImportPanel : Border
         Width = 620;
         Padding = new Thickness(22);
         CornerRadius = new CornerRadius(14);
-        Background = ThemePackService.Brush("CardBg");
-        BorderBrush = ThemePackService.Brush("CardBorder");
+        Background = LegacyChrome.Brush("CardBg");
+        BorderBrush = LegacyChrome.Brush("CardBorder");
         BorderThickness = new Thickness(1);
         IsVisible = false;
 
@@ -300,8 +300,8 @@ public sealed class ExportPanel : Border
         Width = 700;
         Padding = new Thickness(22);
         CornerRadius = new CornerRadius(14);
-        Background = ThemePackService.Brush("CardBg");
-        BorderBrush = ThemePackService.Brush("CardBorder");
+        Background = LegacyChrome.Brush("CardBg");
+        BorderBrush = LegacyChrome.Brush("CardBorder");
         BorderThickness = new Thickness(1);
         IsVisible = false;
 
@@ -680,3 +680,4 @@ public sealed class ExportPanel : Border
         }
     }
 }
+

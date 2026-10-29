@@ -9,7 +9,6 @@ using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.ThemeStudio;
 using NewManga.App.Views;
 using NewManga.DesignSystem.Theming;
-using NewManga.Theme;
 
 namespace NewManga.App;
 
@@ -29,23 +28,23 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var options = AppOptionsStore.Current;
-            ThemePackService.ApplyDefault(this);
 
-            // THEME-MACOS-2 evidence hook: deterministic real-machine startup state for screenshots.
-            // Applied BEFORE the shell is constructed so code-built page surfaces resolve the requested
-            // variant; defaults are untouched when the options are absent.
+            // V11R-C-3: the old theme-pack startup hook is retired. `--theme` stays as a compatibility
+            // argument and is mapped through the ThemeEngine migration table (all retired ids land on
+            // newmanga-default, which the design system already applies); appearance is driven by the
+            // design-system manager below. The legacy shell still accepts the argument without crashing.
             if (!string.IsNullOrWhiteSpace(options.StartupThemeId))
             {
-                ThemePackService.Apply(this, ThemePacks.ById(options.StartupThemeId));
-            }
-
-            if (!string.IsNullOrWhiteSpace(options.StartupVariant))
-            {
-                ThemePackService.ApplyVariant(
-                    this,
-                    string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
-                        ? ThemeVariant.Dark
-                        : ThemeVariant.Light);
+                var legacySettings = new NewManga.ThemeEngine.ThemeSettings(
+                    options.StartupThemeId!,
+                    NewManga.ThemeEngine.AppearanceMode.System,
+                    NewManga.ThemeEngine.ContrastMode.Standard,
+                    NewManga.ThemeEngine.LayoutProfile.Default,
+                    ReducedMotion: false,
+                    FollowSystemAccent: false);
+                var migrated = NewManga.ThemeEngine.LegacyThemeMigration.Migrate(legacySettings, _ => false);
+                System.Diagnostics.Trace.TraceInformation(
+                    $"--theme={options.StartupThemeId} mapped to {migrated.Settings.ThemeId} (legacy theme packs retired)");
             }
 
             // V11R-D-1: normalize the design-system resource stack (palette + overlays) after the
@@ -171,3 +170,5 @@ public partial class App : Application
         }
     }
 }
+
+
