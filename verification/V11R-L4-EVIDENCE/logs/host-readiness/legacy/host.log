@@ -1,0 +1,8 @@
+2026-10-29T19:52:06.6742752+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-29T19:52:06.6750793+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\l4-hr2-legacy-af03c6\data
+2026-10-29T19:52:06.6754562+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T19:52:07.1538991+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T19:52:07.2599865+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T19:52:07.2603951+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T19:52:07.2632446+00:00 INFO host-control session opened (host_b4fZ5S4TscgY06_SqTYZnxazUmEYRdxhqXcfl66hzns)
+2026-10-29T19:52:07.2657686+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

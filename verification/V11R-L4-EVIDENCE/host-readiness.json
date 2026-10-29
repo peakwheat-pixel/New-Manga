@@ -1,0 +1,26 @@
+[
+  {
+    "shell": "legacy",
+    "exit_code": "0",
+    "window_found": true,
+    "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\host-readiness-legacy.png",
+    "screenshot_ok": true,
+    "host_log_exists": true,
+    "host_ready": true,
+    "data_root_created": true,
+    "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\l4-hr2-legacy-af03c6\\data",
+    "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\host-readiness\\legacy"
+  },
+  {
+    "shell": "v2",
+    "exit_code": "0",
+    "window_found": true,
+    "screenshot": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\screens\\host-readiness-v2.png",
+    "screenshot_ok": true,
+    "host_log_exists": false,
+    "host_ready": false,
+    "data_root_created": false,
+    "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\l4-hr2-v2-a08e92\\data",
+    "log_dir": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-L4-EVIDENCE\\logs\\host-readiness\\v2"
+  }
+]

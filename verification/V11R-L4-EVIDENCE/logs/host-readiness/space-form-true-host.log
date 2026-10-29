@@ -1,0 +1,4 @@
+2026-10-29T19:51:40.3882074+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-10-29T19:51:40.3889178+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=true
+2026-10-29T19:51:40.3892364+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T19:51:40.3901711+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 3 candidate locations

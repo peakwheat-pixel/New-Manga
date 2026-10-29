@@ -1,0 +1,9 @@
+command: dotnet run --project src/NewManga.App --no-build -- --shell=legacy --log-dir= --exit-after=2000 --legacy-shell-check=off
+exit_code: -532462766
+
+stderr/stdout:
+Unhandled exception. System.ArgumentException: The value cannot be an empty string. (Parameter 'path')
+   at System.ArgumentException.ThrowNullOrEmptyException(String argument, String paramName)
+   at System.IO.Directory.CreateDirectory(String path)
+   at NewManga.App.Program.WriteFatal(AppOptions options, String name, String detail) in G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.App\Program.cs:line 41
+   at NewManga.App.Program.Main(String[] args) in G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.App\Program.cs:line 26
