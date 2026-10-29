@@ -49,3 +49,4 @@ dotnet test tests/NewManga.DesignSystem.Tests/NewManga.DesignSystem.Tests.csproj
   已知残余（建议组件约束「状态文字允许背景集合」，不在本 I2 扩权改组件布局）。
 - 生成器自检：`token-gen-check.log`（DS 278 rows，byte-for-byte）与
   `theme-gen-check.log`（ThemeEngine 内置主题，byte-for-byte）均 up to date。
+

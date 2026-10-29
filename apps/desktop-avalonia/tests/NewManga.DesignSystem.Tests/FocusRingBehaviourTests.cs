@@ -21,7 +21,7 @@ public sealed class FocusRingBehaviourTests
         using var manager = ThemeTestHarness.CreateInitialized();
         var textBox = new TextBox();
         FocusRing.SetIsEnabled(textBox, true);
-        var window = new Window { Width = 320, Height = 200, Content = textBox };
+        var window = new Window { Width = 320, Height = 200, Content = new Border { Padding = new Thickness(12), Child = textBox } };
         window.Show();
         Dispatcher.UIThread.RunJobs();
 
@@ -38,7 +38,7 @@ public sealed class FocusRingBehaviourTests
         using var manager = ThemeTestHarness.CreateInitialized();
         var textBox = new TextBox();
         FocusRing.SetIsEnabled(textBox, true);
-        var window = new Window { Width = 320, Height = 200, Content = textBox };
+        var window = new Window { Width = 320, Height = 200, Content = new Border { Padding = new Thickness(12), Child = textBox } };
         window.Show();
         Dispatcher.UIThread.RunJobs();
 
@@ -53,7 +53,7 @@ public sealed class FocusRingBehaviourTests
     public void Scrolling_the_focused_control_out_of_the_viewport_hides_the_outline()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
-        var stack = new StackPanel { Spacing = 8 };
+        var stack = new StackPanel { Spacing = 8, Margin = new Thickness(4) };
         for (var index = 0; index < 12; index++)
         {
             var textBox = new TextBox { Text = $"row {index}" };
@@ -62,7 +62,7 @@ public sealed class FocusRingBehaviourTests
         }
 
         var scrollViewer = new ScrollViewer { Height = 110, Content = stack };
-        var window = new Window { Width = 320, Height = 200, Content = scrollViewer };
+        var window = new Window { Width = 320, Height = 220, Content = new Border { Padding = new Thickness(12), Child = scrollViewer } };
         window.Show();
         Dispatcher.UIThread.RunJobs();
 
@@ -81,8 +81,45 @@ public sealed class FocusRingBehaviourTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void Repeated_enable_and_focus_cycles_do_not_leak_rings_or_handlers()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var textBox = new TextBox();
+        var window = new Window { Width = 320, Height = 200, Content = new Border { Padding = new Thickness(12), Child = textBox } };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        for (var index = 0; index < 25; index++)
+        {
+            FocusRing.SetIsEnabled(textBox, true);
+            textBox.Focus(NavigationMethod.Tab);
+            Dispatcher.UIThread.RunJobs();
+            FocusRing.SetIsEnabled(textBox, false);
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        FocusRing.SetIsEnabled(textBox, true);
+        textBox.Focus(NavigationMethod.Tab);
+        Dispatcher.UIThread.RunJobs();
+
+        var rings = window.GetVisualDescendants()
+            .OfType<Border>()
+            .Where(border => border.Classes.Contains("nm-focus-ring"))
+            .ToArray();
+        var ring = Assert.Single(rings);
+        Assert.True(ring.IsVisible);
+
+        FocusRing.SetIsEnabled(textBox, false);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Null(VisibleRingOf(window));
+        window.Close();
+    }
+
     private static Border? VisibleRingOf(Window window) => window.GetVisualDescendants()
         .OfType<Border>()
         .FirstOrDefault(border => border.Classes.Contains("nm-focus-ring") && border.IsVisible);
 }
+
+
 

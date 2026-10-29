@@ -7,6 +7,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Icons;
 using NewManga.DesignSystem.Theming;
@@ -47,9 +48,15 @@ public sealed class VisualEvidenceTests
         AssertPixels(darkFrame, Path.Combine(evidenceDirectory, "gallery-dark.png"), Color.Parse("#FF1A1C1F"), "dark panel surface");
         Assert.True(CountDistinctColors(darkFrame) > 40, "dark gallery looks blank");
 
+        var contentBefore = window.Content;
+        var firstVisualBefore = window.GetVisualChildren().FirstOrDefault();
         Assert.True(manager.SetAppearance(AppearanceMode.Light), manager.LastError);
         Dispatcher.UIThread.RunJobs();
-        Assert.Same(window.Content, window.Content);
+        // Appearance switching must swap resources only (AC7): the same content instance and the same
+        // visual root stay attached to the window (no rebuild, no replacement).
+        Assert.Same(contentBefore, window.Content);
+        Assert.Same(firstVisualBefore, window.GetVisualChildren().FirstOrDefault());
+        Assert.True(window.IsVisible);
         var lightFrame = Capture(window, Path.Combine(evidenceDirectory, "gallery-light.png"));
         AssertPixels(lightFrame, Path.Combine(evidenceDirectory, "gallery-light.png"), Color.Parse("#FFFFFFFF"), "light panel surface");
         Assert.True(CountDistinctColors(lightFrame) > 40, "light gallery looks blank");
@@ -388,6 +395,7 @@ public sealed class VisualEvidenceTests
             : configured;
     }
 }
+
 
 
 
