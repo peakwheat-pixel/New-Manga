@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NewManga.DesignSystem</RootNamespace>
+    <AssemblyName>NewManga.DesignSystem</AssemblyName>
+    <Description>New Manga design system: frozen design tokens (DESIGN_SYSTEM.md + tokens.json) as Avalonia resources, control styles, custom controls and icons. Single source of truth for V11R UI.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <!-- The token generator (tools/**) is a sibling console project kept inside this directory so the
+       whole design-system toolchain stays inside the V11R-D-1 write scope. Its sources are not part
+       of the library; exclude them from the default SDK item globs (Compile + Avalonia XAML). -->
+  <ItemGroup>
+    <Compile Remove="tools\**" />
+    <AvaloniaXaml Remove="tools\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <None Remove="tools\**" />
+  </ItemGroup>
+
+</Project>
