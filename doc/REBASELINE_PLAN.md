@@ -34,11 +34,12 @@
 |UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 迁移：11 用例、v5 四重建表逐列断言；2623P；3 轮 Review PASS；`61601dc8c`）|
 |UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|done（4×P2：全列/NULL 断言、额外行、14 表结构、冻结 v1 列；复核 PASS；`d03f6e115`）|
 |REAL-USER-UPGRADE-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1、NSIS-INSTALLER-1|done（真实数据副本 + 官方 0.1.0 升级：A 字节一致；B 旧布局备份迁移书架 1 本；**官方包 sidecar 无迁移修复 → 需重建发布包**）|
+|RELEASE-REPACK-6|REAL-USER-UPGRADE-1、UPGRADE-LEGACY-LAYOUT-1、NSIS-INSTALLER-1、AGPL-RELEASE-1|ready（重建 0.1.1：含迁移修复 sidecar + App + NSIS；重新验收 + 替换发布构件）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
 
-READY 节点：无
+READY 节点：RELEASE-REPACK-6
 
 ## 历史快照（终态节点，非当前 DAG）
 
