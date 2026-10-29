@@ -1,0 +1,20 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.CoreClient.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll
+  NewManga.DesignSystem.TokenGen -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\bin\Debug\net9.0\NewManga.DesignSystem.TokenGen.dll
+  NewManga.DesignSystem.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Debug\net9.0\NewManga.DesignSystem.Tests.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.ThemeEngine.ThemeGen -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\bin\Debug\net9.0\NewManga.ThemeEngine.ThemeGen.dll
+  NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Debug\net9.0\NewManga.ThemeEngine.Tests.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:03.12

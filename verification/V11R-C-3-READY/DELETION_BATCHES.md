@@ -115,3 +115,15 @@
 
 
 
+
+## 5. 执行结果（V11R-C-3 执行包，R1–R6 完成）
+
+- R1：tag `v11r-pre-retire` @ df883f2ce；R2：依赖图 634 引用/69 文件、迁移门 26/26、矩阵 6 行/7 对。
+- R3：10 个生产文件迁移完成，`legacy-shell-production = 0 / 0`。
+- R4：5 条“需新增”断言已补并通过；5 个旧测试文件（218 引用）已删除；全量测试 0 失败。
+- R5：`NewManga.Theme` 项目、sln/App.csproj 引用已删除；`--theme` 保留为兼容映射。
+- R6：零引用门通过（legacy-theme-source / legacy-shell-production / legacy-tests 均为 0，
+  DELETE/MIGRATE/REPLACE fate 均为 0）；全量 build 0W/0E、test 0 失败；`--shell=v2` 与
+  `--shell=legacy` 均启动成功（窗口标题 `New Manga`）。
+- 执行证据：`verification/V11R-C-3/README.md`、`R1-tag.txt`、`R2-report.md`、`R3-report.md`、
+  `R4-report.md`、`R5-report.md`、`R6-report.md` 及对应日志。

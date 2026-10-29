@@ -1,0 +1,17 @@
+# V11R-C-3 R6 startup smoke (both shells) - 2026-10-30T03:49:02+08:00
+# app=apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.exe
+# sidecar=G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar
+SHELL=v2 started=True windowTitle='New Manga'
+SHELL=v2 terminated_by_harness_after_verification=true
+SHELL=legacy started=True windowTitle='New Manga'
+SHELL=legacy terminated_by_harness_after_verification=true
+SHELL=legacy log=core_service.stderr.log tail:
+  WARNING: detector weights not found (weights name 'rtdetr-v2-fixed.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\c3-smoke-4df4c861\legacy\models\detector\rtdetr-v2-fixed.onnx | G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar\models\detector\rtdetr-v2-fixed.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+  WARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\c3-smoke-4df4c861\legacy\models\detector\yolo11s-seg.onnx | G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar\models\detector\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS
+  [core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+SHELL=legacy log=host_bridge.stderr.log tail:
+SHELL=legacy log=host.log tail:
+  2026-10-29T19:49:13.3310853+00:00 INFO host_bridge ready (1 wire frames)
+  2026-10-29T19:49:13.3315655+00:00 INFO credential port ready (Windows Credential Manager)
+  2026-10-29T19:49:13.3343334+00:00 INFO host-control session opened (host_0w-Loyytkfv5AXYfVM3-zfr91vwbFm4Bq4Zg9siNSxI)
+  2026-10-29T19:49:13.3371062+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

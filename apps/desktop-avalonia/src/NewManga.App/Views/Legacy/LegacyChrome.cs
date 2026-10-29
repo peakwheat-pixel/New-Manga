@@ -15,7 +15,7 @@ namespace NewManga.App.Views.Legacy;
 /// </summary>
 public static class LegacyChrome
 {
-    /// <summary>Metric set used by the remaining legacy cards (replaces ThemePackMetrics).</summary>
+    /// <summary>Metric set used by the remaining legacy cards (fixed values after the pack system retired).</summary>
     public static LegacyMetrics Metrics { get; } = new();
 
     /// <summary>The single fixed profile the legacy shell runs with after C-3.</summary>
@@ -167,7 +167,7 @@ public sealed class LegacyMetrics
     public double CornerSmall => 6;
 }
 
-/// <summary>Legacy shell profile wrapper (replaces the retired ThemePack model in legacy code).</summary>
+/// <summary>Legacy shell profile wrapper (flat replacement for the retired pack model).</summary>
 public sealed class LegacyThemePack
 {
     public LegacyThemePack(string id, string label, LegacyLayoutProfile layout, LegacyMetrics metrics)
@@ -188,5 +188,6 @@ public sealed class LegacyThemePack
 
     public bool SupportsVariants => true;
 }
+
 
 
