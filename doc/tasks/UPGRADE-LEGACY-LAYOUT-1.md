@@ -92,6 +92,7 @@ allowed_paths:
   R-06 新增 I/O 包装/部分失败/补迁/仅目录/journal 用例（共 10）；
   R-07 全量日志带命令头；Handoff 已补。
 - 复审：**待 region-workbench-owner 再审 `27de6fce3`**。
+- 独立复审（round 2，region-workbench-owner，reviewed_head `27de6fce3`）：**FAIL / CHANGES_REQUESTED**（P0=0；2×P1 + 6×P2；R-01/R-02/R-03 已闭环；R-04 仍未真正原子：sidecar 在 DB 后 promote，失败会留下无 WAL 的根 DB 且重试不补；目录 promote 部分失败后 main 继续会创建空根库，使旧库永久不迁移；R-05 对 corrupt legacy DB 的补迁失败；R-07 全量日志无命令头、Handoff 元数据陈旧/超出 allowed_paths、旧 real-data-verify.json 未登记）。详见 [`doc/reviews/UPGRADE-LEGACY-LAYOUT-1.md`](../reviews/UPGRADE-LEGACY-LAYOUT-1.md) 的 Round 2 Review。
 
 ## Canonical Evidence
 

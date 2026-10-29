@@ -73,3 +73,59 @@ decision: changes_requested
 **FAIL / CHANGES_REQUESTED @ `154f97a5c`**：P0 = 0；P1 = 4（R-01 AC3 证据不成立、R-02 AC4 证据只覆盖第二次运行、R-03 Windows I/O 失败逃逸导致启动崩溃、R-04 非原子 promote 留下不可自愈的部分迁移状态）；P2 = 6。R-01/R-02 只需重跑并重打证据；R-03/R-04 需要代码加固（最小修复：I/O 失败包装为 `LegacyLayoutError` 并在 `main` 安全处理；先 staging 全部内容再 promote/或支持续迁）及对应测试。R-03/R-04 修复后需重新执行单测、真实数据首次迁移证据和（按 DSH 决定）全量回归，再送复审。
 
 作者不可自审；本结论仅对 `154f97a5c` 有效，head 变化后需重新审查。
+
+## Round 2 Review
+
+**reviewed_head**: `27de6fce3e6ad8a2d2da434fc67d3ac1da9d1f13`；**decision: changes_requested（FAIL）**。
+
+**复核方式**：只读检查 `27de6fce3` 的代码/测试/证据；repo root 实跑 10 个单测；按 round 1 方法做 I/O、promote 失败、sidecar 失败、current-db/corrupt-legacy 故障注入；核对 5 个证据 SHA-256 与 `check.ps1`；`git show 27de6fce3 --stat` 核对 allowed_paths。全量 pytest 未独立重跑（用户要求）。
+
+### R-01..R-07 逐项状态
+
+| 项 | round 1 问题 | 状态 | 证据/复核结论 |
+|---|---|---|---|
+| R-01 | unit-tests.log 是 “no tests ran” | **PASS（已修复）** | `unit-tests.log` 现有 COMMAND/CWD/PYTHON/AT + `10 passed` + `EXIT=0`；pin 匹配；本次 repo root 实跑 10 passed（0.30s）。 |
+| R-02 | real-data 证据只记录第二次运行 | **PASS（已修复）** | `real-data-first-migration.json`：`migrated=true`、`copied=[managed/,backups/,library.db]`、源 SHA 前后不变、新库 SHA 一致（`96fc4120…`）、books=1、schema=6、integrity=ok、data 保留；`real-data-second-run.json`：`migrated=false`（幂等）。 |
+| R-03 | I/O 异常逃逸会崩溃启动 | **PASS（已修复）** | 故障注入 `shutil.copy2→PermissionError`：现在转为 `LegacyLayoutError`，根无 DB、无 managed、staging 清理；`shutil.Error`（`copytree` 聚合异常）实测是 `OSError` 子类并被包装；`main()` 捕获后继续。 |
+| R-04 | 非原子 promote / 部分状态不可自愈 | **FAIL（仍有 P1）** | 见 R2-01、R2-02：sidecar 在 DB 之后 promote，失败会留下“根 DB 已存在、WAL 缺失”；目录先 promote 后 DB 失败会留下部分根目录；更关键是失败后 `main()` 继续，`assemble_production_core` 会创建**空根 `library.db`**，下一次启动的 current 守卫会永久跳过旧库迁移。 |
+| R-05 | 当前库存在时跳过（旧 managed 不补） | **PARTIAL（P2）** | 正常 current DB + 缺失 managed/backups 会补迁（单测/代码成立）；但 current DB 存在时仍先 stage+verify legacy DB，若 legacy DB 损坏/被占用则整次迁移抛错，缺失目录得不到补迁（探针 D）。 |
+| R-06 | 边界测试缺失 | **PARTIAL（P2）** | 10 用例实跑通过，但缺少：sidecar promote 失败、目录 promote 失败、失败后 main 创建空库、current DB + corrupt legacy、`NEWMANGA_DATA_ROOT` 主入口、已有 managed 目录。 |
+| R-07 | 证据头缺失 / Handoff 缺失 | **PARTIAL（P2）** | unit 日志已带头；但 `pytest-full.log:1` 仅为 `----`，无 COMMAND/CWD/PYTHON/AT（卡宣称“带命令头”不成立）；Handoff 已存在但 frontmatter `head: 311ddfe0d (review) / rework commit pending` 过期，且引用不存在的 `pytest-full-v2.log`；旧 `real-data-verify.json` 仍留在 evidence_dir 但未登记，`check.ps1` 因此新增 warning；Handoff 也不在卡 `allowed_paths`。 |
+
+### Round 2 Findings
+
+| ID | 级别 | 文件/行 | 触发与影响 | 复现证据 | 建议 | 状态 |
+|---|---|---|---|---|---|---|
+| R2-01 | P1 | `src/infrastructure/sqlite/upgrade_legacy_layout.py:101-112, 204-215` | DB 文件（含 `-wal/-shm/-journal`）按 `staged_db_files` 顺序逐个 `os.replace`，base DB 先于 sidecar。以 `-wal` 为例，base 成功、sidecar 失败时根 DB 已落地且无 WAL；异常被包装后 main 继续，下一次启动 `current_exists=True` 只补目录、不补缺失 sidecar，可能丢失 WAL 中未 checkpoint 的事务。 | 故障注入 `_promote_file` 对 `library.db-wal` 抛 PermissionError：`root_db=True, root_wal=False`；第二次 `migrate` 返回 skipped 且 WAL 仍缺失。 | sidecar 先 promote、DB 最后；或在 `current_exists=True` 时检测并补缺失 sidecar；加 sidecar promote 失败测试。 | open |
+| R2-02 | P1 | `src/bootstrap/core_service.py:4595-4601, 4628`；`core_service.py:707`；`core_assembly.py:942`；`connection.py:344-346` | `main()` 捕获 `LegacyLayoutError` 后继续执行 `assemble_production_core`；OpenDatabase 在根库缺失时会创建**空库**（probe：`SchemaState.EMPTY`）。随后 `current_exists=True`，旧 `data/library.db` 永久不再迁移；用户看到空书架（旧数据仍在 `data/`，但无提示/自动恢复）。目录先 promote 后失败的场景即可触发。 | 故障注入 `_promote_directory` 对 `backups` 失败：root managed 已存在、root DB 不存在；模拟 `open_database` 后创建空 root DB；retry 仅返回 `copied=['backups/']`，root DB 仍无 books 表。 | 迁移失败且当前根库不存在时，不应继续 assemble 创建空库（可返回错误/记录 pending 标记）；或在下一次启动识别“空新库+pending 迁移”并允许旧库迁入/提示用户。 | open |
+| R2-03 | P2 | `src/infrastructure/sqlite/upgrade_legacy_layout.py:208-215`；docstring `:26-31` | 多个目录按字典顺序 promote；第一个目录成功后第二个失败会把已成功目录留在 root，docstring/卡“失败不落地/根保持原样”不成立（retry 可续，但原子声明过强）。 | 故障注入 `_promote_directory` 对 `backups` 失败：root `managed=True`、`backups=False`、root_db=False。 | 目录整体 staging/promote 策略要么接受“部分目录可续”并如实描述，要么用临时根目录整体切换；补 promote 失败测试。 | open |
+| R2-04 | P2 | `src/infrastructure/sqlite/upgrade_legacy_layout.py:174-183` | `current_db.exists()` 时仍无条件 `_stage_database` 复制+校验 legacy DB；若 legacy DB 损坏/被占用，直接抛 `LegacyLayoutError`，R-05 的 missing managed/backups 补迁不执行。 | 探针 D：current DB 正常、legacy `data/library.db` 为 “not sqlite”、data/managed 存在 → `LegacyLayoutError`，root managed 未生成。 | 仅在 `not current_exists` 时 stage DB；current 存在时只 stage 目录；补测试。 | open |
+| R2-05 | P2 | `tests/infrastructure/test_upgrade_legacy_layout.py` | 10 用例未覆盖 R2-01/R2-02/R2-03/R2-04 及 `NEWMANGA_DATA_ROOT` 主入口；卡 AC3 的“隔离 root 传参/部分失败”覆盖不完整。 | 逐条核对测试文件；故障注入均为手工探针，无对应回归测试。 | 新增上述边界测试；优先覆盖 sidecar promote 失败、失败后空 root DB、corrupt legacy + current DB。 | open |
+| R2-06 | P2 | `verification/UPGRADE-LEGACY-LAYOUT-1/pytest-full.log:1`；`unit-tests.log`；Handoff frontmatter | 全量日志缺 command/shell/venv 头（首行 `----`），与卡“带命令头”不符；Handoff `head` 仍是 `311ddfe0d (review) / rework commit pending`（实际 27de6fce3），并引用不存在的 `pytest-full-v2.log`。 | 读取日志/Handoff | 重生成全量日志头并更新 pin；Handoff 更新 head/status/文件名；补 Handoff 到 allowed_paths。 | open |
+| R2-07 | P2 | 卡 `allowed_paths`；`verification/UPGRADE-LEGACY-LAYOUT-1/real-data-verify.json` | `27de6fce3` 新增 `doc/handoffs/UPGRADE-LEGACY-LAYOUT-1-handoff.md`，但卡 allowed_paths 未包含该路径（超出实现范围）；旧 `real-data-verify.json` 留在 evidence_dir 未登记，`check.ps1` 报 warning（4 warnings，DONE 时会报错）。 | `git show --name-status 27de6fce3`；`check.ps1` 输出 | 在卡 allowed_paths 补 handoff；登记/移走旧证据，避免 DONE evidence_dir 未登记文件。 | open |
+| R2-08 | P2 | `src/infrastructure/sqlite/upgrade_legacy_layout.py:141-147`；`connection.py` | 用户已先启动新版本创建空根库时，旧布局仍被跳过；本 task 未处理该“已打开一次”的升级路径（当前库不覆盖是安全策略，但产品缺口仍在）。 | 代码路径；R2-02 也揭示同类空库问题 | 在后续任务/文档中登记限制，评估空库识别或提示用户；不要静默覆盖。 | open |
+
+### Round 2 验证
+
+| 场景 | 命令/步骤 | 结果 | 证据 |
+|---|---|---|---|
+| 单测 10 用例 | `python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q`（repo root） | PASS：10 passed in 0.30s | 本次实跑；`unit-tests.log` 亦一致 |
+| I/O 包装 | `copy2→PermissionError` 故障注入 | PASS：`LegacyLayoutError`，根不变、staging 清理 | 本次探针 |
+| sidecar promote 失败 | `_promote_file` 对 `-wal` 抛 PermissionError | FAIL：root db 存在、wal 缺失；retry skipped，无修复 | 本次探针 |
+| 目录 promote 部分失败 | `_promote_directory` 对 `backups` 抛 PermissionError | FAIL：root managed 已留下（非原子）；随后 main 继续会创建空 root DB | 本次探针 |
+| current DB + corrupt legacy | current DB 正常、legacy db “not sqlite”、legacy managed 存在 | FAIL：`LegacyLayoutError`，managed 未补迁 | 本次探针 |
+| 真实数据证据 | first/second JSON | PASS：首次 migrated=true、SHA/books/integrity 一致；第二次幂等 | `real-data-first-migration.json`、`real-data-second-run.json` |
+| 证据 pin | 5 个 sha256 | PASS：5/5 与 pin 一致 | 本次实算 |
+| 门禁 | `check.ps1 -TaskPath` | PASS（4 warnings；新增未登记 `real-data-verify.json` warning） | 本次实跑 |
+| 契约 | `git show 27de6fce3 --stat` | 仅允许的源码/测试/证据 + handoff；未改命令面/schema | commit diff |
+
+### Round 2 结论
+
+**FAIL / CHANGES_REQUESTED @ `27de6fce3`**：P0=0；P1=2（R2-01 sidecar 非原子、R2-02 失败后空根库导致旧库永久不迁移）；P2=6。R-01/R-02/R-03 已闭环；R-04 仍未真正闭环，R-05/R-06/R-07 为部分闭环。最小修复：
+1. sidecar 先 promote、DB 最后，或在 current DB 存在时补缺失 sidecar；
+2. 迁移失败且当前根库不存在时不要静默创建空根库（返回错误/写 pending 标记/下一次启动识别并允许旧库迁入），并补对应测试；
+3. `current_exists` 时跳过 legacy DB staging/verify，仅补目录（避免 corrupt legacy 阻塞补迁）；
+4. 补全 sidecar/目录 promote 失败、失败→空库、`NEWMANGA_DATA_ROOT` 等测试；
+5. 重生成带 command 头的全量日志、修正 Handoff 元数据/文件名、补 handoff 到 allowed_paths、登记/移走旧 `real-data-verify.json`。
+
+修复后需重新执行 10 用例、真实数据首次/二次证据和全量回归，再送第三轮复审。
