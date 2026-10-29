@@ -25,6 +25,8 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
         Page = new StudioPageViewModel(host, Selection, runSource, textSource, flagSource);
         Host = host;
         Batch = new StudioBatchViewModel(host, Selection, Page, host as IRunController);
+        Export = new StudioExportViewModel(host, Selection, Page);
+        Terms = new StudioTermsViewModel();
     }
 
     public IHostController Host { get; }
@@ -35,6 +37,12 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
 
     /// <summary>V11R-B-4: Batch mode view model (one instance for the session, like Page).</summary>
     public StudioBatchViewModel Batch { get; }
+
+    /// <summary>V11R-B-5: export preflight/history over the real Host export face.</summary>
+    public StudioExportViewModel Export { get; }
+
+    /// <summary>V11R-B-5: terms &amp; constraints workbench (NOT_WIRED until the knowledge command lands).</summary>
+    public StudioTermsViewModel Terms { get; }
 
     public StudioWorkspaceMode Mode
     {

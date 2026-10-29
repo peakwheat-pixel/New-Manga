@@ -1,0 +1,8 @@
+{
+  "ac": "AC1 stale \u7B56\u7565\u8BDA\u5B9E\u964D\u7EA7",
+  "abort_supported": true,
+  "continue_existing_supported": false,
+  "verified_fact": "\u672A\u652F\u6301\uFF1ACore \u652F\u6301 continue_existing\uFF0C\u4F46 IHostController.StartExportAsync \u672A\u66B4\u9732 stale_policy \u53C2\u6570\uFF08Host \u56FA\u5B9A\u53D1\u9001\u9ED8\u8BA4 abort\uFF09\uFF1B\u9700\u5951\u7EA6\u6269\u5C55\u540E\u624D\u80FD\u9009\u62E9",
+  "ui_option_disabled": true,
+  "selection_attempt_refused": true
+}

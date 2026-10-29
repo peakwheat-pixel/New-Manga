@@ -30,6 +30,7 @@ public partial class StudioWorkspaceView : UserControl
     private readonly TextBlock _scopeText;
     private readonly TextBlock _modeText;
     private readonly StudioBatchWorkspace _batchWorkspace;
+    private readonly StudioToolsOverlay _tools;
 
 
     /// <summary>Design-time / XAML-loading constructor: no Host, so the view renders its empty state.</summary>
@@ -46,6 +47,7 @@ public partial class StudioWorkspaceView : UserControl
         
 
         _viewModel = viewModel;
+        _tools = new StudioToolsOverlay(viewModel);
         DataContext = viewModel;
         _root = this.FindControl<Grid>("RootGrid")!;
 
@@ -72,6 +74,10 @@ public partial class StudioWorkspaceView : UserControl
         _modeText = new TextBlock { Classes = { "meta", "muted" } };
         _modeText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioWorkspaceViewModel.HeaderModeText)));
         headRow.Children.Add(_modeText);
+        var exportButton = StudioUi.Button("导出", "ghost sm", () => _ = _tools.OpenAsync(StudioToolsTab.Preflight));
+        var termsButton = StudioUi.Button("术语", "ghost sm", () => _ = _tools.OpenAsync(StudioToolsTab.Terms));
+        headRow.Children.Add(exportButton);
+        headRow.Children.Add(termsButton);
 
         head.Child = headRow;
 
@@ -86,6 +92,9 @@ public partial class StudioWorkspaceView : UserControl
         Grid.SetRow(content, 1);
         _root.Children.Add(head);
         _root.Children.Add(content);
+        Grid.SetRow(_tools, 0);
+        Grid.SetRowSpan(_tools, 2);
+        _root.Children.Add(_tools);
 
         _viewModel.PropertyChanged += (_, args) =>
         {
@@ -108,6 +117,8 @@ public partial class StudioWorkspaceView : UserControl
     public Control BatchPlaceholder => _batchWorkspace;
 
     public StudioBatchWorkspace BatchWorkspace => _batchWorkspace;
+
+    public StudioToolsOverlay Tools => _tools;
 
     public TextBlock BreadcrumbText => _breadcrumb;
 
