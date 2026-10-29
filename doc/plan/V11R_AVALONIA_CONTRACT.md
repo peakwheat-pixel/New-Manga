@@ -60,7 +60,7 @@ CSS 变量 `--nm-color-bg-canvas` 与本键一一对应。
 | 圆角 | `Nm.Corner.None/Sm(2)/Md(3)` | `CornerRadius` |
 | 尺寸 | `Nm.Size.TopBand(36)/StatusBandPage(28)/StatusBandBatch(24)/FilmStripCollapsed(56)/FilmStripExpanded(200)/InspectorCollapsed(40)/InspectorExpanded(320)/Drawer(360)/RowPage(28)/RowBatch(22)/ControlHeight(28)/ControlHeightSm(24)` | `double` |
 | 内边距 | `Nm.Padding.Panel(12)/Card(12)/Control(8,12)/ControlSm(6,8)/Cell(8)/Section(16)` | `Thickness` |
-| 动效 | `Nm.Motion.Duration.Fast(0:0:0.09)/Normal(0:0:0.15)`、`Nm.Motion.Enabled` | `TimeSpan`/`bool` |
+| 动效 | `Nm.Motion.Duration.Fast(90ms)/Normal(140ms)`、`Nm.Motion.Enabled` | `TimeSpan`/`bool` |
 | 图标 | `Nm.Icon.Size(20)/Stroke(1.25)` | `double` |
 
 **硬规则**：组件 XAML/C# 中禁止裸色值、裸字号、裸间距、`border-radius > 3px`、阴影、渐变、模糊（DESIGN_SYSTEM §1、§9）。

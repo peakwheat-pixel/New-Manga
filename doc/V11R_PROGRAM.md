@@ -167,6 +167,10 @@
 | **R-05** | 旧主题退役执行顺序见 `doc/plan/V11R_THEME_RETIREMENT_PLAN.md`：新系统等效 + 迁移/回滚测试通过后才删除；任何旧 ID 一律安全映射默认主题 | 用户 C4 硬约束 + 不得导致启动失败 |
 | **R-06** | Theme Studio 为独立覆盖式表面（非第五空间），规范见 `doc/design/theming/THEME_STUDIO_SPEC.md` | 用户 C3 要求"独立 Theme Studio 页面"，同时保持三空间 IA 不被破坏 |
 | **R-07** | Codex CLI 在本机需 `--dangerously-bypass-approvals-and-sandbox` 才能启动子进程（默认沙箱报 `helper_unknown_error`）；因此 Codex 仅用于**独立审查/只读研究**，实现任务由 DSH 专责 Owner 承担 | 实测沙箱故障；不因单 Agent 不可用而停滞（用户 §1.7） |
+| **R-08** | `IRunController` 幂等键改为显式参数：`ControlRunAsync(runId, action, string? idempotencyKey = null, ct)`、`RetryFailedTargetsAsync(runId, string idempotencyKey, ct)`；导出方法不进 `IRunController` | 避免重载分叉与双重真值 |
+| **R-09** | 修订冻结 `tokens.json` 的对比度不达标值（dark queued/skipped/failed、light skipped/accent 族），以 DESIGN_SYSTEM §2.3 ≥4.5:1 为准；修订记入 `40-fusion/DECISION_LOG.md` | 规范条款优先于数据值；无障碍不可协商 |
+| **R-10** | Motion 时长以 `tokens.json` 的 140ms 为准，契约 §2.2 的 150ms 为示例笔误 | 单一来源 |
+| **R-11** | 视觉/交互差异一律以冻结 FUSION_SPEC + DESIGN_SYSTEM 为准；发现缺口先改冻结文件并记 DECISION_LOG，禁止各页自行发挥 | 防止 B/C 分叉 |
 
 ## 9. 变更记录
 
