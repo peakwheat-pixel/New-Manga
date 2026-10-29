@@ -15,7 +15,7 @@ Lead / Integrator：DeepSeek Harness（DSH）
 |---|---|---|
 | V1.1 审计整改（工作流 A） | **PASS_WITH_ISSUES** | A-1/A-2/A-3/A-5/A-6/A-7 完成并集成；66 命令契约 FROZEN 49 / PARTIAL 17 / GAP 0；**追加发现并修复 P0**：发布版默认 `ReadOnlyUntilParity` 导致导入/建书/运行全被拒（A-5）。F0-1/F0-2 Region 写面 4 轮审查 P1 全关闭、I4 修 3×P2 并经独立窄验证 CLOSED，已合入 main（见 §7）。 |
 | 全新 UI/UX（工作流 B） | **PASS_WITH_ISSUES** | 新 Avalonia 外壳 + Library/Console/Studio Page/Studio Batch + 导出/术语工作面全部交付；main 已切**新壳为默认入口**（`--shell=legacy` 保留回滚）。独立审查 r1/r2/r3 的 P1 均已关闭；剩余 P2/P3 见 §8。 |
-| Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES（2×P2）**；C-3 旧主题**退役执行 BLOCKED**（准备包就绪，但回滚安全网 P1 待修）。 |
+| Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**（235 测试）；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES**（I1 已修行高契约漂移 P1 + 2×P2）；**C-3 旧主题退役已执行**（`NewManga.Theme` 项目/源码/引用删除、零引用门、双壳启动 smoke 通过），独立复审 FAIL（P2-only，定点修 C-3-I1 进行中）。 |
 | 设计系统（工作流 D） | **PASS_WITH_ISSUES** | D-1 独立审查 r2 的 2×P1 已修（真实 App 资源栈全局令牌、徽标合成对比度），DS 82 测试；仍有 6 行/6 对状态色落极端表面未达 4.5:1（已登记组件约束）。 |
 | 总体 | **未达 L4 最终验收** | 阻断项：C-3 未执行（旧主题系统仍在）、F0-1 待最终复核、跨项目并行测试偶发、Windows 实机/DPI/IME/Trim 未验证（NOT_RUN）。可交付为 **M2（新壳可用）+ M3（全工作面）候选**。 |
 
@@ -39,7 +39,7 @@ Lead / Integrator：DeepSeek Harness（DSH）
 ### 2.3 Theme Studio（工作流 C）
 - C-1 引擎：10 子系统 + 203–229 测试；Part B Avalonia 适配器（`DesignSystemThemeLayerSink`，59 键白名单、原子替换、失败保持原状、不重建窗口、画布像素差=0）；K-21 Scrim 全局不变量。
 - C-2 页面：7 分区全部可用（主题库/预览/我的主题/编辑/外观/导入导出/恢复默认），真实生产服务（非 STUB），24 帧渲染证据 + 应用/取消/回滚真断言。
-- C-3 准备：依赖图（631 引用/68 文件）、迁移门 26 测试、删除批次 A/B/C + R1–R6、回滚脚本、对比度矩阵。
+- C-3 执行（R1–R6）：tag `v11r-pre-retire` = `df883f2ce`；迁移 10 个生产文件（旧壳 chrome/设置页/`--theme` 兼容映射到新引擎）；R4 补 5 条硬门替代断言后删除 5 个旧测试；**删除 `NewManga.Theme` 项目与源码**；R6 零引用门（DELETE/MIGRATE/REPLACE 全 0，余 87 证据 + 55 非依赖），双 shell 启动 smoke 通过。
 
 ### 2.4 服务层与 Core（工作流 A）
 A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，R-08 幂等键纪律）；A-3 66 命令契约 + 派生 parity 测试；A-4 同 SHA CI + 干净克隆可重建；A-5 **P0 写入策略**（默认可写 + 三重护栏 + 首次备份）；A-6 启动自检（协议/能力不匹配降级只读）；A-7 导出 `stale_policy` 透传。
@@ -97,7 +97,7 @@ A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，
 
 | 项 | 状态 | 原因 / 解除条件 |
 |---|---|---|
-| **C-3 旧主题退役执行** | **BLOCKED** | 准备包就绪，但回滚脚本 DryRun 在 tag 校验前 throw（P1，Reviewer 实测 exit=1）+ 对比度计数错误（P2）+ 陈旧数字（P3）。最小修复集已派并给出窄复审要求；修复+窄复审通过后按 R1–R6 执行（先打 `v11r-pre-retire` tag）。 |
+| C-3 旧主题退役 | **执行完成，验收 in_review** | R1–R6 全部完成且已合入 main；独立复审 FAIL 但为 P2-only（旧壳外观切 DS palette 未同步、`--theme` 迁移外观丢失、替代断言以旧壳为主、R6 脏树重跑、READY 证据被原位改写、LegacyChrome 硬编码 fallback、字体审计扫到 gitignored 数据）。定点修 C-3-I1 进行中，修后窄复审即关闭。 |
 | F0-1 / F0-2 Region 写面 | **已合入** | 4 轮审查 P1 全关闭；I4 修 3×P2 后独立窄验证 3 项 **CLOSED**（`doc/reviews/V11R-F0-1-r5-verification.md`），整支（含 C077 `list_page_region_texts`）合入 main `d217b3658`；合入后 build 0W/0E、CoreClient 119 pass、App 305 pass。 |
 | D-1 终审 | 待审 | I2 已交付（2×P1+P2 全闭），需固定 pin 终审。 |
 | C-2 2×P2 | 待修 | ThemeStudio C# 裸几何值 + conformance 排除、AC9 像素探针恒真。 |
@@ -118,3 +118,19 @@ A-1 `CreateChapterAsync`；A-2 `IRunController`（暂停/继续/停止/重试，
 ## 9. 环境限制（NOT_RUN 汇总）
 
 Windows 实机启动 smoke、真实 DPI 多屏、IME、屏幕阅读器、Trim/AOT/单文件发布、GitHub Actions 真实运行、PyInstaller 同 SHA sidecar 集成、真 `%APPDATA%` 生产数据读写 —— 均因当前环境不可执行而 `NOT_RUN`，无伪造。
+
+---
+
+## 10. L4 证据阶段发现并修复的关键缺陷（本轮新增）
+
+L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单元测试覆盖不到的发布级缺陷，这是分层验证的直接价值：
+
+| # | 级别 | 缺陷 | 影响 | 状态 |
+|---|---|---|---|---|
+| 1 | **P0** | **v2 默认壳从不启动 Host**（唯一 `StartAsync` 只在 legacy `MainWindow`；v2 链路 `RefreshBooksAsync` 在 `_runtime is null` 时静默返回） | 默认安装后数据面全不可用、状态栏永远"Host 未就绪"、无错误提示 | 修复中（`V11R-INT-2`） |
+| 2 | **P1** | 主题引擎 `ThemePaletteComposer` 把 `Nm.LineHeight.*` 写成绝对像素，DS 按倍数再乘字号 → 行高 ×12（194.4px），任意主题层应用后版式崩坏（含 v2 启动） | 全 UI 版式崩坏 | **已修**（C-2-I1，engine 倍数/绝对分离 + 6 例回归） |
+| 3 | **P1** | 资料柜空态 4 个 `EmptyState` 兄弟节点重叠，Host 未就绪 + 空库时多个同时可见 | 首屏文字叠印（真实截图可见） | 修复中（随 `V11R-INT-2`） |
+| 4 | **P1** | CLI 只接受 `--key=value`，空格形式被静默解析为 `true`（sidecar/data-root/log-dir 全部失效，无 InvalidReason） | 诊断/部署参数静默失效 | 修复中（`A-8`） |
+| 5 | **P2** | `--variant=dark|light` 在 v2 壳无可见差异（主题栈未接 StartupVariant/被覆盖） | 明暗偏好失效 | 修复中（随 `V11R-INT-2`） |
+
+> 结论：**若只跑单元/headless 测试会全部"通过"**；这批缺陷只有真实窗口 + 真实 sidecar + 真实渲染才能暴露。已在验收报告标注，修复后需重跑 L4 矩阵（`tools/e2e/v2-launch-matrix.ps1`）并重新生成证据。
