@@ -20,7 +20,7 @@
 |GIT-CLEAN-*（4 项历史，2026-10）|—|in_review/ready/proposed/approved（Rust 线冻结；详见各自 Task 卡）|
 |V1-RELEASE-SIGNING-1|P09-MANAGED-READ-ROOT-TRUST-1、WORKSPACE-CLEANUP-TOOL-HARDENING-1|in_review（接受未签名；待签核）|
 
-|AD002-FOLLOWUPS-1|—|proposed（20 项遗留登记：NS 批次/签名/进度/多章/精度/region 写 UI 等）|
+|AD002-FOLLOWUPS-1|—|closed_with_limitations（20 项遗留：18 项已释放完成；#8 精度需人工 GT、#12 Win10 真机不可得；登记使命完成）|
 |REGION-WORKBENCH-1|S4-CMD-BATCH-1|done（工作台真实 region 读/改标/撤销/重渲染 + 只读门；AC1–AC5 MET；258/258；集成 `60d087627`）|
 |AGPL-RELEASE-1|—|done（models 包含 Ultralytics YOLO11s-seg=AGPL-3.0 → models 包整体 AGPL-3.0 声明 + AGPL 全文随包 + 重打包验证；AC1–AC5 MET；集成 `9948c3209`）|
 |NSIS-INSTALLER-1|AGPL-RELEASE-1|done（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；AC1–AC5 MET；独立安装 6.64s/卸载 0.74s；集成 `64d41f329`）|

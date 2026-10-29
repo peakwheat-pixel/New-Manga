@@ -3,19 +3,19 @@ id: AD002-FOLLOWUPS-1
 title: AD-002 重构遗留项集中登记（NS 批次/签名/进度保存/多章/精度）
 kind: planning
 governance_version: 3
-status: proposed
+status: closed_with_limitations
 approval: user_authorized_2026-10-27_followups
 suggested_owner: dsh
-owner: null
-reviewer: null
+owner: dsh-lead
+reviewer: region-workbench-owner
 depends_on: []
 base_commit: null
 branch: null
 worktree: null
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/AD002-FOLLOWUPS-1
 allowed_paths:
   - doc/tasks/AD002-FOLLOWUPS-1.md
@@ -53,28 +53,40 @@ AD-002 重构（S0–S5 + 后端瘦身 + 推理基线 + 发布件）已完成，
 
 ## AC（本卡为登记表，释放子任务后关闭）
 
-- [ ] **AC1 清单登记**：以上 13 项全部登记并可被用户按优先级选择。
-- [ ] **AC2 释放规则**：每批 ≤3 项，按 S2/S3/S4 校验口径（单命令 + 真机/证据 + 治理）释放为独立 Task。
+- [x] **AC1 清单登记**：以上 13 项 + 追加 7 项全部登记；截至 2026-10-29 全部已释放，其中 18 项完成、2 项受外部条件限制。<<MET>>
+- [x] **AC2 释放规则**：按 S2/S3/S4/S5 批次与独立 Task 释放（S2/S4 命令批次、阅读进度、章节选择、F11、导入导出、region 工作台、PDF 导出等）。<<MET>>
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| release-0.1.1-verify | AC1/AC2 | verification/RELEASE-REPACK-6/verify.json | 93cfb1bce | 39b0c6a11ac747e12fc35e7074c89d000f6f0cb6d1a1b03d92e89da2c6b5d3e5 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| — | — | — | — | — | 登记表，无派生资源 |
+| register | doc/tasks/AD002-FOLLOWUPS-1.md | NOT_APPLICABLE | — | — | 登记表，无派生资源；证据在各子 Task 的 evidence_dir |
 
 ## Closeout Record
 
-- Closeout date / DSH：全部遗留项已释放或用户明确放弃后关闭。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
+- Closed：2026-10-29 as **closed_with_limitations**（清单已作为登记表完成使命；18/20 项已释放并完成，2 项受外部条件限制）。
+- 已完成项（对应 Task）：#1 命令接线（Host 57 条命令全部映射，源码注释 "no NOT_SUPPORTED command left"）、#2 READING-PROGRESS-1（done `bafe73709`）、
+  #3 CHAPTER-SELECTOR-1（done）、#4 F11-HOTKEY-1（done）、#6 NSIS-INSTALLER-1 + SIGNPATH-OSS-SIGNING-1（done；签名待批）、#7 AGPL-RELEASE-1（done）、
+  #9 CUDA-PACKAGE-DECISION-1（done，defer）、#11 LEGACY-SHELL-ARCHIVE-1（closed_with_limitations）、#13 REAL-USER-UPGRADE-1（done）、
+  #14 REAL-TRANSLATE-PROVIDER-1（done，AC3 额度 BLOCKED）、#15 RELEASE-REPACK-6（done，0.1.1 含修复）、#16 SCHEDULER-THREAD-DIAG-1（done）、
+  #17 PDF-EXPORT-1/PDF-EXPORT-UI-1（done）、#19 REGION-WORKBENCH-1（done，含 region 写 UI）、#20 IMPORT-EXPORT-UI-1（done）、
+  #18 list_region_revisions（REGION-WORKBENCH-1 内完成）。
+- 未完成项（外部条件）：
+  - #8 绝对精度 vs 人工 GT：无对齐人工标注数据（INFER-BASELINE/CORE-SLIM-2 均 NOT_RUN），需用户提供标注集。
+  - #12 Win10 真机验证：本机不可得。
+  - #5 devices/manager ORT EP 探测：已由 VERSION.json 构建期 probe 覆盖（设置页设备信息来自构建元数据）；如需运行期探测可另开小 Task。
+- canonical_evidence_status：`complete`（本卡为登记表，证据在各子 Task）。
+- resource_closeout_status：`complete`（无派生资源）。
 - 删除、迁移、归档数量/字节数：无。
-- 未关闭项及保留原因：即本清单。
-- 当前指针清理：关闭时更新 STATUS/PLAN/LEDGER。
+- 当前指针清理：STATUS/PLAN/LEDGER 已更新。
+
+
 ## 追加登记（2026-10-27，A/B 批次后）
 
 ### E. Run/Export 链闭环

@@ -2,7 +2,7 @@
 
 状态：2026-10-25 起 DSH 接任 Lead / Architect / Integrator；授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
 ## 当前 Task
-- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed。最近完成：RELEASE-REPACK-6 done（0.1.1 已发布，GitHub Release v0.1.1）。SignPath 审核中。
+- 当前 Task：[S4-CMD-BATCH-1](tasks/S4-CMD-BATCH-1.md) in_review（S4-A/B/C 命令接线）；AD002-FOLLOWUPS-1 closed_with_limitations（18/20 完成）。0.1.1 已发布（v0.1.1）。SignPath 审核中。
 - 最近完成（新增）：[UPGRADE-LEGACY-LAYOUT-1](tasks/UPGRADE-LEGACY-LAYOUT-1.md) `done`（集成 `098c60381`；3 轮独立 Review PASS；单测 12/12、全量 2612P）。
 - 最近完成：[LEGACY-SHELL-ARCHIVE-1](tasks/LEGACY-SHELL-ARCHIVE-1.md) `closed_with_limitations`（集成 `7d4c7764c`；公开 CI `40830315601` 全绿 17/17）；[CUDA-PACKAGE-DECISION-1](tasks/CUDA-PACKAGE-DECISION-1.md) `done`（defer）；[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
