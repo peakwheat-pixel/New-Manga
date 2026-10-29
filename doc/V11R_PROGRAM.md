@@ -176,8 +176,17 @@
 | **R-12** | DS 与 ThemeEngine 职责边界：DS 拥有令牌/样式/控件/资源应用机制；ThemeEngine 拥有主题包语义与数据；依赖方向 `App → ThemeEngine → DesignSystem`；DS 暴露 `ApplyThemeLayer/ApplyPalette/RevertPalette` 供引擎调用 | 防止两套主题真值 |
 | **R-13** | **生产写入策略**：`ReadOnlyUntilParity` 使发布版完全不可写（P0，审计未覆盖）。改为默认 ReadWrite，保留三重护栏（旧 Tauri 壳运行 / `--parity=false` / Host 未就绪）与首次写前 first-run backup；`--parity=false` 为回滚手段。此为 DSH 依授权做出的产品策略修复，须在最终报告显著标注 | 用户核心工作流被真实阻断，且无任何文档告知用户 |
 | **R-14** | 冻结基线键名/例外登记：字号键统一 `Nm.FontSize.Xxl`（非 `2Xl`）；行高保留 `Tight/Normal/Loose` 并提供语义别名 `Body/Label/Meta/Data`；高对比/密度令牌为 DS 生成器按设计规则派生的**冻结扩展**；`Transparent` 与图标按钮 `Margin="-2"` 为唯一裸值例外；其余裸值违规 | 独立审查发现契约与实现键名不一致、派生令牌被误判为"第二真值"；集中登记避免反复争议 |
-## 9. 变更记录
-
+| **R-15** | 主题层白名单 = 59 键（颜色35 + 字体族3 + 字号6 + 行高乘数3/绝对6 + 圆角3 + 动效3）；`material/elevation` 无冻结键只校验不发布；`Nm.Motion.Duration.Slow=220ms` 登记为冻结扩展 | 让 Theme Studio 的字号缩放/行高预设真实生效，且不发明令牌 |
+| **R-16** | **单一选择模型**：`ShellState.Selection` 为唯一权威；`StudioSelection` 降为投影 + 变更路由；显式 `ScopeKind {Chapter, SelectedPages, Page, Region}`，显式多选优先于 Region | 两套 selection 会让 FUSION 硬规则 1（跨模式作用域一致）必然失效 |
+| **R-17** | `IWorkspaceView` 增加 `bool TryHandleKey(KeyEventArgs, ShellState)`：工位专属键（Tab/Esc/J/K/[ ]/+/-/0）先交工作面，shell 仅在 false 时处理；其余键由 shell 统一注册表处理 | 否则 shell 的全局 Tab/Esc 会吞掉 Studio 的 HUD/逐级退出 |
+| **R-18** | 断点统一 `>=1600` 完整 / `1280–1599` 紧凑 / `<1280` 覆盖式；令牌 `Nm.Size.Breakpoint.Full=1600/.Compact=1280/.Narrow=1024`，禁止各 Owner 自造 1400/1200 | 审查发现三套断点不一致 |
+| **R-19** | 证据纪律：每个任务只写 `verification/<TASK-ID>/`；**禁止复制其它任务证据/二进制 DB 入库**；测试证据写入默认落仓库而非 `%TEMP%`；交付后证据须随 fix commit 重生成；被审 pin 冻结 | 审查发现 B-1 证据 42% 为外任务复制品 |
+| **R-20** | `App` 项目引用 `NewManga.ThemeEngine`（依赖 `App → ThemeEngine → DesignSystem`）；Theme Studio 可直接调用引擎，禁止条件编译桩冒充生产适配器 | Theme Studio 需要真实引擎能力 |## 9. 变更记录
+| **R-21** | `Nm.Color.Scrim` 为**主题不变量全局派生色**（rgba(0,0,0,0.55)，Modal 遮罩），不属于 appearance palette、不属于主题包 59 键白名单；引擎的必需颜色集必须用 DS 公开 `PaletteColorKeys`（35）而非 `NmKeys.Color.*` 全量 | DS 返修新增该键导致引擎 46 测试失败；Scrim 无语义个性 |
+| **R-22** | **幂等键语义统一**（改写 R-08 的 UI 侧解释）：UI 可以为"一次新的用户意图"生成幂等键，但必须 ①意图创建时生成并存住、②同一意图的重试**复用同一键**、③提交进行中按钮禁用（防双击）；禁止每次点击新生成 GUID。Console 手填键与 Batch 自动键都需满足②③；Batch 必须在 UI 显示/记录键来源 | 审查发现 Batch 每次点击 Guid.NewGuid() 使幂等保护失效，且与 Console 纪律相反 |
+| **R-23** | **状态词表只表达状态**：`done/blocked/not_started` 等七态不得用于"是否接入/是否已保存/分区可用性"等非状态语义；这类语义用中性文字徽标或 `StatusBadge` 之外的组件 | DESIGN_SYSTEM §2.1/§2.2 明确禁止状态参与装饰 |
+| **R-24** | **Run 投影单一来源**：收敛为一个可注入间隔的 `IRunProjectionPoller` + `IRunDataSource`，Console / Batch 共用同一投影与同一控制面（Start/Stop/Pause/Retry/Resume 语义一致，Stop 必须确认）；禁止两个空间各自轮询同一 `IRunController` | 审查发现 Console 1s/Batch 750ms 双源、Stop 纪律分裂 |
+| **R-25** | 证据禁止"字面量-backed 字段"：JSON/截图中的每个字段必须从被测对象读取（如 `batch.GateImpactText`），禁止 `writer.WriteString("field","字面量")`；恒真断言（`x is null` 与取值、`Contains("A","A")`）一律删除 | 连续两轮审查发现证据作假模式 |
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-10-30 | 建立程序；合并冻结 A+C 设计基线；建立 DAG；裁定 R-01/R-02 | DSH |

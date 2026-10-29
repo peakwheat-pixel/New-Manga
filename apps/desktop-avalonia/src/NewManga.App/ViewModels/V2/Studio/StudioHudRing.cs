@@ -60,7 +60,7 @@ public static class StudioHudRing
         new StudioHudSlot(StudioHudAction.ShowHistory, "E", "历史版本", "H", null, true),
         new StudioHudSlot(StudioHudAction.RerenderPage, "SE", "重渲染页", "R", StudioCommand.RerenderPage, false),
         new StudioHudSlot(StudioHudAction.RestorePreviousRevision, "S", "恢复上版", "U", StudioCommand.RestoreRevision, false),
-        new StudioHudSlot(StudioHudAction.ReOcrRegion, "SW", "重 OCR", "O", StudioCommand.CreateRegion, false),
+        new StudioHudSlot(StudioHudAction.ReOcrRegion, "SW", "重 OCR", "O", StudioCommand.ReOcrRegion, false),
         new StudioHudSlot(StudioHudAction.ToggleLock, "W", "锁定", "L", StudioCommand.LockRegion, false),
         new StudioHudSlot(StudioHudAction.DeleteRegion, "NW", "删除", "D", StudioCommand.DeleteRegion, false),
     };

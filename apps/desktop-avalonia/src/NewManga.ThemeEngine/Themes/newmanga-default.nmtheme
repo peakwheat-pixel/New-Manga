@@ -72,7 +72,8 @@
     "elevation": "none",
     "motion": {
       "fastMs": 90,
-      "normalMs": 140
+      "normalMs": 140,
+      "slowMs": 220
     }
   },
   "dark": {
@@ -131,7 +132,8 @@
     "elevation": "none",
     "motion": {
       "fastMs": 90,
-      "normalMs": 140
+      "normalMs": 140,
+      "slowMs": 220
     }
   },
   "metadata": {

@@ -36,15 +36,6 @@
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
           </Border>
-          <!-- Outline: drawn over the fill, outside the hit area. The -2 offset is the focus
-               stroke width itself (Nm.Border.Focus) so the ring sits outside the control bounds. -->
-          <Border Name="PART_FocusRing"
-                  IsVisible="False"
-                  IsHitTestVisible="False"
-                  Margin="-2"
-                  CornerRadius="{DynamicResource Nm.Corner.Sm}"
-                  BorderBrush="{DynamicResource Nm.Color.Accent.Base}"
-                  BorderThickness="{DynamicResource Nm.Border.Focus}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -56,9 +47,6 @@
     </Style>
     <Style Selector="^:pressed /template/ Border#PART_Root">
       <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
-    </Style>
-    <Style Selector="^:focus-visible /template/ Border#PART_FocusRing">
-      <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^:disabled">
       <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />

@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <!-- TabItem: flat header with a 1px accent underline for the selected tab (no pills, radius <= 3px). -->
+  <!-- TabItem: flat header with a 1px accent underline for the selected tab (no pills, radius <= 3px).
+       Keyboard focus uses the shared outside focus ring. -->
   <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
@@ -15,28 +16,30 @@
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Name="PART_LayoutRoot"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{DynamicResource Nm.Color.Line.Subtle}"
-                BorderThickness="0,0,0,1">
-          <Panel>
-            <ContentPresenter Name="PART_ContentPresenter"
-                              Content="{TemplateBinding Header}"
-                              ContentTemplate="{TemplateBinding HeaderTemplate}"
-                              Padding="{TemplateBinding Padding}"
-                              Foreground="{TemplateBinding Foreground}"
-                              FontFamily="{TemplateBinding FontFamily}"
-                              FontSize="{TemplateBinding FontSize}"
-                              FontWeight="{TemplateBinding FontWeight}"
-                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-            <Border Name="PART_SelectedPipe"
-                    IsVisible="False"
-                    Height="1"
-                    VerticalAlignment="Bottom"
-                    Background="{DynamicResource Nm.Color.Accent.Base}" />
-          </Panel>
-        </Border>
+        <Panel>
+          <Border Name="PART_LayoutRoot"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{DynamicResource Nm.Color.Line.Subtle}"
+                  BorderThickness="0,0,0,1">
+            <Panel>
+              <ContentPresenter Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Padding="{TemplateBinding Padding}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+              <Border Name="PART_SelectedPipe"
+                      IsVisible="False"
+                      Height="1"
+                      VerticalAlignment="Bottom"
+                      Background="{DynamicResource Nm.Color.Accent.Base}" />
+            </Panel>
+          </Border>
+        </Panel>
       </ControlTemplate>
     </Setter>
 

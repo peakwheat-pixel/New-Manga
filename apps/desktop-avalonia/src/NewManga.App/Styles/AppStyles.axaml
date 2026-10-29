@@ -7,9 +7,9 @@
     <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}" />
   </Style>
 
-  <Style Selector="TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
-  </Style>
+  <!-- V11R-D-1 (review P1): no global TextBlock Foreground here either. Text colour must flow through
+       Avalonia's TextElement inheritance chain (Window -> container -> ContentPresenter -> TextBlock)
+       so a primary Button's label inherits Accent.On instead of being overridden by a global style. -->
 
   <Style Selector="TextBlock.nm-hint">
     <Setter Property="Opacity" Value="0" />

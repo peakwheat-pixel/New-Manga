@@ -1,7 +1,8 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <!-- CheckBox: square 16px box (radius <= 3px per DESIGN_SYSTEM §1), accent fill + check glyph when
-       checked, dash when indeterminate. Hit area >= Nm.Size.ControlHeight (24-28px). -->
+  <!-- CheckBox: square marker (radius <= 3px per DESIGN_SYSTEM §1), accent fill + check glyph when
+       checked, dash when indeterminate. Hit area >= Nm.Size.ControlHeight. Keyboard focus shows the
+       shared outside focus ring (PART_FocusRing), never a geometry-changing border. -->
   <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
     <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeight}" />
     <Setter Property="Background" Value="Transparent" />
@@ -14,31 +15,34 @@
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}" Background="Transparent">
-          <Border Name="PART_Box"
-                  Width="16" Height="16"
-                  VerticalAlignment="Center"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}">
-            <Path Name="PART_CheckGlyph"
-                  IsVisible="False"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  Data="M 2,7 L 5.5,10 L 11,3"
-                  Stroke="{DynamicResource Nm.Color.Accent.On}"
-                  StrokeThickness="{DynamicResource Nm.Icon.Stroke}" />
-          </Border>
-          <ContentPresenter Name="PART_ContentPresenter"
-                            Grid.Column="1"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Foreground="{TemplateBinding Foreground}"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            VerticalContentAlignment="Center" />
-        </Grid>
+        <Panel Background="Transparent">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <Border Name="PART_Box"
+                    Width="{DynamicResource Nm.Size.Marker}"
+                    Height="{DynamicResource Nm.Size.Marker}"
+                    VerticalAlignment="Center"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+              <Path Name="PART_CheckGlyph"
+                    IsVisible="False"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M 2,7 L 5.5,10 L 11,3"
+                    Stroke="{DynamicResource Nm.Color.Accent.On}"
+                    StrokeThickness="{DynamicResource Nm.Icon.Stroke}" />
+            </Border>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Grid.Column="1"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontFamily="{TemplateBinding FontFamily}"
+                              FontSize="{TemplateBinding FontSize}"
+                              VerticalContentAlignment="Center" />
+          </Grid>
+        </Panel>
       </ControlTemplate>
     </Setter>
 

@@ -101,8 +101,11 @@ public sealed class StudioRegionOverlay : Canvas
     public StudioRegionOverlay(StudioPageViewModel viewModel)
     {
         _viewModel = viewModel;
-        Background = Brushes.Transparent;
-        IsHitTestVisible = false;
+        // V11R-B-3 review I1: the overlay must NOT be hit-test-invisible (that turned hover and
+        // region selection into dead code). A null Background keeps the empty canvas
+        // non-hit-testable, so clicks outside a box fall through to the viewport pan handler, while
+        // each StudioRegionBox is a real hit target that marks PointerPressed Handled.
+        Background = null;
         viewModel.Regions.CollectionChanged += (_, _) => Rebuild();
         Rebuild();
     }

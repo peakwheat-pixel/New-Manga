@@ -47,6 +47,9 @@
     <Setter Property="Cursor" Value="Arrow" />
   </Style>
 
+  <Style Selector="ToggleSwitch">
+  </Style>
+
   <!-- ComboBox / Select: surface skin over the Fluent template (IME, keyboard navigation, popup
        placement and virtualisation stay framework-owned). -->
   <Style Selector="ComboBox">
@@ -66,10 +69,7 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
   </Style>
 
-  <Style Selector="ComboBox:focus-visible">
-    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
-    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
-  </Style>
+  <!-- Keyboard focus is the shared outside outline (FocusAdorner above); no border-thickness change. -->
 
   <Style Selector="ComboBox:disabled">
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />

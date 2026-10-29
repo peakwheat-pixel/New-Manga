@@ -206,13 +206,24 @@ public sealed record ThemeCorners(double None, double Sm, double Md)
     public const double MaxRadius = 3.0;
 }
 
-/// <summary>Motion personality: UI durations owned by the theme (DESIGN_SYSTEM §7, R-10: 140ms baseline).</summary>
+/// <summary>
+/// Motion personality: the three UI durations owned by a theme (DESIGN_SYSTEM §7; R-10 fixes 140ms as
+/// the normal baseline, R-15 registers the slow tier with a 220ms default and adds the
+/// <c>Nm.Motion.Duration.Slow</c> key as a design-system contract extension).
+/// </summary>
 /// <param name="FastMs">Fast duration in milliseconds (frozen baseline: 90ms).</param>
 /// <param name="NormalMs">Normal duration in milliseconds (frozen baseline: 140ms).</param>
-public sealed record ThemeMotion(int FastMs, int NormalMs)
+/// <param name="SlowMs">Slow duration in milliseconds (R-15 default: 220ms; the frozen token document carries no slow token yet).</param>
+public sealed record ThemeMotion(int FastMs, int NormalMs, int SlowMs)
 {
     /// <summary>Upper bound accepted from a theme package, in milliseconds.</summary>
     public const int MaxDurationMs = 1000;
+
+    /// <summary>R-15 default for the slow tier when a package/token document does not define one.</summary>
+    public const int DefaultSlowMs = 220;
+
+    /// <summary>Frozen baseline durations (fast 90ms, normal 140ms) plus the R-15 slow default.</summary>
+    public static ThemeMotion Baseline { get; } = new(90, 140, DefaultSlowMs);
 }
 
 /// <summary>

@@ -103,6 +103,8 @@ public static class BuiltInThemeGenerator
             static binding => binding.ResourceKey,
             StringComparer.Ordinal);
 
+        var derivationWarnings = new List<string>();
+
         var darkColors = ReadColors(entries, TokenMap.DarkScope, "dark");
         var lightColors = ReadColors(entries, TokenMap.LightScope, "light");
         if (darkColors.Count != RequiredColorKeyCount || lightColors.Count != RequiredColorKeyCount)
@@ -133,9 +135,22 @@ public static class BuiltInThemeGenerator
             TokenValues.ParseDimension(ReadTokenValue(byPath, "radius.sm")),
             TokenValues.ParseDimension(ReadTokenValue(byPath, "radius.md")));
 
+        // R-15 registers the slow tier (default 220ms) as a design-system contract extension; the frozen
+        // token document still carries only instant/fast/normal, so use the registered default until a
+        // motion.duration.slow token exists and then read it without touching this code path.
+        var slowMotionMs = byPath.TryGetValue("motion.duration.slow", out var slowMotionEntry)
+            ? DurationMilliseconds(slowMotionEntry.Value)
+            : ThemeMotion.DefaultSlowMs;
+        if (!byPath.ContainsKey("motion.duration.slow"))
+        {
+            derivationWarnings.Add(
+                $"motion slow duration = {ThemeMotion.DefaultSlowMs}ms (R-15 default; no 'motion.duration.slow' token in the frozen baseline)");
+        }
+
         var motion = new ThemeMotion(
             DurationMilliseconds(ReadTokenValue(byPath, "motion.duration.fast")),
-            DurationMilliseconds(ReadTokenValue(byPath, "motion.duration.normal")));
+            DurationMilliseconds(ReadTokenValue(byPath, "motion.duration.normal")),
+            slowMotionMs);
 
         ThemeTokenSet TokenSet(IReadOnlyDictionary<string, string> colors) =>
             new(colors, typography, corners, ThemeMaterial.Solid, ThemeElevation.None, motion);
@@ -173,7 +188,7 @@ public static class BuiltInThemeGenerator
             throw new InvalidOperationException("generated file order drifted from GeneratedFilePaths");
         }
 
-        return new BuiltInThemeGenerationResult(files, package, baseline.Warnings);
+        return new BuiltInThemeGenerationResult(files, package, [.. derivationWarnings, .. baseline.Warnings]);
     }
 
     /// <summary>Compares generated artifacts with what is committed on disk (reproducibility gate).</summary>

@@ -1,0 +1,120 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nmc="using:NewManga.DesignSystem.Controls">
+  <!-- Status language (DESIGN_SYSTEM §2.2): hue classes are generated from the frozen status tokens so
+       the symbol/hue/text three-channel encoding cannot drift. -->
+
+  <Style Selector="nmc|StatusGlyph">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Data}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="nmc|StatusGlyph.queued">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Queued}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.running">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Running}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.done">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Done}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.failed">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.blocked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.stale">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Stale}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.skipped">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Skipped}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.notstarted">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+  </Style>
+  <Style Selector="nmc|StatusGlyph.locked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+
+  <!-- Status hue for plain text labels (Chip/CountChips status counters). -->
+  <Style Selector="TextBlock.nm-status-queued">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Queued}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-running">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Running}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-done">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Done}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-failed">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-blocked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-stale">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Stale}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-skipped">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Skipped}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-notstarted">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+  </Style>
+  <Style Selector="TextBlock.nm-status-locked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+
+  <Style Selector="StackPanel.nm-status-row">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
+  </Style>
+
+  <Style Selector="nmc|StatusBadge">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="nmc|StatusBadge.queued">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Queued}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Queued}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.running">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Running}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Running}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.done">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Done}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Done}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.failed">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.blocked">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.stale">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Stale}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Stale}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.skipped">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Skipped}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Skipped}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.notstarted">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+  </Style>
+  <Style Selector="nmc|StatusBadge.locked">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+</Styles>

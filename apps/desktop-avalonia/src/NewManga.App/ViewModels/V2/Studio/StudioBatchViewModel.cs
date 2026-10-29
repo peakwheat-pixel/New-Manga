@@ -467,14 +467,18 @@ public sealed class StudioBatchViewModel : StudioObservable
     }
 
     /// <summary>Always-visible scope suffix for every batch action (FUSION §2.3).</summary>
-    public string ScopeSuffix => _scope switch
-    {
-        StudioBatchScope.All => " · 全部",
-        StudioBatchScope.Selected => Selection.SelectedPageIds.Count == 0
-            ? " · 选中 0 页"
-            : $" · 选中 {Selection.SelectedPageIds.Count} 页",
-        _ => CurrentPageLabel is null ? " · 当前页（未选择）" : $" · 当前页 {CurrentPageLabel}",
-    };
+    /// <summary>
+    /// FUSION hard rule 1 / R-16: an explicit multi-page selection always wins over the manual scope
+    /// selector, so a Batch box selection of 3 pages keeps suffix " · 选中 3 页" in every mode.
+    /// </summary>
+    public string ScopeSuffix => Selection.ResolvedScope == StudioScopeKind.SelectedPages
+        ? Selection.ScopeSuffix
+        : _scope switch
+        {
+            StudioBatchScope.All => " · 全部",
+            StudioBatchScope.Selected => " · 选中 0 页",
+            _ => CurrentPageLabel is null ? " · 当前页（未选择）" : $" · 当前页 {CurrentPageLabel}",
+        };
 
     private string? CurrentPageLabel =>
         _projection?.RowFor(Selection.CurrentPageId)?.Filename ?? Selection.CurrentPageId;
@@ -1095,6 +1099,16 @@ public sealed class StudioBatchViewModel : StudioObservable
     private Dictionary<string, object?>? BuildScope()
     {
         var chapterId = Selection.ChapterId ?? _page.ChapterId;
+        if (Selection.ResolvedScope == StudioScopeKind.SelectedPages)
+        {
+            return new Dictionary<string, object?>
+            {
+                ["kind"] = "page_selection",
+                ["chapter_id"] = chapterId,
+                ["page_ids"] = Selection.SelectedPageIds.ToArray(),
+            };
+        }
+
         if (_scope == StudioBatchScope.Selected && Selection.SelectedPageIds.Count > 0)
         {
             return new Dictionary<string, object?>
