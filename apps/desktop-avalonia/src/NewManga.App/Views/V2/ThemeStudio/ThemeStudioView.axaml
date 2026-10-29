@@ -1,0 +1,294 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:tsc="using:NewManga.App.Views.V2.ThemeStudio.Controls"
+             xmlns:tss="using:NewManga.App.Views.V2.ThemeStudio.Sections"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             xmlns:automation="using:Avalonia.Automation"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.ThemeStudioView"
+             x:DataType="vm:ThemeStudioViewModel"
+             Focusable="True">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://NewManga.App/Views/V2/ThemeStudio/Controls/ThemeCardTemplates.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <StyleInclude Source="avares://NewManga.App/Views/V2/Shell/Theme/V2LocalStyles.axaml" />
+    <StyleInclude Source="avares://NewManga.App/Views/V2/ThemeStudio/Styles/ThemeStudioStyles.axaml" />
+  </UserControl.Styles>
+
+  <!--
+    Theme Studio is a full-window overlay surface (THEME_STUDIO_SPEC §2), not a fifth space:
+    left rail 7 sections · main area per section · right rail 320px summary with 取消/应用.
+    The root PaletteScope only carries an *unsaved editor draft* palette; a catalog preview is applied
+    application-wide by the engine's own preview session.
+  -->
+  <tsc:PaletteScope x:Name="RootPaletteScope" Palette="{Binding DraftPalette}">
+    <Grid Background="{DynamicResource Nm.Color.Bg.Canvas}" RowDefinitions="Auto,Auto,*">
+      <!-- ── Surface header: back + title + dirty + STUB + 取消/应用 ───────────────────── -->
+      <Border Grid.Row="0"
+              Classes="topband"
+              MinHeight="{DynamicResource Nm.Size.TopBand}"
+              Padding="{DynamicResource Nm.Padding.Cell}">
+        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <Button Grid.Column="0" Classes="ghost sm" Content="返回" Command="{Binding BackCommand}" />
+          <TextBlock Grid.Column="1" Classes="label" Text="主题工作室" VerticalAlignment="Center" />
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <TextBlock Classes="dirty-badge" Classes.on="{Binding HasDraft}" Text="{Binding DirtyLabel}" VerticalAlignment="Center" />
+            <TextBlock Classes="meta" Text="{Binding SourceLabel}" VerticalAlignment="Center" />
+            <TextBlock Classes="stub-badge" Text="STUB" IsVisible="{Binding IsSandbox}" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Grid.Column="3" Classes="meta" Text="{Binding StatusMessage}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          <Button Grid.Column="4" Classes="secondary sm" Content="取消" Command="{Binding CancelCommand}" />
+          <Button Grid.Column="5" Classes="primary sm" Content="{Binding ApplyButtonLabel}" Command="{Binding ApplyCommand}" />
+        </Grid>
+      </Border>
+
+      <!-- ── Notices: migration + catalog diagnostics (never silent) ──────────────────── -->
+      <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}" Margin="{DynamicResource Nm.Padding.Cell}">
+        <ItemsControl ItemsSource="{Binding MigrationNotices}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioMigrationNotice">
+              <c:AlertBanner Severity="Stale" Message="{Binding Message}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <c:AlertBanner Severity="Blocked"
+                       Message="{Binding StartupIssueSummary}"
+                       IsVisible="{Binding HasStartupIssues}" />
+      </StackPanel>
+
+      <!-- ── Left rail 200px (DS Size.TreeWidth) · main · right rail 320px (DS InspectorExpanded) ─ -->
+      <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <Border Grid.Column="0"
+                Width="{DynamicResource Nm.Size.TreeWidth}"
+                Classes="panel"
+                Padding="{DynamicResource Nm.Padding.Cell}">
+          <ItemsControl x:Name="NavRail" ItemsSource="{Binding Sections}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioSectionItem">
+                <Button Classes="navitem"
+                        Classes.selected="{Binding IsSelected}"
+                        Command="{Binding SelectCommand}"
+                        Margin="{DynamicResource Nm.Padding.IconSm}"
+                        automation:AutomationProperties.Name="{Binding AccessibleLabel}">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                    <Path Grid.Column="0"
+                          Classes="navicon"
+                          Data="{Binding Icon}"
+                          StrokeLineCap="Round"
+                          StrokeJoin="Round" />
+                    <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                      <TextBlock Classes="label" Text="{Binding Title}" />
+                      <TextBlock Classes="meta" Text="{Binding Subtitle}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2"
+                               Classes="dirty-marker"
+                               Text="未提交"
+                               IsVisible="{Binding IsDirty}" />
+                  </Grid>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Border>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.2}">
+          <Border Grid.Row="0" Classes="section-header">
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="title" Text="{Binding SectionTitle}" VerticalAlignment="Center" />
+              <TextBlock Classes="meta" Text="{Binding SectionSubtitle}" VerticalAlignment="Center" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+          <Grid Grid.Row="1">
+            <Grid IsVisible="{Binding ShowLibrary}">
+              <tss:LibrarySectionView x:Name="LibrarySection" DataContext="{Binding Library}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowPreview}">
+              <tss:PreviewSectionView x:Name="PreviewSection" DataContext="{Binding Preview}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowMyThemes}">
+              <tss:MyThemesSectionView DataContext="{Binding MyThemes}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowEditor}">
+              <tss:EditorSectionView DataContext="{Binding Editor}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowAppearance}">
+              <tss:AppearanceSectionView DataContext="{Binding Appearance}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowImportExport}">
+              <tss:ImportExportSectionView DataContext="{Binding ImportExport}" />
+            </Grid>
+            <Grid IsVisible="{Binding ShowReset}">
+              <tss:ResetSectionView DataContext="{Binding Reset}" />
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <!-- ── Right rail: summary + 取消/应用 ──────────────────────────────────────── -->
+        <Border Grid.Column="2"
+                Width="{DynamicResource Nm.Size.InspectorExpanded}"
+                Classes="panel"
+                Padding="{DynamicResource Nm.Padding.Cell}">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="当前主题" />
+                <TextBlock Classes="label" Text="{Binding CurrentThemeName}" />
+                <TextBlock Classes="meta" Text="{Binding CurrentThemeAuthor}" />
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="meta" Text="{Binding CurrentThemeVersion}" />
+                  <TextBlock Classes="meta" Text="{Binding CurrentThemeKind}" />
+                </StackPanel>
+                <TextBlock Classes="meta" Text="{Binding CurrentThemeSupport}" />
+                <TextBlock Classes="meta" Text="{Binding CurrentThemeTags}" TextWrapping="Wrap" />
+                <TextBlock Classes="meta" Text="{Binding SessionThemeLabel}" TextWrapping="Wrap" />
+              </StackPanel>
+
+              <Separator />
+
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="外观（立即生效）" />
+                <ItemsControl ItemsSource="{Binding Appearance.AppearanceOptions}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ThemeStudioOption">
+                      <Button Classes="chip sm"
+                              Classes.on="{Binding IsSelected}"
+                              Content="{Binding Label}"
+                              Command="{Binding SelectCommand}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Grid.Column="0" Classes="meta" Text="高对比" VerticalAlignment="Center" />
+                  <ToggleSwitch Grid.Column="1" IsChecked="{Binding Appearance.IsHighContrastOn, Mode=TwoWay}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Grid.Column="0" Classes="meta" Text="减少动效" VerticalAlignment="Center" />
+                  <ToggleSwitch Grid.Column="1" IsChecked="{Binding Appearance.IsReducedMotionOn, Mode=TwoWay}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Grid.Column="0" Classes="meta" Text="跟随系统强调色（仅作用域）" VerticalAlignment="Center" TextWrapping="Wrap" />
+                  <ToggleSwitch Grid.Column="1" IsChecked="{Binding Appearance.IsFollowSystemAccentOn, Mode=TwoWay}" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Classes="meta" Text="密度" VerticalAlignment="Center" />
+                  <ItemsControl ItemsSource="{Binding Appearance.DensityOptions}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:ThemeStudioOption">
+                        <Button Classes="chip sm"
+                                Classes.on="{Binding IsSelected}"
+                                Content="{Binding Label}"
+                                Command="{Binding SelectCommand}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+                <TextBlock Classes="meta" Text="布局：导航 TopBand（V1 生效）；书架/工作台/阅读器为预留" TextWrapping="Wrap" />
+              </StackPanel>
+
+              <Separator />
+
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="对比度校验" />
+                <ItemsControl ItemsSource="{Binding RailAuditRows}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ThemeStudioContrastRow">
+                      <Border Classes="contrast-row" Classes.fail="{Binding !Pass}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                          <TextBlock Grid.Column="0" Classes="meta" Text="{Binding Label}" />
+                          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+                            <TextBlock Classes="contrast-value" Text="{Binding RatioLabel}" />
+                            <TextBlock Classes="contrast-state" Text="{Binding StateLabel}" />
+                          </StackPanel>
+                        </Grid>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Classes="meta" Text="{Binding RailAuditSummary}" />
+              </StackPanel>
+
+              <Separator />
+
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="meta" Text="{Binding PersistenceLabel}" />
+                <TextBlock Classes="meta" Text="{Binding CapabilityNote}" TextWrapping="Wrap" IsVisible="{Binding HasCapabilityNote}" />
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="secondary" Content="取消" Command="{Binding CancelCommand}" HorizontalAlignment="Stretch" />
+                  <Button Classes="primary" Content="{Binding ApplyButtonLabel}" Command="{Binding ApplyCommand}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <TextBlock Classes="meta" Text="{Binding ApplyStateLabel}" TextWrapping="Wrap" />
+              </StackPanel>
+            </StackPanel>
+          </ScrollViewer>
+        </Border>
+      </Grid>
+
+      <!-- ── Modal dialog host (unsaved changes / reset / save-as / delete) ─────────── -->
+      <Grid Grid.Row="0" Grid.RowSpan="3"
+            IsVisible="{Binding Dialog.IsOpen}"
+            ZIndex="{DynamicResource Nm.ZIndex.Modal}"
+            KeyboardNavigation.TabNavigation="Cycle">
+        <Border Classes="dialog-scrim" />
+        <Border x:Name="DialogCard" Classes="dialog-card">
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <c:StatusBadge Status="Blocked" ShowLabel="False" VerticalAlignment="Center" />
+              <TextBlock Classes="title" Text="{Binding Dialog.Title}" TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock Classes="body" Text="{Binding Dialog.Message}" TextWrapping="Wrap" />
+            <TextBlock Classes="meta"
+                       Text="{Binding Dialog.Footnote}"
+                       IsVisible="{Binding Dialog.HasFootnote}"
+                       TextWrapping="Wrap" />
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Dialog.IsInputVisible}">
+              <TextBox Watermark="主题名称" Text="{Binding Dialog.NameInput, Mode=TwoWay}" />
+              <TextBox Watermark="作者（可选）" Text="{Binding Dialog.AuthorInput, Mode=TwoWay}" />
+              <TextBox Watermark="标签，逗号分隔（可选）" Text="{Binding Dialog.TagsInput, Mode=TwoWay}" />
+            </StackPanel>
+
+            <CheckBox Content="{Binding Dialog.CheckboxLabel}"
+                      IsChecked="{Binding Dialog.IsChecked, Mode=TwoWay}"
+                      IsVisible="{Binding Dialog.IsCheckboxVisible}" />
+
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" HorizontalAlignment="Right">
+              <ItemsControl ItemsSource="{Binding Dialog.Actions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioDialogAction">
+                    <Button Classes="sm"
+                            Classes.primary="{Binding IsPrimary}"
+                            Classes.danger="{Binding IsDanger}"
+                            Content="{Binding Label}"
+                            Command="{Binding Command}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Button Classes="ghost sm" Content="关闭（Esc）" Command="{Binding Dialog.CancelCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Grid>
+  </tsc:PaletteScope>
+</UserControl>

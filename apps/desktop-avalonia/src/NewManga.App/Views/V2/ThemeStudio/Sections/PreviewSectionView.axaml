@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:tsc="using:NewManga.App.Views.V2.ThemeStudio.Controls"
+             xmlns:tsp="using:NewManga.App.Views.V2.ThemeStudio.Preview"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.PreviewSectionView"
+             x:DataType="vm:ThemeStudioPreviewViewModel">
+  <!-- ② 预览: three real surfaces + appearance/contrast/density/zoom switches. -->
+  <Grid RowDefinitions="Auto,Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
+    <StackPanel Grid.Row="0" Spacing="{DynamicResource Nm.Space.2}">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <TextBlock Classes="meta" Text="视图" VerticalAlignment="Center" />
+        <ItemsControl ItemsSource="{Binding ModeOptions}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioOption">
+              <Button Classes="chip sm"
+                      Classes.on="{Binding IsSelected}"
+                      Content="{Binding Label}"
+                      Command="{Binding SelectCommand}"
+                      ToolTip.Tip="{Binding Description}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <TextBlock Classes="meta" Text="明暗" VerticalAlignment="Center" />
+        <ItemsControl ItemsSource="{Binding AppearanceOptions}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioOption">
+              <Button Classes="chip sm"
+                      Classes.on="{Binding IsSelected}"
+                      Content="{Binding Label}"
+                      Command="{Binding SelectCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Classes="meta" Text="高对比" VerticalAlignment="Center" />
+        <ToggleSwitch IsChecked="{Binding HighContrast, Mode=TwoWay}" />
+
+        <TextBlock Classes="meta" Text="密度" VerticalAlignment="Center" />
+        <ItemsControl ItemsSource="{Binding DensityOptions}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioOption">
+              <Button Classes="chip sm"
+                      Classes.on="{Binding IsSelected}"
+                      Content="{Binding Label}"
+                      Command="{Binding SelectCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Classes="meta" Text="缩放" VerticalAlignment="Center" />
+        <ItemsControl ItemsSource="{Binding ZoomOptions}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioOption">
+              <Button Classes="chip sm"
+                      Classes.on="{Binding IsSelected}"
+                      Content="{Binding Label}"
+                      Command="{Binding SelectCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
+      <TextBlock Classes="meta" Text="{Binding ComparisonLabel}" />
+    </StackPanel>
+
+    <Border Grid.Row="1" Classes="hairline" Padding="{DynamicResource Nm.Padding.Cell}">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.3}">
+        <TextBlock Classes="meta" Text="示例内容 · 非真实书库（不读取用户数据）" VerticalAlignment="Center" />
+        <TextBlock Classes="meta" Text="{Binding ModeLabel}" VerticalAlignment="Center" />
+        <TextBlock Classes="meta" Text="{Binding PreviewAppearanceLabel}" VerticalAlignment="Center" />
+        <TextBlock Classes="meta" Text="{Binding DensityLabel}" VerticalAlignment="Center" />
+        <TextBlock Classes="meta" Text="{Binding ZoomLabel}" VerticalAlignment="Center" />
+      </StackPanel>
+    </Border>
+
+    <tsc:PaletteScope Grid.Row="2" x:Name="PreviewPaletteScope" Palette="{Binding Palette}">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="PreviewHost">
+          <ContentControl x:Name="ShelfHost" IsVisible="{Binding IsShelf}">
+            <tsp:ShelfPreviewView />
+          </ContentControl>
+          <ContentControl x:Name="WorkbenchHost" IsVisible="{Binding IsWorkbench}">
+            <tsp:WorkbenchPreviewView />
+          </ContentControl>
+          <ContentControl x:Name="ReaderHost" IsVisible="{Binding IsReader}">
+            <tsp:ReaderPreviewView />
+          </ContentControl>
+        </Grid>
+      </ScrollViewer>
+    </tsc:PaletteScope>
+  </Grid>
+</UserControl>

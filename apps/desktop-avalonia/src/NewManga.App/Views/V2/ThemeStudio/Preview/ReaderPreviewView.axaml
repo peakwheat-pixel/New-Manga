@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Preview.ReaderPreviewView"
+             x:DataType="vm:ThemeStudioPreviewViewModel">
+  <!--
+    阅读器 preview: a page surface with example translated region boxes, a navigation bar and a progress
+    bar. Real controls, example content only (never the user's library or images).
+  -->
+  <Border Background="{DynamicResource Nm.Color.Bg.Canvas}" Padding="{DynamicResource Nm.Padding.Panel}">
+    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="{DynamicResource Nm.Space.3}">
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+        <TextBlock Grid.Column="0" Classes="label" Text="雾港来信 · 第 3 章" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1" Classes="meta" Text="示例内容 · 非真实书库" VerticalAlignment="Center" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <Button Classes="ghost sm" Content="‹" />
+          <TextBlock Classes="num" Text="12 / 40" VerticalAlignment="Center" />
+          <Button Classes="ghost sm" Content="›" />
+        </StackPanel>
+      </Grid>
+
+      <Border Grid.Row="1" Classes="reader-surface">
+        <StackPanel Spacing="{DynamicResource Nm.Space.4}" VerticalAlignment="Center">
+          <TextBlock Classes="meta" Text="第 12 页（示例）" HorizontalAlignment="Center" />
+          <ItemsControl ItemsSource="{Binding SampleRegions}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioSampleRegion">
+                <Border Classes="reader-region">
+                  <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                    <TextBlock Classes="body" Text="{Binding Text}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+                      <TextBlock Classes="meta" Text="{Binding Label}" />
+                      <TextBlock Classes="meta" Text="{Binding StatusSymbol}" />
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <TextBlock Grid.Column="0" Classes="meta" Text="30%" VerticalAlignment="Center" />
+        <ProgressBar Grid.Column="1" Value="30" Maximum="100" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="2" Classes="meta" Text="进度双模态：页码 12/40 · 30%" VerticalAlignment="Center" />
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

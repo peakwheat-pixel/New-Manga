@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.MyThemesSectionView"
+             x:DataType="vm:ThemeStudioMyThemesViewModel">
+  <!-- ③ 我的主题: 已安装 / 收藏 / 自定义 tabs + apply/favorite/copy/export/delete. -->
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="{DynamicResource Nm.Space.3}">
+    <StackPanel Grid.Row="0" Spacing="{DynamicResource Nm.Space.2}">
+      <ItemsControl ItemsSource="{Binding TabOptions}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ThemeStudioOption">
+            <Button Classes="chip sm"
+                    Classes.on="{Binding IsSelected}"
+                    Content="{Binding Label}"
+                    Command="{Binding SelectCommand}"
+                    ToolTip.Tip="{Binding Description}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBlock Classes="meta" Text="{Binding SelectionLabel}" />
+    </StackPanel>
+
+    <Grid Grid.Row="1">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding HasItems}">
+        <ListBox ItemsSource="{Binding Items}"
+                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 ItemTemplate="{StaticResource ThemeRowTemplate}" />
+      </ScrollViewer>
+
+      <c:EmptyState Title="{Binding EmptyTitle}"
+                    Hint="{Binding EmptyHint}"
+                    IsVisible="{Binding IsEmpty}" />
+    </Grid>
+
+    <Border Grid.Row="2" Classes="hairline" Padding="{DynamicResource Nm.Padding.Cell}">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <Button Classes="primary sm" Content="应用" Command="{Binding ApplyCommand}" IsEnabled="{Binding HasSelection}" />
+        <Button Classes="secondary sm" Content="收藏 / 取消" Command="{Binding ToggleFavoriteCommand}" IsEnabled="{Binding HasSelection}" />
+        <Button Classes="secondary sm" Content="复制" Command="{Binding DuplicateCommand}" IsEnabled="{Binding HasSelection}" />
+        <Button Classes="secondary sm" Content="导出 .nmtheme" Command="{Binding ExportCommand}" IsEnabled="{Binding HasSelection}" />
+        <Button Classes="danger sm" Content="删除" Command="{Binding DeleteCommand}" IsEnabled="{Binding CanDelete}" />
+        <TextBlock Classes="meta"
+                   Text="内置主题不可删除，只能复制或另存为"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Preview.MiniTriPreviewView">
+  <!--
+    Mini tri-view of a theme card (THEME_STUDIO_SPEC §3.1): three small but REAL control renderings
+    (shelf / workbench / reader) drawn from the card's own palette. No bitmaps, no second style system —
+    every value is a DynamicResource token installed by the card's PaletteScope.
+  -->
+  <Border Classes="mini-preview" Background="{DynamicResource Nm.Color.Bg.Canvas}">
+    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+      <!-- 书架 -->
+      <StackPanel Grid.Column="0" Spacing="{DynamicResource Nm.Space.1}">
+        <TextBlock Classes="mini-caption" Text="书架" />
+        <WrapPanel Orientation="Horizontal">
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Accent.Muted}" />
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Bg.Sunken}" />
+          <Border Classes="mini-cover" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+        </WrapPanel>
+      </StackPanel>
+
+      <!-- 工作台 -->
+      <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+        <TextBlock Classes="mini-caption" Text="工作台" />
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.1}">
+          <StackPanel Grid.Column="0" Spacing="{DynamicResource Nm.Space.1}">
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Bg.Sunken}" />
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Bg.Sunken}" />
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Accent.Muted}" />
+          </StackPanel>
+          <Border Grid.Column="1" Classes="mini-canvas" Background="{DynamicResource Nm.Color.Bg.Sunken}">
+            <Border Classes="mini-region" Background="{DynamicResource Nm.Color.Accent.Muted}" />
+          </Border>
+          <StackPanel Grid.Column="2" Spacing="{DynamicResource Nm.Space.1}">
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+            <Border Classes="mini-bar" Background="{DynamicResource Nm.Color.Bg.Raised}" />
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+
+      <!-- 阅读器 -->
+      <StackPanel Grid.Column="2" Spacing="{DynamicResource Nm.Space.1}">
+        <TextBlock Classes="mini-caption" Text="阅读器" />
+        <Border Classes="mini-canvas" Background="{DynamicResource Nm.Color.Bg.Sunken}">
+          <StackPanel Spacing="{DynamicResource Nm.Space.1}" Margin="{DynamicResource Nm.Padding.IconSm}">
+            <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Text.Secondary}" />
+            <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Text.Secondary}" />
+            <Border Classes="mini-region" Background="{DynamicResource Nm.Color.Accent.Muted}" />
+            <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Text.Tertiary}" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>
