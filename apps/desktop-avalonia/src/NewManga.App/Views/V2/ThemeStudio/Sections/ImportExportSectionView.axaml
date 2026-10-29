@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.ImportExportSectionView"
+             x:DataType="vm:ThemeStudioImportExportViewModel">
+  <!-- ⑥ 导入导出: drag-in / paste / pick, per-item validation, blocked import on errors, canonical export. -->
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="{DynamicResource Nm.Space.3}">
+    <StackPanel Grid.Row="0" Spacing="{DynamicResource Nm.Space.2}">
+      <TextBlock Classes="section-title" Text="导入主题包" />
+      <Border x:Name="DropZone"
+              Classes="dropzone"
+              Classes.active="{Binding IsDropActive}"
+              DragDrop.AllowDrop="True">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="body" Text="把 .nmtheme / .json 文件拖到这里" />
+          <TextBlock Classes="meta" Text="{Binding PickerHint}" TextWrapping="Wrap" />
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <Button Classes="secondary sm" Content="选择文件…" Command="{Binding PickFileCommand}" />
+            <Button Classes="ghost sm" Content="载入当前主题作为样本" Command="{Binding UseSampleCommand}" />
+            <Button Classes="ghost sm" Content="清空" Command="{Binding ClearCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock Classes="meta" Text="{Binding CompatibilityNote}" />
+    </StackPanel>
+
+    <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="{DynamicResource Nm.Space.4}">
+      <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="主题包 JSON / 校验" />
+          <TextBox AcceptsReturn="True"
+                   TextWrapping="NoWrap"
+                   Classes="mono"
+                   MinHeight="{DynamicResource Nm.Size.StatusBandExpanded}"
+                   Text="{Binding InputJson, Mode=TwoWay}"
+                   Watermark="粘贴 newmanga.theme/1 主题包 JSON…" />
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <Button Classes="secondary sm" Content="校验" Command="{Binding ValidateCommand}" />
+            <Button Classes="primary sm"
+                    Content="导入"
+                    Command="{Binding ImportCommand}"
+                    IsEnabled="{Binding CanImport}" />
+            <TextBlock Classes="meta" Text="{Binding ReportSummary}" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Classes="meta" Text="{Binding SourceName}" />
+        </StackPanel>
+      </ScrollViewer>
+
+      <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.2}">
+        <TextBlock Grid.Row="0" Classes="section-title" Text="逐条校验结果（级别 / 路径 / 说明 / 建议）" />
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding Issues}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioIssue">
+                <Border Classes="contrast-row">
+                  <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                      <TextBlock Classes="data" Text="{Binding LevelLabel}" />
+                      <TextBlock Classes="mono" Text="{Binding PathLabel}" />
+                      <TextBlock Classes="body" Text="{Binding Code}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <TextBlock Classes="body" Text="{Binding Message}" TextWrapping="Wrap" />
+                    <TextBlock Classes="meta" Text="{Binding SuggestionLabel}" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Grid>
+
+    <Border Grid.Row="2" Classes="card">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <TextBlock Grid.Column="0" Classes="section-title" Text="导出主题" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1"
+                  Classes="compact"
+                  ItemsSource="{Binding ExportThemeOptions}"
+                  SelectedValue="{Binding SelectedExportThemeId, Mode=TwoWay}"
+                  SelectedValueBinding="{Binding Key}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioOption">
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="body" Text="{Binding Label}" />
+                <TextBlock Classes="meta" Text="{Binding Description}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Grid.Column="2"
+                Classes="secondary sm"
+                Content="导出 .nmtheme"
+                Command="{Binding ExportCommand}"
+                IsEnabled="{Binding CanExport}" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

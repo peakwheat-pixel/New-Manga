@@ -1,0 +1,83 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+                    xmlns:ts="using:NewManga.App.Views.V2.ThemeStudio"
+                    xmlns:tsc="using:NewManga.App.Views.V2.ThemeStudio.Controls"
+                    xmlns:tsp="using:NewManga.App.Views.V2.ThemeStudio.Preview">
+  <!--
+    Shared theme-card templates (library grid + my-themes list). The mini tri-view is wrapped in the card's
+    own PaletteScope, so it renders that theme's tokens without touching application resources.
+  -->
+
+  <DataTemplate x:Key="ThemeCardTemplate" x:DataType="vm:ThemeStudioCardViewModel">
+    <Button Classes="themecard"
+            Classes.selected="{Binding IsSelected}"
+            Width="{Binding Width}"
+            Command="{Binding PreviewCommand}"
+            ToolTip.Tip="{Binding AccessibleLabel}">
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <tsc:PaletteScope Palette="{Binding Palette}">
+            <tsp:MiniTriPreviewView />
+          </tsc:PaletteScope>
+
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+            <TextBlock Grid.Column="0"
+                       Classes="label"
+                       Text="{Binding Name}"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Classes="meta" Text="{Binding Version}" VerticalAlignment="Center" />
+          </Grid>
+
+          <TextBlock Classes="meta" Text="{Binding Author}" TextTrimming="CharacterEllipsis" />
+
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+            <Border Classes="hairline" Padding="{DynamicResource Nm.Padding.IconSm}">
+              <TextBlock Classes="meta" Text="{Binding KindLabel}" />
+            </Border>
+            <Border Classes="hairline" Padding="{DynamicResource Nm.Padding.IconSm}">
+              <TextBlock Classes="meta" Text="{Binding SupportLabel}" />
+            </Border>
+            <Border Classes="hairline" Padding="{DynamicResource Nm.Padding.IconSm}">
+              <TextBlock Classes="meta" Text="{Binding FavoriteLabel}" />
+            </Border>
+          </StackPanel>
+
+          <TextBlock Classes="meta" Text="{Binding TagsLabel}" TextTrimming="CharacterEllipsis" />
+
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <Button Classes="secondary sm" Content="预览" Command="{Binding PreviewCommand}" />
+            <Button Classes="ghost sm" Content="应用" Command="{Binding ApplyCommand}" />
+            <Button Classes="ghost sm" Content="{Binding FavoriteLabel}" Command="{Binding FavoriteCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Button>
+  </DataTemplate>
+
+  <DataTemplate x:Key="ThemeRowTemplate" x:DataType="vm:ThemeStudioCardViewModel">
+    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+      <tsc:PaletteScope Grid.Column="0" Palette="{Binding Palette}">
+        <tsp:MiniTriPreviewView Width="{DynamicResource Nm.Size.TreeWidth}" />
+      </tsc:PaletteScope>
+      <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="label" Text="{Binding Name}" />
+          <TextBlock Classes="meta" Text="{Binding Version}" VerticalAlignment="Center" />
+          <TextBlock Classes="meta" Text="{Binding KindLabel}" VerticalAlignment="Center" />
+        </StackPanel>
+        <TextBlock Classes="meta" Text="{Binding Author}" />
+        <TextBlock Classes="meta" Text="{Binding TagsLabel}" TextTrimming="CharacterEllipsis" />
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+          <TextBlock Classes="meta" Text="{Binding SupportLabel}" />
+          <TextBlock Classes="meta" Text="{Binding FavoriteLabel}" />
+        </StackPanel>
+      </StackPanel>
+      <StackPanel Grid.Column="2" Spacing="{DynamicResource Nm.Space.1}" VerticalAlignment="Center">
+        <Button Classes="secondary sm" Content="应用" Command="{Binding ApplyCommand}" />
+        <Button Classes="ghost sm" Content="{Binding FavoriteLabel}" Command="{Binding FavoriteCommand}" />
+      </StackPanel>
+    </Grid>
+  </DataTemplate>
+</ResourceDictionary>

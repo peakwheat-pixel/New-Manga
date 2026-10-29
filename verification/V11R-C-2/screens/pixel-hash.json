@@ -1,0 +1,12 @@
+{
+  "ac": "AC9",
+  "generated_by": "V2ThemeStudioScreenshotTests.Preview_DoesNotTouchAFixedPixelCanvas_OrTheUnsavedEditorState",
+  "method": "RenderTargetBitmap(320x180, #123456 canvas \u002B unsaved-edit text) hashed before/during/after a real preview session",
+  "hash_before": "1FB04898552104857D76064A9BCDAF759D3F4E62F355EC1F87D2FB19E0557052",
+  "hash_during_preview": "1FB04898552104857D76064A9BCDAF759D3F4E62F355EC1F87D2FB19E0557052",
+  "hash_after_cancel": "1FB04898552104857D76064A9BCDAF759D3F4E62F355EC1F87D2FB19E0557052",
+  "identical": true,
+  "applied_theme_before": "newmanga-default",
+  "applied_theme_after": "newmanga-default",
+  "passed": true
+}
