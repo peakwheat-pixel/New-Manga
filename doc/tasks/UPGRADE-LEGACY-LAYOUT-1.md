@@ -87,6 +87,7 @@ allowed_paths:
 - **round 3 修复**：R-04 sidecar 先于 DB promote + 失败 `return 2`（probe 证明根不建空库）；R-05 当前库时跳过 DB staging；
   R-06 +2 用例（12）；R-07 日志头补齐、Handoff 更新并纳入 allowed_paths、旧 `real-data-verify.json` 登记为 SOURCE_PIN。
 - 复审：**待 region-workbench-owner 再审 `098c60381`**。
+- 独立复审 round 3（region-workbench-owner，reviewed_head `ce3cf5bac`）：**PASS**（P0=0，P1=0；R-01/R-02/R-03/R-04/R-05/R-06/R-07 均闭环：12 passed、main fail-closed `MAIN_RETURN 2` 且不建根库、sidecar 失败重试成功、current+corrupt legacy 补迁成功、证据 7/7 pin、check PASS 3 warnings；剩余 4×P2：目录 promote 严格原子性表述/测试回归缺口/Handoff head pending/fail-closed 在 current DB 场景的启动策略，建议 done 收口时顺手修正）。详见 [`doc/reviews/UPGRADE-LEGACY-LAYOUT-1.md`](../reviews/UPGRADE-LEGACY-LAYOUT-1.md) 的 Round 3 Review。
 
 ## Canonical Evidence
 

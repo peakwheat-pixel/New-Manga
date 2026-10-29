@@ -3,8 +3,8 @@ task_id: UPGRADE-LEGACY-LAYOUT-1
 reviewer: region-workbench-owner
 author: dsh-lead
 base_commit: af6d9e94d
-reviewed_head: 154f97a5c6a636b7ce319677b109e076b5ad33d3
-decision: changes_requested
+reviewed_head: ce3cf5bac1dacc1d1c72395a9bb8b745ddcc92cc
+decision: approved
 ---
 
 # Review：UPGRADE-LEGACY-LAYOUT-1
@@ -129,3 +129,50 @@ decision: changes_requested
 5. 重生成带 command 头的全量日志、修正 Handoff 元数据/文件名、补 handoff 到 allowed_paths、登记/移走旧 `real-data-verify.json`。
 
 修复后需重新执行 10 用例、真实数据首次/二次证据和全量回归，再送第三轮复审。
+
+## Round 3 Review
+
+**reviewed_head**: `ce3cf5bac1dacc1d1c72395a9bb8b745ddcc92cc`；**decision: approved（PASS）**。
+
+**复核方式**：只读检查 `ce3cf5bac` / merge `098c60381` / 卡 `bbadef667`；repo root 实跑 12 个单测；独立做 main fail-closed、sidecar promote 失败、目录 promote 失败、current DB + corrupt legacy 故障注入；核对 7 个证据 SHA-256、`check.ps1`、`git show ce3cf5bac --stat` 与 allowed_paths。按用户要求未独立重跑全量 pytest。
+
+### R-01..R-07 状态
+
+| 项 | round 2 问题 | 状态 | 复核结论 |
+|---|---|---|---|
+| R-01 | unit-tests.log 曾是 "no tests ran" | **PASS** | 现为 COMMAND/CWD/PYTHON/AT + `12 passed` + `EXIT=0`；pin `8e7c0eae…` 匹配；本次 repo root 实跑 12 passed（0.38s）。 |
+| R-02 | real-data 只记录第二次运行 | **PASS** | `real-data-first-migration.json`：`migrated=true`、copied=`managed/,backups/,library.db`、源 SHA 前后不变、新库 SHA 一致、books=1、schema=6、integrity=ok；第二次幂等；pin 匹配。 |
+| R-03 | I/O 异常逃逸 | **PASS** | OSError 包装 + `main()` 捕获；独立 copy2 故障注入返回 `LegacyLayoutError`，根不变、staging 清理。 |
+| R-04 | sidecar 顺序 / main 继续启动创建空库 | **PASS（主风险闭环；P2 见 R3-01）** | promote 顺序已改为目录→侧车→主 DB；独立 sidecar `-wal` 失败探针：根无 `library.db`，清除 patch 后重试完整成功（根 DB/WAL 均在）；独立 main fail-closed 探针（`NEWMANGA_DATA_ROOT` + 损坏 legacy）返回 `MAIN_RETURN 2`，根 `library.db` 不存在、legacy 保留。目录 promote 部分失败仍会留下已 promote 的根目录（P2），但 main 退出、重试自愈，无空库/无数据库丢失。 |
+| R-05 | corrupt legacy DB 阻断补迁 | **PASS** | 独立探针：current DB 正常 + legacy DB 损坏 + legacy managed 存在 → `migrated=True, copied=['managed/']`，managed 成功补迁；单测覆盖。 |
+| R-06 | 12 用例与边界覆盖 | **PASS（P2 见 R3-02）** | 实跑 12 passed；新增 sidecar promote 失败重试、current DB + corrupt legacy 用例；目录 promote 失败/main 主入口仍无 pytest 回归（仅有 probe 日志）。 |
+| R-07 | 证据头 / Handoff / 旧证据登记 | **PASS（P2 见 R3-03）** | `pytest-full.log` 有 COMMAND/CWD/PYTHON/AT 与 `EXIT=0`；`main-failure-probe.log` pin 匹配；Handoff 存在并列入 allowed_paths；旧 `real-data-verify.json` 已登记为 SOURCE_PIN；`check.ps1` PASS（3 warnings，无未登记 evidence warning）。 |
+
+### Round 3 Findings
+
+| ID | 级别 | 文件/行 | 触发与影响 | 复现证据 | 建议 | 状态 |
+|---|---|---|---|---|---|---|
+| R3-01 | P2 | `src/infrastructure/sqlite/upgrade_legacy_layout.py:211-230`；docstring `:26-31` | 目录先 promote、失败可能留下已 promote 的根目录（如 managed 成功、backups 失败）；严格意义上不是“失败后根保持原样”。 | 独立故障注入 `_promote_directory` 对 `backups` 失败：root managed=True、backups=False、root_db=False；清除 patch 后 retry 成功（backups + DB）。 | 将文档/AC 的“失败不落地”改为“目录可先落地、重试自愈（DB 绝不先行）”，或进一步用临时根整体切换；无需改数据安全逻辑。 | open |
+| R3-02 | P2 | `tests/infrastructure/test_upgrade_legacy_layout.py` | 12 用例未覆盖目录 promote 失败、main 主入口 fail-closed、`NEWMANGA_DATA_ROOT` 的 pytest 回归；目前这些只有手工 probe/evidence。 | 逐条核对测试文件 | 可补三条回归测试（目录 promote 失败、main return 2、空根库不创建）。 | open |
+| R3-03 | P2 | `doc/handoffs/UPGRADE-LEGACY-LAYOUT-1-handoff.md:7`；证据头格式 | Handoff frontmatter 仍是 `head: pending (round 3 commit)`（实际 `ce3cf5bac`）；`pytest-full.log`/`unit-tests.log` 的 `PYTHON:`/`AT:` 值换行在下一行（仍可读，但格式可整理）。 | 读取 Handoff/日志 | Handoff head 改为 `ce3cf5bac`；日志头格式整理（可选）。 | open |
+| R3-04 | P2 | `src/bootstrap/core_service.py:4595-4611` | `main()` 在 current DB 存在、仅 legacy 目录补迁失败时也会 `return 2`，当前可用库无法启动；属 fail-closed 设计选择，建议在 Handoff/CLI 文档明确“仅文件系统可恢复错误时才退出”。 | 代码路径 | 文档说明或后续评估更细粒度失败策略，不阻塞本轮。 | open |
+
+### Round 3 验证
+
+| 场景 | 命令/步骤 | 结果 | 证据 |
+|---|---|---|---|
+| 单测 12 用例 | `python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q`（repo root） | **PASS：12 passed in 0.38s** | 本次实跑；`unit-tests.log` 12 passed |
+| main fail-closed | 损坏 legacy DB + 隔离 `NEWMANGA_DATA_ROOT` 调 `core_service.main()` | **PASS**：`MAIN_RETURN 2`，root `library.db` 不存在，legacy 保留 | 本次独立 probe；`main-failure-probe.log` |
+| sidecar promote 失败 | 故障注入 `os.replace` 对 `-wal` 失败 | **PASS**：root 无 `library.db`；清除 patch 后 retry 成功（DB/WAL） | 本次独立 probe |
+| 目录 promote 失败 | 故障注入 `_promote_directory` 对 backups 失败 | **P2**：root managed 留下（严格非原子）；retry 成功（backups+DB） | 本次独立 probe；R3-01 |
+| current DB + corrupt legacy | current DB + legacy 损坏 DB + legacy managed | **PASS**：`migrated=True, copied=['managed/']` | 本次独立 probe |
+| 证据 pin | 7 个 sha256（含 main-failure-probe/旧 real-data SOURCE_PIN） | **PASS：7/7 匹配** | 本次实算 |
+| 门禁 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/UPGRADE-LEGACY-LAYOUT-1.md` | **PASS（3 warnings）** | 本次实跑 |
+| 全量回归证据 | `pytest-full-summary.txt` / `pytest-full.log` | 证据：2612 passed / 10 skipped / 0 failed、`EXIT=0`、带命令头；按用户要求未独立重跑全量 | 证据文件 |
+| 契约/范围 | `git show --name-status ce3cf5bac` | 仅本任务 allowed_paths 内的源码/测试/证据/Handoff；未改命令面/schema | commit diff |
+
+### Round 3 结论
+
+**PASS @ `ce3cf5bac`**（集成 merge `098c60381`，卡 `bbadef667`）：P0=0，P1=0。R-04 的“空根库导致旧库永久不迁移”与 sidecar 先于 DB 的主风险已闭环；R-05 损坏旧库不再阻断补迁；R-01/R-02/R-03/R-07 的 round 1/2 问题均有可复现证据。剩余 4 项 P2（目录 promote 的严格原子性表述、测试回归缺口、Handoff head 元数据、fail-closed 在 current DB 场景的启动策略）不阻塞本 Task 收口；建议在 done 收口 commit 顺手修 R3-02/R3-03 的文档/测试项。
+
+复审结论仅对 `ce3cf5bac` 有效；后续 head 变化需重新审查。
