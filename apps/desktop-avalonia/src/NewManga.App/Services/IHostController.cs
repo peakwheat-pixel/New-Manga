@@ -28,6 +28,14 @@ public sealed record HostViewSnapshot(
     /// default to true so existing UI suites keep exercising the writable path.
     /// </summary>
     public bool WritesAllowed { get; init; } = true;
+
+    /// <summary>
+    /// V11R-A-1 (contract §5.1): typed code of the last refused service-layer write
+    /// (for example <c>INVALID_REQUEST</c> / <c>TARGET_NOT_FOUND</c> / <c>HOST_READ_ONLY</c> /
+    /// <c>CANCELLED</c>); null after the last successful write. Deliberately a code only — never a
+    /// message, an OS path or a credential — so the channel is safe to render and to log.
+    /// </summary>
+    public string? LastError { get; init; }
 }
 
 /// <summary>READER-PROGRESS-1: typed outcome of one progress save (never throws into the UI).</summary>
@@ -99,6 +107,20 @@ public interface IHostController : IReaderProgressSink, IAsyncDisposable
     Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default);
 
     Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V11R-A-1 (audit P-01, contract §5.1): creates one chapter through the Core
+    /// <c>CreateChapter</c> command (protocol minor 8). Returns the new chapter, or null when the
+    /// Host is not ready / read-only / the Core refused the request; refusals are recorded as a
+    /// typed code on <see cref="HostViewSnapshot.LastError"/> and never throw into the UI.
+    /// The Core stays the semantic authority for the title rules (blank titles are rejected by the
+    /// Core, duplicate titles are allowed by design); only an empty <paramref name="bookId"/> is
+    /// rejected locally before any wire frame is sent.
+    /// </summary>
+    Task<ChapterSummary?> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// READER-LIBRARY-WIRE-1 AC1: real reader payload (ListBooks → list_chapters → GetReaderProjection)
