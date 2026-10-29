@@ -1427,6 +1427,233 @@ public sealed class HostController : IHostController
         }
     }
 
+    // ---------------------------------------------------------------------------------------
+    // V11R-A-2 (audit P-02, contract §5.2): Run control through the registered production commands
+    // C056-C061 (library_start_run / library_control_run / library_resume_blocked_run /
+    // library_get_run_snapshot / library_get_task_projection / library_retry_failed_targets, all
+    // protocol minor 3). The dispatcher enforces the legacy argument shapes; refusals return null and
+    // publish the typed code through HostViewSnapshot.LastError. Writes follow the Host data-root
+    // policy exactly like the existing region writes.
+    // ---------------------------------------------------------------------------------------
+
+    public async Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default)
+    {
+        if (request is null ||
+            string.IsNullOrWhiteSpace(request.Command) ||
+            request.Scope is null ||
+            string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_start_run", RunPayloads.StartRun(request), ct)
+                .ConfigureAwait(false);
+            var info = RunStartInfo.FromJson(response.Value);
+            SetLastError(null);
+            return info;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<RunControlInfo?> ControlRunAsync(
+        string runId,
+        RunControlAction action,
+        string? idempotencyKey = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        // R-08: restart always needs the caller's key (never generated here); other actions ignore it
+        // because the frozen Core rejects an idempotency_key on them.
+        if (action == RunControlAction.Restart && string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync(
+                "library_control_run",
+                RunPayloads.ControlRun(
+                    runId,
+                    action,
+                    action == RunControlAction.Restart ? idempotencyKey : null),
+                ct)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync("library_resume_blocked_run", RunPayloads.RunId(runId), ct)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_get_run_snapshot", RunPayloads.RunId(runId), ct)
+                .ConfigureAwait(false);
+            return RunSnapshotInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_get_task_projection", RunPayloads.RunId(runId), ct)
+                .ConfigureAwait(false);
+            // AC4: the projection is parsed exactly as the Core composes it; nothing is derived here.
+            return TaskProjectionInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<RunControlInfo?> RetryFailedTargetsAsync(
+        string runId,
+        string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            // R-08: the retry key is mandatory — a missing key must never be generated silently.
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync(
+                "library_retry_failed_targets",
+                RunPayloads.RetryFailedTargets(runId, idempotencyKey),
+                ct)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// V11R-A-2: shared body of the four Run write faces (ControlRun / ResumeBlockedRun /
+    /// RetryFailedTargets). Local validation and the Host data-root policy gate run before any wire
+    /// frame; Core refusals keep their typed code (INVALID_RUN_TRANSITION / TARGET_NOT_FOUND /
+    /// IDEMPOTENCY_KEY_REUSED / …).
+    /// </summary>
+    private async Task<RunControlInfo?> InvokeRunWriteAsync(
+        string command,
+        System.Text.Json.JsonElement payload,
+        CancellationToken ct)
+    {
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands.InvokeAsync(command, payload, ct).ConfigureAwait(false);
+            var info = RunControlInfo.FromJson(response.Value);
+            SetLastError(null);
+            return info;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
     private static bool IsUiFacingFailure(Exception ex) => ex is
         CoreOperationException or SidecarException or BridgeException or ReadOnlyHostException or
         HostCommandInvalidArgumentsException or ShellActionException or IOException or

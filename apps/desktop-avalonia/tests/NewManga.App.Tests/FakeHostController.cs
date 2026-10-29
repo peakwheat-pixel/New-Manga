@@ -948,6 +948,247 @@ public sealed class FakeHostController : IHostController
             : null;
     }
 
+    // ---------------------------------------------------------------------------------------
+    // V11R-A-2 (contract §5.2): scripted Run seam. Records every request, lets a test queue typed
+    // results, and otherwise behaves like the deterministic fake (in-memory runs, honest empty
+    // projections, local R-08 key rules). Never throws into the UI.
+    // ---------------------------------------------------------------------------------------
+
+    public List<RunStartRequest> StartRunRequests { get; } = new();
+
+    public List<(string RunId, RunControlAction Action, string? IdempotencyKey)> ControlRunRequests { get; } = new();
+
+    public List<string> RunSnapshotRequests { get; } = new();
+
+    public List<string> TaskProjectionRequests { get; } = new();
+
+    public List<(string RunId, string IdempotencyKey)> RetriedFailedRuns { get; } = new();
+
+    public Queue<RunStartInfo?> ScriptedStartRuns { get; } = new();
+
+    public Queue<RunControlInfo?> ScriptedControlRuns { get; } = new();
+
+    public Queue<RunSnapshotInfo?> ScriptedRunSnapshots { get; } = new();
+
+    public Queue<TaskProjectionInfo?> ScriptedTaskProjections { get; } = new();
+
+    private readonly Dictionary<string, RunStartInfo> _fakeRuns = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, RunStartRequest> _fakeRunRequests = new(StringComparer.Ordinal);
+    private int _fakeRunSequence;
+
+    public Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default)
+    {
+        StartRunRequests.Add(request);
+
+        if (request is null ||
+            string.IsNullOrWhiteSpace(request.Command) ||
+            request.Scope is null ||
+            string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            PublishLastError("INVALID_REQUEST");
+            return Task.FromResult<RunStartInfo?>(null);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            PublishLastError("CANCELLED");
+            return Task.FromResult<RunStartInfo?>(null);
+        }
+
+        if (ScriptedStartRuns.Count > 0)
+        {
+            var scripted = ScriptedStartRuns.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        var info = new RunStartInfo($"fake-run-{++_fakeRunSequence}", "pending");
+        _fakeRuns[info.RunId] = info;
+        _fakeRunRequests[info.RunId] = request;
+        PublishLastError(null);
+        return Task.FromResult<RunStartInfo?>(info);
+    }
+
+    public Task<RunControlInfo?> ControlRunAsync(
+        string runId,
+        RunControlAction action,
+        string? idempotencyKey = null,
+        CancellationToken ct = default)
+    {
+        ControlRunRequests.Add((runId, action, idempotencyKey));
+
+        if (string.IsNullOrWhiteSpace(runId) ||
+            (action == RunControlAction.Restart && string.IsNullOrWhiteSpace(idempotencyKey)))
+        {
+            PublishLastError("INVALID_REQUEST");
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            PublishLastError("CANCELLED");
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        if (ScriptedControlRuns.Count > 0)
+        {
+            var scripted = ScriptedControlRuns.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        lock (_fakeRuns)
+        {
+            if (!_fakeRuns.TryGetValue(runId, out var run))
+            {
+                PublishLastError("TARGET_NOT_FOUND");
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            var next = action switch
+            {
+                RunControlAction.Pause when run.Status == "running" => "paused",
+                RunControlAction.Resume when run.Status == "paused" => "running",
+                RunControlAction.Stop when run.Status is "pending" or "running" or "paused" => "cancelled",
+                _ => null,
+            };
+            if (next is null)
+            {
+                PublishLastError("INVALID_RUN_TRANSITION");
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            var updated = run with { Status = next };
+            _fakeRuns[runId] = updated;
+            PublishLastError(null);
+            return Task.FromResult<RunControlInfo?>(new RunControlInfo(runId, next));
+        }
+    }
+
+    public Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            PublishLastError(ct.IsCancellationRequested ? "CANCELLED" : "INVALID_REQUEST");
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        if (ScriptedControlRuns.Count > 0)
+        {
+            var scripted = ScriptedControlRuns.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        PublishLastError("INVALID_RUN_TRANSITION");
+        return Task.FromResult<RunControlInfo?>(null);
+    }
+
+    public Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default)
+    {
+        RunSnapshotRequests.Add(runId);
+
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            PublishLastError(ct.IsCancellationRequested ? "CANCELLED" : "INVALID_REQUEST");
+            return Task.FromResult<RunSnapshotInfo?>(null);
+        }
+
+        if (ScriptedRunSnapshots.Count > 0)
+        {
+            var scripted = ScriptedRunSnapshots.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        lock (_fakeRuns)
+        {
+            if (!_fakeRuns.TryGetValue(runId, out var run))
+            {
+                PublishLastError("TARGET_NOT_FOUND");
+                return Task.FromResult<RunSnapshotInfo?>(null);
+            }
+
+            return Task.FromResult<RunSnapshotInfo?>(new RunSnapshotInfo(
+                runId,
+                _fakeRunRequests[runId].Command,
+                new RunScopeInfo("chapter"),
+                run.Status,
+                Array.Empty<RunTargetInfo>()));
+        }
+    }
+
+    public Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default)
+    {
+        TaskProjectionRequests.Add(runId);
+
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            PublishLastError(ct.IsCancellationRequested ? "CANCELLED" : "INVALID_REQUEST");
+            return Task.FromResult<TaskProjectionInfo?>(null);
+        }
+
+        if (ScriptedTaskProjections.Count > 0)
+        {
+            var scripted = ScriptedTaskProjections.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        lock (_fakeRuns)
+        {
+            if (!_fakeRuns.TryGetValue(runId, out var run))
+            {
+                PublishLastError("TARGET_NOT_FOUND");
+                return Task.FromResult<TaskProjectionInfo?>(null);
+            }
+
+            return Task.FromResult<TaskProjectionInfo?>(new TaskProjectionInfo(
+                runId,
+                run.Status,
+                null,
+                null,
+                null,
+                null,
+                Array.Empty<RunStepFlowInfo>(),
+                Array.Empty<RunRowInfo>(),
+                Array.Empty<RunTaskInfo>(),
+                new RunCountsInfo(),
+                Array.Empty<string>(),
+                new RunControlsInfo(false, false, false, false, false, false)));
+        }
+    }
+
+    public Task<RunControlInfo?> RetryFailedTargetsAsync(
+        string runId,
+        string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        RetriedFailedRuns.Add((runId, idempotencyKey));
+
+        if (string.IsNullOrWhiteSpace(runId) || string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            PublishLastError("INVALID_REQUEST");
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            PublishLastError("CANCELLED");
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        if (ScriptedControlRuns.Count > 0)
+        {
+            var scripted = ScriptedControlRuns.Dequeue();
+            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            return Task.FromResult(scripted);
+        }
+
+        PublishLastError("INVALID_RUN_TRANSITION");
+        return Task.FromResult<RunControlInfo?>(null);
+    }
+
     public static HostViewSnapshot ReadySnapshot(params string[] titles)
     {
         var books = new List<BookSummary>();
