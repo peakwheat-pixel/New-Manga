@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7b05d4d0-d0d0-4fca-8e16-942f11fbe407" name="49745@HOME-MY 2026-10-30 00:44:39" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-30T00:44:39.1005531+08:00" queuing="2026-10-30T00:44:39.1005533+08:00" start="2026-10-30T00:44:37.3388903+08:00" finish="2026-10-30T00:44:46.7416724+08:00" />
+  <TestSettings name="default" id="882a57c9-dda3-4742-b106-90c5a277184d">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-30_00_44_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4ff04c6a-3ca5-48a5-9293-c39f17e6f53a" testId="22aff079-4a82-40d5-67d9-07c7385e87ff" testName="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_BeforeStart_PublishesHostNotReady" computerName="HOME-MY" duration="00:00:00.0019541" startTime="2026-10-30T00:44:37.6885342+08:00" endTime="2026-10-30T00:44:37.6885342+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ff04c6a-3ca5-48a5-9293-c39f17e6f53a" />
+    <UnitTestResult executionId="a116852c-d4a4-4d5e-a1dc-388f77da71dd" testId="f11f9985-6007-22eb-1381-632580e9275e" testName="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_ScriptedFailure_ReturnsNullWithTypedCode" computerName="HOME-MY" duration="00:00:00.0022850" startTime="2026-10-30T00:44:46.6743309+08:00" endTime="2026-10-30T00:44:46.6743311+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a116852c-d4a4-4d5e-a1dc-388f77da71dd" />
+    <UnitTestResult executionId="4cb5e50a-f778-4e43-ae1e-7a7d613784d7" testId="0d019783-a8f3-74c3-74a0-f44f5ab0568a" testName="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_EmptyBookId_IsRejectedBeforeAnyWireFrame" computerName="HOME-MY" duration="00:00:00.0002724" startTime="2026-10-30T00:44:37.6879620+08:00" endTime="2026-10-30T00:44:37.6879620+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4cb5e50a-f778-4e43-ae1e-7a7d613784d7" />
+    <UnitTestResult executionId="1d71ba1f-3532-4ec1-96e2-1a6dd770cd92" testId="70f5f30d-7d4a-d2cf-9a54-1f9df9a77d02" testName="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_CancelledToken_PublishesCancelled" computerName="HOME-MY" duration="00:00:00.0036763" startTime="2026-10-30T00:44:37.6865063+08:00" endTime="2026-10-30T00:44:37.6865171+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d71ba1f-3532-4ec1-96e2-1a6dd770cd92" />
+    <UnitTestResult executionId="3a494a10-7f44-4bd4-b0f4-0e8c24f378b8" testId="39285bae-871a-0516-b760-81c98ca644f4" testName="NewManga.App.Tests.CreateChapterNullControllerTests.NullController_BlankArgumentsAndCancellation_ReturnNullWithoutAdvancingSequence" computerName="HOME-MY" duration="00:00:00.0003123" startTime="2026-10-30T00:44:46.6775813+08:00" endTime="2026-10-30T00:44:46.6775813+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a494a10-7f44-4bd4-b0f4-0e8c24f378b8" />
+    <UnitTestResult executionId="f6b4cd58-6538-4be9-b18d-63948cd1961d" testId="61c5fe12-91e7-520e-3a62-3219153e2942" testName="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_BlankOrCancelled_ReturnsNullWithTypedCode" computerName="HOME-MY" duration="00:00:00.0002530" startTime="2026-10-30T00:44:46.6746349+08:00" endTime="2026-10-30T00:44:46.6746349+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f6b4cd58-6538-4be9-b18d-63948cd1961d" />
+    <UnitTestResult executionId="2f75ba59-0f20-4d72-92b5-0a66a7d9ed40" testId="d1c05b7d-cae1-edba-afeb-a7dd0555814c" testName="NewManga.App.Tests.CreateChapterNullControllerTests.NullController_ValidCall_ReturnsDeterministicIncrementingChapter" computerName="HOME-MY" duration="00:00:00.0006066" startTime="2026-10-30T00:44:46.6772286+08:00" endTime="2026-10-30T00:44:46.6772287+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f75ba59-0f20-4d72-92b5-0a66a7d9ed40" />
+    <UnitTestResult executionId="567cc495-3e9f-46a8-ad49-eef67c155d24" testId="4a6737d3-713b-b08c-735e-5eddacfdd8a4" testName="NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures" computerName="HOME-MY" duration="00:00:04.5074433" startTime="2026-10-30T00:44:42.1982278+08:00" endTime="2026-10-30T00:44:42.1982281+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="567cc495-3e9f-46a8-ad49-eef67c155d24" />
+    <UnitTestResult executionId="889e21b1-f94d-4a11-b1b2-45021e1fde73" testId="991b8f56-ad67-9aa9-21cc-b751a1f3af22" testName="NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly" computerName="HOME-MY" duration="00:00:04.4718911" startTime="2026-10-30T00:44:46.6709875+08:00" endTime="2026-10-30T00:44:46.6709877+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="889e21b1-f94d-4a11-b1b2-45021e1fde73" />
+    <UnitTestResult executionId="86dec2f0-3a14-41c9-833b-7c722d568ffa" testId="7a267ff3-f52a-6fd7-ee94-94dffd28c00b" testName="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_ValidCall_RecordsRequestAndReturnsChapter" computerName="HOME-MY" duration="00:00:00.0018089" startTime="2026-10-30T00:44:46.6764896+08:00" endTime="2026-10-30T00:44:46.6764897+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86dec2f0-3a14-41c9-833b-7c722d568ffa" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="991b8f56-ad67-9aa9-21cc-b751a1f3af22">
+      <Execution id="889e21b1-f94d-4a11-b1b2-45021e1fde73" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterHostIntegrationTests" name="HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterNullControllerTests.NullController_BlankArgumentsAndCancellation_ReturnNullWithoutAdvancingSequence" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="39285bae-871a-0516-b760-81c98ca644f4">
+      <Execution id="3a494a10-7f44-4bd4-b0f4-0e8c24f378b8" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterNullControllerTests" name="NullController_BlankArgumentsAndCancellation_ReturnNullWithoutAdvancingSequence" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_ValidCall_RecordsRequestAndReturnsChapter" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="7a267ff3-f52a-6fd7-ee94-94dffd28c00b">
+      <Execution id="86dec2f0-3a14-41c9-833b-7c722d568ffa" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterUiSeamTests" name="FakeController_ValidCall_RecordsRequestAndReturnsChapter" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_BlankOrCancelled_ReturnsNullWithTypedCode" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="61c5fe12-91e7-520e-3a62-3219153e2942">
+      <Execution id="f6b4cd58-6538-4be9-b18d-63948cd1961d" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterUiSeamTests" name="FakeController_BlankOrCancelled_ReturnsNullWithTypedCode" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_BeforeStart_PublishesHostNotReady" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="22aff079-4a82-40d5-67d9-07c7385e87ff">
+      <Execution id="4ff04c6a-3ca5-48a5-9293-c39f17e6f53a" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterHostLocalFailureTests" name="CreateChapter_BeforeStart_PublishesHostNotReady" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_CancelledToken_PublishesCancelled" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="70f5f30d-7d4a-d2cf-9a54-1f9df9a77d02">
+      <Execution id="1d71ba1f-3532-4ec1-96e2-1a6dd770cd92" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterHostLocalFailureTests" name="CreateChapter_CancelledToken_PublishesCancelled" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterNullControllerTests.NullController_ValidCall_ReturnsDeterministicIncrementingChapter" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="d1c05b7d-cae1-edba-afeb-a7dd0555814c">
+      <Execution id="2f75ba59-0f20-4d72-92b5-0a66a7d9ed40" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterNullControllerTests" name="NullController_ValidCall_ReturnsDeterministicIncrementingChapter" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="4a6737d3-713b-b08c-735e-5eddacfdd8a4">
+      <Execution id="567cc495-3e9f-46a8-ad49-eef67c155d24" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterHostIntegrationTests" name="HostController_CreateChapter_SucceedsThenMapsCoreFailures" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterHostLocalFailureTests.CreateChapter_EmptyBookId_IsRejectedBeforeAnyWireFrame" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="0d019783-a8f3-74c3-74a0-f44f5ab0568a">
+      <Execution id="4cb5e50a-f778-4e43-ae1e-7a7d613784d7" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterHostLocalFailureTests" name="CreateChapter_EmptyBookId_IsRejectedBeforeAnyWireFrame" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.CreateChapterUiSeamTests.FakeController_ScriptedFailure_ReturnsNullWithTypedCode" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="f11f9985-6007-22eb-1381-632580e9275e">
+      <Execution id="a116852c-d4a4-4d5e-a1dc-388f77da71dd" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.CreateChapterUiSeamTests" name="FakeController_ScriptedFailure_ReturnsNullWithTypedCode" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="22aff079-4a82-40d5-67d9-07c7385e87ff" executionId="4ff04c6a-3ca5-48a5-9293-c39f17e6f53a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f11f9985-6007-22eb-1381-632580e9275e" executionId="a116852c-d4a4-4d5e-a1dc-388f77da71dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d019783-a8f3-74c3-74a0-f44f5ab0568a" executionId="4cb5e50a-f778-4e43-ae1e-7a7d613784d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70f5f30d-7d4a-d2cf-9a54-1f9df9a77d02" executionId="1d71ba1f-3532-4ec1-96e2-1a6dd770cd92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39285bae-871a-0516-b760-81c98ca644f4" executionId="3a494a10-7f44-4bd4-b0f4-0e8c24f378b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61c5fe12-91e7-520e-3a62-3219153e2942" executionId="f6b4cd58-6538-4be9-b18d-63948cd1961d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d1c05b7d-cae1-edba-afeb-a7dd0555814c" executionId="2f75ba59-0f20-4d72-92b5-0a66a7d9ed40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a6737d3-713b-b08c-735e-5eddacfdd8a4" executionId="567cc495-3e9f-46a8-ad49-eef67c155d24" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="991b8f56-ad67-9aa9-21cc-b751a1f3af22" executionId="889e21b1-f94d-4a11-b1b2-45021e1fde73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a267ff3-f52a-6fd7-ee94-94dffd28c00b" executionId="86dec2f0-3a14-41c9-833b-7c722d568ffa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.04]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.06]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.07]   Starting:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:09.08]   Finished:    NewManga.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
