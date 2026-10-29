@@ -38,7 +38,13 @@
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
 
-READY 节点：无
+## 当前活动程序（2026-10-30 起）
+
+**V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）。
+共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
+本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
+
+READY 节点：见 [V11R_PROGRAM §3](V11R_PROGRAM.md)（历史 READY = 无）
 
 ## 历史快照（终态节点，非当前 DAG）
 
