@@ -13,10 +13,10 @@ namespace NewManga.App.Shell.V2;
 /// </summary>
 public static class ShellLayout
 {
-    // ── R-18 responsive bands (frozen by Lead ruling; DS Breakpoint tokens are a follow-up) ──────
-    public const double BreakpointFull = 1600;     // >= 1600: full layout (4-column book grid)
-    public const double BreakpointCompact = 1280;  // 1280..1599: compact (3 columns, narrower detail)
-    public const double BreakpointNarrow = 1024;   // < 1280: narrow (detail becomes an overlay)
+    // ── R-18 responsive bands: DS tokens (Nm.Size.Breakpoint.*), no local literals ─────────────
+    public static double BreakpointFull => Size(NmKeys.Size.Breakpoint.Full);       // >= full (4 columns)
+    public static double BreakpointCompact => Size(NmKeys.Size.Breakpoint.Compact); // 1280..1599 compact (3 columns)
+    public static double BreakpointNarrow => Size(NmKeys.Size.Breakpoint.Narrow);   // < 1280 narrow (overlay detail)
 
     // ── Documented proportions (not colour/size tokens; derived geometry only) ──────────────────
     /// <summary>Book-cover card aspect ratio from SCREEN_SPECS §2 (cover cards are 1 : 1.3).</summary>
@@ -27,7 +27,7 @@ public static class ShellLayout
 
     public static bool IsFull(double width) => width >= BreakpointFull;
 
-    public static bool IsCompact(double width) => width is >= BreakpointCompact and < BreakpointFull;
+    public static bool IsCompact(double width) => width >= BreakpointCompact && width < BreakpointFull;
 
     public static bool IsNarrow(double width) => width < BreakpointCompact;
 

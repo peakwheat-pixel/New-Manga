@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Avalonia.Headless.XUnit;
 using NewManga.DesignSystem;
 
 namespace NewManga.App.Tests;
@@ -174,12 +175,15 @@ public sealed class V2ConformanceTests
         Assert.Empty(problems);
     }
 
-    [Fact]
-    public void ResponsiveBreakpoints_UseTheFrozenR18Values_AndNoLegacyThresholds()
+    [AvaloniaFact]
+    public void ResponsiveBreakpoints_ComeFromDesignSystemTokens_AndNoLegacyThresholds()
     {
+        // D-14 closed: the R-18 bands are DS tokens (Nm.Size.Breakpoint.*); the constants must not be
+        // duplicated locally. 1600/1280/1024 are the frozen token values.
         Assert.Equal(1600, NewManga.App.Shell.V2.ShellLayout.BreakpointFull);
         Assert.Equal(1280, NewManga.App.Shell.V2.ShellLayout.BreakpointCompact);
         Assert.Equal(1024, NewManga.App.Shell.V2.ShellLayout.BreakpointNarrow);
+        Assert.Equal(NmKeys.Size.Breakpoint.Full, "Nm.Size.Breakpoint.Full");
 
         var offenders = new List<string>();
         foreach (var file in AppCSharpFiles().Concat(V2XamlFiles()))

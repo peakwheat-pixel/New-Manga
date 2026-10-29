@@ -33,7 +33,11 @@
 
         <!-- 全窗表面：ThemeStudio（保留 TopBand 返回语义） -->
         <Grid IsVisible="{Binding IsThemeStudioOpen}">
-          <v:ThemeStudioPendingView />
+          <ContentControl Content="{Binding ThemeStudioWorkspaceContent}"
+                          IsVisible="{Binding IsThemeStudioWorkspaceRegistered}" />
+          <v:WorkspacePlaceholderView Title="主题中心"
+                                      Detail="{Binding ThemeStudioPlaceholderDetail}"
+                                      IsVisible="{Binding IsThemeStudioPlaceholderVisible}" />
         </Grid>
 
         <!-- 阅读浮层：覆盖空间内容，TopBand 保留（Esc 退出，不改主界面状态） -->

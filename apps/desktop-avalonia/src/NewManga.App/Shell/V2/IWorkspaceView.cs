@@ -31,3 +31,21 @@ public interface IWorkspaceView
     /// </summary>
     bool TryHandleKey(KeyEventArgs e, ShellState state);
 }
+
+/// <summary>
+/// V11R-INT-0: an overlay-surface workspace (currently Theme Studio). Same lifecycle contract as
+/// <see cref="IWorkspaceView"/>, but bound to a <see cref="ShellSurface"/> on the overlay stack instead
+/// of a top-level space.
+/// </summary>
+public interface ISurfaceWorkspace
+{
+    ShellSurface Surface { get; }
+
+    string DisplayName { get; }
+
+    Control CreateContent();
+
+    void OnActivated(ShellState state);
+
+    void OnDeactivated(ShellState state);
+}
