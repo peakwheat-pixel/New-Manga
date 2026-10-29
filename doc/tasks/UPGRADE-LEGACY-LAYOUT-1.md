@@ -64,7 +64,7 @@ allowed_paths:
 - [x] **AC2 幂等与守卫**：根库存在跳过；无旧布局 no-op；重复运行幂等；`PRAGMA integrity_check` 验证。<<MET>>
 - [x] **AC3 测试**：7 用例覆盖（含 WAL/损坏/幂等）；单测 7 passed；全量 2607 passed。<<MET>>
 - [x] **AC4 真实数据验证**：真实备份布局迁移 → SHA 一致、books=1、integrity ok、源未动。<<MET>>
-- [x] **AC5 门禁**：check（待最终 commit 后确认）；契约不变（仅启动迁移）；Handoff。<<MET>>
+- [x] **AC5 门禁**：`check.ps1` → **PASS**（3 warnings：非终态/PLAN 预算）；契约不变（仅启动迁移）；Handoff。<<MET>>
 
 ## 禁止范围（已遵守）
 
