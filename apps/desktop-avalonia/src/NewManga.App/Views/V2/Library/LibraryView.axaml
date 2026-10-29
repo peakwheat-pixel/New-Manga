@@ -119,7 +119,7 @@
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Disabled"
                       Padding="{DynamicResource Nm.Padding.Panel}"
-                      IsVisible="{Binding IsLoading}">
+                      IsVisible="{Binding ShowLoadingState}">
           <WrapPanel Orientation="Horizontal"
                      HorizontalAlignment="Left"
                      ItemWidth="{Binding CardSlotWidth}"
@@ -181,32 +181,37 @@
           </WrapPanel>
         </ScrollViewer>
 
-        <Grid IsVisible="{Binding HasError}">
-          <ctrl:EmptyState Title="书架读取失败"
-                           Hint="{Binding ErrorMessage}"
-                           ActionText="重试"
-                           ActionCommand="{Binding RefreshCommand}" />
-        </Grid>
+        <!-- V11R-INT-2 P1: ONE state container; its children are mutually exclusive by construction
+             (HostNotReady > Loading > Error > EmptyLibrary > NoResults). No sibling empty states can
+             overlap/render together — regression: pre-fix the 4 sibling Grids overlapped and overprinted. -->
+        <Grid x:Name="LibraryCenterStateHost" IsVisible="{Binding ShowEmptyState}">
+          <Grid IsVisible="{Binding ShowErrorState}">
+            <ctrl:EmptyState Title="书架读取失败"
+                             Hint="{Binding ErrorMessage}"
+                             ActionText="重试"
+                             ActionCommand="{Binding RefreshCommand}" />
+          </Grid>
 
-        <Grid IsVisible="{Binding HostNotReady}">
-          <ctrl:EmptyState Title="Host 尚未就绪"
-                           Hint="等待 Core sidecar；数据只经 Host/IPC 访问。"
-                           ActionText="重试"
-                           ActionCommand="{Binding RefreshCommand}" />
-        </Grid>
+          <Grid IsVisible="{Binding ShowHostNotReadyState}">
+            <ctrl:EmptyState Title="Host 尚未就绪"
+                             Hint="等待 Core sidecar；数据只经 Host/IPC 访问。"
+                             ActionText="重试"
+                             ActionCommand="{Binding RefreshCommand}" />
+          </Grid>
 
-        <Grid IsVisible="{Binding IsEmptyLibrary}">
-          <ctrl:EmptyState Title="书架还是空的"
-                           Hint="新建一本作品，选择章节后导入页面；所有读写都经 Core。"
-                           ActionText="新建作品"
-                           ActionCommand="{Binding NewBookCommand}" />
-        </Grid>
+          <Grid IsVisible="{Binding ShowEmptyLibraryState}">
+            <ctrl:EmptyState Title="书架还是空的"
+                             Hint="新建一本作品，选择章节后导入页面；所有读写都经 Core。"
+                             ActionText="新建作品"
+                             ActionCommand="{Binding NewBookCommand}" />
+          </Grid>
 
-        <Grid IsVisible="{Binding HasNoResults}">
-          <ctrl:EmptyState Title="没有匹配的作品"
-                           Hint="换个关键词（支持拼音首字母，例如 yglc），或切回「全部」筛选。"
-                           ActionText="清除搜索与筛选"
-                           ActionCommand="{Binding ClearFiltersCommand}" />
+          <Grid IsVisible="{Binding ShowNoResultsState}">
+            <ctrl:EmptyState Title="没有匹配的作品"
+                             Hint="换个关键词（支持拼音首字母，例如 yglc），或切回「全部」筛选。"
+                             ActionText="清除搜索与筛选"
+                             ActionCommand="{Binding ClearFiltersCommand}" />
+          </Grid>
         </Grid>
 
         <lv:RecycleBinView IsVisible="{Binding IsRecycleBinView}" />

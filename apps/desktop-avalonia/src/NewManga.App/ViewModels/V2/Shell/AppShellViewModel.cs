@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Avalonia.Input;
+using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.Console;
@@ -33,6 +34,7 @@ public sealed class AppShellViewModel : ObservableObject
     private string? _noticeText;
     private NmStatus _noticeStatus = NmStatus.Blocked;
     private ConfirmRequest? _confirm;
+    private string? _hostStartFailure;
 
     public AppShellViewModel(IHostController controller, IFilePickerGateway? picker = null)
     {
@@ -94,6 +96,19 @@ public sealed class AppShellViewModel : ObservableObject
         State.WorkspacesChanged += (_, _) => RaiseWorkspaceChrome();
         State.ModeChanged += (_, _) => RefreshChrome();
         State.SelectionChanged += (_, _) => RefreshChrome();
+        _controller.Changed += (_, _) =>
+        {
+            // HostController fires Changed from a thread-pool continuation; Avalonia property
+            // notifications must be raised on the UI thread (V11R-INT-2 real-window P0 follow-up).
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                RefreshChrome();
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(RefreshChrome);
+            }
+        };
         State.SurfaceChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(IsReaderSurfaceVisible), nameof(IsThemeStudioOpen), nameof(IsOverlayOpen));
@@ -240,6 +255,61 @@ public sealed class AppShellViewModel : ObservableObject
 
     public bool IsHostReady => _controller.Snapshot.State == HostViewState.Ready;
 
+    /// <summary>
+    /// V11R-INT-2: one-line Host readiness/diagnostic for the status band. Shows the real typed failure
+    /// (code + user message) or read-only reason; a thrown startup exception is surfaced here too.
+    /// </summary>
+    public string HostStatusLine
+    {
+        get
+        {
+            if (_hostStartFailure is { Length: > 0 } failure)
+            {
+                return failure;
+            }
+
+            var snapshot = _controller.Snapshot;
+            return snapshot.State switch
+            {
+                HostViewState.Ready when !string.IsNullOrWhiteSpace(snapshot.ReadOnlyReason) =>
+                    $"Host 就绪（{snapshot.ReadOnlyReason}）",
+                HostViewState.Ready => "Host 就绪",
+                HostViewState.AlreadyRunning => snapshot.ReadOnlyReason is { Length: > 0 } reason
+                    ? $"已有实例运行（{reason}）"
+                    : "已有实例运行",
+                HostViewState.Failed => HostFailureText(snapshot),
+                _ => "Host 启动中…",
+            };
+        }
+    }
+
+    public bool HasHostFailure =>
+        _hostStartFailure is { Length: > 0 } || _controller.Snapshot.State == HostViewState.Failed;
+
+    private static string HostFailureText(HostViewSnapshot snapshot)
+    {
+        var code = string.IsNullOrWhiteSpace(snapshot.ErrorCode) ? null : snapshot.ErrorCode;
+        var message = string.IsNullOrWhiteSpace(snapshot.ErrorMessage) ? null : snapshot.ErrorMessage;
+        if (code is not null && message is not null)
+        {
+            return $"Host 启动失败（{code}）：{message}";
+        }
+
+        if (message is not null)
+        {
+            return $"Host 启动失败：{message}";
+        }
+
+        if (code is not null)
+        {
+            return $"Host 启动失败（{code}）";
+        }
+
+        return string.IsNullOrWhiteSpace(snapshot.ReadOnlyReason)
+            ? "Host 启动失败：请查看 host.log"
+            : $"Host 启动失败：{snapshot.ReadOnlyReason}";
+    }
+
     // ── Notice / status band ──────────────────────────────────────────────────────────────
 
     public bool HasNotice => !string.IsNullOrEmpty(_noticeText);
@@ -253,29 +323,46 @@ public sealed class AppShellViewModel : ObservableObject
     public string NoticeLabel => NmStatusInfo.Label(_noticeStatus);
 
     /// <summary>
-    /// Status band is only an activity strip here (screen spec §1: it exists for a Run). Before the Run
-    /// projection lands it appears for real activity/status only; notices live in the AlertBanner.
+    /// V11R-INT-2 (P0): the band is always visible — it is the product's Host readiness channel.
+    /// It shows the active Run (R-24 shared snapshot), else import activity, else Host readiness/failure.
     /// </summary>
-    /// <summary>
-    /// Status band: R-24 — the single shared <see cref="RunStatusMonitor"/> snapshot is the Run source
-    /// (no Run ⇒ hidden); real import/Host activity still shows before any Run exists.
-    /// </summary>
-    public bool IsStatusBandVisible =>
-        (RunMonitor.IsActive && RunMonitor.HasSnapshot) || Library.ImportDock.IsRunning || !IsHostReady;
+    public bool IsStatusBandVisible => true;
 
     public string StatusBandLeft => RunMonitor.IsActive && RunMonitor.HasSnapshot
         ? RunMonitor.SummaryText
         : Library.ImportDock.IsRunning
             ? $"导入中 · {Library.ImportDock.Summary}"
-            : "Host 未就绪：等待 Core sidecar";
+            : HostStatusLine;
 
     public string StatusBandRight => $"作用域 {ScopeText} · {HostStatusText}";
 
-    public NmStatus StatusBandState => RunMonitor.IsActive && RunMonitor.HasSnapshot
-        ? RunMonitor.Status
-        : Library.ImportDock.IsRunning
-            ? NmStatus.Running
-            : NmStatus.Blocked;
+    public NmStatus StatusBandState
+    {
+        get
+        {
+            if (RunMonitor.IsActive && RunMonitor.HasSnapshot)
+            {
+                return RunMonitor.Status;
+            }
+
+            if (Library.ImportDock.IsRunning)
+            {
+                return NmStatus.Running;
+            }
+
+            if (HasHostFailure || _controller.Snapshot.State == HostViewState.Failed)
+            {
+                return NmStatus.Failed;
+            }
+
+            if (_controller.Snapshot.State == HostViewState.AlreadyRunning)
+            {
+                return NmStatus.Blocked;
+            }
+
+            return IsHostReady ? NmStatus.Done : NmStatus.Queued;
+        }
+    }
 
     public string StatusBandSymbol => NmStatusInfo.Symbol(StatusBandState);
 
@@ -572,8 +659,47 @@ public sealed class AppShellViewModel : ObservableObject
 
     private async Task InitializeCoreAsync()
     {
+        // V11R-INT-2 (P0): the v2 shell is the product default and MUST start the Host before any
+        // data-face read. StartAsync is idempotent (one sidecar per process); a typed failure is
+        // surfaced in the status band instead of being swallowed.
+        await StartHostAsync().ConfigureAwait(true);
+        RefreshChrome();
         await Library.InitializeAsync().ConfigureAwait(true);
         RefreshChrome();
+    }
+
+    private async Task StartHostAsync()
+    {
+        try
+        {
+            await _controller.StartAsync(CancellationToken.None).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException
+            or OperationCanceledException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            var code = ex is NewManga.CoreClient.Diagnostics.SidecarException sidecar
+                ? sidecar.Code.ToString()
+                : ex.GetType().Name;
+            _hostStartFailure = $"Host 启动失败（{code}）：{ex.Message}";
+        }
+    }
+
+    /// <summary>Test/automation seam: observes the raw Host readiness line shown by the status band.</summary>
+    public string HostReadinessDetail => HostStatusLine;
+
+    /// <summary>
+    /// V11R-INT-2: adopt the design-system manager's already-applied appearance (from --variant /
+    /// persisted choice) without re-forcing a default; user toggles still go through the shell.
+    /// </summary>
+    public void AdoptAppearance(bool isDark)
+    {
+        if (_isDarkTheme == isDark)
+        {
+            return;
+        }
+
+        _isDarkTheme = isDark;
+        OnPropertyChanged(nameof(IsDarkTheme), nameof(ThemeLabel), nameof(ThemeToggleTooltip));
     }
 
     public void Notify(string text, NmStatus status)
@@ -1237,7 +1363,9 @@ public sealed class AppShellViewModel : ObservableObject
             nameof(StatusBandState),
             nameof(StatusBandSymbol),
             nameof(HostStatusText),
-            nameof(IsHostReady));
+            nameof(IsHostReady),
+            nameof(HostStatusLine),
+            nameof(HasHostFailure));
     }
 
     private void SynchronizeReaderSurface()

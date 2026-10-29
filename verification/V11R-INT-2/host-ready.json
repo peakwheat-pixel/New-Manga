@@ -1,0 +1,24 @@
+{
+  "task": "V11R-INT-2",
+  "date": "2026-10-30",
+  "tip": "v2 default shell now starts the real Host; --variant works; library center state is single-block",
+  "real_sidecar": {
+    "shell": "v2",
+    "sidecar_dir": "apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar",
+    "cli_form": "--key=value",
+    "host_ready": true,
+    "host_log_dark": "logs/dark/host.log",
+    "host_log_light": "logs/light/host.log",
+    "dark_screenshot": "screens/int2-real-sidecar-host-ready-dark.png",
+    "light_screenshot": "screens/int2-real-sidecar-host-ready-light.png",
+    "dark_sha256": "8ED32D36F5876FD4E421A01B11CCB3A2077693A6BDB98AB078E8592908AFC102",
+    "light_sha256": "8B5BEAA8B6DF09B51CD4E42E9D8D90E73509E67813758401348EEBCA961BE912",
+    "window_size": "1567x1009 (requested 1600x1000; clamped by desktop width)"
+  },
+  "test_result": {
+    "build": "0W/0E",
+    "dotnet_test": "green",
+    "app_tests": "279 passed / 7 skipped / 286 total",
+    "v2_tests": 150
+  }
+}

@@ -51,11 +51,7 @@ public partial class App : Application
             // legacy theme pack has been applied. The startup appearance (--variant / persisted choice)
             // is passed in so initialization never silently overrides a known user preference; only an
             // absent choice falls back to the design-system default (dark).
-            var startupAppearance = string.IsNullOrWhiteSpace(options.StartupVariant)
-                ? (AppearanceMode?)null
-                : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
-                    ? AppearanceMode.Dark
-                    : AppearanceMode.Light;
+            var startupAppearance = StartupAppearance(options);
             _designSystemTheme = new DesignSystemThemeManager(this);
             _designSystemTheme.Initialize(startupAppearance);
 
@@ -119,6 +115,16 @@ public partial class App : Application
                 try
                 {
                     await service.InitializeAsync();
+
+                    // V11R-INT-2: the Theme Studio service applies persisted settings after the shell
+                    // has adopted the startup appearance. An explicit --variant must win over the
+                    // persisted default, and the shell label must mirror the real palette.
+                    if (StartupAppearance(options) is { } requested)
+                    {
+                        _designSystemTheme.SetAppearance(requested);
+                    }
+
+                    shell.ViewModel.AdoptAppearance(_designSystemTheme.Appearance == AppearanceMode.Dark);
                 }
                 catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
                 {
@@ -134,6 +140,14 @@ public partial class App : Application
 
         return root;
     }
+
+    /// <summary>Explicit startup appearance from <c>--variant</c> (null = persisted/default wins).</summary>
+    private static AppearanceMode? StartupAppearance(AppOptions options) =>
+        string.IsNullOrWhiteSpace(options.StartupVariant)
+            ? null
+            : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
+                ? AppearanceMode.Dark
+                : AppearanceMode.Light;
 
     private static Window CreateLegacyShell(HostController controller, AppOptions options) =>
         new MainWindow(controller, options);

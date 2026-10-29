@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using NewManga.CoreClient;
 using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Commands;
@@ -11,7 +12,10 @@ namespace NewManga.App.Services;
 public sealed class HostController : IHostController
 {
     private readonly HostOptions _options;
+    private readonly object _startLock = new();
     private HostRuntime? _runtime;
+    private Task? _startTask;
+    private int _startRequests;
     private HostViewSnapshot _snapshot = new(
         HostViewState.Starting,
         "正在启动 Host…",
@@ -33,11 +37,44 @@ public sealed class HostController : IHostController
         _options = options;
     }
 
+    /// <summary>
+    /// V11R-INT-2: Changed is consumed by UI ViewModels (shell chrome, Studio page, legacy panels). Host
+    /// continuations run on the thread pool, so the event is always marshalled to the UI thread.
+    /// </summary>
+    private void RaiseChanged()
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() => Changed?.Invoke(this, EventArgs.Empty));
+        }
+    }
+
     public HostViewSnapshot Snapshot => _snapshot;
+
+    /// <inheritdoc />
+    public int StartRequests => Volatile.Read(ref _startRequests);
 
     public event EventHandler? Changed;
 
-    public async Task StartAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    /// V11R-INT-2: idempotent startup. The sidecar must be started exactly once per process, no matter
+    /// how many shell/lifecycle paths ask (v2 shell initialization is the product path; the legacy
+    /// shell keeps its single call). Repeated calls return the same task.
+    /// </summary>
+    public Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        lock (_startLock)
+        {
+            Interlocked.Increment(ref _startRequests);
+            return _startTask ??= StartCoreAsync(cancellationToken);
+        }
+    }
+
+    private async Task StartCoreAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -55,7 +92,7 @@ public sealed class HostController : IHostController
                 WritesAllowed = false,
                 ReadOnlyReason = "Host 启动失败（只读）",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
         }
 
         if (_snapshot.State == HostViewState.Ready)
@@ -87,7 +124,7 @@ public sealed class HostController : IHostController
                 WritesAllowed = false,
                 ReadOnlyReason = "Host 不可用（只读）",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
         }
         catch (SidecarException ex)
         {
@@ -100,7 +137,7 @@ public sealed class HostController : IHostController
                 WritesAllowed = false,
                 ReadOnlyReason = "Host 不可用（只读）",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
         }
     }
 
@@ -120,7 +157,7 @@ public sealed class HostController : IHostController
                     ? $"往返一致：{result.Expected}"
                     : $"往返不一致：expected={result.Expected} received={result.Received}",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
             await RefreshBooksAsync(cancellationToken).ConfigureAwait(false);
             return result.ExactMatch;
         }
@@ -130,7 +167,7 @@ public sealed class HostController : IHostController
             {
                 LastChineseRoundTrip = "只读模式：S2 parity 前禁止写生产数据",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
             return false;
         }
         catch (Exception ex) when (ex is CoreOperationException or SidecarException)
@@ -144,7 +181,7 @@ public sealed class HostController : IHostController
                 WritesAllowed = false,
                 ReadOnlyReason = "Host 不可用（只读）",
             };
-            Changed?.Invoke(this, EventArgs.Empty);
+            RaiseChanged();
             return false;
         }
     }
@@ -1728,7 +1765,7 @@ public sealed class HostController : IHostController
         }
 
         _snapshot = _snapshot with { LastError = code };
-        Changed?.Invoke(this, EventArgs.Empty);
+        RaiseChanged();
     }
 
     public async ValueTask DisposeAsync()
@@ -1779,7 +1816,7 @@ public sealed class HostController : IHostController
                 ? null
                 : CoexistenceRules.Describe(result.Mode),
         };
-        Changed?.Invoke(this, EventArgs.Empty);
+        RaiseChanged();
     }
 }
 

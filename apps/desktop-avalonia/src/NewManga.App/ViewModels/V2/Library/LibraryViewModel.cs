@@ -325,7 +325,27 @@ public sealed class LibraryViewModel : ObservableObject
 
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    public bool HostNotReady => !HasError && _initialized && !IsLoading && _controller.Snapshot.State != HostViewState.Ready;
+    /// <summary>
+    /// V11R-INT-2 P1: exactly one center block may be visible. Priority (highest first):
+    /// HostNotReady → Loading → Error → EmptyLibrary → NoResults → BookGrid.
+    /// </summary>
+    public bool ShowHostNotReadyState => _initialized && !IsLoading && _controller.Snapshot.State != HostViewState.Ready;
+
+    public bool ShowLoadingState => _initialized && !ShowHostNotReadyState && IsLoading;
+
+    public bool ShowErrorState => _initialized && !ShowHostNotReadyState && !IsLoading && HasError;
+
+    public bool ShowEmptyLibraryState => _initialized && !ShowHostNotReadyState && !IsLoading && !HasError
+        && _controller.Snapshot.State == HostViewState.Ready && _allBooks.Count == 0;
+
+    public bool ShowNoResultsState => _initialized && !ShowHostNotReadyState && !IsLoading && !HasError
+        && _controller.Snapshot.State == HostViewState.Ready && _allBooks.Count > 0 && Books.Count == 0;
+
+    /// <summary>True when one of the full-surface state blocks is visible (exactly one by construction).</summary>
+    public bool ShowEmptyState => ShowHostNotReadyState || ShowErrorState || ShowEmptyLibraryState || ShowNoResultsState;
+
+    // Legacy property names (kept for external bindings/tests); all derive from the exclusive selectors.
+    public bool HostNotReady => ShowHostNotReadyState;
 
     public string StatusMessage
     {
@@ -341,9 +361,9 @@ public sealed class LibraryViewModel : ObservableObject
 
     public bool HasStatus => _statusMessage.Length > 0;
 
-    public bool IsEmptyLibrary => !IsLoading && !HasError && _allBooks.Count == 0;
+    public bool IsEmptyLibrary => ShowEmptyLibraryState;
 
-    public bool HasNoResults => !IsLoading && !HasError && _allBooks.Count > 0 && Books.Count == 0;
+    public bool HasNoResults => ShowNoResultsState;
 
     public bool IsRecycleBinView
     {
@@ -360,7 +380,9 @@ public sealed class LibraryViewModel : ObservableObject
     public bool ShowGrid => !IsRecycleBinView;
 
     /// <summary>Book grid is hidden while the initial Host read is in flight (skeleton takes its place).</summary>
-    public bool ShowBooksGrid => ShowGrid && !IsLoading;
+    /// <summary>Book grid is visible only when exactly one data/state block applies (never under a state).</summary>
+    public bool ShowBooksGrid => ShowGrid && !ShowHostNotReadyState && !ShowLoadingState && !ShowErrorState
+        && !ShowEmptyLibraryState && !ShowNoResultsState;
 
     public string RecycleCountText => "—";
 
@@ -1115,6 +1137,12 @@ public sealed class LibraryViewModel : ObservableObject
         nameof(IsEmptyLibrary),
         nameof(HasNoResults),
         nameof(HostNotReady),
+        nameof(ShowHostNotReadyState),
+        nameof(ShowLoadingState),
+        nameof(ShowErrorState),
+        nameof(ShowEmptyLibraryState),
+        nameof(ShowNoResultsState),
+        nameof(ShowEmptyState),
         nameof(ShowBooksGrid),
         nameof(BookCountText),
         nameof(ListStatusText),
