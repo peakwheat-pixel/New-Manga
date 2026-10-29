@@ -1,0 +1,13 @@
+{
+  "ac": "AC2",
+  "region_id": "region-1",
+  "retype_expected_revision": 3,
+  "retype_new_revision": 4,
+  "restore_source_revision": 3,
+  "restore_expected_revision": 4,
+  "restore_new_revision": 5,
+  "rerender_page_id": "p1",
+  "rerender_artifact_id": "artifact-fake",
+  "rerender_preview_published": true,
+  "undo_read_history_first": true
+}

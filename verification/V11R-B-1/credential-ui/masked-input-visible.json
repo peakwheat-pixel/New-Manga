@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "derived TextBox keeps the TextBox control theme",
+  "height": 35,
+  "width": 900,
+  "masked_password_char": true
+}

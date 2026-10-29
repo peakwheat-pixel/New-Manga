@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             x:Class="NewManga.App.Views.V2.Shell.ScopeSelector"
+             x:DataType="vm:AppShellViewModel">
+  <!-- ScopeSelector (contract §6.2): ALWAYS visible; every batch action carries its scope suffix. -->
+  <Button Classes="ghost sm"
+          ToolTip.Tip="作用域选择器：所有空间共享同一 selection，批量动作必须显示作用域后缀">
+    <StackPanel Orientation="Horizontal"
+                Spacing="{DynamicResource Nm.Space.2}"
+                VerticalAlignment="Center">
+      <TextBlock Classes="meta" Text="作用域" IsVisible="{Binding !IsCompact}" />
+      <TextBlock Classes="label"
+                 Text="{Binding ScopeText}"
+                 TextTrimming="CharacterEllipsis"
+                 MaxWidth="{DynamicResource Nm.Size.FilmStripExpanded}"
+                 VerticalAlignment="Center" />
+    </StackPanel>
+    <Button.Flyout>
+      <Flyout Placement="BottomEdgeAlignedRight">
+        <StackPanel Spacing="{DynamicResource Nm.Space.3}"
+                    MinWidth="{DynamicResource Nm.Size.InspectorExpanded}">
+          <TextBlock Classes="section-title" Text="共享作用域（ShellState 是唯一状态源）" />
+          <TextBlock Classes="body" Text="{Binding ScopeText}" TextWrapping="Wrap" />
+          <TextBlock Classes="meta"
+                     Text="本章 / 选中 N 页 / 当前页 / 当前 Region 由同一 selection 派生；切换空间或模式不清空作用域。"
+                     TextWrapping="Wrap" />
+          <Button Classes="ghost sm"
+                  Content="清除多选"
+                  Command="{Binding Library.ClearSelectionCommand}"
+                  IsVisible="{Binding Library.IsMultiSelectActive}" />
+        </StackPanel>
+      </Flyout>
+    </Button.Flyout>
+  </Button>
+</UserControl>

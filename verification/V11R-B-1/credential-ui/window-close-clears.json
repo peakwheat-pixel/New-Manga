@@ -1,0 +1,6 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "window close drops the masked plaintext reference",
+  "masked_input_cleared_on_close": true,
+  "pending_secret_cleared_on_close": true
+}

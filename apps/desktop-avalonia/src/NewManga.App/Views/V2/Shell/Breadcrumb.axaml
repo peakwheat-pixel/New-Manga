@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             x:Class="NewManga.App.Views.V2.Shell.Breadcrumb"
+             x:DataType="vm:AppShellViewModel">
+  <!-- Breadcrumb (contract §6.2): 资料柜 › 作品 › 章节 › 页; the last level is not clickable. -->
+  <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+    <ItemsControl ItemsSource="{Binding Breadcrumb}" VerticalAlignment="Center">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:BreadcrumbItem">
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+            <TextBlock Classes="tertiary"
+                       Text="›"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ShowSeparator}" />
+            <Button Classes="crumb"
+                    Content="{Binding Label}"
+                    IsVisible="{Binding IsClickable}"
+                    Click="OnBreadcrumbClick" />
+            <TextBlock Classes="label"
+                       Text="{Binding Label}"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding IsCurrent}" />
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </ScrollViewer>
+</UserControl>

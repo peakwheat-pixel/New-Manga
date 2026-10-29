@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NewManga.App.Views.V2.Shell.Controls.AlertBanner">
+  <!-- AlertBanner (DESIGN_SYSTEM §6.2): icon + one consequence sentence + action; never colour-only. -->
+  <Border x:Name="Root" Classes="alert">
+    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+      <TextBlock x:Name="SymbolText" Classes="symbol data" VerticalAlignment="Center" />
+      <TextBlock x:Name="MessageText" Grid.Column="1" Classes="alert-message" VerticalAlignment="Center" />
+      <Button x:Name="ActionButton" Grid.Column="2" Classes="ghost sm" IsVisible="False" VerticalAlignment="Center" />
+    </Grid>
+  </Border>
+</UserControl>

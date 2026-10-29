@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.SpaceTabs"
+             x:DataType="vm:AppShellViewModel">
+  <!-- SpaceTabs (contract §6.2): three spaces, each with its Ctrl+N hint; active = accent outline. -->
+  <ItemsControl ItemsSource="{Binding SpaceTabs}">
+    <ItemsControl.ItemsPanel>
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}" />
+      </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+    <ItemsControl.ItemTemplate>
+      <DataTemplate x:DataType="vm:SpaceTabItem">
+        <Button Classes="spacetab"
+                Classes.active="{Binding IsActive}"
+                Command="{Binding ActivateCommand}"
+                ToolTip.Tip="{Binding Label}">
+          <StackPanel Orientation="Horizontal"
+                      Spacing="{DynamicResource Nm.Space.2}"
+                      VerticalAlignment="Center">
+            <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+            <ctrl:Kbd Text="{Binding Shortcut}" />
+          </StackPanel>
+        </Button>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

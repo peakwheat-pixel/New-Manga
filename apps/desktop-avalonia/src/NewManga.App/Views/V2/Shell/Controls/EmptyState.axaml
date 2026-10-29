@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NewManga.App.Views.V2.Shell.Controls.EmptyState">
+  <!-- EmptyState (DESIGN_SYSTEM §6.5): one sentence + one primary action + optional fact line; no illustration. -->
+  <StackPanel Spacing="{DynamicResource Nm.Space.3}"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              MaxWidth="{DynamicResource Nm.Size.Drawer}">
+    <TextBlock x:Name="TitleText"
+               Classes="empty-title"
+               HorizontalAlignment="Center"
+               TextAlignment="Center"
+               TextWrapping="Wrap" />
+    <TextBlock x:Name="HintText"
+               Classes="empty-hint"
+               HorizontalAlignment="Center"
+               TextAlignment="Center" />
+    <Button x:Name="ActionButton"
+            Classes="secondary sm"
+            HorizontalAlignment="Center"
+            IsVisible="False" />
+  </StackPanel>
+</UserControl>

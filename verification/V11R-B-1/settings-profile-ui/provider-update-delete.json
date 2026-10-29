@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "select -\u003E update -\u003E delete provider profile",
+  "update_profile_id": "profile-1",
+  "deleted_profile_id": "profile-1",
+  "empty_after_delete": true
+}

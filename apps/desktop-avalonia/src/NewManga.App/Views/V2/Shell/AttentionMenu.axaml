@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.AttentionMenu"
+             x:DataType="vm:AppShellViewModel">
+  <!-- AttentionMenu (contract §6.2): 待确认 N · 失败 M · 阻塞 K · 过期 P. Counts stay "—" until the
+       Run projection (V11R-A-2 / V11R-B-4) is wired: honest, never fabricated. -->
+  <Button Classes="ghost sm"
+          ToolTip.Tip="需要我处理：待确认 / 失败 / 阻塞 / 过期（Run 投影未接入时显示「—」）">
+    <StackPanel Orientation="Horizontal"
+                Spacing="{DynamicResource Nm.Space.2}"
+                VerticalAlignment="Center">
+      <TextBlock Classes="meta" Text="需要我处理" IsVisible="{Binding !IsCompact}" />
+      <TextBlock Classes="meta" Text="待办" IsVisible="{Binding IsCompact}" />
+      <TextBlock Classes="num data" Text="4" IsVisible="False" />
+    </StackPanel>
+    <Button.Flyout>
+      <Flyout Placement="BottomEdgeAlignedRight">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}"
+                    MinWidth="{DynamicResource Nm.Size.InspectorExpanded}">
+          <TextBlock Classes="section-title" Text="需要我处理（Run 投影）" />
+          <ItemsControl ItemsSource="{Binding AttentionItems}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:AttentionItem">
+                <Button Classes="detailrow"
+                        Command="{Binding ActivateCommand}"
+                        ToolTip.Tip="{Binding Tooltip}">
+                  <Grid ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="{DynamicResource Nm.Space.2}">
+                    <ctrl:StatusBadge Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1"
+                               Classes="label"
+                               Text="{Binding Label}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2"
+                               Classes="data"
+                               Text="{Binding CountText}"
+                               VerticalAlignment="Center" />
+                  </Grid>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="meta"
+                     TextWrapping="Wrap"
+                     Text="能力待接入：GetTaskProjection 由 V11R-A-2（core-bridge）与 V11R-B-4（工位批次）接入；计数显示「—」不伪造。" />
+        </StackPanel>
+      </Flyout>
+    </Button.Flyout>
+  </Button>
+</UserControl>
