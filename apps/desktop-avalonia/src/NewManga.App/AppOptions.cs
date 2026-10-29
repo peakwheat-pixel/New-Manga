@@ -51,6 +51,20 @@ public sealed class AppOptions
     /// </summary>
     public string? StartupThemeId { get; private set; }
 
+    /// <summary>
+    /// V11R-INT-1: which shell hosts the product. <c>v2</c> is the new Avalonia shell
+    /// (AppShellV2: three spaces + Studio dual mode + Theme Studio); <c>legacy</c> keeps the
+    /// pre-redesign code-built shell as a one-release rollback path (<c>--shell=legacy</c>).
+    /// Default is flipped to <c>v2</c> only after the INT-1 L3 gate passes.
+    /// </summary>
+    public string Shell { get; private set; } = DefaultShellId;
+
+    /// <summary>INT-1 rollout constant: keep <c>legacy</c> until the new shell passes L3, then flip.</summary>
+    public const string DefaultShellId = "legacy";
+
+    /// <summary>True when the new Avalonia shell should host the product.</summary>
+    public bool UseV2Shell => string.Equals(Shell, "v2", StringComparison.OrdinalIgnoreCase);
+
     /// <summary>THEME-MACOS-2 evidence hook: <c>light</c> / <c>dark</c> for the startup theme variant.</summary>
     public string? StartupVariant { get; private set; }
 
@@ -96,9 +110,12 @@ public sealed class AppOptions
                     break;
                 case "legacy-shell-check":
                     options.DetectLegacyShell = !value.Equals("off", StringComparison.OrdinalIgnoreCase);
-                    break;
-                case "theme":
+                    break;                case "theme":
+                case "theme-id":
                     options.StartupThemeId = value;
+                    break;
+                case "shell":
+                    options.Shell = value.Equals("v2", StringComparison.OrdinalIgnoreCase) ? "v2" : "legacy";
                     break;
                 case "variant":
                     options.StartupVariant = value;
