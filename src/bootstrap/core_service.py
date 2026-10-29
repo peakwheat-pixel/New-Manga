@@ -196,6 +196,10 @@ from infrastructure.resource_channel.render_preview import (
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
 from infrastructure.sqlite.nmbak import NmbakBackupError
+from infrastructure.sqlite.upgrade_legacy_layout import (
+    LegacyLayoutError,
+    migrate_legacy_layout,
+)
 from infrastructure.plugins.service import PluginError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
@@ -4584,6 +4588,24 @@ def _ensure_preview_namespace(catalog_db: Path, derived_root: Path) -> None:
 def main() -> int:
     env_root = os.environ.get("NEWMANGA_DATA_ROOT")
     data_root = Path(env_root) if env_root else default_data_root()
+    # UPGRADE-LEGACY-LAYOUT-1: older builds kept the library under <root>/data/.
+    # Promote it once, before anything opens the database; a broken legacy file
+    # is reported but must not prevent start-up (the current data root is then
+    # used as-is).
+    try:
+        migration = migrate_legacy_layout(data_root)
+    except LegacyLayoutError as error:
+        print(
+            f"[core.upgrade] legacy data layout was NOT migrated: {error}",
+            file=sys.stderr,
+        )
+    else:
+        if migration.migrated:
+            print(
+                "[core.upgrade] migrated legacy data layout: "
+                + ", ".join(migration.copied),
+                file=sys.stderr,
+            )
     derived_root = Path(os.environ.get("M2RC1_DERIVED_ROOT", data_root / "derived"))
     catalog_db = Path(
         os.environ.get("M2RC2_CATALOG_DB", data_root / "catalog" / "catalog.sqlite")

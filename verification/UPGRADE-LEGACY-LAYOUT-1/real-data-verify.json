@@ -1,0 +1,18 @@
+{
+ "result": {
+  "migrated": false,
+  "copied": [],
+  "skipped_reason": "current library.db already present; legacy data left untouched"
+ },
+ "legacy_sha_before": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "legacy_sha_after": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "legacy_untouched": true,
+ "new_db_exists": true,
+ "new_db_sha": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "new_db_same_as_legacy": true,
+ "books": 1,
+ "schema_version": 6,
+ "integrity": "ok",
+ "data_dir_kept": true,
+ "staging_removed": true
+}
