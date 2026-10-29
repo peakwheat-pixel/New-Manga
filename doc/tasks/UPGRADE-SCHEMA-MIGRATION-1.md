@@ -72,6 +72,7 @@ allowed_paths:
 ## Review
 
 - 实施与自查：DSH（Lead）。独立审查：**待补**（建议 `region-workbench-owner` 复核测试真实性/覆盖/无产品改动）。
+- 独立审查（region-workbench-owner，2026-10-29，reviewed_head `fd925fcf7`）：**FAIL / CHANGES_REQUESTED**（P0=0；2×P1 + 6×P2；7 个单测实跑通过、7/7 证据 pin 与 check PASS，但测试仅 seed v1-era 数据，v2/v5 版本特有/数据变换（尤其 v5 pipeline 表重建）在空表上执行；值/关系断言只覆盖 book title + revision 三列，chapters/pages 仅 count、无关系/FK 断言；pytest-full.log/summary 无命令头）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-1.md)。
 
 ## Canonical Evidence
 
