@@ -1,6 +1,6 @@
-# V11R Region 写面 + 文本读投影契约 v1.1（FROZEN）
+# V11R Region 写面 + 文本读投影契约 v1.2（FROZEN）
 
-状态：`FROZEN`（2026-10-30，V11R-F0-1 + V11R-F0-2 Owner 产出，Lead 裁定文件归属）。
+状态：`FROZEN`（2026-10-30；v1 = V11R-F0-1 写面，v1.1 = V11R-F0-2 文本读投影，v1.2 = F0-1 I1 有界返修：原子复合写 / 批量乐观锁 / 锁继承 / 事务化 delete-pin / Host 边界校验；Owner 产出，Lead 裁定文件归属）。
 任务卡：`doc/tasks/V11R-F0-1.md`（写面，高风险）、`doc/tasks/V11R-F0-2.md`（文本读投影，关闭 GAP-2）。
 上游：审计 §5.1 F-01（`New_Manga_前后端功能与接口现状审计_V1.1_修订完整版.md`）、
 `doc/plan/V11R_AVALONIA_CONTRACT.md` §1.2/§5.3、`doc/design/redesign-v1/40-fusion/FUSION_SPEC.md` §4/§8 F-01。
@@ -102,8 +102,12 @@ UI 从不提供页像素尺寸，也从不接触存储坐标。
   `list_region_revisions.current_revision_no`、或任一写命令返回的 `revision_no`）；
 - 必须为正整数；缺省 = 不启用守卫（向后兼容，C042/C045 既有语义）；
 - 语义与 C042/C045 完全一致：不可解析或不是 current 指针 ⇒ `INPUT_REVISION_CHANGED`，
-  **零写**（不是「吞掉冲突后继续写」）；单 region 命令在 commit seam 事务内二次校验
-  `expected_current_revision_id`，多 region 命令先整体校验全部条目、再逐 region 入 seam 二次校验；
+  **零写**（不是「吞掉冲突后继续写」）；
+- **事务内二次校验（v1.2 / I1）**：单 region 命令在 commit seam 事务内二次校验
+  `expected_current_revision_id`；**多 region 命令（merge/split 的源、reorder）与 delete/pin
+  全部走 `commit_region_batch`——在同一个 `BEGIN IMMEDIATE` 内先重读并比较每个 expected
+  current 指针，再执行任何写；任一过期 ⇒ 整批回滚、零写**。不允许出现「前 N 个已写、第 N+1 个
+  冲突」的部分提交。
 - 多 region 命令使用 `expected_revisions: {"<region_id>": <revision_no>, ...}`：
   必须**恰好覆盖**本次受影响的 region 集合，缺项/多项 ⇒ `INVALID_REQUEST`；
 - `create_region` 不支持也不需要守卫：创建不存在「先前 revision」，且 region_id 由服务端生成，
@@ -131,7 +135,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`（payload/枚举/几何）、`TARGET_NOT_FOUND`（page 不存在）、`UNKNOWN` |
 | 乐观锁 | 不适用（§1.4） |
 | 幂等 | 非幂等：每次调用创建新 region + 其第 1 个 revision |
-| 语义 | 复用 `RegionEditingService.create_region`（TASK-002 §2.1：首 revision 与 current 指针同一次原子 commit）；SFX 策略复用 EV-8 共享规则：仅 `region_type=sfx` 携带**当前全局** `sfx.policy`，其余类型强制 `skip`；命令写永远是用户写（首 revision `origin=user`，机器检测候选仍走 pipeline 内部路径）；显式 `reading_order` 原样使用、不做唯一性重排（UI 建议省略以自动追加） |
+| 语义 | 复用 `RegionEditingService.create_region`（TASK-002 §2.1：首 revision 与 current 指针同一次原子 commit）；SFX 策略复用 EV-8 共享规则：仅 `region_type=sfx` 携带**当前全局** `sfx.policy`，其余类型强制 `skip`；命令写永远是用户写（首 revision `origin=user`，机器检测候选仍走 pipeline 内部路径）；显式 `reading_order` 原样使用、不做唯一性重排（UI 建议省略以自动追加）；**v1.2/I1：实体行 + 首 revision + current 指针在同一个 `BEGIN IMMEDIATE` 内提交，失败整批回滚，绝无「无 current revision 的孤儿 region」** |
 
 ### C068 `delete_region`
 
@@ -142,7 +146,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`、`INPUT_REVISION_CHANGED`、`TARGET_NOT_FOUND`、`UNKNOWN` |
 | 乐观锁 | 支持；过期 ⇒ conflict 零写 |
 | 幂等 | 软删除本身**不新增 revision**；二次调用 `TARGET_NOT_FOUND`，历史/current/pinned 不变 |
-| 语义 | 仅写 `deleted_at`（既有 `delete_region`）；`list_regions` 不再返回该 region，但 `region_revisions` 与 current 指针对历史审计仍可寻址；不删除用户数据 |
+| 语义 | 仅写 `deleted_at`（既有 `delete_region`）；`list_regions` 不再返回该 region，但 `region_revisions` 与 current 指针对历史审计仍可寻址；不删除用户数据；**v1.2/I1：current 指针比较与 `deleted_at` 写入在同一个 `BEGIN IMMEDIATE` 内完成（过期即整批零写）** |
 
 ### C069 `save_region_geometry`
 
@@ -164,7 +168,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`、`INPUT_REVISION_CHANGED`、`TARGET_NOT_FOUND`（源 region 不存在/已删）、`UNKNOWN` |
 | 乐观锁 | 支持（映射）；**全部条目在任何写之前校验**，任一过期 => 零写 |
 | 幂等 | 非幂等；成功后重试 ⇒ 源已被软删，`TARGET_NOT_FOUND` |
-| 语义 | 复用 `merge_regions`（D03 §6.4）：覆盖 bbox + 多边形拼接、OCR/机翻以空格拼接、任一源的人工保护继承（`manual_edited`+`translation_locked`，重新确认由 merge 后 region 自己承担）、新 region 从 revision 1 开始、源软删除且历史保留 |
+| 语义 | 复用 `merge_regions`（D03 §6.4）：覆盖 bbox + 多边形拼接、OCR/机翻以空格拼接、任一源的人工保护继承（`manual_edited`+`translation_locked`，重新确认由 merge 后 region 自己承担）、新 region 从 revision 1 开始、源软删除且历史保留；**v1.2/I1：新 region 行+首 revision+全部源软删同一事务；源 current revision 在事务内重核对（任一过期整批零写）；继承「有效锁」——源 region 级或文本级锁任一为真即视为锁定，并一致写入新 region 的两个投影（P1-3）** |
 
 ### C071 `split_region`
 
@@ -175,7 +179,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`、`INPUT_REVISION_CHANGED`、`TARGET_NOT_FOUND`、`UNKNOWN` |
 | 乐观锁 | 支持；写入第一个 part 前校验 |
 | 幂等 | 非幂等；成功后重试 ⇒ `TARGET_NOT_FOUND` |
-| 语义 | 复用 `split_region`（D03 §6.4）：交互切割由编辑器给几何；每 part 新历史 revision 1、阅读序按 part 顺序；源软删除；人工保护继承 |
+| 语义 | 复用 `split_region`（D03 §6.4）：交互切割由编辑器给几何；每 part 新历史 revision 1、阅读序按 part 顺序；源软删除；人工保护继承；**v1.2/I1：全部 part 行+首 revision+源软删同一事务（中途失败不得留下 live 源 + 半套 part）；源 current revision 事务内重核对；每 part 继承源「有效锁」并写入两个投影（P1-3）** |
 
 ### C072 `reorder_regions`
 
@@ -186,7 +190,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`、`INPUT_REVISION_CHANGED`、`TARGET_NOT_FOUND`（page 未知）、`UNKNOWN` |
 | 乐观锁 | 支持（映射）；先整体校验，再逐 region 入 seam 二次校验 |
 | 幂等 | **效果幂等**：位置未变的 region 不产生 revision；相同顺序重复调用零新 revision |
-| 语义 | 复用 `reorder_regions`（TASK-028 §3.4：reading_order 是 revision-owned state）；拒绝部分列表，避免制造重复/空洞阅读序 |
+| 语义 | 复用 `reorder_regions`（TASK-028 §3.4：reading_order 是 revision-owned state）；拒绝部分列表，避免制造重复/空洞阅读序；**v1.2/I1：整批排列变更 + 各自新 revision 在同一个 `BEGIN IMMEDIATE` 内提交，事务内重核对所有 expected current 指针（含未变更 region 的检查），任一冲突整批回滚、零写（P1-2）** |
 
 ### C073 `save_manual_translation`
 
@@ -230,7 +234,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 错误 | `INVALID_REQUEST`、`INPUT_REVISION_CHANGED`（expected 过期）、`TARGET_NOT_FOUND`（region 或 revision 不存在）、`UNKNOWN` |
 | 乐观锁 | 支持（仅守卫 current 指针仍是调用方观察到的 revision；pin 本身不依赖 current） |
 | 幂等 | **幂等**：重复写同一 flag 无新状态、无新 revision |
-| 语义 | 复用 `set_revision_pinned`（AC-REV-003）：专用单语句事务只翻 `is_pinned`，**从不 upsert 不可变历史**、不移动 current 指针、不产生 revision；pin 保护 revision 免于 cleanup/清理（见 M2-C1 §5） |
+| 语义 | 复用 `set_revision_pinned`（AC-REV-003）：专用单语句事务只翻 `is_pinned`，**从不 upsert 不可变历史**、不移动 current 指针、不产生 revision；pin 保护 revision 免于 cleanup/清理（见 M2-C1 §5）；**v1.2/I1：current 指针比较与 is_pinned 更新在同一个 `BEGIN IMMEDIATE` 内完成（目标 revision 存在性为 append-only 历史的无竞态前置校验），过期即零写（P2-4）** |
 
 ### C077 `list_page_region_texts`（V11R-F0-2，读命令，关闭 GAP-2）
 
@@ -251,16 +255,27 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 1. **current/pinned 不被破坏**：所有 revision 写走既有 `commit_region_revision` 原子 seam
    （`BEGIN IMMEDIATE` 内重读 current、比较 id、插 revision、同步 revision-owned state、更新指针，
    失败整体回滚）；`pin_revision` 只翻 `is_pinned`；`delete_region` 只写 `deleted_at`。
-2. **不可变历史**：本任务不 upsert/不删除任何 `region_revisions` 行；restore 语义不变（新建
+2. **复合写全有或全无（v1.2/I1）**：create / merge / split / reorder / delete / pin 走
+   `commit_region_batch`——实体行、首 revision、current 指针、源软删、pin 旗标与全部 expected
+   current 重核对都在**同一个 `BEGIN IMMEDIATE`** 内；任一步失败整批回滚，因此不存在
+   「无 current revision 的 region」「merged 行与 live 源共存」「live 源 + 半套 part」
+   「部分重排」「delete/pin 跨过已变化的 current」。事务内重核对是防 TOCTOU 的唯一权威点，
+   调用前预检查只是快速失败。
+3. **锁继承（v1.2/I1）**：merge/split 继承「有效锁」（源 region 级或文本级任一为真），并**一致写入
+   region 列与 text_json 两个投影**；显式 `set_region_lock` 的锁定语义因此不会因合并/拆分丢失，
+   机器翻译步骤继续走既有锁/candidate 通道而不会覆盖受保护文本。既有 `save_manual_translation`
+   只写文本级旗标的行为**未改**（GAP-3 双投影说明保留，单独契约决策）。
+4. **不可变历史**：本任务不 upsert/不删除任何 `region_revisions` 行；restore 语义不变（新建
    RESTORED revision 而非回移指针）。
-3. **人工保护**：manual save/lock 的 `translation_locked` 会让机器写走既有 candidate 通道
+5. **人工保护**：manual save/lock 的 `translation_locked` 会让机器写走既有 candidate 通道
    （`apply_machine_translation` 的 LOCK_CHANGED / §8.4），写命令不解除保护。
-4. **源文件**：10 条写命令与 1 条读命令的 payload/result 均不含 OS 路径、文件名、base64 图像或
+6. **源文件**：10 条写命令与 1 条读命令的 payload/result 均不含 OS 路径、文件名、base64 图像或
    managed path；不读不写用户源文件与 Managed Copy 内容（几何是 DB 内坐标，不是文件）。
-5. **自动/机器写与用户写分离**：本任务全部是用户写（origin=USER），不修改 pipeline 的
+7. **自动/机器写与用户写分离**：本任务全部是用户写（origin=USER），不修改 pipeline 的
    machine-write guard、candidate 持久化与锁比较语义。
-6. **失败面**：任何校验失败在持久化之前返回（写前 fail-closed）；conflict 零写；
-   内部失败仅固定短语，详情只进 stderr。
+8. **失败面**：任何校验失败在持久化之前返回（写前 fail-closed）；conflict 零写；
+   内部失败仅固定短语，详情只进 stderr。Host 侧 v1.2/I1 起同时拒绝领域非法值
+   （归一化坐标越界、非正整数 revision/reading_order），不把明显非法的请求发到 Core。
 
 ---
 
@@ -271,8 +286,10 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
   `V11RAdditiveCommandNames`（11）显式暴露追加集合；`All` = 冻结 66 条迁移命令 + 11 条追加命令。
 - `HostCommandDispatcher.WriteCorePayload`：逐命令做 legacy 边界的 fail-closed 参数校验
   （`INVALID_ARGUMENTS`，发帧前拒绝），并写出 §2 的精确 payload：
-  - 几何：`geometry.points` ≥2 个 `[x,y]` 有限数对；split `parts` 为 ≥2 个点列表；
-  - `expected_revisions`：对象，key 非空、value 整数；`set_region_lock` 至少一个锁字段；
+  - 几何：`geometry.points` ≥2 个 `[x,y]` 有限数对，**且必须在归一化 `[0,1]` 内**（v1.2/I1）；split `parts` 为 ≥2 个点列表；
+  - `expected_revisions`：对象，key 非空、value **正整数**；`set_region_lock` 至少一个锁字段；
+  - v1.2/I1：`expected_revision` / `reading_order` 必须为正整数（present ⇒ >0），`revision_no`
+    必须为正整数；领域非法值在发帧前以 `INVALID_ARGUMENTS` 拒绝；
   - `edited_translation` 允许空串（文本写入专用 `RequireText`）；
   - `list_page_region_texts.region_ids`：可选，非空、互异非空字符串；省略/null 即整页。
 - V11R-F0-2 新增读取 DTO（`NewManga.CoreClient.Commands`）：
@@ -300,12 +317,18 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | C073 | `save_manual_translation` | +`expected_revision_no` |
 | C074 | `confirm_final` | +`expected_revision_no` |
 | C075 | **新增** `set_locks()`（组合既有域方法） | +`Region.set_translation_locked`、`RegionText.lock_translation`（对称域方法） |
-| C076 | `set_revision_pinned` | +`expected_revision_no`；`LookupError` → typed `RegionRevisionNotFound` |
+| C076 | `set_revision_pinned` | +`expected_revision_no`；`LookupError` → typed `RegionRevisionNotFound`；v1.2/I1：事务化 guard |
 | C077 | **新增** `RegionEditingService.list_region_details()`（只读组合：`list_regions` + `list_revisions` + `region_canvas` 逆向映射 + 共享 `region_text_state()`） | V11R-F0-2；不新增写路径、不补占位值 |
+
+**v1.2/I1 复合写 seam**：C067/C068/C070/C071/C072/C076 的「实体行 + 首 revision + current 指针 +
+源软删 + pin 旗标 + 全部 expected 重核对」统一走新增的
+`RegionRevisionCommitter.commit_region_batch(...)`（SQLite 实现在
+`src/infrastructure/sqlite/regions.py`，单 `BEGIN IMMEDIATE`）；没有第二条写路径。
 
 新增的读辅助：`RegionEditingService.current_revision(region_id)`（写后有效状态回读）、
 `region_text_state(region)`（四级文本单一投影定义，写/读共用）、
-`list_region_details(page_id, page_size=...)`（C077 的页码级真实投影）。
+`list_region_details(page_id, page_size=...)`（C077 的页码级真实投影）、
+`effective_region_locks(regions)`（merge/split 有效锁继承）。
 全部新增写参数均为 keyword-only 且默认 `None`，既有调用点零行为变化。
 
 ---
@@ -316,7 +339,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 |---|---|---|---|
 | GAP-1 | **已填**（application 层缺失） | `set_region_lock` 无 use case：域有 `Region.set_region_locked` / `set_inpaint_locked` / `RegionText.unlock_translation`，但没有把锁变更持久化为 revision 的应用层入口（此前唯一锁写是 manual save 的隐式上锁） | 本任务新增薄 `set_locks()`（组合既有域方法 + 同一 commit seam，锁变更产生 revision，D06 §87）+ 两个对称域方法；**明确标注为 V11R-F0-1 新增**，非既有能力 |
 | GAP-2 | **CLOSED（V11R-F0-2）** | Region **文本只读**投影曾缺失：`list_regions` 是 5 字段最小 DTO，IPC 上没有命令返回四级文本；C044 只返回 revision 摘要 | 新增 C077 `list_page_region_texts`（page-scoped，1 次命令完成首帧载入；含四轨文本/锁/review_state/is_pinned/pinned 历史/几何，全部真实投影）。实现见 `service.list_region_details` + `core_service.handle_list_page_region_texts`；测试 `tests/core/test_region_text_read_command.py`（11 用例）；证据 `verification/V11R-F0-2/`。**GAP-2 关闭**；UI 不再需要伪造文本 |
-| GAP-3 | **记录**（既有设计双投影） | `Region.translation_locked`（列，pipeline LockSnapshot 读它）与 `RegionText.translation_locked`（text_json，人工保护判定读它）是既有双表示；既有 `save_manual_translation` 只写 text 级 | 显式 `set_region_lock` 同时同步两者；C077 把两份原值分别投影（`locks.translation_locked` / `text.translation_locked`）。**未改**既有 manual save 行为（保持既有语义，bug 修复需独立契约决策），作为已知风险保留 |
+| GAP-3 | **记录**（既有设计双投影） | `Region.translation_locked`（列，pipeline LockSnapshot 读它）与 `RegionText.translation_locked`（text_json，人工保护判定读它）是既有双表示；既有 `save_manual_translation` 只写 text 级 | 显式 `set_region_lock` 同时同步两者；C077 把两份原值分别投影（`locks.translation_locked` / `text.translation_locked`）；**v1.2/I1：merge/split 继承有效锁并一致写入两个投影（P1-3 已修）**。**未改**既有 manual save 行为（保持既有语义，bug 修复需独立契约决策），作为已知风险保留 |
 | GAP-4 | **决策记录** | `create_region` 无 `expected_revision` | 创建无先前 revision，无冲突面；§1.4 已冻结说明，不是遗漏 |
 | GAP-5 | **边界** | `IHostController`/`HostController` 未追加 Region 写便捷方法 | 写权属 core-bridge（契约 §1.2）；本任务只保证命令真实可调（`HostRuntime.Commands`），UI 任务按 V11R_AVALONIA_CONTRACT 消费 |
 | GAP-6 | **记录** | merge/split 对源 region 只软删，不产生“删除 revision” | 既有 D03 §6.4/TASK-002 语义，源历史与 current/pin 保留；未改 |
@@ -346,15 +369,20 @@ A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为�
 
 ---
 
-## 8. 验证出口（证据见 `verification/V11R-F0-1/` 与 `verification/V11R-F0-2/`）
+## 8. 验证出口（证据见 `verification/V11R-F0-1/`、`verification/V11R-F0-2/`、`verification/V11R-F0-1-I1/`）
 
 | Gate | 命令 | 通过标准 |
 |---|---|---|
-| Python 全量 | `python -m pytest -q`（仓库根） | exit 0，无新增失败；新增用例见 `tests/core/test_region_write_commands.py`、`tests/core/test_region_text_read_command.py`、`tests/editing/test_region_write_guards.py` |
-| Core 契约用例 | `python -m pytest -q tests/core/test_region_write_commands.py tests/core/test_region_text_read_command.py tests/editing/test_region_write_guards.py` | 全绿（每命令成功/冲突/非法参数 + 重启后锁持久化 + 文本读投影真实值/软删不可见/空页/过滤） |
+| Python 全量 | `python -m pytest -q`（仓库根） | exit 0，无新增失败；新增用例见 `tests/core/test_region_write_commands.py`、`tests/core/test_region_text_read_command.py`、`tests/editing/test_region_write_guards.py`、`tests/core/test_region_atomicity.py`、`tests/core/test_region_batch_locking.py`、`tests/core/test_region_transactional_guards.py`、`tests/core/test_region_lock_inheritance.py` |
+| Core 契约用例 | `python -m pytest -q tests/core/test_region_*.py tests/editing/test_region_*.py` | 全绿（每命令成功/冲突/非法参数 + 重启后锁持久化 + 文本读投影 + 原子回滚/并发冲突零写/锁继承/事务化 delete-pin） |
 | C# 构建 | `dotnet build NewManga.sln -warnaserror`（`apps/desktop-avalonia`） | 0 warning / 0 error |
-| C# 测试 | `dotnet test NewManga.sln --no-build` | 全绿（`RegionWriteCommandTests`：11 条注册/minor/精确 payload/边界拒绝/DTO 严格解析） |
+| C# 测试 | `dotnet test NewManga.sln --no-build` | 全绿（`RegionWriteCommandTests`：11 条注册/minor/精确 payload/边界拒绝/DTO 严格解析 + v1.2/I1 领域非法值边界用例） |
 | 快照不变量 | 同 C# 测试 | 冻结 66 快照 ⊆ registry；追加集恰为 `V11RAdditiveCommandNames`（10 写 + 1 读） |
+
+**v1.2/I1 返修验证要求（已满足，证据见 `verification/V11R-F0-1-I1/README.md`）**：
+失败注入必须证明「无 current revision 的 region 行不存在」；并发/过期必须证明「整批零写」；
+显式 `set_region_lock(translation_locked=true)` 后 merge/split 必须仍锁定（双投影）且机器翻译
+不覆盖文本；delete/pin 的 guard 与写入必须同事务。
 
 ---
 
@@ -364,3 +392,4 @@ A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为�
 |---|---|
 | 2026-10-30 | v1 冻结：10 条命令契约、minor 3 策略、几何/乐观锁/幂等/错误码/数据安全、C# 注册与 payload、GAP 清单（V11R-F0-1 Owner） |
 | 2026-10-30 | v1.1（V11R-F0-2）：新增 C077 `list_page_region_texts`（page-scoped 文本读投影，关闭 GAP-2）、`RegionPageTextProjection` 解析 DTO、`RegionReadCommandNames`/`V11RAdditiveCommandNames`；GAP-2 标 CLOSED，GAP-3 “既有 manual save 未改”显式保留；契约升版原因见 §0 读命令选型。 |
+| 2026-10-30 | v1.2（V11R-F0-1 I1 有界返修，独立审查 r1 FAIL 处置）：P1-1 复合写全有或全无（`commit_region_batch` 单事务）；P1-2 多 region 乐观锁事务内整批重核对、整批零写；P1-3 merge/split 继承有效锁并写双投影；P2-4 delete/pin guard 与写入同事务；P2-5 Host 发帧前拒绝坐标越界/非正整数等领域非法值。逐项处置表见 `verification/V11R-F0-1-I1/README.md`。 |

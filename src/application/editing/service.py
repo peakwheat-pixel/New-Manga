@@ -24,6 +24,14 @@ Frozen rules implemented here:
   use case for the three explicit user locks (the domain setters existed,
   the application-layer use case did not), still routed through the same
   atomic commit seam.
+- V11R-F0-1 I1 (independent-review r1 repair): create / merge / split /
+  reorder / delete / pin go through ONE ``commit_region_batch`` transaction
+  (``BEGIN IMMEDIATE``): every expected current pointer is re-read inside the
+  transaction before the first write, so a conflict or persistence failure is
+  all-or-nothing (no orphan region, no merged-with-live-sources, no partial
+  reading order, no delete/pin past a moved current pointer). merge/split
+  inherit the EFFECTIVE locks (region-level OR text-level) into BOTH lock
+  projections.
 """
 
 from __future__ import annotations
