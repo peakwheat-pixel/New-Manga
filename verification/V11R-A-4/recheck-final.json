@@ -1,7 +1,7 @@
 {
   "task": "V11R-A-4",
-  "repo_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE",
-  "git_head": "9fbee17efde8ead5ae08947a3041fd45524674f8",
+  "repo_root": "G:\\CODEX\\New Manga",
+  "git_head": "0fc5d8ee308882fdea5337b89f2292d6580638cb",
   "checked_files": 17606,
   "hard_failures": [],
   "pending_owner_fixes": [
@@ -69,116 +69,8 @@
       }
     ]
   },
-  "allowed_hit_count": 128298,
+  "allowed_hit_count": 128268,
   "allowed_hits_sample": [
-    {
-      "file": ".codex/skills/ask-matt",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
-    },
-    {
-      "file": ".codex/skills/grill-me-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
-    },
-    {
-      "file": ".codex/skills/grill-with-docs-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
-    },
-    {
-      "file": ".codex/skills/handoff-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
-    },
-    {
-      "file": ".codex/skills/manage-skills",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
-    },
-    {
-      "file": ".codex/skills/vibehub",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.codex/)",
-      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
-    },
-    {
-      "file": ".dsh/skills/ask-matt",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
-    },
-    {
-      "file": ".dsh/skills/grill-me-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
-    },
-    {
-      "file": ".dsh/skills/grill-with-docs-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
-    },
-    {
-      "file": ".dsh/skills/handoff-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
-    },
-    {
-      "file": ".dsh/skills/manage-skills",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
-    },
-    {
-      "file": ".dsh/skills/vibehub",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.dsh/)",
-      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
-    },
-    {
-      "file": ".gemini/antigravity/skills/ask-matt",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/ask-matt"
-    },
-    {
-      "file": ".gemini/antigravity/skills/grill-me-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-me-2"
-    },
-    {
-      "file": ".gemini/antigravity/skills/grill-with-docs-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/grill-with-docs-2"
-    },
-    {
-      "file": ".gemini/antigravity/skills/handoff-2",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/handoff-2"
-    },
-    {
-      "file": ".gemini/antigravity/skills/manage-skills",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/manage-skills"
-    },
-    {
-      "file": ".gemini/antigravity/skills/vibehub",
-      "line": 1,
-      "reason": "historical evidence/doc tree (.gemini/)",
-      "text": "C:/Users/49745/.skills-manager/skills/vibehub"
-    },
     {
       "file": ".orchestrator/BACKLOG.md",
       "line": 7,
@@ -310,6 +202,114 @@
       "line": 298,
       "reason": "historical evidence/doc tree (.qoder-credits/)",
       "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 307,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 356,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 365,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 374,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part3.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 383,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part1.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 392,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523/doc/reviews/M2-C1-4d66523-r3.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 401,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 410,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/README.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 428,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/genlogs3.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 437,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 446,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/r3part4.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 455,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 473,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/m2c1-r3-review-state.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 580,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"attr\": \"file:G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 581,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 592,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"attr\": \"file:G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 593,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"label\": \"G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md\","
+    },
+    {
+      "file": ".qoder-credits/report.json",
+      "line": 604,
+      "reason": "historical evidence/doc tree (.qoder-credits/)",
+      "text": "\"attr\": \"file:G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh\","
     }
   ],
   "required_inputs": {
