@@ -49,8 +49,8 @@ public sealed class StudioCanvasViewport : Border
         };
         RenderOptions.SetBitmapInterpolationMode(_image, BitmapInterpolationMode.HighQuality);
 
-        _placeholderText = StudioUi.Text("正在读取页面图…", "nm-meta");
-        _placeholderHost = StudioUi.Box("studio-sunken");
+        _placeholderText = StudioUi.Text("正在读取页面图…", "meta");
+        _placeholderHost = StudioUi.Box("sunken");
         _placeholderHost.Child = new Border
         {
             Child = _placeholderText,
@@ -61,8 +61,8 @@ public sealed class StudioCanvasViewport : Border
         _imageHost = new Border { Child = _image, ClipToBounds = true };
 
         _finalText = StudioUi.Text(
-            "成品预览 · 能力待接入\n渲染结果读取命令未接入（F0-1）", "nm-meta", "nm-center", "nm-wrap");
-        _finalHost = StudioUi.Box("studio-sunken");
+            "成品预览 · 能力待接入\n渲染结果读取命令未接入（F0-1）", "meta", "studio-center", "studio-wrap");
+        _finalHost = StudioUi.Box("sunken");
         _finalHost.Child = new Border
         {
             Child = _finalText,
@@ -82,7 +82,7 @@ public sealed class StudioCanvasViewport : Border
         _surfaceGrid.Children.Add(_finalHost);
         _surfaceGrid.Children.Add(_splitDivider);
 
-        _pageFrame = StudioUi.Box("studio-page-shadowless");
+        _pageFrame = StudioUi.Box("studio-page-frame");
         _pageFrame.ClipToBounds = true;
         _pageFrame.Child = _surfaceGrid;
 

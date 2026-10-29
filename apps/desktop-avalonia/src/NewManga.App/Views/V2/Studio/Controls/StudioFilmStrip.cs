@@ -36,7 +36,7 @@ public sealed class StudioFilmStrip : Border
         var header = StudioUi.Row(4);
         header.Margin = new Thickness(4, 2);
         header.Children.Add(_expandButton);
-        var count = StudioUi.BoundText(nameof(StudioPageViewModel.PageCount), "nm-num", "nm-muted");
+        var count = StudioUi.BoundText(nameof(StudioPageViewModel.PageCount), "data", "muted");
         header.Children.Add(count);
 
         _items = new ItemsControl
@@ -88,27 +88,27 @@ public sealed class StudioFilmStrip : Border
     {
         var thumb = new Grid { Width = 44, Height = 56 };
         var placeholder = StudioUi.Box("studio-film-placeholder");
-        placeholder.Child = StudioUi.Text("·", "nm-meta", "nm-center");
+        placeholder.Child = StudioUi.Text("·", "meta", "studio-center");
         thumb.Children.Add(placeholder);
 
         var image = new Image { Stretch = Stretch.Uniform, Classes = { "studio-film-thumb" } };
         thumb.Children.Add(image);
 
-        var number = StudioUi.Text(item.NumberLabel, "nm-num");
+        var number = StudioUi.Text(item.NumberLabel, "data");
         number.HorizontalAlignment = HorizontalAlignment.Right;
         number.VerticalAlignment = VerticalAlignment.Bottom;
         number.Margin = new Thickness(2);
         thumb.Children.Add(number);
 
-        var stateGlyph = StudioUi.Text("·", "nm-num", "nm-state-nodata");
+        var stateGlyph = StudioUi.Text("·", "data", "studio-state-nodata");
         stateGlyph.HorizontalAlignment = HorizontalAlignment.Left;
         stateGlyph.VerticalAlignment = VerticalAlignment.Top;
         stateGlyph.Margin = new Thickness(3);
         thumb.Children.Add(stateGlyph);
 
-        var title = StudioUi.BoundText(nameof(StudioFilmPageItem.SourceFilename), "nm-meta");
+        var title = StudioUi.BoundText(nameof(StudioFilmPageItem.SourceFilename), "meta");
         title.TextTrimming = TextTrimming.CharacterEllipsis;
-        var stateText = StudioUi.BoundText(nameof(StudioFilmPageItem.StateLabel), "nm-meta", "nm-muted");
+        var stateText = StudioUi.BoundText(nameof(StudioFilmPageItem.StateLabel), "meta", "muted");
         var expanded = new StackPanel
         {
             Orientation = Orientation.Vertical,
@@ -144,7 +144,7 @@ public sealed class StudioFilmStrip : Border
             if (args.PropertyName is nameof(StudioFilmPageItem.HasState) or nameof(StudioFilmPageItem.State) or null)
             {
                 stateGlyph.Text = item.HasState ? item.StateGlyph : "·";
-                stateGlyph.Classes.Set("nm-state-nodata", !item.HasState);
+                stateGlyph.Classes.Set("studio-state-nodata", !item.HasState);
                 foreach (var state in Enum.GetValues<StudioStateKind>())
                 {
                     stateGlyph.Classes.Set(StudioStates.StyleClass(state), item.HasState && item.State == state);

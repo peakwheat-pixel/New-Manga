@@ -38,10 +38,13 @@ public sealed class StudioPageWorkspace : Grid
     private TextBlock _emptyTitle = null!;
     private TextBlock _emptyDetail = null!;
     private Button _emptyAction = null!;
+    private bool _responsiveApplied;
 
     public StudioPageWorkspace(StudioPageViewModel viewModel)
     {
         _viewModel = viewModel;
+        // Path bindings in this subtree resolve against the Page view model (one page, one context).
+        DataContext = viewModel;
         RowDefinitions = new RowDefinitions("*,Auto");
 
         // ---------------------------------------------------------------- main row
@@ -75,6 +78,7 @@ public sealed class StudioPageWorkspace : Grid
         Children.Add(bottom);
 
         // ---------------------------------------------------------------- overlays
+        SizeChanged += (_, _) => ApplyResponsive();
         _leaveModal = new StudioLeaveModal(viewModel);
         Grid.SetRowSpan(_leaveModal, 2);
         Children.Add(_leaveModal);
@@ -129,7 +133,7 @@ public sealed class StudioPageWorkspace : Grid
         var column = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto") };
 
         // toolbar (28px): surface switch + zoom + page navigation + region count
-        var toolbar = StudioUi.Box("studio-panel");
+        var toolbar = StudioUi.Box("panel");
         toolbar.Height = 32;
         toolbar.Padding = new Thickness(8, 0);
         var toolbarRow = StudioUi.Row(8);
@@ -138,11 +142,11 @@ public sealed class StudioPageWorkspace : Grid
 
         ZoomOutButton = StudioUi.Button("−", "icon ghost", () => _viewModel.ZoomOut());
         ToolTip.SetTip(ZoomOutButton, "缩小（滚轮亦可）");
-        _zoomText = new TextBlock { Classes = { "nm-num", "nm-secondary" }, Width = 42, TextAlignment = TextAlignment.Center };
+        _zoomText = new TextBlock { Classes = { "data", "muted" }, Width = 42, TextAlignment = TextAlignment.Center };
         _zoomText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.ZoomText)));
         ZoomInButton = StudioUi.Button("＋", "icon ghost", () => _viewModel.ZoomIn());
         ToolTip.SetTip(ZoomInButton, "放大（滚轮亦可）");
-        FitButton = StudioUi.Button("适应", "studio-action", () => _viewModel.FitWindow());
+        FitButton = StudioUi.Button("适应", "sm", () => _viewModel.FitWindow());
         ToolTip.SetTip(FitButton, "适应窗口（适应后居中）");
         toolbarRow.Children.Add(ZoomOutButton);
         toolbarRow.Children.Add(_zoomText);
@@ -156,12 +160,12 @@ public sealed class StudioPageWorkspace : Grid
         toolbarRow.Children.Add(PreviousPageButton);
         toolbarRow.Children.Add(NextPageButton);
 
-        var pageCounter = new TextBlock { Classes = { "nm-num", "nm-muted" } };
+        var pageCounter = new TextBlock { Classes = { "data", "muted" } };
         pageCounter.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.PageCounterText)));
         toolbarRow.Children.Add(pageCounter);
 
-        var regionChip = StudioUi.Box(StudioUi.Text("区", "nm-meta"), "studio-chip");
-        regionChip.Child = StudioUi.Text(string.Empty, "nm-meta");
+        var regionChip = StudioUi.Box(StudioUi.Text("区", "meta"), "studio-chip");
+        regionChip.Child = StudioUi.Text(string.Empty, "meta");
         ((TextBlock)regionChip.Child).Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.RegionCountText)));
         toolbarRow.Children.Add(regionChip);
 
@@ -171,27 +175,27 @@ public sealed class StudioPageWorkspace : Grid
         var banners = StudioUi.Column(4);
         banners.Margin = new Thickness(8, 4);
 
-        _hostBannerText = new TextBlock { Classes = { "nm-meta", "nm-wrap" } };
+        _hostBannerText = new TextBlock { Classes = { "meta", "studio-wrap" } };
         _hostBannerText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.HostBannerText)));
-        _hostBanner = StudioUi.Box(_hostBannerText, "studio-banner");
+        _hostBanner = StudioUi.Box(_hostBannerText, "raised");
         StudioUi.TrackVisible(_hostBanner, _viewModel, () => _viewModel.HostBannerVisible);
         banners.Children.Add(_hostBanner);
 
-        _errorText = new TextBlock { Classes = { "nm-meta", "nm-wrap" } };
+        _errorText = new TextBlock { Classes = { "meta", "studio-wrap" } };
         _errorText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.ErrorText)));
         var errorRow = StudioUi.Column(4);
         errorRow.Children.Add(_errorText);
-        _retryButton = StudioUi.Button("重新读取", "studio-action", () => _ = _viewModel.LoadAsync());
+        _retryButton = StudioUi.Button("重新读取", "sm", () => _ = _viewModel.LoadAsync());
         errorRow.Children.Add(_retryButton);
         _errorBanner = StudioUi.Box(errorRow, "studio-banner-error");
         StudioUi.TrackVisible(_errorBanner, _viewModel, () => _viewModel.HasErrorText);
         banners.Children.Add(_errorBanner);
 
-        _partialText = new TextBlock { Classes = { "nm-meta", "nm-wrap" } };
+        _partialText = new TextBlock { Classes = { "meta", "studio-wrap" } };
         _partialText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.PartialReason)));
         var partialRow = StudioUi.Row(8);
         partialRow.Children.Add(_partialText);
-        var partialRetry = StudioUi.Button("重试", "studio-action", () => _ = _viewModel.RefreshPageAsync());
+        var partialRetry = StudioUi.Button("重试", "sm", () => _ = _viewModel.RefreshPageAsync());
         partialRow.Children.Add(partialRetry);
         _partialBanner = StudioUi.Box(partialRow, "studio-banner-partial");
         StudioUi.TrackVisible(_partialBanner, _viewModel, () => _viewModel.HasPartialReason);
@@ -209,20 +213,20 @@ public sealed class StudioPageWorkspace : Grid
         statusBorder.Height = 24;
         statusBorder.Padding = new Thickness(8, 0);
         var statusRow = StudioUi.Row(12);
-        var pageInfo = new TextBlock { Classes = { "nm-num", "nm-muted" } };
+        var pageInfo = new TextBlock { Classes = { "data", "muted" } };
         pageInfo.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.BreadcrumbText)));
         statusRow.Children.Add(pageInfo);
-        var sizeInfo = new TextBlock { Classes = { "nm-num", "nm-muted" } };
+        var sizeInfo = new TextBlock { Classes = { "data", "muted" } };
         sizeInfo.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.PageSizeText)));
         statusRow.Children.Add(sizeInfo);
-        var selectionInfo = new TextBlock { Classes = { "nm-meta", "nm-secondary" } };
+        var selectionInfo = new TextBlock { Classes = { "meta", "muted" } };
         selectionInfo.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.SelectedRegionDetail)));
         statusRow.Children.Add(selectionInfo);
-        var detailsInfo = new TextBlock { Classes = { "nm-meta", "nm-muted" } };
+        var detailsInfo = new TextBlock { Classes = { "meta", "muted" } };
         detailsInfo.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.RegionDetailsStatus)));
         statusRow.Children.Add(detailsInfo);
         statusRow.Children.Add(new Panel { Width = 1 });
-        _statusText = new TextBlock { Classes = { "nm-meta" } };
+        _statusText = new TextBlock { Classes = { "meta" } };
         _statusText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.StatusText)));
         statusRow.Children.Add(_statusText);
         statusBorder.Child = statusRow;
@@ -243,7 +247,7 @@ public sealed class StudioPageWorkspace : Grid
 
     private Control BuildSurfaceSwitch()
     {
-        var segmented = StudioUi.Box("studio-segmented");
+        var segmented = StudioUi.Box("raised");
         var row = StudioUi.Row(0);
         foreach (var (mode, label) in new[]
                  {
@@ -272,14 +276,14 @@ public sealed class StudioPageWorkspace : Grid
     private void BuildEmptyOverlay()
     {
         _emptyOverlay = new Grid();
-        var card = StudioUi.Box("studio-banner");
+        var card = StudioUi.Box("raised");
         card.Width = 420;
         card.HorizontalAlignment = HorizontalAlignment.Center;
         card.VerticalAlignment = VerticalAlignment.Center;
         var column = StudioUi.Column(8);
-        _emptyTitle = new TextBlock { Classes = { "nm-title" } };
-        _emptyDetail = new TextBlock { Classes = { "nm-meta", "nm-wrap" } };
-        _emptyAction = StudioUi.Button("重新读取", "studio-action primary", () => _ = _viewModel.LoadAsync());
+        _emptyTitle = new TextBlock { Classes = { "title" } };
+        _emptyDetail = new TextBlock { Classes = { "meta", "studio-wrap" } };
+        _emptyAction = StudioUi.Button("重新读取", "sm primary", () => _ = _viewModel.LoadAsync());
         column.Children.Add(_emptyTitle);
         column.Children.Add(_emptyDetail);
         column.Children.Add(_emptyAction);
@@ -288,6 +292,41 @@ public sealed class StudioPageWorkspace : Grid
         StudioUi.TrackVisible(_emptyOverlay, _viewModel, () => _viewModel.IsEmpty || _viewModel.HasError);
         _viewModel.PropertyChanged += (_, _) => RefreshEmptyOverlay();
         RefreshEmptyOverlay();
+    }
+
+    /// <summary>
+    /// Responsive rules (FUSION_SPEC §6): ≥1600 full layout; 1280–1599 strip fixed at 56 and inspector
+    /// defaults collapsed; &lt;1280 the strip narrows to 40 and the inspector body becomes an overlay so
+    /// the canvas is never squeezed to zero.
+    /// </summary>
+    private void ApplyResponsive()
+    {
+        var width = Bounds.Width;
+        if (width <= 0)
+        {
+            return;
+        }
+
+        var compact = width < 1280;
+        _inspector.SetOverlayMode(compact);
+        _filmStrip.Width = compact ? 40 : _viewModel.FilmStripWidth;
+        _inspector.Width = compact ? 40 : _viewModel.InspectorWidth;
+
+        if (_responsiveApplied)
+        {
+            return;
+        }
+
+        _responsiveApplied = true;
+        if (width < 1600)
+        {
+            _viewModel.FilmStripExpanded = false;
+        }
+
+        if (width < 1400)
+        {
+            _viewModel.InspectorExpanded = false;
+        }
     }
 
     private void RefreshEmptyOverlay()

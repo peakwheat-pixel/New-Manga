@@ -150,7 +150,7 @@ public sealed class StudioRevisionItemViewModel : StudioObservable
 
     public string StateLabel => State is { } state ? StudioStates.Label(state) : "未开始";
 
-    public string StateClass => State is { } value ? StudioStates.StyleClass(value) : "nm-state-notstarted";
+    public string StateClass => State is { } value ? StudioStates.StyleClass(value) : "studio-state-notstarted";
 
     public bool IsCurrent => Revision.IsCurrent;
 

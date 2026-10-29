@@ -52,9 +52,9 @@ public static class StudioCoordinates
     public static double SnapZoom(double zoom) =>
         ClampZoom(Math.Round(ClampZoom(zoom) * 10, MidpointRounding.AwayFromZero) / 10);
 
-    public static double ZoomIn(double zoom) => SnapZoom(ClampZoom(zoom) + ZoomStep);
+    public static double ZoomIn(double zoom) => ClampZoom(ClampZoom(zoom) + ZoomStep);
 
-    public static double ZoomOut(double zoom) => SnapZoom(ClampZoom(zoom) - ZoomStep);
+    public static double ZoomOut(double zoom) => ClampZoom(ClampZoom(zoom) - ZoomStep);
 
     /// <summary>Wheel notch: <paramref name="notches"/> positive = zoom in.</summary>
     public static double ApplyWheelZoom(double zoom, int notches)

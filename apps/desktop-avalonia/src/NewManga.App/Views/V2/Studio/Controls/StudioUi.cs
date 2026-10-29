@@ -108,8 +108,8 @@ public static class StudioUi
     public static TextBlock Glyph(StudioStateKind? state, params string[] extraClasses)
     {
         var block = Text(state is { } value ? StudioStates.Glyph(value) : "–");
-        block.Classes.Add(state is { } token ? StudioStates.StyleClass(token) : "nm-state-nodata");
-        block.Classes.Add("nm-num");
+        block.Classes.Add(state is { } token ? StudioStates.StyleClass(token) : "studio-state-nodata");
+        block.Classes.Add("data");
         foreach (var name in extraClasses)
         {
             block.Classes.Add(name);
@@ -120,8 +120,8 @@ public static class StudioUi
 
     public static Border Dot(StudioStateKind? state, params string[] extraClasses)
     {
-        var border = Box("studio-pipeline-dot");
-        border.Classes.Add(state is { } token ? FillClass(token) : "nm-fill-nodata");
+        var border = Box("studio-dot");
+        border.Classes.Add(state is { } token ? FillClass(token) : "studio-fill-nodata");
         foreach (var name in extraClasses)
         {
             border.Classes.Add(name);
@@ -133,15 +133,15 @@ public static class StudioUi
     /// <summary>Maps a state to the muted fill class used by dots/matrix cells.</summary>
     public static string FillClass(StudioStateKind state) => state switch
     {
-        StudioStateKind.Queued => "nm-fill-queued",
-        StudioStateKind.Running => "nm-fill-running",
-        StudioStateKind.Done => "nm-fill-done",
-        StudioStateKind.Failed => "nm-fill-failed",
-        StudioStateKind.Blocked => "nm-fill-blocked",
-        StudioStateKind.Stale => "nm-fill-stale",
-        StudioStateKind.Skipped => "nm-fill-skipped",
-        StudioStateKind.NotStarted => "nm-fill-notstarted",
-        _ => "nm-fill-nodata",
+        StudioStateKind.Queued => "studio-fill-queued",
+        StudioStateKind.Running => "studio-fill-running",
+        StudioStateKind.Done => "studio-fill-done",
+        StudioStateKind.Failed => "studio-fill-failed",
+        StudioStateKind.Blocked => "studio-fill-blocked",
+        StudioStateKind.Stale => "studio-fill-stale",
+        StudioStateKind.Skipped => "studio-fill-skipped",
+        StudioStateKind.NotStarted => "studio-fill-notstarted",
+        _ => "studio-fill-nodata",
     };
 
     /// <summary>Binds a boolean path to visibility.</summary>

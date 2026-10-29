@@ -39,7 +39,7 @@ public sealed class StudioSelection : StudioObservable
     private StudioSurfaceMode _surfaceMode = StudioSurfaceMode.Page;
     private StudioInspectorTab _inspectorTab = StudioInspectorTab.Text;
     private bool _filmStripExpanded;
-    private bool _inspectorExpanded;
+    private bool _inspectorExpanded = true;
     private double _zoom = StudioCoordinates.DefaultZoom;
     private double _offsetX;
     private double _offsetY;

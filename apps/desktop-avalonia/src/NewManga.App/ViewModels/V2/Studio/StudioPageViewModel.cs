@@ -99,7 +99,7 @@ public sealed class StudioFilmPageItem : StudioObservable
 
     public string StateGlyph => _state is { } state ? StudioStates.Glyph(state) : string.Empty;
 
-    public string StateClass => _state is { } state ? StudioStates.StyleClass(state) : "nm-state-notstarted";
+    public string StateClass => _state is { } state ? StudioStates.StyleClass(state) : "studio-state-notstarted";
 
     public string StateLabel => _state is { } state ? StudioStates.Label(state) : "状态未接入";
 
@@ -162,7 +162,7 @@ public sealed class StudioPipelineStageItem : StudioObservable
 
     public string Glyph => _state is { } state ? StudioStates.Glyph(state) : "–";
 
-    public string StateClass => _state is { } token ? StudioStates.StyleClass(token) : "nm-state-nodata";
+    public string StateClass => _state is { } token ? StudioStates.StyleClass(token) : "studio-state-nodata";
 
     public string StateLabel => _state is { } state ? StudioStates.Label(state) : "无投影数据";
 
@@ -820,7 +820,12 @@ public sealed class StudioPageViewModel : StudioObservable
             }
 
             var loaded = await LoadPageCoreAsync(targetPageId, cancellationToken).ConfigureAwait(true);
-            LoadState = loaded == false ? StudioLoadState.Error : StudioLoadState.Ready;
+            // LoadPageCoreAsync sets Partial/Ready itself; a hard failure means nothing rendered.
+            LoadState = !loaded
+                ? StudioLoadState.Error
+                : PartialReason is not null
+                    ? StudioLoadState.Partial
+                    : StudioLoadState.Ready;
             await RefreshRunProjectionAsync(cancellationToken).ConfigureAwait(true);
             _ = LoadThumbnailsAsync(cancellationToken);
             return loaded;

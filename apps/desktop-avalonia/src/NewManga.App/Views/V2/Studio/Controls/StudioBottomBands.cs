@@ -35,11 +35,11 @@ public sealed class StudioTrackStrip : StackPanel
 
         foreach (var (key, label) in new[] { ("source", "原图"), ("text", "文本"), ("inpaint", "修复"), ("render", "排版") })
         {
-            var glyph = StudioUi.Text("·", "nm-num", "nm-state-nodata");
-            var detail = StudioUi.Text("—", "nm-meta", "nm-muted");
+            var glyph = StudioUi.Text("·", "data", "studio-state-nodata");
+            var detail = StudioUi.Text("—", "meta", "muted");
             var row = StudioUi.Row(4);
             row.Children.Add(glyph);
-            row.Children.Add(StudioUi.Text(label, "nm-label"));
+            row.Children.Add(StudioUi.Text(label, "label"));
             row.Children.Add(detail);
             var chip = StudioUi.Box(row, "studio-track-chip");
             _chips[key] = (glyph, detail, chip);
@@ -85,7 +85,7 @@ public sealed class StudioTrackStrip : StackPanel
                 chip.Glyph.Classes.Set(StudioStates.StyleClass(state), track.State == state);
             }
 
-            chip.Glyph.Classes.Set("nm-state-nodata", track.State is null);
+            chip.Glyph.Classes.Set("studio-state-nodata", track.State is null);
             ToolTip.SetTip(chip.Chip, track.Tooltip);
         }
     }
@@ -156,14 +156,14 @@ public sealed class StudioPipelineBand : Border
     public StudioPipelineBand(StudioPageViewModel viewModel)
     {
         _viewModel = viewModel;
-        Classes.Add("studio-pipeline-band");
+        Classes.Add("studio-band");
         Height = CollapsedHeight;
         BorderThickness = new Thickness(0, 1, 0, 0);
 
         _toggle = StudioUi.Button("▸ 展开 10 阶段", "ghost sm", () => _viewModel.TogglePipelineExpanded());
         _toggle.Bind(ContentControl.ContentProperty, new Binding(nameof(StudioPageViewModel.PipelineToggleLabel)));
-        _header = StudioUi.BoundText(nameof(StudioPageViewModel.PipelineHeaderText), "nm-label");
-        _pageText = StudioUi.BoundText(nameof(StudioPageViewModel.PageCounterText), "nm-num", "nm-muted");
+        _header = StudioUi.BoundText(nameof(StudioPageViewModel.PipelineHeaderText), "label");
+        _pageText = StudioUi.BoundText(nameof(StudioPageViewModel.PageCounterText), "data", "muted");
 
         _dots = StudioUi.Row(4);
         foreach (var stage in viewModel.PipelineStages)
@@ -179,18 +179,18 @@ public sealed class StudioPipelineBand : Border
                     dot.Classes.Set(StudioUi.FillClass(state), captured.State == state);
                 }
 
-                dot.Classes.Set("nm-fill-nodata", captured.State is null);
+                dot.Classes.Set("studio-fill-nodata", captured.State is null);
                 ToolTip.SetTip(dot, captured.Tooltip);
             };
         }
 
         var notWiredChip = StudioUi.Box(
-            StudioUi.Text("NOT_WIRED", "nm-meta"),
+            StudioUi.Text("NOT_WIRED", "meta"),
             "studio-chip");
         StudioUi.TrackVisible(notWiredChip, viewModel, () => viewModel.PipelineNotWired);
 
         var headerRow = StudioUi.Row(8);
-        headerRow.Margin = new Thickness(0, 4);
+        headerRow.Margin = new Thickness(0);
         headerRow.Children.Add(_toggle);
         headerRow.Children.Add(_header);
         headerRow.Children.Add(notWiredChip);
@@ -250,12 +250,12 @@ public sealed class StudioPipelineBand : Border
     {
         var row = StudioUi.Row(8);
         row.Margin = new Thickness(0, 2);
-        var index = StudioUi.Text(item.Index.ToString("00"), "nm-num", "nm-muted");
+        var index = StudioUi.Text(item.Index.ToString("00"), "data", "muted");
         index.Width = 20;
         var glyph = StudioUi.Glyph(item.State);
-        var label = StudioUi.BoundText(nameof(StudioPipelineStageItem.Label), "nm-label");
+        var label = StudioUi.BoundText(nameof(StudioPipelineStageItem.Label), "label");
         label.Width = 64;
-        var state = StudioUi.BoundText(nameof(StudioPipelineStageItem.StateLabel), "nm-meta", "nm-muted");
+        var state = StudioUi.BoundText(nameof(StudioPipelineStageItem.StateLabel), "meta", "muted");
         row.Children.Add(index);
         row.Children.Add(glyph);
         row.Children.Add(label);

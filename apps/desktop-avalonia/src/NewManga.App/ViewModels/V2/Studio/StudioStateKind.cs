@@ -26,7 +26,7 @@ public static class StudioStates
     /// <summary>State symbols frozen by the Avalonia contract §2.3.</summary>
     public static string Glyph(StudioStateKind state) => state switch
     {
-        StudioStateKind.Queued => "·",
+        StudioStateKind.Queued => "◦",
         StudioStateKind.Running => "◐",
         StudioStateKind.Done => "●",
         StudioStateKind.Failed => "✗",
@@ -57,15 +57,15 @@ public static class StudioStates
     /// </summary>
     public static string StyleClass(StudioStateKind state) => state switch
     {
-        StudioStateKind.Queued => "nm-state-queued",
-        StudioStateKind.Running => "nm-state-running",
-        StudioStateKind.Done => "nm-state-done",
-        StudioStateKind.Failed => "nm-state-failed",
-        StudioStateKind.Blocked => "nm-state-blocked",
-        StudioStateKind.Stale => "nm-state-stale",
-        StudioStateKind.Skipped => "nm-state-skipped",
-        StudioStateKind.NotStarted => "nm-state-notstarted",
-        _ => "nm-state-notstarted",
+        StudioStateKind.Queued => "studio-state-queued",
+        StudioStateKind.Running => "studio-state-running",
+        StudioStateKind.Done => "studio-state-done",
+        StudioStateKind.Failed => "studio-state-failed",
+        StudioStateKind.Blocked => "studio-state-blocked",
+        StudioStateKind.Stale => "studio-state-stale",
+        StudioStateKind.Skipped => "studio-state-skipped",
+        StudioStateKind.NotStarted => "studio-state-notstarted",
+        _ => "studio-state-notstarted",
     };
 
     /// <summary>The token key backing <see cref="StyleClass"/> (used by tests + evidence).</summary>

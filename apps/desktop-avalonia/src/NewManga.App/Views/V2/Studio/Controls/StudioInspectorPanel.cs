@@ -23,6 +23,7 @@ public sealed class StudioInspectorPanel : Border
     private readonly Dictionary<StudioInspectorTab, Control> _tabPanels = new();
     private readonly Dictionary<StudioInspectorTab, Control> _tabContentWrappers = new();
     private readonly Border _rail;
+    private Border _contentBorder = null!;
     private readonly ScrollViewer _content;
     private readonly TextBlock _header;
     private readonly Button _collapseButton;
@@ -32,6 +33,7 @@ public sealed class StudioInspectorPanel : Border
     private Button _restoreButton = null!;
     private readonly List<Button> _lockButtons = new();
     private readonly List<Button> _typeOptionButtons = new();
+    private bool _overlayMode;
 
     public StudioInspectorPanel(StudioPageViewModel page)
     {
@@ -64,13 +66,13 @@ public sealed class StudioInspectorPanel : Border
         _rail.Width = 40;
         _rail.Child = railStack;
 
-        _header = new TextBlock { Classes = { "nm-label" } };
+        _header = new TextBlock { Classes = { "label" } };
         _header.Bind(TextBlock.TextProperty, new Binding(nameof(StudioInspectorViewModel.ActiveTabLabel)));
         var titleRow = StudioUi.Row(8);
         titleRow.Margin = new Thickness(12, 8);
         titleRow.Children.Add(_header);
 
-        var regionSummary = new TextBlock { Classes = { "nm-meta", "nm-muted" } };
+        var regionSummary = new TextBlock { Classes = { "meta", "muted" } };
         regionSummary.Bind(TextBlock.TextProperty, new Binding(nameof(StudioPageViewModel.SelectedRegionSummary)) { Source = _page });
         titleRow.Children.Add(regionSummary);
 
@@ -103,6 +105,7 @@ public sealed class StudioInspectorPanel : Border
         contentColumn.Children.Add(titleRow);
         contentColumn.Children.Add(_content);
         var contentBorder = StudioUi.Box(contentColumn);
+        _contentBorder = contentBorder;
         contentBorder.Width = 280;
 
         var root = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,Auto") };
@@ -125,7 +128,7 @@ public sealed class StudioInspectorPanel : Border
         {
             if (args.PropertyName is nameof(StudioPageViewModel.InspectorExpanded) or nameof(StudioPageViewModel.InspectorWidth) or null)
             {
-                Width = page.InspectorWidth;
+                Width = _overlayMode ? 40 : page.InspectorWidth;
                 contentBorder.IsVisible = page.InspectorExpanded;
                 _collapseButton.Content = page.InspectorToggleLabel;
                 ToolTip.SetTip(_collapseButton, page.InspectorToggleTooltip);
@@ -143,6 +146,25 @@ public sealed class StudioInspectorPanel : Border
     }
 
     public Border Rail => _rail;
+
+    /// <summary>
+    /// Responsive (&lt;1280): the inspector collapses to its 40px rail and the 280px body floats over the
+    /// canvas instead of shrinking it (FUSION_SPEC §6 overlay drawer behaviour).
+    /// </summary>
+    public void SetOverlayMode(bool overlay)
+    {
+        if (overlay == _overlayMode)
+        {
+            return;
+        }
+
+        _overlayMode = overlay;
+        Width = overlay ? 40 : _page.InspectorWidth;
+        _contentBorder.Margin = overlay ? new Thickness(-280, 0, 0, 0) : new Thickness(0);
+        ZIndex = overlay ? 20 : 0;
+    }
+
+    public bool IsOverlayMode => _overlayMode;
 
     public ScrollViewer Content => _content;
 
@@ -214,7 +236,7 @@ public sealed class StudioInspectorPanel : Border
         var panel = StudioUi.Column(8);
         panel.Margin = new Thickness(12, 8);
         panel.Children.Add(StudioUi.Text("四级文本", "studio-section-title"));
-        var note = StudioUi.BoundText(nameof(StudioInspectorViewModel.TextTiersNote), "nm-meta", "nm-wrap");
+        var note = StudioUi.BoundText(nameof(StudioInspectorViewModel.TextTiersNote), "meta", "studio-wrap");
         panel.Children.Add(note);
 
         var tiers = new ItemsControl
@@ -226,15 +248,15 @@ public sealed class StudioInspectorPanel : Border
 
         var save = StudioUi.BoundLabelButton(
             nameof(StudioInspectorViewModel.SaveTranslationLabel),
-            "studio-action",
+            "sm",
             () => _ = SaveTranslationAsync());
         _saveTranslationButton = save;
         panel.Children.Add(save);
         panel.Children.Add(StudioUi.Text(
             "人工译文输入框：能力待接入（F0-1 save_manual_translation）· 本构建不提供可输入的假字段",
-            "nm-meta",
-            "nm-muted",
-            "nm-wrap"));
+            "meta",
+            "muted",
+            "studio-wrap"));
         panel.Name = "TextPanel";
         return panel;
     }
@@ -245,15 +267,15 @@ public sealed class StudioInspectorPanel : Border
         row.Margin = new Thickness(0, 4);
 
         var head = StudioUi.Row(6);
-        head.Children.Add(StudioUi.Text(tier.Label, "nm-label"));
-        head.Children.Add(StudioUi.Text(tier.SourceHint, "nm-meta", "nm-muted"));
-        var lockBadge = StudioUi.Text("▮", "nm-state-blocked", "nm-num");
+        head.Children.Add(StudioUi.Text(tier.Label, "label"));
+        head.Children.Add(StudioUi.Text(tier.SourceHint, "meta", "muted"));
+        var lockBadge = StudioUi.Text("▮", "studio-state-blocked", "data");
         head.Children.Add(lockBadge);
-        var notWired = StudioUi.Box(StudioUi.Text("能力待接入", "nm-meta"), "studio-chip");
+        var notWired = StudioUi.Box(StudioUi.Text("能力待接入", "meta"), "studio-chip");
         head.Children.Add(notWired);
         row.Children.Add(head);
 
-        var value = new TextBlock { Classes = { "nm-body", "nm-wrap" } };
+        var value = new TextBlock { Classes = { "body", "studio-wrap" } };
         value.Bind(TextBlock.TextProperty, new Binding(nameof(StudioTextTierViewModel.ValueDisplay)));
         var valueHost = StudioUi.Box(value, "studio-field-readonly");
         valueHost.MinHeight = 26;
@@ -291,7 +313,7 @@ public sealed class StudioInspectorPanel : Border
         foreach (var type in _inspector.RegionTypeOptions)
         {
             var captured = type;
-            var button = StudioUi.Button(type, "studio-action", () => _inspector.SetPendingRegionType(captured));
+            var button = StudioUi.Button(type, "sm", () => _inspector.SetPendingRegionType(captured));
             StudioUi.TrackClass(
                 button,
                 "active",
@@ -310,13 +332,13 @@ public sealed class StudioInspectorPanel : Border
         };
         panel.Children.Add(optionScroll);
 
-        var apply = StudioUi.Button("应用类型修改", "studio-action primary", () => _ = _page.ApplyRegionTypeAsync());
+        var apply = StudioUi.Button("应用类型修改", "sm primary", () => _ = _page.ApplyRegionTypeAsync());
         _applyTypeButton = apply;
         panel.Children.Add(apply);
 
-        var applyHint = StudioUi.BoundText(nameof(StudioInspectorViewModel.PendingEditSummary), "nm-meta", "nm-muted", "nm-wrap");
+        var applyHint = StudioUi.BoundText(nameof(StudioInspectorViewModel.PendingEditSummary), "meta", "muted", "studio-wrap");
         panel.Children.Add(applyHint);
-        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.FontFamilyNote), "nm-meta", "nm-muted", "nm-wrap"));
+        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.FontFamilyNote), "meta", "muted", "studio-wrap"));
 
         return panel;
     }
@@ -324,11 +346,11 @@ public sealed class StudioInspectorPanel : Border
     private static Control FieldRow(string label, string path, bool wrap = false)
     {
         var row = StudioUi.Column(2);
-        row.Children.Add(StudioUi.Text(label, "nm-meta", "nm-muted"));
-        var value = new TextBlock { Classes = { "nm-body" } };
+        row.Children.Add(StudioUi.Text(label, "meta", "muted"));
+        var value = new TextBlock { Classes = { "body" } };
         if (wrap)
         {
-            value.Classes.Add("nm-wrap");
+            value.Classes.Add("studio-wrap");
         }
 
         value.Bind(TextBlock.TextProperty, new Binding(path));
@@ -346,17 +368,17 @@ public sealed class StudioInspectorPanel : Border
         panel.Children.Add(StudioUi.Text("重渲染（已接入 rerender_page）", "studio-section-title"));
         var rerender = StudioUi.BoundLabelButton(
             nameof(StudioInspectorViewModel.RerenderLabel),
-            "studio-action",
+            "sm",
             () => _ = _page.RerenderPageAsync());
         _rerenderButton = rerender;
         panel.Children.Add(rerender);
-        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.LastRerenderText), "nm-meta", "nm-wrap"));
+        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.LastRerenderText), "meta", "studio-wrap"));
 
         panel.Children.Add(StudioUi.Text("修复路线 / MASK", "studio-section-title"));
-        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.RepairNote), "nm-meta", "nm-muted", "nm-wrap"));
+        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.RepairNote), "meta", "muted", "studio-wrap"));
         foreach (var label in new[] { "换 Mask · 能力待接入", "换路线 · 能力待接入", "重新修复 · 能力待接入" })
         {
-            var button = StudioUi.Button(label, "studio-action");
+            var button = StudioUi.Button(label, "sm");
             button.IsEnabled = false;
             ToolTip.SetTip(button, StudioCapabilityGate.NotWiredTooltip);
             panel.Children.Add(button);
@@ -373,7 +395,7 @@ public sealed class StudioInspectorPanel : Border
         panel.Margin = new Thickness(12, 8);
         panel.Name = "LocksPanel";
         panel.Children.Add(StudioUi.Text("四把锁", "studio-section-title"));
-        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.LocksNote), "nm-meta", "nm-muted", "nm-wrap"));
+        panel.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.LocksNote), "meta", "muted", "studio-wrap"));
 
         var locks = new ItemsControl
         {
@@ -388,14 +410,14 @@ public sealed class StudioInspectorPanel : Border
     {
         var row = StudioUi.Row(6);
         row.Margin = new Thickness(0, 4);
-        var glyph = StudioUi.Text(item.Glyph, "nm-num");
+        var glyph = StudioUi.Text(item.Glyph, "data");
         row.Children.Add(glyph);
         var column = StudioUi.Column(2);
         column.Width = 200;
-        column.Children.Add(StudioUi.Text(item.Label, "nm-label"));
-        column.Children.Add(StudioUi.Text(item.Explanation, "nm-meta", "nm-muted", "nm-wrap"));
+        column.Children.Add(StudioUi.Text(item.Label, "label"));
+        column.Children.Add(StudioUi.Text(item.Explanation, "meta", "muted", "studio-wrap"));
         row.Children.Add(column);
-        var toggle = StudioUi.Button(item.IsLocked ? "已锁定" : "锁定", "studio-action");
+        var toggle = StudioUi.Button(item.IsLocked ? "已锁定" : "锁定", "sm");
         toggle.IsEnabled = false;
         ToolTip.SetTip(toggle, StudioCapabilityGate.NotWiredTooltip);
         _lockButtons.Add(toggle);
@@ -412,16 +434,16 @@ public sealed class StudioInspectorPanel : Border
         panel.Name = "HistoryPanel";
         panel.Children.Add(StudioUi.Text("REVISION", "studio-section-title"));
 
-        var loading = StudioUi.Text("正在读取 revision…", "nm-meta", "nm-muted");
+        var loading = StudioUi.Text("正在读取 revision…", "meta", "muted");
         StudioUi.TrackVisible(loading, _inspector, () => _inspector.IsHistoryLoading);
         panel.Children.Add(loading);
 
-        var empty = new TextBlock { Classes = { "nm-meta", "nm-muted" } };
+        var empty = new TextBlock { Classes = { "meta", "muted" } };
         empty.Bind(TextBlock.TextProperty, new Binding(nameof(StudioInspectorViewModel.HistoryEmptyNote)));
         StudioUi.TrackVisible(empty, _inspector, () => _inspector.IsHistoryEmpty);
         panel.Children.Add(empty);
 
-        var error = new TextBlock { Classes = { "nm-meta" } };
+        var error = new TextBlock { Classes = { "meta" } };
         error.Bind(TextBlock.TextProperty, new Binding(nameof(StudioInspectorViewModel.HistoryError)));
         StudioUi.TrackVisible(error, _inspector, () => _inspector.HasHistoryError);
         panel.Children.Add(error);
@@ -435,37 +457,37 @@ public sealed class StudioInspectorPanel : Border
 
         var preview = StudioUi.Column(4);
         preview.Children.Add(StudioUi.Text("预览（元数据）", "studio-section-title"));
-        preview.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.PreviewTitle), "nm-label"));
-        preview.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.PreviewDetail), "nm-meta", "nm-muted", "nm-wrap"));
+        preview.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.PreviewTitle), "label"));
+        preview.Children.Add(StudioUi.BoundText(nameof(StudioInspectorViewModel.PreviewDetail), "meta", "muted", "studio-wrap"));
         panel.Children.Add(preview);
 
         var restore = StudioUi.BoundLabelButton(
             nameof(StudioInspectorViewModel.RestoreLabel),
-            "studio-action",
+            "sm",
             () => _ = RestoreSelectedRevisionAsync());
         _restoreButton = restore;
         panel.Children.Add(restore);
         panel.Children.Add(StudioUi.Text(
             "恢复会生成一个新的 revision，历史版本不会被覆盖（Core restore_region_revision 语义）",
-            "nm-meta",
-            "nm-muted",
-            "nm-wrap"));
+            "meta",
+            "muted",
+            "studio-wrap"));
         return panel;
     }
 
     private Control BuildRevisionRow(StudioRevisionItemViewModel item)
     {
         var row = StudioUi.Row(6);
-        row.Children.Add(StudioUi.Text(item.RevisionLabel, "nm-num"));
-        row.Children.Add(StudioUi.Text(item.OriginLabel, "nm-meta"));
-        var glyph = StudioUi.Text(item.StateGlyph, "nm-num");
+        row.Children.Add(StudioUi.Text(item.RevisionLabel, "data"));
+        row.Children.Add(StudioUi.Text(item.OriginLabel, "meta"));
+        var glyph = StudioUi.Text(item.StateGlyph, "data");
         glyph.Classes.Add(item.StateClass);
         row.Children.Add(glyph);
-        row.Children.Add(StudioUi.Text(item.StateLabel, "nm-meta", "nm-muted"));
-        var current = StudioUi.Box(StudioUi.Text("当前", "nm-meta"), "studio-chip-accent");
+        row.Children.Add(StudioUi.Text(item.StateLabel, "meta", "muted"));
+        var current = StudioUi.Box(StudioUi.Text("当前", "meta"), "studio-chip-accent");
         current.IsVisible = item.IsCurrent;
         row.Children.Add(current);
-        var pinned = StudioUi.Text("▮", "nm-state-blocked", "nm-num");
+        var pinned = StudioUi.Text("▮", "studio-state-blocked", "data");
         pinned.IsVisible = item.IsPinned;
         row.Children.Add(pinned);
 

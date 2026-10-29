@@ -1,0 +1,12 @@
+{
+  "ac": "AC3",
+  "screenshots": [
+    "state-empty.png",
+    "state-error.png",
+    "state-partial.png"
+  ],
+  "empty": "Empty",
+  "error": "Error",
+  "partial": "Partial",
+  "partial_keeps_regions": true
+}

@@ -43,7 +43,7 @@ public partial class StudioWorkspaceView : UserControl
         InitializeComponent();
 
         // Temporary Nm.* token shim (dies automatically when NewManga.DesignSystem merges).
-        StudioFallbackTokens.EnsureMerged();
+        
 
         _viewModel = viewModel;
         DataContext = viewModel;
@@ -55,12 +55,12 @@ public partial class StudioWorkspaceView : UserControl
         var headRow = StudioUi.Row(12);
 
         (_pageModeButton, _batchModeButton) = BuildModeSwitch(headRow);
-        _breadcrumb = new TextBlock { Classes = { "nm-label", "nm-secondary" } };
-        _breadcrumb.Bind(TextBlock.TextProperty, new Binding(nameof(StudioWorkspaceViewModel.TitleLine)));
+        _breadcrumb = new TextBlock { Classes = { "label", "muted" } };
+        _breadcrumb.Bind(TextBlock.TextProperty, new Binding("Page.BreadcrumbText"));
         headRow.Children.Add(_breadcrumb);
 
         var scopeChip = StudioUi.Box("studio-chip");
-        _scopeText = new TextBlock { Classes = { "nm-meta" } };
+        _scopeText = new TextBlock { Classes = { "meta" } };
         _scopeText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioSelection.SelectionSummary))
         {
             Source = _viewModel.Selection,
@@ -69,7 +69,7 @@ public partial class StudioWorkspaceView : UserControl
         ToolTip.SetTip(scopeChip, "作用域：所有批量动作都带该后缀（FUSION_SPEC §2.3）");
         headRow.Children.Add(scopeChip);
 
-        _modeText = new TextBlock { Classes = { "nm-meta", "nm-muted" } };
+        _modeText = new TextBlock { Classes = { "meta", "muted" } };
         _modeText.Bind(TextBlock.TextProperty, new Binding(nameof(StudioWorkspaceViewModel.HeaderModeText)));
         headRow.Children.Add(_modeText);
 
@@ -167,7 +167,7 @@ public partial class StudioWorkspaceView : UserControl
 
     private (Button Page, Button Batch) BuildModeSwitch(StackPanel host)
     {
-        var segmented = StudioUi.Box("studio-segmented");
+        var segmented = StudioUi.Box("raised");
         var row = StudioUi.Row(0);
         var page = StudioUi.Button("页面", "studio-segment", () => _viewModel.RequestMode(StudioWorkspaceMode.Page));
         var batch = StudioUi.Button("矩阵", "studio-segment", () => _viewModel.RequestMode(StudioWorkspaceMode.Batch));
@@ -190,27 +190,27 @@ public partial class StudioWorkspaceView : UserControl
 
     private Control BuildBatchPlaceholder()
     {
-        var host = StudioUi.Box("studio-canvas");
-        var card = StudioUi.Box("studio-banner");
+        var host = StudioUi.Box("sunken");
+        var card = StudioUi.Box("raised");
         card.Width = 560;
         card.HorizontalAlignment = HorizontalAlignment.Center;
         card.VerticalAlignment = VerticalAlignment.Center;
 
         var column = StudioUi.Column(12);
-        column.Children.Add(StudioUi.Text("Studio · Batch", "nm-title"));
-        var notWired = StudioUi.Box(StudioUi.Text("NOT_WIRED", "nm-meta"), "studio-chip");
+        column.Children.Add(StudioUi.Text("Studio · Batch", "title"));
+        var notWired = StudioUi.Box(StudioUi.Text("NOT_WIRED", "meta"), "studio-chip");
         notWired.HorizontalAlignment = HorizontalAlignment.Left;
         column.Children.Add(notWired);
-        _batchNote = new TextBlock { Classes = { "nm-body", "nm-wrap" }, Text = _viewModel.BatchNotWiredNote };
+        _batchNote = new TextBlock { Classes = { "body", "studio-wrap" }, Text = _viewModel.BatchNotWiredNote };
         column.Children.Add(_batchNote);
-        var detail = new TextBlock { Classes = { "nm-meta", "nm-wrap" }, Text = _viewModel.BatchNotWiredDetail };
+        var detail = new TextBlock { Classes = { "meta", "studio-wrap" }, Text = _viewModel.BatchNotWiredDetail };
         column.Children.Add(detail);
 
         var actions = StudioUi.Row(8);
-        var start = StudioUi.Button("开始处理", "studio-action primary");
+        var start = StudioUi.Button("开始处理", "sm primary");
         start.IsEnabled = false;
         ToolTip.SetTip(start, StudioCapabilityGate.NotWiredTooltip);
-        var back = StudioUi.Button("返回 Page 模式", "studio-action", () => _viewModel.RequestMode(StudioWorkspaceMode.Page));
+        var back = StudioUi.Button("返回 Page 模式", "sm", () => _viewModel.RequestMode(StudioWorkspaceMode.Page));
         actions.Children.Add(start);
         actions.Children.Add(back);
         column.Children.Add(actions);

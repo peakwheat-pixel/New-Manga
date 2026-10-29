@@ -34,22 +34,22 @@ public sealed class StudioLeaveModal : Grid
         card.VerticalAlignment = VerticalAlignment.Center;
 
         var column = StudioUi.Column(12);
-        column.Children.Add(StudioUi.Text("离开前保存更改？", "nm-title"));
-        _body = new TextBlock { Classes = { "nm-body", "nm-wrap" } };
+        column.Children.Add(StudioUi.Text("离开前保存更改？", "title"));
+        _body = new TextBlock { Classes = { "body", "studio-wrap" } };
         _body.Bind(TextBlock.TextProperty, new Avalonia.Data.Binding(nameof(StudioPageViewModel.LeaveBody)));
         column.Children.Add(_body);
 
-        _error = new TextBlock { Classes = { "nm-meta", "nm-wrap" }, Foreground = Brushes.Transparent };
+        _error = new TextBlock { Classes = { "meta", "studio-wrap" }, Foreground = Brushes.Transparent };
         _error.Bind(TextBlock.TextProperty, new Avalonia.Data.Binding(nameof(StudioPageViewModel.LeaveError)));
         StudioUi.TrackVisible(_error, _viewModel, () => _viewModel.HasLeaveError);
         column.Children.Add(_error);
 
         var buttons = StudioUi.Row(8);
         buttons.HorizontalAlignment = HorizontalAlignment.Right;
-        _saveButton = StudioUi.Button("保存并继续", "studio-action primary", () => _ = ResolveAsync(StudioLeaveChoice.Save));
+        _saveButton = StudioUi.Button("保存并继续", "sm primary", () => _ = ResolveAsync(StudioLeaveChoice.Save));
         _saveButton.Bind(IsEnabledProperty, new Avalonia.Data.Binding(nameof(StudioPageViewModel.LeaveSaveEnabled)));
         _discardButton = StudioUi.Button("放弃更改", "studio-action danger", () => _ = ResolveAsync(StudioLeaveChoice.Discard));
-        _cancelButton = StudioUi.Button("取消", "studio-action", () => _ = ResolveAsync(StudioLeaveChoice.Cancel));
+        _cancelButton = StudioUi.Button("取消", "sm", () => _ = ResolveAsync(StudioLeaveChoice.Cancel));
         buttons.Children.Add(_cancelButton);
         buttons.Children.Add(_discardButton);
         buttons.Children.Add(_saveButton);

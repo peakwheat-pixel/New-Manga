@@ -30,19 +30,19 @@ public sealed class StudioRegionBox : Border
         ClipToBounds = false;
 
         _labelChip = StudioUi.Box("studio-region-label");
-        _labelChip.Child = StudioUi.Text(item.ShortLabel, "nm-data");
+        _labelChip.Child = StudioUi.Text(item.ShortLabel, "data");
         _labelChip.HorizontalAlignment = HorizontalAlignment.Left;
         _labelChip.VerticalAlignment = VerticalAlignment.Top;
         _labelChip.Margin = new Thickness(2);
 
         _failBadge = StudioUi.Box("studio-region-badge");
-        _failBadge.Child = StudioUi.Text("✗", "studio-region-badge-failed", "nm-num");
+        _failBadge.Child = StudioUi.Text("✗", "studio-region-badge-failed", "data");
         _failBadge.HorizontalAlignment = HorizontalAlignment.Right;
         _failBadge.VerticalAlignment = VerticalAlignment.Top;
         _failBadge.Margin = new Thickness(2);
 
         _lockBadge = StudioUi.Box("studio-region-badge");
-        _lockBadge.Child = StudioUi.Text("▮", "studio-region-badge-locked", "nm-num");
+        _lockBadge.Child = StudioUi.Text("▮", "studio-region-badge-locked", "data");
         _lockBadge.HorizontalAlignment = HorizontalAlignment.Right;
         _lockBadge.VerticalAlignment = VerticalAlignment.Bottom;
         _lockBadge.Margin = new Thickness(2);
