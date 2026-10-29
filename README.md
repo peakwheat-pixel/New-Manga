@@ -122,6 +122,16 @@ instructions, and known limitations (written in Chinese).
   ([`LICENSE-AGPL-3.0.txt`](LICENSE-AGPL-3.0.txt)). Third-party components: [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md),
   [`NOTICE.md`](NOTICE.md). Fonts are system fonts only — none are redistributed.
 
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org/).
+
+- Committers and reviewers: [@peakwheat-pixel](https://github.com/peakwheat-pixel) (repository owner)
+- Approvers (signing requests): [@peakwheat-pixel](https://github.com/peakwheat-pixel)
+- Privacy policy: [`PRIVACY.md`](PRIVACY.md) — the program transfers information to other networked
+  systems only when the user explicitly configures a remote provider or uses the Playwright-based import
+  helper; local providers keep all processing on the machine.
+
 ## Contributing
 
 This is an early, single-maintainer project (repository created 2026-09-24). Issues and pull requests are
