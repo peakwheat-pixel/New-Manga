@@ -21,11 +21,19 @@ class RegionRevisionChanged(Exception):
 
 
 class GuardStatus(str, Enum):
-    """Outcome of a guarded (optimistic) automatic write, D06 §90."""
+    """Outcome of a guarded (optimistic) automatic write, D06 §90.
+
+    ``DB_FAILED`` (I2/P2-D) is deliberately its own status: a persistence
+    fault must never masquerade as an optimistic conflict, otherwise the wire
+    reports INPUT_REVISION_CHANGED (and callers may "refresh and retry") for a
+    database/busy failure. Consumers map it to UNKNOWN/internal with a fixed
+    safe phrase.
+    """
 
     APPLIED = "applied"
     INPUT_REVISION_CHANGED = "input_revision_changed"
     LOCK_CHANGED = "lock_changed"
+    DB_FAILED = "db_failed"
 
 
 @dataclass(frozen=True)

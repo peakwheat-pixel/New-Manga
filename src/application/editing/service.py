@@ -127,8 +127,17 @@ def _apply_effective_locks(
 
 
 def _guard_status_of(result: RegionCommitResult) -> GuardStatus:
+    """Map a commit-seam status to the guarded-write outcome.
+
+    I2/P2-D: ``DB_FAILED`` keeps its own status. Mapping it to
+    INPUT_REVISION_CHANGED (the pre-I2 default for every non-applied status)
+    told the wire "conflict/refresh and retry" for a database fault and could
+    silently degrade into the candidate path; consumers now surface it as
+    UNKNOWN/internal with a fixed safe phrase.
+    """
     return {
         RegionCommitStatus.LOCK_CHANGED: GuardStatus.LOCK_CHANGED,
+        RegionCommitStatus.DB_FAILED: GuardStatus.DB_FAILED,
     }.get(result.status, GuardStatus.INPUT_REVISION_CHANGED)
 
 
