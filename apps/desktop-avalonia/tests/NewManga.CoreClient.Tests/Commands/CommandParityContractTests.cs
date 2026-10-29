@@ -12,7 +12,7 @@ namespace NewManga.CoreClient.Tests.Commands;
 ///
 /// V11R-F0-1: the registry gains ten additive Region write commands. The frozen 66-command snapshot
 /// is NOT edited; the parity tests derive the legacy set from the snapshot and assert the only
-/// additions are exactly <see cref="HostCommandRegistry.RegionWriteCommandNames"/> (per-domain counts
+/// additions are exactly <see cref="HostCommandRegistry.V11RAdditiveCommandNames"/> (per-domain counts
 /// are derived too, never hand-maintained).
 /// </summary>
 public sealed class CommandParityContractTests
@@ -87,7 +87,7 @@ public sealed class CommandParityContractTests
             "C# registry is missing frozen production commands");
         var additive = registryNames.Except(snapshotNames, StringComparer.Ordinal)
             .ToHashSet(StringComparer.Ordinal);
-        Assert.Equal(HostCommandRegistry.RegionWriteCommandNames, additive);
+        Assert.Equal(HostCommandRegistry.V11RAdditiveCommandNames, additive);
         Assert.Equal(snapshotNames.Count + additive.Count, registryNames.Count);
 
         // Per-domain counts are DERIVED from the frozen snapshot's own domain

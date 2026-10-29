@@ -103,6 +103,28 @@ def effective_sfx_policy(
     return SfxPolicy.SKIP
 
 
+def region_text_state(region: Region) -> dict[str, object]:
+    """The four-level text projection verbatim (D03 §8.1, snapshot contract).
+
+    V11R-F0-2: one definition shared by the write-side read-back
+    (``core_service``) and the ``list_page_region_texts`` read channel, so the
+    UI never receives two slightly different text shapes for the same
+    persisted state. Every field is the persisted value -- no defaults or
+    placeholders are filled in here.
+    """
+    text = region.text
+    return {
+        "ocr_text": text.ocr_text,
+        "machine_translation": text.machine_translation,
+        "edited_translation": text.edited_translation,
+        "final_translation": text.final_translation,
+        "final_source": text.final_source,
+        "edited_confirmed": text.edited_confirmed,
+        "manual_edited": text.manual_edited,
+        "translation_locked": text.translation_locked,
+    }
+
+
 class InMemoryRegionCommitter:
     """Contract-faithful committer for in-memory repositories: same guard
     order and pointer semantics as the SQLite seam, without transactions."""
@@ -543,6 +565,87 @@ class RegionEditingService:
                 )
             summaries.append(summary)
         return summaries
+
+    def list_region_details(
+        self, page_id: str, *, page_size: tuple[int, int] | None = None
+    ) -> list[dict[str, object]]:
+        """RegionTextDetail read channel (V11R-F0-2 / closes GAP-2): every
+        live region of ONE page with its full real projection, in
+        ``reading_order`` ascending.
+
+        This is the single command the Studio Page mode needs on first load:
+        region + four-level text + three locks + review state + pin flags +
+        normalized geometry, so the page can be rendered without an N+1 loop
+        of per-region calls and without inventing text the Core does not have.
+
+        Every field is the persisted value:
+        - ``text`` is ``region_text_state(region)`` (snapshot contract shape;
+          empty strings / ``final_source="none"`` are the real values of a
+          region that was never OCR'd);
+        - ``review_state`` / ``origin`` / ``revision_no`` / ``is_pinned`` come
+          from the revision the current pointer targets (never invented);
+        - ``locks`` is the region-level lock projection (the translation-lock
+          dual projection is documented in the contract: ``text.
+          translation_locked`` is the manual-protection flag, ``locks.
+          translation_locked`` the region snapshot the pipeline reads);
+        - ``pinned_revision_nos`` lists every pinned revision of the history;
+        - ``geometry`` is the optional normalized read shape and stays ``None``
+          when the caller cannot supply the page extent (unknown page row),
+          exactly like ``list_region_summaries`` omits it -- it is never
+          fabricated from zero.
+
+        A page with no regions reads as an empty list (same precedent as
+        ``list_region_summaries``).
+        """
+        details: list[dict[str, object]] = []
+        for region in self.list_regions(page_id):
+            revisions = self._repo.list_revisions(region.region_id)
+            current = next(
+                (
+                    rev
+                    for rev in revisions
+                    if rev.region_revision_id == region.current_revision_id
+                ),
+                None,
+            )
+            if current is None:
+                # TASK-002 §2.1 invariant broken: fail loudly instead of
+                # fabricating a plausible text row.
+                raise RuntimeError(
+                    f"current revision pointer of region {region.region_id}"
+                    " does not resolve"
+                )
+            geometry: dict[str, object] | None = None
+            if page_size is not None:
+                page_w, page_h = page_size
+                geometry = page_geometry_to_normalized(
+                    region.geometry, page_w, page_h
+                )
+            details.append({
+                "region_id": region.region_id,
+                "page_id": region.page_id,
+                "region_type": region.region_type.value,
+                "sfx_policy": region.sfx_policy.value,
+                "reading_order": region.reading_order,
+                "geometry": geometry,
+                "text": region_text_state(region),
+                "locks": {
+                    "region_locked": region.region_locked,
+                    "translation_locked": region.translation_locked,
+                    "inpaint_locked": region.inpaint_locked,
+                },
+                "review_state": current.review_state.value,
+                "origin": current.origin.value,
+                "revision_no": current.revision_no,
+                "current_revision_id": region.current_revision_id,
+                "is_pinned": current.is_pinned,
+                "pinned_revision_nos": [
+                    rev.revision_no for rev in revisions if rev.is_pinned
+                ],
+                "created_at": region.created_at,
+                "updated_at": region.updated_at,
+            })
+        return details
 
     def list_revision_summaries(self, region_id: str) -> dict[str, object]:
         """Return the frozen, read-only revision history projection."""

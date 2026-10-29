@@ -85,6 +85,24 @@ Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
     {"regions": [], "page_size": null}, NOT an error -- the existing
     list_regions semantics (contract §5.4 footnote a). Errors:
     INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
+  - list_page_region_texts: {"page_id": "<id>", "region_ids"?: ["<id>", ...]}
+      -> {"page_id", "page_size": {"width", "height"} | null,
+          "regions": RegionTextDetail[]}
+    (V11R-F0-2 / closes the V11R-F0-1 GAP-2: the region TEXT read face did
+    not exist, so the Studio Page mode had no way to load the four-level text
+    of an already-edited page -- only list_regions' minimal five-field DTO and
+    the revision summaries existed. This single-page read returns every live
+    region of one page with its REAL persisted projection: four-level text,
+    the three locks, review_state, origin, current revision number/id,
+    is_pinned of the current revision, all pinned revision numbers and the
+    normalized geometry -- one round trip, no per-region N+1. The optional
+    region_ids filter is strict (every id must be a LIVE region of that page,
+    otherwise TARGET_NOT_FOUND, which also rejects a cross-page id). A page
+    with no regions reads as an empty list (the frozen C043 precedent, not an
+    error); an unknown page reads page_size null and empty regions. Protocol
+    minor stays 3 (same Region family, zero bump). Errors: INVALID_REQUEST
+    (payload) / TARGET_NOT_FOUND (filtered region unknown or of another
+    page) / UNKNOWN (internal) only.)
   - create_region / delete_region / save_region_geometry / merge_regions /
     split_region / reorder_regions / save_manual_translation /
     confirm_region_final / set_region_lock / pin_revision
@@ -172,7 +190,7 @@ from application.editing.region_canvas import (
     normalized_to_page_geometry,
     page_geometry_to_normalized,
 )
-from application.editing.service import effective_sfx_policy
+from application.editing.service import effective_sfx_policy, region_text_state
 from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
@@ -2153,6 +2171,79 @@ class CoreServiceServer:
         except RegionNotFound as error:
             raise RegionLookupError(region_id) from error
 
+    def handle_list_page_region_texts(
+        self, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """The RegionTextDetail read channel (V11R-F0-2 / closes GAP-2).
+
+        Studio Page loads ONE page's region list + four-level text in ONE
+        round trip. ``list_page_region_texts`` was chosen over a single-region
+        ``get_region`` because the page workspace always needs every live
+        region of the page: a per-region command would make the first paint
+        N+1, while this command is exactly one request.
+
+        Request: ``{"page_id": "<id>", "region_ids"?: ["<id>", ...]}``.
+        ``region_ids`` is the optional strict filter: every id must be a LIVE
+        region of that page, otherwise TARGET_NOT_FOUND -- this covers
+        "unknown region" and "region of another page" (no cross-page read).
+        Without the filter all live regions of the page are returned in
+        reading_order ascending.
+
+        Result: ``{"page_id", "page_size": {width, height} | null,
+        "regions": RegionTextDetail[]}``. Every projected field is the
+        persisted value (four-level text, three locks, review_state, origin,
+        current revision number/id, is_pinned of the current revision, all
+        pinned revision numbers, normalized geometry when the page extent is
+        known). A page with no regions -- unknown page_id included -- reads as
+        ``regions: []`` (the frozen C043 precedent: empty data, not an
+        error); an unknown page additionally reads ``page_size: null``.
+        Geometry is never fabricated from a missing extent (``null``).
+        """
+        page_id = payload.get("page_id")
+        if not isinstance(page_id, str) or not page_id:
+            raise RegionRequestError(
+                "list_page_region_texts requires 'page_id': a non-empty string"
+            )
+        requested = payload.get("region_ids")
+        filter_ids: list[str] | None = None
+        if requested is not None:
+            if (
+                not isinstance(requested, list)
+                or not requested
+                or any(
+                    not isinstance(item, str) or not item
+                    for item in requested
+                )
+                or len(set(requested)) != len(requested)
+            ):
+                raise RegionRequestError(
+                    "list_page_region_texts 'region_ids' must be a non-empty"
+                    " list of distinct non-empty region ids when present"
+                )
+            filter_ids = list(requested)
+        page = self._core.repository.get_page(page_id)
+        page_size = (
+            {"width": page.width, "height": page.height} if page else None
+        )
+        details = self._core.editing.list_region_details(
+            page_id,
+            page_size=(page.width, page.height) if page else None,
+        )
+        if filter_ids is not None:
+            by_id = {row["region_id"]: row for row in details}
+            for region_id in filter_ids:
+                if region_id not in by_id:
+                    raise RegionLookupError(region_id)
+            requested_set = set(filter_ids)
+            details = [
+                row for row in details if row["region_id"] in requested_set
+            ]
+        return {
+            "page_id": page_id,
+            "page_size": page_size,
+            "regions": details,
+        }
+
     def handle_restore_region_revision(
         self, payload: dict[str, Any]
     ) -> dict[str, Any]:
@@ -2336,20 +2427,6 @@ class CoreServiceServer:
             raise RegionRequestError(
                 f"{command} rejected {label}: {error.code}"
             ) from error
-
-    @staticmethod
-    def _region_write_text_state(region: Any) -> dict[str, Any]:
-        text = region.text
-        return {
-            "ocr_text": text.ocr_text,
-            "machine_translation": text.machine_translation,
-            "edited_translation": text.edited_translation,
-            "final_translation": text.final_translation,
-            "final_source": text.final_source,
-            "edited_confirmed": text.edited_confirmed,
-            "manual_edited": text.manual_edited,
-            "translation_locked": text.translation_locked,
-        }
 
     def _region_write_snapshot(self, region_id: str) -> tuple[Any, Any]:
         """Read back the effective state from the SAME authoritative objects
@@ -2691,7 +2768,7 @@ class CoreServiceServer:
             "region_id": region_id,
             "revision_no": revision_no,
             "review_state": revision.review_state.value,
-            "text": self._region_write_text_state(region),
+            "text": region_text_state(region),
         }
 
     def handle_confirm_region_final(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -2717,7 +2794,7 @@ class CoreServiceServer:
             "region_id": region_id,
             "revision_no": revision_no,
             "review_state": revision.review_state.value,
-            "text": self._region_write_text_state(region),
+            "text": region_text_state(region),
         }
 
     def handle_set_region_lock(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -4864,11 +4941,15 @@ class CoreServiceServer:
         # validation is typed fail-closed BEFORE any persistence (the §5.3
         # discipline); error semantics reuse the existing typed literals
         # only (contract rev 1.4 §5.4 mapping table).
+        # V11R-F0-2: list_page_region_texts joins this Region read branch
+        # (same typed envelope: INVALID_REQUEST / TARGET_NOT_FOUND /
+        # UNKNOWN; the raw error text never rides the wire).
         if command in (
             "set_region_type",
             "list_regions",
             "list_region_revisions",
             "restore_region_revision",
+            "list_page_region_texts",
         ):
             try:
                 if command == "set_region_type":
@@ -4877,6 +4958,8 @@ class CoreServiceServer:
                     result = self.handle_list_region_revisions(payload)
                 elif command == "restore_region_revision":
                     result = self.handle_restore_region_revision(payload)
+                elif command == "list_page_region_texts":
+                    result = self.handle_list_page_region_texts(payload)
                 else:
                     result = self.handle_list_regions(payload)
             except RegionRequestError as error:

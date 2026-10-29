@@ -29,9 +29,9 @@
 
 ---
 
-## GAP-2 — Region 文本只读投影缺失（OPEN，超出 F-01 范围，需 Lead 决策）
+## GAP-2 — Region 文本只读投影缺失（**CLOSED by V11R-F0-2**，2026-10-30）
 
-**事实**
+**原始事实（F0-1 立项时）**
 
 - `list_regions`（C043）返回的 `RegionListSummary` 是**最小 5 字段** + 可选 normalized
   `geometry`：`region_id / region_type / sfx_policy / origin / revision_no`
@@ -39,21 +39,26 @@
 - `list_region_revisions`（C044）返回 revision 摘要（`service.py` `list_revision_summaries`），
   不含快照文本、不含 `text` 字段。
 - 全仓 IPC 命令清册（审计 §5）没有其它 region 文本读命令；`rerender_page` / 资源命令都不带文本。
-- 本任务写命令的 result 回显了“本次写后”的 `text`，但那只能覆盖刚写过的 region，不能用于页面初次载入。
+- F0-1 写命令的 result 只回显“本次写后”的 `text`，不能用于页面初次载入。
 
-**影响（必须诚实声明）**
+**影响（当时）**：Studio · Page 初次打开一页无法读取已有四级文本/锁/确认状态，UI 只能伪造或标
+“能力待接入”。
 
-Studio · Page 模式初次打开一页时，IPC 上没有通道读取已存在的四级文本
-（ocr/machine/edited/final）与锁/确认状态；UI **不得伪造**文本或把它标成“能力待接入”以外的样子
-（FUSION_SPEC §4 的 A 类映射规则：UI 标注“能力待接入”而不是假装可用）。
+**关闭处置（V11R-F0-2，Lead 裁定“必须补”）**
 
-**建议（Lead 决策，不在本任务实施）**
-
-1. 新增读命令（更干净）：`get_region`（region 详情：text/四轨/lock/revision 摘要）或
-   `list_region_texts {page_id}`，minor 3，只读；
-2. 或对 C043 做 additively widening（增加 optional `text` 字段）——但 C043 是既有冻结命令面，
-   需 DSH/契约裁决，不能由本任务单方改；
-3. 若采用方案 1，建议排入 Wave-2 的独立任务（Owner 非本任务），本任务不预留半成品。
+- 新增读命令 **C077 `list_page_region_texts`**（page-scoped，`page_id!` + 可选严格 `region_ids` 过滤），
+  一条命令完成整页 region + 四轨文本 + 三锁 + review_state + origin + current revision + is_pinned +
+  全部 pinned 号 + normalized 几何的载入（避免 N+1；选型理由见契约 §0）。
+- 实现：`RegionEditingService.list_region_details()`（只读组合既有 `list_regions` /
+  `list_revisions` / `region_canvas` 逆向映射 + 共享 `region_text_state()`）；
+  wire handler `handle_list_page_region_texts`；C# 注册 + `RegionPageTextProjection.Parse` 严格 DTO。
+- 语义：全部真实投影（未编辑 region 的空串/`final_source="none"` 就是真实值）；未知/跨页筛选 id →
+  `TARGET_NOT_FOUND`；无 region / 未知 page → `regions: []`（空数据不是错误）；几何在页行不可用时
+  为 `null`，不伪造。minor=3，零 protocol bump。
+- 测试：`tests/core/test_region_text_read_command.py`（11 用例：真实值/多 region/软删不可见/无文本/
+  未知页/空页/过滤/跨页/非法参数/0 写）+ C# `RegionWriteCommandTests`（注册/payload/DTO 严格解析）。
+- 证据：`verification/V11R-F0-2/`；契约 `doc/contracts/V11R_REGION_WRITE_CONTRACT.md` v1.1 C077。
+- **状态：CLOSED。** 原“建议独立 follow-up”已被 Lead 正式建为 V11R-F0-2 并由同一 Owner 完成。
 
 ---
 

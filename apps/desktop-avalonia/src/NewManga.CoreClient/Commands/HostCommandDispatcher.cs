@@ -471,6 +471,14 @@ public sealed class HostCommandDispatcher
                 writer.WriteBoolean("pinned", RequireBool(name, payload, "pinned"));
                 WriteOptionalInt64(writer, name, payload, "expected_revision");
                 break;
+            // V11R-F0-2: the page-scoped Region text read projection. The
+            // optional strict region filter is enforced as non-empty distinct
+            // strings at the boundary; the Core additionally proves each id is
+            // a live region of that page (TARGET_NOT_FOUND otherwise).
+            case "list_page_region_texts":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                WriteOptionalStringArray(writer, name, payload, "region_ids");
+                break;
             case "library_save_reading_progress":
                 writer.WriteString("chapter_id", RequireString(name, payload, "chapter_id"));
                 writer.WriteString("mode", RequireString(name, payload, "mode"));
@@ -516,6 +524,47 @@ public sealed class HostCommandDispatcher
             }
 
             writer.WriteStringValue(element.GetString());
+        }
+
+        writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// V11R-F0-2: the optional strict region filter of
+    /// <c>list_page_region_texts</c> (non-empty distinct strings; omitted /
+    /// null when the caller wants the whole page).
+    /// </summary>
+    private static void WriteOptionalStringArray(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Array || value.GetArrayLength() == 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a non-empty string[] when present");
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        writer.WritePropertyName(property);
+        writer.WriteStartArray();
+        foreach (var element in value.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.String ||
+                element.GetString() is not { Length: > 0 } text ||
+                !seen.Add(text))
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{property}' must contain distinct non-empty strings");
+            }
+
+            writer.WriteStringValue(text);
         }
 
         writer.WriteEndArray();

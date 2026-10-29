@@ -1,27 +1,36 @@
-# V11R Region 写面契约 v1（FROZEN）
+# V11R Region 写面 + 文本读投影契约 v1.1（FROZEN）
 
-状态：`FROZEN`（2026-10-30，V11R-F0-1 Owner 产出，Lead 裁定文件归属）。
-任务卡：`doc/tasks/V11R-F0-1.md`（高风险，独立审查前不得合入 main）。
+状态：`FROZEN`（2026-10-30，V11R-F0-1 + V11R-F0-2 Owner 产出，Lead 裁定文件归属）。
+任务卡：`doc/tasks/V11R-F0-1.md`（写面，高风险）、`doc/tasks/V11R-F0-2.md`（文本读投影，关闭 GAP-2）。
 上游：审计 §5.1 F-01（`New_Manga_前后端功能与接口现状审计_V1.1_修订完整版.md`）、
 `doc/plan/V11R_AVALONIA_CONTRACT.md` §1.2/§5.3、`doc/design/redesign-v1/40-fusion/FUSION_SPEC.md` §4/§8 F-01。
 实现：`src/bootstrap/core_service.py`（wire handler）、`src/application/editing/service.py`（use case）、
-`src/domain/regions/entities.py`、`apps/desktop-avalonia/src/NewManga.CoreClient/Commands/{HostCommandRegistry,HostCommandDispatcher}.cs`。
-命令清册编号：本文件是总契约 `doc/contracts/V11R_COMMAND_CONTRACT_V1.md` 的 **C067–C076** 节（总契约由 V11R-A-3 维护，不得在本文件重复冻结 C001–C066）。
+`src/domain/regions/entities.py`、`apps/desktop-avalonia/src/NewManga.CoreClient/Commands/{HostCommandRegistry,HostCommandDispatcher,RegionTextProjection}.cs`。
+命令清册编号：本文件是总契约 `doc/contracts/V11R_COMMAND_CONTRACT_V1.md` 的 **C067–C077** 节（总契约由 V11R-A-3 维护，不得在本文件重复冻结 C001–C066）。
 
 ---
 
 ## 0. 范围与非目标
 
-本契约冻结审计 §5.1 F-01 指出的 Region 写面在 IPC 上的 10 条新命令。它们是既有 Region 命令族
-（C042 `set_region_type` / C043 `list_regions` / C044 `list_region_revisions` / C045
-`restore_region_revision` / C046 `rerender_page` / C047 `resolve_page_resource`）的**追加**，
-C042–C047 的入参/出参/错误码**逐字节不变**。
+本契约冻结两部分：
+1. 审计 §5.1 F-01 指出的 Region 写面在 IPC 上的 10 条新命令（C067–C076）；
+2. V11R-F0-1 遗留 GAP-2 的 Region 文本只读投影（C077，V11R-F0-2 补齐）。
 
-非目标（本任务不做，见 §7 GAP）：
-- Region 文本只读投影（初始载入已存 ocr/machine/edited/final 文本）——F-01 只要求写面，见 GAP-2；
-- `IHostController` / `HostController` 的 C# 便捷方法（写权归 V11R-A-1/A-2 的 core-bridge）；
+它们是既有 Region 命令族（C042 `set_region_type` / C043 `list_regions` / C044
+`list_region_revisions` / C045 `restore_region_revision` / C046 `rerender_page` / C047
+`resolve_page_resource`）的**追加**，C042–C047 的入参/出参/错误码**逐字节不变**。
+
+**读命令选型（F0-2 裁定）**：任务卡允许 `get_region`（单 region）或
+`list_page_region_texts`（整页）二选一，选型标准是「Studio Page 载入一页的 region 列表 + 文本应在
+1 次命令内完成」。选 **`list_page_region_texts`（page-scoped）**：Page 工作区首帧必然需要该页全部
+live region，单 region 命令会退化成 N+1 次往返；本命令一次返回整页投影，并支持可选
+`region_ids` 严格过滤（刷新/局部重读；未知或跨页 region → TARGET_NOT_FOUND）。
+
+非目标：
+- `IHostController` / `HostController` 的 C# 便捷方法（写权归 V11R-A-1/A-2 的 core-bridge；本任务
+  只提供 `HostCommandDispatcher` 可调命令与 `RegionPageTextProjection` 解析 DTO）；
 - 任何 UI 视图、ViewModel、旧 `apps/desktop` 代码；
-- 用户源文件/Managed Copy 内容（写命令不接触文件系统，见 §5）。
+- 用户源文件/Managed Copy 内容（这些命令不接触文件系统，见 §5）。
 
 ---
 
@@ -38,9 +47,9 @@ C042–C047 的入参/出参/错误码**逐字节不变**。
 
 应答：`{"protocol", "version": {"major": 2, "minor": 3}, "request_id", "result" | null, "error" | null}`。
 
-**minor 策略（明确决定，非默认）**：10 条命令全部使用**逐命令族 minor = 3**（与
-`set_region_type` / `list_regions` 同族），Core 的 `PROTOCOL_MINOR` 保持 3，**零 protocol bump**。
-理由：
+**minor 策略（明确决定，非默认）**：11 条命令（C067–C077，10 写 + 1 读）全部使用**逐命令族
+minor = 3**（与 `set_region_type` / `list_regions` 同族），Core 的 `PROTOCOL_MINOR` 保持 3，
+**零 protocol bump**。理由：
 
 1. Core 的版本门只对 `CreateBook/CreateChapter`（minor 8）、`PermanentlyDelete*`（minor 10）与
    P15 settings 族（minor 7）做严格 minor 门禁；Region 族按 major=2 受理任意整数 minor；
@@ -49,8 +58,9 @@ C042–C047 的入参/出参/错误码**逐字节不变**。
    「追加命令面不 bump」先例；
 3. bump 会改变所有客户端声明的 envelope 版本，属于本任务未授权的共享契约变更。
 
-C# 侧 `HostCommandRegistry` 中 10 条命令的 `CoreMinor` 均为 `3`，`HostCommandRegistry.RegionWriteCommandNames`
-显式暴露追加集合；冻结的 66 条 Rust 快照**不修改**（见 §8 验证）。
+C# 侧 `HostCommandRegistry` 中 11 条命令的 `CoreMinor` 均为 `3`；
+`RegionWriteCommandNames`（10 写）、`RegionReadCommandNames`（1 读）与并集
+`V11RAdditiveCommandNames`（11）显式暴露追加集合；冻结的 66 条 Rust 快照**不修改**（见 §8 验证）。
 
 ### 1.2 错误 envelope（复用既有 typed 字面量，零新增错误类型）
 
@@ -108,7 +118,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 
 ---
 
-## 2. 逐命令契约（C067–C076）
+## 2. 逐命令契约（C067–C077）
 
 所有命令均为 `core` 通道，C# Host 命令名与 Core wire 命令名**同名**，`minor=3`。
 
@@ -222,6 +232,18 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | 幂等 | **幂等**：重复写同一 flag 无新状态、无新 revision |
 | 语义 | 复用 `set_revision_pinned`（AC-REV-003）：专用单语句事务只翻 `is_pinned`，**从不 upsert 不可变历史**、不移动 current 指针、不产生 revision；pin 保护 revision 免于 cleanup/清理（见 M2-C1 §5） |
 
+### C077 `list_page_region_texts`（V11R-F0-2，读命令，关闭 GAP-2）
+
+| 项 | 内容 |
+|---|---|
+| 入参 | `page_id`! 非空串；`region_ids`? 非空、互异的非空 id 数组（严格过滤；省略=整页） |
+| 出参 | `{page_id, page_size: {width, height} \| null, regions: RegionTextDetail[]}`，reading_order 升序 |
+| RegionTextDetail | `{region_id, page_id, region_type, sfx_policy, reading_order, geometry: {bbox, polygon} \| null, text: {ocr_text, machine_translation, edited_translation, final_translation, final_source, edited_confirmed, manual_edited, translation_locked}, locks: {region_locked, translation_locked, inpaint_locked}, review_state, origin, revision_no, current_revision_id, is_pinned, pinned_revision_nos: int[], created_at, updated_at}` |
+| 错误 | `INVALID_REQUEST`（payload/`region_ids` 形状）、`TARGET_NOT_FOUND`（过滤 id 不存在、已软删或属于其它页）、`UNKNOWN` |
+| 乐观锁 | 不适用（只读） |
+| 幂等 | 只读，天然幂等 |
+| 语义 | 纯读投影，**一条命令完成 Studio Page 首帧的「整页 region + 四轨文本」载入**（避免 N+1；这是选型依据）。`text` 是快照契约的四级文本原值（未编辑 region 的 `final_source="none"`、空串就是真实值，不得补占位）；`review_state`/`origin`/`revision_no`/`current_revision_id`/`is_pinned` 取自 current 指针指向的 revision；`pinned_revision_nos` 列出历史中所有 pinned 号；`geometry` 是 normalized 回读形状（与 C043 同构），页行拿不到像素范围时为 `null`（不伪造）；`page_size` 在未知页为 `null`。未知 page / 无 region 页均返回 `regions: []`（C043 先例：空数据不是错误）。`locks.translation_locked`（Region 列投影）与 `text.translation_locked`（人工保护旗标）分别原值投影，双投影含义见 §6 GAP-3。 |
+
 ---
 
 ## 3. 数据安全不变量（独立审查重点）
@@ -233,8 +255,8 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
    RESTORED revision 而非回移指针）。
 3. **人工保护**：manual save/lock 的 `translation_locked` 会让机器写走既有 candidate 通道
    （`apply_machine_translation` 的 LOCK_CHANGED / §8.4），写命令不解除保护。
-4. **源文件**：10 条命令的 payload/result 均不含 OS 路径、文件名、base64 图像或 managed path；
-   不读不写用户源文件与 Managed Copy 内容（几何是 DB 内坐标，不是文件）。
+4. **源文件**：10 条写命令与 1 条读命令的 payload/result 均不含 OS 路径、文件名、base64 图像或
+   managed path；不读不写用户源文件与 Managed Copy 内容（几何是 DB 内坐标，不是文件）。
 5. **自动/机器写与用户写分离**：本任务全部是用户写（origin=USER），不修改 pipeline 的
    machine-write guard、candidate 持久化与锁比较语义。
 6. **失败面**：任何校验失败在持久化之前返回（写前 fail-closed）；conflict 零写；
@@ -244,16 +266,22 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 
 ## 4. C# Host/CoreClient 侧契约
 
-- `HostCommandRegistry`：`RegionNames` 追加 10 名；`CoreBindings` 映射同名 Core 命令、`Minor=3`；
-  `RegionWriteCommandNames` 暴露追加集合；`All` = 冻结 66 条迁移命令 + 10 条追加命令。
+- `HostCommandRegistry`：`RegionNames` 追加 11 名（10 写 + 1 读）；`CoreBindings` 映射同名 Core
+  命令、`Minor=3`；`RegionWriteCommandNames`（10）、`RegionReadCommandNames`（1）与并集
+  `V11RAdditiveCommandNames`（11）显式暴露追加集合；`All` = 冻结 66 条迁移命令 + 11 条追加命令。
 - `HostCommandDispatcher.WriteCorePayload`：逐命令做 legacy 边界的 fail-closed 参数校验
   （`INVALID_ARGUMENTS`，发帧前拒绝），并写出 §2 的精确 payload：
   - 几何：`geometry.points` ≥2 个 `[x,y]` 有限数对；split `parts` 为 ≥2 个点列表；
   - `expected_revisions`：对象，key 非空、value 整数；`set_region_lock` 至少一个锁字段；
-  - `edited_translation` 允许空串（文本写入专用 `RequireText`）。
-- 无新 DTO 类型：既有 `HostCommandDescriptor` / `HostCommandResult` 已覆盖；UI（Studio Page）
-  通过 `HostRuntime.Commands.InvokeAsync(name, args)` 消费（`IHostController` 便捷方法归属
-  core-bridge 的 V11R-A-1/A-2 任务，不在本契约内）。
+  - `edited_translation` 允许空串（文本写入专用 `RequireText`）；
+  - `list_page_region_texts.region_ids`：可选，非空、互异非空字符串；省略/null 即整页。
+- V11R-F0-2 新增读取 DTO（`NewManga.CoreClient.Commands`）：
+  `RegionPageTextProjection.Parse(JsonElement)` → `{PageId, PageWidth, PageHeight, Regions}`，
+  其中 `RegionTextDetail` 含 `RegionFourTrackText` / `RegionLockProjection` /
+  `RegionGeometryProjection?`（null 保留未知页的几何缺失，不伪造），严格解析、缺字段即
+  `FormatException`；UI 通过 `HostRuntime.Commands.InvokeAsync(name, args)` 获取
+  `HostCommandResult.Value` 后传入 `Parse`（`IHostController` 便捷方法归属 core-bridge 的
+  V11R-A-1/A-2 任务，不在本契约内）。
 - 冻结 66 条命令的既有路由/minor 不变；快照文件
   `verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json` **未编辑**。
 
@@ -273,9 +301,12 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | C074 | `confirm_final` | +`expected_revision_no` |
 | C075 | **新增** `set_locks()`（组合既有域方法） | +`Region.set_translation_locked`、`RegionText.lock_translation`（对称域方法） |
 | C076 | `set_revision_pinned` | +`expected_revision_no`；`LookupError` → typed `RegionRevisionNotFound` |
+| C077 | **新增** `RegionEditingService.list_region_details()`（只读组合：`list_regions` + `list_revisions` + `region_canvas` 逆向映射 + 共享 `region_text_state()`） | V11R-F0-2；不新增写路径、不补占位值 |
 
-新增的读辅助：`RegionEditingService.current_revision(region_id)`（写后有效状态回读，复用同一
-权威对象，不发明第二查询路径）。全部新增参数均为 keyword-only 且默认 `None`，既有调用点零行为变化。
+新增的读辅助：`RegionEditingService.current_revision(region_id)`（写后有效状态回读）、
+`region_text_state(region)`（四级文本单一投影定义，写/读共用）、
+`list_region_details(page_id, page_size=...)`（C077 的页码级真实投影）。
+全部新增写参数均为 keyword-only 且默认 `None`，既有调用点零行为变化。
 
 ---
 
@@ -284,40 +315,46 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 | ID | 类别 | 事实 | 处置 |
 |---|---|---|---|
 | GAP-1 | **已填**（application 层缺失） | `set_region_lock` 无 use case：域有 `Region.set_region_locked` / `set_inpaint_locked` / `RegionText.unlock_translation`，但没有把锁变更持久化为 revision 的应用层入口（此前唯一锁写是 manual save 的隐式上锁） | 本任务新增薄 `set_locks()`（组合既有域方法 + 同一 commit seam，锁变更产生 revision，D06 §87）+ 两个对称域方法；**明确标注为 V11R-F0-1 新增**，非既有能力 |
-| GAP-2 | **未填**（超出 F-01 范围） | Region **文本只读**投影缺失：`list_regions` 是 5 字段最小 DTO（含 optional `geometry`），IPC 上没有命令返回 `ocr_text/machine_translation/edited_translation/final_translation`；C044 只返回 revision 摘要（不含快照文本） | 本任务写命令的 result 回显「本次写完后的 text」；**页面初次载入已有文本仍无通道**。Studio Page 不得伪造文本；建议独立 follow-up（候选：`get_region` 详情投影或 `list_region_texts`），由 Lead 决策是否排入，见 `verification/V11R-F0-1/GAPS.md` |
-| GAP-3 | **记录**（既有设计双投影） | `Region.translation_locked`（列，pipeline LockSnapshot 读它）与 `RegionText.translation_locked`（text_json，人工保护判定读它）是既有双表示；既有 `save_manual_translation` 只写 text 级 | 本任务的显式 `set_region_lock` 同时同步两者；**未改**既有 manual save 行为（会改变既有语义，超出本任务授权），作为已知风险记录 |
+| GAP-2 | **CLOSED（V11R-F0-2）** | Region **文本只读**投影曾缺失：`list_regions` 是 5 字段最小 DTO，IPC 上没有命令返回四级文本；C044 只返回 revision 摘要 | 新增 C077 `list_page_region_texts`（page-scoped，1 次命令完成首帧载入；含四轨文本/锁/review_state/is_pinned/pinned 历史/几何，全部真实投影）。实现见 `service.list_region_details` + `core_service.handle_list_page_region_texts`；测试 `tests/core/test_region_text_read_command.py`（11 用例）；证据 `verification/V11R-F0-2/`。**GAP-2 关闭**；UI 不再需要伪造文本 |
+| GAP-3 | **记录**（既有设计双投影） | `Region.translation_locked`（列，pipeline LockSnapshot 读它）与 `RegionText.translation_locked`（text_json，人工保护判定读它）是既有双表示；既有 `save_manual_translation` 只写 text 级 | 显式 `set_region_lock` 同时同步两者；C077 把两份原值分别投影（`locks.translation_locked` / `text.translation_locked`）。**未改**既有 manual save 行为（保持既有语义，bug 修复需独立契约决策），作为已知风险保留 |
 | GAP-4 | **决策记录** | `create_region` 无 `expected_revision` | 创建无先前 revision，无冲突面；§1.4 已冻结说明，不是遗漏 |
 | GAP-5 | **边界** | `IHostController`/`HostController` 未追加 Region 写便捷方法 | 写权属 core-bridge（契约 §1.2）；本任务只保证命令真实可调（`HostRuntime.Commands`），UI 任务按 V11R_AVALONIA_CONTRACT 消费 |
+| GAP-6 | **记录** | merge/split 对源 region 只软删，不产生“删除 revision” | 既有 D03 §6.4/TASK-002 语义，源历史与 current/pin 保留；未改 |
 
 契约差异：任务卡 AC7 原文为「契约文档更新（与 V11R-A-3 命令契约合并）」；Lead 裁定
-A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为其 **C067–C076** 引用节，
+A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为其 **C067–C077** 引用节，
 不重复冻结 C001–C066。此为经批准的偏差。
 
 ---
 
 ## 7. Studio Page 消费指引（实施建议，不构成 UI 设计冻结）
 
-1. 打开页：`list_regions` 拿 region/current revision/normalized geometry（GAP-2：文本另需后续通道）。
+1. 打开页（首帧，**1 次命令**）：`list_page_region_texts {page_id}` 一次拿到整页 region +
+   四轨文本 + 三锁 + review_state + is_pinned/pinned 历史 + normalized 几何；无需再逐个 region 读
+   （如果只需要最小 5 字段列表，C043 `list_regions` 仍可用）。局部刷新/选中重读可带
+   `region_ids` 严格过滤。
 2. 画布新建框选 → `create_region`（points 为归一化点列）；读回 `region_id/revision_no`。
 3. 拖拽/缩放结束 → `save_region_geometry`，带上次 `revision_no` 作 `expected_revision`；
-   `INPUT_REVISION_CHANGED` 时**不要重试写**，重新 `list_regions` 让用户确认后重做。
+   `INPUT_REVISION_CHANGED` 时**不要重试写**，重新 `list_page_region_texts` 让用户确认后重做。
 4. 合并/拆分/排序 → 对应命令带 `expected_revisions`/`expected_revision`；排序必须发全量全排列。
 5. 文本：编辑后 `save_manual_translation`（带 expected）→ 用户 `Enter` 确认 → `confirm_region_final`。
 6. 锁页签 → `set_region_lock`（只发变化的锁字段）；历史页签 → `pin_revision`。
 7. 删除 → `delete_region`（带 expected）；UI 需二次确认（命令本身不做确认门，契约语义为显式用户动作）。
 8. 任何 error：按 `code` 分类呈现（validation/conflict/not_found/internal），不要静默吞 conflict。
+9. 解析：C# 侧用 `RegionPageTextProjection.Parse(result.Value)`；缺字段严格失败而不是静默空值，
+   `Geometry=null`/`PageWidth=null` 只出现在页行不可用的真实情形。
 
 ---
 
-## 8. 验证出口（证据见 `verification/V11R-F0-1/`）
+## 8. 验证出口（证据见 `verification/V11R-F0-1/` 与 `verification/V11R-F0-2/`）
 
 | Gate | 命令 | 通过标准 |
 |---|---|---|
-| Python 全量 | `python -m pytest -q`（仓库根） | exit 0，无新增失败；本任务新增用例见 `tests/core/test_region_write_commands.py`、`tests/editing/test_region_write_guards.py` |
-| Core 契约用例 | `python -m pytest -q tests/core/test_region_write_commands.py tests/editing/test_region_write_guards.py` | 全绿（每命令成功/冲突/非法参数 + 重启后锁持久化） |
+| Python 全量 | `python -m pytest -q`（仓库根） | exit 0，无新增失败；新增用例见 `tests/core/test_region_write_commands.py`、`tests/core/test_region_text_read_command.py`、`tests/editing/test_region_write_guards.py` |
+| Core 契约用例 | `python -m pytest -q tests/core/test_region_write_commands.py tests/core/test_region_text_read_command.py tests/editing/test_region_write_guards.py` | 全绿（每命令成功/冲突/非法参数 + 重启后锁持久化 + 文本读投影真实值/软删不可见/空页/过滤） |
 | C# 构建 | `dotnet build NewManga.sln -warnaserror`（`apps/desktop-avalonia`） | 0 warning / 0 error |
-| C# 测试 | `dotnet test NewManga.sln --no-build` | 全绿（含 `RegionWriteCommandTests`：注册/minor/精确 payload/边界拒绝） |
-| 快照不变量 | 同 C# 测试 | 冻结 66 快照 ⊆ registry；追加集恰为 `RegionWriteCommandNames` |
+| C# 测试 | `dotnet test NewManga.sln --no-build` | 全绿（`RegionWriteCommandTests`：11 条注册/minor/精确 payload/边界拒绝/DTO 严格解析） |
+| 快照不变量 | 同 C# 测试 | 冻结 66 快照 ⊆ registry；追加集恰为 `V11RAdditiveCommandNames`（10 写 + 1 读） |
 
 ---
 
@@ -326,3 +363,4 @@ A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为�
 | 日期 | 变更 |
 |---|---|
 | 2026-10-30 | v1 冻结：10 条命令契约、minor 3 策略、几何/乐观锁/幂等/错误码/数据安全、C# 注册与 payload、GAP 清单（V11R-F0-1 Owner） |
+| 2026-10-30 | v1.1（V11R-F0-2）：新增 C077 `list_page_region_texts`（page-scoped 文本读投影，关闭 GAP-2）、`RegionPageTextProjection` 解析 DTO、`RegionReadCommandNames`/`V11RAdditiveCommandNames`；GAP-2 标 CLOSED，GAP-3 “既有 manual save 未改”显式保留；契约升版原因见 §0 读命令选型。 |

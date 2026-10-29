@@ -80,11 +80,11 @@ exit 0；未出现与本变更相关的新增失败。
 
 ## 5. 已知 GAP / 风险（详见 `GAPS.md`）
 
-- **GAP-2（未填，超出 F-01 范围）**：Region 文本只读投影在 IPC 上仍缺失（`list_regions` 为最小
-  5 字段 DTO；`list_region_revisions` 只给摘要）。Studio Page 初次载入显示已有文本需要后续
-  follow-up 读命令；写命令 result 已回显本次写后的 text。**UI 不得伪造文本**。
+- **GAP-2（已由 V11R-F0-2 CLOSED，2026-10-30）**：Region 文本只读投影在 F0-1 时缺失；F0-2 新增
+  `list_page_region_texts`（C077，page-scoped，1 次命令完成整页 region + 四轨文本载入），证据在
+  `verification/V11R-F0-2/`，契约 v1.1 §2 C077。F0-1 当时的声明保留，仅更新状态。
 - GAP-1（已填）显式锁 use case、GAP-3 既有翻译锁双投影、GAP-4 create 无乐观锁（决策）、
-  GAP-5 IHostController 便捷方法边界：见 GAPS。
+  GAP-5 IHostController 便捷方法边界、GAP-6 merge/split 软删不建 revision：见 GAPS。
 
 ## 6. 复现方法
 

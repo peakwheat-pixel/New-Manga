@@ -13,9 +13,11 @@ namespace NewManga.CoreClient.Commands;
 /// Region write commands to the Region domain: create_region / delete_region /
 /// save_region_geometry / merge_regions / split_region / reorder_regions /
 /// save_manual_translation / confirm_region_final / set_region_lock /
-/// pin_revision. They are additive to the frozen 66-command snapshot (the
-/// snapshot file is NOT edited) and ride the SAME per-command Core minor (3)
-/// as their set_region_type/list_regions siblings -- zero protocol bump, see
+/// pin_revision. V11R-F0-2 appends the one Region TEXT read projection
+/// (list_page_region_texts) that closes the F0-1 GAP-2. Both are additive to
+/// the frozen 66-command snapshot (the snapshot file is NOT edited) and ride
+/// the SAME per-command Core minor (3) as their set_region_type/list_regions
+/// siblings -- zero protocol bump, see
 /// doc/contracts/V11R_REGION_WRITE_CONTRACT.md. The parity test derives the
 /// legacy set from the frozen snapshot and the additive set explicitly, so a
 /// missing/duplicated binding still fails closed.
@@ -91,6 +93,10 @@ public static class HostCommandRegistry
         "confirm_region_final",
         "set_region_lock",
         "pin_revision",
+        // V11R-F0-2: the Region TEXT read projection (closes V11R-F0-1
+        // GAP-2) -- one page-scoped command, additive to the frozen snapshot,
+        // same Region family minor 3.
+        "list_page_region_texts",
     };
 
     private static readonly string[] ReaderNames =
@@ -221,6 +227,8 @@ public static class HostCommandRegistry
         ["confirm_region_final"] = new("confirm_region_final", 3),
         ["set_region_lock"] = new("set_region_lock", 3),
         ["pin_revision"] = new("pin_revision", 3),
+        // V11R-F0-2: the page-scoped Region text read projection (same minor).
+        ["list_page_region_texts"] = new("list_page_region_texts", 3),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -263,9 +271,10 @@ public static class HostCommandRegistry
     /// <summary>
     /// V11R-F0-1: the ten Region write commands ADDED on top of the frozen
     /// 66-command snapshot (the snapshot file is not edited). The parity test
-    /// derives the additive set from the registry and asserts it matches this
-    /// set exactly, so the frozen legacy surface keeps its own independent
-    /// gate while the V11R widening stays explicit.
+    /// derives the additive set from the registry and asserts it matches
+    /// <see cref="V11RAdditiveCommandNames"/> exactly, so the frozen legacy
+    /// surface keeps its own independent gate while the V11R widening stays
+    /// explicit.
     /// </summary>
     public static IReadOnlySet<string> RegionWriteCommandNames { get; } =
         new HashSet<string>(StringComparer.Ordinal)
@@ -282,6 +291,27 @@ public static class HostCommandRegistry
             "pin_revision",
         };
 
+    /// <summary>
+    /// V11R-F0-2: the Region TEXT read projection (closes the V11R-F0-1
+    /// GAP-2). Not a write command, so it has its own explicit additive set;
+    /// the Studio Page mode calls it once per page load.
+    /// </summary>
+    public static IReadOnlySet<string> RegionReadCommandNames { get; } =
+        new HashSet<string>(StringComparer.Ordinal)
+        {
+            "list_page_region_texts",
+        };
+
+    /// <summary>
+    /// V11R-F0-1 + V11R-F0-2: every command ADDED on top of the frozen
+    /// 66-command snapshot. The parity test asserts the registry minus the
+    /// frozen snapshot equals exactly this set.
+    /// </summary>
+    public static IReadOnlySet<string> V11RAdditiveCommandNames { get; } =
+        new HashSet<string>(
+            RegionWriteCommandNames.Concat(RegionReadCommandNames),
+            StringComparer.Ordinal);
+
     public static HostCommandDescriptor Get(string name) =>
         Commands.TryGetValue(name, out var descriptor)
             ? descriptor
@@ -289,8 +319,8 @@ public static class HostCommandRegistry
 
     private static IReadOnlyDictionary<string, HostCommandDescriptor> BuildCommands()
     {
-        // Frozen legacy 66 + the ten V11R-F0-1 Region write commands.
-        var descriptors = new List<HostCommandDescriptor>(76);
+        // Frozen legacy 66 + the V11R-F0-1/F0-2 additive Region commands.
+        var descriptors = new List<HostCommandDescriptor>(77);
         AddDomain(descriptors, HostCommandDomain.Settings, SettingsNames);
         AddDomain(descriptors, HostCommandDomain.Library, LibraryNames);
         AddDomain(descriptors, HostCommandDomain.Region, RegionNames);
