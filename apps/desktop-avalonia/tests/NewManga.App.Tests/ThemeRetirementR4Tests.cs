@@ -160,6 +160,31 @@ public sealed class ThemeRetirementR4Tests
         }
     }
 
+    [AvaloniaFact]
+    public void V2_shell_window_chrome_is_visual_only_and_keeps_real_window_behaviour()
+    {
+        using var manager = new DesignSystemThemeManager(Application.Current!);
+        Assert.True(manager.Initialize(AppearanceMode.Dark), manager.LastError);
+        var window = AppShellV2.CreateRoot(
+            new FakeHostController(FakeHostController.ReadySnapshot()),
+            new AppOptions(),
+            picker: null,
+            themeManager: manager);
+        var decorations = window.SystemDecorations;
+        var canResize = window.CanResize;
+
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        manager.SetAppearance(AppearanceMode.Light);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(SystemDecorations.Full, decorations);
+        Assert.Equal(decorations, window.SystemDecorations);
+        Assert.Equal(canResize, window.CanResize);
+        Assert.True(window.IsVisible);
+        window.Close();
+    }
+
     private static Color ResolvedColor(string key)
     {
         Assert.True(Application.Current!.TryGetResource(key, null, out var value), $"{key} is not loaded");
