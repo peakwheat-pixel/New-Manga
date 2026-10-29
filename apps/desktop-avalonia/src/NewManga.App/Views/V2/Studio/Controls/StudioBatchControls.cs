@@ -374,7 +374,7 @@ public sealed class StudioBatchRunStripControl : Border
 
         _pause = StudioUi.Button("暂停", "ghost sm", () => _ = viewModel.PauseAsync());
         _resume = StudioUi.Button("继续", "ghost sm", () => _ = viewModel.ResumeAsync());
-        _stop = StudioUi.Button("停止", "ghost sm", () => _ = viewModel.StopAsync());
+        _stop = StudioUi.Button("停止", "ghost sm", () => _ = viewModel.RequestStopAsync());
         _retry = StudioUi.Button("重试失败", "ghost sm", () => _ = viewModel.RetryFailedAsync());
         _resumeBlocked = StudioUi.Button("恢复阻塞", "ghost sm", () => _ = viewModel.ResumeBlockedAsync());
         var controls = StudioUi.Row(4);
@@ -544,11 +544,12 @@ public sealed class StudioBatchWorkspace : Grid
         Matrix = new StudioBatchMatrixControl(viewModel);
         Drawer = new StudioBatchDrawerControl(viewModel);
         GateModal = new StudioBatchGateModalControl(viewModel);
+        StopConfirm = new StudioStopConfirmModal(viewModel);
         matrixHost.Children.Add(Matrix);
         matrixHost.Children.Add(Drawer);
         BuildEmptyState();
         matrixHost.Children.Add(_emptyHost);
-        matrixHost.Children.Add(GateModal);
+        // GateModal lives on the root layer so its scrim covers the whole Batch surface (I2b).
 
         Chips = chips;
         StageRail = rail;
@@ -577,6 +578,10 @@ public sealed class StudioBatchWorkspace : Grid
         Children.Add(matrixHost);
         Children.Add(_actionBar);
         Children.Add(runStrip);
+        Grid.SetRowSpan(GateModal, 5);
+        Children.Add(GateModal);
+        Grid.SetRowSpan(StopConfirm, 5);
+        Children.Add(StopConfirm);
 
         viewModel.PropertyChanged += (_, args) =>
         {
@@ -611,6 +616,8 @@ public sealed class StudioBatchWorkspace : Grid
     public StudioBatchDrawerControl Drawer { get; }
 
     public StudioBatchGateModalControl GateModal { get; }
+
+    public StudioStopConfirmModal StopConfirm { get; }
 
     public StudioBatchStageRailControl StageRail { get; }
 
@@ -650,7 +657,7 @@ public sealed class StudioBatchWorkspace : Grid
         _emptyDetail = new TextBlock { Classes = { "meta", "studio-wrap" } };
         column.Children.Add(_emptyTitle);
         column.Children.Add(_emptyDetail);
-        _startButton = StudioUi.Button("开始处理", "primary", () => _ = _viewModel.StartProcessingAsync());
+        _startButton = StudioUi.Button("开始处理", "primary", () => { if (_viewModel.State == StudioBatchRunState.Error) { _ = _viewModel.RefreshAsync(); } else { _ = _viewModel.StartProcessingAsync(); } });
         var startRow = StudioUi.Row(8);
         startRow.Children.Add(_startButton);
         column.Children.Add(startRow);
@@ -720,7 +727,7 @@ public sealed class StudioBatchWorkspace : Grid
     private void RefreshChrome()
     {
         var hasData = _viewModel.HasData;
-        _emptyHost.IsVisible = !hasData;
+        _emptyHost.IsVisible = !hasData && _viewModel.State != StudioBatchRunState.Error;
         _emptyDetail.Text = _viewModel.State switch
         {
             StudioBatchRunState.NotWired => "本构建没有可用的 IRunController 数据源；不会伪造矩阵或进度。",
@@ -734,4 +741,65 @@ public sealed class StudioBatchWorkspace : Grid
     }
 
 
+}
+
+/// <summary>
+/// I2b: stop confirmation. Mirrors the shell <c>ConfirmRequest</c> semantics (B-1 modal: default focus
+/// 取消, impact copy, Esc cancels) because the shell's visual modal lives in AppShellV2 and cannot be
+/// reused across the Studio area; the request shape stays the same.
+/// </summary>
+public sealed class StudioStopConfirmModal : Grid
+{
+    private readonly StudioBatchViewModel _viewModel;
+    private readonly Button _cancel;
+    private readonly Button _confirm;
+
+    public StudioStopConfirmModal(StudioBatchViewModel viewModel)
+    {
+        _viewModel = viewModel;
+        var scrim = StudioUi.Box("studio-scrim");
+        scrim.PointerPressed += (_, _) => viewModel.CancelStop();
+        Children.Add(scrim);
+
+        var card = StudioUi.Box("studio-modal-card");
+        card.HorizontalAlignment = HorizontalAlignment.Center;
+        card.VerticalAlignment = VerticalAlignment.Center;
+        var column = StudioUi.Column(12);
+        column.Children.Add(StudioUi.Text("停止当前 Run？", "title"));
+        var body = new TextBlock
+        {
+            Classes = { "body", "studio-wrap" },
+            Text = "停止会中止未完成的页：已完成页保留，未完成页保持现状且需要重新运行。",
+        };
+        column.Children.Add(body);
+        var actions = StudioUi.Row(8);
+        actions.HorizontalAlignment = HorizontalAlignment.Right;
+        _cancel = StudioUi.Button("取消", "sm", viewModel.CancelStop);
+        _confirm = StudioUi.Button("停止 Run", "sm danger", () => _ = viewModel.CancelConfirmedStopAsync());
+        actions.Children.Add(_cancel);
+        actions.Children.Add(_confirm);
+        column.Children.Add(actions);
+        card.Child = column;
+        Children.Add(card);
+        StudioUi.TrackVisible(this, viewModel, () => viewModel.StopArmed);
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(StudioBatchViewModel.StopArmed) or null && viewModel.StopArmed)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => _cancel.Focus(), Avalonia.Threading.DispatcherPriority.Loaded);
+            }
+        };
+        KeyDown += (_, args) =>
+        {
+            if (viewModel.StopArmed && args.Key is Key.Escape)
+            {
+                viewModel.CancelStop();
+                args.Handled = true;
+            }
+        };
+    }
+
+    public Button CancelButton => _cancel;
+
+    public Button ConfirmButton => _confirm;
 }
