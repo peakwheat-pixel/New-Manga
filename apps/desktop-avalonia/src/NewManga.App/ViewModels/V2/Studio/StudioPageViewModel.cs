@@ -679,6 +679,9 @@ public sealed class StudioPageViewModel : StudioObservable
 
     public bool PipelineNotWired => _runProjection is null;
 
+    /// <summary>V11R-B-5: live projection consumed by the export preflight counters.</summary>
+    public StudioRunProjection? RunProjection => _runProjection;
+
     public string PipelineNotWiredNote =>
         "阶段状态来自 GetTaskProjection（V11R-A-2 未合入）· 当前不显示任何伪造进度";
 

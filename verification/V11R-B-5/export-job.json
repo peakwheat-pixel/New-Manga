@@ -1,0 +1,12 @@
+{
+  "ac": "AC2 \u5BFC\u51FA/\u8F6E\u8BE2/\u53D6\u6D88/\u63ED\u793A",
+  "screenshot": "export-cancelled.png",
+  "format": "pdf",
+  "pdf_content": "searchable_dual_layer",
+  "page_ids": 3,
+  "snapshot_calls": 3,
+  "cancel_calls": 1,
+  "reveal_calls": 1,
+  "final_phase": "Cancelled",
+  "output_hides_absolute_path": true
+}
