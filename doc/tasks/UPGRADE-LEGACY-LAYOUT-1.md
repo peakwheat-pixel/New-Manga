@@ -3,7 +3,7 @@ id: UPGRADE-LEGACY-LAYOUT-1
 title: 修复真实升级缺口——Core 启动时迁移旧布局 data/library.db → 根 library.db
 kind: fix
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-29_fix_upgrade_gap
 suggested_owner: dsh
 owner: dsh-lead
@@ -110,4 +110,8 @@ allowed_paths:
 
 ## Closeout Record
 
-- 待复审 PASS 后填写（target: done）；round 1/2 旧证据保留为历史（SOURCE_PIN）。
+- Closed：2026-10-29 as **done**（用户「立即修复升级缺口」；round 1/2 FAIL → round 3 PASS；集成 merge `098c60381`，代码 `ce3cf5bac`）。
+- 复审 PASS 后 P2 处理：Handoff frontmatter `head` 已更新为 `ce3cf5bac`；fail-closed 策略补充说明
+  （迁移失败即退出是为保护旧数据不被空库永久遮挡；仅当**当前库缺失、旧数据存在**时触发；若仅补迁目录失败且当前库可用，仍退出——已知 P2，后续可按需改为降级启动）；目录 promote 严格原子性表述保留在 Handoff 风险节。
+- 资源：worktree/task-env 保留（PRESERVE_REFERENCED）；round 1/2 旧证据保留为 SOURCE_PIN。
+- 后续（follow-up，不阻塞）：①目录 promote 的严格原子性注记与测试回归（P2）；②`NEWMANGA_DATA_ROOT` 隔离的端到端集成测试（P2）；③GUI 端到端升级验证（B 卡遗留）。

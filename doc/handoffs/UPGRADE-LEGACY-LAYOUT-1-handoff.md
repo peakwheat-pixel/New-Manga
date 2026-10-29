@@ -1,9 +1,9 @@
 ---
 task: UPGRADE-LEGACY-LAYOUT-1
 title: 修复升级缺口（旧布局 data/ → 根布局）Handoff
-status: in_review (round 3)
+status: done
 date: 2026-10-29
-head: pending (round 3 commit)
+head: ce3cf5bac1dacc1d1c72395a9bb8b745ddcc92cc
 ---
 
 # Handoff：UPGRADE-LEGACY-LAYOUT-1
@@ -51,3 +51,8 @@ head: pending (round 3 commit)
 ## 下一步
 
 - 复审 PASS → 转 `done`。
+## fail-closed 说明（review P2）
+
+- main() 在迁移失败时 eturn 2：目的是避免 ssemble_production_core 创建空根库、让旧 data/library.db 永久不再被迁移。
+- 触发条件：仅当**当前根 library.db 缺失且旧数据存在**（需要迁移）时；损坏/占用/权限错误都会走到这里。
+- 已知 P2：若当前库已存在、仅补迁 managed/backups 目录失败，也会退出（严格保护）；后续可按需改为"警告后继续"。
