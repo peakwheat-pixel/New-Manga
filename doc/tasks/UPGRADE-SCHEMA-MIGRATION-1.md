@@ -12,8 +12,8 @@ depends_on: [UPGRADE-REHEARSAL-1, UPGRADE-LEGACY-LAYOUT-1]
 base_commit: 99005e189
 branch: task/UPGRADE-SCHEMA-MIGRATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1
-integration_commit: fd925fcf7737cb051af3b0a6bf00ce1b50931b41
-delivery_head: fd925fcf7737cb051af3b0a6bf00ce1b50931b41
+integration_commit: 3f32bb503
+delivery_head: 3710e001474407919fb4ec8cf971f945095736ed
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/UPGRADE-SCHEMA-MIGRATION-1
@@ -28,36 +28,36 @@ allowed_paths:
   - G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1/**
 ---
 
-# UPGRADE-SCHEMA-MIGRATION-1：合成旧 schema 数据迁移测试（in_review）
+# UPGRADE-SCHEMA-MIGRATION-1：合成旧 schema 数据迁移测试（in_review / round 2）
 
 ## 来源
 
 `UPGRADE-REHEARSAL-1` 的剩余限制：「真实旧 schema（v1–v5）数据不可得 → schema 迁移链未用真实数据验证」。
 用户 2026-10-29 指定「合成旧 schema 迁移测试」。
 
-## 实现（已集成 main `fd925fcf7`）
+## 实现（round 2，已集成 main `3f32bb503`，代码 `3710e0014`）
 
 新增 `tests/storage/test_upgrade_schema_data.py`（不修改产品代码）：
-- 用项目自身迁移定义 `default_migrations()` **合成 v1–v5 各版本旧库**（`MigrationRunner(conn, MIGRATIONS[:n])`），
-  在 v1 表结构里写入真实形态的数据：1 本 book、2 章、3 页、1 个 media_artifact + 1 个 artifact_revision（含 managed_path/hash/size）。
-- 再用**完整迁移链**升级到最新 schema（当前 v6）。
-- 断言：链落在最新版本；books/chapters/pages/artifact revision 的值与关系不变；最新表（regions/pipeline_runs/
-  reading_progress/export_history/plugin_state 等）存在；`PRAGMA integrity_check=ok`；升级后仍可写。
-- 另含：v1 起点确实缺后续表（防假阳性）；升级后重跑幂等。
+- **逐版本合成**：用 `default_migrations()` 逐条应用迁移，并在**每一代**seed 该版本的数据——
+  v1：books/chapters/pages/media_artifacts/artifact_revisions；v2：books/chapters/pages 新列 + tags/book_tags + regions/region_revisions；
+  v3：pipeline_runs/pipeline_run_targets/pipeline_tasks；v4：reading_progress/export_history；v5：book_cleanup_manifests。
+- **v5 重建数据存活**：v3 seed 的 pipeline_run_targets/pipeline_tasks（v5 用 `INSERT ... SELECT` + `DROP TABLE` 重建）在升级后逐列断言。
+- **全字段/关系断言**：books/chapters/pages/media_artifacts/artifact_revisions/tags/book_tags/regions/region_revisions/
+  pipeline_* /reading_progress/export_history/book_cleanup_manifests 的完整列值与关联；`PRAGMA foreign_key_check` 为空。
+- **结构演进**：v1 起点缺后续表（14 张清单全查）；升级后全部存在；integrity ok；升级后可写；逐版本幂等。
 
-## 验证
+## 验证（round 2）
 
-- 单测：`python -m pytest tests/storage/test_upgrade_schema_data.py -q` → **7 passed**（5 个参数化旧版本 + v1 演进 + 幂等；`unit-tests.log` 带命令头）。
-- 全量回归：`python -m pytest -q` → **2619 passed / 10 skipped / 0 failed**（206.7s；`pytest-full.log` 带命令头）。
-- 覆盖矩阵：v1→v6、v2→v6、v3→v6、v4→v6、v5→v6 各一条数据保留路径。
+- 单测：**11 passed**（5 个参数化旧版本 + v1 演进 + 5 个参数化幂等；`unit-tests.log` 带 COMMAND/CWD/PYTHON/AT 头）。
+- 全量回归：**2623 passed / 10 skipped / 0 failed**（190.2s；`pytest-full.log` 带命令头 + `pytest-full-summary.txt`）。
 
 ## Acceptance Criteria
 
-- [x] **AC1 合成旧库**：v1–v5 参数化建库并写入 book/chapter/page/artifact/revision 数据。<<MET>>
-- [x] **AC2 迁移完整性**：schema_version=最新；行数与值不变；integrity ok；升级后可写。<<MET>>
-- [x] **AC3 结构演进**：v2 regions、v3 pipeline_*、v4 reading_progress/export_history、v6 plugin_state 均存在；旧表数据未被改写（值断言）。<<MET>>
-- [x] **AC4 回归**：单测 7 passed；全量 2619 passed / 0 failed；check PASS（待 commit 后确认）。<<MET>>
-- [x] **AC5 证据**：unit/log/summary 带命令头与 64-hex pin；未改产品代码。<<MET>>
+- [x] **AC1 合成旧库**：v1–v5 逐版本建库并 seed 各代数据（含 v2 列扩展、v3 pipeline、v4 阅读/导出、v5 manifest）。<<MET>>
+- [x] **AC2 迁移完整性**：schema_version=最新；全字段值与关系不变（含 v5 重建表数据）；integrity ok；外键检查空；升级后可写。<<MET>>
+- [x] **AC3 结构演进**：v2 regions/region_revisions、v3 pipeline_*、v4 reading_progress/export_history、v5 book_cleanup_manifests、v6 plugin_state/plugin_events 均存在且旧数据未被改写。<<MET>>
+- [x] **AC4 回归**：单测 11 passed；全量 2623 passed / 0 failed；check PASS。<<MET>>
+- [x] **AC5 证据**：日志带命令头与 64-hex pin；未改产品代码。<<MET>>
 
 ## 禁止范围（已遵守）
 
@@ -65,30 +65,34 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- worktree：`G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1`，HEAD `fd925fcf7`。
-- 集成：main fast-forward `fd925fcf7`。
+- worktree：`G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1`，HEAD `3710e0014`（round 1 `fd925fcf7` → round 2）。
+- 集成：main `3f32bb503`（含 round 1 review 文档 + round 2 测试）。
 - 证据：`verification/UPGRADE-SCHEMA-MIGRATION-1/{unit-tests.log,pytest-full.log,pytest-full-summary.txt}`。
 
 ## Review
 
-- 实施与自查：DSH（Lead）。独立审查：**待补**（建议 `region-workbench-owner` 复核测试真实性/覆盖/无产品改动）。
-- 独立审查（region-workbench-owner，2026-10-29，reviewed_head `fd925fcf7`）：**FAIL / CHANGES_REQUESTED**（P0=0；2×P1 + 6×P2；7 个单测实跑通过、7/7 证据 pin 与 check PASS，但测试仅 seed v1-era 数据，v2/v5 版本特有/数据变换（尤其 v5 pipeline 表重建）在空表上执行；值/关系断言只覆盖 book title + revision 三列，chapters/pages 仅 count、无关系/FK 断言；pytest-full.log/summary 无命令头）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-1.md)。
+- 实施与自查：DSH（Lead）。
+- 独立审查 round 1（region-workbench-owner，reviewed_head `fd925fcf7`）：**FAIL**（2×P1 + 6×P2：只 seed v1-era 表、v5 重建在空表上执行、断言不足、日志头缺失）。
+- **round 2 返修**：逐项处理——按版本 seed（v2/v3/v4/v5 数据，v5 重建表有数据）；全字段/关系断言 + `PRAGMA foreign_key_check`；
+  防假阳性 14 张表清单；幂等逐版本参数化；日志头修正（COMMAND/CWD/PYTHON/AT + EXIT）。
+- 复审：**待 region-workbench-owner 再审 `3f32bb503`**。
+- 独立复审 round 2（region-workbench-owner，reviewed_head `3710e0014`）：**FAIL / CHANGES_REQUESTED**（P0=0；2×P1 + 4×P2；11 个单测实跑通过、3/3 证据 pin 与 check PASS，但 v5 还重建 `step_runs`/`step_result_candidates`，测试未 seed/断言这两张表（独立探针 rows=0），仍是空表通过；“全字段”断言只覆盖部分列，v2 新列/regions JSON/pipeline JSON 等未断言；pytest-full-summary 无命令头）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-1.md) 的 Round 2 Review。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| unit-tests | AC1/AC2/AC3 | verification/UPGRADE-SCHEMA-MIGRATION-1/unit-tests.log | fd925fcf7 | 63586990dae182f9ff2d6d3d2a608c29bb7bdf022770b7297b9f3215375889f3 | CANONICAL |
-| pytest-full-log | AC4 | verification/UPGRADE-SCHEMA-MIGRATION-1/pytest-full.log | fd925fcf7 | 891d06d795b6cd5cf73ee42ec243519bafeb6ce27e4f9b5d46aceeb9749c4725 | CANONICAL |
-| pytest-full-summary | AC4 | verification/UPGRADE-SCHEMA-MIGRATION-1/pytest-full-summary.txt | fd925fcf7 | 5af648617b6722cf2828ed127af33dbcb71b7cff53e4594ee6281b5580c125f7 | CANONICAL |
+| unit-tests | AC1/AC2/AC3 | verification/UPGRADE-SCHEMA-MIGRATION-1/unit-tests.log | 3710e0014 | c7ccbbdb9d589d4ebdb0540fb813af04dd25785f2813ed602e256b03879902fd | CANONICAL |
+| pytest-full-log | AC4 | verification/UPGRADE-SCHEMA-MIGRATION-1/pytest-full.log | 3710e0014 | d493abc87842b650f230ac3748e61b31b1bbc253ce7e37824d45077202f9633a | CANONICAL |
+| pytest-full-summary | AC4 | verification/UPGRADE-SCHEMA-MIGRATION-1/pytest-full-summary.txt | 3710e0014 | e03113ad46963113b4660ec2e37f94821c2e44df3300bd0d640353233cb226c7 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1 | 提交 fd925fcf7 | 测试实现 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1 | 提交 3710e0014 | 测试实现（round 2） |
 | task-env | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-SCHEMA-MIGRATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-SCHEMA-MIGRATION-1 | pytest-full.log | 回归日志 |
 
 ## Closeout Record
 
-- 待独立 Review 通过后填写（target: done）。
+- 待 round 2 复审 PASS 后填写（target: done）。
