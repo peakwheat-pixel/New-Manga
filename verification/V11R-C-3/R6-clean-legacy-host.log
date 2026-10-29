@@ -1,0 +1,8 @@
+2026-10-29T20:33:57.7395607+00:00 INFO single-instance acquired: C3I1r6b-legacy-e96848 (abandoned_recovered=False)
+2026-10-29T20:33:57.7461014+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\c3i1-r6smoke2-03b8cb02\legacy
+2026-10-29T20:33:57.7464381+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T20:33:58.1015625+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T20:33:58.1861638+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T20:33:58.1866350+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T20:33:58.1893865+00:00 INFO host-control session opened (host_4rquch3bjFkwqGGh48lg9xPb-5VV0B6l2QBr8-N6gHs)
+2026-10-29T20:33:58.1924845+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

@@ -1,0 +1,14 @@
+# C-3-I1 clean-tree R6 startup smoke - 2026-10-30T04:33:48+08:00
+# HEAD=641c0a075d5c09e1f7b1855dee5df572e9262c5e
+# exe=apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.exe
+# sidecar=G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar
+# close=graceful: observe window, WM_CLOSE, wait exit (no kill)
+SHELL=v2 started=True title='New Manga' hwnd=25168760
+SHELL=v2 graceful_close=WM_CLOSE EXIT=0
+SHELL=v2 hostlog_tail:
+SHELL=legacy started=True title='New Manga' hwnd=7539250
+SHELL=legacy graceful_close=WM_CLOSE EXIT=0
+SHELL=legacy hostlog_tail:
+  2026-10-29T20:33:58.1866350+00:00 INFO credential port ready (Windows Credential Manager)
+  2026-10-29T20:33:58.1893865+00:00 INFO host-control session opened (host_4rquch3bjFkwqGGh48lg9xPb-5VV0B6l2QBr8-N6gHs)
+  2026-10-29T20:33:58.1924845+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
