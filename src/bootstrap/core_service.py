@@ -167,7 +167,11 @@ from bootstrap.core_assembly import (
 )
 from domain.regions.entities import RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
-from infrastructure.importing import PillowImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.sqlite.upgrade_legacy_layout import (
+    LegacyLayoutError,
+    migrate_legacy_layout,
+)
 from infrastructure.providers.handlers import typeset_style_defaults
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
@@ -175,7 +179,6 @@ from infrastructure.rendering.pillow_rendering import (
     PillowTextLayoutEngine,
     decode_nmfr_frame,
 )
-from infrastructure.rendering.pillow_source_style import PillowSourceStyleAnalyzer
 from infrastructure.resource_channel.catalog_store import (
     PreviewOrigin,
     ResourceCatalogStore,
@@ -196,10 +199,6 @@ from infrastructure.resource_channel.render_preview import (
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
 from infrastructure.sqlite.nmbak import NmbakBackupError
-from infrastructure.sqlite.upgrade_legacy_layout import (
-    LegacyLayoutError,
-    migrate_legacy_layout,
-)
 from infrastructure.plugins.service import PluginError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
@@ -647,13 +646,19 @@ class P16WireError(Exception):
 
 
 class _PassthroughImageDecoder:
-    """Legacy test double; production assembly uses ``PillowImageDecoder``."""
+    """Legacy test double; production assembly uses ``QtImageDecoder``."""
 
     def decode(self, payload: bytes) -> DecodedImage:
         del payload
         # mime_type keeps the stub's original "rgb" semantics under the image
         # type, matching the frozen DecodedImage contract (no format= field).
         return DecodedImage(width=1, height=1, mime_type="image/rgb")
+
+
+class _StubStyleAnalyzer:
+    def analyze_pixel_styles(self, image: Any) -> list[Any]:
+        del image
+        return []
 
 
 def assemble_production_core(data_root: Path | None = None) -> CoreServices:
@@ -707,11 +712,11 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     core = assemble_core_services(
         db_path,
         managed_root,
-        image_decoder=PillowImageDecoder(),
+        image_decoder=QtImageDecoder(),
         font_catalog=catalog,
         layout_engine=PillowTextLayoutEngine(catalog),
         compositor=PillowImageCompositor(catalog),
-        source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
+        source_styles=SourceStyleService(_StubStyleAnalyzer()),
         content_decoder=decode_nmfr_frame,
         original_page_reader=read_original_page,
         recover_runs_on_assembly=False,
