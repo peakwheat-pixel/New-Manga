@@ -13,7 +13,7 @@
             Width="{DynamicResource Nm.Size.FilmStripExpanded}"
             Background="{DynamicResource Nm.Color.Bg.Panel}"
             BorderBrush="{DynamicResource Nm.Color.Line.Default}"
-            BorderThickness="0,0,1,0">
+            BorderThickness="{DynamicResource Nm.Border.Hairline}">
       <Grid RowDefinitions="Auto,*,Auto" Margin="{DynamicResource Nm.Padding.Panel}" RowSpacing="{DynamicResource Nm.Space.4}">
         <StackPanel Grid.Row="0" Spacing="{DynamicResource Nm.Space.1}">
           <TextBlock Classes="title" Text="控制台" />
@@ -77,7 +77,7 @@
         </Grid>
       </Border>
 
-      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+      <ScrollViewer x:Name="ConsoleScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" ScrollChanged="OnConsoleScrollChanged">
         <Grid Margin="{DynamicResource Nm.Padding.Panel}">
           <!-- loading / error -->
           <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsLoading}">
@@ -157,7 +157,7 @@
               <ItemsControl ItemsSource="{Binding RunStages}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:RunStageRowViewModel">
-                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" Margin="0,2">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                       <ctrl:StatusBadge Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
                       <TextBlock Grid.Column="1" Classes="label" Text="{Binding Label}" VerticalAlignment="Center" />
                       <TextBlock Grid.Column="2" Classes="meta" Text="{Binding StateText}" VerticalAlignment="Center" />
@@ -172,7 +172,7 @@
               <ItemsControl ItemsSource="{Binding RunRows}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:RunRowViewModel">
-                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}" Margin="0,2">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
                       <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                         <TextBlock Classes="data" Text="{Binding OrderText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">

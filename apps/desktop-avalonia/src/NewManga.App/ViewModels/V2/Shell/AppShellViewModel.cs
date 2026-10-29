@@ -29,6 +29,7 @@ public sealed class AppShellViewModel : ObservableObject
     private int _jumpIndex = -1;
     private bool _isDarkTheme = true;
     private bool _isCompact;
+    private bool _isNarrow;
     private string? _noticeText;
     private NmStatus _noticeStatus = NmStatus.Blocked;
     private ConfirmRequest? _confirm;
@@ -69,12 +70,12 @@ public sealed class AppShellViewModel : ObservableObject
         PageModeCommand = new RelayCommand(() =>
         {
             SwitchSpace(SpaceId.Studio);
-            State.SetStudioMode(StudioMode.Page);
+            SetStudioMode(StudioMode.Page);
         });
         BatchModeCommand = new RelayCommand(() =>
         {
             SwitchSpace(SpaceId.Studio);
-            State.SetStudioMode(StudioMode.Batch);
+            SetStudioMode(StudioMode.Batch);
         });
         OpenPaletteCommand = new RelayCommand(OpenPalette);
         OpenJumpCommand = new RelayCommand(OpenJump);
@@ -88,6 +89,7 @@ public sealed class AppShellViewModel : ObservableObject
         CloseThemeStudioCommand = new RelayCommand(CloseThemeStudio);
 
         State.SpaceChanged += (_, _) => RefreshChrome();
+        State.WorkspacesChanged += (_, _) => RaiseWorkspaceChrome();
         State.ModeChanged += (_, _) => RefreshChrome();
         State.SelectionChanged += (_, _) => RefreshChrome();
         State.SurfaceChanged += (_, _) => OnPropertyChanged(nameof(IsReaderSurfaceVisible), nameof(IsThemeStudioOpen), nameof(IsOverlayOpen));
@@ -283,6 +285,86 @@ public sealed class AppShellViewModel : ObservableObject
         private set => Set(ref _isCompact, value);
     }
 
+    /// <summary>R-18 narrow band (&lt; 1280): secondary labels collapse and Library uses overlay detail.</summary>
+    public bool IsNarrow
+    {
+        get => _isNarrow;
+        private set => Set(ref _isNarrow, value);
+    }
+
+    // ── V11R-INT-0 workspaces ─────────────────────────────────────────────────────────────
+
+    /// <summary>Registers a workspace with the shell and activates it when its space is current.</summary>
+    public bool RegisterWorkspace(IWorkspaceView workspace)
+    {
+        if (!State.RegisterWorkspace(workspace))
+        {
+            return false;
+        }
+
+        if (State.CurrentSpace == workspace.Space)
+        {
+            workspace.OnActivated(State);
+        }
+
+        RaiseWorkspaceChrome();
+        return true;
+    }
+
+    public bool UnregisterWorkspace(SpaceId space)
+    {
+        var workspace = State.GetWorkspace(space);
+        if (workspace is not null && State.CurrentSpace == space)
+        {
+            workspace.OnDeactivated(State);
+        }
+
+        var removed = State.UnregisterWorkspace(space);
+        RaiseWorkspaceChrome();
+        return removed;
+    }
+
+    public bool IsLibraryWorkspaceRegistered => State.IsWorkspaceRegistered(SpaceId.Library);
+
+    public bool IsConsoleWorkspaceRegistered => State.IsWorkspaceRegistered(SpaceId.Console);
+
+    public bool IsStudioWorkspaceRegistered => State.IsWorkspaceRegistered(SpaceId.Studio);
+
+    public object? LibraryWorkspaceContent =>
+        State.GetWorkspace(SpaceId.Library)?.CreateContent();
+
+    public object? ConsoleWorkspaceContent =>
+        State.GetWorkspace(SpaceId.Console)?.CreateContent();
+
+    public object? StudioWorkspaceContent =>
+        State.GetWorkspace(SpaceId.Studio)?.CreateContent();
+
+    public bool IsLibraryPlaceholderVisible => IsLibrarySpace && !IsLibraryWorkspaceRegistered;
+
+    public bool IsConsolePlaceholderVisible => IsConsoleSpace && !IsConsoleWorkspaceRegistered;
+
+    public bool IsStudioPlaceholderVisible => IsStudioSpace && !IsStudioWorkspaceRegistered;
+
+    public string LibraryPlaceholderDetail => ShellState.WorkspacePlaceholderDetail(SpaceId.Library);
+
+    public string ConsolePlaceholderDetail => ShellState.WorkspacePlaceholderDetail(SpaceId.Console);
+
+    public string StudioPlaceholderDetail => ShellState.WorkspacePlaceholderDetail(SpaceId.Studio);
+
+    private void RaiseWorkspaceChrome() => OnPropertyChanged(
+        nameof(IsLibraryWorkspaceRegistered),
+        nameof(IsConsoleWorkspaceRegistered),
+        nameof(IsStudioWorkspaceRegistered),
+        nameof(LibraryWorkspaceContent),
+        nameof(ConsoleWorkspaceContent),
+        nameof(StudioWorkspaceContent),
+        nameof(IsLibraryPlaceholderVisible),
+        nameof(IsConsolePlaceholderVisible),
+        nameof(IsStudioPlaceholderVisible),
+        nameof(LibraryPlaceholderDetail),
+        nameof(ConsolePlaceholderDetail),
+        nameof(StudioPlaceholderDetail));
+
     // ── Command palette ──────────────────────────────────────────────────────────────────
 
     public bool IsPaletteOpen
@@ -323,11 +405,11 @@ public sealed class AppShellViewModel : ObservableObject
 
     public bool IsAnyOverlayOpen => IsPaletteOpen || IsJumpOpen || IsHelpOpen || IsConfirmOpen;
 
-    /// <summary>Palette panel width (px). Kept in the ViewModel so XAML carries no layout magic values.</summary>
-    public double PaletteWidth => 560;
+    /// <summary>Palette panel width (DS-token derived; see <see cref="ShellLayout"/>).</summary>
+    public double PaletteWidth => ShellLayout.PaletteWidth;
 
-    /// <summary>Centered confirmation-modal width (px).</summary>
-    public double ConfirmWidth => 480;
+    /// <summary>Centered confirmation-modal width (DS-token derived).</summary>
+    public double ConfirmWidth => ShellLayout.ConfirmWidth;
 
     public ObservableCollection<CommandPaletteEntry> PaletteItems { get; } = new();
 
@@ -466,26 +548,52 @@ public sealed class AppShellViewModel : ObservableObject
 
     public void SetViewport(double width, double height)
     {
-        IsCompact = width < 1200;
+        IsCompact = ShellLayout.IsCompact(width);
+        IsNarrow = ShellLayout.IsNarrow(width);
         Library.SetViewport(width, height);
         OnPropertyChanged(nameof(ScopeText), nameof(StatusBandRight));
     }
 
     public void SwitchSpace(SpaceId space)
     {
+        if (State.CurrentSpace == space)
+        {
+            return;
+        }
+
+        // Contract §6.1: deactivate the outgoing workspace (writes scroll/filter/selection back) before
+        // switching, then activate the incoming one (restores its retained context). ViewModels are
+        // never rebuilt, so this is a context hand-off, not a subscription swap.
+        State.GetWorkspace(State.CurrentSpace)?.OnDeactivated(State);
         State.SwitchSpace(space);
+        State.GetWorkspace(space)?.OnActivated(State);
+
         if (space == SpaceId.Console)
         {
             _ = Console.InitializeAsync();
         }
-        if (space == SpaceId.Studio)
+    }
+
+    /// <summary>Sets the Studio mode with the §6.1 workspace hooks (same workspace, new retained mode).</summary>
+    public void SetStudioMode(StudioMode mode)
+    {
+        var workspace = State.GetWorkspace(SpaceId.Studio);
+        var active = State.CurrentSpace == SpaceId.Studio;
+        if (active)
         {
-            // Studio content is owned by V11R-B-3/B-4 (ui-studio). This shell keeps the routing and
-            // the shared selection intact and renders an honest pending surface.
+            workspace?.OnDeactivated(State);
+        }
+
+        State.SetStudioMode(mode);
+
+        if (active)
+        {
+            workspace?.OnActivated(State);
         }
     }
 
-    public void ToggleStudioMode() => State.ToggleStudioMode();
+    public void ToggleStudioMode() =>
+        SetStudioMode(State.StudioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page);
 
     public void ToggleTheme() => IsDarkTheme = !IsDarkTheme;
 
@@ -609,7 +717,41 @@ public sealed class AppShellViewModel : ObservableObject
     /// <paramref name="isTextInputFocused"/> implements the IME-safety rule (AC5): while a text box
     /// has focus plain letter/digit shortcuts yield to typing; Ctrl/F-key/Esc shortcuts still apply.
     /// </summary>
-    public bool HandleKey(Key key, KeyModifiers modifiers, bool isTextInputFocused)
+    /// <summary>Window key funnel: workspace first refusal (R-17), then the shell KeyMap.</summary>
+    public bool HandleKey(KeyEventArgs e, bool isTextInputFocused)
+    {
+        var shellOverlayTakesKeys = IsConfirmOpen || IsPaletteOpen || IsJumpOpen || IsHelpOpen || State.IsReaderOpen;
+        if (!shellOverlayTakesKeys && !(isTextInputFocused && IsPlainTypingKey(e.Key, e.KeyModifiers)))
+        {
+            var workspace = State.GetWorkspace(State.CurrentSpace);
+            if (workspace is not null && workspace.TryHandleKey(e, State))
+            {
+                e.Handled = true;
+                return true;
+            }
+        }
+
+        if (HandleKeyCore(e.Key, e.KeyModifiers, isTextInputFocused))
+        {
+            e.Handled = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Test/automation wrapper for the same funnel (no real KeyEventArgs required).</summary>
+    public bool HandleKey(Key key, KeyModifiers modifiers, bool isTextInputFocused) =>
+        HandleKey(
+            new KeyEventArgs
+            {
+                RoutedEvent = InputElement.KeyDownEvent,
+                Key = key,
+                KeyModifiers = modifiers,
+            },
+            isTextInputFocused);
+
+    private bool HandleKeyCore(Key key, KeyModifiers modifiers, bool isTextInputFocused)
     {
         if (IsConfirmOpen)
         {
@@ -756,7 +898,7 @@ public sealed class AppShellViewModel : ObservableObject
                 return;
             case ShellCommandIds.AttentionNext:
                 SwitchSpace(SpaceId.Studio);
-                State.SetStudioMode(StudioMode.Batch);
+                SetStudioMode(StudioMode.Batch);
                 Notify(ReasonOf(ShellCommandIds.AttentionNext), NmStatus.Blocked);
                 return;
             case ShellCommandIds.SurfaceBack:
@@ -806,11 +948,11 @@ public sealed class AppShellViewModel : ObservableObject
                 return;
             case ShellCommandIds.StudioPage:
                 SwitchSpace(SpaceId.Studio);
-                State.SetStudioMode(StudioMode.Page);
+                SetStudioMode(StudioMode.Page);
                 return;
             case ShellCommandIds.StudioBatch:
                 SwitchSpace(SpaceId.Studio);
-                State.SetStudioMode(StudioMode.Batch);
+                SetStudioMode(StudioMode.Batch);
                 return;
         }
     }
@@ -977,6 +1119,9 @@ public sealed class AppShellViewModel : ObservableObject
         RebuildBreadcrumb();
         UpdateStatusBand();
         OnPropertyChanged(
+            nameof(IsLibraryPlaceholderVisible),
+            nameof(IsConsolePlaceholderVisible),
+            nameof(IsStudioPlaceholderVisible),
             nameof(IsLibrarySpace),
             nameof(IsStudioSpace),
             nameof(IsConsoleSpace),

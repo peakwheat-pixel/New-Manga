@@ -158,6 +158,10 @@ public sealed class ShellState : ObservableObject
     private StudioMode _studioMode = StudioMode.Page;
     private ShellSelection _selection = ShellSelection.Empty;
 
+    // V11R-INT-0: registered workspaces (Library/Console from this Owner; Studio from ui-studio;
+    // Theme Studio uses its own surface stack, registered by the integration step).
+    private readonly Dictionary<SpaceId, IWorkspaceView> _workspaces = new();
+
     public event EventHandler? SpaceChanged;
 
     public event EventHandler? ModeChanged;
@@ -165,6 +169,9 @@ public sealed class ShellState : ObservableObject
     public event EventHandler? SelectionChanged;
 
     public event EventHandler? SurfaceChanged;
+
+    /// <summary>Raised when a workspace is registered/unregistered so the host can refresh placeholders.</summary>
+    public event EventHandler? WorkspacesChanged;
 
     public SpaceId CurrentSpace => _currentSpace;
 
@@ -298,6 +305,48 @@ public sealed class ShellState : ObservableObject
     public SpaceViewState GetView(SpaceId space, StudioMode? mode) =>
         _views[Key(space, space == SpaceId.Studio ? mode : null)];
 
+    // ── V11R-INT-0 workspace registry ────────────────────────────────────────────────────────
+
+    public IReadOnlyCollection<IWorkspaceView> Workspaces => _workspaces.Values;
+
+    /// <summary>Workspace registered for the space, or null when the integration has not arrived yet.</summary>
+    public IWorkspaceView? GetWorkspace(SpaceId space) =>
+        _workspaces.TryGetValue(space, out var workspace) ? workspace : null;
+
+    public bool IsWorkspaceRegistered(SpaceId space) => _workspaces.ContainsKey(space);
+
+    public bool RegisterWorkspace(IWorkspaceView workspace)
+    {
+        if (workspace is null || _workspaces.ContainsKey(workspace.Space))
+        {
+            return false;
+        }
+
+        _workspaces[workspace.Space] = workspace;
+        RaiseWorkspacesChanged();
+        return true;
+    }
+
+    public bool UnregisterWorkspace(SpaceId space)
+    {
+        if (!_workspaces.Remove(space))
+        {
+            return false;
+        }
+
+        RaiseWorkspacesChanged();
+        return true;
+    }
+
+    /// <summary>Honest placeholder copy for a space whose workspace has not been registered.</summary>
+    public static string WorkspacePlaceholderDetail(SpaceId space) => space switch
+    {
+        SpaceId.Library => "资料柜工作区尚未注册：壳不渲染任何伪造书架内容。",
+        SpaceId.Studio => "工位工作区尚未注册：Studio（V11R-B-3/B-4）接入后由壳承载；此处不显示伪造画布、矩阵或进度。",
+        SpaceId.Console => "控制台工作区尚未注册：壳不渲染任何伪造设置项。",
+        _ => "工作区尚未注册：此处不显示伪造内容。",
+    };
+
     public void SetScroll(SpaceId space, StudioMode? mode, double offsetX, double offsetY)
     {
         var view = GetView(space, mode);
@@ -341,6 +390,12 @@ public sealed class ShellState : ObservableObject
         }
 
         return path;
+    }
+
+    private void RaiseWorkspacesChanged()
+    {
+        OnPropertyChanged(nameof(Workspaces));
+        WorkspacesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void RaiseSurfaceChanged()

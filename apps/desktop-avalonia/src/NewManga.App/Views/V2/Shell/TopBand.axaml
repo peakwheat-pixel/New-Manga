@@ -8,14 +8,15 @@
   <!-- TopBand 36px (screen spec §1): SpaceTabs · Breadcrumb · 模式切换 · ScopeSelector ·
        AttentionMenu · 命令 · 主题 · 速查. -->
   <Border Classes="topband"
+          Height="{DynamicResource Nm.Size.TopBand}"
           MinHeight="{DynamicResource Nm.Size.TopBand}"
-          Padding="{DynamicResource Nm.Padding.ControlSm}">
+          Padding="{DynamicResource Nm.Padding.IconSm}"
+          ClipToBounds="True">
     <Grid ColumnDefinitions="Auto,*,Auto"
           ColumnSpacing="{DynamicResource Nm.Space.3}">
       <v:SpaceTabs Grid.Column="0" VerticalAlignment="Center" />
 
       <v:Breadcrumb Grid.Column="1"
-                    Margin="0"
                     VerticalAlignment="Center" />
 
       <StackPanel Grid.Column="2"
@@ -53,11 +54,13 @@
         </Button>
 
         <Button Classes="ghost sm"
-                Content="主题"
+                x:Name="ThemeStudioButton"
+                Content="主题工作室"
                 Command="{Binding OpenThemeStudioCommand}"
-                ToolTip.Tip="主题工作室 Ctrl+," />
+                ToolTip.Tip="打开主题工作室（C-2 接入前为诚实占位）· Ctrl+," />
 
         <Button Classes="ghost sm"
+                x:Name="ThemeToggleButton"
                 Content="{Binding ThemeLabel}"
                 Command="{Binding ToggleThemeCommand}"
                 ToolTip.Tip="{Binding ThemeToggleTooltip}" />

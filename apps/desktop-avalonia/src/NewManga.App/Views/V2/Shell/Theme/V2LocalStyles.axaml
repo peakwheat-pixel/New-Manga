@@ -163,12 +163,15 @@
   </Style>
 
   <!-- ── Local controls ───────────────────────────────────────────────────────────────── -->
+  <Style Selector="c|StatusBadge StackPanel">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
+  </Style>
   <Style Selector="c|Kbd.kbd">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="4,1" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.IconSm}" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
   <Style Selector="c|Kbd.kbd TextBlock.kbd-text">

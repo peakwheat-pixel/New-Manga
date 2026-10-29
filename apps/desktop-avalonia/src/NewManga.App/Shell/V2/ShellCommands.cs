@@ -46,8 +46,7 @@ public static class ShellCommandIds
 /// </summary>
 public static class ShellCommands
 {
-    private const string NotWiredCreateChapter =
-        "能力待接入：CreateChapterAsync 由 core-bridge（V11R-A-1）提供，尚未合入";
+    
 
     private const string NotWiredRunData =
         "能力待接入：Run 投影由 core-bridge（V11R-A-2/IRunController）提供，尚未合入";

@@ -61,10 +61,12 @@
     <!-- ── Body: PageGrid + resident detail panel ─────────────────────────────────── -->
     <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
       <Grid Grid.Column="0">
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+        <ScrollViewer x:Name="BooksScroll"
+                      HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       Padding="{DynamicResource Nm.Padding.Panel}"
-                      IsVisible="{Binding ShowGrid}">
+                      IsVisible="{Binding ShowBooksGrid}"
+                      ScrollChanged="OnBooksScrollChanged">
           <ItemsControl x:Name="BookGrid" ItemsSource="{Binding Books}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>
@@ -113,18 +115,71 @@
           </ItemsControl>
         </ScrollViewer>
 
-        <!-- 状态七态：loading / error / not-ready / empty / no-results（就地呈现，无整页 spinner） -->
-        <Grid IsVisible="{Binding IsLoading}">
-          <StackPanel Spacing="{DynamicResource Nm.Space.3}"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center">
-            <ctrl:StatusBadge Status="Running" HorizontalAlignment="Center" />
-            <TextBlock Classes="body" Text="正在读取书架…" HorizontalAlignment="Center" />
-            <TextBlock Classes="meta"
-                       Text="骨架保持书卡网格布局，不使用整页 spinner"
-                       HorizontalAlignment="Center" />
-          </StackPanel>
-        </Grid>
+        <!-- Loading 态：与书卡同尺寸的骨架网格（保留列宽/缝隙几何），不使用整页 spinner 与自证文案 -->
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Disabled"
+                      Padding="{DynamicResource Nm.Padding.Panel}"
+                      IsVisible="{Binding IsLoading}">
+          <WrapPanel Orientation="Horizontal"
+                     HorizontalAlignment="Left"
+                     ItemWidth="{Binding CardSlotWidth}"
+                     ItemHeight="{Binding CardSlotHeight}">
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <Border Classes="card" Width="{Binding CardWidth}" Height="{Binding CardHeight}">
+              <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                <Border Classes="sunken" />
+                <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.4}" />
+                  <Border Classes="sunken" Height="{DynamicResource Nm.Space.3}" Width="{DynamicResource Nm.Size.TreeWidth}" HorizontalAlignment="Left" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </WrapPanel>
+        </ScrollViewer>
 
         <Grid IsVisible="{Binding HasError}">
           <ctrl:EmptyState Title="书架读取失败"
@@ -157,8 +212,21 @@
         <lv:RecycleBinView IsVisible="{Binding IsRecycleBinView}" />
       </Grid>
 
-      <!-- 驻留详情面板（作品元信息 / 章节账本 / 页 / 进度 / 操作） -->
-      <lv:BookDetailPanel Grid.Column="1" Width="{Binding DetailPanelWidth}" />
+      <!-- 驻留详情面板（作品元信息 / 章节账本 / 页 / 进度 / 操作）。R-18：<1280 改为覆盖式抽屉，
+           >=1280 作为右侧驻留列；两种形态共用同一 ViewModel，切换空间不丢失状态。 -->
+      <lv:BookDetailPanel Grid.Column="1"
+                          Width="{Binding DetailPanelWidth}"
+                          IsVisible="{Binding IsSideDetailVisible}" />
+
+      <Border Grid.Column="0"
+              Classes="raised"
+              Width="{Binding DetailPanelWidth}"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Stretch"
+              Panel.ZIndex="{DynamicResource Nm.ZIndex.Drawer}"
+              IsVisible="{Binding IsOverlayDetailVisible}">
+        <lv:BookDetailPanel />
+      </Border>
     </Grid>
 
     <!-- ── Multi-select batch bar（作用域常驻） ──────────────────────────────────── -->

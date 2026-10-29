@@ -46,7 +46,8 @@ public sealed class LibraryViewModel : ObservableObject
     private double _cardWidth = 272;
     private double _cardHeight = 354;
     private double _cardGap = 8;
-    private double _detailPanelWidth = 360;
+    private double _detailPanelWidth;
+    private bool _isNarrowLayout;
     private int _columnCount = 4;
 
     public LibraryViewModel(
@@ -248,6 +249,43 @@ public sealed class LibraryViewModel : ObservableObject
         }
     }
 
+    // ── V11R-INT-0 workspace context (real ScrollViewer offset, written back by the view) ──────
+
+    /// <summary>Raised when the shell activates this space and the view must restore its scroll offset.</summary>
+    public event EventHandler? ScrollRestoreRequested;
+
+    /// <summary>Live offset of the book grid ScrollViewer; the shell persists it per space.</summary>
+    public double ScrollOffsetY
+    {
+        get => _state.LibraryView.ScrollOffsetY;
+        set
+        {
+            if (Math.Abs(_state.LibraryView.ScrollOffsetY - value) < 0.5)
+            {
+                return;
+            }
+
+            _state.LibraryView.ScrollOffsetY = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>Contract §6.1 OnDeactivated: flush retained context into the shell state.</summary>
+    public void CaptureViewState(SpaceViewState view)
+    {
+        view.SearchText = SearchText;
+        view.SortKey = SortOptions[SortIndex].Key;
+        view.FilterKey = FilterKey;
+        view.ScrollOffsetY = ScrollOffsetY;
+    }
+
+    /// <summary>Contract §6.1 OnActivated: restore the retained scroll offset from the shell state.</summary>
+    public void RestoreViewState(SpaceViewState view)
+    {
+        ScrollOffsetY = view.ScrollOffsetY;
+        ScrollRestoreRequested?.Invoke(this, EventArgs.Empty);
+    }
+
     public bool IsLoading
     {
         get => _isLoading;
@@ -320,6 +358,9 @@ public sealed class LibraryViewModel : ObservableObject
     }
 
     public bool ShowGrid => !IsRecycleBinView;
+
+    /// <summary>Book grid is hidden while the initial Host read is in flight (skeleton takes its place).</summary>
+    public bool ShowBooksGrid => ShowGrid && !IsLoading;
 
     public string RecycleCountText => "—";
 
@@ -394,13 +435,31 @@ public sealed class LibraryViewModel : ObservableObject
 
     public bool HasSelection => SelectedBook is not null;
 
-    // ── Layout metrics (computed here so XAML carries no raw design values) ────────────────
+    // ── Layout metrics (derived from DS tokens via ShellLayout; XAML carries no raw values) ──
 
-    /// <summary>Search field width (px). Kept in the ViewModel so XAML carries no layout magic values.</summary>
-    public double SearchBoxWidth => 220;
+    /// <summary>Search field width (DS tree-width token).</summary>
+    public double SearchBoxWidth => ShellLayout.SearchBoxWidth;
 
-    /// <summary>Sort combo width (px).</summary>
-    public double SortBoxWidth => 120;
+    /// <summary>Sort combo width derived from the DS search width.</summary>
+    public double SortBoxWidth => ShellLayout.SortBoxWidth;
+
+    /// <summary>True below the 1280 breakpoint: the resident detail panel becomes an overlay (R-18).</summary>
+    public bool IsNarrowLayout
+    {
+        get => _isNarrowLayout;
+        private set
+        {
+            if (Set(ref _isNarrowLayout, value))
+            {
+                OnPropertyChanged(nameof(IsSideDetailVisible), nameof(IsOverlayDetailVisible));
+            }
+        }
+    }
+
+    public bool IsSideDetailVisible => !IsNarrowLayout;
+
+    public bool IsOverlayDetailVisible => IsNarrowLayout;
+
     public double CardWidth
     {
         get => _cardWidth;
@@ -440,6 +499,7 @@ public sealed class LibraryViewModel : ObservableObject
         get => _columnCount;
         private set => Set(ref _columnCount, value);
     }
+
 
     public string BookCountText => IsRecycleBinView
         ? "回收站"
@@ -826,20 +886,33 @@ public sealed class LibraryViewModel : ObservableObject
 
     public void SetViewport(double width, double height)
     {
-        var detailWidth = width >= 1400 ? 360.0 : width >= 1200 ? 340.0 : 300.0;
-        var (cardWidth, gap) = width >= 1400
-            ? (272.0, 12.0)
-            : width >= 1200
-                ? (240.0, 12.0)
-                : (200.0, 8.0);
+        // R-18: >=1600 full (4 columns) / 1280..1599 compact (3 columns) / <1280 narrow (detail overlay).
+        var compact = ShellLayout.IsCompact(width);
+        var narrow = ShellLayout.IsNarrow(width);
+        var detailWidth = compact ? ShellLayout.CompactDetailPanelWidth : ShellLayout.DetailPanelWidth;
+        var gap = ShellLayout.GridGap;
+        var columns = compact ? 3 : 4;
+        var content = Math.Max(0, width - (narrow ? 0 : detailWidth) - (2 * ShellLayout.PanelInset));
+        var slot = columns == 0 ? 0 : content / columns;
+        var cardWidth = Math.Max(0, slot - gap);
 
         DetailPanelWidth = detailWidth;
         CardGap = gap;
-        CardWidth = cardWidth;
-        CardHeight = Math.Round(cardWidth * 1.3);
-        var content = Math.Max(0, width - detailWidth - 2 * 24);
-        ColumnCount = Math.Clamp((int)Math.Floor((content + gap) / (cardWidth + gap)), 1, 6);
-        OnPropertyChanged(nameof(CardSlotWidth), nameof(CardSlotHeight), nameof(DetailPanelWidth), nameof(ColumnCount));
+        CardWidth = Math.Floor(cardWidth);
+        CardHeight = Math.Round(CardWidth * ShellLayout.CoverAspectRatio);
+        ColumnCount = columns;
+        IsNarrowLayout = narrow;
+
+        OnPropertyChanged(
+            nameof(CardSlotWidth),
+            nameof(CardSlotHeight),
+            nameof(DetailPanelWidth),
+            nameof(ColumnCount),
+            nameof(IsNarrowLayout),
+            nameof(IsSideDetailVisible),
+            nameof(IsOverlayDetailVisible),
+            nameof(SearchBoxWidth),
+            nameof(SortBoxWidth));
     }
 
     // ── Internal loaders ──────────────────────────────────────────────────────────────────
@@ -1042,6 +1115,7 @@ public sealed class LibraryViewModel : ObservableObject
         nameof(IsEmptyLibrary),
         nameof(HasNoResults),
         nameof(HostNotReady),
+        nameof(ShowBooksGrid),
         nameof(BookCountText),
         nameof(ListStatusText),
         nameof(HasStatus));

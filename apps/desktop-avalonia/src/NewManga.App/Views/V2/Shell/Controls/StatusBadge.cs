@@ -36,7 +36,6 @@ public sealed class StatusBadge : Border
         var panel = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Spacing = 4,
             VerticalAlignment = VerticalAlignment.Center,
         };
         panel.Children.Add(_symbol);
