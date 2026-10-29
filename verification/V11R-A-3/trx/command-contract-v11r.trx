@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e7583332-d2da-4343-a2e2-f3a80fddb0e9" name="49745@HOME-MY 2026-10-30 01:24:30" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-30T01:24:30.8095254+08:00" queuing="2026-10-30T01:24:30.8095255+08:00" start="2026-10-30T01:24:30.3771897+08:00" finish="2026-10-30T01:24:30.8134323+08:00" />
+  <TestSettings name="default" id="550e8b7d-01c6-468f-800c-577055fcfa69">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-30_01_24_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e0771673-04d0-4bab-b09d-1ac70055f71c" testId="14e592ad-421c-87fd-5922-10865cdaceb3" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.PendingIncrements_StayPending_AndNeverEnterTheFrozenSet" computerName="HOME-MY" duration="00:00:00.0011536" startTime="2026-10-30T01:24:30.7483855+08:00" endTime="2026-10-30T01:24:30.7483855+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0771673-04d0-4bab-b09d-1ac70055f71c" />
+    <UnitTestResult executionId="0f582859-3726-407d-8fdf-cc4f13bbc846" testId="aa415b85-ccea-3254-7dbd-17c31115d47b" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.RegistrySurface_IsFullyDeclared_WithoutHardcodingTheTotal" computerName="HOME-MY" duration="00:00:00.0072000" startTime="2026-10-30T01:24:30.7370510+08:00" endTime="2026-10-30T01:24:30.7370597+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f582859-3726-407d-8fdf-cc4f13bbc846" />
+    <UnitTestResult executionId="a1fac628-1d8e-431f-8487-8923fc6efa59" testId="28996802-1e91-d520-b666-710466dbf3fb" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.DeclaredCoreRows_KeepTheRegisteredProtocolMinor" computerName="HOME-MY" duration="00:00:00.0004697" startTime="2026-10-30T01:24:30.7472020+08:00" endTime="2026-10-30T01:24:30.7472020+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1fac628-1d8e-431f-8487-8923fc6efa59" />
+    <UnitTestResult executionId="50ced69e-ce0d-40ff-9822-4724d06c86c1" testId="53010a52-01b7-7d51-cb61-1618ae9dc931" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.LibraryStartRun_MinorCompatibilityConclusion_IsPresent" computerName="HOME-MY" duration="00:00:00.0000803" startTime="2026-10-30T01:24:30.7467078+08:00" endTime="2026-10-30T01:24:30.7467079+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50ced69e-ce0d-40ff-9822-4724d06c86c1" />
+    <UnitTestResult executionId="4decfe12-62ab-4936-80e5-c5775a1e2df1" testId="f72b586c-6b71-f9b4-d93e-b67ef637d32f" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.EveryBaselineRow_HasStatusAndSourceEvidence" computerName="HOME-MY" duration="00:00:00.0032735" startTime="2026-10-30T01:24:30.7465885+08:00" endTime="2026-10-30T01:24:30.7465885+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4decfe12-62ab-4936-80e5-c5775a1e2df1" />
+    <UnitTestResult executionId="18c85ea0-e909-4e4d-9d3e-76f831947c5b" testId="30d9ca03-95ad-03e5-82d6-3b862616ec92" testName="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.BaselineRows_CoverC001ToC066_AndEveryCommandExistsInRegistry" computerName="HOME-MY" duration="00:00:00.0065187" startTime="2026-10-30T01:24:30.7432996+08:00" endTime="2026-10-30T01:24:30.7432997+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18c85ea0-e909-4e4d-9d3e-76f831947c5b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.BaselineRows_CoverC001ToC066_AndEveryCommandExistsInRegistry" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="30d9ca03-95ad-03e5-82d6-3b862616ec92">
+      <Execution id="18c85ea0-e909-4e4d-9d3e-76f831947c5b" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="BaselineRows_CoverC001ToC066_AndEveryCommandExistsInRegistry" />
+    </UnitTest>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.LibraryStartRun_MinorCompatibilityConclusion_IsPresent" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="53010a52-01b7-7d51-cb61-1618ae9dc931">
+      <Execution id="50ced69e-ce0d-40ff-9822-4724d06c86c1" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="LibraryStartRun_MinorCompatibilityConclusion_IsPresent" />
+    </UnitTest>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.EveryBaselineRow_HasStatusAndSourceEvidence" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="f72b586c-6b71-f9b4-d93e-b67ef637d32f">
+      <Execution id="4decfe12-62ab-4936-80e5-c5775a1e2df1" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="EveryBaselineRow_HasStatusAndSourceEvidence" />
+    </UnitTest>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.DeclaredCoreRows_KeepTheRegisteredProtocolMinor" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="28996802-1e91-d520-b666-710466dbf3fb">
+      <Execution id="a1fac628-1d8e-431f-8487-8923fc6efa59" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="DeclaredCoreRows_KeepTheRegisteredProtocolMinor" />
+    </UnitTest>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.PendingIncrements_StayPending_AndNeverEnterTheFrozenSet" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="14e592ad-421c-87fd-5922-10865cdaceb3">
+      <Execution id="e0771673-04d0-4bab-b09d-1ac70055f71c" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="PendingIncrements_StayPending_AndNeverEnterTheFrozenSet" />
+    </UnitTest>
+    <UnitTest name="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests.RegistrySurface_IsFullyDeclared_WithoutHardcodingTheTotal" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.coreclient.tests\bin\debug\net9.0\newmanga.coreclient.tests.dll" id="aa415b85-ccea-3254-7dbd-17c31115d47b">
+      <Execution id="0f582859-3726-407d-8fdf-cc4f13bbc846" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.CoreClient.Tests.Commands.CommandContractV11RTests" name="RegistrySurface_IsFullyDeclared_WithoutHardcodingTheTotal" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="14e592ad-421c-87fd-5922-10865cdaceb3" executionId="e0771673-04d0-4bab-b09d-1ac70055f71c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa415b85-ccea-3254-7dbd-17c31115d47b" executionId="0f582859-3726-407d-8fdf-cc4f13bbc846" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="28996802-1e91-d520-b666-710466dbf3fb" executionId="a1fac628-1d8e-431f-8487-8923fc6efa59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53010a52-01b7-7d51-cb61-1618ae9dc931" executionId="50ced69e-ce0d-40ff-9822-4724d06c86c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f72b586c-6b71-f9b4-d93e-b67ef637d32f" executionId="4decfe12-62ab-4936-80e5-c5775a1e2df1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30d9ca03-95ad-03e5-82d6-3b862616ec92" executionId="18c85ea0-e909-4e4d-9d3e-76f831947c5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.04]   Discovering: NewManga.CoreClient.Tests&#xD;
+[xUnit.net 00:00:00.07]   Discovered:  NewManga.CoreClient.Tests&#xD;
+[xUnit.net 00:00:00.07]   Starting:    NewManga.CoreClient.Tests&#xD;
+[xUnit.net 00:00:00.11]   Finished:    NewManga.CoreClient.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,7 @@
+G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+警告: 正在覆盖结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-3\trx\command-contract-v11r.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-3\trx\command-contract-v11r.trx
+
+已通过! - 失败:     0，通过:     6，已跳过:     0，总计:     6，持续时间: 18 ms - NewManga.CoreClient.Tests.dll (net9.0)
+EXIT=0
