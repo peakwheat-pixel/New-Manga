@@ -266,4 +266,231 @@ public sealed class NullHostController : IHostController
         Task.FromResult(false);
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    // ---------------------------------------------------------------------------------------
+    // V11R-A-2 (contract §5.2): deterministic Run fake for UI tests. A tiny in-memory run table
+    // keeps a dialog/queue page drivable without a Core; no progress is fabricated (unknown counters
+    // stay null, no invented targets/rows) and the transitions are the Core's frozen table.
+    // ---------------------------------------------------------------------------------------
+
+    private readonly object _runGate = new();
+    private readonly Dictionary<string, NullRun> _runs = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, (string Payload, string RunId)> _startRunKeys = new(StringComparer.Ordinal);
+    private int _runSequence;
+
+    private sealed class NullRun
+    {
+        public required string RunId { get; init; }
+
+        public required string Command { get; init; }
+
+        public required RunStartRequest Request { get; init; }
+
+        public string Status { get; set; } = "pending";
+    }
+
+    public Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default)
+    {
+        if (request is null ||
+            string.IsNullOrWhiteSpace(request.Command) ||
+            request.Scope is null ||
+            string.IsNullOrWhiteSpace(request.IdempotencyKey) ||
+            ct.IsCancellationRequested)
+        {
+            return Task.FromResult<RunStartInfo?>(null);
+        }
+
+        var payload = RunPayloads.StartRun(request).GetRawText();
+        lock (_runGate)
+        {
+            if (_startRunKeys.TryGetValue(request.IdempotencyKey, out var accepted))
+            {
+                // Same key + same request fingerprint reuses the accepted run; a different request
+                // under the same key is the Core's IDEMPOTENCY_KEY_REUSED case.
+                return Task.FromResult<RunStartInfo?>(
+                    string.Equals(accepted.Payload, payload, StringComparison.Ordinal)
+                        ? new RunStartInfo(accepted.RunId, _runs[accepted.RunId].Status)
+                        : null);
+            }
+
+            var run = new NullRun
+            {
+                RunId = "null-run-" + (++_runSequence).ToString(CultureInfo.InvariantCulture),
+                Command = request.Command,
+                Request = request,
+            };
+            _runs[run.RunId] = run;
+            _startRunKeys[request.IdempotencyKey] = (payload, run.RunId);
+            return Task.FromResult<RunStartInfo?>(new RunStartInfo(run.RunId, run.Status));
+        }
+    }
+
+    public Task<RunControlInfo?> ControlRunAsync(
+        string runId,
+        RunControlAction action,
+        string? idempotencyKey = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) ||
+            (action == RunControlAction.Restart && string.IsNullOrWhiteSpace(idempotencyKey)) ||
+            ct.IsCancellationRequested)
+        {
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        lock (_runGate)
+        {
+            if (!_runs.TryGetValue(runId, out var run))
+            {
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            // Core control_run table (src/application/tasks/service.py): pause←running,
+            // continue←paused, stop←pending/running/paused/blocked, restart←undisposed interrupted.
+            var next = action switch
+            {
+                RunControlAction.Pause when run.Status == "running" => "paused",
+                RunControlAction.Resume when run.Status == "paused" => "running",
+                RunControlAction.Stop when run.Status is "pending" or "running" or "paused" or "blocked" => "cancelled",
+                _ => null,
+            };
+            if (next is null)
+            {
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            run.Status = next;
+            return Task.FromResult<RunControlInfo?>(new RunControlInfo(run.RunId, run.Status));
+        }
+    }
+
+    public Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        lock (_runGate)
+        {
+            if (!_runs.TryGetValue(runId, out var run) || run.Status != "blocked")
+            {
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            run.Status = "running";
+            return Task.FromResult<RunControlInfo?>(new RunControlInfo(run.RunId, run.Status));
+        }
+    }
+
+    public Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            return Task.FromResult<RunSnapshotInfo?>(null);
+        }
+
+        lock (_runGate)
+        {
+            return Task.FromResult(
+                _runs.TryGetValue(runId, out var run)
+                    ? new RunSnapshotInfo(
+                        run.RunId,
+                        run.Command,
+                        NullScopeOf(run.Request.Scope),
+                        run.Status,
+                        Array.Empty<RunTargetInfo>())
+                    : null);
+        }
+    }
+
+    public Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
+        {
+            return Task.FromResult<TaskProjectionInfo?>(null);
+        }
+
+        lock (_runGate)
+        {
+            if (!_runs.TryGetValue(runId, out var run))
+            {
+                return Task.FromResult<TaskProjectionInfo?>(null);
+            }
+
+            // Honest empty projection: the fake has no pages, so rows/tasks stay empty and the
+            // counters stay null (unknown) instead of a plausible-looking zero.
+            return Task.FromResult<TaskProjectionInfo?>(new TaskProjectionInfo(
+                run.RunId,
+                run.Status,
+                null,
+                null,
+                null,
+                null,
+                Array.Empty<RunStepFlowInfo>(),
+                Array.Empty<RunRowInfo>(),
+                Array.Empty<RunTaskInfo>(),
+                new RunCountsInfo(),
+                Array.Empty<string>(),
+                NullControlsFor(run.Status)));
+        }
+    }
+
+    public Task<RunControlInfo?> RetryFailedTargetsAsync(
+        string runId,
+        string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) ||
+            string.IsNullOrWhiteSpace(idempotencyKey) ||
+            ct.IsCancellationRequested)
+        {
+            return Task.FromResult<RunControlInfo?>(null);
+        }
+
+        lock (_runGate)
+        {
+            if (!_runs.TryGetValue(runId, out var run) || run.Status != "completed_with_failures")
+            {
+                return Task.FromResult<RunControlInfo?>(null);
+            }
+
+            var child = new NullRun
+            {
+                RunId = "null-run-" + (++_runSequence).ToString(CultureInfo.InvariantCulture),
+                Command = run.Command,
+                Request = run.Request,
+            };
+            _runs[child.RunId] = child;
+            return Task.FromResult<RunControlInfo?>(new RunControlInfo(child.RunId, child.Status));
+        }
+    }
+
+    private static RunScopeInfo NullScopeOf(IReadOnlyDictionary<string, object?> scope)
+    {
+        string? ReadText(string key) =>
+            scope.TryGetValue(key, out var value) && value is string text ? text : null;
+
+        IReadOnlyList<string>? pageIds = null;
+        if (scope.TryGetValue("page_ids", out var ids) && ids is IEnumerable<string> items)
+        {
+            pageIds = items.ToList();
+        }
+
+        return new RunScopeInfo(
+            ReadText("kind") ?? string.Empty,
+            ReadText("book_id"),
+            ReadText("chapter_id"),
+            ReadText("page_id"),
+            ReadText("region_id"),
+            pageIds);
+    }
+
+    private static RunControlsInfo NullControlsFor(string status) => new(
+        CanPause: status == "running",
+        CanStop: status is "pending" or "running" or "paused" or "blocked",
+        CanContinue: status == "paused",
+        CanRestart: false,
+        CanAbandon: false,
+        CanRetryFailed: status == "completed_with_failures");
 }

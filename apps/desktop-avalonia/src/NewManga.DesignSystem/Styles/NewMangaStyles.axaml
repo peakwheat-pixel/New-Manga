@@ -6,6 +6,10 @@
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Text.Inline.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Surfaces.axaml" />
   <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Inputs.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Selection.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Navigation.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Feedback.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Scrolling.axaml" />
 
   <!-- Window shell defaults: the UI font stack and the canvas-level surface token. -->
   <Style Selector="Window">

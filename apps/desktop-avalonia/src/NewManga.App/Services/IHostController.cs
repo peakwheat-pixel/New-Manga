@@ -29,13 +29,14 @@ public sealed record HostViewSnapshot(
     /// </summary>
     public bool WritesAllowed { get; init; } = true;
 
-    /// <summary>
-    /// V11R-A-1 (contract §5.1): typed code of the last refused service-layer write
-    /// (for example <c>INVALID_REQUEST</c> / <c>TARGET_NOT_FOUND</c> / <c>HOST_READ_ONLY</c> /
-    /// <c>CANCELLED</c>); null after the last successful write. Deliberately a code only — never a
-    /// message, an OS path or a credential — so the channel is safe to render and to log.
-    /// </summary>
-    public string? LastError { get; init; }
+/// <summary>
+/// V11R-A-1: typed code of the last refused Host-controller request (<c>INVALID_REQUEST</c> /
+/// <c>TARGET_NOT_FOUND</c> / <c>HOST_READ_ONLY</c> / <c>CANCELLED</c> / <c>IDEMPOTENCY_KEY_REUSED</c> /
+/// <c>INVALID_RUN_TRANSITION</c> …); null after the last successful write. V11R-A-2 publishes Run
+/// read refusals (for example <c>TARGET_NOT_FOUND</c>) on the same field. Deliberately a code only —
+/// never a message, an OS path or a credential — so the channel is safe to render and to log.
+/// </summary>
+public string? LastError { get; init; }
 }
 
 /// <summary>READER-PROGRESS-1: typed outcome of one progress save (never throws into the UI).</summary>
@@ -93,7 +94,7 @@ public interface IReaderProgressSink
 }
 
 /// <summary>Test seam: the window talks to this, production implementation wraps HostRuntime.</summary>
-public interface IHostController : IReaderProgressSink, IAsyncDisposable
+public interface IHostController : IReaderProgressSink, IRunController, IAsyncDisposable
 {
     HostViewSnapshot Snapshot { get; }
 

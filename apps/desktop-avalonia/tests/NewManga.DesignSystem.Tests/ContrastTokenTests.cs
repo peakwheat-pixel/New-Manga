@@ -7,20 +7,15 @@ namespace NewManga.DesignSystem.Tests;
 
 /// <summary>
 /// AC8 conformance: the published palettes are measured with WCAG 2.1 contrast math against the
-/// DESIGN_SYSTEM §2.3 floors. The standard palette is the frozen baseline; where the frozen tokens fall
-/// below a floor the gap is pinned here as a characterization (and listed in
-/// verification/V11R-D-1/DEVIATIONS.md) instead of silently weakening the gate. High contrast is the
-/// design system's derived palette and must meet every floor.
+/// DESIGN_SYSTEM §2.3 floors. The frozen standard palette was remediated for the failing status/accent
+/// tokens under Lead decision R-09 (see doc/design/redesign-v1/40-fusion/DECISION_LOG.md §5), so the
+/// standard palette is now a hard compliance assertion instead of a characterization. High contrast is
+/// the stronger, derived mode and must meet every floor as well.
 /// </summary>
 public sealed class ContrastTokenTests
 {
     private static readonly IReadOnlyDictionary<string, Color> FrozenColors = LoadFrozenColors();
-
-    public static IEnumerable<object[]> ThemeScopes => new[]
-    {
-        new object[] { "color.dark.", "dark" },
-        new object[] { "color.light.", "light" },
-    };
+    private static readonly string[] StatusNames = ["Queued", "Running", "Done", "Failed", "Blocked", "Stale", "Skipped"];
 
     [Theory]
     [InlineData("color.dark.", "dark")]
@@ -44,6 +39,36 @@ public sealed class ContrastTokenTests
     [Theory]
     [InlineData("color.dark.", "dark")]
     [InlineData("color.light.", "light")]
+    public void Status_text_meets_the_design_system_floor(string scope, string label)
+    {
+        var panel = Color(scope, "bg.panel");
+        foreach (var status in StatusNames)
+        {
+            var ratio = ContrastMath.ContrastRatio(Color(scope, "status." + status.ToLowerInvariant()), panel);
+            Assert.True(ratio >= 4.5, $"{label}: status.{status} is {ratio:F2}:1 against bg.panel (need >= 4.5:1)");
+        }
+    }
+
+    [Theory]
+    [InlineData("color.dark.", "dark")]
+    [InlineData("color.light.", "light")]
+    public void Accent_fill_supports_its_on_color_and_the_focus_ring_floor(string scope, string label)
+    {
+        var accent = Color(scope, "accent.base");
+        var on = Color(scope, "accent.on");
+        var panel = Color(scope, "bg.panel");
+
+        Assert.True(
+            ContrastMath.ContrastRatio(on, accent) >= 4.5,
+            $"{label}: accent.on on accent.base is {ContrastMath.ContrastRatio(on, accent):F2}:1 (need >= 4.5:1)");
+        Assert.True(
+            ContrastMath.ContrastRatio(accent, panel) >= 3.0,
+            $"{label}: focus-ring accent on bg.panel is {ContrastMath.ContrastRatio(accent, panel):F2}:1 (need >= 3:1)");
+    }
+
+    [Theory]
+    [InlineData("color.dark.", "dark")]
+    [InlineData("color.light.", "light")]
     public void Focus_ring_accent_meets_the_non_text_floor(string scope, string label)
     {
         var panel = Color(scope, "bg.panel");
@@ -53,16 +78,28 @@ public sealed class ContrastTokenTests
     }
 
     [Fact]
-    public void Standard_palette_status_gap_is_pinned_to_the_frozen_baseline()
+    public void Light_accent_interaction_ladder_stays_luminance_monotonic()
     {
-        // Frozen tokens.json values (not a design-system choice): the dark palette's queued/skipped
-        // hues and the marginal failed hue are below the §2.3 floor for status text/symbols. Changing
-        // this expectation requires an amendment to the frozen baseline, not a local fix.
-        var darkFailures = BelowFloor("color.dark.", floor: 4.5);
-        var lightFailures = BelowFloor("color.light.", floor: 4.5);
+        // R-09: the light accent was darkened; base > hover > active must stay strictly monotonic so the
+        // interaction states keep their visual order (lighter = base, darker = pressed).
+        var baseLuminance = ContrastMath.RelativeLuminance(Color("color.light.", "accent.base"));
+        var hoverLuminance = ContrastMath.RelativeLuminance(Color("color.light.", "accent.hover"));
+        var activeLuminance = ContrastMath.RelativeLuminance(Color("color.light.", "accent.active"));
 
-        Assert.Equal(new[] { "Status.Failed", "Status.Queued", "Status.Skipped" }, darkFailures);
-        Assert.Equal(new[] { "Status.Skipped" }, lightFailures);
+        Assert.True(baseLuminance > hoverLuminance, "light accent.base must be lighter than accent.hover");
+        Assert.True(hoverLuminance > activeLuminance, "light accent.hover must be lighter than accent.active");
+    }
+
+    [Fact]
+    public void Dark_accent_interaction_ladder_stays_luminance_monotonic()
+    {
+        // Dark theme's hover is the brighter state; the ladder still has a single direction.
+        var baseLuminance = ContrastMath.RelativeLuminance(Color("color.dark.", "accent.base"));
+        var hoverLuminance = ContrastMath.RelativeLuminance(Color("color.dark.", "accent.hover"));
+        var activeLuminance = ContrastMath.RelativeLuminance(Color("color.dark.", "accent.active"));
+
+        Assert.True(hoverLuminance > baseLuminance, "dark accent.hover must be lighter than accent.base");
+        Assert.True(baseLuminance > activeLuminance, "dark accent.base must be lighter than accent.active");
     }
 
     [AvaloniaFact]
@@ -95,16 +132,6 @@ public sealed class ContrastTokenTests
                     $"{label} HC: accent.base >= 4.5:1");
             }
         }
-    }
-
-    private static IReadOnlyList<string> BelowFloor(string scope, double floor)
-    {
-        var panel = Color(scope, "bg.panel");
-        return new[] { "Queued", "Running", "Done", "Failed", "Blocked", "Stale", "Skipped" }
-            .Where(status => ContrastMath.ContrastRatio(Color(scope, "status." + status.ToLowerInvariant()), panel) < floor)
-            .Select(status => "Status." + status)
-            .OrderBy(static status => status, StringComparer.Ordinal)
-            .ToArray();
     }
 
     private static Color Color(string scope, string path) => FrozenColors[scope + path];

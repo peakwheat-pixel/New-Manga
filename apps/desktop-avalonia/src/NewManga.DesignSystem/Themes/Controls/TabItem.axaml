@@ -1,0 +1,60 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- TabItem: flat header with a 1px accent underline for the selected tab (no pills, radius <= 3px). -->
+  <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeight}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Medium}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PART_LayoutRoot"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{DynamicResource Nm.Color.Line.Subtle}"
+                BorderThickness="0,0,0,1">
+          <Panel>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Header}"
+                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                              Padding="{TemplateBinding Padding}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontFamily="{TemplateBinding FontFamily}"
+                              FontSize="{TemplateBinding FontSize}"
+                              FontWeight="{TemplateBinding FontWeight}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            <Border Name="PART_SelectedPipe"
+                    IsVisible="False"
+                    Height="1"
+                    VerticalAlignment="Bottom"
+                    Background="{DynamicResource Nm.Color.Accent.Base}" />
+          </Panel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^:selected">
+      <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    </Style>
+    <Style Selector="^:selected /template/ Border#PART_SelectedPipe">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:pointerover">
+      <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+      <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

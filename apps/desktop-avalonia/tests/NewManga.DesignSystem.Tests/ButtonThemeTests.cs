@@ -43,7 +43,9 @@ public sealed class ButtonThemeTests
 
         Assert.Equal(Color.Parse("#FF22252A"), RootOf(secondary).Background is SolidColorBrush secondaryFill ? secondaryFill.Color : default);
         Assert.Equal(Colors.Transparent, Assert.IsAssignableFrom<ISolidColorBrush>(ghost.Background).Color);
-        Assert.Equal(Color.Parse("#FFC9634F"), ((SolidColorBrush)danger.BorderBrush!).Color);
+        var failedBrush = Assert.IsAssignableFrom<ISolidColorBrush>(
+            Application.Current!.TryGetResource(NmKeys.Color.Status.Failed, null, out var failedValue) ? failedValue : null);
+        Assert.Equal(failedBrush.Color, Assert.IsAssignableFrom<ISolidColorBrush>(danger.BorderBrush).Color);
 
         Assert.Equal(24d, small.MinHeight);
         Assert.Equal(28d, icon.MinWidth);
