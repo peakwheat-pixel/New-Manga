@@ -1,0 +1,112 @@
+{
+  "task": "PUBLIC-RELEASE-P0-1",
+  "at_utc": "2026-10-29T01:06:51.7313992Z",
+  "run_id": 40689279237,
+  "run_url": "https://github.com/peakwheat-pixel/New-Manga/actions/runs/40689279237",
+  "head_sha": "d3dd911c40ef28e1d5dd57a85d3b125c42f6ab56",
+  "workflow": "build-release",
+  "event": "workflow_dispatch",
+  "status": "completed",
+  "conclusion": "success",
+  "default_branch": "public-release",
+  "repo_license": "GPL-3.0",
+  "jobs": [
+    {
+      "name": "build",
+      "conclusion": "success"
+    }
+  ],
+  "steps": [
+    {
+      "number": 1,
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "number": 2,
+      "name": "Checkout",
+      "conclusion": "success"
+    },
+    {
+      "number": 3,
+      "name": "Setup .NET 9",
+      "conclusion": "success"
+    },
+    {
+      "number": 4,
+      "name": "Setup Python 3.11",
+      "conclusion": "success"
+    },
+    {
+      "number": 5,
+      "name": "Show toolchain",
+      "conclusion": "success"
+    },
+    {
+      "number": 6,
+      "name": "Restore Python dependencies (runtime + dev: pytest/PyInstaller)",
+      "conclusion": "success"
+    },
+    {
+      "number": 7,
+      "name": "Run Python tests",
+      "conclusion": "success"
+    },
+    {
+      "number": 8,
+      "name": "Build .NET projects (compile check; full test suite runs on the maintainer machine)",
+      "conclusion": "success"
+    },
+    {
+      "number": 9,
+      "name": "Build Core sidecar bundle (weights-free public build, dedicated build venv)",
+      "conclusion": "success"
+    },
+    {
+      "number": 10,
+      "name": "Build base package (unsigned)",
+      "conclusion": "success"
+    },
+    {
+      "number": 11,
+      "name": "Build NSIS installer (unsigned)",
+      "conclusion": "success"
+    },
+    {
+      "number": 12,
+      "name": "Write base-only SHA-256 manifest",
+      "conclusion": "success"
+    },
+    {
+      "number": 13,
+      "name": "Upload unsigned artifacts (build evidence)",
+      "conclusion": "success"
+    },
+    {
+      "number": 24,
+      "name": "Post Setup Python 3.11",
+      "conclusion": "success"
+    },
+    {
+      "number": 25,
+      "name": "Post Setup .NET 9",
+      "conclusion": "success"
+    },
+    {
+      "number": 26,
+      "name": "Post Checkout",
+      "conclusion": "success"
+    },
+    {
+      "number": 27,
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts_uploaded": [
+    "out/NewManga-0.1.0-win-x64.zip",
+    "${{ runner.temp }}/installer-out/NewManga-0.1.0-setup.exe",
+    "out/SHA256SUMS"
+  ],
+  "note": "First fully successful public CI run after 6 iterations; default branch switched to public-release and GitHub license now GPL-3.0."
+}

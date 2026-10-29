@@ -52,3 +52,16 @@
 | P2-2 | AC1/AC2 缺原始 ls-tree / ls-remote 证据 | 新增 `ls-tree.txt`（1040 行）与 `ls-remote.txt` |
 | P2-4 | 公开文档内链断点（CHECKLIST 链接 `../tasks/…`、APPLICATION 引用 `verification/…`） | 登记为 follow-up：公开材料面向外部读者，内部路径不影响安全，不随公开树暴露私有文件 |
 | P2-5 | 测试假凭据字符串可能触发 secret-scanning 噪音 | 已在 `security-scan.json` 分类登记（非真实凭据） |
+
+## 7. 默认分支切换与首次 CI 成功（2026-10-29）
+
+- GitHub API：`PATCH /repos/peakwheat-pixel/New-Manga` body `{"default_branch":"public-release"}` → 成功；复验 `default_branch=public-release`、`license=GPL-3.0`。
+- 首次完整成功 run：**`40689279237`**（`https://github.com/peakwheat-pixel/New-Manga/actions/runs/40689279237`），head `d3dd911c4`，event `workflow_dispatch`，`sign=false`；**13 个步骤 + 4 个 post 步骤全部 success**（pytest 子集 2402 passed / 10 skipped / 1 deselected、.NET 编译、sidecar 构建、base package、NSIS installer、base-only SHA-256 manifest、artifact 上传）。
+- 6 次 run 迭代（全部真实执行，失败记录保留）：
+  1. `40677485249`：pytest 全量依赖内部资产（`verification/`、`doc/design/`）→ 19 failed + 3 errors。
+  2. `40679554169`：pytest 子集通过；base package 550 MB 超 `package.ps1` 150 MB 上限 → 失败。
+  3. `40682540805`：改用专用 build venv 后仍 550 MB（公开 CI 侧车为完整发布栈）→ 失败。
+  4. `40684796533`：.NET 测试的环境假设（`RepoLocator` 仓库根、`%TEMP%` 证据目录）→ 失败。
+  5. `40686130148`：改为 .NET 编译检查后，`build-installer.ps1` 拒绝把 installer 写入仓库目录 → 失败。
+  6. `40689279237`：OutDir 改 runner temp + manifest/upload 路径修正 → **全绿**。
+- CI 产物差异（已知限制）：公开 CI 的 base zip 为 550,232,173 B（含完整 release 栈），维护者发布包为 103,492,048 B（trimmed）；workflow 注释与申请材料均已说明，不改变发布包事实。

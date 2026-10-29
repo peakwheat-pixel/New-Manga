@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) in_review（P0 整改已推送 `public-release`=`3207e9c18`；CI Run/默认分支待用户两步；Reviewer region-workbench-owner）。
-- 最近完成：[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`；SignPath 免费签名申请材料，独立审阅 3 轮 PASS）；[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留；READY 空，待用户/环境决策）。
+- 最近完成：[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`；`public-release`=`d3dd911c4`、默认分支切换、license GPL-3.0、CI `40689279237` 全绿）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）；[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`）；[AGPL-RELEASE-1](tasks/AGPL-RELEASE-1.md) `done`（`9948c3209`）；[REGION-WORKBENCH-1](tasks/REGION-WORKBENCH-1.md) `done`（`60d087627`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`；Rust ISOLATION-1 `in_review` / CAPACITY-DESIGN-1 `ready`。
