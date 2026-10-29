@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Styling;
 
 namespace NewManga.DesignSystem.Theming;
@@ -11,6 +12,13 @@ namespace NewManga.DesignSystem.Theming;
 /// the palette dictionary, contrast/density/reduced-motion append or remove overlay dictionaries.
 /// Failures to load a dictionary are reported through <see cref="LastError"/> and leave the previous
 /// state intact (AC9).
+///
+/// <para>
+/// Boundary with the Theme Engine (V11R-C-1): the design system owns tokens, styles, controls and the
+/// mechanism that applies a dictionary to the running application; the theme engine owns theme
+/// semantics (packages, registry, persistence, preview). The engine feeds a complete palette in through
+/// <see cref="ApplyPalette"/> and can restore the shipped palette with <see cref="RevertPalette"/>.
+/// </para>
 /// </summary>
 public sealed class DesignSystemThemeManager : IDisposable
 {
@@ -20,11 +28,23 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// <summary>Key probed to detect the theme-invariant token dictionary.</summary>
     public const string GlobalProbeKey = "Nm.Space.3";
 
+    /// <summary>Palette id reported while the shipped dark appearance palette is applied.</summary>
+    public const string BuiltinDarkPaletteId = "builtin.dark";
+
+    /// <summary>Palette id reported while the shipped light appearance palette is applied.</summary>
+    public const string BuiltinLightPaletteId = "builtin.light";
+
+    /// <summary>Every color key a complete palette must define (contract §2.2 color groups).</summary>
+    public static IReadOnlyList<string> PaletteColorKeys { get; } = NmKeys.All
+        .Where(static key => key.StartsWith("Nm.Color.", StringComparison.Ordinal))
+        .ToArray();
+
     private readonly Application _application;
     private readonly IDesignSystemResourceSource _resources;
 
     private ResourceDictionary? _palette;
     private bool _paletteIsLight;
+    private bool _paletteIsBuiltin = true;
     private ResourceDictionary? _contrastOverlay;
     private ResourceDictionary? _densityOverlay;
     private ResourceDictionary? _motionOverlay;
@@ -58,6 +78,13 @@ public sealed class DesignSystemThemeManager : IDisposable
     public bool IsInitialized { get; private set; }
 
     /// <summary>
+    /// Id of the palette currently applied: <see cref="BuiltinDarkPaletteId"/> /
+    /// <see cref="BuiltinLightPaletteId"/> for the shipped appearance palettes, otherwise the id the
+    /// Theme Engine supplied through <see cref="ApplyPalette"/>.
+    /// </summary>
+    public string? AppliedPaletteId { get; private set; }
+
+    /// <summary>
     /// Ensures the token dictionaries exist, then applies the current settings. Safe to call twice;
     /// the second call re-normalizes a foreign palette provider (e.g. the aggregate theme include).
     /// </summary>
@@ -85,6 +112,54 @@ public sealed class DesignSystemThemeManager : IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
         Appearance = mode;
         return ApplyRequestedVariant();
+    }
+
+    /// <summary>
+    /// Palette seam for the Theme Engine (V11R-C-1): replaces only the color layer
+    /// (<c>Nm.Color.*</c>) and preserves the theme-invariant tokens and the density/motion/contrast
+    /// overlay semantics. The palette must define every key in <see cref="PaletteColorKeys"/>; a
+    /// palette with missing keys or non-brush values is rejected without touching the current state
+    /// (no half-applied palette).
+    /// </summary>
+    /// <param name="palette">Complete, flat (or theme-scoped) palette dictionary for the active appearance.</param>
+    /// <param name="paletteId">Stable palette id reported back through <see cref="AppliedPaletteId"/>.</param>
+    /// <returns>True when the palette was applied; false when validation/merge failed.</returns>
+    public bool ApplyPalette(ResourceDictionary palette, string paletteId)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        ArgumentNullException.ThrowIfNull(palette);
+        if (string.IsNullOrWhiteSpace(paletteId))
+        {
+            LastError = "palette id must not be empty";
+            return false;
+        }
+
+        var invalidKeys = new List<string>();
+        foreach (var key in PaletteColorKeys)
+        {
+            if (!TryResolvePaletteValue(palette, key, out var value) || value is not IBrush)
+            {
+                invalidKeys.Add(key);
+            }
+        }
+
+        if (invalidKeys.Count > 0)
+        {
+            LastError =
+                $"palette '{paletteId}' is not a complete color layer: {invalidKeys.Count} key(s) missing or not a brush " +
+                $"({string.Join(", ", invalidKeys.Take(5))}{(invalidKeys.Count > 5 ? ", ..." : string.Empty)})";
+            return false;
+        }
+
+        SwapPalette(palette, IsLightConfigured(), paletteId, isBuiltin: false);
+        return true;
+    }
+
+    /// <summary>Restores the shipped built-in palette for the current appearance (cancel/uninstall path).</summary>
+    public bool RevertPalette()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return ApplyPaletteForActualVariant(forceBuiltin: true);
     }
 
     /// <summary>Adds/removes the complete high-contrast palette overlay.</summary>
@@ -231,14 +306,14 @@ public sealed class DesignSystemThemeManager : IDisposable
         return ApplyPaletteForActualVariant();
     }
 
-    private bool ApplyPaletteForActualVariant()
+    private bool ApplyPaletteForActualVariant(bool forceBuiltin = false)
     {
-        var isLight = Appearance switch
+        var isLight = IsLightConfigured();
+        if (!forceBuiltin && _palette is not null && _paletteIsBuiltin && _paletteIsLight == isLight)
         {
-            AppearanceMode.Light => true,
-            AppearanceMode.Dark => false,
-            _ => _application.ActualThemeVariant == ThemeVariant.Light,
-        };
+            AppliedPaletteId = BuiltinPaletteId(isLight);
+            return true;
+        }
 
         var source = isLight ? _resources.LightPalette : _resources.DarkPalette;
         if (!TryLoadAndRecord(source, out var palette))
@@ -246,25 +321,51 @@ public sealed class DesignSystemThemeManager : IDisposable
             return false;
         }
 
-        if (_palette is not null && _paletteIsLight == isLight)
+        SwapPalette(palette!, isLight, BuiltinPaletteId(isLight), isBuiltin: true);
+        return true;
+    }
+
+    /// <summary>
+    /// Swaps only the palette layer. The theme-invariant tokens are re-ensured and the overlays are
+    /// re-ordered afterwards so density/motion/high-contrast semantics keep their precedence.
+    /// </summary>
+    private void SwapPalette(ResourceDictionary palette, bool isLight, string paletteId, bool isBuiltin)
+    {
+        RemovePaletteProviders();
+        EnsureGlobalTokens();
+        _application.Resources.MergedDictionaries.Add(palette);
+        _palette = palette;
+        _paletteIsLight = isLight;
+        _paletteIsBuiltin = isBuiltin;
+        AppliedPaletteId = paletteId;
+        ReorderOverlays();
+    }
+
+    private bool IsLightConfigured() => Appearance switch
+    {
+        AppearanceMode.Light => true,
+        AppearanceMode.Dark => false,
+        _ => _application.ActualThemeVariant == ThemeVariant.Light,
+    };
+
+    private static string BuiltinPaletteId(bool isLight) =>
+        isLight ? BuiltinLightPaletteId : BuiltinDarkPaletteId;
+
+    /// <summary>Resolves a palette value for validation, tolerating flat and theme-scoped palettes.</summary>
+    private bool TryResolvePaletteValue(ResourceDictionary palette, string key, out object? value)
+    {
+        if (palette.TryGetResource(key, ThemeVariant.Default, out value))
         {
             return true;
         }
 
-        // Replace whatever currently provides the palette (a plain palette include, or the aggregate
-        // NewMangaTheme include). The theme-invariant tokens are re-ensured afterwards so removing an
-        // aggregate include cannot leave the application without tokens.
-        RemovePaletteProviders();
-        if (!EnsureGlobalTokens())
+        if (palette.TryGetResource(key, _application.ActualThemeVariant, out value))
         {
-            return false;
+            return true;
         }
 
-        _application.Resources.MergedDictionaries.Add(palette!);
-        _palette = palette;
-        _paletteIsLight = isLight;
-        ReorderOverlays();
-        return true;
+        return palette.TryGetResource(key, ThemeVariant.Dark, out value) ||
+               palette.TryGetResource(key, ThemeVariant.Light, out value);
     }
 
     private void RemovePaletteProviders()

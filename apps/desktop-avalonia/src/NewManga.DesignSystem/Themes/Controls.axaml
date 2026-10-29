@@ -5,5 +5,8 @@
        system style). -->
   <ResourceDictionary.MergedDictionaries>
     <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls/Button.axaml" />
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls/CheckBox.axaml" />
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls/RadioButton.axaml" />
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls/TabItem.axaml" />
   </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
