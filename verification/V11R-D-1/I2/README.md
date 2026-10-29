@@ -35,3 +35,17 @@ dotnet test tests/NewManga.DesignSystem.Tests/NewManga.DesignSystem.Tests.csproj
 | `color.light.status.skipped` | `#73777B` | `#6A6D71` | 4.62:1 |
 
 `StatusGlyph.notstarted`：`Text.Disabled` → `Text.Secondary`（unstarted 是真实状态，非禁用控件）。
+
+## 附：L3 对比度矩阵复跑（新 token 数据）
+
+`contrast-matrix.log`：`pwsh -NoProfile -File tools/v11r/contrast-matrix.ps1` 重新生成
+`verification/V11R-D-1/contrast-matrix.md`（基线 commit = 本包实现 commit）与
+`verification/V11R-C-3-READY/contrast-matrix.json`。
+
+- 标准盘未达标行从修订前的 **8 行 / 14 对** 降至 **6 行 / 6 对**（徽标合成底全部达标）。
+- 剩余 6 对均为"状态文字直接落在极端表面"：dark `queued/failed/skipped` vs `bg.overlay`
+  （`skipped` 另含 `bg.raised`）；light `queued/blocked/skipped` vs `bg.sunken`。
+- 组件样式把状态文字放在 `bg.panel/raised + statusMuted` 上，实际组合全部达标；按 L3 判定保留为
+  已知残余（建议组件约束「状态文字允许背景集合」，不在本 I2 扩权改组件布局）。
+- 生成器自检：`token-gen-check.log`（DS 278 rows，byte-for-byte）与
+  `theme-gen-check.log`（ThemeEngine 内置主题，byte-for-byte）均 up to date。

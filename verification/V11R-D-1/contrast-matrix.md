@@ -1,7 +1,7 @@
 # V11R-D-1 L3 无障碍对比度矩阵
 
-- 生成时间：2026-10-30T02:18:24+08:00
-- 基线 commit：`7f6787b91f15e9ae7485cff8103206b0f2a4704d`
+- 生成时间：2026-10-30T03:07:58+08:00
+- 基线 commit：`fb042c8fd4be2d98fe308e86ae8799cb5b473cce`
 - 数据来源：`doc/design/redesign-v1/40-fusion/tokens.json`（冻结标准盘）、`apps/desktop-avalonia/src/NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml`（R-14 规则派生高对比盘）
 - 计算方法：WCAG 2.1 相对亮度与对比度公式（(L1+0.05)/(L2+0.05)），与 DS `ContrastMath` 实现一致；比率保留两位小数。
 - 门槛（Lead 裁定）：正文 `text.primary` ≥ 7.0；次要 `text.secondary/tertiary` ≥ 4.5；状态 7 色 ≥ 4.5；强调/焦点环（非文本 UI）≥ 3.0；`accent.on` 落在 `accent.base` 上按文本要求 ≥ 4.5。
@@ -15,12 +15,12 @@
 | 次要 `text.secondary` = #A3A8AF | 7.96 ✔ | 8.18 ✔ | 7.14 ✔ | 6.43 ✔ | 5.70 ✔ | ≥ 4.5 |
 | 三级(信息性) `text.tertiary` = #71767D | 4.16 — | 4.28 — | 3.73 — | 3.36 — | 2.98 — | 参考 |
 | 状态 `status.queued` = #8A9099 | 5.92 ✔ | 6.08 ✔ | 5.31 ✔ | 4.78 ✔ | 4.24 ✘ | ≥ 4.5 |
-| 状态 `status.running` = #5B93B8 | 5.72 ✔ | 5.88 ✔ | 5.13 ✔ | 4.62 ✔ | 4.10 ✘ | ≥ 4.5 |
+| 状态 `status.running` = #689CBE | 6.42 ✔ | 6.60 ✔ | 5.76 ✔ | 5.19 ✔ | 4.61 ✔ | ≥ 4.5 |
 | 状态 `status.done` = #6FA97D | 6.93 ✔ | 7.13 ✔ | 6.22 ✔ | 5.60 ✔ | 4.97 ✔ | ≥ 4.5 |
-| 状态 `status.failed` = #CC6A57 | 5.23 ✔ | 5.37 ✔ | 4.69 ✔ | 4.22 ✘ | 3.75 ✘ | ≥ 4.5 |
+| 状态 `status.failed` = #D27A69 | 6.10 ✔ | 6.27 ✔ | 5.47 ✔ | 4.93 ✔ | 4.37 ✘ | ≥ 4.5 |
 | 状态 `status.blocked` = #C8903F | 6.81 ✔ | 7.00 ✔ | 6.11 ✔ | 5.50 ✔ | 4.88 ✔ | ≥ 4.5 |
-| 状态 `status.stale` = #9A8AB0 | 6.02 ✔ | 6.18 ✔ | 5.40 ✔ | 4.86 ✔ | 4.31 ✘ | ≥ 4.5 |
-| 状态 `status.skipped` = #82878E | 5.26 ✔ | 5.41 ✔ | 4.72 ✔ | 4.25 ✘ | 3.77 ✘ | ≥ 4.5 |
+| 状态 `status.stale` = #9F90B4 | 6.46 ✔ | 6.64 ✔ | 5.79 ✔ | 5.21 ✔ | 4.63 ✔ | ≥ 4.5 |
+| 状态 `status.skipped` = #868B91 | 5.54 ✔ | 5.70 ✔ | 4.97 ✔ | 4.48 ✘ | 3.97 ✘ | ≥ 4.5 |
 | 强调 `accent.base`（非文本 UI）= #D9A04B | 8.23 ✔ | 8.46 ✔ | 7.38 ✔ | 6.65 ✔ | 5.90 ✔ | ≥ 3.0 |
 | 强调 `accent.hover`（非文本 UI）= #E8B264 | 9.96 ✔ | 10.23 ✔ | 8.93 ✔ | 8.04 ✔ | 7.14 ✔ | ≥ 3.0 |
 | 强调 `accent.active`（非文本 UI）= #C08A34 | 6.28 ✔ | 6.45 ✔ | 5.63 ✔ | 5.07 ✔ | 4.50 ✔ | ≥ 3.0 |
@@ -35,13 +35,13 @@
 | 正文 `text.primary` = #1C1E21 | 15.06 ✔ | 13.90 ✔ | 16.71 ✔ | 14.79 ✔ | 16.71 ✔ | ≥ 7.0 |
 | 次要 `text.secondary` = #55595F | 6.35 ✔ | 5.86 ✔ | 7.05 ✔ | 6.24 ✔ | 7.05 ✔ | ≥ 4.5 |
 | 三级(信息性) `text.tertiary` = #83888F | 3.22 — | 2.97 — | 3.57 — | 3.16 — | 3.57 — | 参考 |
-| 状态 `status.queued` = #6E7378 | 4.31 ✘ | 3.98 ✘ | 4.79 ✔ | 4.24 ✘ | 4.79 ✔ | ≥ 4.5 |
+| 状态 `status.queued` = #676C71 | 4.78 ✔ | 4.41 ✘ | 5.30 ✔ | 4.69 ✔ | 5.30 ✔ | ≥ 4.5 |
 | 状态 `status.running` = #3D6E8E | 4.96 ✔ | 4.57 ✔ | 5.50 ✔ | 4.87 ✔ | 5.50 ✔ | ≥ 4.5 |
 | 状态 `status.done` = #3F6B4F | 5.52 ✔ | 5.10 ✔ | 6.13 ✔ | 5.42 ✔ | 6.13 ✔ | ≥ 4.5 |
 | 状态 `status.failed` = #A8462F | 5.28 ✔ | 4.88 ✔ | 5.86 ✔ | 5.19 ✔ | 5.86 ✔ | ≥ 4.5 |
-| 状态 `status.blocked` = #8A6A1F | 4.55 ✔ | 4.20 ✘ | 5.05 ✔ | 4.47 ✘ | 5.05 ✔ | ≥ 4.5 |
+| 状态 `status.blocked` = #84661E | 4.85 ✔ | 4.48 ✘ | 5.38 ✔ | 4.77 ✔ | 5.38 ✔ | ≥ 4.5 |
 | 状态 `status.stale` = #6B5E82 | 5.33 ✔ | 4.92 ✔ | 5.92 ✔ | 5.24 ✔ | 5.92 ✔ | ≥ 4.5 |
-| 状态 `status.skipped` = #73777B | 4.07 ✘ | 3.75 ✘ | 4.51 ✔ | 4.00 ✘ | 4.51 ✔ | ≥ 4.5 |
+| 状态 `status.skipped` = #6A6D71 | 4.69 ✔ | 4.32 ✘ | 5.20 ✔ | 4.60 ✔ | 5.20 ✔ | ≥ 4.5 |
 | 强调 `accent.base`（非文本 UI）= #96651A | 4.53 ✔ | 4.19 ✔ | 5.03 ✔ | 4.46 ✔ | 5.03 ✔ | ≥ 3.0 |
 | 强调 `accent.hover`（非文本 UI）= #7F5515 | 5.89 ✔ | 5.44 ✔ | 6.54 ✔ | 5.79 ✔ | 6.54 ✔ | ≥ 3.0 |
 | 强调 `accent.active`（非文本 UI）= #6B470F | 7.47 ✔ | 6.89 ✔ | 8.29 ✔ | 7.34 ✔ | 8.29 ✔ | ≥ 3.0 |
@@ -94,22 +94,14 @@
 ## 汇总
 
 - 检查项：4 套盘 ×（正文 1 + 次要 1 + 状态 7 + 强调/焦点指示 3 + accent 文本 1）共 13 个强制门槛组 × 5 级背景；另有三级文字与 `accent.ring` 外发光两组信息性参考（无门槛）。
-- 未达标行数（按行计）：**8**。
+- 未达标行数（按行计）：**6**。
 - 未达标组合明细（标准盘状态色 vs 极端表面）：
   - Dark（冻结标准盘） | 状态 `status.queued` = #8A9099 | bg.overlay = 4.24
-  - Dark（冻结标准盘） | 状态 `status.running` = #5B93B8 | bg.overlay = 4.1
-  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | bg.raised = 4.22
-  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | bg.overlay = 3.75
-  - Dark（冻结标准盘） | 状态 `status.stale` = #9A8AB0 | bg.overlay = 4.31
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | bg.raised = 4.25
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | bg.overlay = 3.77
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.canvas = 4.31
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.sunken = 3.98
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.raised = 4.24
-  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | bg.sunken = 4.2
-  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | bg.raised = 4.47
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.canvas = 4.07
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.sunken = 3.75
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.raised = 4
+  - Dark（冻结标准盘） | 状态 `status.failed` = #D27A69 | bg.overlay = 4.37
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | bg.raised = 4.48
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | bg.overlay = 3.97
+  - Light（冻结标准盘） | 状态 `status.queued` = #676C71 | bg.sunken = 4.41
+  - Light（冻结标准盘） | 状态 `status.blocked` = #84661E | bg.sunken = 4.48
+  - Light（冻结标准盘） | 状态 `status.skipped` = #6A6D71 | bg.sunken = 4.32
 - 判定：状态色在 `bg.panel`（正文/表格/卡片）与合成后的 `statusMuted` 底上达标；上表暴露出的是状态文字直接落在 `bg.overlay`（菜单/tooltip）或 `bg.sunken/bg.raised` 极端表面时的缺口。DS 组件样式把状态文字放在 `bg.panel/raised + statusMuted` 组合上，因此实际界面组合达标；L3 审查建议把「状态文字允许背景集合」写成组件约束，或在后续令牌修订中抬高这些状态色。light `status.skipped` vs `bg.canvas` 已按 D-3 登记为已知残余。
 - 复现：`pwsh -NoProfile -File tools/v11r/contrast-matrix.ps1`
