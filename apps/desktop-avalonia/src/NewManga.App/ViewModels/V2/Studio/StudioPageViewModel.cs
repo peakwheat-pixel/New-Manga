@@ -275,6 +275,7 @@ public sealed class StudioPageViewModel : StudioObservable
         TextSource = textSource ?? new NotWiredRegionTextSource();
         FlagSource = flagSource ?? new NotWiredRegionFlagSource();
         _gate = BuildGate();
+        _host.Changed += OnHostChanged;
 
         Pages = new ObservableCollection<StudioFilmPageItem>();
         Regions = new ObservableCollection<StudioRegionItem>();
@@ -758,6 +759,7 @@ public sealed class StudioPageViewModel : StudioObservable
         CancellationToken cancellationToken = default)
     {
         _gate = BuildGate();
+        // Host.Changed is subscribed once in the constructor (no duplicate handlers).
         Raise(nameof(Gate));
         Raise(nameof(HostReady));
         Raise(nameof(WritesAllowed));
@@ -795,8 +797,7 @@ public sealed class StudioPageViewModel : StudioObservable
 
             _bookId = bookId;
             _chapterId = chapterId;
-            Selection.BookId = bookId;
-            Selection.ChapterId = chapterId;
+            Selection.SetContext(bookId, chapterId);
             BookTitle = ResolveBookTitle(bookId);
             await LoadChaptersAsync(bookId, chapterId, cancellationToken).ConfigureAwait(true);
 
@@ -840,6 +841,15 @@ public sealed class StudioPageViewModel : StudioObservable
         catch (OperationCanceledException)
         {
             LoadState = StudioLoadState.Idle;
+            return false;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
+        {
+            // I1 fix: typed Host failures must become an in-place Error state, never escape the view.
+            LoadState = StudioLoadState.Error;
+            ErrorText = $"读取失败：{ex.GetType().Name}";
+            StatusText = "读取失败";
+            PartialReason = null;
             return false;
         }
     }
@@ -1698,6 +1708,17 @@ public sealed class StudioPageViewModel : StudioObservable
 
     // ---------------------------------------------------------------- misc
 
+    /// <summary>I1 fix: Host ready/read-only transitions must update the gate without a reload.</summary>
+    private void OnHostChanged(object? sender, EventArgs e)
+    {
+        _gate = BuildGate();
+        Raise(nameof(Gate));
+        Raise(nameof(HostReady));
+        Raise(nameof(WritesAllowed));
+        Raise(nameof(HostBannerText));
+        Raise(nameof(HostBannerVisible));
+        Raise(nameof(HostBannerText));
+    }
     private StudioCapabilityGate BuildGate()
     {
         var snapshot = _host.Snapshot;

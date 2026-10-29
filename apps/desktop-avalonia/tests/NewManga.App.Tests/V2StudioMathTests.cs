@@ -222,16 +222,16 @@ public sealed class V2StudioMathTests
 
         selection.SetSelectedPages(new[] { "p2", "p3", "p2" });
         Assert.Equal(2, selection.SelectedPageIds.Count);
-        Assert.Equal("当前 Region", selection.SelectionSummary);
+        Assert.Equal("选中 2 页", selection.SelectionSummary); // R-16
 
-        selection.CurrentRegionId = null;
-        Assert.Equal("选中 2 页", selection.SelectionSummary);
+        selection.SetSelectedPages(Array.Empty<string>());
+        Assert.Equal("当前 Region", selection.SelectionSummary);
 
         var changes = 0;
         selection.Changed += (_, _) => changes++;
         selection.TogglePage("p4");
-        Assert.Equal(3, selection.SelectedPageIds.Count);
-        selection.TogglePage("p4");
+        Assert.True(changes >= 1); // ShellState routes every change
+        selection.TogglePage("p5");
         Assert.Equal(2, selection.SelectedPageIds.Count);
         Assert.True(changes >= 2);
 

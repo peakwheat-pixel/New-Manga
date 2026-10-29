@@ -539,9 +539,9 @@ public sealed class V2StudioPageTests
         Assert.Equal(regionCount, page.Regions.Count);
         Assert.Equal(StudioInspectorTab.Locks, page.Inspector.ActiveTab);
         Assert.Equal(2, vm.Selection.SelectedPageIds.Count);
+        Assert.Equal("选中 2 页", vm.Selection.SelectionSummary); // R-16: multi-page wins
+        vm.Selection.SetSelectedPages(Array.Empty<string>());
         Assert.Equal("当前 Region", vm.Selection.SelectionSummary);
-        vm.Selection.CurrentRegionId = null;
-        Assert.Equal("选中 2 页", vm.Selection.SelectionSummary);
 
         StudioEvidence.Write(Task, "context-retention.json", writer =>
         {
@@ -577,7 +577,7 @@ public sealed class V2StudioPageTests
         Assert.False(await errorView.LoadAndRenderAsync("book-0", "ch-1"));
         StudioFixtures.Pump();
         Assert.Equal(StudioLoadState.Error, errorVm.Page.LoadState);
-        Assert.True(errorView.PageWorkspace.ErrorBanner.IsVisible);
+        Assert.False(errorView.PageWorkspace.ErrorBanner.IsVisible); // I1: single error block
         Assert.True(errorView.PageWorkspace.HostBanner.IsVisible);
         var errorShot = Capture(StudioFixtures.WindowOf(errorView), "state-error");
 

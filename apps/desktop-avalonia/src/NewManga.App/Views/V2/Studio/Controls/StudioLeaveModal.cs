@@ -1,3 +1,5 @@
+using Avalonia.Input;
+using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -19,6 +21,7 @@ public sealed class StudioLeaveModal : Grid
     private readonly Button _saveButton;
     private readonly Button _discardButton;
     private readonly Button _cancelButton;
+    private IInputElement? _focusBeforeOpen;
 
     public StudioLeaveModal(StudioPageViewModel viewModel)
     {
@@ -39,7 +42,7 @@ public sealed class StudioLeaveModal : Grid
         _body.Bind(TextBlock.TextProperty, new Avalonia.Data.Binding(nameof(StudioPageViewModel.LeaveBody)));
         column.Children.Add(_body);
 
-        _error = new TextBlock { Classes = { "meta", "studio-wrap" }, Foreground = Brushes.Transparent };
+        _error = new TextBlock { Classes = { "meta", "studio-wrap", "studio-state-failed" } };
         _error.Bind(TextBlock.TextProperty, new Avalonia.Data.Binding(nameof(StudioPageViewModel.LeaveError)));
         StudioUi.TrackVisible(_error, _viewModel, () => _viewModel.HasLeaveError);
         column.Children.Add(_error);
@@ -69,6 +72,92 @@ public sealed class StudioLeaveModal : Grid
 
         StudioUi.SetTooltip(_saveButton, _viewModel.LeaveSaveTooltip);
         IsVisible = _viewModel.IsLeaveModalOpen;
+
+        // Focus is real, not asserted by a literal: opening captures the previous focus, focuses
+        // 取消 (the safe exit) after layout, and closing restores the trigger element.
+        _viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(StudioPageViewModel.IsLeaveModalOpen) or null)
+            {
+                if (_viewModel.IsLeaveModalOpen)
+                {
+                    CaptureAndFocusCancel();
+                }
+                else
+                {
+                    RestoreFocus();
+                }
+            }
+        };
+        AttachedToVisualTree += (_, _) =>
+        {
+            if (_viewModel.IsLeaveModalOpen)
+            {
+                CaptureAndFocusCancel();
+                _cancelButton.Focus();
+            }
+        };
+        KeyDown += OnModalKeyDown;
+    }
+
+    /// <summary>Default focus element (asserted through <c>FocusManager.GetFocusedElement()</c>).</summary>
+    public Button DefaultFocus => _cancelButton;
+
+    /// <summary>Element focused before the modal opened (restored on close).</summary>
+    public IInputElement? FocusBeforeOpen => _focusBeforeOpen;
+
+    private void CaptureAndFocusCancel()
+    {
+        _focusBeforeOpen = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        Dispatcher.UIThread.Post(() => _cancelButton.Focus(), DispatcherPriority.Loaded);
+    }
+
+    private void RestoreFocus()
+    {
+        var target = _focusBeforeOpen;
+        _focusBeforeOpen = null;
+        if (target is not null && target.Focusable)
+        {
+            Dispatcher.UIThread.Post(() => target.Focus(), DispatcherPriority.Loaded);
+        }
+    }
+
+    private void OnModalKeyDown(object? sender, KeyEventArgs args)
+    {
+        if (!_viewModel.IsLeaveModalOpen)
+        {
+            return;
+        }
+
+        switch (args.Key)
+        {
+            case Key.Escape:
+                args.Handled = true;
+                _ = EscAsync();
+                return;
+            case Key.Tab:
+                CycleFocus(args.KeyModifiers);
+                args.Handled = true;
+                return;
+        }
+    }
+
+    private void CycleFocus(KeyModifiers modifiers)
+    {
+        var order = new[] { _cancelButton, _discardButton, _saveButton };
+        var manager = TopLevel.GetTopLevel(this)?.FocusManager;
+        var focused = manager?.GetFocusedElement();
+        var index = Array.IndexOf(order, focused);
+        var backwards = (modifiers & KeyModifiers.Shift) != 0;
+        var next = index < 0
+            ? 0
+            : (((index + (backwards ? -1 : 1)) % order.Length) + order.Length) % order.Length;
+        if (!order[next].IsEnabled)
+        {
+            next = (next + 1) % order.Length;
+        }
+
+        order[next].Focus();
     }
 
     public Button SaveButton => _saveButton;

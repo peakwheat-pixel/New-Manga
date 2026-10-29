@@ -18,6 +18,7 @@ public enum StudioCommand
 
     // ---- V11R-F0-1 region write face: not merged into this branch yet (never faked) ----
     CreateRegion,
+    ReOcrRegion,
     DeleteRegion,
     MoveRegion,
     ResizeRegion,
