@@ -1,0 +1,17 @@
+{
+  "legacy_exists": true,
+  "writes_performed": 0,
+  "legacy_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UPGRADE-REHEARSAL-1\\backup-layout",
+  "target_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UPGRADE-REHEARSAL-1\\target-dryrun",
+  "dry_run": true,
+  "actions": [
+    {
+      "files": 4,
+      "target": "G:\\CODEX\\New Manga.workspace\\task-envs\\UPGRADE-REHEARSAL-1\\target-dryrun",
+      "bytes": 368956.0,
+      "note": "copy-only, no delete, idempotent; dry-run writes nothing",
+      "source": "G:\\CODEX\\New Manga.workspace\\task-envs\\UPGRADE-REHEARSAL-1\\backup-layout",
+      "action": "copy"
+    }
+  ]
+}

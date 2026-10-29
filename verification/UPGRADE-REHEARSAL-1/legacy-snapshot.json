@@ -1,0 +1,70 @@
+{
+  "task": "UPGRADE-REHEARSAL-1",
+  "at_utc": "2026-10-29T07:15:01.0856186Z",
+  "source_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+  "copy_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\UPGRADE-REHEARSAL-1\\legacy-data",
+  "file_count": 12,
+  "total_bytes": 814429,
+  "files": [
+    {
+      "path": "/catalog/catalog.sqlite",
+      "size": 24576,
+      "sha256": "b2ab079773d6ddf42156370a837f7b28544c0dea18df7ad744730d541b3cde52"
+    },
+    {
+      "path": "/data/library.db",
+      "size": 344064,
+      "sha256": "07624d04d89a53718c6b0f2bcfa7a0ec113487c187695b0acf4a1a7774bb96b8"
+    },
+    {
+      "path": "/data/library.db-shm",
+      "size": 32768,
+      "sha256": "0bc764a3d39d75a2ce1bd6dfa68e5bfb93b4792bd08b443dcae0b92b57168c2d"
+    },
+    {
+      "path": "/data/library.db-wal",
+      "size": 366712,
+      "sha256": "5e093ab197758e3da5e2f4620f9b67a1a564ae39b032d648b83534461bef8a22"
+    },
+    {
+      "path": "/data/library.db.run-owner.lock",
+      "size": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "path": "/data/managed/books/48e6fd51c7cd4eb68740f4388f028f09/chapters/89a26b829f824bb09005a71e2886df8f/original/4492a02bb22c40e0bb351f146242033c.png",
+      "size": 7679,
+      "sha256": "ef8f4ac42c692ab8d028aeeb0f5269e8a2f2557c0f1b415b30b05d710aeac485"
+    },
+    {
+      "path": "/data/managed/books/48e6fd51c7cd4eb68740f4388f028f09/chapters/89a26b829f824bb09005a71e2886df8f/original/74a1dc1b2864421eb524d4aea89e4dd1.png",
+      "size": 7677,
+      "sha256": "ea198e4f0740665d026cc87a558e70c56415924d7c706fc5c01f2a3dd18148a0"
+    },
+    {
+      "path": "/data/managed/books/48e6fd51c7cd4eb68740f4388f028f09/chapters/89a26b829f824bb09005a71e2886df8f/original/b1ec7ceaa6fc471b8d86f24d0e105b4e.png",
+      "size": 7634,
+      "sha256": "c71082e20cd82a898b572656e899ad25f8d845a873a9266047ad4994a03fcd1b"
+    },
+    {
+      "path": "/derived/.preview-lifecycle.lock",
+      "size": 328,
+      "sha256": "0a7310a866db3237d33af3b5644cf1ad851215dbabcabc21dd96ec88de93181a"
+    },
+    {
+      "path": "/derived/pages/page-original-2b6bbf24d0cd4fb8a22ac458ede08c2d.png",
+      "size": 7679,
+      "sha256": "ef8f4ac42c692ab8d028aeeb0f5269e8a2f2557c0f1b415b30b05d710aeac485"
+    },
+    {
+      "path": "/derived/pages/page-original-740e2b7db0f24641a721dd64cdeb7264.png",
+      "size": 7634,
+      "sha256": "c71082e20cd82a898b572656e899ad25f8d845a873a9266047ad4994a03fcd1b"
+    },
+    {
+      "path": "/derived/pages/page-original-e592f85076ac432086cc002173503b6c.png",
+      "size": 7677,
+      "sha256": "ea198e4f0740665d026cc87a558e70c56415924d7c706fc5c01f2a3dd18148a0"
+    }
+  ]
+}

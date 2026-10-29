@@ -29,7 +29,7 @@
 |SIGNPATH-OSS-SIGNING-1|RELEASE-VERIFY-1、V1-RELEASE-SIGNING-1|done（SignPath Foundation 免费 OSS 签名申请材料：英文草案 + 中文前置清单 + CI 草案 + README；独立审阅 3 轮修复后 PASS；集成 `f632ee39c`）|
 |CUDA-PACKAGE-DECISION-1|INFER-BASELINE-EP-1、CORE-SLIM-2、GPU-ORT-PROBE-1|done（决策 = defer：主包保持 DirectML；CUDA 仅对 manga-ocr/LaMa 必要；可选包 2.3GB/7GB ≤8GB 预算；触发条件与备选方案已登记）|
 |LEGACY-SHELL-ARCHIVE-1|PUBLIC-RELEASE-P0-1|closed_with_limitations（构建输出解耦到 `apps/desktop-avalonia/build/sidecar` + 归档 17 个旧壳测试/spec/dev 脚本；`apps/desktop` 受 42 条 evidence pin、`src/ui` 受产品 import 约束原位冻结；集成 `7d4c7764c`）|
-|UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|blocked（真实旧版数据升级演练；dry-run 已有；**需用户提供旧 Tauri 数据根副本**）|
+|UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|closed_with_limitations（本机无 AD-001 原始数据，用 2026-10-26 升级前备份执行 dry-run + 真实布局迁移完整性 PASS；发现升级缺口：Core 不识别旧布局 data/library.db）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
@@ -45,6 +45,7 @@ READY 节点：无
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 
 
 

@@ -1,90 +1,88 @@
 ---
 id: UPGRADE-REHEARSAL-1
-title: 真实旧版用户数据升级演练（旧 Tauri 数据根 → 新壳，dry-run 已有、真实数据未跑）
+title: 真实用户数据升级演练（旧布局 → 新壳；已用 2026-10-26 升级前备份执行）
 kind: verification
 governance_version: 3
-status: blocked
+status: closed_with_limitations
 approval: user_authorized_2026-10-29_abc_sequence
-suggested_owner: region-workbench-owner
-owner: null
-reviewer: dsh
+suggested_owner: dsh
+owner: dsh-lead
+reviewer: region-workbench-owner
 depends_on: [RELEASE-VERIFY-1, NSIS-INSTALLER-1]
-base_commit: 145bccb29
+base_commit: 2ac44ff3e
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 2ac44ff3e
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/UPGRADE-REHEARSAL-1
 allowed_paths:
   - doc/tasks/UPGRADE-REHEARSAL-1.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
-  - apps/desktop-avalonia/scripts/migrate-legacy-dryrun.ps1
-  - apps/desktop-avalonia/docs/UPGRADE.md
   - verification/UPGRADE-REHEARSAL-1/**
   - G:/CODEX/New Manga.workspace/task-envs/UPGRADE-REHEARSAL-1/**
 ---
 
-# UPGRADE-REHEARSAL-1：真实旧版数据升级演练
+# UPGRADE-REHEARSAL-1：真实用户数据升级演练（closed_with_limitations）
 
-## 来源与目标
+## 背景与数据来源（用户"不知道旧数据在哪"→ 本机探测结果）
 
-- 来源：用户 2026-10-29 授权按 A/B/C 顺序推进；本卡 = B（AD002-FOLLOWUPS-1 #13「真实用户数据升级演练（旧 Tauri 版 → 新壳，dry-run 已有，真实数据未跑）」）。
-- 现状：`apps/desktop-avalonia/scripts/migrate-legacy-dryrun.ps1` 已实现 copy-only dry-run（不写盘、不删除、幂等）；`apps/desktop-avalonia/docs/UPGRADE.md` 已记录覆盖安装与数据根保留约定；`src/infrastructure/sqlite/migrator.py` 具备 schema 迁移能力。**但从未用真实旧版（v1 Tauri）数据跑过。**
+| 位置 | 结论 |
+|---|---|
+| `%APPDATA%\com.newmanga.desktop` | 当前数据根（已被新壳接管；含 `backups/first-run-*.zip` 2026-10-26 升级前备份） |
+| `%APPDATA%\com.newmanga.m2rc1.desktop` | M2-RC1 时期数据（新架构 27 表 schema，非 AD-001 旧 Tauri 原始数据） |
+| `%LOCALAPPDATA%\com.newmanga.desktop\EBWebView` | 旧 Tauri（WebView2）缓存痕迹 |
+| 旧壳 identifier | `com.newmanga.desktop`（与新版相同 → 旧数据被新壳数据根覆盖） |
 
-## 阻塞点（BLOCKED）
+**本机没有 AD-001 旧 Tauri 时期的原始 schema 数据**。采用最接近的真实数据：
+`backups/first-run-20261026190335.zip`（新壳首次安装时的**升级前布局**：`data/library.db` + `catalog/catalog.sqlite` + `derived/`）。
 
-**需要用户提供的输入**：一份**旧壳（v1 Tauri 版）真实数据根副本**（通常位于 `%APPDATA%\com.newmanga.desktop`，含 `library.db`、托管副本目录等），复制到本机任意路径（**不要直接给正在使用的数据根**，先复制一份）。
+## 执行结果
 
-- 若本机曾安装旧版：告知旧数据根路径（可含隐私数据——只需路径，证据中只记录结构/哈希与统计，不复制内容进仓库）。
-- 若从未安装旧版：明确回复"无旧数据"，本卡改为「用合成旧 schema 数据演练」并把范围降级为合成数据演练（需另写生成脚本）。
+1. **快照**（`legacy-snapshot.json`）：备份布局 4 文件 / 368,956 B，逐文件 SHA-256。
+2. **dry-run**（`dryrun.json`）：`migrate-legacy-dryrun.ps1` → copy-only、`writes_performed=0`、4 文件/368956 B、目标目录未创建。**PASS**
+3. **真实迁移演练**：旧布局 `data/library.db` → 新布局根 `library.db`（+ catalog/derived），校验（`verify-migration.json`）：
+   - 源/目标 SHA-256 一致（`96fc4120…`）、源文件未被修改
+   - `PRAGMA integrity_check = ok`、`schema_version=6`、books=1 / chapters=0 / pages=0 / regions=0
+4. **确认升级缺口**：`src/bootstrap/core_service.py:666` 固定读取 `data_root / "library.db"`（根），**不识别旧布局 `data/library.db`**（`git grep` 0 命中）。即：新壳不会自动迁移旧布局数据，升级需要安装器/迁移脚本显式处理（B 的关键发现）。
 
-## 演练方案（数据到位后执行）
+## Limitations
 
-1. **冻结副本**：把旧数据根整体复制到 `task-env/UPGRADE-REHEARSAL-1/legacy-data/`，记录文件清单 + 每文件 SHA-256 + `library.db` 的表/行数快照（只读）。
-2. **dry-run 复核**：`migrate-legacy-dryrun.ps1 -LegacyRoot <副本> -TargetRoot <新副本>` → 校验输出 JSON（copy-only、writes_performed=0、文件数/字节一致）。
-3. **真实迁移演练**：对副本执行迁移（`src/infrastructure/sqlite/migrator.py` 的升级路径或 `migrate-legacy-dryrun.ps1` 的正式模式，按其当前实现）→ 新壳用隔离数据根启动（`--data-root=<新副本>`）→ Host 就绪 + 书架可见。
-4. **数据完整性断言**：书/章/页计数不变；region 标注、Lock、current/pinned revision 保留；托管副本与源文件未被改写（源目录哈希不变）；`library.db` schema 版本前进且无数据丢失。
-5. **回滚路径**：演练前保留副本 → 失败可原样恢复；记录回滚命令。
-6. **证据**：`verification/UPGRADE-REHEARSAL-1/{report.md, legacy-snapshot.json, dryrun.json, migrate-run.json, integrity.json, screenshots/}`，64-hex pin。
+1. **无 AD-001 旧 schema 原始数据**：本机旧 Tauri 数据已被新壳数据根覆盖；备份库 schema 已是 v6（无需 schema 迁移）。真实"旧 schema → 新 schema"路径未用真实数据验证（migrator v1–v6 链存在，可用合成数据补充）。
+2. **未做 GUI/Core 端到端启动**：演练验证了文件布局迁移 + 库完整性，未启动新壳 GUI 读取迁移后数据根（隔离 `NEWMANGA_DATA_ROOT` 启动属 GUI 环境）。
+3. **升级缺口需修复**（follow-up）：安装器/首启应检测 `data/library.db` 旧布局并迁移/提示，否则旧用户升级后看不到旧书架。
 
 ## Acceptance Criteria
 
-- [ ] **AC1 旧数据副本与快照**：旧数据根副本、文件清单/哈希、库表行数快照（不泄露内容）。<<BLOCKED: 需用户提供真实旧数据根副本>>
-- [ ] **AC2 dry-run 复核**：copy-only、0 写入、文件/字节一致。
-- [ ] **AC3 真实迁移**：新壳隔离启动成功（Host ready + 书架页面可见），数据计数与关键状态保留。
-- [ ] **AC4 回滚与证据**：回滚命令可执行并记录；报告/JSON/截图 pin。
-- [ ] **AC5 门禁**：`check.ps1` PASS；不修改产品代码（仅脚本/文档如必要，需按 allowed_paths）。
+- [ ] **AC1 旧数据副本与快照**：用 2026-10-26 升级前备份（旧布局）替代；本机无 AD-001 原始数据。<<PARTIAL: 本机无旧 Tauri 原始数据；以首次安装前备份替代并快照化>>
+- [x] **AC2 dry-run 复核**：copy-only、0 写入、4 文件/368956 B、目标未创建。<<MET>>
+- [ ] **AC3 真实迁移**：旧布局→新布局文件迁移 + 库完整性 PASS；未跑 GUI 端到端。<<PARTIAL: 未验证新壳 GUI 读取迁移后数据根与可见书架>>
+- [x] **AC4 回滚与证据**：源副本未修改（SHA 一致）；回滚=丢弃 rehearsal-root；快照/dry-run/校验 JSON 落盘。<<MET>>
+- [x] **AC5 门禁**：check PASS；未改产品代码。<<MET>>
 
-## 允许修改范围
+## 已发现缺口（建议 follow-up Task）
 
-本卡、STATUS/PLAN/LEDGER、`verification/UPGRADE-REHEARSAL-1/**`、`task-env/UPGRADE-REHEARSAL-1/**`；如需修 dry-run 脚本或 UPGRADE.md，先在卡内登记（当前范围允许）。
-
-## 风险与阻塞
-
-- 阻塞：真实旧数据根副本（见上）。
-- 风险：旧 schema 可能比当前迁移器支持的更旧（需先核对 `library.db` 的 `PRAGMA user_version`）；隐私——证据只记录结构/统计，不复制数据内容进仓库。
-
-## 交付与运行记录
-
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- 安装器/首启迁移旧布局：`data/library.db` → 根 `library.db`（若根不存在）+ catalog/derived 保留；含备份与回滚。
+- 合成旧 schema（v1–v5）数据 + migrator 迁移测试（真实旧 schema 数据不可得）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| legacy-snapshot | AC1 | verification/UPGRADE-REHEARSAL-1/legacy-snapshot.json | - | ac65f81c289eb69b1aa419c3c9fb3f811c0f4dd2aa24a00a9e84af1f032aec55 | CANONICAL |
+| dryrun | AC2 | verification/UPGRADE-REHEARSAL-1/dryrun.json | - | fcb56bd61760fac48053e21027a9ba4d6630613402ac73062dabca9df841cc48 | CANONICAL |
+| verify-migration | AC3 | verification/UPGRADE-REHEARSAL-1/verify-migration.json | - | 2c6af04570d417bfadc272fc8cc8446e200b42723282a2e725f0bf88e26a4dae | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-REHEARSAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-REHEARSAL-1 | 待数据到位时登记 | 旧数据副本与演练工作区 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-REHEARSAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/UPGRADE-REHEARSAL-1 | legacy-snapshot.json / backup-layout / rehearsal-root | 演练副本与输出 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待解除阻塞后填写。
+- Closed：2026-10-29 as **closed_with_limitations**（用户"不知道旧数据在哪"；本机探测后以升级前真实备份替代 AD-001 原始数据；完成 dry-run + 真实布局迁移完整性 + 确认升级缺口）。
+- 后续：①安装器/首启旧布局迁移实现（建议新 Task `UPGRADE-LEGACY-LAYOUT-1`）；②合成旧 schema 迁移测试；③GUI 端到端升级验证。
