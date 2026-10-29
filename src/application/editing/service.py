@@ -1383,6 +1383,10 @@ class RegionEditingService:
             raise RegionRevisionNotFound()
         staged = _clone_region(region)
         staged.restore_from_snapshot(dict(source.snapshot))
+        # I4/P2-B: a restored snapshot carries its own geometry; the vertex
+        # bound must apply BEFORE the revision seam persists it (an oversized
+        # historical polygon would otherwise bypass the create/save/split caps).
+        assert_geometry_within_limits(staged.geometry)
         revision = RegionRevision(
             region_revision_id=_new_id(),
             region_id=region_id,

@@ -2277,6 +2277,12 @@ class CoreServiceServer:
             raise RegionLookupError(region_id) from error
         except RegionRevisionNotFound as error:
             raise RegionLookupError(region_id) from error
+        except RegionLimitExceeded as error:
+            # I4/P2-B: an oversized historical snapshot geometry is a validation
+            # failure (never UNKNOWN); zero write.
+            raise RegionRequestError(
+                f"restore_region_revision rejected: {error}"
+            ) from error
         except RegionRevisionChanged as error:
             raise RegionConflictError(
                 "region revision changed since it was read"
