@@ -15,7 +15,7 @@ Lead / Integrator：DeepSeek Harness（DSH）
 |---|---|---|
 | V1.1 审计整改（工作流 A） | **PASS_WITH_ISSUES** | A-1/A-2/A-3/A-5/A-6/A-7 完成并集成；66 命令契约 FROZEN 49 / PARTIAL 17 / GAP 0；**追加发现并修复 P0**：发布版默认 `ReadOnlyUntilParity` 导致导入/建书/运行全被拒（A-5）。F0-1/F0-2 Region 写面 4 轮审查 P1 全关闭、I4 修 3×P2 并经独立窄验证 CLOSED，已合入 main（见 §7）。 |
 | 全新 UI/UX（工作流 B） | **PASS_WITH_ISSUES** | 新 Avalonia 外壳 + Library/Console/Studio Page/Studio Batch + 导出/术语工作面全部交付；main 已切**新壳为默认入口**（`--shell=legacy` 保留回滚）。独立审查 r1/r2/r3 的 P1 均已关闭；剩余 P2/P3 见 §8。 |
-| Theme Studio 重建（工作流 C） | **PASS_WITH_ISSUES** | C-1 新主题引擎 **PASS**（235 测试）；C-2 Theme Studio 7 分区 **PASS_WITH_ISSUES**（I1 已修行高契约漂移 P1 + 2×P2）；**C-3 旧主题退役已完成并收口**（`NewManga.Theme` 项目/源码/引用删除、零引用门、干净树 R6、双壳 EXIT 0/0、v2 host.log）；r1 FAIL(P2-only) → C-3-I1 修复 + 干净树补证 + 窄验证通过。 |
+| Theme Studio 重建（工作流 C） | **PASS** | C-1 新主题引擎 **PASS**（235 测试）；C-2 Theme Studio 7 分区 **PASS**（行高契约漂移 P1 + 2×P2 已修并经独立验证 3/3 CLOSED，**主题域 L3 可签署**）；**C-3 旧主题退役已完成并收口**（`NewManga.Theme` 项目/源码/引用删除、零引用门、干净树 R6、双壳 EXIT 0/0、v2 host.log）；r1 FAIL(P2-only) → C-3-I1 修复 + 干净树补证 + 窄验证通过。 |
 | 设计系统（工作流 D） | **PASS_WITH_ISSUES** | D-1 独立审查 r2 的 2×P1 已修（真实 App 资源栈全局令牌、徽标合成对比度），DS 82 测试；仍有 6 行/6 对状态色落极端表面未达 4.5:1（已登记组件约束）。 |
 | 总体 | **未达 L4 最终验收** | 阻断项：C-3 未执行（旧主题系统仍在）、F0-1 待最终复核、跨项目并行测试偶发、Windows 实机/DPI/IME/Trim 未验证（NOT_RUN）。可交付为 **M2（新壳可用）+ M3（全工作面）候选**。 |
 
@@ -165,3 +165,13 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 | L4（发布验收） | **真实窗口矩阵 7/7 PASS**；实机 DPI/IME/Trim/AOT/交互 **NOT_RUN** | `verification/V11R-L4-EVIDENCE/` |
 
 **结论**：本轮交付范围内，所有"可在当前环境执行"的验证均已完成且 0 失败；剩余项均为环境受限的实机验证（NOT_RUN）与已登记的 V1.x follow-up，不阻塞功能交付。
+## 14. 主题域 L3 签署与最终复检
+
+| 对象 | 结论 | 依据 |
+|---|---|---|
+| C-1 新主题引擎 | **PASS** | `doc/reviews/V11R-THEME-L3-r1-independent.md`；235 测试；零依赖旧 `NewManga.Theme` |
+| C-2 Theme Studio | **PASS** | C-2-I1 后窄验证 3/3 CLOSED（`doc/reviews/V11R-C-2-I1-verification.md`） |
+| C-3 旧主题退役 | **PASS** | 干净树 R6（`workingTreeDirty=false`、双壳 EXIT 0/0、v2 host.log、零引用门）+ C-3-I1 窄验证补项闭环 |
+| 主题域 L3 | **可签署** | 三者闭环，无 P1/P2 未处置项 |
+| 最终树 clean-clone 自检（A-4） | **修复中** | 唯一 hard failure 为负向安全测试夹具中的假路径字面量（`V2ConsoleUiTests.cs:368`），正在加"显式标注豁免 + 报告可见"后复跑 |
+| 真实窗口 L4 矩阵（当前 HEAD 复跑） | **7/7 PASS** | `verification/V11R-L4-EVIDENCE/launch-matrix.json`：Host 就绪 7/7、自然退出 7/7、截图 9 张 |
