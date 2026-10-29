@@ -251,11 +251,12 @@ public sealed class V2ConformanceTests
 
         var json = BuildInventoryJson(files, tokens, classes);
         var relative = Path.Combine("conformance", "v2-tokens-and-classes.json");
-        var bytes = EvidenceFiles.WriteText("V11R-B-1", relative, json, nameof(Evidence_RecordsUsedTokensClassesAndStyleSources));
+        var task = EvidenceFiles.Task("V11R-B-1");
+        var bytes = EvidenceFiles.WriteText(task, relative, json, nameof(Evidence_RecordsUsedTokensClassesAndStyleSources));
         Assert.NotNull(bytes);
         Assert.True(bytes > 1024, $"conformance evidence is too small: {bytes}");
 
-        var tempPath = EvidenceFiles.TempPath("V11R-B-1", relative);
+        var tempPath = EvidenceFiles.TempPath(task, relative);
         Assert.True(File.Exists(tempPath), $"conformance evidence not written to {tempPath}");
         var written = File.ReadAllText(tempPath);
         Assert.Contains("\"nm_tokens_used\"", written, StringComparison.Ordinal);
@@ -308,5 +309,22 @@ public sealed class V2ConformanceTests
         }
 
         return Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    /// <summary>
+    /// R-23: console wiring / saved / bound states are neutral metadata, never the frozen seven-state
+    /// status vocabulary (no StatusBadge / st-* symbol for these surfaces).
+    /// </summary>
+    [Fact]
+    public void ConsoleView_WiringAndSavedStates_DoNotUseSevenStateStatusBadges()
+    {
+        var path = Path.Combine(V2Root, "Views", "V2", "Console", "ConsoleView.axaml");
+        var text = File.ReadAllText(path);
+        Assert.DoesNotContain("SelectedSection.Status", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Binding Status=\"{Binding Status}\"", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("StateStatus", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("BindingStatus", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status=\"Queued\"", text, StringComparison.Ordinal);
+        Assert.Contains("WiringText", text, StringComparison.Ordinal);
     }
 }

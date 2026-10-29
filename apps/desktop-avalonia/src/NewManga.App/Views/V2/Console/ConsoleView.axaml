@@ -36,7 +36,7 @@
                                  Text="{Binding Summary}"
                                  TextTrimming="CharacterEllipsis" />
                     </StackPanel>
-                    <ctrl:StatusBadge Grid.Column="2" Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Classes="meta" Text="{Binding WiringText}" VerticalAlignment="Center" />
                   </Grid>
                 </Button>
               </DataTemplate>
@@ -61,7 +61,7 @@
         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
           <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
             <TextBlock Classes="title" Text="{Binding SelectedSection.Label}" VerticalAlignment="Center" />
-            <ctrl:StatusBadge Status="{Binding SelectedSection.Status}" VerticalAlignment="Center" />
+            <TextBlock Classes="meta" Text="{Binding SelectedSection.WiringText}" VerticalAlignment="Center" />
           </StackPanel>
           <TextBlock Grid.Column="1"
                      Classes="meta"
@@ -220,7 +220,6 @@
                         <TextBlock Grid.Column="1" Classes="meta" Text="{Binding NetworkText}" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" Classes="meta" Text="{Binding EnabledText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
-                          <ctrl:StatusBadge Status="Queued" ShowLabel="False" />
                           <TextBlock Classes="meta" Text="{Binding CredentialStateText}" VerticalAlignment="Center" />
                         </StackPanel>
                       </Grid>
@@ -282,8 +281,7 @@
                       <StackPanel Spacing="{DynamicResource Nm.Space.2}">
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                           <TextBlock Classes="label" Text="{Binding TargetText}" VerticalAlignment="Center" />
-                          <ctrl:StatusBadge Grid.Column="1" Status="{Binding StateStatus}" VerticalAlignment="Center" />
-                          <TextBlock Grid.Column="2" Classes="meta" Text="{Binding StateLabel}" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1" Classes="meta" Text="{Binding StateLabel}" VerticalAlignment="Center" />
                         </Grid>
                         <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                           <TextBox Grid.Column="0"
@@ -324,7 +322,6 @@
                       <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                         <TextBlock Classes="label" Text="{Binding Title}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
-                          <ctrl:StatusBadge Status="{Binding BindingStatus}" ShowLabel="False" />
                           <TextBlock Classes="meta" Text="{Binding BindingText}" VerticalAlignment="Center" />
                           <TextBlock Classes="meta" Text="{Binding BindingSourceText}" VerticalAlignment="Center" />
                         </StackPanel>
@@ -363,7 +360,6 @@
                       <TextBlock Grid.Column="2" Classes="meta" Text="{Binding TlsText}" VerticalAlignment="Center" />
                       <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
                         <TextBlock Classes="meta" Text="{Binding DefaultText}" />
-                        <ctrl:StatusBadge Status="Queued" ShowLabel="False" />
                         <TextBlock Classes="meta" Text="{Binding CredentialStateText}" VerticalAlignment="Center" />
                       </StackPanel>
                     </Grid>

@@ -1,4 +1,4 @@
-# V11R-B-2 构建与测试记录（I1/INT-0 共享基础设施后的复跑）
+# V11R-B-2 构建与测试记录（I2 收口：R-24/R-23 + 2026-10-30 复跑）
 
 执行目录：`apps/desktop-avalonia`；证据文件：`build.log`、`test.log`（命令原样输出）。
 
@@ -21,15 +21,15 @@ dotnet test NewManga.sln -m:1 --no-build --nologo
 
 | 测试项目 | 通过 | 跳过 | 失败 | 总计 |
 |---|---|---|---|---|
-| NewManga.Host.Tests | 42 | 24 | 0 | 66 |
-| NewManga.DesignSystem.Tests | 67 | 0 | 0 | 67 |
+| NewManga.Host.Tests | 49 | 28 | 0 | 77 |
+| NewManga.DesignSystem.Tests | 82 | 0 | 0 | 82 |
 | NewManga.ThemeEngine.Tests | 229 | 0 | 0 | 229 |
-| NewManga.App.Tests | 254 | 6 | 0 | 260 |
-| NewManga.CoreClient.Tests | 42 | 25 | 0 | 67 |
+| NewManga.App.Tests | 308 | 7 | 0 | 315 |
+| NewManga.CoreClient.Tests | 116 | 25 | 0 | 141 |
 
 跳过项为既有环境依赖用例（真实 sidecar / 冻结二进制），与本次改动无关。
 
-## 3. 本任务测试（11 条，全部通过）
+## 3. 本任务测试（13 条，全部通过）
 
 `tests/NewManga.App.Tests/V2ConsoleUiTests.cs`：
 
@@ -46,6 +46,8 @@ dotnet test NewManga.sln -m:1 --no-build --nologo
 | `Console_FailedSave_RendersTypedCodeOnly_NoPathOrSecretInNotice` | 注入含路径+假 secret 的 Core Message，通知只含 typed code |
 | `Tasks_LoadsRealRunSnapshotAndProjection_AndHonorsRunControlRules` | 真实快照/投影（状态/命令/作用域/进度/计数/阶段/任务行）；Restart 缺幂等键零调用；有键才调用；Stop 需确认、取消不写、确认执行；R-24：Console 与 StatusBand 共享 `RunStatusMonitor`，LoadRun 只产生 1 次快照/投影读取 |
 | `Tasks_WithoutRunId_DoesNotFabricateAnything` | 无 run_id 时零 Host 调用、无伪造行、给出提示 |
+| `R24_ConsoleRunPolling_PausesOnLeave_AndResumesOnReentry` | 加载 Run → 离开 Console（共享 poller 暂停）→ 切回（恢复订阅并立即单次共享刷新；快照/投影计数增长，无 sleep） |
+| `R23_WiringAndSavedStates_UseNeutralVocabulary_NotSevenStateStatus` | 分区「已接入/待接入」、凭据「已保存/未保存」、绑定「已绑定/未绑定」中性 metadata；反射断言旧 `Status/StateStatus/BindingStatus` 已移除；文本不落入七态词表 |
 
 ## 4. 证据生成
 

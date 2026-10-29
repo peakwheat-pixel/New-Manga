@@ -48,7 +48,8 @@ public sealed class ConsoleSectionItem : ObservableObject
 
     public bool IsWired { get; }
 
-    public NmStatus Status => IsWired ? NmStatus.Done : NmStatus.Blocked;
+    /// <summary>R-23: neutral metadata, never the seven-state status vocabulary.</summary>
+    public string WiringText => IsWired ? "已接入" : "待接入";
 
     public RelayCommand SelectCommand { get; }
 
@@ -263,8 +264,6 @@ public sealed class CredentialTargetRowViewModel : ObservableObject
     /// <summary>已保存 / 未保存 — the only state the UI may render for a credential.</summary>
     public string StateLabel => IsConfigured ? "已保存" : "未保存";
 
-    public NmStatus StateStatus => IsConfigured ? NmStatus.Done : NmStatus.NotStarted;
-
     /// <summary>Transient password-box content. Cleared after a successful put; never displayed elsewhere.</summary>
     public string SecretInput
     {
@@ -308,7 +307,7 @@ public sealed class CredentialTargetRowViewModel : ObservableObject
     public void UpdateState(string credentialState)
     {
         _credentialState = credentialState;
-        OnPropertyChanged(nameof(CredentialState), nameof(IsConfigured), nameof(StateLabel), nameof(StateStatus));
+        OnPropertyChanged(nameof(CredentialState), nameof(IsConfigured), nameof(StateLabel));
     }
 
     public void ClearSecretInput()
@@ -345,8 +344,6 @@ public sealed class CapabilityBindingRowViewModel : ObservableObject
 
     public string BindingText { get; private set; } = "未绑定";
 
-    public NmStatus BindingStatus { get; private set; } = NmStatus.NotStarted;
-
     public string BindingSourceText { get; private set; } = string.Empty;
 
     public RelayCommand BindCommand { get; }
@@ -356,9 +353,8 @@ public sealed class CapabilityBindingRowViewModel : ObservableObject
     public void Update(bool isBound, string? profileId, string? source)
     {
         BindingText = isBound ? $"已绑定 → {profileId}" : "未绑定";
-        BindingStatus = isBound ? NmStatus.Done : NmStatus.NotStarted;
         BindingSourceText = string.IsNullOrEmpty(source) ? string.Empty : $"来源：{source}";
-        OnPropertyChanged(nameof(BindingText), nameof(BindingStatus), nameof(BindingSourceText));
+        OnPropertyChanged(nameof(BindingText), nameof(BindingSourceText));
     }
 }
 

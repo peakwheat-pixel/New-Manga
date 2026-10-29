@@ -457,4 +457,84 @@ public sealed class V2ConsoleUiTests
         Assert.Contains("run_id", shell.ViewModel.NoticeText, StringComparison.Ordinal);
         window.Close();
     }
+
+    [AvaloniaFact]
+    public async Task R24_ConsoleRunPolling_PausesOnLeave_AndResumesOnReentry()
+    {
+        var controller = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(controller);
+        console.SelectSectionById(ConsoleSectionId.Tasks);
+        console.RunIdInput = "run-1";
+        console.LoadRunCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(console.HasRunLoaded);
+        Assert.True(shell.ViewModel.RunMonitor.IsPollingEnabled);
+        var snapshotsAfterLoad = controller.RunSnapshotRequests.Count;
+        var projectionsAfterLoad = controller.TaskProjectionRequests.Count;
+        Assert.True(snapshotsAfterLoad > 0);
+        Assert.True(projectionsAfterLoad > 0);
+
+        // Leave the Console: the shared poller must pause (no background Host reads).
+        Assert.True(shell.HandleKeyForTest(Key.D1, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.RunMonitor.IsPollingEnabled);
+        var snapshotsWhileAway = controller.RunSnapshotRequests.Count;
+        var projectionsWhileAway = controller.TaskProjectionRequests.Count;
+
+        // Re-enter with the same run: subscription resumes and one immediate shared refresh is made.
+        Assert.True(shell.HandleKeyForTest(Key.D3, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.RunMonitor.IsPollingEnabled);
+        Assert.True(controller.RunSnapshotRequests.Count > snapshotsWhileAway,
+            "re-entry must resume the shared snapshot subscription without waiting for the timer");
+        Assert.True(controller.TaskProjectionRequests.Count > projectionsWhileAway,
+            "re-entry must resume the shared projection subscription without waiting for the timer");
+        Assert.Equal("run-1", console.RunIdInput);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task R23_WiringAndSavedStates_UseNeutralVocabulary_NotSevenStateStatus()
+    {
+        var controller = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(controller);
+        console.SelectSectionById(ConsoleSectionId.Providers);
+        Dispatcher.UIThread.RunJobs();
+
+        // The NmStatus projections that expressed "wired / saved / bound" are gone at the API level.
+        Assert.Null(typeof(ConsoleSectionItem).GetProperty("Status", BindingFlags.Public | BindingFlags.Instance));
+        Assert.Null(typeof(CredentialTargetRowViewModel).GetProperty("StateStatus", BindingFlags.Public | BindingFlags.Instance));
+        Assert.Null(typeof(CapabilityBindingRowViewModel).GetProperty("BindingStatus", BindingFlags.Public | BindingFlags.Instance));
+
+        var sevenStateWords = Enum.GetValues<NmStatus>()
+            .SelectMany(status => new[] { NmStatusInfo.Label(status), NmStatusInfo.Symbol(status) })
+            .Where(text => !string.IsNullOrWhiteSpace(text))
+            .ToHashSet(StringComparer.Ordinal);
+
+        Assert.NotEmpty(console.Sections);
+        Assert.All(console.Sections, section =>
+        {
+            Assert.Contains(section.WiringText, new[] { "已接入", "待接入" });
+            Assert.False(sevenStateWords.Contains(section.WiringText),
+                $"section wiring must not use the seven-state vocabulary: {section.WiringText}");
+        });
+
+        Assert.NotEmpty(console.CredentialTargets);
+        Assert.All(console.CredentialTargets, row =>
+        {
+            Assert.Contains(row.StateLabel, new[] { "已保存", "未保存" });
+            Assert.False(sevenStateWords.Contains(row.StateLabel),
+                $"credential state must not use the seven-state vocabulary: {row.StateLabel}");
+        });
+
+        Assert.NotEmpty(console.CapabilityBindings);
+        Assert.All(console.CapabilityBindings, row =>
+        {
+            Assert.False(sevenStateWords.Contains(row.BindingText),
+                $"binding state must not use the seven-state vocabulary: {row.BindingText}");
+        });
+
+        window.Close();
+    }
 }
