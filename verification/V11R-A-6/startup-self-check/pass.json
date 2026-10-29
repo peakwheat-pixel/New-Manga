@@ -1,0 +1,7 @@
+{
+  "status": "Degraded",
+  "mode": "ReadWrite",
+  "writes_allowed": true,
+  "detail": "core_protocol=2.3 required_minor=3 capabilities=[library.list_books]",
+  "created_book_id": "3b102005ef1245a5a069929d47cadb3b"
+}

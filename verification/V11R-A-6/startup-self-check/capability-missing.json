@@ -1,0 +1,8 @@
+{
+  "status": "Failed",
+  "mode": "ReadOnlySelfCheckFailed",
+  "writes_allowed": false,
+  "typed_error": "CORE_CAPABILITY_MISSING",
+  "reason": "\u53EA\u8BFB\uFF08\u542F\u52A8\u81EA\u68C0\u5931\u8D25\uFF09",
+  "refusal_code": "HOST_READ_ONLY"
+}
