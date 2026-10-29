@@ -29,14 +29,22 @@ public sealed record HostViewSnapshot(
     /// </summary>
     public bool WritesAllowed { get; init; } = true;
 
-/// <summary>
-/// V11R-A-1: typed code of the last refused Host-controller request (<c>INVALID_REQUEST</c> /
-/// <c>TARGET_NOT_FOUND</c> / <c>HOST_READ_ONLY</c> / <c>CANCELLED</c> / <c>IDEMPOTENCY_KEY_REUSED</c> /
-/// <c>INVALID_RUN_TRANSITION</c> …); null after the last successful write. V11R-A-2 publishes Run
-/// read refusals (for example <c>TARGET_NOT_FOUND</c>) on the same field. Deliberately a code only —
-/// never a message, an OS path or a credential — so the channel is safe to render and to log.
-/// </summary>
-public string? LastError { get; init; }
+    /// <summary>
+    /// V11R-A-1: typed code of the last refused Host-controller request (<c>INVALID_REQUEST</c> /
+    /// <c>TARGET_NOT_FOUND</c> / <c>HOST_READ_ONLY</c> / <c>CANCELLED</c> / <c>IDEMPOTENCY_KEY_REUSED</c> /
+    /// <c>INVALID_RUN_TRANSITION</c> …); null after the last successful write. V11R-A-2 publishes Run
+    /// read refusals (for example <c>TARGET_NOT_FOUND</c>) on the same field. Deliberately a code only —
+    /// never a message, an OS path or a credential — so the channel is safe to render and to log.
+    /// </summary>
+    public string? LastError { get; init; }
+
+    /// <summary>
+    /// V11R-A-5: UI-readable reason when the Host is read-only (for example
+    /// <c>只读（旧壳运行中）</c> / <c>只读（S2 parity 前）</c>); null while writes are allowed. Mirrors
+    /// <see cref="NewManga.Host.DataRootPolicy.Reason"/> through the shared
+    /// <see cref="NewManga.Host.CoexistenceRules.Describe"/> text so a refusal is never silent.
+    /// </summary>
+    public string? ReadOnlyReason { get; init; }
 }
 
 /// <summary>READER-PROGRESS-1: typed outcome of one progress save (never throws into the UI).</summary>

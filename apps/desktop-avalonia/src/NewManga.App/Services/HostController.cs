@@ -21,7 +21,12 @@ public sealed class HostController : IHostController
         Array.Empty<BookSummary>(),
         0,
         true,
-        null);
+        null)
+    {
+        // V11R-A-5: until the Host is ready the write gate stays closed and the reason is explicit.
+        WritesAllowed = false,
+        ReadOnlyReason = "Host 未就绪（只读）",
+    };
 
     public HostController(HostOptions options)
     {
@@ -47,6 +52,8 @@ public sealed class HostController : IHostController
                 StatusLine = "Host 启动失败",
                 ErrorCode = ex is SidecarException sidecar ? sidecar.Code.ToString() : "HOST_START_IO",
                 ErrorMessage = ex is SidecarException typed ? typed.UserMessage : "Host 启动时发生 I/O 错误，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 启动失败（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -77,6 +84,8 @@ public sealed class HostController : IHostController
                 StatusLine = "读取书架失败",
                 ErrorCode = ex.Code,
                 ErrorMessage = "Core 返回了错误码，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -88,6 +97,8 @@ public sealed class HostController : IHostController
                 StatusLine = "核心服务中断",
                 ErrorCode = ex.Code.ToString(),
                 ErrorMessage = ex.UserMessage,
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -130,6 +141,8 @@ public sealed class HostController : IHostController
                 StatusLine = "中文往返失败",
                 ErrorCode = ex is CoreOperationException core ? core.Code : ((SidecarException)ex).Code.ToString(),
                 ErrorMessage = "核心服务返回错误，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
             return false;
@@ -1748,7 +1761,12 @@ public sealed class HostController : IHostController
         {
             // READER-WORKBENCH-1 AC3: the workbench's write gate mirrors the Host data-root policy.
             WritesAllowed = _runtime.Policy.WritesAllowed,
+            // V11R-A-5: when the gate is closed the UI gets the explicit reason, never a silent refusal.
+            ReadOnlyReason = _runtime.Policy.WritesAllowed
+                ? null
+                : CoexistenceRules.Describe(result.Mode),
         };
         Changed?.Invoke(this, EventArgs.Empty);
     }
 }
+

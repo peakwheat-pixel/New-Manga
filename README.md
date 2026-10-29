@@ -11,6 +11,10 @@
 > **Status: 0.1.0 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
 > “Unknown publisher”. Verify the SHA-256 manifest and read the release notes before installing.
 > A free open-source signing application is prepared in [`doc/release/`](doc/release/).
+>
+> **Writes:** the installed app is writable by default. It only runs read-only when the legacy Tauri shell is
+> detected or `--parity=false` is passed (the UI shows the reason), and a first-run catalog backup is
+> taken before writes. See [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md).
 
 ## What it does
 
@@ -28,6 +32,7 @@
   两者经严格请求/响应的 typed JSON IPC 通信，无网络监听。
 - 用户数据根 `%APPDATA%\com.newmanga.desktop`（书库、托管副本、缓存、导出、日志）；安装/卸载**不会**删除或改写它。
 - 四个一级页面：书架 / 工作台 / 阅读器 / 设置。
+- **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.nmbak`，幂等不覆盖）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
 - 构建：需 .NET 9 SDK、Python 3.11、NSIS 3.x、PowerShell 7；模型权重不随 Git 仓库分发，
   `-models` 发行包内置权重，base 包首次检测会以 typed `PROVIDER_NOT_CONFIGURED` 提示。
 - 测试基线（2026-10-28）：.NET 258/258（0 skipped）、pytest 2773P/10S/0F、typed IPC 命令 66/66。
@@ -150,3 +155,4 @@ This is an early, single-maintainer project (repository created 2026-09-24). Iss
 welcome; please do not include model weights or third-party copyrighted assets in pull requests.
 Release/signing process: [`doc/release/SIGNPATH-APPLICATION.md`](doc/release/SIGNPATH-APPLICATION.md)
 (English) and [`doc/release/SIGNPATH-APPLICATION-CHECKLIST.md`](doc/release/SIGNPATH-APPLICATION-CHECKLIST.md) (中文).
+
