@@ -70,6 +70,8 @@ try {
         'docs/',
         'AGENTS.md',
         'apps/desktop/',
+        # This scanner's own pattern literals are its definition, not a location to resolve.
+        'tools/ci/verify-clean-clone.ps1',
         'tools/governance/',
         'tools/p02/'
     )
