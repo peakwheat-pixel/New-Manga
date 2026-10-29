@@ -1,0 +1,7 @@
+{
+  "ac": "P1-2 TryHandleKey \u771F\u5B9E\u73B0\uFF08Page \u002B Batch\uFF09",
+  "page_j_handled": true,
+  "batch_down_handled": true,
+  "batch_enter_handled": true,
+  "interface": "NewManga.App.Shell.V2.IWorkspaceView.TryHandleKey(KeyEventArgs, ShellState)"
+}

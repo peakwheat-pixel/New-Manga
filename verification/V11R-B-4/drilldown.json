@@ -4,6 +4,6 @@
   "batch_to_page": "p02 \u00B7 inpaint",
   "page_to_batch_stage": "render",
   "filter_kept": "Failed",
-  "scroll_kept": true,
+  "scroll_kept_nonzero": true,
   "host_accessed": true
 }

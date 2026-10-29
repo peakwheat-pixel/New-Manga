@@ -1,6 +1,0 @@
-{
-  "ac": "R-17 Studio \u4E13\u6709\u952E \u002B Tab \u7CFB\u7EDF\u904D\u5386",
-  "tab_not_swallowed_without_hud": true,
-  "try_handle_key_exposed": true,
-  "shell_interface": "IWorkspaceView.TryHandleKey \u7531 INT-1 shell \u4EFB\u52A1\u5408\u5165\u540E\u63A5\u7EBF"
-}

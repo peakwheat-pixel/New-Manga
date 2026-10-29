@@ -1,8 +1,9 @@
 {
   "ac": "P2-5 Studio conformance\uFF08DS \u4E0A\u6536/\u65E0\u88F8\u503C\uFF09",
-  "files_scanned": 27,
+  "files_scanned": 30,
   "symbol_offenders": 0,
   "font_size_offenders": 0,
   "breakpoint_offenders": 0,
+  "spacing_offenders": 0,
   "status_catalog_is_single_source": true
 }

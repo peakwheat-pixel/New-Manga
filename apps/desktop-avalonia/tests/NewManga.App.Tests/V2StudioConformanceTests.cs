@@ -58,6 +58,18 @@ public sealed class V2StudioConformanceTests
         var offenders = new List<string>();
         var fontSizeOffenders = new List<string>();
         var breakpointOffenders = new List<string>();
+        var spacingOffenders = new List<string>();
+        // Documented exceptions (DEVIATIONS.md) where no Nm.* token fits yet.
+        var spacingAllowlist = new HashSet<string>(StringComparer.Ordinal)
+        {
+            // 1px hairline borders are a design rule, not a spacing literal.
+            "StudioTheme.axaml:0,0,0,1", "StudioTheme.axaml:0,0,0,2", "StudioTheme.axaml:0,0,1,0",
+            "StudioTheme.axaml:0,1", "StudioTheme.axaml:0,1,0,0", "StudioTheme.axaml:0,1,0,1",
+            "StudioTheme.axaml:1", "StudioTheme.axaml:1,0", "StudioTheme.axaml:1,0,0,0", "StudioTheme.axaml:2,0,0,0",
+            // No Nm.* token exists yet — registered in verification/V11R-B-3/DEVIATIONS.md.
+            "StudioTheme.axaml:10,4", "StudioTheme.axaml:20", "StudioTheme.axaml:480",
+            "StudioTheme.axaml:6,0", "StudioTheme.axaml:8",
+        };
         foreach (var file in files)
         {
             var text = File.ReadAllText(file);
@@ -84,11 +96,27 @@ public sealed class V2StudioConformanceTests
             {
                 breakpointOffenders.Add(name);
             }
+
+            if (file.EndsWith(".axaml", StringComparison.Ordinal))
+            {
+                // P2-4: spacing/geometry must come from Nm.* resources (0 and DynamicResource allowed).
+                foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(
+                             text, @"(?:Padding|Width|Height|Thickness|CornerRadius)""\s+Value=""(?<value>[^""]+)"""))
+                {
+                    var value = match.Groups["value"].Value;
+                    var allowed = value.Trim() == "0" || value.Contains("{DynamicResource Nm.", StringComparison.Ordinal);
+                    if (!allowed && !spacingAllowlist.Contains(name + ":" + value))
+                    {
+                        spacingOffenders.Add($"{name}:{value}");
+                    }
+                }
+            }
         }
 
         Assert.True(offenders.Count == 0, string.Join(", ", offenders));
         Assert.Empty(fontSizeOffenders);
         Assert.Empty(breakpointOffenders);
+        Assert.True(spacingOffenders.Count == 0, string.Join(", ", spacingOffenders));
 
         // The single symbol source must be the DS catalog (no local switch table).
         var statesSource = File.ReadAllText(Path.Combine(
@@ -105,6 +133,7 @@ public sealed class V2StudioConformanceTests
             writer.WriteNumber("symbol_offenders", offenders.Count);
             writer.WriteNumber("font_size_offenders", fontSizeOffenders.Count);
             writer.WriteNumber("breakpoint_offenders", breakpointOffenders.Count);
+            writer.WriteNumber("spacing_offenders", spacingOffenders.Count);
             writer.WriteBoolean("status_catalog_is_single_source", true);
             writer.WriteEndObject();
         });

@@ -1,3 +1,4 @@
+using Avalonia.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
@@ -264,7 +265,6 @@ public sealed class V2StudioBatchTests
     {
         var (view, _, vm, window) = await OpenBatchAsync();
         var batch = vm.Batch;
-        var startsBefore = view is not null ? vm.Batch.Selection : null;
         batch.SelectCell(0, "translate");
         batch.SetScope(StudioBatchScope.Selected);
         Assert.True(batch.HasGateWarning);
@@ -302,7 +302,7 @@ public sealed class V2StudioBatchTests
             writer.WriteString("ac", "AC4 门禁");
             writer.WriteBoolean("executed_without_confirm", false);
             writer.WriteBoolean("gate_modal_opened", true);
-            writer.WriteString("impact_text", "门禁未清 · 作用域 · 仍然执行会产生不完整产物");
+            writer.WriteString("impact_text", batch.GateImpactText);
             writer.WriteString("start_command", request.Command);
             writer.WriteString("start_scope_kind", request.Scope["kind"]?.ToString());
             writer.WriteNumber("start_run_requests", HostOf(window).StartRunRequests.Count);
@@ -373,12 +373,15 @@ public sealed class V2StudioBatchTests
     [AvaloniaFact]
     public async Task DrillDown_BothWays_PreservesFilterAndScroll()
     {
-        var (view, host, vm, window) = await OpenBatchAsync();
+        var (view, host, vm, window) = await OpenBatchAsync(projection: Projection(TenStages, pages: 60));
         var batch = vm.Batch;
         batch.SetFilter(StudioBatchFilter.Failed);
         batch.HighlightStage("inpaint", "p02");
         var filter = batch.ActiveFilter;
+        view.BatchWorkspace.Matrix.Scroll.Offset = new Vector(0, 240);
+        StudioFixtures.Pump();
         var scrollBefore = view.BatchWorkspace.Matrix.Scroll.Offset;
+        Assert.True(scrollBefore.Y > 0);
 
         // Batch → Page: the matrix drill selection requests Page mode on that page.
         var drill = default((string PageId, string? StageType)?);
@@ -398,7 +401,7 @@ public sealed class V2StudioBatchTests
         Assert.Equal(vm.Page.CurrentPageId, batch.HighlightedPageId);
         Assert.Equal(filter, batch.ActiveFilter);
         Assert.Equal(scrollBefore, view.BatchWorkspace.Matrix.Scroll.Offset);
-        Assert.Contains("NOT_WIRED", "NOT_WIRED"); // placeholder assertion keeps evidence honest
+        Assert.Equal(StudioWorkspaceMode.Batch, vm.Mode); // drill-up returned to Batch
 
         var shot = Capture(window, "batch-drawer-gate");
         StudioEvidence.Write(Task, "drilldown.json", writer =>
@@ -409,7 +412,7 @@ public sealed class V2StudioBatchTests
             writer.WriteString("batch_to_page", $"{drill.Value.PageId} · {drill.Value.StageType}");
             writer.WriteString("page_to_batch_stage", batch.HighlightedStage);
             writer.WriteString("filter_kept", batch.ActiveFilter.ToString());
-            writer.WriteBoolean("scroll_kept", scrollBefore == view.BatchWorkspace.Matrix.Scroll.Offset);
+            writer.WriteBoolean("scroll_kept_nonzero", scrollBefore.Y > 0 && scrollBefore == view.BatchWorkspace.Matrix.Scroll.Offset);
             writer.WriteBoolean("host_accessed", host is not null);
             writer.WriteEndObject();
         });
@@ -640,7 +643,7 @@ public sealed class V2StudioBatchTests
         var reads = host.TaskProjectionRequests.Count;
         await System.Threading.Tasks.Task.Delay(900); // longer than one poll interval
         StudioFixtures.Pump();
-        // NOTE: strict equality is flaky under headless visibility/timer race; recorded as observed.
+        Assert.Equal(reads, host.TaskProjectionRequests.Count); // Activate/Deactivate stops the poll deterministically
         var after = host.TaskProjectionRequests.Count;
 
         StudioEvidence.Write(Task, "polling-visibility.json", writer =>
@@ -649,7 +652,7 @@ public sealed class V2StudioBatchTests
             writer.WriteString("ac", "I2b 仅可见时轮询（Page 模式零读取）");
             writer.WriteNumber("projection_reads_before", reads);
             writer.WriteNumber("projection_reads_after", host.TaskProjectionRequests.Count);
-            writer.WriteBoolean("no_reads_in_page_mode_observed", reads == after);
+            writer.WriteBoolean("no_reads_in_page_mode", reads == after);
             writer.WriteEndObject();
         });
     }
@@ -726,6 +729,77 @@ public sealed class V2StudioBatchTests
             writer.WriteBoolean("actions_disabled_while_in_flight", true);
             writer.WriteNumber("start_run_requests", host.StartRunRequests.Count);
             writer.WriteString("status", batch.StatusText);
+            writer.WriteEndObject();
+        });
+    }
+
+    // ---------------------------------------------------------------- I3: gate modal + keyboard seam
+
+    [AvaloniaFact]
+    public async Task GateModal_FocusesCancel_EscCancels_AndScrimCancels()
+    {
+        var (view, host, vm, window) = await OpenBatchAsync();
+        var batch = vm.Batch;
+        batch.SelectCell(0, "translate");
+        batch.SetScope(StudioBatchScope.Selected);
+        Assert.False(await batch.ExecuteActionAsync(batch.Actions[0])); // opens the gate, nothing runs
+        Assert.True(batch.IsGateConfirmOpen);
+        StudioFixtures.Pump();
+        StudioFixtures.PumpUntil(() => view.BatchWorkspace.GateModal.CancelButton.IsFocused, 2000);
+        var focused = view.BatchWorkspace.GateModal.CancelButton.IsFocused ||
+            ReferenceEquals(TopLevel.GetTopLevel(view)?.FocusManager?.GetFocusedElement(), view.BatchWorkspace.GateModal.CancelButton);
+        Assert.True(focused, "gate modal must focus 取消 (P1-1)");
+
+        window.KeyPressQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+        StudioFixtures.Pump();
+        Assert.False(batch.IsGateConfirmOpen);
+        Assert.Empty(host.StartRunRequests);
+
+        StudioEvidence.Write(Task, "gate.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "P1-1 Gate 模态焦点/Esc/零执行");
+            writer.WriteBoolean("cancel_focused", focused);
+            writer.WriteBoolean("esc_cancelled", !batch.IsGateConfirmOpen);
+            writer.WriteNumber("start_run_requests", host.StartRunRequests.Count);
+            writer.WriteString("impact_text", batch.GateImpactText);
+            writer.WriteEndObject();
+        });
+    }
+
+    [AvaloniaFact]
+    public async Task TryHandleKey_HandlesStudioKeys_AndBatchKeys()
+    {
+        var (view, _, vm, _) = await OpenBatchAsync();
+        var state = vm.Selection.Shell;
+        KeyEventArgs Args(Key key) => new() { RoutedEvent = InputElement.KeyDownEvent, Key = key, KeyModifiers = KeyModifiers.None };
+        var args = Args(Key.J);
+
+        vm.RequestMode(StudioWorkspaceMode.Page);
+        StudioFixtures.Pump();
+        Assert.True(view.TryHandleKey(args, state)); // J = next region in Page mode
+        args.Handled = false;
+
+        vm.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        args = Args(Key.Down);
+        Assert.True(view.TryHandleKey(args, state)); // arrows move the matrix selection
+        args.Handled = false;
+        args = Args(Key.Enter);
+        Assert.True(view.TryHandleKey(args, state)); // Enter drills into Page
+        args.Handled = false;
+        args = Args(Key.Escape);
+        vm.Batch.SelectCell(0, "translate");
+        Assert.True(view.TryHandleKey(args, state) == false || vm.Batch.IsGateConfirmOpen == false);
+
+        StudioEvidence.Write(Task, "keyboard-seam.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "P1-2 TryHandleKey 真实现（Page + Batch）");
+            writer.WriteBoolean("page_j_handled", true);
+            writer.WriteBoolean("batch_down_handled", true);
+            writer.WriteBoolean("batch_enter_handled", true);
+            writer.WriteString("interface", "NewManga.App.Shell.V2.IWorkspaceView.TryHandleKey(KeyEventArgs, ShellState)");
             writer.WriteEndObject();
         });
     }

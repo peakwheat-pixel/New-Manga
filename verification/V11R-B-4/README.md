@@ -71,3 +71,9 @@ dotnet test NewManga.sln
 ```
 
 截图由 `Avalonia.Headless`（`UseHeadlessDrawing=false` + Skia）在 `[AvaloniaFact]` 内 `CaptureRenderedFrame()` 生成真实像素；投影由 `FakeHostController.ScriptedTaskProjections` 脚本化，语义与 Core `GetTaskProjection` 一致。
+
+## I2/I3 后状态（最新）
+- P1-A（增量矩阵/滚动保持）与 P1-B（作用域物化/不回落整章）均有自动化测试
+- R-22 意图幂等键可观测 + Stop 二次确认 + SubmitInFlight 守卫均有测试
+- gate.json impact_text 读真实 GateImpactText；drilldown scroll_kept 使用非 0 偏移；恒真断言已删
+- 轮询由 Activate/Deactivate 驱动，Page 模式零读取为硬断言

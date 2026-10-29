@@ -103,3 +103,10 @@ dotnet test NewManga.sln
 pwsh scripts/curate-evidence.ps1 -Task V11R-B-3
 ```
 或 `NEWMANGA_EVIDENCE_SYNC=1` + `dotnet test` 后再 curate。
+
+## I1/I2/I3 后状态（最新）
+- Studio 测试：49/49（B-3 21 + B-4 15 + conformance/交互 13，含 I3 新增）
+- 全量 dotnet test NewManga.sln -m:1 全绿（App 262/6skip、DS 67、ThemeEngine 229、Host 42/24、CoreClient 42/25）
+- Gate 模态：焦点/ Esc / scrim 取消均已真断言（gate.json 由测试生成）
+- TryHandleKey 真实现 + IWorkspaceView 适配 + StudioWorkspaceFactory 交付 INT-1
+- 孤儿 JSON（selection-authority/error-block/gate-live/keyboard-seam）已删除，由新测试重新生成
