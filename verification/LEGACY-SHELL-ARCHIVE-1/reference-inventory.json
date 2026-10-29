@@ -1,0 +1,110 @@
+{
+  "task": "LEGACY-SHELL-ARCHIVE-1",
+  "at_utc": "2026-10-29T06:27:19.6062198Z",
+  "decision": "Partial archive: moved evidence-pin-free legacy parts; kept apps/desktop (42+ pins) and src/ui (product import chain) in place.",
+  "pins_blocking_apps_desktop": {
+    "count": 42,
+    "note": "historical done-task Canonical Evidence pins reference apps/desktop/src-tauri/src/** and apps/desktop/frontend/src/**; governance keeps referenced files at original path"
+  },
+  "product_blocking_src_ui": {
+    "importer": "src/bootstrap/app.py (module-level import ui.viewmodels.bookshelf.viewmodel)",
+    "dependent_tests": ">=6 core tests via bootstrap.app"
+  },
+  "moved_files": [
+    "R100\tpackaging/new_manga.spec\tarchive/history/legacy-shell/packaging/new_manga.spec",
+    "R100\ttests/packaging/test_frozen_runtime_contract.py\tarchive/history/legacy-shell/tests-packaging/test_frozen_runtime_contract.py",
+    "R100\ttests/packaging/test_packaging_contract.py\tarchive/history/legacy-shell/tests-packaging/test_packaging_contract.py",
+    "R100\ttests/ui_shell/conftest.py\tarchive/history/legacy-shell/tests-ui-shell/conftest.py",
+    "R100\ttests/ui_shell/fakes.py\tarchive/history/legacy-shell/tests-ui-shell/fakes.py",
+    "R100\ttests/ui_shell/helpers.py\tarchive/history/legacy-shell/tests-ui-shell/helpers.py",
+    "R100\ttests/ui_shell/test_bookshelf_viewmodel.py\tarchive/history/legacy-shell/tests-ui-shell/test_bookshelf_viewmodel.py",
+    "R100\ttests/ui_shell/test_design_f_applied.py\tarchive/history/legacy-shell/tests-ui-shell/test_design_f_applied.py",
+    "R100\ttests/ui_shell/test_design_tokens.py\tarchive/history/legacy-shell/tests-ui-shell/test_design_tokens.py",
+    "R100\ttests/ui_shell/test_navigation_service.py\tarchive/history/legacy-shell/tests-ui-shell/test_navigation_service.py",
+    "R100\ttests/ui_shell/test_navigation_viewmodel.py\tarchive/history/legacy-shell/tests-ui-shell/test_navigation_viewmodel.py",
+    "R100\ttests/ui_shell/test_qml_shell.py\tarchive/history/legacy-shell/tests-ui-shell/test_qml_shell.py",
+    "R100\ttests/ui_shell/test_repair13_export_window_open.py\tarchive/history/legacy-shell/tests-ui-shell/test_repair13_export_window_open.py",
+    "R100\ttests/ui_shell/test_repair13_import_entry.py\tarchive/history/legacy-shell/tests-ui-shell/test_repair13_import_entry.py",
+    "R100\ttests/ui_shell/test_settings_viewmodel.py\tarchive/history/legacy-shell/tests-ui-shell/test_settings_viewmodel.py",
+    "R100\ttests/workbench/test_qml_workbench.py\tarchive/history/legacy-shell/tests-workbench/test_qml_workbench.py",
+    "R100\ttools/dev/dev-preview.ps1\tarchive/history/legacy-shell/tools-dev/dev-preview.ps1"
+  ],
+  "moved_summary": {
+    "ui_shell_files": 12,
+    "packaging_tests": 2,
+    "workbench_qml_test": 1,
+    "pyinstaller_spec": 1,
+    "dev_preview_script": 1,
+    "total": 17
+  },
+  "archive_dir": {
+    "path": "archive/history/legacy-shell",
+    "files": 18,
+    "size_kb": 144.6
+  },
+  "remaining_active_legacy_refs": [
+    {
+      "file": "apps/desktop-avalonia/scripts/build-installer.ps1:55",
+      "ref": "apps/desktop/src-tauri/icons/icon.ico",
+      "category": "installer icon",
+      "disposition": "kept as-is (apps/desktop in place); follow-up: copy icon into Avalonia resources"
+    },
+    {
+      "file": "apps/desktop-avalonia/scripts/extract-command-surface.py:23",
+      "ref": "apps/desktop/src-tauri/src",
+      "category": "command-surface extractor scans legacy Rust",
+      "disposition": "kept as-is (apps/desktop in place); follow-up: repoint to Avalonia CoreClient"
+    },
+    {
+      "file": "packaging/release-gate/run_release_gate.py:912",
+      "ref": "apps/desktop/src-tauri/src/main.rs",
+      "category": "historical release gate",
+      "disposition": "kept as-is; historical tool"
+    },
+    {
+      "file": "tools/smoke/checks/frontend.py:60",
+      "ref": "apps/desktop/frontend",
+      "category": "legacy smoke check",
+      "disposition": "kept as-is; historical tool"
+    },
+    {
+      "file": "tools/smoke/checks/packaged.py:108",
+      "ref": "apps/desktop/src-tauri/target/core-sidecar",
+      "category": "legacy smoke check",
+      "disposition": "kept as-is; historical tool"
+    },
+    {
+      "file": "apps/desktop-avalonia/scripts/prepare-sidecar.ps1:16",
+      "ref": "apps/desktop/src-tauri/target/release/resources/core-sidecar",
+      "category": "dev helper default source",
+      "disposition": "kept as-is; dev-only default, overridable"
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.CoreClient/SidecarLocator.cs:17",
+      "ref": "apps/desktop/src-tauri packing (comment)",
+      "category": "code comment",
+      "disposition": "documentation only"
+    }
+  ],
+  "build_path_decoupling": {
+    "old": "apps/desktop/src-tauri/target",
+    "new": "apps/desktop-avalonia/build/sidecar",
+    "files_updated": [
+      "packaging/m2ac5/build_sidecar.ps1",
+      "apps/desktop-avalonia/scripts/package.ps1",
+      "README.md",
+      "packaging/m2ac5/README.md",
+      ".github/workflows/build-release.yml",
+      ".gitignore"
+    ]
+  },
+  "pytest": {
+    "passed": 2600,
+    "skipped": 10,
+    "failed": 0,
+    "duration_s": 201,
+    "previous_baseline": "2773 passed/10 skipped",
+    "delta": "173 tests archived (ui_shell + qml/packaging contract tests)"
+  },
+  "notes": "Partial archive delivered: 18 archive files, 17 moved (12 ui_shell + 2 packaging tests + 1 QML test + 1 spec + 1 dev script). apps/desktop stays frozen (42 evidence pins) and src/ui stays (product import chain). Remaining legacy refs are listed with disposition/follow-ups. Sidecar build output decoupled to apps/desktop-avalonia/build/sidecar."
+}

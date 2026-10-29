@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[LEGACY-SHELL-ARCHIVE-1](tasks/LEGACY-SHELL-ARCHIVE-1.md) ready（A：旧壳彻底归档；需先解耦 sidecar 构建输出路径；B=UPGRADE-REHEARSAL-1 blocked 待旧数据；C=CUDA 已 decided=defer）。
-- 最近完成：[CUDA-PACKAGE-DECISION-1](tasks/CUDA-PACKAGE-DECISION-1.md) `done`（defer）；[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`；public-release + CI 全绿 + SignPath 申请已提交）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）；[RELEASE-VERIFY-1](tasks/RELEASE-VERIFY-1.md) `done`（`5364652b0`）；[NSIS-INSTALLER-1](tasks/NSIS-INSTALLER-1.md) `done`（`64d41f329`）。
+- 当前 Task：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留；READY 空）。B=UPGRADE-REHEARSAL-1 blocked（需旧数据）；SignPath 审核中。
+- 最近完成：[LEGACY-SHELL-ARCHIVE-1](tasks/LEGACY-SHELL-ARCHIVE-1.md) `closed_with_limitations`（集成 `7d4c7764c`：sidecar 构建输出解耦 + 归档 17 个旧壳测试/spec/脚本；apps/desktop/src/ui 原位冻结）；[CUDA-PACKAGE-DECISION-1](tasks/CUDA-PACKAGE-DECISION-1.md) `done`（defer）；[PUBLIC-RELEASE-P0-1](tasks/PUBLIC-RELEASE-P0-1.md) `done`（`cd58c50fe`；public-release + CI 全绿 + SignPath 申请已提交）；[SIGNPATH-OSS-SIGNING-1](tasks/SIGNPATH-OSS-SIGNING-1.md) `done`（`f632ee39c`）。
 - 登记表：[AD002-FOLLOWUPS-1](tasks/AD002-FOLLOWUPS-1.md) proposed（20 项遗留）。
 - 更早：UIUX-V2-RUNTIME-NARROW-1（`e9a409927`）、UIUX-V2-RUNTIME-REALCORE-1、UIUX-V2-RUNTIME-1（`af421b9e6`）、DISPLAY-PERF-DECISION-1、REALCORE-2 `closed_with_limitations`。
 - 发布线（绕开）：[GIT-CLEAN-PUBLICATION-1](tasks/GIT-CLEAN-PUBLICATION-1.md) `in_review`；Rust ISOLATION-1 `in_review` / CAPACITY-DESIGN-1 `ready`。

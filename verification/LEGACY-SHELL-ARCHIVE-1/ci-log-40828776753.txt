@@ -1,0 +1,964 @@
+﻿2026-10-29T06:22:15.0622954Z Current runner version: '2.338.0'
+2026-10-29T06:22:15.0662326Z ##[group]Runner Image Provisioner
+2026-10-29T06:22:15.0663921Z Hosted Compute Agent
+2026-10-29T06:22:15.0664764Z Version: 20261021.618
+2026-10-29T06:22:15.0665608Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-29T06:22:15.0666642Z Build Date: 2026-10-21T00:45:21Z
+2026-10-29T06:22:15.0667569Z Worker ID: {621b44d3-6753-4ef6-9310-d952e9b1496f}
+2026-10-29T06:22:15.0668463Z Region: westus3
+2026-10-29T06:22:15.0669215Z Cloud: Azure
+2026-10-29T06:22:15.0669922Z ##[endgroup]
+2026-10-29T06:22:15.0671839Z ##[group]Operating System
+2026-10-29T06:22:15.0672798Z Microsoft Windows Server 2025
+2026-10-29T06:22:15.0673605Z 10.0.26100
+2026-10-29T06:22:15.0674310Z Datacenter
+2026-10-29T06:22:15.0674959Z ##[endgroup]
+2026-10-29T06:22:15.0675649Z ##[group]Runner Image
+2026-10-29T06:22:15.0676472Z Image: windows-2025-vs2026
+2026-10-29T06:22:15.0677296Z Version: 20261021.278.1
+2026-10-29T06:22:15.0679381Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md
+2026-10-29T06:22:15.0681849Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278
+2026-10-29T06:22:15.0683621Z ##[endgroup]
+2026-10-29T06:22:15.0685211Z ##[group]GITHUB_TOKEN Permissions
+2026-10-29T06:22:15.0688225Z Contents: read
+2026-10-29T06:22:15.0689045Z Metadata: read
+2026-10-29T06:22:15.0689885Z ##[endgroup]
+2026-10-29T06:22:15.0692939Z Secret source: Actions
+2026-10-29T06:22:15.0694318Z Cache mode: write
+2026-10-29T06:22:15.0695438Z Prepare workflow directory
+2026-10-29T06:22:15.1169687Z Prepare all required actions
+2026-10-29T06:22:15.1241846Z Getting action download info
+2026-10-29T06:22:15.4325323Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-29T06:22:15.7409578Z Download action repository 'actions/setup-dotnet@v4' (SHA:67a3573c9a986a3f9c594539f4ab511d57bb3ce9)
+2026-10-29T06:22:16.3710281Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-29T06:22:16.6173247Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-29T06:22:17.1454957Z Complete job name: build
+2026-10-29T06:22:17.5577289Z ##[group]Run actions/checkout@v4
+2026-10-29T06:22:17.5579098Z with:
+2026-10-29T06:22:17.5579698Z   fetch-depth: 1
+2026-10-29T06:22:17.5580379Z   repository: peakwheat-pixel/New-Manga
+2026-10-29T06:22:17.5587567Z   token: ***
+2026-10-29T06:22:17.5588173Z   ssh-strict: true
+2026-10-29T06:22:17.5588779Z   ssh-user: git
+2026-10-29T06:22:17.5589390Z   persist-credentials: true
+2026-10-29T06:22:17.5590055Z   clean: true
+2026-10-29T06:22:17.5590665Z   sparse-checkout-cone-mode: true
+2026-10-29T06:22:17.5591407Z   fetch-tags: false
+2026-10-29T06:22:17.5592023Z   show-progress: true
+2026-10-29T06:22:17.5592638Z   lfs: false
+2026-10-29T06:22:17.5593215Z   submodules: false
+2026-10-29T06:22:17.5593863Z   set-safe-directory: true
+2026-10-29T06:22:17.5594575Z   allow-unsafe-pr-checkout: false
+2026-10-29T06:22:17.5595708Z ##[endgroup]
+2026-10-29T06:22:17.8005871Z Syncing repository: peakwheat-pixel/New-Manga
+2026-10-29T06:22:17.8009352Z ##[group]Getting Git version info
+2026-10-29T06:22:17.8011308Z Working directory is 'D:\a\New-Manga\New-Manga'
+2026-10-29T06:22:17.9037264Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-29T06:22:18.4297942Z git version 2.56.0.windows.2
+2026-10-29T06:22:18.4429619Z ##[endgroup]
+2026-10-29T06:22:18.4452948Z Temporarily overriding HOME='D:\a\_temp\b8191499-5d91-46f6-8b34-2ec28f376b57' before making global git config changes
+2026-10-29T06:22:18.4456350Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T06:22:18.4464851Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\New-Manga\New-Manga
+2026-10-29T06:22:18.5222374Z Deleting the contents of 'D:\a\New-Manga\New-Manga'
+2026-10-29T06:22:18.5229323Z ##[group]Initializing the repository
+2026-10-29T06:22:18.5237475Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\New-Manga\New-Manga
+2026-10-29T06:22:18.6305092Z Initialized empty Git repository in D:/a/New-Manga/New-Manga/.git/
+2026-10-29T06:22:18.6356344Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/peakwheat-pixel/New-Manga
+2026-10-29T06:22:18.7072887Z ##[endgroup]
+2026-10-29T06:22:18.7073883Z ##[group]Disabling automatic garbage collection
+2026-10-29T06:22:18.7081656Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-29T06:22:18.7563267Z ##[endgroup]
+2026-10-29T06:22:18.7564781Z ##[group]Setting up auth
+2026-10-29T06:22:18.7575730Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T06:22:18.7997360Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-29T06:22:20.2525224Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T06:22:20.2913440Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-29T06:22:20.7862375Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T06:22:20.8263621Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-29T06:22:21.3300292Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-29T06:22:21.3691735Z ##[endgroup]
+2026-10-29T06:22:21.3693027Z ##[group]Fetching the repository
+2026-10-29T06:22:21.3714942Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +734c2c48dc7d27b42a7e6c4e3dd940dbcac5ff6c:refs/remotes/origin/public-release
+2026-10-29T06:22:22.9301855Z From https://github.com/peakwheat-pixel/New-Manga
+2026-10-29T06:22:22.9303561Z  * [new ref]         734c2c48dc7d27b42a7e6c4e3dd940dbcac5ff6c -> origin/public-release
+2026-10-29T06:22:22.9355318Z ##[endgroup]
+2026-10-29T06:22:22.9356416Z ##[group]Determining the checkout info
+2026-10-29T06:22:22.9358511Z ##[endgroup]
+2026-10-29T06:22:22.9368581Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-29T06:22:22.9914098Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-29T06:22:23.0342137Z ##[group]Checking out the ref
+2026-10-29T06:22:23.0351885Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B public-release refs/remotes/origin/public-release
+2026-10-29T06:22:23.3986165Z Switched to a new branch 'public-release'
+2026-10-29T06:22:23.4009998Z branch 'public-release' set up to track 'origin/public-release'.
+2026-10-29T06:22:23.4064012Z ##[endgroup]
+2026-10-29T06:22:23.4537137Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-29T06:22:23.5107285Z 734c2c48dc7d27b42a7e6c4e3dd940dbcac5ff6c
+2026-10-29T06:22:23.5624069Z ##[group]Run actions/setup-dotnet@v4
+2026-10-29T06:22:23.5624442Z with:
+2026-10-29T06:22:23.5624645Z   dotnet-version: 9.0.x
+2026-10-29T06:22:23.5625049Z   cache: false
+2026-10-29T06:22:23.5625244Z ##[endgroup]
+2026-10-29T06:22:23.7277247Z (node:824) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-29T06:22:23.7277928Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-29T06:22:23.8490373Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Runtime dotnet -Channel LTS
+2026-10-29T06:22:25.7138859Z dotnet-install: Downloaded file https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip size is 36971047 bytes.
+2026-10-29T06:22:25.7143015Z dotnet-install: Either downloaded or local package size can not be measured. One of them may be corrupted.
+2026-10-29T06:22:25.7170714Z dotnet-install: Extracting the archive.
+2026-10-29T06:22:26.6416205Z dotnet-install: Note that the script does not ensure your Windows version is supported during the installation.
+2026-10-29T06:22:26.6423632Z dotnet-install: To check the list of supported versions, go to https://learn.microsoft.com/dotnet/core/install/windows#supported-versions
+2026-10-29T06:22:26.6434084Z dotnet-install: Installed version is 10.0.14
+2026-10-29T06:22:26.6439870Z dotnet-install: Installation finished
+2026-10-29T06:22:26.7989188Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Channel 9.0
+2026-10-29T06:22:41.1116715Z dotnet-install: Downloaded file https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.320/dotnet-sdk-9.0.320-win-x64.zip size is 298326389 bytes.
+2026-10-29T06:22:41.1124529Z dotnet-install: Either downloaded or local package size can not be measured. One of them may be corrupted.
+2026-10-29T06:22:41.1153081Z dotnet-install: Extracting the archive.
+2026-10-29T06:23:02.5005299Z dotnet-install: Note that the script does not ensure your Windows version is supported during the installation.
+2026-10-29T06:23:02.5014821Z dotnet-install: To check the list of supported versions, go to https://learn.microsoft.com/dotnet/core/install/windows#supported-versions
+2026-10-29T06:23:02.5021916Z dotnet-install: Installed version is 9.0.320
+2026-10-29T06:23:02.5027037Z dotnet-install: Installation finished
+2026-10-29T06:23:02.5824573Z ##[group]Run actions/setup-python@v5
+2026-10-29T06:23:02.5824921Z with:
+2026-10-29T06:23:02.5825115Z   python-version: 3.11
+2026-10-29T06:23:02.5825321Z   check-latest: false
+2026-10-29T06:23:02.5827601Z   token: ***
+2026-10-29T06:23:02.5827790Z   update-environment: true
+2026-10-29T06:23:02.5828009Z   allow-prereleases: false
+2026-10-29T06:23:02.5828217Z   freethreaded: false
+2026-10-29T06:23:02.5828403Z env:
+2026-10-29T06:23:02.5828584Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-29T06:23:02.5828813Z ##[endgroup]
+2026-10-29T06:23:02.7462767Z ##[group]Installed versions
+2026-10-29T06:23:02.7578701Z (node:8644) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-29T06:23:02.7579377Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-29T06:23:02.7580155Z Successfully set up CPython (3.11.9)
+2026-10-29T06:23:02.7581289Z ##[endgroup]
+2026-10-29T06:23:02.7873411Z ##[group]Run dotnet --info
+2026-10-29T06:23:02.7873816Z [36;1mdotnet --info[0m
+2026-10-29T06:23:02.7874038Z [36;1mpython --version[0m
+2026-10-29T06:23:02.7874294Z [36;1mchoco install nsis --no-progress -y[0m
+2026-10-29T06:23:02.8328717Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-29T06:23:02.8329075Z env:
+2026-10-29T06:23:02.8329276Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-29T06:23:02.8329597Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:02.8330025Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.11.9\x64/lib/pkgconfig
+2026-10-29T06:23:02.8330450Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:02.8330835Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:02.8331200Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:02.8331497Z ##[endgroup]
+2026-10-29T06:23:04.1939711Z .NET SDK:
+2026-10-29T06:23:04.1940208Z  Version:           10.0.402
+2026-10-29T06:23:04.1940490Z  Commit:            a8dd0577c5
+2026-10-29T06:23:06.1665055Z  Workload version:  10.0.400-manifests.6055ec36
+2026-10-29T06:23:06.2905124Z  MSBuild version:   18.9.15+a8dd0577c
+2026-10-29T06:23:06.2905527Z 
+2026-10-29T06:23:06.2905707Z Runtime Environment:
+2026-10-29T06:23:06.2914531Z  OS Name:     Windows
+2026-10-29T06:23:06.2915102Z  OS Version:  10.0.26100
+2026-10-29T06:23:06.2925398Z  OS Platform: Windows
+2026-10-29T06:23:06.3213194Z  RID:         win-x64
+2026-10-29T06:23:06.3213631Z  Base Path:   C:\Program Files\dotnet\sdk\10.0.402\
+2026-10-29T06:23:06.3213855Z 
+2026-10-29T06:23:06.3214137Z .NET workloads installed:
+2026-10-29T06:23:06.6067915Z  [maui-windows]
+2026-10-29T06:23:06.6070820Z    Installation Source: VS 18.11.12315.225
+2026-10-29T06:23:06.6071288Z    Manifest Version:    10.0.110/10.0.100
+2026-10-29T06:23:06.6072219Z    Manifest Path:       C:\Program Files\dotnet\sdk-manifests\10.0.100\microsoft.net.sdk.maui\10.0.110\WorkloadManifest.json
+2026-10-29T06:23:06.6073060Z    Install Type:              Msi
+2026-10-29T06:23:06.6073627Z 
+2026-10-29T06:23:06.6073830Z  [maccatalyst]
+2026-10-29T06:23:06.6074243Z    Installation Source: VS 18.11.12315.225
+2026-10-29T06:23:06.6074980Z    Manifest Version:    26.5.10315/10.0.100
+2026-10-29T06:23:06.6076297Z    Manifest Path:       C:\Program Files\dotnet\sdk-manifests\10.0.100\microsoft.net.sdk.maccatalyst\26.5.10315\WorkloadManifest.json
+2026-10-29T06:23:06.6077164Z    Install Type:              Msi
+2026-10-29T06:23:06.6077433Z 
+2026-10-29T06:23:06.6077539Z  [ios]
+2026-10-29T06:23:06.6077833Z    Installation Source: VS 18.11.12315.225
+2026-10-29T06:23:06.6078276Z    Manifest Version:    26.5.10315/10.0.100
+2026-10-29T06:23:06.6079426Z    Manifest Path:       C:\Program Files\dotnet\sdk-manifests\10.0.100\microsoft.net.sdk.ios\26.5.10315\WorkloadManifest.json
+2026-10-29T06:23:06.6080301Z    Install Type:              Msi
+2026-10-29T06:23:06.6080597Z 
+2026-10-29T06:23:06.6080734Z  [android]
+2026-10-29T06:23:06.6081033Z    Installation Source: VS 18.11.12315.225
+2026-10-29T06:23:06.6081992Z    Manifest Version:    36.1.118/10.0.100
+2026-10-29T06:23:06.6082995Z    Manifest Path:       C:\Program Files\dotnet\sdk-manifests\10.0.100\microsoft.net.sdk.android\36.1.118\WorkloadManifest.json
+2026-10-29T06:23:06.6084016Z    Install Type:              Msi
+2026-10-29T06:23:06.6084279Z 
+2026-10-29T06:23:06.6084442Z  [wasm-tools]
+2026-10-29T06:23:06.6084761Z    Installation Source: VS 18.11.12315.225
+2026-10-29T06:23:06.6085153Z    Manifest Version:    10.0.113/10.0.100
+2026-10-29T06:23:06.6086184Z    Manifest Path:       C:\Program Files\dotnet\sdk-manifests\10.0.100\microsoft.net.workload.mono.toolchain.current\10.0.113\WorkloadManifest.json
+2026-10-29T06:23:06.6087233Z    Install Type:              Msi
+2026-10-29T06:23:06.6087503Z 
+2026-10-29T06:23:06.6087879Z Configured to use workload sets when installing new manifests.
+2026-10-29T06:23:06.6091322Z No workload sets are installed. Run "dotnet workload restore" to install a workload set.
+2026-10-29T06:23:07.3176970Z 
+2026-10-29T06:23:07.3177977Z Host:
+2026-10-29T06:23:07.3178763Z   Version:      10.0.14
+2026-10-29T06:23:07.3179420Z   Architecture: x64
+2026-10-29T06:23:07.3179753Z   Commit:       0427b9abbe
+2026-10-29T06:23:07.3179985Z 
+2026-10-29T06:23:07.3180097Z .NET SDKs installed:
+2026-10-29T06:23:07.3180338Z   8.0.132 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3180605Z   8.0.206 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3180872Z   8.0.319 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3181116Z   8.0.426 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3181363Z   9.0.122 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3181611Z   9.0.205 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3181856Z   9.0.319 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3182094Z   9.0.320 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3182698Z   10.0.113 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3182968Z   10.0.204 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3183237Z   10.0.303 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3183701Z   10.0.402 [C:\Program Files\dotnet\sdk]
+2026-10-29T06:23:07.3183878Z 
+2026-10-29T06:23:07.3183985Z .NET runtimes installed:
+2026-10-29T06:23:07.3184399Z   Microsoft.AspNetCore.App 8.0.6 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3184997Z   Microsoft.AspNetCore.App 8.0.22 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3185566Z   Microsoft.AspNetCore.App 8.0.32 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3186369Z   Microsoft.AspNetCore.App 9.0.6 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3186910Z   Microsoft.AspNetCore.App 9.0.21 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3187457Z   Microsoft.AspNetCore.App 9.0.22 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3188017Z   Microsoft.AspNetCore.App 10.0.8 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3188561Z   Microsoft.AspNetCore.App 10.0.11 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3189109Z   Microsoft.AspNetCore.App 10.0.13 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+2026-10-29T06:23:07.3189647Z   Microsoft.NETCore.App 8.0.6 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3190150Z   Microsoft.NETCore.App 8.0.22 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3190680Z   Microsoft.NETCore.App 8.0.32 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3191186Z   Microsoft.NETCore.App 9.0.6 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3191675Z   Microsoft.NETCore.App 9.0.21 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3192178Z   Microsoft.NETCore.App 9.0.22 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3192845Z   Microsoft.NETCore.App 10.0.8 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3193361Z   Microsoft.NETCore.App 10.0.11 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3193861Z   Microsoft.NETCore.App 10.0.13 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3194376Z   Microsoft.NETCore.App 10.0.14 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+2026-10-29T06:23:07.3194937Z   Microsoft.WindowsDesktop.App 8.0.6 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3195561Z   Microsoft.WindowsDesktop.App 8.0.22 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3196178Z   Microsoft.WindowsDesktop.App 8.0.32 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3197710Z   Microsoft.WindowsDesktop.App 9.0.6 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3198340Z   Microsoft.WindowsDesktop.App 9.0.21 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3198944Z   Microsoft.WindowsDesktop.App 9.0.22 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3199569Z   Microsoft.WindowsDesktop.App 10.0.8 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3200178Z   Microsoft.WindowsDesktop.App 10.0.11 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3202045Z   Microsoft.WindowsDesktop.App 10.0.13 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+2026-10-29T06:23:07.3202843Z 
+2026-10-29T06:23:07.3203051Z Other architectures found:
+2026-10-29T06:23:07.3203454Z   x86   [C:\Program Files (x86)\dotnet]
+2026-10-29T06:23:07.3204104Z     registered at [HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x86\InstallLocation]
+2026-10-29T06:23:07.3204628Z 
+2026-10-29T06:23:07.3206168Z Environment variables:
+2026-10-29T06:23:07.3206593Z   DOTNET_MULTILEVEL_LOOKUP                 [0]
+2026-10-29T06:23:07.3207051Z   DOTNET_NOLOGO                            [1]
+2026-10-29T06:23:07.3207570Z   DOTNET_ROOT                              [C:\Program Files\dotnet]
+2026-10-29T06:23:07.3208140Z   DOTNET_SKIP_FIRST_TIME_EXPERIENCE        [1]
+2026-10-29T06:23:07.3208552Z 
+2026-10-29T06:23:07.3208675Z global.json file:
+2026-10-29T06:23:07.3208982Z   Not found
+2026-10-29T06:23:07.3209209Z 
+2026-10-29T06:23:07.3209317Z Learn more:
+2026-10-29T06:23:07.3210295Z   https://aka.ms/dotnet/info
+2026-10-29T06:23:07.3210941Z 
+2026-10-29T06:23:07.3211258Z Download .NET:
+2026-10-29T06:23:07.3212017Z   https://aka.ms/dotnet/download
+2026-10-29T06:23:07.5336299Z Python 3.11.9
+2026-10-29T06:23:10.5769630Z Chocolatey v2.7.4
+2026-10-29T06:23:10.8722751Z Installing the following packages:
+2026-10-29T06:23:10.8728144Z nsis
+2026-10-29T06:23:10.8731976Z By installing, you accept licenses for the packages.
+2026-10-29T06:23:15.0808320Z Downloading package from source 'https://community.chocolatey.org/api/v2/'
+2026-10-29T06:23:15.8889166Z 
+2026-10-29T06:23:15.8889734Z nsis.install v3.13.0 [Approved]
+2026-10-29T06:23:15.9097777Z nsis.install package files install completed. Performing other installation steps.
+2026-10-29T06:23:18.9574673Z Installing nsis.install...
+2026-10-29T06:23:20.8875809Z nsis.install has been installed.
+2026-10-29T06:23:21.0364845Z   nsis.install can be automatically uninstalled.
+2026-10-29T06:23:21.1576545Z  The install of nsis.install was successful.
+2026-10-29T06:23:21.1579103Z   Deployed to 'C:\Program Files (x86)\NSIS'
+2026-10-29T06:23:21.1691615Z Downloading package from source 'https://community.chocolatey.org/api/v2/'
+2026-10-29T06:23:21.7218649Z 
+2026-10-29T06:23:21.7219119Z nsis v3.13.0 [Approved]
+2026-10-29T06:23:21.7233856Z nsis package files install completed. Performing other installation steps.
+2026-10-29T06:23:21.8910592Z  The install of nsis was successful.
+2026-10-29T06:23:21.8913086Z   Deployed to 'C:\ProgramData\chocolatey\lib\nsis'
+2026-10-29T06:23:21.9102939Z 
+2026-10-29T06:23:21.9103383Z Chocolatey installed 2/2 packages. 
+2026-10-29T06:23:21.9103821Z  See the log for details (C:\ProgramData\chocolatey\logs\chocolatey.log).
+2026-10-29T06:23:22.0636207Z ##[group]Run python -m pip install --upgrade pip
+2026-10-29T06:23:22.0636667Z [36;1mpython -m pip install --upgrade pip[0m
+2026-10-29T06:23:22.0637075Z [36;1mpython -m pip install -r requirements.txt -r requirements-dev.txt[0m
+2026-10-29T06:23:22.0708242Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-29T06:23:22.0708598Z env:
+2026-10-29T06:23:22.0708811Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-29T06:23:22.0709144Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:22.0709567Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.11.9\x64/lib/pkgconfig
+2026-10-29T06:23:22.0709989Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:22.0710388Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:22.0710770Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:23:22.0711080Z ##[endgroup]
+2026-10-29T06:23:26.5233546Z Requirement already satisfied: pip in C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\site-packages (26.2.2)
+2026-10-29T06:23:28.5651758Z Collecting PySide6_Essentials==6.11.2 (from -r requirements.txt (line 1))
+2026-10-29T06:23:28.7541739Z   Downloading pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl.metadata (3.8 kB)
+2026-10-29T06:23:28.8270923Z Collecting shiboken6==6.11.2 (from -r requirements.txt (line 2))
+2026-10-29T06:23:28.8336234Z   Downloading shiboken6-6.11.2-cp310-abi3-win_amd64.whl.metadata (2.5 kB)
+2026-10-29T06:23:28.9765087Z Collecting pypdfium2==5.13.0 (from -r requirements.txt (line 3))
+2026-10-29T06:23:28.9828786Z   Downloading pypdfium2-5.13.0-py3-none-win_amd64.whl.metadata (67 kB)
+2026-10-29T06:23:29.1827834Z Collecting mobi==0.4.1 (from -r requirements.txt (line 4))
+2026-10-29T06:23:29.1894119Z   Downloading mobi-0.4.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-29T06:23:29.2984327Z Collecting python-doctr==1.1.0 (from -r requirements.txt (line 16))
+2026-10-29T06:23:29.3049341Z   Downloading python_doctr-1.1.0-py3-none-any.whl.metadata (34 kB)
+2026-10-29T06:23:29.4140915Z Collecting torch==2.14.0 (from -r requirements.txt (line 17))
+2026-10-29T06:23:29.4218812Z   Downloading torch-2.14.0-cp311-cp311-win_amd64.whl.metadata (38 kB)
+2026-10-29T06:23:29.5084865Z Collecting torchvision==0.29.0 (from -r requirements.txt (line 18))
+2026-10-29T06:23:29.5166448Z   Downloading torchvision-0.29.0-cp311-cp311-win_amd64.whl.metadata (5.7 kB)
+2026-10-29T06:23:29.5837669Z Collecting transformers==5.17.0 (from -r requirements.txt (line 28))
+2026-10-29T06:23:29.5890190Z   Downloading transformers-5.17.0-py3-none-any.whl.metadata (32 kB)
+2026-10-29T06:23:30.3961181Z Collecting safetensors==0.8.0 (from -r requirements.txt (line 29))
+2026-10-29T06:23:30.4022930Z   Downloading safetensors-0.8.0-cp310-abi3-win_amd64.whl.metadata (4.2 kB)
+2026-10-29T06:23:30.4735916Z Collecting onnxruntime-directml==1.24.4 (from -r requirements.txt (line 45))
+2026-10-29T06:23:30.4799877Z   Downloading onnxruntime_directml-1.24.4-cp311-cp311-win_amd64.whl.metadata (5.2 kB)
+2026-10-29T06:23:30.5460319Z Collecting playwright==1.63.0 (from -r requirements.txt (line 48))
+2026-10-29T06:23:30.5525345Z   Downloading playwright-1.63.0-py3-none-win_amd64.whl.metadata (3.3 kB)
+2026-10-29T06:23:30.5986044Z Collecting altgraph==0.17.5 (from -r requirements-dev.txt (line 2))
+2026-10-29T06:23:30.6034794Z   Downloading altgraph-0.17.5-py2.py3-none-any.whl.metadata (7.5 kB)
+2026-10-29T06:23:30.6468166Z Collecting colorama==0.4.6 (from -r requirements-dev.txt (line 3))
+2026-10-29T06:23:30.6517375Z   Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+2026-10-29T06:23:30.6925647Z Collecting iniconfig==2.3.0 (from -r requirements-dev.txt (line 4))
+2026-10-29T06:23:30.6977668Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-29T06:23:30.7420418Z Collecting packaging==26.3 (from -r requirements-dev.txt (line 5))
+2026-10-29T06:23:30.7484222Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-29T06:23:30.7868197Z Collecting pefile==2024.8.26 (from -r requirements-dev.txt (line 6))
+2026-10-29T06:23:30.7931846Z   Downloading pefile-2024.8.26-py3-none-any.whl.metadata (1.4 kB)
+2026-10-29T06:23:30.8383435Z Collecting pluggy==1.6.0 (from -r requirements-dev.txt (line 7))
+2026-10-29T06:23:30.8437600Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-29T06:23:30.8892428Z Collecting Pygments==2.21.0 (from -r requirements-dev.txt (line 8))
+2026-10-29T06:23:30.8941729Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-29T06:23:30.9704168Z Collecting pyinstaller==6.22.3 (from -r requirements-dev.txt (line 9))
+2026-10-29T06:23:30.9767497Z   Downloading pyinstaller-6.22.3-py3-none-win_amd64.whl.metadata (8.5 kB)
+2026-10-29T06:23:31.0304973Z Collecting pyinstaller-hooks-contrib==2026.7 (from -r requirements-dev.txt (line 10))
+2026-10-29T06:23:31.0374737Z   Downloading pyinstaller_hooks_contrib-2026.7-py3-none-any.whl.metadata (16 kB)
+2026-10-29T06:23:31.1089459Z Collecting pytest==9.1.1 (from -r requirements-dev.txt (line 11))
+2026-10-29T06:23:31.1147557Z   Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+2026-10-29T06:23:31.1638387Z Collecting pywin32-ctypes==0.2.3 (from -r requirements-dev.txt (line 12))
+2026-10-29T06:23:31.1688183Z   Downloading pywin32_ctypes-0.2.3-py3-none-any.whl.metadata (3.9 kB)
+2026-10-29T06:23:31.2800113Z Collecting setuptools==84.0.0 (from -r requirements-dev.txt (line 13))
+2026-10-29T06:23:31.2853321Z   Downloading setuptools-84.0.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-29T06:23:31.3327056Z Collecting loguru>=0.6 (from mobi==0.4.1->-r requirements.txt (line 4))
+2026-10-29T06:23:31.3380097Z   Downloading loguru-0.7.3-py3-none-any.whl.metadata (22 kB)
+2026-10-29T06:23:31.3869249Z Collecting standard-imghdr>=3.13.0 (from mobi==0.4.1->-r requirements.txt (line 4))
+2026-10-29T06:23:31.3932391Z   Downloading standard_imghdr-3.13.0-py3-none-any.whl.metadata (862 bytes)
+2026-10-29T06:23:31.4924551Z Collecting onnx<3.0.0,>=1.12.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:31.4988106Z   Downloading onnx-1.23.2-cp311-cp311-win_amd64.whl.metadata (8.7 kB)
+2026-10-29T06:23:31.7311032Z Collecting numpy<3.0.0,>=1.16.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:31.7366411Z   Downloading numpy-2.4.6-cp311-cp311-win_amd64.whl.metadata (6.6 kB)
+2026-10-29T06:23:31.9153081Z Collecting scipy<2.0.0,>=1.4.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:31.9218078Z   Downloading scipy-1.17.1-cp311-cp311-win_amd64.whl.metadata (60 kB)
+2026-10-29T06:23:32.0117385Z Collecting h5py<4.0.0,>=3.1.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:32.0196424Z   Downloading h5py-3.16.0-cp311-cp311-win_amd64.whl.metadata (3.1 kB)
+2026-10-29T06:23:32.1192206Z Collecting opencv-python<6.0.0,>=4.5.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:32.1248653Z   Downloading opencv_python-5.0.0.93-cp37-abi3-win_amd64.whl.metadata (20 kB)
+2026-10-29T06:23:32.1962226Z Collecting pyclipper<2.0.0,>=1.2.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:32.2026794Z   Downloading pyclipper-1.4.0-cp311-cp311-win_amd64.whl.metadata (8.8 kB)
+2026-10-29T06:23:32.3279673Z Collecting shapely<3.0.0,>=1.6.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:32.3399148Z   Downloading shapely-2.2.0-cp311-cp311-win_amd64.whl.metadata (6.8 kB)
+2026-10-29T06:23:32.3843721Z Collecting langdetect<2.0.0,>=1.0.9 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:32.3904614Z   Downloading langdetect-1.0.9.tar.gz (981 kB)
+2026-10-29T06:23:32.4230373Z      ---------------------------------------- 981.5/981.5 kB 48.0 MB/s  0:00:00
+2026-10-29T06:23:32.5467895Z   Installing build dependencies: started
+2026-10-29T06:23:34.7365099Z   Installing build dependencies: finished with status 'done'
+2026-10-29T06:23:34.7379181Z   Getting requirements to build wheel: started
+2026-10-29T06:23:35.3261077Z   Getting requirements to build wheel: finished with status 'done'
+2026-10-29T06:23:35.3295157Z   Preparing metadata (pyproject.toml): started
+2026-10-29T06:23:35.6275660Z   Preparing metadata (pyproject.toml): finished with status 'done'
+2026-10-29T06:23:36.1481599Z Collecting rapidfuzz<4.0.0,>=3.0.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.1547351Z   Downloading rapidfuzz-3.14.6-cp311-cp311-win_amd64.whl.metadata (12 kB)
+2026-10-29T06:23:36.2554985Z Collecting huggingface-hub<2.0.0,>=0.20.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.2649673Z   Downloading huggingface_hub-1.33.0-py3-none-any.whl.metadata (16 kB)
+2026-10-29T06:23:36.5008659Z Collecting Pillow>=10.1.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.5076169Z   Downloading pillow-13.0.0-cp311-cp311-win_amd64.whl.metadata (9.3 kB)
+2026-10-29T06:23:36.5578111Z Collecting anyascii>=0.3.2 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.5638773Z   Downloading anyascii-0.3.3-py3-none-any.whl.metadata (1.6 kB)
+2026-10-29T06:23:36.6736859Z Collecting validators>=0.18.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.6791297Z   Downloading validators-0.36.0-py3-none-any.whl.metadata (4.1 kB)
+2026-10-29T06:23:36.7373855Z Collecting tqdm>=4.30.0 (from python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:36.7428959Z   Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+2026-10-29T06:23:36.8049601Z Collecting filelock (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:36.8106346Z   Downloading filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+2026-10-29T06:23:36.8582451Z Collecting typing-extensions>=4.10.0 (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:36.8634155Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-29T06:23:36.9190344Z Collecting sympy>=1.13.3 (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:36.9242307Z   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+2026-10-29T06:23:36.9774647Z Collecting networkx>=2.5.1 (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:36.9829627Z   Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+2026-10-29T06:23:37.0537152Z Collecting jinja2 (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:37.0593317Z   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+2026-10-29T06:23:37.1119173Z Collecting fsspec>=0.8.5 (from torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:37.1171098Z   Downloading fsspec-2026.9.0-py3-none-any.whl.metadata (10 kB)
+2026-10-29T06:23:37.2121457Z Collecting pyyaml>=5.1 (from transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:37.2190853Z   Downloading pyyaml-6.0.3-cp311-cp311-win_amd64.whl.metadata (2.4 kB)
+2026-10-29T06:23:37.6698350Z Collecting regex>=2025.10.22 (from transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:37.6760343Z   Downloading regex-2026.9.29-cp311-cp311-win_amd64.whl.metadata (41 kB)
+2026-10-29T06:23:37.8503750Z Collecting tokenizers<0.24.0,>=0.23.1 (from transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:37.8569004Z   Downloading tokenizers-0.23.3-cp310-abi3-win_amd64.whl.metadata (10 kB)
+2026-10-29T06:23:37.9146502Z Collecting typer (from transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:37.9202461Z   Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+2026-10-29T06:23:37.9758505Z Collecting flatbuffers (from onnxruntime-directml==1.24.4->-r requirements.txt (line 45))
+2026-10-29T06:23:37.9813238Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+2026-10-29T06:23:38.2144260Z Collecting protobuf (from onnxruntime-directml==1.24.4->-r requirements.txt (line 45))
+2026-10-29T06:23:38.2198358Z   Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+2026-10-29T06:23:38.2787870Z Collecting pyee<14,>=13 (from playwright==1.63.0->-r requirements.txt (line 48))
+2026-10-29T06:23:38.2856349Z   Downloading pyee-13.0.1-py3-none-any.whl.metadata (3.0 kB)
+2026-10-29T06:23:38.4660100Z Collecting greenlet<4.0.0,>=3.1.1 (from playwright==1.63.0->-r requirements.txt (line 48))
+2026-10-29T06:23:38.4735611Z   Downloading greenlet-3.5.6-cp311-cp311-win_amd64.whl.metadata (3.9 kB)
+2026-10-29T06:23:38.5388328Z Collecting click<9.0.0,>=8.4.2 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.5440333Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-29T06:23:38.6256752Z Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.6329005Z   Downloading hf_xet-1.7.1-cp38-abi3-win_amd64.whl.metadata (4.9 kB)
+2026-10-29T06:23:38.6879842Z Collecting httpx<1,>=0.23.0 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.6932459Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-29T06:23:38.7489394Z Collecting anyio (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.7543824Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-29T06:23:38.8245831Z Collecting certifi (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.8302355Z   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+2026-10-29T06:23:38.8843677Z Collecting httpcore==1.* (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.8910536Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-29T06:23:38.9437332Z Collecting idna (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:38.9490326Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-29T06:23:38.9986140Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:39.0039341Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-29T06:23:39.0544088Z Collecting six (from langdetect<2.0.0,>=1.0.9->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:39.0599309Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-10-29T06:23:39.1320972Z Collecting ml_dtypes>=0.5.4 (from onnx<3.0.0,>=1.12.0->python-doctr==1.1.0->-r requirements.txt (line 16))
+2026-10-29T06:23:39.1390132Z   Downloading ml_dtypes-0.6.0-cp311-cp311-win_amd64.whl.metadata (8.8 kB)
+2026-10-29T06:23:39.2149428Z Collecting win32-setctime>=1.0.0 (from loguru>=0.6->mobi==0.4.1->-r requirements.txt (line 4))
+2026-10-29T06:23:39.2204936Z   Downloading win32_setctime-1.2.1-py3-none-any.whl.metadata (2.7 kB)
+2026-10-29T06:23:39.2711736Z Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:39.2764824Z   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+2026-10-29T06:23:39.3786362Z Collecting MarkupSafe>=2.0 (from jinja2->torch==2.14.0->-r requirements.txt (line 17))
+2026-10-29T06:23:39.3852581Z   Downloading markupsafe-3.0.4-cp311-cp311-win_amd64.whl.metadata (2.8 kB)
+2026-10-29T06:23:39.4299727Z Collecting shellingham>=1.3.0 (from typer->transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:39.4354786Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+2026-10-29T06:23:39.4980266Z Collecting rich>=13.8.0 (from typer->transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:39.5036604Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+2026-10-29T06:23:39.5483332Z Collecting annotated-doc>=0.0.2 (from typer->transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:39.5533869Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-29T06:23:39.6080940Z Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:39.6130199Z   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+2026-10-29T06:23:39.6620133Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers==5.17.0->-r requirements.txt (line 28))
+2026-10-29T06:23:39.6667565Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+2026-10-29T06:23:39.6894774Z Downloading pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl (76.9 MB)
+2026-10-29T06:23:41.2528429Z    ---------------------------------------- 76.9/76.9 MB 49.6 MB/s  0:00:01
+2026-10-29T06:23:41.2658999Z Downloading shiboken6-6.11.2-cp310-abi3-win_amd64.whl (1.2 MB)
+2026-10-29T06:23:41.2934557Z    ---------------------------------------- 1.2/1.2 MB 64.3 MB/s  0:00:00
+2026-10-29T06:23:41.2997404Z Downloading pypdfium2-5.13.0-py3-none-win_amd64.whl (3.9 MB)
+2026-10-29T06:23:41.3541881Z    ---------------------------------------- 3.9/3.9 MB 77.1 MB/s  0:00:00
+2026-10-29T06:23:41.3600585Z Downloading mobi-0.4.1-py3-none-any.whl (99 kB)
+2026-10-29T06:23:41.3806074Z Downloading python_doctr-1.1.0-py3-none-any.whl (402 kB)
+2026-10-29T06:23:41.4105974Z Downloading torch-2.14.0-cp311-cp311-win_amd64.whl (124.1 MB)
+2026-10-29T06:23:44.3958663Z    ---------------------------------------- 124.1/124.1 MB 41.5 MB/s  0:00:02
+2026-10-29T06:23:44.4037278Z Downloading torchvision-0.29.0-cp311-cp311-win_amd64.whl (1.4 MB)
+2026-10-29T06:23:44.4447781Z    ---------------------------------------- 1.4/1.4 MB 23.7 MB/s  0:00:00
+2026-10-29T06:23:44.4632740Z Downloading transformers-5.17.0-py3-none-any.whl (12.3 MB)
+2026-10-29T06:23:44.5792767Z    ---------------------------------------- 12.3/12.3 MB 109.4 MB/s  0:00:00
+2026-10-29T06:23:44.5876814Z Downloading safetensors-0.8.0-cp310-abi3-win_amd64.whl (355 kB)
+2026-10-29T06:23:44.6142709Z Downloading onnxruntime_directml-1.24.4-cp311-cp311-win_amd64.whl (25.1 MB)
+2026-10-29T06:23:45.7004459Z    ---------------------------------------- 25.1/25.1 MB 23.0 MB/s  0:00:01
+2026-10-29T06:23:45.7129207Z Downloading playwright-1.63.0-py3-none-win_amd64.whl (38.6 MB)
+2026-10-29T06:23:46.3755130Z    ---------------------------------------- 38.6/38.6 MB 58.5 MB/s  0:00:00
+2026-10-29T06:23:46.3814799Z Downloading altgraph-0.17.5-py2.py3-none-any.whl (21 kB)
+2026-10-29T06:23:46.3999256Z Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+2026-10-29T06:23:46.4184875Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-29T06:23:46.4471981Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-29T06:23:46.4739812Z Downloading pefile-2024.8.26-py3-none-any.whl (74 kB)
+2026-10-29T06:23:46.5284488Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-29T06:23:46.5709784Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-29T06:23:46.6203940Z    ---------------------------------------- 1.3/1.3 MB 21.5 MB/s  0:00:00
+2026-10-29T06:23:46.6258289Z Downloading pyinstaller-6.22.3-py3-none-win_amd64.whl (1.5 MB)
+2026-10-29T06:23:46.6963477Z    ---------------------------------------- 1.5/1.5 MB 18.9 MB/s  0:00:00
+2026-10-29T06:23:46.7034931Z Downloading pyinstaller_hooks_contrib-2026.7-py3-none-any.whl (459 kB)
+2026-10-29T06:23:46.7578273Z Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+2026-10-29T06:23:46.8031643Z Downloading pywin32_ctypes-0.2.3-py3-none-any.whl (30 kB)
+2026-10-29T06:23:46.8471441Z Downloading setuptools-84.0.0-py3-none-any.whl (818 kB)
+2026-10-29T06:23:46.9277051Z    ---------------------------------------- 818.2/818.2 kB 7.1 MB/s  0:00:00
+2026-10-29T06:23:46.9355290Z Downloading greenlet-3.5.6-cp311-cp311-win_amd64.whl (323 kB)
+2026-10-29T06:23:46.9988516Z Downloading h5py-3.16.0-cp311-cp311-win_amd64.whl (3.2 MB)
+2026-10-29T06:23:47.0978942Z    ---------------------------------------- 3.2/3.2 MB 26.6 MB/s  0:00:00
+2026-10-29T06:23:47.1086421Z Downloading huggingface_hub-1.33.0-py3-none-any.whl (846 kB)
+2026-10-29T06:23:47.2959856Z    ---------------------------------------- 846.4/846.4 kB 3.4 MB/s  0:00:00
+2026-10-29T06:23:47.3012814Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-29T06:23:47.3405408Z Downloading hf_xet-1.7.1-cp38-abi3-win_amd64.whl (3.8 MB)
+2026-10-29T06:23:47.4177021Z    ---------------------------------------- 3.8/3.8 MB 57.6 MB/s  0:00:00
+2026-10-29T06:23:47.4227419Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-29T06:23:47.4674046Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-29T06:23:47.5126828Z Downloading numpy-2.4.6-cp311-cp311-win_amd64.whl (12.6 MB)
+2026-10-29T06:23:47.6878872Z    ---------------------------------------- 12.6/12.6 MB 71.8 MB/s  0:00:00
+2026-10-29T06:23:47.6940899Z Downloading onnx-1.23.2-cp311-cp311-win_amd64.whl (7.9 MB)
+2026-10-29T06:23:47.8192345Z    ---------------------------------------- 7.9/7.9 MB 60.9 MB/s  0:00:00
+2026-10-29T06:23:47.8329965Z Downloading opencv_python-5.0.0.93-cp37-abi3-win_amd64.whl (44.0 MB)
+2026-10-29T06:23:49.3878435Z    ---------------------------------------- 44.0/44.0 MB 28.3 MB/s  0:00:01
+2026-10-29T06:23:49.3942571Z Downloading pyclipper-1.4.0-cp311-cp311-win_amd64.whl (104 kB)
+2026-10-29T06:23:49.4313407Z Downloading pyee-13.0.1-py3-none-any.whl (15 kB)
+2026-10-29T06:23:49.4940902Z Downloading rapidfuzz-3.14.6-cp311-cp311-win_amd64.whl (1.7 MB)
+2026-10-29T06:23:49.5506131Z    ---------------------------------------- 1.7/1.7 MB 23.4 MB/s  0:00:00
+2026-10-29T06:23:49.5574777Z Downloading scipy-1.17.1-cp311-cp311-win_amd64.whl (36.6 MB)
+2026-10-29T06:23:50.8368595Z    ---------------------------------------- 36.6/36.6 MB 28.4 MB/s  0:00:01
+2026-10-29T06:23:50.8431340Z Downloading shapely-2.2.0-cp311-cp311-win_amd64.whl (1.8 MB)
+2026-10-29T06:23:50.9524780Z    ---------------------------------------- 1.8/1.8 MB 13.9 MB/s  0:00:00
+2026-10-29T06:23:50.9591133Z Downloading tokenizers-0.23.3-cp310-abi3-win_amd64.whl (2.9 MB)
+2026-10-29T06:23:51.0632910Z    ---------------------------------------- 2.9/2.9 MB 27.8 MB/s  0:00:00
+2026-10-29T06:23:51.0685786Z Downloading anyascii-0.3.3-py3-none-any.whl (345 kB)
+2026-10-29T06:23:51.1378087Z Downloading filelock-4.2.4-py3-none-any.whl (162 kB)
+2026-10-29T06:23:51.1871496Z Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+2026-10-29T06:23:51.2367046Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-29T06:23:51.3015643Z Downloading loguru-0.7.3-py3-none-any.whl (61 kB)
+2026-10-29T06:23:51.3556945Z Downloading ml_dtypes-0.6.0-cp311-cp311-win_amd64.whl (433 kB)
+2026-10-29T06:23:51.4038293Z Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+2026-10-29T06:23:51.4702699Z    ---------------------------------------- 2.1/2.1 MB 29.1 MB/s  0:00:00
+2026-10-29T06:23:51.4751175Z Downloading pillow-13.0.0-cp311-cp311-win_amd64.whl (7.3 MB)
+2026-10-29T06:23:51.5871530Z    ---------------------------------------- 7.3/7.3 MB 64.4 MB/s  0:00:00
+2026-10-29T06:23:51.5941116Z Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl (456 kB)
+2026-10-29T06:23:51.6733585Z Downloading pyyaml-6.0.3-cp311-cp311-win_amd64.whl (158 kB)
+2026-10-29T06:23:51.7306468Z Downloading regex-2026.9.29-cp311-cp311-win_amd64.whl (280 kB)
+2026-10-29T06:23:51.7817484Z Downloading standard_imghdr-3.13.0-py3-none-any.whl (4.6 kB)
+2026-10-29T06:23:51.8226647Z Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+2026-10-29T06:23:51.9066566Z    ---------------------------------------- 6.3/6.3 MB 77.4 MB/s  0:00:00
+2026-10-29T06:23:51.9119465Z Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+2026-10-29T06:23:51.9652555Z    ---------------------------------------- 536.2/536.2 kB 5.8 MB/s  0:00:00
+2026-10-29T06:23:51.9706217Z Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+2026-10-29T06:23:51.9878102Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-29T06:23:52.0131046Z Downloading validators-0.36.0-py3-none-any.whl (46 kB)
+2026-10-29T06:23:52.0351668Z Downloading win32_setctime-1.2.1-py3-none-any.whl (4.2 kB)
+2026-10-29T06:23:52.0545070Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-29T06:23:52.0753950Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-29T06:23:52.0955913Z Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+2026-10-29T06:23:52.1142291Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+2026-10-29T06:23:52.1322204Z Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+2026-10-29T06:23:52.1527689Z Downloading markupsafe-3.0.4-cp311-cp311-win_amd64.whl (14 kB)
+2026-10-29T06:23:52.1710064Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-10-29T06:23:52.1923790Z Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+2026-10-29T06:23:52.2149416Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-29T06:23:52.2336407Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+2026-10-29T06:23:52.2609710Z Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+2026-10-29T06:23:52.2802624Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+2026-10-29T06:23:52.2980657Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+2026-10-29T06:23:53.3014198Z Building wheels for collected packages: langdetect
+2026-10-29T06:23:53.3040290Z   Building wheel for langdetect (pyproject.toml): started
+2026-10-29T06:23:54.0296551Z   Building wheel for langdetect (pyproject.toml): finished with status 'done'
+2026-10-29T06:23:54.0329047Z   Created wheel for langdetect: filename=langdetect-1.0.9-py3-none-any.whl size=993364 sha256=45a68db1de5df2a89bdb776136647638830e576d1e45e7b4eb9613cba89a6d32
+2026-10-29T06:23:54.0331104Z   Stored in directory: c:\users\runneradmin\appdata\local\pip\cache\wheels\0a\f2\b2\e5ca405801e05eb7c8ed5b3b4bcf1fcabcd6272c167640072e
+2026-10-29T06:23:54.0366538Z Successfully built langdetect
+2026-10-29T06:23:54.3160303Z Installing collected packages: standard-imghdr, mpmath, flatbuffers, altgraph, win32-setctime, validators, typing-extensions, sympy, six, shiboken6, shellingham, setuptools, safetensors, regex, rapidfuzz, pyyaml, pywin32-ctypes, pypdfium2, Pygments, pyclipper, protobuf, pluggy, Pillow, pefile, packaging, numpy, networkx, mdurl, MarkupSafe, iniconfig, idna, hf-xet, h11, greenlet, fsspec, filelock, colorama, click, certifi, anyascii, annotated-doc, tqdm, shapely, scipy, pytest, PySide6_Essentials, pyinstaller-hooks-contrib, pyee, opencv-python, onnxruntime-directml, ml_dtypes, markdown-it-py, loguru, langdetect, jinja2, httpcore, h5py, anyio, torch, rich, pyinstaller, playwright, onnx, mobi, httpx, typer, torchvision, huggingface-hub, tokenizers, python-doctr, transformers
+2026-10-29T06:24:03.9490695Z   Attempting uninstall: setuptools
+2026-10-29T06:24:03.9513868Z     Found existing installation: setuptools 65.5.0
+2026-10-29T06:24:04.4814333Z     Uninstalling setuptools-65.5.0:
+2026-10-29T06:24:04.6017437Z       Successfully uninstalled setuptools-65.5.0
+2026-10-29T06:25:23.4609163Z 
+2026-10-29T06:25:23.4651796Z Successfully installed MarkupSafe-3.0.4 Pillow-13.0.0 PySide6_Essentials-6.11.2 Pygments-2.21.0 altgraph-0.17.5 annotated-doc-0.0.5 anyascii-0.3.3 anyio-4.15.1 certifi-2026.10.23 click-8.5.0 colorama-0.4.6 filelock-4.2.4 flatbuffers-25.12.19 fsspec-2026.9.0 greenlet-3.5.6 h11-0.16.0 h5py-3.16.0 hf-xet-1.7.1 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-1.33.0 idna-3.20 iniconfig-2.3.0 jinja2-3.1.6 langdetect-1.0.9 loguru-0.7.3 markdown-it-py-4.2.0 mdurl-0.1.2 ml_dtypes-0.6.0 mobi-0.4.1 mpmath-1.3.0 networkx-3.6.1 numpy-2.4.6 onnx-1.23.2 onnxruntime-directml-1.24.4 opencv-python-5.0.0.93 packaging-26.3 pefile-2024.8.26 playwright-1.63.0 pluggy-1.6.0 protobuf-7.36.2 pyclipper-1.4.0 pyee-13.0.1 pyinstaller-6.22.3 pyinstaller-hooks-contrib-2026.7 pypdfium2-5.13.0 pytest-9.1.1 python-doctr-1.1.0 pywin32-ctypes-0.2.3 pyyaml-6.0.3 rapidfuzz-3.14.6 regex-2026.9.29 rich-15.0.0 safetensors-0.8.0 scipy-1.17.1 setuptools-84.0.0 shapely-2.2.0 shellingham-1.5.4 shiboken6-6.11.2 six-1.17.0 standard-imghdr-3.13.0 sympy-1.14.0 tokenizers-0.23.3 torch-2.14.0 torchvision-0.29.0 tqdm-4.70.1 transformers-5.17.0 typer-0.27.3 typing-extensions-4.16.0 validators-0.36.0 win32-setctime-1.2.1
+2026-10-29T06:25:25.4088317Z ##[group]Run python -m pytest -q
+2026-10-29T06:25:25.4088711Z [36;1mpython -m pytest -q[0m
+2026-10-29T06:25:25.4159951Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-29T06:25:25.4160303Z env:
+2026-10-29T06:25:25.4160511Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-29T06:25:25.4160841Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:25:25.4161273Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.11.9\x64/lib/pkgconfig
+2026-10-29T06:25:25.4161695Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:25:25.4162096Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:25:25.4162476Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.11.9\x64
+2026-10-29T06:25:25.4162790Z ##[endgroup]
+2026-10-29T06:25:57.5605483Z ........................................................................ [  2%]
+2026-10-29T06:26:07.9710062Z ........................................................................ [  5%]
+2026-10-29T06:26:16.7733936Z ........................................................................ [  8%]
+2026-10-29T06:26:32.2759971Z ........................................................................ [ 11%]
+2026-10-29T06:26:36.6347435Z ........................................................................ [ 14%]
+2026-10-29T06:26:42.7411622Z ........................................................................ [ 17%]
+2026-10-29T06:26:51.1349015Z ........................................................................ [ 20%]
+2026-10-29T06:28:03.7219418Z ........................................................................ [ 22%]
+2026-10-29T06:28:05.7032039Z ........................................................................ [ 25%]
+2026-10-29T06:28:14.8253406Z ........................................................................ [ 28%]
+2026-10-29T06:28:20.7560883Z ........................................................................ [ 31%]
+2026-10-29T06:28:27.6747023Z ........................................................................ [ 34%]
+2026-10-29T06:32:36.5841741Z ................................................F........F.............. [ 37%]
+2026-10-29T06:32:36.6963216Z ........................................................................ [ 40%]
+2026-10-29T06:32:48.8230220Z ........................................................................ [ 42%]
+2026-10-29T06:33:13.3024436Z ........................................................................ [ 45%]
+2026-10-29T06:33:17.3743812Z ....................................................................F..F [ 48%]
+2026-10-29T06:33:21.3418936Z F.......F............................................................... [ 51%]
+2026-10-29T06:33:27.0395105Z ........................................................................ [ 54%]
+2026-10-29T06:33:38.7215262Z ...........................................F.E.E.E...................... [ 57%]
+2026-10-29T06:33:42.8214390Z ........................................................................ [ 60%]
+2026-10-29T06:33:44.2030125Z ........................................................................ [ 63%]
+2026-10-29T06:33:45.5289982Z ........................................................................ [ 65%]
+2026-10-29T06:33:47.4044666Z ......sss............................................................... [ 68%]
+2026-10-29T06:33:48.6839197Z ........................................................................ [ 71%]
+2026-10-29T06:33:52.2229013Z ........................................................................ [ 74%]
+2026-10-29T06:33:52.3904681Z .....................................s.................................. [ 77%]
+2026-10-29T06:33:52.6105982Z ........................................................................ [ 80%]
+2026-10-29T06:33:55.4978365Z ........................................................................ [ 83%]
+2026-10-29T06:34:19.6769569Z ........................................................................ [ 85%]
+2026-10-29T06:34:32.3538866Z ........................................................................ [ 88%]
+2026-10-29T06:34:36.9710581Z ........................................................................ [ 91%]
+2026-10-29T06:34:44.7056308Z ........................................................................ [ 94%]
+2026-10-29T06:34:49.8498716Z ..........FF............................................................ [ 97%]
+2026-10-29T06:35:11.7686698Z ..............................F...................................       [100%]
+2026-10-29T06:35:11.7687779Z =================================== ERRORS ====================================
+2026-10-29T06:35:11.7688302Z _______ ERROR at setup of test_rc2_parser_omission_raises_system_exit_2 _______
+2026-10-29T06:35:11.7688790Z 
+2026-10-29T06:35:11.7688934Z     @pytest.fixture(scope="module")
+2026-10-29T06:35:11.7689325Z     def rc2_module() -> ModuleType:
+2026-10-29T06:35:11.7689801Z >       return load_module_from_path("rc2_runner_module", RC2_RUNNER)
+2026-10-29T06:35:11.7690241Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-29T06:35:11.7690447Z 
+2026-10-29T06:35:11.7690664Z tests\packaging\test_runner_output_dir_required.py:48: 
+2026-10-29T06:35:11.7691105Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7691608Z tests\packaging\test_runner_output_dir_required.py:37: in load_module_from_path
+2026-10-29T06:35:11.7692051Z     spec.loader.exec_module(module)
+2026-10-29T06:35:11.7693547Z <frozen importlib._bootstrap_external>:936: in exec_module
+2026-10-29T06:35:11.7693900Z     ???
+2026-10-29T06:35:11.7694582Z <frozen importlib._bootstrap_external>:1073: in get_code
+2026-10-29T06:35:11.7694981Z     ???
+2026-10-29T06:35:11.7695434Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7696072Z 
+2026-10-29T06:35:11.7696562Z self = <_frozen_importlib_external.SourceFileLoader object at 0x000001EDB1B7F8D0>
+2026-10-29T06:35:11.7697449Z path = 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7697936Z 
+2026-10-29T06:35:11.7698074Z >   ???
+2026-10-29T06:35:11.7698933Z E   FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7699711Z 
+2026-10-29T06:35:11.7700054Z <frozen importlib._bootstrap_external>:1130: FileNotFoundError
+2026-10-29T06:35:11.7700966Z ________ ERROR at setup of test_rc2_parser_accepts_explicit_output_dir ________
+2026-10-29T06:35:11.7701473Z 
+2026-10-29T06:35:11.7701691Z     @pytest.fixture(scope="module")
+2026-10-29T06:35:11.7702204Z     def rc2_module() -> ModuleType:
+2026-10-29T06:35:11.7702887Z >       return load_module_from_path("rc2_runner_module", RC2_RUNNER)
+2026-10-29T06:35:11.7703569Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-29T06:35:11.7704270Z 
+2026-10-29T06:35:11.7704592Z tests\packaging\test_runner_output_dir_required.py:48: 
+2026-10-29T06:35:11.7705344Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7706230Z tests\packaging\test_runner_output_dir_required.py:37: in load_module_from_path
+2026-10-29T06:35:11.7706991Z     spec.loader.exec_module(module)
+2026-10-29T06:35:11.7707626Z <frozen importlib._bootstrap_external>:936: in exec_module
+2026-10-29T06:35:11.7708219Z     ???
+2026-10-29T06:35:11.7708722Z <frozen importlib._bootstrap_external>:1073: in get_code
+2026-10-29T06:35:11.7709238Z     ???
+2026-10-29T06:35:11.7709800Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7710252Z 
+2026-10-29T06:35:11.7710703Z self = <_frozen_importlib_external.SourceFileLoader object at 0x000001EDB1B7F8D0>
+2026-10-29T06:35:11.7711668Z path = 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7712118Z 
+2026-10-29T06:35:11.7712289Z >   ???
+2026-10-29T06:35:11.7714512Z E   FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7715365Z 
+2026-10-29T06:35:11.7715847Z <frozen importlib._bootstrap_external>:1130: FileNotFoundError
+2026-10-29T06:35:11.7716734Z ________ ERROR at setup of test_rc2_main_interception_after_parse_args ________
+2026-10-29T06:35:11.7717280Z 
+2026-10-29T06:35:11.7717458Z     @pytest.fixture(scope="module")
+2026-10-29T06:35:11.7718020Z     def rc2_module() -> ModuleType:
+2026-10-29T06:35:11.7718679Z >       return load_module_from_path("rc2_runner_module", RC2_RUNNER)
+2026-10-29T06:35:11.7719354Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-29T06:35:11.7719717Z 
+2026-10-29T06:35:11.7720061Z tests\packaging\test_runner_output_dir_required.py:48: 
+2026-10-29T06:35:11.7720787Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7721652Z tests\packaging\test_runner_output_dir_required.py:37: in load_module_from_path
+2026-10-29T06:35:11.7722395Z     spec.loader.exec_module(module)
+2026-10-29T06:35:11.7723045Z <frozen importlib._bootstrap_external>:936: in exec_module
+2026-10-29T06:35:11.7723684Z     ???
+2026-10-29T06:35:11.7724151Z <frozen importlib._bootstrap_external>:1073: in get_code
+2026-10-29T06:35:11.7724713Z     ???
+2026-10-29T06:35:11.7725219Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-29T06:35:11.7725617Z 
+2026-10-29T06:35:11.7726101Z self = <_frozen_importlib_external.SourceFileLoader object at 0x000001EDB1B7F8D0>
+2026-10-29T06:35:11.7727282Z path = 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7727772Z 
+2026-10-29T06:35:11.7727897Z >   ???
+2026-10-29T06:35:11.7728750Z E   FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:11.7729532Z 
+2026-10-29T06:35:11.7729924Z <frozen importlib._bootstrap_external>:1130: FileNotFoundError
+2026-10-29T06:35:11.7730683Z ================================== FAILURES ===================================
+2026-10-29T06:35:11.7731510Z ____________ test_sandbox_kills_a_hanging_hook_within_the_timeout _____________
+2026-10-29T06:35:11.7732051Z 
+2026-10-29T06:35:11.7732430Z sandboxed = <test_plugin_sandbox._Runtime object at 0x000001EDB1EBE0D0>
+2026-10-29T06:35:11.7733723Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_sandbox_kills_a_hanging_h0')
+2026-10-29T06:35:11.7734870Z 
+2026-10-29T06:35:11.7735301Z     def test_sandbox_kills_a_hanging_hook_within_the_timeout(sandboxed, tmp_path) -> None:
+2026-10-29T06:35:11.7736111Z         source = (
+2026-10-29T06:35:11.7736623Z             "import time\n"
+2026-10-29T06:35:11.7737099Z             "def after_detect(payload):\n"
+2026-10-29T06:35:11.7737636Z             "    time.sleep(60)\n"
+2026-10-29T06:35:11.7738136Z             "    return {'ok': True}\n"
+2026-10-29T06:35:11.7738612Z         )
+2026-10-29T06:35:11.7739054Z         _write_plugin(tmp_path, "acme-hang", source)
+2026-10-29T06:35:11.7739660Z         short = PluginService(
+2026-10-29T06:35:11.7740135Z             sandboxed.service._conn,
+2026-10-29T06:35:11.7740650Z             tmp_path / "plugins",
+2026-10-29T06:35:11.7741142Z             app_version="0.1.0",
+2026-10-29T06:35:11.7741619Z             hook_timeout_seconds=1,
+2026-10-29T06:35:11.7742131Z             sandbox=AppContainerSandbox(),
+2026-10-29T06:35:11.7742631Z         )
+2026-10-29T06:35:11.7743010Z         try:
+2026-10-29T06:35:11.7743425Z             short.set_global_enabled(True)
+2026-10-29T06:35:11.7744024Z             short.set_plugin_enabled("acme-hang", True)
+2026-10-29T06:35:11.7744646Z             started = time.perf_counter()
+2026-10-29T06:35:11.7745218Z             outcome = short.run_hook("after_detect", {})
+2026-10-29T06:35:11.7745823Z             elapsed = time.perf_counter() - started
+2026-10-29T06:35:11.7746572Z         finally:
+2026-10-29T06:35:11.7746969Z             pass
+2026-10-29T06:35:11.7747395Z         assert outcome["applied"] is False
+2026-10-29T06:35:11.7748020Z         assert outcome["errors"][0]["code"] == "PLUGIN_HOOK_TIMEOUT"
+2026-10-29T06:35:11.7748676Z >       assert elapsed < 15
+2026-10-29T06:35:11.7749153Z E       assert 16.062178700000004 < 15
+2026-10-29T06:35:11.7749500Z 
+2026-10-29T06:35:11.7749894Z tests\infrastructure\test_plugin_sandbox.py:208: AssertionError
+2026-10-29T06:35:11.7750767Z ___________ test_network_capability_requires_the_network_permission ___________
+2026-10-29T06:35:11.7751251Z 
+2026-10-29T06:35:11.7751592Z sandboxed = <test_plugin_sandbox._Runtime object at 0x000001EDB1F0B810>
+2026-10-29T06:35:11.7752696Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_network_capability_requir0')
+2026-10-29T06:35:11.7753516Z 
+2026-10-29T06:35:11.7754005Z     def test_network_capability_requires_the_network_permission(sandboxed, tmp_path) -> None:
+2026-10-29T06:35:11.7755070Z         source = _network_probe_source()
+2026-10-29T06:35:11.7755624Z         _write_plugin(tmp_path, "acme-no-net", source)
+2026-10-29T06:35:11.7756298Z         _write_plugin(tmp_path, "acme-net", source, permissions=["network"])
+2026-10-29T06:35:11.7756902Z         service = sandboxed.service
+2026-10-29T06:35:11.7757391Z         service.set_global_enabled(True)
+2026-10-29T06:35:11.7757901Z         service.set_plugin_enabled("acme-no-net", True)
+2026-10-29T06:35:11.7758489Z         service.set_plugin_enabled("acme-net", True)
+2026-10-29T06:35:11.7759247Z     
+2026-10-29T06:35:11.7759674Z         outcome = service.run_hook("after_detect", {})
+2026-10-29T06:35:11.7760408Z         results = {item["plugin_id"]: item["result"] for item in outcome["results"]}
+2026-10-29T06:35:11.7761063Z     
+2026-10-29T06:35:11.7761615Z         # CAPABILITY-1: the container's network stack is denied for a plugin that
+2026-10-29T06:35:11.7762388Z         # declares no permission; the network plugin is allowed through.
+2026-10-29T06:35:11.7763021Z         assert results["acme-no-net"]["net"] == "BLOCKED"
+2026-10-29T06:35:11.7763642Z         assert results["acme-no-net"]["kind"] == "PermissionError"
+2026-10-29T06:35:11.7764428Z >       assert results["acme-net"]["kind"] != "PermissionError"
+2026-10-29T06:35:11.7764988Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-29T06:35:11.7765492Z E       KeyError: 'kind'
+2026-10-29T06:35:11.7765760Z 
+2026-10-29T06:35:11.7766027Z tests\infrastructure\test_plugin_sandbox.py:456: KeyError
+2026-10-29T06:35:11.7766852Z _ test_benchmark_checksum_inventory_paths_exist[ko_sfx_dialogue_cleaned_webtoon] _
+2026-10-29T06:35:11.7767356Z 
+2026-10-29T06:35:11.7767622Z source_id = 'ko_sfx_dialogue_cleaned_webtoon'
+2026-10-29T06:35:11.7768337Z inventory_path = 'verification/M2-TA2C/ko-webtoon-audit.json'
+2026-10-29T06:35:11.7768782Z 
+2026-10-29T06:35:11.7769219Z     @pytest.mark.parametrize(("source_id", "inventory_path"), benchmark_inventory_params())
+2026-10-29T06:35:11.7770179Z     def test_benchmark_checksum_inventory_paths_exist(source_id, inventory_path):
+2026-10-29T06:35:11.7771085Z         # Runtime consumption for benchmark_sources[*].checksum_inventory (TA2C P3-10):
+2026-10-29T06:35:11.7771947Z         # every non-empty path must exist relative to the repository root.
+2026-10-29T06:35:11.7772754Z >       assert (assets.REPO_ROOT / inventory_path).is_file(), (
+2026-10-29T06:35:11.7773476Z             f"benchmark source {source_id} checksum_inventory is missing: {inventory_path}"
+2026-10-29T06:35:11.7774176Z         )
+2026-10-29T06:35:11.7775618Z E       AssertionError: benchmark source ko_sfx_dialogue_cleaned_webtoon checksum_inventory is missing: verification/M2-TA2C/ko-webtoon-audit.json
+2026-10-29T06:35:11.7776745Z E       assert False
+2026-10-29T06:35:11.7777213Z E        +  where False = is_file()
+2026-10-29T06:35:11.7778346Z E        +    where is_file = (WindowsPath('D:/a/New-Manga/New-Manga') / 'verification/M2-TA2C/ko-webtoon-audit.json').is_file
+2026-10-29T06:35:11.7779571Z E        +      where WindowsPath('D:/a/New-Manga/New-Manga') = assets.REPO_ROOT
+2026-10-29T06:35:11.7780053Z 
+2026-10-29T06:35:11.7780397Z tests\m2_test_assets\test_catalog.py:250: AssertionError
+2026-10-29T06:35:11.7781184Z __________ test_ko_sfx_dialogue_cleaned_webtoon_inventory_semantics ___________
+2026-10-29T06:35:11.7781655Z 
+2026-10-29T06:35:11.7781980Z     def test_ko_sfx_dialogue_cleaned_webtoon_inventory_semantics():
+2026-10-29T06:35:11.7782700Z         # README semantics: checksum_inventory == null means "no locally verifiable
+2026-10-29T06:35:11.7783425Z         # files for this source". Reconnaissance (2026-09-29) shows this entry is NOT
+2026-10-29T06:35:11.7783950Z         # null: it pins the KO Cleaned Webtoon audit manifest, so assert the concrete
+2026-10-29T06:35:11.7784441Z         # value and its presence instead of a null assertion.
+2026-10-29T06:35:11.7784819Z         manifest = assets.load_manifest()
+2026-10-29T06:35:11.7785227Z         by_id = {source["id"]: source for source in manifest["benchmark_sources"]}
+2026-10-29T06:35:11.7785736Z         inventory_path = by_id["ko_sfx_dialogue_cleaned_webtoon"]["checksum_inventory"]
+2026-10-29T06:35:11.7786264Z         assert inventory_path == "verification/M2-TA2C/ko-webtoon-audit.json"
+2026-10-29T06:35:11.7786838Z >       assert (assets.REPO_ROOT / inventory_path).is_file()
+2026-10-29T06:35:11.7787447Z E       AssertionError: assert False
+2026-10-29T06:35:11.7787773Z E        +  where False = is_file()
+2026-10-29T06:35:11.7789224Z E        +    where is_file = (WindowsPath('D:/a/New-Manga/New-Manga') / 'verification/M2-TA2C/ko-webtoon-audit.json').is_file
+2026-10-29T06:35:11.7789876Z E        +      where WindowsPath('D:/a/New-Manga/New-Manga') = assets.REPO_ROOT
+2026-10-29T06:35:11.7790152Z 
+2026-10-29T06:35:11.7790358Z tests\m2_test_assets\test_catalog.py:264: AssertionError
+2026-10-29T06:35:11.7790844Z ____________ test_benchmark_inventory_missing_path_detection_demo _____________
+2026-10-29T06:35:11.7791154Z 
+2026-10-29T06:35:11.7791320Z     def test_benchmark_inventory_missing_path_detection_demo():
+2026-10-29T06:35:11.7791788Z         # Discriminative demo (TA2C P3-10): a checksum_inventory pointing at a
+2026-10-29T06:35:11.7792433Z         # nonexistent path must be reported as a failure by the runtime consumer,
+2026-10-29T06:35:11.7793133Z         # while the real manifest stays green. The "red" side is demonstrated by
+2026-10-29T06:35:11.7793626Z         # calling the checker directly on a mutated copy, not by breaking CI.
+2026-10-29T06:35:11.7794046Z         manifest = assets.load_manifest()
+2026-10-29T06:35:11.7794519Z         healthy_failures, healthy_checked = assets.verify_benchmark_source_inventories(manifest)
+2026-10-29T06:35:11.7795212Z >       assert healthy_failures == []
+2026-10-29T06:35:11.7795625Z E       AssertionError: assert ['ko_sfx_dial...n-audit.json'] == []
+2026-10-29T06:35:11.7795999Z E         
+2026-10-29T06:35:11.7796620Z E         Left contains one more item: 'ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/ko-webtoon-audit.json'
+2026-10-29T06:35:11.7797283Z E         
+2026-10-29T06:35:11.7797532Z E         Full diff:
+2026-10-29T06:35:11.7797886Z E         - []
+2026-10-29T06:35:11.7798235Z E         + [
+2026-10-29T06:35:11.7798642Z E         +     'ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: '
+2026-10-29T06:35:11.7799134Z E         +     'verification/M2-TA2C/ko-webtoon-audit.json',
+2026-10-29T06:35:11.7799473Z E         + ]
+2026-10-29T06:35:11.7799616Z 
+2026-10-29T06:35:11.7799787Z tests\m2_test_assets\test_catalog.py:274: AssertionError
+2026-10-29T06:35:11.7800440Z _____________ test_verify_fails_when_public_smoke_page_is_missing _____________
+2026-10-29T06:35:11.7800932Z 
+2026-10-29T06:35:11.7802389Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_verify_fails_when_public_0')
+2026-10-29T06:35:11.7803385Z capsys = <_pytest.capture.CaptureFixture object at 0x000001EDB4A35410>
+2026-10-29T06:35:11.7804591Z 
+2026-10-29T06:35:11.7804943Z     def test_verify_fails_when_public_smoke_page_is_missing(tmp_path, capsys):
+2026-10-29T06:35:11.7805637Z         manifest = assets.load_manifest()
+2026-10-29T06:35:11.7806360Z         case = next(case.copy() for case in manifest["cases"] if case["case_id"] == "J38")
+2026-10-29T06:35:11.7807088Z         case["local_path"] = "ja/absent"
+2026-10-29T06:35:11.7807586Z         manifest["cases"] = [case]
+2026-10-29T06:35:11.7808087Z         manifest_path = tmp_path / "cases.json"
+2026-10-29T06:35:11.7808694Z         inventory_path = tmp_path / "local_asset_inventory.json"
+2026-10-29T06:35:11.7810093Z         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+2026-10-29T06:35:11.7810940Z         inventory_path.write_text(json.dumps({"assets": []}), encoding="utf-8")
+2026-10-29T06:35:11.7811624Z     
+2026-10-29T06:35:11.7812374Z         with patch.object(assets, "ROOT", tmp_path), patch.object(assets, "MANIFEST_PATH", manifest_path), patch.object(
+2026-10-29T06:35:11.7813285Z             assets, "INVENTORY_PATH", inventory_path
+2026-10-29T06:35:11.7814037Z         ), patch.object(sys, "argv", ["assets.py", "verify", "--language", "ja", "--level", "smoke"]):
+2026-10-29T06:35:11.7815214Z             assert assets.main() == 1
+2026-10-29T06:35:11.7815866Z     
+2026-10-29T06:35:11.7816251Z         output = capsys.readouterr().out
+2026-10-29T06:35:11.7816755Z         assert "J38\tja\tMISSING" in output
+2026-10-29T06:35:11.7817522Z >       assert "INVALID\tJ38" in output
+2026-10-29T06:35:11.7819556Z E       AssertionError: assert 'INVALID\tJ38' in 'J38\tja\tMISSING\tja/absent\nSUMMARY\tMISSING=1\nINVENTORY\tchecked=0 missing=0 failures=0\nBENCHMARK_INVENTORY\tchec...gue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/ko-webtoon-audit.json\nSUMMARY\tFAILED\n'
+2026-10-29T06:35:11.7822726Z 
+2026-10-29T06:35:11.7823095Z tests\m2_test_assets\test_catalog.py:463: AssertionError
+2026-10-29T06:35:11.7823890Z _____ test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] ______
+2026-10-29T06:35:11.7824373Z 
+2026-10-29T06:35:11.7824839Z runner_path = WindowsPath('D:/a/New-Manga/New-Manga/verification/M2-RC2/run_e2e.py')
+2026-10-29T06:35:11.7825402Z 
+2026-10-29T06:35:11.7825894Z     @pytest.mark.parametrize("runner_path", [RC2_RUNNER, AC5_RUNNER], ids=["rc2_run_e2e", "ac5_run_clean_start"])
+2026-10-29T06:35:11.7826950Z     def test_cli_omission_fails_usage_error_exit_2_subprocess(runner_path: Path):
+2026-10-29T06:35:11.7828089Z         """AC1: Invoking runner CLI without --output-dir fails with exit 2 and usage error before work."""
+2026-10-29T06:35:11.7828920Z         res = subprocess.run(
+2026-10-29T06:35:11.7829417Z             [sys.executable, str(runner_path)],
+2026-10-29T06:35:11.7829957Z             capture_output=True,
+2026-10-29T06:35:11.7830401Z             text=True,
+2026-10-29T06:35:11.7830830Z             cwd=ROOT,
+2026-10-29T06:35:11.7831243Z             timeout=30,
+2026-10-29T06:35:11.7831650Z         )
+2026-10-29T06:35:11.7832287Z         assert res.returncode == 2, f"Expected returncode 2, got {res.returncode}. stderr:\n{res.stderr}"
+2026-10-29T06:35:11.7891485Z         err = res.stderr.lower()
+2026-10-29T06:35:11.7892161Z >       assert "--output-dir" in res.stderr
+2026-10-29T06:35:11.7893810Z E       assert '--output-dir' in "C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe: can't open file 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n"
+2026-10-29T06:35:11.7899823Z E        +  where "C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe: can't open file 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n" = CompletedProcess(args=['C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe', 'D:\\a\\New-Manga\\New-Manga\\...le 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n").stderr
+2026-10-29T06:35:11.7901150Z 
+2026-10-29T06:35:11.7901530Z tests\packaging\test_runner_output_dir_required.py:68: AssertionError
+2026-10-29T06:35:11.7902120Z _______________________ test_cli_wire_layer_json_report _______________________
+2026-10-29T06:35:11.7902423Z 
+2026-10-29T06:35:11.7902877Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_cli_wire_layer_json_repor0')
+2026-10-29T06:35:11.7903814Z capsys = <_pytest.capture.CaptureFixture object at 0x000001EDB434B490>
+2026-10-29T06:35:11.7904093Z 
+2026-10-29T06:35:11.7904292Z     def test_cli_wire_layer_json_report(tmp_path, capsys) -> None:
+2026-10-29T06:35:11.7904697Z         json_path = tmp_path / "wire-report.json"
+2026-10-29T06:35:11.7905086Z         exit_code = main(["--only", "wire", "--json", str(json_path)])
+2026-10-29T06:35:11.7905470Z >       assert exit_code == 0
+2026-10-29T06:35:11.7905756Z E       assert 1 == 0
+2026-10-29T06:35:11.7905921Z 
+2026-10-29T06:35:11.7906120Z tests\tools\test_software_smoke.py:153: AssertionError
+2026-10-29T06:35:11.7906583Z ---------------------------- Captured stdout call -----------------------------
+2026-10-29T06:35:11.7957921Z NM \u8f6f\u4ef6\u68c0\u67e5\u5de5\u5177 v1 \u2014 FAIL\uff084 \u5c42\uff0c6 \u9879\u68c0\u67e5\uff0c0.4s\uff09\n  [SKIP] Core \u6c99\u7bb1\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09\n  [FAIL] Wire \u5c42\uff086 \u9879\uff0c0.4s\uff09\n    - WIRE-PING\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5728 core.ping \u54cd\u5e94\u524d\u9000\u51fa\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-LIST\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-STATE\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-ERRORS\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_plugin_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-AUDIT\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.audit_list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-SHUTDOWN\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 core.shutdown\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n  [SKIP] \u524d\u7aef\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09\n  [SKIP] \u6253\u5305\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09\n\u62a5\u544a\uff1aC:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_cli_wire_layer_json_repor0\\wire-report.json
+2026-10-29T06:35:11.8028796Z __________________________ test_cli_json_stdout_mode __________________________
+2026-10-29T06:35:11.8029791Z 
+2026-10-29T06:35:11.8030129Z     def test_cli_json_stdout_mode() -> None:
+2026-10-29T06:35:11.8031150Z         # main() writes JSON to stdout and the human summary to stderr.
+2026-10-29T06:35:11.8032283Z         exit_code = main(["--only", "wire", "--json", "-"])
+2026-10-29T06:35:11.8033257Z >       assert exit_code == 0
+2026-10-29T06:35:11.8033953Z E       assert 1 == 0
+2026-10-29T06:35:11.8034319Z 
+2026-10-29T06:35:11.8034771Z tests\tools\test_software_smoke.py:165: AssertionError
+2026-10-29T06:35:11.8036018Z ---------------------------- Captured stdout call -----------------------------
+2026-10-29T06:35:11.8143474Z {\n  "schema": "nm-software-smoke/1",\n  "generated_at": "2026-10-29T06:34:46+00:00",\n  "started_at": "2026-10-29T06:34:45+00:00",\n  "duration_ms": 352,\n  "status": "FAIL",\n  "command": [\n    "--only",\n    "wire",\n    "--json",\n    "-"\n  ],\n  "environment": {\n    "platform": "win32",\n    "python": "3.11.9",\n    "repack": false,\n    "screenshots": "disabled",\n    "gui": "not_used",\n    "mouse": "not_used"\n  },\n  "summary": {\n    "status": "FAIL",\n    "layers": 4,\n    "checks": 6,\n    "passed": 0,\n    "failed": 6,\n    "skipped": 0,\n    "blocked": 0\n  },\n  "layers": [\n    {\n      "id": "core",\n      "name": "Core \u6c99\u7bb1\u5c42",\n      "status": "SKIP",\n      "duration_ms": 0,\n      "checks": [],\n      "skip_reason": "\u663e\u5f0f\u8df3\u8fc7"\n    },\n    {\n      "id": "wire",\n      "name": "Wire \u5c42",\n      "status": "FAIL",\n      "duration_ms": 350,\n      "checks": [\n        {\n          "id": "WIRE-PING",\n          "name": "\u771f\u5b9e Core \u5b50\u8fdb\u7a0b\u542f\u52a8\u5e76\u54cd\u5e94 core.ping",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5728 core.ping \u54cd\u5e94\u524d\u9000\u51fa\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 344,\n          "detail": {}\n        },\n        {\n          "id": "WIRE-PLUGINS-LIST",\n          "name": "plugins.list \u9ed8\u8ba4\u5173\u95ed\u3001\u62d2\u7edd\u8bed\u4e49\u4e0e\u6295\u5f71\u5b57\u6bb5",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 0,\n          "detail": {}\n        },\n        {\n          "id": "WIRE-PLUGINS-STATE",\n          "name": "plugins.set_enabled / set_plugin_enabled \u72b6\u6001\u5f80\u8fd4",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 0,\n          "detail": {}\n        },\n        {\n          "id": "WIRE-PLUGINS-ERRORS",\n          "name": "\u7c7b\u578b\u5316\u9519\u8bef\u4fe1\u5c01\uff1a\u62d2\u7edd/\u672a\u77e5/\u7578\u5f62\u8bf7\u6c42",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_plugin_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 0,\n          "detail": {}\n        },\n        {\n          "id": "WIRE-PLUGINS-AUDIT",\n          "name": "plugins.audit_list \u8d26\u672c\u5f62\u72b6\u4e0e\u4e8b\u4ef6",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.audit_list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 0,\n          "detail": {}\n        },\n        {\n          "id": "WIRE-SHUTDOWN",\n          "name": "core.shutdown \u6b63\u5e38\u9000\u51fa\u4e14\u65e0\u6b8b\u7559\u8fdb\u7a0b",\n          "status": "FAIL",\n          "code": "WIRE_PROCESS_EXITED",\n          "message": "Core \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 core.shutdown\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\\n    _ensure_preview_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\bootstrap\\\\core_service.py\\", line 4586, in _ensure_preview_namespace\\n    initialize_namespace(catalog_db, derived_root)\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\catalog_store.py\\", line 211, in initialize_namespace\\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 1037, in open_exclusive_lock_for_initialize\\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"D:\\\\a\\\\New-Manga\\\\New-Manga\\\\src\\\\infrastructure\\\\resource_channel\\\\handle_resolver.py\\", line 870, in resolve_namespace_identity\\n    raise namespace_unavailable(\\"namespace path resolved to a different identity\\")\\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity",\n          "duration_ms": 0,\n          "detail": {}\n        }\n      ]\n    },\n    {\n      "id": "frontend",\n      "name": "\u524d\u7aef\u5c42",\n      "status": "SKIP",\n      "duration_ms": 0,\n      "checks": [],\n      "skip_reason": "\u663e\u5f0f\u8df3\u8fc7"\n    },\n    {\n      "id": "packaged",\n      "name": "\u6253\u5305\u5c42",\n      "status": "SKIP",\n      "duration_ms": 0,\n      "checks": [],\n      "skip_reason": "\u663e\u5f0f\u8df3\u8fc7"\n    }\n  ]\n}
+2026-10-29T06:35:11.8210890Z ---------------------------- Captured stderr call -----------------------------
+2026-10-29T06:35:12.3140882Z NM \u8f6f\u4ef6\u68c0\u67e5\u5de5\u5177 v1 \u2014 FAIL\uff084 \u5c42\uff0c6 \u9879\u68c0\u67e5\uff0c0.4s\uff09\n  [SKIP] Core \u6c99\u7bb1\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09\n  [FAIL] Wire \u5c42\uff086 \u9879\uff0c0.3s\uff09\n    - WIRE-PING\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5728 core.ping \u54cd\u5e94\u524d\u9000\u51fa\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-LIST\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-STATE\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-ERRORS\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.set_plugin_enabled\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-PLUGINS-AUDIT\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 plugins.audit_list\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n    - WIRE-SHUTDOWN\uff08WIRE_PROCESS_EXITED\uff09\uff1aCore \u5b50\u8fdb\u7a0b\u5df2\u9000\u51fa\uff0c\u65e0\u6cd5\u53d1\u9001 core.shutdown\uff08[Errno 22] Invalid argument\uff09\uff1bstderr=\u20264604, in main\n    _ensure_preview_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\bootstrap\\core_service.py", line 4586, in _ensure_preview_namespace\n    initialize_namespace(catalog_db, derived_root)\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\catalog_store.py", line 211, in initialize_namespace\n    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 1037, in open_exclusive_lock_for_initialize\n    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "D:\\a\\New-Manga\\New-Manga\\src\\infrastructure\\resource_channel\\handle_resolver.py", line 870, in resolve_namespace_identity\n    raise namespace_unavailable("namespace path resolved to a different identity")\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace path resolved to a different identity\n  [SKIP] \u524d\u7aef\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09\n  [SKIP] \u6253\u5305\u5c42\uff08\u663e\u5f0f\u8df3\u8fc7\uff09
+2026-10-29T06:35:12.3171983Z ______________ test_pause_shows_optimistic_feedback_immediately _______________
+2026-10-29T06:35:12.3172295Z 
+2026-10-29T06:35:12.3172605Z qapp_ = <PySide6.QtGui.QGuiApplication(0x1edfd84ff70) at 0x000001ED8AD3CC80>
+2026-10-29T06:35:12.3172908Z 
+2026-10-29T06:35:12.3173120Z     def test_pause_shows_optimistic_feedback_immediately(qapp_):
+2026-10-29T06:35:12.3173790Z         """AC-PAUSE-001: \u2264200 ms \u201c\u6b63\u5728\u6682\u505c\u201d \u2014 the viewmodel flips the flag
+2026-10-29T06:35:12.3174365Z         synchronously on click, long before the executor boundary."""
+2026-10-29T06:35:12.3174758Z     
+2026-10-29T06:35:12.3175019Z         service, _ = make_pipeline(
+2026-10-29T06:35:12.3175443Z             pages=[(f"p{i}", i) for i in range(1, 9)], executor=slow_executor()
+2026-10-29T06:35:12.3175825Z         )
+2026-10-29T06:35:12.3176072Z         vm = make_vm(service)
+2026-10-29T06:35:12.3176427Z         vm.setContext("book-1", "chapter-1", "\u4e66", "\u7ae0")
+2026-10-29T06:35:12.3176819Z         vm.startTranslateAll()
+2026-10-29T06:35:12.3177080Z     
+2026-10-29T06:35:12.3177326Z         started = time.monotonic()
+2026-10-29T06:35:12.3177624Z         vm.pauseRun()
+2026-10-29T06:35:12.3177928Z         elapsed_ms = (time.monotonic() - started) * 1000
+2026-10-29T06:35:12.3178250Z     
+2026-10-29T06:35:12.3178428Z         assert elapsed_ms <= 200
+2026-10-29T06:35:12.3178702Z         assert vm.taskProgress["pausing"] is True
+2026-10-29T06:35:12.3179210Z         assert vm.taskProgress["can_pause"] is False  # \u6682\u505c\u4e2d\u4e0d\u53ef\u91cd\u590d\u6682\u505c
+2026-10-29T06:35:12.3179673Z     
+2026-10-29T06:35:12.3179917Z         assert wait_until(
+2026-10-29T06:35:12.3180304Z             qapp_, lambda: vm.taskProgress["run_status"] == "paused", timeout_ms=15000
+2026-10-29T06:35:12.3180719Z         )
+2026-10-29T06:35:12.3180979Z         assert vm.taskProgress["pausing"] is False
+2026-10-29T06:35:12.3181464Z         assert vm.taskProgress["can_continue"] is True
+2026-10-29T06:35:12.3181829Z     
+2026-10-29T06:35:12.3182067Z         vm.continueRun()
+2026-10-29T06:35:12.3182356Z >       assert wait_until(
+2026-10-29T06:35:12.3182744Z             qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
+2026-10-29T06:35:12.3183154Z         )
+2026-10-29T06:35:12.3183391Z E       assert False
+2026-10-29T06:35:12.3184261Z E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1edfd84ff70) at 0x000001ED8AD3CC80>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001EDB53280E0>, timeout_ms=15000)
+2026-10-29T06:35:12.3184973Z 
+2026-10-29T06:35:12.3185153Z tests\workbench\test_workbench_viewmodel.py:210: AssertionError
+2026-10-29T06:35:12.3185597Z ============================== warnings summary ===============================
+2026-10-29T06:35:12.3186412Z tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+2026-10-29T06:35:12.3187477Z   D:\a\New-Manga\New-Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+2026-10-29T06:35:12.3188776Z     for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+2026-10-29T06:35:12.3189101Z 
+2026-10-29T06:35:12.3189483Z tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+2026-10-29T06:35:12.3190506Z   D:\a\New-Manga\New-Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+2026-10-29T06:35:12.3191321Z     for red, green, blue, _alpha in image.getdata()
+2026-10-29T06:35:12.3191535Z 
+2026-10-29T06:35:12.3191827Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-10-29T06:35:12.3192340Z =========================== short test summary info ===========================
+2026-10-29T06:35:12.3193038Z FAILED tests/infrastructure/test_plugin_sandbox.py::test_sandbox_kills_a_hanging_hook_within_the_timeout - assert 16.062178700000004 < 15
+2026-10-29T06:35:12.3193946Z FAILED tests/infrastructure/test_plugin_sandbox.py::test_network_capability_requires_the_network_permission - KeyError: 'kind'
+2026-10-29T06:35:12.3195507Z FAILED tests/m2_test_assets/test_catalog.py::test_benchmark_checksum_inventory_paths_exist[ko_sfx_dialogue_cleaned_webtoon] - AssertionError: benchmark source ko_sfx_dialogue_cleaned_webtoon checksum_inventory is missing: verification/M2-TA2C/ko-webtoon-audit.json
+2026-10-29T06:35:12.3196482Z assert False
+2026-10-29T06:35:12.3196740Z  +  where False = is_file()
+2026-10-29T06:35:12.3197235Z  +    where is_file = (WindowsPath('D:/a/New-Manga/New-Manga') / 'verification/M2-TA2C/ko-webtoon-audit.json').is_file
+2026-10-29T06:35:12.3197833Z  +      where WindowsPath('D:/a/New-Manga/New-Manga') = assets.REPO_ROOT
+2026-10-29T06:35:12.3198558Z FAILED tests/m2_test_assets/test_catalog.py::test_ko_sfx_dialogue_cleaned_webtoon_inventory_semantics - AssertionError: assert False
+2026-10-29T06:35:12.3199126Z  +  where False = is_file()
+2026-10-29T06:35:12.3199624Z  +    where is_file = (WindowsPath('D:/a/New-Manga/New-Manga') / 'verification/M2-TA2C/ko-webtoon-audit.json').is_file
+2026-10-29T06:35:12.3200198Z  +      where WindowsPath('D:/a/New-Manga/New-Manga') = assets.REPO_ROOT
+2026-10-29T06:35:12.3200992Z FAILED tests/m2_test_assets/test_catalog.py::test_benchmark_inventory_missing_path_detection_demo - AssertionError: assert ['ko_sfx_dial...n-audit.json'] == []
+2026-10-29T06:35:12.3201694Z   
+2026-10-29T06:35:12.3202225Z   Left contains one more item: 'ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/ko-webtoon-audit.json'
+2026-10-29T06:35:12.3202832Z   
+2026-10-29T06:35:12.3203041Z   Full diff:
+2026-10-29T06:35:12.3203252Z   - []
+2026-10-29T06:35:12.3203585Z   + [
+2026-10-29T06:35:12.3203927Z   +     'ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: '
+2026-10-29T06:35:12.3204359Z   +     'verification/M2-TA2C/ko-webtoon-audit.json',
+2026-10-29T06:35:12.3204688Z   + ]
+2026-10-29T06:35:12.3206170Z FAILED tests/m2_test_assets/test_catalog.py::test_verify_fails_when_public_smoke_page_is_missing - AssertionError: assert 'INVALID\tJ38' in 'J38\tja\tMISSING\tja/absent\nSUMMARY\tMISSING=1\nINVENTORY\tchecked=0 missing=0 failures=0\nBENCHMARK_INVENTORY\tchec...gue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/ko-webtoon-audit.json\nSUMMARY\tFAILED\n'
+2026-10-29T06:35:12.3208880Z FAILED tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] - assert '--output-dir' in "C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe: can't open file 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n"
+2026-10-29T06:35:12.3211120Z  +  where "C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe: can't open file 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n" = CompletedProcess(args=['C:\\hostedtoolcache\\windows\\Python\\3.11.9\\x64\\python.exe', 'D:\\a\\New-Manga\\New-Manga\\...le 'D:\\\\a\\\\New-Manga\\\\New-Manga\\\\verification\\\\M2-RC2\\\\run_e2e.py': [Errno 2] No such file or directory\n").stderr
+2026-10-29T06:35:12.3212657Z FAILED tests/tools/test_software_smoke.py::test_cli_wire_layer_json_report - assert 1 == 0
+2026-10-29T06:35:12.3213247Z FAILED tests/tools/test_software_smoke.py::test_cli_json_stdout_mode - assert 1 == 0
+2026-10-29T06:35:12.3213958Z FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately - assert False
+2026-10-29T06:35:12.3215019Z  +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x1edfd84ff70) at 0x000001ED8AD3CC80>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000001EDB53280E0>, timeout_ms=15000)
+2026-10-29T06:35:12.3216464Z ERROR tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_omission_raises_system_exit_2 - FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:12.3218009Z ERROR tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_accepts_explicit_output_dir - FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:12.3219441Z ERROR tests/packaging/test_runner_output_dir_required.py::test_rc2_main_interception_after_parse_args - FileNotFoundError: [Errno 2] No such file or directory: 'D:\\a\\New-Manga\\New-Manga\\verification\\M2-RC2\\run_e2e.py'
+2026-10-29T06:35:12.3220381Z 10 failed, 2497 passed, 10 skipped, 2 warnings, 3 errors in 585.09s (0:09:45)
+2026-10-29T06:35:14.4811962Z ##[error]Process completed with exit code 1.
+2026-10-29T06:35:14.5491140Z Post job cleanup.
+2026-10-29T06:35:14.7680318Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-29T06:35:14.8033189Z git version 2.56.0.windows.2
+2026-10-29T06:35:14.8118546Z Temporarily overriding HOME='D:\a\_temp\aa070abe-d2d2-438b-96ee-84ff3f140af8' before making global git config changes
+2026-10-29T06:35:14.8119790Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T06:35:14.8131209Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\New-Manga\New-Manga
+2026-10-29T06:35:14.8550574Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T06:35:14.9004458Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-29T06:35:15.4673298Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T06:35:15.5011320Z http.https://github.com/.extraheader
+2026-10-29T06:35:15.5062483Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-29T06:35:15.5461178Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-29T06:35:16.0887358Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T06:35:16.1256635Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-29T06:35:16.6911838Z Cleaning up orphan processes
+2026-10-29T06:35:16.7172286Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-dotnet@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
