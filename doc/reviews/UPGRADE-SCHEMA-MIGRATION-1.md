@@ -3,8 +3,8 @@ task_id: UPGRADE-SCHEMA-MIGRATION-1
 reviewer: region-workbench-owner
 author: dsh-lead
 base_commit: 99005e189
-reviewed_head: 3710e001474407919fb4ec8cf971f945095736ed
-decision: changes_requested
+reviewed_head: 43a76b2044847bfe3bcea23905b9830dfdc97bbe
+decision: approved
 ---
 
 # Review：UPGRADE-SCHEMA-MIGRATION-1
@@ -130,3 +130,50 @@ decision: changes_requested
 2. 对 v2 新列、regions/region_revisions JSON、pipeline_runs/tasks JSON 做完整值断言，或缩小“全字段”表述；
 3. summary 加命令头或调整 AC5 表述；补 `_assert_latest` 关键列/索引检查、v1 fixture/版本连续守卫。
 修复后重跑 11 用例与全量证据，再送第三轮复审。
+
+## Round 3 Review
+
+**reviewed_head**: `43a76b2044847bfe3bcea23905b9830dfdc97bbe`；**decision: approved（PASS）**。
+
+**复核方式**：只读检查 `43a76b204` / merge `61601dc8c` / 卡 `570684693`；repo root 实跑 11 个单测；独立探针检查 v5 迁移前 `pipeline_run_targets/pipeline_tasks/step_runs/step_result_candidates/book_cleanup_manifests` 行数；单独验证 v1 实际表集合与 `FROZEN_V1_TABLES` 是否相等；检查 `EXPECTED` 覆盖列；核对 3 个证据 SHA-256、`check.ps1`、`git show 43a76b204 --stat`。按用户要求未独立重跑全量 pytest。
+
+### Round 2 发现状态
+
+| 项 | round 2 问题 | round 3 状态 | 复核结论 |
+|---|---|---|---|
+| F2-01 | v5 的 `step_runs`/`step_result_candidates` 空表重建 | **PASS（已修）** | `_seed_v3` 已 seed step_runs/step_result_candidates（含 `task_id`/`step_run_id` 关系和 `pipeline_tasks.step_run_ids_json`）；独立探针 v5 迁移前行数：pipeline_run_targets=1、pipeline_tasks=1、**step_runs=1、step_result_candidates=1**、book_cleanup_manifests=1；`EXPECTED` 逐列断言全部四张重建表。 |
+| F2-02 | “全字段”断言不足 | **PASS（主体验证；P2 见 F3-01）** | `EXPECTED` 记录各 seed 表所有写入列，`_assert_expected` 逐行逐列比较（含 JSON/NULL/时间）；v2 全部新列、regions/region_revisions JSON、pipeline_runs/tasks/step JSON 均已纳入。仍有一个 NULL 列 `region_revisions.source_run_id` 未记录（F3-01）。 |
+| F2-03 | summary 无命令头 | **PASS（已修）** | unit/full/summary 三份证据均有 5 行命令头（COMMAND/CWD/PYTHON/AT + `----`）；summary 还有 RESULT/EXIT；3/3 sha256 与卡内 pin 一致。 |
+| F2-04 | `_assert_latest` 只查表名 | **PASS（已修，P2 见 F3-03）** | 新增关键列（books/chapters/pages/regions/step_runs/pipeline_tasks/plugin_state）、索引 `idx_chapters_book_id`/`idx_step_runs_run`、外键（chapters→books）检查；仍非全 schema 穷举。 |
+| F2-05 | 用生产 MIGRATIONS 合成旧库 | **PARTIAL（P2）** | 新增 `FROZEN_V1_TABLES` 精确断言 v1 表集合（实测相等）；但 v1/v2/v3 SQL 仍由生产迁移定义生成，冻结 fixture 只覆盖表名集合。 |
+| F2-06 | 版本连续守卫 | **PASS（已修）** | `test_upgrade_from_v1_creates_later_version_objects` 断言 `LEGACY_VERSIONS == list(range(1, LATEST_VERSION))`。 |
+
+### Round 3 Findings
+
+| ID | 级别 | 文件/行 | 触发与影响 | 复现证据 | 建议 | 状态 |
+|---|---|---|---|---|---|---|
+| F3-01 | P2 | `tests/storage/test_upgrade_schema_data.py:335-351`；`EXPECTED` 机制 | `_seed_v2` 写入 `region_revisions.source_run_id=NULL`，但 `_record` 未记录该列；`_assert_expected` 无法发现它被迁移改成非 NULL。全列声明有 1 个 NULL 列缺口。 | 独立探针 `EXPECTED['region_revisions']` 无 `source_run_id`；SQL 却写入该列 | 把 `source_run_id=None` 加入 `_record`；可选补一个非 NULL 的 `source_run_id` 关系。 | open（P2） |
+| F3-02 | P2 | `tests/storage/test_upgrade_schema_data.py:623-635` | `_assert_expected` 只验证“seed 行存在且列值相同”，不检测迁移新增/重复行或行数变化；若迁移多插/复制行仍可通过。 | 读取 `_assert_expected` 仅按 ID 查询 | 迁移前后统计每表行数（或查询 `EXPECTED` 之外的意外行）并断言一致。 | open（P2） |
+| F3-03 | P2 | `tests/storage/test_upgrade_schema_data.py:638-671` | `_assert_latest` 只抽查部分关键列/两个索引/一个外键；其他列/索引/外键缺失仍可能通过。 | 读取 `expected_columns`/`index_list`/`foreign_key_list` 列表 | 可选扩展到每张表完整列/索引/外键，或明确它只是关键结构冒烟检查。 | open（P2） |
+| F3-04 | P2 | `tests/storage/test_upgrade_schema_data.py:39-57, 156-165` | 旧库仍由生产 `MIGRATIONS` 合成；`FROZEN_V1_TABLES` 只能发现表集合变化，不能发现 v1/v2 列/SQL 变化（可能同时改变合成旧库和升级两端）。 | 代码路径 | 可增加冻结的 v1 schema 列清单或固定 SQL snapshot；不阻塞本卡。 | open（P2） |
+
+### Round 3 验证
+
+| 场景 | 命令/步骤 | 结果 | 证据 |
+|---|---|---|---|
+| 指定单测 | `python -m pytest tests/storage/test_upgrade_schema_data.py -q`（repo root） | **PASS：11 passed in 2.58s** | 本次实跑；`unit-tests.log` 为 11 passed |
+| v5 四张重建表 seed 行数 | `_build_legacy_database(..., 5)` 后查表 | **PASS**：pipeline_run_targets=1、pipeline_tasks=1、step_runs=1、step_result_candidates=1、book_cleanup_manifests=1 | 本次独立探针 |
+| `FROZEN_V1_TABLES` | 实际 v1 表集合 vs 常量 | **PASS**：extra=[]、missing=[]；实际 8 表完全相等 | 本次独立探针 |
+| 全列覆盖 | 检查 `EXPECTED` 的 table/column | 16 张 seed 表均记录；除 F3-01 的 `region_revisions.source_run_id` 外，seed 列均被 `_assert_expected` 检查 | 本次独立探针 + 静态核对 |
+| 证据 pin | 3 个 sha256（unit 888a10b9…、full fee8d85a4…、summary be4cdad2…） | **PASS：3/3 匹配** | 本次实算 |
+| 日志头 | unit/full/summary | **PASS**：均 5 行命令头 + `EXIT=0`；summary 含 RESULT | 文件读取 |
+| 门禁 | `check.ps1 -TaskPath doc/tasks/UPGRADE-SCHEMA-MIGRATION-1.md` | **PASS（3 warnings）** | 本次实跑 |
+| 改动范围 | `git show --name-status 43a76b204` | 仅测试 + 3 个证据文件；无 `src/**`/迁移 SQL | commit diff |
+
+**附带核验**：v5 四张重建表在迁移前确实各有 1 行，且 `EXPECTED` 对四张表逐列断言，因此“空表重建通过”的 round 2 P1 已闭环；`pipeline_tasks.step_run_ids_json` 与 `step_runs.step_run_id` 的关系也被 seed/断言。未发现版本错位：v1 测试只用 `V1_COLUMNS` 断言 v1 行，参数化用例按 `start_version` 渐进断言。
+
+### Round 3 结论
+
+**PASS @ `43a76b204`**（集成 merge `61601dc8c`，卡 `570684693`）：P0=0，P1=0。11 个单测通过；v5 四张重建表实测均有数据并逐列断言；`FROZEN_V1_TABLES` 与实际 v1 表集合完全一致；3/3 证据 pin 匹配，三份证据均有 5 行命令头，`check.ps1` PASS，改动仅测试+证据、无产品代码/迁移 SQL。剩余 4 项 P2（`source_run_id` NULL 列未记录、未检测额外行、结构检查非全量、旧库仍由生产迁移合成）不阻塞本卡收口，建议后续测试维护时顺手补齐。
+
+复审结论仅对 `43a76b204` 有效；后续 head 变化需重新审查。

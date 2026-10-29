@@ -77,6 +77,7 @@ allowed_paths:
 - **round 3 返修**：seed v3/v4 的 step_runs/step_result_candidates（含 `step_run_ids_json` 关系）→ v5 后逐列断言；`EXPECTED` 全列断言机制；
   `_assert_latest` 增列/索引/外键检查；`FROZEN_V1_TABLES` + 版本连续守卫；三份证据均带 5 行命令头。
 - 复审：**待 region-workbench-owner 再审 `61601dc8c`**。
+- 独立复审 round 3（region-workbench-owner，reviewed_head `43a76b204`）：**PASS**（P0=0，P1=0；11 passed、v5 四张重建表实测各 1 行且 EXPECTED 逐列断言、FROZEN_V1_TABLES 与实际 v1 表集合完全一致、3/3 pin、三份证据 5 行命令头、check PASS；剩余 4×P2：region_revisions.source_run_id NULL 未记录、未检测额外行、_assert_latest 结构检查非全量、旧库仍由生产 MIGRATIONS 合成）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-1.md) 的 Round 3 Review。
 
 ## Canonical Evidence
 
