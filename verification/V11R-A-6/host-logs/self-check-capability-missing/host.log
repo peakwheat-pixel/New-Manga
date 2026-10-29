@@ -1,0 +1,9 @@
+2026-10-29T18:15:46.1064557+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.62ccaa189826 (abandoned_recovered=False)
+2026-10-29T18:15:46.1065061+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\self-check-capability-missing-46fc910f93
+2026-10-29T18:15:46.1065541+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T18:15:46.5109275+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T18:15:46.5912696+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T18:15:46.5914435+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T18:15:46.5920497+00:00 INFO host-control session opened (host_xDYKlDf4UvoUJm4jIaW_18ErZjiALhKS7k-EtKracuw)
+2026-10-29T18:15:46.5927970+00:00 INFO self-check status=Failed code=CORE_CAPABILITY_MISSING detail=capabilities=[settings.get]
+2026-10-29T18:15:46.5928066+00:00 WARN self-check blocked writes: CORE_CAPABILITY_MISSING Core 未声明能力 library.list_books，写入已关闭。

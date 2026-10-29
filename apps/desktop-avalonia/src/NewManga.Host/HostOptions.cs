@@ -1,3 +1,5 @@
+using NewManga.CoreClient;
+
 namespace NewManga.Host;
 
 public enum HostStatus
@@ -71,6 +73,12 @@ public sealed class HostOptions
 
     /// <summary>Test seam for legacy-shell detection.</summary>
     public IProcessNameProbe? ProcessProbe { get; init; }
+
+    /// <summary>
+    /// V11R-A-6 test seam for the startup contract self check: null uses the live
+    /// <c>core.ping</c>; tests inject a mismatching CorePing to prove the write gate closes.
+    /// </summary>
+    public Func<CancellationToken, Task<CorePing>>? StartupPingProbe { get; init; }
 
     public bool EnableWireEvidence { get; init; } = true;
 }

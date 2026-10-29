@@ -74,11 +74,65 @@
 | GUI 控制器默认可写、`--parity=false` 只读 + `ReadOnlyReason` + `HOST_READ_ONLY` | `tests/NewManga.App.Tests/WritePolicyUiIntegrationTests` |
 | 全量回归 | `verification/V11R-A-5/logs/dotnet-test-full.log`（0 failed / 0 skipped） |
 
-## 6. 风险与遗留
+## 6. 启动自检（V11R-A-6，A-5 遗留 #1）
+
+Host 启动、Core 握手成功后执行一次**契约自检**（`StartupSelfCheck`，`HostRuntime.SelfCheck`），
+目标是"Core/Host 契约漂移时先降级只读并给出 typed error"，而不是让用户第一次写入才失败。
+
+### 6.1 可低成本验证的面
+
+`core.ping` 只公开：`status`、`protocol_version{major,minor}`、`capabilities`（当前仅
+`["library.list_books"]`）。**没有完整命令面枚举**；在启动时逐条探测 66 条命令会执行写命令，不可接受。
+
+因此自检执行三项廉价校验：
+
+| 校验 | 失败码（typed） | 结果 |
+|---|---|---|
+| `core.ping.status == ready` | `CORE_NOT_READY` | 只读 |
+| `protocol_version.major == 2` | `PROTOCOL_VERSION_MISMATCH` | 只读 |
+| `protocol_version.minor >= 3`（`CoreProtocol.DefaultMinor`；7/8/10 是逐命令请求级扩展，不由 ping 报告） | `CORE_PROTOCOL_MINOR_TOO_OLD` | 只读 |
+| `capabilities` 含 `library.list_books` | `CORE_CAPABILITY_MISSING` | 只读 |
+
+全部通过 → `SelfCheckStatus.Degraded`（写入保持开启）：这是**诚实的降级状态**，不是"永远通过"——
+`HostRuntime.SelfCheck.Detail` 与 host.log 明确记录"完整命令面比对未执行（follow-up：Core 在
+`core.ping` 中提供命令面摘要）"。
+
+### 6.2 失败时的行为
+
+- 新增 `HostMode.ReadOnlySelfCheckFailed`；`DataRootPolicy.WritesAllowed=false`；
+- `HostStartResult`：`Status=Ready`（sidecars 已启动，只读浏览可用）、`Mode=ReadOnlySelfCheckFailed`、
+  `ErrorCode=<上表 typed code>`、`UserMessage=<中文原因>`；
+- UI：`HostViewSnapshot.WritesAllowed=false`、`ReadOnlyReason="只读（启动自检失败）"`、`ErrorCode` 可见；
+- 写 API 抛 `ReadOnlyHostException.Code=HOST_READ_ONLY`；
+- 诊断：host.log 输出 `self-check status=… code=… detail=…`（不含路径/凭据）。
+
+### 6.3 探测本身失败
+
+`StartupSelfCheck.RunAsync` 的探测抛 `SidecarException`/`CoreOperationException`/取消时：
+**保持 ReadWrite**，记录 `SelfCheckStatus.Degraded` + `ErrorCode=SELF_CHECK_PROBE_FAILED` + 诊断；
+理由：启动阶段 `core.ping` 握手已经成功，一次自检请求失败不足以判定 Core 不可用（且用户主旅程优先）。
+
+### 6.4 测试与证据
+
+- 单测（无需 sidecar）：`StartupSelfCheckTests` 覆盖匹配/主版本/次版本/能力/未 ready/探测失败；
+- 集成（真实 sidecar）：真实 Core → `Degraded` + `ReadWrite` + 真实建书成功；
+- 故障注入（真实 sidecar + `HostOptions.StartupPingProbe`）：主版本不匹配 → `ReadOnlySelfCheckFailed`
+  + `PROTOCOL_VERSION_MISMATCH` + 写拒绝；能力缺失 → `CORE_CAPABILITY_MISSING`；
+- UI：`StartupSelfCheckUiTests`（App 控制器快照只读 + 原因 + typed error）；
+- 证据：`verification/V11R-A-6/`。
+
+### 6.5 Follow-up（不硬凑）
+
+1. Core 在 `core.ping` 暴露命令面摘要（例如 `command_surface_sha256` 或命令名列表）后，
+   自检可升级为真正比对 `HostCommandRegistry` 的 core-channel 集合 → `SelfCheckStatus.Passed`；
+   在此之前 `Degraded` 是准确状态（Core 侧归属：core-writer / V11R-F0-1 后续）。
+2. 每次启动的探测只发 1 条 `core.ping`（无额外进程、无写命令），成本可忽略。
+
+## 7. 风险与遗留
 
 1. **默认可写是必要能力**，安全网 = 旧壳共存门 + 显式只读开关 + first-run 备份；三者均有测试。
-2. **启动自检（Core 命令面 vs 注册表）未实现**：任务卡列为"可选但推荐"。当前以
-   `core.ping` 握手 + 既有 parity 注册表测试覆盖；运行时自检降级只读登记为 follow-up
-   （建议并入 `V11R-A-4` 或后续运维任务），避免在 P0 修复里硬凑。
+2. **启动自检已实现基础版（V11R-A-6）**：协议版本 + 能力集 + ready 三项廉价校验；不匹配 → 只读
+   + typed error。**完整命令面比对仍待 Core 在 `core.ping` 暴露命令面摘要**（见 §6.5 follow-up），
+   当前通过时状态为 `Degraded`（诚实降级，非静默通过）。
 3. **旧壳共存策略不变**：检测到旧壳时仍"只读 + 提示"，不杀进程、不双写。
 4. **安装器无需改动**：默认参数即写入；`--parity=false` 仅排障/回滚用。

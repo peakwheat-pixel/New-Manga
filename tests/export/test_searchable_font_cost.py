@@ -30,10 +30,17 @@ pymupdf = pytest.importorskip("pymupdf", reason="PyMuPDF is required")
 # V11R-A-4: repo-relative assets; NEWMANGA_GOLDEN_ASSETS overrides for an out-of-tree asset root.
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ASSETS = os.environ.get("NEWMANGA_GOLDEN_ASSETS") or str(REPO_ROOT / "test_assets" / "comic_golden_suite")
-if not os.path.isdir(ASSETS):
+def _asset_pages():
+    for root, _, files in os.walk(os.path.join(ASSETS, "日漫_JA")):
+        for name in sorted(files):
+            if name.lower().endswith((".jpg", ".png", ".jpeg")):
+                yield os.path.join(root, name)
+
+
+if next(_asset_pages(), None) is None:
     pytest.skip(
-        f"comic_golden_suite assets missing at {ASSETS}; set NEWMANGA_GOLDEN_ASSETS "
-        "or check out the asset bundle (environmental, not a product failure)",
+        f"no comic page images under {ASSETS}/日漫_JA (tracked manifests only); set "
+        "NEWMANGA_GOLDEN_ASSETS or check out the asset bundle (environmental, not a product failure)",
         allow_module_level=True,
     )
 

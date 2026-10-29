@@ -27,10 +27,17 @@ Image.MAX_IMAGE_PIXELS = 200_000_000
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT = os.environ.get("NEWMANGA_GOLDEN_ASSETS") or str(REPO_ROOT / "test_assets" / "comic_golden_suite")
 KOREAN_TREE = os.path.join(ROOT, "韩漫_KO")
-if not os.path.isdir(KOREAN_TREE):
+def _korean_pages():
+    for root, _, files in os.walk(KOREAN_TREE):
+        for name in files:
+            if name.lower().endswith((".png", ".jpg", ".jpeg")):
+                yield os.path.join(root, name)
+
+
+if next(_korean_pages(), None) is None:
     pytest.skip(
-        f"Korean comic assets missing at {KOREAN_TREE}; set NEWMANGA_GOLDEN_ASSETS "
-        "or check out the asset bundle (environmental, not a product failure)",
+        f"no Korean page images under {KOREAN_TREE} (tracked manifests only); set "
+        "NEWMANGA_GOLDEN_ASSETS or check out the asset bundle (environmental, not a product failure)",
         allow_module_level=True,
     )
 KOREAN_TEXT = "안녕하세요 세계"

@@ -1,0 +1,8 @@
+{
+  "stale_policy": "continue_existing",
+  "frame_sent": true,
+  "typed_error": "TARGET_NOT_FOUND",
+  "frames_in_call": 3,
+  "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-8\u0022,\u0022command\u0022:\u0022StartExport\u0022,\u0022payload\u0022:{\u0022book_id\u0022:\u002200000000000000000000000000000000\u0022,\u0022chapter_ids\u0022:[\u002211111111111111111111111111111111\u0022],\u0022ordered_page_ids\u0022:[\u002222222222222222222222222222222222\u0022],\u0022format\u0022:\u0022zip\u0022,\u0022format_options\u0022:{\u0022compression\u0022:\u0022standard\u0022},\u0022stale_policy\u0022:\u0022continue_existing\u0022,\u0022target_ref\u0022:\u0022etref1.grant_rA2uxqTQChCE6QkBb6KNhcgahhsDAsTKulKAWmrhUAw.gFs8EWqmB2NwBHMsJm5vujN9ZSLn41PVEE5K-fPlHJw\u0022}}",
+  "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-8\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022TARGET_NOT_FOUND\u0022,\u0022category\u0022:\u0022not_found\u0022,\u0022message\u0022:\u0022Export target was not found\u0022,\u0022retryable\u0022:false}}"
+}

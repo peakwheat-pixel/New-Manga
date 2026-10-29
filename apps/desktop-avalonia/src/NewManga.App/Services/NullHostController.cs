@@ -243,6 +243,7 @@ public sealed class NullHostController : IHostController
         string targetPath,
         string format = "zip",
         string? pdfContent = null,
+        string? stalePolicy = null,
         CancellationToken cancellationToken = default) =>
         Task.FromResult<ExportStartInfo?>(null);
 

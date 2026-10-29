@@ -1,0 +1,6 @@
+report: G:\CODEX\New Manga.workspace\task-envs\V11R-A-4\logs\clean-clone.json
+clean-clone check: files=17238 hard_failures=0 allowed_hits=127086
+model weights: SKIPPED
+long paths: enabled
+OK: no machine-absolute paths in operational files; CI inputs locatable.
+EXIT=0

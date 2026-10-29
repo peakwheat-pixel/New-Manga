@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <!--
+      V11R-A-6 test infrastructure: the three test assemblies each create their own temp SQLite data
+      roots, but running the assemblies concurrently (the default `dotnet test <solution>` behaviour)
+      still opens several SQLite catalogs in parallel on the same machine; on Windows the WAL/-shm
+      siblings of a just-deleted temp root can briefly collide. MaxCpuCount=1 serializes the test
+      hosts, which removes that contention without `dotnet test -m:1` (that switch only limits MSBuild
+      parallelism, not the VSTest host parallelism this setting controls).
+    -->
+    <MaxCpuCount>1</MaxCpuCount>
+  </RunConfiguration>
+</RunSettings>

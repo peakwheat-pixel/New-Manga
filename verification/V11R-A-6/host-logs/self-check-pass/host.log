@@ -1,0 +1,8 @@
+2026-10-29T18:15:41.5231438+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.2ca9bc104567 (abandoned_recovered=False)
+2026-10-29T18:15:41.5232025+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\self-check-pass-fff29644ce
+2026-10-29T18:15:41.5232617+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T18:15:41.9820838+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T18:15:42.0882221+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T18:15:42.0884276+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T18:15:42.0892123+00:00 INFO host-control session opened (host_BKm0rZx3ANXys8TLbY_8iFdPWEOtyhGySXooFASD7T4)
+2026-10-29T18:15:42.0908003+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

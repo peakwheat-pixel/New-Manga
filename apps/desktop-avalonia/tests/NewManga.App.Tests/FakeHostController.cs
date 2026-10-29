@@ -579,7 +579,8 @@ public sealed class FakeHostController : IHostController
 
     public int TranslatedPageCalls { get; private set; }
 
-    public List<(string BookId, string ChapterId, IReadOnlyList<string> PageIds, string TargetPath, string Format, string? PdfContent)> StartExportCalls { get; } = new();
+    /// <summary>V11R-A-7: stale policy the UI asked for (null = the controller's default abort).</summary>
+    public List<(string BookId, string ChapterId, IReadOnlyList<string> PageIds, string TargetPath, string Format, string? PdfContent, string? StalePolicy)> StartExportCalls { get; } = new();
 
     public Queue<ExportStartInfo?> ScriptedStartResults { get; } = new();
 
@@ -639,9 +640,10 @@ public sealed class FakeHostController : IHostController
         string targetPath,
         string format = "zip",
         string? pdfContent = null,
+        string? stalePolicy = null,
         CancellationToken cancellationToken = default)
     {
-        StartExportCalls.Add((bookId, chapterId, orderedPageIds, targetPath, format, pdfContent));
+        StartExportCalls.Add((bookId, chapterId, orderedPageIds, targetPath, format, pdfContent, stalePolicy));
         if (ScriptedStartResults.Count > 0)
         {
             return Task.FromResult(ScriptedStartResults.Dequeue());

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="10781c09-4e6d-41c4-8004-419dc319ad10" name="49745@HOME-MY 2026-10-30 02:15:56" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-30T02:15:56.5289949+08:00" queuing="2026-10-30T02:15:56.5289950+08:00" start="2026-10-30T02:15:51.5015540+08:00" finish="2026-10-30T02:15:56.5337839+08:00" />
+  <TestSettings name="default" id="300034f5-19b7-460b-9605-a73ab6a902c4">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-30_02_15_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dc95c43e-5d39-4347-be35-4e83aa378753" testId="e732d9b1-f98c-684f-0eb3-580a9b3ddc16" testName="NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot" computerName="HOME-MY" duration="00:00:04.5353253" startTime="2026-10-30T02:15:56.4427022+08:00" endTime="2026-10-30T02:15:56.4427117+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc95c43e-5d39-4347-be35-4e83aa378753" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="e732d9b1-f98c-684f-0eb3-580a9b3ddc16">
+      <Execution id="dc95c43e-5d39-4347-be35-4e83aa378753" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.StartupSelfCheckUiTests" name="SelfCheckFailure_IsVisibleInTheSnapshot" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e732d9b1-f98c-684f-0eb3-580a9b3ddc16" executionId="dc95c43e-5d39-4347-be35-4e83aa378753" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.05]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.08]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.08]   Starting:    NewManga.App.Tests&#xD;
+[xUnit.net 00:00:04.64]   Finished:    NewManga.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

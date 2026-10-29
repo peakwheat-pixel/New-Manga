@@ -1,0 +1,9 @@
+2026-10-29T18:15:36.9747359+00:00 INFO single-instance acquired: Local\NewManga.Host.Test.e0daedd31789 (abandoned_recovered=False)
+2026-10-29T18:15:36.9766193+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\self-check-protocol-mismatch-51cc36f2ad
+2026-10-29T18:15:36.9770339+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T18:15:37.3956315+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T18:15:37.4856705+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T18:15:37.4861267+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T18:15:37.4884449+00:00 INFO host-control session opened (host_QMU4lKFwKZIR_Ee82ckYH73c5haJfNuzm8ySUcYPcBE)
+2026-10-29T18:15:37.4903134+00:00 INFO self-check status=Failed code=PROTOCOL_VERSION_MISMATCH detail=core_protocol=3.3
+2026-10-29T18:15:37.4903589+00:00 WARN self-check blocked writes: PROTOCOL_VERSION_MISMATCH Core 协议主版本 3 与 Host 期望 2 不一致，写入已关闭。
