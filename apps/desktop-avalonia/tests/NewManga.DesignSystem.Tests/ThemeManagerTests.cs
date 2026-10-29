@@ -134,6 +134,104 @@ public sealed class ThemeManagerTests
     }
 
     [AvaloniaFact]
+    public void Apply_palette_replaces_only_the_color_layer_and_revert_restores_builtin()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        Assert.Equal(DesignSystemThemeManager.BuiltinDarkPaletteId, manager.AppliedPaletteId);
+
+        var globalBefore = ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3);
+        var custom = CompletePalette(palette =>
+        {
+            palette[NmKeys.Color.Bg.Canvas] = new SolidColorBrush(Color.Parse("#FF112233"));
+            palette[NmKeys.Color.Bg.Panel] = new SolidColorBrush(Color.Parse("#FF223344"));
+        });
+
+        Assert.True(manager.ApplyPalette(custom, "user.ocean"), manager.LastError);
+        Assert.Equal("user.ocean", manager.AppliedPaletteId);
+        Assert.Equal(Color.Parse("#FF112233"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Equal(Color.Parse("#FF223344"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Panel));
+        // Global (size/spacing/typography) semantics are untouched by a palette swap.
+        Assert.Equal(globalBefore, ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3));
+        Assert.Equal(28d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.ControlHeight));
+
+        Assert.True(manager.RevertPalette(), manager.LastError);
+        Assert.Equal(DesignSystemThemeManager.BuiltinDarkPaletteId, manager.AppliedPaletteId);
+        Assert.Equal(Color.Parse("#FF0F1012"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+    }
+
+    [AvaloniaFact]
+    public void Apply_palette_refreshes_a_live_visual_tree()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+
+        var border = new Border { Classes = { "card" } };
+        var window = new Window { Width = 320, Height = 200, Content = border };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(Color.Parse("#FF1A1C1F"), ((SolidColorBrush)border.Background!).Color);
+
+        var custom = CompletePalette(palette =>
+            palette[NmKeys.Color.Bg.Panel] = new SolidColorBrush(Color.Parse("#FF445566")));
+        Assert.True(manager.ApplyPalette(custom, "user.refresh"), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(Color.Parse("#FF445566"), ((SolidColorBrush)border.Background!).Color);
+
+        Assert.True(manager.RevertPalette(), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(Color.Parse("#FF1A1C1F"), ((SolidColorBrush)border.Background!).Color);
+        Assert.True(window.IsVisible);
+
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Apply_palette_with_missing_keys_is_rejected_without_changing_state()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        var canvasBefore = ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas);
+        var idBefore = manager.AppliedPaletteId;
+
+        var incomplete = CompletePalette(palette => palette.Remove(NmKeys.Color.Status.Failed));
+
+        Assert.False(manager.ApplyPalette(incomplete, "user.broken"));
+        Assert.NotNull(manager.LastError);
+        Assert.Contains("not a complete color layer", manager.LastError, StringComparison.Ordinal);
+        Assert.Equal(canvasBefore, ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Equal(idBefore, manager.AppliedPaletteId);
+    }
+
+    [AvaloniaFact]
+    public void Apply_palette_with_non_brush_values_is_rejected()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        var textBefore = ThemeTestHarness.ColorOf(app, NmKeys.Color.Text.Primary);
+
+        var invalid = CompletePalette(palette => palette[NmKeys.Color.Text.Primary] = "not-a-brush");
+
+        Assert.False(manager.ApplyPalette(invalid, "user.invalid-types"));
+        Assert.NotNull(manager.LastError);
+        Assert.Equal(textBefore, ThemeTestHarness.ColorOf(app, NmKeys.Color.Text.Primary));
+    }
+
+    [AvaloniaFact]
+    public void Appearance_switch_after_a_custom_palette_returns_to_the_builtin_palette()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+
+        var custom = CompletePalette(palette =>
+            palette[NmKeys.Color.Bg.Canvas] = new SolidColorBrush(Color.Parse("#FF010203")));
+        Assert.True(manager.ApplyPalette(custom, "user.temporary"), manager.LastError);
+
+        Assert.True(manager.SetAppearance(AppearanceMode.Light), manager.LastError);
+        Assert.Equal(DesignSystemThemeManager.BuiltinLightPaletteId, manager.AppliedPaletteId);
+        Assert.Equal(Color.Parse("#FFF4F3F0"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+    }
+
+    [AvaloniaFact]
     public void Reset_to_defaults_restores_the_shipped_stack()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
@@ -160,6 +258,22 @@ public sealed class ThemeManagerTests
         brush is SolidColorBrush solid
             ? solid.Color
             : throw new InvalidOperationException($"{label} is not a solid color brush");
+
+    /// <summary>Copies the shipped dark palette into a fresh dictionary, then applies an optional mutation.</summary>
+    private static ResourceDictionary CompletePalette(Action<ResourceDictionary>? mutate = null)
+    {
+        var source = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://NewManga.DesignSystem/Themes/Tokens.Dark.axaml"));
+        var palette = new ResourceDictionary();
+        foreach (var key in DesignSystemThemeManager.PaletteColorKeys)
+        {
+            Assert.True(source.TryGetResource(key, ThemeVariant.Default, out var value), $"builtin palette lacks {key}");
+            palette[key] = value;
+        }
+
+        mutate?.Invoke(palette);
+        return palette;
+    }
 
     private sealed class BrokenResourceSource : IDesignSystemResourceSource
     {
