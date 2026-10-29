@@ -1,0 +1,183 @@
+{
+  "fallbackInjected": true,
+  "pixels": [
+    "(100,100)=#ff0b0c0e",
+    "(700,500)=#fff2efe8",
+    "(1400,500)=#ff0b0c0e",
+    "(1580,500)=#ff0b0c0e",
+    "(700,950)=#ff0b0c0e"
+  ],
+  "widgets": {
+    "zoomText": {
+      "bounds": "193, 10, 42, 13",
+      "text": null
+    },
+    "statusText": {
+      "bounds": "61, 0, 0, 14",
+      "text": null
+    },
+    "pipelineHeader": {
+      "bounds": "122, 8, 0, 16",
+      "text": "",
+      "visible": true
+    },
+    "pipelineToggle": {
+      "bounds": "0, 0, 114, 32",
+      "content": "\u25B8 \u5C55\u5F00 10 \u9636\u6BB5",
+      "visible": true
+    },
+    "pipelineBand": {
+      "bounds": "0, 28, 1600, 28"
+    },
+    "trackStrip": {
+      "bounds": "8, 4, 1584, 22"
+    },
+    "inspector": {
+      "bounds": "1560, 0, 40, 908",
+      "rail": "0, 0, 40, 908"
+    }
+  },
+  "tree": [
+    "StudioCanvasViewport [0, 0, 1504, 844] bg=#ff0b0c0e border=null classes=studio-viewport",
+    "  Canvas [0, 0, 1504, 844] bg=- border=- classes=",
+    "    Canvas [236, 0, 1032, 1428] bg=- border=- classes=",
+    "      Border [0, 0, 0, 0] bg=#ff0b0c0e border=null classes=studio-sunken",
+    "        Border [0, 0, 0, 0] bg=null border=null classes=",
+    "          TextBlock [0, 0, 0, 0] bg=- border=- classes=nm-meta",
+    "      Border [0, 0, 1032, 1428] bg=null border=#1affffff classes=studio-page-shadowless",
+    "        Grid [1, 1, 1030, 1426] bg=- border=- classes=",
+    "          Border [0, 0, 1030, 1426] bg=null border=null classes=",
+    "            Image [0, 0, 1030, 1426] bg=- border=- classes=",
+    "          Border [0, 0, 0, 0] bg=#ff0b0c0e border=null classes=studio-sunken",
+    "            Border [0, 0, 0, 0] bg=null border=null classes=",
+    "          Border [0, 0, 0, 0] bg=#1affffff border=null classes=studio-divider",
+    "      StudioRegionOverlay [0, 0, 1032, 1428] bg=- border=- classes=",
+    "        StudioRegionBox [103, 143, 413, 286] bg=Transparent border=#ffd9a04b classes=studio-region,selected",
+    "          Canvas [2, 2, 409, 282] bg=- border=- classes=",
+    "            Border [2, 2, 34, 16] bg=#ff2a2e34 border=#1affffff classes=studio-region-label",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "        StudioRegionBox [568, 428, 207, 215] bg=Transparent border=#29ffffff classes=studio-region",
+    "          Canvas [1, 1, 205, 213] bg=- border=- classes=",
+    "            Border [2, 2, 34, 16] bg=#ff2a2e34 border=#1affffff classes=studio-region-label",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "        StudioRegionBox [206, 857, 516, 357] bg=Transparent border=#29ffffff classes=studio-region",
+    "          Canvas [1, 1, 514, 355] bg=- border=- classes=",
+    "            Border [2, 2, 34, 16] bg=#ff2a2e34 border=#1affffff classes=studio-region-label",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "            Border [0, 0, 0, 0] bg=#ff2a2e34 border=#1affffff classes=studio-region-badge",
+    "      StudioHudRingControl [0, 0, 1032, 1428] bg=- border=- classes=",
+    "        Button [299, 117, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [520, 117, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [520, 275, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [520, 432, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [299, 432, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [77, 432, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [77, 275, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes=",
+    "        Button [77, 117, 22, 22] bg=- border=- classes=studio-hud-slot",
+    "          Border [0, 0, 22, 22] bg=Transparent border=#1affffff classes=",
+    "            ContentPresenter [1, 1, 20, 20] bg=- border=- classes="
+  ],
+  "window": {
+    "width": 1600,
+    "height": 1000
+  },
+  "viewport": "0, 0, 1504, 844",
+  "viewportSize": "1504, 844",
+  "content": "1032, 1427.6",
+  "pageFrame": "0, 0, 1032, 1428",
+  "pageFrameBorder": "#1affffff",
+  "imageSource": "1200, 1660",
+  "offsetX": 236,
+  "offsetY": 0,
+  "zoom": 0.86,
+  "selected": "region-1",
+  "hudVisible": true,
+  "boxes": [
+    {
+      "id": "region-1",
+      "bounds": "103, 143, 413, 286",
+      "border": "#ffd9a04b",
+      "thickness": "2,2,2,2",
+      "classes": "studio-region,selected",
+      "visible": true,
+      "parentIsOverlay": true
+    },
+    {
+      "id": "region-2",
+      "bounds": "568, 428, 207, 215",
+      "border": "#29ffffff",
+      "thickness": "1,1,1,1",
+      "classes": "studio-region",
+      "visible": true,
+      "parentIsOverlay": true
+    },
+    {
+      "id": "region-3",
+      "bounds": "206, 857, 516, 357",
+      "border": "#29ffffff",
+      "thickness": "1,1,1,1",
+      "classes": "studio-region",
+      "visible": true,
+      "parentIsOverlay": true
+    }
+  ],
+  "tracks": [
+    {
+      "Key": "source",
+      "Glyph": "\u25CF",
+      "Detail": "1200\u00D71660"
+    },
+    {
+      "Key": "text",
+      "Glyph": "\u2013",
+      "Detail": "3 \u533A \u00B7 \u72B6\u6001\u5F85\u63A5\u5165"
+    },
+    {
+      "Key": "inpaint",
+      "Glyph": "\u2013",
+      "Detail": "\u72B6\u6001\u5F85\u63A5\u5165"
+    },
+    {
+      "Key": "render",
+      "Glyph": "\u2013",
+      "Detail": "\u72B6\u6001\u5F85\u63A5\u5165"
+    }
+  ],
+  "notWired": [
+    "CreateRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "DeleteRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "MoveRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ResizeRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "MergeRegions: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SplitRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ReorderRegions: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SaveEditedTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SaveFinalTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ConfirmFinal: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockPage: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockInpaint: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "PinRevision: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "IRunDataSource: NOT_WIRED\uFF08GetTaskProjection / V11R-A-2 \u672A\u5408\u5165\uFF09",
+    "IRegionTextSource: NOT_WIRED\uFF08\u56DB\u7EA7\u6587\u672C\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09",
+    "IRegionFlagSource: NOT_WIRED\uFF08\u56DB\u628A\u9501 / \u5931\u8D25\u89D2\u6807\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09",
+    "PageSurface.Final/Split: NOT_WIRED\uFF08\u6210\u54C1\u9875\u8D44\u6E90\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09"
+  ]
+}
