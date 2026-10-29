@@ -26,6 +26,15 @@ public sealed class HostCommandInvalidArgumentsException : Exception
 /// </summary>
 public sealed class HostCommandDispatcher
 {
+    // I2/P2-E: the Region write face's bounded input limits (contract v1.3
+    // §1.3/§2). The SAME numbers are enforced by the Core before persistence;
+    // rejecting them here keeps obviously-invalid requests from ever opening a
+    // long write transaction.
+    private const int MaxRegionsPerPage = 500;
+    private const int MaxRegionIdsPerBatch = 64;
+    private const int MaxSplitParts = 64;
+    private const int MaxGeometryPoints = 512;
+
     private readonly CoreServiceClient? _core;
     private readonly HostBridgeClient? _bridge;
     private readonly Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? _hostLocal;
@@ -434,7 +443,7 @@ public sealed class HostCommandDispatcher
             case "merge_regions":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
                 writer.WritePropertyName("region_ids");
-                WriteRequiredStringArray(writer, name, payload, "region_ids", minimum: 2);
+                WriteRequiredStringArray(writer, name, payload, "region_ids", minimum: 2, maximum: MaxRegionIdsPerBatch);
                 WriteOptionalRevisionsMap(writer, name, payload, "expected_revisions");
                 break;
             case "split_region":
@@ -445,7 +454,7 @@ public sealed class HostCommandDispatcher
             case "reorder_regions":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
                 writer.WritePropertyName("ordered_region_ids");
-                WriteRequiredStringArray(writer, name, payload, "ordered_region_ids");
+                WriteRequiredStringArray(writer, name, payload, "ordered_region_ids", minimum: 1, maximum: MaxRegionsPerPage);
                 WriteOptionalRevisionsMap(writer, name, payload, "expected_revisions");
                 break;
             case "save_manual_translation":
@@ -504,7 +513,8 @@ public sealed class HostCommandDispatcher
         JsonElement args,
         string property,
         bool requireNonEmpty = true,
-        int minimum = 1)
+        int minimum = 1,
+        int maximum = int.MaxValue)
     {
         var minimumCount = Math.Max(requireNonEmpty ? 1 : 0, minimum);
         if (!args.TryGetProperty(property, out var value) ||
@@ -513,6 +523,14 @@ public sealed class HostCommandDispatcher
         {
             throw new HostCommandInvalidArgumentsException(
                 command, $"missing required string[] argument '{property}'");
+        }
+
+        // I2/P2-E: bounded input; the Core enforces the same contract limit
+        // (a huge list runs inside ONE write transaction).
+        if (value.GetArrayLength() > maximum)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' supports at most {maximum} entries");
         }
 
         writer.WriteStartArray();
@@ -591,7 +609,7 @@ public sealed class HostCommandDispatcher
         writer.WritePropertyName(property);
         writer.WriteStartObject();
         writer.WritePropertyName("points");
-        WritePointArray(writer, command, points, $"{property}.points", minimum: 2);
+        WritePointArray(writer, command, points, $"{property}.points", minimum: 2, maximum: MaxGeometryPoints);
         writer.WriteEndObject();
     }
 
@@ -613,13 +631,19 @@ public sealed class HostCommandDispatcher
                 command, $"missing required parts argument '{property}' (at least two point lists)");
         }
 
+        if (parts.GetArrayLength() > MaxSplitParts)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' supports at most {MaxSplitParts} point lists");
+        }
+
         writer.WritePropertyName(property);
         writer.WriteStartArray();
         var index = 0;
         foreach (var part in parts.EnumerateArray())
         {
             index += 1;
-            WritePointArray(writer, command, part, $"{property}[{index}]", minimum: 2);
+            WritePointArray(writer, command, part, $"{property}[{index}]", minimum: 2, maximum: MaxGeometryPoints);
         }
 
         writer.WriteEndArray();
@@ -630,12 +654,20 @@ public sealed class HostCommandDispatcher
         string command,
         JsonElement array,
         string label,
-        int minimum)
+        int minimum,
+        int maximum = int.MaxValue)
     {
         if (array.ValueKind != JsonValueKind.Array || array.GetArrayLength() < minimum)
         {
             throw new HostCommandInvalidArgumentsException(
                 command, $"argument '{label}' needs at least {minimum} [x, y] points");
+        }
+
+        // I2/P2-E: bounded vertex count (contract v1.3 §1.3).
+        if (array.GetArrayLength() > maximum)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{label}' supports at most {maximum} points");
         }
 
         writer.WriteStartArray();

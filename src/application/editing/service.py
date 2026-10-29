@@ -54,7 +54,12 @@ from application.editing.ports import (
     RegionRepository,
     RegionRevisionCommitter,
 )
-from application.editing.region_canvas import page_geometry_to_normalized
+from application.editing.region_canvas import (
+    MAX_REGION_IDS_PER_BATCH,
+    MAX_REGIONS_PER_PAGE,
+    MAX_SPLIT_PARTS,
+    page_geometry_to_normalized,
+)
 from domain.regions.entities import (
     Region,
     RegionGeometry,
@@ -544,8 +549,14 @@ class RegionEditingService:
         sfx_policy: SfxPolicy = SfxPolicy.SKIP,
         origin: RegionOrigin = RegionOrigin.USER,
     ) -> Region:
+        existing = [r for r in self._repo.list_regions(page_id) if not r.deleted]
+        # I2/P2-E: bounded page input (same contract limit the wire enforces)
+        # so a page can never grow an unbounded batch later.
+        if len(existing) >= MAX_REGIONS_PER_PAGE:
+            raise ValueError(
+                f"page already has {MAX_REGIONS_PER_PAGE} live regions"
+            )
         if reading_order is None:
-            existing = [r for r in self._repo.list_regions(page_id) if not r.deleted]
             reading_order = max((r.reading_order for r in existing), default=0) + 1
         region = Region(
             region_id=_new_id(),
@@ -890,6 +901,10 @@ class RegionEditingService:
         """
         if len(region_ids) < 2:
             raise ValueError("merge needs at least two regions")
+        if len(region_ids) > MAX_REGION_IDS_PER_BATCH:
+            raise ValueError(
+                f"merge supports at most {MAX_REGION_IDS_PER_BATCH} regions"
+            )
         regions = [self._require_region(rid) for rid in region_ids]
         if any(region.page_id != page_id for region in regions):
             raise ValueError("merge is limited to regions of one page")
@@ -964,6 +979,10 @@ class RegionEditingService:
         source = self._require_region(region_id)
         if len(parts) < 2:
             raise ValueError("split needs at least two parts")
+        if len(parts) > MAX_SPLIT_PARTS:
+            raise ValueError(
+                f"split supports at most {MAX_SPLIT_PARTS} parts"
+            )
         expected_current_revision_id = self._resolve_expected_current(
             source, expected_revision_no
         )
@@ -1024,6 +1043,10 @@ class RegionEditingService:
         checked BEFORE the first revision is committed, and each committed
         region additionally carries its expected revision id into the seam's
         in-transaction re-check (zero write on any stale entry)."""
+        if len(ordered_region_ids) > MAX_REGIONS_PER_PAGE:
+            raise ValueError(
+                f"reorder supports at most {MAX_REGIONS_PER_PAGE} regions"
+            )
         regions = {region.region_id: region for region in self.list_regions(page_id)}
         missing = [rid for rid in ordered_region_ids if rid not in regions]
         if missing:

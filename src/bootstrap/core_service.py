@@ -186,6 +186,10 @@ from application.editing.errors import (
     RegionRevisionNotFound,
 )
 from application.editing.region_canvas import (
+    MAX_GEOMETRY_POINTS,
+    MAX_REGION_IDS_PER_BATCH,
+    MAX_REGIONS_PER_PAGE,
+    MAX_SPLIT_PARTS,
     RegionCanvasError,
     normalized_to_page_geometry,
     page_geometry_to_normalized,
@@ -2371,6 +2375,13 @@ class CoreServiceServer:
             raise RegionRequestError(
                 f"{command} '{label}' requires at least two [x, y] points"
             )
+        # I2/P2-E: bounded input (the whole batch runs in one write
+        # transaction; an unbounded polygon would hold the write lock).
+        if len(raw) > MAX_GEOMETRY_POINTS:
+            raise RegionRequestError(
+                f"{command} '{label}' supports at most"
+                f" {MAX_GEOMETRY_POINTS} points"
+            )
         points: list[tuple[float, float]] = []
         for item in raw:
             if not isinstance(item, list) or len(item) != 2:
@@ -2471,6 +2482,15 @@ class CoreServiceServer:
                 command, "'reading_order' must be a positive integer when present"
             )
         page_width, page_height = self._region_write_page_extent(page_id, command)
+        if (
+            len(self._core.editing.list_regions(page_id))
+            >= MAX_REGIONS_PER_PAGE
+        ):
+            raise self._region_write_error(
+                command,
+                f"page already has {MAX_REGIONS_PER_PAGE} live regions"
+                " (contract limit)",
+            )
         geometry = self._region_write_geometry(
             payload, page_width, page_height, command
         )
@@ -2579,6 +2599,11 @@ class CoreServiceServer:
                 " region ids",
             )
         region_ids = list(raw_ids)
+        if len(region_ids) > MAX_REGION_IDS_PER_BATCH:
+            raise self._region_write_error(
+                command,
+                f"'region_ids' supports at most {MAX_REGION_IDS_PER_BATCH} ids",
+            )
         expected = self._region_write_expected_revisions(payload, command)
         live_ids = {
             region.region_id for region in self._core.editing.list_regions(page_id)
@@ -2628,6 +2653,11 @@ class CoreServiceServer:
         if not isinstance(raw_parts, list) or len(raw_parts) < 2:
             raise self._region_write_error(
                 command, "requires 'parts': at least two point lists"
+            )
+        if len(raw_parts) > MAX_SPLIT_PARTS:
+            raise self._region_write_error(
+                command,
+                f"'parts' supports at most {MAX_SPLIT_PARTS} point lists",
             )
         stored = self._core.editing.get_region(region_id)
         page_width, page_height = self._region_write_page_extent(
@@ -2700,6 +2730,12 @@ class CoreServiceServer:
                 " non-empty region ids",
             )
         ordered = list(raw_ids)
+        if len(ordered) > MAX_REGIONS_PER_PAGE:
+            raise self._region_write_error(
+                command,
+                f"'ordered_region_ids' supports at most"
+                f" {MAX_REGIONS_PER_PAGE} ids",
+            )
         expected = self._region_write_expected_revisions(payload, command)
         live_ids = {
             region.region_id for region in self._core.editing.list_regions(page_id)

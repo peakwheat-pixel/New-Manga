@@ -26,6 +26,19 @@ from domain.regions.entities import BBox, RegionGeometry
 PAGE_SIZE_UNAVAILABLE = "PAGE_SIZE_UNAVAILABLE"
 TOO_FEW_POINTS = "TOO_FEW_POINTS"
 DEGENERATE_GEOMETRY = "DEGENERATE_GEOMETRY"
+TOO_MANY_POINTS = "TOO_MANY_POINTS"
+
+# I2/P2-E: hard input bounds for the Region write face. Every composite write
+# runs inside ONE BEGIN IMMEDIATE transaction with a 5 s busy timeout, so an
+# unbounded input would hold the SQLite write lock for an unbounded time and
+# starve every other writer (BUSY). These are wire-contract limits (v1.3
+# §1.3/§2) and are enforced fail-closed BEFORE any persistence; they are
+# deliberately generous for a single manga page while keeping the worst-case
+# transaction bounded.
+MAX_REGIONS_PER_PAGE = 500
+MAX_REGION_IDS_PER_BATCH = 64
+MAX_SPLIT_PARTS = 64
+MAX_GEOMETRY_POINTS = 512
 
 
 class RegionCanvasError(ValueError):

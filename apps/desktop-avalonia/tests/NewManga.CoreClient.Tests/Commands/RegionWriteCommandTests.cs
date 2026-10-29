@@ -267,6 +267,41 @@ public sealed class RegionWriteCommandTests
             document.RootElement.GetProperty("edited_translation").GetString());
     }
 
+    [Fact]
+    public void Dispatcher_RejectsOversizedBatches_BeforeAnyFrame()
+    {
+        // I2/P2-E (contract v1.3): bounded inputs are rejected at the Host
+        // boundary so an unbounded batch never opens a long Core write
+        // transaction. Same numbers as application/editing/region_canvas.py.
+        static string Points(int count) =>
+            string.Join(",", Enumerable.Range(0, count).Select(_ => "[0.1,0.1]"));
+        static string Ids(int count) =>
+            string.Join(",", Enumerable.Range(0, count).Select(i => $"\"r{i}\""));
+        static string Parts(int count) =>
+            string.Join(",", Enumerable.Range(0, count).Select(_ => "[[0.1,0.1],[0.2,0.2]]"));
+
+        var cases = new (string Command, string Args)[]
+        {
+            ("create_region",
+                $"{{\"page_id\":\"p\",\"geometry\":{{\"points\":[{Points(513)}]}}}}"),
+            ("save_region_geometry",
+                $"{{\"region_id\":\"r1\",\"geometry\":{{\"points\":[{Points(513)}]}}}}"),
+            ("split_region",
+                $"{{\"region_id\":\"r1\",\"parts\":[{Parts(65)}]}}"),
+            ("merge_regions",
+                $"{{\"page_id\":\"p\",\"region_ids\":[{Ids(65)}]}}"),
+            ("reorder_regions",
+                $"{{\"page_id\":\"p\",\"ordered_region_ids\":[{Ids(501)}]}}"),
+        };
+
+        foreach (var (command, argsJson) in cases)
+        {
+            Assert.Throws<HostCommandInvalidArgumentsException>(() =>
+                WireJson.Write(writer => HostCommandDispatcher.WriteCorePayload(
+                    command, Args(argsJson), writer)));
+        }
+    }
+
     public static TheoryData<string, string> InvalidArgumentCases => new()
     {
         { "create_region", "{}" },
