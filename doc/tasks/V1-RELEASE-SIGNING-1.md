@@ -89,3 +89,9 @@ created: 2026-10-21
   SignPath Foundation 免费路线 2026-10-29 被拒，原因=项目公共可见度不足；AC1–AC3 NOT_APPLICABLE、AC4 MET）。
 - 备选路线见上（付费订阅 / 自有证书 / 保持未签名）。
 - canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+
+## 最终决定（2026-10-29）
+
+- 用户明确决定：**保持未签名**（不采用 SignPath 付费订阅、不采购证书；免费 Foundation 路线因可见度不足被拒）。
+- 0.1.1 以未签名形式发布，README 的 Code signing policy 已更新为诚实说明（未签名 + SHA256SUMS 校验 + 未来可选路线）。
+- 本卡保持 `closed_with_limitations`；无进一步动作，除非用户日后改变决定。

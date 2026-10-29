@@ -88,7 +88,7 @@ pwsh -NoProfile -File packaging/release/generate-checksums.ps1 `
 ```
 
 A GitHub Actions pipeline **draft** lives in [`.github/workflows/build-release.yml`](.github/workflows/build-release.yml):
-public base build → SignPath signing request (disabled until the project is approved and secrets exist).
+public base build → optional SignPath signing (requires approval + secrets; not enabled — see Code signing policy).
 
 ## Test & quality baseline (2026-10-28)
 
@@ -124,7 +124,19 @@ instructions, and known limitations (written in Chinese).
 
 ## Code signing policy
 
-Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org/).
+**Current policy: the installers are unsigned.** This is a deliberate, recorded decision
+(owner decision, 2026-10-29). The project applied to the
+[SignPath Foundation](https://signpath.org/) free OSS signing program and was declined because the
+project does not yet show the public-visibility signals the Foundation requires — explicitly not a
+judgment on the project's quality. Generated installers are `NotSigned`; **verify the SHA-256 digest
+published with each GitHub Release** (`SHA256SUMS.txt`) before running them. SmartScreen may show an
+"unknown publisher" prompt.
+
+Signing can be re-enabled later via (a) reapplying to the SignPath Foundation once the project has
+more public visibility, (b) a commercial OV/EV code-signing certificate, or (c) a paid SignPath
+subscription. The signing pipeline is prepared and does not ship anything until enabled:
+`.github/workflows/build-release.yml` submits the installer only when `sign=true` and the SignPath
+secrets exist.
 
 - Committers and reviewers: [@peakwheat-pixel](https://github.com/peakwheat-pixel) (repository owner)
 - Approvers (signing requests): [@peakwheat-pixel](https://github.com/peakwheat-pixel)
