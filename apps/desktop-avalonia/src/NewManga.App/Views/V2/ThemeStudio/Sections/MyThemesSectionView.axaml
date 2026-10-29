@@ -31,7 +31,6 @@
         <ListBox ItemsSource="{Binding Items}"
                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                  Background="Transparent"
-                 BorderThickness="0"
                  ItemTemplate="{StaticResource ThemeRowTemplate}" />
       </ScrollViewer>
 
