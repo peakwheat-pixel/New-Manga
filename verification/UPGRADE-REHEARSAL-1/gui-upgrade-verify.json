@@ -1,0 +1,19 @@
+{
+ "root_library_exists": true,
+ "legacy_library_exists": true,
+ "new_sha": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "legacy_sha": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "sha_equal": true,
+ "books": 1,
+ "book_titles": [
+  "家族战记"
+ ],
+ "integrity": "ok",
+ "data_dir_kept": true,
+ "logs": [
+  "core_service.stderr.log",
+  "host.log",
+  "host_bridge.stderr.log",
+  "upgrade-legacy.log"
+ ]
+}
