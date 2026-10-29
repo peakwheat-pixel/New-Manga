@@ -27,12 +27,15 @@
 |NSIS-INSTALLER-1|AGPL-RELEASE-1|done（NSIS 无签名安装包：per-user 安装/卸载/数据根保留；AC1–AC5 MET；独立安装 6.64s/卸载 0.74s；集成 `64d41f329`）|
 |RELEASE-VERIFY-1|NSIS-INSTALLER-1、AGPL-RELEASE-1|done（免证书发布完整性：SHA-256 清单 + 校验脚本 + 发行说明/SmartScreen 指引；AC1–AC5 MET；PASS 3/3 + 独立负向篡改 FAIL；集成 `5364652b0`）|
 |SIGNPATH-OSS-SIGNING-1|RELEASE-VERIFY-1、V1-RELEASE-SIGNING-1|done（SignPath Foundation 免费 OSS 签名申请材料：英文草案 + 中文前置清单 + CI 草案 + README；独立审阅 3 轮修复后 PASS；集成 `f632ee39c`）|
+|CUDA-PACKAGE-DECISION-1|INFER-BASELINE-EP-1、CORE-SLIM-2、GPU-ORT-PROBE-1|done（决策 = defer：主包保持 DirectML；CUDA 仅对 manga-ocr/LaMa 必要；可选包 2.3GB/7GB ≤8GB 预算；触发条件与备选方案已登记）|
+|LEGACY-SHELL-ARCHIVE-1|PUBLIC-RELEASE-P0-1|ready（旧壳彻底归档：apps/desktop Tauri + src/ui PySide6 → archive；需先解耦 sidecar 构建输出路径并迁移引用；影响分析已完成）|
+|UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|blocked（真实旧版数据升级演练；dry-run 已有；**需用户提供旧 Tauri 数据根副本**）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
 |THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
 
-READY 节点：无
+READY 节点：LEGACY-SHELL-ARCHIVE-1
 
 ## 历史快照（终态节点，非当前 DAG）
 
