@@ -5,6 +5,7 @@ Older builds stored the library database and its managed copies under a
 
     <root>/data/library.db
     <root>/data/library.db-wal      (possibly)
+    <root>/data/library.db-journal  (possibly)
     <root>/data/managed/...
     <root>/data/backups/...
 
@@ -16,13 +17,18 @@ old ``data/`` tree, so the migration is idempotent and the user can roll back by
 discarding the new files.
 
 Safety rules:
-- The current layout wins: if ``<root>/library.db`` already exists the legacy
-  database is left untouched (``skipped_reason`` explains why).
-- The legacy database is verified (``PRAGMA integrity_check``) on a staging
-  copy before it is promoted; a corrupt/stale database raises
-  :class:`LegacyLayoutError` instead of replacing a working library.
-- All writes go through a temporary staging directory first; a failure leaves
-  the data root as it was.
+- The current layout wins: an existing ``<root>/library.db`` is never
+  overwritten; legacy ``managed/``/``backups/`` directories are only filled in
+  when the corresponding current directory is missing (this also repairs a
+  partially-completed earlier migration).
+- The legacy database is verified (``PRAGMA integrity_check``) on the staging
+  copy before anything is promoted.
+- **Atomic promotion**: the database and the managed/backups trees are copied
+  into ``<root>/.upgrade-legacy-staging`` first; only when every copy succeeded
+  are they renamed into place (directories first, database last).  A failure
+  leaves the data root untouched and raises :class:`LegacyLayoutError`; all
+  I/O errors (locked files, permissions) are wrapped into it so start-up can
+  report the problem instead of crashing.
 """
 
 from __future__ import annotations
@@ -38,7 +44,8 @@ logger = logging.getLogger(__name__)
 
 LEGACY_DATA_DIR = "data"
 LEGACY_DB_NAME = "library.db"
-_WAL_SUFFIXES = ("-wal", "-shm")
+_SQLITE_SIDECAR_SUFFIXES = ("-wal", "-shm", "-journal")
+_SUBDIRECTORIES = ("managed", "backups")
 
 
 class LegacyLayoutError(Exception):
@@ -61,8 +68,14 @@ class MigrationResult:
         }
 
 
-def _sidecar_paths(db_path: Path) -> tuple[Path, ...]:
-    return tuple(db_path.with_name(db_path.name + suffix) for suffix in _WAL_SUFFIXES)
+def _sqlite_sidecars(db_path: Path) -> tuple[Path, ...]:
+    return tuple(
+        db_path.with_name(db_path.name + suffix) for suffix in _SQLITE_SIDECAR_SUFFIXES
+    )
+
+
+def _existing_sidecars(db_path: Path) -> tuple[Path, ...]:
+    return tuple(sidecar for sidecar in _sqlite_sidecars(db_path) if sidecar.is_file())
 
 
 def _copy_file(source: Path, destination: Path) -> None:
@@ -70,10 +83,10 @@ def _copy_file(source: Path, destination: Path) -> None:
     shutil.copy2(source, destination)
 
 
-def _verify_copy(staging_db: Path) -> None:
-    """Raise :class:`LegacyLayoutError` unless *staging_db* is a healthy SQLite file."""
+def _verify_database(staged_db: Path) -> None:
+    """Raise :class:`LegacyLayoutError` unless *staged_db* is a healthy SQLite file."""
     try:
-        connection = sqlite3.connect(f"file:{staging_db}?mode=ro", uri=True)
+        connection = sqlite3.connect(f"file:{staged_db}?mode=ro", uri=True)
         try:
             row = connection.execute("PRAGMA integrity_check").fetchone()
         finally:
@@ -85,36 +98,39 @@ def _verify_copy(staging_db: Path) -> None:
         raise LegacyLayoutError(f"legacy library.db failed integrity_check: {detail}")
 
 
-def _promote_database(legacy_db: Path, current_db: Path, staging_root: Path) -> tuple[str, ...]:
-    """Copy the legacy database (+ existing WAL/SHM) to staging, verify, then promote it."""
-    copied: list[str] = []
-    staged_db = staging_root / current_db.name
-    source_sidecars = tuple(
-        sidecar for sidecar in _sidecar_paths(legacy_db) if sidecar.is_file()
-    )
+def _stage_database(legacy_db: Path, staging_dir: Path) -> list[Path]:
+    """Copy the legacy database + its existing SQLite sidecars into staging."""
+    staged_db = staging_dir / LEGACY_DB_NAME
     _copy_file(legacy_db, staged_db)
-    for sidecar in source_sidecars:
-        _copy_file(sidecar, staged_db.with_name(staged_db.name + sidecar.name[len(legacy_db.name):]))
-    _verify_copy(staged_db)
-    os.replace(staged_db, current_db)
-    copied.append(current_db.name)
-    # Promote only the sidecars that existed in the legacy directory; the
-    # read-only verification above may create empty WAL/SHM files in staging.
-    for sidecar in source_sidecars:
-        target = current_db.with_name(current_db.name + sidecar.name[len(legacy_db.name):])
-        staged = staged_db.with_name(staged_db.name + sidecar.name[len(legacy_db.name):])
-        if staged.is_file():
-            os.replace(staged, target)
-            copied.append(target.name)
-    return tuple(copied)
+    staged: list[Path] = [staged_db]
+    for sidecar in _existing_sidecars(legacy_db):
+        suffix = sidecar.name[len(legacy_db.name):]
+        target = staged_db.with_name(staged_db.name + suffix)
+        _copy_file(sidecar, target)
+        staged.append(target)
+    _verify_database(staged_db)
+    return staged
 
 
-def _promote_directory(legacy_dir: Path, current_dir: Path) -> str | None:
-    """Copy a legacy sub-directory into the current layout unless it already exists."""
-    if not legacy_dir.is_dir() or current_dir.exists():
+def _stage_directory(legacy_dir: Path, staging_dir: Path) -> Path | None:
+    """Copy a legacy sub-directory into staging; ``None`` when absent."""
+    if not legacy_dir.is_dir():
         return None
-    shutil.copytree(legacy_dir, current_dir)
-    return current_dir.name + "/"
+    staged = staging_dir / legacy_dir.name
+    shutil.copytree(legacy_dir, staged)
+    return staged
+
+
+def _promote_file(staged: Path, target: Path) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    os.replace(staged, target)
+
+
+def _promote_directory(staged: Path, target: Path) -> None:
+    # ``os.replace`` cannot move onto an existing directory; the caller only
+    # passes this when the current directory is absent.
+    target.parent.mkdir(parents=True, exist_ok=True)
+    os.replace(staged, target)
 
 
 def _append_log(data_root: Path, line: str) -> None:
@@ -130,41 +146,84 @@ def _append_log(data_root: Path, line: str) -> None:
 def migrate_legacy_layout(data_root: Path) -> MigrationResult:
     """Migrate ``<root>/data/*`` (pre-AD-002) into the current data-root layout.
 
-    Safe to call on every start-up: it is a no-op for current layouts and never
-    overwrites a current library database.
+    Safe to call on every start-up: it is a no-op for current layouts, never
+    overwrites a current library database, and repairs a partially-completed
+    earlier migration (missing managed/backups trees).
     """
     data_root = Path(data_root).expanduser()
     legacy_dir = data_root / LEGACY_DATA_DIR
     legacy_db = legacy_dir / LEGACY_DB_NAME
     current_db = data_root / LEGACY_DB_NAME
 
-    if not legacy_db.is_file():
-        return MigrationResult(False, skipped_reason="legacy data/library.db not found")
-    if current_db.exists():
-        return MigrationResult(
-            False,
-            skipped_reason="current library.db already present; legacy data left untouched",
-        )
-
-    staging_root = data_root / ".upgrade-legacy-staging"
-    if staging_root.exists():
-        shutil.rmtree(staging_root, ignore_errors=True)
-    staging_root.mkdir(parents=True, exist_ok=True)
+    staging_dir = data_root / ".upgrade-legacy-staging"
     try:
-        copied = list(_promote_database(legacy_db, current_db, staging_root))
-        for name in ("managed", "backups"):
-            promoted = _promote_directory(legacy_dir / name, data_root / name)
-            if promoted is not None:
-                copied.append(promoted)
+        if staging_dir.exists():
+            shutil.rmtree(staging_dir, ignore_errors=True)
+
+        current_exists = current_db.exists()
+        legacy_subdirs = {
+            name: legacy_dir / name
+            for name in _SUBDIRECTORIES
+            if (legacy_dir / name).is_dir()
+        }
+        if not legacy_db.is_file() and not legacy_subdirs:
+            return MigrationResult(
+                False, skipped_reason="legacy data/library.db not found"
+            )
+
+        staging_dir.mkdir(parents=True, exist_ok=True)
+        # 1) Stage everything first; nothing in the data root is touched yet.
+        staged_db_files = _stage_database(legacy_db, staging_dir) if legacy_db.is_file() else []
+        staged_dirs = {
+            name: staged
+            for name, staged in (
+                (name, _stage_directory(path, staging_dir))
+                for name, path in legacy_subdirs.items()
+            )
+            if staged is not None
+        }
+
+        # 2) Decide what to promote.  The current database wins; missing
+        #    current sub-directories are filled in (also repairs partial runs).
+        promote_db = (not current_exists) and bool(staged_db_files)
+        promote_dirs = {
+            name: staged
+            for name, staged in staged_dirs.items()
+            if not (data_root / name).exists()
+        }
+        if not promote_db and not promote_dirs:
+            return MigrationResult(
+                False,
+                skipped_reason=(
+                    "current layout already present; legacy data left untouched"
+                    if current_exists
+                    else "nothing to migrate"
+                ),
+            )
+
+        copied: list[str] = []
+        # Directories first, database last: a failure before the database is
+        # promoted leaves the old root readable on the next start-up, and the
+        # retry is idempotent because already-migrated directories are skipped.
+        for name, staged in promote_dirs.items():
+            _promote_directory(staged, data_root / name)
+            copied.append(name + "/")
+        if promote_db:
+            for staged in staged_db_files:
+                suffix = staged.name[len(LEGACY_DB_NAME):]
+                _promote_file(staged, current_db.with_name(current_db.name + suffix))
+            copied.append(current_db.name)
+
         result = MigrationResult(True, copied=tuple(copied))
-        _append_log(
-            data_root,
-            f"[upgrade-legacy] migrated from data/: {', '.join(copied)}",
-        )
+        _append_log(data_root, f"[upgrade-legacy] migrated from data/: {', '.join(copied)}")
         logger.info("upgrade_legacy_layout: migrated %s", ", ".join(copied))
         return result
     except LegacyLayoutError as exc:
         _append_log(data_root, f"[upgrade-legacy] refused: {exc}")
         raise
+    except OSError as exc:
+        message = f"filesystem error while migrating legacy layout: {exc}"
+        _append_log(data_root, f"[upgrade-legacy] refused: {message}")
+        raise LegacyLayoutError(message) from exc
     finally:
-        shutil.rmtree(staging_root, ignore_errors=True)
+        shutil.rmtree(staging_dir, ignore_errors=True)

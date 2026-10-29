@@ -1,4 +1,8 @@
-
-no tests ran in 0.00s
-ERROR: file or directory not found: tests/infrastructure/test_upgrade_legacy_layout.py
-
+COMMAND: python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q
+CWD: G:\CODEX\New Manga.workspace\worktrees\UPGRADE-LEGACY-LAYOUT-1
+PYTHON: Python 3.14.6
+AT: 2026-10-29T08:07:50.0846442Z
+----
+..........                                                               [100%]
+10 passed in 2.14s
+EXIT=0

@@ -1,0 +1,24 @@
+{
+ "command": "python real-data-first-migration.py (fresh copy of first-run-20261026190335.zip)",
+ "at_utc": "2026-10-29T08:07:52.986800+00:00",
+ "result": {
+  "migrated": true,
+  "copied": [
+   "managed/",
+   "backups/",
+   "library.db"
+  ],
+  "skipped_reason": null
+ },
+ "legacy_sha_before": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "legacy_sha_after": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "legacy_untouched": true,
+ "new_db_exists": true,
+ "new_db_sha": "96fc41200373aef57df72c7952495d5089587120283de75c0ca824ef3dc2f1aa",
+ "new_db_same_as_legacy": true,
+ "data_dir_kept": true,
+ "staging_removed": true,
+ "books": 1,
+ "schema_version": 6,
+ "integrity": "ok"
+}
