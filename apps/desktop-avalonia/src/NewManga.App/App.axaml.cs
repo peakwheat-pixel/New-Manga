@@ -47,9 +47,16 @@ public partial class App : Application
             }
 
             // V11R-D-1: normalize the design-system resource stack (palette + overlays) after the
-            // legacy theme pack has been applied, so the new tokens win consistently.
+            // legacy theme pack has been applied. The startup appearance (--variant / persisted choice)
+            // is passed in so initialization never silently overrides a known user preference; only an
+            // absent choice falls back to the design-system default (dark).
+            var startupAppearance = string.IsNullOrWhiteSpace(options.StartupVariant)
+                ? (AppearanceMode?)null
+                : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
+                    ? AppearanceMode.Dark
+                    : AppearanceMode.Light;
             _designSystemTheme = new DesignSystemThemeManager(this);
-            _designSystemTheme.Initialize();
+            _designSystemTheme.Initialize(startupAppearance);
 
             var controller = new HostController(options.ToHostOptions());
             var window = new MainWindow(controller, options);

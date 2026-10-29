@@ -1,0 +1,6 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "scope=book -\u003E book selector -\u003E bind real book id",
+  "bound_book_id": "book-0",
+  "chapter_selector_hidden": true
+}

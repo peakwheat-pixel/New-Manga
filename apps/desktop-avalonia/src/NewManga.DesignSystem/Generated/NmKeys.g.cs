@@ -32,6 +32,7 @@ public static class NmKeys
         "Nm.Color.Line.Grid",
         "Nm.Color.Line.Strong",
         "Nm.Color.Line.Subtle",
+        "Nm.Color.Scrim",
         "Nm.Color.Status.Blocked",
         "Nm.Color.Status.Done",
         "Nm.Color.Status.Failed",
@@ -85,6 +86,7 @@ public static class NmKeys
         "Nm.Motion.Duration.Fast",
         "Nm.Motion.Duration.Instant",
         "Nm.Motion.Duration.Normal",
+        "Nm.Motion.Duration.Slow",
         "Nm.Motion.Easing.Standard",
         "Nm.Motion.Enabled",
         "Nm.Opacity.Disabled",
@@ -96,6 +98,11 @@ public static class NmKeys
         "Nm.Padding.IconSm",
         "Nm.Padding.Panel",
         "Nm.Padding.Section",
+        "Nm.Padding.Snug",
+        "Nm.Padding.Tight",
+        "Nm.Size.Breakpoint.Compact",
+        "Nm.Size.Breakpoint.Full",
+        "Nm.Size.Breakpoint.Narrow",
         "Nm.Size.ControlHeight",
         "Nm.Size.ControlHeightSm",
         "Nm.Size.Drawer",
@@ -104,11 +111,16 @@ public static class NmKeys
         "Nm.Size.HudSlot",
         "Nm.Size.InspectorCollapsed",
         "Nm.Size.InspectorExpanded",
+        "Nm.Size.Marker",
+        "Nm.Size.MarkerCore",
         "Nm.Size.RowBatch",
         "Nm.Size.RowDense",
         "Nm.Size.RowNormal",
         "Nm.Size.RowPage",
         "Nm.Size.RowPageTall",
+        "Nm.Size.ScrollBar",
+        "Nm.Size.SkeletonBookCard",
+        "Nm.Size.SkeletonPanel",
         "Nm.Size.StatusBandBatch",
         "Nm.Size.StatusBandExpanded",
         "Nm.Size.StatusBandPage",
@@ -133,6 +145,12 @@ public static class NmKeys
         "Nm.State.Symbol.Running",
         "Nm.State.Symbol.Skipped",
         "Nm.State.Symbol.Stale",
+        "Nm.TextLineBox.Body",
+        "Nm.TextLineBox.Data",
+        "Nm.TextLineBox.Display",
+        "Nm.TextLineBox.Label",
+        "Nm.TextLineBox.Meta",
+        "Nm.TextLineBox.Title",
         "Nm.ZIndex.Base",
         "Nm.ZIndex.Drawer",
         "Nm.ZIndex.Modal",
@@ -196,6 +214,8 @@ public static class NmKeys
             /// <summary>Nm.Color.Line.Subtle</summary>
             public const string Subtle = "Nm.Color.Line.Subtle";
         }
+        /// <summary>Nm.Color.Scrim</summary>
+        public const string Scrim = "Nm.Color.Scrim";
 
         public static class Status
         {
@@ -349,6 +369,8 @@ public static class NmKeys
             public const string Instant = "Nm.Motion.Duration.Instant";
             /// <summary>Nm.Motion.Duration.Normal</summary>
             public const string Normal = "Nm.Motion.Duration.Normal";
+            /// <summary>Nm.Motion.Duration.Slow</summary>
+            public const string Slow = "Nm.Motion.Duration.Slow";
         }
 
         public static class Easing
@@ -384,10 +406,24 @@ public static class NmKeys
         public const string Panel = "Nm.Padding.Panel";
         /// <summary>Nm.Padding.Section</summary>
         public const string Section = "Nm.Padding.Section";
+        /// <summary>Nm.Padding.Snug</summary>
+        public const string Snug = "Nm.Padding.Snug";
+        /// <summary>Nm.Padding.Tight</summary>
+        public const string Tight = "Nm.Padding.Tight";
     }
 
     public static class Size
     {
+
+        public static class Breakpoint
+        {
+            /// <summary>Nm.Size.Breakpoint.Compact</summary>
+            public const string Compact = "Nm.Size.Breakpoint.Compact";
+            /// <summary>Nm.Size.Breakpoint.Full</summary>
+            public const string Full = "Nm.Size.Breakpoint.Full";
+            /// <summary>Nm.Size.Breakpoint.Narrow</summary>
+            public const string Narrow = "Nm.Size.Breakpoint.Narrow";
+        }
         /// <summary>Nm.Size.ControlHeight</summary>
         public const string ControlHeight = "Nm.Size.ControlHeight";
         /// <summary>Nm.Size.ControlHeightSm</summary>
@@ -404,6 +440,10 @@ public static class NmKeys
         public const string InspectorCollapsed = "Nm.Size.InspectorCollapsed";
         /// <summary>Nm.Size.InspectorExpanded</summary>
         public const string InspectorExpanded = "Nm.Size.InspectorExpanded";
+        /// <summary>Nm.Size.Marker</summary>
+        public const string Marker = "Nm.Size.Marker";
+        /// <summary>Nm.Size.MarkerCore</summary>
+        public const string MarkerCore = "Nm.Size.MarkerCore";
         /// <summary>Nm.Size.RowBatch</summary>
         public const string RowBatch = "Nm.Size.RowBatch";
         /// <summary>Nm.Size.RowDense</summary>
@@ -414,6 +454,12 @@ public static class NmKeys
         public const string RowPage = "Nm.Size.RowPage";
         /// <summary>Nm.Size.RowPageTall</summary>
         public const string RowPageTall = "Nm.Size.RowPageTall";
+        /// <summary>Nm.Size.ScrollBar</summary>
+        public const string ScrollBar = "Nm.Size.ScrollBar";
+        /// <summary>Nm.Size.SkeletonBookCard</summary>
+        public const string SkeletonBookCard = "Nm.Size.SkeletonBookCard";
+        /// <summary>Nm.Size.SkeletonPanel</summary>
+        public const string SkeletonPanel = "Nm.Size.SkeletonPanel";
         /// <summary>Nm.Size.StatusBandBatch</summary>
         public const string StatusBandBatch = "Nm.Size.StatusBandBatch";
         /// <summary>Nm.Size.StatusBandExpanded</summary>
@@ -474,6 +520,22 @@ public static class NmKeys
             /// <summary>Nm.State.Symbol.Stale</summary>
             public const string Stale = "Nm.State.Symbol.Stale";
         }
+    }
+
+    public static class TextLineBox
+    {
+        /// <summary>Nm.TextLineBox.Body</summary>
+        public const string Body = "Nm.TextLineBox.Body";
+        /// <summary>Nm.TextLineBox.Data</summary>
+        public const string Data = "Nm.TextLineBox.Data";
+        /// <summary>Nm.TextLineBox.Display</summary>
+        public const string Display = "Nm.TextLineBox.Display";
+        /// <summary>Nm.TextLineBox.Label</summary>
+        public const string Label = "Nm.TextLineBox.Label";
+        /// <summary>Nm.TextLineBox.Meta</summary>
+        public const string Meta = "Nm.TextLineBox.Meta";
+        /// <summary>Nm.TextLineBox.Title</summary>
+        public const string Title = "Nm.TextLineBox.Title";
     }
 
     public static class ZIndex

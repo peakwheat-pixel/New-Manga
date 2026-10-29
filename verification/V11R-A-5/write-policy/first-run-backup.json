@@ -1,0 +1,11 @@
+{
+  "ac": "AC4",
+  "mode": "ReadWrite",
+  "writes_allowed": true,
+  "backup_file_name": "catalog.20261029T173938Z.sqlite.nmbak",
+  "backup_file_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-host-runtime-tests\\write-policy-backup-0982f39b95\\backups\\catalog.20261029T173938Z.sqlite.nmbak",
+  "backup_file_bytes": 24576,
+  "backup_evidence_copy": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\verification\\V11R-A-5\\write-policy\\first-run-backup.nmbak",
+  "backup_evidence_copy_bytes": 24576,
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-host-runtime-tests\\write-policy-backup-0982f39b95"
+}

@@ -1,0 +1,7 @@
+{
+  "ac": "AC2",
+  "mode": "ReadOnlyUntilParity",
+  "writes_allowed": false,
+  "refusal_code": "HOST_READ_ONLY",
+  "refusal_message": "host is read-only (\u53EA\u8BFB\uFF08S2 parity \u524D\uFF09); writes to production data are disabled until S2 parity"
+}

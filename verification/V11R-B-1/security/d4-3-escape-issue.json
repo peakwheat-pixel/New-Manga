@@ -1,0 +1,11 @@
+{
+  "task": "HOST-RESOURCE-SECURITY-1",
+  "at_utc": "2026-10-29T17:16:51.1022120Z",
+  "ac": "AC2",
+  "dotdot_escape": "TilePathOutsideRoot",
+  "unc_escape": "TilePathOutsideRoot",
+  "junction_created": true,
+  "junction_issue": "TilePathReparse",
+  "symlink_created": true,
+  "symlink_issue": "TilePathReparse"
+}

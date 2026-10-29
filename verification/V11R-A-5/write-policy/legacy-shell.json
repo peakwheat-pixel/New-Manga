@@ -1,0 +1,7 @@
+{
+  "ac": "AC3",
+  "mode": "ReadOnlyLegacyShellRunning",
+  "writes_allowed": false,
+  "legacy_shell_detected": true,
+  "refusal_code": "HOST_READ_ONLY"
+}

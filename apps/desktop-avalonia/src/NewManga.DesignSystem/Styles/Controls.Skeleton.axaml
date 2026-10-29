@@ -1,0 +1,23 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:NewManga.DesignSystem.Controls">
+  <!-- DESIGN_SYSTEM §7 skeleton placeholders: book card / row / panel. Static by design (no pulse or
+       shimmer) so reduced-motion users see the same stable placeholder; only the shape size is tokenised. -->
+  <Style Selector="controls|Skeleton.skeleton">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+
+  <Style Selector="controls|Skeleton.skeleton.book-card">
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.SkeletonBookCard}" />
+  </Style>
+
+  <Style Selector="controls|Skeleton.skeleton.row">
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.RowPage}" />
+  </Style>
+
+  <Style Selector="controls|Skeleton.skeleton.panel">
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.SkeletonPanel}" />
+  </Style>
+</Styles>

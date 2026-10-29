@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.JumpOverlay"
+             x:DataType="vm:AppShellViewModel"
+             IsVisible="{Binding IsJumpOpen}">
+  <!-- Ctrl+P quick jump (screen spec §1): 作品 / 章节 / 页 fuzzy jump; Region jump needs Studio (B-3). -->
+  <Grid>
+    <Border Classes="scrim" />
+    <Border Classes="overlay"
+            Width="{Binding PaletteWidth}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Padding="{DynamicResource Nm.Padding.Section}">
+      <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <TextBox x:Name="JumpSearch"
+                   Classes="search"
+                   Watermark="跳转到作品 / 章节 / 页（支持拼音首字母）"
+                   Text="{Binding JumpQuery}" />
+          <ctrl:Kbd Grid.Column="1" Text="Esc" />
+        </Grid>
+
+        <ListBox x:Name="JumpList"
+                 ItemsSource="{Binding JumpItems}"
+                 SelectedIndex="{Binding JumpIndex, Mode=TwoWay}"
+                 MaxHeight="{DynamicResource Nm.Size.Drawer}"
+                 Background="Transparent"
+                 DoubleTapped="OnJumpDoubleTapped">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:JumpEntry">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                <TextBlock Classes="meta" Text="{Binding KindLabel}" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="meta" Text="{Binding Subtitle}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <TextBlock Grid.Column="2"
+                           Classes="data"
+                           Text="{Binding PageIndex}"
+                           VerticalAlignment="Center" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="meta" Text="{Binding JumpHint}" />
+          <TextBlock Grid.Column="1"
+                     Classes="meta"
+                     Text="Region 跳转需工位空间（V11R-B-3）"
+                     TextTrimming="CharacterEllipsis" />
+        </Grid>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

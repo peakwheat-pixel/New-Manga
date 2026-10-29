@@ -1,0 +1,9 @@
+{
+  "ac": "AC1/AC6 responsive",
+  "screenshot_1280": "page-mode-1280x800.png",
+  "screenshot_1024": "page-mode-1024x700-inspector-overlay.png",
+  "width_1280": 1280,
+  "width_1024": 1024,
+  "overlay_inspector_below_1280": true,
+  "no_crash": true
+}

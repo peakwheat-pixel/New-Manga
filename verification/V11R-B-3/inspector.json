@@ -1,0 +1,16 @@
+{
+  "ac": "AC1/AC4/AC6",
+  "screenshots": [
+    "inspector-text.png",
+    "inspector-style.png",
+    "inspector-repair.png",
+    "inspector-locks.png",
+    "inspector-history.png"
+  ],
+  "tab_panel_instances": 5,
+  "revisions": 3,
+  "text_tiers": 4,
+  "save_translation_disabled": true,
+  "save_translation_tooltip": "\u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+  "locks": 4
+}

@@ -1,0 +1,193 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             xmlns:lv="using:NewManga.App.Views.V2.Library"
+             x:Class="NewManga.App.Views.V2.Library.LibraryView"
+             x:DataType="vm:LibraryViewModel">
+  <!-- Library space (screen spec §2): search(中文/拼音首字母) + sort + filter chips + PageGrid of book
+       covers + resident detail panel + multi-select bar + ImportDock + recycle view. -->
+  <Grid RowDefinitions="Auto,*,Auto" Background="{DynamicResource Nm.Color.Bg.Canvas}">
+    <!-- ── Library bar ────────────────────────────────────────────────────────────── -->
+    <Border Grid.Row="0" Classes="librarybar" Padding="{DynamicResource Nm.Padding.ControlSm}">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.3}" VerticalAlignment="Center">
+          <TextBlock Classes="title" Text="资料柜" VerticalAlignment="Center" />
+          <TextBlock Classes="meta" Text="{Binding BookCountText}" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.2}"
+                    VerticalAlignment="Center">
+          <TextBox Classes="search"
+                   Width="{Binding SearchBoxWidth}"
+                   Watermark="搜索作品（中文 / 拼音首字母）"
+                   Text="{Binding SearchText}"
+                   ToolTip.Tip="支持中文与拼音首字母，例如「夜光列车」可搜 yglc" />
+          <ComboBox Width="{Binding SortBoxWidth}"
+                    ItemsSource="{Binding SortOptions}"
+                    SelectedIndex="{Binding SortIndex, Mode=TwoWay}"
+                    ToolTip.Tip="排序">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:LibrarySortOption">
+                <TextBlock Classes="meta" Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <ItemsControl ItemsSource="{Binding FilterChips}" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:FilterChipItem">
+                <Button Classes="chip"
+                        Classes.on="{Binding IsOn}"
+                        Command="{Binding ToggleCommand}"
+                        Content="{Binding DisplayText}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Button Classes="ghost sm" Content="导入文件" Command="{Binding ImportFilesCommand}" />
+          <Button Classes="ghost sm" Content="导入文件夹" Command="{Binding ImportFolderCommand}" />
+          <Button Classes="ghost sm" Content="新建作品" Command="{Binding NewBookCommand}" />
+          <Button Classes="ghost sm" Content="回收站" Command="{Binding ShowRecycleBinCommand}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ── Body: PageGrid + resident detail panel ─────────────────────────────────── -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+      <Grid Grid.Column="0">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="{DynamicResource Nm.Padding.Panel}"
+                      IsVisible="{Binding ShowGrid}">
+          <ItemsControl x:Name="BookGrid" ItemsSource="{Binding Books}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        ItemWidth="{Binding CardSlotWidth}"
+                        ItemHeight="{Binding CardSlotHeight}" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:BookRowViewModel">
+                <Button Classes="bookcard"
+                        Classes.selected="{Binding IsSelected}"
+                        Command="{Binding SelectCommand}"
+                        ToolTip.Tip="{Binding Title}">
+                  <Border Classes="card" Padding="{DynamicResource Nm.Padding.Card}">
+                    <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                      <Border Grid.Row="0" Classes="cover">
+                        <Grid>
+                          <TextBlock Classes="display"
+                                     Text="{Binding Glyph}"
+                                     Foreground="{DynamicResource Nm.Color.Text.Tertiary}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center" />
+                          <Border HorizontalAlignment="Right"
+                                  VerticalAlignment="Top"
+                                  Padding="{DynamicResource Nm.Padding.Cell}"
+                                  IsVisible="{Binding HasBadge}">
+                            <TextBlock Classes="meta" Text="{Binding BadgeText}" />
+                          </Border>
+                        </Grid>
+                      </Border>
+                      <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.1}">
+                        <TextBlock Classes="label"
+                                   Text="{Binding Title}"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Classes="meta"
+                                   Text="{Binding MetaText}"
+                                   TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <!-- 状态七态：loading / error / not-ready / empty / no-results（就地呈现，无整页 spinner） -->
+        <Grid IsVisible="{Binding IsLoading}">
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+            <ctrl:StatusBadge Status="Running" HorizontalAlignment="Center" />
+            <TextBlock Classes="body" Text="正在读取书架…" HorizontalAlignment="Center" />
+            <TextBlock Classes="meta"
+                       Text="骨架保持书卡网格布局，不使用整页 spinner"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+        </Grid>
+
+        <Grid IsVisible="{Binding HasError}">
+          <ctrl:EmptyState Title="书架读取失败"
+                           Hint="{Binding ErrorMessage}"
+                           ActionText="重试"
+                           ActionCommand="{Binding RefreshCommand}" />
+        </Grid>
+
+        <Grid IsVisible="{Binding HostNotReady}">
+          <ctrl:EmptyState Title="Host 尚未就绪"
+                           Hint="等待 Core sidecar；数据只经 Host/IPC 访问。"
+                           ActionText="重试"
+                           ActionCommand="{Binding RefreshCommand}" />
+        </Grid>
+
+        <Grid IsVisible="{Binding IsEmptyLibrary}">
+          <ctrl:EmptyState Title="书架还是空的"
+                           Hint="新建一本作品，选择章节后导入页面；所有读写都经 Core。"
+                           ActionText="新建作品"
+                           ActionCommand="{Binding NewBookCommand}" />
+        </Grid>
+
+        <Grid IsVisible="{Binding HasNoResults}">
+          <ctrl:EmptyState Title="没有匹配的作品"
+                           Hint="换个关键词（支持拼音首字母，例如 yglc），或切回「全部」筛选。"
+                           ActionText="清除搜索与筛选"
+                           ActionCommand="{Binding ClearFiltersCommand}" />
+        </Grid>
+
+        <lv:RecycleBinView IsVisible="{Binding IsRecycleBinView}" />
+      </Grid>
+
+      <!-- 驻留详情面板（作品元信息 / 章节账本 / 页 / 进度 / 操作） -->
+      <lv:BookDetailPanel Grid.Column="1" Width="{Binding DetailPanelWidth}" />
+    </Grid>
+
+    <!-- ── Multi-select batch bar（作用域常驻） ──────────────────────────────────── -->
+    <Border Grid.Row="2"
+            Classes="raised"
+            Padding="{DynamicResource Nm.Padding.ControlSm}"
+            IsVisible="{Binding IsMultiSelectActive}">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+          <ctrl:StatusBadge Status="Queued" ShowLabel="False" VerticalAlignment="Center" />
+          <TextBlock Classes="label" Text="{Binding SelectionSummary}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.2}">
+          <Button Classes="ghost sm" Content="删除" Command="{Binding DeleteSelectionCommand}" />
+          <Button Classes="ghost sm" Content="导出" Command="{Binding ExportSelectionCommand}" />
+          <Button Classes="ghost sm" Content="标记" Command="{Binding MarkSelectionCommand}" />
+          <Button Classes="secondary sm" Content="清除选择" Command="{Binding ClearSelectionCommand}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ── ImportDock（文件/文件夹 → 每文件状态 → 部分失败重试/跳过） ───────────── -->
+    <Grid Grid.Row="1"
+          Grid.RowSpan="2"
+          VerticalAlignment="Bottom"
+          IsVisible="{Binding ImportDock.IsOpen}">
+      <lv:ImportDockView DataContext="{Binding ImportDock}" />
+    </Grid>
+  </Grid>
+</UserControl>

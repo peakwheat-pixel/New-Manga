@@ -1,0 +1,9 @@
+{
+  "ac": "AC3 Run \u63A7\u5236",
+  "poll_interval_ms": 750,
+  "control_calls": 2,
+  "retry_failed_calls": 1,
+  "resume_blocked_status": "resumed_from_block",
+  "last_control_action": "Resume",
+  "selection_survived_poll": true
+}

@@ -1,0 +1,10 @@
+{
+  "ac": "AC1/AC3",
+  "entry": "BookshelfPage.ImportFilesButton",
+  "picker_files_returned": "C:\\in\\a.png, C:\\in\\b.png",
+  "host_chapter_id": "ch-1",
+  "host_paths": 2,
+  "host_duplicate_policy": "skip",
+  "shelf_refreshed": true,
+  "panel_status": "\u5DF2\u5BFC\u5165 2 \u4E2A\u6587\u4EF6"
+}

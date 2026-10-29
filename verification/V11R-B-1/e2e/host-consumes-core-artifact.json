@@ -1,0 +1,20 @@
+{
+  "executed": true,
+  "artifact_dir": "G:/CODEX/New Manga.workspace/task-envs/CORE-TILE-EMIT-1/e2e/artifact",
+  "resource_id": "page:467a6f5bfa84923b",
+  "revision": "467a6f5bfa84923ba4bbfa397a3cdec115dc598ab88fa2fe97b065e24974fb95",
+  "tile_count": 2,
+  "page_bytes": 11954,
+  "digests_verified": 2,
+  "digest_match_rate": 1,
+  "digest_mismatches": 0,
+  "contract_fields": [
+    "resource_id",
+    "revision",
+    "size",
+    "tiles",
+    "absolute_path",
+    "allowed_root"
+  ],
+  "ui_fixture_fallback_used": false
+}

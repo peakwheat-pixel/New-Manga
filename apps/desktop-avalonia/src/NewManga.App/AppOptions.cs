@@ -4,9 +4,14 @@ using NewManga.Host;
 namespace NewManga.App;
 
 /// <summary>
-/// Command-line options for the new shell. S1 intentionally defaults to the shared production data
-/// root in read-only mode; writes are only possible with an explicit isolated data root
-/// (<c>--data-root</c>) plus <c>--demo-write</c>, which is what the AC3 demo/evidence run uses.
+/// Command-line options for the new shell.
+///
+/// V11R-A-5 (P0 write policy): the shipped GUI is writable by default — the previous
+/// "read-only until S2 parity" default made import / create book / create chapter / Run fail for every
+/// release user (the installer shortcut passes no arguments). Writes are now gated by real
+/// preconditions instead: the legacy Tauri shell being detected keeps the host read-only, and
+/// <c>--parity=false</c> is the explicit operator/test downgrade. <c>--demo-write</c> stays as a
+/// compatibility flag for the isolated AC3 demo (it still requires an explicit <c>--data-root</c>).
 /// </summary>
 public sealed class AppOptions
 {
@@ -18,7 +23,11 @@ public sealed class AppOptions
 
     public string MutexName { get; private set; } = SingleInstanceGuard.DefaultMutexName;
 
-    public bool ParityReached { get; private set; }
+    /// <summary>
+    /// V11R-A-5: true by default (production write policy). <c>--parity=false</c> forces the
+    /// migration-era read-only mode for diagnostics/tests; legacy-shell coexistence still overrides.
+    /// </summary>
+    public bool ParityReached { get; private set; } = true;
 
     public bool DemoWrite { get; private set; }
 

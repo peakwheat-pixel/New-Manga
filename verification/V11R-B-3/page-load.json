@@ -1,0 +1,44 @@
+{
+  "ac": "AC1/AC6",
+  "screenshot": "page-mode-1600x1000.png",
+  "page_id": "p1",
+  "chapter_id": "ch-1",
+  "page_count": 3,
+  "region_count": 3,
+  "zoom": 0.86,
+  "zoom_label": "86%",
+  "offset_x": 96,
+  "page_width": 1200,
+  "page_height": 1660,
+  "region1_pixel_x": 120,
+  "region1_pixel_width": 480,
+  "region1_rendered_left": 103.2,
+  "page_image_decoded": true,
+  "pipeline_not_wired": true,
+  "tracks": [
+    {
+      "key": "source",
+      "label": "\u539F\u56FE",
+      "glyph": "\u25CF",
+      "detail": "1200\u00D71660"
+    },
+    {
+      "key": "text",
+      "label": "\u6587\u672C",
+      "glyph": "\u2013",
+      "detail": "3 \u533A \u00B7 \u72B6\u6001\u5F85\u63A5\u5165"
+    },
+    {
+      "key": "inpaint",
+      "label": "\u4FEE\u590D",
+      "glyph": "\u2013",
+      "detail": "\u72B6\u6001\u5F85\u63A5\u5165"
+    },
+    {
+      "key": "render",
+      "label": "\u6392\u7248",
+      "glyph": "\u2013",
+      "detail": "\u72B6\u6001\u5F85\u63A5\u5165"
+    }
+  ]
+}

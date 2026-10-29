@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:v="using:NewManga.App.Views.V2.Shell"
+             xmlns:lv="using:NewManga.App.Views.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Shell.V2.AppShellV2"
+             x:DataType="vm:AppShellViewModel">
+  <!--
+    V11R-B-1 new shell (screen spec §1): TopBand 36px / space content / StatusBand + overlay surfaces
+    (ThemeStudio, ReaderOverlay) and the global command palette / jump / help / confirm overlays.
+    The window host (MainWindow) is switched to this control by V11R-INT-1 (DSH); until then headless
+    tests render this control directly.
+  -->
+  <UserControl.Styles>
+    <StyleInclude Source="avares://NewManga.App/Views/V2/Shell/Theme/V2LocalStyles.axaml" />
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto" Background="{DynamicResource Nm.Color.Bg.App}">
+    <v:TopBand Grid.Row="0" />
+
+    <Grid Grid.Row="1" RowDefinitions="Auto,*">
+      <Border Grid.Row="0" Padding="{DynamicResource Nm.Padding.ControlSm}">
+        <ctrl:AlertBanner Severity="{Binding NoticeStatus}"
+                          Message="{Binding NoticeText}"
+                          ActionText="关闭"
+                          ActionCommand="{Binding DismissNoticeCommand}"
+                          IsVisible="{Binding HasNotice}" />
+      </Border>
+
+      <Grid Grid.Row="1">
+        <v:V2WorkspaceHost />
+
+        <!-- 全窗表面：ThemeStudio（保留 TopBand 返回语义） -->
+        <Grid IsVisible="{Binding IsThemeStudioOpen}">
+          <v:ThemeStudioPendingView />
+        </Grid>
+
+        <!-- 阅读浮层：覆盖空间内容，TopBand 保留（Esc 退出，不改主界面状态） -->
+        <Grid IsVisible="{Binding IsReaderSurfaceVisible}">
+          <lv:ReaderOverlay DataContext="{Binding Library.Reader}" />
+        </Grid>
+      </Grid>
+    </Grid>
+
+    <v:StatusBand Grid.Row="2" />
+
+    <!-- 全局浮层（覆盖整个外壳，含 TopBand） -->
+    <v:CommandPaletteOverlay Grid.RowSpan="3" />
+    <v:JumpOverlay Grid.RowSpan="3" />
+    <v:HelpOverlay Grid.RowSpan="3" />
+    <v:ConfirmModal Grid.RowSpan="3" />
+  </Grid>
+</UserControl>

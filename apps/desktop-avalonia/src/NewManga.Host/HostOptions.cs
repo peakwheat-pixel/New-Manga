@@ -55,8 +55,13 @@ public sealed class HostOptions
 
     public bool DetectLegacyShell { get; init; } = true;
 
-    /// <summary>False until S2 command parity; keeps production data read-only.</summary>
-    public bool ParityReached { get; init; }
+    /// <summary>
+    /// V11R-A-5 (P0 write policy): the release product is writable by default — the migration-era
+    /// "read-only until S2 parity" default made every import/create/run fail in the shipped GUI.
+    /// Safety is now a real precondition gate instead of a permanent default: read-only only when
+    /// the legacy Tauri shell is detected or the caller explicitly passes <c>--parity=false</c>.
+    /// </summary>
+    public bool ParityReached { get; init; } = true;
 
     public bool FirstRunBackupEnabled { get; init; } = true;
 

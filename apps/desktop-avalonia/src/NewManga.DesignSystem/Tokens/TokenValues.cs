@@ -57,6 +57,39 @@ public static class TokenValues
         return double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
     }
 
+    /// <summary>
+    /// Parses a DTCG tracking token authored in <c>em</c> into its <em>ratio</em> (0.08em -> 0.08). The
+    /// ratio is deliberately not converted to pixels: CSS tracking is relative to the element font size,
+    /// so a fixed pixel value would be wrong for every other size. Avalonia 11 has no em-based letter
+    /// spacing; consumers that need device pixels must multiply the ratio by their font size.
+    /// </summary>
+    public static double ParseEmRatio(string raw)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(raw);
+        var value = raw.Trim();
+        if (value.EndsWith("rem", StringComparison.OrdinalIgnoreCase))
+        {
+            value = value[..^3];
+        }
+        else if (value.EndsWith("em", StringComparison.OrdinalIgnoreCase))
+        {
+            value = value[..^2];
+        }
+        else
+        {
+            // A unitless tracking token is only meaningful when it is exactly zero.
+            var unitless = double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+            if (Math.Abs(unitless) > double.Epsilon)
+            {
+                throw new FormatException($"tracking token '{raw}' must be em-relative (or exactly 0)");
+            }
+
+            return 0;
+        }
+
+        return double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+    }
+
     /// <summary>Parses a bare DTCG number token (line-height multipliers, z-index values).</summary>
     public static double ParseNumber(string raw)
     {

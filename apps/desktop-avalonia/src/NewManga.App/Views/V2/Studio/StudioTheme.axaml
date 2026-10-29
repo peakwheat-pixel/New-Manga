@@ -1,0 +1,424 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    V11R-B-3 Studio stylesheet (scoped to the Studio subtree).
+
+    Standard controls, text tiers and surface classes are owned by NewManga.DesignSystem (V11R-D-1,
+    merged): Button (primary/secondary/ghost/danger/icon/sm), TextBlock (display/title/body/label/meta/
+    data/muted/num) and Border (card/panel/raised/overlay/sunken/hairline) are NOT redefined here.
+    This file only carries the Studio-specific geometry/state classes, and every value is a frozen
+    Nm.* token (no raw colour, font size, shadow, gradient or blur — DESIGN_SYSTEM §1 hard rules).
+  -->
+  <Styles.Resources>
+    <x:Double x:Key="StudioSpaceZero">0</x:Double>
+    <x:Double x:Key="StudioHairline">1</x:Double>
+  </Styles.Resources>
+
+  <!-- ============================================================ text modifiers = -->
+  <Style Selector="TextBlock.studio-wrap">
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+  </Style>
+  <Style Selector="TextBlock.studio-center">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="TextAlignment" Value="Center" />
+  </Style>
+
+  <!-- state symbols: colour always paired with the contract glyph (DESIGN_SYSTEM §2.2) -->
+  <Style Selector="TextBlock.studio-state-queued">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Queued}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-running">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Running}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-done">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Done}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-failed">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-blocked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-stale">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Stale}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-skipped">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Skipped}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-notstarted">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+  </Style>
+  <Style Selector="TextBlock.studio-state-nodata">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Tertiary}" />
+  </Style>
+
+  <!-- status fills (pipeline dots / future matrix cells) -->
+  <Style Selector="Border.studio-fill-queued">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Queued}" />
+  </Style>
+  <Style Selector="Border.studio-fill-running">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Running}" />
+  </Style>
+  <Style Selector="Border.studio-fill-done">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Done}" />
+  </Style>
+  <Style Selector="Border.studio-fill-failed">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+  </Style>
+  <Style Selector="Border.studio-fill-blocked">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
+  </Style>
+  <Style Selector="Border.studio-fill-stale">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Stale}" />
+  </Style>
+  <Style Selector="Border.studio-fill-skipped">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Skipped}" />
+  </Style>
+  <Style Selector="Border.studio-fill-notstarted">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+  </Style>
+  <Style Selector="Border.studio-fill-nodata">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+  </Style>
+
+  <!-- ============================================================ structure ====== -->
+  <Style Selector=":is(Border).studio-head">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="8,0" />
+  </Style>
+  <Style Selector=":is(Border).studio-rail">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,0,1,0" />
+  </Style>
+  <Style Selector=":is(Border).studio-viewport">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+  <Style Selector=":is(Border).studio-page-frame">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+  <Style Selector="Border.studio-divider">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Default}" />
+  </Style>
+  <Style Selector="Border.studio-sunken-band">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+  </Style>
+  <Style Selector=":is(Border).studio-band">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+    <Setter Property="Padding" Value="8,0" />
+  </Style>
+  <Style Selector="Border.studio-chip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,2" />
+  </Style>
+  <Style Selector="Border.studio-chip-accent">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,2" />
+  </Style>
+  <Style Selector="Border.studio-section">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="12,8" />
+  </Style>
+  <Style Selector="TextBlock.studio-section-title">
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.SemiBold}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Tertiary}" />
+  </Style>
+  <Style Selector="Border.studio-field">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,4" />
+  </Style>
+  <Style Selector="Border.studio-field-readonly">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,4" />
+  </Style>
+
+  <!-- banners: in-place error/partial feedback, never toast-only (DESIGN_SYSTEM §9 rule 7) -->
+  <Style Selector="Border.studio-banner-error">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+  <Style Selector="Border.studio-banner-partial">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+
+  <!-- ============================================================ canvas ======== -->
+  <Style Selector=":is(Border).studio-region">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector=":is(Border).studio-region.hovered">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+  </Style>
+  <Style Selector=":is(Border).studio-region.selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
+  </Style>
+  <Style Selector=":is(Border).studio-region.locked">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector=":is(Border).studio-region.nogeometry">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+  </Style>
+  <Style Selector="Border.studio-region-label">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Padding" Value="2,0" />
+  </Style>
+  <Style Selector="Border.studio-region-badge">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Padding" Value="1,0" />
+  </Style>
+  <Style Selector="TextBlock.studio-region-badge-failed">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="TextBlock.studio-region-badge-locked">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+
+  <!-- ============================================================ film strip ==== -->
+  <Style Selector="Button.studio-film-item">
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+  <Style Selector="Button.studio-film-item.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="2,0,0,0" />
+  </Style>
+  <Style Selector="Image.studio-film-thumb">
+    <Setter Property="Stretch" Value="Uniform" />
+  </Style>
+  <Style Selector="Border.studio-film-placeholder">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+
+  <!-- ============================================================ HUD / tabs ==== -->
+  <Style Selector="Button.studio-hud-slot">
+    <Setter Property="Width" Value="{DynamicResource Nm.Size.HudSlot}" />
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.HudSlot}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+  <Style Selector="Button.studio-hud-slot.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
+  </Style>
+  <Style Selector="Button.studio-tab">
+    <Setter Property="Width" Value="{DynamicResource Nm.Size.InspectorCollapsed}" />
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.InspectorCollapsed}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Button.studio-tab.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
+  <Style Selector="Button.studio-segment">
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.ControlHeightSm}" />
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Button.studio-segment.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
+
+  <!-- ============================================================ bottom bands == -->
+  <Style Selector="Border.studio-track-chip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,2" />
+  </Style>
+  <Style Selector="Border.studio-dot">
+    <Setter Property="Width" Value="8" />
+    <Setter Property="Height" Value="8" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+
+  <!-- ============================================================ inspector ===== -->
+  <Style Selector=":is(Border).studio-inspector">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="1,0,0,0" />
+  </Style>
+  <Style Selector="Border.studio-inspector-rail">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,0,1,0" />
+  </Style>
+  <Style Selector="Border.studio-revision-row">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+  <Style Selector="Border.studio-revision-row.selected">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+
+  <!-- ============================================================ modal ========= -->
+  <Style Selector="Border.studio-scrim">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="Opacity" Value="0.86" />
+  </Style>
+  <Style Selector="Border.studio-modal-card">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Md}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Section}" />
+    <Setter Property="Width" Value="480" />
+  </Style>
+  <!-- ============================================================ batch ======== -->
+  <Style Selector=":is(Border).studio-stage-rail">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="8,0" />
+  </Style>
+  <Style Selector=":is(Border).studio-run-strip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+    <Setter Property="Padding" Value="8,0" />
+  </Style>
+  <Style Selector=":is(Border).studio-drawer">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="1,0,0,0" />
+    <Setter Property="ZIndex" Value="20" />
+  </Style>
+  <Style Selector="Border.studio-action-bar">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+  </Style>
+  <Style Selector="Border.studio-cell">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+  <Style Selector="Border.studio-cell.selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
+  </Style>
+  <Style Selector="Border.studio-cell.highlighted">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+  </Style>
+  <Style Selector="Border.studio-cell.dimmed">
+    <Setter Property="Opacity" Value="0.35" />
+  </Style>
+  <Style Selector="Border.studio-matrix-row">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0,1" />
+  </Style>
+  <Style Selector="Border.studio-matrix-row.selected">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+  </Style>
+  <Style Selector="Border.studio-matrix-row.dimmed">
+    <Setter Property="Opacity" Value="0.4" />
+  </Style>
+  <Style Selector="Border.studio-matrix-row.highlighted">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+    <Setter Property="BorderThickness" Value="0,1,0,1" />
+  </Style>
+  <Style Selector="Button.studio-matrix-page">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="6,0" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="Height" Value="20" />
+  </Style>
+  <Style Selector="Button.studio-stage-tab">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+  <Style Selector="Button.studio-stage-tab.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
+  <Style Selector="Button.studio-count-chip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="6,2" />
+  </Style>
+  <Style Selector="Button.studio-count-chip.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+  <Style Selector="Button.studio-scope-chip">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
+  </Style>
+  <Style Selector="Button.studio-scope-chip.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
+</Styles>

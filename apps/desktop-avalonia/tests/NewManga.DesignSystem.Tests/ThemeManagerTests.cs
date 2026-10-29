@@ -134,6 +134,25 @@ public sealed class ThemeManagerTests
     }
 
     [AvaloniaFact]
+    public void Density_switch_refreshes_a_live_control_without_rebuilding()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+
+        var button = new Button { Content = "density" };
+        var window = new Window { Width = 320, Height = 160, Content = button };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(28d, button.MinHeight);
+
+        Assert.True(manager.SetDensity(DensityMode.Compact), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(24d, button.MinHeight);
+        Assert.True(window.IsVisible);
+
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void Apply_palette_replaces_only_the_color_layer_and_revert_restores_builtin()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
@@ -149,6 +168,8 @@ public sealed class ThemeManagerTests
 
         Assert.True(manager.ApplyPalette(custom, "user.ocean"), manager.LastError);
         Assert.Equal("user.ocean", manager.AppliedPaletteId);
+        // ApplyPalette is a color-only convenience over ApplyThemeLayer, so the layer id is reported too.
+        Assert.Equal("user.ocean", manager.AppliedThemeLayerId);
         Assert.Equal(Color.Parse("#FF112233"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
         Assert.Equal(Color.Parse("#FF223344"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Panel));
         // Global (size/spacing/typography) semantics are untouched by a palette swap.
@@ -156,6 +177,7 @@ public sealed class ThemeManagerTests
         Assert.Equal(28d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.ControlHeight));
 
         Assert.True(manager.RevertPalette(), manager.LastError);
+        Assert.Null(manager.AppliedThemeLayerId);
         Assert.Equal(DesignSystemThemeManager.BuiltinDarkPaletteId, manager.AppliedPaletteId);
         Assert.Equal(Color.Parse("#FF0F1012"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
     }
@@ -197,7 +219,7 @@ public sealed class ThemeManagerTests
 
         Assert.False(manager.ApplyPalette(incomplete, "user.broken"));
         Assert.NotNull(manager.LastError);
-        Assert.Contains("not a complete color layer", manager.LastError, StringComparison.Ordinal);
+        Assert.Contains("is missing", manager.LastError, StringComparison.Ordinal);
         Assert.Equal(canvasBefore, ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
         Assert.Equal(idBefore, manager.AppliedPaletteId);
     }
@@ -217,6 +239,92 @@ public sealed class ThemeManagerTests
     }
 
     [AvaloniaFact]
+    public void Initialize_with_an_explicit_light_appearance_uses_the_light_palette()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized(AppearanceMode.Light);
+        var app = Application.Current!;
+
+        Assert.Equal(AppearanceMode.Light, manager.Appearance);
+        Assert.Equal(ThemeVariant.Light, app.RequestedThemeVariant);
+        Assert.Equal(Color.Parse("#FFF4F3F0"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Equal(DesignSystemThemeManager.BuiltinLightPaletteId, manager.AppliedPaletteId);
+    }
+
+    [AvaloniaFact]
+    public void Initialize_with_system_appearance_requests_the_platform_variant()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized(AppearanceMode.System);
+        var app = Application.Current!;
+
+        Assert.Equal(AppearanceMode.System, manager.Appearance);
+        Assert.Equal(ThemeVariant.Default, app.RequestedThemeVariant);
+        // Headless defaults to the dark baseline; the important part is that a concrete palette was
+        // resolved and no exception/silent gap occurred.
+        Assert.NotNull(manager.AppliedPaletteId);
+        _ = ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas);
+    }
+
+    [AvaloniaFact]
+    public void Switching_to_a_broken_palette_keeps_the_previous_state()
+    {
+        var app = Application.Current!;
+        app.Resources.MergedDictionaries.Clear();
+        app.Resources.MergedDictionaries.Add(ThemeTestHarness.LoadControlThemes());
+
+        var partiallyBroken = new PartiallyBrokenResourceSource();
+        using var manager = new DesignSystemThemeManager(app, partiallyBroken);
+        Assert.True(manager.Initialize(AppearanceMode.Dark), manager.LastError);
+        var darkCanvas = ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas);
+        var darkSpace = ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3);
+
+        // The light palette URI is broken: the switch must fail atomically and keep the dark palette.
+        Assert.False(manager.SetAppearance(AppearanceMode.Light));
+        Assert.NotNull(manager.LastError);
+        Assert.Equal(darkCanvas, ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Equal(darkSpace, ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3));
+        Assert.Equal(DesignSystemThemeManager.BuiltinDarkPaletteId, manager.AppliedPaletteId);
+    }
+
+    [AvaloniaFact]
+    public void Apply_theme_layer_changes_whitelisted_tokens_and_revert_restores_builtin()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        var globalBefore = ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3);
+
+        var layer = CompleteThemeLayer(layer =>
+        {
+            layer[NmKeys.Color.Bg.Canvas] = new SolidColorBrush(Color.Parse("#FF0A0B0C"));
+            layer[NmKeys.FontFamily.Ui] = FontFamily.Parse("Georgia");
+            layer[NmKeys.Corner.Md] = new CornerRadius(3);
+            layer[NmKeys.Motion.Duration.Fast] = TimeSpan.FromMilliseconds(200);
+            layer[NmKeys.FontSize.Md] = 14d;
+            layer[NmKeys.LineHeight.Body] = 1.6d;
+            layer[NmKeys.Motion.Duration.Slow] = TimeSpan.FromMilliseconds(260);
+        });
+
+        Assert.True(manager.ApplyThemeLayer(layer, "user.theme.1"), manager.LastError);
+        Assert.Equal("user.theme.1", manager.AppliedPaletteId);
+        Assert.Equal("user.theme.1", manager.AppliedThemeLayerId);
+        Assert.Equal(Color.Parse("#FF0A0B0C"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Contains("Georgia", ThemeTestHarness.ValueOf<FontFamily>(app, NmKeys.FontFamily.Ui).FamilyNames);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), ThemeTestHarness.ValueOf<TimeSpan>(app, NmKeys.Motion.Duration.Fast));
+        // Theme-invariant size/spacing tokens are untouched by a theme layer.
+        Assert.Equal(globalBefore, ThemeTestHarness.ValueOf<double>(app, NmKeys.Space.S3));
+        Assert.Equal(28d, ThemeTestHarness.ValueOf<double>(app, NmKeys.Size.ControlHeight));
+        Assert.Equal(14d, ThemeTestHarness.ValueOf<double>(app, NmKeys.FontSize.Md));
+        Assert.Equal(1.6d, ThemeTestHarness.ValueOf<double>(app, NmKeys.LineHeight.Body));
+        Assert.Equal(TimeSpan.FromMilliseconds(260), ThemeTestHarness.ValueOf<TimeSpan>(app, NmKeys.Motion.Duration.Slow));
+
+        Assert.True(manager.RevertPalette(), manager.LastError);
+        Assert.Null(manager.AppliedThemeLayerId);
+        Assert.Equal(DesignSystemThemeManager.BuiltinDarkPaletteId, manager.AppliedPaletteId);
+        Assert.Equal(Color.Parse("#FF0F1012"), ThemeTestHarness.ColorOf(app, NmKeys.Color.Bg.Canvas));
+        Assert.Contains("Segoe UI Variable Text", ThemeTestHarness.ValueOf<FontFamily>(app, NmKeys.FontFamily.Ui).FamilyNames);
+        Assert.Equal(TimeSpan.FromMilliseconds(90), ThemeTestHarness.ValueOf<TimeSpan>(app, NmKeys.Motion.Duration.Fast));
+    }
+
+            [AvaloniaFact]
     public void Appearance_switch_after_a_custom_palette_returns_to_the_builtin_palette()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
@@ -275,6 +383,39 @@ public sealed class ThemeManagerTests
         return palette;
     }
 
+    /// <summary>Copies the shipped dark theme layer (colors + fonts + corners + durations) for seam tests.</summary>
+    private static ResourceDictionary CompleteThemeLayer(Action<ResourceDictionary>? mutate = null)
+    {
+        var layer = CompletePalette();
+        var builtin = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://NewManga.DesignSystem/Themes/Tokens.Global.axaml"));
+        foreach (var key in DesignSystemThemeManager.ThemeLayerRequiredKeys
+                     .Where(static key => !key.StartsWith("Nm.Color.", StringComparison.Ordinal)))
+        {
+            Assert.True(builtin.TryGetResource(key, ThemeVariant.Default, out var value), $"global dictionary lacks {key}");
+            layer[key] = value;
+        }
+
+        mutate?.Invoke(layer);
+        return layer;
+    }
+    /// <summary>Healthy dark/global dictionaries but a broken light palette: exercises atomic failure.</summary>
+    private sealed class PartiallyBrokenResourceSource : IDesignSystemResourceSource
+    {
+        public Uri GlobalTokens => DesignSystemResourceSource.Default.GlobalTokens;
+
+        public Uri DarkPalette => DesignSystemResourceSource.Default.DarkPalette;
+
+        public Uri LightPalette { get; } = new("avares://NewManga.DesignSystem/Themes/DoesNotExist.axaml");
+
+        public Uri HighContrastPalette => DesignSystemResourceSource.Default.HighContrastPalette;
+
+        public Uri CompactDensity => DesignSystemResourceSource.Default.CompactDensity;
+
+        public Uri SpaciousDensity => DesignSystemResourceSource.Default.SpaciousDensity;
+
+        public Uri ReducedMotion => DesignSystemResourceSource.Default.ReducedMotion;
+    }
     private sealed class BrokenResourceSource : IDesignSystemResourceSource
     {
         private static readonly Uri Missing = new("avares://NewManga.DesignSystem/Themes/DoesNotExist.axaml");
@@ -298,7 +439,7 @@ public sealed class ThemeManagerTests
 /// <summary>Shared helpers that isolate each test from resources merged by the previous test.</summary>
 internal static class ThemeTestHarness
 {
-    public static DesignSystemThemeManager CreateInitialized()
+    public static DesignSystemThemeManager CreateInitialized(AppearanceMode? appearance = null)
     {
         var application = Application.Current
             ?? throw new InvalidOperationException("no Avalonia application is running");
@@ -310,11 +451,11 @@ internal static class ThemeTestHarness
         application.Resources.MergedDictionaries.Add(LoadControlThemes());
 
         var manager = new DesignSystemThemeManager(application);
-        Assert.True(manager.Initialize(), manager.LastError);
+        Assert.True(manager.Initialize(appearance), manager.LastError);
         return manager;
     }
 
-    private static ResourceDictionary LoadControlThemes() =>
+    public static ResourceDictionary LoadControlThemes() =>
         (ResourceDictionary)AvaloniaXamlLoader.Load(
             new Uri("avares://NewManga.DesignSystem/Themes/Controls.axaml"));
 
@@ -336,3 +477,8 @@ internal static class ThemeTestHarness
         return Assert.IsType<T>(value);
     }
 }
+
+
+
+
+

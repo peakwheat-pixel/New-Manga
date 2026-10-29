@@ -1,6 +1,7 @@
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using NewManga.DesignSystem.Accessibility;
+using NewManga.DesignSystem.Theming;
 using NewManga.DesignSystem.Tokens;
 
 namespace NewManga.DesignSystem.Tests;
@@ -118,10 +119,13 @@ public sealed class ContrastTokenTests
 
             foreach (var background in new[] { panel, canvas })
             {
-                Assert.True(ContrastMath.ContrastRatio(HighContrast("Text.Primary"), background) >= 7.0,
-                    $"{label} HC: text.primary >= 7:1");
-                Assert.True(ContrastMath.ContrastRatio(HighContrast("Text.Secondary"), background) >= 4.5,
-                    $"{label} HC: text.secondary >= 4.5:1");
+                // R-14: in high contrast every normal text tier is >= 7:1.
+                foreach (var text in new[] { "Text.Primary", "Text.Secondary", "Text.Tertiary" })
+                {
+                    Assert.True(ContrastMath.ContrastRatio(HighContrast(text), background) >= 7.0,
+                        $"{label} HC: {text} >= 7:1");
+                }
+
                 foreach (var status in new[] { "Queued", "Running", "Done", "Failed", "Blocked", "Stale", "Skipped" })
                 {
                     Assert.True(ContrastMath.ContrastRatio(HighContrast("Status." + status), background) >= 4.5,
@@ -148,3 +152,4 @@ public sealed class ContrastTokenTests
                 StringComparer.Ordinal);
     }
 }
+

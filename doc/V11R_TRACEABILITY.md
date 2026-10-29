@@ -86,3 +86,23 @@
 | E2E-08 | Windows 11 实机 DPI/长图/IME/Esc | L4（需实机） | NOT_RUN |
 | E2E-09 | 旧数据备份→升级→卸载→重装 | L4（沿用既有升级证据 + 新包） | pending |
 | E2E-10 | 干净 Windows clone 构建 | A-4 + L4 | pending |
+
+---
+
+## 7. 滚动更新（2026-10-30）
+
+| 事项 | 结论/状态 | 证据 |
+|---|---|---|
+| V11R-A-1 CreateChapter | done（合入 main） | `verification/V11R-A-1/` |
+| V11R-A-2 IRunController | done（合入 main） | `verification/V11R-A-2/` |
+| V11R-A-3 66 命令契约 | done：FROZEN 49 / PARTIAL 17 / GAP 0；C067–C077 单列 PENDING(minor=3) | `doc/contracts/V11R_COMMAND_CONTRACT_V1.md`、`verification/V11R-A-3/` |
+| `library_start_run` minor 兼容 | **结论：升 minor=7 是必要条件非充分；现有命令路径无法透传 `provider_profiles`，UI 不得当已支持** | `verification/V11R-A-3/minor-compat/start-run-minor-probe.json` |
+| V11R-A-5 生产写入策略（P0） | done：默认 ReadWrite + 三重护栏（旧壳运行/`--parity=false`/Host 未就绪）+ first-run 备份实证 | `doc/plan/V11R_WRITE_POLICY.md`、`verification/V11R-A-5/` |
+| V11R-D-1 M0 + R-09 对比度 + palette seam | 已合入；P1/P2 返修中（独立审查 FAIL，见 `doc/reviews/V11R-D-1-r1-codex.md`） | `verification/V11R-D-1/` |
+| V11R-F0-1 Region 写面 | I1 返修中（审查 FAIL：3×P1 原子性/并发/锁继承） | `doc/reviews/V11R-F0-1-r1-codex.md` |
+| V11R-F0-2 Region 文本投影（C077） | 已交付待随 F0-1 返修复审后合入 | `verification/V11R-F0-2/` |
+| V11R-B-1 / B-2 | B-1 PASS_WITH_ISSUES（返修中）；B-2 待第二轮审查 | `doc/reviews/V11R-B-1-B-3-r1-independent.md` |
+| V11R-B-3 / B-4 | B-3 FAIL（P1 画布 Region 命中 + Modal 焦点证据作假，返修中）；B-4 待第二轮审查 | 同上 |
+| V11R-C-1 Theme Engine Part A | done（159 测试，合入 main）；Part B 进行中（等 DS `ApplyThemeLayer`） | `verification/V11R-C-1/` |
+| V11R-C-2 Theme Studio | 进行中（theme-studio Owner） | — |
+| 集成裁定 | R-15 59 键层 / R-16 单一 selection / R-17 TryHandleKey / R-18 断点 / R-19 证据纪律 / R-20 App→ThemeEngine | `doc/V11R_PROGRAM.md §8` |

@@ -1,0 +1,9 @@
+{
+  "ac": "AC2/AC5",
+  "exits": "\u4FDD\u5B58 / \u653E\u5F03 / \u53D6\u6D88",
+  "cancel_outcome": "Cancelled",
+  "discard_outcome": "Discarded",
+  "save_outcome": "Saved",
+  "save_write_calls": 1,
+  "modal_default_focus": "\u53D6\u6D88"
+}

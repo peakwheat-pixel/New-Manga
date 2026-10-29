@@ -1,0 +1,9 @@
+{
+  "ac": "AC2",
+  "screenshot": "wired-writes.png",
+  "set_region_type": "region-1:narration@3",
+  "retype_revision": 4,
+  "restore": "r3\u2192new revision",
+  "restore_calls": 1,
+  "rerender_page": "p1"
+}
