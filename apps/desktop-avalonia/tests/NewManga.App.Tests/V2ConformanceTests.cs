@@ -42,8 +42,16 @@ public sealed class V2ConformanceTests
 
     private static string V2Root => Path.Combine(RepoRoot(), "src", "NewManga.App");
 
-    /// <summary>Single token-resolution module: token lookups + frozen breakpoints/ratios only.</summary>
-    private static readonly string[] CSharpAllowlist = { "Shell/V2/ShellLayout.cs" };
+    /// <summary>
+    /// Single token-resolution modules: token lookups + frozen breakpoints/ratios only. Each owner has
+    /// exactly one (ui-shell <c>ShellLayout</c>, ui-studio metrics, Theme Studio <c>ThemeStudioMetrics</c>) so
+    /// the scan can allow the resolver while banning raw values everywhere else in that domain.
+    /// </summary>
+    private static readonly string[] CSharpAllowlist =
+    {
+        "Shell/V2/ShellLayout.cs",
+        "ViewModels/V2/ThemeStudio/ThemeStudioMetrics.cs",
+    };
 
     private static string RepoRoot()
     {
@@ -85,9 +93,11 @@ public sealed class V2ConformanceTests
         "ViewModels/V2/Shell",
         "ViewModels/V2/Library",
         "ViewModels/V2/Console",
+        "ViewModels/V2/ThemeStudio",
         "Views/V2/Shell",
         "Views/V2/Library",
         "Views/V2/Console",
+        "Views/V2/ThemeStudio",
     };
 
     private static IReadOnlyList<string> AppCSharpFiles()

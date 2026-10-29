@@ -22,8 +22,9 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 | 门 | 命令（在 `apps/desktop-avalonia`） | 结果 | 日志 |
 |---|---|---|---|
 | 构建 | `dotnet build NewManga.sln -warnaserror -t:Rebuild` | **0 warning / 0 error**（EXIT=0） | [build.log](build.log) |
-| 测试（合入 main 后，串行） | `dotnet test NewManga.sln --no-build -m:1` | **0 失败**：App.Tests 294 通过 / 6 跳过；ThemeEngine 229；DesignSystem 67；Host 42 / 24 跳过；CoreClient 42 / 25 跳过（EXIT=0） | [test.log](test.log) |
-| 静态合规 | `--filter "FullyQualifiedName~V2ConformanceTests|FullyQualifiedName~V2StudioConformanceTests"` | **10/10 通过**（含 `V2Xaml_UsesNoRawDesignValues_AndNoForbiddenEffects`） | 见 `test.log` |
+| 测试（合入 main + C-2-I1 后，串行） | `dotnet test NewManga.sln --no-build -m:1` | **0 失败**：App.Tests 305 通过 / 7 跳过；ThemeEngine 235；DesignSystem 82；Host 49 / 28 跳过；CoreClient 116 / 25 跳过（EXIT=0） | [test.log](test.log) |
+| 静态合规 | `--filter "FullyQualifiedName~V2ConformanceTests|FullyQualifiedName~V2StudioConformanceTests"` | **10/10 通过**（含 `V2Xaml_UsesNoRawDesignValues_AndNoForbiddenEffects`；C# 扫描已含 ThemeStudio） | 见 `test.log` |
+| 行高回归（C-2-I1 P1） | `--filter "FullyQualifiedName~LineHeightContractTests"` | **6/6 通过**（主题层应用后/服务初始化后 行高 ≤ 字号×2.5） | 见 `test.log` |
 | 新增测试 | `--filter "FullyQualifiedName~V2ThemeStudio"` | **36/36 通过**（含 2 个 headless 截图测试） | test.log |
 
 日志最后一行分别记录 `BUILD_EXIT=0` / `TEST_EXIT=0`。
@@ -54,13 +55,13 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 ### 3.2 测试
 
 - `tests/NewManga.App.Tests/V2ThemeStudioTests.cs`：34 个行为/语义测试（分区状态机、脏标记/三出口、取消回滚、真实预览会话、编辑器草稿作用域、对比度审计、导入阻止、round-trip、9+2 迁移、键盘路由、响应式断点、收藏/复制/删除、重置、外观持久化）。
-- `tests/NewManga.App.Tests/V2ThemeStudioScreenshotTests.cs`：2 个 headless 截图/像素测试。
+- `tests/NewManga.App.Tests/V2ThemeStudioScreenshotTests.cs`：2 个 headless 截图/像素测试（24 帧分区截图 + 真实窗口混合探针：`{DynamicResource}` 强调色 Border 正向控制 + `WriteableBitmap` 文档画布像素不变）。
 
 ### 3.3 证据
 
 - `screens/*.png`：24 张真实渲染帧（`Avalonia.Headless` + Skia，`UseHeadlessDrawing=false`，`CaptureRenderedFrame()`，1600×1000 / 1280 / 1024）。
 - `screens/screens.json`：每帧路径、尺寸、字节数、SHA-256、主背景色、64 格签名、渲染器与服务来源。
-- `screens/pixel-hash.json`：固定像素画布 + 「未保存编辑」文本探针在预览前/预览中/取消后的 SHA-256 一致性。
+- `screens/pixel-hash.json`：**真实窗口内**混合探针的 5 步帧（baseline / appearance-light / appearance-dark / preview / after-cancel）：区域 SHA-256（强调色探针 + 文档画布 + 整帧）+ 9 项由比较派生的检查布尔值。
 - `compliance.md`：设计系统合规 grep 自检。
 - `build.log` / `test.log`。
 - [INT_NOTES.md](INT_NOTES.md)：V11R-INT-1 接线说明（精确构造签名、唯一 `DesignSystemThemeManager` 约束、接线配方、GAP-3）。
@@ -80,7 +81,7 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 | AC6 外观立即生效（浅/深/系统 + 高对比 + 减少动效 + 跟随强调色） | PASS（含 GAP-3） | `AppearanceSettings_ApplyImmediately_AndPersist`、`screens/studio-appearance-{dark,light}.png`；「跟随系统强调色」受 GAP-3 限制（见 §6） |
 | AC7 导入导出：逐条 issue、错误阻止、round-trip 等价 | PASS | `InvalidPackage_IsBlocked_WithPerItemIssues_AndCatalogUnchanged`、`ValidPackage_Imports_AndDuplicateIdRequiresOverwrite`、`ExportThenImport_RoundTripsToTheSameDocument`、`screens/import-failure-dark.png`、`screens/studio-importexport-{dark,light}.png` |
 | AC8 恢复默认：二次确认、不删文件、重置后重启保持 | PASS | `ResetToDefault_RestoresSettings_AndKeepsUserThemeFilesUnlessAsked`、`ResetWithClearUserThemes_DeletesUserThemeFiles`、`screens/studio-reset-{dark,light}.png` |
-| AC9 实时预览 + 取消完整回滚 + 画布像素不变 | PASS | `CancelPreview_RollsBackAppliedThemeAndPalette`（断言 `DesignSystemThemeManager.AppliedPaletteId` 与设置恢复）、`PreviewSession_DoesNotPersistUntilApply`（磁盘文档预览期不变）、`screens/rollback-{before,preview,after}.png` + `pixel-hash.json` |
+| AC9 实时预览 + 取消完整回滚 + 画布像素不变 | PASS | `CancelPreview_RollsBackAppliedThemeAndPalette`（`DesignSystemThemeManager.AppliedPaletteId` 预览=探针主题、取消=默认）、`PreviewSession_DoesNotPersistUntilApply`（磁盘文档预览期不变）、`Preview_ChangesDynamicResourceProbe_ButLeavesCanvasPixelsUntouched_AndCancelRestores`（真实窗口正向控制 + 画布区域哈希恒定 + 取消精确还原，见 `screens/pixel-hash.json`）、`screens/rollback-{before,preview,after}.png`（preview↔before 差 128/160 格，after↔before 差 0） |
 | AC10 非法包 → issue + 回退默认不崩溃；旧 ID（9+2）迁移 | PASS | `InvalidPackage_IsBlocked_*`、`LegacyThemeIds_MigrateToDefault_WithVisibleNotice`（9 个 Theory 用例）、`UnknownOrEmptyThemeId_RecoversToDefault_WithoutCrashing`（未知/空 2 例） |
 | AC11 键盘全可达、焦点可见、Esc 分级、无颜色单编码 | PASS | `EscLadder_DialogThenUnsavedThenClose`、`UnsavedDialog_ApplyAction_CommitsAndCloses`、`KeyboardRouting_EscCtrlEnterCtrlFAndArrows`、`StatusStates_AreTextEncoded_NotColourOnly`；焦点环由 DS Button/Input 内置 2px accent |
 | AC12 证据：7 分区 × 暗/浅 + 高对比 + 导入失败 + 像素哈希 | PASS | `screens/`（24 帧）+ `screens.json` + `pixel-hash.json` |
@@ -113,7 +114,7 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 
 ## 6. 设计系统合规
 
-- 生产 XAML/C# 中**无裸色值、裸字号、裸间距、裸圆角**；全部 `{DynamicResource Nm.*}` 或 `Auto`/`*`（见 `compliance.md` 自动 grep 结果）。
+- 生产 XAML/C# 中**无裸色值、裸字号、裸间距、裸圆角**：XAML 全部 `{DynamicResource Nm.*}` 或 `Auto`/`*`；C# 几何值统一经 `ThemeStudioMetrics`（唯一令牌解析模块，conformance 允许清单，与 `ShellLayout` 同构），**ThemeStudio 的 C# 已纳入 `V2ConformanceTests` 扫描**（`compliance.md` §1/§2：39 XAML + 71 C# 文件，0 命中）。
 - 无阴影 / 渐变 / 模糊；圆角仅 `Nm.Corner.None/Sm/Md`（0/2/3px）。
 - 无 emoji 图标：导航图标为 20×20、1.25px 描边的内联 `Geometry`；状态符号统一 `Nm.State.Symbol.*`（`● ◐ ✗ ▨ · – ▲`）。
 - 状态非颜色单编码：卡片明暗徽标为文字；校验行为「级别 + 路径 + 说明 + 建议」；对比度同时显示数值与「通过/未通过」。
@@ -151,11 +152,27 @@ Get-ChildItem src/NewManga.App/Views/V2/ThemeStudio,src/NewManga.App/Shell/V2/Th
 | `build.log` | 全解决方案 Rebuild，0W/0E，`BUILD_EXIT=0` |
 | `test.log` | 全量测试汇总，`TEST_EXIT=0` |
 | `compliance.md` | 设计系统合规 grep 自检 |
-| `screens/screens.json` | 24 帧元数据（SHA-256 / 主背景 / 64 格签名 / 渲染器） |
-| `screens/pixel-hash.json` | 预览前/中/后固定像素画布哈希一致 |
+| `screens/screens.json` | 24 帧元数据（SHA-256 / 主背景 / 64 格签名 / 渲染器）+ 回滚帧差值 |
+| `screens/pixel-hash.json` | 真实窗口混合探针：5 步区域哈希 + 9 项检查（正向控制/画布恒定/取消还原） |
+| `screens/probe-{baseline,appearance-light,appearance-dark,preview,after-cancel}.png` | 探针 5 帧原始截图（强调色 Border + 文档画布） |
 | `screens/studio-{library,preview,mythemes,editor,appearance,importexport,reset}-{dark,light}.png` | 7 分区 × 暗/浅 |
 | `screens/studio-{library,preview,editor}-highcontrast.png` | 高对比关键张 |
 | `screens/import-failure-dark.png` | 非法包逐条 issue + 导入禁用 |
 | `screens/editor-dirty-dark.png` | 编辑器未保存草稿 + 实时预览 + 脏标记 |
-| `screens/rollback-{before,preview,after}.png` | 取消回滚前后帧 |
+| `screens/rollback-{before,preview,after}.png` | 取消回滚三帧（`screens.json.rollback` 记录 preview-vs-before=128 格、after-vs-before=0 格） |
 | `screens/library-{1280,1024}.png` | 响应式三/两列断点 |
+
+---
+
+## 9. 独立复审 r1 处置（PASS_WITH_ISSUES → 本 commit）
+
+复审报告：`doc/reviews/V11R-THEME-L3-r1-independent.md`（C-2 结论 `PASS_WITH_ISSUES`，2 个 P2 + 1 个 P3）。
+
+| 编号 | 处置 | 落点 |
+|---|---|---|
+| **C2-P2-1** C# 裸几何值 + conformance 排除 | `ThemeStudioMetrics` 运行期解析 `Nm.Space.4` / `Nm.Size.InspectorExpanded` / `Nm.Size.Breakpoint.*`；最小卡宽纯令牌推导；`V2ConformanceTests` 扫描目录加入 ThemeStudio 的 VM/Views，允许清单仅保留两个令牌解析模块（理由已注释）；DEVIATIONS「例外申请：无」改为与实现一致 | `ViewModels/V2/ThemeStudio/ThemeStudioMetrics.cs`、`tests/.../V2ConformanceTests.cs`、`compliance.md` §2/§3、`DEVIATIONS.md` |
+| **C2-P2-2** AC9 探针恒真 | 探针迁入真实窗口：`{DynamicResource Nm.Color.Accent.Base}` Border（正向控制，不随主题变则测试红）+ `WriteableBitmap` 文档画布（区域哈希必须不变）；`passed` 与全部哈希由比较结果写出；取消后强调色探针与整帧精确还原 | `tests/.../V2ThemeStudioScreenshotTests.cs`、`screens/pixel-hash.json`、`screens/probe-*.png` |
+| **P3** rollback-preview 未比较 | 断言 preview↔before ≥5/160 格（实测 128）、after↔before ≤3 格（实测 0），并写入 `screens.json` | `screens/screens.json` → `rollback` |
+| P3 边界说明 | README §4.1 明确「行为=沙箱真引擎 / 应用级=production」；AC 表按此引用，不再混用 | README §4.1 |
+| P3 GAP-3 清单 | 已请 Lead 登记进 V11R-C-1 follow-up 清单（C-2 侧记录保留在 `DEVIATIONS.md`） | `DEVIATIONS.md` |
+| **C2-P1** 主题层行高契约漂移（本任务诊断，Lead 授权修复） | `ThemePaletteComposer` 改写倍数（量化到 1.25/1.45/1.6，层仍 59 键）+ DS 最小防御（别名 ∈[1,2.5] 否则拒绝层）+ 6 个回归测试；24 帧重建后版式恢复 | `DEVIATIONS.md` §C2-P1、`tests/NewManga.ThemeEngine.Tests/LineHeightContractTests.cs` |

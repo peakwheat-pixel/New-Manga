@@ -135,8 +135,11 @@ public sealed class ThemePaletteComposerTests
             Assert.Equal(Math.Round(value * 1.25, 2, MidpointRounding.AwayFromZero), Assert.IsType<double>(layer[key]));
         }
 
-        // Body tier = 13px * 1.45 * 1.25 = 23.56
-        Assert.Equal(23.56, Assert.IsType<double>(layer[NmKeys.LineHeight.Body]), precision: 2);
+        // The alias stays the frozen multiplier; the absolute line box the design system derives is
+        // fontSize * multiplier = 13 * 1.25 * 1.45 = 23.56 (asserted end-to-end in LineHeightContractTests).
+        Assert.Equal(1.45, Assert.IsType<double>(layer[NmKeys.LineHeight.Body]));
+        var scaledBodySize = Assert.IsType<double>(layer[NmKeys.FontSize.Md]);
+        Assert.Equal(23.56, Math.Round(scaledBodySize * 1.45, 2, MidpointRounding.AwayFromZero), precision: 2);
     }
 
     [Fact]
@@ -159,10 +162,17 @@ public sealed class ThemePaletteComposerTests
         var tightLayer = ThemePaletteComposer.Compose(tight, PaletteVariant.Dark);
         var looseLayer = ThemePaletteComposer.Compose(loose, PaletteVariant.Dark);
 
-        // Body = 13px * 1.45 (design tier) * preset / 1.45 (normal anchor)
-        Assert.Equal(18.85, Assert.IsType<double>(normalLayer[NmKeys.LineHeight.Body]), precision: 2);
-        Assert.Equal(16.25, Assert.IsType<double>(tightLayer[NmKeys.LineHeight.Body]), precision: 2);
-        Assert.Equal(20.8, Assert.IsType<double>(looseLayer[NmKeys.LineHeight.Body]), precision: 2);
+        // The preset maps the Body alias onto the frozen multiplier set (1.45 / 1.25 / 1.6) and the
+        // absolute line box follows the layer font size: 13px * multiplier.
+        Assert.Equal(1.45, Assert.IsType<double>(normalLayer[NmKeys.LineHeight.Body]));
+        Assert.Equal(1.25, Assert.IsType<double>(tightLayer[NmKeys.LineHeight.Body]));
+        Assert.Equal(1.6, Assert.IsType<double>(looseLayer[NmKeys.LineHeight.Body]));
+
+        // Derived absolute boxes (font size * alias) keep the preset's visual rhythm.
+        var bodySize = Assert.IsType<double>(normalLayer[NmKeys.FontSize.Md]);
+        Assert.Equal(18.85, Math.Round(bodySize * 1.45, 2, MidpointRounding.AwayFromZero), precision: 2);
+        Assert.Equal(16.25, Math.Round(bodySize * 1.25, 2, MidpointRounding.AwayFromZero), precision: 2);
+        Assert.Equal(20.8, Math.Round(bodySize * 1.6, 2, MidpointRounding.AwayFromZero), precision: 2);
 
         // The multiplier tokens themselves are frozen values, not the preset.
         Assert.Equal(1.25, Assert.IsType<double>(tightLayer[NmKeys.LineHeight.Tight]));

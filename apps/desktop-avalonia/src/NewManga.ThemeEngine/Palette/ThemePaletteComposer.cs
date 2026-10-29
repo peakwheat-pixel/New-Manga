@@ -131,14 +131,46 @@ public static class ThemePaletteComposer
             layer[multiplierKey] = multiplierValue;
         }
 
+        // R-15 line-height group, corrected by C-2-I1: the frozen 59-key layer carries the semantic
+        // aliases as MULTIPLIERS (contract: TokenMap says Nm.LineHeight.* is constrained to the frozen
+        // 1.25/1.45/1.6 set). DesignSystemThemeManager derives the absolute Nm.TextLineBox.* value as
+        // fontSize x multiplier; emitting absolute pixels here made that derivation multiply the font
+        // size twice and inflated every line box ~12x whenever a theme layer was applied.
         var anchor = ThemeTokenBaseline.LineHeightMultipliers[NmKeys.LineHeight.Normal];
         var preset = PresetMultiplier(tokens.Typography.LineHeight);
         var presetRatio = preset / anchor;
+        var allowedAliases = ThemeTokenBaseline.LineHeightMultipliers.Values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
         foreach (var tier in ThemeTokenBaseline.LineHeightTiers)
         {
-            var baseSize = ThemeTokenBaseline.FontSizes[tier.FontSizeKey];
-            layer[tier.ResourceKey] = Round(baseSize * scale * tier.DesignMultiplier * presetRatio);
+            var multiplier = QuantizeLineHeightAlias(tier.DesignMultiplier * presetRatio, allowedAliases);
+            layer[tier.ResourceKey] = multiplier;
         }
+    }
+
+    /// <summary>
+    /// Snaps a design ratio onto the frozen multiplier set (1.25 / 1.45 / 1.6): the alias keys are
+    /// contract-constrained to those values, while the exact preset/scale precision lives in the absolute
+    /// <c>Nm.TextLineBox.*</c> values the design-system manager derives from the layer's own font sizes.
+    /// Ties resolve to the lower step so the mapping is stable.
+    /// </summary>
+    private static double QuantizeLineHeightAlias(double value, IReadOnlyList<double> allowed)
+    {
+        var best = allowed[0];
+        var bestDelta = double.MaxValue;
+        foreach (var candidate in allowed)
+        {
+            var delta = Math.Abs(candidate - value);
+            if (delta < bestDelta - 1e-9)
+            {
+                best = candidate;
+                bestDelta = delta;
+            }
+        }
+
+        return best;
     }
 
     private static void AddCorners(

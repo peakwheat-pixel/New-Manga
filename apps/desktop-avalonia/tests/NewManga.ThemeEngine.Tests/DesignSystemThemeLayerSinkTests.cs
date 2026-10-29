@@ -40,7 +40,8 @@ public sealed class DesignSystemThemeLayerSinkTests : IDisposable
         var application = ThemeTestHarness.Application;
         Assert.Equal(Color.Parse("#FF0F1012"), ThemeTestHarness.ColorOf(application, NmKeys.Color.Bg.Canvas));
         Assert.Equal(13d, ThemeTestHarness.ValueOf<double>(application, NmKeys.FontSize.Md));
-        Assert.Equal(18.85, ThemeTestHarness.ValueOf<double>(application, NmKeys.LineHeight.Body), precision: 2);
+        Assert.Equal(18.85, ThemeTestHarness.ValueOf<double>(application, NmKeys.TextLineBox.Body), precision: 2);
+        Assert.Equal(1.45, ThemeTestHarness.ValueOf<double>(application, NmKeys.LineHeight.Body), precision: 2);
         Assert.Equal(new CornerRadius(3), ThemeTestHarness.ValueOf<CornerRadius>(application, NmKeys.Corner.Md));
         Assert.Equal(
             TimeSpan.FromMilliseconds(ThemeMotion.DefaultSlowMs),
