@@ -1,0 +1,10 @@
+{
+  "ac": "AC4/AC2 \u9009\u62E9\u4E0E\u7B5B\u9009",
+  "screenshot": "batch-chips-selection.png",
+  "chips": 6,
+  "box_selected_cells": 4,
+  "box_selected_pages": 2,
+  "scope_suffix": " \u00B7 \u9009\u4E2D 2 \u9875",
+  "stale_chip_unavailable": true,
+  "filter_dims_not_removes": true
+}

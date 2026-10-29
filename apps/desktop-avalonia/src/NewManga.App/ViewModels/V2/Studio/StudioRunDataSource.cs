@@ -12,6 +12,13 @@ public sealed record StudioRunStageState(
     string RawState,
     StudioStateKind? State);
 
+/// <summary>One executed step of one page task (per-page per-stage evidence for a matrix cell).</summary>
+public sealed record StudioRunStepState(
+    string StepType,
+    string RawStatus,
+    StudioStateKind? State,
+    string? ErrorCode);
+
 /// <summary>One page row of the run projection (Batch matrix row).</summary>
 public sealed record StudioRunPageRow(
     string PageId,
@@ -21,7 +28,17 @@ public sealed record StudioRunPageRow(
     StudioStateKind? State,
     bool IsLocked,
     bool IsPipelineCurrent,
-    string? ErrorCode);
+    string? ErrorCode,
+    IReadOnlyList<StudioRunStepState> Steps)
+{
+    /// <summary>The authoritative per-stage state of this page (null = projection has no such step).</summary>
+    public StudioStateKind? StageState(string? stageType) =>
+        string.IsNullOrWhiteSpace(stageType)
+            ? null
+            : Steps.FirstOrDefault(step =>
+                    string.Equals(step.StepType, stageType, StringComparison.OrdinalIgnoreCase))
+                ?.State;
+}
 
 /// <summary>
 /// Studio-facing projection of one pipeline run. Deliberately a Studio-local DTO: the frozen
@@ -45,16 +62,44 @@ public sealed record StudioRunProjection(
     int WaitingPageCount,
     int ProcessingPageCount)
 {
+    /// <summary>Core-projected control availability (pause/stop/continue/restart/abandon/retry).</summary>
+    public StudioRunControls Controls { get; init; } = new(false, false, false, false, false, false);
+
+    /// <summary>Blocked reasons the Core reported (error codes only, no paths/secrets).</summary>
+    public IReadOnlyList<string> BlockedReasons { get; init; } = Array.Empty<string>();
+
     /// <summary>True when the projection has enough information to render the matrix honestly.</summary>
     public bool HasRows => Rows.Count > 0;
+
+    /// <summary>Stage columns for the matrix: exactly the projection's step flow (never a fixed ten).</summary>
+    public IReadOnlyList<StudioRunStageState> Columns => Stages;
+
+    public double ProgressPercent => Math.Clamp(Progress, 0, 1);
+
+    /// <summary>Alias used by the Batch VM (0..1).</summary>
+    public double Percent => ProgressPercent;
 
     /// <summary>Stages as a lookup for the Page pipeline band (Core step type → state).</summary>
     public StudioStateKind? StateForStage(StudioStage stage) =>
         stage.CoreStepType is null
             ? null
+            : StateForCoreStep(stage.CoreStepType);
+
+    public StudioStateKind? StateForCoreStep(string? coreStepType) =>
+        string.IsNullOrWhiteSpace(coreStepType)
+            ? null
             : Stages.FirstOrDefault(item =>
-                    string.Equals(item.CoreStepType, stage.CoreStepType, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(item.CoreStepType, coreStepType, StringComparison.OrdinalIgnoreCase))
                 ?.State;
+
+    /// <summary>Stage count from this projection (0 when no step flow was returned).</summary>
+    public int StageColumnCount => Stages.Count;
+
+    /// <summary>Row lookup for the drawer / drill-down.</summary>
+    public StudioRunPageRow? RowFor(string? pageId) =>
+        string.IsNullOrWhiteSpace(pageId)
+            ? null
+            : Rows.FirstOrDefault(row => string.Equals(row.PageId, pageId, StringComparison.Ordinal));
 }
 
 /// <summary>

@@ -24,6 +24,7 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
         Selection = selection ?? new StudioSelection();
         Page = new StudioPageViewModel(host, Selection, runSource, textSource, flagSource);
         Host = host;
+        Batch = new StudioBatchViewModel(host, Selection, Page, host as IRunController);
     }
 
     public IHostController Host { get; }
@@ -31,6 +32,9 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
     public StudioSelection Selection { get; }
 
     public StudioPageViewModel Page { get; }
+
+    /// <summary>V11R-B-4: Batch mode view model (one instance for the session, like Page).</summary>
+    public StudioBatchViewModel Batch { get; }
 
     public StudioWorkspaceMode Mode
     {

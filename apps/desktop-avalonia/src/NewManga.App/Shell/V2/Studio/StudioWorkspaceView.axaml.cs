@@ -29,8 +29,8 @@ public partial class StudioWorkspaceView : UserControl
     private readonly TextBlock _breadcrumb;
     private readonly TextBlock _scopeText;
     private readonly TextBlock _modeText;
-    private readonly Control _batchPlaceholder;
-    private TextBlock _batchNote = null!;
+    private readonly StudioBatchWorkspace _batchWorkspace;
+
 
     /// <summary>Design-time / XAML-loading constructor: no Host, so the view renders its empty state.</summary>
     public StudioWorkspaceView()
@@ -77,10 +77,10 @@ public partial class StudioWorkspaceView : UserControl
 
         // ---------------------------------------------------------------- content
         _pageWorkspace = new StudioPageWorkspace(viewModel.Page);
-        _batchPlaceholder = BuildBatchPlaceholder();
+        _batchWorkspace = new StudioBatchWorkspace(viewModel.Batch);
         var content = new Grid();
         content.Children.Add(_pageWorkspace);
-        content.Children.Add(_batchPlaceholder);
+        content.Children.Add(_batchWorkspace);
 
         Grid.SetRow(head, 0);
         Grid.SetRow(content, 1);
@@ -95,6 +95,7 @@ public partial class StudioWorkspaceView : UserControl
             }
         };
         _pageWorkspace.Canvas.Focusable = true;
+        WireBatchDrillDown();
         ApplyMode();
     }
 
@@ -104,7 +105,9 @@ public partial class StudioWorkspaceView : UserControl
 
     public StudioPageWorkspace PageWorkspace => _pageWorkspace;
 
-    public Control BatchPlaceholder => _batchPlaceholder;
+    public Control BatchPlaceholder => _batchWorkspace;
+
+    public StudioBatchWorkspace BatchWorkspace => _batchWorkspace;
 
     public TextBlock BreadcrumbText => _breadcrumb;
 
@@ -188,36 +191,28 @@ public partial class StudioWorkspaceView : UserControl
         return (page, batch);
     }
 
-    private Control BuildBatchPlaceholder()
+    private async Task SyncBatchAsync()
     {
-        var host = StudioUi.Box("sunken");
-        var card = StudioUi.Box("raised");
-        card.Width = 560;
-        card.HorizontalAlignment = HorizontalAlignment.Center;
-        card.VerticalAlignment = VerticalAlignment.Center;
+        await _viewModel.Batch.RefreshAsync().ConfigureAwait(true);
+        _viewModel.Page.ApplyRunProjection(_viewModel.Batch.Projection);
+    }
 
-        var column = StudioUi.Column(12);
-        column.Children.Add(StudioUi.Text("Studio · Batch", "title"));
-        var notWired = StudioUi.Box(StudioUi.Text("NOT_WIRED", "meta"), "studio-chip");
-        notWired.HorizontalAlignment = HorizontalAlignment.Left;
-        column.Children.Add(notWired);
-        _batchNote = new TextBlock { Classes = { "body", "studio-wrap" }, Text = _viewModel.BatchNotWiredNote };
-        column.Children.Add(_batchNote);
-        var detail = new TextBlock { Classes = { "meta", "studio-wrap" }, Text = _viewModel.BatchNotWiredDetail };
-        column.Children.Add(detail);
+    private async Task DrillToPageAsync(string pageId, string? stageType)
+    {
+        await _viewModel.Page.SelectPageAsync(pageId).ConfigureAwait(true);
+        _viewModel.Page.HighlightPipelineStage(stageType);
+        _viewModel.RequestMode(StudioWorkspaceMode.Page);
+    }
 
-        var actions = StudioUi.Row(8);
-        var start = StudioUi.Button("开始处理", "sm primary");
-        start.IsEnabled = false;
-        ToolTip.SetTip(start, StudioCapabilityGate.NotWiredTooltip);
-        var back = StudioUi.Button("返回 Page 模式", "sm", () => _viewModel.RequestMode(StudioWorkspaceMode.Page));
-        actions.Children.Add(start);
-        actions.Children.Add(back);
-        column.Children.Add(actions);
-
-        card.Child = column;
-        host.Child = card;
-        return host;
+    private void WireBatchDrillDown()
+    {
+        _viewModel.Batch.DrillToPageRequested += (_, target) => _ = DrillToPageAsync(target.PageId, target.StageType);
+        _viewModel.Page.PipelineStageActivated += (_, stageType) =>
+        {
+            _viewModel.Batch.HighlightStage(stageType, _viewModel.Page.CurrentPageId);
+            _ = SyncBatchAsync();
+            _viewModel.RequestMode(StudioWorkspaceMode.Batch);
+        };
     }
 
     private void ApplyMode()
@@ -225,7 +220,11 @@ public partial class StudioWorkspaceView : UserControl
         _pageModeButton.Classes.Set("active", _viewModel.IsPageMode);
         _batchModeButton.Classes.Set("active", _viewModel.IsBatchMode);
         _pageWorkspace.IsVisible = _viewModel.IsPageMode;
-        _batchPlaceholder.IsVisible = _viewModel.IsBatchMode;
+        _batchWorkspace.IsVisible = _viewModel.IsBatchMode;
+        if (_viewModel.IsBatchMode)
+        {
+            _ = SyncBatchAsync();
+        }
         _modeText.Text = _viewModel.HeaderModeText;
     }
 }

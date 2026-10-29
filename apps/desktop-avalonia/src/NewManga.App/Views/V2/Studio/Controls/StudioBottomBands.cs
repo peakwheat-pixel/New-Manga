@@ -166,23 +166,8 @@ public sealed class StudioPipelineBand : Border
         _pageText = StudioUi.BoundText(nameof(StudioPageViewModel.PageCounterText), "data", "muted");
 
         _dots = StudioUi.Row(4);
-        foreach (var stage in viewModel.PipelineStages)
-        {
-            var dot = StudioUi.Dot(stage.State);
-            ToolTip.SetTip(dot, stage.Tooltip);
-            _dots.Children.Add(dot);
-            var captured = stage;
-            stage.PropertyChanged += (_, _) =>
-            {
-                foreach (var state in Enum.GetValues<StudioStateKind>())
-                {
-                    dot.Classes.Set(StudioUi.FillClass(state), captured.State == state);
-                }
-
-                dot.Classes.Set("studio-fill-nodata", captured.State is null);
-                ToolTip.SetTip(dot, captured.Tooltip);
-            };
-        }
+        RebuildDots();
+        viewModel.PipelineStages.CollectionChanged += (_, _) => RebuildDots();
 
         var notWiredChip = StudioUi.Box(
             StudioUi.Text("NOT_WIRED", "meta"),
@@ -235,6 +220,34 @@ public sealed class StudioPipelineBand : Border
     }
 
     private readonly ScrollViewer _stageScroll;
+
+    /// <summary>Rebuilds the ten/dynamic dots; each dot is a real button (Page → Batch drill-up).</summary>
+    private void RebuildDots()
+    {
+        _dots.Children.Clear();
+        foreach (var stage in _viewModel.PipelineStages)
+        {
+            var dot = StudioUi.Dot(stage.State);
+            var button = StudioUi.Button(string.Empty, "icon ghost", () => _viewModel.ActivatePipelineStage(stage.Key));
+            button.Content = dot;
+            button.Width = 14;
+            button.Height = 14;
+            button.Padding = new Thickness(0);
+            ToolTip.SetTip(button, $"{stage.Tooltip} · 点击回到 Batch 并高亮该阶段");
+            _dots.Children.Add(button);
+            var captured = stage;
+            stage.PropertyChanged += (_, _) =>
+            {
+                foreach (var state in Enum.GetValues<StudioStateKind>())
+                {
+                    dot.Classes.Set(StudioUi.FillClass(state), captured.State == state);
+                }
+
+                dot.Classes.Set("studio-fill-nodata", captured.State is null);
+                ToolTip.SetTip(button, captured.Tooltip);
+            };
+        }
+    }
 
     public ItemsControl StageList => _stageList;
 

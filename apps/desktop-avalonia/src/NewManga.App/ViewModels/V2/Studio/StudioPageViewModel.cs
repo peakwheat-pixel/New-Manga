@@ -131,6 +131,12 @@ public sealed class StudioPipelineStageItem : StudioObservable
         Stage = stage;
     }
 
+    /// <summary>V11R-B-4: a stage column that comes from the live projection (dynamic step flow).</summary>
+    public StudioPipelineStageItem(string key, string label, int index)
+    {
+        Stage = new StudioStage(key, label, label, index, key);
+    }
+
     public StudioStage Stage { get; }
 
     public string Key => Stage.Key;
@@ -254,6 +260,7 @@ public sealed class StudioPageViewModel : StudioObservable
     private string? _regionDetailsError;
     private bool _isLoadingRegionDetails;
     private int _loadGeneration;
+    private string? _highlightedStageKey;
 
     public StudioPageViewModel(
         IHostController host,
@@ -1270,18 +1277,73 @@ public sealed class StudioPageViewModel : StudioObservable
         RefreshPipelineBand();
     }
 
+    /// <summary>
+    /// V11R-B-4: band stages are the projection's own step flow (dynamic). Without a projection the
+    /// canonical ten render as "no projection data" — they never claim progress.
+    /// </summary>
     private void RefreshPipelineBand()
     {
-        var mapped = StudioRunStageMapper.MapBandStages(_runProjection);
-        for (var index = 0; index < PipelineStages.Count; index++)
+        PipelineStages.Clear();
+        if (_runProjection is { Columns.Count: > 0 } projection)
         {
-            PipelineStages[index].State = mapped[index].State;
+            for (var index = 0; index < projection.Columns.Count; index++)
+            {
+                var column = projection.Columns[index];
+                PipelineStages.Add(new StudioPipelineStageItem(column.CoreStepType, column.Label, index + 1)
+                {
+                    State = column.State,
+                });
+            }
+        }
+        else
+        {
+            foreach (var stage in StudioStages.Canonical)
+            {
+                PipelineStages.Add(new StudioPipelineStageItem(stage));
+            }
         }
 
         Raise(nameof(PipelineWired));
         Raise(nameof(PipelineHeaderText));
         Raise(nameof(PipelineNotWired));
         Raise(nameof(PipelineNotWiredNote));
+    }
+
+    /// <summary>V11R-B-4: the workspace pushes the Batch projection into the Page band (same source).</summary>
+    public void ApplyRunProjection(StudioRunProjection? projection)
+    {
+        _runProjection = projection;
+        RefreshPipelineBand();
+        Raise(nameof(PipelineHeaderText));
+        Raise(nameof(PipelineWired));
+        Raise(nameof(PipelineNotWired));
+    }
+
+    /// <summary>Raised when a pipeline step dot is activated (Page → Batch drill-up).</summary>
+    public event EventHandler<string?>? PipelineStageActivated;
+
+    /// <summary>Highlighted step column (set by the Batch matrix drill-down).</summary>
+    public string? HighlightedStageKey
+    {
+        get => _highlightedStageKey;
+        private set
+        {
+            if (Set(ref _highlightedStageKey, value))
+            {
+                Raise(nameof(HighlightedStageLabel));
+            }
+        }
+    }
+
+    public string HighlightedStageLabel => HighlightedStageKey is { } key ? $"阶段：{key}" : "未定位阶段";
+
+    public void HighlightPipelineStage(string? coreStepType) => HighlightedStageKey = coreStepType;
+
+    /// <summary>Band step click: record the highlight and raise the drill-up event for the workspace.</summary>
+    public void ActivatePipelineStage(string? coreStepType)
+    {
+        HighlightedStageKey = coreStepType;
+        PipelineStageActivated?.Invoke(this, coreStepType);
     }
 
     public void TogglePipelineExpanded()
