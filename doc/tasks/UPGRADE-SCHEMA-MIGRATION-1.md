@@ -76,6 +76,7 @@ allowed_paths:
 - **round 2 返修**：逐项处理——按版本 seed（v2/v3/v4/v5 数据，v5 重建表有数据）；全字段/关系断言 + `PRAGMA foreign_key_check`；
   防假阳性 14 张表清单；幂等逐版本参数化；日志头修正（COMMAND/CWD/PYTHON/AT + EXIT）。
 - 复审：**待 region-workbench-owner 再审 `3f32bb503`**。
+- 独立复审 round 2（region-workbench-owner，reviewed_head `3710e0014`）：**FAIL / CHANGES_REQUESTED**（P0=0；2×P1 + 4×P2；11 个单测实跑通过、3/3 证据 pin 与 check PASS，但 v5 还重建 `step_runs`/`step_result_candidates`，测试未 seed/断言这两张表（独立探针 rows=0），仍是空表通过；“全字段”断言只覆盖部分列，v2 新列/regions JSON/pipeline JSON 等未断言；pytest-full-summary 无命令头）。详见 [`doc/reviews/UPGRADE-SCHEMA-MIGRATION-1.md`](../reviews/UPGRADE-SCHEMA-MIGRATION-1.md) 的 Round 2 Review。
 
 ## Canonical Evidence
 
