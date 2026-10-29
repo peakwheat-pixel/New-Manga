@@ -46,7 +46,7 @@
 
 ### C 类：受证据 pin 保护（禁止修改/删除）
 
-78 处 / 28 文件（完整清单见 `DEPENDENCY_GRAPH.md` §6）：计划/契约/任务/交接/历史验证证据（`doc/**`、
+86 处 / 30 文件（完整清单见 `DEPENDENCY_GRAPH.md` §6）：计划/契约/任务/交接/历史验证证据（`doc/**`、
 `verification/THEME-MACOS-2/**`、`verification/V11R-C-1/**`、`verification/RELEASE-REPACK-5/**` 等）。
 处理原则：保持原字节；如新事实与旧文档冲突，由 Lead 追加新说明/新证据，不就地改写；删除任务不得以
 “清理旧文档”为名触碰这些文件。
@@ -87,7 +87,7 @@
 | `S4ReaderWorkbenchTests.*`（10 个，旧壳 reader workbench） | `ReaderLibraryTests`、`ReaderProgressTests`、`ReaderChapterSelectorTests`、`RegionWorkbenchUiTests`、`V2ShellUiTests.ReaderOverlay_...` |
 
 > 标“**需新增**”的 5 条断言是 R4 前的硬门：C-3 执行时先补测试并通过，再删对应旧测试；否则 R4 不通过。
-> 其余映射均已存在于当前 main 测试中（基线 `907339511` 全绿）。
+> 其余映射均已存在于当前 main 测试中（基线 `c5037b65` 全绿）。
 
 ## 3. 执行顺序与门禁
 
@@ -107,7 +107,8 @@
 
 - 迁移门测试：`tests/NewManga.ThemeEngine.Tests/LegacyThemeRetirementGateTests.cs` 26 例全绿（9 旧 ID ×
   文件级端到端 + 未知 ID（有/无 registry）+ 空/缺失 + 旧键组合 + 幂等 + 表完整性）。
-- 依赖图：609 引用/65 文件已分类，含机器可读 JSON 与全表。
+- 依赖图：631 引用/68 文件已分类，含机器可读 JSON 与全表。
 - 回滚脚本：dry-run 通过（见 `verification/V11R-C-3-READY/rollback-dry-run.log`）；实际 git 回滚 + 启动
   smoke 演练留到 C-3 执行（`ROLLBACK_DRILL.md` 标注 NOT_RUN 步骤）。
-- L3 对比度矩阵：`verification/V11R-D-1/contrast-matrix.md`（4 套盘 × 5 背景，含 8 行/14 对未达标明细与判定依据）。
+- L3 对比度矩阵：`verification/V11R-D-1/contrast-matrix.md`（4 套盘 × 5 背景，含 8 行/15 对未达标明细与判定依据）。
+

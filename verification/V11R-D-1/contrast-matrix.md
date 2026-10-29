@@ -1,7 +1,7 @@
 # V11R-D-1 L3 无障碍对比度矩阵
 
-- 生成时间：2026-10-30T02:18:24+08:00
-- 基线 commit：`7f6787b91f15e9ae7485cff8103206b0f2a4704d`
+- 生成时间：2026-10-30T03:14:37+08:00
+- 基线 commit：`9acddc23f6f69959606f57f58f24921d0db5d730`
 - 数据来源：`doc/design/redesign-v1/40-fusion/tokens.json`（冻结标准盘）、`apps/desktop-avalonia/src/NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml`（R-14 规则派生高对比盘）
 - 计算方法：WCAG 2.1 相对亮度与对比度公式（(L1+0.05)/(L2+0.05)），与 DS `ContrastMath` 实现一致；比率保留两位小数。
 - 门槛（Lead 裁定）：正文 `text.primary` ≥ 7.0；次要 `text.secondary/tertiary` ≥ 4.5；状态 7 色 ≥ 4.5；强调/焦点环（非文本 UI）≥ 3.0；`accent.on` 落在 `accent.base` 上按文本要求 ≥ 4.5。
@@ -95,21 +95,22 @@
 
 - 检查项：4 套盘 ×（正文 1 + 次要 1 + 状态 7 + 强调/焦点指示 3 + accent 文本 1）共 13 个强制门槛组 × 5 级背景；另有三级文字与 `accent.ring` 外发光两组信息性参考（无门槛）。
 - 未达标行数（按行计）：**8**。
+- 未达标 pair 数（按 pair 计）：**15**。
 - 未达标组合明细（标准盘状态色 vs 极端表面）：
-  - Dark（冻结标准盘） | 状态 `status.queued` = #8A9099 | bg.overlay = 4.24
-  - Dark（冻结标准盘） | 状态 `status.running` = #5B93B8 | bg.overlay = 4.1
-  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | bg.raised = 4.22
-  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | bg.overlay = 3.75
-  - Dark（冻结标准盘） | 状态 `status.stale` = #9A8AB0 | bg.overlay = 4.31
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | bg.raised = 4.25
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | bg.overlay = 3.77
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.canvas = 4.31
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.sunken = 3.98
-  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | bg.raised = 4.24
-  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | bg.sunken = 4.2
-  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | bg.raised = 4.47
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.canvas = 4.07
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.sunken = 3.75
-  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | bg.raised = 4
+  - Dark（冻结标准盘） | 状态 `status.queued` = #8A9099 | background=bg.overlay ratio=4.24 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.running` = #5B93B8 | background=bg.overlay ratio=4.10 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | background=bg.raised ratio=4.22 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.failed` = #CC6A57 | background=bg.overlay ratio=3.75 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.stale` = #9A8AB0 | background=bg.overlay ratio=4.31 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | background=bg.raised ratio=4.25 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #82878E | background=bg.overlay ratio=3.77 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | background=bg.canvas ratio=4.31 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | background=bg.sunken ratio=3.98 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.queued` = #6E7378 | background=bg.raised ratio=4.24 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | background=bg.sunken ratio=4.20 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.blocked` = #8A6A1F | background=bg.raised ratio=4.47 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | background=bg.canvas ratio=4.07 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | background=bg.sunken ratio=3.75 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.skipped` = #73777B | background=bg.raised ratio=4.00 floor=4.5
 - 判定：状态色在 `bg.panel`（正文/表格/卡片）与合成后的 `statusMuted` 底上达标；上表暴露出的是状态文字直接落在 `bg.overlay`（菜单/tooltip）或 `bg.sunken/bg.raised` 极端表面时的缺口。DS 组件样式把状态文字放在 `bg.panel/raised + statusMuted` 组合上，因此实际界面组合达标；L3 审查建议把「状态文字允许背景集合」写成组件约束，或在后续令牌修订中抬高这些状态色。light `status.skipped` vs `bg.canvas` 已按 D-3 登记为已知残余。
 - 复现：`pwsh -NoProfile -File tools/v11r/contrast-matrix.ps1`

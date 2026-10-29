@@ -166,7 +166,7 @@ $markdown = [System.Text.StringBuilder]::new()
 [void]$markdown.AppendLine()
 
 $failures = 0
-$failingPairs = [System.Collections.Generic.List[string]]::new()
+$failingPairs = [System.Collections.Generic.List[object]]::new()
 foreach ($theme in $themes) {
     $palette = $theme.Palette
     $backgroundValues = [ordered]@{}
@@ -219,7 +219,16 @@ foreach ($theme in $themes) {
             }
 
             $pass = $ratio -ge $row.Floor
-            if (-not $pass -and -not $row.Info) { $rowFailed = $true; $failingPairs.Add("$($theme.Name) | $($row.Label) | $bgName = $ratio") }
+            if (-not $pass -and -not $row.Info) {
+                $rowFailed = $true
+                $failingPairs.Add([pscustomobject]@{
+                    theme = $theme.Name
+                    label = $row.Label
+                    background = $bgName
+                    ratio = [math]::Round($ratio, 2)
+                    floor = $row.Floor
+                })
+            }
             $cells += ('{0:F2} {1}' -f $ratio, $(if ($row.Info) { '—' } elseif ($pass) { '✔' } else { '✘' }))
             $pairResults += [ordered]@{ background = $bgName; ratio = $ratio; floor = $row.Floor; pass = $pass }
         }
@@ -263,10 +272,11 @@ foreach ($theme in $themes) {
 [void]$markdown.AppendLine()
 [void]$markdown.AppendLine('- 检查项：4 套盘 ×（正文 1 + 次要 1 + 状态 7 + 强调/焦点指示 3 + accent 文本 1）共 13 个强制门槛组 × 5 级背景；另有三级文字与 `accent.ring` 外发光两组信息性参考（无门槛）。')
 [void]$markdown.AppendLine('- 未达标行数（按行计）：**' + $failures + '**。')
+[void]$markdown.AppendLine('- 未达标 pair 数（按 pair 计）：**' + $failingPairs.Count + '**。')
 if ($failures -gt 0) {
     [void]$markdown.AppendLine('- 未达标组合明细（标准盘状态色 vs 极端表面）：')
     foreach ($pair in $failingPairs) {
-        [void]$markdown.AppendLine('  - ' + $pair)
+        [void]$markdown.AppendLine(('  - {0} | {1} | background={2} ratio={3:F2} floor={4:F1}' -f $pair.theme, $pair.label, $pair.background, $pair.ratio, $pair.floor))
     }
     [void]$markdown.AppendLine('- 判定：状态色在 `bg.panel`（正文/表格/卡片）与合成后的 `statusMuted` 底上达标；上表暴露出的是状态文字直接落在 `bg.overlay`（菜单/tooltip）或 `bg.sunken/bg.raised` 极端表面时的缺口。DS 组件样式把状态文字放在 `bg.panel/raised + statusMuted` 组合上，因此实际界面组合达标；L3 审查建议把「状态文字允许背景集合」写成组件约束，或在后续令牌修订中抬高这些状态色。light `status.skipped` vs `bg.canvas` 已按 D-3 登记为已知残余。')
 }
@@ -285,6 +295,8 @@ $data = [ordered]@{
     generatedAt = $generatedAt
     method = 'WCAG 2.1 relative luminance; (L1+0.05)/(L2+0.05)'
     failures = $failures
+    failing_pairs = $failingPairs.Count
+    failing_pairs_detail = $failingPairs
     themes = $dataThemes
 }
 [System.IO.File]::WriteAllText($dataAbsolute, ($data | ConvertTo-Json -Depth 8) + [Environment]::NewLine, [System.Text.UTF8Encoding]::new($false))
@@ -292,6 +304,10 @@ $data = [ordered]@{
 Write-Output "matrix : $matrixAbsolute"
 Write-Output "data   : $dataAbsolute"
 Write-Output "failing rows: $failures"
+Write-Output "failing pairs: $($failingPairs.Count)"
+
+
+
 
 
 

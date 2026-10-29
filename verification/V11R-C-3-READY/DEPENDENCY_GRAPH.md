@@ -86,7 +86,7 @@ $graph.references | Where-Object { $_.fate -in @('DELETE-WITH-C3','MIGRATE-THEN-
 
 随机漂移时重新运行生成脚本即可刷新 `dependency-graph.json` 与全表。
 
-## 6. 证据 pin 保护清单（78 处 / 28 文件，禁止修改或删除）
+## 6. 证据 pin 保护清单（86 处 / 30 文件，禁止修改或删除）
 
 - 计划/契约/任务/交接：`doc/plan/V11R_THEME_RETIREMENT_PLAN.md`（13）、`doc/plan/V11R_AVALONIA_CONTRACT.md`（3）、
   `doc/tasks/V11R-C-3.md`（3）、`doc/tasks/THEME-MACOS-1.md`（7）、`doc/tasks/THEME-MACOS-2.md`（3）、
@@ -98,4 +98,5 @@ $graph.references | Where-Object { $_.fate -in @('DELETE-WITH-C3','MIGRATE-THEN-
   `verification/PUBLIC-RELEASE-P0-1/ls-tree.txt`（1）、`verification/RELEASE-REPACK-5/**`（2）、
   `verification/V11R-C-1/**`（4）、`verification/V11R-B-1/layout/hot-switch.json`（1）。
 - 处理原则：C-3 代码改动不得修改这些字节；如新事实与旧文档冲突，按治理规则由 Lead 追加说明/新证据，不就地改写。
+
 

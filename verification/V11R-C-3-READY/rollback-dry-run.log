@@ -1,4 +1,20 @@
+# command: pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun -ArtifactDirectory verification/V11R-C-3-READY/drill-artifacts
 DRY RUN - no files, refs or settings are changed.
-repo   : G:/CODEX/New Manga.workspace/worktrees/V11R-C3-READY
-branch : v11r/c3-ready @ 7f6787b91f15e9ae7485cff8103206b0f2a4704d
-dirty  : True
+repo     : G:/CODEX/New Manga.workspace/worktrees/V11R-C3-READY-FIX
+branch   : v11r/c3-ready-fix @ 5842b4f90ddc934c12c311a6b7e6526f1c8dee7f
+dirty    : False
+mode     : checkout
+tag      : v11r-pre-retire (exists=False)
+settings : C:\Users\49745\AppData\Roaming\NewManga\theme-settings.json (restore=False, reset=False)
+artifacts: G:\CODEX\New Manga.workspace\worktrees\V11R-C3-READY-FIX\verification\V11R-C-3-READY\drill-artifacts
+decisions:
+  - tag does not exist yet: DryRun only prints the plan; the execute path refuses until R1 runs with -CreateTag
+blockers (execute path would fail):
+  - tag v11r-pre-retire is missing; R1 must run with -CreateTag before any rollback action
+planned actions:
+  - backup settings: C:\Users\49745\AppData\Roaming\NewManga\theme-settings.json -> G:\CODEX\New Manga.workspace\worktrees\V11R-C3-READY-FIX\verification\V11R-C-3-READY\drill-artifacts (when the file exists)
+  - git switch --create rollback/v11r-c3-20261030-031632 v11r-pre-retire
+  - dotnet build apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj -warnaserror
+  - verify old theme symbols are back: git grep ThemePackService (count > 0)
+  - verify settings JSON parses; write report.json
+EXIT_CODE=0
