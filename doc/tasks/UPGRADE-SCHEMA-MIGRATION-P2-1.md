@@ -53,12 +53,6 @@ allowed_paths:
 
 不改 `src/**` 产品代码、迁移 SQL、既有历史测试；不 push main。
 
-## Canonical Evidence
-
-| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
-|---|---|---|---|---|---|
-
-
 ## 交付与验证
 
 - 修改 `tests/storage/test_upgrade_schema_data.py`：`_record_full_rows`（全列 EXPECTED）、`_assert_no_extra_rows`（额外行检测）、
