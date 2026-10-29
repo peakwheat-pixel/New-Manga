@@ -1,14 +1,35 @@
-# C-3-I1 clean-tree R6 startup smoke - 2026-10-30T04:33:48+08:00
-# HEAD=641c0a075d5c09e1f7b1855dee5df572e9262c5e
+# C-3-I1 clean-tree R6 startup smoke - 2026-10-30T04:43:30+08:00
+# source HEAD=e41017aa99fba1e161569ae7d73ec7da9c518ddd
 # exe=apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.exe
 # sidecar=G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar
-# close=graceful: observe window, WM_CLOSE, wait exit (no kill)
-SHELL=v2 started=True title='New Manga' hwnd=25168760
-SHELL=v2 graceful_close=WM_CLOSE EXIT=0
+# close=graceful --exit-after 2500 (pin parameter; no kill)
+SHELL=v2 EXIT=0
+SHELL=v2 stdout='' stderr=''
+SHELL=v2 files:
+  core_service.stderr.log
+  err.txt
+  host_bridge.stderr.log
+  host.log
+  library.db
+  library.db.run-owner.lock
+  out.txt
 SHELL=v2 hostlog_tail:
-SHELL=legacy started=True title='New Manga' hwnd=7539250
-SHELL=legacy graceful_close=WM_CLOSE EXIT=0
+  2026-10-29T20:43:32.0041199+00:00 INFO host_bridge ready (1 wire frames)
+  2026-10-29T20:43:32.0046234+00:00 INFO credential port ready (Windows Credential Manager)
+  2026-10-29T20:43:32.0073932+00:00 INFO host-control session opened (host_LvRAEZValh-Y6VpUSn-MIvzsl3rAON7r5MEhtTBN4iQ)
+  2026-10-29T20:43:32.0102099+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
+SHELL=legacy EXIT=0
+SHELL=legacy stdout='' stderr=''
+SHELL=legacy files:
+  core_service.stderr.log
+  err.txt
+  host_bridge.stderr.log
+  host.log
+  library.db
+  library.db.run-owner.lock
+  out.txt
 SHELL=legacy hostlog_tail:
-  2026-10-29T20:33:58.1866350+00:00 INFO credential port ready (Windows Credential Manager)
-  2026-10-29T20:33:58.1893865+00:00 INFO host-control session opened (host_4rquch3bjFkwqGGh48lg9xPb-5VV0B6l2QBr8-N6gHs)
-  2026-10-29T20:33:58.1924845+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
+  2026-10-29T20:43:35.3327083+00:00 INFO host_bridge ready (1 wire frames)
+  2026-10-29T20:43:35.3331914+00:00 INFO credential port ready (Windows Credential Manager)
+  2026-10-29T20:43:35.3359025+00:00 INFO host-control session opened (host_Zm3Yxhl_gS-C30oWHnrTRA644w2kcGvv10Oe3-xk5yo)
+  2026-10-29T20:43:35.3384451+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

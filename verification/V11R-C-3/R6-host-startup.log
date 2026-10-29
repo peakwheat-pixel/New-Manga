@@ -1,8 +1,8 @@
-2026-10-29T19:45:26.9416308+00:00 INFO single-instance acquired: C3R6-legacy (abandoned_recovered=False)
-2026-10-29T19:45:26.9484718+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\c3-smoke-7855db20
-2026-10-29T19:45:26.9488277+00:00 INFO first-run backup skipped: catalog database not present yet
-2026-10-29T19:45:27.3032267+00:00 INFO core_service ready (1 wire frames)
-2026-10-29T19:45:27.3880399+00:00 INFO host_bridge ready (1 wire frames)
-2026-10-29T19:45:27.3885426+00:00 INFO credential port ready (Windows Credential Manager)
-2026-10-29T19:45:27.3913347+00:00 INFO host-control session opened (host_x-4C1X1iCIBlx_pZEczgZse8YWY7DLWXFGzf_yREhX8)
-2026-10-29T19:45:27.3940645+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
+2026-10-29T20:43:31.5305555+00:00 INFO single-instance acquired: C3I1fin-v2-4d1bf7 (abandoned_recovered=False)
+2026-10-29T20:43:31.5376694+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\c3i1-smoke-final-4f618a36\v2
+2026-10-29T20:43:31.5380405+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T20:43:31.9121763+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T20:43:32.0041199+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T20:43:32.0046234+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T20:43:32.0073932+00:00 INFO host-control session opened (host_LvRAEZValh-Y6VpUSn-MIvzsl3rAON7r5MEhtTBN4iQ)
+2026-10-29T20:43:32.0102099+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]

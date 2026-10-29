@@ -39,4 +39,6 @@
   `R4-ASSERTION-MAP.md`。
 - READY 包 6 个文件已从 `b5f7d88fc` 逐字节恢复；执行态副本在 `final/`，工具默认输出改到
   `verification/V11R-C-3/`（`READY-RESTORE.md`）。
-- 干净树 R6 重跑记录见 `R6-report-clean.md`（dirty=false、完整文件清单、两个 shell 正常退出码）。
+- 干净树 R6 终版见 `R6-report-clean.md`（源码 HEAD `e41017aa`、dirty=false、完整 SHA-256 清单、
+  两个 shell **exit 0/0**、v2 与 legacy 的 host.log 均存在）；旧 `R6-report.md` 已标记 SUPERSEDED。
+
