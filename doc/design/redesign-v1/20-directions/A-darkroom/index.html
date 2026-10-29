@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New Manga · 暗房 Darkroom · 方向 A 高保真原型</title>
+<meta name="description" content="New Manga 全新 UI/UX 重设计 · 方向 A 暗房 · 纯静态零依赖高保真可交互原型">
+<link rel="stylesheet" href="styles.css">
+<script>
+  /* 主题必须在首帧前决定，避免深浅闪烁。localStorage 记忆 + 查询参数覆盖。 */
+  (function () {
+    try {
+      var q = new URLSearchParams(location.search);
+      var t = q.get('theme') || localStorage.getItem('nm.theme') || 'dark';
+      if (t !== 'light') t = 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     图标雪碧：统一 20×20 网格 / 1.25px stroke / 线性only / currentColor
+     ══════════════════════════════════════════════════════════════════════════ -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <g id="st" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></g>
+  </defs>
+
+  <symbol id="i-library" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5h5.5V9H3zM11.5 3.5H17V9h-5.5zM3 11h5.5v5.5H3zM11.5 11H17v5.5h-5.5z"/></g></symbol>
+  <symbol id="i-studio" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5h15v11h-15z"/><path d="M7 8h6v4H7z"/><path d="M2.5 8h1.5M2.5 12h1.5M16 8h1.5M16 12h1.5"/></g></symbol>
+  <symbol id="i-console" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5h15v11h-15z"/><path d="M5.5 8.5l2 1.75-2 1.75"/><path d="M10.5 12h4"/></g></symbol>
+  <symbol id="i-command" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h15v7h-15z"/><path d="M5.5 9h.6M8.5 9h.6M11.5 9h.6M5.5 11.2h.6M8.5 11.2h.6"/><path d="M11 11.2h3.5"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3.2"/><path d="M10 3v1.6M10 15.4V17M3 10h1.6M15.4 10H17M5.1 5.1l1.1 1.1M13.8 13.8l1.1 1.1M14.9 5.1l-1.1 1.1M6.2 13.8l-1.1 1.1"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 12.6A6.2 6.2 0 017.4 4.5a6.2 6.2 0 108.1 8.1z"/></g></symbol>
+  <symbol id="i-target" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><circle cx="10" cy="10" r="2"/><path d="M10 1.5v2.5M10 16v2.5M1.5 10H4M16 10h2.5"/></g></symbol>
+  <symbol id="i-text" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12M10 5v11M7 16h6"/></g></symbol>
+  <symbol id="i-sliders" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h14M3 13.5h14"/><circle cx="7.5" cy="6.5" r="1.6"/><circle cx="13" cy="13.5" r="1.6"/></g></symbol>
+  <symbol id="i-layers" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.8l7 3.7-7 3.7-7-3.7z"/><path d="M3 11l7 3.7 7-3.7"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V7.2a4 4 0 018 0V9"/><path d="M4.4 9h11.2v7.5H4.4z"/><path d="M10 12v1.6"/></g></symbol>
+  <symbol id="i-unlock" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V7.2a4 4 0 017.6-1.7"/><path d="M4.4 9h11.2v7.5H4.4z"/><path d="M10 12v1.6"/></g></symbol>
+  <symbol id="i-history" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 10a6.6 6.6 0 106.6-6.6"/><path d="M10 3.4L6.6 6.6 10 9.8"/><path d="M10 6.6V10l2.6 1.6"/></g></symbol>
+  <symbol id="i-export" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 13.4v3.2h12.4v-3.2"/><path d="M10 13.4V3.4"/><path d="M6.4 7L10 3.4 13.6 7"/></g></symbol>
+  <symbol id="i-import" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 13.4v3.2h12.4v-3.2"/><path d="M10 3.4v10"/><path d="M6.4 10L10 13.6 13.6 10"/></g></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8L10 12.5 14.5 8"/></g></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5l5 5-5 5"/></g></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5L7 10l5 5"/></g></symbol>
+  <symbol id="i-play" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 4.2l9 5.8-9 5.8z"/></g></symbol>
+  <symbol id="i-pause" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M7.6 4.8v10.4M12.4 4.8v10.4"/></g></symbol>
+  <symbol id="i-stop" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 5.6h8.8v8.8H5.6z"/></g></symbol>
+  <symbol id="i-warn" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.2l6.8 12.6H3.2z"/><path d="M10 7.8v3.4"/><path d="M10 13.6v.1"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.6l4.1 4.1L16 5.6"/></g></symbol>
+  <symbol id="i-close" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l10 10M15 5L5 15"/></g></symbol>
+  <symbol id="i-search" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.8" cy="8.8" r="5.2"/><path d="M12.7 12.7L17 17"/></g></symbol>
+  <symbol id="i-page" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 2.6h10.8v14.8H4.6z"/><path d="M7 6h6M7 9h6M7 12h3.5"/></g></symbol>
+  <symbol id="i-trash" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 5.8h12.8"/><path d="M7.4 5.8V3.9h5.2v1.9"/><path d="M5.4 5.8l.9 11.1h7.4l.9-11.1"/><path d="M8.6 8.9v5.2M11.4 8.9v5.2"/></g></symbol>
+  <symbol id="i-retry" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M16.2 10a6.2 6.2 0 11-2.1-4.7"/><path d="M16.4 3.8v4.2h-4.2"/></g></symbol>
+  <symbol id="i-film" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 3.4h13.2v13.2H3.4z"/><path d="M6 3.4v13.2M14 3.4v13.2"/><path d="M6 6.6h1.6M6 10h1.6M6 13.4h1.6M12.4 6.6H14M12.4 10H14M12.4 13.4H14"/></g></symbol>
+  <symbol id="i-panel-right" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 4h14.4v12H2.8z"/><path d="M12.8 4v12"/></g></symbol>
+  <symbol id="i-panel-bottom" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 4h14.4v12H2.8z"/><path d="M2.8 13h14.4"/></g></symbol>
+  <symbol id="i-filter" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 5h13.2l-5.1 6v5.2l-3-1.5V11z"/></g></symbol>
+  <symbol id="i-gear" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="2.4"/><path d="M10 3v2.1M10 14.9V17M3 10h2.1M14.9 10H17M5.2 5.2l1.5 1.5M13.3 13.3l1.5 1.5M14.8 5.2l-1.5 1.5M6.7 13.3l-1.5 1.5"/></g></symbol>
+  <symbol id="i-plug" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.8v3.4M13 2.8v3.4"/><path d="M5.2 6.2h9.6v2.6a4.8 4.8 0 01-9.6 0z"/><path d="M10 13.6V17"/></g></symbol>
+  <symbol id="i-globe" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.6"/><path d="M3.4 10h13.2"/><path d="M10 3.4c3.4 3.6 3.4 9.6 0 13.2-3.4-3.6-3.4-9.6 0-13.2z"/></g></symbol>
+  <symbol id="i-db" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="5.2" rx="6" ry="2.4"/><path d="M4 5.2v4.4c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5.2"/><path d="M4 9.6V14c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V9.6"/></g></symbol>
+  <symbol id="i-archive" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 3.4h14.4v3.4H2.8z"/><path d="M4.4 6.8v9.8h11.2V6.8"/><path d="M8.2 9.8h3.6"/></g></symbol>
+  <symbol id="i-plugin" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.8" cy="10" r="2.2"/><circle cx="15.2" cy="5.4" r="2.2"/><circle cx="15.2" cy="14.6" r="2.2"/><path d="M7 9.2l6.1-3.1M7 10.8l6.1 3.1"/></g></symbol>
+  <symbol id="i-spark" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 2.6L5.6 11h3.9l-.7 6.4 5.6-8.4h-3.9z"/></g></symbol>
+  <symbol id="i-split" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 4h14.4v12H2.8z"/><path d="M10 4v12"/></g></symbol>
+  <symbol id="i-zoom-in" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.8" cy="8.8" r="5.2"/><path d="M12.7 12.7L17 17"/><path d="M6.4 8.8h4.8M8.8 6.4v4.8"/></g></symbol>
+  <symbol id="i-zoom-out" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.8" cy="8.8" r="5.2"/><path d="M12.7 12.7L17 17"/><path d="M6.4 8.8h4.8"/></g></symbol>
+  <symbol id="i-queue" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.2h12M4 10h12M4 14.8h12"/><path d="M2 5.2h.1M2 10h.1M2 14.8h.1"/></g></symbol>
+  <symbol id="i-eye" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 10S4.8 4.8 10 4.8 18.2 10 18.2 10 15.2 15.2 10 15.2 1.8 10 1.8 10z"/><circle cx="10" cy="10" r="2.2"/></g></symbol>
+  <symbol id="i-edit" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 16.6l.8-4 9-9 2.9 2.9-9 9z"/><path d="M11.6 5.2l2.9 2.9"/></g></symbol>
+  <symbol id="i-more" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10h.1M10 10h.1M15 10h.1"/></g></symbol>
+  <symbol id="i-type" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 16l3.4-9.2L9.6 16"/><path d="M4.2 13h4.1"/><path d="M12.4 16V6.8"/><path d="M12.4 9.6h3.2a1.8 1.8 0 010 3.6h-3.2"/></g></symbol>
+  <symbol id="i-steps" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.6h5M3.4 10h8M3.4 13.4h11"/></g></symbol>
+  <symbol id="i-corner" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 8V3.4H8M12 3.4h4.6V8M16.6 12v4.6H12M8 16.6H3.4V12"/></g></symbol>
+</svg>
+
+<div class="app" id="app">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       顶带 36px：三空间 · breadcrumb · 作用域 · 命令面板 · 主题
+       ════════════════════════════════════════════════════════════════════ -->
+  <header class="topband" role="banner">
+    <nav class="spacetabs" aria-label="空间切换">
+      <button class="spacetab" type="button" data-goto-space="library" title="资料柜 · Ctrl+1">
+        <svg class="ico" aria-hidden="true"><use href="#i-library"></use></svg>
+        <span class="spacetab-name">资料柜</span>
+        <kbd class="kbd">1</kbd>
+      </button>
+      <button class="spacetab" type="button" data-goto-space="studio" title="工位 · Ctrl+2">
+        <svg class="ico" aria-hidden="true"><use href="#i-studio"></use></svg>
+        <span class="spacetab-name">工位</span>
+        <kbd class="kbd">2</kbd>
+      </button>
+      <button class="spacetab" type="button" data-goto-space="console" title="控制台 · Ctrl+3">
+        <svg class="ico" aria-hidden="true"><use href="#i-console"></use></svg>
+        <span class="spacetab-name">控制台</span>
+        <kbd class="kbd">3</kbd>
+      </button>
+    </nav>
+
+    <div class="topband-mid">
+      <nav class="crumb" id="crumb" aria-label="层级位置"></nav>
+    </div>
+
+    <div class="topband-right">
+      <div class="scope" id="scope">
+        <span class="scope-label">作用域</span>
+        <button class="scope-btn" type="button" id="scopeBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="scope-text" id="scopeText">本章 23 页</span>
+          <svg class="ico ico--sm" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="menu" id="scopeMenu" hidden></div>
+      </div>
+      <button class="icobtn icobtn--labelled" type="button" id="btnCmd" title="命令面板 · Ctrl+K">
+        <svg class="ico" aria-hidden="true"><use href="#i-command"></use></svg>
+        <span class="icobtn-label">命令</span>
+        <kbd class="kbd">K</kbd>
+      </button>
+      <button class="icobtn" type="button" id="btnStates" title="状态演示 · 12 个状态真相" aria-expanded="false">
+        <svg class="ico" aria-hidden="true"><use href="#i-eye"></use></svg>
+        <span class="icobtn-badge" id="stateBadge">12</span>
+      </button>
+      <button class="icobtn" type="button" id="btnTheme" title="切换深浅主题">
+        <svg class="ico theme-dark" aria-hidden="true"><use href="#i-sun"></use></svg>
+        <svg class="ico theme-light" aria-hidden="true"><use href="#i-moon"></use></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       空间 1 · Library 资料柜
+       ════════════════════════════════════════════════════════════════════ -->
+  <main class="space space--library" id="space-library" hidden>
+    <div class="lib-bar">
+      <span class="lib-title">资料柜</span>
+      <span class="lib-sep"></span>
+      <span class="lib-stat" id="libStat"></span>
+      <div class="lib-bar-right">
+        <label class="field field--search">
+          <svg class="ico ico--sm" aria-hidden="true"><use href="#i-search"></use></svg>
+          <input type="text" id="libSearch" placeholder="搜索作品 / 章节 / 页" autocomplete="off" spellcheck="false">
+        </label>
+        <button class="btn" type="button" id="btnImportDir">
+          <svg class="ico ico--sm" aria-hidden="true"><use href="#i-import"></use></svg>导入文件夹
+        </button>
+        <button class="btn" type="button" id="btnImportFile">导入文件</button>
+        <button class="btn btn--ghost" type="button" id="btnRecycle">
+          <svg class="ico ico--sm" aria-hidden="true"><use href="#i-trash"></use></svg>回收站 <span class="num" id="recycleCount">2</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="shelf" id="shelf"></div>
+
+    <div class="lib-body">
+      <section class="lib-chapters" aria-label="章节">
+        <div class="pane-head">
+          <span class="pane-title">章节</span>
+          <span class="pane-meta" id="chapterMeta"></span>
+          <span class="pane-spacer"></span>
+          <button class="icobtn icobtn--sm" type="button" title="按状态排序">
+            <svg class="ico ico--sm" aria-hidden="true"><use href="#i-filter"></use></svg>
+          </button>
+        </div>
+        <div class="table-wrap"><table class="grid grid--chapters" id="chapterTable"></table></div>
+        <div class="dropzone" id="dropzone">
+          <svg class="ico" aria-hidden="true"><use href="#i-import"></use></svg>
+          <span class="dropzone-title">拖入文件夹或图片序列</span>
+          <span class="dropzone-hint">识别为「夜光列车 · 第 13 话」或新建作品 · 不清空现有数据</span>
+        </div>
+      </section>
+
+      <section class="lib-pages" aria-label="页面">
+        <div class="pane-head">
+          <span class="pane-title" id="pagesTitle">第 12 话 · 雨の停車場</span>
+          <span class="pane-meta" id="pagesMeta"></span>
+          <span class="pane-spacer"></span>
+          <button class="btn btn--ghost btn--sm" type="button" id="btnOpenReader">
+            <svg class="ico ico--sm" aria-hidden="true"><use href="#i-page"></use></svg>阅读
+          </button>
+        </div>
+        <div class="sheet" id="pageSheet"></div>
+      </section>
+    </div>
+
+    <div class="import-dock" id="importDock" hidden></div>
+    <div class="reader" id="reader" hidden></div>
+  </main>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       空间 2 · Studio 工位（默认）
+       ════════════════════════════════════════════════════════════════════ -->
+  <main class="space space--studio" id="space-studio">
+    <div class="banner-slot" id="bannerSlot" hidden></div>
+
+    <aside class="filmstrip" id="filmStrip" aria-label="胶片条">
+      <div class="filmstrip-head">
+        <button class="icobtn icobtn--sm" type="button" id="btnFilm" title="展开 / 收起胶片条">
+          <svg class="ico ico--sm" aria-hidden="true"><use href="#i-film"></use></svg>
+        </button>
+        <span class="filmstrip-meta" id="filmMeta"></span>
+      </div>
+      <ol class="filmstrip-list" id="filmList" tabindex="0" aria-label="页列表"></ol>
+    </aside>
+
+    <section class="viewport" id="viewport">
+      <div class="vpchrome vpchrome--page" id="vpPageChip"></div>
+      <div class="vpchrome vpchrome--view" id="vpViewSeg"></div>
+      <div class="vpchrome vpchrome--zoom" id="vpZoom"></div>
+      <div class="vpchrome vpchrome--tracks" id="vpTracks"></div>
+      <div class="stage" id="stage"></div>
+      <div class="reviewrail" id="reviewRail" hidden></div>
+    </section>
+
+    <aside class="inspector" id="inspector" aria-label="检查器">
+      <nav class="insp-rail" id="inspRail" aria-label="检查器分区"></nav>
+      <div class="insp-pane" id="inspPane"></div>
+    </aside>
+
+    <footer class="pipeline" id="pipeline" aria-label="流水线带"></footer>
+  </main>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       空间 3 · Console 控制台
+       ════════════════════════════════════════════════════════════════════ -->
+  <main class="space space--console" id="space-console" hidden>
+    <nav class="console-index" id="consoleIndex" aria-label="控制台索引"></nav>
+    <section class="console-pane" id="consolePane"></section>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     全局浮层
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- 命令面板 Ctrl+K -->
+<div class="scrim" id="cmdScrim" hidden></div>
+<div class="cmd" id="cmd" role="dialog" aria-modal="true" aria-label="命令面板" hidden>
+  <div class="cmd-head">
+    <svg class="ico" aria-hidden="true"><use href="#i-search"></use></svg>
+    <input type="text" id="cmdInput" placeholder="输入命令或对象名 · 例如「重渲染」「第7页」「Provider」" autocomplete="off" spellcheck="false">
+    <kbd class="kbd">Esc</kbd>
+  </div>
+  <div class="cmd-list" id="cmdList"></div>
+  <div class="cmd-foot">
+    <span><kbd class="kbd">↑</kbd><kbd class="kbd">↓</kbd> 选择</span>
+    <span><kbd class="kbd">Enter</kbd> 执行</span>
+    <span class="cmd-scope" id="cmdScope"></span>
+  </div>
+</div>
+
+<!-- 状态演示抽屉 -->
+<aside class="drawer" id="stateDrawer" hidden aria-label="状态演示">
+  <div class="drawer-head">
+    <span class="drawer-title">状态真相 · 12</span>
+    <button class="icobtn icobtn--sm" type="button" id="btnStateClose"><svg class="ico ico--sm" aria-hidden="true"><use href="#i-close"></use></svg></button>
+  </div>
+  <p class="drawer-note">逐条点击即可把整个原型切到该状态。所有状态使用同一份假数据（夜光列车 · 第12话 · 23 页）。</p>
+  <ol class="statelist" id="stateList"></ol>
+  <div class="drawer-foot">
+    <button class="btn btn--ghost btn--sm" type="button" id="btnStateReset">回到默认演示态</button>
+  </div>
+</aside>
+
+<!-- 模态：中断恢复 / 危险确认 -->
+<div class="scrim" id="modalScrim" hidden></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

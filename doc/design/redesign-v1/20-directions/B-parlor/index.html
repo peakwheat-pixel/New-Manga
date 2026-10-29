@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>夜光列车 · 第12话「雨の停車場」 — 校阅台 Parlor</title>
+<meta name="description" content="方向 B · 校阅台。以文本为主体、图像为佐证的双语工作稿校对界面。纯静态原型。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================================================
+     图标符号：20×20 网格，1.25px stroke，只用 currentColor
+     使用：<svg class="icon"><use href="#i-xxx"></use></svg>
+     ============================================================ -->
+<svg class="is-hidden" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-export" viewBox="0 0 20 20"><path d="M10 13V3.4"/><path d="M6.6 6.8 10 3.4l3.4 3.4"/><path d="M3.8 12.4v3.8h12.4v-3.8"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 20 20"><path d="M3 6.4h14"/><path d="M3 13.6h14"/><circle cx="13" cy="6.4" r="1.7"/><circle cx="7" cy="13.6" r="1.7"/></symbol>
+  <symbol id="i-command" viewBox="0 0 20 20"><path d="M3.6 4.6h12.8v10.8H3.6z"/><path d="M7.4 8.2 10 10.6l-2.6 2.4"/><path d="M11.2 13h3"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.3"/><path d="M10 2.4v1.9M10 15.7v1.9M2.4 10h1.9M15.7 10h1.9M4.6 4.6l1.3 1.3M14.1 14.1l1.3 1.3M15.4 4.6l-1.3 1.3M5.9 14.1l-1.3 1.3"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 20 20"><path d="M11.6 3.3a6.7 6.7 0 100 13.4 7.8 7.8 0 010-13.4z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 20 20"><circle cx="8.7" cy="8.7" r="4.5"/><path d="M12.1 12.1 16.4 16.4"/></symbol>
+  <symbol id="i-caret-down" viewBox="0 0 20 20"><path d="M6.4 8.2 10 11.8l3.6-3.6"/></symbol>
+  <symbol id="i-caret-right" viewBox="0 0 20 20"><path d="M8.2 6.4 11.8 10l-3.6 3.6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 20 20"><path d="M5.6 9.1h8.8v7.3H5.6z"/><path d="M7.7 9.1V6.9a2.3 2.3 0 014.6 0v2.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="M4.6 10.6 8 14l7.4-8"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-2.1-4.7"/><path d="M16.4 3.6v3.6h-3.6"/></symbol>
+  <symbol id="i-page" viewBox="0 0 20 20"><path d="M5.2 3.2h6.4l3.2 3.2v10.4H5.2z"/><path d="M11.4 3.2v3.4h3.4"/></symbol>
+  <symbol id="i-plate" viewBox="0 0 20 20"><path d="M3.4 4.6h13.2v10.8H3.4z"/><path d="M3.4 12.6 7.3 8.9l2.6 2.5 2.2-2.3 4.5 4.1"/><circle cx="7.3" cy="7.5" r="1.1"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 20 20"><path d="M10 3 16.6 6.4 10 9.8 3.4 6.4z"/><path d="M3.4 10.1 10 13.5l6.6-3.4"/><path d="M3.4 13.7 10 17.1l6.6-3.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6.5"/><path d="M10 6.1v4.3l3 1.7"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 20 20"><path d="M10 3.7 17.3 16.3H2.7z"/><path d="M10 8.1v3.5"/><path d="M10 13.9v.6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 20 20"><path d="M3.8 10h11.6"/><path d="M11.8 6.4 15.4 10l-3.6 3.6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 20 20"><path d="M16.2 10H4.6"/><path d="M8.2 6.4 4.6 10l3.6 3.6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 20 20"><path d="M5.6 5.6 14.4 14.4"/><path d="M14.4 5.6 5.6 14.4"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 20 20"><path d="M7.4 5.4v9.2"/><path d="M12.6 5.4v9.2"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 20 20"><path d="M6.2 6.2h7.6v7.6H6.2z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 20 20"><path d="M7.2 5.2 14 10l-6.8 4.8z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 5.4v9.2"/><path d="M5.4 10h9.2"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 20 20"><path d="M5.4 10h9.2"/></symbol>
+  <symbol id="i-text" viewBox="0 0 20 20"><path d="M4.4 5.4h11.2"/><path d="M4.4 9h11.2"/><path d="M4.4 12.6h7.6"/><path d="M10 5.4v10.2"/><path d="M10 15.6h5.6"/></symbol>
+  <symbol id="i-brush" viewBox="0 0 20 20"><path d="M4.4 16.4c3 0 4.8-1.7 4.8-4.2"/><path d="M9.2 12.2 15.3 5.6l-1.4-1.4-6.2 6.4z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 20 20"><path d="M3.6 3.6h12.8v12.8H3.6z"/><path d="M3.6 8.1h12.8"/><path d="M8.7 8.1v8.3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 20 20"><circle cx="10" cy="7" r="2.7"/><path d="M4.9 16.3c.6-3 2.7-4.5 5.1-4.5s4.5 1.5 5.1 4.5"/></symbol>
+  <symbol id="i-cog" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3.2v2M10 14.8v2M3.2 10h2M14.8 10h2M5.2 5.2l1.4 1.4M13.4 13.4l1.4 1.4M14.8 5.2l-1.4 1.4M6.6 13.4l-1.4 1.4"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 20 20"><path d="M3.4 5.6h13.2"/><path d="M6.2 10h8"/><path d="M8.4 14.4h3.2"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 20 20"><path d="M2.8 6.4h14.4v7.2H2.8z"/><path d="M5.4 8.8h.9M8.2 8.8h.9M11 8.8h.9M13.8 8.8h.9M5.8 11.4h8.4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 20 20"><path d="M8.4 11.6 11.6 8.4"/><path d="M7.3 9.6 5.8 11a2.6 2.6 0 003.7 3.7l1.4-1.4"/><path d="M12.7 10.4 14.2 9a2.6 2.6 0 00-3.7-3.7l-1.4 1.4"/></symbol>
+  <symbol id="i-corner" viewBox="0 0 20 20"><path d="M4 8V4h4"/><path d="M16 12v4h-4"/></symbol>
+  <symbol id="i-select" viewBox="0 0 20 20"><path d="M4.6 4.6h4.2v4.2H4.6z"/><path d="M11.2 4.6h4.2v4.2h-4.2z"/><path d="M4.6 11.2h4.2v4.2H4.6z"/><path d="M11.2 11.2h4.2v4.2h-4.2z" opacity=".45"/></symbol>
+</defs></svg>
+
+<div class="app" id="app">
+
+  <!-- ===== 顶栏 44px ==================================================== -->
+  <header class="topbar" role="banner">
+    <div class="masthead">
+      <span class="masthead__imprint">NEW MANGA · 校阅台</span>
+      <h1 class="masthead__title" id="mastTitle">夜光列车 <em>· 第12话「雨の停車場」</em></h1>
+      <span class="masthead__rule" aria-hidden="true"></span>
+      <span class="masthead__meta" id="mastMeta">23 页 · 日→中 · Paged RTL</span>
+    </div>
+
+    <!-- 作用域必须常驻可见 -->
+    <div class="scope-chip" id="scopeChip" data-scope="chapter">
+      作用域 <b id="scopeVal">本章 23 页</b>
+    </div>
+
+    <div class="topbar__spacer"></div>
+
+    <!-- 三呈现：分段控件 -->
+    <div class="segmented" id="viewSeg" role="tablist" aria-label="呈现方式">
+      <button class="segmented__item" role="tab" data-view="proof" aria-selected="true" title="对照：账本式双语对照（V 循环切换）">对照 <kbd>1</kbd></button>
+      <button class="segmented__item" role="tab" data-view="canvas" aria-selected="false" title="画布：页面示意图与行联动（V 循环切换）">画布 <kbd>2</kbd></button>
+      <button class="segmented__item" role="tab" data-view="final" aria-selected="false" title="成品：只验收成品页（V 循环切换）">成品 <kbd>3</kbd></button>
+    </div>
+
+    <button class="btn" id="btnExport" title="导出抽屉（Ctrl+E）">
+      <svg class="icon icon--sm"><use href="#i-export"></use></svg>导出<span class="btn__hint">Ctrl+E</span>
+    </button>
+    <button class="btn" id="btnTools" title="工具抽屉：任务 / 术语 / 设置（Ctrl+Shift+T）">
+      <svg class="icon icon--sm"><use href="#i-sliders"></use></svg>工具
+    </button>
+    <button class="icon-btn" id="btnStates" data-tip="状态演示：12 个状态真相" title="状态演示 Ctrl+Shift+D">
+      <svg class="icon"><use href="#i-layers"></use></svg>
+    </button>
+    <button class="icon-btn" id="btnTheme" data-tip="切换主题 深/浅" title="切换主题">
+      <svg class="icon"><use href="#i-moon"></use></svg>
+    </button>
+    <button class="icon-btn" id="btnKeys" data-tip="键位速查 F1" title="键位速查 F1">
+      <svg class="icon"><use href="#i-keyboard"></use></svg>
+    </button>
+    <button class="icon-btn" id="btnCmd" data-tip="命令面板 Ctrl+K" title="命令面板 Ctrl+K">
+      <svg class="icon"><use href="#i-command"></use></svg>
+    </button>
+    <button class="icon-btn" id="btnSettings" data-tip="设置 Ctrl+," title="设置 Ctrl+,">
+      <svg class="icon"><use href="#i-cog"></use></svg>
+    </button>
+  </header>
+
+  <!-- ===== 稿面工具条 32px ============================================= -->
+  <div class="toolbar" role="toolbar" aria-label="稿面工具">
+    <div class="toolbar__group" id="filterGroup">
+      <span class="toolbar__label">筛选</span>
+      <button class="chip" data-filter="all" aria-pressed="true">全部 <b id="cntAll">16</b></button>
+      <button class="chip" data-filter="review" aria-pressed="false">待确认 <b id="cntReview">3</b></button>
+      <button class="chip" data-filter="failed" aria-pressed="false">失败 <b id="cntFailed">2</b></button>
+      <button class="chip" data-filter="locked" aria-pressed="false">已锁定 <b id="cntLocked">2</b></button>
+      <button class="chip" data-filter="stale" aria-pressed="false">过期 <b id="cntStale">2</b></button>
+    </div>
+
+    <div class="toolbar__group">
+      <label class="search" title="稿面内搜索（Ctrl+F）">
+        <svg class="icon icon--sm"><use href="#i-search"></use></svg>
+        <input id="searchInput" type="search" placeholder="搜索 Region / 原文 / 译文" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+
+    <div class="toolbar__group">
+      <span class="toolbar__label">字号</span>
+      <div class="zoom" title="稿面字号缩放：- / +">
+        <button id="zoomOut" aria-label="缩小字号"><svg class="icon icon--sm"><use href="#i-minus"></use></svg></button>
+        <output id="zoomVal">100%</output>
+        <button id="zoomIn" aria-label="放大字号"><svg class="icon icon--sm"><use href="#i-plus"></use></svg></button>
+      </div>
+    </div>
+
+    <div class="toolbar__group">
+      <span class="toolbar__label">显示</span>
+      <button class="chip" id="optDiff" aria-pressed="true" title="显示机器译文与人工译文的差异下划线">差异</button>
+      <button class="chip" id="optTerm" aria-pressed="true" title="显示术语冲突标记">术语</button>
+    </div>
+
+    <div class="toolbar__result" id="toolbarResult">16 条 · 已确认 9 · 待确认 3</div>
+  </div>
+
+  <!-- ===== 三栏主体 ==================================================== -->
+  <main class="main">
+    <nav class="tree" id="tree" aria-label="工程树"></nav>
+
+    <section class="stage" id="stage" aria-label="工作稿">
+      <div id="bannerSlot"></div>
+      <div class="view" id="viewSlot"></div>
+      <div class="flash is-hidden" id="flash"></div>
+    </section>
+
+    <aside class="margin" id="margin" aria-label="边注"></aside>
+  </main>
+
+  <!-- ===== 底栏 30px =================================================== -->
+  <footer class="bottombar" id="bottombar" role="status"></footer>
+</div>
+
+<!-- ===== 遮罩层 ======================================================== -->
+<div class="scrim is-hidden" id="scrim"></div>
+
+<!-- 命令面板 -->
+<div class="layer palette is-hidden" id="palette" role="dialog" aria-modal="true" aria-label="命令面板">
+  <div class="palette__search">
+    <svg class="icon icon--sm"><use href="#i-command"></use></svg>
+    <input id="paletteInput" placeholder="输入命令、动作或页码…" autocomplete="off" spellcheck="false">
+    <span class="palette__hint" id="paletteMode">命令</span>
+  </div>
+  <div class="palette__list" id="paletteList"></div>
+  <div class="palette__foot">
+    <span><b>↑ ↓</b> 选择</span>
+    <span><b>Enter</b> 执行</span>
+    <span><b>Esc</b> 关闭</span>
+    <span id="paletteCount" style="margin-left:auto">0 项</span>
+  </div>
+</div>
+
+<!-- 抽屉 -->
+<div class="layer sheet is-hidden" id="sheet" role="dialog" aria-modal="true" aria-label="抽屉">
+  <div class="sheet__head">
+    <span class="sheet__title" id="sheetTitle">工具</span>
+    <span class="sheet__meta" id="sheetMeta"></span>
+    <button class="icon-btn" id="sheetClose" aria-label="关闭" data-tip="Esc">
+      <svg class="icon"><use href="#i-close"></use></svg>
+    </button>
+  </div>
+  <div class="sheet__tabs" id="sheetTabs" role="tablist"></div>
+  <div class="sheet__body" id="sheetBody"></div>
+  <div class="sheet__foot" id="sheetFoot"></div>
+</div>
+
+<!-- 状态演示面板 -->
+<div class="layer states is-hidden" id="states" role="dialog" aria-modal="true" aria-label="状态演示面板">
+  <div class="states__head">
+    <span class="states__title">状态真相 · 12</span>
+    <span class="states__meta" id="statesMeta"></span>
+    <button class="icon-btn" id="statesClose" aria-label="关闭">
+      <svg class="icon"><use href="#i-close"></use></svg>
+    </button>
+  </div>
+  <div class="states__list" id="statesList"></div>
+</div>
+
+<!-- 对话框 -->
+<div class="layer dialog is-hidden" id="dialog" role="alertdialog" aria-modal="true" aria-label="确认">
+  <div class="dialog__head">
+    <span class="dialog__title" id="dialogTitle">确认</span>
+  </div>
+  <div class="dialog__body" id="dialogBody"></div>
+  <div class="dialog__foot" id="dialogFoot"></div>
+</div>
+
+<!-- 自定义悬停提示（200ms 延迟，规格要求 ≤400ms） -->
+<div class="is-hidden" id="tip" role="tooltip"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
