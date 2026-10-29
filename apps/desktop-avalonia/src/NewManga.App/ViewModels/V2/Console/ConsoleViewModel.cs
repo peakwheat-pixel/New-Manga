@@ -18,6 +18,7 @@ public sealed class ConsoleViewModel : ObservableObject
     private readonly IHostController _controller;
     private readonly ShellState _state;
     private readonly RunStatusMonitor _runMonitor;
+    private bool _runPollingPreferred = true;
     private readonly Action<string, NmStatus> _notify;
     private readonly Action<ConfirmRequest> _requestConfirm;
     private readonly Func<bool> _isDarkTheme;
@@ -390,8 +391,33 @@ public sealed class ConsoleViewModel : ObservableObject
     public bool IsRunPollingEnabled
     {
         get => _runMonitor.IsPollingEnabled;
-        set => _runMonitor.SetPollingEnabled(value);
+        set
+        {
+            _runPollingPreferred = value;
+            _runMonitor.SetPollingEnabled(value);
+        }
     }
+
+    /// <summary>
+    /// R-24: entering the Console with a loaded Run resumes the shared mouse-free poller and performs one
+    /// immediate refresh, so the snapshot/projection request counter grows deterministically on re-entry.
+    /// </summary>
+    public void EnterWorkspace()
+    {
+        if (!HasRunLoaded || !_runPollingPreferred)
+        {
+            return;
+        }
+
+        _runMonitor.SetPollingEnabled(true);
+        _ = _runMonitor.RefreshAsync();
+    }
+
+    /// <summary>
+    /// R-24: leaving the Console pauses the shared poller (no background Host reads while the Console is
+    /// not observable). The shell StatusBand keeps the last shared snapshot; re-entry resumes polling.
+    /// </summary>
+    public void LeaveWorkspace() => _runMonitor.SetPollingEnabled(false);
 
     public bool HasRunLoaded
     {
@@ -478,7 +504,7 @@ public sealed class ConsoleViewModel : ObservableObject
     }
 
     public string RunSourceNote =>
-        "数据同源：IRunController（V11R-A-2）的 GetRunSnapshot / GetTaskProjection；B-4 共享 Run 视图合入后改为订阅，不另造状态。";
+        "数据同源：IRunController（V11R-A-2）经壳共享 RunStatusMonitor（R-24）单次快照/投影；进入 Console 恢复轮询、离开暂停，不另造状态。";
 
     public RelayCommand LoadRunCommand { get; }
 
@@ -497,7 +523,11 @@ public sealed class ConsoleViewModel : ObservableObject
     public RelayCommand RetryFailedRunCommand { get; }
 
     /// <summary>Test seam: pauses the SHARED poller (R-24); the tracked run + snapshot stay intact.</summary>
-    public void StopRunPolling() => _runMonitor.SetPollingEnabled(false);
+    public void StopRunPolling()
+    {
+        _runPollingPreferred = false;
+        _runMonitor.SetPollingEnabled(false);
+    }
 
     private async Task LoadRunAsync()
     {

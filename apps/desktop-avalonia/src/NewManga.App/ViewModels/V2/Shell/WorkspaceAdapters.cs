@@ -57,10 +57,12 @@ public sealed class ConsoleWorkspaceView : IWorkspaceView
     public void OnActivated(ShellState state)
     {
         _viewModel.RestoreViewState(state.ConsoleView);
+        _viewModel.EnterWorkspace();
     }
 
     public void OnDeactivated(ShellState state)
     {
+        _viewModel.LeaveWorkspace();
         _viewModel.CaptureViewState(state.ConsoleView);
     }
 

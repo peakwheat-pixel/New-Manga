@@ -1,7 +1,8 @@
 # V11R-B-2 证据：Console 空间（设置中心 9 分区）
 
 - Task: `doc/tasks/V11R-B-2.md`（task-6，Owner `ui-shell`）
-- Branch: `v11r/ui-shell`；已合入 `main`（V11R-A-2 `IRunController`、V11R-A-1 `CreateChapterAsync`、V11R-D-1 M0）
+- 更新：2026-10-30（B-2-I2 收口：R-24 轮询恢复、R-23 中性词表、证据重生成）
+- Branch: `v11r/ui-shell`；已合入 `main`（V11R-A-2 `IRunController`、V11R-A-1 `CreateChapterAsync`、V11R-D-1 M0、V11R-INT-0/INT-1）
 - 视觉权威：DESIGN_SYSTEM.md + tokens.json（经 `NewManga.DesignSystem`）；屏幕规格：SCREEN_SPECS §5
 - 渲染方式：Avalonia Headless + Skia（`UseHeadlessDrawing=false`），`[AvaloniaFact]` 真窗口 `CaptureRenderedFrame()`（每张 PNG > 4KB 断言）
 
@@ -72,6 +73,12 @@ pwsh -NoProfile -File ../../verification/V11R-B-2/curate.ps1
 | `DEVIATIONS.md` | 与规格偏差及理由 |
 | `AC_COVERAGE.md` | AC1–AC7 → 代码/测试/截图映射 |
 
-## 5. 测试（`tests/NewManga.App.Tests/V2ConsoleUiTests.cs`，11 条全绿）
+## 5. 测试（`tests/NewManga.App.Tests/V2ConsoleUiTests.cs`，13 条全绿）
 
-分区真实度（5 真实/4 待接入）、Provider 创建走真实 draft、凭据不回显 + 反射扫描、删除 Provider 取消/ Esc / 确认三条路径、网络测试+默认+ TLS 规则、未接分区阻断危险确认、外观真实切换+主题工作室表面、诊断 Host 事实+导出历史+揭示目录、失败保存只渲染 typed code、Run 快照/投影+控制规则、无 run_id 不伪造。另 B-1/INT-0 全部回归通过（V2 合计 95 条）。
+分区真实度（5 真实/4 待接入）、Provider 创建走真实 draft、凭据不回显 + 反射扫描、删除 Provider 取消/ Esc / 确认三条路径、网络测试+默认+ TLS 规则、未接分区阻断危险确认、外观真实切换+主题工作室表面、诊断 Host 事实+导出历史+揭示目录、失败保存只渲染 typed code、Run 快照/投影+控制规则、无 run_id 不伪造。
+
+I2 新增：
+- `R24_ConsoleRunPolling_PausesOnLeave_AndResumesOnReentry`：加载 Run → 离开 Console 暂停共享 poller → 切回恢复订阅并立即产生一次共享快照/投影读取（可观测计数器，无 sleep 竞态）。
+- `R23_WiringAndSavedStates_UseNeutralVocabulary_NotSevenStateStatus`：分区「已接入/待接入」、凭据「已保存/未保存」、能力绑定「已绑定/未绑定」均为中性 metadata；API 上已移除 `Status`/`StateStatus`/`BindingStatus`，文本不落入七态词表。
+
+另 B-1/INT-0 全部回归通过（V2 合计 145 条）。

@@ -26,6 +26,15 @@ public static class EvidenceFiles
         Path.Combine(Path.GetTempPath(), "newmanga-evidence", task);
 
     /// <summary>
+    /// R-19: explicit curation runs may target another task evidence directory (B-2 reuses the shared
+    /// conformance inventory without duplicating the scan). Ordinary test runs never set this.
+    /// </summary>
+    public static string Task(string fallback) =>
+        Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_TASK") is { Length: > 0 } value
+            ? value
+            : fallback;
+
+    /// <summary>
     /// Saves a rendered frame. Returns the byte count on success and null when every attempt failed —
     /// the test must not fail because of evidence-file IO, but the curated evidence run reports gaps.
     /// </summary>
