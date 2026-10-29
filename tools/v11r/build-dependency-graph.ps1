@@ -39,7 +39,7 @@ $symbols = @(
     'SettingsStyle',
     'MotionProfile'
 )
-$excludePaths = @('archive/**', '**/bin/**', '**/obj/**', '**/node_modules/**', 'tools/v11r/**', 'verification/V11R-C-3-READY/**')
+$excludePaths = @('archive/**', '**/bin/**', '**/obj/**', '**/node_modules/**', 'tools/v11r/**', 'verification/V11R-C-3-READY/**', 'verification/V11R-C-3/**')
 $pattern = '\b(' + ($symbols -join '|') + ')\b'
 
 $outputPath = Join-Path $RepositoryRoot $OutputDirectory
@@ -211,6 +211,7 @@ Write-Output "json        : $jsonPath"
 Write-Output "table       : $tablePath"
 $kindSummary | ForEach-Object { Write-Output "  kind  $_" }
 $fateSummary | ForEach-Object { Write-Output "  fate  $_" }
+
 
 
 
