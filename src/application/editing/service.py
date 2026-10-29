@@ -43,6 +43,7 @@ from typing import Sequence
 from application.editing.errors import (
     GuardStatus,
     GuardedWriteOutcome,
+    RegionLimitExceeded,
     RegionNotFound,
     RegionRevisionChanged,
     RegionRevisionNotFound,
@@ -256,6 +257,7 @@ class InMemoryRegionCommitter:
         soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
     ) -> RegionCommitResult:
         """In-memory twin of the SQLite composite seam (contract-faithful).
 
@@ -286,6 +288,17 @@ class InMemoryRegionCommitter:
                         f"expected current {expected!r},"
                         f" stored current {stored.current_revision_id!r}"
                     ),
+                )
+
+        if page_region_limit is not None:
+            page_id, limit = page_region_limit
+            live_count = sum(
+                1 for region in repo.list_regions(page_id) if not region.deleted
+            )
+            if live_count >= limit:
+                return RegionCommitResult(
+                    RegionCommitStatus.REGION_LIMIT_EXCEEDED,
+                    detail=f"page {page_id} already has {limit} live regions",
                 )
 
         applied: list[tuple[Region, str]] = []
@@ -435,6 +448,8 @@ class RegionEditingService:
             raise RegionRevisionChanged()
         if result.status is RegionCommitStatus.TARGET_NOT_FOUND:
             raise RegionNotFound(result.detail or "region")
+        if result.status is RegionCommitStatus.REGION_LIMIT_EXCEEDED:
+            raise RegionLimitExceeded("page region limit exceeded")
         raise RuntimeError(f"region batch commit failed: {result.detail}")
 
     def _commit_user_or_raise(
@@ -564,10 +579,11 @@ class RegionEditingService:
         origin: RegionOrigin = RegionOrigin.USER,
     ) -> Region:
         existing = [r for r in self._repo.list_regions(page_id) if not r.deleted]
-        # I2/P2-E: bounded page input (same contract limit the wire enforces)
-        # so a page can never grow an unbounded batch later.
+        # I3/P2-A: the authoritative check is the in-transaction page cap passed
+        # to the batch seam below (two callers can both count N-1 here); this
+        # pre-check only fails fast on an already-full page.
         if len(existing) >= MAX_REGIONS_PER_PAGE:
-            raise ValueError(
+            raise RegionLimitExceeded(
                 f"page already has {MAX_REGIONS_PER_PAGE} live regions"
             )
         if reading_order is None:
@@ -587,7 +603,10 @@ class RegionEditingService:
         revision = self._build_revision(
             region, RegionOrigin(origin), ReviewState.UNREVIEWED
         )
-        self._commit_batch_or_raise(new_regions=[(region, revision)])
+        self._commit_batch_or_raise(
+            new_regions=[(region, revision)],
+            page_region_limit=(page_id, MAX_REGIONS_PER_PAGE),
+        )
         return region
 
     def get_region(self, region_id: str) -> Region:

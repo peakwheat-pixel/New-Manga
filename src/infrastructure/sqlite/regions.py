@@ -293,6 +293,7 @@ class SqliteRegionRepository:
         soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
     ) -> RegionCommitResult:
         """ALL-OR-NOTHING composite Region write (see the ports protocol).
 
@@ -347,7 +348,24 @@ class SqliteRegionRepository:
                         ),
                     )
 
-            # 2. new regions: the row, its first revision and the current
+            # 2. atomic page cap (I3/P2-A): the live count is re-read INSIDE
+            #    this transaction, so two callers that both counted N-1 before
+            #    the transaction can never both insert past the limit.
+            if page_region_limit is not None:
+                page_id, limit = page_region_limit
+                live_count = conn.execute(
+                    "SELECT COUNT(*) AS live FROM regions"
+                    " WHERE page_id = ? AND deleted_at IS NULL",
+                    (page_id,),
+                ).fetchone()["live"]
+                if live_count >= limit:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.REGION_LIMIT_EXCEEDED,
+                        detail=f"page {page_id} already has {limit} live regions",
+                    )
+
+            # 3. new regions: the row, its first revision and the current
             #    pointer appear together or not at all.
             for region, revision in new_regions:
                 stored_revision = replace(revision, revision_no=1)
@@ -357,7 +375,7 @@ class SqliteRegionRepository:
                 self._insert_revision(stored_revision)
                 applied.append((region, stored_revision.region_revision_id))
 
-            # 3. updated regions: append the next immutable revision and sync
+            # 4. updated regions: append the next immutable revision and sync
             #    the revision-owned state + pointer.
             for region, revision, _expected in updated_regions:
                 revision_no = conn.execute(
@@ -380,7 +398,7 @@ class SqliteRegionRepository:
                 )
                 applied.append((region, stored_revision.region_revision_id))
 
-            # 4. source soft deletes (merge/split): never hard delete. The
+            # 5. source soft deletes (merge/split): never hard delete. The
             #    update is CONDITIONAL on the target still being live; a
             #    rowcount != 1 rolls the whole batch back as TARGET_NOT_FOUND
             #    (defense in depth after the step-1 live re-read).
@@ -396,7 +414,7 @@ class SqliteRegionRepository:
                         detail=region_id,
                     )
 
-            # 5. pin flag flips (revision rows stay immutable), only while the
+            # 6. pin flag flips (revision rows stay immutable), only while the
             #    region is still live.
             for region_id, revision_no, pinned in revision_pins:
                 cursor = conn.execute(

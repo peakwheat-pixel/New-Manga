@@ -181,6 +181,7 @@ from typing import Any, Callable, TextIO
 
 from application.editing.errors import (
     GuardStatus,
+    RegionLimitExceeded,
     RegionNotFound,
     RegionRevisionChanged,
     RegionRevisionNotFound,
@@ -5112,6 +5113,24 @@ class CoreServiceServer:
                         "error": make_error_envelope(
                             code=E_INPUT_REVISION_CHANGED,
                             category="conflict",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLimitExceeded as error:
+                # I3/P2-A/B: bounded inputs (page region cap, vertex cap) are a
+                # validation failure, never a conflict/internal error.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
                             message=str(error),
                             retryable=False,
                         ),

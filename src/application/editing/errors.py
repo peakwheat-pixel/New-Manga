@@ -20,6 +20,15 @@ class RegionRevisionChanged(Exception):
     """The current revision moved since the caller read it."""
 
 
+class RegionLimitExceeded(ValueError):
+    """A bounded Region write input exceeded its contract limit (I3/P2-A/B).
+
+    Subclasses ``ValueError`` so existing application callers keep their
+    failure family; the wire layer maps it to INVALID_REQUEST/validation
+    (never to a conflict or an internal error).
+    """
+
+
 class GuardStatus(str, Enum):
     """Outcome of a guarded (optimistic) automatic write, D06 §90.
 

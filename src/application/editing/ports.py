@@ -42,6 +42,7 @@ class RegionCommitStatus(str, Enum):
     INPUT_REVISION_CHANGED = "input_revision_changed"
     LOCK_CHANGED = "lock_changed"
     TARGET_NOT_FOUND = "target_not_found"
+    REGION_LIMIT_EXCEEDED = "region_limit_exceeded"
     DB_FAILED = "db_failed"
 
 
@@ -87,6 +88,7 @@ class RegionRevisionCommitter(Protocol):
         soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
     ) -> RegionCommitResult:
         """V11R-F0-1 I1: ALL-OR-NOTHING composite write for the Region face.
 
@@ -121,6 +123,12 @@ class RegionRevisionCommitter(Protocol):
         callers can both pass ``get_region`` before the first merge/split
         commits, and only this in-transaction live re-read prevents the second
         from producing a second result set on already-deleted sources.
+
+        ``page_region_limit`` (I3/P2-A) is the atomic page-cap guard for
+        ``new_regions``: ``(page_id, limit)``. Inside the SAME transaction the
+        live region count of that page is re-read; count >= limit rolls the
+        batch back with ``REGION_LIMIT_EXCEEDED`` (zero write), closing the
+        "two callers both counted N-1 outside the transaction" window.
 
         This is the seam the create/merge/split/reorder/delete/pin use cases
         call so a failure can never leave a partial state (orphan region,
