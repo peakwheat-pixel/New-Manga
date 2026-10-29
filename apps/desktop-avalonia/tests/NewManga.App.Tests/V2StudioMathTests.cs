@@ -110,7 +110,7 @@ public sealed class V2StudioMathTests
     public void States_GlyphsMatchTheFrozenContractVocabulary()
     {
         // Contract §2.3 / DESIGN_SYSTEM §2.2: symbol is part of the contract, not a UI choice.
-        Assert.Equal("◦", StudioStates.Glyph(StudioStateKind.Queued));
+        Assert.Equal("·", StudioStates.Glyph(StudioStateKind.Queued));
         Assert.Equal("◐", StudioStates.Glyph(StudioStateKind.Running));
         Assert.Equal("●", StudioStates.Glyph(StudioStateKind.Done));
         Assert.Equal("✗", StudioStates.Glyph(StudioStateKind.Failed));

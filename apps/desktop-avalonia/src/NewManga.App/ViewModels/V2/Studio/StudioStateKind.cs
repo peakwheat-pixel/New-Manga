@@ -26,7 +26,7 @@ public static class StudioStates
     /// <summary>State symbols frozen by the Avalonia contract §2.3.</summary>
     public static string Glyph(StudioStateKind state) => state switch
     {
-        StudioStateKind.Queued => "◦",
+        StudioStateKind.Queued => "·",
         StudioStateKind.Running => "◐",
         StudioStateKind.Done => "●",
         StudioStateKind.Failed => "✗",
