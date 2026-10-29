@@ -55,12 +55,12 @@ public sealed class AppOptions
     /// V11R-INT-1: which shell hosts the product. <c>v2</c> is the new Avalonia shell
     /// (AppShellV2: three spaces + Studio dual mode + Theme Studio); <c>legacy</c> keeps the
     /// pre-redesign code-built shell as a one-release rollback path (<c>--shell=legacy</c>).
-    /// Default is flipped to <c>v2</c> only after the INT-1 L3 gate passes.
+    /// Default flipped to <c>v2</c> for V11R-INT-1 (L3 gate); <c>--shell=legacy</c> remains the one-release rollback.
     /// </summary>
     public string Shell { get; private set; } = DefaultShellId;
 
     /// <summary>INT-1 rollout constant: keep <c>legacy</c> until the new shell passes L3, then flip.</summary>
-    public const string DefaultShellId = "legacy";
+    public const string DefaultShellId = "v2";
 
     /// <summary>True when the new Avalonia shell should host the product.</summary>
     public bool UseV2Shell => string.Equals(Shell, "v2", StringComparison.OrdinalIgnoreCase);
