@@ -1,0 +1,18 @@
+G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-1\trx\full-{assembly}.trx
+
+已通过! - 失败:     0，通过:   147，已跳过:     0，总计:   147，持续时间: 15 s - NewManga.App.Tests.dll (net9.0)
+警告: 正在覆盖结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-1\trx\full-{assembly}.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-1\trx\full-{assembly}.trx
+
+已通过! - 失败:     0，通过:    60，已跳过:     0，总计:    60，持续时间: 1 m 19 s - NewManga.Host.Tests.dll (net9.0)
+警告: 正在覆盖结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-1\trx\full-{assembly}.trx
+结果文件: G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\verification\V11R-A-1\trx\full-{assembly}.trx
+
+已通过! - 失败:     0，通过:    61，已跳过:     0，总计:    61，持续时间: 1 m 48 s - NewManga.CoreClient.Tests.dll (net9.0)
+EXIT=0

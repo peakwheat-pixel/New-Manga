@@ -54,13 +54,13 @@ CSS 变量 `--nm-color-bg-canvas` 与本键一一对应。
 | 状态 7+未开始 | `Nm.Color.Status.Queued/Running/Done/Failed/Blocked/Stale/Skipped` | `IBrush` |
 | 状态底 | `Nm.Color.StatusMuted.*` | `IBrush` |
 | 字体族 | `Nm.FontFamily.Ui/Data/Display` | `FontFamily` |
-| 字号 | `Nm.FontSize.Xs(11)/Sm(12)/Md(13)/Lg(14)/Xl(18)/2Xl(24)` | `double` |
-| 字重/行高 | `Nm.FontWeight.Regular/Medium/SemiBold`、`Nm.LineHeight.Tight(1.25)/Normal(1.45)/Loose(1.6)` | `FontWeight`/`double` |
+| 字号 | `Nm.FontSize.Xs(11)/Sm(12)/Md(13)/Lg(14)/Xl(18)/Xxl(24)` | `double` |
+| 字重/行高 | `Nm.FontWeight.Regular/Medium/SemiBold`、`Nm.LineHeight.Tight(1.25)/Normal(1.45)/Loose(1.6) + 语义别名 Body/Label/Meta/Data（DS 扩展，R-14 登记）` | `FontWeight`/`double` |
 | 间距 | `Nm.Space.0=0,1=2,2=4,3=8,4=12,5=16,6=20,7=24,8=32` | `double` |
 | 圆角 | `Nm.Corner.None/Sm(2)/Md(3)` | `CornerRadius` |
 | 尺寸 | `Nm.Size.TopBand(36)/StatusBandPage(28)/StatusBandBatch(24)/FilmStripCollapsed(56)/FilmStripExpanded(200)/InspectorCollapsed(40)/InspectorExpanded(320)/Drawer(360)/RowPage(28)/RowBatch(22)/ControlHeight(28)/ControlHeightSm(24)` | `double` |
 | 内边距 | `Nm.Padding.Panel(12)/Card(12)/Control(8,12)/ControlSm(6,8)/Cell(8)/Section(16)` | `Thickness` |
-| 动效 | `Nm.Motion.Duration.Fast(0:0:0.09)/Normal(0:0:0.15)`、`Nm.Motion.Enabled` | `TimeSpan`/`bool` |
+| 动效 | `Nm.Motion.Duration.Fast(90ms)/Normal(140ms)`、`Nm.Motion.Enabled` | `TimeSpan`/`bool` |
 | 图标 | `Nm.Icon.Size(20)/Stroke(1.25)` | `double` |
 
 **硬规则**：组件 XAML/C# 中禁止裸色值、裸字号、裸间距、`border-radius > 3px`、阴影、渐变、模糊（DESIGN_SYSTEM §1、§9）。
@@ -69,10 +69,25 @@ CSS 变量 `--nm-color-bg-canvas` 与本键一一对应。
 ### 2.3 状态令牌的使用方式
 
 每个状态必须同时有色相 + 符号 + 文字标签（DESIGN_SYSTEM §2.2）。符号常量：
-`◦ queued · ◐ running ● done ✗ failed ▲ blocked ▨ stale – skipped ○ not_started ▮ locked`，由 `NewManga.DesignSystem.Controls.StatusGlyph` 提供，UI 不得自造。
+`· queued ◐ running ● done ✗ failed ▲ blocked ▨ stale – skipped ○ not_started ▮ locked`，由 `NewManga.DesignSystem.Controls.StatusGlyph` 提供，UI 不得自造。
 
 ---
 
+### 2.4 例外登记与派生令牌（R-14，2026-10-30）
+
+以下为**唯一允许的例外**，其余任何裸值均视为违规（独立审查据此判定）：
+
+| 例外 | 范围 | 理由 |
+|---|---|---|
+| `0`、`1`（1px 线宽）、`Auto`/`*` | 全局 | 布局原语，非设计值 |
+| `Transparent` / `Brushes.Transparent` | 控件模板透明态 | 无语义颜色，不可用令牌表达 |
+| `Margin="-2"` | 仅图标按钮的视觉居中补偿 | 图标 20×20、命中区 24×24 的既定几何修正；不得扩散到其它控件 |
+| 高对比模式令牌（`Tokens.HighContrast.axaml`） | DS 生成器维护 | 由 DESIGN_SYSTEM §2.3 对比度规则派生（≥4.5:1 / ≥7:1），**非第二真值源**：取值必须由规则计算得出并在生成器内登记 |
+| 密度令牌（`Density.Compact/Spacious`） | DS 生成器维护 | 由 DESIGN_SYSTEM §4 两档密度规则派生，同上 |
+| 语义行高别名（`Nm.LineHeight.Body/Label/Meta/Data`） | DS 扩展 | 排版层级语义别名，值必须等于 `Tight/Normal/Loose` 之一（生成器断言） |
+| 强调色/状态的 muted 底色（`Nm.Color.StatusMuted.*`、`Nm.Color.Accent.Muted`） | 令牌 | 装饰性底色，不受正文对比度约束 |
+
+任何新增例外必须先在本节登记（记录理由与范围），否则 L2/L3 审查按违规处理。
 ## 3. Design System 公开面（UI 只依赖这些）
 
 ### 3.1 标准控件样式（无自定义控件，直接用 Avalonia 内置 + `Classes`）
@@ -198,16 +213,24 @@ Task<ChapterSummary?> CreateChapterAsync(string bookId, string title, Cancellati
 public interface IRunController
 {
     Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default);
-    Task<RunControlInfo?> ControlRunAsync(string runId, RunControlAction action, CancellationToken ct = default);
+    Task<RunControlInfo?> ControlRunAsync(string runId, RunControlAction action, string? idempotencyKey = null, CancellationToken ct = default);
     Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default);
     Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default);
     Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default);
-    Task<RunControlInfo?> RetryFailedTargetsAsync(string runId, CancellationToken ct = default);
-    Task<bool> CancelExportAsync(string exportId, CancellationToken ct = default); // 已存在则复用
+    Task<RunControlInfo?> RetryFailedTargetsAsync(string runId, string idempotencyKey, CancellationToken ct = default);
 }
 public enum RunControlAction { Pause, Resume, Stop, Restart }
 public sealed record RunStartRequest(string Command, IReadOnlyDictionary<string, object?> Scope, IReadOnlyDictionary<string, object?>? Overrides, string IdempotencyKey);
 ```
+
+**幂等键规则（R-08，2026-10-30 修订）**：
+- `StartRun`：`RunStartRequest.IdempotencyKey` **必填**；
+- `ControlRun`：仅 `Restart` 必须提供 `idempotencyKey`（其余 action 传入应被忽略或为 null）；
+- `RetryFailedTargets`：`idempotencyKey` **必填**（签名中为非可空参数，调用方必须给出）；
+- 缺失/空白幂等键一律**本地 typed 拒绝**（`INVALID_REQUEST`），**禁止静默生成**——否则无法区分"用户重试"与"重复提交"。
+
+**不放入 `IRunController` 的成员**：导出相关方法（如 `CancelExportAsync`）已存在于 `IHostController`，且语义属于导出域，不在 `IRunController` 重复声明（避免返回类型冲突与双重真值）。
+
 宿主：`HostController` 实现（`IHostController` 可继承 `IRunController`）；`NullHostController` 提供确定性假实现。
 UI 通过 `IRunController` 订阅/轮询 `GetRunSnapshotAsync` + `GetTaskProjectionAsync`（无 push 通道时 500–1000ms 轮询，可注入）。
 

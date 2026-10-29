@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3",
+  "scenario": "book without chapters -\u003E empty state; scope switch resets selections",
+  "chapterless_empty_state": true,
+  "scope_switch_resets_book": true,
+  "scope_switch_resets_chapter": true
+}

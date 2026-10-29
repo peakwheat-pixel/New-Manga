@@ -21,7 +21,12 @@ public sealed class HostController : IHostController
         Array.Empty<BookSummary>(),
         0,
         true,
-        null);
+        null)
+    {
+        // V11R-A-5: until the Host is ready the write gate stays closed and the reason is explicit.
+        WritesAllowed = false,
+        ReadOnlyReason = "Host 未就绪（只读）",
+    };
 
     public HostController(HostOptions options)
     {
@@ -47,6 +52,8 @@ public sealed class HostController : IHostController
                 StatusLine = "Host 启动失败",
                 ErrorCode = ex is SidecarException sidecar ? sidecar.Code.ToString() : "HOST_START_IO",
                 ErrorMessage = ex is SidecarException typed ? typed.UserMessage : "Host 启动时发生 I/O 错误，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 启动失败（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -77,6 +84,8 @@ public sealed class HostController : IHostController
                 StatusLine = "读取书架失败",
                 ErrorCode = ex.Code,
                 ErrorMessage = "Core 返回了错误码，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -88,6 +97,8 @@ public sealed class HostController : IHostController
                 StatusLine = "核心服务中断",
                 ErrorCode = ex.Code.ToString(),
                 ErrorMessage = ex.UserMessage,
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -130,6 +141,8 @@ public sealed class HostController : IHostController
                 StatusLine = "中文往返失败",
                 ErrorCode = ex is CoreOperationException core ? core.Code : ((SidecarException)ex).Code.ToString(),
                 ErrorMessage = "核心服务返回错误，详见 host.log。",
+                WritesAllowed = false,
+                ReadOnlyReason = "Host 不可用（只读）",
             };
             Changed?.Invoke(this, EventArgs.Empty);
             return false;
@@ -152,6 +165,57 @@ public sealed class HostController : IHostController
         catch (Exception ex) when (ex is ReadOnlyHostException or CoreOperationException or SidecarException or OperationCanceledException)
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// V11R-A-1 (audit P-01, contract §5.1): creates one chapter through the Core
+    /// <c>CreateChapter</c> command (protocol minor 8, C037). The typing layer is
+    /// <see cref="HostRuntime.CreateChapterAsync"/>: the wire payload is exactly
+    /// <c>{"book_id", "title"}</c> and the result is <c>{chapter_id, title, chapter_number,
+    /// sort_order}</c> — verified against <c>src/bootstrap/core_service.py</c>
+    /// (<c>handle_create_chapter</c> + <c>_CREATE_FIELDS</c> + <c>_create_validation_details</c>).
+    /// Refusals never throw into the UI: they return null and publish the typed code through
+    /// <see cref="HostViewSnapshot.LastError"/>. Title semantics stay with the Core (blank title →
+    /// INVALID_REQUEST, duplicates allowed, no length limit); only an empty book id is rejected
+    /// locally before any wire frame is sent.
+    /// </summary>
+    public async Task<ChapterSummary?> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var chapter = await _runtime.CreateChapterAsync(bookId, title, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return chapter;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            // Core errors keep their typed code (INVALID_REQUEST / TARGET_NOT_FOUND / ...);
+            // read-only, transport and cancellation failures map exactly like the rest of the
+            // service layer (ErrorCodeOf), so nothing is silently swallowed.
+            SetLastError(ErrorCodeOf(ex));
+            return null;
         }
     }
 
@@ -1376,6 +1440,233 @@ public sealed class HostController : IHostController
         }
     }
 
+    // ---------------------------------------------------------------------------------------
+    // V11R-A-2 (audit P-02, contract §5.2): Run control through the registered production commands
+    // C056-C061 (library_start_run / library_control_run / library_resume_blocked_run /
+    // library_get_run_snapshot / library_get_task_projection / library_retry_failed_targets, all
+    // protocol minor 3). The dispatcher enforces the legacy argument shapes; refusals return null and
+    // publish the typed code through HostViewSnapshot.LastError. Writes follow the Host data-root
+    // policy exactly like the existing region writes.
+    // ---------------------------------------------------------------------------------------
+
+    public async Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default)
+    {
+        if (request is null ||
+            string.IsNullOrWhiteSpace(request.Command) ||
+            request.Scope is null ||
+            string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_start_run", RunPayloads.StartRun(request), ct)
+                .ConfigureAwait(false);
+            var info = RunStartInfo.FromJson(response.Value);
+            SetLastError(null);
+            return info;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<RunControlInfo?> ControlRunAsync(
+        string runId,
+        RunControlAction action,
+        string? idempotencyKey = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        // R-08: restart always needs the caller's key (never generated here); other actions ignore it
+        // because the frozen Core rejects an idempotency_key on them.
+        if (action == RunControlAction.Restart && string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync(
+                "library_control_run",
+                RunPayloads.ControlRun(
+                    runId,
+                    action,
+                    action == RunControlAction.Restart ? idempotencyKey : null),
+                ct)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync("library_resume_blocked_run", RunPayloads.RunId(runId), ct)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_get_run_snapshot", RunPayloads.RunId(runId), ct)
+                .ConfigureAwait(false);
+            return RunSnapshotInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync("library_get_task_projection", RunPayloads.RunId(runId), ct)
+                .ConfigureAwait(false);
+            // AC4: the projection is parsed exactly as the Core composes it; nothing is derived here.
+            return TaskProjectionInfo.FromJson(response.Value);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<RunControlInfo?> RetryFailedTargetsAsync(
+        string runId,
+        string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(runId) || string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            // R-08: the retry key is mandatory — a missing key must never be generated silently.
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        return await InvokeRunWriteAsync(
+                "library_retry_failed_targets",
+                RunPayloads.RetryFailedTargets(runId, idempotencyKey),
+                ct)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// V11R-A-2: shared body of the four Run write faces (ControlRun / ResumeBlockedRun /
+    /// RetryFailedTargets). Local validation and the Host data-root policy gate run before any wire
+    /// frame; Core refusals keep their typed code (INVALID_RUN_TRANSITION / TARGET_NOT_FOUND /
+    /// IDEMPOTENCY_KEY_REUSED / …).
+    /// </summary>
+    private async Task<RunControlInfo?> InvokeRunWriteAsync(
+        string command,
+        System.Text.Json.JsonElement payload,
+        CancellationToken ct)
+    {
+        if (ct.IsCancellationRequested)
+        {
+            SetLastError("CANCELLED");
+            return null;
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var response = await commands.InvokeAsync(command, payload, ct).ConfigureAwait(false);
+            var info = RunControlInfo.FromJson(response.Value);
+            SetLastError(null);
+            return info;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
     private static bool IsUiFacingFailure(Exception ex) => ex is
         CoreOperationException or SidecarException or BridgeException or ReadOnlyHostException or
         HostCommandInvalidArgumentsException or ShellActionException or IOException or
@@ -1410,6 +1701,22 @@ public sealed class HostController : IHostController
         value.TryGetInt32(out var parsed)
             ? parsed
             : null;
+
+    /// <summary>
+    /// V11R-A-1: publish the typed code of the last refused service-layer write (null = recovered).
+    /// Only the code travels — never a message, a path or a secret — and <see cref="Changed"/> fires
+    /// only when the value actually changes so a failing UI never gets an event storm.
+    /// </summary>
+    private void SetLastError(string? code)
+    {
+        if (string.Equals(_snapshot.LastError, code, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _snapshot = _snapshot with { LastError = code };
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
 
     public async ValueTask DisposeAsync()
     {
@@ -1454,7 +1761,12 @@ public sealed class HostController : IHostController
         {
             // READER-WORKBENCH-1 AC3: the workbench's write gate mirrors the Host data-root policy.
             WritesAllowed = _runtime.Policy.WritesAllowed,
+            // V11R-A-5: when the gate is closed the UI gets the explicit reason, never a silent refusal.
+            ReadOnlyReason = _runtime.Policy.WritesAllowed
+                ? null
+                : CoexistenceRules.Describe(result.Mode),
         };
         Changed?.Invoke(this, EventArgs.Empty);
     }
 }
+

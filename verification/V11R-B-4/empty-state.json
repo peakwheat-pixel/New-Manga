@@ -1,0 +1,7 @@
+{
+  "ac": "AC1 \u7A7A\u6001",
+  "screenshot": "batch-empty-empty-state.png",
+  "start_command": "translate_all",
+  "notwired_datasource_exists": true,
+  "projection_after_start": true
+}

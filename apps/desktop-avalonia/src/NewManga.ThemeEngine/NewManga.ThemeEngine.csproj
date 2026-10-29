@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NewManga.ThemeEngine</RootNamespace>
+    <AssemblyName>NewManga.ThemeEngine</AssemblyName>
+    <Description>New Manga theme engine (V11R-C-1): theme package schema newmanga.theme/1, registry, validation, persistence with legacy-id migration, preview sessions, fallback and ThemePackage -> Nm.* palette composition. Replaces the retired ThemePack architecture; depends on NewManga.DesignSystem, never the other way round.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewManga.DesignSystem\NewManga.DesignSystem.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The shipped default theme is a generated artifact embedded in this assembly. -->
+    <EmbeddedResource Include="Themes\newmanga-default.nmtheme"
+                      LogicalName="NewManga.ThemeEngine.Themes.newmanga-default.nmtheme" />
+  </ItemGroup>
+
+  <!-- The theme generator (tools/**) is a sibling console project kept inside this directory so the
+       whole theme toolchain stays inside the V11R-C-1 write scope. Its sources are not part of the
+       library; exclude them from the default SDK item globs. -->
+  <ItemGroup>
+    <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <None Remove="tools\**" />
+    <AvaloniaXaml Remove="tools\**" />
+    <AvaloniaResource Remove="tools\**" />
+  </ItemGroup>
+
+</Project>

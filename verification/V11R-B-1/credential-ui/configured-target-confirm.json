@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "configured target -\u003E confirm before any command; cancel sends nothing",
+  "put_calls": 0,
+  "pending_secret_cleared": true,
+  "masked_input_cleared": true
+}

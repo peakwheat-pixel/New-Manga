@@ -1,0 +1,48 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Inline tiers: body (13/400/1.45), label (12/500/1.25), meta (11/400/1.25),
+       data (mono, 12/400/1.25), plus the muted modifier and num alignment.
+
+       There is deliberately NO base `TextBlock` style: Foreground/FontFamily/FontSize inherit from
+       the root (Window sets them from tokens) and from the containing control (e.g. Button sets
+       Accent.On, so its content text must inherit that instead of being forced to Text.Primary).
+       Only elements that opt into a semantic tier get an explicit typography setter. -->
+
+  <Style Selector="TextBlock.body">
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Regular}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Body}" />
+  </Style>
+
+  <Style Selector="TextBlock.label">
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Medium}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Label}" />
+  </Style>
+
+  <Style Selector="TextBlock.meta">
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Regular}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Meta}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+  </Style>
+
+  <Style Selector="TextBlock.data">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Data}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Regular}" />
+    <Setter Property="LineHeight" Value="{DynamicResource Nm.TextLineBox.Data}" />
+    <!-- Avalonia 11.3 has no OpenType feature settings; the tabular-nums requirement is met by the
+         monospaced data font stack (Nm.FontFamily.Data) which has fixed digit advance widths. -->
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+  </Style>
+
+  <!-- Modifiers -->
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+  </Style>
+  <Style Selector="TextBlock.num">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Data}" />
+    <Setter Property="TextAlignment" Value="Right" />
+  </Style>
+</Styles>

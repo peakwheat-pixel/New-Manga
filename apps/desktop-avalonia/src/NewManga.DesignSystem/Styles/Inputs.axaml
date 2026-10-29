@@ -1,0 +1,66 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Text input surface (classes: search / mono / invalid). The Fluent template owns the editing
+       machinery (IME, caret, selection); the design system owns every visible value. Keyboard focus
+       draws the DESIGN_SYSTEM §8 2px accent outline OUTSIDE the control bounds through the focus
+       adorner, so the inner geometry never changes (no border-thickness hack). -->
+
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeight}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+
+  <Style Selector="TextBox:pointerover">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+  </Style>
+
+  <!-- Fluent's template turns the inner border into a 2px system-blue focus border. The
+       design system suppresses that template-level emphasis so the only focus signal is the shared
+       outside accent outline (FocusAdorner above); the border keeps its idle geometry and colour. -->
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="TextBox:pointerover:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+
+  <Style Selector="TextBox.invalid:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+
+  <Style Selector="TextBox:disabled">
+    <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+  </Style>
+
+  <Style Selector="TextBox.search">
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeightSm}" />
+  </Style>
+
+  <Style Selector="TextBox.mono">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Data}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+  </Style>
+
+  <!-- Invalid state keeps the 1px status border; the outside focus ring still shows the accent
+       outline from the application-wide default focus adorner. -->
+  <Style Selector="TextBox.invalid">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+
+</Styles>
+

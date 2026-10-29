@@ -1,0 +1,76 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- CheckBox: square marker (radius <= 3px per DESIGN_SYSTEM §1), accent fill + check glyph when
+       checked, dash when indeterminate. Hit area >= Nm.Size.ControlHeight. Keyboard focus shows the
+       shared outside focus ring (PART_FocusRing), never a geometry-changing border. -->
+  <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeight}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <Border Name="PART_Box"
+                    Width="{DynamicResource Nm.Size.Marker}"
+                    Height="{DynamicResource Nm.Size.Marker}"
+                    VerticalAlignment="Center"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+              <Path Name="PART_CheckGlyph"
+                    IsVisible="False"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M 2,7 L 5.5,10 L 11,3"
+                    Stroke="{DynamicResource Nm.Color.Accent.On}"
+                    StrokeThickness="{DynamicResource Nm.Icon.Stroke}" />
+            </Border>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Grid.Column="1"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontFamily="{TemplateBinding FontFamily}"
+                              FontSize="{TemplateBinding FontSize}"
+                              VerticalContentAlignment="Center" />
+          </Grid>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^:checked /template/ Border#PART_Box">
+      <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    </Style>
+    <Style Selector="^:checked /template/ Path#PART_CheckGlyph">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:checked:pointerover /template/ Border#PART_Box">
+      <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+    </Style>
+    <Style Selector="^:indeterminate /template/ Border#PART_Box">
+      <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Strong}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    </Style>
+    <Style Selector="^:indeterminate /template/ Path#PART_CheckGlyph">
+      <Setter Property="IsVisible" Value="True" />
+      <Setter Property="Data" Value="M 3,8 L 10,8" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#PART_Box">
+      <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+      <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

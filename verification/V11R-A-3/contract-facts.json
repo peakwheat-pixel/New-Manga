@@ -1,0 +1,3300 @@
+{
+  "task": "V11R-A-3",
+  "baseline": "c73239999",
+  "sources": {
+    "ledger": "G:/CODEX/New Manga.workspace/tasks/AUDIT-V11-INTAKE-1/命令清册_C001-C066.csv",
+    "registry": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs",
+    "dispatcher": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+    "core": "src/bootstrap/core_service.py"
+  },
+  "facts": [
+    {
+      "id": "C001",
+      "domain": "Settings",
+      "front": "settings_get",
+      "route": "settings.get",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传：section?（未在 Dispatcher 特判）",
+      "audit_result": "配置投影；具体响应 DTO 待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 127,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 3475,
+      "core_handler": "handle_settings_get",
+      "core_handler_line": 1754,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "settings.get",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-8",
+          "result": {
+            "settings": {}
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C002",
+      "domain": "Settings",
+      "front": "settings_update_section",
+      "route": "settings.update_section",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "section!,values! object",
+      "audit_result": "设置投影；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 135,
+      "dispatcher_line": 175,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3476,
+      "core_handler": "handle_settings_update_section",
+      "core_handler_line": 1773,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "settings.update_section",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "section": "ocr",
+            "values": {}
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "a1-1",
+          "result": {
+            "settings": {
+              "ocr": {}
+            }
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C003",
+      "domain": "Settings",
+      "front": "cleanup_preview",
+      "route": "cleanup.preview",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；通常空对象，须按 Core 核实",
+      "audit_result": "清理候选；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 130,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 265,
+      "core_handler": "handle_cleanup_preview",
+      "core_handler_line": 1845,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "cleanup.preview",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-11",
+          "result": {
+            "targets": [],
+            "total_bytes": 0,
+            "pending_cleanups": 0
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C004",
+      "domain": "Settings",
+      "front": "cleanup_run",
+      "route": "cleanup.run",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "清理结果；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 141,
+      "dispatcher_line": 182,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 266,
+      "core_handler": "handle_cleanup_run",
+      "core_handler_line": 1858,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "cleanup.run",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "a1-7",
+          "result": {
+            "items": {},
+            "removed": 0,
+            "failed": 0,
+            "skipped": 0
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C005",
+      "domain": "Settings",
+      "front": "cleanup_retry_pending",
+      "route": "cleanup.retry_pending",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "重试清理；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 161,
+      "dispatcher_line": 259,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 267,
+      "core_handler": "handle_cleanup_retry_pending",
+      "core_handler_line": 1864,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "cleanup.retry_pending",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-001",
+          "result": {
+            "items": {},
+            "removed": 0,
+            "failed": 0,
+            "skipped": 0
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C006",
+      "domain": "Settings",
+      "front": "backup_create",
+      "route": "backup.create",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "backup_type? 默认 manual",
+      "audit_result": "备份元数据；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 139,
+      "dispatcher_line": 192,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 273,
+      "core_handler": "handle_backup_create",
+      "core_handler_line": 1882,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "backup.create",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "backup_type": "manual"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-004",
+          "result": {
+            "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c",
+            "path": "9eb63bdd723f41d0bb7c97e058d5204c.nmbak",
+            "size_bytes": 10811,
+            "created_at": "2026-10-27T10:21:38.420+00:00",
+            "verified": true
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C007",
+      "domain": "Settings",
+      "front": "backup_list",
+      "route": "backup.list",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；须核 Core 允许键",
+      "audit_result": "备份列表；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 128,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 274,
+      "core_handler": "handle_backup_list",
+      "core_handler_line": 1895,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "backup.list",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-9",
+          "result": [],
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C008",
+      "domain": "Settings",
+      "front": "backup_restore",
+      "route": "backup.restore",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "backup_id!,confirm_restore! bool",
+      "audit_result": "恢复结果；需明确确认错误",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 189,
+      "dispatcher_line": 255,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 275,
+      "core_handler": "handle_backup_restore",
+      "core_handler_line": 1898,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "backup.restore",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-006",
+          "result": null,
+          "error": {
+            "code": "BACKUP_RESTORE_REQUIRES_CONFIRMATION",
+            "category": "validation",
+            "message": "confirm_restore must be true",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C009",
+      "domain": "Settings",
+      "front": "backup_delete",
+      "route": "backup.delete",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "backup_id!",
+      "audit_result": "删除结果；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 160,
+      "dispatcher_line": 249,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 276,
+      "core_handler": "handle_backup_delete",
+      "core_handler_line": 1909,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "backup.delete",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "backup_id": "9eb63bdd723f41d0bb7c97e058d5204c"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-005",
+          "result": {
+            "removed": true
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C010",
+      "domain": "Settings",
+      "front": "plugins_list",
+      "route": "plugins.list",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；须核 Core 允许键",
+      "audit_result": "插件列表；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 129,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 285,
+      "core_handler": "handle_plugins_list",
+      "core_handler_line": 1929,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "plugins.list",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-10",
+          "result": {
+            "global_enabled": false,
+            "plugins": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C011",
+      "domain": "Settings",
+      "front": "plugins_set_enabled",
+      "route": "plugins.set_enabled",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "enabled! bool",
+      "audit_result": "插件总开关状态；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 140,
+      "dispatcher_line": 195,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 286,
+      "core_handler": "handle_plugins_set_enabled",
+      "core_handler_line": 1932,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "plugins.set_enabled",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "enabled": false
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "a1-6",
+          "result": {
+            "global_enabled": false
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C012",
+      "domain": "Settings",
+      "front": "plugins_set_plugin_enabled",
+      "route": "plugins.set_plugin_enabled",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "plugin_id!,enabled! bool",
+      "audit_result": "单插件状态；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 163,
+      "dispatcher_line": 266,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 287,
+      "core_handler": "handle_plugins_set_plugin_enabled",
+      "core_handler_line": 1938,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "plugins.set_plugin_enabled",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "plugin_id": "no-such-plugin",
+            "enabled": false
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-003",
+          "result": null,
+          "error": {
+            "code": "PLUGIN_NOT_FOUND",
+            "category": "not_found",
+            "message": "no-such-plugin",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C013",
+      "domain": "Settings",
+      "front": "plugins_audit_list",
+      "route": "plugins.audit_list",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "limit? int",
+      "audit_result": "审计记录；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 162,
+      "dispatcher_line": 263,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 288,
+      "core_handler": "handle_plugins_audit_list",
+      "core_handler_line": 1948,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "plugins.audit_list",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "rc-002",
+          "result": [],
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C014",
+      "domain": "Settings",
+      "front": "plugins_open_directory",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local，参数形状待核",
+      "audit_result": "打开目录动作；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 40,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": null,
+      "sample_kind": null,
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs:343",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C015",
+      "domain": "Settings",
+      "front": "settings_provider_profiles_list",
+      "route": "settings_provider_profiles_list",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "ProviderProfile 列表",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 136,
+      "dispatcher_line": 180,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 316,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "settings_provider_profiles_list",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "a1-2",
+          "result": {
+            "profiles": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C016",
+      "domain": "Settings",
+      "front": "settings_provider_profiles_create",
+      "route": "settings_provider_profiles_create",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "provider_id!,display_name!,capabilities![],endpoint!,model!,network_profile_id nullable,enabled!",
+      "audit_result": "ProviderProfile 写结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 190,
+      "dispatcher_line": 337,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 317,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_profiles_create",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "provider_id": "custom",
+            "display_name": "NS probe provider",
+            "capabilities": "Translation",
+            "endpoint": "http://127.0.0.1:9/v1",
+            "model": "probe",
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+            "enabled": false
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-009",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "profile",
+              "action": "edit_profile",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C017",
+      "domain": "Settings",
+      "front": "settings_provider_profiles_update",
+      "route": "settings_provider_profiles_update",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "profile_id!,display_name!,capabilities![],endpoint!,model!,network_profile_id nullable,enabled!",
+      "audit_result": "ProviderProfile 写结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 191,
+      "dispatcher_line": 347,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 318,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_profiles_update",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "profile_id": null,
+            "display_name": "NS probe provider v2",
+            "capabilities": "Translation",
+            "endpoint": "http://127.0.0.1:9/v1",
+            "model": "probe",
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+            "enabled": false
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-010",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "profile",
+              "action": "edit_profile",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C018",
+      "domain": "Settings",
+      "front": "settings_provider_profiles_delete",
+      "route": "settings_provider_profiles_delete",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "profile_id!",
+      "audit_result": "删除结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 192,
+      "dispatcher_line": 357,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 319,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_profiles_delete",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "profile_id": null
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-022",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "profile",
+              "action": "edit_profile",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C019",
+      "domain": "Settings",
+      "front": "settings_provider_bindings_set",
+      "route": "settings_provider_bindings_set",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "scope! object,capability!,profile_id!",
+      "audit_result": "绑定结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 193,
+      "dispatcher_line": 360,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 320,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_bindings_set",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "scope": {
+              "kind": "global"
+            },
+            "capability": "Translation",
+            "profile_id": null
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-011",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "binding",
+              "action": "none",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C020",
+      "domain": "Settings",
+      "front": "settings_provider_bindings_clear",
+      "route": "settings_provider_bindings_clear",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "scope! object,capability!",
+      "audit_result": "清除绑定结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 170,
+      "dispatcher_line": 373,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 321,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_bindings_clear",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "scope": {
+              "kind": "global"
+            },
+            "capability": "Translation"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-013",
+          "result": {
+            "cleared": true
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C021",
+      "domain": "Settings",
+      "front": "settings_provider_bindings_resolve",
+      "route": "settings_provider_bindings_resolve",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "capability!,book_id?,chapter_id?,run_id?",
+      "audit_result": "绑定解析；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 171,
+      "dispatcher_line": 378,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 322,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_bindings_resolve",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "capability": "Translation"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-012",
+          "result": {
+            "profile_id": null,
+            "source": null
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C022",
+      "domain": "Settings",
+      "front": "settings_provider_run_snapshot_get",
+      "route": "settings_provider_run_snapshot_get",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "run_id!",
+      "audit_result": "Run Provider 快照；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 172,
+      "dispatcher_line": 384,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 323,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_provider_run_snapshot_get",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "run_id": "no-such-run"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-014",
+          "result": null,
+          "error": {
+            "code": "TARGET_NOT_FOUND",
+            "category": "not_found",
+            "message": "SETTINGS_ITEM_NOT_FOUND",
+            "retryable": false,
+            "details": {
+              "phase": "binding",
+              "action": "none",
+              "message_key": "SETTINGS_ITEM_NOT_FOUND"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C023",
+      "domain": "Settings",
+      "front": "settings_network_profiles_list",
+      "route": "settings_network_profiles_list",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "NetworkProfile 列表",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 137,
+      "dispatcher_line": 181,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 325,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "settings_network_profiles_list",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "a1-3",
+          "result": {
+            "profiles": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C024",
+      "domain": "Settings",
+      "front": "settings_network_profiles_create",
+      "route": "settings_network_profiles_create",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "display_name!,mode!,proxy_endpoint nullable,verify_tls?,confirm_disable_tls_verification?,allow_proxy_failure_direct_fallback?",
+      "audit_result": "NetworkProfile 写结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 167,
+      "dispatcher_line": 311,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 326,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profiles_create",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "display_name": "NS probe network",
+            "mode": "Direct",
+            "proxy_endpoint": null
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-008",
+          "result": {
+            "profile": {
+              "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+              "display_name": "NS probe network",
+              "mode": "Direct",
+              "proxy_endpoint": null,
+              "verify_tls": true,
+              "tls_verification_state": "enabled",
+              "allow_proxy_failure_direct_fallback": false,
+              "credential_state": "missing"
+            }
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C025",
+      "domain": "Settings",
+      "front": "settings_network_profiles_update",
+      "route": "settings_network_profiles_update",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "network_profile_id!,display_name!,mode!,proxy_endpoint nullable,verify_tls!,confirm_disable_tls_verification?,allow_proxy_failure_direct_fallback!",
+      "audit_result": "NetworkProfile 写结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 169,
+      "dispatcher_line": 319,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 327,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profiles_update",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+            "display_name": "NS probe network v2",
+            "mode": "Direct",
+            "proxy_endpoint": null,
+            "verify_tls": true,
+            "allow_proxy_failure_direct_fallback": false
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-015",
+          "result": {
+            "profile": {
+              "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+              "display_name": "NS probe network v2",
+              "mode": "Direct",
+              "proxy_endpoint": null,
+              "verify_tls": true,
+              "tls_verification_state": "enabled",
+              "allow_proxy_failure_direct_fallback": false,
+              "credential_state": "missing"
+            }
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C026",
+      "domain": "Settings",
+      "front": "settings_network_profiles_delete",
+      "route": "settings_network_profiles_delete",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "network_profile_id!",
+      "audit_result": "删除结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 168,
+      "dispatcher_line": 330,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 328,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profiles_delete",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-023",
+          "result": {
+            "deleted": true
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C027",
+      "domain": "Settings",
+      "front": "settings_network_profiles_test",
+      "route": "settings_network_profiles_test",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "network_profile_id!,provider_profile_id?",
+      "audit_result": "网络测试结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 194,
+      "dispatcher_line": 366,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 332,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profiles_test",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a",
+            "provider_profile_id": null
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-016",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "profile",
+              "action": "edit_profile",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C028",
+      "domain": "Settings",
+      "front": "settings_network_profile_default_set",
+      "route": "settings_network_profile_default_set",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "network_profile_id!",
+      "audit_result": "默认网络配置结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 166,
+      "dispatcher_line": 308,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 329,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profile_default_set",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-017",
+          "result": {
+            "network_profile_id": "697c64319c614086b51a8b208ce8ac0a"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C029",
+      "domain": "Settings",
+      "front": "settings_network_profile_default_clear",
+      "route": "settings_network_profile_default_clear",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "清除默认结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 165,
+      "dispatcher_line": 260,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 330,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profile_default_clear",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-019",
+          "result": {
+            "network_profile_id": null
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C030",
+      "domain": "Settings",
+      "front": "settings_network_profile_resolve",
+      "route": "settings_network_profile_resolve",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "provider_profile_id?",
+      "audit_result": "路由解析结果；详情待核",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 195,
+      "dispatcher_line": 370,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 331,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "settings_network_profile_resolve",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "provider_profile_id": null
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "rc-018",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "message": "SETTINGS_INVALID_INPUT",
+            "retryable": false,
+            "details": {
+              "phase": "profile",
+              "action": "edit_profile",
+              "message_key": "SETTINGS_INVALID_INPUT"
+            }
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C031",
+      "domain": "Settings",
+      "front": "settings_resolve_overrides",
+      "route": "settings_resolve_overrides",
+      "audit_minor": "7",
+      "audit_channel": "core",
+      "audit_payload": "keys![],book_id?,chapter_id?,run_id?",
+      "audit_result": "合并设置投影；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 7,
+      "registry_line": 138,
+      "dispatcher_line": 185,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 324,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-WIRE-A1/probe-results.json",
+        "request": {
+          "command": "settings_resolve_overrides",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "payload": {
+            "keys": [
+              "sfx.policy"
+            ]
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 7
+          },
+          "request_id": "a1-4",
+          "result": {
+            "values": [
+              {
+                "key": "sfx.policy",
+                "value": "skip",
+                "source": "global",
+                "is_default": true
+              }
+            ]
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C032",
+      "domain": "Settings",
+      "front": "credential_put",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local：kind,owner_id,intent,secret（须核授权流程）",
+      "audit_result": "CredentialOperationResult；不应回显 secret",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 58,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.App.Tests/CredentialUiTests.cs:398"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs:26",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C033",
+      "domain": "Settings",
+      "front": "credential_clear",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local：kind,owner_id",
+      "audit_result": "CredentialOperationResult",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 59,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.App.Tests/CredentialUiTests.cs:406"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs:27",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C034",
+      "domain": "Library",
+      "front": "library_list_books",
+      "route": "ListBooks",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；常用空对象；须核 Core",
+      "audit_result": "BookSummary[]",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 120,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 3783,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "ListBooks",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-2",
+          "result": [
+            {
+              "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+              "title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+              "original_title": "",
+              "is_favorite": false,
+              "is_archived": false,
+              "page_count": 8,
+              "created_at": "2026-10-27T01:25:52.758+00:00",
+              "updated_at": "2026-10-27T01:25:52.758+00:00"
+            }
+          ],
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C035",
+      "domain": "Library",
+      "front": "library_list_recycle_bin_books",
+      "route": "ListRecycleBinBooks",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；须核 Core",
+      "audit_result": "回收站书籍列表；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 121,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 3733,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "ListRecycleBinBooks",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-3",
+          "result": [],
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C036",
+      "domain": "Library",
+      "front": "library_create_book",
+      "route": "CreateBook",
+      "audit_minor": "8",
+      "audit_channel": "core",
+      "audit_payload": "透传；title 参数由 CoreClient 发送，须核 dispatcher",
+      "audit_result": "BookSummary",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 8,
+      "registry_line": 122,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 242,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "CreateBook",
+          "version": {
+            "major": 2,
+            "minor": 8
+          },
+          "payload": {
+            "title": "命令面探测・日本語テスト"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 8
+          },
+          "request_id": "probe-4",
+          "result": {
+            "book_id": "aadd7b15da8549b29b435ec25ba80e7c",
+            "title": "命令面探测・日本語テスト",
+            "original_title": "",
+            "is_favorite": false,
+            "is_archived": false,
+            "page_count": null,
+            "created_at": "2026-10-27T11:01:14.771+00:00",
+            "updated_at": "2026-10-27T11:01:14.771+00:00"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C037",
+      "domain": "Library",
+      "front": "create_chapter",
+      "route": "CreateChapter",
+      "audit_minor": "8",
+      "audit_channel": "core",
+      "audit_payload": "透传；须按 Core 文档核查实际字段",
+      "audit_result": "Chapter 对象；详情待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 8,
+      "registry_line": 123,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 242,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "CreateChapter",
+          "version": {
+            "major": 2,
+            "minor": 8
+          },
+          "payload": {
+            "title": "第1章",
+            "book_id": "aadd7b15da8549b29b435ec25ba80e7c",
+            "chapter_number": "1"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 8
+          },
+          "request_id": "probe-5",
+          "result": {
+            "chapter_id": "76a5046e815f42d3a1229ea1b399c7ed",
+            "title": "第1章",
+            "chapter_number": "1",
+            "sort_order": 1
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C038",
+      "domain": "Library",
+      "front": "library_import_file",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local：chapter_id + 文件授权参数，详情待核",
+      "audit_result": "ImportOutcome",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 68,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.Host.Tests/GrantIssuerTests.cs:82"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs:71",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C039",
+      "domain": "Library",
+      "front": "library_import_folder",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local：chapter_id + 目录授权参数，详情待核",
+      "audit_result": "ImportOutcome",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 69,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": null,
+      "sample_kind": null,
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs:76",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C040",
+      "domain": "Library",
+      "front": "library_delete_book_permanently",
+      "route": "PermanentlyDeleteBook",
+      "audit_minor": "10",
+      "audit_channel": "core",
+      "audit_payload": "book_id!,confirm_permanent_delete! bool",
+      "audit_result": "删除结果；需验证确认门禁",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 10,
+      "registry_line": 164,
+      "dispatcher_line": 270,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 243,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-WIRE-B1/probe-results.json",
+        "request": {
+          "command": "PermanentlyDeleteBook",
+          "version": {
+            "major": 2,
+            "minor": 10
+          },
+          "payload": {
+            "book_id": "767d191aad7640ebbc9225adcf55ebe9",
+            "confirm_permanent_delete": true
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 10
+          },
+          "request_id": "b1-018",
+          "result": {
+            "book_id": "767d191aad7640ebbc9225adcf55ebe9",
+            "deleted": true
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C041",
+      "domain": "Library",
+      "front": "library_delete_books_permanently",
+      "route": "PermanentlyDeleteBooks",
+      "audit_minor": "10",
+      "audit_channel": "core",
+      "audit_payload": "book_ids![],confirmed_book_ids![],confirm_count!,confirm_permanent_delete!",
+      "audit_result": "批量删除结果；需验证二次确认",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 10,
+      "registry_line": 196,
+      "dispatcher_line": 282,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 243,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/NS-RECLASSIFY-1/probe-results.json",
+        "request": {
+          "command": "PermanentlyDeleteBooks",
+          "version": {
+            "major": 2,
+            "minor": 10
+          },
+          "payload": {
+            "book_ids": "no-such-book",
+            "confirm_permanent_delete": true
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 10
+          },
+          "request_id": "rc-038",
+          "result": null,
+          "error": {
+            "code": "INVALID_REQUEST",
+            "category": "validation",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C042",
+      "domain": "Region",
+      "front": "set_region_type",
+      "route": "set_region_type",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "region_id!,new_region_type!,expected_revision?",
+      "audit_result": "RegionWriteSnapshot；revision/conflict",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 177,
+      "dispatcher_line": 394,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 4164,
+      "core_handler": "handle_set_region_type",
+      "core_handler_line": 1979,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "set_region_type",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+            "expected_revision": 3,
+            "new_region_type": "narration"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-28",
+          "result": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+            "revision_no": 4,
+            "region_type": "narration",
+            "sfx_policy": "skip"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C043",
+      "domain": "Region",
+      "front": "list_regions",
+      "route": "list_regions",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；page_id（CoreClient 明确写入）",
+      "audit_result": "RegionPageProjection",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 126,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 4165,
+      "core_handler": "handle_list_regions",
+      "core_handler_line": 2054,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "list_regions",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "page_id": "probe-page"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-18",
+          "result": {
+            "regions": [],
+            "page_size": null
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C044",
+      "domain": "Region",
+      "front": "list_region_revisions",
+      "route": "list_region_revisions",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "region_id!",
+      "audit_result": "RegionRevisionHistory",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 197,
+      "dispatcher_line": 389,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 4166,
+      "core_handler": "handle_list_region_revisions",
+      "core_handler_line": 2085,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "list_region_revisions",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-27",
+          "result": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+            "current_revision_no": 3,
+            "revisions": [
+              {
+                "region_revision_id": "6f55ae685c0c493bbc497619dc45cb6a",
+                "revision_no": 1,
+                "origin": "user",
+                "review_state": "unreviewed",
+                "is_pinned": false,
+                "restored_from_revision_id": null,
+                "created_at": "2026-10-27T10:58:17.514+00:00",
+                "region_type": "speech",
+                "sfx_policy": "skip",
+                "is_current": false
+              },
+              {
+                "region_revision_id": "eb44a8112b1f4aaeb2f24859f680d3c6",
+                "revision_no": 2,
+                "origin": "user",
+                "review_state": "needs_review",
+                "is_pinned": false,
+                "restored_from_revision_id": null,
+                "created_at": "2026-10-27T10:58:17.515+00:00",
+                "region_type": "speech",
+                "sfx_policy": "skip",
+                "is_current": false
+              },
+              {
+                "region_revision_id": "a6150a1095164b92ae5264559ba5abbb",
+                "revision_no": 3,
+                "origin": "user",
+                "review_state": "confirmed",
+                "is_pinned": false,
+                "restored_from_revision_id": null,
+                "created_at": "2026-10-27T10:58:17.515+00:00",
+                "region_type": "speech",
+                "sfx_policy": "skip",
+                "is_current": true
+              }
+            ]
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C045",
+      "domain": "Region",
+      "front": "restore_region_revision",
+      "route": "restore_region_revision",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "region_id!,revision_no!,expected_revision!",
+      "audit_result": "RegionWriteSnapshot",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 178,
+      "dispatcher_line": 399,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 4167,
+      "core_handler": "handle_restore_region_revision",
+      "core_handler_line": 2096,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "restore_region_revision",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+            "expected_revision": 4,
+            "revision_no": 1
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-29",
+          "result": {
+            "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+            "revision_no": 5,
+            "region_type": "speech",
+            "sfx_policy": "skip"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C046",
+      "domain": "Region",
+      "front": "rerender_page",
+      "route": "rerender_page",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "page_id!",
+      "audit_result": "PageRerenderResult",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 179,
+      "dispatcher_line": 404,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 4256,
+      "core_handler": "handle_rerender_page",
+      "core_handler_line": 2135,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "rerender_page",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-30",
+          "result": {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "artifact_id": "8639a19b3ec841219dde27b78e9aa8bd",
+            "revision_no": 1,
+            "reports": [
+              {
+                "region_id": "8fba49b810b1434d9cdd0928f466feb7",
+                "status": "skipped",
+                "skip_reason": "empty_final",
+                "font_substituted": false
+              }
+            ],
+            "preview": {
+              "resource_id": "preview-73b34c79521d46dbb753364d078a0c50",
+              "revision": "rev-1"
+            },
+            "preview_error": null
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C047",
+      "domain": "Region",
+      "front": "resolve_page_resource",
+      "route": "resolve_page_resource",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "page_id!",
+      "audit_result": "ResolvedPageResource",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 180,
+      "dispatcher_line": 407,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 4389,
+      "core_handler": "handle_resolve_page_resource",
+      "core_handler_line": 2363,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "resolve_page_resource",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-31",
+          "result": {
+            "resource_id": "page-original-f52f2772e8044557a72e82f5ea6ab932",
+            "revision": "original"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C048",
+      "domain": "Reader",
+      "front": "list_chapters",
+      "route": "list_chapters",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；book_id（CoreClient 明确写入）",
+      "audit_result": "ChapterSummary[]",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 124,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 4334,
+      "core_handler": "handle_list_chapters",
+      "core_handler_line": 2312,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "list_chapters",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "book_id": "probe-book"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-16",
+          "result": {
+            "chapters": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C049",
+      "domain": "Reader",
+      "front": "list_chapter_pages",
+      "route": "list_chapter_pages",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；chapter_id（CoreClient 明确写入）",
+      "audit_result": "ChapterPageSummary[]",
+      "consumer": "UI",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 125,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 4334,
+      "core_handler": "handle_list_chapter_pages",
+      "core_handler_line": 2338,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "list_chapter_pages",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "chapter_id": "probe-chapter"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-17",
+          "result": {
+            "pages": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C050",
+      "domain": "Reader",
+      "front": "library_get_reader_projection",
+      "route": "GetReaderProjection",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "chapter_id!,mode!,start_position!",
+      "audit_result": "ReaderProjection",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 142,
+      "dispatcher_line": 239,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3648,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "GetReaderProjection",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "mode": "original",
+            "start_position": "beginning",
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-32",
+          "result": {
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+            "mode": "original",
+            "last_page_id": "f52f2772e8044557a72e82f5ea6ab932",
+            "scroll_offset_y": 0.0,
+            "progress_percent": 0.0,
+            "last_read_at": "2026-10-27T11:01:14.886+00:00",
+            "total_read_seconds": 1.5
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C051",
+      "domain": "Reader",
+      "front": "library_save_reading_progress",
+      "route": "SaveReadingProgress",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "chapter_id!,mode!,page_id!,scroll_offset_y?,elapsed_seconds_delta?",
+      "audit_result": "ReadingProgressSnapshot",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 181,
+      "dispatcher_line": 410,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3648,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "SaveReadingProgress",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {
+            "mode": "original",
+            "scroll_offset_y": 0,
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+            "elapsed_seconds_delta": 1.5,
+            "page_id": "f52f2772e8044557a72e82f5ea6ab932"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "event_id": "7f50ebfe90d348e2baeda2329f6aaa67",
+          "event_type": "ReadingProgressChanged",
+          "emitted_at": "2026-10-27T11:01:14.886+00:00",
+          "payload": {
+            "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+            "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+            "mode": "original"
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C052",
+      "domain": "Resource",
+      "front": "issue_resource_url",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "bridge",
+      "audit_payload": "HostBridge：resource_id,revision 等，须按 HostBridgeClient 核实",
+      "audit_result": "资源 grant/handle；不可暴露系统路径",
+      "consumer": "间接UI",
+      "audit_status": "C",
+      "channel": "bridge",
+      "minor": null,
+      "registry_line": 94,
+      "dispatcher_line": 109,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:237"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs:109",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C053",
+      "domain": "Resource",
+      "front": "revoke_ref",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "bridge",
+      "audit_payload": "HostBridge：opaque ref；须核实际字段",
+      "audit_result": "撤销结果",
+      "consumer": "间接UI",
+      "audit_status": "C",
+      "channel": "bridge",
+      "minor": null,
+      "registry_line": 95,
+      "dispatcher_line": 127,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:245"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs:127",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C054",
+      "domain": "Resource",
+      "front": "revoke_resource_refs",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "bridge",
+      "audit_payload": "HostBridge：resource_id；须核实际字段",
+      "audit_result": "批量撤销数量；详情待核",
+      "consumer": "间接UI",
+      "audit_status": "P",
+      "channel": "bridge",
+      "minor": null,
+      "registry_line": 96,
+      "dispatcher_line": 143,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:251"
+      },
+      "sample_kind": "test",
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs:143",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C055",
+      "domain": "Workbench",
+      "front": "core_ping",
+      "route": "core.ping",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "透传；空对象",
+      "audit_result": "CorePing / ready",
+      "consumer": "Host启动",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 119,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": 3607,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "core.ping",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-1",
+          "result": {
+            "status": "ready",
+            "protocol_version": {
+              "major": 2,
+              "minor": 3
+            },
+            "capabilities": [
+              "library.list_books"
+            ]
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C056",
+      "domain": "Workbench",
+      "front": "library_start_run",
+      "route": "StartRun",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "command!,scope! object,overrides?,idempotency_key!",
+      "audit_result": "run_id,status",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 147,
+      "dispatcher_line": 198,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 254,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-6",
+          "command": "StartRun",
+          "payload": {
+            "command": "translate_all",
+            "scope": {
+              "kind": "chapter",
+              "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+            },
+            "overrides": {
+              "provider_bindings": {
+                "ocr": "manga-ocr"
+              }
+            },
+            "idempotency_key": "run-key-122466d6edd343c0a5d76ea41fa64a32"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-6",
+          "result": {
+            "run_id": "run-92bea0c71e5d40d1aba9c67489e4657f",
+            "status": "pending"
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C057",
+      "domain": "Workbench",
+      "front": "library_control_run",
+      "route": "ControlRun",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "run_id!,action!,idempotency_key? 仅 restart",
+      "audit_result": "run_id,status,new_run_id?",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 148,
+      "dispatcher_line": 207,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 254,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-10",
+          "command": "ControlRun",
+          "payload": {
+            "run_id": "missing-run",
+            "action": "stop"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-10",
+          "result": null,
+          "error": {
+            "code": "TARGET_NOT_FOUND",
+            "category": "not_found",
+            "message": "Requested Run or target was not found",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C058",
+      "domain": "Workbench",
+      "front": "library_resume_blocked_run",
+      "route": "ResumeBlockedRun",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "run_id!",
+      "audit_result": "run_id,status",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 149,
+      "dispatcher_line": 212,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 254,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-11",
+          "command": "ResumeBlockedRun",
+          "payload": {
+            "run_id": "missing-run"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-11",
+          "result": null,
+          "error": {
+            "code": "TARGET_NOT_FOUND",
+            "category": "not_found",
+            "message": "Requested Run or target was not found",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C059",
+      "domain": "Workbench",
+      "front": "library_get_run_snapshot",
+      "route": "GetRunSnapshot",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "run_id!",
+      "audit_result": "run_id,command,scope,status,targets[]",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 150,
+      "dispatcher_line": 213,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 254,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-9",
+          "command": "GetRunSnapshot",
+          "payload": {
+            "run_id": "run-92bea0c71e5d40d1aba9c67489e4657f"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-9",
+          "result": {
+            "run_id": "run-92bea0c71e5d40d1aba9c67489e4657f",
+            "command": "translate_all",
+            "scope": {
+              "kind": "chapter",
+              "chapter_id": "240bdba549b74281bfc6d901b1a7abd7"
+            },
+            "status": "pending",
+            "targets": [
+              {
+                "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+                "target_type": "page",
+                "order": 0
+              },
+              {
+                "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+                "target_type": "page",
+                "order": 1
+              },
+              {
+                "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+                "target_type": "page",
+                "order": 2
+              },
+              {
+                "target_id": "6814353f6d8544d6945ad5748d518f47",
+                "target_type": "page",
+                "order": 3
+              },
+              {
+                "target_id": "f54739037525486e8704db23db5c0dc1",
+                "target_type": "page",
+                "order": 4
+              },
+              {
+                "target_id": "c239be827f3a4448848d2c42bffc05d1",
+                "target_type": "page",
+                "order": 5
+              },
+              {
+                "target_id": "7a39226851774f01a4cdb89bcf118296",
+                "target_type": "page",
+                "order": 6
+              },
+              {
+                "target_id": "221d772e601e480e8e7508dfe9aff380",
+                "target_type": "page",
+                "order": 7
+              }
+            ]
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C060",
+      "domain": "Workbench",
+      "front": "library_get_task_projection",
+      "route": "GetTaskProjection",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "run_id!",
+      "audit_result": "任务投影；细粒度字段待核",
+      "consumer": "—",
+      "audit_status": "P",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 151,
+      "dispatcher_line": 214,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 255,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-10",
+          "command": "GetTaskProjection",
+          "payload": {
+            "run_id": "run-92bea0c71e5d40d1aba9c67489e4657f"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-10",
+          "result": {
+            "run_id": "run-92bea0c71e5d40d1aba9c67489e4657f",
+            "run_status": "pending",
+            "run_title": "全部翻译",
+            "overall_progress": 0.0,
+            "current_page_id": null,
+            "current_step_type": "",
+            "step_flow": [],
+            "rows": [],
+            "tasks": [],
+            "counts": {
+              "total": 0,
+              "completed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "blocked": 0,
+              "waiting": 0,
+              "processing": 0
+            },
+            "blocked_reasons": [],
+            "controls": {
+              "can_pause": false,
+              "can_stop": true,
+              "can_continue": false,
+              "can_restart": false,
+              "can_abandon": false,
+              "can_retry_failed": false
+            },
+            "extra": {}
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C061",
+      "domain": "Workbench",
+      "front": "library_retry_failed_targets",
+      "route": "RetryFailedTargets",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "run_id!,idempotency_key!",
+      "audit_result": "run_id,status",
+      "consumer": "—",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 152,
+      "dispatcher_line": 217,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 255,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/V11R-A-2/core-wire-run.ndjson",
+        "request": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-12",
+          "command": "RetryFailedTargets",
+          "payload": {
+            "run_id": "missing-run",
+            "idempotency_key": "retry-key"
+          }
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "req-12",
+          "result": null,
+          "error": {
+            "code": "TARGET_NOT_FOUND",
+            "category": "not_found",
+            "message": "Requested Run or target was not found",
+            "retryable": false
+          }
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C062",
+      "domain": "Workbench",
+      "front": "library_reveal_export_folder",
+      "route": null,
+      "audit_minor": "-",
+      "audit_channel": "host-local",
+      "audit_payload": "Host-local：导出目录由 Host 决定",
+      "audit_result": "bool（可揭示目录）",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "host-local",
+      "minor": null,
+      "registry_line": 108,
+      "dispatcher_line": null,
+      "dispatcher_passthrough_line": 417,
+      "core_dispatch_line": null,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": null,
+      "sample_kind": null,
+      "impl_ref": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs:265",
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C063",
+      "domain": "Workbench",
+      "front": "library_get_export_history",
+      "route": "GetExportHistory",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "无参数（Dispatcher 丢弃输入）",
+      "audit_result": "ExportHistoryEntry[]",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 131,
+      "dispatcher_line": 237,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3649,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "verification/S4-CMD-BATCH-1/commands/core-command-probe.json",
+        "request": {
+          "command": "GetExportHistory",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "payload": {}
+        },
+        "response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 2,
+            "minor": 3
+          },
+          "request_id": "probe-12",
+          "result": {
+            "exports": []
+          },
+          "error": null
+        }
+      },
+      "sample_kind": "wire",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C064",
+      "domain": "Workbench",
+      "front": "library_start_export",
+      "route": "StartExport",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "book_id!,chapter_ids![],ordered_page_ids![],format!,format_options! object,stale_policy!,target_ref!",
+      "audit_result": "ExportStartInfo",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 153,
+      "dispatcher_line": 221,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3648,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:196"
+      },
+      "sample_kind": "test",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C065",
+      "domain": "Workbench",
+      "front": "library_cancel_export",
+      "route": "CancelExport",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "export_id!",
+      "audit_result": "ExportSnapshotInfo",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 154,
+      "dispatcher_line": 233,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3649,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:193"
+      },
+      "sample_kind": "test",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    },
+    {
+      "id": "C066",
+      "domain": "Workbench",
+      "front": "library_get_export_snapshot",
+      "route": "GetExportSnapshot",
+      "audit_minor": "3",
+      "audit_channel": "core",
+      "audit_payload": "export_id!",
+      "audit_result": "ExportSnapshotInfo",
+      "consumer": "UI",
+      "audit_status": "C",
+      "channel": "core",
+      "minor": 3,
+      "registry_line": 155,
+      "dispatcher_line": 234,
+      "dispatcher_passthrough_line": null,
+      "core_dispatch_line": 3649,
+      "core_handler": null,
+      "core_handler_line": null,
+      "sample": {
+        "source": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:191"
+      },
+      "sample_kind": "test",
+      "impl_ref": null,
+      "status": "FROZEN",
+      "gap": null
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "ac": "AC1 \u4E03\u6001\u6620\u5C04",
+  "failed_cell_glyph": "\u2717",
+  "blocked_row_glyph": "\u25B2",
+  "done_cell_glyph": "\u25CF",
+  "queued_glyph": "\u00B7",
+  "unknown_status_is_null": true
+}

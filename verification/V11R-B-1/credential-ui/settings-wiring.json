@@ -1,0 +1,7 @@
+{
+  "ac": "AC1/AC2/AC3/AC4",
+  "scenario": "SettingsPage -\u003E IHostController -\u003E dispatcher seam",
+  "targets": 2,
+  "controller_put_calls": 1,
+  "duplicate_list_calls_allowed": true
+}

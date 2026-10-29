@@ -74,6 +74,7 @@
 | `V11R-A-1` | **CreateChapter 服务层**：`CreateChapterAsync` + 新建章节对话框契约 + 空库→建书→建章→导入链路测试 | — | `core-bridge` | 独立 Reviewer | L2 | `App/Services/IHostController.cs`、`HostController.cs`、`NullHostController.cs`、`CoreClient/**`、`tests/NewManga.App.Tests/**` |
 | `V11R-A-2` | **Run 控制服务层**：`IRunController`（Start/Control/Resume/Snapshot/TaskProjection/RetryFailed）+ 幂等键 + 状态投影轮询 | — | `core-bridge` | 独立 Reviewer | L2 | 同上 + `App/Services/Run*/**` |
 | `V11R-A-3` | **66 命令契约包**：DTO/错误码/样例/minor 兼容表 + parity 测试补强 | — | `core-bridge` | 独立 Reviewer | L2 | `CoreClient/**`、`doc/contracts/**`、tests |
+| `V11R-A-5` | **P0 生产写入策略**（Lead 新发现）：默认 `ReadOnlyUntilParity` 使发布版 GUI 完全不可写；改为默认 ReadWrite + 三重护栏（旧壳运行 / `--parity=false` / 启动未就绪）+ first-run 备份 | — | `core-bridge` | 独立 Reviewer | L2 + 高风险（数据策略） | `NewManga.Host/**`、`AppOptions.cs`、`doc/plan/V11R_WRITE_POLICY.md` |
 
 ### 3.2 波次 2（DS 骨架合入后释放）
 
@@ -82,6 +83,7 @@
 | `V11R-B-1` | 新外壳：TopBand + 三空间路由 + 上下文保留 + 命令面板 + 键位注册表 + 焦点管理；Library 空间（作品/章节/页/导入 dock/回收站/阅读浮层） | `V11R-D-1`(M0 骨架) | `ui-shell` | 独立 | L3 |
 | `V11R-C-1` | **Theme Engine**：Semantic Tokens / Registry / Package Schema / Resolver / State Manager / Persistence / Preview / Import-Export / Validation / Fallback（10 子系统） | `V11R-D-1` | `design-platform` | 独立 | L2 |
 | `V11R-F0-1` | **Region 写面契约**（高风险）：Core 新增 create/delete/geometry/merge/split/reorder/save_manual_translation/confirm_final/set_lock/pin_revision + Host/IPC + typed error + 乐观锁 | — | Codex（架构/协议） | 独立（DSH 指派第三方） | L2+高风险 |
+| `V11R-F0-2` | **Region 文本只读投影**（GAP-2）：单次命令返回一页 region 四轨文本/锁/review_state/is_pinned/几何，Studio Page 初次载入必需 | `V11R-F0-1` | `core-writer` | 独立 | L2 |
 | `V11R-A-4` | 新快照 CI 与可重建测试（V-01）：GitHub Actions 同 SHA、无本机绝对路径 | — | `core-bridge` | 独立 | L2 |
 
 ### 3.3 波次 3（B-1 与 A-2 可用后）
@@ -156,8 +158,36 @@
 - 不写入用户数据；不改 DB schema（除非任务显式授权并独立审查）；不 push 远端。
 - 高频并行：每个 Owner 在自己 linked worktree 工作，DSH 负责合并；共享契约以本文件与 `doc/plan/V11R_AVALONIA_CONTRACT.md` 冻结。
 
-## 8. 变更记录
+## 8. 裁定记录
 
+| 编号 | 裁定 | 理由 |
+|---|---|---|
+| **R-01** | 工作流 B 的实现基线 = 冻结的 FUSION_SPEC + DESIGN_SYSTEM + tokens.json（2026-10-25 用户已裁决 A+C），不重新发明设计方向 | 已有冻结规范与用户裁决，重做等于浪费且违反"B/C 共用一套设计系统" |
+| **R-02** | CSS 令牌命名 `--nm-*` → Avalonia 资源键 `Nm.*`（PascalCase 逐段） | Avalonia 无 CSS 变量，需资源键承载动态切换 |
+| **R-03** | V1 **不引入** SukiUI/FluentAvalonia/Semi.Avalonia/PleasantUI 依赖，新 Theme Engine 建在 Avalonia 原生原语上（ThemeVariant + ResourceDictionary + ControlTheme + DynamicResource），第三方仅作参考 | 视觉语言与冻结设计冲突、单一令牌真值、发布体积与可恢复性；详见 `doc/design/theming/RESEARCH_V1.md` |
+| **R-04** | 命令注册表随 `V11R-F0-1` 由 **66 → 76**；`V11R-A-3` 契约以 C001–C066 为基线并单列 C067–C076（PENDING，指向 `V11R_REGION_WRITE_CONTRACT.md`）；所有 parity 测试改为**从注册表派生**，禁止硬编码数量 | 避免 A-3 与 F0-1 并行写域互相打爆；数量不是契约真值 |
+| **R-05** | 旧主题退役执行顺序见 `doc/plan/V11R_THEME_RETIREMENT_PLAN.md`：新系统等效 + 迁移/回滚测试通过后才删除；任何旧 ID 一律安全映射默认主题 | 用户 C4 硬约束 + 不得导致启动失败 |
+| **R-06** | Theme Studio 为独立覆盖式表面（非第五空间），规范见 `doc/design/theming/THEME_STUDIO_SPEC.md` | 用户 C3 要求"独立 Theme Studio 页面"，同时保持三空间 IA 不被破坏 |
+| **R-07** | Codex CLI 在本机需 `--dangerously-bypass-approvals-and-sandbox` 才能启动子进程（默认沙箱报 `helper_unknown_error`）；因此 Codex 仅用于**独立审查/只读研究**，实现任务由 DSH 专责 Owner 承担 | 实测沙箱故障；不因单 Agent 不可用而停滞（用户 §1.7） |
+| **R-08** | `IRunController` 幂等键改为显式参数：`ControlRunAsync(runId, action, string? idempotencyKey = null, ct)`、`RetryFailedTargetsAsync(runId, string idempotencyKey, ct)`；导出方法不进 `IRunController` | 避免重载分叉与双重真值 |
+| **R-09** | 修订冻结 `tokens.json` 的对比度不达标值（dark queued/skipped/failed、light skipped/accent 族），以 DESIGN_SYSTEM §2.3 ≥4.5:1 为准；修订记入 `40-fusion/DECISION_LOG.md` | 规范条款优先于数据值；无障碍不可协商 |
+| **R-10** | Motion 时长以 `tokens.json` 的 140ms 为准，契约 §2.2 的 150ms 为示例笔误 | 单一来源 |
+| **R-11** | 视觉/交互差异一律以冻结 FUSION_SPEC + DESIGN_SYSTEM 为准；发现缺口先改冻结文件并记 DECISION_LOG，禁止各页自行发挥 | 防止 B/C 分叉 |
+| **R-12** | DS 与 ThemeEngine 职责边界：DS 拥有令牌/样式/控件/资源应用机制；ThemeEngine 拥有主题包语义与数据；依赖方向 `App → ThemeEngine → DesignSystem`；DS 暴露 `ApplyThemeLayer/ApplyPalette/RevertPalette` 供引擎调用 | 防止两套主题真值 |
+| **R-13** | **生产写入策略**：`ReadOnlyUntilParity` 使发布版完全不可写（P0，审计未覆盖）。改为默认 ReadWrite，保留三重护栏（旧 Tauri 壳运行 / `--parity=false` / Host 未就绪）与首次写前 first-run backup；`--parity=false` 为回滚手段。此为 DSH 依授权做出的产品策略修复，须在最终报告显著标注 | 用户核心工作流被真实阻断，且无任何文档告知用户 |
+| **R-14** | 冻结基线键名/例外登记：字号键统一 `Nm.FontSize.Xxl`（非 `2Xl`）；行高保留 `Tight/Normal/Loose` 并提供语义别名 `Body/Label/Meta/Data`；高对比/密度令牌为 DS 生成器按设计规则派生的**冻结扩展**；`Transparent` 与图标按钮 `Margin="-2"` 为唯一裸值例外；其余裸值违规 | 独立审查发现契约与实现键名不一致、派生令牌被误判为"第二真值"；集中登记避免反复争议 |
+| **R-15** | 主题层白名单 = 59 键（颜色35 + 字体族3 + 字号6 + 行高乘数3/绝对6 + 圆角3 + 动效3）；`material/elevation` 无冻结键只校验不发布；`Nm.Motion.Duration.Slow=220ms` 登记为冻结扩展 | 让 Theme Studio 的字号缩放/行高预设真实生效，且不发明令牌 |
+| **R-16** | **单一选择模型**：`ShellState.Selection` 为唯一权威；`StudioSelection` 降为投影 + 变更路由；显式 `ScopeKind {Chapter, SelectedPages, Page, Region}`，显式多选优先于 Region | 两套 selection 会让 FUSION 硬规则 1（跨模式作用域一致）必然失效 |
+| **R-17** | `IWorkspaceView` 增加 `bool TryHandleKey(KeyEventArgs, ShellState)`：工位专属键（Tab/Esc/J/K/[ ]/+/-/0）先交工作面，shell 仅在 false 时处理；其余键由 shell 统一注册表处理 | 否则 shell 的全局 Tab/Esc 会吞掉 Studio 的 HUD/逐级退出 |
+| **R-18** | 断点统一 `>=1600` 完整 / `1280–1599` 紧凑 / `<1280` 覆盖式；令牌 `Nm.Size.Breakpoint.Full=1600/.Compact=1280/.Narrow=1024`，禁止各 Owner 自造 1400/1200 | 审查发现三套断点不一致 |
+| **R-19** | 证据纪律：每个任务只写 `verification/<TASK-ID>/`；**禁止复制其它任务证据/二进制 DB 入库**；测试证据写入默认落仓库而非 `%TEMP%`；交付后证据须随 fix commit 重生成；被审 pin 冻结 | 审查发现 B-1 证据 42% 为外任务复制品 |
+| **R-20** | `App` 项目引用 `NewManga.ThemeEngine`（依赖 `App → ThemeEngine → DesignSystem`）；Theme Studio 可直接调用引擎，禁止条件编译桩冒充生产适配器 | Theme Studio 需要真实引擎能力 |## 9. 变更记录
+| **R-21** | `Nm.Color.Scrim` 为**主题不变量全局派生色**（rgba(0,0,0,0.55)，Modal 遮罩），不属于 appearance palette、不属于主题包 59 键白名单；引擎的必需颜色集必须用 DS 公开 `PaletteColorKeys`（35）而非 `NmKeys.Color.*` 全量 | DS 返修新增该键导致引擎 46 测试失败；Scrim 无语义个性 |
+| **R-22** | **幂等键语义统一**（改写 R-08 的 UI 侧解释）：UI 可以为"一次新的用户意图"生成幂等键，但必须 ①意图创建时生成并存住、②同一意图的重试**复用同一键**、③提交进行中按钮禁用（防双击）；禁止每次点击新生成 GUID。Console 手填键与 Batch 自动键都需满足②③；Batch 必须在 UI 显示/记录键来源 | 审查发现 Batch 每次点击 Guid.NewGuid() 使幂等保护失效，且与 Console 纪律相反 |
+| **R-23** | **状态词表只表达状态**：`done/blocked/not_started` 等七态不得用于"是否接入/是否已保存/分区可用性"等非状态语义；这类语义用中性文字徽标或 `StatusBadge` 之外的组件 | DESIGN_SYSTEM §2.1/§2.2 明确禁止状态参与装饰 |
+| **R-24** | **Run 投影单一来源**：收敛为一个可注入间隔的 `IRunProjectionPoller` + `IRunDataSource`，Console / Batch 共用同一投影与同一控制面（Start/Stop/Pause/Retry/Resume 语义一致，Stop 必须确认）；禁止两个空间各自轮询同一 `IRunController` | 审查发现 Console 1s/Batch 750ms 双源、Stop 纪律分裂 |
+| **R-25** | 证据禁止"字面量-backed 字段"：JSON/截图中的每个字段必须从被测对象读取（如 `batch.GateImpactText`），禁止 `writer.WriteString("field","字面量")`；恒真断言（`x is null` 与取值、`Contains("A","A")`）一律删除 | 连续两轮审查发现证据作假模式 |
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-10-30 | 建立程序；合并冻结 A+C 设计基线；建立 DAG；裁定 R-01/R-02 | DSH |
+| 2026-10-30 | 完成 C1 研究（R-03）、C3 规格（R-06）、C4 退役计划（R-05）；裁定 R-04/R-07；释放 5 条并行实现线 | DSH |

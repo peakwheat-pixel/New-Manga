@@ -1,0 +1,123 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Library.ReaderOverlay"
+             x:DataType="vm:ReaderOverlayViewModel">
+  <!-- 阅读浮层（screen spec §2 / FUSION_SPEC §2.1）：分页 RTL/LTR + Webtoon 纵向；进度双模态（页码 + 百分比）；
+       Esc 退出且不改主界面状态；进度经 IHostController.SaveReadingProgressAsync 持久化。 -->
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource Nm.Color.Bg.Canvas}">
+    <Border Grid.Row="0"
+            Classes="topband"
+            MinHeight="{DynamicResource Nm.Size.TopBand}"
+            Padding="{DynamicResource Nm.Padding.ControlSm}">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <Button Classes="ghost sm" Content="返回（Esc）" Command="{Binding CloseCommand}" />
+        <StackPanel Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.3}"
+                    VerticalAlignment="Center">
+          <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+          <TextBlock Classes="meta" Text="{Binding Subtitle}" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        <StackPanel Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.2}"
+                    VerticalAlignment="Center">
+          <Button Classes="chip"
+                  Classes.on="{Binding IsPaged}"
+                  Content="分页"
+                  Command="{Binding ToggleLayoutCommand}" />
+          <Button Classes="chip"
+                  Classes.on="{Binding IsWebtoon}"
+                  Content="Webtoon 纵向"
+                  Command="{Binding ToggleLayoutCommand}" />
+          <Button Classes="ghost sm"
+                  Content="{Binding DirectionLabel}"
+                  Command="{Binding ToggleDirectionCommand}"
+                  ToolTip.Tip="分页方向 RTL / LTR（仅分页模式）" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="1" Padding="{DynamicResource Nm.Padding.ControlSm}" IsVisible="{Binding HasError}">
+      <ctrl:AlertBanner Severity="Failed"
+                        Message="{Binding ErrorMessage}"
+                        ActionText="重试"
+                        ActionCommand="{Binding RetryCommand}" />
+    </Border>
+
+    <Grid Grid.Row="2">
+      <!-- 分页模式 -->
+      <Grid IsVisible="{Binding IsPaged}">
+        <Image Source="{Binding CurrentPage.Image}"
+               Stretch="Uniform"
+               IsVisible="{Binding CurrentPageHasImage}" />
+        <Border Classes="raised"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Padding="{DynamicResource Nm.Padding.Section}"
+                IsVisible="{Binding !CurrentPageHasImage}">
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+            <ctrl:StatusBadge Status="Blocked" HorizontalAlignment="Center" />
+            <TextBlock Classes="meta"
+                       Text="页图不可用：Host 资源通道未接入或该页没有图像（不伪造图片）"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center" />
+            <TextBlock Classes="num data"
+                       Text="{Binding CurrentPageLabel}"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- Webtoon 纵向 -->
+      <ScrollViewer x:Name="WebtoonScroll"
+                    IsVisible="{Binding IsWebtoon}"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollChanged="OnWebtoonScrollChanged">
+        <ItemsControl ItemsSource="{Binding Pages}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ReaderPageItem">
+              <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Cell}">
+                <Grid>
+                  <Image Source="{Binding Image}" Stretch="Uniform" IsVisible="{Binding HasImage}" />
+                  <TextBlock Classes="num data"
+                             Text="{Binding Label}"
+                             IsVisible="{Binding !HasImage}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Grid>
+
+    <!-- 双模态进度：页码 + 百分比 + 保存状态 -->
+    <Border Grid.Row="3" Classes="statusband" Padding="{DynamicResource Nm.Padding.ControlSm}">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <Button Classes="ghost sm" Content="上一页" Command="{Binding PreviousPageCommand}" />
+          <Button Classes="ghost sm" Content="下一页" Command="{Binding NextPageCommand}" />
+        </StackPanel>
+        <Grid Grid.Column="1"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="{DynamicResource Nm.Space.3}"
+              VerticalAlignment="Center">
+          <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercent}" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1"
+                     Classes="label"
+                     Text="{Binding ProgressText}"
+                     VerticalAlignment="Center" />
+        </Grid>
+        <TextBlock Grid.Column="2"
+                   Classes="meta"
+                   Text="{Binding SaveStatusText}"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

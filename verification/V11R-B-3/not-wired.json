@@ -1,0 +1,43 @@
+{
+  "ac": "AC1/AC4",
+  "capabilities": [
+    "CreateRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ReOcrRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "DeleteRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "MoveRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ResizeRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "MergeRegions: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SplitRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ReorderRegions: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SaveEditedTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "SaveFinalTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "ConfirmFinal: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockPage: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockRegion: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockTranslation: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "LockInpaint: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "PinRevision: \u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09",
+    "IRunDataSource: NOT_WIRED\uFF08GetTaskProjection / V11R-A-2 \u672A\u5408\u5165\uFF09",
+    "IRegionTextSource: NOT_WIRED\uFF08\u56DB\u7EA7\u6587\u672C\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09",
+    "IRegionFlagSource: NOT_WIRED\uFF08\u56DB\u628A\u9501 / \u5931\u8D25\u89D2\u6807\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09",
+    "PageSurface.Final/Split: NOT_WIRED\uFF08\u6210\u54C1\u9875\u8D44\u6E90\u8BFB\u53D6\u547D\u4EE4\u4E0D\u5B58\u5728\uFF09"
+  ],
+  "hud_disabled_slots": [
+    {
+      "position": "SW",
+      "action": "ReOcrRegion",
+      "tooltip": "\u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09"
+    },
+    {
+      "position": "W",
+      "action": "ToggleLock",
+      "tooltip": "\u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09"
+    },
+    {
+      "position": "NW",
+      "action": "DeleteRegion",
+      "tooltip": "\u80FD\u529B\u5F85\u63A5\u5165\uFF08V11R-F0-1 \u5199\u9762\u672A\u5408\u5165\uFF09"
+    }
+  ],
+  "write_calls": 0
+}

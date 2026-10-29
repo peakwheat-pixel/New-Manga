@@ -1,0 +1,11 @@
+{
+  "ac": "AC3",
+  "writes_allowed": false,
+  "write_controls_enabled": "false",
+  "banner_visible": true,
+  "banner_text": "\u53EA\u8BFB\u6A21\u5F0F\uFF08Host \u672A\u8FBE S2 parity\uFF09\uFF1A\u6539\u7C7B\u578B / \u64A4\u9500 / \u91CD\u6E32\u67D3\u5DF2\u7981\u7528\uFF1Bregion \u8BFB\u53D6\u4ECD\u53EF\u7528",
+  "regions_read_in_read_only_mode": 2,
+  "retype_status": "ReadOnly",
+  "retype_error_code": "HOST_READ_ONLY",
+  "zero_write_calls": true
+}

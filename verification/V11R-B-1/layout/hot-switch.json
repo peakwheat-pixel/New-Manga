@@ -1,0 +1,350 @@
+{
+  "ac": "AC3",
+  "generated_by": "ThemeLayoutsTests.LayoutAndVariantHotSwitch_P95Under100ms",
+  "mechanism": "ThemePackService.Apply/ApplyVariant + MainWindow.OnThemeApplied (shell + BookshelfPage + SettingsPage relayout) + Dispatcher.UIThread.RunJobs",
+  "threshold": 100,
+  "layout_switch": {
+    "samples": 36,
+    "cycles": 12,
+    "p95_ms": 25.715,
+    "max_ms": 28.721,
+    "min_ms": 11.999,
+    "p95_pass": true,
+    "samples": [
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 25.715
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 13.132
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 20.311
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 14.183
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 19.903
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 20.577
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 14.033
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 17.208
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 24.203
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 13.761
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 16.604
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.562
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 13.184
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 16.432
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 23.678
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 18.239
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 21.029
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.713
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 13.536
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 16.533
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 28.721
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 20.079
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 12.336
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 24.069
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 19.508
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 11.999
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.973
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 12.619
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 18.85
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.781
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 13.324
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 16.945
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.93
+      },
+      {
+        "pack_id": "macos-sonoma",
+        "layout_kind": "Sonoma",
+        "ms": 12.501
+      },
+      {
+        "pack_id": "macos-launchpad",
+        "layout_kind": "Launchpad",
+        "ms": 18.318
+      },
+      {
+        "pack_id": "macos-split",
+        "layout_kind": "Split",
+        "ms": 19.237
+      }
+    ]
+  },
+  "variant_switch": {
+    "samples": 36,
+    "p95_ms": 7.132,
+    "max_ms": 7.579,
+    "min_ms": 2.39,
+    "p95_pass": true,
+    "layout_unchanged": true,
+    "samples": [
+      {
+        "variant": "Dark",
+        "ms": 7.579
+      },
+      {
+        "variant": "Light",
+        "ms": 2.818
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.585
+      },
+      {
+        "variant": "Light",
+        "ms": 2.659
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.513
+      },
+      {
+        "variant": "Light",
+        "ms": 2.491
+      },
+      {
+        "variant": "Dark",
+        "ms": 6.293
+      },
+      {
+        "variant": "Light",
+        "ms": 2.86
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.567
+      },
+      {
+        "variant": "Light",
+        "ms": 2.468
+      },
+      {
+        "variant": "Dark",
+        "ms": 6.363
+      },
+      {
+        "variant": "Light",
+        "ms": 6.51
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.753
+      },
+      {
+        "variant": "Light",
+        "ms": 2.398
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.39
+      },
+      {
+        "variant": "Light",
+        "ms": 2.405
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.452
+      },
+      {
+        "variant": "Light",
+        "ms": 2.531
+      },
+      {
+        "variant": "Dark",
+        "ms": 5.587
+      },
+      {
+        "variant": "Light",
+        "ms": 2.674
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.492
+      },
+      {
+        "variant": "Light",
+        "ms": 2.483
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.482
+      },
+      {
+        "variant": "Light",
+        "ms": 2.44
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.412
+      },
+      {
+        "variant": "Light",
+        "ms": 7.132
+      },
+      {
+        "variant": "Dark",
+        "ms": 3.027
+      },
+      {
+        "variant": "Light",
+        "ms": 2.598
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.591
+      },
+      {
+        "variant": "Light",
+        "ms": 2.443
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.431
+      },
+      {
+        "variant": "Light",
+        "ms": 5.808
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.825
+      },
+      {
+        "variant": "Light",
+        "ms": 2.517
+      },
+      {
+        "variant": "Dark",
+        "ms": 2.445
+      },
+      {
+        "variant": "Light",
+        "ms": 2.514
+      }
+    ]
+  }
+}

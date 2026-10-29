@@ -1,0 +1,9 @@
+{
+  "ac": "R-16 \u5355\u4E00 selection\uFF08ShellState \u6743\u5A01 \u002B \u591A\u9009\u4F18\u5148\uFF09",
+  "authority": "NewManga.App.Shell.V2.ShellState.Selection",
+  "shell_multi_page": 2,
+  "resolved_scope": "SelectedPages",
+  "summary": "\u9009\u4E2D 2 \u9875",
+  "shell_change_events": 2,
+  "multi_wins_over_region": true
+}

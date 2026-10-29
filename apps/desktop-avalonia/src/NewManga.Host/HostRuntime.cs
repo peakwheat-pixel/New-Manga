@@ -29,6 +29,8 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         _options = options;
         _log = log;
+        // V11R-A-5: conservative pre-start gate (closed until StartInternalAsync decides). The real
+        // policy is derived from CoexistenceRules (legacy shell / explicit --parity=false).
         _policy = DataRootPolicy.For(options.DataRoot, HostMode.ReadOnlyUntilParity);
     }
 
@@ -113,8 +115,9 @@ public sealed class HostRuntime : IAsyncDisposable
     }
 
     /// <summary>
-    /// Creates a book through the Core — refused while the host is read-only (S1 default). Tests and
-    /// the isolated demo pass an isolated data root and <c>ParityReached=true</c>.
+    /// Creates a book through the Core — refused while the host is read-only (legacy Tauri shell
+    /// detected, explicit <c>--parity=false</c>, or the host is not ready). V11R-A-5: the shipped
+    /// product is writable by default; tests use an isolated data root.
     /// </summary>
     public async Task<BookSummary> CreateBookAsync(string title, CancellationToken cancellationToken = default)
     {
@@ -667,3 +670,4 @@ public sealed class HostRuntime : IAsyncDisposable
 }
 
 public sealed record ChineseRoundTripResult(string Expected, string Received, bool ExactMatch);
+

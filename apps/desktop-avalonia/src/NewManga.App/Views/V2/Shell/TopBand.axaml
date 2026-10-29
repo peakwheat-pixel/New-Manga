@@ -1,0 +1,73 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             xmlns:v="using:NewManga.App.Views.V2.Shell"
+             x:Class="NewManga.App.Views.V2.Shell.TopBand"
+             x:DataType="vm:AppShellViewModel">
+  <!-- TopBand 36px (screen spec §1): SpaceTabs · Breadcrumb · 模式切换 · ScopeSelector ·
+       AttentionMenu · 命令 · 主题 · 速查. -->
+  <Border Classes="topband"
+          MinHeight="{DynamicResource Nm.Size.TopBand}"
+          Padding="{DynamicResource Nm.Padding.ControlSm}">
+    <Grid ColumnDefinitions="Auto,*,Auto"
+          ColumnSpacing="{DynamicResource Nm.Space.3}">
+      <v:SpaceTabs Grid.Column="0" VerticalAlignment="Center" />
+
+      <v:Breadcrumb Grid.Column="1"
+                    Margin="0"
+                    VerticalAlignment="Center" />
+
+      <StackPanel Grid.Column="2"
+                  Orientation="Horizontal"
+                  Spacing="{DynamicResource Nm.Space.2}"
+                  VerticalAlignment="Center">
+        <!-- Studio 双模式（只有工位空间显示；切换保留 selection/滚动）。 -->
+        <StackPanel Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.1}"
+                    IsVisible="{Binding IsStudioSpace}">
+          <Button Classes="chip"
+                  Classes.on="{Binding IsPageMode}"
+                  Content="页面"
+                  Command="{Binding PageModeCommand}"
+                  ToolTip.Tip="Studio · Page 模式（Ctrl+2 / Tab 切换）" />
+          <Button Classes="chip"
+                  Classes.on="{Binding IsBatchMode}"
+                  Content="批次"
+                  Command="{Binding BatchModeCommand}"
+                  ToolTip.Tip="Studio · Batch 模式（Ctrl+2 / Tab 切换）" />
+        </StackPanel>
+
+        <v:ScopeSelector />
+        <v:AttentionMenu />
+
+        <Button Classes="ghost sm"
+                Command="{Binding OpenPaletteCommand}"
+                ToolTip.Tip="命令面板 Ctrl+K">
+          <StackPanel Orientation="Horizontal"
+                      Spacing="{DynamicResource Nm.Space.2}"
+                      VerticalAlignment="Center">
+            <TextBlock Text="命令" />
+            <ctrl:Kbd Text="Ctrl+K" />
+          </StackPanel>
+        </Button>
+
+        <Button Classes="ghost sm"
+                Content="主题"
+                Command="{Binding OpenThemeStudioCommand}"
+                ToolTip.Tip="主题工作室 Ctrl+," />
+
+        <Button Classes="ghost sm"
+                Content="{Binding ThemeLabel}"
+                Command="{Binding ToggleThemeCommand}"
+                ToolTip.Tip="{Binding ThemeToggleTooltip}" />
+
+        <Button Classes="ghost sm"
+                Command="{Binding OpenHelpCommand}"
+                ToolTip.Tip="键位速查 F1">
+          <ctrl:Kbd Text="F1" />
+        </Button>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>
