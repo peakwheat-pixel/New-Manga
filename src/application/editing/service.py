@@ -17,6 +17,13 @@ Frozen rules implemented here:
   history.
 - D03 §8.3/§8.4: confirmed non-blank manual text wins as final; a manual
   save arms manual_edited + translation_locked automatically.
+- V11R-F0-1: every user write accepts the optional keyword-only
+  ``expected_revision_no`` optimistic guard (stale -> typed
+  ``RegionRevisionChanged`` with ZERO write, wire INPUT_REVISION_CHANGED);
+  multi-region writes take ``expected_revisions``. ``set_locks`` is the thin
+  use case for the three explicit user locks (the domain setters existed,
+  the application-layer use case did not), still routed through the same
+  atomic commit seam.
 """
 
 from __future__ import annotations
@@ -242,18 +249,113 @@ class RegionEditingService:
         review_state: ReviewState,
         *,
         restored_from_revision_id: str | None = None,
+        expected_current_revision_id: str | None = None,
     ) -> RegionRevision:
-        """User-initiated writes: no optimistic expectation; a database
-        failure surfaces as an exception instead of a silent no-op."""
+        """User-initiated writes: a database failure surfaces as an exception
+        instead of a silent no-op.
+
+        V11R-F0-1: the optional ``expected_current_revision_id`` is the
+        optimistic guard (the caller resolved it from the ``expected_revision``
+        revision number). The commit seam re-checks it inside its transaction
+        and a mismatch is a typed :class:`RegionRevisionChanged` with ZERO
+        write -- never a silently swallowed conflict.
+        """
         revision = self._build_revision(
             staged, origin, review_state,
             restored_from_revision_id=restored_from_revision_id,
         )
-        result = self._committer.commit_region_revision(staged, revision)
-        if result.status is not RegionCommitStatus.APPLIED:
-            raise RuntimeError(f"region revision commit failed: {result.detail}")
-        _sync_region_state(region, staged)
-        return replace(revision, revision_no=result.revision_no or 0)
+        result = self._committer.commit_region_revision(
+            staged,
+            revision,
+            expected_current_revision_id=expected_current_revision_id,
+        )
+        if result.status is RegionCommitStatus.APPLIED:
+            _sync_region_state(region, staged)
+            return replace(revision, revision_no=result.revision_no or 0)
+        if (
+            result.status is RegionCommitStatus.INPUT_REVISION_CHANGED
+            and expected_current_revision_id is not None
+        ):
+            raise RegionRevisionChanged()
+        raise RuntimeError(f"region revision commit failed: {result.detail}")
+
+    # ------------------------------------------------------------------
+    # optimistic-guard helpers (V11R-F0-1)
+    # ------------------------------------------------------------------
+
+    def _resolve_expected_current(
+        self,
+        region: Region,
+        expected_revision_no: int | None,
+        expected_current_revision_id: str | None = None,
+    ) -> str | None:
+        """Translate a caller-visible revision NUMBER into the opaque
+        revision id the commit seam compares.
+
+        Follows the frozen ``set_region_type``/``restore_region_revision``
+        semantics: an unknown revision number or a number that is not the
+        current pointer is a stale expectation -> ``RegionRevisionChanged``
+        (wire: INPUT_REVISION_CHANGED/conflict) with zero write. ``None``
+        keeps the historical unguarded behaviour for pre-V11R callers.
+        """
+        if expected_revision_no is None:
+            return expected_current_revision_id
+        expected = self._repo.get_revision(region.region_id, expected_revision_no)
+        if (
+            expected is None
+            or region.current_revision_id != expected.region_revision_id
+        ):
+            raise RegionRevisionChanged()
+        return expected.region_revision_id
+
+    def _assert_current_revision(
+        self, region: Region, expected_revision_no: int | None
+    ) -> None:
+        """Guard a write that does not pass through the commit seam (soft
+        delete / pin). The Core sidecar serves requests serially, so the
+        read-check-write window is bounded by the single request loop; the
+        mutation itself never rewrites revision-owned state."""
+        self._resolve_expected_current(region, expected_revision_no)
+
+    def _expected_current_ids(
+        self,
+        regions: list[Region],
+        expected_revisions: dict[str, int] | None,
+    ) -> dict[str, str]:
+        """Resolve the per-region optimistic guards of a multi-region write.
+
+        ``None`` keeps the unguarded behaviour. Otherwise every affected
+        region is compared BEFORE any mutation of the batch; a stale or
+        unknown expectation aborts the whole batch with zero write.
+        (Coverage of exactly the affected region ids is validated by the
+        command layer, which owns the wire request shape.)
+        """
+        if expected_revisions is None:
+            return {}
+        resolved: dict[str, str] = {}
+        for region in regions:
+            revision_no = expected_revisions.get(region.region_id)
+            if revision_no is None:
+                raise RegionRevisionChanged()
+            resolved[region.region_id] = self._resolve_expected_current(
+                region, revision_no
+            )  # type: ignore[assignment]
+        return resolved
+
+    def current_revision(self, region_id: str) -> RegionRevision:
+        """The immutable revision the current pointer targets (raises when the
+        TASK-002 §2.1 pointer does not resolve instead of fabricating one).
+
+        Read helper for the write-side wire projections (V11R-F0-1): the
+        post-write effective state is read back from the SAME authoritative
+        objects, no second query path is invented."""
+        region = self._require_region(region_id)
+        for revision in self._repo.list_revisions(region_id):
+            if revision.region_revision_id == region.current_revision_id:
+                return revision
+        raise RuntimeError(
+            f"current revision pointer of region {region_id} does not resolve"
+        )
 
     # ------------------------------------------------------------------
     # creation / deletion (AC-REGION-001/002)
@@ -295,8 +397,19 @@ class RegionEditingService:
         regions = [r for r in self._repo.list_regions(page_id) if not r.deleted]
         return sorted(regions, key=lambda region: region.reading_order)
 
-    def delete_region(self, region_id: str) -> None:
+    def delete_region(
+        self, region_id: str, *, expected_revision_no: int | None = None
+    ) -> None:
+        """Soft-delete one region (V11R-F0-1 guard added).
+
+        Deletion is NOT a revision-owned write: the region row keeps its
+        current/pinned revision and history untouched, only ``deleted_at`` is
+        set, so the deletion itself creates no revision. The optional
+        ``expected_revision_no`` is the caller-visible optimistic guard
+        (stale -> :class:`RegionRevisionChanged`, zero write).
+        """
         region = self._require_region(region_id)
+        self._assert_current_revision(region, expected_revision_no)
         region.soft_delete()
         self._repo.update_region(region)
 
@@ -471,8 +584,12 @@ class RegionEditingService:
         geometry: RegionGeometry,
         *,
         expected_current_revision_id: str | None = None,
+        expected_revision_no: int | None = None,
     ) -> GuardedWriteOutcome:
         region = self._require_region(region_id)
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no, expected_current_revision_id
+        )
         staged = _clone_region(region)
         staged.geometry = geometry
         revision = self._build_revision(staged, RegionOrigin.USER, ReviewState.UNREVIEWED)
@@ -489,7 +606,11 @@ class RegionEditingService:
         )
 
     def merge_regions(
-        self, page_id: str, region_ids: list[str]
+        self,
+        page_id: str,
+        region_ids: list[str],
+        *,
+        expected_revisions: dict[str, int] | None = None,
     ) -> tuple[Region, tuple[str, ...]]:
         """Merge regions of one page into a new region (D03 §6.4).
 
@@ -498,12 +619,18 @@ class RegionEditingService:
         any source carries over (the merged region still needs its own
         confirmation). Old regions are soft-deleted; the merged region
         starts its own revision history with reading_order = min.
+
+        V11R-F0-1 optimistic guard: ``expected_revisions`` maps every source
+        region id to the revision number the caller observed. Every entry is
+        compared BEFORE the first write; a stale expectation aborts the
+        whole merge with zero write (:class:`RegionRevisionChanged`).
         """
         if len(region_ids) < 2:
             raise ValueError("merge needs at least two regions")
         regions = [self._require_region(rid) for rid in region_ids]
         if any(region.page_id != page_id for region in regions):
             raise ValueError("merge is limited to regions of one page")
+        self._expected_current_ids(regions, expected_revisions)
 
         geometry = regions[0].geometry
         for region in regions[1:]:
@@ -549,13 +676,19 @@ class RegionEditingService:
         self,
         region_id: str,
         parts: list[RegionGeometry],
+        *,
+        expected_revision_no: int | None = None,
     ) -> tuple[Region, ...]:
         """Split a region into caller-supplied geometries (editor owns the
         interactive cut). The source region is soft-deleted; each part starts
-        a fresh revision history; manual protection carries over."""
+        a fresh revision history; manual protection carries over.
+
+        V11R-F0-1 optimistic guard: ``expected_revision_no`` is checked
+        before the first part is created (stale -> zero write)."""
         source = self._require_region(region_id)
         if len(parts) < 2:
             raise ValueError("split needs at least two parts")
+        self._assert_current_revision(source, expected_revision_no)
         created: list[Region] = []
         for index, geometry in enumerate(parts, start=1):
             part = Region(
@@ -586,13 +719,28 @@ class RegionEditingService:
     # reading order (AC-REGION-003, TASK-028 §3.4)
     # ------------------------------------------------------------------
 
-    def reorder_regions(self, page_id: str, ordered_region_ids: list[str]) -> list[Region]:
+    def reorder_regions(
+        self,
+        page_id: str,
+        ordered_region_ids: list[str],
+        *,
+        expected_revisions: dict[str, int] | None = None,
+    ) -> list[Region]:
         """reading_order is revision-owned state: every changed region gets a
-        new user revision through the atomic seam (TASK-028 §3.4)."""
+        new user revision through the atomic seam (TASK-028 §3.4).
+
+        V11R-F0-1 optimistic guard: ``expected_revisions`` maps every ordered
+        region id to the revision number the caller observed; every entry is
+        checked BEFORE the first revision is committed, and each committed
+        region additionally carries its expected revision id into the seam's
+        in-transaction re-check (zero write on any stale entry)."""
         regions = {region.region_id: region for region in self.list_regions(page_id)}
         missing = [rid for rid in ordered_region_ids if rid not in regions]
         if missing:
             raise RegionNotFound(missing[0])
+        expected_ids = self._expected_current_ids(
+            [regions[rid] for rid in ordered_region_ids], expected_revisions
+        )
         reordered = []
         for position, region_id in enumerate(ordered_region_ids, start=1):
             region = regions[region_id]
@@ -602,7 +750,11 @@ class RegionEditingService:
             staged = _clone_region(region)
             staged.reading_order = position
             self._commit_user_or_raise(
-                region, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+                region,
+                staged,
+                RegionOrigin.USER,
+                ReviewState.UNREVIEWED,
+                expected_current_revision_id=expected_ids.get(region_id),
             )
             reordered.append(region)
         return reordered
@@ -694,28 +846,122 @@ class RegionEditingService:
             GuardStatus.APPLIED, revision_no=result.revision_no
         )
 
-    def save_manual_translation(self, region_id: str, edited: str) -> int:
-        """User save → new user revision; arms manual protection (§8.4)."""
+    def save_manual_translation(
+        self,
+        region_id: str,
+        edited: str,
+        *,
+        expected_revision_no: int | None = None,
+    ) -> int:
+        """User save → new user revision; arms manual protection (§8.4).
+
+        V11R-F0-1: the optional ``expected_revision_no`` guards the write
+        (stale -> :class:`RegionRevisionChanged`, zero write). The save is
+        intentionally append-only: saving the same text twice still creates
+        two revisions (history is never rewritten)."""
         region = self._require_region(region_id)
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no
+        )
         staged = _clone_region(region)
         staged.text.save_manual_translation(edited)
         revision = self._commit_user_or_raise(
-            region, staged, RegionOrigin.USER, ReviewState.NEEDS_REVIEW
+            region,
+            staged,
+            RegionOrigin.USER,
+            ReviewState.NEEDS_REVIEW,
+            expected_current_revision_id=expected_current_revision_id,
         )
         return revision.revision_no
 
-    def confirm_final(self, region_id: str) -> int:
+    def confirm_final(
+        self, region_id: str, *, expected_revision_no: int | None = None
+    ) -> int:
         """Explicit proofread confirmation → confirmed revision (D06 §87).
         A non-blank edited text becomes the confirmed final (D03 §8.3);
-        confirming a region without manual text just locks the review state."""
+        confirming a region without manual text just locks the review state.
+
+        V11R-F0-1: ``expected_revision_no`` is the same optimistic guard as
+        the other user writes (zero write on a stale expectation)."""
         region = self._require_region(region_id)
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no
+        )
         staged = _clone_region(region)
         if staged.text.edited_translation.strip():
             staged.text.confirm_edited_translation()
         else:
             staged.text.refresh_final()
         revision = self._commit_user_or_raise(
-            region, staged, RegionOrigin.USER, ReviewState.CONFIRMED
+            region,
+            staged,
+            RegionOrigin.USER,
+            ReviewState.CONFIRMED,
+            expected_current_revision_id=expected_current_revision_id,
+        )
+        return revision.revision_no
+
+    def set_locks(
+        self,
+        region_id: str,
+        *,
+        region_locked: bool | None = None,
+        translation_locked: bool | None = None,
+        inpaint_locked: bool | None = None,
+        expected_revision_no: int | None = None,
+    ) -> int:
+        """Explicit user lock change → ONE new user revision (D06 §87).
+
+        V11R-F0-1 GAP FILL: the domain exposes the three lock setters but the
+        application layer had no use case that persists them through the
+        atomic commit seam (the only lock write before this task was the
+        implicit arm inside :meth:`save_manual_translation`). This method is
+        the thin composition of the EXISTING domain operations and commit
+        seam -- no new lock semantics are invented:
+
+        - ``region_locked`` / ``inpaint_locked`` call the existing
+          ``Region.set_region_locked`` / ``Region.set_inpaint_locked``;
+        - ``translation_locked`` calls ``RegionText.lock_translation`` /
+          ``RegionText.unlock_translation`` (the manual-protection flag) AND
+          mirrors the value onto ``Region.set_translation_locked`` so the
+          region-level lock snapshot the pipeline reads observes the explicit
+          user lock too -- the two persisted projections never diverge on
+          this path;
+        - the revision snapshot therefore carries the lock state exactly like
+          every other revision-owned write, and the commit seam's in-
+          transaction lock comparison stays available for machine writes
+          (the user path passes no lock expectation, same as every other
+          user write).
+
+        ``None`` leaves that lock untouched; at least one lock must be
+        provided (the command layer enforces the wire shape). Lock changes are
+        append-only: every call creates a revision even when the value is
+        unchanged (D06 §87 treats the explicit user action as a save)."""
+        if region_locked is None and translation_locked is None and inpaint_locked is None:
+            raise ValueError("set_locks needs at least one lock")
+        region = self._require_region(region_id)
+        expected_current_revision_id = self._resolve_expected_current(
+            region, expected_revision_no
+        )
+        staged = _clone_region(region)
+        if region_locked is not None:
+            staged.set_region_locked(region_locked)
+        if inpaint_locked is not None:
+            staged.set_inpaint_locked(inpaint_locked)
+        if translation_locked is not None:
+            if translation_locked:
+                staged.text.lock_translation()
+            else:
+                staged.text.unlock_translation()
+            # Keep the region-level projection (the pipeline lock snapshot)
+            # in sync with the manual-protection flag (see the docstring).
+            staged.set_translation_locked(translation_locked)
+        revision = self._commit_user_or_raise(
+            region,
+            staged,
+            RegionOrigin.USER,
+            ReviewState.UNREVIEWED,
+            expected_current_revision_id=expected_current_revision_id,
         )
         return revision.revision_no
 
@@ -783,10 +1029,30 @@ class RegionEditingService:
         _sync_region_state(region, staged)
         return region, result.revision_no or 0
 
-    def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
+    def set_revision_pinned(
+        self,
+        region_id: str,
+        revision_no: int,
+        pinned: bool,
+        *,
+        expected_revision_no: int | None = None,
+    ) -> None:
         """AC-REV-003: pin is a dedicated single-purpose transaction that
-        only flips is_pinned — immutable history is never upserted."""
-        self._repo.set_revision_pinned(region_id, revision_no, pinned)
+        only flips is_pinned — immutable history is never upserted.
+
+        V11R-F0-1: pinning never rewrites revision-owned state, so it creates
+        no revision (the flag lives on the immutable row itself). The optional
+        ``expected_revision_no`` guards that the CURRENT pointer is still the
+        revision the caller saw; an unknown target revision is the typed
+        :class:`RegionRevisionNotFound`."""
+        region = self._require_region(region_id)
+        self._assert_current_revision(region, expected_revision_no)
+        try:
+            self._repo.set_revision_pinned(region_id, revision_no, pinned)
+        except LookupError as error:
+            raise RegionRevisionNotFound(
+                f"revision {revision_no} not found for region {region_id}"
+            ) from error
 
 
 class EditingSession:

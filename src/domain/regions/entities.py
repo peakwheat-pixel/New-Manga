@@ -188,6 +188,17 @@ class RegionText:
         """User may explicitly release the Translation Lock (D03 §8.4)."""
         self.translation_locked = False
 
+    def lock_translation(self) -> None:
+        """User re-arms the Translation Lock explicitly (V11R-F0-1).
+
+        The symmetrical domain operation to :meth:`unlock_translation`: a
+        manual save arms the lock automatically (D03 §8.4), this method is
+        the explicit user action that re-locks a region whose lock was
+        released. The caller owns revision creation (lock changes are
+        revision-owned state, D06 §87).
+        """
+        self.translation_locked = True
+
 
 @dataclass
 class TextStyle:
@@ -254,6 +265,20 @@ class Region:
 
     def set_inpaint_locked(self, locked: bool) -> None:
         self.inpaint_locked = bool(locked)
+        self.updated_at = utc_now()
+
+    def set_translation_locked(self, locked: bool) -> None:
+        """Region-level Translation Lock projection (D06 §87, V11R-F0-1).
+
+        The manual-protection flag itself lives on :class:`RegionText`
+        (``save_manual_translation`` arms it, ``unlock_translation`` releases
+        it). This setter mirrors the explicit user lock onto the Region model
+        so every consumer of the region lock snapshot -- the pipeline's
+        ``LockSnapshot`` (which reads the ``regions.translation_locked``
+        column) and the revision snapshot's top-level lock projection -- sees
+        the same lock. Callers keep both representations in sync.
+        """
+        self.translation_locked = bool(locked)
         self.updated_at = utc_now()
 
     def soft_delete(self) -> None:
