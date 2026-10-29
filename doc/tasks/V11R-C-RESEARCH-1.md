@@ -13,7 +13,7 @@ base_commit: c73239999
 branch: v11r/theme-research
 worktree: (doc-only, lead merges)
 integration_commit: 
-delivery_head: 9b0b5b5b5
+delivery_head: ba59a6c0d
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/V11R-C-RESEARCH-1
