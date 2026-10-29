@@ -10,15 +10,18 @@ public enum ThemeKind
     User,
 }
 
-/// <summary>Requested light/dark appearance (contract §4 <c>AppearanceMode</c>).</summary>
+/// <summary>
+/// Requested light/dark appearance (contract §4 <c>AppearanceMode</c>). Member order matches the frozen
+/// contract declaration (<c>Light, Dark, System</c>) so the enum's numeric values stay compatible.
+/// </summary>
 public enum AppearanceMode
 {
-    /// <summary>Follow the platform theme (listens to <c>ActualThemeVariantChanged</c>).</summary>
-    System,
-
     Light,
 
     Dark,
+
+    /// <summary>Follow the platform theme (listens to <c>ActualThemeVariantChanged</c>).</summary>
+    System,
 }
 
 /// <summary>Standard or WCAG-boosted contrast (contract §4 <c>ContrastMode</c>).</summary>
