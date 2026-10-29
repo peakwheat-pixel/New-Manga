@@ -4,13 +4,14 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.ViewModels;
 using NewManga.App.Views;
 using NewManga.CoreClient;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -29,7 +30,7 @@ public partial class MainWindow : Window
     private double _lastRenderScaling;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to the shell and both pages.</summary>
-    private LayoutProfile _layout = LayoutProfiles.Sonoma;
+    private LegacyLayoutProfile _layout = LegacyLayoutProfiles.Sonoma;
 
     /// <summary>One navigation button plus the parts whose geometry/orientation change per layout.</summary>
     private sealed record NavVisual(Button Button, StackPanel Content, TextBlock Icon, TextBlock Label);
@@ -63,7 +64,7 @@ public partial class MainWindow : Window
         {
             Text = "启动中…",
             FontSize = 11,
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
         };
         RightPanel.Children.Add(_status);
@@ -73,8 +74,8 @@ public partial class MainWindow : Window
             FontSize = 11,
             Padding = new Thickness(10, 4),
             CornerRadius = new CornerRadius(8),
-            Background = ThemePackService.Brush("ChipBg"),
-            Foreground = ThemePackService.Brush("TextSecondary"),
+            Background = LegacyChrome.Brush("ChipBg"),
+            Foreground = LegacyChrome.Brush("TextSecondary"),
         };
         themeCycle.Click += (_, _) => CycleTheme();
         RightPanel.Children.Add(themeCycle);
@@ -120,7 +121,7 @@ public partial class MainWindow : Window
             : new[] { WindowTransparencyLevel.None };
         if (_materialKind == WindowMaterialKind.OpaqueFallback)
         {
-            Background = ThemePackService.Brush("MicaFallback");
+            Background = LegacyChrome.Brush("MicaFallback");
         }
 
         Opened += (_, _) =>
@@ -189,9 +190,9 @@ public partial class MainWindow : Window
     public StackPanel SidebarNavPanelControl => SidebarNavPanel;
 
     /// <summary>THEME-MACOS-LAYOUTS-1: layout profile currently applied to the shell (kind + geometry).</summary>
-    public LayoutProfile Layout => _layout;
+    public LegacyLayoutProfile Layout => _layout;
 
-    public LayoutKind CurrentLayout => _layout.Kind;
+    public LegacyLayoutKind CurrentLayout => _layout.Kind;
 
     public IReadOnlyDictionary<string, Button> NavButtons => _navButtons;
 
@@ -502,7 +503,7 @@ public partial class MainWindow : Window
         Settings.ApplyTheme();
         ApplyWindowChrome();
         UpdateNavVisuals();
-        _status.Foreground = ThemePackService.Brush("TextSecondary");
+        _status.Foreground = LegacyChrome.Brush("TextSecondary");
     }
 
     /// <summary>
@@ -513,13 +514,13 @@ public partial class MainWindow : Window
     /// </summary>
     private void ApplyWindowChrome()
     {
-        var macChrome = ThemePacks.IsMacOsPack(ThemePackService.Current);
+        var macChrome = false; // V11R-C-3: macOS pack chrome retired with the legacy theme system.
         TrafficLights.IsVisible = macChrome;
-        TitleBar.Background = macChrome ? ThemePackService.Brush("HeaderBg") : null;
-        SidebarHost.Background = ThemePackService.Brush(ThemePackService.SidebarBackground);
-        SidebarHost.BorderBrush = ThemePackService.Brush("CardBorder");
-        DockHost.Background = ThemePackService.Brush(ThemePackService.DockBackground);
-        DockHost.BorderBrush = ThemePackService.Brush("CardBorder");
+        TitleBar.Background = macChrome ? LegacyChrome.Brush("HeaderBg") : null;
+        SidebarHost.Background = LegacyChrome.Brush(LegacyChrome.SidebarBackground);
+        SidebarHost.BorderBrush = LegacyChrome.Brush("CardBorder");
+        DockHost.Background = LegacyChrome.Brush(LegacyChrome.DockBackground);
+        DockHost.BorderBrush = LegacyChrome.Brush("CardBorder");
     }
 
     /// <summary>THEME-MACOS-1 AC1: true when the macOS pack's traffic lights are currently shown.</summary>
@@ -527,45 +528,36 @@ public partial class MainWindow : Window
 
     public BookshelfPage BookshelfPageControl => (BookshelfPage)_pages["bookshelf"];
 
+    /// <summary>
+    /// V11R-C-3: the legacy pack cycle is retired. The legacy shell keeps a single fixed profile and only
+    /// toggles the light/dark appearance (degraded but startable, as agreed for --shell=legacy).
+    /// </summary>
     public void CycleTheme()
     {
-        var packs = ThemePacks.All;
-        var index = packs.ToList().FindIndex(pack => pack.Id == ThemePackService.Current.Id);
-        var next = packs[(index + 1) % packs.Count];
         if (Application.Current is { } application)
         {
-            ThemePackService.Apply(application, next);
+            application.RequestedThemeVariant = application.ActualThemeVariant == ThemeVariant.Dark
+                ? ThemeVariant.Light
+                : ThemeVariant.Dark;
             OnThemeApplied();
         }
     }
 
-    /// <summary>
-    /// THEME-MACOS-LAYOUTS-1: the single hot-switch entry point. A pack whose <see cref="ThemePack.Layout"/>
-    /// kind differs from the applied one rebuilds the shell + both page structures; a variant switch or a
-    /// pack with the same layout only re-applies colors (existing THEME-MACOS-1 behaviour).
-    /// </summary>
+    /// <summary>Re-applies the fixed legacy chrome after an appearance change.</summary>
     public void OnThemeApplied()
     {
-        if (ThemePackService.Current.Layout.Kind != _layout.Kind)
-        {
-            ApplyLayout();
-        }
-        else
-        {
-            ApplyTheme();
-        }
-
+        ApplyTheme();
         InvalidateVisual();
     }
 
     /// <summary>
-    /// THEME-MACOS-LAYOUTS-1: applies the active pack's <see cref="LayoutProfile"/> to the shell and to the
+    /// THEME-MACOS-LAYOUTS-1: applies the active pack's <see cref="LegacyLayoutProfile"/> to the shell and to the
     /// two code-built pages. The four nav buttons keep their instances (and their click handlers) and are
     /// moved between the three pre-built hosts, because Avalonia allows one visual parent per control.
     /// </summary>
     public void ApplyLayout()
     {
-        var profile = ThemePackService.Current.Layout;
+        var profile = LegacyChrome.Current.Layout;
         _layout = profile;
 
         foreach (var key in _navOrder)
@@ -575,8 +567,8 @@ public partial class MainWindow : Window
 
         var host = profile.Nav switch
         {
-            NavPlacement.Dock => (Panel)DockNavPanel,
-            NavPlacement.Sidebar => SidebarNavPanel,
+            LegacyNavPlacement.Dock => (Panel)DockNavPanel,
+            LegacyNavPlacement.Sidebar => SidebarNavPanel,
             _ => NavPanel,
         };
         foreach (var key in _navOrder)
@@ -585,7 +577,7 @@ public partial class MainWindow : Window
             host.Children.Add(_navButtons[key]);
         }
 
-        NavPanel.IsVisible = profile.Nav == NavPlacement.TitleBar;
+        NavPanel.IsVisible = profile.Nav == LegacyNavPlacement.TitleBar;
         DockHost.IsVisible = profile.UsesDock;
         SidebarHost.IsVisible = profile.UsesSidebar;
         DockHost.Height = profile.DockHeight > 0 ? profile.DockHeight : DockHost.Height;
@@ -640,7 +632,7 @@ public partial class MainWindow : Window
     /// Per-layout navigation button geometry: Sonoma keeps the THEME-MACOS-1 pill, Launchpad uses an
     /// icon-over-label Dock tile, Split uses a full-width sidebar row.
     /// </summary>
-    private void StyleNavVisual(string key, LayoutProfile profile)
+    private void StyleNavVisual(string key, LegacyLayoutProfile profile)
     {
         if (!_navVisuals.TryGetValue(key, out var visual))
         {
@@ -649,7 +641,7 @@ public partial class MainWindow : Window
 
         switch (profile.Nav)
         {
-            case NavPlacement.Dock:
+            case LegacyNavPlacement.Dock:
                 visual.Content.Orientation = Avalonia.Layout.Orientation.Vertical;
                 visual.Content.Spacing = 3;
                 visual.Content.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
@@ -663,7 +655,7 @@ public partial class MainWindow : Window
                 visual.Button.VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Center;
                 visual.Button.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
                 break;
-            case NavPlacement.Sidebar:
+            case LegacyNavPlacement.Sidebar:
                 visual.Content.Orientation = Avalonia.Layout.Orientation.Horizontal;
                 visual.Content.Spacing = 10;
                 visual.Content.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
@@ -695,14 +687,14 @@ public partial class MainWindow : Window
     /// <summary>Paints the four nav buttons for the active layout + selected page (single source of truth).</summary>
     private void UpdateNavVisuals()
     {
-        var chromeOnly = _layout.Nav is NavPlacement.Dock or NavPlacement.Sidebar;
+        var chromeOnly = _layout.Nav is LegacyNavPlacement.Dock or LegacyNavPlacement.Sidebar;
         foreach (var pair in _navButtons)
         {
             var active = pair.Key == CurrentPage;
             pair.Value.Background = active
-                ? ThemePackService.Brush("NavActiveBg")
-                : chromeOnly ? Brushes.Transparent : ThemePackService.Brush("NavBg");
-            pair.Value.Foreground = ThemePackService.Brush(active ? "NavActiveText" : "TextPrimary");
+                ? LegacyChrome.Brush("NavActiveBg")
+                : chromeOnly ? Brushes.Transparent : LegacyChrome.Brush("NavBg");
+            pair.Value.Foreground = LegacyChrome.Brush(active ? "NavActiveText" : "TextPrimary");
         }
     }
 
@@ -741,8 +733,8 @@ public partial class MainWindow : Window
             Content = content,
             Padding = new Thickness(14, 6),
             CornerRadius = new CornerRadius(9),
-            Background = ThemePackService.Brush("NavBg"),
-            Foreground = ThemePackService.Brush("TextPrimary"),
+            Background = LegacyChrome.Brush("NavBg"),
+            Foreground = LegacyChrome.Brush("TextPrimary"),
             Focusable = true,
         };
         button.Name = "Nav_" + key;
@@ -861,3 +853,6 @@ public partial class MainWindow : Window
         }
     }
 }
+
+
+

@@ -1,0 +1,12 @@
+# V11R-C-3 R1 — 回滚点 tag 证据
+
+- 执行时间：2026-10-30T03:18:13+08:00
+- worktree：G:/CODEX/New Manga.workspace/worktrees/V11R-C3-EXEC
+- branch：v11r/c3-exec
+- base main：df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e（已 merge main，up to date）
+- tag：v11r-pre-retire（annotated）
+- tag commit：df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e
+- HEAD：df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e
+- 创建方式：`git tag -a v11r-pre-retire -m 'V11R pre-retire rollback point (C-3 R1)' df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e`
+- 说明：`tools/v11r/rollback-theme-retire.ps1 -CreateTag` 会继续执行 checkout 回滚分支（脚本设计为回滚操作），
+  因此 R1 建点使用脚本头文档同样允许的直接 `git tag` 方式，避免在 R1 就切换分支。

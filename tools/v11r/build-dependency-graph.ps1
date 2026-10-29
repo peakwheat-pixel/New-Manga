@@ -39,7 +39,7 @@ $symbols = @(
     'SettingsStyle',
     'MotionProfile'
 )
-$excludePaths = @('archive/**', '**/bin/**', '**/obj/**', '**/node_modules/**', 'tools/v11r/**', 'verification/V11R-C-3-READY/**')
+$excludePaths = @('archive/**', '**/bin/**', '**/obj/**', '**/node_modules/**', 'tools/v11r/**', 'verification/V11R-C-3-READY/**', 'verification/V11R-C-3/**')
 $pattern = '\b(' + ($symbols -join '|') + ')\b'
 
 $outputPath = Join-Path $RepositoryRoot $OutputDirectory
@@ -86,6 +86,18 @@ if ($null -eq $lines) { $lines = @() }
 
 $entries = [System.Collections.Generic.List[object]]::new()
 $fileRows = @{}
+$fileTextCache = @{}
+function Get-FileText([string]$relativePath) {
+    if (-not $fileTextCache.ContainsKey($relativePath)) {
+        $absolute = Join-Path $RepositoryRoot $relativePath
+        $fileTextCache[$relativePath] = if (Test-Path -LiteralPath $absolute) {
+            Get-Content -LiteralPath $absolute -Raw -ErrorAction SilentlyContinue
+        } else {
+            $null
+        }
+    }
+    return $fileTextCache[$relativePath]
+}
 foreach ($line in $lines) {
     if ($line -notmatch '^(?<path>[^:]+):(?<line>\d+):(?<text>.*)$') { continue }
     $path = $Matches['path']
@@ -95,6 +107,18 @@ foreach ($line in $lines) {
     $kind = Get-ReferenceKind $path
     if ($symbol -eq 'LayoutKind' -and $text -match 'StructLayout\(') {
         $kind = 'platform-struct-unrelated'
+    }
+    elseif ($symbol -in @('LayoutProfile', 'LayoutProfiles')) {
+        # Same-name collision: NewManga.ThemeEngine.Models.LayoutProfile is a new-architecture type.
+        # When the file references the ThemeEngine namespace (using or fully-qualified) and does not import
+        # the legacy NewManga.Theme namespace, the match is a new-architecture reference, not a dependency.
+        $content = Get-FileText $path
+        if ($kind -in @('legacy-shell-production', 'legacy-tests', 'legacy-theme-source') -and
+            $null -ne $content -and
+            $content -match 'NewManga\.ThemeEngine' -and
+            $content -notmatch 'using\s+NewManga\.Theme\s*;') {
+            $kind = if ($path -like 'apps/desktop-avalonia/tests/*') { 'new-architecture-tests' } else { 'new-architecture' }
+        }
     }
 
     $fate = Get-RetireFate $kind
@@ -188,6 +212,9 @@ Write-Output "json        : $jsonPath"
 Write-Output "table       : $tablePath"
 $kindSummary | ForEach-Object { Write-Output "  kind  $_" }
 $fateSummary | ForEach-Object { Write-Output "  fate  $_" }
+
+
+
 
 
 

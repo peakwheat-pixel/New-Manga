@@ -1,7 +1,7 @@
 # V11R-D-1 L3 无障碍对比度矩阵
 
-- 生成时间：2026-10-30T03:07:58+08:00
-- 基线 commit：`fb042c8fd4be2d98fe308e86ae8799cb5b473cce`
+- 生成时间：2026-10-30T03:21:27+08:00
+- 基线 commit：`3b7b3b4e9be8cbb93222c58d1aaf393ead1f8dcc`
 - 数据来源：`doc/design/redesign-v1/40-fusion/tokens.json`（冻结标准盘）、`apps/desktop-avalonia/src/NewManga.DesignSystem/Themes/Tokens.HighContrast.axaml`（R-14 规则派生高对比盘）
 - 计算方法：WCAG 2.1 相对亮度与对比度公式（(L1+0.05)/(L2+0.05)），与 DS `ContrastMath` 实现一致；比率保留两位小数。
 - 门槛（Lead 裁定）：正文 `text.primary` ≥ 7.0；次要 `text.secondary/tertiary` ≥ 4.5；状态 7 色 ≥ 4.5；强调/焦点环（非文本 UI）≥ 3.0；`accent.on` 落在 `accent.base` 上按文本要求 ≥ 4.5。
@@ -95,13 +95,14 @@
 
 - 检查项：4 套盘 ×（正文 1 + 次要 1 + 状态 7 + 强调/焦点指示 3 + accent 文本 1）共 13 个强制门槛组 × 5 级背景；另有三级文字与 `accent.ring` 外发光两组信息性参考（无门槛）。
 - 未达标行数（按行计）：**6**。
+- 未达标 pair 数（按 pair 计）：**7**。
 - 未达标组合明细（标准盘状态色 vs 极端表面）：
-  - Dark（冻结标准盘） | 状态 `status.queued` = #8A9099 | bg.overlay = 4.24
-  - Dark（冻结标准盘） | 状态 `status.failed` = #D27A69 | bg.overlay = 4.37
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | bg.raised = 4.48
-  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | bg.overlay = 3.97
-  - Light（冻结标准盘） | 状态 `status.queued` = #676C71 | bg.sunken = 4.41
-  - Light（冻结标准盘） | 状态 `status.blocked` = #84661E | bg.sunken = 4.48
-  - Light（冻结标准盘） | 状态 `status.skipped` = #6A6D71 | bg.sunken = 4.32
+  - Dark（冻结标准盘） | 状态 `status.queued` = #8A9099 | background=bg.overlay ratio=4.24 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.failed` = #D27A69 | background=bg.overlay ratio=4.37 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | background=bg.raised ratio=4.48 floor=4.5
+  - Dark（冻结标准盘） | 状态 `status.skipped` = #868B91 | background=bg.overlay ratio=3.97 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.queued` = #676C71 | background=bg.sunken ratio=4.41 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.blocked` = #84661E | background=bg.sunken ratio=4.48 floor=4.5
+  - Light（冻结标准盘） | 状态 `status.skipped` = #6A6D71 | background=bg.sunken ratio=4.32 floor=4.5
 - 判定：状态色在 `bg.panel`（正文/表格/卡片）与合成后的 `statusMuted` 底上达标；上表暴露出的是状态文字直接落在 `bg.overlay`（菜单/tooltip）或 `bg.sunken/bg.raised` 极端表面时的缺口。DS 组件样式把状态文字放在 `bg.panel/raised + statusMuted` 组合上，因此实际界面组合达标；L3 审查建议把「状态文字允许背景集合」写成组件约束，或在后续令牌修订中抬高这些状态色。light `status.skipped` vs `bg.canvas` 已按 D-3 登记为已知残余。
 - 复现：`pwsh -NoProfile -File tools/v11r/contrast-matrix.ps1`

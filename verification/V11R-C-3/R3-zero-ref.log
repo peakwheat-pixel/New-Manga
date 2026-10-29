@@ -1,0 +1,13 @@
+base main   : 287705e653d490941c6acf310d1acc2304355f05
+repo HEAD   : a4129e8e8eaf61e5447e019f8659b21a0f90cf12
+references  : 225 in 55 files
+json        : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-C-3-READY\dependency-graph.json
+table       : G:\CODEX\New Manga.workspace\worktrees\V11R-C3-EXEC\verification\V11R-C-3-READY\dependency-graph-table.md
+  kind  evidence-or-documentation=87
+  kind  legacy-theme-source=83
+  kind  new-architecture=15
+  kind  new-architecture-tests=21
+  kind  platform-struct-unrelated=19
+  fate  DELETE-WITH-C3=83
+  fate  EVIDENCE-PIN-PROTECTED=87
+  fate  NOT-A-DEPENDENCY=55

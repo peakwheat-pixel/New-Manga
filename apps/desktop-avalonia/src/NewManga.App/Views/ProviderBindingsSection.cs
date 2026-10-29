@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using NewManga.App.Services;
 using NewManga.CoreClient;
-using NewManga.Theme;
+using NewManga.App.Views.Legacy;
 
 namespace NewManga.App.Views;
 
@@ -367,6 +367,7 @@ public sealed class ProviderBindingsSection : UserControl
     private void SetStatus(string message, bool error = false)
     {
         _status.Text = message;
-        _status.Foreground = ThemePackService.Brush(error ? "TextPrimary" : "TextSecondary");
+        _status.Foreground = LegacyChrome.Brush(error ? "TextPrimary" : "TextSecondary");
     }
 }
+
