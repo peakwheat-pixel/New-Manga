@@ -8,11 +8,15 @@
   a settings-parse smoke check. Designed for the C-3 operator:
 
     git tag v11r-pre-retire            # once, before starting C-3 (R1)
-    pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun                 # verify plan
+    pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun                 # plan only; tag not required
     pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -CreateTag             # R1
     # ... C-3 deletion steps R3-R6 ...
     pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1                        # rollback
     pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -Mode reset -Force     # destructive reset
+
+  -DryRun is side-effect free and does not require the tag to exist: it prints the complete plan,
+  its decision basis and blockers, then exits 0. Only the execute path validates the tag, clean tree
+  and -Force (fail-closed).
 
   Default mode is non-destructive: it creates a `rollback/v11r-c3-<timestamp>` branch at the tag and
   switches to it, leaving the current branch untouched. `-Mode reset` requires `-Force` and is intended
@@ -64,34 +68,36 @@ $head = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
 $branch = (& git -C $RepositoryRoot rev-parse --abbrev-ref HEAD).Trim()
 $dirty = ((& git -C $RepositoryRoot status --porcelain | Out-String).Trim().Length -gt 0)
 $tagExists = $false
-if (-not $CreateTag) {
-    & git -C $RepositoryRoot rev-parse -q --verify "refs/tags/$Tag" > $null 2>&1
-    $tagExists = ($LASTEXITCODE -eq 0)
-}
+& git -C $RepositoryRoot rev-parse -q --verify "refs/tags/$Tag" > $null 2>&1
+if ($LASTEXITCODE -eq 0) { $tagExists = $true }
 
 $actions = [System.Collections.Generic.List[string]]::new()
+$blockers = [System.Collections.Generic.List[string]]::new()
 if ($CreateTag) {
     $actions.Add("git tag -a $Tag -m 'V11R pre-retire rollback point'")
 }
 elseif (-not $tagExists) {
-    throw "rollback tag '$Tag' does not exist; create it with -CreateTag before starting C-3"
+    # Reported as a plan decision; only the execute path below fails closed.
+    $blockers.Add("tag $Tag is missing; R1 must run with -CreateTag before any rollback action")
 }
 
-if ($dirty -and -not $AllowDirty -and -not $DryRun) {
-    throw "working tree is dirty; commit/stash first or pass -AllowDirty (rollback would mix local changes)"
+if ($dirty -and -not $AllowDirty) {
+    $blockers.Add('working tree is dirty; execute path would refuse without -AllowDirty')
 }
+
 if ($Mode -eq 'reset' -and -not $Force) {
-    throw "refusing to reset --hard without -Force; use the default checkout mode or pass -Force explicitly"
+    $blockers.Add('Mode=reset requires -Force; execute path would refuse')
 }
 
 if ($RestoreSettings) {
     $backupPattern = Join-Path $ArtifactDirectory 'theme-settings.*.json'
     $backup = Get-ChildItem -Path $backupPattern -File -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($null -eq $backup) {
-        throw "-RestoreSettings requested but no theme-settings backup exists in $ArtifactDirectory"
+        $blockers.Add("-RestoreSettings requested but no theme-settings backup exists in $ArtifactDirectory")
     }
-
-    $actions.Add("restore settings: $($backup.FullName) -> $SettingsPath")
+    else {
+        $actions.Add("restore settings: $($backup.FullName) -> $SettingsPath")
+    }
 }
 if ($ResetSettings) {
     $actions.Add("reset settings to shipped default: $SettingsPath")
@@ -110,14 +116,56 @@ if (-not $SkipBuild) {
 $actions.Add('verify old theme symbols are back: git grep ThemePackService (count > 0)')
 $actions.Add('verify settings JSON parses; write report.json')
 
+# ---- Dry run: never touches refs/files/settings and never depends on the tag existing. ----------
 if ($DryRun) {
     Write-Output 'DRY RUN - no files, refs or settings are changed.'
-    Write-Output "repo   : $RepositoryRoot"
-    Write-Output "branch : $branch @ $head"
-    Write-Output "dirty  : $dirty"
-    Write-Output "tag    : $Tag (exists=$tagExists)"
+    Write-Output "repo     : $RepositoryRoot"
+    Write-Output "branch   : $branch @ $head"
+    Write-Output "dirty    : $dirty"
+    Write-Output "mode     : $Mode"
+    Write-Output "tag      : $Tag (exists=$tagExists)"
+    Write-Output "settings : $SettingsPath (restore=$([bool]$RestoreSettings), reset=$([bool]$ResetSettings))"
+    Write-Output "artifacts: $ArtifactDirectory"
+    Write-Output 'decisions:'
+    if ($CreateTag) {
+        Write-Output "  - create the tag at the current HEAD (R1); the execute path creates it before switching"
+    }
+    elseif ($tagExists) {
+        Write-Output "  - tag exists; the execute path switches/resets to it"
+    }
+    else {
+        Write-Output "  - tag does not exist yet: DryRun only prints the plan; the execute path refuses until R1 runs with -CreateTag"
+    }
+    if ($dirty) {
+        Write-Output "  - dirty tree: DryRun ignores it; the execute path would refuse unless -AllowDirty is passed"
+    }
+    if ($Mode -eq 'reset') {
+        Write-Output "  - reset mode is destructive: the execute path additionally requires -Force"
+    }
+    if ($blockers.Count -gt 0) {
+        Write-Output 'blockers (execute path would fail):'
+        foreach ($blocker in $blockers) { Write-Output "  - $blocker" }
+    }
+    Write-Output 'planned actions:'
     foreach ($action in $actions) { Write-Output "  - $action" }
+    Write-Output 'EXIT_CODE=0'
     return
+}
+
+# ---- Execute path: fail closed on the same preconditions the plan reports. ----------------------
+if (-not $CreateTag -and -not $tagExists) {
+    throw "rollback tag '$Tag' does not exist; create it with -CreateTag before starting C-3"
+}
+if ($dirty -and -not $AllowDirty) {
+    throw "working tree is dirty; commit/stash first or pass -AllowDirty (rollback would mix local changes)"
+}
+if ($Mode -eq 'reset' -and -not $Force) {
+    throw "refusing to reset --hard without -Force; use the default checkout mode or pass -Force explicitly"
+}
+if ($RestoreSettings) {
+    if ($null -eq $backup) {
+        throw "-RestoreSettings requested but no theme-settings backup exists in $ArtifactDirectory"
+    }
 }
 
 New-Item -ItemType Directory -Path $ArtifactDirectory -Force | Out-Null
@@ -227,3 +275,4 @@ Write-Output "  settings   : $SettingsPath (parses=$settingsParseOk)"
 Write-Output "  old refs   : $($themeReferences.Trim())"
 Write-Output "  artifacts  : $ArtifactDirectory"
 if ($buildExitCode -ne $null) { Write-Output "  build      : exit=$buildExitCode" }
+

@@ -14,20 +14,34 @@
 | L1 脚本演练 | 在临时 worktree 内真实执行 checkout 模式回滚 + build + 设置解析 smoke | 仅临时 worktree | NOT_RUN（留到 C-3 执行时） |
 | L2 生产演练 | 主 checkout 真实回滚 + 启动应用人工确认 | 需要用户/Lead 批准 | NOT_RUN（C-3 执行时） |
 
-L0 证据（本目录 `rollback-dry-run.log`）：
+L0 证据（本目录 `rollback-dry-run.log`，fix head 重跑；`EXIT_CODE=0`）：DryRun 不要求 tag 已存在，
+未建 tag 时仍打印完整 Plan 与 blockers，只有在执行路径才 fail-closed。
 
 ```text
 DRY RUN - no files, refs or settings are changed.
-repo   : G:/CODEX/New Manga.workspace/worktrees/V11R-C3-READY
-branch : v11r/c3-ready @ <HEAD>
-tag    : v11r-pre-retire (exists=False)
-  - git tag -a v11r-pre-retire -m 'V11R pre-retire rollback point'
-  - backup settings: %APPDATA%\NewManga\theme-settings.json -> %TEMP%\v11r-c3-rollback\<ts>
+repo     : <worktree>
+branch   : v11r/c3-ready-fix @ <fix head>
+dirty    : False
+mode     : checkout
+tag      : v11r-pre-retire (exists=False)
+settings : %APPDATA%\NewManga\theme-settings.json (restore=False, reset=False)
+artifacts: verification/V11R-C-3-READY/drill-artifacts
+decisions:
+  - tag does not exist yet: DryRun only prints the plan; the execute path refuses until R1 runs with -CreateTag
+blockers (execute path would fail):
+  - tag v11r-pre-retire is missing; R1 must run with -CreateTag before any rollback action
+planned actions:
+  - backup settings: %APPDATA%\NewManga\theme-settings.json -> verification/V11R-C-3-READY/drill-artifacts (when the file exists)
   - git switch --create rollback/v11r-c3-<ts> v11r-pre-retire
   - dotnet build apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj -warnaserror
   - verify old theme symbols are back: git grep ThemePackService (count > 0)
   - verify settings JSON parses; write report.json
+EXIT_CODE=0
 ```
+
+- 只有在执行路径（非 `-DryRun`）才会对缺失 tag、脏树、`reset` 无 `-Force` 等 fail-closed；DryRun 永远
+  只读且退出码 0，便于在 R1 之前先审阅计划。
+- L1 完成后应再跑一次 tag 存在（`exists=True`）的 DryRun 作为回滚点证据，留到 C-3 执行时补。
 
 ## 2. C-3 执行前（R1）：建立回滚点
 
