@@ -23,7 +23,9 @@ public sealed class ThemePaletteComposerTests
         var layer = ThemePaletteComposer.Compose(Default, variant);
 
         Assert.Equal(ThemePaletteComposer.ThemeLayerKeyCount, layer.Count);
-        Assert.All(layer.Keys, key => Assert.Contains(key, NmKeys.All));
+        Assert.All(layer.Keys, key => Assert.True(
+            ThemeTokenKeys.IsKnownKey(key),
+            $"palette key '{key}' is neither published by the design system nor a registered R-15 extension"));
         Assert.All(layer.Keys, key => Assert.StartsWith("Nm.", key, StringComparison.Ordinal));
     }
 
@@ -158,7 +160,7 @@ public sealed class ThemePaletteComposerTests
             Dark = Default.Dark with
             {
                 Corners = new ThemeCorners(0, 1, 3),
-                Motion = new ThemeMotion(50, 200),
+                Motion = new ThemeMotion(50, 200, 400),
             },
         };
 
@@ -170,6 +172,7 @@ public sealed class ThemePaletteComposerTests
         Assert.Equal(TimeSpan.Zero, Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Instant]));
         Assert.Equal(TimeSpan.FromMilliseconds(50), Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Fast]));
         Assert.Equal(TimeSpan.FromMilliseconds(200), Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Normal]));
+        Assert.Equal(TimeSpan.FromMilliseconds(400), Assert.IsType<TimeSpan>(layer[ThemeTokenKeys.SlowMotionKey]));
     }
 
     [Fact]

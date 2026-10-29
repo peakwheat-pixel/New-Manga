@@ -144,6 +144,7 @@ public static class ThemePackageJson
         writer.WriteStartObject("motion");
         writer.WriteNumber("fastMs", tokens.Motion.FastMs);
         writer.WriteNumber("normalMs", tokens.Motion.NormalMs);
+        writer.WriteNumber("slowMs", tokens.Motion.SlowMs);
         writer.WriteEndObject();
 
         writer.WriteEndObject();
@@ -391,11 +392,17 @@ public static class ThemePackageJson
     {
         var path = $"{scope}.motion";
         var properties = ReadObjectProperties(element, path, issues);
-        ReportUnknownProperties(properties, ["fastMs", "normalMs"], path, issues);
+        ReportUnknownProperties(properties, ["fastMs", "normalMs", "slowMs"], path, issues);
 
+        // slowMs is optional for compatibility with packages authored before R-15; the registered slow
+        // default applies when absent.
+        var slowMs = properties.TryGetValue("slowMs", out _)
+            ? ReadRequiredInt32(properties, "slowMs", path, issues)
+            : ThemeMotion.DefaultSlowMs;
         return new ThemeMotion(
             ReadRequiredInt32(properties, "fastMs", path, issues),
-            ReadRequiredInt32(properties, "normalMs", path, issues));
+            ReadRequiredInt32(properties, "normalMs", path, issues),
+            slowMs);
     }
 
     private static ThemeMetadata ReadMetadata(JsonElement element, List<ThemeValidationIssue> issues)

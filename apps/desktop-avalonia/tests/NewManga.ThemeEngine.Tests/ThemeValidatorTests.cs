@@ -144,7 +144,7 @@ public sealed class ThemeValidatorTests
     [Fact]
     public void Motion_durations_outside_the_supported_range_are_errors()
     {
-        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(-5, 140));
+        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(-5, 140, 220));
         var result = Validator.Validate(WithDark(Default, set));
 
         Assert.False(result.IsValid);
@@ -154,7 +154,7 @@ public sealed class ThemeValidatorTests
     [Fact]
     public void Fast_motion_slower_than_normal_is_a_warning()
     {
-        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(500, 140));
+        var set = ThemeFixtures.WithMotion(Default.Dark, new ThemeMotion(500, 140, 220));
         var result = Validator.Validate(WithDark(Default, set));
 
         Assert.True(result.IsValid, Describe(result.Errors));

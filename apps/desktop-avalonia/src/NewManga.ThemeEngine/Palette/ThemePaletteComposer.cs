@@ -15,7 +15,7 @@ namespace NewManga.ThemeEngine;
 ///   <item>typography — 3 font families, 6 font sizes (scaled), 3 line-height multipliers and the 6
 ///   absolute line-height tiers derived from DESIGN_SYSTEM §3,</item>
 ///   <item>corners — <c>Nm.Corner.None/Sm/Md</c> (≤3px, validated before composition),</item>
-///   <item>motion — <c>Nm.Motion.Duration.Instant/Fast/Normal</c>.</item>
+///   <item>motion — <c>Nm.Motion.Duration.Instant/Fast/Normal</c> plus the R-15 <c>Slow</c> extension.</item>
 /// </list>
 /// Layout, density, spacing and sizes are deliberately absent: they are not theme personality
 /// (contract §4, DESIGN_SYSTEM §1 token-compilation rule). Material/elevation are validated theme
@@ -24,8 +24,8 @@ namespace NewManga.ThemeEngine;
 /// </summary>
 public static class ThemePaletteComposer
 {
-    /// <summary>Number of keys a composed theme layer contains (35 + 3 + 6 + 3 + 6 + 3 + 3).</summary>
-    public const int ThemeLayerKeyCount = 59;
+    /// <summary>Number of keys a composed theme layer contains (35 colors + 3 families + 6 sizes + 3 multipliers + 6 absolute line heights + 3 corners + 4 motion).</summary>
+    public const int ThemeLayerKeyCount = 60;
 
     /// <summary>Number of color keys (<see cref="ThemeTokenKeys.Colors"/>).</summary>
     public const int ColorLayerKeyCount = 35;
@@ -171,7 +171,8 @@ public static class ThemePaletteComposer
         PaletteVariant variant)
     {
         if (tokens.Motion.FastMs < 0 || tokens.Motion.FastMs > ThemeMotion.MaxDurationMs ||
-            tokens.Motion.NormalMs < 0 || tokens.Motion.NormalMs > ThemeMotion.MaxDurationMs)
+            tokens.Motion.NormalMs < 0 || tokens.Motion.NormalMs > ThemeMotion.MaxDurationMs ||
+            tokens.Motion.SlowMs < 0 || tokens.Motion.SlowMs > ThemeMotion.MaxDurationMs)
         {
             throw new ThemePackageException(
                 $"theme '{variant}' motion durations are out of range",
@@ -183,6 +184,7 @@ public static class ThemePaletteComposer
         layer[NmKeys.Motion.Duration.Instant] = TimeSpan.Zero;
         layer[NmKeys.Motion.Duration.Fast] = TimeSpan.FromMilliseconds(tokens.Motion.FastMs);
         layer[NmKeys.Motion.Duration.Normal] = TimeSpan.FromMilliseconds(tokens.Motion.NormalMs);
+        layer[ThemeTokenKeys.SlowMotionKey] = TimeSpan.FromMilliseconds(tokens.Motion.SlowMs);
     }
 
     private static FontFamily ParseFontFamily(string raw, string path, PaletteVariant variant)

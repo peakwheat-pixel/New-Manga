@@ -27,4 +27,20 @@ public static class ThemeTokenKeys
     /// <summary>Every resource key the design system publishes, as a set for palette conformance tests.</summary>
     public static IReadOnlySet<string> Published { get; } =
         new HashSet<string>(NmKeys.All, StringComparer.Ordinal);
+
+    /// <summary>
+    /// <c>Nm.Motion.Duration.Slow</c>: registered by Lead ruling R-15 as a design-system contract
+    /// extension (default 220ms) while the design system's generated key set catches up. The palette
+    /// may publish it; the conformance test accepts it through <see cref="PendingDesignSystemKeys"/>
+    /// until <see cref="Published"/> contains it, at which point the pending entry becomes redundant.
+    /// </summary>
+    public const string SlowMotionKey = "Nm.Motion.Duration.Slow";
+
+    /// <summary>Keys the theme layer publishes before the design system's generated key set lists them (R-15).</summary>
+    public static IReadOnlySet<string> PendingDesignSystemKeys { get; } =
+        new HashSet<string>(StringComparer.Ordinal) { SlowMotionKey };
+
+    /// <summary>True when the key is published today or registered as a pending R-15 extension.</summary>
+    public static bool IsKnownKey(string key) =>
+        Published.Contains(key) || PendingDesignSystemKeys.Contains(key);
 }
