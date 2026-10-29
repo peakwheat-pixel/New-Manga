@@ -1,0 +1,34 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Progress + separators. The ProgressBar keeps the Fluent determinate/indeterminate machinery and
+       is repainted with token brushes; the 4px track height comes from Nm.Space.2. -->
+
+  <Style Selector="ProgressBar">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Space.2}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="ProgressBar /template/ Border#PART_Indicator">
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+
+  <Style Selector="ProgressBar /template/ Border#IndeterminateProgressBarIndicator">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+
+  <Style Selector="ProgressBar /template/ Border#IndeterminateProgressBarIndicator2">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+  </Style>
+
+  <Style Selector="ProgressBar.indeterminate">
+    <Setter Property="IsIndeterminate" Value="True" />
+  </Style>
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Subtle}" />
+    <Setter Property="Height" Value="1" />
+  </Style>
+</Styles>

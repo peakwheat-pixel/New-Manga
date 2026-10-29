@@ -1,0 +1,47 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Scroll surfaces: 8px thin scrollbars, token-colored thumb that only becomes prominent on hover
+       (DESIGN_SYSTEM §6.1 "滚动条 8px，hover 才显形"). The Fluent ScrollBar template is kept and its
+       visible parts repainted through template selectors. -->
+
+  <Style Selector="ScrollViewer">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="ScrollBar:vertical /template/ Grid#Root">
+    <Setter Property="Width" Value="8" />
+  </Style>
+
+  <Style Selector="ScrollBar:horizontal /template/ Grid#Root">
+    <Setter Property="Height" Value="8" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ Rectangle#TrackRect">
+    <Setter Property="Fill" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ Thumb">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="ScrollBar:pointerover /template/ Thumb">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Line.Strong}" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ RepeatButton#PART_LineUpButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ RepeatButton#PART_LineDownButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ RepeatButton#PART_PageUpButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ RepeatButton#PART_PageDownButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+</Styles>
