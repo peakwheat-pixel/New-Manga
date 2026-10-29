@@ -5,6 +5,8 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using NewManga.App.Services;
+using NewManga.App.Shell.V2;
+using NewManga.App.ViewModels.V2.ThemeStudio;
 using NewManga.App.Views;
 using NewManga.DesignSystem.Theming;
 using NewManga.Theme;
@@ -59,18 +61,21 @@ public partial class App : Application
             _designSystemTheme.Initialize(startupAppearance);
 
             var controller = new HostController(options.ToHostOptions());
-            var window = new MainWindow(controller, options);
+            var window = options.UseV2Shell
+                ? CreateV2Shell(controller, options)
+                : CreateLegacyShell(controller, options);
+
             desktop.MainWindow = window;
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-            if (!string.IsNullOrWhiteSpace(options.StartupThemeId) || !string.IsNullOrWhiteSpace(options.StartupVariant))
+            if (!options.UseV2Shell && (!string.IsNullOrWhiteSpace(options.StartupThemeId) || !string.IsNullOrWhiteSpace(options.StartupVariant)))
             {
-                window.ApplyTheme();
+                (window as MainWindow)?.ApplyTheme();
             }
 
             if (!string.IsNullOrWhiteSpace(options.StartupPage))
             {
-                window.Navigate(options.StartupPage);
+                NavigateStartupPage(window, options);
             }
 
             if (options.ExitAfterMs is { } exitAfter)
@@ -86,5 +91,83 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// V11R-INT-1: the new Avalonia shell (three spaces + Studio dual mode + Theme Studio surface).
+    /// Theme Studio is bound to the real theme engine and shares the application's single
+    /// <see cref="DesignSystemThemeManager"/> (two managers would fight over the same resource layer).
+    /// </summary>
+    private Window CreateV2Shell(HostController controller, AppOptions options)
+    {
+        var root = AppShellV2.CreateRoot(controller, options, picker: null, themeManager: _designSystemTheme);
+        if (root.Content is not AppShellV2 shell || _designSystemTheme is null)
+        {
+            return root;
+        }
+
+        try
+        {
+            var service = ThemeEngineThemeStudioService.CreateProduction(this, _designSystemTheme);
+            var viewModel = new ThemeStudioViewModel(service);
+            var adapter = new ThemeStudioSurfaceAdapter(viewModel, () => shell.ViewModel.CloseThemeStudioCommand.Execute(null));
+            shell.ViewModel.RegisterSurfaceWorkspace(adapter);
+
+            // Persisted theme settings are applied asynchronously; the shell is already usable and
+            // the surface shows its own error banner if initialization fails.
+            Dispatcher.UIThread.Post(async () =>
+            {
+                try
+                {
+                    await service.InitializeAsync();
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
+                {
+                    System.Diagnostics.Trace.TraceWarning($"Theme service init failed: {ex.GetType().Name}");
+                }
+            });
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or ArgumentException)
+        {
+            // Theme Studio is optional at startup: never block the product shell on it.
+            System.Diagnostics.Trace.TraceWarning($"Theme Studio wiring failed: {ex.GetType().Name}");
+        }
+
+        return root;
+    }
+
+    private static Window CreateLegacyShell(HostController controller, AppOptions options) =>
+        new MainWindow(controller, options);
+
+    /// <summary>
+    /// Maps the existing <c>--page</c> evidence hook onto both shells. Legacy keeps its page names;
+    /// v2 maps the four product surfaces onto the three spaces (reader is an overlay inside Library).
+    /// </summary>
+    private static void NavigateStartupPage(Window window, AppOptions options)
+    {
+        var page = options.StartupPage!;
+        if (window is MainWindow legacy)
+        {
+            legacy.Navigate(page);
+            return;
+        }
+
+        if (window.Content is not AppShellV2 shell)
+        {
+            return;
+        }
+
+        var space = page.ToLowerInvariant() switch
+        {
+            "bookshelf" or "library" or "reader" => SpaceId.Library,
+            "workbench" or "studio" => SpaceId.Studio,
+            "settings" or "console" => SpaceId.Console,
+            _ => (SpaceId?)null,
+        };
+
+        if (space is { } target)
+        {
+            shell.ViewModel.SwitchSpace(target);
+        }
     }
 }
