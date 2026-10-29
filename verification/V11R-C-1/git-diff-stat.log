@@ -1,0 +1,37 @@
+# command: git diff --stat HEAD~4 HEAD
+# head: 46837ba7c17d350263d4546ab42ed8f9c9325e80
+
+ apps/desktop-avalonia/NewManga.sln                 |  45 ++
+ .../src/NewManga.ThemeEngine/.gitattributes        |   4 +
+ .../Generated/ThemeTokenBaseline.g.cs              |  56 ++
+ .../NewManga.ThemeEngine/Models/ThemeContracts.cs  | 235 ++++++
+ .../NewManga.ThemeEngine/Models/ThemeIssueCodes.cs | 144 ++++
+ .../src/NewManga.ThemeEngine/Models/ThemeModels.cs | 454 +++++++++++
+ .../NewManga.ThemeEngine/Models/ThemeTokenKeys.cs  |  30 +
+ .../NewManga.ThemeEngine.csproj                    |  35 +
+ .../Palette/ThemePaletteComposer.cs                | 213 ++++++
+ .../Persistence/LegacyThemeMigration.cs            | 131 ++++
+ .../Persistence/ThemeSettingsStore.cs              | 181 +++++
+ .../Preview/ThemePreviewEngine.cs                  | 362 +++++++++
+ .../src/NewManga.ThemeEngine/README.md             | 114 +++
+ .../NewManga.ThemeEngine/Registry/ThemeRegistry.cs | 472 ++++++++++++
+ .../Serialization/JsonSupport.cs                   | 212 ++++++
+ .../Serialization/ThemePackageJson.cs              | 831 +++++++++++++++++++++
+ .../Serialization/ThemeSettingsJson.cs             | 337 +++++++++
+ .../Themes/BuiltInThemeGenerator.cs                | 365 +++++++++
+ .../NewManga.ThemeEngine/Themes/BuiltInThemes.cs   |  82 ++
+ .../Themes/newmanga-default.nmtheme                | 142 ++++
+ .../Validation/ThemeContrast.cs                    |  55 ++
+ .../Validation/ThemeValidator.cs                   | 477 ++++++++++++
+ .../NewManga.ThemeEngine.ThemeGen.csproj           |  15 +
+ .../tools/NewManga.ThemeEngine.ThemeGen/Program.cs | 121 +++
+ .../BuiltInThemeGeneratorTests.cs                  | 225 ++++++
+ .../LegacyThemeMigrationTests.cs                   | 229 ++++++
+ .../NewManga.ThemeEngine.Tests.csproj              |  31 +
+ .../NewManga.ThemeEngine.Tests/TestSupport.cs      | 148 ++++
+ .../ThemePackageJsonTests.cs                       | 204 +++++
+ .../ThemePaletteComposerTests.cs                   | 251 +++++++
+ .../ThemePreviewEngineTests.cs                     | 227 ++++++
+ .../ThemeRegistryTests.cs                          | 247 ++++++
+ .../ThemeValidatorTests.cs                         | 312 ++++++++
+ 33 files changed, 6987 insertions(+)
