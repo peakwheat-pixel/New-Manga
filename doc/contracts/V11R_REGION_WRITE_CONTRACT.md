@@ -1,6 +1,6 @@
-# V11R Region 写面 + 文本读投影契约 v1.4（FROZEN）
+# V11R Region 写面 + 文本读投影契约 v1.5（FROZEN）
 
-状态：`FROZEN`（2026-10-30；v1 = V11R-F0-1 写面，v1.1 = V11R-F0-2 文本读投影，v1.2 = F0-1 I1 有界返修，v1.3 = F0-1 I2 有界返修，v1.4 = F0-1 I3 有界返修：单 revision 写入目标存活 / 页 region 上限进事务 / service 层顶点上限 / P3 helper 去重；Owner 产出，Lead 裁定文件归属）。
+状态：`FROZEN`（2026-10-30；v1 = V11R-F0-1 写面，v1.1 = V11R-F0-2 文本读投影，v1.2 = F0-1 I1 有界返修，v1.3 = F0-1 I2 有界返修，v1.4 = F0-1 I3 有界返修，v1.5 = F0-1 I4 有界返修：页上限并发测试独立连接 + restore 顶点上限 + restore typed TARGET_NOT_FOUND；Owner 产出，Lead 裁定文件归属）。
 任务卡：`doc/tasks/V11R-F0-1.md`（写面，高风险）、`doc/tasks/V11R-F0-2.md`（文本读投影，关闭 GAP-2）。
 上游：审计 §5.1 F-01（`New_Manga_前后端功能与接口现状审计_V1.1_修订完整版.md`）、
 `doc/plan/V11R_AVALONIA_CONTRACT.md` §1.2/§5.3、`doc/design/redesign-v1/40-fusion/FUSION_SPEC.md` §4/§8 F-01。
@@ -473,6 +473,13 @@ confirm_final/set_locks 全部 `TARGET_NOT_FOUND` 且零写；两个 create 调�
 必须只允许一个越线者之前的写入（不得出现 limit+1）；service 层超限顶点必须在持久化前拒绝；
 P3 去重不得改变 DTO 行为。
 
+**v1.5/I4 返修验证要求（已满足，证据见 `verification/V11R-F0-1-I4/README.md`）**：
+页上限并发测试必须证明两个 create 线程使用**各自独立的真实 SQLite 连接**（非共享句柄）且在
+barrier 后同时提交，除 live count 外还断言 `regions`/`region_revisions` 总行数只增加胜者的一份；
+`restore_revision_with_number` 必须对历史 snapshot 几何执行顶点上限（超限 typed
+`RegionLimitExceeded`/INVALID_REQUEST 零写）并把 seam 的 `TARGET_NOT_FOUND` 映射为 typed
+not-found（并发软删后 restore 零写、wire TARGET_NOT_FOUND）。
+
 ---
 
 ## 9. 变更记录
@@ -484,3 +491,4 @@ P3 去重不得改变 DTO 行为。
 | 2026-10-30 | v1.2（V11R-F0-1 I1 有界返修，独立审查 r1 FAIL 处置）：P1-1 复合写全有或全无（`commit_region_batch` 单事务）；P1-2 多 region 乐观锁事务内整批重核对、整批零写；P1-3 merge/split 继承有效锁并写双投影；P2-4 delete/pin guard 与写入同事务；P2-5 Host 发帧前拒绝坐标越界/非正整数等领域非法值。逐项处置表见 `verification/V11R-F0-1-I1/README.md`。 |
 | 2026-10-30 | v1.3（V11R-F0-1 I2 有界返修，独立审查 r2 FAIL 处置）：P1-A 批量事务重读目标 `deleted_at IS NULL`、条件软删 rowcount=1、pin 带 live 条件，已删目标 ⇒ `TARGET_NOT_FOUND` 零写；P1-B 独立 SQLite 连接 + barrier 的真实交错并发测试；P2-C（**F0-2 修复项**）DTO 缺属性严格失败、显式 null 仍合法；P2-D `GuardStatus.DB_FAILED` 独立，wire UNKNOWN/internal 固定短语；P2-E 输入上限（500 region / 64 merge / 64 part / 512 vertex，Core 与 Host 同值 `INVALID_REQUEST`）。逐项处置表见 `verification/V11R-F0-1-I2/README.md`。 |
 | 2026-10-30 | v1.4（V11R-F0-1 I3 有界返修，独立审查 r3 FAIL 处置）：P1 单 revision 写入在事务内重读目标 `deleted_at`（save_geometry/save_manual_translation/confirm/set_region_locks；并发软删 ⇒ `TARGET_NOT_FOUND` 零写）；P2-A 页 region 上限进入批事务（`page_region_limit`，两调用者同见 N-1 也不会越界，超限 INVALID_REQUEST）；P2-B service 层顶点上限（create/save/split part/merge 派生多边形）；P3 `RequireInt` helper 去重（行为不变）。逐项处置表见 `verification/V11R-F0-1-I3/README.md`。 |
+| 2026-10-30 | v1.5（V11R-F0-1 I4 有界返修，独立审查 r4 关闭项）：页上限并发测试改为证明两个 create 线程各自持有独立真实 SQLite 连接（ThreadRoutedConnection 按线程路由）并补齐 rows 总数为零写断言；`restore_revision_with_number` 对历史 snapshot 几何执行顶点上限（typed `RegionLimitExceeded`/INVALID_REQUEST 零写）；restore 的 seam `TARGET_NOT_FOUND` 映射为 typed not-found（wire TARGET_NOT_FOUND 零写）。逐项处置表见 `verification/V11R-F0-1-I4/README.md`。 |

@@ -1,0 +1,15 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 4 items
+
+tests/core/test_region_create_cap.py::test_sequential_create_at_cap_is_rejected_without_write PASSED [ 25%]
+tests/core/test_region_create_cap.py::test_batch_page_cap_is_the_authority_even_if_the_precheck_passed PASSED [ 50%]
+tests/core/test_region_create_cap.py::test_concurrent_creates_at_the_cap_boundary_cannot_overshoot PASSED [ 75%]
+tests/core/test_region_create_cap.py::test_wire_create_at_cap_is_invalid_request_and_writes_nothing PASSED [100%]
+
+============================== 4 passed in 0.53s ==============================
+EXIT_CODE=0

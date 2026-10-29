@@ -1,0 +1,37 @@
+{
+  "task": "V11R-F0-1 I4 (bounded closure of the two remaining P2 items + one new P2)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "review_report": "doc/reviews/V11R-F0-1-r4-codex.md (independent channel, archived by Lead; r1 visible in branch)",
+  "reviewed_head": "ed2d991e4d7f5ba578deedadb9cf1be49bbe90bd",
+  "f0_2_head": "089cdb761f7d015688cd273d40a9c9fae668c154",
+  "i1_head": "c861fcba5aa3dd70fb8444cc14c6dc6ea607b395",
+  "i2_head": "1a457111cd2cb68321947b5359a2ad235f13fe2e",
+  "i3_head": "ed2d991e4d7f5ba578deedadb9cf1be49bbe90bd",
+  "i4_head": "6af12665b336961546315b2ab8863fbde8fb2297",
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md v1.5",
+  "commits": {
+    "P2-A": {"sha": "d858f44d7", "title": "real independent-connection page-cap concurrency + zero-write counts", "tests": "tests/core/test_region_create_cap.py"},
+    "P2-B": {"sha": "f3ecc19de", "title": "restore must respect the vertex bound", "tests": "tests/core/test_region_restore_limits.py"},
+    "P2-new": {"sha": "6af12665b", "title": "restore maps seam TARGET_NOT_FOUND to typed not-found", "tests": "tests/core/test_region_restore_liveness.py"}
+  },
+  "disposition": {
+    "P2-A": "two create threads prove distinct ThreadRoutedConnection per-thread sqlite3 connections (ids asserted, none equals the main thread's); barrier after both pre-checks; exactly one winner: regions/region_revisions totals +1, live count == limit; wire over-cap INVALID_REQUEST leaves both totals unchanged",
+    "P2-B": "restore_revision_with_number calls assert_geometry_within_limits on the restored snapshot before the seam; oversized history revision => RegionLimitExceeded (wire INVALID_REQUEST) with zero write (current pointer/geometry/revision count unchanged)",
+    "P2-new": "restore maps RegionCommitStatus.TARGET_NOT_FOUND to RegionNotFound; wire returns TARGET_NOT_FOUND/not_found after a concurrent soft delete, with zero write"
+  },
+  "three_logs": {
+    "P2-A": {"command": "python -m pytest -v tests/core/test_region_create_cap.py", "result": "4 passed", "log": "logs/i4-1-create-cap-interleaving.log"},
+    "P2-B": {"command": "python -m pytest -v tests/core/test_region_restore_limits.py", "result": "2 passed", "log": "logs/i4-2-restore-geometry-limit.log"},
+    "P2-new": {"command": "python -m pytest -v tests/core/test_region_restore_liveness.py", "result": "2 passed", "log": "logs/i4-3-restore-liveness.log"}
+  },
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2727 passed, 10 skipped, 2 warnings in 236.91s", "log": "logs/pytest-full.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors (no C# production changes in I4)"}
+  },
+  "unverified": [
+    "UI empty-text risk remains a UI-task responsibility (CONSUMER_GUIDE unchanged)",
+    "page/book ACL is not defined by the project; no fake authorization added (contract 3.1)",
+    "GAP-3 existing manual-save dual projection intentionally unchanged"
+  ]
+}
