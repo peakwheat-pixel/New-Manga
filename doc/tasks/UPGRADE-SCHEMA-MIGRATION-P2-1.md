@@ -3,7 +3,7 @@ id: UPGRADE-SCHEMA-MIGRATION-P2-1
 title: 合成旧 schema 迁移测试的 4×P2 补齐（NULL 列、额外行、结构全量、冻结 v1 列）
 kind: chore
 governance_version: 3
-status: ready
+status: in_review
 approval: user_authorized_2026-10-29_p2_closeout
 suggested_owner: dsh
 owner: dsh-lead
@@ -12,10 +12,10 @@ depends_on: [UPGRADE-SCHEMA-MIGRATION-1]
 base_commit: 7598e1c40
 branch: task/UPGRADE-SCHEMA-MIGRATION-P2-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/UPGRADE-SCHEMA-MIGRATION-1
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: d03f6e115264aa6196270ba76c15ab1b0de0d6ae
+delivery_head: d03f6e115264aa6196270ba76c15ab1b0de0d6ae
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/UPGRADE-SCHEMA-MIGRATION-P2-1
 allowed_paths:
   - doc/tasks/UPGRADE-SCHEMA-MIGRATION-P2-1.md
@@ -43,11 +43,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 全列 EXPECTED**：每个 seed 行用 `SELECT *` 记录**整行**（含 NULL/默认值列），升级后逐列断言。
-- [ ] **AC2 额外行检测**：每个 seed 表断言升级后行数 == EXPECTED 记录数（多出行即失败；复合键 `book_tags` 单独断言）。
-- [ ] **AC3 结构检查全量**：对全部 `LATEST_TABLES` 断言主键列存在（`PRAGMA table_info`），关键索引/外键检查保留。
-- [ ] **AC4 冻结 v1 列**：`FROZEN_V1_COLUMNS`（books/chapters/pages 的 v1 列集合）断言，防迁移定义改 v1 DDL。
-- [ ] **AC5 回归与证据**：单测 11 passed；全量 pytest 无新增失败；check PASS；证据日志带命令头。
+- [x] **AC1 全列 EXPECTED**：seed 后 `_record_full_rows` 用 `SELECT *` 记录整行（含 NULL/默认值列），升级后逐列断言。<<MET>>
+- [x] **AC2 额外行检测**：`_assert_no_extra_rows` 断言每个 seed 表行数 == EXPECTED 记录数；`book_tags` 单独断言（v2+ 起点）。<<MET>>
+- [x] **AC3 结构检查全量**：全部 14 张 `LATEST_TABLES` 断言有列且有主键；关键索引/外键检查保留。<<MET>>
+- [x] **AC4 冻结 v1 列**：`FROZEN_V1_COLUMNS`（books/chapters/pages 的 v1 列集合）在 v1 建库后断言。<<MET>>
+- [x] **AC5 回归与证据**：单测 11 passed；全量 2623 passed / 0 failed；check PASS；unit/full/summary 均带 5 行命令头。<<MET>>
 
 ## 禁止范围
 
@@ -58,6 +58,26 @@ allowed_paths:
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
 
+
+## 交付与验证
+
+- 修改 `tests/storage/test_upgrade_schema_data.py`：`_record_full_rows`（全列 EXPECTED）、`_assert_no_extra_rows`（额外行检测）、
+  `_assert_latest` 全表结构检查（14 表列+主键）、`FROZEN_V1_COLUMNS`（v1 列集合）。
+- 单测 **11 passed**（`unit-tests.log` 带头）；全量 **2623 passed / 10 skipped / 0 failed**（`pytest-full.log` 带头）。
+- 集成：main `d03f6e115`。证据：`verification/UPGRADE-SCHEMA-MIGRATION-P2-1/`。
+
+## Review
+
+- 实施与自查：DSH（Lead）。独立复核：**待补**（region-workbench-owner 轻量复核 4 项 P2 修复与无回归）。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| unit-tests | AC1–AC4 | verification/UPGRADE-SCHEMA-MIGRATION-P2-1/unit-tests.log | d03f6e115 | b54967fa956e9e032751ee6f567e197d1cfde53b31c9730d659e810baba35ec4 | CANONICAL |
+| pytest-full-log | AC5 | verification/UPGRADE-SCHEMA-MIGRATION-P2-1/pytest-full.log | d03f6e115 | 38c33d2abad122effaf0760f20b9d99ec497d3e086b176afee9ae5c85426bb88 | CANONICAL |
+| pytest-full-summary | AC5 | verification/UPGRADE-SCHEMA-MIGRATION-P2-1/pytest-full-summary.txt | d03f6e115 | 60661a57b177a5b4e622625a3ebe33cac8e8d0c44976727d832b2cfd6f11635a | CANONICAL |
+
 ## Closeout Record
 
-- 待实施后填写。
+- 待独立复核通过后填写（target: done）。

@@ -32,13 +32,13 @@
 |UPGRADE-REHEARSAL-1|RELEASE-VERIFY-1、NSIS-INSTALLER-1|closed_with_limitations（本机无 AD-001 原始数据，用 2026-10-26 升级前备份执行 dry-run + 真实布局迁移完整性 PASS；发现升级缺口：Core 不识别旧布局 data/library.db）|
 |UPGRADE-LEGACY-LAYOUT-1|UPGRADE-REHEARSAL-1|done（Core 启动迁移旧布局：原子 staging/promote + fail-closed + 补迁；3 轮独立 Review 后 PASS；单测 12/12、全量 2612P；集成 `098c60381`）|
 |UPGRADE-SCHEMA-MIGRATION-1|UPGRADE-REHEARSAL-1、UPGRADE-LEGACY-LAYOUT-1|done（合成 v1–v5 旧 schema 数据迁移：11 用例、v5 四重建表逐列断言、全量 2623P；3 轮 Review PASS；集成 `61601dc8c`）|
-|UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|ready（4×P2 补齐：全列 EXPECTED、额外行检测、结构全量、冻结 v1 列）|
+|UPGRADE-SCHEMA-MIGRATION-P2-1|UPGRADE-SCHEMA-MIGRATION-1|in_review（4×P2 补齐已实施：全列 EXPECTED/额外行/结构全量/冻结 v1 列；集成 `d03f6e115`；待复核）|
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1|—|superseded（原 Sonoma 单 pack 交付被 THEME-MACOS-2 重做取代：`ec7316738`；原证据保留）|
 |THEME-MACOS-LAYOUTS-1|—|done（并入 THEME-MACOS-2：三套布局 Sonoma/Launchpad/Split，`0e1f71151`；REPACK-5 已合并）|
 
-READY 节点：UPGRADE-SCHEMA-MIGRATION-P2-1
+READY 节点：无
 
 ## 历史快照（终态节点，非当前 DAG）
 
