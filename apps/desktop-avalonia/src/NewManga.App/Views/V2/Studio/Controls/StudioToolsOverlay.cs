@@ -219,10 +219,11 @@ public sealed class StudioExportPreflightPanel : Border
         _pdfOptions.Children.Add(_pdfImageOnly);
         _pdfOptions.Children.Add(_pdfSearchable);
 
-        _abortPolicy = StudioUi.Button("abort（已支持）", "studio-count-chip", () => _viewModel.TrySelectStalePolicy(StudioStalePolicy.Abort));
-        _continuePolicy = StudioUi.Button("continue_existing · 未支持", "studio-count-chip", () => { });
-        _continuePolicy.IsEnabled = false;
-        ToolTip.SetTip(_continuePolicy, StudioExportViewModel.ContinueExistingNotSupported);
+        _abortPolicy = StudioUi.Button("abort", "studio-count-chip", () => _viewModel.TrySelectStalePolicy(StudioStalePolicy.Abort));
+        ToolTip.SetTip(_abortPolicy, StudioExportViewModel.AbortDescription);
+        ToolTip.SetTip(_abortPolicy, StudioExportViewModel.AbortDescription);
+        _continuePolicy = StudioUi.Button("continue_existing", "studio-count-chip", () => _viewModel.TrySelectStalePolicy(StudioStalePolicy.ContinueExisting));
+        ToolTip.SetTip(_continuePolicy, StudioExportViewModel.ContinueExistingDescription);
         var policyRow = StudioUi.Row(6);
         policyRow.Children.Add(StudioUi.Text("stale 策略", "label"));
         policyRow.Children.Add(_abortPolicy);
@@ -329,6 +330,7 @@ public sealed class StudioExportPreflightPanel : Border
         StudioUi.TrackClass(_pdfImageOnly, "active", _viewModel, () => _viewModel.PdfContent == StudioPdfContentMode.ImageOnly);
         StudioUi.TrackClass(_pdfSearchable, "active", _viewModel, () => _viewModel.PdfContent == StudioPdfContentMode.SearchableDualLayer);
         StudioUi.TrackClass(_abortPolicy, "active", _viewModel, () => _viewModel.StalePolicy == StudioStalePolicy.Abort);
+        StudioUi.TrackClass(_continuePolicy, "active", _viewModel, () => _viewModel.StalePolicy == StudioStalePolicy.ContinueExisting);
         _capability.Text = _viewModel.BuildCapabilityInventory().Count == 0
             ? string.Empty
             : "能力清单：" + string.Join(" · ", _viewModel.BuildCapabilityInventory().Take(2)) + "（详见证据 NOT_WIRED 清单）";

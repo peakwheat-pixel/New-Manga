@@ -108,8 +108,11 @@ public sealed class StudioExportHistoryItemViewModel : StudioObservable
 /// </summary>
 public sealed class StudioExportViewModel : StudioObservable
 {
-    public const string ContinueExistingNotSupported =
-        "未支持：Core 支持 continue_existing，但 IHostController.StartExportAsync 未暴露 stale_policy 参数（Host 固定发送默认 abort）；需契约扩展后才能选择";
+    public const string ContinueExistingDescription =
+        "跳过 stale 页继续导出（Core 不再以 EXPORT_STALE 中止；仍导出其余有效翻译页）";
+
+    public const string AbortDescription =
+        "有 stale 输入即中止（Core 返回 EXPORT_STALE 明细，先重渲染过期页）";
 
     public const string UnconfirmedNotWired =
         "未确认计数读取命令未接入（review 状态在 Region revision 面，V11R-F0-2）";
@@ -270,24 +273,25 @@ public sealed class StudioExportViewModel : StudioObservable
     }
 
     public string StalePolicyText => StalePolicy == StudioStalePolicy.Abort
-        ? "abort · 有 stale 即中止（已支持）"
-        : "continue_existing · 跳过 stale 继续导出（未支持）";
+        ? "abort · 有 stale 即中止"
+        : "continue_existing · 跳过 stale 继续导出";
 
     public string StalePolicyTooltip => StalePolicy == StudioStalePolicy.Abort
-        ? "Host 固定发送默认 stale_policy=abort；Core 遇 stale 输入返回 EXPORT_STALE 明细"
-        : ContinueExistingNotSupported;
+        ? AbortDescription
+        : ContinueExistingDescription;
 
-    /// <summary>True only for the abort policy (the Host does not expose the other one).</summary>
-    public bool CanSelectStalePolicy(StudioStalePolicy policy) => policy == StudioStalePolicy.Abort;
+    /// <summary>A-7 merged: both stale policies are real and passed through to the Host/Core.</summary>
+    public bool CanSelectStalePolicy(StudioStalePolicy policy) =>
+        policy is StudioStalePolicy.Abort or StudioStalePolicy.ContinueExisting;
 
-    public string ContinueExistingTooltip => ContinueExistingNotSupported;
+    public string ContinueExistingTooltip => ContinueExistingDescription;
 
-    /// <summary>Attempting the unsupported policy is refused with the exact reason (never silent).</summary>
+    /// <summary>Selects a supported policy; unknown values are refused locally (Host would reject them).</summary>
     public bool TrySelectStalePolicy(StudioStalePolicy policy)
     {
         if (!CanSelectStalePolicy(policy))
         {
-            _statusText = ContinueExistingNotSupported;
+            _statusText = "非法 stale 策略：仅支持 abort / continue_existing";
             Raise(nameof(StatusText));
             return false;
         }
@@ -295,7 +299,6 @@ public sealed class StudioExportViewModel : StudioObservable
         StalePolicy = policy;
         return true;
     }
-
     public IReadOnlyList<string> TranslatedPageIds => _translatedPageIds;
 
     public int TranslatedPageCount => _translatedPageIds.Count;
@@ -494,7 +497,7 @@ public sealed class StudioExportViewModel : StudioObservable
             _format == StudioExportFormat.Pdf
                 ? _pdfContent == StudioPdfContentMode.SearchableDualLayer ? "searchable_dual_layer" : "image_only"
                 : null,
-            stalePolicy: null,
+            stalePolicy: _stalePolicy == StudioStalePolicy.ContinueExisting ? "continue_existing" : "abort",
             cancellationToken).ConfigureAwait(true);
 
         if (started is null)
@@ -693,7 +696,7 @@ public sealed class StudioExportViewModel : StudioObservable
             items.Add("Host 只读：导出写操作被 Host 拒绝");
         }
 
-        items.Add("stale_policy=continue_existing：" + ContinueExistingNotSupported);
+        items.Add("stale_policy=abort / continue_existing：两值均由 Host 透传到 Core（V11R-A-7）");
         items.Add("未确认计数：" + UnconfirmedNotWired);
         items.Add("过期计数：" + StaleNotWired);
         return items;

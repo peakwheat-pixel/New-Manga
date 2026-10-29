@@ -17,3 +17,8 @@ JSON：preflight / stale-policy / export-job / readonly / history / terms；截�
 - 术语/约束无真实命令（NOT_WIRED 呈现，不伪造）。
 - continue_existing 未支持（Host 契约未暴露参数）。
 - 过期/未确认不可预读（显示 —）。
+
+## A-7 后状态（最新）
+- stale 策略两值均可选：abort（中止并返回 EXPORT_STALE 明细）/ continue_existing（跳过 stale 继续导出），真实传参。
+- 测试 StalePolicy_BothValuesAreSelectable_AndPassedToHost 断言两种策略分别写入 StartExportAsync 的 stalePolicy。
+- 证据 stale-policy.json 由该测试生成（passed_continue_existing / passed_abort / invalid_value_guard）。
