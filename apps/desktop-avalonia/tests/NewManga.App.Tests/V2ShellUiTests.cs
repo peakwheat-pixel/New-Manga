@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using System.Security.Cryptography;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.Shell.V2.Studio;
@@ -13,8 +14,10 @@ using NewManga.App.ViewModels.V2.Library;
 using NewManga.App.Views.V2.Library;
 using NewManga.App.ViewModels.V2.Studio;
 using NewManga.App.Views.V2.Shell;
+using NewManga.App.Views.V2.Shell.Controls;
 using NewManga.App.Views.V2.Studio;
 using NewManga.CoreClient;
+using NewManga.DesignSystem;
 using NewManga.DesignSystem.Theming;
 
 namespace NewManga.App.Tests;
@@ -280,6 +283,36 @@ public sealed class V2ShellUiTests
         await host.Shell.Initialization;
         Dispatcher.UIThread.RunJobs();
         return host;
+    }
+
+    private static async Task<(Window Window, AppShellV2 Shell)> HostWithThemeAsync(
+        IHostController controller,
+        DesignSystemThemeManager themeManager,
+        double width = 1600,
+        double height = 1000)
+    {
+        var shell = new AppShellV2(controller, themeManager: themeManager);
+        var window = new Window
+        {
+            Width = width,
+            Height = height,
+            Content = shell,
+            Background = Brushes.Black,
+        };
+        window.Show();
+        await shell.Initialization;
+        Dispatcher.UIThread.RunJobs();
+        return (window, shell);
+    }
+
+    private static string ScreenshotSha256(Window window)
+    {
+        Dispatcher.UIThread.RunJobs();
+        var frame = window.CaptureRenderedFrame()
+            ?? throw new InvalidOperationException("CaptureRenderedFrame() returned null");
+        using var stream = new MemoryStream();
+        frame.Save(stream);
+        return Convert.ToHexString(SHA256.HashData(stream.ToArray()));
     }
 
     /// <summary>R-19: temp-first capture (unique name incl. test method); repo sync only when curated.</summary>
@@ -801,7 +834,11 @@ public sealed class V2ShellUiTests
 
         shell.ViewModel.TrackRun(null);
         Dispatcher.UIThread.RunJobs();
-        Assert.False(shell.ViewModel.IsStatusBandVisible);
+        // V11R-INT-2 (P0): the band is the always-visible Host readiness channel; without a Run the
+        // Run summary disappears but the Host state stays visible.
+        Assert.True(shell.ViewModel.IsStatusBandVisible);
+        Assert.DoesNotContain("run-1", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
+        Assert.Contains("Host 就绪", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
         window.Close();
     }
 
@@ -821,5 +858,204 @@ public sealed class V2ShellUiTests
         Assert.Contains("尚未注册", placeholder.Detail, StringComparison.Ordinal);
         Capture(window, "18-int0-studio-unregistered", task: "V11R-INT-0");
         window.Close();
+    }
+
+    // ── V11R-INT-2: Host startup P0 + --variant appearance ─────────────────────────────────
+
+    [AvaloniaFact]
+    public async Task Int2_V2Shell_StartsHostBeforeFirstDataRead_AndShowsHostReady()
+    {
+        var fake = V2Fixture.Create();
+        var (window, shell) = await HostReadyAsync(fake);
+
+        Assert.Equal(1, fake.StartCalls); // v2 initialization requested startup exactly once
+        Assert.Equal(HostViewState.Ready, fake.Snapshot.State);
+        var firstStart = fake.LifecycleLog.IndexOf("start");
+        var firstRefresh = fake.LifecycleLog.IndexOf("refresh");
+        Assert.True(firstStart >= 0, "v2 shell never called IHostController.StartAsync (P0 regression)");
+        Assert.True(firstRefresh < 0 || firstStart < firstRefresh,
+            $"Host must start before the first data read; log={string.Join(",", fake.LifecycleLog)}");
+
+        Assert.True(shell.ViewModel.IsStatusBandVisible);
+        Assert.Contains("Host 就绪", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
+        Assert.True(shell.ViewModel.IsHostReady);
+        Assert.Equal(NmStatus.Done, shell.ViewModel.StatusBandState);
+        Capture(window, "01-int2-host-ready", task: "V11R-INT-2");
+
+        // Re-awaiting initialization (window attach, deep link, external callers) must not start twice.
+        await shell.Initialization;
+        await shell.Initialization;
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(1, fake.StartCalls);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int2_HostStartFailure_IsSurfacedInStatusBand_WithoutCrashing()
+    {
+        var fake = V2Fixture.Create();
+        fake.StartException = new InvalidOperationException("sidecar bundle missing: TYPED_E2E_FAILURE");
+        var (window, shell) = await HostReadyAsync(fake);
+
+        Assert.Equal(1, fake.StartCalls);
+        Assert.True(shell.ViewModel.HasHostFailure);
+        Assert.Contains("Host 启动失败", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
+        Assert.Contains("TYPED_E2E_FAILURE", shell.ViewModel.StatusBandLeft, StringComparison.Ordinal);
+        Assert.Equal(NmStatus.Failed, shell.ViewModel.StatusBandState);
+        Assert.True(shell.ViewModel.IsStatusBandVisible);
+        Capture(window, "04-int2-host-start-failure", task: "V11R-INT-2");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Int2_VariantDarkAndLight_ResolveDifferentTokensAndScreenshots()
+    {
+        TestTheme.ResetToDefaults();
+        var darkManager = new DesignSystemThemeManager(Application.Current!);
+        Assert.True(darkManager.Initialize(AppearanceMode.Dark));
+        var (darkWindow, darkShell) = await HostWithThemeAsync(V2Fixture.Create(), darkManager);
+        Assert.True(darkShell.ViewModel.IsDarkTheme);
+        var darkColor = ResourceColor(NmKeys.Color.Bg.App);
+        var darkHash = ScreenshotSha256(darkWindow);
+        Capture(darkWindow, "02-int2-variant-dark", task: "V11R-INT-2");
+        darkWindow.Close();
+        darkManager.Dispose();
+
+        var lightManager = new DesignSystemThemeManager(Application.Current!);
+        Assert.True(lightManager.Initialize(AppearanceMode.Light));
+        var (lightWindow, lightShell) = await HostWithThemeAsync(V2Fixture.Create(), lightManager);
+        Assert.False(lightShell.ViewModel.IsDarkTheme);
+        var lightColor = ResourceColor(NmKeys.Color.Bg.App);
+        var lightHash = ScreenshotSha256(lightWindow);
+        Capture(lightWindow, "03-int2-variant-light", task: "V11R-INT-2");
+        lightWindow.Close();
+        lightManager.Dispose();
+
+        Assert.NotEqual(darkColor, lightColor);
+        Assert.NotEqual(darkHash, lightHash);
+        TestTheme.ResetToDefaults();
+    }
+
+    [Fact]
+    public void Int2_SingleHostStartup_CallSites_AreOnlyTheLegacyShellAndTheV2ViewModel()
+    {
+        var root = FindAppSourceRoot();
+        var mainWindow = File.ReadAllText(Path.Combine(root, "Views", "MainWindow.axaml.cs"));
+        var shellVm = File.ReadAllText(Path.Combine(root, "ViewModels", "V2", "Shell", "AppShellViewModel.cs"));
+        var app = File.ReadAllText(Path.Combine(root, "App.axaml.cs"));
+
+        Assert.Equal(1, CountOccurrences(mainWindow, "_controller.StartAsync("));
+        Assert.Equal(1, CountOccurrences(shellVm, "_controller.StartAsync("));
+        Assert.DoesNotContain("StartAsync(", app, StringComparison.Ordinal);
+    }
+
+    [AvaloniaFact]
+    public async Task Int2_LibraryCenterState_HasExactlyOneVisibleBlock_ForEveryCombination()
+    {
+        // (a) Host not ready + empty shelf -> only the Host state (highest priority).
+        var starting = new HostViewSnapshot(
+            HostViewState.Starting, "正在启动 Host…", "—", null, null,
+            Array.Empty<BookSummary>(), 0, true, null);
+        var (hostWindow, hostShell) = await HostReadyAsync(new FakeHostController(starting));
+        Assert.True(VisibleEmptyStateCount(hostWindow) == 1, "visible states: " + string.Join(" | ", VisibleEmptyStateTitles(hostWindow)));
+        Assert.Equal("Host 尚未就绪", VisibleEmptyStateTitle(hostWindow));
+        Assert.False(hostShell.ViewModel.Library.ShowEmptyLibraryState);
+        hostWindow.Close();
+
+        // (b) Ready + empty shelf -> only the empty-shelf state.
+        var (emptyWindow, emptyShell) = await HostReadyAsync(new FakeHostController(FakeHostController.ReadySnapshot()));
+        Assert.True(VisibleEmptyStateCount(emptyWindow) == 1, "visible states: " + string.Join(" | ", VisibleEmptyStateTitles(emptyWindow)));
+        Assert.Equal("书架还是空的", VisibleEmptyStateTitle(emptyWindow));
+        Assert.True(emptyShell.ViewModel.Library.ShowEmptyLibraryState);
+        Capture(emptyWindow, "05-int2-library-empty-only", task: "V11R-INT-2");
+        emptyWindow.Close();
+
+        // (c) Ready + loading -> only the same-geometry skeleton (no empty state in the tree).
+        var gated = V2Fixture.Create();
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        gated.SnapshotGate = gate.Task;
+        var (loadingWindow, loadingShell) = Host(gated);
+        _ = loadingShell.Initialization;
+        await gated.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(0, VisibleEmptyStateCount(loadingWindow));
+        Assert.True(VisibleSkeletonCardCount(loadingWindow, loadingShell.ViewModel.Library.CardWidth) >= 4,
+            "loading must show the same-geometry skeleton cards");
+        Assert.True(loadingShell.ViewModel.Library.ShowLoadingState);
+        Capture(loadingWindow, "06-int2-library-loading-only", task: "V11R-INT-2");
+        gate.SetResult(true);
+        await loadingShell.Initialization;
+        loadingWindow.Close();
+
+        // (d) Ready + error -> only the error block (error outranks empty states).
+        var failing = V2Fixture.Create();
+        failing.RefreshException = new InvalidOperationException("TYPED_READ_FAILURE");
+        var (errorWindow, errorShell) = await HostReadyAsync(failing);
+        Assert.True(VisibleEmptyStateCount(errorWindow) == 1, "visible states: " + string.Join(" | ", VisibleEmptyStateTitles(errorWindow)));
+        Assert.Equal("书架读取失败", VisibleEmptyStateTitle(errorWindow));
+        Assert.True(errorShell.ViewModel.Library.ShowErrorState);
+        errorWindow.Close();
+
+        // (e) Ready + data + zero filter matches -> only the no-results state.
+        var (resultsWindow, resultsShell) = await HostReadyAsync(V2Fixture.Create());
+        resultsShell.ViewModel.Library.SearchText = "zzz-no-such-book";
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(VisibleEmptyStateCount(resultsWindow) == 1, "visible states: " + string.Join(" | ", VisibleEmptyStateTitles(resultsWindow)));
+        Assert.Equal("没有匹配的作品", VisibleEmptyStateTitle(resultsWindow));
+        Assert.True(resultsShell.ViewModel.Library.ShowNoResultsState);
+        resultsWindow.Close();
+    }
+
+    private static int VisibleEmptyStateCount(Window window) =>
+        CenterStateHost(window).GetVisualDescendants().OfType<EmptyState>().Count(state => state.IsEffectivelyVisible);
+
+    private static string VisibleEmptyStateTitle(Window window) =>
+        CenterStateHost(window).GetVisualDescendants().OfType<EmptyState>()
+            .Single(state => state.IsEffectivelyVisible && state.Title.Length > 0)
+            .Title;
+
+    private static IEnumerable<string> VisibleEmptyStateTitles(Window window) =>
+        CenterStateHost(window).GetVisualDescendants().OfType<EmptyState>()
+            .Where(state => state.IsEffectivelyVisible)
+            .Select(state => state.Title);
+
+    private static Grid CenterStateHost(Window window) =>
+        window.GetVisualDescendants().OfType<Grid>().Single(grid => grid.Name == "LibraryCenterStateHost");
+
+    private static int VisibleSkeletonCardCount(Window window, double cardWidth) =>
+        window.GetVisualDescendants()
+            .OfType<Border>()
+            .Count(border => border.Classes.Contains("card")
+                && border.IsEffectivelyVisible
+                && Math.Abs(border.Bounds.Width - cardWidth) < 1);
+
+    private static int CountOccurrences(string text, string token)
+    {
+        var count = 0;
+        var index = 0;
+        while ((index = text.IndexOf(token, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += token.Length;
+        }
+
+        return count;
+    }
+
+    private static string FindAppSourceRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            var candidate = Path.Combine(directory.FullName, "apps", "desktop-avalonia", "src", "NewManga.App");
+            if (Directory.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            directory = directory.Parent;
+        }
+
+        throw new InvalidOperationException("apps/desktop-avalonia/src/NewManga.App not found above the test binaries");
     }
 }

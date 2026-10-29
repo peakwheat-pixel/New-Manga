@@ -61,7 +61,14 @@ public partial class AppShellV2 : UserControl
         // Unified construction path: Initialize() is idempotent and must also run for an injected manager.
         _themeManager?.Initialize();
 
-        ApplyTheme();
+        // V11R-INT-2: adopt the appearance the DS manager already applied (--variant / persisted
+        // choice) instead of forcing the ViewModel default back over it. Only the user toggle and
+        // explicit SetAppearance calls change it afterwards.
+        if (_themeManager is not null)
+        {
+            _viewModel.AdoptAppearance(_themeManager.Appearance == AppearanceMode.Dark);
+        }
+
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         SizeChanged += (_, e) => _viewModel.SetViewport(e.NewSize.Width, e.NewSize.Height);
     }

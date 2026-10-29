@@ -16,9 +16,21 @@ public sealed class FakeHostController : IHostController
 
     public int StartCalls { get; private set; }
 
+    /// <summary>V11R-INT-2 ordering evidence: "start" must precede the first "refresh".</summary>
+    public List<string> LifecycleLog { get; } = new();
+
+    /// <inheritdoc />
+    public int StartRequests => StartCalls;
+
+    /// <summary>V11R-INT-2 failure path: when set, StartAsync throws this typed exception once.</summary>
+    public Exception? StartException { get; set; }
+
     public Task? StartGate { get; set; }
 
     public int RefreshCalls { get; private set; }
+
+    /// <summary>V11R-INT-2 error-state test: when set, the next RefreshBooksAsync throws this typed error.</summary>
+    public Exception? RefreshException { get; set; }
 
     /// <summary>V11R-INT-0 loading-skeleton tests: refresh waits on this gate before completing.</summary>
     public Task? SnapshotGate { get; set; }
@@ -34,12 +46,26 @@ public sealed class FakeHostController : IHostController
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
         StartCalls++;
+        LifecycleLog.Add("start");
+        if (StartException is { } failure)
+        {
+            StartException = null;
+            throw failure;
+        }
+
         return Task.CompletedTask;
     }
 
     public async Task RefreshBooksAsync(CancellationToken cancellationToken = default)
     {
         RefreshCalls++;
+        LifecycleLog.Add("refresh");
+        if (RefreshException is { } failure)
+        {
+            RefreshException = null;
+            throw failure;
+        }
+
         if (SnapshotGate is { } gate)
         {
             SnapshotGateStarted.TrySetResult(true);

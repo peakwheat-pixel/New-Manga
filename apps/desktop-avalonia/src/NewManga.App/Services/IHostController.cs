@@ -108,6 +108,13 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
 
     event EventHandler? Changed;
 
+    /// <summary>
+    /// V11R-INT-2: number of times startup was requested. Production <see cref="HostController.StartAsync"/>
+    /// is idempotent (one runtime start), so this reads 1 after the shell initialized even if several
+    /// callers asked; tests assert the v2 shell requests startup exactly once.
+    /// </summary>
+    int StartRequests { get; }
+
     Task StartAsync(CancellationToken cancellationToken = default);
 
     Task RefreshBooksAsync(CancellationToken cancellationToken = default);
