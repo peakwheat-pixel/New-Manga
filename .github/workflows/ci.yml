@@ -102,7 +102,11 @@ jobs:
       - name: Test (serialized; sidecar-dependent tests self-skip on a clean clone)
         shell: pwsh
         run: |
-          dotnet test apps/desktop-avalonia/NewManga.sln --no-build -m:1 `
+          # V11R-A-6: MaxCpuCount=1 in NewManga.runsettings serializes the test hosts, so no -m:1
+          # is needed; the assembly-level DisableTestParallelization already serializes tests inside
+          # each assembly. This is what makes a plain `dotnet test <solution>` stable on Windows.
+          dotnet test apps/desktop-avalonia/NewManga.sln --no-build `
+            --settings apps/desktop-avalonia/tests/NewManga.runsettings `
             --logger "trx;LogFileName=results.trx" `
             --results-directory "${{ github.workspace }}/out/test-results"
 
@@ -155,7 +159,8 @@ jobs:
         env:
           NEWMANGA_CORECLIENT_SIDECAR_DIR: ${{ github.workspace }}/apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar
         run: |
-          dotnet test apps/desktop-avalonia/NewManga.sln --no-build -m:1 `
+          dotnet test apps/desktop-avalonia/NewManga.sln --no-build `
+            --settings apps/desktop-avalonia/tests/NewManga.runsettings `
             --logger "trx;LogFileName=results-integration.trx" `
             --results-directory "${{ github.workspace }}/out/test-results-integration"
 

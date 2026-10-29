@@ -34,6 +34,9 @@ public sealed class HostRuntime : IAsyncDisposable
         _policy = DataRootPolicy.For(options.DataRoot, HostMode.ReadOnlyUntilParity);
     }
 
+    /// <summary>V11R-A-6: last startup contract self check result (NotRun until the host starts).</summary>
+    public StartupSelfCheckResult SelfCheck { get; private set; } = StartupSelfCheckResult.NotRun;
+
     public HostStartResult Result { get; private set; } =
         new(HostStatus.Failed, HostMode.ReadOnlyUntilParity, "HOST_NOT_STARTED", "host not started", null);
 
@@ -619,7 +622,26 @@ public sealed class HostRuntime : IAsyncDisposable
                 Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
             }
 
-            Result = HostStartResult.Ready(decision.Mode);
+            // V11R-A-6: contract self check after the Core handshake. A mismatch closes the write
+            // gate (read-only host, typed error) instead of failing the first user write; partial
+            // coverage is a visible Degraded status, never a silent pass.
+            SelfCheck = await StartupSelfCheck.RunAsync(_options, CoreService, cancellationToken).ConfigureAwait(false);
+            _log.Info($"self-check status={SelfCheck.Status} code={SelfCheck.ErrorCode ?? "-"} detail={SelfCheck.Detail}");
+            if (SelfCheck.WritesBlocked)
+            {
+                _policy = DataRootPolicy.For(_options.DataRoot, HostMode.ReadOnlySelfCheckFailed);
+                _log.Warn($"self-check blocked writes: {SelfCheck.ErrorCode} {SelfCheck.Reason}");
+                Result = new HostStartResult(
+                    HostStatus.Ready,
+                    _policy.Mode,
+                    SelfCheck.ErrorCode,
+                    SelfCheck.Reason,
+                    null);
+            }
+            else
+            {
+                Result = HostStartResult.Ready(decision.Mode);
+            }
         }
         catch (SidecarException ex)
         {

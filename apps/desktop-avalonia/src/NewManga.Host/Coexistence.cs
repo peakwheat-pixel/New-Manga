@@ -11,6 +11,9 @@ public enum HostMode
 
     /// <summary>Legacy Tauri shell is running: read-only + notice (chosen AC5 policy).</summary>
     ReadOnlyLegacyShellRunning,
+
+    /// <summary>V11R-A-6: the startup contract self check failed (Core/Host mismatch): read-only.</summary>
+    ReadOnlySelfCheckFailed,
 }
 
 public sealed record CoexistenceDecision(HostMode Mode, string Reason);
@@ -46,6 +49,7 @@ public static class CoexistenceRules
         HostMode.ReadWrite => "读写就绪",
         HostMode.ReadOnlyUntilParity => "只读（S2 parity 前）",
         HostMode.ReadOnlyLegacyShellRunning => "只读（旧壳运行中）",
+        HostMode.ReadOnlySelfCheckFailed => "只读（启动自检失败）",
         _ => mode.ToString(),
     };
 }

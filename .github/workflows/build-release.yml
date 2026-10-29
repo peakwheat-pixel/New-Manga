@@ -87,8 +87,8 @@ jobs:
           # V11R-A-4: same-SHA CI lives in .github/workflows/ci.yml; this release job keeps the
           # sidecar-free subset it always ran. -m:1 serializes MSBuild/project test execution so the
           # temp SQLite fixtures never contend across parallel project builds.
-          dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release -m:1
-          dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release -m:1
+          dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release --settings apps/desktop-avalonia/tests/NewManga.runsettings
+          dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --settings apps/desktop-avalonia/tests/NewManga.runsettings
 
       - name: Build Core sidecar bundle (weights-free public build)
         shell: pwsh
