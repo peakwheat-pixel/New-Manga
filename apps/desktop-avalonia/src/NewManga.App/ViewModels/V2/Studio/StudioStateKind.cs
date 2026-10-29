@@ -1,3 +1,6 @@
+using NewManga.DesignSystem;
+using NewManga.DesignSystem.Controls;
+
 namespace NewManga.App.ViewModels.V2.Studio;
 
 /// <summary>
@@ -23,64 +26,36 @@ public enum StudioStateKind
 /// </summary>
 public static class StudioStates
 {
-    /// <summary>State symbols frozen by the Avalonia contract §2.3.</summary>
-    public static string Glyph(StudioStateKind state) => state switch
+    /// <summary>Placeholder for "no projection data" — deliberately distinct from Skipped (–).</summary>
+    public const string NoDataGlyph = "–";
+
+    /// <summary>Maps the Studio vocabulary to the DS status vocabulary (single symbol source).</summary>
+    public static StatusKind ToStatusKind(StudioStateKind state) => state switch
     {
-        StudioStateKind.Queued => "·",
-        StudioStateKind.Running => "◐",
-        StudioStateKind.Done => "●",
-        StudioStateKind.Failed => "✗",
-        StudioStateKind.Blocked => "▲",
-        StudioStateKind.Stale => "▨",
-        StudioStateKind.Skipped => "–",
-        StudioStateKind.NotStarted => "○",
-        _ => "○",
+        StudioStateKind.Queued => StatusKind.Queued,
+        StudioStateKind.Running => StatusKind.Running,
+        StudioStateKind.Done => StatusKind.Done,
+        StudioStateKind.Failed => StatusKind.Failed,
+        StudioStateKind.Blocked => StatusKind.Blocked,
+        StudioStateKind.Stale => StatusKind.Stale,
+        StudioStateKind.Skipped => StatusKind.Skipped,
+        _ => StatusKind.NotStarted,
     };
 
-    /// <summary>Chinese text label; a state must never be conveyed by colour alone (§2.2).</summary>
-    public static string Label(StudioStateKind state) => state switch
-    {
-        StudioStateKind.Queued => "排队",
-        StudioStateKind.Running => "进行中",
-        StudioStateKind.Done => "完成",
-        StudioStateKind.Failed => "失败",
-        StudioStateKind.Blocked => "阻塞",
-        StudioStateKind.Stale => "过期",
-        StudioStateKind.Skipped => "跳过",
-        StudioStateKind.NotStarted => "未开始",
-        _ => "未开始",
-    };
+    /// <summary>State symbols come from the DS <see cref="NmStatusSymbols"/> source (no local table).</summary>
+    public static string Glyph(StudioStateKind state) => StatusCatalog.Symbol(ToStatusKind(state));
+
+    /// <summary>Chinese label from the DS catalog; a state is never conveyed by colour alone (§2.2).</summary>
+    public static string Label(StudioStateKind state) => StatusCatalog.Label(ToStatusKind(state));
 
     /// <summary>
     /// Style class applied by the Studio stylesheet. Colour comes from
     /// <c>{DynamicResource Nm.Color.Status.*}</c>; code never assigns a raw brush.
     /// </summary>
-    public static string StyleClass(StudioStateKind state) => state switch
-    {
-        StudioStateKind.Queued => "studio-state-queued",
-        StudioStateKind.Running => "studio-state-running",
-        StudioStateKind.Done => "studio-state-done",
-        StudioStateKind.Failed => "studio-state-failed",
-        StudioStateKind.Blocked => "studio-state-blocked",
-        StudioStateKind.Stale => "studio-state-stale",
-        StudioStateKind.Skipped => "studio-state-skipped",
-        StudioStateKind.NotStarted => "studio-state-notstarted",
-        _ => "studio-state-notstarted",
-    };
+    public static string StyleClass(StudioStateKind state) => "studio-state-" + StatusCatalog.ClassName(ToStatusKind(state));
 
     /// <summary>The token key backing <see cref="StyleClass"/> (used by tests + evidence).</summary>
-    public static string ColorTokenKey(StudioStateKind state) => state switch
-    {
-        StudioStateKind.Queued => "Nm.Color.Status.Queued",
-        StudioStateKind.Running => "Nm.Color.Status.Running",
-        StudioStateKind.Done => "Nm.Color.Status.Done",
-        StudioStateKind.Failed => "Nm.Color.Status.Failed",
-        StudioStateKind.Blocked => "Nm.Color.Status.Blocked",
-        StudioStateKind.Stale => "Nm.Color.Status.Stale",
-        StudioStateKind.Skipped => "Nm.Color.Status.Skipped",
-        StudioStateKind.NotStarted => "Nm.Color.Text.Disabled",
-        _ => "Nm.Color.Text.Disabled",
-    };
+    public static string ColorTokenKey(StudioStateKind state) => StatusCatalog.ColorKey(ToStatusKind(state));
 
     /// <summary>
     /// Region review state (Core <c>list_region_revisions.review_state</c>) → product state. Only

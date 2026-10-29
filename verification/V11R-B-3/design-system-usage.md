@@ -1,7 +1,106 @@
-# V11R-B-3 Studio · design-system usage (auto-generated)
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]Generated from the Studio source files under `Views/V2/Studio`, `ViewModels/V2/Studio`, `Shell/V2/Studio`.
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]## Nm.* tokens referenced (40)
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]
-  ## DesignSystem tooltip/class helpers reused (10)  System.Object[]System.Object[]
+# Studio design-system usage (I2c regenerated)
+
+Tokens referenced: 40
+
+- `Nm.Border.Focus`
+- `Nm.Border.Hairline`
+- `Nm.Color.Accent.Base`
+- `Nm.Color.Accent.Hover`
+- `Nm.Color.Accent.Muted`
+- `Nm.Color.Bg.Overlay`
+- `Nm.Color.Bg.Panel`
+- `Nm.Color.Bg.Raised`
+- `Nm.Color.Bg.Sunken`
+- `Nm.Color.Line.Default`
+- `Nm.Color.Line.Strong`
+- `Nm.Color.Line.Subtle`
+- `Nm.Color.Status.`
+- `Nm.Color.Status.Blocked`
+- `Nm.Color.Status.Done`
+- `Nm.Color.Status.Failed`
+- `Nm.Color.Status.Queued`
+- `Nm.Color.Status.Running`
+- `Nm.Color.Status.Skipped`
+- `Nm.Color.Status.Stale`
+- `Nm.Color.StatusMuted.Blocked`
+- `Nm.Color.StatusMuted.Done`
+- `Nm.Color.StatusMuted.Failed`
+- `Nm.Color.StatusMuted.Queued`
+- `Nm.Color.StatusMuted.Running`
+- `Nm.Color.StatusMuted.Skipped`
+- `Nm.Color.StatusMuted.Stale`
+- `Nm.Color.Text.Disabled`
+- `Nm.Color.Text.Primary`
+- `Nm.Color.Text.Tertiary`
+- `Nm.Corner.Md`
+- `Nm.Corner.Sm`
+- `Nm.FontSize.Sm`
+- `Nm.FontSize.Xs`
+- `Nm.FontWeight.SemiBold`
+- `Nm.Padding.Section`
+- `Nm.Size.ControlHeightSm`
+- `Nm.Size.FilmStrip`
+- `Nm.Size.HudSlot`
+- `Nm.Size.InspectorCollapsed`
+
+Studio classes: 59
+
+- `studio-action-bar`
+- `studio-band`
+- `studio-banner-error`
+- `studio-banner-partial`
+- `studio-cell`
+- `studio-center`
+- `studio-chip`
+- `studio-chip-accent`
+- `studio-count-chip`
+- `studio-divider`
+- `studio-dot`
+- `studio-drawer`
+- `studio-field-readonly`
+- `studio-fill-blocked`
+- `studio-fill-done`
+- `studio-fill-failed`
+- `studio-fill-nodata`
+- `studio-fill-notstarted`
+- `studio-fill-queued`
+- `studio-fill-running`
+- `studio-fill-skipped`
+- `studio-fill-stale`
+- `studio-film-item`
+- `studio-film-placeholder`
+- `studio-film-thumb`
+- `studio-head`
+- `studio-hud-slot`
+- `studio-inspector`
+- `studio-inspector-rail`
+- `studio-legend`
+- `studio-matrix-page`
+- `studio-matrix-row`
+- `studio-modal-card`
+- `studio-page-frame`
+- `studio-rail`
+- `studio-region`
+- `studio-region-badge`
+- `studio-region-badge-failed`
+- `studio-region-badge-locked`
+- `studio-region-label`
+- `studio-revision-row`
+- `studio-root`
+- `studio-run-strip`
+- `studio-scope-chip`
+- `studio-scrim`
+- `studio-section-title`
+- `studio-segment`
+- `studio-stage-rail`
+- `studio-stage-tab`
+- `studio-state-`
+- `studio-state-blocked`
+- `studio-state-done`
+- `studio-state-failed`
+- `studio-state-nodata`
+- `studio-state-notstarted`
+- `studio-sunken-band`
+- `studio-track-chip`
+- `studio-viewport`
+- `studio-wrap`

@@ -48,7 +48,7 @@ public sealed class StudioTextTierViewModel : StudioObservable
 
     public bool IsLocked { get; private set; }
 
-    public string LockBadge => IsLocked ? "▮" : string.Empty;
+    public string LockBadge => IsLocked ? NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked) : string.Empty;
 
     /// <summary>Shown in place of the value while the tier read is NOT_WIRED.</summary>
     public string NotWiredNote => "能力待接入";
@@ -99,7 +99,7 @@ public sealed class StudioLockItemViewModel : StudioObservable
 
     public bool IsNotWired => !IsWired;
 
-    public string Glyph => IsLocked ? "▮" : "○";
+    public string Glyph => IsLocked ? NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked) : StudioStates.Glyph(StudioStateKind.NotStarted);
 
     /// <summary>Toggle is disabled while the lock write command is missing (F0-1).</summary>
     public bool CanToggle => IsWired;
@@ -146,7 +146,7 @@ public sealed class StudioRevisionItemViewModel : StudioObservable
     /// <summary>Review state mapped onto the shared seven-state vocabulary.</summary>
     public StudioStateKind? State => StudioStates.FromReviewState(ReviewState);
 
-    public string StateGlyph => State is { } state ? StudioStates.Glyph(state) : "○";
+    public string StateGlyph => State is { } state ? StudioStates.Glyph(state) : StudioStates.Glyph(StudioStateKind.NotStarted);
 
     public string StateLabel => State is { } state ? StudioStates.Label(state) : "未开始";
 
@@ -156,7 +156,7 @@ public sealed class StudioRevisionItemViewModel : StudioObservable
 
     public bool IsPinned => Revision.IsPinned;
 
-    public string PinBadge => IsPinned ? "▮" : string.Empty;
+    public string PinBadge => IsPinned ? NewManga.DesignSystem.Controls.StatusCatalog.Symbol(NewManga.DesignSystem.Controls.StatusKind.Locked) : string.Empty;
 
     public string RegionType => Revision.RegionType;
 

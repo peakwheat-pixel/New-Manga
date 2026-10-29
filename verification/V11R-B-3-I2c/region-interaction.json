@@ -1,0 +1,8 @@
+{
+  "ac": "P1-1 Region \u9009\u4E2D/hover\uFF08\u786E\u5B9A\u6027\u63A7\u4EF6\u8DEF\u5F84\uFF09",
+  "hovered_region": "region-1",
+  "hover_class": true,
+  "selected_region": "region-1",
+  "selected_class": true,
+  "method": "RegionBox.Select()/Page.HoverRegion() \u2014 \u4E0E\u6307\u9488\u4E8B\u4EF6\u540C\u4E00\u5904\u7406\u903B\u8F91"
+}

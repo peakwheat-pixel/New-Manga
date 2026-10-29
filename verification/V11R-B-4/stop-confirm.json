@@ -1,0 +1,7 @@
+{
+  "ac": "I2b \u505C\u6B62\u4E8C\u6B21\u786E\u8BA4\uFF08\u9ED8\u8BA4\u53D6\u6D88\u3001\u96F6\u8C03\u7528\uFF09",
+  "control_calls_before": 0,
+  "control_calls_after_cancel": 0,
+  "control_calls_after_confirm": 1,
+  "confirmed_action": "Stop"
+}

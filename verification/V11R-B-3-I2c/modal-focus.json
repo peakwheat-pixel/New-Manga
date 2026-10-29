@@ -1,0 +1,6 @@
+{
+  "ac": "P1-2 Modal \u9ED8\u8BA4\u7126\u70B9\uFF08\u771F\u5B9E\u7126\u70B9\u65AD\u8A00\uFF09",
+  "cancel_focused": true,
+  "esc_cancelled": true,
+  "assertion": "CancelButton.IsFocused || FocusManager.GetFocusedElement() == CancelButton"
+}
