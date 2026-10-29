@@ -73,7 +73,7 @@ pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -PythonExe python -SkipW
 # 3) package (base; add -WithModels for the models variant — requires staged weights)
 pwsh -NoProfile -File apps/desktop-avalonia/scripts/package.ps1 `
   -OutputRoot <out-dir> -Version 0.1.0 `
-  -SidecarDir apps/desktop/src-tauri/target/core-sidecar/core-sidecar
+  -SidecarDir apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar
 
 # 4) per-user NSIS installer (unsigned in this release)
 pwsh -NoProfile -File apps/desktop-avalonia/scripts/build-installer.ps1 `

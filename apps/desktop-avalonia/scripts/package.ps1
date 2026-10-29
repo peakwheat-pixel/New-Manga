@@ -8,7 +8,7 @@
 )
 $ErrorActionPreference='Stop'
 $root=Resolve-Path (Join-Path $PSScriptRoot '..'); $repo=Resolve-Path (Join-Path $root '..\..')
-if([string]::IsNullOrWhiteSpace($SidecarDir)){$SidecarDir=Join-Path $repo 'apps/desktop/src-tauri/target/core-sidecar/core-sidecar'}
+if([string]::IsNullOrWhiteSpace($SidecarDir)){$SidecarDir=Join-Path $repo 'apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar'}
 $variant=if($WithModels){'models'}else{'base'}
 $stageName=if($WithModels){"NewManga-$Version-win-x64-models"}else{"NewManga-$Version-win-x64"}
 $stage=Join-Path $OutputRoot $stageName
