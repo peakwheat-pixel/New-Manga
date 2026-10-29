@@ -68,6 +68,7 @@
 | 1 | `dotnet build NewManga.sln -warnaserror` | 0 | 0 warning / 0 error |
 | 2 | `dotnet test tests/NewManga.App.Tests --filter "AppOptionsCliRobustness|ProgramWriteFatal"` | 0 | 20/20 PASS |
 | 3 | 真实进程 E2E（§3.2） | 0/2/2/2/2 | 与预期一致 |
+| 4 | `dotnet test NewManga.sln --no-build --settings tests/NewManga.runsettings`（全解） | 0 | **827 passed / 9 skipped / 0 failed**（ThemeEngine 235、DesignSystem 82、CoreClient 136+5skip、App 301、Host 73+4skip；skip 为未提供可选夹具的显式环境跳过） |
 
 日志/TRX：`verification/V11R-A-8/logs/`、`trx/cli-robustness.trx`。
 
