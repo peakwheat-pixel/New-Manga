@@ -139,9 +139,80 @@ internal static class V2Fixture
         fake.CredentialTargets.Add(new CredentialTargetOption(
             CredentialKinds.ProxyAuth, "network-1", "公司代理", "missing"));
 
-        fake.ScriptedNetworkResolveResults.Enqueue(new NetworkResolveInfo("network-1", "HTTP", "global_default"));
+        for (var resolveSeed = 0; resolveSeed < 3; resolveSeed++)
+        {
+            fake.ScriptedNetworkResolveResults.Enqueue(new NetworkResolveInfo("network-1", "HTTP", "global_default"));
+        }
+        fake.ScriptedRunSnapshots.Enqueue(new RunSnapshotInfo(
+            "run-1",
+            "translate",
+            new RunScopeInfo("chapter", BookId: "book-0", ChapterId: "ch-0-1"),
+            "running",
+            new[] { new RunTargetInfo("page-0", "page", 0), new RunTargetInfo("page-1", "page", 1) }));
+        fake.ScriptedTaskProjections.Enqueue(new TaskProjectionInfo(
+            "run-1",
+            "running",
+            "第 12 话 · 雨の停車場",
+            0.5,
+            "page-1",
+            "inpaint",
+            new[]
+            {
+                new RunStepFlowInfo("translate", "翻译", "completed"),
+                new RunStepFlowInfo("inpaint", "修复", "running"),
+            },
+            new[]
+            {
+                new RunRowInfo("page-0", 0, "001.jpg", "completed", false, true, null),
+                new RunRowInfo("page-1", 1, "002.jpg", "running", false, true, null),
+            },
+            new[]
+            {
+                new RunTaskInfo("task-1", "page-0", "completed", null, null, new[]
+                {
+                    new RunStepInfo("step-1", "translate", "completed", null, null, null, "openai", "gpt-4o-mini", "cpu"),
+                }),
+                new RunTaskInfo("task-2", "page-1", "running", null, null, Array.Empty<RunStepInfo>()),
+            },
+            new RunCountsInfo(Total: 2, Completed: 1, Failed: 0, Skipped: 0, Blocked: 0, Waiting: 1, Processing: 0),
+            Array.Empty<string>(),
+            new RunControlsInfo(true, true, false, true, false, false)));
         fake.ExportHistory.Add(new ExportHistoryEntry(
             "exp-1", "zip", "completed", null, null, 240, "2026-10-29T01:00:00Z"));
+        fake.ScriptedRunSnapshots.Enqueue(new RunSnapshotInfo(
+            "run-1",
+            "translate",
+            new RunScopeInfo("chapter", BookId: "book-0", ChapterId: "ch-0-1"),
+            "running",
+            new[] { new RunTargetInfo("page-0", "page", 0), new RunTargetInfo("page-1", "page", 1) }));
+        fake.ScriptedTaskProjections.Enqueue(new TaskProjectionInfo(
+            "run-1",
+            "running",
+            "第 12 话 · 雨の停車場",
+            0.5,
+            "page-1",
+            "inpaint",
+            new[]
+            {
+                new RunStepFlowInfo("translate", "翻译", "completed"),
+                new RunStepFlowInfo("inpaint", "修复", "running"),
+            },
+            new[]
+            {
+                new RunRowInfo("page-0", 0, "001.jpg", "completed", false, true, null),
+                new RunRowInfo("page-1", 1, "002.jpg", "running", false, true, null),
+            },
+            new[]
+            {
+                new RunTaskInfo("task-1", "page-0", "completed", null, null, new[]
+                {
+                    new RunStepInfo("step-1", "translate", "completed", null, null, null, "openai", "gpt-4o-mini", "cpu"),
+                }),
+                new RunTaskInfo("task-2", "page-1", "running", null, null, Array.Empty<RunStepInfo>()),
+            },
+            new RunCountsInfo(Total: 2, Completed: 1, Failed: 0, Skipped: 0, Blocked: 0, Waiting: 1, Processing: 0),
+            Array.Empty<string>(),
+            new RunControlsInfo(true, true, false, true, false, false)));
         fake.ExportHistory.Add(new ExportHistoryEntry(
             "exp-2", "pdf", "failed", null, null, 0, "2026-10-28T22:00:00Z"));
     }

@@ -178,6 +178,8 @@ public sealed class NetworkProfileRowViewModel : ObservableObject
 
     public string EndpointText => HasProxyEndpoint ? ProxyEndpoint : "无代理端点";
 
+    public string ModeEndpointText => $"{Mode} · {EndpointText}";
+
     public string TlsText => VerifyTls ? "TLS 校验开" : "TLS 校验关";
 
     public string FallbackText => AllowDirectFallback ? "代理失败可直连回退" : "代理失败不回退";
@@ -431,5 +433,102 @@ public sealed class ExportHistoryRowViewModel : ObservableObject
         "pending" => "等待中",
         "publishing" => "写入中",
         _ => status,
+    };
+}
+
+
+/// <summary>One stage of the Run step flow (real GetTaskProjection step_flow).</summary>
+public sealed class RunStageRowViewModel : ObservableObject
+{
+    public RunStageRowViewModel(RunStepFlowInfo step)
+    {
+        Type = step.Type;
+        Label = step.Label.Length > 0 ? step.Label : step.Type;
+        State = step.State;
+    }
+
+    public string Type { get; }
+
+    public string Label { get; }
+
+    public string State { get; }
+
+    public string StateText => ConsoleStatusText.RunState(State);
+
+    public NmStatus Status => ConsoleStatusText.RunStatus(State);
+}
+
+/// <summary>One per-page Run row (real GetTaskProjection rows + task step count).</summary>
+public sealed class RunRowViewModel : ObservableObject
+{
+    public RunRowViewModel(RunRowInfo row, RunTaskInfo? task)
+    {
+        PageId = row.PageId;
+        OrderText = row.PageOrder is { } order
+            ? order.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            : "—";
+        Filename = string.IsNullOrWhiteSpace(row.Filename) ? row.PageId : row.Filename;
+        Status = row.Status;
+        ErrorCode = row.ErrorCode ?? string.Empty;
+        IsLocked = row.IsLocked;
+        IsPipelineCurrent = row.IsPipelineCurrent;
+        StepCountText = task switch
+        {
+            null => "步骤：—",
+            { Steps.Count: 0 } => "步骤：0",
+            _ => $"步骤：{task.Steps.Count}（{string.Join(" / ", task.Steps.Select(step => step.StepType))}）",
+        };
+    }
+
+    public string PageId { get; }
+
+    public string OrderText { get; }
+
+    public string Filename { get; }
+
+    public string Status { get; }
+
+    public string StatusText => ConsoleStatusText.RunState(Status);
+
+    public NmStatus StatusNm => ConsoleStatusText.RunStatus(Status);
+
+    public string ErrorCode { get; }
+
+    public bool IsLocked { get; }
+
+    public bool IsPipelineCurrent { get; }
+
+    public string StepCountText { get; }
+
+    public string LockText => IsLocked ? "锁定" : string.Empty;
+}
+
+/// <summary>Status vocabulary mapping for Run projections (Core states → UI status language).</summary>
+public static class ConsoleStatusText
+{
+    public static string RunState(string state) => state switch
+    {
+        "completed" or "done" => "已完成",
+        "running" or "processing" => "进行中",
+        "failed" or "error" => "失败",
+        "blocked" => "阻塞",
+        "waiting" or "pending" or "queued" => "等待",
+        "skipped" => "跳过",
+        "cancelled" or "canceled" or "stopped" => "已取消",
+        "paused" => "已暂停",
+        "stale" => "过期",
+        _ => string.IsNullOrEmpty(state) ? "未知" : state,
+    };
+
+    public static NmStatus RunStatus(string state) => state switch
+    {
+        "completed" or "done" => NmStatus.Done,
+        "running" or "processing" => NmStatus.Running,
+        "failed" or "error" => NmStatus.Failed,
+        "blocked" => NmStatus.Blocked,
+        "waiting" or "pending" or "queued" => NmStatus.Queued,
+        "skipped" => NmStatus.Skipped,
+        "stale" => NmStatus.Stale,
+        _ => NmStatus.NotStarted,
     };
 }

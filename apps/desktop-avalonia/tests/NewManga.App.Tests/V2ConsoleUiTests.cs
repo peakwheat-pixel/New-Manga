@@ -89,7 +89,7 @@ public sealed class V2ConsoleUiTests
             : default;
 
     [AvaloniaFact]
-    public async Task Console_HasNineSections_FourRealAndFiveHonestlyNotWired()
+    public async Task Console_HasNineSections_FiveRealAndFourHonestlyNotWired()
     {
         var (window, shell, console) = await HostInConsoleAsync(Fixture());
         Assert.Equal(9, console.Sections.Count);
@@ -101,6 +101,7 @@ public sealed class V2ConsoleUiTests
         Assert.Equal(
             new[]
             {
+                ConsoleSectionId.Tasks,
                 ConsoleSectionId.Providers,
                 ConsoleSectionId.Network,
                 ConsoleSectionId.Diagnostics,
@@ -226,7 +227,7 @@ public sealed class V2ConsoleUiTests
         console.DeleteSelectedProviderCommand.Execute(null);
         Assert.True(shell.ViewModel.IsConfirmOpen);
         Assert.Contains("不可撤销", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
-        Assert.Contains("能力绑定会失效", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
+        Assert.Contains("能力绑定会立即失效", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
         Assert.True(shell.ViewModel.ConfirmIsDanger);
         Assert.True(shell.ViewModel.ConfirmCanConfirm);
 
@@ -298,11 +299,12 @@ public sealed class V2ConsoleUiTests
         Dispatcher.UIThread.RunJobs();
         Assert.True(console.IsNotWiredSection);
         Assert.True(console.ShowClearCacheDanger);
+        Capture(window, "04-console-storage-not-wired");
         console.RequestClearCacheCommand.Execute(null);
         Assert.True(shell.ViewModel.IsConfirmOpen);
         Assert.False(shell.ViewModel.ConfirmCanConfirm);
         Assert.Contains("能力待接入", shell.ViewModel.ConfirmBlockedReason, StringComparison.Ordinal);
-        Capture(window, "04-console-storage-not-wired");
+        Capture(window, "08-console-danger-confirm-blocked");
         shell.ViewModel.CancelConfirmCommand.Execute(null);
         Assert.False(shell.ViewModel.IsConfirmOpen);
 
@@ -389,6 +391,86 @@ public sealed class V2ConsoleUiTests
         Assert.Contains("INVALID_REQUEST", shell.ViewModel.NoticeText, StringComparison.Ordinal);
         Assert.DoesNotContain("C:\\", shell.ViewModel.NoticeText, StringComparison.Ordinal);
         Assert.DoesNotContain("sk-live", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Tasks_LoadsRealRunSnapshotAndProjection_AndHonorsRunControlRules()
+    {
+        var controller = Fixture();
+        controller.ScriptedControlRuns.Enqueue(new RunControlInfo("run-1", "paused"));
+        controller.ScriptedControlRuns.Enqueue(new RunControlInfo("run-1", "cancelled"));
+        var (window, shell, console) = await HostInConsoleAsync(controller);
+        console.SelectSectionById(ConsoleSectionId.Tasks);
+        console.IsRunPollingEnabled = false; // deterministic: no 1s polling in the test
+        console.RunIdInput = "run-1";
+        console.LoadRunCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        // Data comes from real IRunController calls, not UI-invented numbers.
+        Assert.Equal(new[] { "run-1" }, controller.RunSnapshotRequests.ToArray());
+        Assert.Equal(new[] { "run-1" }, controller.TaskProjectionRequests.ToArray());
+        Assert.Equal("进行中", console.RunStatusText);
+        Assert.Equal("translate", console.RunCommandText);
+        Assert.Contains("chapter", console.RunScopeText, StringComparison.Ordinal);
+        Assert.Equal("50%", console.RunProgressText);
+        Assert.Contains("总 2", console.RunCountsText, StringComparison.Ordinal);
+        Assert.Contains("完成 1", console.RunCountsText, StringComparison.Ordinal);
+        Assert.Equal("inpaint", console.RunCurrentStepText);
+        Assert.Equal(2, console.RunStages.Count);
+        Assert.Equal(2, console.RunRows.Count);
+        Assert.Equal("002.jpg", console.RunRows[1].Filename);
+        Assert.True(console.RunCanPause);
+        Assert.True(console.RunCanRestart);
+        Assert.True(console.RunCanStop);
+
+        // R-08: restart/retry need a caller-supplied idempotency key — the UI must not invent one.
+        console.RestartRunCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Empty(controller.ControlRunRequests);
+        Assert.Contains("幂等键", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+
+        console.RunIdempotencyKey = "idem-restart-1";
+        console.RestartRunCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Single(controller.ControlRunRequests);
+        Assert.Equal(("run-1", RunControlAction.Restart, "idem-restart-1"), controller.ControlRunRequests[0]);
+
+        // Stop is destructive → confirmation first, cancel writes nothing.
+        console.StopRunCommand.Execute(null);
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Contains("进行中的步骤会终止", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
+        shell.ViewModel.CancelConfirmCommand.Execute(null);
+        Assert.Single(controller.ControlRunRequests);
+
+        console.StopRunCommand.Execute(null);
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(2, controller.ControlRunRequests.Count);
+        Assert.Equal(RunControlAction.Stop, controller.ControlRunRequests[1].Action);
+
+        Capture(window, "07-console-tasks-run");
+        console.StopRunPolling();
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Tasks_WithoutRunId_DoesNotFabricateAnything()
+    {
+        var controller = Fixture();
+        // Drain the fixture's scripted run so the section has no data until a real load happens.
+        controller.ScriptedRunSnapshots.Clear();
+        controller.ScriptedTaskProjections.Clear();
+        var (window, shell, console) = await HostInConsoleAsync(controller);
+        console.SelectSectionById(ConsoleSectionId.Tasks);
+        console.IsRunPollingEnabled = false;
+        console.RunIdInput = string.Empty;
+        console.LoadRunCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Empty(controller.RunSnapshotRequests);
+        Assert.False(console.HasRunLoaded);
+        Assert.Empty(console.RunRows);
+        Assert.Contains("run_id", shell.ViewModel.NoticeText, StringComparison.Ordinal);
         window.Close();
     }
 }

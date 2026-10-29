@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 
@@ -67,6 +68,27 @@ public sealed class ConsoleViewModel : ObservableObject
     private string _hostErrorCodeText = "无";
     private string _hostWireFrameText = "—";
 
+    private string _runIdInput = string.Empty;
+    private string _runIdempotencyKey = string.Empty;
+    private bool _isRunPollingEnabled = true;
+    private bool _hasRunLoaded;
+    private string _runStatusText = "未加载 Run";
+    private string _runCommandText = "—";
+    private string _runScopeText = "—";
+    private string _runProgressText = "—";
+    private string _runCountsText = "—";
+    private string _runCurrentStepText = "—";
+    private string _runBlockedText = "无";
+    private bool _runCanPause;
+    private bool _runCanStop;
+    private bool _runCanContinue;
+    private bool _runCanRestart;
+    private bool _runCanResumeBlocked;
+    private bool _runCanRetryFailed;
+    private RunSnapshotInfo? _runSnapshot;
+    private TaskProjectionInfo? _runProjection;
+    private DispatcherTimer? _runPollTimer;
+
     public ConsoleViewModel(
         IHostController controller,
         ShellState state,
@@ -88,7 +110,7 @@ public sealed class ConsoleViewModel : ObservableObject
 
         Sections = new ObservableCollection<ConsoleSectionItem>
         {
-            Section(ConsoleSectionId.Tasks, "01", "任务与队列", "Run 投影未接入（V11R-A-2 / B-4）", isWired: false),
+            Section(ConsoleSectionId.Tasks, "01", "任务与队列", "Run 快照 / 任务投影（IRunController，真实）", isWired: true),
             Section(ConsoleSectionId.Providers, "02", "Provider 与凭据", "配置 / 凭据状态 / 能力绑定", isWired: true),
             Section(ConsoleSectionId.Network, "03", "网络与代理", "网络配置 / 默认网络 / 连通测试", isWired: true),
             Section(ConsoleSectionId.Devices, "04", "模型与设备", "设备探测未接入（无 Host 命令）", isWired: false),
@@ -104,6 +126,8 @@ public sealed class ConsoleViewModel : ObservableObject
         CapabilityBindings = new ObservableCollection<CapabilityBindingRowViewModel>();
         NetworkProfiles = new ObservableCollection<NetworkProfileRowViewModel>();
         ExportHistory = new ObservableCollection<ExportHistoryRowViewModel>();
+        RunStages = new ObservableCollection<RunStageRowViewModel>();
+        RunRows = new ObservableCollection<RunRowViewModel>();
         ProviderNetworkOptions = new ObservableCollection<ConsoleOption> { new(string.Empty, "使用默认网络") };
         BindingScopeOptions = new ObservableCollection<BindingScopeOption>();
         NetworkModeOptions = new ObservableCollection<ConsoleOption>
@@ -140,10 +164,25 @@ public sealed class ConsoleViewModel : ObservableObject
         RequestCreateBackupCommand = new RelayCommand(RequestCreateBackup);
         RequestDeleteBackupCommand = new RelayCommand(RequestDeleteBackup);
         RefreshExportHistoryCommand = new RelayCommand(() => _ = RefreshExportHistoryAsync());
+        LoadRunCommand = new RelayCommand(() => _ = LoadRunAsync());
+        RefreshRunCommand = new RelayCommand(() => _ = RefreshRunAsync(notifyFailure: true));
+        PauseRunCommand = new RelayCommand(() => RequestRunControl(RunControlAction.Pause));
+        ContinueRunCommand = new RelayCommand(() => RequestRunControl(RunControlAction.Resume));
+        StopRunCommand = new RelayCommand(RequestStopRun);
+        RestartRunCommand = new RelayCommand(() => RequestRunControl(RunControlAction.Restart));
+        ResumeBlockedRunCommand = new RelayCommand(() => _ = ResumeBlockedRunAsync());
+        RetryFailedRunCommand = new RelayCommand(() => _ = RetryFailedRunAsync());
         RebuildCapabilityBindings();
         RebuildBindingScopes();
         SelectSection(Sections[0]);
         _state.SelectionChanged += (_, _) => RebuildBindingScopes();
+        _state.SpaceChanged += (_, _) =>
+        {
+            if (_state.CurrentSpace != SpaceId.Console)
+            {
+                StopRunPolling();
+            }
+        };
     }
 
     // ── Sections ─────────────────────────────────────────────────────────────────────────
@@ -151,6 +190,8 @@ public sealed class ConsoleViewModel : ObservableObject
     public ObservableCollection<ConsoleSectionItem> Sections { get; }
 
     public ConsoleSectionItem SelectedSection => _selectedSection;
+
+    public bool IsTasksSection => _selectedSection.Id == ConsoleSectionId.Tasks;
 
     public bool IsProvidersSection => _selectedSection.Id == ConsoleSectionId.Providers;
 
@@ -171,8 +212,6 @@ public sealed class ConsoleViewModel : ObservableObject
     public bool ShowClearCacheDanger => _selectedSection.Id == ConsoleSectionId.Storage;
 
     public bool ShowBackupDanger => _selectedSection.Id == ConsoleSectionId.Backup;
-
-    public bool ShowStudioShortcut => _selectedSection.Id == ConsoleSectionId.Tasks;
 
     public string SectionSummary => _selectedSection.Summary;
 
@@ -196,6 +235,7 @@ public sealed class ConsoleViewModel : ObservableObject
         _selectedSection = section;
         OnPropertyChanged(
             nameof(SelectedSection),
+            nameof(IsTasksSection),
             nameof(IsProvidersSection),
             nameof(IsNetworkSection),
             nameof(IsDiagnosticsSection),
@@ -206,7 +246,6 @@ public sealed class ConsoleViewModel : ObservableObject
             nameof(NotWiredRequirement),
             nameof(ShowClearCacheDanger),
             nameof(ShowBackupDanger),
-            nameof(ShowStudioShortcut),
             nameof(SectionSummary));
     }
 
@@ -278,6 +317,455 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public RelayCommand RequestDeleteBackupCommand { get; }
 
+    // ── ① 任务与队列（真实 IRunController；无可列 Run 时要求显式 run_id） ─────────────
+    //
+    // The frozen contract has no "list runs" command, so the section takes an explicit run id and
+    // reads IHostController.GetRunSnapshotAsync / GetTaskProjectionAsync (V11R-A-2) — the same source
+    // V11R-B-4 will use. Polling is independent here but never fabricates progress: every counter comes
+    // from the Core projection and missing counters render as "—".
+
+    public ObservableCollection<RunStageRowViewModel> RunStages { get; }
+
+    public ObservableCollection<RunRowViewModel> RunRows { get; }
+
+    public string RunIdInput
+    {
+        get => _runIdInput;
+        set => Set(ref _runIdInput, value);
+    }
+
+    /// <summary>Restart / Retry Failed require a caller-supplied idempotency key (R-08: never silent).</summary>
+    public string RunIdempotencyKey
+    {
+        get => _runIdempotencyKey;
+        set => Set(ref _runIdempotencyKey, value);
+    }
+
+    public bool IsRunPollingEnabled
+    {
+        get => _isRunPollingEnabled;
+        set
+        {
+            if (Set(ref _isRunPollingEnabled, value) && !value)
+            {
+                StopRunPolling();
+            }
+        }
+    }
+
+    public bool HasRunLoaded
+    {
+        get => _hasRunLoaded;
+        private set => Set(ref _hasRunLoaded, value);
+    }
+
+    public string RunStatusText
+    {
+        get => _runStatusText;
+        private set => Set(ref _runStatusText, value);
+    }
+
+    public string RunCommandText
+    {
+        get => _runCommandText;
+        private set => Set(ref _runCommandText, value);
+    }
+
+    public string RunScopeText
+    {
+        get => _runScopeText;
+        private set => Set(ref _runScopeText, value);
+    }
+
+    public string RunProgressText
+    {
+        get => _runProgressText;
+        private set => Set(ref _runProgressText, value);
+    }
+
+    public string RunCountsText
+    {
+        get => _runCountsText;
+        private set => Set(ref _runCountsText, value);
+    }
+
+    public string RunCurrentStepText
+    {
+        get => _runCurrentStepText;
+        private set => Set(ref _runCurrentStepText, value);
+    }
+
+    public string RunBlockedText
+    {
+        get => _runBlockedText;
+        private set => Set(ref _runBlockedText, value);
+    }
+
+    public bool RunCanPause
+    {
+        get => _runCanPause;
+        private set => Set(ref _runCanPause, value);
+    }
+
+    public bool RunCanStop
+    {
+        get => _runCanStop;
+        private set => Set(ref _runCanStop, value);
+    }
+
+    public bool RunCanContinue
+    {
+        get => _runCanContinue;
+        private set => Set(ref _runCanContinue, value);
+    }
+
+    public bool RunCanRestart
+    {
+        get => _runCanRestart;
+        private set => Set(ref _runCanRestart, value);
+    }
+
+    public bool RunCanResumeBlocked
+    {
+        get => _runCanResumeBlocked;
+        private set => Set(ref _runCanResumeBlocked, value);
+    }
+
+    public bool RunCanRetryFailed
+    {
+        get => _runCanRetryFailed;
+        private set => Set(ref _runCanRetryFailed, value);
+    }
+
+    public string RunSourceNote =>
+        "数据同源：IRunController（V11R-A-2）的 GetRunSnapshot / GetTaskProjection；B-4 共享 Run 视图合入后改为订阅，不另造状态。";
+
+    public RelayCommand LoadRunCommand { get; }
+
+    public RelayCommand RefreshRunCommand { get; }
+
+    public RelayCommand PauseRunCommand { get; }
+
+    public RelayCommand ContinueRunCommand { get; }
+
+    public RelayCommand StopRunCommand { get; }
+
+    public RelayCommand RestartRunCommand { get; }
+
+    public RelayCommand ResumeBlockedRunCommand { get; }
+
+    public RelayCommand RetryFailedRunCommand { get; }
+
+    public void StopRunPolling()
+    {
+        if (_runPollTimer is null)
+        {
+            return;
+        }
+
+        _runPollTimer.Stop();
+        _runPollTimer = null;
+    }
+
+    private void StartRunPolling()
+    {
+        if (!IsRunPollingEnabled || _runPollTimer is not null || !HasRunLoaded)
+        {
+            return;
+        }
+
+        _runPollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _runPollTimer.Tick += (_, _) =>
+        {
+            if (HasRunLoaded)
+            {
+                _ = RefreshRunAsync(notifyFailure: false);
+            }
+        };
+        _runPollTimer.Start();
+    }
+
+    private async Task LoadRunAsync()
+    {
+        var runId = RunIdInput.Trim();
+        if (runId.Length == 0)
+        {
+            _notify("请输入 run_id：冻结契约没有「列出 Run」命令，run id 由工位批次或外部记录提供", NmStatus.Blocked);
+            return;
+        }
+
+        await RefreshRunAsync(notifyFailure: true).ConfigureAwait(true);
+        if (HasRunLoaded)
+        {
+            StartRunPolling();
+        }
+    }
+
+    private async Task RefreshRunAsync(bool notifyFailure)
+    {
+        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        if (runId.Length == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            var snapshot = await _controller.GetRunSnapshotAsync(runId).ConfigureAwait(true);
+            var projection = await _controller.GetTaskProjectionAsync(runId).ConfigureAwait(true);
+            if (snapshot is null && projection is null)
+            {
+                if (notifyFailure)
+                {
+                    _notify($"Run 读取被拒绝或不存在：{RunFailureCode()}", NmStatus.Failed);
+                }
+
+                StopRunPolling();
+                return;
+            }
+
+            ApplyRun(runId, snapshot, projection);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            if (notifyFailure)
+            {
+                _notify("Run 读取失败：Host 不可用", NmStatus.Failed);
+            }
+        }
+    }
+
+    private string RunFailureCode()
+    {
+        var snapshot = _controller.Snapshot;
+        if (!string.IsNullOrEmpty(snapshot.ErrorCode))
+        {
+            return snapshot.ErrorCode;
+        }
+
+        return string.IsNullOrEmpty(snapshot.LastError) ? "UNKNOWN" : snapshot.LastError;
+    }
+
+    private void ApplyRun(string runId, RunSnapshotInfo? snapshot, TaskProjectionInfo? projection)
+    {
+        _runSnapshot = snapshot;
+        _runProjection = projection;
+        HasRunLoaded = true;
+        RunIdInput = runId;
+
+        var status = projection?.RunStatus ?? snapshot?.Status ?? string.Empty;
+        RunStatusText = string.IsNullOrEmpty(status) ? "未知" : ConsoleStatusText.RunState(status);
+        RunCommandText = snapshot is null || string.IsNullOrEmpty(snapshot.Command) ? "—" : snapshot.Command;
+        RunScopeText = DescribeScope(snapshot?.Scope);
+        RunProgressText = projection?.OverallProgress is { } progress ? progress.ToString("P0") : "—";
+        RunCountsText = DescribeCounts(projection?.Counts);
+        RunCurrentStepText = string.IsNullOrEmpty(projection?.CurrentStepType) ? "—" : projection!.CurrentStepType!;
+        RunBlockedText = projection is null || projection.BlockedReasons.Count == 0
+            ? "无"
+            : string.Join("；", projection.BlockedReasons);
+
+        RunStages.Clear();
+        if (projection is not null)
+        {
+            foreach (var stage in projection.StepFlow)
+            {
+                RunStages.Add(new RunStageRowViewModel(stage));
+            }
+        }
+
+        RunRows.Clear();
+        if (projection is not null)
+        {
+            var tasksByPage = projection.Tasks
+                .GroupBy(task => task.PageId, StringComparer.Ordinal)
+                .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+            foreach (var row in projection.Rows)
+            {
+                tasksByPage.TryGetValue(row.PageId, out var task);
+                RunRows.Add(new RunRowViewModel(row, task));
+            }
+        }
+
+        var controls = projection?.Controls;
+        RunCanPause = controls?.CanPause ?? false;
+        RunCanStop = controls?.CanStop ?? false;
+        RunCanContinue = controls?.CanContinue ?? false;
+        RunCanRestart = controls?.CanRestart ?? false;
+        RunCanRetryFailed = controls?.CanRetryFailed ?? false;
+        RunCanResumeBlocked = controls?.CanContinue ?? false;
+
+        OnPropertyChanged(
+            nameof(RunStatusText),
+            nameof(RunCommandText),
+            nameof(RunScopeText),
+            nameof(RunProgressText),
+            nameof(RunCountsText),
+            nameof(RunCurrentStepText),
+            nameof(RunBlockedText),
+            nameof(HasRunLoaded));
+    }
+
+    private static string DescribeScope(RunScopeInfo? scope)
+    {
+        if (scope is null || string.IsNullOrEmpty(scope.Kind))
+        {
+            return "—";
+        }
+
+        return scope.Kind switch
+        {
+            "book" => $"book: {scope.BookId}",
+            "chapter" => $"chapter: {scope.ChapterId}",
+            "page" => $"page: {scope.PageId}",
+            "region" => $"region: {scope.RegionId}",
+            "page_selection" => $"page_selection: {scope.PageIds?.Count ?? 0} 页",
+            _ => scope.Kind,
+        };
+    }
+
+    private static string DescribeCounts(RunCountsInfo? counts)
+    {
+        if (counts is null)
+        {
+            return "—";
+        }
+
+        static string Value(int? value) => value?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "—";
+
+        return $"总 {Value(counts.Total)} · 完成 {Value(counts.Completed)} · 失败 {Value(counts.Failed)} · " +
+               $"跳过 {Value(counts.Skipped)} · 阻塞 {Value(counts.Blocked)} · 等待 {Value(counts.Waiting)} · 处理中 {Value(counts.Processing)}";
+    }
+
+    private void RequestRunControl(RunControlAction action)
+    {
+        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        if (runId.Length == 0)
+        {
+            _notify("请先加载一个 Run（输入 run_id 并读取）", NmStatus.Blocked);
+            return;
+        }
+
+        if (action == RunControlAction.Restart && string.IsNullOrWhiteSpace(RunIdempotencyKey))
+        {
+            _notify("Restart 需要幂等键：请在「幂等键」框填写（R-08：UI 不静默生成）", NmStatus.Blocked);
+            return;
+        }
+
+        if (action == RunControlAction.Stop)
+        {
+            _requestConfirm(new ConfirmRequest(
+                "停止当前 Run",
+                $"将停止 Run「{runId}」：进行中的步骤会终止，未完成页需要重新启动 Run 才能继续。" +
+                "已完成的输出保留；此操作不可撤销（可取消）。",
+                "停止 Run",
+                IsDanger: true,
+                OnConfirm: () => _ = ControlRunAsync(runId, action, null)));
+            return;
+        }
+
+        _ = ControlRunAsync(runId, action, action == RunControlAction.Restart ? RunIdempotencyKey.Trim() : null);
+    }
+
+    private void RequestStopRun() => RequestRunControl(RunControlAction.Stop);
+
+    private async Task ControlRunAsync(string runId, RunControlAction action, string? idempotencyKey)
+    {
+        try
+        {
+            var result = await _controller
+                .ControlRunAsync(runId, action, idempotencyKey)
+                .ConfigureAwait(true);
+            if (result is null)
+            {
+                _notify($"Run 控制被拒绝：{RunFailureCode()}", NmStatus.Failed);
+                return;
+            }
+
+            _notify(
+                result.NewRunId is { Length: > 0 }
+                    ? $"Run 已{ActionText(action)}，新 Run：{result.NewRunId}"
+                    : $"Run 已{ActionText(action)}（状态：{ConsoleStatusText.RunState(result.Status)}）",
+                NmStatus.Done);
+            await RefreshRunAsync(notifyFailure: false).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            _notify("Run 控制失败：Host 不可用", NmStatus.Failed);
+        }
+    }
+
+    private static string ActionText(RunControlAction action) => action switch
+    {
+        RunControlAction.Pause => "暂停",
+        RunControlAction.Resume => "继续",
+        RunControlAction.Stop => "停止",
+        RunControlAction.Restart => "重启",
+        _ => action.ToString(),
+    };
+
+    private async Task ResumeBlockedRunAsync()
+    {
+        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        if (runId.Length == 0)
+        {
+            _notify("请先加载一个 Run", NmStatus.Blocked);
+            return;
+        }
+
+        try
+        {
+            var result = await _controller.ResumeBlockedRunAsync(runId).ConfigureAwait(true);
+            if (result is null)
+            {
+                _notify($"恢复阻塞被拒绝：{RunFailureCode()}", NmStatus.Failed);
+                return;
+            }
+
+            _notify("已请求恢复阻塞 Run", NmStatus.Done);
+            await RefreshRunAsync(notifyFailure: false).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            _notify("恢复阻塞失败：Host 不可用", NmStatus.Failed);
+        }
+    }
+
+    private async Task RetryFailedRunAsync()
+    {
+        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        if (runId.Length == 0)
+        {
+            _notify("请先加载一个 Run", NmStatus.Blocked);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(RunIdempotencyKey))
+        {
+            _notify("重试失败目标需要幂等键：请在「幂等键」框填写（R-08：UI 不静默生成）", NmStatus.Blocked);
+            return;
+        }
+
+        try
+        {
+            var result = await _controller
+                .RetryFailedTargetsAsync(runId, RunIdempotencyKey.Trim())
+                .ConfigureAwait(true);
+            if (result is null)
+            {
+                _notify($"重试失败目标被拒绝：{RunFailureCode()}", NmStatus.Failed);
+                return;
+            }
+
+            _notify(
+                result.NewRunId is { Length: > 0 } ? $"已创建重试 Run：{result.NewRunId}" : "已请求重试失败目标",
+                NmStatus.Done);
+            await RefreshRunAsync(notifyFailure: false).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            _notify("重试失败目标失败：Host 不可用", NmStatus.Failed);
+        }
+    }
     // ── Provider section ─────────────────────────────────────────────────────────────────
 
     public ObservableCollection<ProviderProfileRowViewModel> ProviderProfiles { get; }
@@ -1453,24 +1941,20 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private static (string Body, string Requirement) NotWiredCopy(ConsoleSectionId id) => id switch
     {
-        ConsoleSectionId.Tasks => (
-            "Run 列表、批次进度与逐页任务投影由 V11R-A-2（IRunController）与 V11R-B-4（工位批次）接入；" +
-            "控制台不展示任何伪造的任务或进度。",
-            "依赖：IRunController.GetRunSnapshotAsync / GetTaskProjectionAsync（V11R-A-2）；Run 列表命令尚未注册。"),
         ConsoleSectionId.Devices => (
-            "设备探测当前只存在于打包元数据（VERSION.json），Host 未暴露设备/模型查询命令；按 AD-002 UI 不直读任意文件，" +
+            "能力待接入：设备探测当前只存在于打包元数据（VERSION.json），Host 未暴露设备/模型查询命令；按 AD-002 UI 不直读任意文件，" +
             "因此这里不显示 GPU/CPU 状态，也不提供假开关。",
             "依赖：Host 设备状态命令（需契约扩展）；在接入前请以打包 VERSION.json 与日志为准。"),
         ConsoleSectionId.Storage => (
-            "缓存预览/清理命令（cleanup_preview / cleanup_run）已在命令注册表中，但 IHostController 未暴露方法，" +
+            "能力待接入：缓存预览/清理命令（cleanup_preview / cleanup_run）已在命令注册表中，但 IHostController 未暴露方法，" +
             "无法先展示将删除的缓存量、过期 revision 与影响面，因此不执行清理。",
             "依赖：core-bridge 追加 IHostController 方法；清理前必须展示影响面并二次确认。"),
         ConsoleSectionId.Backup => (
-            "备份列表/创建命令（backup_list / backup_create）已在注册表中，但 IHostController 未暴露方法；" +
+            "能力待接入：备份列表/创建命令（backup_list / backup_create）已在注册表中，但 IHostController 未暴露方法；" +
             ".nmbak 恢复策略尚未接入，因此不提供假备份开关。",
             "依赖：core-bridge 追加 IHostController 方法；恢复必须二次确认并说明覆盖范围。"),
         ConsoleSectionId.Plugins => (
-            "插件列表/启停命令（plugins_list / plugins_set_enabled）已在注册表中，但 IHostController 未暴露方法；" +
+            "能力待接入：插件列表/启停命令（plugins_list / plugins_set_enabled）已在注册表中，但 IHostController 未暴露方法；" +
             "不显示无法生效的开关。",
             "依赖：core-bridge 追加 IHostController 方法；插件启用需要审计记录与权限说明。"),
         _ => (

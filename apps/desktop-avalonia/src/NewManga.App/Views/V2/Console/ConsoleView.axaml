@@ -96,9 +96,7 @@
               <TextBlock Classes="section-title" Text="接入前置条件" />
               <TextBlock Classes="body" Text="{Binding NotWiredRequirement}" TextWrapping="Wrap" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowStudioShortcut}">
-              <Button Classes="secondary sm" Content="前往工位（Run 内容属 V11R-B-4）" Command="{Binding OpenStudioCommand}" />
-            </StackPanel>
+
             <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowClearCacheDanger}">
               <Button Classes="danger sm" Content="清理缓存与过期版本（能力待接入）" Command="{Binding RequestClearCacheCommand}" />
             </StackPanel>
@@ -108,6 +106,91 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- ── ① 任务与队列（真实 IRunController，无 List Run 命令） ─────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsTasksSection}">
+            <ctrl:AlertBanner Severity="Blocked" Message="{Binding RunSourceNote}" />
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="meta" Text="run_id" VerticalAlignment="Center" />
+              <TextBox Grid.Column="1" Text="{Binding RunIdInput}" Watermark="输入 run_id（冻结契约无 List Run；由工位批次或外部记录提供）" />
+              <Button Grid.Column="2" Classes="primary sm" Content="读取 Run" Command="{Binding LoadRunCommand}" />
+              <Button Grid.Column="3" Classes="ghost sm" Content="刷新" Command="{Binding RefreshRunCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="meta" Text="幂等键" VerticalAlignment="Center" />
+              <TextBox Grid.Column="1" Text="{Binding RunIdempotencyKey}" Watermark="Restart / 重试失败目标必填（R-08：UI 不静默生成）" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasRunLoaded}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="Run 状态（真实投影）" />
+                <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" RowSpacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="meta" Text="状态" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding RunStatusText}" />
+                  <TextBlock Grid.Column="2" Classes="meta" Text="命令" />
+                  <TextBlock Grid.Column="3" Classes="meta" Text="{Binding RunCommandText}" />
+                  <TextBlock Grid.Row="1" Classes="meta" Text="作用域" />
+                  <TextBlock Grid.Row="1" Grid.Column="1" Classes="meta" Text="{Binding RunScopeText}" />
+                  <TextBlock Grid.Row="1" Grid.Column="2" Classes="meta" Text="总进度" />
+                  <TextBlock Grid.Row="1" Grid.Column="3" Classes="data" Text="{Binding RunProgressText}" />
+                  <TextBlock Grid.Row="2" Classes="meta" Text="当前步骤" />
+                  <TextBlock Grid.Row="2" Grid.Column="1" Classes="meta" Text="{Binding RunCurrentStepText}" />
+                  <TextBlock Grid.Row="2" Grid.Column="2" Classes="meta" Text="阻塞原因" />
+                  <TextBlock Grid.Row="2" Grid.Column="3" Classes="meta" Text="{Binding RunBlockedText}" TextWrapping="Wrap" />
+                  <TextBlock Grid.Row="3" Classes="meta" Text="计数" />
+                  <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Classes="meta" Text="{Binding RunCountsText}" TextWrapping="Wrap" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="secondary sm" Content="暂停" Command="{Binding PauseRunCommand}" IsEnabled="{Binding RunCanPause}" />
+                  <Button Classes="secondary sm" Content="继续" Command="{Binding ContinueRunCommand}" IsEnabled="{Binding RunCanContinue}" />
+                  <Button Classes="ghost sm" Content="恢复阻塞" Command="{Binding ResumeBlockedRunCommand}" IsEnabled="{Binding RunCanResumeBlocked}" />
+                  <Button Classes="danger sm" Content="停止" Command="{Binding StopRunCommand}" IsEnabled="{Binding RunCanStop}" />
+                  <Button Classes="ghost sm" Content="重启" Command="{Binding RestartRunCommand}" IsEnabled="{Binding RunCanRestart}" />
+                  <Button Classes="ghost sm" Content="重试失败目标" Command="{Binding RetryFailedRunCommand}" IsEnabled="{Binding RunCanRetryFailed}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+            <TextBlock Classes="meta" IsVisible="{Binding !HasRunLoaded}"
+                       Text="尚未加载 Run：输入 run_id 后读取；本分区不会伪造任务行或进度。" />
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasRunLoaded}">
+              <TextBlock Classes="section-title" Text="阶段流（step_flow）" />
+              <ItemsControl ItemsSource="{Binding RunStages}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RunStageRowViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" Margin="0,2">
+                      <ctrl:StatusBadge Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1" Classes="label" Text="{Binding Label}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding StateText}" VerticalAlignment="Center" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasRunLoaded}">
+              <TextBlock Classes="section-title" Text="任务行（GetTaskProjection rows / tasks）" />
+              <ItemsControl ItemsSource="{Binding RunRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RunRowViewModel">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}" Margin="0,2">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <TextBlock Classes="data" Text="{Binding OrderText}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                          <TextBlock Classes="label" Text="{Binding Filename}" />
+                          <TextBlock Classes="meta" Text="{Binding StepCountText}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Classes="meta" Text="{Binding ErrorCode}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                          <TextBlock Classes="meta" Text="{Binding LockText}" />
+                          <ctrl:StatusBadge Status="{Binding StatusNm}" />
+                        </StackPanel>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
           <!-- ── ② Provider 与凭据 ─────────────────────────────────────────────── -->
           <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsProvidersSection}">
             <ctrl:AlertBanner Severity="Blocked"
@@ -276,7 +359,7 @@
                   <Button Classes="detailrow" Classes.selected="{Binding IsSelected}" Command="{Binding SelectCommand}" ToolTip.Tip="{Binding NetworkProfileId}">
                     <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                       <TextBlock Classes="label" Text="{Binding DisplayName}" VerticalAlignment="Center" />
-                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding EndpointText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding ModeEndpointText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                       <TextBlock Grid.Column="2" Classes="meta" Text="{Binding TlsText}" VerticalAlignment="Center" />
                       <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
                         <TextBlock Classes="meta" Text="{Binding DefaultText}" />
@@ -400,7 +483,7 @@
                            Text="深浅外观经 NewManga.DesignSystem 的令牌字典切换生效（不重建窗口）；主题库 / 预览 / 编辑器 / 导入导出属于主题工作室 V11R-C-2。" />
                 <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
                   <Button Classes="secondary sm" Content="切换深浅外观" Command="{Binding ToggleAppearanceCommand}" />
-                  <Button Classes="primary sm" Content="打开主题工作室" Command="{Binding OpenThemeStudioCommand}" />
+                  <Button Classes="primary sm" Content="打开主题工作室（7 分区即将可用）" Command="{Binding OpenThemeStudioCommand}" />
                 </StackPanel>
               </StackPanel>
             </Border>
