@@ -145,9 +145,20 @@ def test_batch_page_cap_is_the_authority_even_if_the_precheck_passed(core):
 def test_concurrent_creates_at_the_cap_boundary_cannot_overshoot(
     core, monkeypatch
 ):
+    """I4/P2-A: REAL independent connections + barrier.
+
+    ``ThreadRoutedConnection`` gives every OS thread its OWN sqlite3 connection,
+    so the two creators below really commit on two independent connections
+    (asserted by id). The barrier is placed after BOTH service pre-checks and
+    before either transaction starts: both callers see N-1 and race for the
+    last slot; only the in-transaction count may decide.
+    """
     monkeypatch.setattr(editing_service, "MAX_REGIONS_PER_PAGE", 2)
     page_id = _seed_page(core)
     core.editing.create_region(page_id, RECT)  # 1 live region; limit is 2
+    main_connection_id = id(core.conn._current())
+    regions_before = _row_count(core, "regions")
+    revisions_before = _row_count(core, "region_revisions")
 
     barrier = threading.Barrier(2)
     original = type(core.editing)._commit_batch_or_raise
@@ -161,8 +172,10 @@ def test_concurrent_creates_at_the_cap_boundary_cannot_overshoot(
 
     results: list[RegionLimitExceeded] = []
     created: list = []
+    thread_connection_ids: dict[int, int] = {}
 
     def create(index: int) -> None:
+        thread_connection_ids[index] = id(core.conn._current())
         try:
             created.append(
                 core.editing.create_region(
@@ -183,11 +196,20 @@ def test_concurrent_creates_at_the_cap_boundary_cannot_overshoot(
         thread.join(timeout=15)
         assert not thread.is_alive()
 
+    # Two OS threads -> two distinct real SQLite connections (never the main
+    # thread's connection): the interleaving is not a shared-handle illusion.
+    assert len(thread_connection_ids) == 2
+    assert len(set(thread_connection_ids.values())) == 2
+    assert main_connection_id not in thread_connection_ids.values()
+
     # Exactly one creator wins; the other is a typed limit rejection; the page
-    # never exceeds the limit (the pre-I3 code could reach 3 here).
+    # never exceeds the limit (the pre-I3 code could reach 3 here) and the
+    # loser wrote NOTHING (row totals grow by exactly the one winner).
     assert len(created) == 1
     assert len(results) == 1
     assert _live_count(core, page_id) == 2
+    assert _row_count(core, "regions") == regions_before + 1
+    assert _row_count(core, "region_revisions") == revisions_before + 1
     orphan = core.conn.execute(
         "SELECT COUNT(*) FROM regions r LEFT JOIN region_revisions rev"
         " ON rev.region_revision_id = r.current_revision_id"
@@ -196,7 +218,9 @@ def test_concurrent_creates_at_the_cap_boundary_cannot_overshoot(
     assert orphan == 0
 
 
-def test_wire_create_at_cap_is_invalid_request(core, monkeypatch):
+def test_wire_create_at_cap_is_invalid_request_and_writes_nothing(
+    core, monkeypatch
+):
     import bootstrap.core_service as core_service
 
     page_id = _seed_page(core)
@@ -206,12 +230,24 @@ def test_wire_create_at_cap_is_invalid_request(core, monkeypatch):
         "page_id": page_id, "geometry": {"points": [[0.1, 0.1], [0.3, 0.3]]},
     })
     assert first["error"] is None, first["error"]
+    regions_before = _row_count(core, "regions")
+    revisions_before = _row_count(core, "region_revisions")
+
     second = _rpc(server, "create_region", {
         "page_id": page_id, "geometry": {"points": [[0.5, 0.5], [0.7, 0.7]]},
     })
     assert second["error"]["code"] == "INVALID_REQUEST"
     assert second["error"]["category"] == "validation"
+    # True zero write: the rejected request changes neither live count nor any
+    # row total (regions/revisions).
     assert _live_count(core, page_id) == 1
+    assert _row_count(core, "regions") == regions_before
+    assert _row_count(core, "region_revisions") == revisions_before
+
+
+def _row_count(core, table: str) -> int:
+    # table names are fixed literals in this test module (no user input).
+    return core.conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
 
 
 def _rpc(server, command: str, payload: dict) -> dict:
