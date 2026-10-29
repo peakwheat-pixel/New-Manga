@@ -13,7 +13,7 @@
 | R3 | `bc3dc1a` | 10 个生产文件迁移，legacy-shell 引用清零 | `R3-report.md`、`R3-zero-ref.log` |
 | R4 | `8e89e62` | 5 条硬门替代断言 + 删除 5 个旧测试 | `R4-report.md`、`R4-*.log` |
 | R5 | `754dc0d` | 删除 NewManga.Theme 项目/工程引用 | `R5-report.md`、`R5-*.log` |
-| R6 | 本 commit | 零引用门 + 全量 build/test + 双 shell 启动 | `R6-report.md`、`R6-*.log` |
+| R6 | `8d7c367` | 零引用门 + 全量 build/test + 双 shell 启动 | `R6-report.md`、`R6-*.log` |
 
 最新执行 HEAD 以 `git log -1` 为准；C-3 只做退役，未 push。
 
@@ -26,3 +26,4 @@
 - `--shell=v2` 与 `--shell=legacy` 均可启动（真实 sidecar；窗口标题 `New Manga`）。
 - 回滚点 tag 未被移动；L1/L2 真实回滚演练仍 NOT_RUN（按计划留待实际回滚）。
 - 未改 ThemeEngine / DesignSystem 语义。
+
