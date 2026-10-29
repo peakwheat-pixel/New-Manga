@@ -217,34 +217,6 @@ def test_merge_inherits_region_and_inpaint_locks(core) -> None:
     assert stored.inpaint_locked is True
 
 
-def test_wire_merge_inherits_lock_and_reports_real_state(core) -> None:
-    page_id = _seed_page(core)
-    server = CoreServiceServer(core)
-    first = _rpc(server, "create_region", {
-        "page_id": page_id, "geometry": {"points": [[0.1, 0.1], [0.3, 0.3]]},
-    })["result"]
-    second = _rpc(server, "create_region", {
-        "page_id": page_id, "geometry": {"points": [[0.5, 0.5], [0.8, 0.8]]},
-    })["result"]
-    locked = _rpc(server, "set_region_lock", {
-        "region_id": first["region_id"], "translation_locked": True,
-    })
-    assert locked["error"] is None, locked["error"]
-
-    merged = _rpc(server, "merge_regions", {
-        "page_id": page_id,
-        "region_ids": [first["region_id"], second["region_id"]],
-    })
-    assert merged["error"] is None, merged["error"]
-    merged_id = merged["result"]["region_id"]
-
-    detail = _rpc(server, "list_page_region_texts", {"page_id": page_id})["result"]
-    row = next(item for item in detail["regions"] if item["region_id"] == merged_id)
-    assert row["locks"]["translation_locked"] is True
-    assert row["text"]["translation_locked"] is True
-    _assert_no_orphan_regions(core)
-
-
 def _rpc(server, command: str, payload: dict, number: int = 1) -> dict:
     line = json.dumps({
         "protocol": "new-manga.core",

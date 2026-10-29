@@ -47,6 +47,10 @@ skip 均为既有环境性 skip（缺 AC11 sidecar / S4 region fixture），与�
 
 ## 3. 数据安全复核点（复审建议逐项核对）
 
+> **可勾选复审清单**：`REVIEW_CHECKLIST.md`（每条含断言点 / 文件:行 / 期望结果 / 可复跑测试，
+> 供 Reviewer 与 L4 直接复用）。**消费指南**：`CONSUMER_GUIDE.md`（合并后 Studio Page 如何调用
+> C067–C077、何时带 `expected_revision`、失败如何处理，ui-studio 使用）。
+
 1. **无孤儿**：`SELECT COUNT(*) FROM regions r LEFT JOIN region_revisions rev ON
    rev.region_revision_id=r.current_revision_id WHERE r.current_revision_id IS NULL OR
    rev.region_revision_id IS NULL` 在失败注入后必须为 0（`_assert_no_orphan_regions`）。
@@ -58,6 +62,8 @@ skip 均为既有环境性 skip（缺 AC11 sidecar / S4 region fixture），与�
    `deleted_at`。
 5. **协议**：冻结 66 快照未编辑；C067–C077 仍 minor=3、零 protocol bump。
 6. **Host 边界**：领域非法值（坐标越界/非正整数）在发帧前 `INVALID_ARGUMENTS`。
+7. **page/book 作用域**：契约 §3.1 已写明——单 region 命令按 id 定位；项目未定义按书 ACL，
+   本任务不新增假授权；跨书 id 授权由 Host 未来 ACL 承担；UI 只传自己已加载的 id。
 
 ## 4. 复审入口
 

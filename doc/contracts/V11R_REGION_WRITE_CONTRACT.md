@@ -277,6 +277,20 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
    内部失败仅固定短语，详情只进 stderr。Host 侧 v1.2/I1 起同时拒绝领域非法值
    （归一化坐标越界、非正整数 revision/reading_order），不把明显非法的请求发到 Core。
 
+### 3.1 安全边界（page / book 作用域，v1.2）
+
+- **单 region 命令按裸 `region_id` 定位**（读命令 `list_region_revisions`/`rerender` 系同理）：
+  Host 与 Core 不额外要求调用方声明 page/book；命令语义是「按 id 操作该 id 指向的对象」。
+- **项目当前没有定义按书（book）授权模型**：本任务**不新增**临时 ACL、不做假权限校验，
+  GAP 面保持诚实（这是产品/平台层未来的授权职责，不是 Region 写面的隐藏实现）。
+- **跨书 id 的授权由 Host 未来 ACL 承担**：一旦产品定义按书访问控制，应在 Host 命令入口按
+  `region_id → page → chapter → book` 解析归属并拒绝越权（Core 侧保持「按 id 定位」的原子语义）。
+- **当前 UI 约束**：Studio 只传自己**已经加载**的 page/region id；不得凭列表外的 id 猜测/试探。
+  `list_page_region_texts` 的 `region_ids` 过滤会拒绝未知或跨页 id（`TARGET_NOT_FOUND`），
+  但这是命令面一致性校验，**不是**授权机制。
+- `merge_regions`/`reorder_regions` 要求全部输入 region 属于同一 `page_id`（跨页 ⇒ `INVALID_REQUEST`），
+  这是数据一致性约束，同样不承担授权语义。
+
 ---
 
 ## 4. C# Host/CoreClient 侧契约
