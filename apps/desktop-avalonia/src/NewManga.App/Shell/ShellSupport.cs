@@ -97,6 +97,14 @@ public static class ShellCommandCatalog
 
     public static void WriteEvidence(string path, string scope, int hotSwitchSamples, IReadOnlyList<double> switchMs, double p95)
     {
+        // V11R-A-2 (Lead ruling): a fresh NEWMANGA_EVIDENCE_DIR must not fail the gate just because
+        // the evidence sub-directory does not exist yet — create the parent before File.Create.
+        var directory = Path.GetDirectoryName(Path.GetFullPath(path));
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         var verified = VerifyAgainstRegistry();
         using var stream = File.Create(path);
         using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });

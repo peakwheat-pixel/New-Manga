@@ -1,0 +1,7 @@
+2026-10-29T16:44:42.2008668+00:00 INFO single-instance acquired: Local\NewManga.App.Tests.A1.8b4da4ed7443 (abandoned_recovered=False)
+2026-10-29T16:44:42.2009210+00:00 INFO mode=ReadOnlyUntilParity reason=S2 command parity not reached; production data stays read-only data_root=C:\Users\49745\AppData\Local\Temp\newmanga-app-tests\v11r-a1-readonly-0145d1daca
+2026-10-29T16:44:42.2009708+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T16:44:42.5751044+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T16:44:42.6502616+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T16:44:42.6506102+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T16:44:42.6511266+00:00 INFO host-control session opened (host_ZgGMVMMYiuDlE1vfVkJiw-T9tf-J-Tk9IzY6F_0pSF4)
