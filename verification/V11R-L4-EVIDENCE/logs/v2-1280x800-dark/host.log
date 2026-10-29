@@ -6,3 +6,11 @@
 2026-10-29T20:35:20.6891839+00:00 INFO credential port ready (Windows Credential Manager)
 2026-10-29T20:35:20.6916848+00:00 INFO host-control session opened (host_UTAp8en-hdJoGhZ5c4hRu3Wb96IqrN3m9bdK8oF8Uc0)
 2026-10-29T20:35:20.6941139+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
+2026-10-29T20:47:23.3576107+00:00 INFO single-instance acquired: Local\NewManga.L4Evidence.v2-1280x800-dark.25d08a1a (abandoned_recovered=False)
+2026-10-29T20:47:23.3587762+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\nm-l4-data-v2-1280x800-dark-7d5d2c05
+2026-10-29T20:47:23.3590856+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T20:47:23.7129004+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T20:47:23.7982245+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T20:47:23.7985786+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T20:47:23.8011962+00:00 INFO host-control session opened (host_wz68hH60kXFMWqYt_-YvWw7DLfnzXMBl5FiMrTihIC0)
+2026-10-29T20:47:23.8035580+00:00 INFO self-check status=Degraded code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books]
