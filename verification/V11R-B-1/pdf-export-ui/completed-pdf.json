@@ -1,7 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3",
-  "scenario": "completed PDF snapshot rendered with path/sha256/pages/format",
-  "status": "\u5BFC\u51FA\u5B8C\u6210\uFF08PDF \u00B7 searchable_dual_layer\uFF09\uFF1AC:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-pdf-ui-exports\\book.pdf \u00B7 sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \u00B7 3 \u9875",
-  "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-  "total_pages": 3
-}

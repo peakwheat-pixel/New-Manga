@@ -1,9 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3/AC4",
-  "scenario": "CREDENTIAL_CONFLICT -\u003E explicit prompt -\u003E second confirmation -\u003E replace",
-  "put_calls_before_confirm": 1,
-  "put_calls_after_confirm": 2,
-  "second_intent": "replace",
-  "confirm_panel_visible_before": true,
-  "pending_secret_cleared_after": true
-}
