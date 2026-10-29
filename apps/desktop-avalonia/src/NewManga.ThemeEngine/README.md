@@ -54,7 +54,7 @@ dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGe
 
 ## 4. Palette（主题层）合成
 
-`ThemePaletteComposer.Compose(package, PaletteVariant)` → `IReadOnlyDictionary<string, object?>`，**60** 个 `Nm.*` 键，可直接作为 Avalonia `ResourceDictionary` 值（白名单见 `doc/design/theming/THEME_ENGINE_LAYER.md`；59 键为 R-15 前口径）：
+`ThemePaletteComposer.Compose(package, PaletteVariant)` → `IReadOnlyDictionary<string, object?>`，**59** 个 `Nm.*` 键（R-15 白名单），可直接作为 Avalonia `ResourceDictionary` 值（白名单权威见 `doc/design/theming/THEME_ENGINE_LAYER.md`，与 DS `ThemeLayerRequiredKeys` 逐字一致）：
 
 | 组 | 键 | 说明 |
 |---|---|---|
@@ -63,10 +63,10 @@ dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGe
 | 字号 | `Nm.FontSize.Xs…Xxl` | 基数 × `ThemeTypography.Scale`（0.8–1.3） |
 | 行高 | `Nm.LineHeight.Tight/Normal/Loose`（乘数）+ `Display/Title/Body/Label/Meta/Data`（绝对 px） | 绝对层 = 字号 × DESIGN_SYSTEM §3 层级比 × 预设比（Tight/1.25、Normal/1.45、Loose/1.6 相对 Normal 的比值） |
 | 圆角 | `Nm.Corner.None/Sm/Md` | `CornerRadius`；硬规则 ≤3px |
-| 动效 | `Nm.Motion.Duration.Instant/Fast/Normal` + `Slow`（R-15 扩展，默认 220ms） | `TimeSpan` |
+| 动效 | `Nm.Motion.Duration.Fast/Normal/Slow`（R-15，默认 90/140/220ms；`Instant` 是 DS 全局不变量，不在主题层） | `TimeSpan` |
 
 `ComposeColorLayer` 只含 35 色（供 DS 颜色 seam / 校验 / 预览快照）。
-`material`/`elevation` 是被校验的**声明**，但冻结令牌词汇里没有对应 `Nm.*` 键——本引擎不发明第二套令牌，故不进生成层（高对比模式与层级表达由 DS 五级明度 + `line.*` 承担）。
+`material`/`elevation` 是被校验的**声明**，但冻结令牌词汇里没有对应 `Nm.*` 键——本引擎不发明第二套令牌，故不进生成层（高对比模式与层级表达由 DS 五级明度 + `line.*` 承担）。\n**主题不变量派生色**（`Nm.Color.Scrim`，Modal 遮罩）属于 DS 全局令牌字典，**不参与主题包校验、也不属于 59 键白名单**（R-21）；主题包声明它会得到 warning 并被忽略。
 布局/密度/间距/尺寸/图标/状态符号**不在**主题层（属 DS 或布局设置）。
 
 ## 5. 校验（`IThemeValidator`）
@@ -81,7 +81,7 @@ dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGe
 | 未知色键 / 非法色值 | `colors.unknown-key`（warning）/ `colors.invalid-value`（error） |
 | 圆角 <0 或 >3px | `corners.radius-out-of-range`（error，DESIGN_SYSTEM §1 rule 4） |
 | 字体族为空/仅 CSS 通用族/带字体文件路径；字号缩放越界 | `typography.font-family-invalid` / `typography.font-scale-out-of-range`（error） |
-| 动效时长越界 / 三档无序（fast≤normal≤slow） | `motion.duration-out-of-range`（error）/ `motion.duration-order`（warning） |
+| 动效时长越界 / 三档无序（fast≤normal≤slow） | `motion.duration-out-of-range`（error）/ `motion.duration-order`（warning） |\n| 主题不变量派生色（Scrim）被声明 | `colors.unknown-key`（warning，忽略；R-21） |
 | WCAG 2.1 对比度 | `contrast.*`，见下 |
 | 读取期诊断（未知字段、被禁声明、重复字段） | 折入校验结果 |
 

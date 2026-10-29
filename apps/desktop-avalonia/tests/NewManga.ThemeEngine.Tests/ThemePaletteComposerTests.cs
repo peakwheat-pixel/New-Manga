@@ -23,9 +23,13 @@ public sealed class ThemePaletteComposerTests
         var layer = ThemePaletteComposer.Compose(Default, variant);
 
         Assert.Equal(ThemePaletteComposer.ThemeLayerKeyCount, layer.Count);
-        Assert.All(layer.Keys, key => Assert.True(
-            ThemeTokenKeys.IsKnownKey(key),
-            $"palette key '{key}' is neither published by the design system nor a registered R-15 extension"));
+        // The composed layer must be exactly the DS theme-layer whitelist (R-15/R-21): same 59 keys,
+        // no theme-invariant derived colors (scrim) and no layout/density keys.
+        Assert.Equal(
+            ThemeTokenKeys.ThemeLayer.OrderBy(key => key, StringComparer.Ordinal),
+            layer.Keys.OrderBy(key => key, StringComparer.Ordinal));
+        Assert.DoesNotContain(NmKeys.Color.Scrim, layer.Keys);
+        Assert.DoesNotContain(NmKeys.Motion.Duration.Instant, layer.Keys);
         Assert.All(layer.Keys, key => Assert.StartsWith("Nm.", key, StringComparison.Ordinal));
     }
 
@@ -85,6 +89,20 @@ public sealed class ThemePaletteComposerTests
         Assert.Contains("Segoe UI Variable Text", ui.Name, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Cascadia Mono", data.Name, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Georgia", display.Name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Theme_invariant_scrim_stays_out_of_the_composed_layer()
+    {
+        var package = Default with
+        {
+            Light = ThemeFixtures.WithColor(Default.Light, NmKeys.Color.Scrim, "rgba(0,0,0,0.55)"),
+        };
+
+        var layer = ThemePaletteComposer.Compose(package, PaletteVariant.Light);
+
+        Assert.Equal(ThemePaletteComposer.ThemeLayerKeyCount, layer.Count);
+        Assert.DoesNotContain(NmKeys.Color.Scrim, layer.Keys);
     }
 
     [Fact]
@@ -169,10 +187,9 @@ public sealed class ThemePaletteComposerTests
         Assert.Equal(new CornerRadius(0), Assert.IsType<CornerRadius>(layer[NmKeys.Corner.None]));
         Assert.Equal(new CornerRadius(1), Assert.IsType<CornerRadius>(layer[NmKeys.Corner.Sm]));
         Assert.Equal(new CornerRadius(3), Assert.IsType<CornerRadius>(layer[NmKeys.Corner.Md]));
-        Assert.Equal(TimeSpan.Zero, Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Instant]));
         Assert.Equal(TimeSpan.FromMilliseconds(50), Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Fast]));
         Assert.Equal(TimeSpan.FromMilliseconds(200), Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Normal]));
-        Assert.Equal(TimeSpan.FromMilliseconds(400), Assert.IsType<TimeSpan>(layer[ThemeTokenKeys.SlowMotionKey]));
+        Assert.Equal(TimeSpan.FromMilliseconds(400), Assert.IsType<TimeSpan>(layer[NmKeys.Motion.Duration.Slow]));
     }
 
     [Fact]
