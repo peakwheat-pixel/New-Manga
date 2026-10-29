@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e7c38867-efe1-49dd-a3ad-fa98a5aadc94" name="49745@HOME-MY 2026-10-30 03:59:44" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-30T03:59:44.6149663+08:00" queuing="2026-10-30T03:59:44.6149666+08:00" start="2026-10-30T03:59:43.9832266+08:00" finish="2026-10-30T03:59:44.6351037+08:00" />
+  <TestSettings name="default" id="2fea1118-6a19-4db0-9abe-b08b8e60358d">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-10-30_03_59_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d2ad91b5-277e-4d3c-971d-9dbe5fd1192d" testId="09894dfe-b397-b397-f1d2-2ebcf56ace9d" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.BooleanSwitches_StillWorkBare" computerName="HOME-MY" duration="00:00:00.0017165" startTime="2026-10-30T03:59:44.5976265+08:00" endTime="2026-10-30T03:59:44.5976265+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2ad91b5-277e-4d3c-971d-9dbe5fd1192d" />
+    <UnitTestResult executionId="6dd94ca3-1535-4219-961c-e63548abfb28" testId="20fdfc00-c6ef-d32c-e1aa-1bf98fa454d5" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.DemoWrite_StillRequiresAnExplicitDataRoot" computerName="HOME-MY" duration="00:00:00.0000613" startTime="2026-10-30T03:59:44.5976662+08:00" endTime="2026-10-30T03:59:44.5976662+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6dd94ca3-1535-4219-961c-e63548abfb28" />
+    <UnitTestResult executionId="96da7ecb-c8bc-44ca-948b-dd700201eeee" testId="e9442059-675f-8208-0164-4e908059eab6" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.EmptyValue_IsRejected_ForEveryKey" computerName="HOME-MY" duration="00:00:00.0000905" startTime="2026-10-30T03:59:44.5834896+08:00" endTime="2026-10-30T03:59:44.5834897+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96da7ecb-c8bc-44ca-948b-dd700201eeee" />
+    <UnitTestResult executionId="aae974dc-a132-4ee2-89d2-7a2746e022a6" testId="1cd0b5a9-bd8c-261b-ec46-8dcb037895e0" testName="NewManga.App.Tests.ProgramWriteFatalTests.HostOptions_WithEmptyLogDirectory_IsReachableOnlyThroughTheGuard" computerName="HOME-MY" duration="00:00:00.0001796" startTime="2026-10-30T03:59:44.5823490+08:00" endTime="2026-10-30T03:59:44.5823490+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aae974dc-a132-4ee2-89d2-7a2746e022a6" />
+    <UnitTestResult executionId="31eeb624-205b-4d91-9ee5-69f11afe67f9" testId="fffb8d87-e55b-9e38-cf9e-370e922721cc" testName="NewManga.App.Tests.ProgramWriteFatalTests.LogPathUnderAFile_DoesNotThrow" computerName="HOME-MY" duration="00:00:00.0755044" startTime="2026-10-30T03:59:44.5805219+08:00" endTime="2026-10-30T03:59:44.5805312+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31eeb624-205b-4d91-9ee5-69f11afe67f9" />
+    <UnitTestResult executionId="9b9d15e4-ddcc-4068-a397-00db01e944a8" testId="2fe4a8a0-433c-a6e0-06e1-c4fb8e97e76a" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--height=-5&quot;)" computerName="HOME-MY" duration="00:00:00.0000025" startTime="2026-10-30T03:59:44.5975354+08:00" endTime="2026-10-30T03:59:44.5975354+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b9d15e4-ddcc-4068-a397-00db01e944a8" />
+    <UnitTestResult executionId="17df53db-3130-417e-9077-bcff6447c435" testId="52e70669-67a7-bcd6-b9b4-b02d70188481" testName="NewManga.App.Tests.ProgramWriteFatalTests.TooLongLogPath_DoesNotThrow" computerName="HOME-MY" duration="00:00:00.0005237" startTime="2026-10-30T03:59:44.5821447+08:00" endTime="2026-10-30T03:59:44.5821448+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17df53db-3130-417e-9077-bcff6447c435" />
+    <UnitTestResult executionId="6ff2bee2-55c5-4154-9b0a-423f91ce36f1" testId="98ddc31a-ac49-04a1-9fc4-c208582296cd" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--height=0&quot;)" computerName="HOME-MY" duration="00:00:00.0001049" startTime="2026-10-30T03:59:44.5836179+08:00" endTime="2026-10-30T03:59:44.5836180+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ff2bee2-55c5-4154-9b0a-423f91ce36f1" />
+    <UnitTestResult executionId="56f99063-424f-44bc-803c-c567303df9c0" testId="22613e84-39dd-3f29-4815-3df9b26923a9" testName="NewManga.App.Tests.ProgramWriteFatalTests.EmptyLogDirectory_DoesNotThrow(logDirectory: &quot;   &quot;)" computerName="HOME-MY" duration="00:00:00.0001099" startTime="2026-10-30T03:59:44.5820454+08:00" endTime="2026-10-30T03:59:44.5820454+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56f99063-424f-44bc-803c-c567303df9c0" />
+    <UnitTestResult executionId="0bb51179-639b-4b9a-a56b-5d3fa0a9beb3" testId="7ae85ebb-6d96-7419-5c18-bdc11298e3ca" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--exit-after=abc&quot;)" computerName="HOME-MY" duration="00:00:00.0000010" startTime="2026-10-30T03:59:44.5975522+08:00" endTime="2026-10-30T03:59:44.5975523+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bb51179-639b-4b9a-a56b-5d3fa0a9beb3" />
+    <UnitTestResult executionId="bf2cf92f-9f3b-49dd-b24d-9a3799ea0927" testId="f3fcc461-77e2-88f8-1abd-a45636e02fdc" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidShellValue_IsRejected" computerName="HOME-MY" duration="00:00:00.0000396" startTime="2026-10-30T03:59:44.5975969+08:00" endTime="2026-10-30T03:59:44.5975969+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf2cf92f-9f3b-49dd-b24d-9a3799ea0927" />
+    <UnitTestResult executionId="25791b72-ce8a-4e2d-883a-321521485855" testId="e287bd33-342e-9dd1-cba1-609b8a3dd27c" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--exit-after=-1&quot;)" computerName="HOME-MY" duration="00:00:00.0000437" startTime="2026-10-30T03:59:44.5974584+08:00" endTime="2026-10-30T03:59:44.5974584+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25791b72-ce8a-4e2d-883a-321521485855" />
+    <UnitTestResult executionId="437d8f80-ac78-4447-b73f-f4dd9b702202" testId="eeefe962-cf08-93b9-20ff-5e9882030dd9" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.ValueOption_FollowedByAnotherOption_IsRejected" computerName="HOME-MY" duration="00:00:00.0000366" startTime="2026-10-30T03:59:44.5983622+08:00" endTime="2026-10-30T03:59:44.5983622+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="437d8f80-ac78-4447-b73f-f4dd9b702202" />
+    <UnitTestResult executionId="b04dbbe2-ed1b-4398-981f-b51d54f73ed2" testId="718659c0-e762-b9ec-8fbc-392dbc609dd0" testName="NewManga.App.Tests.ProgramWriteFatalTests.EmptyLogDirectory_DoesNotThrow(logDirectory: &quot;&quot;)" computerName="HOME-MY" duration="00:00:00.0001748" startTime="2026-10-30T03:59:44.5819018+08:00" endTime="2026-10-30T03:59:44.5819019+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b04dbbe2-ed1b-4398-981f-b51d54f73ed2" />
+    <UnitTestResult executionId="5b71d026-83b8-454c-ad18-d2fb7ce0ead5" testId="71d3a87d-fd4c-db3d-9e28-280eda25936d" testName="NewManga.App.Tests.ProgramWriteFatalTests.UnwritableLogFile_DoesNotThrow" computerName="HOME-MY" duration="00:00:00.0010523" startTime="2026-10-30T03:59:44.5820690+08:00" endTime="2026-10-30T03:59:44.5820690+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b71d026-83b8-454c-ad18-d2fb7ce0ead5" />
+    <UnitTestResult executionId="5da9607c-c8fa-4cd6-8532-c5039a62a2db" testId="212a8c6e-fab5-da5f-99d5-1dd77658c55b" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--width=abc&quot;)" computerName="HOME-MY" duration="00:00:00.0000678" startTime="2026-10-30T03:59:44.5837062+08:00" endTime="2026-10-30T03:59:44.5837062+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5da9607c-c8fa-4cd6-8532-c5039a62a2db" />
+    <UnitTestResult executionId="18b68923-42c3-48ab-8797-d3d840fd350e" testId="178631e4-8ae6-9d82-89c7-108d59819486" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.BareValueOption_IsRejected_WithReadableReason" computerName="HOME-MY" duration="00:00:00.0000522" startTime="2026-10-30T03:59:44.5975722+08:00" endTime="2026-10-30T03:59:44.5975722+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18b68923-42c3-48ab-8797-d3d840fd350e" />
+    <UnitTestResult executionId="f4e1216b-94e1-4428-98be-6250bb16582b" testId="080acf5c-041f-096a-9d66-2456ec625a13" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.EqualsForm_And_SpaceForm_AreEquivalent" computerName="HOME-MY" duration="00:00:00.0015691" startTime="2026-10-30T03:59:44.5976467+08:00" endTime="2026-10-30T03:59:44.5976467+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4e1216b-94e1-4428-98be-6250bb16582b" />
+    <UnitTestResult executionId="174182af-1892-472a-9a2c-b7ddcbf5abd1" testId="f7e3b509-eb1a-49ba-f71a-f9aaf82cbb46" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.UnknownOption_IsRejected" computerName="HOME-MY" duration="00:00:00.0000457" startTime="2026-10-30T03:59:44.5983357+08:00" endTime="2026-10-30T03:59:44.5983357+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="174182af-1892-472a-9a2c-b7ddcbf5abd1" />
+    <UnitTestResult executionId="af7a1d84-032e-477b-a82a-4b348d3e5578" testId="aa7264b6-62c3-39ef-4829-20dd1219d919" testName="NewManga.App.Tests.AppOptionsCliRobustnessTests.UnknownPositionalToken_IsRejected" computerName="HOME-MY" duration="00:00:00.0000539" startTime="2026-10-30T03:59:44.5976854+08:00" endTime="2026-10-30T03:59:44.5976854+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af7a1d84-032e-477b-a82a-4b348d3e5578" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.EmptyLogDirectory_DoesNotThrow(logDirectory: &quot;   &quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="22613e84-39dd-3f29-4815-3df9b26923a9">
+      <Execution id="56f99063-424f-44bc-803c-c567303df9c0" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="EmptyLogDirectory_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.UnwritableLogFile_DoesNotThrow" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="71d3a87d-fd4c-db3d-9e28-280eda25936d">
+      <Execution id="5b71d026-83b8-454c-ad18-d2fb7ce0ead5" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="UnwritableLogFile_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--height=0&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="98ddc31a-ac49-04a1-9fc4-c208582296cd">
+      <Execution id="6ff2bee2-55c5-4154-9b0a-423f91ce36f1" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidNumericValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--width=abc&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="212a8c6e-fab5-da5f-99d5-1dd77658c55b">
+      <Execution id="5da9607c-c8fa-4cd6-8532-c5039a62a2db" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidNumericValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--exit-after=abc&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="7ae85ebb-6d96-7419-5c18-bdc11298e3ca">
+      <Execution id="0bb51179-639b-4b9a-a56b-5d3fa0a9beb3" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidNumericValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.HostOptions_WithEmptyLogDirectory_IsReachableOnlyThroughTheGuard" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="1cd0b5a9-bd8c-261b-ec46-8dcb037895e0">
+      <Execution id="aae974dc-a132-4ee2-89d2-7a2746e022a6" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="HostOptions_WithEmptyLogDirectory_IsReachableOnlyThroughTheGuard" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--exit-after=-1&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="e287bd33-342e-9dd1-cba1-609b8a3dd27c">
+      <Execution id="25791b72-ce8a-4e2d-883a-321521485855" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidNumericValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.EmptyValue_IsRejected_ForEveryKey" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="e9442059-675f-8208-0164-4e908059eab6">
+      <Execution id="96da7ecb-c8bc-44ca-948b-dd700201eeee" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="EmptyValue_IsRejected_ForEveryKey" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.TooLongLogPath_DoesNotThrow" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="52e70669-67a7-bcd6-b9b4-b02d70188481">
+      <Execution id="17df53db-3130-417e-9077-bcff6447c435" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="TooLongLogPath_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.LogPathUnderAFile_DoesNotThrow" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="fffb8d87-e55b-9e38-cf9e-370e922721cc">
+      <Execution id="31eeb624-205b-4d91-9ee5-69f11afe67f9" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="LogPathUnderAFile_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.UnknownPositionalToken_IsRejected" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="aa7264b6-62c3-39ef-4829-20dd1219d919">
+      <Execution id="af7a1d84-032e-477b-a82a-4b348d3e5578" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="UnknownPositionalToken_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidShellValue_IsRejected" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="f3fcc461-77e2-88f8-1abd-a45636e02fdc">
+      <Execution id="bf2cf92f-9f3b-49dd-b24d-9a3799ea0927" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidShellValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.ValueOption_FollowedByAnotherOption_IsRejected" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="eeefe962-cf08-93b9-20ff-5e9882030dd9">
+      <Execution id="437d8f80-ac78-4447-b73f-f4dd9b702202" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="ValueOption_FollowedByAnotherOption_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.EqualsForm_And_SpaceForm_AreEquivalent" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="080acf5c-041f-096a-9d66-2456ec625a13">
+      <Execution id="f4e1216b-94e1-4428-98be-6250bb16582b" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="EqualsForm_And_SpaceForm_AreEquivalent" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.DemoWrite_StillRequiresAnExplicitDataRoot" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="20fdfc00-c6ef-d32c-e1aa-1bf98fa454d5">
+      <Execution id="6dd94ca3-1535-4219-961c-e63548abfb28" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="DemoWrite_StillRequiresAnExplicitDataRoot" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.UnknownOption_IsRejected" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="f7e3b509-eb1a-49ba-f71a-f9aaf82cbb46">
+      <Execution id="174182af-1892-472a-9a2c-b7ddcbf5abd1" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="UnknownOption_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.BooleanSwitches_StillWorkBare" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="09894dfe-b397-b397-f1d2-2ebcf56ace9d">
+      <Execution id="d2ad91b5-277e-4d3c-971d-9dbe5fd1192d" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="BooleanSwitches_StillWorkBare" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.BareValueOption_IsRejected_WithReadableReason" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="178631e4-8ae6-9d82-89c7-108d59819486">
+      <Execution id="18b68923-42c3-48ab-8797-d3d840fd350e" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="BareValueOption_IsRejected_WithReadableReason" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.AppOptionsCliRobustnessTests.InvalidNumericValue_IsRejected(raw: &quot;--height=-5&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="2fe4a8a0-433c-a6e0-06e1-c4fb8e97e76a">
+      <Execution id="9b9d15e4-ddcc-4068-a397-00db01e944a8" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.AppOptionsCliRobustnessTests" name="InvalidNumericValue_IsRejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.App.Tests.ProgramWriteFatalTests.EmptyLogDirectory_DoesNotThrow(logDirectory: &quot;&quot;)" storage="g:\codex\new manga.workspace\worktrees\v11r-core-bridge\apps\desktop-avalonia\tests\newmanga.app.tests\bin\debug\net9.0\newmanga.app.tests.dll" id="718659c0-e762-b9ec-8fbc-392dbc609dd0">
+      <Execution id="b04dbbe2-ed1b-4398-981f-b51d54f73ed2" />
+      <TestMethod codeBase="G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.App.Tests.ProgramWriteFatalTests" name="EmptyLogDirectory_DoesNotThrow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="09894dfe-b397-b397-f1d2-2ebcf56ace9d" executionId="d2ad91b5-277e-4d3c-971d-9dbe5fd1192d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20fdfc00-c6ef-d32c-e1aa-1bf98fa454d5" executionId="6dd94ca3-1535-4219-961c-e63548abfb28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e9442059-675f-8208-0164-4e908059eab6" executionId="96da7ecb-c8bc-44ca-948b-dd700201eeee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cd0b5a9-bd8c-261b-ec46-8dcb037895e0" executionId="aae974dc-a132-4ee2-89d2-7a2746e022a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fffb8d87-e55b-9e38-cf9e-370e922721cc" executionId="31eeb624-205b-4d91-9ee5-69f11afe67f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fe4a8a0-433c-a6e0-06e1-c4fb8e97e76a" executionId="9b9d15e4-ddcc-4068-a397-00db01e944a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52e70669-67a7-bcd6-b9b4-b02d70188481" executionId="17df53db-3130-417e-9077-bcff6447c435" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="98ddc31a-ac49-04a1-9fc4-c208582296cd" executionId="6ff2bee2-55c5-4154-9b0a-423f91ce36f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22613e84-39dd-3f29-4815-3df9b26923a9" executionId="56f99063-424f-44bc-803c-c567303df9c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ae85ebb-6d96-7419-5c18-bdc11298e3ca" executionId="0bb51179-639b-4b9a-a56b-5d3fa0a9beb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3fcc461-77e2-88f8-1abd-a45636e02fdc" executionId="bf2cf92f-9f3b-49dd-b24d-9a3799ea0927" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e287bd33-342e-9dd1-cba1-609b8a3dd27c" executionId="25791b72-ce8a-4e2d-883a-321521485855" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eeefe962-cf08-93b9-20ff-5e9882030dd9" executionId="437d8f80-ac78-4447-b73f-f4dd9b702202" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="718659c0-e762-b9ec-8fbc-392dbc609dd0" executionId="b04dbbe2-ed1b-4398-981f-b51d54f73ed2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71d3a87d-fd4c-db3d-9e28-280eda25936d" executionId="5b71d026-83b8-454c-ad18-d2fb7ce0ead5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="212a8c6e-fab5-da5f-99d5-1dd77658c55b" executionId="5da9607c-c8fa-4cd6-8532-c5039a62a2db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="178631e4-8ae6-9d82-89c7-108d59819486" executionId="18b68923-42c3-48ab-8797-d3d840fd350e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="080acf5c-041f-096a-9d66-2456ec625a13" executionId="f4e1216b-94e1-4428-98be-6250bb16582b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7e3b509-eb1a-49ba-f71a-f9aaf82cbb46" executionId="174182af-1892-472a-9a2c-b7ddcbf5abd1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa7264b6-62c3-39ef-4829-20dd1219d919" executionId="af7a1d84-032e-477b-a82a-4b348d3e5578" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.22]   Discovered:  NewManga.App.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    NewManga.App.Tests&#xD;
+[fatal] simulated startup failure&#xD;
+log unavailable: IOException: Cannot create 'C:\Users\49745\AppData\Local\Temp\nm-a8-file-615905de\not-a-directory' because a file or directory with the same name already exists.&#xD;
+[fatal] simulated startup failure&#xD;
+log unavailable: log directory is empty&#xD;
+[fatal] simulated startup failure&#xD;
+log unavailable: log directory is empty&#xD;
+[fatal] simulated startup failure&#xD;
+log unavailable: IOException: The process cannot access the file 'C:\Users\49745\AppData\Local\Temp\nm-a8-lock-31cb83cc\fatal.log' because it is being used by another process.&#xD;
+[fatal] simulated startup failure&#xD;
+log unavailable: IOException: �ļ�����Ŀ¼��������﷨����ȷ�� : 'C:\Users\49745\AppData\Local\Temp\xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-nm-a8-logs'.&#xD;
+[xUnit.net 00:00:00.33]   Finished:    NewManga.App.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

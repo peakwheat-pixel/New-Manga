@@ -1,0 +1,5 @@
+case=space-form-legacy exit=0 data=True logs=True host_ready=True tail=
+case=bare-key exit=2 data= logs= host_ready= tail=
+case=unknown-option exit=2 data= logs= host_ready= tail=
+case=empty-log-dir exit=2 data= logs= host_ready= tail=
+case=invalid-numeric exit=2 data= logs= host_ready= tail=
