@@ -175,3 +175,16 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 | 主题域 L3 | **可签署** | 三者闭环，无 P1/P2 未处置项 |
 | 最终树 clean-clone 自检（A-4） | **修复中** | 唯一 hard failure 为负向安全测试夹具中的假路径字面量（`V2ConsoleUiTests.cs:368`），正在加"显式标注豁免 + 报告可见"后复跑 |
 | 真实窗口 L4 矩阵（当前 HEAD 复跑） | **7/7 PASS** | `verification/V11R-L4-EVIDENCE/launch-matrix.json`：Host 就绪 7/7、自然退出 7/7、截图 9 张 |
+## 15. 最终门禁（main `8ed4a4f4f`，本轮收盘）
+
+| 门 | 结果 |
+|---|---|
+| `dotnet build NewManga.sln -warnaserror` | **0 warning / 0 error** |
+| `dotnet test NewManga.sln`（串行宿主 runsettings） | DS **85** / ThemeEngine **235** / Host **49**(+28 skip) / CoreClient **119**(+22 skip) / App **309**(+7 skip) = **797 passed / 57 skipped / 0 failed** |
+| `CoreClient` 单项目复跑 | 119 passed / 22 skip / **0 failed**（确认跨项目 flake 不再现） |
+| clean-clone 自检（最终树） | **OK**，hard_failures=0，fixture 豁免 1 条且可审计，分类自测 6/6 |
+| 真实窗口 L4 矩阵（当前树复跑） | **7/7 PASS**，Host 就绪 7/7，自然退出 7/7，截图 9 张 |
+| Python `pytest` | exit 0（QML 历史噪音不属于失败） |
+| 旧主题退役 | `src/**`/`tests/**` 旧符号 0；`NewManga.Theme` 已删除；双壳启动 EXIT 0/0 |
+
+**收盘判定**：本轮目标的可执行范围已全部完成且门禁全绿；仅剩环境受限的实机验证（Windows 真实 DPI/IME/屏幕阅读器/Trim/AOT/GitHub Actions 真跑/受支持的 UI 自动化输入）为 `NOT_RUN`，以及 `FOLLOW-UP-*` 清单中的 V1.x 收尾项，均已在报告与 `doc/V11R_PROGRAM.md §10` 诚实登记。
