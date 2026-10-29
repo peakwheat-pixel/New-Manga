@@ -87,7 +87,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
-    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
   </Style>
   <Style Selector=":is(Border).studio-rail">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
@@ -114,26 +114,26 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="0,1,0,0" />
-    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
   </Style>
   <Style Selector="Border.studio-chip">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
   </Style>
   <Style Selector="Border.studio-chip-accent">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
   </Style>
   <Style Selector="Border.studio-section">
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
-    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Card}" />
   </Style>
   <Style Selector="TextBlock.studio-section-title">
     <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
@@ -145,14 +145,14 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
   </Style>
   <Style Selector="Border.studio-field-readonly">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
   </Style>
 
   <!-- banners: in-place error/partial feedback, never toast-only (DESIGN_SYSTEM §9 rule 7) -->
@@ -161,14 +161,14 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
   <Style Selector="Border.studio-banner-partial">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
 
   <!-- ============================================================ canvas ======== -->
@@ -195,7 +195,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
-    <Setter Property="Padding" Value="2,0" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Tight}" />
   </Style>
   <Style Selector="Border.studio-region-badge">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
@@ -212,7 +212,7 @@
 
   <!-- ============================================================ film strip ==== -->
   <Style Selector="Button.studio-film-item">
-    <Setter Property="Padding" Value="4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Tight}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="0" />
@@ -282,7 +282,7 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
   </Style>
   <Style Selector="Border.studio-dot">
     <Setter Property="Width" Value="8" />
@@ -307,7 +307,7 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
-    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
   <Style Selector="Border.studio-revision-row.selected">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
@@ -332,13 +332,13 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
-    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
   </Style>
   <Style Selector=":is(Border).studio-run-strip">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="0,1,0,0" />
-    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
   </Style>
   <Style Selector=":is(Border).studio-drawer">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
@@ -391,7 +391,7 @@
   <Style Selector="Button.studio-stage-tab">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
   </Style>
   <Style Selector="Button.studio-stage-tab.active">
@@ -404,7 +404,7 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
   </Style>
   <Style Selector="Button.studio-count-chip.active">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
@@ -413,7 +413,7 @@
   <Style Selector="Button.studio-scope-chip">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="6,2" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
     <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Xs}" />
   </Style>
   <Style Selector="Button.studio-scope-chip.active">

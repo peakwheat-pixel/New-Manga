@@ -110,3 +110,93 @@ public static class StudioKeyboard
         return focused is TextBox;
     }
 }
+/// <summary>I3: Batch-mode keys (arrows / J,K / Enter / Esc). Returns true when the Batch consumed it.</summary>
+public static class StudioBatchKeyboard
+{
+    public static bool Handle(StudioBatchViewModel batch, KeyEventArgs args)
+    {
+        if (args.Handled)
+        {
+            return false;
+        }
+
+        var row = batch.SelectingAnchor?.RowIndex ?? 0;
+        switch (args.Key)
+        {
+            case Key.Escape:
+                if (batch.IsGateConfirmOpen)
+                {
+                    batch.CancelGate();
+                    args.Handled = true;
+                    return true;
+                }
+
+                if (batch.StopArmed)
+                {
+                    batch.CancelStop();
+                    args.Handled = true;
+                    return true;
+                }
+
+                if (batch.IsDrawerOpen)
+                {
+                    batch.CloseDrawer();
+                    args.Handled = true;
+                    return true;
+                }
+
+                return false;
+            case Key.Enter:
+                if (batch.Rows.Count > 0)
+                {
+                    batch.RequestDrillToPage(Math.Clamp(row, 0, batch.Rows.Count - 1));
+                    args.Handled = true;
+                    return true;
+                }
+
+                return false;
+            case Key.Down or Key.J:
+                Move(batch, row + 1);
+                args.Handled = true;
+                return true;
+            case Key.Up or Key.K:
+                Move(batch, row - 1);
+                args.Handled = true;
+                return true;
+            case Key.Right or Key.OemCloseBrackets:
+                MoveColumn(batch, 1);
+                args.Handled = true;
+                return true;
+            case Key.Left or Key.OemOpenBrackets:
+                MoveColumn(batch, -1);
+                args.Handled = true;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static void Move(StudioBatchViewModel batch, int row)
+    {
+        if (batch.Rows.Count == 0)
+        {
+            return;
+        }
+
+        batch.SelectRow(Math.Clamp(row, 0, batch.Rows.Count - 1));
+    }
+
+    private static void MoveColumn(StudioBatchViewModel batch, int delta)
+    {
+        if (batch.Rows.Count == 0 || batch.StageColumnCount == 0)
+        {
+            return;
+        }
+
+        var row = Math.Clamp(batch.SelectingAnchor?.RowIndex ?? 0, 0, batch.Rows.Count - 1);
+        var current = batch.StageColumns.ToList().FindIndex(stage =>
+            string.Equals(stage.CoreStepType, batch.SelectingAnchor?.StageType, StringComparison.OrdinalIgnoreCase));
+        var next = Math.Clamp((current < 0 ? 0 : current) + delta, 0, batch.StageColumnCount - 1);
+        batch.SelectCell(row, batch.StageColumns[next].CoreStepType);
+    }
+}

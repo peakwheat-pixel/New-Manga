@@ -1,3 +1,4 @@
+using NewManga.App.Shell.V2;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
@@ -19,7 +20,7 @@ namespace NewManga.App.Shell.V2.Studio;
 /// in this branch yet. The view model instance is created once per view and never rebuilt, so Page ⇄
 /// Batch keeps selection, zoom/pan, filters and inspector tab (AC2).
 /// </summary>
-public partial class StudioWorkspaceView : UserControl
+public partial class StudioWorkspaceView : UserControl, IWorkspaceView
 {
     private readonly StudioWorkspaceViewModel _viewModel;
     private readonly StudioPageWorkspace _pageWorkspace;
@@ -228,6 +229,14 @@ public partial class StudioWorkspaceView : UserControl
 
     private void ApplyMode()
     {
+        if (_viewModel.IsBatchMode)
+        {
+            _batchWorkspace.Activate();
+        }
+        else
+        {
+            _batchWorkspace.Deactivate();
+        }
         _pageModeButton.Classes.Set("active", _viewModel.IsPageMode);
         _batchModeButton.Classes.Set("active", _viewModel.IsBatchMode);
         _pageWorkspace.IsVisible = _viewModel.IsPageMode;
@@ -238,4 +247,38 @@ public partial class StudioWorkspaceView : UserControl
         }
         _modeText.Text = _viewModel.HeaderModeText;
     }
+    // ---------------------------------------------------------------- IWorkspaceView (P1-2)
+
+    public SpaceId Space => SpaceId.Studio;
+
+    public Control CreateContent() => this;
+
+    /// <summary>
+    /// On entry the shell hands over its authoritative <see cref="ShellState"/>: the selection is already
+    /// the same instance through <c>StudioSelection</c>, so activation only restores the Batch poll and the
+    /// retained zoom/offset/inspector tab (kept on the shared selection object, never rebuilt).
+    /// </summary>
+    public void OnActivated(ShellState state)
+    {
+        if (_viewModel.IsBatchMode)
+        {
+            _batchWorkspace.Activate();
+        }
+    }
+
+    /// <summary>On exit the Batch poll stops; selection was written back to <see cref="ShellState"/> live.</summary>
+    public void OnDeactivated(ShellState state)
+    {
+        _batchWorkspace.Deactivate();
+    }
+
+    /// <summary>
+    /// R-17: Studio first refusal on its own keys. Page mode: HUD Tab/Enter, Esc stepwise, J/K, [ ],
+    /// +/-, 0 (the shell keeps everything else). Batch mode: arrows/J/K move the matrix selection,
+    /// Enter drills into Page, Esc closes gate/stop/drawer.
+    /// </summary>
+    public bool TryHandleKey(KeyEventArgs e, ShellState state) =>
+        _viewModel.IsBatchMode
+            ? StudioBatchKeyboard.Handle(_viewModel.Batch, e)
+            : StudioKeyboard.Handle(_viewModel.Page, this, e);
 }

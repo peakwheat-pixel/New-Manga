@@ -491,6 +491,7 @@ public sealed class StudioBatchGateModalControl : Grid
     {
         _viewModel = viewModel;
         var scrim = StudioUi.Box("studio-scrim");
+        scrim.PointerPressed += (_, _) => viewModel.CancelGate();
         Children.Add(scrim);
 
         var card = StudioUi.Box("studio-modal-card");
@@ -511,7 +512,39 @@ public sealed class StudioBatchGateModalControl : Grid
         card.Child = column;
         Children.Add(card);
         StudioUi.TrackVisible(this, viewModel, () => viewModel.IsGateConfirmOpen);
+
+        // P1-1: real modal discipline — focus 取消 after layout, Esc cancels, closing restores focus.
+        _cancel = cancel;
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(StudioBatchViewModel.IsGateConfirmOpen) or null)
+            {
+                if (viewModel.IsGateConfirmOpen)
+                {
+                    _focusBeforeOpen = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+                    Dispatcher.UIThread.Post(() => _cancel.Focus(), DispatcherPriority.Loaded);
+                }
+                else if (_focusBeforeOpen is { Focusable: true } target)
+                {
+                    _focusBeforeOpen = null;
+                    Dispatcher.UIThread.Post(() => target.Focus(), DispatcherPriority.Loaded);
+                }
+            }
+        };
+        KeyDown += (_, args) =>
+        {
+            if (viewModel.IsGateConfirmOpen && args.Key is Key.Escape)
+            {
+                viewModel.CancelGate();
+                args.Handled = true;
+            }
+        };
     }
+
+    private Button _cancel = null!;
+    private IInputElement? _focusBeforeOpen;
+
+    public Button CancelButton => _cancel;
 
     public TextBlock ImpactText => _impact;
 }
@@ -614,6 +647,25 @@ public sealed class StudioBatchWorkspace : Grid
     public StudioBatchMatrixControl Matrix { get; }
 
     public StudioBatchDrawerControl Drawer { get; }
+
+    /// <summary>P2-2: polling is driven by explicit Activate/Deactivate (Browser tab switches never detach).</summary>
+    public void Activate()
+    {
+        if (!_viewModel.IsWired)
+        {
+            return;
+        }
+
+        _viewModel.StartPolling();
+        _timer?.Start();
+        _ = _viewModel.RefreshAsync();
+    }
+
+    public void Deactivate()
+    {
+        _viewModel.StopPolling();
+        _timer?.Stop();
+    }
 
     public StudioBatchGateModalControl GateModal { get; }
 
