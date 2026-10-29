@@ -1,9 +1,10 @@
 {
   "schema": "newmanga.v11r.c3-dependency-graph/1",
   "task": "V11R-C-3-READY",
-  "baseCommit": "097e82d7276cfbf064b768bc68ab70da7c8756a8",
-  "workingTreeDirty": false,
-  "generatedAt": "2026-10-30T02:17:27+08:00",
+  "baseCommit": "c5037b65fb4c80a42e96869789d12a6e2427e954",
+  "repoHead": "303d308f9540ef9458cebfba36caea19fda20399",
+  "workingTreeDirty": true,
+  "generatedAt": "2026-10-30T02:17:41+08:00",
   "symbols": [
     "ThemePackMetrics",
     "ThemePackService",
@@ -60,7 +61,7 @@
   },
   "files": [
     {
-      "file": "verification/DISPLAY-PERF-DECISION-1/baseline/harness/paint-probe.ps1",
+      "file": "verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1",
       "kind": "platform-struct-unrelated",
       "fate": "NOT-A-DEPENDENCY",
       "references": 2,
@@ -69,12 +70,187 @@
       ]
     },
     {
-      "file": "verification/P20-MEM-OPT-1/probe-process-tree.ps1",
+      "file": "verification/V11R-C-1/README.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeServiceTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/S3ShellTests.cs",
+      "kind": "legacy-tests",
+      "fate": "REPLACE-BEFORE-DELETE",
+      "references": 20,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/tasks/PDF-EXPORT-UI-1.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/CredentialSection.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 4,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/tasks/THEME-MACOS-1.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 7,
+      "symbols": [
+        "MotionProfile",
+        "ThemePack",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 6,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ImportExportPanels.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 4,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/ViewModels/MainViewModels.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 2,
+      "symbols": [
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/reviews/V11R-D-1-r1-codex.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/ThemeMacosTests.cs",
+      "kind": "legacy-tests",
+      "fate": "REPLACE-BEFORE-DELETE",
+      "references": 88,
+      "symbols": [
+        "ThemePack",
+        "ThemePackMetrics",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/handoffs/UI-SHELL-THEME-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/handoffs/THEME-MACOS-2-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/DISPLAY-PERF-DECISION-1/spike/scripts/window_probe.ps1",
       "kind": "platform-struct-unrelated",
       "fate": "NOT-A-DEPENDENCY",
       "references": 2,
       "symbols": [
         "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 6,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeContractTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/THEME-MACOS-2/layout/hot-switch.json",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePackService"
       ]
     },
     {
@@ -89,7 +265,45 @@
       ]
     },
     {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/ThemeService.cs",
+      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 4,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks",
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/tasks/V11R-C-3.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 3,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ProfileSections.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 7,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/LegacyThemeMigrationTests.cs",
+      "kind": "new-architecture-tests",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeContracts.cs",
       "kind": "new-architecture",
       "fate": "NOT-A-DEPENDENCY",
       "references": 1,
@@ -107,35 +321,16 @@
       ]
     },
     {
-      "file": "doc/tasks/V11R-C-3.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 3,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "doc/reviews/V11R-D-1-r1-codex.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "doc/handoffs/UI-SHELL-THEME-1-handoff.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
+      "file": "verification/DISPLAY-PERF-DECISION-1/baseline/harness/paint-probe.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
       "references": 2,
       "symbols": [
-        "ThemePack",
-        "ThemePackService"
+        "LayoutKind"
       ]
     },
     {
-      "file": "verification/THEME-MACOS-2/layout/hot-switch.json",
+      "file": "verification/V11R-B-1/layout/hot-switch.json",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
       "references": 1,
@@ -144,39 +339,10 @@
       ]
     },
     {
-      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/S3ShellTests.cs",
-      "kind": "legacy-tests",
-      "fate": "REPLACE-BEFORE-DELETE",
-      "references": 20,
-      "symbols": [
-        "ThemePack",
-        "ThemePacks",
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/AppOptions.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ProfileSections.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 7,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md",
+      "file": "verification/PDF-EXPORT-1/REPORT.md",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 3,
+      "references": 1,
       "symbols": [
         "ThemePack"
       ]
@@ -191,23 +357,21 @@
       ]
     },
     {
-      "file": "apps/desktop-avalonia/src/NewManga.App/ViewModels/MainViewModels.cs",
+      "file": "apps/desktop-avalonia/src/NewManga.App/AppOptions.cs",
       "kind": "legacy-shell-production",
       "fate": "MIGRATE-THEN-DELETE",
-      "references": 2,
+      "references": 1,
       "symbols": [
-        "ThemePacks",
-        "ThemePackService"
+        "ThemePack"
       ]
     },
     {
-      "file": "verification/THEME-MACOS-2/REPORT.md",
+      "file": "verification/V11R-C-1/DEVIATIONS.md",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 6,
+      "references": 1,
       "symbols": [
-        "ThemePack",
-        "ThemePacks"
+        "LayoutProfile"
       ]
     },
     {
@@ -226,12 +390,57 @@
       ]
     },
     {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeContracts.cs",
+      "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/NewManga.ThemeEngine.csproj",
       "kind": "new-architecture",
       "fate": "NOT-A-DEPENDENCY",
       "references": 1,
       "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/PUBLIC-RELEASE-P0-1/ls-tree.txt",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 13,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 3,
+      "symbols": [
         "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/P20-AC4-FPS-1/run-ac4-fps.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
       ]
     },
     {
@@ -244,28 +453,37 @@
       ]
     },
     {
-      "file": "verification/V11R-C-1/DEVIATIONS.md",
+      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 4,
+      "symbols": [
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "verification/P20-MEM-OPT-1/experiment-flags.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/tasks/DISPLAY-PERF-DECISION-1.md",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
       "references": 1,
       "symbols": [
-        "LayoutProfile"
+        "ThemePack"
       ]
     },
     {
-      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeServiceTests.cs",
-      "kind": "new-architecture-tests",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "verification/P20-AC4-FPS-1/run-ac4-fps.ps1",
+      "file": "verification/P19-BOOT-1/capture_real_startup.ps1",
       "kind": "platform-struct-unrelated",
       "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
+      "references": 1,
       "symbols": [
         "LayoutKind"
       ]
@@ -289,187 +507,12 @@
       ]
     },
     {
-      "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 1,
-      "symbols": [
-        "LayoutKind"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 13,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "verification/DISPLAY-PERF-DECISION-1/spike/scripts/window_probe.ps1",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutKind"
-      ]
-    },
-    {
-      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 13,
-      "symbols": [
-        "LayoutProfile",
-        "MotionProfile",
-        "ThemePack",
-        "ThemePackMetrics",
-        "ThemePacks",
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "verification/PDF-EXPORT-1/REPORT.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "doc/tasks/THEME-MACOS-1.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 7,
-      "symbols": [
-        "MotionProfile",
-        "ThemePack",
-        "ThemePacks",
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
-      "kind": "new-architecture",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 5,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "verification/PUBLIC-RELEASE-P0-1/ls-tree.txt",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/tests/NewManga.App.Tests/ThemeMacosTests.cs",
-      "kind": "legacy-tests",
-      "fate": "REPLACE-BEFORE-DELETE",
-      "references": 88,
-      "symbols": [
-        "ThemePack",
-        "ThemePackMetrics",
-        "ThemePacks",
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "verification/PDF-EXPORT-UI-1/REPORT.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 2,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "doc/plan/V11R_AVALONIA_CONTRACT.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 3,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/Views/ImportExportPanels.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 4,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 3,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/ThemeContractTests.cs",
-      "kind": "new-architecture-tests",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 1,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/ThemeSettingsJson.cs",
-      "kind": "new-architecture",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 3,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/LegacyThemeMigrationTests.cs",
-      "kind": "new-architecture-tests",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
       "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
       "kind": "platform-struct-unrelated",
       "fate": "NOT-A-DEPENDENCY",
       "references": 1,
       "symbols": [
         "LayoutKind"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/HostIssuer.cs",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 1,
-      "symbols": [
-        "LayoutKind"
-      ]
-    },
-    {
-      "file": "doc/handoffs/THEME-MACOS-1-handoff.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 4,
-      "symbols": [
-        "ThemePack",
-        "ThemePacks",
-        "ThemePackService"
       ]
     },
     {
@@ -500,10 +543,75 @@
       ]
     },
     {
-      "file": "doc/handoffs/PDF-EXPORT-UI-1-handoff.md",
+      "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/HostIssuer.cs",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "doc/tasks/THEME-MACOS-2.md",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 4,
+      "references": 3,
+      "symbols": [
+        "ThemePack",
+        "ThemePacks"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 3,
+      "symbols": [
+        "LayoutProfile",
+        "ThemePack"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/ThemeService.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/V11R-C-1/dotnet-test-themeengine.log",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
+      "kind": "legacy-shell-production",
+      "fate": "MIGRATE-THEN-DELETE",
+      "references": 3,
+      "symbols": [
+        "ThemePackService"
+      ]
+    },
+    {
+      "file": "doc/V11R_TRACEABILITY.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 1,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
+      "file": "verification/PDF-EXPORT-UI-1/REPORT.md",
+      "kind": "evidence-or-documentation",
+      "fate": "EVIDENCE-PIN-PROTECTED",
+      "references": 2,
       "symbols": [
         "ThemePack"
       ]
@@ -528,6 +636,24 @@
       ]
     },
     {
+      "file": "verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1",
+      "kind": "platform-struct-unrelated",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 2,
+      "symbols": [
+        "LayoutKind"
+      ]
+    },
+    {
+      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/ThemeModels.cs",
+      "kind": "new-architecture",
+      "fate": "NOT-A-DEPENDENCY",
+      "references": 5,
+      "symbols": [
+        "LayoutProfile"
+      ]
+    },
+    {
       "file": "verification/RELEASE-REPACK-5/smoke.json",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
@@ -537,59 +663,12 @@
       ]
     },
     {
-      "file": "doc/tasks/PDF-EXPORT-UI-1.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "verification/V11R-C-1/dotnet-test-themeengine.log",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "doc/handoffs/THEME-MACOS-2-external-handoff.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 6,
-      "symbols": [
-        "LayoutProfile",
-        "ThemePacks",
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "verification/P19-BOOT-1/capture_real_startup.ps1",
+      "file": "verification/P20-MEM-OPT-1/probe-process-tree.ps1",
       "kind": "platform-struct-unrelated",
       "fate": "NOT-A-DEPENDENCY",
-      "references": 1,
-      "symbols": [
-        "LayoutKind"
-      ]
-    },
-    {
-      "file": "verification/V11R-C-1/README.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
       "references": 2,
       "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "verification/V11R-B-1/layout/hot-switch.json",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePackService"
+        "LayoutKind"
       ]
     },
     {
@@ -602,30 +681,17 @@
       ]
     },
     {
-      "file": "doc/V11R_TRACEABILITY.md",
+      "file": "doc/plan/V11R_THEME_RETIREMENT_PLAN.md",
       "kind": "evidence-or-documentation",
       "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
+      "references": 13,
       "symbols": [
-        "LayoutProfile"
-      ]
-    },
-    {
-      "file": "doc/tasks/DISPLAY-PERF-DECISION-1.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutKind"
+        "LayoutProfile",
+        "MotionProfile",
+        "ThemePack",
+        "ThemePackMetrics",
+        "ThemePacks",
+        "ThemePackService"
       ]
     },
     {
@@ -635,71 +701,6 @@
       "references": 1,
       "symbols": [
         "ThemePack"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/NewManga.ThemeEngine.csproj",
-      "kind": "new-architecture",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 1,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.App/Views/CredentialSection.cs",
-      "kind": "legacy-shell-production",
-      "fate": "MIGRATE-THEN-DELETE",
-      "references": 4,
-      "symbols": [
-        "ThemePackService"
-      ]
-    },
-    {
-      "file": "verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutKind"
-      ]
-    },
-    {
-      "file": "doc/handoffs/THEME-MACOS-2-handoff.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 2,
-      "symbols": [
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "doc/tasks/THEME-MACOS-2.md",
-      "kind": "evidence-or-documentation",
-      "fate": "EVIDENCE-PIN-PROTECTED",
-      "references": 3,
-      "symbols": [
-        "ThemePack",
-        "ThemePacks"
-      ]
-    },
-    {
-      "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/README.md",
-      "kind": "new-architecture",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 3,
-      "symbols": [
-        "LayoutProfile",
-        "ThemePack"
-      ]
-    },
-    {
-      "file": "verification/P20-MEM-OPT-1/experiment-flags.ps1",
-      "kind": "platform-struct-unrelated",
-      "fate": "NOT-A-DEPENDENCY",
-      "references": 2,
-      "symbols": [
-        "LayoutKind"
       ]
     }
   ],

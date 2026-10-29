@@ -129,7 +129,9 @@ $files = $fileRows.Values | ForEach-Object {
     }
 } | Sort-Object -Property @{ Expression = 'references'; Descending = $true }, file
 
-$commit = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
+$headCommit = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
+$baseCommit = (& git -C $RepositoryRoot rev-parse main 2>$null | Out-String).Trim()
+if ([string]::IsNullOrWhiteSpace($baseCommit)) { $baseCommit = $headCommit }
 $workingTreeDirty = ((& git -C $RepositoryRoot status --porcelain | Out-String).Trim().Length -gt 0)
 $generatedAt = (Get-Date).ToString('yyyy-MM-ddTHH:mm:sszzz')
 
@@ -148,7 +150,8 @@ $summary = [ordered]@{
 $document = [ordered]@{
     schema           = 'newmanga.v11r.c3-dependency-graph/1'
     task             = 'V11R-C-3-READY'
-    baseCommit       = $commit
+    baseCommit       = $baseCommit
+    repoHead         = $headCommit
     workingTreeDirty = $workingTreeDirty
     generatedAt      = $generatedAt
     symbols          = $symbols
@@ -178,11 +181,13 @@ foreach ($file in $files) {
 $tablePath = Join-Path $outputPath 'dependency-graph-table.md'
 [System.IO.File]::WriteAllText($tablePath, $table.ToString(), [System.Text.UTF8Encoding]::new($false))
 
-Write-Output "base commit : $commit"
+Write-Output "base main   : $baseCommit"
+Write-Output "repo HEAD   : $headCommit"
 Write-Output "references  : $($entries.Count) in $($files.Count) files"
 Write-Output "json        : $jsonPath"
 Write-Output "table       : $tablePath"
 $kindSummary | ForEach-Object { Write-Output "  kind  $_" }
 $fateSummary | ForEach-Object { Write-Output "  fate  $_" }
+
 
 
