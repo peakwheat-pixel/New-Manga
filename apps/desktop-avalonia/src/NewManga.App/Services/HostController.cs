@@ -1293,8 +1293,19 @@ public sealed class HostController : IHostController
         string targetPath,
         string format = "zip",
         string? pdfContent = null,
+        string? stalePolicy = null,
         CancellationToken cancellationToken = default)
     {
+        // V11R-A-7: the Core accepts exactly abort | continue_existing (core_service.py:2854-2863,
+        // HostIssuer.ValidateExportRequest mirrors it). Refuse anything else locally with a typed code
+        // and zero frames; null/blank keeps the historical default abort.
+        var effectiveStalePolicy = string.IsNullOrWhiteSpace(stalePolicy) ? "abort" : stalePolicy;
+        if (effectiveStalePolicy is not ("abort" or "continue_existing"))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
         if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId) ||
             orderedPageIds.Count == 0 || string.IsNullOrWhiteSpace(targetPath))
         {
@@ -1324,8 +1335,10 @@ public sealed class HostController : IHostController
         try
         {
             var request = ImportExportPayloads.StartExportRequest(
-                bookId, new[] { chapterId }, orderedPageIds, format, pdfContent: pdfContent);
+                bookId, new[] { chapterId }, orderedPageIds, format,
+                stalePolicy: effectiveStalePolicy, pdfContent: pdfContent);
             var started = await grants.StartExportAsync(request, targetPath, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
             return ExportStartInfo.FromJson(started);
         }
         catch (Exception ex) when (IsUiFacingFailure(ex))

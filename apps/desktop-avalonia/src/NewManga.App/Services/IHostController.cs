@@ -319,6 +319,9 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// PDF-EXPORT-UI-1: <paramref name="format"/> is <c>zip</c> or <c>pdf</c>; for PDF
     /// <paramref name="pdfContent"/> selects <c>image_only</c> / <c>searchable_dual_layer</c>
     /// (the Host contract already validates exactly that pair).
+    /// V11R-A-7: <paramref name="stalePolicy"/> exposes the Core's stale policy
+    /// (<c>abort</c> / <c>continue_existing</c>); null keeps the historical default <c>abort</c>.
+    /// Any other value is refused locally with <c>INVALID_REQUEST</c> and zero Core frames.
     /// </summary>
     Task<ExportStartInfo?> StartExportAsync(
         string bookId,
@@ -327,6 +330,7 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
         string targetPath,
         string format = "zip",
         string? pdfContent = null,
+        string? stalePolicy = null,
         CancellationToken cancellationToken = default);
 
     Task<ExportSnapshotInfo?> GetExportSnapshotAsync(

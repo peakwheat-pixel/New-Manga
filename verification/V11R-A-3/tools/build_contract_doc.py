@@ -38,7 +38,7 @@ CORE_REF_OVERRIDES = {
     "C061": ("src/bootstrap/core_service.py:3256; :3355-3364（RetryFailedTargets 分支）", None),
     "C055": ("src/bootstrap/core_service.py:3610-3613（core.ping 分支）", None),
     "C063": ("src/bootstrap/core_service.py:3677-3680（GetExportHistory 分支）", None),
-    "C064": ("src/bootstrap/core_service.py:3657-3658（handle_start_export）", None),
+    "C064": ("src/bootstrap/core_service.py:3657-3658（handle_start_export） · V11R-A-7 stale_policy ∈ {abort,continue_existing}（core_service.py:2854-2863；HostIssuer.cs:382-386）；null=默认 abort，非法值本地 INVALID_REQUEST 零帧", None),
     "C065": ("src/bootstrap/core_service.py:3668-3676（CancelExport 分支）", None),
     "C066": ("src/bootstrap/core_service.py:3659-3667（GetExportSnapshot 分支）", None),
     "C050": ("src/bootstrap/core_service.py:3653-3654（handle_get_reader_projection）", None),
