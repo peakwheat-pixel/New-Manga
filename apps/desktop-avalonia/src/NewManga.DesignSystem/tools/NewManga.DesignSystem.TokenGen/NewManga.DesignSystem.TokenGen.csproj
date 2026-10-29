@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NewManga.DesignSystem.TokenGen</RootNamespace>
+    <AssemblyName>NewManga.DesignSystem.TokenGen</AssemblyName>
+    <Description>Reproducible generator: doc/design/redesign-v1/40-fusion/tokens.json -> Avalonia resource dictionaries + token map evidence.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NewManga.DesignSystem.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -156,8 +156,25 @@
 - 不写入用户数据；不改 DB schema（除非任务显式授权并独立审查）；不 push 远端。
 - 高频并行：每个 Owner 在自己 linked worktree 工作，DSH 负责合并；共享契约以本文件与 `doc/plan/V11R_AVALONIA_CONTRACT.md` 冻结。
 
-## 8. 变更记录
+## 8. 裁定记录
+
+| 编号 | 裁定 | 理由 |
+|---|---|---|
+| **R-01** | 工作流 B 的实现基线 = 冻结的 FUSION_SPEC + DESIGN_SYSTEM + tokens.json（2026-10-25 用户已裁决 A+C），不重新发明设计方向 | 已有冻结规范与用户裁决，重做等于浪费且违反"B/C 共用一套设计系统" |
+| **R-02** | CSS 令牌命名 `--nm-*` → Avalonia 资源键 `Nm.*`（PascalCase 逐段） | Avalonia 无 CSS 变量，需资源键承载动态切换 |
+| **R-03** | V1 **不引入** SukiUI/FluentAvalonia/Semi.Avalonia/PleasantUI 依赖，新 Theme Engine 建在 Avalonia 原生原语上（ThemeVariant + ResourceDictionary + ControlTheme + DynamicResource），第三方仅作参考 | 视觉语言与冻结设计冲突、单一令牌真值、发布体积与可恢复性；详见 `doc/design/theming/RESEARCH_V1.md` |
+| **R-04** | 命令注册表随 `V11R-F0-1` 由 **66 → 76**；`V11R-A-3` 契约以 C001–C066 为基线并单列 C067–C076（PENDING，指向 `V11R_REGION_WRITE_CONTRACT.md`）；所有 parity 测试改为**从注册表派生**，禁止硬编码数量 | 避免 A-3 与 F0-1 并行写域互相打爆；数量不是契约真值 |
+| **R-05** | 旧主题退役执行顺序见 `doc/plan/V11R_THEME_RETIREMENT_PLAN.md`：新系统等效 + 迁移/回滚测试通过后才删除；任何旧 ID 一律安全映射默认主题 | 用户 C4 硬约束 + 不得导致启动失败 |
+| **R-06** | Theme Studio 为独立覆盖式表面（非第五空间），规范见 `doc/design/theming/THEME_STUDIO_SPEC.md` | 用户 C3 要求"独立 Theme Studio 页面"，同时保持三空间 IA 不被破坏 |
+| **R-07** | Codex CLI 在本机需 `--dangerously-bypass-approvals-and-sandbox` 才能启动子进程（默认沙箱报 `helper_unknown_error`）；因此 Codex 仅用于**独立审查/只读研究**，实现任务由 DSH 专责 Owner 承担 | 实测沙箱故障；不因单 Agent 不可用而停滞（用户 §1.7） |
+| **R-08** | `IRunController` 幂等键改为显式参数：`ControlRunAsync(runId, action, string? idempotencyKey = null, ct)`、`RetryFailedTargetsAsync(runId, string idempotencyKey, ct)`；导出方法不进 `IRunController` | 避免重载分叉与双重真值 |
+| **R-09** | 修订冻结 `tokens.json` 的对比度不达标值（dark queued/skipped/failed、light skipped/accent 族），以 DESIGN_SYSTEM §2.3 ≥4.5:1 为准；修订记入 `40-fusion/DECISION_LOG.md` | 规范条款优先于数据值；无障碍不可协商 |
+| **R-10** | Motion 时长以 `tokens.json` 的 140ms 为准，契约 §2.2 的 150ms 为示例笔误 | 单一来源 |
+| **R-11** | 视觉/交互差异一律以冻结 FUSION_SPEC + DESIGN_SYSTEM 为准；发现缺口先改冻结文件并记 DECISION_LOG，禁止各页自行发挥 | 防止 B/C 分叉 |
+
+## 9. 变更记录
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-10-30 | 建立程序；合并冻结 A+C 设计基线；建立 DAG；裁定 R-01/R-02 | DSH |
+| 2026-10-30 | 完成 C1 研究（R-03）、C3 规格（R-06）、C4 退役计划（R-05）；裁定 R-04/R-07；释放 5 条并行实现线 | DSH |

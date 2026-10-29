@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Control themes owned by the design system. Merged into Application.Resources, so they take
+       precedence over the base FluentTheme control themes (contract §3.1: default style = design
+       system style). -->
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls/Button.axaml" />
+  </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>
