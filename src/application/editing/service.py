@@ -248,26 +248,22 @@ class InMemoryRegionCommitter:
         never mutates caller objects before all steps succeeded.
         """
         repo = self._repo
-        expectations: list[tuple[str, str | None]] = []
-        expectations.extend(
-            (region_id, expected)
-            for region_id, expected in soft_delete_region_ids
-            if expected is not None
-        )
-        expectations.extend(expected_current_checks)
-        expectations.extend(
-            (region.region_id, expected)
-            for region, _revision, expected in updated_regions
-            if expected is not None
-        )
-        for region_id, expected in expectations:
+        existing_ids: dict[str, str | None] = {}
+        for region_id, expected in soft_delete_region_ids:
+            existing_ids[region_id] = expected
+        for region_id, expected in expected_current_checks:
+            existing_ids[region_id] = expected
+        for region, _revision, expected in updated_regions:
+            existing_ids[region.region_id] = expected
+        for region_id, _revision_no, _pinned in revision_pins:
+            existing_ids.setdefault(region_id, None)
+        for region_id, expected in existing_ids.items():
             stored = repo.get_region(region_id)
-            if stored is None:
+            if stored is None or stored.deleted:
                 return RegionCommitResult(
-                    RegionCommitStatus.DB_FAILED,
-                    detail=f"region {region_id} is not persisted",
+                    RegionCommitStatus.TARGET_NOT_FOUND, detail=region_id
                 )
-            if stored.current_revision_id != expected:
+            if expected is not None and stored.current_revision_id != expected:
                 return RegionCommitResult(
                     RegionCommitStatus.INPUT_REVISION_CHANGED,
                     detail=(
@@ -303,10 +299,18 @@ class InMemoryRegionCommitter:
                 repo.update_region(stored)
         for region_id, _expected in soft_delete_region_ids:
             stored = repo.get_region(region_id)
-            if stored is not None:
-                stored.soft_delete()
-                repo.update_region(stored)
+            if stored is None or stored.deleted:
+                return RegionCommitResult(
+                    RegionCommitStatus.TARGET_NOT_FOUND, detail=region_id
+                )
+            stored.soft_delete()
+            repo.update_region(stored)
         for region_id, revision_no, pinned in revision_pins:
+            stored = repo.get_region(region_id)
+            if stored is None or stored.deleted:
+                return RegionCommitResult(
+                    RegionCommitStatus.TARGET_NOT_FOUND, detail=region_id
+                )
             try:
                 repo.set_revision_pinned(region_id, revision_no, pinned)
             except LookupError:
@@ -390,19 +394,24 @@ class RegionEditingService:
         return result
 
     def _commit_batch_or_raise(self, **batch: object) -> None:
-        """V11R-F0-1 I1: the ALL-OR-NOTHING composite seam used by
+        """V11R-F0-1 I1/I2: the ALL-OR-NOTHING composite seam used by
         create/merge/split/reorder/delete/pin.
 
         A stale expectation (re-read inside the transaction) is the typed
-        :class:`RegionRevisionChanged` with ZERO write; any persistence
-        failure rolls the whole batch back and surfaces as ``RuntimeError``
-        (wire UNKNOWN, same convention as the single-region user writes).
+        :class:`RegionRevisionChanged` with ZERO write; a target soft-deleted
+        between the caller's pre-check and the transaction is the typed
+        :class:`RegionNotFound` (I2/P1-A, wire TARGET_NOT_FOUND) with ZERO
+        write; any persistence failure rolls the whole batch back and surfaces
+        as ``RuntimeError`` (wire UNKNOWN, same convention as the
+        single-region user writes).
         """
         result = self._committer.commit_region_batch(**batch)  # type: ignore[arg-type]
         if result.status is RegionCommitStatus.APPLIED:
             return
         if result.status is RegionCommitStatus.INPUT_REVISION_CHANGED:
             raise RegionRevisionChanged()
+        if result.status is RegionCommitStatus.TARGET_NOT_FOUND:
+            raise RegionNotFound(result.detail or "region")
         raise RuntimeError(f"region batch commit failed: {result.detail}")
 
     def _commit_user_or_raise(

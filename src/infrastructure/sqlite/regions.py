@@ -306,38 +306,39 @@ class SqliteRegionRepository:
         try:
             conn.execute("BEGIN IMMEDIATE")
 
-            # 1. re-read + compare every expectation inside this transaction.
-            expectations: list[tuple[str, str | None]] = []
-            expectations.extend(
-                (region_id, expected)
-                for region_id, expected in soft_delete_region_ids
-                if expected is not None
-            )
-            expectations.extend(expected_current_checks)
-            expectations.extend(
-                (region.region_id, expected)
-                for region, _revision, expected in updated_regions
-                if expected is not None
-            )
-            for region_id, expected in expectations:
+            # 1. Every EXISTING target must still be live and carry the
+            #    expected current pointer. Both checks are re-read INSIDE this
+            #    transaction: two callers can pass get_region() before the
+            #    first merge/split commits, so this is the only place that can
+            #    stop the second one from acting on already-soft-deleted rows.
+            existing_ids: dict[str, str | None] = {}
+            for region_id, expected in soft_delete_region_ids:
+                existing_ids[region_id] = expected
+            for region_id, expected in expected_current_checks:
+                existing_ids[region_id] = expected
+            for region, _revision, expected in updated_regions:
+                existing_ids[region.region_id] = expected
+            for region_id, _revision_no, _pinned in revision_pins:
+                existing_ids.setdefault(region_id, None)
+            for region_id, expected in existing_ids.items():
                 row = conn.execute(
-                    "SELECT current_revision_id FROM regions WHERE region_id = ?",
+                    "SELECT current_revision_id, deleted_at FROM regions"
+                    " WHERE region_id = ?",
                     (region_id,),
                 ).fetchone()
-                if row is None:
+                if row is None or row["deleted_at"] is not None:
                     conn.rollback()
                     return RegionCommitResult(
-                        RegionCommitStatus.DB_FAILED,
-                        detail=f"region {region_id} is not persisted",
+                        RegionCommitStatus.TARGET_NOT_FOUND,
+                        detail=region_id,
                     )
-                stored_current = row["current_revision_id"]
-                if stored_current != expected:
+                if expected is not None and row["current_revision_id"] != expected:
                     conn.rollback()
                     return RegionCommitResult(
                         RegionCommitStatus.INPUT_REVISION_CHANGED,
                         detail=(
                             f"expected current {expected!r},"
-                            f" stored current {stored_current!r}"
+                            f" stored current {row['current_revision_id']!r}"
                         ),
                     )
 
@@ -374,17 +375,31 @@ class SqliteRegionRepository:
                 )
                 applied.append((region, stored_revision.region_revision_id))
 
-            # 4. source soft deletes (merge/split): never hard delete.
+            # 4. source soft deletes (merge/split): never hard delete. The
+            #    update is CONDITIONAL on the target still being live; a
+            #    rowcount != 1 rolls the whole batch back as TARGET_NOT_FOUND
+            #    (defense in depth after the step-1 live re-read).
             deleted_at = _utc_now()
-            for region_id, _expected in soft_delete_region_ids:
-                self._soft_delete_row(conn, region_id, deleted_at)
+            for region_id, expected in soft_delete_region_ids:
+                rowcount = self._soft_delete_row(
+                    conn, region_id, deleted_at, expected
+                )
+                if rowcount != 1:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.TARGET_NOT_FOUND,
+                        detail=region_id,
+                    )
 
-            # 5. pin flag flips (revision rows stay immutable).
+            # 5. pin flag flips (revision rows stay immutable), only while the
+            #    region is still live.
             for region_id, revision_no, pinned in revision_pins:
                 cursor = conn.execute(
                     "UPDATE region_revisions SET is_pinned = ?"
-                    " WHERE region_id = ? AND revision_no = ?",
-                    (int(pinned), region_id, revision_no),
+                    " WHERE region_id = ? AND revision_no = ?"
+                    " AND EXISTS (SELECT 1 FROM regions r"
+                    " WHERE r.region_id = ? AND r.deleted_at IS NULL)",
+                    (int(pinned), region_id, revision_no, region_id),
                 )
                 if cursor.rowcount == 0:
                     conn.rollback()
@@ -429,12 +444,30 @@ class SqliteRegionRepository:
         )
 
     def _soft_delete_row(
-        self, conn: sqlite3.Connection, region_id: str, deleted_at: str
-    ) -> None:
-        conn.execute(
-            "UPDATE regions SET deleted_at = ?, updated_at = ? WHERE region_id = ?",
-            (deleted_at, deleted_at, region_id),
-        )
+        self,
+        conn: sqlite3.Connection,
+        region_id: str,
+        deleted_at: str,
+        expected_current_revision_id: str | None = None,
+    ) -> int:
+        """Conditional soft delete (I2/P1-A): never rewrite an already-deleted
+        row and, when the caller supplied the observed pointer, only delete the
+        revision it actually observed. Returns the affected row count (the
+        batch requires exactly 1)."""
+        if expected_current_revision_id is None:
+            cursor = conn.execute(
+                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+                " WHERE region_id = ? AND deleted_at IS NULL",
+                (deleted_at, deleted_at, region_id),
+            )
+        else:
+            cursor = conn.execute(
+                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+                " WHERE region_id = ? AND deleted_at IS NULL"
+                " AND current_revision_id = ?",
+                (deleted_at, deleted_at, region_id, expected_current_revision_id),
+            )
+        return cursor.rowcount
 
     def _insert_revision(self, revision: RegionRevision) -> None:
         self._conn.execute(
