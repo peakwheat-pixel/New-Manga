@@ -191,3 +191,16 @@
 |---|---|---|
 | 2026-10-30 | 建立程序；合并冻结 A+C 设计基线；建立 DAG；裁定 R-01/R-02 | DSH |
 | 2026-10-30 | 完成 C1 研究（R-03）、C3 规格（R-06）、C4 退役计划（R-05）；裁定 R-04/R-07；释放 5 条并行实现线 | DSH |
+
+## 10. Follow-up 清单（不阻塞 L4，但须在 V1.x 关闭）
+
+| 编号 | 内容 | 来源 |
+|---|---|---|
+| FOLLOW-UP-C1-1 | 系统强调色跟随（`FollowSystemAccent`）V1 仅作用域生效、不持久化；V1.x 扩 `IThemeService` 后写入设置 | C-2 GAP-3（Lead 裁定） |
+| FOLLOW-UP-C1-2 | 主题编辑器的"未安装草稿"为了实时预览走作用域 PaletteScope；V1.x 评估持久草稿模型 | C-2 DEV-2 |
+| FOLLOW-UP-DS-1 | 状态文字在 `bg.overlay/sunken` 等极端表面的对比度（6 行/7 对）；V1 约束=只落 panel/raised+statusMuted | D-1 r2/r3 |
+| FOLLOW-UP-CORE-1 | 过期/待确认计数无投影口径；需 Core 投影扩展 | B-4 |
+| FOLLOW-UP-CORE-2 | Host 缩略图命令缺失（页缩略图网格） | B-1 |
+| FOLLOW-UP-CORE-3 | 术语/不译表无 Core 读写命令（UI 诚实 NOT_WIRED） | A-3 / B-5 |
+| FOLLOW-UP-TEST-1 | 跨项目并行测试偶发 1 例失败（runsettings 串行化后仍偶发）；需定位共享状态 | 多次观测 |
+| FOLLOW-UP-REPO-1 | `ReaderWorkbenchPages.cs` 本机路径 fallback（verify-clean-clone ALLOW_PENDING） | A-4 |
