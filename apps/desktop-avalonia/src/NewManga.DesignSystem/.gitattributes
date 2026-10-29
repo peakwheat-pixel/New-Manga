@@ -1,0 +1,8 @@
+# V11R-D-1 token pipeline reproducibility pins.
+#
+# The frozen design-system tokens are compiled by a generator whose output must be byte-identical on
+# every checkout (AC1). core.autocrlf=true would rewrite LF to CRLF in the working tree and break the
+# generated-artifact comparison, so every pipeline output (and its XAML source) is pinned to LF here.
+*.axaml text eol=lf
+Generated/*.g.cs text eol=lf
+Generated/*.md text eol=lf

@@ -1,0 +1,15 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Application-level style stack for the design system. Composition order in App.axaml:
+       FluentTheme (base behaviour) -> NewMangaStyles (design system) -> app-specific legacy styles. -->
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Text.Heading.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Text.Inline.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Surfaces.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Inputs.axaml" />
+
+  <!-- Window shell defaults: the UI font stack and the canvas-level surface token. -->
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Canvas}" />
+  </Style>
+</Styles>

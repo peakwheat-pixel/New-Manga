@@ -2,8 +2,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="NewManga.App.App"
              RequestedThemeVariant="Light">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <!-- V11R-D-1: the design system is the single source of visual tokens (Nm.*).
+             NewMangaTheme merges the frozen global tokens + dark palette; DesignSystemThemeManager
+             replaces the palette at startup according to the persisted appearance. Controls.axaml
+             carries the design-system control themes (they win over FluentTheme resource lookup). -->
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/NewMangaTheme.axaml" />
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://NewManga.App/Styles/AppStyles.axaml" />
+    <!-- Design-system styles come last so their token-driven values win over legacy app styles.
+         The legacy shell is retired in V11R-C-3 / V11R-INT-1; until then both stacks coexist. -->
+    <StyleInclude Source="avares://NewManga.DesignSystem/Styles/NewMangaStyles.axaml" />
   </Application.Styles>
 </Application>

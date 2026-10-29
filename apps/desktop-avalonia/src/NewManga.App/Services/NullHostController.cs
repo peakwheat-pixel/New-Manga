@@ -1,3 +1,4 @@
+using System.Globalization;
 using NewManga.CoreClient;
 
 namespace NewManga.App.Services;
@@ -9,6 +10,8 @@ namespace NewManga.App.Services;
 public sealed class NullHostController : IHostController
 {
     public static NullHostController Instance { get; } = new();
+
+    private int _createdChapters;
 
     private NullHostController()
     {
@@ -37,6 +40,30 @@ public sealed class NullHostController : IHostController
 
     public Task<bool> TryCreateBookAsync(string title, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
+
+    /// <summary>
+    /// V11R-A-1 (contract §5.1): deterministic fake for UI tests — a valid call returns an
+    /// incrementing chapter (<c>null-chapter-1</c>, <c>null-chapter-2</c>, …), while a blank argument
+    /// or a cancelled token returns null exactly like the production failure channel. The counter
+    /// only advances on success, so assertions stay stable across failed probes. Never throws.
+    /// </summary>
+    public Task<ChapterSummary?> CreateChapterAsync(
+        string bookId,
+        string title,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) ||
+            string.IsNullOrWhiteSpace(title) ||
+            cancellationToken.IsCancellationRequested)
+        {
+            return Task.FromResult<ChapterSummary?>(null);
+        }
+
+        var order = Interlocked.Increment(ref _createdChapters);
+        var number = order.ToString(CultureInfo.InvariantCulture);
+        return Task.FromResult<ChapterSummary?>(
+            new ChapterSummary($"null-chapter-{number}", title, number, order));
+    }
 
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);

@@ -20,3 +20,7 @@ experiments/M2-SFX-DATA-INFRA/*.bak
 
 # Avalonia sidecar build output (LEGACY-SHELL-ARCHIVE-1 decoupling)
 /apps/desktop-avalonia/build/
+
+# DSH local scratch (codex probe logs, temp)
+/.tmp.dsh/
+
