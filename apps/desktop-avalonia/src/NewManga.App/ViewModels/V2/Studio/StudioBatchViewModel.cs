@@ -356,6 +356,12 @@ public sealed class StudioBatchViewModel : StudioObservable
         };
         RebuildChips();
         BuildActions();
+        Selection.Changed += (_, _) =>
+        {
+            BuildActions();
+            Raise(nameof(ScopeSuffix));
+            Raise(nameof(ActionBarHeader));
+        };
     }
 
     /// <summary>Raised when the matrix asks to drill into Page mode for one page (+ optional stage).</summary>
@@ -1271,7 +1277,9 @@ public sealed class StudioBatchViewModel : StudioObservable
     {
         if (!action.IsEnabled)
         {
-            _statusText = action.Tooltip;
+            _statusText = CanMaterializeScope()
+                ? "提交中或动作不可用：" + action.Tooltip
+                : "动作不可用：作用域无法物化（缺少章节/选中页），未发起任何 Run，未回落到整章";
             Raise(nameof(StatusText));
             return false;
         }

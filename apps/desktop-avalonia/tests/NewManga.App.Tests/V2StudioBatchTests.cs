@@ -653,4 +653,80 @@ public sealed class V2StudioBatchTests
             writer.WriteEndObject();
         });
     }
+
+    // ---------------------------------------------------------------- residual: P1-B deterministic + submit guard
+
+    [AvaloniaFact]
+    public async Task Scope_SelectionDisappearsFromProjection_DisablesActionsWithoutChapterFallback()
+    {
+        var (view, host, vm, _) = await OpenBatchAsync(projection: Projection(TenStages, pages: 6));
+        var batch = vm.Batch;
+
+        // Real user flow: select the last two pages, switch scope to Selected (materializable).
+        batch.SelectBox(4, "translate", 5, "translate");
+        batch.SetScope(StudioBatchScope.Selected);
+        Assert.Equal(2, vm.Selection.SelectedPageIds.Count);
+        Assert.True(batch.CanMaterializeScope());
+
+        // A new projection no longer contains those pages → the selection clears, scope stays Selected.
+        host.ScriptedTaskProjections.Enqueue(Projection(TenStages, pages: 4, runStatus: "paused", failedPages: 0, blockedPages: 0));
+        Assert.True(await batch.RefreshAsync());
+        StudioFixtures.Pump();
+
+        Assert.Empty(vm.Selection.SelectedPageIds);
+        Assert.Equal(StudioBatchScope.Selected, batch.Scope);
+        Assert.False(batch.CanMaterializeScope());
+        Assert.False(batch.Actions[0].IsEnabled);
+        var started = await batch.ExecuteActionAsync(batch.Actions[0]);
+        Assert.False(started);
+        Assert.Empty(host.StartRunRequests); // no silent widening to a chapter run
+        Assert.Contains("作用域", batch.StatusText);
+
+        StudioEvidence.Write(Task, "scope-materialize.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "P1-B 页从投影消失 → 选择清空但 Scope=Selected，不回落整章");
+            writer.WriteNumber("selected_pages_after", vm.Selection.SelectedPageIds.Count);
+            writer.WriteString("scope", batch.Scope.ToString());
+            writer.WriteBoolean("can_materialize", batch.CanMaterializeScope());
+            writer.WriteBoolean("action_enabled", batch.Actions[0].IsEnabled);
+            writer.WriteNumber("start_run_requests", host.StartRunRequests.Count);
+            writer.WriteString("status", batch.StatusText);
+            writer.WriteEndObject();
+        });
+    }
+
+    [AvaloniaFact]
+    public async Task SubmitInFlight_BlocksSecondSubmit_AndDisablesActions()
+    {
+        var (view, host, vm, _) = await OpenBatchAsync();
+        var batch = vm.Batch;
+        vm.Selection.SetSelectedPages(new[] { "p01" });
+        batch.SetScope(StudioBatchScope.Selected);
+
+        // Deterministic state-machine test: force the in-flight flag (same guard the second click sees).
+        var field = typeof(StudioBatchViewModel).GetField(
+            "_submitInFlight", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        field.SetValue(batch, true);
+        typeof(StudioBatchViewModel).GetMethod(
+            "BuildActions", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .Invoke(batch, null);
+        Assert.False(batch.Actions[0].IsEnabled);
+
+        var started = await batch.StartRunAsync("translate_selected");
+        Assert.Null(started);
+        Assert.Empty(host.StartRunRequests);
+        Assert.Contains("提交中", batch.StatusText);
+
+        field.SetValue(batch, false);
+        StudioEvidence.Write(Task, "submit-guard.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "R-22 提交中双击保护");
+            writer.WriteBoolean("actions_disabled_while_in_flight", true);
+            writer.WriteNumber("start_run_requests", host.StartRunRequests.Count);
+            writer.WriteString("status", batch.StatusText);
+            writer.WriteEndObject();
+        });
+    }
 }
