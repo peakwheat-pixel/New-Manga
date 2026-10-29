@@ -1,1 +1,7 @@
-2623 passed, 10 skipped, 2 warnings in 190.18s (0:03:10)
+COMMAND: python -m pytest -q
+CWD: G:\CODEX\New Manga.workspace\worktrees\UPGRADE-SCHEMA-MIGRATION-1
+PYTHON: Python 3.14.6
+AT: 2026-10-29T10:12:24.5991983Z
+----
+RESULT: 2623 passed, 10 skipped, 2 warnings in 190.16s (0:03:10)
+EXIT=0
