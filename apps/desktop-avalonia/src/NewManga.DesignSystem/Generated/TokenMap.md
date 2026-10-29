@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 277.
+Rows: 278.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -26,11 +26,11 @@ Rows: 277.
 | dark | `color.dark.line.subtle` | `Nm.Color.Line.Subtle` | Brush | `rgba(255,255,255,0.06)` |
 | dark | `color.dark.status.blocked` | `Nm.Color.Status.Blocked` | Brush | `#C8903F` |
 | dark | `color.dark.status.done` | `Nm.Color.Status.Done` | Brush | `#6FA97D` |
-| dark | `color.dark.status.failed` | `Nm.Color.Status.Failed` | Brush | `#CC6A57` |
+| dark | `color.dark.status.failed` | `Nm.Color.Status.Failed` | Brush | `#D27A69` |
 | dark | `color.dark.status.queued` | `Nm.Color.Status.Queued` | Brush | `#8A9099` |
-| dark | `color.dark.status.running` | `Nm.Color.Status.Running` | Brush | `#5B93B8` |
-| dark | `color.dark.status.skipped` | `Nm.Color.Status.Skipped` | Brush | `#82878E` |
-| dark | `color.dark.status.stale` | `Nm.Color.Status.Stale` | Brush | `#9A8AB0` |
+| dark | `color.dark.status.running` | `Nm.Color.Status.Running` | Brush | `#689CBE` |
+| dark | `color.dark.status.skipped` | `Nm.Color.Status.Skipped` | Brush | `#868B91` |
+| dark | `color.dark.status.stale` | `Nm.Color.Status.Stale` | Brush | `#9F90B4` |
 | dark | `color.dark.statusMuted.blocked` | `Nm.Color.StatusMuted.Blocked` | Brush | `rgba(200,144,63,0.16)` |
 | dark | `color.dark.statusMuted.done` | `Nm.Color.StatusMuted.Done` | Brush | `rgba(111,169,125,0.14)` |
 | dark | `color.dark.statusMuted.failed` | `Nm.Color.StatusMuted.Failed` | Brush | `rgba(201,99,79,0.16)` |
@@ -262,12 +262,12 @@ Rows: 277.
 | light | `color.light.line.grid` | `Nm.Color.Line.Grid` | Brush | `rgba(0,0,0,0.05)` |
 | light | `color.light.line.strong` | `Nm.Color.Line.Strong` | Brush | `rgba(0,0,0,0.18)` |
 | light | `color.light.line.subtle` | `Nm.Color.Line.Subtle` | Brush | `rgba(0,0,0,0.06)` |
-| light | `color.light.status.blocked` | `Nm.Color.Status.Blocked` | Brush | `#8A6A1F` |
+| light | `color.light.status.blocked` | `Nm.Color.Status.Blocked` | Brush | `#84661E` |
 | light | `color.light.status.done` | `Nm.Color.Status.Done` | Brush | `#3F6B4F` |
 | light | `color.light.status.failed` | `Nm.Color.Status.Failed` | Brush | `#A8462F` |
-| light | `color.light.status.queued` | `Nm.Color.Status.Queued` | Brush | `#6E7378` |
+| light | `color.light.status.queued` | `Nm.Color.Status.Queued` | Brush | `#676C71` |
 | light | `color.light.status.running` | `Nm.Color.Status.Running` | Brush | `#3D6E8E` |
-| light | `color.light.status.skipped` | `Nm.Color.Status.Skipped` | Brush | `#73777B` |
+| light | `color.light.status.skipped` | `Nm.Color.Status.Skipped` | Brush | `#6A6D71` |
 | light | `color.light.status.stale` | `Nm.Color.Status.Stale` | Brush | `#6B5E82` |
 | light | `color.light.statusMuted.blocked` | `Nm.Color.StatusMuted.Blocked` | Brush | `rgba(138,106,31,0.12)` |
 | light | `color.light.statusMuted.done` | `Nm.Color.StatusMuted.Done` | Brush | `rgba(63,107,79,0.12)` |
@@ -284,6 +284,7 @@ Rows: 277.
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Instant` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Fast` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Normal` | TimeSpan | `0ms` |
+| motion-reduced | `(motion)` | `Nm.Motion.Duration.Slow` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Enabled` | Boolean | `false` |
 
 ## Naming and derivation notes (R-14, contract §2.4)

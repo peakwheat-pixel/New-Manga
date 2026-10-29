@@ -33,7 +33,8 @@
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Skipped}" />
   </Style>
   <Style Selector="nmc|StatusGlyph.notstarted">
-    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+    <!-- Unstarted is a real state, not a disabled control: keep its symbol readable (>=4.5:1). -->
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
   </Style>
   <Style Selector="nmc|StatusGlyph.locked">
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
@@ -62,7 +63,7 @@
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Skipped}" />
   </Style>
   <Style Selector="TextBlock.nm-status-notstarted">
-    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
   </Style>
   <Style Selector="TextBlock.nm-status-locked">
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Status.Blocked}" />
@@ -118,3 +119,4 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
   </Style>
 </Styles>
+

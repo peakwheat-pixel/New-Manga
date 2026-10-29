@@ -5,11 +5,12 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <!-- V11R-D-1: the design system is the single source of visual tokens (Nm.*).
-             NewMangaTheme merges the frozen global tokens + dark palette; DesignSystemThemeManager
-             replaces the palette at startup according to the persisted appearance. Controls.axaml
-             carries the design-system control themes (they win over FluentTheme resource lookup). -->
-        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/NewMangaTheme.axaml" />
+        <!-- V11R-D-1: the design system is the single source of visual tokens (Nm.*). Global and palette
+             are registered as SEPARATE providers so the theme manager can replace only the palette at
+             startup/appearance switches without dropping spacing/font/Scrim tokens (D-1 I2 P1-1).
+             Controls.axaml carries the design-system control themes; they win over FluentTheme lookup. -->
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Global.axaml" />
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Dark.axaml" />
         <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls.axaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>

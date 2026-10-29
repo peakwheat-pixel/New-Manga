@@ -305,7 +305,10 @@ public sealed class CustomControlsTests
         Dispatcher.UIThread.RunJobs();
 
         var wrap = (WrapPanel)window.Content!;
-        foreach (var kind in required)
+        // I2/P3: render EVERY declared icon kind, not only the required subset.
+        var allKinds = Enum.GetValues<NmIconKind>();
+        Assert.Equal(41, allKinds.Length);
+        foreach (var kind in allKinds)
         {
             var icon = new NmIcon { Kind = kind };
             wrap.Children.Add(icon);
@@ -315,7 +318,7 @@ public sealed class CustomControlsTests
             Assert.Equal(1.25d, icon.StrokeThickness);
         }
 
-        Assert.True(Enum.GetValues<NmIconKind>().Length >= 40, "the icon vocabulary should cover every primary action");
+        Assert.All(required, kind => Assert.True(Enum.IsDefined(kind), $"{kind} must stay in the vocabulary"));
         window.Close();
     }
 

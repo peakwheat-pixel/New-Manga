@@ -77,3 +77,38 @@ B（校阅台）不被采纳为方向；其"逐条校对流"的思想以 `Review
   （标准盘状态文字对 `bg.panel` 全部 ≥4.5:1；浅色主按钮白字 ≥4.5:1；强调色明度单调），
   高对比档断言保留；token 生成器 `--check` 在修订后仍逐字节一致。
 
+---
+
+## 6. D-1 I2 / P1-2：状态徽标合成背景对比度补丁
+
+- 日期：2026-10-30
+- 裁决来源：Lead `V11R-D-1-r2` 独立审查 **P1-2**（Light `Skipped` 徽标实测 ≈4.01:1，低于
+  §2.3 的 4.5:1）；同时授权"调整 Light Skipped 前景/背景组合（或状态徽标改用不透明的状态底色
+  令牌）"。
+- 根因：状态徽标背景是半透明 `statusMuted.*`，实际有效背景是它与父面板的**合成色**；
+  原 R-09 只对 `bg.panel` 验证，故按合成背景复测时 7 个状态/主题组合低于 4.5:1。
+- 裁决：沿用 R-09"规范条款优先于数据"的原则，仅修订下表 7 个状态前景令牌，使**在合成徽标背景
+  上** ≥4.5:1；`statusMuted.*` 装饰底色保持不变，其余令牌保持原字节。
+- 伴随实现修正（不涉及令牌）：`StatusGlyph.notstarted` / `TextBlock.nm-status-notstarted` 由
+  `Text.Disabled` 改为 `Text.Secondary`——unstarted 是真实状态而非禁用控件，避免 2.52:1 的
+  低对比符号（dark 8.18:1 / light 5.86:1 on `bg.sunken`）。
+
+| 令牌 | 修订前 | 修订前（合成徽标底） | 修订后 | 修订后（合成徽标底 / bg.panel） |
+|---|---|---|---|---|
+| `color.dark.status.running` | `#5B93B8` | 4.10:1 | `#689CBE` | **4.60:1** / 5.76:1 |
+| `color.dark.status.failed` | `#CC6A57` | 3.89:1 | `#D27A69` | **4.54:1** / 5.47:1 |
+| `color.dark.status.stale` | `#9A8AB0` | 4.26:1 | `#9F90B4` | **4.58:1** / 5.79:1 |
+| `color.dark.status.skipped` | `#82878E` | 4.35:1 | `#868B91` | **4.58:1** / 4.97:1 |
+| `color.light.status.queued` | `#6E7378` | 4.13:1 | `#676C71` | **4.58:1** / 5.30:1 |
+| `color.light.status.blocked` | `#8A6A1F` | 4.32:1 | `#84661E` | **4.61:1** / 5.38:1 |
+| `color.light.status.skipped` | `#73777B` | 4.01:1 | `#6A6D71` | **4.62:1** / 5.20:1 |
+
+- 验证：新增 `BadgeCompositeContrastTests` 从 headless 真实渲染帧采样徽标背景像素、与解析后的
+  `StatusGlyph`/标签前景计算 WCAG 对比度，覆盖 9 状态 × dark/light × standard/high-contrast，
+  全部 ≥4.5:1；`R14ContractTests`/`ContrastTokenTests` 保持通过；token 生成器
+  `--check` 与 ThemeEngine 内置主题基线（`newmanga-default.nmtheme`、
+  `ThemeTokenBaseline.g.cs`）同步再生成。
+- 证据：`verification/V11R-D-1/REVIEW-R2-DISPOSITION.md`、
+  `verification/V11R-D-1/I2/badge-contrast-tests.log`。
+
+

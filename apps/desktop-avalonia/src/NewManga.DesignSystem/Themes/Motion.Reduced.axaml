@@ -7,5 +7,6 @@
   <sys:TimeSpan x:Key="Nm.Motion.Duration.Fast">00:00:00</sys:TimeSpan>
   <sys:TimeSpan x:Key="Nm.Motion.Duration.Instant">00:00:00</sys:TimeSpan>
   <sys:TimeSpan x:Key="Nm.Motion.Duration.Normal">00:00:00</sys:TimeSpan>
+  <sys:TimeSpan x:Key="Nm.Motion.Duration.Slow">00:00:00</sys:TimeSpan>
   <sys:Boolean x:Key="Nm.Motion.Enabled">False</sys:Boolean>
 </ResourceDictionary>

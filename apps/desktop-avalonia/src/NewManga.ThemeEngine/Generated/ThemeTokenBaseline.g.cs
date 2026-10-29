@@ -3,7 +3,7 @@
 //   Typography baseline derived from the frozen token document; the palette composer
 //   scales these values for theme font-size / line-height personality.
 //   source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN)
-//   tokens.json sha256: afad46ef9290f40616d09c4e47d3ba9ed83baf436ec8bf375c1a4a11b4c23943
+//   tokens.json sha256: c8fc0f13562e52085f2cf7ee5dab3e5e4f0a34f42f7587be6ef98270e707c10b
 // </auto-generated>
 
 namespace NewManga.ThemeEngine;
@@ -18,7 +18,7 @@ public static class ThemeTokenBaseline
     public const string SourcePath = "doc/design/redesign-v1/40-fusion/tokens.json";
 
     /// <summary>SHA-256 of the token document this baseline was generated from.</summary>
-    public const string SourceSha256 = "afad46ef9290f40616d09c4e47d3ba9ed83baf436ec8bf375c1a4a11b4c23943";
+    public const string SourceSha256 = "c8fc0f13562e52085f2cf7ee5dab3e5e4f0a34f42f7587be6ef98270e707c10b";
 
     /// <summary>Base font sizes at scale 1.0, keyed by <c>Nm.FontSize.*</c>.</summary>
     public static IReadOnlyDictionary<string, double> FontSizes { get; } =
