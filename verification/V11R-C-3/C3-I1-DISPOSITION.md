@@ -18,5 +18,7 @@
 
 - ``dotnet build NewManga.sln -warnaserror``：0W/0E。
 - ``dotnet test NewManga.sln --no-build``：0 fail（含新增 C-3-I1 测试）。
+- 干净树终版 R6：``R6-report-clean.md``（源码 HEAD e41017aa、dirty=false、App 309+7/ThemeEngine 235/DS 85/Host 49+28/CoreClient 116+25、双 shell exit 0/0、v2 与 legacy host.log 齐全、SHA-256 清单）。
 - 干净树 R6 重跑：见 ``R6-report-clean.md``。
+
 

@@ -1,3 +1,5 @@
+> **SUPERSEDED**：本文件是 C-3 执行期（I1 前）的 R6 记录；干净树终版见 `R6-report-clean.md`。
+
 # V11R-C-3 R6 — 零引用门与全量验收
 
 - 执行时间：2026-10-30T03:50:45+08:00
@@ -42,3 +44,5 @@
 - 旧壳 `--shell=legacy` 保留可启动（固定 Sonoma 布局、仅浅/暗外观切换、设置页指向 Theme Studio）；
 - `--theme` 旧参数保留为兼容映射（LegacyThemeMigration → newmanga-default）；
 - ThemeEngine / DesignSystem 语义未改动。
+
+
