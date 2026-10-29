@@ -8,7 +8,7 @@
     <AssemblyName>NewManga.App</AssemblyName>
     <RootNamespace>NewManga.App</RootNamespace>
     <IsPackable>false</IsPackable>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
 
     <!-- Release publish shape validated by the S0 spike (DISPLAY-PERF-DECISION-1):
          SingleFile + SelfContained + Trimmed + native libs bundled + R2R + compression
@@ -39,3 +39,4 @@
   </ItemGroup>
 
 </Project>
+

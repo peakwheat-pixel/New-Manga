@@ -167,7 +167,7 @@ from bootstrap.core_assembly import (
 )
 from domain.regions.entities import RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
-from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.importing import PillowImageDecoder, SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.providers.handlers import typeset_style_defaults
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
@@ -175,6 +175,7 @@ from infrastructure.rendering.pillow_rendering import (
     PillowTextLayoutEngine,
     decode_nmfr_frame,
 )
+from infrastructure.rendering.pillow_source_style import PillowSourceStyleAnalyzer
 from infrastructure.resource_channel.catalog_store import (
     PreviewOrigin,
     ResourceCatalogStore,
@@ -195,6 +196,10 @@ from infrastructure.resource_channel.render_preview import (
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
 from infrastructure.sqlite.nmbak import NmbakBackupError
+from infrastructure.sqlite.upgrade_legacy_layout import (
+    LegacyLayoutError,
+    migrate_legacy_layout,
+)
 from infrastructure.plugins.service import PluginError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
@@ -642,19 +647,13 @@ class P16WireError(Exception):
 
 
 class _PassthroughImageDecoder:
-    """Legacy test double; production assembly uses ``QtImageDecoder``."""
+    """Legacy test double; production assembly uses ``PillowImageDecoder``."""
 
     def decode(self, payload: bytes) -> DecodedImage:
         del payload
         # mime_type keeps the stub's original "rgb" semantics under the image
         # type, matching the frozen DecodedImage contract (no format= field).
         return DecodedImage(width=1, height=1, mime_type="image/rgb")
-
-
-class _StubStyleAnalyzer:
-    def analyze_pixel_styles(self, image: Any) -> list[Any]:
-        del image
-        return []
 
 
 def assemble_production_core(data_root: Path | None = None) -> CoreServices:
@@ -708,11 +707,11 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     core = assemble_core_services(
         db_path,
         managed_root,
-        image_decoder=QtImageDecoder(),
+        image_decoder=PillowImageDecoder(),
         font_catalog=catalog,
         layout_engine=PillowTextLayoutEngine(catalog),
         compositor=PillowImageCompositor(catalog),
-        source_styles=SourceStyleService(_StubStyleAnalyzer()),
+        source_styles=SourceStyleService(PillowSourceStyleAnalyzer()),
         content_decoder=decode_nmfr_frame,
         original_page_reader=read_original_page,
         recover_runs_on_assembly=False,
@@ -4589,6 +4588,34 @@ def _ensure_preview_namespace(catalog_db: Path, derived_root: Path) -> None:
 def main() -> int:
     env_root = os.environ.get("NEWMANGA_DATA_ROOT")
     data_root = Path(env_root) if env_root else default_data_root()
+    # UPGRADE-LEGACY-LAYOUT-1: older builds kept the library under <root>/data/.
+    # Promote it once, before anything opens the database; a broken legacy file
+    # is reported but must not prevent start-up (the current data root is then
+    # used as-is).
+    try:
+        migration = migrate_legacy_layout(data_root)
+    except LegacyLayoutError as error:
+        # Refusing to continue matters: assemble_production_core would create an
+        # empty root library.db on first use, after which the legacy data would
+        # never be migrated again (the current layout wins). Exit instead so the
+        # Host surfaces the filesystem error and the user data stays intact.
+        print(
+            f"[core.upgrade] legacy data layout was NOT migrated: {error}",
+            file=sys.stderr,
+        )
+        print(
+            "[core.upgrade] refusing to start while legacy data is un-migrated;"
+            " fix the filesystem issue and restart",
+            file=sys.stderr,
+        )
+        return 2
+    else:
+        if migration.migrated:
+            print(
+                "[core.upgrade] migrated legacy data layout: "
+                + ", ".join(migration.copied),
+                file=sys.stderr,
+            )
     derived_root = Path(os.environ.get("M2RC1_DERIVED_ROOT", data_root / "derived"))
     catalog_db = Path(
         os.environ.get("M2RC2_CATALOG_DB", data_root / "catalog" / "catalog.sqlite")
