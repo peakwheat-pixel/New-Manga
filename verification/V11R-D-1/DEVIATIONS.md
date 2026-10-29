@@ -20,28 +20,33 @@
   `Nm.LineHeight.Display/Title/Body/Label/Meta/Data`、`Nm.Opacity.Disabled(0.4)`。
 - 建议：下一版设计基线把 high-contrast / density 正式纳入 `tokens.json`，届时删除对应派生表。
 
-## D-2 契约示例与冻结 token 的数值不一致
+## D-2 Motion 时长以冻结 token 为准（已由 Lead 裁决 R-10）
 
-契约 §2.2 示例写 `Nm.Motion.Duration.Normal(0:0:0.15)`；冻结 `tokens.json` 为 `140ms`。按
-V11R_PROGRAM §1.4「tokens.json 为唯一视觉权威」，资源值取 `00:00:00.1400000`。契约示例为说明性
-文本，未改动契约。
+契约 §2.2 示例曾写 `Nm.Motion.Duration.Normal(0:0:0.15)`；冻结 `tokens.json` 为 `140ms`。按
+V11R_PROGRAM §1.4「tokens.json 为唯一视觉权威」，资源值取 `00:00:00.1400000`。Lead 已裁决 R-10：
+契约示例为笔误、以 tokens.json 为准，并已同步修正契约文本。DS 无需改动。
 
-## D-3 冻结标准盘的对比度缺口（需 Lead 裁决是否修订基线）
+## D-3 标准盘对比度缺口 → 已按 Lead 裁决 R-09 修订冻结令牌
 
-用 WCAG 2.1 公式实测（`ContrastTokenTests`，对 `bg.panel`）：
+实测（WCAG 2.1，对 `bg.panel`）发现冻结标准盘有 5 处低于 DESIGN_SYSTEM §2.3 下限。Lead 裁决
+**R-09**：规范条款优先于数据，修订 `tokens.json` 数据（记录于
+`doc/design/redesign-v1/40-fusion/DECISION_LOG.md` §5），不改规范；高对比模式保留为更强分离档。
 
-| 令牌 | dark 对比度 | light 对比度 | 结论 |
-|---|---|---|---|
-| `status.queued` | 2.74:1 | 4.79:1 | dark 低于 §2.3 的 4.5:1 |
-| `status.skipped` | 2.07:1 | 3.26:1 | 两套主题均低于 4.5:1 |
-| `status.failed` | 4.38:1 | 5.86:1 | dark 低于 4.5:1（临界） |
-| `accent.base` on `bg.panel` | 7.38:1 | 3.69:1 | 浅色主按钮 `accent.on`(#FFF) 文字 3.69:1 低于 4.5:1 |
-| `accent.ring` on white | — | ≈1.6:1（叠加后） | 焦点"外发光"在浅色不达标；实现改用实色 `accent.base` 2px 描边（≥3:1） |
+修订后标准盘已全部达标，`ContrastTokenTests` 已从"特征化缺口"改为**合规断言**：
 
-处理：标准盘按冻结值原样发布（不擅自改色），高对比模式把全部状态/次要文字提升到 ≥4.5:1；
-所有状态组件一律"色相 + 符号 + 文字"三编码（§2.2），颜色不是唯一通道。缺口已用
-`ContrastTokenTests.Standard_palette_status_gap_is_pinned_to_the_frozen_baseline` 固定为特征化断言，
-防止无声漂移。**是否修订 `tokens.json` 属设计基线变更，需 Lead 裁决。**
+| 令牌 | 修订前 | 修订后 |
+|---|---|---|
+| dark `status.queued` | `#5C6169`（2.74:1） | `#8A9099`（5.31:1） |
+| dark `status.skipped` | `#4A4F55`（2.07:1） | `#82878E`（4.72:1） |
+| dark `status.failed` | `#C9634F`（4.38:1） | `#CC6A57`（4.69:1） |
+| light `status.skipped` | `#8A8F94`（3.26:1） | `#73777B`（4.51:1） |
+| light `accent.base`（白字） | `#B4791F`（3.69:1） | `#96651A`（5.03:1） |
+| light `accent.hover/active` | `#9C6717`/`#8A5A12` | `#7F5515`/`#6B470F`（明度仍单调） |
+| light `accent.muted/ring` | `rgba(180,121,31,…)` | `rgba(150,101,26,…)`（同色相） |
+
+残余说明：light `status.skipped` 对 `bg.canvas`（#F4F3F0）为 4.07:1，略低于 4.5；状态文字/符号
+在组件中始终落在 `bg.panel`/`bg.raised` 或 `statusMuted` 底上（对 panel 4.51:1 达标），且一律带
+符号与文字标签，高对比模式对 canvas 亦达标。`statusMuted.*` 为装饰性底色，按 R-09 保持不变。
 
 ## D-4 Avalonia 11.3 无 OpenType 字体特性 API
 

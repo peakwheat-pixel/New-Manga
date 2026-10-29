@@ -1,0 +1,7 @@
+2026-10-29T16:44:37.6956685+00:00 INFO single-instance acquired: Local\NewManga.App.Tests.A1.e7978879828f (abandoned_recovered=False)
+2026-10-29T16:44:37.6971295+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running data_root=C:\Users\49745\AppData\Local\Temp\newmanga-app-tests\v11r-a1-create-bc478a0478
+2026-10-29T16:44:37.6974553+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-10-29T16:44:38.0896545+00:00 INFO core_service ready (1 wire frames)
+2026-10-29T16:44:38.1684960+00:00 INFO host_bridge ready (1 wire frames)
+2026-10-29T16:44:38.1688493+00:00 INFO credential port ready (Windows Credential Manager)
+2026-10-29T16:44:38.1709135+00:00 INFO host-control session opened (host_WwisrR6yr8vNVWL8xZBH2g_jKZ_qgI9m_FBVeKuNXZ0)

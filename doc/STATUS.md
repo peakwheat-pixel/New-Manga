@@ -3,7 +3,10 @@
 状态：2026-10-25 起 DSH 接任 Lead / Architect / Integrator；授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
 ## 当前程序（2026-10-30）
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建的唯一 DAG）；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`V11R-BASELINE-1` done（审计受理、设计基线合并 `c78db96ed`/`c73239999`、DAG 建立）。进行中：`V11R-D-1`（Design System）、`V11R-A-1/A-2/A-3`（服务层与契约）、`V11R-C-RESEARCH-1`（主题框架研究）、`V11R-F0-1`（Region 写面）。
+- 当前 Task：`V11R-BASELINE-1` done。已合入 main：设计基线（`c78db96ed`/`c73239999`）、`V11R-A-1` CreateChapter（`819eea0d3` 前）、`V11R-D-1` M0 设计系统（`819eea0d3`）、R-09 对比度修订 + DS palette seam、`V11R-A-2` IRunController。main 实测 build 0W/0E、dotnet test 322 通过/0 失败。
+- 进行中：`V11R-D-1` 余量（AC4 余量/AC5 自定义控件/截图）、`V11R-C-1` 主题引擎 Part A（theme-engine）、`V11R-A-3` 66 命令契约、`V11R-A-5` **P0 生产写入策略**、`V11R-F0-1` Region 写面（交付 `f971ece07`，独立审查中）、`V11R-F0-2` Region 文本投影、`V11R-B-1` 新外壳+Library、`V11R-B-3` Studio Page。
+- **P0 新发现**：`HostRuntime` 默认 `ReadOnlyUntilParity` 且发布快捷方式无 `--parity` → 发布版 GUI 完全不可写（导入/建书/建章/Run 全被拒）。已建 `V11R-A-5` 修复（默认 ReadWrite + 三重护栏 + first-run 备份），见裁定 R-13。
+- 证据与契约：`doc/contracts/V11R_REGION_WRITE_CONTRACT.md`、`doc/design/theming/{RESEARCH_V1,THEME_STUDIO_SPEC}.md`、`doc/plan/{V11R_AVALONIA_CONTRACT,V11R_SCREEN_SPECS,V11R_THEME_RETIREMENT_PLAN}.md`。
 - 基线：`main@eaacd872d` + 设计合并；`dotnet build NewManga.sln` 0W/0E 实测；**不 push 远端**。
 - 最近完成（上一程序）：READER-LIBRARY-WIRE-1 done（阅读器/沉浸，复核收口）。0.1.1 未签名发布。
 
