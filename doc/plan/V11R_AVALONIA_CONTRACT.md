@@ -198,16 +198,24 @@ Task<ChapterSummary?> CreateChapterAsync(string bookId, string title, Cancellati
 public interface IRunController
 {
     Task<RunStartInfo?> StartRunAsync(RunStartRequest request, CancellationToken ct = default);
-    Task<RunControlInfo?> ControlRunAsync(string runId, RunControlAction action, CancellationToken ct = default);
+    Task<RunControlInfo?> ControlRunAsync(string runId, RunControlAction action, string? idempotencyKey = null, CancellationToken ct = default);
     Task<RunControlInfo?> ResumeBlockedRunAsync(string runId, CancellationToken ct = default);
     Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default);
     Task<TaskProjectionInfo?> GetTaskProjectionAsync(string runId, CancellationToken ct = default);
-    Task<RunControlInfo?> RetryFailedTargetsAsync(string runId, CancellationToken ct = default);
-    Task<bool> CancelExportAsync(string exportId, CancellationToken ct = default); // 已存在则复用
+    Task<RunControlInfo?> RetryFailedTargetsAsync(string runId, string idempotencyKey, CancellationToken ct = default);
 }
 public enum RunControlAction { Pause, Resume, Stop, Restart }
 public sealed record RunStartRequest(string Command, IReadOnlyDictionary<string, object?> Scope, IReadOnlyDictionary<string, object?>? Overrides, string IdempotencyKey);
 ```
+
+**幂等键规则（R-08，2026-10-30 修订）**：
+- `StartRun`：`RunStartRequest.IdempotencyKey` **必填**；
+- `ControlRun`：仅 `Restart` 必须提供 `idempotencyKey`（其余 action 传入应被忽略或为 null）；
+- `RetryFailedTargets`：`idempotencyKey` **必填**（签名中为非可空参数，调用方必须给出）；
+- 缺失/空白幂等键一律**本地 typed 拒绝**（`INVALID_REQUEST`），**禁止静默生成**——否则无法区分"用户重试"与"重复提交"。
+
+**不放入 `IRunController` 的成员**：导出相关方法（如 `CancelExportAsync`）已存在于 `IHostController`，且语义属于导出域，不在 `IRunController` 重复声明（避免返回类型冲突与双重真值）。
+
 宿主：`HostController` 实现（`IHostController` 可继承 `IRunController`）；`NullHostController` 提供确定性假实现。
 UI 通过 `IRunController` 订阅/轮询 `GetRunSnapshotAsync` + `GetTaskProjectionAsync`（无 push 通道时 500–1000ms 轮询，可注入）。
 
