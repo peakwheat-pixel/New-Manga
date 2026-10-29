@@ -1,0 +1,20 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 9 items
+
+tests/core/test_region_single_write_liveness.py::test_save_geometry_after_concurrent_delete_is_target_not_found PASSED [ 11%]
+tests/core/test_region_single_write_liveness.py::test_save_manual_translation_after_concurrent_delete_is_target_not_found PASSED [ 22%]
+tests/core/test_region_single_write_liveness.py::test_confirm_final_after_concurrent_delete_is_target_not_found PASSED [ 33%]
+tests/core/test_region_single_write_liveness.py::test_set_locks_after_concurrent_delete_is_target_not_found PASSED [ 44%]
+tests/core/test_region_single_write_liveness.py::test_wire_save_region_geometry_after_concurrent_delete_is_target_not_found PASSED [ 55%]
+tests/core/test_region_create_cap.py::test_sequential_create_at_cap_is_rejected_without_write PASSED [ 66%]
+tests/core/test_region_create_cap.py::test_batch_page_cap_is_the_authority_even_if_the_precheck_passed PASSED [ 77%]
+tests/core/test_region_create_cap.py::test_concurrent_creates_at_the_cap_boundary_cannot_overshoot PASSED [ 88%]
+tests/core/test_region_create_cap.py::test_wire_create_at_cap_is_invalid_request PASSED [100%]
+
+============================== 9 passed in 1.06s ==============================
+EXIT_CODE=0

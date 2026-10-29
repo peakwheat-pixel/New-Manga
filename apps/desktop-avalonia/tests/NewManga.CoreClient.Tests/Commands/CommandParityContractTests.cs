@@ -6,24 +6,19 @@ namespace NewManga.CoreClient.Tests.Commands;
 
 /// <summary>
 /// AC1/AC2/AC3 contract parity: the committed Rust-derived snapshot and the C# command registry must
-/// describe exactly the same 66 production commands, with no silent gaps. Every command is either
+/// agree on every frozen production command, with no silent gaps. Every command is either
 /// IMPLEMENTED (sidecar channel named) or explicit NOT_SUPPORTED with a readable reason. The probe
 /// evidence proves the nine core_service routes really work on the frozen sidecar.
+///
+/// V11R-F0-1: the registry gains ten additive Region write commands. The frozen 66-command snapshot
+/// is NOT edited; the parity tests derive the legacy set from the snapshot and assert the only
+/// additions are exactly <see cref="HostCommandRegistry.V11RAdditiveCommandNames"/> (per-domain counts
+/// are derived too, never hand-maintained).
 /// </summary>
 public sealed class CommandParityContractTests
 {
     private const string SnapshotPath = "verification/HOST-COMMAND-MIGRATION-1/parity/production-commands.json";
     private const string ProbePath = "verification/HOST-COMMAND-MIGRATION-1/parity/core-command-probe.json";
-
-    private static readonly Dictionary<HostCommandDomain, int> ExpectedDomainCounts = new()
-    {
-        [HostCommandDomain.Settings] = 33,
-        [HostCommandDomain.Library] = 8,
-        [HostCommandDomain.Region] = 6,
-        [HostCommandDomain.Reader] = 4,
-        [HostCommandDomain.Resource] = 3,
-        [HostCommandDomain.Workbench] = 12,
-    };
 
     private static readonly (string Command, string CoreCommand)[] ImplementedCoreRoutes =
     {
@@ -78,24 +73,50 @@ public sealed class CommandParityContractTests
     public void Registry_CoversSnapshotExactly_WithSixDomains()
     {
         var snapshot = RepoLocator.ReadElement(SnapshotPath);
-        var snapshotNames = snapshot.GetProperty("commands").EnumerateArray()
+        var snapshotCommands = snapshot.GetProperty("commands").EnumerateArray().ToArray();
+        var snapshotNames = snapshotCommands
             .Select(command => command.GetProperty("name").GetString()!)
             .ToHashSet(StringComparer.Ordinal);
         var registryNames = HostCommandRegistry.All.Keys.ToHashSet(StringComparer.Ordinal);
 
-        Assert.Equal(66, registryNames.Count);
-        Assert.True(registryNames.SetEquals(snapshotNames), "C# registry and Rust snapshot command sets differ");
+        // The frozen legacy surface must stay fully registered; the only
+        // additions are the explicitly declared V11R-F0-1 Region write set
+        // (the frozen snapshot file itself is never edited).
+        Assert.True(
+            registryNames.IsSupersetOf(snapshotNames),
+            "C# registry is missing frozen production commands");
+        var additive = registryNames.Except(snapshotNames, StringComparer.Ordinal)
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Equal(HostCommandRegistry.V11RAdditiveCommandNames, additive);
+        Assert.Equal(snapshotNames.Count + additive.Count, registryNames.Count);
+
+        // Per-domain counts are DERIVED from the frozen snapshot's own domain
+        // labels plus the additive set -- no hand-maintained totals.
+        var expectedDomainCounts = Enum.GetValues<HostCommandDomain>()
+            .ToDictionary(domain => domain, _ => 0);
+        foreach (var command in snapshotCommands)
+        {
+            var domain = Enum.Parse<HostCommandDomain>(
+                command.GetProperty("domain").GetString()!, ignoreCase: true);
+            expectedDomainCounts[domain] += 1;
+        }
+
+        foreach (var name in additive)
+        {
+            expectedDomainCounts[HostCommandRegistry.Get(name).Domain] += 1;
+        }
 
         foreach (var domain in Enum.GetValues<HostCommandDomain>())
         {
             var count = HostCommandRegistry.ForDomain(domain).Count;
-            Assert.Equal(ExpectedDomainCounts[domain], count);
+            Assert.Equal(expectedDomainCounts[domain], count);
             Assert.True(count > 0, $"{domain} domain is empty");
         }
 
-        Assert.Equal(66, ExpectedDomainCounts.Values.Sum());
-        var total = Enum.GetValues<HostCommandDomain>().Sum(domain => HostCommandRegistry.ForDomain(domain).Count);
-        Assert.Equal(66, total);
+        Assert.Equal(registryNames.Count, expectedDomainCounts.Values.Sum());
+        var total = Enum.GetValues<HostCommandDomain>()
+            .Sum(domain => HostCommandRegistry.ForDomain(domain).Count);
+        Assert.Equal(registryNames.Count, total);
     }
 
     [Fact]
@@ -104,10 +125,12 @@ public sealed class CommandParityContractTests
         var implemented = HostCommandRegistry.All.Values.Where(command => command.IsImplemented).ToArray();
         var notSupported = HostCommandRegistry.All.Values.Where(command => !command.IsImplemented).ToArray();
 
-        // CREDENTIAL-PORT-1 wired the last pair (OS vault + Core bind/clear): nothing is NOT_SUPPORTED.
-        Assert.Equal(66, implemented.Length);
+        // CREDENTIAL-PORT-1 wired the last pair (OS vault + Core bind/clear):
+        // nothing is NOT_SUPPORTED. The expected totals are DERIVED from the
+        // registry itself, so the V11R-F0-1 additive batch needs no magic 66/76.
         Assert.Empty(notSupported);
-        Assert.Equal(66, implemented.Length + notSupported.Length);
+        Assert.Equal(HostCommandRegistry.All.Count, implemented.Length);
+        Assert.Equal(HostCommandRegistry.All.Count, implemented.Length + notSupported.Length);
 
         foreach (var command in implemented)
         {
@@ -169,17 +192,30 @@ public sealed class CommandParityContractTests
         var rows = new List<object>();
         var implemented = new List<string>();
         var notSupported = new List<object>();
+        var additiveCount = 0;
         foreach (var descriptor in HostCommandRegistry.All.Values.OrderBy(command => command.Name, StringComparer.Ordinal))
         {
-            var snapshotCommand = snapshotCommands[descriptor.Name];
-            var handler = snapshotCommand.GetProperty("handler");
+            // The frozen snapshot documents the migrated legacy commands; the
+            // V11R-F0-1 additions have no Rust handler by design (they are new
+            // Core commands, not migrated Tauri commands) and are marked so.
+            var fromSnapshot = snapshotCommands.TryGetValue(descriptor.Name, out var snapshotCommand);
+            if (!fromSnapshot)
+            {
+                additiveCount += 1;
+            }
+
+            var handler = fromSnapshot ? snapshotCommand.GetProperty("handler") : default;
             rows.Add(new
             {
                 name = descriptor.Name,
                 domain = descriptor.Domain.ToString().ToLowerInvariant(),
-                rust_handler = handler.GetProperty("file").GetString() + ":" + handler.GetProperty("line").GetInt32(),
-                rust_params = snapshotCommand.GetProperty("params").GetArrayLength(),
-                rust_returns = snapshotCommand.GetProperty("returns").GetString(),
+                rust_handler = fromSnapshot
+                    ? handler.GetProperty("file").GetString() + ":" + handler.GetProperty("line").GetInt32()
+                    : "n/a (V11R-F0-1 additive command)",
+                rust_params = fromSnapshot ? snapshotCommand.GetProperty("params").GetArrayLength() : 0,
+                rust_returns = fromSnapshot
+                    ? snapshotCommand.GetProperty("returns").GetString()
+                    : "n/a (V11R-F0-1 additive command)",
                 status = descriptor.Status.ToString(),
                 channel = descriptor.Channel.ToString(),
                 core_command = descriptor.CoreCommand,
@@ -203,7 +239,10 @@ public sealed class CommandParityContractTests
             writer.WriteString("ac", "AC1/AC2/AC3");
             writer.WriteString("snapshot", SnapshotPath);
             writer.WriteString("probe", ProbePath);
-            writer.WriteNumber("snapshot_commands", 66);
+            writer.WriteNumber(
+                "snapshot_commands",
+                snapshot.GetProperty("counts").GetProperty("production").GetInt32());
+            writer.WriteNumber("additive_commands", additiveCount);
             writer.WriteNumber("implemented", implemented.Count);
             writer.WriteNumber("not_supported", notSupported.Count);
             writer.WriteNumber("coverage_percent", 100);

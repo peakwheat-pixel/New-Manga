@@ -85,6 +85,47 @@ Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
     {"regions": [], "page_size": null}, NOT an error -- the existing
     list_regions semantics (contract §5.4 footnote a). Errors:
     INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
+  - list_page_region_texts: {"page_id": "<id>", "region_ids"?: ["<id>", ...]}
+      -> {"page_id", "page_size": {"width", "height"} | null,
+          "regions": RegionTextDetail[]}
+    (V11R-F0-2 / closes the V11R-F0-1 GAP-2: the region TEXT read face did
+    not exist, so the Studio Page mode had no way to load the four-level text
+    of an already-edited page -- only list_regions' minimal five-field DTO and
+    the revision summaries existed. This single-page read returns every live
+    region of one page with its REAL persisted projection: four-level text,
+    the three locks, review_state, origin, current revision number/id,
+    is_pinned of the current revision, all pinned revision numbers and the
+    normalized geometry -- one round trip, no per-region N+1. The optional
+    region_ids filter is strict (every id must be a LIVE region of that page,
+    otherwise TARGET_NOT_FOUND, which also rejects a cross-page id). A page
+    with no regions reads as an empty list (the frozen C043 precedent, not an
+    error); an unknown page reads page_size null and empty regions. Protocol
+    minor stays 3 (same Region family, zero bump). Errors: INVALID_REQUEST
+    (payload) / TARGET_NOT_FOUND (filtered region unknown or of another
+    page) / UNKNOWN (internal) only.)
+  - create_region / delete_region / save_region_geometry / merge_regions /
+    split_region / reorder_regions / save_manual_translation /
+    confirm_region_final / set_region_lock / pin_revision
+    (V11R-F0-1 / audit §5.1 F-01: the Region write face the Studio Page mode
+    consumes. Additive command surface on the SAME Region family minor (3):
+    the Core's version gate enforces the major for this family, the existing
+    Region siblings ride minor 3, and zero pre-existing command semantics
+    change -- same backwards-compatible widening precedent as the
+    cleanup/backup/plugin and RC-4 command families. Request payloads are
+    validated typed fail-closed BEFORE any persistence; every write reuses
+    the EXISTING ``application.editing.service`` use case (the single new use
+    case ``set_locks`` composes the existing domain lock setters through the
+    same atomic commit seam and is recorded as a GAP in
+    doc/contracts/V11R_REGION_WRITE_CONTRACT.md). Wire geometry is the
+    editable normalized point list ``{"points": [[x, y], ...]}`` (0..1; two
+    points = rectangle, >=3 = polygon) converted by
+    ``application/editing/region_canvas.py``; results project the
+    post-write effective state. Error semantics reuse the existing typed
+    literals only: INVALID_REQUEST (validation) / INPUT_REVISION_CHANGED
+    (the explicit ``expected_revision`` / ``expected_revisions`` optimistic
+    guard, ZERO write on conflict) / TARGET_NOT_FOUND (region, page or
+    revision not found) / UNKNOWN (internal). Full per-command contract:
+    doc/contracts/V11R_REGION_WRITE_CONTRACT.md.)
   - cleanup.preview: {} -> {"targets": [{"relative_path", "size_bytes"}...],
       "total_bytes": <int>, "pending_cleanups": <int>}
     (SETTINGS-OPEN-B-2, design §4.3: the cache/Revision maintenance face
@@ -125,6 +166,7 @@ import hmac
 from dataclasses import asdict, dataclass
 import io
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -139,10 +181,21 @@ from typing import Any, Callable, TextIO
 
 from application.editing.errors import (
     GuardStatus,
+    RegionLimitExceeded,
     RegionNotFound,
     RegionRevisionChanged,
     RegionRevisionNotFound,
 )
+from application.editing.region_canvas import (
+    MAX_GEOMETRY_POINTS,
+    MAX_REGION_IDS_PER_BATCH,
+    MAX_REGIONS_PER_PAGE,
+    MAX_SPLIT_PARTS,
+    RegionCanvasError,
+    normalized_to_page_geometry,
+    page_geometry_to_normalized,
+)
+from application.editing.service import effective_sfx_policy, region_text_state
 from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
@@ -165,7 +218,7 @@ from bootstrap.core_assembly import (
     assemble_core_services,
     default_data_root,
 )
-from domain.regions.entities import RegionType, SfxPolicy
+from domain.regions.entities import RegionGeometry, RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
 from infrastructure.importing import PillowImageDecoder, SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.providers.handlers import typeset_style_defaults
@@ -392,6 +445,29 @@ _SFX_POLICY_VALUES = frozenset(policy.value for policy in SfxPolicy)
 _REGION_TYPE_VALUES = frozenset(
     region_type.value for region_type in RegionType
 )
+
+#: V11R-F0-1: the Region write face the Studio Page mode consumes (audit
+#: §5.1 F-01 -- the commands did not exist on the wire before). Additive to
+#: the six registered Region commands (C042-C047); every handler reuses the
+#: EXISTING ``application.editing.service`` use cases and only adds the
+#: wire-side validation/projection. There is no new envelope semantics: the
+#: commands ride the same per-command family minor (3) as their
+#: ``set_region_type`` / ``list_regions`` siblings.
+_REGION_WRITE_COMMANDS = frozenset({
+    "create_region",
+    "delete_region",
+    "save_region_geometry",
+    "merge_regions",
+    "split_region",
+    "reorder_regions",
+    "save_manual_translation",
+    "confirm_region_final",
+    "set_region_lock",
+    "pin_revision",
+})
+
+#: V11R-F0-1: the three user locks the ``set_region_lock`` command addresses.
+_REGION_LOCK_FIELDS = ("region_locked", "translation_locked", "inpaint_locked")
 
 #: M2-PROD-DETECT-3: upper bound for one core.detect page, enforced on the
 #: base64-decoded FILE bytes; a separate pixel-count cap (below) bounds the
@@ -623,13 +699,20 @@ class RegionConflictError(ValueError):
 
 
 class RegionLookupError(ValueError):
-    """A set_region_type target does not exist or is soft-deleted (C7) --
-    mapped to the existing TARGET_NOT_FOUND/not_found row; carries only the
-    region_id so no raw exception text rides the wire (§8)."""
+    """A region-side target does not exist or is soft-deleted (C7) -- mapped
+    to the existing TARGET_NOT_FOUND/not_found row; carries only the opaque
+    id so no raw exception text rides the wire (§8).
 
-    def __init__(self, region_id: str) -> None:
-        super().__init__("region not found")
+    V11R-F0-1: ``message`` lets the added write commands distinguish
+    "region not found" from "page not found" / "region revision not found"
+    without inventing a new error code (the frozen TARGET_NOT_FOUND row stays
+    the single not_found code). The pre-existing callers keep the historical
+    default message verbatim."""
+
+    def __init__(self, region_id: str, message: str = "region not found") -> None:
+        super().__init__(message)
         self.region_id = region_id
+        self.message = message
 
 
 class RenderCommandError(ValueError):
@@ -2093,6 +2176,79 @@ class CoreServiceServer:
         except RegionNotFound as error:
             raise RegionLookupError(region_id) from error
 
+    def handle_list_page_region_texts(
+        self, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """The RegionTextDetail read channel (V11R-F0-2 / closes GAP-2).
+
+        Studio Page loads ONE page's region list + four-level text in ONE
+        round trip. ``list_page_region_texts`` was chosen over a single-region
+        ``get_region`` because the page workspace always needs every live
+        region of the page: a per-region command would make the first paint
+        N+1, while this command is exactly one request.
+
+        Request: ``{"page_id": "<id>", "region_ids"?: ["<id>", ...]}``.
+        ``region_ids`` is the optional strict filter: every id must be a LIVE
+        region of that page, otherwise TARGET_NOT_FOUND -- this covers
+        "unknown region" and "region of another page" (no cross-page read).
+        Without the filter all live regions of the page are returned in
+        reading_order ascending.
+
+        Result: ``{"page_id", "page_size": {width, height} | null,
+        "regions": RegionTextDetail[]}``. Every projected field is the
+        persisted value (four-level text, three locks, review_state, origin,
+        current revision number/id, is_pinned of the current revision, all
+        pinned revision numbers, normalized geometry when the page extent is
+        known). A page with no regions -- unknown page_id included -- reads as
+        ``regions: []`` (the frozen C043 precedent: empty data, not an
+        error); an unknown page additionally reads ``page_size: null``.
+        Geometry is never fabricated from a missing extent (``null``).
+        """
+        page_id = payload.get("page_id")
+        if not isinstance(page_id, str) or not page_id:
+            raise RegionRequestError(
+                "list_page_region_texts requires 'page_id': a non-empty string"
+            )
+        requested = payload.get("region_ids")
+        filter_ids: list[str] | None = None
+        if requested is not None:
+            if (
+                not isinstance(requested, list)
+                or not requested
+                or any(
+                    not isinstance(item, str) or not item
+                    for item in requested
+                )
+                or len(set(requested)) != len(requested)
+            ):
+                raise RegionRequestError(
+                    "list_page_region_texts 'region_ids' must be a non-empty"
+                    " list of distinct non-empty region ids when present"
+                )
+            filter_ids = list(requested)
+        page = self._core.repository.get_page(page_id)
+        page_size = (
+            {"width": page.width, "height": page.height} if page else None
+        )
+        details = self._core.editing.list_region_details(
+            page_id,
+            page_size=(page.width, page.height) if page else None,
+        )
+        if filter_ids is not None:
+            by_id = {row["region_id"]: row for row in details}
+            for region_id in filter_ids:
+                if region_id not in by_id:
+                    raise RegionLookupError(region_id)
+            requested_set = set(filter_ids)
+            details = [
+                row for row in details if row["region_id"] in requested_set
+            ]
+        return {
+            "page_id": page_id,
+            "page_size": page_size,
+            "regions": details,
+        }
+
     def handle_restore_region_revision(
         self, payload: dict[str, Any]
     ) -> dict[str, Any]:
@@ -2121,6 +2277,12 @@ class CoreServiceServer:
             raise RegionLookupError(region_id) from error
         except RegionRevisionNotFound as error:
             raise RegionLookupError(region_id) from error
+        except RegionLimitExceeded as error:
+            # I4/P2-B: an oversized historical snapshot geometry is a validation
+            # failure (never UNKNOWN); zero write.
+            raise RegionRequestError(
+                f"restore_region_revision rejected: {error}"
+            ) from error
         except RegionRevisionChanged as error:
             raise RegionConflictError(
                 "region revision changed since it was read"
@@ -2131,6 +2293,668 @@ class CoreServiceServer:
             "region_type": region.region_type.value,
             "sfx_policy": region.sfx_policy.value,
         }
+
+    # ------------------------------------------------------------------
+    # Region write face (V11R-F0-1 / audit §5.1 F-01)
+    #
+    # The six pre-existing Region commands above are untouched. These ten
+    # write/read-back commands are the real channels the Studio Page mode
+    # needs; every handler reuses the EXISTING application use case (the
+    # only new use case is ``set_locks``, recorded as a GAP in
+    # doc/contracts/V11R_REGION_WRITE_CONTRACT.md §2.1) and adds wire-side
+    # validation + the post-write effective-state projection. Geometry on the
+    # wire is the SAME normalized read shape ``list_regions`` projects
+    # ({"bbox", "polygon"}), except writes carry the editable point list
+    # {"points": [[x, y], ...]} -- application/editing/region_canvas.py owns
+    # the single normalized<->page-pixel mapping.
+    #
+    # Error semantics reuse the existing typed literals only:
+    # INVALID_REQUEST (validation) / INPUT_REVISION_CHANGED (conflict, the
+    # explicit optimistic guard) / TARGET_NOT_FOUND (not_found) /
+    # UNKNOWN (internal). Wire codes stay SCREAMING_SNAKE_CASE.
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _region_write_error(command: str, detail: str) -> RegionRequestError:
+        return RegionRequestError(f"{command} {detail}")
+
+    def _region_write_string(self, payload: dict[str, Any], key: str, command: str) -> str:
+        value = payload.get(key)
+        if not isinstance(value, str) or not value:
+            raise self._region_write_error(
+                command, f"requires '{key}': a non-empty string"
+            )
+        return value
+
+    def _region_write_expected_revision(
+        self, payload: dict[str, Any], command: str
+    ) -> int | None:
+        value = payload.get("expected_revision")
+        if value is None:
+            return None
+        if not self._is_positive_integer(value):
+            raise self._region_write_error(
+                command,
+                "'expected_revision' must be a positive integer when present",
+            )
+        return value
+
+    def _region_write_expected_revisions(
+        self, payload: dict[str, Any], command: str
+    ) -> dict[str, int] | None:
+        """The multi-region optimistic guard (merge / reorder). Coverage of
+        exactly the affected region ids is validated by the handler that owns
+        the batch (it already knows the live page set)."""
+        value = payload.get("expected_revisions")
+        if value is None:
+            return None
+        if not isinstance(value, dict) or not value:
+            raise self._region_write_error(
+                command, "'expected_revisions' must be a non-empty object"
+            )
+        expected: dict[str, int] = {}
+        for region_id, revision_no in value.items():
+            if (
+                not isinstance(region_id, str)
+                or not region_id
+                or not self._is_positive_integer(revision_no)
+            ):
+                raise self._region_write_error(
+                    command,
+                    "'expected_revisions' must map non-empty region ids to"
+                    " positive revision numbers",
+                )
+            expected[region_id] = revision_no
+        return expected
+
+    @staticmethod
+    def _region_write_points(
+        raw: Any, command: str, label: str = "geometry"
+    ) -> list[tuple[float, float]]:
+        """Normalized (0..1) editable point list (``[[x, y], ...]``).
+
+        Two points are an axis-aligned rectangle in any corner order, three
+        or more are a polygon ring -- the same contract
+        ``normalized_to_page_geometry`` documents. Every rejection happens
+        before a ``RegionGeometry`` is built (the region_canvas.py invariant).
+        """
+        if not isinstance(raw, list) or len(raw) < 2:
+            raise RegionRequestError(
+                f"{command} '{label}' requires at least two [x, y] points"
+            )
+        # I2/P2-E: bounded input (the whole batch runs in one write
+        # transaction; an unbounded polygon would hold the write lock).
+        if len(raw) > MAX_GEOMETRY_POINTS:
+            raise RegionRequestError(
+                f"{command} '{label}' supports at most"
+                f" {MAX_GEOMETRY_POINTS} points"
+            )
+        points: list[tuple[float, float]] = []
+        for item in raw:
+            if not isinstance(item, list) or len(item) != 2:
+                raise RegionRequestError(
+                    f"{command} '{label}' points must be [x, y] pairs"
+                )
+            x, y = item
+            for axis in (x, y):
+                if (
+                    isinstance(axis, bool)
+                    or not isinstance(axis, (int, float))
+                    or not math.isfinite(axis)
+                    or axis < 0
+                    or axis > 1
+                ):
+                    raise RegionRequestError(
+                        f"{command} '{label}' points must be finite normalized"
+                        " numbers within [0, 1]"
+                    )
+            points.append((float(x), float(y)))
+        return points
+
+    def _region_write_page_extent(
+        self, page_id: str, command: str
+    ) -> tuple[int, int]:
+        page = self._core.repository.get_page(page_id)
+        if page is None:
+            raise RegionLookupError(page_id, "page not found")
+        return page.width, page.height
+
+    def _region_write_geometry(
+        self,
+        payload: dict[str, Any],
+        page_width: int,
+        page_height: int,
+        command: str,
+        label: str = "geometry",
+    ) -> RegionGeometry:
+        raw = payload.get(label)
+        if not isinstance(raw, dict):
+            raise RegionRequestError(
+                f"{command} requires '{label}': an object with 'points'"
+            )
+        try:
+            return normalized_to_page_geometry(
+                self._region_write_points(raw.get("points"), command, label),
+                page_width,
+                page_height,
+            )
+        except RegionCanvasError as error:
+            # The typed reason (PAGE_SIZE_UNAVAILABLE / TOO_FEW_POINTS /
+            # DEGENERATE_GEOMETRY) is safe to project; no coordinates or
+            # paths ride the message.
+            raise RegionRequestError(
+                f"{command} rejected {label}: {error.code}"
+            ) from error
+
+    def _region_write_snapshot(self, region_id: str) -> tuple[Any, Any]:
+        """Read back the effective state from the SAME authoritative objects
+        the write path just updated (one round trip, no second query path);
+        the current pointer is guaranteed to resolve by the service
+        invariant, a breach is an internal error (UNKNOWN) rather than a
+        fabricated row."""
+        region = self._core.editing.get_region(region_id)
+        revision = self._core.editing.current_revision(region_id)
+        return region, revision
+
+    def handle_create_region(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Create one Region from normalized canvas points.
+
+        Request: {"page_id", "geometry": {"points": [[x, y], ...]},
+        "region_type"?: RegionType (default speech),
+        "reading_order"?: positive int (default: append)}.
+        The first revision + current pointer are created atomically by the
+        existing ``RegionEditingService.create_region`` path (TASK-002 §2.1);
+        the SFX policy reuses the shared EV-8 rule (only an SFX region carries
+        the CURRENT global policy, every other type is forced SKIP).
+        Result: {"region_id", "revision_no", "reading_order", "region_type",
+        "sfx_policy"}.
+        Optimistic lock: none -- creation has no prior revision to guard and
+        candidate region ids are server-generated (documented in the
+        contract).
+        """
+        command = "create_region"
+        page_id = self._region_write_string(payload, "page_id", command)
+        region_type_value = payload.get("region_type", RegionType.SPEECH.value)
+        if (
+            not isinstance(region_type_value, str)
+            or region_type_value not in _REGION_TYPE_VALUES
+        ):
+            raise self._region_write_error(
+                command,
+                "'region_type' must be one of " + str(sorted(_REGION_TYPE_VALUES)),
+            )
+        reading_order = payload.get("reading_order")
+        if reading_order is not None and not self._is_positive_integer(reading_order):
+            raise self._region_write_error(
+                command, "'reading_order' must be a positive integer when present"
+            )
+        page_width, page_height = self._region_write_page_extent(page_id, command)
+        if (
+            len(self._core.editing.list_regions(page_id))
+            >= MAX_REGIONS_PER_PAGE
+        ):
+            raise self._region_write_error(
+                command,
+                f"page already has {MAX_REGIONS_PER_PAGE} live regions"
+                " (contract limit)",
+            )
+        geometry = self._region_write_geometry(
+            payload, page_width, page_height, command
+        )
+        region_type = RegionType(region_type_value)
+        region = self._core.editing.create_region(
+            page_id,
+            geometry,
+            region_type=region_type,
+            reading_order=reading_order,
+            sfx_policy=effective_sfx_policy(
+                region_type, self._global_sfx_policy_value()
+            ),
+        )
+        revision = self._core.editing.current_revision(region.region_id)
+        return {
+            "region_id": region.region_id,
+            "revision_no": revision.revision_no,
+            "reading_order": region.reading_order,
+            "region_type": region.region_type.value,
+            "sfx_policy": region.sfx_policy.value,
+        }
+
+    def handle_delete_region(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Soft-delete one Region (no revision is created: the deletion only
+        stamps ``deleted_at``; current/pinned revisions and history stay
+        untouched). Request: {"region_id", "expected_revision"?}.
+        Result: {"region_id", "deleted": true}."""
+        command = "delete_region"
+        region_id = self._region_write_string(payload, "region_id", command)
+        expected = self._region_write_expected_revision(payload, command)
+        try:
+            self._core.editing.delete_region(
+                region_id, expected_revision_no=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        return {"region_id": region_id, "deleted": True}
+
+    def handle_save_region_geometry(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Persist a geometry edit as ONE new user revision through the atomic
+        commit seam (D06 §87). Request: {"region_id", "geometry": {"points"},
+        "expected_revision"?}. Result: {"region_id", "revision_no",
+        "geometry": normalized read shape}."""
+        command = "save_region_geometry"
+        region_id = self._region_write_string(payload, "region_id", command)
+        expected = self._region_write_expected_revision(payload, command)
+        # The region's own page extent, resolved from the persisted row (the
+        # caller never supplies pixel sizes; only the projection is returned).
+        stored = self._core.editing.get_region(region_id)
+        page_width, page_height = self._region_write_page_extent(
+            stored.page_id, command
+        )
+        geometry = self._region_write_geometry(
+            payload, page_width, page_height, command
+        )
+        try:
+            outcome = self._core.editing.save_geometry(
+                region_id, geometry, expected_revision_no=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        if outcome.status is GuardStatus.INPUT_REVISION_CHANGED:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            )
+        if outcome.status is not GuardStatus.APPLIED:
+            raise RuntimeError(f"save_region_geometry commit failed: {outcome.detail}")
+        region, revision = self._region_write_snapshot(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": revision.revision_no,
+            "geometry": page_geometry_to_normalized(
+                region.geometry, page_width, page_height
+            ),
+        }
+
+    def handle_merge_regions(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Merge >= 2 live Regions of one page into one new Region (D03 §6.4).
+        Request: {"page_id", "region_ids": [...], "expected_revisions"?}.
+        The sources are soft-deleted and the merged Region starts its own
+        revision history (existing use case); every source expectation is
+        checked BEFORE the first write. Result: {"region_id", "revision_no",
+        "reading_order", "region_type", "sfx_policy", "deleted_region_ids"}.
+        """
+        command = "merge_regions"
+        page_id = self._region_write_string(payload, "page_id", command)
+        self._region_write_page_extent(page_id, command)
+        raw_ids = payload.get("region_ids")
+        if (
+            not isinstance(raw_ids, list)
+            or len(raw_ids) < 2
+            or any(not isinstance(item, str) or not item for item in raw_ids)
+            or len(set(raw_ids)) != len(raw_ids)
+        ):
+            raise self._region_write_error(
+                command,
+                "requires 'region_ids': at least two distinct non-empty"
+                " region ids",
+            )
+        region_ids = list(raw_ids)
+        if len(region_ids) > MAX_REGION_IDS_PER_BATCH:
+            raise self._region_write_error(
+                command,
+                f"'region_ids' supports at most {MAX_REGION_IDS_PER_BATCH} ids",
+            )
+        expected = self._region_write_expected_revisions(payload, command)
+        live_ids = {
+            region.region_id for region in self._core.editing.list_regions(page_id)
+        }
+        for region_id in region_ids:
+            if region_id not in live_ids:
+                raise RegionLookupError(region_id)
+        if expected is not None and set(expected) != set(region_ids):
+            raise self._region_write_error(
+                command,
+                "'expected_revisions' must cover exactly the merged region ids",
+            )
+        try:
+            merged, deleted = self._core.editing.merge_regions(
+                page_id, region_ids, expected_revisions=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(error.region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        except ValueError as error:
+            raise self._region_write_error(command, f"rejected: {error}") from error
+        revision = self._core.editing.current_revision(merged.region_id)
+        return {
+            "region_id": merged.region_id,
+            "revision_no": revision.revision_no,
+            "reading_order": merged.reading_order,
+            "region_type": merged.region_type.value,
+            "sfx_policy": merged.sfx_policy.value,
+            "deleted_region_ids": list(deleted),
+        }
+
+    def handle_split_region(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Split one Region into >= 2 caller-supplied geometries (D03 §6.4 /
+        TASK-002). Request: {"region_id", "parts": [[[x, y], ...], ...],
+        "expected_revision"?}. The source is soft-deleted and every part
+        starts a fresh history; manual protection carries over. Result:
+        {"source_region_id", "source_deleted": true, "regions":
+        [{"region_id", "revision_no", "reading_order", "region_type"}]}.
+        """
+        command = "split_region"
+        region_id = self._region_write_string(payload, "region_id", command)
+        expected = self._region_write_expected_revision(payload, command)
+        raw_parts = payload.get("parts")
+        if not isinstance(raw_parts, list) or len(raw_parts) < 2:
+            raise self._region_write_error(
+                command, "requires 'parts': at least two point lists"
+            )
+        if len(raw_parts) > MAX_SPLIT_PARTS:
+            raise self._region_write_error(
+                command,
+                f"'parts' supports at most {MAX_SPLIT_PARTS} point lists",
+            )
+        stored = self._core.editing.get_region(region_id)
+        page_width, page_height = self._region_write_page_extent(
+            stored.page_id, command
+        )
+        parts = []
+        for index, raw_part in enumerate(raw_parts, start=1):
+            try:
+                parts.append(
+                    normalized_to_page_geometry(
+                        self._region_write_points(
+                            raw_part, command, f"parts[{index}]"
+                        ),
+                        page_width,
+                        page_height,
+                    )
+                )
+            except RegionCanvasError as error:
+                raise RegionRequestError(
+                    f"{command} rejected parts[{index}]: {error.code}"
+                ) from error
+        try:
+            created = self._core.editing.split_region(
+                region_id, parts, expected_revision_no=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        except ValueError as error:
+            raise self._region_write_error(command, f"rejected: {error}") from error
+        regions = []
+        for part in created:
+            revision = self._core.editing.current_revision(part.region_id)
+            regions.append({
+                "region_id": part.region_id,
+                "revision_no": revision.revision_no,
+                "reading_order": part.reading_order,
+                "region_type": part.region_type.value,
+            })
+        return {
+            "source_region_id": region_id,
+            "source_deleted": True,
+            "regions": regions,
+        }
+
+    def handle_reorder_regions(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Persist the manual reading order of one page (TASK-028 §3.4).
+        Request: {"page_id", "ordered_region_ids": [...],
+        "expected_revisions"?}. The list must be the exact permutation of the
+        page's live Region ids (fail-closed: a partial list could corrupt the
+        reading order). Each changed Region gets one user revision. Result:
+        {"page_id", "regions": [{"region_id", "revision_no", "reading_order"}]}.
+        """
+        command = "reorder_regions"
+        page_id = self._region_write_string(payload, "page_id", command)
+        self._region_write_page_extent(page_id, command)
+        raw_ids = payload.get("ordered_region_ids")
+        if (
+            not isinstance(raw_ids, list)
+            or not raw_ids
+            or any(not isinstance(item, str) or not item for item in raw_ids)
+            or len(set(raw_ids)) != len(raw_ids)
+        ):
+            raise self._region_write_error(
+                command,
+                "requires 'ordered_region_ids': a non-empty list of distinct"
+                " non-empty region ids",
+            )
+        ordered = list(raw_ids)
+        if len(ordered) > MAX_REGIONS_PER_PAGE:
+            raise self._region_write_error(
+                command,
+                f"'ordered_region_ids' supports at most"
+                f" {MAX_REGIONS_PER_PAGE} ids",
+            )
+        expected = self._region_write_expected_revisions(payload, command)
+        live_ids = {
+            region.region_id for region in self._core.editing.list_regions(page_id)
+        }
+        if set(ordered) != live_ids:
+            raise self._region_write_error(
+                command,
+                "'ordered_region_ids' must be the exact set of the page's live"
+                " region ids",
+            )
+        if expected is not None and set(expected) != set(ordered):
+            raise self._region_write_error(
+                command,
+                "'expected_revisions' must cover exactly the ordered region ids",
+            )
+        try:
+            reordered = self._core.editing.reorder_regions(
+                page_id, ordered, expected_revisions=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(error.region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        regions = []
+        for region in reordered:
+            revision = self._core.editing.current_revision(region.region_id)
+            regions.append({
+                "region_id": region.region_id,
+                "revision_no": revision.revision_no,
+                "reading_order": region.reading_order,
+            })
+        return {"page_id": page_id, "regions": regions}
+
+    def handle_save_manual_translation(
+        self, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Save the user's edited translation (D03 §8.4): arms manual_edited +
+        translation_locked and records ONE user revision (review_state
+        needs_review until an explicit confirm). Request: {"region_id",
+        "edited_translation": str (may be empty), "expected_revision"?}.
+        Result: {"region_id", "revision_no", "review_state", "text"} where
+        ``text`` is the four-level text projection verbatim.
+        """
+        command = "save_manual_translation"
+        region_id = self._region_write_string(payload, "region_id", command)
+        edited = payload.get("edited_translation")
+        if not isinstance(edited, str):
+            raise self._region_write_error(
+                command, "requires 'edited_translation': a string"
+            )
+        expected = self._region_write_expected_revision(payload, command)
+        try:
+            revision_no = self._core.editing.save_manual_translation(
+                region_id, edited, expected_revision_no=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        region, revision = self._region_write_snapshot(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": revision_no,
+            "review_state": revision.review_state.value,
+            "text": region_text_state(region),
+        }
+
+    def handle_confirm_region_final(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Explicit proofread confirmation (D06 §87): a non-blank edited text
+        becomes the confirmed final; otherwise the review state is just
+        locked. Request: {"region_id", "expected_revision"?}. Result same
+        shape as save_manual_translation with review_state "confirmed"."""
+        command = "confirm_region_final"
+        region_id = self._region_write_string(payload, "region_id", command)
+        expected = self._region_write_expected_revision(payload, command)
+        try:
+            revision_no = self._core.editing.confirm_final(
+                region_id, expected_revision_no=expected
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        region, revision = self._region_write_snapshot(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": revision_no,
+            "review_state": revision.review_state.value,
+            "text": region_text_state(region),
+        }
+
+    def handle_set_region_lock(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Explicitly set one or more of the three user locks (D06 §87): the
+        change is ONE user revision through the atomic commit seam (the added
+        ``set_locks`` use case composes the existing domain setters).
+        Request: {"region_id", "region_locked"?: bool,
+        "translation_locked"?: bool, "inpaint_locked"?: bool,
+        "expected_revision"?}. Result: {"region_id", "revision_no",
+        "review_state", "region_locked", "translation_locked",
+        "inpaint_locked"}."""
+        command = "set_region_lock"
+        region_id = self._region_write_string(payload, "region_id", command)
+        expected = self._region_write_expected_revision(payload, command)
+        locks: dict[str, bool] = {}
+        for field in _REGION_LOCK_FIELDS:
+            value = payload.get(field)
+            if value is None:
+                continue
+            if not isinstance(value, bool):
+                raise self._region_write_error(
+                    command, f"'{field}' must be a boolean when present"
+                )
+            locks[field] = value
+        if not locks:
+            raise self._region_write_error(
+                command,
+                "requires at least one of " + ", ".join(_REGION_LOCK_FIELDS),
+            )
+        try:
+            revision_no = self._core.editing.set_locks(
+                region_id, expected_revision_no=expected, **locks
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        region, revision = self._region_write_snapshot(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": revision_no,
+            "review_state": revision.review_state.value,
+            "region_locked": region.region_locked,
+            "translation_locked": region.translation_locked,
+            "inpaint_locked": region.inpaint_locked,
+        }
+
+    def handle_pin_revision(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Pin/unpin one immutable revision (AC-REV-003). Request:
+        {"region_id", "revision_no": positive int, "pinned": bool,
+        "expected_revision"?}. Pin touches ``is_pinned`` only -- no revision
+        is created and no immutable snapshot is rewritten; the optional
+        expectation guards that the CURRENT pointer is still what the caller
+        observed. Result: {"region_id", "revision_no", "is_pinned",
+        "current_revision_no"}."""
+        command = "pin_revision"
+        region_id = self._region_write_string(payload, "region_id", command)
+        revision_no = payload.get("revision_no")
+        if not self._is_positive_integer(revision_no):
+            raise self._region_write_error(
+                command, "requires positive integer 'revision_no'"
+            )
+        pinned = payload.get("pinned")
+        if not isinstance(pinned, bool):
+            raise self._region_write_error(command, "requires boolean 'pinned'")
+        expected = self._region_write_expected_revision(payload, command)
+        try:
+            self._core.editing.set_revision_pinned(
+                region_id,
+                revision_no,
+                pinned,
+                expected_revision_no=expected,
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionNotFound as error:
+            raise RegionLookupError(
+                region_id, "region revision not found"
+            ) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        _region, current = self._region_write_snapshot(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": revision_no,
+            "is_pinned": pinned,
+            "current_revision_no": current.revision_no,
+        }
+
+    def _dispatch_region_write(
+        self, command: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Route one of the ten V11R region write commands (additive surface,
+        same typed-error envelope as the existing Region family)."""
+        if command == "create_region":
+            return self.handle_create_region(payload)
+        if command == "delete_region":
+            return self.handle_delete_region(payload)
+        if command == "save_region_geometry":
+            return self.handle_save_region_geometry(payload)
+        if command == "merge_regions":
+            return self.handle_merge_regions(payload)
+        if command == "split_region":
+            return self.handle_split_region(payload)
+        if command == "reorder_regions":
+            return self.handle_reorder_regions(payload)
+        if command == "save_manual_translation":
+            return self.handle_save_manual_translation(payload)
+        if command == "confirm_region_final":
+            return self.handle_confirm_region_final(payload)
+        if command == "set_region_lock":
+            return self.handle_set_region_lock(payload)
+        return self.handle_pin_revision(payload)
 
     def handle_rerender_page(self, payload: dict[str, Any]) -> dict[str, Any]:
         page_id = payload.get("page_id")
@@ -4160,11 +4984,15 @@ class CoreServiceServer:
         # validation is typed fail-closed BEFORE any persistence (the §5.3
         # discipline); error semantics reuse the existing typed literals
         # only (contract rev 1.4 §5.4 mapping table).
+        # V11R-F0-2: list_page_region_texts joins this Region read branch
+        # (same typed envelope: INVALID_REQUEST / TARGET_NOT_FOUND /
+        # UNKNOWN; the raw error text never rides the wire).
         if command in (
             "set_region_type",
             "list_regions",
             "list_region_revisions",
             "restore_region_revision",
+            "list_page_region_texts",
         ):
             try:
                 if command == "set_region_type":
@@ -4173,6 +5001,8 @@ class CoreServiceServer:
                     result = self.handle_list_region_revisions(payload)
                 elif command == "restore_region_revision":
                     result = self.handle_restore_region_revision(payload)
+                elif command == "list_page_region_texts":
+                    result = self.handle_list_page_region_texts(payload)
                 else:
                     result = self.handle_list_regions(payload)
             except RegionRequestError as error:
@@ -4237,6 +5067,131 @@ class CoreServiceServer:
                                 "set_region_type": "Region retype failed",
                                 "restore_region_revision": "Region restore failed",
                             }.get(command, "Region read failed"),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
+        # V11R-F0-1: the Region write face (audit §5.1 F-01 -- the write
+        # commands did not exist on the wire). Additive command surface on the
+        # SAME Region family minor (3) as set_region_type/list_regions; the
+        # branches above keep their exact semantics. Request validation is
+        # typed fail-closed BEFORE any persistence; the typed error literals
+        # are the existing ones only (INVALID_REQUEST / INPUT_REVISION_CHANGED
+        # / TARGET_NOT_FOUND / UNKNOWN), with SCREAMING_SNAKE_CASE codes.
+        if command in _REGION_WRITE_COMMANDS:
+            try:
+                result = self._dispatch_region_write(command, payload)
+            except RegionRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionConflictError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INPUT_REVISION_CHANGED,
+                            category="conflict",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLimitExceeded as error:
+                # I3/P2-A/B: bounded inputs (page region cap, vertex cap) are a
+                # validation failure, never a conflict/internal error.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLookupError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_TARGET_NOT_FOUND,
+                            category="not_found",
+                            message=error.message,
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionNotFound:
+                # A lookup the service raised before the handler's own
+                # projection (e.g. the region row vanished between the
+                # validation read and the write) keeps the same typed
+                # not_found row; the raw exception text never rides the wire.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_TARGET_NOT_FOUND,
+                            category="not_found",
+                            message="region not found",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                # Internal failure: a fixed safe phrase per command family --
+                # no raw exception text, paths or user data ride the wire.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="Region write failed",
                             retryable=False,
                         ),
                     },

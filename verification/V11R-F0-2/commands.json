@@ -1,0 +1,65 @@
+{
+  "task": "V11R-F0-2",
+  "title": "Region text read projection (closes V11R-F0-1 GAP-2)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "base_head": "f971ece07",
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md (v1.1, C077)",
+  "protocol": {"name": "new-manga.core", "major": 2, "command_family_minor": 3, "bump": false},
+  "decision": {
+    "chosen_command": "list_page_region_texts",
+    "rejected_alternative": "get_region (single region)",
+    "rationale": "Studio Page first paint always needs every live region of one page; a single-region command would be N+1 round trips, while the page-scoped command is exactly one request. Optional strict region_ids filter covers refresh/precise addressing."
+  },
+  "command": {
+    "contract_id": "C077",
+    "name": "list_page_region_texts",
+    "core_command": "list_page_region_texts",
+    "channel": "core",
+    "minor": 3,
+    "payload_required": ["page_id"],
+    "payload_optional": ["region_ids"],
+    "result": {
+      "page_id": "string",
+      "page_size": "{width,height}|null",
+      "regions": "RegionTextDetail[] (reading_order ascending)"
+    },
+    "region_text_detail_fields": [
+      "region_id", "page_id", "region_type", "sfx_policy", "reading_order",
+      "geometry{bbox,polygon}|null", "text{ocr_text,machine_translation,edited_translation,final_translation,final_source,edited_confirmed,manual_edited,translation_locked}",
+      "locks{region_locked,translation_locked,inpaint_locked}", "review_state", "origin",
+      "revision_no", "current_revision_id", "is_pinned", "pinned_revision_nos", "created_at", "updated_at"
+    ],
+    "errors": {
+      "validation": "INVALID_REQUEST",
+      "not_found": "TARGET_NOT_FOUND (filtered region missing / soft-deleted / another page)",
+      "internal": "UNKNOWN"
+    },
+    "empty_semantics": "unknown page or page without regions -> regions: [] (not an error); unknown page additionally page_size: null",
+    "idempotency": "read-only, naturally idempotent",
+    "csharp_registration": {
+      "domain": "Region",
+      "minor": 3,
+      "sets": ["RegionReadCommandNames", "V11RAdditiveCommandNames"],
+      "dto": "RegionPageTextProjection.Parse / RegionTextDetail / RegionFourTrackText / RegionLockProjection / RegionGeometryProjection"
+    }
+  },
+  "gaps_closed": {
+    "GAP-2": "CLOSED by V11R-F0-2 (see verification/V11R-F0-1/GAPS.md)"
+  },
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2672 passed, 10 skipped, 2 warnings in 222.62s", "log": "logs/pytest-full.log"},
+    "python_region_text": {"command": "python -m pytest -q tests/core/test_region_text_read_command.py tests/core/test_region_write_commands.py tests/editing/test_region_write_guards.py", "exit_code": 0, "result": "49 passed in 3.03s", "log": "logs/pytest-region-text.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors", "log": "logs/dotnet-build.log"},
+    "dotnet_test": {"command": "dotnet test NewManga.sln --no-build", "exit_code": 0, "result": "App 137 passed; Host 39 passed + 21 skipped; CoreClient 98 passed + 22 skipped; 0 failed", "log": "logs/dotnet-test.log"},
+    "dotnet_test_region_text": {"command": "dotnet test NewManga.sln --no-build --filter RegionWriteCommandTests|CommandParityContractTests", "exit_code": 0, "result": "64 passed / 0 failed", "log": "logs/dotnet-test-region-text.log"}
+  },
+  "evidence": [
+    "dotnet-evidence/commands/v11r-region-write-registration.json",
+    "dotnet-evidence/commands/parity-contract.json"
+  ],
+  "tests": {
+    "python": "tests/core/test_region_text_read_command.py (11 cases)",
+    "csharp": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/RegionWriteCommandTests.cs (payload/registry/DTO parse/validation)"
+  }
+}

@@ -26,6 +26,15 @@ public sealed class HostCommandInvalidArgumentsException : Exception
 /// </summary>
 public sealed class HostCommandDispatcher
 {
+    // I2/P2-E: the Region write face's bounded input limits (contract v1.3
+    // §1.3/§2). The SAME numbers are enforced by the Core before persistence;
+    // rejecting them here keeps obviously-invalid requests from ever opening a
+    // long write transaction.
+    private const int MaxRegionsPerPage = 500;
+    private const int MaxRegionIdsPerBatch = 64;
+    private const int MaxSplitParts = 64;
+    private const int MaxGeometryPoints = 512;
+
     private readonly CoreServiceClient? _core;
     private readonly HostBridgeClient? _bridge;
     private readonly Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? _hostLocal;
@@ -165,8 +174,11 @@ public sealed class HostCommandDispatcher
     /// NS-WIRE-A1: the legacy Tauri command signatures are enforced at the dispatcher boundary and
     /// translated to the exact Core payload each route proved against the frozen sidecar. Unknown
     /// commands keep the historical pass-through (Core remains the semantic authority).
+    ///
+    /// V11R-F0-1: internal (instead of private) so the CoreClient test project can assert the exact
+    /// written payload of the Region write commands without a live sidecar.
     /// </summary>
-    private static void WriteCorePayload(string name, JsonElement args, Utf8JsonWriter writer)
+    internal static void WriteCorePayload(string name, JsonElement args, Utf8JsonWriter writer)
     {
         var payload = args.ValueKind == JsonValueKind.Object ? args : EmptyObject();
         writer.WriteStartObject();
@@ -394,11 +406,11 @@ public sealed class HostCommandDispatcher
             case "set_region_type":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
                 writer.WriteString("new_region_type", RequireString(name, payload, "new_region_type"));
-                WriteOptionalInt64(writer, name, payload, "expected_revision");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
                 break;
             case "restore_region_revision":
                 writer.WriteString("region_id", RequireString(name, payload, "region_id"));
-                writer.WriteNumber("revision_no", RequireInt64(name, payload, "revision_no"));
+                writer.WriteNumber("revision_no", RequirePositiveInt64(name, payload, "revision_no"));
                 writer.WriteNumber("expected_revision", RequireInt64(name, payload, "expected_revision"));
                 break;
             case "rerender_page":
@@ -406,6 +418,75 @@ public sealed class HostCommandDispatcher
                 break;
             case "resolve_page_resource":
                 writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                break;
+            // V11R-F0-1: the Region write face (audit §5.1 F-01). The payload
+            // keys are exactly the ones bootstrap/core_service.py validates;
+            // required arguments are enforced here (INVALID_ARGUMENTS before
+            // any Core frame), optional ones ride only when present. Geometry
+            // is the editable normalized point list owned by the
+            // application/editing/region_canvas.py mapping.
+            case "create_region":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                WriteOptionalString(writer, name, payload, "region_type");
+                WriteOptionalPositiveInt64(writer, name, payload, "reading_order");
+                WriteGeometryPayload(writer, name, payload, "geometry");
+                break;
+            case "delete_region":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "save_region_geometry":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                WriteGeometryPayload(writer, name, payload, "geometry");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "merge_regions":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                writer.WritePropertyName("region_ids");
+                WriteRequiredStringArray(writer, name, payload, "region_ids", minimum: 2, maximum: MaxRegionIdsPerBatch);
+                WriteOptionalRevisionsMap(writer, name, payload, "expected_revisions");
+                break;
+            case "split_region":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                WriteGeometryPartsPayload(writer, name, payload, "parts");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "reorder_regions":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                writer.WritePropertyName("ordered_region_ids");
+                WriteRequiredStringArray(writer, name, payload, "ordered_region_ids", minimum: 1, maximum: MaxRegionsPerPage);
+                WriteOptionalRevisionsMap(writer, name, payload, "expected_revisions");
+                break;
+            case "save_manual_translation":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                writer.WriteString("edited_translation", RequireText(name, payload, "edited_translation"));
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "confirm_region_final":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "set_region_lock":
+                RequireAnyLockProperty(name, payload);
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                WriteOptionalBool(writer, name, payload, "region_locked");
+                WriteOptionalBool(writer, name, payload, "translation_locked");
+                WriteOptionalBool(writer, name, payload, "inpaint_locked");
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            case "pin_revision":
+                writer.WriteString("region_id", RequireString(name, payload, "region_id"));
+                writer.WriteNumber("revision_no", RequirePositiveInt64(name, payload, "revision_no"));
+                writer.WriteBoolean("pinned", RequireBool(name, payload, "pinned"));
+                WriteOptionalPositiveInt64(writer, name, payload, "expected_revision");
+                break;
+            // V11R-F0-2: the page-scoped Region text read projection. The
+            // optional strict region filter is enforced as non-empty distinct
+            // strings at the boundary; the Core additionally proves each id is
+            // a live region of that page (TARGET_NOT_FOUND otherwise).
+            case "list_page_region_texts":
+                writer.WriteString("page_id", RequireString(name, payload, "page_id"));
+                WriteOptionalStringArray(writer, name, payload, "region_ids");
                 break;
             case "library_save_reading_progress":
                 writer.WriteString("chapter_id", RequireString(name, payload, "chapter_id"));
@@ -431,13 +512,25 @@ public sealed class HostCommandDispatcher
         string command,
         JsonElement args,
         string property,
-        bool requireNonEmpty)
+        bool requireNonEmpty = true,
+        int minimum = 1,
+        int maximum = int.MaxValue)
     {
+        var minimumCount = Math.Max(requireNonEmpty ? 1 : 0, minimum);
         if (!args.TryGetProperty(property, out var value) ||
             value.ValueKind != JsonValueKind.Array ||
-            value.GetArrayLength() == 0)
+            value.GetArrayLength() < minimumCount)
         {
-            throw new HostCommandInvalidArgumentsException(command, $"missing required string[] argument '{property}'");
+            throw new HostCommandInvalidArgumentsException(
+                command, $"missing required string[] argument '{property}'");
+        }
+
+        // I2/P2-E: bounded input; the Core enforces the same contract limit
+        // (a huge list runs inside ONE write transaction).
+        if (value.GetArrayLength() > maximum)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' supports at most {maximum} entries");
         }
 
         writer.WriteStartArray();
@@ -452,6 +545,261 @@ public sealed class HostCommandDispatcher
         }
 
         writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// V11R-F0-2: the optional strict region filter of
+    /// <c>list_page_region_texts</c> (non-empty distinct strings; omitted /
+    /// null when the caller wants the whole page).
+    /// </summary>
+    private static void WriteOptionalStringArray(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Array || value.GetArrayLength() == 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a non-empty string[] when present");
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        writer.WritePropertyName(property);
+        writer.WriteStartArray();
+        foreach (var element in value.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.String ||
+                element.GetString() is not { Length: > 0 } text ||
+                !seen.Add(text))
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{property}' must contain distinct non-empty strings");
+            }
+
+            writer.WriteStringValue(text);
+        }
+
+        writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// V11R-F0-1: the Region write face's normalized canvas geometry payload
+    /// ({"points": [[x, y], ...]}); the Core converts the points to page
+    /// pixels through application/editing/region_canvas.py.
+    /// </summary>
+    private static void WriteGeometryPayload(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        var geometry = RequireObject(command, args, property);
+        if (!geometry.TryGetProperty("points", out var points))
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"missing required point array '{property}.points'");
+        }
+
+        writer.WritePropertyName(property);
+        writer.WriteStartObject();
+        writer.WritePropertyName("points");
+        WritePointArray(writer, command, points, $"{property}.points", minimum: 2, maximum: MaxGeometryPoints);
+        writer.WriteEndObject();
+    }
+
+    /// <summary>
+    /// V11R-F0-1: split parts ([[[x, y], ...], ...]); at least two parts, each
+    /// with at least two points.
+    /// </summary>
+    private static void WriteGeometryPartsPayload(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var parts) ||
+            parts.ValueKind != JsonValueKind.Array ||
+            parts.GetArrayLength() < 2)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"missing required parts argument '{property}' (at least two point lists)");
+        }
+
+        if (parts.GetArrayLength() > MaxSplitParts)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' supports at most {MaxSplitParts} point lists");
+        }
+
+        writer.WritePropertyName(property);
+        writer.WriteStartArray();
+        var index = 0;
+        foreach (var part in parts.EnumerateArray())
+        {
+            index += 1;
+            WritePointArray(writer, command, part, $"{property}[{index}]", minimum: 2, maximum: MaxGeometryPoints);
+        }
+
+        writer.WriteEndArray();
+    }
+
+    private static void WritePointArray(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement array,
+        string label,
+        int minimum,
+        int maximum = int.MaxValue)
+    {
+        if (array.ValueKind != JsonValueKind.Array || array.GetArrayLength() < minimum)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{label}' needs at least {minimum} [x, y] points");
+        }
+
+        // I2/P2-E: bounded vertex count (contract v1.3 §1.3).
+        if (array.GetArrayLength() > maximum)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{label}' supports at most {maximum} points");
+        }
+
+        writer.WriteStartArray();
+        foreach (var point in array.EnumerateArray())
+        {
+            if (point.ValueKind != JsonValueKind.Array || point.GetArrayLength() != 2)
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{label}' points must be [x, y] pairs");
+            }
+
+            writer.WriteStartArray();
+            foreach (var axis in point.EnumerateArray())
+            {
+                if (axis.ValueKind != JsonValueKind.Number ||
+                    !axis.TryGetDouble(out var value) ||
+                    double.IsNaN(value) ||
+                    double.IsInfinity(value))
+                {
+                    throw new HostCommandInvalidArgumentsException(
+                        command, $"argument '{label}' coordinates must be finite numbers");
+                }
+
+                // I1/P2-5: the wire geometry is NORMALIZED (0..1); an
+                // out-of-range coordinate is a domain-invalid argument and
+                // must fail here, before any Core frame.
+                if (value < 0 || value > 1)
+                {
+                    throw new HostCommandInvalidArgumentsException(
+                        command,
+                        $"argument '{label}' coordinates must be normalized within [0, 1]");
+                }
+
+                writer.WriteNumberValue(value);
+            }
+
+            writer.WriteEndArray();
+        }
+
+        writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// V11R-F0-1: the multi-region optimistic guard
+    /// ({"region_id": revision_no, ...}); values are enforced as integers here,
+    /// the Core validates that the map covers exactly the affected regions.
+    /// </summary>
+    private static void WriteOptionalRevisionsMap(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Object)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be an object");
+        }
+
+        writer.WritePropertyName(property);
+        writer.WriteStartObject();
+        foreach (var entry in value.EnumerateObject())
+        {
+            if (string.IsNullOrEmpty(entry.Name) ||
+                entry.Value.ValueKind != JsonValueKind.Number ||
+                !entry.Value.TryGetInt64(out var revisionNo) ||
+                revisionNo <= 0)
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{property}' must map non-empty region ids to POSITIVE integer revision numbers");
+            }
+
+            writer.WriteNumber(entry.Name, revisionNo);
+        }
+
+        writer.WriteEndObject();
+    }
+
+    /// <summary>V11R-F0-1: a text argument that may be an empty string (clearing a manual edit).</summary>
+    private static string RequireText(string command, JsonElement args, string property)
+    {
+        if (args.ValueKind == JsonValueKind.Object &&
+            args.TryGetProperty(property, out var value) &&
+            value.ValueKind == JsonValueKind.String)
+        {
+            return value.GetString()!;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"missing required text argument '{property}'");
+    }
+
+    /// <summary>
+    /// V11R-F0-1: ``set_region_lock`` must name at least one of the three
+    /// locks (the Core rejects an empty lock set with INVALID_REQUEST; the
+    /// dispatcher fails closed before any frame). The value TYPE is enforced by
+    /// WriteOptionalBool per property.
+    /// </summary>
+    private static void RequireAnyLockProperty(string command, JsonElement args)
+    {
+        foreach (var property in new[] { "region_locked", "translation_locked", "inpaint_locked" })
+        {
+            if (args.TryGetProperty(property, out var value) && value.ValueKind != JsonValueKind.Null)
+            {
+                return;
+            }
+        }
+
+        throw new HostCommandInvalidArgumentsException(
+            command,
+            "requires at least one of 'region_locked' / 'translation_locked' / 'inpaint_locked'");
+    }
+
+    /// <summary>
+    /// V11R-F0-1 I1/P2-5: required positive integer (revision numbers are
+    /// 1-based; a 0/negative value is a domain-invalid argument and must be
+    /// rejected BEFORE any frame instead of round-tripping to the Core).
+    /// </summary>
+    private static long RequirePositiveInt64(string command, JsonElement args, string property)
+    {
+        var value = RequireInt64(command, args, property);
+        if (value <= 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a positive integer");
+        }
+
+        return value;
     }
 
     private static JsonElement RequireObject(string command, JsonElement args, string property)
@@ -661,6 +1009,33 @@ public sealed class HostCommandDispatcher
         if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt64(out var number))
         {
             throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an integer");
+        }
+
+        writer.WriteNumber(property, number);
+    }
+
+    /// <summary>
+    /// V11R-F0-1 I1/P2-5: optional 1-based integer (``expected_revision`` /
+    /// ``reading_order``): present =&gt; strictly positive, so domain-invalid
+    /// values fail at the dispatcher boundary before any Core frame.
+    /// </summary>
+    private static void WriteOptionalPositiveInt64(
+        Utf8JsonWriter writer,
+        string command,
+        JsonElement args,
+        string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Number ||
+            !value.TryGetInt64(out var number) ||
+            number <= 0)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be a positive integer");
         }
 
         writer.WriteNumber(property, number);

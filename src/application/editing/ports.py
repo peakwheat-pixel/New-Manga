@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Protocol
+from typing import Protocol, Sequence
 
 from domain.regions.entities import Region, RegionRevision
 
@@ -41,6 +41,8 @@ class RegionCommitStatus(str, Enum):
     APPLIED = "applied"
     INPUT_REVISION_CHANGED = "input_revision_changed"
     LOCK_CHANGED = "lock_changed"
+    TARGET_NOT_FOUND = "target_not_found"
+    REGION_LIMIT_EXCEEDED = "region_limit_exceeded"
     DB_FAILED = "db_failed"
 
 
@@ -77,3 +79,59 @@ class RegionRevisionCommitter(Protocol):
         expected_current_revision_id: str | None = None,
         lock_snapshot: RegionLockSnapshot | None = None,
     ) -> RegionCommitResult: ...
+
+    def commit_region_batch(
+        self,
+        *,
+        new_regions: "Sequence[tuple[Region, RegionRevision]]" = (),
+        updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]" = (),
+        soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
+        revision_pins: "Sequence[tuple[str, int, bool]]" = (),
+        expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
+    ) -> RegionCommitResult:
+        """V11R-F0-1 I1: ALL-OR-NOTHING composite write for the Region face.
+
+        One ``BEGIN IMMEDIATE`` transaction performs, in order:
+
+        1. for EVERY region named by ``soft_delete_region_ids`` /
+           ``updated_regions`` / ``revision_pins`` / any
+           ``expected_current_checks`` entry: require the row to still exist
+           AND ``deleted_at IS NULL`` (a concurrent merge/split/delete that
+           soft-deleted the target rolls the batch back with
+           ``TARGET_NOT_FOUND``), then re-read the current pointer and compare
+           it with the caller's expected revision id (a mismatch rolls back
+           with ``INPUT_REVISION_CHANGED``); both failures are ZERO write;
+        2. insert every ``(region, revision)`` of ``new_regions`` together
+           with revision_no=1 and the current pointer (a region can never be
+           persisted without its first revision/current pointer);
+        3. append the next revision of every ``updated_regions`` entry, sync
+           the revision-owned region state and move the pointer;
+        4. soft-delete every ``soft_delete_region_ids`` region (source rows of
+           merge/split) with a CONDITIONAL ``deleted_at IS NULL`` update whose
+           ``rowcount`` must be exactly 1 — never hard delete, history stays
+           addressable;
+        5. flip ``is_pinned`` for ``revision_pins`` only while the region is
+           still live (revision rows are immutable; the target revision
+           existence is the caller's race-free pre-check because history is
+           append-only);
+        6. commit only when every step succeeded; any exception rolls the
+           whole transaction back and returns ``DB_FAILED``.
+
+        ``TARGET_NOT_FOUND`` (I2/P1-A) is the typed outcome when any target was
+        soft-deleted between the caller's pre-check and this transaction — two
+        callers can both pass ``get_region`` before the first merge/split
+        commits, and only this in-transaction live re-read prevents the second
+        from producing a second result set on already-deleted sources.
+
+        ``page_region_limit`` (I3/P2-A) is the atomic page-cap guard for
+        ``new_regions``: ``(page_id, limit)``. Inside the SAME transaction the
+        live region count of that page is re-read; count >= limit rolls the
+        batch back with ``REGION_LIMIT_EXCEEDED`` (zero write), closing the
+        "two callers both counted N-1 outside the transaction" window.
+
+        This is the seam the create/merge/split/reorder/delete/pin use cases
+        call so a failure can never leave a partial state (orphan region,
+        merged-with-live-sources, half split parts, partially reordered
+        reading order, a delete/pin past a changed current pointer).
+        """

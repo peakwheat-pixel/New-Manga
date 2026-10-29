@@ -1,0 +1,51 @@
+{
+  "task": "V11R-F0-1 I2 (bounded repair after independent review r2 FAIL)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "review_report": "doc/reviews/V11R-F0-1-r2-codex.md (archived by Lead; r1 also present via git merge main)",
+  "reviewed_head": "c861fcba5aa3dd70fb8444cc14c6dc6ea607b395",
+  "f0_2_head": "089cdb761f7d015688cd273d40a9c9fae668c154",
+  "i1_head": "c861fcba5aa3dd70fb8444cc14c6dc6ea607b395",
+  "main_merge_head": "c180fa4ac100e44d96e7a0778fd2aadafa9c4975",
+  "i2_head": "6c5a9f8c3186efe51319032f067fd21e0957fc9e",
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md v1.3",
+  "commits": {
+    "integration-A3": {"sha": "5f4d1884c", "title": "declare C077 list_page_region_texts in A-3 command contract"},
+    "P1-A": {"sha": "8a43a0224", "title": "reject batch writes to soft-deleted targets", "tests": "tests/core/test_region_target_liveness.py"},
+    "P1-B": {"sha": "e229da632", "title": "real interleaving coverage (independent sqlite connection + barrier)", "tests": "tests/core/test_region_concurrency.py"},
+    "P2-C": {"sha": "1798d2e00", "title": "F0-2 repair: strict presence validation for region text DTO", "tests": "RegionWriteCommandTests.RegionTextProjection_RejectsMissingRequiredFields"},
+    "P2-D": {"sha": "23f707a1b", "title": "keep DB_FAILED distinct from optimistic conflict", "tests": "tests/core/test_region_db_failure.py"},
+    "P2-E": {"sha": "6c5a9f8c3", "title": "bound Region write batch inputs", "tests": "tests/core/test_region_limits.py + Dispatcher_RejectsOversizedBatches_BeforeAnyFrame"}
+  },
+  "disposition": {
+    "P1-A": "batch transaction re-reads deleted_at IS NULL for every existing target; conditional soft delete requires rowcount==1; pin requires live region; TARGET_NOT_FOUND with zero write",
+    "P1-B": "barrier installed inside _commit_batch_or_raise (after pre-check, before BEGIN IMMEDIATE) + independent sqlite connection that advances current / soft deletes; covers single/multi expiry, split delete race, delete/pin guards, two real merge callers, bounded writer stress",
+    "P2-C": "geometry/page_size property presence required before null is allowed; explicit nulls stay legal (F0-2 repair, separate commit)",
+    "P2-D": "GuardStatus.DB_FAILED is distinct; wire UNKNOWN/internal fixed phrase instead of INPUT_REVISION_CHANGED",
+    "P2-E": "MAX_REGIONS_PER_PAGE=500, MAX_REGION_IDS_PER_BATCH=64, MAX_SPLIT_PARTS=64, MAX_GEOMETRY_POINTS=512 enforced in Core service/wire and C# Host before any frame; INVALID_REQUEST with zero write"
+  },
+  "interleaving_design": {
+    "barrier_point": "_commit_batch_or_raise (service pre-check done, transaction not started)",
+    "second_connection": "sqlite3.connect(data_root/library.db) on a worker thread; never the Core facade",
+    "side_effects": ["append real revision + move current pointer", "soft delete target"],
+    "assertions": ["typed conflict/not-found", "zero new revision", "reading order unchanged", "deleted_at unchanged", "is_pinned unchanged", "no orphan region"]
+  },
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2709 passed, 10 skipped, 2 warnings in 247.57s", "log": "logs/pytest-full.log"},
+    "python_region_i2": {"command": "python -m pytest -q tests/core/test_region_target_liveness.py tests/core/test_region_concurrency.py tests/core/test_region_db_failure.py tests/core/test_region_limits.py tests/core/test_region_atomicity.py tests/core/test_region_batch_locking.py tests/core/test_region_transactional_guards.py tests/core/test_region_lock_inheritance.py tests/core/test_region_write_commands.py tests/core/test_region_text_read_command.py tests/editing/test_region_write_guards.py", "exit_code": 0, "result": "86 passed in 9.62s", "log": "logs/pytest-region-i2.log"},
+    "python_concurrency_verbose": {"command": "python -m pytest -v tests/core/test_region_concurrency.py", "exit_code": 0, "result": "7 passed in 1.11s", "log": "logs/pytest-concurrency-verbose.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors", "log": "logs/dotnet-build.log"},
+    "dotnet_test": {"command": "dotnet test NewManga.sln --no-build", "exit_code": 0, "result": "ThemeEngine 189; Host 42+24skip; DesignSystem 67; CoreClient 119+22skip; App 232+6skip; 0 failed", "log": "logs/dotnet-test.log", "note": "first run hit an environmental test-host crash (exit 1, App.Tests partially discovered); unchanged rerun twice passed; crash log kept"},
+    "dotnet_test_region_i2": {"command": "dotnet test NewManga.sln --no-build --filter RegionWriteCommandTests|CommandParityContractTests|CommandContractV11RTests", "exit_code": 0, "result": "85 passed / 0 failed", "log": "logs/dotnet-test-region-i2.log"}
+  },
+  "evidence": [
+    "dotnet-evidence/commands/v11r-region-write-registration.json",
+    "dotnet-evidence/commands/parity-contract.json",
+    "dotnet-evidence/contract-v11r/command-contract-v11r.json"
+  ],
+  "unverified": [
+    "UI empty-text risk stays a UI-task responsibility (CONSUMER_GUIDE rules unchanged)",
+    "page/book ACL is not defined by the project; no fake authorization added (contract 3.1)",
+    "GAP-3 existing manual-save dual projection intentionally unchanged"
+  ]
+}

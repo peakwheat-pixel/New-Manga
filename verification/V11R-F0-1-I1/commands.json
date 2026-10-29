@@ -1,0 +1,52 @@
+{
+  "task": "V11R-F0-1 I1 (bounded repair after independent review r1 FAIL)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "review_report": "doc/reviews/V11R-F0-1-r1-codex.md (main; not in this branch)",
+  "reviewed_head": "f971ece0785fb3fd32431b1b5f6c51daebc0541e",
+  "f0_2_head": "089cdb761f7d015688cd273d40a9c9fae668c154",
+  "i1_head": "reported in Handoff after the evidence commit",
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md v1.2",
+  "commits": {
+    "P1-1": {"sha": "a3aed053a", "title": "atomic composite Region writes", "tests": "tests/core/test_region_atomicity.py"},
+    "P1-2": {"sha": "f7afca5f7", "title": "all-or-nothing multi-region optimistic lock", "tests": "tests/core/test_region_batch_locking.py"},
+    "P1-3": {"sha": "6dfc0cd51", "title": "inherit effective locks through merge/split", "tests": "tests/core/test_region_lock_inheritance.py"},
+    "P2-4": {"sha": "cead08188", "title": "transactional delete/pin guards", "tests": "tests/core/test_region_transactional_guards.py"},
+    "P2-5": {"sha": "ea568b09b", "title": "host-side domain validation before any frame", "tests": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/RegionWriteCommandTests.cs"}
+  },
+  "design": {
+    "seam": "commit_region_batch(one BEGIN IMMEDIATE)",
+    "guarantees": [
+      "all expectations re-read inside the transaction before the first write",
+      "new region row + first revision + current pointer are one unit",
+      "updated region revision + state + pointer are one unit",
+      "source soft deletes (merge/split) commit with the new rows",
+      "pin flag update commits with the current-pointer check",
+      "any failure or stale expectation rolls the whole batch back (zero write)"
+    ],
+    "lock_inheritance": "source lock effective when region-level OR text-level is set; written to BOTH projections",
+    "host_boundary": "normalized coordinates within [0,1]; expected_revision/reading_order/revision_no strictly positive; expected_revisions values positive"
+  },
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2684 passed, 10 skipped, 2 warnings in 225.22s", "log": "logs/pytest-full.log"},
+    "python_region_i1": {"command": "python -m pytest -q tests/core/test_region_atomicity.py tests/core/test_region_batch_locking.py tests/core/test_region_transactional_guards.py tests/core/test_region_lock_inheritance.py tests/core/test_region_write_commands.py tests/core/test_region_text_read_command.py tests/editing/test_region_write_guards.py", "exit_code": 0, "result": "61 passed in 3.73s", "log": "logs/pytest-region-i1.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors", "log": "logs/dotnet-build.log"},
+    "dotnet_test": {"command": "dotnet test NewManga.sln --no-build", "exit_code": 0, "result": "App 137 passed; Host 39 passed + 21 skipped; CoreClient 111 passed + 22 skipped; 0 failed", "log": "logs/dotnet-test.log"},
+    "dotnet_test_region_i1": {"command": "dotnet test NewManga.sln --no-build --filter RegionWriteCommandTests|CommandParityContractTests", "exit_code": 0, "result": "77 passed / 0 failed", "log": "logs/dotnet-test-region-i1.log"}
+  },
+  "evidence": [
+    "dotnet-evidence/commands/v11r-region-write-registration.json",
+    "dotnet-evidence/commands/parity-contract.json"
+  ],
+  "disposition": {
+    "P1-1": "fixed + failure-injection tests (no orphan region / no merged-with-live-sources / no half parts)",
+    "P1-2": "fixed + stale-second-expectation and concurrent-pointer tests (whole batch zero write)",
+    "P1-3": "fixed + explicit-lock inheritance tests in both projections and machine-translation lock path",
+    "P2-4": "fixed + transactional guard tests for delete and pin",
+    "P2-5": "fixed + 13 C# boundary cases rejected before any frame"
+  },
+  "unverified": [
+    "UI empty-text risk is out of scope here (no UI change); Studio Page must not write a cleared translation when the read failed (Lead/UI task)",
+    "page/book ACL is not defined by the project; cross-page ids are rejected by list_page_region_texts filter only"
+  ]
+}

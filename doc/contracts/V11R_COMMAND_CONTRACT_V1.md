@@ -217,10 +217,11 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRunAsync` 只承诺
 `provider_bindings` 等普通 overrides；`provider_profiles` 应视为未支持的边界并在 UI 禁用/提示。
 
-## 8. C067–C076 增量命令（PENDING, V11R-F0-1；另预留 C077 占位）
+## 8. C067–C077 增量命令（PENDING, V11R-F0-1 / F0-2）
 
-`V11R-F0-1`（core-writer）正在为 Region 写面新增 10 条 Host 命令，命令总数将从 66 增至 76；另有 1 条 Region 文本投影读命令（C077）合入后为 77，本表预留占位。
-这些命令**尚未合入本分支/注册表**，因此全部标 `PENDING(V11R-F0-1)`，**不得**当作已冻结契约。
+`V11R-F0-1`（core-writer）为 Region 写面新增 10 条 Host 命令，命令总数从 66 增至 76；`V11R-F0-2` 另新增
+1 条 Region 文本投影读命令（C077），合入后为 77。本表保留 `PENDING` 状态，**不得**当作已冻结契约。
+这些命令已在 `v11r/region-write` 分支实现并注册，合入 main 后本表可升级为 `FROZEN`。
 上游契约（core-writer 产出，合入后本表可升级为 `FROZEN`）：`doc/contracts/V11R_REGION_WRITE_CONTRACT.md`。
 
 | ID | 前端命令（待合入） | 域 | 预期通道 | minor | 参数外形（待 core-writer 契约确认） | 状态 |
@@ -235,10 +236,10 @@ UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRu
 | C074 | `confirm_region_final` | Region | core | 3（zero protocol bump，Lead 裁定） | `PENDING(V11R-F0-1)` |
 | C075 | `set_region_lock` | Region | core | 3（zero protocol bump，Lead 裁定） | `PENDING(V11R-F0-1)` |
 | C076 | `pin_revision` | Region | core | 3（zero protocol bump，Lead 裁定） | `PENDING(V11R-F0-1)` |
-| C077 | （命令名待 core-writer 确认）Region 文本投影（读） | Region | core | 待定（读命令，预期 3） | `PENDING(V11R-F0-1)` |
+| C077 | `list_page_region_texts` | Region | core | 3（读命令，zero protocol bump） | `PENDING(V11R-F0-2)` |
 
-约束：`C067–C076` 在 `V11R_REGION_WRITE_CONTRACT.md` 合入并由 DSH 签发前，任何一方不得在 UI 中
-把它们当稳定契约消费；`CommandContractV11RTests` 会断言这 10 条不进入"已冻结集合"。
+约束：`C067–C077` 在 `V11R_REGION_WRITE_CONTRACT.md` 合入并由 DSH 签发前，任何一方不得在 UI 中
+把它们当稳定契约消费；`CommandContractV11RTests` 会断言这 11 条不进入"已冻结集合"。
 
 ## 9. 已知偏差与后续
 

@@ -1,0 +1,102 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+...........s............................................................ [ 53%]
+...................................sssss................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+...................................................s.................... [ 77%]
+........................................................................ [ 80%]
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 82%]
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................................ [ 98%]
+...........................                                              [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2684 passed, 10 skipped, 2 warnings in 225.22s (0:03:45)
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.workspace/worktrees/V11R-F0-REGION-WRITE/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+EXIT_CODE=0

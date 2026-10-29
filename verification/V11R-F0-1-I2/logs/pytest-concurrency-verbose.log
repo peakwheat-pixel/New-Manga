@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 7 items
+
+tests/core/test_region_concurrency.py::test_merge_stale_pointer_after_precheck_is_zero_write PASSED [ 14%]
+tests/core/test_region_concurrency.py::test_reorder_two_expired_regions_in_one_side_transaction_is_zero_write PASSED [ 28%]
+tests/core/test_region_concurrency.py::test_split_target_concurrently_deleted_after_precheck_is_not_found PASSED [ 42%]
+tests/core/test_region_concurrency.py::test_delete_guard_vs_advanced_pointer_is_zero_write PASSED [ 57%]
+tests/core/test_region_concurrency.py::test_pin_guard_vs_advanced_pointer_is_zero_write PASSED [ 71%]
+tests/core/test_region_concurrency.py::test_two_merge_callers_only_one_wins PASSED [ 85%]
+tests/core/test_region_concurrency.py::test_concurrent_writers_serialize_without_orphans PASSED [100%]
+
+============================== 7 passed in 1.11s ==============================
+EXIT_CODE=0

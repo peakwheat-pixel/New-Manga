@@ -1,0 +1,49 @@
+{
+  "task": "V11R-F0-1 I3 (bounded repair after independent review r3 FAIL)",
+  "owner": "core-writer",
+  "branch": "v11r/region-write",
+  "review_report": "doc/reviews/V11R-F0-1-r3-codex.md (archived by Lead; r1 visible in branch via merge main)",
+  "reviewed_head": "1a457111cd2cb68321947b5359a2ad235f13fe2e",
+  "f0_2_head": "089cdb761f7d015688cd273d40a9c9fae668c154",
+  "i1_head": "c861fcba5aa3dd70fb8444cc14c6dc6ea607b395",
+  "i2_head": "1a457111cd2cb68321947b5359a2ad235f13fe2e",
+  "i3_head": "c0ea0df4fd8c21f85db145f56d28f8f27606c0d6",
+  "contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md v1.4",
+  "commits": {
+    "P1": {"sha": "d6bfee1f3", "title": "single-revision writes must target a live region", "tests": "tests/core/test_region_single_write_liveness.py"},
+    "P2-A": {"sha": "e0f9597e4", "title": "page region cap enforced inside the write transaction", "tests": "tests/core/test_region_create_cap.py"},
+    "P2-B": {"sha": "00ab2dcf7", "title": "vertex bound enforced in the application service", "tests": "tests/core/test_region_service_limits.py"},
+    "P3": {"sha": "c0ea0df4f", "title": "share the required-int projection helper (optional cleanup)", "tests": "RegionWriteCommandTests"}
+  },
+  "disposition": {
+    "P1": "commit_region_revision re-reads deleted_at inside BEGIN IMMEDIATE; deleted/missing => rollback + TARGET_NOT_FOUND (zero write); service maps to typed RegionNotFound; covered for save_geometry/save_manual_translation/confirm_final/set_region_lock plus wire",
+    "P2-A": "commit_region_batch page_region_limit=(page_id, limit) re-counts live regions inside the same transaction; count>=limit => REGION_LIMIT_EXCEEDED => RegionLimitExceeded => INVALID_REQUEST; pre-count only fast-fails",
+    "P2-B": "service.assert_geometry_within_limits enforces MAX_GEOMETRY_POINTS before persistence for create_region, save_geometry, every split part and the merged polygon",
+    "P3": "single internal static RequireInt shared by both DTO projection classes; behaviour unchanged"
+  },
+  "interleaving_design": {
+    "barrier_point": "before BEGIN IMMEDIATE of commit_region_revision / before the create batch transaction (service pre-check already passed)",
+    "second_connection": "sqlite3.connect(data_root/library.db) on a worker thread; never the Core facade",
+    "side_effects": ["soft delete the single-revision target", "both create callers pass the pre-check at the barrier"],
+    "assertions": ["typed TARGET_NOT_FOUND / INVALID_REQUEST", "zero revision", "geometry/text/lock unchanged", "page live count never exceeds limit", "no orphan"]
+  },
+  "gates": {
+    "python_full": {"command": "python -m pytest -q", "exit_code": 0, "result": "2723 passed, 10 skipped, 2 warnings in 234.03s", "log": "logs/pytest-full.log"},
+    "python_region_i3": {"command": "python -m pytest -q <I3 + existing Region files>", "exit_code": 0, "result": "100 passed in 6.91s", "log": "logs/pytest-region-i3.log"},
+    "python_interleaving_verbose": {"command": "python -m pytest -v tests/core/test_region_single_write_liveness.py tests/core/test_region_create_cap.py", "exit_code": 0, "result": "9 passed in 1.06s", "log": "logs/pytest-i3-interleaving-verbose.log"},
+    "dotnet_build": {"command": "dotnet build NewManga.sln -warnaserror", "exit_code": 0, "result": "0 warnings / 0 errors", "log": "logs/dotnet-build.log"},
+    "dotnet_test": {"command": "dotnet test NewManga.sln --no-build", "exit_code": 0, "result": "ThemeEngine 189; Host 42+24skip; DesignSystem 67; CoreClient 119+22skip; App 232+6skip; 0 failed", "log": "logs/dotnet-test.log"},
+    "dotnet_test_region_i3": {"command": "dotnet test NewManga.sln --no-build --filter RegionWriteCommandTests|CommandParityContractTests|CommandContractV11RTests", "exit_code": 0, "result": "85 passed / 0 failed", "log": "logs/dotnet-test-region-i3.log"}
+  },
+  "evidence": [
+    "dotnet-evidence/commands/v11r-region-write-registration.json",
+    "dotnet-evidence/commands/parity-contract.json",
+    "dotnet-evidence/contract-v11r/command-contract-v11r.json"
+  ],
+  "unverified": [
+    "UI empty-text risk remains a UI-task responsibility (CONSUMER_GUIDE rules unchanged)",
+    "page/book ACL is not defined by the project; no fake authorization added (contract 3.1)",
+    "GAP-3 existing manual-save dual projection intentionally unchanged",
+    "review reports r2/r3 are archived by the Lead; the branch currently contains r1 only (merge main on request)"
+  ]
+}

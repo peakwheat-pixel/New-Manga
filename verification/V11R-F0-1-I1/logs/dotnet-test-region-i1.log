@@ -1,0 +1,13 @@
+G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+No test matches the given testcase filter `FullyQualifiedName~RegionWriteCommandTests|FullyQualifiedName~CommandParityContractTests` in G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~RegionWriteCommandTests|FullyQualifiedName~CommandParityContractTests` in G:\CODEX\New Manga.workspace\worktrees\V11R-F0-REGION-WRITE\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+
+
+
+已通过! - 失败:     0，通过:    77，已跳过:     0，总计:    77，持续时间: 58 ms - NewManga.CoreClient.Tests.dll (net9.0)
+EXIT_CODE=0

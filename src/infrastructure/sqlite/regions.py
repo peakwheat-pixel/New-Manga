@@ -15,6 +15,7 @@ import json
 import sqlite3
 from dataclasses import replace
 from datetime import datetime, timezone
+from typing import Sequence
 
 from application.editing.ports import (
     RegionCommitResult,
@@ -116,20 +117,8 @@ class SqliteRegionRepository:
 
     def add_region(self, region: Region) -> None:
         with self._conn:
-            self._conn.execute(
-                "INSERT INTO regions (" + _REGION_COLUMNS + ")"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    region.region_id, region.page_id, region.region_type.value,
-                    region.reading_order,
-                    json.dumps(region.geometry.as_jsonable(), ensure_ascii=False, sort_keys=True),
-                    json.dumps(_text_jsonable(region.text), ensure_ascii=False, sort_keys=True),
-                    json.dumps(region.style.as_jsonable(), ensure_ascii=False, sort_keys=True),
-                    region.sfx_policy.value, int(region.region_locked),
-                    int(region.translation_locked), int(region.inpaint_locked),
-                    region.current_revision_id, region.created_at,
-                    region.updated_at, region.deleted_at,
-                ),
+            self._insert_region_row(
+                self._conn, region, region.current_revision_id
             )
 
     def get_region(self, region_id: str) -> Region | None:
@@ -214,15 +203,20 @@ class SqliteRegionRepository:
         try:
             conn.execute("BEGIN IMMEDIATE")
             row = conn.execute(
-                "SELECT current_revision_id, region_locked, translation_locked,"
-                " inpaint_locked FROM regions WHERE region_id = ?",
+                "SELECT current_revision_id, deleted_at, region_locked,"
+                " translation_locked, inpaint_locked"
+                " FROM regions WHERE region_id = ?",
                 (region.region_id,),
             ).fetchone()
-            if row is None:
+            if row is None or row["deleted_at"] is not None:
+                # I3/P1: a single-revision write must not land on a target that
+                # was soft-deleted between the service pre-check and this
+                # transaction (a merge/split/delete from another connection).
+                # Roll back and surface the typed not-found outcome.
                 conn.rollback()
                 return RegionCommitResult(
-                    RegionCommitStatus.DB_FAILED,
-                    detail=f"region {region.region_id} disappeared mid-commit",
+                    RegionCommitStatus.TARGET_NOT_FOUND,
+                    detail=region.region_id,
                 )
 
             current = row["current_revision_id"]
@@ -286,6 +280,217 @@ class SqliteRegionRepository:
         return RegionCommitResult(
             RegionCommitStatus.APPLIED, revision_no=stored_revision.revision_no
         )
+
+    # ------------------------------------------------------------------
+    # atomic composite seam (V11R-F0-1 I1)
+    # ------------------------------------------------------------------
+
+    def commit_region_batch(
+        self,
+        *,
+        new_regions: "Sequence[tuple[Region, RegionRevision]]" = (),
+        updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]" = (),
+        soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
+        revision_pins: "Sequence[tuple[str, int, bool]]" = (),
+        expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
+    ) -> RegionCommitResult:
+        """ALL-OR-NOTHING composite Region write (see the ports protocol).
+
+        One ``BEGIN IMMEDIATE`` transaction. Every expected current pointer is
+        re-read INSIDE the transaction before the first write, so a concurrent
+        pipeline write between the service's pre-check and this commit turns
+        the whole batch into a typed INPUT_REVISION_CHANGED with ZERO write.
+        A failure at ANY step (insert/revision/soft-delete/pin) rolls the
+        whole transaction back, so create can never leave a region without its
+        first revision/current pointer, merge/split can never leave the new
+        region together with live sources (or half the parts), and reorder can
+        never persist a partial reading order.
+        """
+        conn = self._conn
+        applied: list[tuple[Region, str]] = []
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+
+            # 1. Every EXISTING target must still be live and carry the
+            #    expected current pointer. Both checks are re-read INSIDE this
+            #    transaction: two callers can pass get_region() before the
+            #    first merge/split commits, so this is the only place that can
+            #    stop the second one from acting on already-soft-deleted rows.
+            existing_ids: dict[str, str | None] = {}
+            for region_id, expected in soft_delete_region_ids:
+                existing_ids[region_id] = expected
+            for region_id, expected in expected_current_checks:
+                existing_ids[region_id] = expected
+            for region, _revision, expected in updated_regions:
+                existing_ids[region.region_id] = expected
+            for region_id, _revision_no, _pinned in revision_pins:
+                existing_ids.setdefault(region_id, None)
+            for region_id, expected in existing_ids.items():
+                row = conn.execute(
+                    "SELECT current_revision_id, deleted_at FROM regions"
+                    " WHERE region_id = ?",
+                    (region_id,),
+                ).fetchone()
+                if row is None or row["deleted_at"] is not None:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.TARGET_NOT_FOUND,
+                        detail=region_id,
+                    )
+                if expected is not None and row["current_revision_id"] != expected:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.INPUT_REVISION_CHANGED,
+                        detail=(
+                            f"expected current {expected!r},"
+                            f" stored current {row['current_revision_id']!r}"
+                        ),
+                    )
+
+            # 2. atomic page cap (I3/P2-A): the live count is re-read INSIDE
+            #    this transaction, so two callers that both counted N-1 before
+            #    the transaction can never both insert past the limit.
+            if page_region_limit is not None:
+                page_id, limit = page_region_limit
+                live_count = conn.execute(
+                    "SELECT COUNT(*) AS live FROM regions"
+                    " WHERE page_id = ? AND deleted_at IS NULL",
+                    (page_id,),
+                ).fetchone()["live"]
+                if live_count >= limit:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.REGION_LIMIT_EXCEEDED,
+                        detail=f"page {page_id} already has {limit} live regions",
+                    )
+
+            # 3. new regions: the row, its first revision and the current
+            #    pointer appear together or not at all.
+            for region, revision in new_regions:
+                stored_revision = replace(revision, revision_no=1)
+                self._insert_region_row(
+                    conn, region, stored_revision.region_revision_id
+                )
+                self._insert_revision(stored_revision)
+                applied.append((region, stored_revision.region_revision_id))
+
+            # 4. updated regions: append the next immutable revision and sync
+            #    the revision-owned state + pointer.
+            for region, revision, _expected in updated_regions:
+                revision_no = conn.execute(
+                    "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
+                    " FROM region_revisions WHERE region_id = ?",
+                    (region.region_id,),
+                ).fetchone()["next_no"]
+                stored_revision = replace(revision, revision_no=revision_no)
+                self._insert_revision(stored_revision)
+                values = self._region_write_values(region)
+                conn.execute(
+                    "UPDATE regions SET page_id = ?, region_type = ?,"
+                    " reading_order = ?, geometry_json = ?, text_json = ?,"
+                    " style_json = ?, sfx_policy = ?, region_locked = ?,"
+                    " translation_locked = ?, inpaint_locked = ?,"
+                    " current_revision_id = ?, updated_at = ?"
+                    " WHERE region_id = ?",
+                    (*values, stored_revision.region_revision_id,
+                     region.updated_at, region.region_id),
+                )
+                applied.append((region, stored_revision.region_revision_id))
+
+            # 5. source soft deletes (merge/split): never hard delete. The
+            #    update is CONDITIONAL on the target still being live; a
+            #    rowcount != 1 rolls the whole batch back as TARGET_NOT_FOUND
+            #    (defense in depth after the step-1 live re-read).
+            deleted_at = _utc_now()
+            for region_id, expected in soft_delete_region_ids:
+                rowcount = self._soft_delete_row(
+                    conn, region_id, deleted_at, expected
+                )
+                if rowcount != 1:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.TARGET_NOT_FOUND,
+                        detail=region_id,
+                    )
+
+            # 6. pin flag flips (revision rows stay immutable), only while the
+            #    region is still live.
+            for region_id, revision_no, pinned in revision_pins:
+                cursor = conn.execute(
+                    "UPDATE region_revisions SET is_pinned = ?"
+                    " WHERE region_id = ? AND revision_no = ?"
+                    " AND EXISTS (SELECT 1 FROM regions r"
+                    " WHERE r.region_id = ? AND r.deleted_at IS NULL)",
+                    (int(pinned), region_id, revision_no, region_id),
+                )
+                if cursor.rowcount == 0:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.DB_FAILED,
+                        detail=f"revision {revision_no} not found for region"
+                        f" {region_id}",
+                    )
+
+            conn.commit()
+        except Exception as error:
+            conn.rollback()
+            return RegionCommitResult(
+                RegionCommitStatus.DB_FAILED, detail=repr(error)
+            )
+
+        # Publish the committed pointers on the caller's objects only AFTER
+        # the transaction committed (a rolled-back batch never mutates them).
+        for region, revision_id in applied:
+            region.current_revision_id = revision_id
+        return RegionCommitResult(RegionCommitStatus.APPLIED)
+
+    # -- internal row writers (also the failure-injection seams in tests) --
+
+    def _insert_region_row(
+        self, conn: sqlite3.Connection, region: Region, current_revision_id: str | None
+    ) -> None:
+        conn.execute(
+            "INSERT INTO regions (" + _REGION_COLUMNS + ")"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                region.region_id, region.page_id, region.region_type.value,
+                region.reading_order,
+                json.dumps(region.geometry.as_jsonable(), ensure_ascii=False, sort_keys=True),
+                json.dumps(_text_jsonable(region.text), ensure_ascii=False, sort_keys=True),
+                json.dumps(region.style.as_jsonable(), ensure_ascii=False, sort_keys=True),
+                region.sfx_policy.value, int(region.region_locked),
+                int(region.translation_locked), int(region.inpaint_locked),
+                current_revision_id, region.created_at,
+                region.updated_at, region.deleted_at,
+            ),
+        )
+
+    def _soft_delete_row(
+        self,
+        conn: sqlite3.Connection,
+        region_id: str,
+        deleted_at: str,
+        expected_current_revision_id: str | None = None,
+    ) -> int:
+        """Conditional soft delete (I2/P1-A): never rewrite an already-deleted
+        row and, when the caller supplied the observed pointer, only delete the
+        revision it actually observed. Returns the affected row count (the
+        batch requires exactly 1)."""
+        if expected_current_revision_id is None:
+            cursor = conn.execute(
+                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+                " WHERE region_id = ? AND deleted_at IS NULL",
+                (deleted_at, deleted_at, region_id),
+            )
+        else:
+            cursor = conn.execute(
+                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+                " WHERE region_id = ? AND deleted_at IS NULL"
+                " AND current_revision_id = ?",
+                (deleted_at, deleted_at, region_id, expected_current_revision_id),
+            )
+        return cursor.rowcount
 
     def _insert_revision(self, revision: RegionRevision) -> None:
         self._conn.execute(

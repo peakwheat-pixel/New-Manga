@@ -5,4 +5,11 @@
     <Description>stdio JSON-lines clients for the existing Python Core sidecars (core_service protocol 2.3 + host_bridge wire v1).</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- V11R-F0-1: the Region write payload writer is asserted from the test
+         project without a live sidecar (exact wire payload / boundary
+         validation), so the dispatcher's WriteCorePayload is internal. -->
+    <InternalsVisibleTo Include="NewManga.CoreClient.Tests" />
+  </ItemGroup>
+
 </Project>

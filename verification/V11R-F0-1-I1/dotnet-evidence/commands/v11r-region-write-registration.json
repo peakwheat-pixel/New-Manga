@@ -1,0 +1,87 @@
+{
+  "task": "V11R-F0-1 \u002B V11R-F0-2",
+  "ac": "F0-1 AC3/AC5 \u002B F0-2 AC2/AC5",
+  "core_contract": "doc/contracts/V11R_REGION_WRITE_CONTRACT.md",
+  "region_family_minor": 3,
+  "registry_total": "77",
+  "additive_commands": 11,
+  "commands": [
+    {
+      "name": "create_region",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "create_region",
+      "core_minor": 3
+    },
+    {
+      "name": "delete_region",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "delete_region",
+      "core_minor": 3
+    },
+    {
+      "name": "save_region_geometry",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "save_region_geometry",
+      "core_minor": 3
+    },
+    {
+      "name": "merge_regions",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "merge_regions",
+      "core_minor": 3
+    },
+    {
+      "name": "split_region",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "split_region",
+      "core_minor": 3
+    },
+    {
+      "name": "reorder_regions",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "reorder_regions",
+      "core_minor": 3
+    },
+    {
+      "name": "save_manual_translation",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "save_manual_translation",
+      "core_minor": 3
+    },
+    {
+      "name": "confirm_region_final",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "confirm_region_final",
+      "core_minor": 3
+    },
+    {
+      "name": "set_region_lock",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "set_region_lock",
+      "core_minor": 3
+    },
+    {
+      "name": "pin_revision",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "pin_revision",
+      "core_minor": 3
+    },
+    {
+      "name": "list_page_region_texts",
+      "domain": "Region",
+      "channel": "CoreService",
+      "core_command": "list_page_region_texts",
+      "core_minor": 3
+    }
+  ]
+}

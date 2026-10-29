@@ -1,0 +1,10 @@
+{
+  "task": "V11R-A-3",
+  "contract": "doc/contracts/V11R_COMMAND_CONTRACT_V1.md",
+  "baseline_rows": 66,
+  "frozen": 49,
+  "partial": 17,
+  "gap": 0,
+  "registry_commands": 77,
+  "pending_rows": 11
+}
