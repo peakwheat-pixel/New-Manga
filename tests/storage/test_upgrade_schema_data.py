@@ -56,6 +56,18 @@ FROZEN_V1_TABLES = frozenset(
     }
 )
 
+#: Frozen v1 column sets of the core tables (a change to the v1 DDL must fail
+#: this test loudly; keep in sync with the historical schema on purpose).
+FROZEN_V1_COLUMNS = {
+    "books": frozenset({"book_id", "title", "created_at", "updated_at", "deleted_at"}),
+    "chapters": frozenset(
+        {"chapter_id", "book_id", "title", "sort_order", "created_at", "updated_at", "deleted_at"}
+    ),
+    "pages": frozenset(
+        {"page_id", "chapter_id", "sort_order", "created_at", "updated_at", "deleted_at"}
+    ),
+}
+
 #: Tables a v1 database must gain by the time it reaches the latest schema.
 LATEST_TABLES = (
     "regions",
@@ -161,6 +173,7 @@ def _build_legacy_database(db_path: Path, version: int) -> sqlite3.Connection:
         applied = MigrationRunner(connection, [migration]).apply_pending()
         assert [record.schema_version for record in applied] == [migration.schema_version]
         _seed_for_version(connection, migration.schema_version)
+    _record_full_rows(connection)
     assert read_schema_version(connection) == version
     return connection
 
@@ -620,6 +633,31 @@ def _assert_v1_rows(connection: sqlite3.Connection) -> None:
             )
 
 
+def _record_full_rows(connection: sqlite3.Connection) -> None:
+    """Replace recorded column subsets with the full seeded row (all columns)."""
+    for table, id_value in list(EXPECTED.keys()):
+        id_column = ID_COLUMNS[table]
+        row = connection.execute(
+            f"SELECT * FROM {table} WHERE {id_column} = ?", (id_value,)
+        ).fetchone()
+        assert row is not None
+        EXPECTED[(table, id_value)] = dict(row)
+
+
+def _assert_no_extra_rows(connection: sqlite3.Connection, start_version: int) -> None:
+    """The upgraded tables must contain exactly the seeded rows (no extras)."""
+    for table in {table for table, _ in EXPECTED}:
+        expected_count = sum(1 for entry_table, _ in EXPECTED if entry_table == table)
+        actual = connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+        assert actual == expected_count, (
+            f"{table}: {actual} rows after upgrade, expected {expected_count}"
+        )
+    if start_version >= 2:
+        # book_tags is a composite-key table the seed writes at v2 (no single id).
+        book_tags = connection.execute("SELECT COUNT(*) FROM book_tags").fetchone()[0]
+        assert book_tags == 1
+
+
 def _assert_expected(connection: sqlite3.Connection) -> None:
     """Every seeded row must be identical after the upgrade (all seeded columns)."""
     assert EXPECTED, "seed functions did not record any expected values"
@@ -658,6 +696,10 @@ def _assert_latest(connection: sqlite3.Connection) -> None:
             for row in connection.execute(f"PRAGMA table_info({table})").fetchall()
         }
         assert columns <= actual, f"{table} missing columns: {columns - actual}"
+    for table in LATEST_TABLES:
+        table_info = connection.execute(f"PRAGMA table_info({table})").fetchall()
+        assert table_info, f"{table} has no columns"
+        assert any(row["pk"] for row in table_info), f"{table} has no primary key"
     indexes = {
         row["name"]
         for row in connection.execute("PRAGMA index_list(chapters)").fetchall()
@@ -693,6 +735,7 @@ def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: in
 
     _assert_latest(connection)
     _assert_expected(connection)
+    _assert_no_extra_rows(connection, version)
     _assert_foreign_keys(connection)
 
     # The upgraded database is usable.
@@ -717,10 +760,20 @@ def test_upgrade_from_v1_creates_later_version_objects(tmp_path: Path) -> None:
     )
     for later_table in LATEST_TABLES:
         assert later_table not in v1_tables
+    for table, frozen_columns in FROZEN_V1_COLUMNS.items():
+        actual_columns = {
+            row["name"]
+            for row in connection.execute(f"PRAGMA table_info({table})").fetchall()
+        }
+        assert actual_columns == frozen_columns, (
+            f"v1 {table} columns changed: extra={actual_columns - frozen_columns} "
+            f"missing={frozen_columns - actual_columns}"
+        )
 
     MigrationRunner(connection, MIGRATIONS).apply_pending()
     _assert_latest(connection)
     _assert_v1_rows(connection)
+    _assert_no_extra_rows(connection, 1)
     connection.close()
 
 
@@ -736,5 +789,6 @@ def test_upgrade_is_idempotent_for_synthetic_legacy_data(
     assert connection.execute("SELECT COUNT(*) FROM books").fetchone()[0] == before
     _assert_latest(connection)
     _assert_expected(connection)
+    _assert_no_extra_rows(connection, version)
     connection.close()
 

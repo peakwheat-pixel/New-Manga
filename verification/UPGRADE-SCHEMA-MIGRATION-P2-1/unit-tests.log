@@ -1,0 +1,8 @@
+COMMAND: python -m pytest tests/storage/test_upgrade_schema_data.py -q
+CWD: G:\CODEX\New Manga.workspace\worktrees\UPGRADE-SCHEMA-MIGRATION-1
+PYTHON: Python 3.14.6
+AT: 2026-10-29T10:18:19.1209331Z
+----
+...........                                                              [100%]
+11 passed in 0.92s
+EXIT=0
