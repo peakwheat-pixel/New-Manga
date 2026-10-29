@@ -12,6 +12,8 @@ using NewManga.App.ViewModels;
 using NewManga.App.Views;
 using NewManga.CoreClient;
 using NewManga.App.Views.Legacy;
+using NewManga.DesignSystem.Theming;
+using DesignSystemAppearance = NewManga.DesignSystem.Theming.AppearanceMode;
 
 namespace NewManga.App.Views;
 
@@ -21,6 +23,7 @@ public partial class MainWindow : Window
     private readonly IFilePickerGateway? _filePickerOverride;
     private readonly IFilePickerGateway _filePicker;
     private readonly AppOptions _options;
+    private readonly DesignSystemThemeManager? _themeManager;
     private readonly Dictionary<string, Button> _navButtons = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Control> _pages = new(StringComparer.Ordinal);
     private readonly List<string> _navOrder = new();
@@ -44,11 +47,16 @@ public partial class MainWindow : Window
     {
     }
 
-    public MainWindow(IHostController controller, AppOptions options, IFilePickerGateway? filePicker = null)
+    public MainWindow(
+        IHostController controller,
+        AppOptions options,
+        IFilePickerGateway? filePicker = null,
+        DesignSystemThemeManager? themeManager = null)
     {
         _controller = controller;
         _options = options;
         _filePickerOverride = filePicker;
+        _themeManager = themeManager;
         InitializeComponent();
 
         Bookshelf = new BookshelfViewModel(
@@ -536,16 +544,50 @@ public partial class MainWindow : Window
     {
         if (Application.Current is { } application)
         {
-            application.RequestedThemeVariant = application.ActualThemeVariant == ThemeVariant.Dark
+            var target = application.ActualThemeVariant == ThemeVariant.Dark
                 ? ThemeVariant.Light
                 : ThemeVariant.Dark;
-            OnThemeApplied();
+            ApplyAppearance(target);
+        }
+    }
+
+    /// <summary>
+    /// C-3-I1: the legacy shell's appearance switch must move the DesignSystem palette, not only the
+    /// Avalonia theme variant. Without this the window kept the previous palette while text colours
+    /// followed the new variant. The manager is shared with the v2 shell; a null manager only happens in
+    /// standalone legacy tests, where the variant remains the fallback.
+    /// </summary>
+    private void ApplyAppearance(ThemeVariant variant)
+    {
+        if (Application.Current is not { } application)
+        {
+            return;
+        }
+
+        application.RequestedThemeVariant = variant;
+        SyncDesignSystemAppearance(variant);
+        OnThemeApplied();
+    }
+
+    private void SyncDesignSystemAppearance(ThemeVariant? variant)
+    {
+        if (_themeManager is null || variant is null || variant == ThemeVariant.Default)
+        {
+            return;
+        }
+
+        var appearance = variant == ThemeVariant.Light ? DesignSystemAppearance.Light : DesignSystemAppearance.Dark;
+        if (!_themeManager.SetAppearance(appearance))
+        {
+            System.Diagnostics.Trace.TraceWarning(
+                $"legacy shell could not sync DesignSystem palette: {_themeManager.LastError}");
         }
     }
 
     /// <summary>Re-applies the fixed legacy chrome after an appearance change.</summary>
     public void OnThemeApplied()
     {
+        SyncDesignSystemAppearance(Application.Current?.RequestedThemeVariant);
         ApplyTheme();
         InvalidateVisual();
     }

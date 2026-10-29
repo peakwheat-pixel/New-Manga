@@ -31,6 +31,14 @@ public sealed class FocusRing : AvaloniaObject
 
     private static readonly ConditionalWeakTable<Control, RingState> States = new();
 
+    /// <summary>Test-only instrumentation: is this control currently holding focus handlers?</summary>
+    internal static bool IsSubscribedFor(Control control) =>
+        States.TryGetValue(control, out var state) && state.Subscribed;
+
+    /// <summary>Test-only instrumentation: how many times this control recomputed its ring position.</summary>
+    internal static int PositionCallCountFor(Control control) =>
+        States.TryGetValue(control, out var state) ? state.PositionCalls : 0;
+
     static FocusRing()
     {
         IsEnabledProperty.Changed.AddClassHandler<Control>(OnIsEnabledChanged);
@@ -141,6 +149,7 @@ public sealed class FocusRing : AvaloniaObject
 
     private static void Position(Control control, RingState state)
     {
+        state.PositionCalls++;
         if (state.Ring is null || state.Host is null)
         {
             return;
@@ -285,6 +294,8 @@ public sealed class FocusRing : AvaloniaObject
     {
         public bool Subscribed { get; set; }
 
+        public int PositionCalls { get; set; }
+
         public bool LayoutSubscribed { get; set; }
 
         public bool ViewportSubscribed { get; set; }
@@ -297,6 +308,7 @@ public sealed class FocusRing : AvaloniaObject
         public Border? Ring { get; set; }
     }
 }
+
 
 
 

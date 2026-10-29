@@ -3,8 +3,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using NewManga.App.Shell;
+using NewManga.App.Shell.V2;
+using NewManga.DesignSystem;
+using NewManga.DesignSystem.Theming;
 using NewManga.App.ViewModels;
 using NewManga.App.Views;
 
@@ -104,6 +109,79 @@ public sealed class ThemeRetirementR4Tests
         Assert.DoesNotContain(Descendants(page).OfType<Button>(), button => button.Name?.StartsWith("ThemePack_", StringComparison.Ordinal) == true);
     }
 
+    // ---- C-3-I1: the same five behaviours on the V2 shell (the R4 assertions were legacy-only) ----
+
+    [AvaloniaFact]
+    public void V2_shell_starts_with_first_frame_and_shares_the_design_system_manager()
+    {
+        using var manager = new DesignSystemThemeManager(Application.Current!);
+        Assert.True(manager.Initialize(AppearanceMode.Dark), manager.LastError);
+        var gate = new TaskCompletionSource();
+        var controller = new FakeHostController(FakeHostController.ReadySnapshot()) { StartGate = gate.Task };
+        var window = AppShellV2.CreateRoot(controller, new AppOptions(), picker: null, themeManager: manager);
+        var contentBefore = window.Content;
+
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(window.IsVisible);
+        Assert.IsType<AppShellV2>(window.Content);
+        Assert.False(gate.Task.IsCompleted);
+        var darkCanvas = ColorOf(NmKeys.Color.Bg.App, ThemeVariant.Dark);
+        Assert.Equal(darkCanvas, ResolvedColor(NmKeys.Color.Bg.App));
+
+        Assert.True(manager.SetAppearance(AppearanceMode.Light), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Same(contentBefore, window.Content);
+        Assert.Equal(ColorOf(NmKeys.Color.Bg.App, ThemeVariant.Light), ResolvedColor(NmKeys.Color.Bg.App));
+
+        gate.SetResult();
+        Dispatcher.UIThread.RunJobs();
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void V2_shell_window_material_uses_the_same_os_fallback_policy()
+    {
+        var window = AppShellV2.CreateRoot(new FakeHostController(FakeHostController.ReadySnapshot()));
+        var expected = WindowMaterial.ForCurrentOs().Hints
+            .Select(hint => hint switch
+            {
+                "Mica" => WindowTransparencyLevel.Mica,
+                "Blur" => WindowTransparencyLevel.Blur,
+                _ => WindowTransparencyLevel.None,
+            })
+            .ToArray();
+
+        Assert.Equal(expected, window.TransparencyLevelHint.ToArray());
+        if (Environment.OSVersion.Version.Build < 22000)
+        {
+            Assert.Equal(new[] { WindowTransparencyLevel.None }, window.TransparencyLevelHint.ToArray());
+        }
+    }
+
+    private static Color ResolvedColor(string key)
+    {
+        Assert.True(Application.Current!.TryGetResource(key, null, out var value), $"{key} is not loaded");
+        return value switch
+        {
+            ISolidColorBrush brush => brush.Color,
+            Color color => color,
+            _ => throw new InvalidOperationException($"{key} resolved to {value?.GetType().Name ?? "null"}"),
+        };
+    }
+
+    private static Color ColorOf(string key, ThemeVariant variant)
+    {
+        Assert.True(Application.Current!.TryGetResource(key, variant, out var value), $"{key} has no {variant} value");
+        return value switch
+        {
+            ISolidColorBrush brush => brush.Color,
+            Color color => color,
+            _ => throw new InvalidOperationException($"{key} resolved to {value?.GetType().Name ?? "null"}"),
+        };
+    }
+
     private static IEnumerable<Control> Descendants(Control root)
     {
         foreach (var child in root.GetLogicalChildren().OfType<Control>())
@@ -166,4 +244,5 @@ public sealed class ThemeRetirementR4Tests
         throw new InvalidOperationException("could not locate repository root");
     }
 }
+
 

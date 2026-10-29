@@ -30,17 +30,20 @@ public static class LegacyChrome
     public const string SidebarBackground = "SidebarBackground";
     public const string DockBackground = "DockBackground";
 
-    private static readonly IBrush FallbackPanel = new SolidColorBrush(Color.Parse("#1A1C1F"));
-    private static readonly IBrush FallbackCanvas = new SolidColorBrush(Color.Parse("#0F1012"));
-    private static readonly IBrush FallbackText = new SolidColorBrush(Color.Parse("#E9EAEC"));
-    private static readonly IBrush FallbackMuted = new SolidColorBrush(Color.Parse("#A3A8AF"));
-    private static readonly IBrush FallbackAccent = new SolidColorBrush(Color.Parse("#E8B264"));
-    private static readonly IBrush FallbackAccentOn = new SolidColorBrush(Color.Parse("#1A1C1F"));
+    // C-3-I1: these are explicit NEUTRAL compatibility values, used only when the DS palette resource is
+    // absent (standalone legacy tests / very early construction). They are not a second theme definition:
+    // whenever the DS stack exists, Resource() wins and these constants are never consulted.
+    private static readonly IBrush FallbackPanel = new SolidColorBrush(Color.Parse("#202020"));
+    private static readonly IBrush FallbackCanvas = new SolidColorBrush(Color.Parse("#101010"));
+    private static readonly IBrush FallbackText = new SolidColorBrush(Color.Parse("#E0E0E0"));
+    private static readonly IBrush FallbackMuted = new SolidColorBrush(Color.Parse("#A0A0A0"));
+    private static readonly IBrush FallbackAccent = new SolidColorBrush(Color.Parse("#C8A060"));
+    private static readonly IBrush FallbackAccentOn = new SolidColorBrush(Color.Parse("#101010"));
     private static readonly IBrush FallbackTransparent = Brushes.Transparent;
 
     /// <summary>
     /// Resolves a legacy token name against the design-system palette. The legacy shell may run before the
-    /// palette is loaded (unit tests construct pages directly), so every key keeps a neutral fallback.
+    /// palette is loaded (unit tests construct pages directly); only then a neutral fallback is used.
     /// </summary>
     public static IBrush Brush(string token) => token switch
     {
@@ -158,13 +161,20 @@ public static class LegacyLayoutProfiles
 /// <summary>Card metrics formerly carried by a theme pack.</summary>
 public sealed class LegacyMetrics
 {
+    // C-3-I1: the legacy PACK radius scale (12/8/6) is a fixed compatibility metric, not a DS token
+    // scale (DS radius.sm/md are 2px/3px). Registered as a C-3 deviation; when the legacy shell retires
+    // these values disappear with it.
+    private const double CornerCardNeutral = 12;
+    private const double CornerButtonNeutral = 8;
+    private const double CornerSmallNeutral = 6;
+
     public bool IsDark => LegacyChrome.IsDark;
 
-    public double CornerCard => 12;
+    public double CornerCard => CornerCardNeutral;
 
-    public double CornerButton => 8;
+    public double CornerButton => CornerButtonNeutral;
 
-    public double CornerSmall => 6;
+    public double CornerSmall => CornerSmallNeutral;
 }
 
 /// <summary>Legacy shell profile wrapper (flat replacement for the retired pack model).</summary>

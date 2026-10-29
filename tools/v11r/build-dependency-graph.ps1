@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param(
     [string]$RepositoryRoot = '',
-    [string]$OutputDirectory = 'verification/V11R-C-3-READY'
+    [string]$OutputDirectory = 'verification/V11R-C-3'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -173,7 +173,7 @@ $summary = [ordered]@{
 
 $document = [ordered]@{
     schema           = 'newmanga.v11r.c3-dependency-graph/1'
-    task             = 'V11R-C-3-READY'
+    task             = 'V11R-C-3'
     baseCommit       = $baseCommit
     repoHead         = $headCommit
     workingTreeDirty = $workingTreeDirty
@@ -212,6 +212,7 @@ Write-Output "json        : $jsonPath"
 Write-Output "table       : $tablePath"
 $kindSummary | ForEach-Object { Write-Output "  kind  $_" }
 $fateSummary | ForEach-Object { Write-Output "  fate  $_" }
+
 
 
 

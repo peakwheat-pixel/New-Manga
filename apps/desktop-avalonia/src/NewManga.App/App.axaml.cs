@@ -30,34 +30,23 @@ public partial class App : Application
             var options = AppOptionsStore.Current;
 
             // V11R-C-3: the old theme-pack startup hook is retired. `--theme` stays as a compatibility
-            // argument and is mapped through the ThemeEngine migration table (all retired ids land on
-            // newmanga-default, which the design system already applies); appearance is driven by the
-            // design-system manager below. The legacy shell still accepts the argument without crashing.
-            if (!string.IsNullOrWhiteSpace(options.StartupThemeId))
-            {
-                var legacySettings = new NewManga.ThemeEngine.ThemeSettings(
-                    options.StartupThemeId!,
-                    NewManga.ThemeEngine.AppearanceMode.System,
-                    NewManga.ThemeEngine.ContrastMode.Standard,
-                    NewManga.ThemeEngine.LayoutProfile.Default,
-                    ReducedMotion: false,
-                    FollowSystemAccent: false);
-                var migrated = NewManga.ThemeEngine.LegacyThemeMigration.Migrate(legacySettings, _ => false);
-                System.Diagnostics.Trace.TraceInformation(
-                    $"--theme={options.StartupThemeId} mapped to {migrated.Settings.ThemeId} (legacy theme packs retired)");
-            }
+            // argument: LegacyStartupTheme maps it through the ThemeEngine migration table and carries the
+            // retired pack's appearance/density into the DesignSystem manager below.
+            var startupTheme = LegacyStartupTheme.Resolve(options.StartupThemeId, options.StartupVariant);
 
             // V11R-D-1: normalize the design-system resource stack (palette + overlays) after the
-            // legacy theme pack has been applied. The startup appearance (--variant / persisted choice)
-            // is passed in so initialization never silently overrides a known user preference; only an
-            // absent choice falls back to the design-system default (dark).
-            var startupAppearance = string.IsNullOrWhiteSpace(options.StartupVariant)
-                ? (AppearanceMode?)null
-                : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
-                    ? AppearanceMode.Dark
-                    : AppearanceMode.Light;
+            // legacy theme pack has been applied. The startup appearance (--variant / --theme / persisted
+            // choice) is passed in so initialization never silently overrides a known user preference;
+            // only an absent choice falls back to the design-system default (dark).
+            var startupAppearance = startupTheme.Appearance;
             _designSystemTheme = new DesignSystemThemeManager(this);
             _designSystemTheme.Initialize(startupAppearance);
+            if (startupTheme.Density is { } startupDensity &&
+                !_designSystemTheme.SetDensity(startupDensity))
+            {
+                System.Diagnostics.Trace.TraceWarning(
+                    $"legacy --theme density could not be applied: {_designSystemTheme.LastError}");
+            }
 
             var controller = new HostController(options.ToHostOptions());
             var window = options.UseV2Shell
@@ -135,8 +124,8 @@ public partial class App : Application
         return root;
     }
 
-    private static Window CreateLegacyShell(HostController controller, AppOptions options) =>
-        new MainWindow(controller, options);
+    private Window CreateLegacyShell(HostController controller, AppOptions options) =>
+        new MainWindow(controller, options, themeManager: _designSystemTheme);
 
     /// <summary>
     /// Maps the existing <c>--page</c> evidence hook onto both shells. Legacy keeps its page names;
