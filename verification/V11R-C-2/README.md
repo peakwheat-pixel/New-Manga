@@ -3,7 +3,7 @@
 - Task：`V11R-C-2`（Owner：`theme-studio`；Lead：DSH）
 - 分支：`v11r/theme-studio`，基线 `907339511`（merge(v11r): V11R-C-1 Part B …；含 R-19 证据纪律、R-20 App→ThemeEngine 引用、V11R-C-1 Part A+B）
 - 规范：`doc/design/theming/THEME_STUDIO_SPEC.md`（FROZEN）、`doc/plan/V11R_AVALONIA_CONTRACT.md`、`doc/design/redesign-v1/40-fusion/{FUSION_SPEC,DESIGN_SYSTEM}.md`、`doc/plan/V11R_SCREEN_SPECS.md §6`
-- 状态：实现完成，本地质量门全绿；等待独立 Review 与 V11R-INT-1 接线。
+- 状态：实现完成，本地质量门全绿（含合入 main 后的静态 conformance 修正）；等待独立 Review 与 V11R-INT-1 接线。
 
 ---
 
@@ -22,7 +22,8 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 | 门 | 命令（在 `apps/desktop-avalonia`） | 结果 | 日志 |
 |---|---|---|---|
 | 构建 | `dotnet build NewManga.sln -warnaserror -t:Rebuild` | **0 warning / 0 error**（EXIT=0） | [build.log](build.log) |
-| 测试 | `dotnet test NewManga.sln --no-build` | **0 失败**：App.Tests 268 通过 / 6 跳过；ThemeEngine 200；DesignSystem 67；Host 42 / 24 跳过；CoreClient 42 / 25 跳过（EXIT=0） | [test.log](test.log) |
+| 测试（合入 main 后，串行） | `dotnet test NewManga.sln --no-build -m:1` | **0 失败**：App.Tests 294 通过 / 6 跳过；ThemeEngine 229；DesignSystem 67；Host 42 / 24 跳过；CoreClient 42 / 25 跳过（EXIT=0） | [test.log](test.log) |
+| 静态合规 | `--filter "FullyQualifiedName~V2ConformanceTests|FullyQualifiedName~V2StudioConformanceTests"` | **10/10 通过**（含 `V2Xaml_UsesNoRawDesignValues_AndNoForbiddenEffects`） | 见 `test.log` |
 | 新增测试 | `--filter "FullyQualifiedName~V2ThemeStudio"` | **36/36 通过**（含 2 个 headless 截图测试） | test.log |
 
 日志最后一行分别记录 `BUILD_EXIT=0` / `TEST_EXIT=0`。
@@ -62,6 +63,8 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 - `screens/pixel-hash.json`：固定像素画布 + 「未保存编辑」文本探针在预览前/预览中/取消后的 SHA-256 一致性。
 - `compliance.md`：设计系统合规 grep 自检。
 - `build.log` / `test.log`。
+- [INT_NOTES.md](INT_NOTES.md)：V11R-INT-1 接线说明（精确构造签名、唯一 `DesignSystemThemeManager` 约束、接线配方、GAP-3）。
+- [DEVIATIONS.md](DEVIATIONS.md)：偏差/例外/缺口登记（GAP-3 裁定、DEV-1..3、conformance 修正、未申请数值例外）。
 
 ---
 
@@ -100,7 +103,7 @@ Theme Studio 以 **独立覆盖式表面**（不是第五空间）实现：左�
 | NOT_WIRED-1 | 集成待接 | 文件选择器：`IThemeStudioFileGateway` 默认 `NullThemeStudioFileGateway`（`IsAvailable=false`） | UI 明示「文件选择器未接线（NOT_WIRED）：可拖入文件或粘贴 JSON」；导出仍生成 canonical `.nmtheme` 内容（`LastExportJson` 供 round-trip 断言），落盘待 INT-1 注入 `StorageProvider` |
 | NOT_WIRED-2 | 集成待接 | `AppShellV2` / TopBand「主题」/ `Ctrl+,` / Console「外观」入口、`ShellState.SurfaceStack` 推入 | 归 `V11R-INT-1`（Lead）。入口已就绪：`ThemeStudioSurface.OpenAsync(section)` / `Close()` / `RequestClose` |
 | NOT_WIRED-3 | 集成待接 | 应用启动时需把 **单一** `DesignSystemThemeManager` 传给 `CreateProduction` | `App._designSystemTheme` 目前是私有字段；INT-1 需暴露（或由 App 构造 Studio 服务），否则会出现两个 manager 竞争同一资源层 |
-| GAP-3 | 引擎接口缺口（已报 Lead） | 冻结 `IThemeService` 没有 `SetFollowSystemAccentAsync`；`ThemeSettings.FollowSystemAccent` 无法经引擎持久化 | V1 该开关仅作用于本表面合成的作用域调色板（可见效果 = 使用应用级强调色基线），**不持久化**；UI 文案与右栏能力说明已标注「（仅作用域）」，待 Lead 裁定是否扩接口 |
+| GAP-3 | 引擎接口缺口（**Lead 已裁定**） | 冻结 `IThemeService` 没有 `SetFollowSystemAccentAsync`；`ThemeSettings.FollowSystemAccent` 无法经引擎持久化 | **V1 不扩接口**：该开关仅作用于作用域调色板（可见效果 = 应用级强调色基线），**不写入设置文件、不跨重启保持**；UI 已明示「（仅作用域）」。登记为 **V11R-C-1 follow-up**，详见 [DEVIATIONS.md](DEVIATIONS.md#gap-3--跟随系统强调色无法经引擎持久化lead-已裁定) |
 | DEV-1 | 偏差（Lead 已批准） | 三视图未复用生产 `LibraryView` / `StudioWorkspaceView` | 生产视图依赖 `IHostController` + `ShellState` + notify/confirm 委托（且属 ui-shell 写域），作为预览宿主过重。改用**真实 Avalonia 控件树 + DS 令牌/Classes + 明示「示例内容」**，并以 `IPreviewSurfaceProvider` 预留替换 seam（INT-1 可注入生产视图） |
 | DEV-2 | 偏差（记录） | 左栏宽度取 DS 令牌 `Nm.Size.TreeWidth`=200，而非规范文字 224px | 契约 §2.2 硬规则禁止裸间距；224 无对应令牌。右栏 320px 使用 `Nm.Size.InspectorExpanded`=320 ✓ |
 | DEV-3 | 偏差（记录） | 动效三档映射 `fast(90/140/220) · normal(140/200/260) · slow(240/320/440)` | R-15 冻结令牌只有 Instant/Fast/Normal + `ThemeMotion.SlowMs` 默认 220；预设为 Studio 侧声明值，全部 ≤ `MaxDurationMs`(1000) |
@@ -126,7 +129,7 @@ cd apps/desktop-avalonia
 dotnet build NewManga.sln -warnaserror -t:Rebuild
 
 # 2) 全量测试
-dotnet test NewManga.sln --no-build
+dotnet test NewManga.sln --no-build -m:1
 
 # 3) 仅 Theme Studio 测试（含截图；证据写入 verification/V11R-C-2）
 $env:NEWMANGA_EVIDENCE_DIR = "G:\CODEX\New Manga.workspace\worktrees\V11R-THEME-STUDIO\verification\V11R-C-2"
