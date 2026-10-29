@@ -1,5 +1,5 @@
 # branch: v11r/theme-engine
-# code head under test: 46837ba7c17d350263d4546ab42ed8f9c9325e80
+# code head under test: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
 # base commit: bb957359e7ea51762a114cc22c02abde7838a500
 # captured: 2026-10-30
-# note: this evidence directory is added by the commit AFTER the code head; code is unchanged by it.
+# note: evidence files are committed after the code head; the code is unchanged by evidence-only commits.

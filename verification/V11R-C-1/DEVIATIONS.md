@@ -107,3 +107,10 @@ theme 层保持在其下方。这样不在 ThemeEngine 里复制第三份高对�
 
 契约 §4 写 `%APPDATA%/NewManga/themes/*.json`，任务卡写 `*.nmtheme`；实现两者都扫描，
 安装统一写 `.nmtheme`，同名 id 时 `.nmtheme` 优先，重复 id 记 `registry.duplicate-id` warning。
+
+## D-13 `AppearanceMode` 枚举声明顺序对齐契约（自查修正）
+
+初版把 `AppearanceMode` 声明为 `System/Light/Dark`；契约 §4 的冻结声明是 `Light/Dark/System`，
+枚举数值属于签名的一部分。已改为契约顺序（`Light=0`、`Dark=1`、`System=2`），并新增
+`ThemeContractTests` 用反射冻结全部契约枚举的声明顺序/数值、位置记录的主构造参数、接口成员集与
+schema 常量，防止后续无意漂移。序列化始终按名称（`light/dark/system`），不受数值影响。

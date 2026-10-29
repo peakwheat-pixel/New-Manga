@@ -1,6 +1,6 @@
 # command: dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen --no-build -- --check
 # workdir: apps/desktop-avalonia
-# head: 46837ba7c17d350263d4546ab42ed8f9c9325e80
+# head: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
 
 tokens:  G:\CODEX\New Manga.workspace\worktrees\V11R-THEME-ENGINE\doc\design\redesign-v1\40-fusion\tokens.json
 project: G:\CODEX\New Manga.workspace\worktrees\V11R-THEME-ENGINE\apps\desktop-avalonia\src\NewManga.ThemeEngine

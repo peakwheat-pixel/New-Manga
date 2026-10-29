@@ -5,7 +5,7 @@
 - Worktree：`G:/CODEX/New Manga.workspace/worktrees/V11R-THEME-ENGINE`
 - Branch：`v11r/theme-engine`
 - 基线：`bb957359e`（main，已含 R-09 令牌修订 `18a6a7782` 与 DS palette seam `a297a5eac`）
-- **代码 head（本证据的构建/测试对象）**：`46837ba7c17d350263d4546ab42ed8f9c9325e80`
+- **代码 head（本证据的构建/测试对象）**：`286abf17f`（含 D-1 契约面对齐修正；证据日志按该 head 重新采集）
 - 本文件所在 commit 仅新增本证据目录，不改代码；最终 delivery head 以 Lead 记录的 Handoff 为准。
 - 状态：**Part A 完成**；Part B（`IThemeService` + DS 应用适配器）等待 Lead 通知 `ApplyThemeLayer` seam 就绪。
 
@@ -14,16 +14,16 @@
 | 门 | 命令（`apps/desktop-avalonia`） | 结果 | 日志 |
 |---|---|---|---|
 | 构建 | `dotnet build NewManga.sln -warnaserror -t:Rebuild -v m -nologo` | **0 warning / 0 error**，EXIT=0（13 个项目全部重新编译） | [build.log](build.log) |
-| 全量测试 | `dotnet test NewManga.sln --no-build -v q --nologo` | **失败 0 / 通过 409 / 跳过 48 / 总计 457**，EXIT=0 | [dotnet-test-full.log](dotnet-test-full.log) |
-| 本任务测试 | `dotnet test tests/NewManga.ThemeEngine.Tests -v n` | **135/135 通过** | [dotnet-test-themeengine.log](dotnet-test-themeengine.log) |
+| 全量测试 | `dotnet test NewManga.sln --no-build -v q --nologo` | **失败 0 / 通过 433 / 跳过 48 / 总计 481**，EXIT=0 | [dotnet-test-full.log](dotnet-test-full.log) |
+| 本任务测试 | `dotnet test tests/NewManga.ThemeEngine.Tests -v n` | **159/159 通过** | [dotnet-test-themeengine.log](dotnet-test-themeengine.log) |
 | 生成器可复现 | `dotnet run --project src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen -- --check` | up to date（逐字节一致），EXIT=0 | [generator-check.log](generator-check.log) |
-| 变更规模 | `git diff --stat HEAD~4 HEAD` | 33 files / +6987（全部新增；既有项目源码 0 改动，仅 `NewManga.sln` +新增项目） | [git-diff-stat.log](git-diff-stat.log) |
+| 变更规模 | `git diff --stat bb957359e..HEAD` | **44 files changed, 7736 insertions(+), 0 deletions**（含 `verification/` 证据；既有项目源码 0 改动，仅 `NewManga.sln` 追加项目条目） | [git-diff-stat.log](git-diff-stat.log) |
 
 分套件（既有套件无回归）：
 
 | 套件 | 通过 | 跳过 | 总计 | 说明 |
 |---|---|---|---|---|
-| NewManga.ThemeEngine.Tests（本任务新增） | 135 | 0 | 135 | 证据见上 |
+| NewManga.ThemeEngine.Tests（本任务新增） | 159 | 0 | 159 | 证据见上 |
 | NewManga.App.Tests | 156 | 5 | 161 | 5 个跳过为 sidecar fixture 缺失时的**自带** self-skip |
 | NewManga.Host.Tests | 39 | 21 | 60 | 同上（`HostSidecarFact`） |
 | NewManga.CoreClient.Tests | 39 | 22 | 61 | 同上（`SidecarFact`） |
@@ -38,7 +38,7 @@
 | # | 任务要求 | 实现 | 证据 |
 |---|---|---|---|
 | A1 | 新建 `src/NewManga.ThemeEngine`（net9.0 + Avalonia 11.3.22 + DS，入 sln，命名空间 `NewManga.ThemeEngine`） | `NewManga.ThemeEngine.csproj`；`dotnet sln add` | [build.log](build.log)、`git-diff-stat.log` |
-| A2 | 模型严格按契约 §4 | `Models/ThemeModels.cs`、`Models/ThemeContracts.cs`（含 6 个冻结接口；契约缺口 `ThemeTokenSet`/`ThemeMetadata` 已获 Lead 批准，见 DEVIATIONS D-1） | 单测全绿；`Written_package_declares_no_layout_navigation_or_density` |
+| A2 | 模型严格按契约 §4 | `Models/ThemeModels.cs`、`Models/ThemeContracts.cs`（含 6 个冻结接口；契约缺口 `ThemeTokenSet`/`ThemeMetadata` 已获 Lead 批准，见 DEVIATIONS D-1） | `ThemeContractTests`（反射冻结枚举/记录/接口面）；`Written_package_declares_no_layout_navigation_or_density` |
 | A3 | JSON schema `newmanga.theme/1`：读写/版本/未知字段容忍/`.nmtheme` 与 `.json` | `Serialization/ThemePackageJson.cs`；手写 `JsonDocument`/`Utf8JsonWriter`（trim 安全）、确定性输出、未知字段 warning、被禁效果 error、schema 版本 error | `ThemePackageJsonTests`（15 例）、[schema-sample.nmtheme](schema-sample.nmtheme) |
 | A4 | 内置 `newmanga-default` 由 `tokens.json` 生成（dark+light，生成器 + `--check`，勿手抄） | `Themes/BuiltInThemeGenerator.cs` + `tools/NewManga.ThemeEngine.ThemeGen`；产物 `Themes/newmanga-default.nmtheme`、`Generated/ThemeTokenBaseline.g.cs` | `BuiltInThemeGeneratorTests`（16 例）、[generator-check.log](generator-check.log) |
 | A5 | `IThemeRegistry`：内置 + `%APPDATA%/NewManga/themes/`；`All/Find/Load/RefreshAsync/InstallAsync/UninstallAsync/ExportAsync` | `Registry/ThemeRegistry.cs`；内置 id 保留、校验后规范化落盘、损坏文件隔离进 `Diagnostics`、`.nmtheme`/`.json` 双扩展 | `ThemeRegistryTests`（15 例） |
@@ -46,7 +46,7 @@
 | A7 | `IThemePersistence`：设置文件 + 旧 ID 迁移 + 损坏文件回退不抛不阻塞 | `Persistence/ThemeSettingsStore.cs`、`LegacyThemeMigration.cs`；路径 `%APPDATA%/NewManga/theme-settings.json` | `LegacyThemeMigrationTests`（16 例）、[MIGRATION_CASES.md](MIGRATION_CASES.md)（9 旧 ID + 未知 + 空 = 11 类全覆盖） |
 | A8 | `IThemePreviewEngine` 纯逻辑：Begin/Update/Commit/Cancel 状态机 + 回滚语义单测 | `Preview/ThemePreviewEngine.cs`；`Changed` 事件流（Began/Updated/Committed/Cancelled）；Commit/Cancel 幂等、Dispose 未提交回滚、单活会话 | `ThemePreviewEngineTests`（17 例） |
 | A9 | Palette 合成：`ThemePackage + variant → IReadOnlyDictionary<string, object?>`（`Nm.*`，可直接应用到 Avalonia Resources） | `Palette/ThemePaletteComposer.cs`：整层 59 键（D-2）+ 35 色子集；不可变 brush | `ThemePaletteComposerTests`（18 例；含与 DS 生成盘逐色语义一致、字体缩放/行高预设/圆角/动效生效） |
-| A10 | 单测：schema 往返、校验错误分支、迁移 11 类、注册表安装/卸载/导出、预览回滚、对比度计算 | 135 tests（见 §1） | [dotnet-test-themeengine.log](dotnet-test-themeengine.log) |
+| A10 | 单测：schema 往返、校验错误分支、迁移 11 类、注册表安装/卸载/导出、预览回滚、对比度计算 | 159 tests（见 §1）；另有 `ThemeContractTests` 用反射冻结契约面（枚举声明顺序/数值、记录主构造参数、接口成员集、schema 常量），防止无意漂移 | [dotnet-test-themeengine.log](dotnet-test-themeengine.log) |
 
 ## 3. 关键决策（完整清单见 [DEVIATIONS.md](DEVIATIONS.md)）
 

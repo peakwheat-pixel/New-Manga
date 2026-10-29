@@ -1,12 +1,13 @@
-# command: git diff --stat HEAD~4 HEAD
-# head: 46837ba7c17d350263d4546ab42ed8f9c9325e80
+# command: git diff --stat bb957359e..HEAD
+# base: bb957359e (main)
+# head: 286abf17f610a96779fb41a8cd9d8a6df4f5271c
 
  apps/desktop-avalonia/NewManga.sln                 |  45 ++
  .../src/NewManga.ThemeEngine/.gitattributes        |   4 +
  .../Generated/ThemeTokenBaseline.g.cs              |  56 ++
  .../NewManga.ThemeEngine/Models/ThemeContracts.cs  | 235 ++++++
  .../NewManga.ThemeEngine/Models/ThemeIssueCodes.cs | 144 ++++
- .../src/NewManga.ThemeEngine/Models/ThemeModels.cs | 454 +++++++++++
+ .../src/NewManga.ThemeEngine/Models/ThemeModels.cs | 457 +++++++++++
  .../NewManga.ThemeEngine/Models/ThemeTokenKeys.cs  |  30 +
  .../NewManga.ThemeEngine.csproj                    |  35 +
  .../Palette/ThemePaletteComposer.cs                | 213 ++++++
@@ -29,9 +30,22 @@
  .../LegacyThemeMigrationTests.cs                   | 229 ++++++
  .../NewManga.ThemeEngine.Tests.csproj              |  31 +
  .../NewManga.ThemeEngine.Tests/TestSupport.cs      | 148 ++++
+ .../ThemeContractTests.cs                          | 111 +++
  .../ThemePackageJsonTests.cs                       | 204 +++++
  .../ThemePaletteComposerTests.cs                   | 251 +++++++
  .../ThemePreviewEngineTests.cs                     | 227 ++++++
  .../ThemeRegistryTests.cs                          | 247 ++++++
  .../ThemeValidatorTests.cs                         | 312 ++++++++
- 33 files changed, 6987 insertions(+)
+ verification/V11R-C-1/DEVIATIONS.md                | 109 +++
+ verification/V11R-C-1/MIGRATION_CASES.md           |  32 +
+ verification/V11R-C-1/README.md                    |  81 ++
+ verification/V11R-C-1/build.log                    |  27 +
+ verification/V11R-C-1/dotnet-test-full.log         |  26 +
+ verification/V11R-C-1/dotnet-test-themeengine.log  | 160 ++++
+ verification/V11R-C-1/generator-check.log          |  16 +
+ verification/V11R-C-1/git-diff-stat.log            |  37 +
+ verification/V11R-C-1/git-head.txt                 |   5 +
+ verification/V11R-C-1/schema-sample.nmtheme        | 142 ++++
+ 44 files changed, 7736 insertions(+)
+
+EXIT=0
