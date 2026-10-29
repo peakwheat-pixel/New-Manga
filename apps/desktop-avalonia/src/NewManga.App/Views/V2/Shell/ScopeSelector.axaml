@@ -9,7 +9,7 @@
     <StackPanel Orientation="Horizontal"
                 Spacing="{DynamicResource Nm.Space.2}"
                 VerticalAlignment="Center">
-      <TextBlock Classes="meta" Text="作用域" IsVisible="{Binding !IsCompact}" />
+      <TextBlock Classes="meta" Text="作用域" IsVisible="{Binding !IsNarrow}" />
       <TextBlock Classes="label"
                  Text="{Binding ScopeText}"
                  TextTrimming="CharacterEllipsis"

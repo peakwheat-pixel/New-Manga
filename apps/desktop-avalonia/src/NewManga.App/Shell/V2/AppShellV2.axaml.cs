@@ -40,13 +40,17 @@ public partial class AppShellV2 : UserControl
             controller,
             picker ?? new AvaloniaFilePickerGateway(_ => TopLevel.GetTopLevel(this)));
         DataContext = _viewModel;
+        _viewModel.RegisterWorkspace(new LibraryWorkspaceView(_viewModel.Library));
+        _viewModel.RegisterWorkspace(new ConsoleWorkspaceView(_viewModel.Console));
 
         _themeManager = themeManager;
         if (_themeManager is null && Application.Current is { } application)
         {
             _themeManager = new DesignSystemThemeManager(application);
-            _themeManager.Initialize();
         }
+
+        // Unified construction path: Initialize() is idempotent and must also run for an injected manager.
+        _themeManager?.Initialize();
 
         ApplyTheme();
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -115,10 +119,7 @@ public partial class AppShellV2 : UserControl
     {
         var focused = _topLevel?.FocusManager?.GetFocusedElement();
         var textInputFocused = focused is TextBox;
-        if (_viewModel.HandleKey(e.Key, e.KeyModifiers, textInputFocused))
-        {
-            e.Handled = true;
-        }
+        _viewModel.HandleKey(e, textInputFocused);
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

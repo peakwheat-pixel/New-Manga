@@ -89,6 +89,28 @@ internal static class V2Fixture
         return fake;
     }
 
+    /// <summary>Scrollable Library fixture (many books) for real ScrollViewer.Offset retention tests.</summary>
+    public static FakeHostController CreateScrollable(int bookCount = 24)
+    {
+        var titles = new string[bookCount];
+        for (var index = 0; index < bookCount; index++)
+        {
+            titles[index] = index == 0 ? "夜光列车" : $"书架测试 {index:D2}";
+        }
+
+        var fake = new FakeHostController(FakeHostController.ReadySnapshot(titles));
+        fake.ChaptersByBook["book-0"] = new[]
+        {
+            new ChapterSummary("ch-0-0", "第 10 话 · 灯を消すな", "10", 0),
+            new ChapterSummary("ch-0-1", "第 12 话 · 雨の停車場", "12", 1),
+        };
+        fake.ChapterPagesByChapter["ch-0-1"] = new[]
+        {
+            new ChapterPageSummary("page-0", "001.jpg", 0),
+            new ChapterPageSummary("page-1", "002.jpg", 1),
+        };
+        return fake;
+    }
     /// <summary>V11R-B-2: real settings/credential/export fixtures for the Console space tests.</summary>
     public static void AddConsoleData(FakeHostController fake)
     {
@@ -224,27 +246,13 @@ internal static class V2Fixture
 /// </summary>
 public sealed class V2ShellUiTests
 {
-    private static string EvidenceRoot
-    {
-        get
-        {
-            var root = Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_DIR");
-            if (string.IsNullOrWhiteSpace(root))
-            {
-                root = Path.Combine(Path.GetTempPath(), "newmanga-v11r-b1-evidence");
-            }
-
-            Directory.CreateDirectory(root);
-            return root;
-        }
-    }
-
     private static (Window Window, AppShellV2 Shell) Host(
         IHostController controller,
         double width = 1600,
         double height = 1000,
         IFilePickerGateway? picker = null)
     {
+        TestTheme.ResetToDefaults();
         var shell = new AppShellV2(controller, picker);
         var window = new Window
         {
@@ -270,17 +278,14 @@ public sealed class V2ShellUiTests
         return host;
     }
 
-    private static void Capture(Window window, string name)
+    /// <summary>R-19: temp-first capture (unique name incl. test method); repo sync only when curated.</summary>
+    private static void Capture(Window window, string name, [System.Runtime.CompilerServices.CallerMemberName] string? testName = null)
     {
         Dispatcher.UIThread.RunJobs();
         var frame = window.CaptureRenderedFrame()
             ?? throw new InvalidOperationException($"{name}: CaptureRenderedFrame() returned null");
-        var directory = Path.Combine(EvidenceRoot, "screens");
-        Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, name + ".png");
-        frame.Save(path);
-        var bytes = new FileInfo(path).Length;
-        Assert.True(bytes > 4096, $"{name}: {bytes} bytes — blank/placeholder screenshot");
+        var bytes = EvidenceFiles.SaveFrame(frame, "V11R-B-1", name, testName);
+        Assert.True(bytes is null or > 4096, $"{name}: {bytes} bytes — blank/placeholder screenshot");
     }
 
     private static Color ColorOf(object? resource) =>
@@ -298,11 +303,12 @@ public sealed class V2ShellUiTests
         Assert.Equal(1000d, window.ClientSize.Height);
 
         var topBand = shell.GetVisualDescendants().OfType<NewManga.App.Views.V2.Shell.TopBand>().Single();
-        Assert.True(topBand.Bounds.Height >= 32, $"TopBand height {topBand.Bounds.Height}");
+        Assert.Equal(36, topBand.Bounds.Height); // screen spec §1: TopBand = 36px
         Assert.NotNull(shell.GetVisualDescendants().OfType<LibraryView>().SingleOrDefault());
 
         // The library loaded the 4 books from the scripted Host snapshot (no fake UI data).
         Assert.Equal(4, shell.ViewModel.Library.Books.Count);
+        Assert.Equal(4, shell.ViewModel.Library.ColumnCount); // screen spec §2: 4 columns at 1600
         Assert.Equal("book-0", shell.ViewModel.State.Selection.BookId);
         Assert.Equal("ch-0-0", shell.ViewModel.State.Selection.ChapterId);
 
@@ -317,7 +323,7 @@ public sealed class V2ShellUiTests
     [AvaloniaFact]
     public async Task SpaceAndModeSwitch_KeepsSelectionFiltersAndTheSameViewModels()
     {
-        var (window, shell) = await HostReadyAsync(V2Fixture.Create());
+        var (window, shell) = await HostReadyAsync(V2Fixture.CreateScrollable());
         var libraryBefore = shell.ViewModel.Library;
         var booksViewBefore = shell.ViewModel.Library.Books;
 
@@ -326,8 +332,13 @@ public sealed class V2ShellUiTests
         await shell.ViewModel.Library.SelectBookAsync(shell.ViewModel.Library.AllBooks[0]);
         await shell.ViewModel.Library.SelectChapterAsync(
             shell.ViewModel.Library.Chapters.First(chapter => chapter.ChapterId == "ch-0-1"));
-        shell.ViewModel.Library.SearchText = "雨";
-        shell.ViewModel.State.SetScroll(SpaceId.Library, null, 0, 320);
+        shell.ViewModel.Library.SearchText = "书架";
+        var libraryView = shell.GetVisualDescendants().OfType<LibraryView>().Single();
+        await Task.Delay(60);
+        Dispatcher.UIThread.RunJobs();
+        libraryView.BooksScrollView!.Offset = new Vector(0, 180);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(180, shell.ViewModel.State.LibraryView.ScrollOffsetY, 1);
         shell.ViewModel.Library.TogglePageSelection(shell.ViewModel.Library.Pages[1]);
 
         Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control)); // Ctrl+2 → Studio
@@ -342,8 +353,8 @@ public sealed class V2ShellUiTests
         Assert.Same(libraryBefore, shell.ViewModel.Library);
         Assert.Same(booksViewBefore, shell.ViewModel.Library.Books);
         Assert.Equal("book-0", shell.ViewModel.State.Selection.BookId);
-        Assert.Equal("雨", shell.ViewModel.Library.SearchText);
-        Assert.Equal(320, shell.ViewModel.State.LibraryView.ScrollOffsetY);
+        Assert.Equal("书架", shell.ViewModel.Library.SearchText);
+        Assert.Equal(180, shell.ViewModel.State.LibraryView.ScrollOffsetY, 1);
         Assert.Equal(1, shell.ViewModel.State.Selection.MultiPageCount);
 
         Capture(window, "03-library-context-retained");
@@ -612,15 +623,77 @@ public sealed class V2ShellUiTests
     {
         var (window, shell) = await HostReadyAsync(V2Fixture.Create(), 1280, 800);
         Assert.Equal(1280d, window.ClientSize.Width);
+        Assert.True(shell.ViewModel.IsCompact); // R-18 compact band 1280..1599
         Assert.Equal(3, shell.ViewModel.Library.ColumnCount); // screen spec §2: 3 columns at 1280
         Capture(window, "11-library-1280x800");
         window.Close();
 
         var (small, smallShell) = await HostReadyAsync(V2Fixture.Create(), 1024, 700);
         Assert.Equal(1024d, small.ClientSize.Width);
-        Assert.True(smallShell.ViewModel.IsCompact);
-        Assert.True(smallShell.ViewModel.Library.ColumnCount >= 2);
+        Assert.True(smallShell.ViewModel.IsNarrow); // R-18 narrow band < 1280 (overlay detail)
+        Assert.True(smallShell.ViewModel.Library.IsOverlayDetailVisible);
+        Assert.Equal(4, smallShell.ViewModel.Library.ColumnCount);
         Capture(small, "12-library-1024x700");
         small.Close();
+    }
+    [AvaloniaFact]
+    public async Task ScrollOffset_IsRealShellState_AndRestoredAcrossSpaceSwitches()
+    {
+        var (window, shell) = await HostReadyAsync(V2Fixture.CreateScrollable());
+        var libraryView = shell.GetVisualDescendants().OfType<LibraryView>().Single();
+        var scroll = libraryView.BooksScrollView;
+        Assert.NotNull(scroll);
+        Assert.True(scroll!.Extent.Height > scroll.Viewport.Height, "fixture must be scrollable");
+
+        await Task.Delay(60);
+        Dispatcher.UIThread.RunJobs();
+        scroll.Offset = new Vector(0, 180);
+        Dispatcher.UIThread.RunJobs();
+        var afterSetState = shell.ViewModel.Library.ScrollOffsetY;
+        var afterSetView = scroll.Offset.Y;
+        Assert.True(shell.ViewModel.Library.ScrollOffsetY > 0, $"ScrollChanged must write the offset into ShellState (view={afterSetView}, state={afterSetState}, extent={scroll.Extent.Height}, viewport={scroll.Viewport.Height})");
+        var persisted = shell.ViewModel.Library.ScrollOffsetY;
+
+        Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(SpaceId.Studio, shell.ViewModel.State.CurrentSpace);
+        Assert.True(shell.HandleKeyForTest(Key.D1, KeyModifiers.Control));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(
+            Math.Abs(persisted - shell.ViewModel.Library.ScrollOffsetY) < 1 && Math.Abs(persisted - scroll.Offset.Y) < 1,
+            $"persisted={persisted} state={shell.ViewModel.Library.ScrollOffsetY} offset={scroll.Offset.Y} extent={scroll.Extent.Height} viewport={scroll.Viewport.Height}");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task LoadingState_RendersSameGeometrySkeleton_WithoutSelfJustifyingCopy()
+    {
+        var fake = V2Fixture.Create();
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        fake.SnapshotGate = gate.Task;
+        var shell = new AppShellV2(fake);
+        var window = new Window { Width = 1600, Height = 1000, Content = shell, Background = Brushes.Black };
+        window.Show();
+        _ = shell.Initialization;
+        Dispatcher.UIThread.RunJobs();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(shell.ViewModel.Library.CardWidth > 0, "viewport metrics must be computed");
+        _ = shell.ViewModel.Library.RefreshAsync();
+        await fake.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.Library.IsLoading, "the gated Host read must keep the loading state");
+        var skeletonCards = shell.GetVisualDescendants()
+            .OfType<Border>()
+            .Count(border => border.Classes.Contains("card") && Math.Abs(border.Bounds.Width - shell.ViewModel.Library.CardWidth) < 1);
+        Assert.True(skeletonCards >= 4, $"expected same-size skeleton cards, got {skeletonCards}");
+        Capture(window, "13-library-loading-skeleton");
+
+        gate.SetResult(true);
+        await shell.Initialization;
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.Library.IsLoading);
+        window.Close();
     }
 }

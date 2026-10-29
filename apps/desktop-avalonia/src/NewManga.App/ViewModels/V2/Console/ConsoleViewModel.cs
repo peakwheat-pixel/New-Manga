@@ -257,6 +257,45 @@ public sealed class ConsoleViewModel : ObservableObject
         bool isWired) =>
         new(id, index, label, summary, isWired, SelectSection);
 
+    // ── V11R-INT-0 workspace context (section + real ScrollViewer offset) ───────────────────
+
+    /// <summary>Raised when the shell activates this space and the view must restore its scroll offset.</summary>
+    public event EventHandler? ScrollRestoreRequested;
+
+    /// <summary>Live offset of the section content ScrollViewer; the shell persists it per space.</summary>
+    public double ScrollOffsetY
+    {
+        get => _state.ConsoleView.ScrollOffsetY;
+        set
+        {
+            if (Math.Abs(_state.ConsoleView.ScrollOffsetY - value) < 0.5)
+            {
+                return;
+            }
+
+            _state.ConsoleView.ScrollOffsetY = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>Contract §6.1 OnDeactivated: flush selected section + scroll into the shell state.</summary>
+    public void CaptureViewState(SpaceViewState view)
+    {
+        view.FilterKey = _selectedSection.Id.ToString();
+        view.ScrollOffsetY = ScrollOffsetY;
+    }
+
+    /// <summary>Contract §6.1 OnActivated: restore the selected section and scroll offset.</summary>
+    public void RestoreViewState(SpaceViewState view)
+    {
+        if (Enum.TryParse<ConsoleSectionId>(view.FilterKey, out var sectionId))
+        {
+            SelectSectionById(sectionId);
+        }
+
+        ScrollOffsetY = view.ScrollOffsetY;
+        ScrollRestoreRequested?.Invoke(this, EventArgs.Empty);
+    }
     // ── Shared state ─────────────────────────────────────────────────────────────────────
 
     public bool IsLoading

@@ -21,21 +21,6 @@ namespace NewManga.App.Tests;
 /// </summary>
 public sealed class V2ConsoleUiTests
 {
-    private static string EvidenceRoot
-    {
-        get
-        {
-            var root = Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_DIR");
-            if (string.IsNullOrWhiteSpace(root))
-            {
-                root = Path.Combine(Path.GetTempPath(), "newmanga-v11r-b2-evidence");
-            }
-
-            Directory.CreateDirectory(root);
-            return root;
-        }
-    }
-
     private static FakeHostController Fixture()
     {
         var fake = V2Fixture.Create();
@@ -45,6 +30,7 @@ public sealed class V2ConsoleUiTests
 
     private static (Window Window, AppShellV2 Shell) Host(IHostController controller, double width = 1600, double height = 1000)
     {
+        TestTheme.ResetToDefaults();
         var shell = new AppShellV2(controller);
         var window = new Window
         {
@@ -71,16 +57,14 @@ public sealed class V2ConsoleUiTests
         return (window, shell, shell.ViewModel.Console);
     }
 
-    private static void Capture(Window window, string name)
+    /// <summary>R-19: temp-first capture (unique name incl. test method); repo sync only when curated.</summary>
+    private static void Capture(Window window, string name, [System.Runtime.CompilerServices.CallerMemberName] string? testName = null)
     {
         Dispatcher.UIThread.RunJobs();
         var frame = window.CaptureRenderedFrame()
             ?? throw new InvalidOperationException($"{name}: CaptureRenderedFrame() returned null");
-        var directory = Path.Combine(EvidenceRoot, "screens");
-        Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, name + ".png");
-        frame.Save(path);
-        Assert.True(new FileInfo(path).Length > 4096, $"{name}: blank screenshot");
+        var bytes = EvidenceFiles.SaveFrame(frame, "V11R-B-2", name, testName);
+        Assert.True(bytes is null or > 4096, $"{name}: {bytes} bytes — blank/placeholder screenshot");
     }
 
     private static Color ResourceColor(string key) =>

@@ -11,9 +11,8 @@
     <StackPanel Orientation="Horizontal"
                 Spacing="{DynamicResource Nm.Space.2}"
                 VerticalAlignment="Center">
-      <TextBlock Classes="meta" Text="需要我处理" IsVisible="{Binding !IsCompact}" />
-      <TextBlock Classes="meta" Text="待办" IsVisible="{Binding IsCompact}" />
-      <TextBlock Classes="num data" Text="4" IsVisible="False" />
+      <TextBlock Classes="meta" Text="需要我处理" IsVisible="{Binding !IsNarrow}" />
+      <TextBlock Classes="meta" Text="待办" IsVisible="{Binding IsNarrow}" />
     </StackPanel>
     <Button.Flyout>
       <Flyout Placement="BottomEdgeAlignedRight">

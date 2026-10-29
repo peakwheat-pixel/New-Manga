@@ -1,8 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3",
-  "scenario": "PDF \u002B image_only -\u003E StartExport(format=pdf, pdf_content=image_only)",
-  "format": "pdf",
-  "pdf_content": "image_only",
-  "target_extension": ".pdf",
-  "pdf_mode_row_visible": true
-}

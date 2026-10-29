@@ -1,7 +1,0 @@
-{
-  "ac": "AC1/AC3",
-  "entry": "BookshelfPage.ImportFolderButton",
-  "host_chapter_id": "ch-1",
-  "host_folder_path": "C:\\in\\chapter-01",
-  "host_duplicate_policy": "import_as_new"
-}

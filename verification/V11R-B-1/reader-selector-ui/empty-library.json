@@ -1,7 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3",
-  "scenario": "empty library -\u003E empty state \u002B disabled submit",
-  "book_selector_empty": true,
-  "set_button_disabled": true,
-  "no_binding_sent": true
-}

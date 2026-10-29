@@ -20,6 +20,13 @@ public sealed class FakeHostController : IHostController
 
     public int RefreshCalls { get; private set; }
 
+    /// <summary>V11R-INT-0 loading-skeleton tests: refresh waits on this gate before completing.</summary>
+    public Task? SnapshotGate { get; set; }
+
+    /// <summary>Signals that the gated refresh actually started (test can await it deterministically).</summary>
+    public TaskCompletionSource<bool> SnapshotGateStarted { get; } =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public string? LastRoundTripTitle { get; private set; }
 
     public event EventHandler? Changed;
@@ -30,10 +37,14 @@ public sealed class FakeHostController : IHostController
         return Task.CompletedTask;
     }
 
-    public Task RefreshBooksAsync(CancellationToken cancellationToken = default)
+    public async Task RefreshBooksAsync(CancellationToken cancellationToken = default)
     {
         RefreshCalls++;
-        return Task.CompletedTask;
+        if (SnapshotGate is { } gate)
+        {
+            SnapshotGateStarted.TrySetResult(true);
+            await gate.ConfigureAwait(false);
+        }
     }
 
     public bool CreateBookResult { get; set; } = true;

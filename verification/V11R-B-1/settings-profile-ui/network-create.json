@@ -1,9 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3/AC4",
-  "scenario": "empty state -\u003E create network profile (HTTPS) \u002B mode rules",
-  "mode": "HTTPS",
-  "proxy_endpoint": "https://127.0.0.1:7890",
-  "verify_tls": true,
-  "allow_fallback": true,
-  "direct_mode_sends_null_proxy": true
-}

@@ -9,8 +9,8 @@ namespace NewManga.App.ViewModels.V2.Library;
 /// existing <see cref="IHostController.ImportFilesAsync"/> seam so every row carries a REAL per-file
 /// outcome (imported / duplicate-skipped / failed) instead of a fabricated aggregate. A folder is a
 /// single Host call, so its row honestly reports the aggregate result.
-/// The "no chapter yet" entry closes audit F011: it is present but reports 能力待接入 until
-/// <c>CreateChapterAsync</c> (V11R-A-1, core-bridge) is merged — it never pretends to succeed.
+/// The "no chapter yet" entry closes audit F011: it calls the real Core <c>CreateChapterAsync</c>
+/// (V11R-A-1, merged); it never pretends to succeed and never fabricates a chapter.
 /// </summary>
 public sealed class ImportDockViewModel : ObservableObject
 {
@@ -107,7 +107,7 @@ public sealed class ImportDockViewModel : ObservableObject
 
     /// <summary>Honest degradation notice: chapter creation is a real Core write (V11R-A-1).</summary>
     public string CapabilityText =>
-        "当前没有章节：先在右侧就地「新建章节」（走 Core CreateChapter，V11R-A-1），创建成功后即可导入；" +
+        "当前没有章节：请先在右侧就地「新建章节」（走 Core CreateChapter，V11R-A-1），创建成功后即可导入；" +
         "不会伪造章节或伪造导入成功。";
 
     public string TargetChapterText => HasTargetChapter
@@ -136,7 +136,7 @@ public sealed class ImportDockViewModel : ObservableObject
         }
         else
         {
-            _notify("导入已就绪：请先选择章节（无章节时「新建章节」为能力待接入）", NmStatus.Blocked);
+            _notify("导入已就绪：请先选择或就地新建章节（「新建章节」走 Core CreateChapter）", NmStatus.Blocked);
         }
     }
 
@@ -156,7 +156,7 @@ public sealed class ImportDockViewModel : ObservableObject
         }
         else
         {
-            _notify("导入已就绪：请先选择章节（无章节时「新建章节」为能力待接入）", NmStatus.Blocked);
+            _notify("导入已就绪：请先选择或就地新建章节（「新建章节」走 Core CreateChapter）", NmStatus.Blocked);
         }
     }
 

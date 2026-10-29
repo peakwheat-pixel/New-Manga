@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.WorkspacePlaceholderView"
+             x:Name="Root">
+  <!-- V11R-INT-0: honest placeholder for a space whose IWorkspaceView has not been registered yet.
+       No fake content, no fake progress; copy comes from ShellState.WorkspacePlaceholderDetail. -->
+  <Border Classes="card" Padding="{DynamicResource Nm.Padding.Section}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <StackPanel Spacing="{DynamicResource Nm.Space.4}" VerticalAlignment="Center" HorizontalAlignment="Center">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" HorizontalAlignment="Center">
+        <ctrl:StatusBadge Status="Blocked" ShowLabel="False" VerticalAlignment="Center" />
+        <TextBlock Classes="title" Text="{Binding #Root.Title}" VerticalAlignment="Center" />
+      </StackPanel>
+      <TextBlock Classes="meta" Text="即将接入" HorizontalAlignment="Center" />
+      <TextBlock Classes="body"
+                 Text="{Binding #Root.Detail}"
+                 TextWrapping="Wrap"
+                 MaxWidth="{DynamicResource Nm.Size.Drawer}"
+                 HorizontalAlignment="Center" />
+    </StackPanel>
+  </Border>
+</UserControl>

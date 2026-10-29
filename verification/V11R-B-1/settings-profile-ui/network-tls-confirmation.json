@@ -1,6 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3/AC4",
-  "scenario": "disabling TLS surfaces TLS_CONFIRMATION_REQUIRED from the Core contract",
-  "confirm_checkbox_visible": true,
-  "typed_code_rendered": true
-}

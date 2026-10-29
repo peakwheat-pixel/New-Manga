@@ -2,19 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
              xmlns:v="using:NewManga.App.Views.V2.Shell"
-             xmlns:lv="using:NewManga.App.Views.V2.Library"
-             xmlns:cn="using:NewManga.App.Views.V2.Console"
              x:Class="NewManga.App.Views.V2.Shell.V2WorkspaceHost"
              x:DataType="vm:AppShellViewModel">
-  <!-- The three spaces are created ONCE and only toggled here: switching Ctrl+1/2/3 must not rebuild a
-       ViewModel and must not lose selection / scroll / filters (AC2). -->
+  <!-- V11R-INT-0: spaces are hosted through IWorkspaceView.CreateContent() exactly once; switching
+       Ctrl+1/2/3 only toggles visibility and hands context between hooks (never rebuilds a ViewModel).
+       An unregistered space shows honest "即将接入" copy — never a fake workspace. -->
   <Grid>
-    <Grid IsVisible="{Binding IsLibrarySpace}">
-      <lv:LibraryView DataContext="{Binding Library}" />
-    </Grid>
+    <ContentControl Content="{Binding LibraryWorkspaceContent}" IsVisible="{Binding IsLibrarySpace}" />
+    <v:WorkspacePlaceholderView Title="资料柜"
+                                Detail="{Binding LibraryPlaceholderDetail}"
+                                IsVisible="{Binding IsLibraryPlaceholderVisible}" />
+
     <v:StudioPendingView IsVisible="{Binding IsStudioSpace}" />
-    <Grid IsVisible="{Binding IsConsoleSpace}">
-      <cn:ConsoleView DataContext="{Binding Console}" />
-    </Grid>
+
+    <ContentControl Content="{Binding ConsoleWorkspaceContent}" IsVisible="{Binding IsConsoleSpace}" />
+    <v:WorkspacePlaceholderView Title="控制台"
+                                Detail="{Binding ConsolePlaceholderDetail}"
+                                IsVisible="{Binding IsConsolePlaceholderVisible}" />
   </Grid>
 </UserControl>

@@ -1,6 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3/AC4",
-  "scenario": "payload shape \u002B shortcut policy \u002B typed mapping",
-  "put_payload_keys": "target,intent,secret",
-  "clear_has_no_secret": true
-}

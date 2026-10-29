@@ -1,7 +1,0 @@
-{
-  "ac": "AC1/AC2/AC3/AC4",
-  "scenario": "SettingsPage -\u003E IHostController seam, all three sections wired",
-  "provider_list": 1,
-  "network_list": 1,
-  "binding_providers": 1
-}
