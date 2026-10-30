@@ -275,14 +275,20 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>Core run states → the frozen seven-state UI language (never a fabricated state).</summary>
+    /// <summary>
+    /// Core run states → the frozen seven-state UI language (never a fabricated state).
+    /// REALUSE-DATA-SAFETY-3 AC4 (audit MA-10): the enum values come from
+    /// <c>src/application/tasks/projection.py</c>; <c>completed_with_failures</c> and
+    /// <c>interrupted</c> used to fall through to NotStarted while the raw value leaked into the UI.
+    /// A run that finished with failed pages counts as Done (it did finish) but its label says so.
+    /// </summary>
     public static NmStatus RunStateStatus(string state) => state switch
     {
-        "completed" or "done" => NmStatus.Done,
+        "completed" or "done" or "completed_with_failures" => NmStatus.Done,
         "running" or "processing" => NmStatus.Running,
-        "failed" or "error" => NmStatus.Failed,
+        "failed" or "error" or "interrupted" => NmStatus.Failed,
         "blocked" => NmStatus.Blocked,
-        "waiting" or "pending" or "queued" => NmStatus.Queued,
+        "waiting" or "pending" or "queued" or "paused" => NmStatus.Queued,
         "skipped" => NmStatus.Skipped,
         "stale" => NmStatus.Stale,
         _ => NmStatus.NotStarted,
@@ -291,8 +297,10 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public static string RunStateText(string state) => state switch
     {
         "completed" or "done" => "已完成",
+        "completed_with_failures" => "已完成（有失败页）",
         "running" or "processing" => "进行中",
         "failed" or "error" => "失败",
+        "interrupted" => "已中断",
         "blocked" => "阻塞",
         "waiting" or "pending" or "queued" => "等待",
         "skipped" => "跳过",
@@ -301,4 +309,35 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         "stale" => "过期",
         _ => string.IsNullOrEmpty(state) ? "未知" : state,
     };
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC4 (audit MA-10): Core step error codes are upper-snake identifiers
+    /// (<c>src/application/**</c>); the UI used to print them verbatim. Known codes get a Chinese
+    /// explanation, unknown ones keep their code so the failure stays diagnosable — never a generic
+    /// "出错了".
+    /// </summary>
+    public static string StepErrorText(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return "无错误码";
+        }
+
+        var explanation = code switch
+        {
+            "PROVIDER_NOT_CONFIGURED" => "未配置模型 Provider",
+            "PROVIDER_UNKNOWN" => "未知的模型 Provider",
+            "PROVIDER_RATE_LIMITED" or "RATE_LIMITED" => "Provider 限流，请稍后重试",
+            "MISSING_REQUIRED_INPUT" => "缺少必要输入（前置步骤未完成）",
+            "OUTPUT_MAPPING_MISMATCH" => "步骤输出映射不一致",
+            "ARTIFACT_WRITE_FAILED" => "产物写入失败",
+            "ARTIFACT_HASH_MISMATCH" => "产物校验不一致",
+            "EXPORT_WRITE_FAILED" => "导出写入失败",
+            "COMPOSITION_BASE_CHANGED" => "合成底图已变化，需要重新渲染",
+            "TARGET_NOT_FOUND" => "目标不存在",
+            _ => null,
+        };
+
+        return explanation is null ? code : $"{explanation}（{code}）";
+    }
 }

@@ -715,8 +715,7 @@ public sealed class V2ShellUiTests
         var shell = new AppShellV2(fake);
         var window = new Window { Width = 1600, Height = 1000, Content = shell, Background = Brushes.Black };
         window.Show();
-        _ = shell.Initialization;
-        Dispatcher.UIThread.RunJobs();
+        await shell.Initialization; // REALUSE-DATA-SAFETY-3 AC3: startup reuses the Host snapshot
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(shell.ViewModel.Library.CardWidth > 0, "viewport metrics must be computed");
@@ -724,9 +723,23 @@ public sealed class V2ShellUiTests
         await fake.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Dispatcher.UIThread.RunJobs();
         Assert.True(shell.ViewModel.Library.IsLoading, "the gated Host read must keep the loading state");
-        var skeletonCards = shell.GetVisualDescendants()
-            .OfType<Border>()
-            .Count(border => border.Classes.Contains("card") && Math.Abs(border.Bounds.Width - shell.ViewModel.Library.CardWidth) < 1);
+        // Rendering the skeleton is a layout effect; under a full parallel run it can land a beat
+        // after the state flips, so poll instead of assuming one dispatcher pass is enough.
+        var skeletonCards = 0;
+        for (var attempt = 0; attempt < 50; attempt++)
+        {
+            Dispatcher.UIThread.RunJobs();
+            skeletonCards = shell.GetVisualDescendants()
+                .OfType<Border>()
+                .Count(border => border.Classes.Contains("card") && Math.Abs(border.Bounds.Width - shell.ViewModel.Library.CardWidth) < 1);
+            if (skeletonCards >= 4)
+            {
+                break;
+            }
+
+            await Task.Delay(10);
+        }
+
         Assert.True(skeletonCards >= 4, $"expected same-size skeleton cards, got {skeletonCards}");
         Capture(window, "13-library-loading-skeleton");
 
@@ -975,7 +988,8 @@ public sealed class V2ShellUiTests
         var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         gated.SnapshotGate = gate.Task;
         var (loadingWindow, loadingShell) = Host(gated);
-        _ = loadingShell.Initialization;
+        await loadingShell.Initialization; // startup reuses the snapshot (AC3); loading comes from a read
+        _ = loadingShell.ViewModel.Library.RefreshAsync();
         await gated.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(0, VisibleEmptyStateCount(loadingWindow));
@@ -991,6 +1005,8 @@ public sealed class V2ShellUiTests
         var failing = V2Fixture.Create();
         failing.RefreshException = new InvalidOperationException("TYPED_READ_FAILURE");
         var (errorWindow, errorShell) = await HostReadyAsync(failing);
+        await errorShell.ViewModel.Library.RefreshAsync(); // the typed read failure must still surface
+        Dispatcher.UIThread.RunJobs();
         Assert.True(VisibleEmptyStateCount(errorWindow) == 1, "visible states: " + string.Join(" | ", VisibleEmptyStateTitles(errorWindow)));
         Assert.Equal("书架读取失败", VisibleEmptyStateTitle(errorWindow));
         Assert.True(errorShell.ViewModel.Library.ShowErrorState);

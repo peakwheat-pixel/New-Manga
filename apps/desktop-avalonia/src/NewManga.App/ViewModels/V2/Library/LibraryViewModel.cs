@@ -543,17 +543,29 @@ public sealed class LibraryViewModel : ObservableObject
         }
 
         _initialized = true;
-        await RefreshAsync(cancellationToken).ConfigureAwait(true);
+        // REALUSE-DATA-SAFETY-3 AC3 (audit MA-08): the Host already listed the shelf during startup,
+        // and HostController leaves it in Snapshot.Books. Reading it again here was the second
+        // ListBooks of a single launch, so the first paint reuses the startup snapshot; an explicit
+        // refresh (user action, import, error retry) still goes to the Host.
+        await RefreshAsync(forceHostRead: false, cancellationToken).ConfigureAwait(true);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken = default)
+    public Task RefreshAsync(CancellationToken cancellationToken = default) =>
+        RefreshAsync(forceHostRead: true, cancellationToken);
+
+    private async Task RefreshAsync(bool forceHostRead, CancellationToken cancellationToken)
     {
         IsLoading = true;
         ErrorMessage = null;
         try
         {
-            await _controller.RefreshBooksAsync(cancellationToken).ConfigureAwait(true);
             var snapshot = _controller.Snapshot;
+            if (forceHostRead || snapshot.State != HostViewState.Ready)
+            {
+                await _controller.RefreshBooksAsync(cancellationToken).ConfigureAwait(true);
+                snapshot = _controller.Snapshot;
+            }
+
             _allBooks.Clear();
             if (snapshot.State == HostViewState.Failed)
             {

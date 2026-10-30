@@ -13,6 +13,9 @@ public sealed class HostController : IHostController
 {
     private readonly HostOptions _options;
     private readonly object _startLock = new();
+
+    /// <summary>REALUSE-DATA-SAFETY-3 AC3: chapter lists already read this session (per book id).</summary>
+    private readonly Dictionary<string, IReadOnlyList<ChapterSummary>> _chapterCache = new(StringComparer.Ordinal);
     private HostRuntime? _runtime;
     private Task? _startTask;
     private int _startRequests;
@@ -292,6 +295,8 @@ public sealed class HostController : IHostController
         try
         {
             var chapter = await _runtime.CreateChapterAsync(bookId, title, cancellationToken).ConfigureAwait(false);
+            // REALUSE-DATA-SAFETY-3 AC3: a new chapter invalidates the cached list for that book.
+            _chapterCache.Remove(bookId);
             SetLastError(null);
             return chapter;
         }
@@ -318,7 +323,15 @@ public sealed class HostController : IHostController
         var runtime = _runtime;
         try
         {
-            var books = await runtime.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+            // REALUSE-DATA-SAFETY-3 AC3 (audit MA-08): the shelf already lives in the snapshot from
+            // startup; listing it again here was the third ListBooks of one launch. Only a cold
+            // snapshot (no books yet) falls back to a real read.
+            var books = _snapshot.Books;
+            if (books.Count == 0)
+            {
+                books = await runtime.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             BookSummary? book = null;
             if (!string.IsNullOrWhiteSpace(bookId))
             {
@@ -331,7 +344,7 @@ public sealed class HostController : IHostController
                 return null;
             }
 
-            var chapters = await runtime.ListChaptersAsync(book.BookId, cancellationToken).ConfigureAwait(false);
+            var chapters = await ListChaptersAsync(book.BookId, cancellationToken).ConfigureAwait(false);
             if (chapters.Count == 0)
             {
                 return null;
@@ -435,10 +448,20 @@ public sealed class HostController : IHostController
             return Array.Empty<ChapterSummary>();
         }
 
+        // REALUSE-DATA-SAFETY-3 AC3 (audit MA-08): the Library lists chapters for the selected book
+        // and the reader listed the same book again a moment later. One read per book per session is
+        // enough; CreateChapterAsync invalidates the entry, and a failure never caches.
+        if (_chapterCache.TryGetValue(bookId, out var cached))
+        {
+            return cached;
+        }
+
         var runtime = _runtime;
         try
         {
-            return await runtime.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+            var chapters = await runtime.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
+            _chapterCache[bookId] = chapters;
+            return chapters;
         }
         catch (Exception ex) when (
             ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
