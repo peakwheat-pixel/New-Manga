@@ -23,9 +23,9 @@ public sealed class RunIndexTests
     {
         var monitor = Monitor();
 
-        monitor.Track("run-a");
-        monitor.Track("run-b");
-        monitor.Track("run-c");
+        monitor.RememberRunId("run-a");
+        monitor.RememberRunId("run-b");
+        monitor.RememberRunId("run-c");
 
         Assert.Equal(new[] { "run-c", "run-b", "run-a" }, monitor.KnownRunIds);
     }
@@ -34,10 +34,10 @@ public sealed class RunIndexTests
     public void Track_DeduplicatesAndPromotes()
     {
         var monitor = Monitor();
-        monitor.Track("run-a");
-        monitor.Track("run-b");
+        monitor.RememberRunId("run-a");
+        monitor.RememberRunId("run-b");
 
-        monitor.Track("run-a");
+        monitor.RememberRunId("run-a");
 
         Assert.Equal(new[] { "run-a", "run-b" }, monitor.KnownRunIds);
     }
@@ -46,14 +46,14 @@ public sealed class RunIndexTests
     public void Track_IgnoresEmptyIds_AndBoundsTheList()
     {
         var monitor = Monitor();
-        monitor.Track(null);
-        monitor.Track("   ");
+        monitor.RememberRunId(string.Empty);
+        monitor.RememberRunId("   ");
 
         Assert.Empty(monitor.KnownRunIds);
 
         for (var index = 0; index < 20; index++)
         {
-            monitor.Track($"run-{index:00}");
+            monitor.RememberRunId($"run-{index:00}");
         }
 
         Assert.Equal(12, monitor.KnownRunIds.Count);
@@ -62,11 +62,24 @@ public sealed class RunIndexTests
     }
 
     [AvaloniaFact]
+    public void Track_Alone_DoesNotRemember_SoATypoNeverBecomesAChip()
+    {
+        // Review r1 M5: typing a non-existent id used to be recorded immediately, which both lied
+        // about what the session had seen and left a chip that polled a run that does not exist.
+        var monitor = Monitor();
+
+        monitor.Track("typo-run-id");
+
+        Assert.Empty(monitor.KnownRunIds);
+        Assert.Equal("typo-run-id", monitor.RunId); // still tracked (the read attempt must show its failure)
+    }
+
+    [AvaloniaFact]
     public void KnownRunIds_AreTrimmedAndNeverInvented()
     {
         var monitor = Monitor();
 
-        monitor.Track("  run-trimmed  ");
+        monitor.RememberRunId("  run-trimmed  ");
 
         Assert.Equal(new[] { "run-trimmed" }, monitor.KnownRunIds);
         Assert.Empty(Monitor().KnownRunIds); // a fresh session knows nothing

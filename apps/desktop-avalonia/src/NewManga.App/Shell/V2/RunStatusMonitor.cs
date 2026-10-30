@@ -98,11 +98,10 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public void Track(string? runId)
     {
         var normalized = string.IsNullOrWhiteSpace(runId) ? null : runId.Trim();
-        if (RememberRun(normalized))
-        {
-            OnPropertyChanged(nameof(KnownRunIds));
-        }
-
+        // Review r1 M5: remembering here meant a typo was cached as a run the session had "seen",
+        // shown as a chip forever while polling a run that does not exist. Only a run the Host
+        // actually answers for (RefreshCoreAsync) or a Run the app just created (RememberRunId)
+        // enters the list.
         if (string.Equals(_runId, normalized, StringComparison.Ordinal))
         {
             return;
@@ -134,6 +133,18 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         }
 
         _ = RefreshAsync();
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: records a run the application itself just created (StartRun
+    /// returned it), so it is offered in the Console list before the first read round-trip.
+    /// </summary>
+    public void RememberRunId(string runId)
+    {
+        if (RememberRun(string.IsNullOrWhiteSpace(runId) ? null : runId.Trim()))
+        {
+            OnPropertyChanged(nameof(KnownRunIds));
+        }
     }
 
     /// <summary>
@@ -227,6 +238,12 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
 
             _snapshot = snapshot;
             _projection = projection;
+            if (snapshot is not null && RememberRun(runId))
+            {
+                // The Host returned this run, so it is real: safe to remember and to offer as a chip.
+                OnPropertyChanged(nameof(KnownRunIds));
+            }
+
             OnPropertyChanged(
                 nameof(Snapshot),
                 nameof(Projection),

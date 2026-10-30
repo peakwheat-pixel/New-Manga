@@ -395,6 +395,16 @@ public sealed class AppShellViewModel : ObservableObject
     /// <summary>Shell-level seam for INT-1/B-4: track the active run on the shared monitor.</summary>
     public void TrackRun(string? runId) => RunMonitor.Track(runId);
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: a Run the app just created (Studio Batch). It is real by
+    /// construction, so it is remembered before the first Host read returns.
+    /// </summary>
+    public void RememberCreatedRun(string runId)
+    {
+        RunMonitor.Track(runId);
+        RunMonitor.RememberRunId(runId);
+    }
+
     // ── Theme / viewport ─────────────────────────────────────────────────────────────────
 
     public bool IsDarkTheme

@@ -719,7 +719,10 @@ public sealed class V2ShellUiTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(shell.ViewModel.Library.CardWidth > 0, "viewport metrics must be computed");
-        _ = shell.ViewModel.Library.RefreshAsync();
+        // Under the new contract startup reuses the snapshot, so the loading state is produced by an
+        // explicit read; hold that task (review r1: awaiting Initialization again waited on an
+        // already-completed task and raced the assertion below).
+        var refresh = shell.ViewModel.Library.RefreshAsync();
         await fake.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Dispatcher.UIThread.RunJobs();
         Assert.True(shell.ViewModel.Library.IsLoading, "the gated Host read must keep the loading state");
@@ -744,7 +747,7 @@ public sealed class V2ShellUiTests
         Capture(window, "13-library-loading-skeleton");
 
         gate.SetResult(true);
-        await shell.Initialization;
+        await refresh;
         Dispatcher.UIThread.RunJobs();
         Assert.False(shell.ViewModel.Library.IsLoading);
         window.Close();
@@ -989,7 +992,7 @@ public sealed class V2ShellUiTests
         gated.SnapshotGate = gate.Task;
         var (loadingWindow, loadingShell) = Host(gated);
         await loadingShell.Initialization; // startup reuses the snapshot (AC3); loading comes from a read
-        _ = loadingShell.ViewModel.Library.RefreshAsync();
+        var loadingRefresh = loadingShell.ViewModel.Library.RefreshAsync();
         await gated.SnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(0, VisibleEmptyStateCount(loadingWindow));
@@ -998,7 +1001,7 @@ public sealed class V2ShellUiTests
         Assert.True(loadingShell.ViewModel.Library.ShowLoadingState);
         Capture(loadingWindow, "06-int2-library-loading-only", task: "V11R-INT-2");
         gate.SetResult(true);
-        await loadingShell.Initialization;
+        await loadingRefresh;
         loadingWindow.Close();
 
         // (d) Ready + error -> only the error block (error outranks empty states).

@@ -14,8 +14,13 @@ public sealed class HostController : IHostController
     private readonly HostOptions _options;
     private readonly object _startLock = new();
 
-    /// <summary>REALUSE-DATA-SAFETY-3 AC3: chapter lists already read this session (per book id).</summary>
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC3: chapter lists already read this session (per book id). Guarded by
+    /// <see cref="_chapterCacheLock"/>: the UI can issue concurrent reads (Library + reader + tests).
+    /// </summary>
     private readonly Dictionary<string, IReadOnlyList<ChapterSummary>> _chapterCache = new(StringComparer.Ordinal);
+
+    private readonly object _chapterCacheLock = new();
     private HostRuntime? _runtime;
     private Task? _startTask;
     private int _startRequests;
@@ -163,6 +168,13 @@ public sealed class HostController : IHostController
         try
         {
             var books = await _runtime.ListBooksAsync(cancellationToken).ConfigureAwait(false);
+            // A real shelf read is the user-visible "refresh" (and follows import/restore). Chapter
+            // lists cached for the session must not outlive it.
+            lock (_chapterCacheLock)
+            {
+                _chapterCache.Clear();
+            }
+
             UpdateFromRuntime(books);
         }
         catch (CoreOperationException ex)
@@ -296,7 +308,10 @@ public sealed class HostController : IHostController
         {
             var chapter = await _runtime.CreateChapterAsync(bookId, title, cancellationToken).ConfigureAwait(false);
             // REALUSE-DATA-SAFETY-3 AC3: a new chapter invalidates the cached list for that book.
-            _chapterCache.Remove(bookId);
+            lock (_chapterCacheLock)
+            {
+                _chapterCache.Remove(bookId);
+            }
             SetLastError(null);
             return chapter;
         }
@@ -324,10 +339,17 @@ public sealed class HostController : IHostController
         try
         {
             // REALUSE-DATA-SAFETY-3 AC3 (audit MA-08): the shelf already lives in the snapshot from
-            // startup; listing it again here was the third ListBooks of one launch. Only a cold
-            // snapshot (no books yet) falls back to a real read.
+            // startup; listing it again here was the third ListBooks of one launch.
+            //
+            // Review r1 M1: reuse is only safe while the snapshot can answer the question. If the
+            // caller asked for a specific book that the snapshot does not contain (it was imported or
+            // restored after startup, or a different shell wrote it), reusing the stale shelf used to
+            // fall through to `book ??= first book`, silently opening a DIFFERENT book — a far worse
+            // outcome than one extra read. A cold/insufficient snapshot therefore re-reads.
             var books = _snapshot.Books;
-            if (books.Count == 0)
+            var askedForMissingBook = !string.IsNullOrWhiteSpace(bookId)
+                && !books.Any(candidate => string.Equals(candidate.BookId, bookId, StringComparison.Ordinal));
+            if (books.Count == 0 || askedForMissingBook)
             {
                 books = await runtime.ListBooksAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -336,6 +358,12 @@ public sealed class HostController : IHostController
             if (!string.IsNullOrWhiteSpace(bookId))
             {
                 book = books.FirstOrDefault(candidate => string.Equals(candidate.BookId, bookId, StringComparison.Ordinal));
+                if (book is null)
+                {
+                    // An explicitly requested book that does not exist is a refusal, never a silent
+                    // substitution with some other book.
+                    return null;
+                }
             }
 
             book ??= books.FirstOrDefault(candidate => (candidate.PageCount ?? 0) > 0) ?? books.FirstOrDefault();
@@ -451,16 +479,23 @@ public sealed class HostController : IHostController
         // REALUSE-DATA-SAFETY-3 AC3 (audit MA-08): the Library lists chapters for the selected book
         // and the reader listed the same book again a moment later. One read per book per session is
         // enough; CreateChapterAsync invalidates the entry, and a failure never caches.
-        if (_chapterCache.TryGetValue(bookId, out var cached))
+        lock (_chapterCacheLock)
         {
-            return cached;
+            if (_chapterCache.TryGetValue(bookId, out var cached))
+            {
+                return cached;
+            }
         }
 
         var runtime = _runtime;
         try
         {
             var chapters = await runtime.ListChaptersAsync(bookId, cancellationToken).ConfigureAwait(false);
-            _chapterCache[bookId] = chapters;
+            lock (_chapterCacheLock)
+            {
+                _chapterCache[bookId] = chapters;
+            }
+
             return chapters;
         }
         catch (Exception ex) when (
@@ -1658,6 +1693,15 @@ public sealed class HostController : IHostController
         try
         {
             var rollback = await _runtime.RestoreBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+            // REALUSE-DATA-SAFETY-3 AC3: a restore replaces the whole library, so both the cached
+            // chapter lists and the shelf from startup are stale. Refresh before returning, otherwise
+            // the UI keeps showing the pre-restore library (imports only add pages, so they do not
+            // need this).
+            lock (_chapterCacheLock)
+            {
+                _chapterCache.Clear();
+            }
+            await RefreshBooksAsync(cancellationToken).ConfigureAwait(false);
             SetLastError(null);
             return rollback;
         }

@@ -676,7 +676,7 @@ public sealed class V2ConsoleUiTests
         Assert.Contains("本会话还没有出现过 Run", console.KnownRunsHint, StringComparison.Ordinal);
 
         // The shell records a Run the session actually obtained (Studio Batch does this on start).
-        shell.ViewModel.TrackRun("run-session-7");
+        shell.ViewModel.RememberCreatedRun("run-session-7");
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(console.HasKnownRuns);
