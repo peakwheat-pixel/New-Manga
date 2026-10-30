@@ -285,7 +285,14 @@ def test_assemble_services_closes_connection_when_migration_fails(
     conn = sqlite3.connect(":memory:")
 
     class FailingMigrationRunner:
-        def __init__(self, connection: sqlite3.Connection, migrations: object) -> None:
+        # REALUSE-DATA-SAFETY-1 AC2: the assembly now passes a pre-migration
+        # backup provider, so the fake must accept the keyword too.
+        def __init__(
+            self,
+            connection: sqlite3.Connection,
+            migrations: object,
+            backup_provider: object = None,
+        ) -> None:
             pass
 
         def apply_pending(self) -> None:

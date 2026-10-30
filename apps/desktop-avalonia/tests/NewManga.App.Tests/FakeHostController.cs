@@ -1274,6 +1274,74 @@ public sealed class FakeHostController : IHostController
         0,
         true,
         null);
+
+    // ---------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-1 AC2: scriptable backup face for Console headless tests.
+    // ---------------------------------------------------------------------------------------
+
+    public List<BackupPackageInfo> Backups { get; } = new();
+
+    public List<string> BackupCalls { get; } = new();
+
+    /// <summary>When set, every backup write reports this failure and performs nothing.</summary>
+    public string? BackupFailureCode { get; set; }
+
+    public Func<BackupPackageInfo>? BackupFactory { get; set; }
+
+    public string? LastBackupError { get; private set; }
+
+    public Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        BackupCalls.Add("list");
+        return Task.FromResult<IReadOnlyList<BackupPackageInfo>>(Backups.ToList());
+    }
+
+    public Task<BackupPackageInfo?> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default)
+    {
+        BackupCalls.Add("create");
+        if (BackupFailureCode is { } code)
+        {
+            LastBackupError = code;
+            return Task.FromResult<BackupPackageInfo?>(null);
+        }
+
+        var created = BackupFactory?.Invoke() ?? new BackupPackageInfo(
+            Guid.NewGuid().ToString("N"), backupType, DateTimeOffset.UtcNow.ToString("o"), 1024, 6, true);
+        Backups.Add(created);
+        return Task.FromResult<BackupPackageInfo?>(created);
+    }
+
+    public Task<bool> DeleteBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default)
+    {
+        BackupCalls.Add("delete:" + backupId);
+        if (BackupFailureCode is { } code)
+        {
+            LastBackupError = code;
+            return Task.FromResult(false);
+        }
+
+        Backups.RemoveAll(item => string.Equals(item.BackupId, backupId, StringComparison.Ordinal));
+        return Task.FromResult(true);
+    }
+
+    public Task<string?> RestoreBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default)
+    {
+        BackupCalls.Add("restore:" + backupId);
+        if (BackupFailureCode is { } code)
+        {
+            LastBackupError = code;
+            return Task.FromResult<string?>(null);
+        }
+
+        return Task.FromResult<string?>("pre-" + backupId);
+    }
 }
 
 /// <summary>READER-PROGRESS-1: one scripted save call recorded by <see cref="FakeProgressStore"/>.</summary>

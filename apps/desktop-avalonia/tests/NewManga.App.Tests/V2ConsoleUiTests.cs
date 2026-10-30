@@ -88,6 +88,8 @@ public sealed class V2ConsoleUiTests
                 ConsoleSectionId.Tasks,
                 ConsoleSectionId.Providers,
                 ConsoleSectionId.Network,
+                // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复 已接真实 Host 面。
+                ConsoleSectionId.Backup,
                 ConsoleSectionId.Diagnostics,
                 ConsoleSectionId.Appearance,
             },
@@ -292,20 +294,15 @@ public sealed class V2ConsoleUiTests
         shell.ViewModel.CancelConfirmCommand.Execute(null);
         Assert.False(shell.ViewModel.IsConfirmOpen);
 
+        // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复 is now a real section, so it no longer opens a
+        // blocked "能力待接入" modal; without a selection the actions refuse up front instead.
         console.SelectSectionById(ConsoleSectionId.Backup);
         Dispatcher.UIThread.RunJobs();
+        Assert.False(console.IsNotWiredSection);
         Assert.True(console.ShowBackupDanger);
         console.RequestDeleteBackupCommand.Execute(null);
-        Assert.True(shell.ViewModel.IsConfirmOpen);
-        Assert.False(shell.ViewModel.ConfirmCanConfirm);
-        Assert.Contains("永久移除", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
-        shell.ViewModel.CancelConfirmCommand.Execute(null);
-
-        // Clicking confirm on a blocked action must not call anything, only surface the reason.
-        console.RequestCreateBackupCommand.Execute(null);
-        shell.ViewModel.ConfirmCommand.Execute(null);
-        Dispatcher.UIThread.RunJobs();
-        Assert.Contains("能力待接入", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        Assert.False(shell.ViewModel.IsConfirmOpen);
+        Assert.Contains("请先选择一个备份包", shell.ViewModel.NoticeText, StringComparison.Ordinal);
         window.Close();
     }
 
@@ -536,5 +533,127 @@ public sealed class V2ConsoleUiTests
         });
 
         window.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复接到真实 Host 面（列表 / 创建 / 删除 / 恢复确认）
+    // ---------------------------------------------------------------------------------------
+
+    private static async Task WaitUntilAsync(Func<bool> predicate, int timeoutMs = 5000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (predicate())
+            {
+                return;
+            }
+
+            await Task.Delay(20);
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        Assert.True(predicate(), "condition not reached before timeout");
+    }
+
+    [AvaloniaFact]
+    public async Task BackupSection_listsRealPackages_andCreatesThroughHost()
+    {
+        var fake = Fixture();
+        fake.Backups.Add(new NewManga.CoreClient.BackupPackageInfo(
+            "0123456789abcdef0123456789abcdef",
+            "automatic",
+            "2026-10-30T00:00:00+00:00",
+            90L * 1024 * 1024,
+            6,
+            true));
+
+        var (window, _shell, console) = await HostInConsoleAsync(fake);
+        window.Close();
+
+        console.SelectSectionById(ConsoleSectionId.Backup);
+        await WaitUntilAsync(() => fake.BackupCalls.Contains("list") && !console.IsBackupBusy);
+
+        Assert.True(console.IsBackupSection);
+        Assert.False(console.IsNotWiredSection);
+        Assert.Single(console.BackupEntries);
+        Assert.Contains("90.0 MiB", console.BackupEntries[0].SizeText, StringComparison.Ordinal);
+        Assert.Contains("已验证", console.BackupEntries[0].VerifiedText, StringComparison.Ordinal);
+        Assert.Contains("共 1 个包", console.BackupStatusText, StringComparison.Ordinal);
+
+        console.RequestCreateBackupCommand.Execute(null);
+        await WaitUntilAsync(() => fake.BackupCalls.Contains("create") && console.BackupEntries.Count == 2);
+
+        Assert.Equal(2, console.BackupEntries.Count);
+        Assert.True(console.HasBackupResult);
+        Assert.Contains("已创建", console.BackupLastResult, StringComparison.Ordinal);
+    }
+
+    [AvaloniaFact]
+    public async Task BackupDelete_requiresSelectionAndConfirmation()
+    {
+        var fake = Fixture();
+        fake.Backups.Add(new NewManga.CoreClient.BackupPackageInfo(
+            "fedcba9876543210fedcba9876543210",
+            "manual",
+            "2026-10-30T01:00:00+00:00",
+            2048,
+            6,
+            true));
+
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        window.Close();
+
+        console.SelectSectionById(ConsoleSectionId.Backup);
+        await WaitUntilAsync(() => fake.BackupCalls.Contains("list") && !console.IsBackupBusy);
+        Assert.Single(console.BackupEntries);
+
+        // No selection: refused up front, no modal, no Host call.
+        console.RequestDeleteBackupCommand.Execute(null);
+        Assert.False(shell.ViewModel.IsConfirmOpen);
+        Assert.DoesNotContain(fake.BackupCalls, call => call.StartsWith("delete:", StringComparison.Ordinal));
+
+        console.SelectedBackup = console.BackupEntries[0];
+        console.RequestDeleteBackupCommand.Execute(null);
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.True(shell.ViewModel.ConfirmIsDanger);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.BackupCalls.Any(call => call.StartsWith("delete:", StringComparison.Ordinal))
+                                   && !console.IsBackupBusy);
+
+        Assert.Contains("delete:fedcba9876543210fedcba9876543210", fake.BackupCalls);
+        Assert.Empty(console.BackupEntries);
+        Assert.Contains("已删除", console.BackupLastResult, StringComparison.Ordinal);
+    }
+
+    [AvaloniaFact]
+    public async Task BackupRestore_requiresSelectionAndExplainsOverwrite()
+    {
+        var fake = Fixture();
+        fake.Backups.Add(new NewManga.CoreClient.BackupPackageInfo(
+            "aaaabbbbccccddddeeeeffff00001111",
+            "pre_migration",
+            "2026-10-30T02:00:00+00:00",
+            1024,
+            6,
+            true));
+
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        window.Close();
+
+        console.SelectSectionById(ConsoleSectionId.Backup);
+        await WaitUntilAsync(() => fake.BackupCalls.Contains("list") && !console.IsBackupBusy);
+
+        console.SelectedBackup = console.BackupEntries[0];
+        console.RequestRestoreBackupCommand.Execute(null);
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Contains("pre_restore", shell.ViewModel.ConfirmBody, StringComparison.Ordinal);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.BackupCalls.Any(call => call.StartsWith("restore:", StringComparison.Ordinal)));
+
+        Assert.Contains("restore:aaaabbbbccccddddeeeeffff00001111", fake.BackupCalls);
+        Assert.Contains("回滚点", console.BackupLastResult, StringComparison.Ordinal);
     }
 }

@@ -107,7 +107,7 @@ from ports.rendering.ports import FontCatalog, ImageCompositor, TextLayoutEngine
 from infrastructure.sqlite.artifacts import SqliteArtifactRepository
 from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
-from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.migrator import MigrationRunner, read_schema_version
 from infrastructure.sqlite.reading_export import (
     SqliteExportHistoryStore,
     SqliteReadingProgressStore,
@@ -130,6 +130,42 @@ from ports.repositories.artifacts import ArtifactType
 from ports.providers.errors import ProviderInputError
 
 _APP_VERSION = "0.1.0"
+
+
+class _NmbakMigrationBackup:
+    """D07 §50 pre-migration hook: a verified ``.nmbak`` before pending DDL.
+
+    REALUSE-DATA-SAFETY-1 AC2: the production assembly used to pass no backup
+    provider, so ``MigrationRunner`` applied schema DDL with no rollback point
+    even though the runner has supported one all along. Every pending migration
+    now gets its own pre-migration package.
+
+    A brand-new library (no ``schema_migrations`` row yet) has no history to
+    protect, so the hook is a no-op there -- first bind of an empty root must
+    not litter ``backups/`` with one package per DDL step.
+    """
+
+    def __init__(self, conn, backup_root, managed_root, *, app_version=None) -> None:
+        self._conn = conn
+        self._backup_root = Path(backup_root)
+        self._managed_root = Path(managed_root)
+        self._app_version = app_version
+        # Decided ONCE, before the runner applies anything: after the first
+        # migration ``schema_migrations`` exists, so a per-call check would
+        # still snapshot a brand-new root's own bootstrap steps.
+        self._had_history = read_schema_version(conn) is not None
+
+    def create_backup(self, backup_type: str, source_reason: str) -> str:
+        if not self._had_history:
+            return ""
+        service = NmbakBackupService(
+            self._conn,
+            self._backup_root,
+            self._managed_root,
+            app_version=self._app_version,
+        )
+        created = service.create(backup_type, source_reason)
+        return str(created["backup_id"])
 
 
 def _has_active_run(conn) -> bool:
@@ -946,7 +982,38 @@ def assemble_core_services(
                 f"database schema v{opened.schema_version} is newer than this "
                 f"application knows (v{latest_known}); refusing to run"
             )
-        MigrationRunner(conn, migrations).apply_pending()
+        runner = MigrationRunner(
+            conn,
+            migrations,
+            backup_provider=_NmbakMigrationBackup(
+                conn,
+                Path(db_path).parent / "backups",
+                managed_root,
+                app_version=_APP_VERSION,
+            ),
+        )
+        applied = runner.apply_pending()
+        # REALUSE-DATA-SAFETY-1 AC4: the Host can run a "read-only until parity"
+        # session, yet this assembly still opens the library writable and applies
+        # pending DDL. That is intentional (schema bootstrap must not be skipped)
+        # but was invisible, so the log now states the seam explicitly: schema
+        # creation/upgrade is the only write such a session performs.
+        if applied:
+            print(
+                "[core.schema] applied "
+                f"{len(applied)} migration(s) up to v{applied[-1].schema_version}; "
+                "schema bootstrap is the only write a read-only session performs "
+                "(user rows and managed originals are never modified)",
+                file=sys.stderr,
+                flush=True,
+            )
+        else:
+            print(
+                "[core.schema] schema "
+                f"v{opened.schema_version} already current; this session performed no write",
+                file=sys.stderr,
+                flush=True,
+            )
 
         repository = SqliteLibraryRepository(conn)
         storage = ManagedFileStorage(managed_root)

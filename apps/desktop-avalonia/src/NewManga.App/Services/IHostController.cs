@@ -355,4 +355,33 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     Task<bool> RevealExportFolderAsync(
         string exportId,
         CancellationToken cancellationToken = default);
+
+    // ---------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-1 AC2: .nmbak backup packages. Listing is read-only; create/delete/
+    // restore are writes (the Host's read-only policy refuses them). Null/false means "not done",
+    // never "pretend success"; the typed code reaches the UI through LastError like every other
+    // write path.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>Verified (and unverified) packages under the Core's backups root; empty when unavailable.</summary>
+    Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Creates one package; null when the Host is not ready, read-only, or the Core refused.</summary>
+    Task<BackupPackageInfo?> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes one package; true only after the Core confirmed the removal.</summary>
+    Task<bool> DeleteBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Overwrite restore. The Core creates its own <c>pre_restore</c> rollback package first; the
+    /// returned id names it. Null when refused (not ready / read-only / active Run / corrupt package).
+    /// </summary>
+    Task<string?> RestoreBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default);
 }

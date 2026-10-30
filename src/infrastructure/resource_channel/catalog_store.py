@@ -269,6 +269,114 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
         close_lock_handle(lock_handle)
 
 
+def _assert_canonical_namespace_table(connection: sqlite3.Connection) -> None:
+    """Refuse any preview_namespace table that is not the frozen one-row shape.
+
+    Shared by lock restore and by migration rebind: a foreign, corrupt or
+    multi-row table is unknown history -- never something to rewrite in place.
+    """
+
+    (row_count,) = connection.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
+    (table_sql,) = connection.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
+    ).fetchone()
+    if (
+        row_count != 1
+        or table_sql is None
+        or not table_sql.isascii()
+        or _SQLITE_DDL_WS.sub(" ", table_sql).strip().lower()
+        != _NORMALIZED_NAMESPACE_SCHEMA
+    ):
+        raise namespace_unavailable("catalog namespace binding is not canonical")
+
+
+def verify_binding_for_root(
+    binding: NamespaceBinding, catalog_db: Path | str, derived_root: Path | str
+) -> None:
+    """Verify a binding read from the lock against the CURRENT root identities.
+
+    ``restore_namespace_lock`` performs the same comparison while it still owns
+    the exclusive lock; this entry point serves callers that already read the
+    lock binding (Core startup) and must decide whether a rebind is required.
+    """
+
+    derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))
+    catalog_str, catalog_identity = resolve_namespace_identity(Path(catalog_db))
+    _verify_catalog_binding(binding, derived_str, derived_identity, catalog_str, catalog_identity)
+
+
+def rebind_namespace(
+    catalog_db: Path | str, derived_root: Path | str, *, reason: str = ""
+) -> NamespaceBinding:
+    """Re-bind a moved/copied/restored data root to its new filesystem identity.
+
+    Data-root migration (whole-directory copy, restore from a backup directory,
+    new machine) changes the volume/file identities the binding was created
+    with. The frozen first-bind initializer deliberately refuses an existing
+    binding, so without this path the Core aborted with a typed error before it
+    could serve (REALUSE-DATA-SAFETY-1 AC1). The rebind keeps every catalog row
+    (``resource_catalog`` / ``preview_lifecycle``) and rewrites only the
+    identity columns plus the lock content, so relative resource paths keep
+    resolving. Structural anomalies (no namespace row, non-canonical table,
+    unreadable identities) still fail closed.
+    """
+
+    db_path = Path(catalog_db)
+    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)
+    try:
+        existing = read_lock_content_if_any(lock_handle)
+        catalog_str, catalog_identity = resolve_namespace_identity(db_path)
+        try:
+            connection = sqlite3.connect(_rw_uri(db_path), uri=True)
+        except sqlite3.Error as error:
+            raise namespace_unavailable(f"catalog probe failed: {error}") from error
+        try:
+            catalog_binding = _read_namespace_row(connection)
+            if catalog_binding is None:
+                raise namespace_unavailable("cannot rebind: catalog has no namespace row")
+            _assert_canonical_namespace_table(connection)
+            # The self-heal is only legitimate when BOTH halves of the binding
+            # agree: a readable lock whose binding equals the catalog row. A
+            # missing, unreadable or contradicting lock is tampering/unknown
+            # history and must keep failing closed (it cannot distinguish a
+            # migration from a rewritten catalog).
+            if existing is None:
+                raise namespace_unavailable(
+                    "cannot rebind without a readable namespace lock"
+                )
+            if existing != catalog_binding:
+                raise namespace_unavailable("namespace lock and catalog bindings differ")
+            binding = NamespaceBinding(
+                protocol_version=1,
+                derived_root=derived_str,
+                derived_identity=derived_identity,
+                catalog_root=catalog_str,
+                catalog_identity=catalog_identity,
+            )
+            connection.execute(
+                "UPDATE preview_namespace SET protocol_version = ?, derived_root = ?,"
+                " derived_identity_volume = ?, derived_identity_index = ?,"
+                " catalog_root = ?, catalog_identity_volume = ?,"
+                " catalog_identity_index = ? WHERE singleton = 1",
+                (
+                    binding.protocol_version,
+                    binding.derived_root,
+                    binding.derived_identity[0],
+                    binding.derived_identity[1],
+                    binding.catalog_root,
+                    binding.catalog_identity[0],
+                    binding.catalog_identity[1],
+                ),
+            )
+            connection.commit()
+        finally:
+            connection.close()
+        write_lock_content(lock_handle, binding)
+    finally:
+        close_lock_handle(lock_handle)
+    return binding
+
+
 def restore_namespace_lock(catalog_db: Path | str, derived_root: Path | str) -> bool:
     """Restore a missing or unreadable lock only from its existing catalog binding.
 
@@ -293,24 +401,11 @@ def restore_namespace_lock(catalog_db: Path | str, derived_root: Path | str) -> 
                         "namespace lock is bound but catalog binding is missing"
                     )
                 return False
-            (row_count,) = connection.execute(
-                "SELECT COUNT(*) FROM preview_namespace"
-            ).fetchone()
-            (table_sql,) = connection.execute(
-                "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
-            ).fetchone()
+            _assert_canonical_namespace_table(connection)
         except (sqlite3.Error, ValueError, TypeError, IndexError) as error:
             raise namespace_unavailable(f"catalog namespace binding unusable: {error}") from error
         finally:
             connection.close()
-        if (
-            row_count != 1
-            or table_sql is None
-            or not table_sql.isascii()
-            or _SQLITE_DDL_WS.sub(" ", table_sql).strip().lower()
-            != _NORMALIZED_NAMESPACE_SCHEMA
-        ):
-            raise namespace_unavailable("catalog namespace binding is not canonical")
         _verify_catalog_binding(
             binding, derived_str, derived_identity, catalog_str, catalog_identity
         )

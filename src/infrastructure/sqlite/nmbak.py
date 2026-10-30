@@ -70,6 +70,53 @@ class NmbakBackupError(RuntimeError):
         self.detail = detail
 
 
+def _managed_relative_path(value: object, *, context: str, code: str = "BACKUP_CORRUPT") -> Path:
+    """REALUSE-DATA-SAFETY-1 review M1: keep every managed path inside its root.
+
+    ``Path(root) / Path(x)`` silently DISCARDS ``root`` when ``x`` is absolute
+    (``C:\\Windows\\...``, ``/etc/...``, ``\\\\server\\share``) and happily walks
+    out through ``..``. Both directions were reachable:
+
+    - create: a dirty/edited ``pages.managed_original_ref`` row;
+    - restore/verify: a tampered ``.nmbak`` manifest.
+
+    The result was an out-of-root read on create and an arbitrary-path write on
+    restore. Every entry point now funnels through this check and fails closed.
+    """
+
+    raw = "" if value is None else str(value).strip()
+    if not raw:
+        raise NmbakBackupError(code, f"{context}: empty managed path")
+    if (
+        Path(raw).is_absolute()
+        or raw.startswith(("/", "\\"))
+        or re.match(r"^[A-Za-z]:", raw)
+    ):
+        raise NmbakBackupError(code, f"{context}: absolute managed path {raw!r}")
+    relative = Path(raw)
+    if any(part in {"..", ""} for part in relative.parts):
+        raise NmbakBackupError(code, f"{context}: unsafe managed path {raw!r}")
+    return relative
+
+
+def _resolve_within(root: Path, relative: Path, *, context: str, code: str = "BACKUP_CORRUPT") -> Path:
+    """Second guard: the resolved candidate must still live under ``root``.
+
+    Symlinks/junctions can defeat the lexical check above, so the create and
+    restore paths also verify the resolved location.
+    """
+
+    candidate = root / relative
+    try:
+        resolved_root = root.resolve()
+        resolved = candidate.resolve()
+    except OSError as error:
+        raise NmbakBackupError(code, f"{context}: {error}") from error
+    if resolved != resolved_root and resolved_root not in resolved.parents:
+        raise NmbakBackupError(code, f"{context}: managed path escapes its root {relative}")
+    return candidate
+
+
 class NmbakBackupService:
     """Backup/restore over ``<data_root>/backups/*.nmbak``."""
 
@@ -148,7 +195,16 @@ class NmbakBackupService:
                 json.dumps(sidecar, ensure_ascii=False, indent=2), encoding="utf-8"
             )
             revision_refs = self._revision_refs()
-            managed_files = self._copy_managed_files(workdir, revision_refs)
+            # REALUSE-DATA-SAFETY-1 AC2: imported page originals live in
+            # ``pages.managed_original_ref`` -- NOT in ``artifact_revisions``
+            # (a library that never ran a pipeline has zero artifact rows but
+            # 100 MB of managed originals). Backing up only revision_refs
+            # produced a "verified" package that silently lost every original
+            # page, which is exactly the user data the product promises to keep.
+            page_original_refs = self._page_original_refs()
+            managed_files = self._copy_managed_files(
+                workdir, revision_refs + page_original_refs
+            )
             manifest = {
                 "format": FORMAT_NAME,
                 "format_version": FORMAT_VERSION,
@@ -161,6 +217,11 @@ class NmbakBackupService:
                 "managed_file_count": len(managed_files),
                 "managed_total_bytes": sum(item["size_bytes"] for item in managed_files),
                 "revision_refs": revision_refs,
+                "page_original_refs": page_original_refs,
+                "page_original_count": len(page_original_refs),
+                "page_original_total_bytes": sum(
+                    item["size_bytes"] for item in page_original_refs
+                ),
                 "verified": False,
             }
             (workdir / MANIFEST_NAME).write_text(
@@ -294,7 +355,30 @@ class NmbakBackupService:
                         "managed_path": row["managed_path"],
                     }
                 )
-        return {"checked": len(rows), "missing": missing, "skipped": ""}
+        # REALUSE-DATA-SAFETY-1 AC2: imported page originals are user content
+        # too; a restore that could not write them back must not report a
+        # clean consistency pass.
+        try:
+            page_rows = self._conn.execute(
+                "SELECT page_id, managed_original_ref FROM pages"
+                " WHERE managed_original_ref IS NOT NULL AND managed_original_ref <> ''"
+            ).fetchall()
+        except sqlite3.OperationalError:
+            page_rows = []
+        for row in page_rows:
+            candidate = self._managed_root / Path(row["managed_original_ref"])
+            if not candidate.is_file():
+                missing.append(
+                    {
+                        "revision_id": f"page-original:{row['page_id']}",
+                        "managed_path": row["managed_original_ref"],
+                    }
+                )
+        return {
+            "checked": len(rows) + len(page_rows),
+            "missing": missing,
+            "skipped": "",
+        }
 
     # ------------------------------------------------------------------
     # internals
@@ -316,6 +400,53 @@ class NmbakBackupService:
         finally:
             out.close()
 
+    def _page_original_refs(self) -> list[dict]:
+        """Managed originals of imported pages (``pages.managed_original_ref``).
+
+        These are user content (the Managed Copy of the source images), not
+        derived artifacts, so they are backed up as their own manifest
+        population instead of being disguised as artifact revisions. Older
+        packages simply have no such key and restore exactly as before.
+        """
+
+        try:
+            rows = self._conn.execute(
+                "SELECT page_id, managed_original_ref FROM pages"
+                " WHERE managed_original_ref IS NOT NULL AND managed_original_ref <> ''"
+            ).fetchall()
+        except sqlite3.OperationalError:
+            return []
+        refs: list[dict] = []
+        for row in rows:
+            managed_path = str(row["managed_original_ref"])
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"page {row['page_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"page {row['page_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            if not source.is_file():
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    f"managed original missing for page {row['page_id']}: {managed_path}",
+                )
+            refs.append(
+                {
+                    "page_id": row["page_id"],
+                    # Store the validated, normalised form: the manifest must never
+                    # carry a path that the restore side would have to trust.
+                    "managed_path": relative.as_posix(),
+                    "sha256": sha256_file(source),
+                    "size_bytes": source.stat().st_size,
+                }
+            )
+        return refs
+
     def _revision_refs(self) -> list[dict]:
         rows = self._conn.execute(
             "SELECT r.artifact_revision_id, r.artifact_id, r.managed_path,"
@@ -328,7 +459,17 @@ class NmbakBackupService:
         refs = []
         for row in rows:
             managed_path = row["managed_path"]
-            source = self._managed_root / Path(managed_path)
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"revision {row['artifact_revision_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"revision {row['artifact_revision_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
             if not source.is_file():
                 raise NmbakBackupError(
                     "BACKUP_CREATE_FAILED",
@@ -348,7 +489,7 @@ class NmbakBackupService:
                     # keeping the key keeps the manifest schema closed.
                     "region_id": None,
                     "artifact_id": row["artifact_id"],
-                    "managed_path": managed_path,
+                    "managed_path": relative.as_posix(),
                     "sha256": sha256_file(source),
                     "size_bytes": source.stat().st_size,
                     "pinned": bool(row["is_pinned"] or row[6]),
@@ -364,7 +505,17 @@ class NmbakBackupService:
             if managed_path in seen:
                 continue
             seen.add(managed_path)
-            source = self._managed_root / Path(managed_path)
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"package revision {ref.get('revision_id')}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"package revision {ref.get('revision_id')}",
+                code="BACKUP_CREATE_FAILED",
+            )
             if not source.is_file():
                 # Design §3.1: every revision_ref must be backed by a managed
                 # file with a matching digest. Silently dropping it would
@@ -373,12 +524,15 @@ class NmbakBackupService:
                     "BACKUP_CREATE_FAILED",
                     f"managed file missing for revision ref: {managed_path}",
                 )
-            destination = workdir / MANAGED_PREFIX / Path(managed_path)
+            # The staging write stays inside the package workdir: ``relative`` was
+            # already proven free of absolute/``..`` components, and WORKDIR is a
+            # fresh temp directory, so no path can escape it.
+            destination = workdir / MANAGED_PREFIX / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())
             copied.append(
                 {
-                    "managed_path": managed_path,
+                    "managed_path": relative.as_posix(),
                     "sha256": sha256_file(destination),
                     "size_bytes": destination.stat().st_size,
                 }
@@ -450,13 +604,17 @@ class NmbakBackupService:
                 # digest, and an unlisted managed member is corruption (a
                 # tampered package must never write files the manifest does
                 # not name).
-                # `revision_refs` is the authoritative population: a
-                # `managed_files` entry may only describe a path already in
-                # it, so a tampered manifest cannot self-authorize extra
-                # files.
+                # `revision_refs` + `page_original_refs` are the authoritative
+                # populations: a `managed_files` entry may only describe a path
+                # already in one of them, so a tampered manifest cannot
+                # self-authorize extra files.
                 allowed: set[str] = set()
                 for ref in manifest.get("revision_refs") or []:
-                    member = MANAGED_PREFIX + str(ref.get("managed_path", "")).lstrip("/")
+                    relative = _managed_relative_path(
+                        ref.get("managed_path"),
+                        context=f"{package.name}: revision_ref",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
                     allowed.add(member)
                     if member not in names:
                         raise NmbakBackupError(
@@ -468,8 +626,32 @@ class NmbakBackupService:
                             "BACKUP_CORRUPT",
                             f"{package.name}: managed sha256 mismatch {ref.get('managed_path')}",
                         )
+                for entry in manifest.get("page_original_refs") or []:
+                    # Never trust a manifest path: validate before using it as a
+                    # zip member name (a tampered package must fail here, not at
+                    # restore time).
+                    relative = _managed_relative_path(
+                        entry.get("managed_path"),
+                        context=f"{package.name}: page original",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
+                    allowed.add(member)
+                    if member not in names:
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: missing page original {entry.get('managed_path')}",
+                        )
+                    if hashlib.sha256(archive.read(member)).hexdigest() != entry.get("sha256"):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: page original sha256 mismatch {entry.get('managed_path')}",
+                        )
                 for item in manifest.get("managed_files") or []:
-                    member = MANAGED_PREFIX + str(item.get("managed_path", "")).lstrip("/")
+                    relative = _managed_relative_path(
+                        item.get("managed_path"),
+                        context=f"{package.name}: managed_files entry",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
                     if member not in allowed:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
@@ -512,19 +694,34 @@ class NmbakBackupService:
         return int(restored)
 
     def _restore_managed(self, restore_dir: Path, manifest: dict) -> None:
-        # Only the authoritative revision_refs population is written back
-        # (the verifier already rejected unlisted managed members and any
-        # managed_files entry outside revision_refs).
-        members: set[str] = {
-            str(entry.get("managed_path", "")).lstrip("/")
-            for entry in (manifest.get("revision_refs") or [])
-        }
-        for managed_path in sorted(members):
-            relative = Path(managed_path)
+        # Only the authoritative populations are written back (the verifier
+        # already rejected unlisted managed members and any managed_files entry
+        # outside them): artifact revisions plus imported page originals.
+        #
+        # REALUSE-DATA-SAFETY-1 review M1: restore is the dangerous direction --
+        # a crafted manifest used to reach any path on disk. Every entry is now
+        # validated lexically AND resolved against the managed root before a
+        # single byte is written.
+        relatives: dict[str, Path] = {}
+        for entry in (
+            (manifest.get("revision_refs") or [])
+            + (manifest.get("page_original_refs") or [])
+        ):
+            relative = _managed_relative_path(
+                entry.get("managed_path"),
+                context="restore entry",
+            )
+            relatives[relative.as_posix()] = relative
+        for key in sorted(relatives):
+            relative = relatives[key]
             source = restore_dir / MANAGED_PREFIX / relative
             if not source.is_file():
                 continue
-            destination = self._managed_root / relative
+            destination = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"restore {key}",
+            )
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())
 

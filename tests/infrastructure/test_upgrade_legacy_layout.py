@@ -241,3 +241,117 @@ def test_current_database_with_corrupt_legacy_db_still_fills_directories(
     assert result.copied == ("managed/", "backups/")
     assert _book_count(root / "library.db") == 4
     assert (root / "managed" / "books" / "abc" / "page.png").is_file()
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 AC3: the Host pre-creates managed/backups before the
+# Core starts, so "the directory exists" must not mean "already migrated".
+# ---------------------------------------------------------------------------
+
+
+def test_precreated_empty_directories_still_receive_legacy_trees(tmp_path: Path) -> None:
+    """The real upgrade path: Host-created empty dirs, legacy originals inside."""
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "backups").mkdir()
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "managed/" in result.copied
+    assert "backups/" in result.copied
+    assert (root / "managed" / "books" / "abc" / "page.png").read_bytes() == b"png"
+    assert (root / "backups" / "old.zip").read_bytes() == b"zip"
+
+
+def test_nonempty_current_tree_receives_only_missing_legacy_files(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "managed" / "current-only.bin").write_bytes(b"keep")
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "managed/" in result.copied
+    assert (root / "managed" / "current-only.bin").read_bytes() == b"keep"
+    assert (root / "managed" / "books" / "abc" / "page.png").read_bytes() == b"png"
+
+
+def test_existing_current_file_is_never_overwritten_by_legacy(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    target = root / "managed" / "books" / "abc" / "page.png"
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"current-wins")
+
+    migrate_legacy_layout(root)
+
+    assert target.read_bytes() == b"current-wins"
+
+
+def test_precreated_empty_backups_directory_does_not_hide_legacy_backups(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    (root / "backups").mkdir()
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "backups/" in result.copied
+    assert (root / "backups" / "old.zip").read_bytes() == b"zip"
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 review M2: the merged copy must be atomic. A plain
+# copy2 that is interrupted leaves a truncated file, and the next run then
+# treats it as "current layout wins" -- permanently corrupting the original.
+# ---------------------------------------------------------------------------
+
+
+def test_interrupted_merge_copy_leaves_no_partial_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "managed" / "current-only.bin").write_bytes(b"keep")
+
+    def _no_space(*_args: object, **_kwargs: object) -> None:
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(
+        "infrastructure.sqlite.upgrade_legacy_layout.shutil.copy2", _no_space
+    )
+
+    with pytest.raises(LegacyLayoutError):
+        migrate_legacy_layout(root)
+
+    # Nothing half-written appeared, and no temp file lingers for the next run
+    # to mistake for real data.
+    assert not (root / "managed" / "books" / "abc" / "page.png").exists()
+    assert (root / "managed" / "current-only.bin").read_bytes() == b"keep"
+    assert not list((root / "managed").rglob("*legacy-tmp*"))
+    assert not (root / "library.db").exists()
+
+
+def test_merge_copy_publishes_complete_file_before_it_is_visible(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The destination only becomes visible via os.replace, after the bytes land."""
+
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "managed" / "current-only.bin").write_bytes(b"keep")
+    replacements: list[tuple[str, str]] = []
+    real_replace = __import__("os").replace
+
+    def _spy_replace(source, target, *args, **kwargs):
+        replacements.append((str(source), str(target)))
+        return real_replace(source, target, *args, **kwargs)
+
+    monkeypatch.setattr(
+        "infrastructure.sqlite.upgrade_legacy_layout.os.replace", _spy_replace
+    )
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert any("legacy-tmp" in source for source, _target in replacements)
+    assert (root / "managed" / "books" / "abc" / "page.png").read_bytes() == b"png"

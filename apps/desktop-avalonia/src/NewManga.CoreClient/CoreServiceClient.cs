@@ -27,6 +27,18 @@ public sealed record BookSummary(
 /// <summary>One chapter row from the Core <c>list_chapters</c> read face.</summary>
 public sealed record ChapterSummary(string ChapterId, string Title, string ChapterNumber, int SortOrder);
 
+/// <summary>
+/// REALUSE-DATA-SAFETY-1 AC2: one <c>.nmbak</c> package row from <c>backup.list</c> /
+/// <c>backup.create</c>. <see cref="Verified"/> is the Core's read-back verdict, never optimism.
+/// </summary>
+public sealed record BackupPackageInfo(
+    string BackupId,
+    string BackupType,
+    string CreatedAt,
+    long SizeBytes,
+    int SchemaVersion,
+    bool Verified);
+
 /// <summary>One page row from <c>GetReaderProjection</c> (src/infrastructure/sqlite/library.py list_pages).</summary>
 public sealed record ReaderPageSummary(
     string PageId,
@@ -474,6 +486,101 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return books;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-1 AC2: the .nmbak package face (backup.list/create/delete/restore).
+    // These are ordinary application commands (never HostControl); every failure is the Core's
+    // typed code, so the UI can show it instead of inventing success.
+    // ---------------------------------------------------------------------------------------------
+
+    public async Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "backup.list",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "backup.list");
+        if (result.ValueKind != JsonValueKind.Array)
+        {
+            throw Malformed("backup.list result is not an array");
+        }
+
+        var packages = new List<BackupPackageInfo>();
+        foreach (var item in result.EnumerateArray())
+        {
+            packages.Add(ParseBackupPackage(item));
+        }
+
+        return packages;
+    }
+
+    public async Task<BackupPackageInfo> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "backup.create",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("backup_type", backupType);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return ParseBackupPackage(RequireResult(response, "backup.create"));
+    }
+
+    public async Task DeleteBackupAsync(string backupId, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "backup.delete",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("backup_id", backupId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        RequireResult(response, "backup.delete");
+    }
+
+    /// <summary>
+    /// Overwrite restore. The Core writes its own <c>pre_restore</c> rollback package first and refuses
+    /// anything but an explicit <c>confirm_restore: true</c>; the returned id names that rollback point.
+    /// </summary>
+    public async Task<string> RestoreBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "backup.restore",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("backup_id", backupId);
+                    writer.WriteBoolean("confirm_restore", true);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "backup.restore");
+        return result.ValueKind == JsonValueKind.Object
+               && result.TryGetProperty("pre_restore_backup_id", out var rollback)
+            ? rollback.GetString() ?? string.Empty
+            : string.Empty;
     }
 
     public async Task<BookSummary> CreateBookAsync(string title, CancellationToken cancellationToken = default)
@@ -1094,6 +1201,26 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         throw new CoreOperationException("INVALID_RESPONSE", "internal", false, $"{command} returned no result", response.RequestId);
+    }
+
+    private static BackupPackageInfo ParseBackupPackage(JsonElement element)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("backup package entry is not an object");
+        }
+
+        return new BackupPackageInfo(
+            ReadString(element, "backup_id") ?? string.Empty,
+            ReadString(element, "backup_type") ?? "unknown",
+            ReadString(element, "created_at") ?? string.Empty,
+            element.TryGetProperty("size_bytes", out var size) && size.ValueKind == JsonValueKind.Number
+                ? size.GetInt64()
+                : 0,
+            element.TryGetProperty("schema_version", out var schema) && schema.ValueKind == JsonValueKind.Number
+                ? schema.GetInt32()
+                : 0,
+            ReadBool(element, "verified"));
     }
 
     private static BookSummary ParseBook(JsonElement element)
