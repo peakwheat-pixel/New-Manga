@@ -7,9 +7,10 @@ namespace NewManga.Host.Tests;
 
 /// <summary>
 /// V11R-A-6 startup contract self check: a Core/Host contract mismatch closes the write gate and
-/// publishes a typed error instead of failing the first user write. Coverage is honest: core.ping
-/// exposes only the protocol version and capabilities, so a passing check is Degraded (diagnostics
-/// visible) rather than a fake Passed.
+/// publishes a typed error instead of failing the first user write.
+/// REALUSE-DATA-SAFETY-2 AC3: every fact <c>core.ping</c> can report (protocol version, capability
+/// set) is checked, so a matching Core is <see cref="SelfCheckStatus.Passed"/>; the command-surface
+/// comparison is covered by the parity tests and is not a runtime degradation.
 /// </summary>
 public sealed class StartupSelfCheckTests
 {
@@ -32,14 +33,16 @@ public sealed class StartupSelfCheckTests
     }
 
     [Fact]
-    public void MatchingCore_IsDegraded_ButWritesStayOpen()
+    public void MatchingCore_IsPassed_AndWritesStayOpen()
     {
         var result = StartupSelfCheck.Evaluate(Ping());
 
-        Assert.Equal(SelfCheckStatus.Degraded, result.Status);
+        Assert.Equal(SelfCheckStatus.Passed, result.Status);
         Assert.False(result.WritesBlocked);
         Assert.Null(result.ErrorCode);
-        Assert.Contains("follow-up", result.Reason, StringComparison.Ordinal);
+        Assert.Contains("通过", result.Reason, StringComparison.Ordinal);
+        // The coverage boundary stays visible, it just is not a degradation.
+        Assert.Contains("parity", result.Reason, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -120,7 +123,8 @@ public sealed class StartupSelfCheckTests
         {
             await using var runtime = await HostRuntime.StartAsync(options);
             Assert.True(runtime.Result.IsReady, runtime.Result.ErrorCode);
-            Assert.Equal(SelfCheckStatus.Degraded, runtime.SelfCheck.Status);
+            // REALUSE-DATA-SAFETY-2 AC3: a matching Core is Passed, not a permanent Degraded.
+            Assert.Equal(SelfCheckStatus.Passed, runtime.SelfCheck.Status);
             Assert.Equal(HostMode.ReadWrite, runtime.Mode);
             Assert.True(runtime.Policy.WritesAllowed);
             Assert.Null(runtime.Result.ErrorCode);

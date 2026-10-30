@@ -451,17 +451,19 @@
               <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
                 <StackPanel Spacing="{DynamicResource Nm.Space.1}">
                   <TextBlock Classes="section-title" Text="Host 状态（真实）" />
-                  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="{DynamicResource Nm.Space.1}" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="{DynamicResource Nm.Space.1}" ColumnSpacing="{DynamicResource Nm.Space.2}">
                     <TextBlock Classes="meta" Text="状态" />
                     <TextBlock Grid.Column="1" Classes="label" Text="{Binding HostStateText}" />
                     <TextBlock Grid.Row="1" Classes="meta" Text="状态行" />
                     <TextBlock Grid.Row="1" Grid.Column="1" Classes="meta" Text="{Binding HostStatusLine}" TextWrapping="Wrap" />
                     <TextBlock Grid.Row="2" Classes="meta" Text="模式" />
                     <TextBlock Grid.Row="2" Grid.Column="1" Classes="meta" Text="{Binding HostModeLine}" TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="3" Classes="meta" Text="错误码" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" Classes="data" Text="{Binding HostErrorCodeText}" />
-                    <TextBlock Grid.Row="4" Classes="meta" Text="已发帧" />
-                    <TextBlock Grid.Row="4" Grid.Column="1" Classes="data" Text="{Binding HostWireFrameText}" />
+                    <TextBlock Grid.Row="3" Classes="meta" Text="启动自检" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Classes="meta" Text="{Binding HostSelfCheckText}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="4" Classes="meta" Text="错误码" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Classes="data" Text="{Binding HostErrorCodeText}" />
+                    <TextBlock Grid.Row="5" Classes="meta" Text="已发帧" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Classes="data" Text="{Binding HostWireFrameText}" />
                   </Grid>
                   <TextBlock Classes="meta" TextWrapping="Wrap" Text="安全：错误只显示 typed code，不渲染可能含本地路径的原始错误文本。" />
                 </StackPanel>

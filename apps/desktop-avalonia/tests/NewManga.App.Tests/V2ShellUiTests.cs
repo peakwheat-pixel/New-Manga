@@ -1006,6 +1006,49 @@ public sealed class V2ShellUiTests
         resultsWindow.Close();
     }
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC2: a ready-but-read-only Host must not present a green all-clear.
+    /// The audit (MA-04) saw "Host 就绪" with a Done badge while every write was actually closed.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ReadOnlyHost_IsNotShownAsGreenReady()
+    {
+        var fake = V2Fixture.Create();
+        fake.Snapshot = fake.Snapshot with
+        {
+            WritesAllowed = false,
+            ReadOnlyReason = "只读（旧壳运行中）",
+        };
+
+        var (window, shell) = await HostReadyAsync(fake);
+
+        // Reads still work, so the Host is "ready" — but it is not writable and must say so.
+        Assert.True(shell.ViewModel.IsHostReady);
+        Assert.False(shell.ViewModel.IsHostWritable);
+        Assert.Contains("只读", shell.ViewModel.HostStatusText, StringComparison.Ordinal);
+        Assert.Contains("旧壳运行中", shell.ViewModel.HostStatusText, StringComparison.Ordinal);
+        Assert.Equal(NmStatus.Blocked, shell.ViewModel.StatusBandState);
+        Assert.Contains("只读", shell.ViewModel.StatusBandRight, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC2: the status band keeps its green Done only when writes are open.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task WritableHost_KeepsGreenReadyState()
+    {
+        var fake = V2Fixture.Create();
+        Assert.True(fake.Snapshot.WritesAllowed);
+
+        var (window, shell) = await HostReadyAsync(fake);
+
+        Assert.True(shell.ViewModel.IsHostWritable);
+        Assert.Equal(NmStatus.Done, shell.ViewModel.StatusBandState);
+        Assert.DoesNotContain("只读", shell.ViewModel.HostStatusText, StringComparison.Ordinal);
+        window.Close();
+    }
+
     private static int VisibleEmptyStateCount(Window window) =>
         CenterStateHost(window).GetVisualDescendants().OfType<EmptyState>().Count(state => state.IsEffectivelyVisible);
 

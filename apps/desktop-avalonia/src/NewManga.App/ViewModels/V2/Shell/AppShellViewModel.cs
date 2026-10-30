@@ -247,16 +247,30 @@ public sealed class AppShellViewModel : ObservableObject
 
     public bool IsThemeStudioOpen => State.IsThemeStudioOpen;
 
-    public string HostStatusText => _controller.Snapshot.State switch
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC2: a ready-but-read-only Host is usable for reading, but it must not
+    /// present itself as an all-clear. The audit caught the status band showing a green "Host 就绪"
+    /// while writes were actually closed (legacy shell running / parity off / self-check failure),
+    /// so the read-only reason is now part of the label.
+    /// </summary>
+    public string HostStatusText => _controller.Snapshot switch
     {
-        HostViewState.Ready => "Host 就绪",
-        HostViewState.Starting => "Host 启动中",
-        HostViewState.AlreadyRunning => "Host 已运行",
-        HostViewState.Failed => "Host 失败",
+        { State: HostViewState.Ready, WritesAllowed: false } snapshot
+            => string.IsNullOrWhiteSpace(snapshot.ReadOnlyReason)
+                ? "Host 就绪（只读）"
+                : $"Host 就绪（只读：{snapshot.ReadOnlyReason}）",
+        { State: HostViewState.Ready } => "Host 就绪",
+        { State: HostViewState.Starting } => "Host 启动中",
+        { State: HostViewState.AlreadyRunning } => "Host 已运行",
+        { State: HostViewState.Failed } => "Host 失败",
         _ => "Host 未知",
     };
 
+    /// <summary>Host is up and serving reads (writes may still be closed — see <see cref="IsHostWritable"/>).</summary>
     public bool IsHostReady => _controller.Snapshot.State == HostViewState.Ready;
+
+    /// <summary>REALUSE-DATA-SAFETY-2 AC2: the Host accepted reads AND writes.</summary>
+    public bool IsHostWritable => IsHostReady && _controller.Snapshot.WritesAllowed;
 
     /// <summary>
     /// V11R-INT-2: one-line Host readiness/diagnostic for the status band. Shows the real typed failure
@@ -363,7 +377,13 @@ public sealed class AppShellViewModel : ObservableObject
                 return NmStatus.Blocked;
             }
 
-            return IsHostReady ? NmStatus.Done : NmStatus.Queued;
+            if (IsHostReady)
+            {
+                // REALUSE-DATA-SAFETY-2 AC2: a read-only Host is not a green all-clear.
+                return IsHostWritable ? NmStatus.Done : NmStatus.Blocked;
+            }
+
+            return NmStatus.Queued;
         }
     }
 
@@ -1367,6 +1387,7 @@ public sealed class AppShellViewModel : ObservableObject
             nameof(StatusBandSymbol),
             nameof(HostStatusText),
             nameof(IsHostReady),
+            nameof(IsHostWritable),
             nameof(HostStatusLine),
             nameof(HasHostFailure));
     }
