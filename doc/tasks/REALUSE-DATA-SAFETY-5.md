@@ -3,20 +3,36 @@ id: REALUSE-DATA-SAFETY-5
 title: B3/B4 剩余体验与卫生项——状态文案一致性、空态与错误指引、仓库卫生
 kind: quality
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: user_authorized_2026-10-30_self_audit_remaining_batches
 suggested_owner: dsh
 owner: dsh-lead
 reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-5-antigravity-r1.md
+    must_fix: 自查记录把「没搜到」写成「MA-21/22 从未存在」；MA-20 脚本路径误判；README 备份扩展名未同步；证据 pin 与治理检查失败
+  - round: 2
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-5-antigravity-r2.md
+    must_fix: 更正只写进仓外 DEFECTS.md，版本化的 Task 卡与 Handoff 仍残留全部错误断言
+  - round: 3
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-5-antigravity-r3.md
+    must_fix: AC2 同时勾选 [x] 且标 <<PARTIAL>>，违反 check.ps1 语法约定
+  - round: 4
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-5-antigravity-r4.md
 depends_on:
   - REALUSE-DATA-SAFETY-4
 base_commit: 5c9c2d08d
 branch: task/REALUSE-DATA-SAFETY-5
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-5
-integration_commit: null
+integration_commit: PENDING
 delivery_head: c50901a2b
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-5
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-5.md
