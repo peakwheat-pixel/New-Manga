@@ -204,6 +204,6 @@
 | FOLLOW-UP-CORE-3 | 术语/不译表无 Core 读写命令（UI 诚实 NOT_WIRED） | A-3 / B-5 |
 | FOLLOW-UP-TEST-1 | 跨项目并行测试偶发 1 例失败（runsettings 串行化后仍偶发）；需定位共享状态 | 多次观测 |
 | FOLLOW-UP-REPO-1 | `ReaderWorkbenchPages.cs` 本机路径 fallback（verify-clean-clone ALLOW_PENDING） | A-4 |
-| FOLLOW-UP-E2E-1 | Theme 持久化路径不可隔离（不受 `--data-root` 影响，E2E 写真实 `%APPDATA%`）：增加 `--theme-settings <path>` 或 `NEWMANGA_THEME_SETTINGS` 覆盖 | 真机 L4（2026-10-30） |
+| FOLLOW-UP-E2E-1 | **CLOSED**（V11R-E2E-1，2026-10-30，证据 `verification/V11R-E2E-1/`：新增 `--theme-home <dir>` 单根覆盖主题子系统；真机 UIA 应用浅色 → `<dir>/theme-settings.json` 为 `appearance=light`，真实 `%APPDATA%\NewManga` 零新建/零修改）Theme 持久化路径不可隔离（不受 `--data-root` 影响，E2E 写真实 `%APPDATA%`） | 真机 L4（2026-10-30） |
 | FOLLOW-UP-A11Y-1 | **CLOSED**（V11R-A11Y-1，2026-10-30，证据 `verification/V11R-A11Y-1/`：UIA 修前 7 个类型名按钮 → 修后 0/21）UIA 可访问名称缺陷：7 个按钮 Name 为类型名（`Avalonia.Controls.StackPanel`×6、`Kbd`×1）；补 `AutomationProperties.Name`/`GetNameCore` | 真机 L4 UIA 审计 |
 | FOLLOW-UP-PUB-1 | 发布配置：trim 默认失败（IL2026 + TreatWarningsAsErrors）；AOT 需显式 `PublishTrimmed=true`；建议固化发布参数脚本并做 trim/AOT 真机回归 | 真机 L4 发布测试 |

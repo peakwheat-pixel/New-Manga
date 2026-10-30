@@ -21,6 +21,14 @@ public sealed class AppOptions
 
     public string? SidecarDirectory { get; private set; }
 
+    /// <summary>
+    /// V11R-E2E-1 (FOLLOW-UP-E2E-1): single-root override for the whole theme subsystem
+    /// (<c>--theme-home &lt;dir&gt;</c>): settings = <c>&lt;dir&gt;/theme-settings.json</c>, user themes =
+    /// <c>&lt;dir&gt;/themes</c>, favorites = <c>&lt;dir&gt;/theme-studio-favorites.json</c>. Null keeps the
+    /// shipped <c>%APPDATA%/NewManga</c> location. See <see cref="Services.ThemeHome"/>.
+    /// </summary>
+    public string? ThemeHome { get; private set; }
+
     public string MutexName { get; private set; } = SingleInstanceGuard.DefaultMutexName;
 
     /// <summary>
@@ -74,7 +82,7 @@ public sealed class AppOptions
     /// <summary>Options that carry a value (both <c>--key=value</c> and <c>--key value</c> are accepted).</summary>
     private static readonly HashSet<string> ValueKeys = new(StringComparer.Ordinal)
     {
-        "data-root", "log-dir", "sidecar-dir", "mutex-name",
+        "data-root", "log-dir", "sidecar-dir", "mutex-name", "theme-home",
         "theme", "theme-id", "shell", "variant", "page",
         "exit-after", "width", "height",
     };
@@ -195,6 +203,15 @@ public sealed class AppOptions
                 break;
             case "sidecar-dir":
                 options.SidecarDirectory = value;
+                break;
+            case "theme-home":
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    options.InvalidReason = "--theme-home requires a non-empty directory";
+                    return false;
+                }
+
+                options.ThemeHome = value.Trim();
                 break;
             case "mutex-name":
                 options.MutexName = value;

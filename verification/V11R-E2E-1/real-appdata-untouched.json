@@ -1,0 +1,23 @@
+{
+  "task": "V11R-E2E-1",
+  "generated_at": "2026-10-30T01:10:40.4499073Z",
+  "real_appdata_root": "C:\\Users\\49745\\AppData\\Roaming\\NewManga",
+  "before": {
+    "exists": true,
+    "dir_last_write_utc": "2026-10-29T23:52:43.0169641Z",
+    "file_count": 0,
+    "files": []
+  },
+  "after": {
+    "exists": true,
+    "dir_last_write_utc": "2026-10-29T23:52:43.0169641Z",
+    "file_count": 0,
+    "files": []
+  },
+  "assertions": {
+    "same_file_set_and_mtimes": true,
+    "same_dir_last_write": true,
+    "untouched": true
+  },
+  "result": "PASS"
+}
