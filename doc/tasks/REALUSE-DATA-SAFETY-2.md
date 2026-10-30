@@ -3,7 +3,7 @@ id: REALUSE-DATA-SAFETY-2
 title: 修复真实使用自查 B2 批次——Provider 可用性引导、就绪状态诚实性、启动自检降级误报
 kind: fix
 governance_version: 3
-status: approved
+status: done
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
@@ -21,10 +21,10 @@ depends_on:
 base_commit: a29e0f516
 branch: task/REALUSE-DATA-SAFETY-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-2
-integration_commit: null
+integration_commit: 15efbcfb0
 delivery_head: f0e207db5
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-2
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-2.md
@@ -48,7 +48,9 @@ allowed_paths:
 
 `G:\CODEX\New Manga.workspace\tmp\self-audit\DEFECTS.md` 记录的 21 条缺陷中，B1（BATCH 1，数据安全）已由 [REALUSE-DATA-SAFETY-1](REALUSE-DATA-SAFETY-1.md) 关闭。本批次处理**用户可见的诚实性与可用性**问题：界面报告的状态必须与实际能力一致，缺失能力必须给出可执行的下一步。
 
-## 范围（B2）
+## 范围（实际覆盖：MA-02 + MA-04 + MA-05）
+
+> 批次标签说明（DSH 收口时核对 DEFECTS.md 后更正）：审计把 MA-02 归入 B2「核心链路可达」，把 MA-04/MA-05 归入 B3「状态与体验」。本 Task 实际取的是这三条（都属用户可见的诚实性问题），因此**不覆盖** B2 的 MA-06/MA-07/MA-08/MA-10——它们由后续 REALUSE-DATA-SAFETY-3 承接。
 
 - **MA-02**：发布包不含模型权重，`PROVIDER_NOT_CONFIGURED` 时 UI 无任何指引（用户只看到失败任务）。要求：诊断/工作台在检测到未配置 Provider 时给出明确说明与入口，而不是让 Run 静默失败。
 - **MA-04**：Host 处于只读或启动失败时，界面仍显示绿色「Host 就绪」，且「重试」是空操作。要求：状态徽标与真实 `HostViewState`/`Mode` 一致；重试必须真的重试或明确禁用。
