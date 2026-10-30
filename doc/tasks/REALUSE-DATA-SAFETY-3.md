@@ -3,20 +3,28 @@ id: REALUSE-DATA-SAFETY-3
 title: 修复真实使用自查 B2 核心链路——Console 分区接线、Run 列表、重复读取、错误码本地化
 kind: fix
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
 reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r1.md
+    must_fix: M1 reader silently opened the wrong book after AC3 reuse; M2/M3 cache invalidation gaps; M4 unguarded cache; M5 invalid run ids polluting the list; M6 a test awaited the wrong task
+  - round: 2
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r2.md
 depends_on:
   - REALUSE-DATA-SAFETY-2
 base_commit: 15efbcfb0
 branch: task/REALUSE-DATA-SAFETY-3
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3
-integration_commit: null
-delivery_head: 569e4fa56
+integration_commit: PENDING
+delivery_head: 4b9b53bb0
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-3
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-3.md
@@ -48,10 +56,10 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 Console 分区接线**：无可用 Provider/模型时，控制台提供明确入口与状态（不再是「待接入」占位）；缓存与版本清理、插件与 Hooks 要么真实接线，要么保留占位但**明确说明未接入原因**，不得静默。 <<PARTIAL: 待实现>>
-- [ ] **AC2 Stop 手工输入 run_id**：普通用户无需手抄 run_id 即可看到本会话/近期的 Run；外部 Run 的 run_id 路径仍在且有说明。若需契约扩展，先记录裁决再实施。 <<PARTIAL: 已实现且未改冻结契约（RunStatusMonitor 记忆本会话真实 run id + Console 列表点击加载 + Studio 创建后回填索引），5 个测试通过，待独立审查>>
-- [ ] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<PARTIAL: 已实现（Library 首屏复用启动快照、阅读器复用快照书架、章节列表按 book 会话内缓存并由 CreateChapter 失效），3 个调用计数测试；Reader 侧复用由代码路径断言，未单独接线真实 wire 计数，待独立审查评估证据强度>>
-- [ ] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<PARTIAL: 已实现（RunStateText/RunStateStatus 覆盖 projection.py 全部终态；新增 StepErrorText 说明真实 upper-snake 步骤码并始终保留标识符），19 个用例通过，待独立审查>>
+- [ ] **AC1 Console 分区接线**：~~本 Task 范围~~ → **已移交 [REALUSE-DATA-SAFETY-4](REALUSE-DATA-SAFETY-4.md)**（体量大且涉及契约边界，DSH 拆分）。 <<PARTIAL: 已移交独立 Task，本 Task 不再承接>>
+- [x] **AC2 Stop 手工输入 run_id**：普通用户无需手抄 run_id 即可看到本会话/近期的 Run；外部 Run 的 run_id 路径仍在且有说明。若需契约扩展，先记录裁决再实施。 <<MET>>
+- [x] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<MET>>
+- [x] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<MET>>
 
 ## 允许修改范围
 
@@ -77,7 +85,13 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC2-MONITOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Shell/V2/RunStatusMonitor.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC2-INDEX | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/RunIndexTests.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC2-CONSOLE | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC3-DEDUP | AC3 | `apps/desktop-avalonia/tests/NewManga.App.Tests/StartupReadDedupTests.cs` | `569e4fa56` | `-` | CANONICAL |
+| E-AC3-CACHE | AC3 | `apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs` | `4b9b53bb0` | `-` | CANONICAL |
+| E-AC4-TEXT | AC4 | `apps/desktop-avalonia/tests/NewManga.App.Tests/CoreStateTextTests.cs` | `569e4fa56` | `-` | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r1.md` | `4b9b53bb0` | `-` | CANONICAL |
 
 ## Resource Manifest
 
