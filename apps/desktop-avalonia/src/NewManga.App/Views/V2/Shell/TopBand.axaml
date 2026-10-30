@@ -3,6 +3,7 @@
              xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
              xmlns:v="using:NewManga.App.Views.V2.Shell"
+             xmlns:automation="using:Avalonia.Automation"
              x:Class="NewManga.App.Views.V2.Shell.TopBand"
              x:DataType="vm:AppShellViewModel">
   <!-- TopBand 36px (screen spec §1): SpaceTabs · Breadcrumb · 模式切换 · ScopeSelector ·
@@ -43,6 +44,7 @@
         <v:AttentionMenu />
 
         <Button Classes="ghost sm"
+                automation:AutomationProperties.Name="命令面板（Ctrl+K）"
                 Command="{Binding OpenPaletteCommand}"
                 ToolTip.Tip="命令面板 Ctrl+K">
           <StackPanel Orientation="Horizontal"
@@ -66,6 +68,7 @@
                 ToolTip.Tip="{Binding ThemeToggleTooltip}" />
 
         <Button Classes="ghost sm"
+                automation:AutomationProperties.Name="键位速查（F1）"
                 Command="{Binding OpenHelpCommand}"
                 ToolTip.Tip="键位速查 F1">
           <ctrl:Kbd Text="F1" />

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Controls.Primitives;
@@ -229,6 +230,7 @@ public sealed class StudioPipelineBand : Border
         {
             var dot = StudioUi.Dot(stage.State);
             var button = StudioUi.Button(string.Empty, "icon ghost", () => _viewModel.ActivatePipelineStage(stage.Key));
+            AutomationProperties.SetName(button, $"流水线阶段：{stage.Key}（跳到批次并高亮）");
             button.Content = dot;
             button.Width = 14;
             button.Height = 14;

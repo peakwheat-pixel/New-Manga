@@ -21,7 +21,12 @@ public partial class App : Application
     /// </summary>
     private DesignSystemThemeManager? _designSystemTheme;
 
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        // V11R-A11Y-1: readable automation names for V2 buttons whose Content is a control tree.
+        Shell.V2.V2AccessibleNames.Register();
+    }
 
     public override void OnFrameworkInitializationCompleted()
     {

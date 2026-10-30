@@ -1,0 +1,203 @@
+{
+  "generatedAt": "2026-10-30T08:57:28.6285044+08:00",
+  "appExe": "G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-UI-SHELL\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Debug\\net9.0\\NewManga.App.exe",
+  "sidecarDir": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\build\\sidecar\\core-sidecar\\core-sidecar",
+  "dataRoot": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-uia-audit\\20261030-085722\\data",
+  "logDir": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-uia-audit\\20261030-085722\\logs",
+  "appPid": 19704,
+  "windowName": "New Manga",
+  "counts": {
+    "enumerated": 23,
+    "buttons": 21,
+    "namedButtons": 21,
+    "unnamedButtons": 0,
+    "editsAndCombos": 2
+  },
+  "unnamedButtons": [],
+  "controls": [
+    {
+      "type": "ControlType.Button",
+      "name": "最小化",
+      "automationId": "Minimize",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "最大化",
+      "automationId": "Maximize",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "关闭",
+      "automationId": "Close",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "资料柜空间",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "工位空间",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "控制台空间",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "作用域：未选择对象",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "需要我处理：待办事项",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "命令面板（Ctrl+K）",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "主题工作室",
+      "automationId": "ThemeStudioButton",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "深色",
+      "automationId": "ThemeToggleButton",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "键位速查（F1）",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Edit",
+      "name": "",
+      "automationId": "",
+      "readable": false,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.ComboBox",
+      "name": "",
+      "automationId": "",
+      "readable": false,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "全部",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "收藏",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "已归档",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "导入文件",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "导入文件夹",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "新建作品",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "回收站",
+      "automationId": "",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "新建作品",
+      "automationId": "ActionButton",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ControlType.Button",
+      "name": "新建作品",
+      "automationId": "ActionButton",
+      "readable": true,
+      "enabled": true,
+      "offscreen": false
+    }
+  ]
+}

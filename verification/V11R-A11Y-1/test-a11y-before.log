@@ -1,0 +1,30 @@
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 1.61 秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 1.61 秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 1.63 秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 1.63 秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 1.67 秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj (用时 1.68 秒)。
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga.workspace\worktrees\V11R-A11Y-1-before\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:03.94]     NewManga.App.Tests.V2AccessibilityTests.V2_ButtonsAndKbd_ExposeReadableAutomationNames [FAIL]
+  失败 NewManga.App.Tests.V2AccessibilityTests.V2_ButtonsAndKbd_ExposeReadableAutomationNames [2 s]
+  错误消息:
+   V2 accessibility names incomplete: 123 unnamed/type-named control(s) across 15 views. Fix with AutomationProperties.Name (action semantics) or Kbd naming:
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[资料柜|1], classes='spacetab,active')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[工位|2], classes='spacetab')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[控制台|3], classes='spacetab')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[作用域|本章 0 页 · 第 10 话 · 灯を消すな], classes='ghost,sm')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[需要我处理|待办], classes='ghost,sm')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=StackPanel[命令|Ctrl+K], classes='ghost,sm')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=Kbd[F1], classes='ghost,sm')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=Border[夜|夜光列车], classes='bookcard,selected')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=Border[雨|雨の停車場], classes='bookcard')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=Border[汉|收藏], classes='bookcard')
+Shell/Library: Avalonia.Controls.Button (x:Name='', name='<null>', content=Border[旧|已归档], classes='bookcard')

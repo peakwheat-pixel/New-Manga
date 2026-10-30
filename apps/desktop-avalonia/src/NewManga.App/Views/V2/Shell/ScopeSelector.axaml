@@ -1,10 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:automation="using:Avalonia.Automation"
              x:Class="NewManga.App.Views.V2.Shell.ScopeSelector"
              x:DataType="vm:AppShellViewModel">
   <!-- ScopeSelector (contract §6.2): ALWAYS visible; every batch action carries its scope suffix. -->
   <Button Classes="ghost sm"
+          automation:AutomationProperties.Name="{Binding ScopeAutomationName}"
           ToolTip.Tip="作用域选择器：所有空间共享同一 selection，批量动作必须显示作用域后缀">
     <StackPanel Orientation="Horizontal"
                 Spacing="{DynamicResource Nm.Space.2}"

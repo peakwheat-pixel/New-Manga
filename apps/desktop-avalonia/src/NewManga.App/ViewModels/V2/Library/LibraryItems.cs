@@ -29,6 +29,8 @@ public sealed class BookRowViewModel : ObservableObject
 
     public string Title { get; }
 
+    public string AutomationName => $"打开作品：{Title}";
+
     public string OriginalTitle { get; }
 
     public bool IsFavorite { get; }
@@ -104,6 +106,8 @@ public sealed class ChapterRowViewModel : ObservableObject
     public string ChapterId { get; }
 
     public string Title { get; }
+
+    public string AutomationName => $"打开章节：{Title}";
 
     public string Number { get; }
 
