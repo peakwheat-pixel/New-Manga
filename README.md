@@ -8,7 +8,7 @@
 > provider sends are shown in the settings privacy notice (OCR → page images, translation → text,
 > inpainting → images/masks). With only local providers, nothing leaves the machine.
 >
-> **Status: 0.1.0 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
+> **Status: 0.1.1 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
 > “Unknown publisher”. Verify the SHA-256 manifest and read the release notes before installing.
 > A free open-source signing application is prepared in [`doc/release/`](doc/release/).
 >
@@ -21,8 +21,8 @@
 - **Bookshelf** — managed library of books/chapters/pages. Original files are never modified (managed copy).
 - **Workbench** — real page canvas with detected regions; retype/undo a region, rerender a page.
 - **Reader** — immersive reader (Esc/H/F keys), webtoon scrolling, per-chapter reading progress.
-- **Settings** — themes (9 packs, incl. macOS-style Sonoma/Launchpad/Split), provider bindings,
-  network profiles, credential vault, device/GPU status.
+- **Settings** — light/dark appearance driven by the design-system token layer (the
+  retired nine theme packs are gone; Theme Studio still edits and saves custom themes), provider bindings, network profiles, credential vault. Device/GPU status is **not exposed yet** — the console says so instead of showing a guess.
 - **Export** — ZIP image pack or PDF (image-only / searchable dual-layer CJK text).
 
 ## 架构 / 中文要点
@@ -32,7 +32,7 @@
   两者经严格请求/响应的 typed JSON IPC 通信，无网络监听。
 - 用户数据根 `%APPDATA%\com.newmanga.desktop`（书库、托管副本、缓存、导出、日志）；安装/卸载**不会**删除或改写它。
 - 四个一级页面：书架 / 工作台 / 阅读器 / 设置。
-- **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.nmbak`，幂等不覆盖）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
+- **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.sqlite-backup`，幂等不覆盖；`.nmbak` 是 Core 的备份包格式，两者不再共用命名空间）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
 - 构建：需 .NET 9 SDK、Python 3.11、NSIS 3.x、PowerShell 7；模型权重不随 Git 仓库分发，
   `-models` 发行包内置权重，base 包首次检测会以 typed `PROVIDER_NOT_CONFIGURED` 提示。
 - 测试基线（2026-10-28）：.NET 258/258（0 skipped）、pytest 2773P/10S/0F、typed IPC 命令 66/66。

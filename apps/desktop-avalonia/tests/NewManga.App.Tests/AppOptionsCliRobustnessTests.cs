@@ -132,4 +132,55 @@ public sealed class AppOptionsCliRobustnessTests
         Assert.NotNull(options.InvalidReason);
         Assert.Contains("--data-root", options.InvalidReason, StringComparison.Ordinal);
     }
+
+    // ── REALUSE-DATA-SAFETY-5 AC1 (audit MA-14): --page / --variant must be validated ─────────
+
+    [Theory]
+    [InlineData("bookshelf")]
+    [InlineData("library")]
+    [InlineData("reader")]
+    [InlineData("workbench")]
+    [InlineData("studio")]
+    [InlineData("settings")]
+    [InlineData("console")]
+    public void Parse_AcceptsEveryPageTheShellCanNavigateTo(string page)
+    {
+        var options = AppOptions.Parse(new[] { "--page", page });
+
+        Assert.Null(options.InvalidReason);
+        Assert.Equal(page, options.StartupPage);
+    }
+
+    [Theory]
+    [InlineData("nonsense")]
+    [InlineData("bogshelf")]
+    [InlineData("Reader ")]
+    public void Parse_RejectsAnUnknownPage_InsteadOfSilentlyIgnoringIt(string page)
+    {
+        var options = AppOptions.Parse(new[] { "--page", page });
+
+        Assert.NotNull(options.InvalidReason);
+        Assert.Contains("--page", options.InvalidReason, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("light")]
+    [InlineData("dark")]
+    [InlineData("DARK")]
+    public void Parse_AcceptsTheTwoVariantsTheShellConsumes(string variant)
+    {
+        var options = AppOptions.Parse(new[] { "--variant", variant });
+
+        Assert.Null(options.InvalidReason);
+        Assert.NotNull(options.StartupVariant);
+    }
+
+    [Fact]
+    public void Parse_RejectsAnUnknownVariant()
+    {
+        var options = AppOptions.Parse(new[] { "--variant", "blue" });
+
+        Assert.NotNull(options.InvalidReason);
+        Assert.Contains("--variant", options.InvalidReason, StringComparison.Ordinal);
+    }
 }

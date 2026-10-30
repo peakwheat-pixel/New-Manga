@@ -35,7 +35,12 @@ public static class UserMessages
 {
     public static string Describe(SidecarErrorCode code, string sidecar) => code switch
     {
-        SidecarErrorCode.SidecarBundleMissing => "核心服务目录缺失，无法启动 Python Core。",
+        // REALUSE-DATA-SAFETY-5 AC1 (audit MA-15): the old sentence named neither where the app
+        // looked nor what to do. Relative locations only -- the UI never renders an absolute path.
+        SidecarErrorCode.SidecarBundleMissing =>
+            "核心服务目录缺失，无法启动 Python Core。已依次查找：程序目录下的 core-sidecar、"
+            + "程序目录下的 resources/core-sidecar，以及 --sidecar-dir 或 NEWMANGA_CORE_SIDECAR_DIR 指定的目录。"
+            + "修复：安装包不完整请重装；绿色版请确认 core-sidecar 目录与主程序同级，或显式传 --sidecar-dir。",
         SidecarErrorCode.SidecarExeMissing => $"核心服务程序缺失（{sidecar}.exe）。",
         SidecarErrorCode.SpawnFailed => $"核心服务启动失败（{sidecar}）。已记录诊断日志。",
         SidecarErrorCode.StartupTimeout => $"核心服务启动超时（{sidecar}）。",

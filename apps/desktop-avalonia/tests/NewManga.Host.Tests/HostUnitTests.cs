@@ -180,6 +180,36 @@ public sealed class DataSafetyTests
     }
 
     [Fact]
+    public void FirstRunBackup_IgnoresCorePackages_SoARealBackupStillHappens()
+    {
+        // REALUSE-DATA-SAFETY-5 AC1 (audit MA-18): *.nmbak belongs to the Core package format. A
+        // Core backup sitting in the same directory used to disable the first-run catalog backup
+        // permanently; only our own backups may satisfy the idempotency check.
+        var dataRoot = Path.Combine(Path.GetTempPath(), "nm-b18-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(dataRoot, "catalog"));
+            File.WriteAllText(Path.Combine(dataRoot, "catalog", "catalog.sqlite"), "db");
+            var backups = Path.Combine(dataRoot, "backups");
+            Directory.CreateDirectory(backups);
+            File.WriteAllText(Path.Combine(backups, "core-20260101T000000Z.nmbak"), "core package");
+
+            var result = FirstRunBackup.EnsureBackup(dataRoot, backups);
+
+            Assert.True(result.Created, "a Core .nmbak package must not suppress the catalog backup");
+            Assert.EndsWith(".sqlite-backup", result.FileName, StringComparison.Ordinal);
+            Assert.Single(Directory.EnumerateFiles(backups, "*.sqlite-backup"));
+        }
+        finally
+        {
+            if (Directory.Exists(dataRoot))
+            {
+                Directory.Delete(dataRoot, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public void FirstRunBackup_SkipsWhenNoCatalog()
     {
         var dataRoot = Path.Combine(Path.GetTempPath(), "newmanga-host-backup-empty-" + Guid.NewGuid().ToString("N")[..10]);

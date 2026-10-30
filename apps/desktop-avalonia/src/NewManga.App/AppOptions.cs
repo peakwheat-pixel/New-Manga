@@ -87,6 +87,12 @@ public sealed class AppOptions
         "exit-after", "width", "height",
     };
 
+    /// <summary>REALUSE-DATA-SAFETY-5 AC1: the pages <see cref="App.NavigateStartupPage"/> understands.</summary>
+    private static readonly HashSet<string> AllowedStartupPages = new(StringComparer.Ordinal)
+    {
+        "bookshelf", "library", "reader", "workbench", "studio", "settings", "console",
+    };
+
     /// <summary>Flags that may be written bare (<c>--parity</c> == <c>--parity=true</c>).</summary>
     private static readonly HashSet<string> BooleanSwitchKeys = new(StringComparer.Ordinal)
     {
@@ -243,10 +249,28 @@ public sealed class AppOptions
                 options.Shell = value.Equals("v2", StringComparison.OrdinalIgnoreCase) ? "v2" : "legacy";
                 break;
             case "variant":
-                options.StartupVariant = value;
+                // REALUSE-DATA-SAFETY-5 AC1 (audit MA-14): only light/dark are consumed; a typo used
+                // to be accepted and then silently ignored at startup.
+                if (!value.Equals("light", StringComparison.OrdinalIgnoreCase) &&
+                    !value.Equals("dark", StringComparison.OrdinalIgnoreCase))
+                {
+                    options.InvalidReason = $"--variant must be 'light' or 'dark' (got '{value}')";
+                    return false;
+                }
+
+                options.StartupVariant = value.Equals("light", StringComparison.OrdinalIgnoreCase) ? "light" : "dark";
                 break;
             case "page":
-                options.StartupPage = value;
+                // REALUSE-DATA-SAFETY-5 AC1 (audit MA-14): these are exactly the values
+                // NavigateStartupPage maps to a space; anything else used to reach it and do nothing.
+                if (!AllowedStartupPages.Contains(value.ToLowerInvariant()))
+                {
+                    options.InvalidReason =
+                        $"--page must be one of {string.Join("/", AllowedStartupPages)} (got '{value}')";
+                    return false;
+                }
+
+                options.StartupPage = value.ToLowerInvariant();
                 break;
             case "exit-after":
                 if (!TryParseNonNegativeInt(value, out var exitAfter))

@@ -42,14 +42,22 @@ public static class FirstRunBackup
 
         if (Directory.Exists(backupDirectory))
         {
-            foreach (var existing in Directory.EnumerateFiles(backupDirectory, "*.nmbak"))
+            // REALUSE-DATA-SAFETY-5 AC1 (audit MA-18): this used to skip on ANY *.nmbak, but
+            // .nmbak belongs to the Core's package format (a zip). One Core backup package in the
+            // same directory silently disabled the first-run catalog backup forever. Only files we
+            // wrote ourselves count, including the legacy suffix so existing installs stay idempotent.
+            foreach (var pattern in new[] { "catalog.*.sqlite-backup", "*.sqlite.nmbak" })
             {
-                return new FirstRunBackupResult(false, Path.GetFileName(existing), "backup already exists");
+                foreach (var existing in Directory.EnumerateFiles(backupDirectory, pattern))
+                {
+                    return new FirstRunBackupResult(false, Path.GetFileName(existing), "backup already exists");
+                }
             }
         }
 
         Directory.CreateDirectory(backupDirectory);
-        var fileName = $"catalog.{DateTimeOffset.UtcNow:yyyyMMddTHHmmssZ}.sqlite.nmbak";
+        // A distinct suffix: the Core owns *.nmbak and the two formats must never share a name space.
+        var fileName = $"catalog.{DateTimeOffset.UtcNow:yyyyMMddTHHmmssZ}.sqlite-backup";
         var destination = Path.Combine(backupDirectory, fileName);
         File.Copy(catalog, destination);
         return new FirstRunBackupResult(true, fileName, null);

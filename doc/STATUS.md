@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[REALUSE-DATA-SAFETY-5](tasks/REALUSE-DATA-SAFETY-5.md) `ready`（B3/B4 剩余体验与卫生项），尚未开 worktree。
+- 当前 Task：[REALUSE-DATA-SAFETY-6](tasks/REALUSE-DATA-SAFETY-6.md) `ready`（自查收尾 4 条：进度刷新、derived 冗余、旧库迁移与安装脚本隔离的方案裁决），尚未开 worktree。
 - 上一 Task：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
 - 已合入 main（历史）：A-1 CreateChapter、A-2 IRunController、A-3 66 命令契约、A-5 生产写入策略、D-1 设计系统、C-1 ThemeEngine、B-1..B-4 外壳/Console/Studio/Batch、V11R-INT-0；明细见 `doc/reviews/` 与各 Task 卡。
 - 独立审查报告统一在 `doc/reviews/`（最新：`REALUSE-DATA-SAFETY-1-antigravity-r2.md` PASS）。
