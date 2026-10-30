@@ -212,4 +212,4 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 |---|---|---|
 | `FOLLOW-UP-A11Y-1` | `V11R-A11Y-1`（`d1a794fc0`）：所有 V2 Button/Kbd 可读 UIA 名称 + headless 15 视图回归（修前 123 处红 → 修后 0）+ `tools/e2e/uia-audit.ps1` | 真机 UIA 审计：修前 7 未命名 → **修后 0/21 未命名**；Lead 独立复跑 `21/21 可读, exit 0` |
 | `FOLLOW-UP-E2E-1` | `V11R-E2E-1`（`cedd01ef0`）：`--theme-home <dir>` 隔离主题子系统（settings/themes/favorites）+ `ThemeHome.Resolve` + 11 项测试 | 真机 UIA 应用 -> `<dir>/theme-settings.json` 写入且真实 `%APPDATA%` 零新建/零修改；Lead 复核测试 11/11、接线与真实 appdata 干净 |
-| `FOLLOW-UP-PUB-1` | `V11R-PUB-1`（`5c7783895`）：`tools/build/publish-release.ps1`（singlefile/trimmed/aot + 真实产物 smoke + manifest/sha256 + 诚实 expected-failure）+ `doc/plan/V11R_RELEASE.md` | Lead 独立跑 `-Mode all -AllowTrimAnalysisWarnings -Smoke`：**3/3 PASS**（窗口+Host 就绪+natural exit 0）；`.gitignore` 已显式重新纳入 `tools/build/**` |
+| `FOLLOW-UP-PUB-1` | `V11R-PUB-1`（`5c7783895`）：`tools/ci/publish-release.ps1`（singlefile/trimmed/aot + 真实产物 smoke + manifest/sha256 + 诚实 expected-failure）+ `doc/plan/V11R_RELEASE.md` | Lead 独立跑 `-Mode all -AllowTrimAnalysisWarnings -Smoke`：**3/3 PASS**（窗口+Host 就绪+natural exit 0）；`.gitignore` 已显式重新纳入 `tools/build/**` |
