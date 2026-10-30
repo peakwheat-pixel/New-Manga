@@ -13,7 +13,7 @@ base_commit: b1c1f5a56
 branch: task/REALUSE-DATA-SAFETY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1
 integration_commit: null
-delivery_head: null
+delivery_head: 38f09ac90
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-1
