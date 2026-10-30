@@ -392,6 +392,9 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// Overwrite restore. The Core creates its own <c>pre_restore</c> rollback package first; the
     /// returned id names it. Null when refused (not ready / read-only / active Run / corrupt package).
     /// </summary>
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: retry the removals the Core persisted as failed.</summary>
+    Task<CleanupOutcomeInfo?> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default);
+
     /// <summary>
     /// REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): plugin inventory. The section used to be a
     /// permanent 待接入 placeholder although <c>plugins.list</c> already existed in the registry.
@@ -399,10 +402,10 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Global plugin master switch; false when the Host refused (typed code on the snapshot).</summary>
-    Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default);
+    Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default);
 
     /// <summary>One plugin's switch; a rejected plugin cannot be enabled (Core returns PLUGIN_NOT_LOADED).</summary>
-    Task<bool> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default);
+    Task<bool?> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): read-only cache pre-flight. The Console's

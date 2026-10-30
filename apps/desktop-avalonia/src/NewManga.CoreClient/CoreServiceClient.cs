@@ -565,6 +565,28 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return packages;
     }
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1 (review r1 M5): retry the removals the Core persisted as failed
+    /// (<c>cleanup.retry_pending</c>). Settled entries leave the ledger; repeated failures stay pending.
+    /// </summary>
+    public async Task<CleanupOutcomeInfo> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.retry_pending",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.retry_pending");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.retry_pending result is not an object");
+        }
+
+        return ParseCleanupOutcome(result);
+    }
+
     /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (<c>plugins.list</c>). Read-only.</summary>
     public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
     {
@@ -606,8 +628,12 @@ public sealed class CoreServiceClient : IAsyncDisposable
             plugins);
     }
 
-    /// <summary>REALUSE-DATA-SAFETY-4 AC1: the global plugin master switch (<c>plugins.set_enabled</c>).</summary>
-    public async Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: the global plugin master switch (<c>plugins.set_enabled</c>).
+    /// Returns the Core-confirmed new state, or null when the response was not a projection —
+    /// <c>false</c> is a valid ANSWER ("now off"), not a failure signal (review r1 M1).
+    /// </summary>
+    public async Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
     {
         var response = await SendAsync(
                 "plugins.set_enabled",
@@ -622,13 +648,21 @@ public sealed class CoreServiceClient : IAsyncDisposable
                 cancellationToken)
             .ConfigureAwait(false);
         var result = RequireResult(response, "plugins.set_enabled");
-        return result.ValueKind == JsonValueKind.Object
-            && result.TryGetProperty("global_enabled", out var global)
-            && global.ValueKind == JsonValueKind.True;
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("global_enabled", out var global)
+            || (global.ValueKind != JsonValueKind.True && global.ValueKind != JsonValueKind.False))
+        {
+            return null;
+        }
+
+        return global.ValueKind == JsonValueKind.True;
     }
 
-    /// <summary>REALUSE-DATA-SAFETY-4 AC1: one plugin's switch (<c>plugins.set_plugin_enabled</c>).</summary>
-    public async Task<bool> SetPluginEnabledAsync(
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: one plugin's switch (<c>plugins.set_plugin_enabled</c>). Returns the
+    /// confirmed new state, or null when the Core refused (unknown / rejected plugin).
+    /// </summary>
+    public async Task<bool?> SetPluginEnabledAsync(
         string pluginId,
         bool enabled,
         CancellationToken cancellationToken = default)
@@ -647,9 +681,14 @@ public sealed class CoreServiceClient : IAsyncDisposable
                 cancellationToken)
             .ConfigureAwait(false);
         var result = RequireResult(response, "plugins.set_plugin_enabled");
-        return result.ValueKind == JsonValueKind.Object
-            && result.TryGetProperty("enabled", out var value)
-            && value.ValueKind == JsonValueKind.True;
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("enabled", out var value)
+            || (value.ValueKind != JsonValueKind.True && value.ValueKind != JsonValueKind.False))
+        {
+            return null;
+        }
+
+        return value.ValueKind == JsonValueKind.True;
     }
 
     private static string ReadPluginString(JsonElement element, string name) =>
@@ -732,6 +771,11 @@ public sealed class CoreServiceClient : IAsyncDisposable
             throw Malformed("cleanup.run result is not an object");
         }
 
+        return ParseCleanupOutcome(result);
+    }
+
+    private static CleanupOutcomeInfo ParseCleanupOutcome(JsonElement result)
+    {
         var failedPaths = new List<string>();
         if (result.TryGetProperty("items", out var items) && items.ValueKind == JsonValueKind.Object)
         {

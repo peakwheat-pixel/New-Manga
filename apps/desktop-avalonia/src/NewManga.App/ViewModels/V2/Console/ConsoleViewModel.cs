@@ -176,6 +176,7 @@ public sealed class ConsoleViewModel : ObservableObject
         OpenStudioCommand = new RelayCommand(() => _openStudio());
         RequestClearCacheCommand = new RelayCommand(RequestClearCache);
         RefreshCleanupPreviewCommand = new RelayCommand(() => _ = RefreshCleanupPreviewAsync());
+        RetryPendingCleanupsCommand = new RelayCommand(RequestRetryPendingCleanups);
         RefreshPluginsCommand = new RelayCommand(() => _ = RefreshPluginsAsync());
         ToggleGlobalPluginsCommand = new RelayCommand(RequestToggleGlobalPlugins);
         GoToProvidersCommand = new RelayCommand(() => SelectSectionById(ConsoleSectionId.Providers));
@@ -328,13 +329,11 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public RelayCommand ToggleGlobalPluginsCommand { get; private set; } = null!;
 
-    public async Task RefreshPluginsAsync()
-    {
-        if (IsPluginsBusy)
-        {
-            return;
-        }
+    public Task RefreshPluginsAsync() =>
+        IsPluginsBusy ? Task.CompletedTask : RefreshPluginsCoreAsync();
 
+    private async Task RefreshPluginsCoreAsync()
+    {
         IsPluginsBusy = true;
         try
         {
@@ -378,16 +377,16 @@ public sealed class ConsoleViewModel : ObservableObject
         IsPluginsBusy = true;
         try
         {
-            var ok = await _controller.SetPluginsGlobalEnabledAsync(enabled).ConfigureAwait(true);
-            if (!ok)
+            var confirmed = await _controller.SetPluginsGlobalEnabledAsync(enabled).ConfigureAwait(true);
+            if (confirmed is null)
             {
                 _notify($"插件全局开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
                 return;
             }
 
-            PluginsLastResult = enabled ? "全局插件已启用（Core 确认）" : "全局插件已停用（Core 确认）";
+            PluginsLastResult = confirmed.Value ? "全局插件已启用（Core 确认）" : "全局插件已停用（Core 确认）";
             _notify(PluginsLastResult, NmStatus.Done);
-            await RefreshPluginsAsync().ConfigureAwait(true);
+            await RefreshPluginsCoreAsync().ConfigureAwait(true);
         }
         finally
         {
@@ -419,16 +418,16 @@ public sealed class ConsoleViewModel : ObservableObject
         IsPluginsBusy = true;
         try
         {
-            var ok = await _controller.SetPluginEnabledAsync(pluginId, enabled).ConfigureAwait(true);
-            if (!ok)
+            var confirmed = await _controller.SetPluginEnabledAsync(pluginId, enabled).ConfigureAwait(true);
+            if (confirmed is null)
             {
                 _notify($"插件开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
                 return;
             }
 
-            PluginsLastResult = enabled ? $"插件「{name}」已启用（Core 确认）" : $"插件「{name}」已停用（Core 确认）";
+            PluginsLastResult = confirmed.Value ? $"插件「{name}」已启用（Core 确认）" : $"插件「{name}」已停用（Core 确认）";
             _notify(PluginsLastResult, NmStatus.Done);
-            await RefreshPluginsAsync().ConfigureAwait(true);
+            await RefreshPluginsCoreAsync().ConfigureAwait(true);
         }
         finally
         {
@@ -448,9 +447,14 @@ public sealed class ConsoleViewModel : ObservableObject
     public bool HasDetectionProvider =>
         ProviderProfiles.Any(profile => profile.Enabled && profile.SupportsDetection);
 
-    public string DetectionReadinessText => HasDetectionProvider
-        ? "检测能力：已有启用且声明「检测」的 Provider，检测步骤可以提交。"
-        : "检测能力：未绑定——提交检测会失败并返回 PROVIDER_NOT_CONFIGURED（请到「Provider 与凭据」新建或启用一个声明「检测」的 Provider）。";
+    /// <summary>Review r1 M4: an unloaded provider list is "unknown", never "unbound".</summary>
+    private bool _providersLoaded;
+
+    public string DetectionReadinessText => !_providersLoaded
+        ? "检测能力：Provider 列表尚未读取，暂时无法判断（切换到「Provider 与凭据」会自动加载）。"
+        : HasDetectionProvider
+            ? "检测能力：已有启用且声明「检测」的 Provider，检测步骤可以提交。"
+            : "检测能力：未绑定——提交检测会失败并返回 PROVIDER_NOT_CONFIGURED（请到「Provider 与凭据」新建或启用一个声明「检测」的 Provider）。";
 
     public string DeviceStatusText =>
         "设备与权重：Core 尚未暴露设备/权重状态命令，因此这里不显示 GPU/CPU 或权重就绪与否；" +
@@ -468,6 +472,9 @@ public sealed class ConsoleViewModel : ObservableObject
     public ObservableCollection<CleanupTargetRowViewModel> CleanupTargets { get; } = new();
 
     public bool HasCleanupTargets => CleanupTargets.Count > 0;
+
+    /// <summary>Review r1 M3: pending removals survive an empty target list, so they need their own flag.</summary>
+    public bool HasCleanupPending => !string.IsNullOrWhiteSpace(_cleanupPendingText);
 
     public bool IsCleanupBusy
     {
@@ -498,14 +505,15 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public RelayCommand RefreshCleanupPreviewCommand { get; private set; } = null!;
 
-    /// <summary>Read-only pre-flight; the Confirm gate below is what actually deletes.</summary>
-    public async Task RefreshCleanupPreviewAsync()
-    {
-        if (IsCleanupBusy)
-        {
-            return;
-        }
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1 (review r1 M5): retry the Core's persisted failed removals.</summary>
+    public RelayCommand RetryPendingCleanupsCommand { get; private set; } = null!;
 
+    /// <summary>Read-only pre-flight; the Confirm gate below is what actually deletes.</summary>
+    public Task RefreshCleanupPreviewAsync() =>
+        IsCleanupBusy ? Task.CompletedTask : RefreshCleanupPreviewCoreAsync();
+
+    private async Task RefreshCleanupPreviewCoreAsync()
+    {
         IsCleanupBusy = true;
         try
         {
@@ -522,7 +530,7 @@ public sealed class ConsoleViewModel : ObservableObject
             CleanupPendingText = preview.PendingCleanups == 0
                 ? string.Empty
                 : $"另有 {preview.PendingCleanups} 处上次删除失败，仍待重试（Core 已记录）";
-            OnPropertyChanged(nameof(HasCleanupTargets));
+            OnPropertyChanged(nameof(HasCleanupTargets), nameof(HasCleanupPending));
         }
         finally
         {
@@ -563,7 +571,7 @@ public sealed class ConsoleViewModel : ObservableObject
                 ? $"已清理 {outcome.Removed} 个文件（跳过 {outcome.Skipped}）"
                 : $"已清理 {outcome.Removed} 个，失败 {outcome.Failed} 个（失败项已记录，可重试）";
             _notify(CleanupLastResult!, outcome.Failed == 0 ? NmStatus.Done : NmStatus.Failed);
-            await RefreshCleanupPreviewAsync().ConfigureAwait(true);
+            await RefreshCleanupPreviewCoreAsync().ConfigureAwait(true);
         }
         finally
         {
@@ -572,6 +580,46 @@ public sealed class ConsoleViewModel : ObservableObject
     }
 
     // ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ──────────────────────────
+
+    private void RequestRetryPendingCleanups()
+    {
+        if (!HasCleanupPending)
+        {
+            _notify("没有待重试的失败项", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "重试上次删除失败的项",
+            "只会重试 Core 记录的失败项（不扩大清理范围）；成功的项会从待重试列表移除，仍失败的会保留。",
+            "重试",
+            IsDanger: true,
+            OnConfirm: () => _ = RetryPendingCleanupsAsync()));
+    }
+
+    private async Task RetryPendingCleanupsAsync()
+    {
+        IsCleanupBusy = true;
+        try
+        {
+            var outcome = await _controller.RetryPendingCleanupsAsync().ConfigureAwait(true);
+            if (outcome is null)
+            {
+                _notify($"重试被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            CleanupLastResult = outcome.Failed == 0
+                ? $"重试完成：{outcome.Removed} 个已删除，待重试项已清空"
+                : $"重试完成：{outcome.Removed} 个已删除，仍有 {outcome.Failed} 个失败";
+            _notify(CleanupLastResult, outcome.Failed == 0 ? NmStatus.Done : NmStatus.Failed);
+            await RefreshCleanupPreviewCoreAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
 
     public bool IsBackupSection => _selectedSection.Id == ConsoleSectionId.Backup;
 
@@ -2314,6 +2362,7 @@ public sealed class ConsoleViewModel : ObservableObject
         }
 
             // REALUSE-DATA-SAFETY-4 AC2: the devices section derives its only answer from this list.
+            _providersLoaded = true;
             OnPropertyChanged(nameof(HasDetectionProvider), nameof(DetectionReadinessText));
 
         ProviderNetworkOptions.Clear();

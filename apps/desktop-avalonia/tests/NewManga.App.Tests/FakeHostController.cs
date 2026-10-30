@@ -1361,26 +1361,26 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(PluginList);
     }
 
-    public Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    public Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
     {
         PluginGlobalToggleCalls++;
         if (PluginWriteRefused)
         {
             PublishLastError("HOST_READ_ONLY");
-            return Task.FromResult(false);
+            return Task.FromResult<bool?>(null);
         }
 
         PluginList = PluginList with { GlobalEnabled = enabled };
-        return Task.FromResult(true);
+        return Task.FromResult<bool?>(enabled);
     }
 
-    public Task<bool> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default)
+    public Task<bool?> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default)
     {
         PluginToggleCalls++;
         if (PluginWriteRefused)
         {
             PublishLastError("HOST_READ_ONLY");
-            return Task.FromResult(false);
+            return Task.FromResult<bool?>(null);
         }
 
         PluginList = PluginList with
@@ -1391,7 +1391,7 @@ public sealed class FakeHostController : IHostController
                     : plugin)
                 .ToArray(),
         };
-        return Task.FromResult(true);
+        return Task.FromResult<bool?>(enabled);
     }
 
     /// <summary>REALUSE-DATA-SAFETY-4 AC1: scriptable cleanup face (preview/run counters + outcome).</summary>
@@ -1407,6 +1407,16 @@ public sealed class FakeHostController : IHostController
 
     public CleanupOutcomeInfo CleanupOutcome { get; set; } =
         new(1, 0, 0, Array.Empty<string>());
+
+    public int CleanupRetryCalls { get; private set; }
+
+    public CleanupOutcomeInfo CleanupRetryOutcome { get; set; } = new(1, 0, 0, Array.Empty<string>());
+
+    public Task<CleanupOutcomeInfo?> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        CleanupRetryCalls++;
+        return Task.FromResult<CleanupOutcomeInfo?>(CleanupRetryOutcome);
+    }
 
     public Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
     {

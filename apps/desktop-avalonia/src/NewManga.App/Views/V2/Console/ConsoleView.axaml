@@ -162,7 +162,11 @@
               <Button Grid.Column="2" Classes="danger sm" Content="清理" Command="{Binding RequestClearCacheCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
             </Grid>
 
-            <TextBlock Classes="meta" Text="{Binding CleanupPendingText}" TextWrapping="Wrap" IsVisible="{Binding HasCleanupTargets}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasCleanupPending}">
+              <TextBlock Classes="meta" Text="{Binding CleanupPendingText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="重试失败项"
+                      Command="{Binding RetryPendingCleanupsCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+            </Grid>
 
             <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasCleanupTargets}">
               <StackPanel Spacing="{DynamicResource Nm.Space.2}">

@@ -1642,34 +1642,34 @@ public sealed class HostController : IHostController
         }
     }
 
-    public async Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    public async Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
     {
         if (_runtime is null || !_runtime.Result.IsReady)
         {
             SetLastError("HOST_NOT_READY");
-            return false;
+            return null;
         }
 
         if (!_runtime.Policy.WritesAllowed)
         {
             SetLastError("HOST_READ_ONLY");
-            return false;
+            return null;
         }
 
         try
         {
-            var value = await _runtime.SetPluginsGlobalEnabledAsync(enabled, cancellationToken).ConfigureAwait(false);
+            bool? value = await _runtime.SetPluginsGlobalEnabledAsync(enabled, cancellationToken).ConfigureAwait(false);
             SetLastError(null);
             return value;
         }
         catch (Exception ex) when (IsUiFacingFailure(ex))
         {
             SetLastError(ErrorCodeOf(ex));
-            return false;
+            return null;
         }
     }
 
-    public async Task<bool> SetPluginEnabledAsync(
+    public async Task<bool?> SetPluginEnabledAsync(
         string pluginId,
         bool enabled,
         CancellationToken cancellationToken = default)
@@ -1677,31 +1677,31 @@ public sealed class HostController : IHostController
         if (string.IsNullOrWhiteSpace(pluginId))
         {
             SetLastError("INVALID_REQUEST");
-            return false;
+            return null;
         }
 
         if (_runtime is null || !_runtime.Result.IsReady)
         {
             SetLastError("HOST_NOT_READY");
-            return false;
+            return null;
         }
 
         if (!_runtime.Policy.WritesAllowed)
         {
             SetLastError("HOST_READ_ONLY");
-            return false;
+            return null;
         }
 
         try
         {
-            var value = await _runtime.SetPluginEnabledAsync(pluginId, enabled, cancellationToken).ConfigureAwait(false);
+            bool? value = await _runtime.SetPluginEnabledAsync(pluginId, enabled, cancellationToken).ConfigureAwait(false);
             SetLastError(null);
             return value;
         }
         catch (Exception ex) when (IsUiFacingFailure(ex))
         {
             SetLastError(ErrorCodeOf(ex));
-            return false;
+            return null;
         }
     }
 
@@ -1745,6 +1745,33 @@ public sealed class HostController : IHostController
         try
         {
             var outcome = await _runtime.RunCleanupAsync(cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return outcome;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<CleanupOutcomeInfo?> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var outcome = await _runtime.RetryPendingCleanupsAsync(cancellationToken).ConfigureAwait(false);
             SetLastError(null);
             return outcome;
         }

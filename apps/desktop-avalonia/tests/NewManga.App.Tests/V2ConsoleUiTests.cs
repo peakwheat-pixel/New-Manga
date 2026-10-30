@@ -928,4 +928,118 @@ public sealed class V2ConsoleUiTests
         Assert.Contains("PROVIDER_NOT_CONFIGURED", console.DetectionReadinessText, StringComparison.Ordinal);
         window.Close();
     }
+
+    // ── REALUSE-DATA-SAFETY-4 review r1: the five defects the first review found ──────────────
+
+    /// <summary>
+    /// r1 M1: the Core echoes the NEW state, so `{"enabled": false}` is a successful "now off".
+    /// The first implementation treated it as a failure and made plugins impossible to disable.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task PluginsSection_DisablingAPlugin_IsReportedAsSuccess()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        var row = Assert.Single(console.Plugins);
+        Assert.True(row.Enabled);
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("已停用", console.PluginsLastResult ?? string.Empty, StringComparison.Ordinal);
+        Assert.DoesNotContain("被拒绝", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>
+    /// r1 M2: the write set the busy flag and then asked for a refresh, which the flag rejected —
+    /// the list stayed on the pre-write state. The refresh must actually run.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task PluginsSection_RefreshAfterToggle_ActuallyReloadsTheList()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+        var before = fake.PluginListCalls;
+
+        console.ToggleGlobalPluginsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginGlobalToggleCalls == 1);
+        await WaitUntilAsync(() => fake.PluginListCalls > before);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.PluginListCalls > before, "the post-write refresh must not be skipped by the busy flag");
+        Assert.False(console.PluginsGlobalEnabled);
+        window.Close();
+    }
+
+    /// <summary>
+    /// r1 M3: pending failures outlive the target list; they must stay visible when the preview is
+    /// empty, otherwise the only trace of a failed cleanup disappears.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task StorageSection_PendingFailures_StayVisibleWithAnEmptyTargetList()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 2);
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasCleanupTargets);
+        Assert.True(console.HasCleanupPending, "pending retries must not hide behind an empty target list");
+        Assert.Contains("2 处上次删除失败", console.CleanupPendingText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>r1 M5: the Core already had cleanup.retry_pending; the UI must let the user reach it.</summary>
+    [AvaloniaFact]
+    public async Task StorageSection_RetriesPersistedFailuresThroughTheConfirmGate()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 1);
+        fake.CleanupRetryOutcome = new CleanupOutcomeInfo(1, 0, 0, Array.Empty<string>());
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        console.RetryPendingCleanupsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Equal(0, fake.CleanupRetryCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.CleanupRetryCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("待重试项已清空", console.CleanupLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>r1 M4: an unloaded provider list must read as unknown, never as "not bound".</summary>
+    [AvaloniaFact]
+    public async Task DevicesSection_SaysUnknown_BeforeAnyProviderListArrives()
+    {
+        // A shell whose Host is not ready never loads providers, so the section must not claim "unbound".
+        var notReady = new FakeHostController(new HostViewSnapshot(
+            HostViewState.Starting, "正在启动 Host…", "—", null, null,
+            Array.Empty<BookSummary>(), 0, true, null));
+        var window = new Window { Width = 1600, Height = 1000, Content = new AppShellV2(notReady), Background = Brushes.Black };
+        window.Show();
+        var shell = (AppShellV2)window.Content!;
+        await shell.Initialization;
+        shell.ViewModel.Console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("尚未读取", shell.ViewModel.Console.DetectionReadinessText, StringComparison.Ordinal);
+        window.Close();
+    }
 }
