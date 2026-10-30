@@ -30,6 +30,9 @@ public sealed class HostGrantCoordinator
     private readonly CoreServiceClient _core;
     private readonly string _dataRoot;
     private readonly string _evidenceDirectory;
+
+    /// <summary>REALUSE-DATA-SAFETY-5 AC2: how many grants evidence records survive a prune.</summary>
+    private const int EvidenceRetentionLimit = 200;
     private readonly TimeSpan _timeout;
     private readonly Action<string> _openDirectory;
     private readonly List<string> _sessionExportDirectories = new();
@@ -515,6 +518,43 @@ public sealed class HostGrantCoordinator
             File.WriteAllText(
                 Path.Combine(_evidenceDirectory, $"{operation}-{DateTime.UtcNow:yyyyMMddTHHmmssfff}.json"),
                 record.GetRawText());
+                PruneEvidence();
+        }
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-5 AC2 (audit MA-22): the grants evidence directory grew without bound --
+    /// one JSON per import/export, 169 files for a 169-page book. Keep the newest records so the
+    /// directory stays inspectable without becoming a disk leak; pruning never breaks the operation
+    /// that triggered it.
+    /// </summary>
+    private void PruneEvidence()
+    {
+        try
+        {
+            var files = new System.IO.DirectoryInfo(_evidenceDirectory).GetFiles("*.json");
+            if (files.Length <= EvidenceRetentionLimit)
+            {
+                return;
+            }
+
+            foreach (var stale in files
+                         .OrderByDescending(file => file.LastWriteTimeUtc)
+                         .Skip(EvidenceRetentionLimit))
+            {
+                try
+                {
+                    stale.Delete();
+                }
+                catch (Exception exception) when (exception is System.IO.IOException or UnauthorizedAccessException)
+                {
+                    // Evidence is diagnostic: a locked file must not fail the user's operation.
+                }
+            }
+        }
+        catch (Exception exception) when (exception is System.IO.IOException or UnauthorizedAccessException)
+        {
+            // Same rule for the directory scan.
         }
     }
 

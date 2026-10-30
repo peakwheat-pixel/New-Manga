@@ -32,7 +32,7 @@
   两者经严格请求/响应的 typed JSON IPC 通信，无网络监听。
 - 用户数据根 `%APPDATA%\com.newmanga.desktop`（书库、托管副本、缓存、导出、日志）；安装/卸载**不会**删除或改写它。
 - 四个一级页面：书架 / 工作台 / 阅读器 / 设置。
-- **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.nmbak`，幂等不覆盖）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
+- **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.sqlite-backup`，幂等不覆盖；`.nmbak` 是 Core 的备份包格式，两者不再共用命名空间）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
 - 构建：需 .NET 9 SDK、Python 3.11、NSIS 3.x、PowerShell 7；模型权重不随 Git 仓库分发，
   `-models` 发行包内置权重，base 包首次检测会以 typed `PROVIDER_NOT_CONFIGURED` 提示。
 - 测试基线（2026-10-28）：.NET 258/258（0 skipped）、pytest 2773P/10S/0F、typed IPC 命令 66/66。

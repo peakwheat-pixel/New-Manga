@@ -79,7 +79,6 @@ allowed_paths:
 | E-AC1-BATCH | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs` | `PENDING` | `-` | CANONICAL |
 | E-AC1-BACKUP | AC1 | `apps/desktop-avalonia/src/NewManga.Host/DataSafety.cs` | `PENDING` | `-` | CANONICAL |
 | E-AC1-DOCS | AC1 | `README.md` | `PENDING` | `-` | CANONICAL |
-| E-AC3-RECORD | AC3 | `DEFECTS.md`（仓外 G:/CODEX/New Manga.workspace/tmp/self-audit） | `PENDING` | `-` | SUPPORTING |
 
 ## Resource Manifest
 
