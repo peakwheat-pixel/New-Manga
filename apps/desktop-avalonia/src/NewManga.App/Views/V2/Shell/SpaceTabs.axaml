@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             xmlns:automation="using:Avalonia.Automation"
              x:Class="NewManga.App.Views.V2.Shell.SpaceTabs"
              x:DataType="vm:AppShellViewModel">
   <!-- SpaceTabs (contract §6.2): three spaces, each with its Ctrl+N hint; active = accent outline. -->
@@ -15,6 +16,7 @@
       <DataTemplate x:DataType="vm:SpaceTabItem">
         <Button Classes="spacetab"
                 Classes.active="{Binding IsActive}"
+                automation:AutomationProperties.Name="{Binding AutomationName}"
                 Command="{Binding ActivateCommand}"
                 ToolTip.Tip="{Binding Label}">
           <StackPanel Orientation="Horizontal"

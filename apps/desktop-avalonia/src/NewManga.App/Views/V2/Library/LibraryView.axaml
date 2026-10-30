@@ -3,6 +3,7 @@
              xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
              xmlns:lv="using:NewManga.App.Views.V2.Library"
+             xmlns:automation="using:Avalonia.Automation"
              x:Class="NewManga.App.Views.V2.Library.LibraryView"
              x:DataType="vm:LibraryViewModel">
   <!-- Library space (screen spec §2): search(中文/拼音首字母) + sort + filter chips + PageGrid of book
@@ -80,6 +81,7 @@
               <DataTemplate x:DataType="vm:BookRowViewModel">
                 <Button Classes="bookcard"
                         Classes.selected="{Binding IsSelected}"
+                        automation:AutomationProperties.Name="{Binding AutomationName}"
                         Command="{Binding SelectCommand}"
                         ToolTip.Tip="{Binding Title}">
                   <Border Classes="card" Padding="{DynamicResource Nm.Padding.Card}">

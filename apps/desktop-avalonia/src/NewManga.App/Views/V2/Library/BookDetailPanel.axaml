@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             xmlns:automation="using:Avalonia.Automation"
              x:Class="NewManga.App.Views.V2.Library.BookDetailPanel"
              x:DataType="vm:LibraryViewModel">
   <!-- 驻留详情面板（screen spec §2）：作品元信息 / 章节账本 / 页数 / 阅读进度 / 操作。
@@ -99,6 +100,7 @@
                 <DataTemplate x:DataType="vm:ChapterRowViewModel">
                   <Button Classes="detailrow"
                           Classes.selected="{Binding IsSelected}"
+                          automation:AutomationProperties.Name="{Binding AutomationName}"
                           Command="{Binding SelectCommand}"
                           ToolTip.Tip="{Binding Title}">
                     <Grid ColumnDefinitions="Auto,*,Auto"

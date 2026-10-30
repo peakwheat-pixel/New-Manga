@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Automation;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
@@ -146,6 +148,10 @@ public sealed class Chip : Border
 }
 
 /// <summary>Keyboard key cap (contract §3.2 `Kbd`): mono gesture text in a hairline cap.</summary>
+/// <remarks>
+/// V11R-A11Y-1: a key cap is decorative visually but must publish the gesture as its accessible name;
+/// without a peer it would surface a CLR type name (or nothing) to UI Automation.
+/// </remarks>
 public sealed class Kbd : Border
 {
     /// <summary>The key gesture to display, e.g. <c>Ctrl+K</c>.</summary>
@@ -169,6 +175,9 @@ public sealed class Kbd : Border
         set => SetValue(GestureProperty, value);
     }
 
+    /// <summary>The gesture announced to assistive technology.</summary>
+    public string AccessibleName => string.IsNullOrWhiteSpace(Gesture) ? "快捷键" : $"快捷键 {Gesture}";
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -178,5 +187,23 @@ public sealed class Kbd : Border
         }
     }
 
-    private void Apply() => _text.Text = Gesture;
+    protected override AutomationPeer OnCreateAutomationPeer() => new KbdAutomationPeer(this);
+
+    private void Apply()
+    {
+        _text.Text = Gesture;
+        AutomationProperties.SetName(this, AccessibleName);
+    }
+
+    private sealed class KbdAutomationPeer : ControlAutomationPeer
+    {
+        public KbdAutomationPeer(Control owner)
+            : base(owner)
+        {
+        }
+
+        protected override string GetClassNameCore() => "Kbd";
+
+        protected override string GetNameCore() => ((Kbd)Owner).AccessibleName;
+    }
 }

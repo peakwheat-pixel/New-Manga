@@ -21,6 +21,9 @@ public sealed class SpaceTabItem : ObservableObject
 
     public string Shortcut { get; }
 
+    /// <summary>V11R-A11Y-1: space-tab action name for UI Automation (Content is a StackPanel).</summary>
+    public string AutomationName => $"{Label}空间";
+
     public RelayCommand ActivateCommand { get; }
 
     public bool IsActive

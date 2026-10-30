@@ -238,6 +238,9 @@ public sealed class AppShellViewModel : ObservableObject
         }
     }
 
+    /// <summary>V11R-A11Y-1: action-oriented automation name for the scope flyout trigger.</summary>
+    public string ScopeAutomationName => $"作用域：{ScopeText}";
+
     public bool IsOverlayOpen => State.HasOverlay;
 
     public bool IsReaderSurfaceVisible => State.IsReaderOpen;
