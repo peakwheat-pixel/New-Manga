@@ -46,6 +46,8 @@
 
 READY 节点：无
 
+当前 DAG：REALUSE-DATA-SAFETY-4（in_review，待独立审查；审查通过后由 DSH 集成）
+
 ## 历史快照（终态节点，非当前 DAG）
 
 已终止节点共 370+ 项（GOV-*、SETTINGS-OPEN-*、PLUGIN-*、UIUX-V2-*、PRODUCT-IDENTITY-1、HOST-CORECLIENT-1 等），明细以 [TASK_LEDGER](TASK_LEDGER.md) 与各 Task 卡为准；本 Plan 不再逐行复制历史注解。仍影响当前决策的终态约束：
