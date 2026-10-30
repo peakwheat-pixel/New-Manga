@@ -21,7 +21,7 @@ depends_on:
 base_commit: b8039aec8
 branch: task/REALUSE-DATA-SAFETY-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
-integration_commit: PENDING
+integration_commit: 7e9e5ddc4
 delivery_head: 37dcd6d9f
 canonical_evidence_status: complete
 resource_closeout_status: complete
