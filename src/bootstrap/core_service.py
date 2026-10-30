@@ -233,7 +233,9 @@ from infrastructure.resource_channel.catalog_store import (
     PreviewOrigin,
     ResourceCatalogStore,
     initialize_namespace,
+    rebind_namespace,
     restore_namespace_lock,
+    verify_binding_for_root,
 )
 from infrastructure.resource_channel.handle_resolver import (
     ManagedRootTrust,
@@ -5531,13 +5533,66 @@ class CoreServiceServer:
             self._stdout.flush()
 
 
+#: Binding failures that mean "this data root moved" rather than "this catalog is
+#: unusable": the binding records the old volume/file identities, so a copied,
+#: restored or relocated data root can never match them. Every other namespace
+#: error (foreign schema, missing table, unreadable identity) must still abort.
+_BINDING_MISMATCH_MARKERS = (
+    "different derived root",
+    "different catalog identity",
+    "namespace binding identity mismatch",
+    "namespace lock and catalog bindings differ",
+)
+
+
+def _is_binding_mismatch(error: BaseException) -> bool:
+    text = str(error)
+    return any(marker in text for marker in _BINDING_MISMATCH_MARKERS)
+
+
 def _ensure_preview_namespace(catalog_db: Path, derived_root: Path) -> None:
+    """Bind (or re-bind after migration) the preview namespace before serving.
+
+    REALUSE-DATA-SAFETY-1 AC1: a data root that was copied, restored from a
+    whole-directory backup or moved to a new machine carries a lock/catalog
+    binding with the OLD filesystem identities. The frozen initializer refuses
+    such a binding, which used to abort the sidecar before it could serve; the
+    rebind refreshes only the identities and keeps all catalog rows.
+
+    The self-heal is deliberately narrow: it runs ONLY when the lock is
+    readable and its binding agrees with the catalog row, i.e. both halves of
+    the binding travelled together (the whole-directory copy/restore case).
+    A damaged/unreadable/absent lock or a lock that contradicts the catalog is
+    still a typed refusal -- nothing proves it is a migration rather than
+    tampering (tests/core/test_core_namespace_bootstrap.py pins that).
+    """
+
     if catalog_db.exists():
-        if read_lock_binding_if_any(str(derived_root)) is not None:
-            return
+        binding = read_lock_binding_if_any(str(derived_root))
+        if binding is not None:
+            try:
+                verify_binding_for_root(binding, catalog_db, derived_root)
+                return
+            except TypedResourceChannelError as error:
+                if not _is_binding_mismatch(error):
+                    raise
+                _rebind_after_migration(catalog_db, derived_root, error)
+                return
         if restore_namespace_lock(catalog_db, derived_root):
             return
     initialize_namespace(catalog_db, derived_root)
+
+
+def _rebind_after_migration(
+    catalog_db: Path, derived_root: Path, error: BaseException
+) -> None:
+    binding = rebind_namespace(catalog_db, derived_root, reason=str(error))
+    print(
+        "[core.namespace] data root identity changed ("
+        f"{error}); re-bound preview namespace: derived_root={binding.derived_root}",
+        file=sys.stderr,
+        flush=True,
+    )
 
 
 def main() -> int:
