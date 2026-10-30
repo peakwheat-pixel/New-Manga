@@ -306,6 +306,7 @@ public sealed class StudioBatchViewModel : StudioObservable
     private readonly IHostController _host;
     private readonly StudioPageViewModel _page;
     private readonly IRunController? _controller;
+    private readonly Action<string>? _onRunTracked;
     private readonly TimeSpan _pollInterval;
     private readonly IRunDataSource _dataSource;
     private bool _polling;
@@ -334,13 +335,17 @@ public sealed class StudioBatchViewModel : StudioObservable
         StudioSelection selection,
         StudioPageViewModel page,
         IRunController? controller,
-        TimeSpan? pollInterval = null)
+        TimeSpan? pollInterval = null,
+        Action<string>? onRunTracked = null)
     {
         _host = host;
         Selection = selection;
         _page = page;
         _controller = controller ?? host as IRunController;
         _pollInterval = pollInterval ?? TimeSpan.FromMilliseconds(750);
+        // REALUSE-DATA-SAFETY-3 AC2 (MA-07): a Run created here must be reachable from the Console
+        // without copying its id, so the shell's shared Run index is told about it.
+        _onRunTracked = onRunTracked;
         _dataSource = _controller is null
             ? NotWiredRunDataSource.Instance
             : new RunControllerRunDataSource(_controller, () => _runId);
@@ -1122,6 +1127,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         Raise(nameof(NeedsProviderSetup));
 
         SetRunId(started.RunId);
+        _onRunTracked?.Invoke(started.RunId);
         _intentIdempotencyKey = null;
         Raise(nameof(CurrentIntentKey));
         _statusText = $"已创建 Run {started.RunId}（{started.Status}）";

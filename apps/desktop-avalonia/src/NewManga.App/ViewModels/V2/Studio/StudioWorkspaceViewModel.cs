@@ -19,12 +19,14 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
         StudioSelection? selection = null,
         IRunDataSource? runSource = null,
         IRegionTextSource? textSource = null,
-        IRegionFlagSource? flagSource = null)
+        IRegionFlagSource? flagSource = null,
+        Action<string>? onRunTracked = null)
     {
         Selection = selection ?? new StudioSelection();
         Page = new StudioPageViewModel(host, Selection, runSource, textSource, flagSource);
         Host = host;
-        Batch = new StudioBatchViewModel(host, Selection, Page, host as IRunController);
+        // REALUSE-DATA-SAFETY-3 AC2: Runs created in Batch mode feed the shell's shared Run index.
+        Batch = new StudioBatchViewModel(host, Selection, Page, host as IRunController, onRunTracked: onRunTracked);
         Export = new StudioExportViewModel(host, Selection, Page);
         Terms = new StudioTermsViewModel();
     }

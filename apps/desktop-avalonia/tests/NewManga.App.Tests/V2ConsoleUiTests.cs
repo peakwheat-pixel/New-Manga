@@ -656,4 +656,39 @@ public sealed class V2ConsoleUiTests
         Assert.Contains("restore:aaaabbbbccccddddeeeeffff00001111", fake.BackupCalls);
         Assert.Contains("回滚点", console.BackupLastResult, StringComparison.Ordinal);
     }
+
+    // ── REALUSE-DATA-SAFETY-3 AC2 (audit MA-07) ─────────────────────────────────────────────
+
+    /// <summary>
+    /// A Run the session saw must be clickable in "任务与队列" instead of asking the user to copy a
+    /// run_id from another window. The list is a memory aid over real ids; clicking one still loads
+    /// through the normal Host read.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task TasksSection_ListsRunsThisSessionSaw_AndClickFillsTheInput()
+    {
+        var (window, shell, console) = await HostInConsoleAsync(Fixture());
+        console.SelectSectionById(ConsoleSectionId.Tasks);
+        Dispatcher.UIThread.RunJobs();
+
+        // Nothing invented: a fresh session shows the honest empty hint, not a fake list.
+        Assert.False(console.HasKnownRuns);
+        Assert.Contains("本会话还没有出现过 Run", console.KnownRunsHint, StringComparison.Ordinal);
+
+        // The shell records a Run the session actually obtained (Studio Batch does this on start).
+        shell.ViewModel.TrackRun("run-session-7");
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(console.HasKnownRuns);
+        var row = Assert.Single(console.KnownRuns);
+        Assert.Equal("run-session-7", row.RunId);
+        Assert.True(row.IsMostRecent);
+
+        row.SelectCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal("run-session-7", console.RunIdInput);
+
+        window.Close();
+    }
 }

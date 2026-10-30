@@ -21,6 +21,17 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     private bool _pollingEnabled = true;
     private Task? _inFlight;
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2 (audit MA-07): the Console's "任务与队列" section required the user
+    /// to type a run_id by hand because the frozen contract has no "list runs" command. Remembering
+    /// the run ids this session has actually seen is not a fabricated list — every entry came from a
+    /// real StartRun or an explicit load — and it is what makes the section usable without copying
+    /// ids out of another window. Most recent first, bounded.
+    /// </summary>
+    private readonly List<string> _knownRunIds = new();
+
+    private const int MaxKnownRunIds = 12;
+
     public RunStatusMonitor(IRunController controller)
     {
         _controller = controller;
@@ -40,6 +51,13 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public TaskProjectionInfo? Projection => _projection;
 
     public bool HasSnapshot => _snapshot is not null;
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: run ids this session has tracked (most recent first, at most
+    /// <see cref="MaxKnownRunIds"/>). Purely a memory aid — it never invents an id and never claims
+    /// a run still exists; loading one goes through the normal Host read.
+    /// </summary>
+    public IReadOnlyList<string> KnownRunIds => _knownRunIds;
 
     /// <summary>True while the shared poller is running (tests can pause it for determinism).</summary>
     public bool IsPollingEnabled => _pollingEnabled;
@@ -80,6 +98,11 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public void Track(string? runId)
     {
         var normalized = string.IsNullOrWhiteSpace(runId) ? null : runId.Trim();
+        if (RememberRun(normalized))
+        {
+            OnPropertyChanged(nameof(KnownRunIds));
+        }
+
         if (string.Equals(_runId, normalized, StringComparison.Ordinal))
         {
             return;
@@ -111,6 +134,37 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         }
 
         _ = RefreshAsync();
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: records a run id the session has actually seen (most recent
+    /// first, de-duplicated, bounded). Returns true when the list actually changed.
+    /// </summary>
+    private bool RememberRun(string? runId)
+    {
+        if (runId is null)
+        {
+            return false;
+        }
+
+        var existing = _knownRunIds.IndexOf(runId);
+        if (existing == 0)
+        {
+            return false;
+        }
+
+        if (existing > 0)
+        {
+            _knownRunIds.RemoveAt(existing);
+        }
+
+        _knownRunIds.Insert(0, runId);
+        while (_knownRunIds.Count > MaxKnownRunIds)
+        {
+            _knownRunIds.RemoveAt(_knownRunIds.Count - 1);
+        }
+
+        return true;
     }
 
     /// <summary>Disables automatic polling (tests / explicit refresh only) without clearing the tracked run.</summary>
