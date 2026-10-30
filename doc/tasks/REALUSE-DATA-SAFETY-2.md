@@ -3,18 +3,26 @@ id: REALUSE-DATA-SAFETY-2
 title: 修复真实使用自查 B2 批次——Provider 可用性引导、就绪状态诚实性、启动自检降级误报
 kind: fix
 governance_version: 3
-status: in_review
+status: approved
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
 reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-2-antigravity-r1.md
+    must_fix: 1 (retry path leaked the single-instance mutex)
+  - round: 2
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-2-antigravity-r2.md
 depends_on:
   - REALUSE-DATA-SAFETY-1
 base_commit: a29e0f516
 branch: task/REALUSE-DATA-SAFETY-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-2
 integration_commit: null
-delivery_head: 5acbc9b88
+delivery_head: f0e207db5
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-2
@@ -88,6 +96,8 @@ allowed_paths:
 | E-AC3-TESTS | AC3 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/StartupSelfCheckTests.cs` | `e9b80d896` | `-` | CANONICAL |
 | E-AC3-UI | AC3 | `apps/desktop-avalonia/tests/NewManga.App.Tests/StartupSelfCheckUiTests.cs` | `e9b80d896` | `-` | CANONICAL |
 | E-AC3-CONSOLE | AC3 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-RETRY-FIX | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/HostControllerRetryTests.cs` | `f0e207db5` | `-` | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-2-antigravity-r1.md` | `f0e207db5` | `-` | CANONICAL |
 
 ## Resource Manifest
 
