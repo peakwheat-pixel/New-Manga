@@ -161,6 +161,21 @@ public sealed class HostRuntime : IAsyncDisposable
         return await core.CreateBackupAsync(backupType, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: read-only cache pre-flight (cleanup.preview).</summary>
+    public async Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.GetCleanupPreviewAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: remove the safe cache population (cleanup.run).</summary>
+    public async Task<CleanupOutcomeInfo> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.RunCleanupAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task DeleteBackupAsync(string backupId, CancellationToken cancellationToken = default)
     {
         RequireWritesAllowed();

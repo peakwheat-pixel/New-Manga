@@ -392,6 +392,16 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// Overwrite restore. The Core creates its own <c>pre_restore</c> rollback package first; the
     /// returned id names it. Null when refused (not ready / read-only / active Run / corrupt package).
     /// </summary>
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): read-only cache pre-flight. The Console's
+    /// "缓存与版本清理" section used to be a permanent 待接入 placeholder because
+    /// <c>cleanup.preview</c> existed in the command registry but was never exposed here.
+    /// </summary>
+    Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Removes the safe cache population; failures stay persisted in the Core ledger.</summary>
+    Task<CleanupOutcomeInfo?> RunCleanupAsync(CancellationToken cancellationToken = default);
+
     Task<string?> RestoreBackupAsync(
         string backupId,
         CancellationToken cancellationToken = default);

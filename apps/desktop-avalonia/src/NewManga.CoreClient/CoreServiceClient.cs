@@ -39,6 +39,31 @@ public sealed record BackupPackageInfo(
     int SchemaVersion,
     bool Verified);
 
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one removable cache target from <c>cleanup.preview</c>. Only a
+/// relative path and a byte size — the Core never sends an OS path here.
+/// </summary>
+public sealed record CleanupTargetInfo(string RelativePath, long SizeBytes);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>cleanup.preview</c> projection
+/// (<c>CleanupPreview.to_dict()</c> + <c>pending_cleanups</c>). Reading never deletes anything.
+/// </summary>
+public sealed record CleanupPreviewInfo(
+    IReadOnlyList<CleanupTargetInfo> Targets,
+    long TotalBytes,
+    int PendingCleanups);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>cleanup.run</c> projection. Counts are the Core's own; failures
+/// keep their fixed path-free reason so a partial cleanup is never reported as success.
+/// </summary>
+public sealed record CleanupOutcomeInfo(
+    int Removed,
+    int Failed,
+    int Skipped,
+    IReadOnlyList<string> FailedPaths);
+
 /// <summary>One page row from <c>GetReaderProjection</c> (src/infrastructure/sqlite/library.py list_pages).</summary>
 public sealed record ReaderPageSummary(
     string PageId,
@@ -517,6 +542,83 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return packages;
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: read-only pre-flight over the removable cache population
+    /// (<c>cleanup.preview</c>). The preview lists exactly the targets the run face re-checks, so
+    /// "preview says N" and "run touches at most N" cannot disagree.
+    /// </summary>
+    public async Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.preview",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.preview");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.preview result is not an object");
+        }
+
+        var targets = new List<CleanupTargetInfo>();
+        if (result.TryGetProperty("targets", out var targetsElement) && targetsElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in targetsElement.EnumerateArray())
+            {
+                targets.Add(new CleanupTargetInfo(
+                    item.TryGetProperty("relative_path", out var path) ? path.GetString() ?? string.Empty : string.Empty,
+                    item.TryGetProperty("size_bytes", out var size) && size.TryGetInt64(out var bytes) ? bytes : 0));
+            }
+        }
+
+        return new CleanupPreviewInfo(
+            targets,
+            result.TryGetProperty("total_bytes", out var total) && total.TryGetInt64(out var totalBytes) ? totalBytes : 0,
+            result.TryGetProperty("pending_cleanups", out var pending) && pending.TryGetInt32(out var pendingCount) ? pendingCount : 0);
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: remove every safe cache target (<c>cleanup.run</c>). Idempotent;
+    /// failed removals stay persisted in the Core's pending ledger for the retry face.
+    /// </summary>
+    public async Task<CleanupOutcomeInfo> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.run",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.run");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.run result is not an object");
+        }
+
+        var failedPaths = new List<string>();
+        if (result.TryGetProperty("items", out var items) && items.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var item in items.EnumerateObject())
+            {
+                if (item.Value.ValueKind == JsonValueKind.Object
+                    && item.Value.TryGetProperty("status", out var status)
+                    && string.Equals(status.GetString(), "failed", StringComparison.Ordinal))
+                {
+                    failedPaths.Add(item.Name);
+                }
+            }
+        }
+
+        return new CleanupOutcomeInfo(
+            result.TryGetProperty("removed", out var removed) && removed.TryGetInt32(out var removedCount) ? removedCount : 0,
+            result.TryGetProperty("failed", out var failed) && failed.TryGetInt32(out var failedCount) ? failedCount : 0,
+            result.TryGetProperty("skipped", out var skipped) && skipped.TryGetInt32(out var skippedCount) ? skippedCount : 0,
+            failedPaths);
     }
 
     public async Task<BackupPackageInfo> CreateBackupAsync(

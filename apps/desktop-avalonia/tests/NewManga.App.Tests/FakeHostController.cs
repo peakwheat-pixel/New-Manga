@@ -1338,6 +1338,32 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(true);
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: scriptable cleanup face (preview/run counters + outcome).</summary>
+    public CleanupPreviewInfo CleanupPreview { get; set; } =
+        new(new[] { new CleanupTargetInfo("cache/tiles/abc.webp", 2048) }, 2048, 0);
+
+    public int CleanupPreviewCalls { get; private set; }
+
+    public int CleanupRunCalls { get; private set; }
+
+    /// <summary>When set, the next RunCleanupAsync returns null (Host refused: read-only / error).</summary>
+    public bool CleanupRunRefused { get; set; }
+
+    public CleanupOutcomeInfo CleanupOutcome { get; set; } =
+        new(1, 0, 0, Array.Empty<string>());
+
+    public Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        CleanupPreviewCalls++;
+        return Task.FromResult(CleanupPreview);
+    }
+
+    public Task<CleanupOutcomeInfo?> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        CleanupRunCalls++;
+        return Task.FromResult(CleanupRunRefused ? null : (CleanupOutcomeInfo?)CleanupOutcome);
+    }
+
     public Task<string?> RestoreBackupAsync(
         string backupId,
         CancellationToken cancellationToken = default)
