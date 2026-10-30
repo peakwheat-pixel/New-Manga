@@ -118,6 +118,50 @@ public sealed class HostRuntime : IAsyncDisposable
     }
 
     /// <summary>
+    /// REALUSE-DATA-SAFETY-1 AC2: the .nmbak package face through the Core. Listing is a read;
+    /// create/delete/restore are writes and therefore obey the same read-only policy as every other
+    /// write path (a read-only Host must never mutate the backups directory behind the UI's back).
+    /// </summary>
+    public async Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListBackupsAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<BackupPackageInfo> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.CreateBackupAsync(backupType, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task DeleteBackupAsync(string backupId, CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        await core.DeleteBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Restore is the most destructive write: policy check first, then the Core's own rollback gate.</summary>
+    public async Task<string> RestoreBackupAsync(string backupId, CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.RestoreBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private void RequireWritesAllowed()
+    {
+        if (!Policy.WritesAllowed)
+        {
+            throw new ReadOnlyHostException($"host is read-only ({Policy.Reason}); writes to production data are disabled until S2 parity");
+        }
+    }
+
+    /// <summary>
     /// Creates a book through the Core — refused while the host is read-only (legacy Tauri shell
     /// detected, explicit <c>--parity=false</c>, or the host is not ready). V11R-A-5: the shipped
     /// product is writable by default; tests use an isolated data root.

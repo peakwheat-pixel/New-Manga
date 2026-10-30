@@ -100,10 +100,44 @@
             <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowClearCacheDanger}">
               <Button Classes="danger sm" Content="清理缓存与过期版本（能力待接入）" Command="{Binding RequestClearCacheCommand}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowBackupDanger}">
-              <Button Classes="secondary sm" Content="创建备份（能力待接入）" Command="{Binding RequestCreateBackupCommand}" />
-              <Button Classes="danger sm" Content="删除备份（能力待接入）" Command="{Binding RequestDeleteBackupCommand}" />
+          </StackPanel>
+
+          <!-- ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ─────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsBackupSection}">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding BackupStatusText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="secondary sm" Content="创建备份" Command="{Binding RequestCreateBackupCommand}" IsEnabled="{Binding !IsBackupBusy}" />
+              <Button Grid.Column="2" Classes="ghost sm" Content="刷新" Command="{Binding RefreshBackupsCommand}" IsEnabled="{Binding !IsBackupBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
+              <ListBox ItemsSource="{Binding BackupEntries}"
+                       SelectedItem="{Binding SelectedBackup}"
+                       Background="Transparent">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BackupEntryRowViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                      <TextBlock Classes="data" Text="{Binding ShortId}" />
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding TypeText}" />
+                      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding SizeText}" />
+                      <TextBlock Grid.Column="3" Classes="meta" Text="{Binding VerifiedText}" />
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <Button Classes="secondary sm" Content="删除选中" Command="{Binding RequestDeleteBackupCommand}" IsEnabled="{Binding HasBackupSelection}" />
+              <Button Classes="danger sm" Content="从选中恢复（覆盖）" Command="{Binding RequestRestoreBackupCommand}" IsEnabled="{Binding HasBackupSelection}" />
             </StackPanel>
+
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="恢复是覆盖式的：Core 会先创建一个 pre_restore 回滚点；有 Run 在跑时会被拒绝（BACKUP_RESTORE_BUSY）。" />
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasBackupResult}">
+              <TextBlock Classes="body" Text="{Binding BackupLastResult}" TextWrapping="Wrap" />
+            </Border>
           </StackPanel>
 
           <!-- ── ① 任务与队列（真实 IRunController，无 List Run 命令） ─────────────── -->

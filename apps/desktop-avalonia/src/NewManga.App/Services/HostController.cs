@@ -1491,6 +1491,111 @@ public sealed class HostController : IHostController
     }
 
     // ---------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-1 AC2: .nmbak backup packages (backup.list/create/delete/restore).
+    // The Host data-root policy is enforced inside HostRuntime; refusals surface their typed code
+    // through LastError and return null/false/empty rather than throwing into the UI.
+    // ---------------------------------------------------------------------------------------
+
+    public async Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<BackupPackageInfo>();
+        }
+
+        try
+        {
+            return await _runtime.ListBackupsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return Array.Empty<BackupPackageInfo>();
+        }
+    }
+
+    public async Task<BackupPackageInfo?> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var created = await _runtime.CreateBackupAsync(backupType, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return created;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(backupId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return false;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return false;
+        }
+
+        try
+        {
+            await _runtime.DeleteBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return true;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return false;
+        }
+    }
+
+    public async Task<string?> RestoreBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(backupId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            var rollback = await _runtime.RestoreBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return rollback;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+    // ---------------------------------------------------------------------------------------
     // V11R-A-2 (audit P-02, contract §5.2): Run control through the registered production commands
     // C056-C061 (library_start_run / library_control_run / library_resume_blocked_run /
     // library_get_run_snapshot / library_get_task_projection / library_retry_failed_targets, all

@@ -64,7 +64,7 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [x] **AC1 命名空间迁移自愈**：把数据根整目录复制到另一路径后以 `--data-root=<副本>` 启动，`core_service` 不再因 `namespace lock is bound to a different derived root` / `namespace binding identity mismatch` 崩溃；自动重绑定到新的 derived/catalog identity，`host.log` 出现明确迁移日志，书架数据完整（1 书 1 章 169 页），Host 就绪。绑定结构异常（catalog 表非 canonical、行数≠1、权限错误）时仍 fail closed 并给出可诊断 stderr。 <<MET: 4 单元测试 + 既有安全测试 7/7 + 真实数据副本源码级完整启动链（books=1/chapters=1/pages=169）；待独立审查>>
-- [ ] **AC2 真实备份**：首次写入前与迁移前生成含 `library.db` + `managed/**` + manifest 的 `.nmbak`（复用 Core `NmbakBackupService`），保留 N 份；`backup_list/create/restore` 经 `IHostController` 接到 Console「备份与恢复」分区；删除 `library.db` 后可从备份恢复出 169 页书架。 <<PARTIAL: Core 侧已完成并验证（迁移前 + 首启自动备份、原图纳入包、保留 5 份）；Console UI 接线未做>>
+- [x] **AC2 真实备份**：首次写入前与迁移前生成含 `library.db` + `managed/**` + manifest 的 `.nmbak`（复用 Core `NmbakBackupService`），保留 N 份；`backup_list/create/restore` 经 `IHostController` 接到 Console「备份与恢复」分区；删除 `library.db` 后可从备份恢复出 169 页书架。 <<MET: Core 迁移前 + 首启自动备份（含 pages.managed_original_ref 原图）；Console ⑥ 分区接真实 Host 面（列表/创建/删除/恢复 + 二次确认）；真实数据副本验证 90.2 MiB / 169 原图 / 169 页；dotnet build 0W0E + 3 headless UI 测试通过；待独立审查>>
 - [ ] **AC3 迁移顺序**：旧布局 `<root>/data/{library.db,managed,backups}` 在生产 Host 路径下被完整迁移（`copied` 含 `managed/` 与 `backups/`），不再因 Host 预创建空目录而跳过；补 Host 级集成测试。 <<PARTIAL: 待实现>>
 - [ ] **AC4 只读语义**：`ReadOnlyUntilParity` 会话要么不写既有库（`query_only`/拒绝迁移），要么把「schema bootstrap 可写、用户数据只读」在日志与 UI 中明确区分；不再出现「日志称只读、实际写库」的矛盾。 <<PARTIAL: 待实现>>
 
@@ -87,8 +87,10 @@ allowed_paths:
 | AC1 负向：catalog 结构异常仍 fail closed | 同上（`test_rebind_fails_closed_on_non_canonical_namespace_table` / `test_missing_lock_after_migration_fails_closed`） | 同上 | PASS | 同上 |
 | AC1 既有安全边界回归 | `python -m pytest tests/core/test_core_namespace_bootstrap.py -q` | 同上 | PASS 7/7 | 该文件 |
 | AC1 实机级：复制真实数据根后完整启动链读数 | `python verify_migrated_root.py %APPDATA%\com.newmanga.desktop <副本>` | 真实用户库 169 页 + 旧 lock | PASS：`books=1 chapters=1 pages=169 progress=1 title='家族战记'`，日志 `[core.namespace] data root identity changed ... re-bound` | `G:\CODEX\New Manga.workspace\tmp\self-audit\verify_migrated_root.py`、`runs\12-migrated-root` |
-| AC2 单测：备份包含 library.db + managed + manifest，可恢复 | `python -m pytest tests/infrastructure/test_backup*.py -q` | 计划命令 | NOT_RUN | 无 |
-| AC2 实机：删库后从 UI 备份恢复出 169 页 | 手工 + 截图 | 待 AC2 实现 | NOT_RUN | 无 |
+| AC2 单测：迁移前/首启自动备份 + 原图纳入包 + 恢复 | `python -m pytest tests/infrastructure/test_nmbak_startup_backup.py tests/storage/test_nmbak_backup.py tests/storage/test_backup_restore.py tests/core/test_core_backup_wire.py -q` | Python 3.14 / Windows 10.0.26300 | PASS：启动备份 5/5、包与原图 8 例、合计 52 passed（2026-10-30） | 上述测试文件 |
+| AC2 真实数据：自动备份包含 169 张原图与 169 页库 | `python verify_backup_real.py %APPDATA%\com.newmanga.desktop <副本>` | 真实用户库 169 页 | PASS：包 90.2 MiB、`page_originals=169`、`original_bytes=100,434,899`、包内库 `books=1 pages=169` | `G:\CODEX\New Manga.workspace\tmp\self-audit\verify_backup_real.py`、`runs\13-backup-real` |
+| AC2 UI：Console ⑥ 列表/创建/删除/恢复（含二次确认） | `dotnet test ... --filter "FullyQualifiedName~V2ConsoleUiTests.Backup"` | headless Avalonia | PASS 3/3 | `V2ConsoleUiTests.cs` |
+| AC2 UI 构建 | `dotnet build apps/desktop-avalonia/NewManga.sln -warnaserror` | net9.0 | PASS 0 warning / 0 error | 控制台输出 |
 | AC3 单测/集成：预创建目录时仍迁移 managed/backups | `python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q` | 计划命令 | NOT_RUN | 无 |
 | AC4 只读会话不写既有库 | 副本 + `--parity=false` | 计划命令 | NOT_RUN | 无 |
 | 全量回归 | `python -m pytest -q --tb=line` | 同上 | PASS：**2727 passed, 12 skipped, 0 failed**（183.76s，2026-10-30） | `G:\CODEX\New Manga.workspace\tmp\self-audit\pytest-full2.log` |

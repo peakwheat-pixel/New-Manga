@@ -89,6 +89,12 @@ public sealed class ConsoleViewModel : ObservableObject
     private RunSnapshotInfo? _runSnapshot;
     private TaskProjectionInfo? _runProjection;
 
+    // REALUSE-DATA-SAFETY-1 AC2: real .nmbak backup packages (list/create/delete/restore).
+    private BackupEntryRowViewModel? _selectedBackup;
+    private bool _isBackupBusy;
+    private string _backupStatusText = "尚未读取备份列表";
+    private string? _backupLastResult;
+
     public ConsoleViewModel(
         IHostController controller,
         ShellState state,
@@ -117,7 +123,7 @@ public sealed class ConsoleViewModel : ObservableObject
             Section(ConsoleSectionId.Network, "03", "网络与代理", "网络配置 / 默认网络 / 连通测试", isWired: true),
             Section(ConsoleSectionId.Devices, "04", "模型与设备", "设备探测未接入（无 Host 命令）", isWired: false),
             Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "清理需 Host 方法与影响面预览", isWired: false),
-            Section(ConsoleSectionId.Backup, "06", "备份与恢复", ".nmbak 备份/恢复未接入", isWired: false),
+            Section(ConsoleSectionId.Backup, "06", "备份与恢复", "真实 .nmbak 包（列表 / 创建 / 删除 / 恢复）", isWired: true),
             Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件列表/启停未接入", isWired: false),
             Section(ConsoleSectionId.Diagnostics, "08", "诊断与日志", "Host 状态 / 导出历史（真实）", isWired: true),
             Section(ConsoleSectionId.Appearance, "09", "外观", "深浅外观 / 主题工作室入口", isWired: true),
@@ -163,8 +169,10 @@ public sealed class ConsoleViewModel : ObservableObject
         OpenThemeStudioCommand = new RelayCommand(() => _openThemeStudio());
         OpenStudioCommand = new RelayCommand(() => _openStudio());
         RequestClearCacheCommand = new RelayCommand(RequestClearCache);
-        RequestCreateBackupCommand = new RelayCommand(RequestCreateBackup);
+        RequestCreateBackupCommand = new RelayCommand(() => _ = CreateBackupAsync());
         RequestDeleteBackupCommand = new RelayCommand(RequestDeleteBackup);
+        RequestRestoreBackupCommand = new RelayCommand(RequestRestoreBackup);
+        RefreshBackupsCommand = new RelayCommand(() => _ = RefreshBackupsAsync());
         RefreshExportHistoryCommand = new RelayCommand(() => _ = RefreshExportHistoryAsync());
         LoadRunCommand = new RelayCommand(() => _ = LoadRunAsync());
         RefreshRunCommand = new RelayCommand(() => _ = RefreshRunAsync(notifyFailure: true));
@@ -221,6 +229,55 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public bool ShowBackupDanger => _selectedSection.Id == ConsoleSectionId.Backup;
 
+    // ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ──────────────────────────
+
+    public bool IsBackupSection => _selectedSection.Id == ConsoleSectionId.Backup;
+
+    public ObservableCollection<BackupEntryRowViewModel> BackupEntries { get; } = new();
+
+    public BackupEntryRowViewModel? SelectedBackup
+    {
+        get => _selectedBackup;
+        set
+        {
+            if (!Set(ref _selectedBackup, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(HasBackupSelection));
+        }
+    }
+
+    public bool HasBackupSelection => _selectedBackup is not null;
+
+    public bool IsBackupBusy
+    {
+        get => _isBackupBusy;
+        private set => Set(ref _isBackupBusy, value);
+    }
+
+    public string BackupStatusText
+    {
+        get => _backupStatusText;
+        private set => Set(ref _backupStatusText, value);
+    }
+
+    /// <summary>Outcome of the last create/delete/restore, including the Core's own rollback package id.</summary>
+    public string? BackupLastResult
+    {
+        get => _backupLastResult;
+        private set
+        {
+            if (Set(ref _backupLastResult, value))
+            {
+                OnPropertyChanged(nameof(HasBackupResult));
+            }
+        }
+    }
+
+    public bool HasBackupResult => !string.IsNullOrWhiteSpace(_backupLastResult);
+
     public string SectionSummary => _selectedSection.Summary;
 
     public RelayCommand SelectSectionCommand { get; }
@@ -248,6 +305,7 @@ public sealed class ConsoleViewModel : ObservableObject
             nameof(IsNetworkSection),
             nameof(IsDiagnosticsSection),
             nameof(IsAppearanceSection),
+            nameof(IsBackupSection),
             nameof(IsNotWiredSection),
             nameof(NotWiredTitle),
             nameof(NotWiredBody),
@@ -255,6 +313,11 @@ public sealed class ConsoleViewModel : ObservableObject
             nameof(ShowClearCacheDanger),
             nameof(ShowBackupDanger),
             nameof(SectionSummary));
+
+        if (section.Id == ConsoleSectionId.Backup)
+        {
+            _ = RefreshBackupsAsync();
+        }
     }
 
     private ConsoleSectionItem Section(
@@ -363,6 +426,10 @@ public sealed class ConsoleViewModel : ObservableObject
     public RelayCommand RequestCreateBackupCommand { get; }
 
     public RelayCommand RequestDeleteBackupCommand { get; }
+
+    public RelayCommand RequestRestoreBackupCommand { get; }
+
+    public RelayCommand RefreshBackupsCommand { get; }
 
     // ── ① 任务与队列（真实 IRunController；无可列 Run 时要求显式 run_id） ─────────────
     //
@@ -1717,23 +1784,148 @@ public sealed class ConsoleViewModel : ObservableObject
         CanConfirm: false,
         BlockedReason: "能力待接入：Host 未暴露 cleanup_preview / cleanup_run 方法"));
 
-    private void RequestCreateBackup() => _requestConfirm(new ConfirmRequest(
-        "创建备份（能力待接入）",
-        "备份会把当前库与配置打包为 .nmbak；当前 IHostController 未暴露 backup_list / backup_create，无法确认备份目录与体积，因此不会执行。",
-        "创建备份（能力待接入）",
-        IsDanger: false,
-        OnConfirm: () => _notify("创建备份：能力待接入，未执行任何写入", NmStatus.Blocked),
-        CanConfirm: false,
-        BlockedReason: "能力待接入：Host 未暴露 backup_list / backup_create 方法"));
+    private async Task RefreshBackupsAsync()
+    {
+        if (IsBackupBusy)
+        {
+            return;
+        }
 
-    private void RequestDeleteBackup() => _requestConfirm(new ConfirmRequest(
-        "删除备份（能力待接入）",
-        "删除备份会永久移除 .nmbak 文件且无法恢复；当前 IHostController 未暴露备份列表方法，无法确认文件与数量，因此不会执行删除。",
-        "删除备份（能力待接入）",
-        IsDanger: true,
-        OnConfirm: () => _notify("删除备份：能力待接入，未执行任何删除", NmStatus.Blocked),
-        CanConfirm: false,
-        BlockedReason: "能力待接入：Host 未暴露备份列表 / 删除方法"));
+        IsBackupBusy = true;
+        try
+        {
+            var packages = await _controller.ListBackupsAsync().ConfigureAwait(true);
+            BackupEntries.Clear();
+            foreach (var package in packages)
+            {
+                BackupEntries.Add(new BackupEntryRowViewModel(package));
+            }
+
+            BackupStatusText = packages.Count == 0
+                ? "暂无备份包：Core 会在首次可写启动且书库非空时自动创建一个 automatic 包。"
+                : $"共 {packages.Count} 个包；恢复前 Core 会自动创建 pre_restore 回滚点。";
+            SelectedBackup = null;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+        {
+            BackupEntries.Clear();
+            BackupStatusText = "备份列表读取失败：Host 不可用。";
+        }
+        finally
+        {
+            IsBackupBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Manual package creation. A null result is a real refusal (not ready / read-only / Core error);
+    /// the typed code is already on the Host snapshot, so the UI never invents success.
+    /// </summary>
+    private async Task CreateBackupAsync()
+    {
+        if (IsBackupBusy)
+        {
+            return;
+        }
+
+        IsBackupBusy = true;
+        try
+        {
+            var created = await _controller.CreateBackupAsync().ConfigureAwait(true);
+            if (created is null)
+            {
+                BackupLastResult = "创建失败：Host 未就绪、只读或 Core 拒绝（见状态栏错误码）";
+                _notify("创建备份失败", NmStatus.Failed);
+                return;
+            }
+
+            BackupLastResult =
+                $"已创建 {created.BackupType} 包 {ShortId(created.BackupId)}（{FormatSize(created.SizeBytes)}）";
+            _notify("备份已创建", NmStatus.Done);
+            IsBackupBusy = false; // RefreshBackupsAsync refuses to run while busy.
+            await RefreshBackupsAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsBackupBusy = false;
+        }
+    }
+
+    private void RequestDeleteBackup()
+    {
+        if (SelectedBackup is not { } target)
+        {
+            _notify("请先选择一个备份包", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "删除备份包",
+            $"将永久删除 {ShortId(target.BackupId)}（{FormatSize(target.SizeBytes)}）；删除后无法恢复，且不会影响其它包。",
+            "删除备份",
+            IsDanger: true,
+            OnConfirm: () => _ = DeleteBackupAsync(target)));
+    }
+
+    private async Task DeleteBackupAsync(BackupEntryRowViewModel target)
+    {
+        var removed = await _controller.DeleteBackupAsync(target.BackupId).ConfigureAwait(true);
+        if (!removed)
+        {
+            BackupLastResult = $"删除失败：{ShortId(target.BackupId)}（见状态栏错误码）";
+            _notify("删除备份失败", NmStatus.Failed);
+            return;
+        }
+
+        BackupLastResult = $"已删除 {ShortId(target.BackupId)}";
+        _notify("备份已删除", NmStatus.Done);
+        IsBackupBusy = false;
+        await RefreshBackupsAsync().ConfigureAwait(true);
+    }
+
+    private void RequestRestoreBackup()
+    {
+        if (SelectedBackup is not { } target)
+        {
+            _notify("请先选择一个备份包", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "从备份恢复（覆盖当前书库）",
+            $"将用 {ShortId(target.BackupId)}（{FormatSize(target.SizeBytes)}）覆盖当前 library.db 与托管原图。"
+            + " Core 会先自动创建一个 pre_restore 回滚点；恢复进行中若有 Run 在跑，Core 会拒绝（BACKUP_RESTORE_BUSY）。",
+            "覆盖并恢复",
+            IsDanger: true,
+            OnConfirm: () => _ = RestoreBackupAsync(target)));
+    }
+
+    private async Task RestoreBackupAsync(BackupEntryRowViewModel target)
+    {
+        var rollback = await _controller.RestoreBackupAsync(target.BackupId).ConfigureAwait(true);
+        if (rollback is null)
+        {
+            BackupLastResult = $"恢复失败：{ShortId(target.BackupId)}（见状态栏错误码）";
+            _notify("恢复失败", NmStatus.Failed);
+            return;
+        }
+
+        BackupLastResult = string.IsNullOrWhiteSpace(rollback)
+            ? $"已从 {ShortId(target.BackupId)} 恢复"
+            : $"已从 {ShortId(target.BackupId)} 恢复；回滚点 {ShortId(rollback)}";
+        _notify("恢复完成", NmStatus.Done);
+        IsBackupBusy = false;
+        await RefreshBackupsAsync().ConfigureAwait(true);
+    }
+
+    private static string ShortId(string backupId) =>
+        backupId.Length <= 12 ? backupId : backupId[..12] + "…";
+
+    private static string FormatSize(long bytes)
+    {
+        const double MiB = 1024d * 1024d;
+        return bytes >= MiB ? $"{bytes / MiB:0.0} MiB" : $"{bytes / 1024d:0.0} KiB";
+    }
 
     // ── Loading ─────────────────────────────────────────────────────────────────────────
 
@@ -2010,4 +2202,47 @@ public sealed class ConsoleViewModel : ObservableObject
             "该分区尚未接入真实 Host API。",
             "依赖：对应服务层方法合入后接入。"),
     };
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-1 AC2: one row in the Console backup list. Every field comes from the Core's
+/// own <c>backup.list</c> projection; nothing is inferred or prettified into a false success.
+/// </summary>
+public sealed class BackupEntryRowViewModel
+{
+    public BackupEntryRowViewModel(NewManga.CoreClient.BackupPackageInfo package)
+    {
+        BackupId = package.BackupId;
+        TypeText = package.BackupType switch
+        {
+            "automatic" => "自动（首启）",
+            "pre_migration" => "迁移前",
+            "pre_restore" => "恢复前回滚点",
+            "manual" => "手动",
+            _ => package.BackupType,
+        };
+        CreatedText = string.IsNullOrWhiteSpace(package.CreatedAt) ? "—" : package.CreatedAt;
+        SizeBytes = package.SizeBytes;
+        SizeText = package.SizeBytes >= 1024L * 1024L
+            ? $"{package.SizeBytes / (1024d * 1024d):0.0} MiB"
+            : $"{package.SizeBytes / 1024d:0.0} KiB";
+        Verified = package.Verified;
+        VerifiedText = package.Verified ? "已验证" : "校验失败";
+    }
+
+    public string BackupId { get; }
+
+    public string ShortId => BackupId.Length <= 12 ? BackupId : BackupId[..12] + "…";
+
+    public string TypeText { get; }
+
+    public string CreatedText { get; }
+
+    public long SizeBytes { get; }
+
+    public string SizeText { get; }
+
+    public bool Verified { get; }
+
+    public string VerifiedText { get; }
 }

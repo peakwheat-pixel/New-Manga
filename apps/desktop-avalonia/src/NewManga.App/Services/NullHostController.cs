@@ -497,4 +497,25 @@ public sealed class NullHostController : IHostController
         CanRestart: false,
         CanAbandon: false,
         CanRetryFailed: status == "completed_with_failures");
+
+    // REALUSE-DATA-SAFETY-1 AC2: the designer/inert path has no Core, so the backup face is empty
+    // and every write is refused (null/false), never simulated.
+    public Task<IReadOnlyList<BackupPackageInfo>> ListBackupsAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<BackupPackageInfo>>(Array.Empty<BackupPackageInfo>());
+
+    public Task<BackupPackageInfo?> CreateBackupAsync(
+        string backupType = "manual",
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<BackupPackageInfo?>(null);
+
+    public Task<bool> DeleteBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<string?> RestoreBackupAsync(
+        string backupId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
 }
