@@ -3,7 +3,7 @@ id: REALUSE-DATA-SAFETY-4
 title: Console 三处「待接入」分区接线——模型/设备、缓存与版本清理、插件与 Hooks
 kind: feature
 governance_version: 3
-status: done
+status: closed_with_limitations
 approval: user_authorized_2026-10-30_self_audit_split_from_REALUSE-DATA-SAFETY-3
 suggested_owner: dsh
 owner: dsh-lead
@@ -23,7 +23,7 @@ branch: task/REALUSE-DATA-SAFETY-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
 integration_commit: PENDING
 delivery_head: 37dcd6d9f
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-4
 allowed_paths:
@@ -58,8 +58,8 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 设备与模型分区可用**：用户能从控制台看到并管理 Provider（至少：列出、选中、显示当前绑定），未配置时给出与 MA-02 指引一致的下一步。 <<PARTIAL: 设备分区改为诊断式（从 ProviderProfiles 推导检测能力绑定，未绑定明确说明会返回 PROVIDER_NOT_CONFIGURED 并给跳转 ② 的入口；设备/权重状态如实标注 Core 未暴露），3 个用例通过。Provider 管理本身在 ② 分区已完整可用（新建/编辑/删除/刷新）——本 Task 复核后确认 MA-02 的指引并非断头路，纠正了任务卡原始假设。完整设备/权重答案依赖契约提案，未实施>>
-- [x] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<MET>> <<PARTIAL_REMOVED: 两处已**真实接线**而非改写文案——⑤ 缓存与版本清理（cleanup.preview / cleanup.run：预览目标数/字节/待重试数 → 确认门 → 执行结果）与 ⑦ 插件与 Hooks（plugins.list / set_enabled / set_plugin_enabled：清单、全局开关、单插件开关、被拒绝插件的 reason、全局关闭时单插件开关禁用）。⑦ 与 ⑤ 共 7 个新用例通过>>
+- [ ] **AC1 设备与模型分区可用**：用户能从控制台看到并管理 Provider（至少：列出、选中、显示当前绑定），未配置时给出与 MA-02 指引一致的下一步。 <<PARTIAL: 设备分区已改为诊断式（从 ProviderProfiles 推导检测能力绑定，未绑定明确说明会返回 PROVIDER_NOT_CONFIGURED 并给跳转 ② 的入口；设备/权重状态如实标注 Core 未暴露），3 个用例通过；完整设备/权重答案依赖 doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md，未实施>>
+- [x] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<MET>>
 - [x] **AC3 契约边界**：任何新增命令必须先在本 Task 记录契约变更提案并交 DSH 裁决；不擅自修改冻结契约。 <<MET>>
 
 ## 禁止范围
@@ -91,7 +91,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3 | doc/handoffs/REALUSE-DATA-SAFETY-3-handoff.md | 前三批 worktree 保留；本 Task 尚未开 worktree |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4 | doc/handoffs/REALUSE-DATA-SAFETY-4-handoff.md | 前四批 worktree 全部保留，未删除 |
 
 ## Closeout Record
 
