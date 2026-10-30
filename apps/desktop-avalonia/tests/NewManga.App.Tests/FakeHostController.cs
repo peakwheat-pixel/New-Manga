@@ -1338,6 +1338,62 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(true);
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: scriptable plugin face.</summary>
+    public PluginListInfo PluginList { get; set; } = new(
+        true,
+        new[]
+        {
+            new PluginInfo("sample.plugin", "enabled", true, "示例插件", "1.0.0", "测试夹具插件",
+                new[] { "before_translate" }, new[] { "read:pages" }, null),
+        });
+
+    public int PluginListCalls { get; private set; }
+
+    public int PluginGlobalToggleCalls { get; private set; }
+
+    public int PluginToggleCalls { get; private set; }
+
+    public bool PluginWriteRefused { get; set; }
+
+    public Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        PluginListCalls++;
+        return Task.FromResult(PluginList);
+    }
+
+    public Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        PluginGlobalToggleCalls++;
+        if (PluginWriteRefused)
+        {
+            PublishLastError("HOST_READ_ONLY");
+            return Task.FromResult(false);
+        }
+
+        PluginList = PluginList with { GlobalEnabled = enabled };
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default)
+    {
+        PluginToggleCalls++;
+        if (PluginWriteRefused)
+        {
+            PublishLastError("HOST_READ_ONLY");
+            return Task.FromResult(false);
+        }
+
+        PluginList = PluginList with
+        {
+            Plugins = PluginList.Plugins
+                .Select(plugin => plugin.PluginId == pluginId
+                    ? plugin with { Enabled = enabled, Status = enabled ? "enabled" : "disabled" }
+                    : plugin)
+                .ToArray(),
+        };
+        return Task.FromResult(true);
+    }
+
     /// <summary>REALUSE-DATA-SAFETY-4 AC1: scriptable cleanup face (preview/run counters + outcome).</summary>
     public CleanupPreviewInfo CleanupPreview { get; set; } =
         new(new[] { new CleanupTargetInfo("cache/tiles/abc.webp", 2048) }, 2048, 0);

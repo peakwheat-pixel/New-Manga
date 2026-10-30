@@ -128,7 +128,9 @@ public sealed class ConsoleViewModel : ObservableObject
             // section is a real pre-flight + confirmed run instead of a permanent placeholder.
             Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "预览影响面后清理（真实，二次确认）", isWired: true),
             Section(ConsoleSectionId.Backup, "06", "备份与恢复", "真实 .nmbak 包（列表 / 创建 / 删除 / 恢复）", isWired: true),
-            Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件列表/启停未接入", isWired: false),
+            // REALUSE-DATA-SAFETY-4 AC1: plugins.list / plugins.set_enabled / plugins.set_plugin_enabled
+            // are wired end to end now, so the section shows the real inventory and real switches.
+            Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件清单与启停（真实，二次确认）", isWired: true),
             Section(ConsoleSectionId.Diagnostics, "08", "诊断与日志", "Host 状态 / 导出历史（真实）", isWired: true),
             Section(ConsoleSectionId.Appearance, "09", "外观", "深浅外观 / 主题工作室入口", isWired: true),
         };
@@ -174,6 +176,9 @@ public sealed class ConsoleViewModel : ObservableObject
         OpenStudioCommand = new RelayCommand(() => _openStudio());
         RequestClearCacheCommand = new RelayCommand(RequestClearCache);
         RefreshCleanupPreviewCommand = new RelayCommand(() => _ = RefreshCleanupPreviewAsync());
+        RefreshPluginsCommand = new RelayCommand(() => _ = RefreshPluginsAsync());
+        ToggleGlobalPluginsCommand = new RelayCommand(RequestToggleGlobalPlugins);
+        GoToProvidersCommand = new RelayCommand(() => SelectSectionById(ConsoleSectionId.Providers));
         RequestCreateBackupCommand = new RelayCommand(() => _ = CreateBackupAsync());
         RequestDeleteBackupCommand = new RelayCommand(RequestDeleteBackup);
         RequestRestoreBackupCommand = new RelayCommand(RequestRestoreBackup);
@@ -273,6 +278,183 @@ public sealed class ConsoleViewModel : ObservableObject
     public bool ShowClearCacheDanger => _selectedSection.Id == ConsoleSectionId.Storage;
 
     public bool ShowBackupDanger => _selectedSection.Id == ConsoleSectionId.Backup;
+
+    // ── ⑦ 插件与 Hooks（REALUSE-DATA-SAFETY-4 AC1：真实 plugins.* 面）──────────────────
+
+    private bool _isPluginsBusy;
+    private bool _pluginsGlobalEnabled;
+    private string _pluginsSummaryText = "尚未读取插件列表";
+    private string? _pluginsLastResult;
+
+    public bool IsPluginsSection => _selectedSection.Id == ConsoleSectionId.Plugins;
+
+    public ObservableCollection<PluginRowViewModel> Plugins { get; } = new();
+
+    public bool HasPlugins => Plugins.Count > 0;
+
+    public bool IsPluginsBusy
+    {
+        get => _isPluginsBusy;
+        private set => Set(ref _isPluginsBusy, value);
+    }
+
+    /// <summary>The Core's global master switch; per-plugin switches are meaningless while it is off.</summary>
+    public bool PluginsGlobalEnabled
+    {
+        get => _pluginsGlobalEnabled;
+        private set => Set(ref _pluginsGlobalEnabled, value);
+    }
+
+    public string PluginsGlobalText => PluginsGlobalEnabled ? "全局插件：已启用" : "全局插件：已停用";
+
+    public string PluginsSummaryText
+    {
+        get => _pluginsSummaryText;
+        private set => Set(ref _pluginsSummaryText, value);
+    }
+
+    public string? PluginsLastResult
+    {
+        get => _pluginsLastResult;
+        private set => Set(ref _pluginsLastResult, value);
+    }
+
+    public bool HasPluginsResult => !string.IsNullOrWhiteSpace(_pluginsLastResult);
+
+    public RelayCommand RefreshPluginsCommand { get; private set; } = null!;
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC2: from the devices section straight to the provider section.</summary>
+    public RelayCommand GoToProvidersCommand { get; private set; } = null!;
+
+    public RelayCommand ToggleGlobalPluginsCommand { get; private set; } = null!;
+
+    public async Task RefreshPluginsAsync()
+    {
+        if (IsPluginsBusy)
+        {
+            return;
+        }
+
+        IsPluginsBusy = true;
+        try
+        {
+            var inventory = await _controller.ListPluginsAsync().ConfigureAwait(true);
+            Plugins.Clear();
+            foreach (var plugin in inventory.Plugins)
+            {
+                Plugins.Add(new PluginRowViewModel(
+                    plugin,
+                    inventory.GlobalEnabled,
+                    () => RequestTogglePlugin(plugin.PluginId, plugin)));
+            }
+
+            PluginsGlobalEnabled = inventory.GlobalEnabled;
+            PluginsSummaryText = inventory.Plugins.Count == 0
+                ? "没有发现可加载的插件（插件目录为空或未装配 Runtime）"
+                : $"发现 {inventory.Plugins.Count} 个插件";
+            OnPropertyChanged(nameof(HasPlugins), nameof(PluginsGlobalText));
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    private void RequestToggleGlobalPlugins()
+    {
+        var turningOn = !PluginsGlobalEnabled;
+        _requestConfirm(new ConfirmRequest(
+            turningOn ? "启用全局插件" : "停用全局插件",
+            turningOn
+                ? "启用后，已勾选的插件钩子会在处理流程中执行。插件是外部代码，请只启用你信任的来源。"
+                : "停用后所有插件钩子立即不再执行（单个插件的启用状态保留）。",
+            turningOn ? "启用" : "停用",
+            IsDanger: true,
+            OnConfirm: () => _ = SetGlobalPluginsAsync(turningOn)));
+    }
+
+    private async Task SetGlobalPluginsAsync(bool enabled)
+    {
+        IsPluginsBusy = true;
+        try
+        {
+            var ok = await _controller.SetPluginsGlobalEnabledAsync(enabled).ConfigureAwait(true);
+            if (!ok)
+            {
+                _notify($"插件全局开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            PluginsLastResult = enabled ? "全局插件已启用（Core 确认）" : "全局插件已停用（Core 确认）";
+            _notify(PluginsLastResult, NmStatus.Done);
+            await RefreshPluginsAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    private void RequestTogglePlugin(string pluginId, PluginInfo plugin)
+    {
+        if (!PluginsGlobalEnabled)
+        {
+            _notify("全局插件已停用：单个插件开关不会生效，请先启用全局插件", NmStatus.Blocked);
+            return;
+        }
+
+        var turningOn = !plugin.Enabled;
+        _requestConfirm(new ConfirmRequest(
+            turningOn ? $"启用插件「{plugin.Name}」" : $"停用插件「{plugin.Name}」",
+            turningOn
+                ? $"该插件声明的钩子：{string.Join(" / ", plugin.Hooks)}。启用后这些钩子会在流程中被调用。"
+                : "停用后该插件的钩子不再执行，其启用状态会记录在 Core 侧。",
+            turningOn ? "启用" : "停用",
+            IsDanger: true,
+            OnConfirm: () => _ = SetPluginAsync(pluginId, turningOn, plugin.Name)));
+    }
+
+    private async Task SetPluginAsync(string pluginId, bool enabled, string name)
+    {
+        IsPluginsBusy = true;
+        try
+        {
+            var ok = await _controller.SetPluginEnabledAsync(pluginId, enabled).ConfigureAwait(true);
+            if (!ok)
+            {
+                _notify($"插件开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            PluginsLastResult = enabled ? $"插件「{name}」已启用（Core 确认）" : $"插件「{name}」已停用（Core 确认）";
+            _notify(PluginsLastResult, NmStatus.Done);
+            await RefreshPluginsAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    // ── ④ 模型与设备（REALUSE-DATA-SAFETY-4 AC2：诚实诊断，不伪造设备状态）──────────
+
+    public bool IsDevicesSection => _selectedSection.Id == ConsoleSectionId.Devices;
+
+    /// <summary>
+    /// Whether any ENABLED provider profile declares the detection capability. This is the only
+    /// device/model fact the Host can answer today; the missing half (GPU/CPU, weights on disk) needs
+    /// a Core command that does not exist yet, and this section says so instead of guessing.
+    /// </summary>
+    public bool HasDetectionProvider =>
+        ProviderProfiles.Any(profile => profile.Enabled && profile.SupportsDetection);
+
+    public string DetectionReadinessText => HasDetectionProvider
+        ? "检测能力：已有启用且声明「检测」的 Provider，检测步骤可以提交。"
+        : "检测能力：未绑定——提交检测会失败并返回 PROVIDER_NOT_CONFIGURED（请到「Provider 与凭据」新建或启用一个声明「检测」的 Provider）。";
+
+    public string DeviceStatusText =>
+        "设备与权重：Core 尚未暴露设备/权重状态命令，因此这里不显示 GPU/CPU 或权重就绪与否；" +
+        "真实状态只能从打包 VERSION.json 与运行日志确认。";
 
     // ── ⑤ 缓存与版本清理（REALUSE-DATA-SAFETY-4 AC1：真实 cleanup.preview / cleanup.run）──
 
@@ -461,6 +643,10 @@ public sealed class ConsoleViewModel : ObservableObject
         if (section.Id == ConsoleSectionId.Storage)
         {
             _ = RefreshCleanupPreviewAsync();
+        }
+        else if (section.Id == ConsoleSectionId.Plugins)
+        {
+            _ = RefreshPluginsAsync();
         }
 
         OnPropertyChanged(
@@ -2127,6 +2313,9 @@ public sealed class ConsoleViewModel : ObservableObject
             ProviderProfiles.Add(new ProviderProfileRowViewModel(profile, SelectProvider, EditProvider, DeleteProvider));
         }
 
+            // REALUSE-DATA-SAFETY-4 AC2: the devices section derives its only answer from this list.
+            OnPropertyChanged(nameof(HasDetectionProvider), nameof(DetectionReadinessText));
+
         ProviderNetworkOptions.Clear();
         ProviderNetworkOptions.Add(new ConsoleOption(string.Empty, "使用默认网络"));
         foreach (var network in NetworkProfiles)
@@ -2453,4 +2642,62 @@ public sealed class CleanupTargetRowViewModel
         : SizeBytes >= 1024
             ? $"{SizeBytes / 1024.0:0.0} KB"
             : $"{SizeBytes} B";
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one row of the Core's <c>plugins.list</c>. A rejected plugin keeps its
+/// reason visible and is never presented as merely "off"; the switch is disabled while the Core's
+/// global master switch is off, because a per-plugin toggle would not take effect.
+/// </summary>
+public sealed class PluginRowViewModel
+{
+    public PluginRowViewModel(PluginInfo plugin, bool globalEnabled, Action onToggle)
+    {
+        PluginId = plugin.PluginId;
+        Name = string.IsNullOrWhiteSpace(plugin.Name) ? plugin.PluginId : plugin.Name;
+        Version = plugin.Version;
+        Description = plugin.Description;
+        StatusText = plugin.Status switch
+        {
+            "enabled" => "已启用",
+            "disabled" => "已停用",
+            "rejected" => "已拒绝（无法加载）",
+            _ => plugin.Status,
+        };
+        HooksText = plugin.Hooks.Count == 0 ? "（无钩子）" : string.Join(" / ", plugin.Hooks);
+        PermissionsText = plugin.Permissions.Count == 0 ? "（无权限声明）" : string.Join(" / ", plugin.Permissions);
+        IsRejected = string.Equals(plugin.Status, "rejected", StringComparison.Ordinal);
+        ReasonText = plugin.Reason ?? string.Empty;
+        Enabled = plugin.Enabled;
+        ToggleText = plugin.Enabled ? "停用" : "启用";
+        // A rejected plugin cannot be enabled; a per-plugin switch is pointless while the master is off.
+        CanToggle = !IsRejected && globalEnabled;
+        ToggleCommand = new RelayCommand(() => onToggle());
+    }
+
+    public string PluginId { get; }
+
+    public string Name { get; }
+
+    public string Version { get; }
+
+    public string Description { get; }
+
+    public string StatusText { get; }
+
+    public string HooksText { get; }
+
+    public string PermissionsText { get; }
+
+    public bool IsRejected { get; }
+
+    public string ReasonText { get; }
+
+    public bool Enabled { get; }
+
+    public bool CanToggle { get; }
+
+    public string ToggleText { get; }
+
+    public RelayCommand ToggleCommand { get; }
 }

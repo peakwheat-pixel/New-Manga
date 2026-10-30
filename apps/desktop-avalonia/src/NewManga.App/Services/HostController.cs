@@ -1622,6 +1622,89 @@ public sealed class HostController : IHostController
         }
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (read).</summary>
+    public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return new PluginListInfo(false, Array.Empty<PluginInfo>());
+        }
+
+        try
+        {
+            return await _runtime.ListPluginsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return new PluginListInfo(false, Array.Empty<PluginInfo>());
+        }
+    }
+
+    public async Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return false;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return false;
+        }
+
+        try
+        {
+            var value = await _runtime.SetPluginsGlobalEnabledAsync(enabled, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return value;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return false;
+        }
+    }
+
+    public async Task<bool> SetPluginEnabledAsync(
+        string pluginId,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pluginId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return false;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return false;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return false;
+        }
+
+        try
+        {
+            var value = await _runtime.SetPluginEnabledAsync(pluginId, enabled, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return value;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return false;
+        }
+    }
+
     /// <summary>
     /// REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): the Console's cache section. The preview is a pure
     /// read; the run is a write and therefore obeys the same data-root policy as every other write.

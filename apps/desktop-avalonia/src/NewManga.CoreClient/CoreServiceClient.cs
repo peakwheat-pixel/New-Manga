@@ -64,6 +64,27 @@ public sealed record CleanupOutcomeInfo(
     int Skipped,
     IReadOnlyList<string> FailedPaths);
 
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one row of <c>plugins.list</c>. A rejected plugin keeps its
+/// <paramref name="Reason"/>; the UI must not present it as merely "off".
+/// </summary>
+public sealed record PluginInfo(
+    string PluginId,
+    string Status,
+    bool Enabled,
+    string Name,
+    string Version,
+    string Description,
+    IReadOnlyList<string> Hooks,
+    IReadOnlyList<string> Permissions,
+    string? Reason);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>plugins.list</c> projection. The plugin root is deliberately not
+/// part of it (the Core never projects an absolute OS path over IPC).
+/// </summary>
+public sealed record PluginListInfo(bool GlobalEnabled, IReadOnlyList<PluginInfo> Plugins);
+
 /// <summary>One page row from <c>GetReaderProjection</c> (src/infrastructure/sqlite/library.py list_pages).</summary>
 public sealed record ReaderPageSummary(
     string PageId,
@@ -542,6 +563,117 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return packages;
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (<c>plugins.list</c>). Read-only.</summary>
+    public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.list",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.list");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("plugins.list result is not an object");
+        }
+
+        var plugins = new List<PluginInfo>();
+        if (result.TryGetProperty("plugins", out var pluginsElement) && pluginsElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in pluginsElement.EnumerateArray())
+            {
+                plugins.Add(new PluginInfo(
+                    ReadPluginString(item, "plugin_id"),
+                    ReadPluginString(item, "status"),
+                    item.TryGetProperty("enabled", out var enabled) && enabled.ValueKind == JsonValueKind.True,
+                    ReadPluginString(item, "name"),
+                    ReadPluginString(item, "version"),
+                    ReadPluginString(item, "description"),
+                    ReadPluginStringArray(item, "hooks"),
+                    ReadPluginStringArray(item, "permissions"),
+                    item.TryGetProperty("reason", out var reason) && reason.ValueKind == JsonValueKind.String
+                        ? reason.GetString()
+                        : null));
+            }
+        }
+
+        return new PluginListInfo(
+            result.TryGetProperty("global_enabled", out var global) && global.ValueKind == JsonValueKind.True,
+            plugins);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: the global plugin master switch (<c>plugins.set_enabled</c>).</summary>
+    public async Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.set_enabled",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteBoolean("enabled", enabled);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.set_enabled");
+        return result.ValueKind == JsonValueKind.Object
+            && result.TryGetProperty("global_enabled", out var global)
+            && global.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: one plugin's switch (<c>plugins.set_plugin_enabled</c>).</summary>
+    public async Task<bool> SetPluginEnabledAsync(
+        string pluginId,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.set_plugin_enabled",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("plugin_id", pluginId);
+                    writer.WriteBoolean("enabled", enabled);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.set_plugin_enabled");
+        return result.ValueKind == JsonValueKind.Object
+            && result.TryGetProperty("enabled", out var value)
+            && value.ValueKind == JsonValueKind.True;
+    }
+
+    private static string ReadPluginString(JsonElement element, string name) =>
+        element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString() ?? string.Empty
+            : string.Empty;
+
+    private static IReadOnlyList<string> ReadPluginStringArray(JsonElement element, string name)
+    {
+        if (!element.TryGetProperty(name, out var value) || value.ValueKind != JsonValueKind.Array)
+        {
+            return Array.Empty<string>();
+        }
+
+        var items = new List<string>();
+        foreach (var item in value.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.String && item.GetString() is { Length: > 0 } text)
+            {
+                items.Add(text);
+            }
+        }
+
+        return items;
     }
 
     /// <summary>

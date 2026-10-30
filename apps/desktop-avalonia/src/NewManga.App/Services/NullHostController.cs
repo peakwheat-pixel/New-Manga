@@ -514,6 +514,15 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
+    public Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(new PluginListInfo(false, Array.Empty<PluginInfo>()));
+
+    public Task<bool> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<bool> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
     public Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult(new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0));
 

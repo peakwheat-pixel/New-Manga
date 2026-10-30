@@ -93,6 +93,8 @@ public sealed class V2ConsoleUiTests
                 ConsoleSectionId.Storage,
                 // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复 已接真实 Host 面。
                 ConsoleSectionId.Backup,
+                // REALUSE-DATA-SAFETY-4 AC1: ⑦ 插件与 Hooks 已接真实 plugins.* 面。
+                ConsoleSectionId.Plugins,
                 ConsoleSectionId.Diagnostics,
                 ConsoleSectionId.Appearance,
             },
@@ -766,6 +768,164 @@ public sealed class V2ConsoleUiTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.Contains("3 处上次删除失败", console.CleanupPendingText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC1: plugins are a real inventory, not a placeholder ───────────
+
+    [AvaloniaFact]
+    public async Task PluginsSection_ReadsInventory_TogglesOnlyAfterConfirmation()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.PluginListCalls >= 1, "opening the section must read plugins.list");
+        Assert.True(console.HasPlugins);
+        Assert.True(console.PluginsGlobalEnabled);
+        var row = Assert.Single(console.Plugins);
+        Assert.Equal("sample.plugin", row.PluginId);
+        Assert.True(row.CanToggle);
+
+        // A plugin switch is a real write: it must pass the confirm gate first.
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Equal(0, fake.PluginToggleCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Contains("已停用", console.PluginsLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_PerPluginSwitchIsDisabledWhileTheGlobalSwitchIsOff()
+    {
+        var fake = Fixture();
+        fake.PluginList = fake.PluginList with { GlobalEnabled = false };
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.PluginsGlobalEnabled);
+        Assert.Contains("已停用", console.PluginsGlobalText, StringComparison.Ordinal);
+        var row = Assert.Single(console.Plugins);
+        Assert.False(row.CanToggle, "a per-plugin switch cannot take effect while the master is off");
+
+        // Pressing it anyway must explain instead of silently writing.
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.IsConfirmOpen);
+        Assert.Contains("全局插件已停用", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        Assert.Equal(0, fake.PluginToggleCalls);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_RejectedPlugin_ShowsReasonAndStaysOff()
+    {
+        var fake = Fixture();
+        fake.PluginList = new PluginListInfo(true, new[]
+        {
+            new PluginInfo("broken.plugin", "rejected", false, string.Empty, string.Empty, string.Empty,
+                Array.Empty<string>(), Array.Empty<string>(), "manifest 缺少 hooks 字段"),
+        });
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        var row = Assert.Single(console.Plugins);
+        Assert.True(row.IsRejected);
+        Assert.Equal("已拒绝（无法加载）", row.StatusText);
+        Assert.Contains("manifest", row.ReasonText, StringComparison.Ordinal);
+        Assert.False(row.CanToggle);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_RefusedWrite_IsReportedWithTheTypedCode()
+    {
+        var fake = Fixture();
+        fake.PluginWriteRefused = true;
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        console.ToggleGlobalPluginsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginGlobalToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("HOST_READ_ONLY", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC2: the devices section answers what it can and says what it cannot ──
+
+    [AvaloniaFact]
+    public async Task DevicesSection_StatesWhatIsUnknown_AndJumpsToProvidersWhenUnbound()
+    {
+        var fake = Fixture();
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        // Still honestly marked as not wired: device/weights status genuinely has no Host command.
+        Assert.True(console.IsNotWiredSection);
+        Assert.False(console.HasDetectionProvider);
+        Assert.Contains("PROVIDER_NOT_CONFIGURED", console.DetectionReadinessText, StringComparison.Ordinal);
+        Assert.Contains("Core 尚未暴露设备/权重状态命令", console.DeviceStatusText, StringComparison.Ordinal);
+
+        console.GoToProvidersCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(console.IsProvidersSection, "the unbound case must offer a way to fix it");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task DevicesSection_ReportsDetectionReady_WhenAnEnabledProviderDeclaresIt()
+    {
+        var fake = Fixture();
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-detect", "local.detector", "本地检测器",
+            new[] { SettingsCapabilities.Detection }, "http://127.0.0.1:9999", "det-v1",
+            null, true, "saved"));
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        await console.RefreshProvidersAsync();
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(console.HasDetectionProvider);
+        Assert.Contains("检测步骤可以提交", console.DetectionReadinessText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task DevicesSection_TreatsDisabledProviderAndOtherCapabilities_AsUnbound()
+    {
+        var fake = Fixture();
+        // detection capability but disabled
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-off", "local.detector", "未启用的检测器",
+            new[] { SettingsCapabilities.Detection }, "http://127.0.0.1:9999", "det-v1",
+            null, false, "saved"));
+        // enabled but only translation
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-tr", "cloud.translator", "翻译器",
+            new[] { SettingsCapabilities.Translation }, "https://example.invalid", "tr-v1",
+            null, true, "saved"));
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        await console.RefreshProvidersAsync();
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasDetectionProvider, "a disabled detector or a non-detection capability is not a binding");
+        Assert.Contains("PROVIDER_NOT_CONFIGURED", console.DetectionReadinessText, StringComparison.Ordinal);
         window.Close();
     }
 }
