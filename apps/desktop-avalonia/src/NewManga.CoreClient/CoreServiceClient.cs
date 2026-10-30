@@ -39,6 +39,52 @@ public sealed record BackupPackageInfo(
     int SchemaVersion,
     bool Verified);
 
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one removable cache target from <c>cleanup.preview</c>. Only a
+/// relative path and a byte size — the Core never sends an OS path here.
+/// </summary>
+public sealed record CleanupTargetInfo(string RelativePath, long SizeBytes);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>cleanup.preview</c> projection
+/// (<c>CleanupPreview.to_dict()</c> + <c>pending_cleanups</c>). Reading never deletes anything.
+/// </summary>
+public sealed record CleanupPreviewInfo(
+    IReadOnlyList<CleanupTargetInfo> Targets,
+    long TotalBytes,
+    int PendingCleanups);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>cleanup.run</c> projection. Counts are the Core's own; failures
+/// keep their fixed path-free reason so a partial cleanup is never reported as success.
+/// </summary>
+public sealed record CleanupOutcomeInfo(
+    int Removed,
+    int Failed,
+    int Skipped,
+    IReadOnlyList<string> FailedPaths);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one row of <c>plugins.list</c>. A rejected plugin keeps its
+/// <paramref name="Reason"/>; the UI must not present it as merely "off".
+/// </summary>
+public sealed record PluginInfo(
+    string PluginId,
+    string Status,
+    bool Enabled,
+    string Name,
+    string Version,
+    string Description,
+    IReadOnlyList<string> Hooks,
+    IReadOnlyList<string> Permissions,
+    string? Reason);
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: <c>plugins.list</c> projection. The plugin root is deliberately not
+/// part of it (the Core never projects an absolute OS path over IPC).
+/// </summary>
+public sealed record PluginListInfo(bool GlobalEnabled, IReadOnlyList<PluginInfo> Plugins);
+
 /// <summary>One page row from <c>GetReaderProjection</c> (src/infrastructure/sqlite/library.py list_pages).</summary>
 public sealed record ReaderPageSummary(
     string PageId,
@@ -517,6 +563,238 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return packages;
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1 (review r1 M5): retry the removals the Core persisted as failed
+    /// (<c>cleanup.retry_pending</c>). Settled entries leave the ledger; repeated failures stay pending.
+    /// </summary>
+    public async Task<CleanupOutcomeInfo> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.retry_pending",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.retry_pending");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.retry_pending result is not an object");
+        }
+
+        return ParseCleanupOutcome(result);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (<c>plugins.list</c>). Read-only.</summary>
+    public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.list",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.list");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("plugins.list result is not an object");
+        }
+
+        var plugins = new List<PluginInfo>();
+        if (result.TryGetProperty("plugins", out var pluginsElement) && pluginsElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in pluginsElement.EnumerateArray())
+            {
+                plugins.Add(new PluginInfo(
+                    ReadPluginString(item, "plugin_id"),
+                    ReadPluginString(item, "status"),
+                    item.TryGetProperty("enabled", out var enabled) && enabled.ValueKind == JsonValueKind.True,
+                    ReadPluginString(item, "name"),
+                    ReadPluginString(item, "version"),
+                    ReadPluginString(item, "description"),
+                    ReadPluginStringArray(item, "hooks"),
+                    ReadPluginStringArray(item, "permissions"),
+                    item.TryGetProperty("reason", out var reason) && reason.ValueKind == JsonValueKind.String
+                        ? reason.GetString()
+                        : null));
+            }
+        }
+
+        return new PluginListInfo(
+            result.TryGetProperty("global_enabled", out var global) && global.ValueKind == JsonValueKind.True,
+            plugins);
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: the global plugin master switch (<c>plugins.set_enabled</c>).
+    /// Returns the Core-confirmed new state, or null when the response was not a projection —
+    /// <c>false</c> is a valid ANSWER ("now off"), not a failure signal (review r1 M1).
+    /// </summary>
+    public async Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.set_enabled",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteBoolean("enabled", enabled);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.set_enabled");
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("global_enabled", out var global)
+            || (global.ValueKind != JsonValueKind.True && global.ValueKind != JsonValueKind.False))
+        {
+            return null;
+        }
+
+        return global.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: one plugin's switch (<c>plugins.set_plugin_enabled</c>). Returns the
+    /// confirmed new state, or null when the Core refused (unknown / rejected plugin).
+    /// </summary>
+    public async Task<bool?> SetPluginEnabledAsync(
+        string pluginId,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "plugins.set_plugin_enabled",
+                CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("plugin_id", pluginId);
+                    writer.WriteBoolean("enabled", enabled);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "plugins.set_plugin_enabled");
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("enabled", out var value)
+            || (value.ValueKind != JsonValueKind.True && value.ValueKind != JsonValueKind.False))
+        {
+            return null;
+        }
+
+        return value.ValueKind == JsonValueKind.True;
+    }
+
+    private static string ReadPluginString(JsonElement element, string name) =>
+        element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString() ?? string.Empty
+            : string.Empty;
+
+    private static IReadOnlyList<string> ReadPluginStringArray(JsonElement element, string name)
+    {
+        if (!element.TryGetProperty(name, out var value) || value.ValueKind != JsonValueKind.Array)
+        {
+            return Array.Empty<string>();
+        }
+
+        var items = new List<string>();
+        foreach (var item in value.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.String && item.GetString() is { Length: > 0 } text)
+            {
+                items.Add(text);
+            }
+        }
+
+        return items;
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: read-only pre-flight over the removable cache population
+    /// (<c>cleanup.preview</c>). The preview lists exactly the targets the run face re-checks, so
+    /// "preview says N" and "run touches at most N" cannot disagree.
+    /// </summary>
+    public async Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.preview",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.preview");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.preview result is not an object");
+        }
+
+        var targets = new List<CleanupTargetInfo>();
+        if (result.TryGetProperty("targets", out var targetsElement) && targetsElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in targetsElement.EnumerateArray())
+            {
+                targets.Add(new CleanupTargetInfo(
+                    item.TryGetProperty("relative_path", out var path) ? path.GetString() ?? string.Empty : string.Empty,
+                    item.TryGetProperty("size_bytes", out var size) && size.TryGetInt64(out var bytes) ? bytes : 0));
+            }
+        }
+
+        return new CleanupPreviewInfo(
+            targets,
+            result.TryGetProperty("total_bytes", out var total) && total.TryGetInt64(out var totalBytes) ? totalBytes : 0,
+            result.TryGetProperty("pending_cleanups", out var pending) && pending.TryGetInt32(out var pendingCount) ? pendingCount : 0);
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1: remove every safe cache target (<c>cleanup.run</c>). Idempotent;
+    /// failed removals stay persisted in the Core's pending ledger for the retry face.
+    /// </summary>
+    public async Task<CleanupOutcomeInfo> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "cleanup.run",
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "cleanup.run");
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("cleanup.run result is not an object");
+        }
+
+        return ParseCleanupOutcome(result);
+    }
+
+    private static CleanupOutcomeInfo ParseCleanupOutcome(JsonElement result)
+    {
+        var failedPaths = new List<string>();
+        if (result.TryGetProperty("items", out var items) && items.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var item in items.EnumerateObject())
+            {
+                if (item.Value.ValueKind == JsonValueKind.Object
+                    && item.Value.TryGetProperty("status", out var status)
+                    && string.Equals(status.GetString(), "failed", StringComparison.Ordinal))
+                {
+                    failedPaths.Add(item.Name);
+                }
+            }
+        }
+
+        return new CleanupOutcomeInfo(
+            result.TryGetProperty("removed", out var removed) && removed.TryGetInt32(out var removedCount) ? removedCount : 0,
+            result.TryGetProperty("failed", out var failed) && failed.TryGetInt32(out var failedCount) ? failedCount : 0,
+            result.TryGetProperty("skipped", out var skipped) && skipped.TryGetInt32(out var skippedCount) ? skippedCount : 0,
+            failedPaths);
     }
 
     public async Task<BackupPackageInfo> CreateBackupAsync(

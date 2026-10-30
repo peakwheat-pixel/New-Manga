@@ -3,20 +3,28 @@ id: REALUSE-DATA-SAFETY-4
 title: Console 三处「待接入」分区接线——模型/设备、缓存与版本清理、插件与 Hooks
 kind: feature
 governance_version: 3
-status: ready
+status: closed_with_limitations
 approval: user_authorized_2026-10-30_self_audit_split_from_REALUSE-DATA-SAFETY-3
 suggested_owner: dsh
-owner: null
-reviewer: null
+owner: dsh-lead
+reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md
+    must_fix: M1 plugin disable read as failure (Core echoes the new state); M2 write-path refresh blocked by its own busy flag; M3 pending retries hidden behind an empty target list; M4 unloaded provider list reported as unbound; M5 cleanup.retry_pending unreachable from the UI
+  - round: 2
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r2.md
 depends_on:
   - REALUSE-DATA-SAFETY-3
-base_commit: 026c5eacc
-branch: null
-worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+base_commit: b8039aec8
+branch: task/REALUSE-DATA-SAFETY-4
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
+integration_commit: PENDING
+delivery_head: 37dcd6d9f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-4
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-4.md
@@ -50,9 +58,9 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 设备与模型分区可用**：用户能从控制台看到并管理 Provider（至少：列出、选中、显示当前绑定），未配置时给出与 MA-02 指引一致的下一步。 <<PARTIAL: 待实现>>
-- [ ] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<PARTIAL: 待实现>>
-- [ ] **AC3 契约边界**：任何新增命令必须先在本 Task 记录契约变更提案并交 DSH 裁决；不擅自修改冻结契约。 <<PARTIAL: 待实现>>
+- [ ] **AC1 设备与模型分区可用**：用户能从控制台看到并管理 Provider（至少：列出、选中、显示当前绑定），未配置时给出与 MA-02 指引一致的下一步。 <<PARTIAL: 设备分区已改为诊断式（从 ProviderProfiles 推导检测能力绑定，未绑定明确说明会返回 PROVIDER_NOT_CONFIGURED 并给跳转 ② 的入口；设备/权重状态如实标注 Core 未暴露），3 个用例通过；完整设备/权重答案依赖 doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md，未实施>>
+- [x] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<MET>>
+- [x] **AC3 契约边界**：任何新增命令必须先在本 Task 记录契约变更提案并交 DSH 裁决；不擅自修改冻结契约。 <<MET>>
 
 ## 禁止范围
 
@@ -62,9 +70,10 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 Provider 管理 | headless UI 测试 + 真实数据根 | net9.0 | NOT_RUN | 待补 |
-| AC2 占位诚实性 | XAML/VM 断言（无假按钮） | net9.0 | NOT_RUN | 待补 |
-| AC3 契约 | 人工核对冻结契约 diff | — | NOT_RUN | 待补 |
+| AC1 设备诊断 | `dotnet test --filter DevicesSection_` | net9.0 | PASS 3/3（未绑定说明 + 已绑定 + 未启用/非检测能力均判为未绑定） | `V2ConsoleUiTests.cs` |
+| AC2 缓存清理 | `dotnet test --filter StorageSection_` | net9.0 | PASS 3/3（预览→确认→执行、空预览拒绝、待重试数透出） | `V2ConsoleUiTests.cs` |
+| AC2 插件分区 | `dotnet test --filter PluginsSection_` | net9.0 | PASS 4/4（清单+确认后开关、全局关闭时单插件禁用、被拒绝插件显示 reason、写入被拒显示 typed code） | `V2ConsoleUiTests.cs` |
+| AC3 契约 | 人工核对：冻结契约未改动 | — | PASS（仅新增提案文档；`git diff` 不含 contracts/ 变更） | `doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md` |
 
 ## Canonical Evidence
 
@@ -72,13 +81,17 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC2-CLIENT | AC2 | `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs` | `282ad43fa` | `-` | CANONICAL |
+| E-AC2-STORAGE | AC2 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs` | `6ea2e817a` | `-` | CANONICAL |
+| E-AC2-UI | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `4238fdbb8` | `-` | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md` | `3844851e8` | `-` | CANONICAL |
+| E-AC3-PROPOSAL | AC3 | `doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md` | `4238fdbb8` | `-` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3 | doc/handoffs/REALUSE-DATA-SAFETY-3-handoff.md | 前三批 worktree 保留；本 Task 尚未开 worktree |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4 | doc/handoffs/REALUSE-DATA-SAFETY-4-handoff.md | 前四批 worktree 全部保留，未删除 |
 
 ## Closeout Record
 

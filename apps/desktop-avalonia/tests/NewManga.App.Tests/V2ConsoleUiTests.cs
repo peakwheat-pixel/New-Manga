@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
+using NewManga.CoreClient;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.Console;
 using NewManga.App.Views.V2.Console;
@@ -88,8 +89,12 @@ public sealed class V2ConsoleUiTests
                 ConsoleSectionId.Tasks,
                 ConsoleSectionId.Providers,
                 ConsoleSectionId.Network,
+                // REALUSE-DATA-SAFETY-4 AC1: ⑤ 缓存与版本清理 已接真实 cleanup.preview / cleanup.run。
+                ConsoleSectionId.Storage,
                 // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复 已接真实 Host 面。
                 ConsoleSectionId.Backup,
+                // REALUSE-DATA-SAFETY-4 AC1: ⑦ 插件与 Hooks 已接真实 plugins.* 面。
+                ConsoleSectionId.Plugins,
                 ConsoleSectionId.Diagnostics,
                 ConsoleSectionId.Appearance,
             },
@@ -281,16 +286,24 @@ public sealed class V2ConsoleUiTests
         var controller = Fixture();
         var (window, shell, console) = await HostInConsoleAsync(controller);
 
-        console.SelectSectionById(ConsoleSectionId.Storage);
+        // REALUSE-DATA-SAFETY-4 AC1: ⑤ Storage is a real pre-flight now, so the honest-placeholder
+        // example moves to ④ Devices (still needs a Host device/weights command).
+        console.SelectSectionById(ConsoleSectionId.Devices);
         Dispatcher.UIThread.RunJobs();
         Assert.True(console.IsNotWiredSection);
-        Assert.True(console.ShowClearCacheDanger);
-        Capture(window, "04-console-storage-not-wired");
+        Assert.Contains("能力待接入", console.NotWiredBody, StringComparison.Ordinal);
+        Assert.Contains("依赖", console.NotWiredRequirement, StringComparison.Ordinal);
+        Capture(window, "04-console-devices-not-wired");
+
+        // ⑤ Storage: the destructive action is real and therefore still gated by the shared confirm.
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(console.IsNotWiredSection);
         console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
         Assert.True(shell.ViewModel.IsConfirmOpen);
-        Assert.False(shell.ViewModel.ConfirmCanConfirm);
-        Assert.Contains("能力待接入", shell.ViewModel.ConfirmBlockedReason, StringComparison.Ordinal);
-        Capture(window, "08-console-danger-confirm-blocked");
+        Assert.True(shell.ViewModel.ConfirmCanConfirm, "a real cleanup must be confirmable");
+        Capture(window, "08-console-danger-confirm");
         shell.ViewModel.CancelConfirmCommand.Execute(null);
         Assert.False(shell.ViewModel.IsConfirmOpen);
 
@@ -689,6 +702,344 @@ public sealed class V2ConsoleUiTests
 
         Assert.Equal("run-session-7", console.RunIdInput);
 
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): cache cleanup is real, not a placeholder ────
+
+    /// <summary>
+    /// The section used to be a permanent 待接入 placeholder because the Host never exposed
+    /// cleanup.preview / cleanup.run. It now shows the Core's own pre-flight and only deletes after
+    /// the shared confirmation gate.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task StorageSection_PreviewsThenDeletesOnlyAfterConfirmation()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.CleanupPreviewCalls >= 1, "opening the section must read the pre-flight");
+        Assert.True(console.HasCleanupTargets);
+        Assert.Contains("将清理 1 个", console.CleanupSummaryText, StringComparison.Ordinal);
+
+        console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen, "deleting cache must go through the confirm gate");
+        Assert.Equal(0, fake.CleanupRunCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.CleanupRunCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("已清理 1 个", console.CleanupLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StorageSection_WithEmptyPreview_RefusesWithoutConfirming()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0);
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasCleanupTargets);
+        Assert.Contains("没有可安全清理", console.CleanupSummaryText, StringComparison.Ordinal);
+
+        console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(shell.ViewModel.IsConfirmOpen, "an empty preview must not open a destructive confirm");
+        Assert.Equal(0, fake.CleanupRunCalls);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StorageSection_SurfacesPendingFailuresFromTheCoreLedger()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(
+            new[] { new CleanupTargetInfo("cache/tiles/abc.webp", 2048) }, 2048, 3);
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("3 处上次删除失败", console.CleanupPendingText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC1: plugins are a real inventory, not a placeholder ───────────
+
+    [AvaloniaFact]
+    public async Task PluginsSection_ReadsInventory_TogglesOnlyAfterConfirmation()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.PluginListCalls >= 1, "opening the section must read plugins.list");
+        Assert.True(console.HasPlugins);
+        Assert.True(console.PluginsGlobalEnabled);
+        var row = Assert.Single(console.Plugins);
+        Assert.Equal("sample.plugin", row.PluginId);
+        Assert.True(row.CanToggle);
+
+        // A plugin switch is a real write: it must pass the confirm gate first.
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Equal(0, fake.PluginToggleCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Contains("已停用", console.PluginsLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_PerPluginSwitchIsDisabledWhileTheGlobalSwitchIsOff()
+    {
+        var fake = Fixture();
+        fake.PluginList = fake.PluginList with { GlobalEnabled = false };
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.PluginsGlobalEnabled);
+        Assert.Contains("已停用", console.PluginsGlobalText, StringComparison.Ordinal);
+        var row = Assert.Single(console.Plugins);
+        Assert.False(row.CanToggle, "a per-plugin switch cannot take effect while the master is off");
+
+        // Pressing it anyway must explain instead of silently writing.
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.ViewModel.IsConfirmOpen);
+        Assert.Contains("全局插件已停用", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        Assert.Equal(0, fake.PluginToggleCalls);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_RejectedPlugin_ShowsReasonAndStaysOff()
+    {
+        var fake = Fixture();
+        fake.PluginList = new PluginListInfo(true, new[]
+        {
+            new PluginInfo("broken.plugin", "rejected", false, string.Empty, string.Empty, string.Empty,
+                Array.Empty<string>(), Array.Empty<string>(), "manifest 缺少 hooks 字段"),
+        });
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        var row = Assert.Single(console.Plugins);
+        Assert.True(row.IsRejected);
+        Assert.Equal("已拒绝（无法加载）", row.StatusText);
+        Assert.Contains("manifest", row.ReasonText, StringComparison.Ordinal);
+        Assert.False(row.CanToggle);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task PluginsSection_RefusedWrite_IsReportedWithTheTypedCode()
+    {
+        var fake = Fixture();
+        fake.PluginWriteRefused = true;
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        console.ToggleGlobalPluginsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginGlobalToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("HOST_READ_ONLY", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC2: the devices section answers what it can and says what it cannot ──
+
+    [AvaloniaFact]
+    public async Task DevicesSection_StatesWhatIsUnknown_AndJumpsToProvidersWhenUnbound()
+    {
+        var fake = Fixture();
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        // Still honestly marked as not wired: device/weights status genuinely has no Host command.
+        Assert.True(console.IsNotWiredSection);
+        Assert.False(console.HasDetectionProvider);
+        Assert.Contains("PROVIDER_NOT_CONFIGURED", console.DetectionReadinessText, StringComparison.Ordinal);
+        Assert.Contains("Core 尚未暴露设备/权重状态命令", console.DeviceStatusText, StringComparison.Ordinal);
+
+        console.GoToProvidersCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(console.IsProvidersSection, "the unbound case must offer a way to fix it");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task DevicesSection_ReportsDetectionReady_WhenAnEnabledProviderDeclaresIt()
+    {
+        var fake = Fixture();
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-detect", "local.detector", "本地检测器",
+            new[] { SettingsCapabilities.Detection }, "http://127.0.0.1:9999", "det-v1",
+            null, true, "saved"));
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        await console.RefreshProvidersAsync();
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(console.HasDetectionProvider);
+        Assert.Contains("检测步骤可以提交", console.DetectionReadinessText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task DevicesSection_TreatsDisabledProviderAndOtherCapabilities_AsUnbound()
+    {
+        var fake = Fixture();
+        // detection capability but disabled
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-off", "local.detector", "未启用的检测器",
+            new[] { SettingsCapabilities.Detection }, "http://127.0.0.1:9999", "det-v1",
+            null, false, "saved"));
+        // enabled but only translation
+        fake.ProviderProfiles.Add(new ProviderProfileInfo(
+            "profile-tr", "cloud.translator", "翻译器",
+            new[] { SettingsCapabilities.Translation }, "https://example.invalid", "tr-v1",
+            null, true, "saved"));
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        await console.RefreshProvidersAsync();
+        console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasDetectionProvider, "a disabled detector or a non-detection capability is not a binding");
+        Assert.Contains("PROVIDER_NOT_CONFIGURED", console.DetectionReadinessText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 review r1: the five defects the first review found ──────────────
+
+    /// <summary>
+    /// r1 M1: the Core echoes the NEW state, so `{"enabled": false}` is a successful "now off".
+    /// The first implementation treated it as a failure and made plugins impossible to disable.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task PluginsSection_DisablingAPlugin_IsReportedAsSuccess()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+
+        var row = Assert.Single(console.Plugins);
+        Assert.True(row.Enabled);
+        row.ToggleCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginToggleCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("已停用", console.PluginsLastResult ?? string.Empty, StringComparison.Ordinal);
+        Assert.DoesNotContain("被拒绝", shell.ViewModel.NoticeText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>
+    /// r1 M2: the write set the busy flag and then asked for a refresh, which the flag rejected —
+    /// the list stayed on the pre-write state. The refresh must actually run.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task PluginsSection_RefreshAfterToggle_ActuallyReloadsTheList()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Plugins);
+        Dispatcher.UIThread.RunJobs();
+        var before = fake.PluginListCalls;
+
+        console.ToggleGlobalPluginsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.PluginGlobalToggleCalls == 1);
+        await WaitUntilAsync(() => fake.PluginListCalls > before);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.PluginListCalls > before, "the post-write refresh must not be skipped by the busy flag");
+        Assert.False(console.PluginsGlobalEnabled);
+        window.Close();
+    }
+
+    /// <summary>
+    /// r1 M3: pending failures outlive the target list; they must stay visible when the preview is
+    /// empty, otherwise the only trace of a failed cleanup disappears.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task StorageSection_PendingFailures_StayVisibleWithAnEmptyTargetList()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 2);
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasCleanupTargets);
+        Assert.True(console.HasCleanupPending, "pending retries must not hide behind an empty target list");
+        Assert.Contains("2 处上次删除失败", console.CleanupPendingText, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>r1 M5: the Core already had cleanup.retry_pending; the UI must let the user reach it.</summary>
+    [AvaloniaFact]
+    public async Task StorageSection_RetriesPersistedFailuresThroughTheConfirmGate()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 1);
+        fake.CleanupRetryOutcome = new CleanupOutcomeInfo(1, 0, 0, Array.Empty<string>());
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        console.RetryPendingCleanupsCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen);
+        Assert.Equal(0, fake.CleanupRetryCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.CleanupRetryCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("待重试项已清空", console.CleanupLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    /// <summary>r1 M4: an unloaded provider list must read as unknown, never as "not bound".</summary>
+    [AvaloniaFact]
+    public async Task DevicesSection_SaysUnknown_BeforeAnyProviderListArrives()
+    {
+        // A shell whose Host is not ready never loads providers, so the section must not claim "unbound".
+        var notReady = new FakeHostController(new HostViewSnapshot(
+            HostViewState.Starting, "正在启动 Host…", "—", null, null,
+            Array.Empty<BookSummary>(), 0, true, null));
+        var window = new Window { Width = 1600, Height = 1000, Content = new AppShellV2(notReady), Background = Brushes.Black };
+        window.Show();
+        var shell = (AppShellV2)window.Content!;
+        await shell.Initialization;
+        shell.ViewModel.Console.SelectSectionById(ConsoleSectionId.Devices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("尚未读取", shell.ViewModel.Console.DetectionReadinessText, StringComparison.Ordinal);
         window.Close();
     }
 }

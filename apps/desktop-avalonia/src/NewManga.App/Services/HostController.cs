@@ -1622,6 +1622,166 @@ public sealed class HostController : IHostController
         }
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (read).</summary>
+    public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return new PluginListInfo(false, Array.Empty<PluginInfo>());
+        }
+
+        try
+        {
+            return await _runtime.ListPluginsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return new PluginListInfo(false, Array.Empty<PluginInfo>());
+        }
+    }
+
+    public async Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            bool? value = await _runtime.SetPluginsGlobalEnabledAsync(enabled, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return value;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<bool?> SetPluginEnabledAsync(
+        string pluginId,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pluginId))
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            bool? value = await _runtime.SetPluginEnabledAsync(pluginId, enabled, cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return value;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): the Console's cache section. The preview is a pure
+    /// read; the run is a write and therefore obeys the same data-root policy as every other write.
+    /// </summary>
+    public async Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0);
+        }
+
+        try
+        {
+            return await _runtime.GetCleanupPreviewAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0);
+        }
+    }
+
+    public async Task<CleanupOutcomeInfo?> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var outcome = await _runtime.RunCleanupAsync(cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return outcome;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
+    public async Task<CleanupOutcomeInfo?> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var outcome = await _runtime.RetryPendingCleanupsAsync(cancellationToken).ConfigureAwait(false);
+            SetLastError(null);
+            return outcome;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return null;
+        }
+    }
+
     public async Task<BackupPackageInfo?> CreateBackupAsync(
         string backupType = "manual",
         CancellationToken cancellationToken = default)

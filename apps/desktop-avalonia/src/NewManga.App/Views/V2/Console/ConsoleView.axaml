@@ -97,9 +97,101 @@
               <TextBlock Classes="body" Text="{Binding NotWiredRequirement}" TextWrapping="Wrap" />
             </StackPanel>
 
+            <!-- ④ 模型与设备：能答的只有「检测能力是否绑定」，其余如实说明缺什么 -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding IsDevicesSection}">
+              <TextBlock Classes="section-title" Text="检测能力现状" />
+              <TextBlock Classes="body" Text="{Binding DetectionReadinessText}" TextWrapping="Wrap" />
+              <TextBlock Classes="meta" Text="{Binding DeviceStatusText}" TextWrapping="Wrap" />
+              <Button Classes="secondary sm" Content="去 Provider 与凭据配置"
+                      Command="{Binding GoToProvidersCommand}"
+                      IsVisible="{Binding !HasDetectionProvider}" />
+            </StackPanel>
+
             <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowClearCacheDanger}">
               <Button Classes="danger sm" Content="清理缓存与过期版本（能力待接入）" Command="{Binding RequestClearCacheCommand}" />
             </StackPanel>
+          </StackPanel>
+
+          <!-- ── ⑦ 插件与 Hooks（真实 plugins.* 面，REALUSE-DATA-SAFETY-4 AC1）────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsPluginsSection}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="安全约束：插件是外部代码。启用前请确认来源；单个插件是否执行取决于全局开关与插件自身开关两个条件。" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding PluginsSummaryText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="刷新" Command="{Binding RefreshPluginsCommand}" IsEnabled="{Binding !IsPluginsBusy}" />
+              <Button Grid.Column="2" Classes="secondary sm" Content="{Binding PluginsGlobalText}" Command="{Binding ToggleGlobalPluginsCommand}" IsEnabled="{Binding !IsPluginsBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasPlugins}">
+              <ItemsControl ItemsSource="{Binding Plugins}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:PluginRowViewModel">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}" Margin="{DynamicResource Nm.Padding.Cell}">
+                      <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                        <TextBlock Classes="label" Text="{Binding Name}" />
+                        <TextBlock Classes="meta" Text="{Binding Description}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding HooksText}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding PermissionsText}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding ReasonText}" TextWrapping="Wrap" IsVisible="{Binding IsRejected}" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding StatusText}" VerticalAlignment="Center" />
+                      <Button Grid.Column="2" Classes="ghost sm" Content="{Binding ToggleText}"
+                              Command="{Binding ToggleCommand}"
+                              IsEnabled="{Binding CanToggle}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasPluginsResult}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="上次插件操作结果（Core 确认）" />
+                <TextBlock Classes="meta" Text="{Binding PluginsLastResult}" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <!-- ── ⑤ 缓存与版本清理（真实 cleanup.preview / cleanup.run，REALUSE-DATA-SAFETY-4 AC1）── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsStorageSection}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="安全范围：只清理 Core 判定为可重建的 cache/ 前缀目标；用户原图、人工修改与已锁定版本不在清理范围内。" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding CleanupSummaryText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="读取预览" Command="{Binding RefreshCleanupPreviewCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+              <Button Grid.Column="2" Classes="danger sm" Content="清理" Command="{Binding RequestClearCacheCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasCleanupPending}">
+              <TextBlock Classes="meta" Text="{Binding CleanupPendingText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="重试失败项"
+                      Command="{Binding RetryPendingCleanupsCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasCleanupTargets}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="将被删除的缓存目标（相对路径）" />
+                <ScrollViewer>
+                  <ItemsControl ItemsSource="{Binding CleanupTargets}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:CleanupTargetRowViewModel">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                          <TextBlock Classes="data" Text="{Binding RelativePath}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Grid.Column="1" Classes="meta" Text="{Binding SizeText}" />
+                        </Grid>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasCleanupResult}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="上次清理结果（Core 投影）" />
+                <TextBlock Classes="meta" Text="{Binding CleanupLastResult}" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
           </StackPanel>
 
           <!-- ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ─────────────── -->

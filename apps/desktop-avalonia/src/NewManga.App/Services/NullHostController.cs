@@ -514,6 +514,24 @@ public sealed class NullHostController : IHostController
         CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
+    public Task<CleanupOutcomeInfo?> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<CleanupOutcomeInfo?>(null);
+
+    public Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(new PluginListInfo(false, Array.Empty<PluginInfo>()));
+
+    public Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default) =>
+        Task.FromResult<bool?>(null);
+
+    public Task<bool?> SetPluginEnabledAsync(string pluginId, bool enabled, CancellationToken cancellationToken = default) =>
+        Task.FromResult<bool?>(null);
+
+    public Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0));
+
+    public Task<CleanupOutcomeInfo?> RunCleanupAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<CleanupOutcomeInfo?>(null);
+
     public Task<string?> RestoreBackupAsync(
         string backupId,
         CancellationToken cancellationToken = default) =>

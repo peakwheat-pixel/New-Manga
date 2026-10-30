@@ -161,6 +161,55 @@ public sealed class HostRuntime : IAsyncDisposable
         return await core.CreateBackupAsync(backupType, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: retry persisted failed removals (a write).</summary>
+    public async Task<CleanupOutcomeInfo> RetryPendingCleanupsAsync(CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.RetryPendingCleanupsAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: plugin inventory (plugins.list), read-only.</summary>
+    public async Task<PluginListInfo> ListPluginsAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListPluginsAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: the global plugin master switch (a write).</summary>
+    public async Task<bool?> SetPluginsGlobalEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.SetPluginsGlobalEnabledAsync(enabled, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: one plugin's switch (a write).</summary>
+    public async Task<bool?> SetPluginEnabledAsync(
+        string pluginId,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.SetPluginEnabledAsync(pluginId, enabled, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: read-only cache pre-flight (cleanup.preview).</summary>
+    public async Task<CleanupPreviewInfo> GetCleanupPreviewAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.GetCleanupPreviewAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1: remove the safe cache population (cleanup.run).</summary>
+    public async Task<CleanupOutcomeInfo> RunCleanupAsync(CancellationToken cancellationToken = default)
+    {
+        RequireWritesAllowed();
+        var core = CoreService ?? throw NotReady();
+        return await core.RunCleanupAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task DeleteBackupAsync(string backupId, CancellationToken cancellationToken = default)
     {
         RequireWritesAllowed();

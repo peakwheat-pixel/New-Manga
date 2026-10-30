@@ -76,6 +76,7 @@ public sealed class ProviderProfileRowViewModel : ObservableObject
         ProfileId = profile.ProfileId;
         ProviderId = profile.ProviderId;
         DisplayName = profile.DisplayName;
+        Capabilities = profile.Capabilities;
         CapabilitiesText = string.Join(" / ", profile.Capabilities);
         Endpoint = profile.Endpoint;
         Model = profile.Model;
@@ -93,7 +94,12 @@ public sealed class ProviderProfileRowViewModel : ObservableObject
 
     public string DisplayName { get; }
 
+    public IReadOnlyList<string> Capabilities { get; }
+
     public string CapabilitiesText { get; }
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC2: whether this profile can serve the detection step.</summary>
+    public bool SupportsDetection => Capabilities.Contains(SettingsCapabilities.Detection);
 
     public string Endpoint { get; }
 

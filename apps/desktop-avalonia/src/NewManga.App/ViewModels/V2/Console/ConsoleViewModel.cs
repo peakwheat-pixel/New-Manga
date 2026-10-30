@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using NewManga.App.Services;
+using NewManga.CoreClient;
 using NewManga.App.Shell.V2;
 
 namespace NewManga.App.ViewModels.V2.Console;
@@ -123,9 +124,13 @@ public sealed class ConsoleViewModel : ObservableObject
             Section(ConsoleSectionId.Providers, "02", "Provider 与凭据", "配置 / 凭据状态 / 能力绑定", isWired: true),
             Section(ConsoleSectionId.Network, "03", "网络与代理", "网络配置 / 默认网络 / 连通测试", isWired: true),
             Section(ConsoleSectionId.Devices, "04", "模型与设备", "设备探测未接入（无 Host 命令）", isWired: false),
-            Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "清理需 Host 方法与影响面预览", isWired: false),
+            // REALUSE-DATA-SAFETY-4 AC1: cleanup.preview / cleanup.run are wired end to end now, so this
+            // section is a real pre-flight + confirmed run instead of a permanent placeholder.
+            Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "预览影响面后清理（真实，二次确认）", isWired: true),
             Section(ConsoleSectionId.Backup, "06", "备份与恢复", "真实 .nmbak 包（列表 / 创建 / 删除 / 恢复）", isWired: true),
-            Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件列表/启停未接入", isWired: false),
+            // REALUSE-DATA-SAFETY-4 AC1: plugins.list / plugins.set_enabled / plugins.set_plugin_enabled
+            // are wired end to end now, so the section shows the real inventory and real switches.
+            Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件清单与启停（真实，二次确认）", isWired: true),
             Section(ConsoleSectionId.Diagnostics, "08", "诊断与日志", "Host 状态 / 导出历史（真实）", isWired: true),
             Section(ConsoleSectionId.Appearance, "09", "外观", "深浅外观 / 主题工作室入口", isWired: true),
         };
@@ -170,6 +175,11 @@ public sealed class ConsoleViewModel : ObservableObject
         OpenThemeStudioCommand = new RelayCommand(() => _openThemeStudio());
         OpenStudioCommand = new RelayCommand(() => _openStudio());
         RequestClearCacheCommand = new RelayCommand(RequestClearCache);
+        RefreshCleanupPreviewCommand = new RelayCommand(() => _ = RefreshCleanupPreviewAsync());
+        RetryPendingCleanupsCommand = new RelayCommand(RequestRetryPendingCleanups);
+        RefreshPluginsCommand = new RelayCommand(() => _ = RefreshPluginsAsync());
+        ToggleGlobalPluginsCommand = new RelayCommand(RequestToggleGlobalPlugins);
+        GoToProvidersCommand = new RelayCommand(() => SelectSectionById(ConsoleSectionId.Providers));
         RequestCreateBackupCommand = new RelayCommand(() => _ = CreateBackupAsync());
         RequestDeleteBackupCommand = new RelayCommand(RequestDeleteBackup);
         RequestRestoreBackupCommand = new RelayCommand(RequestRestoreBackup);
@@ -270,7 +280,346 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public bool ShowBackupDanger => _selectedSection.Id == ConsoleSectionId.Backup;
 
+    // ── ⑦ 插件与 Hooks（REALUSE-DATA-SAFETY-4 AC1：真实 plugins.* 面）──────────────────
+
+    private bool _isPluginsBusy;
+    private bool _pluginsGlobalEnabled;
+    private string _pluginsSummaryText = "尚未读取插件列表";
+    private string? _pluginsLastResult;
+
+    public bool IsPluginsSection => _selectedSection.Id == ConsoleSectionId.Plugins;
+
+    public ObservableCollection<PluginRowViewModel> Plugins { get; } = new();
+
+    public bool HasPlugins => Plugins.Count > 0;
+
+    public bool IsPluginsBusy
+    {
+        get => _isPluginsBusy;
+        private set => Set(ref _isPluginsBusy, value);
+    }
+
+    /// <summary>The Core's global master switch; per-plugin switches are meaningless while it is off.</summary>
+    public bool PluginsGlobalEnabled
+    {
+        get => _pluginsGlobalEnabled;
+        private set => Set(ref _pluginsGlobalEnabled, value);
+    }
+
+    public string PluginsGlobalText => PluginsGlobalEnabled ? "全局插件：已启用" : "全局插件：已停用";
+
+    public string PluginsSummaryText
+    {
+        get => _pluginsSummaryText;
+        private set => Set(ref _pluginsSummaryText, value);
+    }
+
+    public string? PluginsLastResult
+    {
+        get => _pluginsLastResult;
+        private set => Set(ref _pluginsLastResult, value);
+    }
+
+    public bool HasPluginsResult => !string.IsNullOrWhiteSpace(_pluginsLastResult);
+
+    public RelayCommand RefreshPluginsCommand { get; private set; } = null!;
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC2: from the devices section straight to the provider section.</summary>
+    public RelayCommand GoToProvidersCommand { get; private set; } = null!;
+
+    public RelayCommand ToggleGlobalPluginsCommand { get; private set; } = null!;
+
+    public Task RefreshPluginsAsync() =>
+        IsPluginsBusy ? Task.CompletedTask : RefreshPluginsCoreAsync();
+
+    private async Task RefreshPluginsCoreAsync()
+    {
+        IsPluginsBusy = true;
+        try
+        {
+            var inventory = await _controller.ListPluginsAsync().ConfigureAwait(true);
+            Plugins.Clear();
+            foreach (var plugin in inventory.Plugins)
+            {
+                Plugins.Add(new PluginRowViewModel(
+                    plugin,
+                    inventory.GlobalEnabled,
+                    () => RequestTogglePlugin(plugin.PluginId, plugin)));
+            }
+
+            PluginsGlobalEnabled = inventory.GlobalEnabled;
+            PluginsSummaryText = inventory.Plugins.Count == 0
+                ? "没有发现可加载的插件（插件目录为空或未装配 Runtime）"
+                : $"发现 {inventory.Plugins.Count} 个插件";
+            OnPropertyChanged(nameof(HasPlugins), nameof(PluginsGlobalText));
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    private void RequestToggleGlobalPlugins()
+    {
+        var turningOn = !PluginsGlobalEnabled;
+        _requestConfirm(new ConfirmRequest(
+            turningOn ? "启用全局插件" : "停用全局插件",
+            turningOn
+                ? "启用后，已勾选的插件钩子会在处理流程中执行。插件是外部代码，请只启用你信任的来源。"
+                : "停用后所有插件钩子立即不再执行（单个插件的启用状态保留）。",
+            turningOn ? "启用" : "停用",
+            IsDanger: true,
+            OnConfirm: () => _ = SetGlobalPluginsAsync(turningOn)));
+    }
+
+    private async Task SetGlobalPluginsAsync(bool enabled)
+    {
+        IsPluginsBusy = true;
+        try
+        {
+            var confirmed = await _controller.SetPluginsGlobalEnabledAsync(enabled).ConfigureAwait(true);
+            if (confirmed is null)
+            {
+                _notify($"插件全局开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            PluginsLastResult = confirmed.Value ? "全局插件已启用（Core 确认）" : "全局插件已停用（Core 确认）";
+            _notify(PluginsLastResult, NmStatus.Done);
+            await RefreshPluginsCoreAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    private void RequestTogglePlugin(string pluginId, PluginInfo plugin)
+    {
+        if (!PluginsGlobalEnabled)
+        {
+            _notify("全局插件已停用：单个插件开关不会生效，请先启用全局插件", NmStatus.Blocked);
+            return;
+        }
+
+        var turningOn = !plugin.Enabled;
+        _requestConfirm(new ConfirmRequest(
+            turningOn ? $"启用插件「{plugin.Name}」" : $"停用插件「{plugin.Name}」",
+            turningOn
+                ? $"该插件声明的钩子：{string.Join(" / ", plugin.Hooks)}。启用后这些钩子会在流程中被调用。"
+                : "停用后该插件的钩子不再执行，其启用状态会记录在 Core 侧。",
+            turningOn ? "启用" : "停用",
+            IsDanger: true,
+            OnConfirm: () => _ = SetPluginAsync(pluginId, turningOn, plugin.Name)));
+    }
+
+    private async Task SetPluginAsync(string pluginId, bool enabled, string name)
+    {
+        IsPluginsBusy = true;
+        try
+        {
+            var confirmed = await _controller.SetPluginEnabledAsync(pluginId, enabled).ConfigureAwait(true);
+            if (confirmed is null)
+            {
+                _notify($"插件开关被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            PluginsLastResult = confirmed.Value ? $"插件「{name}」已启用（Core 确认）" : $"插件「{name}」已停用（Core 确认）";
+            _notify(PluginsLastResult, NmStatus.Done);
+            await RefreshPluginsCoreAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsPluginsBusy = false;
+        }
+    }
+
+    // ── ④ 模型与设备（REALUSE-DATA-SAFETY-4 AC2：诚实诊断，不伪造设备状态）──────────
+
+    public bool IsDevicesSection => _selectedSection.Id == ConsoleSectionId.Devices;
+
+    /// <summary>
+    /// Whether any ENABLED provider profile declares the detection capability. This is the only
+    /// device/model fact the Host can answer today; the missing half (GPU/CPU, weights on disk) needs
+    /// a Core command that does not exist yet, and this section says so instead of guessing.
+    /// </summary>
+    public bool HasDetectionProvider =>
+        ProviderProfiles.Any(profile => profile.Enabled && profile.SupportsDetection);
+
+    /// <summary>Review r1 M4: an unloaded provider list is "unknown", never "unbound".</summary>
+    private bool _providersLoaded;
+
+    public string DetectionReadinessText => !_providersLoaded
+        ? "检测能力：Provider 列表尚未读取，暂时无法判断（切换到「Provider 与凭据」会自动加载）。"
+        : HasDetectionProvider
+            ? "检测能力：已有启用且声明「检测」的 Provider，检测步骤可以提交。"
+            : "检测能力：未绑定——提交检测会失败并返回 PROVIDER_NOT_CONFIGURED（请到「Provider 与凭据」新建或启用一个声明「检测」的 Provider）。";
+
+    public string DeviceStatusText =>
+        "设备与权重：Core 尚未暴露设备/权重状态命令，因此这里不显示 GPU/CPU 或权重就绪与否；" +
+        "真实状态只能从打包 VERSION.json 与运行日志确认。";
+
+    // ── ⑤ 缓存与版本清理（REALUSE-DATA-SAFETY-4 AC1：真实 cleanup.preview / cleanup.run）──
+
+    private bool _isCleanupBusy;
+    private string _cleanupSummaryText = "尚未读取缓存预览";
+    private string _cleanupPendingText = string.Empty;
+    private string? _cleanupLastResult;
+
+    public bool IsStorageSection => _selectedSection.Id == ConsoleSectionId.Storage;
+
+    public ObservableCollection<CleanupTargetRowViewModel> CleanupTargets { get; } = new();
+
+    public bool HasCleanupTargets => CleanupTargets.Count > 0;
+
+    /// <summary>Review r1 M3: pending removals survive an empty target list, so they need their own flag.</summary>
+    public bool HasCleanupPending => !string.IsNullOrWhiteSpace(_cleanupPendingText);
+
+    public bool IsCleanupBusy
+    {
+        get => _isCleanupBusy;
+        private set => Set(ref _isCleanupBusy, value);
+    }
+
+    public string CleanupSummaryText
+    {
+        get => _cleanupSummaryText;
+        private set => Set(ref _cleanupSummaryText, value);
+    }
+
+    /// <summary>Pending removals the Core persisted after a failed deletion (retryable, never silent).</summary>
+    public string CleanupPendingText
+    {
+        get => _cleanupPendingText;
+        private set => Set(ref _cleanupPendingText, value);
+    }
+
+    public string? CleanupLastResult
+    {
+        get => _cleanupLastResult;
+        private set => Set(ref _cleanupLastResult, value);
+    }
+
+    public bool HasCleanupResult => !string.IsNullOrWhiteSpace(_cleanupLastResult);
+
+    public RelayCommand RefreshCleanupPreviewCommand { get; private set; } = null!;
+
+    /// <summary>REALUSE-DATA-SAFETY-4 AC1 (review r1 M5): retry the Core's persisted failed removals.</summary>
+    public RelayCommand RetryPendingCleanupsCommand { get; private set; } = null!;
+
+    /// <summary>Read-only pre-flight; the Confirm gate below is what actually deletes.</summary>
+    public Task RefreshCleanupPreviewAsync() =>
+        IsCleanupBusy ? Task.CompletedTask : RefreshCleanupPreviewCoreAsync();
+
+    private async Task RefreshCleanupPreviewCoreAsync()
+    {
+        IsCleanupBusy = true;
+        try
+        {
+            var preview = await _controller.GetCleanupPreviewAsync().ConfigureAwait(true);
+            CleanupTargets.Clear();
+            foreach (var target in preview.Targets)
+            {
+                CleanupTargets.Add(new CleanupTargetRowViewModel(target));
+            }
+
+            CleanupSummaryText = preview.Targets.Count == 0
+                ? "没有可安全清理的缓存（预览为空）"
+                : $"将清理 {preview.Targets.Count} 个缓存文件，共 {FormatSize(preview.TotalBytes)}";
+            CleanupPendingText = preview.PendingCleanups == 0
+                ? string.Empty
+                : $"另有 {preview.PendingCleanups} 处上次删除失败，仍待重试（Core 已记录）";
+            OnPropertyChanged(nameof(HasCleanupTargets), nameof(HasCleanupPending));
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
+
+    private void RequestClearCache()
+    {
+        if (!HasCleanupTargets)
+        {
+            _notify("没有可清理的缓存：先读取预览", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "清理缓存与过期版本",
+            $"将删除 {CleanupTargets.Count} 个可重建的缓存 / 缩略图 / 过期 revision 文件。" +
+            "用户原图、人工修改与已锁定版本不在清理范围内；清理后部分页面需要重新处理。",
+            "清理",
+            IsDanger: true,
+            OnConfirm: () => _ = RunCleanupAsync()));
+    }
+
+    private async Task RunCleanupAsync()
+    {
+        IsCleanupBusy = true;
+        try
+        {
+            var outcome = await _controller.RunCleanupAsync().ConfigureAwait(true);
+            if (outcome is null)
+            {
+                _notify($"清理被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            CleanupLastResult = outcome.Failed == 0
+                ? $"已清理 {outcome.Removed} 个文件（跳过 {outcome.Skipped}）"
+                : $"已清理 {outcome.Removed} 个，失败 {outcome.Failed} 个（失败项已记录，可重试）";
+            _notify(CleanupLastResult!, outcome.Failed == 0 ? NmStatus.Done : NmStatus.Failed);
+            await RefreshCleanupPreviewCoreAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
+
     // ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ──────────────────────────
+
+    private void RequestRetryPendingCleanups()
+    {
+        if (!HasCleanupPending)
+        {
+            _notify("没有待重试的失败项", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "重试上次删除失败的项",
+            "只会重试 Core 记录的失败项（不扩大清理范围）；成功的项会从待重试列表移除，仍失败的会保留。",
+            "重试",
+            IsDanger: true,
+            OnConfirm: () => _ = RetryPendingCleanupsAsync()));
+    }
+
+    private async Task RetryPendingCleanupsAsync()
+    {
+        IsCleanupBusy = true;
+        try
+        {
+            var outcome = await _controller.RetryPendingCleanupsAsync().ConfigureAwait(true);
+            if (outcome is null)
+            {
+                _notify($"重试被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            CleanupLastResult = outcome.Failed == 0
+                ? $"重试完成：{outcome.Removed} 个已删除，待重试项已清空"
+                : $"重试完成：{outcome.Removed} 个已删除，仍有 {outcome.Failed} 个失败";
+            _notify(CleanupLastResult, outcome.Failed == 0 ? NmStatus.Done : NmStatus.Failed);
+            await RefreshCleanupPreviewCoreAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
 
     public bool IsBackupSection => _selectedSection.Id == ConsoleSectionId.Backup;
 
@@ -339,6 +688,15 @@ public sealed class ConsoleViewModel : ObservableObject
         }
 
         _selectedSection = section;
+        if (section.Id == ConsoleSectionId.Storage)
+        {
+            _ = RefreshCleanupPreviewAsync();
+        }
+        else if (section.Id == ConsoleSectionId.Plugins)
+        {
+            _ = RefreshPluginsAsync();
+        }
+
         OnPropertyChanged(
             nameof(SelectedSection),
             nameof(IsTasksSection),
@@ -1818,15 +2176,6 @@ public sealed class ConsoleViewModel : ObservableObject
 
     // ── Not-wired sections / blocked dangerous actions ─────────────────────────────────
 
-    private void RequestClearCache() => _requestConfirm(new ConfirmRequest(
-        "清理缓存与过期版本（能力待接入）",
-        "清理会删除可重建的缓存、缩略图与过期 revision 文件，可能使部分页面需要重新处理；" +
-        "当前 IHostController 未暴露 cleanup_preview / cleanup_run，无法先展示影响面，因此不会执行任何删除。",
-        "清理（能力待接入）",
-        IsDanger: true,
-        OnConfirm: () => _notify("清理缓存：能力待接入，未执行任何删除", NmStatus.Blocked),
-        CanConfirm: false,
-        BlockedReason: "能力待接入：Host 未暴露 cleanup_preview / cleanup_run 方法"));
 
     private async Task RefreshBackupsAsync()
     {
@@ -2011,6 +2360,10 @@ public sealed class ConsoleViewModel : ObservableObject
         {
             ProviderProfiles.Add(new ProviderProfileRowViewModel(profile, SelectProvider, EditProvider, DeleteProvider));
         }
+
+            // REALUSE-DATA-SAFETY-4 AC2: the devices section derives its only answer from this list.
+            _providersLoaded = true;
+            OnPropertyChanged(nameof(HasDetectionProvider), nameof(DetectionReadinessText));
 
         ProviderNetworkOptions.Clear();
         ProviderNetworkOptions.Add(new ConsoleOption(string.Empty, "使用默认网络"));
@@ -2315,4 +2668,85 @@ public sealed class ConsoleKnownRunRow
     public bool IsMostRecent { get; }
 
     public RelayCommand SelectCommand { get; }
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one removable cache target from the Core's <c>cleanup.preview</c>.
+/// Only a relative path and a size — the Core never sends an OS path and the UI never renders one.
+/// </summary>
+public sealed class CleanupTargetRowViewModel
+{
+    public CleanupTargetRowViewModel(CleanupTargetInfo target)
+    {
+        RelativePath = target.RelativePath;
+        SizeBytes = target.SizeBytes;
+    }
+
+    public string RelativePath { get; }
+
+    public long SizeBytes { get; }
+
+    public string SizeText => SizeBytes >= 1024 * 1024
+        ? $"{SizeBytes / (1024.0 * 1024.0):0.0} MB"
+        : SizeBytes >= 1024
+            ? $"{SizeBytes / 1024.0:0.0} KB"
+            : $"{SizeBytes} B";
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one row of the Core's <c>plugins.list</c>. A rejected plugin keeps its
+/// reason visible and is never presented as merely "off"; the switch is disabled while the Core's
+/// global master switch is off, because a per-plugin toggle would not take effect.
+/// </summary>
+public sealed class PluginRowViewModel
+{
+    public PluginRowViewModel(PluginInfo plugin, bool globalEnabled, Action onToggle)
+    {
+        PluginId = plugin.PluginId;
+        Name = string.IsNullOrWhiteSpace(plugin.Name) ? plugin.PluginId : plugin.Name;
+        Version = plugin.Version;
+        Description = plugin.Description;
+        StatusText = plugin.Status switch
+        {
+            "enabled" => "已启用",
+            "disabled" => "已停用",
+            "rejected" => "已拒绝（无法加载）",
+            _ => plugin.Status,
+        };
+        HooksText = plugin.Hooks.Count == 0 ? "（无钩子）" : string.Join(" / ", plugin.Hooks);
+        PermissionsText = plugin.Permissions.Count == 0 ? "（无权限声明）" : string.Join(" / ", plugin.Permissions);
+        IsRejected = string.Equals(plugin.Status, "rejected", StringComparison.Ordinal);
+        ReasonText = plugin.Reason ?? string.Empty;
+        Enabled = plugin.Enabled;
+        ToggleText = plugin.Enabled ? "停用" : "启用";
+        // A rejected plugin cannot be enabled; a per-plugin switch is pointless while the master is off.
+        CanToggle = !IsRejected && globalEnabled;
+        ToggleCommand = new RelayCommand(() => onToggle());
+    }
+
+    public string PluginId { get; }
+
+    public string Name { get; }
+
+    public string Version { get; }
+
+    public string Description { get; }
+
+    public string StatusText { get; }
+
+    public string HooksText { get; }
+
+    public string PermissionsText { get; }
+
+    public bool IsRejected { get; }
+
+    public string ReasonText { get; }
+
+    public bool Enabled { get; }
+
+    public bool CanToggle { get; }
+
+    public string ToggleText { get; }
+
+    public RelayCommand ToggleCommand { get; }
 }
