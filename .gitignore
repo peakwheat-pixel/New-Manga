@@ -3,9 +3,6 @@ __pycache__/
 .pytest_cache/
 .venv/
 build/
-# V11R-PUB-1: release tooling lives in tools/build (explicitly re-included; other build/ dirs stay ignored).
-!tools/build/
-!tools/build/**
 dist/
 # Model weight guard (M2-MANGA-WEIGHTS-SOP r2): weights stay in external snapshots/installers, never in the repo — process discipline backed by ignore rules.
 *.safetensors
@@ -23,9 +20,6 @@ experiments/M2-SFX-DATA-INFRA/*.bak
 
 # Avalonia sidecar build output (LEGACY-SHELL-ARCHIVE-1 decoupling)
 /apps/desktop-avalonia/build/
-# V11R-PUB-1: release tooling lives in tools/build (explicitly re-included; other build/ dirs stay ignored).
-!tools/build/
-!tools/build/**
 
 # DSH local scratch (codex probe logs, temp)
 /.tmp.dsh/
