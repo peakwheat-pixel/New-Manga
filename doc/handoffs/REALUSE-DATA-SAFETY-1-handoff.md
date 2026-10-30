@@ -3,8 +3,8 @@ task_id: REALUSE-DATA-SAFETY-1
 author: dsh-lead
 recipient: DeepSeek Harness (Lead/Integrator)
 base_commit: b1c1f5a56
-delivery_head: b1ff8921f
-status: delivered (AC1-AC4 all implemented, awaiting independent review)
+delivery_head: 8669388ae
+status: review-r1 returned FAIL_WITH_MUST_FIX; all three must-fix items closed in 8669388ae, awaiting re-review
 ---
 
 # Handoff：REALUSE-DATA-SAFETY-1（B1 数据安全）
@@ -36,6 +36,16 @@ status: delivered (AC1-AC4 all implemented, awaiting independent review)
 | 全量回归 | `pytest -q --tb=no`；`dotnet test NewManga.sln` | `b1ff8921f` | **pytest exit 0**；**dotnet 811 passed / 0 failed**（App 325 / Host 50 / ThemeEngine 235 / DesignSystem 85 / CoreClient 116） | `pytest-full6.log` |
 
 未运行：`dotnet test NewManga.sln`（本 AC 无 C# 变更；AC2/AC3 接线时需要）、sidecar PyInstaller 构建（本机无 PyInstaller；AC1 用源码级启动链覆盖同一路径）。
+
+
+## 独立审查（第 1 轮，Antigravity，未参与实现）
+
+- 范围 `b1c1f5a56..586adcc7c`；报告 `doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md`。
+- 结论 **FAIL_WITH_MUST_FIX**，3 项必须修复（全部已修复于 `8669388ae`）：
+  1. `nmbak.py` 打包/恢复路径穿越（绝对路径与 `..`）：create 越界读取、restore 可写任意路径；
+  2. `upgrade_legacy_layout.py` 合并拷贝非原子：中断留下半写文件，下次被 `exists()` 判定为已存在而永久损坏；
+  3. `_ensure_automatic_backup` 仅以"存在任意 verified 包"为判据：首启之后新数据长期零自动备份。
+- 审查判定 OK 的三点：`_prune_automatic_backups` 不误删、`catalog_store` fail-closed 不可绕过、Console 恢复二次确认无绕过路径。
 
 ## 接收方式
 

@@ -7,13 +7,21 @@ status: in_progress
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: antigravity-headless-r1
+review_history:
+  - round: 1
+    reviewer: Antigravity (agy headless, independent)
+    range: b1c1f5a56..586adcc7c
+    verdict: FAIL_WITH_MUST_FIX
+    must_fix: [M1 nmbak path traversal, M2 non-atomic merge copy, M3 stale automatic backup]
+    fixed_in: 8669388ae
+    report: doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md
 depends_on: []
 base_commit: b1c1f5a56
 branch: task/REALUSE-DATA-SAFETY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1
 integration_commit: null
-delivery_head: b1ff8921f
+delivery_head: 8669388ae
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-1
@@ -27,6 +35,7 @@ allowed_paths:
   - src/infrastructure/resource_channel/catalog_store.py
   - src/infrastructure/resource_channel/handle_resolver.py
   - src/infrastructure/sqlite/upgrade_legacy_layout.py
+  - src/infrastructure/sqlite/nmbak.py
   - src/bootstrap/core_service.py
   - src/bootstrap/core_assembly.py
   - apps/desktop-avalonia/src/NewManga.Host/DataSafety.cs
@@ -41,6 +50,7 @@ allowed_paths:
   - tests/storage/**
   - apps/desktop-avalonia/tests/**
   - verification/REALUSE-DATA-SAFETY-1/**
+  - doc/reviews/REALUSE-DATA-SAFETY-1-*.md
   - G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1/**
 ---
 
@@ -94,6 +104,9 @@ allowed_paths:
 | AC3 单测：预创建目录时仍迁移 managed/backups | `python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q` | Python 3.14 / Windows 10.0.26300 | PASS 16/16（含 4 个 AC3 新例：预创建空目录 / 非空合并 / 不覆盖当前文件 / 空 backups 目录） | `tests/infrastructure/test_upgrade_legacy_layout.py` |
 | AC4 契约：只读语义显式区分 schema 写入 | `dotnet test tests/NewManga.Host.Tests --filter "FullyQualifiedName~ReadOnlyUntilParity_NamesTheSchemaWriteSeam"` | net9.0 | PASS（Host 合计 50 passed） | `tests/NewManga.Host.Tests/HostUnitTests.cs` |
 | AC4 运行日志：Core 声明 schema 是唯一写入 | 启动数据根后读 `core_service.stderr.log` | 同上 | PASS：`[core.schema] applied N migration(s) up to vX; schema bootstrap is the only write a read-only session performs` | `src/bootstrap/core_assembly.py` |
+| Review r1 M1：备份路径穿越拦截 | `python -m pytest tests/storage/test_nmbak_backup.py -q` | Python 3.14 / Windows 10.0.26300 | PASS 21/21（含 5 个新增负向例：绝对路径 create、`..` create、revision 绝对路径、篡改 manifest `..` 恢复、篡改 manifest 绝对路径恢复） | `tests/storage/test_nmbak_backup.py` |
+| Review r1 M2：合并拷贝原子性 | `python -m pytest tests/infrastructure/test_upgrade_legacy_layout.py -q` | 同上 | PASS 18/18（含 2 个新增：中断不留半写、发布前经过 os.replace） | `tests/infrastructure/test_upgrade_legacy_layout.py` |
+| Review r1 M3：过期自动备份轮转 | `python -m pytest tests/infrastructure/test_nmbak_startup_backup.py -q` | 同上 | PASS 8/8（含 3 个新增：时间解析、陈旧包轮转、空库不轮转） | `tests/infrastructure/test_nmbak_startup_backup.py` |
 | 全量回归 | `python -m pytest -q --tb=no`；`dotnet test NewManga.sln` | 同上 | PASS：pytest exit 0（2735+ passed）；dotnet test 全项目 0 failed | `G:\CODEX\New Manga.workspace\tmp\self-audit\pytest-full6.log` |
 
 ## 依赖、风险与阻塞
@@ -125,6 +138,7 @@ allowed_paths:
 | E-AC3-IMPL | AC3 | `src/infrastructure/sqlite/upgrade_legacy_layout.py`（`_promote_directory_merged`） | `ff3dee029` | 由 git 内容确定 | CANONICAL |
 | E-AC4-SEAM | AC4 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/HostUnitTests.cs`（`ReadOnlyUntilParity_NamesTheSchemaWriteSeam`） | `b1ff8921f` | 由 git 内容确定 | CANONICAL |
 | E-AC4-LOG | AC4 | `src/bootstrap/core_assembly.py`（`[core.schema]` 启动日志） | `b1ff8921f` | 由 git 内容确定 | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md`（Antigravity 独立审查，FAIL_WITH_MUST_FIX） | `8669388ae` | 由 git 内容确定 | CANONICAL |
 | E-BUILD | AC1–AC4 | `dotnet build -warnaserror` 0W/0E；`dotnet test NewManga.sln` 811 passed / 0 failed；`python -m pytest -q` exit 0 | `b1ff8921f` | 运行输出 | SOURCE_PIN |
 
 ## Resource Manifest
