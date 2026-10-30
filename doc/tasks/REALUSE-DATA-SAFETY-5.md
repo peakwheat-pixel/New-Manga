@@ -29,7 +29,7 @@ depends_on:
 base_commit: 5c9c2d08d
 branch: task/REALUSE-DATA-SAFETY-5
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-5
-integration_commit: PENDING
+integration_commit: f9b53a0d8
 delivery_head: c50901a2b
 canonical_evidence_status: complete
 resource_closeout_status: complete
