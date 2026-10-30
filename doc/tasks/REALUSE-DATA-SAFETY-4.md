@@ -14,7 +14,7 @@ base_commit: b8039aec8
 branch: task/REALUSE-DATA-SAFETY-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
 integration_commit: null
-delivery_head: HEAD_PLACEHOLDER
+delivery_head: 4238fdbb8
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-4
@@ -75,8 +75,8 @@ allowed_paths:
 |---|---|---|---|---|---|
 | E-AC1-CLIENT | AC2 | `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs` | `282ad43fa` | `-` | CANONICAL |
 | E-AC2-STORAGE | AC2 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs` | `6ea2e817a` | `-` | CANONICAL |
-| E-AC2-UI | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `PLACEHOLDER` | `-` | CANONICAL |
-| E-AC3-PROPOSAL | AC3 | `doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md` | `PLACEHOLDER` | `-` | CANONICAL |
+| E-AC2-UI | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `4238fdbb8` | `-` | CANONICAL |
+| E-AC3-PROPOSAL | AC3 | `doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md` | `4238fdbb8` | `-` | CANONICAL |
 
 ## Resource Manifest
 
