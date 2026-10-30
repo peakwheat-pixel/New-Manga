@@ -106,6 +106,24 @@ public sealed class CoexistenceTests
         Assert.Contains("读写", CoexistenceRules.Describe(HostMode.ReadWrite), StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-1 AC4: the read-only mode blocks user-data writes, but the Core
+    /// still bootstraps/upgrades the schema. The decision text and the UI label must name that
+    /// seam — the old wording claimed the whole data root was read-only while library.db kept
+    /// changing, which is exactly the contradiction the audit reported.
+    /// </summary>
+    [Fact]
+    public void ReadOnlyUntilParity_NamesTheSchemaWriteSeam()
+    {
+        var decision = CoexistenceRules.Decide(legacyShellRunning: false, parityReached: false);
+
+        Assert.Equal(HostMode.ReadOnlyUntilParity, decision.Mode);
+        Assert.Contains("user data stays read-only", decision.Reason, StringComparison.Ordinal);
+        Assert.Contains("schema", decision.Reason, StringComparison.Ordinal);
+        Assert.Contains("用户数据只读", CoexistenceRules.Describe(decision.Mode), StringComparison.Ordinal);
+        Assert.Contains("schema", CoexistenceRules.Describe(decision.Mode), StringComparison.Ordinal);
+    }
+
     private sealed class FakeProbe : IProcessNameProbe
     {
         private readonly IReadOnlyList<int> _ids;

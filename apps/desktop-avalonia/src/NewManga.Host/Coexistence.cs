@@ -36,9 +36,15 @@ public static class CoexistenceRules
 
         if (!parityReached)
         {
+            // REALUSE-DATA-SAFETY-1 AC4: this mode blocks every user-data write,
+            // but the Core still creates/upgrades the database schema on start-up
+            // (a skipped bootstrap would make the library unreadable). The old
+            // text claimed the whole data root was read-only, which contradicted
+            // the observed library.db mtime; state the seam instead.
             return new CoexistenceDecision(
                 HostMode.ReadOnlyUntilParity,
-                "S2 command parity not reached; production data stays read-only");
+                "S2 command parity not reached; user data stays read-only "
+                + "(the Core may still create or upgrade the database schema)");
         }
 
         return new CoexistenceDecision(HostMode.ReadWrite, "parity reached and no legacy shell running");
@@ -47,8 +53,8 @@ public static class CoexistenceRules
     public static string Describe(HostMode mode) => mode switch
     {
         HostMode.ReadWrite => "读写就绪",
-        HostMode.ReadOnlyUntilParity => "只读（S2 parity 前）",
-        HostMode.ReadOnlyLegacyShellRunning => "只读（旧壳运行中）",
+        HostMode.ReadOnlyUntilParity => "只读（S2 parity 前）· 用户数据只读，schema 仍由 Core 建库/升级",
+        HostMode.ReadOnlyLegacyShellRunning => "只读（旧壳运行中）· 用户数据只读，schema 仍由 Core 建库/升级",
         HostMode.ReadOnlySelfCheckFailed => "只读（启动自检失败）",
         _ => mode.ToString(),
     };

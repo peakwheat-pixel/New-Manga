@@ -982,7 +982,7 @@ def assemble_core_services(
                 f"database schema v{opened.schema_version} is newer than this "
                 f"application knows (v{latest_known}); refusing to run"
             )
-        MigrationRunner(
+        runner = MigrationRunner(
             conn,
             migrations,
             backup_provider=_NmbakMigrationBackup(
@@ -991,7 +991,29 @@ def assemble_core_services(
                 managed_root,
                 app_version=_APP_VERSION,
             ),
-        ).apply_pending()
+        )
+        applied = runner.apply_pending()
+        # REALUSE-DATA-SAFETY-1 AC4: the Host can run a "read-only until parity"
+        # session, yet this assembly still opens the library writable and applies
+        # pending DDL. That is intentional (schema bootstrap must not be skipped)
+        # but was invisible, so the log now states the seam explicitly: schema
+        # creation/upgrade is the only write such a session performs.
+        if applied:
+            print(
+                "[core.schema] applied "
+                f"{len(applied)} migration(s) up to v{applied[-1].schema_version}; "
+                "schema bootstrap is the only write a read-only session performs "
+                "(user rows and managed originals are never modified)",
+                file=sys.stderr,
+                flush=True,
+            )
+        else:
+            print(
+                "[core.schema] schema "
+                f"v{opened.schema_version} already current; this session performed no write",
+                file=sys.stderr,
+                flush=True,
+            )
 
         repository = SqliteLibraryRepository(conn)
         storage = ManagedFileStorage(managed_root)
