@@ -8,13 +8,18 @@ approval: user_authorized_2026-10-30_self_audit_split_from_REALUSE-DATA-SAFETY-3
 suggested_owner: dsh
 owner: dsh-lead
 reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md
+    must_fix: M1 plugin disable read as failure (Core echoes the new state); M2 write-path refresh blocked by its own busy flag; M3 pending retries hidden behind an empty target list; M4 unloaded provider list reported as unbound; M5 cleanup.retry_pending unreachable from the UI
 depends_on:
   - REALUSE-DATA-SAFETY-3
 base_commit: b8039aec8
 branch: task/REALUSE-DATA-SAFETY-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
 integration_commit: null
-delivery_head: 4238fdbb8
+delivery_head: 3844851e8
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-4
