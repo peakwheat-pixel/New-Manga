@@ -8,12 +8,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---:|
 | task files | 459 |
 | terminal | 451 |
-| non-terminal | 8 |
+| non-terminal | 7 |
 | non-terminal named in the plan | 2 |
-| non-terminal outside the plan | 6 |
+| non-terminal outside the plan | 5 |
 | task files tracked by git | 459 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 8 |
+| non-terminal tracked by git | 7 |
 
 ## By status
 
@@ -35,7 +35,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | task | status | in plan |
 |---|---|---|
-| `UIUX-FUSION-IMPL-1` | `(none)` | no |
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |

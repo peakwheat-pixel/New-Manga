@@ -111,7 +111,12 @@ def main() -> int:
 
     counts = Counter(row["status"] for row in rows)
     terminal = [r for r in rows if r["status"] in TERMINAL]
-    non_terminal = [r for r in rows if r["status"] not in TERMINAL]
+    # A file with no status field is a draft, not an active task: check.ps1 only counts entries
+    # whose status exists and is not terminal (`if ($st -and $st -notin $terminalSet)`). Counting
+    # "(none)" here made the ledger claim one non-terminal task more than the checker derived, so
+    # every run produced a spurious "TASK_LEDGER 已过期" error (pre-existing drift, fixed in
+    # REALUSE-DATA-SAFETY-5).
+    non_terminal = [r for r in rows if r["status"] != "(none)" and r["status"] not in TERMINAL]
 
     for row in rows:
         # a plan node is one whose id appears as a table-row id, which is
