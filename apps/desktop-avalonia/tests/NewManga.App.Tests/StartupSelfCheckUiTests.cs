@@ -54,6 +54,10 @@ public sealed class StartupSelfCheckUiTests
             Assert.Equal("PROTOCOL_VERSION_MISMATCH", controller.Snapshot.ErrorCode);
             Assert.Contains("只读（启动自检失败）", controller.Snapshot.ModeLine, StringComparison.Ordinal);
             Assert.False(string.IsNullOrWhiteSpace(controller.Snapshot.ReadOnlyReason));
+            // REALUSE-DATA-SAFETY-2 AC3: the App now consumes the self check result, so a contract
+            // problem is visible in the UI instead of living only in host.log.
+            Assert.Equal("Failed", controller.Snapshot.SelfCheckStatus);
+            Assert.Contains("PROTOCOL_VERSION_MISMATCH", controller.Snapshot.SelfCheckLine, StringComparison.Ordinal);
             Assert.False(await controller.TryCreateBookAsync("V11R-A-6 UI 只读夹具"));
         }
         finally

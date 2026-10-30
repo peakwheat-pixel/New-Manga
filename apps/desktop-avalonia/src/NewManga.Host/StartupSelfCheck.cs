@@ -47,13 +47,13 @@ public sealed record StartupSelfCheckResult(
 /// against what the Host contract requires, and close the write gate on a mismatch instead of
 /// letting the first user write fail mid-journey.
 ///
-/// Coverage is deliberately honest: <c>core.ping</c> exposes only the protocol version and the
-/// capability list, not an enumeration of all 66 commands. Probing every command at startup would
-/// execute mutating commands, so the full surface comparison is NOT attempted here; when the cheap
-/// checks pass the result is <see cref="SelfCheckStatus.Degraded"/> (writes stay enabled, the gap is
-/// logged and surfaced in <see cref="HostRuntime.SelfCheck"/>). The follow-up is to extend
-/// <c>core.ping</c> with a command-surface digest (Core owner) and upgrade this to
-/// <see cref="SelfCheckStatus.Passed"/>.
+/// Coverage boundary: <c>core.ping</c> exposes the protocol version and the capability list, not an
+/// enumeration of all 66 commands (probing every command at startup would execute mutating
+/// commands). Those two facts are exactly what this cheap check can prove, so passing them yields
+/// <see cref="SelfCheckStatus.Passed"/>; the command-surface comparison is owned by the parity
+/// tests and the limitation stays in <see cref="StartupSelfCheckResult.Detail"/>.
+/// <see cref="SelfCheckStatus.Degraded"/> is reserved for a probe/transport failure, which is a
+/// real degradation rather than an untested area (REALUSE-DATA-SAFETY-2 AC3).
 /// </summary>
 public static class StartupSelfCheck
 {
@@ -105,10 +105,16 @@ public static class StartupSelfCheck
                 $"capabilities=[{string.Join(",", ping.Capabilities)}]");
         }
 
+        // REALUSE-DATA-SAFETY-2 AC3: every check this probe can perform has passed, so the honest
+        // result is Passed. The audit (MA-05) flagged the old unconditional Degraded: twelve of
+        // twelve real starts reported "degraded" while nothing was wrong, and the App never consumed
+        // the value, so the word carried no information. What core.ping cannot express (an
+        // enumeration of all 66 commands) is a coverage boundary owned by the parity tests, not a
+        // runtime degradation; it stays in Detail so the limitation is still visible.
         return new StartupSelfCheckResult(
-            SelfCheckStatus.Degraded,
+            SelfCheckStatus.Passed,
             null,
-            "启动自检通过基础校验（协议版本 + 能力集）；Core 未公开完整命令面枚举，命令面比对未执行（follow-up）。",
+            "启动自检通过：协议版本与能力集符合 Host 契约（命令面逐条比对由 parity 测试覆盖）。",
             $"core_protocol={ping.ProtocolMajor}.{ping.ProtocolMinor} required_minor={requiredMinor} " +
             $"capabilities=[{string.Join(",", ping.Capabilities)}]");
     }

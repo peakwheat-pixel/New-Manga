@@ -45,6 +45,17 @@ public sealed record HostViewSnapshot(
     /// <see cref="NewManga.Host.CoexistenceRules.Describe"/> text so a refusal is never silent.
     /// </summary>
     public string? ReadOnlyReason { get; init; }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC3: the Host startup self check outcome
+    /// (<c>NotRun</c> / <c>Passed</c> / <c>Degraded</c> / <c>Failed</c>). The audit found the App had
+    /// zero references to this value, so a real contract problem could stay invisible; the Console
+    /// diagnostics section now renders it.
+    /// </summary>
+    public string? SelfCheckStatus { get; init; }
+
+    /// <summary>Human-readable self check line (typed code + reason); null before the check ran.</summary>
+    public string? SelfCheckLine { get; init; }
 }
 
 /// <summary>READER-PROGRESS-1: typed outcome of one progress save (never throws into the UI).</summary>

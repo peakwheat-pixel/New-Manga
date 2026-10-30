@@ -319,6 +319,7 @@ public sealed class StudioBatchViewModel : StudioObservable
     private string? _highlightedPageId;
     private string? _statusText;
     private string? _errorText;
+    private bool _needsProviderSetup;
     private bool _gateConfirmOpen;
     private string _gateImpactText = string.Empty;
     private StudioBatchActionViewModel? _pendingGateAction;
@@ -441,6 +442,14 @@ public sealed class StudioBatchViewModel : StudioObservable
     public string? ErrorText => _errorText;
 
     public bool HasError => !string.IsNullOrWhiteSpace(_errorText);
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC1: true when the last StartRun refusal was
+    /// <c>PROVIDER_NOT_CONFIGURED</c>, i.e. the user has to configure a Provider before a Run can
+    /// start. <see cref="ErrorText"/> already carries the actionable sentence; this flag lets the UI
+    /// emphasise it without re-parsing text.
+    /// </summary>
+    public bool NeedsProviderSetup => _needsProviderSetup;
 
     public StudioBatchFilter ActiveFilter
     {
@@ -1090,17 +1099,27 @@ public sealed class StudioBatchViewModel : StudioObservable
         }
         if (started is null)
         {
-            _errorText = _host.Snapshot.LastError ?? "StartRun 被拒绝";
+            // REALUSE-DATA-SAFETY-2 AC1: the batch area is the only place a Run can be started, and
+            // it used to surface the bare typed code (audit MA-02: "PROVIDER_NOT_CONFIGURED" with no
+            // next step looked like a silent failure). Map the actionable code to guidance naming the
+            // exact place to fix it; every other code keeps its typed value so it stays diagnosable.
+            var code = _host.Snapshot.LastError;
+            _needsProviderSetup = string.Equals(code, "PROVIDER_NOT_CONFIGURED", StringComparison.Ordinal);
+            _errorText = _needsProviderSetup
+                ? "未配置模型 Provider：请到「设置 → Provider 与凭据」添加并启用一个可翻译的 Provider，再回到这里重试。"
+                : string.IsNullOrWhiteSpace(code)
+                    ? "StartRun 被拒绝（Host 未返回原因）"
+                    : $"StartRun 被拒绝（{code}）";
             State = StudioBatchRunState.Error;
             Raise(nameof(HeaderLine));
             Raise(nameof(ErrorText));
+            Raise(nameof(HasError));
+            Raise(nameof(NeedsProviderSetup));
             return null;
         }
 
-        if (started is null)
-        {
-            return null;
-        }
+        _needsProviderSetup = false;
+        Raise(nameof(NeedsProviderSetup));
 
         SetRunId(started.RunId);
         _intentIdempotencyKey = null;

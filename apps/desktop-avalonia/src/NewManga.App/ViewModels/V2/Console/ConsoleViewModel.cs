@@ -67,6 +67,7 @@ public sealed class ConsoleViewModel : ObservableObject
     private string _hostStateText = "—";
     private string _hostStatusLine = "—";
     private string _hostModeLine = "—";
+    private string _hostSelfCheckText = "启动自检尚未运行";
     private string _hostErrorCodeText = "无";
     private string _hostWireFrameText = "—";
 
@@ -408,6 +409,9 @@ public sealed class ConsoleViewModel : ObservableObject
     public string HostStatusLine => _hostStatusLine;
 
     public string HostModeLine => _hostModeLine;
+
+    /// <summary>REALUSE-DATA-SAFETY-2 AC3: startup self check line (passed / degraded + reason).</summary>
+    public string HostSelfCheckText => _hostSelfCheckText;
 
     public string HostErrorCodeText => _hostErrorCodeText;
 
@@ -2068,6 +2072,8 @@ public sealed class ConsoleViewModel : ObservableObject
         };
         _hostStatusLine = snapshot.StatusLine;
         _hostModeLine = snapshot.ModeLine;
+        // REALUSE-DATA-SAFETY-2 AC3: the startup self check is rendered, not just logged.
+        _hostSelfCheckText = snapshot.SelfCheckLine ?? "启动自检尚未运行";
         // Security: only the typed code is rendered; the raw error message may contain paths.
         _hostErrorCodeText = string.IsNullOrEmpty(snapshot.ErrorCode)
             ? string.IsNullOrEmpty(snapshot.LastError) ? "无" : snapshot.LastError
@@ -2077,6 +2083,7 @@ public sealed class ConsoleViewModel : ObservableObject
             nameof(HostStateText),
             nameof(HostStatusLine),
             nameof(HostModeLine),
+            nameof(HostSelfCheckText),
             nameof(HostErrorCodeText),
             nameof(HostWireFrameText));
     }

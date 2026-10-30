@@ -607,7 +607,7 @@ public sealed class V2StudioBatchTests
     }
 
     [AvaloniaFact]
-    public async Task ErrorState_ShowsRetryInsteadOfStart_AndHidesEmptyCard()
+    public async Task ErrorState_ShowsRetryAndKeepsTheCardVisible_SoTheReasonIsReadable()
     {
         var (view, host, vm) = StudioFixtures.Open();
         Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
@@ -618,17 +618,20 @@ public sealed class V2StudioBatchTests
         Assert.False(await batch.RefreshAsync());
         Assert.Equal(StudioBatchRunState.Error, batch.State);
         StudioFixtures.Pump();
-        Assert.False(view.BatchWorkspace.EmptyStateHost.IsVisible);
+        // REALUSE-DATA-SAFETY-2 AC1: this card is the only place HeaderLine/ErrorText render, so an
+        // error state must keep it visible — hiding it produced the audit's "silent failure".
+        Assert.True(view.BatchWorkspace.EmptyStateHost.IsVisible);
+        Assert.False(string.IsNullOrWhiteSpace(batch.HeaderLine));
         var buttonLabel = view.BatchWorkspace.StartButton.Content?.ToString();
         Assert.NotNull(buttonLabel);
 
         StudioEvidence.Write(Task, "error-state.json", writer =>
         {
             writer.WriteStartObject();
-            writer.WriteString("ac", "I2b Error 态改「重试读取」并隐藏空态卡");
+            writer.WriteString("ac", "I2b Error 态改「重试读取」；REALUSE-DATA-SAFETY-2 AC1 保留空态卡以显示原因");
             writer.WriteString("state", batch.State.ToString());
             writer.WriteString("primary_button", buttonLabel);
-            writer.WriteBoolean("empty_card_hidden", !view.BatchWorkspace.EmptyStateHost.IsVisible);
+            writer.WriteBoolean("empty_card_visible", view.BatchWorkspace.EmptyStateHost.IsVisible);
             writer.WriteEndObject();
         });
     }
@@ -802,5 +805,61 @@ public sealed class V2StudioBatchTests
             writer.WriteString("interface", "NewManga.App.Shell.V2.IWorkspaceView.TryHandleKey(KeyEventArgs, ShellState)");
             writer.WriteEndObject();
         });
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // REALUSE-DATA-SAFETY-2 AC1: a refused StartRun must explain itself. Audit MA-02 saw the bare
+    // code PROVIDER_NOT_CONFIGURED on a release package with no model weights, and — because the
+    // error card was hidden in the Error state — nothing on screen at all.
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task StartRunWithoutProvider_ShowsActionableGuidance_AndTheCardStaysVisible()
+    {
+        var (view, host, workspace) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        workspace.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = workspace.Batch;
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "PROVIDER_NOT_CONFIGURED";
+
+        var started = await batch.StartProcessingAsync();
+        StudioFixtures.Pump();
+
+        Assert.Null(started);
+        Assert.Equal(StudioBatchRunState.Error, batch.State);
+        Assert.True(batch.NeedsProviderSetup);
+        Assert.NotNull(batch.ErrorText);
+        Assert.Contains("未配置模型 Provider", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.Contains("Provider 与凭据", batch.ErrorText!, StringComparison.Ordinal);
+        // The header line is what the empty-state card renders; it must carry the guidance too.
+        Assert.Contains("未配置模型 Provider", batch.HeaderLine, StringComparison.Ordinal);
+        // Root cause of "silent": the card used to be hidden exactly when the error existed.
+        Assert.True(view.BatchWorkspace.EmptyStateHost.IsVisible);
+
+        StudioFixtures.WindowOf(view).Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StartRunFailure_KeepsTheTypedCodeForOtherRefusals()
+    {
+        var (view, host, workspace) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        workspace.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = workspace.Batch;
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "TARGET_NOT_FOUND";
+
+        Assert.Null(await batch.StartProcessingAsync());
+        StudioFixtures.Pump();
+
+        Assert.False(batch.NeedsProviderSetup);
+        Assert.Contains("TARGET_NOT_FOUND", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.DoesNotContain("Provider 与凭据", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.True(view.BatchWorkspace.EmptyStateHost.IsVisible);
+
+        StudioFixtures.WindowOf(view).Close();
     }
 }

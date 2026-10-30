@@ -779,7 +779,12 @@ public sealed class StudioBatchWorkspace : Grid
     private void RefreshChrome()
     {
         var hasData = _viewModel.HasData;
-        _emptyHost.IsVisible = !hasData && _viewModel.State != StudioBatchRunState.Error;
+        // REALUSE-DATA-SAFETY-2 AC1: the error state used to hide this card, and the card is the
+        // only place HeaderLine/ErrorText are rendered -- so a refused StartRun produced no visible
+        // text at all (audit MA-02: "silent failure"). Show the card whenever there is no projection
+        // to display, error included; with a stale projection the matrix stays and the header line
+        // carries the message.
+        _emptyHost.IsVisible = !hasData;
         _emptyDetail.Text = _viewModel.State switch
         {
             StudioBatchRunState.NotWired => "本构建没有可用的 IRunController 数据源；不会伪造矩阵或进度。",

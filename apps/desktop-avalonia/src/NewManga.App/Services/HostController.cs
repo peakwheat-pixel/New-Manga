@@ -70,12 +70,61 @@ public sealed class HostController : IHostController
         lock (_startLock)
         {
             Interlocked.Increment(ref _startRequests);
-            return _startTask ??= StartCoreAsync(cancellationToken);
+            // REALUSE-DATA-SAFETY-2 AC2: a FAILED start used to be cached forever, which made the
+            // UI's "retry" a silent no-op (audit MA-04). A completed, unsuccessful attempt is
+            // cleared first so retry is a real second attempt; a completed *successful* start stays
+            // cached (one sidecar per process).
+            //
+            // Review r1 M1: dropping the old runtime without disposing it leaks the Win32
+            // single-instance mutex. HostRuntime.StartAsync RETURNS a runtime even on failure (the
+            // catch blocks set Result = Failed and stop sidecars, but never release _guard), so a
+            // retry would then see AlreadyRunning forever. The stale instance is handed to
+            // StartCoreAsync, which disposes it before the new attempt.
+            HostRuntime? staleRuntime = null;
+            if (_startTask is { IsCompleted: true } && _snapshot.State != HostViewState.Ready)
+            {
+                staleRuntime = _runtime;
+                _startTask = null;
+                _runtime = null;
+                _snapshot = new HostViewSnapshot(
+                    HostViewState.Starting,
+                    "正在重试启动 Host…",
+                    "—",
+                    null,
+                    null,
+                    Array.Empty<BookSummary>(),
+                    0,
+                    true,
+                    null)
+                {
+                    WritesAllowed = false,
+                    ReadOnlyReason = "Host 未就绪（只读）",
+                };
+                RaiseChanged();
+            }
+
+            return _startTask ??= StartCoreAsync(cancellationToken, staleRuntime);
         }
     }
 
-    private async Task StartCoreAsync(CancellationToken cancellationToken)
+    private async Task StartCoreAsync(CancellationToken cancellationToken, HostRuntime? staleRuntime = null)
     {
+        if (staleRuntime is not null)
+        {
+            // Release the previous attempt's single-instance mutex and sidecar handles before the
+            // new attempt tries to acquire them. Cleanup failures must not hide the retry.
+            try
+            {
+                await staleRuntime.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is ObjectDisposedException or IOException or InvalidOperationException)
+            {
+                // Best effort: the retry must proceed even if the stale instance is half-disposed.
+                // Only the exception type is written (never a path or message).
+                System.Diagnostics.Debug.WriteLine($"stale runtime cleanup failed: {ex.GetType().Name}");
+            }
+        }
+
         try
         {
             _runtime = await HostRuntime.StartAsync(_options, cancellationToken).ConfigureAwait(false);
@@ -1920,6 +1969,17 @@ public sealed class HostController : IHostController
             ReadOnlyReason = _runtime.Policy.WritesAllowed
                 ? null
                 : CoexistenceRules.Describe(result.Mode),
+            // REALUSE-DATA-SAFETY-2 AC3: surface the startup self check so it is not a log-only fact.
+            SelfCheckStatus = _runtime.SelfCheck.Status.ToString(),
+            SelfCheckLine = _runtime.SelfCheck.Status switch
+            {
+                NewManga.Host.SelfCheckStatus.Passed => "启动自检通过",
+                NewManga.Host.SelfCheckStatus.Degraded =>
+                    $"启动自检降级：{_runtime.SelfCheck.Reason}",
+                NewManga.Host.SelfCheckStatus.Failed =>
+                    $"启动自检未通过：{_runtime.SelfCheck.ErrorCode} · {_runtime.SelfCheck.Reason}",
+                _ => "启动自检尚未运行",
+            },
         };
         RaiseChanged();
     }
