@@ -3,24 +3,24 @@ task_id: REALUSE-DATA-SAFETY-1
 author: dsh-lead
 recipient: DeepSeek Harness (Lead/Integrator)
 base_commit: b1c1f5a56
-delivery_head: 811078ebb
-status: partial (AC1 + AC2 delivered, AC3/AC4 pending)
+delivery_head: b1ff8921f
+status: delivered (AC1-AC4 all implemented, awaiting independent review)
 ---
 
 # Handoff：REALUSE-DATA-SAFETY-1（B1 数据安全）
 
 ## 交付结果
 
-本 Handoff 覆盖 **AC1**（数据根迁移自愈）与 **AC2**（真实 `.nmbak` 备份 + Console 接线）；AC3（迁移顺序）、AC4（只读语义）尚未开始。
+本 Handoff 覆盖 **AC1–AC4 全部四项**：AC1 数据根迁移自愈、AC2 真实 `.nmbak` 备份 + Console 接线、AC3 旧布局目录迁移顺序、AC4 只读语义 seam 显式化。四项均已实现并有单元/集成测试，等待未参与实现的 Agent 独立审查。
 
 | AC | 状态 | 变更 |
 |---|---|---|
 | AC1 命名空间迁移自愈 | **DELIVERED** | `src/infrastructure/resource_channel/catalog_store.py`（+`verify_binding_for_root`、`rebind_namespace`、`_assert_canonical_namespace_table`；`restore_namespace_lock` 复用 canonical 校验）；`src/bootstrap/core_service.py`（`_ensure_preview_namespace` 校验现有绑定并仅在可识别 mismatch 时重绑 + stderr 迁移日志）；`tests/infrastructure/test_preview_namespace_rebind.py`（4 例） |
 | AC2 真实备份 | **DELIVERED** | `core_assembly.py`（迁移前 `_NmbakMigrationBackup`）、`core_service.py`（`_ensure_automatic_backup` + 保留 5 份）、`nmbak.py`（`page_original_refs` 原图纳入包/校验/恢复 + consistency）、`CoreServiceClient.cs`/`HostRuntime.cs`/`IHostController`/`HostController`/`NullHostController`（backup 4 方法）、`ConsoleViewModel.cs` + `ConsoleView.axaml`（⑥ 分区接真实面，含二次确认） |
-| AC3 迁移顺序 | PENDING | 无变更 |
-| AC4 只读语义 | PENDING | 无变更 |
+| AC3 迁移顺序 | **DELIVERED** | `upgrade_legacy_layout.py`（`_promote_directory_merged`：空目标原子替换、非空目标只补缺失、绝不覆盖）+ 4 新测试 |
+| AC4 只读语义 | **DELIVERED** | `core_assembly.py`（`[core.schema]` 日志）+ `Coexistence.cs`（决策文案/UI 标签声明 schema seam）+ `HostUnitTests` 契约测试；选择「明确区分」而非拒绝迁移 |
 
-提交：`38f09ac90`（分支 `task/REALUSE-DATA-SAFETY-1`，worktree `G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-1`）。
+提交：`38f09ac90`（AC1）、`75aeff349`（AC2 Core）、`811078ebb`（AC2 UI）、`ff3dee029`（AC3）、`b1ff8921f`（AC4），分支 `task/REALUSE-DATA-SAFETY-1`，worktree `G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-1`。
 
 ## 验证证据
 
@@ -29,7 +29,11 @@ status: partial (AC1 + AC2 delivered, AC3/AC4 pending)
 | AC1 复制数据根重绑定 | `pytest tests/infrastructure/test_preview_namespace_rebind.py -q` | Python 3.14 / Windows 10.0.26300 / `38f09ac90` | **PASS 4/4** | 测试文件本身 |
 | AC1 安全边界（篡改/损坏锁/非 canonical） | 同上 + `pytest tests/core/test_core_namespace_bootstrap.py -q` | 同上 | **PASS 7/7** | 既有测试文件 |
 | AC1 真实数据副本完整启动链 | `python verify_migrated_root.py %APPDATA%\com.newmanga.desktop <副本>` | 真实库 169 页 + 旧 lock | **PASS**：重绑定日志 + `books=1 chapters=1 pages=169 progress=1 title='家族战记'` | `G:\CODEX\New Manga.workspace\tmp\self-audit\verify_migrated_root.py`、`runs\12-migrated-root` |
-| 全量回归 | `python -m pytest -q --tb=line` | 同上 | **2727 passed, 12 skipped, 0 failed** | `G:\CODEX\New Manga.workspace\tmp\self-audit\pytest-full2.log` |
+| AC2 自动备份含原图 | `python verify_backup_real.py %APPDATA%\com.newmanga.desktop <副本>` | 真实库 169 页 / `75aeff349` | **PASS**：包 90.2 MiB、`page_originals=169`、`original_bytes=100,434,899`、包内库 `pages=169` | `verify_backup_real.py`、`runs\13-backup-real` |
+| AC2 UI 备份分区 | `dotnet test --filter "FullyQualifiedName~V2ConsoleUiTests.Backup"` | headless Avalonia / `811078ebb` | **PASS 3/3** | `V2ConsoleUiTests.cs` |
+| AC3 预创建目录仍迁移 | `pytest tests/infrastructure/test_upgrade_legacy_layout.py -q` | Python 3.14 / `ff3dee029` | **PASS 16/16**（含 4 个 AC3 新例） | 该测试文件 |
+| AC4 只读 seam | `dotnet test tests/NewManga.Host.Tests --filter ReadOnlyUntilParity_NamesTheSchemaWriteSeam` | net9.0 / `b1ff8921f` | **PASS**（Host 50 passed） | `HostUnitTests.cs` |
+| 全量回归 | `pytest -q --tb=no`；`dotnet test NewManga.sln` | `b1ff8921f` | **pytest exit 0**；**dotnet 811 passed / 0 failed**（App 325 / Host 50 / ThemeEngine 235 / DesignSystem 85 / CoreClient 116） | `pytest-full6.log` |
 
 未运行：`dotnet test NewManga.sln`（本 AC 无 C# 变更；AC2/AC3 接线时需要）、sidecar PyInstaller 构建（本机无 PyInstaller；AC1 用源码级启动链覆盖同一路径）。
 
