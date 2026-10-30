@@ -74,11 +74,11 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-AC1-CLI | AC1 | `apps/desktop-avalonia/src/NewManga.App/AppOptions.cs` | `PENDING` | `-` | CANONICAL |
-| E-AC1-CLI-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/AppOptionsCliRobustnessTests.cs` | `PENDING` | `-` | CANONICAL |
-| E-AC1-BATCH | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs` | `PENDING` | `-` | CANONICAL |
-| E-AC1-BACKUP | AC1 | `apps/desktop-avalonia/src/NewManga.Host/DataSafety.cs` | `PENDING` | `-` | CANONICAL |
-| E-AC1-DOCS | AC1 | `README.md` | `PENDING` | `-` | CANONICAL |
+| E-AC1-CLI | AC1 | `apps/desktop-avalonia/src/NewManga.App/AppOptions.cs` | `f25120e17` | `-` | CANONICAL |
+| E-AC1-CLI-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/AppOptionsCliRobustnessTests.cs` | `f25120e17` | `-` | CANONICAL |
+| E-AC1-BATCH | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs` | `f25120e17` | `-` | CANONICAL |
+| E-AC1-BACKUP | AC1 | `apps/desktop-avalonia/src/NewManga.Host/DataSafety.cs` | `f25120e17` | `-` | CANONICAL |
+| E-AC1-DOCS | AC1 | `README.md` | `f25120e17` | `-` | CANONICAL |
 
 ## Resource Manifest
 
