@@ -1,0 +1,17 @@
+{
+  "task": "V11R-E2E-1",
+  "generated_at": "2026-10-30T01:10:15.2945465Z",
+  "command": "NewManga.App.exe --shell=v2 --theme-home=<temp> --data-root=<temp> --log-dir=<temp> --sidecar-dir=<sidecar> --variant=dark",
+  "theme_home": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-e2e1\\theme-home",
+  "settings_file": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-e2e1\\theme-home\\theme-settings.json",
+  "settings_file_exists": true,
+  "appearance": "light",
+  "theme_id": "newmanga-default",
+  "ui_flow": "Ctrl+, 打开 Theme Studio -> 外观 -> 浅色 -> 应用",
+  "ui_evidence": "theme-studio-light-applied.png",
+  "real_appdata_root": "C:\\Users\\49745\\AppData\\Roaming\\NewManga",
+  "host_log": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-e2e1\\logs\\host.log",
+  "host_ready": true,
+  "app_exit": "graceful WM_CLOSE, exited within 25s",
+  "result": "PASS"
+}

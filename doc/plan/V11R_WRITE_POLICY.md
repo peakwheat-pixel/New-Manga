@@ -58,6 +58,7 @@
 | 恢复迁移期只读 | `NewManga.App.exe --parity=false`（或安装快捷方式追加该参数） |
 | 复现旧壳共存只读 | 启动旧 Tauri 壳 `new-manga.exe` 后再启动新 App（或 `--legacy-shell-check=on`，默认 on） |
 | 隔离演示/测试数据 | `--data-root=<临时目录>` + `--log-dir=<临时目录>`（不得指向用户真实数据根） |
+| 隔离主题子系统持久化 | `--theme-home=<临时目录>`（V11R-E2E-1：设置 `<dir>/theme-settings.json`、用户主题 `<dir>/themes`、收藏 `<dir>/theme-studio-favorites.json`；未指定时保持 `%APPDATA%/NewManga`） |
 | 只读原因排查 | UI `ModeLine` / `HostViewSnapshot.ReadOnlyReason`；日志 `host.log` 中 `mode=… reason=…` |
 | 关闭备份（仅测试） | `HostOptions.FirstRunBackupEnabled=false`（测试夹具可显式设置；生产不建议） |
 

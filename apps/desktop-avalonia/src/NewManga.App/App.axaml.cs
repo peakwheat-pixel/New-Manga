@@ -101,7 +101,16 @@ public partial class App : Application
 
         try
         {
-            var service = ThemeEngineThemeStudioService.CreateProduction(this, _designSystemTheme);
+            // V11R-E2E-1: one --theme-home override moves the whole theme subsystem (settings, user
+            // themes, favorites) off the real %APPDATA%/NewManga location; without it the resolver
+            // returns the shipped paths, so the default behavior is unchanged.
+            var themeHome = ThemeHome.Resolve(options);
+            var service = ThemeEngineThemeStudioService.CreateProduction(
+                this,
+                _designSystemTheme,
+                themeDirectory: themeHome.ThemesDirectory,
+                settingsFilePath: themeHome.SettingsFilePath,
+                favoritesFilePath: themeHome.FavoritesFilePath);
             var viewModel = new ThemeStudioViewModel(service);
             var adapter = new ThemeStudioSurfaceAdapter(viewModel, () => shell.ViewModel.CloseThemeStudioCommand.Execute(null));
             shell.ViewModel.RegisterSurfaceWorkspace(adapter);

@@ -35,9 +35,14 @@
 4. 读取 `%APPDATA%\NewManga\theme-settings.json`（ThemeService 的持久化路径）→ `appearance="light"`；
 5. 不带 `--variant` 重启 → 设置仍为 `light`，顶栏外观标签显示「浅色」，截图 `restart-persisted-light.png` 为浅色主题。
 
-**重要发现（P2，测试/隔离缺陷）**：`theme-settings.json` 路径是 `Environment.GetFolderPath(ApplicationData)`，**不随 `--data-root` 隔离**（子进程 `APPDATA` 环境变量覆盖无效）。因此该 E2E 会写用户真实 `%APPDATA%`。
+**重要发现（P2，测试/隔离缺陷，已关闭）**：`theme-settings.json` 路径是 `Environment.GetFolderPath(ApplicationData)`，**不随 `--data-root` 隔离**（子进程 `APPDATA` 环境变量覆盖无效）。因此该 E2E 会写用户真实 `%APPDATA%`。
 - 本次已把测试产生的文件备份到 `theme-settings-created-by-test.json` 并从真实路径删除（执行前该文件不存在 → 已恢复原状）；
 - 建议 follow-up：为 ThemeService 增加 `--theme-settings <path>` 或 `NEWMANGA_THEME_SETTINGS` 覆盖，供 E2E/多实例隔离（已登记 `FOLLOW-UP-E2E-1`）。
+- **处置（V11R-E2E-1，2026-10-30，CLOSED）**：新增 `--theme-home <dir>` 单根覆盖整个主题子系统
+  （`<dir>/theme-settings.json`、`<dir>/themes`、`<dir>/theme-studio-favorites.json`），未指定时保持
+  `%APPDATA%/NewManga` 语义；真机 UIA 复验：指定 `--theme-home=<temp>` 后应用浅色 → 隔离目录
+  `appearance=light`，真实 `%APPDATA%\NewManga` **零新建/零修改**（目录 mtime 与文件集合前后一致）。
+  证据见 `verification/V11R-E2E-1/`（`theme-home.json`、`real-appdata-untouched.json`）。
 
 ## 3. 中文 IME 真实输入
 
