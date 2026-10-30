@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
+using NewManga.CoreClient;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.Console;
 using NewManga.App.Views.V2.Console;
@@ -88,6 +89,8 @@ public sealed class V2ConsoleUiTests
                 ConsoleSectionId.Tasks,
                 ConsoleSectionId.Providers,
                 ConsoleSectionId.Network,
+                // REALUSE-DATA-SAFETY-4 AC1: ⑤ 缓存与版本清理 已接真实 cleanup.preview / cleanup.run。
+                ConsoleSectionId.Storage,
                 // REALUSE-DATA-SAFETY-1 AC2: ⑥ 备份与恢复 已接真实 Host 面。
                 ConsoleSectionId.Backup,
                 ConsoleSectionId.Diagnostics,
@@ -281,16 +284,24 @@ public sealed class V2ConsoleUiTests
         var controller = Fixture();
         var (window, shell, console) = await HostInConsoleAsync(controller);
 
-        console.SelectSectionById(ConsoleSectionId.Storage);
+        // REALUSE-DATA-SAFETY-4 AC1: ⑤ Storage is a real pre-flight now, so the honest-placeholder
+        // example moves to ④ Devices (still needs a Host device/weights command).
+        console.SelectSectionById(ConsoleSectionId.Devices);
         Dispatcher.UIThread.RunJobs();
         Assert.True(console.IsNotWiredSection);
-        Assert.True(console.ShowClearCacheDanger);
-        Capture(window, "04-console-storage-not-wired");
+        Assert.Contains("能力待接入", console.NotWiredBody, StringComparison.Ordinal);
+        Assert.Contains("依赖", console.NotWiredRequirement, StringComparison.Ordinal);
+        Capture(window, "04-console-devices-not-wired");
+
+        // ⑤ Storage: the destructive action is real and therefore still gated by the shared confirm.
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(console.IsNotWiredSection);
         console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
         Assert.True(shell.ViewModel.IsConfirmOpen);
-        Assert.False(shell.ViewModel.ConfirmCanConfirm);
-        Assert.Contains("能力待接入", shell.ViewModel.ConfirmBlockedReason, StringComparison.Ordinal);
-        Capture(window, "08-console-danger-confirm-blocked");
+        Assert.True(shell.ViewModel.ConfirmCanConfirm, "a real cleanup must be confirmable");
+        Capture(window, "08-console-danger-confirm");
         shell.ViewModel.CancelConfirmCommand.Execute(null);
         Assert.False(shell.ViewModel.IsConfirmOpen);
 
@@ -689,6 +700,72 @@ public sealed class V2ConsoleUiTests
 
         Assert.Equal("run-session-7", console.RunIdInput);
 
+        window.Close();
+    }
+
+    // ── REALUSE-DATA-SAFETY-4 AC1 (audit MA-06): cache cleanup is real, not a placeholder ────
+
+    /// <summary>
+    /// The section used to be a permanent 待接入 placeholder because the Host never exposed
+    /// cleanup.preview / cleanup.run. It now shows the Core's own pre-flight and only deletes after
+    /// the shared confirmation gate.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task StorageSection_PreviewsThenDeletesOnlyAfterConfirmation()
+    {
+        var fake = Fixture();
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fake.CleanupPreviewCalls >= 1, "opening the section must read the pre-flight");
+        Assert.True(console.HasCleanupTargets);
+        Assert.Contains("将清理 1 个", console.CleanupSummaryText, StringComparison.Ordinal);
+
+        console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.ViewModel.IsConfirmOpen, "deleting cache must go through the confirm gate");
+        Assert.Equal(0, fake.CleanupRunCalls);
+
+        shell.ViewModel.ConfirmCommand.Execute(null);
+        await WaitUntilAsync(() => fake.CleanupRunCalls == 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("已清理 1 个", console.CleanupLastResult ?? string.Empty, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StorageSection_WithEmptyPreview_RefusesWithoutConfirming()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(Array.Empty<CleanupTargetInfo>(), 0, 0);
+        var (window, shell, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(console.HasCleanupTargets);
+        Assert.Contains("没有可安全清理", console.CleanupSummaryText, StringComparison.Ordinal);
+
+        console.RequestClearCacheCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(shell.ViewModel.IsConfirmOpen, "an empty preview must not open a destructive confirm");
+        Assert.Equal(0, fake.CleanupRunCalls);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StorageSection_SurfacesPendingFailuresFromTheCoreLedger()
+    {
+        var fake = Fixture();
+        fake.CleanupPreview = new CleanupPreviewInfo(
+            new[] { new CleanupTargetInfo("cache/tiles/abc.webp", 2048) }, 2048, 3);
+        var (window, _, console) = await HostInConsoleAsync(fake);
+        console.SelectSectionById(ConsoleSectionId.Storage);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Contains("3 处上次删除失败", console.CleanupPendingText, StringComparison.Ordinal);
         window.Close();
     }
 }

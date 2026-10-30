@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using NewManga.App.Services;
+using NewManga.CoreClient;
 using NewManga.App.Shell.V2;
 
 namespace NewManga.App.ViewModels.V2.Console;
@@ -123,7 +124,9 @@ public sealed class ConsoleViewModel : ObservableObject
             Section(ConsoleSectionId.Providers, "02", "Provider 与凭据", "配置 / 凭据状态 / 能力绑定", isWired: true),
             Section(ConsoleSectionId.Network, "03", "网络与代理", "网络配置 / 默认网络 / 连通测试", isWired: true),
             Section(ConsoleSectionId.Devices, "04", "模型与设备", "设备探测未接入（无 Host 命令）", isWired: false),
-            Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "清理需 Host 方法与影响面预览", isWired: false),
+            // REALUSE-DATA-SAFETY-4 AC1: cleanup.preview / cleanup.run are wired end to end now, so this
+            // section is a real pre-flight + confirmed run instead of a permanent placeholder.
+            Section(ConsoleSectionId.Storage, "05", "缓存与版本清理", "预览影响面后清理（真实，二次确认）", isWired: true),
             Section(ConsoleSectionId.Backup, "06", "备份与恢复", "真实 .nmbak 包（列表 / 创建 / 删除 / 恢复）", isWired: true),
             Section(ConsoleSectionId.Plugins, "07", "插件与 Hooks", "插件列表/启停未接入", isWired: false),
             Section(ConsoleSectionId.Diagnostics, "08", "诊断与日志", "Host 状态 / 导出历史（真实）", isWired: true),
@@ -170,6 +173,7 @@ public sealed class ConsoleViewModel : ObservableObject
         OpenThemeStudioCommand = new RelayCommand(() => _openThemeStudio());
         OpenStudioCommand = new RelayCommand(() => _openStudio());
         RequestClearCacheCommand = new RelayCommand(RequestClearCache);
+        RefreshCleanupPreviewCommand = new RelayCommand(() => _ = RefreshCleanupPreviewAsync());
         RequestCreateBackupCommand = new RelayCommand(() => _ = CreateBackupAsync());
         RequestDeleteBackupCommand = new RelayCommand(RequestDeleteBackup);
         RequestRestoreBackupCommand = new RelayCommand(RequestRestoreBackup);
@@ -270,6 +274,121 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public bool ShowBackupDanger => _selectedSection.Id == ConsoleSectionId.Backup;
 
+    // ── ⑤ 缓存与版本清理（REALUSE-DATA-SAFETY-4 AC1：真实 cleanup.preview / cleanup.run）──
+
+    private bool _isCleanupBusy;
+    private string _cleanupSummaryText = "尚未读取缓存预览";
+    private string _cleanupPendingText = string.Empty;
+    private string? _cleanupLastResult;
+
+    public bool IsStorageSection => _selectedSection.Id == ConsoleSectionId.Storage;
+
+    public ObservableCollection<CleanupTargetRowViewModel> CleanupTargets { get; } = new();
+
+    public bool HasCleanupTargets => CleanupTargets.Count > 0;
+
+    public bool IsCleanupBusy
+    {
+        get => _isCleanupBusy;
+        private set => Set(ref _isCleanupBusy, value);
+    }
+
+    public string CleanupSummaryText
+    {
+        get => _cleanupSummaryText;
+        private set => Set(ref _cleanupSummaryText, value);
+    }
+
+    /// <summary>Pending removals the Core persisted after a failed deletion (retryable, never silent).</summary>
+    public string CleanupPendingText
+    {
+        get => _cleanupPendingText;
+        private set => Set(ref _cleanupPendingText, value);
+    }
+
+    public string? CleanupLastResult
+    {
+        get => _cleanupLastResult;
+        private set => Set(ref _cleanupLastResult, value);
+    }
+
+    public bool HasCleanupResult => !string.IsNullOrWhiteSpace(_cleanupLastResult);
+
+    public RelayCommand RefreshCleanupPreviewCommand { get; private set; } = null!;
+
+    /// <summary>Read-only pre-flight; the Confirm gate below is what actually deletes.</summary>
+    public async Task RefreshCleanupPreviewAsync()
+    {
+        if (IsCleanupBusy)
+        {
+            return;
+        }
+
+        IsCleanupBusy = true;
+        try
+        {
+            var preview = await _controller.GetCleanupPreviewAsync().ConfigureAwait(true);
+            CleanupTargets.Clear();
+            foreach (var target in preview.Targets)
+            {
+                CleanupTargets.Add(new CleanupTargetRowViewModel(target));
+            }
+
+            CleanupSummaryText = preview.Targets.Count == 0
+                ? "没有可安全清理的缓存（预览为空）"
+                : $"将清理 {preview.Targets.Count} 个缓存文件，共 {FormatSize(preview.TotalBytes)}";
+            CleanupPendingText = preview.PendingCleanups == 0
+                ? string.Empty
+                : $"另有 {preview.PendingCleanups} 处上次删除失败，仍待重试（Core 已记录）";
+            OnPropertyChanged(nameof(HasCleanupTargets));
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
+
+    private void RequestClearCache()
+    {
+        if (!HasCleanupTargets)
+        {
+            _notify("没有可清理的缓存：先读取预览", NmStatus.Blocked);
+            return;
+        }
+
+        _requestConfirm(new ConfirmRequest(
+            "清理缓存与过期版本",
+            $"将删除 {CleanupTargets.Count} 个可重建的缓存 / 缩略图 / 过期 revision 文件。" +
+            "用户原图、人工修改与已锁定版本不在清理范围内；清理后部分页面需要重新处理。",
+            "清理",
+            IsDanger: true,
+            OnConfirm: () => _ = RunCleanupAsync()));
+    }
+
+    private async Task RunCleanupAsync()
+    {
+        IsCleanupBusy = true;
+        try
+        {
+            var outcome = await _controller.RunCleanupAsync().ConfigureAwait(true);
+            if (outcome is null)
+            {
+                _notify($"清理被拒绝：{_controller.Snapshot.LastError ?? "未知原因"}", NmStatus.Failed);
+                return;
+            }
+
+            CleanupLastResult = outcome.Failed == 0
+                ? $"已清理 {outcome.Removed} 个文件（跳过 {outcome.Skipped}）"
+                : $"已清理 {outcome.Removed} 个，失败 {outcome.Failed} 个（失败项已记录，可重试）";
+            _notify(CleanupLastResult!, outcome.Failed == 0 ? NmStatus.Done : NmStatus.Failed);
+            await RefreshCleanupPreviewAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            IsCleanupBusy = false;
+        }
+    }
+
     // ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ──────────────────────────
 
     public bool IsBackupSection => _selectedSection.Id == ConsoleSectionId.Backup;
@@ -339,6 +458,11 @@ public sealed class ConsoleViewModel : ObservableObject
         }
 
         _selectedSection = section;
+        if (section.Id == ConsoleSectionId.Storage)
+        {
+            _ = RefreshCleanupPreviewAsync();
+        }
+
         OnPropertyChanged(
             nameof(SelectedSection),
             nameof(IsTasksSection),
@@ -1818,15 +1942,6 @@ public sealed class ConsoleViewModel : ObservableObject
 
     // ── Not-wired sections / blocked dangerous actions ─────────────────────────────────
 
-    private void RequestClearCache() => _requestConfirm(new ConfirmRequest(
-        "清理缓存与过期版本（能力待接入）",
-        "清理会删除可重建的缓存、缩略图与过期 revision 文件，可能使部分页面需要重新处理；" +
-        "当前 IHostController 未暴露 cleanup_preview / cleanup_run，无法先展示影响面，因此不会执行任何删除。",
-        "清理（能力待接入）",
-        IsDanger: true,
-        OnConfirm: () => _notify("清理缓存：能力待接入，未执行任何删除", NmStatus.Blocked),
-        CanConfirm: false,
-        BlockedReason: "能力待接入：Host 未暴露 cleanup_preview / cleanup_run 方法"));
 
     private async Task RefreshBackupsAsync()
     {
@@ -2315,4 +2430,27 @@ public sealed class ConsoleKnownRunRow
     public bool IsMostRecent { get; }
 
     public RelayCommand SelectCommand { get; }
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-4 AC1: one removable cache target from the Core's <c>cleanup.preview</c>.
+/// Only a relative path and a size — the Core never sends an OS path and the UI never renders one.
+/// </summary>
+public sealed class CleanupTargetRowViewModel
+{
+    public CleanupTargetRowViewModel(CleanupTargetInfo target)
+    {
+        RelativePath = target.RelativePath;
+        SizeBytes = target.SizeBytes;
+    }
+
+    public string RelativePath { get; }
+
+    public long SizeBytes { get; }
+
+    public string SizeText => SizeBytes >= 1024 * 1024
+        ? $"{SizeBytes / (1024.0 * 1024.0):0.0} MB"
+        : SizeBytes >= 1024
+            ? $"{SizeBytes / 1024.0:0.0} KB"
+            : $"{SizeBytes} B";
 }
