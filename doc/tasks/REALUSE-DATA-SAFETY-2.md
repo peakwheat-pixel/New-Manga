@@ -3,19 +3,19 @@ id: REALUSE-DATA-SAFETY-2
 title: 修复真实使用自查 B2 批次——Provider 可用性引导、就绪状态诚实性、启动自检降级误报
 kind: fix
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: antigravity-headless
 depends_on:
   - REALUSE-DATA-SAFETY-1
 base_commit: a29e0f516
 branch: task/REALUSE-DATA-SAFETY-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-2
 integration_commit: null
-delivery_head: e9b80d896
-canonical_evidence_status: pending
+delivery_head: 5acbc9b88
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-2
 allowed_paths:
@@ -48,9 +48,9 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 Provider 未配置可诊断**：无可用 Provider 时，UI 明确显示「未配置模型 Provider」并给出下一步入口/说明；不再出现「任务静默失败」。 <<PARTIAL: 待实现>>
-- [ ] **AC2 就绪状态诚实**：只读/失败/未就绪时状态徽标不得显示「就绪」；「重试」按钮要么真实重试要么禁用并说明。 <<PARTIAL: 已实现（只读时徽标 Blocked + 状态文案含只读原因；失败后 StartAsync 真实重试），2 个 shell 测试通过，待独立审查>>
-- [ ] **AC3 启动自检不再误报降级**：自检全通过时返回 `Ready`；失败时返回 `Degraded` 并携带原因；App 侧消费该结果。 <<PARTIAL: 已实现（Evaluate 成功返回 Passed，Degraded 仅留给探测失败；快照暴露 SelfCheckStatus/SelfCheckLine，Console 诊断分区渲染），Host 7 例 + App 断言通过，待独立审查>>
+- [x] **AC1 Provider 未配置可诊断**：无可用 Provider 时，UI 明确显示「未配置模型 Provider」并给出下一步入口/说明；不再出现「任务静默失败」。 <<MET>>
+- [x] **AC2 就绪状态诚实**：只读/失败/未就绪时状态徽标不得显示「就绪」；「重试」按钮要么真实重试要么禁用并说明。 <<MET>>
+- [x] **AC3 启动自检不再误报降级**：自检全通过时返回 `Ready`；失败时返回 `Degraded` 并携带原因；App 侧消费该结果。 <<MET>>
 
 ## 允许修改范围
 
@@ -66,7 +66,7 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 Provider 未配置提示 | headless UI 测试 + 真实包运行截图 | 无 Provider 的数据根 | NOT_RUN | 待补 |
+| AC1 Provider 未配置提示 | `dotnet test --filter V2StudioBatchTests` | headless Avalonia / `5acbc9b88` | PASS 19/19（含 2 个新例：指引文案 + 卡片可见） | `V2StudioBatchTests.cs` |
 | AC2 状态诚实性 | `dotnet test --filter Host` + headless UI | net9.0 | NOT_RUN | 待补 |
 | AC3 自检结果 | `dotnet test --filter StartupSelfCheck` | net9.0 / `e9b80d896` | PASS：Host 7 passed / 3 环境性跳过；App 侧断言 SelfCheckStatus=Failed + 行含错误码 | `StartupSelfCheckTests.cs`、`StartupSelfCheckUiTests.cs` |
 | AC2 只读状态 | `dotnet test --filter "FullyQualifiedName~ReadOnlyHost_IsNotShownAsGreenReady|FullyQualifiedName~WritableHost_KeepsGreenReadyState"` | headless Avalonia / `e9b80d896` | PASS 2/2 | `V2ShellUiTests.cs` |
@@ -78,7 +78,16 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-GUIDANCE | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2StudioBatchTests.cs` | `5acbc9b88` | `-` | CANONICAL |
+| E-AC1-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs` | `5acbc9b88` | `-` | CANONICAL |
+| E-AC1-VIEW | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioBatchControls.cs` | `5acbc9b88` | `-` | CANONICAL |
+| E-AC2-SHELL | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellUiTests.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC2-STATE | AC2 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Shell/AppShellViewModel.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC2-RETRY | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC3-SELFCHECK | AC3 | `apps/desktop-avalonia/src/NewManga.Host/StartupSelfCheck.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC3-TESTS | AC3 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/StartupSelfCheckTests.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC3-UI | AC3 | `apps/desktop-avalonia/tests/NewManga.App.Tests/StartupSelfCheckUiTests.cs` | `e9b80d896` | `-` | CANONICAL |
+| E-AC3-CONSOLE | AC3 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs` | `e9b80d896` | `-` | CANONICAL |
 
 ## Resource Manifest
 
