@@ -50,7 +50,8 @@ public partial class AppShellV2 : UserControl
         StudioWorkspace = new StudioWorkspaceAdapter(
             new StudioWorkspaceView(new StudioWorkspaceViewModel(
                 controller,
-                new StudioSelection(_viewModel.State))));
+                new StudioSelection(_viewModel.State),
+                onRunTracked: _viewModel.RememberCreatedRun)));
         _viewModel.RegisterWorkspace(StudioWorkspace);
 
         _themeManager = themeManager;

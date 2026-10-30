@@ -21,6 +21,17 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     private bool _pollingEnabled = true;
     private Task? _inFlight;
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2 (audit MA-07): the Console's "任务与队列" section required the user
+    /// to type a run_id by hand because the frozen contract has no "list runs" command. Remembering
+    /// the run ids this session has actually seen is not a fabricated list — every entry came from a
+    /// real StartRun or an explicit load — and it is what makes the section usable without copying
+    /// ids out of another window. Most recent first, bounded.
+    /// </summary>
+    private readonly List<string> _knownRunIds = new();
+
+    private const int MaxKnownRunIds = 12;
+
     public RunStatusMonitor(IRunController controller)
     {
         _controller = controller;
@@ -40,6 +51,13 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public TaskProjectionInfo? Projection => _projection;
 
     public bool HasSnapshot => _snapshot is not null;
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: run ids this session has tracked (most recent first, at most
+    /// <see cref="MaxKnownRunIds"/>). Purely a memory aid — it never invents an id and never claims
+    /// a run still exists; loading one goes through the normal Host read.
+    /// </summary>
+    public IReadOnlyList<string> KnownRunIds => _knownRunIds;
 
     /// <summary>True while the shared poller is running (tests can pause it for determinism).</summary>
     public bool IsPollingEnabled => _pollingEnabled;
@@ -80,6 +98,10 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public void Track(string? runId)
     {
         var normalized = string.IsNullOrWhiteSpace(runId) ? null : runId.Trim();
+        // Review r1 M5: remembering here meant a typo was cached as a run the session had "seen",
+        // shown as a chip forever while polling a run that does not exist. Only a run the Host
+        // actually answers for (RefreshCoreAsync) or a Run the app just created (RememberRunId)
+        // enters the list.
         if (string.Equals(_runId, normalized, StringComparison.Ordinal))
         {
             return;
@@ -111,6 +133,49 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         }
 
         _ = RefreshAsync();
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: records a run the application itself just created (StartRun
+    /// returned it), so it is offered in the Console list before the first read round-trip.
+    /// </summary>
+    public void RememberRunId(string runId)
+    {
+        if (RememberRun(string.IsNullOrWhiteSpace(runId) ? null : runId.Trim()))
+        {
+            OnPropertyChanged(nameof(KnownRunIds));
+        }
+    }
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC2: records a run id the session has actually seen (most recent
+    /// first, de-duplicated, bounded). Returns true when the list actually changed.
+    /// </summary>
+    private bool RememberRun(string? runId)
+    {
+        if (runId is null)
+        {
+            return false;
+        }
+
+        var existing = _knownRunIds.IndexOf(runId);
+        if (existing == 0)
+        {
+            return false;
+        }
+
+        if (existing > 0)
+        {
+            _knownRunIds.RemoveAt(existing);
+        }
+
+        _knownRunIds.Insert(0, runId);
+        while (_knownRunIds.Count > MaxKnownRunIds)
+        {
+            _knownRunIds.RemoveAt(_knownRunIds.Count - 1);
+        }
+
+        return true;
     }
 
     /// <summary>Disables automatic polling (tests / explicit refresh only) without clearing the tracked run.</summary>
@@ -173,6 +238,12 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
 
             _snapshot = snapshot;
             _projection = projection;
+            if (snapshot is not null && RememberRun(runId))
+            {
+                // The Host returned this run, so it is real: safe to remember and to offer as a chip.
+                OnPropertyChanged(nameof(KnownRunIds));
+            }
+
             OnPropertyChanged(
                 nameof(Snapshot),
                 nameof(Projection),
@@ -221,14 +292,20 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>Core run states → the frozen seven-state UI language (never a fabricated state).</summary>
+    /// <summary>
+    /// Core run states → the frozen seven-state UI language (never a fabricated state).
+    /// REALUSE-DATA-SAFETY-3 AC4 (audit MA-10): the enum values come from
+    /// <c>src/application/tasks/projection.py</c>; <c>completed_with_failures</c> and
+    /// <c>interrupted</c> used to fall through to NotStarted while the raw value leaked into the UI.
+    /// A run that finished with failed pages counts as Done (it did finish) but its label says so.
+    /// </summary>
     public static NmStatus RunStateStatus(string state) => state switch
     {
-        "completed" or "done" => NmStatus.Done,
+        "completed" or "done" or "completed_with_failures" => NmStatus.Done,
         "running" or "processing" => NmStatus.Running,
-        "failed" or "error" => NmStatus.Failed,
+        "failed" or "error" or "interrupted" => NmStatus.Failed,
         "blocked" => NmStatus.Blocked,
-        "waiting" or "pending" or "queued" => NmStatus.Queued,
+        "waiting" or "pending" or "queued" or "paused" => NmStatus.Queued,
         "skipped" => NmStatus.Skipped,
         "stale" => NmStatus.Stale,
         _ => NmStatus.NotStarted,
@@ -237,8 +314,10 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public static string RunStateText(string state) => state switch
     {
         "completed" or "done" => "已完成",
+        "completed_with_failures" => "已完成（有失败页）",
         "running" or "processing" => "进行中",
         "failed" or "error" => "失败",
+        "interrupted" => "已中断",
         "blocked" => "阻塞",
         "waiting" or "pending" or "queued" => "等待",
         "skipped" => "跳过",
@@ -247,4 +326,35 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
         "stale" => "过期",
         _ => string.IsNullOrEmpty(state) ? "未知" : state,
     };
+
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-3 AC4 (audit MA-10): Core step error codes are upper-snake identifiers
+    /// (<c>src/application/**</c>); the UI used to print them verbatim. Known codes get a Chinese
+    /// explanation, unknown ones keep their code so the failure stays diagnosable — never a generic
+    /// "出错了".
+    /// </summary>
+    public static string StepErrorText(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return "无错误码";
+        }
+
+        var explanation = code switch
+        {
+            "PROVIDER_NOT_CONFIGURED" => "未配置模型 Provider",
+            "PROVIDER_UNKNOWN" => "未知的模型 Provider",
+            "PROVIDER_RATE_LIMITED" or "RATE_LIMITED" => "Provider 限流，请稍后重试",
+            "MISSING_REQUIRED_INPUT" => "缺少必要输入（前置步骤未完成）",
+            "OUTPUT_MAPPING_MISMATCH" => "步骤输出映射不一致",
+            "ARTIFACT_WRITE_FAILED" => "产物写入失败",
+            "ARTIFACT_HASH_MISMATCH" => "产物校验不一致",
+            "EXPORT_WRITE_FAILED" => "导出写入失败",
+            "COMPOSITION_BASE_CHANGED" => "合成底图已变化，需要重新渲染",
+            "TARGET_NOT_FOUND" => "目标不存在",
+            _ => null,
+        };
+
+        return explanation is null ? code : $"{explanation}（{code}）";
+    }
 }

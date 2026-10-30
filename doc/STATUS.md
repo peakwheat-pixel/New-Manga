@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[REALUSE-DATA-SAFETY-3](tasks/REALUSE-DATA-SAFETY-3.md) `ready`（B2 核心链路可达：Console 分区接线 / Run 列表 / 重复读取 / 错误码本地化），尚未开 worktree。已完成两批自查修复：`REALUSE-DATA-SAFETY-1`（数据安全，集成 `ba8de1148`）与 `REALUSE-DATA-SAFETY-2`（MA-02/04/05 诚实性，集成 `15efbcfb0`，独立审查 r1 FAIL→修复→r2 PASS）。B1 明细：AC1 数据根迁移后命名空间自愈、AC2 真实 `.nmbak` 备份（含导入原图）+ Console「备份与恢复」接线、AC3 旧布局 `data/{managed,backups}` 迁移、AC4 只读语义 seam。独立审查 2 轮（Antigravity，未参与实现）：r1 FAIL_WITH_MUST_FIX（备份路径穿越 / 合并拷贝非原子 / 自动备份判据）→ 修复 `8669388ae` → r2 **PASS**。证据：全量 pytest exit 0；`dotnet test` 811 passed / 0 failed；`dotnet build -warnaserror` 0W/0E。
+- 当前 Task：[REALUSE-DATA-SAFETY-4](tasks/REALUSE-DATA-SAFETY-4.md) `ready`（Console 三处「待接入」分区接线，由 SAFETY-3 的 AC1 拆出）。已完成三批自查修复：`REALUSE-DATA-SAFETY-1`（数据安全，集成 `ba8de1148`）、`-2`（MA-02/04/05 诚实性，集成 `15efbcfb0`）、`-3`（MA-07/08/10：Run 列表、启动重复读取、错误码本地化，独立审查 r1 FAIL→修复→r2 PASS，待集成）。B1 明细：AC1 数据根迁移后命名空间自愈、AC2 真实 `.nmbak` 备份（含导入原图）+ Console「备份与恢复」接线、AC3 旧布局 `data/{managed,backups}` 迁移、AC4 只读语义 seam。独立审查 2 轮（Antigravity，未参与实现）：r1 FAIL_WITH_MUST_FIX（备份路径穿越 / 合并拷贝非原子 / 自动备份判据）→ 修复 `8669388ae` → r2 **PASS**。证据：全量 pytest exit 0；`dotnet test` 811 passed / 0 failed；`dotnet build -warnaserror` 0W/0E。
 - 上一 Task：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
 - 已合入 main（历史）：A-1 CreateChapter、A-2 IRunController、A-3 66 命令契约、A-5 生产写入策略、D-1 设计系统、C-1 ThemeEngine、B-1..B-4 外壳/Console/Studio/Batch、V11R-INT-0；明细见 `doc/reviews/` 与各 Task 卡。
 - 独立审查报告统一在 `doc/reviews/`（最新：`REALUSE-DATA-SAFETY-1-antigravity-r2.md` PASS）。

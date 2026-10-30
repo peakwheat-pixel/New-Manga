@@ -143,9 +143,26 @@
           <!-- ── ① 任务与队列（真实 IRunController，无 List Run 命令） ─────────────── -->
           <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsTasksSection}">
             <ctrl:AlertBanner Severity="Blocked" Message="{Binding RunSourceNote}" />
+            <!-- REALUSE-DATA-SAFETY-3 AC2 (MA-07): ids this session actually saw, clickable. Never
+                 a fabricated list: the frozen contract has no List Run command, so this only holds
+                 runs the session obtained from the Host. -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+              <TextBlock Classes="meta" Text="{Binding KnownRunsHint}" TextWrapping="Wrap" />
+              <ItemsControl ItemsSource="{Binding KnownRuns}" IsVisible="{Binding HasKnownRuns}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ConsoleKnownRunRow">
+                    <Button Classes="chip"
+                            Content="{Binding RunId}"
+                            Command="{Binding SelectCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="{DynamicResource Nm.Padding.Cell}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
             <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
               <TextBlock Classes="meta" Text="run_id" VerticalAlignment="Center" />
-              <TextBox Grid.Column="1" Text="{Binding RunIdInput}" Watermark="输入 run_id（冻结契约无 List Run；由工位批次或外部记录提供）" />
+              <TextBox Grid.Column="1" Text="{Binding RunIdInput}" Watermark="输入 run_id（本会话的 Run 可点上方列表；跨会话的 Run 由工位批次或外部记录提供）" />
               <Button Grid.Column="2" Classes="primary sm" Content="读取 Run" Command="{Binding LoadRunCommand}" />
               <Button Grid.Column="3" Classes="ghost sm" Content="刷新" Command="{Binding RefreshRunCommand}" />
             </Grid>

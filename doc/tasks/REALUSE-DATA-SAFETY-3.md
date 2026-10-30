@@ -3,20 +3,28 @@ id: REALUSE-DATA-SAFETY-3
 title: 修复真实使用自查 B2 核心链路——Console 分区接线、Run 列表、重复读取、错误码本地化
 kind: fix
 governance_version: 3
-status: ready
+status: done
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
-owner: null
-reviewer: null
+owner: dsh-lead
+reviewer: antigravity-headless
+review_history:
+  - round: 1
+    verdict: FAIL_WITH_MUST_FIX
+    report: doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r1.md
+    must_fix: M1 reader silently opened the wrong book after AC3 reuse; M2/M3 cache invalidation gaps; M4 unguarded cache; M5 invalid run ids polluting the list; M6 a test awaited the wrong task
+  - round: 2
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r2.md
 depends_on:
   - REALUSE-DATA-SAFETY-2
 base_commit: 15efbcfb0
-branch: null
-worktree: null
-integration_commit: null
-delivery_head: null
+branch: task/REALUSE-DATA-SAFETY-3
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3
+integration_commit: PENDING
+delivery_head: 4b9b53bb0
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-3
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-3.md
@@ -48,10 +56,10 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 Console 分区接线**：无可用 Provider/模型时，控制台提供明确入口与状态（不再是「待接入」占位）；缓存与版本清理、插件与 Hooks 要么真实接线，要么保留占位但**明确说明未接入原因**，不得静默。 <<PARTIAL: 待实现>>
-- [ ] **AC2 Stop 手工输入 run_id**：普通用户无需手抄 run_id 即可看到本会话/近期的 Run；外部 Run 的 run_id 路径仍在且有说明。若需契约扩展，先记录裁决再实施。 <<PARTIAL: 待实现>>
-- [ ] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<PARTIAL: 待实现>>
-- [ ] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<PARTIAL: 待实现>>
+- [ ] **AC1 Console 分区接线**：~~本 Task 范围~~ → **已移交 [REALUSE-DATA-SAFETY-4](REALUSE-DATA-SAFETY-4.md)**（体量大且涉及契约边界，DSH 拆分）。 <<PARTIAL: 已移交独立 Task，本 Task 不再承接>>
+- [x] **AC2 Stop 手工输入 run_id**：普通用户无需手抄 run_id 即可看到本会话/近期的 Run；外部 Run 的 run_id 路径仍在且有说明。若需契约扩展，先记录裁决再实施。 <<MET>>
+- [x] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<MET>>
+- [x] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<MET>>
 
 ## 允许修改范围
 
@@ -67,9 +75,9 @@ allowed_paths:
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1 分区接线 | `dotnet test --filter Console` + headless 截图 | net9.0 | NOT_RUN | 待补 |
-| AC2 Run 列表 | `dotnet test --filter Run` | net9.0 | NOT_RUN | 待补 |
-| AC3 重复读取 | wire 帧计数断言（Host/Fake 均可） | net9.0 | NOT_RUN | 待补 |
-| AC4 错误码 | `dotnet test --filter Localization` 或 UI 断言 | net9.0 | NOT_RUN | 待补 |
+| AC2 Run 列表 | `dotnet test --filter "RunIndexTests"` + `--filter TasksSection_ListsRunsThisSessionSaw` | net9.0 / `8b5530608` | PASS 5/5（索引 4 + Console 集成 1） | `RunIndexTests.cs`、`V2ConsoleUiTests.cs` |
+| AC3 重复读取 | `dotnet test --filter StartupReadDedupTests` | net9.0 / `569e4fa56` | PASS 3/3（`RefreshCalls` 断言：首屏 0 次、显式刷新 1 次、冷快照 1 次） | `StartupReadDedupTests.cs` |
+| AC4 错误码 | `dotnet test --filter CoreStateTextTests` | net9.0 / `569e4fa56` | PASS 19/19（终态文案 + 状态映射 + 步骤码说明与保留） | `CoreStateTextTests.cs` |
 
 ## Canonical Evidence
 
@@ -77,7 +85,13 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC2-MONITOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Shell/V2/RunStatusMonitor.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC2-INDEX | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/RunIndexTests.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC2-CONSOLE | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `8b5530608` | `-` | CANONICAL |
+| E-AC3-DEDUP | AC3 | `apps/desktop-avalonia/tests/NewManga.App.Tests/StartupReadDedupTests.cs` | `569e4fa56` | `-` | CANONICAL |
+| E-AC3-CACHE | AC3 | `apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs` | `4b9b53bb0` | `-` | CANONICAL |
+| E-AC4-TEXT | AC4 | `apps/desktop-avalonia/tests/NewManga.App.Tests/CoreStateTextTests.cs` | `569e4fa56` | `-` | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r1.md` | `4b9b53bb0` | `-` | CANONICAL |
 
 ## Resource Manifest
 

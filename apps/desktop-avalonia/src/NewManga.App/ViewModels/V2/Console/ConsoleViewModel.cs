@@ -190,10 +190,12 @@ public sealed class ConsoleViewModel : ObservableObject
         // R-24: the shared RunStatusMonitor owns polling; leaving the Console does not stop the shared
         // source (the shell StatusBand keeps showing the active Run).
         _runMonitor.Updated += OnRunMonitorUpdated;
+        RefreshKnownRuns();
     }
 
     private void OnRunMonitorUpdated(object? sender, EventArgs e)
     {
+        RefreshKnownRuns();
         if (!HasRunLoaded || _runMonitor.RunId is not { } runId)
         {
             return;
@@ -201,6 +203,44 @@ public sealed class ConsoleViewModel : ObservableObject
 
         ApplyRun(runId, _runMonitor.Snapshot, _runMonitor.Projection);
     }
+
+    // ── REALUSE-DATA-SAFETY-3 AC2: this session's runs (audit MA-07) ───────────────────────
+
+    private void RefreshKnownRuns()
+    {
+        var known = _runMonitor.KnownRunIds;
+        if (known.Count == KnownRuns.Count && known.Select((id, index) => id == KnownRuns[index].RunId).All(same => same))
+        {
+            return;
+        }
+
+        KnownRuns.Clear();
+        for (var index = 0; index < known.Count; index++)
+        {
+            KnownRuns.Add(new ConsoleKnownRunRow(known[index], index == 0, SelectKnownRun));
+        }
+
+        OnPropertyChanged(nameof(HasKnownRuns), nameof(KnownRunsHint));
+    }
+
+    /// <summary>
+    /// Loads a run the session already saw, so the section is usable without copying an id out of
+    /// another window. The load still goes through the normal Host read (no cached projection).
+    /// </summary>
+    private void SelectKnownRun(string runId)
+    {
+        RunIdInput = runId;
+        _ = LoadRunAsync();
+    }
+
+    /// <summary>REALUSE-DATA-SAFETY-3 AC2: runs this session tracked (most recent first).</summary>
+    public ObservableCollection<ConsoleKnownRunRow> KnownRuns { get; } = new();
+
+    public bool HasKnownRuns => KnownRuns.Count > 0;
+
+    public string KnownRunsHint => KnownRuns.Count == 0
+        ? "本会话还没有出现过 Run；从工位批次开始处理，或直接输入外部 run_id。"
+        : "本会话出现过的 Run（点击读取）；冻结契约没有「列出 Run」命令，跨会话的 Run 仍需输入 run_id。";
 
     // ── Sections ─────────────────────────────────────────────────────────────────────────
 
@@ -2252,4 +2292,27 @@ public sealed class BackupEntryRowViewModel
     public bool Verified { get; }
 
     public string VerifiedText { get; }
+}
+
+/// <summary>
+/// REALUSE-DATA-SAFETY-3 AC2 (audit MA-07): one row of "runs this session has seen". The Console
+/// used to require a hand-typed run_id because the frozen contract exposes no "list runs" command;
+/// this list is a memory aid over ids the session actually obtained from the Host, never a
+/// fabricated projection.
+/// </summary>
+public sealed class ConsoleKnownRunRow
+{
+    public ConsoleKnownRunRow(string runId, bool isMostRecent, Action<string> select)
+    {
+        RunId = runId;
+        IsMostRecent = isMostRecent;
+        SelectCommand = new RelayCommand(() => select(runId));
+    }
+
+    public string RunId { get; }
+
+    /// <summary>Marks the entry the shared monitor is currently tracking.</summary>
+    public bool IsMostRecent { get; }
+
+    public RelayCommand SelectCommand { get; }
 }
