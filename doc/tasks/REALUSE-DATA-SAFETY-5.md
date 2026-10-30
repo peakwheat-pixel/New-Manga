@@ -48,8 +48,8 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 B3 剩余项逐条核对**：对 MA-09/11/14~20 每一条给出「仍成立 / 已消失 / 性质改变」的判定与依据（文件:行 或 测试），仍成立的按批次修完。 <<PARTIAL: 已核对 9 条中的 8 条（MA-20 的脚本不在仓库，无法核对），修掉 5 条（MA-14/15/16/17/18），剩 4 条按判定留给后续：MA-09（进度刷新未接）、MA-11（迁移策略需用户裁决）、MA-19（derived 副本涉及资源通道设计）、MA-20（脚本归属待确认）。核对表与依据已写进 DEFECTS.md 复核记录。本批不把「未修」说成「已修」>>
-- [x] **AC2 B4 卫生项**：MA-21/22 处理完成，或在 Task 中明确记录为何不值得做。 <<NOT_APPLICABLE: DEFECTS.md 实际只到 MA-20，MA-21/22 从未存在（B4 批次表记账错误）；已把编号越界与 B4 的真实内容一并记入 DEFECTS.md 复核记录>>
+- [ ] **AC1 B3 剩余项逐条核对**：对 MA-09/11/14~20 每一条给出「仍成立 / 已消失 / 性质改变」的判定与依据（文件:行 或 测试），仍成立的按批次修完。 <<PARTIAL: 9 条全部核对完成（MA-20 的脚本实际在 apps/desktop-avalonia/scripts/install.ps1，上一版误称「不在仓库」已更正）。已修 6 条：MA-14/15/16/17/18 + MA-22；已记录理由暂不修 2 条：MA-21（wire 日志重复，属可观测性优化）、MA-20（安装脚本隔离属部署侧决策）；仍成立待后续 3 条：MA-09、MA-11、MA-19。核对表与依据见 DEFECTS.md 复核记录>>
+- [x] **AC2 B4 卫生项**：MA-21/22 处理完成，或在 Task 中明确记录为何不值得做。 <<PARTIAL: MA-21 / MA-22 确实存在（P4 卫生项，本文件第 118-119 行）。MA-22 已修：HostGrantCoordinator 写入 grants 证据后按最近 200 个修剪，不再无限增长；MA-21 记录为暂不修（wire 日志对 SaveReadingProgress 的重复记录属可观测性优化，改动协议层观察逻辑风险高于收益）>>
 - [x] **AC3 不新增未登记行为**：不得借机扩大范围；任何新发现记入 DEFECTS.md 而不是直接实现。 <<MET>>
 
 ## 禁止范围
@@ -60,12 +60,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 核对 | 逐条读代码 + `git log` | a5c08bfb0 | 8/9 条判定完成（1 条脚本不在仓库）；详见 DEFECTS.md 复核记录 | `DEFECTS.md` |
+| AC1 核对 | 逐条读代码 + `git log` | a5c08bfb0 | 9/9 条判定完成（MA-20 脚本定位到 apps/desktop-avalonia/scripts/install.ps1）；详见 DEFECTS.md 复核记录 | `DEFECTS.md` |
 | AC1 MA-14 | `dotnet test --filter AppOptionsCliRobustnessTests` | net9.0 | PASS（+11 用例：7 个合法页面、3 个非法页面、2 个变体、1 个非法变体） | `AppOptionsCliRobustnessTests.cs` |
 | AC1 MA-17 | `dotnet test --filter StartRunReadOnly|StartRunNotReady` | net9.0 | PASS 2/2 | `V2StudioBatchTests.cs` |
 | AC1 MA-18 | `dotnet test --filter FirstRunBackup_IgnoresCorePackages` | net9.0 | PASS（Core `.nmbak` 不再抑制首次备份，新备份后缀 `.sqlite-backup`） | `HostUnitTests.cs` |
 | AC1 MA-15/16 | 人工核对文案与 README | — | PASS（含候选位置与修复步骤；README 0.1.1 与实际能力一致） | `SidecarException.cs` / `README.md` |
-| AC2 | 人工核对编号边界 | — | N/A（编号不存在） | `DEFECTS.md` |
+| AC2 | MA-22 修剪 + MA-21 记录 | net9.0 | PASS（代码路径核对：修剪在 `lock (_evidenceGate)` 内按 `LastWriteTimeUtc` 保留最近 200，异常静默；未加自动化用例——`HostGrantCoordinator` 需要真实 sidecar 环境，覆盖成本高于这段 20 行逻辑的风险，理由记录在此） | `HostGrantCoordinator.cs` |
 | AC3 | 人工核对 diff + DEFECTS.md 新增记录 | — | PASS（新发现只记录未实现） | `DEFECTS.md` |
 
 ## Canonical Evidence
