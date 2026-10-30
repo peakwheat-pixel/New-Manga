@@ -1,0 +1,43 @@
+{
+  "task": "V11R-PUB-1",
+  "generated_at": "2026-10-30T01:29:04.4771863Z",
+  "git_head": "0627e7711781f241183ec857a280c10e42dc3024",
+  "modes": [
+    {
+      "mode": "singlefile",
+      "result": "PASS",
+      "publish_exit_code": 0,
+      "artifact_exe_size_mb": 93.5,
+      "artifact_directory_size_mb": 93.5,
+      "artifact_sha256": "F9C474147DBD028AE40D05C7B403141169E0B189F34F1A9D045CB83626BD83D4",
+      "smoke_pass": true,
+      "expected_failure": null
+    },
+    {
+      "mode": "trimmed",
+      "result": "PASS",
+      "publish_exit_code": 0,
+      "artifact_exe_size_mb": 0.15,
+      "artifact_directory_size_mb": 44.96,
+      "artifact_sha256": "773824CE6E849AF84BEBC81F8DB8F5403125F1377E046EAD2D10F9A0E43DA412",
+      "smoke_pass": true,
+      "expected_failure": null
+    },
+    {
+      "mode": "aot",
+      "result": "PASS",
+      "publish_exit_code": 0,
+      "artifact_exe_size_mb": 28.85,
+      "artifact_directory_size_mb": 44.72,
+      "artifact_sha256": "8FEF2487499ACB89D1B668988EE927E989608663EEFD33C1CBCAA390C149DB4D",
+      "smoke_pass": true,
+      "expected_failure": null
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "expected_failures": 0,
+    "failed": 0
+  }
+}

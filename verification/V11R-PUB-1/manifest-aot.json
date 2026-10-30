@@ -1,0 +1,49 @@
+{
+  "task": "V11R-PUB-1",
+  "generated_at": "2026-10-30T01:29:04.3202703Z",
+  "git_head": "0627e7711781f241183ec857a280c10e42dc3024",
+  "dotnet": "10.0.401",
+  "os": "Microsoft Windows 10.0.26300",
+  "mode": "aot",
+  "configuration": "Release",
+  "runtime": "win-x64",
+  "allow_trim_analysis_warnings": true,
+  "command": "dotnet publish \"G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\apps\\desktop-avalonia\\src\\NewManga.App\\NewManga.App.csproj\" -c Release -r win-x64 --self-contained true -p:PublishAot=true -p:PublishTrimmed=true -p:SuppressTrimAnalysisWarnings=true -o \"G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\"",
+  "publish_exit_code": 0,
+  "publish_elapsed_ms": 34580,
+  "result": "PASS",
+  "expected_failure": null,
+  "guidance": null,
+  "warning_codes": [
+    "IL3050"
+  ],
+  "warnings_sample": [
+    "ILC : AOT analysis warning IL3050: MicroCom.Runtime.MicroComVtblBase.AddMethod(Delegate): Using member 'System.Runtime.InteropServices.Marshal.GetFunctionPointerForDelegate(Delegate)' which has 'RequiresDynamicCodeAttribute' can break functionality when AOT compiling. Marshalling code for the delegate might not be available. Use the GetFunctionPointerForDelegate<TDelegate> overload instead. [G:\\CODEX\\New Manga.workspace\\worktrees\\V11R-CORE-BRIDGE\\apps\\desktop-avalonia\\src\\NewManga.App\\NewManga.App.csproj]"
+  ],
+  "artifact": {
+    "path": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\\NewManga.App.exe",
+    "exe_size_bytes": 30247424,
+    "exe_size_mb": 28.85,
+    "directory_size_bytes": 46892688.0,
+    "directory_size_mb": 44.72,
+    "sha256": "8FEF2487499ACB89D1B668988EE927E989608663EEFD33C1CBCAA390C149DB4D"
+  },
+  "output_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64",
+  "build_log": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\\build-aot.log",
+  "smoke": {
+    "mode": "aot",
+    "exe": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\\NewManga.App.exe",
+    "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\data",
+    "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\logs",
+    "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\theme-home",
+    "window_found": true,
+    "window_title": "New Manga",
+    "host_ready": true,
+    "exit_code": 0,
+    "exit_kind": "natural",
+    "screenshot": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\\published-aot.png",
+    "pass": true,
+    "failure_reason": null
+  },
+  "caveat": "trim/AOT safety is NOT analyzed; SuppressTrimAnalysisWarnings only silences the analyzer."
+}

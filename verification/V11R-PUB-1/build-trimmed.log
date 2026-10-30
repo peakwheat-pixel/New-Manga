@@ -1,0 +1,11 @@
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 224 毫秒)。
+  4 个项目(共 5 个)是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\V11R-CORE-BRIDGE\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\win-x64\NewManga.App.dll
+  优化程序集以调整大小可能会更改应用的行为。请务必在发布后进行测试。请参阅: https://aka.ms/dotnet-illink
+  正在优化程序集以调整大小。此过程可能需要一段时间。
+  NewManga.App -> G:\CODEX\New Manga.workspace\artifacts\publish\trimmed-Release-win-x64\
