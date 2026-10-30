@@ -3,11 +3,11 @@ id: REALUSE-DATA-SAFETY-1
 title: 修复真实使用自查 P1 数据安全缺陷——命名空间迁移自愈、真实备份、迁移顺序与只读语义
 kind: fix
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: antigravity-headless-r1
+reviewer: antigravity-headless
 review_history:
   - round: 1
     reviewer: Antigravity (agy headless, independent)
@@ -16,13 +16,18 @@ review_history:
     must_fix: [M1 nmbak path traversal, M2 non-atomic merge copy, M3 stale automatic backup]
     fixed_in: 8669388ae
     report: doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md
+  - round: 2
+    reviewer: Antigravity (agy headless, independent)
+    range: 8669388ae
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r2.md
 depends_on: []
 base_commit: b1c1f5a56
 branch: task/REALUSE-DATA-SAFETY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1
 integration_commit: null
 delivery_head: 8669388ae
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-1
 allowed_paths:
@@ -138,6 +143,7 @@ allowed_paths:
 | E-AC3-IMPL | AC3 | `src/infrastructure/sqlite/upgrade_legacy_layout.py`（`_promote_directory_merged`） | `ff3dee029` | 由 git 内容确定 | CANONICAL |
 | E-AC4-SEAM | AC4 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/HostUnitTests.cs`（`ReadOnlyUntilParity_NamesTheSchemaWriteSeam`） | `b1ff8921f` | 由 git 内容确定 | CANONICAL |
 | E-AC4-LOG | AC4 | `src/bootstrap/core_assembly.py`（`[core.schema]` 启动日志） | `b1ff8921f` | 由 git 内容确定 | CANONICAL |
+| E-REVIEW-R2 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r2.md`（Antigravity 独立复核，**PASS**，47 用例全过） | `8669388ae` | 由 git 内容确定 | CANONICAL |
 | E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md`（Antigravity 独立审查，FAIL_WITH_MUST_FIX） | `8669388ae` | 由 git 内容确定 | CANONICAL |
 | E-BUILD | AC1–AC4 | `dotnet build -warnaserror` 0W/0E；`dotnet test NewManga.sln` 811 passed / 0 failed；`python -m pytest -q` exit 0 | `b1ff8921f` | 运行输出 | SOURCE_PIN |
 
