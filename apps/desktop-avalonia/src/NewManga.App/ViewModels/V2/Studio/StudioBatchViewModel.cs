@@ -1110,11 +1110,19 @@ public sealed class StudioBatchViewModel : StudioObservable
             // exact place to fix it; every other code keeps its typed value so it stays diagnosable.
             var code = _host.Snapshot.LastError;
             _needsProviderSetup = string.Equals(code, "PROVIDER_NOT_CONFIGURED", StringComparison.Ordinal);
+            // REALUSE-DATA-SAFETY-5 AC1 (audit MA-17): a read-only or not-yet-ready Host used to surface
+            // the bare typed code, which reads like a bug rather than a state the user can act on.
+            var readOnly = string.Equals(code, "HOST_READ_ONLY", StringComparison.Ordinal);
+            var notReady = string.Equals(code, "HOST_NOT_READY", StringComparison.Ordinal);
             _errorText = _needsProviderSetup
                 ? "未配置模型 Provider：请到「设置 → Provider 与凭据」添加并启用一个可翻译的 Provider，再回到这里重试。"
-                : string.IsNullOrWhiteSpace(code)
-                    ? "StartRun 被拒绝（Host 未返回原因）"
-                    : $"StartRun 被拒绝（{code}）";
+                : readOnly
+                    ? "Host 处于只读模式：写入被拒绝（通常因为检测到旧壳仍在运行，或启动时指定了 --parity=false）。关闭旧壳后重启即可恢复写入。"
+                    : notReady
+                        ? "Host 尚未就绪：请等待启动自检完成（控制台 ①/Host 状态可见），再重试。"
+                        : string.IsNullOrWhiteSpace(code)
+                            ? "StartRun 被拒绝（Host 未返回原因）"
+                            : $"StartRun 被拒绝（{code}）";
             State = StudioBatchRunState.Error;
             Raise(nameof(HeaderLine));
             Raise(nameof(ErrorText));

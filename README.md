@@ -8,7 +8,7 @@
 > provider sends are shown in the settings privacy notice (OCR → page images, translation → text,
 > inpainting → images/masks). With only local providers, nothing leaves the machine.
 >
-> **Status: 0.1.0 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
+> **Status: 0.1.1 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
 > “Unknown publisher”. Verify the SHA-256 manifest and read the release notes before installing.
 > A free open-source signing application is prepared in [`doc/release/`](doc/release/).
 >
@@ -21,8 +21,8 @@
 - **Bookshelf** — managed library of books/chapters/pages. Original files are never modified (managed copy).
 - **Workbench** — real page canvas with detected regions; retype/undo a region, rerender a page.
 - **Reader** — immersive reader (Esc/H/F keys), webtoon scrolling, per-chapter reading progress.
-- **Settings** — themes (9 packs, incl. macOS-style Sonoma/Launchpad/Split), provider bindings,
-  network profiles, credential vault, device/GPU status.
+- **Settings** — light/dark appearance driven by the design-system token layer (the
+  retired nine theme packs are gone; Theme Studio still edits and saves custom themes), provider bindings, network profiles, credential vault. Device/GPU status is **not exposed yet** — the console says so instead of showing a guess.
 - **Export** — ZIP image pack or PDF (image-only / searchable dual-layer CJK text).
 
 ## 架构 / 中文要点

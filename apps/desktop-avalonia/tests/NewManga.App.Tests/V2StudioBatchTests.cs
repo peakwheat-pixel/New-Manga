@@ -862,4 +862,53 @@ public sealed class V2StudioBatchTests
 
         StudioFixtures.WindowOf(view).Close();
     }
+
+    // ── REALUSE-DATA-SAFETY-5 AC1 (audit MA-17): read-only / not-ready states need a next step ──
+
+    [AvaloniaFact]
+    public async Task StartRunReadOnly_ExplainsWhyAndHowToRecover()
+    {
+        var (view, host, workspace) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        workspace.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = workspace.Batch;
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "HOST_READ_ONLY";
+
+        var started = await batch.StartProcessingAsync();
+        StudioFixtures.Pump();
+
+        Assert.Null(started);
+        Assert.Equal(StudioBatchRunState.Error, batch.State);
+        // The bare typed code reads like a bug; the sentence has to name the state and the way out.
+        Assert.Contains("只读模式", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.Contains("重启", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.DoesNotContain("PROVIDER", batch.ErrorText!, StringComparison.Ordinal);
+        // It is not a provider problem, so the provider call-to-action must stay off.
+        Assert.False(batch.NeedsProviderSetup);
+
+        StudioFixtures.WindowOf(view).Close();
+    }
+
+    [AvaloniaFact]
+    public async Task StartRunNotReady_ExplainsTheWait()
+    {
+        var (view, host, workspace) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        workspace.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = workspace.Batch;
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "HOST_NOT_READY";
+
+        var started = await batch.StartProcessingAsync();
+        StudioFixtures.Pump();
+
+        Assert.Null(started);
+        Assert.Contains("尚未就绪", batch.ErrorText!, StringComparison.Ordinal);
+        Assert.False(batch.NeedsProviderSetup);
+
+        StudioFixtures.WindowOf(view).Close();
+    }
 }

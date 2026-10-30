@@ -57,6 +57,7 @@ public static class SidecarLocator
         throw new SidecarException(
             SidecarErrorCode.SidecarBundleMissing,
             "sidecar-bundle",
-            $"no sidecar directory with {CoreServiceFileName} and {HostBridgeFileName} found in {candidates.Count} candidate locations");
+            $"no sidecar directory with {CoreServiceFileName} and {HostBridgeFileName} found in {candidates.Count} candidate locations: "
+            + string.Join("; ", candidates.Select(Path.GetFullPath)));
     }
 }
