@@ -169,3 +169,74 @@ def test_automatic_backups_are_pruned_but_manual_ones_are_kept(tmp_path: Path) -
         assert len(list(backups.glob("*.nmbak"))) >= len(automatic_left)
     finally:
         core.conn.close()
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 review M3: "a verified package exists" was not coverage.
+# After the first start a growing library kept no fresh rollback point at all.
+# ---------------------------------------------------------------------------
+
+
+def test_package_age_hours_treats_unknown_timestamps_as_stale() -> None:
+    from bootstrap.core_service import _package_age_hours
+
+    assert _package_age_hours(None) == float("inf")
+    assert _package_age_hours("") == float("inf")
+    assert _package_age_hours("not-a-timestamp") == float("inf")
+    assert 0.0 <= _package_age_hours("2026-10-30T00:00:00+00:00") < 10**6
+
+
+def test_stale_verified_package_is_rotated_on_startup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import bootstrap.core_service as core_service
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        backups = Path(core.data_root) / "backups"
+        with core.conn as conn:
+            conn.execute(
+                "INSERT INTO books (book_id, title, created_at, updated_at)"
+                " VALUES ('b1', 'x', ?, ?)",
+                (NOW, NOW),
+            )
+
+        _ensure_automatic_backup(core)
+        first = sorted(backups.glob("*.nmbak"))
+        assert len(first) == 1
+
+        # A zero-hour refresh window makes the existing package "stale".
+        monkeypatch.setattr(core_service, "_AUTOMATIC_BACKUP_REFRESH_HOURS", 0.0)
+        _ensure_automatic_backup(core)
+
+        rotated = sorted(backups.glob("*.nmbak"))
+        assert len(rotated) == 2
+        assert {path.name for path in rotated} != {first[0].name}
+    finally:
+        core.conn.close()
+
+
+def test_stale_package_does_not_rotate_for_an_empty_library(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import bootstrap.core_service as core_service
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        backups = Path(core.data_root) / "backups"
+        with core.conn as conn:
+            conn.execute(
+                "INSERT INTO books (book_id, title, created_at, updated_at)"
+                " VALUES ('b1', 'x', ?, ?)",
+                (NOW, NOW),
+            )
+        core.backup.create("automatic", "seed")
+
+        monkeypatch.setattr(core_service, "_AUTOMATIC_BACKUP_REFRESH_HOURS", 0.0)
+        with core.conn as conn:
+            conn.execute("DELETE FROM books")
+        _ensure_automatic_backup(core)
+
+        assert len(list(backups.glob("*.nmbak"))) == 1
+    finally:
+        core.conn.close()

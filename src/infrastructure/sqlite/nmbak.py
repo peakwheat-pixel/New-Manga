@@ -70,6 +70,53 @@ class NmbakBackupError(RuntimeError):
         self.detail = detail
 
 
+def _managed_relative_path(value: object, *, context: str, code: str = "BACKUP_CORRUPT") -> Path:
+    """REALUSE-DATA-SAFETY-1 review M1: keep every managed path inside its root.
+
+    ``Path(root) / Path(x)`` silently DISCARDS ``root`` when ``x`` is absolute
+    (``C:\\Windows\\...``, ``/etc/...``, ``\\\\server\\share``) and happily walks
+    out through ``..``. Both directions were reachable:
+
+    - create: a dirty/edited ``pages.managed_original_ref`` row;
+    - restore/verify: a tampered ``.nmbak`` manifest.
+
+    The result was an out-of-root read on create and an arbitrary-path write on
+    restore. Every entry point now funnels through this check and fails closed.
+    """
+
+    raw = "" if value is None else str(value).strip()
+    if not raw:
+        raise NmbakBackupError(code, f"{context}: empty managed path")
+    if (
+        Path(raw).is_absolute()
+        or raw.startswith(("/", "\\"))
+        or re.match(r"^[A-Za-z]:", raw)
+    ):
+        raise NmbakBackupError(code, f"{context}: absolute managed path {raw!r}")
+    relative = Path(raw)
+    if any(part in {"..", ""} for part in relative.parts):
+        raise NmbakBackupError(code, f"{context}: unsafe managed path {raw!r}")
+    return relative
+
+
+def _resolve_within(root: Path, relative: Path, *, context: str, code: str = "BACKUP_CORRUPT") -> Path:
+    """Second guard: the resolved candidate must still live under ``root``.
+
+    Symlinks/junctions can defeat the lexical check above, so the create and
+    restore paths also verify the resolved location.
+    """
+
+    candidate = root / relative
+    try:
+        resolved_root = root.resolve()
+        resolved = candidate.resolve()
+    except OSError as error:
+        raise NmbakBackupError(code, f"{context}: {error}") from error
+    if resolved != resolved_root and resolved_root not in resolved.parents:
+        raise NmbakBackupError(code, f"{context}: managed path escapes its root {relative}")
+    return candidate
+
+
 class NmbakBackupService:
     """Backup/restore over ``<data_root>/backups/*.nmbak``."""
 
@@ -372,7 +419,17 @@ class NmbakBackupService:
         refs: list[dict] = []
         for row in rows:
             managed_path = str(row["managed_original_ref"])
-            source = self._managed_root / Path(managed_path)
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"page {row['page_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"page {row['page_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
             if not source.is_file():
                 raise NmbakBackupError(
                     "BACKUP_CREATE_FAILED",
@@ -381,7 +438,9 @@ class NmbakBackupService:
             refs.append(
                 {
                     "page_id": row["page_id"],
-                    "managed_path": managed_path,
+                    # Store the validated, normalised form: the manifest must never
+                    # carry a path that the restore side would have to trust.
+                    "managed_path": relative.as_posix(),
                     "sha256": sha256_file(source),
                     "size_bytes": source.stat().st_size,
                 }
@@ -400,7 +459,17 @@ class NmbakBackupService:
         refs = []
         for row in rows:
             managed_path = row["managed_path"]
-            source = self._managed_root / Path(managed_path)
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"revision {row['artifact_revision_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"revision {row['artifact_revision_id']}",
+                code="BACKUP_CREATE_FAILED",
+            )
             if not source.is_file():
                 raise NmbakBackupError(
                     "BACKUP_CREATE_FAILED",
@@ -420,7 +489,7 @@ class NmbakBackupService:
                     # keeping the key keeps the manifest schema closed.
                     "region_id": None,
                     "artifact_id": row["artifact_id"],
-                    "managed_path": managed_path,
+                    "managed_path": relative.as_posix(),
                     "sha256": sha256_file(source),
                     "size_bytes": source.stat().st_size,
                     "pinned": bool(row["is_pinned"] or row[6]),
@@ -436,7 +505,17 @@ class NmbakBackupService:
             if managed_path in seen:
                 continue
             seen.add(managed_path)
-            source = self._managed_root / Path(managed_path)
+            relative = _managed_relative_path(
+                managed_path,
+                context=f"package revision {ref.get('revision_id')}",
+                code="BACKUP_CREATE_FAILED",
+            )
+            source = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"package revision {ref.get('revision_id')}",
+                code="BACKUP_CREATE_FAILED",
+            )
             if not source.is_file():
                 # Design §3.1: every revision_ref must be backed by a managed
                 # file with a matching digest. Silently dropping it would
@@ -445,12 +524,15 @@ class NmbakBackupService:
                     "BACKUP_CREATE_FAILED",
                     f"managed file missing for revision ref: {managed_path}",
                 )
-            destination = workdir / MANAGED_PREFIX / Path(managed_path)
+            # The staging write stays inside the package workdir: ``relative`` was
+            # already proven free of absolute/``..`` components, and WORKDIR is a
+            # fresh temp directory, so no path can escape it.
+            destination = workdir / MANAGED_PREFIX / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())
             copied.append(
                 {
-                    "managed_path": managed_path,
+                    "managed_path": relative.as_posix(),
                     "sha256": sha256_file(destination),
                     "size_bytes": destination.stat().st_size,
                 }
@@ -528,7 +610,11 @@ class NmbakBackupService:
                 # self-authorize extra files.
                 allowed: set[str] = set()
                 for ref in manifest.get("revision_refs") or []:
-                    member = MANAGED_PREFIX + str(ref.get("managed_path", "")).lstrip("/")
+                    relative = _managed_relative_path(
+                        ref.get("managed_path"),
+                        context=f"{package.name}: revision_ref",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
                     allowed.add(member)
                     if member not in names:
                         raise NmbakBackupError(
@@ -541,7 +627,14 @@ class NmbakBackupService:
                             f"{package.name}: managed sha256 mismatch {ref.get('managed_path')}",
                         )
                 for entry in manifest.get("page_original_refs") or []:
-                    member = MANAGED_PREFIX + str(entry.get("managed_path", "")).lstrip("/")
+                    # Never trust a manifest path: validate before using it as a
+                    # zip member name (a tampered package must fail here, not at
+                    # restore time).
+                    relative = _managed_relative_path(
+                        entry.get("managed_path"),
+                        context=f"{package.name}: page original",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
                     allowed.add(member)
                     if member not in names:
                         raise NmbakBackupError(
@@ -554,7 +647,11 @@ class NmbakBackupService:
                             f"{package.name}: page original sha256 mismatch {entry.get('managed_path')}",
                         )
                 for item in manifest.get("managed_files") or []:
-                    member = MANAGED_PREFIX + str(item.get("managed_path", "")).lstrip("/")
+                    relative = _managed_relative_path(
+                        item.get("managed_path"),
+                        context=f"{package.name}: managed_files entry",
+                    )
+                    member = MANAGED_PREFIX + relative.as_posix()
                     if member not in allowed:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
@@ -600,19 +697,31 @@ class NmbakBackupService:
         # Only the authoritative populations are written back (the verifier
         # already rejected unlisted managed members and any managed_files entry
         # outside them): artifact revisions plus imported page originals.
-        members: set[str] = {
-            str(entry.get("managed_path", "")).lstrip("/")
-            for entry in (
-                (manifest.get("revision_refs") or [])
-                + (manifest.get("page_original_refs") or [])
+        #
+        # REALUSE-DATA-SAFETY-1 review M1: restore is the dangerous direction --
+        # a crafted manifest used to reach any path on disk. Every entry is now
+        # validated lexically AND resolved against the managed root before a
+        # single byte is written.
+        relatives: dict[str, Path] = {}
+        for entry in (
+            (manifest.get("revision_refs") or [])
+            + (manifest.get("page_original_refs") or [])
+        ):
+            relative = _managed_relative_path(
+                entry.get("managed_path"),
+                context="restore entry",
             )
-        }
-        for managed_path in sorted(members):
-            relative = Path(managed_path)
+            relatives[relative.as_posix()] = relative
+        for key in sorted(relatives):
+            relative = relatives[key]
             source = restore_dir / MANAGED_PREFIX / relative
             if not source.is_file():
                 continue
-            destination = self._managed_root / relative
+            destination = _resolve_within(
+                self._managed_root,
+                relative,
+                context=f"restore {key}",
+            )
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(source.read_bytes())
 

@@ -414,3 +414,108 @@ def test_old_package_without_page_originals_still_restores(workspace) -> None:
 
     report = workspace["service"].restore(created["backup_id"], confirm_restore=True)
     assert report["restored_from"] == created["backup_id"]
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 review M1: a managed path must never leave its root.
+# ``Path(root) / Path(x)`` discards ``root`` for absolute ``x`` and walks out
+# through ``..``; both the database (create) and a tampered package (restore)
+# could reach it.
+# ---------------------------------------------------------------------------
+
+
+def test_create_rejects_absolute_page_original_ref(workspace):
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ? WHERE page_id = 'page-1'",
+            ("C:/Windows/System32/drivers/etc/hosts",),
+        )
+
+    with pytest.raises(NmbakBackupError) as excinfo:
+        workspace["service"].create("manual", "test")
+
+    assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+    assert "absolute managed path" in excinfo.value.detail
+    assert not list(workspace["backup_root"].glob("*.nmbak"))
+
+
+def test_create_rejects_traversal_page_original_ref(workspace):
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ? WHERE page_id = 'page-1'",
+            ("../../escape/page.png",),
+        )
+
+    with pytest.raises(NmbakBackupError) as excinfo:
+        workspace["service"].create("manual", "test")
+
+    assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+    assert "unsafe managed path" in excinfo.value.detail
+
+
+def test_create_rejects_absolute_revision_ref(workspace):
+    relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
+    assert relative  # the fixture seeds a valid relative revision path
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE artifact_revisions SET managed_path = ?"
+            " WHERE artifact_revision_id = 'rev-1'",
+            ("/etc/passwd",),
+        )
+
+    with pytest.raises(NmbakBackupError) as excinfo:
+        workspace["service"].create("manual", "test")
+
+    assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+    assert "absolute managed path" in excinfo.value.detail
+
+
+def test_restore_rejects_traversal_in_tampered_manifest(workspace):
+    relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ? WHERE page_id = 'page-1'",
+            (relative,),
+        )
+    created = workspace["service"].create("manual", "test")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+
+    with zipfile.ZipFile(package) as archive:
+        members = {name: archive.read(name) for name in archive.namelist()}
+    manifest = json.loads(members[MANIFEST_NAME])
+    manifest["page_original_refs"][0]["managed_path"] = "../../escape.png"
+    members[MANIFEST_NAME] = json.dumps(manifest, ensure_ascii=False).encode("utf-8")
+    with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+        for name, data in members.items():
+            archive.writestr(name, data)
+
+    outside = workspace["managed_root"].parent / "escape.png"
+    with pytest.raises(NmbakBackupError) as excinfo:
+        workspace["service"].restore(created["backup_id"], confirm_restore=True)
+
+    assert excinfo.value.code == "BACKUP_CORRUPT"
+    assert "unsafe managed path" in excinfo.value.detail
+    assert not outside.exists()
+
+
+def test_restore_rejects_absolute_path_in_tampered_manifest(workspace):
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    created = workspace["service"].create("manual", "test")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+
+    with zipfile.ZipFile(package) as archive:
+        members = {name: archive.read(name) for name in archive.namelist()}
+    manifest = json.loads(members[MANIFEST_NAME])
+    manifest["revision_refs"][0]["managed_path"] = "C:/Windows/Temp/evil.png"
+    members[MANIFEST_NAME] = json.dumps(manifest, ensure_ascii=False).encode("utf-8")
+    with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+        for name, data in members.items():
+            archive.writestr(name, data)
+
+    with pytest.raises(NmbakBackupError) as excinfo:
+        workspace["service"].restore(created["backup_id"], confirm_restore=True)
+
+    assert excinfo.value.code == "BACKUP_CORRUPT"
+    assert "absolute managed path" in excinfo.value.detail

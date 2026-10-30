@@ -37,6 +37,7 @@ import logging
 import os
 import shutil
 import sqlite3
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -126,6 +127,27 @@ def _promote_file(staged: Path, target: Path) -> None:
     os.replace(staged, target)
 
 
+def _copy_file_atomically(source: Path, destination: Path) -> None:
+    """Publish ``source`` at ``destination`` without ever exposing a partial file.
+
+    REALUSE-DATA-SAFETY-1 review M2: the merged-directory path used a plain
+    ``shutil.copy2``. An interruption (kill, power loss, ENOSPC) left a truncated
+    file, and the next run then saw ``destination.exists()`` and skipped it --
+    permanently keeping a half-written user original. Copy next to the target and
+    ``os.replace`` only after the bytes are complete, so the destination is
+    either absent (clean retry) or whole.
+    """
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temp = destination.with_name(f".{destination.name}.legacy-tmp-{os.getpid()}-{uuid.uuid4().hex}")
+    try:
+        shutil.copy2(source, temp)
+        os.replace(temp, destination)
+    finally:
+        if temp.exists():
+            temp.unlink(missing_ok=True)
+
+
 def _directory_is_empty(path: Path) -> bool:
     try:
         next(path.iterdir())
@@ -166,8 +188,7 @@ def _promote_directory_merged(staged: Path, target: Path) -> str | None:
         destination = target / relative
         if destination.exists():
             continue  # current layout wins: never overwrite
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, destination)
+        _copy_file_atomically(source, destination)
         copied_any = True
     return (target.name + "/") if copied_any else None
 

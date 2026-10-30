@@ -5598,41 +5598,84 @@ def _rebind_after_migration(
 #: How many automatic packages (first-run / pre-migration / pre-restore) to keep.
 _AUTOMATIC_BACKUP_KEEP = 5
 
+#: REALUSE-DATA-SAFETY-1 review M3: a verified package older than this no longer
+#: covers data imported since, so start-up rotates a fresh one in.
+_AUTOMATIC_BACKUP_REFRESH_HOURS = 24
+
+
+def _package_age_hours(created_at: object) -> float:
+    """Age of a package in hours; unknown/unparsable timestamps count as stale."""
+
+    if not isinstance(created_at, str) or not created_at:
+        return math.inf
+    try:
+        parsed = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+    except ValueError:
+        return math.inf
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return (datetime.now(timezone.utc) - parsed).total_seconds() / 3600.0
+
 
 def _ensure_automatic_backup(core) -> None:
-    """AC2: guarantee a verified ``.nmbak`` covers an existing user library.
+    """AC2: guarantee a verified ``.nmbak`` keeps covering an existing library.
 
     A fresh empty library has nothing to protect; a library with books does.
-    Any already-verified package (manual or automatic) counts as coverage, so
-    this runs once per data root and stays a cheap directory scan afterwards.
     Failures are reported to stderr and never abort start-up -- an unwritable
     backups directory must not make the product unusable.
+
+    REALUSE-DATA-SAFETY-1 review M3: treating "any verified package exists" as
+    full coverage was wrong. After the very first start the library kept growing
+    (imports, pipeline output) while no new automatic package was ever created,
+    so a data loss would roll back to the cold-start snapshot. Coverage now has
+    an age: a package older than ``_AUTOMATIC_BACKUP_REFRESH_HOURS`` is rotated,
+    and ``_prune_automatic_backups`` still bounds the total.
     """
 
     service = getattr(core, "backup", None)
     if service is None:
         return
     try:
-        existing = [entry for entry in service.list_backups() if entry.get("verified")]
-        if existing:
-            _prune_automatic_backups(service, existing)
-            return
+        entries = service.list_backups()
         try:
             books = core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
         except sqlite3.Error:
             return
         if books == 0:
+            _prune_automatic_backups(service, entries)
             return
-        created = service.create(
-            "automatic", "first writable start with an existing library"
+        verified = [entry for entry in entries if entry.get("verified")]
+        newest = (
+            max(verified, key=lambda entry: str(entry.get("created_at") or ""))
+            if verified
+            else None
         )
-        print(
-            "[core.backup] automatic first-run backup created: "
-            f"{created['backup_id']} ({created['size_bytes']} bytes, "
-            f"verified={created['verified']})",
-            file=sys.stderr,
-            flush=True,
-        )
+        if newest is None:
+            created = service.create(
+                "automatic", "first writable start with an existing library"
+            )
+            print(
+                "[core.backup] automatic first-run backup created: "
+                f"{created['backup_id']} ({created['size_bytes']} bytes, "
+                f"verified={created['verified']})",
+                file=sys.stderr,
+                flush=True,
+            )
+            _prune_automatic_backups(service, service.list_backups())
+            return
+        age_hours = _package_age_hours(newest.get("created_at"))
+        if age_hours >= _AUTOMATIC_BACKUP_REFRESH_HOURS:
+            created = service.create(
+                "automatic",
+                f"scheduled rotation: newest verified package is {age_hours:.1f}h old",
+            )
+            print(
+                "[core.backup] automatic rotation backup created: "
+                f"{created['backup_id']} ({created['size_bytes']} bytes, "
+                f"verified={created['verified']}, previous age {age_hours:.1f}h)",
+                file=sys.stderr,
+                flush=True,
+            )
         _prune_automatic_backups(service, service.list_backups())
     except NmbakBackupError as error:
         print(
