@@ -1005,6 +1005,13 @@ public sealed class FakeHostController : IHostController
 
     public Queue<RunStartInfo?> ScriptedStartRuns { get; } = new();
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-2 AC1: typed code published when a scripted start returns null
+    /// (default <c>SCRIPTED_FAILURE</c>), so a test can reproduce a real Core refusal such as
+    /// <c>PROVIDER_NOT_CONFIGURED</c>.
+    /// </summary>
+    public string? ScriptedStartRunErrorCode { get; set; }
+
     public Queue<RunControlInfo?> ScriptedControlRuns { get; } = new();
 
     public Queue<RunSnapshotInfo?> ScriptedRunSnapshots { get; } = new();
@@ -1037,7 +1044,9 @@ public sealed class FakeHostController : IHostController
         if (ScriptedStartRuns.Count > 0)
         {
             var scripted = ScriptedStartRuns.Dequeue();
-            PublishLastError(scripted is null ? "SCRIPTED_FAILURE" : null);
+            PublishLastError(scripted is null
+                ? ScriptedStartRunErrorCode ?? "SCRIPTED_FAILURE"
+                : null);
             return Task.FromResult(scripted);
         }
 
