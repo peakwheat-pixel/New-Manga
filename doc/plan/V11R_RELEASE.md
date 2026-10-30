@@ -2,7 +2,7 @@
 
 - Task：`V11R-PUB-1`（修 `FOLLOW-UP-PUB-1`）
 - Owner：`core-bridge`
-- 脚本：`tools/build/publish-release.ps1`
+- 脚本：`tools/ci/publish-release.ps1`
 - 证据：`verification/V11R-PUB-1/`（manifest / build 日志 / smoke JSON / 截图）
 - 结论：**三种发布形态已固化并全部通过真机 Smoke**（`singlefile`、`trimmed`（caveat）、`aot`（caveat））；
   二进制与 manifest 不进入 git（只在 workspace `artifacts/publish`）。
@@ -31,16 +31,16 @@
 
 ```powershell
 # 三种模式全部发布 + 真机 Smoke（门禁命令；trim/AOT 需要显式允许 caveat）
-pwsh -NoProfile -File tools/build/publish-release.ps1 `
+pwsh -NoProfile -File tools/ci/publish-release.ps1 `
   -Mode all -AllowTrimAnalysisWarnings -Smoke `
   -SidecarDir "<sidecar bundle>" `
   -EvidenceDir verification/V11R-PUB-1
 
 # 单文件（默认，推荐发布）
-pwsh -NoProfile -File tools/build/publish-release.ps1 -Mode singlefile -Smoke -SidecarDir "<sidecar>"
+pwsh -NoProfile -File tools/ci/publish-release.ps1 -Mode singlefile -Smoke -SidecarDir "<sidecar>"
 
 # 只验证"默认应失败"的诚实行为（不产生 caveat 版本）
-pwsh -NoProfile -File tools/build/publish-release.ps1 -Mode all -OutRoot <workspace>\artifacts\publish-expected-fail -Smoke:$false
+pwsh -NoProfile -File tools/ci/publish-release.ps1 -Mode all -OutRoot <workspace>\artifacts\publish-expected-fail -Smoke:$false
 ```
 
 `-AllowTrimAnalysisWarnings` 只对 `trimmed`/`aot` 有效；未加时这两种模式的 publish 失败会被记录为
@@ -90,3 +90,4 @@ published-singlefile.png / published-trimmed.png / published-aot.png
 ```
 
 （对应二进制在 workspace `artifacts/publish/<mode>-Release-win-x64/`，不进入 git。）
+

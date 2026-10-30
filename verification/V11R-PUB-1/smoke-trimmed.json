@@ -1,9 +1,9 @@
 {
   "mode": "trimmed",
   "exe": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\trimmed-Release-win-x64\\NewManga.App.exe",
-  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-8c0de52c\\data",
-  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-8c0de52c\\logs",
-  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-8c0de52c\\theme-home",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-53b3e21d\\data",
+  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-53b3e21d\\logs",
+  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-trimmed-53b3e21d\\theme-home",
   "window_found": true,
   "window_title": "New Manga",
   "host_ready": true,
