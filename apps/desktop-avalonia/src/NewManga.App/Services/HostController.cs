@@ -74,8 +74,16 @@ public sealed class HostController : IHostController
             // UI's "retry" a silent no-op (audit MA-04). A completed, unsuccessful attempt is
             // cleared first so retry is a real second attempt; a completed *successful* start stays
             // cached (one sidecar per process).
+            //
+            // Review r1 M1: dropping the old runtime without disposing it leaks the Win32
+            // single-instance mutex. HostRuntime.StartAsync RETURNS a runtime even on failure (the
+            // catch blocks set Result = Failed and stop sidecars, but never release _guard), so a
+            // retry would then see AlreadyRunning forever. The stale instance is handed to
+            // StartCoreAsync, which disposes it before the new attempt.
+            HostRuntime? staleRuntime = null;
             if (_startTask is { IsCompleted: true } && _snapshot.State != HostViewState.Ready)
             {
+                staleRuntime = _runtime;
                 _startTask = null;
                 _runtime = null;
                 _snapshot = new HostViewSnapshot(
@@ -95,12 +103,28 @@ public sealed class HostController : IHostController
                 RaiseChanged();
             }
 
-            return _startTask ??= StartCoreAsync(cancellationToken);
+            return _startTask ??= StartCoreAsync(cancellationToken, staleRuntime);
         }
     }
 
-    private async Task StartCoreAsync(CancellationToken cancellationToken)
+    private async Task StartCoreAsync(CancellationToken cancellationToken, HostRuntime? staleRuntime = null)
     {
+        if (staleRuntime is not null)
+        {
+            // Release the previous attempt's single-instance mutex and sidecar handles before the
+            // new attempt tries to acquire them. Cleanup failures must not hide the retry.
+            try
+            {
+                await staleRuntime.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is ObjectDisposedException or IOException or InvalidOperationException)
+            {
+                // Best effort: the retry must proceed even if the stale instance is half-disposed.
+                // Only the exception type is written (never a path or message).
+                System.Diagnostics.Debug.WriteLine($"stale runtime cleanup failed: {ex.GetType().Name}");
+            }
+        }
+
         try
         {
             _runtime = await HostRuntime.StartAsync(_options, cancellationToken).ConfigureAwait(false);

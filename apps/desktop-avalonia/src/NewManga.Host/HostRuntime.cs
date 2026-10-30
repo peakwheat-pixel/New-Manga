@@ -70,8 +70,31 @@ public sealed class HostRuntime : IAsyncDisposable
     public static async Task<HostRuntime> StartAsync(HostOptions options, CancellationToken cancellationToken = default)
     {
         var runtime = new HostRuntime(options, new HostLog(options.LogDirectory));
-        await runtime.StartInternalAsync(cancellationToken).ConfigureAwait(false);
-        return runtime;
+        try
+        {
+            await runtime.StartInternalAsync(cancellationToken).ConfigureAwait(false);
+            return runtime;
+        }
+        catch
+        {
+            // REALUSE-DATA-SAFETY-2 review r1 M1: an escaping failure would drop a runtime that
+            // already owns the Win32 single-instance mutex, so the next start would report
+            // AlreadyRunning forever. The normal failure paths return a Failed result instead of
+            // throwing, but release the mutex here for the ones that do escape.
+            try
+            {
+                await runtime.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception disposeFailure) when (
+                disposeFailure is ObjectDisposedException or IOException or InvalidOperationException)
+            {
+                // Keep the original failure; only the exception type is recorded.
+                System.Diagnostics.Debug.WriteLine(
+                    $"failed runtime cleanup failed: {disposeFailure.GetType().Name}");
+            }
+
+            throw;
+        }
     }
 
     public async Task<IReadOnlyList<BookSummary>> ListBooksAsync(CancellationToken cancellationToken = default)

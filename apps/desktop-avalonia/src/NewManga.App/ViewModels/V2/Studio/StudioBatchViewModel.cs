@@ -1121,11 +1121,6 @@ public sealed class StudioBatchViewModel : StudioObservable
         _needsProviderSetup = false;
         Raise(nameof(NeedsProviderSetup));
 
-        if (started is null)
-        {
-            return null;
-        }
-
         SetRunId(started.RunId);
         _intentIdempotencyKey = null;
         Raise(nameof(CurrentIntentKey));
