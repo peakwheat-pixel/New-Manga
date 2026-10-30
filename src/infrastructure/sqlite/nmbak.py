@@ -148,7 +148,16 @@ class NmbakBackupService:
                 json.dumps(sidecar, ensure_ascii=False, indent=2), encoding="utf-8"
             )
             revision_refs = self._revision_refs()
-            managed_files = self._copy_managed_files(workdir, revision_refs)
+            # REALUSE-DATA-SAFETY-1 AC2: imported page originals live in
+            # ``pages.managed_original_ref`` -- NOT in ``artifact_revisions``
+            # (a library that never ran a pipeline has zero artifact rows but
+            # 100 MB of managed originals). Backing up only revision_refs
+            # produced a "verified" package that silently lost every original
+            # page, which is exactly the user data the product promises to keep.
+            page_original_refs = self._page_original_refs()
+            managed_files = self._copy_managed_files(
+                workdir, revision_refs + page_original_refs
+            )
             manifest = {
                 "format": FORMAT_NAME,
                 "format_version": FORMAT_VERSION,
@@ -161,6 +170,11 @@ class NmbakBackupService:
                 "managed_file_count": len(managed_files),
                 "managed_total_bytes": sum(item["size_bytes"] for item in managed_files),
                 "revision_refs": revision_refs,
+                "page_original_refs": page_original_refs,
+                "page_original_count": len(page_original_refs),
+                "page_original_total_bytes": sum(
+                    item["size_bytes"] for item in page_original_refs
+                ),
                 "verified": False,
             }
             (workdir / MANIFEST_NAME).write_text(
@@ -294,7 +308,30 @@ class NmbakBackupService:
                         "managed_path": row["managed_path"],
                     }
                 )
-        return {"checked": len(rows), "missing": missing, "skipped": ""}
+        # REALUSE-DATA-SAFETY-1 AC2: imported page originals are user content
+        # too; a restore that could not write them back must not report a
+        # clean consistency pass.
+        try:
+            page_rows = self._conn.execute(
+                "SELECT page_id, managed_original_ref FROM pages"
+                " WHERE managed_original_ref IS NOT NULL AND managed_original_ref <> ''"
+            ).fetchall()
+        except sqlite3.OperationalError:
+            page_rows = []
+        for row in page_rows:
+            candidate = self._managed_root / Path(row["managed_original_ref"])
+            if not candidate.is_file():
+                missing.append(
+                    {
+                        "revision_id": f"page-original:{row['page_id']}",
+                        "managed_path": row["managed_original_ref"],
+                    }
+                )
+        return {
+            "checked": len(rows) + len(page_rows),
+            "missing": missing,
+            "skipped": "",
+        }
 
     # ------------------------------------------------------------------
     # internals
@@ -315,6 +352,41 @@ class NmbakBackupService:
             out.commit()
         finally:
             out.close()
+
+    def _page_original_refs(self) -> list[dict]:
+        """Managed originals of imported pages (``pages.managed_original_ref``).
+
+        These are user content (the Managed Copy of the source images), not
+        derived artifacts, so they are backed up as their own manifest
+        population instead of being disguised as artifact revisions. Older
+        packages simply have no such key and restore exactly as before.
+        """
+
+        try:
+            rows = self._conn.execute(
+                "SELECT page_id, managed_original_ref FROM pages"
+                " WHERE managed_original_ref IS NOT NULL AND managed_original_ref <> ''"
+            ).fetchall()
+        except sqlite3.OperationalError:
+            return []
+        refs: list[dict] = []
+        for row in rows:
+            managed_path = str(row["managed_original_ref"])
+            source = self._managed_root / Path(managed_path)
+            if not source.is_file():
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    f"managed original missing for page {row['page_id']}: {managed_path}",
+                )
+            refs.append(
+                {
+                    "page_id": row["page_id"],
+                    "managed_path": managed_path,
+                    "sha256": sha256_file(source),
+                    "size_bytes": source.stat().st_size,
+                }
+            )
+        return refs
 
     def _revision_refs(self) -> list[dict]:
         rows = self._conn.execute(
@@ -450,10 +522,10 @@ class NmbakBackupService:
                 # digest, and an unlisted managed member is corruption (a
                 # tampered package must never write files the manifest does
                 # not name).
-                # `revision_refs` is the authoritative population: a
-                # `managed_files` entry may only describe a path already in
-                # it, so a tampered manifest cannot self-authorize extra
-                # files.
+                # `revision_refs` + `page_original_refs` are the authoritative
+                # populations: a `managed_files` entry may only describe a path
+                # already in one of them, so a tampered manifest cannot
+                # self-authorize extra files.
                 allowed: set[str] = set()
                 for ref in manifest.get("revision_refs") or []:
                     member = MANAGED_PREFIX + str(ref.get("managed_path", "")).lstrip("/")
@@ -467,6 +539,19 @@ class NmbakBackupService:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
                             f"{package.name}: managed sha256 mismatch {ref.get('managed_path')}",
+                        )
+                for entry in manifest.get("page_original_refs") or []:
+                    member = MANAGED_PREFIX + str(entry.get("managed_path", "")).lstrip("/")
+                    allowed.add(member)
+                    if member not in names:
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: missing page original {entry.get('managed_path')}",
+                        )
+                    if hashlib.sha256(archive.read(member)).hexdigest() != entry.get("sha256"):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: page original sha256 mismatch {entry.get('managed_path')}",
                         )
                 for item in manifest.get("managed_files") or []:
                     member = MANAGED_PREFIX + str(item.get("managed_path", "")).lstrip("/")
@@ -512,12 +597,15 @@ class NmbakBackupService:
         return int(restored)
 
     def _restore_managed(self, restore_dir: Path, manifest: dict) -> None:
-        # Only the authoritative revision_refs population is written back
-        # (the verifier already rejected unlisted managed members and any
-        # managed_files entry outside revision_refs).
+        # Only the authoritative populations are written back (the verifier
+        # already rejected unlisted managed members and any managed_files entry
+        # outside them): artifact revisions plus imported page originals.
         members: set[str] = {
             str(entry.get("managed_path", "")).lstrip("/")
-            for entry in (manifest.get("revision_refs") or [])
+            for entry in (
+                (manifest.get("revision_refs") or [])
+                + (manifest.get("page_original_refs") or [])
+            )
         }
         for managed_path in sorted(members):
             relative = Path(managed_path)

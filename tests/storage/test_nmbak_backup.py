@@ -301,3 +301,116 @@ def test_restore_aborts_when_pre_restore_cannot_be_created(workspace, monkeypatc
     # No rollback point => nothing is overwritten.
     remaining = {row["book_id"] for row in workspace["conn"].execute("SELECT book_id FROM books")}
     assert "book-2" in remaining
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 AC2: imported page originals are user data too.
+# ---------------------------------------------------------------------------
+
+
+def _make_page_original_ref(workspace, page_id: str, blob: bytes) -> str:
+    """Seed a page whose Managed Copy original is ``pages.managed_original_ref``."""
+
+    relative = workspace["seed_page"](page_id, blob)
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ? WHERE page_id = ?",
+            (relative, page_id),
+        )
+    return relative
+
+
+def test_package_contains_imported_page_originals(workspace) -> None:
+    """A library with 0 artifact rows but real page originals must not look empty."""
+
+    relative = _make_page_original_ref(workspace, "page-9", b"\x89PNG-page-original")
+    created = workspace["service"].create("manual", "includes page originals")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+    with zipfile.ZipFile(package) as archive:
+        manifest = json.loads(archive.read(MANIFEST_NAME))
+        assert manifest["page_original_count"] == 1
+        assert manifest["page_original_refs"][0]["managed_path"] == relative
+        assert manifest["page_original_total_bytes"] == len(b"\x89PNG-page-original")
+        assert (MANAGED_PREFIX + relative) in archive.namelist()
+        assert archive.read(MANAGED_PREFIX + relative) == b"\x89PNG-page-original"
+    # The managed original and the revision reference the same file, so the
+    # package member must not be duplicated.
+    assert manifest["managed_file_count"] == 1
+
+
+def test_restore_rolls_back_newer_pages_and_keeps_originals(workspace) -> None:
+    """A restore rolls the library back while Managed Copy bytes stay readable."""
+
+    blob = b"\x89PNG-page-original"
+    relative = _make_page_original_ref(workspace, "page-9", blob)
+    created = workspace["service"].create("manual", "target")
+
+    # Work done AFTER the backup must disappear on restore.
+    extra = workspace["seed_page"]("page-10", b"NEW-PAGE")
+    with workspace["conn"] as conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ? WHERE page_id = 'page-10'",
+            (extra,),
+        )
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('book-2', 'after backup', ?, ?)",
+            (NOW, NOW),
+        )
+
+    report = workspace["service"].restore(created["backup_id"], confirm_restore=True)
+
+    assert workspace["conn"].execute("SELECT COUNT(*) AS n FROM books").fetchone()[0] == 1
+    assert (
+        workspace["conn"]
+        .execute("SELECT COUNT(*) AS n FROM pages WHERE page_id = 'page-10'")
+        .fetchone()[0]
+        == 0
+    )
+    row = workspace["conn"].execute(
+        "SELECT managed_original_ref FROM pages WHERE page_id = 'page-9'"
+    ).fetchone()
+    assert row is not None
+    assert row["managed_original_ref"] == relative
+    assert (workspace["managed_root"] / Path(relative)).read_bytes() == blob
+    assert report["managed_consistency"]["missing"] == []
+
+
+def test_missing_page_original_fails_create(workspace) -> None:
+    """Never report a verified package that silently dropped a source page."""
+
+    relative = _make_page_original_ref(workspace, "page-8", b"page-eight")
+    (workspace["managed_root"] / Path(relative)).unlink()
+
+    with pytest.raises(NmbakBackupError) as info:
+        workspace["service"].create("manual", "missing original")
+    assert info.value.code == "BACKUP_CREATE_FAILED"
+
+    # The artifact revision also referenced that file, so no package can exist.
+    assert not list(workspace["backup_root"].glob("*.nmbak"))
+
+
+def test_old_package_without_page_originals_still_restores(workspace) -> None:
+    """Backward compatibility: pre-AC2 manifests have no page_original_refs key."""
+
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    created = workspace["service"].create("manual", "legacy shape")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+
+    # Rewrite the package as a previous build would have written it: same
+    # members, manifest without the new page-original keys.
+    with zipfile.ZipFile(package) as archive:
+        members = {
+            name: archive.read(name) for name in archive.namelist() if name != MANIFEST_NAME
+        }
+        manifest = json.loads(archive.read(MANIFEST_NAME))
+    manifest.pop("page_original_refs", None)
+    manifest.pop("page_original_count", None)
+    manifest.pop("page_original_total_bytes", None)
+    with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+        archive.writestr(MANIFEST_NAME, json.dumps(manifest, ensure_ascii=False))
+        for name, data in members.items():
+            archive.writestr(name, data)
+
+    report = workspace["service"].restore(created["backup_id"], confirm_restore=True)
+    assert report["restored_from"] == created["backup_id"]

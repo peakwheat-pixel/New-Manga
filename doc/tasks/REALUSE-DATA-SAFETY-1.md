@@ -37,6 +37,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/**
   - tests/infrastructure/**
   - tests/bootstrap/**
+  - tests/core/**
+  - tests/storage/**
   - apps/desktop-avalonia/tests/**
   - verification/REALUSE-DATA-SAFETY-1/**
   - G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1/**
@@ -62,7 +64,7 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [x] **AC1 命名空间迁移自愈**：把数据根整目录复制到另一路径后以 `--data-root=<副本>` 启动，`core_service` 不再因 `namespace lock is bound to a different derived root` / `namespace binding identity mismatch` 崩溃；自动重绑定到新的 derived/catalog identity，`host.log` 出现明确迁移日志，书架数据完整（1 书 1 章 169 页），Host 就绪。绑定结构异常（catalog 表非 canonical、行数≠1、权限错误）时仍 fail closed 并给出可诊断 stderr。 <<MET: 4 单元测试 + 既有安全测试 7/7 + 真实数据副本源码级完整启动链（books=1/chapters=1/pages=169）；待独立审查>>
-- [ ] **AC2 真实备份**：首次写入前与迁移前生成含 `library.db` + `managed/**` + manifest 的 `.nmbak`（复用 Core `NmbakBackupService`），保留 N 份；`backup_list/create/restore` 经 `IHostController` 接到 Console「备份与恢复」分区；删除 `library.db` 后可从备份恢复出 169 页书架。 <<PARTIAL: 待实现>>
+- [ ] **AC2 真实备份**：首次写入前与迁移前生成含 `library.db` + `managed/**` + manifest 的 `.nmbak`（复用 Core `NmbakBackupService`），保留 N 份；`backup_list/create/restore` 经 `IHostController` 接到 Console「备份与恢复」分区；删除 `library.db` 后可从备份恢复出 169 页书架。 <<PARTIAL: Core 侧已完成并验证（迁移前 + 首启自动备份、原图纳入包、保留 5 份）；Console UI 接线未做>>
 - [ ] **AC3 迁移顺序**：旧布局 `<root>/data/{library.db,managed,backups}` 在生产 Host 路径下被完整迁移（`copied` 含 `managed/` 与 `backups/`），不再因 Host 预创建空目录而跳过；补 Host 级集成测试。 <<PARTIAL: 待实现>>
 - [ ] **AC4 只读语义**：`ReadOnlyUntilParity` 会话要么不写既有库（`query_only`/拒绝迁移），要么把「schema bootstrap 可写、用户数据只读」在日志与 UI 中明确区分；不再出现「日志称只读、实际写库」的矛盾。 <<PARTIAL: 待实现>>
 

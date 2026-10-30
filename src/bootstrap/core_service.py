@@ -5595,6 +5595,79 @@ def _rebind_after_migration(
     )
 
 
+#: How many automatic packages (first-run / pre-migration / pre-restore) to keep.
+_AUTOMATIC_BACKUP_KEEP = 5
+
+
+def _ensure_automatic_backup(core) -> None:
+    """AC2: guarantee a verified ``.nmbak`` covers an existing user library.
+
+    A fresh empty library has nothing to protect; a library with books does.
+    Any already-verified package (manual or automatic) counts as coverage, so
+    this runs once per data root and stays a cheap directory scan afterwards.
+    Failures are reported to stderr and never abort start-up -- an unwritable
+    backups directory must not make the product unusable.
+    """
+
+    service = getattr(core, "backup", None)
+    if service is None:
+        return
+    try:
+        existing = [entry for entry in service.list_backups() if entry.get("verified")]
+        if existing:
+            _prune_automatic_backups(service, existing)
+            return
+        try:
+            books = core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
+        except sqlite3.Error:
+            return
+        if books == 0:
+            return
+        created = service.create(
+            "automatic", "first writable start with an existing library"
+        )
+        print(
+            "[core.backup] automatic first-run backup created: "
+            f"{created['backup_id']} ({created['size_bytes']} bytes, "
+            f"verified={created['verified']})",
+            file=sys.stderr,
+            flush=True,
+        )
+        _prune_automatic_backups(service, service.list_backups())
+    except NmbakBackupError as error:
+        print(
+            f"[core.backup] automatic backup skipped: {error.code}: {error.detail}",
+            file=sys.stderr,
+            flush=True,
+        )
+
+
+def _prune_automatic_backups(service, entries) -> None:
+    """Keep the newest ``_AUTOMATIC_BACKUP_KEEP`` automatic packages only.
+
+    Manual packages are never pruned: a user-created backup is an explicit
+    intent, while the automatic ones exist to bound disk growth.
+    """
+
+    automatic = sorted(
+        (
+            entry
+            for entry in entries
+            if entry.get("verified")
+            and entry.get("backup_type") in ("automatic", "pre_migration", "pre_restore")
+        ),
+        key=lambda entry: entry.get("created_at") or "",
+    )
+    excess = len(automatic) - _AUTOMATIC_BACKUP_KEEP
+    if excess <= 0:
+        return
+    for entry in automatic[:excess]:
+        try:
+            service.delete(entry["backup_id"])
+        except NmbakBackupError:
+            pass
+
+
 def main() -> int:
     env_root = os.environ.get("NEWMANGA_DATA_ROOT")
     data_root = Path(env_root) if env_root else default_data_root()
@@ -5646,6 +5719,11 @@ def main() -> int:
     core = None
     try:
         core = assemble_production_core(data_root)
+        # REALUSE-DATA-SAFETY-1 AC2: the Host-side first-run backup only copied
+        # the derived catalog, so an existing user library had no rollback
+        # point. Keep one verified package before serving; idempotent and never
+        # start-up-blocking.
+        _ensure_automatic_backup(core)
         if exclusive is not None:
             # The sweeps run under the exclusive lease; the store borrows it
             # (it must not take a second, shared lock for itself).
