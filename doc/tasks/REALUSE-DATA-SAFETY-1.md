@@ -13,7 +13,7 @@ base_commit: b1c1f5a56
 branch: task/REALUSE-DATA-SAFETY-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-1
 integration_commit: null
-delivery_head: 38f09ac90
+delivery_head: 811078ebb
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-1
@@ -110,10 +110,17 @@ allowed_paths:
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项填写（当前为空）。
+进入独立审查前的当前证据（`commit` = 含该文件的提交；仓外证据给绝对路径）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| E-AC1-TESTS | AC1 | `tests/infrastructure/test_preview_namespace_rebind.py` | `38f09ac90` | 由 git 内容确定 | CANONICAL |
+| E-AC1-SAFETY | AC1 | `tests/core/test_core_namespace_bootstrap.py`（7/7 通过，内容未改） | `38f09ac90` | 由 git 内容确定 | CANONICAL |
+| E-AC1-REAL | AC1 | `G:\CODEX\New Manga.workspace\tmp\self-audit\verify_migrated_root.py` + `runs\12-migrated-root\` | `38f09ac90` | 仓外脚本 + 运行输出 | SOURCE_PIN |
+| E-AC2-BACKUP-CORE | AC2 | `tests/infrastructure/test_nmbak_startup_backup.py`、`tests/storage/test_nmbak_backup.py` | `75aeff349` | 由 git 内容确定 | CANONICAL |
+| E-AC2-REAL | AC2 | `G:\CODEX\New Manga.workspace\tmp\self-audit\verify_backup_real.py` + `runs\13-backup-real\` | `75aeff349` | 仓外（90.2 MiB / 169 原图） | SOURCE_PIN |
+| E-AC2-UI | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs`（3 例） | `811078ebb` | 由 git 内容确定 | CANONICAL |
+| E-BUILD | AC1/AC2 | `dotnet build -warnaserror` 0W/0E；`dotnet test` 810 passed / 0 failed | `811078ebb` | 运行输出 | SOURCE_PIN |
 
 ## Resource Manifest
 

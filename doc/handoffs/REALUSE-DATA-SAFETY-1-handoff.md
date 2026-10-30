@@ -3,20 +3,20 @@ task_id: REALUSE-DATA-SAFETY-1
 author: dsh-lead
 recipient: DeepSeek Harness (Lead/Integrator)
 base_commit: b1c1f5a56
-delivery_head: 38f09ac90
-status: partial (AC1 delivered, AC2/AC3/AC4 pending)
+delivery_head: 811078ebb
+status: partial (AC1 + AC2 delivered, AC3/AC4 pending)
 ---
 
 # Handoff：REALUSE-DATA-SAFETY-1（B1 数据安全）
 
 ## 交付结果
 
-本 Handoff 覆盖 **AC1**（数据根迁移自愈）；AC2（真实备份）、AC3（迁移顺序）、AC4（只读语义）尚未开始。
+本 Handoff 覆盖 **AC1**（数据根迁移自愈）与 **AC2**（真实 `.nmbak` 备份 + Console 接线）；AC3（迁移顺序）、AC4（只读语义）尚未开始。
 
 | AC | 状态 | 变更 |
 |---|---|---|
 | AC1 命名空间迁移自愈 | **DELIVERED** | `src/infrastructure/resource_channel/catalog_store.py`（+`verify_binding_for_root`、`rebind_namespace`、`_assert_canonical_namespace_table`；`restore_namespace_lock` 复用 canonical 校验）；`src/bootstrap/core_service.py`（`_ensure_preview_namespace` 校验现有绑定并仅在可识别 mismatch 时重绑 + stderr 迁移日志）；`tests/infrastructure/test_preview_namespace_rebind.py`（4 例） |
-| AC2 真实备份 | PENDING | 无变更 |
+| AC2 真实备份 | **DELIVERED** | `core_assembly.py`（迁移前 `_NmbakMigrationBackup`）、`core_service.py`（`_ensure_automatic_backup` + 保留 5 份）、`nmbak.py`（`page_original_refs` 原图纳入包/校验/恢复 + consistency）、`CoreServiceClient.cs`/`HostRuntime.cs`/`IHostController`/`HostController`/`NullHostController`（backup 4 方法）、`ConsoleViewModel.cs` + `ConsoleView.axaml`（⑥ 分区接真实面，含二次确认） |
 | AC3 迁移顺序 | PENDING | 无变更 |
 | AC4 只读语义 | PENDING | 无变更 |
 
