@@ -3,7 +3,7 @@ id: REALUSE-DATA-SAFETY-4
 title: Console 三处「待接入」分区接线——模型/设备、缓存与版本清理、插件与 Hooks
 kind: feature
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-30_self_audit_split_from_REALUSE-DATA-SAFETY-3
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,15 +13,18 @@ review_history:
     verdict: FAIL_WITH_MUST_FIX
     report: doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md
     must_fix: M1 plugin disable read as failure (Core echoes the new state); M2 write-path refresh blocked by its own busy flag; M3 pending retries hidden behind an empty target list; M4 unloaded provider list reported as unbound; M5 cleanup.retry_pending unreachable from the UI
+  - round: 2
+    verdict: PASS
+    report: doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r2.md
 depends_on:
   - REALUSE-DATA-SAFETY-3
 base_commit: b8039aec8
 branch: task/REALUSE-DATA-SAFETY-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-4
-integration_commit: null
-delivery_head: 3844851e8
+integration_commit: PENDING
+delivery_head: 37dcd6d9f
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-4
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-4.md
@@ -56,8 +59,8 @@ allowed_paths:
 ## 验收标准
 
 - [ ] **AC1 设备与模型分区可用**：用户能从控制台看到并管理 Provider（至少：列出、选中、显示当前绑定），未配置时给出与 MA-02 指引一致的下一步。 <<PARTIAL: 设备分区改为诊断式（从 ProviderProfiles 推导检测能力绑定，未绑定明确说明会返回 PROVIDER_NOT_CONFIGURED 并给跳转 ② 的入口；设备/权重状态如实标注 Core 未暴露），3 个用例通过。Provider 管理本身在 ② 分区已完整可用（新建/编辑/删除/刷新）——本 Task 复核后确认 MA-02 的指引并非断头路，纠正了任务卡原始假设。完整设备/权重答案依赖契约提案，未实施>>
-- [ ] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<PARTIAL: 两处已**真实接线**而非改写文案——⑤ 缓存与版本清理（cleanup.preview / cleanup.run：预览目标数/字节/待重试数 → 确认门 → 执行结果）与 ⑦ 插件与 Hooks（plugins.list / set_enabled / set_plugin_enabled：清单、全局开关、单插件开关、被拒绝插件的 reason、全局关闭时单插件开关禁用）。⑦ 与 ⑤ 共 7 个新用例通过>>
-- [ ] **AC3 契约边界**：任何新增命令必须先在本 Task 记录契约变更提案并交 DSH 裁决；不擅自修改冻结契约。 <<PARTIAL: 已写提案 doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md（diagnostics.device_status：只读、无绝对路径、探测失败返回 typed code、minor 递增），**未实施、未改冻结契约**；裁决点待 DSH 与用户确认>>
+- [x] **AC2 三处占位不再静默**：缓存清理与插件分区若无法真实接线，必须显示「为什么还不能用 + 前置条件 + 追踪标识」，不得只写「待接入」三个字。 <<MET>> <<PARTIAL_REMOVED: 两处已**真实接线**而非改写文案——⑤ 缓存与版本清理（cleanup.preview / cleanup.run：预览目标数/字节/待重试数 → 确认门 → 执行结果）与 ⑦ 插件与 Hooks（plugins.list / set_enabled / set_plugin_enabled：清单、全局开关、单插件开关、被拒绝插件的 reason、全局关闭时单插件开关禁用）。⑦ 与 ⑤ 共 7 个新用例通过>>
+- [x] **AC3 契约边界**：任何新增命令必须先在本 Task 记录契约变更提案并交 DSH 裁决；不擅自修改冻结契约。 <<MET>>
 
 ## 禁止范围
 
@@ -78,9 +81,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-AC1-CLIENT | AC2 | `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs` | `282ad43fa` | `-` | CANONICAL |
+| E-AC2-CLIENT | AC2 | `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs` | `282ad43fa` | `-` | CANONICAL |
 | E-AC2-STORAGE | AC2 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs` | `6ea2e817a` | `-` | CANONICAL |
 | E-AC2-UI | AC2 | `apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs` | `4238fdbb8` | `-` | CANONICAL |
+| E-REVIEW-R1 | Gate | `doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md` | `3844851e8` | `-` | CANONICAL |
 | E-AC3-PROPOSAL | AC3 | `doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md` | `4238fdbb8` | `-` | CANONICAL |
 
 ## Resource Manifest
