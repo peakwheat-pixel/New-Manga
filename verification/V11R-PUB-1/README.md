@@ -2,18 +2,28 @@
 
 - Task：`V11R-PUB-1`（Lead 2026-10-30 分配）
 - Owner：`core-bridge`（未自审）
-- 脚本：`tools/build/publish-release.ps1`；说明：`doc/plan/V11R_RELEASE.md`
+- 脚本：`tools/ci/publish-release.ps1`；说明：`doc/plan/V11R_RELEASE.md`
 - 结论：**三种发布形态全部固化并通过真机 Smoke**（`singlefile`、`trimmed`（caveat）、`aot`（caveat））；
   `-Mode all -AllowTrimAnalysisWarnings -Smoke` 全绿（3/3 PASS）。二进制与 manifest 只写 workspace
   `artifacts/publish/`，**不进入 git**；本目录只保存日志/JSON/截图。
 
 ## 1. 三种模式结果（本次真实执行，HEAD 见 manifest）
 
+脚本位置：`tools/ci/publish-release.ps1`（与 `verify-clean-clone.ps1` 同目录；原 `tools/build/` 会被
+`.gitignore:5` 的 `build/` 规则忽略，已按 Lead 要求迁移，工作区不再保留旧副本）。
+
+复跑基线：**main `b1ef1d89c2f90d5f23e034bb9ca0e22c368e7c51`**（含 A11Y-1 / E2E-1 后重跑）。
+
 | 模式 | publish exit | 耗时 | 产物 | sha256 | Smoke | 结论 |
 |---|---:|---:|---|---|---|---|
-| `singlefile` | 0 | 6.4s | **93.5 MB 单 exe**（自包含，原生库自解压） | `F9C47414…26BD83D4` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（推荐发布形态）** |
-| `trimmed` | 0 | 11.7s | exe 0.15 MB + DLL 目录 **44.96 MB**（裁剪后） | `773824CE…E43DA412` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（caveat）** |
-| `aot` | 0 | 34.6s | **28.85 MB 原生 exe** + native libs（目录 44.72 MB） | `8FEF2487…C149DB4D` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（caveat；IL3050 MicroCom 警告）** |
+| `singlefile` | 0 | 4.7s | **93.5 MB 单 exe**（自包含，原生库自解压） | `3DBEF6F3…219A506` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（推荐发布形态）** |
+| `trimmed` | 0 | 11.6s | exe 0.15 MB + DLL 目录 **44.96 MB**（裁剪后） | `DB06DD9F…A139068` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（caveat）** |
+| `aot` | 0 | 39.0s | **28.85 MB 原生 exe** + native libs（目录 44.72 MB） | `93D1406E…6BBA3C1` | 窗口 + Host 就绪 + exit 0（natural） | **PASS（caveat；IL3050 MicroCom 警告）** |
+
+完整 sha256 见 `manifest-*.json` / `manifest-summary.json`（本次：singlefile
+`3DBEF6F3BAB8B8475878A35E6A1F7AECACA59F419BF5BBE31505FA87A9216506`、trimmed
+`DB06DD9F6979A460638922F2B44090EBCD96EDFAF402CC9026AB08562A139068`、aot
+`93D1406E382BA774D7979D5A887DC3A5ABE31BEA75F75440BDD0CFE7F6BBA3C1`）。
 
 - `trimmed`/`aot` 的 `caveat` 字段：**trim/AOT 安全性未分析**；`SuppressTrimAnalysisWarnings` 只静默分析器，
   不证明反射/COM 路径安全。
@@ -40,7 +50,7 @@
 
 | 项 | 结果 | 日志 |
 |---|---|---|
-| `tools/build/publish-release.ps1 -Mode all -AllowTrimAnalysisWarnings -Smoke` | **3/3 PASS**（见 §1） | `G:\CODEX\New Manga.workspace\task-envs\V11R-PUB-1\all-modes-run2.log` |
+| `tools/ci/publish-release.ps1 -Mode all -AllowTrimAnalysisWarnings -Smoke` | **3/3 PASS**（见 §1） | `G:\CODEX\New Manga.workspace\task-envs\V11R-PUB-1\all-modes-run2.log` |
 | `dotnet build NewManga.sln -warnaserror` | **0W/0E**（本卡未改产品代码） | `gate-build.log` |
 | `dotnet test NewManga.sln --no-build --settings tests/NewManga.runsettings` | **0 失败**（见 `gate-test.log` 汇总） | `gate-test.log` |
 
@@ -48,13 +58,13 @@
 
 ```powershell
 # 门禁：三种模式 + 真机 Smoke
-pwsh -NoProfile -File tools/build/publish-release.ps1 `
+pwsh -NoProfile -File tools/ci/publish-release.ps1 `
   -Mode all -AllowTrimAnalysisWarnings -Smoke `
   -SidecarDir "<sidecar bundle>" `
   -EvidenceDir verification/V11R-PUB-1
 
 # 推荐发布形态
-pwsh -NoProfile -File tools/build/publish-release.ps1 -Mode singlefile -Smoke -SidecarDir "<sidecar>"
+pwsh -NoProfile -File tools/ci/publish-release.ps1 -Mode singlefile -Smoke -SidecarDir "<sidecar>"
 ```
 
 参数：`-Mode singlefile|trimmed|aot|all`（默认 singlefile）、`-Configuration Release`、`-Runtime win-x64`、
@@ -85,3 +95,4 @@ verification/V11R-PUB-1/
   published-singlefile.png / published-trimmed.png / published-aot.png
   gate-build.log / gate-test.log
 ```
+

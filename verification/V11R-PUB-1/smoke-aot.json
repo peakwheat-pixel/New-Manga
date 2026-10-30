@@ -1,9 +1,9 @@
 {
   "mode": "aot",
   "exe": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\aot-Release-win-x64\\NewManga.App.exe",
-  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\data",
-  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\logs",
-  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-2ea3253d\\theme-home",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-d02efa58\\data",
+  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-d02efa58\\logs",
+  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-aot-d02efa58\\theme-home",
   "window_found": true,
   "window_title": "New Manga",
   "host_ready": true,

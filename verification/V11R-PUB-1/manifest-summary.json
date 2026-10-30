@@ -1,7 +1,7 @@
 {
   "task": "V11R-PUB-1",
-  "generated_at": "2026-10-30T01:29:04.4771863Z",
-  "git_head": "0627e7711781f241183ec857a280c10e42dc3024",
+  "generated_at": "2026-10-30T01:39:34.3057361Z",
+  "git_head": "b1ef1d89c2f90d5f23e034bb9ca0e22c368e7c51",
   "modes": [
     {
       "mode": "singlefile",
@@ -9,7 +9,7 @@
       "publish_exit_code": 0,
       "artifact_exe_size_mb": 93.5,
       "artifact_directory_size_mb": 93.5,
-      "artifact_sha256": "F9C474147DBD028AE40D05C7B403141169E0B189F34F1A9D045CB83626BD83D4",
+      "artifact_sha256": "3DBEF6F3BAB8B8475878A35E6A1F7AECACA59F419BF5BBE31505FA87A9216506",
       "smoke_pass": true,
       "expected_failure": null
     },
@@ -19,7 +19,7 @@
       "publish_exit_code": 0,
       "artifact_exe_size_mb": 0.15,
       "artifact_directory_size_mb": 44.96,
-      "artifact_sha256": "773824CE6E849AF84BEBC81F8DB8F5403125F1377E046EAD2D10F9A0E43DA412",
+      "artifact_sha256": "DB06DD9F6979A460638922F2B44090EBCD96EDFAF402CC9026AB08562A139068",
       "smoke_pass": true,
       "expected_failure": null
     },
@@ -29,7 +29,7 @@
       "publish_exit_code": 0,
       "artifact_exe_size_mb": 28.85,
       "artifact_directory_size_mb": 44.72,
-      "artifact_sha256": "8FEF2487499ACB89D1B668988EE927E989608663EEFD33C1CBCAA390C149DB4D",
+      "artifact_sha256": "93D1406E382BA774D7979D5A887DC3A5ABE31BEA75F75440BDD0CFE7F6BBA3C1",
       "smoke_pass": true,
       "expected_failure": null
     }

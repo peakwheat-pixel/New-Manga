@@ -1,9 +1,9 @@
 {
   "mode": "singlefile",
   "exe": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\singlefile-Release-win-x64\\NewManga.App.exe",
-  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-ab61b1a0\\data",
-  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-ab61b1a0\\logs",
-  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-ab61b1a0\\theme-home",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-b2fa5813\\data",
+  "log_dir": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-b2fa5813\\logs",
+  "theme_home": "G:\\CODEX\\New Manga.workspace\\artifacts\\publish\\smoke-singlefile-b2fa5813\\theme-home",
   "window_found": true,
   "window_title": "New Manga",
   "host_ready": true,
