@@ -213,3 +213,16 @@ L4 真实窗口/真实 sidecar 取证阶段（非单元测试）发现 5 个单�
 | `FOLLOW-UP-A11Y-1` | `V11R-A11Y-1`（`d1a794fc0`）：所有 V2 Button/Kbd 可读 UIA 名称 + headless 15 视图回归（修前 123 处红 → 修后 0）+ `tools/e2e/uia-audit.ps1` | 真机 UIA 审计：修前 7 未命名 → **修后 0/21 未命名**；Lead 独立复跑 `21/21 可读, exit 0` |
 | `FOLLOW-UP-E2E-1` | `V11R-E2E-1`（`cedd01ef0`）：`--theme-home <dir>` 隔离主题子系统（settings/themes/favorites）+ `ThemeHome.Resolve` + 11 项测试 | 真机 UIA 应用 -> `<dir>/theme-settings.json` 写入且真实 `%APPDATA%` 零新建/零修改；Lead 复核测试 11/11、接线与真实 appdata 干净 |
 | `FOLLOW-UP-PUB-1` | `V11R-PUB-1`（`5c7783895`）：`tools/ci/publish-release.ps1`（singlefile/trimmed/aot + 真实产物 smoke + manifest/sha256 + 诚实 expected-failure）+ `doc/plan/V11R_RELEASE.md` | Lead 独立跑 `-Mode all -AllowTrimAnalysisWarnings -Smoke`：**3/3 PASS**（窗口+Host 就绪+natural exit 0）；`.gitignore` 已显式重新纳入 `tools/build/**` |
+---
+
+## 17. 发布产物（0.1.1，2026-10-30）
+
+- **远端**：`origin/main` 已推送至 `e97d6a242`；发布 tag **`v0.1.1-v11r`** 已推送（`https://github.com/peakwheat-pixel/New-Manga`）。
+- **打包产物**（位于 `G:\CODEX\New Manga.workspace\artifacts\release\`，二进制不入 git）：
+  | 产物 | 大小 | SHA-256 | 验证 |
+  |---|---:|---|---|
+  | `NewManga-0.1.1-win-x64-portable.zip` | 115.4 MB | `47BC1513…360493A7` | 打包后 stage 冒烟：窗口 + Host 就绪 + exit 0；`--theme-home` 隔离生效 |
+  | `NewManga-0.1.1-win-x64-setup.exe`（NSIS 3.13） | 71.7 MB | `D8FCB7EB…E5BBEC` | 构建成功；安装/卸载冒烟 **NOT_RUN**（避免改动用户环境） |
+- `SHA256SUMS` + `RELEASE-MANIFEST.json`；`packaging/release/verify-release.ps1` 校验 **PASS (2/2)**。
+- 发布说明：`doc/releases/RELEASE_0.1.1.md`；安装包脚本：`packaging/nsis/installer.nsi`。
+- 未随包：模型权重（`*.onnx`，按策略外置）。
