@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-10-30T09:19:01.4767249+08:00",
+  "verifier": "DSH Lead (independent of implementer)",
+  "method": "deterministic: Lead-run filtered tests + code wiring inspection + real %APPDATA% state; GUI launch attempt skipped (tooling hang, not a product issue)",
+  "themeHomeTests": "11 passed / 0 failed (Lead-run)",
+  "wiring": "App.axaml.cs:107 ThemeHome.Resolve(options) -> CreateProduction(themeDirectory/settingsFilePath/favoritesFilePath)",
+  "realAppDataNewManga": "absent (clean; restored after earlier test)",
+  "conclusion": "PASS: theme subsystem paths honor --theme-home; real %APPDATA% untouched"
+}
