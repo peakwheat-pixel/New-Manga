@@ -3,18 +3,18 @@ id: REALUSE-DATA-SAFETY-3
 title: 修复真实使用自查 B2 核心链路——Console 分区接线、Run 列表、重复读取、错误码本地化
 kind: fix
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_authorized_2026-10-30_self_audit_repair
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: antigravity-headless
 depends_on:
   - REALUSE-DATA-SAFETY-2
 base_commit: 15efbcfb0
 branch: task/REALUSE-DATA-SAFETY-3
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-3
 integration_commit: null
-delivery_head: 8b5530608
+delivery_head: 569e4fa56
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-3
@@ -50,8 +50,8 @@ allowed_paths:
 
 - [ ] **AC1 Console 分区接线**：无可用 Provider/模型时，控制台提供明确入口与状态（不再是「待接入」占位）；缓存与版本清理、插件与 Hooks 要么真实接线，要么保留占位但**明确说明未接入原因**，不得静默。 <<PARTIAL: 待实现>>
 - [ ] **AC2 Stop 手工输入 run_id**：普通用户无需手抄 run_id 即可看到本会话/近期的 Run；外部 Run 的 run_id 路径仍在且有说明。若需契约扩展，先记录裁决再实施。 <<PARTIAL: 已实现且未改冻结契约（RunStatusMonitor 记忆本会话真实 run id + Console 列表点击加载 + Studio 创建后回填索引），5 个测试通过，待独立审查>>
-- [ ] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<PARTIAL: 待实现>>
-- [ ] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<PARTIAL: 待实现>>
+- [ ] **AC3 消除启动期重复读取**：同一数据根下一次启动内 `ListBooks` 与 `list_chapters` 各只发生一次（或明确缓存命中），wire 帧计数可证明。 <<PARTIAL: 已实现（Library 首屏复用启动快照、阅读器复用快照书架、章节列表按 book 会话内缓存并由 CreateChapter 失效），3 个调用计数测试；Reader 侧复用由代码路径断言，未单独接线真实 wire 计数，待独立审查评估证据强度>>
+- [ ] **AC4 错误码本地化**：`completed_with_failures` 与常见步骤错误码在 UI 显示为中文说明，同时保留 typed code（诊断用）。 <<PARTIAL: 已实现（RunStateText/RunStateStatus 覆盖 projection.py 全部终态；新增 StepErrorText 说明真实 upper-snake 步骤码并始终保留标识符），19 个用例通过，待独立审查>>
 
 ## 允许修改范围
 
@@ -68,8 +68,8 @@ allowed_paths:
 |---|---|---|---|---|
 | AC1 分区接线 | `dotnet test --filter Console` + headless 截图 | net9.0 | NOT_RUN | 待补 |
 | AC2 Run 列表 | `dotnet test --filter "RunIndexTests"` + `--filter TasksSection_ListsRunsThisSessionSaw` | net9.0 / `8b5530608` | PASS 5/5（索引 4 + Console 集成 1） | `RunIndexTests.cs`、`V2ConsoleUiTests.cs` |
-| AC3 重复读取 | wire 帧计数断言（Host/Fake 均可） | net9.0 | NOT_RUN | 待补 |
-| AC4 错误码 | `dotnet test --filter Localization` 或 UI 断言 | net9.0 | NOT_RUN | 待补 |
+| AC3 重复读取 | `dotnet test --filter StartupReadDedupTests` | net9.0 / `569e4fa56` | PASS 3/3（`RefreshCalls` 断言：首屏 0 次、显式刷新 1 次、冷快照 1 次） | `StartupReadDedupTests.cs` |
+| AC4 错误码 | `dotnet test --filter CoreStateTextTests` | net9.0 / `569e4fa56` | PASS 19/19（终态文案 + 状态映射 + 步骤码说明与保留） | `CoreStateTextTests.cs` |
 
 ## Canonical Evidence
 
