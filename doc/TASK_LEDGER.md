@@ -24,12 +24,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `in_review` | 2 | no |
-| `ready` | 2 | no |
+| `in_review` | 3 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `proposed` | 1 | no |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -40,9 +40,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
+| `REALUSE-DATA-SAFETY-4` | `in_review` | mentioned |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
-| `REALUSE-DATA-SAFETY-4` | `ready` | mentioned |
 
 ## What this ledger does not say
 
