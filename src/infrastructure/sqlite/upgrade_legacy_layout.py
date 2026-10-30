@@ -126,11 +126,50 @@ def _promote_file(staged: Path, target: Path) -> None:
     os.replace(staged, target)
 
 
-def _promote_directory(staged: Path, target: Path) -> None:
-    # ``os.replace`` cannot move onto an existing directory; the caller only
-    # passes this when the current directory is absent.
+def _directory_is_empty(path: Path) -> bool:
+    try:
+        next(path.iterdir())
+    except StopIteration:
+        return True
+    return False
+
+
+def _promote_directory_merged(staged: Path, target: Path) -> str | None:
+    """Move a staged legacy tree into place, merging into a pre-created target.
+
+    REALUSE-DATA-SAFETY-1 AC3: the Host creates ``managed``/``backups`` BEFORE
+    the Core starts (first-run backup + ``HostRuntime`` layout), so "the target
+    directory exists" no longer means "the current layout already holds this
+    data". The old rule therefore skipped the legacy trees forever on a real
+    upgrade path, leaving the imported originals under ``data/managed``.
+
+    - absent target: atomic rename, exactly as before;
+    - EMPTY target (the Host's pre-created directory): replace it atomically;
+    - non-empty target: the current layout wins file by file -- only legacy
+      files the target does not have are copied (this also repairs a
+      partially-completed earlier migration, now at file granularity).
+
+    Returns the copied name (``"managed/"``) when anything was promoted, else
+    ``None``.
+    """
+
     target.parent.mkdir(parents=True, exist_ok=True)
-    os.replace(staged, target)
+    if not target.exists() or _directory_is_empty(target):
+        if target.exists():
+            target.rmdir()
+        os.replace(staged, target)
+        return target.name + "/"
+
+    copied_any = False
+    for source in sorted(path for path in staged.rglob("*") if path.is_file()):
+        relative = source.relative_to(staged)
+        destination = target / relative
+        if destination.exists():
+            continue  # current layout wins: never overwrite
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        copied_any = True
+    return (target.name + "/") if copied_any else None
 
 
 def _append_log(data_root: Path, line: str) -> None:
@@ -190,15 +229,12 @@ def migrate_legacy_layout(data_root: Path) -> MigrationResult:
             if staged is not None
         }
 
-        # 2) Decide what to promote.  The current database wins; missing
-        #    current sub-directories are filled in (also repairs partial runs).
+        # 2) Decide what to promote.  The current database wins; the legacy
+        #    sub-directories are merged in even when the Host already created
+        #    an EMPTY managed/backups directory before the Core started (AC3),
+        #    and a partially migrated tree receives only its missing files.
         promote_db = (not current_exists) and bool(staged_db_files)
-        promote_dirs = {
-            name: staged
-            for name, staged in staged_dirs.items()
-            if not (data_root / name).exists()
-        }
-        if not promote_db and not promote_dirs:
+        if not promote_db and not staged_dirs:
             return MigrationResult(
                 False,
                 skipped_reason=(
@@ -209,12 +245,18 @@ def migrate_legacy_layout(data_root: Path) -> MigrationResult:
             )
 
         copied: list[str] = []
+        for name, staged in staged_dirs.items():
+            promoted = _promote_directory_merged(staged, data_root / name)
+            if promoted is not None:
+                copied.append(promoted)
+        if not copied and not promote_db:
+            return MigrationResult(
+                False,
+                skipped_reason="current layout already present; legacy data left untouched",
+            )
         # Directories first, database last: a failure before the database is
         # promoted leaves the old root readable on the next start-up, and the
-        # retry is idempotent because already-migrated directories are skipped.
-        for name, staged in promote_dirs.items():
-            _promote_directory(staged, data_root / name)
-            copied.append(name + "/")
+        # retry is idempotent because already-migrated files are skipped.
         if promote_db:
             # WAL/SHM/journal sidecars are promoted before the main database:
             # if a sidecar rename fails the root still has no library.db (so the

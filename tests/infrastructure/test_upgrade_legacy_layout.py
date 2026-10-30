@@ -241,3 +241,59 @@ def test_current_database_with_corrupt_legacy_db_still_fills_directories(
     assert result.copied == ("managed/", "backups/")
     assert _book_count(root / "library.db") == 4
     assert (root / "managed" / "books" / "abc" / "page.png").is_file()
+
+
+# ---------------------------------------------------------------------------
+# REALUSE-DATA-SAFETY-1 AC3: the Host pre-creates managed/backups before the
+# Core starts, so "the directory exists" must not mean "already migrated".
+# ---------------------------------------------------------------------------
+
+
+def test_precreated_empty_directories_still_receive_legacy_trees(tmp_path: Path) -> None:
+    """The real upgrade path: Host-created empty dirs, legacy originals inside."""
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "backups").mkdir()
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "managed/" in result.copied
+    assert "backups/" in result.copied
+    assert (root / "managed" / "books" / "abc" / "page.png").read_bytes() == b"png"
+    assert (root / "backups" / "old.zip").read_bytes() == b"zip"
+
+
+def test_nonempty_current_tree_receives_only_missing_legacy_files(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    (root / "managed").mkdir()
+    (root / "managed" / "current-only.bin").write_bytes(b"keep")
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "managed/" in result.copied
+    assert (root / "managed" / "current-only.bin").read_bytes() == b"keep"
+    assert (root / "managed" / "books" / "abc" / "page.png").read_bytes() == b"png"
+
+
+def test_existing_current_file_is_never_overwritten_by_legacy(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    target = root / "managed" / "books" / "abc" / "page.png"
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"current-wins")
+
+    migrate_legacy_layout(root)
+
+    assert target.read_bytes() == b"current-wins"
+
+
+def test_precreated_empty_backups_directory_does_not_hide_legacy_backups(tmp_path: Path) -> None:
+    root = _legacy_root(tmp_path)
+    (root / "backups").mkdir()
+
+    result = migrate_legacy_layout(root)
+
+    assert result.migrated is True
+    assert "backups/" in result.copied
+    assert (root / "backups" / "old.zip").read_bytes() == b"zip"
