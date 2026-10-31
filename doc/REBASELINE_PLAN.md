@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-GOV-8（契约冻结准备总表，in_progress）
+当前 DAG：FEA-GOV-9（夜班收尾与一致性核验，in_progress）
 
 ## 历史快照（终态节点，非当前 DAG）
 
