@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "task_id": "REALUSE-DATA-SAFETY-11",
+  "generated_at": "2026-11-01",
+  "generated_by": "DSH (Lead / Architect / Integrator)",
+  "note": "实现阶段资源收口：worktree 保留；本 Task 无新增临时文件；未触碰用户数据。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-11",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "worktree 保留；doc/tasks/REALUSE-DATA-SAFETY-11.md 引用其路径；未删除、未 prune",
+      "branch": "task/REALUSE-DATA-SAFETY-11",
+      "base_commit": "7ff5aa4b1",
+      "delivery_head": "d32f4b5ef"
+    }
+  ],
+  "closeout_counts": { "deleted": 0, "moved": 0, "migrated": 0, "archived": 0 },
+  "closeout_note": "worktree 按 PRESERVE_REFERENCED 保留；本 Task 无临时产物；用户数据零访问。"
+}

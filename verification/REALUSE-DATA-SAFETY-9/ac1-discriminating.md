@@ -29,16 +29,16 @@ Assert.Equal(3, library.Reader.PageIndex);
 
 同时在 `ac3-closing-gate.md`（SAFETY-8 证据）与用例注释中标注其角色：**判别性断言**（不是回归栅栏）。
 
-## 负向对照（实测，2026-11-01 02:28 复现；原始日志见 SAFETY-10 证据）
+## 负向对照（实测；完整五步 run 于 2026-11-01 02:53:12 在 SAFETY-11 worktree 执行，原始日志见 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt`）
 
-**执行位置**：在 SAFETY-10 的 worktree（`G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10`）
+**执行位置**：在 SAFETY-11 的 worktree（`G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-11`）
 内**临时覆盖后恢复**——不是在 main 工作区原地覆盖，也没有改动任何已提交的交付字节。完整原始日志见
-`verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`。
+`verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt`（R-102 补全：五步全程，含覆盖命令、`_isClosing` 计数、失败运行 EXIT=1、恢复确认、恢复后通过 EXIT=0；早前精简版为同目录 `ac1-negative-control.txt`）。
 
 **命令与 cwd**（host：本机 / pwsh 7 / dotnet 10.0.401）：
 
 ```powershell
-$wt = 'G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-10'
+$wt = 'G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11'
 $src = 'apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs'
 cd $wt
 cmd /c "git -C `"$wt`" show bb7cbda1d:$src > `"$(Join-Path $wt ($src.Replace('/','\')))`""
