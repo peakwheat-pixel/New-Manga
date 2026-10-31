@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-8
 title: SAFETY-7 Review P2 收尾——证据文档修正与 CloseAsync 健壮性
 kind: quality
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_REALUSE-DATA-SAFETY-7_review_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety8-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-7
 base_commit: bb7cbda1d
 branch: task/REALUSE-DATA-SAFETY-8
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-8
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 84b9f4319
+delivery_head: 60056d353
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-8
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-8.md
@@ -90,6 +90,28 @@ allowed_paths:
 - 负向对照临时日志 `tmp/safety8-negctl.log`：DELETE_SAFE，已删除（`closeout_counts.deleted=1`）
 - 用户数据：本 Task 零写操作
 
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-8-review.md](../reviews/REALUSE-DATA-SAFETY-8-review.md)
+- Reviewer：`safety8-reviewer`（Agent Teams 共享任务 `task-5`，fresh context；未参与实现、返修或证据撰写）
+- 被审 head：`231ff2ebe`；base `bb7cbda1d`；交付实现 `60056d353`
+- 结论：**approved**（P0=0 / P1=0 / P2=3 open，不阻断集成）；AC1/AC2/AC3 均判 **MET**
+- 独立复核：12 条 pin 用 `git cat-file blob` 12/12 一致、变化恰为 5 条；负向对照 post-delivery 配方在仓外副本复现 1 failed / EXIT=1；F-004 探针注入 `NotSupportedException` 被捕获不冒泡；AC3 用例确定性 5/5 稳定
+- 复跑：build 0 警告/0 错误；filtered 7/7；全量 396/0/7（403）；`check.ps1` PASS (3 warnings)
+
+## Known P2（open，登记为后续项）
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| R-001 | P2 | resource-manifest 声称 `tmp/safety8-negctl.log` 已删除，但 Review 时文件仍在（943 B，01:51:51 < manifest 提交 01:54:57） | **已闭环**：集成前 DSH 删除该文件（`Test-Path=False`），声明现成立 |
+| R-002 | P2 | AC3 新用例不判别 F-005 修复（在 pre-F-005 生产文件下同样 7/7 通过，因为 close 窗口内 `_isSaving` 仍为 true，旧实现同样早退）；Reviewer 给出可判别断言：close 窗口内断言 `PageIndex` 保持 3 | 转 SAFETY-9：补判别性断言并明确标注该用例的角色 |
+| R-003 | P2 | `ac2-eol-pin.md:72` 在交付提交中写入「SAFETY-8 独立 Review 已复核一致」——当时该 Review 尚未发生；结论现已被证实 | 转 SAFETY-9：改为「可供独立 Review 按此方式复核」或复审后回填 |
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@84b9f4319`（merge `task/REALUSE-DATA-SAFETY-8`，含 `5bea0ce4b` Review 报告提交）
+- 集成验证：`check.ps1` PASS (3 warnings)；`dotnet build` 0 警告 0 错误；`dotnet test` 396 通过 / 0 失败 / 7 跳过（403）
+- AC 判定：AC1 `MET`、AC2 `MET`、AC3 `MET`
+- 已知 P2：R-001 已闭环（删残留文件）；R-002 / R-003 转 SAFETY-9
+- 资源：worktree 保留（PRESERVE_REFERENCED）；负向对照临时日志已删除；用户数据零写操作
