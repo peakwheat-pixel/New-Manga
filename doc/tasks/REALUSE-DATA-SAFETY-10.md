@@ -65,13 +65,16 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `b02f4de05` | `cd79746e1ede265fd4bfc77cf584fd1cec8779de21e08c308b831b134d9b96fa` | CANONICAL |
+| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt` | `b02f4de05` | `09463db204791f968f38d0055cae871c6a996b48f148eacfb5025a8645ec2c28` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1 | `verification/REALUSE-DATA-SAFETY-10/README.md` | `b02f4de05` | `affbf77db9be88f46922a7a52ca42e6bd649c26c520e4aebb28f602603f712b5` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-10/resource-manifest.json`（schema_version 1）。`tmp/safety10-negctl-full.txt` 为负向对照临时日志，已删除。
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+
 
