@@ -10,7 +10,7 @@
 | 集成验证 | 通过 | build 0 警告/0 错误；test 394 通过 / 0 失败 / 7 跳过（401）；check.ps1 PASS |
 | REALUSE-DATA-SAFETY-7 → **11** | **全部 `done`**：7（`aaed145e9`）/ 8（`84b9f4319`）/ 9（`9aa6758b6`）/ 10（`8b15adbfe`）/ 11（`a1b82ffb9`） | 各 `doc/reviews/REALUSE-DATA-SAFETY-*-review.md`；证据 `verification/REALUSE-DATA-SAFETY-*/` |
 | REALUSE-DATA-SAFETY-12（收尾审计） | **done**：14 条 → 复核修正为 **17 条 P2**（当轮 5 + 转后续 12、0 悬挂） | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md`；Review `doc/reviews/REALUSE-DATA-SAFETY-12-review.md` |
-| 当前 Task | **FEA-GOV-1**（AD-003 独立 Review 收口 —— C-01b 冻结前置②） | `doc/tasks/FEA-GOV-1.md` |
+| 当前 Task | **FEA-GOV-2**（AD-002 责任表修订提案 —— C-01b 冻结前置③，提案待你确认） | `doc/tasks/FEA-GOV-2.md` |
 
 ## 新架构到哪
 
@@ -22,7 +22,7 @@
 | 契约清单草案 | 已吸收 r8；C-04c 已由 r4 §9.1 覆盖；G-01/G-03 关闭 | `doc/plan/FEA-01_CONTRACT_DRAFT.md` |
 | **C-01b 存储契约草案** | **v5，r5 独立复核 `approved`（P0×0 / P1×0 / P2×3 非阻断）**；r1→r5 共处置 P0×1、P1×3、P2×20；条款 SC-01…SC-39 覆盖 AD-003 §3.1–§3.8 全部 38 单元 | `doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md`；报告 `doc/reviews/FEA-C01b-r{1..5}.md` |
 | **C-07 端口清单** | 由代码生成：54 成员（`IReaderProgressSink` 1 + `IHostController` 47 + `IRunController` 6） | `doc/plan/FEA-C07_API_INVENTORY.md` |
-| 下一步（冻结前置） | ② AD-003 `G-REVIEW` 收口（FEA-GOV-1 进行中）；③ 用户确认 AD-002 责任表与哨兵口径；④ `check.ps1` PASS → 逐条冻结 C-02…C-12 | — |
+| 冻结前置 | ① C-01b r5 `approved` ✅；② AD-003 `G-REVIEW` → **`SATISFIED`**（FEA-GOV-1，`approved` 0 P0/0 P1/4 P2）✅；③ AD-002 责任表与哨兵口径**待你确认**（FEA-GOV-2 出提案）；④ `check.ps1` PASS ✅ | `doc/AD-003_...md` §5；`doc/reviews/FEA-GOV-1-ad003-review.md` |
 
 ## 待你拍板（可直接回 A/B/C）
 
@@ -118,3 +118,19 @@
 - **C-01b v5 第 5 轮极窄面复核 `approved`**（P0×0 / P1×0 / P2×3 非阻断已知限制：L-1 图例写法、L-2 依据链、L-3 变更记录归属）。覆盖 38/38、出处 40/40、无新增语义。**文本层面已达冻结前质量**。
 - 冻结前置仍未满足：② AD-003 `G-REVIEW`（-> **FEA-GOV-1 已开并派发独立复核**）；③ 用户确认 AD-002 责任表/哨兵；④ `check.ps1` PASS。
 - SAFETY 线：**SAFETY-6→11 全部 done + 12 收尾审计 done**；17 条 P2 全部闭合、0 悬挂。
+
+### 06:3x AD-003 独立复核 `approved`（FEA-GOV-1）
+- reviewer `c01b-reviewer`（独立上下文）对 AD-003 判 **`approved`**（P0×0 / P1×0 / P2×4 非阻断），六项判定 6 通过。
+- 关键实证：AD-002 的 LF blob 去掉 `504797ba7` 追加的 5 行横幅后，SHA-256 与变更前 `1180cdba7` **完全相同** → AD-003 §7「只追加未改写」为真；§4 的 12 项"未实现"全部实测 0 命中。
+- `G-REVIEW`：`ADDRESSED_PENDING_R2` → **`SATISFIED`**（并写明依据 2026-10-31 独立性裁决）。**C-01b 冻结前置② 解决**。
+- 披露：reviewer 同时是 C-01b r1–r5 复核者（存在确认倾向），但结论均从 AD-003 原文 + 代码实测重新取证。
+
+### 07:3x FEA-GOV-2 开卡（冻结前置③）
+- 开 **FEA-GOV-2**：起草 AD-002 `:28` 责任表行 + `:9-10` 横幅的**最小修订提案**（不直接改 AD-002，等用户确认）；并给出冻结前置③的确认清单。
+
+## SAFETY 线总结（供晨阅）
+
+- SAFETY-6 → 11 六个 Task + SAFETY-12 收尾审计**全部 `done` 并已集成**；`main` 上 `check.ps1` PASS。
+- **17 条 P2 全部闭合、0 悬挂**（当轮处置 5 + 转后续闭环 12）。
+- 关键行为修复：并发 NRE（SAFETY-7）、closing 门禁与判别性断言（SAFETY-8/9）、异常可见化（SAFETY-8）、证据链格式（SAFETY-9/10/11）。
+- 当前测试基线：**396 通过 / 0 失败 / 7 跳过（403）**。
