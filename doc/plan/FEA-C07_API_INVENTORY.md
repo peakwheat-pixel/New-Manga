@@ -2,13 +2,13 @@
 
 状态：**GENERATED / 草案依据 / 未冻结**
 生成日期：2026-11-01；生成时 HEAD：`e7e43543b`
-生成方式：解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块（成员名 + 返回类型）；**不是**手工枚举。
+生成方式：`python tools/generate_api_inventory.py`（解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块，输出成员名 + 返回类型）；**不是**手工枚举。重跑同一命令应得到同一集合。
 
 ## 用途
 
 C-07（应用端口与兼容面）要求「由代码生成的方法清单」，替换冻结文档中的「36」口径。本文件即该清单基线：
 
-- **命令契约数**（冻结文档的 36/57 口径）与 **C# 端口方法数** 是两个不同计数，不得互相替代；
+- **`IHostController` 方法数基线 36**（V11R §5 `:239`）与 **本清单实测 47**（含 11 个新增）是两个不同口径；「命令契约数」（冻结文档的 57）是第三种计数——三者不得互相替代；
 - 新增/删除端口方法时，同一 Task 内必须同步更新本清单；
 - `IHostController` 继承的接口方法按下表分别列出，实现方必须全部满足。
 
@@ -19,17 +19,19 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | IReaderProgressSink | 1 |
 | IHostController | 47 |
 | IRunController | 6 |
-| **合计** | **54** |
+| **合计** | **54**（另有 4 个非方法成员：`HostViewSnapshot Snapshot`、`event EventHandler? Changed`、`int StartRequests`、`string ExportDirectorySuggestion`，均属 `IHostController`） |
+
+**变更类别**：`IHostController` 的 47 个中，**36 个为 V11R §5 `:239` 基线**（签名不得变），**11 个为 FEA 期间新增**（additive；冻结后同样只允许追加）。逐成员的新增/基线标注由实现 Task 在该行落地时补（本文档暂不逐行标）。
 
 ## IReaderProgressSink
 
-| # | 方法 | 返回类型 |
+| # | 方法 | 返回类型（参数以代码为权威，本文档不列） |
 |---|---|---|
 | 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
 
 ## IHostController
 
-| # | 方法 | 返回类型 |
+| # | 方法 | 返回类型（参数以代码为权威，本文档不列） |
 |---|---|---|
 | 1 | `StartAsync` | `Task` |
 | 2 | `RefreshBooksAsync` | `Task` |
@@ -81,7 +83,7 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 
 ## IRunController
 
-| # | 方法 | 返回类型 |
+| # | 方法 | 返回类型（参数以代码为权威，本文档不列） |
 |---|---|---|
 | 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
 | 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
@@ -92,6 +94,6 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 
 ## 与 C-07 冻结面的关系
 
-- 本清单是**基线**：冻结时以本文件 + 生成脚本为准；
-- 「旧签名不变」的可验证基线 = 反复运行生成脚本得到同一集合；
+- 本清单是**基线**：冻结时以本文件 + `tools/generate_api_inventory.py` 的输出为准；
+- 「旧签名不变」的可验证基线 = 反复运行 `python tools/generate_api_inventory.py --check` 得到同一集合（`--check` 会对比本文档的计数行）；
 - 能力握手与 request-scoped error（C-07 其余内容）不在本文件展开。
