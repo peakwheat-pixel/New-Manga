@@ -110,6 +110,7 @@ REALUSE-DATA-SAFETY-5 的核对结论：9 条里修了 6 条，剩下 4 条明�
 | E-AC2-DATA | AC2 | `verification/REALUSE-DATA-SAFETY-6/ac2-derived-realdata.json` | `fb5065013` | `22f9793f071de4173aed7bad4017d54edf8261692a14242694a4a17bd2da0ddc` | CANONICAL |
 | E-AC3-DOC | AC3 | `verification/REALUSE-DATA-SAFETY-6/ac3-options.md` | `fb5065013` | `9c27d477301e090e79cb48a3fafa892b86ddfce80e41723826cd2acfef5c950b` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-6/README.md` | `fb5065013` | `d199f4843dea5c3c6b25ee293f1b54b93ce58bdb82fa9960c4eb6676041ca3ff` | CANONICAL |
+| E-GOV-CHECK | Gate（治理检查） | `verification/REALUSE-DATA-SAFETY-6/governance-check.txt` | `b94dc3d86` | `bc97d7a78e4db6e84899c415bc82a27e45b8874c16b31e71baf571c69e7b592e` | CANONICAL |
 
 ## Resource Manifest
 
