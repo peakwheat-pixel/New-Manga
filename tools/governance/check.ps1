@@ -349,6 +349,18 @@ function Hide-NonLinkContexts([string]$Line) {
     return -join $chars
 }
 
+# A block-level HTML construct may start after at most three spaces of
+# indentation (CommonMark allows 0-3); anything else is inline content.
+function Test-BlockHtmlStart([string]$Text, [int]$Position) {
+    $lineStart = $Position
+    while ($lineStart -gt 0 -and [int][char]$Text[$lineStart - 1] -ne 10) { $lineStart-- }
+    if (($Position - $lineStart) -gt 3) { return $false }
+    for ($k = $lineStart; $k -lt $Position; $k++) {
+        if ([int][char]$Text[$k] -ne 32) { return $false }
+    }
+    return $true
+}
+
 # A paragraph whose inline-code backticks open on one line and close on a later
 # line forms a CommonMark code span that spans lines. Content inside such a span
 # is not a link or authority field, so mask it before looking for assertions.
@@ -395,19 +407,37 @@ function Mask-ParagraphCrossLineCode([string[]]$Lines, [hashtable]$BlockState) {
                 continue
             }
         }
-        # Only a line-start block opener suppresses inline parsing. An inline
-        # <pre>/<code> tag does not: CommonMark keeps it inline, so backticks
-        # between such tags still open and close code spans.
-        if (($i -eq 0 -or [int][char]$chars[$i - 1] -eq 10) -and [int][char]$chars[$i] -eq 60) {
-            if ($joined.Substring($i).StartsWith('<!--', [StringComparison]::Ordinal)) {
-                $BlockState.Comment = $true
-                $i += 4
-                continue
+        # HTML comments suppress inline parsing wherever they start.
+        if ([int][char]$chars[$i] -eq 60 -and
+            $joined.Substring($i).StartsWith('<!--', [StringComparison]::Ordinal)) {
+            $BlockState.Comment = $true
+            $i += 4
+            continue
+        }
+        # Block-level HTML suppresses inline parsing; an inline <pre>/<code> tag
+        # does not. A type-1 <pre> may interrupt a paragraph, while a type-7
+        # complete <code> tag line only starts a block at the paragraph start.
+        if ([int][char]$chars[$i] -eq 60 -and (Test-BlockHtmlStart $joined $i)) {
+            $blockTag = ''
+            $openLength = 0
+            $openPre = [regex]::Match($joined.Substring($i), '^(?i:<\s*(pre)(?=[\s>/]|$))')
+            if ($openPre.Success) {
+                $blockTag = 'pre'
+                $openLength = $openPre.Length
+            } else {
+                $firstLineEnd = $joined.IndexOf("`n", [StringComparison]::Ordinal)
+                if ($firstLineEnd -lt 0) { $firstLineEnd = $chars.Length }
+                if ($i -lt $firstLineEnd) {
+                    $openCode = [regex]::Match($joined.Substring($i), '^(?i:<\s*(code)(?:\s[^>]*)?>[ \t]*(?=\n|$))')
+                    if ($openCode.Success) {
+                        $blockTag = 'code'
+                        $openLength = $openCode.Length
+                    }
+                }
             }
-            $open = [regex]::Match($joined.Substring($i), '^(?i:<\s*pre(?=[\s>/]|$))')
-            if ($open.Success) {
-                $BlockState.HtmlTag = 'pre'
-                $i += $open.Length
+            if ($blockTag) {
+                $BlockState.HtmlTag = $blockTag
+                $i += $openLength
                 continue
             }
         }

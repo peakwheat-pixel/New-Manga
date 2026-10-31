@@ -275,6 +275,47 @@ class ArchitectureAssertions(unittest.TestCase):
                             lambda text: text.replace(
                                 field, "历史说明：`未闭合\n" + heading + "\n" + field, 1), True)
 
+    def test_inline_html_comment_backticks_form_code_span(self):
+        # An HTML comment suppresses inline parsing wherever it starts, so a
+        # backtick inside it never opens a code span of its own.
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        variants = {
+            "single": f"历史说明 <!-- ` --> 之后 `开启\n{field}\n结束`",
+            "double": f"历史说明 <!-- `` --> 之后 ``开启\n{field}\n结束``",
+        }
+        for name, hidden in variants.items():
+            with self.subTest(name=name):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, hidden, 1), False)
+
+    def test_inline_html_comment_backtick_does_not_swallow_next_field(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        hidden = f"历史说明 <!-- ` --> 之后\n{field}"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, hidden, 1), True)
+
+    def test_indented_block_openers_suppress_inline_parsing(self):
+        # CommonMark allows 0-3 leading spaces for block-level HTML openers.
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        variants = {
+            "pre-1sp": f"历史说明：\n <pre>\n`示例\n</pre>\n{field}",
+            "pre-2sp": f"历史说明：\n  <pre>\n`示例\n</pre>\n{field}",
+            "pre-3sp": f"历史说明：\n   <pre>\n`示例\n</pre>\n{field}",
+            "comment-2sp": f"历史说明：\n  <!-- \n`示例 -->\n{field}",
+        }
+        for name, hidden in variants.items():
+            with self.subTest(name=name):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, hidden, 1), True)
+
+    def test_paragraph_leading_code_block_suppresses_inline_parsing(self):
+        # A complete <code> tag line starting a paragraph is a type-7 HTML
+        # block; backticks inside it are not inline delimiters.
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        hidden = f"历史说明：\n\n<code>\n`示例\n</code>\n{field}"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, hidden, 1), True)
+
     def test_cross_line_code_span_in_prose_is_not_flagged(self):
         self.mutate("AGENTS.md", lambda text: text + "\n\n历史示例：`跨行\n代码示例`。\n", True)
 
