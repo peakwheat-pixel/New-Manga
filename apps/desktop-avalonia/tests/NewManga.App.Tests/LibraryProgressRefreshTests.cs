@@ -297,9 +297,13 @@ public sealed class LibraryProgressRefreshTests
     // ------------------------------------------------------------------
 
     /// <summary>
-    /// F-005: while <c>CloseAsync</c> waits for the in-flight save, a page turn that slips in must
-    /// not start a new save (which would re-arm <c>_isSaving</c> and skip the closing authoritative
-    /// re-read). Exactly one closing re-read must happen.
+    /// F-005: while <c>CloseAsync</c> waits for the in-flight save, a page turn that slips in must be
+    /// ignored (no new save) and exactly one closing authoritative re-read must happen.
+    ///
+    /// <para>Discriminating assertion (REALUSE-DATA-SAFETY-9 R-002): while the close window is open,
+    /// <c>PageIndex</c> must stay at 3. Without the <c>_isClosing</c> gate the late
+    /// <c>GoToAsync(5)</c> moves it to 5 before the save gate is released — so the pre-F-005 code
+    /// fails this assertion even though its save pipeline also short-circuits on <c>_isSaving</c>.</para>
     /// </summary>
     [AvaloniaFact]
     public async Task ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread()
@@ -313,11 +317,15 @@ public sealed class LibraryProgressRefreshTests
 
         var firstNavigation = library.Reader.GoToAsync(3);
         await controller.SaveGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Equal(3, library.Reader.PageIndex);
 
         var closing = library.Reader.CloseAsync();
 
         // A page turn during the close window: must be ignored, not start a second save.
         var lateNavigation = library.Reader.GoToAsync(5);
+
+        // F-005 discriminator: pre-gate code moves PageIndex to 5 here; the gate keeps it at 3.
+        Assert.Equal(3, library.Reader.PageIndex);
 
         gate.SetResult(true);
         await firstNavigation;

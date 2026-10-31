@@ -36,14 +36,16 @@ finally { _isClosing = false; }
 
 ## 验证
 
-新增确定性用例 `ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread`：
+新增用例 `ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread`：
 
 - 用 gate 挂起第一个保存；
 - 在 `CloseAsync` 等待窗口内调用 `GoToAsync(5)`（模拟用户翻页）；
-- 断言：`ReaderLoadCount == loadsBefore + 1`（**恰好一次**权威重读）、`IsOpen == false`、`LastSaveResult == Saved`。
+- **判别性断言（REALUSE-DATA-SAFETY-9 R-002 补强）**：close 窗口内 `PageIndex` 必须保持 3
+  （pre-F-005 代码会先移到 5）——该断言在旧代码上失败，见 `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md`；
+- 回归栅栏断言：`ReaderLoadCount == loadsBefore + 1`（**恰好一次**权威重读）、`IsOpen == false`、`LastSaveResult == Saved`。
 
 结果：filtered **7/7**（原 6 + 新用例），EXIT=0；全量 **396 通过 / 0 失败 / 7 跳过（403）**，EXIT=0。
-证据：`ac1-fix-tests.txt`。
+证据：`ac1-fix-tests.txt`（SAFETY-8）与 `verification/REALUSE-DATA-SAFETY-9/ac1-fix-tests.txt`（SAFETY-9 判别性补强）。
 
 ## 边界
 

@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-9
 title: SAFETY-8 Review P2 收尾——判别性断言与证据措辞
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-8_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-8
-base_commit: 84b9f4319
-branch: null
-worktree: null
+base_commit: 5b888cd70
+branch: task/REALUSE-DATA-SAFETY-9
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-9
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -29,6 +29,7 @@ allowed_paths:
   - apps/desktop-avalonia/tests/**
   - verification/REALUSE-DATA-SAFETY-9/**
   - verification/REALUSE-DATA-SAFETY-7/**
+  - verification/REALUSE-DATA-SAFETY-8/**
 ---
 
 # REALUSE-DATA-SAFETY-9：SAFETY-8 Review 的 2 条 P2
@@ -44,8 +45,8 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 R-002 判别性断言**：在 close 窗口内断言 `PageIndex` 保持 3（`GoToAsync` 被 `_isClosing` 忽略）；用 pre-F-005 生产文件做负向对照，证明该断言在旧代码上失败（EXIT=1）；在 `ac3-closing-gate.md` 明确标注该用例角色（判别性 vs 回归栅栏）。 <<PARTIAL: 待实现>>
-- [ ] **AC2 R-003 措辞修正**：`ac2-eol-pin.md` 改为「可供独立 Review 按此方式复核」，或引用已发生的 SAFETY-8 Review 结论并标注 commit。 <<PARTIAL: 待实现>>
+- [x] **AC1 R-002 判别性断言**：在 close 窗口内断言 `PageIndex` 保持 3（`GoToAsync` 被 `_isClosing` 忽略）；用 pre-F-005 生产文件做负向对照，证明该断言在旧代码上失败（EXIT=1）；在 `ac3-closing-gate.md` 明确标注该用例角色（判别性 vs 回归栅栏）。 <<MET>>
+- [x] **AC2 R-003 措辞修正**：`ac2-eol-pin.md` 改为只记录已发生的 Review 结论并引用两份已入库报告。 <<MET>>
 
 ## 禁止范围
 
@@ -55,8 +56,10 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 交付版 + pre-F-005 副本分别跑判别用例 | net9.0 | NOT_RUN | 待补 |
-| AC2 | 文本核对 | 只读 | NOT_RUN | 待补 |
+| AC1 交付版 | filtered 判别用例 | net9.0 | **1/1 通过**，EXIT=0 | `ac1-discriminating.md` |
+| AC1 负向 | pre-F-005 生产文件（`_isClosing` 0 次）+ 判别用例 | net9.0 | **1 失败 / 0 通过，EXIT=1** | `ac1-discriminating.md` |
+| AC1 回归 | 构建 + filtered 7/7 + 全量 | net9.0 | **0 警告 / 0 错误**；filtered **7/7**；全量 **396/0/7（403）**，EXIT=0 | `ac1-fix-tests.txt` |
+| AC2 | 文本核对 | 只读 | 两处引用均指向已入库 Review 报告 | `ac2-wording.md` |
 
 ## Canonical Evidence
 
