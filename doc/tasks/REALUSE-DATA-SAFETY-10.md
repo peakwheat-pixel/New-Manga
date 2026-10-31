@@ -69,6 +69,7 @@ allowed_paths:
 | E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt` | `b02f4de05` | `09463db204791f968f38d0055cae871c6a996b48f148eacfb5025a8645ec2c28` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1 | `verification/REALUSE-DATA-SAFETY-10/README.md` | `b02f4de05` | `affbf77db9be88f46922a7a52ca42e6bd649c26c520e4aebb28f602603f712b5` | CANONICAL |
 | E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-10/resource-manifest.json` | `9ee1d65aa` | `076f8f50febe4de8bdb08c2203db61d42a5878a9ed74a8d58e289c8e1f65f661` | CANONICAL |
+| E-AC1-LOG-FULL | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt` | `a1b82ffb9` | `e9c55c8e585e0b011b2ef99901d82e6c41f8493be9662cfc744f5384b5a8a6e4` | CANONICAL |
 
 ## Resource Manifest
 

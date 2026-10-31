@@ -89,3 +89,9 @@
 - **C-01b 存储契约草案**（`doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md`）：AD-003 §3.1–§3.8 → SC-01…SC-37。
 - **C-01b r1 独立复核 = changes_requested**（P0×1 / P1×7 / P2×6）：P0 = SC-01 验证列严于 AD-003 §3.2（会驱动删除既有 derived）。**v2 已修订提交**（`e7e43543b`）：SC-01 口径收窄、SC-03/08/19 重标状态、§3.8 补二进制（SC-38）/数据（SC-39）、[现行] 补文件:行证据、冻结条件补 AD-003 `G-REVIEW` 与 ADJ-001 `G-DELETE-CONTRACT`。待 r2。
 - **SAFETY-10**：实现提交 `df944357e`（转录补全 + 修复 Codex 首轮 RV-001 pin / RV-002 表格行）；Codex 第二轮复审运行中（其 build/test 受沙箱 NuGet 限制，由 Lead 集成验证覆盖）。
+
+### 03:0x SAFETY-11 落地 + C-01b v2 进入 r2
+- **SAFETY-10 收口**：最终 Review（durable teammate）`approved`（0 P0 / 0 P1 / 1 P2），集成 `main@8b15adbfe`；R-102 开 SAFETY-11。
+- **SAFETY-11（R-102）**：完整五步负向对照重跑（覆盖 pre-F-005 → build → **失败 EXIT=1**「Expected 3 / Actual 5 @ :328」→ 恢复 → **通过 EXIT=0**），全程原始日志写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt`（217 行）；`ac1-discriminating.md` 引用已更新。实现 HEAD `0726dab70`，`check.ps1` PASS。**Review 审查中**（task-10 / `safety9-reviewer`）。
+- **C-01b v2**：处置 r1 全部 findings（SC-01 口径、§3.8 补 2 行、状态重标、验证列补文件:行、冻结条件补 AD-003 `G-REVIEW`/ADJ-001 `G-DELETE-CONTRACT`），提交 `e7e43543b`（`cacd6239…`）。**r2 复核中**（`c01b-reviewer`）。
+- **C-07 端口清单**：由代码生成 `doc/plan/FEA-C07_API_INVENTORY.md`（54 成员：IReaderProgressSink 1 + IHostController 47 + IRunController 6），提交 `063f35c01`。

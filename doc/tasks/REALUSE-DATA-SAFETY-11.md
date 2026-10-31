@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-11
 title: SAFETY-10 Review R-102 收尾——负向对照日志范围补全
 kind: quality
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_REALUSE-DATA-SAFETY-10_review_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety11-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-10
 base_commit: 7ff5aa4b1
 branch: task/REALUSE-DATA-SAFETY-11
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-11
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a1b82ffb9
+delivery_head: fb5700ceb
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-11
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-11.md
@@ -74,6 +74,26 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 
 资源收口记录：`verification/REALUSE-DATA-SAFETY-11/resource-manifest.json`（schema_version 1）。worktree 保留（PRESERVE_REFERENCED）；本 Task 无新增临时文件需删除。
 
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-11-review.md](../reviews/REALUSE-DATA-SAFETY-11-review.md)
+- Reviewer：`safety11-reviewer`（Agent Teams durable teammate task-10，未参与实现）
+- 被审 head：`0726dab70`；结论：**approved**（P0=0 / P1=0 / P2=2 open，不阻断）
+- 复核：完整日志 217 行五步自洽（EXIT 0/0/1/—/0+0）、时间线自洽（base 02:52:56 < 日志 02:53:12 < 实现 02:55:02）；5 条 pin 5/5 MATCH
+- 复跑：build 0/0、filtered 7/7、check.ps1 PASS (3 warnings)
+
+## Known P2（open → 本次已处置）
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| R-102-A | P2 | `ac1-discriminating.md` 执行位置/时间仍是旧 run（SAFETY-10 worktree、02:28），与所引完整日志（SAFETY-11、02:53）矛盾 | **已处置**：标题/执行位置/命令段改为 SAFETY-11 + 02:53:12（提交 `e2eb824e0`） |
+| R-102-B | P2 | SAFETY-11 卡 AC1 行 `[x]` 与 `<<PARTIAL: 待实现>>` 并存 | **已处置**：改为 `<<MET>>`（提交 `e2eb824e0`） |
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@a1b82ffb9`（merge `task/REALUSE-DATA-SAFETY-11`）
+- 集成验证：`check.ps1` PASS (3 warnings)；`dotnet build` 0/0；`dotnet test` 396 通过 / 0 失败 / 7 跳过（403）
+- AC 判定：AC1 `MET`；R-102-A/R-102-B 已在集成前处置
+- 上游遗留：SAFETY-10 卡在 main 上未同步 done → 已补正（`6f23b8ce5`），并为其登记 `E-AC1-LOG-FULL` pin
+- 资源：worktree 保留；本 Task 无临时文件；用户数据零写操作
