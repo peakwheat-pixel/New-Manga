@@ -27,7 +27,7 @@
 | 命令 | 形状 | 新增字段 |
 |---|---|---|
 | **单条** `PermanentlyDeleteBook` | `{book_id, confirm_permanent_delete: true}` + **`inventory_digest: string`** | digest 绑定**单个** book 的预览 |
-| **批量** `PermanentlyDeleteBooks` | `{book_ids[1..20], confirmed_book_ids[1..20], confirm_count, confirm_permanent_delete: true}` + **`inventory_digests: { [bookId]: string }`** | digest **逐书**绑定；缺失任一 → `INVALID_REQUEST` |
+| **批量** `PermanentlyDeleteBooks` | `{book_ids[1..20], confirmed_book_ids[1..20], confirm_count, confirm_permanent_delete: true}` + **`inventoryDigest: string`（集合级）+ `inventory_digests: { [bookId]: string }`（逐书）** | 集合级 digest 绑定**有序 `book_ids`**（PD-02 原文）；逐书 map 用于逐项诊断；**两者都校验**，任一缺失 → `INVALID_REQUEST`，任一不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
 
 **不得**用单一 `inventory_digest` 字段同时服务两种形状；`confirmed_book_ids`/`confirm_count` 语义保持（§5.11.1）。
 
@@ -37,11 +37,11 @@
 |---|---|
 | 方向 | Host → Core |
 | 入参（closed shape） | `{ bookIds: BookId[1..20] }`（非空、去重、**上限 20**，与 M2-C1 §5.11.2 一致） |
-| 出参（closed shape） | `{ inventoryDigests: { [bookId]: string }, computedAt: string(ISO-8601), items: DeletePreviewItem[] }` |
-| `DeletePreviewItem` | `{ bookId, title, protection: { lockCount, currentRevisionId, pinnedRevisionIds[], activeRunIds[], draftPageCount, manualRegionCount }, contentSummary: { chapters, pages, artifacts, deletedFiles, deletedBytes }, sharedFileRefs: { fileId, otherProjectCount }[] }` |
+| 出参（closed shape） | `{ inventoryDigest: string, inventoryDigests: { [bookId]: string }, computedAt: string(ISO-8601), items: DeletePreviewItem[] }` |
+| `DeletePreviewItem` | `{ bookId, title（**仅展示用；不参与 digest 计算或确认校验**）, protection: { lockCount, currentRevisionId, pinnedRevisionIds[], activeRunIds[], draftPageCount, manualRegionCount }, contentSummary: { chapters, pages, artifacts, deletedFiles, deletedBytes }, sharedFileRefs: { fileId, otherProjectCount }[] }` |
 | **PD-01 三项**（必须） | ① `protection.manualRegionCount`（人工修改区域数）；② `protection.draftPageCount`（活动草稿页数）；③ `contentSummary.deletedFiles` + `deletedBytes`（将被删除的 managed/派生文件数与字节量） |
 | 语义 | **只读**：零副作用、不缓存、不预解锁、不写 DB、不触原文件 |
-| digest 格式 | `sha256:<64 hex>`（小写）；格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
+| digest 格式 | `sha256:<64 hex>`（小写）；**集合级 digest 算法**：对 `book_ids` 按调用方顺序拼接各 book 的逐书 digest（`sha256:` 前缀去掉、小写 hex），再整体 `sha256`；逐书 digest = 该 book 的保护+内容清单的 sha256。格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
 | 版本 | 新增命令按 **minor** 递增（`2.11`）；旧 Core → `PROTOCOL_VERSION_UNSUPPORTED` |
 
 ### 2.2 `inventory_digest` 校验（与 PD-02/PD-04）
@@ -54,7 +54,7 @@
 | 时机 | 一次预览 → 一次确认之间有效；目标/保护集合/文件清单任一变化即失效 |
 | 兼容 | `confirm_permanent_delete: true` 含义不变；digest 为**追加**字段；旧 Host 不传 → `INVALID_REQUEST`（fail-closed，不降级软删） |
 
-### 2.3 错误码表（**完整 12 行 + 2 新增**）
+### 2.3 错误码表（**12 行稳定 + 2 host 级/兜底 + 2 新增**）
 
 沿用（M2-C1 §5.11.3 `:745-760` 逐字）：
 
@@ -89,7 +89,7 @@
 | 位置 | 需追加 |
 |---|---|
 | `PermanentlyDeleteBookErrorView.code` | `BOOK_DELETE_STALE_PREVIEW`、`BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` |
-| `PermanentlyDeleteBooksErrorView.code` | 同上（批量逐书 digest 不匹配时返回单条级码，或整体 `BOOK_DELETE_STALE_PREVIEW`） |
+| `PermanentlyDeleteBooksErrorView.code` | 同上；批量 digest 不匹配时返回**顶层 `BOOK_DELETE_STALE_PREVIEW`** + `phase:"preflight"` + 逐项 `items[]`（与 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED` 同形状） |
 | 批量 `items[].error_code` 白名单 | 追加两码 |
 | §5.11.3 表 | 追加两行（本草案 §2.3） |
 
