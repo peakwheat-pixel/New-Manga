@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-GOV-9](tasks/FEA-GOV-9.md) `in_progress`（夜班收尾与全域一致性核验）。
-- 上一 Task：FEA-GOV-8 `done`（**冻结矩阵 `approved`**：12 行 × 8 步 × 5 Gate）。
+- 当前 Task：[FEA-GOV-10](tasks/FEA-GOV-10.md) `in_progress`（C-07 API inventory 独立复核——契约清单最后一份）。
+- 上一 Task：FEA-GOV-9 `done`（夜班收尾核验 `approved`；晨报定稿）。
 - 下一候选：MA-11 / MA-20 裁决后另立实施 Task；AC2 去重属资源通道契约演进（`G-CONTRACT` OPEN）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 历史基线：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。

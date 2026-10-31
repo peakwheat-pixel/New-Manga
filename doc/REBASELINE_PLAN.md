@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-GOV-9（夜班收尾与一致性核验，in_progress）
+当前 DAG：FEA-GOV-10（C-07 API inventory 复核，in_progress）
 
 ## 历史快照（终态节点，非当前 DAG）
 
