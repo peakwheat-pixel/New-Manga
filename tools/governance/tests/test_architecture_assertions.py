@@ -141,6 +141,77 @@ class ArchitectureAssertions(unittest.TestCase):
             "[AD-003 存储架构补充决策](doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)",
             "历史说明 AD-003_REFERENCED_SOURCE_ARCHITECTURE.md", 1), False)
 
+    def test_agents_rejects_link_in_code_or_image(self):
+        pattern = r"(\[AD-003[^\]]*\]\(doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE\.md\))"
+        variants = {
+            "code_span": lambda link: f"`{link}`",
+            "double_code_span": lambda link: f"``{link}``",
+            "image": lambda link: f"!{link}",
+            "escaped_link": lambda link: f"\\{link}",
+            "html_code": lambda link: f"<code>{link}</code>",
+            "html_pre_attributes": lambda link: f'<pre class="sample">{link}</pre>',
+            "html_attribute": lambda link: f'<span title="{link}">example</span>',
+            "html_attribute_with_gt": lambda link: f'<span title="> {link}">example</span>',
+            "nested_image_alt": lambda link: f"![example {link}](cover.png)",
+        }
+        for name, wrap in variants.items():
+            with self.subTest(name=name):
+                self.mutate("AGENTS.md", lambda text: re.sub(
+                    pattern, lambda m: wrap(m.group(1)), text, count=1), False)
+
+    def test_html_code_blocks_cannot_declare_sentinel(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        variants = {
+            "pre": f"<pre>\n{field}\n</pre>",
+            "code": f"<code>\n{field}\n</code>",
+            "uppercase_with_attributes": f'<PRE class="sample">\n{field}\n</PRE>',
+            "multiline_open": f'<pre\n class="sample">\n{field}\n</pre>',
+        }
+        for name, replacement in variants.items():
+            with self.subTest(name=name):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, replacement, 1), False)
+
+    def _cross_line(self, relative, needle, replacement=None):
+        def change(text):
+            base = text.replace("\r\n", "\n")
+            index = base.index(needle)
+            line_start = base.rfind("\n", 0, index) + 1
+            line_end = base.find("\n", index)
+            line = base[line_start:line_end]
+            if replacement is not None:
+                line = line.replace(needle, replacement, 1)
+            return base[:line_start] + "`跨行示例\n" + line + "`\n" + base[line_end + 1:]
+        self.mutate(relative, change, False)
+
+    def test_cross_line_code_span_link_is_rejected(self):
+        self._cross_line("AGENTS.md", "当前唯一继续演进的产品架构为")
+
+    def test_cross_line_code_span_image_is_rejected(self):
+        link = "[AD-003 存储架构补充决策](doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)"
+        image = "![AD-003 图](doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)"
+        self._cross_line("AGENTS.md", link, image)
+
+    def test_cross_line_code_span_sentinel_is_rejected(self):
+        self._cross_line("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                         f"Architecture sentinel: `{SENTINEL}`")
+
+    def test_cross_line_code_span_in_prose_is_not_flagged(self):
+        self.mutate("AGENTS.md", lambda text: text + "\n\n历史示例：`跨行\n代码示例`。\n", True)
+
+    def test_historical_inline_code_does_not_hide_real_link(self):
+        fake = "`[AD-003 example](doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)`"
+        self.mutate("AGENTS.md", lambda text: text.replace(
+            "与 [AD-003", f"与 {fake} [AD-003", 1), True)
+
+    def test_historical_html_examples_do_not_hide_real_sentinel(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        variants = ("历史示例 `<pre>` 不表示本文开始代码块。\n", "```text\n<pre>\n```\n")
+        for example in variants:
+            with self.subTest(example=example):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, example + field, 1), True)
+
     def test_duplicate_authority_row_is_rejected(self):
         def duplicate(text):
             lines = text.splitlines()

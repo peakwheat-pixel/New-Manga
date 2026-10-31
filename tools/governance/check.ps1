@@ -274,8 +274,110 @@ foreach ($file in $selectedFiles) {
 $architecture = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy'
 $architectureCurrent = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource'
 
-# Only unquoted Markdown outside HTML comments and fenced code can declare an
-# authority field. Historical prose remains outside this mechanical check.
+# Mask inline code with spaces so callers can inspect Markdown syntax without
+# accepting examples as links. An unmatched delimiter masks the remainder.
+function Hide-InlineCode([string]$Line) {
+    $masked = [Text.StringBuilder]::new()
+    $delimiterLength = 0
+    $i = 0
+    while ($i -lt $Line.Length) {
+        if ([int][char]$Line[$i] -eq 96) {
+            $start = $i
+            while ($i -lt $Line.Length -and [int][char]$Line[$i] -eq 96) { $i++ }
+            $length = $i - $start
+            if ($delimiterLength -eq 0) { $delimiterLength = $length }
+            elseif ($delimiterLength -eq $length) { $delimiterLength = 0 }
+            [void]$masked.Append((' ' * $length))
+        } else {
+            if ($delimiterLength -eq 0) { [void]$masked.Append($Line[$i]) }
+            else { [void]$masked.Append(' ') }
+            $i++
+        }
+    }
+    return $masked.ToString()
+}
+
+# Link-shaped text in HTML tag attributes and Markdown image descriptions is
+# not a navigable link. Mask both contexts while preserving character offsets.
+function Hide-NonLinkContexts([string]$Line) {
+    $chars = (Hide-InlineCode $Line).ToCharArray()
+    $inTag = $false
+    $quote = 0
+    $i = 0
+    while ($i -lt $chars.Length) {
+        $value = [int][char]$chars[$i]
+        if ($inTag) {
+            if ($quote -ne 0) {
+                if ($value -eq $quote) { $quote = 0 }
+            } elseif ($value -eq 34 -or $value -eq 39) { $quote = $value }
+            elseif ($value -eq 62) { $inTag = $false }
+            $chars[$i] = [char]32
+            $i++
+        } elseif ($value -eq 60 -and $i + 1 -lt $chars.Length -and
+                  [string]$chars[$i + 1] -cmatch '[A-Za-z/!?]') {
+            $inTag = $true
+            $chars[$i] = [char]32
+            $i++
+        } elseif ($value -eq 33 -and $i + 1 -lt $chars.Length -and [int][char]$chars[$i + 1] -eq 91) {
+            $depth = 0
+            $chars[$i] = [char]32
+            $i++
+            while ($i -lt $chars.Length) {
+                $value = [int][char]$chars[$i]
+                if ($value -eq 91) { $depth++ }
+                elseif ($value -eq 93) { $depth-- }
+                $chars[$i] = [char]32
+                $i++
+                if ($depth -eq 0) { break }
+            }
+        } else { $i++ }
+    }
+    return -join $chars
+}
+
+# A paragraph whose inline-code backticks open on one line and close on a later
+# line forms a CommonMark code span that spans lines. Content inside such a span
+# is not a link or authority field, so mask it before looking for assertions.
+# Same-line spans keep their original text (sentinel values are backtick-wrapped
+# by design); only spans that actually cross a line break are masked.
+function Mask-ParagraphCrossLineCode([string[]]$Lines) {
+    if ($Lines.Count -le 1) { return ,$Lines }
+    $joined = [string]::Join("`n", $Lines)
+    $chars = $joined.ToCharArray()
+    $i = 0
+    while ($i -lt $chars.Length) {
+        if ([int][char]$chars[$i] -eq 96) {
+            $start = $i
+            while ($i -lt $chars.Length -and [int][char]$chars[$i] -eq 96) { $i++ }
+            $length = $i - $start
+            $closeStart = -1
+            $closeEnd = -1
+            $j = $i
+            while ($j -lt $chars.Length) {
+                if ([int][char]$chars[$j] -eq 96) {
+                    $m = $j
+                    while ($m -lt $chars.Length -and [int][char]$chars[$m] -eq 96) { $m++ }
+                    if (($m - $j) -eq $length) { $closeStart = $j; $closeEnd = $m; break }
+                    $j = $m
+                } else { $j++ }
+            }
+            if ($closeStart -ge 0) {
+                if ($joined.Substring($start, $closeEnd - $start).Contains("`n")) {
+                    for ($k = $start; $k -lt $closeEnd; $k++) {
+                        # Keep line breaks so the masked paragraph keeps its line structure.
+                        if ([int][char]$chars[$k] -ne 10 -and [int][char]$chars[$k] -ne 13) { $chars[$k] = [char]32 }
+                    }
+                }
+                $i = $closeEnd
+            }
+        } else { $i++ }
+    }
+    return (-join $chars) -split "`n"
+}
+
+# Only unquoted Markdown outside HTML comments, fenced code, HTML pre/code and
+# multi-line inline code spans can declare an authority field. Historical prose
+# remains outside this check.
 function Get-AuthorityLines([string]$Relative) {
     $path = Join-Path $repoRoot $Relative
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
@@ -287,21 +389,61 @@ function Get-AuthorityLines([string]$Relative) {
     $inFence = $false
     $fenceChar = ''
     $fenceLength = 0
+    $htmlCodeTag = ''
+    $visibleLines = [System.Collections.Generic.List[string]]::new()
     foreach ($line in ($text -split '\r?\n')) {
-        $opening = [regex]::Match($line, '^ {0,3}(`{3,}|~{3,})')
-        if ($opening.Success) {
-            $marker = $opening.Groups[1].Value
-            if (-not $inFence) {
-                $inFence = $true
-                $fenceChar = $marker.Substring(0, 1)
-                $fenceLength = $marker.Length
-            } elseif ($marker.Substring(0, 1) -ceq $fenceChar -and $marker.Length -ge $fenceLength -and
-                      $line.Substring($opening.Length).Trim().Length -eq 0) {
-                $inFence = $false
+        if (-not $htmlCodeTag) {
+            $opening = [regex]::Match($line, '^ {0,3}(`{3,}|~{3,})')
+            if ($opening.Success) {
+                $marker = $opening.Groups[1].Value
+                if (-not $inFence) {
+                    $inFence = $true
+                    $fenceChar = $marker.Substring(0, 1)
+                    $fenceLength = $marker.Length
+                } elseif ($marker.Substring(0, 1) -ceq $fenceChar -and $marker.Length -ge $fenceLength -and
+                          $line.Substring($opening.Length).Trim().Length -eq 0) {
+                    $inFence = $false
+                }
+                $visibleLines.Add('')
+                continue
             }
-            continue
+            if ($inFence) { $visibleLines.Add(''); continue }
         }
-        if (-not $inFence) { $line }
+
+        $visible = [Text.StringBuilder]::new()
+        $remaining = $line
+        while ($remaining.Length -gt 0) {
+            if ($htmlCodeTag) {
+                $close = [regex]::Match($remaining, '(?i)</\s*' + [regex]::Escape($htmlCodeTag) + '\s*>')
+                if (-not $close.Success) { break }
+                $remaining = $remaining.Substring($close.Index + $close.Length)
+                $htmlCodeTag = ''
+            } else {
+                # Mask inline code only for finding tags; retain the original
+                # text, including backtick-wrapped sentinel values, in output.
+                $masked = Hide-InlineCode $remaining
+                $open = [regex]::Match($masked, '(?i)<\s*(pre|code)(?=[\s>/]|$)')
+                if (-not $open.Success) { [void]$visible.Append($remaining); break }
+                [void]$visible.Append($remaining.Substring(0, $open.Index))
+                $htmlCodeTag = $open.Groups[1].Value
+                $remaining = $remaining.Substring($open.Index + $open.Length)
+            }
+        }
+        $visibleLines.Add($visible.ToString())
+    }
+
+    # Mask multi-line inline code spans per paragraph, then drop blank lines.
+    $index = 0
+    while ($index -lt $visibleLines.Count) {
+        if ($visibleLines[$index].Trim().Length -eq 0) { $index++; continue }
+        $start = $index
+        while ($index -lt $visibleLines.Count -and $visibleLines[$index].Trim().Length -gt 0) { $index++ }
+        $paragraph = @($visibleLines.GetRange($start, $index - $start))
+        $maskedParagraph = @(Mask-ParagraphCrossLineCode $paragraph)
+        for ($k = 0; $k -lt $maskedParagraph.Count; $k++) { $visibleLines[$start + $k] = $maskedParagraph[$k] }
+    }
+    foreach ($visibleLine in $visibleLines) {
+        if ($visibleLine.Length -gt 0) { $visibleLine }
     }
 }
 
@@ -332,7 +474,8 @@ else {
     }
     $sentenceEnd = $boundary[0].IndexOf('。', [StringComparison]::Ordinal)
     $firstSentence = if ($sentenceEnd -ge 0) { $boundary[0].Substring(0, $sentenceEnd) } else { $boundary[0] }
-    if ($firstSentence -cnotmatch '\[AD-003[^\]]*\]\(doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE\.md\)') {
+    $visibleSentence = Hide-NonLinkContexts $firstSentence
+    if ($visibleSentence -cnotmatch '(?<![!\\])\[AD-003[^\]]*\]\(doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE\.md\)') {
         Add-Error 'AGENTS.md 产品边界的首句缺少 AD-003 Markdown 链接。'
     }
 }
