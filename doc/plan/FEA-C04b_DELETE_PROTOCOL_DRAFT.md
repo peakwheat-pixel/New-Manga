@@ -7,6 +7,8 @@
 
 **边界声明**：ADJ-001 明写「本文件**不**冻结具体字段名」；本草案就做这件事——给出字段/命令/码表的**冻结候选**。不改 ADJ-001 与 M2-C1 的字节。
 
+**命名约定**：**请求 payload 用 snake_case**（与 M2-C1 §5.11.1 一致）；**返回 DTO 用 camelCase**（与现有 Host 投影一致）；本稿在 §2.0/§2.2（请求侧）用 snake、§2.1 出参（返回侧）用 camel，符号按所属侧书写。
+
 ---
 
 ## 1. 现状（冻结契约事实）
@@ -27,7 +29,7 @@
 | 命令 | 形状 | 新增字段 |
 |---|---|---|
 | **单条** `PermanentlyDeleteBook` | `{book_id, confirm_permanent_delete: true}` + **`inventory_digest: string`** | digest 绑定**单个** book 的预览 |
-| **批量** `PermanentlyDeleteBooks` | `{book_ids[1..20], confirmed_book_ids[1..20], confirm_count, confirm_permanent_delete: true}` + **`inventoryDigest: string`（集合级）+ `inventory_digests: { [bookId]: string }`（逐书）** | 集合级 digest 绑定**有序 `book_ids`**（PD-02 原文）；逐书 map 用于逐项诊断；**两者都校验**，任一缺失 → `INVALID_REQUEST`，任一不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
+| **批量** `PermanentlyDeleteBooks` | `{book_ids[1..20], confirmed_book_ids[1..20], confirm_count, confirm_permanent_delete: true}` + **请求侧：`inventory_digest: string`（集合级）+ `inventory_digests: { [book_id]: string }`（逐书）** | 集合级 digest 绑定**有序 `book_ids`**（PD-02 原文）；逐书 map 用于逐项诊断；**两者都校验**，任一缺失 → `INVALID_REQUEST`，任一不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
 
 **不得**用单一 `inventory_digest` 字段同时服务两种形状；`confirmed_book_ids`/`confirm_count` 语义保持（§5.11.1）。
 
@@ -37,11 +39,11 @@
 |---|---|
 | 方向 | Host → Core |
 | 入参（closed shape） | `{ bookIds: BookId[1..20] }`（非空、去重、**上限 20**，与 M2-C1 §5.11.2 一致） |
-| 出参（closed shape） | `{ inventoryDigest: string, inventoryDigests: { [bookId]: string }, computedAt: string(ISO-8601), items: DeletePreviewItem[] }` |
+| 出参（closed shape，camel） | `{ inventoryDigest: string, inventoryDigests: { [bookId]: string }, computedAt: string(ISO-8601), items: DeletePreviewItem[] }`；单条命令的请求侧字段名同 snake（`inventory_digest`） |
 | `DeletePreviewItem` | `{ bookId, title（**仅展示用；不参与 digest 计算或确认校验**）, protection: { lockCount, currentRevisionId, pinnedRevisionIds[], activeRunIds[], draftPageCount, manualRegionCount }, contentSummary: { chapters, pages, artifacts, deletedFiles, deletedBytes }, sharedFileRefs: { fileId, otherProjectCount }[] }` |
 | **PD-01 三项**（必须） | ① `protection.manualRegionCount`（人工修改区域数）；② `protection.draftPageCount`（活动草稿页数）；③ `contentSummary.deletedFiles` + `deletedBytes`（将被删除的 managed/派生文件数与字节量） |
 | 语义 | **只读**：零副作用、不缓存、不预解锁、不写 DB、不触原文件 |
-| digest 格式 | `sha256:<64 hex>`（小写）；**集合级 digest 算法**：对 `book_ids` 按调用方顺序拼接各 book 的逐书 digest（`sha256:` 前缀去掉、小写 hex），再整体 `sha256`；逐书 digest = 该 book 的保护+内容清单的 sha256。格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
+| digest 格式 | `sha256:<64 hex>`（小写）；**集合级 digest 算法**：对 `book_ids` 按调用方顺序拼接各 book 的逐书 digest（`sha256:` 前缀去掉、小写 hex），再整体 `sha256`；**逐书 digest 输入字段**（canonical JSON，键排序、UTF-8、无空白）：`{bookId, lockCount, currentRevisionId, pinnedRevisionIds(sorted), activeRunIds(sorted), draftPageCount, manualRegionCount, chapters, pages, artifacts, deletedFiles, deletedBytes, sharedFileRefs(sorted by fileId，含 otherProjectCount)}`；该 canonical 形式由实现 Task 固化 + 测试向量。格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW` |
 | 版本 | 新增命令按 **minor** 递增（`2.11`）；旧 Core → `PROTOCOL_VERSION_UNSUPPORTED` |
 
 ### 2.2 `inventory_digest` 校验（与 PD-02/PD-04）
@@ -49,6 +51,7 @@
 | 项 | 内容 |
 |---|---|
 | 绑定 | digest 由 `PreviewPermanentDeleteBooks` 计算（Core 权威），确认时回传 |
+| **校验顺序**（两级） | ① **集合级**：键集合与顺序必须与预览时的 `book_ids` 完全一致 → 不一致 `BOOK_DELETE_STALE_PREVIEW`；② **逐书**：每个 book 的逐书 digest 必须匹配 → 不匹配 `BOOK_DELETE_STALE_PREVIEW`（`items[]` 标出失配 book）；两级任一失败零副作用 |
 | 不匹配 | → `BOOK_DELETE_STALE_PREVIEW` / `conflict` / `retryable=false`，零副作用 |
 | 缺失/格式错 | → `INVALID_REQUEST` / `validation` / `retryable=false` |
 | 时机 | 一次预览 → 一次确认之间有效；目标/保护集合/文件清单任一变化即失效 |
