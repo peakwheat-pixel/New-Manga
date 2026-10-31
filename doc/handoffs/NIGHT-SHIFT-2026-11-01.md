@@ -95,3 +95,9 @@
 - **SAFETY-11（R-102）**：完整五步负向对照重跑（覆盖 pre-F-005 → build → **失败 EXIT=1**「Expected 3 / Actual 5 @ :328」→ 恢复 → **通过 EXIT=0**），全程原始日志写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt`（217 行）；`ac1-discriminating.md` 引用已更新。实现 HEAD `0726dab70`，`check.ps1` PASS。**Review 审查中**（task-10 / `safety9-reviewer`）。
 - **C-01b v2**：处置 r1 全部 findings（SC-01 口径、§3.8 补 2 行、状态重标、验证列补文件:行、冻结条件补 AD-003 `G-REVIEW`/ADJ-001 `G-DELETE-CONTRACT`），提交 `e7e43543b`（`cacd6239…`）。**r2 复核中**（`c01b-reviewer`）。
 - **C-07 端口清单**：由代码生成 `doc/plan/FEA-C07_API_INVENTORY.md`（54 成员：IReaderProgressSink 1 + IHostController 47 + IRunController 6），提交 `063f35c01`。
+
+### 04:0x SAFETY 线收尾 + C-01b v3
+- **SAFETY-11 收口**：Review `approved`（0 P0/0 P1/2 P2），集成 `main@a1b82ffb9`；R-102-A/B 集成前已处置（`e2eb824e0`）。
+- **SAFETY-12（收尾审计）**：`verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md` 汇总 **14 条 P2**（当轮处置 4 + 转后续闭环 10、0 悬挂）；治理一致性核对 PASS。实现 `810eacf95`/`705b046d0`；**Review 审查中**（task-11）。
+- **C-01b v3**：处置 r2（P0×0 / P1×1 / P2×8）——SC-10 拆分为 SC-10a [现行] + SC-10b [新增]（`settings/*.json`、`catalog.sqlite` 未入 `nmbak` 包）、SC-01 补判别、SC-03 拆分、SC-06/09/15/16 统一 [文档级约束]、SC-38 证据换真实载体、图例与四态判据、变更记录补记。提交 `89aa61849`（`deca1c1d…`）。**r3 复核中**（`c01b-reviewer`）。
+- 上游补正：SAFETY-10 卡在 main 未同步 done → `6f23b8ce5`；并登记 `E-AC1-LOG-FULL` pin。
