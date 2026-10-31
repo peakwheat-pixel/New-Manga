@@ -57,7 +57,7 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `(见提交)` | `621b55c656fe6ffa26b16d05b5aed72082e4dbc960891f8fac058ec8641f7e80` | CANONICAL |
+| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `da20bd87a` | `621b55c656fe6ffa26b16d05b5aed72082e4dbc960891f8fac058ec8641f7e80` | CANONICAL |
 
 ## Resource Manifest
 
