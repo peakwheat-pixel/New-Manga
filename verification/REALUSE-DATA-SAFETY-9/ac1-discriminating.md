@@ -29,7 +29,7 @@ Assert.Equal(3, library.Reader.PageIndex);
 
 同时在 `ac3-closing-gate.md`（SAFETY-8 证据）与用例注释中标注其角色：**判别性断言**（不是回归栅栏）。
 
-## 负向对照（实测，2026-11-01 02:31 复现）
+## 负向对照（实测，2026-11-01 02:28 复现；原始日志见 SAFETY-10 证据）
 
 **执行位置**：在 SAFETY-10 的 worktree（`G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10`）
 内**临时覆盖后恢复**——不是在 main 工作区原地覆盖，也没有改动任何已提交的交付字节。完整原始日志见
@@ -75,3 +75,4 @@ EXIT=0
 ```
 
 结论：新断言**判别** F-005 门禁（旧代码在 `:328` 以 `Expected 3 / Actual 5` 失败、新代码通过）。
+
