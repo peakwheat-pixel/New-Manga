@@ -67,7 +67,7 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 ## 跨 Task 治理修复记录
 
-- `26feb784e` 顺带修正 AD-003 §6 的 `ADDRESSED_PENDING_R2` 残留段落（该文件不在本 Task 原 allowed_paths；已在本卡补记并补齐 allowed_paths）。AD-003 §8 已加变更记录行；AD-003 被审 hash 链：`0940a41b`（FEA-GOV-1 复核）→ `712d3c9d`（收口）→ `dd4032b7`（本次收尾修正）
+- `26feb784e` 顺带修正 AD-003 §6 的 `ADDRESSED_PENDING_R2` 残留段落（该文件不在本 Task 原 allowed_paths；已在本卡补记并补齐 allowed_paths）。AD-003 §8 已加变更记录行；AD-003 被审 hash 链：`0940a41b`（FEA-GOV-1 复核）→ `712d3c9d`（收口）→ `dd4032b7`（本次收尾修正）→ `b1491db9c`（§8 留痕追加后）
 
 ## Closeout Record
 

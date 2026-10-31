@@ -153,5 +153,5 @@ Feature flag 名称（`FrontendSwitchEnabled`、`ReferencedImportEnabled`、`Sou
 |---|---|---|
 | 2026-10-31 | 初版：记录用户 2026-10-31 存储方向决定，定义取代范围、八类边界、Gate 与审查安排 | 用户 2026-10-31 决定 1/2/3；AD-002 `Decision authority: User`；FEA-00 r1 F-01 |
 | 2026-11-01 | **G-REVIEW 收口**：r2 独立复核 `approved`（`c01b-reviewer`，P0/P1=0），G-REVIEW 由 `ADDRESSED_PENDING_R2` 改为 `SATISFIED` | [FEA-GOV-1-ad003-review](reviews/FEA-GOV-1-ad003-review.md) |
-| 2026-11-01 | **§6 状态行收尾修正**：把仍写「`ADDRESSED_PENDING_R2`…待 Codex 复审」的段落同步为 `SATISFIED`（不涉语义，属 FEA-GOV-2 r2 P1-2 处置） | [FEA-GOV-1-ad003-review](reviews/FEA-GOV-1-ad003-review.md) |
+| 2026-11-01 | **§6 状态行收尾修正**：把仍写「`ADDRESSED_PENDING_R2`…待 Codex 复审」的段落同步为 `SATISFIED`（不涉语义，属 FEA-GOV-2 r2 P1-2 处置）；本行留痕后本文件 blob = `b1491db9c`（仅追加变更记录行） | [FEA-GOV-1-ad003-review](reviews/FEA-GOV-1-ad003-review.md) |
 | 2026-10-31 | **r2（按 Codex 独立 Review r1 修订）**：§7 字节保留改为三口径陈述（R-07）；§3.7 增加"共享源不阻断应用内删除"（R-01 关联）；§5/§6 更新 Review 状态 | [FEA-00 Codex r1](reviews/FEA-00-codex-r1.md)；[处置记录](reviews/FEA-00-codex-r1-adjudication.md) |
