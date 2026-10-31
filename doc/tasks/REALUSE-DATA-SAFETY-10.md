@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-10
 title: SAFETY-9 Review R-101 收尾——负向对照转录补全
 kind: quality
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_REALUSE-DATA-SAFETY-9_review_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety10-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-9
 base_commit: 284708c3c
 branch: task/REALUSE-DATA-SAFETY-10
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 8b15adbfe
+delivery_head: df944357e
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-10
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-10.md
@@ -74,9 +74,28 @@ allowed_paths:
 
 资源收口记录：`verification/REALUSE-DATA-SAFETY-10/resource-manifest.json`（schema_version 1）。`tmp/safety10-negctl-full.txt` 为负向对照临时日志，已删除。
 
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-10-review.md](../reviews/REALUSE-DATA-SAFETY-10-review.md)（最终版，覆盖 Codex blocked 版）
+- Reviewer：`safety10-reviewer`（Agent Teams durable teammate task-9，未参与实现）
+- 被审 head：`df944357e`；结论：**approved**（P0=0 / P1=0 / P2=1 open，不阻断）
+- 复核：RV-001/RV-002 均已修复（pin `4d2658dd6`/`7c00accf…` MATCH；证据表两条独立行、无字面 `n）；AC1 四点齐全
+- 复跑：build 0/0、filtered 7/7、check.ps1 PASS (3 warnings)
+
+## Known P2（open，登记为后续项）
+
+| ID | 级别 | 内容 | 建议处置 |
+|---|---|---|---|
+| R-102 | P2 | `ac1-discriminating.md:44-45,70-74` 的转录超出所附原始日志覆盖范围（覆盖命令 + `_isClosing` 计数、恢复后 1/1 通过不在 196 行日志内） | 在日志追加该次运行原文，或标注「恢复后独立复跑、未随附日志」并给出可核引用 |
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@8b15adbfe`（merge `task/REALUSE-DATA-SAFETY-10`，含 `a3cb8ed19` 最终 Review 提交）
+- 集成验证：`check.ps1` PASS (3 warnings)；`dotnet build` 0 警告 0 错误；`dotnet test` 396 通过 / 0 失败 / 7 跳过（403）
+- AC 判定：AC1 `MET`
+- 已知 P2：R-102（转录超出日志范围），不阻断，登记为后续项
+- 资源：worktree 保留；负向对照临时日志已删除；用户数据零写操作
 
 
 
