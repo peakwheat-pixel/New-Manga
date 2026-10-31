@@ -69,7 +69,10 @@ git cat-file blob $blob > tmp.bin
 (Get-FileHash tmp.bin -Algorithm SHA256).Hash.ToLower()
 ```
 
-SAFETY-7 与 SAFETY-8 的独立 Review 均按此方式复核并全部一致（SAFETY-6 12/12、SAFETY-7 10/10）。
+SAFETY-7 的独立 Review 已按此方式复核并全部一致（SAFETY-6 12/12、SAFETY-7 10/10，见
+`doc/reviews/REALUSE-DATA-SAFETY-7-review.md`）；SAFETY-8 的独立 Review 也已按同一方式复核
+（12/12 一致、变化恰为 5 条，见 `doc/reviews/REALUSE-DATA-SAFETY-8-review.md`）。
+本段只记录**已发生**的审查结论；任何新 Review 的结论须在其报告落盘后再回填。
 
 ## 边界
 
