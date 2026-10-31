@@ -41,6 +41,7 @@
 - **预览阶段**（`PrepareRun`）：计算 `PreparedRun`（快照 + 摘要 + `preparedDigest`），**不写 DB、不触发执行**。
 - **接受阶段**（`AcceptRun`）：校验 `preparedDigest` 与当前状态一致 → 写入 `pipeline_runs`（含全部快照列）→ 返回 `runId`。
 - **拒绝**：digest 不一致 / 目标变化 / 配置变化 → `RUN_STALE_PREVIEW`（零副作用）。
+- **`preparedDigest` 算法**：对 `{requestedTargets, settingsSnapshot, providerBindingSnapshot, constraintSnapshotRef}` 做 canonical JSON（键排序、UTF-8、无空白）后 sha256；与 C-04b 的 digest 同口径。
 
 ### SC-R02 快照不可变
 
@@ -64,14 +65,16 @@
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
-- **C-01b**：SC-27（Run 快照恢复所需索引）由本草案落地。
-- **C-05**：Run 的 `active_runs` 判定引用 `pipeline_runs.status ∈ {'running','prepared'}`。
-- **C-04b**：删除保护要求「无活跃 Run」——`prepared` 状态计入活跃（阻塞删除）。
+- **C-01b**：Run 快照在 **SC-10b/SC-13**（备份覆盖清单/恢复索引）；本草案的 SC-R02/SC-R05 是对其的细化，不是新语义。
+- **C-05**：Run 的 `active_runs` 判定引用 **`ACTIVE_STATES = {pending, running, paused, blocked, interrupted}`**（与 C-05 v3 及 `core_assembly.py:171-181` 一致；`prepared`/`committed` 不是 Run 状态）。
+- **C-04b**：删除保护要求「无活跃 Run」——按 `ACTIVE_STATES` 判定（`prepared` 是 export 的 `hooks_prepared` 字段，不是 Run 状态；删除阻塞只看 Run 的非终态集合）。
 
 ## 5. 冻结条件
 
 1. 独立复核通过；
+1a. **C-05 与 C-04b 已冻结**（§4 依赖它们的 active_runs 与删除保护口径）；
 2. C-01b 已冻结（顺序：C-01b 先）；
+2a. 新增命令/错误码的**协议注册**由独立 Task 完成：`PrepareRun`/`AcceptRun` 的 wire 版本（minor 递增）、3 个新码（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE`）须扩 M2-C1 错误表 + ErrorView 联合（同 C-04b §2.4 模式）；
 3. `check.ps1` PASS。
 
 ## 6. 变更记录
