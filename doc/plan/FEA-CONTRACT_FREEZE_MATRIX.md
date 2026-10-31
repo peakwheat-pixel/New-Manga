@@ -19,7 +19,7 @@
 | 4 | **C-04b** 删除协议 | `approved` r3 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` 关闭 ③D04/D07（码表裁决，ADJ-001 §6.3）④DSH 批准 2.11 ⑤M2-C1 扩展独立 Task | C-01b | 5 项全未满足 |
 | 5 | **C-05** 页可见性 | `approved` r3 | ①`VISIBLE_TYPES`/`active_runs` 经 C-01b/ADJ-001 确认（C-01b 冻结后即可） | C-01b（口径确认） | 无硬阻塞 |
 | 6 | **C-06** 授权面 | `approved` r3 | ①C-01b 冻结 ②`G-CONTRACT` 关闭 ③wire v1.1 DSH 批准 | C-01b | `G-CONTRACT: OPEN` |
-| 7 | **C-07** API inventory | 已生成（54 成员） | ①独立复核 | 无 | 未复核 |
+| 7 | **C-07** API inventory | `approved` r2 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
 | 8 | **C-08** Run 快照 | `approved` r2 | ①C-05/C-04b 冻结 ②C-01b 冻结 ③协议注册独立 Task | C-05/C-04b | 协议注册未建 |
 | 9 | **C-09** 删除/备份/迁移 | `approved` r2 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` + `G-CONTRACT` 关闭 | C-01b | 两 Gate |
 | 10 | **C-11** 候选表口径 | `approved` r3 | ①C-01b 或 C-02 至少其一冻结 | C-01b/C-02 | 无 |
