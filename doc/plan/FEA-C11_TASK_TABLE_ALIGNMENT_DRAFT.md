@@ -33,7 +33,7 @@
 ## 2. 共享文件写权（§15.6 首段的强化）
 
 - **共享组合根**：`apps/desktop-avalonia/NewManga.sln`、`src/NewManga.App/App.axaml`、`App.axaml.cs`、`NewManga.App.csproj` —— **仅 DSH 单点提交**；各 Owner 提供 patch，未获重新指派不得改。
-- **`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` / `doc/TASK_LEDGER.md` / `doc/00_INDEX.md`** —— 仅 DSH 写（依据：AGENTS.md「每次结束对话」条款 + `tools/governance/check.ps1` 的权威指针断言）。
+- **`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` / `doc/TASK_LEDGER.md` / `doc/00_INDEX.md`** —— 仅 DSH 写（依据：[09_COLLABORATION](../09_COLLABORATION.md) §4 Task 文件约定 + §5.1 下一任务建议）。
 - **`tools/governance/check.ps1`** —— 只读检查器，任何候选不得修改其断言面（如需改，另开治理 Task）。
 - **共享源文件冲突**：先到者提交，后者 rebase/重新生成，不得强推。
 
@@ -45,6 +45,8 @@
 | **L2** | 功能 / IPC / 持久化 | 单测 + 集成测试 + 负向对照；schema 变更需旧端拒写证据 |
 | **L3** | 集成 / UI | 真机截图或 UI 测试 + 键盘/IME/a11y 核查 |
 | **L4** | 发布 / 安装 | 隔离干净构建 + 打包 smoke + 升级/回退证据 |
+
+**来源/细化**：L1–L4 与方案 §15.6 首段同源；「文档/设计」「持久化」「安装」为 C-11 对 L1/L2/L4 的细化用词，「最低证据」列是 C-11 新增的可操作化补充（不改变等级语义）。
 
 高风险候选（L2 高 / L3 高）**另需独立 Review + 隔离故障注入**。
 
@@ -63,10 +65,11 @@ Gate 定义在方案 **§14.1 待验证假设**（`:789-797`），C-11 只做**�
 | **H1** 资源作用域隔离 | 方案 §14.1 `:791` | 同一进程内 Current / Fluent / preview 的样式与资源不串染（真机 + 测试双证） | FEA-05 |
 | **H2** 稳定 Window + 内容替换 | 方案 §14.1 `:792` | 双屏 Inspector、焦点/IME/native owner/DPI 恢复 | FEA-07 |
 | **H3** 热切换性能 | 方案 §14.1 `:793` | 两棵内容树并存峰值、超长页/多缩略图首帧、输入冻结时间 p50/p95 | FEA-07 |
-| **H4** 稳定源 lease 在目标卷可证明 | 方案 §14.1 | lease/卷/路径可证明性 | FEA-08/09 |
-| **H5** 回收站/永久删除的跨卷行为 | 方案 §14.1 | 跨卷回收与删除语义 | FEA-12 |
-| **H6** 备份/恢复的旧根兼容 | 方案 §14.1 | 旧包可读、UseBackup 保全 | FEA-13 |
-| **H7** 双 UI 故障矩阵 | 方案 `:807` 附近 | 跨 UI / 双屏 / 拔屏 / redock 的失败回当前 | FEA-07 |
+| **H4** 稳定源 lease 在目标卷可证明一致读取 | 方案 §14.1 `:792` | NTFS/USB/SMB/云共享、外部替换、断连、内存映射写等边界；不能证明则标受限/不可用 | FEA-08 |
+| **H5** Windows recycle 可保证失败时不永久删除 | 方案 §14.1 `:795` | 各卷/目录/shell 配置/部分失败/崩溃后的 receipt；无法保证 → 禁用该类型原件删除、保留「仅应用回收站」交产品裁决 | FEA-08、FEA-12 |
+| **H6** 精确页面匹配覆盖目标格式 | 方案 §14.1 `:796` | PDF 重生成、ZIP 重编码/重复名、GIF/色彩/方向、密码格式；Golden fixtures；无法唯一匹配只给候选 + 用户确认 | FEA-08 |
+| **H7** 当前 Core 能力复用成本可控 | 方案 §14.1 `:797` | F20 修复后故障回归、Provider 快照完整性、旧 lock 双投影、未接线端口 | FEA-10（及依赖 Core 能力的候选） |
+| （原「双 UI 故障矩阵」） | 方案 §14.2 `:807` 自查覆盖行 | 跨 UI / 双屏 / 拔屏 / redock 的失败回当前——**不是独立 Gate**，作为 H2 的子判据 | FEA-07 |
 | **H4b** Source 原型范围（**非方案 Gate，C-11 派生**） | §12.1 FEA-08 行（「隔离 workspace 原型、不触真实库」） | 隔离 workspace 原型；不碰真实库 | FEA-08 |
 
 **Gate 未过 → 依赖它的候选保持 `BLOCKED`**，不得以"先做再说"绕过。
@@ -89,6 +92,8 @@ C-01b + C-02 + C-03 + C-11 冻结
 ```
 
 **任何一步缺失，候选不得实施。**
+
+> 注意：§15.6 的路径是**建议**、不是实际写权（§15.6 首段明文）；建卡时 DSH 必须显式冻结 `write_scopes` / `allowed_paths`，不得直接照抄为授权。
 
 ## 8. 冻结条件
 
