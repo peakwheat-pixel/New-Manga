@@ -60,15 +60,18 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**（`git cat-file blob` → SHA-256）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-LOG-FULL | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt` | `d32f4b5ef` | `e9c55c8e585e0b011b2ef99901d82e6c41f8493be9662cfc744f5384b5a8a6e4` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-11/ac1-verification.md` | `d32f4b5ef` | `6325e359cc35c278841e7ec44680e0c3368ee30a96ea6522a5cdba8ec6df3378` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1 | `verification/REALUSE-DATA-SAFETY-11/README.md` | `d32f4b5ef` | `e35993dd0bcac8fbcd4b0b3d0b644668c07f4000d8b6a65705ad52fa2f838d03` | CANONICAL |
+| E-AC1-REF-UPDATED | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `d32f4b5ef` | `cdf52c6f77eb987e445e6e484c87aa70beb3d9794917e6e305e29a2c44955098` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-11/resource-manifest.json`（schema_version 1）。worktree 保留（PRESERVE_REFERENCED）；本 Task 无新增临时文件需删除。
 
 ## Closeout Record
 
