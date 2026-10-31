@@ -1,9 +1,9 @@
 # FEA-C01b 存储契约（草案）
 
-状态：**DRAFT v4 / 已过 r1、r2、r3 独立复核（均 `changes_requested`，P0×0 / P1×1 / P2×6 open）/ 未冻结 / 不释放实现 Task**
+状态：**DRAFT v5 / 已过 r1、r2、r3、r4 独立复核（均 `changes_requested`，P0×0 / P1×1 / P2×4 open）/ 未冻结 / 不释放实现 Task**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
-依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1 复核](../reviews/FEA-C01b-r1.md)
+依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1 复核](../reviews/FEA-C01b-r1.md)、[r2](../reviews/FEA-C01b-r2.md)、[r3](../reviews/FEA-C01b-r3.md)
 
 **边界声明**：本文件把 AD-003 §3 的决策语义转成可验证的契约条款，**不是 ADR、未冻结**。`check.ps1 PASS` 不构成契约语义证据。
 
@@ -20,7 +20,7 @@
 - **[未实现]**：AD-003 §4 明确标注未具备，冻结**不**把它变成已实现；
 - **[现行→退役]**：现行结构性前提，因新决策而部分退役（写明保留部分）。
 - **[文档级约束]**：无代码守卫、只由文档/审查约束成立的情形（如"未实现前不得删除 derived"）；冻结时须注明其证据来源，不得表述为已实现；
-- **拆分写法** `[A：… / B：…]`：同一条款同时含已实现与未实现部分时，逐段标注状态（如 SC-08/12/30/39）；
+- **拆分写法** 统一为 `[A：… / B：…]` 形式；同一条款同时含已实现与未实现部分时逐段标注（用于 SC-03/08/09/12/30/39）；
 - **判据**：有代码路径且测试覆盖 → [现行]；有代码但保护/清理**能力缺位** → [新增]；AD-003 §4 明示未具备 → [未实现]；无代码守卫但由既有事实约束 → [文档级约束]。
 
 ---
@@ -71,7 +71,7 @@
 
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
-| **SC-20** | 现有 derived-cache 资源通道**不因本决策放宽**：`user-source` 不得进入 derived-cache grant；`handle_resolver` 的 identity/size/digest 与可信根校验、reparse 拒绝继续有效。 | [现行] | `handle_resolver.py:284-320`（identity/size/digest）、`:206`（可信根）、`:351`（reparse 拒绝）；资源控制面 wire v1 回归 |
+| **SC-20** | 现有 derived-cache 资源通道**不因本决策放宽**：`user-source` 不得进入 derived-cache grant；`handle_resolver` 的 identity/size/digest 与可信根校验、reparse 拒绝继续有效。 | [现行] | `handle_resolver.py:284-320`（identity/size/digest）、`:206`（reparse 预拒，`:225-226` 抛 `E_REPARSE`）、`:351`（identity 复核，`:352` 抛 `E_IDENTITY_CHANGED`）、`:641`/`:766`（`ManagedRootTrust` 可信根）；资源控制面 wire v1 回归 |
 | **SC-21** | 引用源读取需要**独立授权面**：Host 私有且持久化的 `SourceAccessRegistry`（locator、授权根边界、identity facts、授权 generation）+ 新 `source-read` grant；旧一次性 `ImportPages` grant（≤300 秒、直属成员、进程内 registry）**不得**当长期授权复用。 | [未实现]（`SourceAccessRegistry` 无结构，`src/` 0 命中） | `import_source_refs.py:153/108/192-203`（现有一次性 grant 语义）；C-06 授权面 |
 | **SC-22** | 授权根为显式边界：不跟随越过根目录的符号链接/junction；递归授权根与 ZIP/CBZ 解码属**新增能力**，当前无实现。 | [未实现] | 无实现；随 SC-21 落地 |
 | **SC-23** | 读取面按 `SourceId`/version/entry/rendition 限定，带大小与解码预算；UI **不得**获得任意 `ReadFile(path)`。 | [新增] | Host 命令面（C-07 清单） |
@@ -91,7 +91,7 @@
 
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
-| **SC-30** | **应用内删除**（软删、自动清理、用户显式彻底删除）**从不触点原文件**。 | [现行]（软删/GC 不删原件）；显式彻底删除的 preview/digest 流程属 [新增]（ADJ-001 PD-01–PD-10 未实现） | 软删/GC：`library.py:1069-1101`；彻底删除按 ADJ-001 §6.1/§6.3 落地后验证 |
+| **SC-30** | **应用内删除**（软删、自动清理、用户显式彻底删除）**从不触点原文件**。 | [现行]（软删/GC 不删原件）；显式彻底删除的 preview/digest 流程属 [新增]（ADJ-001 PD-01–PD-10 未实现） | 软删：`library/service.py:97-99`、`trash.py:119`；页级 purge：`trash.py:196`；项目级永久删除事务：`library.py:1069-1101`（非软删路径）。彻底删除按 ADJ-001 §6.1/§6.3 落地后验证 |
 | **SC-31** | **原始文件删除是独立流程**：独立选择 → 检查其他 live/trashed 引用与活跃 Run/lease → 明确列出确切文件 → 用户确认 → 经 Host 的 Windows 回收站桥执行 → 逐项验证结果；不可回收/被占用/网络盘/路径被替换时**保留并报告**，不得转为永久删除。 | [未实现]（回收站桥与授权流程均无结构） | C-09 删除/备份 |
 | **SC-32** | 共享源默认保留；「已删项目」不得自动视为不再保护；文件夹只处理实际引用文件与本次变空的子目录，不越过导入根。 | [新增] | C-09 |
 | **SC-33** | 应用内删除项目**不因共享源而阻断**：删自有内容行/绑定/清单内自有文件，保留共享原文件与其他项目绑定；「无法安全拆分、关系图/归属不一致、存在未列明目标外引用」时 fail-closed，其余预检失败按现行契约处理。 | [新增] | C-09；与 ADJ-001 PD-08、`M2-C1:752,:764` 一致 |
@@ -119,7 +119,7 @@
 
 ## 4. 冻结条件
 
-1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1/r2/r3 已跑，v4 修订后需 r4 窄面复核**）；
+1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1/r2/r3/r4 已跑，v5 修订后需 r5 极窄面确认**）；
 2. **AD-003 自身的 `G-REVIEW` 收口**（AD-003 §6 明文：复审通过前不作为契约冻结依据）；ADJ-001 的 `G-DELETE-CONTRACT` 仍 OPEN，相关条款（SC-30/31/33）冻结前须注明依赖；
 3. 用户确认 AD-002 的**责任表与哨兵口径**修订（`Managed Copy` 行 + 顶部横幅归口）；
 4. `check.ps1` PASS（机械检查，仅证明结构条件）。
@@ -132,5 +132,6 @@
 |---|---|---|
 | 2026-11-01 | v1：把 AD-003 §3.1–§3.8 转为 SC-01…SC-37，标注状态与验证方式 | DSH |
 | 2026-11-01 | v2：处置 FEA-C01b-r1（P0×1 / P1×7 / P2×6）——SC-01 验证列不再严于 AD-003；SC-03/08/19 重标状态；SC-06/24 口径修正；§3.8 补二进制（SC-38）与数据（SC-39）两行；[现行] 补文件:行证据；冻结条件补 AD-003 G-REVIEW 与 ADJ-001 G-DELETE-CONTRACT；SC-18 补「回填前身份 unknown」；SC-35 补 flag 拟议与 `--shell=legacy` | DSH |
-| 2026-11-01 | v4：处置 FEA-C01b-r3（P0×0 / P1×1 / P2×6）——P1-1 文档控制字段同步（状态行 v4、依据链 r2/r3、§4.1 改「需 r4」）；P2-2 SC-10b 旁注纠正（Run 快照结构已存在 `schema.py:290-323`，真实缺口为快照不含上下文页内容；补 `trash-manifest.json` 白名单证据）；P2-1 SC-09 拆分；P2-4 SC-20/30/36/12/24 证据补文件:行；P2-5 变更记录补 old→new；P2-6 SC-18/21/31 按判据重标 [未实现] | DSH |
 | 2026-11-01 | v3：处置 FEA-C01b-r2（P0×0 / P1×1 / P2×8）。状态变更（old→new）：SC-10 [新增]→拆分 SC-10a [现行]+SC-10b [新增]；SC-09 [新增]→[文档级约束]；SC-17 [新增]→（保持）；SC-06 [现行]→[文档级约束]；SC-15/16 [现行]→[文档级约束]；SC-03 [现行]→拆分；SC-38 证据换载。其余：SC-01 补判别、图例补四态判据 | DSH |
+| 2026-11-01 | v4：处置 FEA-C01b-r3（P0×0 / P1×1 / P2×6）——P1-1 文档控制字段同步（状态行 v4、依据链 r2/r3、§4.1 改「需 r4」）；P2-2 SC-10b 旁注纠正（Run 快照结构已存在 `schema.py:290-323`，真实缺口为快照不含上下文页内容；补 `trash-manifest.json` 白名单证据）；P2-1 SC-09 拆分；P2-4 SC-20/30/36/12/24 证据补文件:行；P2-5 变更记录补 old→new；P2-6 SC-18/21/31 按判据重标 [未实现] | DSH |
+| 2026-11-01 | v5：处置 FEA-C01b-r4（P0×0 / P1×1 / P2×4）——`:6` 依据补链 r2/r3（P1 唯一项）；SC-20 证据标签纠正（`:206` reparse 预拒、`:351` identity 复核、`:641`/`:766` 可信根）；SC-30 证据标签纠正（软删 `library/service.py:97-99`/`trash.py:119`、页级 `trash.py:196`、项目级永久删除 `library.py:1069-1101`）；§5 行序修正（v4 移到 v3 后）；图例拆分写法统一为 `[A：… / B：…]` | DSH |
