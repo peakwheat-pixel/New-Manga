@@ -8,7 +8,9 @@
 |---|---|---|
 | REALUSE-DATA-SAFETY-6 | **done**（AC1/AC2/AC3 MET；Review approved；P2×3 open） | 集成 `011b19bbf`；证据 `verification/REALUSE-DATA-SAFETY-6/`；Review `doc/reviews/REALUSE-DATA-SAFETY-6-review.md` |
 | 集成验证 | 通过 | build 0 警告/0 错误；test 394 通过 / 0 失败 / 7 跳过（401）；check.ps1 PASS |
-| REALUSE-DATA-SAFETY-7 | **ready → 夜班执行中**（R-001 并发 NRE / R-002 pin / R-003 日志） | worktree `G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-7`，分支 `task/REALUSE-DATA-SAFETY-7`，base `29d06c462` |
+| REALUSE-DATA-SAFETY-7 → **11** | **全部 `done`**：7（`aaed145e9`）/ 8（`84b9f4319`）/ 9（`9aa6758b6`）/ 10（`8b15adbfe`）/ 11（`a1b82ffb9`） | 各 `doc/reviews/REALUSE-DATA-SAFETY-*-review.md`；证据 `verification/REALUSE-DATA-SAFETY-*/` |
+| REALUSE-DATA-SAFETY-12（收尾审计） | **done**：14 条 → 复核修正为 **17 条 P2**（当轮 5 + 转后续 12、0 悬挂） | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md`；Review `doc/reviews/REALUSE-DATA-SAFETY-12-review.md` |
+| 当前 Task | **FEA-GOV-1**（AD-003 独立 Review 收口 —— C-01b 冻结前置②） | `doc/tasks/FEA-GOV-1.md` |
 
 ## 新架构到哪
 
@@ -18,8 +20,9 @@
 | r7 的 2×P1 | 均已实质处置（R7-01 权威层同步、R7-02 PD-01–PD-10 全部落位） | r8 §3 |
 | r7 的 6×P2 | 全部有处置（R7-05/07/08 无残留） | 同上 |
 | 契约清单草案 | 已吸收 r8；C-04c 已由 r4 §9.1 覆盖；G-01/G-03 关闭 | `doc/plan/FEA-01_CONTRACT_DRAFT.md` |
-| **C-01b 存储契约草案** | 新建：AD-003 §3.1–§3.8 → SC-01…SC-37 条款（[现行]/[新增]/[未实现]） | `doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md` |
-| 下一步 | C-01b 独立复核 + 用户确认 AD-002 责任表口径 → 逐条冻结 C-02…C-12 | — |
+| **C-01b 存储契约草案** | **v5，r5 独立复核 `approved`（P0×0 / P1×0 / P2×3 非阻断）**；r1→r5 共处置 P0×1、P1×3、P2×20；条款 SC-01…SC-39 覆盖 AD-003 §3.1–§3.8 全部 38 单元 | `doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md`；报告 `doc/reviews/FEA-C01b-r{1..5}.md` |
+| **C-07 端口清单** | 由代码生成：54 成员（`IReaderProgressSink` 1 + `IHostController` 47 + `IRunController` 6） | `doc/plan/FEA-C07_API_INVENTORY.md` |
+| 下一步（冻结前置） | ② AD-003 `G-REVIEW` 收口（FEA-GOV-1 进行中）；③ 用户确认 AD-002 责任表与哨兵口径；④ `check.ps1` PASS → 逐条冻结 C-02…C-12 | — |
 
 ## 待你拍板（可直接回 A/B/C）
 
@@ -101,3 +104,17 @@
 - **SAFETY-12（收尾审计）**：`verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md` 汇总 **14 条 P2**（当轮处置 4 + 转后续闭环 10、0 悬挂）；治理一致性核对 PASS。实现 `810eacf95`/`705b046d0`；**Review 审查中**（task-11）。
 - **C-01b v3**：处置 r2（P0×0 / P1×1 / P2×8）——SC-10 拆分为 SC-10a [现行] + SC-10b [新增]（`settings/*.json`、`catalog.sqlite` 未入 `nmbak` 包）、SC-01 补判别、SC-03 拆分、SC-06/09/15/16 统一 [文档级约束]、SC-38 证据换真实载体、图例与四态判据、变更记录补记。提交 `89aa61849`（`deca1c1d…`）。**r3 复核中**（`c01b-reviewer`）。
 - 上游补正：SAFETY-10 卡在 main 未同步 done → `6f23b8ce5`；并登记 `E-AC1-LOG-FULL` pin。
+
+### 04:1x SAFETY-12 收尾审计 + C-01b v2/v3
+- **SAFETY-11 收口**：Review `approved`（0 P0/0 P1/2 P2），集成 `a1b82ffb9`；R-102-A/B 集成前已处置。
+- **SAFETY-12**：`safety-line-audit.md` 汇总 P2 处置链；**Review 复核后修正**——漏列 SAFETY-6 的 3 条、计数改为 **17 = 当轮 5 + 转后续 12**、SAFETY-6 集成点改 merge `011b19bbf`、证据路径修正（在 SAFETY-7 目录）。`approved`（0 P0/0 P1/5 P2 已修正）。
+- **C-01b v2/v3**：v2 处置 r1（P0×1：SC-01 不再严于 AD-003）、v3 处置 r2（P1×1：SC-10 拆 SC-10a/10b；`nmbak` 未打包 `settings/*.json`、`catalog.sqlite`）。
+
+### 05:0x C-01b r3 → v4 → r4 → v5
+- r3 `changes_requested`（1 P1：文档控制字段未随 v3 同步 + 6 P2）→ v4。
+- r4 `changes_requested`（1 P1：依据行未链 r2/r3；+ 4 P2：SC-20/SC-30 证据标签错位、§5 行序）→ v5。
+
+### 06:1x C-01b r5 `approved` + FEA-GOV-1 开
+- **C-01b v5 第 5 轮极窄面复核 `approved`**（P0×0 / P1×0 / P2×3 非阻断已知限制：L-1 图例写法、L-2 依据链、L-3 变更记录归属）。覆盖 38/38、出处 40/40、无新增语义。**文本层面已达冻结前质量**。
+- 冻结前置仍未满足：② AD-003 `G-REVIEW`（-> **FEA-GOV-1 已开并派发独立复核**）；③ 用户确认 AD-002 责任表/哨兵；④ `check.ps1` PASS。
+- SAFETY 线：**SAFETY-6→11 全部 done + 12 收尾审计 done**；17 条 P2 全部闭合、0 悬挂。
