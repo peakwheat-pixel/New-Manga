@@ -1,0 +1,217 @@
+# REALUSE-DATA-SAFETY-10 ac1 negative control (FULL run, R-102 补全)
+generated_at: 2026-11-01T02:53:12.4577030+08:00
+host: HOME-MY / pwsh 7.6.8 / dotnet 10.0.401
+location: worktree G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-11 (in-place overwrite then restore; not main)
+
+## step 1: overwrite production file with pre-F-005 version from bb7cbda1d
+_isClosing occurrences in overwritten file: 0
+
+## step 2: build (cwd=apps/desktop-avalonia)
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:07.33
+
+EXIT=0
+
+## step 3: failing test on pre-F-005 code (expect 1 failed, EXIT=1)
+生成启动时间为 2026/11/1 2:53:20。
+     1>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”在节点 1 上(Restore 个目标)。
+     1>_GetAllRestoreProjectPathItems:
+         正在确定要还原的项目…
+       Restore:
+         X.509 证书链验证将使用 .NET 选择的默认信任存储进行代码签名。
+         X.509 证书链验证将使用 .NET 选择的默认信任存储进行时间戳。
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.Host\obj\project.assets.json
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\obj\project.assets.json
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\obj\project.assets.json
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.ThemeEngine\obj\project.assets.json
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.CoreClient\obj\project.assets.json
+         资产文件未改变。跳过资产文件写入。路径: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\obj\project.assets.json
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 31 毫秒)。
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj (用时 31 毫秒)。
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 31 毫秒)。
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 31 毫秒)。
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 31 毫秒)。
+         已还原 G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 31 毫秒)。
+         
+         使用的 NuGet 配置文件:
+             C:\Users\49745\AppData\Roaming\NuGet\NuGet.Config
+             C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.FallbackLocation.config
+             C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.Offline.config
+         
+         使用的源:
+             https://api.nuget.org/v3/index.json
+             C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\
+             C:\Program Files\dotnet\library-packs
+         所有项目均是最新的，无法还原。
+     1>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(Restore 个目标)的操作。
+   1:7>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”在节点 2 上(VSTest 个目标)。
+     1>BuildProject:
+         已开始生成，请等待...
+   1:7>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:7)正在节点 2 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8) (默认目标)。
+   1:8>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8)正在节点 1 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj”(5:7) (默认目标)。
+     5>GenerateAvaloniaResources:
+       正在跳过目标“GenerateAvaloniaResources”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+   1:8>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8)正在节点 2 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj”(4:6) (默认目标)。
+     4>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+     5>CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+     4>_GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.CoreClient.sourcelink.json" 是最新的。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+     4>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj”(默认目标)的操作。
+     5>_GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.DesignSystem.sourcelink.json" 是最新的。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       AvaloniaDeleteRefAssemblyBeforeOutputCopy:
+         正在删除文件“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\obj\Debug\net9.0\ref\NewManga.DesignSystem.dll”。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         正在将引用程序集从"obj\Debug\net9.0\refint\NewManga.DesignSystem.dll"复制到"G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\obj\Debug\net9.0\ref\NewManga.DesignSystem.dll"。
+         NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+     5>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj”(默认目标)的操作。
+   1:8>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8)正在节点 4 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj”(3:6) (默认目标)。
+     3>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+   1:8>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8)正在节点 5 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj”(6:6) (默认目标)。
+     6>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+     3>CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.Host.sourcelink.json" 是最新的。
+     6>CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+     3>CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+     3>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj”(默认目标)的操作。
+     6>_GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.ThemeEngine.sourcelink.json" 是最新的。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+     6>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj”(默认目标)的操作。
+   1:8>项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(1:8)正在节点 3 上生成“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj”(2:6) (默认目标)。
+     2>GenerateAvaloniaResources:
+       正在跳过目标“GenerateAvaloniaResources”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.App.sourcelink.json" 是最新的。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CreateAppHost:
+       正在跳过目标“_CreateAppHost”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       正在跳过目标“_CopyOutOfDateSourceItemsToOutputDirectory”，因为所有输出文件相对于输入文件而言都是最新的。
+       AvaloniaDeleteRefAssemblyBeforeOutputCopy:
+         正在删除文件“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\ref\NewManga.App.dll”。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildRuntimeConfigurationFiles:
+       正在跳过目标“GenerateBuildRuntimeConfigurationFiles”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         正在将引用程序集从"obj\Debug\net9.0\refint\NewManga.App.dll"复制到"G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\obj\Debug\net9.0\ref\NewManga.App.dll"。
+         NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+     2>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj”(默认目标)的操作。
+     1>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 文件 "obj\Debug\net9.0\NewManga.App.Tests.sourcelink.json" 是最新的。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       正在跳过目标“_CopyOutOfDateSourceItemsToOutputDirectory”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildRuntimeConfigurationFiles:
+       正在跳过目标“GenerateBuildRuntimeConfigurationFiles”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         NewManga.App.Tests -> G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+     1>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(默认目标)的操作。
+     1>BuildProject:
+         完成的生成。
+         
+G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.55]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.61]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.61]   Starting:    NewManga.App.Tests
+[xUnit.net 00:00:01.44]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:01.44]       Expected: 3
+[xUnit.net 00:00:01.44]       Actual:   5
+[xUnit.net 00:00:01.44]     NewManga.App.Tests.LibraryProgressRefreshTests.ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread [FAIL]
+[xUnit.net 00:00:01.44]       Stack Trace:
+[xUnit.net 00:00:01.44]         G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\LibraryProgressRefreshTests.cs(328,0): at NewManga.App.Tests.LibraryProgressRefreshTests.ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread()
+[xUnit.net 00:00:01.44]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.44]   Finished:    NewManga.App.Tests
+  失败 NewManga.App.Tests.LibraryProgressRefreshTests.ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread [95 ms]
+  错误消息:
+   Assert.Equal() Failure: Values differ
+Expected: 3
+Actual:   5
+  堆栈跟踪:
+     at NewManga.App.Tests.LibraryProgressRefreshTests.ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread() in G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\LibraryProgressRefreshTests.cs:line 328
+--- End of stack trace from previous location ---
+
+测试运行失败。
+测试总数: 1
+     失败数: 1
+总时间: 2.3917 秒
+       _VSTestConsole:
+         MSB4181: “VSTestTask”任务返回了 false，但未记录错误。
+     1>已完成生成项目“G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj”(VSTest 个目标)的操作 - 失败。
+
+生成失败。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:04.57
+
+EXIT=1
+
+## step 4: restore delivered version
+git status --porcelain: ?? verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt
+
+## step 5: rebuild + passing test on delivered version (expect 1 passed, EXIT=0)
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:05.11
+
+EXIT=0
+G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-11\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 104 ms - NewManga.App.Tests.dll (net9.0)
+
+EXIT=0

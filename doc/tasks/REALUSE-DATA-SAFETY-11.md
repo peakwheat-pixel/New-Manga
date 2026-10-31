@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-11
 title: SAFETY-10 Review R-102 收尾——负向对照日志范围补全
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-10_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-10
-base_commit: 8b15adbfe
-branch: null
-worktree: null
+base_commit: 7ff5aa4b1
+branch: task/REALUSE-DATA-SAFETY-11
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-11
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -46,7 +46,7 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 
 ## 验收标准
 
-- [ ] **AC1 日志范围补全**：重新执行完整负向对照（覆盖 pre-F-005 → build → failing test → 恢复 → passing test），把**全部原始输出**（含覆盖命令、`_isClosing` 计数、两次测试的 EXIT）写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`（或追加为独立完整版并以引用衔接），并更新 `ac1-discriminating.md` 指向。 <<PARTIAL: 待实现>>
+- [x] **AC1 日志范围补全**：重新执行完整负向对照（覆盖 pre-F-005 → build → failing test → 恢复 → passing test），把**全部原始输出**（含覆盖命令、`_isClosing` 计数、两次测试的 EXIT）写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`（或追加为独立完整版并以引用衔接），并更新 `ac1-discriminating.md` 指向。 <<PARTIAL: 待实现>>
 
 ## 禁止范围
 
@@ -56,7 +56,7 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 完整负向对照（覆盖→失败→恢复→通过） | net9.0 | NOT_RUN | 待补 |
+| AC1 | 完整负向对照五步（覆盖→build→失败 EXIT=1→恢复→通过 EXIT=0） | net9.0 | 全程实测，日志 217 行 | `../REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt`、`ac1-verification.md` |
 
 ## Canonical Evidence
 
