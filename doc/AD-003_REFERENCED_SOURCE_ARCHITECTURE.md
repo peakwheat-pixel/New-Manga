@@ -137,7 +137,7 @@ Feature flag 名称（`FrontendSwitchEnabled`、`ReferencedImportEnabled`、`Sou
 - 本文件由 DSH 编写，按项目规则不得由 DSH 自审。ZCode 当前 `reviewer_unavailable`（本机无 `zcode` CLI）。
 - **已执行**：Codex 独立 Review r1（用户直接指派，[`doc/reviews/FEA-00-codex-r1.md`](reviews/FEA-00-codex-r1.md)）判 **`changes_requested`**：R-01 P0、R-02/R-03/R-04 P1、R-05–R-07 P2。DSH 逐项处置见[处置记录](reviews/FEA-00-codex-r1-adjudication.md)。
 - **r2 修订范围**：R-07（字节保留三口径，§7）、R-01 关联口径（§3.7 共享源不阻断应用内删除）、R-05 关联事实（引用 ADJ-001 四层现状表）。
-- 状态 `ADDRESSED_PENDING_R2`：在 Codex 对新 hash 复审通过前，本文件只作为**决策记录**生效，不作为契约冻结依据；契约冻结仍需 DSH 在 D05 显式裁定。
+- 状态 **`SATISFIED`（2026-11-01）**：r2 独立复核通过（见上方 r2 记录与 §5 `G-REVIEW`）；本文件作为**决策记录**与契约冻结依据生效；契约冻结仍需 DSH 在 D05 显式裁定。
 - **未重复已判项**：本文件未参与 R-02/R-03/R-04 的修订范围（均在 ADJ-001 与检查器内）。
 - **r2 独立复核（2026-11-01，FEA-GOV-1）**：reviewer `c01b-reviewer`（Agent Teams 独立上下文，未参与本文件撰写与 Codex r1 处置），对被审字节（LF blob `0940a41b…`，16319 B）判 **`approved`**（P0×0 / P1×0 / P2×4 非阻断）；六项判定 6 通过、0 不通过；报告 [`FEA-GOV-1-ad003-review.md`](reviews/FEA-GOV-1-ad003-review.md)。
 

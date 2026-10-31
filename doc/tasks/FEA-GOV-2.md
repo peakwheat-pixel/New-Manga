@@ -37,7 +37,7 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 ## 验收标准
 
-- [x] **AC1 修订提案**：在 `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` 给出 AD-002 的**最小修订 diff**——① `:28` 责任表行的新文本（保留旧数据双读、明确新导入=引用）；② 哨兵口径（`Managed Copy` 字样如何处理，与 AD-003 §2.1 一致）；③ 明确的字节保留声明（只改这两处，其余正文不动）。**提案不直接修改 AD-002**，等用户确认后由 DSH 执行。**已完成**：`doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md`（三方案对比 + 推荐 A 纯追加 + 精确 diff + 执行动作）。 <<MET>>
+- [x] **AC1 修订提案**：在 `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` 给出 AD-002 口径的修订方案——① 四案对比（D 零字节 / A 纯追加 / B 改 `:28` / C 改哨兵），含字节影响与风险；② 推荐案（r1 复核后改为 **D 零字节**：不改 AD-002，解释由 AD-003 §2 + C-01b SC-07/SC-01 承担）；③ 若选 A 的精确 diff 与已知代价（§4.1 的 AD-003 §2:28/§7① 配方漂移）。**提案不直接修改 AD-002**，等用户确认后由 DSH 执行。 <<MET>>
 - [x] **AC2 确认清单**：列出冻结前置③需要用户回复的全部问题（逐条给推荐选项与影响），供晨报「待裁决」区使用。**已完成**：C1–C4 四条，每条含推荐与影响，支持 `A` 一键回复。 <<MET>>
 
 ## 禁止范围
@@ -57,7 +57,7 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `da20bd87a` | `621b55c656fe6ffa26b16d05b5aed72082e4dbc960891f8fac058ec8641f7e80` | CANONICAL |
+| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `da20bd87a` | `5255dfa837cc54711d560b725f247bed0ed52ab0c9276c0056ec8f5a6e1c310b` | CANONICAL |
 
 ## Resource Manifest
 
