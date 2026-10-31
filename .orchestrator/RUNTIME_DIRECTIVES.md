@@ -4,6 +4,8 @@
 权威优先级遵循恢复真实性原则：Live Git/FS > guarded governance > 本文件 > Agent 自述。
 本文件不是治理文件（不改 DAG/Task 状态）；治理指针仍以 `doc/STATUS.md` / `doc/REBASELINE_PLAN.md` 为准。
 
+当前参与名单、派发与故障转移资格以 [AGENTS.md](../AGENTS.md) 的最新用户裁决为准；下文历史派发和通道诊断记录不恢复已退出 Agent 的资格。
+
 | id | 生效时间（Asia/Shanghai） | 指令 | 执行方式 | 失效条件 |
 |---|---|---|---|---|
 | DIR-1 | 2026-10-15 23:34 | **不打断当前任务**（P06 正在进行，Owner=antigravity） | P06 继续运行至其自身完成/BLOCKED，不 kill、不抢占、不重派 | P06 收口后自动失效（一次性） |
@@ -12,10 +14,11 @@
 | DIR-3 | 2026-10-16 17:10 | **只保留一个 Active Coordinator 会话**（用户裁决；起因：出现两个共享同一 lease 的 dsh 会话） | 本会话 dsh 以原子 CAS takeover 递增到 epoch 6 并独占新 lease；其他会话持有的 epoch 5 旧 lease 一律 STALE_COORDINATOR，不得再充当 Coordinator，亦不得抢回 | 用户改判 |
 | DIR-4 | 2026-10-17 23:28 | **禁止失败后无限循环**：无论派发给 dsh 自身还是其他 agent，同一失败（同一命令/同一脚本/同一断言/同一隔离根）**最多重试 2 次**；达到上限必须先**停止执行**，输出原始错误输出 + 已尝试假设 + 根因分析 + 修正方案，经 Coordinator 确认后才可再次执行 | ① 所有派发 prompt 必嵌「有限重试条款」（见下节可直接复制文本）；② Owner 达上限即**停手上报**，不得自行"改脚本重跑"；③ Coordinator 发现循环迹象（如重复创建同名隔离根、`codex` 进程数异常增长、长时间 0 提交）**必须立即 `job_kill`** 并如实登记通道、理由与保留产物 | 用户改判 |
 | DIR-5 | 2026-10-17 23:58（2026-10-18 00:14 更新） | **目标轮次上限 1000；第 990 轮起停止推进任务** | 到达第 990 轮时：**不再开始新任务、不再派发新 Owner**；只做收尾：产出完整 **Handoff**（现状 / Git pin / 证据 / 未决项 / 恢复点）+ 一份**可直接粘贴给新会话的启动提示词**（含仓库、DAG 与 Task 现状、下一步、硬约束、当前 Coordinator epoch） | 用户改判 |
+| DIR-6 | 2026-10-31（用户裁决） | **Review 不再要求非作者**：Reviewer 不必是与 Owner 不同的项目角色；作者可派发新的子 agent（独立上下文、只读被审 head）执行 Review | 在 Task 的 `reviewer` 字段与 Review 报告登记审查者身份/来源（子 agent 会话或子任务 ID）与 `reviewer_kind`；审查者不计入 `.orchestrator/tasks/<task>-role.json` 的 `contributors`/`repair_participants`，也不要求该文件新增 reviewer 字段；审查者不得参与该 Task 的实现或返修；同一会话/实例仍不得自审 | 用户改判 |
 
 ## 执行备注
 
-- DIR-2 不改变 Reviewer 独立性：Reviewer 仍必须 ≠ Owner，且不得参与该 Task 的 implementation/repair。
+- DIR-2 不改变 Review 独立性：产出该变更的同一会话/实例不得自审；作者可派发独立上下文的子 agent 审查（2026-10-31 用户裁决，见 AGENTS.md），审查者不得参与该 Task 的 implementation/repair。
 - DIR-2 不覆盖 capsule 内的硬 Gate：PREFLIGHT 仍须真实探测；若 codex 预检失败，按 Anti-Thrash 记录失败并 REBALANCE。
 - 用户未授权跳过任何 Gate、未授权 push、未授权触碰用户 dirty 内容。
 
@@ -62,7 +65,7 @@ node $z --prompt <自包含提示> --cwd <worktree> --mode edit --json --locale 
 
 **派发纪律（更正后）**：
 
-1. **首选 DSH 原生通道**：`subagent_codex` / `subagent_agy` / `subagent_zcode`（受管、有完成通知、结果回传），不要用 PowerShell 里的原始 CLI 子进程自造派发；
+1. **首选 DSH 原生通道**：`subagent_codex` / `subagent_zcode`（受管、有完成通知、结果回传），不要用 PowerShell 里的原始 CLI 子进程自造派发；
 2. 若确需原始 CLI：必须选用**已获用户授权**的模式（`zcode-dispatch` skill 说明：headless `--prompt` 默认 `yolo`；`build` 变更前请求确认；`edit` 命令仍需确认；**只有用户已授权完整访问时才用 `yolo`**），并且必须注入三个环境变量；
 3. 不得因该限制而伪造命令输出；被拒时如实登记原文。
 
@@ -71,7 +74,7 @@ node $z --prompt <自包含提示> --cwd <worktree> --mode edit --json --locale 
 
 ## 派发通道实测（2026-10-16，用户纠正后）
 
-**用户指令**：DSH 派发任务**必须**通过 DSH 原生子智能体通道 —— `subagent_codex` / `subagent_agy` / `subagent_zcode`（由 DSH 插件 `@deepseek-ai/dsh-tool-subagent`、`@deepseek-ai/dsh-subagent`、`dsh-tool-subagent-control`、`dsh-subagent-fork-in-process`、`dsh-hooks-codex` 提供）。**不要**用 PowerShell 里的原始 CLI 子进程自造派发。
+**用户指令**：DSH 派发任务**必须**通过 DSH 原生子智能体通道 —— `subagent_codex` / `subagent_zcode`（由 DSH 插件 `@deepseek-ai/dsh-tool-subagent`、`@deepseek-ai/dsh-subagent`、`dsh-tool-subagent-control`、`dsh-subagent-fork-in-process`、`dsh-hooks-codex` 提供）。**不要**用 PowerShell 里的原始 CLI 子进程自造派发。
 
 实测结果：
 
@@ -79,16 +82,15 @@ node $z --prompt <自包含提示> --cwd <worktree> --mode edit --json --locale 
 |---|---|---|
 | `subagent_zcode` | ✅ **成功** | 逐字读回 `doc/REBASELINE_PLAN.md` 的 READY 行；自报 `SHELL=是`（可执行 shell） |
 | `subagent_codex` | ❌ **连续 2 次失败** | 两次均 `Product subagent failure (product: Codex; stage: turn; category: product-error)`，**无收尾消息** → 判定为**系统性**（非瞬时），需排查 DSH 侧 Codex 后端配置 |
-| `subagent_agy` | ⏳ 未实测 | 下次真实派发时验证 |
 | 原始 CLI `codex exec` | ✅ 可用 | 本会话多次成功（P14 正运行于此路径） |
 | 原始 CLI `node zcode.cjs --mode edit` | ❌ 拒 Bash | `No permission client configured for Bash`（通道缺陷，非 agent 缺陷） |
 
 **纪律**：
-1. 优先 DSH 原生通道；`subagent_codex` 失败时，**如实报告并改用 `subagent_agy`/`subagent_zcode`**，或（经用户同意）回退原始 CLI；
+1. 优先 DSH 原生通道；`subagent_codex` 失败时，**如实报告并改用 `subagent_zcode`**，或（经用户同意）回退原始 CLI；
 2. **不得**因某通道失败而伪造派发成功；
 3. 原始 CLI 仅在 DSH 通道不可用时作回退，并在交付记录中**注明所用通道**。
 
-### 通道故障更新（2026-10-16 23:15）
+### 历史通道故障更新（2026-10-16 23:15，仅作记录）
 
 - **`subagent_codex` 连续 3 次失败**：`7a08f404`、`0bd6fcba`、`2165cd45` 均以
   `Product subagent failure (product: Codex; stage: turn; category: product-error)` 结束且**无收尾消息**

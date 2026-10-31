@@ -1,6 +1,7 @@
 ---
 task_id: TASK-xxx
 reviewer: 待填写
+reviewer_kind: pending
 author: 待填写
 base_commit: null
 reviewed_head: null
@@ -9,7 +10,7 @@ decision: pending
 
 # Review：TASK-xxx
 
-Reviewer 不能是变更作者；Reviewer 由 DSH 以 Appointment 指定，DSH 不得审核自己实现的变更。decision 为 pending / changes_requested / approved / blocked；只有对该 reviewed_head 的实际审查才有效。
+Reviewer 不得是产出该变更的同一 Agent 会话/实例；作者可以派发新的子 agent 在独立上下文执行 Review（2026-10-31 用户裁决：不再要求非作者或不同角色）。该类审查仍须经 DSH Appointment 登记（在 Task 的 `reviewer` 字段与本文件 `reviewer_kind` 写明审查者与来源），DSH 保留 Review 处置权。报告须记录审查者身份与来源（子 agent 会话/子任务 ID 或 Agent 名）与 `reviewer_kind`：`subagent` = 作者派发的独立上下文子 agent，`agent` = 另一个独立 Agent，`external` = 项目外审查（须记录来源）。decision 为 pending / changes_requested / approved / blocked；只有对该 reviewed_head 的实际审查才有效。
 
 **执行口径（2026-09-18 更新：双轴强制已取消）**：Review 必须覆盖 **Architecture**（分层/契约/依赖/安全/持久化）与 **Verification**（实际运行检查、逐项 PASS/FAIL/BLOCKED/NOT_RUN）。`code-review` 技能的 **Standards**（是否符合本仓库记录的标准）与 **Spec**（是否忠实实现来源 AC）是**可选视角**：可用可不用，**不再强制**，也**不再要求**分别报告、独立 sub-agent 并行执行、"两遍相互隔离"检查或偏差声明（并行双轴子代理能力在本会话不可用，用户 2026-09-18 决定取消该强制项）。
 

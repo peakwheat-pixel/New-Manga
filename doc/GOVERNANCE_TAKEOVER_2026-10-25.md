@@ -1,5 +1,9 @@
 # 治理接管记录：Codex → DeepSeek Harness（2026-10-25）
 
+> 当前参与名单与派发资格以 [AGENTS.md](../AGENTS.md) 的最新用户裁决为准；下文角色表和审查人记录描述 2026-10-25 接管当日事实，不恢复已退出 Agent 的资格。
+>
+> 2026-10-31 用户裁决修订 Review 独立性口径：不再要求 Reviewer 为非作者或与 Owner 不同角色，作者可派发独立上下文的子 agent 审查；同一会话/实例不得自审。以 [AGENTS.md](../AGENTS.md) 与 [09 协作协议](09_COLLABORATION.md) 的当前条文为准，本文件“Owner 与 Reviewer 必须不同”等历史表述不再作为现行 Gate。
+
 ## 1. 授权与效力
 
 用户于 2026-10-25 正式授权并立即生效：从本次接管起，将 New Manga 项目中原属于 Codex 的全部项目管理与集成权限移交给 DeepSeek Harness（DSH），由 DSH 主持后续工作并完成安全 push。

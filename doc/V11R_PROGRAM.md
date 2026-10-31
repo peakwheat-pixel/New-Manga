@@ -120,17 +120,17 @@
 
 ---
 
-## 5. Agent 角色（动态，Owner ≠ Reviewer）
+## 5. Agent 角色（动态，Review 上下文独立）
 
 | Role | 承担者 | 说明 |
 |---|---|---|
-| Lead / Architect / Integrator | DSH | DAG、契约、集成、最终验收；**不审自己实现的变更** |
+| Lead / Architect / Integrator | DSH | DAG、契约、集成、最终验收；**不以同一主会话自审，可派子 agent 审查** |
 | Owner: 设计平台 | DSH teammate `design-platform` | DS + Theme Engine + 退役 |
 | Owner: 新 UI | DSH teammate `ui-shell` / `ui-studio` | 外壳/Library/Console；Studio Page/Batch |
 | Owner: 服务层与契约 | DSH teammate `core-bridge` | IHostController/Run/契约包/CI |
-| Owner: 高风险协议 | Codex | Region 写面、独立审查、参考研究 |
-| Reviewer | Codex / 独立 DSH teammate（不参与实现） | 关键里程碑与高风险变更 |
-| Fallback | ZCode / Antigravity | Owner 不可用时按 capability 重新路由 |
+| Owner: 高风险协议 | Codex | Region 写面、审查、参考研究 |
+| Reviewer | 未参与实现的 Agent，或作者派发的独立上下文子 agent | 关键里程碑与高风险变更（2026-10-31 起不再要求非作者） |
+| Fallback | ZCode | Owner 不可用时按 capability 重新路由 |
 
 故障规则：Agent 不可用/额度不足 → 重新路由或拆分任务，不让 DAG 停滞；不伪造启动或 PASS。
 

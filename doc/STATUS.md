@@ -5,6 +5,7 @@
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
 - 当前 Task：[REALUSE-DATA-SAFETY-6](tasks/REALUSE-DATA-SAFETY-6.md) `ready`（自查收尾 4 条：进度刷新、derived 冗余、旧库迁移与安装脚本隔离的方案裁决），尚未开 worktree。
+- **FEA 方案（非 Task）**：方案 r3 已做 DSH 技术复核（[r2 复核](reviews/FEA-00-dsh-r2-technical-recheck.md)，非独立 Review）；存储方向 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除语义 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线 D05 冻结前 `blocked`；未释放任何实现 Task。**
 - 上一 Task：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
 - 已合入 main（历史）：A-1 CreateChapter、A-2 IRunController、A-3 66 命令契约、A-5 生产写入策略、D-1 设计系统、C-1 ThemeEngine、B-1..B-4 外壳/Console/Studio/Batch、V11R-INT-0；明细见 `doc/reviews/` 与各 Task 卡。
 - 独立审查报告统一在 `doc/reviews/`（最新：`REALUSE-DATA-SAFETY-1-antigravity-r2.md` PASS）。

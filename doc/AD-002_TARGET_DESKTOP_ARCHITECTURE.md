@@ -5,6 +5,11 @@ Target architecture sentinel: `Windows + C#/.NET + Avalonia + Python Core + SQLi
 Owner: DSH（Lead/Architect）· Decision authority: User · Date: 2026-10-26
 依据：`verification/DISPLAY-PERF-DECISION-1/{baseline,visual,routes,ui-stack,ui-spec,nonadmin}/**`
 
+> **状态更新（2026-10-31，DSH 记录；不改写本文历史正文）**
+> 本文 §1 边界表中 `Managed Copy｜保持既有实现与验收` 的**新导入默认策略**，已由用户 2026-10-31 决定、经 [AD-003 直接引用原文件的存储架构补充决策](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) 正式取代为"新导入默认引用原文件、不复制不覆盖"。既有 Managed Copy 数据按 AD-003 §3.1 继续读取，不自动迁移、不自动删除。
+> **本文其余全部决策继续有效**（Avalonia + C#/.NET、Python Core 权威、SQLite 单写者、Host/IPC 边界、四页、主题中心、许可证、迁移路线）。去除本横幅并归一行尾后，本文 2026-10-26 裁决的正文与上方架构哨兵同 HEAD 的 Git blob 一致；变更前工作树原始字节无独立基线；**当前架构哨兵以 AD-003 为准**，机械检查同时校验两者。
+> 永久删除与保护状态的语义裁定见 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。`tools/governance/check.ps1` 的 PASS 只证明机械条件成立，不证明架构语义已获审查或批准。
+
 **用户已裁决的三项**：① 前端 = C#/.NET + Avalonia 11；② UI = **全部页面"着重参考" Saber（不做 1:1 复刻）**，书架是参考重点；③ 许可证 = **GPL-3.0 开源**（因此可合法移植 Saber 代码并保留版权声明）。
 
 ---

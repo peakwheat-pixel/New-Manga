@@ -60,16 +60,16 @@ Status: ACTIVE_EXECUTION_DIRECTIVE · Owner: DSH（Lead/Architect/Integrator）�
 ## 4. 每个 round 的固定循环
 
 ① **读**：§1 全部事实源 + `git status` + 当前活跃 teammate/Task 占用。
-② **选/放**：从 READY 选 Task；无 READY 时由 DSH 拆分并正式释放（改 `status: ready`、冻结范围、`allowed_paths` 显式含 `evidence_dir`、`base_commit` 填实、`reviewer` 指定不同人），同步更新 DAG、STATUS、TASK_LEDGER 并跑 `check.ps1`。
+② **选/放**：从 READY 选 Task；无 READY 时由 DSH 拆分并正式释放（改 `status: ready`、冻结范围、`allowed_paths` 显式含 `evidence_dir`、`base_commit` 填实、`reviewer` 指定为满足上下文独立的审查者），同步更新 DAG、STATUS、TASK_LEDGER 并跑 `check.ps1`。
 ③ **实现**：仅改 `allowed_paths`；产品代码 Task 使用独立分支/worktree（证据/研究类可在 main）。
 ④ **测试**：命令 + 环境 + 结果 + 证据文件；双轨门禁（§5）。
-⑤ **独立 Review**：作者 ≠ 审查者。**DSH 可以审 teammate 的实现**（只要不是自己写的）；需要独审时按 ZCode → Antigravity → Codex 回退，全部不可用才计为外部阻塞。
+⑤ **独立 Review**：产出变更的同一会话/实例不得自审。**DSH 可以审 teammate 的实现**（只要不是自己写的）；DSH 自身实现也可派发**独立上下文的子 agent** 审查（2026-10-31 用户裁决：不再要求非作者或不同角色）。审查者不参与该 Task 的实现或返修，报告记录其身份与来源。
 ⑥ **集成验证**：DSH 跑一次端到端（启动/关键路径/回归）。
 ⑦ **状态更新**：Task `status`、AC 标记、Canonical Evidence pin（commit 或 SHA-256）、STATUS 指针、DAG、TASK_LEDGER。
 ⑧ **rolling checkpoint**：写 `doc/handoffs/<TaskID>-checkpoint.md`（HEAD、完成项、未完成项、风险、下一步）。
 ⑨ **立即选下一 Task**，不得空转。
 
-**释放 Task 的前置检查单**：`check.ps1` PASS；STATUS/PLAN 预算未超（§5.8）；无并行的写路径冲突；reviewer 已指定且非作者。
+**释放 Task 的前置检查单**：`check.ps1` PASS；STATUS/PLAN 预算未超（§5.8）；无并行的写路径冲突；reviewer 已指定且满足上下文独立（非产出该变更的同一会话/实例）。
 
 ## 5. 质量门禁（每个 Task 关闭前必过）
 
@@ -82,7 +82,7 @@ Status: ACTIVE_EXECUTION_DIRECTIVE · Owner: DSH（Lead/Architect/Integrator）�
 7. **无控制台窗口**：启动后用 `Get-Process | Where MainWindowTitle` + 控制台附着检查，侧车与主进程均无控制台。
 8. **文档预算**：STATUS ≤3200 bytes/45 行；REBASELINE_PLAN ≤7000 bytes/64 行（当前已 3188/6996，**每次释放 Task 前先压缩再改**）。超预算即 FAIL。
 9. **lifecycle v3**：AC 行末带 `<<MET>>`/`<<PARTIAL: 原因>>`/`<<BLOCKED: 原因>>`/`<<NOT_APPLICABLE: 原因>>`；勾选与标记一致；`MET` 必须有 Canonical Evidence pin。
-10. **owner ≠ reviewer**；`done` 只能由 DSH 在集成 + 验证 + 资源 closeout 全部通过后设置。
+10. **reviewer 不得是产出该变更的同一会话/实例**（作者可派子 agent 审查，2026-10-31 用户裁决）；`done` 只能由 DSH 在集成 + 验证 + 资源 closeout 全部通过后设置。
 
 ## 6. 决策规则（自行裁决，必须留痕）
 
@@ -156,7 +156,7 @@ Task: <ID> / status: <status> / HEAD: <sha>
 | 无许可证交付物 | §3 P1 三件套（仓库当前无 LICENSE） |
 | 无仓库布局/新旧共存决策 | §3 P2 ADR（目录、标识、数据根、单实例） |
 | 无 Core 启动健壮性 | S1 必含失败诊断、不 panic |
-| Review 规则自相矛盾 | §4⑤ DSH 可审 teammate；ZCode→Antigravity→Codex 回退 |
+| Review 规则自相矛盾 | §4⑤ DSH 可审 teammate；ZCode→Codex 回退（2026-10-31 修订：作者可派独立上下文子 agent 审查；原 ZCode→Antigravity→Codex 回退已随 Antigravity 退出调整） |
 | round/汇报无定义 | §0 round 定义、§9 汇报频率 |
 | 预算护栏缺失 | §0 150% 重估、§5.8 文档预算 |
 | S0「全部 GO」不现实 | §2 允许 GO_WITH_LIMITATIONS（仅环境项） |

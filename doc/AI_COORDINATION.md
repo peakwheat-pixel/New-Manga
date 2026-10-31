@@ -149,4 +149,4 @@ Release、Rebaseline 时刷，默认增量（`--update`），不默认全量重�
 - **CodeWiki 不是一等支持 QML。** 涉及 Screen / Component / signal / slot /
   property / objectName / ViewModel binding / Python bridge / UI Action 的结论，
   必须直接读 `.qml` 与对应 Python/ViewModel/Service。CodeWiki 没显示不等于不存在。
-- **antigravity 已在 `AGENTS.md` 中有角色条目**（2026-10-25 接管核对关闭该历史缺口）。后续如再缺失，由 DSH 裁决。
+- 当前参与名单与派发资格以 [AGENTS.md](../AGENTS.md) 的最新用户裁决为准；历史角色记录不恢复已退出 Agent 的资格。

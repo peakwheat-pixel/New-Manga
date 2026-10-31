@@ -1,24 +1,25 @@
-# DeepSeek Harness / Codex / ZCode / Antigravity 协作协议
+# DeepSeek Harness / Codex / ZCode 协作协议
 
 本协议固化协作方式；当前 Milestone、任务树、依赖与 Legacy Mapping 以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源，当前唯一 Active Task 与运行状态以 [STATUS](STATUS.md) 为准。
 
-2026-10-08用户裁决已登记于[GOV-001追加治理范围](tasks/GOV-001.md)：Qoder退出本项目的Owner、Reviewer、设计与接管名单。历史署名与已交付结果仍是历史事实；旧分支/worktree及未提交内容保留。项目策略为`primary_orchestrator=dsh; fallback_order=zcode,antigravity; heavy_task_executor=zcode`，优先于共享skill默认配置；不因额度恢复或旧Task引用自动恢复Qoder资格。
+2026-10-08用户裁决已登记于[GOV-001追加治理范围](tasks/GOV-001.md)：Qoder退出本项目的Owner、Reviewer、设计与接管名单。历史署名与已交付结果仍是历史事实；旧分支/worktree及未提交内容保留。项目策略为`primary_orchestrator=dsh; fallback_order=zcode; heavy_task_executor=zcode`，优先于共享skill默认配置；不因额度恢复或旧Task引用自动恢复Qoder资格。
 
-2026-10-25用户裁决：DSH接任Lead / Architect / Integrator，接管原Codex的项目管理与集成权限；Codex改为按DSH分配的协作Agent，不再保留项目级审批、否决或最终集成特权；ZCode、Antigravity既有职责保留。角色迁移、字节保留与授权依据见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
+2026-10-25用户裁决：DSH接任Lead / Architect / Integrator，接管原Codex的项目管理与集成权限；Codex改为按DSH分配的协作Agent，不再保留项目级审批、否决或最终集成特权；ZCode既有职责保留；当前参与名单以[AGENTS.md](../AGENTS.md)的最新用户裁决为准。角色迁移、字节保留与授权依据见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
+
+2026-10-31用户裁决（修订2026-10-25的Review独立性口径）：Review不再要求Reviewer为非作者，也不再要求Reviewer与Owner为不同项目角色。独立审查改以**上下文独立**为准——产出该变更的同一Agent会话/实例不得自审，作者可派发新的子agent（独立上下文、只读被审head）执行Review，也可委托其他Agent；审查者不得参与该Task的实现或返修。Review报告须记录审查者身份与来源（子agent会话/子任务ID或Agent名）。DSH保留Review Appointment、findings处置与集成验证责任。历史Review与署名保持原字节。
 
 ## 1. 角色与权限
 
 | Agent | 主责 | 交付物 | 集成权限 |
 |---|---|---|---|
-| DeepSeek Harness | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突、Review Appointment、审查处置、资源处置与 Task 生命周期 | 基线文档、Task、集成验证、决策记录与推送记录 | 唯一主线写入和合并责任人；最终 push 责任人；不得自审 |
-| Codex | 协作 Agent；按 DSH 分配承担实现、诊断、测试或独立 Review | 固定 commit、代码与必要测试、Handoff 或独立 Review 报告 | 自己的任务分支；无项目级审批、否决或最终集成特权；不得审自己的实现 |
-| ZCode | 独立 Feature、长任务；新架构 React/Tauri UI/UX 与 GUI 视觉/交互设计及实现主责 | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线；不得审自己的变更 |
-| Antigravity | 通用编程实现；承担 DSH 释放的 Python、应用、基础设施或测试 Feature/长任务 | 固定 commit、代码、必要测试与 Handoff | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
+| DeepSeek Harness | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突、Review Appointment、审查处置、资源处置与 Task 生命周期 | 基线文档、Task、集成验证、决策记录与推送记录 | 唯一主线写入和合并责任人；最终 push 责任人；不得以同一主会话自审，可派子 agent 审查 |
+| Codex | 协作 Agent；按 DSH 分配承担实现、诊断、测试或 Review | 固定 commit、代码与必要测试、Handoff 或 Review 报告 | 自己的任务分支；无项目级审批、否决或最终集成特权；不得以同一主会话自审，可派子 agent 审查 |
+| ZCode | 独立 Feature、长任务；新架构 React/Tauri UI/UX 与 GUI 视觉/交互设计及实现主责 | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线；不得以同一主会话自审，可派子 agent 审查 |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 DSH 记录的审核决定 | 决定接管及后续阶段范围 |
 
-Owner 与 Reviewer 必须不同。DSH 不得审核自己实现的变更；需要独审时，由 DSH 指定未参与实现的 ZCode、Antigravity 或 Codex 担任 Reviewer。ZCode / Antigravity / Codex 的实现由非作者独立审查；DSH 以 Lead 身份负责 Review Appointment 与 findings 处置，不以 Reviewer 身份替代独审。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+Review 独立性以**上下文独立**为准（2026-10-31 用户裁决，修订此前“非作者 / 不同角色”口径）：产出该变更的同一 Agent 会话/实例不得自审；作者可以派发新的子 agent（独立上下文、只读被审 head）执行 Review，也可委托其他未参与实现的 Agent。审查者不得参与该 Task 的实现或返修；Review 报告须记录审查者身份与来源（子 agent 会话/子任务 ID 或 Agent 名）。DSH 以 Lead 身份负责 Review Appointment（包括为 DSH 自身实现派发子 agent 审查）与 findings 处置。工具不可用时记录 reviewer_unavailable；不得虚构批准，也不得以“已派发子 agent”代替真实完成的审查。
 
-UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 React 组件边界由 ZCode 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、DSH 集成，之后才能在单独释放的实现 Task 中落代码。设计身份不自动授予产品代码写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
+UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 React 组件边界由 ZCode 主责设计；设计结论先以只读设计 Task 固化并经上下文独立的 Review、DSH 集成，之后才能在单独释放的实现 Task 中落代码。设计身份不自动授予产品代码写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 
@@ -28,7 +29,7 @@ UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 React 组件
 
 批准接管后先由 DSH 创建可复现的初始基线 commit，再开放任务分支。未提交的当前接管文件不能充当可跨 worktree 同步的基线。第一次提交的 author 使用实际 Git 身份，不能冒用其他 Agent 的签名。
 
-并行模式：DSH 使用主工作区；Codex、ZCode 与 Antigravity 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
+并行模式：DSH 使用主工作区；Codex、ZCode 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
 
 开始时记录以下检查结果：
 
@@ -43,7 +44,7 @@ git rev-parse HEAD
 
 linked worktree 的 toplevel 可以不同，但 common directory 必须指向本项目 .git。初始仓库 HEAD 不存在时，由 DSH 先完成基线提交；其他 Agent 不自行绕过。
 
-分支约定：agent/dsh/TASK-xxx-slug、agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug、agent/antigravity/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 DSH 分配并填进 Task，不能复制模板中的示例命令直接执行。
+分支约定：agent/dsh/TASK-xxx-slug、agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 DSH 分配并填进 Task，不能复制模板中的示例命令直接执行。
 
 同一物理 checkout 同时只允许一个写入者；无法使用 worktree 时串行交接。read-only Review 也固定被审查 commit，不对正在写的 checkout 运行会改文件的命令。
 
@@ -207,8 +208,8 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 
 1. **Task**：Roadmap ID 或现有 Task ID、标题、推荐启动条件和依赖。
 2. **Agent**：根据任务性质指定合适的 Owner；ZCode 负责独立 Feature/长任务，
-   Antigravity 负责通用编程实现，ZCode同时主责React/Tauri UI/UX，Codex 按 DSH 分配承担协作实现或独立 Review，
-   DSH 负责契约、共享 seam、主线集成、Review Appointment 和 Release Gate。Owner 与 Reviewer 必须不同。
+   Codex 按 DSH 分配承担 Python、应用、基础设施、测试等协作实现或 Review，
+   DSH 负责契约、共享 seam、主线集成、Review Appointment 和 Release Gate。Review 须满足上下文独立（产出变更的同一会话/实例不得自审；作者可派子 agent 审查）。
 3. **Recovery point**：实际仓库路径、branch/worktree、固定 `base_commit` 和当前
    `head`；若 worktree 尚未创建，写明“待 DSH 创建”，不得臆造路径或 commit。
 4. **Scope**：允许修改路径、明确的禁止路径、是否需要共享接口/Schema/依赖变更授权。
@@ -262,6 +263,8 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 
 使用 [Review 模板](templates/REVIEW.md)。Review 必须固定 base_commit 与 reviewed_head；分支随后变化不延用旧批准。
 
+**“独立”的定义（2026-10-31 用户裁决）。** 独立审查指**上下文独立**，不要求 Reviewer 为非作者或与 Owner 不同角色：产出该变更的同一 Agent 会话/实例不得自审；作者可以派发新的子 agent（独立上下文、只读被审 head、不参与实现或返修）执行 Review 并出具报告。报告须记录审查者身份与来源（子 agent 的会话/子任务 ID 或 Agent 名）与 `reviewer_kind`：`subagent` = 作者派发的独立上下文子 agent（DSH subagent / Workflow / teammate 等），`agent` = 另一个独立 Agent（如 Codex / ZCode），`external` = 项目外审查（用户指定或外部工具，须记录来源）。作者派发子 agent 审查仍须经 DSH Appointment 登记（写明审查者与来源），DSH 保留 Review 处置权；不得以“已派发子 agent”代替实际完成的审查。数据安全、共享契约、Schema 与发布 Gate 等高风险变更，DSH 可另行指定独立 Agent 加强审查，但这不是默认 Gate。历史 Review 与署名不改写。
+
 ### 6.1 DeepSeek Harness CLI 与 Web 会话可见性
 
 用真实 DSH CLI 派发 Review 时，从被审查任务的 linked worktree 根目录运行 `dsh --profile headless --json`，保存退出码并记录 JSONL `session` 事件中的 session ID。`--json` 只输出本次运行事件并报告 ID；每次默认新建独立会话，不会把内容追加到当前打开的 Web 对话。只有 Web 端实际看到该会话及其 Review 内容，才可记为 Web 可见。
@@ -270,7 +273,7 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 
 若重启后仍不可见，记录 DSH 版本、worktree 路径、session ID 和检查结果，标记 `web_visibility=unverified`；不要把 headless 运行描述成 Web 对话已显示，也不要用其他 Agent 模拟代替指定 Reviewer 的真实 Review。继续已有会话时才传入 `--session-id <id>`，并确认该会话属于相同工作目录且可由当前 profile 接管。
 
-1. Reviewer 在独立工作区读完整 diff、受影响调用链、需求和测试，不只看作者摘要。
+1. Reviewer（含作者派发的子 agent）在独立工作区或独立上下文读完整 diff、受影响调用链、需求和测试，不只看作者摘要。
 2. **Standards 视角（建议，非强制；2026-09-18 用户决定取消"双轴"强制口径）**：代码是否符合**当前有效**标准——`AGENTS.md`、本协议、[AD-002 目标架构](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、本 Task 的允许/禁止范围及 Task 明确引用的冻结 contract。`AD-001`、`02_TECHNICAL_ARCHITECTURE_.md`、QML 映射和旧 D08 中的 PyInstaller/Qt 条款属于 Legacy/Historical，不得作为新架构实现标准。仓库**未记录**标准的方面适用 Fowler smell baseline（_Refactoring_ 第 3 章）作为**判断项**（须带 label 并引用 hunk）；**仓库记录的标准优先于 baseline**，工具已强制的项跳过。
 3. **Spec 视角（建议，非强制；同上）**：AC、写回范围、命令语义、数据保护、失败/暂停/恢复、UI 行为是否符合来源。来源顺序：本 Task 文件 AC → 其引用的 D01～D08 条文与 `doc/contracts/**` → STATUS 中的用户裁决；**不得**用聊天记录或旧仓库推断已有实现。
 4. Architecture 轴：分层、共享契约、依赖、安全、持久化、可选 AI 依赖边界；新架构依赖方向为 `Avalonia UI → Host/IPC（C# 服务层）→ Python Application → Domain/Ports → Infrastructure Adapters`，禁止 Avalonia UI 直接访问 SQLite、任意 OS 路径或模型，也禁止反向依赖。Legacy QML 与 Tauri/React 只作历史证据。
@@ -292,4 +295,4 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 
 发布按 D08 执行：P0/P1 和干净 Windows 验证等要求不因 Roadmap 分阶段而降低。范围删减、阈值豁免先形成用户可审查的文档决定，不能把未完成标成 N/A。
 
-推送规则（2026-10-25 用户裁决后）：普通 push 权限由 DSH 在候选满足既定推送条件并完成非作者独立审查后执行；执行前重新核实远端 SHA、候选精确 commit、材料隔离结论与目标 ref 未被占用。只允许普通 push 用户批准的目标分支；禁止 force push、禁止覆盖远端 `main`、禁止传播私有漫画及其历史对象、禁止改写本地 `main` 历史或他人未提交内容。推送结果（远端、目标分支、commit、实际命令与 exit、远端 SHA 核验）必须写入当前交付记录。任何新交付 head 重新 Appointment Review。
+推送规则（2026-10-25 用户裁决后，2026-10-31 修订审查口径）：普通 push 权限由 DSH 在候选满足既定推送条件并完成上下文独立的审查后执行；执行前重新核实远端 SHA、候选精确 commit、材料隔离结论与目标 ref 未被占用。只允许普通 push 用户批准的目标分支；禁止 force push、禁止覆盖远端 `main`、禁止传播私有漫画及其历史对象、禁止改写本地 `main` 历史或他人未提交内容。推送结果（远端、目标分支、commit、实际命令与 exit、远端 SHA 核验）必须写入当前交付记录。任何新交付 head 重新 Appointment Review。

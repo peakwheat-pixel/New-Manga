@@ -18,6 +18,8 @@ agent_policy:
   no_permanent_roles: true
   capability_required: true
   owner_policy: AUTO_SELECT
+  # 2026-10-31 用户裁决：Review 不再要求非作者，作者可派独立上下文子 agent 审查。
+  # 下面两项仅约束"审查者身份 ≠ owner / contributor 身份"，不禁止作者派子 agent 以独立 reviewer 身份审查。
   reviewer_must_not_be_owner: true
   reviewer_must_not_be_contributor: true
 legacy_compatibility:

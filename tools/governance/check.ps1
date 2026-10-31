@@ -170,6 +170,8 @@ $staticFiles = @(
     'AGENTS.md',
     'doc/00_INDEX.md',
     'doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md',
+    'doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md',
+    'doc/contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md',
     'doc/STATUS.md',
     'doc/REBASELINE_PLAN.md',
     'doc/09_COLLABORATION.md',
@@ -256,26 +258,96 @@ foreach ($file in $selectedFiles) {
     }
 }
 
+# 2026-10-31 (AD-003, rev r2 after FEA-00 Codex r1 R-03/R-04):
+#   AD-002 keeps the 2026-10-26 sentinel as history; the CURRENT architecture sentinel
+#   lives in AD-003. A PASS here is mechanical only and does NOT replace an architecture
+#   review or an ADR adjudication.
+#
+# Scope of machine checking is BOUNDED ON PURPOSE. Only explicit "architecture assertion
+# surfaces" are validated: the sentinel fields of AD-002/AD-003, a dedicated
+# machine-checked field in doc/00_INDEX.md, and the AGENTS.md product-boundary line.
+# Free prose is deliberately NOT scanned: a whole-file `-like` test can be satisfied by
+# any incidental mention of the old string, and any line-wide regex sweep false-positives
+# on legitimate historical notes ("...为 React + TypeScript；该表述已被取代"). Stale
+# claims in prose are a REVIEW concern, not a regex concern; see
+# doc/reviews/FEA-00-codex-r1.md R-04 for the accepted limitation.
 $architecture = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy'
-$adPath = Join-Path $repoRoot 'doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md'
-$adText = Get-Content -LiteralPath $adPath -Raw
-if ($adText -notlike "*$architecture*") { Add-Error 'AD-002 缺少冻结的唯一目标架构哨兵。' }
-$truthPaths = @('AGENTS.md', 'doc/00_INDEX.md', 'doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md', 'doc/STATUS.md', 'doc/REBASELINE_PLAN.md')
-$conflictPatterns = @(
-    '(?i)(?:current|target|future)\s+architecture\s*(?:is|=)\s*(?:Windows\s*\+\s*)?React\s*\+\s*TypeScript',
-    '(?:当前目标架构|唯一继续演进的产品架构)\s*(?:为|是|=|：|:)\s*(?:Windows\s*\+\s*)?React\s*\+\s*TypeScript',
-    'React\s*(?:\+|/)\s*Tauri\s*(?:为|是)\s*(?:当前|目标|未来)架构',
-    '(?:当前目标架构|唯一继续演进的产品架构)\s*(?:为|是|=|：|:)\s*(?:Windows\s*\+\s*)?Python\s*\+\s*PySide6',
-    'PySide6\s*(?:\+|/)\s*QML\s*(?:为|是)\s*(?:当前|目标|未来)架构'
-)
-foreach ($relative in $truthPaths) {
-    $file = Join-Path $repoRoot $relative
-    $lineNumber = 0
-    foreach ($line in (Get-Content -LiteralPath $file)) {
-        $lineNumber++
-        foreach ($pattern in $conflictPatterns) {
-            if ($line -match $pattern) { Add-Error "目标架构冲突标记：${relative}:$lineNumber"; break }
+$architectureCurrent = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource'
+
+# Only unquoted Markdown outside HTML comments and fenced code can declare an
+# authority field. Historical prose remains outside this mechanical check.
+function Get-AuthorityLines([string]$Relative) {
+    $path = Join-Path $repoRoot $Relative
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        Add-Error "缺少架构权威文档：$Relative"
+        return
+    }
+    $text = Get-Content -LiteralPath $path -Raw
+    $text = [regex]::Replace($text, '(?s)<!--.*?(?:-->|\z)', '')
+    $inFence = $false
+    $fenceChar = ''
+    $fenceLength = 0
+    foreach ($line in ($text -split '\r?\n')) {
+        $opening = [regex]::Match($line, '^ {0,3}(`{3,}|~{3,})')
+        if ($opening.Success) {
+            $marker = $opening.Groups[1].Value
+            if (-not $inFence) {
+                $inFence = $true
+                $fenceChar = $marker.Substring(0, 1)
+                $fenceLength = $marker.Length
+            } elseif ($marker.Substring(0, 1) -ceq $fenceChar -and $marker.Length -ge $fenceLength -and
+                      $line.Substring($opening.Length).Trim().Length -eq 0) {
+                $inFence = $false
+            }
+            continue
         }
+        if (-not $inFence) { $line }
+    }
+}
+
+function Assert-ArchitectureSurface {
+    param([string]$Relative, [string]$Marker, [string]$ExpectedLine, [string]$Label)
+    $hits = @(Get-AuthorityLines $Relative | Where-Object { $_.StartsWith($Marker, [StringComparison]::Ordinal) })
+    if ($hits.Count -ne 1) { Add-Error "架构断言面必须唯一（$Label）：$Relative，实际 $($hits.Count) 行"; return }
+    if ($hits[0].TrimEnd() -cne $ExpectedLine) { Add-Error "架构断言面与哨兵不一致（$Label）：$Relative" }
+}
+
+Assert-ArchitectureSurface -Relative 'doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md' `
+    -Marker 'Target architecture sentinel:' -ExpectedLine ('Target architecture sentinel: `' + $architecture + '`') -Label 'AD-002 历史哨兵'
+Assert-ArchitectureSurface -Relative 'doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md' `
+    -Marker 'Architecture sentinel:' -ExpectedLine ('Architecture sentinel: `' + $architectureCurrent + '`') -Label 'AD-003 当前哨兵'
+Assert-ArchitectureSurface -Relative 'doc/00_INDEX.md' `
+    -Marker '**当前架构哨兵（机器校验字段）**：' -ExpectedLine ('**当前架构哨兵（机器校验字段）**：`' + $architectureCurrent + '`') -Label '00_INDEX 当前哨兵字段'
+
+# Parse the actual architecture value before its explanatory parenthesis; a
+# historical occurrence later on the line cannot replace that value or link.
+$boundaryMarker = '当前唯一继续演进的产品架构为 '
+$boundary = @(Get-AuthorityLines 'AGENTS.md' | Where-Object { $_.StartsWith($boundaryMarker, [StringComparison]::Ordinal) })
+if ($boundary.Count -ne 1) { Add-Error "AGENTS.md 产品边界断言行必须唯一，实际 $($boundary.Count) 行。" }
+else {
+    $end = $boundary[0].IndexOf('（', $boundaryMarker.Length, [StringComparison]::Ordinal)
+    $expectedBoundary = 'Windows / C# .NET + Avalonia / Python Core / SQLite / ReferencedSource'
+    if ($end -lt 0 -or $boundary[0].Substring($boundaryMarker.Length, $end - $boundaryMarker.Length).Trim() -cne $expectedBoundary) {
+        Add-Error 'AGENTS.md 产品边界的当前架构值不一致。'
+    }
+    $sentenceEnd = $boundary[0].IndexOf('。', [StringComparison]::Ordinal)
+    $firstSentence = if ($sentenceEnd -ge 0) { $boundary[0].Substring(0, $sentenceEnd) } else { $boundary[0] }
+    if ($firstSentence -cnotmatch '\[AD-003[^\]]*\]\(doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE\.md\)') {
+        Add-Error 'AGENTS.md 产品边界的首句缺少 AD-003 Markdown 链接。'
+    }
+}
+
+# Only the unique CURRENT rows in the document map are authority pointers.
+$indexLines = @(Get-AuthorityLines 'doc/00_INDEX.md')
+foreach ($pointer in @(
+    @{ Name = 'AD-003'; Target = 'AD-003_REFERENCED_SOURCE_ARCHITECTURE.md'; Kind = 'CURRENT / ARCHITECTURE' },
+    @{ Name = 'ADJ-001'; Target = 'contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md'; Kind = 'CURRENT / CONTRACT ADJUDICATION' }
+)) {
+    $rowPrefix = '| [' + $pointer.Name + ']('
+    $rows = @($indexLines | Where-Object { $_.StartsWith($rowPrefix, [StringComparison]::Ordinal) })
+    $expectedPrefix = '| [' + $pointer.Name + '](' + $pointer.Target + ') | ' + $pointer.Kind + ' |'
+    if ($rows.Count -ne 1 -or -not $rows[0].StartsWith($expectedPrefix, [StringComparison]::Ordinal)) {
+        Add-Error "00_INDEX 当前权威指针缺失、不唯一或状态不匹配：$($pointer.Name)"
     }
 }
 
