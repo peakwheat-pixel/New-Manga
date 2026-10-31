@@ -52,8 +52,8 @@ C-02 覆盖 V11R 合同的 **§1.1 / §1.2 / §2.2 / §2.3 / §2.4 / §3 / §4 /
   | 焦点 | `Nm.Focus.Ring.Width/Offset/Color` | `double`/`IBrush` |
   | 圆角（Fluent 扩展） | `Nm.Corner.Fluent.Sm(4)/Md(6)/Lg(8)` | `CornerRadius` |
 
-> 上述四组为 **Fluent 专属最小集**，不改变 V11R §2.2 对 Current 主题的全局义务（V-03 末尾）。
-  **适用域限定**：这三组仅在 `builtin.fluent` 主题包内**必须**存在；`builtin.current-v2` 可缺省（回退为单色边框）。
+上述四组为 **Fluent 专属最小集**，不改变 V11R §2.2 对 Current 主题的全局义务。
+  **适用域限定**：这四组仅在 Fluent 主题包内**必须**存在；Current 主题可缺省（回退为单色边框）。
 - **审查判据**：Fluent 主题包缺任一键 → 判违规；current-v2 缺省 → 合规。
 - **例外登记**：材质/层次组进入 §2.4 例外表的 `Fluent 视觉令牌` 行（见 V-05）。
 
@@ -102,11 +102,12 @@ C-02 覆盖 V11R 合同的 **§1.1 / §1.2 / §2.2 / §2.3 / §2.4 / §3 / §4 /
 - **修订文本 / 适用域**：方案 §15.2 的 §6.3 行要求「进程级单一注册表按 **scheme / 窗口 / 输入焦点上下文** 路由」。修订为：`KeyMap` 扩展为**按上下文路由**的单一注册表（`contextKey = (frontendId, windowRole, focusScope)`），但**仍为进程级唯一**；Fluent 的默认快捷键上下文与 Current 不得冲突（注册冲突仍启动断言失败）。
 - **审查判据**：注册表仍唯一（不得每 frontend 一份）；`Ctrl+1/2/3` 等 §6.3 既有快捷键在两个 frontend 下映射一致；上下文路由键覆盖 `(frontendId, windowRole, focusScope)` 三元。
 - **例外登记**：无需。
-- **例外登记**：无需。
 
 ---
 
 ## 3. Fluent 定位（R-03 重申，防止误读）
+
+**id 约定**（本单全文）：`builtin.fluent` = frontend id（`newmanga.frontend/1`）；其视觉主题 = `builtin.fluent-dark`；`builtin.current-v2` = Current frontend id，其视觉主题 = `newmanga-default`。文中「Fluent 主题包」均指 `builtin.fluent-dark`。
 
 - **Fluent = 视觉风格**，**不是** FluentAvalonia 依赖。禁止引入 `FluentAvaloniaUI` 与 **SukiUI** NuGet；所有 Fluent 观感通过 `nm.fluent.visual/1` 主题包令牌 + 既有控件模板实现。
 - 「Fluent 风格」与「FluentAvalonia 库」是两个概念；审查时若发现 `FluentAvalonia` 引用即判违规（除非用户另行裁决）。
