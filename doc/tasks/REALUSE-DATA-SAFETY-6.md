@@ -100,14 +100,14 @@ REALUSE-DATA-SAFETY-5 的核对结论：9 条里修了 6 条，剩下 4 条明�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-AC1-READER-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs` | `fb5065013` | `603ed15e600aefaf91fa04984fb4844e2daa32b459e88dca616ab586151fe865` | CANONICAL |
-| E-AC1-LIBRARY-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs` | `fb5065013` | `2b6f2525f1724cecaf0e0a5de6cf18560ceb28ef6d71784cdb7ba8c2c53066f6` | CANONICAL |
+| E-AC1-READER-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs` | `fb5065013` | `db99f3ebcaa07805b3d195048dabf3ab7eee00e17bd3805d5f0951b782b642ef` | CANONICAL |
+| E-AC1-LIBRARY-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs` | `fb5065013` | `bc651c5657d05fc041754d25b00d503ee68ce734fa005a6469d8afb21e2d66e7` | CANONICAL |
 | E-AC1-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/LibraryProgressRefreshTests.cs` | `fb5065013` | `135de02c1856c5989269a70f8544925d03c4a7e3127642b0b75e88f3cff260a2` | CANONICAL |
-| E-AC1-TEST-FAKE | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs` | `fb5065013` | `6c63c2c5fc933eea8fab51ba792246d6131e997ce31bccb248eb32d2affe4a11` | CANONICAL |
+| E-AC1-TEST-FAKE | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs` | `fb5065013` | `c0c4822bc7ffb7ae0eabf6fcc6832c1100f31b729844235b2b23031fee716533` | CANONICAL |
 | E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-6/ac1-progress-refresh.md` | `fb5065013` | `e913e2dd01d8e8f8af6cc54b7d1126eb5993b64d0b0976f0bf2f0d44669866e8` | CANONICAL |
-| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-6/ac1-progress-refresh-test-log.txt` | `fb5065013` | `2eab80965115b0d2feb5ca9fb9a4903682311e63b78a3ac1be9e1a517cc0a63c` | CANONICAL |
+| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-6/ac1-progress-refresh-test-log.txt` | `fb5065013` | `1bb0ac36aa1866230b38385c189edfcf97bf63bc87a43e2d307048477723466c` | CANONICAL |
 | E-AC2-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-6/ac2-derived-conclusion.md` | `fb5065013` | `1edb35f14a3676cecaad7c8d2b78ed75af2ca3ae43b43c20967bb85e73c77c47` | CANONICAL |
-| E-AC2-DATA | AC2 | `verification/REALUSE-DATA-SAFETY-6/ac2-derived-realdata.json` | `fb5065013` | `22f9793f071de4173aed7bad4017d54edf8261692a14242694a4a17bd2da0ddc` | CANONICAL |
+| E-AC2-DATA | AC2 | `verification/REALUSE-DATA-SAFETY-6/ac2-derived-realdata.json` | `fb5065013` | `e21061547e8adb405490d0119efd93b24fcdfd0b79966dffefc219963d3c5dea` | CANONICAL |
 | E-AC3-DOC | AC3 | `verification/REALUSE-DATA-SAFETY-6/ac3-options.md` | `fb5065013` | `9c27d477301e090e79cb48a3fafa892b86ddfce80e41723826cd2acfef5c950b` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-6/README.md` | `fb5065013` | `d199f4843dea5c3c6b25ee293f1b54b93ce58bdb82fa9960c4eb6676041ca3ff` | CANONICAL |
 | E-GOV-CHECK | Gate（治理检查） | `verification/REALUSE-DATA-SAFETY-6/governance-check.txt` | `b94dc3d86` | `bc97d7a78e4db6e84899c415bc82a27e45b8874c16b31e71baf571c69e7b592e` | CANONICAL |
