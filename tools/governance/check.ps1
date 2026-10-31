@@ -395,15 +395,18 @@ function Mask-ParagraphCrossLineCode([string[]]$Lines, [hashtable]$BlockState) {
                 continue
             }
         }
-        if ([int][char]$chars[$i] -eq 60) {
+        # Only a line-start block opener suppresses inline parsing. An inline
+        # <pre>/<code> tag does not: CommonMark keeps it inline, so backticks
+        # between such tags still open and close code spans.
+        if (($i -eq 0 -or [int][char]$chars[$i - 1] -eq 10) -and [int][char]$chars[$i] -eq 60) {
             if ($joined.Substring($i).StartsWith('<!--', [StringComparison]::Ordinal)) {
                 $BlockState.Comment = $true
                 $i += 4
                 continue
             }
-            $open = [regex]::Match($joined.Substring($i), '^(?i:<\s*(pre|code)(?=[\s>/]|$))')
+            $open = [regex]::Match($joined.Substring($i), '^(?i:<\s*pre(?=[\s>/]|$))')
             if ($open.Success) {
-                $BlockState.HtmlTag = $open.Groups[1].Value
+                $BlockState.HtmlTag = 'pre'
                 $i += $open.Length
                 continue
             }
@@ -449,14 +452,15 @@ function Get-AuthorityLines([string]$Relative) {
     $text = Get-Content -LiteralPath $path -Raw
 
     # Find spans in raw paragraphs before removing any fence/HTML content.
-    # Blank lines, ATX headings and line-start block openers end a paragraph;
-    # an inline <pre> inside a span is not a block opener.
+    # Blank lines, ATX headings and line-start block openers end a paragraph.
+    # Inline <pre>/<code> tags do not, and neither does a line-start <code>:
+    # it is a type-7 HTML block, which cannot interrupt a paragraph.
     $rawLines = @($text -split '\r?\n')
     $maskedLines = [System.Collections.Generic.List[string]]::new()
     $paragraph = [System.Collections.Generic.List[string]]::new()
     $blockState = @{ Comment = $false; HtmlTag = ''; InFence = $false; FenceChar = ''; FenceLength = 0 }
     foreach ($rawLine in $rawLines) {
-        $isBlockBoundary = $rawLine -match '^ {0,3}(?:#{1,6}(?:[ \t]+|$)|`{3,}|~{3,}|<!--|(?i:<\s*(?:pre|code)(?=[\s>/]|$)))'
+        $isBlockBoundary = $rawLine -match '^ {0,3}(?:#{1,6}(?:[ \t]+|$)|`{3,}|~{3,}|<!--|(?i:<\s*pre(?=[\s>/]|$)))'
         if ($rawLine.Trim().Length -eq 0 -or $isBlockBoundary) {
             if ($paragraph.Count -gt 0) {
                 foreach ($maskedLine in (Mask-ParagraphCrossLineCode @($paragraph.ToArray()) $blockState)) { $maskedLines.Add($maskedLine) }

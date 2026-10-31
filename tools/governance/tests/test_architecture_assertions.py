@@ -202,6 +202,24 @@ class ArchitectureAssertions(unittest.TestCase):
         self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
                     lambda text: text.replace(field, hidden, 1), False)
 
+    def test_line_start_code_element_does_not_end_paragraph(self):
+        # <code> is a type-7 HTML block and cannot interrupt a paragraph, so a
+        # cross-line span opened before it still encloses the sentinel.
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        hidden = f"历史示例：``跨行代码\n<code>README</code> 标签示例\n{field}\n示例结束``"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, hidden, 1), False)
+
+    def test_backticks_inside_inline_html_elements_still_form_code_span(self):
+        # Inline raw HTML does not suppress Markdown inline parsing, so a
+        # backtick between an inline <code>/<pre> pair still opens a span.
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        for tag in ("code", "pre"):
+            with self.subTest(tag=tag):
+                hidden = f"历史示例：<{tag}>`跨行代码</{tag}>\n{field}\n结束`"
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, hidden, 1), False)
+
     def test_escaped_backtick_does_not_start_cross_line_code(self):
         field = f"Architecture sentinel: `{SENTINEL}`"
         for slash_count in (1, 3):
