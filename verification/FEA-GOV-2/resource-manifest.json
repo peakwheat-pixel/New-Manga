@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-GOV-2",
+  "generated_at": "2026-11-01",
+  "generated_by": "DSH (Lead / Architect / Integrator)",
+  "note": "治理 Task：只产出提案文档，无 worktree、无临时产物、无用户数据访问。",
+  "resources": [
+    {
+      "resource_type": "proposal-document",
+      "source_path": "G:/CODEX/New Manga/doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md",
+      "disposition": "PRESERVE_IN_REPO",
+      "destination_path": "Same source location",
+      "process_check": "提案文档入库并登记 canonical evidence pin；不删除、不移动"
+    }
+  ],
+  "closeout_counts": { "deleted": 0, "moved": 0, "migrated": 0, "archived": 0 },
+  "closeout_note": "只读起草，未创建或删除任何资源。"
+}
