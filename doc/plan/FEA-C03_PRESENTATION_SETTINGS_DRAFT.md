@@ -17,7 +17,7 @@
 | 写者 | `ThemeSettingsStore : IThemePersistence`（唯一实现） | `ThemeSettingsStore.cs:11,131` |
 | 模型 | `ThemeSettings(ThemeId, Appearance, Contrast, LayoutProfile, ReducedMotion, FollowSystemAccent)` | `Models/ThemeModels.cs:349-355` |
 | 布局 | `LayoutProfile(Id, Navigation, Shelf, Density, Workbench, Reader)`，V1 仅实现 `LayoutNavigation.TopBand` | `ThemeModels.cs:330-346` |
-| 动效 | 只有 `ReducedMotion` 布尔（`ThemeMotion` 是主题包内的时长，不持久化到设置） | `ThemeModels.cs:217,353` |
+| 动效 | 只有 `ReducedMotion` 布尔（`ThemeMotion` 是主题包内的时长，不持久化到设置） | `ThemeModels.cs:217,354` |
 | 损坏容错 | 读失败回退默认，不让损坏文件阻断启动 | `ThemeSettingsStore.cs` 注释与 `Load()` |
 | 迁移 | `LegacyThemeMigration` 存在（退役主题 id 迁移） | `LegacyThemeMigration.cs` |
 
@@ -25,9 +25,9 @@
 
 ### 2.1 唯一写者与文件
 
-- **唯一写者**：`presentation-settings.json`（新文件）作为**外观/布局/动效**的单一写点；`ThemeSettingsStore` 降为 **sink-only**（只读，不再写）。
+- **唯一写者**：`presentation-settings.json`（新文件）由 **`NewManga.Appearance` 项目的 `AppearanceCoordinator`** 原子写（方案 `:131`/`:858`）；ThemeEngine 的 `IThemePersistence` 成为**对该存储的适配面**（sink-only：ThemeEngine 只读它，不再自行写旧文件）。`PresentationSettingsStore` 落在 `NewManga.Appearance` 内，**不在 ThemeEngine**。
 - **旧文件停止写的时点**：新文件**首次成功写入**后，`theme-settings.json` 转为只读（保留为迁移输入，不删除）。
-- **理由**：Fluent 主题包（视觉主题 `builtin.fluent-dark`，frontend id `builtin.fluent`）需要持久化比现有 `ThemeSettings` 更多的字段（材质强度、圆角档、密度档、动效分类），塞进旧模型会破坏 V11R §4 的冻结签名。
+- **理由**：Fluent 主题包（视觉主题 `builtin.fluent-dark`，frontend id `builtin.fluent`）需要持久化比现有 `ThemeSettings` 更多的字段（材质强度、圆角档、密度档、动效分类），塞进旧模型会破坏 V11R §4 的冻结签名；写者上移到 Appearance coordinator 也让「三层选择/兼容/持久化协调」有唯一落点（方案 `:131`）。
 
 ### 2.2 字段迁移矩阵
 
@@ -53,17 +53,17 @@
   | `feedback` | 按钮 hover、状态变化 | `reduce` 下保留颜色变化、去掉位移 |
   | `decorative` | 背景渐变移动、粒子 | `reduce` 下**完全禁用** |
 - **兼容**：旧 `ReducedMotion=true` 映射为 `motion.mode=reduce` 且三类全禁（等价旧行为）。
-- **适用域**：`motion.mode=auto` 时读取系统辅助功能设置（Avalonia `PlatformSettings`）；`full`/`reduce` 为显式覆盖。
+- **适用域**：`motion.mode=auto` 时读取系统辅助功能设置——**Avalonia 11.3.22 无动画开关 API**，实现须走平台层：Windows 读 `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` 或 WinRT `UISettings.AnimationsEnabled`；`full`/`reduce` 为显式覆盖。
 
 ## 3. 冻结前置与判据
 
 | 项 | 判据 |
 |---|---|
-| 写者唯一性 | `presentation-settings.json` 只能由 ThemeEngine 的 `PresentationSettingsStore` 写；`ThemeSettingsStore` 的 `SaveAsync` 在迁移后必须抛 `NotSupportedException`（或用 `[Obsolete(error:true)]`） |
+| 写者唯一性 | `presentation-settings.json` 只能由 **`NewManga.Appearance` 的 `AppearanceCoordinator`** 写；ThemeEngine 的 `ThemeSettingsStore.SaveAsync` 在迁移后**保留一个 release 周期的兼容写**（写旧文件 + 记 warning），**不抛 `NotSupportedException`**——因为现有唯一调用者 `ThemeService.TrySave`（`Service/ThemeService.cs:647-661`）在 `:654` 会 catch 并吞掉异常，静默失效比兼容写更糟；兼容期结束后由 Appearance 接管全部保存路径 |
 | 迁移幂等 | 旧文件存在 → 首次读时迁移 → 写新文件 → 旧文件只读；重复启动不再写旧文件 |
 | 字段完整性 | 新模型覆盖 §2.2 全部行；缺字段 → 回退默认并记录 warning |
 | 三态可验证 | 单测：`reduce` 下 `decorative` 类动效时长为 0；`full` 下不受系统设置影响 |
-| 与 C-02 一致 | `builtin.fluent` 主题包 id 在 `theme.packageId` 合法；`builtin.current-v2` 下 material/corners 字段被忽略（不报错） |
+| 与 C-02 一致 | `theme.visualThemeId` ∈ {`newmanga-default`, `builtin.fluent-dark`}；`theme.frontendId` ∈ {`builtin.current-v2`, `builtin.fluent`}；Current 视觉主题下 material/corners 字段被忽略（不报错） |
 
 ## 4. 冻结条件
 
@@ -89,5 +89,5 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
-| 2026-11-01 | 建立草案：现状表（代码事实）、目标文件与唯一写者、字段迁移矩阵 10 行、动效三态/三类、5 条判据、U-05a/U-05b 待裁决 | DSH |
+| 2026-11-01 | 建立草案：现状表（代码事实）、目标文件与唯一写者、字段迁移矩阵 9 行、动效三态/三类、5 条判据、U-05a/U-05b 待裁决 | DSH |
 | 2026-11-01 | v2：补正式冻结条件（§4 四条，含 C-02 先冻结）；字段表补双 id 体系；全文 id 词汇与 C-02 V-07 对齐 | DSH |
