@@ -25,7 +25,7 @@
 | 项 | 内容 |
 |---|---|
 | 归属 | **Host 侧**（不是 Core、不是 UI）；UI 不可见其内部结构 |
-| 持久化 | Host 私有存储（不写 Core DB）；加密或受 ACL 保护，**不得**出现在备份包外泄面 |
+| 持久化 | Host 私有存储（不写 Core DB）；**随备份纳入**（AD-003 §3.3「源引用与授权元数据默认包含」），备份包内加密；**不得在备份包之外**泄露 |
 | 条目字段（候选） | `{ registryId, locator, authorizedRoots[], identityFacts, generation, createdAt, lastUsedAt }`；**`identityFacts` 必须含内容 digest + volume serial + file ID**（AD-003 §3.2 明文「不得仅凭路径、mtime 或 size 断言同一文件」）；`size`/`mtime` 只作快速预筛，不单独构成身份 |
 | 语义 | 一条 registry 记录 = 一个「用户已授权读取的源根」；`generation` 每次授权变更递增 |
 | 生命周期 | 用户显式授权创建；用户撤销/源不可达时失效；**不因导入完成而删除**（这些是引用源，需长期可读） |
@@ -49,7 +49,7 @@
 | `ListSourceRoots` | UI → Host | `{}` | `{ entries: [{ registryId, locator, roots[], generation, createdAt, lastUsedAt }] }`（重启后 UI 列出/撤销已授权根） |
 | `RevokeSourceRoot` | UI → Host | `{ registryId }` | `{}` |
 | `RequestSourceRead` | Core → Host | `{ registryId, generation, scope{ sourceId, version, entry, rendition }, budget{ maxBytes, maxDecodeBytes } }` | `{ grantId, expiresAt }` |
-| `VerifySourceRead` | Host 内部 | `{ grantId, scope, identityFacts{ digest, volumeSerial, fileId } }` | `{ ok, reason? }` |
+| `VerifySourceRead` | Host 内部 | `{ grantId, scope, identityFacts{ digest, volumeSerial, fileId } }` | `{ ok, reason? }`；**归属校验**：`scope.sourceId/entry` 必须解析到某 `authorizedRoots` 内的路径（映射在 Verify 时做，越根即拒绝） |
 
 新增命令按 **minor** 递增（当前资源控制面 wire v1 → 本组命令 v1.1；**不改 major**）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。**读取面**：`RequestSourceRead` 的 `scope` 必须按 `SourceId/version/entry/rendition` 表达并带预算，**不接受** `paths[]` 形式。
 
@@ -67,9 +67,9 @@
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
-- **C-01b**：SC-21（引用源读取需独立授权面）由本草案落地；SC-07/SC-01 的「新导入不复制」依赖本授权面。
+- **C-01b**：SC-21（引用源读取需独立授权面）由本草案落地；**SC-01**（新导入不复制）依赖长期读取授权；SC-07（旧 managed 双读）**不依赖**本授权面。
 - **C-05**：源读取产生的 revision 进入可见性谓词（`integrity_status` 校验同口径）。
-- **C-04b**：删除授权（PD-05/PD-06）与本授权面**独立**——删除不撤销源读取授权，反之亦然。
+- **C-04b**：删除授权（AD-003 §3.7 / PD-02/PD-03；注意 PD-05=事务边界、PD-06=失败回滚）与本授权面**独立**——删除不撤销源读取授权，反之亦然。
 
 > 注：ADJ-001 的 PD-05 = 事务边界、PD-06 = 失败回滚；删除**授权**在 AD-003 §3.7（`：95`）/PD-02/PD-03，不在 PD-05/PD-06。
 

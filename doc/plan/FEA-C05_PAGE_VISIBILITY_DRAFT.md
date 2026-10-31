@@ -33,7 +33,14 @@ V(p, t) ≡
 ∧ P4. r = revision(a.current_revision_id)
      ∧ r.integrity_status = 'valid'                             -- 该 revision 内容完整（P2–P4 绑定同一个 a）
 ∧ P5. r.created_at <= t                                        -- 已落库（revision 是提交产物；见 §4）
-∧ P6. active_runs(p) = ∅  ∨  所有 run.status ∉ ACTIVE_STATES   -- 无活跃 Run（见 §4）
+
+**稳定性谓词**（导出/删除预览用，独立于可见性）：
+
+```
+S(p, t) ≡ V(p, t) ∧ active_runs(p) = ∅
+```
+
+其中 `active_runs(p)` = 该页上有 `pipeline_run_id`/`step_run_id` 且 `run.status ∈ ACTIVE_STATES = {pending, running, paused, blocked, interrupted}` 的 Run（与 `core_assembly.py:171-181` 一致；`prepared`/`committed` 不是 Run 状态）。
 ```
 
 其中 `VISIBLE_TYPES = {'original','thumbnail','clean','translated','render_preview','export'}`（`detection_overlay`/`mask`/`debug_*` 是中间产物，**不**构成可见性）。
@@ -64,6 +71,7 @@ ORDER BY p.chapter_id, p.sort_order;
 
 | 情形 | 行为 |
 |---|---|
+| `current_revision_id` 为 NULL | 该页**不可见**（P3 不满足；schema `:72` 允许 NULL） |
 | `current_revision_id` 指向的 revision 缺失 | 该页**不可见**（P4 不满足），记 `DATA_INTEGRITY_BROKEN`（内部诊断，不向 UI 暴露路径） |
 | `integrity_status = 'unknown'`（schema 允许） | 该页**不可见**（P4 只接受 `valid`）；记 `DATA_INTEGRITY_UNKNOWN` |
 | `integrity_status ∈ {'missing','corrupted'}` | 不可见；UI 显示「内容损坏」占位，不显示路径 |
@@ -72,7 +80,7 @@ ORDER BY p.chapter_id, p.sort_order;
 
 ## 6. 与 C-01b 的接口
 
-- C-01b SC-30/SC-31/SC-33 的删除语义**预期**引用本谓词（当前 SC 条文未涉可见性/内容摘要，属**后续细化**，不是既有条文）；删除预览的「内容摘要」建议用 `V(p,t)` 计数、不可见页不计入。
+- C-01b SC-30/SC-31/SC-33 的删除语义**预期**引用本谓词（当前 SC 条文未涉可见性/内容摘要，属**后续细化**，不是既有条文）；删除预览的「内容摘要」建议用 `S(p,t)`（稳定页）计数、不可见/不稳定页不计入。
 - 导出（FEA-14-EXPORT）也引用本谓词：只导出 `V(p,t) ∧ 无在途 Run` 的页。
 
 ## 7. 冻结条件
