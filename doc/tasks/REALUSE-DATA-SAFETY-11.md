@@ -46,7 +46,7 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 
 ## 验收标准
 
-- [x] **AC1 日志范围补全**：重新执行完整负向对照（覆盖 pre-F-005 → build → failing test → 恢复 → passing test），把**全部原始输出**（含覆盖命令、`_isClosing` 计数、两次测试的 EXIT）写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`（或追加为独立完整版并以引用衔接），并更新 `ac1-discriminating.md` 指向。 <<PARTIAL: 待实现>>
+- [x] **AC1 日志范围补全**：重新执行完整负向对照（覆盖 pre-F-005 → build → failing test → 恢复 → passing test），把**全部原始输出**（含覆盖命令、`_isClosing` 计数、两次测试的 EXIT）写入 `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`（或追加为独立完整版并以引用衔接），并更新 `ac1-discriminating.md` 指向。 <<MET>>
 
 ## 禁止范围
 
