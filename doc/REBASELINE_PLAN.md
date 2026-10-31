@@ -43,9 +43,9 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：REALUSE-DATA-SAFETY-11
 
-当前 DAG：REALUSE-DATA-SAFETY-10（SAFETY-9 Review 的 R-101，in_progress）
+当前 DAG：REALUSE-DATA-SAFETY-11（SAFETY-10 Review 的 R-102，ready）
 
 ## 历史快照（终态节点，非当前 DAG）
 

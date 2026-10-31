@@ -79,3 +79,13 @@
 - 提交：`60056d353` → `923f1d5db` → `231ff2ebe`；filtered **7/7**、全量 **396 通过 / 0 失败 / 7 跳过（403）**；`check.ps1` **PASS (3 warnings)**。
 - 独立 Review 已派发：task-5 / `safety8-reviewer` / reviewed_head `231ff2ebe`。
 - **FEA 线**：Codex 修订完成并已提交（`74a772167`，r4 方案 793 行，LF sha256 `8895aebe…`）；机械验收通过（"待权威记录" 0 次、`PreviewPermanentDeleteBooks`×3、`inventory_digest`×4、未落库会话引用已移除、只改一个文件）。**第 8 轮 Appointment 已建**（`doc/reviews/FEA-00-dsh-r8-appointment.md`），独立复审已派发（task-6 / `fea-reviewer-r8`）。
+
+### 02:20 SAFETY-9 完成并集成；SAFETY-10 开卡
+- **SAFETY-9 Review approved**（0 P0 / 0 P1 / 1 P2 R-101）；集成 `main@9aa6758b6`。
+- R-101 → **REALUSE-DATA-SAFETY-10**：负向对照转录补全（执行位置/命令/cwd/host/`Expected: 3 / Actual: 5 @ :328`/恢复确认）。
+
+### 02:50 FEA 契约线推进 + SAFETY-10 复审
+- **FEA-00 r4 approved**（r8，0 P0 / 0 P1 / 9 P2）已集成并登记索引；契约清单草案吸收 r8。
+- **C-01b 存储契约草案**（`doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md`）：AD-003 §3.1–§3.8 → SC-01…SC-37。
+- **C-01b r1 独立复核 = changes_requested**（P0×1 / P1×7 / P2×6）：P0 = SC-01 验证列严于 AD-003 §3.2（会驱动删除既有 derived）。**v2 已修订提交**（`e7e43543b`）：SC-01 口径收窄、SC-03/08/19 重标状态、§3.8 补二进制（SC-38）/数据（SC-39）、[现行] 补文件:行证据、冻结条件补 AD-003 `G-REVIEW` 与 ADJ-001 `G-DELETE-CONTRACT`。待 r2。
+- **SAFETY-10**：实现提交 `df944357e`（转录补全 + 修复 Codex 首轮 RV-001 pin / RV-002 表格行）；Codex 第二轮复审运行中（其 build/test 受沙箱 NuGet 限制，由 Lead 集成验证覆盖）。
