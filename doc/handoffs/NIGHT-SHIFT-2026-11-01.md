@@ -70,3 +70,11 @@
 - 集成：**`main@aaed145e9`**（merge `task/REALUSE-DATA-SAFETY-7`，Review 报告 `2a0528851`）。
 - 5 条 P2 登记为 **REALUSE-DATA-SAFETY-8**（`ready`）：F-001 证据文档计数、F-002 负向配方可复现、F-003 日志 cwd/filtered、F-004 异常捕获限定、F-005 关闭期保存门禁。
 - 新架构线：**Codex 修订任务已派发**（R7-01/R7-02 + 6 条 P2，`codex exec` 运行中）；完成后对**新 sha256** 派独立复审。
+
+### 02:15 SAFETY-8 实现完成，进入独立 Review
+- **AC1（F-001/F-002/F-003）**：`ac2-eol-pin.md` 重写为 12 条对照（5 条变化：3 代码 + 2 证据）；`ac1-negative-control.md` 改 post-delivery 配方并实测复现 **1 failed / EXIT=1**；`ac1-fix-tests.txt` 补 cwd + filtered 段。
+- **AC2（F-004）**：core 加通用 catch（`Debug.WriteLine` + 「内部错误」可见状态）；`CloseAsync` 等待 catch 限定类型。
+- **AC3（F-005）**：新增 `_isClosing` 门禁 + 循环等待；`GoToAsync` 在 closing 时忽略；新用例断言**恰好一次**权威重读。
+- 提交：`60056d353` → `923f1d5db` → `231ff2ebe`；filtered **7/7**、全量 **396 通过 / 0 失败 / 7 跳过（403）**；`check.ps1` **PASS (3 warnings)**。
+- 独立 Review 已派发：task-5 / `safety8-reviewer` / reviewed_head `231ff2ebe`。
+- **FEA 线**：Codex 修订完成并已提交（`74a772167`，r4 方案 793 行，LF sha256 `8895aebe…`）；机械验收通过（"待权威记录" 0 次、`PreviewPermanentDeleteBooks`×3、`inventory_digest`×4、未落库会话引用已移除、只改一个文件）。**第 8 轮 Appointment 已建**（`doc/reviews/FEA-00-dsh-r8-appointment.md`），独立复审已派发（task-6 / `fea-reviewer-r8`）。
