@@ -67,15 +67,27 @@ allowed_paths:
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**（`git cat-file blob` → SHA-256）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC2-READER-VM | AC2/AC3 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs` | `60056d353` | `f71eed262580207963ee6e2518638230ebf1045c9285c48af300174da73664eb` | CANONICAL |
+| E-AC3-TEST | AC3 | `apps/desktop-avalonia/tests/NewManga.App.Tests/LibraryProgressRefreshTests.cs` | `60056d353` | `b1862e36386128ed5cb65ba8ac64b2c849ffece0c9c139d69556b3c82e0aecd2` | CANONICAL |
+| E-AC1-PIN-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-7/ac2-eol-pin.md` | `60056d353` | `4b7676cf8980cf97caa5039cf822b9a3295887abdd979e7d005bb7cca97196f6` | CANONICAL |
+| E-AC1-NEG | AC1 | `verification/REALUSE-DATA-SAFETY-7/ac1-negative-control.md` | `60056d353` | `ad1a0fc4027984c8d653f57ebff12ab2385e2656a230df72d6f86e670982e4b2` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-8/ac1-doc-fix.md` | `60056d353` | `42d5a986cd6cefb62791b93d6b288dcfab621ccd658b8c461f2fa6c5b9df6ec8` | CANONICAL |
+| E-AC2-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-8/ac2-catch-scope.md` | `60056d353` | `a90521d543b1f574f8929bce6820cbea414675defe395d2728bb42088edd94d0` | CANONICAL |
+| E-AC3-DOC | AC3 | `verification/REALUSE-DATA-SAFETY-8/ac3-closing-gate.md` | `60056d353` | `6bc65d82fef2016d54c00e975f7c1c380ce06c0289021e759903d47f9825ec01` | CANONICAL |
+| E-TEST-LOG | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-8/ac1-fix-tests.txt` | `60056d353` | `713a8e0ac880cabf9f1d70d654ba90b13845df0efbec0a7ee8b8b42230278e06` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-8/README.md` | `60056d353` | `2df34f829fd6f345e9995dc8b0981f51bdc0fd20547f5c579733576cae40860d` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-8/resource-manifest.json`（schema_version 1）。
+
+- worktree：PRESERVE_REFERENCED（分支 `task/REALUSE-DATA-SAFETY-8`）
+- 负向对照临时日志 `tmp/safety8-negctl.log`：DELETE_SAFE，已删除（`closeout_counts.deleted=1`）
+- 用户数据：本 Task 零写操作
 
 ## Closeout Record
 
