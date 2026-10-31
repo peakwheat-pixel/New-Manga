@@ -26,7 +26,7 @@
 |---|---|
 | 归属 | **Host 侧**（不是 Core、不是 UI）；UI 不可见其内部结构 |
 | 持久化 | Host 私有存储（不写 Core DB）；加密或受 ACL 保护，**不得**出现在备份包外泄面 |
-| 条目字段（候选） | `{ registryId, locator, authorizedRoots[], identityFacts{ size, mtime, fileId? }, generation, createdAt, lastUsedAt }` |
+| 条目字段（候选） | `{ registryId, locator, authorizedRoots[], identityFacts, generation, createdAt, lastUsedAt }`；**`identityFacts` 必须含内容 digest + volume serial + file ID**（AD-003 §3.2 明文「不得仅凭路径、mtime 或 size 断言同一文件」）；`size`/`mtime` 只作快速预筛，不单独构成身份 |
 | 语义 | 一条 registry 记录 = 一个「用户已授权读取的源根」；`generation` 每次授权变更递增 |
 | 生命周期 | 用户显式授权创建；用户撤销/源不可达时失效；**不因导入完成而删除**（这些是引用源，需长期可读） |
 
@@ -36,7 +36,7 @@
 |---|---|
 | 申请方 | Core（导入/同步/重定位时），经 Host |
 | 授予方 | Host（校验 `SourceAccessRegistry` + `identityFacts`） |
-| grant 字段（候选） | `{ grantId, registryId, generation, expiresAt, scope{ paths[] } }` |
+| grant 字段（候选） | `{ grantId, registryId, generation, expiresAt, scope }`；`scope` **按 `SourceId / version / entry / rendition` 限定**（AD-003 §3.5），**不是**裸 `paths[]`；附**大小与解码预算**（单次字节上限 + 解码尺寸上限），UI **不得**获得任意 `ReadFile(path)` |
 | 有效期 | **短期**（≤ 单次操作，建议 ≤300 秒）；**不得**作为长期通行证复用 |
 | 与旧 grant 的关系 | 旧 `ImportPages` 一次性 grant **保持原语义**（≤300 秒、直属成员、进程内）；`source-read` 是**独立**的新 grant 类型，不复用旧类型 |
 | 失败 | registry 不存在/过期/generation 不匹配/identity 变化 → `SOURCE_ACCESS_DENIED`（fail-closed，不降级读取） |
@@ -45,12 +45,13 @@
 
 | 命令 | 方向 | 入参 | 出参 |
 |---|---|---|---|
-| `RegisterSourceRoot` | UI → Host | `{ locator, roots[] }` | `{ registryId, generation }` |
+| `RegisterSourceRoot` | UI → Host | `{ locator, roots[] }`（`locator` = 用户选择的源展示名；`roots[]` = 授权根绝对路径列表，Host 校验规范化后互不包含、均在用户可选范围内） | `{ registryId, generation }` |
+| `ListSourceRoots` | UI → Host | `{}` | `{ entries: [{ registryId, locator, roots[], generation, createdAt, lastUsedAt }] }`（重启后 UI 列出/撤销已授权根） |
 | `RevokeSourceRoot` | UI → Host | `{ registryId }` | `{}` |
-| `RequestSourceRead` | Core → Host | `{ registryId, generation, paths[] }` | `{ grantId, expiresAt }` |
-| `VerifySourceRead` | Host 内部 | `{ grantId, path, identity }` | `{ ok, reason? }` |
+| `RequestSourceRead` | Core → Host | `{ registryId, generation, scope{ sourceId, version, entry, rendition }, budget{ maxBytes, maxDecodeBytes } }` | `{ grantId, expiresAt }` |
+| `VerifySourceRead` | Host 内部 | `{ grantId, scope, identityFacts{ digest, volumeSerial, fileId } }` | `{ ok, reason? }` |
 
-新增命令按 **minor** 递增（wire v1 → v2）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。
+新增命令按 **minor** 递增（当前资源控制面 wire v1 → 本组命令 v1.1；**不改 major**）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。**读取面**：`RequestSourceRead` 的 `scope` 必须按 `SourceId/version/entry/rendition` 表达并带预算，**不接受** `paths[]` 形式。
 
 ## 3. 安全约束
 
@@ -59,6 +60,10 @@
 3. **无路径泄漏**：错误码/日志不出现绝对路径（与 M2-C1 §5.11.5 同口径）。
 4. **授权面不可被 UI 绕过**：UI 只能经 Host 命令申请，不得直接持有 registry/grant 内部结构。
 5. **撤销即时**：`RevokeSourceRoot` 后，所有未过期 grant 立即失效（generation 递增）。
+6. **越根拒绝**：符号链接/junction 指向授权根外 → 不跟随（reparse 拒绝），返回 `SOURCE_ACCESS_DENIED`（与 C-01b SC-22 一致）。
+7. **读取预算**：每次 grant 有字节上限与解码尺寸上限；超限 → 拒绝（不截断）。
+8. **`user-source` 不得进入 derived-cache grant**：源读取与 derived 缓存是两条独立通道（C-01b SC-20）。
+9. **外部写/删只收敛到 registry + 回收站桥**：除 `SourceAccessRegistry` 与 Windows 回收站桥外，任何路径不得对外部源文件写/删（AD-003 §3.7）。
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
@@ -66,11 +71,15 @@
 - **C-05**：源读取产生的 revision 进入可见性谓词（`integrity_status` 校验同口径）。
 - **C-04b**：删除授权（PD-05/PD-06）与本授权面**独立**——删除不撤销源读取授权，反之亦然。
 
+> 注：ADJ-001 的 PD-05 = 事务边界、PD-06 = 失败回滚；删除**授权**在 AD-003 §3.7（`：95`）/PD-02/PD-03，不在 PD-05/PD-06。
+
 ## 5. 冻结条件
 
 1. 独立复核通过；
-2. `G-CONTRACT` 关闭（AD-003/ADJ-001 授权语义冻结）；
-3. `check.ps1` PASS。
+2. **C-01b 已冻结**（SC-21/SC-22 由本草案落地）；
+3. `G-CONTRACT` 关闭（AD-003/ADJ-001 授权语义冻结）；
+4. **wire 版本由 DSH 批准**（v1.1 minor 增量）；
+5. `check.ps1` PASS。
 
 ## 6. 变更记录
 
