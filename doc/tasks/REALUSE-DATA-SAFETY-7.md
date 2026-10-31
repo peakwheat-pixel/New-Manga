@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-7
 title: SAFETY-6 Review P2 收尾——并发 NRE、证据 pin 规范化、日志格式
 kind: quality
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_REALUSE-DATA-SAFETY-6_review_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety7-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-6
 base_commit: 29d06c462
 branch: task/REALUSE-DATA-SAFETY-7
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-7
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: aaed145e9
+delivery_head: 306ae09ae
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-7
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-7.md
@@ -90,6 +90,31 @@ allowed_paths:
 - 负向对照临时目录 `tmp/safety7-negctl`：DELETE_SAFE，已删除（`closeout_counts.deleted=1`）
 - 用户数据：本 Task 零写操作（不涉及真实数据根）
 
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-7-review.md](../reviews/REALUSE-DATA-SAFETY-7-review.md)
+- Reviewer：`safety7-reviewer`（Agent Teams 共享任务 `task-4`，fresh context；未参与实现与返修）
+- 被审 head：`58596949a`；base `29d06c462`
+- 结论：**approved**（P0=0 / P1=0 / P2=5 open，不阻断集成）；AC1/AC2/AC3 均判 **MET**
+- 复跑：build 0 警告/0 错误；全量 395/0/7（402）跑 2 次一致；filtered 6/6 跑 6 次全过；`check.ps1` PASS (3 warnings)
+- pin 复核：SAFETY-6 12/12、SAFETY-7 10/10 与 `git cat-file blob` 一致；5 条变化 pin 的旧值 == 「blob→CRLF」哈希（纯行尾归一化）
+- 负向对照：Reviewer 在仓外副本独立复现 1 failed / EXIT=1（NRE 堆栈 `ReaderOverlayViewModel.cs:377 ← GoToAsync:308`）
+
+## Known P2（open，登记为后续项）
+
+| ID | 级别 | 内容 | 建议处置 |
+|---|---|---|---|
+| F-001 | P2 | `ac2-eol-pin.md` 与任务卡的 pin 计数与实际不符（实际 12 条 pin / 5 条值变化；文档写 11/2/9；对照表漏 4 条代码 pin） | 修正证据文档计数并补代码 pin 对照（可由 SAFETY-8 或治理小项处理） |
+| F-002 | P2 | 负向对照步骤是「提交前工作树」配方，在交付 head 上逐字执行是空操作；无原始输出与 `exit_code=` | 改为 post-delivery 配方（`git checkout <base> -- <path>` → 测试 → `git checkout HEAD -- <path>`）并附输出 |
+| F-003 | P2 | filtered 6/6 未进入 canonical 日志；日志命令缺 cwd（仓库根执行会 MSB1009） | 日志记录 cwd/绝对路径并单列 filtered 段 |
+| F-004 | P2 | `CloseAsync` 的 `catch (Exception)` 静默吞未知异常 | 限定捕获类型（与 core 类型化集合一致）或记录 Debug/notify |
+| F-005 | P2 | 极窄残留竞态：等待窗口内再触发翻页保存时，closing 权威重读仍可能被 `_isSaving` 跳过（不再 NRE） | closing 期间禁用新保存或在 closing 时循环等待 |
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@aaed145e9`（merge `task/REALUSE-DATA-SAFETY-7`，含 `2a0528851` Review 报告提交）
+- 集成验证：`check.ps1` PASS (3 warnings)；`dotnet build` 0 警告 0 错误；`dotnet test` 395 通过 / 0 失败 / 7 跳过（402）
+- AC 判定：AC1 `MET`、AC2 `MET`、AC3 `MET`
+- 已知 P2：F-001 ~ F-005（见上表），不阻断集成，登记为后续项
+- 资源：worktree 保留（PRESERVE_REFERENCED）；负向对照临时目录已删除；用户数据零写操作
