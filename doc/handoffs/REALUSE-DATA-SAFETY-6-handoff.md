@@ -4,8 +4,11 @@
 - 分支：`task/REALUSE-DATA-SAFETY-6`（**不合并 main、不 push 远端**）
 - Worktree：`G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-6`（保留给 Review / 集成）
 - 基线：`main@841cbdc4b`
-- 实现提交（delivery_head）：`fb5065013`
-- 文档与证据提交：本文件所在提交（其直接父提交为 `fb5065013`）；分支 tip 以 `git rev-parse HEAD` 为准
+- 交付链（本分支，不合并 main、不 push）：
+  - `fb5065013`：**实现提交**（token: delivery_head）= 3 个生产文件 + 1 个测试文件 + `verification/REALUSE-DATA-SAFETY-6/**` 证据
+  - `b94dc3d86`：文档与证据提交 = 任务卡 / STATUS / REBASELINE_PLAN / TASK_LEDGER / 本 handoff / 治理检查证据
+  - `0330b0a38`：**Review 基线** = 证据 pin 补齐（只改任务卡一行 Canonical Evidence）
+  - 本文件所在提交：仅补充上面的交付链说明（不改任何代码、证据或任务卡）
 - 状态：`in_review`，owner `dsh-lead`，reviewer 未指派
 
 ## 1. 完成项
