@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-GOV-4（三份草案独立复核，in_progress）
+当前 DAG：FEA-GOV-5（C-04b 复核 + C-05/C-06 草案，in_progress）
 
 ## 历史快照（终态节点，非当前 DAG）
 

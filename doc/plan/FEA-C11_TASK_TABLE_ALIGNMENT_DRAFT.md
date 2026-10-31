@@ -33,7 +33,7 @@
 ## 2. 共享文件写权（§15.6 首段的强化）
 
 - **共享组合根**：`apps/desktop-avalonia/NewManga.sln`、`src/NewManga.App/App.axaml`、`App.axaml.cs`、`NewManga.App.csproj` —— **仅 DSH 单点提交**；各 Owner 提供 patch，未获重新指派不得改。
-- **`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` / `doc/TASK_LEDGER.md` / `doc/00_INDEX.md`** —— 仅 DSH 写（依据：[09_COLLABORATION](../09_COLLABORATION.md) §4 Task 文件约定 + §5.1 下一任务建议）。
+- **`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` / `doc/TASK_LEDGER.md` / `doc/00_INDEX.md`** —— 仅 DSH 写（依据：[09_COLLABORATION](../09_COLLABORATION.md) §3 第 5/6 条（`:56-58`））。
 - **`tools/governance/check.ps1`** —— 只读检查器，任何候选不得修改其断言面（如需改，另开治理 Task）。
 - **共享源文件冲突**：先到者提交，后者 rebase/重新生成，不得强推。
 
@@ -65,10 +65,10 @@ Gate 定义在方案 **§14.1 待验证假设**（`:789-797`），C-11 只做**�
 | **H1** 资源作用域隔离 | 方案 §14.1 `:791` | 同一进程内 Current / Fluent / preview 的样式与资源不串染（真机 + 测试双证） | FEA-05 |
 | **H2** 稳定 Window + 内容替换 | 方案 §14.1 `:792` | 双屏 Inspector、焦点/IME/native owner/DPI 恢复 | FEA-07 |
 | **H3** 热切换性能 | 方案 §14.1 `:793` | 两棵内容树并存峰值、超长页/多缩略图首帧、输入冻结时间 p50/p95 | FEA-07 |
-| **H4** 稳定源 lease 在目标卷可证明一致读取 | 方案 §14.1 `:792` | NTFS/USB/SMB/云共享、外部替换、断连、内存映射写等边界；不能证明则标受限/不可用 | FEA-08 |
+| **H4** 稳定源 lease 在目标卷可证明一致读取 | 方案 §14.1 `:794` | NTFS/USB/SMB/云共享、外部替换、断连、内存映射写等边界；不能证明则标受限/不可用 | FEA-08 |
 | **H5** Windows recycle 可保证失败时不永久删除 | 方案 §14.1 `:795` | 各卷/目录/shell 配置/部分失败/崩溃后的 receipt；无法保证 → 禁用该类型原件删除、保留「仅应用回收站」交产品裁决 | FEA-08、FEA-12 |
 | **H6** 精确页面匹配覆盖目标格式 | 方案 §14.1 `:796` | PDF 重生成、ZIP 重编码/重复名、GIF/色彩/方向、密码格式；Golden fixtures；无法唯一匹配只给候选 + 用户确认 | FEA-08 |
-| **H7** 当前 Core 能力复用成本可控 | 方案 §14.1 `:797` | F20 修复后故障回归、Provider 快照完整性、旧 lock 双投影、未接线端口 | FEA-10（及依赖 Core 能力的候选） |
+| **H7** 当前 Core 能力复用成本可控 | 方案 §14.1 `:797` | F20 修复后故障回归、Provider 快照完整性、旧 lock 双投影、未接线端口 | §14.1 保留、§12.1 未引用（**不自动阻塞**；如确需阻塞由方案侧增列） |
 | （原「双 UI 故障矩阵」） | 方案 §14.2 `:807` 自查覆盖行 | 跨 UI / 双屏 / 拔屏 / redock 的失败回当前——**不是独立 Gate**，作为 H2 的子判据 | FEA-07 |
 | **H4b** Source 原型范围（**非方案 Gate，C-11 派生**） | §12.1 FEA-08 行（「隔离 workspace 原型、不触真实库」） | 隔离 workspace 原型；不碰真实库 | FEA-08 |
 
