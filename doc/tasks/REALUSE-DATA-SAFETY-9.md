@@ -63,15 +63,25 @@ allowed_paths:
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**（`git cat-file blob` → SHA-256）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/LibraryProgressRefreshTests.cs` | `dcce29a13` | `dc22432bce2312bc645bdca4f36eb2d31bb20fbc638ce7c5bed579036a4b1394` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `dcce29a13` | `1b395b9c24de6611bd6f13f92a3d5f0ab10582baf920bb68f6fae4474f8e7a7c` | CANONICAL |
+| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-fix-tests.txt` | `dcce29a13` | `83ecb65f92cc2d95e0947b44c72b29972f57bdfef6afea26a5f3655b622193ef` | CANONICAL |
+| E-AC2-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-9/ac2-wording.md` | `dcce29a13` | `ce0f7c3a1f8d324f0b8b2b4f96c41299337ac455186bc419600639400ed697ee` | CANONICAL |
+| E-AC2-PIN-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-7/ac2-eol-pin.md` | `dcce29a13` | `266f50fe30091d9a6531d881bfb048e20dd9f4cf325dd06530956685e9d25173` | CANONICAL |
+| E-AC1-GATE-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-8/ac3-closing-gate.md` | `dcce29a13` | `1518a0efceea6cdc48f45c8bbdead5b81d287a152a8a93cdd4343d353eeed64e` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1/AC2 | `verification/REALUSE-DATA-SAFETY-9/README.md` | `dcce29a13` | `f9b8ffced0522695ba8726b22ce23d67ec6d67671956fbd8e9635ef49535583f` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-9/resource-manifest.json`（schema_version 1）。
+
+- worktree：PRESERVE_REFERENCED（分支 `task/REALUSE-DATA-SAFETY-9`）
+- 负向对照临时日志 `tmp/safety9-negctl.txt`：DELETE_SAFE，已删除
+- 用户数据：本 Task 零写操作
 
 ## Closeout Record
 
