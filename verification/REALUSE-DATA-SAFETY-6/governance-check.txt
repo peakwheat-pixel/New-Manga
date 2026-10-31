@@ -1,0 +1,36 @@
+REALUSE-DATA-SAFETY-6 governance check (tools/governance/check.ps1)
+generated_at_local: 2026-11-01T01:01:38.8005632+08:00
+worktree: G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-6
+branch: task/REALUSE-DATA-SAFETY-6 (base main@841cbdc4b)
+
+== [1] 改动前基线（本 worktree，仅代码改动未提交时运行）==
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\REALUSE-DATA-SAFETY-6.md
+WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6624 bytes / 58 lines
+FAIL: 失效的本地引用：doc\AD-003_REFERENCED_SOURCE_ARCHITECTURE.md → design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md
+FAIL: 失效的本地引用：doc\AD-003_REFERENCED_SOURCE_ARCHITECTURE.md → design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md
+Governance check: FAIL (2 errors, 2 warnings)
+
+== [2] 既有债务证明：这两个 FLUENT 文档不在基线提交里 ==
+$ git ls-tree -r --name-only 841cbdc4b | Select-String FLUENT
+(empty) -> 基线提交 841cbdc4b 不含 doc/design/FLUENT_*.md
+
+$ git -C 'G:\CODEX\New Manga' status --short -- doc/design   # 主工作区（只读查询）
+?? doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md
+?? doc/design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md
+-> FLUENT_*.md 只存在于主工作区且未提交；干净 worktree 上必然 404，与本 Task 无关
+
+== [3] 最终（本 Task 文档更新后运行，命令见任务卡）==
+pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/REALUSE-DATA-SAFETY-6.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\REALUSE-DATA-SAFETY-6.md
+WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6610 bytes / 58 lines
+FAIL: 失效的本地引用：doc\AD-003_REFERENCED_SOURCE_ARCHITECTURE.md → design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md
+FAIL: 失效的本地引用：doc\AD-003_REFERENCED_SOURCE_ARCHITECTURE.md → design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md
+Governance check: FAIL (2 errors, 2 warnings)
+exit_code=1
+
+结论：2 errors / 2 warnings 与基线完全一致（同一批既有债务，无新增 finding）；
+本 Task 新增/修改文件没有引入任何新的 check 错误或警告。不声称 PASS。
