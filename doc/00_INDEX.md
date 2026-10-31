@@ -29,6 +29,8 @@
 | [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) | CURRENT / CONTRACT ADJUDICATION | 永久删除与保护状态裁定：`M2-C1 §5.11` 现行删除语义保持有效，新增影响清单/专门确认/零提前变化要求（PD-01–PD-10）；实现与协议**未冻结**。 |
 | [FEA-00 r1 Review](reviews/FEA-00-dsh-r1.md)、[FEA-00 r2 技术复核](reviews/FEA-00-dsh-r2-technical-recheck.md) | CURRENT / REVIEW + TECHNICAL RECHECK | 方案 r1 分片独立审查（changes_requested）与同 hash 的 DSH 技术复核；后者**不是**独立 Review，正式批准仍待合格席位。 |
 | [FEA-00 Codex r1 独立 Review](reviews/FEA-00-codex-r1.md)、[处置记录](reviews/FEA-00-codex-r1-adjudication.md) | CURRENT / REVIEW + ADJUDICATION | Codex 对 DSH 新增权威文档的独立审查（`changes_requested`：1×P0、3×P1、3×P2）与 DSH 逐项处置；修订后须对**新 hash** 复审，未获批。 |
+| [FEA-00 r7 独立 Review](reviews/FEA-00-dsh-r7.md)、[Appointment 与处置](reviews/FEA-00-dsh-r7-appointment.md) | CURRENT / REVIEW + APPOINTMENT | 方案 r3 字节（sha256 `2f925cca…`）第 7 轮独立审查：`changes_requested`（0 P0 / 2 P1 / 6 P2）；R7-01 权威层未同步、R7-02 删除流程未吸收 ADJ-001 PD-01–PD-10；转 Codex 修订后对**新 hash** 复审。 |
+| [FLUENT 用户需求概念](design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md)、[FLUENT 前端架构方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)、[FEA-01 契约清单草案](plan/FEA-01_CONTRACT_DRAFT.md) | CURRENT / DESIGN + PROPOSAL | 产品需求记录与 E 方案（同一进程两套界面，共享应用内核）；契约清单为草案，**未冻结、不释放实现 Task**。 |
 | [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | HISTORICAL / ARCHITECTURE | 旧目标架构（React/TypeScript + Tauri/Rust）；已被 AD-002 取代，仅作审计。 |
 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | CURRENT / PLAN | 当前 DAG 和 Task 释放/阻塞关系。 |
 | [STATUS](STATUS.md) | CURRENT / STATUS | 当前唯一 Active Task、Gate 状态和恢复指针。 |
