@@ -53,7 +53,7 @@ P2 处置链闭合、治理指针一致，并给出可向用户汇报的 SAFETY 
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**（`git cat-file blob` → SHA-256）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
@@ -61,7 +61,7 @@ P2 处置链闭合、治理指针一致，并给出可向用户汇报的 SAFETY 
 
 ## Resource Manifest
 
-本 Task 只做审计（无 worktree、无临时产物）；资源处置在收尾时登记。
+本 Task 只做审计：无 worktree、无临时产物；资源处置记录见 `verification/REALUSE-DATA-SAFETY-12/resource-manifest.json`（schema_version 1）。
 
 ## Closeout Record
 
