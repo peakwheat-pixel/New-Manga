@@ -10,7 +10,7 @@
 | 集成验证 | 通过 | build 0 警告/0 错误；test 394 通过 / 0 失败 / 7 跳过（401）；check.ps1 PASS |
 | REALUSE-DATA-SAFETY-7 → **11** | **全部 `done`**：7（`aaed145e9`）/ 8（`84b9f4319`）/ 9（`9aa6758b6`）/ 10（`8b15adbfe`）/ 11（`a1b82ffb9`） | 各 `doc/reviews/REALUSE-DATA-SAFETY-*-review.md`；证据 `verification/REALUSE-DATA-SAFETY-*/` |
 | REALUSE-DATA-SAFETY-12（收尾审计） | **done**：14 条 → 复核修正为 **17 条 P2**（当轮 5 + 转后续 12、0 悬挂） | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md`；Review `doc/reviews/REALUSE-DATA-SAFETY-12-review.md` |
-| 当前 Task | **FEA-GOV-3**（契约冻结包准备，Review 中） | `doc/tasks/FEA-GOV-3.md` |
+| 当前 Task | **FEA-GOV-3**（契约冻结包准备，r2 复核中） | `doc/tasks/FEA-GOV-3.md` |
 
 ## 新架构到哪
 
@@ -26,7 +26,7 @@
 | **C-03 外观持久化** | `presentation-settings.json` 单点写者 + 10 行字段迁移矩阵 + 动效三态/三类；U-05a/U-05b 待裁决 | `doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md` |
 | **C-11 候选表口径** | §12.1 主表 + §15.6 补充列合并引用；L1–L4 等级；H1–H4b Gate 判据；FEA-04b 硬前置 | `doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md` |
 | 冻结前置 | ① C-01b r5 `approved` ✅；② AD-003 `G-REVIEW` → **`SATISFIED`**（FEA-GOV-1）✅；③ AD-002 责任表口径 **待你回 `R`**（FEA-GOV-2 提案 v3 `approved`，推荐 D 零字节）⏳；④ `check.ps1` PASS ✅ | `doc/AD-003_...md` §5；`doc/reviews/FEA-GOV-1-ad003-review.md`；`doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` |
-| **C-01b 冻结包** | 四份草案条件核对 + 四阶段执行序列 + 回退表；**你回 `R` 后 DSH 可按序冻结** | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` |
+| **C-01b 冻结包** | 四份草案条件核对 + 四阶段执行序列 + 回退表；**你回 `R` 后 DSH 可按序冻结**（C-01b 还差 ②b ADJ-001 依赖注明；C-02/C-03/C-11 各需一轮独立复核） | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` |
 
 ## 待你拍板（可直接回 A/B/C）
 
