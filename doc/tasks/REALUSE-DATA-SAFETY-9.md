@@ -74,6 +74,7 @@ allowed_paths:
 | E-AC2-PIN-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-7/ac2-eol-pin.md` | `dcce29a13` | `266f50fe30091d9a6531d881bfb048e20dd9f4cf325dd06530956685e9d25173` | CANONICAL |
 | E-AC1-GATE-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-8/ac3-closing-gate.md` | `dcce29a13` | `1518a0efceea6cdc48f45c8bbdead5b81d287a152a8a93cdd4343d353eeed64e` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1/AC2 | `verification/REALUSE-DATA-SAFETY-9/README.md` | `dcce29a13` | `f9b8ffced0522695ba8726b22ce23d67ec6d67671956fbd8e9635ef49535583f` | CANONICAL |
+| E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-9/resource-manifest.json` | `407d3b1d8` | `3f2573d8db04f61e4584775678d06b77d9fedaa74de04b8ebca35792d8a0d92e` | CANONICAL |
 
 ## Resource Manifest
 
