@@ -1,0 +1,106 @@
+{
+  "product_db": {
+    "path": "library.db (data root)",
+    "counts": {
+      "books": 1,
+      "chapters": 1,
+      "pages": 169,
+      "reading_progress": 1,
+      "artifact_revisions": 0,
+      "regions": 0
+    }
+  },
+  "legacy_layout_db": {
+    "path": "data/library.db",
+    "counts": {
+      "books": 1,
+      "chapters": 0,
+      "pages": 0,
+      "reading_progress": 0,
+      "artifact_revisions": 0,
+      "regions": 0
+    }
+  },
+  "pages_columns": [
+    "page_id",
+    "chapter_id",
+    "sort_order",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "source_filename",
+    "source_order",
+    "source_hash",
+    "source_size_bytes",
+    "width",
+    "height",
+    "managed_original_ref",
+    "page_locked",
+    "review_state",
+    "overall_status"
+  ],
+  "page_pairs": {
+    "pages_with_managed_ref": 169,
+    "pairs_present_and_size_equal": 169,
+    "missing_derived": [],
+    "missing_managed": []
+  },
+  "digest_proof": {
+    "page_id": "48b5b58e82e94e6f9a0d70676426676c",
+    "managed_size": 82862,
+    "managed_sha256": "70c2fd731bef8d3f382b524ae1d9b981edd719f7b81611a209d6dbbecea6eb07",
+    "derived_size": 82862,
+    "derived_sha256": "70c2fd731bef8d3f382b524ae1d9b981edd719f7b81611a209d6dbbecea6eb07",
+    "identical": true
+  },
+  "catalog_scope_classes": [
+    [
+      "derived-read-only",
+      169
+    ]
+  ],
+  "catalog_sample": [
+    {
+      "resource_id": "page-original-008763039fe84a41a12ba4b208c03c20",
+      "scope_class": "derived-read-only",
+      "rel_path": "pages/page-original-008763039fe84a41a12ba4b208c03c20.jpg"
+    },
+    {
+      "resource_id": "page-original-00c1aea5a1da4868ab5bd002e232ec5a",
+      "scope_class": "derived-read-only",
+      "rel_path": "pages/page-original-00c1aea5a1da4868ab5bd002e232ec5a.jpg"
+    },
+    {
+      "resource_id": "page-original-02cc5fbd65c049a09ec8e15ee86b5060",
+      "scope_class": "derived-read-only",
+      "rel_path": "pages/page-original-02cc5fbd65c049a09ec8e15ee86b5060.jpg"
+    }
+  ],
+  "preview_namespace": [
+    {
+      "singleton": 1,
+      "protocol_version": 1,
+      "derived_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop\\derived",
+      "derived_identity_volume": 1485189147,
+      "derived_identity_index": 72620543991401102,
+      "catalog_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop\\catalog\\catalog.sqlite",
+      "catalog_identity_volume": 1485189147,
+      "catalog_identity_index": 4222124651735892
+    }
+  ],
+  "disk": {
+    "managed_root": {
+      "files": 169,
+      "bytes": 100434899
+    },
+    "derived_root": {
+      "files": 170,
+      "bytes": 100435214
+    },
+    "derived_pages": {
+      "files": 169,
+      "bytes": 100434899
+    },
+    "derived_previews_present": false
+  }
+}
