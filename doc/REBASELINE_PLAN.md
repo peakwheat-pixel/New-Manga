@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-GOV-7（C-08/C-09/C-12 三份草案复核，in_progress）
+当前 DAG：FEA-GOV-8（契约冻结准备总表，in_progress）
 
 ## 历史快照（终态节点，非当前 DAG）
 
