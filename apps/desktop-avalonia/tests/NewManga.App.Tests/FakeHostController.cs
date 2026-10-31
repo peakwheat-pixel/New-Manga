@@ -149,6 +149,12 @@ public sealed class FakeHostController : IHostController
 
     public bool ReaderLoadCalled { get; private set; }
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-6 AC1: number of reader projection reads. A progress refresh must be a
+    /// real Host read, not only a re-render of a cached value, so tests assert this counter moves.
+    /// </summary>
+    public int ReaderLoadCount { get; private set; }
+
     /// <summary>READER-PROGRESS-1: last (bookId, chapterId) requested from the reader seam.</summary>
     public (string? BookId, string? ChapterId) LastReaderRequest { get; private set; }
 
@@ -176,6 +182,7 @@ public sealed class FakeHostController : IHostController
         CancellationToken cancellationToken = default)
     {
         ReaderLoadCalled = true;
+        ReaderLoadCount++;
         LastReaderRequest = (bookId, chapterId);
 
         // CHAPTER-SELECTOR-1: an exact chapter wins, then an exact book, then the legacy single book.

@@ -17,15 +17,34 @@ public enum ReaderDirection
 }
 
 /// <summary>
+/// REALUSE-DATA-SAFETY-6 AC1 (audit MA-09): one committed reader save, published to the Library so
+/// the shelf detail can mirror the position the Core just accepted. <see cref="PageNumber"/> is
+/// 1-based and names the page that was saved, <see cref="PageCount"/> the reader's page count for
+/// the same chapter -- together they are exactly the dual-modality progress the reader shows.
+/// <see cref="IsClosing"/> tells the Library the overlay is going away, i.e. the shelf becomes
+/// visible and should re-read the authoritative Core projection instead of only mirroring.
+/// </summary>
+public readonly record struct ReaderProgressSavedEvent(
+    string BookId,
+    string ChapterId,
+    int PageNumber,
+    int PageCount,
+    bool IsClosing,
+    ReaderProgressSaveResult Result);
+
+/// <summary>
 /// V11R-B-1: the Library reading overlay (screen spec §2 / FUSION_SPEC §2.1: reading is a Library
 /// overlay, not a separate space). Supports paged RTL/LTR and webtoon vertical layouts, shows the
 /// dual-modality progress (page number + percentage), saves progress through the real
 /// <see cref="IHostController.SaveReadingProgressAsync"/> seam and never crashes on a missing Core.
+/// REALUSE-DATA-SAFETY-6 AC1: a committed save is published through
+/// <c>progressSaved</c> so the shelf cannot keep showing a stale position (MA-09).
 /// </summary>
 public sealed class ReaderOverlayViewModel : ObservableObject
 {
     private readonly IHostController _controller;
     private readonly Action<string, NmStatus> _notify;
+    private readonly Func<ReaderProgressSavedEvent, Task>? _progressSaved;
     private ReaderBookData? _book;
     private int _pageIndex;
     private ReaderLayoutMode _layout = ReaderLayoutMode.Paged;
@@ -37,10 +56,14 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     private string _saveStatusText = "进度：未保存";
     private bool _isSaving;
 
-    public ReaderOverlayViewModel(IHostController controller, Action<string, NmStatus> notify)
+    public ReaderOverlayViewModel(
+        IHostController controller,
+        Action<string, NmStatus> notify,
+        Func<ReaderProgressSavedEvent, Task>? progressSaved = null)
     {
         _controller = controller;
         _notify = notify;
+        _progressSaved = progressSaved;
         Pages = new ObservableCollection<ReaderPageItem>();
         CloseCommand = new RelayCommand(() => _ = CloseAsync());
         NextPageCommand = new RelayCommand(() => _ = NextAsync());
@@ -180,6 +203,13 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         private set => Set(ref _saveStatusText, value);
     }
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-6 AC1: typed outcome of the last save attempt (null before the first
+    /// one). Honest evidence for the shelf-consistency tests: only <c>Saved</c> may refresh the
+    /// shelf, so the reader keeps the raw result instead of only its display text.
+    /// </summary>
+    public ReaderProgressSaveResult? LastSaveResult { get; private set; }
+
     /// <summary>Opens the overlay at the resume position returned by the Host. Never throws.</summary>
     public async Task<bool> OpenAsync(string? bookId = null, string? chapterId = null, int? startPage = null)
     {
@@ -243,7 +273,9 @@ public sealed class ReaderOverlayViewModel : ObservableObject
 
     public async Task CloseAsync()
     {
-        await SaveProgressAsync().ConfigureAwait(true);
+        // MA-09: the closing save is the last one the reader performs, and the shelf becomes visible
+        // right after it, so the Library re-reads the authoritative projection on this pass.
+        await SaveProgressAsync(isClosing: true).ConfigureAwait(true);
         IsOpen = false;
         ReleaseImages();
         _book = null;
@@ -309,7 +341,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         OnPropertyChanged(nameof(ProgressPercent), nameof(ProgressText));
     }
 
-    public async Task SaveProgressAsync()
+    public async Task SaveProgressAsync(bool isClosing = false)
     {
         if (_book is null || Pages.Count == 0 || _isSaving)
         {
@@ -325,6 +357,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
                 page.PageId,
                 "original",
                 scrollOffsetY: null).ConfigureAwait(true);
+            LastSaveResult = result;
             SaveStatusText = result.Status switch
             {
                 ReaderProgressSaveStatus.Saved => "进度：已保存到 Core",
@@ -334,6 +367,21 @@ public sealed class ReaderOverlayViewModel : ObservableObject
                 _ => "进度：未保存",
             };
             OnPropertyChanged(nameof(SaveStatusText));
+
+            // MA-09 (REALUSE-DATA-SAFETY-6 AC1): publish the committed position so the shelf detail
+            // refreshes in the same user action. Only a real commit is mirrored -- a typed refusal
+            // (NotReady / ReadOnly / Failed) changes nothing in the Core, so nothing may change on
+            // the shelf either.
+            if (result.IsSaved && _progressSaved is not null)
+            {
+                await _progressSaved(new ReaderProgressSavedEvent(
+                    _book.BookId,
+                    _book.ChapterId,
+                    page.Index + 1,
+                    Pages.Count,
+                    isClosing,
+                    result)).ConfigureAwait(true);
+            }
         }
         catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
         {

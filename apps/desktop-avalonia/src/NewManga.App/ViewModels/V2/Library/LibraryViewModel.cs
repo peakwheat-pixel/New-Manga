@@ -70,7 +70,7 @@ public sealed class LibraryViewModel : ObservableObject
             chapterTitle: () => SelectedChapter?.Title,
             afterImport: ReloadAfterImportAsync,
             requestCreateChapter: ShowCreateChapter);
-        Reader = new ReaderOverlayViewModel(controller, notify);
+        Reader = new ReaderOverlayViewModel(controller, notify, OnReaderProgressSavedAsync);
 
         FilterChips = new ObservableCollection<FilterChipItem>
         {
@@ -451,6 +451,14 @@ public sealed class LibraryViewModel : ObservableObject
 
     public string DetailProgressText => _detailProgressText;
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-6 AC1 (audit MA-09): how many times the shelf detail progress line was
+    /// re-derived from a committed reader save or a fresh Core projection. Kept as an observable
+    /// counter so a test can prove the refresh actually ran (a PropertyChanged alone proves the UI
+    /// was notified; the counter proves it was the progress refresh path and not a rebuild).
+    /// </summary>
+    public int ProgressRefreshes { get; private set; }
+
     public bool HasChapters => Chapters.Count > 0;
 
     public bool HasPages => Pages.Count > 0;
@@ -786,6 +794,10 @@ public sealed class LibraryViewModel : ObservableObject
         }
 
         await RefreshBookCountsAsync().ConfigureAwait(true);
+        // MA-09 (REALUSE-DATA-SAFETY-6 AC1): an import adds pages to the chapter, so the page count
+        // the progress line divides by changes. Re-reading the Core projection here keeps the shelf
+        // from showing a pre-import denominator ("导入后进度信息不陈旧").
+        await LoadProgressAsync().ConfigureAwait(true);
     }
 
     public void ShowRecycleBin()
@@ -1024,32 +1036,75 @@ public sealed class LibraryViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// MA-09 (REALUSE-DATA-SAFETY-6 AC1): mirror one committed reader save into the shelf detail.
+    ///
+    /// The normal save path is a real Core commit, so the shelf can show the committed position in
+    /// the same user action without a second projection read (the reader saves on every page turn,
+    /// and a projection read resolves + digests every page of the chapter -- doing that per turn
+    /// would be a serious regression). When the overlay closes, the Library re-reads the
+    /// authoritative projection instead; that is the moment the shelf becomes visible again.
+    ///
+    /// Only the chapter the shelf is showing is touched: a deep-linked reader on another chapter
+    /// must not rewrite this chapter's line.
+    /// </summary>
+    private async Task OnReaderProgressSavedAsync(ReaderProgressSavedEvent saved)
+    {
+        if (saved.IsClosing)
+        {
+            await LoadProgressAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (SelectedChapter is not { } chapter ||
+            !string.Equals(chapter.ChapterId, saved.ChapterId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        SetDetailProgress(FormatSavedProgress(saved.PageNumber, saved.PageCount));
+    }
+
+    /// <summary>Single formatter for the shelf progress line (projection path and mirror path agree).</summary>
+    private static string FormatSavedProgress(int pageNumber, int pageCount)
+    {
+        var total = Math.Max(1, pageCount);
+        var page = Math.Clamp(pageNumber, 1, total);
+        return $"读到 第 {page} / {total} 页 · {page * 100.0 / total:0}%";
+    }
+
+    /// <summary>
+    /// Publishes one progress value: records the refresh for evidence and raises the property the
+    /// bound detail panel listens to (a value-equal write still notifies, so the UI cannot stay stale).
+    /// </summary>
+    private void SetDetailProgress(string text)
+    {
+        _detailProgressText = text;
+        ProgressRefreshes++;
+        OnPropertyChanged(nameof(DetailProgressText));
+    }
+
     private async Task LoadProgressAsync()
     {
         if (SelectedBook is not { } book || SelectedChapter is not { } chapter)
         {
-            _detailProgressText = "—";
-            OnPropertyChanged(nameof(DetailProgressText));
+            SetDetailProgress("—");
             return;
         }
 
         var data = await _controller.LoadReaderBookAsync(book.BookId, chapter.ChapterId).ConfigureAwait(true);
         if (data is null)
         {
-            _detailProgressText = "进度未知（Core 未就绪或无阅读投影）";
+            SetDetailProgress("进度未知（Core 未就绪或无阅读投影）");
         }
         else if (data.HasSavedProgress)
         {
-            var total = Math.Max(1, data.Pages.Count);
-            var page = Math.Clamp(data.InitialPageIndex + 1, 1, total);
-            _detailProgressText = $"读到 第 {page} / {total} 页 · {page * 100.0 / total:0}%";
+            SetDetailProgress(FormatSavedProgress(data.InitialPageIndex + 1, data.Pages.Count));
         }
         else
         {
-            _detailProgressText = $"未开始阅读 · 共 {data.Pages.Count} 页";
+            SetDetailProgress($"未开始阅读 · 共 {data.Pages.Count} 页");
         }
-
-        OnPropertyChanged(nameof(DetailProgressText));
     }
 
     private async Task RefreshBookCountsAsync()
