@@ -34,7 +34,8 @@
 | **C-04b 复核** | **`approved`**（r3；r1/r2 的 6 P1 全部处置） | `doc/reviews/FEA-GOV-5-c04b-r3.md` |
 | **C-08/C-09/C-12 草案** | Run 快照（SC-R01…R05）+ 删除/备份/迁移（SC-B01…B05）+ 检查器边界 | `doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md`、`FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md`、`FEA-C12_CHECKER_SCOPE_DRAFT.md` |
 | **C-05/C-06 复核** | **`approved`**（r3；r1/r2 的 6 P1 全部处置） | `doc/reviews/FEA-GOV-6-c05-c06-r3.md` |
-| **C-08/C-09/C-12 复核** | 复核中（三份草案已建） | — |
+| **C-08/C-09/C-12 复核** | **`approved`**（r2；r1 的 3 P1 全部处置） | `doc/reviews/FEA-GOV-7-r2.md` |
+| **冻结矩阵** | `approved` 待复核（11 行 × 条件 × 8 步顺序 × 5 Gate） | `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md` |
 | **C-04b 草案** | 删除协议字段/码表（`PreviewPermanentDeleteBooks` + `inventory_digest` + 6 码表），未复核 | `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md` |
 
 ## 待你拍板（可直接回 A/B/C）
