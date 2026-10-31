@@ -274,6 +274,14 @@ foreach ($file in $selectedFiles) {
 $architecture = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + Managed Copy'
 $architectureCurrent = 'Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource'
 
+# Outside a code span, an odd run of backslashes escapes a backtick. Inside a
+# code span backslashes are literal, so a matching closing run still closes it.
+function Test-BacktickEscaped([string]$Text, [int]$Position) {
+    $slashes = 0
+    for ($j = $Position - 1; $j -ge 0 -and [int][char]$Text[$j] -eq 92; $j--) { $slashes++ }
+    return ($slashes % 2) -eq 1
+}
+
 # Mask inline code with spaces so callers can inspect Markdown syntax without
 # accepting examples as links. An unmatched delimiter masks the remainder.
 function Hide-InlineCode([string]$Line) {
@@ -285,6 +293,12 @@ function Hide-InlineCode([string]$Line) {
             $start = $i
             while ($i -lt $Line.Length -and [int][char]$Line[$i] -eq 96) { $i++ }
             $length = $i - $start
+            if ($delimiterLength -eq 0 -and (Test-BacktickEscaped $Line $start)) {
+                # A backslash escapes only the first backtick in a run.
+                [void]$masked.Append($Line[$start])
+                $i = $start + 1
+                continue
+            }
             if ($delimiterLength -eq 0) { $delimiterLength = $length }
             elseif ($delimiterLength -eq $length) { $delimiterLength = 0 }
             [void]$masked.Append((' ' * $length))
@@ -340,28 +354,76 @@ function Hide-NonLinkContexts([string]$Line) {
 # is not a link or authority field, so mask it before looking for assertions.
 # Same-line spans keep their original text (sentinel values are backtick-wrapped
 # by design); only spans that actually cross a line break are masked.
-function Mask-ParagraphCrossLineCode([string[]]$Lines) {
-    if ($Lines.Count -le 1) { return ,$Lines }
+function Mask-ParagraphCrossLineCode([string[]]$Lines, [hashtable]$BlockState) {
     $joined = [string]::Join("`n", $Lines)
     $chars = $joined.ToCharArray()
     $i = 0
     while ($i -lt $chars.Length) {
+        # Block context is tracked on raw text only to decide where inline
+        # delimiters can start; actual fence/HTML filtering happens later.
+        if ($BlockState.Comment) {
+            $end = $joined.IndexOf('-->', $i, [StringComparison]::Ordinal)
+            if ($end -lt 0) { break }
+            $BlockState.Comment = $false
+            $i = $end + 3
+            continue
+        }
+        if ($BlockState.HtmlTag) {
+            $close = [regex]::Match($joined.Substring($i), '(?i)</\s*' + [regex]::Escape($BlockState.HtmlTag) + '\s*>')
+            if (-not $close.Success) { break }
+            $BlockState.HtmlTag = ''
+            $i += $close.Index + $close.Length
+            continue
+        }
+        if ($i -eq 0 -or [int][char]$chars[$i - 1] -eq 10) {
+            $lineEnd = $joined.IndexOf("`n", $i, [StringComparison]::Ordinal)
+            if ($lineEnd -lt 0) { $lineEnd = $chars.Length }
+            $line = $joined.Substring($i, $lineEnd - $i)
+            $fence = [regex]::Match($line, '^ {0,3}(`{3,}|~{3,})')
+            if ($BlockState.InFence) {
+                if ($fence.Success -and $fence.Groups[1].Value.Substring(0, 1) -ceq $BlockState.FenceChar -and
+                    $fence.Groups[1].Value.Length -ge $BlockState.FenceLength -and
+                    $line.Substring($fence.Length).Trim().Length -eq 0) { $BlockState.InFence = $false }
+                $i = $lineEnd + 1
+                continue
+            }
+            if ($fence.Success) {
+                $BlockState.InFence = $true
+                $BlockState.FenceChar = $fence.Groups[1].Value.Substring(0, 1)
+                $BlockState.FenceLength = $fence.Groups[1].Value.Length
+                $i = $lineEnd + 1
+                continue
+            }
+        }
+        if ([int][char]$chars[$i] -eq 60) {
+            if ($joined.Substring($i).StartsWith('<!--', [StringComparison]::Ordinal)) {
+                $BlockState.Comment = $true
+                $i += 4
+                continue
+            }
+            $open = [regex]::Match($joined.Substring($i), '^(?i:<\s*(pre|code)(?=[\s>/]|$))')
+            if ($open.Success) {
+                $BlockState.HtmlTag = $open.Groups[1].Value
+                $i += $open.Length
+                continue
+            }
+        }
         if ([int][char]$chars[$i] -eq 96) {
             $start = $i
             while ($i -lt $chars.Length -and [int][char]$chars[$i] -eq 96) { $i++ }
             $length = $i - $start
-            $closeStart = -1
+            if (Test-BacktickEscaped $joined $start) { $i = $start + 1; continue }
             $closeEnd = -1
             $j = $i
             while ($j -lt $chars.Length) {
                 if ([int][char]$chars[$j] -eq 96) {
                     $m = $j
                     while ($m -lt $chars.Length -and [int][char]$chars[$m] -eq 96) { $m++ }
-                    if (($m - $j) -eq $length) { $closeStart = $j; $closeEnd = $m; break }
+                    if (($m - $j) -eq $length) { $closeEnd = $m; break }
                     $j = $m
                 } else { $j++ }
             }
-            if ($closeStart -ge 0) {
+            if ($closeEnd -ge 0) {
                 if ($joined.Substring($start, $closeEnd - $start).Contains("`n")) {
                     for ($k = $start; $k -lt $closeEnd; $k++) {
                         # Keep line breaks so the masked paragraph keeps its line structure.
@@ -385,14 +447,38 @@ function Get-AuthorityLines([string]$Relative) {
         return
     }
     $text = Get-Content -LiteralPath $path -Raw
-    $text = [regex]::Replace($text, '(?s)<!--.*?(?:-->|\z)', '')
+
+    # Find spans in raw paragraphs before removing any fence/HTML content.
+    # Blank lines, ATX headings and line-start block openers end a paragraph;
+    # an inline <pre> inside a span is not a block opener.
+    $rawLines = @($text -split '\r?\n')
+    $maskedLines = [System.Collections.Generic.List[string]]::new()
+    $paragraph = [System.Collections.Generic.List[string]]::new()
+    $blockState = @{ Comment = $false; HtmlTag = ''; InFence = $false; FenceChar = ''; FenceLength = 0 }
+    foreach ($rawLine in $rawLines) {
+        $isBlockBoundary = $rawLine -match '^ {0,3}(?:#{1,6}(?:[ \t]+|$)|`{3,}|~{3,}|<!--|(?i:<\s*(?:pre|code)(?=[\s>/]|$)))'
+        if ($rawLine.Trim().Length -eq 0 -or $isBlockBoundary) {
+            if ($paragraph.Count -gt 0) {
+                foreach ($maskedLine in (Mask-ParagraphCrossLineCode @($paragraph.ToArray()) $blockState)) { $maskedLines.Add($maskedLine) }
+                $paragraph.Clear()
+            }
+            if ($rawLine.Trim().Length -gt 0) {
+                foreach ($maskedLine in (Mask-ParagraphCrossLineCode @($rawLine) $blockState)) { $maskedLines.Add($maskedLine) }
+            } else { $maskedLines.Add($rawLine) }
+        } else { $paragraph.Add($rawLine) }
+    }
+    if ($paragraph.Count -gt 0) {
+        foreach ($maskedLine in (Mask-ParagraphCrossLineCode @($paragraph.ToArray()) $blockState)) { $maskedLines.Add($maskedLine) }
+    }
+    $text = [string]::Join("`n", $maskedLines)
     $inFence = $false
     $fenceChar = ''
     $fenceLength = 0
     $htmlCodeTag = ''
+    $htmlComment = $false
     $visibleLines = [System.Collections.Generic.List[string]]::new()
     foreach ($line in ($text -split '\r?\n')) {
-        if (-not $htmlCodeTag) {
+        if (-not $htmlCodeTag -and -not $htmlComment) {
             $opening = [regex]::Match($line, '^ {0,3}(`{3,}|~{3,})')
             if ($opening.Success) {
                 $marker = $opening.Groups[1].Value
@@ -413,35 +499,31 @@ function Get-AuthorityLines([string]$Relative) {
         $visible = [Text.StringBuilder]::new()
         $remaining = $line
         while ($remaining.Length -gt 0) {
-            if ($htmlCodeTag) {
+            if ($htmlComment) {
+                $closeComment = $remaining.IndexOf('-->', [StringComparison]::Ordinal)
+                if ($closeComment -lt 0) { break }
+                $remaining = $remaining.Substring($closeComment + 3)
+                $htmlComment = $false
+            } elseif ($htmlCodeTag) {
                 $close = [regex]::Match($remaining, '(?i)</\s*' + [regex]::Escape($htmlCodeTag) + '\s*>')
                 if (-not $close.Success) { break }
                 $remaining = $remaining.Substring($close.Index + $close.Length)
                 $htmlCodeTag = ''
             } else {
-                # Mask inline code only for finding tags; retain the original
-                # text, including backtick-wrapped sentinel values, in output.
+                # Find HTML outside inline code, while retaining original text
+                # (including backtick-wrapped sentinel values) in the output.
                 $masked = Hide-InlineCode $remaining
-                $open = [regex]::Match($masked, '(?i)<\s*(pre|code)(?=[\s>/]|$)')
+                $open = [regex]::Match($masked, '(?i)<!--|<\s*(pre|code)(?=[\s>/]|$)')
                 if (-not $open.Success) { [void]$visible.Append($remaining); break }
                 [void]$visible.Append($remaining.Substring(0, $open.Index))
-                $htmlCodeTag = $open.Groups[1].Value
+                if ($open.Value -ceq '<!--') { $htmlComment = $true }
+                else { $htmlCodeTag = $open.Groups[1].Value }
                 $remaining = $remaining.Substring($open.Index + $open.Length)
             }
         }
         $visibleLines.Add($visible.ToString())
     }
 
-    # Mask multi-line inline code spans per paragraph, then drop blank lines.
-    $index = 0
-    while ($index -lt $visibleLines.Count) {
-        if ($visibleLines[$index].Trim().Length -eq 0) { $index++; continue }
-        $start = $index
-        while ($index -lt $visibleLines.Count -and $visibleLines[$index].Trim().Length -gt 0) { $index++ }
-        $paragraph = @($visibleLines.GetRange($start, $index - $start))
-        $maskedParagraph = @(Mask-ParagraphCrossLineCode $paragraph)
-        for ($k = 0; $k -lt $maskedParagraph.Count; $k++) { $visibleLines[$start + $k] = $maskedParagraph[$k] }
-    }
     foreach ($visibleLine in $visibleLines) {
         if ($visibleLine.Length -gt 0) { $visibleLine }
     }

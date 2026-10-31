@@ -196,6 +196,67 @@ class ArchitectureAssertions(unittest.TestCase):
         self._cross_line("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
                          f"Architecture sentinel: `{SENTINEL}`")
 
+    def test_cross_line_span_masks_inline_html_before_html_processing(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        hidden = f"历史示例：``跨行代码\n说明 <pre>内容\n</pre>\n{field}\n结束``"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, hidden, 1), False)
+
+    def test_escaped_backtick_does_not_start_cross_line_code(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        for slash_count in (1, 3):
+            with self.subTest(slash_count=slash_count):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(
+                                field, "历史说明：" + "\\" * slash_count + "`literal\n" + field, 1), True)
+
+    def test_escaped_backtick_does_not_hide_same_line_authority_link(self):
+        self.mutate("AGENTS.md", lambda text: text.replace(
+            "与 [AD-003", "与 \\`literal [AD-003", 1), True)
+
+    def test_escaped_first_of_two_backticks_leaves_second_active(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, "历史说明：\\``x\n" + field, 1), False)
+
+    def test_backticks_in_prior_blocks_do_not_hide_authority(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        variants = {
+            "comment": "<!-- ` -->\n",
+            "pre": "<pre>\n`\n</pre>\n",
+            "fence": "~~~\n`\n~~~\n",
+        }
+        for name, block in variants.items():
+            with self.subTest(name=name):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(field, block + field, 1), True)
+
+    def test_unclosed_span_before_fence_preserves_external_authority(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, "历史说明：`x\n~~~\n`\n~~~\n" + field, 1), True)
+
+    def test_unclosed_span_before_html_block_cannot_expose_sentinel(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                    lambda text: text.replace(field, "历史说明：`x\n<pre>\n`\n" + field + "\n</pre>", 1), False)
+
+    def test_even_backslashes_leave_cross_line_delimiter_active(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        for slash_count in (0, 2):
+            with self.subTest(slash_count=slash_count):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(
+                                field, "历史说明：" + "\\" * slash_count + "`literal\n" + field, 1), False)
+
+    def test_atx_heading_ends_preceding_paragraph(self):
+        field = f"Architecture sentinel: `{SENTINEL}`"
+        for heading in ("## 独立标题", "# 一级标题", "   ### 三级标题"):
+            with self.subTest(heading=heading):
+                self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+                            lambda text: text.replace(
+                                field, "历史说明：`未闭合\n" + heading + "\n" + field, 1), True)
+
     def test_cross_line_code_span_in_prose_is_not_flagged(self):
         self.mutate("AGENTS.md", lambda text: text + "\n\n历史示例：`跨行\n代码示例`。\n", True)
 
@@ -206,7 +267,8 @@ class ArchitectureAssertions(unittest.TestCase):
 
     def test_historical_html_examples_do_not_hide_real_sentinel(self):
         field = f"Architecture sentinel: `{SENTINEL}`"
-        variants = ("历史示例 `<pre>` 不表示本文开始代码块。\n", "```text\n<pre>\n```\n")
+        variants = ("历史示例 `<pre>` 不表示本文开始代码块。\n", "```text\n<pre>\n```\n",
+                    "历史示例 `<!--` 是字面内容。\n")
         for example in variants:
             with self.subTest(example=example):
                 self.mutate("doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
