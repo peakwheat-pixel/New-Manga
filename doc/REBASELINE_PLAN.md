@@ -44,9 +44,9 @@
 共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：REALUSE-DATA-SAFETY-7
 
-当前 DAG：无（SAFETY-6 已 done；下一节点待 MA-11/MA-20 裁决后释放）
+当前 DAG：REALUSE-DATA-SAFETY-7（SAFETY-6 Review 的 3 条 P2，ready）
 
 ## 历史快照（终态节点，非当前 DAG）
 
