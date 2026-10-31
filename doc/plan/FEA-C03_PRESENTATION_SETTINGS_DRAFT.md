@@ -26,7 +26,7 @@
 ### 2.1 唯一写者与文件
 
 - **唯一写者**：`presentation-settings.json`（新文件）由 **`NewManga.Appearance` 项目的 `AppearanceCoordinator`** 原子写（方案 `:131`/`:858`）；ThemeEngine 的 `IThemePersistence` 成为**对该存储的适配面**（sink-only：ThemeEngine 只读它，不再自行写旧文件）。`PresentationSettingsStore` 落在 `NewManga.Appearance` 内，**不在 ThemeEngine**。
-- **旧文件停止写的时点**：新文件**首次成功写入**后，`theme-settings.json` 转为只读（保留为迁移输入，不删除）。
+- **旧文件停止写的时点**：新文件**首次成功写入**后，`theme-settings.json` 进入**兼容期**（保持可写，继续接收兼容写）；**兼容期结束**（由 DSH 在释放该 Task 时记录时点）后转只读（保留为迁移输入，不删除）。
 - **理由**：Fluent 主题包（视觉主题 `builtin.fluent-dark`，frontend id `builtin.fluent`）需要持久化比现有 `ThemeSettings` 更多的字段（材质强度、圆角档、密度档、动效分类），塞进旧模型会破坏 V11R §4 的冻结签名；写者上移到 Appearance coordinator 也让「三层选择/兼容/持久化协调」有唯一落点（方案 `:131`）。
 
 ### 2.2 字段迁移矩阵
@@ -53,14 +53,14 @@
   | `feedback` | 按钮 hover、状态变化 | `reduce` 下保留颜色变化、去掉位移 |
   | `decorative` | 背景渐变移动、粒子 | `reduce` 下**完全禁用** |
 - **兼容**：旧 `ReducedMotion=true` 映射为 `motion.mode=reduce` 且三类全禁（等价旧行为）。
-- **适用域**：`motion.mode=auto` 时读取系统辅助功能设置——**Avalonia 11.3.22 无动画开关 API**，实现须走平台层：Windows 读 `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` 或 WinRT `UISettings.AnimationsEnabled`；`full`/`reduce` 为显式覆盖。
+- **适用域**：`motion.mode=auto` 时读取系统辅助功能设置——**Avalonia 11.3.22 无动画开关 API**，实现须走平台层：Windows 读 `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` 或 WinRT `UISettings.AnimationsEnabled`；`full`/`reduce` 为显式覆盖。**失败降级**：平台读取失败按 `full` 处理并记 warning；读取封装为 `IMotionPreferenceSource` 接口，便于单测注入失败分支。
 
 ## 3. 冻结前置与判据
 
 | 项 | 判据 |
 |---|---|
 | 写者唯一性 | `presentation-settings.json` 只能由 **`NewManga.Appearance` 的 `AppearanceCoordinator`** 写；ThemeEngine 的 `ThemeSettingsStore.SaveAsync` 在迁移后**保留一个 release 周期的兼容写**（写旧文件 + 记 warning），**不抛 `NotSupportedException`**——因为现有唯一调用者 `ThemeService.TrySave`（`Service/ThemeService.cs:647-661`）在 `:654` 会 catch 并吞掉异常，静默失效比兼容写更糟；兼容期结束后由 Appearance 接管全部保存路径 |
-| 迁移幂等 | 旧文件存在 → 首次读时迁移 → 写新文件 → 旧文件只读；重复启动不再写旧文件 |
+| 迁移幂等 | 旧文件存在 → 首次读时迁移 → 写新文件 → **兼容期内旧文件仍可写**（兼容写路径）→ 兼容期结束后转只读；重复启动不再把旧文件当权威源 |
 | 字段完整性 | 新模型覆盖 §2.2 全部行；缺字段 → 回退默认并记录 warning |
 | 三态可验证 | 单测：①`reduce` 下 `decorative` 类动效时长为 0、`feedback` 保留颜色变化但无位移；②`full` 下不受系统设置影响；③`auto` 下按注入的假平台设置切换；④`navigation` 类在 `reduce` 下无动画切换；⑤旧 `ReducedMotion=true` 迁移后三类全禁（等价旧行为） |
 | `ThemeService` 迁移 | `Service/ThemeService.cs:647-661` 的 `TrySave` 改为调 `AppearanceCoordinator`；`ThemeSettingsStore.SaveAsync` 的异常只作**防复活护栏**（如果仍有调用方，必须对用户可见——`ApplyAsync` 不得返回成功）；过渡期失败必须提示而非静默降级 |
@@ -92,3 +92,5 @@
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表（代码事实）、目标文件与唯一写者、字段迁移矩阵 9 行、动效三态/三类、5 条判据、U-05a/U-05b 待裁决 | DSH |
 | 2026-11-01 | v2：补正式冻结条件（§4 四条，含 C-02 先冻结）；字段表补双 id 体系；全文 id 词汇与 C-02 V-07 对齐 | DSH |
+| 2026-11-01 | v3：处置 FEA-GOV-4-c03 r1（P1×2）——写者上移 `NewManga.Appearance` 的 `AppearanceCoordinator`、`IThemePersistence` 为适配面；`SaveAsync` 改兼容写不抛异常；P2×4（9 行/`theme.visualThemeId`/平台 API/行号） | DSH |
+| 2026-11-01 | v4：补 `ThemeService` 迁移判据 + 三态判据 ①–⑤ + 兼容期时序（K-1）+ 平台读取失败降级（K-3） | DSH |
