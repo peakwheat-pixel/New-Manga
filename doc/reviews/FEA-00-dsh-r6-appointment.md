@@ -90,3 +90,16 @@ r6c 复审：同一 `reviewer-r6` 独立复审 `83c422345`，报告 `doc/reviews
 - **E-03（P2，非阻断，证据归档）**：已处置——实施侧探针日志归档到 `G:/CODEX/New Manga.workspace/agent-output/dsh/FEA-00-R2-fix2/` 并补 `EXIT`：`probe-family-r6c.log`（`db4408f8…`）、`probe21-current.log`（`559b4290…`）、`new-samples-current.log`（`b4014481…`）、`probe-extra.log`（`4ecb5db8…`）；后续不再写入 `review-r6*` reviewer 证据目录。哈希同步登记在 `r6-verification.md` §4。
 - Reviewer 记录的 type-7 `<code>` 块结束条件近似（空行 vs `</code>`，`1672f3c40` 起一致）并入 **R-03 accepted limitation**，记录在 `r6-verification.md` §5。
 - 集成状态：`83c422345` 已在 `main`，**未 push**；推送由 DSH 按用户授权决定。独立复审已确认该 head 可交集成。
+
+## 收口记录（2026-11-01）
+
+按 r6c 报告的建议完成 P0-1～P0-4：
+
+| 项 | 处置 |
+|---|---|
+| P0-1 判别力 artefact | `unittest-r6c-discriminative-31.log`（环境头 + `EXIT=1` + `Ran 31 tests / FAILED (failures=8)`），哈希 `359a8566…`，登记于 `r6-verification.md` §4 |
+| P0-2 过期表述 | `r6-verification.md` §3 标题改为「已提交 `83c422345`」；§5 末条改为已复审 approved 与 disposition 记录；**未改 `check.ps1`**（保持已审字节） |
+| P0-3 集成验证 | `integration-checker.log`（EXIT=0 / PASS 2 warnings）、`integration-unittest-31.log`（EXIT=0 / Ran 31 OK）、`integration-matrix22.log`（EXIT=0 / 22 场景 0 mismatch），哈希见 `r6-verification.md` §4；集成方式为 main 就地包含该 commit，无来源分支合并动作 |
+| P0-4 归档提交 | commit **`b6bdb3877`**（11 个 Review/Appointment/Handoff 文档，+1132 行）；归档前后代码 blob 未变（`dd800c58…` / `161435c9…`）；归档后 `check.ps1` 复验 EXIT=0（`post-archive-checker.log`） |
+
+`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md`、`doc/design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md` 属产品设计线，保持 untracked，未混入本次归档。`main` 仍无 upstream，未 push。
