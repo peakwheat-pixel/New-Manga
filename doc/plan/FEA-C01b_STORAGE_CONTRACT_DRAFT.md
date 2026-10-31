@@ -1,9 +1,9 @@
 # FEA-C01b 存储契约（草案）
 
-状态：**DRAFT v5 / 已过 r1、r2、r3、r4 独立复核（均 `changes_requested`，P0×0 / P1×1 / P2×4 open）/ 未冻结 / 不释放实现 Task**
+状态：**DRAFT v5 / r5 独立复核 `approved`（P0×0 / P1×0 / P2×3 非阻断已知限制）/ **未冻结** / 不释放实现 Task**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
-依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1 复核](../reviews/FEA-C01b-r1.md)、[r2](../reviews/FEA-C01b-r2.md)、[r3](../reviews/FEA-C01b-r3.md)
+依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1](../reviews/FEA-C01b-r1.md)、[r2](../reviews/FEA-C01b-r2.md)、[r3](../reviews/FEA-C01b-r3.md)、[r4](../reviews/FEA-C01b-r4.md)、[r5](../reviews/FEA-C01b-r5.md)
 
 **边界声明**：本文件把 AD-003 §3 的决策语义转成可验证的契约条款，**不是 ADR、未冻结**。`check.ps1 PASS` 不构成契约语义证据。
 
@@ -119,7 +119,7 @@
 
 ## 4. 冻结条件
 
-1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1/r2/r3/r4 已跑，v5 修订后需 r5 极窄面确认**）；
+1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1–r5 已跑，r5 `approved`**）；
 2. **AD-003 自身的 `G-REVIEW` 收口**（AD-003 §6 明文：复审通过前不作为契约冻结依据）；ADJ-001 的 `G-DELETE-CONTRACT` 仍 OPEN，相关条款（SC-30/31/33）冻结前须注明依赖；
 3. 用户确认 AD-002 的**责任表与哨兵口径**修订（`Managed Copy` 行 + 顶部横幅归口）；
 4. `check.ps1` PASS（机械检查，仅证明结构条件）。
@@ -135,3 +135,4 @@
 | 2026-11-01 | v3：处置 FEA-C01b-r2（P0×0 / P1×1 / P2×8）。状态变更（old→new）：SC-10 [新增]→拆分 SC-10a [现行]+SC-10b [新增]；SC-09 [新增]→[文档级约束]；SC-17 [新增]→（保持）；SC-06 [现行]→[文档级约束]；SC-15/16 [现行]→[文档级约束]；SC-03 [现行]→拆分；SC-38 证据换载。其余：SC-01 补判别、图例补四态判据 | DSH |
 | 2026-11-01 | v4：处置 FEA-C01b-r3（P0×0 / P1×1 / P2×6）——P1-1 文档控制字段同步（状态行 v4、依据链 r2/r3、§4.1 改「需 r4」）；P2-2 SC-10b 旁注纠正（Run 快照结构已存在 `schema.py:290-323`，真实缺口为快照不含上下文页内容；补 `trash-manifest.json` 白名单证据）；P2-1 SC-09 拆分；P2-4 SC-20/30/36/12/24 证据补文件:行；P2-5 变更记录补 old→new；P2-6 SC-18/21/31 按判据重标 [未实现] | DSH |
 | 2026-11-01 | v5：处置 FEA-C01b-r4（P0×0 / P1×1 / P2×4）——`:6` 依据补链 r2/r3（P1 唯一项）；SC-20 证据标签纠正（`:206` reparse 预拒、`:351` identity 复核、`:641`/`:766` 可信根）；SC-30 证据标签纠正（软删 `library/service.py:97-99`/`trash.py:119`、页级 `trash.py:196`、项目级永久删除 `library.py:1069-1101`）；§5 行序修正（v4 移到 v3 后）；图例拆分写法统一为 `[A：… / B：…]` | DSH |
+| 2026-11-01 | r5 复核 `approved`（P0×0 / P1×0 / P2×3 非阻断）。已知限制：L-1 图例拆分写法与正文未完全统一（各状态仍可唯一判读）、L-2 `:6` 依据链止于 r3（r4/r5 报告已入库，`:3` 自述已过 r4/r5）、L-3 §5 的 v4 行把「依据链 r2/r3」记在 v4 名下（实际 v5 完成）。**冻结前置仍未满足**：② AD-003 `G-REVIEW` 收口（`ADDRESSED_PENDING_R2`，无 AD-003 独立 Review 产物）；③ 用户确认 AD-002 责任表与哨兵口径；④ `check.ps1` PASS | DSH |
