@@ -57,8 +57,8 @@ P2 处置链闭合、治理指针一致，并给出可向用户汇报的 SAFETY 
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-AUDIT | AC1/AC2 | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md` | `(见提交)` | `724afcd71ca955b80f9962653127e23d4933764b1dcbcc9f2a1448a44abcd14f` | CANONICAL |
-| E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-12/resource-manifest.json` | `(见提交)` | `38fdd4b7ad93babdf20561d4b139c7d9a0e212c4ac96ad4b7f650598a05375b3` | CANONICAL |
+| E-AUDIT | AC1/AC2 | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md` | `fc111c21f` | `724afcd71ca955b80f9962653127e23d4933764b1dcbcc9f2a1448a44abcd14f` | CANONICAL |
+| E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-12/resource-manifest.json` | `fc111c21f` | `38fdd4b7ad93babdf20561d4b139c7d9a0e212c4ac96ad4b7f650598a05375b3` | CANONICAL |
 
 ## Resource Manifest
 
