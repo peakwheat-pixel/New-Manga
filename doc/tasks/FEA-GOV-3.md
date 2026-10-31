@@ -3,20 +3,20 @@ id: FEA-GOV-3
 title: 契约冻结包准备（C-01b/C-02/C-03/C-11）
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_FEA-GOV-2_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: c01b-reviewer
 depends_on:
   - FEA-GOV-2
 base_commit: 937cbad2a
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: cc1fe0d8c
+delivery_head: 18f59e8b8
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-GOV-3
 allowed_paths:
   - doc/tasks/FEA-GOV-3.md
@@ -62,6 +62,17 @@ allowed_paths:
 
 治理 Task：无 worktree、无临时产物；资源处置在收口时登记。
 
+## 独立 Review
+
+- r1 [FEA-GOV-3-review.md](../reviews/FEA-GOV-3-review.md)：`changes_requested`（P0×0 / P1×1 / P2×5）——C-01b 条件② 漏 ADJ-001 子条件
+- r2 [FEA-GOV-3-r2.md](../reviews/FEA-GOV-3-r2.md)：`changes_requested`（P0×0 / P1×2 / P2×3）——FEA-00a 排除理由错误 + pin 未回填
+- r3 [FEA-GOV-3-r3.md](../reviews/FEA-GOV-3-r3.md)：**`approved`**（P0×0 / P1×0 / P2×3 非阻断，K-1/K-2/K-3 均已修）
+- Reviewer：`c01b-reviewer`（Agent Teams durable teammate task-14，独立上下文）
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：main 直接提交 `cc1fe0d8c`（治理 Task，无 worktree/branch）
+- 结果：冻结包定稿（四份草案条件核对 + 11 步四阶段序列 + 回退表 + UNFREEZE 载体）；**C-01b 差 ②b（ADJ-001 依赖注明）+ ③（用户口径）**
+- 已知 P2：K-1/K-2/K-3 均已处置
+- 资源：无 worktree、无临时产物、无用户数据访问。
