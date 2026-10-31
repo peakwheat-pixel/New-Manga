@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-10
 title: SAFETY-9 Review R-101 收尾——负向对照转录补全
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-9_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-9
-base_commit: 9aa6758b6
-branch: null
-worktree: null
+base_commit: 284708c3c
+branch: task/REALUSE-DATA-SAFETY-10
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -47,7 +47,7 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 转录补全**：`ac1-discriminating.md` 的负向对照段补齐「执行位置（worktree 内临时覆盖 + 恢复，或仓外副本）、完整命令与 cwd、host 头、断言失败明细（Expected/Actual 与行号）、恢复后 `git status` 干净」；如重新实测则附新输出与 EXIT。 <<PARTIAL: 待实现>>
+- [x] **AC1 转录补全**：`ac1-discriminating.md` 的负向对照段已补齐执行位置、完整命令与 cwd、host 头、断言失败明细（`Expected: 3 / Actual: 5`、`:328`）、恢复后 `git status` 干净，并附完整原始日志。 <<MET>>
 
 ## 禁止范围
 
@@ -57,20 +57,26 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 重跑负向对照并记录完整输出 | net9.0 | NOT_RUN | 待补 |
+| AC1 | worktree 内临时覆盖 pre-F-005 → build → `-v n` filtered 测试 → 恢复 | net9.0 | **1 失败 / 0 通过，EXIT=1**；`Expected: 3 / Actual: 5` @ `:328` | `ac1-negative-control.txt`、`ac1-discriminating.md` |
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**（`git cat-file blob` → SHA-256）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `4d2658dd6` | `7c00accf9563f6f5d0eea9cd2ecff34ac7ac3f482cb4b59d9b7e00ba124bb328` | CANONICAL |
+| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt` | `b02f4de05` | `09463db204791f968f38d0055cae871c6a996b48f148eacfb5025a8645ec2c28` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1 | `verification/REALUSE-DATA-SAFETY-10/README.md` | `b02f4de05` | `affbf77db9be88f46922a7a52ca42e6bd649c26c520e4aebb28f602603f712b5` | CANONICAL |
+| E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-10/resource-manifest.json` | `9ee1d65aa` | `076f8f50febe4de8bdb08c2203db61d42a5878a9ed74a8d58e289c8e1f65f661` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-10/resource-manifest.json`（schema_version 1）。`tmp/safety10-negctl-full.txt` 为负向对照临时日志，已删除。
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+
+
+
