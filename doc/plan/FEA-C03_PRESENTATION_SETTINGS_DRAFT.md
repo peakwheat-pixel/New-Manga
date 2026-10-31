@@ -62,7 +62,8 @@
 | 写者唯一性 | `presentation-settings.json` 只能由 **`NewManga.Appearance` 的 `AppearanceCoordinator`** 写；ThemeEngine 的 `ThemeSettingsStore.SaveAsync` 在迁移后**保留一个 release 周期的兼容写**（写旧文件 + 记 warning），**不抛 `NotSupportedException`**——因为现有唯一调用者 `ThemeService.TrySave`（`Service/ThemeService.cs:647-661`）在 `:654` 会 catch 并吞掉异常，静默失效比兼容写更糟；兼容期结束后由 Appearance 接管全部保存路径 |
 | 迁移幂等 | 旧文件存在 → 首次读时迁移 → 写新文件 → 旧文件只读；重复启动不再写旧文件 |
 | 字段完整性 | 新模型覆盖 §2.2 全部行；缺字段 → 回退默认并记录 warning |
-| 三态可验证 | 单测：`reduce` 下 `decorative` 类动效时长为 0；`full` 下不受系统设置影响 |
+| 三态可验证 | 单测：①`reduce` 下 `decorative` 类动效时长为 0、`feedback` 保留颜色变化但无位移；②`full` 下不受系统设置影响；③`auto` 下按注入的假平台设置切换；④`navigation` 类在 `reduce` 下无动画切换；⑤旧 `ReducedMotion=true` 迁移后三类全禁（等价旧行为） |
+| `ThemeService` 迁移 | `Service/ThemeService.cs:647-661` 的 `TrySave` 改为调 `AppearanceCoordinator`；`ThemeSettingsStore.SaveAsync` 的异常只作**防复活护栏**（如果仍有调用方，必须对用户可见——`ApplyAsync` 不得返回成功）；过渡期失败必须提示而非静默降级 |
 | 与 C-02 一致 | `theme.visualThemeId` ∈ {`newmanga-default`, `builtin.fluent-dark`}；`theme.frontendId` ∈ {`builtin.current-v2`, `builtin.fluent`}；Current 视觉主题下 material/corners 字段被忽略（不报错） |
 
 ## 4. 冻结条件
