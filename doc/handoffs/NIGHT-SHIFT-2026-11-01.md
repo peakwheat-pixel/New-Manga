@@ -50,12 +50,20 @@
    - **B（推荐）**：按 `(SessionId, RegionId)` draft owner + 字段分域并发
 
 5. **U-04 Fluent 视觉是否豁免 V11R 圆角/阴影/模糊禁令**
-   - **A（推荐）**：起草 per-scheme 例外登记（与 R-14 同构），不整体豁免
+   - **A（推荐）**：起草 per-scheme 例外登记（与 R-14 同构），不整体豁免（已落在 [C-02 V-05](plan/FEA-C02_V11R_AMENDMENT_DRAFT.md)：材质/层次/圆角三行，仅 `builtin.fluent` 生效且强制走令牌）
    - B：完全豁免
+
+6. **AD-002 口径（FEA-GOV-2，C1–C4）** —— 冻结前置③
+   - **回 `R`（推荐）** = C1=**D 零字节**（不改 AD-002，解释由 AD-003 §2 + C-01b SC-07/SC-01 承担）、C3=哨兵保持 `Managed Copy`、C2/C4 无需回答
+   - 若你要正文同步：回 `C1=A`（纯追加，需接受 AD-003 §2:28/§7① 配方扩展 + 再修订/再 pin）或 `C1=B`（改 `:28`，破坏字节保留声明）
+
+7. **U-05a 外观持久化是否纳动效三态/三类**（C-03）
+   - **A（推荐）**：纳入 `motion.mode = auto/full/reduce` + 三类（navigation/feedback/decorative），旧 `ReducedMotion=true` 映射为 `reduce`
+   - B：只保留布尔 `ReducedMotion`（Fluent 动效分级无法表达）
 
 ## 明早推荐第一步
 
-**先裁决 1 与 2**（各回一个字母即可），我按裁决开实施 Task；新架构线等 Codex 修订完成后我会自动进入复审，不需要你介入。
+**先裁决 1、2、6**（各回一个字母 / 一个 `R` 即可）。第 6 项是 C-01b 冻结的最后一关：回了 `R`，我就按 D 案落裁决记录并冻结 C-01b/C-02/C-03/C-11，然后释放第一个 FEA 实现候选 Task。第 3–5、7 项影响后续契约细节，晚点回也不阻塞。
 
 ---
 
