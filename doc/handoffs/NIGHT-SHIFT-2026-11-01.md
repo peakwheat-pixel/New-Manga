@@ -22,6 +22,9 @@
 | 契约清单草案 | 已吸收 r8；C-04c 已由 r4 §9.1 覆盖；G-01/G-03 关闭 | `doc/plan/FEA-01_CONTRACT_DRAFT.md` |
 | **C-01b 存储契约草案** | **v5，r5 独立复核 `approved`（P0×0 / P1×0 / P2×3 非阻断）**；r1→r5 共处置 P0×1、P1×3、P2×20；条款 SC-01…SC-39 覆盖 AD-003 §3.1–§3.8 全部 38 单元 | `doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md`；报告 `doc/reviews/FEA-C01b-r{1..5}.md` |
 | **C-07 端口清单** | 由代码生成：54 成员（`IReaderProgressSink` 1 + `IHostController` 47 + `IRunController` 6） | `doc/plan/FEA-C07_API_INVENTORY.md` |
+| **C-02 V11R 修订单** | V-01…V-08 逐条（项目/写权/令牌组/状态/例外/DS/ThemeEngine/UI 结构）；U-04 落点为 V-05（Fluent per-scheme 例外） | `doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md` |
+| **C-03 外观持久化** | `presentation-settings.json` 单点写者 + 10 行字段迁移矩阵 + 动效三态/三类；U-05a/U-05b 待裁决 | `doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md` |
+| **C-11 候选表口径** | §12.1 主表 + §15.6 补充列合并引用；L1–L4 等级；H1–H4b Gate 判据；FEA-04b 硬前置 | `doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md` |
 | 冻结前置 | ① C-01b r5 `approved` ✅；② AD-003 `G-REVIEW` → **`SATISFIED`**（FEA-GOV-1，`approved` 0 P0/0 P1/4 P2）✅；③ AD-002 责任表与哨兵口径**待你确认**（FEA-GOV-2 出提案）；④ `check.ps1` PASS ✅ | `doc/AD-003_...md` §5；`doc/reviews/FEA-GOV-1-ad003-review.md` |
 
 ## 待你拍板（可直接回 A/B/C）
