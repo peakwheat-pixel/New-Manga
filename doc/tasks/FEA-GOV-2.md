@@ -21,6 +21,8 @@ evidence_dir: verification/FEA-GOV-2
 allowed_paths:
   - doc/tasks/FEA-GOV-2.md
   - doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md
+  - doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md
+  - doc/reviews/FEA-GOV-2-*.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
@@ -38,7 +40,7 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 ## 验收标准
 
 - [x] **AC1 修订提案**：在 `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` 给出 AD-002 口径的修订方案——① 四案对比（D 零字节 / A 纯追加 / B 改 `:28` / C 改哨兵），含字节影响与风险；② 推荐案（r1 复核后改为 **D 零字节**：不改 AD-002，解释由 AD-003 §2 + C-01b SC-07/SC-01 承担）；③ 若选 A 的精确 diff 与已知代价（§4.1 的 AD-003 §2:28/§7① 配方漂移）。**提案不直接修改 AD-002**，等用户确认后由 DSH 执行。 <<MET>>
-- [x] **AC2 确认清单**：列出冻结前置③需要用户回复的全部问题（逐条给推荐选项与影响），供晨报「待裁决」区使用。**已完成**：C1–C4 四条，每条含推荐与影响，支持 `A` 一键回复。 <<MET>>
+- [x] **AC2 确认清单**：列出冻结前置③需要用户回复的全部问题（逐条给推荐选项与影响），供晨报「待裁决」区使用。**已完成**：C1–C4 四条，每条含推荐与影响，支持 `R` 一键回复（= 全部按推荐，即 C1=D）。 <<MET>>
 
 ## 禁止范围
 
@@ -57,11 +59,15 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `da20bd87a` | `5255dfa837cc54711d560b725f247bed0ed52ab0c9276c0056ec8f5a6e1c310b` | CANONICAL |
+| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `26feb784e` | `5255dfa837cc54711d560b725f247bed0ed52ab0c9276c0056ec8f5a6e1c310b` | CANONICAL |
 
 ## Resource Manifest
 
 治理 Task：无 worktree、无临时产物；资源处置记录见 `verification/FEA-GOV-2/resource-manifest.json`（schema_version 1）。
+
+## 跨 Task 治理修复记录
+
+- `26feb784e` 顺带修正 AD-003 §6 的 `ADDRESSED_PENDING_R2` 残留段落（该文件不在本 Task 原 allowed_paths；已在本卡补记并补齐 allowed_paths）。AD-003 §8 已加变更记录行；AD-003 被审 hash 链：`0940a41b`（FEA-GOV-1 复核）→ `712d3c9d`（收口）→ `dd4032b7`（本次收尾修正）
 
 ## Closeout Record
 
