@@ -3,7 +3,7 @@
 状态：**DRAFT / 未冻结 / 不释放实现 Task**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
-依据：FEA-00 r1（[FEA-00-dsh-r1](../reviews/FEA-00-dsh-r1.md) §5.4）、r2 技术复核（[FEA-00-dsh-r2-technical-recheck](../reviews/FEA-00-dsh-r2-technical-recheck.md)）、**r7 独立 Review（[FEA-00-dsh-r7](../reviews/FEA-00-dsh-r7.md)，verdict `changes_requested`：0 P0 / 2 P1 / 6 P2）**、方案 r3（`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md`，sha256 `2f925cca…afa120`）、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)
+依据：FEA-00 r1（[FEA-00-dsh-r1](../reviews/FEA-00-dsh-r1.md) §5.4）、r2 技术复核（[FEA-00-dsh-r2-technical-recheck](../reviews/FEA-00-dsh-r2-technical-recheck.md)）、r7 独立 Review（[FEA-00-dsh-r7](../reviews/FEA-00-dsh-r7.md)，`changes_requested`）、**r8 独立 Review（[FEA-00-dsh-r8](../reviews/FEA-00-dsh-r8.md)，`approved`：0 P0 / 0 P1 / 9 P2）**、方案 r4（`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` @ `74a772167`，LF sha256 `8895aebe…`）、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)
 
 **边界声明**：本文件是变更清单草案，**不是 ADR、不是冻结契约、不是 Task 释放，也不构成实现授权**。其中任何条目在方案修订、独立复审通过（新 hash）与用户裁决完成前**不得实施**；`check.ps1 PASS` 不构成架构语义证据。
 
@@ -14,7 +14,7 @@
 ```
 用户裁决（§3 待决项）
   → 方案修订（R7-01 / R7-02 等）
-  → 新 hash 独立复审通过
+  → 新 hash 独立复审通过          ← 2026-11-01 已完成（r8 `approved`，`74a772167`）
   → C-01…C-12 逐条冻结
   → FEA-01 冻结
   → Task 释放
@@ -31,6 +31,12 @@
   - **R7-02**：显式彻底删除未映射 ADJ-001 的 PD-01–PD-10（无 Core 只读预览、`inventory_digest` 绑定、确认前零变化门禁）。
 - 处置：转方案作者（Codex）修订 → 新 SHA-256 上重新 Appointment 复审 → 再进入契约冻结。
 
+### 1.2 r8 结论摘要（2026-11-01，方案 r4）
+
+- **`approved`（0 P0 / 0 P1 / 9 P2）**：R7-01 / R7-02 均已实质处置，R7-03–R7-08 全部有处置（R7-05/07/08 无残留）。
+- 本轮 9 条 P2 不阻断：R8-01/02（§13.3 基线/指令混写）、R8-03（候选名未标「候选」）、R8-04（PD-01 漏 `BOOK_BUSY`）、R8-05（F09 锚点失效）、R8-06/07（旧口径残留）、R8-08（56/56 只对 r3）、R8-09（两份权威文档自身 `G-REVIEW` 未获批）。
+- **approved 不等于契约冻结**：下一步仍是 C-01…C-12 逐条冻结（本清单的工作面）。
+
 ---
 
 ## 2. 变更包清单
@@ -44,7 +50,7 @@
 | **C-03** | 外观持久化与字段迁移 | `ThemeSettings`/`LayoutProfile`/`IThemeService`/`IThemePersistence`、新 `presentation-settings.json` | 唯一写者（建议 `presentation-settings.json` 单点，ThemeEngine 降为 sink-only）；旧文件停止写的时点；字段迁移矩阵（保留/迁 Core 按书偏好/迁 scale schema/废弃）；动效三态与分类模型 | F-06、F-16、F-36 | 成立（草案，待冻结） |
 | **C-04a** | 删除语义（已冻结） | ADJ-001 PD-01–PD-10 | 语义 = 已冻结；方案 §9 应改为**引用**而非重述 | F-02 | **已满足（ADJ-001 `G-DELETE-SEMANTICS: SATISFIED`）** |
 | **C-04b** | 删除协议字段/码表 | `M2-C1 §5.11`、`PreviewPermanentDeleteBooks`、`inventory_digest` | 只读预览、确认绑定摘要、确认前零变化门禁的字段与错误码 | F-02 | **D07 待冻结（先核 ADJ-001 §5/§6.1）** |
-| **C-04c** | PD→方案映射 | 方案 §9.1/§9.2、FEA-12-CORE AC | PD-01–PD-10 逐条映射到方案流程与 AC | R7-02 | **缺（转 Codex 修订）** |
+| **C-04c** | PD→方案映射 | 方案 §9.1/§9.2、FEA-12-CORE AC | PD-01–PD-10 逐条映射到方案流程与 AC | R7-02 | **已由 r4 §9.1 覆盖（r8 复核十个编号全部落位，F-02 占位 0 命中）；待 C-04b 字段冻结后闭合** |
 | **C-05** | 页可见性/完整性谓词 | `src/infrastructure/sqlite/library.py` 读面、`core_service` 页解析 | 新增显式完整性标记，区分「崩溃半写」与「引用模式合法无副本」；5 处读路径改造；不削弱崩溃安全不变量 | F-11 | 成立 |
 | **C-06** | Source 授权面 | 导入/资源控制面、Host issuer、新 `SourceReadService`、`SourceAccessRegistry` | grant 种类（一次性导入 ≤5min / 可续租 `source-read`，不可混用）；续租/撤销/过期；递归授权根模型；registry 持久化与 generation；读取预算；`ManagedRootTrust` 每根每代等价快照 | F-12、F-15、F-31 | 成立 |
 | **C-07** | 应用端口与兼容面 | `IHostController`/`IRunController`/CoreClient/Registry/Dispatcher/命令清册 | 由代码生成的方法清单（替换冻结文档的「36」口径）；request-scoped error；能力握手；增量为准；旧签名不变的可验证基线 | F-22、F-25 | 成立（委托 FEA-01 生成清单） |
@@ -65,7 +71,7 @@
 | # | 取舍 | 现状/冲突 | 建议默认 | 状态 |
 |---|---|---|---|---|
 | U-01 | 是否把 AD-002 默认存储语义改为 ReferencedSource（F-01） | AD-002 `Decision authority: User`；AGENTS.md 只允许落在该架构 | 需用户明确裁决（ADR） | **已记录（AD-003）；契约冻结待办（C-01b）** |
-| U-02 | 用户「彻底删除」是否解除 Lock/current/pinned（F-02） | 冻结 `M2-C1 §5.11.2` = 移除；方案 = 拒绝 | 建议区分：用户显式彻底删除可解除（沿用冻结语义），仅回收站到期 GC 阻受保护项 | **待你裁决（决定 C-04b 的字段/门禁方向）** |
+| U-02 | 用户「彻底删除」是否解除 Lock/current/pinned（F-02） | 冻结 `M2-C1 §5.11.2` = 移除；方案 = 拒绝 | 建议区分：用户显式彻底删除可解除（沿用冻结语义），仅回收站到期 GC 阻受保护项 | **已由 ADJ-001 冻结（PD-01–PD-10）；待你确认采用冻结语义**（决定 C-04b 字段/门禁方向） |
 | U-03 | 首阶段浮窗是否允许与主窗同时编辑同一区域（F-10） | 方案只读镜像；需求暗示可编辑 | 建议按 `(SessionId, RegionId)` draft owner + 分字段并发；否则明确降级只读 | **待你裁决** |
 | U-04 | Fluent 是否豁免 V11R §2.2 圆角/阴影/模糊禁令（F-03） | V11R 硬规则 + R-14 唯一例外清单；需求要求亚克力/层次 | DSH 起草 per-scheme 例外登记（与 R-14 同构）并经用户确认 | **待你裁决** |
 | U-05 | 阅读器翻页效果/动效分类是否纳入首阶段（F-36/F-39） | 需求要求；方案无归属 | 纳入，但首阶段可降级为跟随系统 + 单一强度 | **待你裁决** |
@@ -79,9 +85,9 @@
 
 | # | 缺口 | 处置 |
 |---|---|---|
-| G-01 | 方案 §16 引用未落库的会话级审查（`a66dc75c`、`759f940f`），`doc/reviews/` 无对应产物 | 二选一：补落库为 Review 文件，或从方案正文移除；由 DSH 收口 |
+| G-01 | 方案 §16 引用未落库的会话级审查（`a66dc75c`、`759f940f`），`doc/reviews/` 无对应产物 | **已处置（r4 §16 移除两处引用，改为指向 `FEA-00-dsh-r2-technical-recheck`，并声明会话级口头复核不作为审查证据）** |
 | G-02 | `FEA-00-dsh-r7` Appointment 登记缺失 | **已补**：`doc/reviews/FEA-00-dsh-r7-appointment.md` |
-| G-03 | `doc/00_INDEX.md` 未登记 r7 报告与 Appointment | 由 DSH 在集成时更新索引 |
+| G-03 | `doc/00_INDEX.md` 未登记 r7 报告与 Appointment | **已补**（r7 与 r8 均已登记） |
 
 ---
 
@@ -99,3 +105,4 @@
 |---|---|---|
 | 2026-11-01 | 建立草案；按 r1 §5.4 收录 C-01…C-12 与 U-01…U-08；标注 AD-003/ADJ-001 已覆盖项 | DSH |
 | 2026-11-01 | 吸收 FEA-00 r7 独立 Review（`changes_requested`）：C-01 → a/b/c、C-04 → a/b/c，C-10 标「部分」、C-12 补断言面；冻结链加入「修订后新 hash 复审」；登记 G-01…G-03 | DSH |
+| 2026-11-01 | 吸收 FEA-00 r8 独立 Review（`approved`，0 P0 / 0 P1 / 9 P2）：更新依据为方案 r4（`74a772167`）；C-04c 改为已覆盖；G-01/G-03 关闭；U-02 标注 ADJ-001 已冻结；冻结链标注「新 hash 复审」已完成 | DSH |

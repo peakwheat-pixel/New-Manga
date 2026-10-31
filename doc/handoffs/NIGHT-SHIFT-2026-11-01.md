@@ -14,11 +14,12 @@
 
 | 项 | 状态 | 证据 |
 |---|---|---|
-| FEA-00 方案 r3 | `changes_requested`（0 P0 / 2 P1 / 6 P2） | `doc/reviews/FEA-00-dsh-r7.md`、`doc/reviews/FEA-00-dsh-r7-appointment.md` |
-| P1 卡点 | R7-01 未同步 AD-003/ADJ-001；R7-02 删除流程未吸收 PD-01–PD-10 | 同上 |
-| 契约清单草案 | 已建，C-01→a/b/c、C-04→a/b/c；**全部未冻结** | `doc/plan/FEA-01_CONTRACT_DRAFT.md` |
-| FLUENT 文档 | 已入库（修复 AD-003 失效引用） | `6cab0b083` |
-| 下一步 | 转 Codex 修订 → 新 hash 独立复审 | — |
+| FEA-00 方案 r4 | **`approved`**（0 P0 / 0 P1 / 9 P2） | `doc/reviews/FEA-00-dsh-r8.md`、`doc/reviews/FEA-00-dsh-r8-appointment.md`；方案 `74a772167`，sha256 `8895aebe…` |
+| r7 的 2×P1 | 均已实质处置（R7-01 权威层同步、R7-02 PD-01–PD-10 全部落位） | r8 §3 |
+| r7 的 6×P2 | 全部有处置（R7-05/07/08 无残留） | 同上 |
+| 契约清单草案 | 已吸收 r8；C-04c 已由 r4 §9.1 覆盖；G-01/G-03 关闭 | `doc/plan/FEA-01_CONTRACT_DRAFT.md` |
+| **C-01b 存储契约草案** | 新建：AD-003 §3.1–§3.8 → SC-01…SC-37 条款（[现行]/[新增]/[未实现]） | `doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md` |
+| 下一步 | C-01b 独立复核 + 用户确认 AD-002 责任表口径 → 逐条冻结 C-02…C-12 | — |
 
 ## 待你拍板（可直接回 A/B/C）
 
