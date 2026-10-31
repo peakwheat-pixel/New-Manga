@@ -3,14 +3,14 @@ id: REALUSE-DATA-SAFETY-12
 title: SAFETY 线收尾审计——六个 Task 的 P2 处置与治理一致性
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-11_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-11
-base_commit: a1b82ffb9
+base_commit: 7ace93780
 branch: null
 worktree: null
 integration_commit: null
@@ -37,8 +37,8 @@ P2 处置链闭合、治理指针一致，并给出可向用户汇报的 SAFETY 
 
 ## 验收标准
 
-- [ ] **AC1 P2 处置链核对**：逐条列出 SAFETY-6/7/8/9/10/11 的 known P2（共 12+ 条），标注「已处置 / 已登记后续 / 接受为限制」，并核对它们在当前 HEAD 上的证据是否仍成立。 <<PARTIAL: 待实现>>
-- [ ] **AC2 治理一致性**：`check.ps1` PASS；STATUS 当前 Task 指针、PLAN 的 READY/DAG、TASK_LEDGER 的非终态计数与各 Task 卡 front matter 一致；晨报补 SAFETY 线结论段。 <<PARTIAL: 待实现>>
+- [x] **AC1 P2 处置链核对**：逐条列出 SAFETY-6/7/8/9/10/11 的 known P2（共 12+ 条），标注「已处置 / 已登记后续 / 接受为限制」，并核对它们在当前 HEAD 上的证据是否仍成立（结果：14 条 P2，当轮处置 4 条、转后续闭环 10 条、0 悬挂）。 <<MET>>
+- [x] **AC2 治理一致性**：`check.ps1` PASS；STATUS 当前 Task 指针、PLAN 的 READY/DAG、TASK_LEDGER 的非终态计数与各 Task 卡 front matter 一致；晨报补 SAFETY 线结论段。 <<MET>>
 
 ## 禁止范围
 
@@ -48,8 +48,8 @@ P2 处置链闭合、治理指针一致，并给出可向用户汇报的 SAFETY 
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 逐卡核对 + 当前 HEAD 证据复算 | 只读 | NOT_RUN | 待补 |
-| AC2 | `check.ps1` + 指针比对 | 只读 | NOT_RUN | 待补 |
+| AC1 | 逐卡核对 + 当前 HEAD 证据复算 | 只读 | 14 条 P2 全部有处置与落地证据 | `verification/REALUSE-DATA-SAFETY-12/safety-line-audit.md` |
+| AC2 | `check.ps1` + 指针比对 | 只读 | PASS (3 warnings)；STATUS/PLAN/LEDGER 一致 | `safety-line-audit.md` §4 |
 
 ## Canonical Evidence
 
