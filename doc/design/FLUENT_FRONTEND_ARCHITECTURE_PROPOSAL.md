@@ -1,12 +1,16 @@
 # New Manga 可切换前端架构方案
 
+| 版本 | 日期 | 变更 |
+|---|---|---|
+| r4 | 2026-11-01 | 处置 FEA-00 r7：R7-01/R7-02（P1）与 R7-03–R7-08（P2）；引用 AD-003/ADJ-001；补充删除预览/摘要绑定/零变化门禁 |
+
 日期：2026-10-31。作者：Codex；本次方案设计由用户直接授权。
 
-状态：**PROPOSAL / 待独立 Review 与 DSH 契约处置**。本文不是 ADR、冻结契约、Task 释放、实现验收或集成批准。文中的候选 Task 均未激活；不改变当前 `REALUSE-DATA-SAFETY-6` 的 `ready` 状态。
+状态：**PROPOSAL / FEA-00-dsh-r7 为 `changes_requested`；本次修订待新 hash 独立 Review 与 DSH 契约处置**。本文不是 ADR、冻结契约、Task 释放、实现验收或集成批准。文中的候选 Task 均未激活；不改变当前 `REALUSE-DATA-SAFETY-8` 的 `ready` 状态。
 
-核查基线：`G:/CODEX/New Manga`，分支 `main`，HEAD `1180cdba79e4d610521dde13f0c8a458220f9d90`，Git common directory `.git`。开始时唯一未提交项为未跟踪的需求文档，予以保留。本文代码位置均指此 HEAD；行号用于定位符号，不是未来版本的固定契约。
+指定复审基线：`main@29d06c462`。本轮修订期间 `main` 并发推进到 HEAD `bb7cbda1d56493580b6e318517898b4aba358391`（SAFETY-7 收口提交）；该提交未修改本方案文件。Git common directory 为 `.git`。本文代码行号是原始核查时的定位线索，不代表已对当前基线逐项重核；从初稿代码基线到当前 HEAD，`apps/` 下有 4 个文件变化，相关引用须在实现 Task 冻结前重核。
 
-需求来源：[Fluent 漫画用户需求与交互概念](FLUENT_MANGA_USER_CONCEPT_2026-10-30.md)，核查时 SHA-256 `508273c4599f9a0e1e33250f9b4d75660ee72fbd7d0c76f678b7aa7751979808`。已读取 [AGENTS](../../AGENTS.md)、[STATUS](../STATUS.md)、[REBASELINE_PLAN](../REBASELINE_PLAN.md)、[AD-002](../AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、[V11R 冻结契约](../plan/V11R_AVALONIA_CONTRACT.md)、当前 Task 及 STATUS 指定的最新 Review。当前 Task 尚未开 worktree，`reviewer: null`，canonical evidence 为空，没有指定 rolling checkpoint；不据此追读历史 checkpoint。`V11R_PROGRAM` 所写全局 `verification/checkpoints/` 在本工作区不存在，作为指针问题交 DSH，不据此推断任务丢失。
+需求来源：[Fluent 漫画用户需求与交互概念](FLUENT_MANGA_USER_CONCEPT_2026-10-30.md)，核查时 SHA-256 `508273c4599f9a0e1e33250f9b4d75660ee72fbd7d0c76f678b7aa7751979808`。已读取 [AGENTS](../../AGENTS.md)、[STATUS](../STATUS.md)、[REBASELINE_PLAN](../REBASELINE_PLAN.md)、[AD-002](../AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、[V11R 冻结契约](../plan/V11R_AVALONIA_CONTRACT.md) 及当前 Task/Review。当前 Task 为 `REALUSE-DATA-SAFETY-8` `ready`，尚未开 worktree，`reviewer: null`，canonical evidence pending；来源 Review 为 `REALUSE-DATA-SAFETY-7-review`（`approved`，`base_commit=29d06c462`、`reviewed_head=58596949a`）。Task 卡未指定 rolling checkpoint。`V11R_PROGRAM` 所写全局 `verification/checkpoints/` 在本工作区不存在，作为指针问题交 DSH，不据此推断任务丢失。
 
 全文使用三种证据标记：
 
@@ -22,7 +26,7 @@
 
 Fluent 的布局、导航、组合组件、手势、快捷键上下文和 ViewModel 都独立编写。共享的是领域行为、业务状态、数据与经过核对的渲染原语；不复制一份 Core，也不把旧 ViewModel 改名后作为新 UI。以后新增布局/导航时，通常只新增 UI 模块、兼容声明和映射；新增领域能力时仍可能需要扩展后端。
 
-**[用户决定，待权威记录]** 2026-10-31 用户回复“按你的建议”，确认新导入默认直接引用原文件、既有 Managed Copy 数据继续读取且不自动迁移或删除、外部原件默认不纳入备份；人工修改和处理结果仍由应用管理。DSH 须将该决定记录为架构 ADR 并协调现行 AD-002 和契约；本文不是正式 ADR，不假称权威文件已修订或契约已冻结。在正式记录及相关范围冻结前，FEA-08/09/11/12/13 Source 改造线仍 `BLOCKED`，现行 AD-002 与 Managed Copy 契约继续生效。`check.ps1 PASS` 仅检查机械条件，不证明架构一致。详见 §15.1。
+**[用户决定，已记录于 AD-003]** 2026-10-31 用户回复“按你的建议”，确认新导入默认直接引用原文件、既有 Managed Copy 数据继续读取且不自动迁移或删除、外部原件默认不纳入备份；人工修改和处理结果仍由应用管理。该决定已记录于 [AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)（2026-10-31，`ACCEPTED_ARCHITECTURE_AMENDMENT`，`G-ADR: SATISFIED`）；契约冻结仍待办（`G-CONTRACT: OPEN`），Source 实现线须待相关契约与范围冻结。本文仍不是 ADR、冻结契约或实现授权。`check.ps1 PASS` 只证明机械条件，不证明架构语义；检查器断言面见 `tools/governance/check.ps1:261-275`，其自身 Review 为 `FEA-00-dsh-r6c`（`approved`）。详见 §15.1。
 
 | 方案 | 优点 | 主要代价 | 结论 |
 |---|---|---|---|
@@ -137,7 +141,7 @@ src/infrastructure/                    # SQLite、受控 Source 读取、备份�
 
 `ApplicationCore → Application.Contracts`，Host adapter 实现这些端口，由 App 注入。UI → ApplicationCore/Contracts；UI 不引用 Host 的具体实现。Presentation.Contracts 不包含 Avalonia；`IAvaloniaFrontendFactory` 等呈现接口放 Presentation.Avalonia。禁止 ApplicationCore 反向引用 Frontends，禁止两套 Frontends 相互引用。
 
-现有 DesignSystem 的样式先限定在 Current 根/窗口作用域；Fluent 有自己的组件模板和局部资源，公共语义颜色/状态/可访问性规则可抽共享基础包。不要让 Fluent 为继承旧 3px 圆角或无模糊规则而扭曲设计，也不要全局放开 Current 规则。需要 DSH 对 V11R §2/§3/§6 的适用范围作正式修订。
+现有 DesignSystem 的样式先限定在 Current 根/窗口作用域；Fluent 有自己的组件模板和局部资源，公共语义颜色/状态/可访问性规则可抽共享基础包。不要让 Fluent 为继承旧 3px 圆角或无模糊规则而扭曲设计，也不要全局放开 Current 规则。V11R 修订范围以 §15.2 逐条修订单为准，至少覆盖 §1.1/§1.2/§2.2/§2.3/§2.4/§3/§4/§6.1/§6.3。
 
 ### 4.2 关键接口草案
 
@@ -470,19 +474,27 @@ flowchart LR
 
 ### 9.1 保护语义与可清理边界
 
-**[事实、原冲突与用户决定]** `M2-C1 §5.11.2` 规定用户显式彻底删除时，事务内移除项目 Lock/current/pinned Revision；本方案原拟议“有保护时拒绝彻底删除”**与该现行冻结语义相反，需 DSH 裁定**。2026-10-31 用户选择更改此前拟议：软删与自动清理保留保护；主动彻底删除前逐项展示受影响的人工修改、Lock、current/pinned 等，由用户专门确认后方可同一事务删除；确认前不得静默解锁、取消 pin 或提前删除。DSH 须对照现行单条/批量契约裁定与冻结预检、确认、事务和失败语义；在正式处置前现行契约继续生效，不能宣称新增确认已实现或冻结。GC/自动清理、软删和显式永久删除是不同操作。新 `ProtectionPolicy` 为建议，详见 §15.4。
+**[事实、原冲突与冻结语义]** `M2-C1 §5.11.2` 规定用户显式彻底删除时，事务内移除项目 Lock/current/pinned Revision；本方案原拟议“有保护时拒绝彻底删除”与该现行冻结语义相反。用户 2026-10-31 决定的操作语义已由 [ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) §5 的 PD-01–PD-10 冻结：软删与自动清理保留保护；主动彻底删除须先逐项披露并由用户专门确认，再于同一事务删除；确认前不得改变保护或删除状态。剩余工作是冻结协议字段与错误码（`C-04b`，`G-DELETE-CONTRACT: OPEN`），不是重新裁定语义。本节实现须引用 ADJ-001 而非重述成另一套规则；当前不代表已实现。GC/自动清理、软删、显式永久删除和原文件独立删除是不同操作。
 
 | 数据/动作 | 保护要求 |
 |---|---|
 | 原文件 | 引用导入、人工编辑、翻译、渲染、导出不修改或覆盖；仅用户显式选择的外部删除流程可触碰 |
 | 人工译文与 Lock | 复用现有四轨文本与保护标记；自动结果不得覆盖人工/最终确认内容；解锁是独立明确操作 |
-| current/pinned Revision | 对软删和自动清理：仍被当前对象、pin、草稿基础、候选、Run、备份/恢复操作引用时不可清理；显式彻底删除按本节用户决定及 DSH 后续契约裁定处理；旧版本恢复新建可追溯 revision |
+| current/pinned Revision | 对软删和自动清理：仍被当前对象、pin、草稿基础、候选、Run、备份/恢复操作引用时不可清理；显式彻底删除依 ADJ-001 PD-01–PD-10 先披露并专门确认后按同一事务处理；旧版本恢复新建可追溯 revision |
 | 活跃草稿 | 未保存文字/几何/样式及 undo history 可恢复；不能当作临时 cache/未引用文件删除 |
 | 结果文件 | 先写不可变文件并校验，事务发布引用；失败保留可追踪 candidate/cleanup journal，不覆盖唯一可用结果 |
 | 可再生缓存 | 只有可从可用 source/version 重建、无 lease、无业务恢复依赖才可删；源已缺失的唯一可用预览不能谎称随时可重建 |
 | 备份 | 最近一次 verified 可用备份不能被轮转删尽；active restore/迁移引用的包和文件被 pin |
 
-GC 使用从 live/trashed 对象、Lock/current/pinned、draft、Run/candidate、迁移/恢复 journal 出发的引用图。预览与执行间重新检查，不能用缓存引用计数直接 unlink。允许自动清理的是明确不受保护的对象；受保护项保留并说明原因，不自动解除 Lock/pin。显式彻底删除按上述用户决定由 DSH 裁定并冻结；预检或确认不充分时拒绝执行，而不是默认永久禁止删除全部受保护项目。
+**显式彻底删除（C 流程；ADJ-001 PD-01–PD-10）**：
+
+1. 确认前必须先调用 Core 只读命令 `PreviewPermanentDeleteBooks`。Core 返回逐项目影响清单，至少列明人工修改、有效 Lock、current/pinned Revision 与回收站条目；UI 只展示 Core 结果，不自行估算（PD-01/PD-03）。
+2. 专门确认绑定该清单的 `inventory_digest`。从预览到事务提交期间必须满足“确认前零变化”；确认与执行之间若目标内容、保护状态或集合变化，Core 拒绝执行并要求重新预览、重新确认，错误码候选为 `BOOK_DELETE_STALE_PREVIEW`（PD-02/PD-04）。
+3. 确认后，在同一数据库事务内删除项目内容与相应保护；任一失败整体回滚，且不得开始文件清理。批量数据库阶段全有或全无，清理阶段逐项报告状态（PD-05/PD-06/PD-09）。
+4. 应用内彻底删除不顺带删除原文件。原文件操作属于独立 D 流程：用户单独选择文件、检查共享引用与活跃 Run/lease、再次确认，再由 Host 移入 Windows 回收站（PD-08；见 §9.2）。
+5. 自动清理和软删始终保留 PD-01 所列保护；pending cleanup 只允许显式重试（PD-07/PD-10）。
+
+GC 使用从 live/trashed 对象、Lock/current/pinned、draft、Run/candidate、迁移/恢复 journal 出发的引用图。预览与执行间重新检查，不能用缓存引用计数直接 unlink。允许自动清理的是明确不受保护的对象；受保护项保留并说明原因，不自动解除 Lock/pin。显式彻底删除遵循 ADJ-001 已冻结语义；预检或确认不充分、摘要过期时拒绝执行并重新预览，而不是默认永久禁止删除全部受保护项目。
 
 已知双 Lock 投影要特别处理：Region 列与 `text.translation_locked` 都可能参与保护，专项冻结契约 §6 已记录该差异。新 ProtectionPolicy 应采用有效保护并保持写入一致性，不能仅看其中一个；修复双表示的历史语义需要 DSH 裁决，不能在 UI adapter 中静默改成另一种含义。
 
@@ -492,16 +504,16 @@ GC 使用从 live/trashed 对象、Lock/current/pinned、draft、Run/candidate�
 
 应用删除默认仅软删业务对象，保留书籍基本信息、内容类型/顺序、阅读位置、问题、人工数据、结果及来源绑定。书籍与单项回收记录使用 `TrashEntryId + deleted scope + parent snapshot + original order anchors`；恢复单项且父书不存在时只恢复必要父信息和该项，其余仍留回收站。书名占用在恢复提交事务中检查，改名或取消；缺源仍允许恢复业务数据。
 
-“同时删除原文件”是**独立、默认关闭**的操作：
+原文件独立删除（D 流程）是独立授权操作，与应用内软删或显式彻底删除分别发起、分别确认：
 
 1. Core 生成 `DeletePlan`，列出确切物理文件、所选项目、其他 live/trashed 引用、活跃 Run/draft/read lease、根目录边界及每项可执行性。文件夹不递归删除未引用内容；ZIP/PDF 只能作为整体文件回收，不能把删除部分页映射成删除容器。
-2. 用户再次确认具体文件，Core 在提交时重核引用与版本；所有共享源默认保留，不能把“已删项目”自动视为不再保护的引用。计划过期则重做预览。
-3. 应用对象软删提交，与外部 recycle job 建立同一 OperationId；原文件动作由 Host 的 WindowsRecycleBridge 执行，源文件/目录 identity 与授权边界在动作前重验。OS 动作与 DB 不能假装同事务，逐项 journal 记录 receipt。
+2. 用户单独选择并确认具体文件；Core 在操作前重核引用与版本。所有共享源默认保留，不能把“已删项目”自动视为不再保护的引用。计划过期或共享引用变化则拒绝并重做预览。
+3. 原文件操作由 Host 的 WindowsRecycleBridge 执行，源文件/目录 identity 与授权边界在动作前重验。OS 动作与 DB 不能假装同事务；以独立 OperationId 和逐项 journal/receipt 记录，不与应用内删除绑定。
 4. 仅请求 Windows 回收站操作，逐项验证结果；不可回收、权限/占用/网络盘限制、路径被替换、结果未知时保留/停止并报告，不转为永久删除。平台 API 的参数与返回值必须用 H5 原型证明满足需求，不能只设置一个 flag 就声称无永久删除风险。Windows 文件操作 API 本身提供 undo 等控制标志，仍需验证具体卷与失败分支。[IFileOperation::SetOperationFlags](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifileoperation-setoperationflags)。
 5. 仅处理用户选取的导入文件夹及其内部因本次动作变空的子目录；先重验为空且无共享/无关内容，不越过导入根，不跟随 reparse。空目录不能回收则保留，不改调用永久 rmdir。任何不确定项保留。
-6. 部分文件失败不撤销已成功的应用软删，也不丢失其元数据；展示成功/失败/保留原因与重试。崩溃恢复先核对 OS receipt/文件事实，不能盲目重发 destructive operation。撤销先恢复应用记录；Windows 原件若不能由可靠 receipt 恢复则引导用户从系统回收站恢复/重新定位，不能假显示原件已恢复。
+6. D 流程部分文件失败不改变独立完成的应用内删除，也不丢失其回收记录；展示成功/失败/保留原因与重试。崩溃恢复先核对 OS receipt/文件事实，不能盲目重发 destructive operation。撤销应用记录与恢复 Windows 原件分别处理；原件若不能由可靠 receipt 恢复，则引导用户从系统回收站恢复/重新定位，不能假显示原件已恢复。
 
-回收站保留期限默认手动；自动清理只处理应用内部数据，从不清理原文件或 Windows 回收站。时间到期检查保护图。用户已选择受保护数据的显式销毁流程；逐项保护 preflight 和专门确认是新增要求，待 DSH 对照 `M2-C1 §5.11.2` 裁定并冻结，不得表述为现行已实现行为。应用内彻底删除不顺带删除原件；原文件仅经独立授权、共享引用检查及 Windows 回收站流程处理。
+回收站保留期限默认手动；自动清理只处理应用内部数据，从不清理原文件或 Windows 回收站。时间到期检查保护图；自动清理与软删保留保护、显示未清理原因，pending cleanup 仅允许显式重试（ADJ-001 PD-07/PD-10）。用户显式彻底删除遵循 PD-01–PD-10，协议字段与错误码仍待 D07 冻结（C-04b）。应用内彻底删除不顺带删除原件；原文件仅经独立选择、共享引用检查、专门确认及 Windows 回收站流程处理。
 
 ### 9.3 备份与恢复
 
@@ -592,9 +604,9 @@ Start/Retry/Restart 的一次用户意图在 ApplicationCore 创建后保存 Int
 3. **状态迁移**：逐功能把 V2 当前编辑/选择/阅读状态迁入 ApplicationCore adapter；迁移完成的功能必须停用 VM 私有第二份真值。启动/loaded 的隐式写入移到用户意图服务。
 4. **增量 Schema**：增加 source mode/version/binding、draft、candidate、prepared run/receipts 与 operation journal；旧 managed 引用保持原值和读取适配器。双读单写指同一 Core 按 source mode 读取，不能让两套后端各写一个库。
 5. **旧书关联外部源（可选、显式）**：列出可匹配候选及差异，用户确认后新建 referenced binding。只有 digest/页映射可靠时才保留同一 PageId 关联；失败仍读 managed。PDF raster/ZIP 旧导入若没有原容器 lineage，不能凭书名/页数回推原件，保持 managed，等待手工重新关联。
-6. **迁移后验证**：人工文本/Lock/current/pinned 不变，Run 仍可查，阅读锚点稳定，原源与旧 managed 文件字节不变，缺失输入有可见状态。只有用户决定已正式记入 ADR 且 DSH 冻结相关契约后，校验通过才允许新默认导入走引用。旧 managed 副本仅成为明确待处置资源，**不在本迁移中自动删除**。
+6. **迁移后验证**：人工文本/Lock/current/pinned 不变，Run 仍可查，阅读锚点稳定，原源与旧 managed 文件字节不变，缺失输入有可见状态。只有 AD-003 已记录的决定对应契约与范围冻结（`G-CONTRACT` 关闭）后，校验通过才允许新默认导入走引用。旧 managed 副本仅成为明确待处置资源，**不在本迁移中自动删除**。
 
-用户已确认引用模式与旧书继续 managed；在 ADR 正式记录及契约处置前现行 Managed Copy 仍有效。若用户希望释放旧副本空间，应另行盘点备份、任务与引用，形成可预览的清理 Task，不能绑定到 UI 切换或 Schema 升级自动执行。
+AD-003 已记录新导入引用模式与旧书继续 Managed Copy 的决定；既有 Managed Copy 仍继续读取，不自动迁移或删除。Source 契约冻结前，新默认引用导入仍受 `G-CONTRACT: OPEN` 阻塞。若用户希望释放旧副本空间，应另行盘点备份、任务与引用，形成可预览的清理 Task，不能绑定到 UI 切换或 Schema 升级自动执行。
 
 ### 11.2 迁移 journal 与故障恢复
 
@@ -616,32 +628,34 @@ Schema 不认识的新版本必须拒绝写入，不能让旧 sidecar“忽略�
 
 ### 12.1 阶段与候选写域
 
-**[建议] 下列 ID 只是本文内的候选标识，没有创建 Task 文件，没有进入 Plan/STATUS。** DSH 需先独立审阅本文、协调当前 DATA-SAFETY-6，再冻结各 Task 的实际 Owner/Reviewer/base/worktree/allowed_paths、AC 与证据。实现只能在该步骤之后进行。源码/证据/构建产物沿用仓库及 `New Manga.workspace` 规则，不能用真实用户数据做破坏性测试。
+**[建议] 下列 ID 只是本文内的候选标识，没有创建 Task 文件，没有进入 Plan/STATUS。** DSH 需先独立审阅本文、协调当前 `REALUSE-DATA-SAFETY-8`，再冻结各 Task 的实际 Owner/Reviewer/base/worktree/allowed_paths、AC 与证据。实现只能在该步骤之后进行。源码/证据/构建产物沿用仓库及 `New Manga.workspace` 规则，不能用真实用户数据做破坏性测试。
 
 每个候选的 workspace-relative `write_scopes`、验证等级、`evidence_dir`、可观察 AC 和逐项中止/回退见 §15.6；需求到能力、Task、AC、证据的追溯见 §15.7。上述均为候选，不构成写权或任务释放。
 
-| 阶段 / 候选 ID | 建议 Owner / 独审 | 依赖 | 候选写域与交付 | 可验证出口（均为 planned） |
+| 阶段 / 候选 ID | 建议 Owner / Review | 依赖 | 候选写域与交付 | 可验证出口（均为 planned） |
 |---|---|---|---|---|
-| S0 `FEA-00` 方案 Review/处置 | DSH 协调；ZCode 独审，Codex 不审自己的方案 | 本文精确版本；用户 §13 仅余产品问题 | 独立 Review、架构变更记录、契约变更清单；不写生产源码 | 每条 blocking finding 有处置；直接引用与 V11R 差异正式裁决；未决项明确阻塞哪个能力 |
-| S0 `FEA-01` 稳定端口冻结 | DSH/指定契约 Owner；未参与者独审 | FEA-00 | Application/Presentation API、能力/错误/Source/草稿/快照契约及兼容测试样例 | 旧命令签名/路由不变；每新增写有 expected/receipt/失败语义；UI 无路径/DB/模型入口 |
-| S0 `FEA-00a` 数据安全修复门 | Codex；未参与实现的 ZCode 独审 | FEA-00；DSH 冻结范围后 | 现有 Core prepare/live 写入缺陷与故障回归；写域见 §15.6 | seam 失败/冲突/暂停/取消/崩溃时 text、指针、revision 行数零变化；生产 assembly 验证；NOT_RUN |
-| S1 `FEA-02` 提取应用内核（CORE → BRIDGE 两个切片，见 §15.6） | Codex（待 DSH 分配）；未参与实现的 ZCode 独审 | FEA-01 | 新 Contracts/ApplicationCore、Host adapter、RunMonitor；只动批准的 App services/seams | 无 Avalonia 引用；两观察者共享一次 Run 查询；同 Intent 重试不重复 Start；端口错误不受 LastError 并发串扰 |
-| S1 `FEA-03` 草稿与保护协调 | Codex；未参与实现的 ZCode 独审 | FEA-01、FEA-00a | Core draft journal/edit token/commit receipt、保护 epoch、应用草稿缓冲 | 磁盘满/断线/崩溃保留可恢复内容；输入与结果交错不覆盖；discard/save/undo 与历史恢复分别验证 |
-| S1 `FEA-04` Current 适配 | ZCode；未参与实现的 Codex 独审 | FEA-02/03 | Frontends.Current、V2 state/route/VM adapter；保留旧入口 | 当前可用行为不退化；无 VM 私有第二份业务真值；关闭/重建内容不 Dispose Host，不隐式 Start |
+| S0 `FEA-00` 方案 Review/处置 | DSH 协调；Review 由 DSH Appointment 登记的独立上下文执行 | 本文精确版本；用户 §13 仅余产品问题 | 独立 Review、架构变更记录、契约变更清单；不写生产源码 | 每条 blocking finding 有处置；直接引用与 V11R 差异正式裁决；未决项明确阻塞哪个能力 |
+| S0 `FEA-01` 稳定端口冻结 | DSH/指定契约 Owner；独立上下文 Review（按 DSH Appointment 登记） | FEA-00 | Application/Presentation API、能力/错误/Source/草稿/快照契约及兼容测试样例 | 旧命令签名/路由不变；每新增写有 expected/receipt/失败语义；UI 无路径/DB/模型入口 |
+| S0 `FEA-00a` 数据安全修复门 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-00；DSH 冻结范围后 | 现有 Core prepare/live 写入缺陷与故障回归；写域见 §15.6 | seam 失败/冲突/暂停/取消/崩溃时 text、指针、revision 行数零变化；生产 assembly 验证；NOT_RUN |
+| S1 `FEA-02` 提取应用内核（CORE → BRIDGE 两个切片，见 §15.6） | Codex（待 DSH 分配）；独立上下文 Review（按 DSH Appointment 登记） | FEA-01 | 新 Contracts/ApplicationCore、Host adapter、RunMonitor；只动批准的 App services/seams | 无 Avalonia 引用；两观察者共享一次 Run 查询；同 Intent 重试不重复 Start；端口错误不受 LastError 并发串扰 |
+| S1 `FEA-03` 草稿与保护协调 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-01、FEA-00a | Core draft journal/edit token/commit receipt、保护 epoch、应用草稿缓冲 | 磁盘满/断线/崩溃保留可恢复内容；输入与结果交错不覆盖；discard/save/undo 与历史恢复分别验证 |
+| S1 `FEA-04` Current 适配 | ZCode；独立上下文 Review（按 DSH Appointment 登记） | FEA-02/03 | Frontends.Current、V2 state/route/VM adapter；保留旧入口 | 当前可用行为不退化；无 VM 私有第二份业务真值；关闭/重建内容不 Dispose Host，不隐式 Start |
 | S1 `FEA-04b` Fluent 四页交互与视觉规格 | ZCode 起草；DSH 协调用户确认并冻结 | FEA-00 与有关用户取舍 | 书架/工作台/阅读器/设置规格、可访问性和版本化设计基线 | 四页设计经用户确认、独立评审与 DSH 冻结；NOT_RUN |
-| S2 `FEA-05` 三层注册与资源隔离 | ZCode；未参与实现的 Codex 独审 | FEA-01/02，H1 | Appearance、scheme/theme/scale registry、设置迁移、preview sink；Current 默认外观保持可验证 | 三层独立保存；兼容矩阵/坏包/未知键/取消 preview 测试；主窗/弹窗/浮窗无样式串染 |
-| S2 `FEA-06` Fluent 独立界面 | ZCode；未参与实现的 Codex 独审 | FEA-02/03/05、FEA-04b 四页设计经用户确认及 DSH 冻结；可用领域端口 | Frontends.Fluent 的独立 Views/VM/Styles/手势/可访问性；先接已有能力 | 四页和四页预览；与 Current 无 View/VM 引用；简体中文/小窗/高对比/纯色回退；缺能力明确不可用 |
-| S2 `FEA-07` 运行期切换/窗口 | ZCode；未参与实现的独审 Agent | FEA-00a/04/05/06、H2/H3 | Presentation.Avalonia、WindowBroker、switch journal、safe startup | §12.3 跨 UI/双屏/故障矩阵全部运行；同 Draft/Run/Host、原生主窗身份保持；失败回当前 |
-| S3 `FEA-08` Source/回收站原型 | Codex；未参与实现的 ZCode 独审 | FEA-00/01、用户 ADR 正式记录及相关范围冻结；H4/H5/H6 | 隔离 workspace 原型、来源文件能力矩阵/技术报告；不触真实库 | NTFS/可移动/网络盘的 identity、稳定读取、替换/改名、回收失败行为有实测；不满足项明确不支持/阻塞 |
-| S3 `FEA-09` 引用源与导入 | Codex；未参与实现的 ZCode 独审 | FEA-08/01 | Core source schema/read/cache、Host SourceAccessRegistry/授权、导入 plan/receipt | 新导入不复制永久原件；源文件 hash/mtime 不变；共享源项目结果独立；临时 grant 不变为永久通行证 |
-| S3 `FEA-10` 快照/候选/提交安全 | Codex；未参与实现的 ZCode 独审 | FEA-00a/03/09 | PreparedRun/request builder、candidate store、provider prepare/commit seam、Host port | §10 全部交错；preview 与发送摘要相同；配置变化不改已接受任务；live 数据零提前写；真正完成才计数 |
-| S3 `FEA-11` 变化/重定位/同步 | Codex；未参与实现的 ZCode 独审 | FEA-09/10 | Source scan/diff/plan、单项/共享引用 relink、页映射与 tombstone | 缺失/替换/重复页/容器重排/目录增删都先预览；歧义不自动套人工修改；计划过期拒绝；其他项目不被误改 |
-| S4 `FEA-12` 删除/回收站/GC（CORE → UI 两个切片，见 §15.6） | Codex；未参与实现的 ZCode 独审 | FEA-03/10/11、H5 | Trash scope/parent snapshot、引用图、Windows recycle journal、保护 preflight | 默认不触原件；共享/未知/不支持回收文件保留；部分失败/进程中断可恢复；清理不删 Lock/current/pinned/恢复链 |
-| S4 `FEA-13` 备份/恢复/迁移 | Codex；未参与实现的 ZCode 独审 | FEA-09/10/12 | backup/2、legacy adapter、merge restore、数据根迁移 journal/兼容 Gate | 旧包可读；默认/可选输入矩阵明确；冲突默认 defer；UseBackup 前保全当前；崩溃继续旧根；无静默 Schema 降级 |
-| S5 `FEA-14-*` 领域缺口切片 | 按下表；独审者不得参与对应实现 | 端口冻结及各安全前置 | 每组另冻结 Task；不是一个无限范围功能包 | 下表逐项有真实 Core→Host→UI→持久化证据；不能以灰按钮/样例替代能力 |
+| S2 `FEA-05` 三层注册与资源隔离 | ZCode；独立上下文 Review（按 DSH Appointment 登记） | FEA-01/02，H1 | Appearance、scheme/theme/scale registry、设置迁移、preview sink；Current 默认外观保持可验证 | 三层独立保存；兼容矩阵/坏包/未知键/取消 preview 测试；主窗/弹窗/浮窗无样式串染 |
+| S2 `FEA-06` Fluent 独立界面 | ZCode；独立上下文 Review（按 DSH Appointment 登记） | FEA-02/03/05、FEA-04b 四页设计经用户确认及 DSH 冻结；可用领域端口 | Frontends.Fluent 的独立 Views/VM/Styles/手势/可访问性；先接已有能力 | 四页和四页预览；与 Current 无 View/VM 引用；简体中文/小窗/高对比/纯色回退；缺能力明确不可用 |
+| S2 `FEA-07` 运行期切换/窗口 | ZCode；独立上下文 Review（按 DSH Appointment 登记） | FEA-00a/04/05/06、H2/H3 | Presentation.Avalonia、WindowBroker、switch journal、safe startup | §12.3 跨 UI/双屏/故障矩阵全部运行；同 Draft/Run/Host、原生主窗身份保持；失败回当前 |
+| S3 `FEA-08` Source/回收站原型 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-00/01、AD-003 已记录；DSH 冻结隔离原型范围；H4/H5/H6 | 隔离 workspace 原型、来源文件能力矩阵/技术报告；不触真实库 | 原型仅限隔离验证；Source 生产实现仍受 `G-CONTRACT: OPEN` 阻塞；NTFS/可移动/网络盘的 identity、稳定读取、替换/改名、回收失败行为有实测，不满足项明确不支持/阻塞 |
+| S3 `FEA-09` 引用源与导入 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-08/01 | Core source schema/read/cache、Host SourceAccessRegistry/授权、导入 plan/receipt | 新导入不复制永久原件；源文件 hash/mtime 不变；共享源项目结果独立；临时 grant 不变为永久通行证 |
+| S3 `FEA-10` 快照/候选/提交安全 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-00a/03/09 | PreparedRun/request builder、candidate store、provider prepare/commit seam、Host port | §10 全部交错；preview 与发送摘要相同；配置变化不改已接受任务；live 数据零提前写；真正完成才计数 |
+| S3 `FEA-11` 变化/重定位/同步 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-09/10 | Source scan/diff/plan、单项/共享引用 relink、页映射与 tombstone | 缺失/替换/重复页/容器重排/目录增删都先预览；歧义不自动套人工修改；计划过期拒绝；其他项目不被误改 |
+| S4 `FEA-12` 删除/回收站/GC（CORE → UI 两个切片，见 §15.6） | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-03/10/11、H5 | Trash scope/parent snapshot、引用图、Windows recycle journal、保护 preflight | 默认不触原件；共享/未知/不支持回收文件保留；部分失败/进程中断可恢复；清理不删 Lock/current/pinned/恢复链 |
+| S4 `FEA-13` 备份/恢复/迁移 | Codex；独立上下文 Review（按 DSH Appointment 登记） | FEA-09/10/12 | backup/2、legacy adapter、merge restore、数据根迁移 journal/兼容 Gate | 旧包可读；默认/可选输入矩阵明确；冲突默认 defer；UseBackup 前保全当前；崩溃继续旧根；无静默 Schema 降级 |
+| S5 `FEA-14-*` 领域缺口切片 | 按下表；独立上下文 Review，不得由实现者所在会话/实例执行 | 端口冻结及各安全前置 | 每组另冻结 Task；不是一个无限范围功能包 | 下表逐项有真实 Core→Host→UI→持久化证据；不能以灰按钮/样例替代能力 |
 | S5 `FEA-15` 集成/发布候选验证 | DSH 集成；独立验证 Agent | FEA-07/11/12/13、全部已纳入产品范围的 FEA-14 子项；当前既有风险已处置 | 隔离干净构建/安装/双 UI 回归/升级与回退报告 | 独立 Review、精确 head、真实生产 adapter 测试、打包 smoke、数据守恒与回退均过；此后才另议发布/push |
 
-S2 的出口是“在既有数据上证明双 UI 架构”，S5 才能认定此次用户需求范围可用。Source 线包括 FEA-08 原型均须等待用户 ADR 正式记录，再经 DSH 范围冻结后才能与 UI 线分支研究，但同一共享文件的写权由 DSH 分配，不因本表并列就取得并行写权。
+Review 只要求上下文独立，不要求 Reviewer 与作者/Owner 是不同 Agent 角色；同一 Agent 会话/实例不得自审。作者可派发独立上下文子 agent；DSH Appointment 与 Review 报告须记录审查者身份和来源（子任务/会话 ID 或 Agent 名）。
+
+S2 的出口是在既有数据上证明双 UI 架构，S5 才能认定此次用户需求范围可用。AD-003 已记录；FEA-08 隔离原型经 DSH 冻结范围后可研究，Source 生产实现 FEA-09/11/12/13 仍分别受 `G-CONTRACT` 与 `G-DELETE-CONTRACT` 冻结阻塞。同一共享文件的写权由 DSH 分配，不因本表并列就取得并行写权。
 
 ```mermaid
 flowchart LR
@@ -660,7 +674,7 @@ flowchart LR
   P6 --> P7
   P00a --> P7
   P04b --> P6
-  ADR[用户决定的 ADR 正式记录] --> P8[FEA-08 原型]
+  AD003[AD-003 已记录 + FEA-08 隔离范围冻结] --> P8[FEA-08 原型]
   P1 --> P8
   P8 --> P9[FEA-09 引用导入]
   P9 --> P10[FEA-10 提交安全]
@@ -732,7 +746,7 @@ pwsh -NoProfile -File tools/governance/check.ps1
 
 ### 13.1 需要用户决定的产品问题
 
-E 方案、Avalonia 双界面、新 Fluent 独立代码、三层分离、保留草稿任务进度、默认引用原件及 §9.1 删除原则均已由用户确认；前两项未决事项的 ADR 正式记录和 DSH 契约处置仍未完成。以下其他问题阻塞各自相关能力，不阻塞本次文档修订。
+E 方案、Avalonia 双界面、新 Fluent 独立代码、三层分离、保留草稿任务进度、默认引用原件及 §9.1 删除原则均已由用户确认；存储方向已记录于 AD-003，删除语义已冻结于 ADJ-001，剩余工作是 `G-CONTRACT` / `G-DELETE-CONTRACT` 对应契约冻结。以下其他问题阻塞各自相关能力，不阻塞本次文档修订。
 
 | 问题 | 推荐默认 | 决策影响 |
 |---|---|---|
@@ -747,26 +761,26 @@ E 方案、Avalonia 双界面、新 Fluent 独立代码、三层分离、保留�
 
 | 变更包 | 涉及权威/共享面 | 必须冻结的内容 |
 |---|---|---|
-| D01 架构补充决策 | AD-002、AGENTS 产品边界、当前程序约束 | 将用户已确认的 ReferencedSource 默认语义正式记入 ADR；DSH 准备备份、回收站、迁移、资源信任根、删除授权的反转清单及治理哨兵修改方案。ADR 正式记录及有关范围冻结前 Source 线 blocked；检查器 PASS 不证明语义一致 |
-| D02 前端可替换契约 | V11R §1/§2/§3/§4/§6、共享 App 启动写域 | scheme 独立于 ThemePackage；允许更换内容树但保留主原生窗口；各 scheme 设计系统与资源 scope；独立比例 schema |
+| D01 架构补充决策 | AD-002、AD-003、AGENTS 产品边界、当前程序约束 | AD-003 已记录；冻结 C-01b（存储契约）与下游五项反转清单。Source 线在 `G-CONTRACT` 关闭前 blocked；`check.ps1 PASS` 只证明机械条件，不证明架构语义 |
+| D02 前端可替换契约 | V11R（修订范围以 §15.2 逐条修订单为准；至少覆盖 §1.1/§1.2/§2.2/§2.3/§2.4/§3/§4/§6.1/§6.3）、共享 App 启动写域 | scheme 独立于 ThemePackage；允许更换内容树但保留主原生窗口；各 scheme 设计系统与资源 scope；独立比例 schema |
 | D03 应用端口/错误/capability | IHostController/CoreClient/Registry/Dispatcher/命令清册 | 旧签名不变、增量 API、request-scoped error、握手、兼容 adapter、R-24 实体与轮询归属 |
 | D04 草稿/保护/结果 | Region 契约、Editing/Pipeline/Provider/SQLite | edit token/journal、Draft/Protection 版本、candidate-only prepare、统一事务 live apply、锁定样式白名单、旧非幂等写兼容 |
 | D05 Source/grant/资源 | 导入/资源控制面、Host issuer、SourceReadService、SQLite | 持久身份与授权分离、scope/version/lease、重定位/同步、容器页映射、缓存边界/资源上限 |
 | D06 Run 快照 | IRunController/PreparedRun/配置/凭据/任务投影 | preview 同源、不可变内容 pin、控制 pending 状态、真实完成口径、retry/new run 区分、断线 receipt |
-| D07 删除/备份/迁移 | `M2-C1 §5.11.2`（含 :752）、Trash/purge/GC、nmbak/migrator、Windows bridge | 用户已选显式彻底删除方向；DSH 先裁定保护清单和专门确认与现行契约的关系，单条/批量硬删、pending cleanup/重试及保护测试需重审；统一三路径、profile/catalog 归属、DatabaseId、backup/2、旧包、独占升级/格式 Gate |
-| D08 现有任务协调 | STATUS/REBASELINE/V11R_PROGRAM/REALUSE-DATA-SAFETY-6 | 进度刷新/derived/旧库/安装隔离谁先做；旧基线/命令标题/rolling checkpoint 指针差异登记；不由本文擅改当前 Task |
+| D07 删除/备份/迁移 | `M2-C1 §5.11`、ADJ-001、Trash/purge/GC、nmbak/migrator、Windows bridge | 先核对 ADJ-001 §5/§6.1，再冻结 `M2-C1 §5.11` 字段与错误码（`C-04b`）；语义已由 ADJ-001 PD-01–PD-10 冻结。统一三路径、profile/catalog 归属、DatabaseId、backup/2、旧包、独占升级/格式 Gate |
+| D08 现有任务协调 | STATUS/REBASELINE/V11R_PROGRAM/REALUSE-DATA-SAFETY-8 | 进度刷新/derived/旧库/安装隔离谁先做；旧基线/命令标题/rolling checkpoint 指针差异登记；不由本文擅改当前 Task |
 
-DSH 应按实际冻结文件追加裁定/建立新版本，而非编辑历史 Review、日志、manifest、evidence pin 来使其符合目标图。任何生产 Schema/共享契约/依赖变更都先有明确 Task 范围。本文作者不能独立审核自己的方案或后续实现；代码核查子 Agent 的报告也不是本方案的独立 Review。
+DSH 应按实际冻结文件追加裁定/建立新版本，而非编辑历史 Review、日志、manifest、evidence pin 来使其符合目标图。任何生产 Schema/共享契约/依赖变更都先有明确 Task 范围。同一 Agent 会话/实例不得审查本人产出；作者可派发独立上下文子 agent，但仍须经 DSH Appointment，且审查者身份与来源须记录。代码核查子 Agent 的报告本身不是本方案的独立 Review。
 
 ### 13.3 可直接转发的下一步建议
 
-下一步是 **将修订版交 DSH 协调 r2 复审**；原 ZCode 席位在 r1 标记 reviewer_unavailable，正式批准仍需符合 AGENTS 的独立席位或用户裁决。复审不是释放实现。建议切片 `FEA-00`（候选 ID），启动前固定本文文件 SHA-256；恢复点为 `G:/CODEX/New Manga`、`main@1180cdba79e4d610521dde13f0c8a458220f9d90`。本文尚未提交，reviewed document 必须用 hash 钉住，不能只引用 HEAD；独立 Review 的 branch/worktree 待 DSH 创建。
+下一步：按 `FEA-00-dsh-r7` findings 修订 → 为新 SHA-256 重新 Appointment 独立复审 → 逐条冻结 `C-01…C-12` → 冻结 `FEA-01` → 由 DSH 释放相应 Task。Review 不是任务释放。建议切片仍为 `FEA-00`（候选 ID）；当前复审基线为 `G:/CODEX/New Manga`、`main@29d06c462`。本文尚未提交，Appointment 必须同时固定方案 SHA-256 与复审 head。
 
 允许范围建议仅为 DSH 指定的 Review 报告路径；禁止修改源码、当前 Task/STATUS/Plan、用户需求文档及任何冻结历史证据；不 push。交付须逐条对照十个架构问题、代码事实、Source/草稿/CAS/回退时序与需求覆盖，写明 BLOCKING/MUST_FIX/后续验证，不能把 planned 视为 PASS。DSH 处理 finding 后再决定是否将方案转为架构/契约变更与候选 Task。
 
 可转发指令：
 
-> 请在 `G:/CODEX/New Manga` 对 `doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` 进行只读独立架构 Review。候选切片 `FEA-00`；源码基线与当前 head 为 `main@1180cdba79e4d610521dde13f0c8a458220f9d90`，开始前由 DSH 固定方案 SHA-256 并确认当前 head；如漂移，报告而不覆盖。Review branch/worktree 待 DSH 创建，报告路径/写权由 DSH 冻结。你未参与方案编写；请对照需求、AD-002、V11R 与真实生产调用，审查十项问题的可实现性，重点验证源引用身份/授权、草稿与新结果交错、任务快照、双屏切换、备份/删除和分层回退是否闭环。事实、建议、假设分开，给出定位与必要反例；仅写指定 Review，不改生产代码/Task/STATUS/Plan/冻结证据，不运行真实用户数据迁移，不 push。交付精确 reviewed document hash、源码 head、finding 和 NOT_RUN/blocked 说明，交 DSH adjudication；本 Review 不构成实现释放。
+> 请在 `G:/CODEX/New Manga` 对 `doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` 执行只读独立 Review。候选切片 `FEA-00`；`base_commit = main@29d06c462`，Appointment 固定 `reviewed_head = 本轮交付消息提供的最终 SHA-256` 与 `reviewed_document_sha256 = 同一 SHA-256`。如仓库 head 漂移，报告实际值而不覆盖。Review 只需上下文独立，同一作者会话/实例不得自审；作者可派独立上下文子 agent，报告记录审查者身份与来源。请逐条核对 R7-01–R7-08 处置、AD-003/ADJ-001 一致性及 C-01…C-12 的状态/待冻结边界；事实、建议、假设分开，标明 finding 和 NOT_RUN/blocked。只写 DSH 指定 Review，不改生产代码、契约、Task/STATUS/Plan 或历史证据，不运行真实用户数据迁移，不 push；Review 不构成契约冻结或实现释放。
 
 ## 14. 待验证假设与本次自查
 
@@ -793,11 +807,11 @@ DSH 应按实际冻结文件追加裁定/建立新版本，而非编辑历史 Re
 | 5 多窗口/双屏 | §7.3/H2 | 已提出角色/Session/DPI/拔屏/redock 与能力不足时阻止切换；均待验证 |
 | 6 界面/主题/比例/组件兼容 | §6 | token/component schema、分 scheme 比例、不兼容保留有效设置 |
 | 7 直接引用替代 Managed Copy | §8/§11 | 身份/授权/共享/变化/删除/旧数据双模式与迁移明确 |
-| 8 Lock/人工/版本/备份/回收站 | §9 | 已提出保护图、白名单重渲染、备份 v2/合并与旧包兼容；与现行永久删除契约冲突须裁决，功能未验收 |
+| 8 Lock/人工/版本/备份/回收站 | §9 | 已提出保护图、白名单重渲染、备份 v2/合并与旧包兼容；永久删除语义依 ADJ-001 PD-01–PD-10，协议字段仍待 D07 冻结，功能未验收 |
 | 9 配置快照/恢复/结果覆盖 | §10 | 拟议 Prepare 与发送同源、commit 重验保护；现有 F20 不满足零提前写，修复与回归 NOT_RUN |
 | 10 分阶段迁移/验证/回退 | §11/§12 | 两条迁移线、候选写域/依赖、15 类验收与分层回退；不承诺无损 Schema 降级 |
 
-本次自查是方案作者的静态检查，**不能替代独立 Review、原型验证、真实数据副本演练或发布验收**。原调查子 Agent 未审查方案；DSH r1 后续给出 changes_requested，其独立性限制见审查报告 §1.4，正式批准仍待有效席位。未运行构建、生产测试、应用迁移或 UI 真机验收；所有新功能与候选 AC 为 planned/NOT_RUN。
+本次自查是方案作者的静态检查，**不能替代独立 Review、原型验证、真实数据副本演练或发布验收**。FEA-00-dsh-r7 对旧 hash 的结论为 `changes_requested`；本次修订须由 DSH Appointment 登记的独立上下文对新 hash 复审。Review 独立性按 2026-10-31 用户裁决以上下文独立为准，同一作者会话/实例不得自审，报告记录审查者身份与来源。未运行构建、生产测试、应用迁移或 UI 真机验收；所有新功能与候选 AC 为 planned/NOT_RUN。
 
 本次文档检查结果在完成静态校验后记于下方；不把仓库既有治理错误改写为通过。
 
@@ -808,17 +822,18 @@ DSH 应按实际冻结文件追加裁定/建立新版本，而非编辑历史 Re
 - 本地 Markdown 引用检查：55 个文件链接存在，代码行号均在文件范围内；代码 fence 成对，6 个 Mermaid 图已做文本结构核对。未运行 Mermaid 渲染器，不将文本检查写成渲染通过。
 - `pwsh -NoProfile -File tools/governance/check.ps1`：exit 0，`PASS (2 warnings)`；检查范围为 13 个当前文档，无历史目录扫描。警告为 7 个非终态 Task 的存量提示、REBASELINE_PLAN 达预算 80%；没有批量关闭/更新它们。该结果只说明当前治理检查通过，不是批准本方案或其候选 Task。
 - `git diff --name-only`：无 tracked 文件修改；工作区新增本方案，原未跟踪需求文档保留。保护文件与需求文档完成前后 SHA-256 比较，不改生产源码、STATUS、Plan、AGENTS、AD-002、V11R 冻结契约及 Region 冻结契约。
-- 未创建/释放实现 Task，未执行迁移、清理、生产构建/测试、commit 或 push。后续独立 Review 应以本文最终 hash 与核查源码 HEAD 双重定位，首次交付时没有独立 Review verdict；DSH r1 后为 changes_requested，详见 §15。
+- 未创建/释放实现 Task，未执行迁移、清理、生产构建/测试、commit 或 push。后续独立 Review 应以本文最终 hash 与复审基线双重定位，首次交付时没有独立 Review verdict；DSH r1 与 r7 的历史结论分别见对应报告。
+- 2026-11-01 的 FEA-00-dsh-r7 只读记录：方案引用为 56/56 存在且行号有效；`tools/governance/check.ps1` 为 `PASS (2 warnings)`、`EXIT=0`，检查范围 15 current documents。首次交付时的 55 个引用和 13 个当前文档是历史数字；本条检查结果只证明当日机械条件，不证明架构语义。
 
 
 ## 15. DSH r1 修订与执行边界（2026-10-31）
 
-**状态：修订提案，非裁决或释放。** 本节对前文有冲突之处优先；全部候选 Task `proposed`，验收及测试均 `NOT_RUN`。r1 为 [FEA-00-dsh-r1](../reviews/FEA-00-dsh-r1.md)，`changes_requested`；DSH Reviewer 池作出的问题清单可供修订，但其报告 §1.4 明确不构成 AGENTS 意义上的独立批准。修订前方案 hash 为 `bc309965cfb6cc2a1c8dd37a144e77ad4dca8664eddee6e7c2e87fe3da5ac85f`，源码 `main@1180cdba79e4d610521dde13f0c8a458220f9d90`。本文末不自嵌最终 hash，交付时外部计算。
+**状态：修订提案，非裁决或释放。** 本节对前文有冲突之处优先；全部候选 Task `proposed`，验收及测试均 `NOT_RUN`。r1 为 [FEA-00-dsh-r1](../reviews/FEA-00-dsh-r1.md)，`changes_requested`，不构成批准。Review 独立性依 2026-10-31 用户裁决以上下文独立为准：同一作者会话/实例不得自审，作者可派发独立上下文子 agent，DSH Appointment 与 Review 报告须登记审查者身份和来源。修订前方案 hash `bc309965cfb6cc2a1c8dd37a144e77ad4dca8664eddee6e7c2e87fe3da5ac85f` 与源码 `main@1180cdba79e4d610521dde13f0c8a458220f9d90` 是 r1 历史基线；当前复审基线为 `main@29d06c462`。本文末不自嵌最终 hash，交付时外部计算。
 
-### 15.1 两个阻塞裁决
+### 15.1 两个已决策项 + 剩余契约冻结
 
-- **F-01 用户 ADR**：2026-10-31 用户确认新导入默认 ReferencedSource、旧 Managed Copy 保留、外部原件默认不备份；这是已表达的用户决定，**尚待 DSH 正式记录 ADR 并协调权威文件**，不可称为 DSH 已冻结或假定 AD-002 已更改。AD-002 修订或新 AD-003 的记录方式交 DSH 协调，保留冻结历史证据。ADR 正式记录与相关范围冻结前 FEA-08/09/11/12/13 均 BLOCKED；不由本段激活 Task。ADR 须逐项处置备份完整性、应用/Windows 回收站、旧库与回滚、资源信任根、外部删除授权及治理哨兵；检查器 PASS 不证明架构语义一致。ReferencedSource 的产品方向已决定；前文 §8/§9/§11 的具体技术方案在 ADR 正式记录与契约冻结前仍属**待落实设计**。
-- **F-02 删除政策与原方案冲突**：现行 `M2-C1 §5.11.2` 的单条/批量项目级永久删除在预检成功后事务移除目标项目 Lock/current/pinned 和关系，失败回滚；提交后文件清理失败按 pending/用户确认重试。原方案“protected 即拒绝永久删除”与该冻结语义相反。2026-10-31 用户选择软删及自动清理保留保护、主动彻底删除时逐项展示影响并专门确认后在事务内删除；原拒绝主张不再作为推荐。DSH 仍须正式裁定现行契约与新增 preflight/确认要求的关系并冻结 D07，覆盖单条/批量、共享引用、DB 原子性、cleanup_pending、重试和原文件独立授权。未完成前现行契约继续生效；用户决定不等于契约已修改或 Task 已释放。
+- **存储方向已决策，契约待冻结（C-01a/C-01b）**：用户决定已记录于 AD-003（2026-10-31，`ACCEPTED_ARCHITECTURE_AMENDMENT`；`G-ADR: SATISFIED`）。剩余处置是冻结 C-01b（存储契约）与下游五项反转清单；`G-CONTRACT: OPEN` 关闭前 Source 实现线保持 `BLOCKED`。AD-003 已处理架构记录与哨兵口径；本文 §8/§9/§11 的具体技术方案仍须按冻结后的契约落地，不代表已实现。
+- **彻底删除语义已冻结，协议待冻结（C-04a/C-04b）**：ADJ-001 §5 的 PD-01–PD-10 已冻结显式删除前逐项披露、专门确认、事务原子性、失败回滚、pending 重试与原文件隔离语义（`G-DELETE-SEMANTICS: SATISFIED`）。剩余工作是先核对 ADJ-001 §5/§6.1，再由 D07 冻结 `M2-C1 §5.11` 字段与错误码（C-04b，`G-DELETE-CONTRACT: OPEN`）。语义记录不等于协议冻结或 Task 已释放。
 
 ### 15.2 V11R 条款级修订单与字段迁移（F-03/F-06/F-16）
 
@@ -835,6 +850,8 @@ DSH 应按实际冻结文件追加裁定/建立新版本，而非编辑历史 Re
 | §4 | `ThemePackage` 仅外观；ThemeSettings/IThemeService/IThemePersistence 与不重建窗口冻结 | ThemePackage 仍禁止导航布局；界面注册独立；Appearance coordinator 是唯一设置写者，旧 `Settings` 为同源只读投影，`SetLayoutAsync` 经桥接映射或明确拒绝不支持项；旧 persistence 适配同一文档 | setter 不再写旧文件；主题/比例不重建窗口；scheme 允许替换内容树但主 HWND 保留；按正式版本化变更 |
 | §6.1 | ShellState 是唯一 selection；AppShellV2 唯一窗口内容 | 应用会话按 SessionId 为跨 scheme 选择真值，Current ShellState 作桥；WindowBroker 独占 Window 创建及生命周期 | Current/Fluent 同 DraftId/RunId；未迁出编辑态禁止切换；各窗口角色恢复 |
 | §6.3 | 全局 KeyMap 单一注册 | 进程级单一注册表按 scheme/窗口/输入焦点上下文路由；方案只申明 bindings | 冲突启动拒绝/提示；文本输入优先；窗口切换一次命令仅执行一次 |
+
+**C-10 交互契约（FEA-01 附件，待冻结）**：①手势优先级与移动阈值；②可编辑态判定及其对切换/写入的阻断条件；③ draft owner 归属与跨窗口共享规则。具体数值、状态表与冲突处理由 FEA-01 逐项冻结，当前不视为已定义或已实现。
 
 R-01/R-11 的“单一设计系统”须由 DSH 明确为共享语义基础 + 各 scheme 经登记的模板作用域，不能让任何方案逃逸语义/a11y 规则。**R-03 仍生效：Fluent 是视觉名称，不引入 FluentAvalonia 或 SukiUI 依赖。**
 
@@ -873,13 +890,13 @@ R-01/R-11 的“单一设计系统”须由 DSH 明确为共享语义基础 + �
 
 ### 15.4 Source、删除与备份的新增契约（F-11–F-15/F-29–F-34）
 
-**均以用户 ADR 为前置。** 页面新增显式 `incomplete/complete` 与 source mode 完整性谓词：managed 页须验证 managed ref；referenced 页须验证完整 source binding/entry/version，不能把合法 NULL managed ref 判为崩溃半写。事务中状态从 incomplete→complete；故障时不可见但可恢复。迁移并回归 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource` 及 reader projection：合法 referenced 页可见且可解析；半写行不可见；旧 managed 页行为不变。
+**存储方向已由 AD-003 记录；本节 Source 实现仍受 `G-CONTRACT: OPEN` 阻塞。** 页面新增显式 `incomplete/complete` 与 source mode 完整性谓词：managed 页须验证 managed ref；referenced 页须验证完整 source binding/entry/version，不能把合法 NULL managed ref 判为崩溃半写。事务中状态从 incomplete→complete；故障时不可见但可恢复。迁移并回归 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource` 及 reader projection：合法 referenced 页可见且可解析；半写行不可见；旧 managed 页行为不变。
 
 旧 `ImportPages` grant 是一次性、≤300 秒、直属目录、进程内 registry，不能当长期授权。新增持久化 Host `SourceAccessRegistry`，签发独立 `source-read` grant（source/授权根/用途/generation/过期/撤销），与旧 grant 不混用；递归授权根模型和 ZIP/CBZ decoder 现均需新增。Core 取 lease 前向 Host 请求，使用同一 session 新 grant；续租需重验身份与授权代，过期/撤销或 Host 失联即拒绝新读及 commit，已持有稳定句柄是否继续以冻结策略及 H4 验证为准；commit 前再次持有效 lease/强校验。`ManagedRootTrust` 扩为每授权根/每授权代的等价快照，parity 覆盖 grant 失效、撤销、重启和根替换。
 
 原“旧清理路径只操作受管相对路径、不会触碰源文件”的结构性前提面临退役。新增外部路径权限仅收敛到 SourceAccessRegistry + WindowsRecycleBridge；其余旧清理/重试仍只接受 `ManagedRelativePath`，`remove_managed` 绝不接受绝对路径；类型分离、reparse 检查及 typed 拒绝必须有负测。旧的 cache cleanup 是前缀白名单且不查 DB；page `TrashService.purge_batch` 未统一保护；book 硬删是独立 preflight。新的 ProtectionPolicy 须逐条包住或替换三路径，不得声称已存在。
 
-当前 Core 命令面有永久删除与回收站列表，**未发现书籍软删/恢复命令；V2 删除/恢复为 NOT_WIRED**。现有硬删命令面与 V2 可达性须分别验证，不能把 legacy `delete_book` 作为 V2 已可用的软删。FEA-12 需追加软删、恢复、TrashEntry、Host/V2 接线以及安全行为；F-02 决策未定前不得改变现行永久删除语义。
+当前 Core 命令面有永久删除与回收站列表，**未发现书籍软删/恢复命令；V2 删除/恢复为 NOT_WIRED**。现有硬删命令面与 V2 可达性须分别验证，不能把 legacy `delete_book` 作为 V2 已可用的软删。FEA-12 需追加软删、恢复、TrashEntry、Host/V2 接线以及安全行为；永久删除语义依 ADJ-001 PD-01–PD-10，协议字段与错误码仍待 D07 冻结。
 
 备份现状：`.nmbak` 包含 `library.db` 和 `managed/**`；`settings/*.json` 的 provider/network/bindings 未覆盖；`catalog/catalog.sqlite` 归属待 D07 冻结；旧 restore 先覆盖 DB，再恢复文件。自动包存在刷新/轮转逻辑，manual 包不自动删。backup/2 必须独占维护锁并 pin DB 引用文件集合，逐项记录 profiles、catalog、草稿、Run、人工版本及 source 授权元数据的包含/缺失；恢复先 staging 校验，再以可恢复的原子入口切换，失败保留旧根。`DatabaseId` 为**新增**：首次写 metadata 生成 UUID，旧库迁移 journal 第一笔原子记录并回填；回填前身份 unknown，不做跨库自动合并。
 
@@ -900,7 +917,7 @@ SourceVersion 拆为 content identity（原始容器 bytes digest；size/mtime �
 |---|---|---|---|
 | FEA-00 | `doc/reviews/FEA-00-*.md`；方案修订仅本次用户授权 | L1；hash、finding 逐项、席位状态 | 不改契约或 Task；保留 r1 |
 | FEA-00a | `src/infrastructure/providers/`、`src/infrastructure/sqlite/pipeline.py`、`tests/` 内明确测试 | L2 高风险；§15.5 三处零变化及重启 | 关闭新写入入口；旧库只读核验，保留备份与候选 |
-| FEA-01 | `doc/plan/`、`doc/contracts/`、`apps/desktop-avalonia/src/NewManga.Application.Contracts/`、`tests/` | L1/L2；接口生成清单、组件 key/version/必选/fallback、需求→能力→Task→AC→证据矩阵 | 不启用新 API；旧签名与 wire 保持 |
+| FEA-01 | `doc/plan/`、`doc/contracts/`、`apps/desktop-avalonia/src/NewManga.Application.Contracts/`、`tests/` | L1/L2；接口生成清单、组件 key/version/必选/fallback、C-10 交互契约附件、需求→能力→Task→AC→证据矩阵 | 不启用新 API；旧签名与 wire 保持 |
 | FEA-02-CORE | `apps/desktop-avalonia/src/NewManga.ApplicationCore/`、对应 `apps/desktop-avalonia/tests/` | L2；无 Avalonia 引用、唯一轮询及调用次数 | 保留 Current 原入口；不得双调度 |
 | FEA-02-BRIDGE | `apps/desktop-avalonia/src/NewManga.App/Services/`、批准的 `apps/desktop-avalonia/src/NewManga.CoreClient/` 子文件及对应 tests；现任 core-bridge 写者或 DSH 先完成 §16.1 重新指派 | L2；Host 生命周期/退出断言、请求错误隔离 | 旧 bridge 继续服务；不写不兼容 schema |
 | FEA-03 | `src/application/`、`src/domain/`、`src/infrastructure/sqlite/`、`apps/desktop-avalonia/src/NewManga.ApplicationCore/`、对应 tests | L2 高风险；draft ACK、单 owner、独立 patch undo 与 revision restore | 关新编辑入口；保留 journal，旧 Core 不得写新 schema |
@@ -909,17 +926,17 @@ SourceVersion 拆为 content identity（原始容器 bytes digest；size/mtime �
 | FEA-05 | `apps/desktop-avalonia/src/NewManga.Appearance/`、`NewManga.ThemeEngine/`、对应 tests | L2/L3；§15.2 单写者/迁移/多套比例/分类动效 | 上次 verified 设置只读回退；不覆盖旧文件 |
 | FEA-06 | `apps/desktop-avalonia/src/NewManga.Frontends.Fluent/`、对应 tests；依赖 FEA-04b | L3；四页对冻结规格与预览真机截图、键盘/IME | feature flag 关闭回 Current；共享数据不回滚 |
 | FEA-07 | `apps/desktop-avalonia/src/NewManga.Presentation.Avalonia/`、对应 tests | L3；§15.5 commit 条件、双屏与完整 window rollback | switch journal 恢复上次 committed；禁用新 scheme |
-| FEA-08 | `experiments/` 内 DSH 指定路径、`doc/design/` 对应报告；临时数据 `G:/CODEX/New Manga.workspace/tasks/FEA-08/` | L1/L2；五类输入（单图/文件夹/ZIP/CBZ/PDF）逐项现状/需新增、NTFS/SMB/回收负测 | 停止原型并保留合成证据；不碰真实库；ADR 正式记录与相关范围冻结前 BLOCKED |
+| FEA-08 | `experiments/` 内 DSH 指定路径、`doc/design/` 对应报告；临时数据 `G:/CODEX/New Manga.workspace/tasks/FEA-08/` | L1/L2；五类输入（单图/文件夹/ZIP/CBZ/PDF）逐项现状/需新增、NTFS/SMB/回收负测 | 停止原型并保留合成证据；不碰真实库；AD-003 已记录，原型范围经 DSH 冻结后可开展；生产 Source 实现仍受 `G-CONTRACT: OPEN` 阻塞 |
 | FEA-09 | `src/application/importing/`、`src/application/resource_channel/`、`src/infrastructure/resource_channel/`（含 `handle_resolver.py`）、`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/`、`apps/desktop-avalonia/src/NewManga.Host/`、对应 tests | L2 高风险；完整性谓词五路径、格式/自然排序/重复名/密码不入日志/跳过/取消保留成功/进度 | 关闭引用导入；managed 双读保持；新 schema 禁旧写 |
 | FEA-10 | `src/application/tasks/`、`src/infrastructure/pipeline/`、`src/infrastructure/providers/`、`src/infrastructure/sqlite/`、CoreClient/Host 经授权子路径、对应 tests | L2 高风险；§15.5、配置改后 retry/邻页改动 | 禁新 builder，未提交 candidate 留待处理，旧 schema 不盲写 |
 | FEA-11 | `src/application/sources/`、`src/infrastructure/resource_channel/`、`src/infrastructure/sqlite/`、Host 授权子路径、对应 tests | L2 高风险；预览/代次 CAS/歧义需确认 | 保留旧 binding/源字节；禁止旧端写新 schema |
-| FEA-12-CORE | `src/application/maintenance/`、`src/infrastructure/sqlite/`、`src/bootstrap/core_service.py`、`src/infrastructure/filesystem/managed_storage.py`、Host 回收桥、对应 tests；写者须先按 §16.1 冻结 | L2 高风险；软删/恢复命令、外部路径拒绝、期限及 F-02 裁定 | 暂停外部回收/清理；保留 journal；已回收项逐项报告 |
+| FEA-12-CORE | `src/application/maintenance/`、`src/infrastructure/sqlite/`、`src/bootstrap/core_service.py`、`src/infrastructure/filesystem/managed_storage.py`、Host 回收桥、对应 tests；写者须先按 §16.1 冻结 | L2 高风险；Core 只读 `PreviewPermanentDeleteBooks` 返回逐项人工修改/Lock/current/pinned/回收站影响；专门确认绑定 `inventory_digest`，预览至提交零变化，失配以 `BOOK_DELETE_STALE_PREVIEW` 拒绝并重预览；内容与保护同事务、全有/全无且失败整体回滚；应用内彻底删除不触原件。按 ADJ-001 PD-01–PD-10 实现，D07 冻结 `C-04b` 后接线；原件另走 D 流程、检查共享引用并确认后移入 Windows 回收站 | 暂停外部回收/清理；保留 journal；已回收项逐项报告 |
 | FEA-12-UI | `apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/`、`ViewModels/V2/Library/`、批准的 `App/Services/` 接口和对应 tests；依 CORE 契约，写者须先按 §16.1 冻结 | L3；软删/恢复、范围提示、期限与撤销真实接线 | 不开放未接线操作；保留 Core 数据 |
 | FEA-13 | `src/infrastructure/sqlite/`、`src/bootstrap/`、Host 备份桥、对应 tests | L2 高风险；profiles/catalog、staging、自动备份调度/保留、DatabaseId | 不切换根；旧根和 verified 包保留；旧端不写新 schema |
 | FEA-14-LIB/READ/EDIT/AI/FONT/SET/EXPORT | 各自 `src/application/<domain>/`、相应 Core/Host 子路径及 `apps/desktop-avalonia/src/NewManga.Frontends.Fluent/<Area>/`、对应 tests；共享目录再细分由 DSH 指派 | L2/L3；§12.2 与 §15.7 每项可观察 AC；SET 覆盖许可展示、工作台默认值、缓存迁移 | 各能力单独开关回旧入口；不得回滚其他已提交用户修改 |
 | FEA-15 | DSH 指定 `verification/FEA-15/`、handoff/review；不授予源码写域 | L4；真实 IPC、隔离安装、升级与回退证据 | 不发布，不覆盖用户数据；保留失败证据 |
 
-FEA-05 的旧 ThemeSettings writer 停写/唯一 coordinator 是其出口；FEA-06 依赖 FEA-04b；FEA-07 依赖 FEA-00a；FEA-08/09/11/12/13 均受用户 ADR 正式记录与相关范围冻结阻塞。FEA-10 中与 source 无关的安全修复由 FEA-00a 独立先行，不因 ADR 尚未正式记录而扩大实现授权。上述所有回退依 §11.2：旧二进制不认识新 schema 时必须拒绝写；恢复旧备份使用隔离新根，不覆盖迁移后新编辑。
+FEA-05 的旧 ThemeSettings writer 停写/唯一 coordinator 是其出口；FEA-06 依赖 FEA-04b；FEA-07 依赖 FEA-00a。AD-003 已记录；FEA-08 隔离原型待 DSH 冻结范围后开展，FEA-09/11 受 `G-CONTRACT: OPEN` 阻塞，FEA-12 同时受 `G-CONTRACT` 与 `G-DELETE-CONTRACT: OPEN` 阻塞，FEA-13 按相关契约 Gate 冻结后开展。FEA-10 中与 source 无关的安全修复由 FEA-00a 独立先行。上述所有回退依 §11.2：旧二进制不认识新 schema 时必须拒绝写；恢复旧备份使用隔离新根，不覆盖迁移后新编辑。
 
 ### 15.7 需求追溯与可观察 AC
 
@@ -928,9 +945,9 @@ FEA-05 的旧 ThemeSettings writer 停写/唯一 coordinator 是其出口；FEA-
 | 概念 §1/§7：三层、四页 | 注册/兼容/四页设计 → FEA-01/04b/05/06 | A07 + 四页冻结资产与真机截图 → 对应 `verification/<ID>/` |
 | §2：搜索/收藏/标签/卷话番外排序 | Library → FEA-14-LIB | 组合过滤、数字/自定义顺序、重名恢复事务 → L2/L3 |
 | §3：直接引用/导入 | ADR + source → FEA-08/09/11 | 五格式/授权、排序、重复名、密码保密、跳过/取消/进度、五读路径/半写负例 → L2 |
-| §4：删除/备份/恢复 | 软删、引用保护、backup → FEA-12/13 | 默认软删、共享保留、部分失败、冲突默认 defer、期限/撤销及自动备份计划 → L2 故障证据 |
+| §4：删除/备份/恢复 | 软删、引用保护、backup → FEA-12/13 | 显式删除先经 Core 只读预览；`inventory_digest` 绑定专门确认；从预览到提交零变化、过期拒绝并重预览；DB 内容与保护同事务全有/全无且失败回滚；不顺带删除原文件；D 流程单独选择/检查共享引用/确认后移入 Windows 回收站 → L2 故障证据 |
 | §5：Reader | 语义 anchor/模式/跨章节 → FEA-14-READ | 双页/连续/书签/缺失页/按书偏好重启恢复 → L2/L3 |
-| §6：工作台与多屏 | draft/编辑/多窗 → FEA-03/07/14-EDIT | 同 DraftId 多窗口几何+样式并发、IME、双屏拔插、Lock → L2/L3 |
+| §6：工作台与多屏 | draft/编辑/多窗 → FEA-01 附件/FEA-03/07/14-EDIT | FEA-01 待冻结手势优先级与移动阈值、可编辑态判定、draft owner 归属；再验同 DraftId 多窗口几何+样式并发、IME、双屏拔插、Lock → L2/L3 |
 | §6/§7：任务与发送 | PreparedRun/应用 → FEA-00a/10/14-AI | 快照与实际 payload 一致、邻页变更/retry、三处零变化 → L2 |
 | §6/§7：样式与字体 | 独立字体库 → FEA-14-FONT | 字体缺失/替代/许可与已有版本保留 → L2/L3 |
 | §6/§7：导出 | scope/rendition/conflict → FEA-14-EXPORT | 不覆盖源、取消保留已成功文件 → L2 |
@@ -994,7 +1011,7 @@ FEA-05 的旧 ThemeSettings writer 停写/唯一 coordinator 是其出口；FEA-
 
 ## 16. DSH r2 后的补充修订（待重新复核）
 
-DSH 在只读会话 `session-5ba272c1-baad-4e37-bd4f-ccdef4e9af0d` 对方案 hash `a66dc75c32f99521c9b57bc13d97195814883b31d50ebfab48e221d61269c94f` 给出 `changes_requested`；由于用户限制只修改方案，r2 结果仅在会话中，未写 Review 文件。本节修订针对其具体意见；不是 DSH adjudication 或独立批准。当时 F-01 用户 ADR 与 F-02 DSH/用户政策裁决仍阻塞；2026-10-31 后续用户决定及尚待完成的正式处置见 §15.1，不通过文档修订关闭；FEA-04b 四页设计尚不存在，也未冻结。
+本节记录 r2 技术复核后方案作者对写域、完整性迁移、视觉契约、导入与设置验收的补充。DSH 技术复核见 `doc/reviews/FEA-00-dsh-r2-technical-recheck.md`；会话级口头复核不作为审查证据。本节是方案作者自修，不构成 DSH adjudication 或独立 Review。F-01/F-02 的当前权威状态及剩余契约冻结见 §15.1；FEA-04b 四页设计仍未冻结。
 
 ### 16.1 共享写域与分派（F-05/F-13/F-15）
 
@@ -1002,13 +1019,13 @@ V11R §1.2 在正式修订前持续生效。`App/Services/IHostController.cs`、
 
 - FEA-02 拆成 ApplicationCore 子任务与 `core-bridge` 服务桥子任务；后者需显式写 `apps/desktop-avalonia/src/NewManga.App/Services/` 的上述文件，由现有写者提交或 DSH 先重新指派；交付边界以文件为单位，不能并发写。
 - FEA-09 为每根授权快照增加 `src/infrastructure/resource_channel/handle_resolver.py`、`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`；FEA-12 的旧清理入口约束增加 `src/infrastructure/filesystem/managed_storage.py`、`src/application/maintenance/` 与相关测试。DSH 对重叠文件指定单一写者及集成顺序；`remove_managed` 仍只接受受管相对路径。
-- FEA-12 V2 接线拆为 `FEA-12-CORE`（Core/Host 命令及安全 preflight）和 `FEA-12-UI`（`apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/`、`ViewModels/V2/Library/` 及批准的 App 服务接口），由 DSH 确认现有 ui-shell/core-bridge 写者或先正式重新指派。CORE 合约和测试先固定，再由 UI 消费；每个切片必须有不同的 Owner/Reviewer。两者仍依用户 ADR 和删除政策裁决，均未释放。
+- FEA-12 V2 接线拆为 `FEA-12-CORE`（Core/Host 命令及安全 preflight）和 `FEA-12-UI`（`apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/`、`ViewModels/V2/Library/` 及批准的 App 服务接口），由 DSH 确认现有 ui-shell/core-bridge 写者或先正式重新指派。CORE 契约和测试先固定，再由 UI 消费；各切片的 Review 须符合上下文独立规则。AD-003 已记录；FEA-12 仍待 DSH 冻结写者与相关 Source/删除契约，尚未释放。
 
 ### 16.2 旧页完整性迁移（F-11）
 
 在独占维护锁和可校验备份下，先以**旧谓词**记录每个旧页的 ID、旧可见性、source_hash、managed_original_ref、尺寸、排序及计数/manifest；旧可见页仅在原样通过旧完整性谓词及 managed 文件存在性校验后回填 `source_mode=managed, integrity=complete`，旧不可见半写行回填 `integrity=incomplete` 并保留待恢复清单，不删除或误标 complete。新列默认 `incomplete`，新导入必须同事务校验并显式置 complete；不能以 DEFAULT complete 将半写误当完整。文件缺失的旧可见行标记需要修复，并在迁移前暂停切换，不静默隐藏。
 
-写 staging 新库并验证前后旧谓词可见页 ID、顺序、阅读器 projection、资源可解析性、人工版本和 Lock 一致；五读取路径与半写负例逐项比较。任何行不匹配、磁盘满或中断均不切换入口，旧库和备份保持可读；重启按 journal 恢复/重试。schema 未兼容的旧 sidecar 禁止写新库，回退通过隔离旧根进行，不能覆盖迁移后新编辑。只有 ADR 正式记录且相关契约和范围冻结后才能启用 referenced 页迁移。
+写 staging 新库并验证前后旧谓词可见页 ID、顺序、阅读器 projection、资源可解析性、人工版本和 Lock 一致；五读取路径与半写负例逐项比较。任何行不匹配、磁盘满或中断均不切换入口，旧库和备份保持可读；重启按 journal 恢复/重试。schema 未兼容的旧 sidecar 禁止写新库，回退通过隔离旧根进行，不能覆盖迁移后新编辑。AD-003 已记录；只有 `G-CONTRACT` 关闭且相关契约和 Task 范围冻结后才能启用 referenced 页迁移。
 
 ### 16.3 可冻结的视觉/组件契约草案（F-03/F-35）
 
@@ -1022,14 +1039,14 @@ R-01/R-11 的替换文字草案：**一个共享语义设计基础为所有方�
 
 - FEA-09：五类输入单图、文件夹、ZIP、CBZ、PDF 分别建立成功/不支持/损坏 fixture；按 PDF 页码和文件路径自然数字排序；重复归档名按 occurrence 保序；加密项目提供密码重试且日志/持久快照无密码；失败项明确原因并支持跳过；取消后已提交项目保留、未提交项目不出现；按当前项目显示可观测进度并汇总成功/失败/跳过。每项用隔离数据断言 Core→Host→UI 结果，source 原字节不变。
 - FEA-05：各存两套 scheme 专属比例并重启核对；逐 slot 与全部重置只作用选中 profile；越界 typed 拒绝；页面/浮层/悬停三类动效分别切换且系统 reduced-motion 优先。
-- FEA-14-SET（Host/Core 设置切片 Owner 由 DSH 指派；Fluent 设置 UI 为 ZCode，分别独审）：逐项测试工作台默认缩放/对照权限/面板设置保存并在新会话生效；缓存位置迁移取消、空间不足及重启恢复继续使用旧位置；关于页展示产品及第三方许可且可访问；诊断预览不含密钥/漫画内容。
-- FEA-12-CORE/UI：手动与 7/30/90/自定义期限、预计日期、恢复/撤销、受保护项说明、到期自动清理不访问外部源均须隔离时钟与重启测试。永久删除保护仍以 F-02 正式裁决为准。
+- FEA-14-SET（Host/Core 设置切片 Owner 由 DSH 指派；Fluent 设置 UI 为 ZCode；Review 按上下文独立规则）：逐项测试工作台默认缩放/对照权限/面板设置保存并在新会话生效；缓存位置迁移取消、空间不足及重启恢复继续使用旧位置；关于页展示产品及第三方许可且可访问；诊断预览不含密钥/漫画内容。
+- FEA-12-CORE/UI：手动与 7/30/90/自定义期限、预计日期、恢复/撤销、受保护项说明、到期自动清理不访问外部源均须隔离时钟与重启测试。显式彻底删除按 ADJ-001 PD-01–PD-10 实现；Core 只读 `PreviewPermanentDeleteBooks` 返回逐项影响，确认绑定 `inventory_digest`，变化时拒绝并重新预览，同一事务删除项目内容与保护且失败整体回滚；应用内删除不触原件，原文件操作单独选择/检查共享引用/确认后移入 Windows 回收站。D07 冻结 `C-04b` 后接线。
 - FEA-13：每天/每周/自定义自动备份、关闭开关、错过计划的启动提示、保留数与最近 verified 包保护分别注入时钟与目标失败测试；关闭自动备份不关闭恢复入口。
 
-### 16.5 r2 处置与下一步
+### 16.5 r2 技术复核与作者自修记录
 
-r2 列出的具体文本缺口：F-05/F-13/F-15 写域见 §16.1；F-08 默认快照见 §15.5；F-11 旧页回填见 §16.2；F-03/F-35 契约草案见 §16.3；F-19 接口列表见 §4.2；F-25 三处定位已按代码修正；F-38/F-39 可执行 AC 见 §16.4。以上是作者自修，不是 Reviewer 确认。需要 DSH 对新文件 hash 重新技术复核；其是否构成合格独立批准仍按项目规则和可用席位确定。
+r2 技术复核所列文本缺口的作者自修位置：F-05/F-13/F-15 写域见 §16.1；F-08 默认快照见 §15.5；F-11 旧页回填见 §16.2；F-03/F-35 契约草案见 §16.3；F-19 接口列表见 §4.2；F-25 三处定位按当时代码修订；F-38/F-39 可执行 AC 见 §16.4。上述均为作者自修，不是 Reviewer 确认。技术复核证据见 `doc/reviews/FEA-00-dsh-r2-technical-recheck.md`；会话级口头复核不作为审查证据。当前下一步见 §13.3。
 
 ### 16.6 r3 文本一致性处置
 
-DSH r3（同一只读会话，审阅 hash `759f940f98ba3cf6939ace6f99aa57bced52387c9d4a7652d553491a70ea1720`）确认 F-08/F-11/F-19/F-25/F-38/F-39 的文本修订到位，要求同步 F-03/F-35 的 manifest 与圆角约束，以及 F-05/F-13/F-15 的写域表和 DAG。本次已同步 §6.1、§15.2、§15.6、§16.1/§16.3 与候选依赖图；CoreClient 现行双重写权明确为 DSH 必须先裁定的冲突，候选切分不是已获授权。上述仍需新 hash 的技术复核；F-01/F-02 此后用户决定及剩余正式处置见 §15.1，四页设计及正式独立审查保持待决。
+会话级口头复核不作为审查证据。§16.3、§15.6、§16.1 与候选依赖图所列内容均为作者修订，不得据此声称 F-08/F-11/F-19/F-25/F-38/F-39 已获独立确认；DSH 技术复核见 `doc/reviews/FEA-00-dsh-r2-technical-recheck.md`。F-01/F-02 的权威状态与剩余契约冻结见 §15.1；四页设计及正式独立审查仍待各自冻结。
