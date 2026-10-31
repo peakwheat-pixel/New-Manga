@@ -27,7 +27,9 @@
 | **C-11 候选表口径** | §12.1 主表 + §15.6 补充列合并引用；L1–L4 等级；H1–H4b Gate 判据；FEA-04b 硬前置 | `doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md` |
 | 冻结前置 | ① C-01b r5 `approved` ✅；② AD-003 `G-REVIEW` → **`SATISFIED`**（FEA-GOV-1）✅；③ AD-002 责任表口径 **待你回 `R`**（FEA-GOV-2 提案 v3 `approved`，推荐 D 零字节）⏳；④ `check.ps1` PASS ✅ | `doc/AD-003_...md` §5；`doc/reviews/FEA-GOV-1-ad003-review.md`；`doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` |
 | **C-01b 冻结包** | `approved`（r3，0 P0/0 P1/3 P2）；四份条件核对 + 11 步四阶段序列 + 回退表 + UNFREEZE 载体 | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` |
-| **C-02/C-03/C-11 复核** | 已开 FEA-GOV-4，C-02 复核中（用户回 `R` 前先把复核做完） | `doc/tasks/FEA-GOV-4.md` |
+| **C-02 复核** | **`approved`**（r2，0 P0/0 P1/3 P2 非阻断；r1 的 4 P1 全部处置） | `doc/reviews/FEA-GOV-4-c02-r2.md` |
+| **C-03 复核** | 复核中（v2 已补冻结条件 + 双 id 对齐） | `doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md` |
+| **C-04b 草案** | 删除协议字段/码表（`PreviewPermanentDeleteBooks` + `inventory_digest` + 6 码表），未复核 | `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md` |
 
 ## 待你拍板（可直接回 A/B/C）
 
