@@ -1,6 +1,6 @@
 # FEA-C01b 存储契约（草案）
 
-状态：**DRAFT v2 / 已过 r1 独立复核（`changes_requested`，P0×1 / P1×7 / P2×6 已处置）/ 未冻结 / 不释放实现 Task**
+状态：**DRAFT v4 / 已过 r1、r2、r3 独立复核（均 `changes_requested`，P0×0 / P1×1 / P2×6 open）/ 未冻结 / 不释放实现 Task**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1 复核](../reviews/FEA-C01b-r1.md)
@@ -44,16 +44,16 @@
 |---|---|---|---|
 | **SC-07** | 旧 Managed Copy 继续按既有读取路径工作（`pages.managed_original_ref` 等），**不自动迁移**、**不自动删除**，不受新导入策略回溯影响。 | [现行] | `core_assembly.py:293/315/375-379`、`core_service.py:1627/3207-3245`；读路径回归测试 |
 | **SC-08** | 旧 Managed 副本是旧书可恢复的必要输入，备份与容量预览**须单列**，不能随新默认静默漏备。 | 备份清单：[现行]；**容量预览：[新增]**（`nmbak` 仅 create/list/restore） | `nmbak.py:3-10/197-226`（清单含 managed 副本）；容量预览待实现 |
-| **SC-09** | 释放旧副本空间须**另行盘点**备份/任务/引用并形成可预览的清理任务；**不得**绑定到界面切换或 Schema 升级自动执行。 | 文档级约束（无自动入口，亦无盘点功能） | 清理入口只有显式任务；当前无该任务面 |
+| **SC-09** | 释放旧副本空间须**另行盘点**备份/任务/引用并形成可预览的清理任务；**不得**绑定到界面切换或 Schema 升级自动执行。 | 拆分：禁止自动执行 [文档级约束]；盘点与可预览清理任务 [新增]（能力缺位） | 清理入口只有显式任务（当前无盘点/预览任务面）；实现 Task 须补 |
 
 ### 2.3 备份（AD-003 §3.3）
 
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
 | **SC-10a** | 备份**默认不含外部原文件**。 | [现行] | `nmbak.py:3-10/197-226`（只打包 `library.db`+sidecar+`managed/`） |
-| **SC-10b** | 应用内数据类别**默认包含**：人工修改、处理结果、受保护 revision、草稿 journal、问题/阅读数据、Run 快照、源引用与授权元数据、恢复所需索引。 | [新增]（`settings/*.json`、`catalog.sqlite` 未入包；Run 快照/源引用元数据尚无结构） | FEA-01 C-09（`:58`）明记二者为「备份覆盖清单**现状缺失项**」；实现 Task 须扩展 `nmbak` 清单并给出覆盖性验证 |
+| **SC-10b** | 应用内数据类别**默认包含**：人工修改、处理结果、受保护 revision、草稿 journal、问题/阅读数据、Run 快照、源引用与授权元数据、恢复所需索引。 | [新增]（`settings/*.json`、`catalog.sqlite` 未入包；`managed/trash-manifest.json` 被 `nmbak.py:660-665` 白名单排除、草稿 journal 未入包；Run 快照结构**已存在** `schema.py:290-323`，真实缺口是「快照不含上下文页内容」） | FEA-01 C-09（`:58`）明记 `settings/*.json`、`catalog.sqlite` 为「备份覆盖清单**现状缺失项**」；`nmbak.py:184` 打包整库（Run 快照随库入包）；实现 Task 须扩展 `nmbak` 白名单并给出覆盖性验证 |
 | **SC-11** | 外部原文件与字体为**独立可选项**，开始前显示预计大小/位置/缺失项；备份期间源变化则该失败或重新确认，**不得**打包混合版本并标 verified。 | [新增] | 备份前预览 + 期间变化检测 |
-| **SC-12** | 服务密钥首阶段**默认不备份**（现行成立）；跨机恢复凭据的加密/解锁方案属**新增**。 | 混合：前半 [现行] / 后半 [新增] | 备份清单核对（凭据条目不在清单） |
+| **SC-12** | 服务密钥首阶段**默认不备份**（现行成立）；跨机恢复凭据的加密/解锁方案属**新增**。 | 拆分：前半 [现行] / 后半 [新增] | `nmbak.py:50-53`（凭据条目不在清单）；跨机方案待实现 |
 | **SC-13** | 备份一致性**同时覆盖 DB 与文件集合**（DB 快照 → pin 文件集合 → 复制校验 → 原子发布 → 标 verified → 释放 pin）；`verified` **不得**覆盖未包含的应用内数据类别。 | [新增]（现为备份完整性缺口） | `nmbak` 流程 + verified 语义 |
 | **SC-14** | 恢复默认逐项 `Defer` 冲突；选 `UseBackup` 前先把当前人工/结果保存为受保护可恢复版本；**不得整库覆盖**。 | [现行] | 恢复流程回归（`nmbak` restore 路径） |
 
@@ -64,18 +64,18 @@
 | **SC-15** | 旧 Managed 数据**不自动转换**；旧书关联外部源是**显式可选**操作（列候选与差异 → 用户确认 → 新建 binding）；映射不可靠时保持 managed。 | 文档级约束（无自动迁移入口） | 迁移入口只有显式操作 |
 | **SC-16** | PDF raster / ZIP 旧导入若没有原容器 lineage，**不得**凭书名/页数回推原件。 | 文档级约束（无该推断路径） | 静态核对：无「按书名/页数找原件」代码 |
 | **SC-17** | 任何迁移使用独占维护锁、staging、校验与 commit marker；失败保留旧根可读，不覆盖迁移后的新编辑。 | [新增]（尚无引用迁移） | C-05/C-09 落地时验证 |
-| **SC-18** | 迁移 journal 记录 `DatabaseId`（首次写 metadata 生成 UUID，旧库由迁移第一笔原子回填；**回填前身份 unknown**，不得以书名或 hash 代替）。 | [新增] | 当前 `DatabaseId` 不存在（`src/` 0 命中）；Schema + 迁移脚本 |
+| **SC-18** | 迁移 journal 记录 `DatabaseId`（首次写 metadata 生成 UUID，旧库由迁移第一笔原子回填；**回填前身份 unknown**，不得以书名或 hash 代替）。 | [未实现]（`DatabaseId` 无结构，`src/` 0 命中） | 随 C-09 迁移实现 |
 | **SC-19** | 新 Schema 被旧二进制打开时**必须拒写**，不得「忽略几个列」继续运行。 | **[现行]**（r1 修正） | `connection.py:60`、`migrator.py:69-80`、`tests/storage/test_schema_migration.py:100`、`test_backup_restore.py:589`（CAP-MAINT-04 记已实现） |
 
 ### 2.5 资源通道信任根（AD-003 §3.5）
 
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
-| **SC-20** | 现有 derived-cache 资源通道**不因本决策放宽**：`user-source` 不得进入 derived-cache grant；`handle_resolver` 的 identity/size/digest 与可信根校验、reparse 拒绝继续有效。 | [现行] | `handle_resolver` 校验点回归（资源控制面 wire v1）；不放宽即通过 |
-| **SC-21** | 引用源读取需要**独立授权面**：Host 私有且持久化的 `SourceAccessRegistry`（locator、授权根边界、identity facts、授权 generation）+ 新 `source-read` grant；旧一次性 `ImportPages` grant（≤300 秒、直属成员、进程内 registry）**不得**当长期授权复用。 | [新增] | `import_source_refs.py:153/108/192-203`（现有一次性 grant 语义）；C-06 授权面 |
+| **SC-20** | 现有 derived-cache 资源通道**不因本决策放宽**：`user-source` 不得进入 derived-cache grant；`handle_resolver` 的 identity/size/digest 与可信根校验、reparse 拒绝继续有效。 | [现行] | `handle_resolver.py:284-320`（identity/size/digest）、`:206`（可信根）、`:351`（reparse 拒绝）；资源控制面 wire v1 回归 |
+| **SC-21** | 引用源读取需要**独立授权面**：Host 私有且持久化的 `SourceAccessRegistry`（locator、授权根边界、identity facts、授权 generation）+ 新 `source-read` grant；旧一次性 `ImportPages` grant（≤300 秒、直属成员、进程内 registry）**不得**当长期授权复用。 | [未实现]（`SourceAccessRegistry` 无结构，`src/` 0 命中） | `import_source_refs.py:153/108/192-203`（现有一次性 grant 语义）；C-06 授权面 |
 | **SC-22** | 授权根为显式边界：不跟随越过根目录的符号链接/junction；递归授权根与 ZIP/CBZ 解码属**新增能力**，当前无实现。 | [未实现] | 无实现；随 SC-21 落地 |
 | **SC-23** | 读取面按 `SourceId`/version/entry/rendition 限定，带大小与解码预算；UI **不得**获得任意 `ReadFile(path)`。 | [新增] | Host 命令面（C-07 清单） |
-| **SC-24** | 「清理/删除只接触受管根内文件」的结构性安全前提**部分退役**：外部路径写/删权限只收敛到 `SourceAccessRegistry` + Windows 回收站桥；其余清理/重试路径**继续**只接受受管相对路径并以类型拒绝绝对路径。 | [现行→退役]（保留部分：受管相对路径校验仍有效） | 权限面核对；理论前提退役不等于校验点删除 |
+| **SC-24** | 「清理/删除只接触受管根内文件」的结构性安全前提**部分退役**：外部路径写/删权限只收敛到 `SourceAccessRegistry` + Windows 回收站桥；其余清理/重试路径**继续**只接受受管相对路径并以类型拒绝绝对路径。 | [现行→退役]（保留部分：受管相对路径校验仍有效） | `cleanup.py:16-20`（受管相对路径校验）；理论前提退役不等于校验点删除 |
 
 ### 2.6 外部变化（AD-003 §3.6）
 
@@ -91,8 +91,8 @@
 
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
-| **SC-30** | **应用内删除**（软删、自动清理、用户显式彻底删除）**从不触点原文件**。 | [现行]（软删/GC 不删原件）；显式彻底删除的 preview/digest 流程属 [新增]（ADJ-001 PD-01–PD-10 未实现） | 软删路径 `trash.py`；彻底删除按 ADJ-001 §6.1/§6.3 落地后验证 |
-| **SC-31** | **原始文件删除是独立流程**：独立选择 → 检查其他 live/trashed 引用与活跃 Run/lease → 明确列出确切文件 → 用户确认 → 经 Host 的 Windows 回收站桥执行 → 逐项验证结果；不可回收/被占用/网络盘/路径被替换时**保留并报告**，不得转为永久删除。 | [新增] | C-09 删除/备份 |
+| **SC-30** | **应用内删除**（软删、自动清理、用户显式彻底删除）**从不触点原文件**。 | [现行]（软删/GC 不删原件）；显式彻底删除的 preview/digest 流程属 [新增]（ADJ-001 PD-01–PD-10 未实现） | 软删/GC：`library.py:1069-1101`；彻底删除按 ADJ-001 §6.1/§6.3 落地后验证 |
+| **SC-31** | **原始文件删除是独立流程**：独立选择 → 检查其他 live/trashed 引用与活跃 Run/lease → 明确列出确切文件 → 用户确认 → 经 Host 的 Windows 回收站桥执行 → 逐项验证结果；不可回收/被占用/网络盘/路径被替换时**保留并报告**，不得转为永久删除。 | [未实现]（回收站桥与授权流程均无结构） | C-09 删除/备份 |
 | **SC-32** | 共享源默认保留；「已删项目」不得自动视为不再保护；文件夹只处理实际引用文件与本次变空的子目录，不越过导入根。 | [新增] | C-09 |
 | **SC-33** | 应用内删除项目**不因共享源而阻断**：删自有内容行/绑定/清单内自有文件，保留共享原文件与其他项目绑定；「无法安全拆分、关系图/归属不一致、存在未列明目标外引用」时 fail-closed，其余预检失败按现行契约处理。 | [新增] | C-09；与 ADJ-001 PD-08、`M2-C1:752,:764` 一致 |
 | **SC-34** | OS 删除与 DB 无分布式事务：以 operation journal + receipt 记录，崩溃恢复先核对 OS 事实再决定是否重发。 | [新增] | C-09 |
@@ -102,7 +102,7 @@
 | ID | 条款 | 状态 | 实现落点 / 验证 |
 |---|---|---|---|
 | **SC-35** | 功能开关关闭 `ReferencedImportEnabled` / `SourceSyncEnabled` 时：禁止新引用导入与新同步、**托管双读保持**、已引用页不自动变 Managed。 | [新增]（开关名为**拟议**，尚无 CLI 参数） | 开关 + 双读；`--shell=legacy` 是**现行**回退入口（`AppOptions.cs:65-66`），与本条开关不同层 |
-| **SC-36** | UI 切回 Current 界面不降级 Core、不恢复旧 DB、不覆盖新 revision。 | [现行] | 界面切换（`--shell=legacy` 诊断/回退） |
+| **SC-36** | UI 切回 Current 界面不降级 Core、不恢复旧 DB、不覆盖新 revision。 | [现行] | `AppOptions.cs:65-66`（`--shell=legacy` 诊断/回退）；界面切换回归 |
 | **SC-37** | Schema 回退：隔离新根恢复迁移前 verified 备份；旧根原样保留；迁移后新编辑需另行导出/合并，**无无损自动降级承诺**。 | [新增] | 回退流程（C-09） |
 | **SC-38** | **二进制回退**：已验证兼容的旧 UI/Host 配新 Core 时，必须通过能力与格式 Gate，**不得任意混配**。 | [现行] | `StartupSelfCheck.cs:8-95,42`（`PROTOCOL_VERSION_MISMATCH`/`CORE_CAPABILITY_MISSING`）、`HostRuntime.cs:746`（WritesBlocked）、`HostCommandRegistry.cs:133` |
 | **SC-39** | **数据回退**：旧 Managed 副本与应用内人工数据**始终可读**；不回退引用模式已产生的引用页，只可标缺失或经明确转换。 | [现行]（双读）；引用页部分为 [新增] | SC-07 双读 + 引用页标记 |
@@ -119,7 +119,7 @@
 
 ## 4. 冻结条件
 
-1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1 已跑，本轮 v2 修订后需 r2**）；
+1. 本草案经**独立复核**（Appointment + 报告）确认与 AD-003/ADJ-001 一致、无新增语义（**r1/r2/r3 已跑，v4 修订后需 r4 窄面复核**）；
 2. **AD-003 自身的 `G-REVIEW` 收口**（AD-003 §6 明文：复审通过前不作为契约冻结依据）；ADJ-001 的 `G-DELETE-CONTRACT` 仍 OPEN，相关条款（SC-30/31/33）冻结前须注明依赖；
 3. 用户确认 AD-002 的**责任表与哨兵口径**修订（`Managed Copy` 行 + 顶部横幅归口）；
 4. `check.ps1` PASS（机械检查，仅证明结构条件）。
@@ -132,4 +132,5 @@
 |---|---|---|
 | 2026-11-01 | v1：把 AD-003 §3.1–§3.8 转为 SC-01…SC-37，标注状态与验证方式 | DSH |
 | 2026-11-01 | v2：处置 FEA-C01b-r1（P0×1 / P1×7 / P2×6）——SC-01 验证列不再严于 AD-003；SC-03/08/19 重标状态；SC-06/24 口径修正；§3.8 补二进制（SC-38）与数据（SC-39）两行；[现行] 补文件:行证据；冻结条件补 AD-003 G-REVIEW 与 ADJ-001 G-DELETE-CONTRACT；SC-18 补「回填前身份 unknown」；SC-35 补 flag 拟议与 `--shell=legacy` | DSH |
-| 2026-11-01 | v3：处置 FEA-C01b-r2（P0×0 / P1×1 / P2×8）——**SC-10 拆分为 SC-10a [现行] + SC-10b [新增]**（`nmbak` 未打包 `settings/*.json`、`catalog.sqlite`）；SC-01 补可执行判别；SC-03 拆 [现行] 白名单 + [新增] preflight；SC-06/09/15/16 统一为 [文档级约束]；SC-38 证据改为 `StartupSelfCheck.cs`/`HostRuntime.cs`/`HostCommandRegistry.cs`；图例补 [文档级约束] 与拆分写法及四态判据；补记 SC-09/SC-17/SC-10 状态变更 | DSH |
+| 2026-11-01 | v4：处置 FEA-C01b-r3（P0×0 / P1×1 / P2×6）——P1-1 文档控制字段同步（状态行 v4、依据链 r2/r3、§4.1 改「需 r4」）；P2-2 SC-10b 旁注纠正（Run 快照结构已存在 `schema.py:290-323`，真实缺口为快照不含上下文页内容；补 `trash-manifest.json` 白名单证据）；P2-1 SC-09 拆分；P2-4 SC-20/30/36/12/24 证据补文件:行；P2-5 变更记录补 old→new；P2-6 SC-18/21/31 按判据重标 [未实现] | DSH |
+| 2026-11-01 | v3：处置 FEA-C01b-r2（P0×0 / P1×1 / P2×8）。状态变更（old→new）：SC-10 [新增]→拆分 SC-10a [现行]+SC-10b [新增]；SC-09 [新增]→[文档级约束]；SC-17 [新增]→（保持）；SC-06 [现行]→[文档级约束]；SC-15/16 [现行]→[文档级约束]；SC-03 [现行]→拆分；SC-38 证据换载。其余：SC-01 补判别、图例补四态判据 | DSH |
