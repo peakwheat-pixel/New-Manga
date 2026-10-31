@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "task_id": "REALUSE-DATA-SAFETY-6",
+  "generated_at": "2026-11-01",
+  "generated_by": "DSH (Lead / Architect / Integrator)",
+  "note": "集成后资源收口记录：用户数据根只读访问，未写入/未删除/未迁移；仓外临时副本已按绝对路径核对后删除。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-6",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "worktree 保留；doc/tasks/REALUSE-DATA-SAFETY-6.md 与 doc/handoffs/ 引用其路径；未删除、未 prune",
+      "branch": "task/REALUSE-DATA-SAFETY-6",
+      "base_commit": "841cbdc4b",
+      "delivery_head": "fb5065013"
+    },
+    {
+      "resource_type": "user-data-root",
+      "source_path": "C:/Users/49745/AppData/Roaming/com.newmanga.desktop",
+      "disposition": "PRESERVE_USER_DATA",
+      "destination_path": "Same source location",
+      "process_check": "只读：目录枚举 + 仓外副本上的只读 SQLite + 样本 sha256；DB mtime 早于 Task；未写入、未删除、未迁移"
+    },
+    {
+      "resource_type": "temp-db-copy",
+      "source_path": "G:/CODEX/New Manga.workspace/tmp/REALUSE-DATA-SAFETY-6",
+      "disposition": "DELETE_SAFE",
+      "destination_path": "Permanent removal",
+      "process_check": "DSH 核对 Resolve-Path 位于 workspace tmp 根内后 Remove-Item -Recurse；Test-Path=False；仓库内无引用",
+      "deleted": true
+    },
+    {
+      "resource_type": "temp-review-copy",
+      "source_path": "G:/CODEX/New Manga.workspace/tmp/safety6-review",
+      "disposition": "DELETE_SAFE",
+      "destination_path": "Permanent removal",
+      "process_check": "Reviewer 仓外负向对照副本（worktree 副本，无用户数据）；核对后删除；Test-Path=False",
+      "deleted": true
+    },
+    {
+      "resource_type": "prior-worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-5",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "前批 worktree 保留；本 Task 未触碰"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 2,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "worktree 按 PRESERVE_REFERENCED 保留（分支 task/REALUSE-DATA-SAFETY-6）；user data root 全程只读。"
+}

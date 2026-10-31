@@ -46,7 +46,7 @@
 
 READY 节点：无
 
-当前 DAG：REALUSE-DATA-SAFETY-6（自查收尾 4 条，in_review）
+当前 DAG：无（SAFETY-6 已 done；下一节点待 MA-11/MA-20 裁决后释放）
 
 ## 历史快照（终态节点，非当前 DAG）
 

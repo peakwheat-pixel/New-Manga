@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-6
 title: 自查收尾——进度刷新、旧库迁移策略、derived 双份、安装脚本隔离
 kind: quality
 governance_version: 3
-status: in_review
+status: done
 approval: user_authorized_2026-10-30_self_audit_remaining_items
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety6-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-5
 base_commit: 841cbdc4b
 branch: task/REALUSE-DATA-SAFETY-6
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-6
-integration_commit: null
+integration_commit: 011b19bbf
 delivery_head: fb5065013
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-6
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-6.md
@@ -114,21 +114,43 @@ REALUSE-DATA-SAFETY-5 的核对结论：9 条里修了 6 条，剩下 4 条明�
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
-|---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-6 | doc/handoffs/REALUSE-DATA-SAFETY-6-handoff.md | 本 Task 交付在分支 `task/REALUSE-DATA-SAFETY-6`；Review 与集成完成前保留，不 merge main、不 push |
-| user data root | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | PRESERVE_USER_DATA | 原地（未移动） | 见 `ac2-derived-realdata.json`（managed 169 文件 / derived 169 文件 / catalog 169 行） | 只读访问：目录枚举 + 只读 SQLite（在仓外副本上）+ 读取样本算 sha256；**未写入、未删除、未迁移** |
-| temp db copy | G:/CODEX/New Manga.workspace/tmp/REALUSE-DATA-SAFETY-6/dbcopy | DELETE_SAFE | — | 含 library.db / catalog.sqlite / legacy data/library.db 的只读副本 | 仓外临时物，含用户数据副本，未纳入 git；核对完成即可删除，不需要归档 |
-| prior worktree | G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-5 | PRESERVE_REFERENCED | 同路径 | doc/handoffs/REALUSE-DATA-SAFETY-5-handoff.md | 前批 worktree 全部保留，本 Task 未触碰 |
+资源收口记录：`verification/REALUSE-DATA-SAFETY-6/resource-manifest.json`（schema_version 1）。
+
+- worktree：PRESERVE_REFERENCED（分支 `task/REALUSE-DATA-SAFETY-6`，未删除、未 prune）
+- 用户数据根：PRESERVE_USER_DATA（全程只读，未写入 / 未删除 / 未迁移）
+- 仓外临时副本：`tmp/REALUSE-DATA-SAFETY-6` 与 `tmp/safety6-review` 均为 DELETE_SAFE，已于 2026-11-01 核对绝对路径后删除（closeout_counts.deleted=2）
 
 ## 治理检查
 
 - 命令：`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/REALUSE-DATA-SAFETY-6.md`
-- 结果：**FAIL（2 errors, 2 warnings）—— 全部为既有债务，与本 Task 改动无关**；详见 handoff 与下面的原文。
-- 2 条错误原文：`失效的本地引用：doc\AD-003_REFERENCED_SOURCE_ARCHITECTURE.md → design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md`、`… → design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md`。这两个文件只存在于 **main 工作区的未提交文件**中（`git ls-tree 841cbdc4b doc/design/FLUENT*` 为空），因此任何干净 worktree 上都会红；修复面在 `doc/AD-003_*.md` / `doc/design/`，均不在本 Task `allowed_paths`，故不擅自修。
-- 2 条警告：7 个非终态 Task 的既有提示、`doc/REBASELINE_PLAN.md` 已达预算 80%（既有债务）。
-- **不声称 PASS**；本 Task 自身引入的检查项（Task 卡语法、AC 标记、证据 pin、READY 节点一致性）在最终一轮运行中没有新增错误。
+- **交付时（worktree 基于 `841cbdc4b`）：FAIL（2 errors, 2 warnings）—— 全部为既有债务，与本 Task 改动无关**。
+  - 2 条错误原因：`doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md` 引用 `design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md` 与 `design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md`，这两个文件当时只在 main 工作区未提交，任何干净 worktree 上都会红。修复面在 `doc/AD-003_*.md` / `doc/design/`，不在本 Task `allowed_paths`，未擅自修。
+- **集成后（main 已入库两个 FLUENT 文档，提交 `6cab0b083`；本 Task 分支 `merge main` 后重跑）：PASS (2 warnings)** —— 2 条 warning 为既有提示（7 个非终态 Task、`REBASELINE_PLAN` 预算 80%）。集成环境 `main@011b19bbf` 实测 `PASS (2 warnings)`。
+- 结论：交付时的 FAIL 已由 main 侧引用修复消除，**未伪造当时的 PASS**。
+
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-6-review.md](../reviews/REALUSE-DATA-SAFETY-6-review.md)
+- Reviewer：`safety6-reviewer`（Agent Teams 共享任务 `task-3`，fresh context；未参与实现与返修）
+- 被审 head：`0feff7a4c`（merge main 后）；实现内容 `fb5065013`
+- 结论：**approved**（P0=0 / P1=0 / P2=3 open，不阻断集成）；AC1/AC2/AC3 均判 **MET**
+- 复跑：build 0 警告 0 错误；新增用例 5/5；全量 394 通过 / 0 失败 / 7 跳过（401）；`check.ps1 -TaskPath` PASS (2 warnings)；负向对照独立复现 3 failed / 2 passed
+- 独立性：2026-10-31 用户裁决口径（上下文独立）；Review 报告字节由 reviewer 写入，DSH 未改写
+
+## Known P2（open，随集成保留，登记为后续项）
+
+| ID | 级别 | 内容 | 建议处置 |
+|---|---|---|---|
+| R-001 | P2 | 关闭阅读浮层与在途保存并发时，镜像回调在 `ReaderOverlayViewModel.cs:377-379` 解引用已置 null 的 `_book`，抛出未捕获 NRE，且关闭时权威重读被跳过（reviewer 在仓外副本用 gate 门控用例真实复现，EXIT 1） | 下一轮小修：`await` 前局部固化 book/chapter/page 值；`CloseAsync` 在 `_isSaving` 时仍保证一次权威重读。属实现引入的并发缺陷，不涉及数据丢失（Core 已提交的保存不受影响） |
+| R-002 | P2 | 证据 pin 哈希基准受 CRLF/LF 影响（worktree 一致 10/11、blob 一致 6/11；`E-GOV-CHECK` pin 与当前字节不符） | 加 `.gitattributes` 规则（`verification/** text eol=lf`）后重算 pin |
+| R-003 | P2 | AC1 测试日志缺 EXIT 码与完整命令，负向对照为散文摘要（Q-009 口径） | 后续任务补全日志格式 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待独立 Review 与集成后填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@011b19bbf`（merge `task/REALUSE-DATA-SAFETY-6`，含 `36b666830` Review 报告提交）
+- 集成验证：`check.ps1` PASS (2 warnings)；`dotnet build NewManga.sln` 0 警告 0 错误；`dotnet test NewManga.App.Tests` 见测试表
+- AC 判定：AC1 `MET`、AC2 `MET`、AC3 `MET`（方案已出，裁决待用户）
+- 未完成/待裁决：MA-11（A1/A4 等）、MA-20（M-1/M-4）需用户裁决后另立实施 Task；AC2 真正去重属资源通道契约演进（`G-CONTRACT` OPEN）
+- 资源：worktree 保留（`PRESERVE_REFERENCED`）；仓外临时副本 `G:/CODEX/New Manga.workspace/tmp/REALUSE-DATA-SAFETY-6/` 与 reviewer 的 `tmp/safety6-review/` 可删，但按纪律不擅自清理（待用户/DSH 资源处置裁决）
+- 已知 P2：R-001 / R-002 / R-003 见上表
