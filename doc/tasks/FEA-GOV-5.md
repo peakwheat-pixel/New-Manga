@@ -39,8 +39,8 @@ C-02/C-03/C-11 已 `approved`（FEA-GOV-4）。FEA-01 契约清单里还有 C-04
 ## 验收标准
 
 - [ ] **AC1 C-04b 复核**：指派独立 reviewer 复核 `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md`，报告入库 `doc/reviews/FEA-GOV-5-c04b-review.md`；P0/P1 必须处置。 <<PARTIAL: 待实现>>
-- [ ] **AC2 C-05 草案**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`——页可见性谓词（`page.committed >= X ∧ active probe = false ∧ no live save`）的可验证定义、判别方法、失败语义。 <<PARTIAL: 待实现>>
-- [ ] **AC3 C-06 草案**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`——授权面（`SourceAccessRegistry` + `source-read` grant）的命令/字段/版本草案。 <<PARTIAL: 待实现>>
+- [x] **AC2 C-05 草案**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`——页可见性谓词（`page.committed >= X ∧ active probe = false ∧ no live save`）的可验证定义、判别方法、失败语义。**已完成**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`（P1–P6 谓词 + 判别 SQL + 失败语义）。 <<MET>>
+- [x] **AC3 C-06 草案**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`——授权面（`SourceAccessRegistry` + `source-read` grant）的命令/字段/版本草案。**已完成**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`（registry + grant + 4 命令 + 5 安全约束）。 <<MET>>
 
 ## 禁止范围
 
@@ -51,8 +51,8 @@ C-02/C-03/C-11 已 `approved`（FEA-GOV-4）。FEA-01 契约清单里还有 C-04
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1 | 独立 reviewer 只读复核 | 只读 | NOT_RUN | 待补 |
-| AC2 | 起草 + `check.ps1` | 文档 | NOT_RUN | 待补 |
-| AC3 | 起草 + `check.ps1` | 文档 | NOT_RUN | 待补 |
+| AC2 | 起草 + `check.ps1` | 文档 | 草案完成；check.ps1 PASS | `doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md` |
+| AC3 | 起草 + `check.ps1` | 文档 | 草案完成；check.ps1 PASS | `doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md` |
 
 ## Canonical Evidence
 

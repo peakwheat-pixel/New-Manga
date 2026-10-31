@@ -29,7 +29,8 @@
 | **C-01b 冻结包** | `approved`（r3，0 P0/0 P1/3 P2）；四份条件核对 + 11 步四阶段序列 + 回退表 + UNFREEZE 载体 | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` |
 | **C-02 复核** | **`approved`**（r2，0 P0/0 P1/3 P2 非阻断；r1 的 4 P1 全部处置） | `doc/reviews/FEA-GOV-4-c02-r2.md` |
 | **C-03 复核** | **`approved`**（r2，0 P0/0 P1/3 P2；写者上移 Appearance coordinator） | `doc/reviews/FEA-GOV-4-c03-r2.md` |
-| **C-11 复核** | r1 `changes_requested`（2 P1）→ 已修，r2 复核中 | `doc/reviews/FEA-GOV-4-c11-review.md` |
+| **C-11 复核** | **`approved`**（r3；r1/r2 的 3 P1 全部处置） | `doc/reviews/FEA-GOV-4-c11-r3.md` |
+| **C-05/C-06 草案** | 页可见性谓词（P1–P6）+ 授权面（registry/grant/4 命令） | `doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`、`FEA-C06_SOURCE_AUTH_DRAFT.md` |
 | **C-04b 草案** | 删除协议字段/码表（`PreviewPermanentDeleteBooks` + `inventory_digest` + 6 码表），未复核 | `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md` |
 
 ## 待你拍板（可直接回 A/B/C）
