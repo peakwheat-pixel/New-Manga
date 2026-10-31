@@ -291,4 +291,42 @@ public sealed class LibraryProgressRefreshTests
         Assert.Equal(ReaderProgressSaveStatus.Saved, library.Reader.LastSaveResult?.Status);
         Assert.NotEmpty(controller.Progress.Entries);
     }
+
+    // ------------------------------------------------------------------
+    // AC3 (REALUSE-DATA-SAFETY-8 F-005): a page turn during the close window
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// F-005: while <c>CloseAsync</c> waits for the in-flight save, a page turn that slips in must
+    /// not start a new save (which would re-arm <c>_isSaving</c> and skip the closing authoritative
+    /// re-read). Exactly one closing re-read must happen.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread()
+    {
+        var (controller, _, library) = await CreateLibraryAsync(pages: 8);
+        Assert.True(await library.Reader.OpenAsync(BookId, ChapterId));
+        var loadsBefore = controller.ReaderLoadCount;
+
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        controller.SaveGate = gate.Task;
+
+        var firstNavigation = library.Reader.GoToAsync(3);
+        await controller.SaveGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        var closing = library.Reader.CloseAsync();
+
+        // A page turn during the close window: must be ignored, not start a second save.
+        var lateNavigation = library.Reader.GoToAsync(5);
+
+        gate.SetResult(true);
+        await firstNavigation;
+        await lateNavigation;
+        await closing;
+
+        Assert.False(library.Reader.IsOpen);
+        Assert.Equal(loadsBefore + 1, controller.ReaderLoadCount);
+        Assert.Equal(ReaderProgressSaveStatus.Saved, library.Reader.LastSaveResult?.Status);
+        Assert.NotEmpty(controller.Progress.Entries);
+    }
 }

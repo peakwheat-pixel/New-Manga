@@ -47,7 +47,7 @@ allowed_paths:
 ## 验收标准
 
 - [x] **AC1 R-001 修复**：等待保存前局部固化 book/chapter/page 值，不再解引用可能为 null 的字段；`CloseAsync` 在 `_isSaving` 时仍保证一次权威重读；新增并发用例（关闭 + 在途保存）证明不再 NRE 且刷新发生。 <<MET>>
-- [x] **AC2 R-002 规范化**：为 `verification/REALUSE-DATA-SAFETY-6/**` 增加 `.gitattributes` eol=lf 规则并强制 LF 检出；重算 11 条 pin 对照（2 条更新），登记于 `ac2-eol-pin.md`。 <<MET>>
+- [x] **AC2 R-002 规范化**：为 `verification/REALUSE-DATA-SAFETY-6/**` 增加 `.gitattributes` eol=lf 规则并强制 LF 检出；全部 pin 统一为 commit blob（LF）基准，12 条中 5 条值变化（3 代码 + 2 证据），登记于 `ac2-eol-pin.md`。 <<MET>>
 - [x] **AC3 R-003 日志格式**：测试日志含完整命令、EXIT 码与 ISO 时间戳；负向对照给出可复现步骤。 <<MET>>
 
 ## 禁止范围
@@ -62,7 +62,7 @@ allowed_paths:
 | AC1 全量 | `dotnet test tests/NewManga.App.Tests` | net9.0 | **PASS 395 / 0 失败 / 7 跳过（402）**，EXIT=0 | `ac1-fix-tests.txt` |
 | AC1 负向 | 移除生产修复、保留测试后重跑并发用例 | net9.0 | **1 失败 / 0 通过，EXIT=1** | `ac1-negative-control.md` |
 | AC1 构建 | `dotnet build NewManga.sln -v q --nologo` | net9.0 | **0 警告 / 0 错误**，EXIT=0 | `ac1-fix-tests.txt` |
-| AC2 | `.gitattributes` eol=lf + 强制 LF 检出 + `Get-FileHash` 重算 | 只读 | **9 条不变 / 2 条更新**，W/LF 一致 | `ac2-eol-pin.md` |
+| AC2 | `.gitattributes` eol=lf + 强制 LF 检出 + `Get-FileHash` 重算 | 只读 | **12 条 pin：7 条不变 / 5 条更新**（3 代码 + 2 证据） | `ac2-eol-pin.md` |
 | AC3 | 日志格式自检 | — | 含 generated_at、命令、EXIT、负向步骤 | `ac3-log-format.md` |
 
 ## Canonical Evidence
