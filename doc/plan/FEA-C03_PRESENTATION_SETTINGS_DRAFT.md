@@ -27,13 +27,13 @@
 
 - **唯一写者**：`presentation-settings.json`（新文件）作为**外观/布局/动效**的单一写点；`ThemeSettingsStore` 降为 **sink-only**（只读，不再写）。
 - **旧文件停止写的时点**：新文件**首次成功写入**后，`theme-settings.json` 转为只读（保留为迁移输入，不删除）。
-- **理由**：Fluent 主题包（`builtin.fluent`）需要持久化比现有 `ThemeSettings` 更多的字段（材质强度、圆角档、密度档、动效分类），塞进旧模型会破坏 V11R §4 的冻结签名。
+- **理由**：Fluent 主题包（视觉主题 `builtin.fluent-dark`，frontend id `builtin.fluent`）需要持久化比现有 `ThemeSettings` 更多的字段（材质强度、圆角档、密度档、动效分类），塞进旧模型会破坏 V11R §4 的冻结签名。
 
 ### 2.2 字段迁移矩阵
 
 | 旧字段（`theme-settings.json`） | 新字段（`presentation-settings.json`） | 迁移方式 |
 |---|---|---|
-| `ThemeId` | `theme.packageId`（含 `builtin.current-v2` / `builtin.fluent`） | **保留**（值映射） |
+| `ThemeId` | `theme.visualThemeId`（`newmanga-default` / `builtin.fluent-dark`）+ `theme.frontendId`（`builtin.current-v2` / `builtin.fluent`） | **保留**（值映射；两套 id 见 C-02 V-07） |
 | `Appearance` | `appearance.mode` | **保留** |
 | `Contrast` | `appearance.contrast` | **保留** |
 | `LayoutProfile.Id/Navigation/Shelf/Density/Workbench/Reader` | `layout.*` 同名 | **保留**（结构不变） |
@@ -65,21 +65,29 @@
 | 三态可验证 | 单测：`reduce` 下 `decorative` 类动效时长为 0；`full` 下不受系统设置影响 |
 | 与 C-02 一致 | `builtin.fluent` 主题包 id 在 `theme.packageId` 合法；`builtin.current-v2` 下 material/corners 字段被忽略（不报错） |
 
-## 4. 待用户裁决项
+## 4. 冻结条件
+
+- ① **独立复核**通过（上下文独立）；
+- ② **用户裁决** U-05a / U-05b；
+- ③ **C-02 已冻结**（本单在 C-02 之上，见 C-02 §6 `:124`）；
+- ④ `check.ps1` PASS。
+
+## 5. 待用户裁决项
 
 | # | 问题 | 推荐 | 影响 |
 |---|---|---|---|
 | **U-05a** | 首阶段是否纳入动效三态与分类（而不是只有 `ReducedMotion` 布尔）？ | **是**（三态 + 三类，等价旧行为的迁移路径已给出） | 若否，Fluent 的动效分级无法表达 |
 | U-05b | 旧 `theme-settings.json` 是否在迁移后删除？ | **否**（转只读保留） | 删除会丢回退输入；保留成本极低 |
 
-## 5. 与现役/冻结契约的关系
+## 6. 与现役/冻结契约的关系
 
 - 本草案**不改** V11R §4 的公开面（`ThemeKind`/接口签名不变）；新增的 `PresentationSettingsStore` 属 ThemeEngine 内部实现，公开面由 C-02 V-07 约束。
 - 与 C-01b 无交叉（存储契约不涉及外观设置文件）。
 - 与 C-02 联动：`builtin.fluent` 的材质/圆角/动效字段由本文件定义持久化形态，视觉例外由 C-02 V-05 定义。
 
-## 6. 变更记录
+## 7. 变更记录
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表（代码事实）、目标文件与唯一写者、字段迁移矩阵 10 行、动效三态/三类、5 条判据、U-05a/U-05b 待裁决 | DSH |
+| 2026-11-01 | v2：补正式冻结条件（§4 四条，含 C-02 先冻结）；字段表补双 id 体系；全文 id 词汇与 C-02 V-07 对齐 | DSH |
