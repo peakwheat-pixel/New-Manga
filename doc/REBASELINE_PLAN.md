@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-GOV-2（AD-002 责任表修订提案，in_progress）
+当前 DAG：FEA-GOV-3（契约冻结包准备，in_progress）
 
 ## 历史快照（终态节点，非当前 DAG）
 

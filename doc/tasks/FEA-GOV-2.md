@@ -3,20 +3,20 @@ id: FEA-GOV-2
 title: AD-002 责任表与哨兵口径修订提案（C-01b 冻结前置③）
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_FEA-GOV-1_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: c01b-reviewer
 depends_on:
   - FEA-GOV-1
 base_commit: 0c6610fd3
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 937cbad2a
+delivery_head: 26feb784e
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-GOV-2
 allowed_paths:
   - doc/tasks/FEA-GOV-2.md
@@ -59,11 +59,18 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `26feb784e` | `5255dfa837cc54711d560b725f247bed0ed52ab0c9276c0056ec8f5a6e1c310b` | CANONICAL |
+| E-PROPOSAL | AC1/AC2 | `doc/plan/FEA-AD002_AMENDMENT_PROPOSAL.md` | `937cbad2a` | `8b8d23fc821af9069856cffb16bc2493bf91b5a3e4cefe7a403043c5067f9fd0` | CANONICAL |
 
 ## Resource Manifest
 
 治理 Task：无 worktree、无临时产物；资源处置记录见 `verification/FEA-GOV-2/resource-manifest.json`（schema_version 1）。
+
+## 独立 Review
+
+- r1 [FEA-GOV-2-review.md](../reviews/FEA-GOV-2-review.md)：`changes_requested`（P0×0 / P1×1 / P2×5）→ 改推荐 D 零字节案
+- r2 [FEA-GOV-2-r2.md](../reviews/FEA-GOV-2-r2.md)：`changes_requested`（P0×0 / P1×2 / P2×4）→ 修 pin commit 回填、AD-003 §8 留痕、A 行降备选、D 案留痕
+- r3 [FEA-GOV-2-r3.md](../reviews/FEA-GOV-2-r3.md)：**`approved`**（P0×0 / P1×0 / P2×3 非阻断，K-1/K-2/K-3 均已处置）
+- Reviewer：`c01b-reviewer`（Agent Teams durable teammate task-13，独立上下文）
 
 ## 跨 Task 治理修复记录
 
@@ -71,4 +78,8 @@ C-01b 冻结前置② 已由 FEA-GOV-1 解决（AD-003 `G-REVIEW: SATISFIED`）�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：main 直接提交 `937cbad2a`（治理 Task，无 worktree/branch）
+- 结果：提案 v2（推荐 **D 零字节**）定稿；C1–C4 交用户裁决（推荐回 `R`）；C-01b 冻结前置③ 待用户确认后收口
+- 已知 P2：K-1/K-2/K-3 均已处置；无遗留
+- 资源：无 worktree、无临时产物、无用户数据访问
