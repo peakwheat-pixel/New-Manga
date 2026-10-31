@@ -1,6 +1,6 @@
 # NIGHT SHIFT 2026-11-01 晨报（DSH 自主夜班）
 
-**一句话结论**：夜班进行中——主线 SAFETY-6 已 done 并集成 main；新架构线 FEA-00 r7 独立 Review 为 `changes_requested`（2×P1），方案待修订；当前离线可推进项 = REALUSE-DATA-SAFETY-7（SAFETY-6 Review 的 3 条 P2）。
+**一句话结论**：SAFETY 线（6→12）全部收尾、17 条 P2 零悬挂；新架构四份契约中 **C-01b/C-02/C-03 已 `approved`**、C-11 待 r3 极窄面；冻结只差你回 `R`（AD-002 口径）与 U-04/U-05 三个选择。
 
 ## 主线到哪
 
