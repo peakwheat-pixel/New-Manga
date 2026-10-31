@@ -41,7 +41,7 @@
 - **预览阶段**（`PrepareRun`）：计算 `PreparedRun`（快照 + 摘要 + `preparedDigest`），**不写 DB、不触发执行**。
 - **接受阶段**（`AcceptRun`）：校验 `preparedDigest` 与当前状态一致 → 写入 `pipeline_runs`（含全部快照列）→ 返回 `runId`。
 - **拒绝**：digest 不一致 / 目标变化 / 配置变化 → `RUN_STALE_PREVIEW`（零副作用）。
-- **`preparedDigest` 算法**：对 `{requestedTargets, settingsSnapshot, providerBindingSnapshot, constraintSnapshotRef}` 做 canonical JSON（键排序、UTF-8、无空白）后 sha256；与 C-04b 的 digest 同口径。
+- **`preparedDigest` 算法**：对 `{requestedTargets, settingsSnapshot, providerBindingSnapshot, constraintSnapshotRef}` 做 canonical JSON（键排序、UTF-8、无空白）后 sha256；**输出格式与 C-04b 一致**：`sha256:<64 hex>`（小写带前缀）。
 
 ### SC-R02 快照不可变
 
@@ -72,9 +72,9 @@
 ## 5. 冻结条件
 
 1. 独立复核通过；
-1a. **C-05 与 C-04b 已冻结**（§4 依赖它们的 active_runs 与删除保护口径）；
+- **前置（a）**：C-05 与 C-04b 已冻结（§4 依赖它们的 active_runs 与删除保护口径）；
 2. C-01b 已冻结（顺序：C-01b 先）；
-2a. 新增命令/错误码的**协议注册**由独立 Task 完成：`PrepareRun`/`AcceptRun` 的 wire 版本（minor 递增）、3 个新码（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE`）须扩 M2-C1 错误表 + ErrorView 联合（同 C-04b §2.4 模式）；
+- **前置（b）**：新增命令/错误码的**协议注册**由独立 Task 完成：`PrepareRun`/`AcceptRun` 的 wire 版本（minor 递增）、3 个新码（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE`）须扩 M2-C1 错误表 + ErrorView 联合（同 C-04b §2.4 模式）；
 3. `check.ps1` PASS。
 
 ## 6. 变更记录
@@ -82,3 +82,4 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
+| 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-1 接口口径 + P2×3） | DSH |
