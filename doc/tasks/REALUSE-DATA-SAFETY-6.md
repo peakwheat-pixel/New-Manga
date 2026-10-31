@@ -111,6 +111,7 @@ REALUSE-DATA-SAFETY-5 的核对结论：9 条里修了 6 条，剩下 4 条明�
 | E-AC3-DOC | AC3 | `verification/REALUSE-DATA-SAFETY-6/ac3-options.md` | `fb5065013` | `9c27d477301e090e79cb48a3fafa892b86ddfce80e41723826cd2acfef5c950b` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-6/README.md` | `fb5065013` | `d199f4843dea5c3c6b25ee293f1b54b93ce58bdb82fa9960c4eb6676041ca3ff` | CANONICAL |
 | E-GOV-CHECK | Gate（治理检查） | `verification/REALUSE-DATA-SAFETY-6/governance-check.txt` | `b94dc3d86` | `bc97d7a78e4db6e84899c415bc82a27e45b8874c16b31e71baf571c69e7b592e` | CANONICAL |
+| E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-6/resource-manifest.json` | `82e86e97b` | `133943d78481e43c0bb4d4766cf7691ca00fe7358506c249c50130b629befd99` | CANONICAL |
 
 ## Resource Manifest
 
