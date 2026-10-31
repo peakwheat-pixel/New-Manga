@@ -1,6 +1,6 @@
 # NIGHT SHIFT 2026-11-01 晨报（DSH 自主夜班）
 
-**一句话结论**：主干 SAFETY 线（6→12）**全部收尾、17 条 P2 零悬挂、测试基线 396 passed / 0 failed**；新架构线 **10 份契约全部 `approved`**（C-01b/C-02/C-03/C-04b/C-05/C-06/C-08/C-09/C-11/C-12）+ **冻结矩阵 `approved`**——**只差你 4 个裁决**（`R` / U-04 / U-05a / U-05b）即可按 8 步顺序冻结。
+**一句话结论**：主干 SAFETY 线（6→12）**全部收尾、17 条 P2 零悬挂、测试基线 396 passed / 0 failed**；新架构线 **10 份契约全部 `approved`**（C-01b/C-02/C-03/C-04b/C-05/C-06/C-08/C-09/C-11/C-12）+ **冻结矩阵 `approved`**——**用户侧只差你 4 个裁决**（`R` / U-04 / U-05a / U-05b）；之后仍需关闭 `G-DELETE-CONTRACT`/`G-CONTRACT`、D04–D07 裁决、DSH 批准 2.11、M2-C1 扩展、C-08 协议注册才能逐步冻结。
 
 ## 主线到哪
 
@@ -35,9 +35,25 @@
 | **C-08/C-09/C-12 草案** | Run 快照（SC-R01…R05）+ 删除/备份/迁移（SC-B01…B05）+ 检查器边界 | `doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md`、`FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md`、`FEA-C12_CHECKER_SCOPE_DRAFT.md` |
 | **C-05/C-06 复核** | **`approved`**（r3；r1/r2 的 6 P1 全部处置） | `doc/reviews/FEA-GOV-6-c05-c06-r3.md` |
 | **C-08/C-09/C-12 复核** | **`approved`**（r2；r1 的 3 P1 全部处置） | `doc/reviews/FEA-GOV-7-r2.md` |
-| **冻结矩阵** | `approved` 待复核（11 行 × 条件 × 8 步顺序 × 5 Gate） | `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md` |
-| **C-04b 草案** | 删除协议字段/码表（`PreviewPermanentDeleteBooks` + `inventory_digest` + 6 码表），未复核 | `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md` |
+| **冻结矩阵** | **`approved`**（r2；12 行 × 8 步 × 5 Gate） | `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md` |
 
+## 契约总表（10 份，全部 `approved`）
+
+| 契约 | 内容 | 轮次 | 报告 |
+|---|---|---|---|
+| C-01b | 存储契约（SC-01…SC-39） | r5 | `doc/reviews/FEA-C01b-*` |
+| C-02 | V11R 条款级修订单（V-01…V-08b） | r2 | `doc/reviews/FEA-GOV-4-c02-r2.md` |
+| C-03 | 外观持久化与字段迁移 | r2 | `doc/reviews/FEA-GOV-4-c03-r2.md` |
+| C-04b | 删除协议字段与码表 | r3 | `doc/reviews/FEA-GOV-5-c04b-r3.md` |
+| C-05 | 页可见性谓词（V + 稳定性 S） | r3 | `doc/reviews/FEA-GOV-6-c05-c06-r3.md` |
+| C-06 | 授权面（registry + source-read grant） | r3 | `doc/reviews/FEA-GOV-6-c05-c06-r3.md` |
+| C-08 | Run 快照（SC-R01…R05） | r2 | `doc/reviews/FEA-GOV-7-r2.md` |
+| C-09 | 删除/备份/迁移（SC-B01…B05） | r2 | `doc/reviews/FEA-GOV-7-r2.md` |
+| C-11 | 候选 Task 表口径 | r3 | `doc/reviews/FEA-GOV-4-c11-r3.md` |
+| C-12 | 检查器职责边界 | r2 | `doc/reviews/FEA-GOV-7-r2.md` |
+
+**未完成**：C-07 API inventory 已生成（54 成员）待复核；C-10 交互契约部分起草（待 U-03）。
+**冻结顺序**见 [FEA-CONTRACT_FREEZE_MATRIX](plan/FEA-CONTRACT_FREEZE_MATRIX.md)（12 行 × 8 步 × 5 Gate，r2 `approved`）。
 ## 待你拍板（可直接回 A/B/C）
 
 1. **MA-11 旧库迁移策略**（SAFETY-6 AC3，涉及用户数据）
@@ -50,6 +66,7 @@
    - **A（推荐）**：`install.ps1` 默认隔离根 + `install-verify.ps1` 改实测断言
    - B：保持真实根 + 二次确认
    - C：仅文档化，不改脚本（不推荐：当前 `data_root_untouched=$true` 是硬编码假断言）
+   - 理由：A 让安装验证在隔离根上实测，避免把真实用户数据根当作测试对象；B 保留真实根但需二次确认，风险更高。
 
 3. **U-02 彻底删除是否解除 Lock/current/pinned**（FEA 契约方向）
    - **A（推荐）**：沿用 ADJ-001 冻结语义（用户显式彻底删除可解除；仅回收站到期 GC 拦截）
@@ -59,6 +76,7 @@
 4. **U-03 首阶段浮窗与主窗同区域编辑**
    - A：只读镜像（简单）
    - **B（推荐）**：按 `(SessionId, RegionId)` draft owner + 字段分域并发
+   - 理由：A 无法满足「首阶段浮窗与主窗同时编辑同一区域」的核心场景；B 用 draft owner 把并发收敛到字段级，与 C-08 的 PreparedRun/digest 机制相容。
 
 5. **U-04 Fluent 视觉是否豁免 V11R 圆角/阴影/模糊禁令**
    - **A（推荐）**：起草 per-scheme 例外登记（与 R-14 同构），不整体豁免（已落在 [C-02 V-05](plan/FEA-C02_V11R_AMENDMENT_DRAFT.md)：材质/层次/圆角三行，仅 `builtin.fluent` 生效且强制走令牌）
@@ -71,6 +89,7 @@
 7. **U-05a 外观持久化是否纳动效三态/三类**（C-03）
    - **A（推荐）**：纳入 `motion.mode = auto/full/reduce` + 三类（navigation/feedback/decorative），旧 `ReducedMotion=true` 映射为 `reduce`
    - B：只保留布尔 `ReducedMotion`（Fluent 动效分级无法表达）
+   - 理由：Fluent 设计需要三类动效分别在 `reduce` 下独立处理（如 `feedback` 保留颜色变化、`decorative` 全禁），布尔值无法表达；A 与 C-03 §2.3 的 `auto/full/reduce` 一致。
 
 ## 明早推荐第一步
 
