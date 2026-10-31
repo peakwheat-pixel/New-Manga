@@ -56,6 +56,13 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     private string _saveStatusText = "进度：未保存";
     private bool _isSaving;
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-7 R-001: the save currently awaiting the Host. Closing waits for it so
+    /// the closing pass cannot be short-circuited by <c>_isSaving</c>, and so the mirror callback
+    /// never runs against a book that the close has already cleared.
+    /// </summary>
+    private Task? _inFlightSave;
+
     public ReaderOverlayViewModel(
         IHostController controller,
         Action<string, NmStatus> notify,
@@ -273,6 +280,21 @@ public sealed class ReaderOverlayViewModel : ObservableObject
 
     public async Task CloseAsync()
     {
+        // REALUSE-DATA-SAFETY-7 R-001: wait for an in-flight page save first. Without this the
+        // closing pass was short-circuited by _isSaving (no authoritative re-read happened) and the
+        // pending save resumed against a _book that this method had already set to null (NRE).
+        if (_inFlightSave is { } pending)
+        {
+            try
+            {
+                await pending.ConfigureAwait(true);
+            }
+            catch (Exception)
+            {
+                // SaveProgressCoreAsync already records the typed status; the close must proceed.
+            }
+        }
+
         // MA-09: the closing save is the last one the reader performs, and the shelf becomes visible
         // right after it, so the Library re-reads the authoritative projection on this pass.
         await SaveProgressAsync(isClosing: true).ConfigureAwait(true);
@@ -341,19 +363,35 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         OnPropertyChanged(nameof(ProgressPercent), nameof(ProgressText));
     }
 
-    public async Task SaveProgressAsync(bool isClosing = false)
+    public Task SaveProgressAsync(bool isClosing = false)
     {
         if (_book is null || Pages.Count == 0 || _isSaving)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         _isSaving = true;
+        var inFlight = SaveProgressCoreAsync(isClosing);
+        _inFlightSave = inFlight;
+        return inFlight;
+    }
+
+    private async Task SaveProgressCoreAsync(bool isClosing)
+    {
+        // R-001: snapshot the identities BEFORE awaiting the Host. The reader can be closed while the
+        // call is pending; dereferencing _book / Pages afterwards was the NRE source.
+        var book = _book;
+        var page = CurrentPage ?? (Pages.Count > 0 ? Pages[0] : null);
+        var pageCount = Pages.Count;
         try
         {
-            var page = CurrentPage ?? Pages[0];
+            if (book is null || page is null || pageCount == 0)
+            {
+                return;
+            }
+
             var result = await _controller.SaveReadingProgressAsync(
-                _book.ChapterId,
+                book.ChapterId,
                 page.PageId,
                 "original",
                 scrollOffsetY: null).ConfigureAwait(true);
@@ -375,10 +413,10 @@ public sealed class ReaderOverlayViewModel : ObservableObject
             if (result.IsSaved && _progressSaved is not null)
             {
                 await _progressSaved(new ReaderProgressSavedEvent(
-                    _book.BookId,
-                    _book.ChapterId,
+                    book.BookId,
+                    book.ChapterId,
                     page.Index + 1,
-                    Pages.Count,
+                    pageCount,
                     isClosing,
                     result)).ConfigureAwait(true);
             }

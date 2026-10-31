@@ -1,0 +1,21 @@
+# REALUSE-DATA-SAFETY-7 AC1 evidence log
+generated_at: 2026-11-01T01:29:21.6006025+08:00
+host: HOME-MY / pwsh 7.6.8
+
+## command: dotnet build NewManga.sln -v q --nologo
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:03.14
+
+EXIT=0
+
+## command: dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --nologo -v q
+G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-7\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:   395，已跳过:     7，总计:   402，持续时间: 58 s - NewManga.App.Tests.dll (net9.0)
+
+EXIT=0

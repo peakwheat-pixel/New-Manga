@@ -251,4 +251,44 @@ public sealed class LibraryProgressRefreshTests
         Assert.Equal("未开始阅读 · 共 8 页", library.DetailProgressText);
         Assert.Equal(refreshesBefore, library.ProgressRefreshes);
     }
+
+    // ------------------------------------------------------------------
+    // AC1-E (REALUSE-DATA-SAFETY-7 R-001): closing while a save is in flight
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// R-001 reproducer-turned-regression test: a page save is held inside the Host await, the user
+    /// closes the reader, and the pending save then resumes. Before the fix this dereferenced a
+    /// <c>_book</c> the close had already set to null (unhandled NRE, propagated out of
+    /// <c>GoToAsync</c>) and the closing authoritative re-read was skipped because
+    /// <c>_isSaving</c> short-circuited the closing pass.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ClosingWhileSaveInFlight_DoesNotThrow_AndStillReReadsProjection()
+    {
+        var (controller, _, library) = await CreateLibraryAsync(pages: 8);
+        Assert.True(await library.Reader.OpenAsync(BookId, ChapterId));
+        var loadsBefore = controller.ReaderLoadCount;
+
+        // Hold the next progress save inside the Host await so the close races it deterministically.
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        controller.SaveGate = gate.Task;
+
+        var navigation = library.Reader.GoToAsync(3); // starts the save, blocks on the gate
+        await controller.SaveGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.True(controller.ProgressSaveCalls >= 1);
+
+        // Close while the save is pending: must not throw and must still re-read the projection.
+        var closing = library.Reader.CloseAsync();
+        gate.SetResult(true);
+        await navigation; // throws NullReferenceException without the R-001 fix
+        await closing;
+
+        Assert.False(library.Reader.IsOpen);
+        Assert.True(
+            controller.ReaderLoadCount > loadsBefore,
+            $"closing during an in-flight save must re-read the projection ({loadsBefore} -> {controller.ReaderLoadCount})");
+        Assert.Equal(ReaderProgressSaveStatus.Saved, library.Reader.LastSaveResult?.Status);
+        Assert.NotEmpty(controller.Progress.Entries);
+    }
 }

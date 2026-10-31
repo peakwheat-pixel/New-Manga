@@ -261,7 +261,7 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult<IReadOnlyList<ChapterSummary>>(Array.Empty<ChapterSummary>());
     }
 
-    public Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
+    public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,
         string mode = "original",
@@ -269,16 +269,36 @@ public sealed class FakeHostController : IHostController
         double elapsedSecondsDelta = 0,
         CancellationToken cancellationToken = default)
     {
+        ProgressSaveCalls++;
+
+        // REALUSE-DATA-SAFETY-7 R-001: lets a test hold a save inside the Host await so the reader
+        // can be closed while the call is still pending (the concurrency window that used to NRE).
+        if (SaveGate is { } gate)
+        {
+            SaveGate = null;
+            SaveGateStarted.TrySetResult(true);
+            await gate.ConfigureAwait(false);
+        }
+
         if (ScriptedSaveResults.Count > 0)
         {
             var scripted = ScriptedSaveResults.Dequeue();
             Progress.Attempts.Add(new FakeProgressAttempt(chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta));
-            return Task.FromResult(scripted);
+            return scripted;
         }
 
-        var result = Progress.Save(ResolveBookForChapter(chapterId), chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta);
-        return Task.FromResult(result);
+        return Progress.Save(ResolveBookForChapter(chapterId), chapterId, pageId, mode, scrollOffsetY, elapsedSecondsDelta);
     }
+
+    /// <summary>R-001: when set, the next save awaits this gate before returning a result.</summary>
+    public Task? SaveGate { get; set; }
+
+    /// <summary>R-001: signals that the gated save actually entered the Host await.</summary>
+    public TaskCompletionSource<bool> SaveGateStarted { get; } =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    /// <summary>R-001: number of progress saves that reached the controller.</summary>
+    public int ProgressSaveCalls { get; private set; }
 
     // -------------------------------------------------------------------------------------
     // CREDENTIAL-UI-1: scripted credential port. Records the exact command arguments the UI

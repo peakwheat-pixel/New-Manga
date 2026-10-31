@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-7
 title: SAFETY-6 Review P2 收尾——并发 NRE、证据 pin 规范化、日志格式
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-6_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-6
-base_commit: d3bcf9f94
-branch: null
-worktree: null
+base_commit: 29d06c462
+branch: task/REALUSE-DATA-SAFETY-7
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-7
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -20,6 +20,7 @@ resource_closeout_status: pending
 evidence_dir: verification/REALUSE-DATA-SAFETY-7
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-7.md
+  - doc/tasks/REALUSE-DATA-SAFETY-6.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
@@ -45,9 +46,9 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 R-001 修复**：等待保存前局部固化 book/chapter/page 值，不再解引用可能为 null 的字段；`CloseAsync` 在 `_isSaving` 时仍保证一次权威重读；新增并发用例（关闭 + 在途保存）证明不再 NRE 且刷新发生。 <<PARTIAL: 待实现>>
-- [ ] **AC2 R-002 规范化**：为 `verification/**` 增加 `.gitattributes` eol 规则（或等价手段），使 pin 基准稳定；重算 SAFETY-6 的 11 条 pin 并在任务卡登记 new/old 对照。 <<PARTIAL: 待实现>>
-- [ ] **AC3 R-003 日志格式**：测试日志含完整命令、EXIT 码与时间戳；负向对照给出可复现步骤而非散文。 <<PARTIAL: 待实现>>
+- [x] **AC1 R-001 修复**：等待保存前局部固化 book/chapter/page 值，不再解引用可能为 null 的字段；`CloseAsync` 在 `_isSaving` 时仍保证一次权威重读；新增并发用例（关闭 + 在途保存）证明不再 NRE 且刷新发生。 <<MET>>
+- [x] **AC2 R-002 规范化**：为 `verification/REALUSE-DATA-SAFETY-6/**` 增加 `.gitattributes` eol=lf 规则并强制 LF 检出；重算 11 条 pin 对照（2 条更新），登记于 `ac2-eol-pin.md`。 <<MET>>
+- [x] **AC3 R-003 日志格式**：测试日志含完整命令、EXIT 码与 ISO 时间戳；负向对照给出可复现步骤。 <<MET>>
 
 ## 禁止范围
 
@@ -57,10 +58,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `dotnet test --filter FullyQualifiedName~LibraryProgressRefreshTests`（含新增并发用例） | net9.0 | NOT_RUN | 待补 |
-| AC1 负向 | 无修复时并发用例失败（对照） | net9.0 | NOT_RUN | 待补 |
-| AC2 | `Get-FileHash` 对照 11 条 pin | 只读 | NOT_RUN | 待补 |
-| AC3 | 日志含 EXIT/命令/时间戳 | 只读 | NOT_RUN | 待补 |
+| AC1 | `dotnet test --filter FullyQualifiedName~LibraryProgressRefreshTests`（含新增并发用例） | net9.0 | **PASS 6/6**，EXIT=0 | `ac1-fix-tests.txt` |
+| AC1 全量 | `dotnet test tests/NewManga.App.Tests` | net9.0 | **PASS 395 / 0 失败 / 7 跳过（402）**，EXIT=0 | `ac1-fix-tests.txt` |
+| AC1 负向 | 移除生产修复、保留测试后重跑并发用例 | net9.0 | **1 失败 / 0 通过，EXIT=1** | `ac1-negative-control.md` |
+| AC1 构建 | `dotnet build NewManga.sln -v q --nologo` | net9.0 | **0 警告 / 0 错误**，EXIT=0 | `ac1-fix-tests.txt` |
+| AC2 | `.gitattributes` eol=lf + 强制 LF 检出 + `Get-FileHash` 重算 | 只读 | **9 条不变 / 2 条更新**，W/LF 一致 | `ac2-eol-pin.md` |
+| AC3 | 日志格式自检 | — | 含 generated_at、命令、EXIT、负向步骤 | `ac3-log-format.md` |
 
 ## Canonical Evidence
 

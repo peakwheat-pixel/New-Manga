@@ -46,3 +46,7 @@ doc/tasks/*.md text eol=lf
 verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.json text eol=lf
 verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/*.md text eol=lf
 verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/** -text
+# REALUSE-DATA-SAFETY-7 AC2 (SAFETY-6 review R-002): Canonical Evidence pins record sha256 of the
+# working-tree bytes. With core.autocrlf=true the checkout was CRLF while the blob is LF, so pins
+# broke on any LF checkout. Pin LF so the recorded hashes are reproducible everywhere.
+verification/REALUSE-DATA-SAFETY-6/** text eol=lf
