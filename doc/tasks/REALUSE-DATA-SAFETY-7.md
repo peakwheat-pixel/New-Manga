@@ -67,15 +67,27 @@ allowed_paths:
 
 ## Canonical Evidence
 
-进入独立审查前逐项填写（当前为空）。
+证据 pin 采用 **blob（LF）基准**，与 AC2 的规范化一致。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-AC1-READER-VM | AC1 | `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs` | `306ae09ae` | `22d594d10fcf0f89094ab7510ac63d7fb59532e1038f725854ce48e61d08b073` | CANONICAL |
+| E-AC1-TEST-FAKE | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs` | `306ae09ae` | `33106db11704b8f3d9d6d05948a6d018637418207a053671b04cadcc828122be` | CANONICAL |
+| E-AC1-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/LibraryProgressRefreshTests.cs` | `306ae09ae` | `71785cd438f3b38da53c0f774a224cd153034c86953d900a6b78581b6c2c7d0e` | CANONICAL |
+| E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-7/ac1-fix.md` | `306ae09ae` | `b31d04e1691872567d7b62628ad0e93d9afa7441fdbd49bde9f8f2c1bff5734b` | CANONICAL |
+| E-AC1-NEG | AC1 | `verification/REALUSE-DATA-SAFETY-7/ac1-negative-control.md` | `306ae09ae` | `e3c19b997ac7a21a2e7626acc0686e4f585fe5f77e3da905616e309dc790488b` | CANONICAL |
+| E-AC1-LOG | AC1 | `verification/REALUSE-DATA-SAFETY-7/ac1-fix-tests.txt` | `306ae09ae` | `8debe2abc9f81b6cc1b135f9932e303cfd1bdf7e867f245b50c3482887e508a4` | CANONICAL |
+| E-AC2-DOC | AC2 | `verification/REALUSE-DATA-SAFETY-7/ac2-eol-pin.md` | `306ae09ae` | `07bf46068ea06b0bc3a05f6b0a03e482758494cd56ed9b586b64275637500da1` | CANONICAL |
+| E-AC3-DOC | AC3 | `verification/REALUSE-DATA-SAFETY-7/ac3-log-format.md` | `306ae09ae` | `2263aa38148200f474a9e527a684a6fbfce87eb3de7c0638d910c9a91c849fef` | CANONICAL |
+| E-EVIDENCE-INDEX | AC1/AC2/AC3 | `verification/REALUSE-DATA-SAFETY-7/README.md` | `306ae09ae` | `a246badb5564f52bbd1bde2bf1844a1248dc9de748c9d814bac8e6142d4e7bf1` | CANONICAL |
 
 ## Resource Manifest
 
-本 Task 尚未开 worktree；资源处置在实现完成后登记。
+资源收口记录：`verification/REALUSE-DATA-SAFETY-7/resource-manifest.json`（schema_version 1）。
+
+- worktree：PRESERVE_REFERENCED（分支 `task/REALUSE-DATA-SAFETY-7`）
+- 负向对照临时目录 `tmp/safety7-negctl`：DELETE_SAFE，已删除（`closeout_counts.deleted=1`）
+- 用户数据：本 Task 零写操作（不涉及真实数据根）
 
 ## Closeout Record
 
