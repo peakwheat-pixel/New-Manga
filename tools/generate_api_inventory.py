@@ -148,6 +148,13 @@ def render(data) -> str:
 
 
 def main() -> int:
+    # K-2: pin stdout to UTF-8 so `> file` diffs are byte-stable on any console codepage.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):  # pragma: no cover - exotic streams
+        pass
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="compare rendered counts with FEA-C07 doc")
     args = ap.parse_args()

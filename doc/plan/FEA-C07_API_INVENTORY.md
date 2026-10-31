@@ -1,6 +1,6 @@
 # FEA-C07 应用端口清单（由代码生成）
 
-状态：**GENERATED / 草案依据 / 未冻结**
+状态：**GENERATED / 草案依据 / 未冻结**（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径，成员行与脚本 stdout 一一对应）
 生成日期：2026-11-01；生成时 HEAD：`e7e43543b`
 生成方式：`python tools/generate_api_inventory.py`（解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块，输出成员名 + 返回类型）；**不是**手工枚举。重跑同一命令应得到同一集合。
 
@@ -95,5 +95,5 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 ## 与 C-07 冻结面的关系
 
 - 本清单是**基线**：冻结时以本文件 + `tools/generate_api_inventory.py` 的输出为准；
-- 「旧签名不变」的可验证基线 = 反复运行 `python tools/generate_api_inventory.py --check` 得到同一集合（`--check` 会对比本文档的计数行）；
+- 「旧签名不变」的可验证基线 = 重跑 `python tools/generate_api_inventory.py` 并把 **stdout 全文**与上次输出 diff（成员名/返回类型都在 stdout 里）；`--check` 只比对三个**计数行**（快速冒烟，不验签名内容）；
 - 能力握手与 request-scoped error（C-07 其余内容）不在本文件展开。
