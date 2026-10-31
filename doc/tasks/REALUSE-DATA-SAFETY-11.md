@@ -67,7 +67,7 @@ Reader 认为实质成立（失败签名 `Expected: 3 / Actual: 5 @ :328` 已证
 | E-AC1-LOG-FULL | AC1 | `verification/REALUSE-DATA-SAFETY-10/ac1-negative-control-full.txt` | `d32f4b5ef` | `e9c55c8e585e0b011b2ef99901d82e6c41f8493be9662cfc744f5384b5a8a6e4` | CANONICAL |
 | E-AC1-DOC | AC1 | `verification/REALUSE-DATA-SAFETY-11/ac1-verification.md` | `d32f4b5ef` | `6325e359cc35c278841e7ec44680e0c3368ee30a96ea6522a5cdba8ec6df3378` | CANONICAL |
 | E-EVIDENCE-INDEX | AC1 | `verification/REALUSE-DATA-SAFETY-11/README.md` | `d32f4b5ef` | `e35993dd0bcac8fbcd4b0b3d0b644668c07f4000d8b6a65705ad52fa2f838d03` | CANONICAL |
-| E-AC1-REF-UPDATED | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `d32f4b5ef` | `cdf52c6f77eb987e445e6e484c87aa70beb3d9794917e6e305e29a2c44955098` | CANONICAL |
+| E-AC1-REF-UPDATED | AC1 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md` | `e2eb824e0` | `7d31215358d33eb40496d8e07e8a89fdd72f45c4622ef3d29e2344859582b92e` | CANONICAL |
 | E-RESOURCE-MANIFEST | Resource | `verification/REALUSE-DATA-SAFETY-11/resource-manifest.json` | `5731a6008` | `0f43c5ebde1ea17633b99a4c31e98cd989b5455929c19a8f8aca3e6b7db364e7` | CANONICAL |
 
 ## Resource Manifest
