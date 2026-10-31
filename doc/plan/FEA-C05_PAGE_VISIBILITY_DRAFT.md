@@ -27,12 +27,15 @@
 
 ```
 V(p, t) ≡
-  P1. p.deleted_at IS NULL                                    -- 页未被软删
+  P1. p.deleted_at IS NULL ∧ c.deleted_at IS NULL ∧ b.deleted_at IS NULL   -- 页/章节/书均未软删
 ∧ P2. ∃ a ∈ artifacts(p): a.artifact_type ∈ VISIBLE_TYPES        -- 存在**同一个** artifact
 ∧ P3. a.current_revision_id IS NOT NULL                         -- 该 artifact 有当前 revision
 ∧ P4. r = revision(a.current_revision_id)
      ∧ r.integrity_status = 'valid'                             -- 该 revision 内容完整（P2–P4 绑定同一个 a）
 ∧ P5. r.created_at <= t                                        -- 已落库（revision 是提交产物；见 §4）
+```
+
+其中 `c` = chapter、`b` = book（软删可发生在任一级）。
 
 **稳定性谓词**（导出/删除预览用，独立于可见性）：
 
@@ -41,7 +44,6 @@ S(p, t) ≡ V(p, t) ∧ active_runs(p) = ∅
 ```
 
 其中 `active_runs(p)` = 该页上有 `pipeline_run_id`/`step_run_id` 且 `run.status ∈ ACTIVE_STATES = {pending, running, paused, blocked, interrupted}` 的 Run（与 `core_assembly.py:171-181` 一致；`prepared`/`committed` 不是 Run 状态）。
-```
 
 其中 `VISIBLE_TYPES = {'original','thumbnail','clean','translated','render_preview','export'}`（`detection_overlay`/`mask`/`debug_*` 是中间产物，**不**构成可见性）。
 
@@ -65,7 +67,7 @@ ORDER BY p.chapter_id, p.sort_order;
 
 - **P5**：`r.created_at` 是 revision 落库时间（schema 无 `committed_at` 列）；在途写不会产生 revision 行（revision 是提交产物）——所以 P5 主要防「未来时间戳」的脏数据。
 - **P6**：`active_runs(p)` = 该页上有 `pipeline_run_id`/`step_run_id` 且 `run.status ∈ ACTIVE_STATES` 的 Run。**ACTIVE_STATES = {'pending', 'running', 'paused', 'blocked', 'interrupted'}**（与 `core_assembly.py:171-181` 的非终态集合一致；`prepared` 不是 Run 状态，`committed` 也不是。可见性判定**不阻塞**这些 Run（页仍可见），但**导出/删除预览**必须把「有活跃 Run」作为**警告**。
-- 语义区分：**可见**（能读）≠ **稳定**（可安全导出/可删除）。导出与删除预览要求 `V(p,t) ∧ 无在途 Run`。
+- 语义区分：**可见**（能读）≠ **稳定**（可安全导出/可删除）。导出与删除预览要求 **`S(p,t)`**（= `V(p,t) ∧ active_runs(p)=∅`）。
 
 ## 5. 失败语义
 
