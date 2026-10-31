@@ -56,7 +56,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-FREEZE-PKG | AC1/AC2 | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` | `9e350dd6e` | `d8c7d1c4020125b837fb51d543f5c437524652d9758b089ab00d067f777a45d2` | CANONICAL |
+| E-FREEZE-PKG | AC1/AC2 | `doc/plan/FEA-CONTRACT_FREEZE_PACKAGE.md` | `(见提交)` | `5ff040b1e8227f79e57b0b612e8474ee76996a5c511838c1d62e4dab43e439b6` | CANONICAL |
 
 ## Resource Manifest
 
