@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-10
 title: SAFETY-9 Review R-101 收尾——负向对照转录补全
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-9_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-9
-base_commit: 9aa6758b6
-branch: null
-worktree: null
+base_commit: 284708c3c
+branch: task/REALUSE-DATA-SAFETY-10
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -47,7 +47,7 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 转录补全**：`ac1-discriminating.md` 的负向对照段补齐「执行位置（worktree 内临时覆盖 + 恢复，或仓外副本）、完整命令与 cwd、host 头、断言失败明细（Expected/Actual 与行号）、恢复后 `git status` 干净」；如重新实测则附新输出与 EXIT。 <<PARTIAL: 待实现>>
+- [x] **AC1 转录补全**：`ac1-discriminating.md` 的负向对照段已补齐执行位置、完整命令与 cwd、host 头、断言失败明细（`Expected: 3 / Actual: 5`、`:328`）、恢复后 `git status` 干净，并附完整原始日志。 <<MET>>
 
 ## 禁止范围
 
@@ -57,7 +57,7 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 重跑负向对照并记录完整输出 | net9.0 | NOT_RUN | 待补 |
+| AC1 | worktree 内临时覆盖 pre-F-005 → build → `-v n` filtered 测试 → 恢复 | net9.0 | **1 失败 / 0 通过，EXIT=1**；`Expected: 3 / Actual: 5` @ `:328` | `ac1-negative-control.txt`、`ac1-discriminating.md` |
 
 ## Canonical Evidence
 
@@ -74,3 +74,4 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+

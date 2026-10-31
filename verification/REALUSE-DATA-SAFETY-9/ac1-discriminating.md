@@ -29,15 +29,43 @@ Assert.Equal(3, library.Reader.PageIndex);
 
 同时在 `ac3-closing-gate.md`（SAFETY-8 证据）与用例注释中标注其角色：**判别性断言**（不是回归栅栏）。
 
-## 负向对照（实测）
+## 负向对照（实测，2026-11-01 02:31 复现）
 
-用 `bb7cbda1d` 的 pre-F-005 生产文件覆盖工作树（`_isClosing` 出现 0 次），构建后跑该用例：
+**执行位置**：在 SAFETY-10 的 worktree（`G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-10`）
+内**临时覆盖后恢复**——不是在 main 工作区原地覆盖，也没有改动任何已提交的交付字节。完整原始日志见
+`verification/REALUSE-DATA-SAFETY-10/ac1-negative-control.txt`。
+
+**命令与 cwd**（host：本机 / pwsh 7 / dotnet 10.0.401）：
+
+```powershell
+$wt = 'G:\CODEX\New Manga.workspace\worktrees\REALUSE-DATA-SAFETY-10'
+$src = 'apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ReaderOverlayViewModel.cs'
+cd $wt
+cmd /c "git -C `"$wt`" show bb7cbda1d:$src > `"$(Join-Path $wt ($src.Replace('/','\')))`""
+# 覆盖后 `_isClosing` 出现次数 = 0（pre-F-005）
+cd (Join-Path $wt 'apps\desktop-avalonia')
+dotnet build NewManga.sln -v q --nologo --no-incremental
+dotnet test tests/NewManga.App.Tests/NewManga.App.Tests.csproj --nologo -v n --filter "FullyQualifiedName~ClosingWhileSecondSaveRequested"
+# 恢复
+cd $wt; git checkout HEAD -- $src; git status --porcelain   # 无输出
+```
+
+**断言失败明细**（关键：失败点正是新增断言）：
 
 ```
 [xUnit.net]  NewManga.App.Tests.LibraryProgressRefreshTests.ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread [FAIL]
+  Assert.Equal() Failure: Values differ
+  Expected: 3
+  Actual:   5
+  Stack Trace:
+    .../tests/NewManga.App.Tests/LibraryProgressRefreshTests.cs(328,0): at ...ClosingWhileSecondSaveRequested_StillPerformsExactlyOneAuthoritativeReread()
+
 失败!  - 失败: 1，通过: 0，已跳过: 0，总计: 1
 EXIT=1
 ```
+
+`Expected: 3 / Actual: 5` 与失败行 `LibraryProgressRefreshTests.cs:328` 对应新增的
+`Assert.Equal(3, library.Reader.PageIndex)`，证明失败来自判别性断言而非其它路径。
 
 恢复交付版后：
 
@@ -46,4 +74,4 @@ EXIT=1
 EXIT=0
 ```
 
-结论：新断言**判别** F-005 门禁（旧代码失败、新代码通过）。
+结论：新断言**判别** F-005 门禁（旧代码在 `:328` 以 `Expected 3 / Actual 5` 失败、新代码通过）。
