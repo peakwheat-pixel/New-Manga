@@ -3,20 +3,20 @@ id: REALUSE-DATA-SAFETY-9
 title: SAFETY-8 Review P2 收尾——判别性断言与证据措辞
 kind: quality
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_REALUSE-DATA-SAFETY-8_review_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: safety9-reviewer
 depends_on:
   - REALUSE-DATA-SAFETY-8
 base_commit: 5b888cd70
 branch: task/REALUSE-DATA-SAFETY-9
 worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-9
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 9aa6758b6
+delivery_head: dcce29a13
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/REALUSE-DATA-SAFETY-9
 allowed_paths:
   - doc/tasks/REALUSE-DATA-SAFETY-9.md
@@ -84,6 +84,26 @@ allowed_paths:
 - 负向对照临时日志 `tmp/safety9-negctl.txt`：DELETE_SAFE，已删除
 - 用户数据：本 Task 零写操作
 
+## 独立 Review
+
+- 报告：[REALUSE-DATA-SAFETY-9-review.md](../reviews/REALUSE-DATA-SAFETY-9-review.md)
+- Reviewer：`safety9-reviewer`（Agent Teams 共享任务 `task-7`，fresh context；未参与实现与证据撰写）
+- 被审 head：`40d286e85`；base `5b888cd70`；交付实现 `dcce29a13`
+- 结论：**approved**（P0=0 / P1=0 / P2=1 open，不阻断集成）；AC1/AC2 均判 **MET**
+- 独立复核：仓外副本换 pre-F-005 生产文件后判别用例 **FAIL（Expected 3 / Actual 5，`:328`）/ EXIT=1**，交付版 PASS/EXIT=0；两次换码构建均 `--no-incremental` 排除增量伪结果
+- 复跑：build 0 警告/0 错误；filtered 7/7；全量 396/0/7（403）；`check.ps1` PASS (3 warnings)；卡内 8 条 pin 8/8 MATCH
+
+## Known P2（open，登记为后续项）
+
+| ID | 级别 | 内容 | 建议处置 |
+|---|---|---|---|
+| R-101 | P2 | `verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md:34-47` 负向对照为精简转录：未写明执行位置（"覆盖工作树"易误读为仓内原地覆盖）、无命令/cwd/host 头、无断言失败明细（Expected 3 / Actual 5 与 `:328`） | 补全转录（执行位置、命令、cwd、失败明细）；实质结论已由 Review 独立复现 |
+
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
+- Closeout date / DSH：2026-11-01，DSH（Lead / Architect / Integrator）
+- 集成：`main@9aa6758b6`（merge `task/REALUSE-DATA-SAFETY-9`，含 `a8a38b595` Review 报告提交）
+- 集成验证：`check.ps1` PASS (3 warnings)；`dotnet build` 0 警告 0 错误；`dotnet test` 396 通过 / 0 失败 / 7 跳过（403）
+- AC 判定：AC1 `MET`、AC2 `MET`
+- 已知 P2：R-101（证据转录完整度），不阻断集成，登记为后续项
+- 资源：worktree 保留（PRESERVE_REFERENCED）；负向对照临时日志已删除；用户数据零写操作

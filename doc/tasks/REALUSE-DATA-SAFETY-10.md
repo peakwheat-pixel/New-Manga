@@ -1,0 +1,76 @@
+---
+id: REALUSE-DATA-SAFETY-10
+title: SAFETY-9 Review R-101 收尾——负向对照转录补全
+kind: quality
+governance_version: 3
+status: ready
+approval: follow_up_of_REALUSE-DATA-SAFETY-9_review_2026-11-01
+suggested_owner: dsh
+owner: null
+reviewer: null
+depends_on:
+  - REALUSE-DATA-SAFETY-9
+base_commit: 9aa6758b6
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/REALUSE-DATA-SAFETY-10
+allowed_paths:
+  - doc/tasks/REALUSE-DATA-SAFETY-10.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - doc/handoffs/REALUSE-DATA-SAFETY-10-handoff.md
+  - doc/reviews/REALUSE-DATA-SAFETY-10-*.md
+  - verification/REALUSE-DATA-SAFETY-9/**
+  - verification/REALUSE-DATA-SAFETY-10/**
+---
+
+# REALUSE-DATA-SAFETY-10：SAFETY-9 Review 的 1 条 P2
+
+## 来源
+
+[REALUSE-DATA-SAFETY-9 独立 Review](../reviews/REALUSE-DATA-SAFETY-9-review.md)（`approved`，P0/P1=0，P2×1）保留的 R-101。
+
+## 逐条说明
+
+**R-101（负向对照转录不完整）**：`verification/REALUSE-DATA-SAFETY-9/ac1-discriminating.md:34-47` 的负向对照只写「用 `bb7cbda1d` 的 pre-F-005 生产文件覆盖工作树」：
+
+- 未写明执行位置（易误读为在仓库内原地覆盖，与「本 Task 不改生产代码」冲突；实际是在 **worktree 内临时覆盖后恢复**，或仓外副本等价执行）；
+- 没有命令、cwd、host 头（违反 SAFETY-8 建立的日志格式）；
+- 没有断言失败明细（应写出 `Expected: 3 / Actual: 5` 与失败行 `LibraryProgressRefreshTests.cs:328`）。
+
+结果：仅凭该证据无法辨别失败是否来自新增断言；Review 已独立复现并确认结论正确，但证据本身不达标。
+
+## 验收标准
+
+- [ ] **AC1 转录补全**：`ac1-discriminating.md` 的负向对照段补齐「执行位置（worktree 内临时覆盖 + 恢复，或仓外副本）、完整命令与 cwd、host 头、断言失败明细（Expected/Actual 与行号）、恢复后 `git status` 干净」；如重新实测则附新输出与 EXIT。 <<PARTIAL: 待实现>>
+
+## 禁止范围
+
+- 不改生产代码、不改已集成测试、不改冻结契约、不动用户数据、不 push。
+
+## 测试要求
+
+| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC1 | 重跑负向对照并记录完整输出 | net9.0 | NOT_RUN | 待补 |
+
+## Canonical Evidence
+
+进入独立审查前逐项填写（当前为空）。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| - | - | - | `-` | `-` | CANONICAL |
+
+## Resource Manifest
+
+本 Task 尚未开 worktree；资源处置在实现完成后登记。
+
+## Closeout Record
+
+- Closeout date / DSH：待关闭时填写。

@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[REALUSE-DATA-SAFETY-9](tasks/REALUSE-DATA-SAFETY-9.md) `ready`（SAFETY-8 Review 的 2 条 P2：判别性断言 / 证据措辞）。
-- 上一 Task：REALUSE-DATA-SAFETY-8 `done`（集成 `84b9f4319`；F-001~F-005 全 MET；Review approved，P2×3，R-001 已闭环）。
+- 当前 Task：[REALUSE-DATA-SAFETY-10](tasks/REALUSE-DATA-SAFETY-10.md) `ready`（SAFETY-9 Review 的 R-101：负向对照转录补全）。
+- 上一 Task：REALUSE-DATA-SAFETY-9 `done`（集成 `9aa6758b6`；AC1/AC2 MET；Review approved，P2×1）。
 - 下一候选：MA-11 / MA-20 裁决后另立实施 Task；AC2 去重属资源通道契约演进（`G-CONTRACT` OPEN）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 上一 Task：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。

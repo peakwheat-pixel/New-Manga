@@ -40,13 +40,12 @@
 
 ## 当前活动程序（2026-10-30 起）
 
-**V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）。
-共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
+**V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：REALUSE-DATA-SAFETY-10
 
-当前 DAG：REALUSE-DATA-SAFETY-9（SAFETY-8 Review 的 2 条 P2，in_progress）
+当前 DAG：REALUSE-DATA-SAFETY-10（SAFETY-9 Review 的 R-101，ready）
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -56,6 +55,8 @@ READY 节点：无
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（368c07809）；DECLARATION-REMEDIATION-1 done（bb7887442），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
+
 
 
 
