@@ -63,6 +63,13 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     /// </summary>
     private Task? _inFlightSave;
 
+    /// <summary>
+    /// REALUSE-DATA-SAFETY-8 F-005: set for the duration of <see cref="CloseAsync"/>. While closing,
+    /// no new page save may start, otherwise a fresh save could re-set <c>_isSaving</c> after the
+    /// close waited for the previous one and the closing authoritative re-read would be skipped.
+    /// </summary>
+    private bool _isClosing;
+
     public ReaderOverlayViewModel(
         IHostController controller,
         Action<string, NmStatus> notify,
@@ -280,30 +287,44 @@ public sealed class ReaderOverlayViewModel : ObservableObject
 
     public async Task CloseAsync()
     {
-        // REALUSE-DATA-SAFETY-7 R-001: wait for an in-flight page save first. Without this the
-        // closing pass was short-circuited by _isSaving (no authoritative re-read happened) and the
-        // pending save resumed against a _book that this method had already set to null (NRE).
-        if (_inFlightSave is { } pending)
+        // R-001 + F-005: once closing starts, no new page save may begin (_isClosing gate below), so
+        // waiting for the in-flight save terminates after at most one wait. Without the gate a page
+        // turn during this window could re-arm _isSaving and the closing pass would still be
+        // short-circuited (the closing authoritative re-read skipped).
+        _isClosing = true;
+        try
         {
-            try
+            while (_inFlightSave is { } pending)
             {
-                await pending.ConfigureAwait(true);
-            }
-            catch (Exception)
-            {
-                // SaveProgressCoreAsync already records the typed status; the close must proceed.
-            }
-        }
+                try
+                {
+                    await pending.ConfigureAwait(true);
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
+                {
+                    // SaveProgressCoreAsync already records the typed status; the close must proceed.
+                }
 
-        // MA-09: the closing save is the last one the reader performs, and the shelf becomes visible
-        // right after it, so the Library re-reads the authoritative projection on this pass.
-        await SaveProgressAsync(isClosing: true).ConfigureAwait(true);
-        IsOpen = false;
-        ReleaseImages();
-        _book = null;
-        Pages.Clear();
-        PageIndex = 0;
-        OnPropertyChanged(nameof(Title), nameof(Subtitle), nameof(HasBook), nameof(PageCount), nameof(PageLabel), nameof(ProgressText));
+                if (_inFlightSave == pending)
+                {
+                    _inFlightSave = null;
+                }
+            }
+
+            // MA-09: the closing save is the last one the reader performs, and the shelf becomes
+            // visible right after it, so the Library re-reads the authoritative projection here.
+            await SaveProgressAsync(isClosing: true).ConfigureAwait(true);
+            IsOpen = false;
+            ReleaseImages();
+            _book = null;
+            Pages.Clear();
+            PageIndex = 0;
+            OnPropertyChanged(nameof(Title), nameof(Subtitle), nameof(HasBook), nameof(PageCount), nameof(PageLabel), nameof(ProgressText));
+        }
+        finally
+        {
+            _isClosing = false;
+        }
     }
 
     public Task NextAsync() => GoToAsync(PageIndex + 1);
@@ -312,7 +333,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
 
     public async Task GoToAsync(int index)
     {
-        if (Pages.Count == 0)
+        if (_isClosing || Pages.Count == 0)
         {
             return;
         }
@@ -366,6 +387,13 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     public Task SaveProgressAsync(bool isClosing = false)
     {
         if (_book is null || Pages.Count == 0 || _isSaving)
+        {
+            return Task.CompletedTask;
+        }
+
+        // F-005: while closing, only the closing pass itself may save. A page turn that slips in
+        // during the close would otherwise re-arm _isSaving and skip the authoritative re-read.
+        if (_isClosing && !isClosing)
         {
             return Task.CompletedTask;
         }
@@ -424,6 +452,13 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         catch (Exception ex) when (ex is InvalidOperationException or NewManga.CoreClient.Diagnostics.SidecarException)
         {
             SaveStatusText = "进度：保存失败（Host 不可用）";
+        }
+        catch (Exception ex)
+        {
+            // F-004: never swallow a non-typed failure silently. The R-001 class of bug was exactly
+            // such an exception; a regression must stay visible instead of vanishing into a no-op.
+            System.Diagnostics.Debug.WriteLine($"ReaderOverlayViewModel: progress save failed: {ex}");
+            SaveStatusText = "进度：保存失败（内部错误）";
         }
         finally
         {

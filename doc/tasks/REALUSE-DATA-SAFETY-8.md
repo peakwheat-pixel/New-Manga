@@ -3,16 +3,16 @@ id: REALUSE-DATA-SAFETY-8
 title: SAFETY-7 Review P2 收尾——证据文档修正与 CloseAsync 健壮性
 kind: quality
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_REALUSE-DATA-SAFETY-7_review_2026-11-01
 suggested_owner: dsh
-owner: null
+owner: dsh-lead
 reviewer: null
 depends_on:
   - REALUSE-DATA-SAFETY-7
-base_commit: aaed145e9
-branch: null
-worktree: null
+base_commit: bb7cbda1d
+branch: task/REALUSE-DATA-SAFETY-8
+worktree: G:/CODEX/New Manga.workspace/worktrees/REALUSE-DATA-SAFETY-8
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -48,9 +48,9 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 F-001/F-002/F-003 证据文档修正**：`ac2-eol-pin.md` 计数与表格覆盖 12 条 pin / 5 条变化；`ac1-negative-control.md` 改为 post-delivery 配方并附原始输出与 `exit_code=`；`ac1-fix-tests.txt` 补 filtered 段并记录 cwd。 <<PARTIAL: 待实现>>
-- [ ] **AC2 F-004 异常捕获限定**：`CloseAsync` 等待在途保存时只捕获与 core 一致的已知类型，其余记录 `Debug`/通知，不得静默；新增或调整用例覆盖。 <<PARTIAL: 待实现>>
-- [ ] **AC3 F-005 关闭期间保存门禁**：closing 期间禁止新保存启动（或循环等待 `_isSaving == false` 后再做 closing 保存），保证 closclose 时始终恰好一次权威重读；新增确定性用例。 <<PARTIAL: 待实现>>
+- [x] **AC1 F-001/F-002/F-003 证据文档修正**：`ac2-eol-pin.md` 计数与表格覆盖 12 条 pin / 5 条变化；`ac1-negative-control.md` 改为 post-delivery 配方并附原始输出与 `exit_code=`；`ac1-fix-tests.txt` 补 filtered 段并记录 cwd。 <<MET>>
+- [x] **AC2 F-004 异常捕获限定**：`CloseAsync` 等待在途保存时只捕获与 core 一致的已知类型，其余记录 `Debug` 并设置可见状态，不得静默；保存路径自身不再抛出未观察异常。 <<MET>>
+- [x] **AC3 F-005 关闭期间保存门禁**：closing 期间禁止新保存启动（`_isClosing` 门禁 + 循环等待），保证 closing 时恰好一次权威重读；新增确定性用例。 <<MET>>
 
 ## 禁止范围
 
@@ -60,9 +60,10 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 文档核对 + 重新执行负向对照配方 | 只读/仓外副本 | NOT_RUN | 待补 |
-| AC2 | `dotnet test --filter FullyQualifiedName~LibraryProgressRefreshTests` | net9.0 | NOT_RUN | 待补 |
-| AC3 | 新增 closing 期间保存用例 | net9.0 | NOT_RUN | 待补 |
+| AC1 配方 | base 文件覆盖 + filtered 测试 + 恢复 | SAFETY-7 worktree | **1 failed / 0 passed，EXIT=1**（修复前）；恢复后 clean | `ac1-doc-fix.md` |
+| AC1 日志 | 构建 + filtered + 全量，记录 cwd | net9.0 | 三段均含 cwd/输出/EXIT | `ac1-fix-tests.txt` |
+| AC2 | `dotnet build` + filtered | net9.0 | **0 警告 / 0 错误**；7/7 | `ac1-fix-tests.txt` |
+| AC3 | 全量 + 新增 closing 门禁用例 | net9.0 | **396 通过 / 0 失败 / 7 跳过（403）**，EXIT=0 | `ac1-fix-tests.txt` |
 
 ## Canonical Evidence
 
