@@ -11,7 +11,7 @@
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
-|FEA-00A-IMPL-1|FEA-00A-PREP-1|**proposed**（实现候选；待用户拍板 D1–D4 → 范围冻结 → 复核 → ready）|
+|FEA-00A-IMPL-1|FEA-00A-PREP-1|**proposed**（范围冻结稿完成；D1–D4 用户 2026-11-01 拍板；待上下文独立复核 → ready 交 Codex）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
@@ -25,7 +25,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-00A-IMPL-1（**proposed**，待用户拍板）、FEA-00A-PREP-1（**done**，评估+复核 `aec780362`）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
+当前 DAG：FEA-00A-IMPL-1（**in_review**，范围已冻结、待独立复核）、FEA-00A-PREP-1（**done**，评估+复核 `aec780362`）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 

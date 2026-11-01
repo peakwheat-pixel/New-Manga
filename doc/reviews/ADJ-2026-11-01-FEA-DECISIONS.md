@@ -53,6 +53,17 @@ Codex 于 2026-11-01 出具 4 项技术意见（只读、未改文件）。DSH �
 | 2026-11-01 | 补**追加裁决（18:43）U-06…U-11**：C-10 阈值 `T=4 DIP`（仅鼠标）+ 验证等级 L1–L4 + Resource Manifest 偏离接受 + L-1…L-9 保留不豁免 + P2/非队列 Task 处置 + C-10 冻结推进 | DSH |
 | 2026-11-01 | 补 **U-12**（首个实现候选 `FEA-02-CORE`、Codex 实现、DSH 范围冻结/复核/集成、4 步推进顺序）——用户 19:25 确认 | DSH |
 
+## 追加裁决 U-13（2026-11-01，FEA-00a 实现范围）
+
+| # | 代号 | 问题 | 裁决 | 影响 | 备注 |
+|---|---|---|---|---|---|
+| 1 | **D1** | artifact 指针是否纳入 FEA-00a | **② 一起修**（region + artifact 同类缺陷一并修） | `FEA-00A-IMPL-1` AC6 | 覆盖 `media_artifacts.current_revision_id` 与 `publish` 的 `artifact_revisions` 行/文件 |
+| 2 | **D2** | 是否允许改 `src/application/tasks/service.py` | **② 允许**；**必要情况下允许重新设计构件** | 写域含 `src/application/tasks/**`；AC9 要求逐项登记理由与回退 | 不得扩张到 FEA-10 的其它功能 |
+| 3 | **D3** | 候选承载 | **① 复用 `step_result_candidates`**（无迁移、无 schema 改动） | 禁改 `schema.py`/migrations | 清理归属按评估 §4.2 |
+| 4 | **D4** | 验证等级 | **L2 自动化 + 真实生产 assembly 跑一遍** | AC8；V1–V9 全部真实 assembly | 不得用 fake executor 代跑 |
+
+**生效范围**：DSH 据此冻结 `FEA-00A-IMPL-1` 范围并派上下文独立复核；复核通过后 `ready` 交 Codex。`G-DELETE-IMPL` 状态不变。本裁决不释放其它实现 Task。
+
 ## 追加裁决（2026-11-01 18:43，用户在线裁定）
 
 | # | 代号 | 问题 | 裁决 | 影响 | 备注 |
