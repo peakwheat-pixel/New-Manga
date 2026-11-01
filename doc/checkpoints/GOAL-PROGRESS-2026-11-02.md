@@ -20,7 +20,10 @@
 | Q-12 | 释放 `FEA-04`（Current 适配） | 释放（依赖 FEA-02-CORE/FEA-03 均 done） | **DSH 裁决：释放**；owner=ZCode（方案指定），ZCode 不可用时 DSH 可指派 Codex |
 | Q-13 | FEA-03 的 V19（旧→新/新→旧组合） | 集成验证 deferral | 已登记（Task 卡 deferral + v-matrix）；集成窗口或 FEA-04 回归覆盖 |
 | Q-14 | FEA-03 P2×13 技术债 | 接受遗留，登记在 Review r5 | 不阻塞 done |
-| Q-15 | FEA-04 切换（Current↔Fluent）是否本卡实现 | 否，仅 preflight + fail-closed；Fluent 入口在 FEA-05 | 卡内禁止范围已写 |
+| Q-15/Q-19 | FEA-04 切换（Current↔Fluent）是否本卡实现 | 仅 preflight；切换执行由 FEA-07 | v2 已收窄（R-SWITCH preflight-only） |
+| Q-16 | FEA-03 defer 的 wire 是否本卡实现 | 否；S1–S3 权威收窄为 ApplicationCore 本地 | v2 R-STATE/AC4 已改；wire 转 FEA-05/07 |
+| Q-17 | `NewManga.App.csproj` 加 ApplicationCore 引用 | 授权为本卡唯一单点例外 | 写域已列；Handoff 记录 |
+| Q-18 | `Frontends.Current` 落点 | `Shell/V2/Frontends/`（in-app） | v2 已写；不新建工程/改 sln |
 
 ## 3. 下一动作
 
@@ -33,3 +36,4 @@
 | 时间 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-02 02:45 | 建立；记录 FEA-03 done 与 FEA-04 释放 | DSH |
+
