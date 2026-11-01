@@ -1,7 +1,7 @@
 # FEA-C10-DRAFT 收口资源说明
 
 - **Task**：`FEA-C10-DRAFT`（C-10 交互契约**起草**）
-- **交付**：`doc/plan/FEA-C10_INTERACTION_DRAFT.md`（v2）+ 独立复核 `doc/reviews/FEA-C10-r2.md`（`approved`）
+- **交付**：`doc/plan/FEA-C10_INTERACTION_DRAFT.md`（v3）+ 独立复核 `doc/reviews/FEA-C10-r2.md` / `FEA-C10-r3.md`（均 `approved`）
 - **本目录用途**：登记本 Task 的资源实况；**本 Task 无判别力原始产物**（纯文档 Task，证据为草案与复核报告）。
 
 ## 仓库内资源

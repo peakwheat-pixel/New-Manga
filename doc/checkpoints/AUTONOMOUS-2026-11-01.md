@@ -20,8 +20,8 @@
 | 0 | 建立复核席位 `c01b-reviewer` + 本 checkpoint | — | — | — | — | 无 |
 | 1 | 收口 `FEA-D06-GAP` | **done**（收口材料 `1027de616`） | PASS (3w) | 13/13 | `doc/reviews/FEA-D06-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×6 非阻断；R1 为 changes_requested→已修） | R2 条件：done 为纯元数据回填；R2-001…006 技术债**未修**，登记待处置 |
 | 2 | 收口 `FEA-C14-DRAFT` | **done**（收口材料 `ff432e97c`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C14-CLOSEOUT-r1.md`（approved，P0/P1=0，P2×6 非阻断） | R1 条件：done 为纯元数据回填；P2-1/5 在 done 处理，P2-2/3/4/6 未修（非阻断） |
-| 3 | L-3 Errata | 待填 | 待填 | 待填 | 待填 | 待填 |
-| 4 | 起草 C-10 交互契约（不冻结） | 待填 | 待填 | 待填 | 待填 | 待填 |
+| 3 | L-3 Errata（裁定 `:63`/`:111` + C04b/C08/C13/C09 注记） | **approved**（`14e6e6a3c`；P2 修复 `500aa6b27`） | PASS (3w) | 13/13 | `doc/reviews/FEA-WRAP-ERRATA-r1.md`（approved，P0/P1=0，P2×5；2 处死链与 C-08 措辞已在 `500aa6b27` 修） | 裁定 §4:58 括注指向落空，已在 C-08 注记留痕、未改裁定正文 |
+| 4 | 起草 `C-10`（不冻结） | **approved**（草案 v3 `b45658c17`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C10-r2.md` + `FEA-C10-r3.md`（均 approved，P0/P1=0） | 未冻结：§10 待用户裁定阈值 `T`；已知 P2：§8 表末缺空行（格式） |
 | 5 | PLAN 预算卫生 | 待填 | 待填 | 待填 | 待填 | 待填 |
 
 ## 偏离登记

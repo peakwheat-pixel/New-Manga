@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-C10-DRAFT（in_progress，起草+复核，**不冻结**）、FEA-CONTRACT-WRAP-1（in_progress，Errata AC1 approved；PLAN 预算/收尾待做）；FEA-C14-DRAFT / FEA-D06-GAP（done）；契约冻结线已完成（13 份冻结，两 Gate CLOSED 2026-11-01）；`G-DELETE-IMPL` OPEN
+当前 DAG：FEA-CONTRACT-WRAP-1（in_progress，PLAN 预算 + 收尾）；FEA-C10-DRAFT（**approved**，草案 v3，**未冻结待用户裁定阈值 `T`**）、FEA-C14-DRAFT / FEA-D06-GAP（done）；13 份契约已冻结（含 C-07 清单；两 Gate CLOSED 2026-11-01）；`G-DELETE-IMPL` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 
