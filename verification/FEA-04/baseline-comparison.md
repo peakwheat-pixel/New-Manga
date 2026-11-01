@@ -24,8 +24,8 @@
 | NewManga.DesignSystem.Tests | 85 | 0 | 0 | 85 |
 | NewManga.CoreClient.Tests | 116 | 0 | 25 | 141 |
 | NewManga.ApplicationCore.Tests | 31 | 0 | 0 | 31 |
-| NewManga.App.Tests | 412 | 0 | 7 | 419 |
-| **合计** | **930** | **0** | **60** | **990** |
+| NewManga.App.Tests | 413 | 0 | 7 | 420 |
+| **合计** | **931** | **0** | **60** | **991** |
 
 ## 判定（AC2）
 - 既有工程 passed 全部 ≥ 基线；failed 均为 0；skipped 不变。

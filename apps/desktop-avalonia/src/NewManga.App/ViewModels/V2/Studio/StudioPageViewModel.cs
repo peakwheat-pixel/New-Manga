@@ -1325,13 +1325,21 @@ public sealed class StudioPageViewModel : StudioObservable
     }
 
     /// <summary>Refreshes the pipeline band from the run data source (NOT_WIRED today).</summary>
-    public Task RefreshRunProjectionAsync(CancellationToken cancellationToken = default)
+    public async Task RefreshRunProjectionAsync(CancellationToken cancellationToken = default)
     {
-        if (cancellationToken.IsCancellationRequested) return Task.CompletedTask;
-        // The RunMonitor owns refreshes; this method only remaps its cached projection into this view.
+        try
+        {
+            _runProjection = RunSource.IsWired
+                ? await RunSource.GetProjectionAsync(_chapterId, cancellationToken).ConfigureAwait(true)
+                : null;
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
         RefreshPipelineBand();
         Raise(nameof(RunProjection));
-        return Task.CompletedTask;
     }
 
     private void RefreshPipelineBand()
@@ -1367,6 +1375,7 @@ public sealed class StudioPageViewModel : StudioObservable
     {
         // V11R-B-4: the workspace push is the authoritative Page-band projection (AC2).
         _runProjection = projection;
+        Raise(nameof(RunProjection));
         RefreshPipelineBand();
         Raise(nameof(PipelineHeaderText));
         Raise(nameof(PipelineWired));
