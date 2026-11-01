@@ -17,9 +17,9 @@
 |---|---|---|---|---|
 | 1 | 持久身份与授权分离 | **C-06**（`identityFacts` + `grant`） | — | 引用 |
 | 2 | scope / version / lease | **C-06**（grant `scope`）+ **C-01b**（SC-25/29/31 lease） | — | 引用 |
-| 3 | **重定位 / 同步** | **无** | 全部 | **SC-S01…SC-S08** |
-| 4 | **容器页映射** | **无**（C-06 只到 entry 授权） | 全部 | **SC-S09…SC-S13** |
-| 5 | 缓存边界 / 资源上限 | 部分（见 §0.1） | 淘汰策略 / 持久化 / 全局上限 | **SC-S14…SC-S17** |
+| 3 | **重定位 / 同步**（正文 §2） | **部分**：C-01b **SC-34**（operation journal + receipt、崩溃恢复先核对 OS 事实）、**SC-26**（Dirty→扫描→diff→预览→事务发布新绑定）、**SC-27**（缺失页 tombstone 不连带删除；变化页新建 binding generation） | **relink/repoint 区分、范围选择、sync plan 字段、可执行判据** | **SC-S01…SC-S08**（引用上述三条，只补增量） |
+| 4 | **容器页映射**（正文 §1） | **无**（C-06 只到 entry 授权） | 全部 | **SC-S09…SC-S13** |
+| 5 | 缓存边界 / 资源上限（正文 §3） | 部分（见 §0.1） | 淘汰策略 / 持久化 / 全局上限 | **SC-S14…SC-S17** |
 
 ### 0.1 第 5 项的已承载子面（逐条证明，不复写）
 
@@ -39,7 +39,8 @@
 ### SC-S09 locator ≠ 身份
 
 - **`locator`**（PDF 页码、ZIP 成员名、目录内相对路径）是**位置**，不是**身份**；
-- **身份** = `EntryId`（`source_entries`），由 **`SourceId` + `SourceVersionId` + 稳定排序键 + 内容指纹**共同确定（方案 `:419`）；
+- **身份** = `EntryId`（`source_entries`），由 **`SourceId` + 稳定排序键**（内容指纹用于区分「同名不同内容」）共同确定；**`SourceVersionId` 是内容版本，不参与身份**——否则改名/移动产生新版本后身份会漂移，与本条「改名后 `EntryId` 不变」及 SC-S01/SC-S12 矛盾；
+- **行键** = (`SourceVersionId`, `EntryId`)——同一身份在不同内容版本下是不同行；
 - 同一文件被改名/移动后 `locator` 变、`EntryId` **不变**；同名不同内容的两个条目 `locator` 相同、`EntryId` **不同**。
 
 **验证**：改名 ZIP 内成员 → 断言 `EntryId` 不变、`locator` 变；同目录两份同名文件 → 断言两个不同 `EntryId`。
@@ -70,7 +71,7 @@
 ### SC-S13 原文件缺失
 
 - 原文件不在且无备份 → 旧版本原图不可用，但**索引、人工版本、区域、进度保留**（`status=missing`）；
-- 恢复路径见 SC-S03/SC-S04（重定位）。
+- 恢复路径见 **SC-S01/SC-S02**（relink/repoint 入口与范围选择）。
 
 **验证**：移走源文件 → 断言 `status=missing`、人工数据完整。
 
@@ -107,7 +108,8 @@
 
 ### SC-S04 失败与回滚
 
-- 重定位/同步是**跨 Host/Core 操作**，必须有 `source_operations` 记录（`operationId`、步骤、receipt、状态、失败/重试原因；方案 `:422`）；
+- **引用 C-01b SC-34**（operation journal + receipt；崩溃恢复先核对 OS 事实再决定是否重发）——本契约**不重写**其语义；
+- 本契约只补 relink/repoint 两类操作各自的步骤序列与幂等键：`source_operations` 记录 `{operationId, kind: relink|repoint|resync, 步骤, receipt, 状态, 失败/重试原因}`（方案 `:422`）；
 - 任一步失败 → 保留 operation receipt；**未达双方确认的 binding 不可读取**（方案 `:432`）；
 - 重试**同一 `operationId`** 必须幂等，不得产生第二个 binding。
 
@@ -115,6 +117,7 @@
 
 ### SC-S05 同步的 diff 预览
 
+- **引用 C-01b SC-26**（Dirty→扫描→diff→用户预览→事务发布新绑定）——本契约不重写，只补 sync 特有的可执行判据：
 - 文件夹/容器变更后**先列 diff**（数量 + 明细），用户确认后才同步（方案 `:459`）；
 - diff 必须包含：新增、缺失、内容变化三类，各自计数与明细；
 - **确认与应用之间再变更 → 拒绝**（`source_sync_plans` 的 `digest` 校验，方案 `:421`）。
@@ -132,6 +135,7 @@
 
 ### SC-S07 同步不连带删除人工成果
 
+- **引用 C-01b SC-27**（缺失页 tombstone；变化页新建 binding generation）——本契约不重写，只补 resync 下的具体操作序列：
 - 缺失页：保留 tombstone + 人工修改 + 问题标记，**不连带删除**（方案 `:459`）；
 - 变化页：建立**新的 binding generation**，旧区域只留在**旧内容 lineage**；手动确认迁移的区域也须**新建 revision**（不得原地改旧 revision）。
 
@@ -139,8 +143,9 @@
 
 ### SC-S08 与 C-04b 删除 preflight 的接口
 
-- 删除 preflight 的「将删除的 managed/派生文件」清单**必须**包含 `source_operations` 的 pending 状态（若有未完成的 relink/sync，preflight 须标出）；
-- 删除**不得**清理 `source_entries`/`page_bindings` 中被引用为「唯一来源」的记录（由 C-04b 的 PD-02/PD-03 约束）。
+- **本契约不扩展 C-04b 的协议形状**。C-04b 冻结的预检出参 `DeletePreviewItem`（`:43`）是 `{bookId, title, protection{...}, contentSummary{...}, sharedFileRefs[]}`，**没有** pending operation 字段。因此：
+  - **需求声明（不含协议改动）**：若存在未完成的 relink/resync，删除 preflight 应向用户披露；该字段的加入属 **C-04b 的 UNFREEZE 或 M2-C1 §5.11.2 的独立字节修订 Task**（照 C-08 块② 模式），不由本契约规定；
+  - 删除**不得**清理被 `page_bindings` 引用为「唯一来源」的记录——由 **ADJ-001 PD-08**（共享引用）与 **C-04b `:72`** 的关系图预检（`BOOK_DELETE_CONFLICT`）约束；本契约只声明该不变量，**不改其协议字节**。
 
 **验证**：有 pending operation 时发起删除预览 → 断言清单含该 operation。
 
@@ -156,12 +161,12 @@
 - **正在被读取/解码的产物不得淘汰**（引用计数 > 0 跳过）；
 - **不得**在删除 preflight 进行中淘汰被列为「将删除」的产物（避免清单不一致）。
 
-**验证**：触顶 → 断言 LRU 先清、变小文件先于小、被引用产物跳过；preflight 期间不淘汰。
+**验证**：触顶 → 断言 LRU 先清；**同 last-use 时大文件先清**；被引用产物跳过；preflight 期间不淘汰。
 
 ### SC-S15 持久化
 
 - 缓存**可跨会话保留**，但**必须可随时全量丢弃并重建**（不承载任何唯一数据）；
-- 位置必须在**受管根**内（C-01b SC-01/SC-03 的派生前缀），不得写用户源目录；
+- 位置必须在**受管根**内（C-01b **SC-03** 的清理前缀白名单，`cleanup.py:41`），不得写用户源目录；
 - 进程崩溃后缓存可能不完整 → **读取时必须校验**（cache key + 尺寸/digest），校验失败视为未命中并重建，**不得**返回损坏内容。
 
 **验证**：杀掉进程 → 重启 → 断言读到的缓存全部通过校验或全部重建；写用户源目录的尝试被拒。
@@ -188,8 +193,8 @@
 
 | 契约 | 接口 |
 |---|---|
-| **C-01b**（已冻） | `source_entries`/`page_bindings`/`source_sync_plans`/`source_operations` 表结构（SC-21/22）；缓存三条款（SC-02/03/20）**引用不复写** |
-| **C-06**（已冻） | grant `scope` 与本契约的 `EntryId` 对齐（`scope.entry`）；per-request 预算与全局上限的分层（SC-S16） |
+| **C-01b**（已冻） | **注意**：C-01b **未冻结** `source_entries`/`page_bindings`/`source_sync_plans`/`source_operations` 的表结构（AD-003 `:117` 明文「这些表均未定，由 DSH 在 D05 范围冻结」）→ **表结构留给后续存储契约，本契约只定义语义与不变量，不定义 DDL**。本契约引用的 C-01b 条款：**SC-02/SC-03/SC-20**（缓存）、**SC-26/SC-27/SC-34**（同步/缺失/operation journal）、**SC-21/SC-22**（授权面，**非**表结构） |
+| **C-06**（已冻） | C-06 的 `scope.entry` 语义是「**可解析到授权根内路径的定位键**」（`:52`）；本契约的 `EntryId` 经 `source_entries.locator` 解析后可与之对应——**对齐规则须在 C-06 侧或协议实现 Task 中确认，本契约不单方面重定义已冻结字段**；per-request 预算与全局上限是两层（SC-S16） |
 | **C-04b**（已冻） | 删除 preflight 的 pending operation 披露（SC-S08）；**不改 C-04b 字节** |
 | **C-08**（已冻） | Run 快照的 `PreparedRun` 与本契约的同步预览是**不同层**（Run 层 vs 源层），不互相替代 |
 
@@ -198,7 +203,7 @@
 1. 独立复核通过（上下文独立）；
 2. C-01b、C-06、C-04b、C-08 均已冻结（**✅ 2026-11-01 全部满足**）；
 3. 覆盖矩阵与 C-06 冻结记录的「D05 授权面子集」表述**无冲突**；
-4. `check.ps1` PASS + `verify_pins.ps1` 全通过（**C-14 冻结时必须同时把本契约加入 `verify_pins.ps1` 的清单**）；
+4. `check.ps1` PASS；`verify_pins.ps1` 对 C-14 当前为 `MISSING-RECORD (not yet frozen; skipped)`（**未冻结不该 PASS**），冻结记录建立后须转为实际校验（已纳入清单）；
 5. 冻结记录须含 §1A（pin 口径）与 §1B（冻结字节 vs 复核字节）。
 
 **注**：`verify_pins.ps1` 是机械校验，**不能替代**最终字节的独立复核——两者都要。
@@ -207,4 +212,5 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v2（处置 FEA-C14-r1 的 P1×5 + P2×4）**：P1-1 §4 改正「C-01b 未冻结四张表」（AD-003 `:117`）；P1-2 §0 行 3 补 C-01b SC-26/27/34 + SC-S04/S05/S07 改引用不复写；P1-3 SC-S08 改为「需求声明 + 属 C-04b UNFREEZE/独立字节修订」并改正引用为 ADJ-001 PD-08 + C-04b `:72`；P1-4 C-06 `scope.entry` 改为「对齐规则待协议层确认」；P1-5 身份公式改为 `SourceId`+稳定排序键（`SourceVersionId` 不参与身份）+ 行键 (`SourceVersionId`,`EntryId`)；P2-1…P2-4 措辞/引用/编号 | DSH |
 | 2026-11-01 | 建立草案：覆盖矩阵（D05 五项 + 第 5 项逐条证明）、SC-S01…SC-S17（重定位/同步 8 条、容器页映射 5 条、缓存边界 4 条）、四契约接口、冻结条件 | DSH |
