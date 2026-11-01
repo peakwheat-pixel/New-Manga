@@ -101,3 +101,8 @@
 - 卡：doc/tasks/FEA-06-PREREQ-1.md **ready**（8d9910e0c），P1–P5b 任务 + AC1–AC6。
 - **下一步**：DSH 实现（Codex 通道故障、ZCode 未安装）——新建 NewManga.Appearance 项目 + 迁移 + 令牌 + 主题包 + 测试。
 - **待裁决**：Q-31（PREREQ-2 复核时必须承接 P2-8「应用主题/动效落点」与 P2-5「selector 按 frontendId 而非 visualThemeId」——已记录，无需用户拍板）。
+## 13. FEA-06-PREREQ-1 实现（AC1 完成，2026-11-03）
+
+- **AC1 完成**（dc6c76bcf）：NewManga.Appearance 项目（AppearanceSettings C-03 §2.2 逐字段、AppearanceJson 宽容读/canonical 写/educedMotion→motion.mode 迁移、AppearanceStore 原子写 + 旧文档读一次、IMotionPreferenceSource SPI）+ NewManga.Appearance.Tests 12 测试；sln 加入两项目。
+- 全量 sln **961/0/57**（+12）。
+- **待完成**：AC2（AppearanceCoordinator + AppOptions.FrontendId）、AC3（G-1 令牌 DerivedGlobals + BoxShadows + 重生成 + --check + R14 计数）、AC4（Windows IMotionPreferenceSource + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（全量回归）。
