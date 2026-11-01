@@ -74,7 +74,7 @@
 1. 独立复核通过；
 2. C-01b 已冻结（顺序：C-01b 先）；
 3. **前置（a）**：C-05 与 C-04b 已冻结（§4 依赖它们的 active_runs 与删除保护口径）；
-4. **前置（b）**：协议注册——**方案**已冻结在本草案 **§3**（SC-R01/R04/R05）；**M2-C1 字节修订**（**§5.5 命令表追加 `PrepareRun`/`AcceptRun` + 3 个新码进 §5.5 错误语义段 + §8 观察表追加 3 行 + 新增 Run 线码白名单校验点**；wire minor **2.12**，DSH 批准）由**独立 Task** 在**释放任何 Run 实现之前**完成并复核，与 C-04b 共用 Task 的**块②**（见 [裁定 v3](GATE-CLOSURE-RULING-2026-11-01.md) **R-4**）；复核须含**负向对照**：未扩 M2-C1 时 3 个新码必须被 **host 的 `allowedRunErrorCodes` 白名单**拒绝/降级（注意：§8 的 `ErrorEnvelope.code` 是自由字符串，无白名单时未注册码会透传，所以白名单本身是块② 的交付项）；
+4. **前置（b）**：协议注册——**方案**已冻结在本草案 **§3**（SC-R01/R04/R05）；**M2-C1 字节修订**（**§5.5 命令表追加 `PrepareRun`/`AcceptRun` + 3 个新码进 §5.5 错误语义段 + §8 新增「Proposed（未观察）」小节 3 行 + §8 taxonomy 例外说明**；**host 投影层新增 `allowedRunErrorCodes` 白名单**（Core §8 不改；未注册码 → `category=unknown` + 安全短消息、**不重写 `code`**）；wire minor **2.12**，DSH 批准）由**独立 Task** 在**释放任何 Run 实现之前**完成并复核，与 C-04b 共用 Task 的**块②**（见 [裁定 v3](GATE-CLOSURE-RULING-2026-11-01.md) **R-4**）；复核须含**负向对照**：未扩 M2-C1 时 3 个新码必须被 **host 的 `allowedRunErrorCodes` 白名单降级**为 `category=unknown`（不重写 `code`、不作 UI 分支依据）；注意 §8 的 `ErrorEnvelope.code` 是自由字符串、无白名单时会透传，所以**白名单本身是块② 的交付项**；
 5. `check.ps1` PASS。
 
 ## 6. 变更记录
@@ -84,3 +84,4 @@
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-1 接口口径 + P2×3） | DSH |
 | 2026-11-01 | **v3（处置裁定 r3/r4）**：前置（b）落点改为**扩展 M2-C1 §5.5**（追加 2 命令 + 3 码进 §5.5 与 §8 ErrorEnvelope，不是新建章节/ErrorView）；引用 §2→§3；3 码补 category/retryable；wire minor **2.12** DSH 批准；冻结条件重排 | DSH |
+| 2026-11-01 | **v4（处置裁定 r6 的 P1×2 + P2×3）**：前置（b）白名单改挂 **host 投影层**（Core §8 不改、「降级」写死）；§8 落点改「Proposed（未观察）」小节 + taxonomy 例外说明；§1 「不改冻结契约」改述为本草案自身不写文件 | DSH |
