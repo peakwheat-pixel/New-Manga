@@ -55,3 +55,14 @@
 - MotionSettings/MotionResolution（可测的纯函数）。
 - NewManga.App.Tests/MotionResolverTests.cs 7 测试（auto 平台/降级两路/显式 full/reduce/off/单类）。
 - 全量 sln **972/0/57**（+7）。
+
+## AC5 完成
+
+- Themes/fluent-dark.nmtheme：Fluent 暗色主题包（id uiltin.fluent-dark、supportsLight=false、dark 调色板来自冻结 tokens）。
+- NewManga.ThemeEngine.csproj 嵌入资源；BuiltInThemes 增加 FluentDarkThemeResourceName/IsFluentDarkAvailable/FluentDark（懒加载、失败暴露为数据）+ All 含两主题。
+- BuiltInThemeGeneratorTests +2（加载/注册；Current 不生效）；ThemeRegistryTests 期望按 id ordinal 更新（两 builtin）。
+- ThemeGen -- --check **up to date**；全量 sln **974/0/57**。
+
+## 全部 AC 完成
+
+AC1 ✅（Appearance 项目 12 测试）/ AC2 ✅（Coordinator 4）/ AC3 ✅（G-1 11 键 + BoxShadows）/ AC4 ✅（Motion 7）/ AC5 ✅（fluent-dark 主题包 2+）/ AC6 ✅（974/0/57）。

@@ -222,4 +222,25 @@ public sealed class BuiltInThemeGeneratorTests
 
         return colors;
     }
+    /// <summary>FEA-06-PREREQ-1 AC5: the shipped Fluent dark theme loads and is registered.</summary>
+    [Fact]
+    public void FluentDark_IsLoadable_AndRegisteredAsBuiltIn()
+    {
+        Assert.True(BuiltInThemes.IsFluentDarkAvailable);
+        Assert.Empty(BuiltInThemes.DefaultLoadIssues);
+
+        var package = BuiltInThemes.FluentDark;
+        Assert.Equal("builtin.fluent-dark", package.Descriptor.Id);
+        Assert.False(package.Descriptor.SupportsLight);
+        Assert.True(package.Descriptor.SupportsDark);
+    }
+
+    /// <summary>FEA-06-PREREQ-1 AC5: the current visual theme must not silently change.</summary>
+    [Fact]
+    public void AddingFluentDark_DoesNotChangeTheDefaultTheme()
+    {
+        Assert.Equal("newmanga-default", BuiltInThemes.Default.Descriptor.Id);
+        Assert.Contains(BuiltInThemes.All, package => package.Descriptor.Id == "newmanga-default");
+        Assert.Contains(BuiltInThemes.All, package => package.Descriptor.Id == "builtin.fluent-dark");
+    }
 }

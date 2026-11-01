@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <!-- The shipped default theme is a generated artifact embedded in this assembly. -->
+    <EmbeddedResource Include="Themes\fluent-dark.nmtheme"
+                      LogicalName="NewManga.ThemeEngine.Themes.fluent-dark.nmtheme" />
     <EmbeddedResource Include="Themes\newmanga-default.nmtheme"
                       LogicalName="NewManga.ThemeEngine.Themes.newmanga-default.nmtheme" />
   </ItemGroup>

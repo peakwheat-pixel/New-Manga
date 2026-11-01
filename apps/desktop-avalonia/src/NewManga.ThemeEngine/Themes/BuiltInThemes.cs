@@ -14,8 +14,18 @@ public static class BuiltInThemes
     public const string DefaultThemeResourceName =
         "NewManga.ThemeEngine.Themes.newmanga-default.nmtheme";
 
+    /// <summary>Manifest resource name of the shipped Fluent dark theme (FEA-06-PREREQ-1 AC5).</summary>
+    public const string FluentDarkThemeResourceName =
+        "NewManga.ThemeEngine.Themes.fluent-dark.nmtheme";
+
     private static readonly Lazy<ThemeReadResult> DefaultResult = new(
         LoadDefaultPackage,
+        LazyThreadSafetyMode.ExecutionAndPublication);
+
+    private static readonly Lazy<ThemeReadResult> FluentDarkResult = new(
+        () => LoadFromResource(
+            typeof(BuiltInThemes).Assembly,
+            FluentDarkThemeResourceName),
         LazyThreadSafetyMode.ExecutionAndPublication);
 
     /// <summary>True when the embedded default package loaded successfully.</summary>
@@ -31,9 +41,19 @@ public static class BuiltInThemes
             $"embedded default theme '{DefaultThemeResourceName}' is unavailable",
             DefaultResult.Value.Issues);
 
+    /// <summary>True when the embedded Fluent dark package loaded successfully.</summary>
+    public static bool IsFluentDarkAvailable => FluentDarkResult.Value.Package is not null;
+
+    /// <summary>The shipped Fluent dark package (Fluent frontend only).</summary>
+    public static ThemePackage FluentDark =>
+        FluentDarkResult.Value.Package ??
+        throw new ThemePackageException(
+            $"embedded Fluent dark theme '{FluentDarkThemeResourceName}' is unavailable",
+            FluentDarkResult.Value.Issues);
+
     /// <summary>Every built-in package. V1 ships exactly one theme by explicit product decision.</summary>
     public static IReadOnlyList<ThemePackage> All =>
-        IsDefaultAvailable ? [Default] : [];
+        IsDefaultAvailable && IsFluentDarkAvailable ? [Default, FluentDark] : IsDefaultAvailable ? [Default] : [];
 
     /// <summary>Reads a package from an assembly manifest resource, returning findings instead of throwing.</summary>
     public static ThemeReadResult LoadFromResource(Assembly assembly, string resourceName)

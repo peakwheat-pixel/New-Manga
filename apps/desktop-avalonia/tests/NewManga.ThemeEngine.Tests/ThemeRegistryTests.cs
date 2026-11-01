@@ -241,7 +241,8 @@ public sealed class ThemeRegistryTests
 
         var ids = registry.All.Select(descriptor => descriptor.Id).ToArray();
 
-        Assert.Equal(ThemeDefaults.DefaultThemeId, ids[0]);
-        Assert.Equal(new[] { "alpha", "zulu" }, ids.Skip(1));
+        // FEA-06-PREREQ-1 AC5: two built-ins (builtin.fluent-dark + newmanga-default)
+        // sort by ordinal id, so the default is no longer ids[0].
+        Assert.Equal(new[] { "newmanga-default", "alpha", "zulu" }, ids.Skip(1));
     }
 }
