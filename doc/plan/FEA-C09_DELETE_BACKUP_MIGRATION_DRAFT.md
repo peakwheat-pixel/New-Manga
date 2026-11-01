@@ -63,7 +63,7 @@
 
 1. 独立复核通过；
 2. C-01b 已冻结；
-3. `G-DELETE-CONTRACT` 关闭（删除语义）+ **`G-CONTRACT` 关闭**（AD-003 存储契约）；
+3. **上游契约已冻结**：C-01b、C-04b、C-06、C-14 均已冻结（本契约显式依赖它们的 source/缓存/删除/授权面）；且 **`G-CONTRACT` 已关闭（2026-11-01）**。**本契约不再要求 `G-DELETE-CONTRACT` 关闭**——本契约正是 D07 的承载者之一；D07 的完整覆盖由「本契约冻结 + C-04b + C-01b 相关条款」共同满足，届时才重新判定 `G-DELETE-CONTRACT`（见 [D07 解环 Task](FEA-D07-UNBLOCK.md)）。**不引入「部分关闭」Gate 状态**。
 4. `check.ps1` PASS。
 
 ## 5. 变更记录
