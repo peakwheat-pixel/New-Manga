@@ -34,7 +34,7 @@
 | 工具按钮 | `Nm.Corner.Fluent.Sm`；激活态背景 `Nm.Color.Accent.Muted` |
 | 底部操作条 | `Nm.Color.Bg.Raised` + 顶部 1px 分隔线 |
 | 批量矩阵单元格 | `Nm.Corner.Fluent.Sm`；七状态语义色（`Nm.Color.Status.*`）+ 图标 |
-| 矩阵表头 | 吸顶；列宽最小 `Nm.Size.RowNormal`（26），阶段名可换行 |
+| 矩阵表头 | 吸顶；列宽最小 96（设计常量，FEA-05 登记/DSH 裁决，见 01 G-1b），阶段名可换行 |
 | Run 投影条 | `Skeleton`/进度条既有组件；状态文案来自共享 RunMonitor |
 
 ## 3. 状态（AC1 必须齐全）

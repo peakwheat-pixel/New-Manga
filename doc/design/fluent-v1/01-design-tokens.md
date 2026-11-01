@@ -19,7 +19,7 @@
 
 > **实现前置**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的实际生成属于 FEA-05 的实现范围（tokens 生成器）；本基线只冻结**取值与用途**。若 FEA-05 无法在 C-02 已冻结的名义下生成这些键，须先由 DSH 裁决（不得在本基线私自改名）。
 >
-> **尺寸/断点缺口（G-1b）**：本基线不新增尺寸/断点令牌；全部复用既有 `Nm.Size.*`（`TopBand` 36 / `TreeWidth` 200 / `FilmStripCollapsed` 56 / `FilmStripExpanded` 200 / `InspectorCollapsed` 40 / `InspectorExpanded` 320 / `RowDense` 24 / `RowNormal` 26 / `StatusBandPage` 28 / `StatusBandBatch` 24 / `ControlHeight`）与三档断点 `Nm.Size.Breakpoint.Narrow/Compact/Full`（1024/1280/1600）。任何实现需要的额外尺寸须先在 FEA-05 中登记并由 DSH 裁决，不得在本基线写裸数。
+> **尺寸/断点缺口（G-1b）**：本基线不新增尺寸/断点令牌；全部复用既有 `Nm.Size.*`（`TopBand` 36 / `TreeWidth` 200 / `FilmStripCollapsed` 56 / `FilmStripExpanded` 200 / `InspectorCollapsed` 40 / `InspectorExpanded` 320 / `RowDense` 24 / `RowNormal` 26 / `StatusBandPage` 28 / `StatusBandBatch` 24 / `ControlHeight`）与三档断点 `Nm.Size.Breakpoint.Narrow/Compact/Full`（1024/1280/1600）。任何实现需要的额外尺寸须先在 FEA-05 中登记并由 DSH 裁决，不得在本基线写裸数。**已登记的设计常量**：批量矩阵列宽最小 96（现有 `Nm.Size.*` 无列宽令牌；`TreeWidth` 200 过宽，故作为设计常量，FEA-05 生成令牌时登记）。
 
 ## 2. 取值表（Fluent v1 冻结）
 

@@ -8,54 +8,47 @@
 
 | AC | 要求 | 落点 | 自查 |
 |---|---|---|---|
-| AC1 | 四页规格齐全，含所有状态（空/载入/错/满）与响应式断点 | `05-page-shelf.md`、`06-page-workbench.md`、`07-page-reader.md`、`08-page-settings.md`、`09-state-matrix.md`、`04-layout-responsive.md` | 四页各含状态表；断点 Compact/Medium/Expanded/Wide 在 04 §2 与各页 §5 |
-| AC2 | `Nm.Corner.Fluent.*`/`Nm.Material.*`/`Nm.Elevation.*` 取值 + C-02 V-05 判据①对表 | `01-design-tokens.md` §2/§3 | 取值表 + 对表 + 裸值禁令 |
-| AC3 | 三类动效 × `auto`/`full`/`rreduce` 参数，满足 C-03 §3 判据 ①–⑤ | `02-motion.md` §2/§3 | 三张参数表 + 判据逐条对应 |
-| AC4 | 焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b KeyMap 无冲突 | `03-accessibility.md` | 键位表来自 `ShellCommands.cs`；四页 Tab 序；高对比降级；AutomationProperties |
-| AC5 | 用户确认 + 独立 Review + DSH 冻结 | 待办 | 用户确认未进行（自主推进模式，已登记待裁决）；独立 Review 待派发 |
+| AC1 | 四页规格齐全，含所有状态（空/载入/错/满）与响应式断点 | 05–08 四页、09 状态矩阵、04 断点 | 四页各含状态表；断点 Narrow/Medium/Compact/Full 见 04 §2 |
+| AC2 | `Nm.Corner.Fluent.*` / `Nm.Material.*` / `Nm.Elevation.*` 取值 + C-02 V-05 判据①对表 | 01 §2/§3/§4 | 取值表 + 对表 + 裸值禁令 + G-1b/G-1c 缺口登记 |
+| AC3 | 三类动效 × auto/full/reduce 参数，满足 C-03 §3 判据 ①–⑤ | 02 §2/§3 | 三张参数表 + 判据逐条对应 + categories 关闭语义 |
+| AC4 | 焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b KeyMap 无冲突 | 03 | 键位表（17 条，与 `ShellCommands.cs` 一致）+ 四页 Tab 序 + 高对比 + AutomationProperties |
+| AC5 | 用户确认 + 独立 Review + DSH 冻结 | 待办 | 独立 Review r1–r4 已走；用户确认未进行（自主推进模式，待裁决） |
 
 ## 2. 上游一致性
 
 | 上游 | 检查 | 结果 |
 |---|---|---|
-| C-02 §6.1 空间/模式/surface | `SpaceId.Library/Studio/Console`、`StudioMode.Page/Batch`、`ShellSurface.Spaces/ThemeStudio/ReaderOverlay` 未新增 | ✓（README §1、05–07 页 ID） |
-| C-02 V-05 令牌 | 只引用 C-02 已定义的 Fluent 令牌名（`Corner.Fluent.*`/`Material.*`/`Elevation.*`）；未新增令牌名 | ✓（01 §1） |
-| C-02 V-08b KeyMap | 全局键位来自 `ShellCommands.cs`；Fluent 不私建注册表；上下文键三元 | ✓（03 §1） |
-| C-03 动效三态/三类 | `auto/full/rreduce` + `navigation/feedback/decorative`；浮层归 `navigation`；判据 ①–⑤ | ✓（02 §1–§3） |
-| C-03 外观字段 | 设置页字段与 `presentation-settings.json` 迁移后字段一致；`AappearanceCoordinator` 唯一写者 | ✓（08 §3） |
-| C-05 页可见性 | 四页不新增页；阅读器为 overlay | ✓（07 页 ID） |
+| C-02 §6.1 空间/模式/surface | 未新增 `SpaceId`/`StudioMode`/`ShellSurface` | 一致 |
+| C-02 V-03/V-05 令牌 | 只引用冻结名；缺键（`Nm.Focus.Ring.*`、`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*`）登记为 G-1/G-1c，不用其他键替代 | 一致 |
+| C-02 V-08b KeyMap | 全局键位来自 `ShellCommands.cs`（17 条）；Fluent 不私建注册表；无无修饰 Tab 冲突（页签用 ←/→） | 一致 |
+| C-03 §2.3 三态三类 | `auto/full/reduce` + `navigation/feedback/decorative`；浮层归 `navigation`；判据 ①–⑤（含 feedback 颜色过渡 0ms） | 一致 |
+| C-03 §2.2 外观字段 | 设置页字段与 `presentation-settings.json` 对齐（appearance/contrast/corners/material/motion.*/layout.*/followSystemAccent/schemaVersion） | 一致 |
+| C-05 页可见性 | 四页不新增页；阅读器为 overlay | 一致 |
 
-## 3. 已知缺口 / 待裁决
+## 3. 缺口登记
 
-| # | 缺口 | 影响 | 处置建议 |
-|---|---|---|---|
-| G-1 | `Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 目前在 `NmKeys.g.cs` **不存在**（Material/Elevation 为保留空键） | FEA-05 实现前需生成令牌；否则设计数值无落点 | 由 FEA-05 在 C-02 已冻结名义下生成；本基线只冻结取值（01 §1 已注明） |
-| G-2 | 用户确认（AC5）未进行 | AC5 无法 MET | 自主推进模式下由用户后续确认；已登记 GOAL-PROGRESS 待裁决 |
-| G-3 | 设计资产（图标/字体）未产出 | FEA-05/06 需图标时无基线 | 本基线不引入新资产；沿用 `NmIcon.cs` 既有集合；新资产在 FEA-05 按许可边界评估 |
-| G-4 | 双屏/拔屏细节只给出原则，未给具体窗口尺寸 | FEA-07 多窗口实现需补充 | 由 FEA-07 在实现时按 04 §4 扩展（不阻断本基线） |
+| # | 缺口 | 处置 |
+|---|---|---|
+| G-1 | `Nm.Corner.Fluent.*` / `Nm.Material.*` / `Nm.Elevation.*` 未生成 | FEA-05 生成；本基线冻结取值 |
+| G-1b | 尺寸/断点复用既有 `Nm.Size.*`（TopBand 36 / TreeWidth 200 / FilmStrip 56·200 / Inspector 40·320 / Row 24·26 / StatusBand 28·24 / ControlHeight）；断点三档 1024/1280/1600；批量矩阵列宽最小 96 为设计常量 | 不新增令牌；额外尺寸须 FEA-05 登记 + DSH 裁决 |
+| G-1c | `Nm.Focus.Ring.Width/Offset/Color` 缺失 | FEA-05 生成或 DSH 裁决替代 |
+| G-2 | 用户确认（AC5）未进行 | 自主推进模式下待用户确认 |
+| G-3 | 设计资产（图标/字体）未产出 | 沿用 `NmIcon` 既有集合；新资产 FEA-05 按许可评估 |
+| G-4 | 双屏/拔屏细节只给原则 | FEA-07 实现时按 04 §4 扩展 |
 
-## 4. 评审要点（给独立 Reviewer）
+## 4. 复核处置记录
 
-- 四页规格是否覆盖**全部**状态（对照 `09-state-matrix.md`，逐格核对）。
-- 令牌取值是否全部可追到 C-02 冻结名；有无自造令牌名/裸值。
-- 动效表是否逐条满足 C-03 §3 判据 ①–⑤（每条可给验证断言）。
-- 键位表是否与 `ShellCommands.cs` 一一对应；有无新增全局键位。
-- 状态矩阵与四页正文是否一致（无矛盾/遗漏）。
-- 是否有与 FEA-04 Current 基线冲突的行为（不退化要求）。
+- **r1（P1×7）**：令牌名改既有冻结名；G-1b 尺寸/断点；命令 Id；Tab 序；判据⑤；09 矩阵 4 格；08 字段。
+- **r2（P1×4）**：焦点环改 G-1c；05–08 断点/令牌同步；删 `Ctrl+Tab`；判据⑤「所有时长 0ms」。
+- **r3（P1×1）**：06 `Compact`→`Narrow`；图中 72/240→`Nm.Size.TreeWidth`；07 高 40/36→`Nm.Size.ControlHeight`。
+- **r4（P1×1）**：06 矩阵列宽恢复 96 并在 01 G-1b 登记为设计常量（`RowNormal` 是行高，不作列宽）。
+- 证据表 12 项 sha256 与最终文件一致（commit 列以交付 head 为准）。
 
-## 5. r1 复核处置（DSH，2026-11-02）
+## 5. 评审要点（给独立 Reviewer）
 
-| finding | 处置 |
-|---|---|
-| P1-01 令牌名自造/错误 | 全库替换为既有冻结名：Nm.Color.Bg.*、Nm.Color.Accent.*、Nm.Color.Status.*、Nm.Color.Text.*、Nm.FontSize.*、Nm.Icon.Size；01 新增「焦点环（第四组）」说明（Nm.Border.Focus + Nm.Color.Accent.Ring，无 Nm.Focus.Ring.* 族） |
-| P1-02 尺寸/断点冲突 | 01 新增 **G-1b**：全部复用既有 Nm.Size.*（TopBand 36/TreeWidth 200/FilmStrip 56/200/Inspector 40/320/Row 24/26/StatusBand 28/24/ControlHeight）与三档断点 Narrow/Compact/Full（1024/1280/1600）；04 重写骨架与断点表，删除自造四档 |
-| P1-03/P1-04 键盘/a11y | 03 命令 Id 改 go.to/export.run；四页 Tab 序与 05–08 对齐（补 film-strip、阅读器顺序、设置返回）；06 明确无修饰 Tab 被 studio.mode.toggle 占用，页签条内改用 ←/→ |
-| P1-05 AC3 判据⑤ | 02 判据⑤ 补断言：旧值 → reduce + 三类「关」；新增 motion.categories 关闭语义（关 = 该类在 ull 下也按 reduce 列） |
-| P1-06 09 矩阵 | 补 4 格定义（阅读器无筛选/冲突/运行态、设置无冲突/运行态）；书架「扫描中」与「运行中」去重；gate 引用改为 06 §3/§4 |
-| P1-07 08 设置字段 | 对齐 C-03 §2.2 键名：appearance/contrast/corners/material/motion.mode/motion.categories/layout.*/followSystemAccent/schemaVersion；设置页宿主引用 ShellSurface.ThemeStudio |
-| P2-14 治理指针 | STATUS/PLAN 已同步 in_review |
-## 6. r2 / r3 复核处置（DSH，2026-11-02）
-
-- **r2（P1×4）**：①焦点环改「C-02 V-03 第四组缺失 + G-1c」；②05–08 断点改 Narrow/Medium/Compact/Full、尺寸改 Nm.Size.*；③删 06 Ctrl+Tab；④判据⑤改「所有类别时长（含 feedback 颜色过渡）=0ms」。
-- **r3（P1×1）**：①06:24 Compact→Narrow（两处）；②05/06/08 图中 72/240 裸值→Nm.Size.TreeWidth(200)；③07 高 40/36→Nm.Size.ControlHeight。
-- 证据表 12 项 sha256 已按最终文件重算（commit 统一 173d156d → 最新提交）。
+- 四页状态是否覆盖全部（对照 09 逐格核对）。
+- 令牌名是否全部可追到冻结名/已登记缺口；有无裸值。
+- 动效表是否逐条满足 C-03 §3 判据 ①–⑤。
+- 键位表是否与 `ShellCommands.cs` 一一对应。
+- 09 与四页正文是否一致。
+- 与 FEA-04 Current 基线不退化。
