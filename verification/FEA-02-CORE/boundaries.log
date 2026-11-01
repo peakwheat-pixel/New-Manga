@@ -1,0 +1,35 @@
+warning: in the working copy of 'doc/plan/FEA-01_CONTRACT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C07_API_INVENTORY.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C10_INTERACTION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C12_CHECKER_SCOPE_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+PASS: Current/App, CoreClient, Python, frozen contracts and existing tests unchanged.
+PASS: solution contains only two new projects and their own configuration/nesting rows.
+PASS: no application wiring and no new production dependency.
+warning: in the working copy of 'doc/TASK_LEDGER.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-01_CONTRACT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C07_API_INVENTORY.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C10_INTERACTION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C12_CHECKER_SCOPE_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md', LF will be replaced by CRLF the next time Git touches it
+PASS: changed and untracked paths remain inside the authorized task scope.
