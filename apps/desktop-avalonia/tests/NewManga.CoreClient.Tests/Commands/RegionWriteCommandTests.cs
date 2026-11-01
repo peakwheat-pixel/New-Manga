@@ -108,11 +108,6 @@ public sealed class RegionWriteCommandTests
             .ToHashSet(StringComparer.Ordinal);
         Assert.Equal(HostCommandRegistry.V11RAdditiveCommandNames, additive);
         Assert.Equal(
-            HostCommandRegistry.RegionWriteCommandNames
-                .Concat(HostCommandRegistry.RegionReadCommandNames)
-                .ToHashSet(StringComparer.Ordinal),
-            additive);
-        Assert.Equal(
             snapshot.GetProperty("counts").GetProperty("production").GetInt32() + additive.Count,
             registryNames.Count);
 

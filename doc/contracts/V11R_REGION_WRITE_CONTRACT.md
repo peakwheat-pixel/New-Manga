@@ -1,6 +1,6 @@
-# V11R Region 写面 + 文本读投影契约 v1.5（FROZEN）
+# V11R Region 写面 + 文本读投影契约 v1.6（FROZEN）
 
-状态：`FROZEN`（2026-10-30；v1 = V11R-F0-1 写面，v1.1 = V11R-F0-2 文本读投影，v1.2 = F0-1 I1 有界返修，v1.3 = F0-1 I2 有界返修，v1.4 = F0-1 I3 有界返修，v1.5 = F0-1 I4 有界返修：页上限并发测试独立连接 + restore 顶点上限 + restore typed TARGET_NOT_FOUND；Owner 产出，Lead 裁定文件归属）。
+状态：`FROZEN`（2026-10-30；v1 = V11R-F0-1 写面，v1.1 = V11R-F0-2 文本读投影，v1.2 = F0-1 I1 有界返修，v1.3 = F0-1 I2 有界返修，v1.4 = F0-1 I3 有界返修，v1.5 = F0-1 I4 有界返修：页上限并发测试独立连接 + restore 顶点上限 + restore typed TARGET_NOT_FOUND；**v1.6 = FEA-05-PORT-1 UNFREEZE：追加 Draft 家族（`DraftsCommandNames` 6），不变式升级为「追加集 = RegionWrite ∪ RegionRead ∪ Drafts」**；Owner 产出，Lead 裁定文件归属）。
 任务卡：`doc/tasks/V11R-F0-1.md`（写面，高风险）、`doc/tasks/V11R-F0-2.md`（文本读投影，关闭 GAP-2）。
 上游：审计 §5.1 F-01（`New_Manga_前后端功能与接口现状审计_V1.1_修订完整版.md`）、
 `doc/plan/V11R_AVALONIA_CONTRACT.md` §1.2/§5.3、`doc/design/redesign-v1/40-fusion/FUSION_SPEC.md` §4/§8 F-01。
@@ -59,8 +59,8 @@ minor = 3**（与 `set_region_type` / `list_regions` 同族），Core 的 `PROTO
 3. bump 会改变所有客户端声明的 envelope 版本，属于本任务未授权的共享契约变更。
 
 C# 侧 `HostCommandRegistry` 中 11 条命令的 `CoreMinor` 均为 `3`；
-`RegionWriteCommandNames`（10 写）、`RegionReadCommandNames`（1 读）与并集
-`V11RAdditiveCommandNames`（11）显式暴露追加集合；冻结的 66 条 Rust 快照**不修改**（见 §8 验证）。
+`RegionWriteCommandNames`（10 写）、`RegionReadCommandNames`（1 读）、`DraftsCommandNames`（6）与并集
+`V11RAdditiveCommandNames`（17 = 10 + 1 + 6）显式暴露追加集合；冻结的 66 条 Rust 快照**不修改**（见 §8 验证）。
 
 ### 1.2 错误 envelope（复用既有 typed 字面量，零新增错误类型）
 
@@ -343,7 +343,7 @@ reorder 的变更 region）都是 **append-only 非幂等**——每次成功调
 
 - `HostCommandRegistry`：`RegionNames` 追加 11 名（10 写 + 1 读）；`CoreBindings` 映射同名 Core
   命令、`Minor=3`；`RegionWriteCommandNames`（10）、`RegionReadCommandNames`（1）与并集
-  `V11RAdditiveCommandNames`（11）显式暴露追加集合；`All` = 冻结 66 条迁移命令 + 11 条追加命令。
+  `V11RAdditiveCommandNames`（17）与 `DraftsCommandNames`（6）显式暴露追加集合；`All` = 冻结 66 条迁移命令 + 17 条追加命令。
 - `HostCommandDispatcher.WriteCorePayload`：逐命令做 legacy 边界的 fail-closed 参数校验
   （`INVALID_ARGUMENTS`，发帧前拒绝），并写出 §2 的精确 payload：
   - 几何：`geometry.points` ≥2 个 `[x,y]` 有限数对，**且必须在归一化 `[0,1]` 内**（v1.2/I1）；split `parts` 为 ≥2 个点列表；
@@ -454,7 +454,7 @@ A-3 的 `V11R_COMMAND_CONTRACT_V1.md` 由 core-bridge 独占，本文件作为�
 | Core 契约用例 | `python -m pytest -q tests/core/test_region_*.py tests/editing/test_region_*.py` | 全绿（每命令成功/冲突/非法参数 + 重启后锁持久化 + 文本读投影 + 原子回滚/并发冲突零写/锁继承/事务化 delete-pin + 软删目标存活 + 真实交错并发 + DB_FAILED + 输入上限 + 单 revision 目标存活 + 事务内页上限） |
 | C# 构建 | `dotnet build NewManga.sln -warnaserror`（`apps/desktop-avalonia`） | 0 warning / 0 error |
 | C# 测试 | `dotnet test NewManga.sln --no-build` | 全绿（`RegionWriteCommandTests`：11 条注册/minor/精确 payload/边界拒绝/DTO 严格解析 + v1.2/I1 领域非法值边界 + v1.3/I2 缺失必需字段/超限批量用例） |
-| 快照不变量 | 同 C# 测试 | 冻结 66 快照 ⊆ registry；追加集恰为 `V11RAdditiveCommandNames`（10 写 + 1 读） |
+| 快照不变量 | 同 C# 测试 | 冻结 66 快照 ⊆ registry；追加集恰为 `RegionWrite ∪ RegionRead ∪ Drafts` = `V11RAdditiveCommandNames`（17） |
 
 **v1.2/I1 返修验证要求（已满足，证据见 `verification/V11R-F0-1-I1/README.md`）**：
 失败注入必须证明「无 current revision 的 region 行不存在」；并发/过期必须证明「整批零写」；
@@ -488,6 +488,7 @@ not-found（并发软删后 restore 零写、wire TARGET_NOT_FOUND）。
 |---|---|
 | 2026-10-30 | v1 冻结：10 条命令契约、minor 3 策略、几何/乐观锁/幂等/错误码/数据安全、C# 注册与 payload、GAP 清单（V11R-F0-1 Owner） |
 | 2026-10-30 | v1.1（V11R-F0-2）：新增 C077 `list_page_region_texts`（page-scoped 文本读投影，关闭 GAP-2）、`RegionPageTextProjection` 解析 DTO、`RegionReadCommandNames`/`V11RAdditiveCommandNames`；GAP-2 标 CLOSED，GAP-3 “既有 manual save 未改”显式保留；契约升版原因见 §0 读命令选型。 |
+| 2026-11-02 | **v1.6（FEA-05-PORT-1 UNFREEZE）**：追加 Draft 家族 `DraftsCommandNames`（6：`drafts_open/patch/prepare/apply/status/discard`）；不变式由「恰为 11 条」升级为「RegionWrite ∪ RegionRead ∪ Drafts = 17」；§1.1/§6.3/§8 同步；UNFREEZE 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-02.md` | DSH |
 | 2026-10-30 | v1.2（V11R-F0-1 I1 有界返修，独立审查 r1 FAIL 处置）：P1-1 复合写全有或全无（`commit_region_batch` 单事务）；P1-2 多 region 乐观锁事务内整批重核对、整批零写；P1-3 merge/split 继承有效锁并写双投影；P2-4 delete/pin guard 与写入同事务；P2-5 Host 发帧前拒绝坐标越界/非正整数等领域非法值。逐项处置表见 `verification/V11R-F0-1-I1/README.md`。 |
 | 2026-10-30 | v1.3（V11R-F0-1 I2 有界返修，独立审查 r2 FAIL 处置）：P1-A 批量事务重读目标 `deleted_at IS NULL`、条件软删 rowcount=1、pin 带 live 条件，已删目标 ⇒ `TARGET_NOT_FOUND` 零写；P1-B 独立 SQLite 连接 + barrier 的真实交错并发测试；P2-C（**F0-2 修复项**）DTO 缺属性严格失败、显式 null 仍合法；P2-D `GuardStatus.DB_FAILED` 独立，wire UNKNOWN/internal 固定短语；P2-E 输入上限（500 region / 64 merge / 64 part / 512 vertex，Core 与 Host 同值 `INVALID_REQUEST`）。逐项处置表见 `verification/V11R-F0-1-I2/README.md`。 |
 | 2026-10-30 | v1.4（V11R-F0-1 I3 有界返修，独立审查 r3 FAIL 处置）：P1 单 revision 写入在事务内重读目标 `deleted_at`（save_geometry/save_manual_translation/confirm/set_region_locks；并发软删 ⇒ `TARGET_NOT_FOUND` 零写）；P2-A 页 region 上限进入批事务（`page_region_limit`，两调用者同见 N-1 也不会越界，超限 INVALID_REQUEST）；P2-B service 层顶点上限（create/save/split part/merge 派生多边形）；P3 `RequireInt` helper 去重（行为不变）。逐项处置表见 `verification/V11R-F0-1-I3/README.md`。 |

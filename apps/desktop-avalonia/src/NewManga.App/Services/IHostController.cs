@@ -417,6 +417,49 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// <summary>Removes the safe cache population; failures stay persisted in the Core ledger.</summary>
     Task<CleanupOutcomeInfo?> RunCleanupAsync(CancellationToken cancellationToken = default);
 
+    // FEA-05-PORT-1: Draft command surface (C078-C083). Null (null / empty list)
+    // means "not available in this host"; never a silent success for a write.
+    Task<DraftLease?> OpenDraftAsync(
+        string sessionId,
+        string pageId,
+        string? regionId,
+        string? baseRevisionId,
+        int pageBindingVersion,
+        CancellationToken cancellationToken = default);
+
+    Task<Draft?> PatchDraftAsync(
+        string draftId,
+        string sessionId,
+        DraftPatchRequest patch,
+        int? undoCursor = null,
+        CancellationToken cancellationToken = default);
+
+    Task<RegionCandidate?> PrepareCandidateAsync(
+        string regionId,
+        DraftPatchRequest patch,
+        string origin,
+        string? draftId = null,
+        string? baseRevisionId = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyDictionary<string, string>> ApplyCandidatesAsync(
+        EditToken token,
+        IReadOnlyList<string> candidateIds,
+        CancellationToken cancellationToken = default);
+
+    Task<Draft?> GetDraftAsync(
+        string draftId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Draft>> ListDraftsAsync(
+        string sessionId,
+        CancellationToken cancellationToken = default);
+
+    Task DiscardDraftAsync(
+        string draftId,
+        string sessionId,
+        CancellationToken cancellationToken = default);
+
     Task<string?> RestoreBackupAsync(
         string backupId,
         CancellationToken cancellationToken = default);

@@ -10,6 +10,7 @@ public enum HostCommandDomain
     Reader,
     Resource,
     Workbench,
+    Drafts,
 }
 
 public enum HostCommandChannel

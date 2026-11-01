@@ -114,6 +114,16 @@ public static class HostCommandRegistry
         "revoke_resource_refs",
     };
 
+    private static readonly string[] DraftsNames =
+    {
+        "drafts_open",
+        "drafts_patch",
+        "drafts_prepare",
+        "drafts_apply",
+        "drafts_status",
+        "drafts_discard",
+    };
+
     private static readonly string[] WorkbenchNames =
     {
         "core_ping",
@@ -177,6 +187,13 @@ public static class HostCommandRegistry
         // minor 10; the backup/cleanup/plugin/run faces stay on minor 3.
         ["backup_delete"] = new("backup.delete", 3),
         ["cleanup_retry_pending"] = new("cleanup.retry_pending", 3),
+        // FEA-05-PORT-1: Draft family (C078-C083); same minor 3 as the frozen 2.3 protocol.
+        ["drafts_open"] = new("drafts_open", 3),
+        ["drafts_patch"] = new("drafts_patch", 3),
+        ["drafts_prepare"] = new("drafts_prepare", 3),
+        ["drafts_apply"] = new("drafts_apply", 3),
+        ["drafts_status"] = new("drafts_status", 3),
+        ["drafts_discard"] = new("drafts_discard", 3),
         ["plugins_audit_list"] = new("plugins.audit_list", 3),
         ["plugins_set_plugin_enabled"] = new("plugins.set_plugin_enabled", 3),
         ["library_delete_book_permanently"] = new("PermanentlyDeleteBook", 10),
@@ -303,13 +320,29 @@ public static class HostCommandRegistry
         };
 
     /// <summary>
+    /// <summary>
+    /// FEA-05-PORT-1: the Draft command family (C078-C083). Additive to the
+    /// frozen 66-command snapshot; the registry parity test derives its
+    /// additive set from the union of the family sets below.
+    /// </summary>
+    public static IReadOnlySet<string> DraftsCommandNames { get; } =
+        new HashSet<string>(StringComparer.Ordinal)
+        {
+            "drafts_open",
+            "drafts_patch",
+            "drafts_prepare",
+            "drafts_apply",
+            "drafts_status",
+            "drafts_discard",
+        };
+
     /// V11R-F0-1 + V11R-F0-2: every command ADDED on top of the frozen
     /// 66-command snapshot. The parity test asserts the registry minus the
     /// frozen snapshot equals exactly this set.
     /// </summary>
     public static IReadOnlySet<string> V11RAdditiveCommandNames { get; } =
         new HashSet<string>(
-            RegionWriteCommandNames.Concat(RegionReadCommandNames),
+            RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames),
             StringComparer.Ordinal);
 
     public static HostCommandDescriptor Get(string name) =>
@@ -327,6 +360,7 @@ public static class HostCommandRegistry
         AddDomain(descriptors, HostCommandDomain.Reader, ReaderNames);
         AddDomain(descriptors, HostCommandDomain.Resource, ResourceNames);
         AddDomain(descriptors, HostCommandDomain.Workbench, WorkbenchNames);
+    AddDomain(descriptors, HostCommandDomain.Drafts, DraftsNames);
 
         var byName = descriptors.ToDictionary(descriptor => descriptor.Name, StringComparer.Ordinal);
         if (byName.Count != descriptors.Count)

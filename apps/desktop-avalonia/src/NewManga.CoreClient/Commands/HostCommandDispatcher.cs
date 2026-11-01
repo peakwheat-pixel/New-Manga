@@ -495,6 +495,55 @@ public sealed class HostCommandDispatcher
                 WriteOptionalDouble(writer, name, payload, "scroll_offset_y");
                 WriteOptionalDouble(writer, name, payload, "elapsed_seconds_delta");
                 break;
+            // FEA-05-PORT-1: Draft family (C078-C083). Explicit cases keep the fail-closed
+            // discipline (no default pass-through of unknown Draft args); payload keys are
+            // camelCase and converted to the Core snake_case faces by the handler.
+            case "drafts_open":
+                writer.WriteString("sessionId", RequireString(name, payload, "sessionId"));
+                writer.WriteString("pageId", RequireString(name, payload, "pageId"));
+                WriteOptionalString(writer, name, payload, "regionId");
+                WriteOptionalString(writer, name, payload, "baseRevisionId");
+                writer.WriteNumber("pageBindingVersion", RequireNumber(name, payload, "pageBindingVersion"));
+                break;
+            case "drafts_patch":
+                writer.WriteString("draftId", RequireString(name, payload, "draftId"));
+                writer.WriteString("sessionId", RequireString(name, payload, "sessionId"));
+                writer.WritePropertyName("patch");
+                RequireObject(name, payload, "patch").WriteTo(writer);
+                WriteOptionalNumber(writer, name, payload, "undoCursor");
+                break;
+            case "drafts_prepare":
+                writer.WriteString("regionId", RequireString(name, payload, "regionId"));
+                writer.WritePropertyName("patch");
+                RequireObject(name, payload, "patch").WriteTo(writer);
+                writer.WriteString("origin", RequireString(name, payload, "origin"));
+                WriteOptionalString(writer, name, payload, "draftId");
+                WriteOptionalString(writer, name, payload, "baseRevisionId");
+                break;
+            case "drafts_apply":
+                writer.WritePropertyName("token");
+                RequireObject(name, payload, "token").WriteTo(writer);
+                writer.WritePropertyName("candidateIds");
+                WriteStringArray(writer, name, payload, "candidateIds");
+                break;
+            case "drafts_status":
+                if (payload.TryGetProperty("draftId", out _) == payload.TryGetProperty("sessionId", out _))
+                {
+                    throw new HostCommandInvalidArgumentsException(name, "exactly one of 'draftId' or 'sessionId' is required");
+                }
+                if (payload.TryGetProperty("draftId", out _))
+                {
+                    writer.WriteString("draftId", RequireString(name, payload, "draftId"));
+                }
+                else
+                {
+                    writer.WriteString("sessionId", RequireString(name, payload, "sessionId"));
+                }
+                break;
+            case "drafts_discard":
+                writer.WriteString("draftId", RequireString(name, payload, "draftId"));
+                writer.WriteString("sessionId", RequireString(name, payload, "sessionId"));
+                break;
             default:
                 foreach (var property in payload.EnumerateObject())
                 {
@@ -1090,6 +1139,33 @@ public sealed class HostCommandDispatcher
         throw new HostCommandInvalidArgumentsException(command, $"missing required string argument '{property}'");
     }
 
+    private static int RequireNumber(string command, JsonElement args, string property)
+    {
+        if (args.ValueKind == JsonValueKind.Object &&
+            args.TryGetProperty(property, out var value) &&
+            value.ValueKind == JsonValueKind.Number &&
+            value.TryGetInt32(out var number))
+        {
+            return number;
+        }
+
+        throw new HostCommandInvalidArgumentsException(command, $"missing required integer argument '{property}'");
+    }
+
+    private static void WriteOptionalNumber(Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt32(out var number))
+        {
+            throw new HostCommandInvalidArgumentsException(command, $"argument '{property}' must be an integer");
+        }
+
+        writer.WriteNumber(property, number);
+    }
     private static JsonElement EmptyObject()
     {
         using var document = JsonDocument.Parse("{}");

@@ -1492,6 +1492,34 @@ public sealed class FakeHostController : IHostController
 
         return Task.FromResult<string?>("pre-" + backupId);
     }
+    // FEA-05-PORT-1: Draft surface (default: unavailable in the fake host).
+    public Task<DraftLease?> OpenDraftAsync(string sessionId, string pageId, string? regionId,
+        string? baseRevisionId, int pageBindingVersion, CancellationToken cancellationToken = default) =>
+        Task.FromResult<DraftLease?>(null);
+
+    public Task<Draft?> PatchDraftAsync(string draftId, string sessionId, DraftPatchRequest patch,
+        int? undoCursor = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<Draft?>(null);
+
+    public Task<RegionCandidate?> PrepareCandidateAsync(string regionId, DraftPatchRequest patch,
+        string origin, string? draftId = null, string? baseRevisionId = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<RegionCandidate?>(null);
+
+    public Task<IReadOnlyDictionary<string, string>> ApplyCandidatesAsync(EditToken token,
+        IReadOnlyList<string> candidateIds, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyDictionary<string, string>>(new Dictionary<string, string>());
+
+    public Task<Draft?> GetDraftAsync(string draftId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<Draft?>(null);
+
+    public Task<IReadOnlyList<Draft>> ListDraftsAsync(string sessionId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<Draft>>(Array.Empty<Draft>());
+
+    public Task DiscardDraftAsync(string draftId, string sessionId,
+        CancellationToken cancellationToken = default) => Task.CompletedTask;
+
 }
 
 /// <summary>READER-PROGRESS-1: one scripted save call recorded by <see cref="FakeProgressStore"/>.</summary>

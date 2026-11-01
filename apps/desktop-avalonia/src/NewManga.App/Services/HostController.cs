@@ -2210,5 +2210,203 @@ public sealed class HostController : IHostController
         };
         RaiseChanged();
     }
+    // FEA-05-PORT-1: the Draft command surface (C078-C083). Reads return null when the
+    // host is not ready; writes surface typed exceptions from the dispatcher unchanged.
+    private NewManga.CoreClient.Commands.HostCommandDispatcher? DraftCommands =>
+        _runtime is { Result.IsReady: true } runtime ? runtime.Commands : null;
+
+    public async Task<DraftLease?> OpenDraftAsync(string sessionId, string pageId, string? regionId,
+        string? baseRevisionId, int pageBindingVersion, CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return null;
+        }
+
+        var args = new Dictionary<string, object?>
+        {
+            ["sessionId"] = sessionId,
+            ["pageId"] = pageId,
+            ["regionId"] = regionId,
+            ["baseRevisionId"] = baseRevisionId,
+            ["pageBindingVersion"] = pageBindingVersion,
+        };
+        var response = await commands.InvokeAsync("drafts_open", System.Text.Json.JsonSerializer.SerializeToElement(args), cancellationToken).ConfigureAwait(false);
+        var value = response.Value;
+        if (value.ValueKind != System.Text.Json.JsonValueKind.Object || !value.TryGetProperty("draft", out var draft))
+        {
+            return null;
+        }
+
+        var canEdit = value.TryGetProperty("canEdit", out var canEditValue) && canEditValue.ValueKind == System.Text.Json.JsonValueKind.True;
+        EditToken? token = value.TryGetProperty("token", out var tokenValue) && tokenValue.ValueKind == System.Text.Json.JsonValueKind.Object
+            ? ReadEditToken(tokenValue)
+            : null;
+        return new DraftLease(ReadDraft(draft), canEdit, token);
+    }
+
+    public async Task<Draft?> PatchDraftAsync(string draftId, string sessionId, DraftPatchRequest patch,
+        int? undoCursor = null, CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return null;
+        }
+
+        var args = new Dictionary<string, object?>
+        {
+            ["draftId"] = draftId,
+            ["sessionId"] = sessionId,
+            ["patch"] = DraftPatchJson(patch),
+            ["undoCursor"] = undoCursor,
+        };
+        var response = await commands.InvokeAsync("drafts_patch", System.Text.Json.JsonSerializer.SerializeToElement(args), cancellationToken).ConfigureAwait(false);
+        return response.Value.TryGetProperty("draft", out var draft) ? ReadDraft(draft) : null;
+    }
+
+    public async Task<RegionCandidate?> PrepareCandidateAsync(string regionId, DraftPatchRequest patch,
+        string origin, string? draftId = null, string? baseRevisionId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return null;
+        }
+
+        var args = new Dictionary<string, object?>
+        {
+            ["regionId"] = regionId,
+            ["patch"] = DraftPatchJson(patch),
+            ["origin"] = origin,
+            ["draftId"] = draftId,
+            ["baseRevisionId"] = baseRevisionId,
+        };
+        var response = await commands.InvokeAsync("drafts_prepare", System.Text.Json.JsonSerializer.SerializeToElement(args), cancellationToken).ConfigureAwait(false);
+        if (!response.Value.TryGetProperty("candidate", out var candidate))
+        {
+            return null;
+        }
+
+        return new RegionCandidate(
+            candidate.TryGetProperty("candidateId", out var id) ? id.GetString() ?? "" : "",
+            candidate.TryGetProperty("RegionId", out var rid) ? rid.GetString() ?? "" : "",
+            candidate.TryGetProperty("BaseRevisionId", out var baseRev) ? baseRev.GetString() ?? "" : "",
+            candidate.TryGetProperty("Origin", out var org) ? org.GetString() ?? "" : "");
+    }
+
+    public async Task<IReadOnlyDictionary<string, string>> ApplyCandidatesAsync(EditToken token,
+        IReadOnlyList<string> candidateIds, CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        var args = new Dictionary<string, object?>
+        {
+            ["token"] = new Dictionary<string, object?>
+            {
+                ["tokenId"] = token.TokenId,
+                ["DraftId"] = token.DraftId,
+                ["DraftSequence"] = token.DraftSequence,
+                ["SessionId"] = token.SessionId,
+                ["issuedAt"] = token.IssuedAt,
+                ["expiresAt"] = token.ExpiresAt,
+            },
+            ["candidateIds"] = candidateIds,
+        };
+        var response = await commands.InvokeAsync("drafts_apply", System.Text.Json.JsonSerializer.SerializeToElement(args), cancellationToken).ConfigureAwait(false);
+        var result = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (response.Value.ValueKind == System.Text.Json.JsonValueKind.Object)
+        {
+            foreach (var property in response.Value.EnumerateObject())
+            {
+                if (property.Value.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    result[property.Name] = property.Value.GetString() ?? "";
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public async Task<Draft?> GetDraftAsync(string draftId, CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return null;
+        }
+
+        var response = await commands.InvokeAsync("drafts_status", System.Text.Json.JsonSerializer.SerializeToElement(new Dictionary<string, object?> { ["draftId"] = draftId }), cancellationToken).ConfigureAwait(false);
+        return response.Value.TryGetProperty("draft", out var draft) ? ReadDraft(draft) : null;
+    }
+
+    public async Task<IReadOnlyList<Draft>> ListDraftsAsync(string sessionId,
+        CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return Array.Empty<Draft>();
+        }
+
+        var response = await commands.InvokeAsync("drafts_status", System.Text.Json.JsonSerializer.SerializeToElement(new Dictionary<string, object?> { ["sessionId"] = sessionId }), cancellationToken).ConfigureAwait(false);
+        if (!response.Value.TryGetProperty("drafts", out var drafts) || drafts.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return Array.Empty<Draft>();
+        }
+
+        return drafts.EnumerateArray().Select(ReadDraft).ToArray();
+    }
+
+    public async Task DiscardDraftAsync(string draftId, string sessionId,
+        CancellationToken cancellationToken = default)
+    {
+        var commands = DraftCommands;
+        if (commands is null)
+        {
+            return;
+        }
+
+        await commands.InvokeAsync("drafts_discard", System.Text.Json.JsonSerializer.SerializeToElement(new Dictionary<string, object?> { ["draftId"] = draftId, ["sessionId"] = sessionId }), cancellationToken).ConfigureAwait(false);
+    }
+
+    private static Draft ReadDraft(System.Text.Json.JsonElement value) => new(
+        value.TryGetProperty("draftId", out var draftId) ? draftId.GetString() ?? "" : "",
+        value.TryGetProperty("sessionId", out var sessionId) ? sessionId.GetString() ?? "" : "",
+        value.TryGetProperty("pageId", out var pageId) ? pageId.GetString() ?? "" : "",
+        value.TryGetProperty("regionId", out var regionId) && regionId.ValueKind == System.Text.Json.JsonValueKind.String ? regionId.GetString() : null,
+        value.TryGetProperty("draftSequence", out var seq) && seq.TryGetInt32(out var sequence) ? sequence : 0,
+        value.TryGetProperty("status", out var status) ? status.GetString() ?? "" : "");
+
+    private static EditToken ReadEditToken(System.Text.Json.JsonElement value) => new(
+        value.TryGetProperty("tokenId", out var tokenId) ? tokenId.GetString() ?? "" : "",
+        value.TryGetProperty("DraftId", out var draftId) ? draftId.GetString() ?? "" : "",
+        value.TryGetProperty("DraftSequence", out var seq) && seq.TryGetInt32(out var sequence) ? sequence : 0,
+        value.TryGetProperty("SessionId", out var sessionId) ? sessionId.GetString() ?? "" : "",
+        value.TryGetProperty("issuedAt", out var issuedAt) ? issuedAt.GetString() ?? "" : "",
+        value.TryGetProperty("expiresAt", out var expiresAt) ? expiresAt.GetString() ?? "" : "");
+
+    private static Dictionary<string, object?> DraftPatchJson(DraftPatchRequest patch)
+    {
+        var payload = new Dictionary<string, object?>(StringComparer.Ordinal);
+        if (patch.Text is not null)
+        {
+            payload["text"] = patch.Text;
+        }
+
+        if (patch.RegionType is not null)
+        {
+            payload["region_type"] = patch.RegionType;
+        }
+
+        return payload;
+    }
 }
 
