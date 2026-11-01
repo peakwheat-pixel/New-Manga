@@ -3,7 +3,7 @@ id: FEA-D06-GAP
 title: D06 四项缺口补齐（C-08 UNFREEZE）
 kind: docs
 governance_version: 3
-status: in_progress
+status: in_review
 approval: user_ruling_2026-11-01_activate_d06
 suggested_owner: dsh
 owner: dsh-lead
@@ -14,8 +14,8 @@ base_commit: 1e0a98734
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 0119a8014
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-D06-GAP
 allowed_paths:
@@ -70,29 +70,37 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 条款 vs M2-C1 `:203` Running 行 | 文档 | NOT_RUN | 待补 |
-| AC2 | 条款 vs M2-C1 `:137`/`:902`/`:1060` | 文档 | NOT_RUN | 待补 |
-| AC3 | 条款 vs M2-C1 `:200`/`:206` + P11 §3.3 | 文档 | NOT_RUN | 待补 |
-| AC4 | 条款 vs M2-C1 `:200` | 文档 | NOT_RUN | 待补 |
+| AC1 | 条款 vs M2-C1 `:203` Running 行 | 文档 | NOT_RUN（本收口不重跑条款级对照） | `doc/reviews/FEA-C08-r12.md`（条款链 r9→r10→r12） |
+| AC2 | 条款 vs M2-C1 `:137`/`:902`/`:1060` | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
+| AC3 | 条款 vs M2-C1 `:200`/`:206` + P11 §3.3 | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
+| AC4 | 条款 vs M2-C1 `:200` | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
 | AC5–AC7 | UNFREEZE + 复核 + 重冻 | 只读 | PASS | r12 approved；pin `453f993c…` |
-| AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `FEA-D04D07-COVERAGE-r3` approved |\n| AC9 | `G-DELETE-CONTRACT` 判定 | 文档 | PASS | `doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md` |
+| AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `FEA-D04D07-COVERAGE-r3` approved |
+| AC9 | `G-DELETE-CONTRACT` 判定 | 文档 | PASS | `doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md` |
+
+> AC1–AC4 的**条款级语义验证**由 C-08 的既有复核链（r9 提 2 P1 → v6；r10/r11 记录同步；r12 `approved`）完成，属本轮之前的历史证据；**本收口没有重跑这些文档对照**，故按红线保留 `NOT_RUN`，不把未执行写成 `PASS`。本收口实际执行的是 AC5–AC9 的收口核对、证据复算与治理检查。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-C08-R12 | AC2,AC5–AC7 | `doc/reviews/FEA-C08-r12.md` | `44667d836` | `4d2053abe707dc886426379eed4b91d231abe51f231122b2261e2dce73a740ed` | CANONICAL |
+| E-D04D07-R3 | AC8 | `doc/reviews/FEA-D04D07-COVERAGE-r3.md` | `2ed4ed91a` | `7baba5491fc1e37b60255976094cd281a57c9fe5d87b06ac55291c7697de7fac` | CANONICAL |
+| E-GATE-R3 | AC9 | `doc/reviews/GATE-DELETE-CONTRACT-CLOSURE-r3.md` | `0119a8014` | `f894839fb35151901d79a9011abbe9a1fd7ddc66e80cbaa5509c91f60f03b313` | CANONICAL |
 
 ## Resource Manifest
 
-文档 Task：无 worktree、无构建产物；仓外 tmp 脚本用后即弃。
+文档 Task：无 worktree、无构建产物；仓外 tmp 脚本用后即弃。`verification/FEA-D06-GAP` 未创建（本 Task 无判别力原始产物需入库，证据均为版本化复核报告）。以下单行表为机械校验所需的最小登记（`NOT_APPLICABLE`），不表示存在资源。
 
-- worktree：NOT_APPLICABLE
-- 临时产物：NOT_APPLICABLE
-- 构建产物：NOT_APPLICABLE
-- 资源处置：NOT_APPLICABLE
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-task | - | NOT_APPLICABLE | - | - | 无 worktree/task-env/artifact/temp/exchange；未访问用户数据；无待清理资源 |
 
 ## Closeout Record
 
 - 2026-11-01 / DSH：AC1–AC9 全部 MET。C-08 v7 冻结 pin `453f993c…`；AC8 覆盖检查 r3 `approved`；AC9 关闭裁定 r3 `approved`（两 Gate 均 CLOSED）。
-
+- 收口（2026-11-01）：`status: in_review` → 待独立复核 `doc/reviews/FEA-D06-CLOSEOUT-r1.md`；`delivery_head` = `0119a8014`（AC1–AC9 交付落盘提交）；`integration_commit` 与 `resource_closeout_status: complete` 在复核通过后的收口提交回填。
+- 证据口径：3 条 Canonical Evidence 的 path/commit/sha256 已逐项实核（worktree 与 commit blob 同 hash）；commit 均确实包含所 pin 文件。
+- 未跑项：AC1–AC4 的条款级对照本收口未重跑（见测试要求注），保持 `NOT_RUN`；未运行任何程序测试（纯文档 Task）。
+- 资源：无 worktree、无临时/构建产物、无用户数据访问。
+- 边界：不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节（`verify_pins.ps1` 13/13）。
