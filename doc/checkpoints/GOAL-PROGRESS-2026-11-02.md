@@ -106,3 +106,10 @@
 - **AC1 完成**（dc6c76bcf）：NewManga.Appearance 项目（AppearanceSettings C-03 §2.2 逐字段、AppearanceJson 宽容读/canonical 写/educedMotion→motion.mode 迁移、AppearanceStore 原子写 + 旧文档读一次、IMotionPreferenceSource SPI）+ NewManga.Appearance.Tests 12 测试；sln 加入两项目。
 - 全量 sln **961/0/57**（+12）。
 - **待完成**：AC2（AppearanceCoordinator + AppOptions.FrontendId）、AC3（G-1 令牌 DerivedGlobals + BoxShadows + 重生成 + --check + R14 计数）、AC4（Windows IMotionPreferenceSource + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（全量回归）。
+## 14. PREREQ-1 AC3 部分（2026-11-03）
+
+- TokenMap.DerivedGlobals +6：G-1c Focus.Ring（Width 2/Offset 1/Color rgba(217,160,75,0.45)）、G-1 Corner.Fluent（Sm 4/Md 6/Lg 8）。
+- 重生成 Tokens.Global.axaml/NmKeys.g.cs/TokenMap.md；TokenGen -- --check **up to date**（ed2bdd61）。
+- 全量 sln **961/0/57**（无回归）。
+- **未完成**：Nm.Elevation.*（需 TokenValueKind.BoxShadows + Writer 分支；本轮尝试后回滚——TokenValues.ParseBoxShadows 插入位置错误、Writer Join 分隔符误写；下轮重做）、Nm.Material.*（主题层机制）、AC2/AC4/AC5。
+- 教训：C# 生成器类改动必须行操作 + 立即 build 验证，避免整段追加到类外。
