@@ -6,9 +6,9 @@
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
 - 当前 Task：[FEA-C14-DRAFT](tasks/FEA-C14-DRAFT.md) `in_progress`（C-14 起草：D05 剩余范围——重定位/同步 + 容器页映射 + 缓存三缺口）。
 - 上一 Task：FEA-GOV-11 `done`（**11 份契约已冻结**：C-01b/C-02/C-03/C-04b/C-05/C-06/C-07/C-08/C-11/C-12/C-13）。
-- 进行中并轨：无（FEA-GOV-11 已 `done`）；**Gate 状态**：`G-DELETE-CONTRACT` / `G-CONTRACT` 均 **OPEN**（等 D05 剩余子面 → C-14）。
+- **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **保持 OPEN**（[裁定](plan/GATE-CONTRACT-CLOSURE-2026-11-01.md)：D06 缺 4 项、D07 缺多项且与 C-09 循环）。**边界**：FEA-12 仍受 `G-DELETE-CONTRACT` 阻塞；四表 DDL 未冻（生产实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
-- 下一候选：C-14 冻结后评估 Gate 关闭 → C-09；C-10 交互契约（U-03 已裁，可起草）；MA-11 / MA-20 裁决后另立实施 Task。
+- 下一候选：[FEA-D06-GAP](plan/TASKS-D06-D07.md#fea-d06-gap) / [FEA-D07-UNBLOCK](plan/TASKS-D06-D07.md#fea-d07-unblock)（范本已定，待激活）；C-10 交互契约（U-03 已裁，可起草）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 历史基线：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
 - 独立审查报告统一在 `doc/reviews/`。

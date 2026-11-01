@@ -60,11 +60,11 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 覆盖矩阵**：`doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md` 的首节含上表（D05 原始要求 → 已有条款 → 缺失条款 → 验收方式），并与 C-06 冻结记录的「D05 授权面子集」表述**无冲突**。 <<MET>>
-- [ ] **AC2 重定位/同步条款**：定义 relink（改名/移动）与 repoint（改引用目标）两种操作、`source_sync_plans` 的 diff → 预览 → 确认 → 应用语义、`page_bindings` 的 generation 与 `acceptedSourceVersion`、失败/冲突路径（方案 `:432`/`:459`/`:461`）。 <<MET>>
-- [ ] **AC3 容器页映射条款**：定义 `source_entries` 的 locator（PDF 页码 / ZIP 成员名）与**永久身份**的区分、稳定排序键、encoded/pixel digest、容器内容变更时的健康判定（方案 `:419`/`:461`）。 <<MET>>
-- [ ] **AC4 跨契约一致性**：与 C-01b（SC-21/22 源表、**SC-02/SC-03/SC-20 缓存条款**）、C-06（grant scope + per-request 预算）、C-04b（删除 preflight 的源引用）逐条对表，无冲突。 <<MET>>
-- [ ] **AC5 缓存边界条款**：定义淘汰策略（触发条件/清理顺序/上限）、持久化（跨会话/位置/崩溃一致性）、全局资源上限（总字节/并发解码数）；**不得与 C-01b SC-02/SC-03/SC-20 冲突**。 <<MET>>\n- [ ] **AC6 独立复核**：`doc/reviews/FEA-C14-r1.md`（`approved`，P0/P1 = 0）后由 DSH 冻结。 <<MET>>
+- [x] **AC1 覆盖矩阵**：`doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md` 的首节含上表（D05 原始要求 → 已有条款 → 缺失条款 → 验收方式），并与 C-06 冻结记录的「D05 授权面子集」表述**无冲突**。 <<MET>>
+- [x] **AC2 重定位/同步条款**：定义 relink（改名/移动）与 repoint（改引用目标）两种操作、`source_sync_plans` 的 diff → 预览 → 确认 → 应用语义、`page_bindings` 的 generation 与 `acceptedSourceVersion`、失败/冲突路径（方案 `:432`/`:459`/`:461`）。 <<MET>>
+- [x] **AC3 容器页映射条款**：定义 `source_entries` 的 locator（PDF 页码 / ZIP 成员名）与**永久身份**的区分、稳定排序键、encoded/pixel digest、容器内容变更时的健康判定（方案 `:419`/`:461`）。 <<MET>>
+- [x] **AC4 跨契约一致性**：与 C-01b（SC-21/22 源表、**SC-02/SC-03/SC-20 缓存条款**）、C-06（grant scope + per-request 预算）、C-04b（删除 preflight 的源引用）逐条对表，无冲突。 <<MET>>
+- [x] **AC5 缓存边界条款**：定义淘汰策略（触发条件/清理顺序/上限）、持久化（跨会话/位置/崩溃一致性）、全局资源上限（总字节/并发解码数）；**不得与 C-01b SC-02/SC-03/SC-20 冲突**。 <<MET>>\n- [x] **AC6 独立复核**：`doc/reviews/FEA-C14-r1.md`（`approved`，P0/P1 = 0）后由 DSH 冻结。 <<MET>>
 
 ## 禁止范围
 
@@ -87,11 +87,21 @@ allowed_paths:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | - | - | - | `-` | `-` | CANONICAL |
+| E-C14-REVIEW | AC6 | `doc/reviews/FEA-C14-r2.md` | `22128693f` | `-` | CANONICAL |
 
 ## Resource Manifest
 
-无 worktree、无临时产物。
+文档 Task：无 worktree、无构建产物、无临时产物（仓外 tmp 脚本用后即弃）。
+
+- worktree：NOT_APPLICABLE
+- 临时产物：NOT_APPLICABLE
+- 构建产物：NOT_APPLICABLE
+- 资源处置：NOT_APPLICABLE（无资源）
+
 
 ## Closeout Record
+
+- 2026-11-01 / DSH：C-14 冻结于 `e35f37603`（v3，r2 approved）；`G-CONTRACT` 据此关闭。AC1–AC6 全部 `<<MET>>`。
+
 
 - Closeout date / DSH：待关闭时填写。

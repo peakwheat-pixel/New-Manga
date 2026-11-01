@@ -125,7 +125,7 @@ Date: 2026-10-31 · 上游：[AD-002](../AD-002_TARGET_DESKTOP_ARCHITECTURE.md)�
 | Gate | 状态 |
 |---|---|
 | G-DELETE-SEMANTICS（本裁定） | **SATISFIED**（语义已冻结；用户决定已记录） |
-| G-DELETE-CONTRACT（协议字段/码表/D04-D07 冻结） | **OPEN** |
+| G-DELETE-CONTRACT（协议字段/码表/D04-D07 冻结） | **OPEN**（2026-11-01 复核：D04 ✓ C-13 / D05 ✓ C-06+C-14 / **D06 缺 4 项** / **D07 缺多项且与 C-09 循环**；见 [Gate 裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §4） |
 | G-DELETE-IMPL（Core 实现 + 故障回归） | **OPEN**（未释放） |
 | G-REVIEW（独立 Review 本文件） | **ADDRESSED_PENDING_R2** — Codex 独立 Review r1（[`doc/reviews/FEA-00-codex-r1.md`](../reviews/FEA-00-codex-r1.md)，SHA-256 `f2fd02e0…17693ba2`）判 `changes_requested`：R-01 P0、R-02/R-03/R-04 P1、R-05–R-07 P2。本 r2 已逐项修订（[处置记录](../reviews/FEA-00-codex-r1-adjudication.md)）；**尚未获批**，待 Codex 对新 hash 复审。ZCode 仍 `reviewer_unavailable` |
 

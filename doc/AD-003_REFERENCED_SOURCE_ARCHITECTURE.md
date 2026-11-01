@@ -125,7 +125,7 @@ Feature flag 名称（`FrontendSwitchEnabled`、`ReferencedImportEnabled`、`Sou
 | Gate | 状态 | 说明 |
 |---|---|---|
 | G-ADR | **SATISFIED** | 用户决定已由本文件正式记录（2026-10-31） |
-| G-CONTRACT（D05 Source/grant/资源契约冻结） | **OPEN** | 未冻结前：允许隔离原型与技术调研；**禁止**修改生产 `src/**` 的导入/资源/删除路径，禁止释放 FEA-09/11/12/13 实现 |
+| G-CONTRACT（D05 Source/grant/资源契约冻结） | **CLOSED（2026-11-01）**——D05 五项全部有冻结契约承载（C-06 + C-14 + C-01b），见 [Gate 裁定](plan/GATE-CONTRACT-CLOSURE-2026-11-01.md)。**边界：四表 DDL 仍未冻结，属 Source 生产实现前置** | 未冻结前：允许隔离原型与技术调研；**禁止**修改生产 `src/**` 的导入/资源/删除路径，禁止释放 FEA-09/11/12/13 实现 |
 | G-SAFETY（FEA-00a 既有 Core 提前写缺陷修复） | **OPEN** | 与双 UI 切换门关联，独立于本决策 |
 | G-FRONTEND（V11R 条款级修订） | **OPEN** | 见方案 §15.2 与 FEA-00 r1 F-03 |
 | G-REVIEW（独立 Review 本文件） | **SATISFIED** | r1（Codex）判 `changes_requested`（[FEA-00-codex-r1](reviews/FEA-00-codex-r1.md)）→ r2 按 R-01/R-05/R-07 修订 → **本轮独立复核 `approved`**（[FEA-GOV-1-ad003-review](reviews/FEA-GOV-1-ad003-review.md)，reviewer `c01b-reviewer`，reviewed_head `e83fd1a2a`，AD-003 LF blob `0940a41b…`；P0×0 / P1×0 / P2×4 非阻断）。依据 **2026-10-31 用户裁决**（Review 独立性以「上下文独立」为准，不再要求非作者/特定 Agent）；本行收口属状态更新，裁决正文未改；见 §6 |
