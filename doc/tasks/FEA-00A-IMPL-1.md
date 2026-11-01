@@ -215,3 +215,4 @@ allowed_paths:
 | build/artifact | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1/verification | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1/verification | `verification/FEA-00A-IMPL-1` | 证据已入库；worktree 内缓存目录属可重建，未登记为交付物 |
 
 - 2026-11-01（DSH 集成收口 + done）：`feat/fea-00a-impl` 以 `--no-ff` 合并 → `integration_commit: e0ba29eba`；独立实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` **approved**（P0/P1=0，P2×12 非阻断）；`verify_pins` 15/15 PASS；`check.ps1` PASS。AC7 真实用户旧库核验按 AC7b 处置（无用户库副本，登记 FOLLOW-UP-FEA00A-1）。
+- 2026-11-01（DSH 裁决，处置 r1-P2-01）：R-SEAM-4 的 REGION 分支**允许** artifact 键（`mask`/`mask_refine`/`clean` 属 region-scoped artifact 步骤，见 `handlers.py:943–956`）；冻结文本按实现修正，不视为越界。r1 其余 P2 为技术债（启动清扫范围、V8 同连接并发证据、seam 内 sha256 写锁时长等），登记在 `doc/reviews/FEA-00A-IMPL-r1.md`，不阻塞 done。
