@@ -1,7 +1,7 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`d4da1f1cb`（FEA-04b 设计基线 r5 approved；FEA-04/C11-PREREQ-1 done）
-**主推进**：`FEA-04b` 设计基线（`doc/design/fluent-v1/`，v1.0.0）**独立复核 r5 approved（P0/P1=0）**；AC5 用户确认待办；上一 Task `FEA-04` done（集成 `f4d8a32ec`）
+**当前 HEAD**：`be9265b34` 后续（FEA-05-WIRE-1 ready + Codex 实现中；FEA-04b r5 approved；FEA-04/C11-PREREQ-1 done）
+**主推进**：`FEA-05-WIRE-1`（Draft 命令面 wire）范围复核 r1–r7 收敛 → **ready**，交 Codex 实现；`FEA-04b` 设计基线 r5 approved（AC5 待用户确认）
 
 ---
 
@@ -68,3 +68,9 @@
 - 缺口登记：G-1（Fluent 令牌待 FEA-05 生成）、G-1b（尺寸/断点复用既有 Nm.Size.* + 矩阵列宽 96 设计常量）、G-1c（Nm.Focus.Ring.* 缺失）。
 - **AC5 未完成**：用户确认未进行（自主推进模式）；待用户确认后 DSH 冻结并标 done。
 - 待裁决：Q-23（FEA-04b 设计基线是否批准冻结）；Q-24（FEA-05 前置 wire 是否先做子卡）。
+## 8. FEA-05-WIRE-1（Draft 命令面 wire，2026-11-02 深夜）
+
+- 建卡 doc/tasks/FEA-05-WIRE-1.md；范围冻结 r1（P0×3/P1×5）→ r2（P0=0/P1×5）→ r3（P1×2）→ r4（P0×1：Region 不变式冲突）→ r5（P1×1）→ r6（P1×3）→ **r7 approved（P0/P1=0，P2×9 接受遗留）**。
+- 最终范围（v5.2）：Core 命令白名单 + 6 handler（drafts_open/patch/prepare/apply/status/discard，真实签名）+ 独立契约 FEA-05_DRAFT_WIRE_CONTRACT.md + V11R_COMMAND_CONTRACT_V1.md §8 六行（C078–C083）+ Python 协议测试；**不接** IHostController/CoreClient（端口与 registry 归 FEA-05-PORT-1，需先契约 UNFREEZE）。
+- 派 Codex 实现（suggested_owner: codex）；DSH 负责审查/提交/集成。
+- 待裁决：Q-25（FEA-05-PORT-1 何时建卡）；Q-26（FEA-05-WIRE-1 实现完成后的实现复核席位）。
