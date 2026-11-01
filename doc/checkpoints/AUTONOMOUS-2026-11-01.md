@@ -24,7 +24,7 @@
 | 4 | 起草 `C-10`（不冻结） | **approved**（草案 v3 `b45658c17`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C10-r2.md` + `FEA-C10-r3.md`（均 approved，P0/P1=0） | 未冻结：§10 待用户裁定阈值 `T`；已知 P2：§8 表末缺空行（格式） |
 | 5 | PLAN 预算卫生 + WRAP 收尾材料 | **done**（收口材料 `6c0195437`；集成 `6cfe7ab92`） | PASS (2w) | 13/13 | `doc/reviews/FEA-WRAP-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×4）；R1 为 changes_requested（P1×1 = Manifest 词表，已修） | PLAN 6777 B/57 行 → **2302 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0）；closeout-check 数字为 `6c0195437` 时刻快照（P2-002） |
 | 6 | C-10 文档冻结（用户 U-06/U-11） | **done**（冻结 `170b384e2`；pin `ec8fd862…`） | PASS (2w) | **14/14** | `doc/reviews/FEA-C10-r4b.md`（approved，P0/P1=0，P2×2 记录侧） | `T=4 DIP` 仅鼠标、跨阈保持、不随缩放、DPI 无关；13 份既有 pin 未变；实现线未释放 |
-| 7 | U-09 前置登记（L-1/L-2/L-5 → 候选 Task 前置与 AC） | **in_review**（待复核 `FEA-C11-PREREQ-r1`） | PASS (2w) | 14/14 | 待复核 | 登记文档 `doc/plan/FEA-C11_IMPL_PREREQS.md`；不豁免、不释放实现 |
+| 7 | U-09 前置登记（L-1/L-2/L-5 → 候选 Task 前置与 AC） | **approved**（`FEA-C11-PREREQ-r1` P0/P1=0；非终态、未集成） | PASS (2w) | 14/14 | `doc/reviews/FEA-C11-PREREQ-r1.md`（approved，P2×5 已处置） | 登记文档 `doc/plan/FEA-C11_IMPL_PREREQS.md`；不豁免、不释放实现（`G-DELETE-IMPL` OPEN） |
 
 ## 偏离登记
 
@@ -57,5 +57,5 @@
 - 每项均有独立复核报告：`FEA-D06-CLOSEOUT-r2.md` / `FEA-C14-CLOSEOUT-r1.md` / `FEA-WRAP-ERRATA-r1.md` / `FEA-C10-r2.md` / `FEA-C10-r3.md` / `FEA-WRAP-CLOSEOUT-r1.md`（最后一项的 P1 修正后由 R2 确认）。
 - 未完成/待裁决项见上节；`FEA-D07-UNBLOCK`、`FEA-GOV-11`、`GIT-CLEAN-*`、实现线保持原状。
 - **已知限制**：`doc/PLAN-HISTORY.md` 迁入块原样继承了旧 PLAN 表内的空行（第 62 行），其后 17 行在 GFM 下渲染为无表头续表——**按「原样迁移」要求不改这 31 行**，已在 `PLAN-HISTORY` 块后加说明。
-- **推荐下一步**：用户裁定 C-10 阈值 `T`（与验证等级口径）→ 冻结 C-10（写冻结记录 + pin + `integration_commit`）→ 按 C-11 选实现候选并建 Task。
+- **更新（用户 18:43 裁定后）**：C-10 **已冻结**（v5，`T=4 DIP`，pin `ec8fd862…`，R4b approved）；U-09 前置登记 approved；失效引用 errata 与 STATUS 陈旧阻塞描述已按 U-10 纠正；P2 暂不扩修、非队列 Task 保持原状。
 
