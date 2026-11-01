@@ -1,6 +1,6 @@
 # FEA-C02 V11R 契约条款级修订单（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C02.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[V11R_AVALONIA_CONTRACT](../plan/V11R_AVALONIA_CONTRACT.md)（FROZEN v1，298 行）、[FEA-00 方案 r4](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-02、[FEA-C01b 存储契约草案](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（r5 `approved`）

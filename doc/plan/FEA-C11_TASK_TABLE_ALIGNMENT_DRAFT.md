@@ -1,6 +1,6 @@
 # FEA-C11 候选 Task 表口径对接说明（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C11.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-00 方案 r4](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`74a772167`，r8 `approved`）§12.1 / §15.6 / §15.7、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-11、[FEA-C02 修订单](FEA-C02_V11R_AMENDMENT_DRAFT.md)、[FEA-C03 草案](FEA-C03_PRESENTATION_SETTINGS_DRAFT.md)
