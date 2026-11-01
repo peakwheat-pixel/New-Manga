@@ -39,6 +39,10 @@
 - **不构成**实现授权。**不构成** Gate 关闭（`G-DELETE-CONTRACT` / `G-CONTRACT` 均**保持 OPEN**）。
 - **不构成**远端 push 授权。
 
+## 4A. 已知限制（冻结后发现）
+
+- **L-1**（来自 [FEA-C13-r2](../reviews/FEA-C13-r2.md)，2026-11-01）：book 级聚合 digest 对「**计数不变而分布变**」（A 区加锁 + B 区解锁）不敏感；**region 级指针**不进 book 级 `currentRevisionId`。这是 `inventory_digest` 的粒度局限，**本契约冻结时已知**。C-13 的 `protectionDigest` 是**编辑层**的逐 Region 摘要，不替代本契约的 book 级 digest，也不接入删除 preflight。若删除线实现需要逐 Region 检测，须走本契约的 **UNFREEZE** + 协议扩展。
+
 ## 5. 变更记录
 
 | 日期 | 变更 | 记录 |
