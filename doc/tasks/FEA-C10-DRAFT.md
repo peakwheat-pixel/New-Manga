@@ -79,4 +79,5 @@ allowed_paths:
 
 ## Closeout Record
 
-- 收口中（2026-11-01）：AC1 草案已落盘；AC2 独立复核进行中；AC3 待冻结字节核验。
+- 收口中（2026-11-01）：AC1 草案已落盘（v2，处置 R1 的 P1×3 + P2×7）；AC2 独立复核进行中；AC3 待冻结字节核验。
+- **provenance 留痕（R1 P2-006）**：草案最初实际落盘于 `500aa6b27`（当时本卡尚未建立，`FEA-CONTRACT-WRAP-1` 的 `allowed_paths` 未含 `doc/plan/FEA-C10_INTERACTION_DRAFT.md`）；本卡建立时（`f9420a750`）已把该路径纳入 `allowed_paths`，未留下未登记的权威面。后续「起草先于建卡」应避免。
