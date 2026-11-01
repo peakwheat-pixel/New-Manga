@@ -154,7 +154,7 @@ def core(tmp_path: Path):
     try:
         yield assembled
     finally:
-        assembled.conn.close()
+        assembled.close()
 
 
 @pytest.fixture()
@@ -889,7 +889,7 @@ def test_lock_and_geometry_survive_a_core_restart(tmp_path: Path) -> None:
         # create(1) + geometry(2) + lock(3); pin creates none.
         assert expected_current == 3
     finally:
-        first_core.conn.close()
+        first_core.close()
 
     # Simulated restart: a fresh production assembly over the same data root.
     restarted = assemble_production_core(data_root)
@@ -905,7 +905,7 @@ def test_lock_and_geometry_survive_a_core_restart(tmp_path: Path) -> None:
         pinned = [rev for rev in revisions["revisions"] if rev["is_pinned"]]
         assert [rev["revision_no"] for rev in pinned] == [1]
     finally:
-        restarted.conn.close()
+        restarted.close()
 
 
 def test_new_commands_are_additive_and_unknown_commands_still_fail() -> None:
