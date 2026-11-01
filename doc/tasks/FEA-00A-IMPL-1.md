@@ -3,14 +3,14 @@ id: FEA-00A-IMPL-1
 title: FEA-00a 数据安全修复（prepare 与 seam 分离；region + artifact 零变化）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: user_ruling_2026-11-01_D1_D4
 suggested_owner: codex
 owner: codex
 reviewer: c01b-reviewer
 depends_on:
   - FEA-00A-PREP-1
-base_commit: 419f891c0
+base_commit: 2a383d1b9
 branch: null
 worktree: null
 integration_commit: null
@@ -108,7 +108,7 @@ allowed_paths:
 - [ ] **AC7 §15.6 出口**：①结构断言覆盖 prepare 无 live 写（同 AC4 清单）；②旧库只读核验程序固定：只读打开既有 DB → 查三处一致性（text_json 与 current_revision 对应、region_revisions 计数）→ 候选表可读 → 输出核验清单；保留既有备份与候选，**不创建/不恢复备份**（A7，不触 L-5）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC8 回归与真实 assembly（V1–V9）**：G7 8 文件逐项表格（测试名/修前/修后/判定/理由），`t111_support.py` 单列"适配而非 outcome 对照"；V1–V9 全部经 R-SEAM-3 入口执行（D4）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC9 D2=② 改动登记**：若改 `src/application/tasks/**`，Handoff 逐项写「为什么必须改 / 不改的替代方案 / 影响面 / 回退方式」；构件重设计附前后接口对照。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC10 独立复核**：范围冻结复核 r3 `doc/reviews/FEA-00A-IMPL-scope-r3.md` 判 `approved`（P0/P1=0）；实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` 判 `approved`。 <<PARTIAL: r1/r2 为 changes_requested、v3 已处置；r3 待派发；实现复核在交付后>>
+- [ ] **AC10 独立复核**：范围冻结复核 r3 `doc/reviews/FEA-00A-IMPL-scope-r3.md` 判 `approved`（P0/P1=0，已完成）；实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` 判 `approved`（P0/P1=0），待交付后。 <<PARTIAL: 范围复核 r3 已 approved；实现复核在交付后>>
 
 ## L 前置适用性判定
 
@@ -183,5 +183,5 @@ allowed_paths:
 - 2026-11-01：范围复核 r1 `changes_requested`（P1×3/P2×10）→ v2（`98fbccdf5`）逐条处置。
 - 2026-11-01：范围复核 r2 `changes_requested`（P1×2/P2×7）→ 本版 v3 处置（R-CAND-2 改 UPSERT/三态保留；R-ART-2 publish 后移；r2 的 P2×7 细分 11 项全部处理）。
 - 2026-11-01：范围复核 **r3 `approved`**（P0=0 / P1=0 / P2×10 非阻断）；按 r3 建议修正 4 条改文项（R-SEAM-4 的 `PAGE` 分支、payload 字段与 `media_artifacts` 列、R-ART-2 的 `stage_updates`/`persist` 顺序、R-CAND-3 例外口径）。
-- 2026-11-01：`ready` 交 Codex 实现；`base_commit` 更新为修订后的冻结提交（见 frontmatter）。
+- 2026-11-01：`ready` 交 Codex 实现（`base_commit: 2a383d1b9` = 范围冻结收口提交）；`G-DELETE-IMPL` 仍 OPEN。
 - 2026-11-01：`proposed`，派独立复核 r3 审查 v3；**复核通过前不 `ready`、不派实现**。`base_commit` 于 `ready` 时更新为最终冻结 head。
