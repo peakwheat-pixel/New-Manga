@@ -1,6 +1,6 @@
 # Draft 命令面契约 v1.0（PENDING）
 
-状态：`PENDING`（FEA-05-WIRE-1 交付；独立复核 r7 approved 范围，实现完成后由 DSH 复核转 FROZEN）
+状态：`FROZEN`（FEA-05-WIRE-1 done `d9d7dde41`；FEA-05-PORT-1 端口/registry 已落 `24600bbee`）（FEA-05-WIRE-1 交付；独立复核 r7 approved 范围，实现完成后由 DSH 复核转 FROZEN）
 版本：`v1.0`
 日期：2026-11-02
 归属：DSH（Lead / Integrator）；实现：Codex/DSH

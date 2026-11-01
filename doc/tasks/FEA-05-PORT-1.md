@@ -3,8 +3,8 @@ id: FEA-05-PORT-1
 title: Draft 端口面（IHostController + CoreClient registry + Region 契约 UNFREEZE）
 kind: implementation
 governance_version: 3
-status: ready
-approval: scope_review_r4_approved_2026-11-02
+status: done
+approval: scope_review_r4_approved_2026-11-02; impl_review_r3_approved_2026-11-02
 suggested_owner: codex
 owner: null
 reviewer: null
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 9ff2f7eac
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 24600bbee
+delivery_head: 24600bbee
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-05-PORT-1
 allowed_paths:
   - doc/tasks/FEA-05-PORT-1.md
@@ -64,13 +64,13 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 契约 UNFREEZE（两个冻结物）**：① `V11R_REGION_WRITE_CONTRACT.md` v1.5→v1.6（不变式改并集 + `DraftsCommandNames` 6 + 变更记录）；② `doc/reviews/CONTRACT-UNFREEZE-2026-11-xx.md` 记录（两份冻结物的理由/影响；Region 契约**无 pin**，仅 C-07 重算 pin）；③ C-07 库存 `FEA-C07_API_INVENTORY.md` 更新（现网 IHostController **47**、合计 **54** → 加 7 方法后 **54**、合计 **61**；成员表 +7、变更类别 11→18、生成日期/HEAD 刷新）并**重算 C-07 pin**（写入 `FEA-CONTRACT-FROZEN-C07.md`）；④ 按 `FROZEN-C07:17` 派**独立复核**（本卡实现完成后）；⑤ `verify_pins.ps1` **15/15**（pin 数量不变）。<<TODO>>
-- [ ] **AC2 端口面**：`IHostController` **7 方法**（Open/Patch/Prepare 三个返回可空：`Task<DraftLease?>`/`Task<Draft?>`/`Task<RegionCandidate?>`；Get/List/Discard 见 P2 表；C082 双模式拆 `GetDraftAsync`/`ListDraftsAsync` 共发 `drafts_status`）+ 实现 + Null 默认；`App.Tests` 覆盖（fake/failure 路径）；既有方法不回归。<<TODO>>
-- [ ] **AC3 CoreClient registry**：6 条模型/注册/路由；`V11RAdditiveCommandNames` = 17；`CommandParityContractTests` 通过。<<TODO>>
-- [ ] **AC4 契约测试**：`RegionWriteCommandTests` 改为并集断言且 Region 子集仍成立；`CommandContractV11RTests` 通过。<<TODO>>
-- [ ] **AC5 端口清单**：`generate_api_inventory.py --check` EXIT 0（人工清单与代码一致；脚本只 print 不生成）。<<TODO>>
-- [ ] **AC6 回归**：全量 `dotnet build` + `dotnet test ... --no-build --settings .../NewManga.runsettings` 不退化（基线 931/0/60）。<<TODO>>
-- [ ] **AC7 证据**：`verification/FEA-05-PORT-1/**` 原始日志 + 证据表。<<TODO>>
+- [x] **AC1 契约 UNFREEZE（两个冻结物）**：① `V11R_REGION_WRITE_CONTRACT.md` v1.5→v1.6（不变式改并集 + `DraftsCommandNames` 6 + 变更记录）；② `doc/reviews/CONTRACT-UNFREEZE-2026-11-xx.md` 记录（两份冻结物的理由/影响；Region 契约**无 pin**，仅 C-07 重算 pin）；③ C-07 库存 `FEA-C07_API_INVENTORY.md` 更新（现网 IHostController **47**、合计 **54** → 加 7 方法后 **54**、合计 **61**；成员表 +7、变更类别 11→18、生成日期/HEAD 刷新）并**重算 C-07 pin**（写入 `FEA-CONTRACT-FROZEN-C07.md`）；④ 按 `FROZEN-C07:17` 派**独立复核**（本卡实现完成后）；⑤ `verify_pins.ps1` **15/15**（pin 数量不变）。<<MET>>
+- [x] **AC2 端口面**：`IHostController` **7 方法**（Open/Patch/Prepare 三个返回可空：`Task<DraftLease?>`/`Task<Draft?>`/`Task<RegionCandidate?>`；Get/List/Discard 见 P2 表；C082 双模式拆 `GetDraftAsync`/`ListDraftsAsync` 共发 `drafts_status`）+ 实现 + Null 默认；`App.Tests` 覆盖（fake/failure 路径）；既有方法不回归。<<MET>>
+- [x] **AC3 CoreClient registry**：6 条模型/注册/路由；`V11RAdditiveCommandNames` = 17；`CommandParityContractTests` 通过。<<MET>>
+- [x] **AC4 契约测试**：`RegionWriteCommandTests` 改为并集断言且 Region 子集仍成立；`CommandContractV11RTests` 通过。<<MET>>
+- [x] **AC5 端口清单**：`generate_api_inventory.py --check` EXIT 0（人工清单与代码一致；脚本只 print 不生成）。<<MET>>
+- [x] **AC6 回归**：全量 `dotnet build` + `dotnet test ... --no-build --settings .../NewManga.runsettings` 不退化（基线 931/0/60）。<<MET>>
+- [x] **AC7 证据**：`verification/FEA-05-PORT-1/**` 原始日志 + 证据表。<<MET>>
 
 ## 禁止范围
 
@@ -99,7 +99,14 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-FEA05P-UNFREEZE | AC1 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-02.md` | `24600bbee` | `100fb2abfd2aa539b4f58cc6fa79a310efe7b5611082d86c5fe1986201e51d1e` | CANONICAL |
+| E-FEA05P-REGION-V16 | AC1 | `doc/contracts/V11R_REGION_WRITE_CONTRACT.md` | `24600bbee` | `007d443db178dc958d05bd50aee33eb3e2f5aed9552c0574f5f73cf0be3f4205` | CANONICAL |
+| E-FEA05P-C07 | AC1/AC5 | `doc/plan/FEA-C07_API_INVENTORY.md` | `24600bbee` | `3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714` | CANONICAL |
+| E-FEA05P-FROZEN-C07 | AC1 | `doc/plan/FEA-CONTRACT-FROZEN-C07.md` | `24600bbee` | `5460395aadbdc88db2d7c454e73ec8d3e7961791b777f30a79281ebc5e57ba4c` | CANONICAL |
+| E-FEA05P-REGISTRY | AC3 | `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | `24600bbee` | `9dd194279bc6903ea55eee060085cbbe1f2792ae91e095bcd8a96d21f14938f1` | CANONICAL |
+| E-FEA05P-PORTS | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs` + `HostController.cs` + `NullHostController.cs` | `24600bbee` | `82c78323f571fe9a882f042ab3826b1c2b41d9fb55dddc010ffbe039e2e89cc1` / `faa9d540a780b986ee9bf8a825ed0cbf29a1a09510191156531e2a1189d33d0d` / `41c1059e625c277d169b93811a89aa0153f442aeb4c71dea8e7015710d884ab9` | CANONICAL |
+| E-FEA05P-TESTS | AC2/AC4 | `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs` + `NewManga.App.Tests/DraftPortDefaultTests.cs` | `24600bbee` | `4df7999b0bb23321b9a808a01d1eb965a35f4eb5c5a689334da0b444c23f8486` / `338e002dd9d5e2bec45948d28e5499075a79219ed261a0d594625aa9b3401c0d` | CANONICAL |
+| E-FEA05P-SLN | AC6 | `verification/FEA-05-PORT-1/sln-test.log` | `24600bbee` | `f303d1cd231d5d92745252d9b8eed3f92c186509edcc3fc41575cba2c3a4397f` | CANONICAL |
 
 ## Resource Manifest
 
@@ -113,4 +120,6 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- 2026-11-02：范围复核 r1（P0×2/P1×1）→ r2（P0=0/P1×2）→ r3（P1×1）→ **r4 approved（P0/P1=0，P2×3 接受遗留）**；置 eady，DSH 实现（Codex 通道故障）。
+- 2026-11-02：范围复核 r1（P0×2/P1×1）→ r2（P0=0/P1×2）→ r3（P1×1）→ **r4 approved（P0/P1=0，P2×3 接受遗留）**；置 
+eady，DSH 实现（Codex 通道故障）。
+- 2026-11-02 / DSH：FEA-05-PORT-1 完成（24600bbee）——范围 r1–r4（r4 approved）、实现 impl-r1–r3（r3 approved，P0/P1=0，P2×11 接受）；UNFREEZE 两冻结物（Region 契约 v1.6、C-07 pin 3fdb44e4…）经独立复核通过；全量 sln **949/0/57**；erify_pins 15/15；置 done。
