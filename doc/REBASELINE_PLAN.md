@@ -7,7 +7,8 @@
 |节点/目标|依赖|状态|
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
-|FEA-C10-DRAFT|—|**FROZEN** 2026-11-01（v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
+|FEA-C11-PREREQ-1|FEA-C10-DRAFT|in_progress（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；待复核）|
+|FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
@@ -20,7 +21,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-CONTRACT-WRAP-1（done）；FEA-C10-DRAFT（**FROZEN 2026-11-01**，v5 `T=4 DIP`）；FEA-C14-DRAFT / FEA-D06-GAP（done）；**14 份契约已全部冻结**（两 Gate CLOSED 2026-11-01）；`G-DELETE-IMPL` OPEN
+当前 DAG：FEA-C11-PREREQ-1（in_progress，U-09 前置登记）；FEA-C10-DRAFT（**done**，C-10 FROZEN v5 `T=4 DIP`）；FEA-CONTRACT-WRAP-1 / FEA-C14-DRAFT / FEA-D06-GAP（done）；**14 份契约已全部冻结**（两 Gate CLOSED 2026-11-01）；`G-DELETE-IMPL` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 

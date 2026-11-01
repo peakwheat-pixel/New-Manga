@@ -3,7 +3,7 @@ id: FEA-C10-DRAFT
 title: C-10 交互契约起草（手势优先级/移动阈值/快捷键作用域/可编辑态/需求追溯）
 kind: contract
 governance_version: 3
-status: approved
+status: done
 approval: user_instruction_2026-11-01_autonomous_queue_C10_draft
 suggested_owner: dsh
 owner: dsh-lead
@@ -12,8 +12,8 @@ depends_on: []
 base_commit: 500aa6b27
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: b45658c17
+integration_commit: 170b384e2
+delivery_head: 170b384e2
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-C10
@@ -68,9 +68,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-C10-DRAFT | AC1 | `doc/plan/FEA-C10_INTERACTION_DRAFT.md` | `b45658c17` | `5bcb40f5c47b44ac976c6dc8325003e1cb4fc18061f42a226353880a93652d7f` | CANONICAL |
+| E-C10-DRAFT | AC1 | `doc/plan/FEA-C10_INTERACTION_DRAFT.md` | `170b384e2` | `ec8fd862f95f7e169723a43305db71d6f735d910446475b3365786e44e31fa87` | CANONICAL |
 | E-C10-R2 | AC2 | `doc/reviews/FEA-C10-r2.md` | `b45658c17` | `9bb27a0cb01c315a39ec2834234cb1109563a4cbda8cb20ac91c9c19f11891b6` | CANONICAL |
 | E-C10-R3 | AC2,AC3 | `doc/reviews/FEA-C10-r3.md` | `-` | `5d64431f96aab9ade3fb637af49d1aef42eae07b96356b94add7f3cbd1dabef3` | CANONICAL |
+| E-C10-FROZEN | AC3 | `doc/plan/FEA-C10_INTERACTION_DRAFT.md` | `170b384e2` | `ec8fd862f95f7e169723a43305db71d6f735d910446475b3365786e44e31fa87` | CANONICAL |
 | E-RES-C10 | Res/Closeout | `verification/FEA-C10/closeout-note.md` | `-` | `c7c784b97d8d465f9a11bc93f3a5fa8a926aef4240d8ba66b9a8c5abc99839c7` | CANONICAL |
 
 ## Resource Manifest
@@ -93,3 +94,5 @@ allowed_paths:
 - 证据口径：E-C10-DRAFT / E-C10-R2 为 commit 型（blob 与 worktree 同 hash）；E-C10-R3 / E-RES-C10 为 `-` commit + worktree sha256（评审报告在提交时一并入库，按 §4.1「或 SHA-256」分支合法）。
 - 资源：仓库内无资源；仓库外 0 新增（共用共享清单）；未访问用户数据。
 - 边界：不构成冻结；不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节（13/13）。
+- 收口（2026-11-01）：**C-10 已按用户 U-11 冻结**（v5，pin `ec8fd862…`；[冻结记录](../plan/FEA-CONTRACT-FROZEN-C10.md)；R4b [approved](../reviews/FEA-C10-r4b.md)）。`status: done`、`integration_commit: 170b384e2` 为收口回填。**边界说明**：AC3 原文写「本 Task 不冻结 C-10」，冻结由用户 2026-11-01 追加裁决 **U-11** 授权，超出 AC3 原边界；AC3 的「13 份 pin 契约字节 0 改动」仍成立（冻结后 14/14，另 13 份 pin 未变）。
+- 冻结后任何改动须走 `CONTRACT-UNFREEZE-C10`；实现验证（DPI / 画布缩放 / 真机手势）留给实现 Task，本 Task 未标其通过。
