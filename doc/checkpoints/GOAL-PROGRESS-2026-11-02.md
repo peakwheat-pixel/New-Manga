@@ -133,3 +133,10 @@
 - **剩余**：AC5（uiltin.fluent-dark 主题包）、AC6（收口）。
 - 进度：PREREQ-1 AC1/AC2/AC3/AC4 完成（4/5）。
 - 教训：MotionResolver 的 reduce+feedback 语义（类别保留、Enabled=false）已在测试中固化，勿再改 IsEnabled 口径。
+## 18. PREREQ-1 实现复核 r1 → 部分处置（2026-11-03）
+
+- impl-r1（547e229e 审）结论 **changes_requested（P0=0/P1=10/P2=16）**；独立复跑 974/0/57、两个 --check 一致。
+- **已处置 7 条 P1**（6ca197f6）：P1-1 categories 词表（navigation/feedback/decorative）、P1-2 layout 词表、P1-4 AppOptions.FrontendId、P1-5 Opacity 0.85、P1-6 Elevation 值、P1-7 Nm.Size.MatrixColumnMin=96、P1-10 写域补齐。
+- **剩余 3 条 P1**：P1-3（旧 	heme-settings.json 迁移/兼容写）、P1-8（AC4 判据⑤迁移测试/④ navigation 专项）、P1-9（fluent-dark 需 ThemeGen 生成 + 
+m.fluent.visual/1 manifest + Material/Elevation 取值 + 校验测试）。
+- 全量 **974/0/57**；TokenGen/ThemeGen --check up to date。
