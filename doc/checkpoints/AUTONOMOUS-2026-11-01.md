@@ -23,6 +23,7 @@
 | 3 | L-3 Errata（裁定 `:63`/`:111` + C04b/C08/C13/C09 注记） | **approved**（`14e6e6a3c`；P2 修复 `500aa6b27`） | PASS (3w) | 13/13 | `doc/reviews/FEA-WRAP-ERRATA-r1.md`（approved，P0/P1=0，P2×5；2 处死链与 C-08 措辞已在 `500aa6b27` 修） | 裁定 §4:58 括注指向落空，已在 C-08 注记留痕、未改裁定正文 |
 | 4 | 起草 `C-10`（不冻结） | **approved**（草案 v3 `b45658c17`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C10-r2.md` + `FEA-C10-r3.md`（均 approved，P0/P1=0） | 未冻结：§10 待用户裁定阈值 `T`；已知 P2：§8 表末缺空行（格式） |
 | 5 | PLAN 预算卫生 + WRAP 收尾材料 | **done**（收口材料 `6c0195437`；集成 `6cfe7ab92`） | PASS (2w) | 13/13 | `doc/reviews/FEA-WRAP-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×4）；R1 为 changes_requested（P1×1 = Manifest 词表，已修） | PLAN 6777 B/57 行 → **2302 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0）；closeout-check 数字为 `6c0195437` 时刻快照（P2-002） |
+| 6 | C-10 文档冻结（用户 U-06/U-11） | **FROZEN**（草案 v5；pin `ec8fd862…`；R4b 确认中） | PASS | **14/14** | `doc/reviews/FEA-C10-r4.md`（changes_requested P1×2→已修）；R4b 极简确认冻结字节 | `T=4 DIP` 仅鼠标、跨阈保持、不随缩放、DPI 无关；13 份既有 pin 未变；实现线未释放 |
 
 ## 偏离登记
 

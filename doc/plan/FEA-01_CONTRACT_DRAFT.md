@@ -56,7 +56,7 @@
 | **C-07** | 应用端口与兼容面 | `IHostController`/`IRunController`/CoreClient/Registry/Dispatcher/命令清册 | 由代码生成的方法清单（替换冻结文档的「36」口径）；request-scoped error；能力握手；增量为准；旧签名不变的可验证基线 | F-22、F-25 | 成立（委托 FEA-01 生成清单） |
 | **C-08** | Run 快照与幂等 | `IRunController`、PreparedRun、配置快照、凭据引用、任务投影 | preview 与发送同源；不可变内容 pin；retry 是否复用 source run 快照；控制 pending 状态；真实完成口径；断线 receipt | F-07、F-08、F-17、F-26 | 成立 |
 | **C-09** | 删除/备份/迁移 | Trash/purge/GC、`nmbak`/`migrator`、Windows 回收站桥 | 软删/恢复/TrashEntry 新命令面；三路径统一 ProtectionPolicy；备份覆盖清单（`settings/*.json`、`catalog.sqlite` 现状缺失项）；`backup/2`；`DatabaseId`；自动备份调度归属；独占写锁与 pin | F-13、F-14、F-30、F-32 | 成立（D07 表述待更新） |
-| **C-10** | 交互契约与需求追溯 | 新交付物（FEA-01 附件） | 手势优先级与移动阈值、快捷键作用域、可编辑态、draft owner 规则；「需求→能力→Task→AC→证据」矩阵。**手势阈值/可编辑态已起草（SC-C10-02/04，R7-07 已处置）；阈值数值待用户裁定** | F-10、F-18、F-39、R7-07 | **草案已完成**（`doc/plan/FEA-C10_INTERACTION_DRAFT.md` v3；r3 `approved`，P0/P1=0；**未冻结**） |
+| **C-10** | 交互契约与需求追溯 | 新交付物（FEA-01 附件） | 手势优先级与移动阈值、快捷键作用域、可编辑态、draft owner 规则；「需求→能力→Task→AC→证据」矩阵。**手势阈值/可编辑态已起草（SC-C10-02/04）；阈值已裁定 `T=4 DIP`（仅鼠标）** | F-10、F-18、F-39、R7-07 | **已冻结**（`doc/plan/FEA-C10_INTERACTION_DRAFT.md` v5；[冻结记录](FEA-CONTRACT-FROZEN-C10.md)，pin `ec8fd862…`；R4b 确认） |
 | **C-11** | 候选 Task 表补列与前置 Gate | 方案 §12 | 每行补 `write_scopes`/`shared-file owner`/验证等级/`evidence_dir`/per-task 回退/需求映射；H1/H2/H3/H4b 写成候选前置 Gate；补「Fluent 四页设计冻结」前置 Task（F-04 指出该基线不存在） | F-04、F-05、F-41、F-42、R7-03 | 成立（席位列口径待更新） |
 | **C-12** | 治理检查器定位 | `tools/governance/check.ps1:261-275` | 明确它**不检测**「保留哨兵 + 覆盖性决策」，也**不扫描** `doc/design/**`；断言面以 r6c 批准的实现为准；不得作为架构一致性证据 | F-01 | **定向正确、文本需更新（并入 R7-01）** |
 
