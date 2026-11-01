@@ -113,3 +113,10 @@
 - 全量 sln **961/0/57**（无回归）。
 - **未完成**：Nm.Elevation.*（需 TokenValueKind.BoxShadows + Writer 分支；本轮尝试后回滚——TokenValues.ParseBoxShadows 插入位置错误、Writer Join 分隔符误写；下轮重做）、Nm.Material.*（主题层机制）、AC2/AC4/AC5。
 - 教训：C# 生成器类改动必须行操作 + 立即 build 验证，避免整段追加到类外。
+## 15. PREREQ-1 AC3 完成（2026-11-03）
+
+- TokenValueKind.BoxShadows + TokenValues.ParseBoxShadows + TokenDictionaryWriter 分支（5b6bfc2a）。
+- **11 键全部落地**：G-1c Focus.Ring.{Width,Offset,Color}；G-1 Corner.Fluent.{Sm,Md,Lg}、Elevation.{1,2,3}（BoxShadows）、Material.Mica.Enabled、Material.Acrylic.Opacity。
+- TokenGen -- --check up to date（rows 287）；全量 sln **961/0/57**。
+- **剩余**：AC2（AppearanceCoordinator + AppOptions.FrontendId）、AC4（Windows IMotionPreferenceSource + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（收口回归）。
+- 教训固化：C# 生成器改动 = 行操作 + 每步 build（本轮一次通过，未再回滚）。
