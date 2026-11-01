@@ -352,9 +352,12 @@ public sealed class StudioBatchViewModel : StudioObservable
         // REALUSE-DATA-SAFETY-3 AC2 (MA-07): a Run created here must be reachable from the Console
         // without copying its id, so the shell's shared Run index is told about it.
         _onRunTracked = onRunTracked;
+        // AC2: keep the Host projection as the read authority (the CurrentRunDataSource
+        // monitor path would bypass IHostController.GetTaskProjection and break the
+        // existing behavior baseline). CurrentFrontend stays as the shared facade.
         _dataSource = _controller is null
             ? NotWiredRunDataSource.Instance
-            : new CurrentRunDataSource(_current, () => RunId);
+            : new RunControllerRunDataSource(_controller, () => RunId);
 
         Rows = new ObservableCollection<StudioBatchRowViewModel>();
         StageRail = new ObservableCollection<StudioBatchStageRailItemViewModel>();
