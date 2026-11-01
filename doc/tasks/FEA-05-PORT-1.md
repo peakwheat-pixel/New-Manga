@@ -3,14 +3,14 @@ id: FEA-05-PORT-1
 title: Draft 端口面（IHostController + CoreClient registry + Region 契约 UNFREEZE）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_review
+status: ready
+approval: scope_review_r4_approved_2026-11-02
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
   - FEA-05-WIRE-1
-base_commit: 70dd4322f
+base_commit: 9ff2f7eac
 branch: null
 worktree: null
 integration_commit: null
@@ -57,7 +57,7 @@ allowed_paths:
 |---|---|---|
 | P1 契约 UNFREEZE | `V11R_REGION_WRITE_CONTRACT.md` v1.5 → v1.6，**5 处更新站点**：① 头部状态/版本；② §命令清册加 `DraftsCommandNames`（6）；③ 不变式改「追加集 = RegionWrite ∪ RegionRead ∪ Drafts」；④ §8 验证表（`:457`）同改；⑤ 变更记录 v1.6 行 | 无 |
 | P2 端口面 | 以下 **7 个方法**（C082 双模式拆两个，均发 `drafts_status`）：`Task<DraftLease?> OpenDraftAsync(string sessionId, string pageId, string? regionId, string? baseRevisionId, int pageBindingVersion, CancellationToken)`；`Task<Draft?> PatchDraftAsync(string draftId, string sessionId, DraftPatchRequest patch, int? undoCursor, CancellationToken)`；`Task<RegionCandidate?> PrepareCandidateAsync(string regionId, DraftPatchRequest patch, string origin, string? draftId, string? baseRevisionId, CancellationToken)`；`Task<IReadOnlyDictionary<string,string>> ApplyCandidatesAsync(EditToken token, IReadOnlyList<string> candidateIds, CancellationToken)`；`Task<Draft?> GetDraftAsync(string draftId, CancellationToken)`；`Task<IReadOnlyList<Draft>> ListDraftsAsync(string sessionId, CancellationToken)`；`Task DiscardDraftAsync(string draftId, string sessionId, CancellationToken)`。DTO 归属 `NewManga.CoreClient/Commands/DraftCommands.cs`（`Draft`/`DraftLease`/`DraftPatchRequest`/`EditToken`/`RegionCandidate`（`DraftPatchRequest` 避免与 `NewManga.ApplicationCore/DraftBuffer.cs:21` 的 `DraftPatch` 同名） 强类型，非 JsonElement）。`HostController` 经 `HostCommandDispatcher` 调用并映射；`NullHostController` 逐方法安全默认（不抛异常，遵守其 "never throws" 契约）：Open→`Task.FromResult<DraftLease?>(null)`、Patch/Prepare→`null`、Apply→空字典、Get→`null`、List→`Array.Empty<Draft>()`、Discard→`Task.CompletedTask`；`IHostController` 侧注明 null 语义。dispatcher 增加显式校验 case（`default` 不静默透传未知 Draft 命令）。 | P1 |
-| P3 CoreClient registry | `HostCommandModel` 6 条；`HostCommandRegistry`：`DraftsCommandNames`（6 新集合）+ `V11RAdditiveCommandNames` 11→17 + `All`/域枚举/`CoreBindings`/`AddDomain` 同步；`HostCommandDispatcher` 显式 case（`drafts_status` 的 draftId/sessionId XOR 校验） | P1 |
+| P3 CoreClient registry | `HostCommandModel` 6 条；`HostCommandRegistry`：`DraftsCommandNames`（6 新集合）+ `V11RAdditiveCommandNames` 11→17 + `All`（既有 registry 字典聚合属性，含 6 条新命令）+ `HostCommandDomain` 枚举加 `Drafts` + `CoreBindings`（6 条：`drafts_*` → 同名 core 命令、minor 3）+ `AddDomain` 注册；`HostCommandDispatcher` 显式 case（`drafts_status` 的 draftId/sessionId XOR 校验） | P1 |
 | P4 契约测试更新 | `RegionWriteCommandTests`：`:109` 改 `V11RAdditiveCommandNames`（17）且 `:110-114` 改为「RegionWrite ∪ RegionRead ⊆ additive」子集断言；补 `DraftsCommandNames ⊆ additive`；测试类注释/测试名同步（`CommandParityContractTests` 派生断言自动成立） | P2/P3 |
 | P5 端口清单 | 手工更新 `FEA-C07_API_INVENTORY.md`（脚本只 print，不生成）→ `generate_api_inventory.py --check` EXIT 0 | P2 |
 | P6 冻结记录 | `CONTRACT-UNFREEZE-2026-11-xx`（两份冻结物）；C-07 pin 重算写入 `FEA-CONTRACT-FROZEN-C07.md`；`verify_pins` 15/15；**独立复核**（`FROZEN-C07:17`） | P1 |
@@ -107,9 +107,10 @@ allowed_paths:
 
 ## 备注（收口时 DSH 处理）
 
-- 冻结矩阵（`doc/plan/FEA-CONTRACT-FROZEN-*.md` 汇总表）：**不随本卡更新**——矩阵按 pin 文件存在性生成；C-07 pin 重算在本卡，矩阵无独立文件（P2-3 登记为接受）。`FEA-05_DRAFT_WIRE_CONTRACT.md` 与 §8.2 状态：本卡 AC1 后由 DSH 一并把 `PENDING` → `FROZEN` 并在变更记录中注明（不在本卡写域外扩展）。
+- 冻结矩阵（`doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`）：**不随本卡更新**——矩阵只记录冻结状态、不承载 pin 值；C-07 重冻后仍为 `FROZEN`，内容无需变（P2-3 接受）。`FEA-05_DRAFT_WIRE_CONTRACT.md` 与 §8.2 状态：本卡 AC1 后由 DSH 一并把 `PENDING` → `FROZEN` 并在变更记录中注明（不在本卡写域外扩展）。
 - STATUS/PLAN/LEDGER 指针：本卡完成后由 DSH 同步（`FEA-05-PORT-1` done）。
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+- 2026-11-02：范围复核 r1（P0×2/P1×1）→ r2（P0=0/P1×2）→ r3（P1×1）→ **r4 approved（P0/P1=0，P2×3 接受遗留）**；置 eady，DSH 实现（Codex 通道故障）。
