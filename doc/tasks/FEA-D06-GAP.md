@@ -24,6 +24,7 @@ allowed_paths:
   - doc/plan/FEA-CONTRACT-FROZEN-C08.md
   - doc/reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md
   - doc/reviews/FEA-D06-*.md
+  - doc/checkpoints/**
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
@@ -74,7 +75,9 @@ allowed_paths:
 | AC2 | 条款 vs M2-C1 `:137`/`:902`/`:1060` | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
 | AC3 | 条款 vs M2-C1 `:200`/`:206` + P11 §3.3 | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
 | AC4 | 条款 vs M2-C1 `:200` | 文档 | NOT_RUN（本收口不重跑条款级对照） | 同上 |
-| AC5–AC7 | UNFREEZE + 复核 + 重冻 | 只读 | PASS | r12 approved；pin `453f993c…` |
+| AC5 | UNFREEZE 载体登记四项 + 依据 | 只读 | PASS | `doc/reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md`（sha256 `99c07fae…` @ `90e81f5cb`） |
+| AC6 | 独立复核 `approved`（P0/P1 = 0） | 只读 | PASS | `doc/reviews/FEA-C08-r12.md` frontmatter：`approved` / 0 / 0 |
+| AC7 | 重新冻结 + pin 校验 | 只读 | PASS | `verify_pins.ps1` 13/13；C-08 pin `453f993c…` |
 | AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `FEA-D04D07-COVERAGE-r3` approved |
 | AC9 | `G-DELETE-CONTRACT` 判定 | 文档 | PASS | `doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md` |
 
@@ -84,23 +87,30 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-C08-R12 | AC2,AC5–AC7 | `doc/reviews/FEA-C08-r12.md` | `44667d836` | `4d2053abe707dc886426379eed4b91d231abe51f231122b2261e2dce73a740ed` | CANONICAL |
+| E-C08-R12 | AC1–AC7 | `doc/reviews/FEA-C08-r12.md` | `44667d836` | `4d2053abe707dc886426379eed4b91d231abe51f231122b2261e2dce73a740ed` | CANONICAL |
+| E-UNFREEZE | AC5 | `doc/reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md` | `90e81f5cb` | `99c07fae5a7e8060fa4fdc4c7da1a3f4220b25078491fbb64758bf992fa81114` | CANONICAL |
 | E-D04D07-R3 | AC8 | `doc/reviews/FEA-D04D07-COVERAGE-r3.md` | `2ed4ed91a` | `7baba5491fc1e37b60255976094cd281a57c9fe5d87b06ac55291c7697de7fac` | CANONICAL |
 | E-GATE-R3 | AC9 | `doc/reviews/GATE-DELETE-CONTRACT-CLOSURE-r3.md` | `0119a8014` | `f894839fb35151901d79a9011abbe9a1fd7ddc66e80cbaa5509c91f60f03b313` | CANONICAL |
+| E-RES | Resource | `verification/FEA-D06-GAP/workspace-tmp-manifest.md` | `-` | `ebc8d80d23d13c8b7bff90c0d6bc39f6ae09f4ece2078683166a2decaf646b2d` | CANONICAL |
 
 ## Resource Manifest
 
-文档 Task：无 worktree、无构建产物；仓外 tmp 脚本用后即弃。`verification/FEA-D06-GAP` 未创建（本 Task 无判别力原始产物需入库，证据均为版本化复核报告）。以下单行表为机械校验所需的最小登记（`NOT_APPLICABLE`），不表示存在资源。
+文档 Task：仓库内无 worktree、无 task-env、无构建产物；**仓库外临时脚本确实存在**——`G:\CODEX\New Manga.workspace\tmp\` 有 32 个 2026-11-01 契约线一次性脚本/日志/截图，已逐项登记到 `verification/FEA-D06-GAP/workspace-tmp-manifest.md`（每项 sha256 + 关联 + 引用检查）。处置 `PRESERVE_UNKNOWN`：**不删除、不移动**（`add_c08_d06.py` 等生成了被冻结契约字节，删除会破坏其可复现性）。
+
+**偏离登记（用户口径 vs 检查器约束）**：用户口头要求「Resource Manifest 用纯文本、不建表（参考 FEA-GOV-11）」。但 `check.ps1` 对 `done` Task 的 Resource Manifest 只接受**非空 6 列表**或 `verification/**` 下的单个 JSON 引用（`resourceRows.Count -eq 0` 即报 `DONE 必须逐项填写 Resource Manifest`；JSON 路线同样要求 `resources` 非空与 `process_check` 非空）。**「纯文本无表」在现行检查器下不可满足**，故保留纯文本说明并附真实表格（不虚构任何路径或哈希）。如需纯文本口径，须另立 governance Task 修改 `tools/governance/check.ps1`（`tools/**` 不在本 Task 范围）。
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| doc-task | - | NOT_APPLICABLE | - | - | 无 worktree/task-env/artifact/temp/exchange；未访问用户数据；无待清理资源 |
+| doc-task | - | NOT_APPLICABLE | - | - | 仓库内无 worktree/task-env/artifact/build/temp；未访问用户数据 |
+| temp-scripts | ..\New Manga.workspace\tmp | PRESERVE_UNKNOWN | ..\New Manga.workspace\tmp | verification/FEA-D06-GAP/workspace-tmp-manifest.md | 32 项逐条 sha256 见清单；无进程占用、不在 git 跟踪内、非用户数据；delete/move/migrate/archive 均为 0 |
 
 ## Closeout Record
 
 - 2026-11-01 / DSH：AC1–AC9 全部 MET。C-08 v7 冻结 pin `453f993c…`；AC8 覆盖检查 r3 `approved`；AC9 关闭裁定 r3 `approved`（两 Gate 均 CLOSED）。
-- 收口（2026-11-01）：`status: in_review` → 待独立复核 `doc/reviews/FEA-D06-CLOSEOUT-r1.md`；`delivery_head` = `0119a8014`（AC1–AC9 交付落盘提交）；`integration_commit` 与 `resource_closeout_status: complete` 在复核通过后的收口提交回填。
-- 证据口径：3 条 Canonical Evidence 的 path/commit/sha256 已逐项实核（worktree 与 commit blob 同 hash）；commit 均确实包含所 pin 文件。
+- 收口（R1 复核后修订，2026-11-01）：`doc/reviews/FEA-D06-CLOSEOUT-r1.md` 判 `changes_requested`（P1×3 / P2×5），本版逐项处置——R-001 证据覆盖改为 `AC1–AC7` 并补 `E-UNFREEZE`/`E-RES`；R-002 仓外 32 个临时脚本登记为 `PRESERVE_UNKNOWN` + 清单（含 sha256）；R-003 checkpoint 位置按用户指令保留 `doc/checkpoints/`，增列 `allowed_paths: doc/checkpoints/**` 并在 STATUS 登记为当前恢复点；R-004 三处指针同步为 `in_review`；R-005 `evidence_dir` 已实际创建；R-006 AC5/AC6/AC7 拆行；R-007 偏离已登记；R-008 checkpoint 头部加「计划记录非释放」声明。
+- `delivery_head` = `0119a8014`（AC1–AC9 交付落盘提交）；`integration_commit` 与 `resource_closeout_status: complete` 在复核 `approved` 后的 `done` 提交回填。
+- 证据口径：4 条 commit 型 evidence 的 path/commit/sha256 已逐项实核（worktree 与对应 commit blob 同 hash）；第 5 条 `E-RES` 为仓内清单文件，按 worktree sha256 校验（`-` commit，符合 check.ps1 规则）。
+- 冻结字节：13 个受 pin 契约文件（12 份 `FEA-C*_DRAFT.md` + `FEA-C07_API_INVENTORY.md`）字节未动，`verify_pins.ps1` 13/13；`git diff` 的 `doc/plan/` 为空。
 - 未跑项：AC1–AC4 的条款级对照本收口未重跑（见测试要求注），保持 `NOT_RUN`；未运行任何程序测试（纯文档 Task）。
-- 资源：无 worktree、无临时/构建产物、无用户数据访问。
-- 边界：不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节（`verify_pins.ps1` 13/13）。
+- 资源：仓库内无 worktree/临时/构建产物；仓库外 32 项 `PRESERVE_UNKNOWN`（清单见 `verification/FEA-D06-GAP/workspace-tmp-manifest.md`）；未访问用户数据。
+- 边界：不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节。
