@@ -3,8 +3,8 @@ id: FEA-06-PREREQ-1
 title: 外观持久化与 Fluent 令牌生成（C-03 落地 + G-1/G-1b/G-1c）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_review
+status: ready
+approval: scope_review_r3_approved_2026-11-02
 suggested_owner: dsh
 owner: null
 reviewer: null
@@ -54,6 +54,7 @@ allowed_paths:
 | P2 | `AppearanceCoordinator`（App 侧）：**只做读取/校验/变更通知**（应用主题与动效的落点在 PREREQ-2 的 `App.axaml.cs`）；`AppOptions` 暴露 `FrontendId`；`Program.cs` 装载 |
 | P3 | 令牌生成（**不得手改生成产物**）：`Nm.Focus.Ring.*`/`Nm.Corner.Fluent.*` 走 `TokenMap.DerivedGlobals`（全局派生）；`Nm.Elevation.*` 需新增 `TokenValueKind.BoxShadows`（`TokenMap.cs:4-17` + Writer）；`Nm.Material.*` 归**主题层**（dark/light 取值，主题包 schema，非全局常量）→ 重生成 `NmKeys.g.cs`/`Tokens.Global.axaml` 并跑 `TokenGen -- --check` |
 | P4 | 三态动效：`motion.mode` = **`auto`/`full`/`reduce`**（C-03:48 + 设计 02）；`auto` 经 `IMotionPreferenceSource`（平台 SPI，Avalonia 无 API → 提供默认实现 + 可注入）；`motion.categories=off` 时 0ms 反馈；设计 02 判据 ①–⑤ 有测试点 |
+| P5b | `builtin.fluent-dark` 视觉主题包：`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + C-02 V-07 注册表 + 主题包校验（`ThemeValidator`/`BuiltInThemes` 加载 + Current 不生效测试） |
 
 ## 验收标准
 
@@ -61,7 +62,7 @@ allowed_paths:
 - [ ] **AC2**：`AppearanceCoordinator` 读取/校验/变更通知（应用落点归 PREREQ-2）；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<TODO>>
 - [ ] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<TODO>>
 - [ ] **AC4**：`motion.mode` = `auto`/`full`/`reduce`（**无 `off`**）；`auto` 经 `IMotionPreferenceSource`（默认实现 + 注入测试）；`motion.categories=off` 0ms；设计 02 判据 ①–⑤ 有测试。<<TODO>>
-- [ ] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）+ 主题包校验通过（`ThemeGen -- --check`）。<<TODO>>
+- [ ] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）；**两项校验**：`ThemeGen -- --check`（产物漂移）+ `ThemeValidator.Validate`/`BuiltInThemes` 加载（schema 合法）+ Current 主题不生效测试。<<TODO>>
 - [ ] **AC6**：全量 sln 不退化（基线 949/0/57）+ 证据。<<TODO>>
 
 ## 禁止范围
@@ -103,3 +104,4 @@ allowed_paths:
 
 - 待关闭时填写。
 | AC6 | 全量 sln build/test（基线 949/0/57） | 全量 | NOT_RUN | 待补 |
+- 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 eady，DSH 实现。
