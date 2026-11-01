@@ -59,9 +59,10 @@ allowed_paths:
 
 - [ ] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<TODO>>
 - [ ] **AC2**：`AppearanceCoordinator` 读取/校验/变更通知（应用落点归 PREREQ-2）；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<TODO>>
-- [ ] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）；`Nm.Material.*` 在主题层；`ThemeGeneratorTests`/`TokenPipelineTests` 计数更新。<<TODO>>
+- [ ] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<TODO>>
 - [ ] **AC4**：`motion.mode` = `auto`/`full`/`reduce`（**无 `off`**）；`auto` 经 `IMotionPreferenceSource`（默认实现 + 注入测试）；`motion.categories=off` 0ms；设计 02 判据 ①–⑤ 有测试。<<TODO>>
-- [ ] **AC5**：全量 sln 不退化（基线 949/0/57）+ 证据。<<TODO>>
+- [ ] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）+ 主题包校验通过（`ThemeGen -- --check`）。<<TODO>>
+- [ ] **AC6**：全量 sln 不退化（基线 949/0/57）+ 证据。<<TODO>>
 
 ## 禁止范围
 
@@ -84,9 +85,9 @@ allowed_paths:
 
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
-| AC1–AC4 | `dotnet test apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests` + `NewManga.App.Tests` | .NET | NOT_RUN | 待补 |
+| AC1–AC4 | `dotnet test` 四工程（Appearance/DesignSystem/ThemeEngine/App） | .NET | NOT_RUN | 待补 |
 | AC3 | `dotnet run --project apps/desktop-avalonia/src/NewManga.DesignSystem.TokenGen -- --check` + `NewManga.ThemeEngine.ThemeGen -- --check` | 生成管线 | NOT_RUN | 待补 |
-| AC5 | 全量 sln build/test | 全量 | NOT_RUN | 待补 |
+| AC5 | `ThemeGen -- --check` + 主题包校验 | 生成管线 | NOT_RUN | 待补 |
 
 ## Canonical Evidence
 
@@ -101,3 +102,4 @@ allowed_paths:
 ## Closeout Record
 
 - 待关闭时填写。
+| AC6 | 全量 sln build/test（基线 949/0/57） | 全量 | NOT_RUN | 待补 |
