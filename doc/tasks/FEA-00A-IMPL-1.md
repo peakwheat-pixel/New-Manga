@@ -185,3 +185,4 @@ allowed_paths:
 - 2026-11-01：范围复核 **r3 `approved`**（P0=0 / P1=0 / P2×10 非阻断）；按 r3 建议修正 4 条改文项（R-SEAM-4 的 `PAGE` 分支、payload 字段与 `media_artifacts` 列、R-ART-2 的 `stage_updates`/`persist` 顺序、R-CAND-3 例外口径）。
 - 2026-11-01：`ready` 交 Codex 实现（`base_commit: 2a383d1b9` = 范围冻结收口提交）；`G-DELETE-IMPL` 仍 OPEN。
 - 2026-11-01：`proposed`，派独立复核 r3 审查 v3；**复核通过前不 `ready`、不派实现**。`base_commit` 于 `ready` 时更新为最终冻结 head。
+- 2026-11-01（DSH 收口）：Codex 实现已交付于 worktree 分支 `feat/fea-00a-impl`，delivery head `007094517`（Codex 沙箱无法写 linked-worktree Git 元数据，DSH 代为提交）；测试 194 passed / 0 failed / 0 skipped，V1–V9 11 passed，`check.ps1` PASS；主仓库 `verify_pins` 15/15 PASS。**待上下文独立实现复核**，复核通过后由 DSH 集成并更新本卡状态/证据（证据文件当前在分支上，集成前不写入 main 证据表以避免检查器路径缺失）。
