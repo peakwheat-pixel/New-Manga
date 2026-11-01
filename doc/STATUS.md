@@ -4,22 +4,21 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-04b](tasks/FEA-04b.md) `ready`（Fluent 四页设计基线——**7 份契约已冻结**，第一个实现候选）。
-- 上一 Task：FEA-GOV-10 `done`（C-07 `approved`；11 份契约全部复核）。
-- 进行中并轨：FEA-GOV-11 `in_progress`（冻结执行；**7 份已冻结**：C-01b/C-02/C-03/C-05/C-07/C-11/C-12）。
-- 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
-- 下一候选：MA-11 / MA-20 裁决后另立实施 Task；AC2 去重属资源通道契约演进（`G-CONTRACT` OPEN）。
+- 当前 Task：[FEA-C14-DRAFT](tasks/FEA-C14-DRAFT.md) `in_progress`（C-14 起草：D05 剩余范围——重定位/同步 + 容器页映射 + 缓存三缺口）。
+- 上一 Task：FEA-GOV-11 `done`（**11 份契约已冻结**：C-01b/C-02/C-03/C-04b/C-05/C-06/C-07/C-08/C-11/C-12/C-13）。
+- 进行中并轨：无（FEA-GOV-11 已 `done`）；**Gate 状态**：`G-DELETE-CONTRACT` / `G-CONTRACT` 均 **OPEN**（等 D05 剩余子面 → C-14）。
+- 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
+- 下一候选：C-14 冻结后评估 Gate 关闭 → C-09；C-10 交互契约（U-03 已裁，可起草）；MA-11 / MA-20 裁决后另立实施 Task。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 历史基线：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
-- 已合入 main（历史）：A-1 CreateChapter、A-2 IRunController、A-3 66 命令契约、A-5 生产写入策略、D-1 设计系统、C-1 ThemeEngine、B-1..B-4 外壳/Console/Studio/Batch、V11R-INT-0；明细见 `doc/reviews/` 与各 Task 卡。
-- 独立审查报告统一在 `doc/reviews/`（最新：`REALUSE-DATA-SAFETY-1-antigravity-r2.md` PASS）。
+- 独立审查报告统一在 `doc/reviews/`。
 - 裁定：R-08..R-25，见 [V11R_PROGRAM](V11R_PROGRAM.md) §8。
-- 基线：`main@011b19bbf`；**不 push 远端**。
+- 冻结校验：`pwsh -NoProfile -File tools/governance/verify_pins.ps1`（11/11 PASS；机械校验，不替代独立复核）。
 
 ## 保留与已知限制
 - WORKSPACE-CONSOLIDATION-1 `closed_with_limitations`（r212）；禁再清理/GC/prune。
-- 治理检查器既有债务（非本 Task 引入）：`doc/REBASELINE_PLAN.md` 行数超预算、`doc/STATUS.md` 指针历史；记入 REALUSE-DATA-SAFETY-1 limitation。
-- SAFETY-6 已知 P2：R-001 关闭浮层与在途保存并发 NRE（待小修）；R-002 证据 pin CRLF 漂移；R-003 日志格式。
+- 检查器既有债务：PLAN 行数超预算、STATUS 指针历史（记入 REALUSE-DATA-SAFETY-1 limitation）。
+- SAFETY-6 已知 P2：R-001 浮层关闭并发 NRE；R-002 证据 pin CRLF 漂移；R-003 日志格式。
 - v1 收口（2026-10-21，`239b165c2`）：ACL 已修；签名待证书。
 - 台账见 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000。
 - 真机端到端脚本化验收：run-i18 7/7、run-i36 10/10。
