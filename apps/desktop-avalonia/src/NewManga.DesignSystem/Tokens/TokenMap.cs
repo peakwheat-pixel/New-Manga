@@ -14,6 +14,7 @@ public enum TokenValueKind
     Boolean,
     String,
     Int32,
+    BoxShadows,
 }
 
 /// <summary>One frozen DTCG token mapped to exactly one Avalonia resource key (contract §2).</summary>
@@ -194,6 +195,19 @@ public static class TokenMap
             "design 01 G-1: Fluent medium corner 6px"),
         new("Nm.Corner.Fluent.Lg", TokenValueKind.CornerRadius, "8",
             "design 01 G-1: Fluent large corner 8px"),
+        // FEA-06-PREREQ-1 (G-1): Fluent elevation ladder (BoxShadows; Fluent frontend only).
+        new("Nm.Elevation.1", TokenValueKind.BoxShadows, "0 1 3 0 #00000024",
+            "design 01 G-1: elevation 1 (cards)"),
+        new("Nm.Elevation.2", TokenValueKind.BoxShadows, "0 4 12 0 #00000033",
+            "design 01 G-1: elevation 2 (popovers)"),
+        new("Nm.Elevation.3", TokenValueKind.BoxShadows, "0 8 24 0 #00000040",
+            "design 01 G-1: elevation 3 (dialogs)"),
+        // FEA-06-PREREQ-1 (G-1): Fluent material switches (theme-independent parts only;
+        // Nm.Material.Acrylic.Base/Tint carry theme values in the theme package).
+        new("Nm.Material.Mica.Enabled", TokenValueKind.Boolean, "true",
+            "design 01 G-1: Mica switch (Fluent frontend only)"),
+        new("Nm.Material.Acrylic.Opacity", TokenValueKind.Double, "0.8",
+            "design 01 G-1: acrylic opacity (Fluent frontend only)"),
         // R-15 extension: a slow exit/reveal duration (220ms) in addition to fast/normal.
         new("Nm.Motion.Duration.Slow", TokenValueKind.TimeSpan, "220ms",
             "R-15 extension: slow duration for 200-260ms reveal/exit transitions"),        new("Nm.Motion.Enabled", TokenValueKind.Boolean, "true",

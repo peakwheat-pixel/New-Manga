@@ -326,4 +326,30 @@ public static class TokenValues
             "system-ui" or "sans-serif" or "serif" or "monospace" or "cursive" or "fantasy" or
             "ui-sans-serif" or "ui-serif" or "ui-monospace" or "ui-rounded" or "emoji" or
             "math" or "fangsong";
+
+    /// <summary>FEA-06-PREREQ-1 (G-1): parses "x y blur spread #RRGGBB[, ...]" into Avalonia BoxShadows.</summary>
+    public static BoxShadows ParseBoxShadows(string raw)
+    {
+        var parts = raw.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var shadows = new BoxShadow[parts.Length];
+        for (var index = 0; index < parts.Length; index++)
+        {
+            var fields = parts[index].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            if (fields.Length != 5)
+            {
+                throw new FormatException($"box shadow '{parts[index]}' must be 'x y blur spread color'");
+            }
+
+            shadows[index] = new BoxShadow
+            {
+                OffsetX = ParseNumber(fields[0]),
+                OffsetY = ParseNumber(fields[1]),
+                Blur = ParseNumber(fields[2]),
+                Spread = ParseNumber(fields[3]),
+                Color = ParseColor(fields[4]),
+            };
+        }
+
+        return new BoxShadows(shadows[0]);
+    }
 }

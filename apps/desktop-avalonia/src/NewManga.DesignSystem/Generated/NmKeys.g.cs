@@ -58,6 +58,9 @@ public static class NmKeys
         "Nm.Corner.Md",
         "Nm.Corner.None",
         "Nm.Corner.Sm",
+        "Nm.Elevation.1",
+        "Nm.Elevation.2",
+        "Nm.Elevation.3",
         "Nm.Focus.Ring.Color",
         "Nm.Focus.Ring.Offset",
         "Nm.Focus.Ring.Width",
@@ -89,6 +92,8 @@ public static class NmKeys
         "Nm.LineHeight.Normal",
         "Nm.LineHeight.Tight",
         "Nm.LineHeight.Title",
+        "Nm.Material.Acrylic.Opacity",
+        "Nm.Material.Mica.Enabled",
         "Nm.Motion.Duration.Fast",
         "Nm.Motion.Duration.Instant",
         "Nm.Motion.Duration.Normal",
@@ -294,6 +299,16 @@ public static class NmKeys
         public const string Sm = "Nm.Corner.Sm";
     }
 
+    public static class Elevation
+    {
+        /// <summary>Nm.Elevation.1</summary>
+        public const string S1 = "Nm.Elevation.1";
+        /// <summary>Nm.Elevation.2</summary>
+        public const string S2 = "Nm.Elevation.2";
+        /// <summary>Nm.Elevation.3</summary>
+        public const string S3 = "Nm.Elevation.3";
+    }
+
     public static class Focus
     {
 
@@ -386,6 +401,22 @@ public static class NmKeys
         public const string Tight = "Nm.LineHeight.Tight";
         /// <summary>Nm.LineHeight.Title</summary>
         public const string Title = "Nm.LineHeight.Title";
+    }
+
+    public static class Material
+    {
+
+        public static class Acrylic
+        {
+            /// <summary>Nm.Material.Acrylic.Opacity</summary>
+            public const string Opacity = "Nm.Material.Acrylic.Opacity";
+        }
+
+        public static class Mica
+        {
+            /// <summary>Nm.Material.Mica.Enabled</summary>
+            public const string Enabled = "Nm.Material.Mica.Enabled";
+        }
     }
 
     public static class Motion

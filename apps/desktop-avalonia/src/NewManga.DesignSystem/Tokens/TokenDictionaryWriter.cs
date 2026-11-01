@@ -259,10 +259,18 @@ internal static class TokenDictionaryWriter
             $"<sys:Boolean x:Key=\"{key}\">{(ParseBoolean(rawValue) ? "True" : "False")}</sys:Boolean>",
         TokenValueKind.String =>
             $"<sys:String x:Key=\"{key}\">{Escape(rawValue)}</sys:String>",
+        TokenValueKind.BoxShadows =>
+            $"<BoxShadows x:Key=\"{key}\">{FormatBoxShadows(TokenValues.ParseBoxShadows(rawValue))}</BoxShadows>",
         TokenValueKind.Int32 =>
             $"<sys:Int32 x:Key=\"{key}\">{int.Parse(rawValue.Trim(), CultureInfo.InvariantCulture)}</sys:Int32>",
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "unsupported token value kind"),
     };
+
+    private static string FormatBoxShadows(BoxShadows shadows)
+    {
+        var shadow = shadows.ToString();
+        return string.IsNullOrWhiteSpace(shadow) ? TokenValues.ToHex(default) : shadow;
+    }
 
     private static bool ParseBoolean(string raw) => raw.Trim().ToLowerInvariant() switch
     {

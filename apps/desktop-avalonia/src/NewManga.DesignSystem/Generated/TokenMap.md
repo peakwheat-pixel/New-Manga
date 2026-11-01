@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 284.
+Rows: 289.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -158,6 +158,11 @@ Rows: 284.
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Sm` | CornerRadius | `4` |
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Md` | CornerRadius | `6` |
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Lg` | CornerRadius | `8` |
+| global-derived | `(derived)` | `Nm.Elevation.1` | BoxShadows | `0 1 3 0 #00000024` |
+| global-derived | `(derived)` | `Nm.Elevation.2` | BoxShadows | `0 4 12 0 #00000033` |
+| global-derived | `(derived)` | `Nm.Elevation.3` | BoxShadows | `0 8 24 0 #00000040` |
+| global-derived | `(derived)` | `Nm.Material.Mica.Enabled` | Boolean | `true` |
+| global-derived | `(derived)` | `Nm.Material.Acrylic.Opacity` | Double | `0.8` |
 | global-derived | `(derived)` | `Nm.Motion.Duration.Slow` | TimeSpan | `220ms` |
 | global-derived | `(derived)` | `Nm.Motion.Enabled` | Boolean | `true` |
 | global-derived | `(derived)` | `Nm.LineHeight.Display` | Double | `1.25` |

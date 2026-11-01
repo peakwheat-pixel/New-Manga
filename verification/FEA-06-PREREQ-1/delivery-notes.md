@@ -31,3 +31,12 @@
 - Tokens.Global.axaml/NmKeys.g.cs/TokenMap.md 经 TokenGen 重新生成；TokenGen -- --check **up to date**。
 - 未完成：Nm.Elevation.*（需新增 TokenValueKind.BoxShadows + Writer 分支——本轮尝试后回滚，留待专门实现）、Nm.Material.*（主题层机制）。
 - 全量 sln **961/0/57**（无回归）。
+
+## AC3 完成（G-1/G-1c 全部 11 键）
+
+- **BoxShadows 类型**：TokenValueKind.BoxShadows + TokenValues.ParseBoxShadows（x y blur spread color）+ TokenDictionaryWriter 分支。
+- **新增 11 键**（全部经 DerivedGlobals + TokenGen）：
+  - G-1c：Nm.Focus.Ring.Width(2)/Offset(1)/Color(rgba accent ring)
+  - G-1：Nm.Corner.Fluent.Sm/Md/Lg(4/6/8)、Nm.Elevation.1/2/3(BoxShadows)、Nm.Material.Mica.Enabled(true)、Nm.Material.Acrylic.Opacity(0.8)
+- Nm.Material.Acrylic.Base/Tint 为主题层键（取值随内置主题包，非全局常量——C-02 口径）。
+- TokenGen -- --check **up to date**；ows: 287；全量 sln **961/0/57**。
