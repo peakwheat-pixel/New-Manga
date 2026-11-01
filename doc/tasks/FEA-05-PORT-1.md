@@ -21,6 +21,9 @@ evidence_dir: verification/FEA-05-PORT-1
 allowed_paths:
   - doc/tasks/FEA-05-PORT-1.md
   - doc/contracts/V11R_REGION_WRITE_CONTRACT.md
+  - doc/plan/FEA-C07_API_INVENTORY.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C07.md
+  - doc/reviews/CONTRACT-UNFREEZE-*.md
   - doc/plan/FEA-CONTRACT-FROZEN-C*.md
   - apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs
   - apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
@@ -44,24 +47,24 @@ allowed_paths:
 - 方案 §15.2（Fluent 独立 frontend）/§15.6；C-02 V-08b（KeyMap 无关）；C-07（端口清单 = `generate_api_inventory.py`）。
 - 上游冻结契约：`doc/contracts/V11R_REGION_WRITE_CONTRACT.md`（FROZEN v1.5）——本卡需 UNFREEZE 到 v1.6。
 
-## 任务拆解
+## 前置\n\n- FEA-05-WIRE-1 已 done（`d9d7dde41`）；`FEA-05_DRAFT_WIRE_CONTRACT.md` 与 §8.2 仍为 `PENDING`——本卡完成后由 DSH 一并升级状态（不含在写域或单列）。\n- `FEA-04b`（in_review）与本卡无写域重叠；`FEA-06`（Fluent UI）须等本卡与设计基线 AC5 用户确认。\n\n## 任务拆解
 
 | 项 | 内容 | 依赖 |
 |---|---|---|
 | P1 契约 UNFREEZE | `V11R_REGION_WRITE_CONTRACT.md` v1.5 → v1.6：把「追加集恰为 `V11RAdditiveCommandNames`（10 写 + 1 读）」升级为「追加集 = `RegionWrite ∪ RegionRead ∪ Drafts`（各家族声明集合之并）」，并补 `DraftsCommandNames`（6）声明 | 无 |
-| P2 端口面 | `IHostController` 新增 6 个 Draft 方法（`OpenDraftAsync`/`PatchDraftAsync`/`PrepareCandidateAsync`/`ApplyCandidatesAsync`/`GetDraftStatusAsync`/`DiscardDraftAsync`）；`HostController` 实现（经 `HostCommandDispatcher`）；`NullHostController` 安全默认 | P1 |
-| P3 CoreClient registry | `HostCommandModel` 6 条；`HostCommandRegistry` 注册（域 `Drafts`、通道 `core`、minor 3）；`HostCommandDispatcher` 路由；`V11RAdditiveCommandNames` 11 → 17 | P1 |
-| P4 契约测试更新 | `RegionWriteCommandTests` 断言改为「additive = RegionWrite ∪ RegionRead ∪ Drafts」并保留 Region 子集断言；`CommandParityContractTests` 每域非空/`CoreMinor>0` | P2/P3 |
+| P2 端口面 | 以下 **7 个方法**（C082 双模式拆两个，均发 `drafts_status`）：`Task<DraftLease> OpenDraftAsync(string sessionId, string pageId, string? regionId, string? baseRevisionId, int pageBindingVersion, CancellationToken)`；`Task<Draft> PatchDraftAsync(string draftId, string sessionId, DraftPatch patch, int? undoCursor, CancellationToken)`；`Task<RegionCandidate> PrepareCandidateAsync(string regionId, DraftPatch patch, string origin, string? draftId, string? baseRevisionId, CancellationToken)`；`Task<IReadOnlyDictionary<string,string>> ApplyCandidatesAsync(EditToken token, IReadOnlyList<string> candidateIds, CancellationToken)`；`Task<Draft?> GetDraftAsync(string draftId, CancellationToken)`；`Task<IReadOnlyList<Draft>> ListDraftsAsync(string sessionId, CancellationToken)`；`Task DiscardDraftAsync(string draftId, string sessionId, CancellationToken)`。DTO 归属 `NewManga.CoreClient/Commands/DraftCommands.cs`（`Draft`/`DraftLease`/`DraftPatch`/`EditToken`/`RegionCandidate` 强类型，非 JsonElement）。`HostController` 经 `HostCommandDispatcher` 调用并映射；`NullHostController` 返回 `Task.FromResult<Draft?>(null)`/`Array.Empty<Draft>()`/抛 `NotSupportedException`（与既有 Null 风格一致，逐方法在实现中登记）。dispatcher 增加显式校验 case（`default` 不静默透传未知 Draft 命令）。 | P1 |
+| P3 CoreClient registry | `HostCommandModel` 6 条；`HostCommandRegistry`：`DraftsCommandNames`（6 新集合）+ `V11RAdditiveCommandNames` 11→17 + `All`/域枚举/`CoreBindings`/`AddDomain` 同步；`HostCommandDispatcher` 显式 case | P1 |
+| P4 契约测试更新 | `RegionWriteCommandTests`：`:109` 改 `V11RAdditiveCommandNames`（17）且 `:110-114` 改为「RegionWrite ∪ RegionRead ⊆ additive」子集断言；补 `DraftsCommandNames ⊆ additive`；测试类注释/测试名同步（`CommandParityContractTests` 派生断言自动成立） | P2/P3 |
 | P5 端口清单 | `generate_api_inventory.py --check` 通过（C-07 端口清单更新）；若脚本生成清单，需重跑并提交 | P2 |
-| P6 冻结记录 | 新 pin 写入 `doc/plan/FEA-CONTRACT-FROZEN-<id>.md`（或追加）+ `verify_pins.ps1` 15/15；UNFREEZE 记录（`CONTRACT-UNFREEZE-2026-11-xx`） | P1 |
+| P6 冻结记录 | `CONTRACT-UNFREEZE-2026-11-xx`（两份冻结物）；C-07 pin 重算写入 `FEA-CONTRACT-FROZEN-C07.md`；`verify_pins` 15/15；**独立复核**（`FROZEN-C07:17`） | P1 |
 
 ## 验收标准
 
-- [ ] **AC1 契约 UNFREEZE**：`V11R_REGION_WRITE_CONTRACT.md` v1.6 落盘（变更记录 + 新不变式 + `DraftsCommandNames`）；`CONTRACT-UNFREEZE` 记录；新 pin 由 DSH 签发；`verify_pins.ps1` 全绿。<<TODO>>
+- [ ] **AC1 契约 UNFREEZE（两个冻结物）**：① `V11R_REGION_WRITE_CONTRACT.md` v1.5→v1.6（不变式改并集 + `DraftsCommandNames` 6 + 变更记录）；② `doc/reviews/CONTRACT-UNFREEZE-2026-11-xx.md` 记录（两份冻结物的理由/影响/新 pin 值）；③ C-07 库存 `FEA-C07_API_INVENTORY.md` 更新（IHostController 53→59、合计 60→66）并**重算 C-07 pin**（写入 `FEA-CONTRACT-FROZEN-C07.md`）；④ 按 `FROZEN-C07:17` 派**独立复核**（本卡实现完成后）；⑤ `verify_pins.ps1` **15/15**（pin 数量不变）。<<TODO>>
 - [ ] **AC2 端口面**：`IHostController` 6 方法 + 实现 + Null 默认；`App.Tests` 覆盖（fake/failure 路径）；既有方法不回归。<<TODO>>
 - [ ] **AC3 CoreClient registry**：6 条模型/注册/路由；`V11RAdditiveCommandNames` = 17；`CommandParityContractTests` 通过。<<TODO>>
 - [ ] **AC4 契约测试**：`RegionWriteCommandTests` 改为并集断言且 Region 子集仍成立；`CommandContractV11RTests` 通过。<<TODO>>
-- [ ] **AC5 端口清单**：`generate_api_inventory.py --check` EXIT 0（C-07 清单同步）。<<TODO>>
+- [ ] **AC5 端口清单**：`generate_api_inventory.py --check` EXIT 0（人工清单与代码一致；脚本只 print 不生成）。<<TODO>>
 - [ ] **AC6 回归**：全量 `dotnet build` + `dotnet test ... --no-build --settings .../NewManga.runsettings` 不退化（基线 931/0/60）。<<TODO>>
 - [ ] **AC7 证据**：`verification/FEA-05-PORT-1/**` 原始日志 + 证据表。<<TODO>>
 
@@ -76,8 +79,8 @@ allowed_paths:
 |---|---|---|---|
 | W-1 | 是否必须 UNFREEZE Region 契约？ | **是**：不变式（追加集 = RegionWrite ∪ RegionRead）与新家族冲突，只能改契约；走 v1.6 + UNFREEZE 记录 + 新 pin | FEA-05-WIRE-1 impl-r4 复核发现（`RegionWriteCommandTests:107-117` vs 契约 `:62-63/344-346/457`） |
 | W-2 | 端口方法名 | `OpenDraftAsync`/`PatchDraftAsync`/`PrepareCandidateAsync`/`ApplyCandidatesAsync`/`GetDraftStatusAsync`/`DiscardDraftAsync`（与 wire 命令一一对应） | 与 `IHostController` 既有命名风格一致 |
-| W-3 | `V11RAdditiveCommandNames` 语义 | 扩为 17（RegionWrite 10 + RegionRead 1 + Drafts 6）；`RegionWriteCommandNames`/`RegionReadCommandNames` 保持原集合 | 契约 v1.6 的并集定义 |
-| W-4 | 证据与冻结 | 卡内产出 UNFREEZE 记录 + 契约 v1.6 + 新 pin；DSH 复核后提交；`verify_pins` 必须 15/15（pin 数量不变，pin 值更新） | 契约冻结纪律 |
+| W-3 | `V11RAdditiveCommandNames` 语义 | 扩为 17（RegionWrite 10 + RegionRead 1 + Drafts 6）；新增 `DraftsCommandNames`（6）；`RegionWriteCommandNames`/`RegionReadCommandNames` 保持原集合 | 契约 v1.6 的并集定义 |
+| W-4 | 证据与冻结 | 卡内产出 UNFREEZE 记录（两份冻结物）+ 契约 v1.6 + C-07 pin 重算；DSH 复核后提交；`verify_pins` 必须 15/15（pin 数量不变，C-07 值更新） | 契约冻结纪律；`FROZEN-C07:17` 独立复核 |
 
 ## 测试要求
 
@@ -86,7 +89,7 @@ allowed_paths:
 | AC1 | `verify_pins.ps1` + 契约 diff | 治理 | NOT_RUN | 待补 |
 | AC2/AC3/AC4 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests` + `NewManga.CoreClient.Tests` | .NET | NOT_RUN | 待补 |
 | AC5 | `python tools/governance/generate_api_inventory.py --check` | 治理 | NOT_RUN | 待补 |
-| AC6 | `dotnet build apps/desktop-avalonia/NewManga.sln` + `dotnet test ... --no-build --settings .../NewManga.runsettings` | 全量 | NOT_RUN | 待补 |
+| AC6 | `dotnet build apps/desktop-avalonia/NewManga.sln` EXIT=0 + `dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 不退化（基线 931/0/60） | 全量 | NOT_RUN | 待补 |
 
 ## Canonical Evidence
 
