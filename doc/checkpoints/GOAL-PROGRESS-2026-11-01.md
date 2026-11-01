@@ -32,6 +32,12 @@
 | Q-4 | `FEA-00A-IMPL-1` 的 AC7②（真实用户旧库只读核验） | 需用户提供旧库副本才能补；已登记 `FOLLOW-UP-FEA00A-1` | 不阻塞；下次用户在线时可提供副本补跑。 |
 | Q-5 | `G-DELETE-IMPL`（删除线实现授权） | 维持 OPEN；FEA-12 需用户单独确认 | 不阻塞 FEA-03。 |
 
+## 3C. 本轮进展（2026-11-01/02 段）
+
+- FEA-03 范围冻结经 **5 轮独立复核**（r1–r4 changes_requested → **r5 approved P0/P1=0**）；C-13 经 CONTRACT-UNFREEZE-C13 修订为 v6（pin `8faf1e80…`，r3 单独 approved）。
+- FEA-03 卡置 `ready`（`b83bc7703`），独立复核报告 r1–r5 全部入库。
+- 已建实现 worktree `G:\CODEX\New Manga.workspace\FEA-03`（分支 `feat/fea-03`）并派发 Codex 实现（2026-11-01 23:59 起）。
+
 ## 4. 下一动作
 
 1. 提交 `FEA-03` 范围冻结卡（proposed）→ 派独立复核 r1。
@@ -58,4 +64,5 @@
 | 范围复核 | r1（P0×1/P1×7/P2×11）→ v2；r2（P0×1/P1×5/P2×12）→ v3；r3（P0=0/P1×4/P2×12，**UNFREEZE approved**）→ v4/v5；r4（P0=0/P1×2/P2×12）→ v6 | r5 待审 |
 
 **FOLLOW-UP 登记**：`FOLLOW-UP-FEA03-1` SC-D11 原条款与新路径实现的长期协调（UNFREEZE 已承接，待后续 Task）；`FOLLOW-UP-FEA03-2` C-13 `:173` manual 位引用口径（本卡按 `text_json.translation_locked`+`manual_edited` 实现，无需再改）；`FOLLOW-UP-FEA03-3` 旧路径统一去重（后续 Task，按 C-13 v6 新路径优先）。
+
 
