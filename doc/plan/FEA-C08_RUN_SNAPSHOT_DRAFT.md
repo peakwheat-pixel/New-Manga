@@ -5,7 +5,7 @@
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-08、[FEA-00 方案 r4](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) §10、代码现状（`src/infrastructure/sqlite/schema.py`、`src/application/tasks/service.py`）、[C-01b 存储契约](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)
 
-**边界声明**：本文件是**草案**，不改 schema、不改冻结契约。
+**边界声明**：本文件是**草案**——**本草案自身不修改任何文件、不改 schema**；其要求修改的 M2-C1 属**冻结契约**，字节修订由前置（b）的独立 Task 执行（见 §5），本草案只冻结「要加什么」。
 
 ---
 
@@ -84,4 +84,4 @@
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-1 接口口径 + P2×3） | DSH |
 | 2026-11-01 | **v3（处置裁定 r3/r4）**：前置（b）落点改为**扩展 M2-C1 §5.5**（追加 2 命令 + 3 码进 §5.5 与 §8 ErrorEnvelope，不是新建章节/ErrorView）；引用 §2→§3；3 码补 category/retryable；wire minor **2.12** DSH 批准；冻结条件重排 | DSH |
-| 2026-11-01 | **v4（处置裁定 r6 的 P1×2 + P2×3）**：前置（b）白名单改挂 **host 投影层**（Core §8 不改、「降级」写死）；§8 落点改「Proposed（未观察）」小节 + taxonomy 例外说明；§1 「不改冻结契约」改述为本草案自身不写文件 | DSH |
+| 2026-11-01 | **v4（处置裁定 r6 的 P1×2 + P2×5）**：前置（b）白名单改挂 **host 投影层**（Core §8 不改、「降级」写死）；§8 落点改「Proposed（未观察）」小节 + taxonomy 例外说明；§1 「不改冻结契约」改述为本草案自身不写文件 | DSH |
