@@ -85,18 +85,18 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-FLUENT-README | AC1–AC4 | `doc/design/fluent-v1/README.md` | f224280df | 2d7650aa475c2580e528fbc580087393c30f2268365a9dff77332fe8e64c7bc2 | CANONICAL |
-| E-FLUENT-TOKENS | AC2 | `doc/design/fluent-v1/01-design-tokens.md` | f224280df | 7bd18ef3a97f6483a25dcc7e9a6f4a5b28eb5c48cccd94721f54b00a5514146d | CANONICAL |
-| E-FLUENT-MOTION | AC3 | `doc/design/fluent-v1/02-motion.md` | f224280df | 5de25787b2191a26695336ae9c2d4bc82aa0960d11bd8033ab9cb159126117c7 | CANONICAL |
-| E-FLUENT-A11Y | AC4 | `doc/design/fluent-v1/03-accessibility.md` | f224280df | 412514945178669f429ade7717be49e09e8deb4ab4bcd82863de64ce286249de | CANONICAL |
-| E-FLUENT-LAYOUT | AC1 | `doc/design/fluent-v1/04-layout-responsive.md` | f224280df | 786ed96254b0d3e76959a3f703fe3ed941d4a9ba42966be8e8a3e0bd1b0605fa | CANONICAL |
-| E-FLUENT-SHELF | AC1 | `doc/design/fluent-v1/05-page-shelf.md` | f224280df | 9ff9d27b940e3f56a7d8ea8440e7f5367ce8bb5b9b5fcd9d7da8082bc2fad529 | CANONICAL |
-| E-FLUENT-WORKBENCH | AC1 | `doc/design/fluent-v1/06-page-workbench.md` | f224280df | cfcf277b0ea66dbfe4b5288afa5f1ffa80013b1ae0ea7fa47eb353223cc69032 | CANONICAL |
-| E-FLUENT-READER | AC1 | `doc/design/fluent-v1/07-page-reader.md` | f224280df | 539f24f9432dde7a0fb33a360b2a7507f7d93a543b10cc063299c4a675f4d6b2 | CANONICAL |
-| E-FLUENT-SETTINGS | AC1 | `doc/design/fluent-v1/08-page-settings.md` | f224280df | fb8058f16d3fd444153287fff9ff1b9261848dbe821d032b9dc6cfb75cac8f43 | CANONICAL |
-| E-FLUENT-STATE | AC1 | `doc/design/fluent-v1/09-state-matrix.md` | f224280df | ed46c107aad1fbb7ab78c6b7c4f26efd0693db73e77ecb0840349d34abe9b126 | CANONICAL |
-| E-FLUENT-COMPONENTS | AC1/AC2 | `doc/design/fluent-v1/10-component-inventory.md` | f224280df | 1ec672367e926c0253f3bbcf049989969c34de440bafe0628e16592bc37129da | CANONICAL |
-| E-FLUENT-SELFCHECK | AC1–AC5 | `verification/FEA-04b/design-baseline-selfcheck.md` | f224280df | 3471b1acdf3dabc1e94a23b79ebdc3f7e98e1be53e6a40e4f5bd69948349535f | CANONICAL |
+| E-FLUENT-README | AC1–AC4 | `doc/design/fluent-v1/README.md` | d4da1f1cb | 2d7650aa475c2580e528fbc580087393c30f2268365a9dff77332fe8e64c7bc2 | CANONICAL |
+| E-FLUENT-TOKENS | AC2 | `doc/design/fluent-v1/01-design-tokens.md` | d4da1f1cb | 7bd18ef3a97f6483a25dcc7e9a6f4a5b28eb5c48cccd94721f54b00a5514146d | CANONICAL |
+| E-FLUENT-MOTION | AC3 | `doc/design/fluent-v1/02-motion.md` | d4da1f1cb | 5de25787b2191a26695336ae9c2d4bc82aa0960d11bd8033ab9cb159126117c7 | CANONICAL |
+| E-FLUENT-A11Y | AC4 | `doc/design/fluent-v1/03-accessibility.md` | d4da1f1cb | 412514945178669f429ade7717be49e09e8deb4ab4bcd82863de64ce286249de | CANONICAL |
+| E-FLUENT-LAYOUT | AC1 | `doc/design/fluent-v1/04-layout-responsive.md` | d4da1f1cb | 786ed96254b0d3e76959a3f703fe3ed941d4a9ba42966be8e8a3e0bd1b0605fa | CANONICAL |
+| E-FLUENT-SHELF | AC1 | `doc/design/fluent-v1/05-page-shelf.md` | d4da1f1cb | 9ff9d27b940e3f56a7d8ea8440e7f5367ce8bb5b9b5fcd9d7da8082bc2fad529 | CANONICAL |
+| E-FLUENT-WORKBENCH | AC1 | `doc/design/fluent-v1/06-page-workbench.md` | d4da1f1cb | cfcf277b0ea66dbfe4b5288afa5f1ffa80013b1ae0ea7fa47eb353223cc69032 | CANONICAL |
+| E-FLUENT-READER | AC1 | `doc/design/fluent-v1/07-page-reader.md` | d4da1f1cb | 539f24f9432dde7a0fb33a360b2a7507f7d93a543b10cc063299c4a675f4d6b2 | CANONICAL |
+| E-FLUENT-SETTINGS | AC1 | `doc/design/fluent-v1/08-page-settings.md` | d4da1f1cb | fb8058f16d3fd444153287fff9ff1b9261848dbe821d032b9dc6cfb75cac8f43 | CANONICAL |
+| E-FLUENT-STATE | AC1 | `doc/design/fluent-v1/09-state-matrix.md` | d4da1f1cb | ed46c107aad1fbb7ab78c6b7c4f26efd0693db73e77ecb0840349d34abe9b126 | CANONICAL |
+| E-FLUENT-COMPONENTS | AC1/AC2 | `doc/design/fluent-v1/10-component-inventory.md` | d4da1f1cb | 1ec672367e926c0253f3bbcf049989969c34de440bafe0628e16592bc37129da | CANONICAL |
+| E-FLUENT-SELFCHECK | AC1–AC5 | `verification/FEA-04b/design-baseline-selfcheck.md` | d4da1f1cb | 3471b1acdf3dabc1e94a23b79ebdc3f7e98e1be53e6a40e4f5bd69948349535f | CANONICAL |
 
 ## Resource Manifest
 
@@ -109,3 +109,4 @@ allowed_paths:
 - 2026-11-02 / DSH：起草 `doc/design/fluent-v1/`（README + 01–10，版本 `fluent-v1.0.0`）与自查清单 `verification/FEA-04b/design-baseline-selfcheck.md`；AC1–AC4 文档完成，待独立复核；AC5 用户确认待办（自主推进模式），独立复核已派发。状态置 `in_review`。
 
 - 2026-11-02：独立复核 r1（P1×7）、r2（P1×4）、r3（P1×1）→ DSH 逐轮处置；**待 r4 复核**。AC5（用户确认）仍待办。
+- 2026-11-02：设计基线独立复核 **r5 approved**（P0/P1=0，P2×16）；AC1–AC4 MET；**AC5（用户确认）未进行**——待用户确认后由 DSH 冻结并在 Closeout 记录。

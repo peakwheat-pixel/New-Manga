@@ -1,7 +1,7 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`1a4d3d1a0`（FEA-04 done + C11-PREREQ-1 done；FEA-04b ready）
-**主推进**：`FEA-04` Current 适配 → **done**（集成 `f4d8a32ec`）；`FEA-C11-PREREQ-1` → **done**（集成 `b7018e19b`）；下一 Task `FEA-04b`（Fluent 四页设计规格，ready）
+**当前 HEAD**：`d4da1f1cb`（FEA-04b 设计基线 r5 approved；FEA-04/C11-PREREQ-1 done）
+**主推进**：`FEA-04b` 设计基线（`doc/design/fluent-v1/`，v1.0.0）**独立复核 r5 approved（P0/P1=0）**；AC5 用户确认待办；上一 Task `FEA-04` done（集成 `f4d8a32ec`）
 
 ---
 
@@ -61,3 +61,10 @@
 |---|---|---|
 | Q-21 | FEA-04b 设计 owner（ZCode CLI 不可用） | DSH 代起草规格 + 独立上下文复核；规格批准后再由 ZCode/Codex 实现 UI |
 | Q-22 | FEA-05（Fluent 独立界面）是否需要先完成 wire（FEA-03 defer 的 Draft 命令面） | 是：先做 wire 子卡，再做 Fluent 页面；否则 Fluent 与 Current 无法共享草稿真值 |
+## 7. FEA-04b 设计基线（2026-11-02 傍晚）
+
+- 交付：doc/design/fluent-v1/（README + 01–10，版本 luent-v1.0.0）：四页规格（书架/工作台/阅读器/设置）+ 状态矩阵 + 令牌取值（C-02 V-05）+ 动效三态三类（C-03 §3 判据①–⑤）+ 键盘/a11y（ShellCommands.cs 17 条键位）+ 响应式（三档断点）+ 组件清单。
+- 独立复核 **r1（P1×7）→ r2（P1×4）→ r3（P1×1）→ r4（P1×1）→ r5 approved（P0/P1=0，P2×16）**。
+- 缺口登记：G-1（Fluent 令牌待 FEA-05 生成）、G-1b（尺寸/断点复用既有 Nm.Size.* + 矩阵列宽 96 设计常量）、G-1c（Nm.Focus.Ring.* 缺失）。
+- **AC5 未完成**：用户确认未进行（自主推进模式）；待用户确认后 DSH 冻结并标 done。
+- 待裁决：Q-23（FEA-04b 设计基线是否批准冻结）；Q-24（FEA-05 前置 wire 是否先做子卡）。
