@@ -57,7 +57,7 @@
 | `EDIT_TOKEN_EXPIRED` | conflict | false | token 过期 |
 | `EDIT_TOKEN_REUSED` | conflict | false | token 重放 |
 | `STALE_BASE_REVISION` | conflict | false | base revision 已过期 |
-| `LOCK_CHANGED` | conflict | true | 并发锁变更（可重试） |
+| `LOCK_CHANGED` | conflict | false | 并发锁变更（需重读状态，不自动重试；W-4） |
 | `DRAFT_JOURNAL_UNWRITABLE` | unavailable | true | journal 不可写（fail-closed） |
 | `PAGE_SIZE_UNAVAILABLE` | unavailable | true | 页面尺寸暂不可用（可重试） |
 | `DRAFT_APPLY_FAILED` | internal | false | 应用失败（内部） |

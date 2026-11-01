@@ -242,7 +242,7 @@ UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRu
 把它们当稳定契约消费；`CommandContractV11RTests` 会断言这 11 条不进入"已冻结集合"。
 
 
-### 8.2 C078–C083 Draft 命令面（PENDING, FEA-05-WIRE-1）
+## 8.2 C078–C083 Draft 命令面（PENDING, FEA-05-WIRE-1）
 
 `FEA-05-WIRE-1` 为 Core drafts 服务新增 6 条 Host 命令（Drafts 域），命令总数从 77 增至 83。本表保留 `PENDING`，**不得**当作已冻结契约；上游契约：`doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md`。
 

@@ -47,3 +47,14 @@
 | P2-02 retryable | 保留 LOCK_CHANGED=true（W-4 已冻「锁冲突 true」；impl-r1 建议再裁，记为 P2 接受遗留） |
 
 回归：pytest tests/core tests/domain -q → **899 passed, exit 0**；dotnet test CoreClient.Tests --filter "CommandContractV11RTests|RegionWriteCommandTests" → **80 passed, 0 failed**。
+
+## impl-r2 处置（DSH，2026-11-02）
+
+| finding | 处置 |
+|---|---|
+| P1-A（唯一 P1）### 8.2 使行不可见 | 改为 ## 8.2 …（"## 8.2".StartsWith("## 8.") 为真）；新增 	est_main_contract_lists_drafts_commands：按 CommandContractV11RTests 的解析规则重放，断言可见集合恰为 C078–C083（12 项测试） |
+| P2-2 retryable 依据不实 | 按 v5.2 W-4「仅 unavailable/internal 为 true」：_DRAFT_RETRYABLE 去掉 LOCK_CHANGED；契约 §3 LOCK_CHANGED 改 false 并注明需重读 |
+| P2-4 契约 §4 UNKNOWN | 保持（Core 既有未知命令行为），待 PORT-1 统一 |
+| P2-10 测试文件末尾换行 | 已补 |
+
+回归：pytest tests/core tests/domain -q → **900 passed, exit 0**；dotnet test CoreClient.Tests --filter "CommandContractV11RTests|RegionWriteCommandTests" → **80 passed, 0 failed**。

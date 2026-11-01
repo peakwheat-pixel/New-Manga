@@ -847,7 +847,7 @@ _DRAFT_ERROR_CATEGORY: dict[str, str] = {
     "UNKNOWN": "validation",
 }
 
-_DRAFT_RETRYABLE = {"LOCK_CHANGED", "PAGE_SIZE_UNAVAILABLE", "DRAFT_JOURNAL_UNWRITABLE", "INTERNAL"}
+_DRAFT_RETRYABLE = {"PAGE_SIZE_UNAVAILABLE", "DRAFT_JOURNAL_UNWRITABLE", "INTERNAL"}
 
 
 def _draft_error_envelope(error: "DraftError") -> dict[str, Any]:

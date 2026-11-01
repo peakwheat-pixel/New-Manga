@@ -172,7 +172,7 @@ def test_error_envelope_uses_frozen_category_table():
 
     locked = _draft_error_envelope(DraftError("LOCK_CHANGED", "lock"))
     assert locked["category"] == "conflict"
-    assert locked["retryable"] is True
+    assert locked["retryable"] is False
 
     cause = _draft_error_envelope(DraftError("INTERNAL", "boom", cause_code="E_X"))
     assert cause["details"] == [{"causeCode": "E_X"}]
@@ -211,3 +211,30 @@ def test_drafts_dispatch_is_registered_and_typed():
         "drafts_discard",
     ):
         assert command in source
+
+def test_main_contract_lists_drafts_commands():
+    """The 6 Draft commands must be visible to CommandContractV11RTests.
+
+    That parser resets its section on any ``## ``/``### `` heading and only
+    accepts rows whose section starts with ``## 8.``; a ``### 8.x`` sub-heading
+    would silently hide the rows (impl-r2 P1). Pin the shape here so the
+    contract cannot regress to an invisible sub-section.
+    """
+    from pathlib import Path
+
+    contract = Path(__file__).resolve().parents[2] / "doc" / "contracts" / "V11R_COMMAND_CONTRACT_V1.md"
+    section = ""
+    visible: list[str] = []
+    for line in contract.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped.startswith("## ") or stripped.startswith("### "):
+            section = stripped
+            continue
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if len(cells) < 2 or not cells[1].replace("`", "").strip().startswith("drafts_"):
+            continue
+        if section.startswith("## 8."):
+            visible.append(cells[0].strip())
+    assert visible == ["C078", "C079", "C080", "C081", "C082", "C083"]
