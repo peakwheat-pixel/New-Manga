@@ -1,6 +1,6 @@
 # Gate 阻塞口径裁定（G-DELETE-CONTRACT / G-CONTRACT）· v3
 
-状态：**DSH 架构裁定 v3**（v2 经 [r2 复核](../reviews/GATE-CLOSURE-RULING-r2.md) `approved`；v3 增 R-4，经 [r3 复核](../reviews/GATE-CLOSURE-RULING-r3.md) 处置中）
+状态：**DSH 架构裁定 v4**（v2 经 [r2](../reviews/GATE-CLOSURE-RULING-r2.md) `approved`；v3 的 R-4 经 r3/r4/r5 逐轮修订——§5.5 落点、§8 无白名单、Run 线负向对照不可执行）
 裁定人：DSH（Lead / Architect / Integrator）
 日期：2026-11-01
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`:762-771`）、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) `:10`/`:92`/`§9`、[AD-003 §5](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[冻结矩阵](FEA-CONTRACT_FREEZE_MATRIX.md)
@@ -93,11 +93,11 @@ Gate 的定义文本与被它守门的契约构成**看似的**循环：
 C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错误码的协议注册须由独立 Task 完成」。按同口径处理：
 
 1. C-08 冻结只冻**快照结构与 3 个新码的声明**（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE` + `PrepareRun`/`AcceptRun` 的 wire 版本）；
-2. **M2-C1 字节修订**（块②：**§5.5 命令表追加 2 行 + 3 码进 §5.5 错误语义与 §8 ErrorEnvelope 允许集合**）由**独立 Task** 在**释放任何 Run 实现前**完成并复核；**wire 版本 = minor `2.12`**（DSH 批准）；两块均为**冻结章节的修订**，须按 M2-C1 自身的修订/复核流程（含版本记录）执行；
-3. 复核须含**负向对照**：未扩 M2-C1 时，3 个新码必须被 host 投影拒绝；
+2. **M2-C1 字节修订**（块②：**§5.5 命令表追加 2 行 + 3 码进 §5.5 错误语义段 + §8 观察表追加 3 行**；**且新增 Run 线码白名单校验点**，见下）由**独立 Task** 在**释放任何 Run 实现前**完成并复核；**wire 版本 = minor `2.12`**（DSH 批准）；两块均为**冻结章节的修订**，须按 M2-C1 自身的修订/复核流程（含版本记录）执行；
+3. 复核须含**负向对照**：未扩 M2-C1 时，3 个新码必须被 host 投影拒绝。**但 Run 线当前没有这个机制**——M2-C1 §8 的 `ErrorEnvelope.code` 是**自由字符串**、且明文「未知时保留原始字符串」（`:1101`）、「不冻结 taxonomy」（`:1122`），所以未注册的 `RUN_*` 会**原样透传**，不会被拒。**因此块② 必须同时新增校验点**：§5.5 增「未注册 `RUN_*` 码 → 拒绝并降级为 `unknown`」规则 + host 侧 `allowedRunErrorCodes` 白名单；**负向对照改挂该白名单**（未扩 M2-C1 时新码不在白名单 → 被拒/降级，而非透传）。
 4. **与 C-04b 共用同一个独立 Task，但范围是两块、不是一块**（关键修正）：
    - **块①（C-04b，删除章节增量）**：M2-C1 §5.11.3 表追加 2 行 + §5.11.5 的 2 个删除 ErrorView 联合扩展；
-   - **块②（C-08，扩展已有 §5.5）**：M2-C1 **§5.5「Run Runtime wire surface（P13-C1，冻结）」**（`:185-226`）的命令表**追加 `PrepareRun`/`AcceptRun` 两行**；3 个 `RUN_*` 码进 **§5.5 的错误语义段 + §8 `ErrorEnvelope` 的允许码集合**（**不是**新增 per-command ErrorView——§5.11.5 的 ErrorView 是删除专属投影，Run 错误走 §8）；wire minor `2.12`。
+   - **块②（C-08，扩展已有 §5.5）**：M2-C1 **§5.5「Run Runtime wire surface（P13-C1，冻结）」**（`:185-226`）的命令表**追加 `PrepareRun`/`AcceptRun` 两行**；3 个 `RUN_*` 码写进 **§5.5 的错误语义段**（`:223` 附近，与 `INVALID_REQUEST`/`INVALID_RUN_TRANSITION` 并列）+ **§8 `:1109-1117` 的观察/映射表追加 3 行**（该表是 **PROPOSAL 观察记录、不是白名单**）；**不新增 per-command ErrorView**（§5.11.5 是删除专属投影）；wire minor `2.12`。
    - **为什么必须是两块**：M2-C1 §5.11 全章是「项目级作品永久删除」（`:678` 起，protocol 2.10），而 Run wire surface 在**独立的 §5.5**（`:185`，P13-C1 冻结，明写 supersede §5 的 Run proposal 行）；`PrepareRun`/`AcceptRun` 在全文 0 命中，所以是**扩展 §5.5**、错误进 §8，而非「§5.11.3 追加两行」或「新建并行章节」。
 
 **与 R-2′ 的区别**：R-2′ 只适用 C-04b；R-4 需独立成立（P2-1 补 C-08 特有理由）：① C-08 的 `preparedDigest` 是 **canonical JSON 的字节级定义**（键排序/UTF-8/无空白），字节修订必须与算法定义同步，不能只改错误表；② Run 命令面受 **M2-C1 `:125` 的 major 2.0 历史约束**，新命令必须确认为 minor 递增；③ C-08 的 candidate store 是 Host 侧临时存储、**不落 Core DB**，其错误投影与删除线的 DB 事务语义不同。
@@ -134,3 +134,4 @@ C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错�
 | 2026-11-01 | v1：Gate 同步关闭 + M2-C1 降级 + 版本批准（被复核判 P1×2） | DSH |
 | 2026-11-01 | **v2**：处置复核 P1×2 + P2×5——R-1′（Gate 保持 OPEN，只解除阻塞）、R-2′（保留独立 Task，顺序改"释放实现前"，同批修 C-04b）、理由诚实化（0 命中 → 契约纪律）、限定 C-04b、引用修正（§13.2、ADJ-001 `:10`）、R-3 补 fail-closed 表述 | DSH |
 | 2026-11-01 | **v3**：新增 **R-4**（C-08 同构论证）；块② 落点改为**扩展 §5.5**（不是新建章节/ErrorView），3 码进 §5.5 + §8；wire `2.12`；共用 Task 耦合治理 | DSH |
+| 2026-11-01 | **v4（处置 r5 的 P1×2 + P2×2）**：P1-A §8 无「允许码集合」（自由字符串、不冻结 taxonomy）→ 改指 §5.5 错误语义段 + §8 观察表；**P1-B Run 线负向对照不可执行**（未知码透传）→ 块② **新增 `allowedRunErrorCodes` 白名单校验点**，负向对照挂白名单；P2 两码属性对齐（`RUN_PREVIEW_EXPIRED` retryable=false、`RUN_SNAPSHOT_INCOMPLETE`→`unavailable`） | DSH |

@@ -55,13 +55,13 @@
 
 ### SC-R04 候选存储
 
-- `candidate store`（Host 侧，临时）保存 `PreparedRun` 直到接受或过期（建议 ≤ 10 分钟）；过期 → `RUN_PREVIEW_EXPIRED`（`conflict` / `retryable=true`；需重新 prepare）。
+- `candidate store`（Host 侧，临时）保存 `PreparedRun` 直到接受或过期（建议 ≤ 10 分钟）；过期 → `RUN_PREVIEW_EXPIRED`（`conflict` / `retryable=false`；需重新 prepare 并生成新 preview）。
 - 候选**不落 Core DB**（避免污染运行时数据）。
 
 ### SC-R05 快照完整性
 
 - `settings_snapshot_json`/`provider_binding_snapshot_json` 必须是**完整**的可重放值（不是引用指针）。
-- 缺失/不完整 → `AcceptRun` 拒绝（`RUN_SNAPSHOT_INCOMPLETE`，`internal` / `retryable=true`）。
+- 缺失/不完整 → `AcceptRun` 拒绝（`RUN_SNAPSHOT_INCOMPLETE`，`unavailable` / `retryable=true`）。
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
@@ -74,7 +74,7 @@
 1. 独立复核通过；
 2. C-01b 已冻结（顺序：C-01b 先）；
 3. **前置（a）**：C-05 与 C-04b 已冻结（§4 依赖它们的 active_runs 与删除保护口径）；
-4. **前置（b）**：协议注册——**方案**已冻结在本草案 **§3**（SC-R01/R04/R05）；**M2-C1 字节修订**（**§5.5 命令表追加 `PrepareRun`/`AcceptRun` + 3 个新码进 §5.5 错误语义与 §8 `ErrorEnvelope` 允许集合**；wire minor **2.12**，DSH 批准）由**独立 Task** 在**释放任何 Run 实现之前**完成并复核，与 C-04b 共用 Task 的**块②**（见 [裁定 v3](GATE-CLOSURE-RULING-2026-11-01.md) **R-4**）；复核须含**负向对照**：未扩 M2-C1 时 3 个新码必须被 host 投影拒绝；
+4. **前置（b）**：协议注册——**方案**已冻结在本草案 **§3**（SC-R01/R04/R05）；**M2-C1 字节修订**（**§5.5 命令表追加 `PrepareRun`/`AcceptRun` + 3 个新码进 §5.5 错误语义段 + §8 观察表追加 3 行 + 新增 Run 线码白名单校验点**；wire minor **2.12**，DSH 批准）由**独立 Task** 在**释放任何 Run 实现之前**完成并复核，与 C-04b 共用 Task 的**块②**（见 [裁定 v3](GATE-CLOSURE-RULING-2026-11-01.md) **R-4**）；复核须含**负向对照**：未扩 M2-C1 时 3 个新码必须被 **host 的 `allowedRunErrorCodes` 白名单**拒绝/降级（注意：§8 的 `ErrorEnvelope.code` 是自由字符串，无白名单时未注册码会透传，所以白名单本身是块② 的交付项）；
 5. `check.ps1` PASS。
 
 ## 6. 变更记录
