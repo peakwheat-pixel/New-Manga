@@ -61,6 +61,6 @@
 - **边界零违反**：未 push；13 份冻结契约字节 0 改动（`verify_pins.ps1` 13/13）；未改 Gate 状态；未动用户数据；未运行安装器；未自审（全部独立复核）。
 - 每项均有独立复核报告：`FEA-D06-CLOSEOUT-r2.md` / `FEA-C14-CLOSEOUT-r1.md` / `FEA-WRAP-ERRATA-r1.md` / `FEA-C10-r2.md` / `FEA-C10-r3.md` / `FEA-WRAP-CLOSEOUT-r1.md`（最后一项的 P1 修正后由 R2 确认）。
 - 未完成/待裁决项见上节；`FEA-D07-UNBLOCK`、`FEA-GOV-11`、`GIT-CLEAN-*`、实现线保持原状。
-- **已知限制**：`doc/PLAN-HISTORY.md` 迁入块原样继承了旧 PLAN 表内的空行（第 62 行），其后 17 行在 GFM 下渲染为无表头续表——**按「原样迁移」要求不改这 31 行**，已在 `PLAN-HISTORY` 块后加说明。
+- **已知环境债务（FEA-02-CORE 复核发现）**：`NewManga.Host.Tests` 的 junction 清理测试（`TileChannelTests`、`D4SecurityHarnessTests`）在共享/残留 TEMP 下会因 `Dispose` 删除 reparse point 抛 `UnauthorizedAccessException` 而失败（3 项），干净 TEMP 全量 0 失败；属既有 Host 测试健壮性债务，不属 FEA-02-CORE，登记待后续 Task 修。`r`n- **已知限制**：`doc/PLAN-HISTORY.md` 迁入块原样继承了旧 PLAN 表内的空行（第 62 行），其后 17 行在 GFM 下渲染为无表头续表——**按「原样迁移」要求不改这 31 行**，已在 `PLAN-HISTORY` 块后加说明。
 - **更新（用户 18:43 裁定后）**：C-10 **已冻结**（v5，`T=4 DIP`，pin `ec8fd862…`，R4b approved）；U-09 前置登记 approved；失效引用 errata 与 STATUS 陈旧阻塞描述已按 U-10 纠正；P2 暂不扩修、非队列 Task 保持原状。
 
