@@ -77,7 +77,7 @@
 
 1. 独立复核通过；
 2. **C-01b 已冻结**（SC-21/SC-22 由本草案落地）；
-3. `G-CONTRACT` 关闭（AD-003/ADJ-001 授权语义冻结）；
+3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集；D05 的 lease/重定位/容器页映射/缓存边界由 C-01b、C-09 等分担，Gate 保持 OPEN 直至这些落地——见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
 4. **wire 版本由 DSH 批准**（v1.1 minor 增量）；
 5. `check.ps1` PASS。
 
