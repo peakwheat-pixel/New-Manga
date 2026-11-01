@@ -3,7 +3,7 @@
 状态：**DRAFT / 未冻结 / 不释放实现 Task**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
-依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) `:767`（D04 行：变更包与"必须冻结的内容"）、方案 `:237`/`:251`/`:269`/`:271`/`:377`、[C-01b](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（已冻结）、[C-08](FEA-C08_RUN_SNAPSHOT_DRAFT.md)、现行代码 `src/infrastructure/sqlite/schema.py:224-271`、`src/application/editing/service.py`
+依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) `:767`（D04 行：变更包与"必须冻结的内容"）、方案 `:237`/`:251`/`:269`/`:271`/`:377`、[C-01b](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（已冻结）、[C-08](FEA-C08_RUN_SNAPSHOT_DRAFT.md)、现行代码 `src/infrastructure/sqlite/schema.py:224-249`（regions）、`:251-271`（region_revisions）、`:275-281`（trigger）、`src/application/editing/service.py`
 
 **边界声明**：本文件把 D04 的「必须冻结的内容」转成可验证条款，**不是 ADR**。`check.ps1 PASS` 不构成契约语义证据。
 
@@ -15,10 +15,10 @@
 
 | 面 | 现状 | 证据 |
 |---|---|---|
-| **Region 实体** | 已实现：`regions` 表含 `geometry_json`/`text_json`/`style_json`/`sfx_policy`、三把锁（`region_locked`/`translation_locked`/`inpaint_locked`）、`current_revision_id` | `schema.py:224-250` |
-| **Region 修订** | 已实现：`region_revisions` + composite deferred FK；`current` 一旦设值不可清空（触发器） | `schema.py:251-280` |
+| **Region 实体** | 已实现：`regions` 表含 `geometry_json`/`text_json`/`style_json`/`sfx_policy`、三把锁（`region_locked`/`translation_locked`/`inpaint_locked`）、`current_revision_id` | `schema.py:224-249` |
+| **Region 修订** | 已实现：`region_revisions` + composite deferred FK；`current` 一旦设值不可清空（触发器） | `schema.py:251-271` |
 | **人工保护** | 已实现：`editing/service.py` 的 manual protection 逻辑（保存即 arm、合并取最强保护） | `service.py:122/812/945/988/1030/1239` |
-| **草稿 / edit token / journal** | **完全不存在**：`src/**`+`apps/**` 对 `draft_journal`/`edit_token`/`DraftSequence`/`draft_owner`/`DraftId` **0 命中**；`schema.py` 无 draft 表 | 本轮 grep |
+| **草稿 / edit token / journal** | **完全不存在**：`src/**`+`apps/**`（**排除** `target/`/`node_modules/`/`bin/`/`obj/` 第三方产物）对 `draft_journal`/`edit_token`/`DraftSequence`/`draft_owner`/`DraftId` **0 命中**；`schema.py` 无 draft 表 | 本轮 grep |
 | **candidate-only prepare** | 部分：C-08 的 `PreparedRun` 已有"preview 同源、不可变内容 pin"语义；但**编辑草稿的 candidate 语义**未定义 | C-08 §2 |
 | **统一事务 live apply** | 未定义：现有 `editing/service.py` 的用户保存路径是单条 revision 写入，无跨 Region 的统一事务契约 | `service.py:1239` |
 
@@ -42,7 +42,7 @@
 | `savedAt` | timestamp | 最后一次落盘时间 |
 | `status` | enum | `active` / `flushed` / `discarded` / `conflicted` |
 
-**验证**：新建草稿 → 断言 10 个字段齐全；`DraftSequence` 从 0 开始且每次 patch +1。
+**验证**：新建草稿 → 断言 **11** 个字段齐全（与方案 `:251` 一致）；`DraftSequence` 从 0 开始且每次 patch +1。
 
 ### SC-D02 落盘节奏与强制 flush
 
@@ -89,14 +89,17 @@
 - 任何同区域的新结果（Pipeline/翻译产物）**先成为 candidate**，不得直接覆盖 `current_revision_id`（方案 `:269`）；
 - 登记表随 Session 结束清理；孤儿草稿（无 Session）按 `status=discarded` 处理。
 
-**验证**：编辑中触发翻译 → 断言产物是 candidate、`current_revision_id` 未变。
+**验证**：编辑中触发翻译 → 断言产物是 `RegionCandidate`、`current_revision_id` 未变。
+
+**与 C-05 `S(p,t)` 的边界**：活跃草稿**不进** `S`（编辑态不是"进行中任务"）。**后果承接**：导出/删除预览在 `S` 成立时仍可通过，因此**导出与删除 preflight 前必须 flush 或显式提示"有未保存草稿"**——该要求写入 C-04b 的 preflight 契约与导出实现 Task 的 AC。
 
 ## 4. candidate-only prepare
 
 ### SC-D07 candidate 语义
 
-- **prepare 阶段只产出 candidate**，绝不写 `current_revision_id`；
-- candidate 必须携带 `{candidateId, RegionId, BaseRevisionId, provenance}`；
+- **「结果」面（Pipeline/Provider 写回）不在本契约**：写回路径的 candidate-only 与同源保证由 **C-08 的 `PreparedRun`** 承载；本契约只规定编辑层 `RegionCandidate`。
+- **prepare 阶段只产出 `RegionCandidate`**（编辑层），绝不写 `current_revision_id`；C-08 的 `candidate store` 是 Run 层的临时存储，二者不是一回事；
+- **`RegionCandidate`**（与 C-08 的 Host 侧 `candidate store`/`PreparedRun` **同名异物**，必须区分）必须携带 `{candidateId, RegionId, BaseRevisionId, origin}`；
 - **live apply** 才切换 `current_revision_id`，且必须是**统一事务**（见 SC-D08）。
 
 **验证**：prepare → 断言 `current_revision_id` 不变；只有 apply 后才变。
@@ -116,30 +119,61 @@
 - `region_locked=1` → **全部只读**（text/geometry/style 均不可改）；
 - `translation_locked=1` → **text 只读**，geometry/style 可改；
 - `inpaint_locked=1` → **style 中与 inpaint 相关的键只读**（白名单见下）；
-- 三锁是**保护语义**，任何写入路径都必须检查（包括 candidate 生成与 apply）。
+- 三锁是**保护语义**，任何写入路径都必须检查（包括 `RegionCandidate` 生成与 apply）。
 
-### SC-D10 样式键白名单
+**验证**：三锁 × {text, geometry, style} 组合断言——`region_locked=1` 时三者全拒；`translation_locked=1` 时 text 拒、geometry/style 允；`inpaint_locked=1` 时样式白名单中的 pivoted 键拒；并断言 candidate 生成与 apply 两条路径都执行同样检查。
 
-`style_json` 的可写键**白名单**（超出即拒绝，不静默丢弃）：
+### SC-D10 样式键白名单（**对齐代码事实**）
 
-| 组 | 键 | 受哪把锁约束 |
-|---|---|---|
-| 排版 | `fontFamily`/`fontSize`/`fontWeight`/`lineHeight`/`letterSpacing`/`align`/`verticalAlign` | `region_locked` |
-| 颜色 | `color`/`strokeColor`/`strokeWidth`/`fillColor`/`opacity` | `region_locked` |
-| 几何 | `rotation`/`padding`/`borderRadius` | `region_locked` |
-| inlet（inpaint 专用） | `inpaintMode`/`inpaintStrength`/`maskFeather` | `inpaint_locked` |
+`style_json` 的可写键 = `TextStyle` 的**实际字段**（`src/domain/regions/entities.py:204-212`，由 `regions.py:461` 的 `as_jsonable()` 序列化、`from_jsonable` 用 `TextStyle(**data)` 反序列化）。**共 6 个 snake_case 键**：
 
-**白名单外键** → 写入被拒并返回 `STYLE_KEY_NOT_ALLOWED`（列出该键名）。白名单本身是**契约冻结面**，扩键须走 UNFREEZE。
+| 组 | 键 | 类型 | 受哪把锁约束 |
+|---|---|---|---|
+| 字体 | `font_family` | str | `region_locked` |
+| 字体 | `font_size` | int? | `region_locked` |
+| 字体 | `auto_font_size_enabled` | bool | `region_locked` |
+| 颜色 | `text_color` | str | `region_locked` |
+| 描边 | `stroke_color` | str | `region_locked` |
+| 描边 | `stroke_width` | float | `region_locked` |
 
-**验证**：写 `style_json.customFoo` → 断言拒绝且报 `STYLE_KEY_NOT_ALLOWED`；`translation_locked=1` 时改 `fontSize` → 允许；改 `text` → 拒绝。
+**白名单外键** → 写入被拒并返回 `STYLE_KEY_NOT_ALLOWED`（列出该键名）。白名单本身是**契约冻结面**：扩键须**先改 `TextStyle` 定义**，再走 UNFREEZE 更新本表。
 
+**inpaint 相关**：`inpaint_locked` 保护的 `inpaintMode`/`inpaintStrength`/`maskFeather` **当前在 `TextStyle` 中不存在**——若未来需要，先新增 `TextStyle` 字段再走 UNFREEZE；**本契约不冻结这些键**。
+
+**与 C-02 V-05 的关系（边界声明）**：C-02 V-05 的令牌强制针对 Fluent 主题包/控件模板的 **XAML 层**（`Nm.*` 令牌 vs 裸值）；本节的 `style_json` 是**编辑层逐区域样式数据快照**，两者**不在同一平面**，不得混用同一套白名单。若将来 `style_json` 映射 DS 令牌，按 C-02 V-05 另立校验。
+
+**验证**：写 `style_json.customFoo` → 断言拒绝且报 `STYLE_KEY_NOT_ALLOWED`；`translation_locked=1` 时改 `font_size` → 允许；改 `text_json` → 拒绝；写 `text_color`（真实键）→ 允许（回归：不得被误拒）。
+
+## 5A. Protection 版本（D04 第 2 项的 Protection 侧）
+
+### SC-D12 protectionDigest（D04「Draft/Protection 版本」的保护半）
+
+**定义**（**派生摘要，不新增 schema 列**）：
+
+```
+protectionDigest(regionId) = sha256(
+    region_locked ‖ translation_locked ‖ inpaint_locked
+    ‖ current_revision_id ‖ updated_at
+)
+```
+
+- 只从 `regions` 表的**现有列**派生（`schema.py:224-249`），**零 schema 迁移**；
+- 覆盖的语义 = 该 Region 的**保护状态位**（三锁）+ 当前修订指针 + 最后更新时间；
+- **与 C-04b 的 `inventory_digest` 分工**：`inventory_digest` 覆盖*保护清单的内容*（哪些书/页/区域受保护、草稿数、删除文件数）；`protectionDigest` 覆盖*保护状态位本身*的变化。**两者都要**——清单没变但用户刚给某区域加了 Lock，`inventory_digest` 察觉不到，`protectionDigest` 能。
+
+**使用规则**：
+1. 删除 preflight（C-04b PD-01/PD-03）**必须**记录逐 Region 的 `protectionDigest`；
+2. apply/确认时**重算并比对**；任一 Region 的 digest 变化 → 拒绝并返回 **`STALE_PROTECTION`**（retryable=true，需重新预览）；
+3. `updated_at` 参与摘要 → **存在假阳性**（非保护的写入也会变）；这是**刻意 fail-safe**：宁可多报过期，不可漏报保护变化。
+
+**验证**：preflight 记录 digest → 给某 Region 加 `translation_locked` → 确认时断言 `STALE_PROTECTION` 且无副作用；再用相同保护状态重新预览 → 断言通过。
 ## 6. 旧非幂等写兼容
 
 ### SC-D11 旧路径不破坏
 
 - 现有 `editing/service.py` 的用户保存路径（`service.py:1239`）在过渡期**继续有效**，不因本契约引入而失败；
 - 新旧路径**不得双写产生两个 revision**：同一 `(RegionId, BaseRevisionId)` 的写入，无论走新 token 还是旧路径，都必须幂等；
-- 旧路径无 token → 以 `(RegionId, BaseRevisionId, 内容摘要)` 作为隐式幂等键；
+- 旧路径无 token → 以 `(RegionId, BaseRevisionId, 内容摘要)` 作为隐式幂等键；**最终去重键统一为 `(RegionId, BaseRevisionId, 内容摘要)`**——新 token 路径也以此为最终判据（token 只防重放，不单独决定去重）；
 - 过渡期结束条件：新路径覆盖全部 UI 写入点 + 独立复核通过（由实现 Task 判定）。
 
 **验证**：同一内容先后走旧路径、新路径 → 断言只产生一个 revision。
@@ -156,7 +190,8 @@
 ## 8. 与 Gate 的关系
 
 本契约冻结后：
-- **D04 的「草稿/保护/结果」有承载契约** → `G-DELETE-CONTRACT` 对 D04 的覆盖完成；
+- **D04 的「草稿/保护」有承载契约**：Draft 侧（SC-D01…SC-D11）+ Protection 侧（SC-D12）；**「结果」面**（Pipeline/Provider 写回责任）显式**转交 C-08**（Run 层），不在本契约；
+- **`G-DELETE-CONTRACT` 对 D04 的覆盖：Draft/保护面完成；「结果」面按转交计**；
 - 但 Gate **不自动关闭**——仍需 D05 的剩余子面（重定位/同步、容器页映射）有承载条款；
 - **C-09 的条件③（两 Gate 关闭）仍不满足**，C-09 继续 blocked。
 
@@ -172,3 +207,4 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表（5 面）、SC-D01…SC-D11、与 C-01b/C-04b/C-05/C-08 的接口、Gate 关系、冻结条件（含 U-03 前置） | DSH |
+| 2026-11-01 | **v2（处置 FEA-C13-r1：P1×2 + P2×9）**：P1-1 样式白名单改为 `TextStyle` 真实 6 键（snake_case）+ 声明与 C-02 V-05 不同平面；P1-2 新增 SC-D12 `protectionDigest`（派生摘要，不新增 schema，与 C-04b `inventory_digest` 分工）；P2-1 字段数 10→11；P2-2 补 SC-D09 验证；P2-3 统一去重键；P2-4 candidate→`RegionCandidate`（与 C-08 同名异物区分）；P2-5 行号修正；P2-6 grep 排除第三方；P2-7 `origin` 取值域；P2-8 结果面转交 C-08；P2-9 导出/删除前 flush 提示 | DSH |
