@@ -91,3 +91,11 @@
 | 2026-11-01 | 冻结后补充（FEA-D06-GAP）：新增 SC-R06…SC-R09 四项，走 UNFREEZE 载体；pin 更新 | DSH |
 | 2026-11-01 | 建立：冻结字节 pin（v4）、条件 5/5、协议注册块②、依赖与后果、2 条已知限制 | DSH |
 | 2026-11-01 | pin 修正：原 pin 指向冻结前草案（状态行改动前），改为最终字节 `37586fb2bfd2a2725d2851ca4db6f12533679eea18f22358f9ae144441bc78a9`；新增 §1A 修正记录与纪律（见上） | DSH |
+
+## 8. Errata 注记（2026-11-01 追加；**原文保留**）
+
+按 [关闭裁定 §4](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 的 Errata 表（L-3）：本记录的旧「D07 缺多项」口径**已无残留**——§4 已在 C-08 v7 冻结时更新为「D06 六项声明全覆盖」与「关闭须经 AC8+AC9 裁定」。本次仅追加确认，不改原文：
+
+- §4「Gate 仍不自动关闭…须经 AC8 完整覆盖检查 + AC9 裁定」**已履行**：AC8（`FEA-D04D07-COVERAGE-r3` `approved`）与 AC9（`GATE-DELETE-CONTRACT-CLOSURE-r3` `approved`）均完成，两 Gate 于 2026-11-01 **CLOSED**。
+- §6「不构成 Gate 关闭」为**冻结时**状态描述；现行两 Gate 均 **CLOSED**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）。
+- C-08 草案字节未改（pin `453f993c…`，`verify_pins.ps1` 13/13）。

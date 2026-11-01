@@ -80,3 +80,15 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin（v5）、§1A（无修正）、§1B（K 项授权处置）、条件 4/4、D07 七项覆盖表、6 条实现铁律、3 条已知限制 | DSH |
+
+## 8. Errata 注记（2026-11-01 追加；**原文保留**）
+
+§5 已知限制 **L-1（K-5 外部记账残留）** 所列旧口径已由 [关闭裁定 §4](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 的 Errata 处置完毕（本条为追加注记，上文原文保留）：
+
+- `GATE-CLOSURE-RULING-2026-11-01.md` `:63`/`:111` → 已追加 errata 注记；
+- `FEA-CONTRACT-FROZEN-C04b.md` / `-C08.md` / `-C13.md` → 已追加 errata 注记（原文保留）；
+- `FEA-CONTRACT_FREEZE_MATRIX.md` 的 Gate 判定块 → 已由 `2ed4ed91a` 更正；
+- `ADJ-001 §9 :128` → 已由 `2ed4ed91a` 更正；
+- **`FEA-C13_DRAFT_PROTECTION_DRAFT.md:203` 保持原字节**（冻结契约正文；修改须走 `CONTRACT-UNFREEZE-C13` + 重冻 + 重算 pin）。
+
+§6「不构成 `G-DELETE-CONTRACT` 的关闭（D06 仍有 4 项缺口）」为**冻结时**状态描述；现行 `G-DELETE-CONTRACT` **CLOSED（2026-11-01）**、`G-CONTRACT` **CLOSED**；`G-DELETE-IMPL` 仍 **OPEN**（未释放实现）。C-09 草案字节未改（pin `dc51226b…`）。

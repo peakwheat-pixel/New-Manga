@@ -137,3 +137,15 @@ C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错�
 | 2026-11-01 | **v4（处置 r5 的 P1×2 + P2×2）**：P1-A §8 无「允许码集合」（自由字符串、不冻结 taxonomy）→ 改指 §5.5 错误语义段 + §8 观察表；**P1-B Run 线负向对照不可执行**（未知码透传）→ 块② **新增 `allowedRunErrorCodes` 白名单校验点**，负向对照挂白名单；P2 两码属性对齐（`RUN_PREVIEW_EXPIRED` retryable=false、`RUN_SNAPSHOT_INCOMPLETE`→`unavailable`） | DSH |
 | 2026-11-01 | **v5（处置 r6 的 P1×2 + P2×5）**：P1-1 白名单**移到 host 投影层**（Core §8 不改，「降级」写死为 `category=unknown` + 安全短消息、不重写 `code`）；P1-2 块② 加 §8 `:1119`/`:1122` 例外说明；P2-1 §8 新增「Proposed（未观察）」小节而非塞进 observed 表；P2-2 标块①/块② 不对称；P2-3/4/5 变更记录/标题/C-08 `:8` 措辞 | DSH |
 | 2026-11-01 | **v6（处置 r7 的 P1×3 + P2×3）**：P1-1 负向对照首句「拒绝」→**降级**（与同段后文一致）；P1-2 `:100` 的「observed 表追加」同步改为「Proposed 小节」；P2-1 §8 例外补 `:1119` 的 retryable 证据规则半句；标题/状态 v6 | DSH |
+
+## 7. Errata 注记（2026-11-01 追加；**原文保留**）
+
+本注记按 [GATE-DELETE-CONTRACT-CLOSURE-2026-11-01](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) §4 的 Errata 表执行：**只追加状态描述类注记**，不删除、不改写本文件任何原文（§3 的「Gate 保持 OPEN」等均为当时裁定的历史快照）。
+
+| 位置 | 原文（历史快照） | 现行状态（2026-11-01 起） |
+|---|---|---|
+| `:63` | 「**C-09 不会提前解锁**——C-09 条件②「两 Gate 关闭」在两个 Gate 都 OPEN 时不满足」 | C-09 已**解环并冻结 v5**：冻结条件②改为只要求 `G-CONTRACT` 关闭（见 [D07 解环](FEA-D07-UNBLOCK.md)），随后两 Gate 于 2026-11-01 **全部 CLOSED** |
+| `:111` | 「C-09 / **不变**（仍等两 Gate 真关闭） / 仍 blocked」 | C-09 **已 FROZEN（v5）**（[冻结记录](FEA-CONTRACT-FROZEN-C09.md)，pin `dc51226b…`）；`G-DELETE-CONTRACT` **CLOSED（2026-11-01）**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)） |
+| §3 R-1′（`:51`–`:66`）、§4 `:112` | 「Gate 保持 OPEN」「D04/D06 未冻」 | 均为**当时裁定快照**；D04→C-13、D05→C-06+C-14+C-01b、D06→C-08 v7、D07→C-09 v5+C-01b+C-04b 已全部冻结承载，两 Gate **CLOSED** |
+
+**权威**：Gate 状态以 [ADJ-001 §9 `:128`](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) 与 [关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 为准；本文件保留原文仅作历史裁定证据。
