@@ -3,7 +3,7 @@ id: FEA-C11-PREREQ-1
 title: 实现线强制前置登记（L-1 / L-2 / L-5 → 候选 Task 前置与 AC）
 kind: governance
 governance_version: 3
-status: approved
+status: done
 approval: user_ruling_2026-11-01_U09
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,7 +13,7 @@ depends_on:
 base_commit: 170b384e2
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: b7018e19b
 delivery_head: b7018e19b
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -76,3 +76,5 @@ allowed_paths:
 
 - 2026-11-01 / DSH：AC1–AC3 全部 MET。R1 [approved](../reviews/FEA-C11-PREREQ-r1.md)（P0/P1 = 0），置 `approved`（非终态，`integration_commit` 留空 = 未集成）。
 - P2 处置（r1）：引用精确化（裁定 §3 / G-CONTRACT §3.3 / C-14 §5 L-1 / C-09 §5 L-2）、L-2 补全四项、L-5 AC 补 4 步序列与崩溃注入；ledger 已重生成。
+
+- 2026-11-02 / DSH：**收口 done**——交付提交 `b7018e19b` 已是 main 祖先；`doc/plan/FEA-C11_IMPL_PREREQS.md` 与 `doc/reviews/FEA-C11-PREREQ-r1.md` 在 main 且 sha256 与证据表一致（`5e5c32b5…` / `a8b293d2…`）；AC1–AC3 MET、复核 approved；`integration_commit = b7018e19b`。

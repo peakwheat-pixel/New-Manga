@@ -7,28 +7,28 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 490 |
-| terminal | 479 |
-| non-terminal | 10 |
+| terminal | 480 |
+| non-terminal | 9 |
 | non-terminal named in the plan | 2 |
-| non-terminal outside the plan | 8 |
+| non-terminal outside the plan | 7 |
 | task files tracked by git | 490 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 10 |
+| non-terminal tracked by git | 9 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 401 | yes |
+| `done` | 402 | yes |
 | `closed_with_limitations` | 41 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `approved` | 2 | no |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
 | `ready` | 2 | no |
 | `(none)` | 1 | no |
+| `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `proposed` | 1 | no |
 
@@ -36,7 +36,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | task | status | in plan |
 |---|---|---|
-| `FEA-C11-PREREQ-1` | `approved` | own row |
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `FEA-D07-UNBLOCK` | `in_progress` | no |
@@ -44,7 +43,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
-| `FEA-04b` | `ready` | no |
+| `FEA-04b` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 
 ## What this ledger does not say
