@@ -3,7 +3,7 @@ id: FEA-05-WIRE-1
 title: Draft 命令面 wire（Core 白名单 + 独立契约 + Python 协议测试）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: scope_review_r7_approved_2026-11-02
 suggested_owner: codex
 owner: null
@@ -12,12 +12,12 @@ depends_on:
   - FEA-03
   - FEA-04
 base_commit: be9265b34
-branch: null
-worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+branch: main（直接实现，无 worktree）
+worktree: none（main 工作区）
+integration_commit: d9d7dde41
+delivery_head: d9d7dde41
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-05-WIRE-1
 allowed_paths:
   - doc/tasks/FEA-05-WIRE-1.md
@@ -80,13 +80,13 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 
 ## 验收标准
 
-- [ ] **AC1 契约**：`FEA-05_DRAFT_WIRE_CONTRACT.md` 落盘且含头部（状态/版本/日期/变更记录）与五节；§3 **必须是逐码表**（每码一行：code/category/retryable/触发条件），与 W-4 冲突时以逐码表为准；§8 追加 6 行且 `CommandContractV11RTests` 通过（行在 §8 内、下划线名、状态 `PENDING` 开头、不进入已冻结集合）；§8 段首总数/约束/§10 已同步。<<TODO>>
-- [ ] **AC2 语义不变**：handler 参数与上表逐字段一致（含 `EditToken` 整对象回传）；只调用真实方法；不新增编辑规则、不改 token/candidate/receipt 语义（FEA-03 r5 冻结）。<<TODO>>
+- [x] **AC1 契约**：`FEA-05_DRAFT_WIRE_CONTRACT.md` 落盘且含头部（状态/版本/日期/变更记录）与五节；§3 **必须是逐码表**（每码一行：code/category/retryable/触发条件），与 W-4 冲突时以逐码表为准；§8 追加 6 行且 `CommandContractV11RTests` 通过（行在 §8 内、下划线名、状态 `PENDING` 开头、不进入已冻结集合）；§8 段首总数/约束/§10 已同步。<<MET>>
+- [x] **AC2 语义不变**：handler 参数与上表逐字段一致（含 `EditToken` 整对象回传）；只调用真实方法；不新增编辑规则、不改 token/candidate/receipt 语义（FEA-03 r5 冻结）。<<MET>>
 - [x] **AC3 CoreClient（不在本卡）**：本卡不接 CoreClient/registry（归 FEA-05-PORT-1，见 W-6）；本 AC 记为 NOT_APPLICABLE 并说明。<<NOT_APPLICABLE: CoreClient 注册与 Region 不变式冲突，归 FEA-05-PORT-1>>
-- [ ] **AC4 Python 协议测试**：`python -m pytest tests/core tests/domain -q` 全绿；每命令至少一成功 + 一失败用例。<<TODO>>
-- [ ] **AC5 回归**：`dotnet build apps/desktop-avalonia/NewManga.sln` EXIT=0；`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 不退化（基线 931/0/60）。<<TODO>>
-- [ ] **AC6 治理**：`verify_pins.ps1` 15/15；C-07 端口清单不变；`generate_api_inventory.py --check` EXIT 0；`check.ps1` PASS。<<TODO>>
-- [ ] **AC7 证据**：`verification/FEA-05-WIRE-1/**` 原始日志 + 测试输出 + 证据表。<<TODO>>
+- [x] **AC4 Python 协议测试**：`python -m pytest tests/core tests/domain -q` 全绿；每命令至少一成功 + 一失败用例。<<MET>>
+- [x] **AC5 回归**：`dotnet build apps/desktop-avalonia/NewManga.sln` EXIT=0；`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 不退化（基线 931/0/60）。<<MET>>
+- [x] **AC6 治理**：`verify_pins.ps1` 15/15；C-07 端口清单不变；`generate_api_inventory.py --check` EXIT 0；`check.ps1` PASS。<<MET>>
+- [x] **AC7 证据**：`verification/FEA-05-WIRE-1/**` 原始日志 + 测试输出 + 证据表。<<MET>>
 
 ## 禁止范围
 
@@ -133,3 +133,4 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 
 - 2026-11-02 / DSH：v1 → v2（r1）→ v3（r2）→ v4（r3）→ **v5（r4）**：映射表按 `drafts.py`/`domain/drafts/entities.py` 真实签名重写；W-4 冻结错误/Token 传输；契约文档头部与 §8 一致性要求；W-6/W-7 裁决登记。待 r4 复核。
 - 2026-11-02：范围复核 **r7 approved**（P0=0/P1=0/P2×9 接受遗留）；置 eady，交 Codex 实现（suggested_owner: codex）。
+- 2026-11-02 / DSH：实现完成（d9d7dde41）经 **impl-r1（P1×5）→ impl-r2（P1×1）→ impl-r3 approved（P0/P1=0，P2×10 接受遗留）**；AC1–AC7 MET（AC3 N/A）；全量 sln **931/0/60**、pytest **900 passed**、C# 契约 80/80、erify_pins 15/15；置 done。
