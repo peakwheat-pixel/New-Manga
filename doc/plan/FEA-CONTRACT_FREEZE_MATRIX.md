@@ -1,13 +1,15 @@
 # FEA 契约冻结准备总表（冻结矩阵）
 
-状态：**DRAFT / 待复核**
+状态：**ACTIVE**（12 份已冻结；Gate 判定见下）
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、各草案的「冻结条件」节、[FEA-CONTRACT_FREEZE_PACKAGE](FEA-CONTRACT_FREEZE_PACKAGE.md)
 
-**用途**：把 **11 份已起草契约 + C-10（部分起草，待 U-03）共 12 行**的冻结依赖链收成一张可执行表——每份差什么、按什么顺序、卡在哪个 Gate。**不是**冻结令。
+**用途**：把 **12 份已冻结契约 + C-10（未起草）+ C-09（未冻）** 的冻结依赖链收成一张可执行表——每份差什么、按什么顺序、卡在哪个 Gate。**不是**冻结令。
 
-> **当前进度（2026-11-01）**：用户 5 项裁决已落盘（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 12 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-08 / C-11 / C-12 / C-13（D04）/ **C-14（D05）**。**D04/D05/D06/D07 均有冻结契约** → `G-DELETE-CONTRACT` 与 `G-CONTRACT` 的契约侧条件已满足（Gate 关闭待 DSH 显式裁定）；仅剩 **C-09**（等 Gate）与 **C-10**（U-03 已裁，可起草）。
+> **当前进度（2026-11-01）**：用户 6 项裁决已落盘（含 U-03=B）（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 12 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-08 / C-11 / C-12 / C-13（D04）/ **C-14（D05）**。**Gate 判定**（[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md)，2026-11-01）：`G-CONTRACT`（D05）**✅ 满足**；`G-DELETE-CONTRACT`（D04–D07）**❌ 不满足**——D04 ✓、D05 ✓，但 **D06 有 4 项声明范围无条款**、**D07 多项未冻且与 C-09 循环**。仅剩 **C-09**（不可冻）、**C-10**（U-03 已裁，可起草）。
+>
+> **Gate 判定**（[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md)）：`G-CONTRACT`（D05）**✅ 满足**；`G-DELETE-CONTRACT`（D04–D07）**❌ 不满足**——D04 ✓（C-13）、D05 ✓、**D06 缺 4 项**（控制 pending 状态 / 真实完成口径 / retry 复用快照 / 断线 receipt）、**D07 多项未冻且与 C-09 循环**（三路径 ProtectionPolicy / 备份覆盖清单 / `backup/2` / 旧包 adapter / 调度归属 / catalog 归属）。
 
 ---
 
@@ -18,17 +20,17 @@
 | 1 | **C-01b** 存储契约 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅（r5 approved）②AD-003 `G-REVIEW` 收口 ✅（SATISFIED）+ ADJ-001 依赖注明（`G-DELETE-CONTRACT` OPEN）③用户确认 AD-002 责任表/哨兵口径（**`R`**）④`check.ps1` PASS | 无（语义基座） | ③（用户 `R`） |
 | 2 | **C-02** V11R 修订 | **`FROZEN`** 2026-11-01 | ①**U-04** 用户裁决 | 无（与 C-01b 独立） | U-04 |
 | 3 | **C-03** 外观持久化 | **`FROZEN`** 2026-11-01 | ①**U-05a/U-05b** ②C-02 先冻结 | C-02 | U-05a/b |
-| 4 | **C-04b** 删除协议 | **`FROZEN`** 2026-11-01 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` 关闭 ③D04/D07（码表裁决，ADJ-001 §6.3）④DSH 批准 2.11 ⑤M2-C1 扩展独立 Task | C-01b | 5 项全未满足 |
+| 4 | **C-04b** 删除协议 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b 冻结 ✅ ③`G-DELETE-CONTRACT` **不阻塞**（裁定 R-1′）④DSH 批准 2.11 ✅ ⑤M2-C1 扩展为释放前置（R-2′） | C-01b | 5 项全未满足 |
 | 5 | **C-05** 页可见性 | **`FROZEN`** 2026-11-01 | ①`VISIBLE_TYPES`/`active_runs` 经 C-01b/ADJ-001 确认（C-01b 冻结后即可） | C-01b（口径确认） | 无硬阻塞 |
-| 6 | **C-06** 授权面 | **`FROZEN`** 2026-11-01 | ①C-01b 冻结 ②`G-CONTRACT` 关闭 ③wire v1.1 DSH 批准 | C-01b | `G-CONTRACT: OPEN` |
+| 6 | **C-06** 授权面 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b 冻结 ✅ ③`G-CONTRACT` **不阻塞**（裁定 R-1′）④wire v1.1 DSH 批准 ✅ | C-01b | `G-CONTRACT: OPEN` |
 | 7 | **C-07** API inventory | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
-| 8 | **C-08** Run 快照 | `approved` r2 | ①C-05/C-04b 冻结 ②C-01b 冻结 ③协议注册独立 Task | C-05/C-04b | 协议注册未建 |
+| 8 | ~~C-08 Run 快照~~ | ~~`approved` r2~~（**已被 #12 FROZEN 取代**） | — | — | — |
 | 9 | **C-09** 删除/备份/迁移 | `approved` r2 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` + `G-CONTRACT` 关闭 | C-01b | 两 Gate |
 | 10 | **C-11** 候选表口径 | **`FROZEN`** 2026-11-01 | ①C-01b 或 C-02 至少其一冻结 | C-01b/C-02 | 无 |
 | 11 | **C-12** 检查器边界 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②检查器现有断言与 §2 表一致（可机械核对）③`check.ps1` PASS | 无 | 无硬阻塞 |
 | 13 | **C-13** 草稿与保护（D04） | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②U-03=B 裁决 ③C-01b 冻结 | C-01b | 无（Gate 不阻塞） |
 | 12 | **C-08** Run 快照 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b/C-05/C-04b 冻结 ③协议注册为释放前置（R-4） | C-05/C-04b | 无（Gate 不阻塞） |
-| 14 | **C-14** Source 重定位/同步/容器页/缓存（D05） | **`FROZEN`** 2026-11-01 | ①独立复核 ✅（r1 5 P1 → r2 approved）②C-01b/C-06/C-04b/C-08 冻结 ③02 裁决 | C-01b/C-06 | 无（Gate 不阻塞） |
+| 14 | **C-14** Source 重定位/同步/容器页/缓存（D05） | **`FROZEN`** 2026-11-01 | ①独立复核 ✅（r1 5 P1 → r2 approved）②C-01b/C-06/C-04b/C-08 冻结 ③用户 2026-11-01 裁决（新建 C-14 承载 D05 剩余范围） | C-01b/C-06 | 无（Gate 不阻塞） |
 | — | **C-10** 交互契约 | **部分**（追溯矩阵/draft owner/快捷键成立；其余待起草） | 待 **U-03** | FEA-01 C-10 依赖列（F-10/F-18/F-39/R7-07；F-ID 见方案 §15.8 台账 `:972/980/1001`） | U-03 |
 
 ## 2. 可执行顺序（推荐）

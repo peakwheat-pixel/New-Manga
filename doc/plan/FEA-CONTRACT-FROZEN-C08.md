@@ -51,7 +51,7 @@
 ## 4. 依赖与后果
 
 - **上游**：C-01b、C-05、C-04b 均已冻结。
-- **D06 现在有承载契约** → `G-DELETE-CONTRACT` 的 D06 覆盖完成（D04=C-13、D05=C-06、D07=C-04b 亦有）。
+- **D06 覆盖状态（更正，2026-11-01）**：本契约覆盖 D06 六项声明中的 **2 项**（preview 与发送同源、不可变内容 pin）+ 候选/配置/完整性，**另 4 项未写入任何冻结契约**（控制 pending 状态、真实完成口径、retry 是否复用 source run 快照、断线 receipt）→ 见 [FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md) P1-1。**`G-DELETE-CONTRACT` 的 D06 条件目前不满足**。
 - **Gate 仍不自动关闭**：D05 的剩余子面（重定位/同步、容器页映射）**无承载条款**；C-09 条件③（两 Gate 关闭）**仍不满足**。
 - **实现**：FEA-03/FEA-13（Run 快照相关）释放需前置（b）完成 + C-11 建卡 + 独立 Review。
 
