@@ -91,7 +91,7 @@
 |---|---|
 | `completed` | `counts.failed = 0` 且 `counts.blocked = 0` |
 | `completed_with_failures` | `counts.failed > 0` 且 `counts.blocked = 0` |
-| `failed` / `cancelled` | **不要求**满足 total 等式——可能有未开始/未处理目标（M2-C1 `:221`：cancelled 时未开始 Task 转 cancelled）；只要求共同不变量 |
+| `failed` / `cancelled` | **不要求**满足 total 等式——可能有未开始/未处理目标（M2-C1 `:221`：cancelled 时未开始 Task 转 cancelled）；只要求共同不变量。**`waiting=0` 的依据**：P11 `:111` 只规定 Run 级 fatal → Failed，未规定未开始 Task 的处置，故本契约把「无 waiting/processing」作为**额外要求**——终态下不应再有排队工作 |
 
 **不得**用 `targets.length` 与计数相加作等式：`skipped` 是计划结果（P11 `:14`），`blocked`/`waiting`/`processing` 各有语义，简单相加会误判。
 

@@ -40,17 +40,23 @@ C-08（Run 快照）已于 2026-11-01 冻结（`sha256 37586fb2…`）。独立�
 
 **权威持久状态**：Run 的完成状态只以 **Core 持久化的 Run/Task/StepRun 数据**为准（M2-C1 `:137`「同步响应表示接受，不表示长任务完成」；`:902`/`:1060`「事件不是状态真值」）。
 
-**完成判定（三个条件同时满足）**：
-1. `status ∈ {completed, completed_with_failures, failed, cancelled}`（终态）；
-2. **目标结果与统计一致**：`targets.length = succeeded + failed`；`completed` ⇔ `failed = 0`；`completed_with_failures` ⇔ `failed > 0` 且 Run 正常结束；
-3. 该状态**已持久化**（不是仅存在于事件流或内存投影）。
+**完成判定**：
 
-**明文的否定**：
-- **`RunAccepted` 不证明完成**——它只证明「接受」；
-- **事件不是状态真值**——事件可能丢失/乱序/重复，UI 必须能靠重读状态恢复；
-- **`GetTaskProjection` 的统计与 `RunSnapshot.status` 必须同源**（不得一处 `completed` 而统计仍有 pending）。
+**所有终态的共同不变量**：`status ∈ {completed, completed_with_failures, failed, cancelled}` **且** `counts.processing = 0` **且** `counts.waiting = 0`（不再有活动工作）。
 
-**验证**：构造 `status=completed` 但 `failed>0` 的伪造投影 → 断言契约要求拒绝（这是不可能的态）；断网后重连 → 断言 UI 靠重读状态恢复而非依赖事件。
+**逐终态的附加判据**（字段用 M2-C1 §6.1 冻结的 `TaskProjection.counts: {total, completed, failed, skipped, blocked, waiting, processing}`，`:834`）：
+
+| 终态 | 附加判据 |
+|---|---|
+| `completed` | `counts.failed = 0` 且 `counts.blocked = 0` |
+| `completed_with_failures` | `counts.failed > 0` 且 `counts.blocked = 0` |
+| `failed` / `cancelled` | **不要求**满足 total 等式——`counts` 没有 `cancelled`/`interrupted` 字段（Task 状态域有，`:861`），终态 total 本就不闭合；只要求共同不变量 |
+
+**不得**用 `targets.length` 与计数相加作等式：`skipped` 是计划结果（P11 `:14`），`blocked`/`waiting`/`processing` 各有语义，简单相加会误判。
+
+**明文的否定**：`RunAccepted` 不证明完成；事件不是状态真值；`GetTaskProjection` 的统计与 `RunSnapshot.status` 必须同源。
+
+**验证**：①伪造 `counts.failed>0` 但 `status=completed` → 非法态；②`status=cancelled` 且 `counts.processing>0` → 非法态；③**重启后** `GetRunSnapshot` 仍返回同一终态与同一 `counts`；④断网重连 → UI 靠重读状态恢复。
 
 ### SC-R08 retry 的快照来源（AC3）
 
@@ -102,3 +108,4 @@ C-08（Run 快照）已于 2026-11-01 冻结（`sha256 37586fb2…`）。独立�
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：四项条款（SC-R06…SC-R09）+ 用户给的既有语义约束 + 复核要求 | DSH |
+| 2026-11-01 | **v6 同步**：SC-R07 改为 `counts.*` 判据（M2-C1 `:834`）；SC-R08 行号 `:204`→`:202`；SC-R06 引 `:213`；SC-R09 引 `:138` + `IDEMPOTENCY_KEY_REUSED` | DSH |
