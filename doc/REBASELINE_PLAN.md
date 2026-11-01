@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-D06-GAP + FEA-D07-UNBLOCK（范本已定，待激活）；12 份契约已冻结；`G-CONTRACT` CLOSED / `G-DELETE-CONTRACT` OPEN
+当前 DAG：FEA-C14-DRAFT（契约已冻结，收口待办）+ FEA-D06-GAP + FEA-D07-UNBLOCK（范本已定，待激活）；12 份契约冻结；`G-CONTRACT` CLOSED / `G-DELETE-CONTRACT` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 

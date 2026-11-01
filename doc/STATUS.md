@@ -11,14 +11,14 @@
 - 下一候选：[FEA-D06-GAP](plan/TASKS-D06-D07.md#fea-d06-gap) / [FEA-D07-UNBLOCK](plan/TASKS-D06-D07.md#fea-d07-unblock)（范本已定，待激活）；C-10 交互契约（U-03 已裁，可起草）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 历史基线：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
-- 独立审查报告统一在 `doc/reviews/`。
+- 审查报告统一在 `doc/reviews/`。
 - 裁定：R-08..R-25，见 [V11R_PROGRAM](V11R_PROGRAM.md) §8。
 - 冻结校验：`pwsh -NoProfile -File tools/governance/verify_pins.ps1`（11/11 PASS；机械校验，不替代独立复核）。
 
 ## 保留与已知限制
 - WORKSPACE-CONSOLIDATION-1 `closed_with_limitations`（r212）；禁再清理/GC/prune。
-- 检查器既有债务：PLAN 行数超预算、STATUS 指针历史（记入 REALUSE-DATA-SAFETY-1 limitation）。
-- SAFETY-6 已知 P2：R-001 浮层关闭并发 NRE；R-002 证据 pin CRLF 漂移；R-003 日志格式。
+- 检查器债务：PLAN 行数超预算、STATUS 指针历史。
+- SAFETY-6 已知 P2：R-001 浮层并发 NRE；R-002 pin CRLF 漂移；R-003 日志格式。
 - v1 收口（2026-10-21，`239b165c2`）：ACL 已修；签名待证书。
 - 台账见 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000。
 - 真机端到端脚本化验收：run-i18 7/7、run-i36 10/10。
