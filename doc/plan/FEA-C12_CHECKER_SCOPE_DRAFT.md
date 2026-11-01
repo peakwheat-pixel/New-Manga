@@ -1,6 +1,6 @@
 # FEA-C12 治理检查器职责边界（草案）
 
-状态：**DRAFT / 未冻结**
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C12.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-12、`tools/governance/check.ps1`（863 行 / 52 KB）、[09_COLLABORATION](../09_COLLABORATION.md)

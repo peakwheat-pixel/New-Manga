@@ -1,6 +1,6 @@
 # FEA-C07 应用端口清单（由代码生成）
 
-状态：**GENERATED / 草案依据 / 未冻结**（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径，成员行与脚本 stdout 一一对应）
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C07.md)）**（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径，成员行与脚本 stdout 一一对应）
 生成日期：2026-11-01；生成时 HEAD：`e7e43543b`
 生成方式：`python tools/generate_api_inventory.py`（解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块，输出成员名 + 返回类型）；**不是**手工枚举。重跑同一命令应得到同一集合。
 
