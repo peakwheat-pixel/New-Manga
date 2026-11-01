@@ -39,8 +39,12 @@
 | `catalog.sqlite` | **否** | **派生索引，可从 `library.db` 重建**——本条即解决 `:901` 的「待 D07 冻结」：**判定为不纳入**，理由是「可重建」而非「缓存」 |
 | `settings/*.json` | **否（凭据）**，但**非凭据类设置**（外观/语言/布局偏好）**纳入** | 拆分凭据类与非凭据类；C-03 的外观设置属非凭据类 → 入包 |
 | 外部原文件 | **否** | 引用模型，从不复制 |
+| **`backup/1` 旧包** | **否**（不复制进新包） | 只可**读取/恢复**（legacy adapter），不升级、不搬运 |
+| **`backup/2` 新包** | **是**（本契约写端产物） | 见 SC-B07 |
 
-**验证**：构造含全部项的库 → 导出备份 → 断言包内容与上表一致；断言 `settings/credentials*` 缺失、`settings/appearance*.json` 存在。
+**验证**：构造含全部项的库 → 导出备份 → 断言包内容与上表一致；断言 `settings/credentials*` 缺失、**`settings/presentation-settings.json`（C-03 的新文件）**与 `settings/theme-settings.json`（旧、只读迁移输入）存在；显式断言 `catalog.sqlite` 不在包内。
+
+**与 C-01b SC-10b 的关系**：SC-10b 的 [现状注记] 记「`settings/*.json` 未入包」——本表是**对该注记的细化更新**（拆分为凭据类=不入包 / 非凭据类=入包），不是重写 SC-10b 的冻结字节；差异由本契约的冻结记录登记。
 
 
 ### SC-B02 备份恢复的完整性
@@ -72,12 +76,15 @@
 
 | 保护来源 | 软删 | 自动清理 | 显式彻底删除 |
 |---|---|---|---|
-| `region_locked` / `translation_locked` / `inpaint_locked` | 不阻止（不触文件） | **阻止**（不清人工成果） | **阻止**（须先列清单并经 PD-01 披露） |
-| 人工 revision / 当前 revision | 不阻止 | **阻止** | **阻止**（含在 `protection` 披露） |
-| 活动草稿（C-13 `status=active`） | 不阻止 | **阻止** | **阻止**（`draftPageCount`） |
-| 共享引用（ADJ-001 PD-08） | 不阻止 | 不阻止 | **阻止**（`BOOK_DELETE_CONFLICT`） |
+| `region_locked` / `translation_locked` / `inpaint_locked` | 不阻止（不触文件） | **阻止**（不清人工成果） | **披露 + 专门确认**（PD-01，计入 `protection.lockCount`）；**非阻断** |
+| 人工 revision / 当前 revision | 不阻止 | **阻止** | **披露**（PD-01，`contentSummary` / `pinnedRevisionIds`）；**非阻断** |
+| 活动草稿（C-13 `status=active`） | 不阻止 | **阻止** | **披露**（PD-01，`draftPageCount`）；**非阻断** |
+| 共享引用（ADJ-001 PD-08） | 不阻止 | 不阻止 | **可安全拆分 → 不阻断**；**不可安全拆分 / 关系图不一致 / 未列明 → `BOOK_DELETE_CONFLICT`**（fail-closed） |
+| **非终态 Run / Task** | 不阻止 | 不阻止 | **阻断 `BOOK_BUSY`**（ADJ-001 PD-01 的唯一硬阻断项） |
 
-**验证**：三条路径对同一 scope 调用同一函数 → 断言返回值一致；构造「有锁 + 有草稿」的页 → 断言自动清理被阻止、软删通过、彻底删除需 PD-01 披露。
+**关键**：ADJ-001 的 PD-01 是**披露**语义（用户看清后专门确认），**不是**「有锁就拒绝删除」。本表「阻止」只用于自动清理（保护人工成果）；显式彻底删除走披露路径。若实现把披露项当阻断项，用户将**永远无法**删除含人工修改的书。
+
+**验证**：三条路径对同一 scope 调用同一函数 → 断言判定一致；构造「有锁 + 有草稿」的页 → 断言**自动清理被阻止**、**软删通过**、**彻底删除可进行（但必须先出 PD-01 披露并确认）**；构造「有非终态 Run」的页 → 断言彻底删除返回 `BOOK_BUSY`。
 
 **不复写**：ADJ-001 的保护**语义**（哪些东西算保护）由 ADJ-001 定义；本条款只定义**三条路径共用同一判定**这一结构要求。
 
@@ -103,16 +110,22 @@
 
 | code | category | retryable | 含义 |
 |---|---|---|---|
-| `TRASH_ENTRY_NOT_FOUND` | `validation` | false | 目标条目不在回收站 |
+| `TRASH_ENTRY_NOT_FOUND` | **`not_found`** | false | 目标条目不在回收站（对齐 M2-C1 类别表的 `not_found`，与 C-04b `BOOK_NOT_FOUND` 一致） |
 | `TRASH_RESTORE_CONFLICT` | `conflict` | false | 恢复目标路径已被占用（逐项返回，不整批失败） |
 | `TRASH_RESTORE_LAYER_MISMATCH` | `conflict` | false | 备份来自不同数据层或 `DatabaseId` 不匹配 |
+
+**与 M2-C1 既有命令的关系**：M2-C1 已冻结 `ListRecycleBinBooks`（`:150`，回收站**读**面）。本契约的 `ListTrash` 是其**底层/扩展**——实现时须明确「`ListRecycleBinBooks` 是否直接映射 `ListTrash`」，或保留两个层级（建议：`ListTrash` 为 Core 能力，`ListRecycleBinBooks` 为 Host 投影；须在实现 Task 确认，不在本契约单方面改 M2-C1）。
+
+**`PurgeTrash` 与 C-04b 的映射**：`PurgeTrash` **不是**新删除路径，它委托 C-04b 的 `PreviewPermanentDeleteBooks` + `PermanentlyDeleteBooks`（含 PD-01 披露与专门确认）；本契约只负责「哪些条目在回收站」这一层。
 
 **不变量**：
 - `MoveToTrash` / `RestoreFromTrash` **只改 `deleted_at`/归属**，不触文件（SC-B04 第一层）；
 - `PurgeTrash` 必须走 C-04b 的 PD-01 披露 + 专门确认，**不得**绕过；
 - 批量操作为**逐项原子**：一项失败不影响其他项，返回 `skipped`/`conflicts`。
 
-**验证**：批量 `MoveToTrash` 含一个不存在的 ref → 断言其余项成功、该项进 `skipped`、无整批回滚；`PurgeTrash` 未带 `confirm: true` → 断言拒绝。
+**验证**：批量 `MoveToTrash` 含一个不存在的 ref → 断言其余项成功、该项进 `skipped`、无整批回滚；`PurgeTrash` 未带 `confirm: true` → 断言拒绝；`PurgeTrash` 带确认但目标含非终态 Run → 断言返回 `BOOK_BUSY` 且零副作用。
+
+**M2-C1 字节修订的负向对照**（实现前置）：未扩 M2-C1 时，3 个 `TRASH_*` 码必须被 **host 投影层白名单**降级为 `category=unknown`（与 C-08 的 `allowedRunErrorCodes` 同一模式）。
 
 **不复写**：回收站/软删的**语义**在 ADJ-001；本条款只定义**命令面**。
 
@@ -120,6 +133,7 @@
 ### SC-B07 `backup/2` 格式契约（D07 声明范围）
 
 - **版本标识**：包根 `manifest.json` 的 `format: "nmbak"` + `version: 2`；`backup/1` 为 `version: 1`。
+- **命名统一**：方案 `:520` 写的 `newmanga.backup/2` 是**设计稿命名**；本契约的落地命名是 **`format: "nmbak"` + `version: 2`**（标题的 `backup/2` 是简写）。实现与文档须用后者，不得混用三种写法。
 - **`backup/2` 相对 `backup/1` 的强制增量**：① 显式清单（SC-B01 的扩展点已要求）；② 每项 `sha256` + 字节数；③ `DatabaseId`（C-01b SC-18）与 `schemaVersion`；④ 包内加密的源授权元数据段。
 - **版本协商**：读取端先读 `version`；`version > 2` → 拒绝（`BACKUP_FORMAT_UNSUPPORTED`）；`version == 1` → **legacy adapter 路径**（只读、不写回）。
 - **旧包读取（legacy adapter）**：`backup/1` 只能**读取/恢复**，**不得**就地升级为 `backup/2`（升级须「导出新包 + 校验 + 原子替换」）。
@@ -152,7 +166,7 @@
 
 ## 3. 与 C-01b / C-04b / C-08 / C-13 / C-14 的接口
 
-- **C-01b**：SC-10a/10b（备份清单）、SC-30/31/33（删除边界）、SC-33（迁移）由本草案细化。
+- **C-01b**：SC-10a/10b（备份清单）、SC-30/31/33（删除边界）、SC-33（迁移）由本草案细化；**D07「独占写锁与 pin」由 C-01b SC-13（pin）与 SC-17（独占维护锁）承载——本契约引用不复写**（对应 SC-B03 对 SC-17 的引用）。
 - **C-04b**：删除协议是 SC-B04 的协议层落地。
 - **C-08**：备份恢复后的 Run 快照必须可读（快照不含上下文页内容——已知缺口）。
 - **C-13**：SC-D12 的 `protectionDigest` 是**编辑层**保护摘要，**不接入**删除 preflight；本契约 SC-B04a 的 `ProtectionPolicy` 是**删除层**判定（引用 ADJ-001 语义）——两者分层、不重叠、不互相替代。
@@ -162,13 +176,14 @@
 
 1. 独立复核通过；
 2. C-01b 已冻结；
-3. **上游契约已冻结**：C-01b、C-04b、C-06、C-14 均已冻结（本契约显式依赖它们的 source/缓存/删除/授权面）；且 **`G-CONTRACT` 已关闭（2026-11-01）**。**本契约不再要求 `G-DELETE-CONTRACT` 关闭**——本契约正是 D07 的承载者之一；D07 的完整覆盖由「本契约冻结 + C-04b + C-01b 相关条款」共同满足，届时才重新判定 `G-DELETE-CONTRACT`（见 [D07 解环 Task](FEA-D07-UNBLOCK.md)）。**不引入「部分关闭」Gate 状态**。
+3. **上游契约已冻结**：C-01b、C-04b、C-06、C-08、C-14 均已冻结（本契约显式依赖它们的 source/缓存/删除/Run 快照/授权面）；且 **`G-CONTRACT` 已关闭（2026-11-01）**。**本契约不再要求 `G-DELETE-CONTRACT` 关闭**——本契约正是 D07 的承载者之一；D07 的完整覆盖由「本契约冻结 + C-04b + C-01b 相关条款」共同满足，届时才重新判定 `G-DELETE-CONTRACT`（见 [D07 解环 Task](FEA-D07-UNBLOCK.md)）。**不引入「部分关闭」Gate 状态**。
 4. `check.ps1` PASS。
 
 ## 5. 变更记录
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v4（处置 FEA-C09-r3 的 P1×1 + P2×7）**：**P1 SC-B04a 语义纠正**——彻底删除列由「阻止」改为「披露 + 专门确认（非阻断）」，共享引用改「可安全拆分不阻断 / 不可拆分才 `BOOK_DELETE_CONFLICT`」，新增「非终态 Run → `BOOK_BUSY`」硬阻断行 + 说明「披露≠拒绝，否则永远删不了含人工修改的书」；P2-1 补 D07 第 7 项（SC-13/17）；P2-2 补 backup/1、backup/2 归属；P2-3 改 `presentation-settings.json` + SC-10b 细化说明；P2-4 `TRASH_ENTRY_NOT_FOUND`→`not_found`、补 ListTrash/PurgeTrash 映射与负向对照；P2-5 命名统一；P2-7 条件③补 C-08 | DSH |
 | 2026-11-01 | **v3（FEA-D07-UNBLOCK AC2–AC6）**：新增 SC-B06 软删/恢复/TrashEntry 命令面（4 命令 + 3 码）、SC-B07 `backup/2` 格式契约（含 legacy adapter）、SC-B08 自动备份调度归属、SC-B09 恢复入口；SC-B01 补「完整归属表」（解决 FEA-00 `:901` 的 catalog 归属问题）、SC-B04 补「三路径统一 ProtectionPolicy」；§4 条件③改上游契约条件（解环） | DSH |
 | 2026-11-01 | 建立草案：现状表 5 项、SC-B01…SC-B05 五条、与三份契约接口、冻结条件 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-2 授权元数据入包 / P1-3 SC-17/18 / P2×4） | DSH |
