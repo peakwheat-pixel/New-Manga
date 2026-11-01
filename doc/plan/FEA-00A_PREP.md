@@ -23,7 +23,7 @@
 |---|---|---|
 | **G1** | **prepare 阶段已写 live**：`_persist` 插入 `region_revisions` 行并 `UPDATE regions SET text_json`，然后 `commit()`；`current_revision_id` 留待 seam | `src/infrastructure/providers/step_writes.py:195`–`:281`（插入行 `:248`–`:266`、写 text `:269`–`:276`、提交 `:277`；注释 `:267`–`:268` 自述「pointer stays behind」） |
 | **G2** | **seam 失败无补偿**：`commit_step` 只在同一事务内翻指针/写 stage/persist；失败返回 `input_revision_changed` / `lock_changed` / `db_failed` / `target_not_found`，但 prepare 的副作用已提交，**不回滚** | seam 实现 `src/infrastructure/sqlite/pipeline.py:742`–`:799`；失败分支消费 `src/application/tasks/service.py:752`–`:789`（冲突→记录 candidate + FAILED `:764`–`:786`；DB 失败→`_fail_step` `:788`–`:789`） |
-| **G3** | **artifact 指针同类缺陷**：`adopt_current` 在 handler 事务内 CAS 并提交 `media_artifacts.current_revision_id`，seam 之前指针已推进 | `step_writes.py:421`–`:459`（提交 `:456`）；handler 调用示例 `src/infrastructure/providers/handlers.py:599`/`:647`/`:733`（返回 `revision_updates=updates` 或不返回） |
+| **G3** | **artifact 同类缺陷**：`adopt_current` 在 handler 事务内 CAS 并提交 `media_artifacts.current_revision_id`，seam 之前指针已推进；且 `publish` 已在 prepare 提交 `artifact_revisions` 行与落盘文件 | `step_writes.py:421`–`:459`（提交 `:456`；`publish` 写行/文件 `:358`/`:365`/`:394`）；handler 调用 `handlers.py:962`（adopt），`:599`/`:647`/`:733` 返回 `revision_updates=updates` |
 | **G4** | **候选暂存表已存在但未用于 pre-seam**：`step_result_candidates(candidate_id, pipeline_run_id, step_run_id, target_id, page_id, region_id, result_kind, base_revision_id, payload_json, reason, status, created_at, resolved_at)` 仅用于 seam 拒绝后的诊断记录 | schema `src/infrastructure/sqlite/schema.py:379`–`:396`（v5 `:521`）；写入点 `pipeline.py:516`–`:528`；清理由 `library.py:571` |
 | **G5** | **测试缺口**：现行测试只覆盖「几何保存 DB 失败零写」「seam guard 单事务」，**没有**断言「provider prepare + seam 失败 → 三处零变化」 | 零写测试 `tests/core/test_region_db_failure.py:100`–`:140`；guard 测试 `tests/core/test_region_transactional_guards.py:153`–`:175`；seam 测试 `tests/pipeline/test_pipeline_production_seam.py` 无失败零变化断言 |
 | **G6** | **pause/cancel/崩溃**：prepare 之后无 staging，副作用即 live；进程崩溃/DB 重开后无法区分「已 prepare 未 seam」与「已 seam」 | 与 G1/G2 同源；无 staging 目录/表可查（除 G4 的候选表） |
@@ -42,7 +42,8 @@
 | **A3 成功路径同事务** | success 时 revision 行、text、指针、Run receipt 相关写入在**同一事务**提交（不存在中间可观察状态） |
 | **A4 prepare 不触碰 live** | prepare 阶段对 `regions`/`media_artifacts` 仅允许**读**；任何 live 写只发生在 seam 事务内 |
 | **A5 重启可判定** | prepare 后崩溃/重启：live 三处不变，候选可识别为「未完成」并可清理/重试，不出现半提交 |
-| **A6（若纳入）artifact 指针** | `media_artifacts.current_revision_id` 同样遵守 A1/A4（指针只在 seam 事务内推进） |
+| **A6（若纳入）artifact 指针** | `media_artifacts.current_revision_id` 同样遵守 A1/A4（指针只在 seam 事务内推进）。**D1=② 时还必须覆盖 `ArtifactStepWriter.publish` 在 prepare 提交的 `artifact_revisions` 行与落盘文件**（`step_writes.py:358`/`:365`/`:394`），即 staging 的不只是指针，还包括 revision 行与文件；成功时由 seam 事务统一 adopt（含 `handlers.py:962` 的 `adopt_current` 调用点）。 |
+| **A7 §15.6 出口（R1-P2-006）** | ①**关闭新写入入口**：修复后 prepare 路径不再有 live 写（A4 断言 + grep 断言覆盖）；②**旧库只读核验**：对既有 DB 以只读方式核验三处一致性与候选可读，**保留备份与候选**不删除（证据留 `verification/`）。 |
 
 ---
 
@@ -51,7 +52,7 @@
 | 文件 | 角色 | 必要性 |
 |---|---|---|
 | `src/infrastructure/providers/step_writes.py` | `RegionStepWriter._persist` 改为写 candidate；`ArtifactStepWriter` 若纳入则 `adopt_current` 改为 candidate | **核心** |
-| `src/infrastructure/providers/handlers.py` | 局部：构造 candidate 所需 run/step 上下文、返回 seam 可解析的 token（`revision_updates`） | 必要（局部） |
+| `src/infrastructure/providers/handlers.py` | 局部：构造 candidate 所需 run/step 上下文（region 路径已具备 `:438`–`:439`、`:524`–`:525`、`:458`/`:548`，**可能 0 改动**）；**仅 D1=② 时**需改 `:962` 的 `adopt_current` 调用点 | 视 D1 |
 | `src/infrastructure/sqlite/pipeline.py` | `commit_step`：解析 candidate token → 同事务插入 `region_revisions` + `UPDATE regions.text_json` + 指针 CAS + 标记 candidate resolved | **核心** |
 | `tests/` 内明确测试 | 新增 §6 矩阵；修正 G7 中受影响的既有测试 | 必要 |
 | `src/application/tasks/service.py` | **不需要改**（token 通过既有 `StepResult.revision_updates` 传递；失败 candidate 记录逻辑沿用） | — |
@@ -59,6 +60,24 @@
 **不新增 schema/迁移**（复用 `step_result_candidates`）；若最终决定不用该表而新建 staging 表 → 属 schema 变更，须先做迁移契约判断（见 §7 D3）。
 
 **设计约束**：prepare 只允许写 candidate（`status='prepared'`），**不得**写 `regions`/`media_artifacts`；seam 事务同时完成「插 revision 行 + 写 text + 翻指针 + `status='resolved'`」，任一失败整体回滚（A3）。
+
+### 4.1 token 契约（R1-P2-001，冻结前必写）
+
+**token 必须是 prepare 预生成的真实 revision id**（`uuid.uuid4().hex`），不得用 opaque 串：
+
+1. prepare 生成 `revision_id` → 候选行以该 id 为键写入 `step_result_candidates`（`payload_json` = 待提交快照，`base_revision_id` = 读取时的 `current_revision_id`，`status='prepared'`）；
+2. handler 返回 `revision_updates={"region": <该 revision_id>}`（`StepResult.revision_updates` 是 `Mapping[str, str]`，`models.py:355`）；
+3. seam 用该 id 找回候选，**同事务**插 `region_revisions` 行（同 id）、写 `regions.text_json`、CAS 翻 `current_revision_id`、置候选 `status='resolved'`。
+
+**依据（为什么必须是真实 id）**：`regions.current_revision_id` 与 `region_revisions` 之间是**延迟复合 FK**（`pipeline.py:769`–`:771` 直接写指针值）；内存 catalog 会把 `revision_updates` 并入 `current_revisions` 快照（`src/application/tasks/store.py:215`、`:236`）。两处都假定值是可解析的真实 revision id；用 opaque token 会破坏 FK 与快照语义，并被迫改 `service.py`/`store.py`（违背 D2=①）。V8 并发的一致性由 revision id 唯一性保证。
+
+### 4.2 staged 失败行的处置与清理归属（R1-P2-003，冻结前必写）
+
+prepare 写入的 `status='prepared'` 行，与 seam 失败后 `service.py:764`–`:786` 再插入的 pending 候选行，会形成**同一步两份候选**；`prepared` 行当前只在页面 purge 时被删（`library.py:571`）。因此实现卡必须指定：
+
+- **语义**：`prepared` = 未 seam 的暂存；失败候选 = seam 拒绝后的诊断记录；两者都以 `step_run_id` 关联，可在查询层区分（`status` 无 CHECK 约束，`schema.py:379`–`:396`）。
+- **扫除点**（仍在本 Task 写域 `pipeline.py` 内，不扩写域）：①run 启动时清理该 run 下超期 `prepared` 行；②`commit_step` 失败分支将对应 `prepared` 行置 `status='abandoned'`（或删除）并记录 `resolved_at`。
+- **重启可判定**（A5）：重启后 `prepared` 行可识别为未完成、可重试或清理，不出现半提交。
 
 ---
 
@@ -95,7 +114,7 @@
 |---|---|---|---|
 | **D1** | FEA-00a 是否同时覆盖 artifact 指针（G3） | ① 仅 region（严格按 §15.5 字面）② region + artifact（同类缺陷一并修） | ②更安全但改 `handlers.py` 中 adopt 调用点；①留同类缺陷 |
 | **D2** | 是否允许改 `src/application/tasks/service.py` | ① 不允许（本文设计可避免）② 允许（可简化 token 解析） | 影响写域是否与 FEA-10 重叠 |
-| **D3** | 候选承载 | ① 复用 `step_result_candidates`（无迁移）② 新建 staging 表/文件 | ②需迁移契约与 L-1 判断；①更小 |
+| **D3** | 候选承载 | ① 复用 `step_result_candidates`（无迁移，但需 §4.2 的清理归属）② 新建 staging 表（需迁移契约与 L-1 判断）③ **文件 staging**（§15.5 原文允许「staging 表/文件」，无迁移、无 schema 改动；代价是崩溃残留文件需清理规则） | ①最小；③最独立于 DB |
 | **D4** | 验证等级 | L2 自动化（V1–V8）+ 生产 assembly；是否需要 L3 真机 | 时间/覆盖 |
 
 **推荐**：D1=②（同类缺陷一并修，仍在本 Task 写域内）；D2=①；D3=①；D4=L2。
@@ -135,3 +154,4 @@ pwsh -NoProfile -File tools/governance/verify_pins.ps1          # 15/15
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：快照 `15aa7bf3b` 的 FEA-00a 缺口证据（G1–G7）、§15.5 验收精确化（A1–A6）、最小写域、失败/重启矩阵、D1–D4 决策项、FEA-03 现状与前置 | DSH |
+| 2026-11-01 | 处置 R1（`FEA-00A-PREP-r1` approved，P2×6）：新增 §4.1 token 契约（真实 revision id + 依据）与 §4.2 staged 行清理归属；A6 扩到 `publish` 的 revision 行/文件 + `handlers.py:962`；新增 A7（§15.6 出口两条）；D3 并列文件 staging；G3 注明 `publish` 同源 | DSH |

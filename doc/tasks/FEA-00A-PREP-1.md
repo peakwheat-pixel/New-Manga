@@ -15,9 +15,10 @@ branch: null
 worktree: null
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-00A-PREP-1
+evidence_snapshot: 15aa7bf3b
 allowed_paths:
   - doc/tasks/FEA-00A-PREP-1.md
   - doc/plan/FEA-00A_PREP.md
@@ -40,7 +41,7 @@ allowed_paths:
 - [x] **AC1 现状评估**：核对 `FEA-00a` 在方案 §15.6 的口径（`src/infrastructure/providers/`、`src/infrastructure/sqlite/pipeline.py`、明确测试；L2 高风险；§15.5 三处零变化及重启）与当前仓库实际代码/测试现状，列出缺口。 <<MET>>
 - [x] **AC2 下一候选建议**：给出 `FEA-03`（及可选 `FEA-00a`）作为下一实现候选的**前置清单、风险、写域与验证等级建议**，并明确「需用户确认后才建 ready 卡」。 <<MET>>
 - [x] **AC3 边界**：只读评估 + 文档；不改代码、不释放 Task、不改冻结契约字节、不动用户数据、不 push。 <<MET>>
-- [ ] **AC4 独立复核**：`doc/reviews/FEA-00A-PREP-r1.md` 判 `approved`（P0/P1 = 0）。 <<BLOCKED: 待独立复核 FEA-00A-PREP-r1>>
+- [x] **AC4 独立复核**：`doc/reviews/FEA-00A-PREP-r1.md` 判 `approved`（P0/P1 = 0）。 <<MET>>
 
 ## L 前置适用性（预估）
 
@@ -55,7 +56,8 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-PREP-DOC | AC1,AC2 | `doc/plan/FEA-00A_PREP.md` | `-` | `2d8ee1f4ca592a2dba0c8a345973ddad3e8c2149a97951b2308d529ae302de62` | CANONICAL |
+| E-PREP-DOC | AC1,AC2 | `doc/plan/FEA-00A_PREP.md` | `-` | `046f301a54a02f2ffd486c2a5cf9333907e8877a82b7fb9360b764a98c01dd70` | CANONICAL |
+| E-PREP-REVIEW | AC4 | `doc/reviews/FEA-00A-PREP-r1.md` | `-` | `e7a627d6f45b823cfaa0771a160ea76509d597257ca293c3724cafd52ec5aa40` | CANONICAL |
 
 ## Resource Manifest
 
@@ -68,4 +70,4 @@ allowed_paths:
 
 ## Closeout Record
 
-- 2026-11-01 / DSH：评估文档落盘（快照 `15aa7bf3b`；G1–G7、A1–A6、D1–D4）；AC1–AC3 MET；AC4 待独立复核。
+- 2026-11-01 / DSH：评估文档 v2（含 R1 的 C1 token 契约、C2 清理归属、C3 artifact publish、C4 出口两条）；R1 `approved`（P0/P1=0，P2×6 已处置）；待收口 done。
