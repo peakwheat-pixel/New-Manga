@@ -1,6 +1,6 @@
 # Gate 阻塞口径裁定（G-DELETE-CONTRACT / G-CONTRACT）· v3
 
-状态：**DSH 架构裁定 v6**（v2 经 [r2](../reviews/GATE-CLOSURE-RULING-r2.md) `approved`；v3 的 R-4 经 r3/r4/r5 逐轮修订——§5.5 落点、§8 无白名单、Run 线负向对照不可执行）
+状态：**DSH 架构裁定 v7**（经 r2–r8 八轮复核，r8 `approved`）（v2 经 [r2](../reviews/GATE-CLOSURE-RULING-r2.md) `approved`；v3 的 R-4 经 r3/r4/r5 逐轮修订——§5.5 落点、§8 无白名单、Run 线负向对照不可执行）
 裁定人：DSH（Lead / Architect / Integrator）
 日期：2026-11-01
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`:762-771`）、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) `:10`/`:92`/`§9`、[AD-003 §5](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[冻结矩阵](FEA-CONTRACT_FREEZE_MATRIX.md)
