@@ -94,3 +94,10 @@
 - **FEA-06 建卡 + 范围 r1**（doc/reviews/FEA-06-scope-r1.md，P0×2/P1×7/P2×11）：P0-1「C-03 外观持久化实现不存在」、P0-2「Fluent frontend 激活/V2 并存 + 组合根不在写域」。
 - **处置**：拆 **FEA-06-PREREQ-1**（C-03 NewManga.Appearance + AppearanceCoordinator + G-1/G-1b/G-1c 令牌 + 三态动效）与 **FEA-06-PREREQ-2**（FrontendSelector + 双壳 + Views/Fluent 骨架）；主卡缩窄为四页内容（W-5/W-6/W-7/W-8：双壳、空间映射、令牌归属、状态矩阵；AC3 错误映射表冻结；AC5 字段清单；AC2–AC5 绑  9-state-matrix.md）。
 - **待裁决**：Q-29（FEA-06 三卡的范围复核 r2 派发顺序：PREREQ-1 → PREREQ-2 → 主卡；推荐先 PREREQ-1）；Q-30（suggested_owner: dsh 与 ZCode UI 主责冲突——ZCode 未安装，DSH 代实现，记录为故障转移事实）。
+## 12. FEA-06-PREREQ-1 范围冻结（2026-11-03）
+
+- 范围复核：r1（P0×2/P1×8/P2×11）→ r2（P0=0/P1×4/P2×12）→ **r3 approved（P0/P1=0，P2×16 接受）**。
+- r1 关键裁决：G-1 键归属（Focus/Corner→DerivedGlobals；Elevation→新增 BoxShadows；Material→主题层）；禁止手改生成产物（TokenGen 重生成 + --check）；AppearanceCoordinator 写者在 NewManga.Appearance；motion.mode=uto/full/reduce（无 off）；uiltin.fluent-dark 主题包归本卡。
+- 卡：doc/tasks/FEA-06-PREREQ-1.md **ready**（8d9910e0c），P1–P5b 任务 + AC1–AC6。
+- **下一步**：DSH 实现（Codex 通道故障、ZCode 未安装）——新建 NewManga.Appearance 项目 + 迁移 + 令牌 + 主题包 + 测试。
+- **待裁决**：Q-31（PREREQ-2 复核时必须承接 P2-8「应用主题/动效落点」与 P2-5「selector 按 frontendId 而非 visualThemeId」——已记录，无需用户拍板）。
