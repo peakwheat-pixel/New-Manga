@@ -372,4 +372,23 @@ public sealed class FEA04CurrentAdapterTests
         int RunStarts,
         int RegionTypeWrites,
         int LifecycleEntries);
+
+    [Fact]
+    public void Page_pipeline_band_uses_the_batch_push_and_never_drops_it()
+    {
+        // IMPL-02 regression: ApplyRunProjection must make the pushed projection the
+        // read authority of the Page band (V11R-B-4 push from the workspace).
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("FEA-04"));
+        var workspace = new NewManga.App.ViewModels.V2.Studio.StudioWorkspaceViewModel(host);
+        var pushed = new NewManga.App.ViewModels.V2.Studio.StudioRunProjection(
+            "run-1", "running", "第 1 章", 0.5, "p01", "translate",
+            Array.Empty<NewManga.App.ViewModels.V2.Studio.StudioRunStageState>(),
+            Array.Empty<NewManga.App.ViewModels.V2.Studio.StudioRunPageRow>(),
+            10, 5, 1, 0, 0, 0, 0);
+
+        workspace.Page.ApplyRunProjection(pushed);
+
+        Assert.Same(pushed, workspace.Page.RunProjection);
+        Assert.True(workspace.Page.PipelineWired);
+    }
 }
