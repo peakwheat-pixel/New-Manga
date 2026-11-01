@@ -1,6 +1,6 @@
 # FEA-C04b 删除协议字段与码表（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C04b.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) §6.1–§6.3（PD-01…PD-10，`G-DELETE-CONTRACT: OPEN`）、[M2-C1](../contracts/M2-C1_TYPED_IPC_CONTRACT.md) §5.11.1–§5.11.5、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-04b
@@ -125,5 +125,5 @@ C-01b 的 SC-30/SC-31/SC-33 引用删除语义；本草案是它们的**协议�
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表、单条/批量形状拆分、PreviewPermanentDeleteBooks、digest 校验、完整码表（12 沿用 + 2 新增）、投影扩展、兼容/失败、与 C-01b 接口、冻结条件 | DSH |
-| 2026-11-01 | **v5（Gate 阻塞口径裁定 v2 处置）**：条件③改「`G-DELETE-CONTRACT` 对 C-04b 不再构成阻塞」（Gate 保持 OPEN）；§2.4 冻结顺序改为「契约冻结构与码表 / M2-C1 字节修订由独立 Task 在释放实现前完成 + 负向对照」；§4 删「须在 Gate 关闭后冻结」 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-5-c04b r1（5 P1）——上限 200→20；码表补全 12 行；预览补 PD-01 三项；单条/批量形状拆分；§5.11.5 投影扩展 + 冻结顺序；P2（PD-08/category/digest 格式/冻结条件） | DSH |
+| 2026-11-01 | **v5（Gate 阻塞口径裁定 v2 处置）**：条件③改「`G-DELETE-CONTRACT` 对 C-04b 不再构成阻塞」（Gate 保持 OPEN）；§2.4 冻结顺序改为「契约冻结构与码表 / M2-C1 字节修订由独立 Task 在释放实现前完成 + 负向对照」；§4 删「须在 Gate 关闭后冻结」 | DSH |

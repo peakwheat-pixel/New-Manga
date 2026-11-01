@@ -1,0 +1,45 @@
+# C06 授权面（registry + source-read grant） · 冻结记录
+
+**契约**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`
+**冻结时间**：2026-11-01
+**冻结人**：DSH（Lead / Architect / Integrator）
+**授权**：[Gate 阻塞口径裁定 v2](GATE-CLOSURE-RULING-2026-11-01.md)（[复核 approved](../reviews/GATE-CLOSURE-RULING-r2.md)）+ [冻结矩阵](FEA-CONTRACT_FREEZE_MATRIX.md)
+
+---
+
+## 1. 冻结字节
+
+| 项 | 值 |
+|---|---|
+| 文件 | `doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md` |
+| sha256 | `465739684111bfa080ca71e684eccafd8c5162a5142a54dac5f8f898df4cbd3c` |
+
+**冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
+
+## 2. 冻结条件逐条核验
+
+| # | C-06 §5 条件 | 状态 | 证据 |
+|---|---|---|---|
+| 1 | 独立复核通过 | ✅ | r1（5 P1）→ r2（1 P1）→ r3 [approved](../reviews/FEA-GOV-6-c05-c06-r3.md)；Gate 口径修订后 [再次确认](../reviews/GATE-CLOSURE-RULING-r2.md) |
+| 2 | C-01b 已冻结（SC-21/SC-22 由本单落地） | ✅ | [FEA-CONTRACT-FROZEN-C01b](FEA-CONTRACT-FROZEN-C01b.md) |
+| 3 | `G-CONTRACT` **不阻塞本单** | ✅ | [裁定 v2](GATE-CLOSURE-RULING-2026-11-01.md) R-1′：Gate 保持 OPEN；本单只承载 D05 的**授权面子集** |
+| 4 | wire 版本 DSH 批准（v1.1 minor） | ✅ | 裁定 R-3（仅新增命令，`ImportPages` 语义不变；兼容性依赖旧端 fail-closed） |
+| 5 | `check.ps1` PASS | ✅ | PASS（3 persistent warnings） |
+
+## 3. 依赖与后果
+
+- **上游**：C-01b 已冻结。
+- **D05 覆盖度**：C-06 只承载 D05 的**授权面**（`SourceAccessRegistry` + source-read grant + 9 条安全约束）。D05 的 lease / 重定位·同步 / 容器页映射 / 缓存边界由 C-01b、C-09 及后续契约分担——**`G-CONTRACT` 保持 OPEN** 直至这些落地。
+- **下游**：Source 线实现（FEA-08/09/11/12/13）仍 blocked（Gate 未关 + 需经 C-11 建卡 + 独立 Review）。
+- **实现前必须**：wire v1.1 的字节修订（`docs`/协议文档）由实现 Task 承载，且旧端 fail-closed 行为须纳入负向对照。
+
+## 4. 不构成什么
+
+- **不构成**实现授权。**不构成** Gate 关闭（`G-DELETE-CONTRACT` / `G-CONTRACT` 均**保持 OPEN**）。
+- **不构成**远端 push 授权。
+
+## 5. 变更记录
+
+| 日期 | 变更 | 记录 |
+|---|---|---|
+| 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |

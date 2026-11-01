@@ -4,7 +4,7 @@
 裁定人：DSH（Lead / Architect / Integrator）
 日期：2026-11-01
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`:762-771`）、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) `:10`/`:92`/`§9`、[AD-003 §5](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[冻结矩阵](FEA-CONTRACT_FREEZE_MATRIX.md)
-前版：[v1](GATE-CLOSURE-RULING-2026-11-01.md)（被 [独立复核](../reviews/GATE-CLOSURE-RULING-review.md) 判 `changes_requested`：P1×2 + P2×5）→ 本 v2 全部处置
+前版：v1 @ 历史提交 `38e80d150`（被 [独立复核](../reviews/GATE-CLOSURE-RULING-review.md) 判 `changes_requested`：P1×2 + P2×5）→ 本 v2 全部处置
 
 ---
 
@@ -18,7 +18,7 @@
 | R-2 同样适用于 C-08 | **限定仅 C-04b** | 复核 P2-5：C-08 无同类论证 |
 | 引用「§15.12」「ADJ-001 §10」 | **§13.2**、**ADJ-001 `:10`** | 复核 P2-3a/3b |
 
-## 1. 问题（còn 成立）
+## 1. 问题（仍成立）
 
 Gate 的定义文本与被它守门的契约构成**看似的**循环：
 
@@ -27,7 +27,7 @@ Gate 的定义文本与被它守门的契约构成**看似的**循环：
 | `G-DELETE-CONTRACT` | 「协议字段/码表/**D04-D07** 冻结」（ADJ-001 `:128`；`:10`/`:92` 亦写 D04/D07） | **覆盖 4 个变更包** |
 | `G-CONTRACT` | 「**D05** Source/grant/资源契约冻结」（AD-003 §5 `:128`） | D05 |
 
-而 C-04b 的条件③要求 `G-DELETE-CONTRACT` 关闭、C-06 的条件③要求 `G-CONTRACT` 关闭。
+而**修订前**，C-04b 的条件③要求 `G-DELETE-CONTRACT` 关闭、C-06 的条件③要求 `G-CONTRACT` 关闭（本 v2 已改为「不阻塞」）。
 
 ## 2. 事实核查
 

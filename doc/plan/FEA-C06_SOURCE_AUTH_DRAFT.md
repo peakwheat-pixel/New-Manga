@@ -1,6 +1,6 @@
 # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C06.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）
@@ -77,7 +77,7 @@
 
 1. 独立复核通过；
 2. **C-01b 已冻结**（SC-21/SC-22 由本草案落地）；
-3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集；D05 的 lease/重定位/容器页映射/缓存边界由 C-01b、C-09 等分担，Gate 保持 OPEN 直至这些落地——见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
+3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集：registry + source-read grant + 4 命令 + 9 条安全约束。**lease** 由 C-01b SC-25/29/31 承载；**缓存预算**在本单 `budget{maxBytes,maxDecodeBytes}` 内自含；**重定位/同步、容器页映射** 目前**无承载条款**，仍属 D05 未覆盖项——Gate 保持 OPEN。见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
 4. **wire 版本由 DSH 批准**（v1.1 minor 增量）；
 5. `check.ps1` PASS。
 

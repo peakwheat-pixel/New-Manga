@@ -7,7 +7,7 @@
 
 **用途**：把 **11 份已起草契约 + C-10（部分起草，待 U-03）共 12 行**的冻结依赖链收成一张可执行表——每份差什么、按什么顺序、卡在哪个 Gate。**不是**冻结令。
 
-> **当前进度（2026-11-01）**：用户 5 项裁决已落盘（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 7 份**：C-01b / C-02 / C-03 / C-05 / C-07 / C-11 / C-12。剩 C-04b / C-06 / C-08 / C-09 —— **全部卡在 Gate**（`G-DELETE-CONTRACT` / `G-CONTRACT` / 协议注册）。
+> **当前进度（2026-11-01）**：用户 5 项裁决已落盘（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 9 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-11 / C-12。剩 **C-08 / C-09** —— 两者仍等 Gate **真关闭**（[裁定 v2](GATE-CLOSURE-RULING-2026-11-01.md) 明确 Gate 保持 OPEN）。
 
 ---
 
@@ -18,9 +18,9 @@
 | 1 | **C-01b** 存储契约 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅（r5 approved）②AD-003 `G-REVIEW` 收口 ✅（SATISFIED）+ ADJ-001 依赖注明（`G-DELETE-CONTRACT` OPEN）③用户确认 AD-002 责任表/哨兵口径（**`R`**）④`check.ps1` PASS | 无（语义基座） | ③（用户 `R`） |
 | 2 | **C-02** V11R 修订 | **`FROZEN`** 2026-11-01 | ①**U-04** 用户裁决 | 无（与 C-01b 独立） | U-04 |
 | 3 | **C-03** 外观持久化 | **`FROZEN`** 2026-11-01 | ①**U-05a/U-05b** ②C-02 先冻结 | C-02 | U-05a/b |
-| 4 | **C-04b** 删除协议 | `approved` r3 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` 关闭 ③D04/D07（码表裁决，ADJ-001 §6.3）④DSH 批准 2.11 ⑤M2-C1 扩展独立 Task | C-01b | 5 项全未满足 |
+| 4 | **C-04b** 删除协议 | **`FROZEN`** 2026-11-01 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` 关闭 ③D04/D07（码表裁决，ADJ-001 §6.3）④DSH 批准 2.11 ⑤M2-C1 扩展独立 Task | C-01b | 5 项全未满足 |
 | 5 | **C-05** 页可见性 | **`FROZEN`** 2026-11-01 | ①`VISIBLE_TYPES`/`active_runs` 经 C-01b/ADJ-001 确认（C-01b 冻结后即可） | C-01b（口径确认） | 无硬阻塞 |
-| 6 | **C-06** 授权面 | `approved` r3 | ①C-01b 冻结 ②`G-CONTRACT` 关闭 ③wire v1.1 DSH 批准 | C-01b | `G-CONTRACT: OPEN` |
+| 6 | **C-06** 授权面 | **`FROZEN`** 2026-11-01 | ①C-01b 冻结 ②`G-CONTRACT` 关闭 ③wire v1.1 DSH 批准 | C-01b | `G-CONTRACT: OPEN` |
 | 7 | **C-07** API inventory | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
 | 8 | **C-08** Run 快照 | `approved` r2 | ①C-05/C-04b 冻结 ②C-01b 冻结 ③协议注册独立 Task | C-05/C-04b | 协议注册未建 |
 | 9 | **C-09** 删除/备份/迁移 | `approved` r2 | ①C-01b 冻结 ②`G-DELETE-CONTRACT` + `G-CONTRACT` 关闭 | C-01b | 两 Gate |
