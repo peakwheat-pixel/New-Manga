@@ -3,14 +3,14 @@ id: FEA-04b
 title: Fluent 四页交互与视觉规格（设计基线）
 kind: design
 governance_version: 3
-status: ready
+status: in_review
 approval: C-11_frozen_2026-11-01 + user_decisions_ADJ-2026-11-01
 suggested_owner: zcode
-owner: null
-reviewer: null
+owner: dsh-lead
+reviewer: fea04b-scope-reviewer
 depends_on:
   - FEA-00
-base_commit: b6d5ccdef
+base_commit: fdf7591ac
 branch: null
 worktree: null
 integration_commit: null
@@ -58,11 +58,11 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 四页规格**：`doc/design/fluent-v1/` 下四页规格齐全，含所有状态（空/载入/错/满）与响应式断点。 <<PARTIAL: 待实现>>
-- [ ] **AC2 令牌取值**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的具体数值 + 与 C-02 V-05 判据①（必须走令牌）的对应表。 <<PARTIAL: 待实现>>
-- [ ] **AC3 动效参数**：三类动效在 `auto`/`full`/`reduce` 下的时长/曲线表，满足 C-03 §2.3 判据 ①–⑤。 <<PARTIAL: 待实现>>
-- [ ] **AC4 a11y 与键盘**：焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b `KeyMap` 无冲突。 <<PARTIAL: 待实现>>
-- [ ] **AC5 用户确认与独立评审**：四页设计经用户确认 + 独立 Review（上下文独立）+ DSH 冻结。 <<PARTIAL: 待实现>>
+- [x] **AC1 四页规格**：`doc/design/fluent-v1/` 下四页规格齐全，含所有状态（空/载入/错/满）与响应式断点。 <<MET>>
+- [x] **AC2 令牌取值**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的具体数值 + 与 C-02 V-05 判据①（必须走令牌）的对应表。 <<MET>>
+- [x] **AC3 动效参数**：三类动效在 `auto`/`full`/`reduce` 下的时长/曲线表，满足 C-03 §2.3 判据 ①–⑤。 <<MET>>
+- [x] **AC4 a11y 与键盘**：焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b `KeyMap` 无冲突。 <<MET>>
+- [ ] **AC5 用户确认与独立评审**：四页设计经用户确认 + 独立 Review（上下文独立）+ DSH 冻结。 <<PARTIAL: 用户确认未进行（自主推进）；独立 Review 待派发>>
 
 ## 禁止范围
 
@@ -73,11 +73,11 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 规格文档评审 | 文档 | NOT_RUN | 待补 |
-| AC2 | 令牌取值与 C-02 判据①对表 | 文档 | NOT_RUN | 待补 |
-| AC3 | 动效表 vs C-03 判据 ①–⑤ | 文档 | NOT_RUN | 待补 |
-| AC4 | 快捷键与 `KeyMap` 比对 | 文档 | NOT_RUN | 待补 |
-| AC5 | 用户确认 + 独立 Review | 人工 | NOT_RUN | 待补 |
+| AC1 | 规格文档评审 | 文档 | DONE（11 文件） | `doc/design/fluent-v1/` |
+| AC2 | 令牌取值与 C-02 判据①对表 | 文档 | DONE（01 §2/§3） | `01-design-tokens.md` |
+| AC3 | 动效表 vs C-03 判据 ①–⑤ | 文档 | DONE（02 §2/§3） | `02-motion.md` |
+| AC4 | 快捷键与 `KeyMap` 比对 | 文档 | DONE（03 §1） | `03-accessibility.md` |
+| AC5 | 用户确认 + 独立 Review | 人工 | PENDING（用户确认）/ 待派复核 | `verification/FEA-04b/` |
 
 ## Canonical Evidence
 
@@ -94,3 +94,5 @@ allowed_paths:
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+
+- 2026-11-02 / DSH：起草 `doc/design/fluent-v1/`（README + 01–10，版本 `fluent-v1.0.0`）与自查清单 `verification/FEA-04b/design-baseline-selfcheck.md`；AC1–AC4 文档完成，待独立复核；AC5 用户确认待办（自主推进模式），独立复核已派发。状态置 `in_review`。
