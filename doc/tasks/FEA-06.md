@@ -11,7 +11,9 @@ reviewer: null
 depends_on:
   - FEA-04b
   - FEA-05-PORT-1
-base_commit: 1a844f681
+  - FEA-06-PREREQ-1
+  - FEA-06-PREREQ-2
+base_commit: cad5ebde3
 branch: null
 worktree: null
 integration_commit: null
@@ -53,16 +55,16 @@ allowed_paths:
 | P3 Workbench | 工作台页：Region 列表/画布/Inspector/FilmStrip/批量栏；Draft 命令面接入（Open/Patch/Prepare/Apply/Status/Discard） | `06-page-workbench.md` |
 | P4 Reader | 阅读器页：页导航、缩放、进度保存、键盘/滚轮 | `07-page-reader.md` |
 | P5 Settings | 设置页：C-03 §2.2 字段、保存/校验/错误态 | `08-page-settings.md` |
-| P6 设计系统消费 | 令牌绑定（`01-design-tokens.md`）、动效三态（`02-motion.md`）、状态矩阵（`09-state-matrix.md`）、组件清单（`10-component-inventory.md`） | 全部 |
+| P6 设计系统消费 | 令牌绑定（`01-design-tokens.md`）、动效三态（`02-motion.md`，由前置 1 提供）、状态矩阵（`09-state-matrix.md`）、组件清单（`10-component-inventory.md`，约 34 组件中新增/外观化约 15–20 个；逐组件登记） | 全部 |
 
 ## 验收标准
 
 - [ ] **AC1 Shell + 响应式**：四页 Tab 顺序与 17 快捷键与设计一致；三断点布局；z-order 正确。<<TODO>>
-- [ ] **AC2 Shelf**：网格/列表/筛选/空态/加载态/错误态；令牌绑定（`Nm.Color.*`/`Nm.Size.*`）。<<TODO>>
-- [ ] **AC3 Workbench**：Region 选择/Inspector/FilmStrip/批量栏 + **Draft 命令面接入**（复用 FEA-05-PORT-1 的 7 方法，含 typed error 映射到 UI 状态）。<<TODO>>
-- [ ] **AC4 Reader**：页导航/缩放/进度保存（读 FEA-04 的 `IReaderProgressSink`）；键盘/滚轮。<<TODO>>
-- [ ] **AC5 Settings**：C-03 §2.2 字段渲染/保存/校验/错误态。<<TODO>>
-- [ ] **AC6 可访问性/动效**：键盘可达（Tab 顺序）、A11y 名称、`motion.categories=off` 语义、reduce-motion 0ms 反馈。<<TODO>>
+- [ ] **AC2 Shelf**：网格/列表/筛选；**状态矩阵 `09-state-matrix.md` 的本页状态全部实现**（空书架/空筛选/加载/部分/错误/未就绪）；令牌绑定（`Nm.Color.*`/`Nm.Size.*`）。<<TODO>>
+- [ ] **AC3 Workbench**：Region 选择/Inspector/FilmStrip/批量栏 + **Draft 命令面接入**（FEA-05-PORT-1 的 7 方法）；**错误映射表冻结**（`FEA-05_DRAFT_WIRE_CONTRACT.md:41-63` 的 17 码 → `CoreOperationException.Category` → UI 状态：validation=行内提示、not_found=刷新/清选、conflict=重读提示、unavailable=可重试横幅、internal=错误页）；状态矩阵本页状态全部实现。<<TODO>>
+- [ ] **AC4 Reader**：页导航/缩放/进度保存（读 FEA-04 的 `IReaderProgressSink`）+ `07-page-reader.md §4` 交互（键盘/滚轮/双击缩放）；状态矩阵本页状态（载入/页失败/只读/运行中）。<<TODO>>
+- [ ] **AC5 Settings**：`08-page-settings.md:41-58` 冻结清单逐字渲染（frontendId/visualThemeId、motion.mode/motion.categories、corners/material、layout.*、followSystemAccent、schemaVersion、Provider/网络/备份/关于）+ 保存/校验/错误态；C-03 §2.2 字段名一致。<<TODO>>
+- [ ] **AC6 可访问性/动效**：键盘可达（Tab 顺序，`03-accessibility.md` 17 键）、A11y 名称、`motion.categories=off` 0ms 反馈、reduce/full 差异。<<TODO>>
 - [ ] **AC7 回归**：全量 sln 不退化（基线 949/0/57）+ App.Tests 新增用例。<<TODO>>
 - [ ] **AC8 证据**：`verification/FEA-06/**`（截图/日志）+ 证据表。<<TODO>>
 
@@ -79,12 +81,16 @@ allowed_paths:
 | W-2 | Draft 命令面接入方式 | 经 `IHostController`（FEA-05-PORT-1）而非直接 CoreClient；typed error（`DraftError` code/category）映射到 UI 状态 | FEA-05-PORT-1 交付 |
 | W-3 | 页面拆分 | 每页独立 View/ViewModel，Shell 只做导航与布局 | 设计 `04-layout-responsive.md` |
 | W-4 | 视觉实现 | 用 `NewManga.DesignSystem` 令牌 + `NewManga.ThemeEngine`（既有），不新建第二套设计系统 | AC6/AC7 |
+| W-5 | Fluent 激活/切换 | 前置 2 的双壳 selector（`frontendId`）；本卡只实现 Fluent 壳内四页 | FEA-06-scope-r1 P0-2 |
+| W-6 | 四页↔三空间↔左导航映射 | 按设计基线执行：顶栏「空间 1/2/3」（`04:13`），左导航随空间（书架空间=书架/回收站/导入 `05:21`）；四页与空间映射以设计为准，FEA-06 不新增第五页 | FEA-06-scope-r1 P1-5；design v1.0.0 FROZEN |
+| W-7 | 令牌生成归属 | G-1/G-1b/G-1c 由前置 1 生成，本卡只消费 | r1 P1-1 |
+| W-8 | 页面状态清单 | 以 `09-state-matrix.md` 为唯一状态清单，AC2–AC5 逐页覆盖 | r1 P1-2 |
 
 ## 测试要求
 
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
-| AC1–AC6 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests` + Avalonia.Headless | .NET | NOT_RUN | 待补 |
+| AC1–AC6 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests`（Avalonia.Headless；每页 ≥1 状态测试 + 冒烟） | .NET | NOT_RUN | 待补 |
 | AC7 | 全量 sln build/test（基线 949/0/57） | 全量 | NOT_RUN | 待补 |
 
 ## Canonical Evidence

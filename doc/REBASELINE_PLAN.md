@@ -14,10 +14,12 @@
 |FEA-00A-IMPL-1|FEA-00A-PREP-1|**done**（集成 `e0ba29eba`；delivery `007094517`；实现复核 r1 approved P0/P1=0；AC7b 限制登记）|
 |FEA-03|FEA-00A-IMPL-1、FEA-01-FREEZE-1|**done**（集成 `76d947923`；实现复核 r5 approved P0/P1=0；范围 v6 + C-13 v6 UNFREEZE approved；AC11b V19 组合 deferral）|
 |FEA-04|FEA-02-CORE、FEA-03|**done**（集成 `f4d8a32ec`；实现复核 r3 approved P0/P1=0；sln 931/0/60；AC11b 无）|
-|FEA-04b|FEA-04|**in_review**（Fluent 四页设计基线；写域 `doc/design/fluent-v1/`；独立复核 r1→r2）|
+|FEA-04b|FEA-01|**done**（设计基线 `fluent-v1.0.0` FROZEN；r5 approved；AC5 用户确认由 DSH 裁决替代）|
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
-|FEA-06|FEA-04b、FEA-05-PORT-1|**proposed**（Fluent UI 四页实现；设计基线 frozen v1.0.0；待范围复核）|
+|FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**proposed**（Fluent UI 四页；范围 r1 changes_requested，已拆前置）|
+|FEA-06-PREREQ-1|FEA-04b|**proposed**（C-03 外观持久化 + G-1/G-1b/G-1c 令牌；待复核）|
+|FEA-06-PREREQ-2|FEA-06-PREREQ-1|**proposed**（Fluent frontend 激活/V2 并存；待复核）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
