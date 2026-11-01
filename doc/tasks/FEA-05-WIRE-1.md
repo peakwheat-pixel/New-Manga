@@ -3,15 +3,15 @@ id: FEA-05-WIRE-1
 title: Draft 命令面 wire（Core 白名单 + 独立契约 + Python 协议测试）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_review
+status: ready
+approval: scope_review_r7_approved_2026-11-02
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
   - FEA-03
   - FEA-04
-base_commit: 25b69b974
+base_commit: be9265b34
 branch: null
 worktree: null
 integration_commit: null
@@ -33,7 +33,7 @@ allowed_paths:
   - doc/reviews/FEA-05-WIRE-1-*.md
 ---
 
-# FEA-05-WIRE-1：Draft 命令面 wire（v5，收窄至 Core 面）
+# FEA-05-WIRE-1：Draft 命令面 wire（范围冻结 v5.2，r7 approved）
 
 ## 来源与授权链
 
@@ -48,7 +48,7 @@ allowed_paths:
 | r1 | changes_requested（P0×3/P1×5） | 纳入契约载体 + Python 测试写域；去掉 C-07 端口面与 `drafts.close` |
 | r2 | changes_requested（P0=0/P1×5） | 独立契约文档 + §8 指针行 + CoreClient registry/parity + 写域修正 |
 | r3 | changes_requested（P0=0/P1×2） | 映射表按真实签名重写；W-4 错误/Token 传输冻结；契约文档必需内容与 §8 一致性 |
-| r4 | changes_requested（P0×1/P1×2） | **v5**：C081 响应改真实 `{region_id: region_revision_id}`；W-4 category 改 M2-C1 冻结词表；**收窄不接 CoreClient/registry**（Region 不变式与 FROZEN 契约不冲突），registry 归 FEA-05-PORT-1 |
+| r4 | changes_requested（P0×1/P1×2） | v5：C081 响应改真实 `{region_id: region_revision_id}`；W-4 category 改 M2-C1 冻结词表；**收窄不接 CoreClient/registry**（Region 不变式与 FROZEN 契约不冲突），registry 归 FEA-05-PORT-1 |
 
 ## 命令清册与真实签名映射（冻结，v4）
 
@@ -107,7 +107,7 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 | W-3 | 命令集合与命名 | **6 条下划线命令**（上表）；不含 `close`；session 结束归 session 层；`flush(trigger)` 不在本卡（见 W-7） | r1/r2/r3 复核；§8 解析器 |
 | W-4 | 错误语义与 Token 传输 | **冻结**：错误结构 = `code`/`message`/`category`/`retryable`/`details`；`DraftError` 的 14 个新 wire 码逐码映射为 **M2-C1 冻结词表** 的 `category`（`validation`/`not_found`/`conflict`/`unavailable`/`cancelled`/`internal`/`unknown`，**不用 `infra`**）+ `retryable`（bool，默认 false；仅 `unavailable`/`internal` 类为 true；`cause_code` 透传为 `details.causeCode`）；逐码表写入契约文档 §3；`EditToken` **整对象原样回传**（六字段），handler 不得拆分/重建；receipt 重放按 `draft_sequence` 键幂等 | `drafts.py`/`errors.py`；FEA-03 r5 |
 | W-5 | 契约文档归属与冻结流程 | 文档由本卡产出；DSH 复核后置 `FROZEN`（本卡交付 `PENDING`，合入 main 后升级）；§8 只追加指针行，不重跑生成器 | Region 契约先例 |
-| W-6 | `V11RAdditiveCommandNames` 语义与 Region 不变式 | **本卡不接 CoreClient/registry**——`RegionWriteCommandTests` 的不变式（追加集 == RegionWrite ∪ RegionRead，出自 FROZEN `V11R_REGION_WRITE_CONTRACT.md`）保持原样；drafts 命令的 registry 注册与 additive 集合扩展归 **FEA-05-PORT-1**（该卡需先走契约 UNFREEZE 把不变式升级为「各家族集合之并」） | r4 P0-01；避免改冻结契约 |
+| W-6 | `V11RAdditiveCommandNames` 语义与 Region 不变式 | **本卡不接 CoreClient/registry**——`RegionWriteCommandTests` 的不变式（追加集 == RegionWrite ∪ RegionRead，出自 FROZEN `V11R_REGION_WRITE_CONTRACT.md`）保持原样；drafts 命令的 registry 注册与 additive 集合扩展归 **FEA-05-PORT-1**（该卡需先走契约 UNFREEZE 把不变式升级为「各家族集合之并」；**尚未建卡**，DSH 待登记） | r4 P0-01；避免改冻结契约 |
 | W-7 | `flush(trigger)`/session 结束 | **不在本卡**：`patch_draft(schedule_flush=…)` 已存在；flush 触发点归 FEA-03 C-13 SC-D02 语义与 session 层，本卡只透传既有参数 | FEA-03 |
 
 ## 测试要求
@@ -132,3 +132,4 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 ## Closeout Record
 
 - 2026-11-02 / DSH：v1 → v2（r1）→ v3（r2）→ v4（r3）→ **v5（r4）**：映射表按 `drafts.py`/`domain/drafts/entities.py` 真实签名重写；W-4 冻结错误/Token 传输；契约文档头部与 §8 一致性要求；W-6/W-7 裁决登记。待 r4 复核。
+- 2026-11-02：范围复核 **r7 approved**（P0=0/P1=0/P2×9 接受遗留）；置 eady，交 Codex 实现（suggested_owner: codex）。
