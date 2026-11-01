@@ -72,7 +72,7 @@ C-02 覆盖 V11R 合同的 **§1.1 / §1.2 / §2.2 / §2.3 / §2.4 / §3 / §4 /
   |---|---|---|
   | **Fluent 材质与层次** | 仅 `builtin.fluent` 主题包与使用其令牌的 UI | 亚克力/Mica/阴影是 Fluent 视觉语言的核心；**取值必须来自 V-03 的 `Nm.Material.*`/`Nm.Elevation.*` 令牌**，不得裸值；`builtin.current-v2` **不得**使用 |
   | **Fluent 圆角** | 仅视觉主题 `builtin.fluent-dark`（及同 frontend 的其他 Fluent 视觉主题） | 冻结组 `Nm.Corner.None/Sm(2)/Md(3)` **不变**；Fluent 额外使用 `Nm.Corner.Fluent.Sm(4)/Md(6)/Lg(8)`（**新增组，随 V-03 登记**）；`border-radius > 3px` 的禁令**仅对 Current 主题包与 DS 原生控件模板继续有效** |
-- **审查判据**：① 任何 Fluent 视觉例外必须指向令牌（`{DynamicResource Nm.Material.*}` / `Nm.Elevation.*` / `Nm.Corner.*`），裸值仍判违规；② current-v2 下出现材质/阴影/圆角>3px → 判违规；③ 例外是否收敛到这两个主题包，由 L2/L3 审查按截图 + XAML 双证。
+- **审查判据**：① 任何 Fluent 视觉例外必须指向令牌（`{DynamicResource Nm.Material.*}` / `Nm.Elevation.*` / `Nm.Corner.*`），裸值仍判违规；② current-v2 下出现材质/阴影/圆角>3px → 判违规；③ 例外是否收敛到这两个主题包，由 L2/L3 审查按截图 + XAML 双证；④ **禁止提高全局 `ThemeCorners.MaxRadius`**（`ThemeModels.cs:206`）来"顺带放开" Fluent——现 `ThemeValidator.cs:223` 的校验依赖该共享上限；Fluent 必须走独立键组 + 限定校验路径，不得改共享上限。
 - **例外登记**：**本行即登记**（这是 U-04 的落点）。**数值时序**：4/6/8 与材质参数的具体取值由 FEA-04b 四页设计基线确认（方案 `:1032`），本修订单只冻结「键存在 + 仅 Fluent 生效」的结构。
 - **待用户裁决**：U-04 —— 是否批准这两行例外（推荐：批准，per-scheme 限定 + 令牌强制）。
 

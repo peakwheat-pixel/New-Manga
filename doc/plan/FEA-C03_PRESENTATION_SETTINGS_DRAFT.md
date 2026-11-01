@@ -37,7 +37,7 @@
 | `Appearance` | `appearance.mode` | **保留** |
 | `Contrast` | `appearance.contrast` | **保留** |
 | `LayoutProfile.Id/Navigation/Shelf/Density/Workbench/Reader` | `layout.*` 同名 | **保留**（结构不变） |
-| `ReducedMotion` | `motion.mode`（**三态**，见 §2.3） | **迁移**：`true` → `reduce`；`false` → `auto` |
+| `ReducedMotion` | `motion.mode`（**三态**，见 §2.3） | **迁移**：`true` → `reduce` + 三类全禁；`false` → **`full`**（旧 `false` = 移除覆盖层 = 完整动效，**不是 `auto`**——见 §2.3 等价性说明） |
 | `FollowSystemAccent` | `appearance.followSystemAccent` | **保留** |
 | （新增） | `material.acrylicStrength` / `material.micaEnabled` | **新增**（仅 Fluent 生效） |
 | （新增） | `corners.scale`（`sm/md/lg`） | **新增**（仅 Fluent 生效） |
@@ -52,7 +52,11 @@
   | `navigation` | 页面切换、Tab 切换 | `reduce` 下改为无动画切换 |
   | `feedback` | 按钮 hover、状态变化 | `reduce` 下保留颜色变化、去掉位移 |
   | `decorative` | 背景渐变移动、粒子 | `reduce` 下**完全禁用** |
-- **兼容**：旧 `ReducedMotion=true` 映射为 `motion.mode=reduce` 且三类全禁（等价旧行为）。
+- **兼容（迁移等价性，逐分支）**：
+  - 旧 `true` → `motion.mode=reduce` **且三类全禁**（等价旧行为：`Motion.Reduced.axaml` 把所有时长置 0、`Nm.Motion.Enabled=false`）；
+  - 旧 `false` → **`motion.mode=full`**（等价旧行为：`DesignSystemThemeManager.SetReducedMotion(false)` 移除覆盖层、恢复完整动效）；
+  - `auto`（跟随系统）是**新选项**，只由用户显式选择或新安装默认值产生，**不从旧布尔推导**。
+- **系统优先级（跨文档分歧，须裁决）**：方案 r4 `:866` 写「系统 reduced motion **覆盖所有类别**」；本草案原判据写「`full` 下不受系统设置影响」。两者不能同时成立。本草案取**用户显式优先**（`auto` 跟随系统 / `full` 显式覆盖 / `reduce` 强制减弱），理由：OS 设置是默认而非强制，应用内显式选择应被尊重；若要求系统优先，改 `full` 语义一行即可（见 U-05c）。
 - **适用域**：`motion.mode=auto` 时读取系统辅助功能设置——**Avalonia 11.3.22 无动画开关 API**，实现须走平台层：Windows 读 `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` 或 WinRT `UISettings.AnimationsEnabled`；`full`/`reduce` 为显式覆盖。**失败降级**：平台读取失败按 `full` 处理并记 warning；读取封装为 `IMotionPreferenceSource` 接口，便于单测注入失败分支。
 
 ## 3. 冻结前置与判据
@@ -62,8 +66,8 @@
 | 写者唯一性 | `presentation-settings.json` 只能由 **`NewManga.Appearance` 的 `AppearanceCoordinator`** 写；ThemeEngine 的 `ThemeSettingsStore.SaveAsync` 在迁移后**保留一个 release 周期的兼容写**（写旧文件 + 记 warning），**不抛 `NotSupportedException`**——因为现有唯一调用者 `ThemeService.TrySave`（`Service/ThemeService.cs:647-661`）在 `:654` 会 catch 并吞掉异常，静默失效比兼容写更糟；兼容期结束后由 Appearance 接管全部保存路径 |
 | 迁移幂等 | 旧文件存在 → 首次读时迁移 → 写新文件 → **兼容期内旧文件仍可写**（兼容写路径）→ 兼容期结束后转只读；重复启动不再把旧文件当权威源 |
 | 字段完整性 | 新模型覆盖 §2.2 全部行；缺字段 → 回退默认并记录 warning |
-| 三态可验证 | 单测：①`reduce` 下 `decorative` 类动效时长为 0、`feedback` 保留颜色变化但无位移；②`full` 下不受系统设置影响；③`auto` 下按注入的假平台设置切换；④`navigation` 类在 `reduce` 下无动画切换；⑤旧 `ReducedMotion=true` 迁移后三类全禁（等价旧行为） |
-| `ThemeService` 迁移 | `Service/ThemeService.cs:647-661` 的 `TrySave` 改为调 `AppearanceCoordinator`；`ThemeSettingsStore.SaveAsync` 的异常只作**防复活护栏**（如果仍有调用方，必须对用户可见——`ApplyAsync` 不得返回成功）；过渡期失败必须提示而非静默降级 |
+| 三态可验证 | 单测：①`reduce` 下 `decorative` 类动效时长为 0、`feedback` 保留颜色变化但无位移；②`full` 下不跟随系统（显式覆盖，见 U-05c 的分歧声明）；③`auto` 下按注入的假平台设置切换；④`navigation` 类在 `reduce` 下无动画切换；⑤旧 `ReducedMotion=true` 迁移后三类全禁（等价旧行为） |
+| `ThemeService` 迁移 | **顺序铁律**：旧文件转只读**必须**在保存路径完全接管之后（否则 `TrySave` 的异常会被 `:654` 吞掉 → 界面已应用但设置没保存）；`Service/ThemeService.cs:647-661` 的 `TrySave` 改为调 `AppearanceCoordinator`；`ThemeSettingsStore.SaveAsync` 的异常只作**防复活护栏**（如果仍有调用方，必须对用户可见——`ApplyAsync` 不得返回成功）；过渡期失败必须提示而非静默降级 |
 | 与 C-02 一致 | `theme.visualThemeId` ∈ {`newmanga-default`, `builtin.fluent-dark`}；`theme.frontendId` ∈ {`builtin.current-v2`, `builtin.fluent`}；Current 视觉主题下 material/corners 字段被忽略（不报错） |
 
 ## 4. 冻结条件
@@ -79,6 +83,7 @@
 |---|---|---|---|
 | **U-05a** | 首阶段是否纳入动效三态与分类（而不是只有 `ReducedMotion` 布尔）？ | **是**（三态 + 三类，等价旧行为的迁移路径已给出） | 若否，Fluent 的动效分级无法表达 |
 | U-05b | 旧 `theme-settings.json` 是否在迁移后删除？ | **否**（转只读保留） | 删除会丢回退输入；保留成本极低 |
+| **U-05c** | 系统 reduced-motion 与用户显式 `full` 的优先级（本草案 vs 方案 r4 `:866` 冲突） | **用户显式优先**（`auto` 跟随 / `full` 覆盖 / `reduce` 强制） | 若改系统优先，`full` 语义与判据②需同步改 |
 
 ## 6. 与现役/冻结契约的关系
 
@@ -94,3 +99,4 @@
 | 2026-11-01 | v2：补正式冻结条件（§4 四条，含 C-02 先冻结）；字段表补双 id 体系；全文 id 词汇与 C-02 V-07 对齐 | DSH |
 | 2026-11-01 | v3：处置 FEA-GOV-4-c03 r1（P1×2）——写者上移 `NewManga.Appearance` 的 `AppearanceCoordinator`、`IThemePersistence` 为适配面；`SaveAsync` 改兼容写不抛异常；P2×4（9 行/`theme.visualThemeId`/平台 API/行号） | DSH |
 | 2026-11-01 | v4：补 `ThemeService` 迁移判据 + 三态判据 ①–⑤ + 兼容期时序（K-1）+ 平台读取失败降级（K-3） | DSH |
+| 2026-11-01 | **v5（Codex 独立意见处置）**：①迁移矩阵 `false → auto` 改为 **`false → full`**（代码事实：旧 `false` = 移除覆盖层 = 完整动效；`auto` 是新选项不从旧布尔推导）②新增「系统优先级」分歧声明 + **U-05c** 裁决项（本草案 vs 方案 r4 `:866`）③判据②同步改 | DSH |
