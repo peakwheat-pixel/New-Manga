@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 278.
+Rows: 284.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -152,6 +152,12 @@ Rows: 278.
 | global-derived | `(derived)` | `Nm.Padding.Snug` | Thickness | `4` |
 | global-derived | `(derived)` | `Nm.Icon.Stroke` | Double | `1.25` |
 | global-derived | `(derived)` | `Nm.Icon.SizeSmall` | Double | `16` |
+| global-derived | `(derived)` | `Nm.Focus.Ring.Width` | Double | `2` |
+| global-derived | `(derived)` | `Nm.Focus.Ring.Offset` | Double | `1` |
+| global-derived | `(derived)` | `Nm.Focus.Ring.Color` | Brush | `rgba(217,160,75,0.45)` |
+| global-derived | `(derived)` | `Nm.Corner.Fluent.Sm` | CornerRadius | `4` |
+| global-derived | `(derived)` | `Nm.Corner.Fluent.Md` | CornerRadius | `6` |
+| global-derived | `(derived)` | `Nm.Corner.Fluent.Lg` | CornerRadius | `8` |
 | global-derived | `(derived)` | `Nm.Motion.Duration.Slow` | TimeSpan | `220ms` |
 | global-derived | `(derived)` | `Nm.Motion.Enabled` | Boolean | `true` |
 | global-derived | `(derived)` | `Nm.LineHeight.Display` | Double | `1.25` |

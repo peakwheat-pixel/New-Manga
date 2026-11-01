@@ -24,3 +24,10 @@
 
 - 全量 sln **961 passed / 0 failed / 57 skipped**（+12 Appearance）；
 - 证据：uild.log、sln-test.log、ppearance-tests.log。
+
+## AC3 进展（部分）
+
+- TokenMap.DerivedGlobals 新增 **6 键**：Nm.Focus.Ring.Width(2)/Offset(1)/Color(rgba accent ring)、Nm.Corner.Fluent.Sm/Md/Lg(4/6/8)。
+- Tokens.Global.axaml/NmKeys.g.cs/TokenMap.md 经 TokenGen 重新生成；TokenGen -- --check **up to date**。
+- 未完成：Nm.Elevation.*（需新增 TokenValueKind.BoxShadows + Writer 分支——本轮尝试后回滚，留待专门实现）、Nm.Material.*（主题层机制）。
+- 全量 sln **961/0/57**（无回归）。

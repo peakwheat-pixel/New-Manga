@@ -180,6 +180,20 @@ public static class TokenMap
             "contract §2.2 + DESIGN_SYSTEM §5: icon stroke width 1.25px"),
         new("Nm.Icon.SizeSmall", TokenValueKind.Double, "16",
             "DESIGN_SYSTEM §5: dense-area icon size 16px"),
+        // FEA-06-PREREQ-1 (G-1c): C-02 V-03 focus ring keys (global, both frontends).
+        new("Nm.Focus.Ring.Width", TokenValueKind.Double, "2",
+            "C-02 V-03: focus ring width 2px (design 03 §3)"),
+        new("Nm.Focus.Ring.Offset", TokenValueKind.Double, "1",
+            "C-02 V-03: focus ring offset 1px"),
+        new("Nm.Focus.Ring.Color", TokenValueKind.Brush, "rgba(217,160,75,0.45)",
+            "C-02 V-03: focus ring color = accent.primary"),
+        // FEA-06-PREREQ-1 (G-1): Fluent corner scale (Fluent frontend only; values are frozen).
+        new("Nm.Corner.Fluent.Sm", TokenValueKind.CornerRadius, "4",
+            "design 01 G-1: Fluent small corner 4px"),
+        new("Nm.Corner.Fluent.Md", TokenValueKind.CornerRadius, "6",
+            "design 01 G-1: Fluent medium corner 6px"),
+        new("Nm.Corner.Fluent.Lg", TokenValueKind.CornerRadius, "8",
+            "design 01 G-1: Fluent large corner 8px"),
         // R-15 extension: a slow exit/reveal duration (220ms) in addition to fast/normal.
         new("Nm.Motion.Duration.Slow", TokenValueKind.TimeSpan, "220ms",
             "R-15 extension: slow duration for 200-260ms reveal/exit transitions"),        new("Nm.Motion.Enabled", TokenValueKind.Boolean, "true",

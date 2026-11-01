@@ -52,9 +52,15 @@ public static class NmKeys
         "Nm.Color.Text.Primary",
         "Nm.Color.Text.Secondary",
         "Nm.Color.Text.Tertiary",
+        "Nm.Corner.Fluent.Lg",
+        "Nm.Corner.Fluent.Md",
+        "Nm.Corner.Fluent.Sm",
         "Nm.Corner.Md",
         "Nm.Corner.None",
         "Nm.Corner.Sm",
+        "Nm.Focus.Ring.Color",
+        "Nm.Focus.Ring.Offset",
+        "Nm.Focus.Ring.Width",
         "Nm.FontFamily.Data",
         "Nm.FontFamily.Display",
         "Nm.FontFamily.Ui",
@@ -270,12 +276,36 @@ public static class NmKeys
 
     public static class Corner
     {
+
+        public static class Fluent
+        {
+            /// <summary>Nm.Corner.Fluent.Lg</summary>
+            public const string Lg = "Nm.Corner.Fluent.Lg";
+            /// <summary>Nm.Corner.Fluent.Md</summary>
+            public const string Md = "Nm.Corner.Fluent.Md";
+            /// <summary>Nm.Corner.Fluent.Sm</summary>
+            public const string Sm = "Nm.Corner.Fluent.Sm";
+        }
         /// <summary>Nm.Corner.Md</summary>
         public const string Md = "Nm.Corner.Md";
         /// <summary>Nm.Corner.None</summary>
         public const string None = "Nm.Corner.None";
         /// <summary>Nm.Corner.Sm</summary>
         public const string Sm = "Nm.Corner.Sm";
+    }
+
+    public static class Focus
+    {
+
+        public static class Ring
+        {
+            /// <summary>Nm.Focus.Ring.Color</summary>
+            public const string Color = "Nm.Focus.Ring.Color";
+            /// <summary>Nm.Focus.Ring.Offset</summary>
+            public const string Offset = "Nm.Focus.Ring.Offset";
+            /// <summary>Nm.Focus.Ring.Width</summary>
+            public const string Width = "Nm.Focus.Ring.Width";
+        }
     }
 
     public static class FontFamily
