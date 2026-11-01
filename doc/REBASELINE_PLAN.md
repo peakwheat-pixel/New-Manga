@@ -13,7 +13,7 @@
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
 |FEA-00A-IMPL-1|FEA-00A-PREP-1|**done**（集成 `e0ba29eba`；delivery `007094517`；实现复核 r1 approved P0/P1=0；AC7b 限制登记）|
 |FEA-03|FEA-00A-IMPL-1、FEA-01-FREEZE-1|**done**（集成 `76d947923`；实现复核 r5 approved P0/P1=0；范围 v6 + C-13 v6 UNFREEZE approved；AC11b V19 组合 deferral）|
-|FEA-04|FEA-02-CORE、FEA-03|**proposed**（Current 适配；范围冻结 v3；待独立复核 r3 → ready；owner=ZCode）|
+|FEA-04|FEA-02-CORE、FEA-03|**done**（集成 `f4d8a32ec`；实现复核 r3 approved P0/P1=0；sln 931/0/60；AC11b 无）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
@@ -25,8 +25,8 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：FEA-04
-（范围冻结 v3 + r3 P0/P1 处置；`base_commit` `7a9135260`；owner=ZCode → ZCode CLI 不可用，DSH 指派 Codex 实现）
+READY 节点：无
+
 
 当前 DAG：FEA-04（**proposed**，Current 适配）、FEA-03（**done**，集成 `76d947923`）、FEA-00A-IMPL-1（**done**，集成 `e0ba29eba`）、FEA-00A-PREP-1（**done**）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
 

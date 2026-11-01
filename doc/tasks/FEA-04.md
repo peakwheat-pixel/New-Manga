@@ -3,7 +3,7 @@ id: FEA-04
 title: FEA-04 Current 适配（Frontends.Current + V2 state/route/VM adapter；保留旧入口）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: dsh_ruling_2026-11-02_GOAL_FEA04_Q16_Q20
 suggested_owner: zcode
 owner: zcode
@@ -12,12 +12,12 @@ depends_on:
   - FEA-02-CORE
   - FEA-03
 base_commit: 7a9135260
-branch: null
-worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+branch: feat/fea-04
+worktree: G:/CODEX/New Manga.workspace/FEA-04
+integration_commit: f4d8a32ec
+delivery_head: 43bce62e4
+canonical_evidence_status: complete
+resource_closeout_status: complete
 review_appointment: "doc/reviews/FEA-04-scope-r1.md、r2（reviewer fea04-scope-reviewer，DSH fresh 独立上下文派发；Review 由该席位写，不在本卡 allowed_paths）"
 evidence_dir: verification/FEA-04
 allowed_paths:
@@ -119,7 +119,16 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-BASELINE | AC2 | `verification/FEA-04/baseline-comparison.md` | 43bce62e4 | fb9b1d94a6466b972dda6cb2f5d36ac41f8f50267e6970a2c0e0caca715afa07 | CANONICAL |
+| E-SLN | AC1/AC2/AC7 | `verification/FEA-04/sln-test-results.md` | 43bce62e4 | 22b485256ca3a95f118b88ea6c80f3099e1137a248f49296ea0f5aa7892c4a0f | CANONICAL |
+| E-RAW | AC7 | `verification/FEA-04/build-test-raw.log` | 43bce62e4 | e94d9d2c3eb99704d5364824aadacdd8b06b7a6c0a83f441b150d53f58984eaf | CANONICAL |
+| E-LIFE | AC6 | `verification/FEA-04/lifecycle-assertions.md` | 43bce62e4 | e4a172115c687b8fd03d6079d3a38595f3362c0cf50a178e65c1bbcbdeb2ae92 | CANONICAL |
+| E-MATRIX | AC5 | `verification/FEA-04/preflight-blocker-matrix.md` | 43bce62e4 | f67f9c7a2a0262ee2b03656cf36b0f22a946ed0b233bc91e9e41a28e23bb06e1 | CANONICAL |
+| E-HANDOFF | AC4/AC7 | `doc/handoffs/FEA-04-68c72ba57.md` | 43bce62e4 | 805b39080096a8be5fb89b4cd392203b94b63d3ad1214b8fbdaa65fda1052061 | CANONICAL |
+| E-REVIEW | AC8 | `doc/reviews/FEA-04-r3.md` | f4d8a32ec | 47602000a4b26cd7a2eaf71517101b064b469b62a8e9e997e4a4f92b796fd9d7 | CANONICAL |
+| E-PINS | 治理 | `verification/FEA-04/verify-pins.log` | 43bce62e4 | 70527bd2b72ba75eb142961e9ee8194297a24ecae1acce1677b907a5ffec932b | SOURCE_PIN |
+| E-DIFFCHK | 治理 | `verification/FEA-04/git-diff-check.log` | 43bce62e4 | 65c3001346de5863040830601e9295050dabb717d434cedc86344ae4c6fc960e | SOURCE_PIN |
+| E-SCOPE | AC8 | `doc/reviews/FEA-04-scope-r1/r2/r3.md` | f4d8a32ec | `-` | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -128,7 +137,7 @@ allowed_paths:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-task | `doc/tasks/FEA-04.md` | NOT_APPLICABLE | - | - | 范围冻结；未访问用户数据 |
-| build/temp（未来） | - | PENDING | ..\New Manga.workspace\ | - | 实现开始前补齐 |
+| worktree/branch | G:/CODEX/New Manga.workspace/FEA-04 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-04 | 分支 feat/fea-04（delivery 43bce62e4，已合并 f4d8a32ec） | 已集成；worktree 保留，未清理/prune |
 
 ## Closeout Record
 
@@ -141,3 +150,5 @@ eady**；R3-01 的「Q-20 已登记 + approval 已更新」即本条。
 - 2026-11-02：Codex 实现 WIP 提交 `160bd0a4d`（分支 `feat/fea-04`，未合并）：Codex 交付 Frontends/Route/S1–S6/测试/证据；DSH 修复编译错误。**行为基线未通过**（App.Tests 23 failed / 389 passed）→ 不按 done 收口，卡维持 `ready` 待返修与独立实现复核。
 - 2026-11-02：Codex 在 `G:/CODEX/New Manga.workspace/FEA-04`（`feat/fea-04`，base `7a9135260`，delivery HEAD `68c72ba57`）完成实现草稿并交接；Handoff `doc/handoffs/FEA-04-68c72ba57.md`；证据 `verification/FEA-04/**`。
 - 2026-11-02：**DSH 返修完成**（`43bce62e4`）：修复编译、恢复 Host 投影/`_projection`/`RunStatusMonitor`/intent key 语义、补 IMPL-02 回归测试；冻结命令 `dotnet build` EXIT=0、`dotnet test NewManga.sln` → **931 passed / 0 failed / 60 skipped**（App 413/420）；实现复核 r1 `changes_requested`（P1×4）→ r2（P1×2）→ **r3 `approved`（P0/P1=0，P2×7 接受遗留）**；`git diff --check` rc=0；`verify_pins` 15/15。
+
+- 2026-11-02：独立实现复核 r1 changes_requested（P0=0/P1×4）→ r2（P1×2）→ **r3 approved（P0/P1=0，P2×7 接受遗留）**；集成 `f4d8a32ec`；`dotnet build` EXIT=0、`dotnet test NewManga.sln` 931/0/60（App 413/420）；`git diff --check` rc=0；`verify_pins` 15/15。
