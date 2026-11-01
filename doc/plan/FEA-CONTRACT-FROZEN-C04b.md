@@ -63,6 +63,6 @@
 
 按 [关闭裁定 §4](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 的 Errata 表，本记录的以下**冻结时状态描述**已被取代，原文保留不改：
 
-- §3 第 3 条「**下游**：C-09（删除/备份/迁移）仍 blocked —— 其条件②「两 Gate 关闭」**不满足**（Gate 保持 OPEN）」：该句为**冻结当时**（2026-11-01 早段）状态；此后走 [D07 解环](FEA-D07-UNBLOCK.md) 与 [C-09 v5 冻结](FEA-CONTRACT-FROZEN-C09.md)，两 Gate 于 2026-11-01 **CLOSED**。
+- §3 第 3 条「**下游**：C-09（删除/备份/迁移）仍 blocked —— 其条件②「两 Gate 关闭」**不满足**（Gate 保持 OPEN）」：该句为**冻结当时**（2026-11-01 早段）状态；此后走 [D07 解环](../tasks/FEA-D07-UNBLOCK.md) 与 [C-09 v5 冻结](FEA-CONTRACT-FROZEN-C09.md)，两 Gate 于 2026-11-01 **CLOSED**。
 - §4「**不构成** Gate 关闭（`G-DELETE-CONTRACT` / `G-CONTRACT` 均**保持 OPEN**）」：同上，为冻结时状态；现行两 Gate 均 **CLOSED**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）。
 - 其余内容（§1 冻结字节 pin、§1B、§2 条件核验、§4A L-1、§5 变更记录）**不受本 Errata 影响**；C-04b 草案字节未改（pin `694ce5bc…`）。

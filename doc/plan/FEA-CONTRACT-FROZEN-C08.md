@@ -94,8 +94,8 @@
 
 ## 8. Errata 注记（2026-11-01 追加；**原文保留**）
 
-按 [关闭裁定 §4](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 的 Errata 表（L-3）：本记录的旧「D07 缺多项」口径**已无残留**——§4 已在 C-08 v7 冻结时更新为「D06 六项声明全覆盖」与「关闭须经 AC8+AC9 裁定」。本次仅追加确认，不改原文：
+按 [关闭裁定 §4](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md) 的 Errata 表（L-3）：**经全文核对，本记录原本就不含「D07 缺多项」表述**（除本节外全文 0 命中），因此无需更正原文；裁定 §4 括注所称「以其 §5 历史段落为准」在本记录中**指向落空**——§5 只有 L-1（preparedDigest 逐字段 wire 编码）与 L-2（防抖/过期建议值）两条实现限制，§7 变更记录亦无 D07 表述。该括注的不精确**按用户指令不在 Errata 中改裁定正文**，仅在此留痕。本次只追加确认，不改原文：
 
-- §4「Gate 仍不自动关闭…须经 AC8 完整覆盖检查 + AC9 裁定」**已履行**：AC8（`FEA-D04D07-COVERAGE-r3` `approved`）与 AC9（`GATE-DELETE-CONTRACT-CLOSURE-r3` `approved`）均完成，两 Gate 于 2026-11-01 **CLOSED**。
-- §6「不构成 Gate 关闭」为**冻结时**状态描述；现行两 Gate 均 **CLOSED**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）。
+- §4（`:55`）「Gate 仍不自动关闭…须经 AC8 完整覆盖检查 + AC9 裁定」**已履行**：AC8（`FEA-D04D07-COVERAGE-r3` `approved`）与 AC9（`GATE-DELETE-CONTRACT-CLOSURE-r3` `approved`）均完成，两 Gate 于 2026-11-01 **CLOSED**。
+- §6（`:65`）「不构成 Gate 关闭」为**冻结时**状态描述；现行两 Gate 均 **CLOSED**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）。
 - C-08 草案字节未改（pin `453f993c…`，`verify_pins.ps1` 13/13）。

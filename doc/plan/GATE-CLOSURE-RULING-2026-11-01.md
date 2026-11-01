@@ -144,7 +144,7 @@ C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错�
 
 | 位置 | 原文（历史快照） | 现行状态（2026-11-01 起） |
 |---|---|---|
-| `:63` | 「**C-09 不会提前解锁**——C-09 条件②「两 Gate 关闭」在两个 Gate 都 OPEN 时不满足」 | C-09 已**解环并冻结 v5**：冻结条件②改为只要求 `G-CONTRACT` 关闭（见 [D07 解环](FEA-D07-UNBLOCK.md)），随后两 Gate 于 2026-11-01 **全部 CLOSED** |
+| `:63` | 「**C-09 不会提前解锁**——C-09 条件②「两 Gate 关闭」在两个 Gate 都 OPEN 时不满足」 | C-09 已**解环并冻结 v5**：冻结条件②改为只要求 `G-CONTRACT` 关闭（见 [D07 解环](../tasks/FEA-D07-UNBLOCK.md)），随后两 Gate 于 2026-11-01 **全部 CLOSED** |
 | `:111` | 「C-09 / **不变**（仍等两 Gate 真关闭） / 仍 blocked」 | C-09 **已 FROZEN（v5）**（[冻结记录](FEA-CONTRACT-FROZEN-C09.md)，pin `dc51226b…`）；`G-DELETE-CONTRACT` **CLOSED（2026-11-01）**（[关闭裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)） |
 | §3 R-1′（`:51`–`:66`）、§4 `:112` | 「Gate 保持 OPEN」「D04/D06 未冻」 | 均为**当时裁定快照**；D04→C-13、D05→C-06+C-14+C-01b、D06→C-08 v7、D07→C-09 v5+C-01b+C-04b 已全部冻结承载，两 Gate **CLOSED** |
 
