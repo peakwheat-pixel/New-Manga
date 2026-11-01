@@ -62,6 +62,10 @@ class TargetCatalog(Protocol):
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
         persist: Callable[[], None] | None = None,
+        run_id: str | None = None,
+        step_run_id: str | None = None,
+        pause_requested: bool = False,
+        cancel_requested: bool = False,
     ) -> CatalogCommit: ...
 
 
@@ -199,7 +203,12 @@ class InMemoryTargetCatalog:
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
         persist: Callable[[], None] | None = None,
+        run_id: str | None = None,
+        step_run_id: str | None = None,
+        pause_requested: bool = False,
+        cancel_requested: bool = False,
     ) -> CatalogCommit:
+        del run_id, step_run_id
         try:
             current = self.current(target_id)
         except PipelineError as error:
@@ -208,6 +217,10 @@ class InMemoryTargetCatalog:
             return CatalogCommit("input_revision_changed", "current Revision changed")
         if current.lock != expected_lock:
             return CatalogCommit("lock_changed", "current Lock changed")
+        if cancel_requested:
+            return CatalogCommit("cancelled", "run cancellation requested before seam commit")
+        if pause_requested:
+            return CatalogCommit("paused", "run pause requested before seam commit")
 
         if current.target_type is TargetType.PAGE:
             updated = replace(

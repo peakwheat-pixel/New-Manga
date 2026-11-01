@@ -1,0 +1,33 @@
+# Governance checks and pinned-contract byte analysis
+
+## Official scripts
+
+- Command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+- Exit: 1; result: FAIL (15/15 reported mismatches).
+- Raw output: governance-script-results.json.
+- Command: pwsh -NoProfile -File tools/governance/check.ps1
+- Exit: 0; result: PASS (2 warnings).
+
+## Cause evidence
+
+Git configuration: file:C:/Program Files/Git/etc/gitconfig	true. No text/eol attribute is set for the frozen contract files. The current worktree bytes have CRLF endings for all 15 pinned files. The official script hashes raw physical bytes, so it reports every record as a mismatch. An independent read-only SHA-256 calculation replacing CRLF with LF matches each recorded pin exactly (15/15). This confirms the checked-out text content matches the pins after line-ending normalization; it does **not** convert the official script run into a PASS. No frozen contract or pin record was changed.
+
+| Pin | Recorded SHA prefix | Worktree raw SHA prefix | CRLF→LF SHA prefix | CRLF | Normalized result |
+|---|---|---|---|---|---|
+| C01b | 3c9f5af7d74f | 41cd5073f945 | 3c9f5af7d74f | yes | match |
+| C02 | bb365ca891a7 | cf553722a1a8 | bb365ca891a7 | yes | match |
+| C03 | b77e7968a00b | c57535ca8fc9 | b77e7968a00b | yes | match |
+| C04b | 694ce5bc8c8b | 250b8e879a02 | 694ce5bc8c8b | yes | match |
+| C05 | b34db8876879 | 8f6e87505b0a | b34db8876879 | yes | match |
+| C06 | b798dd8a9b38 | 1b884feb0f20 | b798dd8a9b38 | yes | match |
+| C07 | 17c8f7016a36 | bac7a2bf5444 | 17c8f7016a36 | yes | match |
+| C08 | 453f993c1a16 | 7852c318605c | 453f993c1a16 | yes | match |
+| C11 | 44f4273f7ad1 | 8c37d15c672c | 44f4273f7ad1 | yes | match |
+| C12 | f49835860143 | f2bbef02acff | f49835860143 | yes | match |
+| C13 | d2cb8de4dd79 | 820cfe368320 | d2cb8de4dd79 | yes | match |
+| C14 | 05056cbf65f9 | bd5e5dd5c5d9 | 05056cbf65f9 | yes | match |
+| C09 | dc51226b336c | 3782fc4657f5 | dc51226b336c | yes | match |
+| C10 | ec8fd862f95f | ba27fd4fa5b5 | ec8fd862f95f | yes | match |
+| FEA01 | 0370c18932b1 | a337c3bd2e30 | 0370c18932b1 | yes | match |
+
+The two governance-check warnings were: Task contains 11 pending AC states; STATUS reached its 80% size warning (3165 bytes / 31 lines at this run). The PowerShell output encoding rendered the Chinese warning text as replacement characters in the captured JSON; exit code and PASS status are intact.

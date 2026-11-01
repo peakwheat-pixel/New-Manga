@@ -943,28 +943,12 @@ class ProductionHandlers:
     def _commit_artifacts(
         self, unit: PlanUnit, prepared: Mapping[str, PreparedArtifact]
     ) -> tuple[dict[str, str], dict[str, StageState]]:
-        """Adopt prepared artifact revisions for a Region-scoped step.
-
-        Artifact-writing steps (segment/mask_refine/inpaint) are always
-        Region-scoped here: the planner expands pages into Region units
-        (D06 §48), and a Region-less page has no valid OCR stage, so its
-        artifact steps are planned ``BLOCKED`` before any handler runs. A
-        Region target's ``StepResult`` may only carry ``{"region": ...}``, so
-        the page-level Mask/Clean pointer is compare-and-set here with the same
-        optimistic guard the pipeline seam would apply (AC-INPAINT-002).
-        """
-        if not unit.region_id:
-            raise ProviderInputError(
-                f"step {unit.step_type!r} requires a Region target",
-                stage=unit.step_type,
-            )
-        for artifact in prepared.values():
-            self.deps.artifacts.adopt_current(
-                artifact_id=artifact.artifact_id,
-                revision_id=artifact.revision_id,
-                expected_current_revision_id=artifact.previous_revision_id,
-            )
-        return {}, {unit.step_type: StageState.COMPLETED}
+        """Return staged artifact tokens for the pipeline commit seam."""
+        updates = {
+            artifact_type: artifact.revision_id
+            for artifact_type, artifact in prepared.items()
+        }
+        return updates, {unit.step_type: StageState.COMPLETED}
 
     def _upstream_frame(
         self, page_id: str, clean_artifact_id: str | None, clean_revision_id: str | None

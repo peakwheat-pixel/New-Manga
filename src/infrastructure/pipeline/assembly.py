@@ -13,6 +13,8 @@ from infrastructure.sqlite.pipeline import (
     SqliteTargetCatalog,
 )
 
+from ports.repositories.storage import ManagedFileStoragePort
+
 from .executor import ProductionStepExecutor, StepHandler
 
 
@@ -26,6 +28,7 @@ def build_production_pipeline(
     context_policy: Mapping[str, Any] | None = None,
     limits: ResourceLimits | None = None,
     clean_probe: Callable[[str], bool] | None = None,
+    storage: ManagedFileStoragePort | None = None,
 ) -> PipelineService:
     """Build a production service with no InMemory/Deterministic defaults.
 
@@ -34,7 +37,7 @@ def build_production_pipeline(
     byte-for-byte.
     """
     return PipelineService(
-        SqliteTargetCatalog(conn),
+        SqliteTargetCatalog(conn, storage=storage),
         store=SqlitePipelineStore(conn),
         snapshots=SqliteSnapshotProvider(
             conn,

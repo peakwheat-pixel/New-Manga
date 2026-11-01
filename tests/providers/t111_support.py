@@ -254,6 +254,7 @@ def run_seam_case(provider, work_root: Path, sample_name: str) -> dict:
         conn,
         handlers=handlers.as_mapping(),
         settings={"ocr": {"script": "japanese"}},
+        storage=storage,
     )
 
     managed_files = [p for p in (root / "managed").rglob("*") if p.is_file()]

@@ -1,0 +1,54 @@
+Shell: PowerShell (pwsh -NoProfile -Command)
+Per-file AC8 + core assembly impact reruns.
+Command per file: uv run --no-project --cache-dir verification/FEA-00A-IMPL-1/.uv-cache --with pytest==9.1.1 --with pillow==12.3.0 --with pypdfium2==5.13.0 --with mobi==0.4.1 --with numpy python -m pytest -q <file>
+EXIT: 0
+7.6.8
+G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmpUQazWr\Scripts\python.exe
+FILE: tests/core/test_bootstrap.py
+.......................                                                  [100%]
+23 passed in 6.03s
+FILE EXIT: 0
+FILE: tests/core/test_page_catalog_modes.py
+...                                                                      [100%]
+3 passed in 0.88s
+FILE EXIT: 0
+FILE: tests/pipeline/test_regionless_rebinding.py
+........................                                                 [100%]
+24 passed in 1.28s
+FILE EXIT: 0
+FILE: tests/providers/test_detect_handler.py
+........                                                                 [100%]
+8 passed in 0.68s
+FILE EXIT: 0
+FILE: tests/providers/test_full_chain.py
+....                                                                     [100%]
+4 passed in 2.64s
+FILE EXIT: 0
+FILE: tests/providers/test_handlers_pipeline.py
+........................                                                 [100%]
+24 passed in 3.38s
+FILE EXIT: 0
+FILE: tests/providers/test_retype_redetect_persistence.py
+.                                                                        [100%]
+1 passed in 0.21s
+FILE EXIT: 0
+FILE: tests/core/test_core_assembly.py
+........                                                                 [100%]
+8 passed in 1.02s
+FILE EXIT: 0
+FILE: tests/core/test_core_detect.py
+........................................                                 [100%]
+40 passed in 2.45s
+FILE EXIT: 0
+FILE: tests/core/test_sfx_assembly.py
+...................                                                      [100%]
+19 passed in 0.69s
+FILE EXIT: 0
+FILE: tests/core/test_sfx_policy_settings.py
+...................                                                      [100%]
+19 passed in 0.48s
+FILE EXIT: 0
+FILE: tests/pipeline/test_pipeline_production_seam.py
+.......                                                                  [100%]
+7 passed in 0.86s
+FILE EXIT: 0

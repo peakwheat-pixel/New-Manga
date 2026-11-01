@@ -1,0 +1,9 @@
+Shell: PowerShell (pwsh -NoProfile -Command)
+Invocation: uv run --no-project --cache-dir verification/FEA-00A-IMPL-1/.uv-cache --with pytest==9.1.1 --with pillow==12.3.0 --with pypdfium2==5.13.0 --with mobi==0.4.1 --with numpy python -m pytest -q tests/core/test_fea00a_pipeline_seam.py::test_v9_artifact_failure_is_invisible_and_success_publishes_consistently --durations=1
+EXIT: 0
+7.6.8
+G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmpo7bhPL\Scripts\python.exe
+.                                                                        [100%]
+============================= slowest 1 durations =============================
+0.09s call     tests/core/test_fea00a_pipeline_seam.py::test_v9_artifact_failure_is_invisible_and_success_publishes_consistently
+1 passed in 0.40s

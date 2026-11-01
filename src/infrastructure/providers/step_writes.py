@@ -1,28 +1,12 @@
-"""Prepare-only writes that cooperate with the TASK-013 pipeline seam.
+"""Prepare-only region/artifact writes coordinated by the SQLite commit seam.
 
-The pipeline's optimistic commit (``SqliteTargetCatalog.commit_step``) expects
-a handler to **prepare** content revisions and then let the seam flip the
-current pointer inside its guarded transaction. Two primitives are missing
-from the frozen layers this Task may not modify, so they are provided here:
+Region and artifact writers create durable ``prepared`` candidates. Region text,
+revision rows, artifact pointers, stage state, candidate resolution and final
+artifact publication are committed by ``SqliteTargetCatalog.commit_step``.
 
-- :class:`RegionStepWriter` inserts the new ``region_revisions`` row and
-  updates ``regions.text_json`` **without** touching ``current_revision_id``;
-- :class:`ArtifactStepWriter` publishes immutable bytes and inserts the
-  ``artifact_revisions`` row **without** touching the artifact pointer.
-
-Both keep the seam authoritative for pointers and stage states:
-
-* a page/region target returns the new revision ids in ``StepResult`` and the
-  seam performs the compare-and-set current-pointer write;
-* a *region*-scoped unit cannot express a page artifact pointer in
-  ``StepResult.revision_updates`` (the seam only accepts ``"region"`` for a
-  region target), so :meth:`ArtifactStepWriter.adopt_current` performs the same
-  compare-and-set itself and the handler returns no revision update.
-
-Domain rules are reused, not re-implemented: OCR/translation text changes go
-through :class:`~domain.regions.entities.RegionText`, so the AC-OCR-002 manual
-protection (``edited_translation``/``final_translation`` stay) is the domain's
-decision, not this adapter's.
+The domain rules remain centralized in ``RegionText``: OCR and translation
+updates preserve manually edited translation fields according to the existing
+domain policy.
 """
 
 from __future__ import annotations
@@ -40,7 +24,6 @@ from application.editing.ports import RegionRepository
 from domain.regions.entities import (
     Region,
     RegionOrigin,
-    RegionRevision,
     ReviewState,
 )
 from ports.ocr.ports import PreparedTextWrite
@@ -201,6 +184,12 @@ class RegionStepWriter:
         expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
         provider_id: str = "",
     ) -> tuple[str, int]:
+        if not source_run_id or not source_step_run_id:
+            raise ProviderInputError(
+                "pipeline run and step identifiers are required for staged region writes",
+                provider_id=provider_id,
+                stage="region-write",
+            )
         revision_id = uuid.uuid4().hex
         now = _utc_now()
         try:
@@ -234,44 +223,28 @@ class RegionStepWriter:
                 " FROM region_revisions WHERE region_id = ?",
                 (staged.region_id,),
             ).fetchone()["next_no"]
-            revision = RegionRevision(
-                region_revision_id=revision_id,
-                region_id=staged.region_id,
-                revision_no=revision_no,
-                snapshot=_revision_snapshot(staged),
-                origin=RegionOrigin.MACHINE,
-                review_state=ReviewState.NEEDS_REVIEW,
-                source_run_id=source_run_id,
-                source_step_run_id=source_step_run_id,
-                created_at=now,
-            )
+            payload = {
+                "revision_id": revision_id,
+                "revision_no": revision_no,
+                "snapshot": _revision_snapshot(staged),
+                "text_json": _text_jsonable(staged),
+                "origin": RegionOrigin.MACHINE.value,
+                "review_state": ReviewState.NEEDS_REVIEW.value,
+                "is_pinned": False,
+                "source_run_id": source_run_id,
+                "source_step_run_id": source_step_run_id,
+                "restored_from_revision_id": None,
+                "created_at": now,
+            }
             self.conn.execute(
-                "INSERT INTO region_revisions (region_revision_id, region_id,"
-                " revision_no, snapshot_json, origin, review_state, is_pinned,"
-                " source_run_id, source_step_run_id, restored_from_revision_id,"
-                " created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
+                " step_run_id, target_id, page_id, region_id, result_kind,"
+                " base_revision_id, payload_json, reason, status, created_at, resolved_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prepared', ?, NULL)",
                 (
-                    revision.region_revision_id,
-                    revision.region_id,
-                    revision.revision_no,
-                    json.dumps(revision.snapshot, ensure_ascii=False, sort_keys=True),
-                    revision.origin.value,
-                    revision.review_state.value,
-                    int(revision.is_pinned),
-                    revision.source_run_id,
-                    revision.source_step_run_id,
-                    revision.restored_from_revision_id,
-                    revision.created_at,
-                ),
-            )
-            # Text state is region-owned; the *pointer* stays behind for the
-            # pipeline seam so its optimistic guard remains authoritative.
-            self.conn.execute(
-                "UPDATE regions SET text_json = ?, updated_at = ? WHERE region_id = ?",
-                (
-                    json.dumps(_text_jsonable(staged), ensure_ascii=False, sort_keys=True),
-                    now,
-                    staged.region_id,
+                    revision_id, source_run_id, source_step_run_id, staged.region_id,
+                    staged.page_id, staged.region_id, "region", row["current_revision_id"],
+                    json.dumps(payload, ensure_ascii=False, sort_keys=True), "prepared", now,
                 ),
             )
             self.conn.commit()
@@ -283,9 +256,9 @@ class RegionStepWriter:
 
 @dataclass(frozen=True)
 class PreparedArtifact:
-    artifact_id: str
+    artifact_id: str | None
     revision_id: str
-    revision_no: int
+    revision_no: int | None
     artifact_type: str
     managed_path: str
     file_hash: str
@@ -296,7 +269,7 @@ class PreparedArtifact:
 
 @dataclass
 class ArtifactStepWriter:
-    """Publish immutable artifact revisions without moving the pointer."""
+    """Stage artifact bytes and candidate metadata for the commit seam."""
 
     conn: sqlite3.Connection
     storage: ManagedFileStoragePort
@@ -320,15 +293,22 @@ class ArtifactStepWriter:
         provenance_json: str | None = None,
         expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
     ) -> PreparedArtifact:
+        if not pipeline_run_id or not step_run_id:
+            raise ProviderInputError(
+                "pipeline run and step identifiers are required for staged artifact writes",
+                stage="artifact-write",
+            )
+        if not isinstance(mime_type, str) or not mime_type.strip():
+            raise ProviderInputError("mime_type is required", stage="artifact-write")
         context = self._page_context(page_id)
-        artifact_id, is_first = self._artifact_id(page_id, artifact_type, context)
-        previous_revision_id = self.current_revision_id(artifact_id)
+        artifact_id = self.artifact_for(page_id, artifact_type)
+        previous_revision_id = (
+            self.current_revision_id(artifact_id) if artifact_id is not None else None
+        )
         if (
             not isinstance(expected_current_revision_id, _Unchecked)
             and previous_revision_id != expected_current_revision_id
         ):
-            # The page-target branch of the pipeline seam owns this pointer;
-            # checking it here keeps an orphan revision row from being written.
             raise LockBlocked(
                 "artifact current revision changed during the step"
                 f" (expected {expected_current_revision_id!r},"
@@ -340,6 +320,7 @@ class ArtifactStepWriter:
             context["book_id"], context["chapter_id"], artifact_type, revision_id, suffix
         )
         temp_handle = self.storage.write_temp(payload)
+        candidate_persisted = False
         try:
             integrity = self.storage.verify_temp(temp_handle)
             if integrity.size_bytes != len(payload):
@@ -347,63 +328,78 @@ class ArtifactStepWriter:
                     "staged artifact size does not match the payload",
                     stage="artifact-write",
                 )
-            self.storage.publish(temp_handle, relative_path)
-            temp_handle = None
-        finally:
-            if temp_handle is not None:
-                self.storage.discard_temp(temp_handle)
-
-        now = _utc_now()
-        try:
+            now = _utc_now()
+            candidate_payload = {
+                "temp_handle": temp_handle,
+                "relative_path": relative_path,
+                "artifact_type": artifact_type,
+                "page_id": page_id,
+                "book_id": context["book_id"],
+                "chapter_id": context["chapter_id"],
+                "base_revision_id": previous_revision_id,
+                "sha256": integrity.sha256,
+                "size": integrity.size_bytes,
+                "mime_type": mime_type,
+                "content_format": Path(relative_path).suffix.lstrip("."),
+                # Optional artifact-revision metadata remains in the staged
+                # snapshot so moving it to the seam does not drop provenance.
+                "width": width,
+                "height": height,
+                "provider_profile_id": provider_profile_id,
+                "model_name": model_name,
+                "options_json": options_json,
+                "source_artifact_revision_id": source_artifact_revision_id,
+                "provenance_json": provenance_json,
+            }
+            if artifact_id is not None:
+                candidate_payload["artifact_id"] = artifact_id
             self.conn.execute("BEGIN IMMEDIATE")
-            revision_no = self.conn.execute(
-                "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
-                " FROM artifact_revisions WHERE artifact_id = ?",
-                (artifact_id,),
-            ).fetchone()["next_no"]
+            latest = self.conn.execute(
+                "SELECT current_revision_id FROM media_artifacts"
+                " WHERE page_id = ? AND artifact_type = ? ORDER BY created_at, artifact_id LIMIT 1",
+                (page_id, artifact_type),
+            ).fetchone()
+            latest_revision_id = latest["current_revision_id"] if latest else None
+            if latest_revision_id != previous_revision_id:
+                raise LockBlocked(
+                    "artifact current revision changed during prepare",
+                    stage="artifact-write",
+                )
             self.conn.execute(
-                "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
-                " revision_no, managed_path, file_hash, mime_type, width, height,"
-                " size_bytes, integrity_status, last_verified_at, provider_profile_id,"
-                " model_name, options_json, source_artifact_revision_id,"
-                " pipeline_run_id, step_run_id, provenance_json, is_pinned, created_at)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
+                " step_run_id, target_id, page_id, region_id, result_kind,"
+                " base_revision_id, payload_json, reason, status, created_at, resolved_at)"
+                " VALUES (?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'prepared', ?, NULL)",
                 (
                     revision_id,
-                    artifact_id,
-                    revision_no,
-                    relative_path,
-                    integrity.sha256,
-                    mime_type,
-                    width,
-                    height,
-                    len(payload),
-                    "valid",
-                    now,
-                    provider_profile_id,
-                    model_name,
-                    options_json,
-                    source_artifact_revision_id,
                     pipeline_run_id,
                     step_run_id,
-                    provenance_json,
-                    0,
+                    page_id,
+                    page_id,
+                    artifact_type,
+                    previous_revision_id,
+                    json.dumps(candidate_payload, ensure_ascii=False, sort_keys=True),
+                    "prepared",
                     now,
                 ),
             )
             self.conn.commit()
+            candidate_persisted = True
         except Exception:
             self.conn.rollback()
             raise
+        finally:
+            if not candidate_persisted:
+                self.storage.discard_temp(temp_handle)
         return PreparedArtifact(
             artifact_id=artifact_id,
             revision_id=revision_id,
-            revision_no=revision_no,
+            revision_no=None,
             artifact_type=artifact_type,
             managed_path=relative_path,
             file_hash=integrity.sha256,
-            size_bytes=len(payload),
-            is_first_revision=is_first,
+            size_bytes=integrity.size_bytes,
+            is_first_revision=artifact_id is None,
             previous_revision_id=previous_revision_id,
         )
 
@@ -418,59 +414,16 @@ class ArtifactStepWriter:
             )
         return row["current_revision_id"]
 
-    def adopt_current(
-        self,
-        *,
-        artifact_id: str,
-        revision_id: str,
-        expected_current_revision_id: str | None,
-    ) -> None:
-        """Compare-and-set the artifact pointer (region-scoped units only).
-
-        Mirrors the TASK-002 §8.1 guard: a mismatch leaves the previous current
-        revision untouched and fails the step, so no clean image can be
-        published over a concurrent edit.
-        """
-        try:
-            self.conn.execute("BEGIN IMMEDIATE")
-            row = self.conn.execute(
-                "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = ?",
-                (artifact_id,),
-            ).fetchone()
-            if row is None:
-                raise ProviderUnavailable(
-                    f"artifact {artifact_id!r} disappeared", stage="artifact-write"
-                )
-            current = row["current_revision_id"]
-            if current != expected_current_revision_id:
-                raise LockBlocked(
-                    "artifact current revision changed during the step"
-                    f" (expected {expected_current_revision_id!r}, found {current!r})",
-                    stage="artifact-write",
-                )
-            self.conn.execute(
-                "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
-                " WHERE artifact_id = ?",
-                (revision_id, _utc_now(), artifact_id),
-            )
-            self.conn.commit()
-        except Exception:
-            self.conn.rollback()
-            raise
-
     def artifact_for(self, page_id: str, artifact_type: str) -> str | None:
         row = self.conn.execute(
-            "SELECT artifact_id FROM media_artifacts WHERE page_id = ? AND artifact_type = ?",
+            "SELECT artifact_id FROM media_artifacts WHERE page_id = ? AND artifact_type = ?"
+            " ORDER BY created_at, artifact_id LIMIT 1",
             (page_id, artifact_type),
         ).fetchone()
         return row["artifact_id"] if row else None
 
     def read_path(self, relative_path: str) -> Path:
         return Path(self.storage.absolute_path(relative_path))
-
-    # ------------------------------------------------------------------
-    # internals
-    # ------------------------------------------------------------------
 
     def _page_context(self, page_id: str) -> dict[str, str]:
         row = self.conn.execute(
@@ -487,32 +440,6 @@ class ArtifactStepWriter:
             "chapter_id": row["chapter_id"],
             "book_id": row["book_id"],
         }
-
-    def _artifact_id(
-        self, page_id: str, artifact_type: str, context: dict[str, str]
-    ) -> tuple[str, bool]:
-        existing = self.artifact_for(page_id, artifact_type)
-        if existing is not None:
-            return existing, False
-        artifact_id = uuid.uuid4().hex
-        now = _utc_now()
-        self.conn.execute(
-            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
-            " artifact_type, current_revision_id, created_at, updated_at)"
-            " VALUES (?, ?, ?, ?, ?, NULL, ?, ?)",
-            (
-                artifact_id,
-                context["book_id"],
-                context["chapter_id"],
-                page_id,
-                artifact_type,
-                now,
-                now,
-            ),
-        )
-        self.conn.commit()
-        return artifact_id, True
-
 
 def artifact_payload_from_frame(
     frame: Any, *, extra: dict | None = None

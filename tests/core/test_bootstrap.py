@@ -17,6 +17,7 @@ import shutil
 import subprocess
 import sys
 import time
+import uuid
 
 import pytest
 
@@ -41,6 +42,41 @@ def _make_png(width: int, height: int) -> bytes:
     buffer.open(QIODevice.OpenModeFlag.WriteOnly)
     image.save(buffer, "PNG")
     return bytes(buffer.data())
+
+
+def _seed_artifact_for_reader_test(
+    services, page_id: str, artifact_type: str, payload: bytes, *,
+    mime_type: str = "image/png", width: int | None = None, height: int | None = None,
+ ) -> str:
+    """Seed a valid artifact row/file for legacy reader projection tests."""
+    artifact_id = uuid.uuid4().hex
+    revision_id = uuid.uuid4().hex
+    page = services.conn.execute(
+        "SELECT p.chapter_id, c.book_id FROM pages p JOIN chapters c ON c.chapter_id = p.chapter_id WHERE p.page_id = ?",
+        (page_id,),
+    ).fetchone()
+    relative_path = services.storage.new_revision_relative_path(
+        page["book_id"], page["chapter_id"], artifact_type, revision_id, ".png"
+    )
+    temp_handle = services.storage.write_temp(payload)
+    integrity = services.storage.verify_temp(temp_handle)
+    assert integrity.size_bytes == len(payload)
+    now = "2026-11-01T00:00:00+00:00"
+    with services.conn:
+        services.conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id, artifact_type, current_revision_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NULL, ?, ?)",
+            (artifact_id, page["book_id"], page["chapter_id"], page_id, artifact_type, now, now),
+        )
+        services.conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id, revision_no, managed_path, file_hash, mime_type, width, height, size_bytes, integrity_status, last_verified_at, created_at) VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, 'valid', ?, ?)",
+            (revision_id, artifact_id, relative_path, integrity.sha256, mime_type, width, height, integrity.size_bytes, now, now),
+        )
+        services.conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ? WHERE artifact_id = ?",
+            (revision_id, now, artifact_id),
+        )
+    services.storage.publish(temp_handle, relative_path)
+    return revision_id
 
 
 def run_app(src_root: Path, data_root: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -824,20 +860,10 @@ def test_production_clean_probe_gates_render_only_planning(tmp_path: Path) -> No
             "render": "blocked:missing_clean_artifact"
         }
 
-        # publish a current Clean revision the way the inpaint handler does
-        writer = ArtifactStepWriter(services.conn, services.storage)
-        prepared = writer.prepare_revision(
-            page_id=page_with_clean.page_id,
-            artifact_type="clean",
-            payload=_make_png(8, 6),
-            mime_type="image/png",
-            width=8,
-            height=6,
-        )
-        writer.adopt_current(
-            artifact_id=prepared.artifact_id,
-            revision_id=prepared.revision_id,
-            expected_current_revision_id=prepared.previous_revision_id,
+        # Seed a valid artifact for this legacy reader/planner projection test.
+        _seed_artifact_for_reader_test(
+            services, page_with_clean.page_id, "clean", _make_png(8, 6),
+            width=8, height=6,
         )
 
         # only the page that really has a current Clean turns RUN

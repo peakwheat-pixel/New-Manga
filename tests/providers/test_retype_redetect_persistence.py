@@ -177,6 +177,7 @@ def _pipeline(workspace, *, detector):
         workspace["conn"],
         handlers=handlers.as_mapping(),
         settings={"ocr": {"script": "japanese"}},
+        storage=workspace["storage"],
     )
 
 

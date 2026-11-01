@@ -1,0 +1,25 @@
+Shell: PowerShell (pwsh -NoProfile -Command)
+Command: uv run --no-project --cache-dir verification/FEA-00A-IMPL-1/.uv-cache --with pytest==9.1.1 --with pillow==12.3.0 --with pypdfium2==5.13.0 --with mobi==0.4.1 --with numpy python -m pytest -vv tests/core/test_fea00a_pipeline_seam.py -k test_v
+EXIT: 0
+7.6.8
+G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmpOIRIFU\Scripts\python.exe
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.7.0 -- G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmpgDBodO\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1
+configfile: pytest.ini
+collecting ... collected 12 items / 1 deselected / 11 selected
+
+tests/core/test_fea00a_pipeline_seam.py::test_v1_revision_conflict_abandons_prepare_and_preserves_both_rows PASSED [  9%]
+tests/core/test_fea00a_pipeline_seam.py::test_v2_lock_conflict_abandons_prepare_without_live_mutation PASSED [ 18%]
+tests/core/test_fea00a_pipeline_seam.py::test_v3_stale_run_snapshot_rolls_back_live_region_writes PASSED [ 27%]
+tests/core/test_fea00a_pipeline_seam.py::test_v4_artifact_commit_failure_compensates_published_file PASSED [ 36%]
+tests/core/test_fea00a_pipeline_seam.py::test_v5_pause_and_cancel_abandon_after_seam_rollback[pause-paused-interrupted] PASSED [ 45%]
+tests/core/test_fea00a_pipeline_seam.py::test_v5_pause_and_cancel_abandon_after_seam_rollback[stop-cancelled-cancelled] PASSED [ 54%]
+tests/core/test_fea00a_pipeline_seam.py::test_v6_restart_sweep_abandons_prepared_candidate_and_counts_it PASSED [ 63%]
+tests/core/test_fea00a_pipeline_seam.py::test_v6_artifact_restart_removes_unreferenced_final_file PASSED [ 72%]
+tests/core/test_fea00a_pipeline_seam.py::test_v7_region_commit_has_one_observable_transaction PASSED [ 81%]
+tests/core/test_fea00a_pipeline_seam.py::test_v8_concurrent_same_region_has_one_winner_and_one_abandoned_candidate PASSED [ 90%]
+tests/core/test_fea00a_pipeline_seam.py::test_v9_artifact_failure_is_invisible_and_success_publishes_consistently PASSED [100%]
+
+====================== 11 passed, 1 deselected in 0.96s =======================

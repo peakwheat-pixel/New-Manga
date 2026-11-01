@@ -47,6 +47,10 @@ class ManagedFileStoragePort(Protocol):
     def absolute_path(self, relative_path: str) -> str:
         ...
 
+    def remove_managed(self, relative_path: str) -> None:
+        """Remove one controlled file beneath the managed root safely."""
+        ...
+
     def verify_temp(self, temp_handle: str) -> IntegrityInfo:
         """Hash and size a temp file before it is published."""
         ...

@@ -1,0 +1,27 @@
+[
+  {
+    "file": "tests/core/test_core_assembly.py",
+    "exit": 0,
+    "output": "........                                                                 [100%]\r\n8 passed in 1.05s\r\n"
+  },
+  {
+    "file": "tests/core/test_core_detect.py",
+    "exit": 0,
+    "output": "........................................                                 [100%]\r\n40 passed in 2.30s\r\n"
+  },
+  {
+    "file": "tests/core/test_sfx_assembly.py",
+    "exit": 0,
+    "output": "...................                                                      [100%]\r\n19 passed in 0.70s\r\n"
+  },
+  {
+    "file": "tests/core/test_sfx_policy_settings.py",
+    "exit": 0,
+    "output": "...................                                                      [100%]\r\n19 passed in 0.48s\r\n"
+  },
+  {
+    "file": "tests/pipeline/test_pipeline_production_seam.py",
+    "exit": 0,
+    "output": ".......                                                                  [100%]\r\n7 passed in 0.36s\r\n"
+  }
+]

@@ -210,6 +210,20 @@ class PipelineService:
         # ``None`` (every pre-existing construction) keeps the inherited
         # stage-based judgement byte-for-byte.
         self._clean_probe = clean_probe
+        self._startup_cleanup_result: dict[str, Any] | None = None
+        self._startup_cleanup_done = False
+
+    @property
+    def startup_cleanup_result(self) -> Mapping[str, Any] | None:
+        """Counts and cleanup issues from the startup staged-write sweep."""
+        return self._startup_cleanup_result
+
+    def _run_startup_cleanup(self) -> None:
+        if self._startup_cleanup_done:
+            return
+        cleanup = getattr(self._catalog, "cleanup_staged_candidates", None)
+        self._startup_cleanup_result = cleanup() if callable(cleanup) else None
+        self._startup_cleanup_done = True
 
     # ------------------------------------------------------------------
     # TASK-002 §9: create and plan
@@ -756,10 +770,33 @@ class PipelineService:
             stage_updates=result.next_stage_states or {unit.step_type: StageState.COMPLETED},
             revision_updates=result.revision_updates,
             persist=persist_committed_step,
+            run_id=run.run_id,
+            step_run_id=step_run.step_run_id,
+            pause_requested=run.pause_requested,
+            cancel_requested=run.cancel_requested,
         )
         if outcome.status == "applied":
             self._emit_lifecycle_events(run)
             return CommitStepOutcome("committed", step_run.step_run_id)
+
+        if outcome.status == "paused":
+            step_run.status = StepRunStatus.INTERRUPTED
+            step_run.error_detail = outcome.detail
+            task.status = PipelineTaskStatus.PENDING
+            run.status = PipelineRunStatus.PAUSED
+            self._persist(run)
+            return CommitStepOutcome("paused", step_run.step_run_id, detail=outcome.detail)
+
+        if outcome.status == "cancelled":
+            step_run.status = StepRunStatus.CANCELLED
+            step_run.error_detail = outcome.detail
+            self._mark_terminal(run, unit.unit_id)
+            task.status = PipelineTaskStatus.CANCELLED
+            self._cancel_remaining(run, task, unit)
+            self._cancel_pending_tasks(run)
+            run.status = PipelineRunStatus.CANCELLED
+            self._persist(run)
+            return CommitStepOutcome("cancelled", step_run.step_run_id, detail=outcome.detail)
 
         if outcome.status in {"input_revision_changed", "lock_changed"}:
             code = "INPUT_REVISION_CHANGED" if outcome.status == "input_revision_changed" else "LOCK_CHANGED"
@@ -785,6 +822,8 @@ class PipelineService:
             self._persist(run)
             return CommitStepOutcome("candidate", step_run.step_run_id, candidate.candidate_id, code, outcome.detail)
 
+        if outcome.status == "db_failed" and "STALE_RUN_SNAPSHOT" in outcome.detail:
+            return CommitStepOutcome("stale", step_run.step_run_id, detail=outcome.detail)
         code = "DB_FAILED" if outcome.status == "db_failed" else "TARGET_NOT_FOUND"
         return self._fail_step(run, task, step_run, unit, code, outcome.detail)
 
@@ -852,6 +891,7 @@ class PipelineService:
     def _execute_run_under_owner(
         self, run_id: str, *, resumed: bool
     ) -> PipelineRun:
+        self._run_startup_cleanup()
         run = self._require_run(run_id)
         # Legacy callers may plan a run before execution; all-skipped plans are
         # already terminal and must remain a no-op instead of a second start.
@@ -944,6 +984,11 @@ class PipelineService:
                         )
                         task_failed = True
                     else:
+                        if committed.status in {"paused", "cancelled"}:
+                            return run
+                        if committed.status == "stale":
+                            refreshed = self._store.refresh(run.run_id)
+                            return refreshed or run
                         if committed.status != "committed":
                             task_failed = True
 
@@ -1093,6 +1138,7 @@ class PipelineService:
 
     def recover_running_runs(self) -> tuple[str, ...]:
         self._ensure_scheduler_owner()
+        self._run_startup_cleanup()
         recovered: list[str] = []
         for run_id in self._store.list_ids():
             run = self._store.get(run_id)
