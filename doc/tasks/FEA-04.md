@@ -3,15 +3,15 @@ id: FEA-04
 title: FEA-04 Current 适配（Frontends.Current + V2 state/route/VM adapter；保留旧入口）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: dsh_ruling_2026-11-02_GOAL_FEA04_Q16_Q19
+status: ready
+approval: dsh_ruling_2026-11-02_GOAL_FEA04_Q16_Q20
 suggested_owner: zcode
 owner: zcode
 reviewer: fea04-scope-reviewer
 depends_on:
   - FEA-02-CORE
   - FEA-03
-base_commit: 55543c10d
+base_commit: 7a9135260
 branch: null
 worktree: null
 integration_commit: null
@@ -43,7 +43,7 @@ allowed_paths:
 1. 方案 §12.1 `:642`：S1 `FEA-04` Current 适配——`Frontends.Current`、V2 state/route/VM adapter、**保留旧入口**；验收「行为不退化；无 VM 私有第二份业务真值；关闭/重建不 Dispose Host，不隐式 Start」。
 2. 方案 §15.6 `:924`：写域 = `Views/V2/`、`ViewModels/V2/`、`Shell/V2/` 中 DSH 划分的 ui-shell/ui-studio 子目录及**对应 tests**；L3；§15.3 每字段迁出、行为基线、fail-closed。
 3. 方案 §15.3 `:880-887`：S1–S6 迁出表（见下）。
-4. 依赖：`FEA-02-CORE` done、`FEA-03` done（集成 `76d947923`）；**FEA-02-BRIDGE** 为 FEA-02 内子切片（ApplicationCore draft buffer，FEA-03 已交付 `DraftBuffer.cs`），本卡不重新实现，仅消费。
+4. 依赖：`FEA-02-CORE` done、`FEA-03` done（集成 `76d947923`）。**FEA-02-BRIDGE 的收窄切片（ApplicationCore 本地缓冲）由 FEA-03 交付（`DraftBuffer.cs`）；其 Host 生命周期/`ExitCoordinator` 部分未实施，本卡不依赖，按 R-STATE-4 维持既有装配**（方案 `:922`/§15.5 `:910` 的 BRIDGE 原义未被本卡声称已交付）。
 5. **DSH 裁决**（[GOAL-PROGRESS-2026-11-02](../checkpoints/GOAL-PROGRESS-2026-11-02.md) Q-12/Q-16…Q-20）：
    - **Q-16**：本卡**不实现 wire**；S1–S3 权威为 ApplicationCore 本地（`DraftBuffer`/`IntentCoordinator`/`RunMonitor`）；S4 的 Core 进度经**既有** `IHostController` 读接口（`IHostController.cs:161/106`）；**S4 只做映射，不新增命令**；wire 接线由 FEA-05/FEA-07 承担（deferral 表）。
    - **Q-17**：`NewManga.App.csproj` 加 `NewManga.ApplicationCore` 引用是唯一单点例外（写域已列；Handoff 记录）。
@@ -59,7 +59,7 @@ allowed_paths:
 - **R-CURRENT-3**：`Frontends.Current` 只做转发与状态映射；业务真值仍在 Host/Core/ApplicationCore。
 
 ### R-STATE
-- **R-STATE-1**：S1–S6 逐项迁出；权威源：S1–S3/S6 为 ApplicationCore 本地对象，S4 为既有 `IHostController` 读接口 + Core 持久进度（只读映射），S5 为单例 `RunMonitor`；每项须有「现状字段 → 新权威 → 断言」证据。
+- **R-STATE-1**：S1–S6 逐项迁出；权威源按项：**S1/S3/S5 = ApplicationCore 本地对象**（`DraftBuffer`/`IntentCoordinator`/单例 `RunMonitor`）；**S2/S6 = UI memento**（会话选择/布局/确认态，不承载业务真值）；**S4 = 既有 `IHostController` 只读投影 + Core 持久进度**；每项须有「现状字段 → 新权威 → 断言」证据。
 - **R-STATE-2（Q-20，冻结）**：preflight 谓词——S1 存在未 flush 的 `_pendingRegionType` → `PENDING_REGION_TYPE`；S2 存在未决确认 → `PENDING_CONFIRMATION`；S3 存在未 ACK 的 run/intent key → `UNFLUSHED_RUN_KEY`；S4 无法无损映射 reader 锚点 → `UNMAPPED_READER_ANCHOR`；S6 `ShellState`/Appearance draft 有未映射编辑 → `UNMAPPED_SHELL_STATE`。任一存在即 fail-closed（中止 + 旧树保留 + 缓冲不丢 + 结构化结果）。
 - **R-STATE-3**：VM 不得持有第二份业务真值；允许的 UI 私有状态 = 选择态/布局/memento（Handoff 逐项列出并区分业务态；静态检查口径 = 新增的私有缓存/registry 字段须在 Handoff 说明且不得作为读取权威）。
 - **R-STATE-4**：关闭/重建内容不得 Dispose Host、不得隐式 `Start`；Host 生命周期归既有装配。
@@ -89,7 +89,7 @@ allowed_paths:
 - [ ] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker → `allowed=false` + 对应 `PreflightBlocker` + 零 Host/Core 副作用；无 blocker → `allowed=true` 且不触发新 Run。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEquals(hostBefore, hostAfter)`；`FakeHostController.StartCalls`/`HostController.StartRequests` 计数不增。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification/FEA-04/**`。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC8 独立复核**：范围复核 r3 `approved`（P0/P1=0）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <<PARTIAL: 范围冻结；待派发>>
+- [ ] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04-scope-r*.md`）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <<PARTIAL: 范围冻结；待派发>>
 
 ## L 前置适用性判定
 
@@ -136,3 +136,4 @@ allowed_paths:
 - 2026-11-02：r1 `changes_requested`（P0×3/P1×9/P2×8）→ v2（`55543c10d`）：Q-16…Q-19 处置。
 - 2026-11-02：r2 `changes_requested`（P0=0/P1×3/P2×12）→ **v3**：R2-01（AC2 改 sln 命令 + 逐工程基线计数）、R2-02（Q-20 blocker 五谓词 + `PreflightBlocker(Code,Source,Detail)`）、R2-03（写域收窄 `NewManga.App.Tests/**` + `ApplicationCore.Tests/**`）；P2 批修（AC6 hostBefore/hostAfter、R-STATE-1/S4 经既有 `IHostController`、S1/S3 类型更正、S6 preflight 只读、§15.3 行号 `:880-887`、AC4 恢复未迁出登记、AC8→r3、route adapter 落 `Views/V2/Route/`、FEA-02-BRIDGE 书面处置、`doc/reviews` 写权说明）。
 - 2026-11-02：`proposed`，派独立复核 r3；**通过前不 ready**。
+- 2026-11-02：r3 changes_requested（P0=0/P1×1/P2×10）→ 处置 R3-01（**GOAL-PROGRESS 补 Q-20 书面裁决** + approval 改 …_Q16_Q20）与 R3-02/R3-03（FEA-02-BRIDGE 陈述更正；R-STATE-1 按项列权威源）。**DSH 判定 P1 闭合，按 r3 复核者给定闭合法置 eady**；R3-01 的「Q-20 已登记 + approval 已更新」即本条。

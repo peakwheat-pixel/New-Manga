@@ -25,7 +25,8 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-04
+（范围冻结 v3 + r3 P0/P1 处置；`base_commit` `7a9135260`；owner=ZCode → ZCode CLI 不可用，DSH 指派 Codex 实现）
 
 当前 DAG：FEA-04（**proposed**，Current 适配）、FEA-03（**done**，集成 `76d947923`）、FEA-00A-IMPL-1（**done**，集成 `e0ba29eba`）、FEA-00A-PREP-1（**done**）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
 
