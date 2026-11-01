@@ -67,16 +67,16 @@ allowed_paths:
 
 - **R-CAND-1（唯一真相）**：`step_result_candidates` 中 `prepared`/`resolved`/`abandoned` 三态行是 prepare→seam 生命周期的唯一持久真相；`PipelineRun.candidates` 只承载 seam 拒绝后的诊断候选。
 - **R-CAND-2（禁止删除父行）**：`_write_run` **不得**对 `pipeline_runs` 使用 `DELETE` 或 `INSERT OR REPLACE`（两者都会触发候选级联删除）；必须改为 `INSERT … ON CONFLICT(run_id) DO UPDATE`（UPSERT）。若某父行（含 `step_runs`）确实必须重建，须在同一事务内先读出该 `run_id` 下三态候选行，重建后按 `candidate_id` 去重回插（`run.candidates` 已有的 id 优先）。四条路径（成功 persist / seam 失败 `_persist` / `recover_running_runs` / `control_run` pause-stop）全部适用。`pipeline.py:1058` 的既有清理语句不属本规则范围，但不得新增删除父行的路径。
-- **R-CAND-3（状态机与保留）**：`prepared` 仅在 prepare 阶段产生；seam 成功 → 同事务置 `resolved`（`resolved_at` 非空）；seam 拒绝/中止 → **独立事务**置 `abandoned`（`resolved_at` 非空）。任何路径不得硬删三态行（唯一例外：`library.purge` 的既有页面清理）。
+- **R-CAND-3（状态机与保留）**：`prepared` 仅在 prepare 阶段产生；seam 成功 → 同事务置 `resolved`（`resolved_at` 非空）；seam 拒绝/中止 → **独立事务**置 `abandoned`（`resolved_at` 非空）。任何路径不得硬删三态行；既有清理路径（`library.purge` 页面清理、`pipeline.py` 的 `purge_targetless_runs`）除外，**不得为本次修复新增删除路径**。
 - **R-CAND-4（启动清扫与双行语义）**：run 启动（含 `recover_running_runs`）时，把该 run 下仍为 `prepared` 的行置 `abandoned` 并记录计数；同一步允许并存「1 行 abandoned（prepare 暂存）」+「1 行 pending（seam 拒绝诊断）」，诊断查询必须按 `status` 区分并可分别断言。
 
 ### R-ART：artifact staging 协议（处置 r2-P1-2 与相关 P2）
 
 事实：`ManagedStorage` 有 `write_temp/verify_temp/publish/discard_temp/remove_managed`（`managed_storage.py:98–126`）；`ArtifactStepWriter.prepare_revision`（`step_writes.py:304`）当前在 prepare 内 `publish`（`:350`）并 `_artifact_id` 插入 `media_artifacts` 后提交（`:491–514`）；`SqliteTargetCatalog.__init__(conn)` 只有连接（`pipeline.py:690–694`），由 `src/infrastructure/pipeline/assembly.py:36–37` 构造，生产装配在 `src/bootstrap/core_assembly.py:1336–1341`、`:1377`。
 
-- **R-ART-1（prepare 只暂存）**：`ArtifactStepWriter.prepare_revision` 在 prepare 阶段只 `write_temp` + `verify_temp`；**不得** `publish`、**不得** `INSERT artifact_revisions`、**不得** `INSERT/UPDATE media_artifacts`（`_artifact_id` 的 prepare 期 `INSERT media_artifacts` 必须移除或延后到 seam）。prepared 候选 `payload_json` 冻结字段：`temp_handle`、`relative_path`、`artifact_type`、`page_id`、`artifact_id`（若已存在）、`book_id`、`chapter_id`、`base_revision_id`、`revision_no`、`sha256`、`size`、`content_format`；返回 `revision_updates={artifact_type: <预生成真实 revision id>}`。
-- **R-ART-2（seam 顺序，消除孤儿文件）**：`commit_step` 的 artifact 分支：①`BEGIN IMMEDIATE` → ②按 token 找回 prepared 候选并校验 `base_revision_id`/`sha256`/`size` → ③`R-SEAM-1` 的 pause/cancel 检查 → ④DB 写：若 `media_artifacts` 无行则 `INSERT`（`current_revision_id=NULL`，`revision_no=1`），`INSERT artifact_revisions`（按 schema 必填列，含 `revision_no`），CAS `UPDATE media_artifacts SET current_revision_id=…`，候选置 `resolved` → ⑤**commit 之前** `storage.publish(temp_handle, relative_path)`（幂等：目标已存在且 sha256 相同视为已发布）→ ⑥`COMMIT`。
-  拒绝路径（revision/lock/stale/pause/cancel）全部发生在 publish 之前 → 不产生孤儿文件。
+- **R-ART-1（prepare 只暂存）**：`ArtifactStepWriter.prepare_revision` 在 prepare 阶段只 `write_temp` + `verify_temp`；**不得** `publish`、**不得** `INSERT artifact_revisions`、**不得** `INSERT/UPDATE media_artifacts`（`_artifact_id` 的 prepare 期 `INSERT media_artifacts` 必须移除或延后到 seam）。prepared 候选 `payload_json` 冻结字段：`temp_handle`、`relative_path`、`artifact_type`、`page_id`、`artifact_id`（若已存在）、`book_id`、`chapter_id`、`base_revision_id`、`sha256`、`size`、`mime_type`（NOT NULL 必填）、`content_format`；**不得虚构 `media_artifacts` 不存在的 `revision_no` 列**（该列只属于 `artifact_revisions`，由 seam 按表结构写入）；返回 `revision_updates={artifact_type: <预生成真实 revision id>}`。
+- **R-ART-2（seam 顺序，消除孤儿文件）**：`commit_step` 的 artifact 分支：①`BEGIN IMMEDIATE` → ②按 token 找回 prepared 候选并校验 `base_revision_id`/`sha256`/`size` → ③`R-SEAM-1` 的 pause/cancel 检查 → ④DB 写：按 `(page_id, artifact_type)` 查 `media_artifacts`，无行则 `INSERT`（`current_revision_id=NULL`）；`INSERT artifact_revisions`（按 schema 必填列，含 `revision_no`）；CAS `UPDATE media_artifacts SET current_revision_id=…`；写 `stage_updates`；调用 `persist()`；候选置 `resolved` → ⑤**commit 之前** `storage.publish(temp_handle, relative_path)`（幂等：目标已存在且 sha256 相同视为已发布）→ ⑥`COMMIT`。
+  拒绝路径（revision/lock/stale/pause/cancel）全部发生在 publish 之前 → 不产生孤儿文件。父行改 UPSERT 后，`run_targets`/`tasks` 等既有子表按原逻辑重建（这些子表不含候选行）；候选行受 R-CAND-2 保护。
 - **R-ART-3（失败补偿与清扫）**：任何非 `applied` 结果：`discard_temp`（未 publish 时）；若 publish 已发生而后续失败 → `storage.remove_managed(relative_path)` 补偿，失败则把孤儿路径写入证据清单。启动清扫：`prepared` 的 artifact 候选 → 校验并 `discard_temp` 后置 `abandoned`；无 `artifact_revisions` 引用的最终文件 → `remove_managed`。清扫实现放 `pipeline.py`，由 `PipelineService` 启动路径调用（`src/application/tasks/service.py` 在写域内）。
 - **R-ART-4（storage 注入与 None 语义）**：允许 `SqliteTargetCatalog(conn, storage=None)`；`storage=None` 表示**不启用 artifact staging**，仅用于既有测试的双实例保持旧语义；**生产装配（`core_assembly.py`）必须传入 `ManagedStorage`**；若 `storage=None` 却遇到 artifact 候选 → 返回明确失败（`db_failed`），不得静默 publish。接线改动须 Handoff 逐行列理由与回退；不改既有业务行为。
 - **R-ART-5（接线边界）**：`src/infrastructure/pipeline/assembly.py`、`src/bootstrap/core_assembly.py` 只做最小接线（构造参数传递 + 注入）；`src/ports/repositories/storage.py` 仅在既有端口缺方法时最小新增。不得重构组合根或改变公开签名。
@@ -86,7 +86,7 @@ allowed_paths:
 - **R-SEAM-1（pause/cancel 在 seam 内判定）**：`commit_step` 增加 pause/cancel 判定入口（入参标志或回调，实现方式由实现者选定但须写入 Handoff）；判定位置在 `BEGIN IMMEDIATE` 之后、任何 live 写与 publish 之前；命中则 `rollback` 返回 `paused`/`cancelled` 结果，随后**独立事务**把对应 prepared 行置 `abandoned`（不得在已回滚的事务内写）。
 - **R-SEAM-2（AC3 观测方法）**：固定三选二——①`sqlite3.Connection.set_trace_callback` 断言语句序列与单次 `COMMIT`；②独立只读连接在提交前读不到新值；③WAL 下提交前另开连接一致性读。至少 ①+②。
 - **R-SEAM-3（真实生产 assembly 定义）**：唯一入口 = `src/bootstrap/core_assembly.py:assemble_core_services`（:944）构造的 `RegionStepWriter/ArtifactStepWriter`（:1340–1341）+ `build_production_pipeline`（:1377）装配的 `PipelineService`。允许生产配置中既有的 `mock_local_providers=True`（本地 provider 替身），**禁止** fake executor / InMemory catalog / 测试专用 pipeline 替代。
-- **R-SEAM-4（分支键守卫）**：`commit_step` 现有的「region 场景 `revision_updates` 键必须为 `region`」守卫（`pipeline.py:763–766`）改为按 `target_type` 分派：REGION 分支保持原样；ARTIFACT 分支接受 `{artifact_type: revision_id}`；两分支互斥，未知键返回 `db_failed`。
+- **R-SEAM-4（分支键守卫）**：`commit_step` 现有「region 场景 `revision_updates` 键必须为 `region`」守卫（`pipeline.py:763–766`）改为按 `target_type` 分派：`REGION` 分支保持原样；`PAGE` 分支接受 `{artifact_type: revision_id}`（artifact 归属 page，`TargetType` 无 ARTIFACT 值）；未知 target_type/键返回 `db_failed`。
 
 ## 范围（写域）
 
@@ -181,5 +181,7 @@ allowed_paths:
 - 2026-11-01：`proposed`（评估完成，等用户拍板）。
 - 2026-11-01：用户裁决 D1–D4 落盘（ADJ U-13），冻结范围 v1（`419f891c0`）。
 - 2026-11-01：范围复核 r1 `changes_requested`（P1×3/P2×10）→ v2（`98fbccdf5`）逐条处置。
-- 2026-11-01：范围复核 r2 `changes_requested`（P1×2/P2×7）→ 本版 v3 处置（R-CAND-2 改 UPSERT/三态保留；R-ART-2 publish 后移；P2×11 全部处理）。
+- 2026-11-01：范围复核 r2 `changes_requested`（P1×2/P2×7）→ 本版 v3 处置（R-CAND-2 改 UPSERT/三态保留；R-ART-2 publish 后移；r2 的 P2×7 细分 11 项全部处理）。
+- 2026-11-01：范围复核 **r3 `approved`**（P0=0 / P1=0 / P2×10 非阻断）；按 r3 建议修正 4 条改文项（R-SEAM-4 的 `PAGE` 分支、payload 字段与 `media_artifacts` 列、R-ART-2 的 `stage_updates`/`persist` 顺序、R-CAND-3 例外口径）。
+- 2026-11-01：`ready` 交 Codex 实现；`base_commit` 更新为修订后的冻结提交（见 frontmatter）。
 - 2026-11-01：`proposed`，派独立复核 r3 审查 v3；**复核通过前不 `ready`、不派实现**。`base_commit` 于 `ready` 时更新为最终冻结 head。
