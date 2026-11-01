@@ -76,7 +76,7 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 | §8 指针行 | `V11R_COMMAND_CONTRACT_V1.md` §8 **末尾**（`## 8.` 与 `## 9.` 之间）追加 C078–C083 六行；同步更新 §8 段首说明（命令总数、`PENDING` 口径）、约束段、§10 变更记录（追加一行版本说明）；**手工追加、不重跑生成器**（§8 由 `build_contract_doc.py:459-480` 模板生成，重跑会覆盖） |
 | Core handler | `core_service.py` 白名单 + handler：6 命令按上表调用真实方法；`DraftError` → 既有错误结构（含 `code`/`message`/`category`/`retryable`/`details`） |
 | CoreClient | **不在本卡**（W-6）：`HostCommandModel`/`HostCommandRegistry`/`HostCommandDispatcher`/`V11RAdditiveCommandNames` 归 **FEA-05-PORT-1**（需先契约 UNFREEZE） |
-| 测试 | Python：`tests/core/test_draft_commands.py`（每命令成功路径 + 未知命令 + 非法 payload + 关键错误码：DRAFT_READ_ONLY / DRAFT_INVALID / EDIT_TOKEN_EXPIRED / RECEIPT 相关）；CoreClient：序列化/registry/parity/错误映射 |
+| 测试 | Python：`tests/core/test_draft_commands.py`（每命令成功路径 + 未知命令 + 非法 payload + 关键错误码：DRAFT_READ_ONLY / DRAFT_INVALID / EDIT_TOKEN_EXPIRED / RECEIPT 相关）； |
 
 ## 验收标准
 
@@ -94,7 +94,11 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 - 不改 `src/application/editing/**`（编辑语义）；不改 schema/migrations；不改 C-02/C-03/C-04b/C-08 冻结字节。
 - 不改 UI（Current/Fluent）；不动用户数据；不 push；不合并 main。
 
-## L-2 前置判定\n\n本卡不新增数据库 schema/迁移，也不改编辑语义；L-2（四表 DDL 未冻）与 L-5（整库恢复锁）**不适用**。命令面扩展属 M2-C1 协议兼容扩展，映射见 W-1。\n\n## 附加裁决点（DSH 已裁）
+## L-2 前置判定
+- **L-2（M2-C1 字节修订）**：本卡新增 Host 命令面与 wire 码，**触发** L-2（`FEA-04.md:99`/`FEA-03.md:153`：「新增 Host/Core 命令或 wire 码 → blocked（先完成 M2-C1）」）。**解除依据**：W-1 裁决——按 F0-1 先例走「§8 追加 + 独立契约文档」的兼容扩展，M2-C1 不逐族追加；本卡同时产出 `V11R_COMMAND_CONTRACT_V1.md` §8 指针行，L-2 判定为「已按 W-1 解除」。
+- **L-1（四表 DDL 未冻）**：本卡不改 schema/迁移 → **NOT_APPLICABLE**。
+- **L-5（整库恢复独占锁）**：本卡无恢复/备份路径 → **NOT_APPLICABLE**。
+## 附加裁决点（DSH 已裁）
 
 | # | 问题 | 裁决 | 依据 |
 |---|---|---|---|
