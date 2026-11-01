@@ -34,7 +34,7 @@
 READY 节点：无
 
 
-当前 DAG：FEA-06（**proposed**，四页 UI）、FEA-05-PORT-1（**done**）、FEA-05-WIRE-1（**done**）、FEA-04b（**done**）
+当前 DAG：FEA-06-PREREQ-1（**proposed**）→ FEA-06-PREREQ-2（**proposed**）→ FEA-06（**proposed**）；其余 done
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -44,6 +44,7 @@ READY 节点：无
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 
 
 

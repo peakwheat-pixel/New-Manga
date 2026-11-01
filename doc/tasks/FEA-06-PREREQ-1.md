@@ -20,12 +20,17 @@ resource_closeout_status: pending
 evidence_dir: verification/FEA-06-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-06-PREREQ-1.md
+  - apps/desktop-avalonia/NewManga.sln
   - apps/desktop-avalonia/src/NewManga.Appearance/**
+  - apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj
+  - apps/desktop-avalonia/src/NewManga.DesignSystem/**
+  - apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/**
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/**
   - apps/desktop-avalonia/src/NewManga.App/Services/Appearance*.cs
   - apps/desktop-avalonia/src/NewManga.App/AppOptions.cs
   - apps/desktop-avalonia/src/NewManga.App/Program.cs
   - apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.Appearance.Tests/**
   - apps/desktop-avalonia/tests/NewManga.App.Tests/**
   - verification/FEA-06-PREREQ-1/**
   - doc/STATUS.md
@@ -45,17 +50,17 @@ allowed_paths:
 
 | 项 | 内容 |
 |---|---|
-| P1 | 新建 `NewManga.Appearance` 项目：`AppearanceSettings` 记录（frontendId/visualThemeId/motion.mode/motion.categories/corners/material/layout.*/followSystemAccent/schemaVersion）、JSON 读写（原子写、schemaVersion 迁移）、默认值 |
-| P2 | `AppearanceCoordinator`（App 侧）：读取 → 应用主题/动效 → 变更通知；`AppOptions` 暴露 `FrontendId`；`Program.cs` 装载 |
-| P3 | 令牌生成：`NmKeys.g.cs`/`Tokens.Global.axaml` 增加 G-1/G-1b/G-1c 令牌（Focus.Ring / Corner.Fluent / Material / Elevation），与设计基线一致 |
-| P4 | 三态动效：`motion.mode` = `off`/`reduce`/`full`；`motion.categories` = `off` 时 0ms 反馈（`02-motion.md`） |
+| P1 | 新建 `NewManga.Appearance` 项目：`AppearanceSettings` 记录 **按 C-03 §2.2 逐字段**（`appearance.mode`/`appearance.contrast`/`appearance.followSystemAccent`/`corners.scale`/`material.acrylicStrength`/`material.micaEnabled`/`motion.mode`（`auto`/`full`/`reduce`）/`motion.categories`/`theme.frontendId`/`theme.visualThemeId`/`layout.*`/`schemaVersion`）+ `presentation-settings.json` 原子写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价、幂等、旧文件只读顺序、`ThemeSettingsStore` 一个 release 兼容写）。**写者在 Appearance 项目内**（C-03:68）。 |
+| P2 | `AppearanceCoordinator`（App 侧）：**只做读取/校验/变更通知**（应用主题与动效的落点在 PREREQ-2 的 `App.axaml.cs`）；`AppOptions` 暴露 `FrontendId`；`Program.cs` 装载 |
+| P3 | 令牌生成（**不得手改生成产物**）：`Nm.Focus.Ring.*`/`Nm.Corner.Fluent.*` 走 `TokenMap.DerivedGlobals`（全局派生）；`Nm.Elevation.*` 需新增 `TokenValueKind.BoxShadows`（`TokenMap.cs:4-17` + Writer）；`Nm.Material.*` 归**主题层**（dark/light 取值，主题包 schema，非全局常量）→ 重生成 `NmKeys.g.cs`/`Tokens.Global.axaml` 并跑 `TokenGen -- --check` |
+| P4 | 三态动效：`motion.mode` = **`auto`/`full`/`reduce`**（C-03:48 + 设计 02）；`auto` 经 `IMotionPreferenceSource`（平台 SPI，Avalonia 无 API → 提供默认实现 + 可注入）；`motion.categories=off` 时 0ms 反馈；设计 02 判据 ①–⑤ 有测试点 |
 
 ## 验收标准
 
-- [ ] **AC1**：`NewManga.Appearance` 项目 + 记录 + 原子读写 + schemaVersion 迁移；单测覆盖（往返/坏文件/版本迁移）。<<TODO>>
-- [ ] **AC2**：`AppearanceCoordinator` 读取后应用主题与动效；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<TODO>>
-- [ ] **AC3**：G-1/G-1b/G-1c 令牌代码存在且与 `01-design-tokens.md` 值与命名一致；`NmKeys.g.cs` 生成器同步。<<TODO>>
-- [ ] **AC4**：`motion.mode` 三态 + `motion.categories=off` 语义有测试；reduce/full 差异可测。<<TODO>>
+- [ ] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<TODO>>
+- [ ] **AC2**：`AppearanceCoordinator` 读取/校验/变更通知（应用落点归 PREREQ-2）；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<TODO>>
+- [ ] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）；`Nm.Material.*` 在主题层；`ThemeGeneratorTests`/`TokenPipelineTests` 计数更新。<<TODO>>
+- [ ] **AC4**：`motion.mode` = `auto`/`full`/`reduce`（**无 `off`**）；`auto` 经 `IMotionPreferenceSource`（默认实现 + 注入测试）；`motion.categories=off` 0ms；设计 02 判据 ①–⑤ 有测试。<<TODO>>
 - [ ] **AC5**：全量 sln 不退化（基线 949/0/57）+ 证据。<<TODO>>
 
 ## 禁止范围
@@ -68,13 +73,19 @@ allowed_paths:
 |---|---|---|---|
 | W-1 | C-03 实现归属 | 独立前置任务（本卡），不并入 FEA-06 | FEA-06-scope-r1 P0-1 |
 | W-2 | 项目命名 | `NewManga.Appearance`（C-03 冻结草案指定名） | C-03 |
-| W-3 | 令牌缺口 | G-1/G-1b/G-1c 在本卡生成，FEA-06 只消费 | 设计基线 `01` |
+| W-3 | 令牌缺口归本卡，FEA-06 只消费 | 设计基线 `01` |
+| W-4 | G-1 键归属 | `Focus.Ring.*`/`Corner.Fluent.*` → 全局派生；`Elevation.*` → 新增 `BoxShadows` 类型；`Material.*` → 主题层（dark/light） | r1 P0-2 裁决 |
+| W-5 | 生成机制 | 禁止手改生成产物；一律走 `TokenMap.DerivedGlobals`/`TokenValueKind` + TokenGen 重生成 + `--check` | r1 P0-2 |
+| W-6 | Coordinator 归属 | 写者在 `NewManga.Appearance`；应用主题/动效在 PREREQ-2 | C-03:68；r1 P1-5 |
+| W-7 | `motion.mode` 取值 | `auto`/`full`/`reduce`（无 `off`）；`auto` 用 `IMotionPreferenceSource` 默认实现 | C-03:48 + 设计 02；r1 P1-3/4 |
+| W-8 | `builtin.fluent-dark` | 本卡交付主题包（ThemeEngine 写域） | C-02 V-07；r1 P1-6 |
 
 ## 测试要求
 
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
 | AC1–AC4 | `dotnet test apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests` + `NewManga.App.Tests` | .NET | NOT_RUN | 待补 |
+| AC3 | `dotnet run --project apps/desktop-avalonia/src/NewManga.DesignSystem.TokenGen -- --check` + `NewManga.ThemeEngine.ThemeGen -- --check` | 生成管线 | NOT_RUN | 待补 |
 | AC5 | 全量 sln build/test | 全量 | NOT_RUN | 待补 |
 
 ## Canonical Evidence
