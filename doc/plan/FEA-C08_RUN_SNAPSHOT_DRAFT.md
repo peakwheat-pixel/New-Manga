@@ -1,6 +1,6 @@
 # FEA-C08 Run 快照与已接受任务不可变（草案）
 
-状态：**FROZEN v4 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C08.md)）**
+状态：**FROZEN v5 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C08.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-08、[FEA-00 方案 r4](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) §10、代码现状（`src/infrastructure/sqlite/schema.py`、`src/application/tasks/service.py`）、[C-01b 存储契约](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)
@@ -67,12 +67,12 @@
 
 ### SC-R06 控制 pending 状态（D06 声明范围）
 
-**引用 M2-C1 `:203`（不复写）**：`Running` 状态下 `pause`/`stop` **先持久化请求**，当前不可安全中断的 Step 可完成，到安全边界后不再开始下一步。
+**引用 M2-C1 `:213`（控制状态矩阵 Running 行，不复写）**：`Running` 状态下 `pause`/`stop` **先持久化请求**，当前不可安全中断的 Step 可完成，到安全边界后不再开始下一步。
 
 **Run 侧不变量（本契约新增）**：
 
 1. **「控制请求已持久化」≠「状态已改变」**：`ControlRun` 成功返回只证明请求被 Core 接受并持久化，**不证明** Run 已进入 `paused`/`cancelled`。
-2. **UI 不得因控制受理而提前显示暂停或结束**：必须以 Core 持久化的 `status` 为准；受理后、状态变更前应显示**过渡态**（如「暂停中…」），而非「已暂停」。
+2. **UI 不得早于 Core 持久化的 `status` 显示 `paused`/`cancelled`**：受理后、状态变更前，**控制受理 ≠ 状态改变**（M2-C1 `:203` 的 `ControlResult.status` 仍可为 `running`；P11 §4.1 `:97`：`pause_requested`/`stop_requested` 是持久化的控制意图，**不是**额外的 Run 状态）。具体过渡态呈现由 UI 契约/实现决定，本契约不规定视觉形式。
 3. **状态变更的唯一权威**是 Core 的 Run 状态持久化（与 SC-R07 的权威源一致）。
 
 **验证**：发出 `pause` → 断言 `ControlResult.status` 仍可为 `running`；UI 断言显示过渡态；到安全边界后再查 → 断言 `status="paused"`。
@@ -81,11 +81,19 @@
 
 **权威持久状态**：Run 的完成状态只以 **Core 持久化的 Run/Task/StepRun 数据**为准（M2-C1 `:137`「同步响应表示接受，不表示长任务完成」；`:902`/`:1060`「事件不是状态真值」）。
 
-**完成判定（三条件同时满足）**：
+**完成判定**：
 
-1. `status ∈ {completed, completed_with_failures, failed, cancelled}`（终态）；
-2. **目标结果与统计一致**：`targets.length = succeeded + failed`；`completed` ⇔ `failed = 0`；`completed_with_failures` ⇔ `failed > 0` 且 Run 正常结束；
-3. 该状态**已持久化**（不是仅存在于事件流或内存投影）。
+**所有终态的共同不变量**：`status ∈ {completed, completed_with_failures, failed, cancelled}` **且** `counts.processing = 0` **且** `counts.waiting = 0`（不再有活动工作）。
+
+**逐终态的附加判据**（字段用 M2-C1 §6.1 冻结的 `TaskProjection.counts: {total, completed, failed, skipped, blocked, waiting, processing}`，`:834`）：
+
+| 终态 | 附加判据 |
+|---|---|
+| `completed` | `counts.failed = 0` 且 `counts.blocked = 0` |
+| `completed_with_failures` | `counts.failed > 0` 且 `counts.blocked = 0` |
+| `failed` / `cancelled` | **不要求**满足 total 等式——可能有未开始/未处理目标（M2-C1 `:221`：cancelled 时未开始 Task 转 cancelled）；只要求共同不变量 |
+
+**不得**用 `targets.length` 与计数相加作等式：`skipped` 是计划结果（P11 `:14`），`blocked`/`waiting`/`processing` 各有语义，简单相加会误判。
 
 **明文的否定**：
 
@@ -93,7 +101,7 @@
 - **事件不是状态真值**——事件可能丢失/乱序/重复，UI 必须能靠重读状态恢复；
 - **`GetTaskProjection` 的统计与 `RunSnapshot.status` 必须同源**。
 
-**验证**：构造 `status=completed` 但 `failed>0` 的投影 → 断言契约判定为非法态；断网重连 → 断言 UI 靠重读状态恢复而非依赖事件。
+**验证**：①构造 `counts.failed>0` 但 `status=completed` 的投影 → 断言判定为非法态；②构造 `status=cancelled` 且 `counts.processing>0` → 断言非法态；③**重启后**调 `GetRunSnapshot` → 断言仍返回同一终态与同一 `counts`；④断网重连 → 断言 UI 靠重读状态恢复而非依赖事件。
 
 ### SC-R08 retry 的快照来源（D06 声明范围）
 
@@ -107,7 +115,7 @@
 **新 Run 的快照来源（明确回答）**：
 
 - **目标集合**：**复用**源 Run 的失败 Page 集合（M2-C1 `:206`），写 `source_run_id` + `retry_reason="retry_failed_targets"`；
-- **冻结上下文**（当前 Revision / Lock / settings / Provider / constraint / context）：**重新读取并冻结**——fingerprint 明确**不含**这些（M2-C1 `:204`）；
+- **冻结上下文**（当前 Revision / Lock / settings / Provider / constraint / context）：**重新读取并冻结**——fingerprint 明确**不含**这些（M2-C1 `:202`）；
 - **结论**：retry **复用「目标集合」但不复用「冻结上下文」**；源 Run 的历史与快照**不变**（`:206`）。
 
 **对照 P11 §3.3**：新 Run 是**独立的 Run**，不是源 Run 的延续；`source_run_id` 只是溯源标记，不构成状态继承。
@@ -126,7 +134,8 @@
 
 **明文的否定**：
 
-- **`request_id` 不能充当去重键**：它是传输层标识（日志/追踪用），可能被复用或由不同层重新生成；去重必须用调用方生成的 `idempotency_key`；
+- **`request_id` 不能充当去重键**——M2-C1 `:138` 明文「`request_id` 只做单次请求/响应关联，**不得**充当幂等键」；去重必须用调用方生成的 `idempotency_key`；
+- **同键异 fingerprint** → `IDEMPOTENCY_KEY_REUSED`（M2-C1 `:201`/`:223`），该键不得被复用为不同操作；
 - **不得**用「时间窗口」近似去重（重启后时间基准不可靠）。
 
 **验证**：注入「提交成功但响应丢失」→ 同键重放 → 断言找回原 `run_id`、无第二个 Run；`request_id` 相同但 `idempotency_key` 不同 → 断言这是**两个不同操作**。
@@ -149,6 +158,7 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v6（处置 FEA-C08-r9 的 P1×2 + P2×5）**：P1-1 **SC-R07 完成判定重写**——改用 §6.1 冻结的 `counts.{total,completed,failed,skipped,blocked,waiting,processing}`（M2-C1 `:834`），共同不变量 `processing=0 && waiting=0`，逐终态附加判据，**取消** `targets.length = succeeded + failed`（`succeeded` 字段不存在、且漏 skipped/blocked）；cancelled/failed 不要求 total 等式；补「重启后仍为终态」验证。P1-2 版本同步 v4→v5。P2-1 行号改 `:213`/`:202`；P2-2 过渡态措辞；P2-3 `request_id` 引 `:138` + `IDEMPOTENCY_KEY_REUSED` | DSH |
 | 2026-11-01 | **v5（FEA-D06-GAP）**：新增 **SC-R06 控制 pending 状态**、**SC-R07 真实完成口径**、**SC-R08 retry 快照来源**、**SC-R09 断线 receipt**四项，补齐 D06 六项声明范围；走 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md) | DSH |
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-1 接口口径 + P2×3） | DSH |
