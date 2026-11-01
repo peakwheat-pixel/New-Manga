@@ -34,10 +34,17 @@ public static class BuiltInThemeGenerator
     /// <summary>File name of the generated default theme package.</summary>
     public const string ThemeFileName = "newmanga-default.nmtheme";
 
+    /// <summary>File name of the generated Fluent dark theme package (FEA-06-PREREQ-1 AC5).</summary>
+    public const string FluentDarkThemeFileName = "fluent-dark.nmtheme";
+
+    /// <summary>Theme id of the Fluent dark package.</summary>
+    public const string FluentDarkThemeId = "builtin.fluent-dark";
+
     /// <summary>Generated artifacts, project-directory-relative, in emission order.</summary>
-    public static IReadOnlyList<string> GeneratedFilePaths { get; } =
+    public static IReadOnlyList<string> GeneratedFilePaths =>
     [
         "Themes/" + ThemeFileName,
+        "Themes/" + FluentDarkThemeFileName,
         "Generated/ThemeTokenBaseline.g.cs",
     ];
 
@@ -176,10 +183,34 @@ public static class BuiltInThemeGenerator
 
         var package = new ThemePackage(ThemeDefaults.Schema, descriptor, TokenSet(lightColors), TokenSet(darkColors), metadata);
 
+        // FEA-06-PREREQ-1 AC5: the Fluent dark package is generated from the same frozen tokens
+        // (dark palette, Fluent material/elevation semantics) so ThemeGen --check covers it too.
+        var fluentDescriptor = new ThemeDescriptor(
+            FluentDarkThemeId,
+            "Fluent Dark",
+            "1.0.0",
+            "New Manga",
+            "Fluent visual theme (dark-only) for the Fluent frontend; generated from the frozen design tokens.",
+            ThemeKind.BuiltIn,
+            ["builtin", "fluent"],
+            SupportsLight: false,
+            SupportsDark: true,
+            PreviewHint: null);
+        ThemeTokenSet FluentTokenSet(IReadOnlyDictionary<string, string> colors) =>
+            new(colors, typography, corners, ThemeMaterial.Solid, ThemeElevation.Raised, motion);
+        var fluentPackage = new ThemePackage(
+            ThemeDefaults.Schema,
+            fluentDescriptor,
+            FluentTokenSet(lightColors),
+            FluentTokenSet(darkColors),
+            metadata);
+        _ = fluentPackage;
+
         var baseline = BuildBaseline(byPath, globalBindings, tokensJson);
         var files = new List<GeneratedThemeFile>(GeneratedFilePaths.Count)
         {
             new("Themes/" + ThemeFileName, ThemePackageJson.Write(package)),
+            new("Themes/" + FluentDarkThemeFileName, ThemePackageJson.Write(fluentPackage)),
             new("Generated/ThemeTokenBaseline.g.cs", baseline.Content),
         };
 

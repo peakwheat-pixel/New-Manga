@@ -9,8 +9,7 @@
     "kind": "builtin",
     "tags": [
       "builtin",
-      "fusion",
-      "a+c"
+      "fluent"
     ],
     "supportsLight": false,
     "supportsDark": true,
@@ -69,7 +68,7 @@
       "md": 3
     },
     "material": "solid",
-    "elevation": "none",
+    "elevation": "raised",
     "motion": {
       "fastMs": 90,
       "normalMs": 140,
@@ -129,7 +128,7 @@
       "md": 3
     },
     "material": "solid",
-    "elevation": "none",
+    "elevation": "raised",
     "motion": {
       "fastMs": 90,
       "normalMs": 140,
