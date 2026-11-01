@@ -85,13 +85,13 @@
 
 ### SC-D06 活跃草稿登记
 
-- Core 收到 `edit-open` / 序号更新后登记**活跃草稿**；
+- Core 收到 `edit-open` / 序号更新后登记**活跃草稿**（`status=active` 的 Draft）；
 - 任何同区域的新结果（Pipeline/翻译产物）**先成为 candidate**，不得直接覆盖 `current_revision_id`（方案 `:269`）；
 - 登记表随 Session 结束清理；孤儿草稿（无 Session）按 `status=discarded` 处理。
 
 **验证**：编辑中触发翻译 → 断言产物是 `RegionCandidate`、`current_revision_id` 未变。
 
-**与 C-05 `S(p,t)` 的边界**：活跃草稿**不进** `S`（编辑态不是"进行中任务"）。**后果承接**：导出/删除预览在 `S` 成立时仍可通过，因此**导出与删除 preflight 前必须 flush 或显式提示"有未保存草稿"**——该要求写入 C-04b 的 preflight 契约与导出实现 Task 的 AC。
+**与 C-05 `S(p,t)` 的边界**：活跃草稿**不进** `S`（编辑态不是"进行中任务"）。**后果承接**：导出/删除预览在 `S` 成立时仍可通过，因此**导出与删除 preflight 前必须 flush 或显式提示"有未保存草稿"**——该要求由**导出实现 Task 的 AC** 承载；删除侧若也需要提示，须先走 `CONTRACT-UNFREEZE-<DATE>.md` 修订 C-04b（本契约不改 C-04b）。
 
 ## 4. candidate-only prepare
 
@@ -144,7 +144,18 @@
 
 **验证**：写 `style_json.customFoo` → 断言拒绝且报 `STYLE_KEY_NOT_ALLOWED`；`translation_locked=1` 时改 `font_size` → 允许；改 `text_json` → 拒绝；写 `text_color`（真实键）→ 允许（回归：不得被误拒）。
 
-## 5B. Protection 版本（D04 第 2 项的 Protection 侧；编号续 SC-D11 之后）
+## 6. 旧非幂等写兼容
+
+### SC-D11 旧路径不破坏
+
+- 现有 `editing/service.py` 的用户保存路径（`service.py:1239`）在过渡期**继续有效**，不因本契约引入而失败；
+- 新旧路径**不得双写产生两个 revision**：无论走新 token 还是旧路径，都以最终去重键 `(RegionId, BaseRevisionId, 内容摘要)` 判幂等；
+- **最终去重键统一为 `(RegionId, BaseRevisionId, 内容摘要)`**——新 token 路径与旧路径都以它为最终判据（token 只防重放，不单独决定去重）；
+- **过渡期结束的客观判据**：①`rg` 全仓确认无任何调用方直接走旧 `service.py:1239` 保存路径；②新路径的写入点清单（实现 Task 产出）与 UI 实际写入点一一对应；③独立复核通过。三条全满足才可移除旧路径。
+
+**验证**：同一内容先后走旧路径、新路径 → 断言只产生一个 revision。
+
+## 6A. Protection 版本（D04 第 2 项的 Protection 侧；SC-D12 续 SC-D11 之后）
 
 ### SC-D12 protectionDigest（D04「Protection 版本」的保护半 · **编辑层专用**）
 
@@ -155,37 +166,25 @@
 ```
 protectionDigest(regionId) = sha256(
     region_locked ‖ translation_locked ‖ inpaint_locked
-    ‖ current_revision_id ‖ updated_at
     ‖ manualFlagIn(text_json)
 )
 ```
 
 - 只从 `regions` 表的**现有列**派生（`schema.py:224-249`）+ `text_json` 内的 manual 标志（`editing/service.py:128-129` 合并逻辑依赖的「列已镜像」不变量）；
-- 覆盖 = 该 Region 的**保护状态位**（三锁）+ 当前修订指针 + 最后更新 + **`text_json` 内的人工修改标志**（不覆盖 `RegionText` 的其他字段，只覆盖 manual 位）；
+- 覆盖 = 该 Region 的**保护状态位**（三锁）+ **`text_json` 内的人工修改标志**（只覆盖 manual 位）。**不含** `current_revision_id`/`updated_at`——修订漂移由 SC-D08 的 `BaseRevisionId` 校验与既有 `InputRevisionChanged`/`STALE_BASE_REVISION` 承担，避免语义重复与误报；
 - **零 schema 迁移、零协议改动、零新错误码**；
 - **粒度**：逐 Region 计算（`regions` 表行级），但只在 candidate 的**目标 Region 集合**上算（通常 ≤ 数个），不做全表扫描；不涉及 C-04b 的 book 级批量。
 
 **使用规则（编辑层）**：
 1. 生成 `RegionCandidate` 时记录其目标 Region 的 `protectionDigest`；
 2. apply 时**重算并比对**；任一目标 Region 的 digest 变化 → **拒绝本次 apply**，走**现有锁冲突路径**（`editing/service.py` 既有 `translation_locked`/`region_locked` 检查，不新增错误码），并让用户重新生成 candidate；
-3. `updated_at`（任何写入都会变）与 `current_revision_id`（保护无关的修订也会变）参与摘要 → **存在假阳性**；这是**刻意的 fail-safe**：宁可多要求一次重算，不可漏报保护变化。
+3. 摘要**只含保护状态位** → **无假阳性**（普通保存、流水线落 revision、改类型都不影响 digest）；保护本身变化才拒绝，语义与既有 `LOCK_CHANGED` 对齐。
 
 **与 C-04b 的关系（明确边界）**：
 - **不改 C-04b**：C-04b 的 `inventory_digest` 逐书输入已含 `lockCount`/`manualRegionCount`/`currentRevisionId`（`:43`/`:46`），**能察觉单点加锁**；
 - C-04b 的**已知局限**（不在本契约修）：book 级聚合对「计数不变而分布变」（A 区加锁 + B 区解锁）不敏感、region 级指针不进 book 级 `currentRevisionId`。该局限登记在 [C-04b 冻结记录](FEA-CONTRACT-FROZEN-C04b.md) 的已知限制，由删除线实现 Task 评估是否需要 UNFREEZE。
 
 **验证**：candidate 生成 → 给目标 Region 加 `translation_locked` → apply 断言被拒（走锁冲突路径）且无副作用；恢复锁状态后重新生成 → 断言通过。
-## 6. 旧非幂等写兼容
-
-### SC-D11 旧路径不破坏
-
-- 现有 `editing/service.py` 的用户保存路径（`service.py:1239`）在过渡期**继续有效**，不因本契约引入而失败；
-- 新旧路径**不得双写产生两个 revision**：同一 `(RegionId, BaseRevisionId)` 的写入，无论走新 token 还是旧路径，都必须幂等；
-- **最终去重键统一为 `(RegionId, BaseRevisionId, 内容摘要)`**——新 token 路径与旧路径都以它为最终判据（token 只防重放，不单独决定去重）；
-- **过渡期结束的客观判据**：①`rg` 全仓确认无任何调用方直接走旧 `service.py:1239` 保存路径；②新路径的写入点清单（实现 Task 产出）与 UI 实际写入点一一对应；③独立复核通过。三条全满足才可移除旧路径。
-
-**验证**：同一内容先后走旧路径、新路径 → 断言只产生一个 revision。
-
 ## 7. 与其它契约的接口
 
 | 契约 | 接口 |
@@ -215,5 +214,6 @@ protectionDigest(regionId) = sha256(
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表（5 面）、SC-D01…SC-D11、与 C-01b/C-04b/C-05/C-08 的接口、Gate 关系、冻结条件（含 U-03 前置） | DSH |
+| 2026-11-01 | **v4（处置 FEA-C13-r3：P1×1 + P2×5）**：P1 `:94` 删除「写入 C-04b preflight」半句（改由导出 Task AC 承载 / 删除侧需 UNFREEZE）；P2-1 `origin` 补取值域；P2-2 去重键残留清理 + 裸 candidate；P2-3 §5B 物理移到 §6 之后；**P2-4 digest 收敛为「三锁 + manual 位」**（去掉 `current_revision_id`/`updated_at`，修订漂移交 SC-D08），消除 `LOCK_CHANGED` 语义错配与假阳性；P2-5 同步去掉 fail-safe 的过度表述 | DSH |
 | 2026-11-01 | **v3（处置 FEA-C13-r2：P1×2 + P2×8）**：**P1-A/P1-B 把 SC-D12 重构为「编辑层专用」**——取消新错误码 `STALE_PROTECTION`（改走既有锁冲突路径）、取消对 C-04b 的任何改动（C-04b 的 `inventory_digest` 已含 `lockCount`/`manualRegionCount`，单点加锁能察觉）、把「计数不变而分布变」登记为 C-04b 的已知局限；P2-1 inpaint 悬空澄清；P2-2 过渡期客观判据；P2-3 §7 与 §4 矛盾消除 + 裸 candidate 清干净；P2-4 `origin` 取值域指向 `schema.py:256-257`；P2-5 digest 含 `text_json` manual 位；P2-6 假阳性来源补 `current_revision_id`；P2-8 粒度说明 | DSH |
 | 2026-11-01 | **v2（处置 FEA-C13-r1：P1×2 + P2×9）**：P1-1 样式白名单改为 `TextStyle` 真实 6 键（snake_case）+ 声明与 C-02 V-05 不同平面；P1-2 新增 SC-D12 `protectionDigest`（派生摘要，不新增 schema，与 C-04b `inventory_digest` 分工）；P2-1 字段数 10→11；P2-2 补 SC-D09 验证；P2-3 统一去重键；P2-4 candidate→`RegionCandidate`（与 C-08 同名异物区分）；P2-5 行号修正；P2-6 grep 排除第三方；P2-7 `origin` 取值域；P2-8 结果面转交 C-08；P2-9 导出/删除前 flush 提示 | DSH |
