@@ -40,3 +40,10 @@
   - G-1：Nm.Corner.Fluent.Sm/Md/Lg(4/6/8)、Nm.Elevation.1/2/3(BoxShadows)、Nm.Material.Mica.Enabled(true)、Nm.Material.Acrylic.Opacity(0.8)
 - Nm.Material.Acrylic.Base/Tint 为主题层键（取值随内置主题包，非全局常量——C-02 口径）。
 - TokenGen -- --check **up to date**；ows: 287；全量 sln **961/0/57**。
+
+## AC2 完成
+
+- App/Services/AppearanceCoordinator.cs：读取/校验/变更通知（**不应用主题**——应用归 PREREQ-2）；FrontendId 暴露给壳；Warnings 透出；坏文件回退默认。
+- App 项目引用 NewManga.Appearance。
+- NewManga.App.Tests/AppearanceCoordinatorTests.cs 4 测试（默认/变更事件/坏文件/不碰资源）。
+- 全量 sln **965/0/57**（+4）。
