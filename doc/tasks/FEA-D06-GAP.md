@@ -36,7 +36,7 @@ allowed_paths:
 
 用户 2026-11-01 裁决：**激活 FEA-D06-GAP，走 C-08 的 UNFREEZE 流程补齐四项，仅修改契约文档**。
 
-背景：[FEA-GATE-READINESS-review](doc/reviews/FEA-GATE-READINESS-review.md) P1-1 指出 D06（Run 快照）六项声明范围中**四项无任何冻结契约承载**，导致 `G-DELETE-CONTRACT` 的 D06 条件不满足。迁延至今，D04/D05/D07 均已覆盖，**D06 是唯一剩余缺口**。
+背景：[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md) P1-1 指出 D06（Run 快照）六项声明范围中**四项无任何冻结契约承载**，导致 `G-DELETE-CONTRACT` 的 D06 条件不满足。迁延至今，D04/D05/D07 均已覆盖，**D06 是唯一剩余缺口**。
 
 ## 四项缺口与用户的起草要点
 
