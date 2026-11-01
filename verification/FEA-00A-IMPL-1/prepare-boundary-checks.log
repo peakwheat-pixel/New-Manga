@@ -1,0 +1,16 @@
+Shell: PowerShell (pwsh -NoProfile -Command)
+Invocation: uv run --no-project --cache-dir verification/FEA-00A-IMPL-1/.uv-cache --with pytest==9.1.1 --with pillow==12.3.0 --with pypdfium2==5.13.0 --with mobi==0.4.1 --with numpy python -m pytest -vv tests/pipeline/test_fea00a_source_boundaries.py
+EXIT: 0
+7.6.8
+G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmplqr10g\Scripts\python.exe
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.7.0 -- G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmpajvegK\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1
+configfile: pytest.ini
+collecting ... collected 2 items
+
+tests/pipeline/test_fea00a_source_boundaries.py::test_region_prepare_only_inserts_a_prepared_candidate PASSED [ 50%]
+tests/pipeline/test_fea00a_source_boundaries.py::test_artifact_prepare_has_no_live_database_or_publish_write PASSED [100%]
+
+============================== 2 passed in 0.07s ==============================

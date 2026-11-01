@@ -1,0 +1,40 @@
+{
+  "baseline": "all seven outcome files passed in 180-test baseline command; individual counts were not captured at baseline",
+  "after": [
+    {
+      "file": "tests/core/test_bootstrap.py",
+      "exit": 0,
+      "output": ".......................                                                  [100%]\r\n23 passed in 6.85s\r\n"
+    },
+    {
+      "file": "tests/core/test_page_catalog_modes.py",
+      "exit": 0,
+      "output": "...                                                                      [100%]\r\n3 passed in 0.65s\r\n"
+    },
+    {
+      "file": "tests/pipeline/test_regionless_rebinding.py",
+      "exit": 0,
+      "output": "........................                                                 [100%]\r\n24 passed in 1.54s\r\n"
+    },
+    {
+      "file": "tests/providers/test_detect_handler.py",
+      "exit": 0,
+      "output": "........                                                                 [100%]\r\n8 passed in 0.70s\r\n"
+    },
+    {
+      "file": "tests/providers/test_full_chain.py",
+      "exit": 0,
+      "output": "....                                                                     [100%]\r\n4 passed in 1.53s\r\n"
+    },
+    {
+      "file": "tests/providers/test_handlers_pipeline.py",
+      "exit": 0,
+      "output": "........................                                                 [100%]\r\n24 passed in 2.24s\r\n"
+    },
+    {
+      "file": "tests/providers/test_retype_redetect_persistence.py",
+      "exit": 0,
+      "output": ".                                                                        [100%]\r\n1 passed in 0.22s\r\n"
+    }
+  ]
+}

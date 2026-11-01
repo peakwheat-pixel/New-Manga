@@ -1378,6 +1378,7 @@ def assemble_core_services(
             conn,
             handlers=handlers,
             clean_probe=clean_probe,
+            storage=storage,
             settings=defaults["settings"] or None,
             provider_bindings=defaults["provider_bindings"] or None,
             constraint_snapshot_ref=defaults["constraint_snapshot_ref"],

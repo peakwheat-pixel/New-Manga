@@ -21,8 +21,12 @@ from domain.tasks.models import (  # noqa: E402
     PlanDecision,
     ScopeType,
     StageState,
+    StepResult,
 )
 from infrastructure.pipeline.executor import ProductionStepExecutor  # noqa: E402
+from infrastructure.pipeline.assembly import build_production_pipeline  # noqa: E402
+from infrastructure.providers.step_writes import RegionStepWriter  # noqa: E402
+from infrastructure.sqlite.regions import SqliteRegionRepository  # noqa: E402
 from infrastructure.sqlite.connection import open_database  # noqa: E402
 from infrastructure.sqlite.migrator import MigrationRunner  # noqa: E402
 from infrastructure.sqlite.pipeline import (  # noqa: E402
@@ -73,7 +77,7 @@ def production_db(tmp_path: Path):
         conn.execute(
             "INSERT INTO regions (region_id, page_id, region_type, geometry_json, text_json,"
             " style_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            ("region-1", "page-1", "speech", "{}", json.dumps(text), "{}", now, now),
+            ("region-1", "page-1", "speech", json.dumps({"bbox": [0, 0, 10, 10], "polygon": []}), json.dumps(text), "{}", now, now),
         )
         conn.execute(
             "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
@@ -95,24 +99,38 @@ def test_sqlite_catalog_expands_real_hierarchy_and_commits_guarded_state(product
     assert page.chapter_id == "chapter-1"
     assert page.regions[0].region_id == "region-1"
 
-    region = catalog.current("region-1")
-    with production_db:
-        production_db.execute(
-            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
-            " snapshot_json, origin, review_state, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ("region-rev-2", "region-1", 2, "{}", "machine", "needs_review", "now"),
-        )
-    result = catalog.commit_step(
-        target_id="region-1",
-        expected_revisions={"region": "region-rev-1"},
-        expected_lock=region.lock,
-        stage_updates={"ocr": StageState.COMPLETED},
-        revision_updates={"region": "region-rev-2"},
+    service = build_production_pipeline(
+        production_db, provider_bindings={"ocr": {"provider_id": "test-ocr"}}
     )
-    assert result.status == "applied"
+    run = service.create_run(
+        CommandType.OCR_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-1",)),
+    )
+    service.plan_run(run.run_id)
+    step = service.record_step_attempt(run.tasks[0].task_id, "ocr")
+    prepared = RegionStepWriter(
+        production_db, SqliteRegionRepository(production_db)
+    ).prepare_ocr_text(
+        "region-1", "新文本", source_run_id=run.run_id,
+        source_step_run_id=step.step_run_id,
+        expected_current_revision_id="region-rev-1",
+    )
+    outcome = service.commit_step_result(
+        step.step_run_id,
+        StepResult(
+            target_id="region-1", step_type="ocr", outputs={"ocr_text": "新文本"},
+            revision_updates={"region": prepared.revision_id},
+        ),
+    )
+    assert outcome.status == "committed"
     assert catalog.current("region-1").stage("ocr") is StageState.COMPLETED
-    assert catalog.current("region-1").current_revisions["region"] == "region-rev-2"
-
+    assert catalog.current("region-1").current_revisions["region"] == prepared.revision_id
+    candidate = production_db.execute(
+        "SELECT status, resolved_at FROM step_result_candidates WHERE candidate_id = ?",
+        (prepared.revision_id,),
+    ).fetchone()
+    assert candidate["status"] == "resolved"
+    assert candidate["resolved_at"] is not None
 
 def test_sqlite_snapshot_redacts_secrets_and_merges_overrides(production_db):
     provider = SqliteSnapshotProvider(

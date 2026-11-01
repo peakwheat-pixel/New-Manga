@@ -1,0 +1,14 @@
+{
+  "database": "C:\\Users\\49745\\AppData\\Local\\Temp\\fea00a-readonly-audit-yrk_h9fl\\library.db",
+  "open_mode": "read-only",
+  "query_only": 1,
+  "region_count": 1,
+  "regions_with_resolvable_current_revision": 1,
+  "region_revision_count": 1,
+  "missing_or_unresolvable_current_revision": [],
+  "current_revision_wrong_region": [],
+  "text_json_snapshot_mismatch": [],
+  "candidate_rows_read": 0,
+  "candidate_status_counts": {},
+  "consistent": true
+}

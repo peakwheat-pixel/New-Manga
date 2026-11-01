@@ -281,6 +281,7 @@ def _build_service(
         conn,
         handlers=mapping,
         settings=settings or {"ocr": {"script": "japanese"}},
+        storage=storage,
         provider_bindings=provider_bindings,
     )
     return service, detector, ocr

@@ -345,6 +345,7 @@ def _pipeline(workspace, settings=None) -> PipelineService:
             "ocr": {"provider_id": "fake-ocr"},
             "translate": {"provider_id": "fake-translate"},
         },
+        storage=workspace["storage"],
     )
 
 

@@ -19,11 +19,10 @@ from bootstrap.app import (
     _ManagedPageCatalog,
     assemble_services,
 )
-from infrastructure.providers.step_writes import ArtifactStepWriter
 from ports.repositories.artifacts import ArtifactType
 from infrastructure.rendering.locator import SqlitePageArtifactLocator
 
-from tests.core.test_bootstrap import _make_png
+from tests.core.test_bootstrap import _make_png, _seed_artifact_for_reader_test
 
 
 def _uri_path(url: str):
@@ -45,21 +44,10 @@ def _import_pages(services, chapter_id: str, count: int = 2):
 
 
 def _publish_translated(services, page_id: str) -> None:
-    writer = ArtifactStepWriter(services.conn, services.storage)
-    prepared = writer.prepare_revision(
-        page_id=page_id,
-        artifact_type="translated",
-        payload=_make_png(41, 61),
-        mime_type="image/png",
-        width=41,
-        height=61,
+    _seed_artifact_for_reader_test(
+        services, page_id, "translated", _make_png(41, 61),
+        width=41, height=61,
     )
-    writer.adopt_current(
-        artifact_id=prepared.artifact_id,
-        revision_id=prepared.revision_id,
-        expected_current_revision_id=prepared.previous_revision_id,
-    )
-
 
 def test_translated_and_compare_resolve_like_the_reader(tmp_path) -> None:
     services = assemble_services(tmp_path / "library.db", tmp_path / "managed")

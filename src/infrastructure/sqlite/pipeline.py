@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
+import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from enum import Enum
 from typing import Any, Callable, Mapping
 
@@ -18,6 +21,9 @@ from application.tasks.store import (
     _merge,
 )
 from domain.regions.entities import SfxPolicy
+from infrastructure.filesystem.integrity import integrity_of
+from infrastructure.filesystem.managed_storage import ARTIFACT_TYPE_DIRS
+from ports.repositories.storage import ManagedFileStoragePort
 from domain.tasks.models import (
     CommandType,
     LockSnapshot,
@@ -430,101 +436,165 @@ class SqlitePipelineStore(PipelineStore):
         revision = self._check_write_revision(run)
         value = _run_dict(run)
         now = _now()
-        self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run.run_id,))
+
+        # step_result_candidates is the durable prepare/seam lifecycle truth.
+        # Child graph rows are rebuilt below, so snapshot every candidate first;
+        # deleting a step row cascades to its candidates.
+        candidate_rows = [
+            dict(row)
+            for row in self._conn.execute(
+                "SELECT candidate_id, pipeline_run_id, step_run_id, target_id, page_id,"
+                " region_id, result_kind, base_revision_id, payload_json, reason, status,"
+                " created_at, resolved_at FROM step_result_candidates"
+                " WHERE pipeline_run_id = ? ORDER BY created_at, candidate_id",
+                (run.run_id,),
+            ).fetchall()
+        ]
+
         self._conn.execute(
-                "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
-                " requested_targets_json, settings_snapshot_json,"
-                " provider_binding_snapshot_json, constraint_snapshot_ref,"
-                " context_policy_json, status, planned_step_units,"
-                " terminal_step_units, pause_requested, cancel_requested,"
-                " source_run_id, retry_reason, interruption_disposition,"
-                " termination_reason, fatal_error, run_json, updated_at)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    run.run_id,
-                    run.command_type.value,
-                    run.scope.scope_type.value,
-                    _dump(run.requested_targets),
-                    _dump(run.settings_snapshot),
-                    _dump(run.provider_binding_snapshot),
-                    run.constraint_snapshot_ref,
-                    _dump(run.context_policy),
-                    run.status.value,
-                    run.planned_step_units,
-                    run.terminal_step_units,
-                    int(run.pause_requested),
-                    int(run.cancel_requested),
-                    run.source_run_id,
-                    run.retry_reason,
-                    run.interruption_disposition,
-                    run.termination_reason,
-                    run.fatal_error,
-                    _dump(value),
-                    now,
-                ),
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
+            " requested_targets_json, settings_snapshot_json,"
+            " provider_binding_snapshot_json, constraint_snapshot_ref,"
+            " context_policy_json, status, planned_step_units,"
+            " terminal_step_units, pause_requested, cancel_requested,"
+            " source_run_id, retry_reason, interruption_disposition,"
+            " termination_reason, fatal_error, run_json, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            " ON CONFLICT(run_id) DO UPDATE SET"
+            " command_type = excluded.command_type, scope_type = excluded.scope_type,"
+            " requested_targets_json = excluded.requested_targets_json,"
+            " settings_snapshot_json = excluded.settings_snapshot_json,"
+            " provider_binding_snapshot_json = excluded.provider_binding_snapshot_json,"
+            " constraint_snapshot_ref = excluded.constraint_snapshot_ref,"
+            " context_policy_json = excluded.context_policy_json, status = excluded.status,"
+            " planned_step_units = excluded.planned_step_units,"
+            " terminal_step_units = excluded.terminal_step_units,"
+            " pause_requested = excluded.pause_requested, cancel_requested = excluded.cancel_requested,"
+            " source_run_id = excluded.source_run_id, retry_reason = excluded.retry_reason,"
+            " interruption_disposition = excluded.interruption_disposition,"
+            " termination_reason = excluded.termination_reason, fatal_error = excluded.fatal_error,"
+            " run_json = excluded.run_json, updated_at = excluded.updated_at",
+            (
+                run.run_id,
+                run.command_type.value,
+                run.scope.scope_type.value,
+                _dump(run.requested_targets),
+                _dump(run.settings_snapshot),
+                _dump(run.provider_binding_snapshot),
+                run.constraint_snapshot_ref,
+                _dump(run.context_policy),
+                run.status.value,
+                run.planned_step_units,
+                run.terminal_step_units,
+                int(run.pause_requested),
+                int(run.cancel_requested),
+                run.source_run_id,
+                run.retry_reason,
+                run.interruption_disposition,
+                run.termination_reason,
+                run.fatal_error,
+                _dump(value),
+                now,
+            ),
+        )
+
+        # Rebuild only the graph beneath the UPSERTed parent. Candidate rows are
+        # restored from the snapshot below, with run.candidates winning on IDs.
+        self._conn.execute(
+            "DELETE FROM pipeline_run_targets WHERE pipeline_run_id = ?", (run.run_id,)
+        )
+        self._conn.execute(
+            "DELETE FROM pipeline_tasks WHERE pipeline_run_id = ?", (run.run_id,)
+        )
+        self._conn.execute(
+            "DELETE FROM step_runs WHERE pipeline_run_id = ?", (run.run_id,)
+        )
+        self._conn.execute(
+            "DELETE FROM step_result_candidates WHERE pipeline_run_id = ?", (run.run_id,)
         )
         for target in run.targets:
             self._conn.execute(
-                    "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
-                    " target_id, target_type, page_id, region_id, target_order, snapshot_json)"
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        target.run_target_id, run.run_id, target.target_id,
-                        target.target_type.value, target.page_id, target.region_id,
-                        target.target_order, _dump(_target_dict(target.snapshot)),
-                    ),
+                "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+                " target_id, target_type, page_id, region_id, target_order, snapshot_json)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    target.run_target_id, run.run_id, target.target_id,
+                    target.target_type.value, target.page_id, target.region_id,
+                    target.target_order, _dump(_target_dict(target.snapshot)),
+                ),
             )
         for task in run.tasks:
             self._conn.execute(
-                    "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id,"
-                    " target_id, target_type, page_id, region_id, status, units_json,"
-                    " step_run_ids_json, error_code, error_detail)"
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        task.task_id, run.run_id, task.run_target_id, task.target_id,
-                        task.target_type.value, task.page_id, task.region_id,
-                        task.status.value, _dump([_unit_dict(item) for item in task.units]),
-                        _dump(task.step_run_ids), task.error_code, task.error_detail,
-                    ),
+                "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id,"
+                " target_id, target_type, page_id, region_id, status, units_json,"
+                " step_run_ids_json, error_code, error_detail)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    task.task_id, run.run_id, task.run_target_id, task.target_id,
+                    task.target_type.value, task.page_id, task.region_id, task.status.value,
+                    _dump([_unit_dict(item) for item in task.units]),
+                    _dump(task.step_run_ids), task.error_code, task.error_detail,
+                ),
             )
         for step in run.step_runs:
             self._conn.execute(
-                    "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id,"
-                    " target_id, page_id, region_id, step_type, unit_id, status,"
-                    " input_refs_json, lock_snapshot_json, retry_no, error_code,"
-                    " error_detail, output_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        step.step_run_id, run.run_id, step.task_id, step.target_id,
-                        step.page_id, step.region_id, step.step_type, step.unit_id,
-                        step.status.value, _dump(step.input_refs),
-                        _dump(_lock_dict(step.lock_snapshot)), step.retry_no,
-                        step.error_code, step.error_detail, _dump(step.output),
-                    ),
+                "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id,"
+                " target_id, page_id, region_id, step_type, unit_id, status,"
+                " input_refs_json, lock_snapshot_json, retry_no, error_code,"
+                " error_detail, output_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    step.step_run_id, run.run_id, step.task_id, step.target_id,
+                    step.page_id, step.region_id, step.step_type, step.unit_id,
+                    step.status.value, _dump(step.input_refs),
+                    _dump(_lock_dict(step.lock_snapshot)), step.retry_no,
+                    step.error_code, step.error_detail, _dump(step.output),
+                ),
             )
             for order, (key, revision_id) in enumerate(step.input_refs.items()):
                 self._conn.execute(
-                        "INSERT INTO step_run_input_refs (step_run_id, input_order, ref_key, revision_id)"
-                        " VALUES (?, ?, ?, ?)",
-                        (step.step_run_id, order, key, revision_id),
+                    "INSERT INTO step_run_input_refs (step_run_id, input_order, ref_key, revision_id)"
+                    " VALUES (?, ?, ?, ?)",
+                    (step.step_run_id, order, key, revision_id),
                 )
-            for order, (key, value) in enumerate(step.output.items()):
+            for order, (key, output_value) in enumerate(step.output.items()):
                 self._conn.execute(
-                        "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
-                        " VALUES (?, ?, ?, ?)",
-                        (step.step_run_id, order, key, _dump(value)),
+                    "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
+                    " VALUES (?, ?, ?, ?)",
+                    (step.step_run_id, order, key, _dump(output_value)),
                 )
+
+        candidates_by_id = {row["candidate_id"]: row for row in candidate_rows}
         for candidate in run.candidates:
+            candidates_by_id[candidate.candidate_id] = {
+                "candidate_id": candidate.candidate_id,
+                "pipeline_run_id": run.run_id,
+                "step_run_id": candidate.step_run_id,
+                "target_id": candidate.target_id,
+                "page_id": candidate.page_id,
+                "region_id": candidate.region_id,
+                "result_kind": candidate.result_kind,
+                "base_revision_id": candidate.base_revision_id,
+                "payload_json": _dump(candidate.payload),
+                "reason": candidate.reason,
+                "status": candidate.status,
+                "created_at": now,
+                "resolved_at": None,
+            }
+        for candidate in candidates_by_id.values():
             self._conn.execute(
-                    "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
-                    " step_run_id, target_id, page_id, region_id, result_kind,"
-                    " base_revision_id, payload_json, reason, status, created_at)"
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        candidate.candidate_id, run.run_id, candidate.step_run_id,
-                        candidate.target_id, candidate.page_id, candidate.region_id,
-                        candidate.result_kind, candidate.base_revision_id,
-                        _dump(candidate.payload), candidate.reason, candidate.status, now,
-                    ),
+                "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
+                " step_run_id, target_id, page_id, region_id, result_kind,"
+                " base_revision_id, payload_json, reason, status, created_at, resolved_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    candidate["candidate_id"], candidate["pipeline_run_id"],
+                    candidate["step_run_id"], candidate["target_id"],
+                    candidate["page_id"], candidate["region_id"],
+                    candidate["result_kind"], candidate["base_revision_id"],
+                    candidate["payload_json"], candidate["reason"],
+                    candidate["status"], candidate["created_at"],
+                    candidate["resolved_at"],
+                ),
             )
         self._write_revision[run.run_id] = revision + 1
         run._store_revision = revision + 1
@@ -690,8 +760,12 @@ class SqlitePipelineStore(PipelineStore):
 class SqliteTargetCatalog(TargetCatalog):
     """Real Book→Chapter→Page→Region target and optimistic commit adapter."""
 
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(
+        self, conn: sqlite3.Connection, storage: ManagedFileStoragePort | None = None
+    ) -> None:
         self._conn = conn
+        self._storage = storage
+        self.orphaned_paths: list[str] = []
 
     def expand(self, scope: PipelineScope) -> tuple[TargetSnapshot, ...]:
         kind = scope.scope_type.value
@@ -748,41 +822,148 @@ class SqliteTargetCatalog(TargetCatalog):
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
         persist: Callable[[], None] | None = None,
+        run_id: str | None = None,
+        step_run_id: str | None = None,
+        pause_requested: bool = False,
+        cancel_requested: bool = False,
     ) -> CatalogCommit:
+        candidates: dict[str, dict[str, Any]] = {}
+        published_paths: list[str] = []
         try:
             self._conn.execute("BEGIN IMMEDIATE")
+            # Resolve candidate rows before target lookup so a deleted/missing
+            # target still abandons and cleans every prepared token supplied
+            # by this step.
+            for token in dict.fromkeys(revision_updates.values()):
+                if run_id is None or step_run_id is None:
+                    row = self._conn.execute(
+                        "SELECT candidate_id, pipeline_run_id, step_run_id, target_id, page_id,"
+                        " region_id, result_kind, base_revision_id, payload_json, reason, status,"
+                        " created_at, resolved_at FROM step_result_candidates WHERE candidate_id = ?",
+                        (token,),
+                    ).fetchone()
+                else:
+                    row = self._conn.execute(
+                        "SELECT candidate_id, pipeline_run_id, step_run_id, target_id, page_id,"
+                        " region_id, result_kind, base_revision_id, payload_json, reason, status,"
+                        " created_at, resolved_at FROM step_result_candidates"
+                        " WHERE candidate_id = ? AND pipeline_run_id = ? AND step_run_id = ?",
+                        (token, run_id, step_run_id),
+                    ).fetchone()
+                if row is not None:
+                    candidates[token] = dict(row)
             current = self.current(target_id)
-            if any(current.current_revisions.get(key) != value for key, value in expected_revisions.items()):
-                self._conn.rollback()
-                return CatalogCommit("input_revision_changed", "current Revision changed")
-            if current.lock != expected_lock:
-                self._conn.rollback()
-                return CatalogCommit("lock_changed", "current Lock changed")
-
             target_type = current.target_type.value
-            if current.target_type is TargetType.REGION:
-                if any(key != "region" for key in revision_updates):
-                    self._conn.rollback()
-                    return CatalogCommit("db_failed", "region revision key must be 'region'")
-                if revision_updates:
-                    cursor = self._conn.execute(
-                        "UPDATE regions SET current_revision_id = ?, updated_at = ?"
-                        " WHERE region_id = ? AND deleted_at IS NULL",
-                        (revision_updates["region"], _now(), current.region_id),
-                    )
-                    if cursor.rowcount != 1:
-                        self._conn.rollback()
-                        return CatalogCommit("target_not_found", target_id)
+            if target_type not in {TargetType.REGION.value, TargetType.PAGE.value}:
+                return self._reject_prepared(
+                    "db_failed", f"unsupported target type: {target_type}", candidates.values()
+                )
+
+            if target_type == TargetType.REGION.value:
+                allowed_keys = {"region", *ARTIFACT_TYPE_DIRS}
             else:
-                for artifact_type, revision_id in revision_updates.items():
-                    cursor = self._conn.execute(
-                        "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
-                        " WHERE page_id = ? AND artifact_type = ?",
-                        (revision_id, _now(), current.page_id, artifact_type),
+                allowed_keys = set(ARTIFACT_TYPE_DIRS)
+
+            if any(key not in allowed_keys for key in revision_updates):
+                return self._reject_prepared(
+                    "db_failed", f"invalid revision key for {target_type} target", candidates.values()
+                )
+
+            for key, token in revision_updates.items():
+                candidate = candidates.get(token)
+                if candidate is None:
+                    return self._reject_prepared(
+                        "db_failed", f"prepared candidate {token!r} was not found", candidates.values()
                     )
-                    if cursor.rowcount != 1:
-                        self._conn.rollback()
-                        return CatalogCommit("target_not_found", f"artifact {artifact_type}")
+                if candidate["status"] != "prepared":
+                    return self._reject_prepared(
+                        "db_failed", f"candidate {token!r} is not prepared", candidates.values()
+                    )
+                try:
+                    candidate["payload"] = json.loads(candidate["payload_json"])
+                except (TypeError, json.JSONDecodeError) as error:
+                    return self._reject_prepared(
+                        "db_failed", f"candidate {token!r} payload is invalid: {error}", candidates.values()
+                    )
+                if candidate["result_kind"] != key:
+                    return self._reject_prepared(
+                        "db_failed", f"candidate {token!r} kind does not match {key!r}", candidates.values()
+                    )
+                if key == "region":
+                    if target_type != TargetType.REGION.value or candidate["target_id"] != target_id:
+                        return self._reject_prepared(
+                            "db_failed", "region candidate does not belong to the target", candidates.values()
+                        )
+                    if candidate["base_revision_id"] != current.current_revisions.get("region"):
+                        return self._reject_prepared(
+                            "input_revision_changed", "prepared region base Revision changed", candidates.values()
+                        )
+                else:
+                    payload = candidate["payload"]
+                    if (
+                        payload.get("artifact_type") != key
+                        or payload.get("page_id") != current.page_id
+                        or candidate["page_id"] != current.page_id
+                    ):
+                        return self._reject_prepared(
+                            "db_failed", "artifact candidate does not belong to the target", candidates.values()
+                        )
+                    artifact_row = self._conn.execute(
+                        "SELECT artifact_id, current_revision_id FROM media_artifacts"
+                        " WHERE page_id = ? AND artifact_type = ? ORDER BY created_at, artifact_id LIMIT 1",
+                        (current.page_id, key),
+                    ).fetchone()
+                    actual_revision = artifact_row["current_revision_id"] if artifact_row else None
+                    if candidate["base_revision_id"] != actual_revision or payload.get("base_revision_id") != actual_revision:
+                        return self._reject_prepared(
+                            "input_revision_changed", "prepared artifact base Revision changed", candidates.values()
+                        )
+                    if self._storage is None:
+                        return self._reject_prepared(
+                            "db_failed", "artifact candidate requires an injected storage adapter", candidates.values()
+                        )
+                    self._validate_artifact_temp(payload)
+
+            if any(
+                current.current_revisions.get(key) != value
+                for key, value in expected_revisions.items()
+            ):
+                return self._reject_prepared(
+                    "input_revision_changed", "current Revision changed", candidates.values()
+                )
+            if current.lock != expected_lock:
+                return self._reject_prepared(
+                    "lock_changed", "current Lock changed", candidates.values()
+                )
+            if run_id is not None:
+                request_row = self._conn.execute(
+                    "SELECT pause_requested, cancel_requested FROM pipeline_runs WHERE run_id = ?",
+                    (run_id,),
+                ).fetchone()
+                if request_row is not None:
+                    pause_requested = pause_requested or bool(request_row["pause_requested"])
+                    cancel_requested = cancel_requested or bool(request_row["cancel_requested"])
+            if cancel_requested:
+                return self._reject_prepared(
+                    "cancelled", "run cancellation requested before seam commit", candidates.values()
+                )
+            if pause_requested:
+                return self._reject_prepared(
+                    "paused", "run pause requested before seam commit", candidates.values()
+                )
+
+            artifact_ops: list[dict[str, Any]] = []
+            for candidate in candidates.values():
+                payload = candidate["payload"]
+                artifact_type = candidate["result_kind"]
+                if artifact_type == "region":
+                    self._write_region_candidate(current, candidate, payload)
+                else:
+                    artifact_ops.append(
+                        self._write_artifact_candidate(
+                            current, candidate, payload, artifact_type
+                        )
+                    )
 
             for stage, state in stage_updates.items():
                 self._conn.execute(
@@ -793,11 +974,350 @@ class SqliteTargetCatalog(TargetCatalog):
                 )
             if persist is not None:
                 persist()
+            resolved_at = _now()
+            for token in candidates:
+                self._conn.execute(
+                    "UPDATE step_result_candidates SET status = 'resolved', resolved_at = ?"
+                    " WHERE candidate_id = ? AND status = 'prepared'",
+                    (resolved_at, token),
+                )
+            for operation in artifact_ops:
+                relative_path = operation["relative_path"]
+                if self._publish_idempotent(
+                    operation["temp_handle"], relative_path,
+                    operation["sha256"], operation["size"],
+                ):
+                    published_paths.append(relative_path)
             self._conn.commit()
             return CatalogCommit("applied")
         except Exception as error:
+            return self._reject_prepared(
+                "db_failed", repr(error), candidates.values(), published_paths=published_paths
+            )
+
+    def _write_region_candidate(
+        self, current: TargetSnapshot, candidate: Mapping[str, Any], payload: Mapping[str, Any]
+    ) -> None:
+        region_id = current.region_id
+        if not region_id:
+            raise RuntimeError("region candidate target has no region id")
+        revision_no = self._conn.execute(
+            "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
+            " FROM region_revisions WHERE region_id = ?",
+            (region_id,),
+        ).fetchone()["next_no"]
+        self._conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, is_pinned, source_run_id, source_step_run_id,"
+            " restored_from_revision_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                candidate["candidate_id"], region_id, revision_no,
+                _dump(payload["snapshot"]), payload["origin"], payload["review_state"],
+                int(bool(payload["is_pinned"])), payload["source_run_id"],
+                payload["source_step_run_id"], payload.get("restored_from_revision_id"),
+                payload["created_at"],
+            ),
+        )
+        cursor = self._conn.execute(
+            "UPDATE regions SET text_json = ?, current_revision_id = ?, updated_at = ?"
+            " WHERE region_id = ? AND current_revision_id IS ? AND deleted_at IS NULL",
+            (
+                _dump(payload["text_json"]), candidate["candidate_id"], _now(),
+                region_id, candidate["base_revision_id"],
+            ),
+        )
+        if cursor.rowcount != 1:
+            raise RuntimeError("region pointer compare-and-set failed")
+
+    def _write_artifact_candidate(
+        self, current: TargetSnapshot, candidate: Mapping[str, Any],
+        payload: Mapping[str, Any], artifact_type: str,
+    ) -> dict[str, Any]:
+        if self._storage is None:
+            raise RuntimeError("artifact candidate requires storage")
+        row = self._conn.execute(
+            "SELECT artifact_id, current_revision_id FROM media_artifacts"
+            " WHERE page_id = ? AND artifact_type = ? ORDER BY created_at, artifact_id LIMIT 1",
+            (current.page_id, artifact_type),
+        ).fetchone()
+        now = _now()
+        if row is None:
+            artifact_id = payload.get("artifact_id") or uuid.uuid4().hex
+            self._conn.execute(
+                "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+                " artifact_type, current_revision_id, created_at, updated_at)"
+                " VALUES (?, ?, ?, ?, ?, NULL, ?, ?)",
+                (artifact_id, payload["book_id"], payload["chapter_id"],
+                 current.page_id, artifact_type, now, now),
+            )
+            base_revision_id = None
+        else:
+            artifact_id = row["artifact_id"]
+            if payload.get("artifact_id") not in (None, artifact_id):
+                raise RuntimeError("prepared artifact id no longer matches the page artifact")
+            base_revision_id = row["current_revision_id"]
+        if base_revision_id != payload.get("base_revision_id"):
+            raise RuntimeError("prepared artifact base Revision changed")
+        revision_no = self._conn.execute(
+            "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
+            " FROM artifact_revisions WHERE artifact_id = ?",
+            (artifact_id,),
+        ).fetchone()["next_no"]
+        self._conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id, revision_no,"
+            " managed_path, file_hash, mime_type, width, height, size_bytes, integrity_status,"
+            " last_verified_at, provider_profile_id, model_name, options_json, source_artifact_revision_id,"
+            " pipeline_run_id, step_run_id, provenance_json, is_pinned, created_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'valid', ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            (
+                candidate["candidate_id"], artifact_id, revision_no, payload["relative_path"],
+                payload["sha256"], payload["mime_type"], payload.get("width"), payload.get("height"),
+                payload["size"], now, payload.get("provider_profile_id"), payload.get("model_name"),
+                payload.get("options_json"), payload.get("source_artifact_revision_id"),
+                candidate["pipeline_run_id"], candidate["step_run_id"],
+                payload.get("provenance_json"), now,
+            ),
+        )
+        cursor = self._conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
+            " WHERE artifact_id = ? AND current_revision_id IS ?",
+            (candidate["candidate_id"], now, artifact_id, base_revision_id),
+        )
+        if cursor.rowcount != 1:
+            raise RuntimeError("artifact pointer compare-and-set failed")
+        return dict(payload)
+
+    def _validate_artifact_temp(self, payload: Mapping[str, Any]) -> None:
+        if self._storage is None:
+            raise RuntimeError("artifact candidate requires storage")
+        if not all(key in payload for key in ("temp_handle", "relative_path", "sha256", "size", "mime_type")):
+            raise ValueError("artifact candidate payload is incomplete")
+        temp_path = Path(str(payload["temp_handle"]))
+        final_path = Path(self._storage.absolute_path(str(payload["relative_path"])))
+        if temp_path.is_file():
+            integrity = self._storage.verify_temp(str(temp_path))
+        elif final_path.is_file():
+            integrity = integrity_of(final_path)
+        else:
+            raise FileNotFoundError("staged artifact temp and final files are both missing")
+        if integrity.sha256 != payload["sha256"] or integrity.size_bytes != int(payload["size"]):
+            raise ValueError("staged artifact sha256/size validation failed")
+
+    def _publish_idempotent(
+        self, temp_handle: str, relative_path: str, sha256: str, size: int
+    ) -> bool:
+        if self._storage is None:
+            raise RuntimeError("artifact candidate requires storage")
+        final_path = Path(self._storage.absolute_path(relative_path))
+        if final_path.exists():
+            actual = integrity_of(final_path)
+            if actual.sha256 != sha256 or actual.size_bytes != int(size):
+                raise RuntimeError("managed artifact path exists with different content")
+            self._storage.discard_temp(temp_handle)
+            # A prepared candidate owns this immutable path until its DB
+            # revision commits. Compensate it if a later step fails.
+            return True
+        try:
+            self._storage.publish(temp_handle, relative_path)
+        except Exception:
+            # A storage adapter may report failure after the atomic rename. Let
+            # the caller compensate if the expected file is now present.
+            if final_path.is_file():
+                actual = integrity_of(final_path)
+                if actual.sha256 == sha256 and actual.size_bytes == int(size):
+                    return True
+            raise
+        return True
+
+    def _reject_prepared(
+        self, status: str, detail: str, candidates, *, published_paths=()
+    ) -> CatalogCommit:
+        if self._conn.in_transaction:
             self._conn.rollback()
-            return CatalogCommit("db_failed", repr(error))
+        extra: list[str] = []
+        for relative_path in published_paths:
+            try:
+                if self._conn.execute(
+                    "SELECT 1 FROM artifact_revisions WHERE managed_path = ? LIMIT 1",
+                    (relative_path,),
+                ).fetchone() is None and self._storage is not None:
+                    self._storage.remove_managed(relative_path)
+            except Exception as error:
+                self.orphaned_paths.append(relative_path)
+                extra.append(f"orphan managed file {relative_path!r}: {error!r}")
+        rows = list(candidates)
+        self._discard_candidate_temps(rows, extra)
+        if rows:
+            try:
+                self._conn.execute("BEGIN IMMEDIATE")
+                resolved_at = _now()
+                for row in rows:
+                    self._conn.execute(
+                        "UPDATE step_result_candidates SET status = 'abandoned', resolved_at = ?"
+                        " WHERE candidate_id = ? AND status = 'prepared'",
+                        (resolved_at, row["candidate_id"]),
+                    )
+                self._conn.commit()
+            except Exception as error:
+                self._conn.rollback()
+                extra.append(f"could not mark prepared candidate abandoned: {error!r}")
+        if extra:
+            detail = detail + "; " + "; ".join(extra)
+        return CatalogCommit(status, detail)
+
+    def _discard_candidate_temps(self, candidates, errors: list[str]) -> None:
+        for row in candidates:
+            payload = row.get("payload")
+            if payload is None:
+                try:
+                    payload = json.loads(row.get("payload_json") or "{}")
+                except (TypeError, json.JSONDecodeError):
+                    continue
+            temp_handle = payload.get("temp_handle") if isinstance(payload, Mapping) else None
+            if not temp_handle:
+                continue
+            if self._storage is None:
+                self.orphaned_paths.append(str(temp_handle))
+                errors.append(f"temp cleanup unavailable for {temp_handle!r}")
+                continue
+            root = getattr(self._storage, "root", None)
+            if root is not None:
+                temp_root = (Path(root) / "temp").resolve()
+                candidate_path = Path(str(temp_handle))
+                try:
+                    if candidate_path.resolve().parent != temp_root or candidate_path.suffix != ".tmp":
+                        raise ValueError("temp handle escapes managed temp directory")
+                except OSError as error:
+                    errors.append(f"temp path validation failed for {temp_handle!r}: {error!r}")
+                    continue
+                if candidate_path.is_symlink():
+                    errors.append(f"refusing temp symlink {temp_handle!r}")
+                    continue
+            try:
+                self._storage.discard_temp(str(temp_handle))
+            except Exception as error:
+                self.orphaned_paths.append(str(temp_handle))
+                errors.append(f"temp cleanup failed for {temp_handle!r}: {error!r}")
+
+    def cleanup_staged_candidates(self) -> dict[str, Any]:
+        rows = [
+            dict(row)
+            for row in self._conn.execute(
+                "SELECT candidate_id, pipeline_run_id, step_run_id, target_id, page_id, region_id,"
+                " result_kind, base_revision_id, payload_json, reason, status, created_at, resolved_at"
+                " FROM step_result_candidates ORDER BY created_at, candidate_id"
+            ).fetchall()
+        ]
+        counts = {"abandoned_prepared": 0, "discarded_temps": 0, "removed_orphans": 0}
+        cleanup_errors: list[str] = []
+        seen_temps: set[str] = set()
+        for row in rows:
+            try:
+                payload = json.loads(row["payload_json"])
+            except (TypeError, json.JSONDecodeError):
+                continue
+            if not isinstance(payload, Mapping):
+                continue
+            temp_handle = payload.get("temp_handle")
+            relative_path = payload.get("relative_path")
+            if temp_handle:
+                seen_temps.add(str(temp_handle))
+                if self._storage is None:
+                    self.orphaned_paths.append(str(temp_handle))
+                else:
+                    temp_path = Path(str(temp_handle))
+                    existed = temp_path.is_file()
+                    self._discard_candidate_temps([{"payload": payload, "candidate_id": row["candidate_id"]}], cleanup_errors)
+                    if existed and not temp_path.exists():
+                        counts["discarded_temps"] += 1
+            if relative_path:
+                if self._storage is None:
+                    self.orphaned_paths.append(str(relative_path))
+                else:
+                    try:
+                        final_path = Path(self._storage.absolute_path(str(relative_path)))
+                        referenced = self._conn.execute(
+                            "SELECT 1 FROM artifact_revisions WHERE managed_path = ? LIMIT 1",
+                            (relative_path,),
+                        ).fetchone()
+                        if referenced is None and final_path.is_file():
+                            self._storage.remove_managed(str(relative_path))
+                            counts["removed_orphans"] += 1
+                    except Exception as error:
+                        self.orphaned_paths.append(str(relative_path))
+                        cleanup_errors.append(f"final cleanup failed for {relative_path!r}: {error!r}")
+        if self._storage is not None:
+            root = getattr(self._storage, "root", None)
+            if root is not None:
+                temp_dir = Path(root) / "temp"
+                if temp_dir.is_dir():
+                    for item in temp_dir.iterdir():
+                        if item.suffix == ".tmp" and item.is_file() and str(item) not in seen_temps:
+                            try:
+                                self._storage.discard_temp(str(item))
+                                counts["discarded_temps"] += 1
+                            except Exception as error:
+                                self.orphaned_paths.append(str(item))
+                                cleanup_errors.append(f"untracked temp cleanup failed for {item!s}: {error!r}")
+        # A crash after publish but before the DB commit can leave a final
+        # managed file whose candidate is no longer discoverable by its run.
+        # Sweep artifact directories too, while preserving Managed Copy originals.
+        if self._storage is not None:
+            root = getattr(self._storage, "root", None)
+            if root is not None:
+                managed_root = Path(root)
+                artifact_dirs = set(ARTIFACT_TYPE_DIRS.values()) - {"original"}
+                books_root = managed_root / "books"
+                if books_root.is_dir():
+                    for base, directories, files in os.walk(books_root, followlinks=False):
+                        base_path = Path(base)
+                        directories[:] = [
+                            name for name in directories
+                            if not (base_path / name).is_symlink()
+                        ]
+                        for name in files:
+                            final_path = base_path / name
+                            if final_path.is_symlink() or not final_path.is_file():
+                                continue
+                            relative_path = final_path.relative_to(managed_root).as_posix()
+                            if not any(part in artifact_dirs for part in Path(relative_path).parts):
+                                continue
+                            referenced = self._conn.execute(
+                                "SELECT 1 FROM artifact_revisions WHERE managed_path = ? LIMIT 1",
+                                (relative_path,),
+                            ).fetchone()
+                            if referenced is not None:
+                                continue
+                            try:
+                                self._storage.remove_managed(relative_path)
+                                counts["removed_orphans"] += 1
+                            except Exception as error:
+                                self.orphaned_paths.append(relative_path)
+                                cleanup_errors.append(
+                                    f"orphan final cleanup failed for {relative_path!r}: {error!r}"
+                                )
+
+        prepared_ids = [row["candidate_id"] for row in rows if row["status"] == "prepared"]
+        if prepared_ids:
+            try:
+                self._conn.execute("BEGIN IMMEDIATE")
+                resolved_at = _now()
+                abandoned_count = 0
+                for candidate_id in prepared_ids:
+                    cursor = self._conn.execute(
+                        "UPDATE step_result_candidates SET status = 'abandoned', resolved_at = ?"
+                        " WHERE candidate_id = ? AND status = 'prepared'",
+                        (resolved_at, candidate_id),
+                    )
+                    abandoned_count += cursor.rowcount
+                self._conn.commit()
+                counts["abandoned_prepared"] = abandoned_count
+            except Exception as error:
+                self._conn.rollback()
+                cleanup_errors.append(f"candidate status sweep failed: {error!r}")
+        counts["orphaned_paths"] = list(dict.fromkeys(self.orphaned_paths))
+        counts["errors"] = cleanup_errors
+        return counts
 
     def _page_or_error(self, page_id: str) -> TargetSnapshot:
         row = self._conn.execute(

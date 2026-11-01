@@ -1,0 +1,12 @@
+{
+  "verify": {
+    "exit": 1,
+    "stdout": "MISMATCH C01b pin=3c9f5af7d74f actual=41cd5073f945\r\nMISMATCH C02 pin=bb365ca891a7 actual=cf553722a1a8\r\nMISMATCH C03 pin=b77e7968a00b actual=c57535ca8fc9\r\nMISMATCH C04b pin=694ce5bc8c8b actual=250b8e879a02\r\nMISMATCH C05 pin=b34db8876879 actual=8f6e87505b0a\r\nMISMATCH C06 pin=b798dd8a9b38 actual=1b884feb0f20\r\nMISMATCH C07 pin=17c8f7016a36 actual=bac7a2bf5444\r\nMISMATCH C08 pin=453f993c1a16 actual=7852c318605c\r\nMISMATCH C09 pin=dc51226b336c actual=3782fc4657f5\r\nMISMATCH C10 pin=ec8fd862f95f actual=ba27fd4fa5b5\r\nMISMATCH C11 pin=44f4273f7ad1 actual=8c37d15c672c\r\nMISMATCH C12 pin=f49835860143 actual=f2bbef02acff\r\nMISMATCH C13 pin=d2cb8de4dd79 actual=820cfe368320\r\nMISMATCH C14 pin=05056cbf65f9 actual=bd5e5dd5c5d9\r\nMISMATCH FEA01 pin=0370c18932b1 actual=a337c3bd2e30\r\nPIN AUDIT: FAIL (15)\r\n",
+    "stderr": ""
+  },
+  "check": {
+    "exit": 0,
+    "stdout": "Governance scope: 15 current documents; no historical directory scan.\r\nTask: doc\\tasks\\FEA-00A-IMPL-1.md\r\nWARN: ���� 11 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\r\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3165 bytes / 31 lines\r\nGovernance check: PASS (2 warnings)\r\n",
+    "stderr": ""
+  }
+}

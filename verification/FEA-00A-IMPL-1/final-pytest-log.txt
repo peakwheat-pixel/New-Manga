@@ -1,0 +1,10 @@
+Shell: PowerShell (pwsh -NoProfile -Command)
+Python environment: uv-managed interpreter path is printed in output.
+Command: uv run --no-project --cache-dir verification/FEA-00A-IMPL-1/.uv-cache --with pytest==9.1.1 --with pillow==12.3.0 --with pypdfium2==5.13.0 --with mobi==0.4.1 --with numpy python -m pytest -q tests/core/test_bootstrap.py tests/core/test_page_catalog_modes.py tests/core/test_core_assembly.py tests/core/test_core_detect.py tests/core/test_sfx_assembly.py tests/core/test_sfx_policy_settings.py tests/core/test_fea00a_pipeline_seam.py tests/pipeline/test_regionless_rebinding.py tests/pipeline/test_pipeline_production_seam.py tests/pipeline/test_fea00a_source_boundaries.py tests/providers/test_detect_handler.py tests/providers/test_full_chain.py tests/providers/test_handlers_pipeline.py tests/providers/test_retype_redetect_persistence.py
+EXIT: 0
+7.6.8
+G:\CODEX\New Manga.workspace\FEA-00A-IMPL-1\verification\FEA-00A-IMPL-1\.uv-cache\builds-v0\.tmp3CGE0r\Scripts\python.exe
+........................................................................ [ 37%]
+........................................................................ [ 74%]
+..................................................                       [100%]
+194 passed in 16.03s

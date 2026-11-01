@@ -158,6 +158,7 @@ def _pipeline(
             workspace, detector=detector, region_creator=region_creator
         ).as_mapping(),
         settings=settings or {"ocr": {"script": "japanese"}},
+        storage=workspace["storage"],
     )
 
 

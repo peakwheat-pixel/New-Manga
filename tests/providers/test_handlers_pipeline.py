@@ -264,7 +264,18 @@ def _pipeline(workspace, *, bindings=None, settings=None) -> PipelineService:
             "ocr": {"provider_id": "fake-ocr"},
             "translate": {"provider_id": "fake-translate"},
         },
+        storage=workspace["storage"],
     )
+
+
+def _record_region_step(workspace, region_id: str = "region-b"):
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.OCR_REGION, PipelineScope(ScopeType.REGION, selected_ids=(region_id,))
+    )
+    service.plan_run(run.run_id)
+    step = service.record_step_attempt(run.tasks[0].task_id, "ocr")
+    return service, run, step
 
 
 def _text(conn: sqlite3.Connection, region_id: str) -> dict:
@@ -789,25 +800,33 @@ def test_missing_provider_binding_fails_closed(workspace) -> None:
 
 
 def test_stale_region_revision_is_refused_before_any_write(workspace) -> None:
-    """The writer applies the seam's optimistic guard before mutating text."""
+    # Prepare guards reject stale expectations and never touch live state.
     conn = workspace["conn"]
     writer = RegionStepWriter(conn, workspace["regions"])
     before = _text(conn, "region-b")
+    service, run, step = _record_region_step(workspace)
 
     with pytest.raises(LockBlocked) as error:
         writer.prepare_ocr_text(
-            "region-b", "stale", expected_current_revision_id="region-b-rev-999"
+            "region-b", "stale", expected_current_revision_id="region-b-rev-999",
+            source_run_id=run.run_id, source_step_run_id=step.step_run_id,
         )
     assert error.value.error_code == "LOCK_CHANGED"
     assert _text(conn, "region-b") == before
     assert len(_revision_ids(conn, "region-b")) == 1
 
-    # The matching expectation still writes.
+    # A matching expectation stages a real token without writing the live row.
     prepared = writer.prepare_ocr_text(
-        "region-b", "fresh", expected_current_revision_id="region-b-rev-1"
+        "region-b", "fresh", expected_current_revision_id="region-b-rev-1",
+        source_run_id=run.run_id, source_step_run_id=step.step_run_id,
     )
-    assert prepared.revision_id in _revision_ids(conn, "region-b")
-
+    assert _text(conn, "region-b") == before
+    assert prepared.revision_id not in _revision_ids(conn, "region-b")
+    candidate = conn.execute(
+        "SELECT status FROM step_result_candidates WHERE candidate_id = ?",
+        (prepared.revision_id,),
+    ).fetchone()
+    assert candidate["status"] == "prepared"
 
 def test_locked_region_refuses_ocr_and_translation_writes(workspace) -> None:
     conn = workspace["conn"]
@@ -828,6 +847,7 @@ def test_locked_region_refuses_ocr_and_translation_writes(workspace) -> None:
 def test_stale_artifact_pointer_is_refused_before_publishing(workspace) -> None:
     storage = workspace["storage"]
     writer = ArtifactStepWriter(workspace["conn"], storage)
+    _service, run, step = _record_region_step(workspace)
     with pytest.raises(LockBlocked):
         writer.prepare_revision(
             page_id="page-1",
@@ -835,14 +855,15 @@ def test_stale_artifact_pointer_is_refused_before_publishing(workspace) -> None:
             payload=b"payload",
             mime_type="application/x-newmanga-mask",
             expected_current_revision_id="not-the-current-one",
+            pipeline_run_id=run.run_id,
+            step_run_id=step.step_run_id,
         )
-    assert (
-        workspace["conn"].execute(
-            "SELECT COUNT(*) FROM artifact_revisions"
-        ).fetchone()[0]
-        == 0
-    )
-
+    assert workspace["conn"].execute(
+        "SELECT COUNT(*) FROM artifact_revisions"
+    ).fetchone()[0] == 0
+    assert workspace["conn"].execute(
+        "SELECT COUNT(*) FROM step_result_candidates WHERE status = 'prepared'"
+    ).fetchone()[0] == 0
 
 def test_sfx_translate_region_carries_type_and_maps_output(workspace) -> None:
     """M2-SFX-SEM-1 end-to-end: a policy=translate SFX region reaches the
