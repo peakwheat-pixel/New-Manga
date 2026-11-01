@@ -22,7 +22,7 @@
 | 2 | 收口 `FEA-C14-DRAFT` | **done**（收口材料 `ff432e97c`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C14-CLOSEOUT-r1.md`（approved，P0/P1=0，P2×6 非阻断） | R1 条件：done 为纯元数据回填；P2-1/5 在 done 处理，P2-2/3/4/6 未修（非阻断） |
 | 3 | L-3 Errata（裁定 `:63`/`:111` + C04b/C08/C13/C09 注记） | **approved**（`14e6e6a3c`；P2 修复 `500aa6b27`） | PASS (3w) | 13/13 | `doc/reviews/FEA-WRAP-ERRATA-r1.md`（approved，P0/P1=0，P2×5；2 处死链与 C-08 措辞已在 `500aa6b27` 修） | 裁定 §4:58 括注指向落空，已在 C-08 注记留痕、未改裁定正文 |
 | 4 | 起草 `C-10`（不冻结） | **approved**（草案 v3 `b45658c17`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C10-r2.md` + `FEA-C10-r3.md`（均 approved，P0/P1=0） | 未冻结：§10 待用户裁定阈值 `T`；已知 P2：§8 表末缺空行（格式） |
-| 5 | PLAN 预算卫生 | 待填 | 待填 | 待填 | 待填 | 待填 |
+| 5 | PLAN 预算卫生 + WRAP 收尾材料 | **in_review**（收口材料见下一行补记） | PASS (2w) | 13/13 | 待复核（`doc/reviews/FEA-WRAP-CLOSEOUT-r1.md`） | PLAN 6777 B/57 行 → **2257 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0） |
 
 ## 偏离登记
 
@@ -33,7 +33,22 @@
 
 ## 待裁决（用户在线后裁定）
 
-（收尾时填写；当前为空）
+1. **C-10 冻结**：草案 v3 已起草并复核 `approved`，但**未冻结**。冻结前置 = 用户裁定阈值 `T` 的数值（草案 §10 第 1 项）+ 条款终稿；之后才走冻结记录 + pin + `integration_commit`。
+2. **C-10 的验证等级口径**：草案 §8 给出 L1–L4 定义（方案 §15.6 只使用未定义）；若用户另有口径，冻结前替换。
+3. **Resource Manifest 格式偏离**：用户口头要求「纯文本不建表」，但 `check.ps1` 对 `done` Task 只接受 6 列表或 `verification/**` JSON → 现采「纯文本说明 + 真实表格」；是否接受该偏离，或另立 governance Task 改检查器。
+4. **既有保留项 L-1…L-9**（尤其 **L-5 整库恢复锁**、**L-1 四表 DDL 未冻**、**L-2 M2-C1 字节修订**）仍按冻结记录执行，需用户决定处置时机。
+5. **`G-DELETE-IMPL` 仍 OPEN**：本段只做契约线，**未释放任何实现 Task**；实现线须按 C-11 选候选 → 建 Task → 独立复核，以用户确认为准。
+6. **非队列非终态 Task 未处理**：`FEA-D07-UNBLOCK`、`FEA-GOV-11`（AC1/AC2 `<<PARTIAL: 待用户裁决>>`）、`GIT-CLEAN-*` 等保持原状，本段未触碰。
+7. **已接受为非阻断的技术债**：D06 的 R2-001…006、C14 的 P2-002/3/4/6、C-10 的 R3-001（§8 表末缺空行，纯格式）——均**未修**，理由见各复核报告。
+8. **裁定 `GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md:58` 括注指向落空**：该括注称 C-08 的 D07 表述「以其 §5 历史段落为准」，但 C-08 记录全文无 D07 表述。已按用户指令**不改裁定正文**，仅在 C-08 §8 注记留痕。
+
+## 收尾（2026-11-01）
+
+- **队列 5 项全部完成**：`FEA-D06-GAP` **done**（R2 approved）→ `FEA-C14-DRAFT` **done**（R1 approved）→ L-3 Errata **approved**（含 P2 修复）→ C-10 草案 **approved**（**未冻结**，待裁定 `T`）→ PLAN 预算达标（2257 B/32 行）+ WRAP 收尾材料。
+- **边界零违反**：未 push；13 份冻结契约字节 0 改动（`verify_pins.ps1` 13/13）；未改 Gate 状态；未动用户数据；未运行安装器；未自审（全部独立复核）。
+- 每项均有独立复核报告：`FEA-D06-CLOSEOUT-r2.md` / `FEA-C14-CLOSEOUT-r1.md` / `FEA-WRAP-ERRATA-r1.md` / `FEA-C10-r2.md` / `FEA-C10-r3.md` / `FEA-WRAP-CLOSEOUT-r1.md`（最后一项在 `done` 提交前产生）。
+- 未完成/待裁决项见上节；`FEA-D07-UNBLOCK`、`FEA-GOV-11`、`GIT-CLEAN-*`、实现线保持原状。
+- **推荐下一步**：用户裁定 C-10 阈值 `T`（与验证等级口径）→ 冻结 C-10（写冻结记录 + pin + `integration_commit`）→ 按 C-11 选实现候选并建 Task。
 
 ## 收尾
 
