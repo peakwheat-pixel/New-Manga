@@ -225,7 +225,8 @@ class DraftProtectionService:
             target = self._target_key(draft.page_id, draft.region_id)
             self._target_by_session.pop((session_id, *target), None)
             if self._owners.get(target) == session_id:
-                self._owners.pop(target, None)
+                if self._owners.get(target) == draft.session_id:
+                    self._owners.pop(target, None)
             for candidate_id, data in tuple(self._candidates.items()):
                 if data.draft_id == draft_id:
                     self._candidates.pop(candidate_id, None)
@@ -270,7 +271,8 @@ class DraftProtectionService:
                 self._journal.delete_receipts(draft_id)
                 self._journal.delete_draft(draft_id)
                 target = self._target_key(draft.page_id, draft.region_id)
-                self._owners.pop(target, None)
+                if self._owners.get(target) == draft.session_id:
+                    self._owners.pop(target, None)
                 self._target_by_session.pop((draft.session_id, *target), None)
                 for candidate_id, data in tuple(self._candidates.items()):
                     if data.draft_id == draft_id:
@@ -418,7 +420,7 @@ class DraftProtectionService:
             ):
                 raise DraftError("DRAFT_CANDIDATE_INVALID", "candidate belongs to another draft")
             if any(
-                item.draft_sequence is not None and item.draft_sequence != edit_token.draft_sequence
+                item.draft_sequence is not None and item.draft_sequence < edit_token.draft_sequence
                 for item in candidate_data
             ):
                 raise DraftError("DRAFT_CANDIDATE_INVALID", "candidate sequence differs from token")
@@ -686,6 +688,8 @@ class DraftProtectionService:
         target = self._target_key(owner_draft.page_id, owner_draft.region_id)
         for draft in self._drafts.values():
             if draft.draft_id == owner_draft.draft_id:
+                continue
+            if draft.status is DraftStatus.DISCARDED:
                 continue
             if self._target_key(draft.page_id, draft.region_id) != target:
                 continue

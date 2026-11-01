@@ -34,8 +34,8 @@ def _process_is_alive(pid: int) -> bool:
         kernel32 = ctypes.windll.kernel32
         handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
         if not handle:
-            # Unknown owner (permissions): be conservative and treat it as alive.
-            return True
+            # A dead PID cannot be opened; reclaim the stale lock.
+            return False
         exit_code = ctypes.c_ulong(0)
         try:
             ok = kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
