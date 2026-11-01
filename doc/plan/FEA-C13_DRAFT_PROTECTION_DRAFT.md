@@ -1,6 +1,6 @@
 # FEA-C13 草稿与保护契约（D04）· 草案
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN v5 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C13.md)）/ U-03=B**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) `:767`（D04 行：变更包与"必须冻结的内容"）、方案 `:237`/`:251`/`:269`/`:271`/`:377`、[C-01b](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（已冻结）、[C-08](FEA-C08_RUN_SNAPSHOT_DRAFT.md)、现行代码 `src/infrastructure/sqlite/schema.py:224-249`（regions）、`:251-271`（region_revisions）、`:275-281`（trigger）、`src/application/editing/service.py`
@@ -61,7 +61,7 @@
 - 不同 Session 对同一 Region **默认只读**或显式请求转移 owner；
 - **文本冲突禁止自动合并**（几何/样式可按域合并）。
 
-**⚠ U-03 尚未裁决**（首阶段是否按此模型）。本契约按方案推荐口径起草；若用户裁决不同（如首阶段只读镜像），SC-D03 走 UNFREEZE 修订。
+**U-03 已裁决 B（draft owner）**（2026-11-01，[裁决记录](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）——本条款即最终口径。
 
 **验证**：两个 Session 同 Region → 断言非 owner 只读；owner 转移需显式请求；文本冲突时两方都拿到 `conflicted` 而非静默合并。
 
@@ -205,7 +205,7 @@ protectionDigest(regionId) = sha256(
 ## 9. 冻结条件
 
 1. 本草案经**独立复核**（上下文独立）；
-2. **U-03 用户裁决**（SC-D03 的 draft owner 模型）——若裁决与本草案不同，先修订再冻结；
+2. **U-03 用户裁决**（SC-D03 的 draft owner 模型）——**已裁决 B（draft owner）**，与本草案口径一致；
 3. C-01b 已冻结（✅ 2026-11-01）；
 4. `check.ps1` PASS。
 
