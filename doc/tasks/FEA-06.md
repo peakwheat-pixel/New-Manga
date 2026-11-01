@@ -5,7 +5,7 @@ kind: implementation
 governance_version: 3
 status: proposed
 approval: pending_review
-suggested_owner: zcode
+suggested_owner: dsh（Codex 通道故障、ZCode 未安装）
 owner: null
 reviewer: null
 depends_on:
