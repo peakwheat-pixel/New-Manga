@@ -7,30 +7,30 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 486 |
-| terminal | 473 |
-| non-terminal | 12 |
-| non-terminal named in the plan | 4 |
+| terminal | 474 |
+| non-terminal | 11 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 8 |
-| task files tracked by git | 484 |
-| task files untracked (drafts) | 2 |
-| non-terminal tracked by git | 10 |
+| task files tracked by git | 486 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 11 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 395 | yes |
+| `done` | 396 | yes |
 | `closed_with_limitations` | 41 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `in_progress` | 3 | no |
+| `ready` | 3 | no |
 | `approved` | 2 | no |
+| `in_progress` | 2 | no |
 | `in_review` | 2 | no |
-| `proposed` | 2 | no |
-| `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `blocked` | 1 | no |
+| `proposed` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -39,13 +39,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-C11-PREREQ-1` | `approved` | own row |
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
-| `FEA-01-FREEZE-1` | `in_progress` | own row |
 | `FEA-D07-UNBLOCK` | `in_progress` | no |
 | `FEA-GOV-11` | `in_progress` | no |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
-| `FEA-02-CORE` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
+| `FEA-02-CORE` | `ready` | own row |
 | `FEA-04b` | `ready` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 

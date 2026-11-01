@@ -1,6 +1,6 @@
 # FEA 契约冻结准备总表（冻结矩阵）
 
-状态：**ACTIVE**（13 份已冻结；Gate 判定见下）
+状态：**ACTIVE**（**15 份已冻结**：14 份子契约 + FEA-01；Gate 判定见下）
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、各草案的「冻结条件」节、[FEA-CONTRACT_FREEZE_PACKAGE](FEA-CONTRACT_FREEZE_PACKAGE.md)

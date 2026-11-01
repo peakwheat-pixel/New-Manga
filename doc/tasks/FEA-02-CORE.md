@@ -3,16 +3,14 @@ id: FEA-02-CORE
 title: FEA-02-CORE 共享应用状态与 Run 轮询基础（ApplicationCore 抽取）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: user_ruling_2026-11-01_U12
 suggested_owner: codex
 owner: codex
 reviewer: c01b-reviewer
 depends_on:
   - FEA-01-FREEZE-1
-blocked_by:
-  - FEA-01-FREEZE-1
-base_commit: null
+base_commit: bf1c8eb00
 branch: null
 worktree: null
 integration_commit: null
@@ -105,4 +103,4 @@ allowed_paths:
 
 ## Closeout Record
 
-- 范围冻结中（2026-11-01）：卡为 `proposed`；待独立复核范围冻结后置 `ready` 并交 Codex。
+- 范围冻结完成（2026-11-01）：写域 = `NewManga.ApplicationCore` + 对应测试 + sln 两条项目条目；R2 `approved`（`FEA-01-FREEZE-r2`）；交 Codex 实现；`G-DELETE-IMPL` 仍 OPEN。

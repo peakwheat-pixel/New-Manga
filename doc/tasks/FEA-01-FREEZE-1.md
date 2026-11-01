@@ -3,7 +3,7 @@ id: FEA-01-FREEZE-1
 title: FEA-01 稳定端口冻结（门禁链最后一环）
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: user_ruling_2026-11-01_U11_U12
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: a2bda2f1d
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: bf1c8eb00
+delivery_head: b0aa7cb6a
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-01-FREEZE
 allowed_paths:
   - doc/tasks/FEA-01-FREEZE-1.md
@@ -42,10 +42,10 @@ FEA-01 §1 门禁链：用户裁决 → 方案修订+新 hash 复审 → C-01…
 
 ## 验收标准
 
-- [x] **AC1 冻结落盘**：`doc/plan/FEA-01_CONTRACT_DRAFT.md` 置 `FROZEN v2`（状态行、§1 门禁链 4/4 标注、§2 快照说明、新增 §2A 冻结对账、变更记录冻结行）；`doc/plan/FEA-CONTRACT-FROZEN-FEA01.md` 含 §1 冻结字节 + §1A + §1B + 条件核验 + 稳定端口说明 + 不构成项；pin 为**全部编辑完成后**计算。
-- [x] **AC2 端口清单唯一载体**：明确稳定端口清单 = `doc/plan/FEA-C07_API_INVENTORY.md`（C-07 pin `17c8f7016a36…`），FEA-01 不另建第二份（避免双权威）；`verify_pins.ps1` 纳入 FEA01 → **15/15**。
-- [x] **AC3 完成证据**：`verification/FEA-01-FREEZE/closeout-check.md` 记录门禁链 4/4、pin 15/15、冻结前后差异与边界。
-- [ ] **AC4 独立复核**：`doc/reviews/FEA-01-FREEZE-r1.md` 判 `approved`（P0/P1 = 0）。
+- [x] **AC1 冻结落盘**：`doc/plan/FEA-01_CONTRACT_DRAFT.md` 置 `FROZEN v2`（状态行、§1 门禁链 4/4 标注、§2 快照说明、新增 §2A 冻结对账、变更记录冻结行）；`doc/plan/FEA-CONTRACT-FROZEN-FEA01.md` 含 §1 冻结字节 + §1A + §1B + 条件核验 + 稳定端口说明 + 不构成项；pin 为**全部编辑完成后**计算。 <<MET>>
+- [x] **AC2 端口清单唯一载体**：明确稳定端口清单 = `doc/plan/FEA-C07_API_INVENTORY.md`（C-07 pin `17c8f7016a36…`），FEA-01 不另建第二份（避免双权威）；`verify_pins.ps1` 纳入 FEA01 → **15/15**。 <<MET>>
+- [x] **AC3 完成证据**：`verification/FEA-01-FREEZE/closeout-check.md` 记录门禁链 4/4、pin 15/15、冻结前后差异与边界。 <<MET>>
+- [x] **AC4 独立复核**：`doc/reviews/FEA-01-FREEZE-r2.md` 判 `approved`（P0/P1 = 0；r1 的 P1×2 已闭合）。 <<MET>>
 
 ## 禁止范围
 
@@ -60,13 +60,15 @@ FEA-01 §1 门禁链：用户裁决 → 方案修订+新 hash 复审 → C-01…
 | AC1 | 冻结前后字节对比 + pin 计算 | 只读 | PASS | 记录 §1B；`Get-FileHash` = `0370c189…` |
 | AC2 | pin 审计 15/15 | 只读 | PASS | `verify_pins.ps1` → `PASS (all 15)` |
 | AC3 | 完成证据核对 | 只读 | PASS | `verification/FEA-01-FREEZE/closeout-check.md` |
-| AC4 | 独立复核 | 只读 | NOT_RUN | 待复核 |
+| AC4 | 独立复核 r2 | 只读 | PASS | `doc/reviews/FEA-01-FREEZE-r2.md`（approved，P0/P1=0） |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-FREEZE-DOC | AC1 | `doc/plan/FEA-CONTRACT-FROZEN-FEA01.md` | `bf1c8eb00` | `3874dc8b79fe04005f7adae2e579941612894835a16241ec9970bbb3d188b31e` | CANONICAL |
+| E-FREEZE-EVIDENCE | AC3 | `verification/FEA-01-FREEZE/closeout-check.md` | `bf1c8eb00` | `e0e1a338d696eddcdfd1cd52a2898410b349858bf7659cdc30643ffbdee32bca` | CANONICAL |
+| E-FREEZE-R2 | AC4 | `doc/reviews/FEA-01-FREEZE-r2.md` | `-` | `6691213e769234becc05a119f0847326bc16bc7d0f766b4aef1e9e7f70783679` | CANONICAL |
 
 ## Resource Manifest
 
@@ -79,4 +81,4 @@ FEA-01 §1 门禁链：用户裁决 → 方案修订+新 hash 复审 → C-01…
 
 ## Closeout Record
 
-- 收口中（2026-11-01）：AC1–AC3 完成（pin `0370c189…`，pins 15/15）；AC4 待独立复核。
+- 收口（2026-11-01）：FEA-01 v2 冻结 pin `0370c189…`；R1 `changes_requested`（P1×2）→ R2 `approved`；`integration_commit: bf1c8eb00`。

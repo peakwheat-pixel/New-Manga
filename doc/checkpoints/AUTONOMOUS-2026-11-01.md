@@ -25,8 +25,8 @@
 | 5 | PLAN 预算卫生 + WRAP 收尾材料 | **done**（收口材料 `6c0195437`；集成 `6cfe7ab92`） | PASS (2w) | 13/13 | `doc/reviews/FEA-WRAP-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×4）；R1 为 changes_requested（P1×1 = Manifest 词表，已修） | PLAN 6777 B/57 行 → **2302 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0）；closeout-check 数字为 `6c0195437` 时刻快照（P2-002） |
 | 6 | C-10 文档冻结（用户 U-06/U-11） | **done**（冻结 `170b384e2`；pin `ec8fd862…`） | PASS (2w) | **14/14** | `doc/reviews/FEA-C10-r4b.md`（approved，P0/P1=0，P2×2 记录侧） | `T=4 DIP` 仅鼠标、跨阈保持、不随缩放、DPI 无关；13 份既有 pin 未变；实现线未释放 |
 | 7 | U-09 前置登记（L-1/L-2/L-5 → 候选 Task 前置与 AC） | **approved**（`FEA-C11-PREREQ-r1` P0/P1=0；非终态、未集成） | PASS (2w) | 14/14 | `doc/reviews/FEA-C11-PREREQ-r1.md`（approved，P2×5 已处置） | 登记文档 `doc/plan/FEA-C11_IMPL_PREREQS.md`；不豁免、不释放实现（`G-DELETE-IMPL` OPEN） |
-| 8 | FEA-01 稳定端口冻结（门禁链最后一环） | **in_progress**（v2，pin `0370c189…`；pins 15/15） | PASS (2w) | **15/15** | 待复核 `FEA-01-FREEZE-r1` | 门禁链 4/4；稳定端口清单唯一载体 = C-07 清单；不释放实现 |
-| 9 | `FEA-02-CORE` 范围冻结卡（Codex 实现） | **proposed**（待复核 → ready） | PASS | 15/15 | 待复核（与第 8 项同一复核） | 写域限 `NewManga.ApplicationCore` + 测试；保留 Current 入口；L-1/L-2/L-5 判定 N/A 且列再触发条件 |
+| 8 | FEA-01 稳定端口冻结（门禁链最后一环） | **done**（v2，pin `0370c189…`；集成 `bf1c8eb00`） | PASS (2w) | **15/15** | r1 `changes_requested`（P1×2）→ **r2 `approved`**（`FEA-01-FREEZE-r2`，P0/P1=0，P2×5） | 门禁链 4/4；稳定端口唯一载体 = C-07 清单；§3 待决项 8/8 对账（U-06/U-07 默认采用待追认）；不释放实现 |
+| 9 | `FEA-02-CORE` 范围冻结卡（Codex 实现） | **ready**（交 Codex；`bf1c8eb00`） | PASS | 15/15 | `FEA-01-FREEZE-r2`（approved；范围冻结复核含 sln） | 写域 = ApplicationCore + 对应测试 + sln 两条项目条目；保留 Current、不双调度；L-1/L-2/L-5 判 N/A + 再触发 |
 
 ## 偏离登记
 
@@ -45,6 +45,8 @@
 6. **非队列非终态 Task 未处理**：`FEA-D07-UNBLOCK`、`FEA-GOV-11`（AC1/AC2 `<<PARTIAL: 待用户裁决>>`）、`GIT-CLEAN-*` 等保持原状，本段未触碰。
 7. **已接受为非阻断的技术债**：D06 的 R2-001…006、C14 的 P2-002/3/4/6、C-10 的 R3-001（§8 表末缺空行，纯格式）——均**未修**，理由见各复核报告。
 8. **裁定 `GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md:58` 括注指向落空**：该括注称 C-08 的 D07 表述「以其 §5 历史段落为准」，但 C-08 记录全文无 D07 表述。已按用户指令**不改裁定正文**，仅在 C-08 §8 注记留痕。
+
+9. **FEA-01 §3 U-06 离线阅读 / U-07 外部卷**：默认采用方案默认（无独立裁决）；**待用户追认**；追认若只改产品默认 → 新裁决 + 调整受影响 Task，**不改 FEA-01 冻结字节**。
 
 **处置状态（2026-11-01 18:43 用户在线裁定后）**：第 1 项 ✅ 已裁定（`T=4 DIP`，ADJ U-06；冻结进行中）；第 2 项 ✅ 采用 L1–L4（U-07）；第 3 项 ✅ 接受偏离（U-08）；第 4 项 ✅ 保留 L-1…L-9 不作整体豁免，L-1/L-2/L-5 进实现 Task 前置与 AC（U-09）；第 5 项 ⏸ `G-DELETE-IMPL` 仍 OPEN（未授权实现）；第 6 项 ✅ 非队列 Task 保持原状（U-10）；第 7 项 ✅ P2 暂不扩修（U-10）；第 8 项 ✅ 以追加 errata 澄清（U-10）。
 
