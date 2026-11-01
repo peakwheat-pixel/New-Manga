@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <Description>UI-independent application state, shared Run polling and in-flight intent coordination.</Description>
+  </PropertyGroup>
+</Project>
