@@ -18,7 +18,7 @@
 | # | 任务 | 结果 HEAD | check.ps1 | verify_pins.ps1 | 复核报告 | 问题/偏离 |
 |---|---|---|---|---|---|---|
 | 0 | 建立复核席位 `c01b-reviewer` + 本 checkpoint | — | — | — | — | 无 |
-| 1 | 收口 `FEA-D06-GAP` | R1 后修订中 | 待填 | 待填 | `doc/reviews/FEA-D06-CLOSEOUT-r1.md`（changes_requested：P1×3 / P2×5，已逐项处置） | 见「偏离登记」1–2 |
+| 1 | 收口 `FEA-D06-GAP` | **done**（收口材料 `1027de616`） | PASS (3w) | 13/13 | `doc/reviews/FEA-D06-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×6 非阻断；R1 为 changes_requested→已修） | R2 条件：done 为纯元数据回填；R2-001…006 技术债**未修**，登记待处置 |
 | 2 | 收口 `FEA-C14-DRAFT` | 待填 | 待填 | 待填 | 待填 | 待填 |
 | 3 | L-3 Errata | 待填 | 待填 | 待填 | 待填 | 待填 |
 | 4 | 起草 C-10 交互契约（不冻结） | 待填 | 待填 | 待填 | 待填 | 待填 |

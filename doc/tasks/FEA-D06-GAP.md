@@ -3,7 +3,7 @@ id: FEA-D06-GAP
 title: D06 四项缺口补齐（C-08 UNFREEZE）
 kind: docs
 governance_version: 3
-status: in_review
+status: done
 approval: user_ruling_2026-11-01_activate_d06
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 1e0a98734
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 1027de616
 delivery_head: 0119a8014
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-D06-GAP
 allowed_paths:
   - doc/tasks/FEA-D06-GAP.md
@@ -114,3 +114,4 @@ allowed_paths:
 - 未跑项：AC1–AC4 的条款级对照本收口未重跑（见测试要求注），保持 `NOT_RUN`；未运行任何程序测试（纯文档 Task）。
 - 资源：仓库内无 worktree/临时/构建产物；仓库外 32 项 `PRESERVE_UNKNOWN`（清单见 `verification/FEA-D06-GAP/workspace-tmp-manifest.md`）；未访问用户数据。
 - 边界：不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节。
+- 收口（2026-11-01）：R2 [approved](../reviews/FEA-D06-CLOSEOUT-r2.md)（P0/P1 = 0；P2×6 非阻断）；`status: done`、`integration_commit: 1027de616`、`resource_closeout_status: complete` 为**纯元数据回填**（未改 AC / 证据表 / 资源清单正文）；P2 技术债登记于 `doc/checkpoints/AUTONOMOUS-2026-11-01.md`。
