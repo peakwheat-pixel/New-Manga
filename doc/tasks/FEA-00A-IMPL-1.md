@@ -3,7 +3,7 @@ id: FEA-00A-IMPL-1
 title: FEA-00a 数据安全修复（prepare 与 seam 分离；region + artifact 零变化）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: user_ruling_2026-11-01_D1_D4
 suggested_owner: codex
 owner: codex
@@ -11,12 +11,12 @@ reviewer: c01b-reviewer
 depends_on:
   - FEA-00A-PREP-1
 base_commit: 2a383d1b9
-branch: null
-worktree: null
-integration_commit: null
+branch: feat/fea-00a-impl
+worktree: G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1
+integration_commit: e0ba29eba
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-00A-IMPL-1
 allowed_paths:
   - doc/tasks/FEA-00A-IMPL-1.md
@@ -99,16 +99,17 @@ allowed_paths:
 
 ## 验收标准（冻结版）
 
-- [ ] **AC1 三处零变化**：revision 冲突 / Lock 冲突 / `STALE_RUN_SNAPSHOT` / DB 失败 / pause / cancel / prepare 后崩溃重启 7 类注入下，`regions.text_json`、`regions.current_revision_id`、`region_revisions` 行数与 prepare 前完全相同（A1、V1–V6；pause/cancel 按 R-SEAM-1）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC2 候选可诊断且三态可存续**：失败候选字段正确；`prepared→resolved/abandoned` 状态机与 `resolved_at` 按 R-CAND-3；R-CAND-2 四条路径下三态候选行数与 `candidate_id` 集合不变（UPSERT 或回插）；R-CAND-4 启动清扫计数；同一步 abandoned+pending 双行可分别断言（A2、§4.2）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC3 成功同事务**：revision 行 + `text_json` + 指针 CAS + 候选 `resolved` 在同一事务提交；按 R-SEAM-2 双证据断言无中间可观察态（A3、V7）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC4 prepare 不触 live（含 artifact 写面）**：结构/grep 断言 prepare 路径不存在 `UPDATE/INSERT regions`、`INSERT region_revisions`、`UPDATE media_artifacts`、`INSERT media_artifacts`、`INSERT artifact_revisions`、`storage.publish`；token = 预生成真实 revision id（A4、§4.1、R-ART-1）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC5 重启可判定**：prepare 后崩溃/重启 live 三处不变；`prepared` 行可识别（R-CAND-2/4），清扫后为 `abandoned` 且计数可核（A5、V6）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC6（D1=②）artifact 三对象零变化**：失败注入下 `media_artifacts.current_revision_id`、`artifact_revisions` 行数、最终文件均无新增可见产物且无孤儿文件；成功时按 R-ART-2 顺序完成文件 promotion 与 DB 落定，`sha256`/`size`/指针/行/文件一致；首 revision 的 `INSERT media_artifacts` 在 seam 内完成；崩溃后按 R-ART-3 可清扫（A6、**V9 从真实生产 assembly 执行**）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC7 §15.6 出口**：①结构断言覆盖 prepare 无 live 写（同 AC4 清单）；②旧库只读核验程序固定：只读打开既有 DB → 查三处一致性（text_json 与 current_revision 对应、region_revisions 计数）→ 候选表可读 → 输出核验清单；保留既有备份与候选，**不创建/不恢复备份**（A7，不触 L-5）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC8 回归与真实 assembly（V1–V9）**：G7 8 文件逐项表格（测试名/修前/修后/判定/理由），`t111_support.py` 单列"适配而非 outcome 对照"；V1–V9 全部经 R-SEAM-3 入口执行（D4）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC9 D2=② 改动登记**：若改 `src/application/tasks/**`，Handoff 逐项写「为什么必须改 / 不改的替代方案 / 影响面 / 回退方式」；构件重设计附前后接口对照。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC10 独立复核**：范围冻结复核 r3 `doc/reviews/FEA-00A-IMPL-scope-r3.md` 判 `approved`（P0/P1=0，已完成）；实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` 判 `approved`（P0/P1=0），待交付后。 <<PARTIAL: 范围复核 r3 已 approved；实现复核在交付后>>
+- [x] **AC1 三处零变化**：revision 冲突 / Lock 冲突 / `STALE_RUN_SNAPSHOT` / DB 失败 / pause / cancel / prepare 后崩溃重启 7 类注入下，`regions.text_json`、`regions.current_revision_id`、`region_revisions` 行数与 prepare 前完全相同（A1、V1–V6；pause/cancel 按 R-SEAM-1）。 <<MET>>
+- [x] **AC2 候选可诊断且三态可存续**：失败候选字段正确；`prepared→resolved/abandoned` 状态机与 `resolved_at` 按 R-CAND-3；R-CAND-2 四条路径下三态候选行数与 `candidate_id` 集合不变（UPSERT 或回插）；R-CAND-4 启动清扫计数；同一步 abandoned+pending 双行可分别断言（A2、§4.2）。 <<MET>>
+- [x] **AC3 成功同事务**：revision 行 + `text_json` + 指针 CAS + 候选 `resolved` 在同一事务提交；按 R-SEAM-2 双证据断言无中间可观察态（A3、V7）。 <<MET>>
+- [x] **AC4 prepare 不触 live（含 artifact 写面）**：结构/grep 断言 prepare 路径不存在 `UPDATE/INSERT regions`、`INSERT region_revisions`、`UPDATE media_artifacts`、`INSERT media_artifacts`、`INSERT artifact_revisions`、`storage.publish`；token = 预生成真实 revision id（A4、§4.1、R-ART-1）。 <<MET>>
+- [x] **AC5 重启可判定**：prepare 后崩溃/重启 live 三处不变；`prepared` 行可识别（R-CAND-2/4），清扫后为 `abandoned` 且计数可核（A5、V6）。 <<MET>>
+- [x] **AC6（D1=②）artifact 三对象零变化**：失败注入下 `media_artifacts.current_revision_id`、`artifact_revisions` 行数、最终文件均无新增可见产物且无孤儿文件；成功时按 R-ART-2 顺序完成文件 promotion 与 DB 落定，`sha256`/`size`/指针/行/文件一致；首 revision 的 `INSERT media_artifacts` 在 seam 内完成；崩溃后按 R-ART-3 可清扫（A6、**V9 从真实生产 assembly 执行**）。 <<MET>>
+- [x] **AC7 §15.6 出口**：①结构断言覆盖 prepare 无 live 写（同 AC4 清单）；②旧库只读核验程序固定：只读打开既有 DB → 查三处一致性（text_json 与 current_revision 对应、region_revisions 计数）→ 候选表可读 → 输出核验清单；保留既有备份与候选，**不创建/不恢复备份**（A7，不触 L-5）。 <<MET>>
+- [x] **AC7b 真实用户旧库核验**：无用户旧库副本供审计，且用户数据不得访问；真实用户库的只读三处一致性核验属发布前运行期审计，本卡以一次性旧结构 fixture 覆盖机制并登记 FOLLOW-UP-FEA00A-1。 <<NOT_APPLICABLE: 无用户旧库副本；用户数据保护；机制已由 fixture 验证>>
+- [x] **AC8 回归与真实 assembly（V1–V9）**：G7 8 文件逐项表格（测试名/修前/修后/判定/理由），`t111_support.py` 单列"适配而非 outcome 对照"；V1–V9 全部经 R-SEAM-3 入口执行（D4）。 <<MET>>
+- [x] **AC9 D2=② 改动登记**：若改 `src/application/tasks/**`，Handoff 逐项写「为什么必须改 / 不改的替代方案 / 影响面 / 回退方式」；构件重设计附前后接口对照。 <<MET>>
+- [x] **AC10 独立复核**：范围冻结复核 r3 `doc/reviews/FEA-00A-IMPL-scope-r3.md` 判 `approved`（P0/P1=0，已完成）；实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` 判 `approved`（P0/P1=0），待交付后。 <<MET>>
 
 ## L 前置适用性判定
 
@@ -165,7 +166,32 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-V1V9 | AC1–AC6；V1–V9 汇总 | `verification/FEA-00A-IMPL-1/v1-v9-summary.md` | 007094517 | 6b93fb149f5623e363b41eedd045cdaa1849c45283bc3535db7af0cb3e4cf18b | CANONICAL |
+| E-V1V9-LOG | AC1–AC6；真实 assembly 执行 | `verification/FEA-00A-IMPL-1/production-assembly-v1-v9.log` | 007094517 | 010349f279d61632e04ec503bdb73b2e8ea5ba1bcbbee8f0fb2f0210da5e33d3 | CANONICAL |
+| E-AC8 | AC8 | `verification/FEA-00A-IMPL-1/ac8-outcome-comparison.md` | 007094517 | 192a39fc88fc36710c531523adde187ba97e1306e095bbc4579001bb942be204 | CANONICAL |
+| E-AC4 | AC4 / AC7 | `verification/FEA-00A-IMPL-1/source-boundary-checks.md` | 007094517 | 0b20621a683bdd7576eab0e46930db16f4cc8833a239b8e721de3d6337316955 | CANONICAL |
+| E-PYTEST | AC1–AC6、AC8 | `verification/FEA-00A-IMPL-1/final-pytest-log.txt` | 007094517 | d5c53e336b2322b14b0fc0a5172e403688d9c2dc3ae32b7122b06606e68efa02 | CANONICAL |
+| E-AC7 | AC7 / AC7b | `verification/FEA-00A-IMPL-1/legacy-db-audit-record.md` | 007094517 | 7567230b0e72c5ffc6c259a9a6377acbbfd4cfb42af1c24c2e1c830a284853d1 | CANONICAL |
+| E-REVIEW | AC10 | `doc/reviews/FEA-00A-IMPL-r1.md` | 121aed018 | cbfbd39a0cb1eee4b088849664628af47d5251ad25a8c7922b0caf25ffa796d9 | CANONICAL |
+| E-ac8-blast-radius-results-json | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/ac8-blast-radius-results.json` | 007094517 | 4cc81f6249b8a65db1ea159e55b75de28144dd284b4ccdd438dd882aee234ee4 | SOURCE_PIN |
+| E-ac8-collected-test-names-json | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/ac8-collected-test-names.json` | 007094517 | f3596cd4520f5e02f308a0d63a75335d6aedcd09f228299c7d9d87b6cc41c836 | SOURCE_PIN |
+| E-ac8-outcome-comparison-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/ac8-outcome-comparison.md` | 007094517 | 192a39fc88fc36710c531523adde187ba97e1306e095bbc4579001bb942be204 | SOURCE_PIN |
+| E-ac8-post-per-file-log-txt | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/ac8-post-per-file-log.txt` | 007094517 | 9d181cacd790ed93e815d1819cb5b50ee1992f976c024b4be15562b1eb1c66be | SOURCE_PIN |
+| E-audit-legacy-db-readonly-py | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/audit_legacy_db_readonly.py` | 007094517 | f6d9a95c952f65e5bfc116c9087bb59e57aeca40bcf12296f59bc0efbb0b1902 | SOURCE_PIN |
+| E-baseline-test-log-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/baseline-test-log.md` | 007094517 | fdb9ee7452fe76067005597fd508f6bf7b8781705b12ce9d61d25ad686e15aac | SOURCE_PIN |
+| E-core-assembly-impact-results-json | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/core-assembly-impact-results.json` | 007094517 | c42d01d0b33f1378b743ac728ab5359a54277b3c7d64a46d7a431c86fb4fd15c | SOURCE_PIN |
+| E-final-pytest-log-txt | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/final-pytest-log.txt` | 007094517 | d5c53e336b2322b14b0fc0a5172e403688d9c2dc3ae32b7122b06606e68efa02 | SOURCE_PIN |
+| E-governance-checks-txt | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/governance-checks.txt` | 007094517 | 5328962ec2570cfd404cdda46b5e3ccd3a99f2c60058e57552d9fbf7783f5873 | SOURCE_PIN |
+| E-governance-script-results-json | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/governance-script-results.json` | 007094517 | 7053d8101bab9dfc538f028940ae0d33f4147a185e8c4c21c48ac7efe5951401 | SOURCE_PIN |
+| E-legacy-db-audit-record-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/legacy-db-audit-record.md` | 007094517 | 7567230b0e72c5ffc6c259a9a6377acbbfd4cfb42af1c24c2e1c830a284853d1 | SOURCE_PIN |
+| E-legacy-db-audit-result-json | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/legacy-db-audit-result.json` | 007094517 | fde69df5293eb7eb5033fc7b181472c5f8a6ecde91062cea2ea3169552b51a7f | SOURCE_PIN |
+| E-prepare-boundary-checks-log | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/prepare-boundary-checks.log` | 007094517 | e5c0e15222e3f90cad6a612a5ee19a78eebd23f1e4c673e2d3959bc8e5866e83 | SOURCE_PIN |
+| E-production-assembly-execution-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/production-assembly-execution.md` | 007094517 | 540000b481c3ffb24575c45814fee5e1fb571dab32e4793604dc0eea22c429d0 | SOURCE_PIN |
+| E-production-assembly-v1-v9-log | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/production-assembly-v1-v9.log` | 007094517 | 010349f279d61632e04ec503bdb73b2e8ea5ba1bcbbee8f0fb2f0210da5e33d3 | SOURCE_PIN |
+| E-source-boundary-checks-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/source-boundary-checks.md` | 007094517 | 0b20621a683bdd7576eab0e46930db16f4cc8833a239b8e721de3d6337316955 | SOURCE_PIN |
+| E-storage-none-check-log | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/storage-none-check.log` | 007094517 | 7c22837fe7f36a258d18dd30e924ffdc853ce5d66d0d455b7801486c99d8a3e0 | SOURCE_PIN |
+| E-v1-v9-summary-md | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/v1-v9-summary.md` | 007094517 | 6b93fb149f5623e363b41eedd045cdaa1849c45283bc3535db7af0cb3e4cf18b | SOURCE_PIN |
+| E-v9-artifact-timing-log | 证据/辅助（AC1–AC8） | `verification/FEA-00A-IMPL-1/v9-artifact-timing.log` | 007094517 | 4b986d039c1ca4fede3ab3b04ae5cba26385ee281438a8476bc48b667bca4eee | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -174,7 +200,7 @@ allowed_paths:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-task | - | NOT_APPLICABLE | - | - | 范围冻结阶段；未访问用户数据 |
-| build/temp（未来） | - | PENDING | ..\New Manga.workspace\ | - | 实现开始前补齐具体路径与处置 |
+| worktree/branch | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1 | verification/FEA-00A-IMPL-1/v1-v9-summary.md | 已集成；worktree 保留供追溯，未清理/prune；带自有 commit，不得删除 |
 
 ## Closeout Record
 
@@ -186,3 +212,6 @@ allowed_paths:
 - 2026-11-01：`ready` 交 Codex 实现（`base_commit: 2a383d1b9` = 范围冻结收口提交）；`G-DELETE-IMPL` 仍 OPEN。
 - 2026-11-01：`proposed`，派独立复核 r3 审查 v3；**复核通过前不 `ready`、不派实现**。`base_commit` 于 `ready` 时更新为最终冻结 head。
 - 2026-11-01（DSH 收口）：Codex 实现已交付于 worktree 分支 `feat/fea-00a-impl`，delivery head `007094517`（Codex 沙箱无法写 linked-worktree Git 元数据，DSH 代为提交）；测试 194 passed / 0 failed / 0 skipped，V1–V9 11 passed，`check.ps1` PASS；主仓库 `verify_pins` 15/15 PASS。**待上下文独立实现复核**，复核通过后由 DSH 集成并更新本卡状态/证据（证据文件当前在分支上，集成前不写入 main 证据表以避免检查器路径缺失）。
+| build/artifact | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1/verification | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-00A-IMPL-1/verification | `verification/FEA-00A-IMPL-1` | 证据已入库；worktree 内缓存目录属可重建，未登记为交付物 |
+
+- 2026-11-01（DSH 集成收口 + done）：`feat/fea-00a-impl` 以 `--no-ff` 合并 → `integration_commit: e0ba29eba`；独立实现复核 `doc/reviews/FEA-00A-IMPL-r1.md` **approved**（P0/P1=0，P2×12 非阻断）；`verify_pins` 15/15 PASS；`check.ps1` PASS。AC7 真实用户旧库核验按 AC7b 处置（无用户库副本，登记 FOLLOW-UP-FEA00A-1）。
