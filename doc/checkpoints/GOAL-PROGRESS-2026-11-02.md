@@ -1,7 +1,7 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`f3bb62d29`（FEA-04 done 收口）
-**主推进**：`FEA-04` Current 适配 → **done**（集成 `f4d8a32ec`）；下一候选 `FEA-04b`（Fluent 四页设计规格）
+**当前 HEAD**：`1a4d3d1a0`（FEA-04 done + C11-PREREQ-1 done；FEA-04b ready）
+**主推进**：`FEA-04` Current 适配 → **done**（集成 `f4d8a32ec`）；`FEA-C11-PREREQ-1` → **done**（集成 `b7018e19b`）；下一 Task `FEA-04b`（Fluent 四页设计规格，ready）
 
 ---
 
@@ -48,9 +48,16 @@
 | 时间 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-02 02:45 | 建立；记录 FEA-03 done 与 FEA-04 释放 | DSH |
+## 5. 本轮新增记录（2026-11-02 03:00–13:00）
 
+- **FEA-04 done**：eat/fea-04 经 Codex 实现 + DSH 返修（编译修复、Host 投影恢复、RunStatusMonitor 恢复、intent key 语义、IMPL-02 投影丢失修复）→ 实现复核 r1（P1×4）→ r2（P1×2）→ **r3 approved（P0/P1=0）**；冻结命令 build EXIT=0、sln test **931/0/60**（App 413/420）；git diff --check rc=0；集成 4d8a32ec；卡 done（证据 10 项）。
+- **FEA-C11-PREREQ-1 done**：交付 7018e19b 已是 main 祖先、文件 sha256 与证据一致、复核 approved → 收口。
+- **FEA-04b 释放**：eady，写域 doc/design/fluent-v1/**；owner/reviewer 待指派（ZCode CLI 不可用 → DSH 可代起草或派 Codex；设计复核需独立上下文）。
+- P2 遗留（FEA-04）：实现复核 r3 列 7 项（基线文档算术/控制字符已修、冻结命令日志已入库；git diff --check 残余、Handoff 行内表述、用例命名等）已在收口时处理大部分，剩余接受遗留。
 
+## 6. 待裁决（需用户拍板）
 
-
-
-
+| # | 事项 | 推荐 |
+|---|---|---|
+| Q-21 | FEA-04b 设计 owner（ZCode CLI 不可用） | DSH 代起草规格 + 独立上下文复核；规格批准后再由 ZCode/Codex 实现 UI |
+| Q-22 | FEA-05（Fluent 独立界面）是否需要先完成 wire（FEA-03 defer 的 Draft 命令面） | 是：先做 wire 子卡，再做 Fluent 页面；否则 Fluent 与 Current 无法共享草稿真值 |
