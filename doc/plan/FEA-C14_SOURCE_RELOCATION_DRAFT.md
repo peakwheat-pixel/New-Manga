@@ -1,6 +1,6 @@
 # FEA-C14 Source 重定位 / 同步 / 容器页映射 / 缓存边界 · 草案
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN v3 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C14.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) `:768`（D05 行）、`:419`–`:422`（源表）、`:432`（导入/重定位 journal）、`:459`（文件夹同步）、`:461`（改名/移动 vs 换引用）；[C-01b](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（已冻结，SC-02/SC-03/SC-20/SC-21/SC-22/SC-25/SC-29/SC-31）；[C-06](FEA-C06_SOURCE_AUTH_DRAFT.md)（已冻结）；[C-04b](FEA-C04b_DELETE_PROTOCOL_DRAFT.md)（已冻结）
@@ -41,6 +41,7 @@
 - **`locator`**（PDF 页码、ZIP 成员名、目录内相对路径）是**位置**，不是**身份**；
 - **身份** = `EntryId`（`source_entries`），由 **`SourceId` + 稳定排序键**（内容指纹用于区分「同名不同内容」）共同确定；**`SourceVersionId` 是内容版本，不参与身份**——否则改名/移动产生新版本后身份会漂移，与本条「改名后 `EntryId` 不变」及 SC-S01/SC-S12 矛盾；
 - **行键** = (`SourceVersionId`, `EntryId`)——同一身份在不同内容版本下是不同行；
+- **跨版本时的身份保续**：稳定排序键只在**单个 `SourceVersion` 内**稳定；跨版本重排（如插入一页导致后续页码平移）时，`EntryId` 的保续依据是**内容指纹匹配**（`encoded/pixel digest`），不是排序键。匹配不上的成员按 SC-S12 的「新增/缺失」处理。
 - 同一文件被改名/移动后 `locator` 变、`EntryId` **不变**；同名不同内容的两个条目 `locator` 相同、`EntryId` **不同**。
 
 **验证**：改名 ZIP 内成员 → 断言 `EntryId` 不变、`locator` 变；同目录两份同名文件 → 断言两个不同 `EntryId`。
@@ -145,7 +146,7 @@
 
 - **本契约不扩展 C-04b 的协议形状**。C-04b 冻结的预检出参 `DeletePreviewItem`（`:43`）是 `{bookId, title, protection{...}, contentSummary{...}, sharedFileRefs[]}`，**没有** pending operation 字段。因此：
   - **需求声明（不含协议改动）**：若存在未完成的 relink/resync，删除 preflight 应向用户披露；该字段的加入属 **C-04b 的 UNFREEZE 或 M2-C1 §5.11.2 的独立字节修订 Task**（照 C-08 块② 模式），不由本契约规定；
-  - 删除**不得**清理被 `page_bindings` 引用为「唯一来源」的记录——由 **ADJ-001 PD-08**（共享引用）与 **C-04b `:72`** 的关系图预检（`BOOK_DELETE_CONFLICT`）约束；本契约只声明该不变量，**不改其协议字节**。
+  - **唯一来源不变量（可判定形式）**：删除后，每条 `page_bindings` 记录要么仍能解析到存在的 `SourceEntry`/`SourceVersion`，要么被显式置为 `status=missing`；**不得**出现「binding 存在但指向已删除源」的悬空状态。主依据 **C-04b `:72`** 的关系图预检（`BOOK_DELETE_CONFLICT`）+ **ADJ-001 PD-08**（共享引用）；本契约只声明该不变量，**不改其协议字节**。
 
 **验证**：有 pending operation 时发起删除预览 → 断言清单含该 operation。
 
@@ -195,7 +196,7 @@
 |---|---|
 | **C-01b**（已冻） | **注意**：C-01b **未冻结** `source_entries`/`page_bindings`/`source_sync_plans`/`source_operations` 的表结构（AD-003 `:117` 明文「这些表均未定，由 DSH 在 D05 范围冻结」）→ **表结构留给后续存储契约，本契约只定义语义与不变量，不定义 DDL**。本契约引用的 C-01b 条款：**SC-02/SC-03/SC-20**（缓存）、**SC-26/SC-27/SC-34**（同步/缺失/operation journal）、**SC-21/SC-22**（授权面，**非**表结构） |
 | **C-06**（已冻） | C-06 的 `scope.entry` 语义是「**可解析到授权根内路径的定位键**」（`:52`）；本契约的 `EntryId` 经 `source_entries.locator` 解析后可与之对应——**对齐规则须在 C-06 侧或协议实现 Task 中确认，本契约不单方面重定义已冻结字段**；per-request 预算与全局上限是两层（SC-S16） |
-| **C-04b**（已冻） | 删除 preflight 的 pending operation 披露（SC-S08）；**不改 C-04b 字节** |
+| **C-04b**（已冻） | pending operation 披露只是**需求声明**（SC-S08）；其字节修订属 C-04b 的 **UNFREEZE / M2-C1 §5.11.2 独立 Task**，**本契约不改 C-04b 字节**；唯一来源不变量由 ADJ-001 PD-08 + C-04b `:72` 承载 |
 | **C-08**（已冻） | Run 快照的 `PreparedRun` 与本契约的同步预览是**不同层**（Run 层 vs 源层），不互相替代 |
 
 ## 5. 冻结条件
@@ -212,5 +213,6 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v3（处置 FEA-C14-r2 的 K-1…K-3）**：K-1 §4 的 C-04b 行明确「需求声明 + 字节修订属 UNFREEZE/独立 Task」；K-2 SC-S08 的「唯一来源」改为可判定形式（binding 要么可解析、要么显式 missing）；K-3 SC-S09 补「跨版本身份保续靠内容指纹、排序键仅单版本内稳定」 | DSH |
 | 2026-11-01 | **v2（处置 FEA-C14-r1 的 P1×5 + P2×4）**：P1-1 §4 改正「C-01b 未冻结四张表」（AD-003 `:117`）；P1-2 §0 行 3 补 C-01b SC-26/27/34 + SC-S04/S05/S07 改引用不复写；P1-3 SC-S08 改为「需求声明 + 属 C-04b UNFREEZE/独立字节修订」并改正引用为 ADJ-001 PD-08 + C-04b `:72`；P1-4 C-06 `scope.entry` 改为「对齐规则待协议层确认」；P1-5 身份公式改为 `SourceId`+稳定排序键（`SourceVersionId` 不参与身份）+ 行键 (`SourceVersionId`,`EntryId`)；P2-1…P2-4 措辞/引用/编号 | DSH |
 | 2026-11-01 | 建立草案：覆盖矩阵（D05 五项 + 第 5 项逐条证明）、SC-S01…SC-S17（重定位/同步 8 条、容器页映射 5 条、缓存边界 4 条）、四契约接口、冻结条件 | DSH |
