@@ -4,8 +4,9 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-GOV-11](tasks/FEA-GOV-11.md) `in_progress`（冻结执行：**用户 5 项裁决已落盘**；C-01b 已冻结）。
-- 上一 Task：FEA-GOV-10 `done`（**C-07 `approved`**；11 份契约全部复核完成）。
+- 当前 Task：[FEA-04b](tasks/FEA-04b.md) `ready`（Fluent 四页设计基线——**7 份契约已冻结**，第一个实现候选）。
+- 上一 Task：FEA-GOV-10 `done`（C-07 `approved`；11 份契约全部复核）。
+- 进行中并轨：FEA-GOV-11 `in_progress`（冻结执行；**7 份已冻结**：C-01b/C-02/C-03/C-05/C-07/C-11/C-12）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
 - 下一候选：MA-11 / MA-20 裁决后另立实施 Task；AC2 去重属资源通道契约演进（`G-CONTRACT` OPEN）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
