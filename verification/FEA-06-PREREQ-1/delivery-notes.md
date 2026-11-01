@@ -47,3 +47,11 @@
 - App 项目引用 NewManga.Appearance。
 - NewManga.App.Tests/AppearanceCoordinatorTests.cs 4 测试（默认/变更事件/坏文件/不碰资源）。
 - 全量 sln **965/0/57**（+4）。
+
+## AC4 完成
+
+- App/Services/WindowsMotionPreferenceSource.cs：SystemParametersInfo(SPI_GETCLIENTAREAANIMATION) P/Invoke；非 Windows/失败 → null；不抛。
+- App/Services/MotionResolver.cs：uto→平台源（null/异常降级 full + warning）、ull/educe 显式覆盖；reduce 时 ①时长全 0、②emphasis 禁、③feedback 类别标志保留但 Enabled=false、⑤不启动动效；motion.categories=off ④全禁。
+- MotionSettings/MotionResolution（可测的纯函数）。
+- NewManga.App.Tests/MotionResolverTests.cs 7 测试（auto 平台/降级两路/显式 full/reduce/off/单类）。
+- 全量 sln **972/0/57**（+7）。
