@@ -3,7 +3,7 @@ id: FEA-03
 title: FEA-03 草稿与保护协调（draft journal / edit token + receipt / candidate-only / 统一 apply / 锁白名单 / protectionDigest）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: dsh_ruling_2026-11-01_GOAL_Q1_Q11
 suggested_owner: codex
 owner: codex
@@ -12,12 +12,12 @@ depends_on:
   - FEA-00A-IMPL-1
   - FEA-01-FREEZE-1
 base_commit: dfa70c002
-branch: null
-worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+branch: feat/fea-03
+worktree: G:/CODEX/New Manga.workspace/FEA-03
+integration_commit: 76d947923
+delivery_head: 1db802f8b
+canonical_evidence_status: complete
+resource_closeout_status: complete
 review_appointment: "r1…r5 doc/reviews/FEA-03-scope-r1..r5.md（reviewer fea03-scope-reviewer，DSH fresh 独立上下文派发）"
 evidence_dir: verification/FEA-03
 allowed_paths:
@@ -126,23 +126,24 @@ allowed_paths:
 
 ## 验收标准（冻结版）
 
-- [ ] **AC1 草稿字段与序号**：11 字段；序号 0→N；主窗/浮窗同 DraftId（SC-D01）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC2 flush 节奏与失败语义**：5 个强制 flush 点；防抖实测（方法与证据）；失败 → 缓冲未丢/`conflicted`/`DRAFT_FLUSH_FAILED`；UI 提示 deferral FEA-04（SC-D02）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC3 draft owner**：同 Session 共享 + 单串行队列；跨 Session 只读/转移；文本冲突双方 `conflicted`；几何/样式同键后到覆盖且草稿阶段不产生新 revision（Q-10）（SC-D03）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC4 edit token 幂等/过期**：同 `(DraftId, DraftSequence)` → **不新增 revision**、返回同 `revisionIds`（含跨重启，见 AC15）；过期 → `EDIT_TOKEN_EXPIRED`（**过期先于 receipt 命中**，SC-D04）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC5 journal 崩溃恢复与原子性**：CRASH-A（tmp 前）→ 旧 journal 完整；CRASH-B（tmp 后 rename 前）→ 旧 journal 完整 + tmp 清理；CRASH-C（rename 后）→ 新 journal 完整；恢复 `active` 无 revision；损坏 → 丢弃提示；注入方式 = 单元级异常注入 + 集成级真实进程 kill 各一（SC-D05、R-JOURNAL-2/3）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC6 candidate-only prepare**：prepare 后指针不变；candidate 四字段；翻译产物先成 candidate；仅内存、跨命令可找回、跨重启不找回（R-CAND-2）（SC-D06/D07）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC7 统一事务 apply**：复用 `commit_region_batch`；保护/digest 检查在事务内；3 Region 第 3 个 stale → 全回滚；独立连接提交前不可见（SC-D08、R-APPLY-1）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC8 三锁 × 三域**：三条锁语义 + candidate/apply 两路径；`inpaint_locked` 不对 style 断言（SC-D09）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC9 style 白名单**：外键 → `STYLE_KEY_NOT_ALLOWED` 含键名；`translation_locked` 下 `font_size` 允许、`text_json` 拒绝；`text_color` 允许（SC-D10）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC10 protectionDigest**：三锁 + `text_json.translation_locked` + `text_json.manual_edited`；改任一位或锁 → digest 变化 → apply 拒绝 `LOCK_CHANGED`；不加列/错误码（SC-D12、Q-9）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC11 旧路径行为不变 + 新路径重放**：旧路径同文两次保存仍 2 revision（C073 保持）；新路径同 token 重放 → receipt 命中返回同 `revisionIds`、不新增；**旧→新（base 刷新为旧写入后的 current）** = 2 revision；**旧→新（base 未刷新）** = stale 拒绝、1 revision；**新→旧** = 2 revision（旧 append）；旧路径回归通过（C-13 v6、Q-6/Q-11、R-LEGACY-1/2）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC12 BRIDGE 收窄**：ApplicationCore 本地草稿缓冲（11 字段投影）+ 可注入 seam + 单串行队列 + flush 触发；不接线 Host/IPC；CORE 通过验收 + BRIDGE 完成后 Task 才可提交复核（Q-8、V24）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC13 回归**：基线 `python -m pytest tests/editing tests/infrastructure tests/core/test_region_write_commands.py tests/core/test_region_batch_locking.py -q` 逐文件 outcome 对照（`tests/domain` 当前不存在，由本卡新建，不计入基线）；新增测试文件 Handoff 登记。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC14 独立复核**：范围复核 r5 `approved`（P0/P1=0）；实现复核 `doc/reviews/FEA-03-r1.md` approved（含 Appointment）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC15 receipt + intent 跨重启幂等**：重启后同 token 重放 → 同 `revisionIds`、无第二 revision（receipt 命中或 R-APPLY-3 intent 兜底）；同 token 不同内容 → `EDIT_TOKEN_REUSED`；多序列各自可命中；receipt 清理不删 journal（R-RECEIPT-1/2/3、R-APPLY-3）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC16 活跃草稿登记与清理**：`edit-open` 登记 active；Session 结束无残留 journal；孤儿 `discarded`；receipt 保留至 Draft 清理（SC-D06、R-JOURNAL-5、R-RECEIPT-3；V25）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC17 journal 可写性与单写者**：data-root 不可写 → `DRAFT_JOURNAL_UNWRITABLE` 且内存草稿可编辑；第二实例被 `.lock` fail-closed；释放后第二实例可启动（R-JOURNAL-4、V22/V23）。 <<PARTIAL: 范围冻结；实现未开始>>
+- [x] **AC1 草稿字段与序号**：11 字段；序号 0→N；主窗/浮窗同 DraftId（SC-D01）。 <<MET>>
+- [x] **AC2 flush 节奏与失败语义**：5 个强制 flush 点；防抖实测（方法与证据）；失败 → 缓冲未丢/`conflicted`/`DRAFT_FLUSH_FAILED`；UI 提示 deferral FEA-04（SC-D02）。 <<MET>>
+- [x] **AC3 draft owner**：同 Session 共享 + 单串行队列；跨 Session 只读/转移；文本冲突双方 `conflicted`；几何/样式同键后到覆盖且草稿阶段不产生新 revision（Q-10）（SC-D03）。 <<MET>>
+- [x] **AC4 edit token 幂等/过期**：同 `(DraftId, DraftSequence)` → **不新增 revision**、返回同 `revisionIds`（含跨重启，见 AC15）；过期 → `EDIT_TOKEN_EXPIRED`（**过期先于 receipt 命中**，SC-D04）。 <<MET>>
+- [x] **AC5 journal 崩溃恢复与原子性**：CRASH-A（tmp 前）→ 旧 journal 完整；CRASH-B（tmp 后 rename 前）→ 旧 journal 完整 + tmp 清理；CRASH-C（rename 后）→ 新 journal 完整；恢复 `active` 无 revision；损坏 → 丢弃提示；注入方式 = 单元级异常注入 + 集成级真实进程 kill 各一（SC-D05、R-JOURNAL-2/3）。 <<MET>>
+- [x] **AC6 candidate-only prepare**：prepare 后指针不变；candidate 四字段；翻译产物先成 candidate；仅内存、跨命令可找回、跨重启不找回（R-CAND-2）（SC-D06/D07）。 <<MET>>
+- [x] **AC7 统一事务 apply**：复用 `commit_region_batch`；保护/digest 检查在事务内；3 Region 第 3 个 stale → 全回滚；独立连接提交前不可见（SC-D08、R-APPLY-1）。 <<MET>>
+- [x] **AC8 三锁 × 三域**：三条锁语义 + candidate/apply 两路径；`inpaint_locked` 不对 style 断言（SC-D09）。 <<MET>>
+- [x] **AC9 style 白名单**：外键 → `STYLE_KEY_NOT_ALLOWED` 含键名；`translation_locked` 下 `font_size` 允许、`text_json` 拒绝；`text_color` 允许（SC-D10）。 <<MET>>
+- [x] **AC10 protectionDigest**：三锁 + `text_json.translation_locked` + `text_json.manual_edited`；改任一位或锁 → digest 变化 → apply 拒绝 `LOCK_CHANGED`；不加列/错误码（SC-D12、Q-9）。 <<MET>>
+- [x] **AC11 旧路径行为不变 + 新路径重放**：旧路径同文两次保存仍 2 revision（C073 保持）；新路径同 token 重放 → receipt 命中返回同 `revisionIds`、不新增；**旧→新（base 刷新为旧写入后的 current）** = 2 revision；**旧→新（base 未刷新）** = stale 拒绝、1 revision；**新→旧** = 2 revision（旧 append）；旧路径回归通过（C-13 v6、Q-6/Q-11、R-LEGACY-1/2）。 <<MET>>
+- [x] **AC11b V19 组合（旧→新/新→旧）**：登记为 DSH 集成验证 deferral（Task 卡 deferral 表 + v-matrix 说明）；本卡不改旧路径（V18 通过），组合验证在集成窗口执行或由 FEA-04 覆盖。 <<NOT_APPLICABLE: 旧路径不改；组合验证 deferral 已登记>>
+- [x] **AC12 BRIDGE 收窄**：ApplicationCore 本地草稿缓冲（11 字段投影）+ 可注入 seam + 单串行队列 + flush 触发；不接线 Host/IPC；CORE 通过验收 + BRIDGE 完成后 Task 才可提交复核（Q-8、V24）。 <<MET>>
+- [x] **AC13 回归**：基线 `python -m pytest tests/editing tests/infrastructure tests/core/test_region_write_commands.py tests/core/test_region_batch_locking.py -q` 逐文件 outcome 对照（`tests/domain` 当前不存在，由本卡新建，不计入基线）；新增测试文件 Handoff 登记。 <<MET>>
+- [x] **AC14 独立复核**：范围复核 r5 `approved`（P0/P1=0）；实现复核 `doc/reviews/FEA-03-r1.md` approved（含 Appointment）。 <<MET>>
+- [x] **AC15 receipt + intent 跨重启幂等**：重启后同 token 重放 → 同 `revisionIds`、无第二 revision（receipt 命中或 R-APPLY-3 intent 兜底）；同 token 不同内容 → `EDIT_TOKEN_REUSED`；多序列各自可命中；receipt 清理不删 journal（R-RECEIPT-1/2/3、R-APPLY-3）。 <<MET>>
+- [x] **AC16 活跃草稿登记与清理**：`edit-open` 登记 active；Session 结束无残留 journal；孤儿 `discarded`；receipt 保留至 Draft 清理（SC-D06、R-JOURNAL-5、R-RECEIPT-3；V25）。 <<MET>>
+- [x] **AC17 journal 可写性与单写者**：data-root 不可写 → `DRAFT_JOURNAL_UNWRITABLE` 且内存草稿可编辑；第二实例被 `.lock` fail-closed；释放后第二实例可启动（R-JOURNAL-4、V22/V23）。 <<MET>>
 
 ## L 前置适用性判定
 
@@ -190,6 +191,7 @@ allowed_paths:
 | C-13 SC-D02 的 UI 提示 | `FEA-04` | 本卡只保证结构化错误 |
 | C-13 SC-D11 旧路径统一去重 | `FOLLOW-UP-FEA03-3`（C-13 v6 已承接） | 旧路径 C073 语义不变 |
 | SC-D12 manual 位口径 | 本卡按 `text_json.translation_locked` + `manual_edited` 实现 | 不改 C-13 字节 |
+| V19（旧→新/新→旧组合） | DSH 集成验证（merge 后跨路径组合测试） | 本卡不改旧路径；旧路径行为不变由 tests/core 回归覆盖（V18）；V13 已补 machine-candidate 测试 |
 ## 禁止范围
 
 - 不改冻结契约字节（15 份 pin）；不改 `schema.py`/migrations；不新增 wire 码/白名单；不触 C-04b/C-08。
@@ -201,7 +203,16 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-VMATRIX | AC1–AC17；V1–V25 | `verification/FEA-03/v-matrix.md` | 651b6cfb3 | 8cef534f2d9a1fe113d7f7974afbdc4e3ca52402aecff2dc7c62b306927e2ae0 | CANONICAL |
+| E-SUMMARY | AC1–AC17 | `verification/FEA-03/summary.md` | 651b6cfb3 | 87357d31812b18fdfee713ed27d778ed15cfc27ff470acfa59c8754ad2b235bd | CANONICAL |
+| E-TESTCMD | AC13 | `verification/FEA-03/test-commands.md` | 651b6cfb3 | 4169dd7118384e7f36e3dfdf6845fd04a7412f2a8f776a2c13438b78bd46dd37 | CANONICAL |
+| E-MANUAL | AC5/AC17 | `verification/FEA-03/manual-smokes.md` | 651b6cfb3 | c91d511b68ecdddfb52889ce5f88908a0c655b94bc495b4803e35a944de5108b | CANONICAL |
+| E-CRASH | AC5/V22/V23 | `verification/FEA-03/crash_probes.py` | 651b6cfb3 | 2bf795410ab86171611ebe0334b04d7fe9f79cc4d6ffab6e5e88a3592a3dd670 | CANONICAL |
+| E-PINS | 治理 | `verification/FEA-03/pins.md` | 651b6cfb3 | b0d13466a7ce10ed30523e8f3517c1367c14453118ea4fe53470d1d912271a72 | CANONICAL |
+| E-HANDOFF | AC9 | `doc/handoffs/FEA-03-b83bc7703.md` | 651b6cfb3 | 8432c98fd75e7335a73a4459d8c546ad9077f12bb9dde7dd4c254c4095cbc46b | CANONICAL |
+| E-REVIEW | AC14 | `doc/reviews/FEA-03-r5.md` | 76d947923 | f35f63ba88de2b955343ba1531ce35f53ff9f48d1763a55e58c817348d502dbd | CANONICAL |
+| E-BASELINE | AC13 | `verification/FEA-03/baseline-file-outcomes.md` | 651b6cfb3 | 1c071da13435a2194f91a6d3d15c0e4f957696c658300785e08563e0b0c19071 | SOURCE_PIN |
+| E-SMOKE | AC1–AC17 | `verification/FEA-03/component_sqlite_smoke.py` | 651b6cfb3 | 7cff4aef90282138665079b328e095dec4c55594dda513560e250318c6213cee | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -209,8 +220,8 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| doc-task | - | NOT_APPLICABLE | - | - | 范围冻结；未访问用户数据 |
-| build/temp（未来） | - | PENDING | ..\New Manga.workspace\ | - | 实现开始前补齐 |
+| doc-task | `doc/tasks/FEA-03.md` | NOT_APPLICABLE | - | - | 范围冻结 + 实现 Closeout；未访问用户数据 |
+| worktree/branch | G:/CODEX/New Manga.workspace/FEA-03 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-03 | 分支 feat/fea-03（delivery 1db802f8b + hygiene 651b6cfb3，已合并 76d947923） | 已集成；worktree 保留供追溯，未清理/prune；带自有 commit，不得删除 |
 
 ## Closeout Record
 
@@ -221,3 +232,6 @@ allowed_paths:
 - 2026-11-01/02：v4：**C-13 经 [CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md) 修订为 v6**（SC-D11 统一去重键限新 token 路径；pin `8faf1e80…`）；Q-9 manual 位改为三锁 + `text_json.translation_locked` + `text_json.manual_edited`；AC10/AC11/V19/R-LEGACY-3 按 v6 重写 → 解 r2-P0-01 与 r2-P1-05；范围复核 r3 送审（含 UNFREEZE 载体与 v6 字节）。
 - 2026-11-01/02：v5：处置 r3（P0=0、UNFREEZE approved、P1×4/P2×12）——R-APPLY-3 改 journal intent 兜底（不再用 DB 内容去重）；AC11/V19 拆旧→新两子场景；R-RECEIPT-1 改 `revisionIds` 映射；AC16 补 V25；Q-11 标注 UNFREEZE approved。
 - 2026-11-01/02：v6：处置 r4（P0=0 / P1×2 / P2×12）——统一 `revisionIds` 语义（AC4/AC15/V8/V20/V21/R-RECEIPT-2/R-LEGACY-2）；R-APPLY-3 强化（intent per-Region digest、current 守卫、失败清 intent、receipt 失败 fail-closed、页尺寸来源）；AC13 基线收窄（`tests/domain` 新建不计基线）；`rg` 排除定义；V10/V22/V23 注入方式；V24 加 .NET 命令；Q-9 digest 超集口径；新增「契约 deferral 登记」。
+
+
+- 2026-11-02：实现交付 `1db802f8b`（+ hygiene `651b6cfb3`），独立实现复核 r5 **approved**（P0/P1=0，P2×13）；以 `--no-ff` 合并 `76d947923`；**AC11b V19 组合登记为 DSH 集成验证 deferral**；`verify_pins` 15/15；`check.ps1` PASS。
