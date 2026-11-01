@@ -3,7 +3,7 @@ id: FEA-00A-PREP-1
 title: FEA-00a 数据安全评估与下一实现候选建议（FEA-03 前置）
 kind: governance
 governance_version: 3
-status: in_review
+status: done
 approval: pending_user_confirmation
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 135479270
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: aec780362
+delivery_head: aec780362
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-00A-PREP-1
 evidence_snapshot: 15aa7bf3b
 allowed_paths:
@@ -71,3 +71,4 @@ allowed_paths:
 ## Closeout Record
 
 - 2026-11-01 / DSH：评估文档 v2（含 R1 的 C1 token 契约、C2 清理归属、C3 artifact publish、C4 出口两条）；R1 `approved`（P0/P1=0，P2×6 已处置）；待收口 done。
+- 收口（2026-11-01，DSH）：`integration_commit: aec780362`（评估文档 v2 + 证据 + 复核报告）；`delivery_head: aec780362`；本卡只读评估，**未释放任何实现卡**（`G-DELETE-IMPL` 仍 OPEN）。
