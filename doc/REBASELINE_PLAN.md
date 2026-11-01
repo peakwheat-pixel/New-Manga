@@ -43,9 +43,9 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：FEA-GOV-11（冻结执行待命，等用户 4 项裁决）
+READY 节点：无
 
-当前 DAG：FEA-GOV-11（冻结执行待命，ready）
+当前 DAG：FEA-GOV-11（冻结执行，in_progress；C-01b 已冻结）
 
 ## 历史快照（终态节点，非当前 DAG）
 

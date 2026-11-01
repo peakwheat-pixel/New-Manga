@@ -3,7 +3,7 @@ id: FEA-GOV-11
 title: 冻结执行待命（等待用户 4 项裁决）
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: follow_up_of_FEA-GOV-10_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead

@@ -1,11 +1,11 @@
 # FEA-C01b 存储契约（草案）
 
-状态：**DRAFT v5 / r5 独立复核 `approved`（P0×0 / P1×0 / P2×3 非阻断已知限制）/ **未冻结** / 不释放实现 Task**
+状态：**FROZEN v5 / r5 独立复核 `approved`（P0×0 / P1×0 / P2×3）/ 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C01b.md)）/ 释放受 Gate 约束**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、方案 r4（`74a772167`，r8 `approved`）、[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、[FEA-C01b r1](../reviews/FEA-C01b-r1.md)、[r2](../reviews/FEA-C01b-r2.md)、[r3](../reviews/FEA-C01b-r3.md)、[r4](../reviews/FEA-C01b-r4.md)、[r5](../reviews/FEA-C01b-r5.md)
 
-**边界声明**：本文件把 AD-003 §3 的决策语义转成可验证的契约条款，**不是 ADR、未冻结**。`check.ps1 PASS` 不构成契约语义证据。
+**边界声明**：本文件把 AD-003 §3 的决策语义转成可验证的契约条款，**不是 ADR**；**已于 2026-11-01 冻结**（见 [冻结记录](FEA-CONTRACT-FROZEN-C01b.md)），此后条款字节不得改动，仅可经 UNFREEZE 载体解冻。`check.ps1 PASS` 不构成契约语义证据。
 
 ---
 
@@ -125,6 +125,8 @@
 4. `check.ps1` PASS（机械检查，仅证明结构条件）。
 
 冻结后：C-01b 关闭；C-05（页完整性谓词）、C-06（授权面）、C-09（删除/备份）可在本契约之上逐条冻结；Source 线（FEA-08/09/11/12/13）方可释放 Task。
+
+**冻结执行记录**：2026-11-01 冻结，条件 4/4 满足；SC-30/31/33 对 ADJ-001 的依赖已在此注明（`G-DELETE-CONTRACT: OPEN`）。详见 [FEA-CONTRACT-FROZEN-C01b](FEA-CONTRACT-FROZEN-C01b.md)。
 
 ## 5. 变更记录
 
