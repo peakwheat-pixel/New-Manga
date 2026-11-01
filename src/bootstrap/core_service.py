@@ -180,6 +180,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, TextIO
 
 from application.editing.errors import (
+    DraftError,
     GuardStatus,
     RegionLimitExceeded,
     RegionNotFound,
@@ -821,6 +822,65 @@ def make_error_envelope(
     if details is not None:
         envelope["details"] = details
     return envelope
+
+
+_DRAFT_ERROR_CATEGORY: dict[str, str] = {
+    "DRAFT_INVALID": "validation",
+    "DRAFT_PATCH_INVALID": "validation",
+    "DRAFT_CANDIDATE_INVALID": "validation",
+    "DRAFT_READ_ONLY": "conflict",
+    "DRAFT_SEQUENCE_MISMATCH": "conflict",
+    "DRAFT_ALREADY_FLUSHED": "conflict",
+    "EDIT_TOKEN_INVALID": "validation",
+    "EDIT_TOKEN_EXPIRED": "conflict",
+    "EDIT_TOKEN_DRAFT_CHANGED": "conflict",
+    "LOCK_CHANGED": "conflict",
+    "TARGET_NOT_FOUND": "not_found",
+    "PAGE_SIZE_UNAVAILABLE": "unavailable",
+    "DRAFT_JOURNAL_UNWRITABLE": "unavailable",
+    "INTERNAL": "internal",
+    "UNKNOWN": "validation",
+}
+
+_DRAFT_RETRYABLE = {"LOCK_CHANGED", "PAGE_SIZE_UNAVAILABLE", "DRAFT_JOURNAL_UNWRITABLE", "INTERNAL"}
+
+
+def _draft_error_envelope(error: "DraftError") -> dict[str, Any]:
+    """Map a DraftError to the frozen M2-C1 error envelope (FEA-05 §3)."""
+    code = getattr(error, "code", "INTERNAL")
+    category = _DRAFT_ERROR_CATEGORY.get(code, "internal")
+    details = getattr(error, "details", None) or None
+    cause = getattr(error, "cause_code", None)
+    if cause:
+        details = list(details or []) + [{"causeCode": cause}]
+    return make_error_envelope(
+        code=code,
+        category=category,
+        message=str(error) or code,
+        retryable=code in _DRAFT_RETRYABLE,
+        details=details,
+    )
+
+
+def _require_str(payload: dict[str, Any], key: str) -> str:
+    value = payload.get(key)
+    if not isinstance(value, str) or not value:
+        raise DraftError("DRAFT_INVALID", f"{key} must be a non-empty string")
+    return value
+
+
+def _require_int(payload: dict[str, Any], key: str) -> int:
+    value = payload.get(key)
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise DraftError("DRAFT_INVALID", f"{key} must be an integer")
+    return value
+
+
+def _require_mapping(payload: dict[str, Any], key: str) -> dict[str, Any]:
+    value = payload.get(key)
+    if not isinstance(value, dict):
+        raise DraftError("DRAFT_PATCH_INVALID", f"{key} must be an object")
+    return value
 
 
 def _export_ref_error_envelope(code: str) -> dict[str, Any]:
@@ -2933,6 +2993,63 @@ class CoreServiceServer:
             "current_revision_no": current.revision_no,
         }
 
+    # FEA-05-WIRE-1: Draft command surface (C078-C083).
+    # Contract: doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md (PENDING).
+    def _dispatch_draft_command(self, command: str, payload: dict[str, Any]) -> dict[str, Any]:
+        drafts = getattr(self._core, "drafts", None)
+        if drafts is None:
+            raise DraftError("INTERNAL", "drafts service is not assembled")
+        if command == "drafts_open":
+            lease = drafts.open_draft(
+                _require_str(payload, "sessionId"),
+                _require_str(payload, "pageId"),
+                payload.get("regionId"),
+                base_revision_id=payload.get("baseRevisionId"),
+                page_binding_version=_require_int(payload, "pageBindingVersion"),
+            )
+            return {
+                "draft": lease.draft.to_json(),
+                "canEdit": bool(lease.can_edit),
+                "token": lease.token.to_json() if lease.token is not None else None,
+            }
+        if command == "drafts_patch":
+            draft = drafts.patch_draft(
+                _require_str(payload, "draftId"),
+                _require_str(payload, "sessionId"),
+                _require_mapping(payload, "patch"),
+                undo_cursor=payload.get("undoCursor"),
+            )
+            return {"draft": draft.to_json()}
+        if command == "drafts_prepare":
+            candidate = drafts.prepare_candidate(
+                _require_str(payload, "regionId"),
+                _require_mapping(payload, "patch"),
+                origin=_require_str(payload, "origin"),
+                draft_id=payload.get("draftId"),
+                base_revision_id=payload.get("baseRevisionId"),
+            )
+            return {"candidate": candidate.to_json()}
+        if command == "drafts_apply":
+            token = payload.get("token")
+            if not isinstance(token, dict):
+                raise DraftError("EDIT_TOKEN_INVALID", "token must be an EditToken object")
+            candidate_ids = payload.get("candidateIds") or []
+            if not isinstance(candidate_ids, list):
+                raise DraftError("EDIT_TOKEN_INVALID", "candidateIds must be a list")
+            return {"revisions": drafts.apply_candidates(token, candidate_ids)}
+        if command == "drafts_status":
+            draft_id = payload.get("draftId")
+            session_id = payload.get("sessionId")
+            if bool(draft_id) == bool(session_id):
+                raise DraftError("DRAFT_INVALID", "exactly one of draftId or sessionId is required")
+            if draft_id:
+                return {"draft": drafts.get_draft(_require_str(payload, "draftId")).to_json()}
+            return {"drafts": [draft.to_json() for draft in drafts.list_drafts(session_id=session_id)]}
+        if command == "drafts_discard":
+            drafts.discard_draft(_require_str(payload, "draftId"), _require_str(payload, "sessionId"))
+            return {"discarded": True}
+        raise DraftError("UNKNOWN", f"unknown draft command: {command}")
+
     def _dispatch_region_write(
         self, command: str, payload: dict[str, Any]
     ) -> dict[str, Any]:
@@ -4989,6 +5106,30 @@ class CoreServiceServer:
         # V11R-F0-2: list_page_region_texts joins this Region read branch
         # (same typed envelope: INVALID_REQUEST / TARGET_NOT_FOUND /
         # UNKNOWN; the raw error text never rides the wire).
+        # FEA-05-WIRE-1: Draft command surface (C078-C083). Additive
+        # widening of the same JSON-lines envelope; no new error semantics
+        # beyond the typed DraftError mapping (FEA-05_DRAFT_WIRE_CONTRACT.md §3).
+        if command in (
+            "drafts_open",
+            "drafts_patch",
+            "drafts_prepare",
+            "drafts_apply",
+            "drafts_status",
+            "drafts_discard",
+        ):
+            try:
+                result = self._dispatch_draft_command(command, payload)
+            except DraftError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": _draft_error_envelope(error),
+                    },
+                    False,
+                )
         if command in (
             "set_region_type",
             "list_regions",
