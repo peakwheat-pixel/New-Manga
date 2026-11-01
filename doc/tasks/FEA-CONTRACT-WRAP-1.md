@@ -3,7 +3,7 @@ id: FEA-CONTRACT-WRAP-1
 title: 契约线收尾（L-3 Errata + PLAN 预算卫生）
 kind: governance
 governance_version: 3
-status: in_review
+status: done
 approval: user_instruction_2026-11-01_autonomous_closeout
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: ff432e97c
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 6cfe7ab92
 delivery_head: 6c0195437
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-CONTRACT-WRAP-1
 allowed_paths:
   - doc/tasks/FEA-CONTRACT-WRAP-1.md
@@ -93,3 +93,4 @@ allowed_paths:
 - 2026-11-01 / DSH：AC1–AC3 MET。AC1 由 `14e6e6a3c` 执行、`500aa6b27` 修 P2；AC2 压缩见 `closeout-check.md`；AC3 指针与检查见同文件。
 - 收口（2026-11-01）：`status: in_review` → 待独立复核 `doc/reviews/FEA-WRAP-CLOSEOUT-r1.md`；`delivery_head` 与 `integration_commit` 按复核结论回填（`done` 提交为纯元数据 + 指针/checkpoint 回填）。
 - 边界：不构成 Gate 变更；不构成实现授权；不构成远端 push 授权；冻结契约字节 0 改动（13/13）。
+- 收口（2026-11-01）：R2 [approved](../reviews/FEA-WRAP-CLOSEOUT-r2.md)（P0/P1 = 0；P2×4 非阻断）；`status: done`、`integration_commit: 6cfe7ab92`、`resource_closeout_status: complete` 为**纯元数据回填**（未改 AC / 证据表 / Resource Manifest）；`verification/.../closeout-check.md` 保留 `6c0195437` 时刻数字（P2-002 记录为快照口径，未随指针更新）。
