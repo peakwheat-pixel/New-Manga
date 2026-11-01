@@ -64,6 +64,13 @@ public static class AppearanceJson
             }
 
             var frontendId = ReadString(properties, "theme.frontendId") ?? defaults.FrontendId;
+            var legacyThemeId = ReadString(properties, "themeId") ?? ReadString(properties, "theme");
+            if (ReadString(properties, "theme.frontendId") is null &&
+                string.Equals(legacyThemeId, "builtin.fluent-dark", StringComparison.Ordinal))
+            {
+                // C-03 §2.2: the legacy visual theme id implies the Fluent frontend.
+                frontendId = "builtin.fluent";
+            }
             var visualThemeId =
                 ReadString(properties, "theme.visualThemeId") ??
                 ReadString(properties, "themeId") ??
@@ -72,9 +79,18 @@ public static class AppearanceJson
 
             var mode = ReadAppearanceMode(properties, warnings);
             var contrast = ReadContrast(properties, warnings);
-            var followSystemAccent = ReadBool(properties, "appearance.followSystemAccent") ?? false;
-            var motion = ReadMotion(properties, warnings);
+            var followSystemAccent =
+                ReadBool(properties, "appearance.followSystemAccent") ??
+                ReadBool(properties, "followSystemAccent") ??
+                ReadBool(properties, "followAccent") ??
+                false;
+            var (motion, legacyReduced) = ReadMotion(properties, warnings);
             var categories = ReadMotionCategories(properties, warnings);
+            if (legacyReduced && !properties.ContainsKey("motion.categories"))
+            {
+                // C-03 §2.3: the old boolean true means reduce AND all three categories disabled.
+                categories = MotionCategories.None;
+            }
             var corners = ReadCorners(properties, warnings);
             var acrylic = ReadDouble(properties, "material.acrylicStrength") ?? ReadNestedDouble(properties, "material", "acrylicStrength") ?? defaults.MaterialAcrylicStrength;
             var mica = ReadBool(properties, "material.micaEnabled") ?? ReadNestedBool(properties, "material", "micaEnabled") ?? defaults.MaterialMicaEnabled;
@@ -148,7 +164,7 @@ public static class AppearanceJson
     /// Old <c>true</c> = reduce + all categories disabled; old <c>false</c> = full
     /// (removing the overlay = full motion, NOT auto).
     /// </summary>
-    private static MotionMode ReadMotion(
+    private static (MotionMode Mode, bool LegacyReduced) ReadMotion(
         IReadOnlyDictionary<string, JsonElement> properties,
         List<string> warnings)
     {
@@ -157,21 +173,21 @@ public static class AppearanceJson
         {
             if (Enum.TryParse<MotionMode>(raw, ignoreCase: true, out var parsed))
             {
-                return parsed;
+                return (parsed, false);
             }
 
             warnings.Add($"unsupported motion.mode '{raw}'; falling back to 'auto'");
-            return MotionMode.Auto;
+            return (MotionMode.Auto, false);
         }
 
         var legacy = ReadBool(properties, "reducedMotion") ?? ReadBool(properties, "reduced-motion");
         if (legacy is { } value)
         {
             warnings.Add("legacy 'reducedMotion' migrated to 'motion.mode'");
-            return value ? MotionMode.Reduce : MotionMode.Full;
+            return (value ? MotionMode.Reduce : MotionMode.Full, value);
         }
 
-        return MotionMode.Auto;
+        return (MotionMode.Auto, false);
     }
 
     private static MotionCategories ReadMotionCategories(

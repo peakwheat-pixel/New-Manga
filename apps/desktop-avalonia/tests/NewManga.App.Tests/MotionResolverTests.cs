@@ -107,4 +107,32 @@ public sealed class MotionResolverTests
         Assert.False(result.Settings.Decorative);
         Assert.True(result.Settings.IsEnabled(MotionCategories.Feedback));
     }
+    /// <summary>
+    /// FEA-06-PREREQ-1 impl-r1 P1-8: criterion ⑤ — migrating the old
+    /// ``reducedMotion: true`` must zero every category (no motion starts at all).
+    /// </summary>
+    [Fact]
+    public void LegacyReducedMotion_True_MigratesToReduce_WithEveryCategoryOff()
+    {
+        var settings = AppearanceJson.Read("{\"reducedMotion\":true}").Settings;
+
+        Assert.Equal(MotionMode.Reduce, settings.MotionMode);
+        Assert.Equal(MotionCategories.None, settings.MotionCategories);
+        var resolved = new MotionResolver(new FixedSource(MotionMode.Full)).Resolve(settings);
+        Assert.False(resolved.Settings.Enabled);
+        Assert.False(resolved.Settings.IsEnabled(MotionCategories.Navigation));
+        Assert.False(resolved.Settings.IsEnabled(MotionCategories.Feedback));
+        Assert.False(resolved.Settings.IsEnabled(MotionCategories.Decorative));
+    }
+
+    /// <summary>FEA-06-PREREQ-1 impl-r1 P1-8: the navigation category has its own 0ms rule.</summary>
+    [Fact]
+    public void NavigationCategory_IsDisabledUnderReduce_AndHonouredUnderFull()
+    {
+        var reduce = Resolve(MotionMode.Reduce, MotionCategories.Navigation, new FixedSource(MotionMode.Full));
+        Assert.False(reduce.Settings.IsEnabled(MotionCategories.Navigation));
+
+        var full = Resolve(MotionMode.Full, MotionCategories.Navigation);
+        Assert.True(full.Settings.IsEnabled(MotionCategories.Navigation));
+    }
 }

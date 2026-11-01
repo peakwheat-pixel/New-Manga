@@ -14,11 +14,15 @@ namespace NewManga.Appearance;
 public sealed class AppearanceStore
 {
     private readonly string _path;
+    private readonly string? _legacyPath;
 
-    public AppearanceStore(string path)
+    public AppearanceStore(string path, string? legacyPath = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         _path = path;
+        _legacyPath = legacyPath ?? Path.Combine(
+            Path.GetDirectoryName(Path.GetFullPath(path)) ?? ".",
+            "theme-settings.json");
     }
 
     /// <summary>The legacy document read before the first write (null until then).</summary>
@@ -29,6 +33,20 @@ public sealed class AppearanceStore
     {
         if (!File.Exists(_path))
         {
+            // C-03 §2.5: the first run must migrate the legacy theme-settings.json instead
+            // of silently falling back to defaults.
+            if (_legacyPath is not null && File.Exists(_legacyPath))
+            {
+                var legacy = File.ReadAllText(_legacyPath);
+                LegacyDocument ??= legacy;
+                var migrated = AppearanceJson.Read(legacy);
+                var warnings = new List<string>(migrated.Warnings)
+                {
+                    "legacy theme-settings.json migrated into presentation-settings.json",
+                };
+                return new AppearanceReadResult(migrated.Settings, warnings) { DocumentParsed = true };
+            }
+
             return new AppearanceReadResult(AppearanceDefaults.Settings, Array.Empty<string>())
             {
                 DocumentParsed = false,

@@ -120,7 +120,6 @@ public sealed class AppearanceJsonTests
         Assert.EndsWith("\n", json, StringComparison.Ordinal);
         Assert.Contains("\"motion.mode\": \"auto\"", json, StringComparison.Ordinal);
     }
-}
 
 /// <summary>C-03 §2.5: atomic persistence and the read-once legacy discipline.</summary>
 public sealed class AppearanceStoreTests : IDisposable
@@ -177,5 +176,33 @@ public sealed class AppearanceStoreTests : IDisposable
         _ = store.Read();
 
         Assert.Equal("{\"reducedMotion\":true}", store.LegacyDocument);
+    }
+}
+    [Fact]
+    public void Read_MigratesLegacyThemeSettingsFile_WhenTheNewOneIsAbsent()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "nm-legacy-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            File.WriteAllText(
+                Path.Combine(directory, "theme-settings.json"),
+                "{\"themeId\":\"builtin.fluent-dark\",\"reducedMotion\":true,\"followSystemAccent\":true}");
+            var store = new AppearanceStore(Path.Combine(directory, "presentation-settings.json"));
+
+            var read = store.Read();
+
+            Assert.True(read.DocumentParsed);
+            Assert.Equal("builtin.fluent", read.Settings.FrontendId);
+            Assert.Equal("builtin.fluent-dark", read.Settings.VisualThemeId);
+            Assert.Equal(MotionMode.Reduce, read.Settings.MotionMode);
+            Assert.Equal(MotionCategories.None, read.Settings.MotionCategories);
+            Assert.True(read.Settings.FollowSystemAccent);
+            Assert.Contains(read.Warnings, warning => warning.Contains("theme-settings.json", StringComparison.Ordinal));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
     }
 }

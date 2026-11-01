@@ -10,9 +10,9 @@ namespace NewManga.App.Services;
 /// <list type="bullet">
 /// <item><c>auto</c> reads <see cref="IMotionPreferenceSource"/>; a null/throw degrades to <c>full</c> with a warning.</item>
 /// <item><c>full</c> / <c>reduce</c> are explicit overrides (no platform read).</item>
-/// <item><c>reduce</c> zeroes every duration (design 02 criterion ①) and disables emphasis (②), keeps feedback transitions at 0ms feedback color only (③).</item>
-/// <item><c>motion.categories=off</c> (None) forces 0ms for every category (④).</item>
-/// <item>Criterion ⑤: no motion is started while reduce is effective, not even a short fade.</item>
+/// <item><c>reduce</c> zeroes every duration (criterion ①), disables decorative motion (②), keeps feedback as a 0ms colour transition (③).</item>
+/// <item><c>motion.categories=off</c> (None) forces 0ms for every category (④); navigation transitions are 0ms too (⑤).</item>
+/// <item>No motion is started while reduce is effective, not even a short fade.</item>
 /// </list>
 /// </summary>
 public sealed class MotionSettings
