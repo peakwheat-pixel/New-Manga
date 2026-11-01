@@ -429,3 +429,32 @@ def test_machine_result_candidate_prepare_keeps_pointer(tmp_path: Path) -> None:
         assert core.editing.get_region(region.region_id).current_revision_id == before
     finally:
         _close(core)
+def test_same_token_replay_after_patch_returns_same_revisions(tmp_path: Path) -> None:
+    """AC4/AC15 + R-01: after a patch advances DraftSequence, replaying the
+    original edit token must return the same revisionIds (receipt keyed on the
+    draft sequence, not the token sequence)."""
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        page_id = _seed_page(core, "page-replay")
+        region = _new_region(core, page_id, "region-replay")
+        service = core.drafts
+        current = core.editing.get_region(region.region_id).current_revision_id
+        lease = service.open_draft(
+            "session-1", page_id, region.region_id,
+            base_revision_id=current, page_binding_version=913,
+        )
+        service.patch_draft(
+            lease.draft.draft_id, "session-1",
+            {"text": {"edited_translation": "replay"}},
+        )
+        candidate = service.prepare_candidate(
+            region.region_id,
+            {"text": {"edited_translation": "replay"}},
+            origin="user",
+            draft_id=lease.draft.draft_id,
+        )
+        first = service.apply_candidates(lease.token, [candidate.candidate_id])
+        second = service.apply_candidates(lease.token, [candidate.candidate_id])
+        assert second == first
+    finally:
+        _close(core)

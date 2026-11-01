@@ -380,8 +380,14 @@ class DraftProtectionService:
                 raise DraftError("DRAFT_JOURNAL_UNWRITABLE", "draft writes are fail-closed")
             if edit_token.is_expired():
                 raise DraftError("EDIT_TOKEN_EXPIRED", "edit token has expired")
+            draft_for_receipt = self._drafts.get(edit_token.draft_id)
+            receipt_sequence = (
+                draft_for_receipt.draft_sequence
+                if draft_for_receipt is not None
+                else edit_token.draft_sequence
+            )
             receipt = self._journal.read_receipt(
-                edit_token.draft_id, edit_token.draft_sequence
+                edit_token.draft_id, receipt_sequence
             )
             data = [self._candidates.get(candidate_id) for candidate_id in candidate_ids]
             if receipt is not None:
@@ -494,7 +500,7 @@ class DraftProtectionService:
                 receipt_data = {
                     "tokenId": edit_token.token_id,
                     "DraftId": draft.draft_id,
-                    "DraftSequence": edit_token.draft_sequence,
+                    "DraftSequence": receipt_sequence,
                     "revisionIds": dict(result.revision_ids or expected_revision_ids),
                     "contentDigests": content_digests,
                     "committedAt": _utc_now(),
