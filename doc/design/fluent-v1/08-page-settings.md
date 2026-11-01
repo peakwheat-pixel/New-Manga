@@ -1,6 +1,6 @@
 # 08 设置页规格（Settings）
 
-**页 ID**：`SpaceId` 外露为「设置」页面；`ShellSurface` 内为独立 surface（不新增 `SpaceId`，入口来自顶部/左导航）
+**页 ID**：设置页以 `ShellSurface.ThemeStudio`（主题工作室）外壳承载外观分组；其余分组（Provider/网络/备份/关于）沿用既有设置 surface。不新增 `SpaceId`，入口来自顶部命令条与左导航。
 **参考**：C-03（外观持久化 `presentation-settings.json`、`motion.mode` 三态、`motion.categories` 三类、`Contrast`、`ReducedMotion` 迁移）、C-02（frontend/visualTheme 标识）
 
 ---
@@ -22,19 +22,19 @@
 ```
 
 - 分组固定：外观、Provider 与凭据、网络、备份与恢复、关于。
-- 表单卡片：`Nm.Surface.Raised` + `Nm.Corner.Fluent.Md` + `Elevation.1`。
+- 表单卡片：`Nm.Color.Bg.Raised` + `Nm.Corner.Fluent.Md` + `Elevation.1`。
 - 危险操作（重置、清理）单独分组卡片 + 二次确认（`Elevation.3` 对话框）。
 
 ## 2. 组件与令牌
 
 | 组件 | 令牌 |
 |---|---|
-| 分组列表项 | `Nm.Corner.Fluent.Sm`；选中 `Nm.Accent.Subtle` |
+| 分组列表项 | `Nm.Corner.Fluent.Sm`；选中 `Nm.Color.Accent.Muted` |
 | 表单卡片 | `Nm.Corner.Fluent.Md`、`Elevation.1`、内边距 `Nm.Space.*` |
-| 输入框 | `Nm.Corner.Fluent.Sm`；错误时 1px `Nm.Status.Error` 边框 + HelpText |
+| 输入框 | `Nm.Corner.Fluent.Sm`；错误时 1px `Nm.Color.Status.Failed` 边框 + HelpText |
 | 开关/滑块 | 既有 `Feedback.cs`/`Inputs.cs` 组件 |
-| 保存按钮 | `Nm.Accent.*` 主按钮；禁用态语义 |
-| 危险按钮 | `Nm.Status.Error` 边框（outline） |
+| 保存按钮 | `Nm.Color.Accent.*` 主按钮；禁用态语义 |
+| 危险按钮 | `Nm.Color.Status.Failed` 边框（outline） |
 | 对话框 | `Nm.Corner.Fluent.Lg` + `Elevation.3` + 遮罩 |
 | 状态提示 | `InfoBar` 风格（`Skeleton`/`Status.cs` 组件） |
 
@@ -44,11 +44,14 @@
 |---|---|---|
 | 外观 | 视觉主题（`theme.visualThemeId`：`newmanga-default` / `builtin.fluent-dark`） | C-02/C-03 |
 | 外观 | frontend（`theme.frontendId`：`builtin.current-v2` / `builtin.fluent`） | C-02 |
-| 外观 | 深/浅（`Appearance`） | C-03 |
-| 外观 | 对比度（`Contrast`） | C-03 |
-| 外观 | 动效模式（`motion.mode`：`auto`/`full`/`reduce`） | C-03 |
-| 外观 | 动效三类（`motion.categories`：`navigation`/`feedback`/`decorative` 各开/关） | C-03 |
-| 外观 | 圆角/材质（Fluent 视觉主题下可用；Current 下忽略不报错） | C-02/C-03 |
+| 外观 | 深/浅（C-03 §2.2 `appearance`） | C-03 |
+| 外观 | 对比度（C-03 §2.2 `contrast`） | C-03 |
+| 外观 | 动效模式（C-03 §2.2 `motion.mode`：`auto`/`full`/`reduce`） | C-03 |
+| 外观 | 动效三类（C-03 §2.2 `motion.categories`：`navigation`/`feedback`/`decorative` 各开/关；关 = 该类在 `full` 下也按 `reduce` 列执行） | C-03 |
+| 外观 | 圆角/材质（C-03 §2.2 `corners`/`material`；Fluent 视觉主题下可用，Current 下忽略不报错） | C-02/C-03 |
+| 外观 | 布局档（C-03 §2.2 `layout.*`：navigation/shelf/density/workbench/reader） | C-03 |
+| 外观 | 跟随系统强调色（C-03 §2.2 `followSystemAccent`） | C-03 |
+| 外观 | 设置 schema 版本（`schemaVersion`，只读展示/迁移状态） | C-03 |
 | Provider 与凭据 | Provider 列表/启用/凭据引用（不显示明文） | Host/凭据管理 |
 | 网络 | 代理/超时/并发 | 既有设置 |
 | 备份与恢复 | 备份目录/频率/恢复入口（恢复须整库锁 L-5） | C-09/ADJ-001 |

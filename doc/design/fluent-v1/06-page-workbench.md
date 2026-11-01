@@ -27,13 +27,13 @@
 
 | 组件 | 令牌 |
 |---|---|
-| 主画布容器 | `Nm.Surface.Sunken`、`Nm.Corner.Fluent.Lg`、内边距 `Nm.Space.*` |
+| 主画布容器 | `Nm.Color.Bg.Sunken`、`Nm.Corner.Fluent.Lg`、内边距 `Nm.Space.*` |
 | 页面图 | `Nm.Corner.None`（图像不圆角） |
-| Region 框 | 1.5px 描边（选中 2px `Nm.Accent.*`）；锁图标角标；hover 提升 |
-| 检查器面板 | `Nm.Surface.Raised`、`Nm.Corner.Fluent.Lg`、`Elevation.1` |
-| 工具按钮 | `Nm.Corner.Fluent.Sm`；激活态背景 `Nm.Accent.Subtle` |
-| 底部操作条 | `Nm.Surface.Raised` + 顶部 1px 分隔线 |
-| 批量矩阵单元格 | `Nm.Corner.Fluent.Sm`；七状态语义色（`Nm.Status.*`）+ 图标 |
+| Region 框 | 1.5px 描边（选中 2px `Nm.Color.Accent.*`）；锁图标角标；hover 提升 |
+| 检查器面板 | `Nm.Color.Bg.Raised`、`Nm.Corner.Fluent.Lg`、`Elevation.1` |
+| 工具按钮 | `Nm.Corner.Fluent.Sm`；激活态背景 `Nm.Color.Accent.Muted` |
+| 底部操作条 | `Nm.Color.Bg.Raised` + 顶部 1px 分隔线 |
+| 批量矩阵单元格 | `Nm.Corner.Fluent.Sm`；七状态语义色（`Nm.Color.Status.*`）+ 图标 |
 | 矩阵表头 | 吸顶；列宽最小 96，阶段名可换行 |
 | Run 投影条 | `Skeleton`/进度条既有组件；状态文案来自共享 RunMonitor |
 
@@ -46,7 +46,7 @@
 | **载入** | 加载页面/投影 | 画布骨架 + 检查器骨架；状态条「读取中」 |
 | **错误** | Host 错误 | 错误卡（原因 + 重试 + 控制台入口）；画布保留上一帧（不清屏） |
 | **满** | 正常编辑 | 画布 + 检查器 + 操作条；未保存标记（标题旁圆点 + 底部文案） |
-| **部分/未决** | 有待确认操作（切页/切模式有未 flush 编辑） | 模态确认「保存 / 丢弃 / 取消」；`Esc` = 取消；确认前不切页（fail-closed） |
+| **部分/未决** | 有待确认操作（切页/切模式有未 flush 编辑） | 模态确认「保存 / 丢弃 / 取消」；`Esc` = 取消；确认前不切页（fail-closed）；`Ctrl+Tab` 也可触发模式切换（与全局 `Tab` 一致） |
 | **冲突** | 文本冲突 / binding 变更 / 锁冲突 | 检查器顶部冲突条（原因 + 「查看对照」）；不自动合并；应用被禁用 |
 | **只读** | Host 只读 / 草稿非本会话 owner | 检查器全禁用 + 顶部警示条（原因 + 转移入口） |
 
@@ -68,8 +68,8 @@
 
 ## 6. a11y 与键盘
 
-- Tab 序：顶部 Tab → 左导航 → film-strip → 画布 → 检查器 → 底部操作条 → 状态条。
-- `Tab`（全局）切换 页面/批量；`[`/`]` 翻页；`J`/`K` 对象导航；`Esc` 关闭浮层/取消确认。
+- Tab 序：顶部页签条 → 左导航 → film-strip → 画布 → 检查器 → 底部操作条 → 状态条。
+- `Tab`（全局，`studio.mode.toggle`）切换 页面/批量；页签条内用 `←`/`→` 切换（不使用无修饰 Tab）；`[`/`]` 翻页；`J`/`K` 对象导航；`Esc` 关闭浮层/取消确认。
 - 画布 region 可用键盘聚焦（Tab 进入画布后 `方向键` 在 region 间移动），聚焦时显示焦点环；`Enter` 进入编辑。
 - 检查器字段 `AutomationProperties.Name` = 字段标签；校验失败 `HelpText` = 原因 + live region。
 - 状态点/进度：`Name` 含数值（例：「第 3 页 · 翻译 · 完成」）。

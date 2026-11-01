@@ -7,15 +7,15 @@
 
 | 组件 | 用途 | 令牌 | 状态 |
 |---|---|---|---|
-| `TopBand` | 顶部命令条（空间/标题/命令/窗口） | `Nm.Surface.Raised`、`Nm.Elevation.1`、`Nm.Text.*` | 默认/紧凑（200% DPI） |
-| `NavRail` | 左导航 rail | `Nm.Surface.Sunken`、`Nm.Accent.Subtle` | 折叠/展开 |
-| `StatusBand` | 底部状态条 | `Nm.Surface.Raised`、`Nm.Status.*` | 默认/错误/运行中 |
-| `SurfaceCard` | 通用卡片容器 | `Nm.Corner.Fluent.Md`、`Elevation.1`、`Nm.Surface.Raised` | 默认/hover/选中/禁用 |
+| `TopBand` | 顶部命令条（空间/标题/命令/窗口） | `Nm.Color.Bg.Raised`、`Nm.Elevation.1`、`Nm.FontSize.*` | 默认/紧凑（200% DPI） |
+| `NavRail` | 左导航 rail | `Nm.Color.Bg.Sunken`、`Nm.Color.Accent.Muted` | 折叠/展开 |
+| `StatusBand` | 底部状态条 | `Nm.Color.Bg.Raised`、`Nm.Color.Status.*` | 默认/错误/运行中 |
+| `SurfaceCard` | 通用卡片容器 | `Nm.Corner.Fluent.Md`、`Elevation.1`、`Nm.Color.Bg.Raised` | 默认/hover/选中/禁用 |
 | `Drawer` | 抽屉（检查器/详情/缩略图） | `Nm.Corner.Fluent.Lg`、`Elevation.2` | 开/关 |
 | `Dialog` | 模态对话框 | `Nm.Corner.Fluent.Lg`、`Elevation.3` + 遮罩 | 默认/危险/加载 |
-| `Toast` / `InfoBar` | 提示与非阻塞通知 | `Nm.Status.*`、`Elevation.3` | info/warn/error/success |
-| `EmptyState` | 空态卡 | `Nm.Icon.*`、`Nm.Text.*`、主按钮 | 空/筛选后空/无权限 |
-| `ErrorState` | 错误态卡 | `Nm.Status.Error`、`Elevation.1` | 可重试/不可恢复 |
+| `Toast` / `InfoBar` | 提示与非阻塞通知 | `Nm.Color.Status.*`、`Elevation.3` | info/warn/error/success |
+| `EmptyState` | 空态卡 | `Nm.Icon.Size`、`Nm.FontSize.*`、主按钮 | 空/筛选后空/无权限 |
+| `ErrorState` | 错误态卡 | `Nm.Color.Status.Failed`、`Elevation.1` | 可重试/不可恢复 |
 | `Skeleton` | 骨架屏（复用既有） | `Skeleton.cs` | 形状/行/卡 |
 
 ## 2. 数据展示组件
@@ -23,15 +23,15 @@
 | 组件 | 页面 | 令牌 | 备注 |
 |---|---|---|---|
 | `BookCard` | 书架 | `Corner.Fluent.Md`、`Elevation.1` | 封面 + 标题 + 状态徽标 |
-| `BookRow` | 书架（列表视图） | `Corner.Fluent.Sm`、行高 40 | 紧凑模式 |
+| `BookRow` | 书架（列表视图） | `Corner.Fluent.Sm`、行高 `Nm.Size.RowNormal` | 紧凑模式 |
 | `ChapterList` | 书架详情 | `Corner.Fluent.Sm` | 虚拟化滚动 |
 | `PageThumbStrip` | 书架/阅读器 | `Corner.Fluent.Sm` | 横向滚动 |
 | `RegionBox` | 工作台画布 | 1.5px 描边；锁角标 | hover/选中/锁定/冲突 |
 | `StreamingThumb` | 工作台 film-strip | `Corner.Fluent.Sm` | 懒加载 |
-| `BatchMatrix` | 工作台批量 | `Corner.Fluent.Sm`、`Nm.Status.*` | 七状态 + 吸顶表头 |
-| `RunProjectionBar` | 工作台/控制台 | `Nm.Accent.*`、`Skeleton` | 投影驱动 |
+| `BatchMatrix` | 工作台批量 | `Corner.Fluent.Sm`、`Nm.Color.Status.*` | 七状态 + 吸顶表头 |
+| `RunProjectionBar` | 工作台/控制台 | `Nm.Color.Accent.*`、`Skeleton` | 投影驱动 |
 | `ReaderPage` | 阅读器 | `Corner.None` | 单页/双页/滚动 |
-| `ReaderProgressBar` | 阅读器 | `Nm.Accent.*` | 可拖动 |
+| `ReaderProgressBar` | 阅读器 | `Nm.Color.Accent.*` | 可拖动 |
 | `SettingsGroup` | 设置 | `Corner.Fluent.Md`、`Elevation.1` | 卡片分组 |
 | `SettingsField` | 设置 | `Corner.Fluent.Sm` | 标签+控件+错误 |
 
@@ -39,14 +39,14 @@
 
 | 组件 | 令牌 | 状态 |
 |---|---|---|
-| `PrimaryButton` | `Nm.Accent.*`、`Corner.Fluent.Sm` | normal/hover/pressed/disabled/loading |
-| `SecondaryButton` | `Nm.Surface.Raised` | 同上 |
-| `DangerButton` | `Nm.Status.Error` outline | normal/hover/disabled |
+| `PrimaryButton` | `Nm.Color.Accent.*`、`Corner.Fluent.Sm` | normal/hover/pressed/disabled/loading |
+| `SecondaryButton` | `Nm.Color.Bg.Raised` | 同上 |
+| `DangerButton` | `Nm.Color.Status.Failed` outline | normal/hover/disabled |
 | `IconButton` | `Corner.Fluent.Sm`、`Elevation.1` | normal/hover/checked |
-| `ToggleSwitch` | `Nm.Accent.*` | on/off/disabled |
-| `Slider` | `Nm.Accent.*` | normal/hover/disabled |
-| `SegmentedControl` | `Corner.Fluent.Sm`、`Nm.Accent.Subtle` | 选中/未选 |
-| `TabStrip` | 下划线 + `Nm.Accent.*` | 选中/未选/hover |
+| `ToggleSwitch` | `Nm.Color.Accent.*` | on/off/disabled |
+| `Slider` | `Nm.Color.Accent.*` | normal/hover/disabled |
+| `SegmentedControl` | `Corner.Fluent.Sm`、`Nm.Color.Accent.Muted` | 选中/未选 |
+| `TabStrip` | 下划线 + `Nm.Color.Accent.*` | 选中/未选/hover |
 | `SearchField` | `Corner.Fluent.Sm` | 默认/聚焦/有值/清空 |
 | `CommandPalette` | `Elevation.3`、`Corner.Fluent.Lg` | 空/结果/加载 |
 | `ContextMenu` | `Elevation.2`、`Corner.Fluent.Md` | 默认/禁用项 |

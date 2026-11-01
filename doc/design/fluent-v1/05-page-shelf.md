@@ -26,12 +26,12 @@
 
 | 组件 | 令牌 |
 |---|---|
-| 封面卡 | `Nm.Corner.Fluent.Md`、`Nm.Elevation.1`（hover 提升至 2）、`Nm.Surface.Raised` |
-| 多选态封面 | 2px `Nm.Accent.*` 边框 + 角标 |
-| 列表行 | `Nm.Corner.Fluent.Sm`、行高 40（`Density` 决定 36/40/48） |
-| 详情栏 | `Nm.Surface.Sunken`、`Nm.Corner.Fluent.Lg` |
+| 封面卡 | `Nm.Corner.Fluent.Md`、`Nm.Elevation.1`（hover 提升至 2）、`Nm.Color.Bg.Raised` |
+| 多选态封面 | 2px `Nm.Color.Accent.*` 边框 + 角标 |
+| 列表行 | `Nm.Corner.Fluent.Sm`、行高 `Nm.Size.RowNormal`（26）/`Nm.Size.RowDense`（24），由 `Density` 决定 |
+| 详情栏 | `Nm.Color.Bg.Sunken`、`Nm.Corner.Fluent.Lg` |
 | 缩略图条 | `Nm.Corner.Fluent.Sm`、选中 2px 强调边框 |
-| 状态徽标 | `Nm.Status.*` 语义色 + 图标（非仅颜色） |
+| 状态徽标 | `Nm.Color.Status.*` 语义色 + 图标（非仅颜色） |
 
 ## 3. 状态（AC1 必须齐全）
 

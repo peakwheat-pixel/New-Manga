@@ -13,8 +13,13 @@
 | 圆角（Fluent 扩展） | `Nm.Corner.Fluent.Sm(4)` / `.Md(6)` / `.Lg(8)` | `CornerRadius` | 仅 `builtin.fluent` frontend + `builtin.fluent-dark` 视觉主题 | **待生成**（`NmKeys.g.cs` 尚无此组；FEA-05 落 token） |
 | 材质 | `Nm.Material.Acrylic.Base` / `.Tint` / `.Opacity` / `Nm.Material.Mica.Enabled` | `IBrush`/`double`/`bool` | 仅 Fluent frontend+visualTheme | 保留键，当前空（`TokenDictionaryWriter.cs:214` 注释） |
 | 层次 | `Nm.Elevation.1` / `.2` / `.3` | `BoxShadows` | 仅 Fluent frontend+visualTheme | 保留键，当前空 |
+| 焦点环（第四组） | `Nm.Border.Focus` + `Nm.Color.Accent.Ring` | `IBrush` | 全部（两 frontend） | 已存在（`NmKeys.g.cs`） |
+
+> **焦点环说明**：C-02:52 的第四组在**现有令牌**中由 `Nm.Border.Focus`（环色）与 `Nm.Color.Accent.Ring`（强调环）承载，**不存在** `Nm.Focus.Ring.Width/Offset` 族；本基线按现有键引用（宽度/偏移为布局常量 2px/1px，写入实现常量并登记于 FEA-05）。
 
 > **实现前置**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的实际生成属于 FEA-05 的实现范围（tokens 生成器）；本基线只冻结**取值与用途**。若 FEA-05 无法在 C-02 已冻结的名义下生成这些键，须先由 DSH 裁决（不得在本基线私自改名）。
+>
+> **尺寸/断点缺口（G-1b）**：本基线不新增尺寸/断点令牌；全部复用既有 `Nm.Size.*`（`TopBand` 36 / `TreeWidth` 200 / `FilmStripCollapsed` 56 / `FilmStripExpanded` 200 / `InspectorCollapsed` 40 / `InspectorExpanded` 320 / `RowDense` 24 / `RowNormal` 26 / `StatusBandPage` 28 / `StatusBandBatch` 24 / `ControlHeight`）与三档断点 `Nm.Size.Breakpoint.Narrow/Compact/Full`（1024/1280/1600）。任何实现需要的额外尺寸须先在 FEA-05 中登记并由 DSH 裁决，不得在本基线写裸数。
 
 ## 2. 取值表（Fluent v1 冻结）
 
@@ -38,7 +43,7 @@
 | `Nm.Material.Acrylic.Opacity` | `0.85` | 材质不透明度；`reduce` 动效下不变（材质非动效） |
 | `Nm.Material.Mica.Enabled` | `true` | 是否使用 Mica 底（仅 Windows 11；不可用时降级为 `Acrylic`） |
 
-**降级规则**：系统不支持 Mica/Acrylic（如 Win10 或远程桌面）→ 退化为不透明表面色 `Nm.Surface.*`（五级表面梯），并在设置页显示「材质不可用」状态；不得留透明导致可读性下降。
+**降级规则**：系统不支持 Mica/Acrylic（如 Win10 或远程桌面）→ 退化为不透明表面色 `Nm.Color.Bg.*`（五级表面梯），并在设置页显示「材质不可用」状态；不得留透明导致可读性下降。
 
 ### 2.3 层次（阴影）
 
@@ -63,7 +68,7 @@
 | 阅读器浮动工具条 | 圆角/阴影 | `Nm.Corner.Fluent.Md` / `Nm.Elevation.2` | 否 |
 | 设置分组卡片 | 圆角/阴影 | `Nm.Corner.Fluent.Md` / `Nm.Elevation.1` | 否 |
 | 对话框 | 圆角/阴影 | `Nm.Corner.Fluent.Lg` / `Nm.Elevation.3` | 否 |
-| 全部文字/间距/颜色 | 字号/间距/前景背景 | `Nm.Text.*` / `Nm.Space.*` / `Nm.Text.Color.*`（既有） | 否 |
+| 全部文字/间距/颜色 | 字号/间距/前景背景 | `Nm.FontSize.*` / `Nm.Space.*` / `Nm.Color.Text.*`（既有） | 否 |
 
 **评审规则**：XAML/代码中出现字面量颜色、`CornerRadius="6"`、`BoxShadows="..."` 即违规（除 `Nm.Corner.None` 的 0 与 `Nm.Material.*` 的初始注入值）。
 

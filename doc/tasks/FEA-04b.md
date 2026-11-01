@@ -86,16 +86,16 @@ allowed_paths:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | E-FLUENT-README | AC1–AC4 | `doc/design/fluent-v1/README.md` | 568cf271e | 2d7650aa475c2580e528fbc580087393c30f2268365a9dff77332fe8e64c7bc2 | CANONICAL |
-| E-FLUENT-TOKENS | AC2 | `doc/design/fluent-v1/01-design-tokens.md` | 568cf271e | d413f75dc985661e228f737dc7d11416432bfadc570b2b21e8676715c8507364 | CANONICAL |
-| E-FLUENT-MOTION | AC3 | `doc/design/fluent-v1/02-motion.md` | 568cf271e | 9d960d7f2ef5a5d68182a7487e7da4c273cc90e764201a305c887626d1401c65 | CANONICAL |
-| E-FLUENT-A11Y | AC4 | `doc/design/fluent-v1/03-accessibility.md` | 568cf271e | 5073ce751b2aecaacc403a13f9a3f8a86aa7fc81998529b0df1443f5ca598792 | CANONICAL |
-| E-FLUENT-LAYOUT | AC1 | `doc/design/fluent-v1/04-layout-responsive.md` | 568cf271e | ce3d7e5357a7773cc003297176e8c6e2c44d93e48cac85fa4a252a600a3753ed | CANONICAL |
-| E-FLUENT-SHELF | AC1 | `doc/design/fluent-v1/05-page-shelf.md` | 568cf271e | 00cb4928aed5dbb48a1ff06ff91929ed6d91b0f1b8c6932e7a56f8a13a5a6b10 | CANONICAL |
-| E-FLUENT-WORKBENCH | AC1 | `doc/design/fluent-v1/06-page-workbench.md` | 568cf271e | ee7b594ff5cbcb441530a7c60bfd9995566d944e281f0653699adb9b044ade76 | CANONICAL |
-| E-FLUENT-READER | AC1 | `doc/design/fluent-v1/07-page-reader.md` | 568cf271e | 3d3b4e0e78a2dba868d40eec47a68f8851f1cca684992a20511ec78000a5f53e | CANONICAL |
-| E-FLUENT-SETTINGS | AC1 | `doc/design/fluent-v1/08-page-settings.md` | 568cf271e | 502b359047a97dfd9131350f4ff1ddfef31653ae5b49ba5b3ec0bd67cdfc776d | CANONICAL |
-| E-FLUENT-STATE | AC1 | `doc/design/fluent-v1/09-state-matrix.md` | 568cf271e | 911e4e8dff6f1caaf415886d9e216e0982519aeafbffb2dd1fdc8ce284239429 | CANONICAL |
-| E-FLUENT-COMPONENTS | AC1/AC2 | `doc/design/fluent-v1/10-component-inventory.md` | 568cf271e | 1ef327a15fe8079b6aba4773fcd9d86049216324e4a143c965d6b7d4e5b7f901 | CANONICAL |
+| E-FLUENT-TOKENS | AC2 | `doc/design/fluent-v1/01-design-tokens.md` | 568cf271e | 98c645e8b5660f1faa29301ab4bdeed75ac962361f8c1f4bef6e08f052442c4e | CANONICAL |
+| E-FLUENT-MOTION | AC3 | `doc/design/fluent-v1/02-motion.md` | 568cf271e | 1dc4d96416d6acf9428be89b195a6c701b799f12a1e1abb26ae7f9ca5e8cb2f8 | CANONICAL |
+| E-FLUENT-A11Y | AC4 | `doc/design/fluent-v1/03-accessibility.md` | 568cf271e | 9a5f9b565f7796516cc530ed7d3e388de60afe2618464cf06e89228bf9cb7fe7 | CANONICAL |
+| E-FLUENT-LAYOUT | AC1 | `doc/design/fluent-v1/04-layout-responsive.md` | 568cf271e | 786ed96254b0d3e76959a3f703fe3ed941d4a9ba42966be8e8a3e0bd1b0605fa | CANONICAL |
+| E-FLUENT-SHELF | AC1 | `doc/design/fluent-v1/05-page-shelf.md` | 568cf271e | e9769eb0312eda425b844b7a4198f3840ecb1ec533783fa7a5439e3f76e03199 | CANONICAL |
+| E-FLUENT-WORKBENCH | AC1 | `doc/design/fluent-v1/06-page-workbench.md` | 568cf271e | 6eaef3e81d84fb3ba753861c59d8cb81e3b201054ba47810ca3bcbad20ed564c | CANONICAL |
+| E-FLUENT-READER | AC1 | `doc/design/fluent-v1/07-page-reader.md` | 568cf271e | fa6941796812928b7f49cbf49852923b83c6c3e5253aa027586d6fcea615338b | CANONICAL |
+| E-FLUENT-SETTINGS | AC1 | `doc/design/fluent-v1/08-page-settings.md` | 568cf271e | 2cde3635b529fdc4e212c10b282c87fcf41fc63bbbda485f4626a0b408325b5d | CANONICAL |
+| E-FLUENT-STATE | AC1 | `doc/design/fluent-v1/09-state-matrix.md` | 568cf271e | ed46c107aad1fbb7ab78c6b7c4f26efd0693db73e77ecb0840349d34abe9b126 | CANONICAL |
+| E-FLUENT-COMPONENTS | AC1/AC2 | `doc/design/fluent-v1/10-component-inventory.md` | 568cf271e | 1ec672367e926c0253f3bbcf049989969c34de440bafe0628e16592bc37129da | CANONICAL |
 | E-FLUENT-SELFCHECK | AC1–AC5 | `verification/FEA-04b/design-baseline-selfcheck.md` | 568cf271e | b3473cb561b8a6a80affe79e83112f184239c3822780c503b826dd4dd5f75334 | CANONICAL |
 
 ## Resource Manifest

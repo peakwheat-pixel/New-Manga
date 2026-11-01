@@ -27,10 +27,10 @@
 
 | 组件 | 令牌 |
 |---|---|
-| 页面图像 | `Nm.Corner.None`；背景 `Nm.Surface.Sunken` |
+| 页面图像 | `Nm.Corner.None`；背景 `Nm.Color.Bg.Sunken` |
 | 页面容器 | 无圆角；阴影仅浮动条用 `Elevation.2` |
 | 浮动工具条 | `Nm.Corner.Fluent.Md`、`Elevation.2`、`Nm.Material.Acrylic.*`（可用时） |
-| 进度条 | `Nm.Accent.*` 填充 + `Nm.Surface.Sunken` 轨道 |
+| 进度条 | `Nm.Color.Accent.*` 填充 + `Nm.Color.Bg.Sunken` 轨道 |
 | 页码徽标 | `Nm.Corner.Fluent.Sm`、半透明背景（`Nm.Material.Acrylic.Opacity`） |
 | 缩略图条 | `Nm.Corner.Fluent.Sm`；当前页 2px 强调边框 |
 
