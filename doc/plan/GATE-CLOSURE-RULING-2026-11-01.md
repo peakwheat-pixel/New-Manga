@@ -1,6 +1,6 @@
-# Gate 阻塞口径裁定（G-DELETE-CONTRACT / G-CONTRACT）· v2
+# Gate 阻塞口径裁定（G-DELETE-CONTRACT / G-CONTRACT）· v3
 
-状态：**DSH 架构裁定 v2 / 待独立复核**
+状态：**DSH 架构裁定 v3**（v2 经 [r2 复核](../reviews/GATE-CLOSURE-RULING-r2.md) `approved`；v3 增 R-4，经 [r3 复核](../reviews/GATE-CLOSURE-RULING-r3.md) 处置中）
 裁定人：DSH（Lead / Architect / Integrator）
 日期：2026-11-01
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)（`:762-771`）、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) `:10`/`:92`/`§9`、[AD-003 §5](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[冻结矩阵](FEA-CONTRACT_FREEZE_MATRIX.md)
@@ -8,9 +8,9 @@
 
 ---
 
-## 0. v2 相对 v1 的变化
+## 0. 版本变化
 
-| v1 主张 | v2 修正 | 依据 |
+| v1 主张 | v2/v3 修正 | 依据 |
 |---|---|---|
 | R-1 Gate 与契约同步**关闭** | **R-1′ Gate 保持 OPEN，只解除「对特定契约的阻塞」** | 复核 P1-1：Gate 覆盖 D04–D07 **四个**变更包，C-04b 只承载 D07；同步关闭会虚报状态并让 C-09 提前满足 |
 | R-2 M2-C1 扩展降级为「实现前置」 | **R-2′ 保留独立 Task 前置，但把「冻结顺序」改为「释放实现前」**，并同批修订 C-04b §2.4 + 条件⑤ | 复核 P1-2：v1 直接推翻了 C-04b §2.4 的明文顺序 |
@@ -93,11 +93,14 @@ Gate 的定义文本与被它守门的契约构成**看似的**循环：
 C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错误码的协议注册须由独立 Task 完成」。按同口径处理：
 
 1. C-08 冻结只冻**快照结构与 3 个新码的声明**（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE` + `PrepareRun`/`AcceptRun` 的 wire 版本）；
-2. **M2-C1 字节修订**（§5.11.3 表 + ErrorView 联合）由**独立 Task** 在**释放任何 Run 实现前**完成并复核；
+2. **M2-C1 字节修订**（块②：新增 Run 命令章节 + 新 Run 错误投影）由**独立 Task** 在**释放任何 Run 实现前**完成并复核；**wire 版本 = minor `2.12`**（DSH 批准，理由：仅新增命令与投影，不改既有 Run 命令语义）；
 3. 复核须含**负向对照**：未扩 M2-C1 时，3 个新码必须被 host 投影拒绝；
-4. **与 C-04b 共用同一个独立 Task**——两者都改 M2-C1 的 §5.11.3/§5.11.5，分两次改同一文件会制造合并冲突与重复复核；该 Task 的范围 = 「M2-C1 §5.11.3/§5.11.5 扩展（C-04b 的 2 码 + C-08 的 3 码 + 2 个 ErrorView 联合）」。
+4. **与 C-04b 共用同一个独立 Task，但范围是两块、不是一块**（关键修正）：
+   - **块①（C-04b，删除章节增量）**：M2-C1 §5.11.3 表追加 2 行 + §5.11.5 的 2 个删除 ErrorView 联合扩展；
+   - **块②（C-08，Run 章节新增）**：M2-C1 **新增 Run 命令章节**（`PrepareRun`/`AcceptRun`）+ **新增 Run 错误投影**（3 个 `RUN_*` 码）+ wire 版本号。
+   - **为什么不能合并成一块**：M2-C1 §5.11 全章是「项目级作品永久删除」（`:678` 起，Core protocol 2.10），`PrepareRun`/`AcceptRun` 在全文**大小写不敏感 0 命中**；Run 命令面现有 StartRun/ControlRun/ResumeBlockedRun/GetRunSnapshot/GetTaskProjection/RetryFailedTargets（`:193` 等）——C-08 的协议注册必须是**新章节 + 新 ErrorView**，不是「§5.11.3 追加两行」。
 
-**与 R-2′ 的区别**：R-2′ 只适用 C-04b；R-4 需独立成立，理由是本条自带（同为「协议注册」模式、同样的负向对照要求、共用同一 M2-C1 修订 Task）。
+**与 R-2′ 的区别**：R-2′ 只适用 C-04b；R-4 需独立成立（P2-1 补 C-08 特有理由）：① C-08 的 `preparedDigest` 是 **canonical JSON 的字节级定义**（键排序/UTF-8/无空白），字节修订必须与算法定义同步，不能只改错误表；② Run 命令面受 **M2-C1 `:125` 的 major 2.0 历史约束**，新命令必须确认为 minor 递增；③ C-08 的 candidate store 是 Host 侧临时存储、**不落 Core DB**，其错误投影与删除线的 DB 事务语义不同。
 ## 4. 影响
 
 | 契约 | 变化 | 结果 |
@@ -120,6 +123,7 @@ C-08 的前置（b）与 C-04b 条件⑤**同构**：都是「新增命令/错�
 | M2-C1 扩展被无限推迟 | 冻结记录写入"释放删除实现前必须完成"+ 负向对照；C-04b 的 §2.4 已是明文 |
 | 负向对照未执行，新码被硬启 | 该独立 Task 的 AC 必须含"未扩 M2-C1 时新码被拒"，独立复核检查 |
 | v1 的"投影"结论被误当事实 | 本 v2 已删；Gate 状态真实为 OPEN |
+| **共用 M2-C1 修订 Task 耦合**：块①与块②共用 Task 后，一方延期会阻塞另一方 | **两段独立提交**（块①/块②分别 commit + 分别复核）；单一 owner；AC 分包；Task 上限 5 个提交 |
 
 **回退**：若独立复核仍认为分块冻结不安全 → 回退到「先完成 M2-C1 扩展独立 Task → 再冻 C-04b」的严格串行路径。
 
