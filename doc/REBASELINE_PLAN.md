@@ -18,7 +18,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**proposed**（Fluent UI 四页；范围 r1 changes_requested，已拆前置）|
-|FEA-06-PREREQ-1|FEA-04b|**ready**（C-03 外观持久化 + G-1 令牌 + fluent-dark 主题包；范围 r3 approved）|
+|FEA-06-PREREQ-1|FEA-04b|**in_review**（C-03 外观 + G-1 令牌 + fluent-dark；impl-r2 后待 r3）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**proposed**（Fluent frontend 激活/V2 并存；待复核）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
@@ -31,7 +31,7 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：FEA-06-PREREQ-1
+READY 节点：无
 
 
 当前 DAG：FEA-06-PREREQ-1（**proposed**）→ FEA-06-PREREQ-2（**proposed**）→ FEA-06（**proposed**）；其余 done
@@ -44,6 +44,7 @@ READY 节点：FEA-06-PREREQ-1
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 
 
 
