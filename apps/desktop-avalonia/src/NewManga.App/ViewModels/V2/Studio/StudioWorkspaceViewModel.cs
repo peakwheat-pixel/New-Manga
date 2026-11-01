@@ -1,4 +1,5 @@
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Frontends;
 
 namespace NewManga.App.ViewModels.V2.Studio;
 
@@ -12,7 +13,7 @@ namespace NewManga.App.ViewModels.V2.Studio;
 public sealed class StudioWorkspaceViewModel : StudioObservable
 {
     private StudioWorkspaceMode _mode = StudioWorkspaceMode.Page;
-    private StudioWorkspaceMode? _pendingMode;
+    private readonly CurrentFrontend _current;
 
     public StudioWorkspaceViewModel(
         IHostController host,
@@ -22,6 +23,7 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
         IRegionFlagSource? flagSource = null,
         Action<string>? onRunTracked = null)
     {
+        _current = CurrentFrontend.For(host);
         Selection = selection ?? new StudioSelection();
         Page = new StudioPageViewModel(host, Selection, runSource, textSource, flagSource);
         Host = host;
@@ -88,7 +90,7 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
 
         if (Page.HasUnsavedChanges)
         {
-            _pendingMode = mode;
+            _current.Session.Studio.PendingMode = mode == StudioWorkspaceMode.Page ? NewManga.App.Shell.V2.StudioMode.Page : NewManga.App.Shell.V2.StudioMode.Batch;
             Page.OpenLeaveModal();
             return false;
         }
@@ -110,12 +112,13 @@ public sealed class StudioWorkspaceViewModel : StudioObservable
         CancellationToken cancellationToken = default)
     {
         var outcome = await Page.ResolveLeaveAsync(choice, cancellationToken).ConfigureAwait(true);
+        if (outcome == StudioLeaveOutcome.Cancelled) _current.Session.Studio.PendingMode = null;
         if (outcome is StudioLeaveOutcome.Saved or StudioLeaveOutcome.Discarded or StudioLeaveOutcome.NoChanges)
         {
-            if (_pendingMode is { } mode)
+            if (_current.Session.Studio.PendingMode is { } mode)
             {
-                Mode = mode;
-                _pendingMode = null;
+                Mode = mode == NewManga.App.Shell.V2.StudioMode.Page ? StudioWorkspaceMode.Page : StudioWorkspaceMode.Batch;
+                _current.Session.Studio.PendingMode = null;
             }
         }
 

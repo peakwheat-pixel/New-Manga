@@ -1,0 +1,17 @@
+$ dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings --artifacts-path G:/CODEX/New Manga.workspace/FEA-04/verification/FEA-04/baseline-artifacts --verbosity minimal
+exit_code=1
+stdout:
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.Host.Tests\debug\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.DesignSystem.Tests\debug\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.CoreClient.Tests\debug\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.ThemeEngine.Tests\debug\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.App.Tests\debug\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.ApplicationCore.Tests\debug\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+
+stderr:
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.Host.Tests\debug\NewManga.Host.Tests.dll”。
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.ThemeEngine.Tests\debug\NewManga.ThemeEngine.Tests.dll”。
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.App.Tests\debug\NewManga.App.Tests.dll”。
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.DesignSystem.Tests\debug\NewManga.DesignSystem.Tests.dll”。
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.CoreClient.Tests\debug\NewManga.CoreClient.Tests.dll”。
+找不到提供的测试源文件“G:\CODEX\New Manga.workspace\FEA-04\verification\FEA-04\baseline-artifacts\bin\NewManga.ApplicationCore.Tests\debug\NewManga.ApplicationCore.Tests.dll”。

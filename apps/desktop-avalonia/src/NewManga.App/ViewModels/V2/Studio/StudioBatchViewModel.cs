@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Frontends;
 
 namespace NewManga.App.ViewModels.V2.Studio;
 
@@ -300,10 +302,16 @@ public sealed class StudioBatchActionViewModel : StudioObservable
 /// </summary>
 public sealed class StudioBatchViewModel : StudioObservable
 {
+    private void RaiseMany(params string[] names)
+    {
+        foreach (string name in names) Raise(name);
+    }
     public const string GateWarningText = "门禁未清";
     public const string NotWiredText = "IRunController 不可用（Host 未就绪）· NOT_WIRED";
 
     private readonly IHostController _host;
+    private readonly CurrentFrontend _current;
+    private IDisposable? _runSubscription;
     private readonly StudioPageViewModel _page;
     private readonly IRunController? _controller;
     private readonly Action<string>? _onRunTracked;
@@ -311,9 +319,7 @@ public sealed class StudioBatchViewModel : StudioObservable
     private readonly IRunDataSource _dataSource;
     private bool _polling;
     private DateTime _lastPollUtc = DateTime.MinValue;
-    private string? _runId;
     private StudioBatchRunState _state = StudioBatchRunState.NoRun;
-    private StudioRunProjection? _projection;
     private StudioBatchFilter _filter = StudioBatchFilter.All;
     private StudioBatchScope _scope = StudioBatchScope.All;
     private string? _highlightedStage;
@@ -326,9 +332,9 @@ public sealed class StudioBatchViewModel : StudioObservable
     private StudioBatchActionViewModel? _pendingGateAction;
     private StudioBatchRowViewModel? _drawerRow;
     private bool _submitInFlight;
-    private string? _intentIdempotencyKey;
     private bool _stopArmed;
     private IReadOnlyList<StudioRunStageState> _stageColumns = Array.Empty<StudioRunStageState>();
+    private StudioRunProjection? _projection;
 
     public StudioBatchViewModel(
         IHostController host,
@@ -339,6 +345,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         Action<string>? onRunTracked = null)
     {
         _host = host;
+        _current = CurrentFrontend.For(host);
         Selection = selection;
         _page = page;
         _controller = controller ?? host as IRunController;
@@ -346,9 +353,12 @@ public sealed class StudioBatchViewModel : StudioObservable
         // REALUSE-DATA-SAFETY-3 AC2 (MA-07): a Run created here must be reachable from the Console
         // without copying its id, so the shell's shared Run index is told about it.
         _onRunTracked = onRunTracked;
+        // AC2: keep the Host projection as the read authority (the CurrentRunDataSource
+        // monitor path would bypass IHostController.GetTaskProjection and break the
+        // existing behavior baseline). CurrentFrontend stays as the shared facade.
         _dataSource = _controller is null
             ? NotWiredRunDataSource.Instance
-            : new RunControllerRunDataSource(_controller, () => _runId);
+            : new RunControllerRunDataSource(_controller, () => RunId);
 
         Rows = new ObservableCollection<StudioBatchRowViewModel>();
         StageRail = new ObservableCollection<StudioBatchStageRailItemViewModel>();
@@ -368,6 +378,7 @@ public sealed class StudioBatchViewModel : StudioObservable
             Raise(nameof(ScopeSuffix));
             Raise(nameof(ActionBarHeader));
         };
+        EnsureRunSubscription();
     }
 
     /// <summary>Raised when the matrix asks to drill into Page mode for one page (+ optional stage).</summary>
@@ -394,11 +405,11 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public StudioRunProjection? Projection => _projection;
 
-    public string? RunId => _runId;
+    public string? RunId => _current.Session.Studio.RunId;
 
-    public string RunIdText => _runId ?? "—";
+    public string RunIdText => RunId ?? "—";
 
-    public string RunStatus => _projection?.RunStatus ?? (_runId is null ? "无运行" : "读取中");
+    public string RunStatus => Projection?.RunStatus ?? (RunId is null ? "无运行" : "读取中");
 
     public bool IsWired => _dataSource.IsWired;
 
@@ -435,10 +446,10 @@ public sealed class StudioBatchViewModel : StudioObservable
         StudioBatchRunState.Loading => "正在读取任务投影…",
         StudioBatchRunState.Error => _errorText ?? "任务投影读取失败",
         StudioBatchRunState.Partial => "部分投影读取失败（保留上次投影）",
-        _ => $"{_projection?.Title ?? "Run"} · {RunStatus} · {Math.Round((_projection?.Percent ?? 0) * 100):0}%",
+        _ => $"{Projection?.Title ?? "Run"} · {RunStatus} · {Math.Round((Projection?.Percent ?? 0) * 100):0}%",
     };
 
-    public string ProgressText => _projection is { } projection
+    public string ProgressText => Projection is { } projection
         ? $"{Math.Round(projection.Percent * 100):0}% · {projection.CompletedPageCount}/{projection.TotalPageCount} 页 · 失败 {projection.FailedPageCount}"
         : "—";
 
@@ -507,7 +518,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         };
 
     private string? CurrentPageLabel =>
-        _projection?.RowFor(Selection.CurrentPageId)?.Filename ?? Selection.CurrentPageId;
+        Projection?.RowFor(Selection.CurrentPageId)?.Filename ?? Selection.CurrentPageId;
 
     public string ActionBarHeader => $"已选 {SelectedCellCount} 单元 · 作用域{ScopeSuffix}";
 
@@ -519,18 +530,18 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public bool IsPolling => _polling;
 
-    public bool CanPause => _projection?.Controls.CanPause ?? false;
+    public bool CanPause => Projection?.Controls.CanPause ?? false;
 
-    public bool CanStop => _projection?.Controls.CanStop ?? false;
+    public bool CanStop => Projection?.Controls.CanStop ?? false;
 
-    public bool CanContinue => _projection?.Controls.CanContinue ?? false;
+    public bool CanContinue => Projection?.Controls.CanContinue ?? false;
 
-    public bool CanRestart => _projection?.Controls.CanRestart ?? false;
+    public bool CanRestart => Projection?.Controls.CanRestart ?? false;
 
-    public bool CanRetryFailed => _projection?.Controls.CanRetryFailed ?? false;
+    public bool CanRetryFailed => Projection?.Controls.CanRetryFailed ?? false;
 
     /// <summary>R-22: intent-level idempotency key (generated once, reused on retry, cleared on success).</summary>
-    public string? CurrentIntentKey => _intentIdempotencyKey;
+    public string? CurrentIntentKey => _current.PendingRunIntentKey;
 
     /// <summary>R-22: while a submit is in flight the actions are disabled (double-click guard).</summary>
     public bool IsSubmitInFlight => _submitInFlight;
@@ -543,7 +554,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         if (!_stopArmed)
         {
             _stopArmed = true;
-            _statusText = $"确认停止？再次点击「停止」将中止 Run {_runId}（未完成页保留现状）";
+            _statusText = $"确认停止？再次点击「停止」将中止 Run {RunId}（未完成页保留现状）";
             Raise(nameof(StopArmed));
             Raise(nameof(StatusText));
             return null;
@@ -569,14 +580,14 @@ public sealed class StudioBatchViewModel : StudioObservable
         return await ControlAsync(RunControlAction.Stop, cancellationToken).ConfigureAwait(true);
     }
 
-    public bool CanResumeBlocked => _projection is { } projection &&
+    public bool CanResumeBlocked => Projection is { } projection &&
         (string.Equals(projection.RunStatus, "blocked", StringComparison.OrdinalIgnoreCase) ||
          projection.BlockedPageCount > 0);
 
-    public bool HasGateWarning => _projection is { } projection &&
+    public bool HasGateWarning => Projection is { } projection &&
         (projection.FailedPageCount > 0 || projection.BlockedPageCount > 0);
 
-    public string GateWarning => HasGateWarning && _projection is { } projection
+    public string GateWarning => HasGateWarning && Projection is { } projection
         ? $"{GateWarningText}（失败 {projection.FailedPageCount} · 阻塞 {projection.BlockedPageCount}）"
         : string.Empty;
 
@@ -630,10 +641,9 @@ public sealed class StudioBatchViewModel : StudioObservable
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(_runId))
+        if (string.IsNullOrWhiteSpace(RunId))
         {
             State = StudioBatchRunState.NoRun;
-            _projection = null;
             _stageColumns = Array.Empty<StudioRunStageState>();
             Rows.Clear();
             StageRail.Clear();
@@ -656,7 +666,7 @@ public sealed class StudioBatchViewModel : StudioObservable
         if (projection is null)
         {
             _errorText = _host.Snapshot.LastError ?? "GetTaskProjection 返回空";
-            State = _projection is null ? StudioBatchRunState.Error : StudioBatchRunState.Partial;
+            State = Projection is null ? StudioBatchRunState.Error : StudioBatchRunState.Partial;
             Raise(nameof(HeaderLine));
             Raise(nameof(HasError));
             Raise(nameof(ErrorText));
@@ -708,14 +718,37 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public void SetRunId(string? runId)
     {
-        _runId = runId;
+        var normalized = string.IsNullOrWhiteSpace(runId) ? null : runId.Trim();
+        if (string.Equals(RunId, normalized, StringComparison.Ordinal))
+        {
+            EnsureRunSubscription();
+            return;
+        }
+
+        _runSubscription?.Dispose();
+        _runSubscription = null;
+        _current.Session.Studio.RunId = normalized;
+        if (normalized is not null) EnsureRunSubscription();
         Raise(nameof(RunId));
         Raise(nameof(RunIdText));
         Raise(nameof(RunStatus));
+        Raise(nameof(Projection));
+    }
+
+    private void EnsureRunSubscription()
+    {
+        // AC2: the projection read stays on the Host seam (RefreshAsync/_dataSource).
+        // A background RunMonitor subscription per VM leaked timers across test hosts
+        // and was not needed for the Current façade, so it stays opt-in only.
+        _runSubscription?.Dispose();
+        _runSubscription = null;
     }
 
     private void ApplyProjection(StudioRunProjection projection)
     {
+        // AC2: the applied projection is the read authority for gate/run state, so
+        // the existing behavior baseline does not depend on the CurrentFrontend monitor.
+        _projection = projection;
         var selected = Rows
             .SelectMany(row => row.Cells
                 .Where(cell => cell.IsSelected)
@@ -723,7 +756,6 @@ public sealed class StudioBatchViewModel : StudioObservable
             .ToHashSet();
         var selectedRows = Rows.Where(row => row.IsSelected).Select(row => row.PageId).ToHashSet();
 
-        _projection = projection;
         _stageColumns = projection.Columns;
         Rows.Clear();
         for (var index = 0; index < projection.Rows.Count; index++)
@@ -809,7 +841,7 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     private void RebuildChips()
     {
-        var projection = _projection;
+        var projection = Projection;
         Chips.Clear();
         Chips.Add(new StudioBatchCountChipViewModel(StudioBatchFilter.All, "总", projection?.TotalPageCount,
             "总页数（任务投影）"));
@@ -1076,17 +1108,15 @@ public sealed class StudioBatchViewModel : StudioObservable
             return null;
         }
 
-        _intentIdempotencyKey ??= Guid.NewGuid().ToString("N");
-        Raise(nameof(CurrentIntentKey));
         _submitInFlight = true;
-        Raise(nameof(IsSubmitInFlight));
+        RaiseMany(nameof(IsSubmitInFlight), nameof(CurrentIntentKey));
         BuildActions();
         RunStartInfo? started = null;
         try
         {
-            started = await _controller
-                .StartRunAsync(new RunStartRequest(command, scope, null, _intentIdempotencyKey), cancellationToken)
-                .ConfigureAwait(true);
+            // Current supplies and retains one ApplicationCore IntentCoordinator key until an ACK.
+            started = await _current.ExecuteRunStartAsync(
+                new RunStartRequest(command, scope, null, string.Empty), cancellationToken).ConfigureAwait(true);
         }
         catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
         {
@@ -1099,19 +1129,13 @@ public sealed class StudioBatchViewModel : StudioObservable
         finally
         {
             _submitInFlight = false;
-            Raise(nameof(IsSubmitInFlight));
+            RaiseMany(nameof(IsSubmitInFlight), nameof(CurrentIntentKey));
             BuildActions();
         }
         if (started is null)
         {
-            // REALUSE-DATA-SAFETY-2 AC1: the batch area is the only place a Run can be started, and
-            // it used to surface the bare typed code (audit MA-02: "PROVIDER_NOT_CONFIGURED" with no
-            // next step looked like a silent failure). Map the actionable code to guidance naming the
-            // exact place to fix it; every other code keeps its typed value so it stays diagnosable.
             var code = _host.Snapshot.LastError;
             _needsProviderSetup = string.Equals(code, "PROVIDER_NOT_CONFIGURED", StringComparison.Ordinal);
-            // REALUSE-DATA-SAFETY-5 AC1 (audit MA-17): a read-only or not-yet-ready Host used to surface
-            // the bare typed code, which reads like a bug rather than a state the user can act on.
             var readOnly = string.Equals(code, "HOST_READ_ONLY", StringComparison.Ordinal);
             var notReady = string.Equals(code, "HOST_NOT_READY", StringComparison.Ordinal);
             _errorText = _needsProviderSetup
@@ -1124,19 +1148,14 @@ public sealed class StudioBatchViewModel : StudioObservable
                             ? "StartRun 被拒绝（Host 未返回原因）"
                             : $"StartRun 被拒绝（{code}）";
             State = StudioBatchRunState.Error;
-            Raise(nameof(HeaderLine));
-            Raise(nameof(ErrorText));
-            Raise(nameof(HasError));
-            Raise(nameof(NeedsProviderSetup));
+            RaiseMany(nameof(HeaderLine), nameof(ErrorText), nameof(HasError), nameof(NeedsProviderSetup));
             return null;
         }
 
         _needsProviderSetup = false;
         Raise(nameof(NeedsProviderSetup));
-
         SetRunId(started.RunId);
         _onRunTracked?.Invoke(started.RunId);
-        _intentIdempotencyKey = null;
         Raise(nameof(CurrentIntentKey));
         _statusText = $"已创建 Run {started.RunId}（{started.Status}）";
         Raise(nameof(StatusText));
@@ -1165,13 +1184,13 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public async Task<RunControlInfo?> RetryFailedAsync(CancellationToken cancellationToken = default)
     {
-        if (_controller is null || _runId is null)
+        if (_controller is null || RunId is null)
         {
             return null;
         }
 
         var info = await _controller
-            .RetryFailedTargetsAsync(_runId, Guid.NewGuid().ToString("N"), cancellationToken)
+            .RetryFailedTargetsAsync(RunId, Guid.NewGuid().ToString("N"), cancellationToken)
             .ConfigureAwait(true);
         if (info is not null)
         {
@@ -1185,12 +1204,12 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public async Task<RunControlInfo?> ResumeBlockedAsync(CancellationToken cancellationToken = default)
     {
-        if (_controller is null || _runId is null)
+        if (_controller is null || RunId is null)
         {
             return null;
         }
 
-        var info = await _controller.ResumeBlockedRunAsync(_runId, cancellationToken).ConfigureAwait(true);
+        var info = await _controller.ResumeBlockedRunAsync(RunId, cancellationToken).ConfigureAwait(true);
         if (info is not null)
         {
             _statusText = $"已恢复阻塞（{info.Status}）";
@@ -1203,12 +1222,12 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     private async Task<RunControlInfo?> ControlAsync(RunControlAction action, CancellationToken cancellationToken)
     {
-        if (_controller is null || _runId is null)
+        if (_controller is null || RunId is null)
         {
             return null;
         }
 
-        var info = await _controller.ControlRunAsync(_runId, action, null, cancellationToken).ConfigureAwait(true);
+        var info = await _controller.ControlRunAsync(RunId, action, null, cancellationToken).ConfigureAwait(true);
         if (info is not null)
         {
             _statusText = $"{action} → {info.Status}";

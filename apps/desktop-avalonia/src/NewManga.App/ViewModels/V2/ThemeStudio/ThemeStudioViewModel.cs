@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Avalonia.Input;
 using NewManga.App.Shell.V2;
+using NewManga.App.Shell.V2.Frontends;
 using NewManga.ThemeEngine;
 
 namespace NewManga.App.ViewModels.V2.ThemeStudio;
@@ -459,6 +460,7 @@ public sealed class ThemeStudioViewModel : ObservableObject, IDisposable
         UpdateDirtyMarkers();
         OnPropertyChanged(nameof(SectionSubtitle));
         Preview.RebuildPalette();
+        UpdateCurrentAppearanceDraft();
     }
 
     /// <summary>Previews an installed theme (library card click / Enter / double click).</summary>
@@ -836,6 +838,7 @@ public sealed class ThemeStudioViewModel : ObservableObject, IDisposable
             }
 
             UpdateDirtyMarkers();
+            UpdateCurrentAppearanceDraft();
             OnPropertyChanged(
                 nameof(CurrentTheme),
                 nameof(CurrentThemeName),
@@ -858,6 +861,15 @@ public sealed class ThemeStudioViewModel : ObservableObject, IDisposable
         {
             _isRefreshing = false;
         }
+    }
+
+    private void UpdateCurrentAppearanceDraft()
+    {
+        var draft = _service.DraftPackage;
+        CurrentFrontend.UpdateAppearanceDraft(
+            _service.HasDraft,
+            draft?.Descriptor.Id,
+            draft?.Descriptor.Name);
     }
 
     private void RefreshPalettes()

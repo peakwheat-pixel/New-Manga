@@ -1,6 +1,9 @@
+using Avalonia.Threading;
 using System.Collections.ObjectModel;
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Frontends;
 using NewManga.CoreClient;
+using NewManga.ApplicationCore;
 
 namespace NewManga.App.ViewModels.V2.Studio;
 
@@ -231,10 +234,16 @@ public sealed class StudioHudSlotViewModel : StudioObservable
 /// </summary>
 public sealed class StudioPageViewModel : StudioObservable
 {
+    private void RaiseMany(params string[] names)
+    {
+        foreach (string name in names) Raise(name);
+    }
     /// <summary>Cap on how many film-strip thumbnails are decoded eagerly (resource channel cost).</summary>
     public const int ThumbnailLimit = 60;
 
     private readonly IHostController _host;
+    private readonly CurrentFrontend _current;
+    private StudioRunProjection? _runProjection;
     private StudioCapabilityGate _gate;
     private StudioLoadState _loadState = StudioLoadState.Idle;
     private string _statusText = string.Empty;
@@ -252,11 +261,7 @@ public sealed class StudioPageViewModel : StudioObservable
     private double _viewportHeight;
     private int _hudFocusIndex = -1;
     private bool _isLoadingPage;
-    private bool _leaveModalOpen;
     private string? _leaveError;
-    private Func<Task>? _pendingNavigation;
-    private string? _lastRerenderSummary;
-    private StudioRunProjection? _runProjection;
     private string? _regionDetailsError;
     private bool _isLoadingRegionDetails;
     private int _loadGeneration;
@@ -270,12 +275,18 @@ public sealed class StudioPageViewModel : StudioObservable
         IRegionFlagSource? flagSource = null)
     {
         _host = host;
+        _current = CurrentFrontend.For(host);
         Selection = selection ?? new StudioSelection();
         RunSource = runSource ?? NotWiredRunDataSource.Instance;
         TextSource = textSource ?? new NotWiredRegionTextSource();
         FlagSource = flagSource ?? new NotWiredRegionFlagSource();
         _gate = BuildGate();
         _host.Changed += OnHostChanged;
+        var pageReference = new WeakReference<StudioPageViewModel>(this);
+        _current.RunObserved += (sender, args) =>
+        {
+            if (pageReference.TryGetTarget(out var page)) page.OnCurrentRunObserved(sender, args);
+        };
 
         Pages = new ObservableCollection<StudioFilmPageItem>();
         Regions = new ObservableCollection<StudioRegionItem>();
@@ -476,6 +487,24 @@ public sealed class StudioPageViewModel : StudioObservable
 
     public string? CurrentPageId => CurrentPageItem?.PageId ?? Selection.CurrentPageId;
 
+    internal CurrentFrontend Current => _current;
+
+    internal DraftBuffer? PendingRegionTypeDraft
+    {
+        get
+        {
+            if (CurrentPageId is not { } pageId || SelectedRegion is not { } region) return null;
+            return _current.TryGetRegionTypeDraft(pageId, region.RegionId, out var buffer) ? buffer : null;
+        }
+    }
+
+    internal DraftBuffer GetOrCreateRegionTypeDraft()
+    {
+        if (CurrentPageId is not { } pageId || SelectedRegion is not { } region)
+            throw new InvalidOperationException("A page and region must be selected before editing region type.");
+        return _current.GetRegionTypeDraft(pageId, region.RegionId, region.RevisionNo);
+    }
+
     public RegionPageSize? PageSize => _projection?.PageSize;
 
     public string PageSizeText => PageSize is { } size ? $"{size.Width}×{size.Height}" : "—";
@@ -658,7 +687,7 @@ public sealed class StudioPageViewModel : StudioObservable
 
     // ---------------------------------------------------------------- pipeline band
 
-    public bool PipelineWired => RunSource.IsWired;
+    public bool PipelineWired => RunSource.IsWired || RunProjection is not null;
 
     public bool PipelineExpanded { get; private set; }
 
@@ -666,7 +695,7 @@ public sealed class StudioPageViewModel : StudioObservable
     {
         get
         {
-            if (_runProjection is { } projection)
+            if (RunProjection is { } projection)
             {
                 return $"{projection.Title} · {projection.CompletedPageCount}/{projection.TotalPageCount} 页 · {projection.FailedPageCount} 失败";
             }
@@ -677,10 +706,10 @@ public sealed class StudioPageViewModel : StudioObservable
 
     public string PipelineToggleLabel => PipelineExpanded ? "▾ 收起" : "▸ 展开 10 阶段";
 
-    public bool PipelineNotWired => _runProjection is null;
+    public bool PipelineNotWired => RunProjection is null;
 
     /// <summary>V11R-B-5: live projection consumed by the export preflight counters.</summary>
-    public StudioRunProjection? RunProjection => _runProjection;
+    public StudioRunProjection? RunProjection => _runProjection ?? _current.GetRun(_current.Session.Studio.RunId)?.StudioProjection;
 
     public string PipelineNotWiredNote =>
         "阶段状态来自 GetTaskProjection（V11R-A-2 未合入）· 当前不显示任何伪造进度";
@@ -705,8 +734,13 @@ public sealed class StudioPageViewModel : StudioObservable
 
     public string? LastRerenderSummary
     {
-        get => _lastRerenderSummary;
-        private set => Set(ref _lastRerenderSummary, value);
+        get => _current.Session.Studio.LastRerenderSummary;
+        private set
+        {
+            if (string.Equals(_current.Session.Studio.LastRerenderSummary, value, StringComparison.Ordinal)) return;
+            _current.Session.Studio.LastRerenderSummary = value;
+            Raise();
+        }
     }
 
     // ---------------------------------------------------------------- leave guard
@@ -717,8 +751,13 @@ public sealed class StudioPageViewModel : StudioObservable
 
     public bool IsLeaveModalOpen
     {
-        get => _leaveModalOpen;
-        private set => Set(ref _leaveModalOpen, value);
+        get => _current.Session.Studio.HasPendingConfirmation;
+        private set
+        {
+            if (_current.Session.Studio.HasPendingConfirmation == value) return;
+            _current.Session.Studio.HasPendingConfirmation = value;
+            Raise();
+        }
     }
 
     public string LeaveTitle => "离开前保存更改？";
@@ -1010,7 +1049,7 @@ public sealed class StudioPageViewModel : StudioObservable
 
         if (HasUnsavedChanges)
         {
-            _pendingNavigation = () => LoadPageCoreAsync(pageId, CancellationToken.None);
+            _current.Session.Studio.PendingNavigationPageId = pageId;
             OpenLeaveModal();
             return false;
         }
@@ -1029,7 +1068,7 @@ public sealed class StudioPageViewModel : StudioObservable
 
         if (HasUnsavedChanges)
         {
-            _pendingNavigation = () => LoadPageCoreAsync(pageId, CancellationToken.None);
+            _current.Session.Studio.PendingNavigationPageId = pageId;
             OpenLeaveModal();
             return false;
         }
@@ -1193,6 +1232,18 @@ public sealed class StudioPageViewModel : StudioObservable
             return refusal;
         }
 
+        var draft = Inspector.PendingDraft;
+        if (draft is not null)
+        {
+            var flushed = await draft.FlushAsync(DraftFlushTrigger.PageChange, cancellationToken).ConfigureAwait(true);
+            if (!flushed.Succeeded)
+            {
+                StatusText = "类型草稿尚未成功 flush，仍保留当前页与编辑内容";
+                LeaveError = StatusText;
+                return RegionOperationResult.Failed(flushed.ErrorCode ?? "DRAFT_FLUSH_FAILED", StatusText);
+            }
+        }
+
         var result = await _host.SetRegionTypeAsync(region.RegionId, newType, region.RevisionNo, cancellationToken)
             .ConfigureAwait(true);
         if (result.IsSuccess)
@@ -1288,16 +1339,13 @@ public sealed class StudioPageViewModel : StudioObservable
         }
 
         RefreshPipelineBand();
+        Raise(nameof(RunProjection));
     }
 
-    /// <summary>
-    /// V11R-B-4: band stages are the projection's own step flow (dynamic). Without a projection the
-    /// canonical ten render as "no projection data" — they never claim progress.
-    /// </summary>
     private void RefreshPipelineBand()
     {
         PipelineStages.Clear();
-        if (_runProjection is { Columns.Count: > 0 } projection)
+        if (RunProjection is { Columns.Count: > 0 } projection)
         {
             for (var index = 0; index < projection.Columns.Count; index++)
             {
@@ -1325,7 +1373,9 @@ public sealed class StudioPageViewModel : StudioObservable
     /// <summary>V11R-B-4: the workspace pushes the Batch projection into the Page band (same source).</summary>
     public void ApplyRunProjection(StudioRunProjection? projection)
     {
+        // V11R-B-4: the workspace push is the authoritative Page-band projection (AC2).
         _runProjection = projection;
+        Raise(nameof(RunProjection));
         RefreshPipelineBand();
         Raise(nameof(PipelineHeaderText));
         Raise(nameof(PipelineWired));
@@ -1625,18 +1675,19 @@ public sealed class StudioPageViewModel : StudioObservable
     {
         IsLeaveModalOpen = false;
         LeaveError = null;
-        _pendingNavigation = null;
+        _current.Session.Studio.PendingNavigationPageId = null;
+        _current.Session.Studio.PendingMode = null;
     }
 
     /// <summary>
-    /// AC: the unsaved-changes modal with three exits. 保存 writes through the wired
-    /// <c>set_region_type</c>; 放弃 drops the pending edit; 取消 returns and keeps the edit.
+    /// AC: confirmation resolves only after the user chooses Save, Discard, or Cancel. The memento
+    /// stores a page id rather than a delegate, so a rebuilt content tree cannot replay an old callback.
     /// </summary>
     public async Task<StudioLeaveOutcome> ResolveLeaveAsync(
         StudioLeaveChoice choice,
         CancellationToken cancellationToken = default)
     {
-        var navigation = _pendingNavigation;
+        var navigationPageId = _current.Session.Studio.PendingNavigationPageId;
         switch (choice)
         {
             case StudioLeaveChoice.Cancel:
@@ -1647,13 +1698,10 @@ public sealed class StudioPageViewModel : StudioObservable
                 Inspector.DiscardPendingType();
                 IsLeaveModalOpen = false;
                 LeaveError = null;
-                _pendingNavigation = null;
+                _current.Session.Studio.PendingNavigationPageId = null;
                 Raise(nameof(LeaveBody));
-                if (navigation is not null)
-                {
-                    await navigation().ConfigureAwait(true);
-                }
-
+                if (navigationPageId is not null)
+                    await LoadPageCoreAsync(navigationPageId, CancellationToken.None).ConfigureAwait(true);
                 return StudioLeaveOutcome.Discarded;
 
             case StudioLeaveChoice.Save:
@@ -1661,11 +1709,8 @@ public sealed class StudioPageViewModel : StudioObservable
                 if (!HasUnsavedChanges)
                 {
                     CloseLeaveModal();
-                    if (navigation is not null)
-                    {
-                        await navigation().ConfigureAwait(true);
-                    }
-
+                    if (navigationPageId is not null)
+                        await LoadPageCoreAsync(navigationPageId, CancellationToken.None).ConfigureAwait(true);
                     return StudioLeaveOutcome.NoChanges;
                 }
 
@@ -1686,18 +1731,14 @@ public sealed class StudioPageViewModel : StudioObservable
 
                 IsLeaveModalOpen = false;
                 LeaveError = null;
-                _pendingNavigation = null;
+                _current.Session.Studio.PendingNavigationPageId = null;
                 Raise(nameof(LeaveBody));
-                if (navigation is not null)
-                {
-                    await navigation().ConfigureAwait(true);
-                }
-
+                if (navigationPageId is not null)
+                    await LoadPageCoreAsync(navigationPageId, CancellationToken.None).ConfigureAwait(true);
                 return StudioLeaveOutcome.Saved;
         }
     }
 
-    /// <summary>Guard used by the shell before leaving the Studio space. Returns false when a modal opened.</summary>
     public bool TryBeginLeave()
     {
         if (!HasUnsavedChanges)
@@ -1712,6 +1753,20 @@ public sealed class StudioPageViewModel : StudioObservable
     // ---------------------------------------------------------------- misc
 
     /// <summary>I1 fix: Host ready/read-only transitions must update the gate without a reload.</summary>
+    private void OnCurrentRunObserved(object? sender, CurrentRunObservedEventArgs e)
+    {
+        if (!string.Equals(_current.Session.Studio.RunId, e.RunId, StringComparison.Ordinal)) return;
+        void Update()
+        {
+            if (!string.Equals(_current.Session.Studio.RunId, e.RunId, StringComparison.Ordinal)) return;
+            RefreshPipelineBand();
+            RaiseMany(nameof(RunProjection), nameof(PipelineHeaderText), nameof(PipelineNotWired), nameof(PipelineWired));
+        }
+
+        if (Dispatcher.UIThread.CheckAccess()) Update();
+        else Dispatcher.UIThread.Post(Update);
+    }
+
     private void OnHostChanged(object? sender, EventArgs e)
     {
         _gate = BuildGate();

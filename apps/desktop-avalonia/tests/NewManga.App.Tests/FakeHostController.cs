@@ -1026,6 +1026,11 @@ public sealed class FakeHostController : IHostController
 
     public List<string> RunSnapshotRequests { get; } = new();
 
+    public Task? RunSnapshotGate { get; set; }
+
+    public TaskCompletionSource<bool> RunSnapshotGateStarted { get; } =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public List<string> TaskProjectionRequests { get; } = new();
 
     public List<(string RunId, string IdempotencyKey)> RetriedFailedRuns { get; } = new();
@@ -1162,7 +1167,24 @@ public sealed class FakeHostController : IHostController
     public Task<RunSnapshotInfo?> GetRunSnapshotAsync(string runId, CancellationToken ct = default)
     {
         RunSnapshotRequests.Add(runId);
+        if (RunSnapshotGate is { } gate)
+        {
+            return GetRunSnapshotAfterGateAsync(runId, ct, gate);
+        }
 
+        return GetRunSnapshotCore(runId, ct);
+    }
+
+    private async Task<RunSnapshotInfo?> GetRunSnapshotAfterGateAsync(
+        string runId, CancellationToken cancellationToken, Task gate)
+    {
+        RunSnapshotGateStarted.TrySetResult(true);
+        await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        return await GetRunSnapshotCore(runId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private Task<RunSnapshotInfo?> GetRunSnapshotCore(string runId, CancellationToken ct)
+    {
         if (string.IsNullOrWhiteSpace(runId) || ct.IsCancellationRequested)
         {
             PublishLastError(ct.IsCancellationRequested ? "CANCELLED" : "INVALID_REQUEST");

@@ -1,0 +1,13 @@
+$ git diff --check
+exit_code=0
+stdout:
+
+stderr:
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/Shell/V2/RunStatusMonitor.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/Shell/V2/ShellState.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioRunControllerDataSource.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs', LF will be replaced by CRLF the next time Git touches it

@@ -1,5 +1,6 @@
 using Avalonia.Threading;
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Frontends;
 using NewManga.CoreClient.Diagnostics;
 
 namespace NewManga.App.Shell.V2;
@@ -13,6 +14,9 @@ namespace NewManga.App.Shell.V2;
 /// </summary>
 public sealed class RunStatusMonitor : ObservableObject, IDisposable
 {
+    /// <summary>Current façade shared with the other V2 consumers (S5 one monitor).</summary>
+    public CurrentFrontend Current { get; }
+
     private readonly IRunController _controller;
     private readonly DispatcherTimer _timer;
     private string? _runId;
@@ -35,12 +39,16 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     public RunStatusMonitor(IRunController controller)
     {
         _controller = controller;
+        Current = CurrentFrontend.For(controller);
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) => _ = RefreshAsync();
     }
 
     /// <summary>Raised after every successful/attempted refresh (consumers re-read Snapshot/Projection).</summary>
     public event EventHandler? Updated;
+
+    /// <summary>Overload for Current consumers that already hold the façade.</summary>
+    public RunStatusMonitor(CurrentFrontend current) : this(current.Controller) { }
 
     public string? RunId => _runId;
 

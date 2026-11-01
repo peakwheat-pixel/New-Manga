@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj" />
     <ProjectReference Include="..\NewManga.Host\NewManga.Host.csproj" />
     <!-- V11R-INT: App consumes the new theme engine (contract App → ThemeEngine → DesignSystem). -->
     <ProjectReference Include="..\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj" />

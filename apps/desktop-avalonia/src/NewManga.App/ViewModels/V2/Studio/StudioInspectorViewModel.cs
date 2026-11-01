@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using NewManga.CoreClient;
+using NewManga.ApplicationCore;
 
 namespace NewManga.App.ViewModels.V2.Studio;
 
@@ -192,7 +193,6 @@ public sealed class StudioInspectorViewModel : StudioObservable
     private bool _isHistoryLoading;
     private string? _historyError;
     private string? _historyEmptyNote;
-    private string? _pendingRegionType;
     private string? _actionStatus;
 
     public StudioInspectorViewModel(StudioPageViewModel page)
@@ -279,22 +279,49 @@ public sealed class StudioInspectorViewModel : StudioObservable
 
     public IReadOnlyList<string> RegionTypeOptions { get; }
 
-    public string? PendingRegionType => _pendingRegionType;
+    internal DraftBuffer? PendingDraft => _page.PendingRegionTypeDraft;
+
+    public string? PendingDraftId => PendingDraft?.Snapshot.DraftId;
+
+    public string? PendingRegionType =>
+        _page.CurrentPageId is { } pageId && _page.SelectedRegion is { } region
+            ? _page.Current.ReadPendingRegionType(pageId, region.RegionId, region.RevisionNo)
+            : null;
 
     /// <summary>Selection index used by the 样式 tab ComboBox (VM-driven, no code-behind state).</summary>
     public int PendingRegionTypeIndex =>
-        _pendingRegionType is null ? -1 : RegionTypeOptions.ToList().IndexOf(_pendingRegionType);
+        PendingRegionType is { } pending ? RegionTypeOptions.ToList().IndexOf(pending) : -1;
 
     /// <summary>Sets the pending type; the commit is a separate step so "未保存更改" is real.</summary>
-    public void SetPendingRegionType(string? regionType)
+    public void SetPendingRegionType(string? regionType) => _ = SetPendingRegionTypeAsync(regionType);
+
+    public async Task SetPendingRegionTypeAsync(string? regionType)
     {
-        var normalized = string.IsNullOrWhiteSpace(regionType) ? null : regionType;
-        if (_pendingRegionType == normalized)
+        var region = _page.SelectedRegion;
+        if (region is null || _page.CurrentPageId is not { } pageId) return;
+        var normalized = string.IsNullOrWhiteSpace(regionType) ? null : regionType.Trim();
+        try
         {
+            if (normalized is null || string.Equals(normalized, region.RegionType, StringComparison.Ordinal))
+            {
+                _page.Current.ClearRegionTypeDraft(pageId, region.RegionId);
+            }
+            else
+            {
+                var draft = _page.GetOrCreateRegionTypeDraft();
+                await draft.ApplyPatchAsync(new DraftPatch(Style: new Dictionary<string, object?>
+                {
+                    ["regionType"] = normalized,
+                })).ConfigureAwait(true);
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            ReportAction($"类型草稿更新失败：{ex.GetType().Name}");
             return;
         }
 
-        _pendingRegionType = normalized;
+        Raise(nameof(PendingDraftId));
         Raise(nameof(PendingRegionType));
         Raise(nameof(PendingRegionTypeIndex));
         Raise(nameof(HasPendingTypeEdit));
@@ -305,9 +332,9 @@ public sealed class StudioInspectorViewModel : StudioObservable
     }
 
     public bool HasPendingTypeEdit =>
-        _pendingRegionType is not null &&
-        _page.SelectedRegion is { } region &&
-        !string.Equals(_pendingRegionType, region.RegionType, StringComparison.Ordinal);
+        PendingRegionType is { } pending &&
+        _page.SelectedRegion is { } selected &&
+        !string.Equals(pending, selected.RegionType, StringComparison.Ordinal);
 
     public bool ApplyRegionTypeEnabled => HasPendingTypeEdit && Gate.CanExecute(StudioCommand.SetRegionType);
 
@@ -318,7 +345,7 @@ public sealed class StudioInspectorViewModel : StudioObservable
             : Gate.Tooltip(StudioCommand.SetRegionType);
 
     public string PendingEditSummary => HasPendingTypeEdit
-        ? $"未保存：类型 {_page.SelectedRegion?.RegionType} → {_pendingRegionType}"
+        ? $"未保存：类型 {_page.SelectedRegion?.RegionType} → {PendingRegionType}"
         : "无未保存修改";
 
     public int RegionTypeIndex => _page.SelectedRegion is { } region
@@ -506,7 +533,9 @@ public sealed class StudioInspectorViewModel : StudioObservable
     /// <summary>Clears the pending type edit (放弃 path of the leave modal).</summary>
     public void DiscardPendingType()
     {
-        _pendingRegionType = null;
+        if (_page.CurrentPageId is { } pageId && _page.SelectedRegion is { } region)
+            _page.Current.ClearRegionTypeDraft(pageId, region.RegionId);
+        Raise(nameof(PendingDraftId));
         Raise(nameof(PendingRegionType));
         Raise(nameof(PendingRegionTypeIndex));
         Raise(nameof(HasPendingTypeEdit));

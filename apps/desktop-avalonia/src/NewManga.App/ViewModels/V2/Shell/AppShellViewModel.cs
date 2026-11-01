@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
+using NewManga.App.Shell.V2.Frontends;
 using NewManga.App.ViewModels.V2.Console;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.CoreClient;
@@ -39,8 +40,10 @@ public sealed class AppShellViewModel : ObservableObject
     public AppShellViewModel(IHostController controller, IFilePickerGateway? picker = null)
     {
         _controller = controller;
-        State = new ShellState();
-        RunMonitor = new RunStatusMonitor(controller);
+        Current = CurrentFrontend.For(controller);
+        CurrentFrontend.Activate(Current);
+        State = Current.CreateShellState();
+        RunMonitor = new RunStatusMonitor(Current);
         Library = new LibraryViewModel(controller, State, Notify, RequestConfirm, picker);
         Console = new ConsoleViewModel(
             controller,
@@ -152,6 +155,8 @@ public sealed class AppShellViewModel : ObservableObject
 
         RefreshChrome();
     }
+
+    public CurrentFrontend Current { get; }
 
     public ShellState State { get; }
 

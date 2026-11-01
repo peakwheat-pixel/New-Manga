@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl Loaded="OnLoaded" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
