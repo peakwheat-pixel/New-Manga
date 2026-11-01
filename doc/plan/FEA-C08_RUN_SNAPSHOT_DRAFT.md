@@ -27,6 +27,8 @@
 
 ## 2. 缺口（C-08 要冻结的）
 
+> **2026-11-01 补记**：下列缺口中的 SC-R06…SC-R09 四项为 D06 声明范围的补齐（[UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md)）。
+
 | 缺口 | 现状 | 影响 |
 |---|---|---|
 | **PreparedRun 抽象** | 无独立类型；`pipeline_runs` 行即「已接受任务」，但无「预览 → 接受」的两阶段语义 | 预览时展示的摘要与提交后的实际执行**可能不一致** |
@@ -63,6 +65,72 @@
 - `settings_snapshot_json`/`provider_binding_snapshot_json` 必须是**完整**的可重放值（不是引用指针）。
 - 缺失/不完整 → `AcceptRun` 拒绝（`RUN_SNAPSHOT_INCOMPLETE`，`unavailable` / `retryable=true`）。
 
+### SC-R06 控制 pending 状态（D06 声明范围）
+
+**引用 M2-C1 `:203`（不复写）**：`Running` 状态下 `pause`/`stop` **先持久化请求**，当前不可安全中断的 Step 可完成，到安全边界后不再开始下一步。
+
+**Run 侧不变量（本契约新增）**：
+
+1. **「控制请求已持久化」≠「状态已改变」**：`ControlRun` 成功返回只证明请求被 Core 接受并持久化，**不证明** Run 已进入 `paused`/`cancelled`。
+2. **UI 不得因控制受理而提前显示暂停或结束**：必须以 Core 持久化的 `status` 为准；受理后、状态变更前应显示**过渡态**（如「暂停中…」），而非「已暂停」。
+3. **状态变更的唯一权威**是 Core 的 Run 状态持久化（与 SC-R07 的权威源一致）。
+
+**验证**：发出 `pause` → 断言 `ControlResult.status` 仍可为 `running`；UI 断言显示过渡态；到安全边界后再查 → 断言 `status="paused"`。
+
+### SC-R07 真实完成口径（D06 声明范围）
+
+**权威持久状态**：Run 的完成状态只以 **Core 持久化的 Run/Task/StepRun 数据**为准（M2-C1 `:137`「同步响应表示接受，不表示长任务完成」；`:902`/`:1060`「事件不是状态真值」）。
+
+**完成判定（三条件同时满足）**：
+
+1. `status ∈ {completed, completed_with_failures, failed, cancelled}`（终态）；
+2. **目标结果与统计一致**：`targets.length = succeeded + failed`；`completed` ⇔ `failed = 0`；`completed_with_failures` ⇔ `failed > 0` 且 Run 正常结束；
+3. 该状态**已持久化**（不是仅存在于事件流或内存投影）。
+
+**明文的否定**：
+
+- **`RunAccepted` 不证明完成**——它只证明「接受」；
+- **事件不是状态真值**——事件可能丢失/乱序/重复，UI 必须能靠重读状态恢复；
+- **`GetTaskProjection` 的统计与 `RunSnapshot.status` 必须同源**。
+
+**验证**：构造 `status=completed` 但 `failed>0` 的投影 → 断言契约判定为非法态；断网重连 → 断言 UI 靠重读状态恢复而非依赖事件。
+
+### SC-R08 retry 的快照来源（D06 声明范围）
+
+**必须区分两种情形**：
+
+| 情形 | 键 | 是否新建 Run | 快照来源 |
+|---|---|---|---|
+| **同键重放** | 同一 `idempotency_key` | **否** | **不重新取快照**（M2-C1 `:200`：同键重放返回该 Run 当前状态） |
+| **新建失败目标重试** | 新 `idempotency_key` | **是**（`RetryFailedTargets`） | 见下 |
+
+**新 Run 的快照来源（明确回答）**：
+
+- **目标集合**：**复用**源 Run 的失败 Page 集合（M2-C1 `:206`），写 `source_run_id` + `retry_reason="retry_failed_targets"`；
+- **冻结上下文**（当前 Revision / Lock / settings / Provider / constraint / context）：**重新读取并冻结**——fingerprint 明确**不含**这些（M2-C1 `:204`）；
+- **结论**：retry **复用「目标集合」但不复用「冻结上下文」**；源 Run 的历史与快照**不变**（`:206`）。
+
+**对照 P11 §3.3**：新 Run 是**独立的 Run**，不是源 Run 的延续；`source_run_id` 只是溯源标记，不构成状态继承。
+
+**验证**：对 `completed_with_failures` 的 Run 发起 retry → 断言新 Run 有 `source_run_id`、目标是失败 Page 子集、其 `Targets` 的 Revision 是**接受时重新读取**的；同键重放 → 断言返回原 `run_id` 且未新建。
+
+### SC-R09 断线 receipt（D06 声明范围）
+
+**已有基础（M2-C1 `:200`，不复写）**：事务提交后响应丢失时，**同键重放须找回原 Run**。
+
+**补充三件事**：
+
+1. **覆盖范围**：仅对带 `idempotency_key` 的操作有效——`StartRun`、`RetryFailedTargets`、`ControlRun(action="restart")`（M2-C1 `:201`）。其余 `ControlRun` 动作与 `ResumeBlockedRun` **不得**传入该字段，因此不提供 receipt 找回能力。
+2. **查询方式**：**同键重放**是唯一找回入口；**不新增**「按 request 查询」的专用命令。
+3. **生命周期**：`idempotency_key` 记录**随 Run History 保留**（M2-C1 `:201`），不因 Run 结束而清理。
+
+**明文的否定**：
+
+- **`request_id` 不能充当去重键**：它是传输层标识（日志/追踪用），可能被复用或由不同层重新生成；去重必须用调用方生成的 `idempotency_key`；
+- **不得**用「时间窗口」近似去重（重启后时间基准不可靠）。
+
+**验证**：注入「提交成功但响应丢失」→ 同键重放 → 断言找回原 `run_id`、无第二个 Run；`request_id` 相同但 `idempotency_key` 不同 → 断言这是**两个不同操作**。
+
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
 - **C-01b**：Run 快照在 **SC-10b/SC-13**（备份覆盖清单/恢复索引）；本草案的 SC-R02/SC-R05 是对其的细化，不是新语义。
@@ -81,6 +149,7 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v5（FEA-D06-GAP）**：新增 **SC-R06 控制 pending 状态**、**SC-R07 真实完成口径**、**SC-R08 retry 快照来源**、**SC-R09 断线 receipt**四项，补齐 D06 六项声明范围；走 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md) | DSH |
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
 | 2026-11-01 | v2：处置 FEA-GOV-7 r1（P1-1 接口口径 + P2×3） | DSH |
 | 2026-11-01 | **v3（处置裁定 r3/r4）**：前置（b）落点改为**扩展 M2-C1 §5.5**（追加 2 命令 + 3 码进 §5.5 与 §8 ErrorEnvelope，不是新建章节/ErrorView）；引用 §2→§3；3 码补 category/retryable；wire minor **2.12** DSH 批准；冻结条件重排 | DSH |
