@@ -3,7 +3,7 @@ id: FEA-03
 title: FEA-03 草稿与保护协调（draft journal / edit token + receipt / candidate-only / 统一 apply / 锁白名单 / protectionDigest）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: dsh_ruling_2026-11-01_GOAL_Q1_Q11
 suggested_owner: codex
 owner: codex
@@ -18,7 +18,7 @@ integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
-review_appointment: "r1…r4 doc/reviews/FEA-03-scope-r1..r4.md（reviewer fea03-scope-reviewer，DSH fresh 独立上下文派发）"
+review_appointment: "r1…r5 doc/reviews/FEA-03-scope-r1..r5.md（reviewer fea03-scope-reviewer，DSH fresh 独立上下文派发）"
 evidence_dir: verification/FEA-03
 allowed_paths:
   - doc/tasks/FEA-03.md
@@ -43,14 +43,14 @@ allowed_paths:
   - verification/FEA-03/**
 ---
 
-# FEA-03 草稿与保护协调（范围冻结 v6，待独立复核）
+# FEA-03 草稿与保护协调（范围冻结 v6，独立复核 r5 approved，ready 交 Codex）
 
 ## 来源与授权
 
 1. 方案 §12.1 `:641`（draft journal / edit token / commit receipt / 保护 epoch / 应用草稿缓冲）；§15.6 `:923`。
-2. **契约**：[C-13 冻结 v5](../plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md)（pin `d2cb8de4…`）；[C-01b](../plan/FEA-CONTRACT-FROZEN-C01b.md)；[C-04b](../plan/FEA-CONTRACT-FROZEN-C04b.md)、[C-08](../plan/FEA-CONTRACT-FROZEN-C08.md)（均**不触**）；[C-05](../plan/FEA-CONTRACT-FROZEN-C05.md)。
+2. **契约**：[C-13 冻结 v6](../plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md)（pin `8faf1e80…`，SC-D11 经 UNFREEZE）；[C-01b](../plan/FEA-CONTRACT-FROZEN-C01b.md)；[C-04b](../plan/FEA-CONTRACT-FROZEN-C04b.md)、[C-08](../plan/FEA-CONTRACT-FROZEN-C08.md)（均**不触**）；[C-05](../plan/FEA-CONTRACT-FROZEN-C05.md)。
 3. **用户裁决** U-03=B。
-4. **DSH 裁决**：GOAL Q-1/Q-2/Q-3 + v2 处置 Q-6…Q-10 + **v3 处置 Q-11**（下述）。
+4. **DSH 裁决**：GOAL Q-1/Q-2/Q-3 + Q-6…Q-11（下述）；v2/v3/v4/v5/v6 处置见 Closeout。
 5. 复核：[r1](../reviews/FEA-03-scope-r1.md) `changes_requested`（P0×1/P1×7/P2×11）→ v2；[r2](../reviews/FEA-03-scope-r2.md)（P0×1/P1×5/P2×12）→ v3；[r3](../reviews/FEA-03-scope-r3.md)（P0=0 / P1×4 / P2×12，**UNFREEZE approved**）→ v4/v5；[r4](../reviews/FEA-03-scope-r4.md)（P0=0 / P1×2 / P2×12）→ 本版 v6。
 
 ## DSH 裁决落盘
@@ -76,12 +76,12 @@ allowed_paths:
 - **R-DRAFT-4**（U-03=B）：`(SessionId, RegionId)` 定 owner；同 Session 共享 `DraftId`；单串行 patch 队列；跨 Session 只读/显式转移；文本冲突禁止自动合并。
 
 ### R-JOURNAL / R-RECEIPT
-- **R-JOURNAL-1**：`<data-root>/drafts/` 为 app-owned 目录（只新建/替换自己的文件，不读改用户文件）；内容 = 11 字段 + `status`/`savedAt`。
+- **R-JOURNAL-1**：`<data-root>/drafts/` 为 app-owned 目录（只新建/替换自己的文件，不读改用户文件）；内容 = 11 字段 + `status`/`savedAt` + `commitIntent?`（intent 与 journal 同一原子写，处置 r5-P2-05）。
 - **R-JOURNAL-2**：写序 = `*.tmp` → flush + fsync 文件 → `os.replace` → 目录 fsync **平台降级**（Windows 上目录 fsync 不可用 → 退化为 `os.replace` 后不再 fsync，登记为已知限制，不阻塞）；启动清理 `*.tmp`，不得当作草稿。
 - **R-JOURNAL-3**：journal 与 revision 表分离；重启可读 → 恢复 `active` 不自动提交；损坏/不可读 → 丢弃提示、不阻塞启动。
 - **R-JOURNAL-4（可写性与单写者）**：**不依赖 Host 只读通道**（Core 无该输入）。判定 = ①data-root 目录不可写（OS 层）→ journal 写 fail-closed（`DRAFT_JOURNAL_UNWRITABLE`），内存草稿可继续编辑并标记不可持久化；②单写者 = `<data-root>/drafts/.lock` 独占文件锁（第二实例启动 fail-closed 并记录）；③Host 只读策略下的 UI 提示由 `FEA-04` 承担（deferral）。
 - **R-JOURNAL-5**：孤儿草稿（无活跃 Session）→ `discarded`；Session 结束清理其 journal；清理不删 receipt。
-- **R-RECEIPT-1**：每 `(DraftId, DraftSequence)` 一条 receipt 文件（`<data-root>/drafts/receipts/<DraftId>.<DraftSequence>.json`），含 `{tokenId, DraftId, DraftSequence, revisionIds: {regionId: revisionId}, contentDigest, committedAt}`（多 Region 用映射，处置 r3-P1-03）。
+- **R-RECEIPT-1**：每 `(DraftId, DraftSequence)` 一条 receipt 文件（`<data-root>/drafts/receipts/<DraftId>.<DraftSequence>.json`），含 `{tokenId, DraftId, DraftSequence, revisionIds: {regionId: revisionId}, contentDigests: {regionId: digest}, committedAt}`（多 Region 用映射，处置 r3-P1-03/r5-P2-06）；写序 = temp+fsync+`os.replace`，不可解析按缺失处理（r5-P2-08）。
 - **R-RECEIPT-2**：同 `(DraftId, DraftSequence)` 重放 → 读 receipt 返回同 `revisionIds`（不新增 revision）；receipt 缺失（崩溃窗口）→ 由 **R-APPLY-3 的 journal intent** 兜底；同 token 但 `contentDigests` 不同 → `EDIT_TOKEN_REUSED`。
 - **R-RECEIPT-3（清理）**：receipt 随 Draft 生命周期清理（Draft `discarded`/超过 7 天未活动时删除）；清理不得删除 journal；清理失败不得阻塞。
 
@@ -91,7 +91,7 @@ allowed_paths:
 - **R-CAND-2**：candidate 仅内存（Core 会话内），apply/discard/会话结束失效；**跨重启不找回**；跨命令用 Core 会话 registry 找回。
 - **R-APPLY-1**：一次 apply 全部 Region 在**同一 SQLite 事务**内；**复用/扩展 `commit_region_batch`**（`src/application/editing/ports.py:83`、`src/infrastructure/sqlite/regions.py:288`）；保护/digest 检查在事务内（在 `commit_region_batch` 的 `BEGIN IMMEDIATE` 内追加校验回调；**不改既有端口签名、不触 C-13 冻结记录铁律 2 所指的 `ports.py` 冻结面**），避免 TOCTOU。
 - **R-APPLY-2（优先级，处置 r2-P1-04/r4-P1-01）**：**重放命中优先于 stale**：先查 receipt（或 intent 恢复）命中 → 返回既有 `revisionIds`（不写、不判 stale）；未命中 → 再按 `BaseRevisionId` 判 stale → `STALE_BASE_REVISION`。**token 过期检查先于 receipt 命中**（SC-D04：过期提交拒绝，不静默接受）。
-- **R-APPLY-3（重放兜底，处置 r3-P1-02 / r4-P1-02）**：**不用 DB 内容去重**（`region_revisions` 无 base/内容列；`commit_region_batch` 事务不可从应用层访问）。**journal intent 方案**：apply 前写 `commitIntent{tokenId, DraftId, DraftSequence, expectedRevisionIds: {regionId: revisionId}, contentDigests: {regionId: digest}, startedAt}`；SQLite 事务提交后写 receipt，**receipt 写失败 → fail-closed 抛错**（进程不得继续写，重启由 intent 恢复）；apply 失败（stale/protection/DB）→ **finally 清 intent**。重启恢复：intent + receipt 都在 → 清 intent；intent 在、receipt 缺 → 逐 Region 判：`regions.current_revision_id == expectedRevisionIds[regionId]` **且**该 revision 的 `contentDigests[regionId]` 匹配 → 视为该 Region 已提交；全部匹配 → 补 receipt；否则清 intent 视为未提交。读 revision 用新增 `RegionRepository.revision_by_id(revision_id)`（写域内，不改既有端口签名）。digest 的 geometry 归一化用 `pages.width/height`（`schema.py:186-194`），取不到 → `PAGE_SIZE_UNAVAILABLE` fail-closed。**只用于新 token 路径**。
+- **R-APPLY-3（重放兜底，处置 r3-P1-02 / r4-P1-02）**：**不用 DB 内容去重**（`region_revisions` 无 base/内容列；`commit_region_batch` 事务不可从应用层访问）。**journal intent 方案**：apply 前写 `commitIntent{tokenId, DraftId, DraftSequence, expectedRevisionIds: {regionId: revisionId}, contentDigests: {regionId: digest}, startedAt}`（`expectedRevisionIds` = apply **预生成的新 revision id**，由既有 `_build_revision` 事务前生成；**不是** base id）；SQLite 事务提交后写 receipt，**receipt 写失败 → fail-closed 抛错**（进程不得继续写，重启由 intent 恢复）；apply 失败（stale/protection/DB）→ **finally 清 intent**。重启恢复：intent + receipt 都在 → 清 intent；intent 在、receipt 缺 → 逐 Region 判：`regions.current_revision_id == expectedRevisionIds[regionId]` **且**该 revision 的 `contentDigests[regionId]` 匹配 → 视为该 Region 已提交；全部匹配 → 补 receipt；否则清 intent 视为未提交。读 revision 用新增 `RegionRepository.revision_by_id(revision_id)`（写域内，不改既有端口签名）。digest 的 geometry 归一化用 `pages.width/height`（`schema.py:186-194`），取不到 → `PAGE_SIZE_UNAVAILABLE` fail-closed。**只用于新 token 路径**。
 
 ### R-LOCK / R-STYLE / R-DIGEST
 - **R-LOCK-1**：三锁语义同 SC-D09；candidate 生成与 apply 两路径都检查；`inpaint_locked` 不对 `style_json` 断言。
@@ -175,7 +175,7 @@ allowed_paths:
 | V17 | 改锁 / 改 manual 位 | `LOCK_CHANGED` 拒绝 | AC10 |
 | V18 | 旧路径同文两次 | 2 revision（C073 保持） | AC11 |
 | V19 | 旧→新（base 刷新 / 未刷新）、新→旧 | base 刷新 = 2 revision；未刷新 = stale 拒绝 1 revision；新→旧 = 2 revision；旧路径回归通过 | AC11 |
-| V20 | 重启后 token 重放（receipt 命中 / intent 兜底 / current 不匹配） | 同 revisionIds；intent 清；无第二 revision | AC15 |
+| V20 | 重启后 token 重放（receipt 命中 / intent 兜底 / current 不匹配） | 命中分支：同 revisionIds；兜底分支：补 receipt 并同 revisionIds；不匹配分支：清 intent、视为未提交、重放写第 1 个 revision（不返回旧 id） | AC15 |
 | V21 | 同 token 不同内容 / 多序列 / 过期重放 | `EDIT_TOKEN_REUSED`；各序列可命中；过期优先拒绝 | AC15 |
 | V22 | data-root 不可写（chmod / ACL 拒绝 或挂载只读） | `DRAFT_JOURNAL_UNWRITABLE`；内存草稿可编辑 | AC17 |
 | V23 | 双实例启动（两进程同 data-root；脚本化 spawn） | 第二实例 `.lock` fail-closed；释放后可启动 | AC17 |
@@ -186,7 +186,7 @@ allowed_paths:
 
 | 契约条款 | deferral 归属 | 说明 |
 |---|---|---|
-| C-13 `:94` 导出/删除 preflight 前必须 flush 或提示"有未保存草稿" | 导出实现 Task（FEA-06/07）+ 删除侧需 `CONTRACT-UNFREEZE-C04b` | 本卡不触 C-04b；只在 journal/草稿层提供可查询的"未保存草稿"状态 |
+| C-13 `:94` 导出/删除 preflight 前必须 flush 或提示"有未保存草稿" | `FEA-14-EXPORT`（方案 `:707`/`:953`）+ 删除侧需 `CONTRACT-UNFREEZE-C04b` | 本卡不触 C-04b；只在 journal/草稿层提供可查询的"未保存草稿"状态 |
 | C-13 SC-D02 的 UI 提示 | `FEA-04` | 本卡只保证结构化错误 |
 | C-13 SC-D11 旧路径统一去重 | `FOLLOW-UP-FEA03-3`（C-13 v6 已承接） | 旧路径 C073 语义不变 |
 | SC-D12 manual 位口径 | 本卡按 `text_json.translation_locked` + `manual_edited` 实现 | 不改 C-13 字节 |
