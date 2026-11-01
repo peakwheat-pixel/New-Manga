@@ -21,7 +21,7 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | IRunController | 6 |
 | **合计** | **61**（另有 4 个非方法成员：`HostViewSnapshot Snapshot`、`event EventHandler? Changed`、`int StartRequests`、`string ExportDirectorySuggestion`，均属 `IHostController`） |
 
-**变更类别**：`IHostController` 的 47 个中，**36 个为 V11R §5 `:239` 基线**（签名不得变），**11 个为 FEA 期间新增**（additive；冻结后同样只允许追加）。逐成员的新增/基线标注由实现 Task 在该行落地时补（本文档暂不逐行标）。
+**变更类别**：`IHostController` 的 54 个中，**36 个为 V11R §5 `:239` 基线**（签名不得变），**18 个为 FEA 期间新增**（additive；冻结后同样只允许追加）。逐成员的新增/基线标注由实现 Task 在该行落地时补（本文档暂不逐行标）。
 
 ## IReaderProgressSink
 

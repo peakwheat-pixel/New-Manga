@@ -2294,7 +2294,7 @@ public sealed class HostController : IHostController
             candidate.TryGetProperty("candidateId", out var id) ? id.GetString() ?? "" : "",
             candidate.TryGetProperty("RegionId", out var rid) ? rid.GetString() ?? "" : "",
             candidate.TryGetProperty("BaseRevisionId", out var baseRev) ? baseRev.GetString() ?? "" : "",
-            candidate.TryGetProperty("Origin", out var org) ? org.GetString() ?? "" : "");
+            candidate.TryGetProperty("origin", out var org) ? org.GetString() ?? "" : "");
     }
 
     public async Task<IReadOnlyDictionary<string, string>> ApplyCandidatesAsync(EditToken token,
@@ -2377,13 +2377,28 @@ public sealed class HostController : IHostController
         await commands.InvokeAsync("drafts_discard", System.Text.Json.JsonSerializer.SerializeToElement(new Dictionary<string, object?> { ["draftId"] = draftId, ["sessionId"] = sessionId }), cancellationToken).ConfigureAwait(false);
     }
 
-    private static Draft ReadDraft(System.Text.Json.JsonElement value) => new(
-        value.TryGetProperty("draftId", out var draftId) ? draftId.GetString() ?? "" : "",
-        value.TryGetProperty("sessionId", out var sessionId) ? sessionId.GetString() ?? "" : "",
-        value.TryGetProperty("pageId", out var pageId) ? pageId.GetString() ?? "" : "",
-        value.TryGetProperty("regionId", out var regionId) && regionId.ValueKind == System.Text.Json.JsonValueKind.String ? regionId.GetString() : null,
-        value.TryGetProperty("draftSequence", out var seq) && seq.TryGetInt32(out var sequence) ? sequence : 0,
-        value.TryGetProperty("status", out var status) ? status.GetString() ?? "" : "");
+    private static Draft ReadDraft(System.Text.Json.JsonElement value)
+    {
+        // Draft.to_json() (domain/drafts/entities.py:11 persisted SC-D01 fields).
+        var patch = value.TryGetProperty("patch", out var patchValue) && patchValue.ValueKind == System.Text.Json.JsonValueKind.Object
+            ? patchValue.Clone()
+            : (System.Text.Json.JsonElement?)null;
+        int? undo = value.TryGetProperty("undoCursor", out var undoValue) && undoValue.ValueKind == System.Text.Json.JsonValueKind.Number && undoValue.TryGetInt32(out var undoNumber)
+            ? undoNumber
+            : null;
+        return new Draft(
+            value.TryGetProperty("DraftId", out var draftId) ? draftId.GetString() ?? "" : "",
+            value.TryGetProperty("SessionId", out var sessionId) ? sessionId.GetString() ?? "" : "",
+            value.TryGetProperty("PageId", out var pageId) ? pageId.GetString() ?? "" : "",
+            value.TryGetProperty("RegionId", out var regionId) && regionId.ValueKind == System.Text.Json.JsonValueKind.String ? regionId.GetString() : null,
+            value.TryGetProperty("BaseRevisionId", out var baseRev) && baseRev.ValueKind == System.Text.Json.JsonValueKind.String ? baseRev.GetString() : null,
+            value.TryGetProperty("PageBindingVersion", out var binding) && binding.TryGetInt32(out var bindingNumber) ? bindingNumber : 0,
+            value.TryGetProperty("DraftSequence", out var seq) && seq.TryGetInt32(out var sequence) ? sequence : 0,
+            patch,
+            undo,
+            value.TryGetProperty("savedAt", out var savedAt) ? savedAt.GetString() ?? "" : "",
+            value.TryGetProperty("status", out var status) ? status.GetString() ?? "" : "");
+    }
 
     private static EditToken ReadEditToken(System.Text.Json.JsonElement value) => new(
         value.TryGetProperty("tokenId", out var tokenId) ? tokenId.GetString() ?? "" : "",
@@ -2393,20 +2408,7 @@ public sealed class HostController : IHostController
         value.TryGetProperty("issuedAt", out var issuedAt) ? issuedAt.GetString() ?? "" : "",
         value.TryGetProperty("expiresAt", out var expiresAt) ? expiresAt.GetString() ?? "" : "");
 
-    private static Dictionary<string, object?> DraftPatchJson(DraftPatchRequest patch)
-    {
-        var payload = new Dictionary<string, object?>(StringComparer.Ordinal);
-        if (patch.Text is not null)
-        {
-            payload["text"] = patch.Text;
-        }
-
-        if (patch.RegionType is not null)
-        {
-            payload["region_type"] = patch.RegionType;
-        }
-
-        return payload;
-    }
+    private static Dictionary<string, object?> DraftPatchJson(DraftPatchRequest patch) =>
+        patch.Patch.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
 }
 

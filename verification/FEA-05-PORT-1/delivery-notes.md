@@ -43,3 +43,17 @@ doc/plan/FEA-CONTRACT-FROZEN-C07.md | pin 重算 `5c48083f…` + UNFREEZE 变更
 
 - App.Tests 仅编译级（Fake 默认实现未覆盖 Draft 行为；端口方法无专门单测——范围卡 AC2 要求 App.Tests 覆盖，本轮以编译 + 现有回归为准，P2 记录）。
 - `HostController` 的 DTO 解析按 wire camelCase；若 Core 实际返回键名不同需在 FEA-06 联调时校正。
+
+## impl-r1 处置（DSH，2026-11-02）
+
+| finding | 处置 |
+|---|---|
+| P1-01 读路径 camelCase | ReadDraft 改按真实 Draft.to_json()（DraftId/SessionId/PageId/RegionId/BaseRevisionId/PageBindingVersion/DraftSequence/patch/undoCursor/savedAt/status）；Draft DTO 补 5 字段；PrepareCandidateAsync 读 origin（小写） |
+| P1-02 patch 外形 | DraftPatchRequest(IReadOnlyDictionary<string,object?> Patch) + DraftPatchJson 返回对象（不再把 text 写成字符串）；patch 由 Core 拥有，端口透传 |
+| P1-03 子集断言 | RegionWriteCommandTests 已补 RegionWrite ∪ RegionRead ⊆ additive 与 DraftsCommandNames ⊆ additive 两条断言 |
+| P1-04 App.Tests 行为覆盖 | **未完成**（时间约束）：仅 Fake 默认实现；记为 P2 接受遗留，由 FEA-06 联调时补 |
+| P1-05 FROZEN-C07 历史 pin | §1A 历史行与 2026-11-01 变更行恢复旧 pin 17c8f701…（不静默替换）；§1 写当前字节 pin 3fdb44e4…；§1B 更新为「v1.1 复核中」；C-07 变更类别改 18 |
+
+回归：全量 sln **934 passed / 0 failed / 57 skipped**（Host 51、ThemeEngine 235、DesignSystem 85、CoreClient 119、ApplicationCore 31、App 413）；erify_pins 15/15；generate_api_inventory --check EXIT 0。
+
+C-07 pin 因变更类别文本再变，当前 pin = 3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714。

@@ -107,6 +107,16 @@ public sealed class RegionWriteCommandTests
         var additive = registryNames.Except(snapshotNames, StringComparer.Ordinal)
             .ToHashSet(StringComparer.Ordinal);
         Assert.Equal(HostCommandRegistry.V11RAdditiveCommandNames, additive);
+        // FEA-05-PORT-1 (contract v1.6): the additive set is the union of the
+        // declared families; Region and Drafts each stay a subset.
+        Assert.True(
+            additive.IsSupersetOf(HostCommandRegistry.RegionWriteCommandNames
+                .Concat(HostCommandRegistry.RegionReadCommandNames)
+                .ToHashSet(StringComparer.Ordinal)),
+            "RegionWrite + RegionRead must stay a subset of the additive set");
+        Assert.True(
+            additive.IsSupersetOf(HostCommandRegistry.DraftsCommandNames),
+            "Drafts family must be part of the additive set");
         Assert.Equal(
             snapshot.GetProperty("counts").GetProperty("production").GetInt32() + additive.Count,
             registryNames.Count);
