@@ -126,3 +126,10 @@
 - 全量 sln **965/0/57**。
 - **剩余**：AC4（Windows IMotionPreferenceSource 实现 + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（收口）。
 - 进度：PREREQ-1 AC1/AC2/AC3 完成；AC4/AC5 待做。
+## 17. PREREQ-1 AC4 完成（2026-11-03）
+
+- WindowsMotionPreferenceSource（P/Invoke SPI_GETCLIENTAREAANIMATION，非 Windows/失败 → null）+ MotionResolver（auto/full/reduce + 判据①–⑤ + categories off）+ MotionSettings 纯函数；7 测试（27475bd8c）。
+- 全量 sln **972/0/57**。
+- **剩余**：AC5（uiltin.fluent-dark 主题包）、AC6（收口）。
+- 进度：PREREQ-1 AC1/AC2/AC3/AC4 完成（4/5）。
+- 教训：MotionResolver 的 reduce+feedback 语义（类别保留、Enabled=false）已在测试中固化，勿再改 IsEnabled 口径。
