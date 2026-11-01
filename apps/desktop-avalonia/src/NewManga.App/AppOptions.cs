@@ -88,7 +88,7 @@ public sealed class AppOptions
     /// <summary>Options that carry a value (both <c>--key=value</c> and <c>--key value</c> are accepted).</summary>
     private static readonly HashSet<string> ValueKeys = new(StringComparer.Ordinal)
     {
-        "data-root", "log-dir", "sidecar-dir", "mutex-name", "theme-home",
+        "data-root", "log-dir", "sidecar-dir", "mutex-name", "theme-home", "frontend",
         "theme", "theme-id", "shell", "variant", "page",
         "exit-after", "width", "height",
     };
