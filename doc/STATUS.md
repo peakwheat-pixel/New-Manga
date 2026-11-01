@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**无**（FEA-D06-GAP AC1–AC9 全 MET，待收口动作）。
+- 当前 Task：[FEA-D06-GAP](tasks/FEA-D06-GAP.md) `in_progress`（**AC1–AC9 全 MET**，待收口动作；两 Gate 已 CLOSED）。
 - 上一 Task：[FEA-D06-GAP](tasks/FEA-D06-GAP.md)（D06 四项补齐；C-08 v7 冻结；两 Gate 据此 CLOSED）。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)；保留项 L-1…L-9，L-5 整库恢复锁已明文认定）。**边界**：FEA-12 仍受 `G-DELETE-CONTRACT` 阻塞；四表 DDL 未冻（生产实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
