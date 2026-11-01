@@ -1,6 +1,6 @@
 # FEA-C03 外观持久化与字段迁移（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN v6 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C03.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-03、[V11R_AVALONIA_CONTRACT](../plan/V11R_AVALONIA_CONTRACT.md) §4（ThemeEngine 公开面冻结）、[FEA-C02 修订单草案](FEA-C02_V11R_AMENDMENT_DRAFT.md)（V-07）、代码现状（`NewManga.ThemeEngine/Persistence/ThemeSettingsStore.cs`、`Models/ThemeModels.cs`）
@@ -46,6 +46,7 @@
 ### 2.3 动效三态与分类模型
 
 - **三态**：`auto`（跟随系统）/ `full`（始终开启）/ `reduce`（始终减弱）。
+- **与方案 r4 的命名映射**（方案术语为描述性，契约以本草案键名为准）：方案 `on/off/system` → 本草案 `full/reduce/auto`；方案「页面过渡」→ `navigation`、「悬停」→ `feedback`、「浮层」→ `decorative`。
 - **分类模型**：动效按**用途**分 3 类，各自独立开关（`motion.categories`）：
   | 类别 | 示例 | 三态作用 |
   |---|---|---|
@@ -54,9 +55,10 @@
   | `decorative` | 背景渐变移动、粒子 | `reduce` 下**完全禁用** |
 - **兼容（迁移等价性，逐分支）**：
   - 旧 `true` → `motion.mode=reduce` **且三类全禁**（等价旧行为：`Motion.Reduced.axaml` 把所有时长置 0、`Nm.Motion.Enabled=false`）；
+    - **限定**：等价性按**持久化值域**成立；旧实现在 overlay 加载失败时（`SetReducedMotion(true)` 返回 `false`、`ReducedMotion` 保持 `false`）的**瞬时行为**不纳入映射（旧行为此时等同 full）。
   - 旧 `false` → **`motion.mode=full`**（等价旧行为：`DesignSystemThemeManager.SetReducedMotion(false)` 移除覆盖层、恢复完整动效）；
   - `auto`（跟随系统）是**新选项**，只由用户显式选择或新安装默认值产生，**不从旧布尔推导**。
-- **系统优先级（跨文档分歧，须裁决）**：方案 r4 `:866` 写「系统 reduced motion **覆盖所有类别**」；本草案原判据写「`full` 下不受系统设置影响」。两者不能同时成立。本草案取**用户显式优先**（`auto` 跟随系统 / `full` 显式覆盖 / `reduce` 强制减弱），理由：OS 设置是默认而非强制，应用内显式选择应被尊重；若要求系统优先，改 `full` 语义一行即可（见 U-05c）。
+- **系统优先级（跨文档分歧，须裁决）**：方案 r4 `:874` 写「系统 reduced motion **覆盖所有类别**」（另 `:1041` 同）；本草案原判据写「`full` 下不受系统设置影响」。两者不能同时成立。本草案取**用户显式优先**（`auto` 跟随系统 / `full` 显式覆盖 / `reduce` 强制减弱），理由：OS 设置是默认而非强制，应用内显式选择应被尊重；若要求系统优先，改 `full` 语义一行即可（见 U-05c）。
 - **适用域**：`motion.mode=auto` 时读取系统辅助功能设置——**Avalonia 11.3.22 无动画开关 API**，实现须走平台层：Windows 读 `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` 或 WinRT `UISettings.AnimationsEnabled`；`full`/`reduce` 为显式覆盖。**失败降级**：平台读取失败按 `full` 处理并记 warning；读取封装为 `IMotionPreferenceSource` 接口，便于单测注入失败分支。
 
 ## 3. 冻结前置与判据
@@ -83,7 +85,7 @@
 |---|---|---|---|
 | **U-05a** | 首阶段是否纳入动效三态与分类（而不是只有 `ReducedMotion` 布尔）？ | **是**（三态 + 三类，等价旧行为的迁移路径已给出） | 若否，Fluent 的动效分级无法表达 |
 | U-05b | 旧 `theme-settings.json` 是否在迁移后删除？ | **否**（转只读保留） | 删除会丢回退输入；保留成本极低 |
-| **U-05c** | 系统 reduced-motion 与用户显式 `full` 的优先级（本草案 vs 方案 r4 `:866` 冲突） | **用户显式优先**（`auto` 跟随 / `full` 覆盖 / `reduce` 强制） | 若改系统优先，`full` 语义与判据②需同步改 |
+| **U-05c** | 系统 reduced-motion 与用户显式 `full` 的优先级（本草案 vs 方案 r4 `:874`/`:1041` 冲突） | **A 用户显式优先**（`auto` 跟随 / `full` 覆盖 / `reduce` 强制） | 三案：**A** 用户显式优先（推荐）/ **B** 系统优先全覆盖（方案 r4 现状）/ **C** 系统优先但 `full` 需二次确认提示。B/C 均须同步改 `full` 语义与判据② |
 
 ## 6. 与现役/冻结契约的关系
 
@@ -99,4 +101,5 @@
 | 2026-11-01 | v2：补正式冻结条件（§4 四条，含 C-02 先冻结）；字段表补双 id 体系；全文 id 词汇与 C-02 V-07 对齐 | DSH |
 | 2026-11-01 | v3：处置 FEA-GOV-4-c03 r1（P1×2）——写者上移 `NewManga.Appearance` 的 `AppearanceCoordinator`、`IThemePersistence` 为适配面；`SaveAsync` 改兼容写不抛异常；P2×4（9 行/`theme.visualThemeId`/平台 API/行号） | DSH |
 | 2026-11-01 | v4：补 `ThemeService` 迁移判据 + 三态判据 ①–⑤ + 兼容期时序（K-1）+ 平台读取失败降级（K-3） | DSH |
+| 2026-11-01 | **v6（FEA-GOV-12 r1 的 5 条 P2）**：①方案行号 `:866`→`:874`（补 `:1041`）②U-05c 补第三案 C（系统优先 + `full` 二次确认）③§2.3 加方案术语映射（`on/off/system` ↔ `full/reduce/auto`、页面/悬停/浮层 ↔ navigation/feedback/decorative）④等价性限定为「持久化值域」，排除 overlay 加载失败的瞬时行为 | DSH |
 | 2026-11-01 | **v5（Codex 独立意见处置）**：①迁移矩阵 `false → auto` 改为 **`false → full`**（代码事实：旧 `false` = 移除覆盖层 = 完整动效；`auto` 是新选项不从旧布尔推导）②新增「系统优先级」分歧声明 + **U-05c** 裁决项（本草案 vs 方案 r4 `:866`）③判据②同步改 | DSH |

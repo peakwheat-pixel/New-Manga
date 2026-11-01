@@ -30,13 +30,18 @@
 - **下游**：**C-03 冻结条件③要求 C-02 先冻结 → 本记录使 C-03 解锁**；Fluent 实现 Task 释放须再满足 C-11 建卡 + 独立 Review。
 - **实现注意**：V-05 判据④ —— 禁止提高全局 `ThemeCorners.MaxRadius`；Fluent 圆角走独立键组 + 限定校验路径。
 
-## 4. 不构成什么
+## 4. 已知限制（冻结后发现）
+
+- **L-1**（来自 [FEA-GOV-12](../reviews/FEA-GOV-12-review.md) P2-5，2026-11-01）：V-05 判据④只禁「提高全局 `ThemeCorners.MaxRadius`」，未指定 Fluent 的「限定校验路径」落点——`ThemeValidator.ValidateCorner` 对所有 corner 键套共享上限，`Nm.Corner.Fluent.*` 的 4/6/8 需要独立路径。**不得为此 UNFREEZE C-02**；由 FEA-05 实现 Task 在 `ThemeValidator` 内加限定路径（不改全局上限）解决。
+
+## 5. 不构成什么
 
 - **不构成**实现授权（实现须按 C-11 选候选 → 建 Task → 独立 Review）。
 - **不构成**远端 push 授权。
 
-## 5. 变更记录
+## 6. 变更记录
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |
+| 2026-11-01 | 补 §4 已知限制 L-1（冻结后发现，来自 FEA-GOV-12 P2-5） | DSH |
