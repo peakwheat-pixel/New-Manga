@@ -9,8 +9,7 @@
 
 > **当前进度（2026-11-01）**：用户 6 项裁决已落盘（含 U-03=B）（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 12 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-08 / C-11 / C-12 / C-13（D04）/ **C-14（D05）**。**Gate 判定**（[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md)，2026-11-01）：`G-CONTRACT`（D05）**✅ 满足**；`G-DELETE-CONTRACT`（D04–D07）**❌ 不满足**——D04 ✓、D05 ✓，但 **D06 有 4 项声明范围无条款**、**D07 多项未冻且与 C-09 循环**。仅剩 **C-09**（不可冻）、**C-10**（U-03 已裁，可起草）。
 >
-> **Gate 判定**（[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md)）：`G-CONTRACT`（D05）**✅ 满足**；`G-DELETE-CONTRACT`（D04–D07）**❌ 不满足**——D04 ✓（C-13）、D05 ✓、**D06 缺 4 项**（控制 pending 状态 / 真实完成口径 / retry 复用快照 / 断线 receipt）、**D07 多项未冻且与 C-09 循环**（三路径 ProtectionPolicy / 备份覆盖清单 / `backup/2` / 旧包 adapter / 调度归属 / catalog 归属）。
-
+> **Gate 判定（最终，2026-11-01）**：`G-CONTRACT` **✅ CLOSED**（[裁定](GATE-CONTRACT-CLOSURE-2026-11-01.md)）；`G-DELETE-CONTRACT` **✅ CLOSED**（[裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，D04–D07 全覆盖，`approved` r3）。**保留项 L-1…L-9**（尤其 L-5 整库恢复锁认定）与 **Errata** 见该裁定。\n
 ---
 
 ## 1. 总表

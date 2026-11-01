@@ -57,7 +57,7 @@ allowed_paths:
 - [x] **AC6 独立复核** `approved`（P0/P1 = 0）。 <<MET>>
 - [x] **AC7 C-08 重新冻结**：新 pin + 冻结记录 §1A/§1B 更新；`verify_pins.ps1` PASS。 <<MET>>
 - [x] **AC8 D04–D07 完整覆盖检查**（表已建，待独立复核）：四项补齐后重跑完整覆盖核对（不是只看 D06），确认无其它缺口。 <<MET>>
-- [ ] **AC9 重新判定 `G-DELETE-CONTRACT`**：AC8 通过后才可关闭；**不引入「部分关闭」**。 <<MET>>
+- [x] **AC9 重新判定 `G-DELETE-CONTRACT`**：AC8 通过后才可关闭；**不引入「部分关闭」**。 <<MET>>
 
 ## 禁止范围
 
@@ -75,7 +75,7 @@ allowed_paths:
 | AC3 | 条款 vs M2-C1 `:200`/`:206` + P11 §3.3 | 文档 | NOT_RUN | 待补 |
 | AC4 | 条款 vs M2-C1 `:200` | 文档 | NOT_RUN | 待补 |
 | AC5–AC7 | UNFREEZE + 复核 + 重冻 | 只读 | PASS | r12 approved；pin `453f993c…` |
-| AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `doc/plan/D04-D07-COVERAGE-CHECK-2026-11-01.md` |
+| AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `FEA-D04D07-COVERAGE-r3` approved |\n| AC9 | `G-DELETE-CONTRACT` 判定 | 文档 | PASS | `doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md` |
 
 ## Canonical Evidence
 
