@@ -24,7 +24,7 @@
 | 6 | **C-06** 授权面 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b 冻结 ✅ ③`G-CONTRACT` **不阻塞**（裁定 R-1′）④wire v1.1 DSH 批准 ✅ | C-01b | `G-CONTRACT: OPEN` |
 | 7 | **C-07** API inventory | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
 | 8 | ~~C-08 Run 快照~~ | ~~`approved` r2~~（**已被 #12 FROZEN 取代**） | — | — | — |
-| 9 | **C-09** 删除/备份/迁移 | **`FROZEN`** 2026-11-01 | ①C-01b/C-04b/C-06/C-08/C-14 冻结 ②`G-CONTRACT` 关闭 ✅（**不再要求 `G-DELETE-CONTRACT`**——解环，见 [D07 解环](FEA-D07-UNBLOCK.md)） | C-01b | 无（Gate 不阻塞） |
+| 9 | **C-09** 删除/备份/迁移 | **`FROZEN`** 2026-11-01 | ①C-01b/C-04b/C-06/C-08/C-14 冻结 ②`G-CONTRACT` 关闭 ✅（**不再要求 `G-DELETE-CONTRACT`**——解环，见 [D07 解环](../tasks/FEA-D07-UNBLOCK.md)） | C-01b | 无（Gate 不阻塞） |
 | 10 | **C-11** 候选表口径 | **`FROZEN`** 2026-11-01 | ①C-01b 或 C-02 至少其一冻结 | C-01b/C-02 | 无 |
 | 11 | **C-12** 检查器边界 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②检查器现有断言与 §2 表一致（可机械核对）③`check.ps1` PASS | 无 | 无硬阻塞 |
 | 13 | **C-13** 草稿与保护（D04） | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②U-03=B 裁决 ③C-01b 冻结 | C-01b | 无（Gate 不阻塞） |

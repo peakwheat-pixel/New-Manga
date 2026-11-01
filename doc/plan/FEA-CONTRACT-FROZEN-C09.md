@@ -90,5 +90,6 @@
 - `FEA-CONTRACT_FREEZE_MATRIX.md` 的 Gate 判定块 → 已由 `2ed4ed91a` 更正；
 - `ADJ-001 §9 :128` → 已由 `2ed4ed91a` 更正；
 - **`FEA-C13_DRAFT_PROTECTION_DRAFT.md:203` 保持原字节**（冻结契约正文；修改须走 `CONTRACT-UNFREEZE-C13` + 重冻 + 重算 pin）。
+- **失效引用 errata（用户 2026-11-01 U-10：失效引用通过追加 errata 澄清）**：C-09 **草案**内指向 `FEA-D07-UNBLOCK.md` 的相对链接在其所在目录（`doc/plan/`）下解析失败；真实位置是 `doc/tasks/FEA-D07-UNBLOCK.md`。因草案字节已冻结（pin `dc51226b…`），**不修改草案字节**，以本条澄清：该引用应读作 `../tasks/FEA-D07-UNBLOCK.md`。
 
 §6「不构成 `G-DELETE-CONTRACT` 的关闭（D06 仍有 4 项缺口）」为**冻结时**状态描述；现行 `G-DELETE-CONTRACT` **CLOSED（2026-11-01）**、`G-CONTRACT` **CLOSED**；`G-DELETE-IMPL` 仍 **OPEN**（未释放实现）。C-09 草案字节未改（pin `dc51226b…`）。

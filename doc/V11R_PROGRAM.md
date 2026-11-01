@@ -2,7 +2,7 @@
 
 状态：`ACTIVE`（2026-10-30 起，DSH 为 Lead / Architect / Integrator）
 权威性：本文件是本程序内**唯一任务 DAG**；运行状态以 [STATUS](STATUS.md) 为准；本程序取代 [REBASELINE_PLAN](REBASELINE_PLAN.md) 中"READY 节点：无"的旧结论。
-上游依据：[AD-002 目标架构](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、[V1.1 审计](V11_AUDIT_V1_1.md)（见 §1.3）、**冻结设计基线** `doc/design/redesign-v1/40-fusion/{FUSION_SPEC,DESIGN_SYSTEM}.md` + `tokens.json`。
+上游依据：[AD-002 目标架构](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)、V1.1 审计（`V11_AUDIT_V1_1.md` 当前不在仓库；errata 2026-11-01：见 checkpoint，不静默补链）、**冻结设计基线** `doc/design/redesign-v1/40-fusion/{FUSION_SPEC,DESIGN_SYSTEM}.md` + `tokens.json`。
 
 ---
 

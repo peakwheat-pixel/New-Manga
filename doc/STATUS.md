@@ -6,7 +6,7 @@
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
 - 当前 Task：[FEA-C10-DRAFT](tasks/FEA-C10-DRAFT.md) `approved`（**未冻结，待用户裁定阈值 `T`**）；上一 Task：[FEA-CONTRACT-WRAP-1](tasks/FEA-CONTRACT-WRAP-1.md) `done`。
 - rolling checkpoint：[AUTONOMOUS-2026-11-01](checkpoints/AUTONOMOUS-2026-11-01.md)（STATUS 指定的当前恢复点）。
-- **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 仍受 `G-DELETE-CONTRACT` 阻塞；四表 DDL 未冻。
+- **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
 - 下一候选：**C-10 冻结**（草案 v3 已 `approved`；冻结待用户裁定阈值 `T` 与条款终稿）；实现线须按 C-11 选候选 → 建 Task → 独立 Review（`G-DELETE-IMPL` 仍 OPEN）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；13 份契约已冻结承载；[FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 待冻结。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
