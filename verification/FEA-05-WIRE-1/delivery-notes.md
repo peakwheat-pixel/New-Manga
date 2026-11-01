@@ -34,3 +34,16 @@
 - C081 响应 { "<region_id>": "<region_revision_id>" } 按 pply_candidates 真实返回值；receipt 元数据不在 wire 返回。
 - drafts_status 按 payload 二选一（draftId/sessionId），两者都给或都不给 → DRAFT_INVALID。
 - Python 测试用 fake 服务（不依赖 SQLite/assembly），真实集成由后续 FEA-05-PORT-1 的端到端覆盖。
+
+## impl-r1 处置（DSH，2026-11-02）
+
+| finding | 处置 |
+|---|---|
+| P1-01 C081 多包一层 | _dispatch_draft_command 直接 eturn drafts.apply_candidates(...)（裸映射 {region_id: revision_id}）；测试断言同步 |
+| P1-02 §3 逐码表错 | 从 drafts.py 实际 17 码重写：DRAFT_FLUSH_TRIGGER_INVALID/DRAFT_NOT_FOUND/DRAFT_CANDIDATE_NOT_FOUND/DRAFT_OWNER_CHANGED/EDIT_TOKEN_REUSED/STALE_BASE_REVISION/DRAFT_APPLY_FAILED 已入表；删除不存在的 3 码；_DRAFT_ERROR_CATEGORY 同步 17 码 |
+| P1-03 主契约 12 处表格被改坏 | git checkout be9265b34 -- doc/contracts/V11R_COMMAND_CONTRACT_V1.md 恢复，再精确追加 §8.2 与 §10（不改其它行） |
+| P1-04 §10/§8 标题 | §8 标题扩为「C067–C077 … 与 C078–C083 Draft 命令面」；§10 追加 FEA-05 行（去重后单 §10） |
+| P1-05 AC4 覆盖 | 新增 	est_each_command_rejects_invalid_payload（8 组非法 payload）与 	est_drafts_dispatch_is_registered_and_typed（dispatcher 注册）；测试 9 → 11 项 |
+| P2-02 retryable | 保留 LOCK_CHANGED=true（W-4 已冻「锁冲突 true」；impl-r1 建议再裁，记为 P2 接受遗留） |
+
+回归：pytest tests/core tests/domain -q → **899 passed, exit 0**；dotnet test CoreClient.Tests --filter "CommandContractV11RTests|RegionWriteCommandTests" → **80 passed, 0 failed**。

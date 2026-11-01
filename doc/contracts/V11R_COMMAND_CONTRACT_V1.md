@@ -15,7 +15,7 @@
 ## 1. 使用方式与状态语义
 
 | 状态 | 含义 | 可依赖的内容 |
-|---|---|---|---|---|---|---|
+|---|---|---|
 | `FROZEN` | 注册表绑定 + Dispatcher 参数约束（或 Core 严格 key 集校验）+ Core 源码行 + 至少一个真实请求/响应样例（或等价测试断言）全部可核实 | 路由、通道、protocol minor、入参键集、成功结果外形、已定位错误码族 |
 | `PARTIAL` | 上述证据链有一项缺失（典型：Dispatcher 透传未约束入参；Host-local 无自动化样例；结果未在 C# 类型化） | 仅可依赖已写明的部分；缺口列在 §6 |
 | `GAP` | 无注册绑定或无法核实 | 不得据此实现 UI |
@@ -36,7 +36,7 @@
 异步事件帧混在 stdout（`event_type`/`event_id`，无 `request_id`），客户端必须过滤（`CoreProtocol.IsEventFrame`）。
 
 | minor | 用途 | 约束 |
-|---|---|---|---|---|---|---|
+|---:|---|---|
 | 3 | 默认应用命令（读、settings 基础、cleanup/backup/plugin、Region/Reader、Run/Export） | 请求 `minor` 必须等于 3（`_P15_SETTINGS_COMMANDS`/`_RUN_COMMANDS` 之外按 3 校验） |
 | 7 | P15 settings / provider / network / credential 面（C015–C031） | Core 拒绝 minor≠7（`core_service.py:3706-3711`） |
 | 8 | `CreateBook` / `CreateChapter`（C036/C037） | Core 拒绝 minor≠8（`core_service.py:240,3504-3518`） |
@@ -54,7 +54,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.1 Settings（33 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C001 | `settings_get` | `settings.get` | core | 3 | 透传（Core 校验；实测空 payload） | `{settings}` | §5.1 | — | **PARTIAL** | registry:127 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:1754（handle_settings_get）；core_service.py:3927-3960（settings 分支） · 样例参考: `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C002 | `settings_update_section` | `settings.update_section` | core | 3 | `section!: string` `values!: object` | `{settings}` | §5.1 | — | **FROZEN** | registry:135 · HostCommandDispatcher.cs:175 · src/bootstrap/core_service.py:1773（handle_settings_update_section）；core_service.py:3927-3960（settings 分支） · 样例(wire): `verification/NS-WIRE-A1/probe-results.json` |
 | C003 | `cleanup_preview` | `cleanup.preview` | core | 3 | 透传（Core 校验；实测空 payload） | `{pending_cleanups, targets, total_bytes}` | §5.1 | — | **PARTIAL** | registry:130 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:1845（handle_cleanup_preview） · 样例参考: `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
@@ -92,7 +92,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.2 Library（8 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C034 | `library_list_books` | `ListBooks` | core | 3 | 透传（Core 校验；实测空 payload） | `[{ book_id, created_at, is_archived, is_favorite, original_title, page_count, title, updated_at }]` | §5.1 | UI | **FROZEN** | registry:120 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:3783-3806（ListBooks 分支） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C035 | `library_list_recycle_bin_books` | `ListRecycleBinBooks` | core | 3 | 透传（Core 校验；实测空 payload） | `[array]` | §5.1 | — | **FROZEN** | registry:121 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:3733-3760（ListRecycleBinBooks 分支） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C036 | `library_create_book` | `CreateBook` | core | 8 | `{title!}`（Core `_CREATE_FIELDS`，:244-247） | `{book_id, created_at, is_archived, is_favorite, original_title, page_count, title, updated_at}` | §5.3 | UI | **FROZEN** | registry:122 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:3531（handle_create_book 调用；校验 :921-941） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
@@ -105,7 +105,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.3 Region（6 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C042 | `set_region_type` | `set_region_type` | core | 3 | `region_id!: string` `new_region_type!: string` `expected_revision?: int` | `{region_id, region_type, revision_no, sfx_policy}` | §5.7 | UI | **FROZEN** | registry:177 · HostCommandDispatcher.cs:394 · src/bootstrap/core_service.py:1979（handle_set_region_type）；src/bootstrap/core_service.py:4164 · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C043 | `list_regions` | `list_regions` | core | 3 | 透传（Core 校验；实测 payload：`{page_id}`） | `{page_size, regions}` | §5.7 | UI | **FROZEN** | registry:126 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:2054（handle_list_regions）；src/bootstrap/core_service.py:4165 · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C044 | `list_region_revisions` | `list_region_revisions` | core | 3 | `region_id!: string` | `{current_revision_no, region_id, revisions}` | §5.7 | UI | **FROZEN** | registry:197 · HostCommandDispatcher.cs:389 · src/bootstrap/core_service.py:2085（handle_list_region_revisions）；src/bootstrap/core_service.py:4166 · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
@@ -116,7 +116,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.4 Reader（4 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C048 | `list_chapters` | `list_chapters` | core | 3 | 透传（Core 校验；实测 payload：`{book_id}`） | `{chapters}` | §5.1 | UI | **FROZEN** | registry:124 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:4334-4350（list_chapters 分支） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C049 | `list_chapter_pages` | `list_chapter_pages` | core | 3 | 透传（Core 校验；实测 payload：`{chapter_id}`） | `{pages}` | §5.1 | UI | **FROZEN** | registry:125 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:4334-4360（list_chapter_pages 分支） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C050 | `library_get_reader_projection` | `GetReaderProjection` | core | 3 | `chapter_id!: string` `mode!: string` `start_position!: string` | `{book_id, chapter_id, last_page_id, last_read_at, mode, progress_percent, scroll_offset_y, total_read_seconds}` | §5.6 | UI | **FROZEN** | registry:142 · HostCommandDispatcher.cs:239 · src/bootstrap/core_service.py:3653-3654（handle_get_reader_projection） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
@@ -125,7 +125,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.5 Resource（3 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C052 | `issue_resource_url` | — | bridge | — | `resource_id!: string` `revision!: string` | `{id, size}`（HostCommandDispatcher.cs:118-124） | §5.9 | 间接UI | **FROZEN** | registry:94 · HostCommandDispatcher.cs:109 · —（无 Core 路由） · 样例(test): `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:237` |
 | C053 | `revoke_ref` | — | bridge | — | `opaque_id!: string` | `{revoked:true}`（HostCommandDispatcher.cs:135-140） | §5.9 | 间接UI | **FROZEN** | registry:95 · HostCommandDispatcher.cs:127 · —（无 Core 路由） · 样例(test): `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:245` |
 | C054 | `revoke_resource_refs` | — | bridge | — | `resource_id!: string` | `{revoked_count}`（HostCommandDispatcher.cs:151-156） | §5.9 | 间接UI | **FROZEN** | registry:96 · HostCommandDispatcher.cs:143 · —（无 Core 路由） · 样例(test): `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:251` |
@@ -133,7 +133,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ### 4.6 Workbench（12 条）
 
 | ID | 前端命令 | 路由目标 | 通道 | minor | 入参（校验/实测） | 结果外形（实测/类型） | 错误码族 | UI 消费者 | 状态 | 源码引用 · 样例 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|:--:|---|---|---|---|---|---|
 | C055 | `core_ping` | `core.ping` | core | 3 | 透传（Core 校验；实测空 payload） | `{capabilities, protocol_version, status}` | §5.1 | Host启动 | **FROZEN** | registry:119 · HostCommandDispatcher.cs:417（default 透传） · src/bootstrap/core_service.py:3610-3613（core.ping 分支） · 样例(wire): `verification/S4-CMD-BATCH-1/commands/core-command-probe.json` |
 | C056 | `library_start_run` | `StartRun` | core | 3 | `command!: string` `idempotency_key!: string` `scope!: object` `overrides?: object` | `RunStartInfo{run_id,status}`（App/Services/RunContracts.cs） | §5.5 | — | **FROZEN** | registry:147 · HostCommandDispatcher.cs:198 · src/bootstrap/core_service.py:3256（_dispatch_run_command）; :3273-3300（StartRun 分支） · 样例(wire): `verification/V11R-A-2/core-wire-run.ndjson` |
 | C057 | `library_control_run` | `ControlRun` | core | 3 | `run_id!: string` `action!: string` `idempotency_key?: string` | `RunControlInfo{run_id,status,new_run_id?,new_run_status?}`（RunContracts.cs） | §5.5 | — | **FROZEN** | registry:148 · HostCommandDispatcher.cs:207 · src/bootstrap/core_service.py:3256; :3301-3321（ControlRun 分支） · 样例(wire): `verification/V11R-A-2/core-wire-run.ndjson` |
@@ -150,7 +150,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ## 5. 错误码族（源码定位）
 
 | 族 | 错误码集 | 源码 |
-|---|---|---|---|---|---|---|
+|---|---|---|
 | §5.1 `settings-generic` | 通用应用 envelope：`INVALID_REQUEST` / `PROTOCOL_VERSION_UNSUPPORTED` / `UNKNOWN`（core_service.py:3589+）；命令特定码见 §5.1 | 见族内引用 |
 | §5.2 `p15` | P15 settings：`SETTINGS_INVALID_INPUT` / `SETTINGS_NOT_FOUND` / `SETTINGS_CONFLICT` / `SETTINGS_UNAVAILABLE`（core_service.py:3372-3388、3706-3731；settings_commands.py:106-112） | 见族内引用 |
 | §5.3 `create` | 创建面：`PROTOCOL_VERSION_UNSUPPORTED` / `INVALID_REQUEST`(+details) / `TARGET_NOT_FOUND` / `LIBRARY_WRITE_FAILED` / `UNKNOWN`（core_service.py:3504-3559、921-941） | 见族内引用 |
@@ -167,7 +167,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 ## 6. 缺口清单（PARTIAL / GAP 逐条）
 
 | ID | 命令 | 缺口 |
-|---|---|---|---|---|---|---|
+|---|---|---|
 | C001 | `settings_get` | Dispatcher 未约束入参（透传），结果投影未在 C# 类型化；已实测成功样例，错误码集未逐条运行核实 |
 | C003 | `cleanup_preview` | Dispatcher 未约束入参（透传），结果未在 C# 类型化；错误码集未逐条运行核实 |
 | C007 | `backup_list` | Dispatcher 未约束入参（透传），结果未在 C# 类型化；错误码集未逐条运行核实 |
@@ -204,7 +204,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 四条 StartRun 使用同一有效 book scope 对照）：
 
 | 变体 | 请求 minor | overrides | 实测响应 |
-|---|---|---|---|---|---|---|
+|---|---:|---|---|
 | (a) 普通 overrides | 3 | `provider_bindings` | `{"run_id":"run-44e5…","status":"pending"}` → 成功 |
 | (b) Provider 覆盖 | 3 | `provider_profiles` | `INVALID_REQUEST`（"Run request is invalid"；Core 源码 :3283-3284 的 minor 门拒绝） |
 | (c) Provider 覆盖 | 7 | `provider_profiles` | `INVALID_REQUEST` + `details={phase:"binding",action:"select_profile",message_key:"SETTINGS_INVALID_INPUT"}` → 已进入 P15 `prepare_run_snapshot`，需要有效 provider profile 配置才可能成功 |
@@ -217,7 +217,7 @@ Host-local 与 HostBridge 命令没有 Core minor（表中记 `—`）。
 UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRunAsync` 只承诺
 `provider_bindings` 等普通 overrides；`provider_profiles` 应视为未支持的边界并在 UI 禁用/提示。
 
-## 8. C067–C077 增量命令（PENDING, V11R-F0-1 / F0-2）
+## 8. C067–C077 增量命令（PENDING, V11R-F0-1 / F0-2）与 C078–C083 Draft 命令面（PENDING, FEA-05-WIRE-1）
 
 `V11R-F0-1`（core-writer）为 Region 写面新增 10 条 Host 命令，命令总数从 66 增至 76；`V11R-F0-2` 另新增
 1 条 Region 文本投影读命令（C077），合入后为 77。本表保留 `PENDING` 状态，**不得**当作已冻结契约。
@@ -242,17 +242,18 @@ UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRu
 把它们当稳定契约消费；`CommandContractV11RTests` 会断言这 11 条不进入"已冻结集合"。
 
 
+### 8.2 C078–C083 Draft 命令面（PENDING, FEA-05-WIRE-1）
 
-`FEA-05-WIRE-1` 为 Core drafts 服务新增 6 条 Host 命令（Draft 域），命令总数从 77 增至 83；本表保留 `PENDING`，**不得**当作已冻结契约。上游契约（本卡产出）：`doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md`。
+`FEA-05-WIRE-1` 为 Core drafts 服务新增 6 条 Host 命令（Drafts 域），命令总数从 77 增至 83。本表保留 `PENDING`，**不得**当作已冻结契约；上游契约：`doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md`。
 
-| ID | 前端命令（待合入） | 域 | 预期通道 | minor | 参数外形（待 FEA-05 契约确认） | 状态 |
+| ID | 前端命令（待合入） | 域 | 预期通道 | minor | 参数外形（见 FEA-05 契约 §2） | 状态 |
 |---|---|---|---|---|---|---|
-| C078 | `drafts_open` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
-| C079 | `drafts_patch` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
-| C080 | `drafts_prepare` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
-| C081 | `drafts_apply` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
-| C082 | `drafts_status` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
-| C083 | `drafts_discard` | Drafts | core | 3（zero protocol bump） | 见 FEA-05_DRAFT_WIRE_CONTRACT.md §2 | `PENDING(FEA-05-WIRE-1)` |
+| C078 | `drafts_open` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
+| C079 | `drafts_patch` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
+| C080 | `drafts_prepare` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
+| C081 | `drafts_apply` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
+| C082 | `drafts_status` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
+| C083 | `drafts_discard` | Drafts | core | 3（zero protocol bump） | 见契约 §2 | `PENDING(FEA-05-WIRE-1)` |
 
 约束：`C078–C083` 在 `FEA-05_DRAFT_WIRE_CONTRACT.md` 合入并由 DSH 签发前，任何一方不得在 UI 中把它们当稳定契约消费；`CommandContractV11RTests` 会断言这 6 条不进入"已冻结集合"。
 
@@ -272,5 +273,8 @@ UI 侧结论：在命令路径升级为 minor=7 之前，`IRunController.StartRu
 ## 10. 变更记录
 
 | 日期 | 变更 | 记录 |
-|---|---|---|---|---|---|---|
+|---|---|---|
 | 2026-10-30 | 初版：C001–C066 逐条签发（FROZEN {frozen} / PARTIAL {partial} / GAP {gap}）+ C067–C076 PENDING + minor 兼容结论 | core-bridge（V11R-A-3） |
+
+
+- 2026-11-02（FEA-05-WIRE-1）：§8.2 新增 C078–C083 Draft 命令面（6 条，PENDING）；命令总数 77 → 83；上游契约 `doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md`。

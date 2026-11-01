@@ -124,7 +124,7 @@ def test_drafts_apply_passes_whole_token_and_candidate_ids():
         "drafts_apply", {"token": token, "candidateIds": ["c1", "c2"]}
     )
     assert drafts.calls[0] == ("apply", token, ("c1", "c2"))
-    assert result == {"revisions": {"r1": "rev2"}}
+    assert result == {"r1": "rev2"}
 
 
 def test_drafts_status_requires_exactly_one_selector():
@@ -176,3 +176,38 @@ def test_error_envelope_uses_frozen_category_table():
 
     cause = _draft_error_envelope(DraftError("INTERNAL", "boom", cause_code="E_X"))
     assert cause["details"] == [{"causeCode": "E_X"}]
+
+def test_each_command_rejects_invalid_payload():
+    server = _server(_FakeDrafts())
+    cases = [
+        ("drafts_patch", {"draftId": "d1"}),
+        ("drafts_patch", {"draftId": "d1", "sessionId": "s1", "patch": "not-an-object"}),
+        ("drafts_prepare", {"regionId": "r1", "patch": {}}),
+        ("drafts_prepare", {"regionId": "r1", "patch": "x", "origin": "user"}),
+        ("drafts_apply", {"token": "not-an-object"}),
+        ("drafts_apply", {"token": {}, "candidateIds": "not-a-list"}),
+        ("drafts_discard", {"draftId": "d1"}),
+        ("drafts_open", {"sessionId": "s1"}),
+    ]
+    for command, payload in cases:
+        with pytest.raises(DraftError) as excinfo:
+            server._dispatch_draft_command(command, payload)
+        envelope = _draft_error_envelope(excinfo.value)
+        assert envelope["code"] in ("DRAFT_INVALID", "DRAFT_PATCH_INVALID", "EDIT_TOKEN_INVALID")
+        assert envelope["category"] == "validation"
+
+
+def test_drafts_dispatch_is_registered_and_typed():
+    """The command surface is wired into the request dispatcher, not just the helper."""
+    import inspect
+
+    source = inspect.getsource(CoreServiceServer._dispatch_request)
+    for command in (
+        "drafts_open",
+        "drafts_patch",
+        "drafts_prepare",
+        "drafts_apply",
+        "drafts_status",
+        "drafts_discard",
+    ):
+        assert command in source

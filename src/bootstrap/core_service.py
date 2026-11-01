@@ -825,19 +825,24 @@ def make_error_envelope(
 
 
 _DRAFT_ERROR_CATEGORY: dict[str, str] = {
+    # 17 codes raised by application/editing/drafts.py (FEA-05 §3).
     "DRAFT_INVALID": "validation",
     "DRAFT_PATCH_INVALID": "validation",
     "DRAFT_CANDIDATE_INVALID": "validation",
-    "DRAFT_READ_ONLY": "conflict",
-    "DRAFT_SEQUENCE_MISMATCH": "conflict",
-    "DRAFT_ALREADY_FLUSHED": "conflict",
+    "DRAFT_FLUSH_TRIGGER_INVALID": "validation",
     "EDIT_TOKEN_INVALID": "validation",
-    "EDIT_TOKEN_EXPIRED": "conflict",
-    "EDIT_TOKEN_DRAFT_CHANGED": "conflict",
-    "LOCK_CHANGED": "conflict",
+    "DRAFT_NOT_FOUND": "not_found",
+    "DRAFT_CANDIDATE_NOT_FOUND": "not_found",
     "TARGET_NOT_FOUND": "not_found",
-    "PAGE_SIZE_UNAVAILABLE": "unavailable",
+    "DRAFT_READ_ONLY": "conflict",
+    "DRAFT_OWNER_CHANGED": "conflict",
+    "EDIT_TOKEN_EXPIRED": "conflict",
+    "EDIT_TOKEN_REUSED": "conflict",
+    "STALE_BASE_REVISION": "conflict",
+    "LOCK_CHANGED": "conflict",
     "DRAFT_JOURNAL_UNWRITABLE": "unavailable",
+    "PAGE_SIZE_UNAVAILABLE": "unavailable",
+    "DRAFT_APPLY_FAILED": "internal",
     "INTERNAL": "internal",
     "UNKNOWN": "validation",
 }
@@ -3036,7 +3041,7 @@ class CoreServiceServer:
             candidate_ids = payload.get("candidateIds") or []
             if not isinstance(candidate_ids, list):
                 raise DraftError("EDIT_TOKEN_INVALID", "candidateIds must be a list")
-            return {"revisions": drafts.apply_candidates(token, candidate_ids)}
+            return drafts.apply_candidates(token, candidate_ids)
         if command == "drafts_status":
             draft_id = payload.get("draftId")
             session_id = payload.get("sessionId")
