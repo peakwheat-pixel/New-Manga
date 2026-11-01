@@ -140,3 +140,10 @@
 - **剩余 3 条 P1**：P1-3（旧 	heme-settings.json 迁移/兼容写）、P1-8（AC4 判据⑤迁移测试/④ navigation 专项）、P1-9（fluent-dark 需 ThemeGen 生成 + 
 m.fluent.visual/1 manifest + Material/Elevation 取值 + 校验测试）。
 - 全量 **974/0/57**；TokenGen/ThemeGen --check up to date。
+## 19. PREREQ-1 impl-r1 续处置（2026-11-03）
+
+- **P1-3 关闭**（f088770e）：ReadMotion 元组化、educedMotion=true→三类全禁、旧 	hemeId→frontendId、FollowSystemAccent 旧键回退、AppearanceStore 读旧 	heme-settings.json 迁移（13 测试）。
+- **P1-8 关闭**：判据⑤迁移测试 + navigation 专项测试；注释按设计 02 对齐。
+- 全量 **977/0/57**。
+- 进度：impl-r1 的 10 条 P1 → **9 关闭，1 剩余（P1-9 主题包生成）**。
+- 下一步：P1-9（BuiltInThemeGenerator 支持第二主题目标 + manifest + Material/Elevation + 校验测试）→ 派 impl-r2。
