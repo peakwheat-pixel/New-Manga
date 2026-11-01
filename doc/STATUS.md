@@ -4,11 +4,11 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-D06-GAP](tasks/FEA-D06-GAP.md) `in_progress`（D06 四项已补入 C-08 并经 r12 复核通过；AC1–AC9 全部 MET，待收口）。
-- 上一 Task：[FEA-D07-UNBLOCK](tasks/FEA-D07-UNBLOCK.md)（AC1–AC7 MET；C-09 已冻结，D07 覆盖完成）。
+- 当前 Task：**无**（FEA-D06-GAP AC1–AC9 全 MET，待收口动作）。
+- 上一 Task：[FEA-D06-GAP](tasks/FEA-D06-GAP.md)（D06 四项补齐；C-08 v7 冻结；两 Gate 据此 CLOSED）。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)；保留项 L-1…L-9，L-5 整库恢复锁已明文认定）。**边界**：FEA-12 仍受 `G-DELETE-CONTRACT` 阻塞；四表 DDL 未冻（生产实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（`R`=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
-- 下一候选：[FEA-D06-GAP](plan/TASKS-D06-D07.md#fea-d06-gap)（D06 四项，待激活）；C-10 交互契约（U-03 已裁，可起草）。
+- 下一候选：C-10 交互契约（U-03 已裁，可起草）；实现线须按 C-11 选候选 → 建 Task → 独立 Review（`G-DELETE-IMPL` 仍 OPEN）。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2；[Appointment](reviews/FEA-00-dsh-r8-appointment.md)）；下一步逐条冻结 C-01…C-12 → 冻结 [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) → 释放 Task。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)，删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。**Source 线冻结前 `blocked`。**
 - 历史基线：`V11R-BASELINE-1` `done`（main 已集成；586 通过 / 52 环境性跳过 / 0 失败）。
 - 审查报告统一在 `doc/reviews/`。

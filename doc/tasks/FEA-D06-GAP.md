@@ -94,4 +94,5 @@ allowed_paths:
 
 ## Closeout Record
 
-- 待关闭时填写。
+- 2026-11-01 / DSH：AC1–AC9 全部 MET。C-08 v7 冻结 pin `453f993c…`；AC8 覆盖检查 r3 `approved`；AC9 关闭裁定 r3 `approved`（两 Gate 均 CLOSED）。
+

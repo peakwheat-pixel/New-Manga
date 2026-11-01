@@ -45,7 +45,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-D06-GAP（in_progress，SC-R06…R09 已补待复核）+ FEA-D07-UNBLOCK（AC1–AC7 MET）；13 份契约冻结；`G-CONTRACT` CLOSED / `G-DELETE-CONTRACT` CLOSED（2026-11-01）
+当前 DAG：契约冻结线**已完成**（13 份冻结，两 Gate CLOSED 2026-11-01）；下一候选 C-10（U-03 已裁）与实现线（`G-DELETE-IMPL` OPEN）
 
 ## 历史快照（终态节点，非当前 DAG）
 

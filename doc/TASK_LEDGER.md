@@ -9,8 +9,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 481 |
 | terminal | 469 |
 | non-terminal | 11 |
-| non-terminal named in the plan | 3 |
-| non-terminal outside the plan | 8 |
+| non-terminal named in the plan | 1 |
+| non-terminal outside the plan | 10 |
 | task files tracked by git | 481 |
 | task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 11 |
@@ -39,8 +39,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `FEA-C14-DRAFT` | `in_progress` | no |
-| `FEA-D06-GAP` | `in_progress` | mentioned |
-| `FEA-D07-UNBLOCK` | `in_progress` | mentioned |
+| `FEA-D06-GAP` | `in_progress` | no |
+| `FEA-D07-UNBLOCK` | `in_progress` | no |
 | `FEA-GOV-11` | `in_progress` | no |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
