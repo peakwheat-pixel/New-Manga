@@ -1,6 +1,6 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`11a8c4ae8`（FEA-05-PORT-1 done；FEA-05-WIRE-1 done；FEA-04b in_review；FEA-04/C11-PREREQ-1 done）
+**当前 HEAD**：`383c46c3b`（FEA-04b/05-PORT-1/05-WIRE-1/04 done；FEA-06 拆前置 proposed）
 **主推进**：`FEA-05-WIRE-1` Draft 命令面 wire **done**（范围 r1–r7、实现 impl-r1–r3 approved；全量 931/0/60）；`FEA-04b` 设计基线 r5 approved（AC5 待用户确认）
 
 ---
@@ -88,3 +88,9 @@
 - 交付：Region 契约 **v1.6 UNFREEZE**（DraftsCommandNames 6；不变式并集 17）+ CONTRACT-UNFREEZE-2026-11-02.md + C-07 库存 54/61/18 + C-07 pin 重算 3fdb44e4…（重冻）+ HostCommandDomain.Drafts + DraftCommands.cs DTO + registry（6 条/17/CoreBindings）+ dispatcher 6 case/XOR + IHostController 7 方法 + HostController/NullHostController/FakeHostController + DraftCommandRegistryTests（9）+ DraftPortDefaultTests（6）。
 - 验证：全量 sln **949 passed / 0 failed / 57 skipped**；erify_pins **15/15**；pi inventory --check EXIT 0；check.ps1 PASS。
 - **待裁决**：Q-28（FEA-06 UI 消费的前置：FEA-04b AC5 用户确认、FEA-05 契约 §8.2 状态升级路径——§8.2 状态列须保持 PENDING 否则 CommandContractV11RTests 红）；Q-23（FEA-04b 批准）。
+## 11. FEA-04b 冻结 + FEA-06 拆分（2026-11-03）
+
+- **FEA-04b done**：设计基线 luent-v1.0.0 **FROZEN**（DSH 裁决，Q-23：用户确认不可得 → 以 r5 approved 独立复核 + DSH 冻结替代；用户后续修订走 v1.1）；11 文件；erification/FEA-04b/design-baseline-selfcheck.md。
+- **FEA-06 建卡 + 范围 r1**（doc/reviews/FEA-06-scope-r1.md，P0×2/P1×7/P2×11）：P0-1「C-03 外观持久化实现不存在」、P0-2「Fluent frontend 激活/V2 并存 + 组合根不在写域」。
+- **处置**：拆 **FEA-06-PREREQ-1**（C-03 NewManga.Appearance + AppearanceCoordinator + G-1/G-1b/G-1c 令牌 + 三态动效）与 **FEA-06-PREREQ-2**（FrontendSelector + 双壳 + Views/Fluent 骨架）；主卡缩窄为四页内容（W-5/W-6/W-7/W-8：双壳、空间映射、令牌归属、状态矩阵；AC3 错误映射表冻结；AC5 字段清单；AC2–AC5 绑  9-state-matrix.md）。
+- **待裁决**：Q-29（FEA-06 三卡的范围复核 r2 派发顺序：PREREQ-1 → PREREQ-2 → 主卡；推荐先 PREREQ-1）；Q-30（suggested_owner: dsh 与 ZCode UI 主责冲突——ZCode 未安装，DSH 代实现，记录为故障转移事实）。
