@@ -12,7 +12,7 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md` |
-| sha256 | `465739684111bfa080ca71e684eccafd8c5162a5142a54dac5f8f898df4cbd3c` |
+| sha256（冻结后最终字节） | `b798dd8a9b3839ac0c8e18e19dd3d515080075db53d83726e18cf76343beaef8` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
