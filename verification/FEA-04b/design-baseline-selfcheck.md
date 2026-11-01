@@ -10,7 +10,7 @@
 |---|---|---|---|
 | AC1 | 四页规格齐全，含所有状态（空/载入/错/满）与响应式断点 | `05-page-shelf.md`、`06-page-workbench.md`、`07-page-reader.md`、`08-page-settings.md`、`09-state-matrix.md`、`04-layout-responsive.md` | 四页各含状态表；断点 Compact/Medium/Expanded/Wide 在 04 §2 与各页 §5 |
 | AC2 | `Nm.Corner.Fluent.*`/`Nm.Material.*`/`Nm.Elevation.*` 取值 + C-02 V-05 判据①对表 | `01-design-tokens.md` §2/§3 | 取值表 + 对表 + 裸值禁令 |
-| AC3 | 三类动效 × `auto`/`full`/`reduce` 参数，满足 C-03 §3 判据 ①–⑤ | `02-motion.md` §2/§3 | 三张参数表 + 判据逐条对应 |
+| AC3 | 三类动效 × `auto`/`full`/`rreduce` 参数，满足 C-03 §3 判据 ①–⑤ | `02-motion.md` §2/§3 | 三张参数表 + 判据逐条对应 |
 | AC4 | 焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b KeyMap 无冲突 | `03-accessibility.md` | 键位表来自 `ShellCommands.cs`；四页 Tab 序；高对比降级；AutomationProperties |
 | AC5 | 用户确认 + 独立 Review + DSH 冻结 | 待办 | 用户确认未进行（自主推进模式，已登记待裁决）；独立 Review 待派发 |
 
@@ -21,8 +21,8 @@
 | C-02 §6.1 空间/模式/surface | `SpaceId.Library/Studio/Console`、`StudioMode.Page/Batch`、`ShellSurface.Spaces/ThemeStudio/ReaderOverlay` 未新增 | ✓（README §1、05–07 页 ID） |
 | C-02 V-05 令牌 | 只引用 C-02 已定义的 Fluent 令牌名（`Corner.Fluent.*`/`Material.*`/`Elevation.*`）；未新增令牌名 | ✓（01 §1） |
 | C-02 V-08b KeyMap | 全局键位来自 `ShellCommands.cs`；Fluent 不私建注册表；上下文键三元 | ✓（03 §1） |
-| C-03 动效三态/三类 | `auto/full/reduce` + `navigation/feedback/decorative`；浮层归 `navigation`；判据 ①–⑤ | ✓（02 §1–§3） |
-| C-03 外观字段 | 设置页字段与 `presentation-settings.json` 迁移后字段一致；`AppearanceCoordinator` 唯一写者 | ✓（08 §3） |
+| C-03 动效三态/三类 | `auto/full/rreduce` + `navigation/feedback/decorative`；浮层归 `navigation`；判据 ①–⑤ | ✓（02 §1–§3） |
+| C-03 外观字段 | 设置页字段与 `presentation-settings.json` 迁移后字段一致；`AappearanceCoordinator` 唯一写者 | ✓（08 §3） |
 | C-05 页可见性 | 四页不新增页；阅读器为 overlay | ✓（07 页 ID） |
 
 ## 3. 已知缺口 / 待裁决
@@ -49,8 +49,13 @@
 |---|---|
 | P1-01 令牌名自造/错误 | 全库替换为既有冻结名：Nm.Color.Bg.*、Nm.Color.Accent.*、Nm.Color.Status.*、Nm.Color.Text.*、Nm.FontSize.*、Nm.Icon.Size；01 新增「焦点环（第四组）」说明（Nm.Border.Focus + Nm.Color.Accent.Ring，无 Nm.Focus.Ring.* 族） |
 | P1-02 尺寸/断点冲突 | 01 新增 **G-1b**：全部复用既有 Nm.Size.*（TopBand 36/TreeWidth 200/FilmStrip 56/200/Inspector 40/320/Row 24/26/StatusBand 28/24/ControlHeight）与三档断点 Narrow/Compact/Full（1024/1280/1600）；04 重写骨架与断点表，删除自造四档 |
-| P1-03/P1-04 键盘/a11y | 03 命令 Id 改 go.to/xport.run；四页 Tab 序与 05–08 对齐（补 film-strip、阅读器顺序、设置返回）；06 明确无修饰 Tab 被 studio.mode.toggle 占用，页签条内改用 ←/→ |
-| P1-05 AC3 判据⑤ | 02 判据⑤ 补断言：旧值 → educe + 三类「关」；新增 motion.categories 关闭语义（关 = 该类在 ull 下也按 educe 列） |
+| P1-03/P1-04 键盘/a11y | 03 命令 Id 改 go.to/export.run；四页 Tab 序与 05–08 对齐（补 film-strip、阅读器顺序、设置返回）；06 明确无修饰 Tab 被 studio.mode.toggle 占用，页签条内改用 ←/→ |
+| P1-05 AC3 判据⑤ | 02 判据⑤ 补断言：旧值 → reduce + 三类「关」；新增 motion.categories 关闭语义（关 = 该类在 ull 下也按 reduce 列） |
 | P1-06 09 矩阵 | 补 4 格定义（阅读器无筛选/冲突/运行态、设置无冲突/运行态）；书架「扫描中」与「运行中」去重；gate 引用改为 06 §3/§4 |
-| P1-07 08 设置字段 | 对齐 C-03 §2.2 键名：ppearance/contrast/corners/material/motion.mode/motion.categories/layout.*/ollowSystemAccent/schemaVersion；设置页宿主引用 ShellSurface.ThemeStudio |
+| P1-07 08 设置字段 | 对齐 C-03 §2.2 键名：appearance/contrast/corners/material/motion.mode/motion.categories/layout.*/followSystemAccent/schemaVersion；设置页宿主引用 ShellSurface.ThemeStudio |
 | P2-14 治理指针 | STATUS/PLAN 已同步 in_review |
+## 6. r2 / r3 复核处置（DSH，2026-11-02）
+
+- **r2（P1×4）**：①焦点环改「C-02 V-03 第四组缺失 + G-1c」；②05–08 断点改 Narrow/Medium/Compact/Full、尺寸改 Nm.Size.*；③删 06 Ctrl+Tab；④判据⑤改「所有类别时长（含 feedback 颜色过渡）=0ms」。
+- **r3（P1×1）**：①06:24 Compact→Narrow（两处）；②05/06/08 图中 72/240 裸值→Nm.Size.TreeWidth(200)；③07 高 40/36→Nm.Size.ControlHeight。
+- 证据表 12 项 sha256 已按最终文件重算（commit 统一 173d156d → 最新提交）。
