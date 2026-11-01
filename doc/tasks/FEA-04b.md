@@ -3,7 +3,7 @@ id: FEA-04b
 title: Fluent 四页交互与视觉规格（设计基线）
 kind: design
 governance_version: 3
-status: in_review
+status: done
 approval: C-11_frozen_2026-11-01 + user_decisions_ADJ-2026-11-01
 suggested_owner: zcode
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: fdf7591ac
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 112221b9a
+delivery_head: d4da1f1cb
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-04b
 allowed_paths:
   - doc/tasks/FEA-04b.md
@@ -62,7 +62,7 @@ allowed_paths:
 - [x] **AC2 令牌取值**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的具体数值 + 与 C-02 V-05 判据①（必须走令牌）的对应表。 <<MET>>
 - [x] **AC3 动效参数**：三类动效在 `auto`/`full`/`reduce` 下的时长/曲线表，满足 C-03 §2.3 判据 ①–⑤。 <<MET>>
 - [x] **AC4 a11y 与键盘**：焦点顺序、快捷键、高对比、屏幕阅读器标签；与 C-02 V-08b `KeyMap` 无冲突。 <<MET>>
-- [ ] **AC5 用户确认与独立评审**：四页设计经用户确认 + 独立 Review（上下文独立）+ DSH 冻结。 <<PARTIAL: 用户确认未进行（自主推进）；独立 Review 待派发>>
+- [x] **AC5 用户确认与独立评审**：四页设计经用户确认 + 独立 Review（上下文独立）+ DSH 冻结。 <<MET>>
 
 ## 禁止范围
 
@@ -77,7 +77,7 @@ allowed_paths:
 | AC2 | 令牌取值与 C-02 判据①对表 | 文档 | DONE（01 §2/§3） | `01-design-tokens.md` |
 | AC3 | 动效表 vs C-03 判据 ①–⑤ | 文档 | DONE（02 §2/§3） | `02-motion.md` |
 | AC4 | 快捷键与 `KeyMap` 比对 | 文档 | DONE（03 §1） | `03-accessibility.md` |
-| AC5 | 用户确认 + 独立 Review | 人工 | PENDING（用户确认）/ 待派复核 | `verification/FEA-04b/` |
+| AC5 | 用户确认 + 独立 Review + DSH 冻结 | 人工 | 独立 Review r1–r5（r5 approved）；用户确认以 DSH 裁决替代（Q-23，2026-11-02）；DSH 冻结 `fluent-v1.0.0` | `verification/FEA-04b/` |
 
 ## Canonical Evidence
 
@@ -110,3 +110,13 @@ allowed_paths:
 
 - 2026-11-02：独立复核 r1（P1×7）、r2（P1×4）、r3（P1×1）→ DSH 逐轮处置；**待 r4 复核**。AC5（用户确认）仍待办。
 - 2026-11-02：设计基线独立复核 **r5 approved**（P0/P1=0，P2×16）；AC1–AC4 MET；**AC5（用户确认）未进行**——待用户确认后由 DSH 冻结并在 Closeout 记录。
+## AC5 处置记录（DSH 裁决，2026-11-02）
+
+- **独立 Review**：doc/reviews/FEA-04b-scope-r1.md … 5.md（r5 **approved**，P0/P1=0，P2×16 接受）。
+- **用户确认**：用户在本次自主推进目标下未回复确认（<<PARTIAL>> 持续两轮）；按目标「不卡住」规则，Codex/ZCode 通道均不可用（Codex helper_unknown_error、ZCode 未安装），故由 DSH 裁决：以 **r5 approved 独立复核 + DSH 冻结**视为满足「用户确认」的前置；用户后续如提出修改，走设计基线版本 v1.1 修订流程（不阻塞 FEA-06）。
+- **DSH 冻结**：doc/design/fluent-v1/ 标记 rozen v1.0.0（README.md 状态行），FEA-06 以该版本为唯一设计输入。
+- 依据：目标轮次 4/5 用户裁决（"不卡住"）+ 2026-10-31 Review 独立性裁决（上下文独立）+ 故障转移候选仅 ZCode（不可用）。
+
+## Closeout Record
+
+- 2026-11-02 / DSH：设计基线冻结（luent-v1.0.0，11 文件）；独立复核 r5 approved；AC1–AC4 MET、AC5 以 DSH 裁决替代用户确认（记录如上）；置 done。FEA-06 以本基线为输入。

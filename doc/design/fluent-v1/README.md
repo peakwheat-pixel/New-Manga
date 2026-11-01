@@ -1,6 +1,6 @@
 # Fluent v1 设计基线（FEA-04b）
 
-**版本**：`fluent-v1.0.0`（设计基线，非代码）
+**版本**：`fluent-v1.0.0`（**FROZEN 2026-11-02**，DSH 裁决；独立复核 r5 approved）（设计基线，非代码）
 **Task**：`doc/tasks/FEA-04b.md`（design，写域 `doc/design/fluent-v1/**`）
 **上游契约**：C-02（V11R 修订单，已冻结：V-05 Fluent 视觉例外、V-08b `KeyMap`）、C-03（外观持久化，已冻结：`motion.mode` 三态、`motion.categories` 三类）、C-05（页可见性，已冻结）
 **上游方案**：`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` §12.1/§15.3/§15.6
