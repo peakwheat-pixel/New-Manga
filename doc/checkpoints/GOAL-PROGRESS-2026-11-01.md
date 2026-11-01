@@ -66,3 +66,10 @@
 **FOLLOW-UP 登记**：`FOLLOW-UP-FEA03-1` SC-D11 原条款与新路径实现的长期协调（UNFREEZE 已承接，待后续 Task）；`FOLLOW-UP-FEA03-2` C-13 `:173` manual 位引用口径（本卡按 `text_json.translation_locked`+`manual_edited` 实现，无需再改）；`FOLLOW-UP-FEA03-3` 旧路径统一去重（后续 Task，按 C-13 v6 新路径优先）。
 
 
+
+## 3D. FEA-03 实现交付（2026-11-02 00:40）
+
+- Codex 实现完成（分支 `feat/fea-03`，commit `7a31c331e`，base `b83bc7703`）：CORE（draft/journal/receipt/intent/candidate/apply/locks/digest）+ BRIDGE（DraftBuffer.cs）+ 证据。
+- 集成验证（DSH 侧）：`python -m pytest tests/core tests/domain tests/editing tests/infrastructure -q` → **1050 passed / 0 failed**（基线 885 + 新增 165）；主仓库 `verify_pins` 15/15 PASS；`check.ps1` PASS。
+- 修复 Codex 环境无法覆盖的问题：journal 文件锁改为**目录锁 + 同进程共享 + 残留 PID 清理**（解决 Windows WinError 32 / 锁文件不可读 / 重启测试 DRAFT_JOURNAL_LOCKED）；`CoreServices.close()` 释放 journal 锁；评测测试配套适配。
+- 交付待上下文独立实现复核（`doc/reviews/FEA-03-r1.md`）。
