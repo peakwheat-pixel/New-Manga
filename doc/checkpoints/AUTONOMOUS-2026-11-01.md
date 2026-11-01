@@ -22,7 +22,7 @@
 | 2 | 收口 `FEA-C14-DRAFT` | **done**（收口材料 `ff432e97c`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C14-CLOSEOUT-r1.md`（approved，P0/P1=0，P2×6 非阻断） | R1 条件：done 为纯元数据回填；P2-1/5 在 done 处理，P2-2/3/4/6 未修（非阻断） |
 | 3 | L-3 Errata（裁定 `:63`/`:111` + C04b/C08/C13/C09 注记） | **approved**（`14e6e6a3c`；P2 修复 `500aa6b27`） | PASS (3w) | 13/13 | `doc/reviews/FEA-WRAP-ERRATA-r1.md`（approved，P0/P1=0，P2×5；2 处死链与 C-08 措辞已在 `500aa6b27` 修） | 裁定 §4:58 括注指向落空，已在 C-08 注记留痕、未改裁定正文 |
 | 4 | 起草 `C-10`（不冻结） | **approved**（草案 v3 `b45658c17`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C10-r2.md` + `FEA-C10-r3.md`（均 approved，P0/P1=0） | 未冻结：§10 待用户裁定阈值 `T`；已知 P2：§8 表末缺空行（格式） |
-| 5 | PLAN 预算卫生 + WRAP 收尾材料 | **in_review**（收口材料见下一行补记） | PASS (2w) | 13/13 | 待复核（`doc/reviews/FEA-WRAP-CLOSEOUT-r1.md`） | PLAN 6777 B/57 行 → **2257 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0） |
+| 5 | PLAN 预算卫生 + WRAP 收尾材料 | **in_review**（收口材料 `6c0195437`；R1 `changes_requested`，P1 已修） | PASS (2w) | 13/13 | `doc/reviews/FEA-WRAP-CLOSEOUT-r1.md`（changes_requested：P1×1 = Manifest disposition 词表非法，已改 `NOT_APPLICABLE`；P2×5 已处置） | PLAN 6777 B/57 行 → **2257 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0） |
 
 ## 偏离登记
 
@@ -44,12 +44,10 @@
 
 ## 收尾（2026-11-01）
 
-- **队列 5 项全部完成**：`FEA-D06-GAP` **done**（R2 approved）→ `FEA-C14-DRAFT` **done**（R1 approved）→ L-3 Errata **approved**（含 P2 修复）→ C-10 草案 **approved**（**未冻结**，待裁定 `T`）→ PLAN 预算达标（2257 B/32 行）+ WRAP 收尾材料。
+- **队列 5 项均已交付**：`FEA-D06-GAP` **done**（R2 approved）→ `FEA-C14-DRAFT` **done**（R1 approved）→ L-3 Errata **approved**（含 P2 修复）→ C-10 草案 **approved**（**未冻结**，待裁定 `T`）→ PLAN 预算达标（2257 B/32 行）+ WRAP 收尾（R1 复核对 P1 修正后见 done）。
 - **边界零违反**：未 push；13 份冻结契约字节 0 改动（`verify_pins.ps1` 13/13）；未改 Gate 状态；未动用户数据；未运行安装器；未自审（全部独立复核）。
-- 每项均有独立复核报告：`FEA-D06-CLOSEOUT-r2.md` / `FEA-C14-CLOSEOUT-r1.md` / `FEA-WRAP-ERRATA-r1.md` / `FEA-C10-r2.md` / `FEA-C10-r3.md` / `FEA-WRAP-CLOSEOUT-r1.md`（最后一项在 `done` 提交前产生）。
+- 每项均有独立复核报告：`FEA-D06-CLOSEOUT-r2.md` / `FEA-C14-CLOSEOUT-r1.md` / `FEA-WRAP-ERRATA-r1.md` / `FEA-C10-r2.md` / `FEA-C10-r3.md` / `FEA-WRAP-CLOSEOUT-r1.md`（最后一项的 P1 修正后由 R2 确认）。
 - 未完成/待裁决项见上节；`FEA-D07-UNBLOCK`、`FEA-GOV-11`、`GIT-CLEAN-*`、实现线保持原状。
+- **已知限制**：`doc/PLAN-HISTORY.md` 迁入块原样继承了旧 PLAN 表内的空行（第 62 行），其后 17 行在 GFM 下渲染为无表头续表——**按「原样迁移」要求不改这 31 行**，已在 `PLAN-HISTORY` 块后加说明。
 - **推荐下一步**：用户裁定 C-10 阈值 `T`（与验证等级口径）→ 冻结 C-10（写冻结记录 + pin + `integration_commit`）→ 按 C-11 选实现候选并建 Task。
 
-## 收尾
-
-（全部任务结束或全部被卡时填写）

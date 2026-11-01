@@ -40,7 +40,7 @@
 |CHAPTER-SELECTOR-1|—|done（多章/多书入口；真机双书三章；修 3 缺陷；集成 3904e88f7）|
 
 
-## 2026-11-01 迁入：REBASELINE 终态节点（原 `doc/REBASELINE_PLAN.md` 当前 DAG 表）
+## 2026-11-01 迁入：REBASELINE 非活动节点（原 `doc/REBASELINE_PLAN.md` 当前 DAG 表）
 
 > 迁入原因：`REBASELINE_PLAN.md` 触发 80% 预算告警。以下 31 行**原样搬移**（依赖列、状态列、集成 commit、顺序与字节未改），PLAN 现只保留活动节点、活动程序与终态约束摘要。
 
@@ -77,3 +77,5 @@
 |PUBLIC-RELEASE-P0-1|SIGNPATH-OSS-SIGNING-1|done（P0 公开仓库整改：`public-release` `3207e9c18`→`d3dd911c4`，默认分支已切换、license=GPL-3.0、首次 CI run `40689279237` 全绿；集成 `cd58c50fe`）|
 |SCHEDULER-THREAD-DIAG-1|—|done（调度线程 detect 卡 running 根因=共享 run 缓存被 GetTaskProjection refresh 替换；集成 ae7fe3334；修复 RUN-STORE-CACHE-RACE-FIX-1 done `146410844`）|
 |THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
+
+> **续表说明**：上文第 62 行的空行原样继承自旧 `REBASELINE_PLAN.md` 的表格（迁移要求不改原字节），其后 17 行为同一张表的续表（GFM 下无表头渲染）；如需重排请在**另一次**独立变更中进行，不要改动本迁入块的 31 行。

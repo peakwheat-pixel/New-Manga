@@ -14,7 +14,7 @@ base_commit: ff432e97c
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 6c0195437
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-CONTRACT-WRAP-1
@@ -73,8 +73,8 @@ allowed_paths:
 |---|---|---|---|---|---|
 | E-WRAP-ERRATA-R1 | AC1 | `doc/reviews/FEA-WRAP-ERRATA-r1.md` | `500aa6b27` | `0d183364c0f885985f9a83a94245a856c98f02ce9fa1f356c53178b19fc26adb` | CANONICAL |
 | E-ERRATA-DOC | AC1 | `doc/plan/GATE-CLOSURE-RULING-2026-11-01.md` | `500aa6b27` | `ae4a432b72fd17b370a1d8bb509a33498f1d07d7782ebbd28d4b1f4d01500c89` | CANONICAL |
-| E-PLAN-HISTORY | AC2 | `doc/PLAN-HISTORY.md` | `-` | `8e292d43c4c30584bca76d3aa3c4127e1cb551ae6535c6ecba6ce3e05b87efaf` | CANONICAL |
-| E-WRAP-CHECK | AC2,AC3 | `verification/FEA-CONTRACT-WRAP-1/closeout-check.md` | `-` | `6aeaf45e7e52c8d55e07841c3ac02874feac183cbaf53ea72d894b7d13691087` | CANONICAL |
+| E-PLAN-HISTORY | AC2 | `doc/PLAN-HISTORY.md` | `-` | `314c2bb41e9656b31630aa58c40d2b8d0260eb8474c93dc290e696b640eeb768` | CANONICAL |
+| E-WRAP-CHECK | AC2,AC3 | `verification/FEA-CONTRACT-WRAP-1/closeout-check.md` | `-` | `fee1792af7910f62ed984fbf6e645547cd25b5c35bb0daed72204afee218fa22` | CANONICAL |
 
 ## Resource Manifest
 
@@ -86,7 +86,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | doc-task | - | NOT_APPLICABLE | - | - | 仓库内无 worktree/task-env/artifact/build/temp；未访问用户数据 |
 | temp-scripts | ..\New Manga.workspace\tmp | PRESERVE_UNKNOWN | ..\New Manga.workspace\tmp | verification/FEA-D06-GAP/workspace-tmp-manifest.md | 共享清单 32 项；无进程占用、不在 git 跟踪内；delete/move/migrate/archive 均为 0 |
-| verification-log | - | PRESERVE | - | verification/FEA-CONTRACT-WRAP-1/closeout-check.md | 只读命令实跑记录已入库；无待清理资源 |
+| verification-log | - | NOT_APPLICABLE | - | verification/FEA-CONTRACT-WRAP-1/closeout-check.md | 仓内证据文件（只读命令实跑记录），非待处置资源；已入库，无清理动作 |
 
 ## Closeout Record
 

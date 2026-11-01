@@ -6,12 +6,12 @@
 
 |节点/目标|依赖|状态|
 |---|---|---|
-|FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|in_progress（L-3 Errata AC1 approved；PLAN 预算 + 收尾）|
+|FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|in_review（AC1–AC3 材料齐；最终复核中）|
 |FEA-C10-DRAFT|—|**approved**（C-10 草案 v3；**未冻结**，待用户裁定阈值 `T`）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
-2026-10 及更早的终态节点（31 行）**原样迁入** [PLAN-HISTORY](PLAN-HISTORY.md)（含依赖/状态/集成 commit，迁出未改字节）。
+2026-10 及更早的**非活动节点**（31 行；含 1 条 blocked、1 条 Rust 线冻结快照）**原样迁入** [PLAN-HISTORY](PLAN-HISTORY.md)（含依赖/状态/集成 commit，迁出未改字节）。
 
 ## 当前活动程序（2026-10-30 起）
 

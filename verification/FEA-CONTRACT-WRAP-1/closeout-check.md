@@ -17,7 +17,7 @@
 | 文件 | 压缩前 | 压缩后 | 预算/阈值 |
 |---|---|---|---|
 | `doc/REBASELINE_PLAN.md` | 6777 B / 57 行 | **2257 B / 32 行** | 7000 B / 64 行；80% = 5600 B / 51 行 |
-| `doc/PLAN-HISTORY.md` | 4132 B / 41 行 | 9504 B / 79 行 | 无预算；**新增 38 行、删除 0 行**（31 行终态节点原样迁入 + 7 行标题/说明） |
+| `doc/PLAN-HISTORY.md` | 4131 B / 41 行 | 9504 B / 79 行 | 无预算；**新增 38 行、删除 0 行**（31 行终态节点原样迁入 + 7 行标题/说明） |
 | `doc/STATUS.md` | 3157 B / 32 行 | 3157 B / 32 行 | 3200 B / 45 行；80% = 2560 B / 36 行 |
 
 `git diff --numstat doc/PLAN-HISTORY.md` = `38	0`（**纯新增**，无删改）。
@@ -36,6 +36,6 @@
 
 | 权威 | 内容 |
 |---|---|
-| `doc/STATUS.md` 当前 Task | `FEA-CONTRACT-WRAP-1` `in_progress` |
+| `doc/STATUS.md` 当前 Task | `FEA-CONTRACT-WRAP-1` `in_progress`（**in_review 时刻**；`done` 提交同批改为指向 `FEA-C10-DRAFT` approved） |
 | `doc/REBASELINE_PLAN.md` 当前 DAG | 含 `FEA-CONTRACT-WRAP-1`（in_progress）、`FEA-C10-DRAFT`（approved，未冻结）、FEA-C14/D06（done） |
-| `doc/TASK_LEDGER.md` | 由 `task_ledger.py --write` 重新生成，计数与磁盘一致 |
+| `doc/TASK_LEDGER.md` | 由 `task_ledger.py --write` 重新生成；`task files 483 = 终态 471 + 非终态 11 + 无 status 1`（`doc/tasks/UIUX-FUSION-IMPL-1.md` 无 `status:` 字段，属既有问题；471+11+1=483 自洽） |
