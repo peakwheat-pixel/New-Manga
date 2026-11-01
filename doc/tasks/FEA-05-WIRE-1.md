@@ -11,7 +11,7 @@ reviewer: null
 depends_on:
   - FEA-03
   - FEA-04
-base_commit: a62d9ca10
+base_commit: 25b69b974
 branch: null
 worktree: null
 integration_commit: null
@@ -33,7 +33,7 @@ allowed_paths:
   - doc/reviews/FEA-05-WIRE-1-*.md
 ---
 
-# FEA-05-WIRE-1：Draft 命令面 wire（v4，签名冻结版）
+# FEA-05-WIRE-1：Draft 命令面 wire（v5，收窄至 Core 面）
 
 ## 来源与授权链
 
@@ -48,7 +48,7 @@ allowed_paths:
 | r1 | changes_requested（P0×3/P1×5） | 纳入契约载体 + Python 测试写域；去掉 C-07 端口面与 `drafts.close` |
 | r2 | changes_requested（P0=0/P1×5） | 独立契约文档 + §8 指针行 + CoreClient registry/parity + 写域修正 |
 | r3 | changes_requested（P0=0/P1×2） | 映射表按真实签名重写；W-4 错误/Token 传输冻结；契约文档必需内容与 §8 一致性 |
-| r4 | changes_requested（P0×1/P1×2） | **本 v5**：C081 响应改真实 `{region_id: region_revision_id}`；W-4 category 改 M2-C1 冻结词表；**收窄不接 CoreClient/registry**（Region 不变式与 FROZEN 契约不冲突），registry 归 FEA-05-PORT-1 |
+| r4 | changes_requested（P0×1/P1×2） | **v5**：C081 响应改真实 `{region_id: region_revision_id}`；W-4 category 改 M2-C1 冻结词表；**收窄不接 CoreClient/registry**（Region 不变式与 FROZEN 契约不冲突），registry 归 FEA-05-PORT-1 |
 
 ## 命令清册与真实签名映射（冻结，v4）
 
@@ -80,11 +80,11 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 
 ## 验收标准
 
-- [ ] **AC1 契约**：`FEA-05_DRAFT_WIRE_CONTRACT.md` 落盘且含头部（状态/版本/日期/变更记录）与五节；§8 追加 6 行且 `CommandContractV11RTests` 通过（行在 §8 内、下划线名、状态 `PENDING` 开头、不进入已冻结集合）；§8 段首总数/约束/§10 已同步。<<TODO>>
+- [ ] **AC1 契约**：`FEA-05_DRAFT_WIRE_CONTRACT.md` 落盘且含头部（状态/版本/日期/变更记录）与五节；§3 **必须是逐码表**（每码一行：code/category/retryable/触发条件），与 W-4 冲突时以逐码表为准；§8 追加 6 行且 `CommandContractV11RTests` 通过（行在 §8 内、下划线名、状态 `PENDING` 开头、不进入已冻结集合）；§8 段首总数/约束/§10 已同步。<<TODO>>
 - [ ] **AC2 语义不变**：handler 参数与上表逐字段一致（含 `EditToken` 整对象回传）；只调用真实方法；不新增编辑规则、不改 token/candidate/receipt 语义（FEA-03 r5 冻结）。<<TODO>>
-- [ ] **AC3 CoreClient（不在本卡）**：本卡不接 CoreClient/registry（归 FEA-05-PORT-1，见 W-6）；本 AC 记为 NOT_APPLICABLE 并说明。<<NOT_APPLICABLE: CoreClient 注册与 Region 不变式冲突，归 FEA-05-PORT-1>>
+- [x] **AC3 CoreClient（不在本卡）**：本卡不接 CoreClient/registry（归 FEA-05-PORT-1，见 W-6）；本 AC 记为 NOT_APPLICABLE 并说明。<<NOT_APPLICABLE: CoreClient 注册与 Region 不变式冲突，归 FEA-05-PORT-1>>
 - [ ] **AC4 Python 协议测试**：`python -m pytest tests/core tests/domain -q` 全绿；每命令至少一成功 + 一失败用例。<<TODO>>
-- [ ] **AC5 回归**：`dotnet build apps/desktop-avalonia/NewManga.sln` EXIT=0；`dotnet test ... --no-build --settings .../NewManga.runsettings` 不退化（基线 931/0/60）。<<TODO>>
+- [ ] **AC5 回归**：`dotnet build apps/desktop-avalonia/NewManga.sln` EXIT=0；`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 不退化（基线 931/0/60）。<<TODO>>
 - [ ] **AC6 治理**：`verify_pins.ps1` 15/15；C-07 端口清单不变；`generate_api_inventory.py --check` EXIT 0；`check.ps1` PASS。<<TODO>>
 - [ ] **AC7 证据**：`verification/FEA-05-WIRE-1/**` 原始日志 + 测试输出 + 证据表。<<TODO>>
 
@@ -94,7 +94,7 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 - 不改 `src/application/editing/**`（编辑语义）；不改 schema/migrations；不改 C-02/C-03/C-04b/C-08 冻结字节。
 - 不改 UI（Current/Fluent）；不动用户数据；不 push；不合并 main。
 
-## 附加裁决点（DSH 已裁）
+## L-2 前置判定\n\n本卡不新增数据库 schema/迁移，也不改编辑语义；L-2（四表 DDL 未冻）与 L-5（整库恢复锁）**不适用**。命令面扩展属 M2-C1 协议兼容扩展，映射见 W-1。\n\n## 附加裁决点（DSH 已裁）
 
 | # | 问题 | 裁决 | 依据 |
 |---|---|---|---|
@@ -111,7 +111,7 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1/AC2/AC4 | `python -m pytest tests/core tests/domain -q` | Core | NOT_RUN | 待补 |
-| AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests` | .NET | NOT_RUN | 待补 |
+| AC3 | NOT_APPLICABLE（CoreClient 不在本卡） | — | N/A | — |
 | AC5 | `dotnet build apps/desktop-avalonia/NewManga.sln` + `dotnet test ... --no-build --settings .../NewManga.runsettings` | 全量 | NOT_RUN | 待补 |
 | AC6 | `verify_pins.ps1` + `generate_api_inventory.py --check` + `check.ps1` | 治理 | NOT_RUN | 待补 |
 
