@@ -1,4 +1,5 @@
 using NewManga.App.Services;
+using NewManga.App.Shell.V2.Frontends;
 
 namespace NewManga.App.ViewModels.V2.Studio;
 
@@ -123,3 +124,32 @@ public sealed record StudioRunControls(
     bool CanRestart,
     bool CanAbandon,
     bool CanRetryFailed);
+
+/// <summary>Studio projection adapter backed by Current's shared ApplicationCore RunMonitor.</summary>
+public sealed class CurrentRunDataSource : IRunDataSource
+{
+    private readonly CurrentFrontend _current;
+    private readonly Func<string?> _runIdProvider;
+
+    public CurrentRunDataSource(CurrentFrontend current, Func<string?> runIdProvider)
+    {
+        _current = current;
+        _runIdProvider = runIdProvider;
+    }
+
+    public bool IsWired => true;
+
+    public int ReadCount { get; private set; }
+
+    public async Task<StudioRunProjection?> GetProjectionAsync(
+        string? chapterId,
+        CancellationToken cancellationToken = default)
+    {
+        var runId = _runIdProvider();
+        if (string.IsNullOrWhiteSpace(runId)) return null;
+        ReadCount++;
+        using var subscription = _current.SubscribeRun(runId, _ => { });
+        await _current.RefreshRunAsync(runId, cancellationToken).ConfigureAwait(true);
+        return _current.GetRun(runId)?.StudioProjection;
+    }
+}

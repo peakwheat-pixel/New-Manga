@@ -1,0 +1,3 @@
+$ pwsh -NoProfile -Command "设置当前 pwsh 子进程的 USERPROFILE、APPDATA、LOCALAPPDATA、HOMEDRIVE、HOMEPATH 后运行 dotnet nuget locals global-packages --list"
+exit_code=1
+error: Value cannot be null. (Parameter 'path1')

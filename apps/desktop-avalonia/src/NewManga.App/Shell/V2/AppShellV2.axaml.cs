@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.Shell.V2.Studio;
+using NewManga.App.Shell.V2.Frontends;
 using NewManga.App.ViewModels.V2.Shell;
 using NewManga.App.ViewModels.V2.Studio;
 using NewManga.DesignSystem;
@@ -76,6 +77,8 @@ public partial class AppShellV2 : UserControl
     }
 
     public AppShellViewModel ViewModel => _viewModel;
+
+    public CurrentFrontend Current => _viewModel.Current;
 
     /// <summary>INT-0: the Studio workspace adapter registered by the built-in shell.</summary>
     public StudioWorkspaceAdapter StudioWorkspace { get; }

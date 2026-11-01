@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 
+using NewManga.App.Shell.V2.Frontends;
+
 namespace NewManga.App.Shell.V2;
 
 /// <summary>Top-level spaces (contract §6.1): Ctrl+1 / Ctrl+2 / Ctrl+3.</summary>
@@ -145,18 +147,15 @@ public sealed class SpaceViewState
 /// </summary>
 public sealed class ShellState : ObservableObject
 {
-    private readonly List<ShellSurface> _surfaces = new() { ShellSurface.Spaces };
-    private readonly Dictionary<string, SpaceViewState> _views = new(StringComparer.Ordinal)
-    {
-        [Key(SpaceId.Library, null)] = new SpaceViewState(),
-        [Key(SpaceId.Studio, StudioMode.Page)] = new SpaceViewState(),
-        [Key(SpaceId.Studio, StudioMode.Batch)] = new SpaceViewState(),
-        [Key(SpaceId.Console, null)] = new SpaceViewState(),
-    };
+    private readonly CurrentShellMemento _session;
 
-    private SpaceId _currentSpace = SpaceId.Library;
-    private StudioMode _studioMode = StudioMode.Page;
-    private ShellSelection _selection = ShellSelection.Empty;
+    public ShellState() : this(new CurrentShellMemento()) { }
+
+    public ShellState(CurrentShellMemento session)
+    {
+        _session = session ?? throw new ArgumentNullException(nameof(session));
+        if (_session.SurfaceStack.Count == 0) _session.SurfaceStack.Add(ShellSurface.Spaces);
+    }
 
     // V11R-INT-0: registered workspaces (Library/Console from this Owner; Studio from ui-studio;
     // Theme Studio uses its own surface stack, registered by the integration step).
@@ -173,16 +172,16 @@ public sealed class ShellState : ObservableObject
     /// <summary>Raised when a workspace is registered/unregistered so the host can refresh placeholders.</summary>
     public event EventHandler? WorkspacesChanged;
 
-    public SpaceId CurrentSpace => _currentSpace;
+    public SpaceId CurrentSpace => _session.CurrentSpace;
 
-    public StudioMode StudioMode => _studioMode;
+    public StudioMode StudioMode => _session.StudioMode;
 
-    public ShellSelection Selection => _selection;
+    public ShellSelection Selection => _session.Selection;
 
     /// <summary>Bottom → top. Always starts with <see cref="ShellSurface.Spaces"/>.</summary>
-    public IReadOnlyList<ShellSurface> SurfaceStack => _surfaces;
+    public IReadOnlyList<ShellSurface> SurfaceStack => _session.SurfaceStack;
 
-    public ShellSurface CurrentSurface => _surfaces[^1];
+    public ShellSurface CurrentSurface => _session.SurfaceStack[^1];
 
     public bool HasOverlay => CurrentSurface != ShellSurface.Spaces;
 
@@ -201,68 +200,68 @@ public sealed class ShellState : ObservableObject
     public SpaceViewState ConsoleView => GetView(SpaceId.Console, null);
 
     /// <summary>View context of the current space+mode (Studio splits Page/Batch, others ignore mode).</summary>
-    public SpaceViewState CurrentView => GetView(_currentSpace, _currentSpace == SpaceId.Studio ? _studioMode : null);
+    public SpaceViewState CurrentView => GetView(_session.CurrentSpace, _session.CurrentSpace == SpaceId.Studio ? _session.StudioMode : null);
 
     public void SwitchSpace(SpaceId space)
     {
-        if (_currentSpace == space)
+        if (_session.CurrentSpace == space)
         {
             return;
         }
 
-        _currentSpace = space;
+        _session.CurrentSpace = space;
         OnPropertyChanged(nameof(CurrentSpace), nameof(CurrentView), nameof(IsStudioSpace));
         SpaceChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetStudioMode(StudioMode mode)
     {
-        if (_studioMode == mode)
+        if (_session.StudioMode == mode)
         {
             return;
         }
 
-        _studioMode = mode;
+        _session.StudioMode = mode;
         OnPropertyChanged(nameof(StudioMode), nameof(CurrentView));
         ModeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void ToggleStudioMode() =>
-        SetStudioMode(_studioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page);
+        SetStudioMode(_session.StudioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page);
 
     public void SetSelection(ShellSelection selection)
     {
-        if (ReferenceEquals(selection, _selection) || selection == _selection)
+        if (ReferenceEquals(selection, _session.Selection) || selection == _session.Selection)
         {
             return;
         }
 
-        _selection = selection;
+        _session.Selection = selection;
         OnPropertyChanged(nameof(Selection));
         SelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SelectBook(string? bookId) => SetSelection(_selection.WithBook(bookId));
+    public void SelectBook(string? bookId) => SetSelection(_session.Selection.WithBook(bookId));
 
-    public void SelectChapter(string? chapterId) => SetSelection(_selection.WithChapter(chapterId));
+    public void SelectChapter(string? chapterId) => SetSelection(_session.Selection.WithChapter(chapterId));
 
-    public void SelectPage(string? pageId) => SetSelection(_selection.WithPage(pageId));
+    public void SelectPage(string? pageId) => SetSelection(_session.Selection.WithPage(pageId));
 
-    public void SelectRegion(string? regionId) => SetSelection(_selection.WithRegion(regionId));
+    public void SelectRegion(string? regionId) => SetSelection(_session.Selection.WithRegion(regionId));
 
     public void SetMultiPage(IEnumerable<string> pageIds) =>
-        SetSelection(_selection.WithMultiPage(pageIds.ToList()));
+        SetSelection(_session.Selection.WithMultiPage(pageIds.ToList()));
 
     public void ToggleMultiPage(string pageId)
     {
-        var current = _selection.MultiPage;
+        var current = _session.Selection.MultiPage;
         var next = current.Contains(pageId, StringComparer.Ordinal)
             ? current.Where(id => !string.Equals(id, pageId, StringComparison.Ordinal)).ToList()
             : current.Concat(new[] { pageId }).ToList();
-        SetSelection(_selection.WithMultiPage(next));
+        SetSelection(_session.Selection.WithMultiPage(next));
     }
 
-    public void ClearMultiPage() => SetSelection(_selection.WithMultiPage(Array.Empty<string>()));
+    public void ClearMultiPage() => SetSelection(_session.Selection.WithMultiPage(Array.Empty<string>()));
 
     public void ClearSelection() => SetSelection(ShellSelection.Empty);
 
@@ -273,7 +272,7 @@ public sealed class ShellState : ObservableObject
             return false;
         }
 
-        _surfaces.Add(surface);
+        _session.SurfaceStack.Add(surface);
         RaiseSurfaceChanged();
         ActivateSurfaceWorkspace(surface);
         return true;
@@ -282,13 +281,13 @@ public sealed class ShellState : ObservableObject
     /// <summary>Esc level-by-level exit: closes exactly one overlay surface.</summary>
     public bool CloseTopSurface()
     {
-        if (_surfaces.Count <= 1)
+        if (_session.SurfaceStack.Count <= 1)
         {
             return false;
         }
 
-        var closed = _surfaces[^1];
-        _surfaces.RemoveAt(_surfaces.Count - 1);
+        var closed = _session.SurfaceStack[^1];
+        _session.SurfaceStack.RemoveAt(_session.SurfaceStack.Count - 1);
         RaiseSurfaceChanged();
         DeactivateSurfaceWorkspace(closed);
         return true;
@@ -296,13 +295,13 @@ public sealed class ShellState : ObservableObject
 
     public void CloseSurfaces()
     {
-        if (_surfaces.Count <= 1)
+        if (_session.SurfaceStack.Count <= 1)
         {
             return;
         }
 
-        var closed = _surfaces.Skip(1).ToList();
-        _surfaces.RemoveRange(1, _surfaces.Count - 1);
+        var closed = _session.SurfaceStack.Skip(1).ToList();
+        _session.SurfaceStack.RemoveRange(1, _session.SurfaceStack.Count - 1);
         RaiseSurfaceChanged();
         foreach (var surface in closed)
         {
@@ -360,7 +359,7 @@ public sealed class ShellState : ObservableObject
 
 
     public SpaceViewState GetView(SpaceId space, StudioMode? mode) =>
-        _views[Key(space, space == SpaceId.Studio ? mode : null)];
+        _session.Views[Key(space, space == SpaceId.Studio ? mode : null)];
 
     // ── V11R-INT-0 workspace registry ────────────────────────────────────────────────────────
 
@@ -426,24 +425,24 @@ public sealed class ShellState : ObservableObject
     public IReadOnlyList<string> SelectionPath()
     {
         var path = new List<string>();
-        if (_selection.HasBook)
+        if (_session.Selection.HasBook)
         {
-            path.Add(_selection.BookId!);
+            path.Add(_session.Selection.BookId!);
         }
 
-        if (_selection.HasChapter)
+        if (_session.Selection.HasChapter)
         {
-            path.Add(_selection.ChapterId!);
+            path.Add(_session.Selection.ChapterId!);
         }
 
-        if (_selection.HasPage)
+        if (_session.Selection.HasPage)
         {
-            path.Add(_selection.PageId!);
+            path.Add(_session.Selection.PageId!);
         }
 
-        if (_selection.HasRegion)
+        if (_session.Selection.HasRegion)
         {
-            path.Add(_selection.RegionId!);
+            path.Add(_session.Selection.RegionId!);
         }
 
         return path;

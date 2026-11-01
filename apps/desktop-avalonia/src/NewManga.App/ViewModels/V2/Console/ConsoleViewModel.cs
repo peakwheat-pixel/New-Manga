@@ -19,7 +19,6 @@ public sealed class ConsoleViewModel : ObservableObject
     private readonly IHostController _controller;
     private readonly ShellState _state;
     private readonly RunStatusMonitor _runMonitor;
-    private bool _runPollingPreferred = true;
     private readonly Action<string, NmStatus> _notify;
     private readonly Action<ConfirmRequest> _requestConfirm;
     private readonly Func<bool> _isDarkTheme;
@@ -72,8 +71,6 @@ public sealed class ConsoleViewModel : ObservableObject
     private string _hostErrorCodeText = "无";
     private string _hostWireFrameText = "—";
 
-    private string _runIdInput = string.Empty;
-    private string _runIdempotencyKey = string.Empty;
     private bool _hasRunLoaded;
     private string _runStatusText = "未加载 Run";
     private string _runCommandText = "—";
@@ -88,8 +85,6 @@ public sealed class ConsoleViewModel : ObservableObject
     private bool _runCanRestart;
     private bool _runCanResumeBlocked;
     private bool _runCanRetryFailed;
-    private RunSnapshotInfo? _runSnapshot;
-    private TaskProjectionInfo? _runProjection;
 
     // REALUSE-DATA-SAFETY-1 AC2: real .nmbak backup packages (list/create/delete/restore).
     private BackupEntryRowViewModel? _selectedBackup;
@@ -195,7 +190,8 @@ public sealed class ConsoleViewModel : ObservableObject
         RetryFailedRunCommand = new RelayCommand(() => _ = RetryFailedRunAsync());
         RebuildCapabilityBindings();
         RebuildBindingScopes();
-        SelectSection(Sections[0]);
+        var selectedSectionId = _runMonitor.Current.Session.Console.SelectedSectionId;
+        SelectSection(Sections.FirstOrDefault(item => string.Equals(item.Id.ToString(), selectedSectionId, StringComparison.Ordinal)) ?? Sections[0]);
         _state.SelectionChanged += (_, _) => RebuildBindingScopes();
         // R-24: the shared RunStatusMonitor owns polling; leaving the Console does not stop the shared
         // source (the shell StatusBand keeps showing the active Run).
@@ -688,6 +684,7 @@ public sealed class ConsoleViewModel : ObservableObject
         }
 
         _selectedSection = section;
+        _runMonitor.Current.Session.Console.SelectedSectionId = section.Id.ToString();
         if (section.Id == ConsoleSectionId.Storage)
         {
             _ = RefreshCleanupPreviewAsync();
@@ -846,23 +843,33 @@ public sealed class ConsoleViewModel : ObservableObject
 
     public string RunIdInput
     {
-        get => _runIdInput;
-        set => Set(ref _runIdInput, value);
+        get => _runMonitor.Current.Session.Console.RunIdInput;
+        set
+        {
+            if (string.Equals(RunIdInput, value, StringComparison.Ordinal)) return;
+            _runMonitor.Current.Session.Console.RunIdInput = value;
+            OnPropertyChanged();
+        }
     }
 
     /// <summary>Restart / Retry Failed require a caller-supplied idempotency key (R-08: never silent).</summary>
     public string RunIdempotencyKey
     {
-        get => _runIdempotencyKey;
-        set => Set(ref _runIdempotencyKey, value);
+        get => _runMonitor.Current.Session.Console.RunIdempotencyKey;
+        set
+        {
+            if (string.Equals(RunIdempotencyKey, value, StringComparison.Ordinal)) return;
+            _runMonitor.Current.Session.Console.RunIdempotencyKey = value;
+            OnPropertyChanged();
+        }
     }
 
     public bool IsRunPollingEnabled
     {
-        get => _runMonitor.IsPollingEnabled;
+        get => _runMonitor.Current.Session.Console.PollingPreferred;
         set
         {
-            _runPollingPreferred = value;
+            _runMonitor.Current.Session.Console.PollingPreferred = value;
             _runMonitor.SetPollingEnabled(value);
         }
     }
@@ -873,7 +880,7 @@ public sealed class ConsoleViewModel : ObservableObject
     /// </summary>
     public void EnterWorkspace()
     {
-        if (!HasRunLoaded || !_runPollingPreferred)
+        if (!HasRunLoaded || !_runMonitor.Current.Session.Console.PollingPreferred)
         {
             return;
         }
@@ -994,7 +1001,7 @@ public sealed class ConsoleViewModel : ObservableObject
     /// <summary>Test seam: pauses the SHARED poller (R-24); the tracked run + snapshot stay intact.</summary>
     public void StopRunPolling()
     {
-        _runPollingPreferred = false;
+        _runMonitor.Current.Session.Console.PollingPreferred = false;
         _runMonitor.SetPollingEnabled(false);
     }
 
@@ -1026,7 +1033,7 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private async Task RefreshRunAsync(bool notifyFailure)
     {
-        var runId = _runMonitor.RunId ?? _runSnapshot?.RunId ?? RunIdInput.Trim();
+        var runId = _runMonitor.RunId ?? _runMonitor.Snapshot?.RunId ?? RunIdInput.Trim();
         if (runId.Length == 0)
         {
             return;
@@ -1066,8 +1073,6 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private void ApplyRun(string runId, RunSnapshotInfo? snapshot, TaskProjectionInfo? projection)
     {
-        _runSnapshot = snapshot;
-        _runProjection = projection;
         HasRunLoaded = true;
         RunIdInput = runId;
 
@@ -1156,7 +1161,7 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private void RequestRunControl(RunControlAction action)
     {
-        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        var runId = _runMonitor.Snapshot?.RunId ?? RunIdInput.Trim();
         if (runId.Length == 0)
         {
             _notify("请先加载一个 Run（输入 run_id 并读取）", NmStatus.Blocked);
@@ -1223,7 +1228,7 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private async Task ResumeBlockedRunAsync()
     {
-        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        var runId = _runMonitor.Snapshot?.RunId ?? RunIdInput.Trim();
         if (runId.Length == 0)
         {
             _notify("请先加载一个 Run", NmStatus.Blocked);
@@ -1250,7 +1255,7 @@ public sealed class ConsoleViewModel : ObservableObject
 
     private async Task RetryFailedRunAsync()
     {
-        var runId = _runSnapshot?.RunId ?? RunIdInput.Trim();
+        var runId = _runMonitor.Snapshot?.RunId ?? RunIdInput.Trim();
         if (runId.Length == 0)
         {
             _notify("请先加载一个 Run", NmStatus.Blocked);

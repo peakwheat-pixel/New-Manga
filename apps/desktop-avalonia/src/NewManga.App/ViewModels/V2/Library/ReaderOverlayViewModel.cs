@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
+using NewManga.App.Shell.V2.Frontends;
 
 namespace NewManga.App.ViewModels.V2.Library;
 
@@ -43,6 +44,7 @@ public readonly record struct ReaderProgressSavedEvent(
 public sealed class ReaderOverlayViewModel : ObservableObject
 {
     private readonly IHostController _controller;
+    private readonly CurrentFrontend _current;
     private readonly Action<string, NmStatus> _notify;
     private readonly Func<ReaderProgressSavedEvent, Task>? _progressSaved;
     private ReaderBookData? _book;
@@ -76,6 +78,10 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         Func<ReaderProgressSavedEvent, Task>? progressSaved = null)
     {
         _controller = controller;
+        _current = CurrentFrontend.For(controller);
+        _layout = Enum.TryParse<ReaderLayoutMode>(_current.Session.Reader.Layout, out var layout) ? layout : ReaderLayoutMode.Paged;
+        _direction = Enum.TryParse<ReaderDirection>(_current.Session.Reader.Direction, out var direction) ? direction : ReaderDirection.Rtl;
+        _webtoonPercent = Math.Clamp(_current.Session.Reader.ScrollOffset, 0, 1);
         _notify = notify;
         _progressSaved = progressSaved;
         Pages = new ObservableCollection<ReaderPageItem>();
@@ -148,6 +154,12 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         {
             if (Set(ref _pageIndex, value))
             {
+                if (CurrentPage is { } page)
+                {
+                    _current.Session.Reader.PageId = page.PageId;
+                    _current.Session.Reader.SemanticAnchor = page.PageId;
+                    _current.Session.Reader.AnchorMapped = true;
+                }
                 OnPropertyChanged(
                     nameof(CurrentPage),
                     nameof(CurrentPageHasImage),
@@ -175,12 +187,15 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         {
             if (Set(ref _layout, value))
             {
+                _current.Session.Reader.Layout = value.ToString();
                 OnPropertyChanged(nameof(IsWebtoon), nameof(IsPaged), nameof(LayoutLabel));
             }
         }
     }
 
     public bool IsWebtoon => Layout == ReaderLayoutMode.Webtoon;
+
+    public double WebtoonScrollPercent => Math.Clamp(_webtoonPercent, 0, 1);
 
     public bool IsPaged => Layout == ReaderLayoutMode.Paged;
 
@@ -193,6 +208,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         {
             if (Set(ref _direction, value))
             {
+                _current.Session.Reader.Direction = value.ToString();
                 OnPropertyChanged(nameof(DirectionLabel));
             }
         }
@@ -237,9 +253,6 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         IsLoading = true;
         ErrorMessage = null;
         SaveStatusText = "进度：未保存";
-        ReleaseImages();
-        Pages.Clear();
-        _book = null;
         try
         {
             var data = await _controller.LoadReaderBookAsync(bookId, chapterId).ConfigureAwait(true);
@@ -249,24 +262,53 @@ public sealed class ReaderOverlayViewModel : ObservableObject
                 return false;
             }
 
+            var saved = _current.Session.Reader;
+            var matchingSession = string.Equals(saved.BookId, bookId, StringComparison.Ordinal) &&
+                string.Equals(saved.ChapterId, chapterId, StringComparison.Ordinal);
+            var savedPageId = startPage is null && matchingSession ? saved.SemanticAnchor ?? saved.PageId : null;
+            var savedIndex = savedPageId is null
+                ? -1
+                : data.Pages.ToList().FindIndex(page => string.Equals(page.PageId, savedPageId, StringComparison.Ordinal));
+            if (savedPageId is not null && savedIndex < 0)
+            {
+                saved.AnchorMapped = false;
+                ErrorMessage = "UNMAPPED_READER_ANCHOR：当前 page ID 不在 Host 返回的页面投影中；保留旧 Reader 状态。";
+                return false;
+            }
+
+            var initial = startPage is { } page
+                ? Math.Clamp(page - 1, 0, Math.Max(0, data.Pages.Count - 1))
+                : savedIndex >= 0
+                    ? savedIndex
+                    : Math.Clamp(data.InitialPageIndex, 0, Math.Max(0, data.Pages.Count - 1));
+            if (data.Pages.Count == 0)
+            {
+                ErrorMessage = "该章节没有可阅读的页面。";
+                return false;
+            }
+
+            ReleaseImages();
+            Pages.Clear();
             _book = data;
+            _current.Session.Reader.BookId = data.BookId;
+            _current.Session.Reader.ChapterId = data.ChapterId;
+            _current.Session.Reader.AnchorMapped = true;
             for (var index = 0; index < data.Pages.Count; index++)
             {
                 Pages.Add(new ReaderPageItem(data.Pages[index], index));
             }
 
-            var initial = startPage is { } page
-                ? Math.Clamp(page - 1, 0, Math.Max(0, Pages.Count - 1))
-                : Math.Clamp(data.InitialPageIndex, 0, Math.Max(0, Pages.Count - 1));
             PageIndex = initial;
-            _webtoonPercent = 0;
-            Layout = data.IsWebtoon ? ReaderLayoutMode.Webtoon : ReaderLayoutMode.Paged;
+            _current.Session.Reader.PageId = Pages[initial].PageId;
+            _current.Session.Reader.SemanticAnchor = Pages[initial].PageId;
+            _current.Session.Reader.AnchorMapped = true;
+            _webtoonPercent = matchingSession ? Math.Clamp(saved.ScrollOffset, 0, 1) : 0;
+            var layout = matchingSession && Enum.TryParse<ReaderLayoutMode>(saved.Layout, out var savedLayout)
+                ? savedLayout
+                : data.IsWebtoon ? ReaderLayoutMode.Webtoon : ReaderLayoutMode.Paged;
+            Layout = layout;
+            if (matchingSession && Enum.TryParse<ReaderDirection>(saved.Direction, out var savedDirection)) Direction = savedDirection;
             OnPropertyChanged(nameof(Title), nameof(Subtitle), nameof(HasBook), nameof(PageCount), nameof(PageLabel), nameof(ProgressPercent), nameof(ProgressText), nameof(CurrentPage));
-            if (Pages.Count == 0)
-            {
-                ErrorMessage = "该章节没有可阅读的页面。";
-                return false;
-            }
 
             await LoadCurrentImageAsync().ConfigureAwait(true);
             SaveStatusText = data.HasSavedProgress
@@ -374,11 +416,19 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     public void UpdateWebtoonProgress(double percent)
     {
         _webtoonPercent = Math.Clamp(percent, 0, 1);
+        _current.Session.Reader.ScrollOffset = _webtoonPercent;
+        OnPropertyChanged(nameof(WebtoonScrollPercent));
         var derived = Pages.Count <= 1 ? 0 : (int)Math.Round(_webtoonPercent * (Pages.Count - 1));
         if (derived != PageIndex)
         {
             _pageIndex = derived;
             OnPropertyChanged(nameof(PageIndex), nameof(CurrentPage), nameof(PageLabel));
+        }
+        if (CurrentPage is { } page)
+        {
+            _current.Session.Reader.PageId = page.PageId;
+            _current.Session.Reader.SemanticAnchor = page.PageId;
+            _current.Session.Reader.AnchorMapped = true;
         }
 
         OnPropertyChanged(nameof(ProgressPercent), nameof(ProgressText));

@@ -1,0 +1,15 @@
+COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings --artifacts-path C:/Users/49745/AppData/Local/Temp/FEA-04-impl-artifacts --verbosity minimal
+EXIT_CODE: 1
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.App.Tests\debug\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.ThemeEngine.Tests\debug\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.Host.Tests\debug\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.DesignSystem.Tests\debug\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.CoreClient.Tests\debug\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.ApplicationCore.Tests\debug\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.App.Tests\debug\NewManga.App.Tests.dll”。
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.DesignSystem.Tests\debug\NewManga.DesignSystem.Tests.dll”。
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.Host.Tests\debug\NewManga.Host.Tests.dll”。
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.ThemeEngine.Tests\debug\NewManga.ThemeEngine.Tests.dll”。
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.ApplicationCore.Tests\debug\NewManga.ApplicationCore.Tests.dll”。
+找不到提供的测试源文件“C:\Users\49745\AppData\Local\Temp\FEA-04-impl-artifacts\bin\NewManga.CoreClient.Tests\debug\NewManga.CoreClient.Tests.dll”。

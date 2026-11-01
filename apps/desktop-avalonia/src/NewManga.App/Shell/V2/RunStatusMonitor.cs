@@ -1,72 +1,54 @@
 using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.CoreClient.Diagnostics;
+using NewManga.App.Shell.V2.Frontends;
 
 namespace NewManga.App.Shell.V2;
 
 /// <summary>
-/// V11R-INT-0 / R-24: the ONE shared Run-status source for the shell, Console and (later) Studio Batch.
-/// It owns a single 1s poll over <see cref="IRunController.GetRunSnapshotAsync"/> +
-/// <see cref="IRunController.GetTaskProjectionAsync"/> for the tracked run id; consumers subscribe to
-/// <see cref="Updated"/> instead of starting their own timers. No projection is invented: when the Host
-/// refuses, the snapshot is dropped and the status reverts to "未加载".
+/// Current's dispatcher adapter over the application-owned ApplicationCore RunMonitor. This type
+/// keeps the existing shell API but owns no poll loop, snapshot, projection, or Host lifecycle.
 /// </summary>
 public sealed class RunStatusMonitor : ObservableObject, IDisposable
 {
-    private readonly IRunController _controller;
-    private readonly DispatcherTimer _timer;
-    private string? _runId;
-    private RunSnapshotInfo? _snapshot;
-    private TaskProjectionInfo? _projection;
+    private readonly CurrentFrontend _current;
+    private IDisposable? _subscription;
     private bool _pollingEnabled = true;
-    private Task? _inFlight;
 
-    /// <summary>
-    /// REALUSE-DATA-SAFETY-3 AC2 (audit MA-07): the Console's "任务与队列" section required the user
-    /// to type a run_id by hand because the frozen contract has no "list runs" command. Remembering
-    /// the run ids this session has actually seen is not a fabricated list — every entry came from a
-    /// real StartRun or an explicit load — and it is what makes the section usable without copying
-    /// ids out of another window. Most recent first, bounded.
-    /// </summary>
-    private readonly List<string> _knownRunIds = new();
+    public RunStatusMonitor(IRunController controller) : this(CurrentFrontend.For(controller)) { }
 
-    private const int MaxKnownRunIds = 12;
-
-    public RunStatusMonitor(IRunController controller)
+    public RunStatusMonitor(CurrentFrontend current)
     {
-        _controller = controller;
-        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        _timer.Tick += (_, _) => _ = RefreshAsync();
+        _current = current ?? throw new ArgumentNullException(nameof(current));
+        _pollingEnabled = _current.Session.Console.PollingPreferred;
+        EnsureSubscription();
     }
 
-    /// <summary>Raised after every successful/attempted refresh (consumers re-read Snapshot/Projection).</summary>
     public event EventHandler? Updated;
+
+    public CurrentFrontend Current => _current;
+
+    private string? _runId => _current.Session.Console.TrackedRunId;
 
     public string? RunId => _runId;
 
     public bool IsActive => !string.IsNullOrEmpty(_runId);
 
-    public RunSnapshotInfo? Snapshot => _snapshot;
+    public RunSnapshotInfo? Snapshot => _current.GetRun(_runId)?.Snapshot;
 
-    public TaskProjectionInfo? Projection => _projection;
+    public TaskProjectionInfo? Projection => _current.GetRun(_runId)?.Projection;
 
-    public bool HasSnapshot => _snapshot is not null;
+    public bool HasSnapshot => Snapshot is not null;
 
-    /// <summary>
-    /// REALUSE-DATA-SAFETY-3 AC2: run ids this session has tracked (most recent first, at most
-    /// <see cref="MaxKnownRunIds"/>). Purely a memory aid — it never invents an id and never claims
-    /// a run still exists; loading one goes through the normal Host read.
-    /// </summary>
-    public IReadOnlyList<string> KnownRunIds => _knownRunIds;
+    public IReadOnlyList<string> KnownRunIds => _current.Session.KnownRunIds;
 
-    /// <summary>True while the shared poller is running (tests can pause it for determinism).</summary>
     public bool IsPollingEnabled => _pollingEnabled;
 
     public string StatusText
     {
         get
         {
-            var status = _projection?.RunStatus ?? _snapshot?.Status;
+            var status = Projection?.RunStatus ?? Snapshot?.Status;
             return string.IsNullOrEmpty(status) ? "状态未知" : RunStateText(status);
         }
     }
@@ -75,7 +57,7 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     {
         get
         {
-            var status = _projection?.RunStatus ?? _snapshot?.Status;
+            var status = Projection?.RunStatus ?? Snapshot?.Status;
             return RunStateStatus(status ?? string.Empty);
         }
     }
@@ -84,221 +66,96 @@ public sealed class RunStatusMonitor : ObservableObject, IDisposable
     {
         get
         {
-            if (!IsActive)
-            {
-                return "无活动 Run";
-            }
-
-            var progress = _projection?.OverallProgress is { } value ? $" · {value:P0}" : string.Empty;
+            if (!IsActive) return "无活动 Run";
+            var progress = Projection?.OverallProgress is { } value ? $" · {value:P0}" : string.Empty;
             return $"Run · {StatusText}{progress} · {_runId}";
         }
     }
 
-    /// <summary>Tracks a run id (null clears). The shared poller starts/stops accordingly.</summary>
+    /// <summary>Tracks a Run through the shared ApplicationCore monitor.</summary>
     public void Track(string? runId)
     {
         var normalized = string.IsNullOrWhiteSpace(runId) ? null : runId.Trim();
-        // Review r1 M5: remembering here meant a typo was cached as a run the session had "seen",
-        // shown as a chip forever while polling a run that does not exist. Only a run the Host
-        // actually answers for (RefreshCoreAsync) or a Run the app just created (RememberRunId)
-        // enters the list.
-        if (string.Equals(_runId, normalized, StringComparison.Ordinal))
-        {
-            return;
-        }
+        if (string.Equals(_runId, normalized, StringComparison.Ordinal)) return;
 
-        _runId = normalized;
-        _snapshot = null;
-        _projection = null;
-        OnPropertyChanged(
-            nameof(RunId),
-            nameof(IsActive),
-            nameof(Snapshot),
-            nameof(Projection),
-            nameof(HasSnapshot),
-            nameof(StatusText),
-            nameof(Status),
-            nameof(SummaryText));
-
-        if (_runId is null)
-        {
-            StopTimer();
-            Updated?.Invoke(this, EventArgs.Empty);
-            return;
-        }
-
-        if (_pollingEnabled)
-        {
-            StartTimer();
-        }
-
-        _ = RefreshAsync();
+        ReleaseSubscription();
+        _current.Session.Console.TrackedRunId = normalized;
+        EnsureSubscription();
+        RaiseRunProperties();
+        if (normalized is null) Updated?.Invoke(this, EventArgs.Empty);
+        else _ = RefreshAsync();
     }
 
-    /// <summary>
-    /// REALUSE-DATA-SAFETY-3 AC2: records a run the application itself just created (StartRun
-    /// returned it), so it is offered in the Console list before the first read round-trip.
-    /// </summary>
     public void RememberRunId(string runId)
     {
-        if (RememberRun(string.IsNullOrWhiteSpace(runId) ? null : runId.Trim()))
-        {
+        if (string.IsNullOrWhiteSpace(runId)) return;
+        var before = _current.Session.KnownRunIds.ToArray();
+        _current.Session.RememberRunId(runId.Trim());
+        if (!before.SequenceEqual(_current.Session.KnownRunIds, StringComparer.Ordinal))
             OnPropertyChanged(nameof(KnownRunIds));
-        }
     }
 
-    /// <summary>
-    /// REALUSE-DATA-SAFETY-3 AC2: records a run id the session has actually seen (most recent
-    /// first, de-duplicated, bounded). Returns true when the list actually changed.
-    /// </summary>
-    private bool RememberRun(string? runId)
-    {
-        if (runId is null)
-        {
-            return false;
-        }
-
-        var existing = _knownRunIds.IndexOf(runId);
-        if (existing == 0)
-        {
-            return false;
-        }
-
-        if (existing > 0)
-        {
-            _knownRunIds.RemoveAt(existing);
-        }
-
-        _knownRunIds.Insert(0, runId);
-        while (_knownRunIds.Count > MaxKnownRunIds)
-        {
-            _knownRunIds.RemoveAt(_knownRunIds.Count - 1);
-        }
-
-        return true;
-    }
-
-    /// <summary>Disables automatic polling (tests / explicit refresh only) without clearing the tracked run.</summary>
     public void SetPollingEnabled(bool enabled)
     {
-        if (_pollingEnabled == enabled)
+        if (_pollingEnabled == enabled) return;
+        _pollingEnabled = enabled;
+        _current.Session.Console.PollingPreferred = enabled;
+        if (enabled) EnsureSubscription();
+        else ReleaseSubscription();
+        OnPropertyChanged(nameof(IsPollingEnabled));
+    }
+
+    public async Task RefreshAsync()
+    {
+        if (_runId is not { } runId) return;
+        if (!_pollingEnabled)
         {
+            using var oneShot = _current.SubscribeRun(runId, _ => { });
+            await RefreshAndNotifyAsync(runId).ConfigureAwait(true);
             return;
         }
 
-        _pollingEnabled = enabled;
-        if (!enabled)
-        {
-            StopTimer();
-        }
-        else if (IsActive)
-        {
-            StartTimer();
-        }
+        EnsureSubscription();
+        await RefreshAndNotifyAsync(runId).ConfigureAwait(true);
     }
 
-    /// <summary>
-    /// One shared refresh of snapshot + projection (never throws into the UI). Concurrent callers share
-    /// the in-flight task, so two consumers (StatusBand + Console) can never double-read the Host (R-24).
-    /// </summary>
-    public Task RefreshAsync()
+    private async Task RefreshAndNotifyAsync(string runId)
     {
-        if (_runId is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (_inFlight is { IsCompleted: false } running)
-        {
-            return running;
-        }
-
-        _inFlight = RefreshCoreAsync();
-        return _inFlight;
+        await _current.RefreshRunAsync(runId).ConfigureAwait(true);
+        NotifyRunUpdated(runId);
     }
 
-    private async Task RefreshCoreAsync()
+    private void EnsureSubscription()
     {
-        var runId = _runId!;
-        try
-        {
-            var snapshot = await _controller.GetRunSnapshotAsync(runId).ConfigureAwait(true);
-            if (!string.Equals(_runId, runId, StringComparison.Ordinal))
-            {
-                return;
-            }
+        if (!_pollingEnabled || _runId is not { } runId || _subscription is not null) return;
+        _subscription = _current.SubscribeRun(runId, _ => NotifyRunUpdated(runId));
+    }
 
-            var projection = snapshot is null
-                ? null
-                : await _controller.GetTaskProjectionAsync(runId).ConfigureAwait(true);
-            if (!string.Equals(_runId, runId, StringComparison.Ordinal))
-            {
-                return;
-            }
+    private void ReleaseSubscription()
+    {
+        _subscription?.Dispose();
+        _subscription = null;
+    }
 
-            _snapshot = snapshot;
-            _projection = projection;
-            if (snapshot is not null && RememberRun(runId))
-            {
-                // The Host returned this run, so it is real: safe to remember and to offer as a chip.
-                OnPropertyChanged(nameof(KnownRunIds));
-            }
-
-            OnPropertyChanged(
-                nameof(Snapshot),
-                nameof(Projection),
-                nameof(HasSnapshot),
-                nameof(StatusText),
-                nameof(Status),
-                nameof(SummaryText));
-        }
-        catch (Exception exception) when (exception is InvalidOperationException or SidecarException)
+    private void NotifyRunUpdated(string runId)
+    {
+        void Update()
         {
-            _snapshot = null;
-            _projection = null;
-            OnPropertyChanged(
-                nameof(Snapshot),
-                nameof(Projection),
-                nameof(HasSnapshot),
-                nameof(StatusText),
-                nameof(Status),
-                nameof(SummaryText));
-        }
-        finally
-        {
-            _inFlight = null;
+            if (!string.Equals(_runId, runId, StringComparison.Ordinal)) return;
+            RaiseRunProperties();
             Updated?.Invoke(this, EventArgs.Empty);
         }
+
+        if (Dispatcher.UIThread.CheckAccess()) Update();
+        else Dispatcher.UIThread.Post(Update);
     }
 
-    public void Dispose()
-    {
-        StopTimer();
-    }
+    private void RaiseRunProperties() => OnPropertyChanged(
+        nameof(RunId), nameof(IsActive), nameof(Snapshot), nameof(Projection), nameof(HasSnapshot),
+        nameof(StatusText), nameof(Status), nameof(SummaryText));
 
-    private void StartTimer()
-    {
-        if (!_timer.IsEnabled)
-        {
-            _timer.Start();
-        }
-    }
+    public void Dispose() => ReleaseSubscription();
 
-    private void StopTimer()
-    {
-        if (_timer.IsEnabled)
-        {
-            _timer.Stop();
-        }
-    }
-
-    /// <summary>
-    /// Core run states → the frozen seven-state UI language (never a fabricated state).
-    /// REALUSE-DATA-SAFETY-3 AC4 (audit MA-10): the enum values come from
-    /// <c>src/application/tasks/projection.py</c>; <c>completed_with_failures</c> and
-    /// <c>interrupted</c> used to fall through to NotStarted while the raw value leaked into the UI.
-    /// A run that finished with failed pages counts as Done (it did finish) but its label says so.
-    /// </summary>
     public static NmStatus RunStateStatus(string state) => state switch
     {
         "completed" or "done" or "completed_with_failures" => NmStatus.Done,
