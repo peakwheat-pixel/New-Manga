@@ -41,8 +41,8 @@ public sealed class MotionResolverTests
         Assert.Equal(MotionMode.Reduce, result.Settings.EffectiveMode);
         Assert.Empty(result.Warnings);
         Assert.True(result.Settings.Feedback); // ③ the category flag stays; Enabled=false zeroes it
-        Assert.False(result.Settings.IsEnabled(MotionCategories.Transition));
-        Assert.False(result.Settings.IsEnabled(MotionCategories.Emphasis));
+        Assert.False(result.Settings.IsEnabled(MotionCategories.Navigation));
+        Assert.False(result.Settings.IsEnabled(MotionCategories.Decorative));
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public sealed class MotionResolverTests
 
         Assert.Equal(MotionMode.Full, result.Settings.EffectiveMode);
         Assert.Empty(result.Warnings);
-        Assert.True(result.Settings.IsEnabled(MotionCategories.Emphasis));
+        Assert.True(result.Settings.IsEnabled(MotionCategories.Decorative));
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public sealed class MotionResolverTests
         Assert.Equal(MotionMode.Reduce, result.Settings.EffectiveMode);
         Assert.False(result.Settings.Enabled); // ① 0ms everywhere, ⑤ no motion started
         Assert.False(result.Settings.IsEnabled(MotionCategories.Feedback));
-        Assert.False(result.Settings.IsEnabled(MotionCategories.Transition));
-        Assert.False(result.Settings.IsEnabled(MotionCategories.Emphasis));
+        Assert.False(result.Settings.IsEnabled(MotionCategories.Navigation));
+        Assert.False(result.Settings.IsEnabled(MotionCategories.Decorative));
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public sealed class MotionResolverTests
 
         Assert.False(result.Settings.Enabled); // ④ categories=off → 0ms for all three
         Assert.False(result.Settings.Feedback);
-        Assert.False(result.Settings.Transition);
-        Assert.False(result.Settings.Emphasis);
+        Assert.False(result.Settings.Navigation);
+        Assert.False(result.Settings.Decorative);
     }
 
     [Fact]
@@ -103,8 +103,8 @@ public sealed class MotionResolverTests
         var result = Resolve(MotionMode.Full, MotionCategories.Feedback);
 
         Assert.True(result.Settings.Feedback);
-        Assert.False(result.Settings.Transition);
-        Assert.False(result.Settings.Emphasis);
+        Assert.False(result.Settings.Navigation);
+        Assert.False(result.Settings.Decorative);
         Assert.True(result.Settings.IsEnabled(MotionCategories.Feedback));
     }
 }

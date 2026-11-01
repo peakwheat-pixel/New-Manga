@@ -124,6 +124,7 @@ public static class NmKeys
         "Nm.Size.InspectorExpanded",
         "Nm.Size.Marker",
         "Nm.Size.MarkerCore",
+        "Nm.Size.MatrixColumnMin",
         "Nm.Size.RowBatch",
         "Nm.Size.RowDense",
         "Nm.Size.RowNormal",
@@ -505,6 +506,8 @@ public static class NmKeys
         public const string Marker = "Nm.Size.Marker";
         /// <summary>Nm.Size.MarkerCore</summary>
         public const string MarkerCore = "Nm.Size.MarkerCore";
+        /// <summary>Nm.Size.MatrixColumnMin</summary>
+        public const string MatrixColumnMin = "Nm.Size.MatrixColumnMin";
         /// <summary>Nm.Size.RowBatch</summary>
         public const string RowBatch = "Nm.Size.RowBatch";
         /// <summary>Nm.Size.RowDense</summary>

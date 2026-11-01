@@ -78,10 +78,10 @@ public enum MotionMode
 public enum MotionCategories
 {
     None = 0,
-    Feedback = 1,
-    Transition = 2,
-    Emphasis = 4,
-    All = Feedback | Transition | Emphasis,
+    Navigation = 1,
+    Feedback = 2,
+    Decorative = 4,
+    All = Navigation | Feedback | Decorative,
 }
 
 /// <summary>C-03 §2.2: the Fluent corner scale.</summary>

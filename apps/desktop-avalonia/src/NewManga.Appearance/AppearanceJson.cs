@@ -117,9 +117,9 @@ public static class AppearanceJson
             writer.WriteBoolean("appearance.followSystemAccent", settings.FollowSystemAccent);
             writer.WriteString("motion.mode", ToJson(settings.MotionMode));
             writer.WriteStartObject("motion.categories");
+            writer.WriteBoolean("navigation", settings.MotionCategories.HasFlag(MotionCategories.Navigation));
             writer.WriteBoolean("feedback", settings.MotionCategories.HasFlag(MotionCategories.Feedback));
-            writer.WriteBoolean("transition", settings.MotionCategories.HasFlag(MotionCategories.Transition));
-            writer.WriteBoolean("emphasis", settings.MotionCategories.HasFlag(MotionCategories.Emphasis));
+            writer.WriteBoolean("decorative", settings.MotionCategories.HasFlag(MotionCategories.Decorative));
             writer.WriteEndObject();
             writer.WriteStartObject("corners");
             writer.WriteString("scale", ToJson(settings.CornersScale));
@@ -212,9 +212,9 @@ public static class AppearanceJson
 
             categories |= property.Name switch
             {
+                "navigation" => MotionCategories.Navigation,
                 "feedback" => MotionCategories.Feedback,
-                "transition" => MotionCategories.Transition,
-                "emphasis" => MotionCategories.Emphasis,
+                "decorative" => MotionCategories.Decorative,
                 _ => MotionCategories.None,
             };
             if (categories == MotionCategories.None)

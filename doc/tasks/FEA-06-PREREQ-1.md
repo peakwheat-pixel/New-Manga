@@ -27,6 +27,10 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/**
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/**
   - apps/desktop-avalonia/src/NewManga.App/Services/Appearance*.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/MotionResolver.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/WindowsMotionPreferenceSource.cs
+  - apps/desktop-avalonia/src/NewManga.App/AppOptions.cs
+  - doc/checkpoints/GOAL-PROGRESS-2026-11-02.md
   - apps/desktop-avalonia/src/NewManga.App/AppOptions.cs
   - apps/desktop-avalonia/src/NewManga.App/Program.cs
   - apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/**

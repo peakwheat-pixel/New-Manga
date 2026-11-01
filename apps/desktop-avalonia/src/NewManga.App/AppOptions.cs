@@ -29,6 +29,12 @@ public sealed class AppOptions
     /// </summary>
     public string? ThemeHome { get; private set; }
 
+    /// <summary>
+    /// FEA-06-PREREQ-1 (C-03 §2.2): the frontend the shell starts, from the persisted
+    /// appearance document (<c>theme.frontendId</c>); null means the fail-safe default.
+    /// </summary>
+    public string? FrontendId { get; private set; }
+
     public string MutexName { get; private set; } = SingleInstanceGuard.DefaultMutexName;
 
     /// <summary>

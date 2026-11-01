@@ -17,13 +17,13 @@ namespace NewManga.App.Services;
 /// </summary>
 public sealed class MotionSettings
 {
-    public MotionSettings(MotionMode effectiveMode, bool enabled, bool feedback, bool transition, bool emphasis)
+    public MotionSettings(MotionMode effectiveMode, bool enabled, bool navigation, bool feedback, bool decorative)
     {
         EffectiveMode = effectiveMode;
         Enabled = enabled;
         Feedback = feedback;
-        Transition = transition;
-        Emphasis = emphasis;
+        Navigation = navigation;
+        Decorative = decorative;
     }
 
     /// <summary>The mode actually applied (never <see cref="MotionMode.Auto"/>).</summary>
@@ -34,16 +34,16 @@ public sealed class MotionSettings
 
     public bool Feedback { get; }
 
-    public bool Transition { get; }
+    public bool Navigation { get; }
 
-    public bool Emphasis { get; }
+    public bool Decorative { get; }
 
     /// <summary>True when a given category animates; false means the consumer must use 0ms.</summary>
     public bool IsEnabled(MotionCategories category) => Enabled && category switch
     {
         MotionCategories.Feedback => Feedback,
-        MotionCategories.Transition => Transition,
-        MotionCategories.Emphasis => Emphasis,
+        MotionCategories.Navigation => Navigation,
+        MotionCategories.Decorative => Decorative,
         _ => false,
     };
 }
@@ -80,12 +80,12 @@ public sealed class MotionResolver
         // ③: feedback keeps its colour transition at 0ms under reduce, so the category flag
         // stays set while Enabled=false zeroes the duration.
         var feedback = categories.HasFlag(MotionCategories.Feedback);
-        var transition = !reduce && categories.HasFlag(MotionCategories.Transition);
-        var emphasis = !reduce && categories.HasFlag(MotionCategories.Emphasis);
-        var enabled = !reduce && (feedback || transition || emphasis);
+        var navigation = !reduce && categories.HasFlag(MotionCategories.Navigation);
+        var decorative = !reduce && categories.HasFlag(MotionCategories.Decorative);
+        var enabled = !reduce && (feedback || navigation || decorative);
 
         return new MotionResolution(
-            new MotionSettings(mode, enabled, feedback, transition, emphasis),
+            new MotionSettings(mode, enabled, navigation, feedback, decorative),
             warnings);
     }
 
