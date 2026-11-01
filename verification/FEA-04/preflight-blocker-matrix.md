@@ -10,12 +10,12 @@ preflight 只读取 Current session memento、DraftBuffer 与 Run intent 的本�
 | UNMAPPED_READER_ANCHOR | S4 | Reader memento 有 PageId/SemanticAnchor 且 AnchorMapped=false | 同上两项 preflight 用例；Reader_keeps_old_anchor_when_new_projection_cannot_map_its_page_id | 已执行并通过（DSH r2 实测） |
 | UNMAPPED_SHELL_STATE | S6 | Shell.HasUnmappedState，或 Appearance draft dirty 且 IsMapped=false | 同上两项 preflight 用例 | 已执行并通过（DSH r2 实测） |
 
-Clear path 用例 Console_selection_and_filters_are_rebuildable_session_state_not_preflight_blockers 覆盖 Allowed=true，并比较调用前后的 Host 计数；未执行。实现没有在 Allowed=true 时创建 Run。
+Clear path 用例 Console_selection_and_filters_are_rebuildable_session_state_not_preflight_blockers 覆盖 Allowed=true，并比较调用前后的 Host 计数；已执行并通过（DSH r2）。实现没有在 Allowed=true 时创建 Run。
 
 ## Host/Core 副作用计数
 
 新增测试 Capture 记录 FakeHostController.StartCalls、StartRequests、RefreshCalls、ReaderLoadCount、RunSnapshotRequests、TaskProjectionRequests、StartRunRequests、SetRegionTypeCalls 和 LifecycleLog。阻断和允许用例都比较调用前后状态。以上断言已由 DSH r2 实测执行并通过（App.Tests 413/420，含 FEA-04 17 项）。
 
-## 当前限制
+## 当前限制（已解除：DSH r2 实测执行）
 
-Q-20 五个 blocker 及其 Source 由冻结卡规定。当前报告确认源码中的映射和测试设计覆盖；独立编译、测试结果与实现 Review 尚待环境恢复及 DSH 指派。
+Q-20 五个 blocker 及其 Source 由冻结卡规定。当前报告确认源码中的映射和测试设计覆盖；独立编译、测试结果与实现 Review 已执行环境恢复及 DSH 指派。

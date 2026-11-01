@@ -14,7 +14,7 @@
 | NewManga.App.Tests | 396 | 0 | 7 | 403 |
 | **合计** | **914** | **0** | **60** | **974** |
 
-## 实现 head eat/fea-04（Codex + DSH 返修）
+## 实现 head  eat/fea-04（Codex + DSH 返修）
 同命令：**EXIT=0（全绿）**
 
 | 工程 | passed | failed | skipped | total |
@@ -29,5 +29,5 @@
 
 ## 判定（AC2）
 - 既有工程 passed 全部 ≥ 基线；failed 均为 0；skipped 不变。
-- App.Tests 419 = 基线 403 + 新增 FEA04CurrentAdapterTests 17 项（16 计划 + 1 个 IMPL-02 回归测试），新增项全通过。
+- App.Tests 420 = 基线 403 + 新增 FEA04CurrentAdapterTests 17 项（16 计划 + 1 个 IMPL-02 回归测试），新增项全通过。
 - **无既有测试被删除或弱化**（新增测试仅追加）。
