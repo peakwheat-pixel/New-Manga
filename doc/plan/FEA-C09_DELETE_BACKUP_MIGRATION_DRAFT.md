@@ -1,6 +1,6 @@
 # FEA-C09 删除 / 备份 / 迁移的数据边界（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN v5 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C09.md)）**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-09、[C-01b 存储契约](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（SC-10a/10b、SC-30/31/33）、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.3/§3.4、代码现状（`nmbak.py`、`cleanup.py`、`library.py`）
@@ -25,6 +25,7 @@
 
 - **必须包含**（默认）：`library.db`、sidecar、`managed/`（含 `trash-manifest.json`，**需扩白名单**）、**源引用与授权元数据**（AD-003 §3.3；Host 私有 registry 随备份纳入，备份包内加密）。
 - **默认不包含**：外部原文件、`settings/*.json`（凭据）、`catalog.sqlite`（缓存，可重建）。
+- **路径口径**：`settings/` 前缀以 C-03 的记述为准（旧文件实际位于 `%APPDATA%/NewManga/` 下，见 `ThemeSettingsStore.cs:7`）；本契约用 `settings/…` 作为**备份包内的相对路径**，不代表磁盘绝对路径。
 - **扩展点**：`nmbak` 白名单改为**显式清单**（每项一个条目 + 版本号），新增项须走独立 Task。
 
 **SC-B01a 完整归属表**（D07 声明范围「备份覆盖清单含 settings/catalog 归属」的承载；解决 FEA-00 `:901` 的「catalog 归属待 D07 冻结」）：
@@ -40,7 +41,7 @@
 | `settings/*.json` | **否（凭据）**，但**非凭据类设置**（外观/语言/布局偏好）**纳入** | 拆分凭据类与非凭据类；C-03 的外观设置属非凭据类 → 入包 |
 | 外部原文件 | **否** | 引用模型，从不复制 |
 | **`backup/1` 旧包** | **否**（不复制进新包） | 只可**读取/恢复**（legacy adapter），不升级、不搬运 |
-| **`backup/2` 新包** | **是**（本契约写端产物） | 见 SC-B07 |
+| **`backup/2` 新包** | **不适用**（它是备份产物本身，不是「入包内容」） | 见 SC-B07 |
 
 **验证**：构造含全部项的库 → 导出备份 → 断言包内容与上表一致；断言 `settings/credentials*` 缺失、**`settings/presentation-settings.json`（C-03 的新文件）**与 `settings/theme-settings.json`（旧、只读迁移输入）存在；显式断言 `catalog.sqlite` 不在包内。
 
@@ -77,7 +78,7 @@
 | 保护来源 | 软删 | 自动清理 | 显式彻底删除 |
 |---|---|---|---|
 | `region_locked` / `translation_locked` / `inpaint_locked` | 不阻止（不触文件） | **阻止**（不清人工成果） | **披露 + 专门确认**（PD-01，计入 `protection.lockCount`）；**非阻断** |
-| 人工 revision / 当前 revision | 不阻止 | **阻止** | **披露**（PD-01，`contentSummary` / `pinnedRevisionIds`）；**非阻断** |
+| 人工 revision / 当前 revision | 不阻止 | **阻止** | **披露**（PD-01：`protection.currentRevisionId` / `protection.pinnedRevisionIds[]` / `protection.manualRegionCount`）；**非阻断** |
 | 活动草稿（C-13 `status=active`） | 不阻止 | **阻止** | **披露**（PD-01，`draftPageCount`）；**非阻断** |
 | 共享引用（ADJ-001 PD-08） | 不阻止 | 不阻止 | **可安全拆分 → 不阻断**；**不可安全拆分 / 关系图不一致 / 未列明 → `BOOK_DELETE_CONFLICT`**（fail-closed） |
 | **非终态 Run / Task** | 不阻止 | 不阻止 | **阻断 `BOOK_BUSY`**（ADJ-001 PD-01 的唯一硬阻断项） |
@@ -114,7 +115,7 @@
 | `TRASH_RESTORE_CONFLICT` | `conflict` | false | 恢复目标路径已被占用（逐项返回，不整批失败） |
 | `TRASH_RESTORE_LAYER_MISMATCH` | `conflict` | false | 备份来自不同数据层或 `DatabaseId` 不匹配 |
 
-**与 M2-C1 既有命令的关系**：M2-C1 已冻结 `ListRecycleBinBooks`（`:150`，回收站**读**面）。本契约的 `ListTrash` 是其**底层/扩展**——实现时须明确「`ListRecycleBinBooks` 是否直接映射 `ListTrash`」，或保留两个层级（建议：`ListTrash` 为 Core 能力，`ListRecycleBinBooks` 为 Host 投影；须在实现 Task 确认，不在本契约单方面改 M2-C1）。
+**与 M2-C1 既有命令的关系**：M2-C1 已冻结 **`ListRecycleBinBooks`（`Core command`，rev 2.11 `:150`）**——它是**已冻结的 Core 命令**，不是 Host 投影。本契约的 `ListTrash` 是**更底层的通用能力/替代候选**；两者映射关系（`ListRecycleBinBooks` 是否改为直接调用 `ListTrash`、还是并存）须在**实现 Task 确认**，本契约不单方面修改 M2-C1 的冻结字节。
 
 **`PurgeTrash` 与 C-04b 的映射**：`PurgeTrash` **不是**新删除路径，它委托 C-04b 的 `PreviewPermanentDeleteBooks` + `PermanentlyDeleteBooks`（含 PD-01 披露与专门确认）；本契约只负责「哪些条目在回收站」这一层。
 
@@ -183,6 +184,7 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v5（处置 FEA-C09-r4 的 K-1…K-4）**：K-1 SC-B04a 字段路径全改 `protection.*`；K-2 backup/2 行改「不适用（产物本身）」；K-3 补 settings 路径口径说明（以 C-03 为准）；K-4 更正 `ListRecycleBinBooks` 为**已冻结 Core command**（非 Host 投影）。**K-5 外部记账残留不在本契约修**——以新裁定/errata 统一更正 | DSH |
 | 2026-11-01 | **v4（处置 FEA-C09-r3 的 P1×1 + P2×7）**：**P1 SC-B04a 语义纠正**——彻底删除列由「阻止」改为「披露 + 专门确认（非阻断）」，共享引用改「可安全拆分不阻断 / 不可拆分才 `BOOK_DELETE_CONFLICT`」，新增「非终态 Run → `BOOK_BUSY`」硬阻断行 + 说明「披露≠拒绝，否则永远删不了含人工修改的书」；P2-1 补 D07 第 7 项（SC-13/17）；P2-2 补 backup/1、backup/2 归属；P2-3 改 `presentation-settings.json` + SC-10b 细化说明；P2-4 `TRASH_ENTRY_NOT_FOUND`→`not_found`、补 ListTrash/PurgeTrash 映射与负向对照；P2-5 命名统一；P2-7 条件③补 C-08 | DSH |
 | 2026-11-01 | **v3（FEA-D07-UNBLOCK AC2–AC6）**：新增 SC-B06 软删/恢复/TrashEntry 命令面（4 命令 + 3 码）、SC-B07 `backup/2` 格式契约（含 legacy adapter）、SC-B08 自动备份调度归属、SC-B09 恢复入口；SC-B01 补「完整归属表」（解决 FEA-00 `:901` 的 catalog 归属问题）、SC-B04 补「三路径统一 ProtectionPolicy」；§4 条件③改上游契约条件（解环） | DSH |
 | 2026-11-01 | 建立草案：现状表 5 项、SC-B01…SC-B05 五条、与三份契约接口、冻结条件 | DSH |
