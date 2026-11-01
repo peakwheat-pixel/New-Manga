@@ -99,7 +99,7 @@
 
 - **「结果」面（Pipeline/Provider 写回）不在本契约**：写回路径的 candidate-only 与同源保证由 **C-08 的 `PreparedRun`** 承载；本契约只规定编辑层 `RegionCandidate`。
 - **prepare 阶段只产出 `RegionCandidate`**（编辑层），绝不写 `current_revision_id`；C-08 的 `candidate store` 是 Run 层的临时存储，二者不是一回事；
-- **`RegionCandidate`**（与 C-08 的 Host 侧 `candidate store`/`PreparedRun` **同名异物**，必须区分）必须携带 `{candidateId, RegionId, BaseRevisionId, origin}`；
+- **`RegionCandidate`**（与 C-08 的 Host 侧 `candidate store`/`PreparedRun` **同名异物**，必须区分）必须携带 `{candidateId, RegionId, BaseRevisionId, origin}`，其中 `origin` ∈ {`machine`,`user`,`imported`,`restored`}（与 `region_revisions.origin` 的 CHECK 约束一致，以该约束为唯一真源）；
 - **live apply** 才切换 `current_revision_id`，且必须是**统一事务**（见 SC-D08）。
 
 **验证**：prepare → 断言 `current_revision_id` 不变；只有 apply 后才变。
