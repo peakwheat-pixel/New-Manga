@@ -1,7 +1,7 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`be9265b34` 后续（FEA-05-WIRE-1 ready + Codex 实现中；FEA-04b r5 approved；FEA-04/C11-PREREQ-1 done）
-**主推进**：`FEA-05-WIRE-1`（Draft 命令面 wire）范围复核 r1–r7 收敛 → **ready**，交 Codex 实现；`FEA-04b` 设计基线 r5 approved（AC5 待用户确认）
+**当前 HEAD**：`e5452dd78`（FEA-05-WIRE-1 done；FEA-04b in_review；FEA-04/C11-PREREQ-1 done）
+**主推进**：`FEA-05-WIRE-1` Draft 命令面 wire **done**（范围 r1–r7、实现 impl-r1–r3 approved；全量 931/0/60）；`FEA-04b` 设计基线 r5 approved（AC5 待用户确认）
 
 ---
 
@@ -74,3 +74,10 @@
 - 最终范围（v5.2）：Core 命令白名单 + 6 handler（drafts_open/patch/prepare/apply/status/discard，真实签名）+ 独立契约 FEA-05_DRAFT_WIRE_CONTRACT.md + V11R_COMMAND_CONTRACT_V1.md §8 六行（C078–C083）+ Python 协议测试；**不接** IHostController/CoreClient（端口与 registry 归 FEA-05-PORT-1，需先契约 UNFREEZE）。
 - 派 Codex 实现（suggested_owner: codex）；DSH 负责审查/提交/集成。
 - 待裁决：Q-25（FEA-05-PORT-1 何时建卡）；Q-26（FEA-05-WIRE-1 实现完成后的实现复核席位）。
+## 9. FEA-05-WIRE-1 收口（2026-11-02 深夜）
+
+- 范围：r1（P0×3/P1×5）→ r2（P0=0/P1×5）→ r3（P1×2）→ r4（P0×1）→ r5（P1×1）→ r6（P1×3）→ **r7 approved**。
+- 实现：Codex 本地命令通道不可用（helper_unknown_error），DSH 代实现；实现复核 **impl-r1（P1×5）→ impl-r2（P1×1）→ impl-r3 approved（P0/P1=0，P2×10 接受遗留）**。
+- 交付：doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md（五节 + 17 码逐码表）、V11R_COMMAND_CONTRACT_V1.md §8.2（C078–C083）、core_service.py（6 handler + 冻结信封映射）、	ests/core/test_draft_commands.py（12 项）、erification/FEA-05-WIRE-1/**（7 项证据）。
+- 验证：全量 sln **931 passed / 0 failed / 60 skipped**；pytest **900 passed**；C# 契约 **80/80**；erify_pins 15/15；check.ps1 PASS。
+- **待裁决**：Q-27（FEA-05-PORT-1 建卡：端口面 + CoreClient registry + V11R_REGION_WRITE_CONTRACT.md UNFREEZE 把 Region 不变式升级为「各家族集合之并」）；Q-23（FEA-04b 设计基线批准/冻结）。
