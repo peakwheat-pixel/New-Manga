@@ -270,8 +270,8 @@ public sealed class CurrentRunIntentCoordinator
             key,
             async (intentKey, token) => new RunStartAck(await operation(intentKey, token).ConfigureAwait(false)),
             cancellationToken).ConfigureAwait(false);
-        if (!result.IsSuccess) return null;
-
+        if (!result.IsSuccess || result.Value?.Run is null) return null;
+        // reuses the same idempotency key; only a real ACK clears it.
         lock (_gate)
         {
             if (string.Equals(_pendingKey, key, StringComparison.Ordinal)) _pendingKey = null;

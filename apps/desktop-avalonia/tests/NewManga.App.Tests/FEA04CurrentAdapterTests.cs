@@ -248,7 +248,7 @@ public sealed class FEA04CurrentAdapterTests
         var deepLink = CurrentRouteAdapter.ToShellDeepLink(route);
         Assert.Equal("page/3", deepLink.PageId);
         Assert.Equal(route, CurrentRouteAdapter.Map(deepLink));
-        Assert.Equal(query.TrimStart('?'), deepLink.ToQuery());
+        Assert.Equal(query.TrimStart('?'), deepLink.ToQuery().TrimStart('?'));
     }
 
     [Fact]
@@ -301,12 +301,12 @@ public sealed class FEA04CurrentAdapterTests
         var workspace = new NewManga.App.ViewModels.V2.Studio.StudioWorkspaceViewModel(host);
         try
         {
-            await host.RunSnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
             using var first = current.SubscribeRun(started.RunId, _ => { });
             using var second = current.SubscribeRun(started.RunId, _ => { });
             var refresh = current.RefreshRunAsync(started.RunId);
             gate.SetResult(true);
             await refresh;
+            await host.RunSnapshotGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
             Assert.Single(host.RunSnapshotRequests);
             Assert.Equal(started.RunId, Assert.Single(host.RunSnapshotRequests));

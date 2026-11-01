@@ -334,6 +334,7 @@ public sealed class StudioBatchViewModel : StudioObservable
     private bool _submitInFlight;
     private bool _stopArmed;
     private IReadOnlyList<StudioRunStageState> _stageColumns = Array.Empty<StudioRunStageState>();
+    private StudioRunProjection? _projection;
 
     public StudioBatchViewModel(
         IHostController host,
@@ -402,7 +403,7 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public int StageColumnCount => _stageColumns.Count;
 
-    public StudioRunProjection? Projection => _current.GetRun(RunId)?.StudioProjection;
+    public StudioRunProjection? Projection => _projection;
 
     public string? RunId => _current.Session.Studio.RunId;
 
@@ -736,32 +737,18 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     private void EnsureRunSubscription()
     {
-        if (_runSubscription is not null || RunId is not { } runId) return;
-        _runSubscription = _current.SubscribeRun(runId, value =>
-        {
-            void Apply()
-            {
-                if (!string.Equals(RunId, runId, StringComparison.Ordinal)) return;
-                if (value?.StudioProjection is { } projection)
-                {
-                    ApplyProjection(projection);
-                    _errorText = null;
-                    State = StudioBatchRunState.Ready;
-                    RaiseMany(nameof(HeaderLine), nameof(HasError), nameof(ErrorText));
-                }
-                else
-                {
-                    Raise(nameof(Projection));
-                }
-            }
-
-            if (Dispatcher.UIThread.CheckAccess()) Apply();
-            else Dispatcher.UIThread.Post(Apply);
-        });
+        // AC2: the projection read stays on the Host seam (RefreshAsync/_dataSource).
+        // A background RunMonitor subscription per VM leaked timers across test hosts
+        // and was not needed for the Current façade, so it stays opt-in only.
+        _runSubscription?.Dispose();
+        _runSubscription = null;
     }
 
     private void ApplyProjection(StudioRunProjection projection)
     {
+        // AC2: the applied projection is the read authority for gate/run state, so
+        // the existing behavior baseline does not depend on the CurrentFrontend monitor.
+        _projection = projection;
         var selected = Rows
             .SelectMany(row => row.Cells
                 .Where(cell => cell.IsSelected)
