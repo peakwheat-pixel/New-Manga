@@ -40,7 +40,7 @@
 
 - **预览阶段**（`PrepareRun`）：计算 `PreparedRun`（快照 + 摘要 + `preparedDigest`），**不写 DB、不触发执行**。
 - **接受阶段**（`AcceptRun`）：校验 `preparedDigest` 与当前状态一致 → 写入 `pipeline_runs`（含全部快照列）→ 返回 `runId`。
-- **拒绝**：digest 不一致 / 目标变化 / 配置变化 → `RUN_STALE_PREVIEW`（零副作用）。
+- **拒绝**：digest 不一致 / 目标变化 / 配置变化 → `RUN_STALE_PREVIEW`（`conflict` / `retryable=false`；零副作用，需重新预览）。
 - **`preparedDigest` 算法**：对 `{requestedTargets, settingsSnapshot, providerBindingSnapshot, constraintSnapshotRef}` 做 canonical JSON（键排序、UTF-8、无空白）后 sha256；**输出格式与 C-04b 一致**：`sha256:<64 hex>`（小写带前缀）。
 
 ### SC-R02 快照不可变
@@ -55,13 +55,13 @@
 
 ### SC-R04 候选存储
 
-- `candidate store`（Host 侧，临时）保存 `PreparedRun` 直到接受或过期（建议 ≤ 10 分钟）；过期 → `RUN_PREVIEW_EXPIRED`。
+- `candidate store`（Host 侧，临时）保存 `PreparedRun` 直到接受或过期（建议 ≤ 10 分钟）；过期 → `RUN_PREVIEW_EXPIRED`（`conflict` / `retryable=true`；需重新 prepare）。
 - 候选**不落 Core DB**（避免污染运行时数据）。
 
 ### SC-R05 快照完整性
 
 - `settings_snapshot_json`/`provider_binding_snapshot_json` 必须是**完整**的可重放值（不是引用指针）。
-- 缺失/不完整 → `AcceptRun` 拒绝（`RUN_SNAPSHOT_INCOMPLETE`）。
+- 缺失/不完整 → `AcceptRun` 拒绝（`RUN_SNAPSHOT_INCOMPLETE`，`internal` / `retryable=true`）。
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
