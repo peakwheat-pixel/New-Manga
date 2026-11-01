@@ -25,7 +25,7 @@
 | 原状态 | `FROZEN`（2026-11-01）；pin `17c8f701…` |
 | 变更 | `IHostController` 47→54（+7 Draft 端口方法：`OpenDraftAsync`/`PatchDraftAsync`/`PrepareCandidateAsync`/`ApplyCandidatesAsync`/`GetDraftAsync`/`ListDraftsAsync`/`DiscardDraftAsync`）；合计 54→61；变更类别 11→18；生成日期/HEAD 更新 |
 | 理由 | C-07 要求「新增/删除端口方法时同一 Task 内同步更新清单」（`FEA-C07_API_INVENTORY.md` 用途节） |
-| 新 pin | `5c48083f9520b53f43296c3353cc9ee0b73fd1fdff5229bbb52412d5b2a5f244`（写入 `FEA-CONTRACT-FROZEN-C07.md`） |
+| 新 pin | **最终 `3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714`**（写入 `FEA-CONTRACT-FROZEN-C07.md` §1；中间值 `5c48083f…` 系成员表首版、后因变更类别文本又改，已废弃） |
 | 复核 | 按 `FROZEN-C07:15-17` 需**重新独立复核**；本轮由 FEA-05-PORT-1 实现复核席位执行（独立上下文） |
 
 ## 3. 纪律

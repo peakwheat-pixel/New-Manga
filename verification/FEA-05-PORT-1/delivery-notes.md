@@ -57,3 +57,12 @@ doc/plan/FEA-CONTRACT-FROZEN-C07.md | pin 重算 `5c48083f…` + UNFREEZE 变更
 回归：全量 sln **934 passed / 0 failed / 57 skipped**（Host 51、ThemeEngine 235、DesignSystem 85、CoreClient 119、ApplicationCore 31、App 413）；erify_pins 15/15；generate_api_inventory --check EXIT 0。
 
 C-07 pin 因变更类别文本再变，当前 pin = 3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714。
+
+## impl-r2 处置（DSH，2026-11-02）
+
+| finding | 处置 |
+|---|---|
+| P1-04 App.Tests/CoreClient 行为覆盖 | 新增 NewManga.App.Tests/DraftPortDefaultTests.cs（3 测试 × 2 host：Open/Patch/Prepare/Get/List/Apply/Discard 全部安全降级）与 NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs（9 测试：家族注册/域/通道/minor、并集 17、分区、6 payload 缺字段 fail-closed、drafts_status XOR） |
+| P1-05 §1B/UNFREEZE/changelog pin 不一致 | §1B 更新为「v1.1 尚未重冻（r2 changes_requested），待 r3」；UNFREEZE §2 新 pin 改最终 3fdb44e4…（注明中间值 5c48083f 废弃）；C-07 变更类别 18 |
+
+回归：全量 sln **949 passed / 0 failed / 57 skipped**（Host 51、ThemeEngine 235、DesignSystem 85、ApplicationCore 31、CoreClient 128、App 419）；erify_pins 15/15；pi inventory --check EXIT 0。
