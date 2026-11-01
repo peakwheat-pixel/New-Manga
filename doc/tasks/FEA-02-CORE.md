@@ -15,8 +15,8 @@ branch: feat/fea-02-core
 worktree: G:/CODEX/New Manga.workspace/FEA-02-CORE
 integration_commit: null
 delivery_head: 5efb8f58c88e1acb11eaf53b1eab9135f26f29db
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-02-CORE
 allowed_paths:
   - doc/tasks/FEA-02-CORE.md
@@ -52,9 +52,9 @@ allowed_paths:
 - [x] **AC2 多观察者共享一次轮询**：N 个观察者同时订阅同一 Run/任务状态 → 断言只发生 **1 次**底层轮询（调用计数断言），观察者各自收到同一快照。 <<MET>>
 - [x] **AC3 同一意图重试不重复启动**：同一意图键（intent key）在 pending/重试期间的重复请求 → 断言不产生第二个启动（去重命中，返回同一 in-flight 结果）；意图完成后允许新意图。 <<MET>>
 - [x] **AC4 请求错误互不串扰**：并发多个请求，其中一个失败（含超时/取消）→ 断言错误只归属该请求（request-scoped error），其它请求结果与状态不受影响，且不污染共享状态缓存。 <<MET>>
-- [ ] **AC5 保留 Current 入口（非回归）**：①**基线非回归**——现有入口相关测试项目保持通过（对照基线）；②**结构断言**——本卡 diff 不触 `apps/desktop-avalonia/src/NewManga.App/**`（脚本断言 0 命中）；③**无双调度**——本卡不接线，接线后须验「同一意图只经一条路径启动」。 <<PARTIAL: Current 回归与结构断言通过；全 solution 尚有与基线相同的 3 个 Host junction 清理失败，未满足全量 test 必须通过的交付要求>>
+- [x] **AC5 保留 Current 入口（非回归）**：①**基线非回归**——现有入口相关测试项目保持通过（对照基线）；②**结构断言**——本卡 diff 不触 `apps/desktop-avalonia/src/NewManga.App/**`（脚本断言 0 命中）；③**无双调度**——本卡不接线，接线后须验「同一意图只经一条路径启动」。 <<MET>>
 - [x] **AC6 L 前置适用性判定**：按**实际写域**逐项判定 L-1/L-2/L-5（见下节），判定结论与再触发条件写入本卡；前置未满足时本卡保持 `proposed/blocked`。 <<MET>>
-- [ ] **AC7 独立复核**：`doc/reviews/FEA-02-CORE-r1.md` 判 `approved`（P0/P1 = 0）。 <<BLOCKED: 待 DSH 按 delivery_head 安排上下文独立复核，本实现会话不得自审>>
+- [x] **AC7 独立复核**：`doc/reviews/FEA-02-CORE-r1.md` 判 `approved`（P0/P1 = 0）。 <<MET>>
 
 ## L 前置适用性判定（用户要求：按实际写域判定，不机械复制）
 
@@ -100,7 +100,10 @@ allowed_paths:
 | CORE-BUILD | solution build | verification/FEA-02-CORE/final-build.log | 5efb8f58c | 41d19138b94149a2434e2e88307294fd0e9228efdc9b1a9099296a432ccd7545 | CANONICAL |
 | CORE-TEST-LOG | solution test（FAIL 如实保留） | verification/FEA-02-CORE/final-test.log | 5efb8f58c | b04fbe7e1e9fc741c09d7f91058a27b3c035be18d81ef3e58d18149cf7033db2 | CANONICAL |
 | BASE-BUILD | AC5 基线 build | verification/FEA-02-CORE/baseline-standard-build.log | 5efb8f58c | 88e9a5b6224dcd5168988200fbf50f3b2a0b644fb059dd292ad2d168802b8cc1 | SOURCE_PIN |
-| BASE-TEST | AC5 基线 test（同 3 失败） | verification/FEA-02-CORE/baseline-standard-test.log | 5efb8f58c | 188843c96cdfe47c498da38a025e05ec768bdcdd721bfd1375d06a07f0c61d68 | SOURCE_PIN |
+| BASE-TEST | AC5 基线 test（Codex 环境含 3 项 Host flaky；干净环境 0 失败，见 BASE-CLEAN） | verification/FEA-02-CORE/baseline-standard-test.log | 5efb8f58c | 188843c96cdfe47c498da38a025e05ec768bdcdd721bfd1375d06a07f0c61d68 | SOURCE_PIN |
+| BASE-CLEAN | AC5 基线（干净 TEMP 全量） | verification/FEA-02-CORE/baseline-clean-env-test.log | `-` | `89a195a269ddb94f214359235079be878f60d8da764f65a6441f04511aaf12c0` | CANONICAL |
+| DELIVERY-CLEAN | AC5 交付（干净 TEMP 全量） | verification/FEA-02-CORE/delivery-clean-env-test.log | `-` | `11883ff6821ab3a69abc8029e14b0362ad4320302df05a0be1312b607bbe2459` | CANONICAL |
+| REVIEW-R1 | AC7 独立复核 | doc/reviews/FEA-02-CORE-r1.md | `-` | `1749f93b288caadd63aaa358cfa70c07f9fe9375b08b61afead5b7e25025f1e7` | CANONICAL |
 | CORE-COMPARE | 汇总程序 | verification/FEA-02-CORE/collect-test-results.ps1 | 5efb8f58c | - | SOURCE_PIN |
 | CORE-BOUNDARY-SCRIPT | 边界程序 | verification/FEA-02-CORE/verify-boundaries.ps1 | 5efb8f58c | - | SOURCE_PIN |
 
@@ -123,3 +126,6 @@ allowed_paths:
 - Codex 开始实现（2026-11-01）：从 `bf1c8eb00` 新建 linked worktree，快进纳入仅含任务释放元数据的 `2546410c4`；源代码基线不变。工作树 `G:/CODEX/New Manga.workspace/FEA-02-CORE`、分支 `feat/fea-02-core`。未接线 Current，不触发 L-1/L-2/L-5 再触发条件；AC7 留待 DSH 安排上下文独立复核。
 - 实现提交 `5efb8f58c`：共享 Run 轮询/快照、进行中意图去重、请求级结果；25 项新增 L2 测试通过；Current 无代码差异。全 solution test 尚未通过（基线同 3 项 Host Dispose 失败），AC5 PARTIAL、AC7 BLOCKED，不能标 approved/done。
 - Handoff：[FEA-02-CORE-5efb8f58c](../handoffs/FEA-02-CORE-5efb8f58c.md)。没有修改冻结契约/pin、Gate 状态或其它 Task；没有 push。
+- 集成收口（2026-11-01，DSH）：**干净 TEMP 复跑**——交付 `908 passed / 0 failed / 60 skipped`（EXIT=0）、基线 `883 passed / 0 failed / 60 skipped`（EXIT=0）；命令 `dotnet test apps/desktop-avalonia/NewManga.sln --no-build`，TEMP 指向私有空目录（原始日志见 Canonical Evidence `DELIVERY-CLEAN` / `BASE-CLEAN`）。
+- **3 项 Host 失败的更正（FEA02-P2-001）**：属**环境相关 flaky**（Host 测试 `Dispose` 删 `Path.GetTempPath()` 下 junction 抛 `UnauthorizedAccessException`），干净环境不可复现；**非基线缺陷、非本 Task 引入**。handoff 中「与基线相同/基线已有」的表述以本条为准（handoff 原字节保留为当时环境快照）。
+- `integration_commit` 见 front matter；`delivery_head: 5efb8f58c`；`G-DELETE-IMPL` 仍 OPEN（本 Task 按卡授权，不释放其它实现）。
