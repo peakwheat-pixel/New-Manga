@@ -1,7 +1,7 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`55543c10d`（FEA-04 v2 提交；FEA-03 done 在 `91be6c134`）
-**主推进**：`FEA-04` Current 适配（范围冻结 v3，待独立复核 r3）
+**当前 HEAD**：`f3bb62d29`（FEA-04 done 收口）
+**主推进**：`FEA-04` Current 适配 → **done**（集成 `f4d8a32ec`）；下一候选 `FEA-04b`（Fluent 四页设计规格）
 
 ---
 
@@ -27,13 +27,13 @@
 | Q-19 | 是否实现运行期切换入口 | 否；只做 preflight，FEA-07 承担切换 | v2 已写入 R-SWITCH-1…3 |
 | **Q-20** | **preflight blocker 形状与"有损编辑态"谓词** | **冻结**：`PreflightBlocker(Code, Source, Detail)`；Code ∈ {`PENDING_REGION_TYPE`,`PENDING_CONFIRMATION`,`UNFLUSHED_RUN_KEY`,`UNMAPPED_READER_ANCHOR`,`UNMAPPED_SHELL_STATE`}；任一存在即 fail-closed | v3 已写入 R-STATE-2/AC5；本行即书面裁决记录 |
 
-## 3A. FEA-04 实现状态（2026-11-02 05:40）
+## 3A. FEA-04 实现状态（已闭环，2026-11-02 12:20）
 
 - Codex 实现 WIP 提交 `160bd0a4d`（分支 `feat/fea-04`，未合并、未复核）。
 - **编译**：DSH 修复 5 处后 `dotnet build NewManga.sln` 通过（Codex 沙箱 NuGet 阻断，非代码问题）。
 - **行为基线 FAIL**：sln 测试 App.Tests **23 failed / 389 passed**（基线 10 failed / 386 passed）；回归集中在 `V2StudioBatchTests`（16，同一 helper `RefreshNowAsync` 返回 false 根因待查）、`V2ConsoleUiTests`（3）、`V2ShellUiTests`（1）；新增 `FEA04CurrentAdapterTests` 1 失败。
-- **结论**：不满足 AC2「基线不退化」→ 不能 done；卡维持 `ready`，待返修 + 独立实现复核。
-- **返修进展（DSH）**：根因定位——Codex 把 `StudioBatchViewModel._dataSource` 从 `RunControllerRunDataSource` 换成 `CurrentRunDataSource`（ApplicationCore monitor 路径），绕过了 Host `GetTaskProjection` → Batch 测试的 `ScriptedTaskProjections` 不再被消费（16 失败同根因）。DSH 恢复 `RunControllerRunDataSource(_controller, () => RunId)` 后，部分结果 16→3（`Poll_UpdatesProjection`、`GateModal_FocusesCancel`、`Gate_UnclearedErrors` 仍 FAIL）。
+- **结论**：已由 DSH 返修闭环：冻结命令 `dotnet build` EXIT=0、`dotnet test NewManga.sln` **931 passed / 0 failed / 60 skipped**（App 413/420，16 个既有回归全部消除 + IMPL-02 回归测试）；实现复核 r1（P1×4）→ r2（P1×2）→ **r3 approved（P0/P1=0，P2×7 接受遗留）**；集成 `f4d8a32ec`；卡 done。
+- **返修根因（历史记录）**：——Codex 把 `StudioBatchViewModel._dataSource` 从 `RunControllerRunDataSource` 换成 `CurrentRunDataSource`（ApplicationCore monitor 路径），绕过了 Host `GetTaskProjection` → Batch 测试的 `ScriptedTaskProjections` 不再被消费（16 失败同根因）。DSH 恢复 `RunControllerRunDataSource(_controller, () => RunId)` 后，部分结果 16→3（`Poll_UpdatesProjection`、`GateModal_FocusesCancel`、`Gate_UnclearedErrors` 仍 FAIL）。
 - **环境限制**：Avalonia headless UI 测试在本机无渲染环境会长时间挂起（testhost CPU 累计上千秒），无法在无人值守下跑完整 sln 测试；完整基线需在用户桌面环境执行。
 - **阻塞**：FEA-04 返修需 UI 测试环境（真实显示/GPU）与逐项断言调试；DSH 已记录返修起点（`feat/fea-04` 分支 HEAD 已含数据源恢复，未提交）。
 
@@ -48,6 +48,7 @@
 | 时间 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-02 02:45 | 建立；记录 FEA-03 done 与 FEA-04 释放 | DSH |
+
 
 
 
