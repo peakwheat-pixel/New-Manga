@@ -9,7 +9,8 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|in_progress（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；待复核）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
-|FEA-02-CORE|FEA-01-FREEZE-1|**in_review**（`5efb8f58c`；全量同基线 3 失败，待 DSH 独审）|
+|FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
+|FEA-00A-PREP-1|FEA-02-CORE|**proposed**（FEA-00a/FEA-03 前置评估，待用户确认）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
@@ -23,7 +24,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-02-CORE（**in_review**，待 DSH）、FEA-01-FREEZE-1（done，FEA-01 冻结 v2 `0370c189…`，15/15）、FEA-C11-PREREQ-1 / FEA-C10-DRAFT / FEA-CONTRACT-WRAP-1 / FEA-C14-DRAFT / FEA-D06-GAP（done）；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
+当前 DAG：FEA-00A-PREP-1（**proposed**，待用户确认）、FEA-02-CORE（**done**，集成 `135479270`）、FEA-01-FREEZE-1 / FEA-C11-PREREQ-1 / FEA-C10-DRAFT / FEA-CONTRACT-WRAP-1 / FEA-C14-DRAFT / FEA-D06-GAP（done）；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 

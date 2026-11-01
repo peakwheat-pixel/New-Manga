@@ -3,7 +3,7 @@ id: FEA-02-CORE
 title: FEA-02-CORE 共享应用状态与 Run 轮询基础（ApplicationCore 抽取）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: user_ruling_2026-11-01_U12
 suggested_owner: codex
 owner: codex
@@ -13,8 +13,8 @@ depends_on:
 base_commit: bf1c8eb00
 branch: feat/fea-02-core
 worktree: G:/CODEX/New Manga.workspace/FEA-02-CORE
-integration_commit: null
-delivery_head: 5efb8f58c88e1acb11eaf53b1eab9135f26f29db
+integration_commit: 135479270
+delivery_head: 5efb8f58c
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-02-CORE
@@ -129,3 +129,4 @@ allowed_paths:
 - 集成收口（2026-11-01，DSH）：**干净 TEMP 复跑**——交付 `908 passed / 0 failed / 60 skipped`（EXIT=0）、基线 `883 passed / 0 failed / 60 skipped`（EXIT=0）；命令 `dotnet test apps/desktop-avalonia/NewManga.sln --no-build`，TEMP 指向私有空目录（原始日志见 Canonical Evidence `DELIVERY-CLEAN` / `BASE-CLEAN`）。
 - **3 项 Host 失败的更正（FEA02-P2-001）**：属**环境相关 flaky**（Host 测试 `Dispose` 删 `Path.GetTempPath()` 下 junction 抛 `UnauthorizedAccessException`），干净环境不可复现；**非基线缺陷、非本 Task 引入**。handoff 中「与基线相同/基线已有」的表述以本条为准（handoff 原字节保留为当时环境快照）。
 - `integration_commit` 见 front matter；`delivery_head: 5efb8f58c`；`G-DELETE-IMPL` 仍 OPEN（本 Task 按卡授权，不释放其它实现）。
+- 集成（2026-11-01，DSH）：`feat/fea-02-core` 以 `--no-ff` 合并（合并提交 `135479270`）= `integration_commit`；`delivery_head: 5efb8f58c`；复核 `doc/reviews/FEA-02-CORE-r1.md` 判 `approved`（P0/P1=0）。

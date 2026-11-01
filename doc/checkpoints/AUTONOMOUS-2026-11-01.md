@@ -27,6 +27,7 @@
 | 7 | U-09 前置登记（L-1/L-2/L-5 → 候选 Task 前置与 AC） | **approved**（`FEA-C11-PREREQ-r1` P0/P1=0；非终态、未集成） | PASS (2w) | 14/14 | `doc/reviews/FEA-C11-PREREQ-r1.md`（approved，P2×5 已处置） | 登记文档 `doc/plan/FEA-C11_IMPL_PREREQS.md`；不豁免、不释放实现（`G-DELETE-IMPL` OPEN） |
 | 8 | FEA-01 稳定端口冻结（门禁链最后一环） | **done**（v2，pin `0370c189…`；集成 `bf1c8eb00`） | PASS (2w) | **15/15** | r1 `changes_requested`（P1×2）→ **r2 `approved`**（`FEA-01-FREEZE-r2`，P0/P1=0，P2×5） | 门禁链 4/4；稳定端口唯一载体 = C-07 清单；§3 待决项 8/8 对账（U-06/U-07 默认采用待追认）；不释放实现 |
 | 9 | `FEA-02-CORE` 范围冻结卡（Codex 实现） | **ready**（交 Codex；`bf1c8eb00`） | PASS | 15/15 | `FEA-01-FREEZE-r2`（approved；范围冻结复核含 sln） | 写域 = ApplicationCore + 对应测试 + sln 两条项目条目；保留 Current、不双调度；L-1/L-2/L-5 判 N/A + 再触发 |
+| 10 | FEA-02-CORE 实现交付与集成（Codex 实现） | **done**（集成 `135479270`；delivery `5efb8f58c`） | PASS (2w) | 15/15 | `doc/reviews/FEA-02-CORE-r1.md`（approved，P0/P1=0，P2×4） | 新增 25/25；干净 TEMP 全量 908/0/60（基线 883/0/60）；3 项 Host 失败=环境 flaky（非基线缺陷、非本 Task 引入）；无 Current 接线、无冻结字节改动 |
 
 ## 偏离登记
 
