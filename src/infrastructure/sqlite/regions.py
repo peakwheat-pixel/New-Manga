@@ -11,6 +11,7 @@ is a separate single-statement transaction that touches ``is_pinned`` only.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
 from dataclasses import replace
@@ -21,6 +22,7 @@ from application.editing.ports import (
     RegionCommitResult,
     RegionCommitStatus,
     RegionLockSnapshot,
+    RegionProtectionGuard,
 )
 from domain.regions.entities import (
     Region,
@@ -169,6 +171,13 @@ class SqliteRegionRepository:
         ).fetchone()
         return self._revision_from_row(row) if row else None
 
+    def revision_by_id(self, revision_id: str) -> RegionRevision | None:
+        row = self._conn.execute(
+            "SELECT * FROM region_revisions WHERE region_revision_id = ?",
+            (revision_id,),
+        ).fetchone()
+        return self._revision_from_row(row) if row else None
+
     def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
         """TASK-028 §4.2: pin touches is_pinned only — no same-id upsert of
         the immutable snapshot."""
@@ -295,6 +304,38 @@ class SqliteRegionRepository:
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
         page_region_limit: tuple[str, int] | None = None,
     ) -> RegionCommitResult:
+        """Existing composite write API; its signature remains stable."""
+        return self._commit_region_batch(
+            new_regions=new_regions,
+            updated_regions=updated_regions,
+            soft_delete_region_ids=soft_delete_region_ids,
+            revision_pins=revision_pins,
+            expected_current_checks=expected_current_checks,
+            page_region_limit=page_region_limit,
+        )
+
+    def commit_region_batch_guarded(
+        self,
+        *,
+        updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]",
+        protection_guards: "Sequence[RegionProtectionGuard]",
+    ) -> RegionCommitResult:
+        """Draft apply variant with pointer and protection checks in-transaction."""
+        return self._commit_region_batch(
+            updated_regions=updated_regions, protection_guards=protection_guards
+        )
+
+    def _commit_region_batch(
+        self,
+        *,
+        new_regions: "Sequence[tuple[Region, RegionRevision]]" = (),
+        updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]" = (),
+        soft_delete_region_ids: "Sequence[tuple[str, str | None]]" = (),
+        revision_pins: "Sequence[tuple[str, int, bool]]" = (),
+        expected_current_checks: "Sequence[tuple[str, str]]" = (),
+        page_region_limit: tuple[str, int] | None = None,
+        protection_guards: "Sequence[RegionProtectionGuard]" = (),
+    ) -> RegionCommitResult:
         """ALL-OR-NOTHING composite Region write (see the ports protocol).
 
         One ``BEGIN IMMEDIATE`` transaction. Every expected current pointer is
@@ -346,6 +387,42 @@ class SqliteRegionRepository:
                             f"expected current {expected!r},"
                             f" stored current {row['current_revision_id']!r}"
                         ),
+                    )
+
+            # Draft/token path: BaseRevisionId and the protection digest are
+            # re-read in this same IMMEDIATE transaction before any write.
+            for guard in protection_guards:
+                row = conn.execute(
+                    "SELECT current_revision_id, deleted_at, region_locked,"
+                    " translation_locked, inpaint_locked, text_json"
+                    " FROM regions WHERE region_id = ?",
+                    (guard.region_id,),
+                ).fetchone()
+                if row is None or row["deleted_at"] is not None:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.TARGET_NOT_FOUND, detail=guard.region_id
+                    )
+                if row["current_revision_id"] != guard.base_revision_id:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.STALE_BASE_REVISION, detail=guard.region_id
+                    )
+                text_state = json.loads(row["text_json"])
+                protection = {
+                    "region_locked": bool(row["region_locked"]),
+                    "translation_locked": bool(row["translation_locked"]),
+                    "inpaint_locked": bool(row["inpaint_locked"]),
+                    "text_translation_locked": bool(text_state.get("translation_locked", False)),
+                    "manual_edited": bool(text_state.get("manual_edited", False)),
+                }
+                digest = hashlib.sha256(
+                    json.dumps(protection, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
+                if digest != guard.protection_digest:
+                    conn.rollback()
+                    return RegionCommitResult(
+                        RegionCommitStatus.LOCK_CHANGED, detail=guard.region_id
                     )
 
             # 2. atomic page cap (I3/P2-A): the live count is re-read INSIDE
@@ -443,7 +520,10 @@ class SqliteRegionRepository:
         # the transaction committed (a rolled-back batch never mutates them).
         for region, revision_id in applied:
             region.current_revision_id = revision_id
-        return RegionCommitResult(RegionCommitStatus.APPLIED)
+        return RegionCommitResult(
+            RegionCommitStatus.APPLIED,
+            revision_ids={region.region_id: revision_id for region, revision_id in applied},
+        )
 
     # -- internal row writers (also the failure-injection seams in tests) --
 

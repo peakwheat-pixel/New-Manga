@@ -59,3 +59,15 @@ class GuardedWriteOutcome:
     retranslate_hint: bool = False
     detail: str = ""
     conflicts: tuple[str, ...] = field(default=())
+
+
+class DraftError(Exception):
+    """Structured internal failure for the draft/protection flow."""
+
+    def __init__(
+        self, code: str, message: str = "", *, details: dict | None = None, cause_code: str | None = None
+    ) -> None:
+        super().__init__(message or code)
+        self.code = code
+        self.details = details or {}
+        self.cause_code = cause_code

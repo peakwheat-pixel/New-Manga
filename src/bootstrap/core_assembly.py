@@ -40,6 +40,7 @@ import sys
 from typing import Any
 
 from application.editing.service import RegionEditingService, effective_sfx_policy
+from application.editing.drafts import DraftProtectionService
 from application.export import ExportService
 from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.ports import ImageDecoder
@@ -63,6 +64,7 @@ from domain.regions.entities import (
     SfxPolicy,
 )
 from infrastructure.filesystem.bounded_log_store import BoundedLogStore
+from infrastructure.filesystem.draft_journal import DraftJournal
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.tile_cache_sweep import WebtoonTileCacheSweeper
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
@@ -754,6 +756,8 @@ class CoreServices:
     #: instead of re-resolving the root (a junction above the root would move
     #: both sides of a resolve-then-compare check).  Provenance object only.
     managed_root_trust: object = None
+    #: FEA-03 C-13 draft/candidate/protected-apply object graph.
+    drafts: DraftProtectionService | None = None
     #: M2-PROD-DETECT-3: the detection adapter the pipeline ``detect`` step
     #: uses (manga/doctr backend selection + weights resolution, or the mock
     #: provider behind ``mock_local_providers``), exposed so the frozen
@@ -784,6 +788,23 @@ class CoreServices:
     #: ``<data_root>/plugins``. ``None`` keeps every existing construction
     #: valid and makes the plugin commands fail closed with CORE_UNAVAILABLE.
     plugins: object = None
+
+    def close(self) -> None:
+        """Release the draft journal's single-writer lock, then the DB facade.
+
+        FEA-03 (C-13 journal): ``DraftJournal`` owns a cross-process file
+        lock, so a Core that is closed and re-assembled over the same data
+        root must release it explicitly.  ``conn.close`` alone would leave
+        the lock held and make the restart look like a second Core instance
+        (``DRAFT_JOURNAL_LOCKED``).
+        """
+        journal = getattr(getattr(self, "drafts", None), "journal", None)
+        if journal is not None:
+            try:
+                journal.close()
+            except Exception:  # noqa: BLE001 - closing is best-effort
+                pass
+        self.conn.close()
 
 
 def _resolve_detector_weights_path(
@@ -1286,6 +1307,13 @@ def assemble_core_services(
         # step's candidates flow through; the handler never writes Regions
         # itself and no second write path is invented.
         editing = RegionEditingService(regions)
+        draft_journal = DraftJournal(Path(db_path).parent / "drafts")
+        drafts = DraftProtectionService(
+            repository=regions,
+            committer=regions,
+            connection=conn,
+            journal=draft_journal,
+        )
 
         def _create_detected_region(
             page_id: str,
@@ -1486,6 +1514,7 @@ def assemble_core_services(
             pipeline=pipeline,
             pipeline_defaults=pipeline_defaults,
             editing=editing,
+            drafts=drafts,
             render=render_service,
             providers=provider_runtime,
             page_catalog=page_catalog,
@@ -1526,5 +1555,7 @@ def assemble_core_services(
             plugins=plugins,
         )
     except Exception:
+        if "draft_journal" in locals():
+            draft_journal.close()
         conn.close()
         raise
