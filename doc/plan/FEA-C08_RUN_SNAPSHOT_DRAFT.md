@@ -74,7 +74,7 @@
 1. 独立复核通过；
 - **前置（a）**：C-05 与 C-04b 已冻结（§4 依赖它们的 active_runs 与删除保护口径）；
 2. C-01b 已冻结（顺序：C-01b 先）；
-- **前置（b）**：新增命令/错误码的**协议注册**由独立 Task 完成：`PrepareRun`/`AcceptRun` 的 wire 版本（minor 递增）、3 个新码（`RUN_STALE_PREVIEW`/`RUN_PREVIEW_EXPIRED`/`RUN_SNAPSHOT_INCOMPLETE`）须扩 M2-C1 错误表 + ErrorView 联合（同 C-04b §2.4 模式）；
+- **前置（b）**：新增命令/错误码的**协议注册**——**方案**已冻结在本草案 §2；**M2-C1 字节修订**（§5.11.3 表 + ErrorView 联合，3 个新码）由**独立 Task** 在**释放任何 Run 实现之前**完成并复核，与 C-04b 共用同一 Task（见 [Gate 阻塞口径裁定 v3](GATE-CLOSURE-RULING-2026-11-01.md) **R-4**）；复核须含**负向对照**：未扩 M2-C1 时 3 个新码必须被 host 投影拒绝；
 3. `check.ps1` PASS。
 
 ## 6. 变更记录
