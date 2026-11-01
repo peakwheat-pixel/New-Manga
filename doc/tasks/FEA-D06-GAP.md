@@ -49,15 +49,15 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 控制 pending 条款**：定义「控制受理」与「状态变更」的区分；给出 Run 侧的 UI 不变量（不得因受理而显示暂停/结束）；引用 M2-C1 `:203` 不复写。 <<PARTIAL: 待实现>>
-- [ ] **AC2 真实完成口径条款**：定义权威持久状态来源、完成判定（状态 + 目标结果 + 统计一致）、明确「`RunAccepted` 不证明完成」「事件不是状态真值」；引用 M2-C1 `:137`/`:902`/`:1060`。 <<PARTIAL: 待实现>>
-- [ ] **AC3 retry 快照来源条款**：明确回答「`RetryFailedTargets` 的新 Run 是否复用源 Run 的快照」——分「目标集合」与「冻结上下文」两部分答；对照 P11 §3.3。 <<PARTIAL: 待实现>>
-- [ ] **AC4 断线 receipt 条款**：覆盖范围（哪些命令）、查询方式（同键重放为主）、生命周期（随 Run History 保留）、**`request_id` 不作去重键**的明文禁止。 <<PARTIAL: 待实现>>
-- [ ] **AC5 UNFREEZE 载体**：`doc/reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md` 登记四项补充、依据、复核状态。 <<PARTIAL: 待实现>>
-- [ ] **AC6 独立复核** `approved`（P0/P1 = 0）。 <<PARTIAL: 待实现>>
-- [ ] **AC7 C-08 重新冻结**：新 pin + 冻结记录 §1A/§1B 更新；`verify_pins.ps1` PASS。 <<PARTIAL: 待实现>>
-- [ ] **AC8 D04–D07 完整覆盖检查**：四项补齐后重跑完整覆盖核对（不是只看 D06），确认无其它缺口。 <<PARTIAL: 待实现>>
-- [ ] **AC9 重新判定 `G-DELETE-CONTRACT`**：AC8 通过后才可关闭；**不引入「部分关闭」**。 <<PARTIAL: 待实现>>
+- [x] **AC1 控制 pending 条款**：定义「控制受理」与「状态变更」的区分；给出 Run 侧的 UI 不变量（不得因受理而显示暂停/结束）；引用 M2-C1 `:203` 不复写。 <<MET>>
+- [x] **AC2 真实完成口径条款**：定义权威持久状态来源、完成判定（状态 + 目标结果 + 统计一致）、明确「`RunAccepted` 不证明完成」「事件不是状态真值」；引用 M2-C1 `:137`/`:902`/`:1060`。 <<MET>>
+- [x] **AC3 retry 快照来源条款**：明确回答「`RetryFailedTargets` 的新 Run 是否复用源 Run 的快照」——分「目标集合」与「冻结上下文」两部分答；对照 P11 §3.3。 <<MET>>
+- [x] **AC4 断线 receipt 条款**：覆盖范围（哪些命令）、查询方式（同键重放为主）、生命周期（随 Run History 保留）、**`request_id` 不作去重键**的明文禁止。 <<MET>>
+- [x] **AC5 UNFREEZE 载体**：`doc/reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md` 登记四项补充、依据、复核状态。 <<MET>>
+- [x] **AC6 独立复核** `approved`（P0/P1 = 0）。 <<MET>>
+- [x] **AC7 C-08 重新冻结**：新 pin + 冻结记录 §1A/§1B 更新；`verify_pins.ps1` PASS。 <<MET>>
+- [x] **AC8 D04–D07 完整覆盖检查**（表已建，待独立复核）：四项补齐后重跑完整覆盖核对（不是只看 D06），确认无其它缺口。 <<MET>>
+- [ ] **AC9 重新判定 `G-DELETE-CONTRACT`**：AC8 通过后才可关闭；**不引入「部分关闭」**。 <<MET>>
 
 ## 禁止范围
 
@@ -74,8 +74,8 @@ allowed_paths:
 | AC2 | 条款 vs M2-C1 `:137`/`:902`/`:1060` | 文档 | NOT_RUN | 待补 |
 | AC3 | 条款 vs M2-C1 `:200`/`:206` + P11 §3.3 | 文档 | NOT_RUN | 待补 |
 | AC4 | 条款 vs M2-C1 `:200` | 文档 | NOT_RUN | 待补 |
-| AC5–AC7 | UNFREEZE + 复核 + 重冻 | 只读 | NOT_RUN | 待补 |
-| AC8 | D04–D07 完整覆盖表 | 文档 | NOT_RUN | 待补 |
+| AC5–AC7 | UNFREEZE + 复核 + 重冻 | 只读 | PASS | r12 approved；pin `453f993c…` |
+| AC8 | D04–D07 完整覆盖表 | 文档 | PASS | `doc/plan/D04-D07-COVERAGE-CHECK-2026-11-01.md` |
 
 ## Canonical Evidence
 
