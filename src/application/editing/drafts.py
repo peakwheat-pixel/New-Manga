@@ -494,7 +494,7 @@ class DraftProtectionService:
                 receipt_data = {
                     "tokenId": edit_token.token_id,
                     "DraftId": draft.draft_id,
-                    "DraftSequence": draft.draft_sequence,
+                    "DraftSequence": edit_token.draft_sequence,
                     "revisionIds": dict(result.revision_ids or expected_revision_ids),
                     "contentDigests": content_digests,
                     "committedAt": _utc_now(),

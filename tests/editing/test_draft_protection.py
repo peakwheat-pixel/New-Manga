@@ -411,3 +411,21 @@ def test_receipt_intent_recovers_after_restart_when_receipt_write_crashes(tmp_pa
         ).fetchone()[0] == 2
     finally:
         _close(recovered)
+
+def test_machine_result_candidate_prepare_keeps_pointer(tmp_path: Path) -> None:
+    """V13 (AC6): a machine result becomes a RegionCandidate and never writes
+    ``current_revision_id`` during prepare (C-13 SC-D06/SC-D07)."""
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        page_id = _seed_page(core, "page-machine")
+        region = _new_region(core, page_id, "region-machine")
+        before = core.editing.get_region(region.region_id).current_revision_id
+        candidate = core.drafts.prepare_candidate(
+            region.region_id,
+            {"text": {"edited_translation": "machine result"}},
+            origin="machine",
+        )
+        assert candidate.origin == "machine"
+        assert core.editing.get_region(region.region_id).current_revision_id == before
+    finally:
+        _close(core)

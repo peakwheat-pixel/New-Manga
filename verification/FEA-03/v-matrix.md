@@ -31,3 +31,6 @@
 | V25 | 活跃登记、Session 清理、孤儿 discard、receipt 保留 | PARTIAL | edit-open active 登记手工验证；其余生命周期断言只在未执行 pytest 测试源中。 |
 
 用户任务正文列 V1–V24；当前工作区 FEA-03 Task v6 冻结矩阵另含 V25。
+
+> 复核处置（DSH）：V13 已补 	est_machine_result_candidate_prepare_keeps_pointer（machine-candidate 不写指针）；V19 旧→新/新→旧组合登记为 DSH 集成验证 deferral（见 Task 卡「契约 deferral 登记」），本卡不改旧路径，V18 覆盖旧路径行为不变。
+
