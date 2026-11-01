@@ -1,6 +1,6 @@
 # FEA-01 契约变更清单（草案）
 
-状态：**DRAFT / 未冻结 / 不释放实现 Task**
+状态：**FROZEN v2 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-FEA01.md)）**。门禁链 4/4 完成（用户裁决 → 方案 r8 复审 → 14 份子契约冻结 → 本文件冻结）；**冻结不释放实现 Task**——实现须逐 Task 建卡 + 范围冻结 + 独立复核 + 用户确认，`G-DELETE-IMPL` 仍 OPEN。
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：FEA-00 r1（[FEA-00-dsh-r1](../reviews/FEA-00-dsh-r1.md) §5.4）、r2 技术复核（[FEA-00-dsh-r2-technical-recheck](../reviews/FEA-00-dsh-r2-technical-recheck.md)）、r7 独立 Review（[FEA-00-dsh-r7](../reviews/FEA-00-dsh-r7.md)，`changes_requested`）、**r8 独立 Review（[FEA-00-dsh-r8](../reviews/FEA-00-dsh-r8.md)，`approved`：0 P0 / 0 P1 / 9 P2）**、方案 r4（`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` @ `74a772167`，LF sha256 `8895aebe…`）、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)
@@ -15,13 +15,13 @@
 用户裁决（§3 待决项）
   → 方案修订（R7-01 / R7-02 等）
   → 新 hash 独立复审通过          ← 2026-11-01 已完成（r8 `approved`，`74a772167`）
-  → C-01…C-12 逐条冻结
-  → FEA-01 冻结
-  → Task 释放
+  → C-01…C-12 逐条冻结            ← 2026-11-01 已完成（14 份：C-01b…C-14，见 §2A）
+  → FEA-01 冻结                    ← 2026-11-01 完成（本文件 v2；pin 见冻结记录）
+  → Task 释放                      ← **未发生**（逐 Task 卡 + 独立复核；`G-DELETE-IMPL` OPEN）
   → 实现
 ```
 
-任一门禁未过，**Source 线（FEA-08/09/11/12/13）保持 BLOCKED**。
+任一门禁未过，**Source 线（FEA-08/09/11/12/13）保持 BLOCKED**。门禁链前四步的完成证据见 [`verification/FEA-01-FREEZE/closeout-check.md`](../../verification/FEA-01-FREEZE/closeout-check.md)。
 
 ### 1.1 r7 结论摘要（2026-11-01）
 
@@ -61,6 +61,31 @@
 | **C-12** | 治理检查器定位 | `tools/governance/check.ps1:261-275` | 明确它**不检测**「保留哨兵 + 覆盖性决策」，也**不扫描** `doc/design/**`；断言面以 r6c 批准的实现为准；不得作为架构一致性证据 | F-01 | **定向正确、文本需更新（并入 R7-01）** |
 
 **说明**：「成立」= 方案已按 r1 要求给出草案，等待冻结；「缺失/部分」= 方案文本尚未覆盖，需修订；「已满足」= 方案之外的权威文档已满足，方案只需引用。
+
+**冻结状态（2026-11-01）**：§2 的「决策状态」列保留**冻结前快照**；现行状态以 §2A 为准。冻结后任何变更须走对应 `CONTRACT-UNFREEZE-<ID>` 并重算 pin。
+
+## 2A. 冻结完成对账（2026-11-01）
+
+**稳定端口说明**：C-07「应用端口与兼容面」由 [FEA-C07_API_INVENTORY.md](FEA-C07_API_INVENTORY.md) 承载（pin `17c8f7016a36…`，方法清单由代码生成、替换旧「36」口径）；本清单的冻结即为「FEA-01 稳定端口冻结」的门禁完成，**不另起第二份端口清单**（避免双权威）。
+
+| 变更包 | 承载契约 / 冻结记录 | pin 前缀 | 状态 |
+|---|---|---|---|
+| C-01b | [FEA-CONTRACT-FROZEN-C01b](FEA-CONTRACT-FROZEN-C01b.md) | `3c9f5af7d74f` | ✅ 冻结 |
+| C-02 | [FEA-CONTRACT-FROZEN-C02](FEA-CONTRACT-FROZEN-C02.md) | `bb365ca891a7` | ✅ 冻结 |
+| C-03 | [FEA-CONTRACT-FROZEN-C03](FEA-CONTRACT-FROZEN-C03.md) | `b77e7968a00b` | ✅ 冻结 |
+| C-04b | [FEA-CONTRACT-FROZEN-C04b](FEA-CONTRACT-FROZEN-C04b.md) | `694ce5bc8c8b` | ✅ 冻结 |
+| C-05 | [FEA-CONTRACT-FROZEN-C05](FEA-CONTRACT-FROZEN-C05.md) | `b34db8876879` | ✅ 冻结 |
+| C-06 | [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md) | `b798dd8a9b38` | ✅ 冻结 |
+| C-07（端口清单） | [FEA-CONTRACT-FROZEN-C07](FEA-CONTRACT-FROZEN-C07.md) | `17c8f7016a36` | ✅ 冻结 |
+| C-08 | [FEA-CONTRACT-FROZEN-C08](FEA-CONTRACT-FROZEN-C08.md) | `453f993c1a16` | ✅ 冻结 |
+| C-09 | [FEA-CONTRACT-FROZEN-C09](FEA-CONTRACT-FROZEN-C09.md) | `dc51226b336c` | ✅ 冻结 |
+| C-10 | [FEA-CONTRACT-FROZEN-C10](FEA-CONTRACT-FROZEN-C10.md) | `ec8fd862f95f` | ✅ 冻结（v5，`T=4 DIP`） |
+| C-11 | [FEA-CONTRACT-FROZEN-C11](FEA-CONTRACT-FROZEN-C11.md) | `44f4273f7ad1` | ✅ 冻结 |
+| C-12 | [FEA-CONTRACT-FROZEN-C12](FEA-CONTRACT-FROZEN-C12.md) | `f49835860143` | ✅ 冻结 |
+| C-13 | [FEA-CONTRACT-FROZEN-C13](FEA-CONTRACT-FROZEN-C13.md) | `d2cb8de4dd79` | ✅ 冻结 |
+| C-14 | [FEA-CONTRACT-FROZEN-C14](FEA-CONTRACT-FROZEN-C14.md) | `05056cbf65f9` | ✅ 冻结 |
+
+合计 **14 份**；`verify_pins.ps1` 在本文件冻结后应为 **15/15**（含 FEA-01 自身）。
 
 ---
 
@@ -106,3 +131,4 @@
 | 2026-11-01 | 建立草案；按 r1 §5.4 收录 C-01…C-12 与 U-01…U-08；标注 AD-003/ADJ-001 已覆盖项 | DSH |
 | 2026-11-01 | 吸收 FEA-00 r7 独立 Review（`changes_requested`）：C-01 → a/b/c、C-04 → a/b/c，C-10 标「部分」、C-12 补断言面；冻结链加入「修订后新 hash 复审」；登记 G-01…G-03 | DSH |
 | 2026-11-01 | 吸收 FEA-00 r8 独立 Review（`approved`，0 P0 / 0 P1 / 9 P2）：更新依据为方案 r4（`74a772167`）；C-04c 改为已覆盖；G-01/G-03 关闭；U-02 标注 ADJ-001 已冻结；冻结链标注「新 hash 复审」已完成 | DSH |
+| 2026-11-01 | **FROZEN v2（冻结行）**：状态行改 FROZEN、门禁链 4/4 完成标注、新增 §2A 冻结完成对账（14 份承载契约 + pin 前缀 + 稳定端口说明）；pin 见[冻结记录](FEA-CONTRACT-FROZEN-FEA01.md) §1（在本次字节编辑完成后计算） | DSH |

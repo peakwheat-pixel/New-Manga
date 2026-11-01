@@ -25,6 +25,8 @@
 | 5 | PLAN 预算卫生 + WRAP 收尾材料 | **done**（收口材料 `6c0195437`；集成 `6cfe7ab92`） | PASS (2w) | 13/13 | `doc/reviews/FEA-WRAP-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×4）；R1 为 changes_requested（P1×1 = Manifest 词表，已修） | PLAN 6777 B/57 行 → **2302 B/32 行**；历史 31 行原样迁入 `PLAN-HISTORY`（+38/−0）；closeout-check 数字为 `6c0195437` 时刻快照（P2-002） |
 | 6 | C-10 文档冻结（用户 U-06/U-11） | **done**（冻结 `170b384e2`；pin `ec8fd862…`） | PASS (2w) | **14/14** | `doc/reviews/FEA-C10-r4b.md`（approved，P0/P1=0，P2×2 记录侧） | `T=4 DIP` 仅鼠标、跨阈保持、不随缩放、DPI 无关；13 份既有 pin 未变；实现线未释放 |
 | 7 | U-09 前置登记（L-1/L-2/L-5 → 候选 Task 前置与 AC） | **approved**（`FEA-C11-PREREQ-r1` P0/P1=0；非终态、未集成） | PASS (2w) | 14/14 | `doc/reviews/FEA-C11-PREREQ-r1.md`（approved，P2×5 已处置） | 登记文档 `doc/plan/FEA-C11_IMPL_PREREQS.md`；不豁免、不释放实现（`G-DELETE-IMPL` OPEN） |
+| 8 | FEA-01 稳定端口冻结（门禁链最后一环） | **in_progress**（v2，pin `0370c189…`；pins 15/15） | PASS (2w) | **15/15** | 待复核 `FEA-01-FREEZE-r1` | 门禁链 4/4；稳定端口清单唯一载体 = C-07 清单；不释放实现 |
+| 9 | `FEA-02-CORE` 范围冻结卡（Codex 实现） | **proposed**（待复核 → ready） | PASS | 15/15 | 待复核（与第 8 项同一复核） | 写域限 `NewManga.ApplicationCore` + 测试；保留 Current 入口；L-1/L-2/L-5 判定 N/A 且列再触发条件 |
 
 ## 偏离登记
 
