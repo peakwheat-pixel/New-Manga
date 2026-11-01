@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import uuid
 from typing import Any, Mapping
 
@@ -163,6 +164,7 @@ class DraftJournal:
                 shared[1] -= 1
                 if shared[1] > 0:
                     return
+                _SHARED_LOCKS.pop(key, None)
         try:
             (handle / "pid").unlink()
         except OSError:

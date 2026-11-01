@@ -257,17 +257,28 @@ class DraftProtectionService:
     def discard_orphans(self, active_session_ids: set[str]) -> list[str]:
         discarded: list[str] = []
         with self._lock:
-            for draft in self._drafts.values():
+            for draft_id, draft in list(self._drafts.items()):
                 if draft.session_id in active_session_ids:
                     continue
                 draft.status = DraftStatus.DISCARDED
-                timer = self._timers.pop(draft.draft_id, None)
+                timer = self._timers.pop(draft_id, None)
                 if timer is not None:
                     timer.cancel()
-                self._journal.write_draft(draft)
-                self._journal.delete_receipts(draft.draft_id)
-                self._owners.pop(self._target_key(draft.page_id, draft.region_id), None)
-                discarded.append(draft.draft_id)
+                # A discarded orphan must not keep the target owned or the draft
+                # cached, otherwise a new Session can never reopen the page
+                # (permanent DRAFT_TEXT_CONFLICT) and the journal leaks files.
+                self._journal.delete_receipts(draft_id)
+                self._journal.delete_draft(draft_id)
+                target = self._target_key(draft.page_id, draft.region_id)
+                self._owners.pop(target, None)
+                self._target_by_session.pop((draft.session_id, *target), None)
+                for candidate_id, data in tuple(self._candidates.items()):
+                    if data.draft_id == draft_id:
+                        self._candidates.pop(candidate_id, None)
+                for token_id, token in tuple(self._tokens.items()):
+                    if token.draft_id == draft_id:
+                        self._tokens.pop(token_id, None)
+                discarded.append(draft_id)
         return discarded
 
     def issue_edit_token(self, draft_id: str, *, ttl_seconds: int | None = None) -> EditToken:
@@ -396,7 +407,7 @@ class DraftProtectionService:
                 raise DraftError(
                     "DRAFT_CANDIDATE_INVALID", "conflicted or discarded draft cannot be applied"
                 )
-            if draft.draft_sequence != edit_token.draft_sequence:
+            if draft.draft_sequence < edit_token.draft_sequence:
                 raise DraftError("EDIT_TOKEN_REUSED", "token sequence does not match the draft")
             if not candidate_ids or any(item is None for item in data):
                 raise DraftError("DRAFT_CANDIDATE_NOT_FOUND", "candidate registry entry is missing")
