@@ -3,7 +3,7 @@ id: FEA-C14-DRAFT
 title: C-14 起草（D05 剩余范围：重定位/同步 + 容器页映射 + 缓存边界缺失子面）
 kind: contract
 governance_version: 3
-status: in_review
+status: done
 approval: user_ruling_2026-11-01_C14_new_contract
 suggested_owner: dsh
 owner: dsh-lead
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 5add23956
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: ff432e97c
 delivery_head: e35f37603
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-C14
 allowed_paths:
   - doc/tasks/FEA-C14-DRAFT.md
@@ -116,3 +116,4 @@ allowed_paths:
 - 未跑项：AC1–AC5 的条款级对照本收口未重跑，保持 `NOT_RUN`；未运行任何程序测试（纯文档 Task）。
 - 资源：仓库内无资源；仓库外 3 项纳入共享清单 `PRESERVE_UNKNOWN`；未访问用户数据。
 - 边界：不构成实现授权；不构成远端 push 授权；不改变任何冻结契约字节（`verify_pins.ps1` 13/13）。
+- 收口（2026-11-01）：R1 [approved](../reviews/FEA-C14-CLOSEOUT-r1.md)（P0/P1 = 0；P2×6 非阻断）；`status: done`、`integration_commit: ff432e97c`、`resource_closeout_status: complete` 为**纯元数据回填**（未改 AC / 证据表 / 资源清单正文）；P2 技术债登记于 `doc/checkpoints/AUTONOMOUS-2026-11-01.md`。

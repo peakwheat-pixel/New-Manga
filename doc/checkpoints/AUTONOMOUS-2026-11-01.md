@@ -19,7 +19,7 @@
 |---|---|---|---|---|---|---|
 | 0 | 建立复核席位 `c01b-reviewer` + 本 checkpoint | — | — | — | — | 无 |
 | 1 | 收口 `FEA-D06-GAP` | **done**（收口材料 `1027de616`） | PASS (3w) | 13/13 | `doc/reviews/FEA-D06-CLOSEOUT-r2.md`（approved，P0/P1=0，P2×6 非阻断；R1 为 changes_requested→已修） | R2 条件：done 为纯元数据回填；R2-001…006 技术债**未修**，登记待处置 |
-| 2 | 收口 `FEA-C14-DRAFT` | 待填 | 待填 | 待填 | 待填 | 待填 |
+| 2 | 收口 `FEA-C14-DRAFT` | **done**（收口材料 `ff432e97c`） | PASS (3w) | 13/13 | `doc/reviews/FEA-C14-CLOSEOUT-r1.md`（approved，P0/P1=0，P2×6 非阻断） | R1 条件：done 为纯元数据回填；P2-1/5 在 done 处理，P2-2/3/4/6 未修（非阻断） |
 | 3 | L-3 Errata | 待填 | 待填 | 待填 | 待填 | 待填 |
 | 4 | 起草 C-10 交互契约（不冻结） | 待填 | 待填 | 待填 | 待填 | 待填 |
 | 5 | PLAN 预算卫生 | 待填 | 待填 | 待填 | 待填 | 待填 |
