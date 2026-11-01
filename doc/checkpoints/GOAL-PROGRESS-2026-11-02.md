@@ -1,6 +1,6 @@
 # Goal 进度文件 · 2026-11-02（自主推进段 2）
 
-**当前 HEAD**：`e5452dd78`（FEA-05-WIRE-1 done；FEA-04b in_review；FEA-04/C11-PREREQ-1 done）
+**当前 HEAD**：`11a8c4ae8`（FEA-05-PORT-1 done；FEA-05-WIRE-1 done；FEA-04b in_review；FEA-04/C11-PREREQ-1 done）
 **主推进**：`FEA-05-WIRE-1` Draft 命令面 wire **done**（范围 r1–r7、实现 impl-r1–r3 approved；全量 931/0/60）；`FEA-04b` 设计基线 r5 approved（AC5 待用户确认）
 
 ---
@@ -81,3 +81,10 @@
 - 交付：doc/contracts/FEA-05_DRAFT_WIRE_CONTRACT.md（五节 + 17 码逐码表）、V11R_COMMAND_CONTRACT_V1.md §8.2（C078–C083）、core_service.py（6 handler + 冻结信封映射）、	ests/core/test_draft_commands.py（12 项）、erification/FEA-05-WIRE-1/**（7 项证据）。
 - 验证：全量 sln **931 passed / 0 failed / 60 skipped**；pytest **900 passed**；C# 契约 **80/80**；erify_pins 15/15；check.ps1 PASS。
 - **待裁决**：Q-27（FEA-05-PORT-1 建卡：端口面 + CoreClient registry + V11R_REGION_WRITE_CONTRACT.md UNFREEZE 把 Region 不变式升级为「各家族集合之并」）；Q-23（FEA-04b 设计基线批准/冻结）。
+## 10. FEA-05-PORT-1 收口（2026-11-03 凌晨）
+
+- 范围：r1（P0×2/P1×1）→ r2（P0=0/P1×2）→ r3（P1×1）→ **r4 approved**。
+- 实现：DSH（Codex 通道故障）；**impl-r1（P1×5）→ impl-r2（P1×2）→ impl-r3 approved（P0/P1=0，P2×11）**。
+- 交付：Region 契约 **v1.6 UNFREEZE**（DraftsCommandNames 6；不变式并集 17）+ CONTRACT-UNFREEZE-2026-11-02.md + C-07 库存 54/61/18 + C-07 pin 重算 3fdb44e4…（重冻）+ HostCommandDomain.Drafts + DraftCommands.cs DTO + registry（6 条/17/CoreBindings）+ dispatcher 6 case/XOR + IHostController 7 方法 + HostController/NullHostController/FakeHostController + DraftCommandRegistryTests（9）+ DraftPortDefaultTests（6）。
+- 验证：全量 sln **949 passed / 0 failed / 57 skipped**；erify_pins **15/15**；pi inventory --check EXIT 0；check.ps1 PASS。
+- **待裁决**：Q-28（FEA-06 UI 消费的前置：FEA-04b AC5 用户确认、FEA-05 契约 §8.2 状态升级路径——§8.2 状态列须保持 PENDING 否则 CommandContractV11RTests 红）；Q-23（FEA-04b 批准）。
