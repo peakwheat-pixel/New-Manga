@@ -147,3 +147,10 @@ m.fluent.visual/1 manifest + Material/Elevation 取值 + 校验测试）。
 - 全量 **977/0/57**。
 - 进度：impl-r1 的 10 条 P1 → **9 关闭，1 剩余（P1-9 主题包生成）**。
 - 下一步：P1-9（BuiltInThemeGenerator 支持第二主题目标 + manifest + Material/Elevation + 校验测试）→ 派 impl-r2。
+## 20. PREREQ-1 impl-r2 与部分处置（2026-11-03）
+
+- impl-r2（3c0c7d50c 审）**changes_requested（P0=0/P1=5/P2=19）**；独立复跑 977/0/57、两 --check 一致。
+- **已处置**（62b36c509）：r2-P1-1（layout 默认 	op-band/stacked/it-page）、r2-P1-5（Elevation 颜色 gba() → 生成   1 2 #26000000 等，alpha 正确；spread=0 省略记 P2）、证据刷新（sln 977、tokengen check）。
+- **遗留 3 条 P1**：r2-P1-2（ThemeSettingsStore 一个 release 兼容写/双写者收敛 + 迁移结果落盘）、r2-P1-3（AppOptions.FrontendId 解析/注入）、r2-P1-4（Nm.Material.Acrylic.Base/Tint + ThemeLayerAllowedKeys/R14 59/65 计数/主题包 schema）。
+- 全量 **977/0/57**。
+- 进度：impl-r1 全 10 关闭；impl-r2 5 条 → 2 关闭、3 遗留。
