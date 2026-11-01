@@ -16,6 +16,7 @@
 |FEA-04|FEA-02-CORE、FEA-03|**done**（集成 `f4d8a32ec`；实现复核 r3 approved P0/P1=0；sln 931/0/60；AC11b 无）|
 |FEA-04b|FEA-04|**in_review**（Fluent 四页设计基线；写域 `doc/design/fluent-v1/`；独立复核 r1→r2）|
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
+|FEA-05-PORT-1|FEA-05-WIRE-1|**proposed**（Draft 端口面 + CoreClient registry + Region 契约 UNFREEZE v1.6；待复核）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
