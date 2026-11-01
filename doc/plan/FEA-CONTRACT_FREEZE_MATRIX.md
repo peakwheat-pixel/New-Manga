@@ -5,11 +5,11 @@
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、各草案的「冻结条件」节、[FEA-CONTRACT_FREEZE_PACKAGE](FEA-CONTRACT_FREEZE_PACKAGE.md)
 
-**用途**：把 **13 份已冻结契约 + C-10（未起草）+ C-09（未冻）** 的冻结依赖链收成一张可执行表——每份差什么、按什么顺序、卡在哪个 Gate。**不是**冻结令。
+**用途**：把 **13 份已冻结契约（含 C-09 v5）+ C-10（未起草）** 的冻结依赖链收成一张可执行表——每份差什么、按什么顺序、卡在哪个 Gate。**不是**冻结令。
 
-> **当前进度（2026-11-01）**：用户 6 项裁决已落盘（含 U-03=B）（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 13 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-08 / C-11 / C-12 / C-13（D04）/ **C-14（D05）**。**Gate 判定**（[FEA-GATE-READINESS-review](../reviews/FEA-GATE-READINESS-review.md)，2026-11-01）：`G-CONTRACT`（D05）**✅ 满足**；`G-DELETE-CONTRACT`（D04–D07）**❌ 不满足**——D04 ✓、D05 ✓，但 **D06 有 4 项声明范围无条款**、**D07 多项未冻且与 C-09 循环**。仅剩 **C-09**（不可冻）、**C-10**（U-03 已裁，可起草）。
+> **当前进度（2026-11-01）**：用户 6 项裁决已落盘（含 U-03=B）（[ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md)）；**已冻结 13 份**：C-01b / C-02 / C-03 / C-04b / C-05 / C-06 / C-07 / C-08 / C-11 / C-12 / C-13（D04）/ **C-14（D05）**。**Gate 判定见下方 `:12` 的最终块**（两 Gate 均已 CLOSED，2026-11-01）。仅剩 **C-10**（U-03 已裁，可起草）。
 >
-> **Gate 判定（最终，2026-11-01）**：`G-CONTRACT` **✅ CLOSED**（[裁定](GATE-CONTRACT-CLOSURE-2026-11-01.md)）；`G-DELETE-CONTRACT` **✅ CLOSED**（[裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，D04–D07 全覆盖，`approved` r3）。**保留项 L-1…L-9**（尤其 L-5 整库恢复锁认定）与 **Errata** 见该裁定。\n
+> **Gate 判定（最终，2026-11-01）**：`G-CONTRACT` **✅ CLOSED**（[裁定](GATE-CONTRACT-CLOSURE-2026-11-01.md)）；`G-DELETE-CONTRACT` **✅ CLOSED**（[裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，D04–D07 全覆盖，`approved` r3）。**保留项 L-1…L-9**（尤其 L-5 整库恢复锁认定）与 **Errata** 见该裁定。
 ---
 
 ## 1. 总表
@@ -45,7 +45,7 @@
    ↓
 第 4 步（可并行）：C-03 冻结（跟 C-02） / C-11 冻结（C-01b 已冻）
    ↓
-第 5 步：C-06 冻结（G-CONTRACT 关闭后） / C-04b 冻结（G-DELETE-CONTRACT 关闭 + D04/D07 + 2.11 + M2-C1 扩展后）
+第 5 步：C-06 冻结 / C-04b 冻结（**历史步骤**：两 Gate 已于 2026-11-01 CLOSED）
    ↓
 第 6 步：C-08 冻结（C-05/C-04b 都冻 + 协议注册）
    ↓
@@ -58,7 +58,7 @@
 
 | Gate | 影响 | 关闭条件 |
 |---|---|---|
-| `G-DELETE-CONTRACT` | C-01b/C-04b/C-09 | ADJ-001 的 PD 语义冻结（**D04–D07** 裁决，ADJ-001 §9 `:128`）；**D07 的承载者 = C-09（解环后）** |
+| `G-DELETE-CONTRACT` | C-01b/C-04b/C-09 | ADJ-001 的 PD 语义冻结（**D04–D07** 裁决，ADJ-001 §9 `:128`）；**已 CLOSED 2026-11-01**（[裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)） |
 | `G-CONTRACT` | C-06/C-09 | AD-003 存储契约冻结；**已 CLOSED 2026-11-01** |
 | `G-SAFETY` | FEA-00a（实现） | SAFETY 线收尾 + F20 修复（当前 `NOT_RUN`） |
 | U-03 / U-04 / U-05a / U-05b | C-10 / C-02 / C-03 | 用户裁决 |
