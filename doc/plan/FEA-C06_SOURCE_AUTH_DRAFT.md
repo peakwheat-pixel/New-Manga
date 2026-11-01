@@ -77,7 +77,7 @@
 
 1. 独立复核通过；
 2. **C-01b 已冻结**（SC-21/SC-22 由本草案落地）；
-3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集：registry + source-read grant + 4 命令 + 9 条安全约束。**lease** 由 C-01b SC-25/29/31 承载；**缓存预算**在本单 `budget{maxBytes,maxDecodeBytes}` 内自含；**重定位/同步、容器页映射** 目前**无承载条款**，仍属 D05 未覆盖项——Gate 保持 OPEN。见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
+3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集：registry + source-read grant + 4 命令 + 9 条安全约束。**lease** 由 C-01b SC-25/29/31 承载；本单只含**per-request 解码预算**（`budget{maxBytes,maxDecodeBytes}`）；**D05 的缓存边界（策略/淘汰/持久化）仍由 C-01b/C-09 分担**；**重定位/同步、容器页映射** 目前**无承载条款**，仍属 D05 未覆盖项——Gate 保持 OPEN。见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
 4. **wire 版本由 DSH 批准**（v1.1 minor 增量）；
 5. `check.ps1` PASS。
 

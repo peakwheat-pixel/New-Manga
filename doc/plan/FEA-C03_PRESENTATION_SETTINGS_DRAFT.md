@@ -46,7 +46,7 @@
 ### 2.3 动效三态与分类模型
 
 - **三态**：`auto`（跟随系统）/ `full`（始终开启）/ `reduce`（始终减弱）。
-- **与方案 r4 的命名映射**（方案术语为描述性，契约以本草案键名为准）：方案 `on/off/system` → 本草案 `full/reduce/auto`；方案「页面过渡」→ `navigation`、「悬停」→ `feedback`、「浮层」→ `decorative`。
+- **与方案 r4 的命名映射**（方案术语为描述性，契约以本草案键名为准）：方案 `on/off/system` → 本草案 `full/reduce/auto`；方案「页面过渡」→ `navigation`、「悬停」→ `feedback`；**方案「浮层（overlay）」在本草案无对应专类**——浮层过渡的动效归属须在 FEA-04b 设计基线里判定（可能落 `navigation` 或 `feedback`），**不得**默认归入 `decorative`（后者指背景渐变/粒子等环境装饰）。
 - **分类模型**：动效按**用途**分 3 类，各自独立开关（`motion.categories`）：
   | 类别 | 示例 | 三态作用 |
   |---|---|---|
