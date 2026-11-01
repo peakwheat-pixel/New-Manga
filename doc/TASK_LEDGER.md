@@ -24,13 +24,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
+| `in_review` | 3 | no |
 | `approved` | 2 | no |
 | `in_progress` | 2 | no |
-| `in_review` | 2 | no |
-| `proposed` | 2 | no |
 | `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `blocked` | 1 | no |
+| `proposed` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -41,9 +41,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `FEA-D07-UNBLOCK` | `in_progress` | no |
 | `FEA-GOV-11` | `in_progress` | no |
+| `FEA-00A-PREP-1` | `in_review` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
-| `FEA-00A-PREP-1` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `FEA-04b` | `ready` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |

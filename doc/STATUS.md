@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-00A-PREP-1](tasks/FEA-00A-PREP-1.md) `proposed`（下一候选评估，待用户确认）；上一 Task：[FEA-02-CORE](tasks/FEA-02-CORE.md) `done`（集成 `135479270`）。
+- 当前 Task：[FEA-00A-PREP-1](tasks/FEA-00A-PREP-1.md) `in_review`（评估文档已出，待独立复核）；上一 Task：[FEA-02-CORE](tasks/FEA-02-CORE.md) `done`（集成 `135479270`）。
 - rolling checkpoint：[FEA-02-CORE](checkpoints/FEA-02-CORE.md)（固定实现 head 与回归限制）。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。

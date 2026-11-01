@@ -3,7 +3,7 @@ id: FEA-00A-PREP-1
 title: FEA-00a 数据安全评估与下一实现候选建议（FEA-03 前置）
 kind: governance
 governance_version: 3
-status: proposed
+status: in_review
 approval: pending_user_confirmation
 suggested_owner: dsh
 owner: dsh-lead
@@ -37,10 +37,10 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 现状评估**：核对 `FEA-00a` 在方案 §15.6 的口径（`src/infrastructure/providers/`、`src/infrastructure/sqlite/pipeline.py`、明确测试；L2 高风险；§15.5 三处零变化及重启）与当前仓库实际代码/测试现状，列出缺口。
-- [ ] **AC2 下一候选建议**：给出 `FEA-03`（及可选 `FEA-00a`）作为下一实现候选的**前置清单、风险、写域与验证等级建议**，并明确「需用户确认后才建 ready 卡」。
-- [ ] **AC3 边界**：只读评估 + 文档；不改代码、不释放 Task、不改冻结契约字节、不动用户数据、不 push。
-- [ ] **AC4 独立复核**：`doc/reviews/FEA-00A-PREP-r1.md` 判 `approved`（P0/P1 = 0）。
+- [x] **AC1 现状评估**：核对 `FEA-00a` 在方案 §15.6 的口径（`src/infrastructure/providers/`、`src/infrastructure/sqlite/pipeline.py`、明确测试；L2 高风险；§15.5 三处零变化及重启）与当前仓库实际代码/测试现状，列出缺口。 <<MET>>
+- [x] **AC2 下一候选建议**：给出 `FEA-03`（及可选 `FEA-00a`）作为下一实现候选的**前置清单、风险、写域与验证等级建议**，并明确「需用户确认后才建 ready 卡」。 <<MET>>
+- [x] **AC3 边界**：只读评估 + 文档；不改代码、不释放 Task、不改冻结契约字节、不动用户数据、不 push。 <<MET>>
+- [ ] **AC4 独立复核**：`doc/reviews/FEA-00A-PREP-r1.md` 判 `approved`（P0/P1 = 0）。 <<BLOCKED: 待独立复核 FEA-00A-PREP-r1>>
 
 ## L 前置适用性（预估）
 
@@ -55,7 +55,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| E-PREP-DOC | AC1,AC2 | `doc/plan/FEA-00A_PREP.md` | `-` | `2d8ee1f4ca592a2dba0c8a345973ddad3e8c2149a97951b2308d529ae302de62` | CANONICAL |
 
 ## Resource Manifest
 
@@ -68,4 +68,4 @@ allowed_paths:
 
 ## Closeout Record
 
-- 建立（2026-11-01）：`proposed`，待用户确认是否进入（FEA-00a / FEA-03 均须用户确认后才建 ready 卡）。
+- 2026-11-01 / DSH：评估文档落盘（快照 `15aa7bf3b`；G1–G7、A1–A6、D1–D4）；AC1–AC3 MET；AC4 待独立复核。
