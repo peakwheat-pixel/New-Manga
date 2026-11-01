@@ -14,7 +14,8 @@
 | `reduce` | 始终减弱（三类分别降级） | 用户显式选择；旧 `ReducedMotion=true` 迁移后落此值且三类全禁 |
 
 **读取失败降级**：平台读取失败按 `full` 处理并记 warning（C-03 §2.3）。
-**优先级**：用户显式优先（U-05c A）：`auto` 跟随系统；`full` 覆盖系统；`reduce` 强制减弱。\n**分类开关语义**：`motion.categories[x]=关` 表示该类**在 `full` 下也按 `reduce` 列执行**；`=开` 表示按 `motion.mode` 列执行；三类独立，互不影响。
+**优先级**：用户显式优先（U-05c A）：`auto` 跟随系统；`full` 覆盖系统；`reduce` 强制减弱。
+**分类开关语义**：`motion.categories[x]=关` 表示该类**在 `full` 下也按 `reduce` 列执行**；`=开` 表示按 `motion.mode` 列执行；三类独立，互不影响。
 
 ## 2. 三类动效 × 三态参数表（冻结）
 
@@ -35,7 +36,7 @@
 
 | 场景 | `full` | `auto`（系统开） | `reduce` |
 |---|---|---|---|
-| 按钮 hover 背景 | 120ms `ease` `(.4,0,.2,1)` | 同 full | **保留颜色变化、无位移**（120ms 颜色过渡允许，位移 0） |
+| 按钮 hover 背景 | 120ms `ease` `(.4,0,.2,1)` | 同 full | **保留颜色变化、无位移**；`motion.categories.feedback=关` 或旧值迁移后颜色过渡亦置 0ms（§3 判据⑤） |
 | 按钮 pressed 形变 | 缩放 0.98，90ms | 同 full | **无缩放**（仅颜色） |
 | 状态点/徽标出现 | 淡入 150ms + 缩放 0.9→1 | 同 full | 纯淡入 0ms（直接显示） |
 | 保存/提交进行中 | 进度条扫光 1.2s 循环 | 同 full | **静态进度条**（无扫光） |
@@ -57,7 +58,7 @@
 | ② | `full` 下不跟随系统 | §1 优先级 + §2 全表 `full` 列独立于系统 | 单测：注入系统「关动画」→ `full` 仍执行 full 时长 |
 | ③ | `auto` 按注入的假平台设置切换 | §2 表 `auto` 两列 | 单测：`IMotionPreferenceSource` 返回 true/false → 对应列 |
 | ④ | `navigation` 在 `reduce` 下无动画切换 | §2.1 `0ms` | 单测：页面切换在 `reduce` 下无 transition 附加 |
-| ⑤ | 旧 `ReducedMotion=true` 迁移后三类全禁 | §1 + §2 全表 | 迁移测试：旧值 → `motion.mode=reduce` 且 `motion.categories` 三类均为「关」；断言之「关」时该类在 `full` 下也按 `reduce` 列执行（即三类全禁） |
+| ⑤ | 旧 `ReducedMotion=true` 迁移后三类全禁（**包括 `feedback` 的颜色过渡也置 0**，等价 C-03 `:57`「所有时长置 0」） | §1 + §2 全表；`feedback` 在 `reduce` 下颜色过渡也取 0ms | 迁移测试：旧值 → `motion.mode=reduce` + 三类「关」；断言所有类别时长（含 `feedback` 颜色过渡）= 0ms |
 
 ## 4. 实现约束（供 FEA-05/06）
 

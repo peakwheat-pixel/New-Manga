@@ -49,8 +49,8 @@
 |---|---|
 | P1-01 令牌名自造/错误 | 全库替换为既有冻结名：Nm.Color.Bg.*、Nm.Color.Accent.*、Nm.Color.Status.*、Nm.Color.Text.*、Nm.FontSize.*、Nm.Icon.Size；01 新增「焦点环（第四组）」说明（Nm.Border.Focus + Nm.Color.Accent.Ring，无 Nm.Focus.Ring.* 族） |
 | P1-02 尺寸/断点冲突 | 01 新增 **G-1b**：全部复用既有 Nm.Size.*（TopBand 36/TreeWidth 200/FilmStrip 56/200/Inspector 40/320/Row 24/26/StatusBand 28/24/ControlHeight）与三档断点 Narrow/Compact/Full（1024/1280/1600）；04 重写骨架与断点表，删除自造四档 |
-| P1-03/P1-04 键盘/a11y | 03 命令 Id 改 go.to/xport.run；四页 Tab 序与 05–08 对齐（补 film-strip、阅读器顺序、设置返回）；06 明确无修饰 Tab 被 studio.mode.toggle 占用，页签条内改用 ←/→ |
-| P1-05 AC3 判据⑤ | 02 判据⑤ 补断言：旧值 → educe + 三类「关」；新增 motion.categories 关闭语义（关 = 该类在 ull 下也按 educe 列） |
+| P1-03/P1-04 键盘/a11y | 03 命令 Id 改 go.to/xport.run；四页 Tab 序与 05–08 对齐（补 film-strip、阅读器顺序、设置返回）；06 明确无修饰 Tab 被 studio.mode.toggle 占用，页签条内改用 ←/→ |
+| P1-05 AC3 判据⑤ | 02 判据⑤ 补断言：旧值 → educe + 三类「关」；新增 motion.categories 关闭语义（关 = 该类在 ull 下也按 educe 列） |
 | P1-06 09 矩阵 | 补 4 格定义（阅读器无筛选/冲突/运行态、设置无冲突/运行态）；书架「扫描中」与「运行中」去重；gate 引用改为 06 §3/§4 |
-| P1-07 08 设置字段 | 对齐 C-03 §2.2 键名：ppearance/contrast/corners/material/motion.mode/motion.categories/layout.*/ollowSystemAccent/schemaVersion；设置页宿主引用 ShellSurface.ThemeStudio |
+| P1-07 08 设置字段 | 对齐 C-03 §2.2 键名：ppearance/contrast/corners/material/motion.mode/motion.categories/layout.*/ollowSystemAccent/schemaVersion；设置页宿主引用 ShellSurface.ThemeStudio |
 | P2-14 治理指针 | STATUS/PLAN 已同步 in_review |

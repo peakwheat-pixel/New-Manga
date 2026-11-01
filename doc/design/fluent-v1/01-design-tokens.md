@@ -13,9 +13,9 @@
 | 圆角（Fluent 扩展） | `Nm.Corner.Fluent.Sm(4)` / `.Md(6)` / `.Lg(8)` | `CornerRadius` | 仅 `builtin.fluent` frontend + `builtin.fluent-dark` 视觉主题 | **待生成**（`NmKeys.g.cs` 尚无此组；FEA-05 落 token） |
 | 材质 | `Nm.Material.Acrylic.Base` / `.Tint` / `.Opacity` / `Nm.Material.Mica.Enabled` | `IBrush`/`double`/`bool` | 仅 Fluent frontend+visualTheme | 保留键，当前空（`TokenDictionaryWriter.cs:214` 注释） |
 | 层次 | `Nm.Elevation.1` / `.2` / `.3` | `BoxShadows` | 仅 Fluent frontend+visualTheme | 保留键，当前空 |
-| 焦点环（第四组） | `Nm.Border.Focus` + `Nm.Color.Accent.Ring` | `IBrush` | 全部（两 frontend） | 已存在（`NmKeys.g.cs`） |
+| 焦点环（第四组） | C-02 V-03 定义 `Nm.Focus.Ring.Width` / `.Offset` / `.Color` | `double`/`double`/`IBrush` | 全部（两 frontend） | **当前不存在**（`NmKeys.g.cs` 无此族）；既有 `Nm.Border.Focus` 是 `Thickness` 边框宽度，**不能**替代环色——须由 FEA-05 按 C-02 生成，或由 DSH 裁决改用现有键 |
 
-> **焦点环说明**：C-02:52 的第四组在**现有令牌**中由 `Nm.Border.Focus`（环色）与 `Nm.Color.Accent.Ring`（强调环）承载，**不存在** `Nm.Focus.Ring.Width/Offset` 族；本基线按现有键引用（宽度/偏移为布局常量 2px/1px，写入实现常量并登记于 FEA-05）。
+> **焦点环说明**：C-02 V-03 第四组 `Nm.Focus.Ring.Width/Offset/Color` 在当前 `NmKeys.g.cs` **不存在**；按 C-02 V-03「冻结键缺失判违规」，本基线**不**用其他键替代，登记为 **G-1c**：由 FEA-05 生成该三键（或 DSH 裁决替代方案）后，03 §3 的焦点环取值（宽 2px / 偏移 1px / 颜色 `Nm.Focus.Ring.Color`）方可生效。
 
 > **实现前置**：`Nm.Corner.Fluent.*`、`Nm.Material.*`、`Nm.Elevation.*` 的实际生成属于 FEA-05 的实现范围（tokens 生成器）；本基线只冻结**取值与用途**。若 FEA-05 无法在 C-02 已冻结的名义下生成这些键，须先由 DSH 裁决（不得在本基线私自改名）。
 >

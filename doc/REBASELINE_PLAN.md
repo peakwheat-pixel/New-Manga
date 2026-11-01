@@ -14,7 +14,7 @@
 |FEA-00A-IMPL-1|FEA-00A-PREP-1|**done**（集成 `e0ba29eba`；delivery `007094517`；实现复核 r1 approved P0/P1=0；AC7b 限制登记）|
 |FEA-03|FEA-00A-IMPL-1、FEA-01-FREEZE-1|**done**（集成 `76d947923`；实现复核 r5 approved P0/P1=0；范围 v6 + C-13 v6 UNFREEZE approved；AC11b V19 组合 deferral）|
 |FEA-04|FEA-02-CORE、FEA-03|**done**（集成 `f4d8a32ec`；实现复核 r3 approved P0/P1=0；sln 931/0/60；AC11b 无）|
-|FEA-04b|FEA-04|**ready**（Fluent 四页设计规格；写域 `doc/design/fluent-v1/`；owner=ZCode/DSH 可代起草）|
+|FEA-04b|FEA-04|**in_review**（Fluent 四页设计基线；写域 `doc/design/fluent-v1/`；独立复核 r1→r2）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
@@ -39,6 +39,7 @@ READY 节点：无
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+
 
 
 

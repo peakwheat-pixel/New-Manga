@@ -82,9 +82,9 @@
 
 | 断点 | 行为 |
 |---|---|
-| Compact | 分组列表折叠为下拉/面包屑；内容单列 |
-| Medium | 分组列表 240 + 内容 |
-| Expanded/Wide | 同 Medium，内容最大宽 960 居中 |
+| Narrow（<1024） | 分组列表折叠为下拉/面包屑；内容单列 |
+| Medium（1024–1279） | 分组列表 `Nm.Size.TreeWidth` 200 + 内容 |
+| Compact/Full（≥1280） | 同 Medium，内容最大宽 `Nm.Size.Breakpoint.Narrow`（1024）内居中 |
 
 ## 7. a11y 与键盘
 
