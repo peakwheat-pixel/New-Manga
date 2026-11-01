@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 492 |
+| task files | 493 |
 | terminal | 483 |
-| non-terminal | 8 |
-| non-terminal named in the plan | 1 |
+| non-terminal | 9 |
+| non-terminal named in the plan | 2 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 492 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 8 |
 
 ## By status
@@ -26,10 +26,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 8 | yes |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
+| `proposed` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
-| `proposed` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -42,6 +42,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-GOV-11` | `in_progress` | no |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
+| `FEA-06` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 

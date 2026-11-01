@@ -98,7 +98,7 @@ allowed_paths:
 | E-FLUENT-COMPONENTS | AC1/AC2 | `doc/design/fluent-v1/10-component-inventory.md` | d4da1f1cb | 1ec672367e926c0253f3bbcf049989969c34de440bafe0628e16592bc37129da | CANONICAL |
 | E-FLUENT-SELFCHECK | AC1–AC5 | `verification/FEA-04b/design-baseline-selfcheck.md` | d4da1f1cb | 3471b1acdf3dabc1e94a23b79ebdc3f7e98e1be53e6a40e4f5bd69948349535f | CANONICAL |
 
-## Resource Manifest
+## Resource Manifest（NOT_APPLICABLE：纯文档设计基线，无 worktree/分支/构建产物；`doc/design/fluent-v1/**` 与 `verification/FEA-04b/**` 均为仓库内版本化文件）
 
 无 worktree、无临时产物；资源处置在收口时登记。
 
