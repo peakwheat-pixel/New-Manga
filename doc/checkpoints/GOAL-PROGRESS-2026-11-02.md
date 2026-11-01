@@ -154,3 +154,10 @@ m.fluent.visual/1 manifest + Material/Elevation 取值 + 校验测试）。
 - **遗留 3 条 P1**：r2-P1-2（ThemeSettingsStore 一个 release 兼容写/双写者收敛 + 迁移结果落盘）、r2-P1-3（AppOptions.FrontendId 解析/注入）、r2-P1-4（Nm.Material.Acrylic.Base/Tint + ThemeLayerAllowedKeys/R14 59/65 计数/主题包 schema）。
 - 全量 **977/0/57**。
 - 进度：impl-r1 全 10 关闭；impl-r2 5 条 → 2 关闭、3 遗留。
+## 21. PREREQ-1 impl-r2 续（2026-11-03）
+
+- r2-P1-3 关闭：AppOptions 支持 --frontend <id>（解析/校验/赋值），注入点建立。
+- r2-P1-2（ThemeSettingsStore 兼容写）与 r2-P1-4（Material Base/Tint 主题层 schema）**记架构理由暂缓**：前者会形成 ThemeEngine ↔ Appearance 循环引用（建议 PREREQ-2 统一写者）；后者需扩主题包 schema/R14 计数，超出本卡「不扩 schema」边界。
+- 全量 **977/0/57**。
+- **待裁决 Q-32**：r2-P1-2/P1-4 的归属——推荐放入 **FEA-06-PREREQ-2**（写者收敛与主题包 schema 演进正是其范围），本卡收口时接受该两条 as P2（记录理由）；若用户/后续复核要求本卡闭环，则需扩卡写域并追加架构裁决。
+- 进度：impl-r1 全 10 关闭；impl-r2 5 条 → 3 关闭（P1-1/P1-3/P1-5）+ 2 暂缓（P1-2/P1-4，有架构理由）。
