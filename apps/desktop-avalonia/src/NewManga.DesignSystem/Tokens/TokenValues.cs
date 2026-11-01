@@ -330,26 +330,22 @@ public static class TokenValues
     /// <summary>FEA-06-PREREQ-1 (G-1): parses "x y blur spread #RRGGBB[, ...]" into Avalonia BoxShadows.</summary>
     public static BoxShadows ParseBoxShadows(string raw)
     {
-        var parts = raw.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var shadows = new BoxShadow[parts.Length];
-        for (var index = 0; index < parts.Length; index++)
+        // A single shadow: "x y blur spread color" where the colour may be an rgba(...)
+        // function — splitting on spaces (not commas) keeps the colour function intact.
+        var fields = raw.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (fields.Length != 5)
         {
-            var fields = parts[index].Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            if (fields.Length != 5)
-            {
-                throw new FormatException($"box shadow '{parts[index]}' must be 'x y blur spread color'");
-            }
-
-            shadows[index] = new BoxShadow
-            {
-                OffsetX = ParseNumber(fields[0]),
-                OffsetY = ParseNumber(fields[1]),
-                Blur = ParseNumber(fields[2]),
-                Spread = ParseNumber(fields[3]),
-                Color = ParseColor(fields[4]),
-            };
+            throw new FormatException($"box shadow '{raw}' must be 'x y blur spread color'");
         }
 
-        return new BoxShadows(shadows[0]);
+        var shadow = new BoxShadow
+        {
+            OffsetX = ParseNumber(fields[0]),
+            OffsetY = ParseNumber(fields[1]),
+            Blur = ParseNumber(fields[2]),
+            Spread = ParseNumber(fields[3]),
+            Color = ParseColor(fields[4]),
+        };
+        return new BoxShadows(shadow);
     }
 }

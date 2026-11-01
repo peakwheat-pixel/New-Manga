@@ -196,11 +196,11 @@ public static class TokenMap
         new("Nm.Corner.Fluent.Lg", TokenValueKind.CornerRadius, "8",
             "design 01 G-1: Fluent large corner 8px"),
         // FEA-06-PREREQ-1 (G-1): Fluent elevation ladder (BoxShadows; Fluent frontend only).
-        new("Nm.Elevation.1", TokenValueKind.BoxShadows, "0 1 2 0 #26000000",
+        new("Nm.Elevation.1", TokenValueKind.BoxShadows, "0 1 2 0 rgba(0,0,0,0.15)",
             "design 01 G-1: elevation 1 (cards)"),
-        new("Nm.Elevation.2", TokenValueKind.BoxShadows, "0 4 8 0 #33000000",
+        new("Nm.Elevation.2", TokenValueKind.BoxShadows, "0 4 8 0 rgba(0,0,0,0.20)",
             "design 01 G-1: elevation 2 (popovers)"),
-        new("Nm.Elevation.3", TokenValueKind.BoxShadows, "0 8 16 0 #40000000",
+        new("Nm.Elevation.3", TokenValueKind.BoxShadows, "0 8 16 0 rgba(0,0,0,0.25)",
             "design 01 G-1: elevation 3 (dialogs)"),
         // FEA-06-PREREQ-1 (G-1): Fluent material switches (theme-independent parts only;
         // Nm.Material.Acrylic.Base/Tint carry theme values in the theme package).

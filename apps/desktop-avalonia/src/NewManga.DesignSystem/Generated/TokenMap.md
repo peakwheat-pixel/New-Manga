@@ -158,9 +158,9 @@ Rows: 290.
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Sm` | CornerRadius | `4` |
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Md` | CornerRadius | `6` |
 | global-derived | `(derived)` | `Nm.Corner.Fluent.Lg` | CornerRadius | `8` |
-| global-derived | `(derived)` | `Nm.Elevation.1` | BoxShadows | `0 1 2 0 #26000000` |
-| global-derived | `(derived)` | `Nm.Elevation.2` | BoxShadows | `0 4 8 0 #33000000` |
-| global-derived | `(derived)` | `Nm.Elevation.3` | BoxShadows | `0 8 16 0 #40000000` |
+| global-derived | `(derived)` | `Nm.Elevation.1` | BoxShadows | `0 1 2 0 rgba(0,0,0,0.15)` |
+| global-derived | `(derived)` | `Nm.Elevation.2` | BoxShadows | `0 4 8 0 rgba(0,0,0,0.20)` |
+| global-derived | `(derived)` | `Nm.Elevation.3` | BoxShadows | `0 8 16 0 rgba(0,0,0,0.25)` |
 | global-derived | `(derived)` | `Nm.Material.Mica.Enabled` | Boolean | `true` |
 | global-derived | `(derived)` | `Nm.Material.Acrylic.Opacity` | Double | `0.85` |
 | global-derived | `(derived)` | `Nm.Size.MatrixColumnMin` | Double | `96` |

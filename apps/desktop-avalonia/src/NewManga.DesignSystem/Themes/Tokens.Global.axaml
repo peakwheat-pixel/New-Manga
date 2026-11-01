@@ -13,9 +13,9 @@
   <CornerRadius x:Key="Nm.Corner.Md">3</CornerRadius>
   <CornerRadius x:Key="Nm.Corner.None">0</CornerRadius>
   <CornerRadius x:Key="Nm.Corner.Sm">2</CornerRadius>
-  <BoxShadows x:Key="Nm.Elevation.1">0 1 2 #00260000</BoxShadows>
-  <BoxShadows x:Key="Nm.Elevation.2">0 4 8 #00330000</BoxShadows>
-  <BoxShadows x:Key="Nm.Elevation.3">0 8 16 #00400000</BoxShadows>
+  <BoxShadows x:Key="Nm.Elevation.1">0 1 2 #26000000</BoxShadows>
+  <BoxShadows x:Key="Nm.Elevation.2">0 4 8 #33000000</BoxShadows>
+  <BoxShadows x:Key="Nm.Elevation.3">0 8 16 #40000000</BoxShadows>
   <SolidColorBrush x:Key="Nm.Focus.Ring.Color" Color="#73D9A04B" />
   <sys:Double x:Key="Nm.Focus.Ring.Offset">1</sys:Double>
   <sys:Double x:Key="Nm.Focus.Ring.Width">2</sys:Double>

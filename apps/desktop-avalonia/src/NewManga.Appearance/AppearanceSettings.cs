@@ -97,15 +97,15 @@ public sealed record LayoutSettings
 {
     public string Id { get; init; } = "default";
 
-    public string Navigation { get; init; } = "expanded";
+    public string Navigation { get; init; } = "top-band";
 
     public string Shelf { get; init; } = "grid";
 
     public string Density { get; init; } = "comfortable";
 
-    public string Workbench { get; init; } = "split";
+    public string Workbench { get; init; } = "stacked";
 
-    public string Reader { get; init; } = "fit";
+    public string Reader { get; init; } = "fit-page";
 
     public static LayoutSettings Default { get; } = new();
 }
