@@ -77,3 +77,7 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：FEA-01 v2 冻结（pin `0370c189…`，15251 B）；门禁链 4/4；§1A 无修正；§1B 披露冻结前改动 | DSH |
+
+## 6. Errata（2026-11-01，**原文保留**）
+
+按 C-13 的 UNFREEZE（[CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md)，v5→v6，pin `d2cb8de4…` → `8faf1e80…`），`FEA-01_CONTRACT_DRAFT.md:85` pin 矩阵中 C-13 的 `d2cb8de4dd79` 为**冻结当时**快照，现已被 v6 取代。FEA-01 本体字节**不变**（仍 `0370c189…`），本 Errata 只记录跨冻结文档的 pin 漂移，不构成对 FEA-01 的修改。

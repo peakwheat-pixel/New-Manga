@@ -24,6 +24,7 @@
 | 最后一次独立复核 | r4 approved（FEA-C13-r4） |
 | 复核后到冻结的改动 | ①**v5 的 K-1…K-4 四处内容修订**（`:89` 裸 candidate→`RegionCandidate`、`:102` 补 `schema.py:256-257`、`:181` LOCK_CHANGED/manual 位表述、§7 补 SC-D12 边界；来源＝r4 报告的 K 项建议，提交 `3a852340f`）②U-03 段 + §9 条件 2 改写（状态标注型，语义未变）③状态行 |
 | 处置 | **已补复核**（[FEA-CONTRACT-BYTES-r1](../reviews/FEA-CONTRACT-BYTES-r1.md)：差异方向在 r4 建议内、无越界新增） |
+| v6 修订复核 | r3（FEA-03 scope）**approved**：仅 SC-D11 适用范围 + 状态行；pin 由 `d2cb8de4…` → `8faf1e80…`（[载体](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md)） |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -32,6 +33,7 @@
 | # | C-13 §9 条件 | 状态 | 证据 |
 |---|---|---|---|
 | 1 | 独立复核通过（上下文独立） | ✅ | r1（2 P1）→ r2（2 P1）→ r3（1 P1）→ r4 [approved](../reviews/FEA-C13-r4.md)（P0×0 / P1×0 / P2×4 已修） |
+| 1b | v6 修订复核（UNFREEZE） | ✅ | r3（FEA-03 scope）approved；见 §1B 末行 |
 | 2 | **U-03 用户裁决**（SC-D03 的 draft owner 模型） | ✅ | 用户裁决 **B（draft owner）**——与草案起草口径一致，无需改 SC-D03 |
 | 3 | C-01b 已冻结 | ✅ | [FEA-CONTRACT-FROZEN-C01b](FEA-CONTRACT-FROZEN-C01b.md) |
 | 4 | `check.ps1` PASS | ✅ | PASS（3 persistent warnings） |
@@ -110,4 +112,4 @@
 - 「D06（C-08）未冻、D05 剩余子面（重定位/同步、容器页映射）**无承载条款**」→ D06 已由 **C-08 v7** 承载（SC-R06…SC-R09）；D05 剩余子面已由 **C-14** 承载（重定位/同步、容器页映射、缓存边界三子面），均于 2026-11-01 冻结。
 - 「**C-09 条件③（两 Gate 关闭）仍不满足** → C-09 继续 blocked」→ C-09 已解环并冻结 **v5**；两 Gate 于 2026-11-01 **CLOSED**（[裁定](GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）。
 - §7「不构成 Gate 关闭」同为冻结时状态描述。
-- **`FEA-C13_DRAFT_PROTECTION_DRAFT.md:203` 的旧口径按裁定保持原字节**（属冻结契约正文，Errata 不得改；如需修改须 `CONTRACT-UNFREEZE-C13` + 重冻 + 重算 pin）。C-13 草案 pin `d2cb8de4…` 未变。
+- **`FEA-C13_DRAFT_PROTECTION_DRAFT.md:203` 的旧口径按裁定保持原字节**（属冻结契约正文，Errata 不得改；如需修改须 `CONTRACT-UNFREEZE-C13` + 重冻 + 重算 pin）。C-13 草案 pin 于 v6 修订后为 `8faf1e80…`（v5 的 `d2cb8de4…` 保留于 §1A）。

@@ -43,7 +43,7 @@ allowed_paths:
   - verification/FEA-03/**
 ---
 
-# FEA-03 草稿与保护协调（范围冻结 v4，待独立复核）
+# FEA-03 草稿与保护协调（范围冻结 v5，待独立复核）
 
 ## 来源与授权
 
@@ -65,7 +65,7 @@ allowed_paths:
 | Q-8 | BRIDGE 收窄 | ApplicationCore 本地缓冲 + 可注入 seam，**不接线** Host/IPC/CoreClient；wire 由 FEA-04 承担 |
 | Q-9 | manual 位 | `protectionDigest` = 三锁（region 列）+ `text_json.translation_locked`（manual-protection flag，`RegionText.translation_locked`）+ `text_json.manual_edited`；与 C-13 `:173`「text_json 内 manual 标志」一致（`effective_region_locks` 读 `region.text.translation_locked`）；须断言"改任一位 → digest 变化 → apply 拒绝" |
 | Q-10 | 几何/样式按域合并 | 文本冲突 `conflicted`（禁止自动合并）；几何/样式同键后到覆盖（草稿缓冲阶段，不产生新 revision） |
-| **Q-11** | **SC-D11 适用范围已 UNFREEZE（处置 r2-P0-01）** | C-13 已由 [CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md) 修订为 **v6**：统一去重键限**新 token 路径**；旧路径保持 C073 append-only。本卡按 v6 实现：AC11 断言旧路径行为不变 + 新路径去重有效 |
+| **Q-11** | **SC-D11 适用范围已 UNFREEZE（处置 r2-P0-01）** | C-13 已由 [CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md) 修订为 **v6**（r3 复核：UNFREEZE **approved**）：统一去重键限**新 token 路径**；旧路径保持 C073 append-only。本卡按 v6 实现 |
 
 ## 冻结设计规则
 
@@ -81,7 +81,7 @@ allowed_paths:
 - **R-JOURNAL-3**：journal 与 revision 表分离；重启可读 → 恢复 `active` 不自动提交；损坏/不可读 → 丢弃提示、不阻塞启动。
 - **R-JOURNAL-4（可写性与单写者）**：**不依赖 Host 只读通道**（Core 无该输入）。判定 = ①data-root 目录不可写（OS 层）→ journal 写 fail-closed（`DRAFT_JOURNAL_UNWRITABLE`），内存草稿可继续编辑并标记不可持久化；②单写者 = `<data-root>/drafts/.lock` 独占文件锁（第二实例启动 fail-closed 并记录）；③Host 只读策略下的 UI 提示由 `FEA-04` 承担（deferral）。
 - **R-JOURNAL-5**：孤儿草稿（无活跃 Session）→ `discarded`；Session 结束清理其 journal；清理不删 receipt。
-- **R-RECEIPT-1**：每 `(DraftId, DraftSequence)` 一条 receipt 文件（`<data-root>/drafts/receipts/<DraftId>.<DraftSequence>.json`），含 `{tokenId, DraftId, DraftSequence, revisionId, contentDigest, committedAt}`。
+- **R-RECEIPT-1**：每 `(DraftId, DraftSequence)` 一条 receipt 文件（`<data-root>/drafts/receipts/<DraftId>.<DraftSequence>.json`），含 `{tokenId, DraftId, DraftSequence, revisionIds: {regionId: revisionId}, contentDigest, committedAt}`（多 Region 用映射，处置 r3-P1-03）。
 - **R-RECEIPT-2**：同 `(DraftId, DraftSequence)` 重放 → 读 receipt 返回同 `revisionId`；receipt 缺失（崩溃窗口）→ 由 **R-APPLY-3 的 DB 去重**兜底；同 token 但 `contentDigest` 不同 → `EDIT_TOKEN_REUSED`。
 - **R-RECEIPT-3（清理）**：receipt 随 Draft 生命周期清理（Draft `discarded`/超过 7 天未活动时删除）；清理不得删除 journal；清理失败不得阻塞。
 
@@ -91,7 +91,7 @@ allowed_paths:
 - **R-CAND-2**：candidate 仅内存（Core 会话内），apply/discard/会话结束失效；**跨重启不找回**；跨命令用 Core 会话 registry 找回。
 - **R-APPLY-1**：一次 apply 全部 Region 在**同一 SQLite 事务**内；**复用/扩展 `commit_region_batch`**（`src/application/editing/ports.py:83`、`src/infrastructure/sqlite/regions.py:288`）；保护/digest 检查在事务内（扩展 seam，不在事务外预检）以避免 TOCTOU。
 - **R-APPLY-2（优先级，处置 r2-P1-04）**：**重放命中优先于 stale**：先查 receipt/DB 去重（R-APPLY-3），命中 → 返回既有 `revisionId`（不写、不判 stale）；未命中 → 再按 `BaseRevisionId` 判 stale → `STALE_BASE_REVISION`。
-- **R-APPLY-3（新路径 DB 去重，处置 r2-P1-03）**：apply 事务内对每个目标 Region 先查 `region_revisions` 是否存在 `(region_id, base_revision_id, 内容摘要)` 相同且内容一致的行；存在 → 返回其 `revision_id`（不写新行）；不存在 → 正常写入。**该去重只用于新 token 路径**；旧路径不启用（C073 append-only 不变）。
+- **R-APPLY-3（重放兜底，处置 r3-P1-02）**：**不用 DB 内容去重**（`region_revisions` 无 base/内容列，`commit_region_batch` 事务不可从应用层访问）。改为 **journal intent 方案**：apply 前在 journal 写 `commitIntent{tokenId, DraftId, DraftSequence, expectedRevisionIds, contentDigest, startedAt}`；SQLite 事务提交后写 receipt 并清 intent；重启恢复：intent + receipt 都在 → 已完成（清 intent）；intent 在、receipt 缺 → 读 `regions.current_revision_id` 对应 revision（新增 `RegionRepository.revision_by_id(revision_id)` 读方法，写域内）比对 `contentDigest`：一致 → 视为已提交并补 receipt；不一致 → 清 intent 视为未提交。**只用于新 token 路径**。
 
 ### R-LOCK / R-STYLE / R-DIGEST
 - **R-LOCK-1**：三锁语义同 SC-D09；candidate 生成与 apply 两路径都检查；`inpaint_locked` 不对 `style_json` 断言。
@@ -136,12 +136,12 @@ allowed_paths:
 - [ ] **AC8 三锁 × 三域**：三条锁语义 + candidate/apply 两路径；`inpaint_locked` 不对 style 断言（SC-D09）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC9 style 白名单**：外键 → `STYLE_KEY_NOT_ALLOWED` 含键名；`translation_locked` 下 `font_size` 允许、`text_json` 拒绝；`text_color` 允许（SC-D10）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC10 protectionDigest**：三锁 + `text_json.translation_locked` + `text_json.manual_edited`；改任一位或锁 → digest 变化 → apply 拒绝 `LOCK_CHANGED`；不加列/错误码（SC-D12、Q-9）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC11 旧路径行为不变 + 新路径去重**：旧路径同文两次保存仍产生 **2 个 revision**（C073 语义保持）；新路径同 token 重放 1 个 revision；旧→新 = 旧 1 个 + 新路径 stale 拒绝（共 1）；新→旧 = 新 1 个 + 旧 append 第 2（共 2，C073 保证）；旧路径回归通过（C-13 v6、Q-6/Q-11、R-LEGACY-1/2）。 <<PARTIAL: 范围冻结；实现未开始>>
+- [ ] **AC11 旧路径行为不变 + 新路径重放**：旧路径同文两次保存仍 2 revision（C073 保持）；新路径同 token 重放 → receipt 命中返回同 `revisionIds`、不新增；**旧→新（base 刷新为旧写入后的 current）** = 2 revision；**旧→新（base 未刷新）** = stale 拒绝、1 revision；**新→旧** = 2 revision（旧 append）；旧路径回归通过（C-13 v6、Q-6/Q-11、R-LEGACY-1/2）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC12 BRIDGE 收窄**：ApplicationCore 本地草稿缓冲（11 字段投影）+ 可注入 seam + 单串行队列 + flush 触发；不接线 Host/IPC；CORE 通过验收 + BRIDGE 完成后 Task 才可提交复核（Q-8、V24）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC13 回归**：基线 `python -m pytest tests/editing tests/domain tests/infrastructure tests/core/test_region_write_commands.py tests/core/test_region_batch_locking.py -q` 逐文件 outcome 对照；新增测试文件 Handoff 登记。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC14 独立复核**：范围复核 r3 `approved`（P0/P1=0）；实现复核 `doc/reviews/FEA-03-r1.md` approved（含 Appointment）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC15 receipt/DB 去重跨重启幂等**：重启后同 token 重放 → 同 revisionId 无第二 revision（receipt 命中或 R-APPLY-3 兜底）；同 token 不同内容 → `EDIT_TOKEN_REUSED`；多序列各自可命中；receipt 清理不删 journal（R-RECEIPT-1/2/3、R-APPLY-3）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC16 活跃草稿登记与清理**：`edit-open` 登记 active；Session 结束无残留 journal；孤儿 `discarded`；receipt 保留至 Draft 清理（SC-D06、R-JOURNAL-5）。 <<PARTIAL: 范围冻结；实现未开始>>
+- [ ] **AC16 活跃草稿登记与清理**：`edit-open` 登记 active；Session 结束无残留 journal；孤儿 `discarded`；receipt 保留至 Draft 清理（SC-D06、R-JOURNAL-5、R-RECEIPT-3；V25）。 <<PARTIAL: 范围冻结；实现未开始>>
 - [ ] **AC17 journal 可写性与单写者**：data-root 不可写 → `DRAFT_JOURNAL_UNWRITABLE` 且内存草稿可编辑；第二实例被 `.lock` fail-closed；释放后第二实例可启动（R-JOURNAL-4、V22/V23）。 <<PARTIAL: 范围冻结；实现未开始>>
 
 ## L 前置适用性判定
@@ -174,7 +174,8 @@ allowed_paths:
 | V16 | style 白名单 | 拒绝含键名；真实键允许 | AC9 |
 | V17 | 改锁 / 改 manual 位 | `LOCK_CHANGED` 拒绝 | AC10 |
 | V18 | 旧路径同文两次 | 2 revision（C073 保持） | AC11 |
-| V19 | 旧→新 / 新→旧 | 旧→新 = 1 revision（新路径 stale 拒绝）；新→旧 = 2 revision（C073 append）；旧路径回归通过 | AC11 |
+| V19 | 旧→新（base 刷新 / 未刷新）、新→旧 | base 刷新 = 2 revision；未刷新 = stale 拒绝 1 revision；新→旧 = 2 revision；旧路径回归通过 | AC11 |
+| V25 | 活跃草稿登记 / Session 结束 / 孤儿 / receipt 保留 | `edit-open` 登记 active；Session 结束无残留 journal；孤儿 `discarded`；receipt 按 R-RECEIPT-3 保留 | AC16 |
 | V20 | 重启后 token 重放（receipt 命中 / receipt 缺失兜底） | 同 revisionId；无第二 revision | AC15 |
 | V21 | 同 token 不同内容 / 多序列 | `EDIT_TOKEN_REUSED`；各序列可命中 | AC15 |
 | V22 | data-root 不可写 | `DRAFT_JOURNAL_UNWRITABLE`；内存草稿可编辑 | AC17 |
@@ -210,3 +211,4 @@ allowed_paths:
 - 2026-11-01：v3 处置：Q-11（SC-D11 去重键 deferral，解 P0-01）、R-APPLY-3（DB 去重兜底 receipt 崩溃窗口）、R-APPLY-2 重放优先、R-RECEIPT-1/2/3 多序列与清理、R-JOURNAL-4 改 OS 可写性 + 文件锁、Q-9 manual 位映射、AC17/V22/V23、AC12/V24、写域去掉 `core_service.py`。
 - 2026-11-01：`proposed`，派独立复核 r3；通过前不 ready。
 - 2026-11-01/02：v4：**C-13 经 [CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md) 修订为 v6**（SC-D11 统一去重键限新 token 路径；pin `8faf1e80…`）；Q-9 manual 位改为三锁 + `text_json.translation_locked` + `text_json.manual_edited`；AC10/AC11/V19/R-LEGACY-3 按 v6 重写 → 解 r2-P0-01 与 r2-P1-05；范围复核 r3 送审（含 UNFREEZE 载体与 v6 字节）。
+- 2026-11-01/02：v5：处置 r3（P0=0、UNFREEZE approved、P1×4/P2×12）——R-APPLY-3 改 journal intent 兜底（不再用 DB 内容去重）；AC11/V19 拆旧→新两子场景；R-RECEIPT-1 改 `revisionIds` 映射；AC16 补 V25；Q-11 标注 UNFREEZE approved。
