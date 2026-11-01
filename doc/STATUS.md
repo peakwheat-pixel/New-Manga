@@ -9,7 +9,7 @@
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。
 - 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
 - 下一候选：`FEA-02-CORE`（proposed；待 FEA-01 冻结复核 → 范围冻结复核 → `ready` 交 Codex）；`G-DELETE-IMPL` 仍 OPEN。
-- **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；**14 份契约已全部冻结**（含 C-10）；[FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 待冻结。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
+- **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；**14 份契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已全部冻结**（门禁链 4/4）。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 历史基线：`V11R-BASELINE-1` done（586P/52S/0F）。
 - 审查报告统一在 `doc/reviews/`。
 - 裁定：R-08..R-25，见 [V11R_PROGRAM](V11R_PROGRAM.md) §8。

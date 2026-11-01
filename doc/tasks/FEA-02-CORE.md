@@ -29,6 +29,7 @@ allowed_paths:
   - doc/reviews/FEA-02-CORE-*.md
   - apps/desktop-avalonia/src/NewManga.ApplicationCore/**
   - apps/desktop-avalonia/tests/**
+  - apps/desktop-avalonia/NewManga.sln
   - verification/FEA-02-CORE/**
 ---
 
@@ -42,7 +43,7 @@ allowed_paths:
 
 ## 范围（范围冻结核心）
 
-- **写域（唯一）**：`apps/desktop-avalonia/src/NewManga.ApplicationCore/**` + `apps/desktop-avalonia/tests/**`（仅与 ApplicationCore 相关的测试文件）。
+- **写域（唯一）**：`apps/desktop-avalonia/src/NewManga.ApplicationCore/**` + `apps/desktop-avalonia/tests/**`（仅与 ApplicationCore 相关的测试文件）+ `apps/desktop-avalonia/NewManga.sln`（**仅新增 ApplicationCore / ApplicationCore.Tests 两条项目条目，不改既有项目与平台配置**）。
 - **保留 Current 入口**：现有入口/调度路径**不得删除、不得改变行为**；新实现只能作为可替换层接入（方案 §15.6 FEA-02-CORE 的「保留 Current 原入口；不得双调度」）。
 - **不写**：`apps/desktop-avalonia/src/NewManga.App/**` 其它目录、`NewManga.CoreClient/**`、`src/**`（Python）、契约文档、其它 Task 文件。
 - **共享组合根**：如需改动组合根/DI 注册，必须先在卡内列出精确文件与理由，经 DSH 范围确认后另批提交（不在默认写域内）。
@@ -53,7 +54,7 @@ allowed_paths:
 - [ ] **AC2 多观察者共享一次轮询**：N 个观察者同时订阅同一 Run/任务状态 → 断言只发生 **1 次**底层轮询（调用计数断言），观察者各自收到同一快照。
 - [ ] **AC3 同一意图重试不重复启动**：同一意图键（intent key）在 pending/重试期间的重复请求 → 断言不产生第二个启动（去重命中，返回同一 in-flight 结果）；意图完成后允许新意图。
 - [ ] **AC4 请求错误互不串扰**：并发多个请求，其中一个失败（含超时/取消）→ 断言错误只归属该请求（request-scoped error），其它请求结果与状态不受影响，且不污染共享状态缓存。
-- [ ] **AC5 保留 Current 入口（非回归）**：现有入口仍可用、行为等价（对照基线测试）；无「双调度」（同一意图不得同时经两条路径启动）。
+- [ ] **AC5 保留 Current 入口（非回归）**：①**基线非回归**——现有入口相关测试项目保持通过（对照基线）；②**结构断言**——本卡 diff 不触 `apps/desktop-avalonia/src/NewManga.App/**`（脚本断言 0 命中）；③**无双调度**——本卡不接线，接线后须验「同一意图只经一条路径启动」。
 - [ ] **AC6 L 前置适用性判定**：按**实际写域**逐项判定 L-1/L-2/L-5（见下节），判定结论与再触发条件写入本卡；前置未满足时本卡保持 `proposed/blocked`。
 - [ ] **AC7 独立复核**：`doc/reviews/FEA-02-CORE-r1.md` 判 `approved`（P0/P1 = 0）。
 
@@ -62,7 +63,7 @@ allowed_paths:
 | 保留项 | 本卡写域是否触及 | 判定 | 依据 / 再触发条件 |
 |---|---|---|---|
 | **L-1** 四表 DDL 未冻 | **否**——本卡只做 Avalonia 侧 ApplicationCore 内存状态/轮询/去重；不访问 SQLite、不定义 schema | **NOT_APPLICABLE**（本卡） | 若实现新增任何 DB/schema 访问 → 立即转 `blocked`，并先完成 L-1 前置（DDL 冻结 + pin） |
-| **L-2** M2-C1 字节修订（`TRASH_*` 3 码 + Run 错误码白名单） | **否（边界）**——本卡消费既有 Run 错误语义，但**不新增/不修改 wire 码表，也不实现 host 投影白名单**（属 Host 层）；如需新增错误码 → 属 M2-C1 | **NOT_APPLICABLE**（本卡） | 若实现新增 `RUN_*`/`TRASH_*` 码或改主机白名单 → 转 `blocked`，先完成 M2-C1 独立字节修订 |
+| **L-2** M2-C1 字节修订（`TRASH_*` 3 码 + Run 错误码白名单） | **否（边界）**——本卡消费既有 Run 错误语义，但**不新增/不修改 wire 码表，也不实现 host 投影白名单**（属 Host 层）；如需新增错误码 → 属 M2-C1 | **NOT_APPLICABLE**（本卡） | 若实现 ①新增 `RUN_*`/`TRASH_*` 码 ②改主机白名单 ③**把既有 Run 错误码→category 映射 / host 投影白名单逻辑搬入 ApplicationCore** → 转 `blocked`，先完成 M2-C1 独立字节修订 |
 | **L-5** 整库恢复独占锁 | **否**——本卡不触及备份/恢复/维护窗口 | **NOT_APPLICABLE**（本卡） | 若实现触及恢复或维护互斥 → 转 `blocked`，先按 L-5 的 4 步序列补 AC |
 
 > 说明：`doc/plan/FEA-C11_IMPL_PREREQS.md` §0 的禁则在此适用——**不适用不等于豁免**；一旦写域扩展到对应范围，立即转 `blocked` 并补前置。
