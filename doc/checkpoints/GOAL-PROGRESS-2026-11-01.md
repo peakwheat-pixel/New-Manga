@@ -44,3 +44,17 @@
 | 时间 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 23:00 | 建立；记录 FEA-00a done 与 FEA-03 推进计划；DSH 裁决 Q-1/Q-2/Q-3 | DSH |
+
+## 3B. 裁决与执行记录（2026-11-01/02，FEA-03 范围冻结迭代）
+
+| 事项 | 裁决/动作 | 结果 |
+|---|---|---|
+| Q-6 旧路径语义 | 不改 C073；SC-D11 适用范围修订 | **CONTRACT-UNFREEZE-C13-2026-11-01**：C-13 v5→v6，pin `8faf1e80…`；去重键限新 token 路径 |
+| Q-7 commit receipt | 多序列 receipt + DB 去重兜底 | R-RECEIPT-1/2/3、R-APPLY-3、AC15/V20/V21 |
+| Q-8 BRIDGE | 收窄为本地缓冲 + 不接线 | AC12、V24；L-2 维持 N/A |
+| Q-9 manual 位 | 三锁 + `text_json.translation_locked` + `text_json.manual_edited` | AC10/V17 |
+| Q-10 几何/样式 | 同键后到覆盖（草稿阶段不产生新 revision） | AC3/V7 |
+| Q-11 SC-D11 | UNFREEZE 已完成（见 Q-6） | 无需 deferral |
+| 范围复核 | r1 changes_requested（P0×1/P1×7/P2×11）→ v2；r2 changes_requested（P0×1/P1×5/P2×12）→ v4（含 UNFREEZE） | r3 待审 |
+
+**FOLLOW-UP 登记**：`FOLLOW-UP-FEA03-1` SC-D11 原条款与新路径实现的长期协调（UNFREEZE 已承接，待后续 Task）；`FOLLOW-UP-FEA03-2` C-13 `:173` manual 位引用口径（本卡按 `text_json.translation_locked`+`manual_edited` 实现，无需再改）；`FOLLOW-UP-FEA03-3` 旧路径统一去重（后续 Task，按 C-13 v6 新路径优先）。

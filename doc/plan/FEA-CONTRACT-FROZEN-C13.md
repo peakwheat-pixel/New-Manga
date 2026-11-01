@@ -12,8 +12,8 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md` |
-| 版本 | **v5** |
-| sha256（冻结后最终字节） | `d2cb8de4dd79fb490e3e5c12a6aaad3e1a0bb294c217a79f083ecfeab683837c` |
+| 版本 | **v6**（v5 于 2026-11-01 经 [CONTRACT-UNFREEZE-C13](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md) 修订 SC-D11 适用范围） |
+| sha256（冻结后最终字节） | `8faf1e805eac500ab20037d8628b8594f8720e455387a85639897f1127afd45c` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
@@ -101,6 +101,7 @@
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin（v5）、条件 4/4、D04 六项覆盖表、4 条实现铁律、3 条已知限制 | DSH |
 | 2026-11-01 | pin 修正：原 pin 指向冻结前草案（状态行改动前），改为最终字节 `d2cb8de4dd79fb490e3e5c12a6aaad3e1a0bb294c217a79f083ecfeab683837c`；新增 §1A 修正记录与纪律（见上） | DSH |
+| 2026-11-01 | **v6 修订（UNFREEZE）**：SC-D11「统一去重键」适用范围限定为新 token 路径（旧路径保持 C073 append-only、非幂等）；状态行标注 v6；新 pin `8faf1e805eac500ab20037d8628b8594f8720e455387a85639897f1127afd45c`；载体 [CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md)，随 FEA-03 范围 r3 复核 | DSH |
 
 ## 9. Errata 注记（2026-11-01 追加；**原文保留**）
 

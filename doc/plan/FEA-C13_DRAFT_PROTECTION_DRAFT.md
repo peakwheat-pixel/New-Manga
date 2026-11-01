@@ -1,6 +1,6 @@
 # FEA-C13 草稿与保护契约（D04）· 草案
 
-状态：**FROZEN v5 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C13.md)）/ U-03=B**
+状态：**FROZEN v6 / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C13.md)）/ U-03=B / SC-D11 适用范围经 CONTRACT-UNFREEZE-C13-2026-11-01 修订**
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-00 方案 r4 §13.2](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) `:767`（D04 行：变更包与"必须冻结的内容"）、方案 `:237`/`:251`/`:269`/`:271`/`:377`、[C-01b](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（已冻结）、[C-08](FEA-C08_RUN_SNAPSHOT_DRAFT.md)、现行代码 `src/infrastructure/sqlite/schema.py:224-249`（regions）、`:251-271`（region_revisions）、`:275-281`（trigger）、`src/application/editing/service.py`
@@ -154,6 +154,8 @@
 - **过渡期结束的客观判据**：①`rg` 全仓确认无任何调用方直接走旧 `service.py:1239` 保存路径；②新路径的写入点清单（实现 Task 产出）与 UI 实际写入点一一对应；③独立复核通过。三条全满足才可移除旧路径。
 
 **验证**：同一内容先后走旧路径、新路径 → 断言只产生一个 revision。
+
+**修订（CONTRACT-UNFREEZE-C13-2026-11-01）**：本条「统一去重键」的约束范围**限定为新 token 路径**。旧保存路径（`editing/service.py:1239`）在过渡期保持既有 **append-only / 非幂等**语义（由 `V11R_REGION_WRITE_CONTRACT` C073 承载），本契约**不要求旧路径去重**，也不因本契约引入而改变旧路径行为；新旧路径的统一去重由独立 follow-up Task 在 C073 与本契约协调后实施（本修订不改 SC-D01…SC-D10、SC-D12）。载体：[CONTRACT-UNFREEZE-C13-2026-11-01](../reviews/CONTRACT-UNFREEZE-C13-2026-11-01.md)。
 
 ## 6A. Protection 版本（D04 第 2 项的 Protection 侧；SC-D12 续 SC-D11 之后）
 
