@@ -12,7 +12,7 @@
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；**14 份契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已全部冻结**（门禁链 4/4）。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告统一在 `doc/reviews/`。
 - 裁定：R-08..R-25，见 [V11R_PROGRAM](V11R_PROGRAM.md) §8。
-- 冻结校验：`verify_pins.ps1` 13/13 PASS（机械校验，不替代复核）。
+- 冻结校验：`verify_pins.ps1` **15/15** PASS（14 份契约 + FEA-01；机械校验，不替代复核）。
 
 ## 保留与已知限制
 - WORKSPACE-CONSOLIDATION-1 `closed_with_limitations`（r212）；禁再清理/GC/prune。

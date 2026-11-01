@@ -25,7 +25,7 @@
 
 READY 节点：无
 
-当前 DAG：FEA-00A-IMPL-1（**in_review**，范围已冻结、待独立复核）、FEA-00A-PREP-1（**done**，评估+复核 `aec780362`）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
+当前 DAG：FEA-00A-IMPL-1（**proposed**，范围冻结 v2 待独立复核）、FEA-00A-PREP-1（**done**，评估+复核 `aec780362`）、FEA-02-CORE（done，集成 `135479270`）…；**14 份契约 + FEA-01 已全部冻结**；`G-DELETE-IMPL` OPEN
 
 ## 历史快照（终态节点，非当前 DAG）
 
