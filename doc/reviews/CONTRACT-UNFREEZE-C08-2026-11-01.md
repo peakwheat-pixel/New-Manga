@@ -56,6 +56,8 @@ C-08（Run 快照）已于 2026-11-01 冻结（`sha256 37586fb2…`）。独立�
 
 **明文的否定**：`RunAccepted` 不证明完成；事件不是状态真值；`GetTaskProjection` 的统计与 `RunSnapshot.status` 必须同源。
 
+**`failed`/`cancelled` 的 `waiting=0` 依据**：P11 `:111` 只规定 Run 级 fatal → `Failed`，未规定未开始 Task 的处置，故本契约把「无 waiting/processing」作为**额外要求**——终态下不应再有排队工作。
+
 **验证**：①伪造 `counts.failed>0` 但 `status=completed` → 非法态；②`status=cancelled` 且 `counts.processing>0` → 非法态；③**重启后** `GetRunSnapshot` 仍返回同一终态与同一 `counts`；④断网重连 → UI 靠重读状态恢复。
 
 ### SC-R08 retry 的快照来源（AC3）
@@ -69,7 +71,7 @@ C-08（Run 快照）已于 2026-11-01 冻结（`sha256 37586fb2…`）。独立�
 
 **新 Run 的快照来源（本契约明确回答）**：
 - **目标集合**：**复用**源 Run 的失败 Page 集合（M2-C1 `:206`「只冻结该来源 Run 的失败 Page」），写 `source_run_id` + `retry_reason="retry_failed_targets"`；
-- **冻结上下文**（当前 Revision / Lock / settings / Provider / constraint / context）：**重新读取并冻结**——因为 fingerprint 明确**不含**这些（M2-C1 `:204`：「不含首次接受时才读取并冻结的当前 Revision、Lock、settings、Provider、constraint、context」）；
+- **冻结上下文**（当前 Revision / Lock / settings / Provider / constraint / context）：**重新读取并冻结**——因为 fingerprint 明确**不含**这些（M2-C1 `:202`：「不含首次接受时才读取并冻结的当前 Revision、Lock、settings、Provider、constraint、context」）；
 - **结论**：retry **复用「目标集合」但不复用「冻结上下文」**；源 Run 的历史与快照**不变**（`:206`）。
 
 **对照 P11 §3.3**：新 Run 是**独立的 Run**，不是源 Run 的延续；`source_run_id` 只是溯源标记，不构成状态继承。

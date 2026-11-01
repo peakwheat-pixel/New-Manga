@@ -158,6 +158,7 @@
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
+| 2026-11-01 | **v7（r11 P2）**：SC-R07 补「`failed`/`cancelled` 的 `waiting=0` 依据」句（P11 `:111` 未规定未开始 Task 处置，故为 C-08 额外要求）；pin 按改后字节重算 | DSH |
 | 2026-11-01 | **v6（处置 FEA-C08-r9 的 P1×2 + P2×5）**：P1-1 **SC-R07 完成判定重写**——改用 §6.1 冻结的 `counts.{total,completed,failed,skipped,blocked,waiting,processing}`（M2-C1 `:834`），共同不变量 `processing=0 && waiting=0`，逐终态附加判据，**取消** `targets.length = succeeded + failed`（`succeeded` 字段不存在、且漏 skipped/blocked）；cancelled/failed 不要求 total 等式；补「重启后仍为终态」验证。P1-2 版本同步 v4→v5。P2-1 行号改 `:213`/`:202`；P2-2 过渡态措辞；P2-3 `request_id` 引 `:138` + `IDEMPOTENCY_KEY_REUSED` | DSH |
 | 2026-11-01 | **v5（FEA-D06-GAP）**：新增 **SC-R06 控制 pending 状态**、**SC-R07 真实完成口径**、**SC-R08 retry 快照来源**、**SC-R09 断线 receipt**四项，补齐 D06 六项声明范围；走 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-C08-2026-11-01.md) | DSH |
 | 2026-11-01 | 建立草案：schema 事实、4 项缺口、SC-R01…SC-R05 五条、与三份契约接口、冻结条件 | DSH |
