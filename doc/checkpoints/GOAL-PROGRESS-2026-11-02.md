@@ -120,3 +120,9 @@
 - TokenGen -- --check up to date（rows 287）；全量 sln **961/0/57**。
 - **剩余**：AC2（AppearanceCoordinator + AppOptions.FrontendId）、AC4（Windows IMotionPreferenceSource + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（收口回归）。
 - 教训固化：C# 生成器改动 = 行操作 + 每步 build（本轮一次通过，未再回滚）。
+## 16. PREREQ-1 AC2 完成（2026-11-03）
+
+- AppearanceCoordinator（5af8605d）：读/校验/Changed 通知；FrontendId/Warnings 透出；**不应用主题**（PREREQ-2 落点）；App 引用 NewManga.Appearance；4 测试。
+- 全量 sln **965/0/57**。
+- **剩余**：AC4（Windows IMotionPreferenceSource 实现 + 判据①–⑤）、AC5（uiltin.fluent-dark 主题包）、AC6（收口）。
+- 进度：PREREQ-1 AC1/AC2/AC3 完成；AC4/AC5 待做。
