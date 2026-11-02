@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-set-region-type"
+description = "Enables the set_region_type command without any pre-configured scope."
+commands.allow = ["set_region_type"]
+
+[[permission]]
+identifier = "deny-set-region-type"
+description = "Denies the set_region_type command without any pre-configured scope."
+commands.deny = ["set_region_type"]

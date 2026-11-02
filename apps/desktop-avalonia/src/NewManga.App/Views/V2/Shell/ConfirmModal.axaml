@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.ConfirmModal"
+             x:DataType="vm:AppShellViewModel"
+             IsVisible="{Binding IsConfirmOpen}">
+  <!-- Confirm/Modal (DESIGN_SYSTEM §6.2): default focus on 取消, Esc closes, dangerous actions spell out
+       the consequence and affected scope. A blocked action shows the typed reason and stays disabled. -->
+  <Grid>
+    <Border Classes="scrim" />
+    <Border Classes="overlay"
+            Width="{Binding ConfirmWidth}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Padding="{DynamicResource Nm.Padding.Section}">
+      <StackPanel Spacing="{DynamicResource Nm.Space.4}">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <ctrl:StatusBadge Status="Blocked" ShowLabel="False" VerticalAlignment="Center" />
+          <TextBlock Classes="title" Text="{Binding ConfirmTitle}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <TextBlock Classes="body" Text="{Binding ConfirmBody}" TextWrapping="Wrap" />
+
+        <ctrl:AlertBanner Severity="Blocked"
+                          Message="{Binding ConfirmBlockedReason}"
+                          IsVisible="{Binding HasConfirmBlockedReason}" />
+
+        <StackPanel Orientation="Horizontal"
+                    Spacing="{DynamicResource Nm.Space.2}"
+                    HorizontalAlignment="Right">
+          <Button x:Name="CancelButton"
+                  Classes="secondary sm"
+                  Content="取消（Esc）"
+                  Command="{Binding CancelConfirmCommand}" />
+          <Button Classes="danger sm"
+                  Content="{Binding ConfirmText}"
+                  Command="{Binding ConfirmCommand}"
+                  IsEnabled="{Binding ConfirmCanConfirm}" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

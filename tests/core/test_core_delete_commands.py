@@ -1,0 +1,802 @@
+"""Core 2.10 PermanentlyDeleteBook / PermanentlyDeleteBooks wire behavior and safety boundaries."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+import pytest
+
+SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from bootstrap.core_service import CoreServiceServer, assemble_production_core
+from infrastructure.resource_channel.catalog_store import (
+    ResourceCatalogStore,
+    initialize_namespace,
+)
+from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+
+
+@pytest.fixture
+def server(tmp_path: Path):
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        yield CoreServiceServer(core)
+    finally:
+        core.conn.close()
+
+
+def _rpc(
+    server: CoreServiceServer,
+    command: str,
+    payload: object,
+    *,
+    minor: int = 10,
+    major: int = 2,
+    request_id: str = "del-test-req",
+) -> dict:
+    response, should_exit = server.dispatch_request(json.dumps({
+        "protocol": "new-manga.core",
+        "version": {"major": major, "minor": minor},
+        "request_id": request_id,
+        "command": command,
+        "payload": payload,
+    }))
+    assert not should_exit
+    return response
+
+
+def _seed_book(server: CoreServiceServer, book_id: str, title: str) -> None:
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at) VALUES (?, ?, 'now', 'now')",
+            (book_id, title),
+        )
+
+
+def _seed_chapter_and_page(server: CoreServiceServer, book_id: str, chapter_id: str, page_id: str) -> str:
+    storage = server._core.storage
+    temp_h = storage.write_temp(b"dummy page bytes")
+    rel_path = storage.new_revision_relative_path(book_id, chapter_id, "original", page_id, ".png")
+    storage.publish(temp_h, rel_path)
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at) VALUES (?, ?, 'Ch', 'now', 'now')",
+            (chapter_id, book_id),
+        )
+        server._core.conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, managed_original_ref, created_at, updated_at) VALUES (?, ?, ?, 'now', 'now')",
+            (page_id, chapter_id, rel_path),
+        )
+    return rel_path
+
+
+# --- PermanentlyDeleteBook (Single) Tests ---
+
+def test_delete_book_version_check(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    # wrong minor
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True}, minor=8)
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+    # wrong major
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True}, major=3)
+    assert res["error"]["code"] == "PROTOCOL_VERSION_UNSUPPORTED"
+
+
+def test_delete_book_invalid_request_shape(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    # missing confirm
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1"})
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+    # confirm is false
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": False})
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+    # extra fields
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True, "extra": 1})
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+
+def test_delete_book_not_found(server: CoreServiceServer) -> None:
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "nonexistent", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_NOT_FOUND"
+    assert res["error"]["category"] == "not_found"
+
+
+def test_delete_book_busy(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    # Add a running pipeline run
+    with server._core.conn:
+        run_json = json.dumps({"scope": {"book_id": "b1"}})
+        server._core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at) VALUES ('r1', 'translate', 'book', '[]', '{}', '{}', '{}', 'running', ?, 'now')",
+            (run_json,),
+        )
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_BUSY"
+    assert res["error"]["category"] == "conflict"
+
+
+def test_delete_book_success(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    rel_path = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    abs_path = Path(server._core.storage.absolute_path(rel_path))
+    assert abs_path.is_file()
+
+    # Add pipeline run and export history
+    with server._core.conn:
+        run_json = json.dumps({"run_id": "r1", "scope": {"book_id": "b1"}})
+        server._core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at) VALUES ('r1', 'translate', 'book', '[]', '{}', '{}', '{}', 'completed', ?, 'now')",
+            (run_json,),
+        )
+        server._core.conn.execute(
+            "INSERT INTO export_history (export_id, book_id, chapter_id, export_type, scope_snapshot_json, status, created_at) VALUES ('e1', 'b1', 'c1', 'zip', '{\"pages\": [\"p1\"]}', 'completed', 'now')"
+        )
+
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"] is None
+    assert res["result"] == {"book_id": "b1", "deleted": True}
+    assert res["version"] == {"major": 2, "minor": 10}
+
+    # Verify files removed
+    assert not abs_path.is_file()
+    assert not (server._core.storage.root / "books" / "b1").exists()
+
+    # Verify DB content deleted
+    assert server._core.conn.execute("SELECT COUNT(*) FROM books WHERE book_id = 'b1'").fetchone()[0] == 0
+    assert server._core.conn.execute("SELECT COUNT(*) FROM chapters WHERE book_id = 'b1'").fetchone()[0] == 0
+    assert server._core.conn.execute("SELECT COUNT(*) FROM pages WHERE chapter_id = 'c1'").fetchone()[0] == 0
+
+    # Verify pipeline history retained with book title snapshot
+    pr_row = server._core.conn.execute("SELECT run_json FROM pipeline_runs WHERE run_id = 'r1'").fetchone()
+    assert pr_row is not None
+    pr_json = json.loads(pr_row[0])
+    assert pr_json["book_title"] == "Book 1"
+
+    # Verify export history retained with book title snapshot
+    exp_row = server._core.conn.execute("SELECT scope_snapshot_json FROM export_history WHERE export_id = 'e1'").fetchone()
+    assert exp_row is not None
+    exp_json = json.loads(exp_row[0])
+    assert exp_json["book_title"] == "Book 1"
+
+
+# --- PermanentlyDeleteBooks (Batch) Tests ---
+
+def test_delete_books_validation_guards(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+
+    # Limit exceeded (> 20)
+    over_20 = [f"b_{i}" for i in range(21)]
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": over_20,
+        "confirmed_book_ids": over_20,
+        "confirm_count": 21,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "BOOK_DELETE_BATCH_LIMIT_EXCEEDED"
+
+    # Duplicate IDs
+    dups = ["b1", "b2", "b1"]
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": dups,
+        "confirmed_book_ids": dups,
+        "confirm_count": 3,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "DUPLICATE_BOOK_ID"
+
+    # Mismatched confirmation
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2"],
+        "confirmed_book_ids": ["b2", "b1"],
+        "confirm_count": 2,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+    # Mismatched count
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2"],
+        "confirmed_book_ids": ["b1", "b2"],
+        "confirm_count": 1,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "INVALID_REQUEST"
+
+
+def test_delete_books_whole_library_protection(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+
+    # Attempt to delete all books in the library
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2"],
+        "confirmed_book_ids": ["b1", "b2"],
+        "confirm_count": 2,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "BOOK_DELETE_BATCH_WHOLE_LIBRARY"
+    assert res["error"]["category"] == "conflict"
+    # Verify no side effects
+    assert server._core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0] == 2
+
+
+def test_delete_books_preflight_failure(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+
+    # b1 exists, b_missing does not
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b_missing"],
+        "confirmed_book_ids": ["b1", "b_missing"],
+        "confirm_count": 2,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
+    assert res["error"]["category"] == "conflict"
+    details = res["error"]["details"]
+    assert details["phase"] == "preflight"
+    assert details["requested_count"] == 2
+    assert details["completed_count"] == 0
+    assert details["items"] == [
+        {"book_id": "b1", "status": "not_started", "error_code": None},
+        {"book_id": "b_missing", "status": "not_started", "error_code": "BOOK_NOT_FOUND"},
+    ]
+    # Zero side effects: b1 still exists!
+    assert server._core.conn.execute("SELECT COUNT(*) FROM books WHERE book_id = 'b1'").fetchone()[0] == 1
+
+
+def test_delete_books_success(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")  # ensures not whole library
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    rel_p2 = _seed_chapter_and_page(server, "b2", "c2", "p2")
+
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2"],
+        "confirmed_book_ids": ["b1", "b2"],
+        "confirm_count": 2,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"] is None
+    assert res["result"]["requested_count"] == 2
+    assert res["result"]["completed_count"] == 2
+    assert res["result"]["items"] == [
+        {"book_id": "b1", "status": "deleted", "error_code": None},
+        {"book_id": "b2", "status": "deleted", "error_code": None},
+    ]
+
+    # Verify both books deleted, b3 remains
+    assert [r["book_id"] for r in server._core.conn.execute("SELECT book_id FROM books").fetchall()] == ["b3"]
+    assert not Path(server._core.storage.absolute_path(rel_p1)).exists()
+    assert not Path(server._core.storage.absolute_path(rel_p2)).exists()
+
+
+def test_delete_book_busy_with_active_tasks_and_exports(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    # 1. Active pipeline_tasks
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at) "
+            "VALUES ('r_task', 'translate', 'book', '[]', '{}', '{}', '{}', 'completed', '{}', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id, target_id, target_type, target_order, page_id, snapshot_json) "
+            "VALUES ('rt1', 'r_task', 'p1', 'page', 0, 'p1', '{}')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id, target_id, target_type, page_id, status, units_json, step_run_ids_json) "
+            "VALUES ('t1', 'r_task', 'rt1', 'p1', 'page', 'p1', 'running', '[]', '[]')"
+        )
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_BUSY"
+    # Zero side effects
+    assert server._core.conn.execute("SELECT COUNT(*) FROM books WHERE book_id = 'b1'").fetchone()[0] == 1
+
+    # Clear active task, test active export via export_runtime.has_active_exports_for_book
+    with server._core.conn:
+        server._core.conn.execute("UPDATE pipeline_tasks SET status = 'completed' WHERE task_id = 't1'")
+
+    class DummyExports:
+        def has_active_exports_for_book(self, bid: str) -> bool:
+            return bid == "b1"
+
+    server._exports = DummyExports()
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_BUSY"
+    server._exports = None
+
+
+def test_delete_book_conflict_with_shared_managed_or_cross_project(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    # Scenario a: Shared managed copy in pages table
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at) VALUES ('c2', 'b2', 'Ch2', 'now', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, managed_original_ref, created_at, updated_at) VALUES ('p2', 'c2', ?, 'now', 'now')",
+            (rel_p1,),
+        )
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_DELETE_CONFLICT"
+    assert server._core.conn.execute("SELECT COUNT(*) FROM books WHERE book_id = 'b1'").fetchone()[0] == 1
+    assert Path(server._core.storage.absolute_path(rel_p1)).exists()
+
+    # Clear shared page, test Scenario b: Shared artifact_revisions managed_path
+    with server._core.conn:
+        server._core.conn.execute("DELETE FROM pages WHERE page_id = 'p2'")
+        server._core.conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id, artifact_type, created_at, updated_at) "
+            "VALUES ('ma1', 'b1', 'c1', 'p1', 'original', 'now', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id, revision_no, managed_path, file_hash, mime_type, size_bytes, created_at) "
+            "VALUES ('rev1', 'ma1', 1, 'shared/path.png', 'hash1', 'image/png', 100, 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, source_order, sort_order, created_at, updated_at) "
+            "VALUES ('p2_ext', 'c2', 1, 1, 'now', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id, artifact_type, created_at, updated_at) "
+            "VALUES ('ma2', 'b2', 'c2', 'p2_ext', 'original', 'now', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id, revision_no, managed_path, file_hash, mime_type, size_bytes, created_at) "
+            "VALUES ('rev2', 'ma2', 1, 'shared/path.png', 'hash2', 'image/png', 100, 'now')"
+        )
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_DELETE_CONFLICT"
+
+    # Clear shared path, test Scenario c: Cross-project source_artifact_revision_id
+    with server._core.conn:
+        server._core.conn.execute("UPDATE artifact_revisions SET managed_path = 'rev2/path.png' WHERE artifact_revision_id = 'rev2'")
+        server._core.conn.execute(
+            "UPDATE artifact_revisions SET source_artifact_revision_id = 'rev1' WHERE artifact_revision_id = 'rev2'"
+        )
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"]["code"] == "BOOK_DELETE_CONFLICT"
+
+
+def test_delete_books_batch_allows_internal_shared_managed_but_rejects_external(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    # b1 and b2 share rel_p1
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at) VALUES ('c2', 'b2', 'Ch2', 'now', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, managed_original_ref, created_at, updated_at) VALUES ('p2', 'c2', ?, 'now', 'now')",
+            (rel_p1,),
+        )
+
+    # Deleting b1 alone fails with conflict
+    res_single = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res_single["error"]["code"] == "BOOK_DELETE_CONFLICT"
+
+    # Deleting [b1, b2] together succeeds because neither is external to the batch!
+    res_batch = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2"],
+        "confirmed_book_ids": ["b1", "b2"],
+        "confirm_count": 2,
+        "confirm_permanent_delete": True,
+    })
+    assert res_batch["error"] is None
+    assert res_batch["result"]["completed_count"] == 2
+
+
+def test_delete_book_cleans_derived_files_and_catalog(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    core = assemble_production_core(data_dir)
+    catalog_db = tmp_path / "derived" / "catalog.db"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    catalog = ResourceCatalogStore(catalog_db)
+    publisher = RenderPreviewPublisher(derived_root, catalog)
+    server = CoreServiceServer(core, render_previews=publisher)
+
+    try:
+        _seed_book(server, "b1", "Book 1")
+        rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+        abs_p1 = Path(server._core.storage.absolute_path(rel_p1))
+
+        # Publish a derived preview
+        publisher.publish_original(abs_p1, "page-original-p1", ".png")
+        entry = catalog.lookup("page-original-p1")
+        assert entry is not None
+        derived_file = derived_root / entry.rel_path
+        assert derived_file.is_file()
+
+        # Permanently delete Book 1
+        res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+        assert res["error"] is None
+
+        # Verify derived file removed and catalog entry removed
+        assert not derived_file.exists()
+        assert catalog.lookup("page-original-p1") is None
+    finally:
+        catalog.close()
+        core.conn.close()
+
+
+def test_delete_books_whole_library_exact_match_vs_not_found(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+
+    # Requesting ["b1", "b2", "b_missing"]
+    # Total books in DB: 2. Request count: 3.
+    # set(book_ids) != all_book_ids, so is_whole_library is False.
+    # Preflight should detect b_missing and return BOOK_DELETE_BATCH_PREFLIGHT_FAILED with BOOK_NOT_FOUND.
+    res = _rpc(server, "PermanentlyDeleteBooks", {
+        "book_ids": ["b1", "b2", "b_missing"],
+        "confirmed_book_ids": ["b1", "b2", "b_missing"],
+        "confirm_count": 3,
+        "confirm_permanent_delete": True,
+    })
+    assert res["error"]["code"] == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
+    items = res["error"]["details"]["items"]
+    missing_item = next(it for it in items if it["book_id"] == "b_missing")
+    assert missing_item["error_code"] == "BOOK_NOT_FOUND"
+
+
+# --- R-001: Export Runtime Exception Fail-Closed ---
+
+def test_delete_book_fail_closed_on_export_runtime_exception(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    class FaultyExportRuntime:
+        def has_active_exports_for_book(self, book_id: str) -> bool:
+            raise RuntimeError("Injected export runtime failure")
+
+    # Call preflight directly with faulty export runtime
+    all_ok, items = server._core.repository.preflight_permanent_delete(
+        ["b1"], storage=server._core.storage, export_runtime=FaultyExportRuntime()
+    )
+    assert not all_ok
+    assert items[0]["book_id"] == "b1"
+    assert items[0]["error_code"] == "BOOK_BUSY"
+
+    # Verify book still exists in DB
+    row = server._core.conn.execute("SELECT book_id FROM books WHERE book_id = 'b1'").fetchone()
+    assert row is not None
+
+
+# --- R-003: Output Refs Cleanup and Pipeline Stage States Retention ---
+
+def test_delete_book_output_refs_cleared_and_stage_states_retained(server: CoreServiceServer) -> None:
+    conn = server._core.conn
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    with conn:
+        conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at)"
+            " VALUES ('run1', 'translate', 'page', '[]', '{}', '{}', '{}', 'completed', ?, 'now')",
+            (
+                # AC6 (R-003): nested locators, not just the top-level scope.
+                # The old cleanup popped keys off rj["scope"] only, so every
+                # locator below survived and kept naming deleted content.
+                '{"scope": {"book_id": "b1", "page_ids": ["p1"]},'
+                ' "targets": [{"target_id": "p1", "page_id": "p1", "region_id": "rg1"}],'
+                ' "task": {"task_id": "t1", "run_target_id": "rt1"},'
+                ' "steps": [{"step_run_id": "sr1", "page_id": "p1"}],'
+                ' "book_title": "Book 1",'
+                ' "status": "completed"}',
+            ),
+        )
+        conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id, target_id, target_type, page_id, target_order, snapshot_json)"
+            " VALUES ('rt1', 'run1', 'p1', 'page', 'p1', 0, '{}')"
+        )
+        conn.execute(
+            "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id, target_id, target_type, page_id, status, units_json, step_run_ids_json)"
+            " VALUES ('t1', 'run1', 'rt1', 'p1', 'page', 'p1', 'completed', '[]', '[\"sr1\"]')"
+        )
+        conn.execute(
+            "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id, target_id, page_id, step_type, unit_id, status, input_refs_json, lock_snapshot_json, output_json)"
+            " VALUES ('sr1', 'run1', 't1', 'p1', 'p1', 'step1', 'u1', 'completed', '[]', '{}', '{\"data\": 1}')"
+        )
+        conn.execute(
+            "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
+            " VALUES ('sr1', 0, 'mask', '{\"locator\": \"media://b1/mask.png\"}')"
+        )
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('page', 'p1', 'detection', 'completed', 'now')"
+        )
+
+    # Execute permanent delete
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"] is None
+
+    # Assert 1: step_run_output_refs value_json was properly cleared to '{}' (frozen step_run_id list was not empty)
+    ref_row = conn.execute("SELECT value_json FROM step_run_output_refs WHERE step_run_id = 'sr1'").fetchone()
+    assert ref_row is not None
+    assert ref_row["value_json"] == "{}"
+
+    # Assert 2 (AC6 / R-003): the history ROW is retained, but it is genuinely
+    # detached.  The previous assertion looked the row up BY the page id, so it
+    # could only pass while the locator still named permanently deleted content.
+    stage_rows = conn.execute(
+        "SELECT target_id, status FROM pipeline_stage_states"
+        " WHERE target_type = 'page' AND stage = 'detection'"
+    ).fetchall()
+    assert len(stage_rows) == 1, "the stage-state history row was not retained"
+    assert stage_rows[0]["status"] == "completed"
+    assert stage_rows[0]["target_id"] != "p1", (
+        "the retained history still identifies the permanently deleted page"
+    )
+    assert stage_rows[0]["target_id"].startswith("detached:")
+
+    # Assert 3 (AC6 / R-003): every nested locator is gone from run_json, while
+    # the retained history still carries its human-readable title and status.
+    run_json = json.loads(
+        conn.execute(
+            "SELECT run_json FROM pipeline_runs WHERE run_id = 'run1'"
+        ).fetchone()["run_json"]
+    )
+
+    locator_keys = {
+        "book_id",
+        "chapter_id",
+        "page_id",
+        "page_ids",
+        "ordered_page_ids",
+        "last_page_id",
+        "region_id",
+        "region_ids",
+        "target_id",
+        "target_ids",
+        "run_target_id",
+        "run_target_ids",
+        "task_id",
+        "task_ids",
+        "step_run_id",
+        "step_run_ids",
+    }
+
+    def _locators_in(node: object) -> set[str]:
+        found: set[str] = set()
+        if isinstance(node, dict):
+            for key, item in node.items():
+                if key in locator_keys:
+                    found.add(key)
+                found |= _locators_in(item)
+        elif isinstance(node, list):
+            for item in node:
+                found |= _locators_in(item)
+        return found
+
+    survived = _locators_in(run_json)
+    assert survived == set(), (
+        f"nested locators survived the permanent delete: {sorted(survived)}"
+    )
+    assert run_json.get("book_title") == "Book 1"
+    assert run_json.get("status") == "completed"
+
+    # Assert 4: book is deleted
+    assert conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
+
+
+# --- R-004: Cleanup Pending Retry Cleans Derived Files and Manifest ---
+
+def test_delete_book_cleanup_pending_retry_cleans_derived_and_manifest(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data_retry"
+    core = assemble_production_core(data_dir)
+    catalog_db = tmp_path / "derived" / "catalog.db"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    catalog = ResourceCatalogStore(catalog_db)
+    publisher = RenderPreviewPublisher(derived_root, catalog)
+    server = CoreServiceServer(core, render_previews=publisher)
+
+    try:
+        _seed_book(server, "b1", "Book 1")
+        rel_path = _seed_chapter_and_page(server, "b1", "c1", "p1")
+        abs_path = Path(server._core.storage.absolute_path(rel_path))
+
+        # Publish a derived preview via publisher
+        publisher.publish_original(abs_path, "page-original-p1", ".png")
+        entry = catalog.lookup("page-original-p1")
+        assert entry is not None
+        derived_file = derived_root / entry.rel_path
+        assert derived_file.is_file()
+
+        # Step 1: Inject fault on catalog.lookup during initial delete so derived preview is not cleaned
+        original_lookup = catalog.lookup
+        def faulty_lookup(res_id: str):
+            raise RuntimeError("Injected catalog lookup failure")
+
+        catalog.lookup = faulty_lookup
+
+        res1 = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+        assert res1["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+
+        # At this point:
+        # - DB row for book b1 is deleted
+        assert core.conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
+        # - Manifest row exists and holds page_ids snapshot
+        manifest_data = core.repository.get_cleanup_manifest_data("b1")
+        assert manifest_data is not None
+        assert "p1" in manifest_data["page_ids"]
+        # - Derived file has NOT been removed because cleanup failed
+        assert derived_file.is_file()
+
+        # Step 2: Restore catalog.lookup and RETRY deletion
+        catalog.lookup = original_lookup
+
+        res2 = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+        assert res2["error"] is None
+        assert res2["result"]["deleted"] is True
+
+        # Now derived preview and catalog entry MUST be cleaned via manifest snapshot
+        assert not derived_file.exists()
+        assert catalog.lookup("page-original-p1") is None
+
+        # And manifest must now be deleted
+        assert core.repository.get_cleanup_manifest_data("b1") is None
+    finally:
+        catalog.close()
+        core.conn.close()
+
+
+# --- R-006: Migrator Finally Rollback Before Restoring Foreign Keys ---
+
+def test_migrator_finally_rollback_before_restoring_foreign_keys(tmp_path: Path) -> None:
+    import sqlite3
+    from infrastructure.sqlite.migrator import MigrationRunner
+    from infrastructure.sqlite.schema import Migration
+
+    db_path = tmp_path / "test_migration_rollback.db"
+    conn = sqlite3.connect(str(db_path))
+    conn.execute("PRAGMA foreign_keys = ON")
+
+    migrator = MigrationRunner(conn, ())
+
+    # Migration that creates a table and then fails with a non-sqlite3 Exception
+    class CustomNonSqliteError(Exception):
+        pass
+
+    faulty_migration = Migration(
+        schema_version=5,
+        migration_name="005_test_faulty",
+        sql="CREATE TABLE test_faulty_tab (id INT PRIMARY KEY);",
+    )
+
+    # Monkey-patch _split_statements to yield SQL then raise CustomNonSqliteError
+    def faulty_split(sql: str):
+        yield "CREATE TABLE test_faulty_tab (id INT PRIMARY KEY);"
+        raise CustomNonSqliteError("Simulated non-sqlite error inside migration")
+
+    migrator._split_statements = faulty_split
+
+    with pytest.raises(CustomNonSqliteError):
+        migrator._apply_one(faulty_migration)
+
+    # Assert 1: Transaction is NOT left active (rolled back)
+    assert not conn.in_transaction
+
+    # Assert 2: Table created inside transaction was rolled back
+    row = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='test_faulty_tab'").fetchone()
+    assert row is None
+
+    # Assert 3: Foreign keys PRAGMA was successfully restored to ON
+    fk_enabled = conn.execute("PRAGMA foreign_keys").fetchone()[0]
+    assert fk_enabled == 1
+
+    conn.close()
+
+
+# --- R-007: LibraryService Recycle Bin Queries and Total Books Count ---
+
+def test_library_service_recycle_bin_queries_and_total_count(tmp_path: Path) -> None:
+    core = assemble_production_core(tmp_path / "data_service")
+    library = core.library
+    try:
+        book_active = library.create_book(title="Active Book")
+        book_deleted = library.create_book(title="Trashed Book")
+
+        # Soft delete book_deleted
+        library.delete_book(book_deleted.book_id)
+
+        # list_books() must only return non-soft-deleted books
+        active_list = library.list_books()
+        assert any(b.book_id == book_active.book_id for b in active_list)
+        assert not any(b.book_id == book_deleted.book_id for b in active_list)
+
+        # list_recycle_bin_books() must only return soft-deleted books
+        trash_list = library.list_recycle_bin_books()
+        assert not any(b.book_id == book_active.book_id for b in trash_list)
+        assert any(b.book_id == book_deleted.book_id for b in trash_list)
+
+        # count_all_books() must return total existing books (active + deleted = 2)
+        assert library.count_all_books() == 2
+    finally:
+        core.conn.close()
+
+
+def test_delete_book_with_multi_target_run_detaches_without_collision(
+    server: CoreServiceServer,
+) -> None:
+    """AC2 / N-001: a run with two targets must not roll the delete back.
+
+    ``pipeline_run_targets`` carries ``UNIQUE(pipeline_run_id, target_id)``.
+    Detaching every target of one run with a bare ``''`` therefore collided on
+    the second row and rolled the entire permanent delete back.  The detached
+    value must stay unique per row while carrying no locator meaning.
+    """
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b1", "c2", "p2")
+
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
+            " requested_targets_json, settings_snapshot_json,"
+            " provider_binding_snapshot_json, context_policy_json, status,"
+            " run_json, updated_at)"
+            " VALUES ('r_multi', 'translate', 'book', '[]', '{}', '{}', '{}',"
+            " 'completed', '{}', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+            " target_id, target_type, target_order, page_id, snapshot_json)"
+            " VALUES ('rt1', 'r_multi', 'p1', 'page', 0, 'p1', '{}')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+            " target_id, target_type, target_order, page_id, snapshot_json)"
+            " VALUES ('rt2', 'r_multi', 'p2', 'page', 1, 'p2', '{}')"
+        )
+
+    res = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {"book_id": "b1", "confirm_permanent_delete": True},
+    )
+    assert res["error"] is None, res["error"]
+    assert res["result"] == {"book_id": "b1", "deleted": True}
+
+    # Both rows survived the detach, each with its own unique value - which is
+    # exactly what the old single-quote detach could not do.
+    detached = sorted(
+        row[0]
+        for row in server._core.conn.execute(
+            "SELECT target_id FROM pipeline_run_targets"
+            " WHERE pipeline_run_id = 'r_multi'"
+        ).fetchall()
+    )
+    assert detached == ["detached:rt1", "detached:rt2"]
+
+    assert (
+        server._core.conn.execute(
+            "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+        ).fetchone()[0]
+        == 0
+    )

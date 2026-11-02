@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-control-run"
+description = "Enables the library_control_run command without any pre-configured scope."
+commands.allow = ["library_control_run"]
+
+[[permission]]
+identifier = "deny-library-control-run"
+description = "Denies the library_control_run command without any pre-configured scope."
+commands.deny = ["library_control_run"]

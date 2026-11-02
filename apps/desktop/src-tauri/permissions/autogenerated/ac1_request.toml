@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-ac1-request"
+description = "Enables the ac1_request command without any pre-configured scope."
+commands.allow = ["ac1_request"]
+
+[[permission]]
+identifier = "deny-ac1-request"
+description = "Denies the ac1_request command without any pre-configured scope."
+commands.deny = ["ac1_request"]

@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.ResetSectionView"
+             x:DataType="vm:ThemeStudioResetViewModel">
+  <!-- ⑦ 恢复默认: explains the impact, never deletes user theme files unless explicitly opted in. -->
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="将重置为出厂默认" />
+          <ItemsControl ItemsSource="{Binding ImpactRows}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioInfoRow">
+                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                  <TextBlock Grid.Column="0" Classes="body" Text="{Binding Label}" />
+                  <TextBlock Grid.Column="1" Classes="body" Text="{Binding ValueLabel}" />
+                  <TextBlock Grid.Column="2" Classes="meta" Text="{Binding Hint}" TextWrapping="Wrap" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="meta"
+                     Text="恢复默认不会删除用户主题文件，只重置当前选择；应用后重启仍保持默认。"
+                     TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="我的主题（用户主题文件）" />
+          <ItemsControl ItemsSource="{Binding UserThemeNames}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Classes="meta" Text="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="meta" Text="没有用户主题文件" IsVisible="{Binding !HasUserThemes}" />
+          <CheckBox Content="{Binding ClearThemesLabel}"
+                    IsChecked="{Binding ClearUserThemes, Mode=TwoWay}"
+                    IsVisible="{Binding HasUserThemes}" />
+          <TextBlock Classes="meta"
+                     Text="勾选后仍需在第二步确认删除文件清单；该操作不可撤销。"
+                     IsVisible="{Binding HasUserThemes}" />
+        </StackPanel>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <Button Classes="danger" Content="恢复默认…" Command="{Binding ConfirmCommand}" />
+        <Button Classes="ghost sm" Content="刷新列表" Command="{Binding RefreshCommand}" />
+        <TextBlock Classes="meta" Text="{Binding StatusMessage}" VerticalAlignment="Center" TextWrapping="Wrap" />
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

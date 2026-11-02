@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-get-export-snapshot"
+description = "Enables the library_get_export_snapshot command without any pre-configured scope."
+commands.allow = ["library_get_export_snapshot"]
+
+[[permission]]
+identifier = "deny-library-get-export-snapshot"
+description = "Denies the library_get_export_snapshot command without any pre-configured scope."
+commands.deny = ["library_get_export_snapshot"]

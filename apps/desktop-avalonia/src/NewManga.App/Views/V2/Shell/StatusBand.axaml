@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.StatusBand"
+             x:DataType="vm:AppShellViewModel">
+  <!-- StatusBand (24–28px). Screen spec §1: shown when there is a Run; before the Run projection is
+       wired it appears for real activity/status only (import running, transient notice, Host not
+       ready) — never as a permanently empty strip. -->
+  <Border Classes="statusband"
+          MinHeight="{DynamicResource Nm.Size.StatusBandBatch}"
+          IsVisible="{Binding IsStatusBandVisible}"
+          Padding="{DynamicResource Nm.Padding.ControlSm}">
+    <Grid ColumnDefinitions="*,Auto"
+          ColumnSpacing="{DynamicResource Nm.Space.3}">
+      <StackPanel Orientation="Horizontal"
+                  Spacing="{DynamicResource Nm.Space.2}"
+                  VerticalAlignment="Center">
+        <ctrl:StatusBadge Status="{Binding StatusBandState}" ShowLabel="False" VerticalAlignment="Center" />
+        <TextBlock Classes="meta"
+                   Text="{Binding StatusBandLeft}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+      <TextBlock Grid.Column="1"
+                 Classes="meta"
+                 Text="{Binding StatusBandRight}"
+                 TextTrimming="CharacterEllipsis"
+                 VerticalAlignment="Center" />
+    </Grid>
+  </Border>
+</UserControl>

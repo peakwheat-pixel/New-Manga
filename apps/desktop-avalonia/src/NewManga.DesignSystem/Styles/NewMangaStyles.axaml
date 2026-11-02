@@ -1,0 +1,29 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Application-level style stack for the design system. Composition order in App.axaml:
+       FluentTheme (base behaviour) -> NewMangaStyles (design system) -> app-specific legacy styles. -->
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Text.Heading.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Text.Inline.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Surfaces.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Focus.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Inputs.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Selection.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Navigation.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Feedback.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Skeleton.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Scrolling.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Status.axaml" />
+  <StyleInclude Source="avares://NewManga.DesignSystem/Styles/Controls.Custom.axaml" />
+
+  <!-- Root shell defaults: font stack, body size, weight and foreground. TextBlock/ContentPresenter
+       text inherits these through Avalonia's TextElement inheritance chain, which is what keeps e.g.
+       a primary Button's label on Accent.On while page text stays Text.Primary. -->
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="FontWeight" Value="{DynamicResource Nm.FontWeight.Regular}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Canvas}" />
+  </Style>
+</Styles>
+

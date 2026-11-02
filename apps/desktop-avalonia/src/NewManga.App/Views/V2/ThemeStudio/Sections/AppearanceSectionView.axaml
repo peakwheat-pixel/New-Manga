@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.AppearanceSectionView"
+             x:DataType="vm:ThemeStudioAppearanceViewModel">
+  <!-- ⑤ 外观: appearance / contrast / reduced motion / system accent / density apply immediately. -->
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="主题模式（立即生效，不依赖「应用」）" />
+          <ItemsControl ItemsSource="{Binding AppearanceOptions}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioOption">
+                <Button Classes="chip"
+                        Classes.on="{Binding IsSelected}"
+                        Command="{Binding SelectCommand}"
+                        Margin="{DynamicResource Nm.Padding.Cell}"
+                        Padding="{DynamicResource Nm.Padding.Control}">
+                  <StackPanel Spacing="{DynamicResource Nm.Space.1}" MaxWidth="{DynamicResource Nm.Size.TreeWidth}">
+                    <TextBlock Classes="label" Text="{Binding Label}" />
+                    <TextBlock Classes="meta" Text="{Binding Description}" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="无障碍" />
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <TextBlock Grid.Column="0" Classes="body" Text="高对比度" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Classes="meta"
+                       Text="加强描边与文本对比；状态符号同步加粗"
+                       VerticalAlignment="Center" />
+            <ToggleSwitch Grid.Column="2" IsChecked="{Binding IsHighContrastOn, Mode=TwoWay}" />
+          </Grid>
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <TextBlock Grid.Column="0" Classes="body" Text="减少动效" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Classes="meta"
+                       Text="关闭全部过渡（系统 prefers-reduced-motion 优先）"
+                       VerticalAlignment="Center" />
+            <ToggleSwitch Grid.Column="2" IsChecked="{Binding IsReducedMotionOn, Mode=TwoWay}" />
+          </Grid>
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <TextBlock Grid.Column="0" Classes="body" Text="跟随系统强调色" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Classes="meta"
+                       Text="开 = 使用应用级强调色基线；V1 未接入 OS 取色（关闭时用主题自带强调色）"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="2" IsChecked="{Binding IsFollowSystemAccentOn, Mode=TwoWay}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="密度" />
+          <ItemsControl ItemsSource="{Binding DensityOptions}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioOption">
+                <Button Classes="chip sm"
+                        Classes.on="{Binding IsSelected}"
+                        Content="{Binding Label}"
+                        Command="{Binding SelectCommand}"
+                        ToolTip.Tip="{Binding Description}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="section-title" Text="布局（V1 仅导航 TopBand 生效，其余为预留，不做假开关）" />
+          <ItemsControl ItemsSource="{Binding LayoutRows}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioInfoRow">
+                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                  <TextBlock Grid.Column="0" Classes="body" Text="{Binding Label}" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding ValueLabel}" />
+                  <TextBlock Grid.Column="2"
+                             Classes="meta"
+                             Text="{Binding Hint}"
+                             IsVisible="{Binding HasHint}"
+                             TextWrapping="Wrap" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Classes="meta" Text="{Binding EffectSummary}" TextWrapping="Wrap" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

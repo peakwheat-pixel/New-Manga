@@ -1,0 +1,1317 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+from dataclasses import replace
+
+import pytest
+
+SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from bootstrap.core_service import CoreServiceServer, PROTOCOL_MAJOR, PROTOCOL_MINOR, _P15_PROTOCOL_MINOR, assemble_production_core
+from domain.books.entities import ReadingDirection
+from domain.pages.entities import Page
+from infrastructure.transport.stdlib import ResolvedRoute, StdlibTransport
+from infrastructure.network.profile_test import NetworkProfileTestProbe
+from ports.network.profiles import MODE_HTTP, NetworkProfile
+from ports.network.transport import TcpConnectionError, TransportError, TransportRequest, TransportResponse
+from ports.providers.profiles import ProviderProfile
+
+
+@pytest.fixture()
+def env(tmp_path: Path):
+    core = assemble_production_core(tmp_path / "data")
+    server = CoreServiceServer(core)
+    try:
+        yield core, server
+    finally:
+        server.close()
+        core.conn.close()
+
+
+def request(server, command: str, payload: dict, *, minor: int = _P15_PROTOCOL_MINOR) -> dict:
+    response, should_exit = server.dispatch_request(json.dumps({
+        "protocol": "new-manga.core",
+        "version": {"major": PROTOCOL_MAJOR, "minor": minor},
+        "request_id": "p15-test",
+        "command": command,
+        "payload": payload,
+    }))
+    assert not should_exit
+    return response
+
+
+def create_profile(server, *, provider_id="shared-provider", capabilities=None, name="Primary") -> dict:
+    response = request(server, "settings_provider_profiles_create", {
+        "provider_id": provider_id,
+        "display_name": name,
+        "capabilities": capabilities or ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert response["error"] is None
+    return response["result"]["profile"]
+
+
+def assert_safe_error(response: dict, message_key: str) -> None:
+    error = response["error"]
+    assert error["details"] == {
+        "phase": error["details"]["phase"],
+        "action": error["details"]["action"],
+        "message_key": message_key,
+    }
+    assert set(error["details"]) == {"phase", "action", "message_key"}
+    assert message_key in error["message"]
+    assert "CredentialRef" not in json.dumps(response)
+    assert "secret-marker" not in json.dumps(response)
+    assert "C:\\private" not in json.dumps(response)
+
+
+def test_provider_profile_crud_is_typed_and_allows_same_provider(env):
+    _core, server = env
+    first = create_profile(server, capabilities=["OCR", "Rendering"])
+    second = create_profile(server, name="Second")
+    assert first["profile_id"] != second["profile_id"]
+    assert first["provider_id"] == second["provider_id"] == "shared-provider"
+    assert first["capabilities"] == ["OCR", "Rendering"]
+    assert first["credential_state"] == "missing"
+
+    updated = request(server, "settings_provider_profiles_update", {
+        "profile_id": first["profile_id"],
+        "display_name": "Updated",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v2",
+        "model": "model-b",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert updated["result"]["profile"]["display_name"] == "Updated"
+    assert updated["result"]["profile"]["provider_id"] == "shared-provider"
+    listed = request(server, "settings_provider_profiles_list", {})["result"]["profiles"]
+    assert len(listed) == 2
+    assert {profile["display_name"] for profile in listed} == {"Second", "Updated"}
+    deleted = request(server, "settings_provider_profiles_delete", {"profile_id": second["profile_id"]})
+    assert deleted["result"] == {"deleted": True}
+
+
+@pytest.mark.parametrize("changes", [
+    {"unknown": "value"},
+    {"enabled": 1},
+    {"capabilities": ["OCR", "OCR"]},
+    {"capabilities": ["NotACapability"]},
+    {"endpoint": "https://user:secret-marker@api.example.test"},
+    {"endpoint": "https://api.example.test/?token=secret-marker"},
+    {"endpoint": r"C:\private\secret.png"},
+])
+def test_provider_profile_rejects_invalid_fields_without_leaking_input(env, changes):
+    _core, server = env
+    payload = {
+        "provider_id": "provider",
+        "display_name": "Profile",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": None,
+        "enabled": True,
+    }
+    payload.update(changes)
+    response = request(server, "settings_provider_profiles_create", payload)
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+    assert request(server, "settings_provider_profiles_list", {})["result"] == {"profiles": []}
+
+
+def test_capability_binding_resolution_priority_and_no_fallback(env):
+    core, server = env
+    global_profile = create_profile(server, name="Global")
+    book_profile = create_profile(server, name="Book")
+    chapter_profile = create_profile(server, name="Chapter")
+    disabled_profile = create_profile(server, name="Disabled")
+    book = core.library.create_book("Book", default_reading_direction=ReadingDirection.LTR)
+    chapter = core.library.create_chapter(
+        book.book_id, "Chapter", reading_direction=ReadingDirection.RTL
+    )
+
+    set_binding = lambda scope, profile: request(server, "settings_provider_bindings_set", {
+        "scope": scope, "capability": "OCR", "profile_id": profile["profile_id"]
+    })
+    set_binding({"kind": "global"}, global_profile)
+    set_binding({"kind": "book", "book_id": book.book_id}, book_profile)
+    set_binding({"kind": "chapter", "chapter_id": chapter.chapter_id}, chapter_profile)
+
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "chapter_id": chapter.chapter_id
+    })["result"]
+    assert resolved == {
+        "profile_id": chapter_profile["profile_id"],
+        "source": {"kind": "chapter", "chapter_id": chapter.chapter_id},
+    }
+    request(server, "settings_provider_bindings_clear", {
+        "scope": {"kind": "chapter", "chapter_id": chapter.chapter_id}, "capability": "OCR"
+    })
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "chapter_id": chapter.chapter_id
+    })["result"]
+    assert resolved["profile_id"] == book_profile["profile_id"]
+    assert resolved["source"] == {"kind": "book", "book_id": book.book_id}
+    request(server, "settings_provider_bindings_clear", {
+        "scope": {"kind": "book", "book_id": book.book_id}, "capability": "OCR"
+    })
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "chapter_id": chapter.chapter_id
+    })["result"]
+    assert resolved == {
+        "profile_id": global_profile["profile_id"],
+        "source": {"kind": "global"},
+    }
+    request(server, "settings_provider_bindings_clear", {
+        "scope": {"kind": "global"}, "capability": "OCR"
+    })
+    assert request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "chapter_id": chapter.chapter_id
+    })["result"] == {"profile_id": None, "source": None}
+    set_binding({"kind": "book", "book_id": book.book_id}, book_profile)
+
+    set_binding({"kind": "chapter", "chapter_id": chapter.chapter_id}, disabled_profile)
+    request(server, "settings_provider_profiles_update", {
+        "profile_id": disabled_profile["profile_id"],
+        "display_name": "Disabled",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": None,
+        "enabled": False,
+    })
+    blocked = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "chapter_id": chapter.chapter_id
+    })
+    assert_safe_error(blocked, "SETTINGS_CONFLICT")
+
+
+def test_binding_rejects_unknown_profile_and_invalid_scope(env):
+    _core, server = env
+    missing = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"},
+        "capability": "OCR",
+        "profile_id": "missing-profile",
+        "credential_ref": "secret-marker",
+    })
+    assert_safe_error(missing, "SETTINGS_INVALID_INPUT")
+    missing = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "book", "book_id": "missing-book"},
+        "capability": "OCR",
+        "profile_id": "missing-profile",
+    })
+    assert_safe_error(missing, "SETTINGS_ITEM_NOT_FOUND")
+
+
+def test_run_snapshot_freezes_profile_and_setting_provenance_without_references(env):
+    core, server = env
+    book = core.library.create_book("Book", default_reading_direction=ReadingDirection.LTR)
+    chapter = core.library.create_chapter(
+        book.book_id, "Chapter", reading_direction=ReadingDirection.RTL
+    )
+    core.repository.add_page(Page(
+        page_id="page-p15",
+        chapter_id=chapter.chapter_id,
+        source_filename="page.png",
+        source_order=1,
+        sort_order=1,
+        source_hash="hash-p15",
+        source_size_bytes=1,
+        width=10,
+        height=10,
+        managed_original_ref=f"books/{book.book_id}/chapters/{chapter.chapter_id}/page.png",
+    ))
+    profile = create_profile(server)
+    lower_priority_profile = create_profile(server, name="Chapter Default")
+    request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"},
+        "capability": "OCR",
+        "profile_id": lower_priority_profile["profile_id"],
+    })
+    request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "chapter", "chapter_id": chapter.chapter_id},
+        "capability": "OCR",
+        "profile_id": lower_priority_profile["profile_id"],
+    })
+    stored = core.provider_profile_store.get_profile(profile["profile_id"])
+    core.provider_profile_store.update_profile(ProviderProfile(
+        provider_profile_id=stored.provider_profile_id,
+        name=stored.name,
+        provider_type=stored.provider_type,
+        capabilities=stored.capabilities,
+        base_url=stored.base_url,
+        model=stored.model,
+        credential_ref="ref-secret-marker",
+        is_enabled=stored.is_enabled,
+    ))
+    core.pipeline_defaults.save_settings_section("reading", {"direction": "rtl"})
+    core.pipeline_defaults.save_settings_section("sfx", {"policy": "manual"})
+
+    # Isolate StartRun acceptance from the asynchronous scheduler worker.
+    server._run_owner = True
+    core.pipeline.set_scheduler_owner(True)
+    started = request(server, "StartRun", {
+        "command": "translate_all",
+        "scope": {"kind": "chapter", "chapter_id": chapter.chapter_id},
+        "idempotency_key": "p15-run-1",
+        "overrides": {
+            "provider_profiles": {"OCR": profile["profile_id"]},
+            "settings": {"reading": {"direction": "ltr"}},
+        },
+    })
+    assert started["error"] is None
+    run_id = started["result"]["run_id"]
+
+    updated = request(server, "settings_provider_profiles_update", {
+        "profile_id": profile["profile_id"],
+        "display_name": "Edited after Run",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/changed",
+        "model": "model-new",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert updated["error"] is None
+
+    frozen = request(server, "settings_provider_run_snapshot_get", {"run_id": run_id})
+    assert frozen["error"] is None
+    binding = frozen["result"]["bindings"][0]
+    assert binding["display_name"] == "Primary"
+    assert binding["endpoint"] == "https://api.example.test/v1"
+    assert binding["provider_credential_state_at_snapshot"] == "configured"
+    assert binding["source"] == {"kind": "run", "run_id": run_id}
+    assert "credential_ref" not in json.dumps(frozen)
+    assert "ref-secret-marker" not in json.dumps(frozen)
+
+    overrides_response = request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction", "sfx.policy"],
+        "run_id": run_id,
+    })
+    assert overrides_response["error"] is None, overrides_response
+    overrides = overrides_response["result"]["values"]
+    assert overrides == [
+        {"key": "reading.direction", "value": "ltr", "source": "run", "source_id": run_id, "is_default": False},
+        {"key": "sfx.policy", "value": "manual", "source": "global", "is_default": False},
+    ]
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR", "run_id": run_id
+    })["result"]
+    assert resolved == {
+        "profile_id": profile["profile_id"],
+        "source": {"kind": "run", "run_id": run_id},
+    }
+    conflict = request(server, "settings_provider_profiles_delete", {"profile_id": profile["profile_id"]})
+    assert_safe_error(conflict, "SETTINGS_CONFLICT")
+
+
+def test_override_layers_and_unsupported_value_fail_closed(env):
+    core, server = env
+    book = core.library.create_book("Book", default_reading_direction=ReadingDirection.LTR)
+    chapter = core.library.create_chapter(
+        book.book_id, "Chapter", reading_direction=ReadingDirection.RTL
+    )
+    core.pipeline_defaults.save_settings_section("reading", {"direction": "rtl"})
+    global_value = request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction"]
+    })["result"]["values"][0]
+    book_value = request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction"], "book_id": book.book_id
+    })["result"]["values"][0]
+    chapter_value = request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction"], "chapter_id": chapter.chapter_id
+    })["result"]["values"][0]
+    assert (global_value["value"], global_value["source"]) == ("rtl", "global")
+    assert (book_value["value"], book_value["source"]) == ("ltr", "book")
+    assert (chapter_value["value"], chapter_value["source"]) == ("rtl", "chapter")
+    core.pipeline_defaults.save_settings_section("reading", {"direction": "unsupported-secret-marker"})
+    overridden_unsafe = request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction"], "book_id": book.book_id
+    })["result"]["values"][0]
+    assert (overridden_unsafe["value"], overridden_unsafe["source"]) == ("ltr", "book")
+    assert_safe_error(request(server, "settings_resolve_overrides", {
+        "keys": ["reading.direction"]
+    }), "SETTINGS_UNAVAILABLE")
+
+    default_sfx = request(server, "settings_resolve_overrides", {"keys": ["sfx.policy"]})["result"]["values"][0]
+    assert default_sfx == {"key": "sfx.policy", "value": "skip", "source": "global", "is_default": True}
+    core.pipeline_defaults.save_settings_section("translation", {"parameters": {"token": "secret-marker"}})
+    unsafe = request(server, "settings_resolve_overrides", {"keys": ["translation.parameters"]})
+    assert_safe_error(unsafe, "SETTINGS_UNAVAILABLE")
+
+
+def test_new_settings_wire_requires_27_and_old_surface_keeps_23(env):
+    _core, server = env
+    old_ping = request(server, "core.ping", {}, minor=3)
+    assert old_ping["version"] == {"major": 2, "minor": 3}
+    assert old_ping["result"]["protocol_version"] == {"major": 2, "minor": 3}
+    new_settings = request(server, "settings_provider_profiles_list", {}, minor=3)
+    assert new_settings["version"] == {"major": 2, "minor": 7}
+    assert_safe_error(new_settings, "SETTINGS_INVALID_INPUT")
+    assert PROTOCOL_MINOR == 3
+    assert _P15_PROTOCOL_MINOR == 7
+
+
+class _MemoryCredentials:
+    def __init__(self):
+        self.refs = set()
+
+    def has_credential(self, ref):
+        return ref in self.refs
+
+    def delete_credential(self, ref):
+        self.refs.discard(ref)
+
+
+def create_network_profile(server, *, mode="Direct", endpoint=None, **options):
+    return request(server, "settings_network_profiles_create", {
+        "display_name": "Network",
+        "mode": mode,
+        "proxy_endpoint": endpoint,
+        **options,
+    })
+
+
+@pytest.mark.parametrize("mode,endpoint", [
+    ("PAC", "http://proxy.example.test:8080"),
+    ("HTTP", "https://proxy.example.test:8080"),
+    ("HTTPS", "http://proxy.example.test:8080"),
+    ("SOCKS5", "https://proxy.example.test:1080"),
+    ("Direct", "http://proxy.example.test:8080"),
+    ("System", "http://proxy.example.test:8080"),
+    ("HTTP", "http://user:secret-marker@proxy.example.test:8080"),
+    ("HTTP", "http://proxy.example.test:8080?"),
+    ("HTTP", "http://proxy.example.test:8080#"),
+])
+def test_network_profile_rejects_invalid_mode_endpoint_and_embedded_credentials(env, mode, endpoint):
+    _core, server = env
+    response = create_network_profile(server, mode=mode, endpoint=endpoint)
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+    assert "secret-marker" not in json.dumps(response)
+    assert request(server, "settings_network_profiles_list", {})["result"] == {"profiles": []}
+
+
+def test_network_profile_crud_defaults_tls_confirmation_and_fallback(env):
+    _core, server = env
+    created = create_network_profile(server, mode="HTTP", endpoint="http://proxy.example.test:8080")
+    assert created["version"] == {"major": 2, "minor": 7}
+    profile = created["result"]["profile"]
+    assert profile["verify_tls"] is True
+    assert profile["tls_verification_state"] == "enabled"
+    assert profile["allow_proxy_failure_direct_fallback"] is False
+    assert profile["credential_state"] == "missing"
+
+    unconfirmed = request(server, "settings_network_profiles_update", {
+        "network_profile_id": profile["network_profile_id"],
+        "display_name": "Changed",
+        "mode": "Direct",
+        "proxy_endpoint": None,
+        "verify_tls": False,
+        "allow_proxy_failure_direct_fallback": True,
+    })
+    assert_safe_error(unconfirmed, "TLS_CONFIRMATION_REQUIRED")
+
+    updated = request(server, "settings_network_profiles_update", {
+        "network_profile_id": profile["network_profile_id"],
+        "display_name": "Changed",
+        "mode": "HTTPS",
+        "proxy_endpoint": "https://proxy.example.test:8443",
+        "verify_tls": False,
+        "confirm_disable_tls_verification": True,
+        "allow_proxy_failure_direct_fallback": True,
+    })["result"]["profile"]
+    assert updated["mode"] == "HTTPS"
+    assert updated["proxy_endpoint"] == "https://proxy.example.test:8443"
+    assert updated["tls_verification_state"] == "disabled_confirmed"
+    assert updated["allow_proxy_failure_direct_fallback"] is True
+
+    listed = request(server, "settings_network_profiles_list", {})["result"]["profiles"]
+    assert listed == [updated]
+    assert request(server, "settings_network_profiles_delete", {
+        "network_profile_id": profile["network_profile_id"]
+    })["result"] == {"deleted": True}
+
+
+def test_network_profile_tls_confirmation_at_creation_and_bad_types_fail_closed(env):
+    _core, server = env
+    response = create_network_profile(server, mode="Direct", endpoint=None, verify_tls=False)
+    assert_safe_error(response, "TLS_CONFIRMATION_REQUIRED")
+
+    created = create_network_profile(
+        server,
+        mode="System",
+        endpoint=None,
+        verify_tls=False,
+        confirm_disable_tls_verification=True,
+        allow_proxy_failure_direct_fallback=True,
+    )["result"]["profile"]
+    assert created["verify_tls"] is False
+    assert created["allow_proxy_failure_direct_fallback"] is True
+
+    bad_type = create_network_profile(server, mode="Direct", endpoint=None, verify_tls=1)
+    assert_safe_error(bad_type, "SETTINGS_INVALID_INPUT")
+    bad_fallback = create_network_profile(
+        server, mode="Direct", endpoint=None, allow_proxy_failure_direct_fallback="true"
+    )
+    assert_safe_error(bad_fallback, "SETTINGS_INVALID_INPUT")
+
+
+def test_network_profile_default_and_resolver_precedence(env, monkeypatch):
+    core, server = env
+    provider_network = create_network_profile(server, mode="HTTP", endpoint="http://provider-proxy.example.test:8080")["result"]["profile"]
+    global_network = create_network_profile(server, mode="Direct", endpoint=None)["result"]["profile"]
+    provider = request(server, "settings_provider_profiles_create", {
+        "provider_id": "provider-a",
+        "display_name": "Provider A",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": provider_network["network_profile_id"],
+        "enabled": True,
+    })["result"]["profile"]
+
+    monkeypatch.setattr("bootstrap.settings_commands.urllib.request.getproxies", lambda: {"https": "http://system-secret"})
+    provider_result = request(server, "settings_network_profile_resolve", {
+        "provider_profile_id": provider["profile_id"]
+    })["result"]
+    assert provider_result == {
+        "network_profile_id": provider_network["network_profile_id"],
+        "mode": "HTTP",
+        "source": "provider",
+    }
+    assert request(server, "settings_network_profile_default_set", {
+        "network_profile_id": global_network["network_profile_id"]
+    })["result"] == {"network_profile_id": global_network["network_profile_id"]}
+    assert core.network_profile_store.get_global_default_profile_id() == global_network["network_profile_id"]
+    create_network_profile(server)
+    assert core.network_profile_store.get_global_default_profile_id() == global_network["network_profile_id"]
+    assert request(server, "settings_network_profile_resolve", {})["result"] == {
+        "network_profile_id": global_network["network_profile_id"],
+        "mode": "Direct",
+        "source": "global",
+    }
+
+    assert request(server, "settings_network_profile_default_clear", {})["result"] == {
+        "network_profile_id": None
+    }
+    system_result = request(server, "settings_network_profile_resolve", {})["result"]
+    assert system_result == {"network_profile_id": None, "mode": "System", "source": "system"}
+    assert "system-secret" not in json.dumps(system_result)
+    monkeypatch.setattr("bootstrap.settings_commands.urllib.request.getproxies", lambda: {})
+    assert request(server, "settings_network_profile_resolve", {})["result"] == {
+        "network_profile_id": None,
+        "mode": "Direct",
+        "source": "direct",
+    }
+
+    missing = request(server, "settings_network_profile_default_set", {
+        "network_profile_id": "missing-profile"
+    })
+    assert_safe_error(missing, "SETTINGS_ITEM_NOT_FOUND")
+    assert core.network_profile_store.get_global_default_profile_id() is None
+
+
+def test_network_profile_delete_rejects_global_and_provider_references(env):
+    _core, server = env
+    profile = create_network_profile(server)["result"]["profile"]
+    profile_id = profile["network_profile_id"]
+    request(server, "settings_network_profile_default_set", {"network_profile_id": profile_id})
+    assert_safe_error(request(server, "settings_network_profiles_delete", {
+        "network_profile_id": profile_id
+    }), "SETTINGS_CONFLICT")
+    request(server, "settings_network_profile_default_clear", {})
+
+    provider = request(server, "settings_provider_profiles_create", {
+        "provider_id": "provider-a",
+        "display_name": "Provider A",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": profile_id,
+        "enabled": True,
+    })["result"]["profile"]
+    assert_safe_error(request(server, "settings_network_profiles_delete", {
+        "network_profile_id": profile_id
+    }), "SETTINGS_CONFLICT")
+    request(server, "settings_provider_profiles_update", {
+        "profile_id": provider["profile_id"],
+        "display_name": "Provider A",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert request(server, "settings_network_profiles_delete", {
+        "network_profile_id": profile_id
+    })["result"] == {"deleted": True}
+
+
+def test_network_profile_delete_rejects_protected_run_snapshot_reference(env):
+    core, server = env
+    book = core.library.create_book("Book")
+    chapter = core.library.create_chapter(book.book_id, "Chapter")
+    core.repository.add_page(Page(
+        page_id="page-network-snapshot",
+        chapter_id=chapter.chapter_id,
+        source_filename="page.png",
+        source_order=1,
+        sort_order=1,
+        source_hash="hash-network-snapshot",
+        source_size_bytes=1,
+        width=10,
+        height=10,
+        managed_original_ref=f"books/{book.book_id}/chapters/{chapter.chapter_id}/page.png",
+    ))
+    network = create_network_profile(server, mode="HTTPS", endpoint="https://proxy.example.test:8443")["result"]["profile"]
+    provider = request(server, "settings_provider_profiles_create", {
+        "provider_id": "provider-a",
+        "display_name": "Provider A",
+        "capabilities": ["OCR"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": network["network_profile_id"],
+        "enabled": True,
+    })["result"]["profile"]
+    server._run_owner = True
+    core.pipeline.set_scheduler_owner(True)
+    started = request(server, "StartRun", {
+        "command": "translate_all",
+        "scope": {"kind": "chapter", "chapter_id": chapter.chapter_id},
+        "idempotency_key": "network-snapshot-run",
+        "overrides": {"provider_profiles": {"OCR": provider["profile_id"]}},
+    })
+    assert started["error"] is None
+    assert_safe_error(request(server, "settings_network_profiles_delete", {
+        "network_profile_id": network["network_profile_id"]
+    }), "SETTINGS_CONFLICT")
+
+
+def test_proxy_failure_does_not_retry_direct_by_default(monkeypatch):
+    transport = StdlibTransport()
+    profile = NetworkProfile(
+        network_profile_id="proxy-profile",
+        name="Proxy",
+        mode=MODE_HTTP,
+        http_proxy="http://proxy.example.test:8080",
+    )
+    attempted_routes = []
+
+    def fail_proxy(_request, _profile, route):
+        attempted_routes.append(route)
+        raise TcpConnectionError("proxy unavailable")
+
+    monkeypatch.setattr(transport, "_send_once", fail_proxy)
+    with pytest.raises(TcpConnectionError):
+        transport.send(
+            TransportRequest(method="GET", url="https://api.example.test/v1"),
+            profile,
+        )
+    assert len(attempted_routes) == 1
+    assert attempted_routes[0].via_proxy is True
+    assert attempted_routes[0].proxy_host == "proxy.example.test"
+
+
+def test_credential_binding_validates_owner_and_never_returns_reference(env):
+    core, server = env
+    core.credential_store = _MemoryCredentials()
+    first = create_profile(server, name="First")
+    second = create_profile(server, name="Second")
+    wrong_ref = f"NewManga/provider/{second['profile_id']}/host-ref"
+    core.credential_store.refs.add(wrong_ref)
+    unauthorized = request(server, "BindProfileCredential", {
+        "target": {"kind": "provider_api", "profile_id": first["profile_id"]},
+        "credential_ref": wrong_ref,
+    })
+    assert_safe_error(unauthorized, "SETTINGS_INVALID_INPUT")
+    assert wrong_ref not in json.dumps(unauthorized)
+
+    credential_ref = f"NewManga/provider/{first['profile_id']}/host-ref"
+    core.credential_store.refs.add(credential_ref)
+    bound = request(server, "BindProfileCredential", {
+        "target": {"kind": "provider_api", "profile_id": first["profile_id"]},
+        "credential_ref": credential_ref,
+    })
+    assert bound["result"] == {"state": "configured"}
+    listed = request(server, "settings_provider_profiles_list", {})["result"]["profiles"]
+    first_projection = next(item for item in listed if item["profile_id"] == first["profile_id"])
+    assert first_projection["credential_state"] == "configured"
+    assert credential_ref not in json.dumps(bound)
+    assert credential_ref not in json.dumps(listed)
+    assert "credential_ref" not in json.dumps(listed)
+
+    cleared = request(server, "ClearProfileCredential", {
+        "target": {"kind": "provider_api", "profile_id": first["profile_id"]}
+    })
+    assert cleared["result"] == {"state": "missing"}
+    assert not core.credential_store.has_credential(credential_ref)
+    assert core.provider_profile_store.get_profile(first["profile_id"]).credential_ref is None
+    profiles = request(server, "settings_provider_profiles_list", {})["result"]["profiles"]
+    first_projection = next(item for item in profiles if item["profile_id"] == first["profile_id"])
+    assert first_projection["credential_state"] == "missing"
+
+
+def test_credential_replace_failure_preserves_old_binding_and_removes_new_ref(env, monkeypatch):
+    core, server = env
+    core.credential_store = _MemoryCredentials()
+    profile = create_profile(server)
+    old_ref = f"NewManga/provider/{profile['profile_id']}/old"
+    new_ref = f"NewManga/provider/{profile['profile_id']}/new"
+    core.credential_store.refs.update({old_ref, new_ref})
+    target = {"kind": "provider_api", "profile_id": profile["profile_id"]}
+    assert request(server, "BindProfileCredential", {"target": target, "credential_ref": old_ref})["error"] is None
+
+    store = core.provider_profile_store
+    update = store.update_profile
+    def fail_new_binding(item):
+        if item.credential_ref == new_ref:
+            raise OSError("C:/private/secret-marker")
+        update(item)
+    monkeypatch.setattr(store, "update_profile", fail_new_binding)
+
+    failed = request(server, "BindProfileCredential", {"target": target, "credential_ref": new_ref})
+    assert_safe_error(failed, "SETTINGS_UNAVAILABLE")
+    assert new_ref not in json.dumps(failed)
+    assert new_ref not in core.credential_store.refs
+    assert old_ref in core.credential_store.refs
+    assert store.get_profile(profile["profile_id"]).credential_ref == old_ref
+
+
+def test_cleared_provider_does_not_resolve_to_another_provider(env):
+    core, server = env
+    core.credential_store = _MemoryCredentials()
+    first = create_profile(server, provider_id="same-provider", name="First")
+    second = create_profile(server, provider_id="same-provider", name="Second")
+    first_ref = f"NewManga/provider/{first['profile_id']}/first"
+    second_ref = f"NewManga/provider/{second['profile_id']}/second"
+    core.credential_store.refs.update({first_ref, second_ref})
+    for profile, ref in ((first, first_ref), (second, second_ref)):
+        assert request(server, "BindProfileCredential", {
+            "target": {"kind": "provider_api", "profile_id": profile["profile_id"]},
+            "credential_ref": ref,
+        })["error"] is None
+    request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"},
+        "capability": "OCR",
+        "profile_id": first["profile_id"],
+    })
+
+    request(server, "ClearProfileCredential", {
+        "target": {"kind": "provider_api", "profile_id": first["profile_id"]}
+    })
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "OCR"
+    })["result"]
+    assert resolved["profile_id"] == first["profile_id"]
+    assert resolved["profile_id"] != second["profile_id"]
+    assert core.provider_profile_store.get_profile(first["profile_id"]).credential_ref is None
+    assert core.provider_profile_store.get_profile(second["profile_id"]).credential_ref == second_ref
+    assert second_ref in core.credential_store.refs
+
+
+def test_proxy_credential_binding_is_profile_scoped_and_secret_free(env):
+    core, server = env
+    core.credential_store = _MemoryCredentials()
+    network = create_network_profile(server, mode="SOCKS5", endpoint="socks5://proxy.example.test:1080")["result"]["profile"]
+    credential_ref = f"NewManga/proxy/{network['network_profile_id']}/proxy-auth"
+    core.credential_store.refs.add(credential_ref)
+    target = {"kind": "proxy_auth", "network_profile_id": network["network_profile_id"]}
+    bound = request(server, "BindProfileCredential", {"target": target, "credential_ref": credential_ref})
+    assert bound["result"] == {"state": "configured"}
+    profile = request(server, "settings_network_profiles_list", {})["result"]["profiles"][0]
+    assert profile["credential_state"] == "configured"
+    assert credential_ref not in json.dumps(profile)
+    assert request(server, "ClearProfileCredential", {"target": target})["result"] == {"state": "missing"}
+    assert not core.credential_store.has_credential(credential_ref)
+
+
+def test_private_credential_commands_require_p15_minor_seven_and_test_requires_ids(env):
+    _core, server = env
+    invalid_version = request(server, "BindProfileCredential", {}, minor=3)
+    assert invalid_version["version"] == {"major": 2, "minor": 7}
+    assert_safe_error(invalid_version, "SETTINGS_INVALID_INPUT")
+    invalid_test = request(server, "settings_network_profiles_test", {}, minor=7)
+    assert invalid_test["error"]["code"] == "INVALID_REQUEST"
+    assert invalid_test["result"] is None
+
+
+def _network_test_profiles(core, server, *, endpoint, provider_type="openai-compatible"):
+    bound = create_network_profile(server)["result"]["profile"]
+    provider_wire = create_profile(server, provider_id=provider_type)
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider,
+        base_url=endpoint,
+        network_profile_id=bound["network_profile_id"],
+    ))
+    return provider_wire, bound
+
+
+def _network_test_request(server, network_id, provider_id):
+    return request(server, "settings_network_profiles_test", {
+        "network_profile_id": network_id,
+        "provider_profile_id": provider_id,
+    })
+
+
+class _StageProbe:
+    def __init__(self, *, fail_at=None, system_direct=False, auth_not_required=True):
+        self.fail_at = fail_at
+        self.system_direct = system_direct
+        self.auth_not_required = auth_not_required
+        self.calls = []
+
+    def run(self, stage, endpoint, provider, network, context):
+        self.calls.append((stage, endpoint, provider.provider_profile_id, network.network_profile_id))
+        if stage == self.fail_at:
+            raise RuntimeError("secret-marker C:\\private\\network.json raw-response-marker")
+        if stage == "Proxy" and network.mode == "system" and self.system_direct:
+            return "system_route_is_direct"
+        if stage == "ProviderAuth" and self.auth_not_required:
+            return "provider_auth_not_required"
+        return None
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("Direct", None),
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+@pytest.mark.parametrize("endpoint,dns_reason,tls_reason", [
+    ("http://tenant-secret.example.test/private/v1", None, "provider_endpoint_uses_http"),
+    ("https://tenant-secret.example.test/private/v1", None, None),
+    ("https://192.0.2.10/private/v1", "provider_endpoint_is_ip_literal", None),
+])
+def test_network_profile_test_mode_and_not_applicable_matrix(
+    env, mode, proxy_endpoint, endpoint, dns_reason, tls_reason
+):
+    core, server = env
+    selected = create_network_profile(server, mode=mode, endpoint=proxy_endpoint)["result"]["profile"]
+    provider, bound = _network_test_profiles(core, server, endpoint=endpoint, provider_type="local-sakura")
+    probe = _StageProbe(system_direct=(mode == "System"))
+    core.network_profile_test_probe = probe
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["status"] == "passed"
+    assert result["failed_stage"] is None
+    assert result["direct_fallback_used"] is False
+    assert [item["stage"] for item in result["stages"]] == [
+        "Proxy", "DNS", "TCP", "TLS", "HTTP", "ProviderAuth"
+    ]
+    if mode == "Direct":
+        assert result["stages"][0] == {
+            "stage": "Proxy", "status": "not_applicable", "reason": "direct_mode"
+        }
+    elif mode == "System":
+        assert result["stages"][0] == {
+            "stage": "Proxy", "status": "not_applicable", "reason": "system_route_is_direct"
+        }
+    else:
+        assert result["stages"][0]["status"] == "passed"
+    if dns_reason:
+        assert result["stages"][1] == {
+            "stage": "DNS", "status": "not_applicable", "reason": dns_reason
+        }
+    else:
+        assert result["stages"][1]["status"] == "passed"
+    if tls_reason:
+        assert result["stages"][3] == {
+            "stage": "TLS", "status": "not_applicable", "reason": tls_reason
+        }
+    else:
+        assert result["stages"][3]["status"] == "passed"
+    assert result["stages"][2]["status"] == "passed"
+    assert result["stages"][4]["status"] == "passed"
+    assert result["stages"][5] == {
+        "stage": "ProviderAuth", "status": "not_applicable",
+        "reason": "provider_auth_not_required",
+    }
+    assert all(call[1] == endpoint and call[3] == selected["network_profile_id"] for call in probe.calls)
+    assert bound["network_profile_id"] != selected["network_profile_id"]
+    assert endpoint not in json.dumps(result)
+
+
+def test_network_profile_test_system_proxy_route_runs_proxy_stage(env):
+    core, server = env
+    selected = create_network_profile(server, mode="System")["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1", provider_type="local-sakura"
+    )
+    probe = _StageProbe(system_direct=False)
+    core.network_profile_test_probe = probe
+
+    result = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])["result"]
+
+    assert result["stages"][0]["status"] == "passed"
+    assert any(call[0] == "Proxy" for call in probe.calls)
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("Direct", None),
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+@pytest.mark.parametrize("failed_stage", ["DNS", "TCP", "TLS", "HTTP", "ProviderAuth"])
+def test_network_profile_test_failure_stops_later_stages_and_sanitizes_result(
+    env, mode, proxy_endpoint, failed_stage
+):
+    core, server = env
+    selected = create_network_profile(
+        server, mode=mode, endpoint=proxy_endpoint,
+        allow_proxy_failure_direct_fallback=True,
+    )["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    probe = _StageProbe(fail_at=failed_stage, auth_not_required=False)
+    core.network_profile_test_probe = probe
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["status"] == "failed"
+    assert result["failed_stage"] == failed_stage
+    assert result["direct_fallback_used"] is False
+    failed_index = next(i for i, item in enumerate(result["stages"]) if item["stage"] == failed_stage)
+    assert result["stages"][failed_index]["status"] == "failed"
+    assert result["stages"][failed_index]["failure"] == {
+        "category": "unavailable", "action": "retry", "message_key": "NETWORK_STAGE_FAILED"
+    }
+    assert all(
+        item == {"stage": item["stage"], "status": "not_run", "reason": "upstream_stage_failed"}
+        for item in result["stages"][failed_index + 1:]
+    )
+    serialized = json.dumps(response)
+    for sensitive in ("tenant-secret", "/private/v1", "secret-marker", "raw-response-marker", "C:\\\\private"):
+        assert sensitive not in serialized
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+def test_network_profile_test_proxy_failure_stops_every_mode(env, mode, proxy_endpoint):
+    core, server = env
+    selected = create_network_profile(server, mode=mode, endpoint=proxy_endpoint)["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    core.network_profile_test_probe = _StageProbe(fail_at="Proxy", system_direct=False)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "Proxy"
+    assert response["result"]["stages"][1:] == [
+        {"stage": stage, "status": "not_run", "reason": "upstream_stage_failed"}
+        for stage in ("DNS", "TCP", "TLS", "HTTP", "ProviderAuth")
+    ]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("provider_profile_id", None),
+    ("provider_profile_id", 7),
+    ("provider_profile_id", ""),
+    ("provider_profile_id", "missing-provider"),
+    ("network_profile_id", None),
+    ("network_profile_id", 7),
+    ("network_profile_id", ""),
+    ("network_profile_id", "missing-network"),
+])
+def test_network_profile_test_invalid_or_unresolved_target_is_invalid_request(env, field, value):
+    core, server = env
+    network = create_network_profile(server)["result"]["profile"]
+    provider = create_profile(server)
+    payload = {
+        "network_profile_id": network["network_profile_id"],
+        "provider_profile_id": provider["profile_id"],
+    }
+    payload[field] = value
+    core.network_profile_test_probe = _StageProbe(fail_at="HTTP")
+
+    response = request(server, "settings_network_profiles_test", payload)
+
+    assert response["error"]["code"] == "INVALID_REQUEST"
+    assert response["result"] is None
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+
+
+@pytest.mark.parametrize("payload", [{}, {"network_profile_id": "network-only"}, {"provider_profile_id": "provider-only"}])
+def test_network_profile_test_missing_target_never_returns_passed(env, payload):
+    core, server = env
+    core.network_profile_test_probe = _StageProbe()
+
+    response = request(server, "settings_network_profiles_test", payload)
+
+    assert response["error"]["code"] == "INVALID_REQUEST"
+    assert response["result"] is None
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+
+
+class _ProxyConnectionFailureTransport:
+    def __init__(self):
+        self.profiles = []
+        self.attempts = []
+
+    def resolve_route(self, endpoint, profile):
+        self.profiles.append(profile)
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+            via_proxy=True, proxy_kind="http", proxy_host="proxy.example.test",
+            proxy_port=8080, proxy_source="profile", reason="profile:http",
+        )
+
+    def _tcp_connect(self, host, port, timeout):
+        self.attempts.append((host, port))
+        raise TcpConnectionError("proxy failed; secret-marker must never escape")
+
+
+class _NegotiationSocket:
+    def __init__(self, replies=()):
+        self.replies = list(replies)
+        self.sent = []
+
+    def sendall(self, data):
+        self.sent.append(data)
+
+    def recv(self, count):
+        return self.replies.pop(0)
+
+    def close(self):
+        pass
+
+
+class _ProxyRouteTransport(StdlibTransport):
+    def __init__(self, system_route=None, replies=()):
+        super().__init__()
+        self.system_route = system_route
+        self.socket = _NegotiationSocket(replies)
+        self.profiles = []
+        self.connects = []
+        self.tls = []
+        self.tunnels = []
+
+    def resolve_route(self, endpoint, profile):
+        self.profiles.append(profile)
+        if profile.mode == "system":
+            return self.system_route
+        return super().resolve_route(endpoint, profile)
+
+    def _tcp_connect(self, host, port, timeout):
+        self.connects.append((host, port))
+        return self.socket
+
+    def _tls_wrap(self, sock, host, profile, *, stage):
+        self.tls.append((host, stage))
+        return sock
+
+    def _http_connect_tunnel(self, sock, route, profile):
+        self.tunnels.append((route.target_host, route.target_port))
+
+
+def test_network_profile_test_proxy_failure_never_attempts_direct(env):
+    core, server = env
+    selected = create_network_profile(
+        server, mode="HTTP", endpoint="http://proxy.example.test:8080",
+        allow_proxy_failure_direct_fallback=True,
+    )["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    transport = _ProxyConnectionFailureTransport()
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    result = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])["result"]
+
+    assert result["status"] == "failed"
+    assert result["failed_stage"] == "Proxy"
+    assert result["stages"][1:] == [
+        {"stage": stage, "status": "not_run", "reason": "upstream_stage_failed"}
+        for stage in ("DNS", "TCP", "TLS", "HTTP", "ProviderAuth")
+    ]
+    assert transport.attempts == [("proxy.example.test", 8080)]
+    assert len(transport.profiles) == 1
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system is False
+    assert result["direct_fallback_used"] is False
+
+
+@pytest.mark.parametrize("mode,proxy_kind", [
+    ("http", "http"),
+    ("https", "https"),
+    ("socks5", "socks5"),
+    ("system", "http"),
+])
+def test_network_probe_uses_the_selected_proxy_and_classifies_its_own_handshake(mode, proxy_kind):
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network",
+        name="selected",
+        mode=mode,
+        http_proxy="http://proxy.example.test:8080" if mode in {"http", "system"} else "",
+        https_proxy="https://proxy.example.test:8443" if mode == "https" else "",
+        socks5_proxy="socks5://proxy.example.test:1080" if mode == "socks5" else "",
+        inherit_system=(mode == "system"),
+        allow_proxy_failure_direct_fallback=True,
+        bypass_hosts=frozenset({"tenant-secret.example.test"}),
+    )
+    system_route = ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        via_proxy=True, proxy_kind="http", proxy_host="proxy.example.test",
+        proxy_port=8080, proxy_source="system",
+    )
+    transport = _ProxyRouteTransport(system_route, replies=(b"\x05\x00",))
+    probe = NetworkProfileTestProbe(transport)
+
+    assert probe.run("Proxy", endpoint, object(), network, {}) is None
+
+    expected_port = {"http": 8080, "https": 8443, "socks5": 1080}[proxy_kind]
+    assert transport.connects == [("proxy.example.test", expected_port)]
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system == (mode == "system")
+    if proxy_kind == "https":
+        assert transport.tls == [("proxy.example.test", "proxy-tls")]
+    if proxy_kind in {"http", "https"}:
+        assert transport.tunnels == [("tenant-secret.example.test", 443)]
+    if proxy_kind == "socks5":
+        assert transport.socket.sent == [b"\x05\x01\x00"]
+
+
+def test_network_probe_system_direct_is_not_applicable_without_connecting():
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network", name="selected", mode="system",
+        inherit_system=True, allow_proxy_failure_direct_fallback=True,
+        bypass_hosts=frozenset({"tenant-secret.example.test"}),
+    )
+    transport = _ProxyRouteTransport(ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        reason="system-none",
+    ))
+
+    reason = NetworkProfileTestProbe(transport).run("Proxy", endpoint, object(), network, {})
+
+    assert reason == "system_route_is_direct"
+    assert transport.connects == []
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system is True
+
+
+def test_network_probe_rejects_unoffered_socks5_authentication():
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network", name="selected", mode="socks5",
+        socks5_proxy="socks5://proxy.example.test:1080", inherit_system=False,
+    )
+    route = ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        via_proxy=True, proxy_kind="socks5", proxy_host="proxy.example.test", proxy_port=1080,
+    )
+    transport = _ProxyRouteTransport(route, replies=(b"\x05\x02",))
+
+    with pytest.raises(TransportError):
+        NetworkProfileTestProbe(transport).run("Proxy", endpoint, object(), network, {})
+
+    assert transport.socket.sent == [b"\x05\x01\x00"]
+
+
+class _HttpProbeTransport:
+    def __init__(self, responses, credentials=None):
+        self.responses = list(responses)
+        self._credentials = credentials
+        self.requests = []
+        self.resolved = []
+
+    def resolve_route(self, endpoint, profile):
+        self.resolved.append((endpoint, profile))
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443
+        )
+
+    def _send_once(self, request, profile, route):
+        self.requests.append(request)
+        return self.responses.pop(0)
+
+
+class _StubSocket:
+    def close(self):
+        pass
+
+
+class _DeterministicNetworkTransport:
+    def __init__(self, responses, credentials=None):
+        self.responses = list(responses)
+        self._credentials = credentials
+        self.requests = []
+        self.connects = []
+        self.tls_hosts = []
+
+    def resolve_route(self, endpoint, profile):
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443
+        )
+
+    def _tcp_connect(self, host, port, timeout):
+        self.connects.append((host, port))
+        return _StubSocket()
+
+    def _tls_wrap(self, sock, host, profile, *, stage):
+        self.tls_hosts.append((host, stage, profile.verify_tls))
+        return sock
+
+    def _send_once(self, request, profile, route):
+        self.requests.append(request)
+        return self.responses.pop(0)
+
+
+def test_network_profile_test_http_probe_uses_same_authority_and_provider_auth_without_leaking_secret(env):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider, credential_ref="private-credential-ref"
+    ))
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    transport = _HttpProbeTransport([
+        TransportResponse(status=401),
+        TransportResponse(status=200, body=b'{"data":[{"id":"model-a"}]}'),
+    ], credentials=Credentials())
+    probe = NetworkProfileTestProbe(transport)
+    context = {}
+    network = core.network_profile_store.get_profile(selected["network_profile_id"])
+
+    assert probe.run("HTTP", provider.base_url, provider, network, context) is None
+    assert context["provider_auth_required"] is True
+    assert probe.run("ProviderAuth", provider.base_url, provider, network, context) is None
+
+    assert len(transport.requests) == 2
+    assert transport.requests[0].url == "https://tenant-secret.example.test/private/v1/models"
+    assert transport.requests[1].headers == {"Authorization": "Bearer api-secret-marker"}
+    assert all("tenant-secret.example.test" in item.url for item in transport.requests)
+
+
+def test_network_profile_test_real_probe_pipeline_is_stubbed_and_secret_free(env, monkeypatch):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider, credential_ref="private-credential-ref"
+    ))
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport([
+        TransportResponse(status=401, body=b"raw-response-marker"),
+        TransportResponse(status=200, body=b'{"data":[{"id":"model-a"}] }'),
+    ], credentials=Credentials())
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider_wire["profile_id"])
+
+    assert response["error"] is None
+    assert response["result"]["status"] == "passed"
+    assert response["result"]["failed_stage"] is None
+    assert response["result"]["stages"][0] == {
+        "stage": "Proxy", "status": "not_applicable", "reason": "direct_mode"
+    }
+    serialized = json.dumps(response)
+    for sensitive in (
+        "tenant-secret.example.test", "/private/v1", "private-credential-ref",
+        "api-secret-marker", "raw-response-marker",
+    ):
+        assert sensitive not in serialized
+    assert transport.requests[0].headers == {}
+    assert transport.requests[1].headers == {"Authorization": "Bearer api-secret-marker"}
+    assert transport.tls_hosts == [("tenant-secret.example.test", "provider-tls", True)]
+
+
+@pytest.mark.parametrize("credential_ref,auth_response,expected_requests", [
+    (None, None, 1),
+    ("private-credential-ref", 403, 2),
+])
+def test_network_profile_test_provider_auth_missing_or_rejected_fails_without_retry(
+    env, monkeypatch, credential_ref, auth_response, expected_requests
+):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    if credential_ref:
+        core.provider_profile_store.update_profile(replace(provider, credential_ref=credential_ref))
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    responses = [TransportResponse(status=401)]
+    if auth_response is not None:
+        responses.append(TransportResponse(status=auth_response, body=b"raw-response-marker"))
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport(responses, credentials=Credentials())
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider_wire["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "ProviderAuth"
+    assert response["result"]["stages"][-1]["failure"]["message_key"] == "NETWORK_STAGE_FAILED"
+    assert len(transport.requests) == expected_requests
+    assert "api-secret-marker" not in json.dumps(response)
+    assert "raw-response-marker" not in json.dumps(response)
+
+
+def test_network_profile_test_does_not_follow_cross_authority_redirect(env, monkeypatch):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport([
+        TransportResponse(status=302, headers={"location": "https://outside.example.test/"})
+    ])
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "HTTP"
+    assert response["result"]["stages"][-1] == {
+        "stage": "ProviderAuth", "status": "not_run", "reason": "upstream_stage_failed"
+    }
+    assert len(transport.requests) == 1
+    assert "outside.example.test" not in json.dumps(response)

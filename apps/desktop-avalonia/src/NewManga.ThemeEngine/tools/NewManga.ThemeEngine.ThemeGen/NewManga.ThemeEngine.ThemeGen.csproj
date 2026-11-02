@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NewManga.ThemeEngine.ThemeGen</RootNamespace>
+    <AssemblyName>NewManga.ThemeEngine.ThemeGen</AssemblyName>
+    <Description>Reproducible generator for the shipped New Manga theme package and its typography baseline.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NewManga.ThemeEngine.csproj" />
+  </ItemGroup>
+
+</Project>

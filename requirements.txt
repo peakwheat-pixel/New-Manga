@@ -1,0 +1,63 @@
+# CORE-SLIM-1: the Core ships NO Qt. The former PySide6_Essentials/shiboken6
+# pins were removed together with the Qt image decoder: `QtImageDecoder` is now
+# the Pillow implementation (`PillowImageDecoder`), the PDF/MOBI rasters encode
+# through Pillow, and the frozen sidecar closure carries no Qt (see
+# verification/CORE-SLIM-1/). The evidence-frozen legacy QML shell
+# (src/ui/**, bootstrap/app.py) is NOT part of the shipped Core closure; running
+# those legacy tests locally still needs PySide6 installed from the archive
+# evidence environment, not from this product runtime list.
+#
+# Pillow is now a DIRECT Core dependency (previously only transitive through
+# torchvision): pinned to the version verified with the packaged closure.
+pillow==12.3.0
+pypdfium2==5.13.0
+mobi==0.4.1
+# CORE-SLIM-2: the torch/transformers/doctr stack below is an OPTIONAL
+# development/fallback dependency, NOT part of the shipped Core closure any
+# more. The released sidecar runs the manga detector and manga-ocr over ONNX
+# Runtime (fixed-shape RT-DETR-v2 ONNX + manga-ocr encoder/decoder ONNX, see
+# src/infrastructure/providers/detection_manga_onnx.py and
+# ocr_manga_onnx.py); the packaged bundle carries no torch/torchvision/
+# transformers/doctr/cv2/scipy (packaging/m2ac5/core_sidecar.spec EXCLUDED
+# asserts it). The pins stay here so a dev venv can still run the legacy
+# adapters and the parity harness:
+#   NEWMANGA_DETECTOR_BACKEND=torch / NEWMANGA_OCR_BACKEND=torch
+# opt into those adapters explicitly, and a machine without the stack gets the
+# typed PROVIDER_DEPENDENCY_MISSING instead of a crash.
+#
+# T1.1.1 production text detector (doc/research/T1.1.1-detector-evaluation.md,
+# optional fallback only since CORE-SLIM-2): torch/torchvision pinned to the
+# versions verified on Windows / Python 3.12 in verification/T1.1.1; PyPI
+# wheels are the CPU builds. GPU (CUDA) wheels stay a separate packaging
+# decision (T3.2.1). detect weights are NOT downloaded at run time: pin
+# fast_base-688a8b34.pt
+# (sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace)
+# locally; see src/infrastructure/providers/detection_doctr.py.
+python-doctr==1.1.0
+torch==2.14.0
+torchvision==0.29.0
+# M2-PROD-DETECT-1 legacy manga detector (ogkalu/comic-text-and-bubble-detector,
+# RT-DETR-v2, Apache-2.0, HF revision 16e8a622; three-file SHA-256 pinned local
+# snapshot, see src/infrastructure/providers/detection_manga.py) — optional
+# torch fallback since CORE-SLIM-2 (the DEFAULT path is the ONNX graph).
+transformers==5.17.0
+safetensors==0.8.0
+# M2-SFX-GPU-EP-1 (user ruling 2026-10-06: deployment form = GPU). The wheel
+# switches onnxruntime -> onnxruntime-directml (SAME import name and API
+# surface; PyPI's directml line tops out at 1.24.4 — the exact build the T5
+# perf venv measured at 1.08 s/page on the DML EP, and the DmlExecutionProvider
+# is now the DEFAULT SFX EP via NEWMANGA_SFX_EP, dml|cpu, with an automatic
+# audited CPU fallback when DML init fails). The directml and CPU wheels are
+# mutually exclusive in one environment — installing one REPLACES the other.
+# The version stays PINNED to the exact build proven by the T5 GPU/CPU
+# measurement (verification/M2-SFX-T5-TILE-KO) and this Task's AC2/AC3
+# evidence. Weights (yolo11s-seg.onnx, ~41 MB, sha256 944e8114… — the v2b
+# production pin, see detection_sfx.py) are NOT downloaded at run time and
+# NOT committed; they ride the packaged bundle via
+# packaging/m2ac5/build_sidecar.ps1. The letterbox preprocessing uses PIL,
+# which is already guaranteed by the torchvision dependency above (hard
+# Requires-Dist: pillow) — deliberately NOT re-pinned here.
+onnxruntime-directml==1.24.4
+
+# M2-SFX-SYNTH-BG-AUTO: playwright = ChatGPT 网页底图自动 provider 的浏览器驱动（channel=chrome 用系统浏览器，无需下载内核）
+playwright==1.63.0

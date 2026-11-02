@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Single-include entry point for the design system: theme-invariant tokens + the frozen dark
+       palette. Applications may merge this file and let NewManga.DesignSystem.Theming.
+       DesignSystemThemeManager normalize/replace the palette at startup, or merge
+       Themes/Tokens.Global.axaml and Themes/Tokens.Dark.axaml explicitly. -->
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Global.axaml" />
+    <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Dark.axaml" />
+  </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-provider-bindings-clear"
+description = "Enables the settings_provider_bindings_clear command without any pre-configured scope."
+commands.allow = ["settings_provider_bindings_clear"]
+
+[[permission]]
+identifier = "deny-settings-provider-bindings-clear"
+description = "Denies the settings_provider_bindings_clear command without any pre-configured scope."
+commands.deny = ["settings_provider_bindings_clear"]

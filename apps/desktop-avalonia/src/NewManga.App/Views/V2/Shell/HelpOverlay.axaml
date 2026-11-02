@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.HelpOverlay"
+             x:DataType="vm:AppShellViewModel"
+             IsVisible="{Binding IsHelpOpen}">
+  <!-- F1 shortcut sheet: generated from the single KeyMap registry, so it can never drift. -->
+  <Grid>
+    <Border Classes="scrim" />
+    <Border Classes="overlay"
+            Width="{Binding PaletteWidth}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Padding="{DynamicResource Nm.Padding.Section}">
+      <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="title" Text="键位速查" VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                  Classes="ghost sm"
+                  Content="关闭（Esc）"
+                  Command="{Binding CloseHelpCommand}" />
+        </Grid>
+
+        <ScrollViewer MaxHeight="{DynamicResource Nm.Size.Drawer}">
+          <ItemsControl ItemsSource="{Binding HelpGroups}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:HelpGroup">
+                <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Classes="section-title" Text="{Binding Title}" />
+                  <ItemsControl ItemsSource="{Binding Entries}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:HelpEntry">
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              ColumnSpacing="{DynamicResource Nm.Space.3}">
+                          <ctrl:Kbd Grid.Column="0" Text="{Binding GestureText}" />
+                          <TextBlock Grid.Column="1"
+                                     Classes="body"
+                                     Text="{Binding Title}"
+                                     VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="2"
+                                     Classes="meta"
+                                     Text="{Binding AvailabilityText}"
+                                     VerticalAlignment="Center" />
+                        </Grid>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <TextBlock Classes="meta"
+                   TextWrapping="Wrap"
+                   Text="输入框聚焦时字母快捷键让位（IME 安全）；Esc 逐级退出浮层；Ctrl+K 执行命令、Ctrl+P 跳转对象。" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-probe-issue-url"
+description = "Enables the probe_issue_url command without any pre-configured scope."
+commands.allow = ["probe_issue_url"]
+
+[[permission]]
+identifier = "deny-probe-issue-url"
+description = "Denies the probe_issue_url command without any pre-configured scope."
+commands.deny = ["probe_issue_url"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-provider-profiles-delete"
+description = "Enables the settings_provider_profiles_delete command without any pre-configured scope."
+commands.allow = ["settings_provider_profiles_delete"]
+
+[[permission]]
+identifier = "deny-settings-provider-profiles-delete"
+description = "Denies the settings_provider_profiles_delete command without any pre-configured scope."
+commands.deny = ["settings_provider_profiles_delete"]

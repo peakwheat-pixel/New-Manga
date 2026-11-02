@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-ac1-exit"
+description = "Enables the ac1_exit command without any pre-configured scope."
+commands.allow = ["ac1_exit"]
+
+[[permission]]
+identifier = "deny-ac1-exit"
+description = "Denies the ac1_exit command without any pre-configured scope."
+commands.deny = ["ac1_exit"]

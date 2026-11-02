@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <Description>Host service layer: sidecar lifecycle, single instance, legacy coexistence, data safety.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewManga.CoreClient\NewManga.CoreClient.csproj" />
+  </ItemGroup>
+
+</Project>

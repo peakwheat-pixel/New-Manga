@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:v="using:NewManga.App.Views.V2.ThemeStudio"
+             x:Class="NewManga.App.Shell.V2.ThemeStudio.ThemeStudioSurface"
+             x:DataType="vm:ThemeStudioViewModel">
+  <!--
+    Integration surface for V11R-INT-1: the shell pushes ShellSurface.ThemeStudio and mounts this control
+    above the space content (it is a full-window overlay, not a fifth space). The surface owns nothing but
+    the hosted view; OpenAsync/Close/RequestClose are the only entry points the shell needs.
+  -->
+  <Grid Background="{DynamicResource Nm.Color.Bg.Canvas}">
+    <v:ThemeStudioView x:Name="Studio" DataContext="{Binding}" />
+  </Grid>
+</UserControl>

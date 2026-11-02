@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Shell.CommandPaletteOverlay"
+             x:DataType="vm:AppShellViewModel"
+             IsVisible="{Binding IsPaletteOpen}">
+  <!-- CommandPalette Ctrl+K (screen spec §1): every row carries 「空间 · 模式 · 作用域」 + key hint;
+       ↑↓ selects, Enter runs, Esc closes and returns focus to the trigger element. -->
+  <Grid>
+    <Border Classes="scrim" />
+    <Border Classes="overlay"
+            Width="{Binding PaletteWidth}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Padding="{DynamicResource Nm.Padding.Section}">
+      <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <TextBox x:Name="PaletteSearch"
+                   Classes="search"
+                   Watermark="输入命令或对象名，例如「导入」「资料柜」「新建章节」"
+                   Text="{Binding PaletteQuery}" />
+          <ctrl:Kbd Grid.Column="1" Text="Esc" />
+        </Grid>
+
+        <ListBox x:Name="PaletteList"
+                 ItemsSource="{Binding PaletteItems}"
+                 SelectedIndex="{Binding PaletteIndex, Mode=TwoWay}"
+                 MaxHeight="{DynamicResource Nm.Size.Drawer}"
+                 Background="Transparent"
+                 DoubleTapped="OnPaletteDoubleTapped">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:CommandPaletteEntry">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="label" Text="{Binding Title}" />
+                  <TextBlock Classes="meta" Text="{Binding Annotation}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="{DynamicResource Nm.Space.2}"
+                            VerticalAlignment="Center">
+                  <TextBlock Classes="meta" Text="{Binding AvailabilityText}" />
+                  <ctrl:Kbd Text="{Binding GestureText}" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="meta" Text="{Binding PaletteHint}" />
+          <TextBlock Grid.Column="1"
+                     Classes="meta"
+                     Text="{Binding PaletteScopeNote}"
+                     TextTrimming="CharacterEllipsis" />
+        </Grid>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

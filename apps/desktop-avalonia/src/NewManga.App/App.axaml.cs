@@ -1,0 +1,262 @@
+using System.Diagnostics;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+using Avalonia.Threading;
+using NewManga.App.Services;
+using NewManga.App.Shell.V2;
+using NewManga.App.ViewModels.V2.ThemeStudio;
+using NewManga.App.Views;
+using NewManga.App.Views.Fluent;
+using NewManga.Appearance;
+using NewManga.DesignSystem.Theming;
+using DsAppearanceMode = NewManga.DesignSystem.Theming.AppearanceMode;
+
+namespace NewManga.App;
+
+public partial class App : Application
+{
+    /// <summary>
+    /// V11R-D-1: owns the application-wide design-system resource stack. Created in
+    /// <see cref="OnFrameworkInitializationCompleted"/> before the shell so every control resolves
+    /// <c>Nm.*</c> tokens on first layout; later theme switches only swap resource dictionaries.
+    /// </summary>
+    private DesignSystemThemeManager? _designSystemTheme;
+
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        // V11R-A11Y-1: readable automation names for V2 buttons whose Content is a control tree.
+        Shell.V2.V2AccessibleNames.Register();
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var options = AppOptionsStore.Current;
+
+            // V11R-C-3: the old theme-pack startup hook is retired. `--theme` stays as a compatibility
+            // argument: LegacyStartupTheme maps it through the ThemeEngine migration table and carries the
+            // retired pack's appearance/density into the DesignSystem manager below.
+            var startupTheme = LegacyStartupTheme.Resolve(options.StartupThemeId, options.StartupVariant);
+
+            // V11R-D-1: normalize the design-system resource stack (palette + overlays) after the
+            // legacy theme pack has been applied. Explicit --variant wins; otherwise the retired
+            // pack's appearance (carried through the ThemeEngine migration table) applies; only an
+            // absent choice falls back to the design-system default (dark).
+            var startupAppearance = StartupAppearance(options) ?? startupTheme.Appearance;
+            _designSystemTheme = new DesignSystemThemeManager(this);
+            _designSystemTheme.Initialize(startupAppearance);
+            if (startupTheme.Density is { } startupDensity &&
+                !_designSystemTheme.SetDensity(startupDensity))
+            {
+                Trace.TraceWarning($"legacy --theme density could not be applied: {_designSystemTheme.LastError}");
+            }
+
+            // FEA-06-PREREQ-2 P1/P2/P5: read the persisted appearance document once, resolve the
+            // frontend (--frontend > persisted theme.frontendId > fail-safe builtin.current-v2) and hand
+            // the single writer to the composition root. The shell choice is recorded for diagnostics.
+            var themeHome = ThemeHome.Resolve(options);
+            var presentationPath = Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(themeHome.SettingsFilePath)) ?? ".",
+                AppearanceStore.FileName);
+            var appearance = new AppearanceCoordinator(new AppearanceStore(
+                presentationPath,
+                legacyPath: themeHome.SettingsFilePath));
+            appearance.Reload();
+            var selection = FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
+            Trace.TraceInformation("frontend selection: " + selection.Diagnostic);
+            if (selection.IsFallback)
+            {
+                Trace.TraceWarning("frontend selection fell back to the Current V2 shell: " + selection.Diagnostic);
+            }
+
+            var controller = new HostController(options.ToHostOptions());
+            var window = CreateShell(options, controller, selection, appearance, themeHome, _designSystemTheme, this);
+
+            desktop.MainWindow = window;
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+            if (!options.UseV2Shell && (!string.IsNullOrWhiteSpace(options.StartupThemeId) || !string.IsNullOrWhiteSpace(options.StartupVariant)))
+            {
+                (window as MainWindow)?.ApplyTheme();
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.StartupPage))
+            {
+                NavigateStartupPage(window, options);
+            }
+
+            if (options.ExitAfterMs is { } exitAfter)
+            {
+                var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(exitAfter) };
+                timer.Tick += (_, _) =>
+                {
+                    timer.Stop();
+                    window.Close();
+                };
+                timer.Start();
+            }
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// FEA-06-PREREQ-2 P2/AC2: the composition root's shell decision. <c>--shell=legacy</c> stays the
+    /// one-release operator rollback and wins over everything; otherwise the frontend selector
+    /// (<paramref name="selection"/>, W-2b precedence) chooses between the Fluent shell and the Current V2
+    /// shell. The V2 path is unchanged apart from receiving the appearance writer and the resolved theme
+    /// home explicitly.
+    /// </summary>
+    internal static Window CreateShell(
+        AppOptions options,
+        IHostController controller,
+        FrontendSelection selection,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome,
+        DesignSystemThemeManager themeManager,
+        Application application)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(selection);
+        ArgumentNullException.ThrowIfNull(appearance);
+        ArgumentNullException.ThrowIfNull(themeHome);
+        ArgumentNullException.ThrowIfNull(themeManager);
+        ArgumentNullException.ThrowIfNull(application);
+
+        if (!options.UseV2Shell)
+        {
+            return CreateLegacyShell(controller, options, themeManager);
+        }
+
+        return selection.IsFluent
+            ? FluentShell.CreateRoot(options, selection)
+            : CreateV2Shell(application, controller, options, themeManager, appearance, themeHome);
+    }
+
+    /// <summary>
+    /// V11R-INT-1: the new Avalonia shell (three spaces + Studio dual mode + Theme Studio surface).
+    /// Theme Studio is bound to the real theme engine and shares the application's single
+    /// <see cref="DesignSystemThemeManager"/> (two managers would fight over the same resource layer).
+    /// </summary>
+    private static Window CreateV2Shell(
+        Application application,
+        IHostController controller,
+        AppOptions options,
+        DesignSystemThemeManager themeManager,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome)
+    {
+        var root = AppShellV2.CreateRoot(controller, options, picker: null, themeManager: themeManager);
+        if (root.Content is not AppShellV2 shell)
+        {
+            return root;
+        }
+
+        try
+        {
+            // FEA-06-PREREQ-2 P5 (W-9/Q-32): the Theme Engine's compatibility write mirrors into the
+            // canonical presentation-settings.json through this app-side sink; the coordinator stays the
+            // single writer of that document.
+            var service = ThemeEngineThemeStudioService.CreateProduction(
+                application,
+                themeManager,
+                themeDirectory: themeHome.ThemesDirectory,
+                settingsFilePath: themeHome.SettingsFilePath,
+                favoritesFilePath: themeHome.FavoritesFilePath,
+                presentationSink: new AppearanceThemeSettingsSink(appearance));
+            var viewModel = new ThemeStudioViewModel(service);
+            var adapter = new ThemeStudioSurfaceAdapter(viewModel, () => shell.ViewModel.CloseThemeStudioCommand.Execute(null));
+            shell.ViewModel.RegisterSurfaceWorkspace(adapter);
+
+            // Persisted theme settings are applied asynchronously; the shell is already usable and
+            // the surface shows its own error banner if initialization fails.
+            Dispatcher.UIThread.Post(async () =>
+            {
+                try
+                {
+                    await service.InitializeAsync();
+
+                    // V11R-INT-2: the Theme Studio service applies persisted settings after the shell
+                    // has adopted the startup appearance. An explicit --variant must win over the
+                    // persisted default, and the shell label must mirror the real palette.
+                    if (StartupAppearance(options) is { } requested)
+                    {
+                        themeManager.SetAppearance(requested);
+                    }
+
+                    shell.ViewModel.AdoptAppearance(themeManager.Appearance == DsAppearanceMode.Dark);
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
+                {
+                    Trace.TraceWarning($"Theme service init failed: {ex.GetType().Name}");
+                }
+            });
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or ArgumentException)
+        {
+            // Theme Studio is optional at startup: never block the product shell on it.
+            Trace.TraceWarning($"Theme Studio wiring failed: {ex.GetType().Name}");
+        }
+
+        return root;
+    }
+
+    /// <summary>Explicit startup appearance from <c>--variant</c> (null = persisted/default wins).</summary>
+    private static DsAppearanceMode? StartupAppearance(AppOptions options) =>
+        string.IsNullOrWhiteSpace(options.StartupVariant)
+            ? null
+            : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
+                ? DsAppearanceMode.Dark
+                : DsAppearanceMode.Light;
+
+    private static Window CreateLegacyShell(
+        IHostController controller,
+        AppOptions options,
+        DesignSystemThemeManager themeManager) =>
+        new MainWindow(controller, options, themeManager: themeManager);
+
+    /// <summary>
+    /// Maps the existing <c>--page</c> evidence hook onto all shells. Legacy keeps its page names; v2 maps
+    /// the four product surfaces onto the three spaces (reader is an overlay inside Library); the Fluent
+    /// skeleton maps them onto its four navigation entries.
+    /// </summary>
+    private static void NavigateStartupPage(Window window, AppOptions options)
+    {
+        var page = options.StartupPage!;
+        if (window is MainWindow legacy)
+        {
+            legacy.Navigate(page);
+            return;
+        }
+
+        if (window is FluentShell fluent)
+        {
+            fluent.Navigate(page);
+            return;
+        }
+
+        if (window.Content is not AppShellV2 shell)
+        {
+            return;
+        }
+
+        var space = page.ToLowerInvariant() switch
+        {
+            "bookshelf" or "library" or "reader" => SpaceId.Library,
+            "workbench" or "studio" => SpaceId.Studio,
+            "settings" or "console" => SpaceId.Console,
+            _ => (SpaceId?)null,
+        };
+
+        if (space is { } target)
+        {
+            shell.ViewModel.SwitchSpace(target);
+        }
+    }
+}

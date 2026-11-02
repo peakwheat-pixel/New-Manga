@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.LibrarySectionView"
+             x:DataType="vm:ThemeStudioLibraryViewModel">
+  <!-- ① 主题库: search + category chips + appearance filters + card grid (4/3/2 columns). -->
+  <Grid RowDefinitions="Auto,Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+      <TextBox x:Name="SearchBox"
+               Grid.Column="0"
+               Classes="search"
+               Watermark="搜索主题名称 / 作者 / 标签（Ctrl+F）"
+               Text="{Binding SearchText, Mode=TwoWay}" />
+      <Button Grid.Column="1"
+              Classes="ghost sm"
+              Content="清空筛选"
+              Command="{Binding ClearFiltersCommand}" />
+    </Grid>
+
+    <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.2}">
+      <ItemsControl ItemsSource="{Binding CategoryChips}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ThemeStudioFilterChip">
+            <Button Classes="chip sm"
+                    Classes.on="{Binding IsOn}"
+                    Content="{Binding Label}"
+                    Command="{Binding ToggleCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ItemsControl ItemsSource="{Binding AppearanceChips}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ThemeStudioFilterChip">
+            <Button Classes="chip sm"
+                    Classes.on="{Binding IsOn}"
+                    Content="{Binding Label}"
+                    Command="{Binding ToggleCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <Grid Grid.Row="2">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding HasCards}">
+        <ItemsControl x:Name="CardItems"
+                      ItemsSource="{Binding Cards}"
+                      ItemTemplate="{StaticResource ThemeCardTemplate}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <c:EmptyState Title="{Binding EmptyTitle}"
+                    Hint="{Binding EmptyHint}"
+                    ActionText="清空筛选"
+                    ActionCommand="{Binding ClearFiltersCommand}"
+                    IsVisible="{Binding IsEmpty}" />
+    </Grid>
+  </Grid>
+</UserControl>

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-get-run-snapshot"
+description = "Enables the library_get_run_snapshot command without any pre-configured scope."
+commands.allow = ["library_get_run_snapshot"]
+
+[[permission]]
+identifier = "deny-library-get-run-snapshot"
+description = "Denies the library_get_run_snapshot command without any pre-configured scope."
+commands.deny = ["library_get_run_snapshot"]

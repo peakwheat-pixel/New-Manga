@@ -1,0 +1,189 @@
+/*
+ * New Manga faux-acrylic material.
+ *
+ * Three tiers:
+ *   .nm-acrylic        blur 40  — detail panels, command palette
+ *   .nm-acrylic-24     blur 24  — title bands, floating bars
+ *   .nm-acrylic-strong blur 40 + strong tint — modal focus surface
+ *
+ * The noise layer (feTurbulence data URI) is mandatory: blur alone reads as
+ * frosted glass, not acrylic. Do not replace the data URI with a remote image.
+ *
+ * The browser performance gate lives in useAcrylicBudget.ts: at most two
+ * backdrop-filter layers may be active on one screen. A downgraded layer gets
+ * .nm-acrylic-off (tint only, no blur, no noise).
+ */
+
+:root {
+  /* 噪声强度：这是"像亚克力"和"像磨砂塑料"之间的唯一切换点。
+     0.03 克制 / 0.055 明显 / 0.08 粗粝（当前）。改这一个值即可整体调。 */
+  --nm-acrylic-noise: 0.08;
+
+  /* 颗粒尺度由下方 data URI 里的 baseFrequency 控制（无法用 var() 注入）：
+     0.8 细（像胶片颗粒）/ 0.5 粗（当前，像亚克力涂层）/ 0.35 很粗（像砂纸）。
+     改的时候三处伪元素要一起改，测试会拦住漏改。 */
+}
+
+.nm-acrylic {
+  position: relative;
+  background: var(--nm-acrylic-tint);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--nm-acrylic-noise);
+  mix-blend-mode: hard-light;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+.nm-acrylic-24 {
+  position: relative;
+  background: var(--nm-acrylic-tint);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic-24::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--nm-acrylic-noise);
+  mix-blend-mode: hard-light;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+.nm-acrylic-strong {
+  position: relative;
+  background: var(--nm-acrylic-tint-strong);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+.nm-acrylic-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--nm-acrylic-noise);
+  mix-blend-mode: hard-light;
+  background-image: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.5%22 numOctaves=%223%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>");
+}
+
+/*
+ * 颗粒漂移：静态纹理人眼会自动忽略，极慢的位移反而让颗粒被"看见"。
+ *
+ * background-size 140% 给 background-position 留出 40% 的余量，
+ * 这样任意 position 都不会在边缘露出没铺到噪声的缝隙
+ * （用 transform 平移 inset:0 的伪元素会露边，不要那样做）。
+ * step-end 让位移是离散跳变而不是滑动，滑动会像面板在漂。
+ */
+.nm-acrylic::after,
+.nm-acrylic-24::after,
+.nm-acrylic-strong::after {
+  background-size: 140% 140%;
+  animation: nm-noise-drift 24s step-end infinite;
+}
+
+@keyframes nm-noise-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 11% 6%;
+  }
+  50% {
+    background-position: 4% 17%;
+  }
+  75% {
+    background-position: 19% 9%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-acrylic::after,
+  .nm-acrylic-24::after,
+  .nm-acrylic-strong::after {
+    animation: none;
+    background-position: 0% 0%;
+  }
+}
+
+/*
+ * Budget fallback: tint and stroke survive, blur and noise do not.
+ * The stronger tint keeps text legible when a panel loses its blur.
+ */.nm-acrylic-off {
+  position: relative;
+  background: var(--nm-acrylic-tint-strong);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid var(--nm-acrylic-stroke);
+  box-shadow: inset 0 1px 0 var(--nm-acrylic-highlight);
+  border-radius: var(--nm-radius-overlay);
+}
+
+/*
+ * Capability fallback: WebView2 without backdrop-filter keeps the tint and
+ * the stroke; only the blur is dropped.
+ *
+ * strong 档必须降成 tint-strong：否则模态在不支持 blur 的环境里，底色比
+ * 「预算降级」的 .nm-acrylic-off 更透，对比度反而更低，两个降级链就打架了。
+ */
+@supports not (backdrop-filter: blur(1px)) {
+  .nm-acrylic,
+  .nm-acrylic-24 {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-acrylic-tint);
+  }
+
+  .nm-acrylic-strong {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-acrylic-tint-strong);
+  }
+}
+
+/*
+ * Accessibility fallback: users who ask the OS to reduce transparency get a
+ * solid surface, no blur, no noise.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .nm-acrylic,
+  .nm-acrylic-24,
+  .nm-acrylic-strong,
+  .nm-acrylic-off {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--nm-bg-solid);
+    box-shadow: none;
+  }
+
+  .nm-acrylic::after,
+  .nm-acrylic-24::after,
+  .nm-acrylic-strong::after {
+    content: none;
+    display: none;
+    opacity: 0;
+  }
+}

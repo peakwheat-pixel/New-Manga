@@ -1,0 +1,58 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Navigation surfaces: TabControl (TabItem theme lives in Themes/Controls/TabItem.axaml) and the
+       overlay chrome for MenuFlyout / ContextMenu / MenuItem / ToolTip. Overlays use bg.overlay +
+       1px stroke; no shadows (DESIGN_SYSTEM §1). -->
+
+  <Style Selector="TabControl">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Section}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+  </Style>
+
+  <Style Selector="MenuFlyoutPresenter">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Cell}" />
+  </Style>
+
+  <Style Selector="ContextMenu">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Cell}" />
+  </Style>
+
+  <Style Selector="MenuItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeightSm}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Md}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+  </Style>
+
+  <Style Selector="MenuItem:pointerover">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+  </Style>
+
+  <Style Selector="MenuItem:disabled">
+    <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+  </Style>
+
+  <Style Selector="ToolTip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Nm.FontFamily.Ui}" />
+    <Setter Property="FontSize" Value="{DynamicResource Nm.FontSize.Sm}" />
+  </Style>
+</Styles>

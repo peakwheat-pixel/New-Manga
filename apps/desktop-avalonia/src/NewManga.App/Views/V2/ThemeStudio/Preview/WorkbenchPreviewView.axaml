@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Preview.WorkbenchPreviewView"
+             x:DataType="vm:ThemeStudioPreviewViewModel">
+  <!--
+    工作台 preview: film strip (56px) + canvas viewport + inspector (320px) + track strip, built from real
+    controls and the design-system classes. Example content only.
+  -->
+  <Border Background="{DynamicResource Nm.Color.Bg.Canvas}" Padding="{DynamicResource Nm.Padding.Panel}">
+    <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.3}">
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <!-- film strip -->
+        <Border Grid.Column="0"
+                Width="{DynamicResource Nm.Size.FilmStripCollapsed}"
+                Classes="panel"
+                Padding="{DynamicResource Nm.Padding.IconSm}">
+          <ItemsControl ItemsSource="{Binding SamplePages}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioSamplePage">
+                <Border Classes="film-item">
+                  <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                    <Border Classes="film-thumb">
+                      <TextBlock Classes="data"
+                                 Text="{Binding Index, StringFormat={}{0:00}}"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Classes="mini-caption"
+                               Text="{Binding StatusSymbol}"
+                               HorizontalAlignment="Center" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Border>
+
+        <!-- canvas -->
+        <Border Grid.Column="1" Classes="sunken">
+          <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.2}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Grid.Column="0" Classes="label" Text="第 12 页 / 共 40 页" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Classes="meta" Text="示例页面 · 不读取真实作品" VerticalAlignment="Center" />
+              <Button Grid.Column="2" Classes="chip sm" Content="成品" />
+            </Grid>
+            <Border Grid.Row="1" Classes="page-surface">
+              <Grid>
+                <StackPanel Spacing="{DynamicResource Nm.Space.3}" VerticalAlignment="Center">
+                  <Border Classes="page-region selected">
+                    <TextBlock Classes="body" Text="示例译文：选中区域用强调描边 + 角标表达。" TextWrapping="Wrap" />
+                  </Border>
+                  <Border Classes="page-region">
+                    <TextBlock Classes="body" Text="第二个区域：普通文本，无锁无失败。" TextWrapping="Wrap" />
+                  </Border>
+                  <Border Classes="page-region failed">
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.1}">
+                      <TextBlock Classes="data" Text="✗" Foreground="{DynamicResource Nm.Color.Status.Failed}" />
+                      <TextBlock Classes="body" Text="第三个区域：失败角标 + 符号，不只靠颜色。" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+                <Border Classes="canvas-hint">
+                  <TextBlock Classes="mini-caption" Text="86% · 示例画布" />
+                </Border>
+              </Grid>
+            </Border>
+          </Grid>
+        </Border>
+
+        <!-- inspector -->
+        <Border Grid.Column="2"
+                Width="{DynamicResource Nm.Size.InspectorExpanded}"
+                Classes="panel">
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+            <TextBlock Classes="section-title" Text="检查器（示例）" />
+            <ItemsControl ItemsSource="{Binding SampleRows}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ThemeStudioSampleRow">
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                    <TextBlock Grid.Column="0" Classes="meta" Text="{Binding Label}" />
+                    <TextBlock Grid.Column="1" Classes="body" Text="{Binding Value}" TextWrapping="Wrap" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Separator />
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <Button Classes="primary sm" Content="渲染" />
+              <Button Classes="secondary sm" Content="重试" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- track strip -->
+      <Border Grid.Row="1" Classes="panel" Padding="{DynamicResource Nm.Padding.Cell}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.4}">
+            <TextBlock Classes="meta" Text="原图 ●" />
+            <TextBlock Classes="meta" Text="文本 ●" />
+            <TextBlock Classes="meta" Text="修复 ◐" />
+            <TextBlock Classes="meta" Text="排版 ·" />
+            <TextBlock Classes="meta" Text="示例轨道（四轨同源）" />
+          </StackPanel>
+          <TextBlock Grid.Column="1" Classes="meta" Text="示例内容" />
+        </Grid>
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

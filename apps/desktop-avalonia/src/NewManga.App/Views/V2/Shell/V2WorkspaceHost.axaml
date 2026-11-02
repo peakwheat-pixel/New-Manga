@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Shell"
+             xmlns:v="using:NewManga.App.Views.V2.Shell"
+             x:Class="NewManga.App.Views.V2.Shell.V2WorkspaceHost"
+             x:DataType="vm:AppShellViewModel">
+  <!-- V11R-INT-0: spaces are hosted through IWorkspaceView.CreateContent() exactly once; switching
+       Ctrl+1/2/3 only toggles visibility and hands context between hooks (never rebuilds a ViewModel).
+       An unregistered space shows honest "即将接入" copy — never a fake workspace. -->
+  <Grid>
+    <ContentControl Content="{Binding LibraryWorkspaceContent}" IsVisible="{Binding IsLibrarySpace}" />
+    <v:WorkspacePlaceholderView Title="资料柜"
+                                Detail="{Binding LibraryPlaceholderDetail}"
+                                IsVisible="{Binding IsLibraryPlaceholderVisible}" />
+
+    <ContentControl Content="{Binding StudioWorkspaceContent}" IsVisible="{Binding IsStudioSpace}" />
+    <v:WorkspacePlaceholderView Title="工位"
+                                Detail="{Binding StudioPlaceholderDetail}"
+                                IsVisible="{Binding IsStudioPlaceholderVisible}" />
+
+    <ContentControl Content="{Binding ConsoleWorkspaceContent}" IsVisible="{Binding IsConsoleSpace}" />
+    <v:WorkspacePlaceholderView Title="控制台"
+                                Detail="{Binding ConsolePlaceholderDetail}"
+                                IsVisible="{Binding IsConsolePlaceholderVisible}" />
+  </Grid>
+</UserControl>

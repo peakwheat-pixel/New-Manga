@@ -1,0 +1,636 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Console"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Console.ConsoleView"
+             x:DataType="vm:ConsoleViewModel">
+  <!-- Console 空间（screen spec §5）：设置中心 9 分区。左索引 + 右内容；
+       数据只经 IHostController；凭据只显示「已保存/未保存」；未接 API 的区块显示「能力待接入」，
+       危险动作一律走外壳确认 Modal（默认取消、写明后果与影响面、可取消）。 -->
+  <Grid Background="{DynamicResource Nm.Color.Bg.Canvas}" ColumnDefinitions="Auto,*">
+    <!-- ── 左：9 分区索引 ─────────────────────────────────────────────────────────── -->
+    <Border Grid.Column="0"
+            Width="{DynamicResource Nm.Size.FilmStripExpanded}"
+            Background="{DynamicResource Nm.Color.Bg.Panel}"
+            BorderBrush="{DynamicResource Nm.Color.Line.Default}"
+            BorderThickness="{DynamicResource Nm.Border.Hairline}">
+      <Grid RowDefinitions="Auto,*,Auto" Margin="{DynamicResource Nm.Padding.Panel}" RowSpacing="{DynamicResource Nm.Space.4}">
+        <StackPanel Grid.Row="0" Spacing="{DynamicResource Nm.Space.1}">
+          <TextBlock Classes="title" Text="控制台" />
+          <TextBlock Classes="meta" Text="设置中心 · 9 分区" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding Sections}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ConsoleSectionItem">
+                <Button Classes="detailrow"
+                        Classes.selected="{Binding IsSelected}"
+                        Command="{Binding SelectCommand}"
+                        ToolTip.Tip="{Binding Summary}">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                    <TextBlock Classes="data" Text="{Binding Index}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                      <TextBlock Classes="label" Text="{Binding Label}" />
+                      <TextBlock Classes="meta"
+                                 Text="{Binding Summary}"
+                                 TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Classes="meta" Text="{Binding WiringText}" VerticalAlignment="Center" />
+                  </Grid>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Spacing="{DynamicResource Nm.Space.2}">
+          <Button Classes="secondary sm" Content="刷新（Host）" Command="{Binding RefreshCommand}" />
+          <TextBlock Classes="meta"
+                     TextWrapping="Wrap"
+                     Text="数据只经 Host/IPC；密钥只显示已保存/未保存，永不回显。" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ── 右：分区内容 ───────────────────────────────────────────────────────────── -->
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+      <Border Grid.Row="0"
+              Classes="librarybar"
+              Padding="{DynamicResource Nm.Padding.ControlSm}">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+          <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+            <TextBlock Classes="title" Text="{Binding SelectedSection.Label}" VerticalAlignment="Center" />
+            <TextBlock Classes="meta" Text="{Binding SelectedSection.WiringText}" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Grid.Column="1"
+                     Classes="meta"
+                     Text="{Binding SectionSummary}"
+                     VerticalAlignment="Center"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock Grid.Column="2"
+                     Classes="meta"
+                     Text="{Binding StatusMessage}"
+                     IsVisible="{Binding HasStatus}"
+                     VerticalAlignment="Center"
+                     TextTrimming="CharacterEllipsis" />
+        </Grid>
+      </Border>
+
+      <ScrollViewer x:Name="ConsoleScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" ScrollChanged="OnConsoleScrollChanged">
+        <Grid Margin="{DynamicResource Nm.Padding.Panel}">
+          <!-- loading / error -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsLoading}">
+            <ctrl:StatusBadge Status="Running" HorizontalAlignment="Left" />
+            <TextBlock Classes="body" Text="正在从 Host 读取控制台数据…" />
+          </StackPanel>
+
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding HasError}">
+            <ctrl:AlertBanner Severity="Failed" Message="{Binding ErrorMessage}" ActionText="重试" ActionCommand="{Binding RefreshCommand}" />
+          </StackPanel>
+
+          <!-- ── 未接入分区（①④⑤⑥⑦） ─────────────────────────────────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsNotWiredSection}">
+            <ctrl:AlertBanner Severity="Blocked" Message="{Binding NotWiredBody}" />
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="接入前置条件" />
+              <TextBlock Classes="body" Text="{Binding NotWiredRequirement}" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <!-- ④ 模型与设备：能答的只有「检测能力是否绑定」，其余如实说明缺什么 -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding IsDevicesSection}">
+              <TextBlock Classes="section-title" Text="检测能力现状" />
+              <TextBlock Classes="body" Text="{Binding DetectionReadinessText}" TextWrapping="Wrap" />
+              <TextBlock Classes="meta" Text="{Binding DeviceStatusText}" TextWrapping="Wrap" />
+              <Button Classes="secondary sm" Content="去 Provider 与凭据配置"
+                      Command="{Binding GoToProvidersCommand}"
+                      IsVisible="{Binding !HasDetectionProvider}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding ShowClearCacheDanger}">
+              <Button Classes="danger sm" Content="清理缓存与过期版本（能力待接入）" Command="{Binding RequestClearCacheCommand}" />
+            </StackPanel>
+          </StackPanel>
+
+          <!-- ── ⑦ 插件与 Hooks（真实 plugins.* 面，REALUSE-DATA-SAFETY-4 AC1）────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsPluginsSection}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="安全约束：插件是外部代码。启用前请确认来源；单个插件是否执行取决于全局开关与插件自身开关两个条件。" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding PluginsSummaryText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="刷新" Command="{Binding RefreshPluginsCommand}" IsEnabled="{Binding !IsPluginsBusy}" />
+              <Button Grid.Column="2" Classes="secondary sm" Content="{Binding PluginsGlobalText}" Command="{Binding ToggleGlobalPluginsCommand}" IsEnabled="{Binding !IsPluginsBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasPlugins}">
+              <ItemsControl ItemsSource="{Binding Plugins}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:PluginRowViewModel">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}" Margin="{DynamicResource Nm.Padding.Cell}">
+                      <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                        <TextBlock Classes="label" Text="{Binding Name}" />
+                        <TextBlock Classes="meta" Text="{Binding Description}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding HooksText}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding PermissionsText}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding ReasonText}" TextWrapping="Wrap" IsVisible="{Binding IsRejected}" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding StatusText}" VerticalAlignment="Center" />
+                      <Button Grid.Column="2" Classes="ghost sm" Content="{Binding ToggleText}"
+                              Command="{Binding ToggleCommand}"
+                              IsEnabled="{Binding CanToggle}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasPluginsResult}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="上次插件操作结果（Core 确认）" />
+                <TextBlock Classes="meta" Text="{Binding PluginsLastResult}" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <!-- ── ⑤ 缓存与版本清理（真实 cleanup.preview / cleanup.run，REALUSE-DATA-SAFETY-4 AC1）── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsStorageSection}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="安全范围：只清理 Core 判定为可重建的 cache/ 前缀目标；用户原图、人工修改与已锁定版本不在清理范围内。" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding CleanupSummaryText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="读取预览" Command="{Binding RefreshCleanupPreviewCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+              <Button Grid.Column="2" Classes="danger sm" Content="清理" Command="{Binding RequestClearCacheCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasCleanupPending}">
+              <TextBlock Classes="meta" Text="{Binding CleanupPendingText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="ghost sm" Content="重试失败项"
+                      Command="{Binding RetryPendingCleanupsCommand}" IsEnabled="{Binding !IsCleanupBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasCleanupTargets}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="将被删除的缓存目标（相对路径）" />
+                <ScrollViewer>
+                  <ItemsControl ItemsSource="{Binding CleanupTargets}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:CleanupTargetRowViewModel">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                          <TextBlock Classes="data" Text="{Binding RelativePath}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Grid.Column="1" Classes="meta" Text="{Binding SizeText}" />
+                        </Grid>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasCleanupResult}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                <TextBlock Classes="section-title" Text="上次清理结果（Core 投影）" />
+                <TextBlock Classes="meta" Text="{Binding CleanupLastResult}" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <!-- ── ⑥ 备份与恢复（真实 .nmbak：列表 / 创建 / 删除 / 恢复） ─────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsBackupSection}">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="body" Text="{Binding BackupStatusText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="secondary sm" Content="创建备份" Command="{Binding RequestCreateBackupCommand}" IsEnabled="{Binding !IsBackupBusy}" />
+              <Button Grid.Column="2" Classes="ghost sm" Content="刷新" Command="{Binding RefreshBackupsCommand}" IsEnabled="{Binding !IsBackupBusy}" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
+              <ListBox ItemsSource="{Binding BackupEntries}"
+                       SelectedItem="{Binding SelectedBackup}"
+                       Background="Transparent">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BackupEntryRowViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                      <TextBlock Classes="data" Text="{Binding ShortId}" />
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding TypeText}" />
+                      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding SizeText}" />
+                      <TextBlock Grid.Column="3" Classes="meta" Text="{Binding VerifiedText}" />
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <Button Classes="secondary sm" Content="删除选中" Command="{Binding RequestDeleteBackupCommand}" IsEnabled="{Binding HasBackupSelection}" />
+              <Button Classes="danger sm" Content="从选中恢复（覆盖）" Command="{Binding RequestRestoreBackupCommand}" IsEnabled="{Binding HasBackupSelection}" />
+            </StackPanel>
+
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="恢复是覆盖式的：Core 会先创建一个 pre_restore 回滚点；有 Run 在跑时会被拒绝（BACKUP_RESTORE_BUSY）。" />
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasBackupResult}">
+              <TextBlock Classes="body" Text="{Binding BackupLastResult}" TextWrapping="Wrap" />
+            </Border>
+          </StackPanel>
+
+          <!-- ── ① 任务与队列（真实 IRunController，无 List Run 命令） ─────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.3}" IsVisible="{Binding IsTasksSection}">
+            <ctrl:AlertBanner Severity="Blocked" Message="{Binding RunSourceNote}" />
+            <!-- REALUSE-DATA-SAFETY-3 AC2 (MA-07): ids this session actually saw, clickable. Never
+                 a fabricated list: the frozen contract has no List Run command, so this only holds
+                 runs the session obtained from the Host. -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+              <TextBlock Classes="meta" Text="{Binding KnownRunsHint}" TextWrapping="Wrap" />
+              <ItemsControl ItemsSource="{Binding KnownRuns}" IsVisible="{Binding HasKnownRuns}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ConsoleKnownRunRow">
+                    <Button Classes="chip"
+                            Content="{Binding RunId}"
+                            Command="{Binding SelectCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="{DynamicResource Nm.Padding.Cell}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="meta" Text="run_id" VerticalAlignment="Center" />
+              <TextBox Grid.Column="1" Text="{Binding RunIdInput}" Watermark="输入 run_id（本会话的 Run 可点上方列表；跨会话的 Run 由工位批次或外部记录提供）" />
+              <Button Grid.Column="2" Classes="primary sm" Content="读取 Run" Command="{Binding LoadRunCommand}" />
+              <Button Grid.Column="3" Classes="ghost sm" Content="刷新" Command="{Binding RefreshRunCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="meta" Text="幂等键" VerticalAlignment="Center" />
+              <TextBox Grid.Column="1" Text="{Binding RunIdempotencyKey}" Watermark="Restart / 重试失败目标必填（R-08：UI 不静默生成）" />
+            </Grid>
+
+            <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding HasRunLoaded}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="Run 状态（真实投影）" />
+                <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}" RowSpacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="meta" Text="状态" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding RunStatusText}" />
+                  <TextBlock Grid.Column="2" Classes="meta" Text="命令" />
+                  <TextBlock Grid.Column="3" Classes="meta" Text="{Binding RunCommandText}" />
+                  <TextBlock Grid.Row="1" Classes="meta" Text="作用域" />
+                  <TextBlock Grid.Row="1" Grid.Column="1" Classes="meta" Text="{Binding RunScopeText}" />
+                  <TextBlock Grid.Row="1" Grid.Column="2" Classes="meta" Text="总进度" />
+                  <TextBlock Grid.Row="1" Grid.Column="3" Classes="data" Text="{Binding RunProgressText}" />
+                  <TextBlock Grid.Row="2" Classes="meta" Text="当前步骤" />
+                  <TextBlock Grid.Row="2" Grid.Column="1" Classes="meta" Text="{Binding RunCurrentStepText}" />
+                  <TextBlock Grid.Row="2" Grid.Column="2" Classes="meta" Text="阻塞原因" />
+                  <TextBlock Grid.Row="2" Grid.Column="3" Classes="meta" Text="{Binding RunBlockedText}" TextWrapping="Wrap" />
+                  <TextBlock Grid.Row="3" Classes="meta" Text="计数" />
+                  <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Classes="meta" Text="{Binding RunCountsText}" TextWrapping="Wrap" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="secondary sm" Content="暂停" Command="{Binding PauseRunCommand}" IsEnabled="{Binding RunCanPause}" />
+                  <Button Classes="secondary sm" Content="继续" Command="{Binding ContinueRunCommand}" IsEnabled="{Binding RunCanContinue}" />
+                  <Button Classes="ghost sm" Content="恢复阻塞" Command="{Binding ResumeBlockedRunCommand}" IsEnabled="{Binding RunCanResumeBlocked}" />
+                  <Button Classes="danger sm" Content="停止" Command="{Binding StopRunCommand}" IsEnabled="{Binding RunCanStop}" />
+                  <Button Classes="ghost sm" Content="重启" Command="{Binding RestartRunCommand}" IsEnabled="{Binding RunCanRestart}" />
+                  <Button Classes="ghost sm" Content="重试失败目标" Command="{Binding RetryFailedRunCommand}" IsEnabled="{Binding RunCanRetryFailed}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+            <TextBlock Classes="meta" IsVisible="{Binding !HasRunLoaded}"
+                       Text="尚未加载 Run：输入 run_id 后读取；本分区不会伪造任务行或进度。" />
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasRunLoaded}">
+              <TextBlock Classes="section-title" Text="阶段流（step_flow）" />
+              <ItemsControl ItemsSource="{Binding RunStages}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RunStageRowViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <ctrl:StatusBadge Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1" Classes="label" Text="{Binding Label}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding StateText}" VerticalAlignment="Center" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding HasRunLoaded}">
+              <TextBlock Classes="section-title" Text="任务行（GetTaskProjection rows / tasks）" />
+              <ItemsControl ItemsSource="{Binding RunRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RunRowViewModel">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <TextBlock Classes="data" Text="{Binding OrderText}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                          <TextBlock Classes="label" Text="{Binding Filename}" />
+                          <TextBlock Classes="meta" Text="{Binding StepCountText}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Classes="meta" Text="{Binding ErrorCode}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                          <TextBlock Classes="meta" Text="{Binding LockText}" />
+                          <ctrl:StatusBadge Status="{Binding StatusNm}" />
+                        </StackPanel>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
+          <!-- ── ② Provider 与凭据 ─────────────────────────────────────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsProvidersSection}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="安全约束：凭据只显示「已保存 / 未保存」，UI 永不回显密钥；错误只显示 typed code，不含路径或 secret。" />
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="Provider 配置" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Classes="meta" Text="{Binding SelectedProviderHint}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="primary sm" Content="新建" Command="{Binding NewProviderCommand}" />
+                  <Button Classes="ghost sm" Content="编辑选中" Command="{Binding EditSelectedProviderCommand}" />
+                  <Button Classes="danger sm" Content="删除选中" Command="{Binding DeleteSelectedProviderCommand}" />
+                  <Button Classes="ghost sm" Content="刷新" Command="{Binding RefreshProvidersCommand}" />
+                </StackPanel>
+              </Grid>
+
+              <ItemsControl ItemsSource="{Binding ProviderProfiles}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ProviderProfileRowViewModel">
+                    <Button Classes="detailrow" Classes.selected="{Binding IsSelected}" Command="{Binding SelectCommand}" ToolTip.Tip="{Binding ProfileId}">
+                      <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                          <TextBlock Classes="label" Text="{Binding DisplayName}" />
+                          <TextBlock Classes="meta" Text="{Binding CapabilitiesText}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Classes="meta" Text="{Binding NetworkText}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Classes="meta" Text="{Binding EnabledText}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                          <TextBlock Classes="meta" Text="{Binding CredentialStateText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Grid>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <!-- Provider 表单 -->
+            <Border Classes="card" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding IsProviderFormOpen}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="{Binding ProviderFormTitle}" />
+                <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}" RowDefinitions="Auto,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Classes="meta" Text="provider_id" VerticalAlignment="Center" />
+                  <TextBox Grid.Column="1" Text="{Binding FormProviderId}" Watermark="如 openai" />
+                  <TextBlock Grid.Column="2" Classes="meta" Text="显示名称" VerticalAlignment="Center" />
+                  <TextBox Grid.Column="3" Text="{Binding FormDisplayName}" Watermark="如 OpenAI · GPT" />
+                  <TextBlock Grid.Row="1" Classes="meta" Text="endpoint" VerticalAlignment="Center" />
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FormEndpoint}" Watermark="https://…" />
+                  <TextBlock Grid.Row="1" Grid.Column="2" Classes="meta" Text="model" VerticalAlignment="Center" />
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding FormModel}" Watermark="模型名" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.3}">
+                  <CheckBox Content="OCR" IsChecked="{Binding FormCapOcr}" />
+                  <CheckBox Content="翻译" IsChecked="{Binding FormCapTranslation}" />
+                  <CheckBox Content="修复" IsChecked="{Binding FormCapInpaint}" />
+                  <CheckBox Content="检测" IsChecked="{Binding FormCapDetection}" />
+                  <CheckBox Content="渲染" IsChecked="{Binding FormCapRendering}" />
+                </StackPanel>
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Classes="meta" Text="网络配置" VerticalAlignment="Center" />
+                  <ComboBox Grid.Column="1" ItemsSource="{Binding ProviderNetworkOptions}" SelectedIndex="{Binding FormNetworkIndex}" HorizontalAlignment="Left" MinWidth="{DynamicResource Nm.Size.TreeWidth}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:ConsoleOption">
+                        <TextBlock Classes="meta" Text="{Binding Label}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                  <CheckBox Grid.Column="2" Content="启用" IsChecked="{Binding FormEnabled}" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="primary sm" Content="保存" Command="{Binding SaveProviderCommand}" />
+                  <Button Classes="ghost sm" Content="取消" Command="{Binding CancelProviderCommand}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- 凭据（只显示状态） -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Classes="section-title" Text="凭据（只显示已保存 / 未保存）" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Classes="ghost sm" Content="刷新" Command="{Binding RefreshCredentialsViewCommand}" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding CredentialTargets}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:CredentialTargetRowViewModel">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
+                      <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                          <TextBlock Classes="label" Text="{Binding TargetText}" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1" Classes="meta" Text="{Binding StateLabel}" VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                          <TextBox Grid.Column="0"
+                                   PasswordChar="*"
+                                   Watermark="输入密钥（掩码显示，保存后立即清空）"
+                                   Text="{Binding SecretInput, Mode=TwoWay}" />
+                          <Button Grid.Column="1" Classes="secondary sm" Content="保存密钥" Command="{Binding PutCommand}" />
+                          <Button Grid.Column="2" Classes="danger sm" Content="清除" Command="{Binding ClearCommand}" />
+                          <TextBlock Grid.Column="3" Classes="meta" Text="{Binding RowStatusText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <!-- 能力绑定 -->
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="能力绑定（global / book / chapter）" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                  <TextBlock Classes="meta" Text="{Binding BindingScopeHint}" VerticalAlignment="Center" />
+                  <ComboBox ItemsSource="{Binding BindingScopeOptions}" SelectedIndex="{Binding BindingScopeIndex}" MinWidth="{DynamicResource Nm.Size.TreeWidth}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:BindingScopeOption">
+                        <TextBlock Classes="meta" Text="{Binding Label}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </StackPanel>
+                <Button Grid.Column="2" Classes="ghost sm" Content="刷新绑定" Command="{Binding RefreshBindingsViewCommand}" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding CapabilityBindings}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:CapabilityBindingRowViewModel">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <TextBlock Classes="label" Text="{Binding Title}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                          <TextBlock Classes="meta" Text="{Binding BindingText}" VerticalAlignment="Center" />
+                          <TextBlock Classes="meta" Text="{Binding BindingSourceText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Button Grid.Column="2" Classes="ghost sm" Content="绑定到选中 Provider" Command="{Binding BindCommand}" />
+                        <Button Grid.Column="3" Classes="ghost sm" Content="清除" Command="{Binding ClearCommand}" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
+
+          <!-- ── ③ 网络与代理 ──────────────────────────────────────────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsNetworkSection}">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="网络配置" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Classes="meta" Text="{Binding DefaultNetworkText}" VerticalAlignment="Center" />
+              <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                <Button Classes="primary sm" Content="新建" Command="{Binding NewNetworkCommand}" />
+                <Button Classes="ghost sm" Content="编辑选中" Command="{Binding EditSelectedNetworkCommand}" />
+                <Button Classes="ghost sm" Content="设为默认" Command="{Binding SetDefaultSelectedNetworkCommand}" />
+                <Button Classes="ghost sm" Content="连通测试" Command="{Binding TestSelectedNetworkCommand}" />
+                <Button Classes="danger sm" Content="删除选中" Command="{Binding DeleteSelectedNetworkCommand}" />
+                <Button Classes="ghost sm" Content="刷新" Command="{Binding RefreshNetworkCommand}" />
+              </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding NetworkProfiles}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:NetworkProfileRowViewModel">
+                  <Button Classes="detailrow" Classes.selected="{Binding IsSelected}" Command="{Binding SelectCommand}" ToolTip.Tip="{Binding NetworkProfileId}">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <TextBlock Classes="label" Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1" Classes="meta" Text="{Binding ModeEndpointText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding TlsText}" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
+                        <TextBlock Classes="meta" Text="{Binding DefaultText}" />
+                        <TextBlock Classes="meta" Text="{Binding CredentialStateText}" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Grid>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+              <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
+                <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="section-title" Text="连通测试（真实 Core 探针）" />
+                  <TextBlock Classes="body" Text="{Binding NetworkTestText}" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+              <Border Grid.Column="1" Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
+                <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="section-title" Text="默认网络解析" />
+                  <TextBlock Classes="body" Text="{Binding NetworkResolveText}" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+            </Grid>
+
+            <Border Classes="card" Padding="{DynamicResource Nm.Padding.Card}" IsVisible="{Binding IsNetworkFormOpen}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="section-title" Text="{Binding NetworkFormTitle}" />
+                <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}" RowDefinitions="Auto,Auto" RowSpacing="{DynamicResource Nm.Space.2}">
+                  <TextBlock Classes="meta" Text="显示名称" VerticalAlignment="Center" />
+                  <TextBox Grid.Column="1" Text="{Binding FormNetworkName}" Watermark="如 公司代理" />
+                  <TextBlock Grid.Column="2" Classes="meta" Text="模式" VerticalAlignment="Center" />
+                  <ComboBox Grid.Column="3" ItemsSource="{Binding NetworkModeOptions}" SelectedIndex="{Binding FormNetworkModeIndex}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:ConsoleOption">
+                        <TextBlock Classes="meta" Text="{Binding Label}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                  <TextBlock Grid.Row="1" Classes="meta" Text="代理端点" VerticalAlignment="Center" />
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FormProxyEndpoint}" Watermark="host:port（HTTP/HTTPS/SOCKS5 必填）" />
+                  <CheckBox Grid.Row="1" Grid.Column="2" Content="校验 TLS" IsChecked="{Binding FormVerifyTls}" />
+                  <CheckBox Grid.Row="1" Grid.Column="3" Content="代理失败可直连回退" IsChecked="{Binding FormAllowFallback}" />
+                </Grid>
+                <CheckBox Content="确认关闭 TLS 校验（关闭有中间人风险，必须显式确认）" IsChecked="{Binding FormConfirmDisableTls}" IsVisible="{Binding !FormVerifyTls}" />
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="primary sm" Content="保存网络配置" Command="{Binding SaveNetworkCommand}" />
+                  <Button Classes="ghost sm" Content="取消" Command="{Binding CancelNetworkCommand}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <!-- ── ⑧ 诊断与日志 ──────────────────────────────────────────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsDiagnosticsSection}">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+              <Border Classes="raised" Padding="{DynamicResource Nm.Padding.Card}">
+                <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                  <TextBlock Classes="section-title" Text="Host 状态（真实）" />
+                  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="{DynamicResource Nm.Space.1}" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                    <TextBlock Classes="meta" Text="状态" />
+                    <TextBlock Grid.Column="1" Classes="label" Text="{Binding HostStateText}" />
+                    <TextBlock Grid.Row="1" Classes="meta" Text="状态行" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Classes="meta" Text="{Binding HostStatusLine}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Classes="meta" Text="模式" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Classes="meta" Text="{Binding HostModeLine}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="3" Classes="meta" Text="启动自检" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Classes="meta" Text="{Binding HostSelfCheckText}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="4" Classes="meta" Text="错误码" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Classes="data" Text="{Binding HostErrorCodeText}" />
+                    <TextBlock Grid.Row="5" Classes="meta" Text="已发帧" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Classes="data" Text="{Binding HostWireFrameText}" />
+                  </Grid>
+                  <TextBlock Classes="meta" TextWrapping="Wrap" Text="安全：错误只显示 typed code，不渲染可能含本地路径的原始错误文本。" />
+                </StackPanel>
+              </Border>
+
+              <ctrl:AlertBanner Grid.Column="1"
+                                Severity="Blocked"
+                                Message="能力待接入：诊断包导出 / 日志查看需要 Host 诊断命令（当前 IHostController 未暴露），此处不展示伪造日志。" />
+            </Grid>
+
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Classes="section-title" Text="导出历史（真实）" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Classes="ghost sm" Content="刷新" Command="{Binding RefreshExportHistoryCommand}" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding ExportHistory}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ExportHistoryRowViewModel">
+                    <Border Classes="raised" Padding="{DynamicResource Nm.Padding.ControlSm}">
+                      <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+                          <TextBlock Classes="label" Text="{Binding MetaText}" />
+                          <TextBlock Classes="meta" Text="{Binding StatusText}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Classes="meta" Text="{Binding RevealText}" VerticalAlignment="Center" />
+                        <Button Grid.Column="2" Classes="ghost sm" Content="打开导出目录" Command="{Binding RevealCommand}" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="meta"
+                         IsVisible="{Binding !HasStatus}"
+                         Text="暂无导出记录（真实读取 GetExportHistoryAsync）。" />
+            </StackPanel>
+          </StackPanel>
+
+          <!-- ── ⑨ 外观 ────────────────────────────────────────────────────────── -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.4}" IsVisible="{Binding IsAppearanceSection}">
+            <Border Classes="card" Padding="{DynamicResource Nm.Padding.Section}">
+              <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+                <TextBlock Classes="section-title" Text="外观（真实生效）" />
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.3}">
+                  <TextBlock Classes="meta" Text="当前外观" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding AppearanceText}" VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock Classes="body"
+                           TextWrapping="Wrap"
+                           Text="深浅外观经 NewManga.DesignSystem 的令牌字典切换生效（不重建窗口）；主题库 / 预览 / 编辑器 / 导入导出属于主题工作室 V11R-C-2。" />
+                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                  <Button Classes="secondary sm" Content="切换深浅外观" Command="{Binding ToggleAppearanceCommand}" />
+                  <Button Classes="primary sm" Content="打开主题工作室（7 分区即将可用）" Command="{Binding OpenThemeStudioCommand}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </Grid>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</UserControl>

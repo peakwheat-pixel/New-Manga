@@ -1,0 +1,25 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NewManga.App.App"
+             RequestedThemeVariant="Light">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <!-- V11R-D-1: the design system is the single source of visual tokens (Nm.*). Global and palette
+             are registered as SEPARATE providers so the theme manager can replace only the palette at
+             startup/appearance switches without dropping spacing/font/Scrim tokens (D-1 I2 P1-1).
+             Controls.axaml carries the design-system control themes; they win over FluentTheme lookup. -->
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Global.axaml" />
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Tokens.Dark.axaml" />
+        <ResourceInclude Source="avares://NewManga.DesignSystem/Themes/Controls.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://NewManga.App/Styles/AppStyles.axaml" />
+    <!-- Design-system styles come last so their token-driven values win over legacy app styles.
+         The legacy shell is retired in V11R-C-3 / V11R-INT-1; until then both stacks coexist. -->
+    <StyleInclude Source="avares://NewManga.DesignSystem/Styles/NewMangaStyles.axaml" />
+  </Application.Styles>
+</Application>

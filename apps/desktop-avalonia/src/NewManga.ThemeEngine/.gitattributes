@@ -1,0 +1,4 @@
+# Generated theme artifacts must round-trip byte-for-byte regardless of the host checkout's
+# core.autocrlf setting (policy mirrors NewManga.DesignSystem/.gitattributes for the token pipeline).
+Themes/*.nmtheme text eol=lf
+Generated/*.g.cs text eol=lf

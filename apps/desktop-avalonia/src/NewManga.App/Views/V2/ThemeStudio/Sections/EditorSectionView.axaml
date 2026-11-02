@@ -1,0 +1,261 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Sections.EditorSectionView"
+             x:DataType="vm:ThemeStudioEditorViewModel">
+  <!--
+    ④ 主题编辑: 6 groups (配色/字体/圆角/背景材质/阴影/动效) + live WCAG numbers. Colour edits go into the
+    draft package only; the right rail still owns 应用/取消.
+  -->
+  <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+      <TextBlock Grid.Column="0" Classes="meta" Text="编辑变体" VerticalAlignment="Center" />
+      <ItemsControl Grid.Column="1" ItemsSource="{Binding VariantOptions}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ThemeStudioOption">
+            <Button Classes="chip sm"
+                    Classes.on="{Binding IsSelected}"
+                    Content="{Binding Label}"
+                    Command="{Binding SelectCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBlock Grid.Column="2" Classes="meta" Text="{Binding DraftBadge}" VerticalAlignment="Center" />
+      <TextBlock Grid.Column="3" Classes="meta" Text="{Binding SaveHint}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+      <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <Button Classes="secondary sm" Content="从当前主题另存为" Command="{Binding SaveAsCommand}" />
+        <Button Classes="ghost sm" Content="放弃草稿" Command="{Binding RevertDraftCommand}" />
+      </StackPanel>
+    </Grid>
+
+    <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="{DynamicResource Nm.Space.4}">
+      <!-- left column: colour groups -->
+      <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+          <ItemsControl ItemsSource="{Binding ColorGroups}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeStudioColorGroup">
+                <Border Classes="card">
+                  <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                    <TextBlock Classes="section-title" Text="{Binding Title}" />
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ThemeStudioColorRow">
+                          <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                                ColumnSpacing="{DynamicResource Nm.Space.2}">
+                            <Border Grid.Column="0" Classes="swatch" Background="{Binding Swatch}" />
+                            <TextBlock Grid.Column="1"
+                                       Classes="body"
+                                       Text="{Binding Label}"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding TokenKey}" />
+                            <TextBox Grid.Column="2"
+                                     Classes="hex"
+                                     Classes.invalid="{Binding IsInvalid}"
+                                     Text="{Binding HexValue, Mode=TwoWay}"
+                                     ToolTip.Tip="{Binding AccessibleLabel}" />
+                            <TextBlock Grid.Column="3" Classes="contrast-value" Text="{Binding ContrastLabel}" />
+                          </Grid>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- right column: typography / corners / material / elevation / motion + audit -->
+      <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="字体（系统字体，禁止随包字体）" />
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0" Classes="meta" Text="UI" VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1"
+                          Classes="compact"
+                          ItemsSource="{Binding FontFamilies}"
+                          SelectedItem="{Binding UiFont, Mode=TwoWay}" />
+              </Grid>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0" Classes="meta" Text="数据" VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1"
+                          Classes="compact"
+                          ItemsSource="{Binding FontFamilies}"
+                          SelectedItem="{Binding DataFont, Mode=TwoWay}" />
+              </Grid>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0" Classes="meta" Text="显示" VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1"
+                          Classes="compact"
+                          ItemsSource="{Binding FontFamilies}"
+                          SelectedItem="{Binding DisplayFont, Mode=TwoWay}" />
+              </Grid>
+              <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0" Classes="meta" Text="字号缩放" VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1"
+                          Classes="compact"
+                          Width="{DynamicResource Nm.Size.TreeWidth}"
+                          ItemsSource="{Binding ScaleOptions}"
+                          SelectedItem="{Binding ScaleLabel, Mode=TwoWay}" />
+                <TextBlock Grid.Column="2" Classes="meta" Text="80–130%（引擎会拒收越界值）" VerticalAlignment="Center" />
+              </Grid>
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Classes="meta" Text="行高预设" VerticalAlignment="Center" />
+                <ItemsControl ItemsSource="{Binding LineHeightOptions}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ThemeStudioOption">
+                      <Button Classes="chip sm"
+                              Classes.on="{Binding IsSelected}"
+                              Content="{Binding Label}"
+                              Command="{Binding SelectCommand}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="圆角（≤3px，超界会被引擎拒绝）" />
+              <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0" Classes="meta" Text="None" VerticalAlignment="Center" />
+                <TextBox Grid.Column="1" Classes="hex" Text="{Binding CornerNone, Mode=TwoWay}" />
+                <TextBlock Grid.Column="2" Classes="meta" Text="Sm" VerticalAlignment="Center" />
+                <TextBox Grid.Column="3" Classes="hex" Text="{Binding CornerSm, Mode=TwoWay}" />
+                <TextBlock Grid.Column="4" Classes="meta" Text="Md" VerticalAlignment="Center" />
+                <TextBox Grid.Column="5" Classes="hex" Text="{Binding CornerMd, Mode=TwoWay}" />
+              </Grid>
+              <TextBlock Classes="meta"
+                         Foreground="{DynamicResource Nm.Color.Status.Failed}"
+                         Text="{Binding CornerError}"
+                         IsVisible="{Binding HasCornerError}" />
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="背景 / 材质" />
+              <ItemsControl ItemsSource="{Binding MaterialOptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioOption">
+                    <Button Classes="chip sm"
+                            Classes.on="{Binding IsSelected}"
+                            Content="{Binding Label}"
+                            Command="{Binding SelectCommand}"
+                            ToolTip.Tip="{Binding Description}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="meta" Text="V1 只支持 Solid / None；Mica、Acrylic、模糊不提供（DESIGN_SYSTEM §1）" />
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="阴影 / 高度" />
+              <ItemsControl ItemsSource="{Binding ElevationOptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioOption">
+                    <Button Classes="chip sm"
+                            Classes.on="{Binding IsSelected}"
+                            Content="{Binding Label}"
+                            Command="{Binding SelectCommand}"
+                            ToolTip.Tip="{Binding Description}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="meta" Text="仅 none / raised：禁止彩色投影与大于 1px 描边的高度表达" />
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="动效（默认 90ms；减少动效在右栏外观区）" />
+              <ItemsControl ItemsSource="{Binding MotionOptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioOption">
+                    <Button Classes="chip sm"
+                            Classes.on="{Binding IsSelected}"
+                            Content="{Binding Label}"
+                            Command="{Binding SelectCommand}"
+                            ToolTip.Tip="{Binding Description}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Classes="section-title" Text="实时 WCAG 对比度" />
+                <TextBlock Grid.Column="1" Classes="meta" Text="{Binding AuditSummary}" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding AuditRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioContrastRow">
+                    <Border Classes="contrast-row" Classes.fail="{Binding !Pass}">
+                      <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                        <TextBlock Grid.Column="0" Classes="body" Text="{Binding Label}" />
+                        <TextBlock Grid.Column="1" Classes="contrast-value" Text="{Binding RatioLabel}" />
+                        <TextBlock Grid.Column="2" Classes="contrast-state" Text="{Binding StateLabel}" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card" IsVisible="{Binding HasIssues}">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="草稿校验问题（引擎 validator 实时结果）" />
+              <ItemsControl ItemsSource="{Binding Issues}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ThemeStudioIssue">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <TextBlock Grid.Column="0" Classes="data" Text="{Binding LevelLabel}" />
+                      <TextBlock Grid.Column="1" Classes="body" Text="{Binding Message}" TextWrapping="Wrap" />
+                      <TextBlock Grid.Column="2" Classes="data" Text="{Binding PathLabel}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</UserControl>

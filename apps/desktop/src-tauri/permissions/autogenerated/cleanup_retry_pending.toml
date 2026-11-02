@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cleanup-retry-pending"
+description = "Enables the cleanup_retry_pending command without any pre-configured scope."
+commands.allow = ["cleanup_retry_pending"]
+
+[[permission]]
+identifier = "deny-cleanup-retry-pending"
+description = "Denies the cleanup_retry_pending command without any pre-configured scope."
+commands.deny = ["cleanup_retry_pending"]

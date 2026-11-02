@@ -1,0 +1,207 @@
+/* =====================================================================
+ * v2 阅读器 / 设置页增量样式。
+ *
+ * 为什么单独一份文件：`src/pages/pages.css` 里的 `.nm-reader*` 段是冻结的
+ * v2 骨架几何（只读），不能往里追加；设置页在 v2 骨架阶段还没有自己的
+ * `.nm-settings*` 类。两份增量都收在这一个文件里，按页面分段。
+ *
+ * 硬规则：圆角只用 var(--nm-radius-overlay|control|cell)（8/4/2），字号只用
+ * var(--nm-text-*)，间距只用 var(--nm-space-1..5)，颜色/描边/状态色一律
+ * var(--nm-*)。这里不出现字面色值，也不出现 emoji。
+ * ===================================================================== */
+
+/* ---------------------------------------------------------------------
+ * Reader — 真实页图 / 章节下拉 / 浮层内的进度与告警
+ * ------------------------------------------------------------------ */
+
+/* 真实页面图：等比放进翻页热区留出的空档，不拉伸。 */
+.nm-reader__image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--nm-radius-cell);
+  background: var(--nm-bg-alt);
+  box-shadow: var(--nm-elevation-16);
+}
+
+/* 页图加载中/失败时给状态面一个稳定的最小尺寸，避免浮层跳动。 */
+.nm-reader__page-area > .nm-state {
+  max-width: 420px;
+}
+
+/* 翻页按钮到边界时必须"看起来也不可点"，而不是静默无响应。 */
+.nm-reader__nav:disabled {
+  opacity: 0.35;
+  border-color: var(--nm-line-divider);
+  color: var(--nm-text-disabled);
+  cursor: default;
+}
+
+.nm-reader__nav:disabled:hover {
+  opacity: 0.35;
+  border-color: var(--nm-line-divider);
+  color: var(--nm-text-disabled);
+}
+
+/* 章节切换下拉：复用 .nm-select-wrap 的定位规则（pages.css 里没有这个类，
+   这里补齐 wrap 的最小宽度，避免章节名挤掉页码）。 */
+.nm-reader__top .nm-select-wrap {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 200px;
+}
+
+.nm-reader__top .nm-select {
+  max-width: 200px;
+  text-overflow: ellipsis;
+}
+
+/* 进度写回失败 / 进度未知：只用状态色做前景，不新增底色块。 */
+.nm-reader__warning {
+  color: var(--nm-status-blocked);
+  font: var(--nm-text-caption);
+  white-space: nowrap;
+}
+
+.nm-reader__warning--failed {
+  color: var(--nm-status-failed);
+}
+
+/* ---------------------------------------------------------------------
+ * Settings — v2 骨架：左侧分节导航 + 右侧内容带
+ * ------------------------------------------------------------------ */
+
+.nm-settings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--nm-bg-mica);
+  background-image:
+    radial-gradient(1100px 520px at 8% -12%, var(--nm-accent-muted), transparent 62%),
+    radial-gradient(900px 480px at 102% 112%, var(--nm-status-muted-stale), transparent 64%);
+}
+
+.nm-settings__body {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 左侧分节导航：固定 200px（与既有设置页导航同宽），亚克力材质由页面声明。
+   浮起一层（外边距 + 8px 圆角）是 v2 的亚克力浮层语言，不做贴边色带。 */
+.nm-settings__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-2);
+  width: 200px;
+  flex: 0 0 200px;
+  min-height: 0;
+  margin: var(--nm-space-3) 0 var(--nm-space-3) var(--nm-space-3);
+  padding: var(--nm-space-3) var(--nm-space-2);
+  overflow: hidden;
+}
+
+.nm-settings__nav-head {
+  padding: 0 var(--nm-space-2);
+  color: var(--nm-text-tertiary);
+  font: var(--nm-text-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nm-settings__nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-1);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.nm-settings__nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--nm-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--nm-radius-control);
+  color: var(--nm-text-secondary);
+  font: var(--nm-text-body);
+  text-align: left;
+}
+
+.nm-settings__nav-item:hover {
+  background: var(--nm-accent-muted);
+  color: var(--nm-text-primary);
+}
+
+.nm-settings__nav-item[data-active="true"] {
+  background: var(--nm-accent-muted);
+  border-color: var(--nm-line-control);
+  color: var(--nm-accent-base);
+  font: var(--nm-text-body-strong);
+}
+
+.nm-settings__nav-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-1);
+  margin-top: auto;
+  padding: var(--nm-space-2);
+  border-top: 1px solid var(--nm-line-divider);
+}
+
+.nm-settings__nav-foot .nm-caption {
+  color: var(--nm-text-tertiary);
+}
+
+.nm-settings__status-line {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nm-space-1);
+}
+
+/* 右侧内容带：真正滚动的是这里，标题行固定。 */
+.nm-settings__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--nm-space-4);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--nm-space-5);
+  overflow-y: auto;
+}
+
+.nm-settings__content-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nm-space-3);
+  padding-bottom: var(--nm-space-3);
+  border-bottom: 1px solid var(--nm-line-divider);
+}
+
+.nm-settings__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-4);
+  width: 100%;
+}
+
+/* 阅读方向说明：设置页只给指引，不给全局默认方向控件。 */
+.nm-settings__note {
+  max-width: 780px;
+  padding: var(--nm-space-3);
+  border: 1px solid var(--nm-line-divider);
+  border-radius: var(--nm-radius-control);
+  background: var(--nm-bg-layer);
+  color: var(--nm-text-secondary);
+  font: var(--nm-text-caption);
+}

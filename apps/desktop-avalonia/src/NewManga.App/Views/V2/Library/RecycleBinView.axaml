@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Library.RecycleBinView"
+             x:DataType="vm:LibraryViewModel">
+  <!-- 回收站（独立筛选视图）：真实数据需要 list_recycle_bin / restore / purge 命令，Host 目前未暴露；
+       因此这里只呈现「能力待接入」+ 危险动作的二次确认（确认默认在取消、不伪造删除成功）。 -->
+  <Border Background="{DynamicResource Nm.Color.Bg.Canvas}" Padding="{DynamicResource Nm.Padding.Section}">
+    <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+        <TextBlock Classes="title" Text="回收站" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1"
+                   Classes="meta"
+                   Text="独立筛选视图 · 恢复 / 永久删除需二次确认（数量 + 书名清单）"
+                   VerticalAlignment="Center" />
+        <Button Grid.Column="2"
+                Classes="ghost sm"
+                Content="返回书架"
+                Command="{Binding CloseRecycleBinCommand}" />
+      </Grid>
+
+      <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.3}">
+        <ctrl:AlertBanner Severity="Blocked"
+                          Message="能力待接入：Host 未暴露 list_recycle_bin / restore / purge 方法，回收站列表与恢复/永久删除不可用；不会伪造任何回收站条目。" />
+        <ctrl:EmptyState Title="回收站暂不可用"
+                         Hint="命令接入后这里会显示真实作品清单、所在原章节数与删除时间；恢复与永久删除都会先要求确认。"
+                         ActionText="返回书架"
+                         ActionCommand="{Binding CloseRecycleBinCommand}" />
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <Button Classes="secondary sm"
+                  Content="恢复选中"
+                  Command="{Binding RecycleRestoreCommand}" />
+          <Button Classes="danger sm"
+                  Content="永久删除选中"
+                  Command="{Binding RecyclePurgeCommand}" />
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

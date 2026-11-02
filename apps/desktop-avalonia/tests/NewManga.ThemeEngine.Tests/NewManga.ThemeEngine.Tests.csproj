@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>NewManga.ThemeEngine.Tests</RootNamespace>
+    <AssemblyName>NewManga.ThemeEngine.Tests</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Headless Avalonia so the real DesignSystemThemeLayerSink adapter can be exercised against
+         Application resources and rendered frames (same stack as the design-system test suite). -->
+    <PackageReference Include="Avalonia.Headless" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Skia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The frozen token source is the single visual authority; generator/palette tests re-run it. -->
+    <None Include="..\..\..\..\doc\design\redesign-v1\40-fusion\tokens.json"
+          Link="Fixtures\tokens.json"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

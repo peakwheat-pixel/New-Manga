@@ -1,0 +1,334 @@
+import { useRef, useState } from "react";
+import { BackupSettingsPanel } from "./BackupSettingsPanel";
+import { CacheRevisionPanel } from "./CacheRevisionPanel";
+import { SettingsClient } from "./client";
+import { CapabilityBindingPanel } from "./CapabilityBindingPanel";
+import { DISABLED_SECTION_REASON } from "./DisabledSection";
+import { InpaintSettingsPanel } from "./InpaintSettingsPanel";
+import { ModelGpuSettingsPanel } from "./ModelGpuSettingsPanel";
+import { NetworkProfilePanel } from "./NetworkProfilePanel";
+import { OcrSettingsPanel } from "./OcrSettingsPanel";
+import { PluginSettingsPanel } from "./PluginSettingsPanel";
+import { ProviderProfilePanel } from "./ProviderProfilePanel";
+import { RecycleBinSettingsPanel } from "./RecycleBinSettingsPanel";
+import { SfxPolicyControl } from "./SfxPolicyControl";
+import { TasksSettingsPanel } from "./TasksSettingsPanel";
+import { TranslationParamsPanel } from "./TranslationParamsPanel";
+import { TypesetSettingsPanel } from "./TypesetSettingsPanel";
+import { tokens } from "../theme/tokens";
+
+/**
+ * P15 Settings page (AD-001 §5). Layout is frozen by §5.2: the AppShell's
+ * 64px Nav Rail is outside this component; here it is the fixed 200px
+ * SettingsCategoryNav plus the SettingsContentPanel. The twelve categories
+ * are in a FIXED order and switching is React local state — there is no
+ * sub-route.
+ *
+ * Editability: Provider (profiles + capability bindings), Network/Proxy,
+ * SFX policy, the four SETTINGS-OPEN-A-1 batch A sections (design
+ * doc/design/SETTINGS_SECTION_SCHEMAS.md §3), the SETTINGS-OPEN-B-1
+ * model/GPU (§4.1) and tasks/concurrency (§4.2) sections, batch B-2's
+ * cache/Revision cleanup operation surface (§4.3), batch C-1's recycle-bin
+ * view/clear surface (§2), and — batch C-2 — the backup/restore operation
+ * surface (design doc/design/SETTINGS_SECTION_C_SCHEMAS.md §3), and — batch
+ * C-3 — the plugin partition's frozen §4.5 read-only face, and
+ * PLUGIN-RUNTIME-1 (user authorization 2026-10-23, D1–D6) — the real plugin
+ * runtime management face: discovery, default-off global switch, per-plugin
+ * switches, the `plugin_events` audit ledger and the plugin-directory opener.
+ * All twelve categories are now open.
+ */
+export const SETTINGS_CATEGORY_ORDER = [
+  "provider",
+  "network",
+  "ocr",
+  "translation",
+  "inpaint",
+  "typeset",
+  "model_gpu",
+  "task_concurrency",
+  "cache_revision",
+  "recycle_bin",
+  "backup_restore",
+  "plugins",
+] as const;
+
+export type SettingsCategoryId = (typeof SETTINGS_CATEGORY_ORDER)[number];
+
+const SETTINGS_CATEGORIES: ReadonlyArray<{
+  id: SettingsCategoryId;
+  label: string;
+  open: boolean;
+}> = [
+  { id: "provider", label: "Provider", open: true },
+  { id: "network", label: "网络/代理", open: true },
+  { id: "ocr", label: "OCR", open: true },
+  { id: "translation", label: "翻译", open: true },
+  { id: "inpaint", label: "图片修复", open: true },
+  { id: "typeset", label: "排版样式", open: true },
+  { id: "model_gpu", label: "模型/GPU", open: true },
+  { id: "task_concurrency", label: "任务/并发", open: true },
+  { id: "cache_revision", label: "缓存/Revision", open: true },
+  { id: "recycle_bin", label: "回收站", open: true },
+  { id: "backup_restore", label: "备份/恢复", open: true },
+  { id: "plugins", label: "Plugin/Hooks", open: true },
+];
+
+/** Every still-disabled partition with its placeholder test id. PLUGIN-RUNTIME-1
+ * opens the last category (real runtime + management face), so this map is
+ * empty and the nav no longer renders a "未开放" badge for any partition. The
+ * exported shape is kept so callers/tests keep one vocabulary. */
+export const DISABLED_SECTION_TEST_IDS: Readonly<Record<string, string>> = {};
+
+/** Batch C-3 §4.5: the plugin partition stays closed until a runtime exists.
+ * The nav and the placeholder use the frozen copy instead of the generic
+ * "等待 section schema 冻结" reason. */
+export const PLUGIN_SECTION_REASON = "插件系统尚未实现";
+/** §4.5 verbatim copy (single continuous paragraph, no generic sentence
+ * inserted in the middle). */
+export const PLUGIN_SECTION_DESCRIPTION =
+  "插件系统尚未实现：当前版本未安装插件运行时。设计已冻结（本地目录插件、manifest v1、Hook 默认禁用、崩溃隔离、审计）；实现后将在此管理已安装插件与权限。";
+
+export interface SettingsPageProps {
+  client?: SettingsClient;
+}
+
+export function SettingsPage({ client }: SettingsPageProps) {
+  const [activeCategoryId, setActiveCategoryId] = useState<SettingsCategoryId>("provider");
+  const navRef = useRef<HTMLElement | null>(null);
+  const activeClient = client ?? new SettingsClient();
+
+  const openCategories = SETTINGS_CATEGORIES.filter((category) => category.open);
+  const activeIndex = openCategories.findIndex((category) => category.id === activeCategoryId);
+
+  const moveSelection = (delta: number) => {
+    const nextIndex = Math.min(openCategories.length - 1, Math.max(0, activeIndex + delta));
+    const nextId = openCategories[nextIndex].id;
+    setActiveCategoryId(nextId);
+    const button = navRef.current?.querySelector<HTMLButtonElement>(`[data-testid="settings-category-${nextId}"]`);
+    button?.focus();
+  };
+
+  const activeCategory = SETTINGS_CATEGORIES.find((c) => c.id === activeCategoryId);
+
+  return (
+    <div
+      data-testid="settings-page"
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        boxSizing: "border-box",
+        backgroundColor: tokens.color.bg.app,
+        overflow: "hidden",
+      }}
+    >
+      {/* Fixed 200px category navigation (§5.2) */}
+      <nav
+        ref={navRef}
+        data-testid="settings-category-nav"
+        aria-label="设置分类"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            moveSelection(1);
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            moveSelection(-1);
+          }
+        }}
+        style={{
+          width: 200,
+          height: "100%",
+          boxSizing: "border-box",
+          flexShrink: 0,
+          backgroundColor: tokens.color.bg.rail,
+          borderRight: `1px solid ${tokens.color.border.default}`,
+          padding: tokens.spacing.sm,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          overflowY: "auto",
+        }}
+      >
+        <div
+          style={{
+            padding: `${tokens.spacing.sm}px ${tokens.spacing.xs}px`,
+            fontSize: tokens.typography.size.secondary,
+            fontWeight: 600,
+            color: tokens.color.text.secondary,
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+          }}
+        >
+          系统设置
+        </div>
+
+        {SETTINGS_CATEGORIES.map((cat) => {
+          const isActive = activeCategoryId === cat.id;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              data-testid={`settings-category-${cat.id}`}
+              data-active={isActive}
+              data-open={cat.open}
+              disabled={!cat.open}
+              aria-disabled={!cat.open}
+              aria-label={
+                cat.open
+                  ? undefined
+                  : `${cat.label}，未开放：${
+                      cat.id === "plugins" ? PLUGIN_SECTION_REASON : DISABLED_SECTION_REASON
+                    }`
+              }
+              title={
+                cat.open
+                  ? undefined
+                  : cat.id === "plugins"
+                    ? PLUGIN_SECTION_REASON
+                    : DISABLED_SECTION_REASON
+              }
+              onClick={() => {
+                if (cat.open) setActiveCategoryId(cat.id);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: tokens.spacing.xs,
+                padding: "8px 10px",
+                fontSize: tokens.typography.size.base,
+                borderRadius: tokens.radius.button,
+                border: "none",
+                backgroundColor: isActive ? tokens.color.accent.selected : "transparent",
+                color: isActive ? tokens.color.accent.primary : cat.open ? tokens.color.text.primary : tokens.color.text.muted,
+                cursor: cat.open ? "pointer" : "not-allowed",
+                fontWeight: isActive ? 600 : 400,
+                textAlign: "left",
+                transition: "background-color 0.1s ease",
+              }}
+            >
+              <span>{cat.label}</span>
+              {!cat.open && (
+                <span
+                  title="等待 section schema 冻结"
+                  style={{
+                    fontSize: tokens.typography.size.badge,
+                    color: tokens.color.state.skipped,
+                    opacity: 0.7,
+                  }}
+                >
+                  未开放
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Content panel — category switching is local state, no sub-route */}
+      <main
+        data-testid="settings-content-panel"
+        style={{
+          flex: 1,
+          height: "100%",
+          overflowY: "auto",
+          padding: tokens.spacing.lg,
+          boxSizing: "border-box",
+        }}
+      >
+        {activeCategoryId === "provider" && (
+          <div data-testid="settings-content-provider" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
+            <ProviderProfilePanel client={activeClient} />
+            <CapabilityBindingPanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "network" && (
+          <div data-testid="settings-content-network">
+            <NetworkProfilePanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "translation" && (
+          <div data-testid="settings-content-translation" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
+            <SfxPolicyControl client={activeClient} />
+            <TranslationParamsPanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "ocr" && (
+          <div data-testid="settings-content-ocr">
+            <OcrSettingsPanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "inpaint" && (
+          <div data-testid="settings-content-inpaint">
+            <InpaintSettingsPanel client={activeClient} />
+          </div>
+        )}
+
+        {activeCategoryId === "typeset" && (
+          <div data-testid="settings-content-typeset" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
+            <TypesetSettingsPanel client={activeClient} />
+            {/* §3.4: reading direction is a Book/Chapter property — the
+             * settings page shows guidance only, never a fake global control
+             * (no DisabledSection placeholder: this partition is not the
+             * batch A surface and must not claim to be "waiting schema"). */}
+            <section
+              data-testid="settings-reading-direction-note"
+              style={{
+                padding: tokens.spacing.md,
+                backgroundColor: tokens.color.surface.card,
+                border: `1px solid ${tokens.color.border.default}`,
+                borderRadius: tokens.radius.card,
+                maxWidth: 780,
+                color: tokens.color.text.secondary,
+                fontSize: tokens.typography.size.secondary,
+                lineHeight: tokens.typography.lineHeight,
+              }}
+            >
+              阅读方向（rtl / ltr / vertical）是书籍 / 章节属性：请在书架或章节属性中修改；
+              设置页不提供全局默认方向。若需要“新建章节默认方向”，另立契约后再开放。
+            </section>
+          </div>
+        )}
+        {activeCategoryId === "model_gpu" && (
+          <div data-testid="settings-content-model-gpu">
+            <ModelGpuSettingsPanel client={activeClient} />
+          </div>
+        )}
+        {activeCategoryId === "task_concurrency" && (
+          <div data-testid="settings-content-task-concurrency">
+            <TasksSettingsPanel client={activeClient} />
+          </div>
+        )}
+        {activeCategoryId === "cache_revision" && (
+          <div data-testid="settings-content-cache-revision">
+            <CacheRevisionPanel client={activeClient} />
+          </div>
+        )}
+        {activeCategoryId === "recycle_bin" && (
+          <div data-testid="settings-content-recycle-bin">
+            <RecycleBinSettingsPanel />
+          </div>
+        )}
+        {activeCategoryId === "backup_restore" && (
+          <div data-testid="settings-content-backup-restore">
+            <BackupSettingsPanel client={activeClient} />
+          </div>
+        )}
+        {activeCategoryId === "plugins" && (
+          <div data-testid="settings-content-plugins">
+            <PluginSettingsPanel client={activeClient} />
+          </div>
+        )}
+
+        <div data-testid="settings-active-category" data-category-id={activeCategoryId} style={{ display: "none" }}>
+          {activeCategory?.label}
+        </div>
+      </main>
+    </div>
+  );
+}

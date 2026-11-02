@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.ThemeStudio"
+             xmlns:c="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.ThemeStudio.Preview.ShelfPreviewView"
+             x:DataType="vm:ThemeStudioPreviewViewModel">
+  <!--
+    书架 preview: a REAL control tree (search field, chips, cover grid with status corner badges).
+    Content is fixed example data and labelled 示例内容 — the studio never reads the user's library.
+  -->
+  <Border Background="{DynamicResource Nm.Color.Bg.Canvas}" Padding="{DynamicResource Nm.Padding.Panel}">
+    <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
+      <Border Grid.Row="0" Classes="librarybar" Padding="{DynamicResource Nm.Padding.Cell}">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+          <TextBox Grid.Column="0"
+                   Classes="search"
+                   IsReadOnly="True"
+                   Watermark="搜索示例书架…"
+                   Text="风" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+            <Button Classes="chip on sm" Content="全部" />
+            <Button Classes="chip sm" Content="已译完" />
+            <Button Classes="chip sm" Content="进行中" />
+            <Button Classes="chip sm" Content="需要我处理" />
+          </StackPanel>
+          <TextBlock Grid.Column="2"
+                     Classes="meta"
+                     Text="示例内容 · 非真实书库"
+                     VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding SampleBooks}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ThemeStudioSampleBook">
+              <Border Classes="preview-card">
+                <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+                  <Border Classes="preview-cover">
+                    <Grid RowDefinitions="*,Auto" RowSpacing="{DynamicResource Nm.Space.1}">
+                      <Border Grid.Row="0" Classes="mini-canvas" Background="{DynamicResource Nm.Color.Bg.Raised}">
+                        <StackPanel Spacing="{DynamicResource Nm.Space.1}" VerticalAlignment="Bottom">
+                          <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Accent.Base}" />
+                          <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Text.Tertiary}" />
+                          <Border Classes="mini-line" Background="{DynamicResource Nm.Color.Text.Tertiary}" />
+                        </StackPanel>
+                      </Border>
+                      <TextBlock Grid.Row="1"
+                                 Classes="label"
+                                 Text="{Binding Title}"
+                                 TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                  </Border>
+                  <TextBlock Classes="meta" Text="{Binding Meta}" />
+                  <c:StatusBadge Status="{Binding Status}" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>

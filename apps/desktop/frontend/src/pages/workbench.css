@@ -1,0 +1,103 @@
+/*
+ * 工作台页运行时（真实 IPC 数据）的增量样式。
+ *
+ * `pages.css` 是冻结的 v2 页面几何，这里只补它没有的运行时构件：
+ *   - 整页级状态面的居中容器；
+ *   - 资源通道组装出的真实页图；
+ *   - 没有缩略图通道时的未知缩略图占位；
+ *   - 真实运行投影（任务列表 / 阻塞原因）的排版。
+ *
+ * 约束沿用设计系统：圆角只用 8/4/2/0，字号只用 28/20/14/12，间距只走
+ * `var(--nm-space-*)`，颜色/描边/状态色只走 `var(--nm-*)`，不写字面色值。
+ * 本文件不声明任何 backdrop-filter：亚克力只由 `.nm-acrylic*` 层提供，
+ * 预算由 `useAcrylicBudget` 统一裁决。
+ */
+
+/* ---- 整页状态面（无作品 / 章节读不出来） --------------------------- */
+
+.nm-workbench__body--state {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: var(--nm-space-4);
+}
+
+/* ---- 真实页图 ------------------------------------------------------ */
+
+.nm-wb-page-img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 1px solid var(--nm-line-control);
+  border-radius: var(--nm-radius-cell);
+  background: var(--nm-bg-layer);
+  box-shadow: var(--nm-elevation-16);
+  transform-origin: center center;
+  transition: transform 120ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-wb-page-img {
+    transition: none;
+  }
+}
+
+/* ---- 胶片条：未知缩略图占位 ---------------------------------------- */
+
+/*
+ * Core 没有缩略图通道，因此运行时不能用 `pages.css` 里那套漫画页图案
+ * （`.nm-filmstrip__mini`）冒充页面预览；这里改成中性占位。
+ */
+.nm-filmstrip__thumb.nm-wb-thumb--unknown {
+  border-style: dashed;
+  border-color: var(--nm-line-strong);
+  background: var(--nm-bg-alt);
+}
+
+/* ---- 画布栏：章节选择 ---------------------------------------------- */
+
+.nm-wb-chapter {
+  flex: none;
+  min-width: 0;
+}
+
+.nm-wb-chapter .nm-select {
+  max-width: 200px;
+}
+
+/* ---- 运行时检查器：运行投影 ---------------------------------------- */
+
+.nm-wb-run {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-2);
+}
+
+.nm-wb-run__reasons,
+.nm-wb-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nm-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nm-wb-reason {
+  margin: 0;
+  color: var(--nm-status-blocked);
+  font: var(--nm-text-caption);
+}
+
+.nm-wb-task {
+  display: flex;
+  align-items: center;
+  gap: var(--nm-space-2);
+  min-width: 0;
+}
+
+.nm-wb-task__name {
+  flex: 1;
+  min-width: 0;
+}

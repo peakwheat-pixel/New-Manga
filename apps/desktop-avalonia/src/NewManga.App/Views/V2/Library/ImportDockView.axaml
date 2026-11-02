@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NewManga.App.ViewModels.V2.Library"
+             xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
+             x:Class="NewManga.App.Views.V2.Library.ImportDockView"
+             x:DataType="vm:ImportDockViewModel">
+  <!-- ImportDock（screen spec §2）：目标章节 → 每文件状态 → 部分失败可重试/跳过；无章节时就地「新建章节」。 -->
+  <Border Classes="overlay"
+          HorizontalAlignment="Right"
+          VerticalAlignment="Bottom"
+          MaxWidth="{DynamicResource Nm.Size.Drawer}"
+          Padding="{DynamicResource Nm.Padding.Panel}">
+    <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+        <StackPanel Spacing="{DynamicResource Nm.Space.1}">
+          <TextBlock Classes="section-title" Text="{Binding Title}" TextWrapping="Wrap" />
+          <TextBlock Classes="meta" Text="{Binding Summary}" />
+        </StackPanel>
+        <Button Grid.Column="1"
+                Classes="ghost sm"
+                Content="关闭"
+                Command="{Binding CloseCommand}"
+                VerticalAlignment="Top" />
+      </Grid>
+
+      <TextBlock Classes="meta" Text="{Binding TargetChapterText}" TextWrapping="Wrap" />
+
+      <!-- 无章节：就地新建章节入口（真实命令；失败会显示 typed 错误） -->
+      <ctrl:AlertBanner Severity="Blocked"
+                        Message="{Binding CapabilityText}"
+                        ActionText="新建章节"
+                        ActionCommand="{Binding RequestCreateChapterCommand}"
+                        IsVisible="{Binding ShowCreateChapterEntry}" />
+
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <Button Classes="primary sm"
+                Content="开始导入"
+                Command="{Binding StartCommand}"
+                IsEnabled="{Binding CanStart}" />
+        <Button Classes="ghost sm"
+                Content="重试失败"
+                Command="{Binding RetryFailedCommand}"
+                IsEnabled="{Binding HasFailures}" />
+        <Button Classes="ghost sm"
+                Content="跳过失败"
+                Command="{Binding SkipFailedCommand}"
+                IsEnabled="{Binding HasFailures}" />
+      </StackPanel>
+
+      <ScrollViewer MaxHeight="{DynamicResource Nm.Size.Drawer}" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding Rows}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ImportRowViewModel">
+              <Border Classes="raised"
+                      Padding="{DynamicResource Nm.Padding.ControlSm}">
+                <Grid ColumnDefinitions="Auto,*,Auto"
+                      ColumnSpacing="{DynamicResource Nm.Space.2}">
+                  <ctrl:StatusBadge Grid.Column="0" Status="{Binding Status}" ShowLabel="False" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1"
+                             Classes="label"
+                             Text="{Binding DisplayName}"
+                             TextTrimming="CharacterEllipsis"
+                             VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="2"
+                             Classes="meta"
+                             Text="{Binding Message}"
+                             TextTrimming="CharacterEllipsis"
+                             VerticalAlignment="Center" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <TextBlock Classes="meta"
+                 TextWrapping="Wrap"
+                 Text="每个文件单独调用 Host 导入命令，状态为真实结果（已导入 / 跳过重复 / 失败 + 错误码）；文件夹为单次调用，显示聚合结果。路径不显示（隐私）。" />
+    </StackPanel>
+  </Border>
+</UserControl>

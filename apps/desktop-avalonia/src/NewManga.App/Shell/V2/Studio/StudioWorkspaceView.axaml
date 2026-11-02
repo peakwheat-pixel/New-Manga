@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NewManga.App.Shell.V2.Studio.StudioWorkspaceView"
+             Focusable="True">
+  <!--
+    V11R-B-3 Studio workspace host. The composition is built in code (same style as the existing
+    MainWindow/Pages views) so headless tests can assert on the real control tree; this file only
+    declares the resource scope (Studio styles + the temporary Nm.* token shim) and the root grid.
+  -->
+  <UserControl.Styles>
+    <StyleInclude Source="avares://NewManga.App/Views/V2/Studio/StudioTheme.axaml" />
+  </UserControl.Styles>
+  <Border x:Name="StudioRoot" Classes="studio-root">
+    <Grid x:Name="RootGrid" RowDefinitions="Auto,*" />
+  </Border>
+</UserControl>

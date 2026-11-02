@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-probe-config"
+description = "Enables the probe_config command without any pre-configured scope."
+commands.allow = ["probe_config"]
+
+[[permission]]
+identifier = "deny-probe-config"
+description = "Denies the probe_config command without any pre-configured scope."
+commands.deny = ["probe_config"]

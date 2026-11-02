@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-library-get-export-history"
+description = "Enables the library_get_export_history command without any pre-configured scope."
+commands.allow = ["library_get_export_history"]
+
+[[permission]]
+identifier = "deny-library-get-export-history"
+description = "Denies the library_get_export_history command without any pre-configured scope."
+commands.deny = ["library_get_export_history"]

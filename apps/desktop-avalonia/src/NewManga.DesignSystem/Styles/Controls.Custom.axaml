@@ -1,0 +1,175 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nmc="using:NewManga.DesignSystem.Controls"
+        xmlns:nmi="using:NewManga.DesignSystem.Icons">
+  <!-- M0 custom controls (contract §3.2). Each is composed from themed primitives; every visible value
+       is here (or in Controls.Status.axaml) as a DynamicResource token, so theme/contrast/density swaps
+       refresh them without rebuilding the tree. -->
+
+  <!-- Chip (filter / count). -->
+  <Style Selector="nmc|Chip">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.ControlHeightSm}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="nmc|Chip:pointerover">
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
+  </Style>
+  <Style Selector="nmc|Chip.active">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+
+  <!-- Kbd key cap. -->
+  <Style Selector="nmc|Kbd">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.ControlSm}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- SegmentedControl: 2-4 mutually exclusive segments. -->
+  <Style Selector="nmc|SegmentedControl">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Tight}" />
+  </Style>
+  <Style Selector="StackPanel.nm-segmented-row">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.1}" />
+  </Style>
+  <Style Selector="Button.segmented-item">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+  </Style>
+  <Style Selector="Button.segmented-item.selected">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+  </Style>
+
+  <!-- SearchField: the inner TextBox carries its own input tokens (TextBox.search). -->
+  <Style Selector="nmc|SearchField">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <!-- EmptyState. -->
+  <Style Selector="nmc|EmptyState">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.3}" />
+  </Style>
+
+  <!-- AlertBanner. -->
+  <Style Selector="nmc|AlertBanner">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Card}" />
+  </Style>
+  <Style Selector="Grid.nm-alert-row">
+    <Setter Property="ColumnSpacing" Value="{DynamicResource Nm.Space.3}" />
+  </Style>
+  <Style Selector="StackPanel.nm-alert-text">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.1}" />
+  </Style>
+  <Style Selector="nmc|AlertBanner.blocked">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Blocked}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Blocked}" />
+  </Style>
+  <Style Selector="nmc|AlertBanner.stale">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Stale}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Stale}" />
+  </Style>
+  <Style Selector="nmc|AlertBanner.failed">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Failed}" />
+  </Style>
+  <Style Selector="nmc|AlertBanner.interrupted">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Queued}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Status.Queued}" />
+  </Style>
+
+  <!-- CountChips. -->
+  <Style Selector="nmc|CountChips">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
+  </Style>
+
+  <!-- Drawer. -->
+  <Style Selector="nmc|Drawer">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Width" Value="{DynamicResource Nm.Size.Drawer}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+  </Style>
+  <Style Selector="StackPanel.nm-drawer-body">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.4}" />
+  </Style>
+
+  <!-- Modal: scrim uses the derived Nm.Color.Scrim token; the panel uses the overlay surface ladder. -->
+  <Style Selector="nmc|Modal">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Scrim}" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+  </Style>
+  <Style Selector="Border.modal-panel">
+    <Setter Property="Width" Value="{DynamicResource Nm.Size.Drawer}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Section}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Sm}" />
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+  </Style>
+  <Style Selector="StackPanel.nm-modal-body">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.4}" />
+  </Style>
+  <Style Selector="StackPanel.nm-modal-actions">
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+  </Style>
+
+  <!-- TopBand: 36px global chrome. -->
+  <Style Selector="nmc|TopBand">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Default}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="Height" Value="{DynamicResource Nm.Size.TopBand}" />
+    <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
+  </Style>
+  <Style Selector="Grid.nm-topband-row">
+    <Setter Property="ColumnSpacing" Value="{DynamicResource Nm.Space.4}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Icons: 1.25px stroke, 20x20 viewBox, accent only for the active state. -->
+  <Style Selector="nmi|NmIcon">
+    <Setter Property="Stroke" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+    <Setter Property="StrokeThickness" Value="{DynamicResource Nm.Icon.Stroke}" />
+    <Setter Property="Width" Value="{DynamicResource Nm.Icon.Size}" />
+    <Setter Property="Height" Value="{DynamicResource Nm.Icon.Size}" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="nmi|NmIcon.active">
+    <Setter Property="Stroke" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+  <Style Selector="nmi|NmIcon.sm">
+    <Setter Property="Width" Value="{DynamicResource Nm.Icon.SizeSmall}" />
+    <Setter Property="Height" Value="{DynamicResource Nm.Icon.SizeSmall}" />
+  </Style>
+</Styles>
