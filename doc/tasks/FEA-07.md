@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: codex-cli（impl-r1 独立复核；报告 doc/reviews/FEA-07-impl-r1.md）
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-04
@@ -17,7 +17,7 @@ base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 7ca2e367b09c41fe0253a68d77bbbfde99e8c772（impl-r1 返修完成；待 r2 复核）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-07
@@ -230,7 +230,7 @@ allowed_paths:
 | EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
 | EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
 | EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
-| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `44f1768bbbb57a35aff415804b0e78a05948ccedc575f94ba9a58aa0a81474fc` | CANONICAL |
+| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `5dd4c89724abdc3b1107d97c261ac71b95d1c38d6093212a32fe76ec039d6283` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 | EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
 
