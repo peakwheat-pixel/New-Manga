@@ -731,3 +731,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 
 - 命令面板测试改为 full motion 并断言 scrim 过渡 Duration=200ms；R1-001 进入项闭环。
 - 余：浮层退出 160ms、feedback pressed 90/badge 150；完成后再派 impl-r2。全量 1197/0/57；交付 `e25600431`。
+## 110. R1-001 浮层退出 160ms 尝试与结论（2026-11-03 01:04）
+
+- 尝试：CloseTopSurface 用 160ms opacity fade + `DispatcherTimer` 后隐藏（焦点立即返还），并同步更新两个模态测试等待计时器。
+- 结果：headless `[AvaloniaFact]` 中 `Thread.Sleep(250)` + `RunJobs()` 后 DispatcherTimer 未触发，`modal.IsVisible` 仍为 True，测试失败；**已完整回退**该尝试（工作树回到 `e25600431` 状态，build 0/0）。
+- 结论/备选（下一轮）：① 用 async `[AvaloniaFact] async Task` + `await Task.Delay(200)` 让 UI 线程让出后再 `RunJobs` 验证 DispatcherTimer；② 若 headless 计时器仍不可用，改用 Avalonia `Animation.RunAsync`/手动 clock 推进；③ 或把退出动画放到 ZCode 视觉任务（可真实视觉验收）并在 Task 记录为 D-10，避免 headless 不可验证的实现。
+- 当前仍未完成：浮层退出 160ms、feedback pressed 90ms / badge 150ms；完成后再派 fresh Codex impl-r2。
