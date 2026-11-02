@@ -17,9 +17,7 @@ namespace NewManga.DesignSystem.Tests;
 /// `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` (current snapshot). PASS means the value
 /// resolved on the attached control equals the existing design token resolved from the same resource
 /// stack — never a selector string. Expected values and their anchors are frozen per group in
-/// `verification/FEA-06-RESIDUAL-2/expected-tokens.md`; groups whose state has no style channel
-/// (SurfaceCard hover/selected/disabled, IconButton checked) assert the frozen container tokens stay
-/// stable instead of inventing new expectations (scope-r3 R3R-007: no self-authored token values).
+/// `verification/FEA-06-RESIDUAL-2/expected-tokens.md`, including actual SurfaceCard/IconButton state channels.
 /// PrimaryButton(disabled) is a re-assertion: the matrix already lists it EFFECTIVE (scope-r3 R3R-004).
 /// </summary>
 public sealed class FluentResidual2StateEffectiveTests
@@ -47,7 +45,7 @@ public sealed class FluentResidual2StateEffectiveTests
             MouseButton.Left, RawInputModifiers.None);
 
     [AvaloniaFact]
-    public void SurfaceCard_HoverSelectedDisabled_KeepTheFrozenContainerTokens()
+    public void SurfaceCard_HoverSelectedDisabled_ResolveTheFrozenStateChannels()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
         var app = Application.Current!;
@@ -228,16 +226,22 @@ public sealed class FluentResidual2StateEffectiveTests
         {
             window.Show();
             RunJobs();
+            var thumb = slider.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.Thumb>().Single();
+            var thumbBorder = thumb.GetVisualDescendants().OfType<Border>().Single();
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(thumb.Background));
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(thumbBorder.Background));
             Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(slider.Foreground)); // normal
             MoveTo(window, slider);
             RunJobs();
             Assert.True(slider.IsPointerOver);
             Assert.Equal(TokenColor(app, "Nm.Color.Accent.Hover"), Solid(slider.Foreground)); // hover
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Hover"), Solid(thumbBorder.Background));
             window.MouseMove(new Point(5, 5), RawInputModifiers.None);
             RunJobs();
             slider.IsEnabled = false;
             RunJobs();
             Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Opacity.Disabled"), slider.Opacity);
+            Assert.Equal(TokenColor(app, "Nm.Color.Text.Disabled"), Solid(thumbBorder.Background));
         }
         finally { window.Close(); }
     }
@@ -324,9 +328,13 @@ public sealed class FluentResidual2StateEffectiveTests
                 .Single(border => border.Name == "PART_BorderElement");
             var idleBrush = Solid(border.BorderBrush);
             var idleThickness = border.BorderThickness;
-            box.Focus();
+            box.Focus(Avalonia.Input.NavigationMethod.Tab);
             RunJobs();
             Assert.True(box.IsFocused);
+            var ring = window.GetVisualDescendants().OfType<Border>().Single(b => b.Classes.Contains("nm-focus-ring"));
+            Assert.True(ring.IsVisible);
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(ring.BorderBrush));
+            Assert.Equal(ThemeTestHarness.ValueOf<Thickness>(app, "Nm.Border.Focus"), ring.BorderThickness);
             // Inputs.axaml focus overrides the Fluent template emphasis back onto the frozen tokens:
             // the inner border keeps idle geometry/colour; the accent focus signal is the outside ring.
             Assert.Equal(idleBrush, Solid(border.BorderBrush));
@@ -363,6 +371,8 @@ public sealed class FluentResidual2StateEffectiveTests
         {
             window.Show();
             RunJobs();
+            Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Space.3"), errored.ColumnSpacing);
+            Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Space.2"), errored.RowSpacing);
             var errorBorder = errorInput.GetVisualDescendants().OfType<Border>()
                 .Single(border => border.Name == "PART_BorderElement");
             Assert.Equal(TokenColor(app, "Nm.Color.Status.Failed"), Solid(errorBorder.BorderBrush));
@@ -437,6 +447,31 @@ public sealed class FluentResidual2StateEffectiveTests
             Assert.Equal(TokenColor(app, "Nm.Color.Line.Default"), Solid(tip.BorderBrush));
             Assert.Equal(TokenColor(app, "Nm.Color.Text.Primary"), Solid(tip.Foreground));
             Assert.Equal(ThemeTestHarness.ValueOf<Thickness>(app, "Nm.Border.Hairline"), tip.BorderThickness);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void DerivedControls_ResolveTheirClassSelectorsToTokens()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        var chapters = new ChapterList(); var thumb = new StreamingThumb();
+        var reader = new ReaderPage(); var progress = new ReaderProgressBar { Value = 60 };
+        var group = new SettingsGroup(); var tabs = new TabStrip();
+        var window = new Window { Width = 640, Height = 480,
+            Content = new StackPanel { Children = { chapters, thumb, reader, progress, group, tabs } } };
+        try
+        {
+            window.Show(); RunJobs();
+            Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Space.2"), chapters.Spacing);
+            Assert.Equal(TokenColor(app, "Nm.Color.Bg.Raised"), Solid(thumb.Background));
+            Assert.Equal(ThemeTestHarness.ValueOf<CornerRadius>(app, "Nm.Corner.Fluent.Sm"), thumb.CornerRadius);
+            Assert.Equal(TokenColor(app, "Nm.Color.Bg.Sunken"), Solid(reader.Background));
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(progress.Foreground));
+            Assert.Equal(TokenColor(app, "Nm.Color.Bg.Raised"), Solid(group.Background));
+            Assert.Equal(ThemeTestHarness.ValueOf<Thickness>(app, "Nm.Padding.Card"), group.Padding);
+            Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Space.2"), tabs.Spacing);
         }
         finally { window.Close(); }
     }

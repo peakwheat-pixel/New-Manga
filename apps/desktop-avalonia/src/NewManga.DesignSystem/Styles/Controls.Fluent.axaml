@@ -97,10 +97,6 @@
   <Style Selector=".fluent-surface-card:disabled" x:SetterTargetType="Border">
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
-  <Style Selector="Button.fluent-icon.checked">
-    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
-  </Style>
   <Style Selector="StackPanel.fluent-page-layout">
     <Setter Property="Spacing" Value="{DynamicResource Nm.Space.3}" />
   </Style>

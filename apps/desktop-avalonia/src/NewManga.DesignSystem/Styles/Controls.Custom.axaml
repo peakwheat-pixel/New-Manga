@@ -79,7 +79,7 @@
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
   <!-- FEA-06-RESIDUAL-2 R2-006: thumb follows the frozen accent token (FluentTheme default is system blue). -->
-  <Style Selector="Slider /template/ Thumb">
+  <Style Selector="Slider:not(:disabled) /template/ Thumb">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
   </Style>
   <Style Selector="Slider:pointerover /template/ Thumb">

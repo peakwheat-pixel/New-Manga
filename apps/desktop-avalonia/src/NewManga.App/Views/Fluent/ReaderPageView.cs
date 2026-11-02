@@ -35,7 +35,7 @@ public sealed class ReaderPageView : UserControl
     private readonly ReaderViewModel _viewModel;
     private readonly Action _back;
     private readonly Action<bool> _setFullScreen;
-    private readonly StackPanel _root;
+    private readonly Grid _root;
     private readonly StackPanel _topBar;
     private readonly StackPanel _bottomBar;
     private readonly DsReaderPage _pageSurface;
@@ -79,11 +79,15 @@ public sealed class ReaderPageView : UserControl
         _progress = new ReaderProgressBar { Minimum = 0, Maximum = 100 };
         _topBar = BuildTopBar();
         _bottomBar = BuildBottomBar();
-        _root = FluentUi.Stack("fluent-page-layout");
+        // A vertical StackPanel measures the image at infinite height: fit-page then overflows the
+        // viewport and puts both the progress bar and bottom-edge particles off screen.
+        _root = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto") };
+        _root[!Grid.RowSpacingProperty] = new DynamicResourceExtension("Nm.Space.3");
+        var readingArea = BuildReadingArea();
         _root.Children.Add(_topBar);
-        _root.Children.Add(_sourceWarningHost);
-        _root.Children.Add(BuildReadingArea());
-        _root.Children.Add(_bottomBar);
+        _root.Children.Add(_sourceWarningHost); Grid.SetRow(_sourceWarningHost, 1);
+        _root.Children.Add(readingArea); Grid.SetRow(readingArea, 2);
+        _root.Children.Add(_bottomBar); Grid.SetRow(_bottomBar, 3);
         Content = _root;
         _topMotion = new FluentVisibilityMotion(_topBar);
         _bottomMotion = new FluentVisibilityMotion(_bottomBar);
@@ -230,7 +234,7 @@ public sealed class ReaderPageView : UserControl
 
     /// <summary>
     /// IN-1.2：翻页装饰粒子（400ms，一次）。reduce / auto(系统关) / category=off 下完全不创建粒子层
-    /// （02 §3 判据①）；启用时粒子层垫在页面图之下，不遮挡页面图也不拦截命中。
+    /// （02 §3 判据①）；启用时粒子层在页面前景边缘稀疏可见，不拦截命中，像素断言限制覆盖面积。
     /// </summary>
     private void PlayPageTurnDecor()
     {

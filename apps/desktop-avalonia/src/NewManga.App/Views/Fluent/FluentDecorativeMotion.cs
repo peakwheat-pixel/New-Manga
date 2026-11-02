@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Controls.Shapes;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.VisualTree;
 using NewManga.App.Controls;
 
@@ -92,7 +94,7 @@ internal sealed class FluentDecorativeLoop
     private void Run(double fromPhase)
     {
         StopRunning();
-        if (!_target.IsAttachedToVisualTree())
+        if (!_target.IsAttachedToVisualTree() || _window?.IsVisible == false)
         {
             // The attach handler restarts the configured loop when the cached page returns to the tree.
             _phaseAtPause = fromPhase;
@@ -135,6 +137,7 @@ internal sealed class FluentDecorativeLoop
                 // continue from the same phase on activation.
                 _window.Activated += OnWindowActivated;
                 _window.Deactivated += OnWindowDeactivated;
+                _window.PropertyChanged += OnWindowPropertyChanged;
             }
         }
 
@@ -155,6 +158,15 @@ internal sealed class FluentDecorativeLoop
 
     private void OnWindowActivated(object? sender, EventArgs e) => Resume();
 
+    private void OnWindowPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == Visual.IsVisibleProperty)
+        {
+            if (_window?.IsVisible == true) Resume();
+            else Pause();
+        }
+    }
+
     private void OnWindowDeactivated(object? sender, EventArgs e) => Pause();
 
     private void DetachWindow()
@@ -166,13 +178,14 @@ internal sealed class FluentDecorativeLoop
 
         _window.Activated -= OnWindowActivated;
         _window.Deactivated -= OnWindowDeactivated;
+        _window.PropertyChanged -= OnWindowPropertyChanged;
         _window = null;
     }
 }
 
 /// <summary>
 /// FEA-06-RESIDUAL-2 IN-1.2: the 400ms page-turn particle effect. One layer is created per turn,
-/// inserted beneath the page image (it can never cover it), driven by <see cref="FluentFrameAnimation"/>,
+/// painted above the page surface as sparse, non-interactive edge particles, driven by <see cref="FluentFrameAnimation"/>,
 /// and removed from the tree when the finite run completes or the layer detaches.
 /// </summary>
 internal static class FluentPageTurnDecor
@@ -203,10 +216,23 @@ internal static class FluentPageTurnDecor
             }
         }
 
-        var layer = FluentUi.PageTurnParticleLayer();
-        area.Children.Insert(0, layer); // beneath the page surface: decorative only, never covering it.
+        var layer = CreateLayer();
+        area.Children.Add(layer); // foreground: the opaque page surface must not hide the particles.
         var detached = false;
-        layer.DetachedFromVisualTree += (_, _) => detached = true;
+        var window = TopLevel.GetTopLevel(area) as Window;
+        var animation = new FluentFrameAnimation(layer);
+        var progressAtPause = 0d;
+        var startProgress = 0d;
+        var startedAt = clock.Now;
+        var running = false;
+        void Unsubscribe()
+        {
+            if (window is null) return;
+            window.Activated -= OnActivated;
+            window.Deactivated -= OnDeactivated;
+            window.PropertyChanged -= OnWindowChanged;
+        }
+        layer.DetachedFromVisualTree += (_, _) => { detached = true; Unsubscribe(); };
         void RemoveFromHost()
         {
             if (detached)
@@ -229,11 +255,84 @@ internal static class FluentPageTurnDecor
             }
         }
 
-        var animation = new FluentFrameAnimation(layer);
-        animation.Run(clock, milliseconds,
-            progress => FluentUi.UpdatePageTurnParticles(layer, progress),
-            RemoveFromHost);
+        void Resume()
+        {
+            if (running || detached || window?.IsVisible == false) return;
+            running = true;
+            startProgress = progressAtPause;
+            startedAt = clock.Now;
+            animation.Run(clock, milliseconds * (1 - startProgress),
+                progress => Update(layer, startProgress + (1 - startProgress) * progress),
+                () => { running = false; Unsubscribe(); RemoveFromHost(); });
+        }
+        void Pause()
+        {
+            if (!running) return;
+            progressAtPause = Math.Clamp(startProgress + (clock.Now - startedAt).TotalMilliseconds / milliseconds, 0, 1);
+            animation.Cancel(); running = false;
+        }
+        void OnActivated(object? sender, EventArgs args) => Resume();
+        void OnDeactivated(object? sender, EventArgs args) => Pause();
+        void OnWindowChanged(object? sender, AvaloniaPropertyChangedEventArgs args)
+        {
+            if (args.Property != Visual.IsVisibleProperty) return;
+            if (window?.IsVisible == true) Resume(); else Pause();
+        }
+        if (window is not null)
+        {
+            window.Activated += OnActivated;
+            window.Deactivated += OnDeactivated;
+            window.PropertyChanged += OnWindowChanged;
+        }
+        Resume();
     }
+
+    private sealed record Particle(double X, double Bottom, double Size, double Delay, double Rise, double Drift);
+    private static readonly Particle[] Particles =
+    [
+        new(.08, 26, 5, 0, 30, -6), new(.20, 14, 4, .045, 24, 8),
+        new(.33, 34, 6, .09, 36, -10), new(.46, 18, 4, .135, 26, 6),
+        new(.58, 30, 5, .18, 32, -8), new(.71, 12, 4, .225, 22, 10),
+        new(.84, 28, 6, .27, 34, -6), new(.94, 20, 4, .30, 28, 8),
+    ];
+
+    private static Border CreateLayer()
+    {
+        var canvas = new Canvas();
+        foreach (var spec in Particles)
+        {
+            var dot = new Ellipse { Width = spec.Size, Height = spec.Size, Opacity = 0,
+                Tag = spec, RenderTransform = new TranslateTransform() };
+            dot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Accent.Base");
+            canvas.Children.Add(dot);
+        }
+        // Layout positions are stable throughout a run. Resizing is the only reason to reposition.
+        canvas.SizeChanged += (_, _) =>
+        {
+            foreach (var dot in canvas.Children.OfType<Ellipse>())
+            {
+                var spec = (Particle)dot.Tag!;
+                Canvas.SetLeft(dot, spec.X * canvas.Bounds.Width);
+                Canvas.SetTop(dot, Math.Max(0, canvas.Bounds.Height - spec.Bottom));
+            }
+        };
+        return new Border { Child = canvas, IsHitTestVisible = false,
+            Classes = { "fluent-decorative", "fluent-decorative-particles" } };
+    }
+
+    private static void Update(Border layer, double progress)
+    {
+        foreach (var dot in ((Canvas)layer.Child!).Children.OfType<Ellipse>())
+        {
+            var spec = (Particle)dot.Tag!;
+            var local = Math.Clamp((progress - spec.Delay) / (1 - spec.Delay), 0, 1);
+            dot.Opacity = .75 * Math.Sin(Math.PI * local);
+            var transform = (TranslateTransform)dot.RenderTransform!;
+            transform.X = spec.Drift * local;
+            transform.Y = -spec.Rise * local;
+        }
+    }
+
 }
 
 /// <summary>
@@ -268,14 +367,24 @@ internal static class FluentTokenGradient
             }
         }
 
-        layer.AttachedToVisualTree += (_, _) => Refresh();
-        if (Application.Current is { } application)
+        Application? subscribed = null;
+        void OnResourcesChanged(object? sender, Avalonia.Controls.ResourcesChangedEventArgs e) => Refresh();
+        void Subscribe()
         {
-            // Theme/high-contrast swaps replace the application dictionaries, which raises ResourcesChanged;
-            // theme-variant flips ride the same notification path.
-            application.ResourcesChanged += (_, _) => Refresh();
+            if (subscribed is null && Application.Current is { } application)
+            {
+                subscribed = application;
+                subscribed.ResourcesChanged += OnResourcesChanged;
+            }
+            Refresh();
         }
-
-        Refresh();
+        layer.AttachedToVisualTree += (_, _) => Subscribe();
+        layer.DetachedFromVisualTree += (_, _) =>
+        {
+            if (subscribed is not null) subscribed.ResourcesChanged -= OnResourcesChanged;
+            subscribed = null;
+        };
+        if (layer.IsAttachedToVisualTree()) Subscribe();
+        else Refresh();
     }
 }

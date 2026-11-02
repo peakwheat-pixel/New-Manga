@@ -85,7 +85,7 @@ public sealed record MotionTimingProfile(
     bool DecorativeEnabled,
     bool Reduced)
 {
-    /// <summary>True when any transition or decorative loop may run (used by tests and diagnostics).</summary>
+    /// <summary>True when a finite navigation/feedback transition may run. Decorative loops are reported by DecorativeEnabled.</summary>
     public bool HasMotion =>
         NavigationPageMilliseconds > 0 ||
         NavigationTabMilliseconds > 0 ||

@@ -1,3 +1,4 @@
+using Avalonia;
 using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Headless;
@@ -18,7 +19,7 @@ namespace NewManga.App.Tests;
 /// <summary>
 /// FEA-06-RESIDUAL-2 IN-1.1/IN-1.2 (design 02-motion §2.3/§4): the two decorative scenes consume the
 /// frozen table — the shelf background gradient loops for 8s changing only Brush.Opacity, the page-turn
-/// particle layer runs once per turn for 400ms beneath the page image. reduce / auto(system-off) /
+/// particle layer runs once per turn for 400ms above the page surface (sparse edge particles). reduce / auto(system-off) /
 /// decorative-off keep the gradient static and create no animation object and no particle layer; a
 /// deactivated window pauses without losing phase; detaching stops every frame request; the production
 /// render clock is sampled for a full first/mid/tail pass.
@@ -153,9 +154,9 @@ public sealed class FluentResidual2DecorativeTests
             var phaseAtPause = shelf.DecorativeLoop.Phase();
             Assert.InRange(phaseAtPause, 0.01, 0.99);
 
-            // The headless window exposes no deactivate API; pause through the exact handler the
-            // window Deactivated wiring calls, then prove the real wiring resumes it via Activate().
-            shelf.DecorativeLoop.Pause();
+            // Raise the actual Window event via its platform notification; do not call the loop's Pause.
+            typeof(WindowBase).GetMethod("HandleDeactivated", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!
+                .Invoke(window, null);
             Assert.False(shelf.DecorativeLoop.IsRunning);
             var frozen = Gradient(surface).Opacity;
             clock.Advance(3000);
@@ -264,7 +265,7 @@ public sealed class FluentResidual2DecorativeTests
     }
 
     [AvaloniaFact]
-    public async Task PageTurnParticles_RunOnceFor400ms_BeneathThePageImage_ThenAreRemoved()
+    public async Task PageTurnParticles_RunOnceFor400ms_AboveThePageImage_ThenAreRemoved()
     {
         var (window, surface, clock) = CreateWithPages();
         try
@@ -281,7 +282,7 @@ public sealed class FluentResidual2DecorativeTests
             var layer = surface.ReaderView.DecorativeParticleLayer;
             Assert.NotNull(layer);
             Assert.False(layer.IsHitTestVisible); // never intercepts hits
-            Assert.True(area.Children.IndexOf(layer) < area.Children.IndexOf(pageSurface)); // beneath the page image
+            Assert.True(area.Children.IndexOf(layer) > area.Children.IndexOf(pageSurface)); // foreground edge particles
             Assert.True(pageSurface.IsVisible); // the page image itself stays visible
 
             clock.Advance(200); // mid-frame: at least one particle is visible
@@ -371,83 +372,129 @@ public sealed class FluentResidual2DecorativeTests
     [AvaloniaFact]
     public async Task Decor_Frames_Are_Captured_Only_When_Opted_In()
     {
-        var captureEnabled = string.Equals(
-            Environment.GetEnvironmentVariable("NEWMANGA_CAPTURE_RESIDUAL2_PNGS"), "1", StringComparison.OrdinalIgnoreCase);
-        var frames = new List<(string Name, byte[] Bytes)>();
+        using var scope = await Residual2Evidence.Create("light");
+        var clock = new ManualFluentMotionClock();
+        var surface = new FluentShellSurface(selection: FrontendSelector.Select("builtin.fluent", null),
+            host: Residual2Evidence.Host(), appearance: scope.Appearance, themeManager: scope.Manager) { MotionClock = clock };
+        var window = new Window { Width = 1280, Height = 900, Content = surface };
+        window.Show(); Dispatcher.UIThread.RunJobs();
+        try
+        {
+            Motion(surface, MotionMode.Full, MotionCategories.Decorative);
+            surface.Navigate(FluentPage.Reader);
+            await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            FluentResidual2VisualEvidenceTests.Settle();
+            await surface.ReaderViewModel.NavigateAsync(1);
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout(); clock.Advance(200);
+            using var withParticles = Residual2Evidence.Capture(window);
+            var layer = surface.ReaderView.DecorativeParticleLayer!;
+            Assert.NotNull(layer); layer.IsVisible = false;
+            using var withoutParticles = Residual2Evidence.Capture(window);
+            Assert.True(Residual2Evidence.ChangedPixels(withParticles, withoutParticles) >= 25, $"layer={layer.Bounds}; origin={layer.TranslatePoint(default, window)}; image={surface.ReaderView.PageImage.Bounds}; particles={string.Join(";", ((Avalonia.Controls.Canvas)layer.Child!).Children.Select(c => $"{c.Bounds}/{c.Opacity}/{c.RenderTransform}"))}");
+            // The only repository writer is the complete, atomic inventory capture test.
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void ShelfGradient_HiddenWindow_PausesAndShowingResumes()
+    {
         var (window, surface, clock) = Create();
         try
         {
-            Motion(surface, MotionMode.Full, MotionCategories.All);
-            surface.Navigate(FluentPage.Library);
-            Dispatcher.UIThread.RunJobs();
-            frames.Add(("decor--shelf-gradient--first--full--light.png", CaptureBytes(window)));
-            clock.Advance(4000);
-            frames.Add(("decor--shelf-gradient--mid--full--light.png", CaptureBytes(window)));
-            Motion(surface, MotionMode.Reduce, MotionCategories.All);
-            Dispatcher.UIThread.RunJobs();
-            frames.Add(("decor--shelf-gradient--static--reduce--light.png", CaptureBytes(window)));
+            Motion(surface); clock.Advance(1000);
+            var phase = surface.ShelfView.DecorativeLoop.Phase();
+            window.Hide(); Dispatcher.UIThread.RunJobs(); clock.Advance(2000);
+            Assert.False(surface.ShelfView.DecorativeLoop.IsRunning);
+            Assert.Equal(0, clock.PendingFrames);
+            Assert.Equal(phase, surface.ShelfView.DecorativeLoop.Phase(), 5);
+            window.Show(); Dispatcher.UIThread.RunJobs();
+            Assert.True(surface.ShelfView.DecorativeLoop.IsRunning);
         }
         finally { window.Close(); }
-
-        var (readerWindow, readerSurface, readerClock) = CreateWithPages();
+    }
+    [AvaloniaFact]
+    public async Task PageTurnParticles_ProductionClock_SamplesVisibleMidAndRemovedTail()
+    {
+        using var scope = await Residual2Evidence.Create("light");
+        var surface = new FluentShellSurface(selection: FrontendSelector.Select("builtin.fluent", null),
+            host: Residual2Evidence.Host(), themeManager: scope.Manager) { MotionClock = FluentRenderClock.Instance };
+        var window = new Window { Width = 1280, Height = 900, Content = surface };
         try
         {
-            Motion(readerSurface, MotionMode.Full, MotionCategories.All);
-            readerSurface.Navigate(FluentPage.Reader);
-            Dispatcher.UIThread.RunJobs();
-            await readerSurface.ReaderView.LoadAsync("book-1", "chapter-key");
-            await readerSurface.ReaderViewModel.NavigateAsync(1);
-            Dispatcher.UIThread.RunJobs();
-            Assert.NotNull(readerSurface.ReaderView.DecorativeParticleLayer);
-            readerClock.Advance(200);
-            frames.Add(("decor--page-turn-particles--mid--full--light.png", CaptureBytes(readerWindow)));
-            readerClock.Advance(300); // let the full-run layer finish before the reduce phase
-            Dispatcher.UIThread.RunJobs();
-
-            Motion(readerSurface, MotionMode.Reduce, MotionCategories.All);
-            await readerSurface.ReaderView.LoadAsync("book-1", "chapter-key");
-            await readerSurface.ReaderViewModel.NavigateAsync(1);
-            Dispatcher.UIThread.RunJobs();
-            Assert.Null(readerSurface.ReaderView.DecorativeParticleLayer);
-            frames.Add(("decor--page-turn-particles--none--reduce--light.png", CaptureBytes(readerWindow)));
+            window.Show(); Motion(surface, MotionMode.Full, MotionCategories.Decorative);
+            surface.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs(); await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            FluentResidual2VisualEvidenceTests.Settle();
+            await surface.ReaderViewModel.NavigateAsync(1); Dispatcher.UIThread.RunJobs();
+            Assert.NotNull(surface.ReaderView.DecorativeParticleLayer); // first
+            FluentResidual2VisualEvidenceTests.Settle(160);
+            var layer = surface.ReaderView.DecorativeParticleLayer;
+            Assert.NotNull(layer);
+            Assert.Contains(((Avalonia.Controls.Canvas)layer.Child!).Children, dot => dot.Opacity > .2); // mid
+            using var visible = Residual2Evidence.Capture(window);
+            layer.IsVisible = false;
+            using var control = Residual2Evidence.Capture(window);
+            Assert.True(Residual2Evidence.ChangedPixels(visible, control) >= 25);
+            layer.IsVisible = true;
+            FluentResidual2VisualEvidenceTests.Settle(300);
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer); // tail, production time > 400ms
         }
-        finally { readerWindow.Close(); }
-
-        Assert.Equal(5, frames.Count);
-        Assert.NotEqual(frames[0].Bytes, frames[1].Bytes); // first vs mid must really differ
-        Assert.NotEqual(frames[0].Bytes, frames[2].Bytes); // full vs reduce must differ
-        if (!captureEnabled)
-        {
-            return;
-        }
-
-        var repositoryRoot = RepositoryRoot();
-        var output = Path.Combine(repositoryRoot, "verification", "FEA-06-RESIDUAL-2", "visuals");
-        Directory.CreateDirectory(output);
-        Assert.DoesNotContain(Path.Combine("verification", "FEA-06", "screens"), output, StringComparison.OrdinalIgnoreCase);
-        foreach (var (name, bytes) in frames)
-        {
-            File.WriteAllBytes(Path.Combine(output, name), bytes);
-        }
+        finally { window.Close(); }
     }
 
-    private static byte[] CaptureBytes(Window window)
+    [AvaloniaFact]
+    public async Task TokenGradient_DetachUnsubscribes_AndReattachRefreshes()
     {
-        var frame = window.CaptureRenderedFrame() ?? throw new InvalidOperationException("frame capture failed");
-        using var stream = new MemoryStream();
-        frame.Save(stream);
-        return stream.ToArray();
+        using var scope = await Residual2Evidence.Create("light");
+        var surface = new FluentShellSurface(host: Residual2Evidence.Host(), themeManager: scope.Manager);
+        var window = new Window { Width = 1280, Height = 900, Content = surface };
+        try
+        {
+            window.Show(); Motion(surface, MotionMode.Reduce);
+            var brush = surface.ShelfView.DecorativeBrush;
+            var light = brush.GradientStops[0].Color;
+            surface.Navigate(FluentPage.Workbench); Dispatcher.UIThread.RunJobs();
+            Assert.True(scope.Manager.SetAppearance(NewManga.DesignSystem.Theming.AppearanceMode.Dark));
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(light, brush.GradientStops[0].Color); // detached layer receives no global resource notifications
+            surface.Navigate(FluentPage.Library); Dispatcher.UIThread.RunJobs();
+            Assert.NotEqual(light, brush.GradientStops[0].Color); // reattached layer refreshes and subscribes
+        }
+        finally { window.Close(); }
     }
 
-    private static string RepositoryRoot()
+    [AvaloniaFact]
+    public async Task PageTurnParticles_WindowDeactivated_PausesThenResumesRemainingTime()
     {
-        var cursor = new DirectoryInfo(AppContext.BaseDirectory);
-        while (cursor is not null && !File.Exists(Path.Combine(cursor.FullName, "doc", "tasks", "FEA-06-RESIDUAL-2.md")))
+        var (window, surface, clock) = CreateWithPages();
+        try
         {
-            cursor = cursor.Parent;
+            Motion(surface, MotionMode.Full, MotionCategories.Decorative);
+            surface.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs(); await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            await surface.ReaderViewModel.NavigateAsync(1); Dispatcher.UIThread.RunJobs();
+            clock.Advance(100);
+            var layer = surface.ReaderView.DecorativeParticleLayer!;
+            Assert.NotNull(layer);
+            typeof(WindowBase).GetMethod("HandleDeactivated", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!.Invoke(window, null);
+            clock.Advance(2000);
+            Assert.Same(layer, surface.ReaderView.DecorativeParticleLayer);
+            Assert.Equal(0, clock.PendingFrames);
+            window.Activate(); Dispatcher.UIThread.RunJobs();
+            clock.Advance(299); Assert.Same(layer, surface.ReaderView.DecorativeParticleLayer);
+            clock.Advance(1); Assert.Null(surface.ReaderView.DecorativeParticleLayer);
         }
+        finally { window.Close(); }
+    }
 
-        return cursor?.FullName ?? throw new DirectoryNotFoundException("repository root not found");
+    [Fact]
+    public void HasMotion_ReportsFiniteTransitions_WhileDecorativeHasItsOwnDiagnostic()
+    {
+        var resolution = new MotionResolver(new WindowsMotionPreferenceSource()).Resolve(AppearanceDefaults.Settings with
+        { MotionMode = MotionMode.Full, MotionCategories = MotionCategories.Decorative });
+        var profile = MotionTimings.Resolve(resolution.Settings);
+        Assert.True(profile.DecorativeEnabled);
+        Assert.False(profile.HasMotion);
+        Assert.Equal(8000, profile.DecorativeShelfGradientMilliseconds);
     }
 
 }
