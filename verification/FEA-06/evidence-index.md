@@ -1,7 +1,7 @@
 # FEA-06 Canonical Evidence Index
 
 - Base commit: `3c7f311d88b24bde462a61690e15d2c66f8c4683`.
-- Implementation head: `7cf305fe2534272dc75295c4644661ddb73221af` (recorded in `doc/tasks/FEA-06.md`).
+- Implementation head: `b26840acdf682d69cf531bec3161d17bf90cf9f4` (recorded in `doc/tasks/FEA-06.md`).
 - Original full regression: **1030 passed / 0 failed / 57 skipped**. After impl-r1 and impl-r2: **1034 passed / 0 failed / 57 skipped**. Skip cause remains missing `NEWMANGA_CORECLIENT_SIDECAR_DIR`; see `verification/FEA-06/skip-analysis.md`.
 - Headless page and navigation evidence is simulated; it does not establish native desktop visual behavior. See `verification/FEA-06/uiux/task-result.json` (`PARTIAL`).
 - Test suite changes: 12 added Fluent tests relative to the 1022/0/57 baseline (8 initial + 4 impl-r1 rework); impl-r2 extends an existing headless test without changing the count. No existing tests removed or skipped by this task.
