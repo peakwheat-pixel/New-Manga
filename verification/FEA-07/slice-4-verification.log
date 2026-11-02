@@ -1,0 +1,20 @@
+# FEA-07 slice-4 (window state memento + display topology + PerMonitorV2 evidence)
+# time: 2026-11-02 15:37:09 +08:00
+# head: d6b87a047cd20a888c2fe26db6014714f8dfb3b1
+# note: 原生双屏/拔屏/DPI 真机矩阵未执行（D-1 待硬件）；本切片为可机械验证的逻辑/清单/持久化部分
+# build: exit=0
+#   0 个警告
+#   0 个错误
+# presentation-tests: exit=0
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 286 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+# window+manifest-tests: exit=0
+#   已通过! - 失败:     0，通过:     7，已跳过:     0，总计:     7，持续时间: 636 ms - NewManga.App.Tests.dll (net9.0)
+# full-tests: exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 95 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 312 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 678 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 24 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   486，已跳过:     7，总计:   493，持续时间: 1 m 20 s - NewManga.App.Tests.dll (net9.0)

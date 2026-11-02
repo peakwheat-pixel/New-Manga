@@ -10,6 +10,7 @@ using NewManga.App.Shell.V2;
 using NewManga.Appearance;
 using NewManga.DesignSystem;
 using NewManga.Presentation.Avalonia.Hosting;
+using NewManga.Presentation.Avalonia.Windows;
 using NewManga.Presentation.Avalonia.Switching;
 
 namespace NewManga.App.Views.Presentation;
@@ -31,7 +32,8 @@ public sealed class PresentationWindow : Window
         IHostController? hostController,
         AppearanceCoordinator appearance,
         SwitchJournal journal,
-        Func<string, Control> contentFactory)
+        Func<string, Control> contentFactory,
+        WindowStateMemento? initialMemento = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(selection);
@@ -41,9 +43,13 @@ public sealed class PresentationWindow : Window
 
         _ = hostController; // content factory owns the Host wiring; the window never starts/disposes it
         Title = "New Manga";
-        Width = options.WindowWidth;
-        Height = options.WindowHeight;
+        Width = initialMemento?.Width ?? options.WindowWidth;
+        Height = initialMemento?.Height ?? options.WindowHeight;
         MinWidth = ShellLayout.BreakpointNarrow;
+        if (initialMemento is { } state)
+        {
+            Position = new PixelPoint(state.X, state.Y);
+        }
 
         ContentHost = new FrontendContentHost();
         ContentHost.SetContent(contentFactory(selection.EffectiveFrontendId));
@@ -64,6 +70,16 @@ public sealed class PresentationWindow : Window
 
     /// <summary>The frontend id currently hosted by this stable window.</summary>
     public string CurrentFrontendId => _coordinator.CurrentFrontendId;
+
+    /// <summary>Captures the current placement for the per-window memento (FEA-07 AC5).</summary>
+    public WindowStateMemento CaptureWindowState() => new(
+        Position.X,
+        Position.Y,
+        (int)Width,
+        (int)Height,
+        DisplayId: null,
+        Scale: RenderScaling,
+        IsMaximized: WindowState == WindowState.Maximized);
 
     /// <summary>Switches the hosted content tree; the window identity is preserved and failures roll back.</summary>
     public Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default) =>

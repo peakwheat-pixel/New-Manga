@@ -15,6 +15,7 @@ using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
 using NewManga.DesignSystem.Theming;
 using NewManga.Presentation.Avalonia.Switching;
+using NewManga.Presentation.Avalonia.Windows;
 using DsAppearanceMode = NewManga.DesignSystem.Theming.AppearanceMode;
 
 namespace NewManga.App;
@@ -221,7 +222,22 @@ public partial class App : Application
             return CreateV2Content(application, controller, options, themeManager, appearance, themeHome);
         }
 
-        return new PresentationWindow(options, selection, controller, appearance, journal, ContentFactory);
+        var stateStore = new WindowStateMementoStore(Path.Combine(directory, "window-state.json"));
+        var initialMemento = stateStore.TryLoad(out _);
+        var window = new PresentationWindow(options, selection, controller, appearance, journal, ContentFactory, initialMemento);
+        window.Closing += (_, _) =>
+        {
+            try
+            {
+                stateStore.Save(window.CaptureWindowState());
+            }
+            catch (IOException)
+            {
+                // Placement persistence is best-effort and never blocks closing the window.
+            }
+        };
+
+        return window;
     }
 
     /// <summary>FEA-06-PREREQ-2 P5: Theme Studio production wiring (never blocks the shell on failure).</summary>

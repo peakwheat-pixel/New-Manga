@@ -145,4 +145,27 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.IsType<Border>(window.ContentHost.Current);
         Assert.False(File.Exists(_journal.FilePath));
     }
+
+    [AvaloniaFact]
+    public void WindowStateMemento_IsRestoredOnConstructionAndCaptured()
+    {
+        var memento = new NewManga.Presentation.Avalonia.Windows.WindowStateMemento(
+            X: 10, Y: 20, Width: 1300, Height: 820, DisplayId: null, Scale: 1.0, IsMaximized: false);
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id => Content(id, "hosted"),
+            memento);
+
+        Assert.Equal(1300, window.Width);
+        Assert.Equal(820, window.Height);
+        var captured = window.CaptureWindowState();
+        Assert.Equal(1300, captured.Width);
+        Assert.Equal(820, captured.Height);
+        Assert.True(captured.Scale > 0);
+        window.Close();
+    }
 }

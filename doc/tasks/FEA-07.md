@@ -133,6 +133,16 @@ allowed_paths:
 - 证据：`verification/FEA-07/slice-3-verification.log`（build 0/0；startup 9/0；全量 **1083/0/57**）。
 - 下一批：切片 4 双屏/拔屏/DPI memento + PerMonitorV2 + 原生矩阵；切片 5 性能 baseline/全量证据/独立复核。
 
+## 实施记录（切片 4，2026-11-02，owner=DSH）
+
+- **窗口状态 memento**：`Presentation.Avalonia/Windows/WindowStateMemento.cs`——`WindowStateMemento{X,Y,Width,Height,DisplayId,Scale,IsMaximized}` + `WindowStateMementoStore`（原子写、损坏容忍，落 theme-home `window-state.json`）；`PresentationWindow` 支持构造时恢复 + `CaptureWindowState()`；`App.CreatePresentationShell` 接线（启动恢复、Closing 时 best-effort 保存）。
+- **显示拓扑规划**：`Presentation.Avalonia/Windows/DisplayTopology.cs`——`DisplayInfo` / `SecondaryWindowDisposition{KeepOnDisplay,MoveToPrimary,ReturnContentToMainWindow}` / `DisplayTopologyPlanner.Clamp/Plan`：窗口永不恢复屏外（clamp 进目标屏/主屏）、混合 DPI 保留各窗口自身 scale、拔屏时第二窗口内容回主窗且未保存编辑 fail-closed 留在主缓冲（`RetainUnsavedEditsInMainBuffer`）。
+- **PerMonitorV2 证据**：`app.manifest` 已含 `dpiAware=true/pm` + `dpiAwareness=PerMonitorV2`；新增 `DpiManifestTests` 机械断言，防止回退。
+- 测试：`WindowStateMementoTests` 3 例、`DisplayTopologyPlannerTests` 7 例、`DpiManifestTests` 1 例、`PresentationWindowTests` +1（memento 恢复/捕获），全绿。
+- 证据：`verification/FEA-07/slice-4-verification.log`（build 0/0；presentation 38/0；全量 **1095/0/57**）。
+- **原生矩阵状态**：真机双屏/拔屏/DPI 100/125/150/200% 验收未执行——按 D-1 登记为 blocked（待硬件），不伪造证据；逻辑/清单/持久化部分已覆盖。
+- 下一批：切片 5 性能 baseline（p50/p95/冻结时长/内存句柄，W-5 门槛）+ 全量证据 → 独立 impl review → 集成验证。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -187,6 +197,7 @@ allowed_paths:
 | EV-FEA07-SLICE2C1 | AC1/AC2/AC8 | `verification/FEA-07/slice-2c-part1-verification.log` | `-` | `d835a23daf53d64d90fbe026f3307570b74df6778a7f1c50f61e60cfe63ee7f1` | CANONICAL |
 | EV-FEA07-SLICE2C2 | AC1/AC4/AC8 | `verification/FEA-07/slice-2c-part2-verification.log` | `-` | `7b848ca1a773e82e0b1faa1ee3e1a7f2d54f8ca49f2e0b3faaa80702ecb75973` | CANONICAL |
 | EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
+| EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
 
 ## Closeout Record
 

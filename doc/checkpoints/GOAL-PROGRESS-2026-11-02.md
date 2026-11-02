@@ -336,3 +336,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **启动矩阵**：`SafeStartupPlannerTests` 8 例 + `StartupCompatibilityMatrixTests` 1 例（默认 V2/CLI fluent/持久化 fluent/未知与视觉主题 fallback/legacy 优先/presentation-host/legacy 优先于 presentation-host）。
 - 证据 `verification/FEA-07/slice-3-verification.log`；build 0/0；全量 **1083/0/57**。
 - **下一批**：切片 4 双屏/拔屏/DPI memento + PerMonitorV2 + 原生矩阵；切片 5 性能 baseline/全量证据/独立复核。
+## 46. FEA-07 实施切片 4（窗口状态 memento + 显示拓扑 + PerMonitorV2，2026-11-02）
+
+- **窗口状态 memento**：`WindowStateMemento` + `WindowStateMementoStore`（原子写/损坏容忍，theme-home `window-state.json`）；`PresentationWindow` 构造恢复 + `CaptureWindowState()`；`App.CreatePresentationShell` 启动恢复/Closing 保存。
+- **显示拓扑规划**：`DisplayTopologyPlanner.Clamp/Plan`——永不屏外、混合 DPI 各窗口保留自身 scale、拔屏 → `ReturnContentToMainWindow` + 未保存编辑 `RetainUnsavedEditsInMainBuffer`（fail-closed 留主窗缓冲）。
+- **PerMonitorV2**：`app.manifest` 已声明 `true/pm` + `PerMonitorV2`，新增 `DpiManifestTests` 防回退。
+- 测试：`WindowStateMementoTests` 3、`DisplayTopologyPlannerTests` 7、`DpiManifestTests` 1、`PresentationWindowTests` +1；证据 `verification/FEA-07/slice-4-verification.log`；build 0/0；全量 **1095/0/57**。
+- **原生矩阵 blocked（D-1）**：真机双屏/拔屏/DPI 100/125/150/200% 未执行；不伪造证据，待硬件或用户降级裁决。
+- **下一批**：切片 5 性能 baseline（W-5 门槛）+ 全量证据 → fresh Codex CLI 独立 impl review → DSH 集成验证。
