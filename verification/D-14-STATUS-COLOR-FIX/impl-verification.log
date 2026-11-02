@@ -1,12 +1,17 @@
-# D-14-STATUS-COLOR-FIX 实施证据（2026-11-03 07:42）
+# D-14-STATUS-COLOR-FIX 实施证据（完整格式，2026-11-03 07:55 补正）
 
-- 裁决依据：`doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`（Codex 裁决 A）。
-- 实施者：DSH（D-7：Codex 限额至 10:25、ZCode retry ≈08:05；独立 impl Review 待窗口）。
-- 变更：`NewManga.DesignSystem/Controls/Status.cs` —— `StatusCatalog.ColorKey(StatusKind.NotStarted)` = `NmKeys.Color.Text.Secondary` + XML 注释；新增 `D14StatusNotStartedTests`（catalog 映射 + light/dark × Bg.Canvas/Bg.Panel 对比度 ≥4.5:1）。
+- shell: pwsh 7 / Windows 11；SDK: .NET 9（dotnet --version 9.x）；host: G:\CODEX\New Manga；base: 83210339336097826eb6161a680ef729a6d2dc1b；head: 5ecc1e4c6e1b99a9b53ad0d9bcd11d7489ee36e2（实现）；reviewed_head: b2c41226d。
+- 实施者：DSH（D-7：Codex 限额至 10:25、ZCode retry ≈08:05；独立 Review 待）。
+- 变更：StatusCatalog.ColorKey(NotStarted)：NmKeys.Color.Text.Disabled → NmKeys.Color.Text.Secondary；XML 注释同步（Status.cs:75/85）；新增 D14StatusNotStartedTests。
 - 命令与 EXIT：
   - `dotnet build apps\desktop-avalonia\NewManga.sln --nologo` → 0 warning / 0 error / EXIT=0
-  - `dotnet test ... --filter FullyQualifiedName~D14StatusNotStartedTests` → **3/3 PASS** / EXIT=0
-  - 无过滤全量：**1292 passed / 0 failed / 57 skipped**（DS 117 = 114+3；App 653；其余程序集不变）/ EXIT=0
-  - `check.ps1` PASS(3)；`verify_pins.ps1` 15/15 PASS。
-- 其余映射/样式/令牌未改；旧 FEA-06 四 PNG 未动；未 push。
-- 待办：独立 impl Review（不得由本实施会话自审）→ DSH 集成验证 → 关闭。
+  - `dotnet test apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --filter FullyQualifiedName~D14StatusNotStartedTests` → 3/3 PASS / EXIT=0
+  - `dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings`（无过滤）→ **1292 passed / 0 failed / 57 skipped** / EXIT=0
+  - `pwsh -NoProfile -File tools\governance\check.ps1` → PASS(3 warnings) / EXIT=0
+  - `pwsh -NoProfile -File tools\governance\verify_pins.ps1` → PASS 15/15 / EXIT=0
+- 逐程序集（无过滤）：Appearance 21 / Presentation 38 / Host 51(+28 skip) / ThemeEngine 253 / DesignSystem **117**（含 D-14 3 项）/ ApplicationCore 31 / CoreClient 128(+22 skip) / App 653(+7 skip) = **1292 passed / 0 failed / 57 skipped**（总数 1349）。
+- skip 明细：Host 28 + CoreClient 22 + App 7 = 57（xUnit 环境 skip，非本卡新增）；无过滤运行未排除任何用例。
+- 差值：base 1289/0/57 → 本卡 **+3（1292）**；旧 FEA-06 四 PNG SHA 未变；默认运行零仓库写入。
+- **修前判别力 artefact：NOT_RUN**（实现提交前未保留旧代码失败快照；按 ADJ 记录为 NOT_RUN，不以推断冒充）。
+- 复现命令：`dotnet test ... --filter FullyQualifiedName~D14StatusNotStartedTests`。
+- 未 push。
