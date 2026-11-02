@@ -275,6 +275,12 @@
   <Style Selector="Button.fluent-secondary:pressed">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
   </Style>
+  <Style Selector="Button.fluent-secondary.selected">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Sm}" />
+  </Style>
   <Style Selector="Button.fluent-secondary:disabled">
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Disabled}" />
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />

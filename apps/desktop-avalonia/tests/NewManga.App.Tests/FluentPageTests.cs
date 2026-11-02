@@ -1,8 +1,10 @@
 using Avalonia.Automation;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.CoreClient;
@@ -40,9 +42,47 @@ public sealed class FluentPageTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(FluentPageState.Empty, shell.WorkbenchViewModel.State);
-        Assert.IsType<WorkbenchPageView>(shell.FindControl<ContentControl>("FluentPageHost")!.Content);
-        Assert.NotNull(Assert.IsType<WorkbenchPageView>(shell.FindControl<ContentControl>("FluentPageHost")!.Content).RegionCanvas);
+        var workbench = Assert.IsType<WorkbenchPageView>(shell.FindControl<ContentControl>("FluentPageHost")!.Content);
+        Assert.NotNull(workbench.RegionCanvas);
+        AssertWorkbenchTabSelection(workbench, 0);
+
+        workbench.ViewTabs.Children[1].RaiseEvent(
+            new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(WorkbenchViewTab.Batch, workbench.ActiveTab);
+        AssertWorkbenchTabSelection(workbench, 1);
+
+        workbench.ViewTabs.Children[2].RaiseEvent(
+            new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(WorkbenchViewTab.Console, workbench.ActiveTab);
+        AssertWorkbenchTabSelection(workbench, 2);
         shell.Close();
+    }
+
+    private static void AssertWorkbenchTabSelection(WorkbenchPageView workbench, int selectedIndex)
+    {
+        var tabs = workbench.ViewTabs.Children.OfType<Button>().ToArray();
+        Assert.Equal(3, tabs.Length);
+        for (var index = 0; index < tabs.Length; index++)
+        {
+            Assert.Equal(index == selectedIndex, tabs[index].Classes.Contains("selected"));
+        }
+
+        Assert.Equal(TokenColor("Nm.Color.Accent.Muted"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(tabs[selectedIndex].Background).Color);
+        Assert.Equal(TokenColor("Nm.Color.Text.Primary"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(tabs[selectedIndex].Foreground).Color);
+        Assert.Equal(TokenColor("Nm.Color.Accent.Base"),
+            Assert.IsAssignableFrom<ISolidColorBrush>(tabs[selectedIndex].BorderBrush).Color);
+        Assert.True(Avalonia.Application.Current!.TryGetResource("Nm.Corner.Fluent.Sm", null, out var radius));
+        Assert.Equal(Assert.IsType<CornerRadius>(radius), tabs[selectedIndex].CornerRadius);
+    }
+
+    private static Color TokenColor(string key)
+    {
+        Assert.True(Avalonia.Application.Current!.TryGetResource(key, null, out var value), key);
+        return Assert.IsAssignableFrom<ISolidColorBrush>(value).Color;
     }
 
     [AvaloniaFact]

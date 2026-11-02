@@ -2,14 +2,14 @@
 
 - Base commit: `3c7f311d88b24bde462a61690e15d2c66f8c4683`.
 - Implementation head: `7cf305fe2534272dc75295c4644661ddb73221af` (recorded in `doc/tasks/FEA-06.md`).
-- Original full regression: **1030 passed / 0 failed / 57 skipped**. After impl-r1 rework: **1034 passed / 0 failed / 57 skipped**. Skip cause remains missing `NEWMANGA_CORECLIENT_SIDECAR_DIR`; see `verification/FEA-06/skip-analysis.md`.
+- Original full regression: **1030 passed / 0 failed / 57 skipped**. After impl-r1 and impl-r2: **1034 passed / 0 failed / 57 skipped**. Skip cause remains missing `NEWMANGA_CORECLIENT_SIDECAR_DIR`; see `verification/FEA-06/skip-analysis.md`.
 - Headless page and navigation evidence is simulated; it does not establish native desktop visual behavior. See `verification/FEA-06/uiux/task-result.json` (`PARTIAL`).
-- Test suite changes: 12 added Fluent tests relative to the 1022/0/57 baseline (8 initial + 4 rework); no existing tests removed or skipped by this task.
+- Test suite changes: 12 added Fluent tests relative to the 1022/0/57 baseline (8 initial + 4 impl-r1 rework); impl-r2 extends an existing headless test without changing the count. No existing tests removed or skipped by this task.
 
 | Evidence path | Bytes | SHA-256 |
 |---|---:|---|
 | `verification/FEA-06/build.log` | 2593 | `a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0` |
-| `verification/FEA-06/component-registry.md` | 6949 | `ca3680a3b79ff347233ade761ef60427b9685947024cca42a713b1cfb0787e0c` |
+| `verification/FEA-06/component-registry.md` | 7355 | `5dd20bf012c3863bca5700febd896357ec2fe136cc44fcd7ed2e131bcfe58324` |
 | `verification/FEA-06/design-system-component-tests.log` | 652 | `5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838` |
 | `verification/FEA-06/full-test.log` | 17432 | `be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21` |
 | `verification/FEA-06/governance-check.log` | 479 | `1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f` |
@@ -18,7 +18,7 @@
 | `verification/FEA-06/screens/reader.png` | 26733 | `8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2` |
 | `verification/FEA-06/screens/settings.png` | 54085 | `fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162` |
 | `verification/FEA-06/screens/shelf.png` | 32737 | `307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a` |
-| `verification/FEA-06/screens/workbench.png` | 28303 | `d709a3238af9d3acc4aa529e5f26a8eb8c93f1f07c0128dfbabdc3e05ae37bac` |
+| `verification/FEA-06/screens/workbench.png` | 28724 | `d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5` |
 | `verification/FEA-06/skip-analysis.md` | 725 | `acaf68b7b12ed9347a97e6aad6193d2411c6bb47f80e63e3c483fb2dc91d692a` |
 | `verification/FEA-06/theme-gen.log` | 1256 | `ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e` |
 | `verification/FEA-06/token-gen.log` | 392 | `0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977` |
@@ -46,3 +46,18 @@
 | `verification/FEA-06/rework-theme-gen.log` | 1256 | `169b9fe70e730c0503ab12d4ee4a7f51684318d52aa23b2ab0ba3e1c10b024ee` |
 | `verification/FEA-06/rework-token-gen.log` | 392 | `90b91fbde2c349ee51bb31fc0c68cf71ac63243f66dc19654a0f9b854df50753` |
 | `verification/FEA-06/rework-verify-pins.log` | 426 | `d521d266606edec817ac419e0252fca4aeca39c1b06463bf87d1411e49929e05` |
+
+## impl-r2 P2-R2-1 evidence
+
+| Evidence path | Bytes | SHA-256 |
+|---|---:|---|
+| `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml` | 21398 | `02a4a2cf851b82f39d16094a2a266214e3477877d4dbfb2143342175d3982c96` |
+| `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | 12708 | `5c7fa89521418fbf518086e050f86f635f4e4f89bc498948fa32bc403bd1be72` |
+| `verification/FEA-06/component-registry.md` | 7355 | `5dd20bf012c3863bca5700febd896357ec2fe136cc44fcd7ed2e131bcfe58324` |
+| `verification/FEA-06/impl-r2-build.log` | 2586 | `30dc4310c5eb364b88678c5e65b69a0eecd8a65fa4ab8cee7e17beed2ea685cf` |
+| `verification/FEA-06/impl-r2-check.log` | 472 | `437e103611d48b529cbfe3047c81a6a9299318294e44d2bcb9a69a6c295ed2a5` |
+| `verification/FEA-06/impl-r2-fluent-tab-test-attempt1.log` | 1540 | `42932aabd87e116796678110570af9586933ee97e0235bdbf2ebb8e63d917ff8` |
+| `verification/FEA-06/impl-r2-fluent-tab-test.log` | 1708 | `a7b451dd0872d893fe0f961d311cbb4282869d653a54a5c3c4f1aafe707e8b53` |
+| `verification/FEA-06/impl-r2-full-test.log` | 17425 | `cce2834512d194b979464f71a9e1dbbf7724d0ecaab736c6105d6da00012e61a` |
+| `verification/FEA-06/impl-r2-verify-pins.log` | 419 | `fe89637581edf5203f39d2e6bda7a240b69724e5f88c877016f74a93c7743930` |
+| `verification/FEA-06/screens/workbench.png` | 28724 | `d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5` |

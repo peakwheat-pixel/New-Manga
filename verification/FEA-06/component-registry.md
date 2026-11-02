@@ -25,7 +25,7 @@
 | DangerButton | Shelf / Workbench / Settings | `Nm.Color.Bg.Raised`、`Nm.Color.Status.Failed/Muted.Failed`、`Nm.Color.Bg.App`、`Nm.Color.Text.Disabled`、`Nm.Opacity.Disabled`、`Nm.Border.Hairline`、`Nm.Corner.Fluent.Sm`、`Nm.Padding.Control`、`Nm.Size.ControlHeight` | normal/hover/pressed/disabled | `FluentPageTests` + `DesignRulesTests` |
 | IconButton | 四页 | `Nm.Color.Bg.Raised`、`Nm.Color.Line.Subtle`、`Nm.Color.Accent.Muted/Base`、`Nm.Border.Hairline`、`Nm.Corner.Fluent.Sm`、`Nm.Padding.Icon`、`Nm.Size.ControlHeight` | normal/hover/pressed/disabled；图标复用 `NmIcon` | `FluentPageTests` + `DesignRulesTests` |
 | SearchField | Shelf / Settings | 复用 DesignSystem `SearchField`；文本/边框/焦点取既有 `Nm.*` 输入令牌 | 默认、聚焦、输入和清空；复用而不复制 | `FluentPageTests`；全量设计规则 |
-| TabStrip | Workbench | `Nm.Space.2`（条间距）；选中态使用 `Nm.Color.Accent.*` | 已接入页面/批量/控制台三视图；hover/键盘切换未覆盖 | `FluentPageTests`；`FluentComponentsTests`（类标识） |
+| TabStrip | Workbench | `Nm.Space.2`；次级按钮基础/hover/pressed/disabled 依赖 `Nm.Color.Bg.Raised/Overlay`、`Nm.Color.Line.Default`、`Nm.Color.Text.Primary/Disabled`、`Nm.Color.Accent.Muted/Base`、`Nm.Border.Hairline`、`Nm.Corner.Fluent.Sm`、`Nm.Padding.Control`、`Nm.Size.ControlHeight`、`Nm.Opacity.Disabled` | 已接入页面/批量/控制台三视图；`Button.fluent-secondary.selected` 实际应用 Accent.Muted 背景、Accent.Base 边框、Text.Primary 前景和 Fluent.Sm 圆角；切换时恰有一个 Tab 选中；hover/键盘切换未覆盖 | `FluentPageTests`（状态 class 与令牌视觉属性） |
 | SegmentedControl | Shelf | 复用 DesignSystem `SegmentedControl`；背景/边框/选中态取既有 `Nm.*` 输入令牌 | 已接入书架网格/列表切换；选中/未选；headless 树含两个选项 | `FluentPageTests`；`FluentComponentsTests` |
 
 ## 页面支撑组件
