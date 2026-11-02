@@ -7,7 +7,7 @@ status: ready
 approval: scope_review_r2_changes_requested_2026-11-02_scope_v3_pending_scope_r3
 suggested_owner: codex
 owner: codex
-reviewer: codex-cli（scope-r2 changes_requested，P0=0/P1=3/P2=3，已处置为范围 v3；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md；当前 Appointment：scope-r3 待派）
+reviewer: codex-cli（scope-r2 changes_requested，P0=0/P1=3/P2=3，已处置为范围 v3；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md；当前 Appointment：**scope-r3 = ZCode CLI**（Codex 额度用尽，按用户 2026-11-02 故障转移裁决；headless plan 只读），复核进行中）
 depends_on:
   - FEA-06
   - FEA-07
@@ -135,7 +135,7 @@ allowed_paths:
 
 ## Review Appointment
 
-- **scope-r3**：fresh Codex CLI 只读，被审文档 head = 范围 v3 提交；只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md`。P0/P1=0 后 DSH 冻结范围 v3 并释放实施。
+- **scope-r3**：**ZCode CLI**（Codex CLI 额度用尽，按用户 2026-11-02 故障转移裁决；headless `--mode plan` 只读，报告由 DSH 原样落盘为 `doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md`）。P0/P1=0 后 DSH 冻结范围 v3 并释放实施。
 - **impl-r1**：实现完成后 fresh Codex CLI 只读全量复核（只写 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md`）；DSH 处置后集成验证 → done/closed_with_limitations。
 - 作者（Codex 实现会话）不得自审；DSH 不审自己实现。
 

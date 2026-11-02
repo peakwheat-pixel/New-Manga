@@ -550,3 +550,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **R2-005（P2）治理指针**：Plan 依赖列改为 FEA-06/FEA-07（FEA-09/10/11/12/13 仅为 BLOCKED 承接方），STATUS/Plan 指向 scope-r3；Manifest 补全八类当前状态。
 - **R2-006（P2）组件断言**：I-4 先冻结组件×适用状态表，断言有效属性/命令零触发/浮层焦点，无法 headless 验证的格标 NOT_RUN，不以字符串选择器存在计 PASS。
 - **下一步**：scope-r3 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md`）；P0/P1=0 后 DSH 冻结范围 v3，按 W-10 派 Codex 实施 Batch A → Batch B。
+## 78. Codex CLI 额度耗尽 → ZCode 故障转移（2026-11-02）
+
+- **待裁决 D-6（已按用户规则直接执行，不需用户拍板）**：Codex CLI 于 2026-11-02 22:01 (+08:00) 返回 usage limit（提示 2026-11-03 00:23 恢复），scope-r3 复核中断、未写报告（`doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md` 不存在），仓库无漂移。
+- **处置**：按用户 2026-11-02 规则「Codex 无额度或不可用时转给其他可用 agent，故障转移候选仅 ZCode」：scope-r3 改由 **ZCode CLI headless（`--mode plan` 只读）**执行，报告由 DSH 原样落盘并标注来源；任务卡 Appointment 已同步。
+- **影响**：Codex 恢复前（预计 2026-11-03 00:23 后）的复核/审查任务全部走 ZCode；FEA-06-RESIDUAL-1 实现 owner 仍登记 codex，若届时额度未恢复，按同一规则故障转移 ZCode 实施并在 Task 卡/证据标注。
+- **回退**：Codex 恢复后，后续轮次恢复 Codex 派发；历史报告中来源字节不改。
+- **当前状态**：FEA-06-RESIDUAL-1 范围 v3 已固定（scope-r1/r2 处置完毕），scope-r3（ZCode）复核进行中；FEA-07 已 closed_with_limitations（integration `aedc7251c`）。
