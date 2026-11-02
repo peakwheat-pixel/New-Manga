@@ -3,19 +3,19 @@ id: FEA-07
 title: 运行期切换与窗口（双 UI 切换、WindowBroker、switch journal、安全启动）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_scope_review_r2（scope-r1 changes_requested 处置后）
+status: ready
+approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
-owner: null
+owner: dsh
 reviewer: null
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-04
   - FEA-05-PORT-1
   - FEA-06
-base_commit: 682fe17ae94ddce5740aa0a2a4a74bde19057024
-branch: null
-worktree: null
+base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
+branch: main
+worktree: G:\CODEX\New Manga
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -113,6 +113,7 @@ allowed_paths:
 | W-7 | 方案旧 owner 行 | 方案 §12.1 的「ZCode」owner 行 **superseded**（用户 2026-11-02 指派与通道现状）；不得据旧行重新分配 | 用户裁决；scope-r1 P2-2 |
 | W-8 | Task 元数据收敛 | 置 ready 时：`base_commit` 刷新冻结 head；`owner: dsh`、`branch: main`、`worktree: G:\CODEX\New Manga`；STATUS rolling checkpoint 刷新为 `GOAL-PROGRESS-2026-11-02` | scope-r1 P2-2 |
 | W-9 | 隔离测试根 | 单测/故障注入所有 data/theme/journal 路径注入临时根；断言不写真实 `%APPDATA%`；原生验收同样用隔离根 | scope-r1 P1-4 |
+| W-10 | App 目录 glob 保留理由（处置 scope-r2 P2-1） | `allowed_paths` 保留 `App/Views/**`、`ViewModels/**`、`Shell/**`、`Services/**`、`Controls/**`、`Styles/**`，理由：稳定主窗 + 内容树替换需要跨这些目录做最小装配（窗口壳/内容宿主/切换编排/状态映射），且 AC1–AC7 的回归测试依赖既有页面结构。**使用限制**：只做「稳定窗口/内容树接线 + switch journal/window broker/exit 协调」所需的最小改动；禁止借这些 glob 改视觉设计、重写页面业务、改 Current V2 行为或绕开 `AppearanceCoordinator` 唯一写者；超出必要文件即停等 DSH 裁决。该 P2 为非阻塞残余（scope-r2 已记录） | scope-r2 P2-1；W-1 |
 
 ## 测试要求
 

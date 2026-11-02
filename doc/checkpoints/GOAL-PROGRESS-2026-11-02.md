@@ -286,3 +286,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **结论**：changes_requested，P0=0 / P1=6 / P2=2。P1：新模块无法接入 App（缺 App.csproj 写域）、A03/§15.5 回滚验收不足、A08/H2 双屏/DPI 不全、隔离/启动矩阵缺失、W-6 无机械门禁、W-5 门槛未冻结。报告：`doc/reviews/FEA-07-scope-r1.md`。
 - **处置**：补 `NewManga.App.csproj` 写域；AC1/AC3 增 DB/current/pinned/Lock/源/candidate 零变化 + §15.5 阶段注入/commit 判据/完整 rollback；AC5 补 100/125/150/200% DPI、拔屏 fail-closed 回主窗、单一写入 owner、PerMonitorV2；AC7 增启动兼容矩阵 + project-reference graph 检查；W-5 **冻结 p95 ≤1000ms**；AR8 隔离根；按 P2-1 收紧写域（移除 Directory.Build.props/Appearance/DesignSystem/Appearance.Tests）；W-3 **owner=DSH**（Codex 仅审不实现）；STATUS rolling checkpoint 已刷新为 GOAL-PROGRESS。
 - **下一步**：派 **scope-r2**（独立 fresh Codex CLI 会话，被审 = 本处置 commit）→ P0/P1=0 后按 W-8 刷新元数据置 ready → DSH 实施 FEA-07 → Codex 独立 impl review → DSH 集成验证。
+## 39. FEA-07 scope-r2 approved → ready（owner=DSH，2026-11-02）
+
+- **scope-r2**（Codex CLI 独立 fresh 会话，被审 `cbfb7bbc9`）：**approved，P0=0 / P1=0 / P2=1**。r1 六项 P1 全部闭环（App.csproj 写域、A03/§15.5 回滚断言、A08/H2 双屏与 DPI、隔离/启动矩阵、project-reference 机械门禁、W-5 门槛冻结 p95≤1000ms）；无新 P0/P1。P2-1（App 目录 glob 未完全收窄）由 DSH 以 **W-10** 逐项记录保留理由与使用限制（非阻塞残余）。报告：`doc/reviews/FEA-07-scope-r2.md`。
+- **置 ready（W-8）**：`status: ready`、`approval: scope_review_r2_approved_2026-11-02`、`owner: dsh`、`branch: main`、`worktree: G:\CODEX\New Manga`、`base_commit: cbfb7bbc9`（冻结 head）；STATUS/PLAN/READY/LEDGER 同步（READY=FEA-07）。
+- **实施分工**：FEA-07 owner=**DSH**（Codex 承担 scope/impl 独立复核，不实现）；实现后由 Codex CLI fresh session 做独立 impl review，DSH 集成验证。原生双屏/DPI 验收（AC5）需真机矩阵，若本机无对应硬件将按 residual/blocked 登记，不伪造证据。
+- **下一步**：DSH 开始 FEA-07 实施（切片：①Presentation.Avalonia 模块 + switch journal/window broker/exit 协调；②稳定主窗 + 内容树切换接线；③safe startup/启动矩阵；④双屏 DPI memento + 测试/证据；⑤全量回归 + 独立复核）。

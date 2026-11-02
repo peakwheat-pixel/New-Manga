@@ -18,7 +18,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**proposed**（双 UI 运行期切换/窗口/switch journal/安全启动；FEA-06 done，待范围冻结）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**ready**（双 UI 运行期切换/窗口/switch journal/安全启动；owner=DSH；scope-r2 approved；base `cbfb7bbc9`）|
 |FEA-06-RESIDUAL-1|FEA-06、FEA-07、FEA-09/10/11/12/13|**proposed**（Fluent 四页 AC1–AC7 residual；按端口就绪分批释放，不阻塞 FEA-07）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
@@ -33,10 +33,10 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-07
 
 
-当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**，集成 `92cac5ab1`）→ FEA-06（**done**，集成 `b26840acd`，1034/0/57）→ FEA-07（**proposed**，待范围冻结）；FEA-06-RESIDUAL-1（**proposed**，待端口）
+当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，集成 `b26840acd`，1034/0/57）→ FEA-07（**ready**，owner=DSH，实施中）；FEA-06-RESIDUAL-1（**proposed**，待端口）
 
 ## 历史快照（终态节点，非当前 DAG）
 
