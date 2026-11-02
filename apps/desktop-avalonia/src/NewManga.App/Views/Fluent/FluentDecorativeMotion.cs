@@ -134,6 +134,7 @@ internal sealed class FluentDecorativeLoop
             _window = TopLevel.GetTopLevel(_target) as Window;
             if (_window is not null)
             {
+                _windowDeactivated = !_window.IsActive;
                 // 02-motion §4: long decorative loops pause while the window is deactivated/hidden and
                 // continue from the same phase on activation.
                 _window.Activated += OnWindowActivated;
@@ -181,7 +182,7 @@ internal sealed class FluentDecorativeLoop
         _window.Deactivated -= OnWindowDeactivated;
         _window.PropertyChanged -= OnWindowPropertyChanged;
         _window = null;
-        _windowDeactivated = false;
+        // Reattachment reads IsActive from the actual window; unsubscription is not activation.
     }
 }
 
@@ -193,18 +194,18 @@ internal sealed class FluentDecorativeLoop
 internal static class FluentPageTurnDecor
 {
     /// <summary>Plays one page-turn particle run in <paramref name="area"/>; no-op when disabled.</summary>
-    public static void Play(IFluentMotionClock clock, double milliseconds, Grid area)
+    public static Action? Play(IFluentMotionClock clock, double milliseconds, Grid area)
     {
         if (milliseconds <= 0)
         {
-            return; // IN-1.2: reduce / auto(system-off) / category-off creates no particle layer.
+            return null; // IN-1.2: reduce / auto(system-off) / category-off creates no particle layer.
         }
 
         if (!area.IsAttachedToVisualTree())
         {
             // Decorations belong to the visible reader; a cached/detached page never spawns them
             // (its finite animation would finish immediately and leak nothing).
-            return;
+            return null;
         }
 
         // A newer turn supersedes an in-flight one instead of stacking layers. The old layer's
@@ -222,6 +223,8 @@ internal static class FluentPageTurnDecor
         area.Children.Add(layer); // foreground: the opaque page surface must not hide the particles.
         var detached = false;
         var window = TopLevel.GetTopLevel(area) as Window;
+        var windowDeactivated = window is not null && !window.IsActive;
+        var cancelled = false;
         var animation = new FluentFrameAnimation(layer);
         var progressAtPause = 0d;
         var startProgress = 0d;
@@ -234,10 +237,19 @@ internal static class FluentPageTurnDecor
             window.Deactivated -= OnDeactivated;
             window.PropertyChanged -= OnWindowChanged;
         }
-        layer.DetachedFromVisualTree += (_, _) => { detached = true; Unsubscribe(); RemoveFromHost(); };
+        layer.DetachedFromVisualTree += (_, _) => { detached = true; Cancel(); };
+        void Cancel()
+        {
+            if (cancelled) return;
+            cancelled = true;
+            running = false;
+            animation.Cancel();
+            Unsubscribe();
+            RemoveFromHost();
+        }
         void RemoveFromHost()
         {
-            if (detached)
+            if (detached || !layer.IsAttachedToVisualTree())
             {
                 // Detaching (page navigated away or layer superseded): removing synchronously here
                 // would re-enter the visual-tree change that raised this completion.
@@ -259,13 +271,13 @@ internal static class FluentPageTurnDecor
 
         void Resume()
         {
-            if (running || detached || window?.IsVisible == false) return;
+            if (running || cancelled || detached || windowDeactivated || window?.IsVisible == false) return;
             running = true;
             startProgress = progressAtPause;
             startedAt = clock.Now;
             animation.Run(clock, milliseconds * (1 - startProgress),
                 progress => Update(layer, startProgress + (1 - startProgress) * progress),
-                () => { running = false; Unsubscribe(); RemoveFromHost(); });
+                Cancel);
         }
         void Pause()
         {
@@ -273,8 +285,8 @@ internal static class FluentPageTurnDecor
             progressAtPause = Math.Clamp(startProgress + (clock.Now - startedAt).TotalMilliseconds / milliseconds, 0, 1);
             animation.Cancel(); running = false;
         }
-        void OnActivated(object? sender, EventArgs args) => Resume();
-        void OnDeactivated(object? sender, EventArgs args) => Pause();
+        void OnActivated(object? sender, EventArgs args) { windowDeactivated = false; Resume(); }
+        void OnDeactivated(object? sender, EventArgs args) { windowDeactivated = true; Pause(); }
         void OnWindowChanged(object? sender, AvaloniaPropertyChangedEventArgs args)
         {
             if (args.Property != Visual.IsVisibleProperty) return;
@@ -287,6 +299,7 @@ internal static class FluentPageTurnDecor
             window.PropertyChanged += OnWindowChanged;
         }
         Resume();
+        return Cancel;
     }
 
     private sealed record Particle(double X, double Bottom, double Size, double Delay, double Rise, double Drift);

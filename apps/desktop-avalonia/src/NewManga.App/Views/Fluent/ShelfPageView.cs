@@ -29,7 +29,7 @@ public sealed class ShelfPageView : UserControl
     /// IN-1.1：渐变循环的波谷透明度（full 相位 0 与相位 1 处）；波峰为 1。reduce / category-off 下
     /// 渐变为静态（Opacity=1）且不创建动画对象（02-motion §2.3/§3 判据①）。
     /// </summary>
-    internal const double DecorativeGradientFloorOpacity = 0.55d;
+    internal const double DecorativeGradientFloorOpacity = 0d;
 
     private readonly ShelfViewModel _viewModel;
     private readonly IFilePickerGateway? _filePicker;
@@ -129,7 +129,7 @@ public sealed class ShelfPageView : UserControl
         _dialogConfirm = FluentUi.Button("确认", "fluent-primary", () => _ = SubmitNameAsync(), "确认操作");
         // IN-1.1：书架背景渐变装饰层（两个停点只取既有 Bg 令牌，随主题/高对比重解析；循环只改 Brush.Opacity）。
         _decorativeLayer = FluentUi.DecorativeShelfGradient(out _decorativeBrush);
-        FluentTokenGradient.Bind(_decorativeLayer, _decorativeBrush, "Nm.Color.Bg.Canvas", "Nm.Color.Bg.Overlay");
+        FluentTokenGradient.Bind(_decorativeLayer, _decorativeBrush, "Nm.Color.Bg.Overlay", "Nm.Color.Bg.Sunken");
         _decorativeLoop = new FluentDecorativeLoop(_decorativeLayer);
 
         _root = FluentUi.Stack("fluent-page-layout");

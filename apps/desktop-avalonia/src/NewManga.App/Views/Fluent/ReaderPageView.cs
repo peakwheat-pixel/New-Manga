@@ -51,6 +51,7 @@ public sealed class ReaderPageView : UserControl
     private readonly FluentVisibilityMotion _bottomMotion;
     private IFluentMotionClock _motionClock = FluentRenderClock.Instance;
     private double _decorativePageTurnMs;
+    private Action? _cancelPageTurnDecor;
     private TimeSpan? _idleDeadline;
     internal TimeSpan? IdleDeadline => _idleDeadline;
     internal bool IdleTimerEnabled => _autoHideTimer.IsEnabled;
@@ -108,7 +109,11 @@ public sealed class ReaderPageView : UserControl
         AddHandler(PointerWheelChangedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
         AddHandler(KeyDownEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
         AttachedToVisualTree += (_, _) => ResetIdleDeadline();
-        DetachedFromVisualTree += (_, _) => { _autoHideTimer.Stop(); _idleDeadline = null; };
+        DetachedFromVisualTree += (_, _) =>
+        {
+            _autoHideTimer.Stop(); _idleDeadline = null;
+            _cancelPageTurnDecor?.Invoke(); _cancelPageTurnDecor = null;
+        };
         ApplyToolBarsMotionMode();
         ApplyToolBarsVisibility();
         ApplySideRailVisibility();
@@ -238,8 +243,10 @@ public sealed class ReaderPageView : UserControl
     /// </summary>
     private void PlayPageTurnDecor()
     {
+        _cancelPageTurnDecor?.Invoke();
+        _cancelPageTurnDecor = null;
         if (_decorativePageTurnMs <= 0) return;
-        if (_pageSurface.Parent is Grid area) FluentPageTurnDecor.Play(_motionClock, _decorativePageTurnMs, area);
+        if (_pageSurface.Parent is Grid area) _cancelPageTurnDecor = FluentPageTurnDecor.Play(_motionClock, _decorativePageTurnMs, area);
     }
 
     /// <summary>IN-1.2 证据入口：阅读区是否当前存在粒子层（reduce 下恒为 null）。</summary>
@@ -306,6 +313,11 @@ public sealed class ReaderPageView : UserControl
     {
         _motionClock = clock;
         _decorativePageTurnMs = timings.DecorativePageTurnMilliseconds;
+        if (_decorativePageTurnMs <= 0)
+        {
+            _cancelPageTurnDecor?.Invoke();
+            _cancelPageTurnDecor = null;
+        }
         _topMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
         _bottomMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
         ResetIdleDeadline();

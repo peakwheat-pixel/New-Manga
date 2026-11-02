@@ -2,6 +2,7 @@ using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
@@ -17,6 +18,7 @@ using NewManga.App.Services;
 using NewManga.App.ViewModels.Fluent;
 using NewManga.App.Views.Fluent;
 using NewManga.Appearance;
+using NewManga.CoreClient;
 using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Icons;
 using NewManga.DesignSystem.Theming;
@@ -56,8 +58,9 @@ public sealed class FluentResidual2VisualEvidenceTests
                 using var scope = await Residual2Evidence.Create(theme);
                 colors.Add(scope.CanvasColor);
                 var clock = new ManualFluentMotionClock();
+                var host = Residual2Evidence.Host();
                 var shell = FluentShell.CreateRoot(selection: FrontendSelector.Select("builtin.fluent", null),
-                    host: Residual2Evidence.Host(), appearance: scope.Appearance, themeManager: scope.Manager);
+                    host: host, appearance: scope.Appearance, themeManager: scope.Manager);
                 shell.Width = 1280; shell.Height = 900; shell.Surface.MotionClock = clock;
                 shell.Show(); Dispatcher.UIThread.RunJobs(); Motion(shell.Surface);
                 try
@@ -79,7 +82,7 @@ public sealed class FluentResidual2VisualEvidenceTests
                         var frame = Residual2Evidence.Capture(shell);
                         shots.Add(new("pages", page == FluentPage.Library ? "shelf" : page.ToString().ToLowerInvariant(), "default", "full", theme, "settled", frame));
                     }
-                    CaptureShellStates(shell, clock, theme, shots);
+                    await CaptureShellStates(shell, clock, scope, host, shots);
                 }
                 finally { shell.Close(); Dispatcher.UIThread.RunJobs(); }
                 CaptureComponents(theme, scope, shots);
@@ -109,16 +112,57 @@ public sealed class FluentResidual2VisualEvidenceTests
         finally { foreach (var shot in shots) shot.Image.Dispose(); }
     }
 
-    private static void CaptureShellStates(FluentShell shell, ManualFluentMotionClock clock, string theme, List<Shot> shots)
+    private static async Task CaptureShellStates(FluentShell shell, ManualFluentMotionClock clock, Residual2Evidence scope,
+        FakeHostController host, List<Shot> shots)
     {
+        var theme = scope.Theme;
         shell.Navigate(FluentPage.Library); clock.Advance(1000); Settle();
         // TopBand, NavRail, StatusBand are the actual named product controls in each responsive layout.
-        foreach (var width in new[] { 1280, 1024 })
+        foreach (var width in new[] { 1024, 1280, 1600 })
         {
             shell.Width = width; shell.UpdateLayout(); Dispatcher.UIThread.RunJobs();
-            shots.Add(new("shell", "top-nav-status", width == 1280 ? "default" : "compact", "full", theme, "settled", Residual2Evidence.Capture(shell)));
+            var band = FluentShell.GetResponsiveBand(width);
+            Assert.Equal(band, shell.ResponsiveBand);
+            Assert.Contains(band.ToString(), shell.FindControl<TextBlock>("FluentBreakpointText")!.Text);
+            Assert.True(shell.FindControl<Border>("FluentNavRail")!.IsVisible);
+            shots.Add(new("shell", "top-nav-status", $"{band.ToString().ToLowerInvariant()}-{width}", "full", theme, "settled", Residual2Evidence.Capture(shell)));
         }
         shell.Width = 1280; shell.UpdateLayout();
+        var toggle = shell.FindControl<Button>("NavRailToggle")!;
+        toggle.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+        Assert.False(shell.FindControl<Border>("FluentNavRail")!.IsVisible);
+        shell.Navigate(FluentPage.Workbench); shell.Navigate(FluentPage.Library); clock.Advance(1000); Settle();
+        Assert.False(shell.FindControl<Border>("FluentNavRail")!.IsVisible); // collapse memento survives navigation
+        shots.Add(new("shell", "nav-rail", "collapsed-1280", "full", theme, "settled", Residual2Evidence.Capture(shell)));
+        toggle.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+        Assert.True(shell.FindControl<Border>("FluentNavRail")!.IsVisible);
+
+        shell.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs();
+        await shell.ReaderView.LoadAsync("book-1", "chapter-key");
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.SaveGate = gate.Task;
+        var turn = shell.ReaderViewModel.NavigateAsync(shell.ReaderViewModel.PageIndex == 0 ? 1 : -1);
+        try
+        {
+            await host.SaveGateStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.False(turn.IsCompleted);
+            Assert.Equal(FluentPageState.Running, shell.ReaderViewModel.State);
+            Assert.Contains("运行中", shell.StatusText);
+            Assert.Equal(scope.Token("Nm.Color.Status.Running"), ((ISolidColorBrush)shell.FindControl<TextBlock>("FluentStatusText")!.Foreground!).Color);
+            clock.Advance(1000); Settle();
+            shots.Add(new("shell", "status-band", "running-1280", "full", theme, "host-save-await", Residual2Evidence.Capture(shell)));
+        }
+        finally { gate.TrySetResult(true); await turn; }
+
+        host.ReaderBooksByChapterId["error-chapter"] = new ReaderBookData("book-1", "Sample Manga", "error-chapter", "Chapter error", "fit-page",
+            [new ReaderPageData("error-page", 0, 320, 480, _ => Task.FromException<byte[]?>(new IOException("fixture read failure")))]);
+        await shell.ReaderView.LoadAsync("book-1", "error-chapter");
+        Assert.Equal(FluentPageState.Error, shell.ReaderViewModel.State);
+        Assert.Contains("错误", shell.StatusText);
+        Assert.Equal(scope.Token("Nm.Color.Status.Failed"), ((ISolidColorBrush)shell.FindControl<TextBlock>("FluentStatusText")!.Foreground!).Color);
+        clock.Advance(1000); Settle();
+        shots.Add(new("shell", "status-band", "error-1280", "full", theme, "host-page-read-failure", Residual2Evidence.Capture(shell)));
+        shell.Navigate(FluentPage.Library); clock.Advance(1000); Settle();
         foreach (var state in new[] { "result", "empty" })
         {
             shell.FindControl<Button>("CommandPaletteButton")!.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
@@ -139,14 +183,16 @@ public sealed class FluentResidual2VisualEvidenceTests
         // No navigation/feedback during the comparison, while decorative remains full. This is the real category policy.
         Motion(shell.Surface, MotionCategories.Decorative);
         var first = Residual2Evidence.Capture(shell);
-        clock.Advance(2000); // an intermediate full frame; the static reduce frame equals the exact 4s crest by design
+        clock.Advance(3000); // intermediate full frame; reduce equals the exact 4s crest by design
         var mid = Residual2Evidence.Capture(shell);
-        Assert.True(Residual2Evidence.ChangedPixels(first, mid, tolerance: 1) > 1000, "gradient must change visible background pixels");
+        // Plain background only: no text antialiasing/layout can supply the >8 RGB difference.
+        Assert.True(Residual2Evidence.ChangedPixels(first, mid, tolerance: 8, region: new PixelRect(250, 740, 1000, 60)) > 5000,
+            $"{theme}: >8 patch={Residual2Evidence.ChangedPixels(first, mid, tolerance: 8, region: new PixelRect(250, 740, 1000, 60))}, global={Residual2Evidence.ChangedPixels(first, mid, tolerance: 8)}, layer={shell.ShelfView.DecorativeLayer.Bounds}, opacity={shell.ShelfView.DecorativeBrush.Opacity}");
         // Crop only: original product pixels, no recolouring or enlargement. This makes the background
         // evidence inspectable and avoids reusing an identical full-page PNG for two distinct cells.
         var backgroundCrop = new PixelRect(216, 95, 1048, 720);
         shots.Add(new("decor", "shelf-gradient", "first", "full", theme, "first-crop-216,95,1048,720", Residual2Evidence.Crop(first, backgroundCrop)));
-        shots.Add(new("decor", "shelf-gradient", "mid", "full", theme, "intermediate-2000ms-crop-216,95,1048,720", Residual2Evidence.Crop(mid, backgroundCrop)));
+        shots.Add(new("decor", "shelf-gradient", "mid", "full", theme, "intermediate-3000ms-crop-216,95,1048,720", Residual2Evidence.Crop(mid, backgroundCrop)));
         first.Dispose(); mid.Dispose();
         Motion(shell.Surface, mode: MotionMode.Reduce);
         using var staticFrame = Residual2Evidence.Capture(shell);
@@ -180,7 +226,7 @@ public sealed class FluentResidual2VisualEvidenceTests
         var cases = new List<(string Name, string State, Control Control, Action<Window,Control>? Act)>();
         void Add(string name, string state, Control control, Action<Window,Control>? act = null) => cases.Add((name,state,control,act));
         static void Hover(Window w, Control c) { w.MouseMove(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value); Settle(250); Assert.True(c.IsPointerOver); }
-        static void Press(Window w, Control c) { Hover(w,c); w.MouseDown(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value,MouseButton.Left); Settle(200); }
+        static void Press(Window w, Control c) { Hover(w,c); w.MouseDown(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value,MouseButton.Left); Settle(400); }
         foreach (var state in new[] { "default", "hover", "selected", "disabled" })
         {
             var card = new SurfaceCard { Width = 200, Height = 90, Child = new TextBlock { Text = "卡片内容" }, IsEnabled = state != "disabled" };
@@ -267,6 +313,22 @@ public sealed class FluentResidual2VisualEvidenceTests
                         var track = slider.GetVisualDescendants().OfType<RepeatButton>().Single(b => b.Name == "PART_DecreaseButton");
                         Assert.True(scope.Token(key) == Assert.IsAssignableFrom<ISolidColorBrush>(track.Background).Color, $"state={item.State} sliderForeground={slider.Foreground}, part={track.Name}, templateParent={track.TemplatedParent}, trackBg={track.Background}");
                     }
+                    if (item.Name == "danger-button" && item.State == "pressed")
+                    {
+                        var button = (Button)item.Control;
+                        Assert.True(button.IsPressed);
+                        var root = button.GetVisualDescendants().OfType<Border>().Single(b => b.Name == "PART_Root");
+                        var presenter = button.GetVisualDescendants().OfType<ContentPresenter>().Single(p => p.Name == "PART_ContentPresenter");
+                        var background = Assert.IsAssignableFrom<ISolidColorBrush>(root.Background).Color;
+                        var foreground = Assert.IsAssignableFrom<ISolidColorBrush>(presenter.Foreground).Color;
+                        Assert.Equal(scope.Token("Nm.Color.Status.Failed"), background);
+                        // Public Background owns a BrushTransition; compare its underlying token,
+                        // while contrast is calculated from the actual rendered template/presenter.
+                        Assert.Equal(Assert.IsAssignableFrom<ISolidColorBrush>(button.GetBaseValue(TemplatedControl.BackgroundProperty).Value).Color, background);
+                        Assert.Equal(scope.Token("Nm.Color.Bg.App"), foreground);
+                        Assert.Equal(Assert.IsAssignableFrom<ISolidColorBrush>(button.Foreground).Color, foreground);
+                        Assert.True(Contrast(foreground, background) >= 4.5, $"{theme}: {foreground}/{background}");
+                    }
                     var imageFrame = Residual2Evidence.Capture(w);
                     if (item.Control is ReaderProgressBar or PageThumbStrip)
                     {
@@ -303,7 +365,7 @@ public sealed class FluentResidual2VisualEvidenceTests
         // Replace only the owned, obsolete capture set; historical reviews retain their signed hashes.
         foreach(var path in Directory.EnumerateFiles(output,"*.png")) File.Delete(path);
         var head=Residual2Evidence.Git("rev-parse","HEAD");
-        var rows=new List<string>{"# R2R2 visual inventory",$"捕获 HEAD：`{head}`；frontend=builtin.fluent；headless Skia、96 DPI。签署待独立 Reviewer，均为 NOT_RUN。",
+        var rows=new List<string>{"# R2R3 visual inventory",$"捕获 HEAD：`{head}`；frontend=builtin.fluent；headless Skia、96 DPI。签署待独立 Reviewer，均为 NOT_RUN。",
             $"命令：`{CaptureCommand}`。EXIT=0 表示捕获测试成功，不代替视觉签署。",
             "| file | head | frontend | group | component/page | state | mode | viewport | raster-size | theme | frame | command | EXIT | SHA256 | signed_by | signed_at |",
             "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"};
@@ -318,5 +380,13 @@ public sealed class FluentResidual2VisualEvidenceTests
         Assert.Equal(shots.Count,rows.Count(r=>r.StartsWith("| `")));
         var changes=Residual2Evidence.Git("status","--porcelain","--","verification").Split('\n',StringSplitOptions.RemoveEmptyEntries);
         Assert.All(changes,line=>Assert.Contains("verification/FEA-06-RESIDUAL-2/visuals/",line));
+    }
+
+    private static double Contrast(Color first, Color second)
+    {
+        static double Channel(byte c) { var v = c / 255d; return v <= .04045 ? v / 12.92 : Math.Pow((v + .055) / 1.055, 2.4); }
+        static double Luminance(Color c) => .2126 * Channel(c.R) + .7152 * Channel(c.G) + .0722 * Channel(c.B);
+        var a = Luminance(first); var b = Luminance(second);
+        return (Math.Max(a, b) + .05) / (Math.Min(a, b) + .05);
     }
 }

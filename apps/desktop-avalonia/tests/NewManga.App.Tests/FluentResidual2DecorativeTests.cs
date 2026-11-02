@@ -354,15 +354,15 @@ public sealed class FluentResidual2DecorativeTests
             var app = Avalonia.Application.Current!;
             Color Token(string key) =>
                 Assert.IsType<SolidColorBrush>(app.TryGetResource(key, app.ActualThemeVariant, out var value) ? value : null).Color;
-            Assert.Equal(Token("Nm.Color.Bg.Canvas"), brush.GradientStops[0].Color);
-            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[1].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[0].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Sunken"), brush.GradientStops[1].Color);
 
             // High contrast just swaps the token table (materials degrade to opaque surfaces); the
             // decorative layer keeps resolving the same keys with no hardcoded fallback (03 §4).
             Assert.True(manager.SetContrast(NewManga.DesignSystem.Theming.ContrastMode.High), manager.LastError);
             Dispatcher.UIThread.RunJobs();
-            Assert.Equal(Token("Nm.Color.Bg.Canvas"), brush.GradientStops[0].Color);
-            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[1].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[0].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Sunken"), brush.GradientStops[1].Color);
         }
         finally { window.Close(); }
     }
@@ -502,6 +502,101 @@ public sealed class FluentResidual2DecorativeTests
         Assert.True(profile.DecorativeEnabled);
         Assert.False(profile.HasMotion);
         Assert.Equal(8000, profile.DecorativeShelfGradientMilliseconds);
+    }
+
+    private static void Deactivate(Window window) => typeof(WindowBase)
+        .GetMethod("HandleDeactivated", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!.Invoke(window, null);
+
+    [AvaloniaFact]
+    public void ShelfGradient_InactiveNavigationReturn_RemainsPausedUntilActivation()
+    {
+        var (window, surface, clock) = Create();
+        try
+        {
+            Motion(surface, categories: MotionCategories.Decorative); clock.Advance(1000);
+            Deactivate(window);
+            var phase = surface.ShelfView.DecorativeLoop.Phase();
+            surface.Navigate(FluentPage.Workbench); Dispatcher.UIThread.RunJobs();
+            surface.Navigate(FluentPage.Library); Dispatcher.UIThread.RunJobs();
+            Motion(surface, categories: MotionCategories.Decorative);
+            clock.Advance(1000);
+            Assert.False(surface.ShelfView.DecorativeLoop.IsRunning);
+            Assert.Equal(0, clock.PendingFrames);
+            Assert.Equal(phase, surface.ShelfView.DecorativeLoop.Phase(), 5);
+            window.Activate(); Dispatcher.UIThread.RunJobs();
+            Assert.True(surface.ShelfView.DecorativeLoop.IsRunning);
+            Assert.Equal(phase, surface.ShelfView.DecorativeLoop.Phase(), 5);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public async Task PageTurnParticles_InactiveNavigationAndNewTurn_StayPausedUntilActivation()
+    {
+        var (window, surface, clock) = CreateWithPages();
+        try
+        {
+            Motion(surface, categories: MotionCategories.Decorative);
+            surface.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs();
+            await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            await surface.ReaderViewModel.NavigateAsync(1); clock.Advance(100);
+            Deactivate(window);
+            surface.Navigate(FluentPage.Workbench); Dispatcher.UIThread.RunJobs();
+            surface.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs();
+            await surface.ReaderViewModel.NavigateAsync(-1); Dispatcher.UIThread.RunJobs();
+            var layer = surface.ReaderView.DecorativeParticleLayer;
+            Assert.NotNull(layer);
+            clock.Advance(2000);
+            Assert.Equal(0, clock.PendingFrames);
+            Assert.All(((Canvas)layer.Child!).Children, dot => Assert.Equal(0, dot.Opacity));
+            window.Activate(); Dispatcher.UIThread.RunJobs();
+            clock.Advance(200);
+            Assert.Contains(((Canvas)layer.Child!).Children, dot => dot.Opacity > .2);
+            clock.Advance(200);
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer);
+            Assert.Equal(0, clock.PendingFrames);
+        }
+        finally { window.Close(); }
+    }
+
+    private sealed class SystemMotionOff : IMotionPreferenceSource
+    {
+        public MotionMode? Read() => MotionMode.Reduce;
+    }
+
+    [AvaloniaTheory]
+    [InlineData(MotionMode.Reduce, MotionCategories.Decorative, false)]
+    [InlineData(MotionMode.Auto, MotionCategories.Decorative, false)]
+    [InlineData(MotionMode.Full, MotionCategories.None, false)]
+    [InlineData(MotionMode.Reduce, MotionCategories.Decorative, true)]
+    [InlineData(MotionMode.Auto, MotionCategories.Decorative, true)]
+    [InlineData(MotionMode.Full, MotionCategories.None, true)]
+    public async Task PageTurnParticles_DisablingPolicy_CancelsExistingRunAndCannotRevive(
+        MotionMode mode, MotionCategories categories, bool paused)
+    {
+        var (window, surface, clock) = CreateWithPages();
+        try
+        {
+            Motion(surface, categories: MotionCategories.Decorative);
+            surface.Navigate(FluentPage.Reader); Dispatcher.UIThread.RunJobs();
+            await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            await surface.ReaderViewModel.NavigateAsync(1); clock.Advance(100);
+            Assert.NotNull(surface.ReaderView.DecorativeParticleLayer);
+            if (paused) Deactivate(window);
+            var settings = new MotionResolver(new SystemMotionOff()).Resolve(AppearanceDefaults.Settings with
+                { MotionMode = mode, MotionCategories = categories }).Settings;
+            surface.ReaderView.ConfigureMotion(MotionTimings.Resolve(settings), clock);
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer); // removed synchronously at policy change
+            clock.Advance(0); // drain the already requested frame: it must not request another
+            Assert.Equal(0, clock.PendingFrames);
+            window.Activate(); Dispatcher.UIThread.RunJobs(); clock.Advance(1000);
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer);
+            Assert.Equal(0, clock.PendingFrames);
+            await surface.ReaderViewModel.NavigateAsync(-1); Dispatcher.UIThread.RunJobs(); clock.Advance(400);
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer);
+            Assert.Equal(0, clock.PendingFrames);
+        }
+        finally { window.Close(); }
     }
 
 }

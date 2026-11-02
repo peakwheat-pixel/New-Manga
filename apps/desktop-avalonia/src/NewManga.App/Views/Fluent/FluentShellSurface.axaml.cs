@@ -79,6 +79,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private bool _overlayClosing;
     internal IFluentMotionClock MotionClock { get; set; } = FluentRenderClock.Instance;
     private bool _textInputFocused;
+    private bool _navRailCollapsed;
+    private double? _viewportWidth;
 
     public FluentShellSurface() : this(null, null) { }
 
@@ -132,6 +134,13 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         };
         _readerView = new ReaderPageView(_readerModel, CloseReader, SetFullScreen);
         _settingsView = new SettingsPageView(_settingsModel);
+        foreach (var model in new FluentViewModel[] { _shelfModel, _workbenchModel, _readerModel, _settingsModel })
+            model.PropertyChanged += (_, _) => UpdateStatus();
+        Require<Button>("NavRailToggle").Click += (_, _) =>
+        {
+            _navRailCollapsed = !_navRailCollapsed;
+            ApplyNavRailVisibility();
+        };
 
         Require<TextBlock>("FluentFrontendLabel").Text = $"Fluent frontend · {_frontendId}";
         _spaceLibrary.Click += (_, _) => NavigateSpace(SpaceId.Library);
@@ -140,7 +149,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         Require<Button>("CommandPaletteButton").Click += (_, _) => OpenCommandPalette();
         Require<Button>("SettingsCommandButton").Click += (_, _) => Navigate(FluentPage.Settings);
         Require<Button>("HelpButton").Click += (_, _) => OpenShortcutHelp();
-        SizeChanged += (_, args) => ApplyResponsiveBand(args.NewSize.Width);
+        SizeChanged += (_, args) => ApplyResponsiveBand(_viewportWidth ?? args.NewSize.Width);
         // Some page commands are rebuilt from real projections after navigation. Prepare those
         // buttons before their native input handler changes IsPressed, without changing that handler.
         AddHandler(PointerPressedEvent, (_, args) => PreparePressedFeedback(args.Source), RoutingStrategies.Tunnel);
@@ -183,7 +192,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     public FluentResponsiveBand ResponsiveBand { get; private set; }
 
     /// <summary>Applies the hosting window viewport width to the responsive bands.</summary>
-    public void SetViewportWidth(double width) { ApplyResponsiveBand(width); UpdateStatus(); }
+    public void SetViewportWidth(double width) { _viewportWidth = width; ApplyResponsiveBand(width); UpdateStatus(); }
 
     /// <summary>Raised when the surface wants the hosting window to toggle full screen.</summary>
     public Action<bool>? FullScreenRequested { get; set; }
@@ -373,7 +382,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private void ApplyResponsiveBand(double width)
     {
         ResponsiveBand = GetResponsiveBand(width);
-        _navRail.IsVisible = ResponsiveBand != FluentResponsiveBand.Narrow;
+        ApplyNavRailVisibility();
         _breakpointText.Text = ResponsiveBand switch
         {
             FluentResponsiveBand.Narrow => "Narrow · <1024",
@@ -385,7 +394,30 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void UpdateStatus()
     {
-        _statusText.Text = $"Fluent · {_frontendId} · {PageTitle(_currentPage)} · {ResponsiveBand}";
+        FluentViewModel model = _currentPage switch
+        {
+            FluentPage.Workbench => _workbenchModel,
+            FluentPage.Reader => _readerModel,
+            FluentPage.Settings => _settingsModel,
+            _ => _shelfModel,
+        };
+        var error = model.State is FluentPageState.Error or FluentPageState.Conflict;
+        var running = model.State == FluentPageState.Running;
+        _statusText.Classes.Set("error", error);
+        _statusText.Classes.Set("running", running);
+        var context = $"Fluent · {_frontendId} · {PageTitle(_currentPage)} · {ResponsiveBand}";
+        _statusText.Text = error ? $"错误 · {model.Error} · {context}"
+            : running ? $"运行中 · {(_readerModel.IsSavingProgress && _currentPage == FluentPage.Reader ? "正在保存阅读进度…" : "正在处理…")} · {context}"
+            : context;
+    }
+
+    private void ApplyNavRailVisibility()
+    {
+        _navRail.IsVisible = !_navRailCollapsed && ResponsiveBand != FluentResponsiveBand.Narrow;
+        var toggle = Require<Button>("NavRailToggle");
+        var label = _navRail.IsVisible ? "折叠导航" : "展开导航";
+        AutomationProperties.SetName(toggle, label);
+        ToolTip.SetTip(toggle, label);
     }
 
     private void OpenReader(BookSummary book, ChapterSummary chapter)

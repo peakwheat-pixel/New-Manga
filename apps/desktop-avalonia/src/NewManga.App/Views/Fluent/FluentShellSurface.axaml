@@ -7,6 +7,7 @@
     <Border x:Name="FluentTopBand" Grid.Row="0" Classes="fluent-top-band">
       <Grid ColumnDefinitions="Auto,*,Auto">
         <StackPanel Grid.Column="0" Orientation="Horizontal" Classes="fluent-page-toolbar">
+          <Button x:Name="NavRailToggle" Content="导航" Classes="fluent-secondary" AutomationProperties.Name="折叠导航" ToolTip.Tip="折叠导航" />
           <TextBlock Text="New Manga" Classes="fluent-shell-brand" VerticalAlignment="Center" />
           <Button x:Name="SpaceLibrary" Content="资料柜" Classes="fluent-space-button selected" AutomationProperties.Name="切换到资料柜空间" />
           <Button x:Name="SpaceStudio" Content="工位" Classes="fluent-space-button" AutomationProperties.Name="切换到工位空间" />
