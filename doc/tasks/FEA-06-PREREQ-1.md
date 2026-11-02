@@ -102,14 +102,14 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `HEAD_PENDING` | `7d9b0fb54f00c3035c1194bce51590ebcd60739ab1cd33ac1585930124aa949f` | CANONICAL |
-| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `HEAD_PENDING` | `b191462943321b1ddc324843c3a0d7d456ec00790597e693a359c3ef472cec97` | CANONICAL |
-| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `HEAD_PENDING` | `f5aea7f7d28a68895f7d9666e57ba0c7d1a86c637400fff87e81d4566b102345` | CANONICAL |
-| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `HEAD_PENDING` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
-| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `HEAD_PENDING` | `34cf6c28b95c42762b0935eaaf5150698aaf5b8b1e50167d01173d02fc926616` | CANONICAL |
-| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `HEAD_PENDING` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
-| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `HEAD_PENDING` | `4657dbbb645447edca44e5eb300229fe449f805cef5070ac55747180b0fec027` | CANONICAL |
-| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `HEAD_PENDING` | `2619d00030a72a157f02e41fc5485f80f099a3893eedb5acf5f8130a3918ef71` | CANONICAL |
+| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `ce24580c8` | `7d9b0fb54f00c3035c1194bce51590ebcd60739ab1cd33ac1585930124aa949f` | CANONICAL |
+| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `ce24580c8` | `b191462943321b1ddc324843c3a0d7d456ec00790597e693a359c3ef472cec97` | CANONICAL |
+| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `ce24580c8` | `f5aea7f7d28a68895f7d9666e57ba0c7d1a86c637400fff87e81d4566b102345` | CANONICAL |
+| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `ce24580c8` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
+| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `ce24580c8` | `34cf6c28b95c42762b0935eaaf5150698aaf5b8b1e50167d01173d02fc926616` | CANONICAL |
+| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `ce24580c8` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
+| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `ce24580c8` | `4657dbbb645447edca44e5eb300229fe449f805cef5070ac55747180b0fec027` | CANONICAL |
+| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `ce24580c8` | `2619d00030a72a157f02e41fc5485f80f099a3893eedb5acf5f8130a3918ef71` | CANONICAL |
 
 ## Resource Manifest
 

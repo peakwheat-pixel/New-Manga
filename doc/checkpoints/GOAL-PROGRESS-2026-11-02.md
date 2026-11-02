@@ -167,3 +167,15 @@ m.fluent.visual/1 manifest + Material/Elevation 取值 + 校验测试）。
 - **依据**：impl-r3/r4 独立复核指出转移目标未承接；DSH 接受该判定并在此正式裁决 + 修订 PREREQ-2（见下），使转移可执行。
 - **PREREQ-2 修订**：doc/tasks/FEA-06-PREREQ-2.md 增加 W-9 承接段（任务 P5/P6 + AC5/AC6 + llowed_paths 含 NewManga.ThemeEngine/Persistence/**、NewManga.DesignSystem/**、NewManga.Appearance/**）。
 - **impl-r4 结论**：pproved（P0=0/P1=0/P2×12），独立复跑 978/0/57、两 --check 一致、证据 sha 全匹配。
+## 23. 复核通道故障与 P2 处置（2026-11-03，Round 19）
+
+- **复核通道故障（阻塞）**：本轮对 PREREQ-2 scope-r2 连续 3 次派发均失败——ea05-wire-scope-reviewer ×2、ea04b-scope-reviewer ×1（均 ailed before it finished，无输出文件）；subagent_codex 1 次（product-error）。判定为平台级子代理派发故障，非任务内容问题。
+- **待裁决 Q-34（复核通道降级）**：PREREQ-2 范围复核在通道恢复前无法产出。推荐：① 先按「已修订待复盘」状态保留 proposed，**不实施**（遵守范围冻结纪律）；② 通道恢复后立即补 scope-r2；③ 若通道持续不可用，请用户裁决是否允许「DSH 自身 + 逐条自证式复核 + 后续补审」的降级路径（不建议，但可解锁进度）。**依据**：仓内已有 scope-r1 报告（P0×3/P1×7）已全部处置，风险已大幅收敛；但范围冻结属 Gate，不宜自审放行。
+- **本轮已推进（不依赖复核通道）**：
+  - PREREQ-1 卡尾部字符损坏修复（c93dd0c4c）——此前 PowerShell 文本替换导致 eady/ 6b7a1b10/
+m.fluent.visual 等被吞字符、Closeout 残留占位、测试表缺行；已按行重建尾部并恢复真实 sha 证据表。
+  - Resource Manifest 登记 3 个过程文件（消除 check.ps1 的 evidence_dir 警告）。
+  - 代码注释 C-03 章节引用修正（§2.5 不存在 → §2.1 唯一写者 / §2.2 字段迁移）。
+  - **发现并记录偏差 D-1**：C-03 §2.1 要求唯一写者 AppearanceCoordinator 位于 NewManga.Appearance；PREREQ-1 交付在 NewManga.App/Services（只读）。已写入类 <remarks>、PREREQ-2 P5 强制项与新增 W-10。
+  - impl-r4 P2 处置：P2-8（fluent-dark 的 light 槽改用 dark 调色板，避免 dark-only 包误用浅色值）、P2-12（移除 NewManga.Appearance 未使用的 ThemeEngine 引用）。
+  - 全量 sln **978/0/57**；TokenGen/ThemeGen -- --check up to date；check.ps1 PASS（3 warnings）、erify_pins 15/15。
