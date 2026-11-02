@@ -171,7 +171,7 @@ allowed_paths:
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
 | EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `eb13cfab0` | `da27944f3f62c611b7ccfc09a40de31c7d2c7d63b5b2911455f22700247d6f80` | CANONICAL |
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `c2d4ce4b6` | `15e822a73fa90305b44b16ef50c6c0987aa05a5de0e817aedf29b0627353bc74` | CANONICAL |
-| EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `PENDING` | `c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc` | CANONICAL |
+| EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `35e80eabf` | `c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |
 | EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `66442e551` | `aeb36c087d4f50c6696eddc28e0474e8cf669fe734d851e553818f5781c3fe06` | CANONICAL |
 
