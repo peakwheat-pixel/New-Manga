@@ -363,4 +363,91 @@ public sealed class FluentResidual2DecorativeTests
         }
         finally { window.Close(); }
     }
+    /// <summary>
+    /// FEA-06-RESIDUAL-2 R2-001: opt-in real decor frames from the product decorative layers
+    /// (ManualFluentMotionClock drives the same code paths the behavioural tests bound). Default run
+    /// writes nothing; NEWMANGA_CAPTURE_RESIDUAL2_PNGS=1 writes verification/FEA-06-RESIDUAL-2/visuals.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task Decor_Frames_Are_Captured_Only_When_Opted_In()
+    {
+        var captureEnabled = string.Equals(
+            Environment.GetEnvironmentVariable("NEWMANGA_CAPTURE_RESIDUAL2_PNGS"), "1", StringComparison.OrdinalIgnoreCase);
+        var frames = new List<(string Name, byte[] Bytes)>();
+        var (window, surface, clock) = Create();
+        try
+        {
+            Motion(surface, MotionMode.Full, MotionCategories.All);
+            surface.Navigate(FluentPage.Library);
+            Dispatcher.UIThread.RunJobs();
+            frames.Add(("decor--shelf-gradient--first--full--light.png", CaptureBytes(window)));
+            clock.Advance(4000);
+            frames.Add(("decor--shelf-gradient--mid--full--light.png", CaptureBytes(window)));
+            Motion(surface, MotionMode.Reduce, MotionCategories.All);
+            Dispatcher.UIThread.RunJobs();
+            frames.Add(("decor--shelf-gradient--static--reduce--light.png", CaptureBytes(window)));
+        }
+        finally { window.Close(); }
+
+        var (readerWindow, readerSurface, readerClock) = CreateWithPages();
+        try
+        {
+            Motion(readerSurface, MotionMode.Full, MotionCategories.All);
+            readerSurface.Navigate(FluentPage.Reader);
+            Dispatcher.UIThread.RunJobs();
+            await readerSurface.ReaderView.LoadAsync("book-1", "chapter-key");
+            await readerSurface.ReaderViewModel.NavigateAsync(1);
+            Dispatcher.UIThread.RunJobs();
+            Assert.NotNull(readerSurface.ReaderView.DecorativeParticleLayer);
+            readerClock.Advance(200);
+            frames.Add(("decor--page-turn-particles--mid--full--light.png", CaptureBytes(readerWindow)));
+            readerClock.Advance(300); // let the full-run layer finish before the reduce phase
+            Dispatcher.UIThread.RunJobs();
+
+            Motion(readerSurface, MotionMode.Reduce, MotionCategories.All);
+            await readerSurface.ReaderView.LoadAsync("book-1", "chapter-key");
+            await readerSurface.ReaderViewModel.NavigateAsync(1);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Null(readerSurface.ReaderView.DecorativeParticleLayer);
+            frames.Add(("decor--page-turn-particles--none--reduce--light.png", CaptureBytes(readerWindow)));
+        }
+        finally { readerWindow.Close(); }
+
+        Assert.Equal(5, frames.Count);
+        Assert.NotEqual(frames[0].Bytes, frames[1].Bytes); // first vs mid must really differ
+        Assert.NotEqual(frames[0].Bytes, frames[2].Bytes); // full vs reduce must differ
+        if (!captureEnabled)
+        {
+            return;
+        }
+
+        var repositoryRoot = RepositoryRoot();
+        var output = Path.Combine(repositoryRoot, "verification", "FEA-06-RESIDUAL-2", "visuals");
+        Directory.CreateDirectory(output);
+        Assert.DoesNotContain(Path.Combine("verification", "FEA-06", "screens"), output, StringComparison.OrdinalIgnoreCase);
+        foreach (var (name, bytes) in frames)
+        {
+            File.WriteAllBytes(Path.Combine(output, name), bytes);
+        }
+    }
+
+    private static byte[] CaptureBytes(Window window)
+    {
+        var frame = window.CaptureRenderedFrame() ?? throw new InvalidOperationException("frame capture failed");
+        using var stream = new MemoryStream();
+        frame.Save(stream);
+        return stream.ToArray();
+    }
+
+    private static string RepositoryRoot()
+    {
+        var cursor = new DirectoryInfo(AppContext.BaseDirectory);
+        while (cursor is not null && !File.Exists(Path.Combine(cursor.FullName, "doc", "tasks", "FEA-06-RESIDUAL-2.md")))
+        {
+            cursor = cursor.Parent;
+        }
+
+        return cursor?.FullName ?? throw new DirectoryNotFoundException("repository root not found");
+    }
+
 }
