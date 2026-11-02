@@ -3,8 +3,8 @@ id: FEA-06
 title: Fluent UI 四页实现（Shelf / Workbench / Reader / Settings）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_scope_review_r2（用户 2026-11-02 指派 Codex 实施）
+status: ready
+approval: scope_review_r3_approved_2026-11-02（owner=Codex，用户 2026-11-02 指派；待派实施）
 suggested_owner: codex
 owner: codex
 reviewer: null
@@ -15,7 +15,7 @@ depends_on:
   - FEA-05-PORT-1
   - FEA-06-PREREQ-1
   - FEA-06-PREREQ-2
-base_commit: 5a47170096bb28c42d108756f522cf4250cab983
+base_commit: 3c7f311d88b24bde462a61690e15d2c66f8c4683
 branch: null
 worktree: null
 integration_commit: null
@@ -82,13 +82,19 @@ allowed_paths:
 | P2-7 「17 快捷键」口径 | AC1 改为「17 个既有冻结快捷键（全局 10 + 空间级 7）」 | AC1 |
 | P2-8/P2-9/P2-10 令牌缺口/失败归因/交付顺序 | 写入派发 brief（缺口停等、单测失败先重跑归因、交付顺序） | 派发 brief |
 
+## scope-r3 复核与释放（2026-11-02，r3 = approved / P0=0 / P1=0 / P2=3）
+
+- r3 确认：r2-P0（Fluent 壳依赖注入）与 r2-P1（AC2–AC5 对齐 09 矩阵）**已闭环**，无新增 P0/P1；P2×3（卡 P3 旧口径、派发 brief 滞后、approval 字段）已在本版处置。
+- **释放**：`status: ready`；`approval: scope_review_r3_approved_2026-11-02`；`base_commit = 3c7f311d8`（r3 被审 head）；owner=**Codex**（W-10），DSH 派发 brief：`G:\CODEX\New Manga.workspace\exchange\FEA-06-codex-brief.md`。
+- 范围报告：`doc/reviews/FEA-06-scope-r1.md`（changes_requested）→ `-r2.md`（changes_requested）→ `-r3.md`（approved）。
+
 ## 任务拆解（按页 + 组件）
 
 | 项 | 内容 | 设计输入 |
 |---|---|---|
 | P1 Shell | 顶条 `TopBand`/左导航 `NavRail`/状态条 `StatusBand`/命令条；17 全局快捷键（`ShellCommands` 既有）；三断点 1024/1280/1600；z-order；分栏折叠；空间 1/2/3 与四页映射（W-6） | `04-layout-responsive.md`、`03-accessibility.md` |
 | P2 Shelf | `BookCard`/`BookRow`/`ChapterList`/`PageThumbStrip`；网格/列表、筛选、选择、右键、拖入、回收站入口；本页状态全量（见 AC2） | `05-page-shelf.md` |
-| P3 Workbench | Region 列表/画布（`RegionBox`）/Inspector（`Drawer`）/FilmStrip（`StreamingThumb`）/批量栏（`BatchMatrix`）/`RunProjectionBar`；Draft 7 方法接入（Open/Patch/Prepare/Apply/Status/Discard）；本页 8 态 | `06-page-workbench.md` |
+| P3 Workbench | Region 列表/画布（`RegionBox`）/Inspector（`Drawer`）/FilmStrip（`StreamingThumb`）/批量栏（`BatchMatrix`）/`RunProjectionBar`；Draft 7 方法接入（OpenDraft/PatchDraft/PrepareCandidate/ApplyCandidates/GetDraft/ListDrafts/DiscardDraft）；`09-state-matrix.md` 工作台列 9 行全实现 | `06-page-workbench.md` |
 | P4 Reader | `ReaderPage`/`ReaderProgressBar`；页导航/缩放/全屏/键盘滚轮→翻页、缩放/双击、方向 memento；进度保存接 `IReaderProgressSink`（FEA-04） | `07-page-reader.md` |
 | P5 Settings | `SettingsGroup`/`SettingsField`；`08-page-settings.md:41-58` 字段逐字（frontendId/visualThemeId、motion.mode/categories、corners/material、layout.*、followSystemAccent、schemaVersion、Provider/网络/备份/关于）+ 保存/校验/错误态 | `08-page-settings.md`、C-03 §2.2 |
 | P6 设计系统消费 | 15–20 个新增/外观化组件：`SurfaceCard`、`Drawer`、`Dialog`、`EmptyState`、`ErrorState`、`Toast/InfoBar`、`BookCard`、`BookRow`、`RegionBox`、`BatchMatrix`、`RunProjectionBar`、`SettingsGroup`、`SettingsField`、`PrimaryButton`、`SecondaryButton`、`DangerButton`、`SearchField`、`TabStrip`、`SegmentedControl`（以 `10-component-inventory.md` 为准，逐项登记）；令牌绑定 + 三态动效 + `09-state-matrix.md` | `01`、`02`、`09`、`10` |

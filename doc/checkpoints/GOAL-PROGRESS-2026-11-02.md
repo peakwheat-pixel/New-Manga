@@ -255,3 +255,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **处置（本 commit）**：**W-12** DSH 单点预置注入——`App.CreateShell` Fluent 分支传 `controller/appearance/themeManager`；`FluentShell.CreateRoot`/ctor 扩可选参数 + 只读属性 `HostController`/`Appearance`/`ThemeManager`；组合根测试断言三实例同一（禁止第二 Host/第二 coordinator）；`App.axaml.cs` 仍不在 FEA-06 写域。**r2-P1**：AC2–AC5 逐页改写为 09 本页列全行（含「—」说明）；P2-1（AC5 补 appearance/contrast）、P2-2（internal 保留旧 UI）、P2-3（W-6 锚点）、P2-5（depends_on 补）、P2-6（禁止范围补资产边界）、P2-7（17 快捷键口径）已入卡；P2-4/P2-8/P2-9/P2-10 已入派发 brief。
 - **验证**：build 0 警告/0 错误；全量 **1022/0/57**；TokenGen/ThemeGen `--check` up to date；`check.ps1` PASS(3 warnings)；`verify_pins` 15/15。
 - **下一步**：增量 **scope-r3**（独立上下文，仅核 r2-P0/P1 处置与无新增问题）→ approved 后置 `ready`、刷新 base_commit → 按 W-10 派 **Codex** 实施（`-m gpt-6-luna`、cwd=仓库根；brief 已备 `workspace/exchange/FEA-06-codex-brief.md`）。
+## 34. FEA-06 scope-r3 approved → ready → 派 Codex 实施（2026-11-02）
+
+- **scope-r3**（独立上下文子代理，被审 `3c7f311d8`）：**approved，P0=0 / P1=0 / P2=3**；r2-P0（Fluent 壳依赖注入）与 r2-P1（AC2–AC5 对齐 09 矩阵）经逐点实测**已闭环**、无新增 P0/P1；build 0/0、全量 1022/0/57、check PASS(3)、pins 15/15。
+- **释放**：卡 `status: ready`、`approval: scope_review_r3_approved_2026-11-02`、`base_commit: 3c7f311d8`；owner=**Codex**（W-10）；r3 P2×3 已处置（卡 P3 旧口径改 7 方法/9 行；派发 brief 刷新 r3 引用与状态口径；approval/STATUS 同步）。
+- **派发**：brief = `G:\CODEX\New Manga.workspace\exchange\FEA-06-codex-brief.md`；命令模板：`codex exec --skip-git-repo-check -s workspace-write -m gpt-6-luna -c model_reasoning_effort="xhigh" -o <workspace>/exchange/fea-06-codex-result.md "<brief>"`，cwd=仓库根（桌面版会话可见）；结果/日志落 workspace/exchange。Codex 交付：单一实现 commit（仅 allowed_paths）+ `verification/FEA-06/**` 证据 + handoff；**不 push**。
+- **下一步**：Codex 完成后 DSH 验证（diff/测试/证据/治理）→ 派独立上下文实现复核（impl-rN）→ DSH 集成验证 → done；期间 DSH 不改 repo 文件（避免与 Codex 写冲突）。
