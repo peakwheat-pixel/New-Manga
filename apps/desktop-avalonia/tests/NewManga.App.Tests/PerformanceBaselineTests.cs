@@ -69,6 +69,9 @@ public sealed class PerformanceBaselineTests : IDisposable
         var window = App.CreatePresentationShell(
             options, NullHostController.Instance, selection, appearance, themeHome, themeManager, application);
         var presentation = Assert.IsType<PresentationWindow>(window);
+        // R-001: the switch transaction now commits only after the real layout/Loaded/frame-render gates,
+        // which require a laid-out window; the measured path is the production path.
+        presentation.Show();
         var firstSwitch = Stopwatch.StartNew();
         var cold = await presentation.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
         firstSwitch.Stop();

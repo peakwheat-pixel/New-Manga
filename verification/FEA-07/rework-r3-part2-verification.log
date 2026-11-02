@@ -1,0 +1,40 @@
+# FEA-07 r3 rework part2 (R-001 real staging Loaded/Rendered gates + state coverage / R-002 hidden cached-tree exit aggregation + V2 Theme Studio draft)
+# time: 2026-11-02 17:44:00 +08:00
+# head: cc34f36e1 (uncommitted rework; committed delivery head is pinned by final-evidence.log)
+# worktree: M apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
+#   M apps/desktop-avalonia/src/NewManga.App/Services/FrontendHostCoordinator.cs
+#   M apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs
+#   M apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/FluentPageViewModels.cs
+#   M apps/desktop-avalonia/src/NewManga.App/Views/Presentation/PresentationWindow.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/FrontendHostCoordinatorTests.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PerformanceBaselineTests.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PresentationHostCompositionTests.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PresentationWindowTests.cs
+# build (Debug, sln): exit=0
+#   0 个警告
+#   0 个错误
+# focused tests (PresentationWindow + FrontendHostCoordinator + PresentationHostComposition): exit=0
+#   测试总数: 27 / 通过: 27 / 失败: 0
+# full-tests (sln, NewManga.runsettings): exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21 - NewManga.Appearance.Tests.dll
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38 - NewManga.Presentation.Avalonia.Tests.dll
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79 - NewManga.Host.Tests.dll
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253 - NewManga.ThemeEngine.Tests.dll
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87 - NewManga.DesignSystem.Tests.dll
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31 - NewManga.ApplicationCore.Tests.dll
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150 - NewManga.CoreClient.Tests.dll
+#   已通过! - 失败:     0，通过:   510，已跳过:     7，总计:   517 - NewManga.App.Tests.dll
+#   全量: 1119 passed / 0 failed / 57 skipped (baseline before rework: 1115/0/57; +4 new tests)
+#   skip reasons (unchanged): Host 28 (sidecar env not set), CoreClient 22 (sidecar env not set), App 7 (BOOK/S4 fixture unavailable)
+# performance baseline (Release, PerformanceBaselineTests, real content factory + real layout/Loaded/frame gates):
+#   run 1: p50 151.09 / p95 712.28 / max 712.28 / cold 621.08 / mem +7216 B / handles 0 -> PASS
+#   run 2: p50 104.28 / p95 575.64 / max 575.64 / mem +39736 B / handles +3 -> PASS
+#   run 3 (recorded JSON): p50 102.29 / p95 496.30 / max 496.30 / cold 593.99 / mem +7088 B / handles 0 -> PASS
+#   W-5 budget p95 <= 1000 ms: PASS on all three runs (range 496.30-712.28 ms; p95==max because n=12)
+#   JSON: verification/FEA-07/performance-baseline-release.json (run 3); summary: performance-baseline.md
+# generators:
+#   TokenGen -- --check: rows 292; up to date (byte-for-byte) exit=0
+#   ThemeGen -- --check: up to date (byte-for-byte) exit=0
+# governance:
+#   check.ps1: PASS (3 warnings: 10 non-terminal tasks; STATUS/PLAN budget warnings)
+#   verify_pins.ps1: PASS 15/15

@@ -240,7 +240,18 @@ public partial class App : Application
 
         var stateStore = new WindowStateMementoStore(Path.Combine(directory, "window-state.json"));
         var initialMemento = stateStore.TryLoad(out _);
-        var window = new PresentationWindow(options, selection, controller, appearance, journal, ContentFactory, initialMemento);
+        // R-002: every cached content tree (including the hidden one kept for state preservation) must
+        // report its live exit state, so leaving a dirty Fluent settings draft or a running workbench
+        // cannot be closed silently from the other frontend.
+        var window = new PresentationWindow(
+            options,
+            selection,
+            controller,
+            appearance,
+            journal,
+            ContentFactory,
+            initialMemento,
+            allContentProvider: () => contentCache.Values.ToArray());
 
         // R-005: clamp the restored placement into the current displays (never restore off-screen).
         if (initialMemento is { } restored)
@@ -383,6 +394,11 @@ public partial class App : Application
             var viewModel = new ThemeStudioViewModel(service);
             var adapter = new ThemeStudioSurfaceAdapter(viewModel, () => shell.ViewModel.CloseThemeStudioCommand.Execute(null));
             shell.ViewModel.RegisterSurfaceWorkspace(adapter);
+
+            // R-002: the stable window's exit gate aggregates hidden content trees; the V2 shell reports
+            // the production Theme Studio draft through this seam (the studio commits apply immediately,
+            // so an unapplied draft is the only V2 edit buffer that can be lost on close).
+            shell.ThemeStudioDraftProvider = () => viewModel.HasDraft;
 
             // Persisted theme settings are applied asynchronously; the shell is already usable and
             // the surface shows its own error banner if initialization fails.

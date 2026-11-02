@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
@@ -16,7 +20,8 @@ namespace NewManga.App.Tests;
 
 /// <summary>
 /// FEA-07 slice 2b: the stable window keeps its native identity while hosting/switching the frontend
-/// content tree; switch failures roll back to the previous tree (§7.1/§7.3/H2).
+/// content tree; the hidden staging slot gives the switch transaction real layout/Loaded/render gates and
+/// switch failures roll back to the previous tree (§7.1/§7.3/H2, R-001/R-002).
 /// </summary>
 public sealed class PresentationWindowTests : IDisposable
 {
@@ -53,16 +58,21 @@ public sealed class PresentationWindowTests : IDisposable
     private static string TextOf(PresentationWindow window) =>
         (window.ContentHost.Current as Border)?.Child is TextBlock text ? text.Text ?? string.Empty : string.Empty;
 
-    private PresentationWindow CreateWindow(Func<string, Control>? factory = null)
+    private PresentationWindow CreateWindow(
+        Func<string, Control>? factory = null,
+        Func<IReadOnlyList<Control>>? allContentProvider = null)
     {
         var options = AppOptions.Parse(Array.Empty<string>());
-        return new PresentationWindow(
+        var window = new PresentationWindow(
             options,
             FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
             hostController: null,
             _appearance,
             _journal,
-            factory ?? (id => Content(id, "hosted")));
+            factory ?? (id => Content(id, "hosted")),
+            allContentProvider: allContentProvider);
+        window.Show();
+        return window;
     }
 
     [AvaloniaFact]
@@ -75,6 +85,24 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.Equal(760, window.Height);
         Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
         Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
+        Assert.True(window.ContentHost.Bounds.Width > 0 && window.ContentHost.Bounds.Height > 0);
+        window.Close();
+    }
+
+    /// <summary>R-001: the staging slot is part of the live visual tree but never visible or interactive.</summary>
+    [AvaloniaFact]
+    public void StagingHost_IsAttachedButNotVisibleOrInteractive()
+    {
+        var window = CreateWindow();
+
+        Assert.Same(window, TopLevel.GetTopLevel(window.StagingHost));
+        Assert.NotNull(window.StagingHost.GetVisualRoot());
+        Assert.Equal(0, window.StagingHost.Opacity);
+        Assert.False(window.StagingHost.IsHitTestVisible);
+        Assert.False(window.StagingHost.Focusable);
+        Assert.Null(window.StagingHost.Current);
+        Assert.True(window.StagingHost.Bounds.Width > 0 && window.StagingHost.Bounds.Height > 0);
+        window.Close();
     }
 
     [AvaloniaFact]
@@ -90,31 +118,26 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.Equal(FrontendSelector.CurrentV2FrontendId, window.CurrentFrontendId);
         Assert.Equal($"hosted:{FrontendSelector.CurrentV2FrontendId}", TextOf(window));
         Assert.Equal(FrontendSelector.CurrentV2FrontendId, _appearance.FrontendId);
+        Assert.Null(window.StagingHost.Current); // the committed tree is moved out of staging
+        window.Close();
     }
 
     [AvaloniaFact]
     public async Task FailedSwitch_KeepsPreviousContentAndJournalRecordsRollback()
     {
-        var window = new PresentationWindow(
-            AppOptions.Parse(Array.Empty<string>()),
-            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
-            hostController: null,
-            _appearance,
-            _journal,
-            id => id == FrontendSelector.CurrentV2FrontendId
-                ? throw new InvalidOperationException("cannot build v2")
-                : Content(id, "hosted"));
+        var window = CreateWindow(id => id == FrontendSelector.CurrentV2FrontendId
+            ? throw new InvalidOperationException("cannot build v2")
+            : Content(id, "hosted"));
 
-        
-        {
-            var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+        var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
 
-            Assert.False(result.Succeeded);
-            Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
-            Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
-            Assert.True(_journal.TryRead(out var entry, out _));
-            Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
-        }
+        Assert.False(result.Succeeded);
+        Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
+        Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
+        Assert.Null(window.StagingHost.Current);
+        Assert.True(_journal.TryRead(out var entry, out _));
+        Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+        window.Close();
     }
 
     [AvaloniaFact]
@@ -128,6 +151,7 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.False(result.Succeeded);
         Assert.Equal(before, TextOf(window));
         Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
+        window.Close();
     }
 
     [AvaloniaFact]
@@ -142,10 +166,12 @@ public sealed class PresentationWindowTests : IDisposable
             Assert.True(result.Succeeded, result.Failure);
             Assert.Equal(target, window.CurrentFrontendId);
             Assert.NotNull(window.ContentHost.Current);
+            Assert.Null(window.StagingHost.Current);
         }
 
         Assert.IsType<Border>(window.ContentHost.Current);
         Assert.False(File.Exists(_journal.FilePath));
+        window.Close();
     }
 
     [AvaloniaFact]
@@ -171,7 +197,6 @@ public sealed class PresentationWindowTests : IDisposable
         window.Close();
     }
 
-
     [AvaloniaFact]
     public void Broker_TracksOnlyOneStableMainWindow()
     {
@@ -185,7 +210,6 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.True(window.Broker.Unregister("inspector"));
         window.Close();
     }
-
 
     [AvaloniaFact]
     public void ExitCoordinator_BlocksCloseUntilPendingWorkCompletes()
@@ -201,7 +225,6 @@ public sealed class PresentationWindowTests : IDisposable
         window.ExitCoordinator.CompletePendingEdit("shelf");
         window.Close();
     }
-
 
     [AvaloniaFact]
     public async Task ConcurrentSwitches_AreSerializedAndEndOnTheLastRequestedFrontend()
@@ -251,6 +274,34 @@ public sealed class PresentationWindowTests : IDisposable
         window.Close();
     }
 
+    /// <summary>
+    /// R-002: the composition root caches one tree per frontend; a dirty/run state in a hidden tree (the
+    /// frontend the user switched away from) must still block the close, not just the visible tree.
+    /// </summary>
+    [AvaloniaFact]
+    public void HiddenCachedContentTrees_BlockCloseWhenDirtyOrRunning()
+    {
+        var hidden = new ExitBlockingControl();
+        var window = CreateWindow(allContentProvider: () => new Control[] { hidden, new Border() });
+        var cancelled = false;
+        window.Closing += (_, args) => cancelled |= args.Cancel;
+
+        hidden.HasUnsavedEdits = true;
+        window.Close();
+        Assert.True(cancelled, "a hidden cached content tree with unsaved edits must block the close");
+
+        cancelled = false;
+        hidden.HasUnsavedEdits = false;
+        hidden.HasActiveRuns = true;
+        window.Close();
+        Assert.True(cancelled, "a hidden cached content tree with an active run must block the close");
+
+        cancelled = false;
+        hidden.HasActiveRuns = false;
+        window.Close();
+        Assert.False(cancelled, "a clean hidden cached tree must not block the close");
+    }
+
     [AvaloniaFact]
     public void MaximizedMemento_IsRestored()
     {
@@ -273,13 +324,9 @@ public sealed class PresentationWindowTests : IDisposable
     [AvaloniaFact]
     public async Task InvalidGeometry_FailsTheSwitchAndKeepsTheOldContent()
     {
-        var window = new PresentationWindow(
-            AppOptions.Parse(Array.Empty<string>()),
-            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
-            hostController: null,
-            _appearance,
-            _journal,
-            id => id == FrontendSelector.CurrentV2FrontendId ? new ZeroSizeControl() : Content(id, "hosted"));
+        var window = CreateWindow(id => id == FrontendSelector.CurrentV2FrontendId
+            ? new ZeroSizeControl()
+            : Content(id, "hosted"));
 
         var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
 
@@ -287,12 +334,52 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.Contains("geometry", result.Failure);
         Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
         Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
+        Assert.Null(window.StagingHost.Current);
+        window.Close();
+    }
+
+    /// <summary>
+    /// R-001: a tree that does not remain loaded in the staging host must fail the Loaded gate, roll back
+    /// to the previous tree and clean up the staging slot (no half-switched UI is committed).
+    /// </summary>
+    [AvaloniaFact]
+    public async Task LoadedGateFailure_RollsBackAndClearsStaging()
+    {
+        var window = CreateWindow(id => id == FrontendSelector.CurrentV2FrontendId
+            ? new DetachesDuringLoadControl()
+            : Content(id, "hosted"));
+
+        var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("loaded", result.Failure, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
+        Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
+        Assert.Null(window.StagingHost.Current);
+        Assert.True(_journal.TryRead(out var entry, out _));
+        Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
         window.Close();
     }
 
     private sealed class ZeroSizeControl : Control
     {
         protected override Size ArrangeOverride(Size finalSize) => default;
+    }
+
+    /// <summary>
+    /// Fault injection for the real Loaded gate: once loaded, the tree detaches itself from the staging
+    /// slot (a tree that cannot stay mounted must never be committed).
+    /// </summary>
+    private sealed class DetachesDuringLoadControl : Border
+    {
+        protected override void OnLoaded(RoutedEventArgs e)
+        {
+            base.OnLoaded(e);
+            if (Parent is ContentControl slot)
+            {
+                Dispatcher.UIThread.Post(() => slot.Content = null, DispatcherPriority.Render);
+            }
+        }
     }
 
     private sealed class ExitBlockingControl : Border, IPresentationExitState

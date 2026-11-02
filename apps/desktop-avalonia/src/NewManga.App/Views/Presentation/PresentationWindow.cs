@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.Services;
@@ -17,16 +19,21 @@ using NewManga.Presentation.Avalonia.Switching;
 namespace NewManga.App.Views.Presentation;
 
 /// <summary>
-/// FEA-07 slice 2b: the stable native main window. It owns one <see cref="FrontendContentHost"/> and
-/// keeps its own native identity (title/geometry/material) while the content tree is switched between
-/// frontends. The content factory is supplied by the composition root so this window has no direct
-/// dependency on either shell implementation (§7.3 / H2).
+/// FEA-07 slice 2b: the stable native main window. It owns one visible <see cref="FrontendContentHost"/>
+/// plus one hidden staging slot and keeps its own native identity (title/geometry/material) while the
+/// content tree is switched between frontends. The content factory is supplied by the composition root
+/// so this window has no direct dependency on either shell implementation (§7.3 / H2).
 /// </summary>
 public sealed class PresentationWindow : Window
 {
     private readonly FrontendHostCoordinator _coordinator;
+    private readonly Func<IReadOnlyList<Control>>? _allContentProvider;
 
     /// <summary>Creates the stable window and hosts the initial frontend content tree.</summary>
+    /// <param name="allContentProvider">
+    /// FEA-07 R-002: every cached content tree the composition root keeps for state preservation (the
+    /// window closes only after all of them report no unsaved edits / active runs, not just the visible tree).
+    /// </param>
     public PresentationWindow(
         AppOptions options,
         FrontendSelection selection,
@@ -34,7 +41,8 @@ public sealed class PresentationWindow : Window
         AppearanceCoordinator appearance,
         SwitchJournal journal,
         Func<string, Control> contentFactory,
-        WindowStateMemento? initialMemento = null)
+        WindowStateMemento? initialMemento = null,
+        Func<IReadOnlyList<Control>>? allContentProvider = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(selection);
@@ -43,6 +51,7 @@ public sealed class PresentationWindow : Window
         ArgumentNullException.ThrowIfNull(contentFactory);
 
         _ = hostController; // content factory owns the Host wiring; the window never starts/disposes it
+        _allContentProvider = allContentProvider;
         Title = "New Manga";
         Width = initialMemento?.Width ?? options.WindowWidth;
         Height = initialMemento?.Height ?? options.WindowHeight;
@@ -58,12 +67,30 @@ public sealed class PresentationWindow : Window
 
         ContentHost = new FrontendContentHost();
         ContentHost.SetContent(contentFactory(selection.EffectiveFrontendId));
-        Content = ContentHost;
+
+        // R-001: the hidden staging slot is attached to the same live visual tree as the visible slot but
+        // is composited at zero opacity and never hit-testable. A replacement tree is mounted here first,
+        // so the commit gate observes real layout/Loaded/frame-render signals while the previous tree
+        // stays interactive (no manual Measure/Arrange, no synthetic viewport, §7.1/§15.5).
+        StagingHost = new FrontendContentHost
+        {
+            Opacity = 0,
+            IsHitTestVisible = false,
+            Focusable = false,
+        };
+        AutomationProperties.SetAccessibilityView(StagingHost, AccessibilityView.Raw);
+
+        var root = new Grid();
+        root.Children.Add(StagingHost);
+        root.Children.Add(ContentHost);
+        Content = root;
+
         this[!BackgroundProperty] = new DynamicResourceExtension(NmKeys.Color.Bg.App);
         ApplyWindowMaterial();
 
         _coordinator = new FrontendHostCoordinator(
             ContentHost,
+            StagingHost,
             selection.EffectiveFrontendId,
             contentFactory,
             appearance,
@@ -86,6 +113,9 @@ public sealed class PresentationWindow : Window
     /// <summary>The content slot the switch transaction replaces (exposed for headless verification).</summary>
     public FrontendContentHost ContentHost { get; }
 
+    /// <summary>The hidden pre-commit slot: real attach/layout/Loaded/render signals come from here (R-001).</summary>
+    public FrontendContentHost StagingHost { get; }
+
     /// <summary>The frontend id currently hosted by this stable window.</summary>
     public string CurrentFrontendId => _coordinator.CurrentFrontendId;
 
@@ -101,13 +131,49 @@ public sealed class PresentationWindow : Window
 
     private void OnClosing(object? sender, WindowClosingEventArgs args)
     {
-        // R-002: consult the live content tree (real draft/run state) plus registered process-level work.
-        var live = ContentHost.Current as IPresentationExitState;
-        var liveBlocked = live is { HasUnsavedEdits: true } or { HasActiveRuns: true };
+        // R-002: aggregate the live content trees the composition root caches per frontend (the visible
+        // one plus hidden staging/cached trees) before consulting the process-level coordinator; leaving a
+        // dirty Fluent settings draft or a running workbench/import in a hidden tree must block the close.
+        var contentBlocked = false;
+        foreach (var content in EnumerateLiveContentTrees())
+        {
+            if (content is IPresentationExitState state && (state.HasUnsavedEdits || state.HasActiveRuns))
+            {
+                contentBlocked = true;
+                break;
+            }
+        }
+
         var decision = ExitCoordinator.RequestExit();
-        if (liveBlocked || !decision.Allowed)
+        if (contentBlocked || !decision.Allowed)
         {
             args.Cancel = true;
+        }
+    }
+
+    private IEnumerable<Control> EnumerateLiveContentTrees()
+    {
+        if (ContentHost.Current is { } visible)
+        {
+            yield return visible;
+        }
+
+        if (StagingHost.Current is { } staged)
+        {
+            yield return staged;
+        }
+
+        if (_allContentProvider?.Invoke() is not { } cached)
+        {
+            yield break;
+        }
+
+        foreach (var content in cached)
+        {
+            if (content is not null)
+            {
+                yield return content;
+            }
         }
     }
 

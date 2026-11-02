@@ -13,14 +13,17 @@ namespace NewManga.App.Tests;
 
 /// <summary>
 /// FEA-07 slice 2: the stable-window content switch. The app-side coordinator validates the frozen
-/// selector semantics, builds the replacement tree, persists <c>theme.frontendId</c> through the single
-/// appearance writer and swaps into the stable host; any failure keeps the previous UI (§7.1/§15.5).
+/// selector semantics, builds the replacement tree into the hidden staging slot, runs the real
+/// layout/Loaded/frame-render gates, persists <c>theme.frontendId</c> through the single appearance
+/// writer and swaps into the stable host; any failure keeps the previous UI (§7.1/§15.5, R-001).
 /// </summary>
 public sealed class FrontendHostCoordinatorTests : IDisposable
 {
     private readonly string _root;
     private readonly AppearanceCoordinator _appearance;
     private readonly FrontendContentHost _host;
+    private readonly FrontendContentHost _staging;
+    private readonly Window _window;
     private readonly SwitchJournal _journal;
 
     public FrontendHostCoordinatorTests()
@@ -31,11 +34,18 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
         _appearance.Reload();
         _host = new FrontendContentHost();
         _host.SetContent(Content(FrontendSelector.CurrentV2FrontendId, "initial"));
+        _staging = new FrontendContentHost { Opacity = 0, IsHitTestVisible = false };
+        var root = new Grid();
+        root.Children.Add(_staging);
+        root.Children.Add(_host);
+        _window = new Window { Width = 900, Height = 600, Content = root };
+        _window.Show();
         _journal = new SwitchJournal(Path.Combine(_root, "switch-journal.json"));
     }
 
     public void Dispose()
     {
+        _window.Close();
         try
         {
             Directory.Delete(_root, recursive: true);
@@ -56,6 +66,7 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
 
     private FrontendHostCoordinator CreateCoordinator(Func<string, Control>? factory = null) => new(
         _host,
+        _staging,
         FrontendSelector.CurrentV2FrontendId,
         factory ?? (id => Content(id, "switched")),
         _appearance,
@@ -82,6 +93,7 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
         var builds = 0;
         var counting = new FrontendHostCoordinator(
             _host,
+            _staging,
             FrontendSelector.CurrentV2FrontendId,
             id =>
             {
@@ -165,6 +177,7 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
     {
         var coordinator = new FrontendHostCoordinator(
             _host,
+            _staging,
             FrontendSelector.CurrentV2FrontendId,
             id => Content(id, "switched"),
             _appearance,
@@ -188,6 +201,7 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
         var finalizeAttempts = 0;
         var coordinator = new FrontendHostCoordinator(
             _host,
+            _staging,
             FrontendSelector.CurrentV2FrontendId,
             id => Content(id, "switched"),
             _appearance,

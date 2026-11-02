@@ -78,8 +78,15 @@ public partial class AppShellV2 : UserControl, IPresentationExitState
 
     public AppShellViewModel ViewModel => _viewModel;
 
-    /// <summary>FEA-07 AC2: V2 pages commit immediately, so there is no draft buffer to lose.</summary>
-    public bool HasUnsavedEdits => false;
+    /// <summary>
+    /// FEA-07 AC2/R-002: V2 pages commit immediately, so only the Theme Studio draft buffer can hold an
+    /// unsaved edit. The composition root wires <see cref="ThemeStudioDraftProvider"/> to the production
+    /// Theme Studio view model; without that seam the shell honestly reports no draft.
+    /// </summary>
+    public Func<bool>? ThemeStudioDraftProvider { get; set; }
+
+    /// <summary>FEA-07 AC2: an unapplied Theme Studio draft blocks process exit.</summary>
+    public bool HasUnsavedEdits => ThemeStudioDraftProvider?.Invoke() ?? false;
 
     /// <summary>FEA-07 AC2: an active import blocks process exit.</summary>
     public bool HasActiveRuns => _viewModel.Library.ImportDock.IsRunning;

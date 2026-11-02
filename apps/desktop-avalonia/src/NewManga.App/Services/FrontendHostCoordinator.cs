@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.Appearance;
 using NewManga.Presentation.Avalonia.Hosting;
 using NewManga.Presentation.Avalonia.Switching;
@@ -12,17 +13,23 @@ namespace NewManga.App.Services;
 
 /// <summary>
 /// FEA-07 app-side switch orchestration: validates the requested frontend against the frozen selector
-/// semantics, builds the replacement content tree, runs the real layout/loaded/rendered gates, persists
-/// <c>theme.frontendId</c> through the single appearance writer and swaps the content into the stable
-/// host. The previous tree is restored on any failure (§7.1 / §15.5). All state checks and snapshots are
-/// inside one switch gate so concurrent requests cannot return a stale success or roll back to an
-/// outdated UI (R-013).
+/// semantics, builds the replacement content tree inside the hidden staging slot, and commits it only
+/// after the real layout pass produced valid geometry, the real Loaded event fired and a frame was
+/// actually rendered for the mounted tree. <c>theme.frontendId</c> is persisted through the single
+/// appearance writer, and the previous tree is restored on any failure (§7.1 / §15.5). All state checks
+/// and snapshots live inside one switch gate so concurrent requests cannot return a stale success or
+/// roll back to an outdated UI (R-013).
 /// </summary>
 public sealed class FrontendHostCoordinator
 {
-    private static readonly Size FallbackViewport = new(1024, 640);
+    /// <summary>Fail-closed bound for the real Loaded signal (the staging top-level must load the tree).</summary>
+    private static readonly TimeSpan LoadedGateTimeout = TimeSpan.FromSeconds(5);
+
+    /// <summary>Fail-closed bound for the real frame-render signal (a window that cannot render must not commit).</summary>
+    private static readonly TimeSpan RenderGateTimeout = TimeSpan.FromSeconds(2);
 
     private readonly FrontendContentHost _host;
+    private readonly FrontendContentHost _stagingHost;
     private readonly Func<string, Control> _contentFactory;
     private readonly AppearanceCoordinator _appearance;
     private readonly FrontendSwitchCoordinator _switcher;
@@ -32,6 +39,7 @@ public sealed class FrontendHostCoordinator
 
     public FrontendHostCoordinator(
         FrontendContentHost host,
+        FrontendContentHost stagingHost,
         string initialFrontendId,
         Func<string, Control> contentFactory,
         AppearanceCoordinator appearance,
@@ -39,12 +47,14 @@ public sealed class FrontendHostCoordinator
         Action? beforeJournalCommit = null)
     {
         ArgumentNullException.ThrowIfNull(host);
+        ArgumentNullException.ThrowIfNull(stagingHost);
         ArgumentException.ThrowIfNullOrWhiteSpace(initialFrontendId);
         ArgumentNullException.ThrowIfNull(contentFactory);
         ArgumentNullException.ThrowIfNull(appearance);
         ArgumentNullException.ThrowIfNull(journal);
 
         _host = host;
+        _stagingHost = stagingHost;
         _contentFactory = contentFactory;
         _appearance = appearance;
         _switcher = new FrontendSwitchCoordinator(journal, beforeJournalCommit: beforeJournalCommit);
@@ -93,6 +103,7 @@ public sealed class FrontendHostCoordinator
             }
 
             Control? replacement = null;
+            TaskCompletionSource<bool>? loadedSignal = null;
             var previous = _host.Current;
             AppearanceSettings? previousSettings = null;
 
@@ -102,22 +113,27 @@ public sealed class FrontendHostCoordinator
                 BuildTreeAsync = _ => InvokeOnUiAsync(() =>
                 {
                     replacement = _contentFactory(target);
+                    // R-001: subscribe to the real Loaded event before the tree enters the visual tree;
+                    // the Loaded gate never fabricates a signal with a dispatcher-priority no-op.
+                    var signal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    replacement.Loaded += (_, _) => signal.TrySetResult(true);
+                    loadedSignal = signal;
                 }),
-                LayoutAsync = _ => InvokeOnUiAsync(() => ValidateLayout(replacement)),
-                LoadedAsync = _ => InvokeAtPriorityAsync(DispatcherPriority.Loaded),
-                RenderedAsync = _ => InvokeAtPriorityAsync(DispatcherPriority.Render),
+                LayoutAsync = _ => MountAndValidateLayoutAsync(replacement),
+                LoadedAsync = token => ValidateLoadedAsync(replacement, loadedSignal, token),
+                RenderedAsync = token => ValidateRenderedAsync(replacement, token),
                 CommitAsync = async token =>
                 {
                     previousSettings = _appearance.Settings;
                     try
                     {
                         await InvokeOnUiAsync(() =>
-                            _host.SetContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
+                            PromoteStagedContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
                         await _appearance.SaveAsync(previousSettings with { FrontendId = target }, token).ConfigureAwait(true);
                     }
                     catch
                     {
-                        await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
+                        await InvokeOnUiAsync(() => RestoreContent(previous));
                         if (previousSettings is not null)
                         {
                             await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
@@ -133,7 +149,7 @@ public sealed class FrontendHostCoordinator
                 },
                 RollbackAsync = async _ =>
                 {
-                    await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
+                    await InvokeOnUiAsync(() => RestoreContent(previous));
                     if (previousSettings is not null)
                     {
                         await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
@@ -157,27 +173,120 @@ public sealed class FrontendHostCoordinator
         }
     }
 
-    private void ValidateLayout(Control? replacement)
+    /// <summary>
+    /// R-001 layout gate: mount the replacement into the hidden staging slot (already attached to the live
+    /// visual tree) and read the geometry produced by the real layout pass. No manual Measure/Arrange and
+    /// no synthetic viewport: zero geometry anywhere fails the switch instead of being papered over.
+    /// </summary>
+    private async Task MountAndValidateLayoutAsync(Control? replacement)
     {
-        if (replacement is null)
+        var tree = replacement ?? throw new InvalidOperationException("replacement content tree was not built");
+        await InvokeOnUiAsync(() => _stagingHost.SetContent(tree));
+
+        // The layout pass runs at the dispatcher's Layout priority, which is processed before the job
+        // below; this continuation therefore observes the post-layout geometry of the mounted tree.
+        await InvokeAtPriorityAsync(DispatcherPriority.Loaded);
+
+        await InvokeOnUiAsync(() =>
         {
-            throw new InvalidOperationException("replacement content tree was not built");
+            var hostBounds = _host.Bounds;
+            if (hostBounds.Width <= 0 || hostBounds.Height <= 0)
+            {
+                throw new InvalidOperationException(
+                    $"stable content host has no valid geometry ({hostBounds.Width:0}x{hostBounds.Height:0}); the window is not laid out");
+            }
+
+            var stagingBounds = _stagingHost.Bounds;
+            if (stagingBounds.Width <= 0 || stagingBounds.Height <= 0)
+            {
+                throw new InvalidOperationException(
+                    $"staging content host has no valid geometry ({stagingBounds.Width:0}x{stagingBounds.Height:0})");
+            }
+
+            var treeBounds = tree.Bounds;
+            if (treeBounds.Width <= 0 || treeBounds.Height <= 0)
+            {
+                throw new InvalidOperationException(
+                    $"replacement content tree has no valid geometry ({treeBounds.Width:0}x{treeBounds.Height:0})");
+            }
+        });
+    }
+
+    /// <summary>R-001 loaded gate: the real Loaded event must fire and the tree must stay attached.</summary>
+    private async Task ValidateLoadedAsync(
+        Control? replacement,
+        TaskCompletionSource<bool>? loadedSignal,
+        CancellationToken cancellationToken)
+    {
+        var tree = replacement ?? throw new InvalidOperationException("replacement content tree was not built");
+        if (!tree.IsLoaded)
+        {
+            var signal = loadedSignal ?? throw new InvalidOperationException("replacement content tree has no load signal");
+            await signal.Task.WaitAsync(LoadedGateTimeout, cancellationToken).ConfigureAwait(true);
         }
 
-        var viewport = _host.Bounds.Width > 0 && _host.Bounds.Height > 0
-            ? _host.Bounds.Size
-            : FallbackViewport;
-        replacement.Measure(viewport);
-        replacement.Arrange(new Rect(viewport));
-        if (replacement.Bounds.Width <= 0 || replacement.Bounds.Height <= 0)
+        await InvokeOnUiAsync(() =>
         {
-            throw new InvalidOperationException("replacement content tree has no valid geometry");
-        }
+            if (!tree.IsLoaded || tree.GetVisualRoot() is null)
+            {
+                throw new InvalidOperationException("replacement content tree did not stay loaded in the staging host");
+            }
+
+            if (TopLevel.GetTopLevel(tree) is null)
+            {
+                throw new InvalidOperationException("replacement content tree is not attached to a top level");
+            }
+        });
+    }
+
+    /// <summary>
+    /// R-001 rendered gate: wait for an actually produced frame (TopLevel animation frame) for the mounted
+    /// tree and re-validate attachment afterwards. A dispatcher-priority no-op is not a rendered signal;
+    /// a tree that stops rendering fails the switch and is rolled back.
+    /// </summary>
+    private async Task ValidateRenderedAsync(Control? replacement, CancellationToken cancellationToken)
+    {
+        var tree = replacement ?? throw new InvalidOperationException("replacement content tree was not built");
+        var topLevel = await InvokeOnUiAsync(() => TopLevel.GetTopLevel(tree))
+            ?? throw new InvalidOperationException("replacement content tree is not attached to a top level");
+
+        var frame = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await InvokeOnUiAsync(() => topLevel.RequestAnimationFrame(_ => frame.TrySetResult(true)));
+        await frame.Task.WaitAsync(RenderGateTimeout, cancellationToken).ConfigureAwait(true);
+
+        await InvokeOnUiAsync(() =>
+        {
+            if (!tree.IsLoaded || tree.GetVisualRoot() is null)
+            {
+                throw new InvalidOperationException("replacement content tree is no longer attached after the render gate");
+            }
+
+            if (tree.Bounds.Width <= 0 || tree.Bounds.Height <= 0)
+            {
+                throw new InvalidOperationException("replacement content tree lost its geometry after the render gate");
+            }
+        });
+    }
+
+    /// <summary>Moves the gated tree from staging into the visible slot (the previous tree never shows half a switch).</summary>
+    private void PromoteStagedContent(Control replacement)
+    {
+        _stagingHost.Clear();
+        _host.SetContent(replacement);
+    }
+
+    /// <summary>Restores the previous visible tree and drops any staged replacement.</summary>
+    private void RestoreContent(Control? previous)
+    {
+        _stagingHost.Clear();
+        _host.SetContent(previous ?? Placeholder);
     }
 
     private static Control Placeholder => new Border();
 
     private static async Task InvokeOnUiAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
+
+    private static async Task<T> InvokeOnUiAsync<T>(Func<T> func) => await Dispatcher.UIThread.InvokeAsync(func);
 
     private static async Task InvokeAtPriorityAsync(DispatcherPriority priority) =>
         await Dispatcher.UIThread.InvokeAsync(static () => { }, priority);

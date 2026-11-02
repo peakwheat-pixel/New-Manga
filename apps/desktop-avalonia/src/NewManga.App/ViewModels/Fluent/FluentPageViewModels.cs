@@ -1383,7 +1383,15 @@ public sealed class SettingsViewModel : FluentViewModel
     private void ApplyCoordinatorSettings()
     {
         if (_appearance is null) return;
-        Draft = _appearance.Settings;
+        var settings = _appearance.Settings;
+
+        // FEA-07 R-001/A01: a runtime frontend switch persists only theme.frontendId. That single-field
+        // change must not silently discard the user's unapplied appearance draft (the hidden Fluent tree
+        // keeps its state across the switch); adopt the new frontend id into the draft and keep the rest.
+        // Any other external appearance change still mirrors the coordinator (single writer).
+        Draft = Equals(Draft with { FrontendId = settings.FrontendId }, settings)
+            ? settings
+            : Draft with { FrontendId = settings.FrontendId };
         Changed(nameof(IsDirty));
     }
 }
