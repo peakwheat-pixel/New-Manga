@@ -26,6 +26,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/**
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/**
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/Validation/**
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Palette/**
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/**
   - apps/desktop-avalonia/src/NewManga.DesignSystem/**
   - apps/desktop-avalonia/src/NewManga.Appearance/**
   - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/ThemeStudio/ThemeEngineThemeStudioService.cs
@@ -90,6 +92,7 @@ allowed_paths:
 | W-10 | D-1 偏差 | C-03 §2.1 的唯一写者是 `NewManga.Appearance` 内的 `AppearanceCoordinator`；PREREQ-1 交付在 App 层（只读）。本卡须迁移到 `NewManga.Appearance` 并使其成为写者 | C-03 §2.1；PREREQ-1 Closeout D-1 |
 | W-11 | C-02 V-07 适用口径（DSH 裁决 Q-35） | ThemeEngine 公开面（enum/接口签名）**冻结**；`Nm.Material.Acrylic.Base/.Tint` 用**主题层令牌**承载（`NmKeys` 常量 + `ThemeLayerAllowedKeys` + 主题包 colors），`ThemeMaterial` 枚举与 `ThemeTokenSet` 签名**不变**，故**无需 UNFREEZE**；若后续确需改公开面，须先出 UNFREEZE 记录再改 | C-02 V-07「不新增枚举值、不改接口签名」；scope-r2 R2-P1-3 |
 | W-12 | P7 校验器归属与写域补口（DSH 实施期裁决，2026-11-02） | C-02 §4 明定「manifest 缺失或被手改 → 主题包加载失败；校验器覆盖令牌齐全性 + 例外仅限 Fluent + 无裸值」，该义务由本卡 P7 承担：`allowed_paths` 增 `NewManga.ThemeEngine/Validation/**`；`ThemeValidator` 增加 manifest 校验（Fluent 包缺/改 manifest 或非 Fluent 包声明 → error）、Fluent 材质键完整性（Fluent 缺键或非 Fluent 声明 → error），并把视觉主题 id 命名空间放宽到接受冻结的 `builtin.fluent-dark`（`.` 合法）。**只改校验规则，不改 `ThemeKind` 枚举与任何公开方法签名**（V-07 不触碰，无需 UNFREEZE）。scope-r3 的 R3-P2-2 把「不改 validator、只加测试」列为最小路径并注明「完整校验器义务归属由 DSH 注记」——本行即该注记的落点；实施期实测现有 `Validate(fluent-dark)` 因 id 含 `.` 必失败，不补此口则 AC7 不可能通过 | C-02 §4 校验器判据；scope-r3 R3-P2-2；实施期实测 |
+| W-13 | 实施期写域回填登记（DSH 裁决，2026-11-02；处置 impl-r1 R1-P1-1） | `allowed_paths` 增 `NewManga.ThemeEngine/Palette/**` 与 `NewManga.ThemeEngine/Service/**`，登记两处行为必需的写域扩张：① `Palette/ThemePaletteComposer.cs`——fluent 包 61 键主题层（37 colors 含两材质键）合成必需，不修则 `Compose` 按 59 键断言必抛异常、AC6/AC7 不可能 MET；② `Service/IThemeSettingsSink.cs`——P5「避免 ThemeEngine→Appearance 反向引用」的承载位（接口在 ThemeEngine、实现在 App）。两者均**零契约面变化**（`Compose` 公开签名未变，仅新增常量成员；新增接口不改既有接口），与 W-12 同性质；实施时已在 `delivery-notes` §1/§2.3 与 checkpoint §28 内容披露，impl-r1 复核确认「行为必需、改动正确、冻结面零触碰」，仅缺登记动作 → 本行补登记。**R1-P2 注记**：W-12 属实施期自裁决，已由 impl-r1 独立复核确认合法（P2 注记）；`ThemeValidator.IdPattern` 放宽面宽于最小必要（`.` 对 user 主题亦放行），登记为已知放宽，user/builtin 命名空间隔离留 FEA-06/Theme Studio 导入侧（P2 接受遗留）；`StubThemeStudioService.Create` 的 sink 注入通路无直接测试（P2-3 接受遗留，生产点 `CreateProduction` 有端到端测试，沙箱默认 null 不镜像为安全默认） | impl-r1 R1-P1-1 / R1-P2-1..3；C-03 §2.1/§2.2 sink-only；C-02 V-03 材质组合成链 |
 
 ## 测试要求
 
@@ -131,7 +134,7 @@ allowed_paths:
 | E-P2-TEST | AC4 | `verification/FEA-06-PREREQ-2/test.log` | `92cac5ab1` | `1325f8408d401440cbd33ec6dfb2a4c6fa2c4eecb2794605c86897a6000f2dcf` | CANONICAL |
 | E-P2-CHECK | Gate | `verification/FEA-06-PREREQ-2/governance-check.log` | `92cac5ab1` | `9fd5ad40131a58dab5c8409df053f967e6efd30dff8da7f65e21cf93d5a5edc4` | CANONICAL |
 | E-P2-PINS | Gate | `verification/FEA-06-PREREQ-2/verify-pins.log` | `92cac5ab1` | `cf0df19a460c144428b4f973b0f1de8b36e0e106d73c0593e15b4e95f84d3615` | CANONICAL |
-| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `92cac5ab1` | `5043754da6159495c65cb0b5501e984c1753c620bddc3efeb2070dc89f6ec0f9` | CANONICAL |
+| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `92cac5ab1` | `1b279fdd0bcfef805860afccbf7253490e1776c02b017d4e538a63431bb7b4a1` | CANONICAL |
 | E-P2-FLUENT-SMOKE | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-fluent-smoke.log` | `0d1037fd3` | `d679b34e04a0ba1a295bcf37eadb73c0b37d45d1335753c53c66928f9ef77a51` | CANONICAL |
 | E-P2-V2-SMOKE | AC2 | `verification/FEA-06-PREREQ-2/ac2-v2-smoke.log` | `0d1037fd3` | `11cb9ee6bb72b01648c23fa318eb336371d79fae2d98c68d6432eaf357e7f536` | CANONICAL |
 | E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `92cac5ab1` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
@@ -144,6 +147,7 @@ allowed_paths:
 ## Closeout Record
 
 - **实施完成（2026-11-02）**：P1–P7 / AC1–AC7 全部实现并自测（全量 **1022/0/57**；两 `--check` up to date；`check.ps1` PASS 3 warnings；`verify_pins` 15/15）。
-- **偏差**：D-1 已关闭（coordinator 迁入 `NewManga.Appearance`）；W-12（P7 校验器归属 + `Validation/**` 写域补口）已入附加裁决点；详见 `verification/FEA-06-PREREQ-2/delivery-notes.md`。
-- **待办**：实现复核（独立上下文）；approve 后填 canonical_evidence_status / resource_closeout_status、integration_commit 与本段最终结论。
+- **偏差**：D-1 已关闭（coordinator 迁入 `NewManga.Appearance`）；W-12（P7 校验器归属 + `Validation/**` 写域补口）与 W-13（`Palette/**` + `Service/**` 写域回填，处置 impl-r1 R1-P1-1）已入附加裁决点；详见 `verification/FEA-06-PREREQ-2/delivery-notes.md`。
+- **实现复核**：impl-r1（独立上下文，`9478c96fb`）**changes_requested（P0=0 / P1=1 / P2=3）**——AC1–AC7 全部 MET，唯一 P1 为程序性写域登记缺口（R1-P1-1，已 docs-only 补正：allowed_paths + W-13；P2×3 接受遗留）。待 impl-r2 窄面复核（只核 R1-P1-1 闭合与是否引入新问题）。
+- **待办**：impl-r2 approved 后填 canonical_evidence_status / resource_closeout_status、integration_commit 与本段最终结论。
 - 待关闭时填写。

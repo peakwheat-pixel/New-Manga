@@ -54,3 +54,10 @@ fluent-dark 为 dark-only 包，light 槽沿用 dark 调色板（impl-r4 P2-8 �
 - `--frontend` 值域不做 CLI 级校验（保持既有解析行为），未知值由 selector fail-safe 到 V2 并记录。
 - Fluent 四页内容、导航状态容器、Theme Studio Fluent 适配均属 FEA-06；本卡仅交付可启动骨架。
 - R2-P2-6（base_commit 在 release 时刷新）已在 release 时刷新为 `a33778608`。
+
+## 5. 实现复核 impl-r1 与处置（2026-11-02）
+
+- **impl-r1**（独立上下文子代理，被审 `9478c96fb`）：**changes_requested，P0=0 / P1=1 / P2=3**；AC1–AC7 逐条 **MET**，全量 1022/0/57 复现，W-12 经独立机械证实合法。报告：`doc/reviews/FEA-06-PREREQ-2-impl-r1.md`。
+- **R1-P1-1（写域扩张未登记）处置**：卡 `allowed_paths` 回填 `NewManga.ThemeEngine/Palette/**` 与 `NewManga.ThemeEngine/Service/**`，并新增 **W-13** 裁决行（行为必需性、零契约面变化、与 W-12 同性质、内容披露先于登记）。docs-only，无代码返修；待 impl-r2 窄面复核。
+- **R1-P2 处置（接受遗留/已注记）**：P2-1 W-12 属实施期自裁决，已由 impl-r1 独立确认（P2 注记）；P2-2 `ThemeValidator.IdPattern` 放宽面宽于最小必要（`.` 对 user 主题亦放行，威胁面无实质变化），登记为已知放宽、user/builtin 命名空间隔离留 FEA-06 导入侧；P2-3 `StubThemeStudioService.Create` 的 sink 注入无直接测试（沙箱默认 null 安全，`CreateProduction` 有端到端测试）——三者均接受遗留，不阻塞本卡。
+

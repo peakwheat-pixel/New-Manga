@@ -222,3 +222,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **裁决补充**：W-12（P7 校验器归属 + `NewManga.ThemeEngine/Validation/**` 写域补口；只改校验规则，不改 `ThemeKind`/接口签名 → 无需 UNFREEZE）；R4-P2-1 计数措辞已改（Base/Tint 可选、不进 Required 59）。
 - **并行复核披露（R4-OBS-1）**：scope-r4 被两个席位并行复核——`b2a45af6d`（另一席位，P2=0）与本会话独立子代理报告（P2=1，工作区版本）；两者 approved / P0=P1=0 同向，本会话采纳后者并在实施中关闭其唯一 P2。详见 `verification/FEA-06-PREREQ-2/delivery-notes.md` §3。
 - **下一步**：派独立上下文实现复核（impl-rB）；approve 后由 DSH 做集成验证、回填 `canonical_evidence_status` / `resource_closeout_status`、置 done 并更新 STATUS/PLAN。
+## 29. PREREQ-2 实现复核 impl-r1 → 处置（2026-11-02）
+
+- **impl-r1**（独立上下文子代理，被审 `9478c96fb`）：**changes_requested，P0=0 / P1=1 / P2=3**；AC1–AC7 逐条 **MET**，全量 1022/0/57 复现，W-12 经独立机械证实合法（旧 IdPattern 对 `builtin.fluent-dark` 匹配=0）；证据 30/30 sha 匹配、两 `--check` EXIT 0、`check.ps1`/`verify_pins` PASS。报告：`doc/reviews/FEA-06-PREREQ-2-impl-r1.md`。
+- **唯一 P1（R1-P1-1）处置**：实施期写域扩张未登记——`ThemePaletteComposer.cs`（`ThemeEngine/Palette/**`）与 `IThemeSettingsSink.cs`（`ThemeEngine/Service/**`）不在 allowed_paths 任何历史版本；行为必需且正确、已在 delivery-notes/checkpoint 披露，但缺 W-12 式登记 → **docs-only 补正**：`allowed_paths` 回填两目录 + 新增 **W-13** 裁决行（行为必需性/零契约面变化/与 W-12 同性质）。
+- **P2×3 处置**：R1-P2-1（W-12 属实施期自裁决，impl-r1 独立确认合法，P2 注记）；R1-P2-2（`ThemeValidator.IdPattern` 放宽面宽于最小必要，登记为已知放宽，user/builtin 命名空间隔离留 FEA-06 导入侧）；R1-P2-3（`StubThemeStudioService.Create` 的 sink 注入无直接测试，沙箱默认 null 安全且 `CreateProduction` 有端到端测试，接受遗留）。三者均不阻塞本卡。
+- **下一步**：派 **impl-r2 窄面复核**（只核 R1-P1-1 闭合、docs-only 无暗改、无新 findings）；approved 后进入 DSH 集成验证（重跑 §7、回填 canonical evidence / closeout、置 done、STATUS/PLAN 指针滚动）。
