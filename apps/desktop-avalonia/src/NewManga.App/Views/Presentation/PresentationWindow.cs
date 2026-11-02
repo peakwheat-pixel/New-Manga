@@ -54,13 +54,15 @@ public sealed class PresentationWindow : Window
             contentFactory,
             initialMemento,
             allContentProvider,
-            beforeJournalCommit: null)
+            beforeJournalCommit: null,
+            beforeCommit: null)
     {
     }
 
     /// <summary>
     /// Test/diagnostics overload: <paramref name="beforeJournalCommit"/> injects a fault right before the
-    /// switch journal finalize (after the content promote), mirroring the coordinator seam.
+    /// switch journal finalize (after the content promote) and <paramref name="beforeCommit"/> runs right
+    /// before the visible promote, mirroring the coordinator seams.
     /// </summary>
     internal PresentationWindow(
         AppOptions options,
@@ -71,7 +73,8 @@ public sealed class PresentationWindow : Window
         Func<string, Control> contentFactory,
         WindowStateMemento? initialMemento,
         Func<IReadOnlyList<Control>>? allContentProvider,
-        Action? beforeJournalCommit)
+        Action? beforeJournalCommit,
+        Action? beforeCommit)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(selection);
@@ -129,7 +132,8 @@ public sealed class PresentationWindow : Window
             journal,
             beforeJournalCommit: beforeJournalCommit,
             // R-022/R-024: the window-mode snapshot is taken inside the switch gate, tied to this transaction.
-            windowModeSnapshot: CaptureWindowMode);
+            windowModeSnapshot: CaptureWindowMode,
+            beforeContentCommit: beforeCommit);
 
         Broker = new WindowBroker();
         Broker.RegisterMain("presentation-main");

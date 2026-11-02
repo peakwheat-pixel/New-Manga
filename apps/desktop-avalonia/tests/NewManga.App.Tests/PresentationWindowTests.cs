@@ -440,43 +440,59 @@ public sealed class PresentationWindowTests : IDisposable
     /// R-024 (r7): a request queued behind a successful transaction and then rejected must not restore the
     /// mode snapshot of the transaction it waited for (the snapshot now lives inside the switch gate).
     /// </summary>
+    /// <summary>
+    /// R-023 residual (r8): the barrier must sit BEFORE the promote, while the old tree is still full screen;
+    /// only then does a queued rejected request carry a stale FullScreen snapshot in the pre-fix implementation.
+    /// </summary>
     [AvaloniaFact]
     public async Task QueuedRejectedSwitch_DoesNotRestoreAStaleWindowMode()
     {
         using var themeManager = new DesignSystemThemeManager(Application.Current!);
         themeManager.Initialize();
-        var finalizeEntered = new ManualResetEventSlim();
-        var releaseFinalize = new ManualResetEventSlim();
+        var commitEntered = new ManualResetEventSlim();
+        var releaseCommit = new ManualResetEventSlim();
         var window = CreateRealFluentWindow(
             themeManager,
             _ => Content("v2", "hosted"),
-            beforeJournalCommit: () =>
+            beforeJournalCommit: null,
+            out var fluent,
+            beforeCommit: () =>
             {
-                finalizeEntered.Set();
-                releaseFinalize.Wait(TimeSpan.FromSeconds(10));
-            },
-            out var fluent);
+                commitEntered.Set();
+                releaseCommit.Wait(TimeSpan.FromSeconds(10));
+            });
         try
         {
             ShowFullScreenReader(window, fluent);
 
             var successful = window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
-            await WaitUntilAsync(() => finalizeEntered.IsSet);
-            Assert.True(finalizeEntered.IsSet);
+            await WaitUntilAsync(() => commitEntered.IsSet);
+            Assert.True(commitEntered.IsSet);
 
-            // Queued behind the in-flight (successful) transaction; rejected after acquiring the gate.
+            // Barrier is before the promote: the visible tree and the native window are still the old
+            // full-screen Fluent that a pre-fix (outside-the-gate) snapshot would capture for the queued request.
+            Assert.Same(fluent, window.ContentHost.Current);
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, window.WindowState);
+
             var rejected = window.SwitchFrontendAsync("builtin.not-a-frontend");
-            releaseFinalize.Set();
+            await Task.Delay(100);
+            Assert.False(rejected.IsCompleted, "the rejected request must wait for the in-flight transaction");
 
+            releaseCommit.Set();
             var results = await Task.WhenAll(successful, rejected);
 
             Assert.True(results[0].Succeeded, results[0].Failure);
             Assert.False(results[1].Succeeded);
             Assert.Equal(FrontendSelector.CurrentV2FrontendId, window.CurrentFrontendId);
+            Assert.IsType<Border>(window.ContentHost.Current);
+            Assert.False(fluent.ReaderViewModel.IsFullScreen);
             Assert.Equal(WindowState.Normal, window.WindowState);
+            Assert.False(File.Exists(_journal.FilePath));
         }
         finally
         {
+            releaseCommit.Set();
             window.Close();
         }
     }
@@ -544,7 +560,8 @@ public sealed class PresentationWindowTests : IDisposable
         DesignSystemThemeManager themeManager,
         Func<string, Control> targetFactory,
         Action? beforeJournalCommit,
-        out FluentShellSurface fluent)
+        out FluentShellSurface fluent,
+        Action? beforeCommit = null)
     {
         FluentShellSurface? created = null;
         var window = new PresentationWindow(
@@ -570,7 +587,8 @@ public sealed class PresentationWindowTests : IDisposable
             },
             initialMemento: null,
             allContentProvider: null,
-            beforeJournalCommit: beforeJournalCommit);
+            beforeJournalCommit: beforeJournalCommit,
+            beforeCommit: beforeCommit);
         fluent = created ?? throw new InvalidOperationException("the Fluent content tree was not created");
         return window;
     }

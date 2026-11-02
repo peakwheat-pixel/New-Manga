@@ -36,6 +36,8 @@ public sealed class FrontendHostCoordinator
     private readonly AppearanceCoordinator _appearance;
     private readonly FrontendSwitchCoordinator _switcher;
     private readonly Func<Control?, IPresentationWindowModeTransaction?>? _windowModeSnapshot;
+    /// <summary>R-023 diagnostics seam: invoked right before the content promote (inside the switch gate).</summary>
+    private readonly Action? _beforeContentCommit;
     private readonly SemaphoreSlim _switchGate = new(1, 1);
     private readonly object _sync = new();
 
@@ -51,7 +53,8 @@ public sealed class FrontendHostCoordinator
         AppearanceCoordinator appearance,
         SwitchJournal journal,
         Action? beforeJournalCommit = null,
-        Func<Control?, IPresentationWindowModeTransaction?>? windowModeSnapshot = null)
+        Func<Control?, IPresentationWindowModeTransaction?>? windowModeSnapshot = null,
+        Action? beforeContentCommit = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(stagingHost);
@@ -66,6 +69,7 @@ public sealed class FrontendHostCoordinator
         _appearance = appearance;
         _switcher = new FrontendSwitchCoordinator(journal, beforeJournalCommit: beforeJournalCommit);
         _windowModeSnapshot = windowModeSnapshot;
+        _beforeContentCommit = beforeContentCommit;
         _currentFrontendId = initialFrontendId;
     }
 
@@ -144,6 +148,8 @@ public sealed class FrontendHostCoordinator
                     previousSettings = _appearance.Settings;
                     try
                     {
+                        // Diagnostics seam (R-023): runs after all gates and before the visible tree changes.
+                        _beforeContentCommit?.Invoke();
                         await InvokeOnUiAsync(() =>
                             PromoteStagedContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
                         await _appearance.SaveAsync(previousSettings with { FrontendId = target }, token).ConfigureAwait(true);

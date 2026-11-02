@@ -1,0 +1,38 @@
+# FEA-07 r8 rework (R-023 residual pre-promote barrier + mutation evidence / R-007 appointment copy)
+# time: 2026-11-02 20:40:00 +08:00
+# head: b6b63574d (uncommitted rework; committed delivery head is pinned by final-evidence.log)
+# worktree: M apps/desktop-avalonia/src/NewManga.App/Services/FrontendHostCoordinator.cs
+#   M apps/desktop-avalonia/src/NewManga.App/Views/Presentation/PresentationWindow.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PresentationWindowTests.cs
+#   M verification/FEA-07/performance-baseline-release.json
+#   A doc/reviews/FEA-07-impl-r8.md (r8 independent review report, decision: changes_requested P0=0/P1=0/P2=2)
+# build (Debug, sln): exit=0
+#   0 个警告
+#   0 个错误
+# focused tests (PresentationWindow + PresentationHostComposition + FrontendHostCoordinator):
+#   36/36 passed on 2 consecutive runs
+# full-tests (sln, NewManga.runsettings): exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21 - NewManga.Appearance.Tests.dll
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38 - NewManga.Presentation.Avalonia.Tests.dll
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79 - NewManga.Host.Tests.dll
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253 - NewManga.ThemeEngine.Tests.dll
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87 - NewManga.DesignSystem.Tests.dll
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31 - NewManga.ApplicationCore.Tests.dll
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150 - NewManga.CoreClient.Tests.dll
+#   已通过! - 失败:     0，通过:   529，已跳过:     7，总计:   536 - NewManga.App.Tests.dll
+#   全量: 1138 passed / 0 failed / 57 skipped (same count as previous head; tests rewritten, not added)
+#   skip reason: Host 28 / CoreClient 22 / App 7 = 57, direct cause NEWMANGA_CORECLIENT_SIDECAR_DIR unset
+# R-023 mutation evidence (temporary, reverted): moved the window-mode snapshot outside the switch gate
+#   (emulating the pre-fix implementation) -> PresentationWindowTests.QueuedRejectedSwitch_DoesNotRestoreAStaleWindowMode
+#   FAILED with "Expected: Normal / Actual: FullScreen"; restored implementation -> 19/19 window tests green.
+#   Mutation backup: G:\CODEX\New Manga.workspace\FEA-07\coordinator-mutation-backup.cs (not versioned)
+# performance baseline (Release, 4 warmup + 20 measured, real gates):
+#   run 1: p50 106.46 / p95 361.52 / max 404.29 / cold 769.27 / mem +1160 B / handles +3 -> PASS
+#   run 2 (recorded JSON): p50 109.89 / p95 381.43 / max 383.05 / cold 697.08 / mem +456 B / handles +1 -> PASS
+#   W-5 budget p95 <= 1000 ms: PASS on both runs
+# generators:
+#   TokenGen -- --check: rows 292; up to date (byte-for-byte) exit=0
+#   ThemeGen -- --check: up to date (byte-for-byte) exit=0
+# governance:
+#   check.ps1: PASS (3 warnings)
+#   verify_pins.ps1: PASS 15/15
