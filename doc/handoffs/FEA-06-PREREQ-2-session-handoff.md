@@ -48,7 +48,7 @@ scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**
 |---|---|---|---|
 | scope-r1 | `a81771bdd` | changes_requested（P0×3 / P1×7 / P2×9） | `doc/reviews/FEA-06-PREREQ-2-scope-r1.md` |
 | scope-r2 | `4659e59d3` | **changes_requested（P0=0 / P1=4 / P2=7）** | `doc/reviews/FEA-06-PREREQ-2-scope-r2.md` |
-| scope-r3 | `df089039c` | **未产出（子代理未完成）** | 待补 `doc/reviews/FEA-06-PREREQ-2-scope-r3.md` |
+| scope-r3 | `df089039c` | **changes_requested（P0=0 / P1=1 / P2=5）**：r2 的 4 条 P1 **全部实质闭合**；唯一 P1 是禁止范围残留旧授权声明（已修） | `doc/reviews/FEA-06-PREREQ-2-scope-r3.md` |
 
 ### 4.2 r2 的 4 条 P1 已由 DSH 处置（提交 `df089039c`）
 - **R2-P1-1 写域缺口** → `allowed_paths` 增 `App/ViewModels/V2/ThemeStudio/ThemeEngineThemeStudioService.cs`、`StubThemeStudioService.cs`。
@@ -57,7 +57,7 @@ scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**
 - **R2-P1-4 测试表** → 补 AC5 / AC6 / AC7 行。
 
 ### 4.3 下一步（唯一动作）
-派**独立上下文**复核 `scope-r3`，确认 r2 的 4 条 P1 关闭且无新增 P0/P1。P0/P1=0 → 卡置 `ready` 并同步 `STATUS.md` / `REBASELINE_PLAN.md`（DAG 行 + 当前 DAG 段），随后开始实现 PREREQ-2。
+派**独立上下文**复核 `scope-r4`（只核 R3-P1-1 闭合）。P0/P1=0 → 卡置 `ready` 并同步 `STATUS.md` / `REBASELINE_PLAN.md`（DAG 行 + 当前 DAG 段），随后开始实现 PREREQ-2（P1–P7 / AC1–AC7）。
 
 ## 5. 环境事实（会直接影响派发成败，务必先读）
 
