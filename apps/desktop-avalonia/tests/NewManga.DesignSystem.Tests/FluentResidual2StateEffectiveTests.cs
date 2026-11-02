@@ -477,6 +477,25 @@ public sealed class FluentResidual2StateEffectiveTests
     }
 
     [AvaloniaFact]
+    public void ReaderProgressAndThumbStrip_ResolveRealTemplatesAndContent()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var progress = new ReaderProgressBar { Width = 260, Height = 12, Value = 60, Maximum = 100 };
+        var strip = new PageThumbStrip { ItemsSource = new[] { "page-1", "page-2" } };
+        var window = new Window { Width = 480, Height = 240, Content = new StackPanel { Children = { progress, strip } } };
+        try
+        {
+            window.Show(); RunJobs();
+            Assert.NotNull(progress.Template);
+            Assert.Contains(progress.GetVisualDescendants().OfType<Border>(), b => b.Bounds.Width > 0);
+            Assert.NotNull(strip.Template);
+            Assert.Contains(strip.GetVisualDescendants().OfType<TextBlock>(), t => t.Text == "page-1");
+            Assert.Contains(strip.GetVisualDescendants().OfType<StackPanel>(), p => p.Orientation == Avalonia.Layout.Orientation.Horizontal);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public void AlertBanner_AllNineSeverities_ResolveTheFrozenStatusTokens()
     {
         using var manager = ThemeTestHarness.CreateInitialized();

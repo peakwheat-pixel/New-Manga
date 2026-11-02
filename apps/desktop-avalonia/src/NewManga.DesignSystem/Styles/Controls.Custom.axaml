@@ -216,4 +216,10 @@
     <Setter Property="Width" Value="{DynamicResource Nm.Icon.SizeSmall}" />
     <Setter Property="Height" Value="{DynamicResource Nm.Icon.SizeSmall}" />
   </Style>
+  <Style Selector="Slider:not(:disabled) /template/ RepeatButton#PART_DecreaseButton">
+    <Setter Property="Background" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+  </Style>
+  <Style Selector="Slider:disabled /template/ RepeatButton#PART_DecreaseButton">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Text.Disabled}" />
+  </Style>
 </Styles>

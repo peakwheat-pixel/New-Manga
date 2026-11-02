@@ -129,7 +129,7 @@ public sealed class ShelfPageView : UserControl
         _dialogConfirm = FluentUi.Button("确认", "fluent-primary", () => _ = SubmitNameAsync(), "确认操作");
         // IN-1.1：书架背景渐变装饰层（两个停点只取既有 Bg 令牌，随主题/高对比重解析；循环只改 Brush.Opacity）。
         _decorativeLayer = FluentUi.DecorativeShelfGradient(out _decorativeBrush);
-        FluentTokenGradient.Bind(_decorativeLayer, _decorativeBrush, "Nm.Color.Bg.Canvas", "Nm.Color.Bg.Sunken");
+        FluentTokenGradient.Bind(_decorativeLayer, _decorativeBrush, "Nm.Color.Bg.Canvas", "Nm.Color.Bg.Overlay");
         _decorativeLoop = new FluentDecorativeLoop(_decorativeLayer);
 
         _root = FluentUi.Stack("fluent-page-layout");

@@ -224,11 +224,22 @@
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Md}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
   </Style>
+
+  <Style Selector=".fluent-page-thumb-strip" x:SetterTargetType="ItemsControl">
+    <Setter Property="Theme" Value="{DynamicResource {x:Type ItemsControl}}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" />
+      </ItemsPanelTemplate>
+    </Setter>
+  </Style>
   <Style Selector=".fluent-reader-page" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
   </Style>
   <Style Selector=".fluent-reader-progress" x:SetterTargetType="ProgressBar">
+    <!-- Derived RangeBase controls do not inherit the base implicit ControlTheme automatically. -->
+    <Setter Property="Theme" Value="{DynamicResource {x:Type ProgressBar}}" />
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Sm}" />
@@ -374,5 +385,29 @@
   <Style Selector="Button.fluent-icon.checked">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+  <Style Selector="Button.fluent-primary:pointerover /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+  </Style>
+  <Style Selector="Button.fluent-primary:pressed /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+  <Style Selector="Button.fluent-secondary:pointerover /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+  </Style>
+  <Style Selector="Button.fluent-secondary:pressed /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+  </Style>
+  <Style Selector="Button.fluent-danger:pointerover /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+  </Style>
+  <Style Selector="Button.fluent-danger:pressed /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.StatusMuted.Failed}" />
+  </Style>
+  <Style Selector="Button.fluent-icon:pointerover /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+  </Style>
+  <Style Selector="Button.fluent-icon:pressed /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Base}" />
   </Style>
 </Styles>

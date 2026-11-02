@@ -8,3 +8,5 @@
 - 下一步：固定代码提交 → build + 无过滤全量（带 TRX/逐条 skip 原因）→ opt-in 完整截图（inventory.head=运行时 git rev-parse HEAD）→ 逐图检查/补齐视觉缺口登记 → TokenGen/ThemeGen --check、check.ps1、verify_pins、旧四 SHA 与禁止写域 → 交付证据/Handoff 文档提交。
 - 限制：StatusBand 错误/运行专用投影无现成通道，不用默认格冒充；原生 200% DPI/a11y 未跑。域外 Controls/FluentUi.cs 的旧未调用粒子工厂/依赖、STATUS/PLAN/Task 指针、全局 checkpoint 过度声明交 DSH；D-14 保持独立后续卡，不写达成。
 - 旧 impl-in1/in2a/in2b-verification.log 保留原字节；最终使用 impl-r2-rework-verification.log。未 push；本会话不得签发独立 Review。
+
+第二恢复点：013c24dfd 首次全量为 1280/0/57，但逐图检查发现 Progress/Thumb 无基类 ControlTheme、Slider hover track 仍走模板状态，因此不能把首轮测试通过当视觉通过。已继续修复：真实基类 Theme、横向 ItemsPanel、像素非空断言、模板 RepeatButton 排除外层按钮 tween、真实模板 PART_Root hover/pressed、Tooltip布局/等待；新增1个真实模板内容回归。decor shelf使用Canvas→Overlay，原像素裁切，先在fresh shell采样phase0/2000ms/reduce，避免复用先前暂停相位误标first。164帧内存捕获与全SHA唯一断言已通过（定向18s）；最终代码冻结后须重跑全量/opt-in，旧013c全量不作为最终head的回归结论。

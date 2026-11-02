@@ -62,6 +62,8 @@ public sealed class FluentResidual2VisualEvidenceTests
                 shell.Show(); Dispatcher.UIThread.RunJobs(); Motion(shell.Surface);
                 try
                 {
+                    await CaptureDecor(shell, clock, scope, shots); // fresh shell/clock: first frame is really phase zero
+                    Motion(shell.Surface);
                     foreach (var page in FluentShell.Pages)
                     {
                         shell.Navigate(page);
@@ -73,11 +75,11 @@ public sealed class FluentResidual2VisualEvidenceTests
                         }
                         if (page == FluentPage.Settings) await shell.SettingsViewModel.LoadAsync();
                         clock.Advance(1000); Settle();
+                        if (page == FluentPage.Library) clock.Advance(3000); // page context at crest; decor-first is independently phase zero
                         var frame = Residual2Evidence.Capture(shell);
                         shots.Add(new("pages", page == FluentPage.Library ? "shelf" : page.ToString().ToLowerInvariant(), "default", "full", theme, "settled", frame));
                     }
                     CaptureShellStates(shell, clock, theme, shots);
-                    await CaptureDecor(shell, clock, scope, shots);
                 }
                 finally { shell.Close(); Dispatcher.UIThread.RunJobs(); }
                 CaptureComponents(theme, scope, shots);
@@ -95,6 +97,9 @@ public sealed class FluentResidual2VisualEvidenceTests
                 Assert.True(Residual2Evidence.ChangedPixels(pair[0].Image, pair[1].Image) > 100);
             }
             Assert.Equal(shots.Count, shots.Select(s => s.File).Distinct().Count());
+            var duplicateFrames = shots.GroupBy(s => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(Residual2Evidence.Bytes(s.Image))))
+                .Where(g => g.Count() > 1).Select(g => string.Join(",", g.Select(s => s.File))).ToArray();
+            Assert.True(duplicateFrames.Length == 0, string.Join(";", duplicateFrames));
             Assert.Equal(statusBefore, Residual2Evidence.Git("status", "--porcelain", "--", "verification"));
             Assert.Equal(old.OrderBy(p => p.Key), Residual2Evidence.OldEvidence().OrderBy(p => p.Key));
             if (Environment.GetEnvironmentVariable("NEWMANGA_CAPTURE_RESIDUAL2_PNGS") == "1") Write(shots);
@@ -134,13 +139,18 @@ public sealed class FluentResidual2VisualEvidenceTests
         // No navigation/feedback during the comparison, while decorative remains full. This is the real category policy.
         Motion(shell.Surface, MotionCategories.Decorative);
         var first = Residual2Evidence.Capture(shell);
-        clock.Advance(4000);
+        clock.Advance(2000); // an intermediate full frame; the static reduce frame equals the exact 4s crest by design
         var mid = Residual2Evidence.Capture(shell);
         Assert.True(Residual2Evidence.ChangedPixels(first, mid, tolerance: 1) > 1000, "gradient must change visible background pixels");
-        shots.Add(new("decor", "shelf-gradient", "first", "full", theme, "first", first));
-        shots.Add(new("decor", "shelf-gradient", "mid", "full", theme, "mid-4000ms", mid));
+        // Crop only: original product pixels, no recolouring or enlargement. This makes the background
+        // evidence inspectable and avoids reusing an identical full-page PNG for two distinct cells.
+        var backgroundCrop = new PixelRect(216, 95, 1048, 720);
+        shots.Add(new("decor", "shelf-gradient", "first", "full", theme, "first-crop-216,95,1048,720", Residual2Evidence.Crop(first, backgroundCrop)));
+        shots.Add(new("decor", "shelf-gradient", "mid", "full", theme, "intermediate-2000ms-crop-216,95,1048,720", Residual2Evidence.Crop(mid, backgroundCrop)));
+        first.Dispose(); mid.Dispose();
         Motion(shell.Surface, mode: MotionMode.Reduce);
-        shots.Add(new("decor", "shelf-gradient", "static", "reduce", theme, "static", Residual2Evidence.Capture(shell)));
+        using var staticFrame = Residual2Evidence.Capture(shell);
+        shots.Add(new("decor", "shelf-gradient", "static", "reduce", theme, "static-crop-216,95,1048,720", Residual2Evidence.Crop(staticFrame, backgroundCrop)));
 
         shell.Navigate(FluentPage.Reader); await shell.ReaderView.LoadAsync("book-1", "chapter-key"); Settle();
         Motion(shell.Surface, MotionCategories.Decorative);
@@ -169,8 +179,8 @@ public sealed class FluentResidual2VisualEvidenceTests
     {
         var cases = new List<(string Name, string State, Control Control, Action<Window,Control>? Act)>();
         void Add(string name, string state, Control control, Action<Window,Control>? act = null) => cases.Add((name,state,control,act));
-        static void Hover(Window w, Control c) { w.MouseMove(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value); Settle(150); Assert.True(c.IsPointerOver); }
-        static void Press(Window w, Control c) { Hover(w,c); w.MouseDown(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value,MouseButton.Left); Settle(100); }
+        static void Hover(Window w, Control c) { w.MouseMove(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value); Settle(250); Assert.True(c.IsPointerOver); }
+        static void Press(Window w, Control c) { Hover(w,c); w.MouseDown(c.TranslatePoint(new Point(c.Bounds.Width/2,c.Bounds.Height/2),w)!.Value,MouseButton.Left); Settle(200); }
         foreach (var state in new[] { "default", "hover", "selected", "disabled" })
         {
             var card = new SurfaceCard { Width = 200, Height = 90, Child = new TextBlock { Text = "卡片内容" }, IsEnabled = state != "disabled" };
@@ -245,13 +255,27 @@ public sealed class FluentResidual2VisualEvidenceTests
                 try
                 {
                     item.Act?.Invoke(w,item.Control);Dispatcher.UIThread.RunJobs();
+                    if (item.Control is ReaderProgressBar progress)
+                        Assert.True(progress.GetVisualDescendants().Any(), $"Progress theme={progress.Theme}, template={progress.Template}, bounds={progress.Bounds}, value={progress.Value}");
+                    if (item.Control is PageThumbStrip strip)
+                        Assert.True(strip.GetVisualDescendants().OfType<Image>().Any(), $"Thumb theme={strip.Theme}, template={strip.Template}, bounds={strip.Bounds}, items={strip.ItemCount}, children={string.Join(",", strip.GetVisualDescendants().Select(v => v.GetType().Name))}");
                     if(item.Control is Slider slider)
                     {
                         var thumb=slider.GetVisualDescendants().OfType<Thumb>().Single();
                         var key=item.State=="disabled"?"Nm.Color.Text.Disabled":item.State=="hover"?"Nm.Color.Accent.Hover":"Nm.Color.Accent.Base";
                         Assert.Equal(scope.Token(key),Assert.IsAssignableFrom<ISolidColorBrush>(thumb.Background).Color);
+                        var track = slider.GetVisualDescendants().OfType<RepeatButton>().Single(b => b.Name == "PART_DecreaseButton");
+                        Assert.True(scope.Token(key) == Assert.IsAssignableFrom<ISolidColorBrush>(track.Background).Color, $"state={item.State} sliderForeground={slider.Foreground}, part={track.Name}, templateParent={track.TemplatedParent}, trackBg={track.Background}");
                     }
-                    shots.Add(new("components",item.Name,item.State,"full",theme,"settled",Residual2Evidence.Capture(w)));
+                    var imageFrame = Residual2Evidence.Capture(w);
+                    if (item.Control is ReaderProgressBar or PageThumbStrip)
+                    {
+                        var pixels = Residual2Evidence.Pixels(imageFrame);
+                        var distinct = new HashSet<int>();
+                        for (var i=0; i<pixels.Length; i+=4) distinct.Add(pixels[i] | pixels[i+1]<<8 | pixels[i+2]<<16);
+                        Assert.True(distinct.Count > 2, $"{item.Name} must render actual content pixels");
+                    }
+                    shots.Add(new("components",item.Name,item.State,"full",theme,"settled",imageFrame));
                 }
                 finally{w.Close();}
             }
@@ -262,8 +286,8 @@ public sealed class FluentResidual2VisualEvidenceTests
                 try
                 {
                     if(kind=="context-menu"){menu=new ContextMenu{Items={new MenuItem{Header="可用"},new MenuItem{Header="不可用",IsEnabled=false}}};b.ContextMenu=menu;menu.Open(b);}
-                    else {ToolTip.SetTip(b,new ToolTip{Content="提示文本"});ToolTip.SetIsOpen(b,true);}
-                    Dispatcher.UIThread.RunJobs();shots.Add(new("components",kind,kind=="context-menu"?"disabled-item":"opened","full",theme,"settled",Residual2Evidence.Capture(w)));
+                    else {w.MouseMove(b.TranslatePoint(new Point(40,20),w)!.Value);ToolTip.SetTip(b,new ToolTip{Content="提示文本"});ToolTip.SetPlacement(b,PlacementMode.Bottom);ToolTip.SetIsOpen(b,true);}
+                    Settle(300);shots.Add(new("components",kind,kind=="context-menu"?"disabled-item":"opened","full",theme,"settled",Residual2Evidence.Capture(w)));
                 }
                 finally{menu?.Close();ToolTip.SetIsOpen(b,false);w.Close();}
             }
@@ -281,13 +305,13 @@ public sealed class FluentResidual2VisualEvidenceTests
         var head=Residual2Evidence.Git("rev-parse","HEAD");
         var rows=new List<string>{"# R2R2 visual inventory",$"捕获 HEAD：`{head}`；frontend=builtin.fluent；headless Skia、96 DPI。签署待独立 Reviewer，均为 NOT_RUN。",
             $"命令：`{CaptureCommand}`。EXIT=0 表示捕获测试成功，不代替视觉签署。",
-            "| file | head | frontend | group | component/page | state | mode | viewport | theme | frame | command | EXIT | SHA256 | signed_by | signed_at |",
-            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"};
+            "| file | head | frontend | group | component/page | state | mode | viewport | raster-size | theme | frame | command | EXIT | SHA256 | signed_by | signed_at |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"};
         foreach(var shot in shots)
         {
             var path=Path.Combine(output,shot.File);shot.Image.Save(path);
             var sha=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(path)));
-            rows.Add($"| `{shot.File}` | `{head}` | builtin.fluent | {shot.Group} | {shot.Name} | {shot.State} | {shot.Mode} | {shot.Image.PixelSize.Width}x{shot.Image.PixelSize.Height} | {shot.Theme} | {shot.Frame} | `{CaptureCommand}` | 0 | {sha} | NOT_RUN | — |");
+            rows.Add($"| `{shot.File}` | `{head}` | builtin.fluent | {shot.Group} | {shot.Name} | {shot.State} | {shot.Mode} | {(shot.Group == "decor" ? "1280x900" : $"{shot.Image.PixelSize.Width}x{shot.Image.PixelSize.Height}")} | {shot.Image.PixelSize.Width}x{shot.Image.PixelSize.Height} | {shot.Theme} | {shot.Frame} | `{CaptureCommand}` | 0 | {sha} | NOT_RUN | — |");
         }
         File.WriteAllLines(Path.Combine(output,"visual-inventory.md"),rows);
         Assert.Equal(shots.Count,Directory.EnumerateFiles(output,"*.png").Count());

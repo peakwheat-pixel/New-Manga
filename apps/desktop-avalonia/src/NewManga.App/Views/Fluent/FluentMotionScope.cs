@@ -21,7 +21,9 @@ internal sealed class FluentMotionScope : AvaloniaObject
     {
         if (configuration is null) return;
         var timings = configuration.Timings;
-        if (control is Button button)
+        // Template RepeatButtons (Slider tracks) own their visual-state updates; applying the
+        // outer button tween here can freeze a template binding at its previous token colour.
+        if (control is Button button && button is not RepeatButton)
         {
             button.Transitions = timings?.FeedbackHoverMilliseconds > 0
                 ? new Transitions { new BrushTransition

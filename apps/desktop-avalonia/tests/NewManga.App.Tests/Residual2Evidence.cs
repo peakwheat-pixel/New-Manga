@@ -112,6 +112,13 @@ internal sealed class Residual2Evidence : IDisposable
         finally { pin.Free(); }
         return data;
     }
+    public static Bitmap Crop(Bitmap source, PixelRect rect)
+    {
+        var cropped = new WriteableBitmap(rect.Size, new Vector(96, 96), source.Format ?? PixelFormat.Bgra8888, AlphaFormat.Premul);
+        using var buffer = cropped.Lock();
+        source.CopyPixels(rect, buffer.Address, buffer.RowBytes * rect.Height, buffer.RowBytes);
+        return cropped;
+    }
     public static int ChangedPixels(Bitmap first, Bitmap second, int tolerance = 8, PixelRect? region = null)
     {
         Assert.Equal(first.PixelSize, second.PixelSize);

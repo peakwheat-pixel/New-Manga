@@ -12,11 +12,11 @@
 | SurfaceCard | disabled | Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:97` | EFFECTIVE |
 | BookCard | disabled | Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:164` | EFFECTIVE |
 | BookRow | disabled | Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:187` | EFFECTIVE |
-| PrimaryButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:271` | EFFECTIVE |
-| SecondaryButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:297` | EFFECTIVE |
-| DangerButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:317` | EFFECTIVE |
-| IconButton | hover | Background | Nm.Color.Accent.Muted | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:331` | EFFECTIVE |
-| IconButton | checked | Background/BorderBrush | Nm.Color.Accent.Muted / Nm.Color.Accent.Base | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:374` | EFFECTIVE |
+| PrimaryButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:282` | EFFECTIVE |
+| SecondaryButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:308` | EFFECTIVE |
+| DangerButton | disabled | Background/Foreground/Opacity | Nm.Color.Bg.Raised（Primary/Secondary）；Nm.Color.Text.Disabled / Nm.Opacity.Disabled；Danger 保留 Status.Failed 描边 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:328` | EFFECTIVE |
+| IconButton | hover | Background | Nm.Color.Accent.Muted | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:342` | EFFECTIVE |
+| IconButton | checked | Background/BorderBrush | Nm.Color.Accent.Muted / Nm.Color.Accent.Base | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:385` | EFFECTIVE |
 | ToggleSwitch | disabled | Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Selection.axaml:45` | EFFECTIVE |
 | Slider | normal | Thumb.Background / rendered Border.Background（不是 Slider.Foreground 代替） | Nm.Color.Accent.Base | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Custom.axaml:82` | EFFECTIVE |
 | Slider | hover | Thumb.Background / rendered Border.Background（不是 Slider.Foreground 代替） | Nm.Color.Accent.Hover | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Custom.axaml:85` | EFFECTIVE |
@@ -27,19 +27,19 @@
 | SegmentedControl | hover | Background / BorderBrush / Foreground（适用通道） | Nm.Color.Bg.Overlay / Nm.Color.Text.Primary | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Custom.axaml:60` | EFFECTIVE |
 | SegmentedControl | pressed | Background / BorderBrush / Foreground（适用通道） | Nm.Color.Accent.Muted | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Custom.axaml:64` | EFFECTIVE |
 | TabItem | hover | Foreground | Nm.Color.Accent.Hover；PART_LayoutRoot=Nm.Color.Bg.Raised | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Custom.axaml:94` | EFFECTIVE |
-| TabStrip | default | Spacing | Nm.Space.2 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:253` | EFFECTIVE |
+| TabStrip | default | Spacing | Nm.Space.2 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:264` | EFFECTIVE |
 | SearchField | focus | 内边框不变；外部 nm-focus-ring.BorderBrush/BorderThickness | Nm.Color.Line.Default / Nm.Border.Hairline；外环 Nm.Color.Accent.Base / Nm.Border.Focus（键盘 Tab 焦点） | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Focus.axaml:9` | EFFECTIVE |
 | SettingsField | error | 子 TextBox PART_BorderElement.BorderBrush | Nm.Color.Status.Failed | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Inputs.axaml:39` | EFFECTIVE |
 | SettingsField | disabled | 子输入 Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Inputs.axaml:44` | EFFECTIVE |
-| SettingsField | 布局 | ColumnSpacing/RowSpacing | Nm.Space.3 / Nm.Space.2 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:248` | EFFECTIVE |
+| SettingsField | 布局 | ColumnSpacing/RowSpacing | Nm.Space.3 / Nm.Space.2 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:259` | EFFECTIVE |
 | RegionBox | hover | Background | Nm.Color.Accent.Hover | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:201` | EFFECTIVE |
 | ContextMenu | disabled item | Opacity | Nm.Opacity.Disabled | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Navigation.axaml:44` | EFFECTIVE |
 | Tooltip | opened | Background/BorderBrush/Foreground/BorderThickness | Nm.Color.Bg.Overlay / Nm.Color.Line.Default / Nm.Color.Text.Primary / Nm.Border.Hairline | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Navigation.axaml:48` | EFFECTIVE |
 | ChapterList | default | Spacing | Nm.Space.2 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:191` | EFFECTIVE |
 | StreamingThumb | default | Background/CornerRadius | Nm.Color.Bg.Raised / Nm.Corner.Fluent.Sm | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:207` | EFFECTIVE |
-| ReaderPage | default | Background | Nm.Color.Bg.Sunken | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:227` | EFFECTIVE |
-| ReaderProgressBar | default | Foreground | Nm.Color.Accent.Base | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:231` | EFFECTIVE |
-| SettingsGroup | default | Background/Padding | Nm.Color.Bg.Raised / Nm.Padding.Card | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:241` | EFFECTIVE |
+| ReaderPage | default | Background | Nm.Color.Bg.Sunken | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:236` | EFFECTIVE |
+| ReaderProgressBar | default | Foreground | Nm.Color.Accent.Base | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:240` | EFFECTIVE |
+| SettingsGroup | default | Background/Padding | Nm.Color.Bg.Raised / Nm.Padding.Card | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml:252` | EFFECTIVE |
 
 D-11 四态映射是既有九值的证据分组，不新增 AlertBanner 变体。`Feedback.cs` 的 Severity→StatusCatalog.ClassName 驱动 class；`Status.cs` 的 StatusCatalog.ColorKey 为交叉锚点。Failed/Blocked/Stale 的表面通道有特化，其余保留 Panel/Line.Default，绝不把默认表面宣称为特化成功。
 
@@ -60,3 +60,9 @@ D-14 例外保持：NotStarted glyph=Text.Secondary，catalog=Text.Disabled。�
 像素与覆盖：见 `visuals/visual-inventory.md`；每图明确 HEAD/theme/frontend/frame/SHA256。每项签署均待独立 Reviewer（NOT_RUN）。StatusBand 错误/运行专用投影、原生 200% DPI/a11y 不用默认帧代替，见 Handoff 限制。
 
 R2R2-016：实际粒子执行器已迁至 Views/Fluent 内，尺寸变化才定位，帧内只写 Opacity/RenderTransform；进度为归一化传入值。域外 Controls/FluentUi.cs 的旧工厂/using 未改且不再被播放路径调用，其死代码清理为 NOT_RUN（需 DSH 扩域）。
+
+补充实际模板通道：ReaderProgressBar.Theme 显式解析基类 ProgressBar 的既有 ControlTheme，PageThumbStrip.Theme 显式解析 ItemsControl，ItemsPanel 使用横向 StackPanel/Space.2。属性和真实内容回归在 ReaderProgressAndThumbStrip_ResolveRealTemplatesAndContent；捕获另断言像素颜色种类>2，避免有 Value/items 仍出空白。
+
+Slider 的 PART_DecreaseButton.Background 绑定父 Slider.Foreground（normal=Accent.Base，hover=Accent.Hover），disabled=Text.Disabled；FluentMotionScope 不再给模板 RepeatButton 叠加通用按钮 tween。Fluent 按钮 hover/pressed 同时覆盖模板 PART_Root 背景，避免只有公开属性变色而实际像素仍走通用 ControlTheme。
+
+IN-1.1 渐变仍仅选既有 Bg 令牌：Canvas→Overlay（此前 Canvas→Sunken 的暗色差异不足）；循环仍为 8s，reduce 静态。decor shelf 原像素裁切 [216,95,1048,720]，viewport=1280x900；中间帧采样 2000ms，frame 明确 intermediate-2000ms，而非虚标精确半周期。生产时钟测试另实采 0/4000/7950ms。

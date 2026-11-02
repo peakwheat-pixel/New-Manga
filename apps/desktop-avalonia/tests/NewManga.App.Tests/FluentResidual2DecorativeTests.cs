@@ -353,14 +353,14 @@ public sealed class FluentResidual2DecorativeTests
             Color Token(string key) =>
                 Assert.IsType<SolidColorBrush>(app.TryGetResource(key, app.ActualThemeVariant, out var value) ? value : null).Color;
             Assert.Equal(Token("Nm.Color.Bg.Canvas"), brush.GradientStops[0].Color);
-            Assert.Equal(Token("Nm.Color.Bg.Sunken"), brush.GradientStops[1].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[1].Color);
 
             // High contrast just swaps the token table (materials degrade to opaque surfaces); the
             // decorative layer keeps resolving the same keys with no hardcoded fallback (03 §4).
             Assert.True(manager.SetContrast(NewManga.DesignSystem.Theming.ContrastMode.High), manager.LastError);
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(Token("Nm.Color.Bg.Canvas"), brush.GradientStops[0].Color);
-            Assert.Equal(Token("Nm.Color.Bg.Sunken"), brush.GradientStops[1].Color);
+            Assert.Equal(Token("Nm.Color.Bg.Overlay"), brush.GradientStops[1].Color);
         }
         finally { window.Close(); }
     }
