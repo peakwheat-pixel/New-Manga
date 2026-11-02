@@ -579,6 +579,9 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         }
 
         _modalHost.Focus();
+        // impl-r1 R1-002: controls created with this overlay (e.g. command rows) also receive the
+        // resolved feedback transition at creation time instead of waiting for the next settings change.
+        ApplyFeedbackTransitions(_motionTimings);
     }
 
     private void CloseTopSurface()

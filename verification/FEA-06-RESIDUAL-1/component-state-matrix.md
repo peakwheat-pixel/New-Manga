@@ -35,8 +35,8 @@
 | 焦点环（所有可聚焦控件） | 键盘焦点/高对比 | 2px↔3px 有效几何（`FocusRingHighContrastTests`）、浮层焦点移入/返还（`I11_LeaveOverlay...`/`FluentCommandPaletteFocusTests`）、隐藏控件不可聚焦（`FocusOrderResidualTests`）、Current 往返资源不污染（`FluentCurrentComparisonTests`） | **EFFECTIVE/FOCUS** | 指针焦点不画环；四页各 1 场景（`FluentFocusPageCoverageTests`） |
 | disabled 命令零触发 | — | `FluentDisabledAutomationTests`：自动化 Invoke 抛 `ElementNotEnabledException`、Click 0 次、Command 0 次执行；`CanExecute=false` | **EFFECTIVE/COMMAND** | 非自动化路径的鼠标点击禁用语义由 Avalonia 输入层保证（未做像素点击） |
 
-## 结论（诚实口径）
+## 结论（诚实口径，impl-r1 返修后 2026-11-03 更新）
 
-- I-4 的**有效属性/焦点**子集已达成（PrimaryButton/DangerButton/SurfaceCard/Dialog/TabItem/焦点环）；
-- hover/pressed/loading/checked 等**纯视觉伪类格**在本环境不可复现，全部标 **NOT_RUN**，不以声明存在计 PASS；
+- I-4 的**有效属性/焦点**子集已达成（Primary/Secondary/Danger/BookCard/BookRow 的指针态、SurfaceCard/Dialog/TabItem、disabled 零触发、命令面板结果/空态、焦点环）；
+- hover/pressed 已用 headless 指针合成升级为 EFFECTIVE；loading/checked 等**剩余视觉格**标 NOT_RUN，不以声明存在计 PASS；
 - 组件矩阵其余行按 DECLARED/COMMAND 登记，缺口（Toast severity 组合、CommandPalette 结果态、disabled 命令零触发、视觉格）留待后续批次或独立视觉复核。
