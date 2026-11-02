@@ -7,7 +7,7 @@ status: in_progress
 approval: scope-r3_approved_2026-11-03（ZCode CLI 独立上下文；reviewed_head b201d4489；P0=0/P1=0/P2=7）；范围 v3 冻结，按 IN-1.1/IN-1.2/IN-2A/IN-2B 实施
 suggested_owner: zcode
 owner: zcode
-reviewer: scope-r3 **approved**（doc/reviews/FEA-06-RESIDUAL-2-scope-r3.md，ZCode CLI）；实施完成后另派独立 impl Review
+reviewer: scope-r3 approved（ZCode CLI）；impl-r1 **changes_requested**（D-9 独立子 agent，P0=1/P1=6/P2=12；doc/reviews/FEA-06-RESIDUAL-2-impl-r1.md）——R2I 返修中
 depends_on:
   - FEA-06-RESIDUAL-1
 base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
