@@ -169,7 +169,13 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `a315bee02` | `88e68f6a2abb7845c684760326a59b58de3e5651f7c5b85722d904811db38e29` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `88e68f6a2abb7845c684760326a59b58de3e5651f7c5b85722d904811db38e29` | CANONICAL |
+
+## 待裁决（DSH 已按推荐口径推进，不阻塞）
+
+- **D-7（已裁决执行）**：双故障转移候选（Codex/ZCode）同时额度耗尽时，允许 DSH 在冻结范围/写域内继续实施并在 agent 恢复后补独立 Review。DSH 推荐/采用：允许（不得自审）；依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 作为 Lead/Integrator 实施。结论记录于 checkpoint §81/§83.1。
+- **D-8（新，待独立裁决/Review 确认）**：decorative 类别实际动画（书架背景渐变 8s 循环、阅读器翻页粒子 400ms、空态插画漂浮 6s）**暂缓实现**，仅保留参数表、类别开关与 reduce 禁用语义。DSH 推荐：**暂缓并转后续视觉任务（ZCode 主责）**。依据：三类均为视觉创作型动画，需视觉设计/像素评审与 reduce 降级截图，headless 下无法证明“未改变布局/层级/可读性”；在无独立视觉 Review 前提下由 DSH 自创会引入不可复核风险。当前 I-5 其余判据（①–④ 及旧值迁移相关断言）已由 `MotionTimings`/`MotionResolver` 测试覆盖。
+- **Review 准备**：独立 impl Review prompt 已备好：`G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-1\impl-review-prompt.md`；Codex 探针 23:31 仍限额至 2026-11-03 00:23，恢复即派发。
 
 ## Closeout Record
 

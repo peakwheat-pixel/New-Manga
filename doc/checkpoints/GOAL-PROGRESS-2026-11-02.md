@@ -603,3 +603,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentShellSurface.ApplyFeedbackTransitions`：motion 启用 → 现有 Button 注入 120ms Background BrushTransition；reduce/category-off → 清除（颜色瞬时，判据③）；挂载时与设置变更后重放。测试断言 full 有过渡/类、reduce 无。
 - 验证：build 0/0；无过滤全量 **1178/0/57**；旧 FEA-06 PNG 零漂移；治理 PASS。交付 `918e4a2e3`；证据 `batch-b-verification.log` SHA `88e68f6a…`。
 - 剩余（NOT_RUN）：decorative 类别专属动画消费；hover/pressed 视觉截图；独立 impl Review（Codex 00:23 / ZCode 03:02）。
+## 85. FEA-06-RESIDUAL-1 review 准备与 D-8（2026-11-02 23:52）
+
+- 独立 impl Review prompt 已备好（workspace `impl-review-prompt.md`）：范围 base `82529a3d5`→head、重点 I-6 等价性/I-7 零写入/I-5 参数与消费/I-8 高对比注入安全性/I-11 焦点/I-4 声明覆盖强度/证据诚实性；产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md`。
+- **D-8**：decorative 实际动画（渐变循环/翻页粒子/空态漂浮）暂缓，转后续视觉任务（ZCode），当前仅保留表/开关/reduce 禁用语义；理由与推荐已写入 Task「待裁决」区（不阻塞）。
+- 交付状态：`918e4a2e3`；全量 1178/0/57；证据 SHA `88e68f6a…`；Task evidence row 已修正到实际包含该日志的提交。
+- 下一步：00:23 后派 Codex 独立 impl Review（备用 03:02 ZCode）→ findings 处置 → DSH 集成验证 → done/closed_with_limitations。
