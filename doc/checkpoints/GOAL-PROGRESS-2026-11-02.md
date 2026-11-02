@@ -656,3 +656,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentCurrentComparisonTests`：Fluent 高对比/恢复 + 同进程 V2↔Fluent 往返后焦点环/ Elevation 令牌回到冻结基线、Current 内容非 Fluent surface。
 - 验证：无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `c2d4ce4b6`；证据 SHA `54a77e6a…`。
 - 下一步：Codex 00:23 恢复后立即派独立 impl Review（prompt/00:24 提醒已备）；ZCode 03:02 备用。
+## 95. FEA-06-RESIDUAL-1 集成验证脚本就绪（2026-11-03 00:12）
+
+- workspace `FEA-06-RESIDUAL-1/integration-verify.ps1`：一旦 Review 通过即可一键产出仓库证据 `verification/FEA-06-RESIDUAL-1/integration-verification.log`；覆盖禁止范围零改动、工作树、build、无过滤全量、旧 PNG 4×SHA、生成器、check/pins/ledger，任一失败 exit 1。
+- 已完整 dry-run（含全量）**RESULT: PASS**：1195/0/57 逐程序集、PNG SHA 与 pin 一致、生成器/治理全过；dry-run 日志在 workspace（不入库），Review 后正式运行写入仓库 evidence。
+- 下一步：Codex 00:23 恢复后派独立 impl Review（prompt/00:24 提醒已备）；ZCode 03:02 备用。
