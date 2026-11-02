@@ -1,0 +1,12 @@
+# D-14-STATUS-COLOR-FIX 实施证据（2026-11-03 07:42）
+
+- 裁决依据：`doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`（Codex 裁决 A）。
+- 实施者：DSH（D-7：Codex 限额至 10:25、ZCode retry ≈08:05；独立 impl Review 待窗口）。
+- 变更：`NewManga.DesignSystem/Controls/Status.cs` —— `StatusCatalog.ColorKey(StatusKind.NotStarted)` = `NmKeys.Color.Text.Secondary` + XML 注释；新增 `D14StatusNotStartedTests`（catalog 映射 + light/dark × Bg.Canvas/Bg.Panel 对比度 ≥4.5:1）。
+- 命令与 EXIT：
+  - `dotnet build apps\desktop-avalonia\NewManga.sln --nologo` → 0 warning / 0 error / EXIT=0
+  - `dotnet test ... --filter FullyQualifiedName~D14StatusNotStartedTests` → **3/3 PASS** / EXIT=0
+  - 无过滤全量：**1292 passed / 0 failed / 57 skipped**（DS 117 = 114+3；App 653；其余程序集不变）/ EXIT=0
+  - `check.ps1` PASS(3)；`verify_pins.ps1` 15/15 PASS。
+- 其余映射/样式/令牌未改；旧 FEA-06 四 PNG 未动；未 push。
+- 待办：独立 impl Review（不得由本实施会话自审）→ DSH 集成验证 → 关闭。

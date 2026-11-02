@@ -72,7 +72,7 @@ public static class StatusCatalog
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
     };
 
-    /// <summary>The <c>Nm.Color.Status.*</c>/<c>Nm.Color.Text.Disabled</c> key carrying this status hue.</summary>
+    /// <summary>The <c>Nm.Color.Status.*</c>/<c>Nm.Color.Text.Secondary</c> key carrying this status hue (D-14: NotStarted is a real state, readable >= 4.5:1).</summary>
     public static string ColorKey(StatusKind kind) => kind switch
     {
         StatusKind.Queued => NmKeys.Color.Status.Queued,
@@ -82,7 +82,7 @@ public static class StatusCatalog
         StatusKind.Blocked => NmKeys.Color.Status.Blocked,
         StatusKind.Stale => NmKeys.Color.Status.Stale,
         StatusKind.Skipped => NmKeys.Color.Status.Skipped,
-        StatusKind.NotStarted => NmKeys.Color.Text.Disabled,
+        StatusKind.NotStarted => NmKeys.Color.Text.Secondary,
         StatusKind.Locked => NmKeys.Color.Status.Blocked,
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
     };
