@@ -753,3 +753,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Codex CLI 实施（job `pwsh-54b39fe8b1bf4a6a`，exit 0）：commit `033c8b4b9` 补齐浮层退出 160ms、feedback pressed 90ms、badge 150ms（可控帧源/时钟，reduce 瞬时），新增 16 个时序测试；`e0d1d73c5` 记录验证日志与 Handoff。全量 **1213/0/57**，四条验收命令 EXIT=0，旧 PNG 零漂移，未 push。
 - DSH 已核验交付指针并派发 fresh Codex **impl-r2** 独立复核（job `pwsh-c3cbdc0f052b410f`，prompt `impl-review-r2-prompt.md`，覆盖 R1-001…R1-009 处置核验 + 新增动画生命周期审查），产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md`。
 - D-10 的 ZCode 排程（03:03）保留为视觉复核备用；r2 approved 后 DSH 跑集成验证并按实际 AC 结果 done/closed_with_limitations。
+## 114. impl-r2 结论与 R2 返修派发（2026-11-03 01:32）
+
+- impl-r2（Codex fresh session）：**changes_requested，P0=0 / P1=3 / P2=3**；实跑 build/全量 1213/0/57/check/pins 全 EXIT=0；报告 `doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md` 已入库。
+- P1：R2-001 动效覆盖未整体闭环（Reader IsVisible、导航分类关闭、Settings/Shelf 浮层未接 200/160、hover 曲线非冻结）；R2-002 页面内部重建控件颜色/pressed 漏接；R2-003 Reader pointer press/wheel/handled 键未统一重置。P2：R2-004 detach 后已排队回调仍执行；R2-005 证据台账仍有过期计数/矛盾；R2-006 焦点环 offset=1 未消费。
+- 已派 fresh Codex 实施 R2-001…006 返修（job `pwsh-d2b10ea336a24bec`，prompt `impl-r2-rework-codex-prompt.md`），要求逐项回归测试 + 证据/handoff；完成后全量刷新再派 impl-r3。
