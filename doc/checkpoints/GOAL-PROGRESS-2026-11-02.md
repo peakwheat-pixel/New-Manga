@@ -971,3 +971,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 按 D-9（双候选不可用时作者可派独立上下文子 agent 做 Review）已用 workflow 派发 **impl-r4 独立复核**（job `workflow-1cbe60f57400429d`，reviewed_head `832103393`）：R2R3-001…006 核验 + **172 图逐图签署** + 门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md`。
 - 当前：Task in_progress（1289/0/57，172 PNG）；README/PLAN/STATUS 指针一致；D-14-STATUS-COLOR-FIX ready 待顺序实施；未 push。
 - approved 后 DSH 集成验证 → 按 AC 关闭；若 changes_requested → R2R4 返修（Codex 10:25 或 ZCode 08:05 窗口）。
+## 150. FEA-06-RESIDUAL-2 关闭（closed_with_limitations）+ D-14 卡排程（2026-11-03 07:32）
+
+- impl-r4（D-9 独立子 agent，Codex 限额回退）**approved：P0=0/P1=0/P2=3**；**172 张 PNG 逐图签署 172 PASS / 0 REJECT**；reviewed_head `bb71e43db`（实现 `17a26d552`/证据 `c70d5c348`）；报告 `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md`。
+- DSH 集成验证 `verification/FEA-06-RESIDUAL-2/integration-verification.log`：build 0/0、无过滤 **1289/0/57**、PNG 172/inventory 172/唯一 SHA 172、旧 FEA-06 四 PNG SHA 不变、TokenGen/ThemeGen up-to-date、check PASS(3)、pins 15/15、禁止范围 diff=0、工作树干净。
+- **Task 终态**：`closed_with_limitations`（AC1–AC4 MET；原生 200% DPI/a11y = BLOCKED/D-1；OUT loading/危险加载/新增组件状态；D-14 裁决 A 实施转后续卡）。Resource Manifest / Canonical Evidence / Closeout 已填写；关闭提交 `e226c08fe`（前序 `d1df8035a` 收录 review + 指针同步）。
+- **释放 D-14-STATUS-COLOR-FIX（ready，owner=codex）** 为当前 Task（STATUS/PLAN 已更新）；已排程 **08:06 ZCode 派发**（Codex 限额 10:25 备用）。
+- 治理 PASS(3)；未 push。
