@@ -376,3 +376,13 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **Review r2**：`doc/reviews/FEA-07-impl-r2.md`（Codex CLI fresh，P0=0/P1=6/P2=3；被审 f28d97b99/代码 7ca2e367b）。处置：R-013 并发串行门（no-op/快照/事务同门）+ 并发测试；R-001 真实 100 次切换（50 往返）+ 状态断言 + Layout/Loaded/Rendered 真实门禁；R-002 `IPresentationExitState` live 状态（设置草稿/Workbench 运行/导入运行）；R-003 journal previous + 启动崩溃窗口还原；R-004 `StartupPlan.Selection` 单源；R-014 最大化 memento；R-009 数值校正；R-011 索引去自引用 pin；R-007 reviewer/delivery_head/handoff 更新。
 - **验证**：代码 head `3220abd59`；build 0/0；全量 **1113/0/57**；check PASS(3)；pins 15/15；两生成物 up-to-date；`final-evidence.log`（SHA 4ab4386d…）；证据提交 `b3fa8dc0c`。
 - **r3 复核已派发**（fresh Codex CLI，被审 b3fa8dc0c/代码 3220abd59；job pwsh-73017f1cb59d4226），等待结果。
+## 53. Codex 模型调用说明（用户提问实测，2026-11-02）
+
+- 用户问：Codex 为什么不能调用 `gpt-6.1-sol-high` / `gpt-6-luna xhigh`。
+- 实测（嵌入 Codex CLI 0.166.0-alpha.5.1，ChatGPT 账号）：
+  - `-m gpt-6.1-sol-high` → ERROR: The 'gpt-6.1-sol-high' model is not supported when using Codex with a ChatGPT account（exit 1）。
+  - `-m "gpt-6-luna xhigh"` → 同上（exit 1）。
+  - `-m gpt-6.1-sol` → 正常（exit 0）。
+  - `-m gpt-6.1-sol -c model_reasoning_effort="high"` → 正常（exit 0）。
+  - `-m gpt-6-luna -c model_reasoning_effort="xhigh"` → 正常（exit 0；FEA-07 全部复核即用此形式）。
+- 结论：`-high`/`xhigh` 不是模型 ID 的一部分，而是 `model_reasoning_effort` 配置；CLI 只接受真实模型 ID。本账号支持 `gpt-6.1-sol` 与 `gpt-6-luna`，不存在 `gpt-6.1-sol-high` 模型。无需用户操作；如需 sol 高强度，用 `-m gpt-6.1-sol -c model_reasoning_effort="high"`。
