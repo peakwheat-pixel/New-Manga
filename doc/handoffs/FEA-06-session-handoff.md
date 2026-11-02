@@ -91,3 +91,8 @@ DSH，请为现有 Task FEA-06 Appointment 一个独立审查上下文，审查 
 - 首次全量尝试发现默认 V2 KeyMap 作用域不可扩大；该尝试记录在 `verification/FEA-06/rework-full-test-attempt1.log`。返修将 `[`/`]` 扩展限制在 Fluent Shell 的 Workbench 页内，最终全量测试通过；默认 `ShellCommands`/KeyMap 保持原行为。
 - 证据：`verification/FEA-06/rework-*.log`、更新后的四页 PNG、`rework-scope-audit.md` 与组件登记表；交付 commit：`7cf305fe2534272dc75295c4644661ddb73221af`；文件 SHA 索引见 `doc/tasks/FEA-06.md` 和 `verification/FEA-06/evidence-index.md`。
 - 接收者：DSH Appointment 独立上下文复核返修 head，优先核对悬空令牌守卫、Console/Settings 映射、V2 快捷键未变和 residual 登记；之后按 adjudication §4 决定集成验证。
+
+## DSH 收口（2026-11-02）
+
+- FEA-06 已 done：返修链 impl-r1→adjudication→7cf305fe2→impl-r2 approved→P2-R2-1 26840acd；DSH 集成验证 1034/0/57、两 --check up to date、check PASS(3)、pins 15/15。
+- AC8–AC10 MET；AC1–AC7 PARTIAL 已转 doc/tasks/FEA-06-RESIDUAL-1.md（待 FEA-07/09–13 端口）。下一 Task = FEA-07（范围冻结）。

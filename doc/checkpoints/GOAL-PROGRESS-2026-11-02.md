@@ -268,3 +268,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **impl-r1**（独立上下文，被审 `b0388df9a`）：**changes_requested，P0=0 / P1=1 / P2=9**；AC1–AC7 PARTIAL **诚实成立**、AC8–AC10 MET；唯一 P1 = `Controls.Fluent.axaml:241` 悬空令牌 `Nm.Space.S1`（真实族 `Nm.Space.0…8`）+ 组件登记表（CANONICAL 证据）同步失实。
 - **DSH adjudication**（`doc/reviews/FEA-06-impl-r1-adjudication.md`）：P1-1 返修（改既有键 + 登记表 + 令牌存在性守卫测试）；P2-1/2/3/5/7 并入返修；**P2-4 裁决 W-13：控制台空间不得映射 Settings** → 控制台=Workbench 第三视图（Run 控制台面板，无数据显式「当前没有运行中的任务」），Settings 改非空间入口（顶部命令条+左导航，08:3）；P2-6/P2-8/P2-9 接受登记 residual/技术债。
 - **下一步**：Codex 同会话 `resume`（session `01a19a5e-2490-7943-a8c5-6cc05e13a4cb`）执行返修 → 单一 fix commit + 证据刷新 + 不 push → DSH 复核/集成验证 → 终态（AC1–AC7 PARTIAL 作 residual 或另立后续 Task）。
+## 36. FEA-06 收口（Codex 返修 → impl-r2 approved → done，2026-11-02）
+
+- **返修链**：impl-r1（changes_requested，P0=0/P1=1/P2=9）→ DSH adjudication → Codex 返修 `7cf305fe2`（P1-1 令牌/登记表 + W-13 控制台空间 + P2）→ impl-r2（**approved，P0=0/P1=0/P2=1**）→ P2-R2-1 小修 `b26840acd`（TabStrip selected 视觉 + 登记表 + 测试扩展）→ DSH 复验。
+- **DSH 集成验证**：build 0/0；全量 **1034 passed / 0 failed / 57 skipped**（基线 1022+12；57 skip 原因不变）；TokenGen/ThemeGen up to date；`check.ps1` PASS(3)；`verify_pins` 15/15 → `verification/FEA-06/integration-verification.log`；工作树 clean，未 push。
+- **收口**：FEA-06 `status: done`、`integration_commit: b26840acd`、canonical_evidence_status/resource_closeout_status complete；AC8–AC10 MET；**AC1–AC7 PARTIAL 作为 residual 转 `FEA-06-RESIDUAL-1`**（依赖 FEA-07/09/10/11/12/13 端口逐项补齐，不阻塞 FEA-07）。
+- **新建卡**：`FEA-07`（运行期切换/窗口，proposed，待范围冻结）与 `FEA-06-RESIDUAL-1`（proposed，待端口）；PLAN/STATUS/LEDGER 指针滚动 → 当前 Task=FEA-07，READY 节点=无。
+- **下一步**：**FEA-07 范围复核/冻结（scope）** → ready → 派实施（owner 由 DSH 在 range 冻结时确认；Codex 通道已验证可用：`-m gpt-6-luna` + bypass sandbox）。

@@ -3,8 +3,8 @@ id: FEA-06
 title: Fluent UI 四页实现（Shelf / Workbench / Reader / Settings）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: scope_review_r3_approved_2026-11-02
+status: done
+approval: scope_review_r3_approved_2026-11-02; impl_review_r2_approved_2026-11-02
 suggested_owner: codex
 owner: codex
 reviewer: null
@@ -18,10 +18,10 @@ depends_on:
 base_commit: 3c7f311d88b24bde462a61690e15d2c66f8c4683
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: null
+integration_commit: b26840acdf682d69cf531bec3161d17bf90cf9f4
 delivery_head: b26840acdf682d69cf531bec3161d17bf90cf9f4
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete（无 worktree；证据/过程文件全部登记；residual 转 FEA-06-RESIDUAL-1）
 evidence_dir: verification/FEA-06
 allowed_paths:
   - doc/tasks/FEA-06.md
@@ -188,6 +188,12 @@ allowed_paths:
 - 扩展 `WorkbenchPage_UnselectedState_OffersReturnToShelf` headless 断言：检查三 Tab 在 Page/Batch/Console 切换时恰有一个 `selected`，且有效背景/前景/边框/圆角解析至列出的 `Nm.*` 令牌。该测试为扩展既有用例，未新增测试数量；全量仍为 1034/0/57。
 - 初次定向构建因测试缺少 `CornerRadius` 命名空间引用而失败；补上 `using Avalonia` 后定向测试通过，首次失败日志保留为证据。
 
+## impl-r2 复核与收口（2026-11-02，r2 = approved / P0=0 / P1=0 / P2=1）
+
+- 复核报告：`doc/reviews/FEA-06-impl-r2.md`（独立上下文，被审返修 head `7cf305fe2`；**approved**）。确认：P1-1 闭合（`Nm.Space.S1`→`Nm.Space.2` + 守卫测试反证成立）、W-13 符合 DSH 裁决与设计（Console→Workbench 第三视图、Settings 非空间入口）、P2-1/2/3/5/6/7/8/9 全部落实、范围零越界、全量 1034/0/57。
+- 唯一新 P2（P2-R2-1）：TabStrip `selected` class 视觉空操作 + 登记表半句失实 → **已由 Codex 修复**（`b26840acd`：`Button.fluent-secondary.selected` 令牌样式 + 登记表如实 + 测试扩展断言），DSH 复验全绿。
+- **收口判定**：AC8–AC10 MET；AC1–AC7 为 PARTIAL —— 按 DSH 处置**接受并转 residual**（见 `doc/tasks/FEA-06-RESIDUAL-1.md`；依赖 FEA-07/09/10/11/12/13 端口逐项补齐，不阻塞 FEA-07）。integrated at `b26840acd`。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
@@ -223,6 +229,10 @@ allowed_paths:
 | EV-FEA06-UIUX-MANIFEST | AC9 | `verification/FEA-06/uiux/evidence-manifest.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `dd1db40b8b1bef9318039d683f4aface7c3f80612a1708482e8f7637bbabeb4b` | CANONICAL |
 | EV-FEA06-UIUX-FINALIZE | AC9 | `verification/FEA-06/uiux/finalize.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bde655d84ede10046dae7df6c03e0b180b46e6cf6ce78b2274ad8e4ed43c1b88` | CANONICAL |
 | EV-FEA06-UIUX-RESULT | AC9 | `verification/FEA-06/uiux/task-result.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cebe22f92c522074343ec4303f176c42bfe4c3a3e003f4673fc0502b96fb267f` | CANONICAL |
+| EV-FEA06-REVIEW-IMPL-R1 | Review | `doc/reviews/FEA-06-impl-r1.md` | `-` | `3791049f3347391e944cb7fda491217c528c1ca26c108e8903a719ec34a2e4b1` | SOURCE_PIN |
+| EV-FEA06-ADJUDICATION | Review | `doc/reviews/FEA-06-impl-r1-adjudication.md` | `-` | `eaa5d24f70ec3159278833cf75354df588b7d839385cbbdfd25f591930549a9d` | SOURCE_PIN |
+| EV-FEA06-REVIEW-IMPL-R2 | Review | `doc/reviews/FEA-06-impl-r2.md` | `-` | `f749682bd58ab392687f825588954dc3da98a2ffc5017a683918ae9dd38b6889` | SOURCE_PIN |
+| EV-FEA06-INTEGRATION | AC8/Gate | `verification/FEA-06/integration-verification.log` | `-` | `2ad559ab8cbd8d8c8b9b95a7e94c8d351e23e2926a83efdb414fac3f6b3014e3` | CANONICAL |
 | EV-FEA06-AC10 | AC10 | `verification/FEA-06/rework-scope-audit.md` | `7cf305fe2534272dc75295c4644661ddb73221af` | `4e0696c8944e99156d9b23268201aed9fd075f6347a821a4c9778f63dcb874d0` | CANONICAL |
 | EV-FEA06-P1-1-STYLE | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml` | `b26840acdf682d69cf531bec3161d17bf90cf9f4` | `02a4a2cf851b82f39d16094a2a266214e3477877d4dbfb2143342175d3982c96` | CANONICAL |
 | EV-FEA06-P1-1-GUARD | AC6 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentTokenResourceTests.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `0549ab08c1f7a80583a6bafe877b0b14da6a08698e82696bd4e01c18ab3a372a` | CANONICAL |
@@ -257,9 +267,10 @@ allowed_paths:
 
 ## Closeout Record
 
-- 实施交付：2026-11-02 / Codex；impl-r1 findings 已按 DSH adjudication 返修，fix commit 为 `7cf305fe2534272dc75295c4644661ddb73221af`；DSH 集成与 Task closeout 尚未执行。
-- impl-r2 P2-R2-1 已补 TabStrip `selected` 视觉变体、测试断言与登记表准确令牌依赖；fix commit：`b26840acdf682d69cf531bec3161d17bf90cf9f4`；全量仍为 1034/0/57。
-- canonical_evidence_status：`complete`；resource_closeout_status：`pending`（由 DSH 在 approved 集成窗口核销）。
-- 删除、迁移、归档数量/字节数：0；未执行清理或数据迁移。
-- 未关闭项：`AC1–AC7` 有明确部分完成项；P2-2/P2-6/P2-7/P2-8/P2-9 与完整 Run 投影等 residual 已登记，待 DSH Review/集成验证。
-- 当前指针：STATUS 与 Plan 已更新到 `in_review`；rolling checkpoint 无需切换；当前 Task 仍由 STATUS 指向。
+- **实施交付**：2026-11-02 / Codex（用户指派 owner）；首轮实现 `b0388df9a`；impl-r1 changes_requested → 返修 `7cf305fe2`；impl-r2 approved → P2-R2-1 小修 `b26840acd`；均未 push。
+- **复核链**：scope-r1/r2/r3（r3 approved）→ impl-r1（changes_requested，P0=0/P1=1/P2=9）→ DSH adjudication → Codex 返修 → impl-r2（**approved**，P0=0/P1=0/P2=1）→ P2-R2-1 修复 → DSH 复验。
+- **DSH 集成验证（2026-11-02）**：main 直接实现、无 worktree；集成 commit = delivery head **`b26840acd`**。build 0 警告/0 错误；全量 **1034 passed / 0 failed / 57 skipped**（基线 1022+12；57 skip 原因与基线一致）；TokenGen/ThemeGen `-- --check` up to date；`check.ps1` PASS（3 warnings）；`verify_pins` 15/15 → `verification/FEA-06/integration-verification.log`。
+- **终态**：`status: done`；AC8–AC10 **MET**；**AC1–AC7 PARTIAL → residual 转 `FEA-06-RESIDUAL-1`**（依赖 FEA-07/09/10/11/12/13 端口逐项补齐；不阻塞 FEA-07）。canonical_evidence_status / resource_closeout_status 均 complete；证据表（含 review/集成验证行）经 `check.ps1` sha 校验。
+- **残留登记**：P2-2（09 细粒度缺口）、P2-6（书架空态主按钮偏差）、P2-7（Elevation 未消费）、P2-8（四 VM 单文件技术债）、P2-9（设置未保存确认/Esc）、W-13 residual（完整 Run 控制台数据）、PNG 采证测试写仓库（异机 dirty）→ 全部登记到 `FEA-06-RESIDUAL-1` 或后续 Task。
+- 删除、迁移、归档数量/字节数：0；未执行清理或数据迁移；未写产品数据/用户源文件。
+- 关闭于 2026-11-02（DSH 集成；未 push）。

@@ -1,0 +1,24 @@
+# FEA-06 DSH 集成验证（main 直接实现，无 worktree）
+# time: 2026-11-02 13:45:15 +08:00
+# head: 2bdbe45d151cdf1afca35d62e19fb0a06f26ab69
+# delivery_head: b26840acdf682d69cf531bec3161d17bf90cf9f4
+# build: exit=0
+#   0 个警告
+#   0 个错误
+# test: exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 40 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 586 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 812 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   463，已跳过:     7，总计:   470，持续时间: 1 m 6 s - NewManga.App.Tests.dll (net9.0)
+# tokengen: exit=0
+#   rows:    292
+#   up to date: every generated artifact matches the frozen token source byte-for-byte
+# themegen: exit=0
+#   up to date: generated theme artifacts match the frozen token source byte-for-byte
+# check: exit=0
+#   Governance check: PASS (3 warnings)
+# pins: exit=0
+#   PIN AUDIT: PASS (all 15)
