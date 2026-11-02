@@ -280,3 +280,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 用户在看到 FEA-06 四页 headless 截图与「residual UI 打磨可插队」选项后裁决：**按原来的顺序进行** → 按 PLAN DAG 先做 **FEA-07**，`FEA-06-RESIDUAL-1` 的 UI 打磨不插队，待端口/顺序就绪后释放。
 - **FEA-07 卡修订**：`base_commit` 刷新 `682fe17ae`；AC 对齐方案 §12.3 场景（A01/A02/A03/A05/A06/A08）；**H2/H3 验证纳入本卡 AC5/AC6**（无独立前置 Task）；新增 W-1…W-5 裁决点（写域边界/原生验收/owner/性能门槛候选 p95≤1s）；测试矩阵分 AC 组（切换矩阵/原生矩阵/性能/回归）；禁止使用真实漫画或真实 `%APPDATA%`。
 - **下一步**：派 **FEA-07 scope-r1 独立复核**（subagent_zcode）→ 处置 findings → 冻结范围（P0/P1=0）→ ready → 实施（owner 冻结时确认；Codex 通道已验证）。
+## 38. FEA-07 scope-r1（Codex CLI 复核）→ 处置（2026-11-02）
+
+- 因 `subagent_zcode`（3 次 parse-output invalid-json）与 `subagent_codex`（turn product-error）均不可用，**FEA-07 scope-r1 改由 Codex CLI 独立 fresh 会话执行**（`gpt-6-luna` xhigh；只读；不实现 FEA-07）。实测：build 通过、全量 1034/0/57、check PASS(3)、pins 15/15。
+- **结论**：changes_requested，P0=0 / P1=6 / P2=2。P1：新模块无法接入 App（缺 App.csproj 写域）、A03/§15.5 回滚验收不足、A08/H2 双屏/DPI 不全、隔离/启动矩阵缺失、W-6 无机械门禁、W-5 门槛未冻结。报告：`doc/reviews/FEA-07-scope-r1.md`。
+- **处置**：补 `NewManga.App.csproj` 写域；AC1/AC3 增 DB/current/pinned/Lock/源/candidate 零变化 + §15.5 阶段注入/commit 判据/完整 rollback；AC5 补 100/125/150/200% DPI、拔屏 fail-closed 回主窗、单一写入 owner、PerMonitorV2；AC7 增启动兼容矩阵 + project-reference graph 检查；W-5 **冻结 p95 ≤1000ms**；AR8 隔离根；按 P2-1 收紧写域（移除 Directory.Build.props/Appearance/DesignSystem/Appearance.Tests）；W-3 **owner=DSH**（Codex 仅审不实现）；STATUS rolling checkpoint 已刷新为 GOAL-PROGRESS。
+- **下一步**：派 **scope-r2**（独立 fresh Codex CLI 会话，被审 = 本处置 commit）→ P0/P1=0 后按 W-8 刷新元数据置 ready → DSH 实施 FEA-07 → Codex 独立 impl review → DSH 集成验证。
