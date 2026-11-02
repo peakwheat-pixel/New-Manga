@@ -410,3 +410,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 新配置：`-m gpt-6.1-sol -c model_reasoning_effort="high"`（用户 2026-11-02 指示；`-high` 不是模型 ID）。
 - 被审：代码 head `100d487ff` + 本证据/文档提交；只读，唯一允许写 `doc/reviews/FEA-07-impl-r4.md`；报告记录 reviewer 身份/来源、reviewed_head、code_head、decision、counts，并实跑 build/全量/两 `--check`/check/pins + 核对 Task pins 与 evidence-index SHA。
 - 通过后：DSH 集成验证 → FEA-07 `done`、integration_commit、canonical=complete、Closeout Record；AC5 原生矩阵按 D-1 residual/waiver 登记；之后按用户顺序 `FEA-06-RESIDUAL-1`。
+## 58. FEA-07 impl-r4 changes_requested → 返修（2026-11-02）
+
+- **r4 复核**（fresh Codex CLI，`-m gpt-6.1-sol -c model_reasoning_effort="high"`；被审 `ad56bea1c`/代码 `100d487ff`）：`doc/reviews/FEA-07-impl-r4.md`，P0=0 / P1=3 / P2=3；指定验证全部通过（build 0/0、全量 1119/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15、Task pins 15/15）。
+- **返修（`b328f3488`）**：R-017 canonical 快照同步（仅 frontend-only 变更保留 draft，其它外部变更镜像）；R-002 真实 Theme Studio draft 测试（不覆写 provider + 反向验证）；R-013 确定性排队屏障（第二请求未完成 + 补偿后执行真实切换）；R-018 Loaded 订阅解绑（事务 finally）；R-019 `IPresentationInputState` staging 输入隔离；R-009 性能口径改 4 预热 + 20 测量（p95 不再恒等于 max）；R-007 生命周期文案与 skip 原因更正。
+- **验证**：build 0/0；全量 **1132/0/57**（+13 测试）；Release 四次复测 p95 292.92/295.41/295.59/313.95 ms 均 PASS（记录 run p50 106.46 / p95 313.95 / max 331.89 / 冷启 661.06 ms / 内存 +10592B / 句柄 0）；`rework-r4-verification.log`、`final-evidence.log`（head `b328f3488`，SHA `06975fc7…`）、`performance-baseline.md`。
+- **测试隔离修正**：V2 shell 共享 `NullHostController.Instance` 的 `CurrentFrontend` memento → 测试显式复位空间/会话值，消除顺序依赖偶发失败（presentation 23 测试连续 5 次全绿）。
+
+## 59. FEA-07 r5 复核派发 + AC5 residual 计划（2026-11-02）
+
+- r5：fresh Codex CLI 只读，被审代码 head `b328f3488` + 本证据/文档提交；唯一允许写 `doc/reviews/FEA-07-impl-r5.md`；用 `-m gpt-6.1-sol -c model_reasoning_effort="high"`。
+- r5 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`b328f3488`（如无新代码变更）、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → 登记为 residual（blocked D-1，不伪造证据），不因 headless 结果升级 AC5；待用户提供真机或书面降级后再验。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
