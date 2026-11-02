@@ -651,3 +651,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `verification/FEA-06-RESIDUAL-1/pre-review-verification.log`（commit `84abc9c71`，SHA `66db6559…`）：记录 head、base→head 禁止范围零改动、build 0/0、无过滤全量 1194/0/57 逐程序集、旧 FEA-06 四张 PNG SHA、TokenGen/ThemeGen `--check` up-to-date、check PASS(3)、pins 15/15。
 - 用途：独立 impl Review 可直接对照该快照复核 DSH 自检结论；最终集成验证仍以 Review 后新跑日志为准。
 - 下一步：00:23 后派 Codex 独立 impl Review（prompt/提醒已备）；仍限则 03:02 转 ZCode。
+## 94. FEA-06-RESIDUAL-1 R3-004 Current 对照断言（2026-11-03 00:08）
+
+- `FluentCurrentComparisonTests`：Fluent 高对比/恢复 + 同进程 V2↔Fluent 往返后焦点环/ Elevation 令牌回到冻结基线、Current 内容非 Fluent surface。
+- 验证：无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `c2d4ce4b6`；证据 SHA `54a77e6a…`。
+- 下一步：Codex 00:23 恢复后立即派独立 impl Review（prompt/00:24 提醒已备）；ZCode 03:02 备用。

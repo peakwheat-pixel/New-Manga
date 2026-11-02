@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 3e879fba1（Batch B 收尾：I-4 有效属性+hover/pressed/Danger/BookCard+disabled/I-5 矩阵+消费/I-8/I-11；decorative D-8 NOT_RUN）
+delivery_head: c2d4ce4b6（Batch B 收尾：I-4 指针态/I-5 矩阵+消费/I-8+I-11 含 R3-004 Current 对照；decorative D-8 NOT_RUN）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -169,7 +169,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `80b00f6b01280d5b353873622049473023e7d8b282a1ffa172d22ac4e3b09d47` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `54a77e6a5698cd79049739707a263e8685fb2c3edc0ed49645befa189e123f9b` | CANONICAL |
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `981719a13` | `4e16174f40ed2829918759fc0fbd5d3aa8d985d2f1cbf951483c00c8215f6d0c` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `b79241c9a` | `abb93fd7c8bdc1b37f707a60303c06bce7ce19659e1b9f26a7189e1e98f21350` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |`r`n| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
