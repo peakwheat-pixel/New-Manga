@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-06-RESIDUAL-1](tasks/FEA-06-RESIDUAL-1.md) `in_progress`（owner=codex；范围 v3 冻结；Batch A/I-7 完成；Batch B 部分完成（`922a116ca`，1179/0/57）；impl Review 待 agent（D-7）；FEA-07 已 `closed_with_limitations`）。
+- 当前 Task：[FEA-06-RESIDUAL-1](tasks/FEA-06-RESIDUAL-1.md) `in_progress`（owner=codex；范围 v3 冻结；Batch A/I-7 完成；Batch B 收尾（`9203c0031`，1180/0/57）；impl Review 待 00:23；impl Review 待 agent（D-7）；FEA-07 已 `closed_with_limitations`）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
 - 下一步：FEA-06-RESIDUAL-1 收尾 I-4 余项/Tab 序/feedback（DSH）→ agent 恢复后 impl 复核 → 关闭；`G-DELETE-IMPL` OPEN。

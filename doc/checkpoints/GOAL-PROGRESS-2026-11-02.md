@@ -615,3 +615,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 新增证据：`verification/FEA-06-RESIDUAL-1/component-state-matrix.md`（组件×状态×断言类型）、`ac-coverage.md`（AC1–AC5 当前评估；AC2=PARTIAL 因 I-4 视觉格 + I-5 decorative D-8）。
 - 验证：build 0/0；无过滤全量 **1179/0/57**；旧 PNG 零漂移；治理 PASS、pins 15/15。交付 `922a116ca`；证据 SHA `2be45bbf…`。
 - 下一步：Codex 00:23 恢复后派独立 impl Review（prompt 已备）；ZCode 03:02 备用 → findings 处置 → DSH 集成验证 → done/closed_with_limitations。
+## 87. FEA-06-RESIDUAL-1 I-11 四页焦点覆盖（2026-11-02 23:50）
+
+- `FluentFocusPageCoverageTests`：四页各自键盘聚焦后实际绘制共享焦点环；覆盖设计 03 §3「四页至少各 1 焦点场景」。
+- 验证：build 0/0；无过滤全量 **1180/0/57**（DS 91 + App 567）；旧 PNG 零漂移。交付 `9203c0031`；证据 SHA `a0ece253…`。
+- 剩余：hover/pressed 视觉格 NOT_RUN、decorative D-8、disabled 命令零触发未自动化；独立 impl Review 待 Codex 00:23（备用 ZCode 03:02）。
