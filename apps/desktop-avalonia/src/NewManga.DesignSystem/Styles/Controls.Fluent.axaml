@@ -78,7 +78,7 @@
   <Style Selector="Button.fluent-command-row:disabled">
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
-  <Style Selector="Border.fluent-surface-card">
+  <Style Selector=".fluent-surface-card" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
@@ -122,7 +122,7 @@
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Tertiary}" />
   </Style>
 
-  <Style Selector="Border.fluent-dialog">
+  <Style Selector=".fluent-dialog" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
@@ -132,7 +132,7 @@
     <Setter Property="Panel.ZIndex" Value="{DynamicResource Nm.ZIndex.Modal}" />
   </Style>
 
-  <Style Selector="Button.fluent-book-card">
+  <Style Selector=".fluent-book-card" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
@@ -141,21 +141,21 @@
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Stretch" />
   </Style>
-  <Style Selector="Button.fluent-book-card:pointerover">
+  <Style Selector=".fluent-book-card:pointerover" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
   </Style>
-  <Style Selector="Button.fluent-book-card:pressed">
+  <Style Selector=".fluent-book-card:pressed" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
   </Style>
-  <Style Selector="Button.fluent-book-card.selected">
+  <Style Selector=".fluent-book-card.selected" x:SetterTargetType="Button">
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
   </Style>
-  <Style Selector="Button.fluent-book-card:disabled">
+  <Style Selector=".fluent-book-card:disabled" x:SetterTargetType="Button">
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
 
-  <Style Selector="Button.fluent-book-row">
+  <Style Selector=".fluent-book-row" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Canvas}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
@@ -164,34 +164,34 @@
     <Setter Property="MinHeight" Value="{DynamicResource Nm.Size.RowNormal}" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
   </Style>
-  <Style Selector="Button.fluent-book-row:pointerover">
+  <Style Selector=".fluent-book-row:pointerover" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
   </Style>
-  <Style Selector="Button.fluent-book-row:pressed">
+  <Style Selector=".fluent-book-row:pressed" x:SetterTargetType="Button">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
   </Style>
-  <Style Selector="Button.fluent-book-row.selected">
+  <Style Selector=".fluent-book-row.selected" x:SetterTargetType="Button">
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
   </Style>
-  <Style Selector="Button.fluent-book-row:disabled">
+  <Style Selector=".fluent-book-row:disabled" x:SetterTargetType="Button">
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
 
   <Style Selector="StackPanel.fluent-chapter-list">
     <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
   </Style>
-  <Style Selector="Border.fluent-region-box">
+  <Style Selector=".fluent-region-box" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Focus}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
-  <Style Selector="Border.fluent-region-box:pointerover">
+  <Style Selector=".fluent-region-box:pointerover" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Hover}" />
   </Style>
-  <Style Selector="Border.fluent-region-box.selected">
+  <Style Selector=".fluent-region-box.selected" x:SetterTargetType="Border">
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Focus.Ring.Color}" />
   </Style>
   <Style Selector="Border.fluent-streaming-thumb">

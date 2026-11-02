@@ -1,0 +1,11 @@
+# FEA-06-RESIDUAL-2 IN-2A 实施证据（2026-11-03 04:08）
+
+- 来源：ZCode WIP 测试经 DSH 校准收尾（D-7：双候选额度窗口不可用期间）。
+- 关键产品修复：**Avalonia 类型选择器不匹配派生控件**导致 `SurfaceCard/BookCard/BookRow/FluentDialog/RegionBox`（Border/Button 子类）不套用类样式；`Controls.Fluent.axaml` 中这些类选择器改为 class-only + `x:SetterTargetType`（`Border`/`Button`），修复产品卡片/对话框/区域框样式缺失（IN-2A 暴露的真实缺陷）。
+- 测试校准：NotStarted 期望按 `Controls.Status.axaml` 权威（Text.Secondary），交叉断言对 NotStarted 特判并登记 **D-14**（StatusCatalog 返回 Text.Disabled，待 DSH 裁决改 catalog）；`FluentComponentStateCoverageTests` 选择器映射同步为 class-only（覆盖矩阵口径不变）。
+- 验证命令与 EXIT：
+  - build `dotnet build apps\desktop-avalonia\NewManga.sln` → 0 warning / 0 error / EXIT=0
+  - IN-2A 定向：`FluentResidual2StateEffectiveTests` **14/14** PASS；`FluentComponentStateCoverageTests` PASS / EXIT=0
+  - 全量无过滤：**1271 passed / 0 failed / 57 skipped**（App 638、DesignSystem 111；较 IN-1 基线 1257 +14）/ EXIT=0
+- 覆盖：16 组 + AlertBanner 九值有效属性断言（解析后属性=设计令牌），含 hover/pressed/selected/disabled/focus 等状态。
+- 未完成：IN-2B（opt-in 像素证据 + visual-inventory + 逐图签署）；旧 FEA-06 四 PNG 未触碰；未 push。
