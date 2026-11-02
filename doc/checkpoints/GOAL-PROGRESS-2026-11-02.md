@@ -450,3 +450,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r7 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`5a495f80a`（如无新代码变更）、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）；R-020/R-022 的全屏接线已在真实组合根 headless 回归，不依赖 D-1。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
+## 64. FEA-07 impl-r7 changes_requested（P2×4）→ 返修（2026-11-02）
+
+- **r7 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `226e47c51`/代码 `5a495f80a`）：`doc/reviews/FEA-07-impl-r7.md`，changes_requested，P0=0 / P1=0 / P2=4；指定验证全部通过（build 0/0、全量 1135/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15）；R-022 部分修复，残留取消路径（R-022 残余）、测试判别力（R-023）、排队陈旧快照（R-024）、appointment 文案（R-007）。
+- **R-022 残余 + R-024（`462141f57`）**：窗口模式快照/恢复移入协调器事务（新增 `IPresentationWindowModeTransaction`）；快照在 `_switchGate` 内、reject/no-op 校验后，绑定本事务旧树；事务 finally dispose 未提交快照 → 失败/异常/取消恢复，成功 Commit 不触碰窗口；取消仍向上传播。
+- **R-023**：新增 3 个判别性测试（Promote 后 finalize 失败、Promote 后取消、排队拒绝不写陈旧模式）；presentation 38 测试连续 3 次全绿。
+- **R-007**：reviewer=impl-r7、delivery_head=`462141f57`、handoff `doc/handoffs/FEA-07-impl-r7.md`、索引 r8 待派；canonical 保持 pending。
+- **验证**：build 0/0；全量 **1138/0/57**（+3 测试）；`rework-r7-verification.log`、`final-evidence.log`（head `462141f57`，SHA `dbfb7666…`）；Release 两次复测 p95 299.40/374.09 ms 均 PASS（记录 run p50 99.28 / p95 374.09 / max 389.99 / 冷启 675.10 ms / 内存 -1616 B / 句柄 0）。
+
+## 65. FEA-07 r8 复核派发 + 集成/收尾计划（2026-11-02）
+
+- r8：fresh Codex CLI 只读，被审代码 head `462141f57` + 本证据/文档提交；唯一允许写 `doc/reviews/FEA-07-impl-r8.md`；重点 R-022 取消/失败补偿、R-024 门内快照、R-023 判别力与回归。
+- r8 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`462141f57`（如无新代码变更）、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
