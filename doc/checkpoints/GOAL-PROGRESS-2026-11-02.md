@@ -515,3 +515,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r12 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引 → `verification/FEA-07/integration-verification.log`）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 矩阵无硬件 → residual；AC1/AC2/AC3/AC4/AC6/AC8 边界一并登记（不伪造证据）。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；依赖 FEA-09/10/11/12/13 端口未就绪，释放时按端口就绪拆分并刷新 base_commit/scope review）。
+## 74. FEA-07 impl-r12 approved → 集成验证 → done / closeout（2026-11-02）
+
+- **r12 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `527a7ec37`/代码 `aedc7251c`）：`doc/reviews/FEA-07-impl-r12.md`，**approved**，P0=0 / P1=0 / P2=1（R-026 非阻塞：索引把 scope-r1 changes_requested 与 scope-r2 approved 合并写成 approved）；r11 缺报告 P2 确认闭环；R-007/R-009/R-011 维持闭环。
+- **R-026 处置**：索引当前摘要改为「scope-r1 changes_requested 已处置；scope-r2 approved」；scope 原报告与历史署名不改。
+- **集成验证**（`verification/FEA-07/integration-verification.log`，SHA `412e8571…`，head `527a7ec37`）：build 0/0；全量 **1138/0/57**；TokenGen 292 rows / ThemeGen `--check` up-to-date；check.ps1 PASS(3)；verify_pins 15/15；Task pins 22/22；索引 24 行 SHA 一致；`aedc7251c..527a7ec37` 无源码/测试漂移。
+- **关闭**：FEA-07 `status=closed_with_limitations`（AC7 MET；AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1 → residual；范围未全部达成，按协作协议不写 done）、`integration_commit=aedc7251c`、`canonical_evidence_status=complete`、`resource_closeout_status=complete`；Closeout Record 与 Residual 登记已填（不伪造证据）。
+- **RES: AC5 原生矩阵（D-1）**：真机双屏/拔屏/DPI 100/125/150/200% 无硬件，登记 residual（待硬件或用户书面 waiver）；其余 AC 边界同登记于 Task 卡。
+- **下一节点**：`FEA-06-RESIDUAL-1` 仍 proposed（依赖 FEA-09/10/11/12/13 端口）；释放前需刷新 base_commit=FEA-07 closeout head、按端口就绪拆分并走 scope review，不自动启动、不插队。

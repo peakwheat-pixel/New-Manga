@@ -18,7 +18,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**in_progress**（owner=DSH；实现+r3–r11 返修 done：模块/稳定窗口/真实 staging 门禁/切换编排/组合根/safe startup/memento/退出聚合/输入隔离/全屏桥接+事务级窗口模式补偿/性能 1138/0/57；delivery `aedc7251c`；当前 Appointment=impl-r12 复核中；AC5 原生矩阵 blocked D-1）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；scope-r2 + impl-r12 approved；全量 **1138/0/57**；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1；residual 见 Task 卡；AC5 原生矩阵待硬件/waiver）|
 |FEA-06-RESIDUAL-1|FEA-06、FEA-07、FEA-09/10/11/12/13|**proposed**（Fluent 四页 AC1–AC7 residual；按端口就绪分批释放，不阻塞 FEA-07）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
@@ -36,7 +36,7 @@
 READY 节点：无
 
 
-当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**in_progress**，owner=DSH，delivery `aedc7251c`，1138/0/57，Appointment=impl-r12 复核中）；FEA-06-RESIDUAL-1（**proposed**，待端口，FEA-07 done 后释放）
+当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**closed_with_limitations**，集成 `aedc7251c`，1138/0/57；AC5 D-1 residual）；下一节点 FEA-06-RESIDUAL-1（**proposed**，按端口就绪分批冻结释放，不自动启动）
 
 ## 历史快照（终态节点，非当前 DAG）
 

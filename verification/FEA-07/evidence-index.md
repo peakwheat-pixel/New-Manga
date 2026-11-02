@@ -1,13 +1,11 @@
 # FEA-07 证据索引（自动生成）
 
-- 生成时间: 2026-11-02 21:12:51 +08:00
-- 代码 head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0 (r8 返修提交；r9–r11 仅文档修正)
+- 生成时间: 2026-11-02 21:28:58 +08:00
+- 状态: FEA-07 **closed_with_limitations**（integration_commit aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0；canonical/resource complete；AC7 MET、其余 PARTIAL/BLOCKED D-1 → residual）
 - 全量测试: **1138 passed / 0 failed / 57 skipped**（skip 直接原因: sidecar env 未设置）
-- 治理: check.ps1 PASS(3); verify_pins.ps1 PASS 15/15
-- 生成物: TokenGen --check 292 rows up-to-date; ThemeGen --check up-to-date
+- 治理: check.ps1 PASS(3); verify_pins.ps1 PASS 15/15; TokenGen 292 rows up-to-date; ThemeGen up-to-date
 - 性能: Release p50 109.89 / p95 381.43 / max(UI freeze upper bound) 383.05 ms / memory +456B / handles +1 => W-5 PASS（4 预热 + 20 单向切换；两次复测 p95 361.52/381.43 ms）
-- 复核: scope-r1/r2 approved; impl-r1–r5/r7–r11 changes_requested 均已处置; impl-r6 approved; 当前 Appointment=impl-r12 复核中
-- 原生双屏/拔屏/DPI 矩阵: BLOCKED (D-1 无硬件)
+- 复核: scope-r1 changes_requested 已处置; scope-r2 approved; impl-r1–r5/r7–r11 changes_requested 均已处置; impl-r6/r12 approved
 
 说明: 本文件不列自身 SHA; 外部 pin 以 Task EV-FEA07-* 与 final-evidence.log 为准。
 
@@ -17,6 +15,7 @@
 |---|---|---|
 | final-evidence.log | verification/FEA-07/final-evidence.log | e8ed8f2934ae33a0d062c0a52e0c96fa59940e0d9ab9243a6f408584e8e43785 |
 | generators-check.log | verification/FEA-07/generators-check.log | c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921 |
+| integration-verification.log | verification/FEA-07/integration-verification.log | 412e8571ffb556a8384d82326f7c647ed9fb8ab1fb4e1126486df45f8f1c60c4 |
 | performance-baseline-debug.json | verification/FEA-07/performance-baseline-debug.json | b9d094be8b22f2fdd34cca4b8bb42ebf5a51bfa234310e9945197ce441224ae1 |
 | performance-baseline-release.json | verification/FEA-07/performance-baseline-release.json | 2ab2f5cfd7241238ca7676890db00b8a292548bb020eae9bbb8bcf7717ee20b7 |
 | performance-baseline.md | verification/FEA-07/performance-baseline.md | d6b87c5a99868d90619354c1f71f0616669f5f6ac92a0d39cee44a586f85b458 |
