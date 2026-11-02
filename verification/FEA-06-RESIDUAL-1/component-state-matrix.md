@@ -29,7 +29,7 @@
 | SegmentedControl | 选中/未选 | 本批新增 hover/pressed/disabled 声明；设置页分段选择行为 | DECLARED | 选中视觉由既有页面测试覆盖，无像素断言 |
 | TabStrip / TabItem | 选中/未选/hover | TabItem：未选 Foreground=Text.Secondary；选中=Text.Primary；Accent pipe（既有测试） | **EFFECTIVE** | hover 视觉 NOT_RUN |
 | SearchField | 默认/聚焦/有值/清空 | 声明；搜索行为（Shelf 既有测试） | DECLARED | 聚焦视觉 NOT_RUN |
-| CommandPalette | 空/结果/加载 | 打开/关闭行为测试（shell 既有测试）；复用 Dialog 样式 | COMMAND | 结果/加载数据态 NOT_RUN |
+| CommandPalette | 空/结果/加载 | `FluentCommandPaletteFocusTests`：打开后焦点进入搜索框、Esc 关闭后焦点返还触发按钮；复用 Dialog 样式 | COMMAND/FOCUS | 结果/加载数据态 NOT_RUN |
 | ContextMenu | 默认/禁用项 | 列表上下文菜单构建（Shelf 既有测试）；声明 | COMMAND | 禁用项视觉 NOT_RUN |
 | Tooltip | 默认 | 声明；Tooltip 设置逻辑（Settings/Reader 既有） | DECLARED | 视觉 NOT_RUN |
 | 焦点环（所有可聚焦控件） | 键盘焦点/高对比 | 2px↔3px 有效几何（`FocusRingHighContrastTests`）、浮层焦点移入/返还（`I11_LeaveOverlay...`）、隐藏控件不可聚焦（`FocusOrderResidualTests`） | **EFFECTIVE/FOCUS** | 指针焦点不画环；四页至少各 1 场景由页面键盘测试覆盖 |

@@ -69,6 +69,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private FluentPage _pageBeforeReader = FluentPage.Library;
     private FluentPage _currentPage;
     private Control? _activeDialog;
+    private IInputElement? _focusBeforeDialog;
     private bool _motionNavigationEnabled;
     private MotionTimingProfile? _motionTimings;
     private bool _textInputFocused;
@@ -541,6 +542,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         {
             if (ReferenceEquals(args.Source, scrim)) CloseTopSurface();
         };
+        // I-11 (design 03 §3): remember the trigger so closing the overlay returns keyboard focus.
+        _focusBeforeDialog = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         _activeDialog = scrim;
         _modalHost.Child = scrim;
         _modalHost.IsVisible = true;
@@ -554,9 +557,21 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             _modalHost.IsVisible = false;
             _modalHost.Child = null;
             _activeDialog = null;
+            RestoreFocusAfterDialog();
             return;
         }
         if (_currentPage == FluentPage.Reader) CloseReader();
+    }
+
+    /// <summary>I-11: closing a shell overlay returns focus to the control that opened it.</summary>
+    private void RestoreFocusAfterDialog()
+    {
+        var previous = _focusBeforeDialog;
+        _focusBeforeDialog = null;
+        if (previous is Control control && control.Focusable && control.IsEffectivelyEnabled && control.IsEffectivelyVisible)
+        {
+            control.Focus();
+        }
     }
 
     private void ToggleTheme()
