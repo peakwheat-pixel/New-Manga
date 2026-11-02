@@ -802,3 +802,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 按附录 A 重写 Task v2（`bff3eee66`）：IN-1.1–1.3（decorative 三动画，含共同约束/降级/暂停/真实帧源/逐图签署）、IN-2A 17 组有效属性、IN-2B 像素格、OUT 理由、BLOCKED 表（数据端口+B-5/D-1）、证据形式（默认零写入/opt-in `verification/FEA-06-RESIDUAL-2/visuals/**`/旧 PNG SHA 对照）、验收命令与实现约束。
 - 已派 scope-r2 复核（D-9 workflow job `workflow-5e8f74838a2149cc`，产出 `doc/reviews/FEA-06-RESIDUAL-2-scope-r2.md`）；ZCode 03:02/03:04 提醒保留为实施主责与补充复核资源。
 - approved 后冻结 Task2（ready→in_progress）并按 allowed_paths 派实施；未冻结前不实施、不 push。
+## 123. FEA-06-RESIDUAL-2 范围 v3 + scope-r3 派发 ZCode（2026-11-03 03:06）
+
+- scope-r2（D-9 子 agent）**changes_requested P0=0/P1=3/P2=12**：AlertBanner 枚举歧义、allowed_paths 可自行移 OUT 漏洞、分类不穷尽（TopBand/NavRail/StatusBand/StreamingThumb）。
+- DSH 范围 v3（`1f53336e8`）：D-11 AlertBanner 按既有 StatusKind 九值（不新增变体）、D-12 IN-1.3 OUT 至 v1.1、D-13 登记 2 项扩域（FluentUi.cs / Themes/Controls）；IN-2A 收窄 16+1 组并冻结期望令牌表要求；IN-2B 逐图清单/签署/固定视口主题；分类完整性表、证据日志格式（逐程序集/skip/EXIT/差值/禁过滤冒充）、禁止范围/测试要求/AC 表、D-10/R4-001 权威链；PLAN/STATUS 同步。
+- 已按 ZCode 窗口（03:02 恢复）派发 **scope-r3**（job `pwsh-684b8fa3d43b4063`，prompt workspace `scope-r3-prompt.md`），产出 `doc/reviews/FEA-06-RESIDUAL-2-scope-r3.md`；若 ZCode 仍限额将记录探针并由 D-9 子 agent 复核。
+- approved 后冻结 Task2（ready→in_progress）并派实施；未冻结前不实施、不 push。
