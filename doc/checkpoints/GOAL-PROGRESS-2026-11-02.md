@@ -748,3 +748,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 其余 impl-r1 findings 已修复并有回归；evidence pins 7 行复审 **0 mismatch**；工作树干净、未 push。
 - 独立 impl-r2 需在新 head（ZCode 3 项完成后）派发，避免对已知部分项重复返修。
 - 下一次可行动作：03:03 提醒→探测 ZCode→派发 3 项动画→完成后 fresh Codex impl-r2→集成/关闭。
+## 113. R1-001 剩余动画由 Codex 交付 + impl-r2 复核派发（2026-11-03 01:18）
+
+- Codex CLI 实施（job `pwsh-54b39fe8b1bf4a6a`，exit 0）：commit `033c8b4b9` 补齐浮层退出 160ms、feedback pressed 90ms、badge 150ms（可控帧源/时钟，reduce 瞬时），新增 16 个时序测试；`e0d1d73c5` 记录验证日志与 Handoff。全量 **1213/0/57**，四条验收命令 EXIT=0，旧 PNG 零漂移，未 push。
+- DSH 已核验交付指针并派发 fresh Codex **impl-r2** 独立复核（job `pwsh-c3cbdc0f052b410f`，prompt `impl-review-r2-prompt.md`，覆盖 R1-001…R1-009 处置核验 + 新增动画生命周期审查），产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md`。
+- D-10 的 ZCode 排程（03:03）保留为视觉复核备用；r2 approved 后 DSH 跑集成验证并按实际 AC 结果 done/closed_with_limitations。

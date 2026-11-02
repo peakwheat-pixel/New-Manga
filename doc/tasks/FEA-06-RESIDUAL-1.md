@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: e25600431（impl-r1 返修：R1-003..008/Tab180/浮层入200/动态过渡/证据口径/浮层入断言；余 浮层退出160/feedback90/150）
+delivery_head: e0d1d73c5（impl-r1 全部返修：R1-001 退出160/pressed90/badge150 由 Codex `033c8b4b9` 补齐 + 证据 `e0d1d73c5`；全量 1213/0/57；impl-r2 复核进行中）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
