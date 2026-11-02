@@ -25,11 +25,13 @@ public sealed class FluentComponentPointerStatesTests
 
         var primary = new Button { Content = "主操作", Classes = { "fluent-primary" }, Width = 160, Height = 40 };
         var secondary = new Button { Content = "次操作", Classes = { "fluent-secondary" }, Width = 160, Height = 40 };
+        var danger = new Button { Content = "危险", Classes = { "fluent-danger" }, Width = 160, Height = 40 };
+        var card = new Button { Content = "作品", Classes = { "fluent-book-card" }, Width = 160, Height = 48 };
         var window = new Window
         {
             Width = 480,
-            Height = 320,
-            Content = new StackPanel { Spacing = 12, Children = { primary, secondary } },
+            Height = 520,
+            Content = new StackPanel { Spacing = 12, Children = { primary, secondary, danger, card } },
         };
         window.Show();
         Dispatcher.UIThread.RunJobs();
@@ -65,6 +67,24 @@ public sealed class FluentComponentPointerStatesTests
         window.MouseUp(CenterOf(window, secondary), MouseButton.Left, RawInputModifiers.None);
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(TokenColor(app, "Nm.Color.Bg.Overlay"), Solid(secondary.Background));
+
+        // DangerButton: hover uses the muted failed status surface (outline stays failed).
+        MoveTo(window, danger);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.StatusMuted.Failed"), Solid(danger.Background));
+
+        // BookCard: raised → overlay (hover) → accent-muted (pressed) → selected keeps accent-muted surface.
+        MoveTo(window, card);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Bg.Overlay"), Solid(card.Background));
+        window.MouseDown(CenterOf(window, card), MouseButton.Left, RawInputModifiers.None);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(card.Background));
+        window.MouseUp(CenterOf(window, card), MouseButton.Left, RawInputModifiers.None);
+        Dispatcher.UIThread.RunJobs();
+        card.Classes.Add("selected");
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(card.Background));
 
         window.Close();
     }

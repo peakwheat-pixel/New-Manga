@@ -81,3 +81,8 @@
 ## 补记 8（I-4 hover/pressed 有效属性，全量 1194/0/57）
 - `FluentComponentPointerStatesTests`：headless 指针合成断言 PrimaryButton（normal Accent.Base→hover Accent.Hover→pressed Accent.Base→移出还原）与 SecondaryButton（Bg.Raised→Bg.Overlay→pressed Accent.Muted→还原）的**真实有效 Background**，把 I-4 的 hover/pressed 格从 NOT_RUN 升级为 EFFECTIVE。
 - 验证：build 0/0；无过滤全量 **1194 passed / 0 failed / 57 skipped**（DS 93 + App 579）；旧 FEA-06 PNG 零漂移。
+
+## 补记 9（I-4 BookCard/Danger hover 扩展，全量 1194/0/57）
+- `FluentComponentPointerStatesTests` 扩展：DangerButton hover=StatusMuted.Failed；BookCard hover=Bg.Overlay / pressed=Accent.Muted / selected=Accent.Muted（指针合成 + 类切换）。
+- 矩阵 DangerButton/BookCard 行升级为 EFFECTIVE（hover/pressed/selected）；BookRow 保持声明+功能测试。
+- 验证：无过滤全量 **1194/0/57** 保持；旧 PNG 零漂移。
