@@ -189,3 +189,14 @@ m.fluent.visual 等被吞字符、Closeout 残留占位、测试表缺行；已�
   - P2-4：新增 Frontend_UnknownId_IsPassedThrough 测试，明确「未知 frontendId 在此层透传、fail-safe 归 PREREQ-2 selector」。
   - P2-16 裁定为**非缺陷**：设计 01 G-1b 明确「96 作为设计常量，FEA-05 生成令牌时登记」，Nm.Size.MatrixColumnMin=96 以字面量令牌登记即符合该要求（非派生计算）。
   - 全量 sln **979/0/57**（+1 测试）；两个 --check up to date；check.ps1 PASS（3 warnings）；erify_pins 15/15。
+## 25. PREREQ-2 scope-r2 结果与处置（2026-11-03，Round 21）
+
+- **复核通道结论修正**：先前判定的「平台故障」不准确——根因是**子代理仍走旧模型供应商、额度不足**（用户 2026-11-03 告知：主会话已切供应商，子代理未切）。本轮 subagent_zcode 实际**成功产出** doc/reviews/FEA-06-PREREQ-2-scope-r2.md（被审 4659e59d3）。
+- **scope-r2 结论**：changes_requested，**P0=0 / P1=4 / P2=7**（r1 的 P0×3 全部闭合）。
+- **DSH 处置（dec5e7337 之后的卡面修订）**：
+  - **R2-P1-1（写域缺口）** → llowed_paths 增 App/ViewModels/V2/ThemeStudio/ThemeEngineThemeStudioService.cs、StubThemeStudioService.cs（P5 sink 双写的真实注入点）。
+  - **R2-P1-2（Q-33 residual ③ 无落点）** → 新增 **P7** + **AC7**（
+m.fluent.visual/1 manifest + ThemeValidator.Validate(fluent) + BuiltInThemes 加载/Current 不生效），并在测试表补 AC7 行。
+  - **R2-P1-3（C-02 V-07 合规路径未闭合）** → **改判 P6 实现路径**：Nm.Material.Acrylic.Base/.Tint 以**主题层令牌**承载（NmKeys + ThemeLayerAllowedKeys + 主题包 colors），**不新增 ThemeMaterial 枚举值、不改 ThemeTokenSet 签名** → 依 C-02 V-07「不新增枚举值、不改接口签名」**无需 UNFREEZE**；新增 **W-11** 记录该口径（Q-35）。
+  - **R2-P1-4（测试表无 AC5/AC6）** → 测试表已补 AC5/AC6（前一轮遗漏）+ 本轮 AC7。
+- **下一步**：派 **scope-r3**（独立上下文，subagent_zcode 或复核队友）确认 4 条 P1 关闭；P0/P1=0 后置 eady 并开始实现。

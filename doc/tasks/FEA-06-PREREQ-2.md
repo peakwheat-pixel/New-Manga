@@ -27,6 +27,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/**
   - apps/desktop-avalonia/src/NewManga.DesignSystem/**
   - apps/desktop-avalonia/src/NewManga.Appearance/**
+  - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/ThemeStudio/ThemeEngineThemeStudioService.cs
+  - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/ThemeStudio/StubThemeStudioService.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml
   - apps/desktop-avalonia/src/NewManga.App/Program.cs
@@ -59,7 +61,8 @@ allowed_paths:
 | P3 | `Views/Fluent/` 目录与 Shell 骨架（仅导航 + 四页占位；页面内容由 FEA-06 实现） |
 | P4 | 测试：selector 选择逻辑（fluent/fluent-dark/v2/未知）+ V2 回归不破 |
 | P5 | **W-9 承接（Q-32）**：写者收敛——**先把 `AppearanceCoordinator` 从 `NewManga.App/Services` 迁入 `NewManga.Appearance`（C-03 §2.1 唯一写者位置；PREREQ-1 偏差 D-1）**，再加 `AppearanceCoordinator.SaveAsync` 调 `AppearanceStore.WriteAsync`（唯一写者 = `NewManga.Appearance`，不引入反向引用）；`ThemeSettingsStore.SaveAsync` 标 `[Obsolete]` 并在一个 release 内双写 `presentation-settings.json`（App 侧 sink adapter `IThemeSettingsSink`，避免 ThemeEngine→Appearance 引用） |
-| P6 | **W-9 承接（Q-32）**：`Nm.Material.Acrylic.Base/Tint` —— 选 **`ThemeTokenSet` 扩展**路径：`ThemeMaterial` 枚举加 `Fluent` 值 + `ThemeTokenSet` 增加 `Material(Base/Tint)` 字段 + `ThemePackageJson` 序列化；`NmKeys` 加两常量但**不进 `Tokens.Global.axaml`**；`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 **59/65 计数**同步；C-02 V-07 公开面（`ThemeMaterial` 枚举值）在变更记录中登记 |
+| P7 | **Q-33 residual ③ 承接（R2-P1-2 处置）**：`builtin.fluent-dark` 的 `nm.fluent.visual/1` manifest 条目（写入主题包 `metadata.extra` 或 descriptor 扩展位，按 `ThemePackageJson` 现有 schema 能承载的最小形式）+ `ThemeValidator.Validate` 显式测试 + `BuiltInThemes` 加载/Current 不生效断言 |
+| P6 | **W-9 承接（Q-32）+ C-02 V-07 合规路径（R2-P1-3 处置）**：`Nm.Material.Acrylic.Base/.Tint` 以**主题层令牌**承载——`NmKeys` 加两常量（**不写入** `Tokens.Global.axaml`）、`ThemeLayerAllowedKeys` 放行、主题包 `colors` 承载取值；`Nm.Material.Acrylic.Opacity`/`Mica.Enabled` 保持 PREREQ-1 已交付的全局令牌。**明确不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 构造器签名**（C-02 V-07：「不新增枚举值、不改公开方法签名」），因此**不需要契约 UNFREEZE**；`R14ContractTests` 的 59/65 计数随主题层键面 +2 同步。 |
 
 ## 验收标准
 
@@ -69,6 +72,7 @@ allowed_paths:
 - [ ] **AC4**：全量 sln 不退化 + 证据。<<TODO>>
 - [ ] **AC5（W-9/Q-32）**：双写者收敛 + `ThemeSettingsStore` 兼容写（一个 release）+ 测试。<<TODO>>
 - [ ] **AC6（W-9/Q-32）**：`Nm.Material.Acrylic.Base/Tint` 主题层键落地 + 主题包 schema/`ThemeLayerAllowedKeys`/`R14ContractTests` 计数同步。<<TODO>>
+- [ ] **AC7（Q-33 residual ③）**：`nm.fluent.visual/1` manifest 落地 + `ThemeValidator.Validate(fluent)` 通过 + `BuiltInThemes` 加载/Current（`newmanga-default`）不生效测试。<<TODO>>
 
 ## 禁止范围
 
@@ -82,12 +86,17 @@ allowed_paths:
 | W-2b | CLI 优先级 | `--frontend`（显式）**优先于** `AppearanceSettings.FrontendId`；两者都缺省 → `builtin.current-v2`（fail-safe V2） | PREREQ-1 `AppOptions.FrontendId`；AC1 |
 | W-2 | 写域 | `App.axaml.cs`/`Program.cs`/`Shell/**`/`Views/Fluent/**` 纳入本卡（r1 P2 指出原 FEA-06 写域缺组合根） | r1 P0-2 |
 | W-3 | V2 回归 | V2 既有路径不改语义，只加 selector 分支 | AC2 |
+| W-10 | D-1 偏差 | C-03 §2.1 的唯一写者是 `NewManga.Appearance` 内的 `AppearanceCoordinator`；PREREQ-1 交付在 App 层（只读）。本卡须迁移到 `NewManga.Appearance` 并使其成为写者 | C-03 §2.1；PREREQ-1 Closeout D-1 |
+| W-11 | C-02 V-07 适用口径（DSH 裁决 Q-35） | ThemeEngine 公开面（enum/接口签名）**冻结**；`Nm.Material.Acrylic.Base/.Tint` 用**主题层令牌**承载（`NmKeys` 常量 + `ThemeLayerAllowedKeys` + 主题包 colors），`ThemeMaterial` 枚举与 `ThemeTokenSet` 签名**不变**，故**无需 UNFREEZE**；若后续确需改公开面，须先出 UNFREEZE 记录再改 | C-02 V-07「不新增枚举值、不改接口签名」；scope-r2 R2-P1-3 |
 
 ## 测试要求
 
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
 | AC1–AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests` | Avalonia.Headless | NOT_RUN | 待补 |
+| AC5 | `dotnet test apps/desktop-avalonia/tests/NewManga.Appearance.Tests` + `NewManga.App.Tests` | .NET 9 / Avalonia.Headless | NOT_RUN | 待补 |
+| AC6 | `dotnet test apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests` + `NewManga.ThemeEngine.Tests` + `TokenGen -- --check` + `ThemeGen -- --check` | .NET 9 + 生成管线 | NOT_RUN | 待补 |
+| AC7 | `dotnet test apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests`（`ThemeValidator`/`BuiltInThemes`） | .NET 9 | NOT_RUN | 待补 |
 | AC4 | 全量 sln build/test | 全量 | NOT_RUN | 待补 |
 
 ## Canonical Evidence
