@@ -34,8 +34,12 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/Styles/**
   - apps/desktop-avalonia/src/NewManga.Appearance/**
   - apps/desktop-avalonia/src/NewManga.DesignSystem/**
+  - apps/desktop-avalonia/src/NewManga.Presentation.Avalonia/**
   - apps/desktop-avalonia/tests/NewManga.App.Tests/**
   - apps/desktop-avalonia/tests/NewManga.Appearance.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.Presentation.Avalonia.Tests/**
+  - apps/desktop-avalonia/NewManga.sln
+  - apps/desktop-avalonia/Directory.Build.props
   - verification/FEA-07/**
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
@@ -92,6 +96,7 @@ allowed_paths:
 | W-3 | owner 指派 | 范围冻结后由 DSH 指定（Codex 通道已验证可用；Codex 2026-11-02 起承接 FEA 实现） | 用户 2026-11-02 |
 | W-4 | H2/H3 归属 | 无独立 Task → 验证纳入本卡 AC5/AC6，不拆前置 | 方案 §12.1 |
 | W-5 | 性能门槛 | p95 ≤1s 为候选预算，最终门槛由 DSH 在范围冻结时确认；记录机器/规模/冷热/峰值 | 方案 §12.3 |
+| W-6 | Presentation.Avalonia 模块落点 | 方案 §12.1 要求 `Presentation.Avalonia`；本卡可在写域内新建 `NewManga.Presentation.Avalonia` 项目并登记 sln/`Directory.Build.props`。**依赖方向不变**：Presentation 可引用 ApplicationCore/Appearance/DesignSystem，**不得**让 Host/Core/ApplicationCore 引用 Presentation/UI；不改既有项目 TFM/依赖方向 | 方案 §3/§4、§12.1；AD-002 |
 
 ## 测试要求
 
