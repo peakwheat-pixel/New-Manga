@@ -209,7 +209,7 @@ public static class TokenMap
         new("Nm.Material.Acrylic.Opacity", TokenValueKind.Double, "0.85",
             "design 01 G-1: acrylic opacity (Fluent frontend only)"),
         new("Nm.Size.MatrixColumnMin", TokenValueKind.Double, "96",
-            "design 01 G-1b: batch matrix minimum column width (registered design constant)"),
+            "design 01 G-1b: batch matrix minimum column width — registered design constant (literal, not derived)"),
         // R-15 extension: a slow exit/reveal duration (220ms) in addition to fast/normal.
         new("Nm.Motion.Duration.Slow", TokenValueKind.TimeSpan, "220ms",
             "R-15 extension: slow duration for 200-260ms reveal/exit transitions"),        new("Nm.Motion.Enabled", TokenValueKind.Boolean, "true",

@@ -57,6 +57,8 @@ public sealed class AppearanceJsonTests
 
         Assert.Equal(MotionMode.Reduce, read.Settings.MotionMode);
         Assert.Contains(read.Warnings, warning => warning.Contains("reducedMotion", StringComparison.Ordinal));
+        // impl-r4 P2-14: the name promises "all categories off", so assert it (C-03 §2.3).
+        Assert.Equal(MotionCategories.None, read.Settings.MotionCategories);
     }
 
     [Fact]
