@@ -631,3 +631,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 新增 `verification/FEA-06-RESIDUAL-1/item-status.md`（I-1…I-14 逐项 commit/断言/状态/缺口），供独立 Review 与集成验证引用。
 - 验证：build 0/0；无过滤全量 **1192/0/57**（DS 92 + App 578）；旧 PNG 零漂移；治理 PASS。交付 `b79241c9a`；证据 SHA `f8413b72…`。
 - 下一步：Codex 00:23 恢复后派独立 impl Review（prompt 已备，00:24 提醒已排程）；ZCode 03:02 备用。
+## 90. FEA-06-RESIDUAL-1 shell 浮层焦点返还（2026-11-02 23:58）
+
+- `FluentShellSurface.OpenDialog` 记录触发焦点、`CloseTopSurface` 返还；命令面板测试覆盖「打开→搜索框聚焦→Esc→触发按钮聚焦」。
+- 验证：build 0/0；无过滤全量 **1193/0/57**；旧 PNG 零漂移；治理 PASS。交付 `981719a13`；证据 SHA `da5ecaeb…`。
+- 下一步：Codex 00:23 恢复后立即派独立 impl Review（prompt/提醒已备）；ZCode 03:02 备用。
