@@ -201,7 +201,9 @@ public static class BuiltInThemeGenerator
         var fluentPackage = new ThemePackage(
             ThemeDefaults.Schema,
             fluentDescriptor,
-            FluentTokenSet(lightColors),
+            // dark-only package: the light slot repeats the dark palette so an accidental
+            // light-mode consumer still resolves to the shipped (dark) values (impl-r4 P2-8).
+            FluentTokenSet(darkColors),
             FluentTokenSet(darkColors),
             metadata);
         _ = fluentPackage;

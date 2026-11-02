@@ -7,8 +7,5 @@
     <Description>New Manga appearance persistence (C-03 v6 / FEA-06-PREREQ-1): AppearanceSettings schema (theme.frontendId, theme.visualThemeId, appearance.mode/contrast/followSystemAccent, motion.mode/motion.categories, corners.scale, material.acrylicStrength/micaEnabled, layout.*, schemaVersion=2), atomic presentation-settings.json writer, legacy reducedMotion -> motion.mode migration and a motion preference SPI (IMotionPreferenceSource). The writer lives here (C-03:68); applying a theme belongs to the app shell.</Description>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj" />
-  </ItemGroup>
 
 </Project>
