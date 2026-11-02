@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-06-RESIDUAL-1](tasks/FEA-06-RESIDUAL-1.md) `ready`（owner=codex；范围 v3 已固定（scope-r1/r2 changes_requested 均处置），scope-r3 独立复核进行中；FEA-07 已 `closed_with_limitations`，integration `aedc7251c`）。
+- 当前 Task：[FEA-06-RESIDUAL-1](tasks/FEA-06-RESIDUAL-1.md) `ready`（owner=codex；范围 v3 已冻结（scope-r3 approved）；impl Batch A 由 ZCode 执行（Codex 故障转移）中；FEA-07 已 `closed_with_limitations`，integration `aedc7251c`）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
-- 下一步：FEA-06-RESIDUAL-1 scope-r3 独立复核（范围 v3：I-1…I-14 IN / B-1…B-7 BLOCKED）→ 冻结后按 W-10 派 Codex 实施；`G-DELETE-IMPL` OPEN。
+- 下一步：FEA-06-RESIDUAL-1 impl Batch A（ZCode 执行，I-6 先行 + I-1/I-2/I-3/I-9/I-10/I-12/I-13/I-14）→ DSH 验收 → Batch B；`G-DELETE-IMPL` OPEN。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；**14 份契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已全部冻结**（门禁链 4/4）。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告统一在 `doc/reviews/`。
 - 冻结校验：`verify_pins.ps1` **15/15** PASS（14 份契约 + FEA-01；机械校验，不替代复核）。

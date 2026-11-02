@@ -4,10 +4,10 @@ title: Fluent 四页规格补齐（FEA-06 AC1–AC7 residual，第一批）
 kind: implementation
 governance_version: 3
 status: ready
-approval: scope_review_r2_changes_requested_2026-11-02_scope_v3_pending_scope_r3
+approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: codex-cli（scope-r2 changes_requested，P0=0/P1=3/P2=3，已处置为范围 v3；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md；当前 Appointment：**scope-r3 = ZCode CLI**（Codex 额度用尽，按用户 2026-11-02 故障转移裁决；headless plan 只读），复核进行中）
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch A（ZCode CLI 执行，Codex 额度故障转移）**，进行中
 depends_on:
   - FEA-06
   - FEA-07
@@ -77,11 +77,11 @@ allowed_paths:
 | I-4 | R-6 | 组件 full 状态：先按 `10-component-inventory.md` §1–§3 冻结「组件 × 适用状态」表，再实现 normal/hover/pressed/disabled/浮层开合；断言**有效属性**（Background/BorderBrush/Opacity/Transform 与资源引用）而非字符串选择器存在；disabled 验命令零触发；浮层验焦点移入/返还 | 组件×适用状态表入证据；每格有效属性/命令断言；无法 headless 验证的视觉格标 NOT_RUN，不以选择器存在计 PASS；无 Current V2 样式改动 |
 | I-5 | R-7a | motion：按 `02-motion.md` 三态 `auto/full/reduce` × 三类 × 分类开关矩阵实现；auto 跟随系统动画设置（读取失败→full+warning）；用户显式优先；`motion.categories[x]=关` 在 full 下按 reduce 列执行 | 表驱动断言（fake 系统开/关 × mode auto/full/reduce × 三类 × 分类开/关）逐格匹配设计参数表（navigation 240/180/200/160ms 或 0ms；feedback 颜色保留/无位移/无缩放；decorative 禁用）；无定时器泄漏 |
 | I-6 | R-8a | 四 Fluent VM 拆分：`ViewModels/Fluent/FluentPageViewModels.cs`（1408 行）→ Shelf/Workbench/Reader/Settings 四文件 + 共享基类，纯移动/等价重构 | 文件结构与行数记录；既有测试不改弱；全量基线不退化；视图引用路径兼容 |
-| I-7 | R-8b | PNG 采证测试改显式 opt-in：默认全量**不写** PNG；opt-in 输出 `verification/FEA-06-RESIDUAL-1/png/` 或临时目录；禁止覆盖 `verification/FEA-06/screens/**` 已 pin 文件 | 默认运行后 `git status` 干净；opt-in 开关生效；旧 FEA-06 PNG 字节不变（SHA 对照） |
-| I-8 | R-9 | 消费现有 `Nm.Elevation.*` 令牌（设计 01 §2.3）替换 Fluent 表面 1px 边框；**standard 与 reduce 均保留阴影令牌不变**；仅高对比模式回退 1px 边框（设计 03:62）；Current V2 不变 | 表面使用 Elevation 令牌（样式断言）；standard+reduce 阴影仍为原令牌；高对比→1px 边框；`Views/V2/**` 无改动；设计值对照表入证据 |
+| I-7 | R-8b | PNG 采证测试改显式 opt-in：**禁止对象 = 仓库/证据面 PNG 写入（`verification/**`，尤其 `verification/FEA-06/screens/**` 已 pin 文件）**；opt-in 输出到 `verification/FEA-06-RESIDUAL-1/png/`；`%TEMP%` 渲染输出（如 DS `VisualEvidenceTests`）不属禁止范围（scope-r3 R3-002 口径） | 默认运行后 `git status` 干净（仅 `%TEMP%` 允许）；opt-in 开关生效写本卡证据目录；旧 FEA-06 PNG 字节不变（SHA 对照） |
+| I-8 | R-9 | 消费现有 `Nm.Elevation.*` 令牌（设计 01 §2.3）替换 Fluent 表面 1px 边框；**standard 与 reduce 均保留阴影令牌不变**；仅高对比模式回退 1px 边框（设计 03:62）；Current V2 不变 | 表面使用 Elevation 令牌（样式断言）；standard+reduce 阴影仍为原令牌；高对比→1px 边框；`Views/V2/**` 无改动；**Current 对照行为断言**（同进程切回 Current 后资源/焦点环/动画不被污染，复用 `RealAppResourceStackTests` 基础）；设计值对照表入证据 |
 | I-9 | R-3b | 未保存圆点（dirty 指示）在设置/工作台等设计指定页面的可见状态（现有 dirty 状态，不新增端口） | dirty=true 显示/false 隐藏；切前端/往返后状态正确；无假数据 |
-| I-10 | R-4b | Reader 工具条自动隐藏（设计 07 交互，纯 UI） | 无操作超时隐藏；键盘/指针唤醒；全屏下一致；不涉及真实 Reader 数据 |
-| I-11 | R-7b | 焦点环：`Nm.Focus.Ring.Width`=2 / `Offset`=1 / 高对比 3px（设计 03:53,62）；浮层打开焦点移入首个可聚焦控件、关闭返还触发控件；隐藏/不可见控件移出 Tab 序 | 焦点环几何/颜色断言；高对比 3px；浮层焦点移入与返还；隐藏控件不在 Tab 序；覆盖四页至少各 1 个焦点场景 |
+| I-10 | R-4b | Reader 工具条自动隐藏（设计 07）：**顶部/底部条** = 无操作 2s 淡出、点击中部切换显隐、reduce 直接切换（07:23）；**右侧浮动工具条** = 常显可隐藏（07:62）；纯 UI，不涉及真实数据 | 两类条分别断言：2s 超时/点击中部切换/reduce 直接显隐；右侧条常显语义；键盘唤醒；全屏下一致 |
+| I-11 | R-7b | 焦点环：`Nm.Focus.Ring.Width`=2 / `Offset`=1 / 高对比 3px（设计 03:53,62）；浮层打开焦点移入首个可聚焦控件、关闭返还触发控件；隐藏/不可见控件移出 Tab 序 | 焦点环几何/颜色断言；高对比 3px；浮层焦点移入与返还；隐藏控件不在 Tab 序；覆盖四页至少各 1 个焦点场景；**Current 对照行为断言**（切回 Current 后焦点环不被 Fluent 改动污染） |
 | I-12 | R-2b | 控制台入口导航与错误卡入口态：`SpaceConsole` 空间入口可用导航（现有 shell surface），Tab 页占位按设计；错误卡「控制台入口」按钮导航到控制台空间；**控制台内容投影仍由 B-1/B-6 承担** | 入口点击导航到 Console 空间/页；错误卡入口按钮可达；占位态无假数据；导航不破坏 FEA-07 输入/切换 |
 | I-13 | R-3c | 9 行状态**视觉骨架**（无数据部分的占位/禁用态，按设计 03 工作台状态表）；**数据绑定归 B-2**，不重复归属 | 9 行视觉/禁用态登记；无数据时安全空态；不与 B-2 重复认领 |
 | I-14 | R-4c | 源不可用只读**警示本体**（banner/文案/禁用操作视觉，按设计 07）；恢复动作归 B-3 | 警示可见/文案/禁用态断言；不涉及真实恢复动作；不依赖数据面 |
@@ -100,6 +100,11 @@ allowed_paths:
 | B-6 | R-2 满态统计 | FEA-12 | 真实统计数据面 |
 | B-7 | R-3 冲突「查看对照」数据 | FEA-10 | 冲突投影端口 |
 
+## scope-r3 P2 处置（2026-11-02，实施期跟踪）
+- **R3-001**：PLAN 当前 DAG 段 v1/scope-r1 残留 → 冻结时已刷新为 v3/scope-r3（历史快照段不动）。
+- **R3-002**：I-7 口径固定为「禁止仓库/证据面（`verification/**`）PNG 写入；`%TEMP%` 渲染输出允许；旧 FEA-06 pin 不得覆盖」。
+- **R3-003**：I-10 按设计 07 分「顶部/底部条（2s 淡出、点击中部切换、reduce 直接切换）」与「右侧浮动工具条（常显可隐藏）」两类断言。
+- **R3-004**：I-8/I-11 增加 Current 对照行为断言（复用 `RealAppResourceStackTests` 基础），不扩写域。
 ## 验收标准
 
 - [ ] **AC1（四页与 Shell residual）**：I-1/I-2/I-9/I-10/I-12/I-13/I-14 逐项完成并登记断言；B-1/B-2/B-3/B-6/B-7 按 BLOCKED 登记原因与恢复条件，不写达成。 `<<TODO>>`

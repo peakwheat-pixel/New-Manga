@@ -557,3 +557,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **影响**：Codex 恢复前（预计 2026-11-03 00:23 后）的复核/审查任务全部走 ZCode；FEA-06-RESIDUAL-1 实现 owner 仍登记 codex，若届时额度未恢复，按同一规则故障转移 ZCode 实施并在 Task 卡/证据标注。
 - **回退**：Codex 恢复后，后续轮次恢复 Codex 派发；历史报告中来源字节不改。
 - **当前状态**：FEA-06-RESIDUAL-1 范围 v3 已固定（scope-r1/r2 处置完毕），scope-r3（ZCode）复核进行中；FEA-07 已 closed_with_limitations（integration `aedc7251c`）。
+## 79. FEA-06-RESIDUAL-1 scope-r3 approved（ZCode）→ 范围 v3 冻结 + impl Batch A 派发（2026-11-02）
+
+- **scope-r3**（ZCode CLI headless `--mode plan` 只读；Codex 额度故障转移；会话 `sess_3c0de2b4-…`）：`doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md`，**approved，P0=0 / P1=0 / P2=4**；R2-001…R2-003 三项 P1 全部闭环；构建/生成器/治理/pins 通过；安全回归 **1137/0/57**（PNG 用例排除口径一致）。
+- **R3-001…R3-004 处置**：R3-001 PLAN 当前 DAG 段刷新为 v3/scope-r3；R3-002 I-7 口径固定（禁止 `verification/**` PNG 写入、`%TEMP%` 允许、不覆盖旧 pin）；R3-003 I-10 按设计 07 分两类工具条断言（2s/点击中部/reduce 直接切换 vs 右侧常显）；R3-004 I-8/I-11 增 Current 对照行为断言。均为实施期跟踪项，不阻塞冻结。
+- **冻结**：范围 v3 冻结（IN=I-1…I-14、BLOCKED=B-1…B-7、无 DEFERRED）；owner 仍登记 codex，实施执行按故障转移改派 **ZCode**。
+- **实施计划**：I-6 独立首个 commit（1408 行 VM 等价拆分）→ Batch A（I-12/I-14/I-9/I-10/I-1/I-2/I-3）→ Batch B（I-4/I-5/I-11/I-13/I-7/I-8）；每子批独立 delivery commit；全程安全回归 filter 1137/0/57，I-7 后恢复 1138/0/57 起点。
+- **下一步**：ZCode 实施 Batch A → DSH 验收（diff 写域/测试/证据/安全回归）→ Batch B → fresh 复核（Codex 恢复则 Codex，否则 ZCode）。
