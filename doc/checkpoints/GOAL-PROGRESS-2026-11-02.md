@@ -625,3 +625,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `MotionMatrixResidualTests`（11 tests）：full/reduce × All/Navigation/Feedback/Decorative/None 逐格对照设计参数；auto 跟随平台/full 不读平台/读失败→full+warning；reduce 下 feedback 类别开/关语义。
 - 验证：build 0/0；无过滤全量 **1191/0/57**；旧 PNG 零漂移。交付 `7ca725bbf`；证据 SHA `85d305f3…`。
 - 剩余：hover/pressed 视觉格 NOT_RUN、Toast severity 组合、CommandPalette 结果态、disabled 命令零触发、decorative D-8；独立 impl Review 待 Codex 00:23（备用 ZCode 03:02）。
+## 89. FEA-06-RESIDUAL-1 disabled 零触发 + 子项台账（2026-11-03 00:0x）
+
+- `FluentDisabledAutomationTests`：disabled Fluent 按钮 Automation Invoke 抛 `ElementNotEnabledException`；Click/Command Execute 均 0；`CanExecute=false`。I-4 矩阵该格 NOT_RUN → EFFECTIVE/COMMAND。
+- 新增 `verification/FEA-06-RESIDUAL-1/item-status.md`（I-1…I-14 逐项 commit/断言/状态/缺口），供独立 Review 与集成验证引用。
+- 验证：build 0/0；无过滤全量 **1192/0/57**（DS 92 + App 578）；旧 PNG 零漂移；治理 PASS。交付 `b79241c9a`；证据 SHA `f8413b72…`。
+- 下一步：Codex 00:23 恢复后派独立 impl Review（prompt 已备，00:24 提醒已排程）；ZCode 03:02 备用。

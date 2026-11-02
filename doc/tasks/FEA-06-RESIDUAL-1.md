@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 7ca725bbf（Batch B 收尾：I-4 有效属性/I-5 三态×三类矩阵+nav/feedback 消费/I-8/I-11 四页焦点；hover 视觉与 decorative D-8 NOT_RUN）
+delivery_head: b79241c9a（Batch B 收尾：I-4 有效属性+disabled 零触发/I-5 矩阵+消费/I-8/I-11；hover 视觉与 decorative D-8 NOT_RUN）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -169,8 +169,9 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `85d305f3d7a8f7fcdfa49bb72d500189f2c6301788a452f79c181f79bf708a45` | CANONICAL |
-| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `03f482400` | `30b629545b134707c535c3042c80db1c4a3f51068e8c1ea947b1c53f249f093f` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `f8413b72b91e93a7b58a8118bb5a70442b0688334e7cdf26f4f3a9658eec9dde` | CANONICAL |
+| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `b79241c9a` | `e2ecb95861973f6b4ffc141fbaf3f98bc255e1d8aaae0fb30a655548f7b6086b` | CANONICAL |
+| EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `b79241c9a` | `abb93fd7c8bdc1b37f707a60303c06bce7ce19659e1b9f26a7189e1e98f21350` | CANONICAL |
 | EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
