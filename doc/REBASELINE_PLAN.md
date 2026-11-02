@@ -18,7 +18,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**in_progress**（owner=DSH；切片1/2/2b/2c/3/4 done：模块+稳定窗口+切换编排+Fluent surface+组合根+safe startup+memento/拓扑，全量 1095/0/57；剩余：性能 baseline、原生矩阵 blocked D-1、独立复核）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**in_progress**（owner=DSH；实现切片1–5 done：模块/稳定窗口/切换编排/Fluent surface/组合根/safe startup/memento/性能 baseline，全量 1099/0/57；待独立 impl review + 集成验证；AC5 原生矩阵 blocked D-1）|
 |FEA-06-RESIDUAL-1|FEA-06、FEA-07、FEA-09/10/11/12/13|**proposed**（Fluent 四页 AC1–AC7 residual；按端口就绪分批释放，不阻塞 FEA-07）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|

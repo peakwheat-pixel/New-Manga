@@ -1,0 +1,31 @@
+{
+  "metric": "FEA-07 hot frontend switch",
+  "machine": "HOME-MY",
+  "os": "Microsoft Windows NT 10.0.26300.0",
+  "dotnet": "9.0.11",
+  "config": "headless Avalonia UI thread; real AppShellV2/FluentShellSurface factories",
+  "warmupSwitches": 2,
+  "measuredSwitches": 12,
+  "coldFirstSwitchMs": 648.42,
+  "p50Ms": 118.51,
+  "p95Ms": 429.47,
+  "maxMs": 429.47,
+  "samplesMs": [
+    369.32,
+    116.72,
+    380.79,
+    118.51,
+    429.47,
+    136.4,
+    427.78,
+    68.73,
+    132.36,
+    72.26,
+    112.05,
+    84.04
+  ],
+  "managedMemoryDeltaBytes": 1363264,
+  "handleDelta": 0,
+  "budgetP95Ms": 1000,
+  "passed": true
+}

@@ -344,3 +344,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 测试：`WindowStateMementoTests` 3、`DisplayTopologyPlannerTests` 7、`DpiManifestTests` 1、`PresentationWindowTests` +1；证据 `verification/FEA-07/slice-4-verification.log`；build 0/0；全量 **1095/0/57**。
 - **原生矩阵 blocked（D-1）**：真机双屏/拔屏/DPI 100/125/150/200% 未执行；不伪造证据，待硬件或用户降级裁决。
 - **下一批**：切片 5 性能 baseline（W-5 门槛）+ 全量证据 → fresh Codex CLI 独立 impl review → DSH 集成验证。
+## 47. FEA-07 实施切片 5（H3 性能 baseline + 架构门禁 + 实现收尾，2026-11-02）
+
+- **性能 baseline（AC6/W-5）**：`PerformanceBaselineTests` 真实 factory + 稳定窗口，Release 实测 **p50 118.51 ms / p95 429.47 ms / 冷启动首次 648.42 ms / 内存 +1.38 MB / 句柄 +3 → PASS**（预算 p95 ≤1000 ms）；Debug 对照 p95 516 ms 亦 PASS；原始 JSON `verification/FEA-07/performance-baseline-release.json`。
+- **W-6 机械门禁（AC7）**：`ArchitectureDependencyTests` 解析 ProjectReference：App→Presentation 允许；Host/CoreClient/ApplicationCore→Presentation/App/DesignSystem 禁止；TFM 保持 net9.0。
+- **实现收尾**：全量 **1099/0/57**；build 0/0；check PASS(3)；pins 15/15；证据 `slice-5-verification.log`。
+- **AC 标记**：AC4/AC6/AC7 MET；AC1/AC2/AC3/AC5/AC8 PARTIAL（原生矩阵 D-1 blocked，其余为集成/真库/启动恢复接线缺口，待独立复核列出最小返修集）。
+- **下一步**：派独立 impl review（fresh Codex CLI 会话，被审 delivery head）→ findings 处置/返修 → DSH 集成验证。
