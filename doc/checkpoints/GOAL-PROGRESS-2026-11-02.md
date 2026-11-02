@@ -661,3 +661,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - workspace `FEA-06-RESIDUAL-1/integration-verify.ps1`：一旦 Review 通过即可一键产出仓库证据 `verification/FEA-06-RESIDUAL-1/integration-verification.log`；覆盖禁止范围零改动、工作树、build、无过滤全量、旧 PNG 4×SHA、生成器、check/pins/ledger，任一失败 exit 1。
 - 已完整 dry-run（含全量）**RESULT: PASS**：1195/0/57 逐程序集、PNG SHA 与 pin 一致、生成器/治理全过；dry-run 日志在 workspace（不入库），Review 后正式运行写入仓库 evidence。
 - 下一步：Codex 00:23 恢复后派独立 impl Review（prompt/00:24 提醒已备）；ZCode 03:02 备用。
+## 96. FEA-06-RESIDUAL-1 复核派发脚本 + 证据 pin 审计（2026-11-03 00:12）
+
+- workspace `dispatch-review.ps1` 就绪：Codex fresh session 读取 `impl-review-prompt.md` 执行独立复核，结果落 `impl-review-codex-result.md`、原始日志 `impl-review-codex-raw.log`，并检查 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md` 是否产出；00:23 额度恢复后直接运行。
+- 证据 pin 审计：Task `EV-FEA06R1-*` 7 行按当前文件 SHA 校验，修正 BATCHB/MATRIX 的提交指针与 SHA、修复 ACCOV 行换行；复审 **0 mismatch**；治理 PASS。
+- 下一步：00:24 提醒/额度恢复后运行 `dispatch-review.ps1`；findings 处置 → `integration-verify.ps1` → done/closed_with_limitations。
