@@ -20,8 +20,8 @@
 | StreamingThumb / BatchMatrix / RunProjectionBar | 七状态/吸顶/投影 | BatchMatrix 数据绑定 B-2 BLOCKED；骨架样式声明 | DECLARED | 数据面由 B-2 承担 |
 | ReaderPage / ReaderProgressBar | 单页/双页/滚动、可拖动 | 阅读器分页/进度功能测试（Batch A）；双页/滚动数据 B-3 BLOCKED | COMMAND | 视觉 NOT_RUN |
 | SettingsGroup / SettingsField | 默认/错误/禁用 | 设置页字段/错误/禁用功能测试（Batch A） | COMMAND | 视觉 NOT_RUN |
-| PrimaryButton | normal/hover/pressed/disabled/loading | normal Effective（Accent.Base/Accent.On/Corner/ControlHeight）；disabled Effective（Opacity.Disabled 且 IsEffectivelyEnabled=false） | **EFFECTIVE** | hover/pressed/loading 视觉 **NOT_RUN** |
-| SecondaryButton | normal/hover/pressed/disabled | 声明覆盖 + 设置页按钮行为 | DECLARED | hover/pressed 视觉 **NOT_RUN** |
+| PrimaryButton | normal/hover/pressed/disabled/loading | `FluentComponentPointerStatesTests`：normal=Accent.Base、hover=Accent.Hover、pressed=Accent.Base（指针合成）；disabled=Opacity.Disabled 且 IsEffectivelyEnabled=false；几何/前景见 Effective 测试 | **EFFECTIVE** | loading 态视觉 **NOT_RUN** |
+| SecondaryButton | normal/hover/pressed/disabled | `FluentComponentPointerStatesTests`：normal=Bg.Raised、hover=Bg.Overlay、pressed=Accent.Muted（指针合成） | **EFFECTIVE** | disabled 视觉 NOT_RUN；设置页行为测试另见 Batch A |
 | DangerButton | normal/hover/disabled | normal Effective（Status.Failed 前景/描边、Hairline） | **EFFECTIVE** | hover/disabled 视觉 **NOT_RUN** |
 | IconButton | normal/hover/checked | 声明 hover/pressed/disabled；点击行为（页面测试） | DECLARED | checked 视觉 NOT_RUN |
 | ToggleSwitch | on/off/disabled | Inputs 既有测试 + 声明 | DECLARED | disabled 视觉 NOT_RUN |

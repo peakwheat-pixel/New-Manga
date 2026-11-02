@@ -77,3 +77,7 @@
 - `FluentShellSurface.OpenDialog/CloseTopSurface` 增加浮层焦点记录/返还；`FluentCommandPaletteFocusTests`：打开命令面板 → 焦点进入搜索框；Esc 关闭 → 焦点返还触发按钮（复用 modal host 断言可见性）。
 - 矩阵 CommandPalette 行升级为 COMMAND/FOCUS。
 - 验证：build 0/0；无过滤全量 **1193 passed / 0 failed / 57 skipped**（DS 92 + App 579）；旧 FEA-06 PNG 零漂移。
+
+## 补记 8（I-4 hover/pressed 有效属性，全量 1194/0/57）
+- `FluentComponentPointerStatesTests`：headless 指针合成断言 PrimaryButton（normal Accent.Base→hover Accent.Hover→pressed Accent.Base→移出还原）与 SecondaryButton（Bg.Raised→Bg.Overlay→pressed Accent.Muted→还原）的**真实有效 Background**，把 I-4 的 hover/pressed 格从 NOT_RUN 升级为 EFFECTIVE。
+- 验证：build 0/0；无过滤全量 **1194 passed / 0 failed / 57 skipped**（DS 93 + App 579）；旧 FEA-06 PNG 零漂移。
