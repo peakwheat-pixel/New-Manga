@@ -1,0 +1,18 @@
+# FEA-07 slice-3 (safe startup + startup compatibility matrix)
+# time: 2026-11-02 15:30:28 +08:00
+# head: eb5b6ed76bf89f5b02ee6402c1ecd15f3200bafb
+# note: CoreClient 已知时间敏感 flaky；记录通过轮
+# build: exit=0
+#   0 个警告
+#   0 个错误
+# startup-tests: exit=0
+#   已通过! - 失败:     0，通过:     9，已跳过:     0，总计:     9，持续时间: 2 s - NewManga.App.Tests.dll (net9.0)
+# full-tests: exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 102 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    28，已跳过:     0，总计:    28，持续时间: 303 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 636 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 23 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   484，已跳过:     7，总计:   491，持续时间: 1 m 15 s - NewManga.App.Tests.dll (net9.0)

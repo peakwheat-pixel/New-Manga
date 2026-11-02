@@ -126,6 +126,13 @@ allowed_paths:
 - 证据：`verification/FEA-07/slice-2c-part2-verification.log`（build 0/0；presentation 12/0；全量 **1074/0/57**）。
 - 下一批：切片 3 safe startup + 启动兼容矩阵；切片 4 双屏/DPI memento；切片 5 全量回归/独立复核。
 
+## 实施记录（切片 3，2026-11-02，owner=DSH）
+
+- **safe startup**：新增 `App/Services/SafeStartupPlanner.cs`（AC4/AC7）——输入 `AppOptions` + 已加载 `AppearanceSettings` + 外观 warnings，输出 `StartupPlan{RequestedFrontendId, EffectiveFrontendId, IsFallback, ShellKind(Legacy/Default/PresentationHost), Diagnostics}`；冻结 fail-safe 策略：未知 frontend/视觉主题 id → Current V2 + 诊断；外观文档坏字段 → 逐字段 fallback warnings 进入诊断；`--shell=legacy` 优先于一切。`App.OnFrameworkInitializationCompleted` 已接入：每个诊断写 Trace（fallback 额外 Warning），运行时行为不变、可诊断性增强。
+- **启动兼容矩阵测试**：`SafeStartupPlannerTests` 8 例（默认 V2/CLI fluent 优先/持久化 fluent/未知 fallback/视觉主题 id fallback/legacy 优先/presentation-host/warnings 诊断）；`StartupCompatibilityMatrixTests` 1 例（默认→AppShellV2、`--frontend=fluent`→FluentShell、未知/视觉主题→V2、`--shell=legacy`→MainWindow 且优先、`--presentation-host`→PresentationWindow、legacy 优先于 presentation-host）。
+- 证据：`verification/FEA-07/slice-3-verification.log`（build 0/0；startup 9/0；全量 **1083/0/57**）。
+- 下一批：切片 4 双屏/拔屏/DPI memento + PerMonitorV2 + 原生矩阵；切片 5 性能 baseline/全量证据/独立复核。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -179,6 +186,7 @@ allowed_paths:
 | EV-FEA07-SLICE2B | AC1/AC2/AC8 | `verification/FEA-07/slice-2b-verification.log` | `-` | `2c281f288af106ed5391eea065aaac25f8f6543063a5aecab0f7ec11a4cee88b` | CANONICAL |
 | EV-FEA07-SLICE2C1 | AC1/AC2/AC8 | `verification/FEA-07/slice-2c-part1-verification.log` | `-` | `d835a23daf53d64d90fbe026f3307570b74df6778a7f1c50f61e60cfe63ee7f1` | CANONICAL |
 | EV-FEA07-SLICE2C2 | AC1/AC4/AC8 | `verification/FEA-07/slice-2c-part2-verification.log` | `-` | `7b848ca1a773e82e0b1faa1ee3e1a7f2d54f8ca49f2e0b3faaa80702ecb75973` | CANONICAL |
+| EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
 
 ## Closeout Record
 

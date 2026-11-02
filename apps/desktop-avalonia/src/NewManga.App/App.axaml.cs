@@ -70,12 +70,18 @@ public partial class App : Application
                 presentationPath,
                 legacyPath: themeHome.SettingsFilePath));
             appearance.Reload();
-            var selection = FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
-            Trace.TraceInformation("frontend selection: " + selection.Diagnostic);
-            if (selection.IsFallback)
+            var startupPlan = SafeStartupPlanner.Plan(options, appearance.Settings, appearance.Warnings);
+            foreach (var diagnostic in startupPlan.Diagnostics)
             {
-                Trace.TraceWarning("frontend selection fell back to the Current V2 shell: " + selection.Diagnostic);
+                Trace.TraceInformation("startup: " + diagnostic);
             }
+
+            if (startupPlan.IsFallback)
+            {
+                Trace.TraceWarning("startup fell back to the Current V2 shell: " + startupPlan.EffectiveFrontendId);
+            }
+
+            var selection = FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
 
             var controller = new HostController(options.ToHostOptions());
             var window = CreateShell(options, controller, selection, appearance, themeHome, _designSystemTheme, this);

@@ -330,3 +330,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **修复**：`SettingsViewModel.OnAppearanceChanged` 非 UI 线程时 `Dispatcher.UIThread.Post`（切换时 Changed 可能来自线程池）；AppOptions 布尔白名单补 `presentation-host`。
 - 测试：`PresentationHostCompositionTests` 2 例（真实 V2/Fluent 内容切换、开关解析）；presentation 相关 12/0；证据 `verification/FEA-07/slice-2c-part2-verification.log`；build 0/0；全量 **1074/0/57**。
 - **下一批**：切片 3 safe startup + 启动兼容矩阵；切片 4 双屏/DPI memento；切片 5 全量回归/独立复核。
+## 45. FEA-07 实施切片 3（safe startup + 启动兼容矩阵，2026-11-02）
+
+- **safe startup**：新增 `App/Services/SafeStartupPlanner.cs`（StartupPlan：effective frontend/IsFallback/ShellKind/Diagnostics；冻结 fail-safe：未知 frontend→V2、外观坏字段 warnings 入诊断、`--shell=legacy` 优先）；`App.OnFrameworkInitializationCompleted` 接线（每个诊断 Trace，fallback 额外 Warning；运行时行为不变、可诊断性增强）。
+- **启动矩阵**：`SafeStartupPlannerTests` 8 例 + `StartupCompatibilityMatrixTests` 1 例（默认 V2/CLI fluent/持久化 fluent/未知与视觉主题 fallback/legacy 优先/presentation-host/legacy 优先于 presentation-host）。
+- 证据 `verification/FEA-07/slice-3-verification.log`；build 0/0；全量 **1083/0/57**。
+- **下一批**：切片 4 双屏/拔屏/DPI memento + PerMonitorV2 + 原生矩阵；切片 5 性能 baseline/全量证据/独立复核。
