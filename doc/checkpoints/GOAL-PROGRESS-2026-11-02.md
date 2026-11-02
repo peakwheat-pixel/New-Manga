@@ -995,3 +995,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 因此下一可推进项需 DSH 先按用户顺序（FEA 端口线）完成 **范围草案 + 依赖核对 + scope 复核**，或由用户指定节点；在 D-14 关闭前不预释放，避免 queue-jump。
 - 待裁决 **D-15（新，记录待用户/PLAN 裁决）**：D-14 关闭后是否立即由 DSH 起草并释放 FEA-09（阅读器数据端口）或其它端口节点；DSH 推荐：按 FEA 线顺序释放 FEA-09 的 scope 草案，交独立 scope Review 后实施（与既有流程一致）。依据：用户「按原来的顺序」+ 当前无 READY 节点。
 - 当前等待 ZCode 08:05 窗口派 D-14 独立 impl Review（Codex 10:25 备用）；期间不空转、不伪造推进。
+## 154. D-15 修正：下一节点应为 FEA-08（非 FEA-09）（2026-11-03 08:00）
+
+- 核对 `doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` S3/S4：**FEA-08（Source/回收站原型）→ FEA-09（引用源与导入）→ FEA-10（快照/候选/提交安全）**；FEA-09 依赖 FEA-08，故 D-14 后按顺序应先起草 **FEA-08** scope（隔离 workspace 原型/技术报告，不触真实库），而非直接 FEA-09。
+- 依据事实：`G-CONTRACT` 已于 2026-11-01 CLOSED（STATUS），AD-003 已记录；FEA-00/01 契约冻结；FEA-08 仍要求隔离原型 + 独立 Review、不产出生产 Source 实现。
+- 修正 D-15 推荐：D-14 关闭后由 DSH 起草 **FEA-08 scope 草案**（隔离原型、能力矩阵、NTFS/可移动/网络盘边界、不触真实库），交独立 scope Review；FEA-09 待 FEA-08 通过后释放。
+- 当前仍等待 ZCode 08:05 派 D-14 独立 impl Review（Codex 10:25 备用）。
