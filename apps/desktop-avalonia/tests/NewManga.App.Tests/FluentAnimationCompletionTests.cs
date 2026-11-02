@@ -27,8 +27,10 @@ namespace NewManga.App.Tests;
 
 public sealed class FluentAnimationCompletionTests
 {
+    // FEA-06-RESIDUAL-2: decorative loops own their own frame source; these completion tests cover
+    // navigation/feedback only so pending-frame assertions stay about the animation they exercise.
     private static void Motion(FluentShellSurface surface, MotionMode mode = MotionMode.Full,
-        MotionCategories categories = MotionCategories.All) =>
+        MotionCategories categories = MotionCategories.Navigation | MotionCategories.Feedback) =>
         typeof(FluentShellSurface).GetMethod("ApplyMotion", BindingFlags.Instance | BindingFlags.NonPublic)!
             .Invoke(surface, [AppearanceDefaults.Settings with { MotionMode = mode, MotionCategories = categories }]);
 

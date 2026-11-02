@@ -33,6 +33,12 @@ public static class MotionTimings
     /// <summary>状态点/徽标出现: 淡入 150ms + 缩放 0.9→1。</summary>
     public const double FeedbackBadgeMilliseconds = 150d;
 
+    /// <summary>书架背景渐变缓动: 8s 循环（02-motion §2.3 decorative）。</summary>
+    public const double DecorativeShelfGradientMilliseconds = 8000d;
+
+    /// <summary>阅读器翻页装饰粒子: 400ms，翻页触发一次（02-motion §2.3 decorative）。</summary>
+    public const double DecorativePageTurnMilliseconds = 400d;
+
     /// <summary>
     /// Resolves the effective timing profile for a resolved motion setting. `navigation`/`decorative`
     /// disabled by category or by reduce become 0ms; feedback keeps its colour transition at 0ms under
@@ -57,6 +63,8 @@ public static class MotionTimings
             FeedbackPressedMilliseconds: feedback && !reduce ? FeedbackPressedMilliseconds : 0d,
             FeedbackBadgeMilliseconds: feedback && !reduce ? FeedbackBadgeMilliseconds : 0d,
             FeedbackColourOnly: feedback && reduce,
+            DecorativeShelfGradientMilliseconds: decorative ? DecorativeShelfGradientMilliseconds : 0d,
+            DecorativePageTurnMilliseconds: decorative ? DecorativePageTurnMilliseconds : 0d,
             DecorativeEnabled: decorative,
             Reduced: reduce);
     }
@@ -72,10 +80,12 @@ public sealed record MotionTimingProfile(
     double FeedbackPressedMilliseconds,
     double FeedbackBadgeMilliseconds,
     bool FeedbackColourOnly,
+    double DecorativeShelfGradientMilliseconds,
+    double DecorativePageTurnMilliseconds,
     bool DecorativeEnabled,
     bool Reduced)
 {
-    /// <summary>True when any transition may run (used by tests and diagnostics).</summary>
+    /// <summary>True when any transition or decorative loop may run (used by tests and diagnostics).</summary>
     public bool HasMotion =>
         NavigationPageMilliseconds > 0 ||
         NavigationTabMilliseconds > 0 ||

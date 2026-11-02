@@ -50,6 +50,7 @@ public sealed class ReaderPageView : UserControl
     private readonly FluentVisibilityMotion _topMotion;
     private readonly FluentVisibilityMotion _bottomMotion;
     private IFluentMotionClock _motionClock = FluentRenderClock.Instance;
+    private double _decorativePageTurnMs;
     private TimeSpan? _idleDeadline;
     internal TimeSpan? IdleDeadline => _idleDeadline;
     internal bool IdleTimerEnabled => _autoHideTimer.IsEnabled;
@@ -222,8 +223,25 @@ public sealed class ReaderPageView : UserControl
         if (args.PropertyName is nameof(ReaderViewModel.IsSideRailVisible)) ApplySideRailVisibility();
         if (args.PropertyName is nameof(ReaderViewModel.AreToolBarsReducedMotion)) ApplyToolBarsMotionMode();
         if (args.PropertyName is nameof(ReaderViewModel.IsFullScreen)) WakeToolBars();
+        // IN-1.2（02 §2.3）：任何翻页路径都会推进 PageIndex，翻页粒子统一由此触发一次。
+        if (args.PropertyName is nameof(ReaderViewModel.PageIndex)) PlayPageTurnDecor();
         Render();
     }
+
+    /// <summary>
+    /// IN-1.2：翻页装饰粒子（400ms，一次）。reduce / auto(系统关) / category=off 下完全不创建粒子层
+    /// （02 §3 判据①）；启用时粒子层垫在页面图之下，不遮挡页面图也不拦截命中。
+    /// </summary>
+    private void PlayPageTurnDecor()
+    {
+        if (_decorativePageTurnMs <= 0) return;
+        if (_pageSurface.Parent is Grid area) FluentPageTurnDecor.Play(_motionClock, _decorativePageTurnMs, area);
+    }
+
+    /// <summary>IN-1.2 证据入口：阅读区是否当前存在粒子层（reduce 下恒为 null）。</summary>
+    internal Border? DecorativeParticleLayer =>
+        (_pageSurface.Parent as Grid)?.Children.OfType<Border>()
+            .FirstOrDefault(border => border.Classes.Contains("fluent-decorative-particles"));
 
     private void WakeToolBars()
     {
@@ -283,6 +301,7 @@ public sealed class ReaderPageView : UserControl
     internal void ConfigureMotion(MotionTimingProfile timings, IFluentMotionClock clock)
     {
         _motionClock = clock;
+        _decorativePageTurnMs = timings.DecorativePageTurnMilliseconds;
         _topMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
         _bottomMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
         ResetIdleDeadline();

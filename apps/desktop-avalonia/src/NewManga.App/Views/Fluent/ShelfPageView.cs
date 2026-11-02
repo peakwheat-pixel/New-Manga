@@ -25,6 +25,12 @@ public sealed class ShelfPageView : UserControl
     public const double DetailPaneMinWidth = 240;
     public const double DetailPaneMaxWidth = 480;
 
+    /// <summary>
+    /// IN-1.1：渐变循环的波谷透明度（full 相位 0 与相位 1 处）；波峰为 1。reduce / category-off 下
+    /// 渐变为静态（Opacity=1）且不创建动画对象（02-motion §2.3/§3 判据①）。
+    /// </summary>
+    internal const double DecorativeGradientFloorOpacity = 0.55d;
+
     private readonly ShelfViewModel _viewModel;
     private readonly IFilePickerGateway? _filePicker;
     private readonly Action<BookSummary, ChapterSummary> _openReader;
@@ -49,6 +55,9 @@ public sealed class ShelfPageView : UserControl
     private readonly StackPanel _dialogBody;
     private readonly Button _dialogConfirm;
     private readonly SegmentedControl _viewModeControl;
+    private readonly Border _decorativeLayer;
+    private readonly LinearGradientBrush _decorativeBrush;
+    private readonly FluentDecorativeLoop _decorativeLoop;
     private IReadOnlyList<string> _pendingDropFiles = Array.Empty<string>();
     private string? _pendingDropFolder;
     private Button _importFilesButton = null!;
@@ -118,6 +127,10 @@ public sealed class ShelfPageView : UserControl
         _overlayMotions = [new(_dialog, FluentDialog.IsOpenProperty), new(_recycleDrawer, Drawer.IsOpenProperty)];
         _dialogBody = FluentUi.Stack("fluent-page-layout");
         _dialogConfirm = FluentUi.Button("确认", "fluent-primary", () => _ = SubmitNameAsync(), "确认操作");
+        // IN-1.1：书架背景渐变装饰层（两个停点只取既有 Bg 令牌，随主题/高对比重解析；循环只改 Brush.Opacity）。
+        _decorativeLayer = FluentUi.DecorativeShelfGradient(out _decorativeBrush);
+        FluentTokenGradient.Bind(_decorativeLayer, _decorativeBrush, "Nm.Color.Bg.Canvas", "Nm.Color.Bg.Sunken");
+        _decorativeLoop = new FluentDecorativeLoop(_decorativeLayer);
 
         _root = FluentUi.Stack("fluent-page-layout");
         _root.Children.Add(BuildToolbar());
@@ -141,6 +154,11 @@ public sealed class ShelfPageView : UserControl
     public Button DetailPaneToggle => _detailToggle;
     public ScrollViewer ListScroll => _listScroll;
 
+    /// <summary>IN-1.1 证据入口：渐变装饰层、其画刷与循环驱动器（供有效属性/泄漏断言使用）。</summary>
+    internal Border DecorativeLayer => _decorativeLayer;
+    internal LinearGradientBrush DecorativeBrush => _decorativeBrush;
+    internal FluentDecorativeLoop DecorativeLoop => _decorativeLoop;
+
     public void ShowNewBookDialog() => ShowNameDialog("book");
 
     public void ShowNewChapterDialog() => ShowNameDialog("chapter");
@@ -153,6 +171,20 @@ public sealed class ShelfPageView : UserControl
             timings.NavigationOverlayOutMilliseconds, clock);
         foreach (var motion in _overlayMotions)
             motion.Configure(timings.NavigationOverlayInMilliseconds, timings.NavigationOverlayOutMilliseconds, clock);
+        // IN-1.1（02 §2.3）：full/auto(系统开) 下渐变按 8s 循环缓动（只改 Brush.Opacity）；
+        // reduce / auto(系统关) / category=off 下为静态渐变，不创建动画对象（§3 判据①）。
+        var gradientMs = timings.DecorativeShelfGradientMilliseconds;
+        if (gradientMs <= 0)
+        {
+            _decorativeLoop.Configure(clock, 0, null);
+            _decorativeBrush.Opacity = 1d;
+        }
+        else
+        {
+            _decorativeLoop.Configure(clock, gradientMs, phase =>
+                _decorativeBrush.Opacity = DecorativeGradientFloorOpacity +
+                    (1d - DecorativeGradientFloorOpacity) * (0.5 - 0.5 * Math.Cos(2 * Math.PI * phase)));
+        }
     }
 
     public Task ImportFilesAsync() => PickAndImportFilesAsync();
@@ -222,6 +254,8 @@ public sealed class ShelfPageView : UserControl
     private Control BuildOverlays(Control content)
     {
         var overlay = new Grid();
+        // IN-1.1：渐变装饰层垫在内容之下（Grid 子顺序即 Z 序）；不可命中、不参与内容布局。
+        overlay.Children.Add(_decorativeLayer);
         overlay.Children.Add(content);
 
         _dialogScrim.PointerPressed += (_, _) => CloseDialog();

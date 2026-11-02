@@ -1,0 +1,13 @@
+# FEA-06-RESIDUAL-2 IN-1 实施证据（2026-11-03 03:58）
+
+- 来源：ZCode CLI WIP（job pwsh-a1a3fdc7925743e1，03:42 遇 429 中断）经 DSH 诊断收尾；WIP 快照 workspace/FEA-06-RESIDUAL-2/wip-snapshot/。
+- shell: pwsh 7 / Windows 11；repo G:\CODEX\New Manga；base 669a4ae02；实施 head 为本次提交。
+- 修复：ToolTip.IsOpen→ToolTip.GetIsOpen(host)；AlertBanner 九值 Children 初始化；MotionTimingProfile.HasMotion 不再计入 decorative（避免误判过渡）；FluentAnimationCompletionTests 默认分类收窄为 Navigation|Feedback（装饰循环自有帧源，见注释），既有断言未删除。
+- 验证命令与 EXIT：
+  - `dotnet build apps\desktop-avalonia\NewManga.sln --nologo` → 0 warning / 0 error / EXIT=0
+  - `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests ... --filter FullyQualifiedName~FluentResidual2DecorativeTests` → **12/12** PASS / EXIT=0
+  - `dotnet test ... --filter FullyQualifiedName~FluentAnimationCompletionTests` → 16/16 PASS / EXIT=0
+  - 全量无过滤：**1257 passed / 0 failed / 57 skipped**（App 638；其余程序集见输出）/ EXIT=0
+- IN-1 覆盖：书架背景渐变 8s（三态降级/不创建动画对象）、阅读器翻页装饰粒子 400ms（不创建粒子层、不拦截命中）、失焦暂停、自动化全关、detach 停帧、真实帧源采样。
+- 未完成：IN-2A（16+1 组期望令牌校准；WIP 测试在快照，9/14 期望值与真实样式不符）、IN-2B（opt-in 像素证据 + 逐图签署）。Task 保持 in_progress。
+- 未 push；旧 FEA-06 四 PNG 未触碰。

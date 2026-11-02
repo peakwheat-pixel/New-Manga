@@ -1,7 +1,12 @@
+using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Layout;
+using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Media;
+using NewManga.App.ViewModels.Fluent;
 using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Icons;
 
@@ -155,4 +160,106 @@ internal static class FluentUi
     }
 
     public static Skeleton LoadingCard() => new() { Variant = SkeletonVariant.BookCard };
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-2 IN-1.1 (02-motion §2.3): the shelf background gradient layer. Both gradient
+    /// stops bind the existing Bg tokens through DynamicResource so theme and high-contrast swaps follow
+    /// without any new colour asset; the loop only mutates <see cref="Avalonia.Media.Brush.Opacity"/>,
+    /// never layout. The layer is inserted beneath the page content and never takes hit-tests.
+    /// </summary>
+    public static Border DecorativeShelfGradient(out LinearGradientBrush brush)
+    {
+        var start = new GradientStop();
+        start[!GradientStop.ColorProperty] = new DynamicResourceExtension("Nm.Color.Bg.Canvas");
+        var end = new GradientStop { Offset = 1 };
+        end[!GradientStop.ColorProperty] = new DynamicResourceExtension("Nm.Color.Bg.Sunken");
+        brush = new LinearGradientBrush
+        {
+            StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+            EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+            GradientStops = new GradientStops { start, end },
+        };
+        return new Border
+        {
+            Background = brush,
+            IsHitTestVisible = false,
+            Classes = { "fluent-decorative", "fluent-decorative-shelf" },
+        };
+    }
+
+    /// <summary>
+    /// The fixed per-particle parameters for the IN-1.2 page-turn decor. Deterministic (no RNG) so every
+    /// run renders the same 400ms effect for tests and visual evidence.
+    /// </summary>
+    private sealed record PageTurnParticleSpec(double XRatio, double FromBottom, double Size,
+        double DelayMs, double Rise, double DriftX, double MaxOpacity);
+
+    private static readonly PageTurnParticleSpec[] PageTurnParticles =
+    [
+        new(0.08, 26, 5, 0, 30, -6, 0.85),
+        new(0.20, 14, 4, 18, 24, 8, 0.70),
+        new(0.33, 34, 6, 36, 36, -10, 0.90),
+        new(0.46, 18, 4, 54, 26, 6, 0.65),
+        new(0.58, 30, 5, 72, 32, -8, 0.85),
+        new(0.71, 12, 4, 90, 22, 10, 0.70),
+        new(0.84, 28, 6, 108, 34, -6, 0.90),
+        new(0.94, 20, 4, 120, 28, 8, 0.70),
+    ];
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-2 IN-1.2 (02-motion §2.3): the page-turn particle layer. Created once per turn,
+    /// placed beneath the page image, driven via <see cref="UpdatePageTurnParticles"/> and removed when
+    /// the run completes. Particle fills bind the existing accent-muted token; positioning is absolute
+    /// inside a Canvas so the effect never participates in host layout.
+    /// </summary>
+    public static Border PageTurnParticleLayer()
+    {
+        var canvas = new Canvas();
+        foreach (var spec in PageTurnParticles)
+        {
+            var dot = new Ellipse { Width = spec.Size, Height = spec.Size, Opacity = 0, Tag = spec };
+            dot[!Ellipse.FillProperty] = new DynamicResourceExtension("Nm.Color.Accent.Muted");
+            dot.RenderTransform = new TranslateTransform();
+            canvas.Children.Add(dot);
+        }
+
+        return new Border
+        {
+            Child = canvas,
+            IsHitTestVisible = false,
+            Classes = { "fluent-decorative", "fluent-decorative-particles" },
+        };
+    }
+
+    /// <summary>
+    /// Advances every particle to <paramref name="progress"/> (0..1 over the 400ms run): each dot fades
+    /// in and out while rising past the bottom edge — opacity and render transform only, no relayout.
+    /// </summary>
+    public static void UpdatePageTurnParticles(Border layer, double progress)
+    {
+        if (layer.Child is not Canvas canvas)
+        {
+            return;
+        }
+
+        foreach (var dot in canvas.Children.OfType<Ellipse>())
+        {
+            if (dot.Tag is not PageTurnParticleSpec spec)
+            {
+                continue;
+            }
+
+            var total = MotionTimings.DecorativePageTurnMilliseconds;
+            var span = total - spec.DelayMs;
+            var local = span <= 0 ? 1 : Math.Clamp((progress * total - spec.DelayMs) / span, 0, 1);
+            dot.Opacity = Math.Sin(Math.PI * local) * spec.MaxOpacity;
+            Canvas.SetLeft(dot, spec.XRatio * canvas.Bounds.Width);
+            Canvas.SetTop(dot, Math.Max(0, canvas.Bounds.Height - spec.FromBottom));
+            if (dot.RenderTransform is TranslateTransform translate)
+            {
+                translate.X = spec.DriftX * local;
+                translate.Y = -spec.Rise * local;
+            }
+        }
+    }
 }
