@@ -598,3 +598,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 ### 83.1 额度探针（2026-11-02 23:31）
 - Codex CLI 探针（`codex exec` 最小 prompt）仍返回 `ERROR: You've hit your usage limit ... try again at Nov 3rd, 2026 12:23 AM` → 独立 impl Review 无法在 00:23 前派发；ZCode 5h 限额 03:02 恢复。
 - 结论：维持 D-7 口径（DSH 实施、Review 待 agent 恢复补做）；下一可派时点 00:23（Codex 优先）或 03:02（ZCode）。
+## 84. FEA-06-RESIDUAL-1 I-5 feedback 消费（2026-11-02 23:45）
+
+- `FluentShellSurface.ApplyFeedbackTransitions`：motion 启用 → 现有 Button 注入 120ms Background BrushTransition；reduce/category-off → 清除（颜色瞬时，判据③）；挂载时与设置变更后重放。测试断言 full 有过渡/类、reduce 无。
+- 验证：build 0/0；无过滤全量 **1178/0/57**；旧 FEA-06 PNG 零漂移；治理 PASS。交付 `918e4a2e3`；证据 `batch-b-verification.log` SHA `88e68f6a…`。
+- 剩余（NOT_RUN）：decorative 类别专属动画消费；hover/pressed 视觉截图；独立 impl Review（Codex 00:23 / ZCode 03:02）。

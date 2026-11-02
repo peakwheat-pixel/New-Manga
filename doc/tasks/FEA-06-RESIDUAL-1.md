@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 6edf24904（Batch B 续作：I-5/I-8/I-11/I-4 声明覆盖 + I-4 扩展/I-11 Tab 序；hover 视觉与部分组件状态待续）
+delivery_head: 918e4a2e3（Batch B 续作：I-5 nav+feedback 消费/I-8/I-11/I-4 扩展；decorative 动画与 hover 视觉 NOT_RUN）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -159,7 +159,7 @@ allowed_paths:
 ## Batch B 记录（2026-11-02 深夜）
 
 - **I-7 完成**：`ce0bee67d`（`FluentPages_RenderHeadlessPngEvidence` 默认不写仓库/证据面 PNG；`NEWMANGA_CAPTURE_FLUENT_PNGS=1` opt-in 写 `verification/FEA-06-RESIDUAL-1/png/`；默认路径保留帧尺寸断言；`verification/FEA-06/screens/**` 字节未变）。验证：默认测试通过、opt-in 生成 4 PNG、git status 干净。
-- **Batch B 部分完成**（`a315bee02`，DSH 实施）：I-5（`MotionTimings` 冻结参数表 + FluentShell 页面过渡消费 + 运行时设置重放）、I-8（`Nm.Elevation.*` 消费 card/detail/drawer/dialog + 高对比运行时注入 focus=3px/Elevation 置空，生成文件与 V2 零改动）、I-11 部分（焦点环 2px↔高对比 3px 断言、设置页离开浮层焦点移入/取消返还）、I-4 部分（组件×状态声明覆盖测试 + DesignRules 阴影规则对齐冻结设计）。全量无过滤 **1177→1178/0/57**（续作：I-4 segmented/slider/tabitem + I-11 隐藏控件焦点）；证据 `batch-b-verification.log`（SHA `df752887…`）。
+- **Batch B 部分完成**（`a315bee02`，DSH 实施）：I-5（`MotionTimings` 冻结参数表 + FluentShell 页面过渡消费 + 运行时设置重放）、I-8（`Nm.Elevation.*` 消费 card/detail/drawer/dialog + 高对比运行时注入 focus=3px/Elevation 置空，生成文件与 V2 零改动）、I-11 部分（焦点环 2px↔高对比 3px 断言、设置页离开浮层焦点移入/取消返还）、I-4 部分（组件×状态声明覆盖测试 + DesignRules 阴影规则对齐冻结设计）。全量无过滤 **1177→1178/0/57**（续作：I-4 segmented/slider/tabitem + I-11 隐藏控件焦点 + I-5 feedback 过渡）；证据 `batch-b-verification.log`（SHA `df752887…`）。
 - **未完成（NOT_RUN）**：I-4 其余组件状态（IconButton/ToggleSwitch/Slider/Segmented/TabStrip/SearchField/CommandPalette/ContextMenu/Tooltip/Toast/BatchMatrix/RunProjectionBar）与 hover/pressed 视觉截图；I-11 隐藏控件 Tab 序显式断言；I-5 feedback/decorative 实际动画消费。当前**双 agent 额度耗尽**（Codex 00:23、ZCode 03:02 恢复），独立 Review 与最终验收待 agent 恢复后补。
 - **待裁决 D-7**：故障转移候选（Codex/ZCode）同时不可用时，是否允许 DSH 直接实施 Batch B 剩余项并在 agent 恢复后补独立 Review。DSH 推荐：**允许**（否则任务停摆；变更均在冻结范围/写域内，保留可复核提交粒度）。依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 作为 Lead/Integrator 实施（不得自审，Review 留待独立 agent）。
 
@@ -169,7 +169,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `a315bee02` | `df75288780a56c2033c549ed1b14bc1da19d9b3d835b868a55d2036e30a53d40` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `a315bee02` | `88e68f6a2abb7845c684760326a59b58de3e5651f7c5b85722d904811db38e29` | CANONICAL |
 
 ## Closeout Record
 
