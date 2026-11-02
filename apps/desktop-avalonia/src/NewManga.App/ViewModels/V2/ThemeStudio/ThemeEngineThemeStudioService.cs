@@ -68,18 +68,24 @@ public sealed class ThemeEngineThemeStudioService : IThemeStudioService
     /// <param name="themeDirectory">User theme directory override (tests use a temp directory).</param>
     /// <param name="settingsFilePath">Settings document override.</param>
     /// <param name="favoritesFilePath">Favorites document override.</param>
+    /// <param name="presentationSink">
+    /// FEA-06-PREREQ-2 P5 (W-9/Q-32): the app-provided compatibility sink that mirrors the Theme Engine's
+    /// settings into the canonical <c>presentation-settings.json</c> (null keeps the engine read-only, e.g.
+    /// in the sandbox). The store's legacy compatibility write is the only caller.
+    /// </param>
     public static ThemeEngineThemeStudioService CreateProduction(
         Avalonia.Application application,
         NewManga.DesignSystem.Theming.DesignSystemThemeManager manager,
         string? themeDirectory = null,
         string? settingsFilePath = null,
-        string? favoritesFilePath = null)
+        string? favoritesFilePath = null,
+        IThemeSettingsSink? presentationSink = null)
     {
         ArgumentNullException.ThrowIfNull(application);
         ArgumentNullException.ThrowIfNull(manager);
 
         var registry = new ThemeRegistry(themeDirectory);
-        var store = new ThemeSettingsStore(settingsFilePath, registry);
+        var store = new ThemeSettingsStore(settingsFilePath, registry, presentationSink);
         var sink = new DesignSystemThemeLayerSink(application, manager);
         var service = new ThemeService(registry, store, sink);
         return new ThemeEngineThemeStudioService(

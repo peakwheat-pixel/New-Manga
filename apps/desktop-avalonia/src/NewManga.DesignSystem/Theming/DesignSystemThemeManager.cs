@@ -83,6 +83,17 @@ public sealed class DesignSystemThemeManager : IDisposable
         NmKeys.TextLineBox.Data,
     ];
 
+    /// <summary>
+    /// Fluent-only material keys a theme layer may carry (C-02 V-03; FEA-06-PREREQ-2 P6): the acrylic
+    /// base/tint brushes are theme-package values, so they are optional — they never enter the 59 required
+    /// keys (the Current theme omits them and stays compliant, per V-03's "Current may omit" rule).
+    /// </summary>
+    public static IReadOnlyList<string> ThemeLayerMaterialKeys { get; } =
+    [
+        NmKeys.Material.Acrylic.Base,
+        NmKeys.Material.Acrylic.Tint,
+    ];
+
     /// <summary>Corner-radius keys a theme layer carries (R-15).</summary>
     public static IReadOnlyList<string> ThemeLayerCornerKeys { get; } =
     [
@@ -121,13 +132,14 @@ public sealed class DesignSystemThemeManager : IDisposable
             .ToArray();
 
     /// <summary>
-    /// Keys a theme layer may define: the 59 required keys plus the six absolute line boxes. The line
-    /// boxes may be supplied explicitly; when omitted the manager derives them from the layer's own font
-    /// sizes and line-height multipliers so text styles always read consistent values. Anything else is
-    /// ignored and recorded.
+    /// Keys a theme layer may define: the 59 required keys plus the six absolute line boxes and the two
+    /// Fluent-only acrylic material colours. The line boxes may be supplied explicitly; when omitted the
+    /// manager derives them from the layer's own font sizes and line-height multipliers so text styles
+    /// always read consistent values. The material keys are optional for every package and required only
+    /// for Fluent packages by the Theme Engine validator. Anything else is ignored and recorded.
     /// </summary>
     public static IReadOnlyList<string> ThemeLayerAllowedKeys { get; } =
-        ThemeLayerRequiredKeys.Concat(ThemeLayerLineBoxKeys).ToArray();
+        ThemeLayerRequiredKeys.Concat(ThemeLayerLineBoxKeys).Concat(ThemeLayerMaterialKeys).ToArray();
 
     private readonly Application _application;
     private readonly IDesignSystemResourceSource _resources;
@@ -283,8 +295,8 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// <summary>
     /// Theme Engine seam (contract §4.1 / R-15): replaces the themeable layer with a whitelisted set of
     /// 59 required keys (35 colors + 3 font families + 6 font sizes + 9 line heights + 3 corner radii + 3 motion
-    /// durations). Keys outside the whitelist are ignored and reported in
-    /// <see cref="ThemeLayerIssues"/>; material/elevation keys are not part of the frozen whitelist.
+    /// durations) plus the optional six absolute line boxes and two Fluent acrylic material colours. Keys
+    /// outside the whitelist are ignored and reported in <see cref="ThemeLayerIssues"/>.
     /// The previous state is kept if the layer is incomplete or a value has the wrong type.
     /// </summary>
     public bool ApplyThemeLayer(ResourceDictionary layer, string themeId)
@@ -523,8 +535,8 @@ public sealed class DesignSystemThemeManager : IDisposable
             else
             {
                 issues.Add(
-                    $"ignored key '{key}' from theme layer '{themeId}': outside the R-15 59-key whitelist " +
-                    "or the six absolute line-box keys");
+                    $"ignored key '{key}' from theme layer '{themeId}': outside the R-15 59-key whitelist, " +
+                    "the six absolute line-box keys or the two Fluent material keys");
             }
         }
 

@@ -22,6 +22,27 @@ public static class ThemeIssueCodes
     /// <summary>An unknown (tolerated) field was found; import is still allowed.</summary>
     public const string UnknownField = "package.unknown-field";
 
+    /// <summary>
+    /// C-02 §4: a Fluent package (`nm.fluent.visual/1`) does not declare its manifest entry.
+    /// </summary>
+    public const string FluentManifestMissing = "manifest.fluent-visual-missing";
+
+    /// <summary>
+    /// C-02 §4: the Fluent manifest entry was hand-edited (value is not the frozen <c>/1</c> version) or a
+    /// non-Fluent package declares it.
+    /// </summary>
+    public const string FluentManifestInvalid = "manifest.fluent-visual-invalid";
+
+    /// <summary>
+    /// C-02 V-03: a Fluent package is missing one of the Fluent-exclusive acrylic material colours.
+    /// </summary>
+    public const string FluentMaterialKeyMissing = "colors.fluent-material-missing";
+
+    /// <summary>
+    /// C-02 V-03: a non-Fluent package declares a Fluent-exclusive acrylic material colour ("例外仅限 Fluent").
+    /// </summary>
+    public const string FluentMaterialKeyUnexpected = "colors.fluent-material-unexpected";
+
     /// <summary>A field declares a visual effect the design system forbids (shadow/gradient/blur/mica...).</summary>
     public const string ForbiddenDeclaration = "package.forbidden-declaration";
 

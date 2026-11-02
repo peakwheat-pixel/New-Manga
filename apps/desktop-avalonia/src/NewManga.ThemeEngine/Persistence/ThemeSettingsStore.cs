@@ -7,6 +7,13 @@ namespace NewManga.ThemeEngine;
 /// <c>%APPDATA%/NewManga/theme-settings.json</c>, migrates retired theme ids, and never lets a corrupt
 /// file block startup (behavior 2/3). Loading always returns usable settings; every recovery is
 /// recorded in <see cref="LastLoadIssues"/> for the Theme Studio / diagnostics surface.
+/// <para>
+/// FEA-06-PREREQ-2 P5 (W-9/Q-32): this type is no longer the writer of the canonical appearance
+/// document. <see cref="SaveAsync"/> is a one-release <b>compatibility write</b> (obsolete): it keeps
+/// writing the legacy <c>theme-settings.json</c> and mirrors the same settings into
+/// <c>presentation-settings.json</c> through the app-provided <see cref="IThemeSettingsSink"/>; the sole
+/// writer of the new document is <c>NewManga.Appearance.AppearanceCoordinator</c> (C-03 §2.1).
+/// </para>
 /// </summary>
 public sealed class ThemeSettingsStore : IThemePersistence
 {
@@ -16,6 +23,7 @@ public sealed class ThemeSettingsStore : IThemePersistence
     private readonly object _gate = new();
     private readonly string _settingsFilePath;
     private readonly IThemeRegistry? _registry;
+    private readonly IThemeSettingsSink? _presentationSink;
 
     private IReadOnlyList<ThemeValidationIssue> _lastLoadIssues = [];
     private bool _needsSave;
@@ -26,11 +34,25 @@ public sealed class ThemeSettingsStore : IThemePersistence
     /// distinguish installed user theme ids from unknown ids (refresh it before <see cref="Load"/>).
     /// </summary>
     public ThemeSettingsStore(string? settingsFilePath = null, IThemeRegistry? registry = null)
+        : this(settingsFilePath, registry, presentationSink: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a store with the app-provided compatibility sink (FEA-06-PREREQ-2 P5). The existing
+    /// two-parameter constructor is kept unchanged for every existing caller; this overload only adds
+    /// the optional compatibility writer.
+    /// </summary>
+    public ThemeSettingsStore(
+        string? settingsFilePath,
+        IThemeRegistry? registry,
+        IThemeSettingsSink? presentationSink)
     {
         _settingsFilePath = string.IsNullOrWhiteSpace(settingsFilePath)
             ? DefaultSettingsFilePath
             : Path.GetFullPath(settingsFilePath);
         _registry = registry;
+        _presentationSink = presentationSink;
     }
 
     /// <summary>Absolute path of the settings document this store owns.</summary>
@@ -127,7 +149,16 @@ public sealed class ThemeSettingsStore : IThemePersistence
         }
     }
 
-    /// <summary>Atomically persists settings (temporary file + replace).</summary>
+    /// <summary>
+    /// Atomically persists settings (temporary file + replace). FEA-06-PREREQ-2 P5: this is the
+    /// <b>one-release compatibility write</b> only — it writes the legacy document and then mirrors the
+    /// same settings into the canonical appearance document through the injected
+    /// <see cref="IThemeSettingsSink"/>. New code must call
+    /// <c>NewManga.Appearance.AppearanceCoordinator.SaveAsync</c> instead.
+    /// </summary>
+    [Obsolete(
+        "FEA-06-PREREQ-2 P5: ThemeSettingsStore.SaveAsync is a one-release compatibility write. " +
+        "The canonical writer of presentation-settings.json is NewManga.Appearance.AppearanceCoordinator.SaveAsync.")]
     public async Task SaveAsync(ThemeSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
@@ -150,6 +181,17 @@ public sealed class ThemeSettingsStore : IThemePersistence
         {
             TryDelete(tempPath);
             throw;
+        }
+
+        // FEA-06-PREREQ-2 P5 (W-9/Q-32): one-release compatibility write — the legacy document keeps
+        // working for existing readers, while the canonical appearance document is written through the
+        // app-provided sink (the engine never references NewManga.Appearance).
+        System.Diagnostics.Trace.TraceWarning(
+            "ThemeSettingsStore.SaveAsync compatibility write: theme-settings.json + presentation-settings.json " +
+            "(FEA-06-PREREQ-2 P5)");
+        if (_presentationSink is not null)
+        {
+            await _presentationSink.WriteAsync(settings).ConfigureAwait(false);
         }
     }
 

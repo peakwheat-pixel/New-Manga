@@ -128,7 +128,9 @@ public sealed class ThemeHomeTests : IDisposable
             LayoutProfile.Default,
             ReducedMotion: false,
             FollowSystemAccent: false);
+#pragma warning disable CS0618 // FEA-06-PREREQ-2 P5: the one-release compatibility write is what this test exercises.
         await store.SaveAsync(light);
+#pragma warning restore CS0618
 
         Assert.True(File.Exists(paths.SettingsFilePath), $"expected settings at {paths.SettingsFilePath}");
         var written = ThemeSettingsJson.Read(File.ReadAllText(paths.SettingsFilePath));

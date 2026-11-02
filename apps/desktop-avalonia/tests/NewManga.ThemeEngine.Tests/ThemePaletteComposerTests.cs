@@ -253,6 +253,43 @@ public sealed class ThemePaletteComposerTests
         Assert.Contains(exception.Issues, issue => issue.Code == ThemeIssueCodes.CornerOutOfRange);
     }
 
+    [Theory]
+    [MemberData(nameof(ThemeFixtures.Variants), MemberType = typeof(ThemeFixtures))]
+    public void Fluent_package_composes_the_two_optional_material_colours(PaletteVariant variant)
+    {
+        // FEA-06-PREREQ-2 P6 / W-9: the Fluent package carries the acrylic colours through the theme
+        // layer; the Current theme keeps the frozen 59-key layer.
+        var layer = ThemePaletteComposer.Compose(BuiltInThemes.FluentDark, variant);
+
+        Assert.Equal(ThemePaletteComposer.ThemeLayerMaxKeyCount, layer.Count);
+        Assert.All(ThemeTokenKeys.MaterialColors, key => Assert.Contains(key, layer.Keys));
+        var baseBrush = Assert.IsAssignableFrom<ISolidColorBrush>(layer[NmKeys.Material.Acrylic.Base]);
+        Assert.Equal(Color.Parse("#1F1F1F"), baseBrush.Color);
+        var tintBrush = Assert.IsAssignableFrom<ISolidColorBrush>(layer[NmKeys.Material.Acrylic.Tint]);
+        Assert.Equal(0x33 / 255d, tintBrush.Color.A / 255d, precision: 2);
+        Assert.Equal(Color.Parse("#007ACC"), Color.FromRgb(tintBrush.Color.R, tintBrush.Color.G, tintBrush.Color.B));
+
+        var colors = ThemePaletteComposer.ComposeColorLayer(BuiltInThemes.FluentDark, variant);
+        Assert.Equal(ThemePaletteComposer.ColorLayerMaxKeyCount, colors.Count);
+        Assert.All(ThemeTokenKeys.MaterialColors, key => Assert.Contains(key, colors.Keys));
+    }
+
+    [Fact]
+    public void Compose_rejects_a_half_specified_fluent_material()
+    {
+        var colors = new Dictionary<string, string>(BuiltInThemes.FluentDark.Dark.Colors, StringComparer.Ordinal);
+        colors.Remove(NmKeys.Material.Acrylic.Tint);
+        var package = BuiltInThemes.FluentDark with
+        {
+            Dark = BuiltInThemes.FluentDark.Dark with { Colors = colors },
+        };
+
+        var exception = Assert.Throws<ThemePackageException>(
+            () => ThemePaletteComposer.Compose(package, PaletteVariant.Dark));
+
+        Assert.Contains(exception.Issues, issue => issue.Code == ThemeIssueCodes.FluentMaterialKeyMissing);
+    }
+
     private static IReadOnlyDictionary<string, Color> FrozenColors(PaletteVariant variant)
     {
         var scope = variant == PaletteVariant.Light ? TokenMap.LightScope : TokenMap.DarkScope;

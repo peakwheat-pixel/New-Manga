@@ -457,6 +457,20 @@ public static class ThemeDefaults
     /// <summary>Alternative extension accepted on import/scan.</summary>
     public const string ThemeJsonExtension = ".json";
 
+    /// <summary>
+    /// C-02 §4 / FEA-06-PREREQ-2 P7: the manifest key a Fluent visual theme declares in
+    /// <see cref="ThemeMetadata.Extra"/> (<c>nm.fluent.visual</c>, value <c>"1"</c>). The Theme Engine's
+    /// validator treats it as the Fluent-package discriminator: a Fluent package must carry it, a
+    /// non-Fluent package must not.
+    /// </summary>
+    public const string FluentVisualManifestKey = "nm.fluent.visual";
+
+    /// <summary>Manifest version of the Fluent visual theme (<c>nm.fluent.visual/1</c>).</summary>
+    public const string FluentVisualManifestVersion = "1";
+
+    /// <summary>Full manifest value as declared by the Fluent package (<c>nm.fluent.visual/1</c>).</summary>
+    public const string FluentVisualManifestValue = FluentVisualManifestKey + "/" + FluentVisualManifestVersion;
+
     /// <summary>Shipped settings: default theme, system appearance, standard contrast, default layout.</summary>
     public static ThemeSettings Settings { get; } = new(
         DefaultThemeId,

@@ -90,9 +90,15 @@ public sealed class R14ContractTests
         Assert.Equal(3, DesignSystemThemeManager.ThemeLayerMotionKeys.Count);
         Assert.Equal(6, DesignSystemThemeManager.ThemeLayerLineBoxKeys.Count);
         Assert.Equal(59, DesignSystemThemeManager.ThemeLayerRequiredKeys.Count);
-        Assert.Equal(65, DesignSystemThemeManager.ThemeLayerAllowedKeys.Count);
+        // FEA-06-PREREQ-2 P6 / W-9: the two Fluent acrylic material colours are optional theme-layer keys
+        // (Current may omit them), so the required count stays 59 while the allowed face grows 65 -> 67.
+        Assert.Equal(2, DesignSystemThemeManager.ThemeLayerMaterialKeys.Count);
+        Assert.Equal(67, DesignSystemThemeManager.ThemeLayerAllowedKeys.Count);
         Assert.All(
             DesignSystemThemeManager.ThemeLayerLineBoxKeys,
+            key => Assert.Contains(key, DesignSystemThemeManager.ThemeLayerAllowedKeys));
+        Assert.All(
+            DesignSystemThemeManager.ThemeLayerMaterialKeys,
             key => Assert.Contains(key, DesignSystemThemeManager.ThemeLayerAllowedKeys));
         // The whitelist must not allow spacing/size overrides through a theme layer.
         Assert.DoesNotContain(NmKeys.Space.S3, DesignSystemThemeManager.ThemeLayerAllowedKeys);
@@ -100,6 +106,36 @@ public sealed class R14ContractTests
         Assert.All(
             DesignSystemThemeManager.ThemeLayerLineBoxKeys,
             key => Assert.DoesNotContain(key, DesignSystemThemeManager.ThemeLayerRequiredKeys));
+        Assert.All(
+            DesignSystemThemeManager.ThemeLayerMaterialKeys,
+            key => Assert.DoesNotContain(key, DesignSystemThemeManager.ThemeLayerRequiredKeys));
+    }
+
+    [Fact]
+    public void Material_acrylic_keys_are_registered_but_not_published_globally()
+    {
+        // FEA-06-PREREQ-2 P6 / W-9: NmKeys has compile-time constants (so UI code uses no string
+        // literals) while the values are carried by the Fluent theme package, never the global dictionary.
+        Assert.Equal("Nm.Material.Acrylic.Base", NmKeys.Material.Acrylic.Base);
+        Assert.Equal("Nm.Material.Acrylic.Tint", NmKeys.Material.Acrylic.Tint);
+        Assert.Contains(NmKeys.Material.Acrylic.Base, NmKeys.All);
+        Assert.Contains(NmKeys.Material.Acrylic.Tint, NmKeys.All);
+
+        var tokenMap = TokenGenerator.Generate(File.ReadAllText(TestPaths.TokensFixture));
+        var themeLayerRows = tokenMap.Rows
+            .Where(static row => row.Scope == "theme-layer")
+            .Select(static row => row.ResourceKey)
+            .ToArray();
+        Assert.Equal(
+            [NmKeys.Material.Acrylic.Base, NmKeys.Material.Acrylic.Tint],
+            themeLayerRows);
+
+        var global = File.ReadAllText(Path.Combine(TestPaths.DesignSystemProject, "Themes", "Tokens.Global.axaml"));
+        Assert.DoesNotContain(NmKeys.Material.Acrylic.Base, global);
+        Assert.DoesNotContain(NmKeys.Material.Acrylic.Tint, global);
+        // The theme-invariant material switches stay global tokens (PREREQ-1 AC3).
+        Assert.Contains(NmKeys.Material.Acrylic.Opacity, global);
+        Assert.Contains(NmKeys.Material.Mica.Enabled, global);
     }
 
     [Fact]

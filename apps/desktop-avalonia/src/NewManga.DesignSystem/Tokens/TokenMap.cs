@@ -28,6 +28,14 @@ public sealed record TokenBinding(string TokenPath, string ResourceKey, TokenVal
 public sealed record DerivedToken(string ResourceKey, TokenValueKind Kind, string RawValue, string Derivation);
 
 /// <summary>
+/// A resource key registered in <c>NmKeys</c> but deliberately <b>not</b> published by the global token
+/// dictionary: its value is carried by a theme package through the theme layer (FEA-06-PREREQ-2 P6 /
+/// W-9). Keeping the key in <c>NmKeys</c> lets UI code reference it with a compile-time constant; the
+/// design system never invents a second value source.
+/// </summary>
+public sealed record ThemeLayerRegisteredKey(string ResourceKey, TokenValueKind Kind, string Derivation);
+
+/// <summary>
 /// Curated high-contrast value for one color key. <c>tokens.json</c> defines no contrast mode; the
 /// design-system extension raises every text/line/accent/status pair above the WCAG thresholds of
 /// DESIGN_SYSTEM §2.3 while keeping the five-level background ladder unchanged.
@@ -263,6 +271,26 @@ public static class TokenMap
             "DESIGN_SYSTEM §6.4: disabled HUD actions are 40% opaque"),
         new("Nm.Color.Scrim", TokenValueKind.Brush, "rgba(0,0,0,0.55)",
             "DESIGN_SYSTEM §6.2 Modal: overlay scrim; the frozen baseline defines Modal but no scrim color, so a neutral 55% black scrim is derived (abandoning the layer behind, never decorative)"),
+    ];
+
+    /// <summary>
+    /// Keys registered in <see cref="Generated.NmKeys"/> but never written to <c>Tokens.Global.axaml</c>:
+    /// their values belong to a theme package and reach the application through the theme layer
+    /// (<see cref="NewManga.DesignSystem.Theming.DesignSystemThemeManager.ThemeLayerAllowedKeys"/>),
+    /// exactly like the six optional absolute line boxes.
+    /// <para>
+    /// C-02 V-03 registers the material group as a Fluent-exclusive minimal set; FEA-06-PREREQ-2 P6 keeps
+    /// the two acrylic colours out of the global dictionary (no second value source) while still giving the
+    /// UI compile-time constants. <c>Nm.Material.Acrylic.Opacity</c> and <c>Nm.Material.Mica.Enabled</c>
+    /// stay global (theme-invariant switches) and are not listed here.
+    /// </para>
+    /// </summary>
+    public static IReadOnlyList<ThemeLayerRegisteredKey> ThemeLayerOnlyKeys { get; } =
+    [
+        new("Nm.Material.Acrylic.Base", TokenValueKind.Brush,
+            "C-02 V-03 material group: acrylic base colour carried by the Fluent theme package (theme layer)"),
+        new("Nm.Material.Acrylic.Tint", TokenValueKind.Brush,
+            "C-02 V-03 material group: acrylic tint layer carried by the Fluent theme package (theme layer)"),
     ];
 
     /// <summary>

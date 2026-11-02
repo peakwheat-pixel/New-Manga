@@ -29,10 +29,18 @@ public static class StubThemeStudioService
     public static IReadOnlyList<ThemePackage> FixturePackages { get; } = BuildFixtures();
 
     /// <summary>Creates the sandbox service, seeding fixtures into the sandbox theme directory.</summary>
+    /// <param name="sandboxDirectory">Throw-away root (never the real app-data directory).</param>
+    /// <param name="seedFixtures">Seed the deterministic fixture packages.</param>
+    /// <param name="persistsToDisk">False keeps the sandbox fully in-memory (no write to disk).</param>
+    /// <param name="presentationSink">
+    /// FEA-06-PREREQ-2 P5 injection point: the sandbox never mirrors into the real appearance document
+    /// (null by default); tests may pass a recording sink.
+    /// </param>
     public static ThemeEngineThemeStudioService Create(
         string? sandboxDirectory = null,
         bool seedFixtures = true,
-        bool persistsToDisk = true)
+        bool persistsToDisk = true,
+        IThemeSettingsSink? presentationSink = null)
     {
         var root = string.IsNullOrWhiteSpace(sandboxDirectory)
             ? DefaultSandboxDirectory
@@ -53,7 +61,7 @@ public static class StubThemeStudioService
         }
 
         var registry = new ThemeRegistry(themeDirectory);
-        var settingsStore = new ThemeSettingsStore(Path.Combine(root, "theme-settings.json"), registry);
+        var settingsStore = new ThemeSettingsStore(Path.Combine(root, "theme-settings.json"), registry, presentationSink);
         var service = new ThemeService(registry, settingsStore, new NullThemeLayerSink(platformIsLight: false));
         return new ThemeEngineThemeStudioService(
             service,

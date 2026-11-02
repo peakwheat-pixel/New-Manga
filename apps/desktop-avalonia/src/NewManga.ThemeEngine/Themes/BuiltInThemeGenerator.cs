@@ -83,6 +83,18 @@ public static class BuiltInThemeGenerator
         "font.size.2xl",
     ];
 
+    /// <summary>
+    /// FEA-06-PREREQ-2 P6 / C-02 V-03: the Fluent acrylic material colours come from the frozen Fluent
+    /// design baseline (design 01 §41-42, recorded there as AARRGGBB) and are carried by the Fluent
+    /// package's <c>colors</c> map — the design system deliberately keeps them out of the global token
+    /// dictionary (theme-layer values). The package is dark-only, so both slots repeat the dark values
+    /// (impl-r4 P2-8).
+    /// </summary>
+    private const string FluentAcrylicBaseCss = "#1F1F1F";
+
+    /// <summary>Design <c>#33007ACC</c> (AARRGGBB) as a CSS colour: alpha 0x33 ≈ 20%.</summary>
+    private const string FluentAcrylicTintCss = "rgba(0,122,204,0.2)";
+
     /// <summary>Line-height multiplier token paths (tight / normal / loose).</summary>
     private static readonly string[] LineHeightMultiplierTokenPaths =
     [
@@ -183,7 +195,7 @@ public static class BuiltInThemeGenerator
 
         var package = new ThemePackage(ThemeDefaults.Schema, descriptor, TokenSet(lightColors), TokenSet(darkColors), metadata);
 
-        // FEA-06-PREREQ-1 AC5: the Fluent dark package is generated from the same frozen tokens
+        // FEA-06-PREREQ-2 AC5: the Fluent dark package is generated from the same frozen tokens
         // (dark palette, Fluent material/elevation semantics) so ThemeGen --check covers it too.
         var fluentDescriptor = new ThemeDescriptor(
             FluentDarkThemeId,
@@ -196,17 +208,41 @@ public static class BuiltInThemeGenerator
             SupportsLight: false,
             SupportsDark: true,
             PreviewHint: null);
+        // C-02 V-03 / FEA-06-PREREQ-2 P6: the Fluent package carries the acrylic material colours in its
+        // colors map; the Current theme keeps the frozen 35-key palette and omits them.
+        var fluentColors = new SortedDictionary<string, string>(StringComparer.Ordinal);
+        foreach (var pair in darkColors)
+        {
+            fluentColors[pair.Key] = pair.Value;
+        }
+
+        fluentColors[NmKeys.Material.Acrylic.Base] = FluentAcrylicBaseCss;
+        fluentColors[NmKeys.Material.Acrylic.Tint] = FluentAcrylicTintCss;
+        derivationWarnings.Add(
+            $"Fluent acrylic material colours (theme layer): {NmKeys.Material.Acrylic.Base}={FluentAcrylicBaseCss}, " +
+            $"{NmKeys.Material.Acrylic.Tint}={FluentAcrylicTintCss} (design 01 §41-42)");
         ThemeTokenSet FluentTokenSet(IReadOnlyDictionary<string, string> colors) =>
             new(colors, typography, corners, ThemeMaterial.Solid, ThemeElevation.Raised, motion);
+        // C-02 §4 / FEA-06-PREREQ-2 P7: the `nm.fluent.visual/1` manifest lives in metadata.extra (the
+        // smallest carrier the existing package schema already has); the Current theme declares no manifest.
+        var fluentMetadata = new ThemeMetadata
+        {
+            EngineVersion = ThemeDefaults.EngineVersion,
+            Generator = GeneratorName,
+            Extra = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(
+                new SortedDictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [ThemeDefaults.FluentVisualManifestKey] = ThemeDefaults.FluentVisualManifestVersion,
+                }),
+        };
         var fluentPackage = new ThemePackage(
             ThemeDefaults.Schema,
             fluentDescriptor,
             // dark-only package: the light slot repeats the dark palette so an accidental
             // light-mode consumer still resolves to the shipped (dark) values (impl-r4 P2-8).
-            FluentTokenSet(darkColors),
-            FluentTokenSet(darkColors),
-            metadata);
-        _ = fluentPackage;
+            FluentTokenSet(fluentColors),
+            FluentTokenSet(fluentColors),
+            fluentMetadata);
 
         var baseline = BuildBaseline(byPath, globalBindings, tokensJson);
         var files = new List<GeneratedThemeFile>(GeneratedFilePaths.Count)

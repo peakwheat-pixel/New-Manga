@@ -51,7 +51,9 @@
       "Nm.Color.Text.Inverse": "#0F1012",
       "Nm.Color.Text.Primary": "#E9EAEC",
       "Nm.Color.Text.Secondary": "#A3A8AF",
-      "Nm.Color.Text.Tertiary": "#71767D"
+      "Nm.Color.Text.Tertiary": "#71767D",
+      "Nm.Material.Acrylic.Base": "#1F1F1F",
+      "Nm.Material.Acrylic.Tint": "rgba(0,122,204,0.2)"
     },
     "font": {
       "family": {
@@ -111,7 +113,9 @@
       "Nm.Color.Text.Inverse": "#0F1012",
       "Nm.Color.Text.Primary": "#E9EAEC",
       "Nm.Color.Text.Secondary": "#A3A8AF",
-      "Nm.Color.Text.Tertiary": "#71767D"
+      "Nm.Color.Text.Tertiary": "#71767D",
+      "Nm.Material.Acrylic.Base": "#1F1F1F",
+      "Nm.Material.Acrylic.Tint": "rgba(0,122,204,0.2)"
     },
     "font": {
       "family": {
@@ -138,6 +142,8 @@
   "metadata": {
     "engineVersion": "1",
     "generator": "newmanga-theme-gen/1",
-    "extra": {}
+    "extra": {
+      "nm.fluent.visual": "1"
+    }
   }
 }

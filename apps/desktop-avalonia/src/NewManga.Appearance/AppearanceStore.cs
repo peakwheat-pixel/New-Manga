@@ -13,6 +13,9 @@ namespace NewManga.Appearance;
 /// </summary>
 public sealed class AppearanceStore
 {
+    /// <summary>C-03 §2.2: file name of the canonical appearance document.</summary>
+    public const string FileName = "presentation-settings.json";
+
     private readonly string _path;
     private readonly string? _legacyPath;
 

@@ -1,3 +1,4 @@
+using NewManga.DesignSystem;
 using NewManga.DesignSystem.Tokens;
 using NewManga.ThemeEngine;
 
@@ -235,12 +236,66 @@ public sealed class BuiltInThemeGeneratorTests
         Assert.True(package.Descriptor.SupportsDark);
     }
 
-    /// <summary>FEA-06-PREREQ-1 AC5: the current visual theme must not silently change.</summary>
+    /// <summary>
+    /// FEA-06-PREREQ-2 P6/AC6 + P7/AC7: the Fluent package carries the acrylic material colours
+    /// (theme layer, not the global dictionary) and the frozen <c>nm.fluent.visual/1</c> manifest, and it
+    /// is validator-clean.
+    /// </summary>
     [Fact]
-    public void AddingFluentDark_DoesNotChangeTheDefaultTheme()
+    public void FluentDark_CarriesTheMaterialColoursAndTheFrozenManifest()
     {
+        var package = BuiltInThemes.FluentDark;
+
+        Assert.Equal(37, package.Dark.Colors.Count);
+        Assert.Equal(37, package.Light.Colors.Count);
+        foreach (var variant in new[] { package.Light, package.Dark })
+        {
+            Assert.Equal("#1F1F1F", variant.Colors[NmKeys.Material.Acrylic.Base]);
+            Assert.Equal("rgba(0,122,204,0.2)", variant.Colors[NmKeys.Material.Acrylic.Tint]);
+        }
+
+        Assert.Equal(ThemeDefaults.FluentVisualManifestVersion, package.Metadata.Extra[ThemeDefaults.FluentVisualManifestKey]);
+        Assert.Equal("1", package.Metadata.Extra["nm.fluent.visual"]);
+        Assert.True(ThemeValidator.IsFluentPackage(package));
+
+        var validation = ThemeValidator.Default.Validate(package);
+        Assert.True(
+            validation.IsValid,
+            string.Join(" | ", validation.Errors.Select(issue => $"{issue.Code}: {issue.Message}")));
+        Assert.DoesNotContain(validation.Issues, issue => issue.Code == ThemeIssueCodes.FluentManifestMissing);
+        Assert.DoesNotContain(validation.Issues, issue => issue.Code == ThemeIssueCodes.FluentMaterialKeyMissing);
+    }
+
+    /// <summary>
+    /// FEA-06-PREREQ-2 P7/AC7: loading/registering the Fluent package must not change the Current theme
+    /// (<c>newmanga-default</c>); the Current package stays manifest-free and material-free.
+    /// </summary>
+    [Fact]
+    public async Task AddingFluentDark_DoesNotChangeTheDefaultTheme()
+    {
+        var generatedDefault = Generate().Package;
+        Assert.Equal("newmanga-default", generatedDefault.Descriptor.Id);
+        Assert.Empty(generatedDefault.Metadata.Extra);
+        Assert.Equal(35, generatedDefault.Dark.Colors.Count);
+        Assert.DoesNotContain(NmKeys.Material.Acrylic.Base, generatedDefault.Dark.Colors.Keys);
+        Assert.DoesNotContain(NmKeys.Material.Acrylic.Tint, generatedDefault.Dark.Colors.Keys);
+        Assert.False(ThemeValidator.IsFluentPackage(generatedDefault));
+
         Assert.Equal("newmanga-default", BuiltInThemes.Default.Descriptor.Id);
         Assert.Contains(BuiltInThemes.All, package => package.Descriptor.Id == "newmanga-default");
         Assert.Contains(BuiltInThemes.All, package => package.Descriptor.Id == "builtin.fluent-dark");
+
+        // A Theme Engine over the shipped registry still initializes on the Current theme; the Fluent
+        // package being present/registered is not enough to make it current.
+        using var temp = new TempDirectory();
+        var registry = new ThemeRegistry(temp.File("themes"));
+        var store = new ThemeSettingsStore(temp.File("theme-settings.json"), registry);
+        var sink = new FakeThemeLayerSink();
+        var service = new ThemeService(registry, store, sink);
+        await service.InitializeAsync();
+
+        Assert.Equal(ThemeDefaults.DefaultThemeId, service.Settings.ThemeId);
+        Assert.Equal(ThemeDefaults.DefaultThemeId, service.Current.Id);
+        Assert.NotEqual(BuiltInThemeGenerator.FluentDarkThemeId, sink.LastAppliedThemeId);
     }
 }

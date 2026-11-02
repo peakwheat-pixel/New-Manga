@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -8,7 +9,10 @@ using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.ThemeStudio;
 using NewManga.App.Views;
+using NewManga.App.Views.Fluent;
+using NewManga.Appearance;
 using NewManga.DesignSystem.Theming;
+using DsAppearanceMode = NewManga.DesignSystem.Theming.AppearanceMode;
 
 namespace NewManga.App;
 
@@ -49,14 +53,29 @@ public partial class App : Application
             if (startupTheme.Density is { } startupDensity &&
                 !_designSystemTheme.SetDensity(startupDensity))
             {
-                System.Diagnostics.Trace.TraceWarning(
-                    $"legacy --theme density could not be applied: {_designSystemTheme.LastError}");
+                Trace.TraceWarning($"legacy --theme density could not be applied: {_designSystemTheme.LastError}");
+            }
+
+            // FEA-06-PREREQ-2 P1/P2/P5: read the persisted appearance document once, resolve the
+            // frontend (--frontend > persisted theme.frontendId > fail-safe builtin.current-v2) and hand
+            // the single writer to the composition root. The shell choice is recorded for diagnostics.
+            var themeHome = ThemeHome.Resolve(options);
+            var presentationPath = Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(themeHome.SettingsFilePath)) ?? ".",
+                AppearanceStore.FileName);
+            var appearance = new AppearanceCoordinator(new AppearanceStore(
+                presentationPath,
+                legacyPath: themeHome.SettingsFilePath));
+            appearance.Reload();
+            var selection = FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
+            Trace.TraceInformation("frontend selection: " + selection.Diagnostic);
+            if (selection.IsFallback)
+            {
+                Trace.TraceWarning("frontend selection fell back to the Current V2 shell: " + selection.Diagnostic);
             }
 
             var controller = new HostController(options.ToHostOptions());
-            var window = options.UseV2Shell
-                ? CreateV2Shell(controller, options)
-                : CreateLegacyShell(controller, options);
+            var window = CreateShell(options, controller, selection, appearance, themeHome, _designSystemTheme, this);
 
             desktop.MainWindow = window;
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -87,30 +106,70 @@ public partial class App : Application
     }
 
     /// <summary>
+    /// FEA-06-PREREQ-2 P2/AC2: the composition root's shell decision. <c>--shell=legacy</c> stays the
+    /// one-release operator rollback and wins over everything; otherwise the frontend selector
+    /// (<paramref name="selection"/>, W-2b precedence) chooses between the Fluent shell and the Current V2
+    /// shell. The V2 path is unchanged apart from receiving the appearance writer and the resolved theme
+    /// home explicitly.
+    /// </summary>
+    internal static Window CreateShell(
+        AppOptions options,
+        IHostController controller,
+        FrontendSelection selection,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome,
+        DesignSystemThemeManager themeManager,
+        Application application)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(selection);
+        ArgumentNullException.ThrowIfNull(appearance);
+        ArgumentNullException.ThrowIfNull(themeHome);
+        ArgumentNullException.ThrowIfNull(themeManager);
+        ArgumentNullException.ThrowIfNull(application);
+
+        if (!options.UseV2Shell)
+        {
+            return CreateLegacyShell(controller, options, themeManager);
+        }
+
+        return selection.IsFluent
+            ? FluentShell.CreateRoot(options, selection)
+            : CreateV2Shell(application, controller, options, themeManager, appearance, themeHome);
+    }
+
+    /// <summary>
     /// V11R-INT-1: the new Avalonia shell (three spaces + Studio dual mode + Theme Studio surface).
     /// Theme Studio is bound to the real theme engine and shares the application's single
     /// <see cref="DesignSystemThemeManager"/> (two managers would fight over the same resource layer).
     /// </summary>
-    private Window CreateV2Shell(HostController controller, AppOptions options)
+    private static Window CreateV2Shell(
+        Application application,
+        IHostController controller,
+        AppOptions options,
+        DesignSystemThemeManager themeManager,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome)
     {
-        var root = AppShellV2.CreateRoot(controller, options, picker: null, themeManager: _designSystemTheme);
-        if (root.Content is not AppShellV2 shell || _designSystemTheme is null)
+        var root = AppShellV2.CreateRoot(controller, options, picker: null, themeManager: themeManager);
+        if (root.Content is not AppShellV2 shell)
         {
             return root;
         }
 
         try
         {
-            // V11R-E2E-1: one --theme-home override moves the whole theme subsystem (settings, user
-            // themes, favorites) off the real %APPDATA%/NewManga location; without it the resolver
-            // returns the shipped paths, so the default behavior is unchanged.
-            var themeHome = ThemeHome.Resolve(options);
+            // FEA-06-PREREQ-2 P5 (W-9/Q-32): the Theme Engine's compatibility write mirrors into the
+            // canonical presentation-settings.json through this app-side sink; the coordinator stays the
+            // single writer of that document.
             var service = ThemeEngineThemeStudioService.CreateProduction(
-                this,
-                _designSystemTheme,
+                application,
+                themeManager,
                 themeDirectory: themeHome.ThemesDirectory,
                 settingsFilePath: themeHome.SettingsFilePath,
-                favoritesFilePath: themeHome.FavoritesFilePath);
+                favoritesFilePath: themeHome.FavoritesFilePath,
+                presentationSink: new AppearanceThemeSettingsSink(appearance));
             var viewModel = new ThemeStudioViewModel(service);
             var adapter = new ThemeStudioSurfaceAdapter(viewModel, () => shell.ViewModel.CloseThemeStudioCommand.Execute(null));
             shell.ViewModel.RegisterSurfaceWorkspace(adapter);
@@ -128,40 +187,44 @@ public partial class App : Application
                     // persisted default, and the shell label must mirror the real palette.
                     if (StartupAppearance(options) is { } requested)
                     {
-                        _designSystemTheme.SetAppearance(requested);
+                        themeManager.SetAppearance(requested);
                     }
 
-                    shell.ViewModel.AdoptAppearance(_designSystemTheme.Appearance == AppearanceMode.Dark);
+                    shell.ViewModel.AdoptAppearance(themeManager.Appearance == DsAppearanceMode.Dark);
                 }
                 catch (Exception ex) when (ex is InvalidOperationException or IOException or TimeoutException)
                 {
-                    System.Diagnostics.Trace.TraceWarning($"Theme service init failed: {ex.GetType().Name}");
+                    Trace.TraceWarning($"Theme service init failed: {ex.GetType().Name}");
                 }
             });
         }
         catch (Exception ex) when (ex is InvalidOperationException or IOException or ArgumentException)
         {
             // Theme Studio is optional at startup: never block the product shell on it.
-            System.Diagnostics.Trace.TraceWarning($"Theme Studio wiring failed: {ex.GetType().Name}");
+            Trace.TraceWarning($"Theme Studio wiring failed: {ex.GetType().Name}");
         }
 
         return root;
     }
 
     /// <summary>Explicit startup appearance from <c>--variant</c> (null = persisted/default wins).</summary>
-    private static AppearanceMode? StartupAppearance(AppOptions options) =>
+    private static DsAppearanceMode? StartupAppearance(AppOptions options) =>
         string.IsNullOrWhiteSpace(options.StartupVariant)
             ? null
             : string.Equals(options.StartupVariant, "dark", StringComparison.OrdinalIgnoreCase)
-                ? AppearanceMode.Dark
-                : AppearanceMode.Light;
+                ? DsAppearanceMode.Dark
+                : DsAppearanceMode.Light;
 
-    private Window CreateLegacyShell(HostController controller, AppOptions options) =>
-        new MainWindow(controller, options, themeManager: _designSystemTheme);
+    private static Window CreateLegacyShell(
+        IHostController controller,
+        AppOptions options,
+        DesignSystemThemeManager themeManager) =>
+        new MainWindow(controller, options, themeManager: themeManager);
 
     /// <summary>
-    /// Maps the existing <c>--page</c> evidence hook onto both shells. Legacy keeps its page names;
-    /// v2 maps the four product surfaces onto the three spaces (reader is an overlay inside Library).
+    /// Maps the existing <c>--page</c> evidence hook onto all shells. Legacy keeps its page names; v2 maps
+    /// the four product surfaces onto the three spaces (reader is an overlay inside Library); the Fluent
+    /// skeleton maps them onto its four navigation entries.
     /// </summary>
     private static void NavigateStartupPage(Window window, AppOptions options)
     {
@@ -169,6 +232,12 @@ public partial class App : Application
         if (window is MainWindow legacy)
         {
             legacy.Navigate(page);
+            return;
+        }
+
+        if (window is FluentShell fluent)
+        {
+            fluent.Navigate(page);
             return;
         }
 
@@ -191,5 +260,3 @@ public partial class App : Application
         }
     }
 }
-
-

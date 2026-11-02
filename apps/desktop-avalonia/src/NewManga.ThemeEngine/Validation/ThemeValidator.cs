@@ -35,8 +35,10 @@ public sealed class ThemeValidator : IThemeValidator
     private const double MinFontScale = 0.8;
     private const double MaxFontScale = 1.3;
 
+    // C-02 V-07 registers the built-in visual theme id `builtin.fluent-dark`, so the id namespace must
+    // accept dots (shipped ids use the `builtin.` family prefix); user ids remain lowercase slugs.
     private static readonly Regex IdPattern = new(
-        "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$",
+        "^[a-z0-9](?:[a-z0-9.-]{0,62}[a-z0-9])?$",
         RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
     private static readonly Regex VersionPattern = new(
@@ -67,10 +69,69 @@ public sealed class ThemeValidator : IThemeValidator
 
         ValidateSchema(package, issues);
         ValidateDescriptor(package.Descriptor, issues);
-        ValidateTokenSet(package.Light, PaletteVariant.Light, issues);
-        ValidateTokenSet(package.Dark, PaletteVariant.Dark, issues);
+        // C-02 §4 / FEA-06-PREREQ-2 P7: the `nm.fluent.visual/1` manifest is the Fluent discriminator.
+        var fluent = IsFluentPackage(package);
+        ValidateFluentManifest(package, fluent, issues);
+        ValidateTokenSet(package.Light, PaletteVariant.Light, fluent, issues);
+        ValidateTokenSet(package.Dark, PaletteVariant.Dark, fluent, issues);
 
         return ThemeValidationResult.From(Deduplicate(issues));
+    }
+
+    /// <summary>
+    /// C-02 §4 / FEA-06-PREREQ-2 P7: a package is Fluent when its descriptor declares the frozen
+    /// <c>fluent</c> tag (built-in <c>builtin.fluent-dark</c> and its Fluent-material variants).
+    /// </summary>
+    public static bool IsFluentPackage(ThemePackage package)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+        return package.Descriptor.Tags.Any(static tag => string.Equals(tag, "fluent", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// C-02 §4: the Fluent manifest must be present and exactly <c>nm.fluent.visual/1</c>; declaring or
+    /// hand-editing it on a non-Fluent package is invalid too ("例外仅限 Fluent").
+    /// </summary>
+    private static void ValidateFluentManifest(
+        ThemePackage package,
+        bool fluent,
+        List<ThemeValidationIssue> issues)
+    {
+        var declared = package.Metadata.Extra.TryGetValue(ThemeDefaults.FluentVisualManifestKey, out var value);
+        if (fluent && !declared)
+        {
+            issues.Add(ThemeValidationIssue.Error(
+                ThemeIssueCodes.FluentManifestMissing,
+                $"Fluent package is missing the '{ThemeDefaults.FluentVisualManifestKey}' manifest entry " +
+                $"('{ThemeDefaults.FluentVisualManifestValue}' expected)",
+                $"metadata.extra.{ThemeDefaults.FluentVisualManifestKey}"));
+            return;
+        }
+
+        if (!declared)
+        {
+            return;
+        }
+
+        if (!fluent)
+        {
+            issues.Add(ThemeValidationIssue.Error(
+                ThemeIssueCodes.FluentManifestInvalid,
+                $"non-Fluent package must not declare the '{ThemeDefaults.FluentVisualManifestKey}' manifest " +
+                "(the Fluent visual exception is limited to Fluent packages)",
+                $"metadata.extra.{ThemeDefaults.FluentVisualManifestKey}"));
+            return;
+        }
+
+        if (!string.Equals(value, ThemeDefaults.FluentVisualManifestVersion, StringComparison.Ordinal))
+        {
+            issues.Add(ThemeValidationIssue.Error(
+                ThemeIssueCodes.FluentManifestInvalid,
+                $"Fluent manifest '{ThemeDefaults.FluentVisualManifestKey}' has value '{value}'; " +
+                $"the frozen version is '{ThemeDefaults.FluentVisualManifestVersion}' " +
+                $"('{ThemeDefaults.FluentVisualManifestValue}')",
+                $"metadata.extra.{ThemeDefaults.FluentVisualManifestKey}"));
+        }
     }
 
     private static void ValidateSchema(ThemePackage package, List<ThemeValidationIssue> issues)
@@ -99,7 +160,8 @@ public sealed class ThemeValidator : IThemeValidator
         {
             issues.Add(ThemeValidationIssue.Error(
                 ThemeIssueCodes.DescriptorIdInvalid,
-                $"theme id '{descriptor.Id}' must be 1–64 chars of lowercase a-z, 0-9 and '-', starting/ending alphanumeric",
+                $"theme id '{descriptor.Id}' must be 1–64 chars of lowercase a-z, 0-9, '-' or '.', " +
+                "starting/ending alphanumeric",
                 "descriptor.id"));
         }
 
@@ -153,17 +215,22 @@ public sealed class ThemeValidator : IThemeValidator
     private static void ValidateTokenSet(
         ThemeTokenSet tokens,
         PaletteVariant variant,
+        bool fluent,
         List<ThemeValidationIssue> issues)
     {
         var scope = variant == PaletteVariant.Light ? "light" : "dark";
-        ValidateColors(tokens, scope, issues);
+        ValidateColors(tokens, scope, fluent, issues);
         ValidateCorners(tokens.Corners, scope, issues);
         ValidateTypography(tokens.Typography, scope, issues);
         ValidateMotion(tokens.Motion, scope, issues);
         ValidateContrast(tokens, variant, scope, issues);
     }
 
-    private static void ValidateColors(ThemeTokenSet tokens, string scope, List<ThemeValidationIssue> issues)
+    private static void ValidateColors(
+        ThemeTokenSet tokens,
+        string scope,
+        bool fluent,
+        List<ThemeValidationIssue> issues)
     {
         foreach (var required in ThemeTokenKeys.Colors)
         {
@@ -185,9 +252,45 @@ public sealed class ThemeValidator : IThemeValidator
             }
         }
 
+        // C-02 V-03 / FEA-06-PREREQ-2 P6: the Fluent-exclusive acrylic material colours. Required for a
+        // Fluent package, invalid on a non-Fluent one (the visual exception is Fluent-only).
+        foreach (var materialKey in ThemeTokenKeys.MaterialColors)
+        {
+            if (!tokens.Colors.TryGetValue(materialKey, out var raw))
+            {
+                if (fluent)
+                {
+                    issues.Add(ThemeValidationIssue.Error(
+                        ThemeIssueCodes.FluentMaterialKeyMissing,
+                        $"Fluent package is missing the material colour '{materialKey}'",
+                        $"{scope}.colors.{materialKey}"));
+                }
+
+                continue;
+            }
+
+            if (!ThemeContrast.TryParse(raw, out _))
+            {
+                issues.Add(ThemeValidationIssue.Error(
+                    ThemeIssueCodes.ColorInvalidValue,
+                    $"material colour '{materialKey}' has unsupported value '{raw}'",
+                    $"{scope}.colors.{materialKey}"));
+            }
+
+            if (!fluent)
+            {
+                issues.Add(ThemeValidationIssue.Error(
+                    ThemeIssueCodes.FluentMaterialKeyUnexpected,
+                    $"material colour '{materialKey}' is a Fluent-only exception; non-Fluent packages must not " +
+                    "declare it (C-02 V-03)",
+                    $"{scope}.colors.{materialKey}"));
+            }
+        }
+
         foreach (var pair in tokens.Colors)
         {
-            if (ThemeTokenKeys.Colors.Contains(pair.Key, StringComparer.Ordinal))
+            if (ThemeTokenKeys.Colors.Contains(pair.Key, StringComparer.Ordinal) ||
+                ThemeTokenKeys.MaterialColors.Contains(pair.Key, StringComparer.Ordinal))
             {
                 continue;
             }

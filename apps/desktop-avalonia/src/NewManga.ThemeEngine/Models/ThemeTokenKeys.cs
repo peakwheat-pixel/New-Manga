@@ -33,6 +33,18 @@ public static class ThemeTokenKeys
     /// </summary>
     public static IReadOnlyList<string> ThemeInvariantColorKeys { get; } = [NmKeys.Color.Scrim];
 
+    /// <summary>
+    /// Fluent-only optional material colours carried by a theme package's <c>colors</c> map
+    /// (C-02 V-03 material group; FEA-06-PREREQ-2 P6 / W-9). They are <b>not</b> part of the 35 required
+    /// palette keys and <b>not</b> part of the 59 required theme-layer keys: the Current theme omits them
+    /// (V-03 "Current may omit"), a Fluent package (`nm.fluent.visual/1`) must provide both.
+    /// </summary>
+    public static IReadOnlyList<string> MaterialColors { get; } =
+    [
+        NmKeys.Material.Acrylic.Base,
+        NmKeys.Material.Acrylic.Tint,
+    ];
+
     /// <summary>Motion-duration keys owned by a theme (R-15: fast/normal/slow; instant is theme-invariant).</summary>
     public static IReadOnlyList<string> MotionDurations { get; } =
     [

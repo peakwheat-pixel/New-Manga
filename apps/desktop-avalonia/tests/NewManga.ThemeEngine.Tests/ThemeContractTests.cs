@@ -124,6 +124,38 @@ public sealed class ThemeContractTests
     }
 
     [Fact]
+    public void Fluent_material_colours_are_optional_theme_layer_keys()
+    {
+        // FEA-06-PREREQ-2 P6 / W-9: the two acrylic colours are registered in NmKeys and allowed on the
+        // theme layer, but they stay outside the 59 required keys (Current may omit them, C-02 V-03).
+        Assert.Equal(2, ThemeTokenKeys.MaterialColors.Count);
+        Assert.Equal(
+            [NmKeys.Material.Acrylic.Base, NmKeys.Material.Acrylic.Tint],
+            ThemeTokenKeys.MaterialColors);
+        Assert.All(ThemeTokenKeys.MaterialColors, key => Assert.Contains(key, NmKeys.All));
+        Assert.All(ThemeTokenKeys.MaterialColors, key => Assert.DoesNotContain(key, ThemeTokenKeys.ThemeLayer));
+        Assert.All(
+            ThemeTokenKeys.MaterialColors,
+            key => Assert.Contains(key, DesignSystemThemeManager.ThemeLayerAllowedKeys));
+        Assert.All(
+            ThemeTokenKeys.MaterialColors,
+            key => Assert.DoesNotContain(key, DesignSystemThemeManager.ThemeLayerRequiredKeys));
+        Assert.Equal(61, ThemePaletteComposer.ThemeLayerMaxKeyCount);
+    }
+
+    [Fact]
+    public void Fluent_manifest_constants_match_the_frozen_contract()
+    {
+        Assert.Equal("nm.fluent.visual", ThemeDefaults.FluentVisualManifestKey);
+        Assert.Equal("1", ThemeDefaults.FluentVisualManifestVersion);
+        Assert.Equal("nm.fluent.visual/1", ThemeDefaults.FluentVisualManifestValue);
+        Assert.Equal(
+            ThemeDefaults.FluentVisualManifestVersion,
+            BuiltInThemes.FluentDark.Metadata.Extra[ThemeDefaults.FluentVisualManifestKey]);
+        Assert.Empty(BuiltInThemes.Default.Metadata.Extra);
+    }
+
+    [Fact]
     public void Severity_channel_is_the_contract_string_pair()
     {
         Assert.Equal("error", ThemeValidationIssue.ErrorSeverity);

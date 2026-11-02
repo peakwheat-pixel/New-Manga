@@ -28,8 +28,20 @@ public static class ThemePaletteComposer
     /// <summary>Number of keys a composed theme layer contains (R-15: 35 colors + 3 families + 6 sizes + 3 multipliers + 6 absolute line heights + 3 corners + 3 motion).</summary>
     public const int ThemeLayerKeyCount = 59;
 
+    /// <summary>
+    /// FEA-06-PREREQ-2 P6 / W-9: optional Fluent material colours appended to a composed layer. They are
+    /// absent from the Current theme (59 keys) and present in a Fluent package (61 keys).
+    /// </summary>
+    public const int ThemeLayerMaterialKeyCount = 2;
+
+    /// <summary>Maximum number of keys a complete theme layer carries (59 required + 2 Fluent material).</summary>
+    public const int ThemeLayerMaxKeyCount = ThemeLayerKeyCount + ThemeLayerMaterialKeyCount;
+
     /// <summary>Number of color keys (<see cref="ThemeTokenKeys.Colors"/>).</summary>
     public const int ColorLayerKeyCount = 35;
+
+    /// <summary>Maximum number of color keys a composed color layer carries (35 required + 2 Fluent material).</summary>
+    public const int ColorLayerMaxKeyCount = ColorLayerKeyCount + ThemeLayerMaterialKeyCount;
 
     /// <summary>Resolves <see cref="AppearanceMode.System"/> against the platform's current light/dark state.</summary>
     public static PaletteVariant ResolveVariant(AppearanceMode appearance, bool platformIsLight) => appearance switch
@@ -48,14 +60,16 @@ public static class ThemePaletteComposer
         var layer = new SortedDictionary<string, object?>(StringComparer.Ordinal);
 
         AddColors(layer, tokens, variant);
+        AddMaterialColors(layer, tokens, variant);
         AddTypography(layer, tokens, variant);
         AddCorners(layer, tokens, variant);
         AddMotion(layer, tokens, variant);
 
-        if (layer.Count != ThemeLayerKeyCount)
+        if (layer.Count is not ThemeLayerKeyCount and not ThemeLayerMaxKeyCount)
         {
             throw new ThemePackageException(
-                $"composed theme layer has {layer.Count} keys, expected {ThemeLayerKeyCount}",
+                $"composed theme layer has {layer.Count} keys, expected {ThemeLayerKeyCount} " +
+                $"or {ThemeLayerMaxKeyCount} (with the Fluent material colours)",
                 [ThemeValidationIssue.Error(
                     ThemeIssueCodes.FieldMissing,
                     $"composed theme layer is incomplete ({layer.Count}/{ThemeLayerKeyCount} keys)")]);
@@ -64,17 +78,20 @@ public static class ThemePaletteComposer
         return new ReadOnlyDictionary<string, object?>(layer);
     }
 
-    /// <summary>Composes only the <c>Nm.Color.*</c> subset (35 keys) for preview snapshots and palette probes.</summary>
+    /// <summary>Composes only the color subset (35 required keys plus the optional Fluent material colours) for preview snapshots and palette probes.</summary>
     public static IReadOnlyDictionary<string, object?> ComposeColorLayer(ThemePackage package, PaletteVariant variant)
     {
         ArgumentNullException.ThrowIfNull(package);
 
+        var tokens = TokenSet(package, variant);
         var layer = new SortedDictionary<string, object?>(StringComparer.Ordinal);
-        AddColors(layer, TokenSet(package, variant), variant);
-        if (layer.Count != ColorLayerKeyCount)
+        AddColors(layer, tokens, variant);
+        AddMaterialColors(layer, tokens, variant);
+        if (layer.Count is not ColorLayerKeyCount and not ColorLayerMaxKeyCount)
         {
             throw new ThemePackageException(
-                $"composed color layer has {layer.Count} keys, expected {ColorLayerKeyCount}",
+                $"composed color layer has {layer.Count} keys, expected {ColorLayerKeyCount} " +
+                $"or {ColorLayerMaxKeyCount} (with the Fluent material colours)",
                 [ThemeValidationIssue.Error(
                     ThemeIssueCodes.ColorMissingKey,
                     $"composed color layer is incomplete ({layer.Count}/{ColorLayerKeyCount} keys)")]);
@@ -104,6 +121,51 @@ public static class ThemePaletteComposer
             {
                 throw new ThemePackageException(
                     $"theme '{variant}' color '{key}' has unsupported value '{raw}'",
+                    [ThemeValidationIssue.Error(ThemeIssueCodes.ColorInvalidValue, "unsupported color value", key)]);
+            }
+
+            layer[key] = new ImmutableSolidColorBrush(color);
+        }
+    }
+
+    /// <summary>
+    /// FEA-06-PREREQ-2 P6 / W-9: appends the optional Fluent material colours when the package carries
+    /// them. Both keys are required together (a half-specified material is rejected) and Current packages
+    /// simply omit them, keeping the frozen 59-key layer.
+    /// </summary>
+    private static void AddMaterialColors(
+        IDictionary<string, object?> layer,
+        ThemeTokenSet tokens,
+        PaletteVariant variant)
+    {
+        var present = ThemeTokenKeys.MaterialColors
+            .Where(key => tokens.Colors.ContainsKey(key))
+            .ToArray();
+        if (present.Length == 0)
+        {
+            return;
+        }
+
+        if (present.Length != ThemeTokenKeys.MaterialColors.Count)
+        {
+            var missing = ThemeTokenKeys.MaterialColors
+                .Where(key => !tokens.Colors.ContainsKey(key))
+                .ToArray();
+            throw new ThemePackageException(
+                $"theme '{variant}' defines only part of the Fluent material colours (missing: {string.Join(", ", missing)})",
+                [ThemeValidationIssue.Error(
+                    ThemeIssueCodes.FluentMaterialKeyMissing,
+                    "the Fluent material colours must be provided together",
+                    $"{variant}.colors")]);
+        }
+
+        foreach (var key in ThemeTokenKeys.MaterialColors)
+        {
+            var raw = tokens.Colors[key];
+            if (!ThemeContrast.TryParse(raw, out var color))
+            {
+                throw new ThemePackageException(
+                    $"theme '{variant}' material colour '{key}' has unsupported value '{raw}'",
                     [ThemeValidationIssue.Error(ThemeIssueCodes.ColorInvalidValue, "unsupported color value", key)]);
             }
 

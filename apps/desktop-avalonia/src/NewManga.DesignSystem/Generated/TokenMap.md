@@ -4,7 +4,7 @@
 
 Source: doc/design/redesign-v1/40-fusion/tokens.json (FROZEN) + TokenMap tables.
 
-Rows: 290.
+Rows: 292.
 
 | Scope | DTCG token | Resource key | Kind | Raw value |
 |---|---|---|---|---|
@@ -298,6 +298,8 @@ Rows: 290.
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Normal` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Duration.Slow` | TimeSpan | `0ms` |
 | motion-reduced | `(motion)` | `Nm.Motion.Enabled` | Boolean | `false` |
+| theme-layer | `(theme package)` | `Nm.Material.Acrylic.Base` | Brush | `(theme package)` |
+| theme-layer | `(theme package)` | `Nm.Material.Acrylic.Tint` | Brush | `(theme package)` |
 
 ## Naming and derivation notes (R-14, contract §2.4)
 

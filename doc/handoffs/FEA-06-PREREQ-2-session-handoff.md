@@ -14,17 +14,16 @@ status: in_progress
 
 ## 1. 一句话现状
 
-FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 已 `ready`（范围冻结通过：scope-r1/r2/r3 changes_requested → **scope-r4 approved（P0/P1/P2=0）**；
-scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**scope-r3 未产出报告**）**。
-全量测试 **979 passed / 0 failed / 57 skipped**；治理 `check.ps1` **PASS（3 warnings）**、`verify_pins` **15/15**。
-**当前唯一可开工任务：实现 FEA-06-PREREQ-2。**
+FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 已实现完成并置 `in_review`**（范围冻结：scope-r1/r2/r3 changes_requested → **scope-r4 approved（P0/P1=0）**；P1–P7 / AC1–AC7 已交付，实现复核 impl-rB 待派）。
+全量测试 **1022 passed / 0 failed / 57 skipped**（基线 979/0/57）；治理 `check.ps1` **PASS（3 warnings）**、`verify_pins` **15/15**、两生成器 `-- --check` up to date。
+**当前唯一下一步：派独立上下文实现复核（impl-rB）。**
 
 ## 2. 关键坐标
 
-- 仓库：`G:\CODEX\New Manga`，分支 `main`，HEAD **`df089039c`**，工作区 **clean**。
+- 仓库：`G:\CODEX\New Manga`，分支 `main`，HEAD 见卡 `delivery_head`（实现完成后回填），工作区 clean。
 - 派生/临时产物：`G:\CODEX\New Manga.workspace\`（不得在 `G:\CODEX\` 根建临时目录）。
-- 当前 DAG（`doc/REBASELINE_PLAN.md`）：`FEA-06-PREREQ-1(done) → FEA-06-PREREQ-2(proposed) → FEA-06(proposed)`。
-- 当前 Task（`doc/STATUS.md`）：`FEA-06-PREREQ-2`（**`ready`**，scope-r4 approved）。
+- 当前 DAG（`doc/REBASELINE_PLAN.md`）：`FEA-06-PREREQ-1(done) → FEA-06-PREREQ-2(in_review) → FEA-06(proposed)`。
+- 当前 Task（`doc/STATUS.md`）：`FEA-06-PREREQ-2`（**`in_review`**，实现完成，impl 复核待）。
 - 进度主线：`doc/checkpoints/GOAL-PROGRESS-2026-11-02.md` §1–§25（**先读 §22 Q-32、§24 Q-34、§25 scope-r2**）。
 
 ## 3. 已完成（勿重做）
@@ -57,9 +56,9 @@ scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**
 - **R2-P1-3 C-02 V-07 合规** → **改判 P6**：`Nm.Material.Acrylic.Base/.Tint` 以**主题层令牌**承载（`NmKeys` 常量 + `ThemeLayerAllowedKeys` + 主题包 `colors`），**不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 签名** → 依 V-07「不新增枚举值、不改接口签名」**无需 UNFREEZE**；新增 **W-11**（Q-35）。
 - **R2-P1-4 测试表** → 补 AC5 / AC6 / AC7 行。
 
-### 4.3 下一步（唯一动作）：**开始实现 PREREQ-2**
+### 4.3 下一步（唯一动作）：**派独立上下文实现复核（impl-rB）**
 
-范围已冻结（scope-r4 approved），卡 `ready`。按以下顺序实现（每步后跑 §7 全部命令）：
+P1–P7 / AC1–AC7 已按下列顺序实现完成（每步后跑 §7 全部命令，证据见 `verification/FEA-06-PREREQ-2/` 与卡 Canonical Evidence）：
 
 1. **P3/AC1 `FrontendSelector`**：按 **frontendId**（`builtin.current-v2` / `builtin.fluent`）决策；优先级 `--frontend`(CLI) > `AppearanceSettings.FrontendId` > 缺省 `builtin.current-v2`；未知/缺失 → V2 + 记录（`builtin.fluent-dark` 是 visualThemeId，**不参与** selector）。含单测。
 2. **P1/P2 组合根**：`App.axaml.cs` 依据 selector 选壳；V2 路径语义不变；新增 `Views/Fluent/` 骨架（导航 + 四页占位，对照设计 `04-layout-responsive.md`）。

@@ -128,7 +128,9 @@ public sealed class LegacyThemeMigrationTests
             ReducedMotion: true,
             FollowSystemAccent: true);
 
+#pragma warning disable CS0618 // FEA-06-PREREQ-2 P5: the one-release compatibility write is what this test exercises.
         await store.SaveAsync(settings);
+#pragma warning restore CS0618
         var loaded = store.Load();
 
         Assert.Equal(settings, loaded);

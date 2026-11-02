@@ -324,6 +324,91 @@ public sealed class ThemeValidatorTests
         Assert.True(ThemeContrast.TryParse("rgba(0,0,0,0.5)", out _));
     }
 
+    // ── FEA-06-PREREQ-2 P6/P7: Fluent `nm.fluent.visual/1` manifest + acrylic material colours ──────
+
+    private static ThemePackage Fluent => BuiltInThemes.FluentDark;
+
+    private static ThemeMetadata ManifestMetadata(string value) => new()
+    {
+        Extra = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [ThemeDefaults.FluentVisualManifestKey] = value,
+        },
+    };
+
+    [Fact]
+    public void Shipped_fluent_package_validates_without_errors()
+    {
+        var result = Validator.Validate(Fluent);
+
+        Assert.True(result.IsValid, Describe(result.Errors));
+        Assert.Equal(
+            ThemeDefaults.FluentVisualManifestVersion,
+            Fluent.Metadata.Extra[ThemeDefaults.FluentVisualManifestKey]);
+        Assert.Equal(ThemeDefaults.FluentVisualManifestValue, "nm.fluent.visual/1");
+    }
+
+    [Fact]
+    public void Fluent_package_without_the_manifest_is_an_error()
+    {
+        var package = Fluent with { Metadata = new ThemeMetadata() };
+
+        var result = Validator.Validate(package);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.FluentManifestMissing);
+    }
+
+    [Fact]
+    public void Hand_edited_fluent_manifest_is_an_error()
+    {
+        var package = Fluent with { Metadata = ManifestMetadata("2") };
+
+        var result = Validator.Validate(package);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.FluentManifestInvalid);
+    }
+
+    [Fact]
+    public void Non_fluent_package_declaring_the_manifest_is_an_error()
+    {
+        var package = WithMetadata(Default, ManifestMetadata(ThemeDefaults.FluentVisualManifestVersion));
+
+        var result = Validator.Validate(package);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.FluentManifestInvalid);
+    }
+
+    [Fact]
+    public void Fluent_package_missing_an_acrylic_material_colour_is_an_error()
+    {
+        var colors = new Dictionary<string, string>(Fluent.Dark.Colors, StringComparer.Ordinal);
+        colors.Remove(NmKeys.Material.Acrylic.Tint);
+        var package = Fluent with { Dark = Fluent.Dark with { Colors = colors } };
+
+        var result = Validator.Validate(package);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.FluentMaterialKeyMissing);
+    }
+
+    [Fact]
+    public void Non_fluent_package_declaring_an_acrylic_material_colour_is_an_error()
+    {
+        var colors = new Dictionary<string, string>(Default.Dark.Colors, StringComparer.Ordinal)
+        {
+            [NmKeys.Material.Acrylic.Base] = "#1F1F1F",
+        };
+        var package = WithDark(Default, Default.Dark with { Colors = colors });
+
+        var result = Validator.Validate(package);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, issue => issue.Code == ThemeIssueCodes.FluentMaterialKeyUnexpected);
+    }
+
     private static string Describe(IReadOnlyList<ThemeValidationIssue> issues) =>
         string.Join(" | ", issues.Select(issue => $"{issue.Code}@{issue.Path}: {issue.Message}"));
 }

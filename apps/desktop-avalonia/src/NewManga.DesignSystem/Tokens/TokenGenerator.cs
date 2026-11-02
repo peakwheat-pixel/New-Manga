@@ -120,6 +120,23 @@ public static class TokenGenerator
             warnings.Add($"derived token {derived.ResourceKey} = {derived.RawValue} ({derived.Derivation})");
         }
 
+        // ---- Theme-layer-only keys (registered in NmKeys, values carried by theme packages) -------
+        // FEA-06-PREREQ-2 P6 / W-9: these keys must exist as NmKeys constants (so UI code references no
+        // string literals) but must NOT be written into Tokens.Global.axaml — the Fluent theme package
+        // supplies their values through the design-system theme layer, so the DS keeps a single value truth.
+        foreach (var registered in TokenMap.ThemeLayerOnlyKeys)
+        {
+            if (!resourceKeys.Add(registered.ResourceKey))
+            {
+                throw new InvalidOperationException(
+                    $"theme-layer key '{registered.ResourceKey}' collides with a published resource key");
+            }
+
+            rows.Add(new GeneratedMappingRow(
+                "theme-layer", "(theme package)", registered.ResourceKey, registered.Kind, "(theme package)"));
+            warnings.Add($"theme-layer key {registered.ResourceKey} = theme package ({registered.Derivation})");
+        }
+
         // ---- Palettes --------------------------------------------------------------------------
         var darkRows = dark
             .Select(entry => (TokenMap.ColorResourceKey(entry.Path), entry.Value))
@@ -222,7 +239,7 @@ public static class TokenGenerator
             new("Generated/NmKeys.g.cs",
                 TokenDictionaryWriter.KeysClass(
                     resourceKeys.Concat(darkKeys).ToArray(),
-                    "Token-derived Nm.* resource-key constants (contract §2).")),
+                    "Token-derived Nm.* resource-key constants (contract §2; incl. theme-layer-registered keys).")),
             new("Generated/StatusCatalog.g.cs",
                 TokenDictionaryWriter.StatusSymbolsClass(
                     entries

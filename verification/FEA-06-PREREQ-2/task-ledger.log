@@ -1,0 +1,32 @@
+Task ledger (reproducible from doc/tasks/*.md)
+  task files            : 495  (tracked 495, untracked drafts 0)
+  terminal              : 484
+  non-terminal          : 10  (tracked 10, untracked drafts 0)
+    own plan row        : 3
+    named anywhere      : 3
+    outside the plan    : 7
+  by status:
+    done                     406 (terminal)
+    closed_with_limitations   41 (terminal)
+    cancelled                 18 (terminal)
+    historical                11 (terminal)
+    superseded                 8 (terminal)
+    in_review                  3
+    in_progress                2
+    proposed                   2
+    (none)                     1
+    approved                   1
+    blocked                    1
+    ready                      1
+
+  7 task(s) in a state that implies activity or dispatchability:
+  (r38: none of these may be bulk-closed; each needs individual proof)
+    approved                 GIT-CLEAN-PUBLICATION-DIAG-1                   outside
+    in_progress              FEA-D07-UNBLOCK                                outside
+    in_progress              FEA-GOV-11                                     outside
+    in_review                FEA-06-PREREQ-2                                plan-row
+    in_review                GIT-CLEAN-PUBLICATION-1                        outside
+    in_review                GIT-CLEAN-RUST-ISOLATION-1                     outside
+    ready                    GIT-CLEAN-RUST-CAPACITY-DESIGN-1               outside
+
+  wrote doc\TASK_LEDGER.md
