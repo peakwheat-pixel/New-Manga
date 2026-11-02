@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch B 待派**（I-4/I-5/I-7/I-8/I-11；Codex 额度恢复后优先 Codex，否则 ZCode 新会话）
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch B（ZCode CLI，Codex 额度故障转移）进行中**（I-7/I-4/I-5/I-11/I-8）
 depends_on:
   - FEA-06
   - FEA-07
