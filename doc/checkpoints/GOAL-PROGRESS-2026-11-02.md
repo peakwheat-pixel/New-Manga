@@ -984,3 +984,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 验证：build 0/0；定向 **3/3 PASS**；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；证据 `verification/D-14-STATUS-COLOR-FIX/impl-verification.log`（SHA `030245d6…`）；实施提交 `5ecc1e4c6`。
 - Task D-14 状态 `in_progress`（delivery_head 5ecc1e4c6；独立 impl Review 待）；STATUS/PLAN 指针已更新（进行中=D-14；READY=无）；PLAN 行数预算内（64 行）——已移除 FEA-06-RESIDUAL-1 历史行（关闭记录仍在 Task/STATUS/checkpoint）。
 - 已排程 **08:06 ZCode 派发**（改为：实现已完成，仅派独立 impl Review；Codex 10:25 备用）。
+## 152. D-14 独立复核准备（2026-11-03 07:52）
+
+- 已备 workspace `d14-impl-review-prompt.md`（ZCode fresh Reviewer：裁决 A 执行准确性、越权检查、映射/对比度断言真实判别、回归/门禁、其它 `StatusCatalog.ColorKey` 消费者回归）。
+- 08:06 提醒已更新为**仅派独立 impl Review**（实现已完成 `5ecc1e4c6`，1292/0/57；Codex 限额 10:25 备用）；approved 后 DSH 集成验证并关闭 D-14，再按 PLAN 释放下一节点。
+- 当前：D-14 in_progress；STATUS/PLAN 指针一致；治理 PASS(3)、pins 15/15；未 push。
