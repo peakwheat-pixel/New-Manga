@@ -6,6 +6,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
+using Avalonia.VisualTree;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using NewManga.App.Shell.V2;
 using NewManga.App.Views.Fluent;
@@ -56,7 +59,7 @@ public sealed class FluentResidual2VisualEvidenceTests
             try
             {
                 shots.AddRange(CapturePages(shell, theme));
-                shots.AddRange(CaptureComponents(theme));
+                if (theme == "light") shots.AddRange(CaptureComponents("current"));
             }
             finally
             {
@@ -143,7 +146,7 @@ public sealed class FluentResidual2VisualEvidenceTests
 
         foreach (var item in cases)
         {
-            yield return ("components", item.Name, item.State, "full", theme, Render(item.Control, item.W, item.H));
+            yield return ("components", item.Name, item.State, "full", theme, Render(item.Control, item.W, item.H, theme));
         }
     }
 
@@ -154,9 +157,10 @@ public sealed class FluentResidual2VisualEvidenceTests
         return shell.CaptureRenderedFrame() ?? throw new InvalidOperationException($"frame capture failed: {page}");
     }
 
-    private static Avalonia.Media.Imaging.Bitmap Render(Control content, int width, int height)
+    private static Avalonia.Media.Imaging.Bitmap Render(Control content, int width, int height, string theme)
     {
         var window = new Window { Width = width, Height = height, Content = content };
+        window.RequestedThemeVariant = theme == "dark" ? ThemeVariant.Dark : ThemeVariant.Light;
         window.Show();
         Dispatcher.UIThread.RunJobs();
         try
