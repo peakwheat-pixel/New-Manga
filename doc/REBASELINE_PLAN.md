@@ -19,7 +19,7 @@
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
 |FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；scope-r2 + impl-r12 approved；全量 **1138/0/57**；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1；residual 见 Task 卡；AC5 原生矩阵待硬件/waiver）|
-|FEA-06-RESIDUAL-1|FEA-06、FEA-07|**in_progress**（2026-11-02 范围 v3 冻结（scope-r3 approved）；impl Batch A 完成 `9337cbbe1`（I-1/I-2/I-3/I-6/I-9/I-10/I-12/I-13/I-14；安全回归 1170/0/57）；Batch B 部分完成 `a315bee02`（I-5/I-8/I-11 + I-4 声明覆盖；全量 1177/0/57）；I-4 剩余状态/审查待续；FEA-09/10/11/12/13 仅为 BLOCKED 承接方）|
+|FEA-06-RESIDUAL-1|FEA-06、FEA-07|**in_progress**（2026-11-02 范围 v3 冻结（scope-r3 approved）；impl Batch A 完成 `9337cbbe1`（I-1/I-2/I-3/I-6/I-9/I-10/I-12/I-13/I-14；安全回归 1170/0/57）；Batch B 部分完成 `6edf24904`（I-5/I-8/I-11/I-4 声明覆盖+扩展；全量 1178/0/57）；I-4 剩余状态/审查待续；FEA-09/10/11/12/13 仅为 BLOCKED 承接方）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|

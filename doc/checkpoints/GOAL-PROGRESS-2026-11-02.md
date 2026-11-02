@@ -588,3 +588,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **验证**（`a315bee02`）：build 0/0；**无过滤全量 1177/0/57**（基线 1137 + Batch A 33 + Batch B 7）；旧 FEA-06 PNG 字节零漂移；生成器/治理/pins 全过。证据 `batch-b-verification.log`。
 - **D-7 状态**：双 agent 额度耗尽（Codex 00:23 / ZCode 03:02 恢复）；DSH 按推荐口径实施并保留独立 Review 待补（不得自审）。
 - **下一步**：收尾 I-4 剩余组件状态 + I-11 Tab 序 + I-5 feedback/decorative 消费；agent 恢复后派 fresh impl Review（Codex 优先）→ DSH 集成验证 → 按实际 AC done/closed_with_limitations。
+## 83. FEA-06-RESIDUAL-1 Batch B 续作（2026-11-02 深夜）
+
+- **I-4 扩展**：`Button.segmented-item`（selected/hover/pressed/disabled）、`Slider`（hover/disabled）、`TabItem`（hover/selected/disabled）状态样式 + 声明覆盖断言；TabItem 选中 Foreground 保持 Text.Primary（与 accent pipe 既有测试一致）。
+- **I-11 扩展**：隐藏控件不可获得焦点（Tab 序排除）、可见兄弟可聚焦的显式断言。
+- **验证**：build 0/0；无过滤全量 **1178/0/57**；旧 FEA-06 PNG 零漂移；生成器/治理/pins 通过。交付 `6edf24904`；证据 `batch-b-verification.log` SHA `df752887…`。
+- **剩余**：CommandPalette/ContextMenu/Tooltip/Toast/BatchMatrix/RunProjectionBar 独立状态；hover/pressed 视觉截图（NOT_RUN）；I-5 feedback/decorative 动画消费；独立 impl Review 待 agent 额度恢复（Codex 00:23 / ZCode 03:02）。
