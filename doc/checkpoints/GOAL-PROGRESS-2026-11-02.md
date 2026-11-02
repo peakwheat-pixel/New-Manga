@@ -768,3 +768,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - impl-r3（fresh Codex）：**changes_requested，P0=0 / P1=1 / P2=0**；实跑全量 1233/0/57、四命令 EXIT=0、PNG 不变；报告 `doc/reviews/FEA-06-RESIDUAL-1-impl-r3.md` 已入库。其余 R2 指定反例已核验修复。
 - **R3-001**：Reader 工具条自动隐藏后，同坐标再次点击中部无法唤回（PointerPressed tunnel 先 reveal 再 toggle；full/reduce 均复现）。已冻结返修范围并派 fresh Codex 实施（job `pwsh-fefbfa1ac8874acc`，prompt `impl-r3-rework-codex-prompt.md`）：中部按事件前状态切换一次、release 只续 2s、其他输入唤醒、真实 MouseDown/Up 双向显隐回归。
 - 完成后：全量+证据刷新 → fresh Codex impl-r4 复核 → DSH 集成验证 → done/closed_with_limitations。
+## 117. R3-001 返修交付 + impl-r4 复核派发（2026-11-03 02:20）
+
+- Codex 实施 R3-001（job `pwsh-fefbfa1ac8874acc`，exit 0）：`3c3afe170`（中部按下按事件前状态切换、release 只续 2s、其他输入唤醒）+ `669a4ae02`（证据/Handoff）；全量 **1245/0/57**（+12），四命令 EXIT=0，旧 PNG 零漂移，未 push。
+- DSH 已派 fresh Codex **impl-r4** 独立复核（job `pwsh-61019e8683e3416a`，prompt `impl-review-r4-prompt.md`）：真实 MouseDown/Up 双向显隐探针 + R2 已修反例回归 + 常规门禁。
+- r4 approved 后：DSH 集成验证（integration-verify.ps1）→ 按实际 AC 结果 done/closed_with_limitations；D-8/B-5/D-1 保持登记。
