@@ -235,3 +235,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **收口**：卡 `status: done`、canonical_evidence_status / resource_closeout_status **complete**、31 条证据（30 CANONICAL + 1 SOURCE_PIN）机械校验通过；STATUS 当前 Task 置空、下一候选 `FEA-06`（需先范围复核/冻结）；PLAN 表行 + 当前 DAG 段滚动为 done。
 - **下一动作**：以 **FEA-06 范围复核/冻结（scope）** 为下一唯一动作——FEA-06 r1 changes_requested 的拆前置已全部满足（PREREQ-1/2 done），需重开范围复核（scope-rN）→ P0/P1=0 后置 ready 释放四页实现。
 - **遗留（非阻塞）**：`G-DELETE-IMPL` OPEN；`FOLLOW-UP-FEA00A-1` 待用户提供 DB 副本；未授权 push（DSH 有最终 push 权但本会话未 push）。
+## 31. 干净源码快照 push（2026-11-02）
+
+- **授权**：用户 2026-11-02 直接指示 **push**；沿用 2026-10-26/29 已确认口径——只推材料已隔离的干净源码快照到 `origin` 新分支，不推 `main`、不 force、不覆盖远端 `main`、不设 upstream。
+- **快照**：`G:/CODEX/New Manga.workspace/publish/clean-snapshot-20261102`，源 commit 本地 `main` HEAD `5c12ab269`；单一 root commit `ac7d488e1944893f961b94eb3d774c899f618829`（无父提交、无 remote/alternates/shallow）；tracked **1413** 文件、约 **20.1 MB**、图片 **0**、禁区泄漏 **0**。
+- **口径**：白名单同 2026-10-29（apps/src/tests/packaging/test_assets + 配置 + tools/p02 + tools/smoke）；本次增补仓库根许可证/声明文件（GPL-3.0 合规）与 `doc/design/redesign-v1/40-fusion/tokens.json`（构建 Content 复制 + 测试根定位所需的公开设计令牌）。
+- **推送前验证**：`dotnet build -c Debug -warnaserror` exit 0（0w/0e）；App.Appearance/Host/ThemeEngine/DesignSystem/ApplicationCore 五工程全绿，App.Tests **452/0/7**；CoreClient **11 failed**（已知口径限制：依赖被剔除的 `AGENTS.md` + `verification/` 契约证据，非代码回归；完整仓库基线 1022/0/57）。
+- **推送**：`git push --no-follow-tags <url> HEAD:refs/heads/clean-snapshot-20261102` → `* [new branch]`，**exit 0**；远端回读 `clean-snapshot-20261102` = `ac7d488e…` 新建，`clean-snapshot-20261026/20261029`/`codex/clean-source-snapshot`/`main`/`public-release` 均**未变**（远端 `main` 仍 `b1c1f5a5…`）。
+- **记录**：`doc/PUSH_RECORD_2026-11-02.md`。未推送本地 `main`；未设置 upstream；未传播私有素材。

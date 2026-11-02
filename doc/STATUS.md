@@ -21,7 +21,7 @@
 - 真机端到端脚本化验收：run-i18 7/7、run-i36 10/10。
 
 ## Gate 与保留项
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。P20 发布 Gate 已实测通过。2026-10-26 push 已执行（快照口径 `clean-snapshot-20261026`=`892b946e`）；main 未推。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。P20 发布 Gate 已实测通过。2026-10-26 push 已执行（`clean-snapshot-20261026`=`892b946e`）；2026-11-02 push 已执行（`clean-snapshot-20261102`=`ac7d488e`，[记录](PUSH_RECORD_2026-11-02.md)）；main 未推。
 
 ## 当前权威指针
 - DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
