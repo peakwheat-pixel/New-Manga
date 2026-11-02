@@ -681,3 +681,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 子项台账 `item-status.md` 刷新至 1195/0/57 与最新测试指针；Task evidence `EV-FEA06R1-ITEMSTATUS` commit 修正，7 行 SHA 复审 **0 mismatch**。
 - Codex 探针（00:16）仍返回 `usage limit ... try again at 12:23 AM` → 继续等待 00:23；`dispatch-review.ps1`/`integration-verify.ps1`/prompt 均就绪，提醒 00:24 `scheduled`。
 - 下一步：额度恢复后立即运行 `dispatch-review.ps1` 派独立 impl Review（对照 `pre-review-verification.log`）；ZCode 03:02 备用。
+## 100. FEA-06-RESIDUAL-1 I-4 BookRow 指针态（2026-11-03 00:20）
+
+- `FluentComponentPointerStatesTests` 增补 BookRow（Bg.Canvas→hover Bg.Overlay→pressed/selected Accent.Muted）；矩阵 BookCard/BookRow 均升级 EFFECTIVE。
+- 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `59ef3abef`；证据 SHA `177e5cc6…`。
+- 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review（所有前置就绪）；ZCode 03:02 备用。
