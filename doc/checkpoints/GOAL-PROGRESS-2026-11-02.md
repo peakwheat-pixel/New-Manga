@@ -228,3 +228,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **唯一 P1（R1-P1-1）处置**：实施期写域扩张未登记——`ThemePaletteComposer.cs`（`ThemeEngine/Palette/**`）与 `IThemeSettingsSink.cs`（`ThemeEngine/Service/**`）不在 allowed_paths 任何历史版本；行为必需且正确、已在 delivery-notes/checkpoint 披露，但缺 W-12 式登记 → **docs-only 补正**：`allowed_paths` 回填两目录 + 新增 **W-13** 裁决行（行为必需性/零契约面变化/与 W-12 同性质）。
 - **P2×3 处置**：R1-P2-1（W-12 属实施期自裁决，impl-r1 独立确认合法，P2 注记）；R1-P2-2（`ThemeValidator.IdPattern` 放宽面宽于最小必要，登记为已知放宽，user/builtin 命名空间隔离留 FEA-06 导入侧）；R1-P2-3（`StubThemeStudioService.Create` 的 sink 注入无直接测试，沙箱默认 null 安全且 `CreateProduction` 有端到端测试，接受遗留）。三者均不阻塞本卡。
 - **下一步**：派 **impl-r2 窄面复核**（只核 R1-P1-1 闭合、docs-only 无暗改、无新 findings）；approved 后进入 DSH 集成验证（重跑 §7、回填 canonical evidence / closeout、置 done、STATUS/PLAN 指针滚动）。
+## 30. PREREQ-2 收口（impl-r2 approved + DSH 集成验证 → done，2026-11-02）
+
+- **impl-r2**（独立上下文子代理，被审 `f3224cb89`）：**approved，P0=0 / P1=0 / P2=1**；R1-P1-1 **完全闭合**（`allowed_paths` +2 行与 impl-r1 指认两文件一一对应、W-13 四要素齐全、无夹带扩权）；docs-only 成立（修复 commit 只动 5 个治理/证据文件）；`check.ps1` PASS(3 warnings)、`verify_pins` 15/15；`E-P2-DELIVERY-NOTES` 新 sha 与工作区逐位一致。唯一 P2 = delivery-notes 行 commit 列滞后（本轮已修，R2-P2-1 CLOSED）。
+- **DSH 集成验证**：main 直接实现、无 worktree；集成 commit = delivery head **`92cac5ab1`**。§7 全绿：build **0 警告/0 错误**、全量 **1022/0/57**、TokenGen/ThemeGen `-- --check` up to date、`check.ps1` PASS(3 warnings)、`verify_pins` 15/15 → `verification/FEA-06-PREREQ-2/integration-verification.log`。
+- **收口**：卡 `status: done`、canonical_evidence_status / resource_closeout_status **complete**、31 条证据（30 CANONICAL + 1 SOURCE_PIN）机械校验通过；STATUS 当前 Task 置空、下一候选 `FEA-06`（需先范围复核/冻结）；PLAN 表行 + 当前 DAG 段滚动为 done。
+- **下一动作**：以 **FEA-06 范围复核/冻结（scope）** 为下一唯一动作——FEA-06 r1 changes_requested 的拆前置已全部满足（PREREQ-1/2 done），需重开范围复核（scope-rN）→ P0/P1=0 后置 ready 释放四页实现。
+- **遗留（非阻塞）**：`G-DELETE-IMPL` OPEN；`FOLLOW-UP-FEA00A-1` 待用户提供 DB 副本；未授权 push（DSH 有最终 push 权但本会话未 push）。

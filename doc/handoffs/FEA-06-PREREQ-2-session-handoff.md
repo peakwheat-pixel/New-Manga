@@ -1,10 +1,10 @@
 ---
 task_id: FEA-06-PREREQ-2
 author: DeepSeek Harness（Lead / Architect / Integrator）
-recipient: DeepSeek Harness（新会话）
-base_commit: 4659e59d3
-delivery_head: df089039c
-status: in_progress
+recipient: DeepSeek Harness（后续会话）
+base_commit: a33778608
+delivery_head: 92cac5ab1
+status: done
 ---
 
 # Handoff：FEA-06 前置 2 范围冻结（跨会话交接）
@@ -14,9 +14,9 @@ status: in_progress
 
 ## 1. 一句话现状
 
-FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 已实现完成并置 `in_review`**（范围冻结：scope-r1/r2/r3 changes_requested → **scope-r4 approved（P0/P1=0）**；P1–P7 / AC1–AC7 已交付；impl-r1 复核 changes_requested，唯一 P1 为程序性写域登记缺口，已 docs-only 补正（allowed_paths + W-13），**待 impl-r2 窄面复核**）。
+FEA-06（Fluent 四页 UI）的两个前置任务 **PREREQ-1 与 PREREQ-2 均已 done**：PREREQ-2 范围冻结 scope-r1/r2/r3 changes_requested → **scope-r4 approved**，实现 P1–P7 / AC1–AC7 → **impl-r1 changes_requested（唯一 P1 写域登记缺口）→ docs-only 补正 → impl-r2 approved（P0/P1=0）** → DSH 集成验证通过（集成 commit `92cac5ab1`）。
 全量测试 **1022 passed / 0 failed / 57 skipped**（基线 979/0/57）；治理 `check.ps1` **PASS（3 warnings）**、`verify_pins` **15/15**、两生成器 `-- --check` up to date。
-**当前唯一下一步：派 impl-r2 窄面复核（只核 R1-P1-1 闭合与无新问题）。**
+**当前唯一下一步：FEA-06 范围复核/冻结（scope）**——前置已全部满足，需重开范围复核 → P0/P1=0 后置 ready 释放四页实现。
 
 ## 2. 关键坐标
 

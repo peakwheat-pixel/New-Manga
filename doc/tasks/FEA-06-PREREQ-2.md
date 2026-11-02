@@ -3,8 +3,8 @@ id: FEA-06-PREREQ-2
 title: Fluent frontend 激活与 V2 并存边界（组合根 + 双壳入口）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: scope_review_r4_approved_2026-11-02
+status: done
+approval: scope_review_r4_approved_2026-11-02; impl_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: null
 reviewer: null
@@ -13,10 +13,10 @@ depends_on:
 base_commit: a33778608
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 92cac5ab1
 delivery_head: 92cac5ab1
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete（31 条证据；DSH 集成验证通过：build 0w/0e、1022/0/57、两 --check up to date、check PASS(3)、pins 15/15）
+resource_closeout_status: complete（无 worktree；证据/过程文件全部登记，见 Resource Manifest）
 evidence_dir: verification/FEA-06-PREREQ-2
 allowed_paths:
   - doc/tasks/FEA-06-PREREQ-2.md
@@ -103,6 +103,7 @@ allowed_paths:
 | AC6 | `dotnet test apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests` + `NewManga.ThemeEngine.Tests` + `TokenGen -- --check` + `ThemeGen -- --check` | .NET 9 + 生成管线 | **PASS**（11 + 51；两 `--check` up to date） | `ac6-r14-tests.log`、`ac6-material-tests.log`、`tokengen-check.log`、`themegen-check.log` |
 | AC7 | `dotnet test apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests`（`ThemeValidator`/`BuiltInThemes`） | .NET 9 | **PASS**（60） | `ac7-manifest-tests.log` |
 | AC4 | 全量 sln build/test | 全量 | **PASS**（build 0 warnings/0 errors；**1022/0/57**） | `build.log`、`test.log` |
+| AC4/Gate | 全量 build+test+TokenGen/ThemeGen `--check`+`check.ps1`+`verify_pins`（DSH 集成验证） | 全量 + 治理 | **PASS**（build 0w/0e；1022/0/57；两 `--check` up to date；check PASS(3)；pins 15/15） | `verification/FEA-06-PREREQ-2/integration-verification.log` |
 
 ## Canonical Evidence
 
@@ -134,10 +135,11 @@ allowed_paths:
 | E-P2-TEST | AC4 | `verification/FEA-06-PREREQ-2/test.log` | `92cac5ab1` | `1325f8408d401440cbd33ec6dfb2a4c6fa2c4eecb2794605c86897a6000f2dcf` | CANONICAL |
 | E-P2-CHECK | Gate | `verification/FEA-06-PREREQ-2/governance-check.log` | `92cac5ab1` | `9fd5ad40131a58dab5c8409df053f967e6efd30dff8da7f65e21cf93d5a5edc4` | CANONICAL |
 | E-P2-PINS | Gate | `verification/FEA-06-PREREQ-2/verify-pins.log` | `92cac5ab1` | `cf0df19a460c144428b4f973b0f1de8b36e0e106d73c0593e15b4e95f84d3615` | CANONICAL |
-| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `92cac5ab1` | `1b279fdd0bcfef805860afccbf7253490e1776c02b017d4e538a63431bb7b4a1` | CANONICAL |
+| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `f3224cb89` | `1b279fdd0bcfef805860afccbf7253490e1776c02b017d4e538a63431bb7b4a1` | CANONICAL |
 | E-P2-FLUENT-SMOKE | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-fluent-smoke.log` | `0d1037fd3` | `d679b34e04a0ba1a295bcf37eadb73c0b37d45d1335753c53c66928f9ef77a51` | CANONICAL |
 | E-P2-V2-SMOKE | AC2 | `verification/FEA-06-PREREQ-2/ac2-v2-smoke.log` | `0d1037fd3` | `11cb9ee6bb72b01648c23fa318eb336371d79fae2d98c68d6432eaf357e7f536` | CANONICAL |
 | E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `92cac5ab1` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
+| E-P2-INTEGRATION | AC4/Gate | `verification/FEA-06-PREREQ-2/integration-verification.log` | `PENDING` | `c5a347b2685a1d8c469652749d7480178474542876f9f8b1417e6ca57853f33a` | CANONICAL |
 
 ## Resource Manifest
 
@@ -148,6 +150,7 @@ allowed_paths:
 
 - **实施完成（2026-11-02）**：P1–P7 / AC1–AC7 全部实现并自测（全量 **1022/0/57**；两 `--check` up to date；`check.ps1` PASS 3 warnings；`verify_pins` 15/15）。
 - **偏差**：D-1 已关闭（coordinator 迁入 `NewManga.Appearance`）；W-12（P7 校验器归属 + `Validation/**` 写域补口）与 W-13（`Palette/**` + `Service/**` 写域回填，处置 impl-r1 R1-P1-1）已入附加裁决点；详见 `verification/FEA-06-PREREQ-2/delivery-notes.md`。
-- **实现复核**：impl-r1（独立上下文，`9478c96fb`）**changes_requested（P0=0 / P1=1 / P2=3）**——AC1–AC7 全部 MET，唯一 P1 为程序性写域登记缺口（R1-P1-1，已 docs-only 补正：allowed_paths + W-13；P2×3 接受遗留）。待 impl-r2 窄面复核（只核 R1-P1-1 闭合与是否引入新问题）。
-- **待办**：impl-r2 approved 后填 canonical_evidence_status / resource_closeout_status、integration_commit 与本段最终结论。
-- 待关闭时填写。
+- **实现复核**：impl-r1（独立上下文，`9478c96fb`）**changes_requested（P0=0 / P1=1 / P2=3）**——AC1–AC7 全部 MET，唯一 P1 为程序性写域登记缺口（R1-P1-1）→ docs-only 补正（allowed_paths + W-13）；impl-r2（独立上下文，`f3224cb89`）**approved（P0=0 / P1=0 / P2=1）**，R1-P1-1 完全闭合、docs-only 成立、无新 P0/P1；R2-P2-1（delivery-notes 行 commit 列滞后）本轮已修（改为 `f3224cb89`）。R1-P2-1..3 接受遗留/已注记。
+- **DSH 集成验证（2026-11-02）**：main 直接实现、无 worktree；集成 commit = delivery head **`92cac5ab1`**。重跑 §7 全绿：build 0 警告/0 错误、全量 **1022/0/57**、TokenGen/ThemeGen `-- --check` up to date、`check.ps1` PASS（3 warnings）、`verify_pins` 15/15 → `verification/FEA-06-PREREQ-2/integration-verification.log`。
+- **终态**：`status: done`；canonical_evidence_status / resource_closeout_status 均为 complete；31 条证据（30 CANONICAL + 1 SOURCE_PIN）经 `check.ps1` sha 机械校验通过。后续四页内容、导航状态容器与 Theme Studio Fluent 适配属 **FEA-06**。
+- 关闭于 2026-11-02（DSH，main 直接实现，未 push）。

@@ -1,0 +1,33 @@
+# FEA-06-PREREQ-2 DSH 集成验证（main 直接实现，无 worktree）
+# time: 2026-11-02 10:33:38 +08:00
+# head: f3224cb8973499ecd2be3d0b56a4d27b596c084c
+# command: dotnet build apps/desktop-avalonia/NewManga.sln --nologo
+# exit: 0
+#   已成功生成。
+#   0 个警告
+#   0 个错误
+# command: dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings
+# exit: 0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 117 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 591 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 958 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    86，已跳过:     0，总计:    86，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 23 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   452，已跳过:     7，总计:   459，持续时间: 57 s - NewManga.App.Tests.dll (net9.0)
+# command: TokenGen --check
+# exit: 0
+#   rows:    292
+#   up to date: every generated artifact matches the frozen token source byte-for-byte
+# command: ThemeGen --check
+# exit: 0
+#   up to date: generated theme artifacts match the frozen token source byte-for-byte
+# command: check.ps1
+# exit: 0
+#   WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+#   WARN: doc/STATUS.md 已达到预算的 80%：3086 bytes / 29 lines
+#   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4009 bytes / 62 lines
+#   Governance check: PASS (3 warnings)
+# command: verify_pins.ps1
+# exit: 0
+#   PIN AUDIT: PASS (all 15)
