@@ -249,8 +249,36 @@ public sealed class PresentationWindow : Window
     }
 
     /// <summary>Switches the hosted content tree; the window identity is preserved and failures roll back.</summary>
-    public Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default) =>
-        _coordinator.SwitchAsync(frontendId, cancellationToken);
+    public async Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default)
+    {
+        // R-022: a failed transaction must not change the user-visible window mode. Promote/leaving the
+        // Fluent tree clears full screen before the commit is known to succeed, so snapshot it here and
+        // restore it together with the previous content tree on failure (success keeps the cleanup policy).
+        var windowState = WindowState;
+        var fullScreenFluent = ContentHost.Current as FluentShellSurface;
+        var readerWasFullScreen = fullScreenFluent?.ReaderViewModel.IsFullScreen == true;
+
+        var result = await _coordinator.SwitchAsync(frontendId, cancellationToken).ConfigureAwait(true);
+        if (!result.Succeeded)
+        {
+            RestoreWindowMode(windowState, fullScreenFluent, readerWasFullScreen);
+        }
+
+        return result;
+    }
+
+    private void RestoreWindowMode(WindowState windowState, FluentShellSurface? fluent, bool readerWasFullScreen)
+    {
+        if (fluent is not null && ReferenceEquals(ContentHost.Current, fluent))
+        {
+            fluent.ReaderViewModel.IsFullScreen = readerWasFullScreen;
+        }
+
+        if (WindowState != windowState)
+        {
+            WindowState = windowState;
+        }
+    }
 
     private void ApplyWindowMaterial()
     {

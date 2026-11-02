@@ -10,8 +10,10 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
+using NewManga.App.Views.Fluent;
 using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
+using NewManga.DesignSystem.Theming;
 using NewManga.Presentation.Avalonia.Switching;
 using NewManga.Presentation.Avalonia.Windows;
 using Xunit;
@@ -135,6 +137,7 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
         Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
         Assert.Null(window.StagingHost.Current);
+        Assert.Equal(WindowState.Normal, window.WindowState);
         Assert.True(_journal.TryRead(out var entry, out _));
         Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
         window.Close();
@@ -300,6 +303,65 @@ public sealed class PresentationWindowTests : IDisposable
         hidden.HasActiveRuns = false;
         window.Close();
         Assert.False(cancelled, "a clean hidden cached tree must not block the close");
+    }
+
+    /// <summary>
+    /// R-022 (r6): the window mode is part of the switch transaction. A failed switch must restore the
+    /// previous tree AND the previous full-screen mode (promote/leaving Fluent clears it before commit).
+    /// </summary>
+    [AvaloniaFact]
+    public async Task FailedSwitch_RestoresTheOriginalFullScreenMode()
+    {
+        var application = Application.Current!;
+        using var themeManager = new DesignSystemThemeManager(application);
+        themeManager.Initialize();
+        FluentShellSurface? fluent = null;
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id =>
+            {
+                if (id == FrontendSelector.CurrentV2FrontendId)
+                {
+                    throw new InvalidOperationException("cannot build v2");
+                }
+
+                fluent = new FluentShellSurface(
+                    AppOptions.Parse(Array.Empty<string>()),
+                    FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+                    NullHostController.Instance,
+                    _appearance,
+                    themeManager);
+                return fluent;
+            });
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            fluent!.Navigate(FluentPage.Reader);
+            Dispatcher.UIThread.RunJobs();
+            var fullScreenButton = fluent.GetVisualDescendants().OfType<Button>()
+                .FirstOrDefault(button => string.Equals(button.Content as string, "全屏", StringComparison.Ordinal));
+            Assert.NotNull(fullScreenButton);
+            fullScreenButton!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, window.WindowState);
+
+            var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+
+            Assert.False(result.Succeeded);
+            Assert.Same(fluent, window.ContentHost.Current);
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, window.WindowState);
+        }
+        finally
+        {
+            window.Close();
+        }
     }
 
     [AvaloniaFact]

@@ -1,0 +1,33 @@
+# FEA-07 r6 rework (R-022 failed-switch window mode compensation)
+# time: 2026-11-02 19:46:00 +08:00
+# head: 80b2203e5 (uncommitted rework; committed delivery head is pinned by final-evidence.log)
+# worktree: M apps/desktop-avalonia/src/NewManga.App/Views/Presentation/PresentationWindow.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PresentationWindowTests.cs
+#   M verification/FEA-07/performance-baseline-release.json
+#   A doc/reviews/FEA-07-impl-r6.md (r6 independent review report, decision: approved P0=0/P1=0/P2=2)
+# build (Debug, sln): exit=0
+#   0 个警告
+#   0 个错误
+# focused tests (PresentationWindow + PresentationHostComposition): 23/23 passed
+#   new: PresentationWindowTests.FailedSwitch_RestoresTheOriginalFullScreenMode
+# full-tests (sln, NewManga.runsettings): exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21 - NewManga.Appearance.Tests.dll
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38 - NewManga.Presentation.Avalonia.Tests.dll
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79 - NewManga.Host.Tests.dll
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253 - NewManga.ThemeEngine.Tests.dll
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87 - NewManga.DesignSystem.Tests.dll
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31 - NewManga.ApplicationCore.Tests.dll
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150 - NewManga.CoreClient.Tests.dll
+#   已通过! - 失败:     0，通过:   526，已跳过:     7，总计:   533 - NewManga.App.Tests.dll
+#   全量: 1135 passed / 0 failed / 57 skipped (previous head: 1134/0/57; +1 test)
+#   skip reason: Host 28 / CoreClient 22 / App 7 = 57, direct cause NEWMANGA_CORECLIENT_SIDECAR_DIR unset
+# performance baseline (Release, 4 warmup + 20 measured, real gates):
+#   run 1: p50 131.26 / p95 292.65 / max 312.73 / cold 608.41 / mem +648 B / handles +2 -> PASS
+#   run 2 (recorded JSON): p50 88.42 / p95 261.38 / max 275.14 / cold 605.39 / mem +22496 B / handles +3 -> PASS
+#   W-5 budget p95 <= 1000 ms: PASS on both runs
+# generators:
+#   TokenGen -- --check: rows 292; up to date (byte-for-byte) exit=0
+#   ThemeGen -- --check: up to date (byte-for-byte) exit=0
+# governance:
+#   check.ps1: PASS (3 warnings)
+#   verify_pins.ps1: PASS 15/15
