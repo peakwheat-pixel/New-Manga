@@ -898,3 +898,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **R2-001 诚实处置**：真实 ShelfPageView 装饰层存在，但 headless `ForceRenderTimerTick` 下 FluentDecorativeLoop 未推进（3 帧同 SHA），Reader 粒子因 fake 单页章节 PageIndex 不前进；**已删除不可复现 decor 输出，不造假**，登记为待用可控帧源/测试钩子解决的 P0 残项。
 - 验证：默认零写入、opt-in 仅本卡 visuals 新增；全量 **1272/0/57**；提交 `21e305249`；未 push；旧四 PNG 未动。
 - 仍余：R2-001 decor 真实帧、R2-006 Slider thumb、R2-008 inventory head、R2-009 日志格式、R2-011 状态通道、R2-012 失焦/可读性、R2-017 Handoff；05:24 提醒已更新。
+## 138. R2-006/008/009 修复（2026-11-03 05:12）
+
+- R2-006：Slider thumb 改冻结令牌（`Slider /template/ Thumb` = Accent.Base；hover=Accent.Hover；disabled=Text.Disabled），消除 FluentTheme 默认蓝。
+- R2-008：`visual-inventory.md` 增 **head 列**（值由 `.git/HEAD` 解析），27 PNG 行全部含 head。
+- R2-009：impl-in1/2a/2b 三份日志补 shell/host/base/head、命令、EXIT、逐程序集计数、57 skip 明细与差值（1245→1257→1271→1272）。
+- 验证：全量 **1272/0/57**；默认零写入、opt-in 仅本卡 visuals 新增；旧四 PNG 未动；提交 `9f5723cb0`；未 push。
+- 仍余：**R2-001 decor 真实帧（P0 未闭环）**、R2-011 状态通道/默认值冒充、R2-012 失焦真实接线+粒子可读性、R2-017 Handoff；05:24 提醒保留。
