@@ -861,3 +861,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 校准后重跑 IN-2A：AlertBanner 交叉断言暴露 **StatusCatalog 与 Controls.Status 的 NotStarted 令牌不一致**（Disabled vs Secondary，后者有 ≥4.5:1 注释权威）——登记 **D-14** 至 Task 待裁决（推荐改 StatusCatalog；因超出本卡 allowed_paths 不在本卡实施）。
 - 仍余：BookCard/BookRow disabled opacity=1、SurfaceCard 默认 Background null（`Controls.Fluent.axaml` 规则存在，疑似测试样式加载/时序；续接用 `FluentComponentStateEffectiveTests` 同款加载对照）。
 - 为保持主分支全绿，IN-2A 测试仍不提交（快照已保留校准与注释）；主分支 1257/0/57 不变；IN-2B 未开始。
+## 132. IN-2A 完成 + 真实样式缺陷修复（2026-11-03 04:10）
+
+- DSH 按 D-7 收尾 IN-2A，并发现/修复**产品级样式缺陷**：Avalonia 类型选择器不匹配派生控件，导致 `SurfaceCard/BookCard/BookRow/FluentDialog/RegionBox`（Border/Button 子类）不套用类样式；`Controls.Fluent.axaml` 相关选择器改 class-only + `x:SetterTargetType`（Border/Button）。
+- IN-2A：16 组 + AlertBanner 九值有效属性断言（14 tests）全绿；NotStarted 按 `Controls.Status.axaml` 权威（Text.Secondary），交叉断言特判并登记 **D-14**（StatusCatalog 仍 Text.Disabled，待裁决改 catalog）。
+- 验证：build 0/0；IN-2A 14/14 + coverage 测试 PASS；全量无过滤 **1271/0/57**（+14）；证据 `verification/FEA-06-RESIDUAL-2/impl-in2a-verification.log`；提交 `1d2df1d15`；未 push；旧四 PNG 未动。
+- 剩余：**IN-2B**（opt-in 像素证据 + visual-inventory + 逐图签署）；05:24 提醒已更新为仅 IN-2B 续接；完成后独立 impl Review → 集成/关闭。
