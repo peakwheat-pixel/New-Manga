@@ -20,6 +20,9 @@ resource_closeout_status: pending
 evidence_dir: verification/FEA-06-PREREQ-2
 allowed_paths:
   - doc/tasks/FEA-06-PREREQ-2.md
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Persistence/**
+  - apps/desktop-avalonia/src/NewManga.DesignSystem/**
+  - apps/desktop-avalonia/src/NewManga.Appearance/**
   - apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml
   - apps/desktop-avalonia/src/NewManga.App/Program.cs
@@ -48,6 +51,8 @@ allowed_paths:
 | P2 | `App.axaml.cs`/`Program.cs` 改造：按 selector 创建对应 Shell；V2 既有路径不变 |
 | P3 | `Views/Fluent/` 目录与 Shell 骨架（仅导航 + 四页占位；页面内容由 FEA-06 实现） |
 | P4 | 测试：selector 选择逻辑（fluent/fluent-dark/v2/未知）+ V2 回归不破 |
+| P5 | **W-9 承接（Q-32）**：`ThemeSettingsStore` 兼容写/双者收敛——`AppearanceCoordinator` 成为唯一写者，`ThemeSettingsStore` 标 deprecated 并保留一个 release 兼容写（避免 ThemeEngine↔Appearance 循环：由 App 侧 sink 适配） |
+| P6 | **W-9 承接（Q-32）**：`Nm.Material.Acrylic.Base/Tint` 主题层键 + 主题包 schema 演进 + `ThemeLayerAllowedKeys` + `R14ContractTests` 59/65 计数更新 |
 
 ## 验收标准
 
@@ -55,6 +60,8 @@ allowed_paths:
 - [ ] **AC2**：组合根按 selector 建壳；V2 启动路径与既有测试不回归。<<TODO>>
 - [ ] **AC3**：Fluent Shell 骨架存在（四页占位 + 导航），可启动（headless 测试）。<<TODO>>
 - [ ] **AC4**：全量 sln 不退化 + 证据。<<TODO>>
+- [ ] **AC5（W-9/Q-32）**：双写者收敛 + `ThemeSettingsStore` 兼容写（一个 release）+ 测试。<<TODO>>
+- [ ] **AC6（W-9/Q-32）**：`Nm.Material.Acrylic.Base/Tint` 主题层键落地 + 主题包 schema/`ThemeLayerAllowedKeys`/`R14ContractTests` 计数同步。<<TODO>>
 
 ## 禁止范围
 
