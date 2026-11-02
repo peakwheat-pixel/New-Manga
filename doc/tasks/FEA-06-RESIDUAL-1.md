@@ -169,10 +169,11 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `54a77e6a5698cd79049739707a263e8685fb2c3edc0ed49645befa189e123f9b` | CANONICAL |
-| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `981719a13` | `4e16174f40ed2829918759fc0fbd5d3aa8d985d2f1cbf951483c00c8215f6d0c` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `c2d4ce4b6` | `54a77e6a5698cd79049739707a263e8685fb2c3edc0ed49645befa189e123f9b` | CANONICAL |
+| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `c2d4ce4b6` | `15e822a73fa90305b44b16ef50c6c0987aa05a5de0e817aedf29b0627353bc74` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `b79241c9a` | `abb93fd7c8bdc1b37f707a60303c06bce7ce19659e1b9f26a7189e1e98f21350` | CANONICAL |
-| EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |`r`n| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
+| EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |
+| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
 
