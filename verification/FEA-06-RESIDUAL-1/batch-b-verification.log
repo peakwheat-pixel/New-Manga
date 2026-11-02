@@ -63,3 +63,7 @@
 ## 补记 4（I-11 四页焦点场景，全量 1180/0/57）
 - `FluentFocusPageCoverageTests`：Library/Workbench/Reader/Settings 四页分别找到可见可聚焦控件 → 键盘焦点后共享 2px 焦点环实际绘制（ring Border 可见）→ 覆盖设计 03 §3「四页至少各 1 个焦点场景」。
 - 验证：无过滤全量 **1180 passed / 0 failed / 57 skipped**（DS 91 + App 567）；旧 FEA-06 PNG 零漂移。
+
+## 补记 5（I-5 三态×三类矩阵，全量 1191/0/57）
+- `MotionMatrixResidualTests`（11 tests）：full/reduce × All/Navigation/Feedback/Decorative/None 逐格匹配设计参数（nav 240/180/200/160、feedback 120/90/150、decorative 启用/禁用、reduce 全 0 且 feedback 仅颜色）；`auto` 跟随平台（Full/Reduce）、`full` 不读平台（throwing source 无 warning）；auto 读失败/null → full + 1 warning；reduce 下 feedback 类别开/关的 `FeedbackColourOnly` 语义。
+- 验证：build 0/0；无过滤全量 **1191 passed / 0 failed / 57 skipped**（DS 91 + App 578）；旧 FEA-06 PNG 零漂移。
