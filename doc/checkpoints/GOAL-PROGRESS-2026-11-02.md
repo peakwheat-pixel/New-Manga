@@ -671,3 +671,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `HighContrastElevationFocusTests` 增补：reduce 下阴影与 hairline 均保持不变（设计 01 §2.3）；`motion-decorative` 状态类随类别开关切换并有断言（实际装饰动画本体仍 D-8 暂缓）。
 - 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `eb13cfab0`；证据 SHA `da27944f…`。
 - 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review；ZCode 03:02 备用。
+## 98. FEA-06-RESIDUAL-1 AC 覆盖评估刷新（2026-11-03 00:16）
+
+- `ac-coverage.md` 刷新至最新事实：AC2 仅剩视觉动画/少数格子 NOT_RUN（I-4 指针态/disabled 零触发/命令面板焦点、I-5 矩阵+消费、I-11 全达成）；AC4 增列 reduce 阴影不变与 R3-004 Current 对照；AC5 更新为 1195/0/57 + 预复核快照 + 集成脚本 dry-run PASS。
+- Task evidence `EV-FEA06R1-ACCOV` 指针修正并复审：**7 行 0 mismatch**；治理 PASS。
+- 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review（prompt/集成脚本已就绪）；ZCode 03:02 备用。
