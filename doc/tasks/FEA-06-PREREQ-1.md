@@ -62,11 +62,11 @@ allowed_paths:
 
 ## 验收标准
 
-- [x] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<MET>>
+- [x] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<PARTIAL: 读写与迁移已交付（13 测试）；`ThemeSettingsStore` 兼容写按 W-9 转 PREREQ-2（Q-32），本卡未闭环>>
 - [x] **AC2**：`AppearanceCoordinator` 读取/校验/变更通知（应用落点归 PREREQ-2）；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<MET>>
-- [x] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<MET>>
+- [x] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<PARTIAL: Focus/Corner/Elevation/Material 开关共 12 键已生成（--check up to date）；`Nm.Material.Acrylic.Base/Tint` 与主题层 schema/R14 计数按 W-9 转 PREREQ-2（Q-32）>>
 - [x] **AC4**：`motion.mode` = `auto`/`full`/`reduce`（**无 `off`**）；`auto` 经 `IMotionPreferenceSource`（默认实现 + 注入测试）；`motion.categories=off` 0ms；设计 02 判据 ①–⑤ 有测试。<<MET>>
-- [x] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）；**两项校验**：`ThemeGen -- --check`（产物漂移）+ `ThemeValidator.Validate`/`BuiltInThemes` 加载（schema 合法）+ Current 主题不生效测试。<<MET>>
+- [x] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）；**两项校验**：`ThemeGen -- --check`（产物漂移）+ `ThemeValidator.Validate`/`BuiltInThemes` 加载（schema 合法）+ Current 主题不生效测试。<<PARTIAL: 包由 ThemeGen 生成（`--check` 覆盖）+ `BuiltInThemes` 懒加载 + Current 不变测试；`nm.fluent.visual/1` manifest 与 `ThemeValidator` 显式测试未加（P2-17）>>
 - [x] **AC6**：全量 sln 不退化（基线 949/0/57）+ 证据。<<MET>>
 
 ## 禁止范围
@@ -92,21 +92,21 @@ allowed_paths:
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
 | AC1–AC4 | `dotnet test` 四工程（Appearance/DesignSystem/ThemeEngine/App） | .NET | NOT_RUN | 待补 |
-| AC3 | `dotnet run --project apps/desktop-avalonia/src/NewManga.DesignSystem.TokenGen -- --check` + `NewManga.ThemeEngine.ThemeGen -- --check` | 生成管线 | NOT_RUN | 待补 |
-| AC5 | `ThemeGen -- --check` + 主题包校验 | 生成管线 | NOT_RUN | 待补 |
+| AC3 | `TokenGen -- --check` + `ThemeGen -- --check` | 生成管线 | **PASS**（均 up to date） | `tokengen-check.log`、`themegen-check.log` |
+| AC5 | `ThemeGen -- --check` + 主题包校验 | 生成管线 | **PASS**（fluent 纳入 --check） | `themegen-check.log` |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `06b7a1b10` | `f94ec74f2d523ecf4abe68c408a88ba91d97cbe1a2120df7037c6900bb2a7a0f` | CANONICAL |
-| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `06b7a1b10` | `387aa136cd278a48443ea9506de6f04b1f19345eb873fafa0381d211a40712d9` | CANONICAL |
+| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `06b7a1b10` | `b191462943321b1ddc324843c3a0d7d456ec00790597e693a359c3ef472cec97` | CANONICAL |
 | E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `06b7a1b10` | `6f5b2487393299c4b7cc30fd2290bfada42048fd91aa8aa8a0928f88ad3553f7` | CANONICAL |
 | E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `06b7a1b10` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
-| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `06b7a1b10` | `eb006bdb21cdc5d3481912164211824676415679140a65c16236689491bf6aa0` | CANONICAL |
+| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `06b7a1b10` | `34cf6c28b95c42762b0935eaaf5150698aaf5b8b1e50167d01173d02fc926616` | CANONICAL |
 | E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `06b7a1b10` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
-| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `06b7a1b10` | `ac48978cf6c3483cf44ca364924fa71a0b4e6a5ce438010df2140278e8449ef6` | CANONICAL |
-| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `06b7a1b10` | `e4d829b7246d7478097a28dcd7c445b76460ee4e164b370ed295712d4bcc0242` | CANONICAL |
+| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `06b7a1b10` | `b8753cd8d8506337794fa5926f9bc2b683f1cd0b8b530e83943e42ccfd44876a` | CANONICAL |
+| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `06b7a1b10` | `ca5cb82c5c06631c132cf49e23aea8c026e73fbf342b46e75eb28b5a2ac077b5` | CANONICAL |
 
 ## Resource Manifest
 
@@ -115,7 +115,7 @@ allowed_paths:
 ## Closeout Record
 
 - 待关闭时填写。
-| AC6 | 全量 sln build/test（基线 949/0/57） | 全量 | NOT_RUN | 待补 |
+| AC6 | 全量 sln build/test | 全量 | **PASS**（**978/0/57**） | `sln-test.log`、`build.log` |
 - 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 
 eady，DSH 实现。
 - 2026-11-03 / DSH：FEA-06-PREREQ-1 实现完成并收口（ 6b7a1b10）——范围 r1–r3（r3 approved）、实现 impl-r1（P1×10 全关闭）→ impl-r2（P1×5：3 关闭 + W-9 裁决 P1-2/P1-4 转 PREREQ-2）；全量 sln **977/0/57**；TokenGen/ThemeGen --check up to date；置 in_review 待 impl-r3。

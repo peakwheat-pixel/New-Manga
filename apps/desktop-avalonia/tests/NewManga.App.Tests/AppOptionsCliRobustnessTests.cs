@@ -183,4 +183,18 @@ public sealed class AppOptionsCliRobustnessTests
         Assert.NotNull(options.InvalidReason);
         Assert.Contains("--variant", options.InvalidReason, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Frontend_Option_IsParsedBothWays()
+    {
+        var equalsForm = AppOptions.Parse(new[] { "--frontend=builtin.fluent" });
+        Assert.Null(equalsForm.InvalidReason);
+        Assert.Equal("builtin.fluent", equalsForm.FrontendId);
+
+        var spaceForm = AppOptions.Parse(new[] { "--frontend", "builtin.current-v2" });
+        Assert.Equal("builtin.current-v2", spaceForm.FrontendId);
+
+        var empty = AppOptions.Parse(new[] { "--frontend=" });
+        Assert.NotNull(empty.InvalidReason);
+    }
 }

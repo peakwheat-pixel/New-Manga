@@ -225,6 +225,15 @@ public sealed class AppOptions
 
                 options.ThemeHome = value.Trim();
                 break;
+            case "frontend":
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    options.InvalidReason = "--frontend requires a non-empty id";
+                    return false;
+                }
+
+                options.FrontendId = value.Trim();
+                break;
             case "mutex-name":
                 options.MutexName = value;
                 break;
