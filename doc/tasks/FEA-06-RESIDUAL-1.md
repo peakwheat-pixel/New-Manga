@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 918e4a2e3（Batch B 续作：I-5 nav+feedback 消费/I-8/I-11/I-4 扩展；decorative 动画与 hover 视觉 NOT_RUN）
+delivery_head: 922a116ca（Batch B 续作：I-4 有效属性+I-5 nav/feedback+I-8/I-11；hover 视觉与 decorative D-8 NOT_RUN）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -169,7 +169,9 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `88e68f6a2abb7845c684760326a59b58de3e5651f7c5b85722d904811db38e29` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `2be45bbfd85464712cec7cad440e3989648d7e4a6a98bc99052336e677973677` | CANONICAL |
+| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `922a116ca` | `da843c5b4dc2ac6af5fac49303b6fc5d8f84c4ba9dffe56588f53d2b76f682dc` | CANONICAL |
+| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
 

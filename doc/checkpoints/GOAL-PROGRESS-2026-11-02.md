@@ -609,3 +609,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **D-8**：decorative 实际动画（渐变循环/翻页粒子/空态漂浮）暂缓，转后续视觉任务（ZCode），当前仅保留表/开关/reduce 禁用语义；理由与推荐已写入 Task「待裁决」区（不阻塞）。
 - 交付状态：`918e4a2e3`；全量 1178/0/57；证据 SHA `88e68f6a…`；Task evidence row 已修正到实际包含该日志的提交。
 - 下一步：00:23 后派 Codex 独立 impl Review（备用 03:02 ZCode）→ findings 处置 → DSH 集成验证 → done/closed_with_limitations。
+## 86. FEA-06-RESIDUAL-1 I-4 有效属性 + 矩阵/AC 评估（2026-11-02 深夜）
+
+- `FluentComponentStateEffectiveTests`：PrimaryButton/DangerButton/SurfaceCard/Dialog/TabItem 的解析后有效属性（颜色/几何/Elevation/ZIndex/disabled opacity）断言；hover/pressed/loading 视觉格仍 NOT_RUN。
+- 新增证据：`verification/FEA-06-RESIDUAL-1/component-state-matrix.md`（组件×状态×断言类型）、`ac-coverage.md`（AC1–AC5 当前评估；AC2=PARTIAL 因 I-4 视觉格 + I-5 decorative D-8）。
+- 验证：build 0/0；无过滤全量 **1179/0/57**；旧 PNG 零漂移；治理 PASS、pins 15/15。交付 `922a116ca`；证据 SHA `2be45bbf…`。
+- 下一步：Codex 00:23 恢复后派独立 impl Review（prompt 已备）；ZCode 03:02 备用 → findings 处置 → DSH 集成验证 → done/closed_with_limitations。
