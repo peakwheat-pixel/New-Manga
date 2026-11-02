@@ -82,6 +82,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Nm.Elevation.1}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Md}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Card}" />
   </Style>
@@ -105,6 +106,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Panel}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Nm.Elevation.1}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
   </Style>
   <Style Selector="Border.fluent-modal-scrim">
@@ -124,6 +126,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Strong}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Nm.Elevation.3}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Lg}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Section}" />
     <Setter Property="Panel.ZIndex" Value="{DynamicResource Nm.ZIndex.Modal}" />
@@ -353,6 +356,7 @@
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Nm.Elevation.2}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Lg}" />
     <Setter Property="MaxWidth" Value="{DynamicResource Nm.Size.Drawer}" />
     <Setter Property="Panel.ZIndex" Value="{DynamicResource Nm.ZIndex.Drawer}" />

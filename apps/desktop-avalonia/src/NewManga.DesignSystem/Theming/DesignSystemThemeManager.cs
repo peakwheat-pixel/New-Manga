@@ -229,6 +229,11 @@ public sealed class DesignSystemThemeManager : IDisposable
             return false;
         }
 
+        if (contrast is not null)
+        {
+            ApplyHighContrastTokenOverrides(contrast);
+        }
+
         if (Density != DensityMode.Comfortable &&
             !TryLoadAndRecord(DensitySource(Density), out density))
         {
@@ -383,10 +388,30 @@ public sealed class DesignSystemThemeManager : IDisposable
             return false;
         }
 
+        ApplyHighContrastTokenOverrides(dictionary);
         CommitOverlay(ref _contrastOverlay, dictionary);
         Contrast = mode;
         LastError = null;
         return true;
+    }
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-1 I-8/I-11 (design 01 §2.3, 03 §4): high contrast keeps the palette file generated
+    /// byte-for-byte while degenerating the elevation shadows to the existing 1px hairline border and
+    /// thickening the shared focus ring from 2px to 3px. Standard contrast simply drops this overlay, so the
+    /// frozen global tokens (2px focus, real shadows) return unchanged.
+    /// </summary>
+    private static void ApplyHighContrastTokenOverrides(ResourceDictionary? dictionary)
+    {
+        if (dictionary is null)
+        {
+            return;
+        }
+
+        dictionary["Nm.Border.Focus"] = new Thickness(3);
+        dictionary["Nm.Elevation.1"] = default(BoxShadows);
+        dictionary["Nm.Elevation.2"] = default(BoxShadows);
+        dictionary["Nm.Elevation.3"] = default(BoxShadows);
     }
 
     /// <summary>Adds/removes the compact or spacious density overlay.</summary>

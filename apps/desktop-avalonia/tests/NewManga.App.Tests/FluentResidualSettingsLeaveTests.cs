@@ -1,4 +1,5 @@
 using System.IO;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
@@ -56,6 +57,31 @@ public sealed class FluentResidualSettingsLeaveTests : IDisposable
         return shell;
     }
 
+
+    [AvaloniaFact]
+    public void I11_LeaveOverlay_MovesFocusIn_AndRestoresItOnCancel()
+    {
+        var appearance = CreateAppearance();
+        var shell = CreateDirtySettingsShell(appearance, out _);
+        var trigger = shell.SettingsView.GetVisualDescendants().OfType<Button>()
+            .First(button => AutomationProperties.GetName(button) == "保存外观设置");
+        trigger.Focus(NavigationMethod.Tab);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(trigger.IsFocused);
+
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.SettingsView.LeaveConfirmationVisible);
+        var cancel = shell.SettingsView.GetVisualDescendants().OfType<Button>()
+            .First(button => AutomationProperties.GetName(button) == "取消离开设置页");
+        Assert.True(cancel.IsFocused, "focus must move into the leave overlay");
+
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(shell.SettingsView.LeaveConfirmationVisible);
+        Assert.True(trigger.IsFocused, "closing the overlay must return focus to the trigger");
+        shell.Close();
+    }
     private static Button LeaveButton(FluentShell shell, string accessibleName) =>
         shell.SettingsView.GetVisualDescendants().OfType<Button>()
             .First(button => Avalonia.Automation.AutomationProperties.GetName(button) == accessibleName &&

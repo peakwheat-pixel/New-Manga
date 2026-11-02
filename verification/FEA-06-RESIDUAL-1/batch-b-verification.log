@@ -1,0 +1,44 @@
+# FEA-06-RESIDUAL-1 Batch B 实现验证（DSH 实施；双 agent 额度耗尽 D-7）
+# time: 2026-11-02 23:25:00 +08:00
+# start head: f2d987bd28acca345279336e0e6d3943544c945e（I-7 交付后）
+# 实现 Agent：DSH（Codex CLI 额度 2026-11-03 00:23 恢复、ZCode CLI 5h 限额 03:02 恢复；故障转移候选同时不可用，
+#   按 D-7 推荐口径由 DSH 在冻结范围/写域内实施，独立 impl Review 待 agent 恢复后补做）
+# 交付 commits：见紧随其后的 Batch B commit（本日志与其同 commit）
+#
+# 覆盖子项：
+#   I-7（上一提交 ce0bee67d）：PNG 采证显式 opt-in；默认零仓库/证据面写入；opt-in 写本卡 png/ 目录。
+#   I-5（本批）：MotionTimings 参数表（doc/design/fluent-v1/02-motion.md §2：navigation 240/180/200/160ms、
+#     feedback 120/90/150ms、decorative reduce 禁用；reduce feedback 仅颜色）落地为 App 层表；
+#     FluentShellSurface 消费为页面切换 Opacity 过渡（240ms），并订阅 AppearanceCoordinator.Changed
+#     （后台线程经 Dispatcher 回 UI）使运行时 mode/categories 变更即时生效；reduce/category-off → 无过渡。
+#   I-8：Consume Nm.Elevation.*（surface-card/detail-pane=1、drawer=2、dialog=3）替代仅 1px 边框；
+#     DesignSystemThemeManager.SetContrast(High) 在生成的高对比调色板之上运行时注入
+#     Nm.Border.Focus=3px 与 Nm.Elevation.*=无阴影（生成文件字节不变）；高对比 = 1px 边框 + 无阴影，
+#     standard/reduce 阴影不变；Current V2 样式文件零改动。
+#   I-11：焦点环 2px→高对比 3px（共享 FocusRing 读同一 token，测试断言 ring BorderThickness）；
+#     设置页离开浮层焦点移入/取消后返还触发控件（SettingsPageView）。隐藏控件 Tab 序未单测（见 NOT_RUN）。
+#   I-4（部分）：NewMangaStyles 组件×状态声明覆盖测试（按钮 primary/secondary/danger/book-card/book-row/
+#     space-button/command-row 的 hover/pressed/disabled + surface-card/detail-pane/dialog/drawer）；
+#     DesignRulesTests 的“禁止阴影”旧规则对齐冻结设计（只允许 DynamicResource Nm.Elevation.*）。
+#     未逐一补齐的组件状态（NOT_RUN，下批/续接）：IconButton、ToggleSwitch、Slider、SegmentedControl、
+#     TabStrip、SearchField、CommandPalette、ContextMenu、Tooltip、Toast/InfoBar、BatchMatrix/RunProjectionBar
+#     的完整状态；视觉伪类渲染（hover/pressed）headless 未截图断言，只做声明覆盖 + 功能态断言。
+#
+# build（Debug, sln）: exit=0（0 警告 / 0 错误）
+# 全量（无过滤，I-7 后已安全）：
+#   dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
+#   exit=0；**1177 passed / 0 failed / 57 skipped**
+#   21 Appearance + 38 Presentation.Avalonia + 51 Host + 253 ThemeEngine + 90 DesignSystem + 31 ApplicationCore
+#   + 128 CoreClient + 565 App.Tests
+#   基线：1137/0/57（PNG 用例排除口径）+ Batch A 33 + Batch B 新增 7（DesignSystem 3 + App 3 + 声明覆盖 1）
+#   说明：设计规则测试 DesignRulesTests 由“禁止 BoxShadow”更新为“只允许 DynamicResource Nm.Elevation.*”，
+#   与冻结设计 01 §2.3 对齐；无弱化其它断言。
+# git status：运行前后 `verification/FEA-06/screens/**` 零漂移（旧 pin 字节不变）。
+# FEA-07 非回归子集（含于全量）：Presentation*/SettingsDraftSync/FrontendHostCoordinator 全绿。
+# generators：TokenGen --check exit 0（292 rows）；ThemeGen --check exit 0。
+# governance：check.ps1 PASS(3)；verify_pins 15/15。
+# 已知限制 / NOT_RUN：
+#   - I-4 仅完成“已实现组件的状态声明覆盖 + 设计规则对齐”，清单中其余组件状态未逐一补齐 → I-4 未完成。
+#   - I-11 隐藏/不可见控件移出 Tab 序未加显式断言（依赖 Avalonia 可见性焦点语义，未截图/未合成 Tab 遍历）。
+#   - I-5 仅消费 navigation 页面切换时长；feedback/decorative 的视觉时长消费未接入动画（表已覆盖，接入待后续）。
+#   - 高对比阴影退化以“1px 边框仍在 + Elevation token 置空”实现，未做像素级截图对比。

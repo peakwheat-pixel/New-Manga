@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
@@ -32,6 +33,7 @@ public sealed class SettingsPageView : UserControl
     private readonly Button _leaveCancelButton;
     private readonly Border _scrim;
     private Action? _pendingLeave;
+    private IInputElement? _focusBeforeLeave;
     private BackupPackageInfo? _pendingBackup;
     private string _pendingAction = string.Empty;
 
@@ -130,6 +132,9 @@ public sealed class SettingsPageView : UserControl
         }
 
         _pendingLeave = proceed;
+        // I-11 (design 03 §3): move focus into the overlay and remember the trigger so closing the
+        // confirmation returns focus instead of dropping it to the window root.
+        _focusBeforeLeave = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         _leaveDialog.IsOpen = true;
         UpdateScrimVisibility();
         _leaveCancelButton.Focus();
@@ -142,6 +147,7 @@ public sealed class SettingsPageView : UserControl
         _pendingLeave = null;
         _leaveDialog.IsOpen = false;
         UpdateScrimVisibility();
+        RestoreFocusAfterLeave();
     }
 
     /// <summary>I-3/08 §7：浮层内 Esc=取消——普通确认浮层的公开关闭入口（供 shell Esc 协调）。</summary>
@@ -202,7 +208,19 @@ public sealed class SettingsPageView : UserControl
         UpdateScrimVisibility();
         var proceed = _pendingLeave;
         _pendingLeave = null;
+        RestoreFocusAfterLeave();
         return proceed;
+    }
+
+    /// <summary>I-11: closing the leave overlay returns focus to the element that opened it.</summary>
+    private void RestoreFocusAfterLeave()
+    {
+        var previous = _focusBeforeLeave;
+        _focusBeforeLeave = null;
+        if (previous is Control control && control.Focusable && control.IsEffectivelyEnabled && control.IsVisible)
+        {
+            control.Focus();
+        }
     }
 
     private void UpdateScrimVisibility() => _scrim.IsVisible = _confirmation.IsOpen || _leaveDialog.IsOpen;

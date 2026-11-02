@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -67,6 +69,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private FluentPage _currentPage;
     private Control? _activeDialog;
     private bool _motionNavigationEnabled;
+    private MotionTimingProfile? _motionTimings;
     private bool _textInputFocused;
 
     public FluentShellSurface() : this(null, null) { }
@@ -132,6 +135,13 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         ApplyResponsiveBand(ShellLayout.BreakpointFull);
         ApplyMotion(appearance?.Settings ?? AppearanceDefaults.Settings);
+        // I-5: repeat the frozen motion resolution whenever the single appearance writer changes the
+        // settings dome (mode/categories), so runtime changes take effect without recreating the tree.
+        if (Appearance is not null)
+        {
+            Appearance.Changed += OnAppearanceChangedForMotion;
+        }
+
         Navigate(FluentPage.Library);
         if (!string.IsNullOrWhiteSpace(options?.StartupPage)) Navigate(options.StartupPage);
     }
@@ -557,10 +567,27 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         ThemeManager.SetAppearance(next);
     }
 
+    private void OnAppearanceChangedForMotion(object? sender, EventArgs args)
+    {
+        // AppearanceCoordinator raises Changed after its atomic write, which may run on a pool thread;
+        // motion application mutates the visual tree, so marshal it back to the UI thread when needed.
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            ApplyMotion(Appearance?.Settings ?? AppearanceDefaults.Settings);
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() => ApplyMotion(Appearance?.Settings ?? AppearanceDefaults.Settings));
+    }
+
     private void ApplyMotion(AppearanceSettings settings)
     {
         var resolution = new MotionResolver(new WindowsMotionPreferenceSource()).Resolve(settings).Settings;
         _motionNavigationEnabled = resolution.IsEnabled(MotionCategories.Navigation);
+        // I-5: consume the frozen motion parameter table instead of hard-coded durations. The page host
+        // fades for the resolved navigation duration; reduce/category-off resolves to 0ms (no transition).
+        _motionTimings = MotionTimings.Resolve(resolution);
+        ApplyNavigationTransition(_motionTimings);
         ThemeManager?.SetReducedMotion(!resolution.Enabled);
         Classes.Set("motion-navigation", _motionNavigationEnabled);
         Classes.Set("motion-reduced", !resolution.Enabled);
@@ -568,6 +595,21 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _readerModel.AreToolBarsReducedMotion = !resolution.Enabled;
     }
 
+    private void ApplyNavigationTransition(MotionTimingProfile timings)
+    {
+        var duration = timings.NavigationPageMilliseconds;
+        _pageHost.Transitions = duration > 0
+            ? new Transitions
+            {
+                new DoubleTransition
+                {
+                    Property = OpacityProperty,
+                    Duration = TimeSpan.FromMilliseconds(duration),
+                    Easing = new CubicEaseOut(),
+                },
+            }
+            : null;
+    }
     private static bool IsPlainTypingKey(Key key, KeyModifiers modifiers) =>
         (modifiers & (KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Meta)) == 0 &&
         (key is >= Key.A and <= Key.Z or >= Key.D0 and <= Key.D9 or Key.Space or Key.OemMinus or Key.OemPlus or

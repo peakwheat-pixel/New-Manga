@@ -37,7 +37,14 @@ public sealed class DesignRulesTests
         foreach (var file in StyleSourceFiles())
         {
             var text = File.ReadAllText(file);
-            Assert.DoesNotContain("BoxShadow", text, StringComparison.Ordinal);
+            // FEA-06-RESIDUAL-1 I-8: the frozen fluent-v1 baseline (design 01 §2.3) requires the
+            // Nm.Elevation.* tokens for surfaces; shadows may only appear as that DynamicResource (never a
+            // raw/hand-typed shadow), while gradients/blur stay forbidden.
+            foreach (var line in text.Split('\n').Where(line => line.Contains("BoxShadow", StringComparison.Ordinal)))
+            {
+                Assert.Matches(@"\{DynamicResource Nm\.Elevation\.[123]\}", line);
+            }
+
             Assert.DoesNotContain("LinearGradient", text, StringComparison.Ordinal);
             Assert.DoesNotContain("RadialGradient", text, StringComparison.Ordinal);
             Assert.DoesNotContain("BlurEffect", text, StringComparison.Ordinal);
