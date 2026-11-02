@@ -79,13 +79,14 @@ public sealed class FluentResidual2VisualEvidenceTests
         {
             var output = Path.Combine(repositoryRoot, "verification", "FEA-06-RESIDUAL-2", "visuals");
             Directory.CreateDirectory(output);
+            var head = ReadGitHead(repositoryRoot);
             Assert.DoesNotContain(
                 Path.Combine("verification", "FEA-06", "screens"), output, StringComparison.OrdinalIgnoreCase);
 
             var rows = new List<string>
             {
-                "| file | group | component/page | state | mode | viewport | theme | frame | command | EXIT | signed_by | signed_at |",
-                "|---|---|---|---|---|---|---|---|---|---|---|---|",
+                "| file | head | group | component/page | state | mode | viewport | theme | frame | command | EXIT | signed_by | signed_at |",
+                "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
             };
             foreach (var shot in shots)
             {
@@ -93,7 +94,7 @@ public sealed class FluentResidual2VisualEvidenceTests
                 shot.Frame.Save(Path.Combine(output, file));
                 Assert.True(new FileInfo(Path.Combine(output, file)).Length > 0, $"missing screenshot: {file}");
                 var size = shot.Frame.PixelSize;
-                rows.Add($"| `{file}` | {shot.Group} | {shot.Name} | {shot.State} | {shot.Mode} | {size.Width}x{size.Height} | {shot.Theme} | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |");
+                rows.Add($"| `{file}` | `{head}` | {shot.Group} | {shot.Name} | {shot.State} | {shot.Mode} | {size.Width}x{size.Height} | {shot.Theme} | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |");
             }
 
             File.WriteAllText(Path.Combine(output, "visual-inventory.md"), string.Join(Environment.NewLine, rows));
@@ -173,6 +174,22 @@ public sealed class FluentResidual2VisualEvidenceTests
         }
     }
 
+    private static string ReadGitHead(string repositoryRoot)
+    {
+        var gitDir = Path.Combine(repositoryRoot, ".git");
+        if (File.Exists(gitDir))
+        {
+            var pointer = File.ReadAllLines(gitDir).FirstOrDefault(line => line.StartsWith("gitdir:", StringComparison.Ordinal));
+            if (pointer is not null) gitDir = Path.GetFullPath(Path.Combine(repositoryRoot, pointer[7..].Trim()));
+        }
+
+        var headFile = Path.Combine(gitDir, "HEAD");
+        if (!File.Exists(headFile)) return "unknown";
+        var head = File.ReadAllText(headFile).Trim();
+        if (!head.StartsWith("ref:", StringComparison.Ordinal)) return head;
+        var refPath = Path.Combine(gitDir, head[4..].Trim().Replace('/', Path.DirectorySeparatorChar));
+        return File.Exists(refPath) ? File.ReadAllText(refPath).Trim() : "unknown";
+    }
     private static string RepositoryRoot()
     {
         var cursor = new DirectoryInfo(AppContext.BaseDirectory);

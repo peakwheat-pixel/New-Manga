@@ -5,3 +5,12 @@
 - 验证：默认全量 **1272/0/57**（App 639，+1）/ EXIT=0；默认运行后 `git status` 仅本卡 visuals 未跟踪（无既有证据被改写）；inventory 含逐图 head/group/component/state/mode/viewport/theme/frame/command/EXIT + `signed_by` 待签署。
 - **签署状态**：未签署 = NOT_RUN；IN-2B 的 AC-3 需独立 Reviewer 逐图签署后方可判 MET；禁止以 PNG 存在替代视觉评审。
 - 未 push。
+
+## R2-009 证据格式补记（2026-11-03 05:10）
+- shell: pwsh 7 / Windows 11；host: G:\CODEX\New Manga；base: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431；head: 5a2692c052bbfb5f986e2b2bd8f76e224c4f9f69
+- 命令：`dotnet build apps\desktop-avalonia\NewManga.sln --nologo`；`dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo`；`pwsh -NoProfile -File tools\governance\check.ps1`；`pwsh -NoProfile -File tools\governance\verify_pins.ps1`。
+- EXIT：build 0；test 0；check 0；pins 0。
+- 逐程序集（无过滤）：Appearance 21 / Presentation 38 / Host 51(pass)+28(skip) / ThemeEngine 253 / DesignSystem 111 / ApplicationCore 31 / CoreClient 128(pass)+22(skip) / App 639(pass)+7(skip) = **1272 passed / 0 failed / 57 skipped**；总数 1329。
+- skip 明细：Host 28 + CoreClient 22 + App 7 = 57（xUnit 环境 skip，非本卡新增）；无过滤运行未排除任何用例。
+- 差值：FEA-06-RESIDUAL-1 关闭基线 1245/0/57 → IN-1 +12（1257）→ IN-2A +14（1271）→ IN-2B +1（1272，本轮 R2 返修后净值不变）。
+- 视觉证据：opt-in `NEWMANGA_CAPTURE_RESIDUAL2_PNGS=1` 生成 27 PNG + head 注释 inventory；默认运行零写入；旧 FEA-06 四 PNG SHA 未变。
