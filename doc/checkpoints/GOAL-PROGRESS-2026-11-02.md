@@ -676,3 +676,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `ac-coverage.md` 刷新至最新事实：AC2 仅剩视觉动画/少数格子 NOT_RUN（I-4 指针态/disabled 零触发/命令面板焦点、I-5 矩阵+消费、I-11 全达成）；AC4 增列 reduce 阴影不变与 R3-004 Current 对照；AC5 更新为 1195/0/57 + 预复核快照 + 集成脚本 dry-run PASS。
 - Task evidence `EV-FEA06R1-ACCOV` 指针修正并复审：**7 行 0 mismatch**；治理 PASS。
 - 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review（prompt/集成脚本已就绪）；ZCode 03:02 备用。
+## 99. FEA-06-RESIDUAL-1 复核前最后准备（2026-11-03 00:17）
+
+- 子项台账 `item-status.md` 刷新至 1195/0/57 与最新测试指针；Task evidence `EV-FEA06R1-ITEMSTATUS` commit 修正，7 行 SHA 复审 **0 mismatch**。
+- Codex 探针（00:16）仍返回 `usage limit ... try again at 12:23 AM` → 继续等待 00:23；`dispatch-review.ps1`/`integration-verify.ps1`/prompt 均就绪，提醒 00:24 `scheduled`。
+- 下一步：额度恢复后立即运行 `dispatch-review.ps1` 派独立 impl Review（对照 `pre-review-verification.log`）；ZCode 03:02 备用。
