@@ -791,3 +791,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - workspace 新增 `FEA-06-RESIDUAL-2/scope-input-analysis.md`：D-8 三动画（02-motion §2.3）参数/降级/断言表；I-4 NOT_RUN 视觉格清单；范围边界与视觉证据形式建议（headless PNG + 属性/像素断言 + reduce 对照；不得碰数据端口/V2/冻结设计/生成物）；BLOCKED B-5/D-1；D-10 已完成不重复。
 - workspace 新增 `dispatch-scope-zcode.ps1`（ZCode CLI 派发 + 报告存在性检查）；03:04 提醒触发即可运行。
 - 当前：FEA-06-RESIDUAL-2 ready；scope 复核待 ZCode（03:02）或 Codex（约 05:23）；任务未冻结前不实施。
+## 121. FEA-06-RESIDUAL-2 scope 复核已派发（D-9 独立子 agent，2026-11-03 02:35）
+
+- 现状：Codex 额度至约 05:23、ZCode 至约 03:02；为不空转，按 **D-9**（2026-10-31 裁决允许作者派发独立上下文子 agent 做 Review）用 workflow 派发独立上下文 Scope Reviewer（job `workflow-c3e9f8b4f92341d4`），prompt 含草案范围、FEA-06-RESIDUAL-1 关闭/AC2 残项、四份 impl Review、冻结设计与 workspace 预研分析。
+- 产出目标 `doc/reviews/FEA-06-RESIDUAL-2-scope-r1.md`；ZCode 03:04 提醒保留为补充/备用复核资源。
+- 复核结果后：approved → 冻结 Task2 范围（ready→in_progress）并按 allowed_paths 派实施；changes_requested → 缩减范围再审。
