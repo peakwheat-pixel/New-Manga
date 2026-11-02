@@ -1,0 +1,7 @@
+COMMAND: dotnet run --project apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen -- --check
+
+tokens:  G:\CODEX\New Manga\doc\design\redesign-v1\40-fusion\tokens.json
+project: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem
+rows:    292
+up to date: every generated artifact matches the frozen token source byte-for-byte
+EXIT_CODE: 0

@@ -30,8 +30,8 @@ public enum FluentPage
 /// <summary>Responsive bands resolved from the frozen 1024/1280/1600 token breakpoints.</summary>
 public enum FluentResponsiveBand
 {
-    BelowMinimum,
     Narrow,
+    Medium,
     Compact,
     Full,
 }
@@ -114,6 +114,11 @@ public partial class FluentShell : Window
         Require<Button>("NavRecycle").Click += (_, _) => _shelfView.OpenRecycleDrawer();
         Require<Button>("NavImport").Click += async (_, _) => await _shelfView.ImportFilesAsync();
         _workbenchView = new WorkbenchPageView(_workbenchModel, () => Navigate(FluentPage.Library));
+        _workbenchView.TabChanged += tab =>
+        {
+            if (tab == WorkbenchViewTab.Page) _studioMode = StudioMode.Page;
+            else if (tab == WorkbenchViewTab.Batch) _studioMode = StudioMode.Batch;
+        };
         _readerView = new ReaderPageView(_readerModel, CloseReader, SetFullScreen);
         _settingsView = new SettingsPageView(_settingsModel);
 
@@ -122,6 +127,7 @@ public partial class FluentShell : Window
         _spaceStudio.Click += (_, _) => NavigateSpace(SpaceId.Studio);
         _spaceConsole.Click += (_, _) => NavigateSpace(SpaceId.Console);
         Require<Button>("CommandPaletteButton").Click += (_, _) => OpenCommandPalette();
+        Require<Button>("SettingsCommandButton").Click += (_, _) => Navigate(FluentPage.Settings);
         Require<Button>("HelpButton").Click += (_, _) => OpenShortcutHelp();
         SizeChanged += (_, args) => ApplyResponsiveBand(args.NewSize.Width);
         AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
@@ -150,12 +156,14 @@ public partial class FluentShell : Window
     public WorkbenchViewModel WorkbenchViewModel => _workbenchModel;
     public FluentReaderViewModel ReaderViewModel => _readerModel;
     public SettingsViewModel SettingsViewModel => _settingsModel;
+    public ShelfPageView ShelfView => _shelfView;
+    public WorkbenchPageView WorkbenchView => _workbenchView;
     public FluentResponsiveBand ResponsiveBand { get; private set; }
     public Button? NavigationButton(FluentPage page) => _navButtons.GetValueOrDefault(page);
 
     public static FluentResponsiveBand GetResponsiveBand(double width) =>
-        width < ShellLayout.BreakpointNarrow ? FluentResponsiveBand.BelowMinimum :
-        width < ShellLayout.BreakpointCompact ? FluentResponsiveBand.Narrow :
+        width < ShellLayout.BreakpointNarrow ? FluentResponsiveBand.Narrow :
+        width < ShellLayout.BreakpointCompact ? FluentResponsiveBand.Medium :
         width < ShellLayout.BreakpointFull ? FluentResponsiveBand.Compact :
         FluentResponsiveBand.Full;
 
@@ -195,7 +203,6 @@ public partial class FluentShell : Window
         {
             FluentPage.Library => SpaceId.Library,
             FluentPage.Workbench => SpaceId.Studio,
-            FluentPage.Settings => SpaceId.Console,
             _ => _currentSpace,
         };
         _pageHost.Content = page switch
@@ -208,6 +215,11 @@ public partial class FluentShell : Window
         UpdateNavigationItems();
         UpdateNavSelection(page);
         UpdateSpaceSelection();
+        if (page == FluentPage.Workbench)
+        {
+            _studioMode = StudioMode.Page;
+            _workbenchView.SelectPageTab();
+        }
         UpdateStatus();
     }
 
@@ -219,9 +231,15 @@ public partial class FluentShell : Window
             "bookshelf" or "library" => FluentPage.Library,
             "workbench" or "studio" => FluentPage.Workbench,
             "reader" => FluentPage.Reader,
-            "settings" or "console" => FluentPage.Settings,
+            "settings" => FluentPage.Settings,
+            "console" => null,
             _ => (FluentPage?)null,
         };
+        if (page.Equals("console", StringComparison.OrdinalIgnoreCase))
+        {
+            NavigateSpace(SpaceId.Console);
+            return true;
+        }
         if (target is not { } resolved) return false;
         Navigate(resolved);
         return true;
@@ -230,21 +248,48 @@ public partial class FluentShell : Window
     public bool HandleKeyForTest(Key key, KeyModifiers modifiers, bool textInputFocused = false)
     {
         if (textInputFocused && IsPlainTypingKey(key, modifiers)) return false;
-        if (!_keyMap.TryMatch(key, modifiers, _currentSpace, _studioMode, out var command)) return false;
-        ExecuteCommand(command);
+        if (_keyMap.TryMatch(key, modifiers, _currentSpace, _studioMode, out var command))
+        {
+            ExecuteCommand(command);
+            return true;
+        }
+
+        var noModifiers = (modifiers & (KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt | KeyModifiers.Meta)) == KeyModifiers.None;
+        if (!noModifiers || _currentPage != FluentPage.Workbench ||
+            _currentSpace is not (SpaceId.Studio or SpaceId.Console) ||
+            key is not (Key.OemOpenBrackets or Key.OemCloseBrackets))
+        {
+            return false;
+        }
+
+        var pageCommand = ShellCommands.Find(key == Key.OemCloseBrackets
+            ? ShellCommandIds.PageNext
+            : ShellCommandIds.PagePrevious);
+        if (pageCommand is null) return false;
+        ExecuteCommand(pageCommand);
         return true;
     }
 
     private void NavigateSpace(SpaceId space)
     {
-        _currentSpace = space;
-        Navigate(space switch
+        if (space == SpaceId.Console)
         {
-            SpaceId.Library => FluentPage.Library,
-            SpaceId.Studio => FluentPage.Workbench,
-            SpaceId.Console => FluentPage.Settings,
-            _ => FluentPage.Library,
-        });
+            Navigate(FluentPage.Workbench);
+            _currentSpace = SpaceId.Console;
+            _workbenchView.SelectConsoleTab();
+            UpdateNavigationItems();
+            UpdateSpaceSelection();
+            UpdateStatus();
+            return;
+        }
+
+        _currentSpace = space;
+        Navigate(space == SpaceId.Library ? FluentPage.Library : FluentPage.Workbench);
+        if (space == SpaceId.Studio)
+        {
+            _studioMode = StudioMode.Page;
+            _workbenchView.SelectPageTab();
+        }
     }
 
     private void UpdateNavSelection(FluentPage page)
@@ -256,12 +301,11 @@ public partial class FluentShell : Window
     {
         var inLibrary = _currentSpace == SpaceId.Library;
         var inStudio = _currentSpace == SpaceId.Studio;
-        var inConsole = _currentSpace == SpaceId.Console;
         Require<Button>("NavLibrary").IsVisible = inLibrary;
         Require<Button>("NavRecycle").IsVisible = inLibrary;
         Require<Button>("NavImport").IsVisible = inLibrary;
-        Require<Button>("NavWorkbench").IsVisible = inStudio;
-        Require<Button>("NavSettings").IsVisible = inConsole;
+        Require<Button>("NavWorkbench").IsVisible = inStudio || _currentSpace == SpaceId.Console;
+        Require<Button>("NavSettings").IsVisible = true;
     }
 
     private void UpdateSpaceSelection()
@@ -274,13 +318,13 @@ public partial class FluentShell : Window
     private void ApplyResponsiveBand(double width)
     {
         ResponsiveBand = GetResponsiveBand(width);
-        _navRail.IsVisible = ResponsiveBand != FluentResponsiveBand.BelowMinimum;
+        _navRail.IsVisible = ResponsiveBand != FluentResponsiveBand.Narrow;
         _breakpointText.Text = ResponsiveBand switch
         {
-            FluentResponsiveBand.BelowMinimum => "< 1024",
-            FluentResponsiveBand.Narrow => "1024–1279",
-            FluentResponsiveBand.Compact => "1280–1599",
-            _ => "≥ 1600",
+            FluentResponsiveBand.Narrow => "Narrow · <1024",
+            FluentResponsiveBand.Medium => "Medium · 1024–1279",
+            FluentResponsiveBand.Compact => "Compact · 1280–1599",
+            _ => "Full · ≥1600",
         };
     }
 
@@ -329,7 +373,7 @@ public partial class FluentShell : Window
             case ShellCommandIds.SpaceLibrary: NavigateSpace(SpaceId.Library); break;
             case ShellCommandIds.SpaceStudio: NavigateSpace(SpaceId.Studio); break;
             case ShellCommandIds.SpaceConsole: NavigateSpace(SpaceId.Console); break;
-            case ShellCommandIds.StudioModeToggle: _studioMode = _studioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page; _workbenchModel.IsBatch = _studioMode == StudioMode.Batch; UpdateStatus(); break;
+            case ShellCommandIds.StudioModeToggle: _studioMode = _studioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page; _workbenchView.SelectTab(_studioMode == StudioMode.Batch ? WorkbenchViewTab.Batch : WorkbenchViewTab.Page); UpdateStatus(); break;
             case ShellCommandIds.CommandPalette: OpenCommandPalette(); break;
             case ShellCommandIds.QuickJump: OpenCommandPalette("快速跳转"); break;
             case ShellCommandIds.ThemeStudio: _settingsModel.SelectedGroup = SettingsGroupId.Appearance; Navigate(FluentPage.Settings); break;
@@ -338,8 +382,8 @@ public partial class FluentShell : Window
             case ShellCommandIds.ThemeToggle: ToggleTheme(); break;
             case ShellCommandIds.ObjectNext: _ = _shelfModel.MoveSelection(1); break;
             case ShellCommandIds.ObjectPrevious: _ = _shelfModel.MoveSelection(-1); break;
-            case ShellCommandIds.PageNext: _ = _readerModel.NavigateAsync(1); break;
-            case ShellCommandIds.PagePrevious: _ = _readerModel.NavigateAsync(-1); break;
+            case ShellCommandIds.PageNext: NavigatePage(1); break;
+            case ShellCommandIds.PagePrevious: NavigatePage(-1); break;
             case ShellCommandIds.ChapterNext: _ = _shelfModel.MoveChapter(1); break;
             case ShellCommandIds.ChapterPrevious: _ = _shelfModel.MoveChapter(-1); break;
             case ShellCommandIds.LibraryRefresh: _ = _shelfModel.RefreshAsync(); break;
@@ -350,9 +394,23 @@ public partial class FluentShell : Window
             case ShellCommandIds.LibraryNewChapter: _shelfView.ShowNewChapterDialog(); break;
             case ShellCommandIds.LibraryOpenReader: _shelfView.OpenSelectedReader(); break;
             case ShellCommandIds.LibraryClearSelection: _shelfModel.ClearSelection(); break;
-            case ShellCommandIds.StudioPage: _studioMode = StudioMode.Page; _workbenchModel.IsBatch = false; break;
-            case ShellCommandIds.StudioBatch: _studioMode = StudioMode.Batch; _workbenchModel.IsBatch = true; break;
+            case ShellCommandIds.StudioPage: _studioMode = StudioMode.Page; _workbenchView.SelectPageTab(); break;
+            case ShellCommandIds.StudioBatch: _studioMode = StudioMode.Batch; _workbenchView.SelectTab(WorkbenchViewTab.Batch); break;
             default: _statusText.Text = $"“{command.Title}”尚无可调用操作。"; break;
+        }
+    }
+
+    private void NavigatePage(int direction)
+    {
+        if (_currentPage == FluentPage.Workbench)
+        {
+            _workbenchView.MovePage(direction);
+            return;
+        }
+
+        if (_currentPage == FluentPage.Reader || _currentSpace == SpaceId.Library)
+        {
+            _ = _readerModel.NavigateAsync(direction);
         }
     }
 

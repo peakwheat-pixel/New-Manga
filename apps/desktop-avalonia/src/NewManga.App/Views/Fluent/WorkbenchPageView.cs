@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
@@ -7,8 +8,16 @@ using NewManga.App.ViewModels.Fluent;
 using NewManga.CoreClient;
 using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Icons;
+using FluentTabStrip = NewManga.DesignSystem.Controls.TabStrip;
 
 namespace NewManga.App.Views.Fluent;
+
+public enum WorkbenchViewTab
+{
+    Page,
+    Batch,
+    Console,
+}
 
 /// <summary>Fluent Workbench page backed exclusively by Host projections and the seven Draft ports.</summary>
 public sealed class WorkbenchPageView : UserControl
@@ -16,6 +25,9 @@ public sealed class WorkbenchPageView : UserControl
     private readonly WorkbenchViewModel _viewModel;
     private readonly Action _backToShelf;
     private readonly StackPanel _root;
+    private readonly FluentTabStrip _tabStrip;
+    private readonly ContentControl _mainHost;
+    private readonly Control _pageLayout;
     private readonly StackPanel _pageStrip;
     private readonly Canvas _canvas;
     private readonly StackPanel _regionList;
@@ -26,12 +38,16 @@ public sealed class WorkbenchPageView : UserControl
     private readonly FluentDialog _leaveDialog;
     private string? _pendingPageId;
     private TextBox? _draftInput;
+    private WorkbenchViewTab _activeTab;
 
     public WorkbenchPageView(WorkbenchViewModel viewModel, Action backToShelf)
     {
         _viewModel = viewModel;
         _backToShelf = backToShelf;
         _root = FluentUi.Stack("fluent-page-layout");
+        _tabStrip = new FluentTabStrip();
+        AutomationProperties.SetName(_tabStrip, "工作台视图");
+        _mainHost = new ContentControl();
         _pageStrip = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         _canvas = new Canvas { Classes = { "fluent-canvas" }, ClipToBounds = true };
         _regionList = FluentUi.Stack("fluent-chapter-list");
@@ -40,7 +56,9 @@ public sealed class WorkbenchPageView : UserControl
         _loadingHost = new Border { IsVisible = false };
         _leaveDialog = new FluentDialog { IsOpen = false };
         _dialogScrim = new Border { Classes = { "fluent-modal-scrim" }, IsVisible = false };
+        _pageLayout = BuildPageLayout();
         _root.Children.Add(BuildToolbar());
+        _root.Children.Add(BuildTabs());
         _root.Children.Add(_statusHost);
         _root.Children.Add(_loadingHost);
         _root.Children.Add(BuildMainLayout());
@@ -48,6 +66,10 @@ public sealed class WorkbenchPageView : UserControl
         Content = _root;
         _viewModel.PropertyChanged += (_, args) =>
         {
+            if (args.PropertyName == nameof(WorkbenchViewModel.IsBatch) && _activeTab != WorkbenchViewTab.Console)
+            {
+                _activeTab = _viewModel.IsBatch ? WorkbenchViewTab.Batch : WorkbenchViewTab.Page;
+            }
             if (args.PropertyName != nameof(WorkbenchViewModel.DraftText)) Render();
         };
         _canvas.SizeChanged += (_, _) => RenderRegions();
@@ -56,19 +78,65 @@ public sealed class WorkbenchPageView : UserControl
 
     public WorkbenchViewModel ViewModel => _viewModel;
     public Canvas RegionCanvas => _canvas;
+    public FluentTabStrip ViewTabs => _tabStrip;
+    public WorkbenchViewTab ActiveTab => _activeTab;
+    public Control? CurrentViewContent => _mainHost.Content as Control;
+    public event Action<WorkbenchViewTab>? TabChanged;
+
+    public void SelectConsoleTab() => SelectTab(WorkbenchViewTab.Console);
+
+    public void SelectPageTab() => SelectTab(WorkbenchViewTab.Page);
+
+    public void SelectTab(WorkbenchViewTab tab)
+    {
+        _activeTab = tab;
+        _viewModel.IsBatch = tab == WorkbenchViewTab.Batch;
+        TabChanged?.Invoke(tab);
+        Render();
+    }
+
+    public bool MovePage(int direction)
+    {
+        if (direction == 0 || _viewModel.SelectedPage is not { } selected) return false;
+        var pages = _viewModel.Pages.ToList();
+        var currentIndex = pages.FindIndex(page => page.PageId == selected.PageId);
+        if (currentIndex < 0) return false;
+        var targetIndex = Math.Clamp(currentIndex + Math.Sign(direction), 0, pages.Count - 1);
+        if (targetIndex == currentIndex) return false;
+        RequestPage(pages[targetIndex].PageId);
+        return true;
+    }
 
     private Control BuildToolbar()
     {
         var toolbar = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         toolbar.Children.Add(FluentUi.Text("工作台", "fluent-page-title"));
         toolbar.Children.Add(FluentUi.Button("返回书架", "fluent-secondary", _backToShelf, "返回书架"));
-        toolbar.Children.Add(FluentUi.Button("页面", "fluent-secondary", () => _viewModel.IsBatch = false, "页面模式"));
-        toolbar.Children.Add(FluentUi.Button("批量", "fluent-secondary", () => _viewModel.IsBatch = true, "批量模式"));
         toolbar.Children.Add(FluentUi.Button("刷新", "fluent-icon", () => _ = _viewModel.LoadAsync(_viewModel.SelectedPage is null ? null : GetChapterId()), "刷新工作台"));
         return toolbar;
     }
 
+    private Control BuildTabs()
+    {
+        AddTab("页面", WorkbenchViewTab.Page);
+        AddTab("批量", WorkbenchViewTab.Batch);
+        AddTab("控制台", WorkbenchViewTab.Console);
+        return _tabStrip;
+
+        void AddTab(string label, WorkbenchViewTab tab)
+        {
+            var button = FluentUi.Button(label, "fluent-secondary", () => SelectTab(tab), $"切换到{label}视图");
+            button.Classes.Set("selected", tab == _activeTab);
+            _tabStrip.Children.Add(button);
+        }
+    }
+
     private Control BuildMainLayout()
+    {
+        return _mainHost;
+    }
+
+    private Control BuildPageLayout()
     {
         var main = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto") };
 
@@ -109,6 +177,31 @@ public sealed class WorkbenchPageView : UserControl
         return main;
     }
 
+    private Control BuildBatchLayout()
+    {
+        var content = FluentUi.Stack("fluent-page-layout");
+        content.Children.Add(FluentUi.Text("批量处理", "fluent-page-title"));
+        content.Children.Add(FluentUi.Text("当前没有可显示的批量状态。", "fluent-status-text"));
+        return new BatchMatrix { Content = content };
+    }
+
+    private Control BuildConsoleLayout()
+    {
+        var content = FluentUi.Stack("fluent-page-layout");
+        content.Children.Add(FluentUi.Text("Run 控制台", "fluent-page-title"));
+        content.Children.Add(new RunProjectionBar
+        {
+            Child = FluentUi.Text("当前没有运行中的任务", "fluent-status-text"),
+        });
+        content.Children.Add(FluentUi.Text("Run 状态与错误由 Host 投影提供；当前端口尚未接入。", "fluent-subtle-text"));
+        if (_viewModel.State == FluentPageState.Error && !string.IsNullOrWhiteSpace(_viewModel.Error))
+        {
+            content.Children.Add(FluentUi.Button("查看工作台错误", "fluent-secondary",
+                () => SelectTab(WorkbenchViewTab.Page), "切换到工作台页面查看错误"));
+        }
+        return content;
+    }
+
     private Control BuildLeaveOverlay()
     {
         var overlay = new Grid { RowDefinitions = new RowDefinitions("*,Auto,*") };
@@ -130,6 +223,17 @@ public sealed class WorkbenchPageView : UserControl
 
     private void Render()
     {
+        for (var index = 0; index < _tabStrip.Children.Count; index++)
+        {
+            _tabStrip.Children[index].Classes.Set("selected", index == (int)_activeTab);
+        }
+        _mainHost.Content = _activeTab switch
+        {
+            WorkbenchViewTab.Batch => BuildBatchLayout(),
+            WorkbenchViewTab.Console => BuildConsoleLayout(),
+            _ => _pageLayout,
+        };
+
         _pageStrip.Children.Clear();
         foreach (var page in _viewModel.Pages)
         {

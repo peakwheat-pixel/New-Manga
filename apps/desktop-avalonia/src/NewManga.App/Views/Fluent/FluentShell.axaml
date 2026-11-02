@@ -15,6 +15,7 @@
         </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Horizontal" Classes="fluent-page-toolbar">
           <TextBlock x:Name="FluentFrontendLabel" Classes="fluent-status-text" VerticalAlignment="Center" />
+          <Button x:Name="SettingsCommandButton" Content="设置" Classes="fluent-secondary" AutomationProperties.Name="打开设置" />
           <Button x:Name="CommandPaletteButton" Content="命令面板" Classes="fluent-secondary" AutomationProperties.Name="打开命令面板" />
           <Button x:Name="HelpButton" Content="键位速查" Classes="fluent-icon" AutomationProperties.Name="打开键位速查" />
         </StackPanel>

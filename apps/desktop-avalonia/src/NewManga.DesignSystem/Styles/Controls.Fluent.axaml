@@ -238,7 +238,7 @@
     <Setter Property="Margin" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
   <Style Selector="StackPanel.fluent-tab-strip">
-    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.S1}" />
+    <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
   </Style>
 
   <Style Selector="Button.fluent-primary">

@@ -77,3 +77,17 @@ DSH，请为现有 Task FEA-06 Appointment 一个独立审查上下文，审查 
 - UIUX finalize 为 `PARTIAL`；没有独立设计 Review、持久流程图或 Native App 验收。
 - 当前 Task 状态为 `in_review`，`integration_commit: null`，资源 closeout pending。未经 DSH 审查处置和集成验证，不得标为 `done`。
 - 回退依据为实现提交 `b0388df9ae2bb087649b44cf25a0921b2116934e`；不要对共享 main 执行 reset/revert，任何修订由 DSH 按 review findings 处理。
+
+## 返修记录（impl-r1 adjudication）
+
+- 返修依据：`doc/reviews/FEA-06-impl-r1.md` 与 `doc/reviews/FEA-06-impl-r1-adjudication.md`；被审实现 `b0388df9ae2bb087649b44cf25a0921b2116934e`；返修 fix commit 在本次记录提交后固定，并写入 Task `delivery_head`。
+- P1-1：TabStrip 样式令牌改为 `Nm.Space.2`；新增 `FluentTokenResourceTests` 扫描 App/DesignSystem 样式及 Fluent XAML 的 `{DynamicResource Nm.*}`，逐键验证 Avalonia 应用资源可解析。
+- P2-1：Workbench 使用 TabStrip 承载页面/批量/控制台；Shelf 使用 SegmentedControl 切换网格/列表，ChapterList 承载书籍详情章节。
+- P2-2/P2-3：AC2/AC3 逐项记录 09 矩阵残差；断点状态文本与枚举统一为 Narrow `<1024`、Medium `1024–1279`，行为未改。
+- W-13：Console 空间落在 Workbench「控制台」页签，空时显示「当前没有运行中的任务」；仅用真实可用的工作台错误提供错误入口，不造 Run 数据。Settings 由顶部「设置」命令条按钮和常驻左导航进入。
+- P2-5：Workbench `[`/`]` 使用既有页列表和选中态，并沿用未保存草稿确认路径；未新增 Host 端口。
+- P2-6/P2-7/P2-8/P2-9 与完整 Run 投影 residual 已记入 Task/组件登记表；没有新增资产或依赖。
+- 验证：build 0 warning / 0 error；全量 **1034 passed / 0 failed / 57 skipped**（返修前 1030/0/57）；Fluent 定向测试 23/0/0；DesignSystem Fluent 组件测试 1/0/0；TokenGen 292 rows 与 ThemeGen 均 `--check` 通过；skip 分布与基线一致。
+- 首次全量尝试发现默认 V2 KeyMap 作用域不可扩大；该尝试记录在 `verification/FEA-06/rework-full-test-attempt1.log`。返修将 `[`/`]` 扩展限制在 Fluent Shell 的 Workbench 页内，最终全量测试通过；默认 `ShellCommands`/KeyMap 保持原行为。
+- 证据：`verification/FEA-06/rework-*.log`、更新后的四页 PNG、`rework-scope-audit.md` 与组件登记表；交付 commit 及 SHA 索引见 `doc/tasks/FEA-06.md` 和 `verification/FEA-06/evidence-index.md`。
+- 接收者：DSH Appointment 独立上下文复核返修 head，优先核对悬空令牌守卫、Console/Settings 映射、V2 快捷键未变和 residual 登记；之后按 adjudication §4 决定集成验证。

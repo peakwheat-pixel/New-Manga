@@ -26,7 +26,7 @@ public sealed class ShelfPageView : UserControl
     private readonly StackPanel _root;
     private readonly WrapPanel _gridHost;
     private readonly StackPanel _listHost;
-    private readonly StackPanel _chapterHost;
+    private readonly ChapterList _chapterHost;
     private readonly StackPanel _pageThumbHost;
     private readonly Border _details;
     private readonly Border _stateHost;
@@ -37,6 +37,7 @@ public sealed class ShelfPageView : UserControl
     private readonly TextBox _dialogInput;
     private readonly StackPanel _dialogBody;
     private readonly Button _dialogConfirm;
+    private readonly SegmentedControl _viewModeControl;
     private IReadOnlyList<string> _pendingDropFiles = Array.Empty<string>();
     private string? _pendingDropFolder;
     private Button _importFilesButton = null!;
@@ -57,7 +58,14 @@ public sealed class ShelfPageView : UserControl
         _openWorkbench = openWorkbench;
         _gridHost = new WrapPanel { Orientation = Orientation.Horizontal };
         _listHost = new StackPanel { Orientation = Orientation.Vertical, Classes = { "fluent-chapter-list" } };
-        _chapterHost = new StackPanel { Classes = { "fluent-chapter-list" } };
+        _chapterHost = new ChapterList();
+        _viewModeControl = new SegmentedControl
+        {
+            Items = ["网格", "列表"],
+            SelectedIndex = viewModel.IsGrid ? 0 : 1,
+        };
+        AutomationProperties.SetName(_viewModeControl, "书架视图模式");
+        _viewModeControl.SelectionChanged += (_, selectedIndex) => _viewModel.IsGrid = selectedIndex == 0;
         _pageThumbHost = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "fluent-page-toolbar" } };
         _status = FluentUi.Text(string.Empty, "fluent-status-text");
         _stateHost = new Border { IsVisible = false };
@@ -89,6 +97,8 @@ public sealed class ShelfPageView : UserControl
     }
 
     public ShelfViewModel ViewModel => _viewModel;
+    public SegmentedControl ViewModeControl => _viewModeControl;
+    public ChapterList ChapterDetails => _chapterHost;
 
     public void ShowNewBookDialog() => ShowNameDialog("book");
 
@@ -118,8 +128,7 @@ public sealed class ShelfPageView : UserControl
             if (args.Property == SearchField.TextProperty) _viewModel.Search = search.Text ?? string.Empty;
         };
         toolbar.Children.Add(search);
-        toolbar.Children.Add(FluentUi.Button("网格", "fluent-secondary", () => _viewModel.IsGrid = true, "切换为网格视图"));
-        toolbar.Children.Add(FluentUi.Button("列表", "fluent-secondary", () => _viewModel.IsGrid = false, "切换为列表视图"));
+        toolbar.Children.Add(_viewModeControl);
         toolbar.Children.Add(FluentUi.Button("收藏", "fluent-secondary", () => _viewModel.FavoritesOnly = !_viewModel.FavoritesOnly, "筛选收藏作品"));
         toolbar.Children.Add(FluentUi.Button("已归档", "fluent-secondary", () => _viewModel.ArchivedOnly = !_viewModel.ArchivedOnly, "筛选已归档作品"));
         toolbar.Children.Add(FluentUi.Button("新建作品", "fluent-primary", () => ShowNameDialog("book"), "新建作品"));
@@ -258,6 +267,7 @@ public sealed class ShelfPageView : UserControl
 
         _gridHost.IsVisible = _viewModel.IsGrid;
         _listHost.IsVisible = !_viewModel.IsGrid;
+        _viewModeControl.SelectedIndex = _viewModel.IsGrid ? 0 : 1;
         _details.IsVisible = _viewModel.SelectedBook is not null;
         if (_viewModel.SelectedBook is not null)
         {

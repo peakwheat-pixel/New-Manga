@@ -47,7 +47,8 @@ public sealed class FluentShellTests
         Assert.True(shell.FindControl<Button>("NavRecycle")!.IsVisible);
         Assert.True(shell.FindControl<Button>("NavImport")!.IsVisible);
         Assert.False(shell.FindControl<Button>("NavWorkbench")!.IsVisible);
-        Assert.False(shell.FindControl<Button>("NavSettings")!.IsVisible);
+        Assert.True(shell.FindControl<Button>("NavSettings")!.IsVisible);
+        Assert.NotNull(shell.FindControl<Button>("SettingsCommandButton"));
 
         shell.Close();
     }
@@ -117,6 +118,9 @@ public sealed class FluentShellTests
         Assert.Equal(FluentPage.Library, shell.CurrentPage);
         Assert.True(shell.Navigate("studio"));
         Assert.Equal(FluentPage.Workbench, shell.CurrentPage);
+        Assert.True(shell.Navigate("console"));
+        Assert.Equal(FluentPage.Workbench, shell.CurrentPage);
+        Assert.Equal(WorkbenchViewTab.Console, shell.WorkbenchView.ActiveTab);
         Assert.True(shell.Navigate("reader"));
         Assert.Equal(FluentPage.Reader, shell.CurrentPage);
         Assert.False(shell.Navigate("not-a-page"));
