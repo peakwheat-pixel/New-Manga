@@ -143,6 +143,14 @@ allowed_paths:
 - **原生矩阵状态**：真机双屏/拔屏/DPI 100/125/150/200% 验收未执行——按 D-1 登记为 blocked（待硬件），不伪造证据；逻辑/清单/持久化部分已覆盖。
 - 下一批：切片 5 性能 baseline（p50/p95/冻结时长/内存句柄，W-5 门槛）+ 全量证据 → 独立 impl review → 集成验证。
 
+## 实施记录（切片 5，2026-11-02，owner=DSH）
+
+- **H3 性能 baseline（AC6/W-5）**：新增 `PerformanceBaselineTests`——真实 `AppShellV2`/`FluentShellSurface` factory + 稳定窗口，预热 2 次后测量 12 次往返；记录 p50/p95/max/冷启动首次/托管内存增量/句柄增量，硬断言 W-5（热切换 p95 ≤ 1000 ms）。Release 实测：**p50 118.51 ms / p95 429.47 ms / max 429.47 ms / 冷启动首次 648.42 ms / 内存 +1.38 MB / 句柄 +3 → PASS**（Debug 对照 p95 516 ms 也 PASS）。
+- **W-6 机械门禁（AC7）**：新增 `ArchitectureDependencyTests`——解析 solution 内 `ProjectReference`：App→Presentation 允许；Host/CoreClient/ApplicationCore→Presentation/App/DesignSystem 禁止；桌面 src 项目 TFM 保持 net9.0。
+- 证据：`verification/FEA-07/performance-baseline-release.json`（原始 metrics）、`performance-baseline-debug.json`（对照）、`performance-baseline.md`（摘要）、`slice-5-verification.log`（build 0/0；perf+arch 4/0；全量 **1099/0/57**）。
+- **实现完成度**：AC4/AC6/AC7 `<<MET>>`；AC1/AC2/AC3/AC5/AC8 `<<PARTIAL: ...>>`（详见各 AC 行；原生矩阵按 D-1 blocked，不伪造证据）。
+- 下一步：独立 impl review（fresh Codex CLI 会话，被审 delivery head）→ findings 处置/返修 → DSH 集成验证 → AC residual 处置。
+
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: headless 100 次往返与每阶段回滚已过；原生 IME/A03 真库数据保护/ACK 重连矩阵待独立复核>>`
@@ -180,12 +188,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令/步骤 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
-| AC1–AC3 | `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests` + `NewManga.Presentation.Avalonia.Tests`（切换/回滚/故障注入，合成数据；data/theme/journal 临时根） | .NET 9 / Avalonia.Headless + Host（`NEWMANGA_CORECLIENT_SIDECAR_DIR`） | NOT_RUN | 待补 |
-| AC4 | 启动矩阵：默认/`--frontend` 覆盖/未知值 fallback/`--shell=legacy`/坏设置/坏包（隔离根） | Windows 11 / .NET 9 | NOT_RUN | 待补 |
-| AC5 | 原生双屏/拔屏/DPI 矩阵（100/125/150/200%、换主屏、拔副屏、全屏） | Windows 11 原生桌面；隔离 `--data-root`/`--theme-home` | NOT_RUN | 待补 |
-| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | NOT_RUN | 待补 |
-| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | NOT_RUN | 待补 |
-| AC8 | 证据归档（日志/截图/矩阵/性能报告/SHA-256 索引） | 全量 | NOT_RUN | 待补 |
+| AC1–AC3 | `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests` + `NewManga.Presentation.Avalonia.Tests`（切换/回滚/故障注入，合成数据；data/theme/journal 临时根） | .NET 9 / Avalonia.Headless + Host（`NEWMANGA_CORECLIENT_SIDECAR_DIR`） | PASS（headless 部分；原生/真库矩阵待复核） | `slice-1/2/2b-verification.log` |
+| AC4 | 启动矩阵：默认/`--frontend` 覆盖/未知值 fallback/`--shell=legacy`/坏设置/坏包（隔离根） | Windows 11 / .NET 9 | PASS（9 测试） | `slice-3-verification.log` |
+| AC5 | 原生双屏/拔屏/DPI 矩阵（100/125/150/200%、换主屏、拔副屏、全屏） | Windows 11 原生桌面；隔离 `--data-root`/`--theme-home` | PARTIAL（headless 拓扑/manifest PASS；原生矩阵 blocked D-1） | `slice-4-verification.log` |
+| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | PASS（Release p95 429.47ms ≤1000ms） | `performance-baseline-release.json` |
+| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | PASS（1099/0/57 + 架构门禁 3 测试） | `slice-5-verification.log` |
+| AC8 | 证据归档（日志/截图/矩阵/性能报告/SHA-256 索引） | 全量 | PARTIAL（headless/性能/架构证据已归档；原生矩阵与 evidence-index 待补） | `performance-baseline.md`、`slice-*-verification.log` |
 
 ## Canonical Evidence
 
@@ -198,6 +206,8 @@ allowed_paths:
 | EV-FEA07-SLICE2C2 | AC1/AC4/AC8 | `verification/FEA-07/slice-2c-part2-verification.log` | `-` | `7b848ca1a773e82e0b1faa1ee3e1a7f2d54f8ca49f2e0b3faaa80702ecb75973` | CANONICAL |
 | EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
 | EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
+| EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
+| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `44f1768bbbb57a35aff415804b0e78a05948ccedc575f94ba9a58aa0a81474fc` | CANONICAL |
 
 ## Closeout Record
 
