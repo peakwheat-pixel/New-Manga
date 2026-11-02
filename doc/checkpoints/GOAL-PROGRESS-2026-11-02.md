@@ -758,3 +758,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - impl-r2（Codex fresh session）：**changes_requested，P0=0 / P1=3 / P2=3**；实跑 build/全量 1213/0/57/check/pins 全 EXIT=0；报告 `doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md` 已入库。
 - P1：R2-001 动效覆盖未整体闭环（Reader IsVisible、导航分类关闭、Settings/Shelf 浮层未接 200/160、hover 曲线非冻结）；R2-002 页面内部重建控件颜色/pressed 漏接；R2-003 Reader pointer press/wheel/handled 键未统一重置。P2：R2-004 detach 后已排队回调仍执行；R2-005 证据台账仍有过期计数/矛盾；R2-006 焦点环 offset=1 未消费。
 - 已派 fresh Codex 实施 R2-001…006 返修（job `pwsh-d2b10ea336a24bec`，prompt `impl-r2-rework-codex-prompt.md`），要求逐项回归测试 + 证据/handoff；完成后全量刷新再派 impl-r3。
+## 115. R2 返修交付 + impl-r3 复核派发（2026-11-03 01:55）
+
+- Codex 实施 R2-001…006（job `pwsh-d2b10ea336a24bec`，exit 0）：实现 `8b39b1398`（motion scope/visibility motion、动态控件反馈、Reader 交互 reset、attach generation、FocusRing offset=1 等）+ 证据 `fcf28bdfc`；全量 **1233/0/57**（+20），build/check/pins/生成器全 EXIT=0，旧 PNG 零漂移，未 push。
+- DSH 已派 fresh Codex **impl-r3** 独立复核（job `pwsh-95997fbd615d4902`，prompt `impl-review-r3-prompt.md`；逐 R2 finding 核验 + 常规门禁），产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r3.md`。
+- r3 approved 后：DSH 集成验证 → 按实际 AC 结果 done/closed_with_limitations；D-8 与原生验收（B-5/D-1）保持登记。

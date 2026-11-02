@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；impl-r1 changes_requested（报告在库）；impl-r2 **changes_requested**（Codex fresh session，P0=0/P1=3/P2=3；doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md，reviewed_head eaf7b74d8）；当前：R2 findings 返修（Codex 实施 job 运行中）→ impl-r3；当前 Appointment：findings 返修（DSH，R1-001…R1-009）→ 待 fresh impl-r2 复核
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；impl-r1 changes_requested（报告在库）；impl-r2 **changes_requested**（Codex fresh session，P0=0/P1=3/P2=3；doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md，reviewed_head eaf7b74d8）；R2 返修已交付（1233/0/57，`fcf28bdfc`）；当前：fresh Codex **impl-r3** 复核（job 运行中）；当前 Appointment：findings 返修（DSH，R1-001…R1-009）→ 待 fresh impl-r2 复核
 depends_on:
   - FEA-06
   - FEA-07
@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: e0d1d73c5（impl-r1 全部返修：R1-001 退出160/pressed90/badge150 由 Codex `033c8b4b9` 补齐 + 证据 `e0d1d73c5`；全量 1213/0/57；impl-r2 复核进行中）
+delivery_head: fcf28bdfc（R2-001…006 返修：`8b39b1398` + 证据 `fcf28bdfc`；全量 1233/0/57；impl-r3 复核进行中）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
