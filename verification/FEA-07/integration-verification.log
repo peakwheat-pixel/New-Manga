@@ -1,0 +1,52 @@
+# FEA-07 集成验证（DSH，r12 approved 后）
+
+- time: 2026-11-02 21:21:43 +08:00
+- integration head: 527a7ec3797f39c24b92ee3e2062fa41777b7b32 (docs head; code head aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0)
+- base: cbfb7bbc92d489541a24290038eae2117f8aa1ce
+- worktree: clean before run (r12 report temporarily outside repo for clean-evidence run)
+- shell: PowerShell 7.6.8 / dotnet 10.0.401
+- review chain: scope-r1 changes_requested→r2 approved; impl-r1–r5/r7–r11 changes_requested 均已处置; impl-r6/r12 approved
+
+# command: dotnet build apps\desktop-avalonia\NewManga.sln --nologo
+# exit: 0
+#   0 warnings
+#   0 errors
+
+# command: dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
+# exit: 0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 80 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 357 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 765 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 31 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   529，已跳过:     7，总计:   536，持续时间: 2 m 15 s - NewManga.App.Tests.dll (net9.0)
+# total: 1138 passed / 0 failed / 57 skipped
+# skip 57: Host 28 / CoreClient 22 / App 7 (direct cause NEWMANGA_CORECLIENT_SIDECAR_DIR unset; native/real-DB matrix blocked D-1)
+
+# command: NewManga.DesignSystem.TokenGen -- --check
+# exit: 0
+#   rows: 292; every generated artifact matches the frozen token source byte-for-byte
+
+# command: NewManga.ThemeEngine.ThemeGen -- --check
+# exit: 0
+#   up to date: generated theme artifacts match the frozen token source byte-for-byte
+
+# command: pwsh -NoProfile -File tools/governance/check.ps1
+# exit: 0
+#   WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+#   WARN: doc/STATUS.md 已达到预算的 80%：3161 bytes / 29 lines
+#   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4803 bytes / 64 lines
+#   Governance check: PASS (3 warnings)
+
+# command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+# exit: 0
+#   PIN AUDIT: PASS (all 15)
+
+# Task Canonical Evidence pin audit
+#   pins=21 mismatches=0
+#   index rows=23 mismatches=0 (no self SHA, control chars 0)
+#   code/test drift aedc7251c..HEAD: 0 files (expected 0)
+# AC5 native dual-screen/unplug/DPI matrix: BLOCKED (D-1 no hardware), no fabricated evidence
+# AC1/AC2/AC3/AC4/AC6/AC8 residual: PARTIAL boundaries recorded in Task card
