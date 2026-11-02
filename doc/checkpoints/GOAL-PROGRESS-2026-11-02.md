@@ -391,3 +391,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 用户指示：Codex 调用改为 `-m gpt-6.1-sol -c model_reasoning_effort="high"`。
 - 实测（嵌入 CLI 0.166.0-alpha.5.1，ChatGPT 账号）：exit 0（ok）。此前 `gpt-6.1-sol-high`/`"gpt-6-luna xhigh"` 作为模型 ID 均报 "not supported"（模型 ID 与 reasoning effort 是两个参数）。
 - 生效范围：自本轮起的 Codex 复核/实现派发统一使用该配置（历史报告不追溯修改）；r4 复核将用新配置。
+## 55. 新会话恢复材料（2026-11-02）
+
+- 用户将新开 DSH 会话；已写 `doc/handoffs/FEA-07-resume-2026-11-02.md`：当前 HEAD、Task 状态、已完成实现/复核历史、r3 未闭环（R-001/R-002/R-007）、验证基线（1115/0/57、性能 p95 344.93ms）、关键命令、Codex 新配置（`-m gpt-6.1-sol -c model_reasoning_effort="high"`）、约束/坑、建议顺序。
+- 新会话按该文件 + Task 卡继续；无需回读旧会话。
