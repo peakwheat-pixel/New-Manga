@@ -178,7 +178,7 @@
     <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
   </Style>
 
-  <Style Selector="StackPanel.fluent-chapter-list">
+  <Style Selector=".fluent-chapter-list" x:SetterTargetType="StackPanel">
     <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
   </Style>
   <Style Selector=".fluent-region-box" x:SetterTargetType="Border">
@@ -194,53 +194,53 @@
   <Style Selector=".fluent-region-box.selected" x:SetterTargetType="Border">
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Focus.Ring.Color}" />
   </Style>
-  <Style Selector="Border.fluent-streaming-thumb">
+  <Style Selector=".fluent-streaming-thumb" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Sm}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
-  <Style Selector="ScrollViewer.fluent-batch-matrix">
+  <Style Selector=".fluent-batch-matrix" x:SetterTargetType="ScrollViewer">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Panel}" />
     <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
     <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
   </Style>
-  <Style Selector="Border.fluent-run-projection-bar">
+  <Style Selector=".fluent-run-projection-bar" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Md}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Control}" />
   </Style>
-  <Style Selector="Border.fluent-reader-page">
+  <Style Selector=".fluent-reader-page" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.None}" />
   </Style>
-  <Style Selector="ProgressBar.fluent-reader-progress">
+  <Style Selector=".fluent-reader-progress" x:SetterTargetType="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Sm}" />
   </Style>
-  <Style Selector="ProgressBar.fluent-progress">
+  <Style Selector=".fluent-progress" x:SetterTargetType="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Sunken}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Sm}" />
   </Style>
-  <Style Selector="Border.fluent-settings-group">
+  <Style Selector=".fluent-settings-group" x:SetterTargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Raised}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Line.Subtle}" />
     <Setter Property="BorderThickness" Value="{DynamicResource Nm.Border.Hairline}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Nm.Corner.Fluent.Md}" />
     <Setter Property="Padding" Value="{DynamicResource Nm.Padding.Card}" />
   </Style>
-  <Style Selector="Grid.fluent-settings-field">
+  <Style Selector=".fluent-settings-field" x:SetterTargetType="Grid">
     <Setter Property="ColumnSpacing" Value="{DynamicResource Nm.Space.3}" />
     <Setter Property="RowSpacing" Value="{DynamicResource Nm.Space.2}" />
     <Setter Property="Margin" Value="{DynamicResource Nm.Padding.Snug}" />
   </Style>
-  <Style Selector="StackPanel.fluent-tab-strip">
+  <Style Selector=".fluent-tab-strip" x:SetterTargetType="StackPanel">
     <Setter Property="Spacing" Value="{DynamicResource Nm.Space.2}" />
   </Style>
 
