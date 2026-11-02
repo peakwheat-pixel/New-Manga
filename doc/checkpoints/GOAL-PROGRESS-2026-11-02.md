@@ -780,3 +780,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Task 终态：`closed_with_limitations`，integration_commit `669a4ae02`；AC1/AC3/AC4/AC5 MET、**AC2 PARTIAL**（I-4 少数视觉格 NOT_RUN、D-8 decorative 视觉动画、B-5 原生 a11y BLOCKED/D-1）。Closeout Record 与 Resource Manifest 已填写；治理 PASS、pins 15/15。
 - 已释放 successor **FEA-06-RESIDUAL-2（ready，owner=zcode）**：IN = D-8 decorative 三类视觉动画 + I-4 剩余纯视觉格；BLOCKED = B-5/D-1。范围待 scope 复核冻结后实施；STATUS/PLAN/LEDGER 已更新。
 - 关闭提交 `54c063405`；未 push。
+## 119. FEA-06-RESIDUAL-2 scope 复核准备（2026-11-03 02:34）
+
+- FEA-06-RESIDUAL-1 已关闭（§118）；successor FEA-06-RESIDUAL-2（ready）范围草案待独立 scope 复核冻结。
+- workspace 已备 `FEA-06-RESIDUAL-2/scope-review-prompt.md`（ZCode fresh scope Reviewer：IN-1 D-8 decorative 三动画 + IN-2 I-4 剩余视觉格；穷尽/互斥/可验证、视觉证据要求、BLOCKED B-5/D-1、allowed_paths 与验收命令）。
+- 排程 03:04 提醒：ZCode 03:02 恢复后探测并派发 scope 复核（产出 doc/reviews/FEA-06-RESIDUAL-2-scope-r1.md）；Codex 约 05:23 恢复为备用。scope approved 后才实施，Task2 状态 ready→in_progress。
+- 当前仓库：治理 PASS、pins PASS、工作树干净（除本记录提交）；未 push。
