@@ -867,3 +867,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - IN-2A：16 组 + AlertBanner 九值有效属性断言（14 tests）全绿；NotStarted 按 `Controls.Status.axaml` 权威（Text.Secondary），交叉断言特判并登记 **D-14**（StatusCatalog 仍 Text.Disabled，待裁决改 catalog）。
 - 验证：build 0/0；IN-2A 14/14 + coverage 测试 PASS；全量无过滤 **1271/0/57**（+14）；证据 `verification/FEA-06-RESIDUAL-2/impl-in2a-verification.log`；提交 `1d2df1d15`；未 push；旧四 PNG 未动。
 - 剩余：**IN-2B**（opt-in 像素证据 + visual-inventory + 逐图签署）；05:24 提醒已更新为仅 IN-2B 续接；完成后独立 impl Review → 集成/关闭。
+## 133. IN-2B 实施计划就绪（2026-11-03 04:15）
+
+- DSH 预研 `workspace/FEA-06-RESIDUAL-2/in2b-capture-plan.md`：复用 `FluentPages_RenderHeadlessPngEvidence`（页面级）与 `ManualFluentMotionClock`（首/中/尾帧）、组件窗口 Headless 渲染；命名 `<group>--<component>--<state>--<mode>--<theme>.png`；最小清单覆盖 pages/components/decor；`visual-inventory.md` 列（含 signed_by/signed_at 待独立签署）；验收脚本（默认零写入、opt-in 仅本卡 visuals 新增、IN-1 mid-frame、旧四 PNG SHA 不变）。
+- 现状：IN-1（`d854d91b2`）+ IN-2A（`1d2df1d15`，含派生控件样式修复）已完成，全量 **1271/0/57**；仅余 IN-2B。
+- 05:24 Codex 提醒已更新为仅 IN-2B 续接；ZCode 08:05 备用；完成后派独立 impl Review（不得自审）→ 集成/关闭。
