@@ -503,3 +503,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r11 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引 → `verification/FEA-07/integration-verification.log`）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 矩阵无硬件 → residual；AC1/AC2/AC3/AC4/AC6/AC8 边界一并登记（不伪造证据）。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；依赖 FEA-09/10/11/12/13 端口未就绪，释放时按端口就绪拆分并刷新 base_commit/scope review）。
+## 72. FEA-07 impl-r11 changes_requested（P2×1，缺 r10 报告）→ 补全（2026-11-02）
+
+- **r11 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `91de6a345`/代码 `aedc7251c`）：`doc/reviews/FEA-07-impl-r11.md`，changes_requested，P0=0 / P1=0 / P2=1；**R-007 文案冲突确认消除**、R-009/R-011 维持闭环；唯一 P2：仓库缺少被声明为「最新已完成 Review」的 r10 原始报告（b7 干净证据运行前暂存仓外、提交时漏恢复）。
+- **修复**：恢复 `doc/reviews/FEA-07-impl-r10.md`（真实内容）并与 r11 报告一并入库；指针更新为「最新已完成=impl-r11（已处置）；当前 Appointment=impl-r12 复核进行中」；canonical 保持 pending（r12 approved 并集成后置 complete）。
+- 本批纯文档，代码 head 不变（`aedc7251c`）；全量 1138/0/57、build 0/0、两生成物 up-to-date、check PASS(3)、pins 15/15 沿用既有证据；提交前重新校验 Task pin/索引 SHA 与 r1–r11 Review 报告完整性。
+
+## 73. FEA-07 r12 复核派发 + 收尾计划（2026-11-02）
+
+- r12：fresh Codex CLI 只读，被审文档 head=本批提交、代码 head `aedc7251c`；唯一允许写 `doc/reviews/FEA-07-impl-r12.md`；重点 Review 报告完整性与 Appointment 指针一致性。
+- r12 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引 → `verification/FEA-07/integration-verification.log`）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 矩阵无硬件 → residual；AC1/AC2/AC3/AC4/AC6/AC8 边界一并登记（不伪造证据）。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；依赖 FEA-09/10/11/12/13 端口未就绪，释放时按端口就绪拆分并刷新 base_commit/scope review）。

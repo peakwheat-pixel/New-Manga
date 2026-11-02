@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
-reviewer: codex-cli（最新已完成：impl-r10 changes_requested，P0=0/P1=0/P2=1（R-007 本轮处置）；报告 doc/reviews/FEA-07-impl-r10.md；当前 Appointment：impl-r11（fresh Codex CLI，来源 doc/handoffs/FEA-07-impl-r10.md §4），复核进行中）
+reviewer: codex-cli（最新已完成：impl-r11 changes_requested，P0=0/P1=0/P2=1（缺 r10 原始报告，本轮补全）；报告 doc/reviews/FEA-07-impl-r11.md；当前 Appointment：impl-r12（fresh Codex CLI，来源 doc/handoffs/FEA-07-impl-r11.md §4），复核进行中）
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-04
@@ -18,7 +18,7 @@ branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
 delivery_head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0（r8 返修代码提交；精确证据见 final-evidence.log）
-canonical_evidence_status: pending（r11 approved 并集成后置 complete）
+canonical_evidence_status: pending（r12 approved 并集成后置 complete）
 resource_closeout_status: pending
 evidence_dir: verification/FEA-07
 allowed_paths:
@@ -279,7 +279,13 @@ allowed_paths:
   - **当前 Appointment = impl-r11（fresh Codex CLI，来源 `doc/handoffs/FEA-07-impl-r10.md` §4），状态「复核进行中」**——Task/索引/STATUS/PLAN/checkpoint/handoff 一致写进行中，不再滚动成下一轮「待派」；
   - canonical 保持 pending（r11 approved 并集成后置 complete）。
 - 本批为纯文档修正，代码 head 不变（`aedc7251c`）；全量 1138/0/57、build 0/0、两生成物 up-to-date、check PASS(3)、pins 15/15 沿用 `rework-r8-verification.log` 与 `final-evidence.log`；commit 前重新校验 Task pin/索引 SHA 一致。
-- 待办：r11 approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
+- 待办（已于 r11 处置，见下节）：r11 approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
+## impl-r11 处置（changes_requested P2×1 → 补全证据，2026-11-02，owner=DSH）
+
+- 报告：`doc/reviews/FEA-07-impl-r11.md`（Codex CLI fresh，`gpt-6.1-sol` + `reasoning_effort=high`；P0=0/P1=0/P2=1；被审文档 `91de6a345`/代码 `aedc7251c`）。**R-007 文案冲突确认消除**；R-009/R-011 维持闭环；唯一 P2 为：仓库中缺少被声明为「最新已完成 Review」的 r10 原始报告（b7 提交前为干净证据运行把 `doc/reviews/FEA-07-impl-r10.md` 暂存到仓外，提交时漏恢复）。
+- **修复**：恢复 `doc/reviews/FEA-07-impl-r10.md`（真实 r10 报告，SHA 不变），本批与 `doc/reviews/FEA-07-impl-r11.md` 一并入库；Task/索引/STATUS/PLAN/checkpoint/handoff 指针更新为「最新已完成=impl-r11（已处置）；当前 Appointment=impl-r12 复核进行中」。
+- 本批纯文档，代码 head 不变（`aedc7251c`）；全量 1138/0/57、build 0/0、两生成物 up-to-date、check PASS(3)、pins 15/15 沿用 `rework-r8-verification.log` 与 `final-evidence.log`；commit 前重新校验 Task pin/索引 SHA。
+- 待办：r12 approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: 真实内容树 100 次切换（50 往返）状态保留/真实 staging 布局+Loaded+帧渲染门禁/失败回滚已过（R-001 part2）；R-017 外部外观同步、R-018 订阅解绑、R-019 staging 输入隔离、R-020 全屏桥接、R-022 失败/取消切换窗口模式回滚、R-024 排队拒绝不写陈旧模式均已补（r4–r7）；原生 IME、A03 真库 DB/current/pinned/Lock 矩阵、ACK 重连与真实 Run/Intent 链路不可测，保持 PARTIAL>>`
