@@ -989,3 +989,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 已备 workspace `d14-impl-review-prompt.md`（ZCode fresh Reviewer：裁决 A 执行准确性、越权检查、映射/对比度断言真实判别、回归/门禁、其它 `StatusCatalog.ColorKey` 消费者回归）。
 - 08:06 提醒已更新为**仅派独立 impl Review**（实现已完成 `5ecc1e4c6`，1292/0/57；Codex 限额 10:25 备用）；approved 后 DSH 集成验证并关闭 D-14，再按 PLAN 释放下一节点。
 - 当前：D-14 in_progress；STATUS/PLAN 指针一致；治理 PASS(3)、pins 15/15；未 push。
+## 153. 后续节点缺口登记（2026-11-03 07:58）
+
+- D-14 关闭后**无现成 READY 节点**：`REBASELINE_PLAN` 的活跃 DAG 中 FEA-09…13 端口线仅作为 BLOCKED 承接方被引用，未实例化为可释放 Task（无 scope/依赖/验收）。
+- 因此下一可推进项需 DSH 先按用户顺序（FEA 端口线）完成 **范围草案 + 依赖核对 + scope 复核**，或由用户指定节点；在 D-14 关闭前不预释放，避免 queue-jump。
+- 待裁决 **D-15（新，记录待用户/PLAN 裁决）**：D-14 关闭后是否立即由 DSH 起草并释放 FEA-09（阅读器数据端口）或其它端口节点；DSH 推荐：按 FEA 线顺序释放 FEA-09 的 scope 草案，交独立 scope Review 后实施（与既有流程一致）。依据：用户「按原来的顺序」+ 当前无 READY 节点。
+- 当前等待 ZCode 08:05 窗口派 D-14 独立 impl Review（Codex 10:25 备用）；期间不空转、不伪造推进。
