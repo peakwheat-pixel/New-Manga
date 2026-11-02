@@ -930,3 +930,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 验证：全量 **1274/0/57**（App 640、DS 112）；`check.ps1` PASS(3)；pins 15/15；未 push。
 - 已派 **独立上下文 impl-r2 Review**（D-9 workflow job `workflow-8eb284e7f674494c`）：核验 R2-001…017 处置、逐图视觉签署（pages/components/decor 共 32+ 张）与门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r2.md`。
 - approved 后：DSH 集成验证 → 按 AC 结果 done/closed_with_limitations；changes_requested 则继续返修。
+## 143. 05:24 提醒处置（2026-11-03 05:26）
+
+- 提醒内容已过时（R2-001/011/012/017 均已由 DSH 完成，head 已从 9f5723cb0 前进到 4a22168f1，全量 1274/0/57）；不重复派发返修。
+- **Codex 探针 05:24:06 返回「可用」**（exit 0）：已按其恢复窗口派发 **D-14 裁决**（job `pwsh-c512b0ff4dd34e9e`，prompt workspace `d14-adjudication-codex-prompt.md`）——裁决 `StatusCatalog.ColorKey(NotStarted)`=Text.Disabled 与 `Controls.Status.axaml` glyph=Text.Secondary 的唯一正确方向、消费者影响、实施卡建议；产出 `doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`。
+- 独立 impl-r2 Review 仍在运行（D-9 workflow `workflow-8eb284e7f674494c`）。两者完成后：DSH 处置 → 集成验证 → 按 AC 关闭 FEA-06-RESIDUAL-2。
