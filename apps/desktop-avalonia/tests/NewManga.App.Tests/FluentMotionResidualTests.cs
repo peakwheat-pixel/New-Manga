@@ -6,6 +6,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.ViewModels.Fluent;
 using NewManga.App.Views.Fluent;
@@ -74,6 +75,9 @@ public sealed class FluentMotionResidualTests : IDisposable
         var options = AppOptions.Parse(Array.Empty<string>());
         var selection = FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null);
         var surface = new FluentShellSurface(options, selection, new FakeHostController(FakeHostController.ReadySnapshot()), appearance, themeManager);
+        var window = new Window { Width = 640, Height = 480, Content = surface };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
         var pageHost = surface.FindControl<ContentControl>("FluentPageHost")!;
         Assert.NotNull(pageHost);
 
@@ -83,10 +87,15 @@ public sealed class FluentMotionResidualTests : IDisposable
         Assert.NotNull(transitions);
         var transition = Assert.IsType<DoubleTransition>(transitions!.Single());
         Assert.Equal(TimeSpan.FromMilliseconds(MotionTimings.NavigationPageMilliseconds), transition.Duration);
+        Assert.Contains("motion-feedback", surface.Classes);
+        var feedbackButton = surface.GetVisualDescendants().OfType<Button>().First();
+        Assert.NotNull(feedbackButton.Transitions);
 
         await appearance.SaveAsync(AppearanceDefaults.Settings with { MotionMode = MotionMode.Reduce, MotionCategories = MotionCategories.All });
         Dispatcher.UIThread.RunJobs();
         Assert.Null(pageHost.Transitions);
+        Assert.DoesNotContain("motion-feedback", surface.Classes);
+        Assert.Null(feedbackButton.Transitions);
 
         await appearance.SaveAsync(AppearanceDefaults.Settings with
         {

@@ -3,6 +3,7 @@ using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -590,6 +591,10 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         ApplyNavigationTransition(_motionTimings);
         ThemeManager?.SetReducedMotion(!resolution.Enabled);
         Classes.Set("motion-navigation", _motionNavigationEnabled);
+        // I-5: feedback keeps its colour change but owns a transition only when motion is enabled;
+        // reduce/category-off removes the class so the colour applies instantly.
+        Classes.Set("motion-feedback", _motionTimings.FeedbackHoverMilliseconds > 0);
+        ApplyFeedbackTransitions(_motionTimings);
         Classes.Set("motion-reduced", !resolution.Enabled);
         // I-10：reduce 下阅读器工具条直接切换、无淡出过渡（07:23）。
         _readerModel.AreToolBarsReducedMotion = !resolution.Enabled;
@@ -609,6 +614,38 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
                 },
             }
             : null;
+    }
+
+    /// <summary>
+    /// I-5 (design 02 §2.2 判据③): feedback colour changes own a transition only while motion is enabled;
+    /// reduce / category-off clears it, leaving the colour change instant. Applied on attach and on every
+    /// re-resolve so runtime settings changes take effect without recreating the content tree.
+    /// </summary>
+    private void ApplyFeedbackTransitions(MotionTimingProfile? timings)
+    {
+        var enabled = timings is not null && timings.FeedbackHoverMilliseconds > 0;
+        Transitions? transitions = enabled
+            ? new Transitions
+            {
+                new BrushTransition
+                {
+                    Property = TemplatedControl.BackgroundProperty,
+                    Duration = TimeSpan.FromMilliseconds(timings!.FeedbackHoverMilliseconds),
+                    Easing = new CubicEaseOut(),
+                },
+            }
+            : null;
+
+        foreach (var button in this.GetVisualDescendants().OfType<Button>())
+        {
+            button.Transitions = transitions;
+        }
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        ApplyFeedbackTransitions(_motionTimings);
     }
     private static bool IsPlainTypingKey(Key key, KeyModifiers modifiers) =>
         (modifiers & (KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Meta)) == 0 &&
