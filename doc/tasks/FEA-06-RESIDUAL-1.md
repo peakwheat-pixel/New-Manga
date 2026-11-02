@@ -3,11 +3,11 @@ id: FEA-06-RESIDUAL-1
 title: Fluent 四页规格补齐（FEA-06 AC1–AC7 residual，第一批）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch A（ZCode CLI 执行，Codex 额度故障转移）**，进行中
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch B 待派**（I-4/I-5/I-7/I-8/I-11；Codex 额度恢复后优先 Codex，否则 ZCode 新会话）
 depends_on:
   - FEA-06
   - FEA-07
@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 9337cbbe1b522d03a60cccd747c58393fc5fba79（Batch A 交付；Batch B 未完成，终态交付待续）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -148,11 +148,19 @@ allowed_paths:
 
 - 关闭时逐类填写（当前 pending）：worktree（无 linked worktree，main 内联）、verification artifacts（`verification/FEA-06-RESIDUAL-1/**` PRESERVE_REFERENCED）、task-env（未创建）、dataset/model/test-material（未创建/未使用）、temp（测试临时根，运行后清理）、agent-output（无）、exchange（无）、user data（未访问）。
 
+## 实施记录（Batch A，2026-11-02）
+
+- 实现执行：ZCode CLI（`--mode yolo`，Codex 额度故障转移）；会话在收尾前崩溃（`0xC0000409`），未写证据/Handoff；工作树遗留 WIP。
+- DSH 收尾：核对全部改动在 allowed_paths；恢复被默认全量运行覆盖的 `verification/FEA-06/screens/{shelf,workbench,reader}.png`（HEAD 字节）；修 1 个异步测试竞态（`PumpUntil`，实现语义未改）；补写 Handoff 与证据日志。
+- commits：`83fa1b186`（I-6 四 VM 等价拆分，1408 行→四文件）；`9337cbbe1`（Batch A 功能 + 证据/Handoff，I-1/I-2/I-3/I-9/I-10/I-12/I-13/I-14）。
+- 验证：build 0/0；新增测试 33/33；安全全量（排除 PNG 用例）**1170/0/57**（基线 1137 + 33）；FEA-07 非回归子集全绿；TokenGen/ThemeGen up-to-date；check PASS(3)；pins 15/15；证据 `verification/FEA-06-RESIDUAL-1/batch-a-verification.log`（SHA `4a7744f1…`）。
+- 未完成（Batch B）：I-4 组件 full 状态、I-5 motion、I-7 PNG opt-in、I-8 Elevation、I-11 焦点环/浮层焦点/Tab 序。I-7 落地前全量验证必须排除 `FluentPages_RenderHeadlessPngEvidence`，不得声称无过滤全量已复跑。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 
 ## Closeout Record
 

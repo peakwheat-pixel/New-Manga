@@ -564,3 +564,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **冻结**：范围 v3 冻结（IN=I-1…I-14、BLOCKED=B-1…B-7、无 DEFERRED）；owner 仍登记 codex，实施执行按故障转移改派 **ZCode**。
 - **实施计划**：I-6 独立首个 commit（1408 行 VM 等价拆分）→ Batch A（I-12/I-14/I-9/I-10/I-1/I-2/I-3）→ Batch B（I-4/I-5/I-11/I-13/I-7/I-8）；每子批独立 delivery commit；全程安全回归 filter 1137/0/57，I-7 后恢复 1138/0/57 起点。
 - **下一步**：ZCode 实施 Batch A → DSH 验收（diff 写域/测试/证据/安全回归）→ Batch B → fresh 复核（Codex 恢复则 Codex，否则 ZCode）。
+## 80. FEA-06-RESIDUAL-1 Batch A 交付（ZCode 实现 + 崩溃 → DSH 收尾）（2026-11-02）
+
+- **实现执行**：ZCode CLI（`--mode yolo`，Codex 额度故障转移）完成 I-6（`83fa1b186`，1408 行 VM 四文件等价拆分）+ Batch A 功能 WIP 后**会话崩溃**（exit `-1073740791` = `0xC0000409` STATUS_STACK_BUFFER_OVERRUN，无 JSON/证据/Handoff）。
+- **DSH 收尾**：核对全部改动在 allowed_paths；恢复被 ZCode 默认全量运行覆盖的 `verification/FEA-06/screens/{shelf,workbench,reader}.png` 到 HEAD 字节；修 1 个异步测试竞态（`PumpUntil`，实现语义未改）；补写 `doc/handoffs/FEA-06-RESIDUAL-1-impl-batch-a.md` 与 `verification/FEA-06-RESIDUAL-1/batch-a-verification.log`；提交 `9337cbbe1`。
+- **Batch A 子项**：I-1/I-2/I-3/I-6/I-9/I-10/I-12/I-13/I-14 完成（新增测试 33/33）。
+- **验证**：build 0/0；安全全量（排除 PNG 用例）**1170/0/57**（基线 1137 + 33 新测试）；FEA-07 非回归子集全绿；TokenGen 292 rows / ThemeGen up-to-date；check PASS(3)；pins 15/15；旧 FEA-06 PNG 字节未变（restore 后 SHA 一致）。
+- **Batch B 待派**：I-4（组件 full 状态）、I-5（motion 三态×三类）、I-7（PNG opt-in，恢复无过滤 1138 起点）、I-8（Elevation+高对比回退+Current 对照）、I-11（焦点环/浮层焦点/Tab 序+Current 对照）。
+- **下一步**：Batch B（Codex 额度恢复优先 Codex，否则 ZCode 新会话）→ fresh impl 复核 → DSH 集成/关闭。
