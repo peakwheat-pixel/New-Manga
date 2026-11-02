@@ -159,6 +159,8 @@ public sealed class FluentResidual2DecorativeTests
                 .Invoke(window, null);
             Assert.False(shelf.DecorativeLoop.IsRunning);
             var frozen = Gradient(surface).Opacity;
+            Motion(surface); // changing policy while inactive must not restart the loop
+            Assert.False(shelf.DecorativeLoop.IsRunning);
             clock.Advance(3000);
             Assert.Equal(0, clock.PendingFrames); // paused: no frame callback is queued
             Assert.Equal(frozen, Gradient(surface).Opacity);
@@ -482,6 +484,11 @@ public sealed class FluentResidual2DecorativeTests
             window.Activate(); Dispatcher.UIThread.RunJobs();
             clock.Advance(299); Assert.Same(layer, surface.ReaderView.DecorativeParticleLayer);
             clock.Advance(1); Assert.Null(surface.ReaderView.DecorativeParticleLayer);
+            await surface.ReaderViewModel.NavigateAsync(-1); Dispatcher.UIThread.RunJobs();
+            Assert.NotNull(surface.ReaderView.DecorativeParticleLayer);
+            typeof(WindowBase).GetMethod("HandleDeactivated", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!.Invoke(window, null);
+            surface.Navigate(FluentPage.Library); Dispatcher.UIThread.RunJobs();
+            Assert.Null(surface.ReaderView.DecorativeParticleLayer); // paused runs also remove their cached layer on detach
         }
         finally { window.Close(); }
     }

@@ -26,6 +26,7 @@ internal sealed class FluentDecorativeLoop
     private TimeSpan _anchor;
     private double _phaseAtPause;
     private Window? _window;
+    private bool _windowDeactivated;
 
     public FluentDecorativeLoop(Control target)
     {
@@ -94,7 +95,7 @@ internal sealed class FluentDecorativeLoop
     private void Run(double fromPhase)
     {
         StopRunning();
-        if (!_target.IsAttachedToVisualTree() || _window?.IsVisible == false)
+        if (!_target.IsAttachedToVisualTree() || _window?.IsVisible == false || _windowDeactivated)
         {
             // The attach handler restarts the configured loop when the cached page returns to the tree.
             _phaseAtPause = fromPhase;
@@ -156,7 +157,7 @@ internal sealed class FluentDecorativeLoop
         DetachWindow();
     }
 
-    private void OnWindowActivated(object? sender, EventArgs e) => Resume();
+    private void OnWindowActivated(object? sender, EventArgs e) { _windowDeactivated = false; Resume(); }
 
     private void OnWindowPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
@@ -167,7 +168,7 @@ internal sealed class FluentDecorativeLoop
         }
     }
 
-    private void OnWindowDeactivated(object? sender, EventArgs e) => Pause();
+    private void OnWindowDeactivated(object? sender, EventArgs e) { _windowDeactivated = true; Pause(); }
 
     private void DetachWindow()
     {
@@ -180,6 +181,7 @@ internal sealed class FluentDecorativeLoop
         _window.Deactivated -= OnWindowDeactivated;
         _window.PropertyChanged -= OnWindowPropertyChanged;
         _window = null;
+        _windowDeactivated = false;
     }
 }
 
@@ -232,7 +234,7 @@ internal static class FluentPageTurnDecor
             window.Deactivated -= OnDeactivated;
             window.PropertyChanged -= OnWindowChanged;
         }
-        layer.DetachedFromVisualTree += (_, _) => { detached = true; Unsubscribe(); };
+        layer.DetachedFromVisualTree += (_, _) => { detached = true; Unsubscribe(); RemoveFromHost(); };
         void RemoveFromHost()
         {
             if (detached)
