@@ -3,8 +3,8 @@ id: FEA-06
 title: Fluent UI 四页实现（Shelf / Workbench / Reader / Settings）
 kind: implementation
 governance_version: 3
-status: ready
-approval: scope_review_r3_approved_2026-11-02（owner=Codex，用户 2026-11-02 指派；待派实施）
+status: in_review
+approval: scope_review_r3_approved_2026-11-02
 suggested_owner: codex
 owner: codex
 reviewer: null
@@ -16,11 +16,11 @@ depends_on:
   - FEA-06-PREREQ-1
   - FEA-06-PREREQ-2
 base_commit: 3c7f311d88b24bde462a61690e15d2c66f8c4683
-branch: null
-worktree: null
+branch: main
+worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: b0388df9ae2bb087649b44cf25a0921b2116934e
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06
 allowed_paths:
@@ -102,16 +102,16 @@ allowed_paths:
 
 ## 验收标准
 
-- [ ] **AC1 Shell + 响应式**：`TopBand`/`NavRail`/`StatusBand` 用令牌（`Nm.Size.TopBand`/`TreeWidth`/`StatusBandPage`、`Nm.Corner.Fluent.*`，无裸值）；17 个既有冻结快捷键可达（全局 10 + 空间级 7：Tab + J/K/[/]/Shift+[/]）；1024/1280/1600 三断点布局、折叠、z-order 与 `04-layout-responsive.md` 一致；空间 1/2/3 与四页映射符合 W-6。 `<<TODO>>`
-- [ ] **AC2 Shelf**：网格/列表/筛选/选择/右键/拖入/回收站入口；**`09-state-matrix.md` 书架列全部行实现**（空〔首次空态+导入主按钮〕/ 空〔筛选后，保留筛选+清除筛选〕/ 载入〔6 封面骨架+「正在读取书架…」〕/ 错误〔错误卡+重试+控制台入口〕/ 满〔网格/列表+统计〕/ 部分〔扫描中进度条；已就绪项可用〕/ 只读〔顶部警示；导入/删除禁用〕/ 运行中〔扫描/导入进度，与部分同态不重复计数〕；冲突列「—」）；`BookCard`/`BookRow`/`ChapterList`/`PageThumbStrip` 令牌与状态符合 `10`。 `<<TODO>>`
-- [ ] **AC3 Workbench**：Region 选择/`RegionBox` 四态/Inspector/FilmStrip/批量栏；**Draft 7 方法接入**（`IHostController`，W-2）；**错误映射表冻结**（17 码→Category→UI：validation=行内提示、not_found=刷新/清选、conflict=重读提示、unavailable=可重试横幅、internal=错误卡在位显示并保留旧 UI/上一帧、不清屏）；**`09-state-matrix.md` 工作台列全部 9 行实现**（空〔未选章节→跳书架；批量无 Run→「开始处理」〕/ 空〔批量筛选无结果→保留 chips+清空选择〕/ 载入〔画布/检查器骨架+「读取中」〕/ 错误〔错误卡+重试；画布保留上一帧〕/ 满〔画布+检查器+操作条；未保存圆点〕/ 部分〔未决确认模态 保存/丢弃/取消；flush 失败留旧 UI〕/ 冲突〔冲突条+查看对照；应用禁用；不自动合并〕/ 只读〔检查器禁用+转移入口〕/ 运行中〔Run 投影条+暂停/停止/重试；intent key 复用〕）。 `<<TODO>>`
-- [ ] **AC4 Reader**：页导航/缩放/全屏/双击/键盘滚轮/方向 memento；进度保存接 `IReaderProgressSink`；**`09-state-matrix.md` 阅读器列全部行实现**（空〔「本章节暂无页面」+返回〕/ 载入〔上一页保留+进度环〕/ 错误〔错误占位+重试+返回〕/ 满〔正常阅读；条自动隐藏〕/ 部分〔缺页占位「页面未就绪」+可重试；其余页可翻〕/ 只读〔只读警示，源不可用〕/ 运行中〔进度写回中，不阻塞〕；筛选/冲突列「—」）；`ReaderPage`/`ReaderProgressBar` 令牌与 `07` 一致。 `<<TODO>>`
-- [ ] **AC5 Settings**：`08-page-settings.md:41-58` 字段逐字渲染（含深/浅 `appearance`、对比度 `contrast`、`frontendId`/`visualThemeId`、`motion.mode`/`motion.categories`、`corners`/`material`、`layout.*`、`followSystemAccent`、`schemaVersion`、Provider/网络/备份/关于；C-03 §2.2 字段名一致）；保存/校验/错误态；**`09-state-matrix.md` 设置列全部行实现**（空〔防御空态+重试〕/ 空〔搜索无结果→「无匹配」+清空搜索〕/ 载入〔卡片骨架；分组列表先显示〕/ 错误〔顶部错误条+重试；保存失败保留输入〕/ 满〔全分组可编辑〕/ 部分〔字段禁用+原因 Tooltip；Fluent 材质在 Current 下〕/ 只读〔保存禁用；可浏览〕；冲突/运行中列「—」）；不越权写 `presentation-settings.json`（经 coordinator）。 `<<TODO>>`
-- [ ] **AC6 设计系统组件**：15–20 个新增/外观化组件逐项登记（名称、令牌依赖、状态、尺寸、测试），至少覆盖 normal/hover/pressed/disabled 与浮层开/关；无裸值；不复制业务组件（复用 DesignSystem 既有）。 `<<TODO>>`
-- [ ] **AC7 可访问性与动效**：Tab 顺序、A11y 名称、焦点环可见、高对比（`03-accessibility.md`）；`motion.mode=reduce` 降级、`motion.categories=off` 0ms、full 差异（`02-motion.md`）。 `<<TODO>>`
-- [ ] **AC8 回归**：全量 sln 不退化（**基线 1022/0/57**）+ App.Tests 新增用例（每页 ≥1 状态测试 + 组件测试）；`TokenGen/ThemeGen -- --check` up to date。 `<<TODO>>`
-- [ ] **AC9 证据**：`verification/FEA-06/**` 下 build/test/生成器/治理日志 + 每页 headless 渲染截图（PNG）+ 组件登记表；Canonical Evidence 逐项 commit+sha256。 `<<TODO>>`
-- [ ] **AC10 范围纪律**：不改 Core/契约/schema/用户数据；不改 `doc/design/fluent-v1/**`（改动即 v1.1 重冻结）；不改生成物（`NmKeys.g.cs`/`Tokens.Global.axaml`/`TokenMap.md`/`*.nmtheme`）；不 push。 `<<TODO>>`
+- [ ] **AC1 Shell + 响应式**：`TopBand`/`NavRail`/`StatusBand` 使用 `Nm.*` 令牌；17 个既有快捷键可达，1024/1280/1600 断点与空间映射已实现。分栏折叠、UI memento、200% DPI 与原生桌面验收未覆盖。 <<PARTIAL: 基础导航、断点与键盘路径已实现；折叠/状态恢复及原生 DPI 验收仍缺>>
+- [ ] **AC2 Shelf**：实现书架网格/列表、搜索筛选、选择、拖入确认及加载/错误/只读等基础状态。回收站入口目前只有空面板；冻结 Host 端口不提供回收站恢复/删除操作，扫描进度也未细化到逐项。 <<PARTIAL: Host 无回收站操作端口，入口和完整状态矩阵尚未闭环>>
+- [ ] **AC3 Workbench**：Region/Inspector/FilmStrip/批量基础视图、Draft 7 方法及 17 错误码到 UI 分类已接入。缺少 `pageBindingVersion` 时新建 Draft 会 fail closed；Run 投影/控制端口未提供，BatchMatrix 未绑定数据，工作台 9 行状态矩阵未全实现。 <<PARTIAL: Draft 与错误映射已接入，但页面绑定和 Run 端口缺失，完整状态矩阵未完成>>
+- [ ] **AC4 Reader**：页导航、缩放、方向 memento 和进度写回已接入。双页第二图、滚动模式、工具条自动隐藏和源不可用只读警示仍缺。 <<PARTIAL: 基础阅读与进度写回已实现，冻结设计要求的部分交互和状态尚未完成>>
+- [ ] **AC5 Settings**：外观设置经唯一 `AppearanceCoordinator` 保存，Provider/网络/备份/关于分组已承载。现有冻结端口缺少网络超时/并发及备份目录/频率字段；完整错误/部分状态矩阵未覆盖。 <<PARTIAL: 外观与分组已落地，但受现有端口字段缺口及状态矩阵覆盖限制>>
+- [ ] **AC6 设计系统组件**：组件登记表列出 20 项规范组件及令牌、页面和测试；样式复用 `Nm.*` 令牌。部分组件尚未具备完整 normal/hover/pressed/disabled 状态，浮层开关状态也未全部实现。 <<PARTIAL: 组件清单与基础样式完成，规范要求的全组件状态覆盖仍不足>>
+- [ ] **AC7 可访问性与动效**：实现主要 Tab 顺序、A11y 名称、高对比和 reduce-motion 路径。焦点环与三类 motion 状态覆盖不完整，且没有原生桌面验证。 <<PARTIAL: 基础可访问性与动效路径已实现，焦点环/分类动效及原生验收未闭环>>
+- [x] **AC8 回归**：全量 sln build/test、Fluent 页面测试、DesignSystem 组件测试及 TokenGen/ThemeGen `--check` 均通过；全量 **1030 passed / 0 failed / 57 skipped**，相对基线 1022/0/57 新增 8 passed。 <<MET>>
+- [x] **AC9 证据**：提交 build/test/生成器/治理日志、四页 Headless PNG、组件登记表、UIUX 结果与 SHA-256 索引；Canonical Evidence 固定到实现 commit。 <<MET>>
+- [x] **AC10 范围纪律**：实现提交 37 个路径均在允许范围；scope audit 已提交。未改 Core/契约/schema/用户数据、冻结设计、生成物、组合根、selector 或 Current V2，未 push。 <<MET>>
 
 ## 禁止范围
 
@@ -138,26 +138,76 @@ allowed_paths:
 | W-11 | 证据口径（处置 r1 P2-6） | 每页 ≥1 headless 状态测试（`AvaloniaFact`）+ 至少 1 张 headless 渲染截图（PNG，落 `verification/FEA-06/`）+ 组件登记表（Markdown）；日志含命令与 exit | r1 采证口径 |
 | W-12 | 组合根依赖注入预置（处置 **scope-r2 P0**） | Fluent 壳的依赖注入由 **DSH 单点预置**：`App.axaml.cs` 的 Fluent 分支传入 `controller/appearance/themeManager`，`FluentShell.CreateRoot`/ctor 扩为可选参数并暴露只读属性 `HostController`/`Appearance`/`ThemeManager`；不改 V2/legacy 分支与 selector 语义。Codex 只**消费**这些实例（不得新建第二个 `HostController` 或 `AppearanceCoordinator`）；`App.axaml.cs` 仍不在 FEA-06 写域 | scope-r2 §2.1 建议①；PREREQ-2 唯一写者/sidecar 单实例语义 |
 
+## 交付与运行记录
+
+- Handoff：`doc/handoffs/FEA-06-session-handoff.md`（随交接文档提交）。
+- Review：待 DSH Appointment；实现 head `b0388df9ae2bb087649b44cf25a0921b2116934e` 尚无独立审查。
+- 实际测试：见下表与 `verification/FEA-06/`；环境 Windows 11 / .NET 9 / Avalonia.Headless。
+- 最终由 DSH 填写 `integration_commit`、完成资源核销与集成验证后决定终态；本次仅进入 `in_review`。
+
 ## 测试要求
 
-| 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
+| 场景/AC | 实际命令 | 环境 | 实际 | 证据 |
 |---|---|---|---|---|
-| AC1–AC7 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests`（Avalonia.Headless；每页状态测试 + 组件测试 + Shell 断点） | .NET 9 / Avalonia.Headless | NOT_RUN | 待补 |
-| AC6 | `dotnet test apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests`（新组件 + 令牌绑定） | .NET 9 | NOT_RUN | 待补 |
-| AC8 | 全量 sln build/test（基线 **1022/0/57**）+ `TokenGen -- --check` + `ThemeGen -- --check` | 全量 + 生成管线 | NOT_RUN | 待补 |
-| AC8/AC9 | `pwsh tools/governance/check.ps1` + `verify_pins.ps1` | 治理 | NOT_RUN | 待补 |
-| AC9 | headless 渲染截图（PNG）+ 每页状态日志 | Avalonia.Headless | NOT_RUN | 待补 |
+| AC1–AC7 | `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --filter FullyQualifiedName~Fluent` | Windows 11 / .NET 9 / Avalonia.Headless | PASS：19 passed / 0 failed / 0 skipped | `verification/FEA-06/page-tests.log` |
+| AC6 | `dotnet test apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --filter FullyQualifiedName~Fluent` | Windows 11 / .NET 9 | PASS：1 passed / 0 failed / 0 skipped | `verification/FEA-06/design-system-component-tests.log` |
+| AC8 | `dotnet build apps\desktop-avalonia\NewManga.sln --nologo` | Windows 11 / .NET 9 | PASS：0 warnings / 0 errors | `verification/FEA-06/build.log` |
+| AC8 | `dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings` | Windows 11 / .NET 9 | PASS：1030 passed / 0 failed / 57 skipped；skip 因缺少 `NEWMANGA_CORECLIENT_SIDECAR_DIR` | `verification/FEA-06/full-test.log`、`skip-analysis.md` |
+| AC8 | TokenGen `-- --check`；ThemeGen `-- --check` | Windows 11 / .NET 9 | PASS：均与生成物一致 | `verification/FEA-06/token-gen.log`、`theme-gen.log` |
+| AC8/AC9 | `pwsh -NoProfile -File tools\governance\check.ps1`；`pwsh -NoProfile -File tools\governance\verify_pins.ps1` | Windows PowerShell | PASS：最终 in_review 检查通过（含治理提示）；冻结 pins 15/15 | `verification/FEA-06/governance-in-review.log`、`verify-pins-in-review.log` |
+| AC9 | `python tools\governance\task_ledger.py --write` | Windows 11 / Python | PASS：ledger 已按 `in_review` 重建 | `verification/FEA-06/task-ledger-in-review.log` |
+| AC9 | Avalonia.Headless 每页渲染截图与页面状态测试 | Windows 11 / Avalonia.Headless（SIMULATED） | PASS：Shelf/Workbench/Reader/Settings 各 1 张；非原生验收 | `verification/FEA-06/screens/`、`page-tests.log` |
+| AC9 | UIUX `finalize` | UIUX Engine 1.3.3 | PARTIAL（exit 11）：独立 Review、L4 设计 Review、持久流程图与 NATIVE_APP 验收待补 | `verification/FEA-06/uiux/finalize.log`、`task-result.json` |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| EV-FEA06-AC1 | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bdff9485eec7c81298cce2b4ee8d2e063e0a75d5ea6033314af31ef5bb37e095` | CANONICAL |
+| EV-FEA06-AC2 | AC2 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `3bcb3af9d6045f175cae8fb439ff6d365ba9de05fc3bf08b52dcdaab6990e78e` | CANONICAL |
+| EV-FEA06-AC3 | AC3 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `48615c1a33803ab9efcc7a2c8c93bed47b8d489991d70b068e9a7dedafeda029` | CANONICAL |
+| EV-FEA06-AC4 | AC4 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `2b5fc10a95e9f1fdbe20cc12e3f9f543a2400ada6d47ccbaf7925298f7026919` | CANONICAL |
+| EV-FEA06-AC5 | AC5 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bb55cd59872e288ffc3da676900a784e9153e138d676c2aa71d11befd75dd53f` | CANONICAL |
+| EV-FEA06-AC6 | AC6 | `verification/FEA-06/component-registry.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `a629145df96cdca76ca3703e8852d865810cc5077959115ae2854b02c267fff4` | CANONICAL |
+| EV-FEA06-AC7 | AC7 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `43e26c38b63d602efbd3ba76b06a1f9596a28c24f96f2ac790d7ee531c4ba921` | CANONICAL |
+| EV-FEA06-AC8 | AC8 | `verification/FEA-06/full-test.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21` | CANONICAL |
+| EV-FEA06-AC8-BUILD | AC8 | `verification/FEA-06/build.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0` | CANONICAL |
+| EV-FEA06-AC6-TEST | AC6 | `verification/FEA-06/design-system-component-tests.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838` | CANONICAL |
+| EV-FEA06-AC1-7-TEST | AC1–AC7 | `verification/FEA-06/page-tests.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c` | CANONICAL |
+| EV-FEA06-AC8-GENERATORS | AC8 | `verification/FEA-06/token-gen.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977` | CANONICAL |
+| EV-FEA06-AC8-THEMEGEN | AC8 | `verification/FEA-06/theme-gen.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e` | CANONICAL |
+| EV-FEA06-AC9-SKIPS | AC9 | `verification/FEA-06/skip-analysis.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `acaf68b7b12ed9347a97e6aad6193d2411c6bb47f80e63e3c483fb2dc91d692a` | CANONICAL |
+| EV-FEA06-AC9-CHECK-PRE | AC9 | `verification/FEA-06/governance-check.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f` | CANONICAL |
+| EV-FEA06-AC9-PINS-PRE | AC9 | `verification/FEA-06/verify-pins.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cefc5376c8ea58cdd8297aa39674aff6aaaf31ac683dc446d16b2cbfb395a479` | CANONICAL |
+| EV-FEA06-AC9-LEDGER | AC9 | `verification/FEA-06/task-ledger-in-review.log` | `-` | `0a62e1a2585f2fea8dc9a4049b361547d3d36fa5de4ebe392153a5c3e51a9f2f` | SOURCE_PIN |
+| EV-FEA06-AC9-PINS | AC9 | `verification/FEA-06/verify-pins-in-review.log` | `-` | `4013203b711a94e9c158cb226b545711e609778384702f982d25aedeaffae9a5` | SOURCE_PIN |
+| EV-FEA06-AC9-GOV-INREVIEW | AC9 | `verification/FEA-06/governance-in-review.log` | `-` | `dd09ac7e256b41fdd2907592b5438f7c08fe2cb2430e6f7488c7aa79c17faaf3` | SOURCE_PIN |
+| EV-FEA06-AC9 | AC9 | `verification/FEA-06/evidence-index.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `f43f0b44384c037948e63c9ee3c01da5a205d3a4cbeeea16d44219c43ced6317` | CANONICAL |
+| EV-FEA06-SCREEN-SHELF | AC9 | `verification/FEA-06/screens/shelf.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `018af624d300e053b7276b702f7908e00426d432808eec810a6c8a4797f72c3f` | CANONICAL |
+| EV-FEA06-SCREEN-WORKBENCH | AC9 | `verification/FEA-06/screens/workbench.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `4ea215345178215fb9e677dc71e0cae10bd2cad7251165752ae7cfb259d6ab41` | CANONICAL |
+| EV-FEA06-SCREEN-READER | AC9 | `verification/FEA-06/screens/reader.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `26e7a47a240cce5698396dd06ec9c4eac7e53ce1e7dbf69c1ce9a1f773f08374` | CANONICAL |
+| EV-FEA06-SCREEN-SETTINGS | AC9 | `verification/FEA-06/screens/settings.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `73ab84ad2807534ef39b186c74bea144bcf8e92f057d54ecc61b584c52b282cd` | CANONICAL |
+| EV-FEA06-UIUX-COVERAGE | AC9 | `verification/FEA-06/uiux/coverage-matrix.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `a9d74fd319b806c823db7fb0ca19394f90a1258afa356fd264ad282ec37322c8` | CANONICAL |
+| EV-FEA06-UIUX-GATES | AC9 | `verification/FEA-06/uiux/gate-results.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `dcdf1daf2139d78113cde29135d56531142fcbda942ffbdbdcc80aa6aa080b09` | CANONICAL |
+| EV-FEA06-UIUX-REQUEST | AC9 | `verification/FEA-06/uiux/request.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `74c0edac9e66c700f9b8bd0289ccc7591aeeb323ac231749c66c80c219ea4c19` | CANONICAL |
+| EV-FEA06-UIUX-TOOLLOGS | AC9 | `verification/FEA-06/uiux/tool-logs.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `8f32b1895125c37919ff9c83b8056d2e4974b101c9f6a1c916f84971ba7d971d` | CANONICAL |
+| EV-FEA06-UIUX-MANIFEST | AC9 | `verification/FEA-06/uiux/evidence-manifest.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `dd1db40b8b1bef9318039d683f4aface7c3f80612a1708482e8f7637bbabeb4b` | CANONICAL |
+| EV-FEA06-UIUX-FINALIZE | AC9 | `verification/FEA-06/uiux/finalize.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bde655d84ede10046dae7df6c03e0b180b46e6cf6ce78b2274ad8e4ed43c1b88` | CANONICAL |
+| EV-FEA06-UIUX-RESULT | AC9 | `verification/FEA-06/uiux/task-result.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cebe22f92c522074343ec4303f176c42bfe4c3a3e003f4673fc0502b96fb267f` | CANONICAL |
+| EV-FEA06-AC10 | AC10 | `verification/FEA-06/scope-audit.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cec04b8135b13549f8c0114b43fe1259b00e5e335538cddccd6166cd8da90ea0` | CANONICAL |
 
 ## Resource Manifest
 
-无 worktree（main 直接实现）；资源处置在收口时登记。
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | 无 linked worktree；main checkout `G:\CODEX\New Manga` | NOT_APPLICABLE | 同一仓库 checkout | `b0388df9ae2bb087649b44cf25a0921b2116934e` | 直接在 main 实施；不创建/删除 worktree。 |
+| verification artifacts | `verification/FEA-06/**` | PRESERVE_REFERENCED | 同路径 | `verification/FEA-06/evidence-index.md` | 证据被 Task 与 Handoff 引用；交 DSH 在集成窗口复核资源处置。 |
+| task-env / user data | 未创建 / 未访问 | NOT_APPLICABLE | - | - | 未写产品数据或用户源文件；无独立环境需清理。 |
 
 ## Closeout Record
 
-- 待关闭时填写。
+- 实施交付：2026-11-02 / Codex；DSH 集成与 Task closeout 尚未执行。
+- canonical_evidence_status：`complete`；resource_closeout_status：`pending`（由 DSH 在 approved 集成窗口核销）。
+- 删除、迁移、归档数量/字节数：0；未执行清理或数据迁移。
+- 未关闭项：`AC1–AC7` 有明确部分完成项，保留待 Review/后续裁决；Review 与集成尚未完成。
+- 当前指针：STATUS 与 Plan 已更新到 `in_review`；rolling checkpoint 无需切换；当前 Task 仍由 STATUS 指向。
