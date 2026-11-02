@@ -5,12 +5,17 @@ using NewManga.Appearance;
 namespace NewManga.App.Services;
 
 /// <summary>
-/// C-03 §2.5 / FEA-06-PREREQ-1 AC2: the appearance coordinator. It owns reading,
+/// C-03 §2.1 / FEA-06-PREREQ-1 AC2: the appearance coordinator. It owns reading,
 /// validating and broadcasting the persisted appearance settings. Applying the
 /// theme / motion to the visual tree is the shell's job (FEA-06-PREREQ-2), so this
 /// type deliberately never touches resources — it is the seam between the writer
 /// (<see cref="AppearanceStore"/>) and the shell.
 /// </summary>
+/// <remarks>
+/// <b>Known deviation D-1</b> (recorded for FEA-06-PREREQ-2 P5): C-03 §2.1 places the sole writer
+/// coordinator in <c>NewManga.Appearance</c>. PREREQ-1 shipped it in the app layer read-only;
+/// P5 must relocate it into <c>NewManga.Appearance</c> and make it the writer (AppearanceStore.WriteAsync).
+/// </remarks>
 public sealed class AppearanceCoordinator
 {
     private readonly AppearanceStore _store;

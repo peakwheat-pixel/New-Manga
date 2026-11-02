@@ -58,7 +58,7 @@ allowed_paths:
 | P2 | `App.axaml.cs`/`Program.cs` 改造：按 selector 创建对应 Shell；V2 既有路径不变 |
 | P3 | `Views/Fluent/` 目录与 Shell 骨架（仅导航 + 四页占位；页面内容由 FEA-06 实现） |
 | P4 | 测试：selector 选择逻辑（fluent/fluent-dark/v2/未知）+ V2 回归不破 |
-| P5 | **W-9 承接（Q-32）**：写者收敛——`AppearanceCoordinator.SaveAsync(settings)` 调 `AppearanceStore.WriteAsync`（唯一写者 = `NewManga.Appearance`，不引入反向引用）；`ThemeSettingsStore.SaveAsync` 标 `[Obsolete]` 并在一个 release 内双写 `presentation-settings.json`（App 侧 sink adapter `IThemeSettingsSink`，避免 ThemeEngine→Appearance 引用） |
+| P5 | **W-9 承接（Q-32）**：写者收敛——**先把 `AppearanceCoordinator` 从 `NewManga.App/Services` 迁入 `NewManga.Appearance`（C-03 §2.1 唯一写者位置；PREREQ-1 偏差 D-1）**，再加 `AppearanceCoordinator.SaveAsync` 调 `AppearanceStore.WriteAsync`（唯一写者 = `NewManga.Appearance`，不引入反向引用）；`ThemeSettingsStore.SaveAsync` 标 `[Obsolete]` 并在一个 release 内双写 `presentation-settings.json`（App 侧 sink adapter `IThemeSettingsSink`，避免 ThemeEngine→Appearance 引用） |
 | P6 | **W-9 承接（Q-32）**：`Nm.Material.Acrylic.Base/Tint` —— 选 **`ThemeTokenSet` 扩展**路径：`ThemeMaterial` 枚举加 `Fluent` 值 + `ThemeTokenSet` 增加 `Material(Base/Tint)` 字段 + `ThemePackageJson` 序列化；`NmKeys` 加两常量但**不进 `Tokens.Global.axaml`**；`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 **59/65 计数**同步；C-02 V-07 公开面（`ThemeMaterial` 枚举值）在变更记录中登记 |
 
 ## 验收标准

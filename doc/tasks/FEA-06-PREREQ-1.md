@@ -87,41 +87,48 @@ allowed_paths:
 | W-8 | `builtin.fluent-dark` | 本卡交付主题包（ThemeEngine 写域） | C-02 V-07；r1 P1-6 |
 | W-9 | r2-P1-2（ThemeSettingsStore 兼容写）/ r2-P1-4（Material Base/Tint 主题层）归属 | **转入 FEA-06-PREREQ-2**，本卡作为 P2 接受：前者写者收敛会形成 `ThemeEngine ↔ Appearance` 循环引用（`AppearanceStore.Read` 已覆盖读路径迁移）；后者需扩主题包 schema/R14 计数，与本卡「不扩 schema」边界冲突 | Q-32（2026-11-03，DSH 裁决）；impl-r2 报告 |
 
+
 ## 测试要求
 
 | 场景/AC | 计划命令 | 前提 | 实际 | 证据 |
 |---|---|---|---|---|
-| AC1–AC4 | `dotnet test` 四工程（Appearance/DesignSystem/ThemeEngine/App） | .NET | NOT_RUN | 待补 |
-| AC3 | `TokenGen -- --check` + `ThemeGen -- --check` | 生成管线 | **PASS**（均 up to date，rows 290） | `verification/FEA-06-PREREQ-1/tokengen-check.log` |
-| AC5 | `ThemeGen -- --check` + 主题包校验 | 生成管线 | **PASS**（fluent 纳入 --check） | `verification/FEA-06-PREREQ-1/themegen-check.log` |
+| AC1 | `dotnet test apps/desktop-avalonia/tests/NewManga.Appearance.Tests` | .NET 9 | **PASS**（13/13） | `verification/FEA-06-PREREQ-1/appearance-tests.log` |
+| AC2/AC4 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests --filter MotionResolverTests` + 全量 App.Tests | Avalonia.Headless | **PASS**（9 / 433） | `verification/FEA-06-PREREQ-1/motion-tests.log` |
+| AC3 | `TokenGen -- --check` | 生成管线 | **PASS**（up to date，rows 290） | `verification/FEA-06-PREREQ-1/tokengen-check.log` |
+| AC5 | `ThemeGen -- --check`（含 fluent-dark 产物漂移） | 生成管线 | **PASS**（up to date） | `verification/FEA-06-PREREQ-1/themegen-check.log` |
+| AC6 | `dotnet build` + `dotnet test` 全量 sln（基线 949/0/57） | .NET 9 | **PASS**（**978/0/57**） | `verification/FEA-06-PREREQ-1/sln-test.log` |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `a57e6a811` | `f94ec74f2d523ecf4abe68c408a88ba91d97cbe1a2120df7037c6900bb2a7a0f` | CANONICAL |
-| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `a57e6a811` | `b191462943321b1ddc324843c3a0d7d456ec00790597e693a359c3ef472cec97` | CANONICAL |
-| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `a57e6a811` | `6f5b2487393299c4b7cc30fd2290bfada42048fd91aa8aa8a0928f88ad3553f7` | CANONICAL |
-| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `a57e6a811` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
-| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `a57e6a811` | `34cf6c28b95c42762b0935eaaf5150698aaf5b8b1e50167d01173d02fc926616` | CANONICAL |
-| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `a57e6a811` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
-| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `a57e6a811` | `b8753cd8d8506337794fa5926f9bc2b683f1cd0b8b530e83943e42ccfd44876a` | CANONICAL |
-| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `a57e6a811` | `ca5cb82c5c06631c132cf49e23aea8c026e73fbf342b46e75eb28b5a2ac077b5` | CANONICAL |
+| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `HEAD_PENDING` | `7d9b0fb54f00c3035c1194bce51590ebcd60739ab1cd33ac1585930124aa949f` | CANONICAL |
+| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `HEAD_PENDING` | `b191462943321b1ddc324843c3a0d7d456ec00790597e693a359c3ef472cec97` | CANONICAL |
+| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `HEAD_PENDING` | `f5aea7f7d28a68895f7d9666e57ba0c7d1a86c637400fff87e81d4566b102345` | CANONICAL |
+| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `HEAD_PENDING` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
+| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `HEAD_PENDING` | `34cf6c28b95c42762b0935eaaf5150698aaf5b8b1e50167d01173d02fc926616` | CANONICAL |
+| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `HEAD_PENDING` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
+| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `HEAD_PENDING` | `805e36fc11d9b42cc9d87b0bd895afe74a7e60f68299ca8982dfea36521efca5` | CANONICAL |
+| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `HEAD_PENDING` | `c5c777756479810b3961d43c88f6765ddf64562d5ec8ab0b5032b5de0d1e3b47` | CANONICAL |
 
 ## Resource Manifest
 
-无 worktree（main 直接实现）。
+- worktree：无（main 直接实现）。
+- 过程文件（非证据，登记为 SOURCE_PIN）：
+  - `verification/FEA-06-PREREQ-1/appearance-coordinator-tests.log`（AC2 专项日志，内容已并入 sln-test.log）
+  - `verification/FEA-06-PREREQ-1/theme-tests.log`（AC5 专项日志，内容已并入 sln-test.log）
+  - `verification/FEA-06-PREREQ-1/delivery-notes.md`（交付记录，AC 处置与 impl-r1…r4 过程）
 
 ## Closeout Record
 
-- 待关闭时填写。
-| AC6 | 全量 sln build/test | 全量 | **PASS**（**978/0/57**） | `verification/FEA-06-PREREQ-1/sln-test.log` |
-- 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 
-eady，DSH 实现。
-- 2026-11-03 / DSH：FEA-06-PREREQ-1 实现完成并收口（ 6b7a1b10）——范围 r1–r3（r3 approved）、实现 impl-r1（P1×10 全关闭）→ impl-r2（P1×5：3 关闭 + W-9 裁决 P1-2/P1-4 转 PREREQ-2）；全量 sln **977/0/57**；TokenGen/ThemeGen --check up to date；置 in_review 待 impl-r3。
+- 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 ready，DSH 实现。
+- 2026-11-03：实现完成（AC1–AC6 全部代码/测试/产物），实现复核 impl-r1（P1×10）→ impl-r2（P1×5）→ impl-r3（P1×5）→ **impl-r4 approved（P0=0/P1=0，P2×12）**。
+- 2026-11-03：Q-32 裁决（r2-P1-2/r2-P1-4 转 FEA-06-PREREQ-2）与 Q-33 拆环（PREREQ-1 以 done 关闭、AC1/AC3/AC5 的 `<<PARTIAL>>` 保留为历史事实、residual 由 PREREQ-2 AC5/AC6 追踪）。
+- 2026-11-03：全量 sln **978/0/57**；`TokenGen -- --check`、`ThemeGen -- --check` 均 up to date。
+- **已知偏差 D-1**：C-03 §2.1 要求唯一写者 `AppearanceCoordinator` 位于 `NewManga.Appearance`；本卡交付为 `NewManga.App/Services`（只读）。已记入 `AppearanceCoordinator` 的 `<remarks>` 并作为 PREREQ-2 P5 的强制项。
+
 ## Q-33 residual 转移记录（2026-11-03，DSH 裁决）
 
-- **背景**：impl-r4 判 AC1/AC3/AC5 <<PARTIAL>>，且 PREREQ-2 依赖 PREREQ-1 → 若 PREREQ-1 因 PARTIAL 保持 in_review，PREREQ-2 永远不可释放（依赖环，PREREQ-2 scope-r1 P0-3）。
-- **裁决**：AC1/AC3/AC5 的 residual 已由 **Q-32 正式裁决 + PREREQ-2 AC5/AC6 承接**；PREREQ-1 以 done 关闭，<<PARTIAL>> 保留为历史事实（不勾选），residual 在 PREREQ-2 追踪。依据：转移目标已修订（P5/P6 + AC5/AC6 + 写域），非无主豁免。
-- **残余清单**（PREREQ-2 负责）：① ThemeSettingsStore 兼容写/写者收敛；② Nm.Material.Acrylic.Base/Tint + 主题层 schema/R14；③ 
-m.fluent.visual/1 manifest + ThemeValidator 显式测试。
+- **背景**：impl-r4 判 AC1/AC3/AC5 `<<PARTIAL>>`，且 PREREQ-2 依赖 PREREQ-1 → 若 PREREQ-1 因 PARTIAL 保持 in_review，PREREQ-2 永远不会被释放（依赖环，PREREQ-2 scope-r1 P0-3）。
+- **裁决**：AC1/AC3/AC5 的 residual 已由 **Q-32 裁决 + PREREQ-2 AC5/AC6 承接**；PREREQ-1 以 `done` 关闭，`<<PARTIAL>>` 保留为历史事实（不勾选），residual 在 PREREQ-2 追踪。依据：转移目标已修订（P5/P6 + AC5/AC6 + 写域），非无主豁免。
+- **残余清单**（PREREQ-2 负责）：① `ThemeSettingsStore` 兼容写与写者收敛（含 D-1 coordinator 迁移）；② `Nm.Material.Acrylic.Base/Tint` + 主题层 schema/R14 计数；③ `nm.fluent.visual/1` manifest + `ThemeValidator` 显式测试。

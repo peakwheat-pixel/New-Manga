@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace NewManga.Appearance;
 
 /// <summary>
-/// C-03 §2.5: the appearance writer. Order discipline: the legacy settings file is
+/// C-03 §2.1: the appearance writer. Order discipline: the legacy settings file is
 /// read once, never modified; the new document is written atomically (temp + replace)
 /// so a crash cannot leave a half-written file. Corrupt files fall back to defaults
 /// with warnings and never block startup.
@@ -33,7 +33,7 @@ public sealed class AppearanceStore
     {
         if (!File.Exists(_path))
         {
-            // C-03 §2.5: the first run must migrate the legacy theme-settings.json instead
+            // C-03 §2.2: the first run must migrate the legacy theme-settings.json instead
             // of silently falling back to defaults.
             if (_legacyPath is not null && File.Exists(_legacyPath))
             {
