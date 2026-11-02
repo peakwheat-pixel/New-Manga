@@ -845,3 +845,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   5) RegionBox hover 待与 Controls.Custom 规则逐行核对。
 - 为保持主分支全绿，IN-2A 测试文件暂不提交（快照保留）；当前 build 0/0、基线 **1257/0/57**（IN-1 已提交 `d854d91b2`）。
 - 剩余：IN-2A 校准落地、IN-2B（opt-in PNG+inventory+签署）；Codex 05:24 / ZCode 08:05 续接；完成后独立 impl Review。
+## 129. IN-2A 样式加载结论与 05:24 续接指令更新（2026-11-03 04:08）
+
+- 追加诊断：BookCard/BookRow 的 `:disabled` Opacity 规则存在于 `DesignSystem/Styles/Controls.Fluent.axaml`（Button.fluent-book-card:disabled / Button.fluent-book-row:disabled），`SurfaceCard` 背景规则在 `Border.fluent-surface-card`；ZCode 测试失败更可能是测试未加载对应 Fluent 样式栈/未 UpdateLayout，而非产品缺口（待用 RealAppResourceStack 式加载验证）。
+- 已更新 05:24 提醒指令（schedule `schedule-6a417da5…`）：含 IN-1 已提交 `d854d91b2`（1257/0/57）、IN-2A 校准笔记/WIP 路径、IN-2B 要求与「不得改样式迁就测试」约束。
+- 当前主分支干净、全绿；Task2 in_progress；等待 Codex 05:23 / ZCode 08:05 窗口续接 IN-2A/IN-2B，随后独立 impl Review → 集成/关闭。
