@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.Shell.V2;
+using NewManga.Appearance;
+using NewManga.DesignSystem.Theming;
 
 namespace NewManga.App.Views.Fluent;
 
@@ -65,9 +67,23 @@ public partial class FluentShell : Window
     {
     }
 
-    /// <summary>Creates the shell for the selected frontend. <paramref name="options"/> only supplies geometry.</summary>
-    public FluentShell(AppOptions? options, FrontendSelection? selection)
+    /// <summary>
+    /// Creates the shell for the selected frontend. <paramref name="options"/> only supplies geometry.
+    /// FEA-06 scope-r2 P0: the composition root injects the single shared services (Host controller,
+    /// appearance writer, design-system theme manager) so the four pages can reach data, Draft commands
+    /// and appearance persistence without creating a second Host/sidecar or a second appearance writer.
+    /// </summary>
+    public FluentShell(
+        AppOptions? options = null,
+        FrontendSelection? selection = null,
+        IHostController? host = null,
+        AppearanceCoordinator? appearance = null,
+        DesignSystemThemeManager? themeManager = null)
     {
+        HostController = host;
+        Appearance = appearance;
+        ThemeManager = themeManager;
+
         InitializeComponent();
 
         _frontendId = selection?.EffectiveFrontendId ?? FrontendSelector.CurrentV2FrontendId;
@@ -99,12 +115,34 @@ public partial class FluentShell : Window
     }
 
     /// <summary>
-    /// The composition-root factory: applies the same window-material policy as the other shells
-    /// (Mica on Windows 11, opaque fallback elsewhere — C-3-I1).
+    /// FEA-06 scope-r2 P0: the single shared host controller injected by the composition root. FEA-06
+    /// pages read library/Draft state through this instance (never by constructing a second controller).
     /// </summary>
-    public static FluentShell CreateRoot(AppOptions? options = null, FrontendSelection? selection = null)
+    public IHostController? HostController { get; }
+
+    /// <summary>
+    /// FEA-06 scope-r2 P0: the single appearance writer shared with the V2 shell; Fluent pages must save
+    /// appearance through <c>SaveAsync</c> on this coordinator (never by writing the JSON directly).
+    /// </summary>
+    public AppearanceCoordinator? Appearance { get; }
+
+    /// <summary>
+    /// FEA-06 scope-r2 P0: the application's single design-system theme manager (tokens/palette/overlays).
+    /// </summary>
+    public DesignSystemThemeManager? ThemeManager { get; }
+
+    /// <summary>
+    /// The composition-root factory: applies the same window-material policy as the other shells
+    /// (Mica on Windows 11, opaque fallback elsewhere — C-3-I1) and forwards the injected shared services.
+    /// </summary>
+    public static FluentShell CreateRoot(
+        AppOptions? options = null,
+        FrontendSelection? selection = null,
+        IHostController? host = null,
+        AppearanceCoordinator? appearance = null,
+        DesignSystemThemeManager? themeManager = null)
     {
-        var shell = new FluentShell(options, selection);
+        var shell = new FluentShell(options, selection, host, appearance, themeManager);
         var material = WindowMaterial.ForCurrentOs();
         shell.TransparencyLevelHint = material.Hints
             .Select(hint => hint switch

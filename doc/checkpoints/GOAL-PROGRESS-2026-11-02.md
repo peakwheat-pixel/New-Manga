@@ -249,3 +249,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **Codex 通路核验**：本机 `codex-cli 0.162.0`；默认配置 model=`gpt-6.1-sol` 会 400（旧结论根因）；按 codex-dispatch skill 以 `-m gpt-6-luna` 探测 **exit 0**（回复 ok）→ 可用。派发一律 cwd=仓库根（桌面版可见）+ 显式 `-m gpt-6-luna`，结果写 workspace、session id 记录；不改全局 `~/.codex/config.toml`。
 - **范围修订 r2（FEA-06 卡）**：r1（P0=2/P1=7/P2=11）逐项处置——P0-1/P0-2/P1-1 已由 PREREQ-1/2 交付关闭；P1-2 状态矩阵绑 AC2–AC5、P1-3 Draft 错误映射冻结、P1-4 新增 AC6 组件清单、P1-5 W-6 映射、P1-6 AC5 字段逐字、P1-7 STATUS/PLAN 同步；写域追加 `Controls/**`/`Styles/**`/`Services/**`（W-9）；证据口径 W-11；baseline 更新为 **1022/0/57**；base_commit `5a4717009`。
 - **下一步**：派 **scope-r2** 独立上下文复核（subagent_zcode，被审 = 本卡修订 commit）→ P0/P1=0 后置 `ready`，按 W-10 派 Codex 实施（交付单一 commit + verification/FEA-06 证据 + handoff）→ 独立实现复核 → DSH 集成验证 → done。
+## 33. FEA-06 scope-r2 处置（2026-11-02）
+
+- **scope-r2**（独立上下文子代理，被审 `53060cd67`）：**changes_requested，P0=1 / P1=1 / P2=10**。r1 的 P0-1（C-03 外观持久化）、P1-1/P1-4/P1-5/P1-6/P1-7 经实测**已闭环**；P0-2「壳可启动」半边闭合；新增 **r2-P0**：`App.axaml.cs` Fluent 分支只传 `(options, selection)`，`HostController`/`AppearanceCoordinator`/`ThemeManager` 未进入 Fluent 壳 → AC2–AC5 数据/命令/外观面在写域内无合法注入通路；**r2-P1**：AC2–AC5 状态清单与 `09-state-matrix.md` 不一致。
+- **处置（本 commit）**：**W-12** DSH 单点预置注入——`App.CreateShell` Fluent 分支传 `controller/appearance/themeManager`；`FluentShell.CreateRoot`/ctor 扩可选参数 + 只读属性 `HostController`/`Appearance`/`ThemeManager`；组合根测试断言三实例同一（禁止第二 Host/第二 coordinator）；`App.axaml.cs` 仍不在 FEA-06 写域。**r2-P1**：AC2–AC5 逐页改写为 09 本页列全行（含「—」说明）；P2-1（AC5 补 appearance/contrast）、P2-2（internal 保留旧 UI）、P2-3（W-6 锚点）、P2-5（depends_on 补）、P2-6（禁止范围补资产边界）、P2-7（17 快捷键口径）已入卡；P2-4/P2-8/P2-9/P2-10 已入派发 brief。
+- **验证**：build 0 警告/0 错误；全量 **1022/0/57**；TokenGen/ThemeGen `--check` up to date；`check.ps1` PASS(3 warnings)；`verify_pins` 15/15。
+- **下一步**：增量 **scope-r3**（独立上下文，仅核 r2-P0/P1 处置与无新增问题）→ approved 后置 `ready`、刷新 base_commit → 按 W-10 派 **Codex** 实施（`-m gpt-6-luna`、cwd=仓库根；brief 已备 `workspace/exchange/FEA-06-codex-brief.md`）。

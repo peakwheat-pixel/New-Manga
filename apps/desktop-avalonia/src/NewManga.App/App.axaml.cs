@@ -135,7 +135,7 @@ public partial class App : Application
         }
 
         return selection.IsFluent
-            ? FluentShell.CreateRoot(options, selection)
+            ? FluentShell.CreateRoot(options, selection, controller, appearance, themeManager)
             : CreateV2Shell(application, controller, options, themeManager, appearance, themeHome);
     }
 

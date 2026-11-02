@@ -140,6 +140,12 @@ public sealed class FluentShellTests
             manager,
             application);
         Assert.IsType<FluentShell>(fluent);
+        var fluentShell = (FluentShell)fluent;
+        // FEA-06 scope-r2 P0: the composition root must hand the single shared services to the Fluent
+        // shell; FEA-06 pages reuse these instances (no second HostController / appearance writer).
+        Assert.Same(controller, fluentShell.HostController);
+        Assert.Same(coordinator, fluentShell.Appearance);
+        Assert.Same(manager, fluentShell.ThemeManager);
         fluent.Close();
 
         var v2 = App.CreateShell(
