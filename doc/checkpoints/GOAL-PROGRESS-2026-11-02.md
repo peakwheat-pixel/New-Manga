@@ -594,3 +594,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **I-11 扩展**：隐藏控件不可获得焦点（Tab 序排除）、可见兄弟可聚焦的显式断言。
 - **验证**：build 0/0；无过滤全量 **1178/0/57**；旧 FEA-06 PNG 零漂移；生成器/治理/pins 通过。交付 `6edf24904`；证据 `batch-b-verification.log` SHA `df752887…`。
 - **剩余**：CommandPalette/ContextMenu/Tooltip/Toast/BatchMatrix/RunProjectionBar 独立状态；hover/pressed 视觉截图（NOT_RUN）；I-5 feedback/decorative 动画消费；独立 impl Review 待 agent 额度恢复（Codex 00:23 / ZCode 03:02）。
+
+### 83.1 额度探针（2026-11-02 23:31）
+- Codex CLI 探针（`codex exec` 最小 prompt）仍返回 `ERROR: You've hit your usage limit ... try again at Nov 3rd, 2026 12:23 AM` → 独立 impl Review 无法在 00:23 前派发；ZCode 5h 限额 03:02 恢复。
+- 结论：维持 D-7 口径（DSH 实施、Review 待 agent 恢复补做）；下一可派时点 00:23（Codex 优先）或 03:02（ZCode）。
