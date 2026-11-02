@@ -695,3 +695,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentCommandPaletteFocusTests` 增补：真实命令行 >0 → 不存在查询过滤为 0（诚实空结果）→ 清空恢复；焦点保持搜索框。I-4 CommandPalette 结果/空态格由 NOT_RUN 升级为 COMMAND。
 - Codex 探针（00:23:16）仍返回 usage limit「try again at 12:23 AM」；继续等待/重试，若持续受限按 D-9 派独立上下文子 agent 复核。
 - 验证：无过滤全量 **1195/0/57**；旧 PNG 零漂移。交付 `4388e50bb`；证据 SHA `77ad2221…`。
+## 103. FEA-06-RESIDUAL-1 独立 impl Review 已派发（2026-11-03 00:24）
+
+- Codex 探针 00:23:55 **恢复可用**（返回“可用”，exit 0）；D-9 降级路径不再需要（保留为记录）。
+- 已通过 workspace `dispatch-review.ps1` 派发 Codex fresh session 独立 impl Review：读取 `impl-review-prompt.md`（base `82529a3d5`→head `4388e50bb` 等交付提交、7 项审查重点、产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md`），后台 job `pwsh-84654685f3a34be5` 运行中。
+- 下一步：读取 review 报告 → DSH 处置 findings（P0/P1 返修、P2 登记）→ 运行 `integration-verify.ps1` 产出正式集成日志 → 按实际 AC 结果 done/closed_with_limitations。
