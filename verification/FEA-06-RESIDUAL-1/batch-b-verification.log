@@ -67,3 +67,8 @@
 ## 补记 5（I-5 三态×三类矩阵，全量 1191/0/57）
 - `MotionMatrixResidualTests`（11 tests）：full/reduce × All/Navigation/Feedback/Decorative/None 逐格匹配设计参数（nav 240/180/200/160、feedback 120/90/150、decorative 启用/禁用、reduce 全 0 且 feedback 仅颜色）；`auto` 跟随平台（Full/Reduce）、`full` 不读平台（throwing source 无 warning）；auto 读失败/null → full + 1 warning；reduce 下 feedback 类别开/关的 `FeedbackColourOnly` 语义。
 - 验证：build 0/0；无过滤全量 **1191 passed / 0 failed / 57 skipped**（DS 91 + App 578）；旧 FEA-06 PNG 零漂移。
+
+## 补记 6（I-4 disabled 命令零触发 + 子项状态台账，全量 1192/0/57）
+- `FluentDisabledAutomationTests`：disabled Fluent 按钮经 Automation Invoke pattern 抛 `ElementNotEnabledException`，Click 计数 0、Command Execute 0；`CanExecute=false` 同步断言。矩阵该格由 NOT_RUN → EFFECTIVE/COMMAND。
+- 新增 `item-status.md`：I-1…I-14 逐项交付 commit/断言/状态/缺口台账，供独立 Review 与集成验证直接引用。
+- 验证：build 0/0；无过滤全量 **1192 passed / 0 failed / 57 skipped**（DS 92 + App 578）；旧 FEA-06 PNG 零漂移。

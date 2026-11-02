@@ -33,7 +33,7 @@
 | ContextMenu | 默认/禁用项 | 列表上下文菜单构建（Shelf 既有测试）；声明 | COMMAND | 禁用项视觉 NOT_RUN |
 | Tooltip | 默认 | 声明；Tooltip 设置逻辑（Settings/Reader 既有） | DECLARED | 视觉 NOT_RUN |
 | 焦点环（所有可聚焦控件） | 键盘焦点/高对比 | 2px↔3px 有效几何（`FocusRingHighContrastTests`）、浮层焦点移入/返还（`I11_LeaveOverlay...`）、隐藏控件不可聚焦（`FocusOrderResidualTests`） | **EFFECTIVE/FOCUS** | 指针焦点不画环；四页至少各 1 场景由页面键盘测试覆盖 |
-| disabled 命令零触发 | — | 未新增自动化（部分 I-10/I-3 禁用写入测试覆盖） | **NOT_RUN** | 后续以 `ShellCommand` CanExecute 注入补齐 |
+| disabled 命令零触发 | — | `FluentDisabledAutomationTests`：自动化 Invoke 抛 `ElementNotEnabledException`、Click 0 次、Command 0 次执行；`CanExecute=false` | **EFFECTIVE/COMMAND** | 非自动化路径的鼠标点击禁用语义由 Avalonia 输入层保证（未做像素点击） |
 
 ## 结论（诚实口径）
 
