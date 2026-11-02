@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -10,8 +11,10 @@ using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.ThemeStudio;
 using NewManga.App.Views;
 using NewManga.App.Views.Fluent;
+using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
 using NewManga.DesignSystem.Theming;
+using NewManga.Presentation.Avalonia.Switching;
 using DsAppearanceMode = NewManga.DesignSystem.Theming.AppearanceMode;
 
 namespace NewManga.App;
@@ -134,6 +137,12 @@ public partial class App : Application
             return CreateLegacyShell(controller, options, themeManager);
         }
 
+        if (options.PresentationHost)
+        {
+            // FEA-07: one stable native window with the real V2/Fluent content factory (opt-in).
+            return CreatePresentationShell(options, controller, selection, appearance, themeHome, themeManager, application);
+        }
+
         return selection.IsFluent
             ? FluentShell.CreateRoot(options, selection, controller, appearance, themeManager)
             : CreateV2Shell(application, controller, options, themeManager, appearance, themeHome);
@@ -158,6 +167,66 @@ public partial class App : Application
             return root;
         }
 
+        WireThemeStudio(shell, application, themeManager, appearance, themeHome, options);
+
+        return root;
+    }
+
+    /// <summary>FEA-07: creates a bare V2 content tree (no host window) for the stable presentation window.</summary>
+    internal static AppShellV2 CreateV2Content(
+        Application application,
+        IHostController controller,
+        AppOptions options,
+        DesignSystemThemeManager themeManager,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome)
+    {
+        var shell = new AppShellV2(controller, picker: null, themeManager: themeManager);
+        WireThemeStudio(shell, application, themeManager, appearance, themeHome, options);
+        return shell;
+    }
+
+    /// <summary>FEA-07: stable presentation window driving the real V2/Fluent content factory.</summary>
+    internal static Window CreatePresentationShell(
+        AppOptions options,
+        IHostController controller,
+        FrontendSelection selection,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome,
+        DesignSystemThemeManager themeManager,
+        Application application)
+    {
+        var directory = Path.GetDirectoryName(themeHome.SettingsFilePath)
+            ?? throw new InvalidOperationException("theme home has no directory");
+        var journal = new SwitchJournal(Path.Combine(directory, "switch-journal.json"));
+
+        Control ContentFactory(string frontendId)
+        {
+            if (string.Equals(frontendId, FrontendSelector.FluentFrontendId, StringComparison.Ordinal))
+            {
+                return new FluentShellSurface(
+                    options,
+                    FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+                    controller,
+                    appearance,
+                    themeManager);
+            }
+
+            return CreateV2Content(application, controller, options, themeManager, appearance, themeHome);
+        }
+
+        return new PresentationWindow(options, selection, controller, appearance, journal, ContentFactory);
+    }
+
+    /// <summary>FEA-06-PREREQ-2 P5: Theme Studio production wiring (never blocks the shell on failure).</summary>
+    private static void WireThemeStudio(
+        AppShellV2 shell,
+        Application application,
+        DesignSystemThemeManager themeManager,
+        AppearanceCoordinator appearance,
+        ThemeHomePaths themeHome,
+        AppOptions options)
+    {
         try
         {
             // FEA-06-PREREQ-2 P5 (W-9/Q-32): the Theme Engine's compatibility write mirrors into the
@@ -203,10 +272,7 @@ public partial class App : Application
             // Theme Studio is optional at startup: never block the product shell on it.
             Trace.TraceWarning($"Theme Studio wiring failed: {ex.GetType().Name}");
         }
-
-        return root;
     }
-
     /// <summary>Explicit startup appearance from <c>--variant</c> (null = persisted/default wins).</summary>
     private static DsAppearanceMode? StartupAppearance(AppOptions options) =>
         string.IsNullOrWhiteSpace(options.StartupVariant)
@@ -241,22 +307,41 @@ public partial class App : Application
             return;
         }
 
+        if (window is PresentationWindow presentation)
+        {
+            // FEA-07: map the startup page onto whichever content tree the stable window hosts.
+            if (presentation.ContentHost.Current is FluentShellSurface fluentSurface)
+            {
+                fluentSurface.Navigate(page);
+                return;
+            }
+
+            if (presentation.ContentHost.Current is AppShellV2 presentationShell &&
+                SpaceForStartupPage(page) is { } presentationSpace)
+            {
+                presentationShell.ViewModel.SwitchSpace(presentationSpace);
+            }
+
+            return;
+        }
+
         if (window.Content is not AppShellV2 shell)
         {
             return;
         }
 
-        var space = page.ToLowerInvariant() switch
+        if (SpaceForStartupPage(page) is { } target)
+        {
+            shell.ViewModel.SwitchSpace(target);
+        }
+    }
+
+    private static SpaceId? SpaceForStartupPage(string page) =>
+        page.ToLowerInvariant() switch
         {
             "bookshelf" or "library" or "reader" => SpaceId.Library,
             "workbench" or "studio" => SpaceId.Studio,
             "settings" or "console" => SpaceId.Console,
             _ => (SpaceId?)null,
         };
-
-        if (space is { } target)
-        {
-            shell.ViewModel.SwitchSpace(target);
-        }
-    }
 }

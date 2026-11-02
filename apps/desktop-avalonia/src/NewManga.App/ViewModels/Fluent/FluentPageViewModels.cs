@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.Appearance;
 using NewManga.CoreClient;
@@ -1365,6 +1366,21 @@ public sealed class SettingsViewModel : FluentViewModel
     }
 
     private void OnAppearanceChanged(object? sender, EventArgs args)
+    {
+        if (_appearance is null) return;
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            ApplyCoordinatorSettings();
+        }
+        else
+        {
+            // FEA-07: the coordinator may raise Changed from a pool thread after an async save; the
+            // settings surface mutates controls and must always observe it on the UI thread.
+            Dispatcher.UIThread.Post(ApplyCoordinatorSettings);
+        }
+    }
+
+    private void ApplyCoordinatorSettings()
     {
         if (_appearance is null) return;
         Draft = _appearance.Settings;

@@ -117,6 +117,15 @@ allowed_paths:
 - 证据：`verification/FEA-07/slice-2c-part1-verification.log`（build 0/0；Fluent 24/0；全量 **1072/0/57**）。
 - 下一批：②c-part2 App 组合根接入真实 factory（V2 content 需携带 Theme Studio 生产接线）+ `--presentation-host` 开关 + 端到端 headless 切换测试；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
 
+## 实施记录（切片 2c-part2，2026-11-02，owner=DSH）
+
+- **组合根接入**：`AppOptions.PresentationHost`（`--presentation-host[=false]`，BooleanSwitchKeys 注册）；`App.CreateShell` 在 V2 路径下按开关走 `CreatePresentationShell`；新增 `CreatePresentationShell`（journal 落 theme-home、真实 content factory：`FluentShellSurface` / `CreateV2Content`）与 `CreateV2Content`（无宿主窗口的 V2 内容树，含 Theme Studio 生产接线，由 `WireThemeStudio` 抽取复用）；`--shell=legacy` 优先级不变。
+- `NavigateStartupPage` 支持稳定窗口（按当前内容树映射 Fluent 页/V2 space）。
+- **修复**：`SettingsViewModel.OnAppearanceChanged` 在非 UI 线程时 `Dispatcher.UIThread.Post`（切换时 `AppearanceCoordinator` 的 Changed 可能来自线程池；设置页控件更新必须在 UI 线程）；`AppOptions` 布尔开关白名单补 `presentation-host`。
+- 测试：`PresentationHostCompositionTests` 2 例（组合根真实 V2/Fluent 内容切换 + 开关解析）；presentation 相关 12 测试全绿。
+- 证据：`verification/FEA-07/slice-2c-part2-verification.log`（build 0/0；presentation 12/0；全量 **1074/0/57**）。
+- 下一批：切片 3 safe startup + 启动兼容矩阵；切片 4 双屏/DPI memento；切片 5 全量回归/独立复核。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -169,6 +178,7 @@ allowed_paths:
 | EV-FEA07-SLICE2 | AC1/AC2/AC8 | `verification/FEA-07/slice-2-verification.log` | `-` | `55fd5e5fb1c5a9a146e3cda5e5a8087ebff4beeee9a5c480e81d539d6bbfe771` | CANONICAL |
 | EV-FEA07-SLICE2B | AC1/AC2/AC8 | `verification/FEA-07/slice-2b-verification.log` | `-` | `2c281f288af106ed5391eea065aaac25f8f6543063a5aecab0f7ec11a4cee88b` | CANONICAL |
 | EV-FEA07-SLICE2C1 | AC1/AC2/AC8 | `verification/FEA-07/slice-2c-part1-verification.log` | `-` | `d835a23daf53d64d90fbe026f3307570b74df6778a7f1c50f61e60cfe63ee7f1` | CANONICAL |
+| EV-FEA07-SLICE2C2 | AC1/AC4/AC8 | `verification/FEA-07/slice-2c-part2-verification.log` | `-` | `7b848ca1a773e82e0b1faa1ee3e1a7f2d54f8ca49f2e0b3faaa80702ecb75973` | CANONICAL |
 
 ## Closeout Record
 

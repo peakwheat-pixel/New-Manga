@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using NewManga.Appearance;
 using NewManga.Presentation.Avalonia.Hosting;
 using NewManga.Presentation.Avalonia.Switching;
@@ -87,22 +88,22 @@ public sealed class FrontendHostCoordinator
         var callbacks = new SwitchCallbacks
         {
             ValidateAsync = _ => Task.CompletedTask,
-            BuildTreeAsync = _ =>
+            BuildTreeAsync = _ => InvokeOnUiAsync(() =>
             {
                 replacement = _contentFactory(target);
-                return Task.CompletedTask;
-            },
+            }),
             CommitAsync = async token =>
             {
                 previousSettings = _appearance.Settings;
                 try
                 {
-                    _host.SetContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built"));
+                    await InvokeOnUiAsync(() =>
+                        _host.SetContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
                     await _appearance.SaveAsync(previousSettings with { FrontendId = target }, token).ConfigureAwait(true);
                 }
                 catch
                 {
-                    _host.SetContent(previous ?? Placeholder);
+                    await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
                     if (previousSettings is not null)
                     {
                         await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
@@ -116,15 +117,13 @@ public sealed class FrontendHostCoordinator
                     _currentFrontendId = target;
                 }
             },
-            RollbackAsync = _ =>
-            {
-                _host.SetContent(previous ?? Placeholder);
-                return Task.CompletedTask;
-            },
+            RollbackAsync = _ => InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder)),
         };
 
         return _switcher.SwitchAsync(new SwitchRequest(target, CurrentFrontendId), callbacks, cancellationToken);
     }
 
     private static Control Placeholder => new Border();
+
+    private static async Task InvokeOnUiAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
 }

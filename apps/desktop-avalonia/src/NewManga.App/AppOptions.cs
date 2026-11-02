@@ -47,6 +47,12 @@ public sealed class AppOptions
 
     public bool DetectLegacyShell { get; private set; } = true;
 
+    /// <summary>
+    /// FEA-07: opt-in stable presentation window (runtime frontend switching). Off by default while the
+    /// stable-window parity tests are being filled in; the legacy/V2/Fluent standalone paths are unchanged.
+    /// </summary>
+    public bool PresentationHost { get; private set; }
+
     /// <summary>Demo/evidence: click the AC3 Chinese vector automatically after host start.</summary>
     public bool AutoRoundTrip { get; private set; }
 
@@ -102,7 +108,7 @@ public sealed class AppOptions
     /// <summary>Flags that may be written bare (<c>--parity</c> == <c>--parity=true</c>).</summary>
     private static readonly HashSet<string> BooleanSwitchKeys = new(StringComparer.Ordinal)
     {
-        "parity", "demo-write", "auto-roundtrip", "smoke",
+        "parity", "demo-write", "auto-roundtrip", "smoke", "presentation-host",
     };
 
     /// <summary>Flags whose value is optional (<c>--legacy-shell-check</c> == on; <c>=off</c> disables).</summary>
@@ -248,6 +254,9 @@ public sealed class AppOptions
                 break;
             case "legacy-shell-check":
                 options.DetectLegacyShell = !value.Equals("off", StringComparison.OrdinalIgnoreCase);
+                break;
+            case "presentation-host":
+                options.PresentationHost = !value.Equals("false", StringComparison.OrdinalIgnoreCase);
                 break;
             case "theme":
             case "theme-id":

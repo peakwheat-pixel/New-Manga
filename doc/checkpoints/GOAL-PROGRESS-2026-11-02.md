@@ -324,3 +324,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **FluentShellSurface 抽取**：新增 `Views/Fluent/FluentShellSurface.axaml(.cs)`（UserControl，Fluent 内容/四页/导航/KeyMap/响应式带全量逻辑，`FullScreenRequested` + `SetViewportWidth`）；`FluentShell` 变薄宿主 Window facade（转发公开 API + `FindControl` + material 策略），**24 个既有 Fluent 测试全通过**；修复响应式状态：视口宽度变化需同时更新状态带（`SetViewportWidth`→`UpdateStatus`）。
 - 证据 `verification/FEA-07/slice-2c-part1-verification.log`；build 0/0；全量 **1072/0/57**。
 - **下一批**：②c-part2 App 组合根真实 factory 接入（V2 content 需带 Theme Studio 生产接线）+ `--presentation-host` 开关 + 端到端 headless 切换；③safe startup；④双屏/DPI；⑤回归/复核。
+## 44. FEA-07 实施切片 2c-part2（组合根 `--presentation-host` 真实接线，2026-11-02）
+
+- **组合根接入**：`AppOptions.PresentationHost`（布尔开关白名单注册）；`App.CreateShell` V2 路径按开关走 `CreatePresentationShell`；`CreatePresentationShell` 用 theme-home 下 `switch-journal.json` + 真实 content factory（`FluentShellSurface` / `CreateV2Content`）；`CreateV2Content` 复用抽取的 `WireThemeStudio`（含 Theme Studio 生产接线）；`--shell=legacy` 优先级不变；`NavigateStartupPage` 支持稳定窗口内容树。
+- **修复**：`SettingsViewModel.OnAppearanceChanged` 非 UI 线程时 `Dispatcher.UIThread.Post`（切换时 Changed 可能来自线程池）；AppOptions 布尔白名单补 `presentation-host`。
+- 测试：`PresentationHostCompositionTests` 2 例（真实 V2/Fluent 内容切换、开关解析）；presentation 相关 12/0；证据 `verification/FEA-07/slice-2c-part2-verification.log`；build 0/0；全量 **1074/0/57**。
+- **下一批**：切片 3 safe startup + 启动兼容矩阵；切片 4 双屏/DPI memento；切片 5 全量回归/独立复核。
