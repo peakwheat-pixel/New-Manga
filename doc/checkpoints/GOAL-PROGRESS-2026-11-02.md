@@ -395,3 +395,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 
 - 用户将新开 DSH 会话；已写 `doc/handoffs/FEA-07-resume-2026-11-02.md`：当前 HEAD、Task 状态、已完成实现/复核历史、r3 未闭环（R-001/R-002/R-007）、验证基线（1115/0/57、性能 p95 344.93ms）、关键命令、Codex 新配置（`-m gpt-6.1-sol -c model_reasoning_effort="high"`）、约束/坑、建议顺序。
 - 新会话按该文件 + Task 卡继续；无需回读旧会话。
+## 56. FEA-07 impl-r3 处置 part2（真实 staging 门禁 + 隐藏树退出聚合，2026-11-02）
+
+- **R-001**：`PresentationWindow` 增加隐藏 staging `FrontendContentHost`（同一 live visual tree、`Opacity=0`、不可命中/聚焦、a11y Raw）；`FrontendHostCoordinator` 要求 staging 宿：替换树先挂 staging → 真实布局 pass 后校验 host/staging/tree 几何（删除 1024×640 fallback 与手工 Measure/Arrange）→ 真实 `Loaded` 事件（5s fail-closed）+ `IsLoaded`/visual root/top-level 复核 → `TopLevel.RequestAnimationFrame` 帧渲染（2s fail-closed）→ 才 commit；失败清 staging + 既有回滚。新增 staging 挂树/有效几何/零几何/Loaded 失败回滚/生产树 50 往返状态保留测试。
+- **R-001 状态覆盖**：Fluent `CurrentPage` + Settings 未应用 draft（跨前端切换保留）、V2 `Session.Shell.CurrentSpace`/`Session.Console.RunIdInput`/`Session.Reader.BookId` 在 100 次切换后保持；真实 Run/Intent、原生 IME、A03 真库矩阵不可测 → AC1 保持 PARTIAL。
+- **A01 补强**：`SettingsViewModel.ApplyCoordinatorSettings` 对「仅 frontendId 变化」的前端切换把新 id 合入 draft、不丢弃未应用外观草稿；其它外观变更仍镜像唯一写者。
+- **R-002**：`PresentationWindow` 可选 `allContentProvider`（组合根传 `contentCache.Values`），`Closing` 聚合可见树+staging+全部缓存树 `IPresentationExitState`；`AppShellV2.ThemeStudioDraftProvider`（`WireThemeStudio` 注入 `() => viewModel.HasDraft`）纳入 `HasUnsavedEdits`。新增隐藏树 dirty/run、生产 Fluent 树切换后隐藏阻断、V2 draft provider 阻断与清理放行测试。
+- **验证**：build 0/0；全量 **1119/0/57**（+4 测试）；两生成物 `--check` up-to-date；check PASS(3)；pins 15/15；证据 `rework-r3-part2-verification.log`、`final-evidence.log`（head `100d487ff`，SHA `478b097f…`）。
+- **性能新 baseline（R-009）**：R-001 后事务含真实渲染门禁；Release 三次 p95 496.30 / 575.64 / 712.28 ms（均 ≤1000ms PASS）；记录 run p50 102.29 / p95 496.30 / max 496.30 / 冷启 593.99 ms / 内存 +7088B / 句柄 0；旧 344.93/429.47 已更正并说明不可直接比较。
+- **R-007/R-016**：delivery_head=`100d487ff`、reviewer=impl-r3、handoff `doc/handoffs/FEA-07-impl-r3.md`、canonical=pending（r4 approved 后 complete）；证据索引重生成（0 控制字符、无自引用）。
+
+## 57. FEA-07 r4 复核派发（2026-11-02）
+
+- 新配置：`-m gpt-6.1-sol -c model_reasoning_effort="high"`（用户 2026-11-02 指示；`-high` 不是模型 ID）。
+- 被审：代码 head `100d487ff` + 本证据/文档提交；只读，唯一允许写 `doc/reviews/FEA-07-impl-r4.md`；报告记录 reviewer 身份/来源、reviewed_head、code_head、decision、counts，并实跑 build/全量/两 `--check`/check/pins + 核对 Task pins 与 evidence-index SHA。
+- 通过后：DSH 集成验证 → FEA-07 `done`、integration_commit、canonical=complete、Closeout Record；AC5 原生矩阵按 D-1 residual/waiver 登记；之后按用户顺序 `FEA-06-RESIDUAL-1`。

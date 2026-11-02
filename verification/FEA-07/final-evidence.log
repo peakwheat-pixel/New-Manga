@@ -1,7 +1,7 @@
-# FEA-07 final evidence @ clean rework head (r2 findings closed)
+# FEA-07 final evidence @ clean r3-part2 rework head
 
-- time: 2026-11-02 16:39:12 +08:00
-- head: 3220abd599aed7e835fc1352a25f8e1f5c214a58
+- time: 2026-11-02 17:43:12 +08:00
+- head: 100d487ffb55518e98be5219d750ab85c8a71d2b
 - worktree: clean before run
 - shell: PowerShell 7.6.8 / dotnet 10.0.401
 
@@ -12,32 +12,35 @@
 
 # command: dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
 # exit: 0
-#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 97 ms - NewManga.Appearance.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 291 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 621 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 100 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 281 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 602 ms - NewManga.Host.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 23 s - NewManga.CoreClient.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:   504，已跳过:     7，总计:   511，持续时间: 1 m 24 s - NewManga.App.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   510，已跳过:     7，总计:   517，持续时间: 1 m 32 s - NewManga.App.Tests.dll (net9.0)
 # skip summary: Host 28 (sidecar env unset), CoreClient 22 (sidecar env unset), App 7 (BOOK/S4 fixture unavailable) = 57
+# total: 1119 passed / 0 failed / 57 skipped
 
-# command: TokenGen -- --check
+# command: NewManga.DesignSystem.TokenGen -- --check
 # exit: 0
+#   project: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem
 #   rows:    292
 #   up to date: every generated artifact matches the frozen token source byte-for-byte
 
-# command: ThemeGen -- --check
+# command: NewManga.ThemeEngine.ThemeGen -- --check
 # exit: 0
+#   derived: line-height tier Nm.LineHeight.Data = font.size.sm x 1.3 (DESIGN_SYSTEM §3)
 #   up to date: generated theme artifacts match the frozen token source byte-for-byte
 
-# command: check.ps1
+# command: pwsh -NoProfile -File tools/governance/check.ps1
 # exit: 0
 #   WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 #   WARN: doc/STATUS.md 已达到预算的 80%：3077 bytes / 29 lines
 #   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4604 bytes / 64 lines
 #   Governance check: PASS (3 warnings)
 
-# command: verify_pins.ps1
+# command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 # exit: 0
 #   PIN AUDIT: PASS (all 15)
