@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.VisualTree;
 
 namespace NewManga.DesignSystem.Theming;
@@ -140,6 +141,9 @@ public sealed class FocusRing : AvaloniaObject
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top,
         };
+        // impl-r1 R1-008: bind the stroke to the token instead of freezing a local value, so an
+        // already-visible ring follows a runtime contrast switch (2px ↔ 3px) without refocusing.
+        state.Ring[!Border.BorderThicknessProperty] = new DynamicResourceExtension(NmKeys.Border.Focus);
 
         host.Children.Add(state.Ring);
         control.LayoutUpdated += OnLayoutUpdated;
@@ -175,7 +179,7 @@ public sealed class FocusRing : AvaloniaObject
         var bounds = control.Bounds;
         state.Ring.Width = bounds.Width + (stroke.Left * 2);
         state.Ring.Height = bounds.Height + (stroke.Top * 2);
-        state.Ring.BorderThickness = stroke;
+        // BorderThickness is token-bound (R1-008); only the geometry is recomputed here.
         if (state.Host is Canvas canvas)
         {
             Canvas.SetLeft(state.Ring, topLeft.Value.X - stroke.Left);

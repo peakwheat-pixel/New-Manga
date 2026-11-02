@@ -70,6 +70,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private FluentPage _currentPage;
     private Control? _activeDialog;
     private IInputElement? _focusBeforeDialog;
+    private bool _appearanceMotionSubscribed;
     private bool _motionNavigationEnabled;
     private MotionTimingProfile? _motionTimings;
     private bool _textInputFocused;
@@ -138,11 +139,9 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         ApplyResponsiveBand(ShellLayout.BreakpointFull);
         ApplyMotion(appearance?.Settings ?? AppearanceDefaults.Settings);
         // I-5: repeat the frozen motion resolution whenever the single appearance writer changes the
-        // settings dome (mode/categories), so runtime changes take effect without recreating the tree.
-        if (Appearance is not null)
-        {
-            Appearance.Changed += OnAppearanceChangedForMotion;
-        }
+        // settings dome (mode/categories). impl-r1 R1-006: the subscription is balanced in
+        // OnAttachedToVisualTree/OnDetachedFromVisualTree so cached/detached trees do not keep the
+        // long-lived coordinator alive or receive callbacks for a dead visual tree.
 
         Navigate(FluentPage.Library);
         if (!string.IsNullOrWhiteSpace(options?.StartupPage)) Navigate(options.StartupPage);
@@ -212,22 +211,24 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     public void Navigate(FluentPage page)
     {
+        // I-3（impl-r1 R1-004）：离开设置页的 dirty 保护必须先于一切目的地分支（含 Reader 特判），
+        // 否则从书架/命令面板进入阅读器会绕过保存/丢弃/取消确认。
+        if (_currentPage == FluentPage.Settings && page != FluentPage.Settings && _settingsModel.IsDirty)
+        {
+            _settingsView.TryBeginLeave(() => Navigate(page));
+            return;
+        }
+
         if (page == FluentPage.Reader)
         {
             if (_currentPage != FluentPage.Reader) _pageBeforeReader = _currentPage;
             _currentPage = FluentPage.Reader;
             _pageHost.Content = _readerView;
+            ApplyPageTransition();
             UpdateNavigationItems();
             UpdateNavSelection(_pageBeforeReader);
             UpdateStatus();
             CurrentPageChanged?.Invoke(this, _currentPage);
-            return;
-        }
-
-        // I-3：设置页有未保存修改时，导航被挂起，先走三分支离开确认（保存并离开/丢弃并离开/取消）。
-        if (_currentPage == FluentPage.Settings && page != FluentPage.Settings && _settingsModel.IsDirty)
-        {
-            _settingsView.TryBeginLeave(() => Navigate(page));
             return;
         }
 
@@ -245,6 +246,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             FluentPage.Settings => _settingsView,
             _ => _shelfView,
         };
+        ApplyPageTransition();
+        ApplyFeedbackTransitions(_motionTimings);
         UpdateNavigationItems();
         UpdateNavSelection(page);
         UpdateSpaceSelection();
@@ -449,6 +452,14 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     /// </summary>
     private void HandleSurfaceBack()
     {
+        // impl-r1 R1-005：最上层是 shell 浮层（命令面板/键位速查）时，Esc 必须先关闭它，
+        // 不能被设置页下层的离开确认抢先处理。
+        if (_modalHost.IsVisible)
+        {
+            CloseTopSurface();
+            return;
+        }
+
         if (_currentPage == FluentPage.Settings)
         {
             if (_settingsView.LeaveConfirmationVisible)
@@ -585,6 +596,11 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void OnAppearanceChangedForMotion(object? sender, EventArgs args)
     {
+        if (!_appearanceMotionSubscribed)
+        {
+            return;
+        }
+
         // AppearanceCoordinator raises Changed after its atomic write, which may run on a pool thread;
         // motion application mutates the visual tree, so marshal it back to the UI thread when needed.
         if (Dispatcher.UIThread.CheckAccess())
@@ -626,10 +642,35 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
                 {
                     Property = OpacityProperty,
                     Duration = TimeSpan.FromMilliseconds(duration),
-                    Easing = new CubicEaseOut(),
+                    // 设计 02 §2.1 的冻结曲线 ease-out cubic-bezier(0.2, 0, 0, 1)。
+                    Easing = new SplineEasing(0.2, 0, 0, 1),
                 },
             }
             : null;
+    }
+
+    /// <summary>
+    /// I-5 / impl-r1 R1-001: actually run the resolved navigation fade. Content swaps are otherwise an
+    /// instant swap (a transition alone proves nothing), so the new page starts at 0 opacity and the
+    /// render loop animates it to 1 for the nav duration; reduce/category-off keeps it instant.
+    /// </summary>
+    private void ApplyPageTransition()
+    {
+        var duration = _motionTimings?.NavigationPageMilliseconds ?? 0d;
+        if (duration <= 0d)
+        {
+            _pageHost.Opacity = 1;
+            return;
+        }
+
+        _pageHost.Opacity = 0;
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_pageHost.IsAttachedToVisualTree())
+            {
+                _pageHost.Opacity = 1;
+            }
+        }, DispatcherPriority.Render);
     }
 
     /// <summary>
@@ -652,16 +693,47 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             }
             : null;
 
-        foreach (var button in this.GetVisualDescendants().OfType<Button>())
+        // impl-r1 R1-002: cached page views are detached from the visual tree when not current, so a walk
+        // of `this` alone misses them (and their buttons were created before the current settings were
+        // applied). Each cached Fluent view is therefore updated explicitly; Navigate re-runs this for the
+        // page that becomes current, covering controls created later inside the cached view.
+        foreach (var root in new Visual?[] { this, _shelfView, _workbenchView, _readerView, _settingsView })
         {
-            button.Transitions = transitions;
+            if (root is null)
+            {
+                continue;
+            }
+
+            foreach (var button in root.GetVisualDescendants().OfType<Button>())
+            {
+                button.Transitions = transitions;
+            }
         }
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        ApplyFeedbackTransitions(_motionTimings);
+        // impl-r1 R1-006: balanced attach/detach subscription; a cached tree that is re-attached gets
+        // exactly one listener and re-applies the resolved motion to the new visual tree.
+        if (Appearance is not null && !_appearanceMotionSubscribed)
+        {
+            Appearance.Changed += OnAppearanceChangedForMotion;
+            _appearanceMotionSubscribed = true;
+        }
+
+        ApplyMotion(Appearance?.Settings ?? AppearanceDefaults.Settings);
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (Appearance is not null && _appearanceMotionSubscribed)
+        {
+            Appearance.Changed -= OnAppearanceChangedForMotion;
+            _appearanceMotionSubscribed = false;
+        }
+
+        base.OnDetachedFromVisualTree(e);
     }
     private static bool IsPlainTypingKey(Key key, KeyModifiers modifiers) =>
         (modifiers & (KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Meta)) == 0 &&

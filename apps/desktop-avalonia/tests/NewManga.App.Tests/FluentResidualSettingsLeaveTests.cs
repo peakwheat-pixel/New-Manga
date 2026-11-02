@@ -304,4 +304,45 @@ public sealed class FluentResidualSettingsLeaveTests : IDisposable
         Assert.Equal(WorkbenchViewTab.Console, shell.WorkbenchView.ActiveTab);
         shell.Close();
     }
+
+    [AvaloniaFact]
+    public void ImplR1_R1_004_DirtySettings_ReaderNavigation_GoesThroughLeaveConfirmation()
+    {
+        var appearance = CreateAppearance();
+        var shell = CreateDirtySettingsShell(appearance, out _);
+
+        // Reader 特判曾绕过 dirty 保护；现在必须被挂起并展示离开确认。
+        shell.Navigate(FluentPage.Reader);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(FluentPage.Settings, shell.CurrentPage);
+        Assert.True(shell.SettingsView.LeaveConfirmationVisible);
+        shell.Close();
+    }
+
+    [AvaloniaFact]
+    public void ImplR1_R1_005_EscapeClosesShellPaletteBeforeLowerLeaveConfirmation()
+    {
+        var appearance = CreateAppearance();
+        var shell = CreateDirtySettingsShell(appearance, out _);
+        var palette = shell.GetVisualDescendants().OfType<Button>()
+            .First(button => AutomationProperties.GetName(button) == "打开命令面板");
+        palette.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+        var modal = shell.GetVisualDescendants().OfType<Border>()
+            .First(border => border.Name == "FluentModalHost");
+        Assert.True(modal.IsVisible);
+
+        // 第一次 Esc 只关闭最上层 shell 浮层，不触发下层设置页离开确认。
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(modal.IsVisible);
+        Assert.False(shell.SettingsView.LeaveConfirmationVisible);
+
+        // 第二次 Esc（无 shell 浮层）才按页面 dirty 语义打开离开确认。
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(shell.SettingsView.LeaveConfirmationVisible);
+        shell.Close();
+    }
 }

@@ -103,3 +103,14 @@
 ## 补记 13（I-4 命令面板结果/空态，全量 1195/0/57）
 - `FluentCommandPaletteFocusTests` 扩展：命令面板初始渲染真实命令行（>0）、输入不存在查询后过滤为 0（诚实空结果，无假数据）、清空后恢复；焦点仍在搜索框。
 - 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。
+
+## 补记 14（impl-r1 findings 返修第一批，全量 1197/0/57）
+- **R1-004 修复**：`Navigate` 的 settings dirty 保护移到所有目的地分支之前（含 Reader 特判）；新增回归 `ImplR1_R1_004_...`（dirty 下 Navigate(Reader) 仍停留设置页并显示离开确认）。
+- **R1-005 修复**：`HandleSurfaceBack` 先关闭 shell 最上层浮层（FluentModalHost），再处理设置页浮层/离开；新增回归 `ImplR1_R1_005_...`（dirty 设置 + 命令面板：第一次 Esc 只关面板、第二次 Esc 才开离开确认）。
+- **R1-003 修复**：Reader `WakeToolBars` 每次交互 Stop/Start 空闲计时器（不再依赖 bool 变化）。
+- **R1-006 修复**：Appearance.Changed 订阅改为 attach 订阅/detach 解除（`_appearanceMotionSubscribed` 平衡，detach 后回调失效）。
+- **R1-007 修复**：Reader 右侧浮动条补 `Nm.Border.Hairline` 边框 + `Nm.Color.Line.Subtle`（高对比阴影置空后仍有 1px 边框）。
+- **R1-008 修复**：FocusRing 的 `BorderThickness` 改为 DynamicResource 绑定（已显示焦点环切高对比即时 2→3→2，无需重聚焦）；测试增加“不重聚焦”断言。
+- **R1-001 部分**：页面导航真正启动 opacity 0→1 淡入（Dispatcher Render 后置 1），easing 改为冻结 `SplineEasing(0.2,0,0,1)`，Reader 也走同一导航过渡；**未完成**：Tab 180ms、浮层 200/160ms、feedback pressed 90/badge 150ms 的实际消费。
+- **R1-002 部分**：feedback 过渡改为遍历四个缓存 Fluent 页面视图（detached 也能覆盖），Navigate 后对当前页重放；**未完成**：完全动态创建的控件在创建瞬间仍可能漏接（待统一机制）。
+- 验证：build 0/0；无过滤全量 **1197 passed / 0 failed / 57 skipped**；旧 FEA-06 PNG 零漂移。

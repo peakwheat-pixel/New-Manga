@@ -168,6 +168,10 @@ public sealed class ReaderPageView : UserControl
         var host = new Border { Child = rail, VerticalAlignment = VerticalAlignment.Center };
         host[!Border.CornerRadiusProperty] = new DynamicResourceExtension("Nm.Corner.Fluent.Md");
         host[!Border.BoxShadowProperty] = new DynamicResourceExtension("Nm.Elevation.2");
+        // impl-r1 R1-007 / design 03 §4: the floating rail must keep a hairline border so high contrast
+        // (which zeroes Elevation) still renders the required 1px border instead of a borderless surface.
+        host[!Border.BorderThicknessProperty] = new DynamicResourceExtension("Nm.Border.Hairline");
+        host[!Border.BorderBrushProperty] = new DynamicResourceExtension("Nm.Color.Line.Subtle");
         return host;
     }
 
@@ -200,6 +204,14 @@ public sealed class ReaderPageView : UserControl
     private void WakeToolBars()
     {
         _viewModel.PokeToolBars();
+        // impl-r1 R1-003: every interaction restarts the 2s idle deadline, even while the bars are
+        // already visible (PokeToolBars is idempotent for the bool, so the old code never restarted the
+        // timer and the bars could hide mid-interaction).
+        if (_viewModel.AreToolBarsVisible && TopLevel.GetTopLevel(this) is not null)
+        {
+            _autoHideTimer.Stop();
+            _autoHideTimer.Start();
+        }
     }
 
     private void ApplyToolBarsVisibility()

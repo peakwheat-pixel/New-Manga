@@ -41,6 +41,12 @@ public sealed class FocusRingHighContrastTests
         Assert.Equal(2d, ring!.BorderThickness.Left, 3);
 
         Assert.True(manager.SetContrast(ContrastMode.High), manager.LastError);
+        // impl-r1 R1-008: an already-visible ring must follow the token change WITHOUT refocusing.
+        Dispatcher.UIThread.RunJobs();
+        ring = VisibleRingOf(window);
+        Assert.NotNull(ring);
+        Assert.Equal(3d, ring!.BorderThickness.Left, 3);
+
         other.Focus(NavigationMethod.Tab);
         Dispatcher.UIThread.RunJobs();
         textBox.Focus(NavigationMethod.Tab);
@@ -50,6 +56,10 @@ public sealed class FocusRingHighContrastTests
         Assert.Equal(3d, ring!.BorderThickness.Left, 3);
 
         Assert.True(manager.SetContrast(ContrastMode.Standard), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        ring = VisibleRingOf(window);
+        Assert.NotNull(ring);
+        Assert.Equal(2d, ring!.BorderThickness.Left, 3);
         Assert.Equal(2d, ThemeTestHarness.ValueOf<Thickness>(Application.Current!, "Nm.Border.Focus").Left);
         other.Focus(NavigationMethod.Tab);
         Dispatcher.UIThread.RunJobs();
