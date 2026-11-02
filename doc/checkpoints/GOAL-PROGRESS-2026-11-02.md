@@ -917,3 +917,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 测试：IN-2A 更新 SurfaceCard 逐状态断言 + IconButton checked 断言（15/15 PASS）；IN-2B 增 surface-card selected / icon-button checked 像素格 → **29 PNG + inventory**。
 - 验证：全量 **1272/0/57**；check PASS(3)；提交 `7e21b4de8`；未 push；旧四 PNG 未动。
 - 仍余：**R2-001 decor 真实帧**（需可控帧源；两次失败已记录 §139）、R2-012 失焦真实接线+粒子可读性、R2-017 Handoff；R2-016 D-14 待裁决。
+## 141. R2 收尾返修派发 Codex（2026-11-03 05:28）
+
+- Codex 额度窗口已恢复，已派 fresh Codex 实施 R2 收尾（job `pwsh-541ea103c8194773`，prompt workspace `r2-final-rework-codex-prompt.md`，head `7e21b4de8`，基线 1272/0/57）：
+  - **R2-001 P0**：真实 ShelfPageView 渐变（full first/mid + reduce）与 Reader particle（full mid + reduce），必须不同 SHA，可用 Manual clock/测试帧推进钩子；禁占位/灰图；
+  - **R2-012**：Deactivated/IsVisible 真实接线 + 粒子可读性/detach 断言；**R2-017** Handoff；R2-016 D-14 不写达成。
+- 完成后：DSH 核验（build/全量/PNG/inventory/check/pins）→ 派 fresh 独立 impl-r2 Review（不得自审）→ 集成/关闭。ZCode 08:05 备用。
