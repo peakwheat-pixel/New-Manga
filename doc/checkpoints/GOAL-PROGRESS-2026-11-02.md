@@ -365,3 +365,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 
 - **Review**：`doc/reviews/FEA-07-impl-r1.md`（Codex CLI fresh，P0=0/P1=7/P2=5）。处置：R-001 内容树缓存复用（状态保留+实例断言）；R-002 ExitCoordinator 接入 Closing + Broker 生产注册；R-003 已提前修复；R-004 planner 单一决策源 + 外观 fallback 强制 V2（含 CLI fluent）；R-005 memento 启动 clamp+DisplayId；R-006 启动矩阵测试隔离（实测 APPDATA mtime 不变；删除测试误写 window-state.json，theme-settings.json 未动）；R-008 allowed_paths 补齐；R-009 AC6 降 PARTIAL + freeze 上限指标；R-012 生成物 --check 归档。
 - 待办：R-007 生命周期固定（reviewer/delivery_head/handoff/canonical）与 R-011 精确 head 证据重跑，然后 r2 复核。
+## 51. FEA-07 impl-r1 返修完成 + 精确 head 证据 + r2 复核派发（2026-11-02）
+
+- **返修 part1（7ca2e367b）**：R-001 内容树缓存复用（同实例断言）；R-002 ExitCoordinator 接入 Closing（未保存编辑阻断关闭）；R-004 planner 单源 + 外观 fallback 强制 Current V2（含 CLI fluent）；R-005 memento 启动 clamp + DisplayId；R-006 启动矩阵测试隔离（APPDATA mtime 实测不变；删除测试误写 window-state.json；theme-settings.json 未动）；R-008 allowed_paths 补齐；R-009 AC6 降 PARTIAL + freeze 上限指标；R-012 生成物 --check 归档。
+- **生命周期（251b5df0d）**：卡内登记 reviewer=codex-cli（impl-r1）、delivery_head=7ca2e367b（代码 head）、handoff `doc/handoffs/FEA-07-impl-r1.md`。
+- **精确 head 证据（f28d97b99）**：`verification/FEA-07/final-evidence.log`（head 7ca2e367b；build 0/0；全量 **1106/0/57**；check PASS(3)；pins 15/15；两生成物 byte-for-byte）；证据索引更新；Release perf p50 99.91ms / p95 344.93ms / max 344.93ms / 内存 +208B / 句柄 0（缓存复用后）。
+- **r2 复核已派发**（fresh Codex CLI，被审 f28d97b99/代码 head 7ca2e367b；job pwsh-ddae7f4df44e488f），等待结果。
