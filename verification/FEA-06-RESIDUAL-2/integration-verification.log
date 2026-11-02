@@ -1,0 +1,43 @@
+# FEA-06-RESIDUAL-2 集成验证（DSH，2026-11-03 07:22）
+shell: pwsh 7.6.8 / Windows；host: G:\CODEX\New Manga
+head: d1df8035a5ea61921bb01b84494de0fd59f805e7；base: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
+
+## 1) build
+    0 个警告
+    0 个错误
+BUILD_EXIT=0
+
+## 2) 无过滤全量
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 95 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 305 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 612 ms - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   114，已跳过:     0，总计:   114，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   653，已跳过:     7，总计:   660，持续时间: 2 m 57 s - NewManga.App.Tests.dll (net9.0)
+TEST_EXIT=0
+
+## 3) 视觉证据
+PNG=172；inventory_rows=172；unique_sha=172
+
+## 4) 旧 FEA-06 PNG
+reader 8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
+settings fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
+shelf 307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
+workbench d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
+
+## 5) 生成器 --check
+TokenGen: rows:    292 | up to date: every generated artifact matches the frozen token source byte-for-byte
+ThemeGen:   derived: line-height tier Nm.LineHeight.Data = font.size.sm x 1.3 (DESIGN_SYSTEM §3) | up to date: generated theme artifacts match the frozen token source byte-for-byte
+
+## 6) 治理
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5202 bytes / 64 lines
+Governance check: PASS (3 warnings)
+PIN AUDIT: PASS (all 15)
+
+## 7) 禁止范围 diff（base..HEAD）
+FORBIDDEN_DRIFT=0
+
+## 8) 工作树
+（干净）

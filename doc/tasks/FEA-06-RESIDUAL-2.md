@@ -3,7 +3,7 @@ id: FEA-06-RESIDUAL-2
 title: Fluent 视觉残项补做（D-8 decorative + I-4 视觉格）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 approval: scope-r3_approved_2026-11-03（ZCode CLI 独立上下文；reviewed_head b201d4489；P0=0/P1=0/P2=7）；范围 v3 冻结，按 IN-1.1/IN-1.2/IN-2A/IN-2B 实施
 suggested_owner: zcode
 owner: zcode
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: null
+integration_commit: d1df8035a5ea61921bb01b84494de0fd59f805e7
 delivery_head: 832103393（R2R3 交付：NavRail/StatusBand 态、可辨渐变、danger 对比、失焦生命周期、reduce 粒子清理；172 PNG；全量 1289/0/57；impl-r4 复核中）
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-2
 allowed_paths:
   - doc/tasks/FEA-06-RESIDUAL-2.md
@@ -134,8 +134,37 @@ pwsh -NoProfile -File tools\governance\verify_pins.ps1
 - 测试：新断言只增不减；全量无过滤 ≥1245/0/57；PNG 默认零写入；视觉格必须属性+像素双证据并独立签署；NOT_RUN 不得计 PASS。
 
 ### AC 表（本卡）
-- AC-1（IN-1.1/1.2 三态降级/暂停/无泄漏/视觉签署）MET 需属性+像素+签署。
-- AC-2（IN-2A 16+1 组有效属性逐格）MET 需解析后属性=令牌。
-- AC-3（IN-2B 像素格+独立签署）MET 需逐图签署；未签署记 NOT_RUN。
-- AC-4（证据/回归/禁止范围/生成器/check/pins/旧 SHA）MET。
+- [x] **AC-1（IN-1.1/1.2 三态降级/暂停/无泄漏/视觉签署）**：行为测试、真实帧与逐图签署通过（172 图 172 PASS）。 <<MET>>
+- [x] **AC-2（IN-2A 16+1 组有效属性逐格）**：解析后属性=令牌断言通过（15/15）。 <<MET>>
+- [x] **AC-3（IN-2B 像素格+独立签署）**：172 图 172 PASS/0 REJECT（impl-r4 独立签署）。 <<MET>>
+- [x] **AC-4（证据/回归/禁止范围/生成器/check/pins/旧 SHA）**：integration log PASS。 <<MET>>
 - BLOCKED：B 表项与 B-5/D-1 不写达成。
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-RES2-INTEGRATION | AC1–AC4 | `verification/FEA-06-RESIDUAL-2/integration-verification.log` | `d1df8035a` | `92a7c8573d3570ae88209bc535c7de403ae35aa2e0a75e9a3e9b9b11f10bac9c` | CANONICAL |
+| EV-RES2-IMPLR4 | AC1–AC4 | `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md` | `d1df8035a` | `9aa51c68ecec8507cf30be08a215ef1096444594a24084293bc3a20c325c2f33` | CANONICAL |
+| EV-RES2-HANDOFF | AC1–AC4 | `doc/handoffs/FEA-06-RESIDUAL-2-r2r3-17a26d552.md` | `832103393` | `65455671ac931b2d6dedbfa0d4ac7ee8fc11a7b57ff90a869910a4b814ec6455` | CANONICAL |
+| EV-RES2-INVENTORY | AC3 | `verification/FEA-06-RESIDUAL-2/visuals/visual-inventory.md` | `c70d5c348` | `e76b2f5fed7a80fc5f52ce2e28dd35b656e8a931f3884781f006098cfbffed74` | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | 无 linked worktree；main checkout `G:\CODEX\New Manga` | NOT_APPLICABLE | 同一仓库 checkout | `832103393` | `git worktree list` 仅 main；未创建/删除 worktree。 |
+| verification artifacts | `verification/FEA-06-RESIDUAL-2/**` | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-2/visuals/visual-inventory.md` | `e76b2f5fed7a80fc5f52ce2e28dd35b656e8a931f3884781f006098cfbffed74` | 172 PNG + inventory + expected-tokens + 各日志被 Task/Review/Handoff/Closeout 引用；旧 `verification/FEA-06/**` 字节未动。 |
+| task-env / dataset / model / test-material | 未创建 / 未使用 | NOT_APPLICABLE | - | - | 未创建 task-env；测试使用 FakeHost 内存 fixture，不接触用户数据。 |
+| temp | 测试 `%TEMP%` 临时根 | NOT_APPLICABLE | - | - | 每次运行临时根并在测试内清理；未写真实 `%APPDATA%`。 |
+| agent-output / exchange | `G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-2\`（prompt/结果日志） | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-2/integration-verification.log` | `92a7c8573d3570ae88209bc535c7de403ae35aa2e0a75e9a3e9b9b11f10bac9c` | prompt/结果日志保留在 workspace；集成日志入库并登记 SHA。 |
+| user data | 未访问 | NOT_APPLICABLE | - | - | 未访问用户源文件/AppData/DB；旧四 PNG SHA 未变。 |
+
+## Closeout Record
+
+- **终态**：`closed_with_limitations`（DONE 不允许 PARTIAL AC；本卡 AC1–AC4 MET，限制/OUT/BLOCKED 另列）。关闭时间 2026-11-03；delivery `832103393`，integration evidence `d1df8035a`。
+- **复核链**：scope-r1（changes_requested）→ scope-r2（changes_requested）→ scope-r3 **approved**（ZCode，P2=7）；impl-r1 **changes_requested**（P0=1/P1=6/P2=12）→ impl-r2 **changes_requested**（P0=0/P1=6/P2=12）→ impl-r3 **changes_requested**（P0=0/P1=2/P2=4）→ **impl-r4 approved**（P0=0/P1=0/P2=3；172 图 172 PASS/0 REJECT；D-9 独立子 agent，Codex 限额期间）。全部报告/证据提交在库，历史字节未覆盖。
+- **集成验证**：`verification/FEA-06-RESIDUAL-2/integration-verification.log`：build 0/0、无过滤全量 **1289/0/57**、PNG 172/inventory 172/唯一 SHA 172、旧 FEA-06 四 PNG SHA 不变、TokenGen/ThemeGen up-to-date、check PASS(3)、pins 15/15、禁止范围 diff=0、工作树干净。
+- **AC 结论**：AC1–AC4 MET（见上）。
+- **限制/残项**：原生 200% DPI/a11y 矩阵 = **BLOCKED/D-1**（无硬件，不写达成）；OUT：PrimaryButton loading、Dialog 危险/加载、CommandPalette loading、新增组件状态（v1.1 重冻结）；R2R4 P2 卫生项已由 DSH 处理（指针/审阅字段）；D-14 NotStarted 令牌 = 已裁决 A，实施在后续卡 `D-14-STATUS-COLOR-FIX`（ready），本卡不写达成。
+- **资源**：见 Resource Manifest；未 push；关闭时工作树干净（除关闭提交）。
+- **后续建议**：按顺序实施 D-14-STATUS-COLOR-FIX；原生矩阵待硬件/waiver。
