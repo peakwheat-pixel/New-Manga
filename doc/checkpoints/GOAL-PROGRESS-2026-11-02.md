@@ -737,3 +737,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 结果：headless `[AvaloniaFact]` 中 `Thread.Sleep(250)` + `RunJobs()` 后 DispatcherTimer 未触发，`modal.IsVisible` 仍为 True，测试失败；**已完整回退**该尝试（工作树回到 `e25600431` 状态，build 0/0）。
 - 结论/备选（下一轮）：① 用 async `[AvaloniaFact] async Task` + `await Task.Delay(200)` 让 UI 线程让出后再 `RunJobs` 验证 DispatcherTimer；② 若 headless 计时器仍不可用，改用 Avalonia `Animation.RunAsync`/手动 clock 推进；③ 或把退出动画放到 ZCode 视觉任务（可真实视觉验收）并在 Task 记录为 D-10，避免 headless 不可验证的实现。
 - 当前仍未完成：浮层退出 160ms、feedback pressed 90ms / badge 150ms；完成后再派 fresh Codex impl-r2。
+## 111. R1-001 剩余动画转 ZCode + D-10（2026-11-03 01:08）
+
+- 两次尝试（Thread.Sleep+RunJobs、async Task.Delay+RunJobs）均无法在 headless 触发退出 DispatcherTimer；已完整回退，工作树/构建干净（`e25600431` 状态）。
+- **D-10**：浮层退出 160 / pressed 90 / badge 150 三项动画转 ZCode 视觉任务（03:02 后派发）实现+真实视觉验收；DSH 不再写不可验证动画。其余 R1-001（页面 240/Tab 180/浮层进入 200/冻结 bezier）已实现并有断言。
+- 下一步：03:02 后派 ZCode 实现这 3 项并视觉验收；完成后与其余返修一并派 fresh Codex impl-r2 → 集成/关闭。Task 保持 in_progress。

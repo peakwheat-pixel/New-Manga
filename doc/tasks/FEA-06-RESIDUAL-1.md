@@ -180,7 +180,7 @@ allowed_paths:
 - **D-7（已裁决执行）**：双故障转移候选（Codex/ZCode）同时额度耗尽时，允许 DSH 在冻结范围/写域内继续实施并在 agent 恢复后补独立 Review。DSH 推荐/采用：允许（不得自审）；依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 作为 Lead/Integrator 实施。结论记录于 checkpoint §81/§83.1。
 - **D-8（新，待独立裁决/Review 确认）**：decorative 类别实际动画（书架背景渐变 8s 循环、阅读器翻页粒子 400ms、空态插画漂浮 6s）**暂缓实现**，仅保留参数表、类别开关与 reduce 禁用语义。DSH 推荐：**暂缓并转后续视觉任务（ZCode 主责）**。依据：三类均为视觉创作型动画，需视觉设计/像素评审与 reduce 降级截图，headless 下无法证明“未改变布局/层级/可读性”；在无独立视觉 Review 前提下由 DSH 自创会引入不可复核风险。当前 I-5 其余判据（①–④ 及旧值迁移相关断言）已由 `MotionTimings`/`MotionResolver` 测试覆盖。
 - **Review 准备**：独立 impl Review prompt 已备好：`G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-1\impl-review-prompt.md`；集成验证脚本 `integration-verify.ps1`（dry-run PASS）就绪，Review 通过后一键产出 `integration-verification.log`；Codex 探针 00:16 仍限额至 2026-11-03 00:23，恢复即派发。
-- **D-9（新，已按推荐执行口径记录）**：若 00:23（Codex）与 03:02（ZCode）两个故障转移候选仍不可用，独立 impl Review 改为**由 DSH 派发独立上下文子 agent**（只读被审 head、产出 review 报告；按 2026-10-31 用户裁决「作者可派发新的子 agent（独立上下文、只读被审 head）执行 Review」）。DSH 不自审、只负责 findings 处置与集成验证；若子 agent 也受限，则继续等待下一个 agent 恢复窗口并记录探针依据。
+- **D-10（新，已按推荐执行口径记录）**：R1-001 仅剩的 3 个动画消费项（浮层退出 160ms、feedback pressed 90ms、badge 150ms）建议**转 ZCode 视觉任务**实现并做真实视觉验收。依据：DSH 环境两次尝试 headless `DispatcherTimer`/`await Task.Delay` 均无法在 `[AvaloniaFact]` 中触发退出计时器（已回退，见 checkpoint §110），继续由 DSH 写不可验证动画会违反「不以声明/不可复现测试计 PASS」；ZCode 为项目视觉/交互实现主责（2026-10-25 授权保留）。DSH 推荐：**转 ZCode（03:02 额度恢复后派发）**，同时先行准备 fresh Codex impl-r2 覆盖其余已修项，ZCode 视觉项完成后补审。\n- **D-9（新，已按推荐执行口径记录）**：若 00:23（Codex）与 03:02（ZCode）两个故障转移候选仍不可用，独立 impl Review 改为**由 DSH 派发独立上下文子 agent**（只读被审 head、产出 review 报告；按 2026-10-31 用户裁决「作者可派发新的子 agent（独立上下文、只读被审 head）执行 Review」）。DSH 不自审、只负责 findings 处置与集成验证；若子 agent 也受限，则继续等待下一个 agent 恢复窗口并记录探针依据。
 
 ## Closeout Record
 
