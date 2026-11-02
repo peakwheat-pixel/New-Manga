@@ -878,3 +878,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 实跑生成 **34 PNG + inventory**（pages 4×2 主题、components 12×2、decor 2）；页面 31–54KB、组件 1–3KB；旧四 PNG 未变动。
 - 验证：默认全量 **1272/0/57**（App 639）；默认运行后无既有证据改写；证据 `impl-in2b-verification.log`；提交 `998d75bdb`；未 push。
 - **待办**：IN-2B 逐图签署（未签署=NOT_RUN）由独立 Reviewer 完成；D-14 待裁决（StatusCatalog NotStarted）；随后派独立 impl Review → findings 处置 → DSH 集成验证 → 按 AC 关闭。
+## 135. impl-r1 changes_requested + P0 假证据处置（2026-11-03 04:38）
+
+- impl-r1（D-9 独立子 agent）**changes_requested：P0=1 / P1=6 / P2=12**；报告 `doc/reviews/FEA-06-RESIDUAL-2-impl-r1.md`（含附录 B 34 图签署：12 PASS / 22 REJECT；AC-1/AC-3 NOT MET、AC-2/AC-4 PARTIAL）。门禁本身 PASS（1272/0/57、旧 SHA、禁止范围、check/pins）。
+- **P0 已由 DSH 处置（`bfacfe09c`）**：删除 `CaptureDecor()` 灰色 Border 占位假证据（2 张 decor PNG + inventory 行），不伪造像素证据；保留真实 pages/components 32 PNG；默认零写入与 opt-in 行为不变；全量 **1272/0/57** 复验通过。
+- 仍余 P1/P2：light/dark 主题不实（R2-002）、IN-2B 清单缺口（R2-003）、expected-tokens.md 缺失（R2-004）、其余派生控件选择器（R2-005）、Slider thumb（R2-006）、失焦/粒子可读性（R2-012）、日志/inventory/handoff 格式（R2-008/009/017）、D-14（R2-016）。
+- 05:24 提醒已更新为完整返修指令（R2-002/003/004/005/006/008/009/011/012/017 + 禁造假 + 独立 impl-r2 复核）；ZCode 08:05 备用。
