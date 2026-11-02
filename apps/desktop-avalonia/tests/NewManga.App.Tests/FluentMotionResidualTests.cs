@@ -92,9 +92,20 @@ public sealed class FluentMotionResidualTests : IDisposable
         var feedbackButton = surface.GetVisualDescendants().OfType<Button>().First();
         Assert.NotNull(feedbackButton.Transitions);
 
+        // impl-r1 R1-001: workbench Tab switching consumes the frozen 180ms navigation parameter.
+        var tabHost = surface.WorkbenchView.TabContentHost;
+        Assert.NotNull(tabHost.Transitions);
+        surface.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(1d, tabHost.Opacity);
+
         await appearance.SaveAsync(AppearanceDefaults.Settings with { MotionMode = MotionMode.Reduce, MotionCategories = MotionCategories.All });
         Dispatcher.UIThread.RunJobs();
         Assert.Null(pageHost.Transitions);
+        Assert.Null(tabHost.Transitions);
+        surface.WorkbenchView.SelectTab(WorkbenchViewTab.Page);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(1d, tabHost.Opacity);
         Assert.DoesNotContain("motion-feedback", surface.Classes);
         Assert.DoesNotContain("motion-decorative", surface.Classes);
         Assert.Null(feedbackButton.Transitions);

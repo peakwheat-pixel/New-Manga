@@ -557,7 +557,27 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _focusBeforeDialog = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         _activeDialog = scrim;
         _modalHost.Child = scrim;
+        // I-5 / impl-r1 R1-001: overlay entrance consumes the frozen 200ms navigation parameter;
+        // reduce/category-off keeps it instant. (Exit 160ms remains TODO for the next batch.)
+        var overlayInMs = _motionTimings?.NavigationOverlayInMilliseconds ?? 0d;
+        scrim.Opacity = overlayInMs > 0d ? 0d : 1d;
+        scrim.Transitions = overlayInMs > 0d
+            ? new Transitions
+            {
+                new DoubleTransition
+                {
+                    Property = OpacityProperty,
+                    Duration = TimeSpan.FromMilliseconds(overlayInMs),
+                    Easing = new SplineEasing(0.2, 0, 0, 1),
+                },
+            }
+            : null;
         _modalHost.IsVisible = true;
+        if (overlayInMs > 0d)
+        {
+            Dispatcher.UIThread.Post(() => scrim.Opacity = 1d, DispatcherPriority.Render);
+        }
+
         _modalHost.Focus();
     }
 
@@ -620,6 +640,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         // fades for the resolved navigation duration; reduce/category-off resolves to 0ms (no transition).
         _motionTimings = MotionTimings.Resolve(resolution);
         ApplyNavigationTransition(_motionTimings);
+        _workbenchView.ConfigureTabMotion(_motionTimings.NavigationTabMilliseconds);
         ThemeManager?.SetReducedMotion(!resolution.Enabled);
         Classes.Set("motion-navigation", _motionNavigationEnabled);
         // I-5: feedback keeps its colour change but owns a transition only when motion is enabled;

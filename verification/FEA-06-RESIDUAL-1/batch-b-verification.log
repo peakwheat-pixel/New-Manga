@@ -114,3 +114,8 @@
 - **R1-001 部分**：页面导航真正启动 opacity 0→1 淡入（Dispatcher Render 后置 1），easing 改为冻结 `SplineEasing(0.2,0,0,1)`，Reader 也走同一导航过渡；**未完成**：Tab 180ms、浮层 200/160ms、feedback pressed 90/badge 150ms 的实际消费。
 - **R1-002 部分**：feedback 过渡改为遍历四个缓存 Fluent 页面视图（detached 也能覆盖），Navigate 后对当前页重放；**未完成**：完全动态创建的控件在创建瞬间仍可能漏接（待统一机制）。
 - 验证：build 0/0；无过滤全量 **1197 passed / 0 failed / 57 skipped**；旧 FEA-06 PNG 零漂移。
+
+## 补记 15（impl-r1 返修第二批：Tab 180 / 浮层进入 200，全量 1197/0/57）
+- **R1-001 续**：Workbench Tab 切换真正消费 180ms navigation 参数（`_mainHost` opacity 0→1 + `SplineEasing(.2,0,0,1)`；reduce=0ms），shell ApplyMotion 配置；测试断言 full 有过渡/opacity 到 1、reduce 无过渡。命令面板/键位速查浮层**进入**消费 200ms（scrim opacity 0→1）；**退出 160ms 仍未接入**。
+- 仍待办：浮层退出 160ms、feedback pressed 90ms / badge 150ms 实际消费、R1-002 完全动态控件统一机制、R1-009 台账/日志刷新（随后一并处理并派 impl-r2）。
+- 验证：build 0/0；无过滤全量 **1197/0/57**；旧 PNG 零漂移。

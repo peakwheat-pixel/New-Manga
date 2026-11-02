@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Automation;
@@ -55,6 +57,7 @@ public sealed class WorkbenchPageView : UserControl
     private string? _pendingPageId;
     private TextBox? _draftInput;
     private WorkbenchViewTab _activeTab;
+    private double _tabTransitionMs;
 
     public WorkbenchPageView(WorkbenchViewModel viewModel, Action backToShelf, Action? openConsole = null)
     {
@@ -135,6 +138,7 @@ public sealed class WorkbenchPageView : UserControl
     public FluentTabStrip ViewTabs => _tabStrip;
     public WorkbenchViewTab ActiveTab => _activeTab;
     public Control? CurrentViewContent => _mainHost.Content as Control;
+    public Control TabContentHost => _mainHost;
     public SurfaceCard InspectorPane => _inspectorCard;
     public Button InspectorToggle => _inspectorToggle;
     public Ellipse DirtyDot => _dirtyDot;
@@ -148,10 +152,42 @@ public sealed class WorkbenchPageView : UserControl
 
     public void SelectTab(WorkbenchViewTab tab)
     {
+        var fade = _tabTransitionMs > 0 && _activeTab != tab;
         _activeTab = tab;
         _viewModel.IsBatch = tab == WorkbenchViewTab.Batch;
         TabChanged?.Invoke(tab);
+        if (fade)
+        {
+            _mainHost.Opacity = 0;
+        }
+
         Render();
+        if (fade)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(
+                () => _mainHost.Opacity = 1,
+                Avalonia.Threading.DispatcherPriority.Render);
+        }
+    }
+
+    /// <summary>
+    /// I-5（impl-r1 R1-001）：工作台 Tab 切换消费 180ms navigation 参数（设计 02 §2.1）；
+    /// reduce / navigation=关 时 duration=0，直接切换。
+    /// </summary>
+    public void ConfigureTabMotion(double durationMs)
+    {
+        _tabTransitionMs = durationMs;
+        _mainHost.Transitions = durationMs > 0
+            ? new Transitions
+            {
+                new DoubleTransition
+                {
+                    Property = OpacityProperty,
+                    Duration = System.TimeSpan.FromMilliseconds(durationMs),
+                    Easing = new SplineEasing(0.2, 0, 0, 1),
+                },
+            }
+            : null;
     }
 
     public bool MovePage(int direction)
