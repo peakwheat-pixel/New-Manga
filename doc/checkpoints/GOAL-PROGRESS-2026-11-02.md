@@ -965,3 +965,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 独立核验：全量 **1289/0/57**（App 653、DS 114）、172 PNG、check PASS(3)、pins 15/15、工作树干净、未 push。
 - 已派 **fresh Codex impl-r4 Review**（job `pwsh-0fccb09844fd4656`，prompt workspace `impl-review-r4-prompt.md`）：核验 R2R3-001…006、172 图逐图签署与门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md`。
 - approved 后：DSH 集成验证 → 按实际 AC 结果 done/closed_with_limitations；D-14-STATUS-COLOR-FIX 保持 ready。
+## 149. Codex 额度再次耗尽 + impl-r4 经 D-9 派发（2026-11-03 06:58）
+
+- Codex impl-r4 Review 尝试（job `pwsh-0fccb09844fd4656`）**exit=1**：`ERROR: usage limit ... try again at 10:25 AM`（探针依据记录于 `impl-review-r4-raw.log`）。ZCode 上次 429 retry-after ≈ 08:05。
+- 按 D-9（双候选不可用时作者可派独立上下文子 agent 做 Review）已用 workflow 派发 **impl-r4 独立复核**（job `workflow-1cbe60f57400429d`，reviewed_head `832103393`）：R2R3-001…006 核验 + **172 图逐图签署** + 门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md`。
+- 当前：Task in_progress（1289/0/57，172 PNG）；README/PLAN/STATUS 指针一致；D-14-STATUS-COLOR-FIX ready 待顺序实施；未 push。
+- approved 后 DSH 集成验证 → 按 AC 关闭；若 changes_requested → R2R4 返修（Codex 10:25 或 ZCode 08:05 窗口）。
