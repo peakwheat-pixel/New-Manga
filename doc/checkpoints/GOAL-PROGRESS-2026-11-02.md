@@ -636,3 +636,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentShellSurface.OpenDialog` 记录触发焦点、`CloseTopSurface` 返还；命令面板测试覆盖「打开→搜索框聚焦→Esc→触发按钮聚焦」。
 - 验证：build 0/0；无过滤全量 **1193/0/57**；旧 PNG 零漂移；治理 PASS。交付 `981719a13`；证据 SHA `da5ecaeb…`。
 - 下一步：Codex 00:23 恢复后立即派独立 impl Review（prompt/提醒已备）；ZCode 03:02 备用。
+## 91. FEA-06-RESIDUAL-1 I-4 hover/pressed 有效属性（2026-11-03 00:00）
+
+- `FluentComponentPointerStatesTests`：headless 指针合成把 Primary/Secondary 按钮的 hover/pressed 从 NOT_RUN 升级为 EFFECTIVE（断言 Accent.Hover/Accent.Base、Bg.Overlay/Accent.Muted 实际 Background）。
+- 验证：build 0/0；无过滤全量 **1194/0/57**；旧 PNG 零漂移。交付 `60fd4fe56`；证据 SHA `13be8c34…`。
+- 下一步：Codex 00:23 恢复后立即派独立 impl Review（prompt/00:24 提醒已备）；ZCode 03:02 备用。
