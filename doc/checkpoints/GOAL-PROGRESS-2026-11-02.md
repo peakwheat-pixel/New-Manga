@@ -773,3 +773,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Codex 实施 R3-001（job `pwsh-fefbfa1ac8874acc`，exit 0）：`3c3afe170`（中部按下按事件前状态切换、release 只续 2s、其他输入唤醒）+ `669a4ae02`（证据/Handoff）；全量 **1245/0/57**（+12），四命令 EXIT=0，旧 PNG 零漂移，未 push。
 - DSH 已派 fresh Codex **impl-r4** 独立复核（job `pwsh-61019e8683e3416a`，prompt `impl-review-r4-prompt.md`）：真实 MouseDown/Up 双向显隐探针 + R2 已修反例回归 + 常规门禁。
 - r4 approved 后：DSH 集成验证（integration-verify.ps1）→ 按实际 AC 结果 done/closed_with_limitations；D-8/B-5/D-1 保持登记。
+## 118. FEA-06-RESIDUAL-1 关闭（closed_with_limitations）+ 释放 FEA-06-RESIDUAL-2（2026-11-03 02:35）
+
+- impl-r4（fresh Codex）**approved：P0=0 / P1=0 / P2=1**；reviewed_head `669a4ae02`，implementation `3c3afe170`；报告 `doc/reviews/FEA-06-RESIDUAL-1-impl-r4.md`。
+- DSH 集成验证 `verification/FEA-06-RESIDUAL-1/integration-verification.log`：RESULT PASS；无过滤全量 **1245/0/57**；禁止范围零改动；旧 FEA-06 四 PNG SHA 与 pin 一致；生成器/check/pins 全过。R4-001（证据入口陈旧）已由 `current-evidence-index.md` + 集成日志 + Task pins 处置（旧字节保留）。
+- Task 终态：`closed_with_limitations`，integration_commit `669a4ae02`；AC1/AC3/AC4/AC5 MET、**AC2 PARTIAL**（I-4 少数视觉格 NOT_RUN、D-8 decorative 视觉动画、B-5 原生 a11y BLOCKED/D-1）。Closeout Record 与 Resource Manifest 已填写；治理 PASS、pins 15/15。
+- 已释放 successor **FEA-06-RESIDUAL-2（ready，owner=zcode）**：IN = D-8 decorative 三类视觉动画 + I-4 剩余纯视觉格；BLOCKED = B-5/D-1。范围待 scope 复核冻结后实施；STATUS/PLAN/LEDGER 已更新。
+- 关闭提交 `54c063405`；未 push。
