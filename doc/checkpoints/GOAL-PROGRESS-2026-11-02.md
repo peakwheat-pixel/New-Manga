@@ -905,3 +905,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - R2-009：impl-in1/2a/2b 三份日志补 shell/host/base/head、命令、EXIT、逐程序集计数、57 skip 明细与差值（1245→1257→1271→1272）。
 - 验证：全量 **1272/0/57**；默认零写入、opt-in 仅本卡 visuals 新增；旧四 PNG 未动；提交 `9f5723cb0`；未 push。
 - 仍余：**R2-001 decor 真实帧（P0 未闭环）**、R2-011 状态通道/默认值冒充、R2-012 失焦真实接线+粒子可读性、R2-017 Handoff；05:24 提醒保留。
+## 139. R2-001 decor 捕获二次尝试失败与回退（2026-11-03 05:08）
+
+- 尝试：真实时间 sleep(120ms)×8 + ForceRenderTimerTick + RunJobs 推进 ShelfPageView 渐变；host 注入 `chapter-key` 两页后 `ReaderViewModel.LoadAsync` 触发翻页粒子并断言层存在。
+- 结果：Shelf loop 仍未产生不同帧；Reader LoadAsync 在测试中**挂起**（>10 分钟，已 kill），无有效证据产出。
+- 处置：**完整回退**（git checkout 捕捉测试），仓库回到 `9f5723cb0` 干净全绿（1272/0/57，visual 测试单跑 PASS）；不产出同 SHA/占位证据。
+- 结论与移交：R2-001 P0 仍未闭环。建议续接者用 **ManualFluentMotionClock 注入/可控帧源**驱动真实装饰层（ShelfPageView.DecorativeLoop / ReaderPageView 粒子），或直接驱动其 update 回调后捕获帧；禁止伪造。05:23 提醒已更新为 R2-001/011/012/017 剩余项。
