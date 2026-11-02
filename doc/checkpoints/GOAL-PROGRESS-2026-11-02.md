@@ -856,3 +856,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 校准说明更新至 workspace `FEA-06-RESIDUAL-2/in2a-calibration-notes.md`：余 3 项（BookCard/BookRow disabled、SurfaceCard 默认背景、RegionBox hover）需真实资源栈/UpdateLayout 探针或权威样式逐行核对；禁止改样式迁就测试。
 - 主分支未改动、仍全绿 1257/0/57；IN-2A 测试文件未提交（快照保留）；Task2 in_progress。
 - 下一步：Codex 05:24 / ZCode 08:05 依快照+notes 完成 IN-2A/IN-2B，随后独立 impl Review。
+## 131. IN-2A 剩余缺口与 D-14（2026-11-03 04:20）
+
+- 校准后重跑 IN-2A：AlertBanner 交叉断言暴露 **StatusCatalog 与 Controls.Status 的 NotStarted 令牌不一致**（Disabled vs Secondary，后者有 ≥4.5:1 注释权威）——登记 **D-14** 至 Task 待裁决（推荐改 StatusCatalog；因超出本卡 allowed_paths 不在本卡实施）。
+- 仍余：BookCard/BookRow disabled opacity=1、SurfaceCard 默认 Background null（`Controls.Fluent.axaml` 规则存在，疑似测试样式加载/时序；续接用 `FluentComponentStateEffectiveTests` 同款加载对照）。
+- 为保持主分支全绿，IN-2A 测试仍不提交（快照已保留校准与注释）；主分支 1257/0/57 不变；IN-2B 未开始。

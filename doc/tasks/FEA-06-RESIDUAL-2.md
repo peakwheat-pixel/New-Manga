@@ -107,6 +107,7 @@ pwsh -NoProfile -File tools\governance\verify_pins.ps1
 - **D-11（AlertBanner）**：按既有 `StatusKind` 九值覆盖，不新增组件变体、不改 `Feedback.cs`；设计四态↔StatusKind 映射写入实施证据。若 Reviewer 认为映射仍不可接受，可由 scope-r3 要求改为设计四态 OUT（不阻塞其他 IN）。
 - **D-12（IN-1.3）**：空态插画漂浮 **OUT** 至 v1.1（`EmptyState` 无图标槽/无插画资产；新增槽位=组件变更）。
 - **D-13（扩域）**：登记 `NewManga.App/Controls/FluentUi.cs`（装饰层工厂）与 `DesignSystem/Themes/Controls/**`（TabItem hover/Button 基础态令牌覆盖）两项，理由见 allowed_paths；不新增产品能力、不改控件行为。
+- **D-14（新，待 DSH 裁决）**：`StatusCatalog.ColorKey(StatusKind.NotStarted)` 返回 `Nm.Color.Text.Disabled`，而 `Controls.Status.axaml` 的 StatusGlyph.notstarted 使用 `Nm.Color.Text.Secondary`（注释要求 ≥4.5:1）。DSH 推荐：**改 StatusCatalog 对齐 Text.Secondary**（语义/可读性一致；属 DesignSystem/Controls，超出本卡 allowed_paths，需在后续卡或扩域中实施），本卡测试按样式权威断言并在交叉断言对 NotStarted 特判。
 - **D-10/R4-001 权威链**：D-10 的 R1-001 三项动画已由 `033c8b4b9`交付并经 impl-r2/r3/r4 复核；R4-001 由 `current-evidence-index.md` + 集成日志处置；本卡不重复认领。
 
 ### 分类完整性（R2R-003 闭合）
