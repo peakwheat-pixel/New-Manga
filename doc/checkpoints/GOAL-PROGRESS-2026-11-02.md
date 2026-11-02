@@ -313,3 +313,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 | D-3 | FEA-07 实现者与复核者独立性 | Codex 已做 scope review → **不实现**；impl review 用 fresh Codex CLI 会话（不同上下文）；若 Codex 不可用则派 subagent_zcode（当前通道故障，需恢复） | 已按此执行 |
 | D-4 | `--shell=legacy` 运维回退保留期 | FEA-07 完成后保留一个 release，移除决策交 FEA-15/用户；FEA-07 不改其语义 | 继续保留 |
 | D-5 | 依赖 DSH 单方裁决的其他范围事项（如需用户产品取舍） | 暂无；出现时按目标规则交 Codex 裁决（Codex 非实现者情形）并记录依据 | 无 |
+## 42. FEA-07 实施切片 2b（稳定 PresentationWindow，2026-11-02）
+
+- **切片 2b 完成**：`App/Views/Presentation/PresentationWindow.cs`——稳定原生主窗（自持 Title/geometry/MinWidth/背景/material；单一 `FrontendContentHost`；注入 `Func<string, Control>` content factory，不依赖具体壳）；`SwitchFrontendAsync` 复用 `FrontendHostCoordinator`：切换保窗身份、失败回滚旧树。
+- 测试：`PresentationWindowTests` 5 例（初始内容/几何、切换保身份、构建失败回滚+journal、未知 id 拒绝、20 次往返单树）；证据 `verification/FEA-07/slice-2b-verification.log`；build 0/0；全量 **1072/0/57**（CoreClient 已知 flaky 首跑 1 failed、重跑全绿）。
+- **下一批**：②c App 组合根接入真实 content factory（V2 `AppShellV2` + Fluent content surface）+ 开关启用；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
+- 待裁决区沿用 §41（D-1 原生硬件 / D-2 默认化时机 / D-3 独立性 / D-4 legacy 保留期），均不阻塞。
