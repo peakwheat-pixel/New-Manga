@@ -1,0 +1,12 @@
+# FEA-07 生成物 --check 归档（R-012）
+# time: 2026-11-02 16:09:31 +08:00
+# head: 3cf03ff581b4c7552dba9a91e785c00d4f854c51
+# command: dotnet run --project apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen -- --check
+# exit: 0
+#   
+rows:    292
+#   up to date: every generated artifact matches the frozen token source byte-for-byte
+# command: dotnet run --project apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen -- --check
+# exit: 0
+#   
+up to date: generated theme artifacts match the frozen token source byte-for-byte

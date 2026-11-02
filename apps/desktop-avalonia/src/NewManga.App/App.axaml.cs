@@ -82,7 +82,10 @@ public partial class App : Application
                 Trace.TraceWarning("startup fell back to the Current V2 shell: " + startupPlan.EffectiveFrontendId);
             }
 
-            var selection = FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
+            // R-004: the planner is the single decision source; its effective frontend is what starts.
+            var selection = startupPlan.IsFallback
+                ? FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null)
+                : FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
 
             var controller = new HostController(options.ToHostOptions());
             var window = CreateShell(options, controller, selection, appearance, themeHome, _designSystemTheme, this);
@@ -217,29 +220,51 @@ public partial class App : Application
             Trace.TraceWarning(recovery + "; starting the persisted frontend");
         }
 
+        // R-001/R-010: retain one content tree per frontend so switching back preserves page/session
+        // state instead of rebuilding a fresh Fluent/V2 tree (and its subscriptions) every time.
+        var contentCache = new Dictionary<string, Control>(StringComparer.Ordinal);
         Control ContentFactory(string frontendId)
         {
-            if (string.Equals(frontendId, FrontendSelector.FluentFrontendId, StringComparison.Ordinal))
+            var key = string.Equals(frontendId, FrontendSelector.FluentFrontendId, StringComparison.Ordinal)
+                ? FrontendSelector.FluentFrontendId
+                : FrontendSelector.CurrentV2FrontendId;
+            if (contentCache.TryGetValue(key, out var cached))
             {
-                return new FluentShellSurface(
-                    options,
-                    FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
-                    controller,
-                    appearance,
-                    themeManager);
+                return cached;
             }
 
-            return CreateV2Content(application, controller, options, themeManager, appearance, themeHome);
+            Control content = key == FrontendSelector.FluentFrontendId
+                ? new FluentShellSurface(
+                    options,
+                    FrontendSelector.Select(key, persistedFrontendId: null),
+                    controller,
+                    appearance,
+                    themeManager)
+                : CreateV2Content(application, controller, options, themeManager, appearance, themeHome);
+            contentCache[key] = content;
+            return content;
         }
 
         var stateStore = new WindowStateMementoStore(Path.Combine(directory, "window-state.json"));
         var initialMemento = stateStore.TryLoad(out _);
         var window = new PresentationWindow(options, selection, controller, appearance, journal, ContentFactory, initialMemento);
-        window.Closing += (_, _) =>
+
+        // R-005: clamp the restored placement into the current displays (never restore off-screen).
+        if (initialMemento is { } restored)
         {
+            ApplyTopologySafePlacement(window, restored);
+        }
+
+        window.Closing += (_, args) =>
+        {
+            if (args.Cancel)
+            {
+                return; // ExitCoordinator blocked the close; do not persist a cancelled placement.
+            }
+
             try
             {
-                stateStore.Save(window.CaptureWindowState());
+                stateStore.Save(window.CaptureWindowState(CurrentDisplayId(window)));
             }
             catch (IOException)
             {
@@ -248,6 +273,54 @@ public partial class App : Application
         };
 
         return window;
+    }
+
+    /// <summary>R-005: enumerates the current displays for the topology-safe memento restore.</summary>
+    private static IReadOnlyList<DisplayInfo> CurrentDisplays(PresentationWindow window)
+    {
+        try
+        {
+            return window.Screens.All
+                .Select((screen, index) => new DisplayInfo(
+                    screen.DisplayName ?? $"screen-{index}",
+                    screen.WorkingArea.X,
+                    screen.WorkingArea.Y,
+                    screen.WorkingArea.Width,
+                    screen.WorkingArea.Height,
+                    screen.Scaling,
+                    screen.IsPrimary))
+                .ToArray();
+        }
+        catch (InvalidOperationException)
+        {
+            return Array.Empty<DisplayInfo>();
+        }
+    }
+
+    private static void ApplyTopologySafePlacement(PresentationWindow window, WindowStateMemento memento)
+    {
+        var displays = CurrentDisplays(window);
+        if (displays.Count == 0)
+        {
+            return;
+        }
+
+        var safe = DisplayTopologyPlanner.Clamp(memento, displays);
+        window.Width = safe.Width;
+        window.Height = safe.Height;
+        window.Position = new PixelPoint(safe.X, safe.Y);
+    }
+
+    private static string? CurrentDisplayId(PresentationWindow window)
+    {
+        try
+        {
+            return window.Screens.ScreenFromWindow(window)?.DisplayName;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
     }
 
     /// <summary>FEA-06-PREREQ-2 P5: Theme Studio production wiring (never blocks the shell on failure).</summary>

@@ -361,3 +361,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 生成 `verification/FEA-07/evidence-index.md`（全部证据 SHA-256、基线、生成物检查、性能数字、复核状态、原生 blocked 说明）。
 - 集成前置实测：TokenGen `-- --check` 292 rows byte-for-byte up to date；ThemeGen `-- --check` byte-for-byte up to date；`check.ps1` PASS(3)；pins 15/15；全量 1102/0/57。
 - impl review 仍在运行（Codex CLI xhigh，大 diff + 全量测试），结果到达后处置。
+## 50. FEA-07 impl-r1 changes_requested → 返修 part1（2026-11-02）
+
+- **Review**：`doc/reviews/FEA-07-impl-r1.md`（Codex CLI fresh，P0=0/P1=7/P2=5）。处置：R-001 内容树缓存复用（状态保留+实例断言）；R-002 ExitCoordinator 接入 Closing + Broker 生产注册；R-003 已提前修复；R-004 planner 单一决策源 + 外观 fallback 强制 V2（含 CLI fluent）；R-005 memento 启动 clamp+DisplayId；R-006 启动矩阵测试隔离（实测 APPDATA mtime 不变；删除测试误写 window-state.json，theme-settings.json 未动）；R-008 allowed_paths 补齐；R-009 AC6 降 PARTIAL + freeze 上限指标；R-012 生成物 --check 归档。
+- 待办：R-007 生命周期固定（reviewer/delivery_head/handoff/canonical）与 R-011 精确 head 证据重跑，然后 r2 复核。

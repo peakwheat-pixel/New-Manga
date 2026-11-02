@@ -92,4 +92,30 @@ public sealed class SafeStartupPlannerTests
 
         Assert.Contains(plan.Diagnostics, d => d.Contains("appearance:", StringComparison.Ordinal));
     }
+
+
+    [Fact]
+    public void AppearanceFallback_ForcesCurrentV2EvenWhenPersistedFrontendIsFluent()
+    {
+        var plan = Plan(
+            Array.Empty<string>(),
+            AppearanceDefaults.Settings with { FrontendId = FrontendSelector.FluentFrontendId },
+            new[] { "unknown theme.visualThemeId 'nope'; falling back to 'newmanga-default'" });
+
+        Assert.True(plan.IsFallback);
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, plan.EffectiveFrontendId);
+        Assert.Contains(plan.Diagnostics, d => d.Contains("appearance:", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void AppearanceFallback_AlsoWinsOverExplicitCliFrontend()
+    {
+        var plan = Plan(
+            new[] { "--frontend=builtin.fluent" },
+            AppearanceDefaults.Settings,
+            new[] { "unknown scale '9.9'; falling back to the shipped scale" });
+
+        Assert.True(plan.IsFallback);
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, plan.EffectiveFrontendId);
+    }
 }

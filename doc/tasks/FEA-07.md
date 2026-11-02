@@ -24,6 +24,7 @@ evidence_dir: verification/FEA-07
 allowed_paths:
   - doc/tasks/FEA-07.md
   - apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj
+  - apps/desktop-avalonia/src/NewManga.App/AppOptions.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml
   - apps/desktop-avalonia/src/NewManga.App/Program.cs
@@ -43,6 +44,7 @@ allowed_paths:
   - doc/TASK_LEDGER.md
   - doc/reviews/FEA-07-*.md
   - doc/handoffs/FEA-07-*.md
+  - doc/checkpoints/GOAL-PROGRESS-2026-11-02.md
 ---
 
 # FEA-07：运行期切换与窗口（双 UI）
@@ -157,6 +159,21 @@ allowed_paths:
 - **AC2 WindowBroker 接线**：`PresentationWindow` 内嵌 `WindowBroker` 并注册唯一稳定主窗；`PresentationWindowTests.Broker_TracksOnlyOneStableMainWindow` 覆盖主窗唯一/二窗登记/移除。
 - **AC3 启动恢复接线**：`App.CreatePresentationShell` 启动时检查 `SwitchJournal` 未完成切换 → `Rollback("startup recovery: ...")` + Trace 警告，再以持久化 frontend 启动；`PresentationHostCompositionTests.InterruptedSwitchFromPreviousRun_IsRolledBackAtStartup` 覆盖（journal 写到 Rendered 后启动 → terminal RolledBack）。
 - 证据：`verification/FEA-07/slice-6-gapclosing-verification.log`（build 0/0；presentation 11/0；全量 **1102/0/57**；首跑偶发 2 例 App.Tests 失败、连续两次全量复跑通过，日志注记）。
+## impl-r1 处置（changes_requested → 返修，2026-11-02）
+
+- 报告：`doc/reviews/FEA-07-impl-r1.md`（Codex CLI 独立会话；P0=0/P1=7/P2=5；被审 `62fb6c5f5`）。
+- **R-001（P1，AC1）**：真实内容工厂改为**按 frontend 缓存复用**（`App.CreatePresentationShell` 的 content cache），切换回来保留同一内容树实例（页面/Session 状态不再重建）；测试断言 10 次往返复用同一实例。阶段 Layout/Loaded/Rendered 仍为占位回调（真实渲染门槛/焦点回滚继续 PARTIAL）。
+- **R-002（P1，AC2）**：`PresentationWindow` 内嵌 `ExitCoordinator` 并接入 `Closing`（未保存编辑/Run 阻断关闭）；Broker 已在生产窗口注册；测试覆盖关闭被阻断与放行。
+- **R-003（P1，AC3）**：已在 `e4ef84efb` 修复（启动 `TryRecoverInterrupted` → Rollback + Trace）；本卡测试覆盖。
+- **R-004（P1，AC4）**：`SafeStartupPlanner` 成为组合根唯一决策源；**任何外观 fallback warning → 强制 Current V2**（含 CLI 显式 fluent 情形）；App 使用 planner 的 effective frontend。新增坏 JSON App 接线测试（fail-safe V2）。
+- **R-005（P1，AC5）**：启动恢复 memento 经 `DisplayTopologyPlanner.Clamp`（枚举 `Screens` 当前拓扑，离屏/拔屏→主屏 clamp），捕获实际 `DisplayId`；headless 无屏幕时跳过。原生矩阵继续 BLOCKED（D-1）。
+- **R-006（P1，AC8/W-9）**：`StartupCompatibilityMatrixTests` 全部参数补 `--theme-home <临时根>`；实测运行前后真实 `%APPDATA%\NewManga\window-state.json` mtime 不变（证明隔离），并将此前测试误写的该文件（headless 默认值，mtime=2026-11-02 15:58）删除并记录；`theme-settings.json`（用户数据）未动。
+- **R-007（P1，生命周期）**：待本轮返修与精确 head 证据完成后登记 reviewer/delivery_head/handoff/canonical 状态（下一提交）。
+- **R-008（P2，写域）**：`allowed_paths` 补 `AppOptions.cs`、`doc/checkpoints/GOAL-PROGRESS-2026-11-02.md`（W-8 所需）。
+- **R-009（P2，AC6）**：AC6 降为 PARTIAL（p95 门槛 PASS，但 UI freeze 为上限估计、真实规模负载/真机指标待补）；性能 JSON 增 `uiFreezeUpperBoundMs`；Debug/Release 数值分开表述。
+- **R-010（P2，事件生命周期）**：内容树缓存复用已消除每次切换新建 VM/订阅；旧内容树长期存活策略待 r2 复核（暂登记 P2）。
+- **R-011（P2，证据精确定）**：待最终 head 上重跑并归档含 commit/exit/skip 原因的证据（下一提交）。
+- **R-012（P2，生成物证据）**：`verification/FEA-07/generators-check.log` 归档两项 `--check` 输出与 exit。
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: headless 100 次往返与每阶段回滚已过；原生 IME/A03 真库数据保护/ACK 重连矩阵待独立复核>>`
@@ -164,7 +181,7 @@ allowed_paths:
 - [x] **AC3（A06）**：switch journal 崩溃恢复；暂停/进程中断后无部分切换状态、未完成步骤可追溯、interrupted 不自动执行；**暂停期间配置/源/Lock 变化后采用最新保护状态**（不漂移、不覆盖）。 `<<PARTIAL: journal 持久化/恢复查询/失败回滚已测；启动时恢复接线与真实崩溃注入待补>>`
 - [x] **AC4（A07）**：safe startup 可诊断（trace/用户可见提示）；坏设置/坏包/未知 frontend/theme/scale 均 fail-safe 到 Current V2，保留有效设置且不硬套不兼容几何。 `<<MET>>`
 - [x] **AC5（A08/H2）**：原生双屏/拔屏/DPI 矩阵（**100/125/150/200%**、换主屏、拔副屏、全屏切换）：主窗+Inspector 浮窗归属与可见可操作、不丢屏外、目标不支持浮动则安全停靠、快捷键不重复执行；**拔屏时第二窗口内容回到主窗对应页面，未 flush 编辑态 fail-closed 留在主窗缓冲**；混合 DPI 各 Window 的提交/恢复正确；发布 manifest 实际启用 PerMonitorV2；**原生桌面验收（不得以 headless 断言代替）**。 `<<PARTIAL: memento/拓扑/PerMonitorV2 机械验证已过；真机双屏/拔屏/DPI 100/125/150/200% 矩阵 blocked（D-1，无硬件）>>`
-- [x] **AC6（H3/W-5）**：热切换性能报告（固定机器 + 合成规模；p50/p95/峰值、最大 UI 冻结时长、内存/句柄变化；冷/热分开记录）：**热切换 p95 ≤ 1000 ms**；超预算 = AC6 不通过（除非 DSH 书面 waiver 登记）。 `<<MET>>`
+- [x] **AC6（H3/W-5）**：热切换性能报告（固定机器 + 合成规模；p50/p95/峰值、最大 UI 冻结时长、内存/句柄变化；冷/热分开记录）：**热切换 p95 ≤ 1000 ms**；超预算 = AC6 不通过（除非 DSH 书面 waiver 登记）。 `<<PARTIAL: p95 PASS（Release 429.47ms）；UI freeze 为上限估计、真实规模合成负载与真机指标待补（R-009）>>`
 - [x] **AC7（回归/启动/依赖门禁）**：全量 sln 不退化（基线 **1034/0/57**，记录 pass/fail/skip 与原因）；启动兼容矩阵：默认 Current V2、`--frontend` 覆盖、未知 `--frontend` fallback、`--shell=legacy` 均行为正确；**project-reference graph 机械检查**：允许 App→Presentation，禁止 Host/Core/ApplicationCore→Presentation/UI，既有项目 TFM 不变。 `<<MET>>`
 - [x] **AC8（隔离/证据）**：所有 data/theme/journal 路径限定在测试临时根，断言不触真实 `%APPDATA%`/真实用户数据；证据含 headless 故障/切换矩阵日志、原生双屏/拔屏/DPI 截图与矩阵、性能报告、全量 build/test、两生成物 `--check`、治理与 pins 输出。 `<<PARTIAL: headless 证据/性能 JSON/架构门禁已归档；原生矩阵与 evidence-index 更新待补>>`
 
@@ -215,6 +232,7 @@ allowed_paths:
 | EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
 | EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `44f1768bbbb57a35aff415804b0e78a05948ccedc575f94ba9a58aa0a81474fc` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
+| EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
 
 ## Closeout Record
 

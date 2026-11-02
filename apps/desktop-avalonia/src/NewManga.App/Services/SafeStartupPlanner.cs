@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NewManga.Appearance;
 
 namespace NewManga.App.Services;
@@ -26,10 +27,11 @@ public sealed record StartupPlan(
     IReadOnlyList<string> Diagnostics);
 
 /// <summary>
-/// FEA-07 AC4/AC7: decides the startup shell and effective frontend under the fail-safe policy:
-/// bad/unknown frontend or a bad appearance document never blocks startup — the selector keeps its
-/// frozen Current V2 fallback and the appearance loader keeps its field-by-field fallback; both are
-/// surfaced as diagnostics. <c>--shell=legacy</c> still wins over everything.
+/// FEA-07 AC4/AC7: decides the startup shell and effective frontend under the fail-safe policy. The
+/// planner is the composition root's single decision source: an unknown frontend OR any appearance
+/// document fallback (unknown visual theme / scale / bad package, surfaced as load warnings) forces the
+/// frozen Current V2 fail-safe instead of starting a half-broken Fluent shell. <c>--shell=legacy</c>
+/// still wins over everything.
 /// </summary>
 public static class SafeStartupPlanner
 {
@@ -49,19 +51,23 @@ public static class SafeStartupPlanner
             diagnostics.Add(selection.Diagnostic);
         }
 
-        if (selection.IsFallback)
+        var appearanceFallbacks = appearanceWarnings
+            .Where(warning => !string.IsNullOrWhiteSpace(warning))
+            .ToArray();
+        foreach (var warning in appearanceFallbacks)
         {
-            var requested = options.FrontendId ?? settings.FrontendId;
-            diagnostics.Add(
-                $"frontend fallback: requested '{requested}' is not a frontend id; starting '{selection.EffectiveFrontendId}' (fail-safe)");
+            diagnostics.Add("appearance: " + warning);
         }
 
-        foreach (var warning in appearanceWarnings)
+        var isFallback = selection.IsFallback || appearanceFallbacks.Length > 0;
+        if (isFallback)
         {
-            if (!string.IsNullOrWhiteSpace(warning))
-            {
-                diagnostics.Add("appearance: " + warning);
-            }
+            var requested = options.FrontendId ?? selection.EffectiveFrontendId;
+            var reason = appearanceFallbacks.Length > 0
+                ? "appearance document fell back field-by-field"
+                : "requested frontend is not a frontend id";
+            diagnostics.Add(
+                $"startup fallback: {reason}; starting '{FrontendSelector.CurrentV2FrontendId}' (fail-safe)");
         }
 
         var shellKind = !options.UseV2Shell
@@ -72,8 +78,8 @@ public static class SafeStartupPlanner
 
         return new StartupPlan(
             RequestedFrontendId: options.FrontendId ?? settings.FrontendId,
-            EffectiveFrontendId: selection.EffectiveFrontendId,
-            IsFallback: selection.IsFallback,
+            EffectiveFrontendId: isFallback ? FrontendSelector.CurrentV2FrontendId : selection.EffectiveFrontendId,
+            IsFallback: isFallback,
             ShellKind: shellKind,
             Diagnostics: diagnostics);
     }

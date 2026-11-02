@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
@@ -53,7 +54,9 @@ public sealed class StartupCompatibilityMatrixTests : IDisposable
 
         Window Create(params string[] args)
         {
-            var options = AppOptions.Parse(args);
+            // W-9/R-006: every startup matrix case must stay inside the test root; never touch %APPDATA%.
+            var isolatedArgs = new List<string>(args) { "--theme-home", _root };
+            var options = AppOptions.Parse(isolatedArgs.ToArray());
             var themeHome = ThemeHome.Resolve(options);
             var selection = FrontendSelector.Select(options.FrontendId, coordinator.FrontendId);
             return App.CreateShell(options, controller, selection, coordinator, themeHome, manager, application);
@@ -95,5 +98,32 @@ public sealed class StartupCompatibilityMatrixTests : IDisposable
         presentationLegacy.Close();
 
         Assert.True(FrontendSelector.Select("builtin.unknown-x", coordinator.FrontendId).IsFallback);
+    }
+
+
+    [AvaloniaFact]
+    public void CorruptAppearanceDocument_FailsSafeToCurrentV2()
+    {
+        var application = Application.Current!;
+        using var manager = new DesignSystemThemeManager(application);
+        Assert.True(manager.Initialize(DsAppearanceMode.Dark), manager.LastError);
+        var corruptDirectory = Path.Combine(_root, "corrupt");
+        Directory.CreateDirectory(corruptDirectory);
+        var corruptPath = Path.Combine(corruptDirectory, AppearanceStore.FileName);
+        File.WriteAllText(corruptPath, "{ this is not a json appearance document");
+        var coordinator = new AppearanceCoordinator(new AppearanceStore(corruptPath));
+        coordinator.Reload();
+        Assert.NotEmpty(coordinator.Warnings);
+
+        var options = AppOptions.Parse(new[] { "--theme-home", _root });
+        var plan = SafeStartupPlanner.Plan(options, coordinator.Settings, coordinator.Warnings);
+        Assert.True(plan.IsFallback);
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, plan.EffectiveFrontendId);
+
+        var controller = new FakeHostController(FakeHostController.ReadySnapshot());
+        var selection = FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null);
+        var window = App.CreateShell(options, controller, selection, coordinator, ThemeHome.Resolve(options), manager, application);
+        Assert.IsType<AppShellV2>(window.Content);
+        window.Close();
     }
 }

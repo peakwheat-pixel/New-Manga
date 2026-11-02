@@ -152,15 +152,21 @@ public sealed class PresentationHostCompositionTests : IDisposable
         var presentation = Assert.IsType<PresentationWindow>(window);
         try
         {
+            Control? fluentContent = null;
+            Control? v2Content = null;
             for (var i = 0; i < 10; i++)
             {
                 var fluent = await presentation.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
                 Assert.True(fluent.Succeeded, fluent.Failure);
-                Assert.IsType<FluentShellSurface>(presentation.ContentHost.Current);
+                var fluentTree = Assert.IsType<FluentShellSurface>(presentation.ContentHost.Current);
+                fluentContent ??= fluentTree;
+                Assert.Same(fluentContent, fluentTree);
 
                 var v2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
                 Assert.True(v2.Succeeded, v2.Failure);
-                Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
+                var v2Tree = Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
+                v2Content ??= v2Tree;
+                Assert.Same(v2Content, v2Tree);
                 Assert.Same(window, presentation);
             }
 

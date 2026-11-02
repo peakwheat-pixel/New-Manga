@@ -184,4 +184,20 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.True(window.Broker.Unregister("inspector"));
         window.Close();
     }
+
+
+    [AvaloniaFact]
+    public void ExitCoordinator_BlocksCloseUntilPendingWorkCompletes()
+    {
+        var window = CreateWindow();
+        window.ExitCoordinator.RegisterPendingEdit("shelf");
+        var cancelled = false;
+        window.Closing += (_, args) => cancelled |= args.Cancel;
+
+        window.Close();
+        Assert.True(cancelled, "closing with pending edits must be blocked by the process-level ExitCoordinator");
+
+        window.ExitCoordinator.CompletePendingEdit("shelf");
+        window.Close();
+    }
 }

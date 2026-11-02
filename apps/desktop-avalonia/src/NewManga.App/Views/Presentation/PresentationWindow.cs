@@ -10,6 +10,7 @@ using NewManga.App.Shell.V2;
 using NewManga.Appearance;
 using NewManga.DesignSystem;
 using NewManga.Presentation.Avalonia.Hosting;
+using NewManga.Presentation.Avalonia.Lifecycle;
 using NewManga.Presentation.Avalonia.Windows;
 using NewManga.Presentation.Avalonia.Switching;
 
@@ -66,10 +67,17 @@ public sealed class PresentationWindow : Window
 
         Broker = new WindowBroker();
         Broker.RegisterMain("presentation-main");
+        Closing += OnClosing;
     }
 
     /// <summary>FEA-07 window broker: the stable main window is registered once; secondary windows are tracked.</summary>
     public WindowBroker Broker { get; }
+
+    /// <summary>
+    /// FEA-07 exit coordination (proposal §7.3): closing the stable window asks the process-level
+    /// coordinator first; pending edits or active runs block the close instead of disposing the Host.
+    /// </summary>
+    public ExitCoordinator ExitCoordinator { get; } = new();
 
     /// <summary>The content slot the switch transaction replaces (exposed for headless verification).</summary>
     public FrontendContentHost ContentHost { get; }
@@ -78,14 +86,23 @@ public sealed class PresentationWindow : Window
     public string CurrentFrontendId => _coordinator.CurrentFrontendId;
 
     /// <summary>Captures the current placement for the per-window memento (FEA-07 AC5).</summary>
-    public WindowStateMemento CaptureWindowState() => new(
+    public WindowStateMemento CaptureWindowState(string? displayId = null) => new(
         Position.X,
         Position.Y,
         (int)Width,
         (int)Height,
-        DisplayId: null,
+        DisplayId: displayId,
         Scale: RenderScaling,
         IsMaximized: WindowState == WindowState.Maximized);
+
+    private void OnClosing(object? sender, WindowClosingEventArgs args)
+    {
+        var decision = ExitCoordinator.RequestExit();
+        if (!decision.Allowed)
+        {
+            args.Cancel = true;
+        }
+    }
 
     /// <summary>Switches the hosted content tree; the window identity is preserved and failures roll back.</summary>
     public Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default) =>

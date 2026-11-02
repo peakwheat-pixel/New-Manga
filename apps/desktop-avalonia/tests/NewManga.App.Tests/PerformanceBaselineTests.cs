@@ -117,6 +117,7 @@ public sealed class PerformanceBaselineTests : IDisposable
                 p50Ms = Math.Round(p50, 2),
                 p95Ms = Math.Round(p95, 2),
                 maxMs = Math.Round(ordered[^1], 2),
+                uiFreezeUpperBoundMs = Math.Round(ordered[^1], 2),
                 samplesMs = samples.Select(milliseconds => Math.Round(milliseconds, 2)).ToArray(),
                 managedMemoryDeltaBytes = memoryAfter - memoryBefore,
                 handleDelta = handlesAfter - handlesBefore,
