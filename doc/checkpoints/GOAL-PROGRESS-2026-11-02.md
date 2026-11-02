@@ -530,3 +530,13 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **残项**：AC5 原生双屏/拔屏/DPI 矩阵（D-1 无硬件，waiver/待硬件）；AC1 原生 IME/A03 真库/ACK/Run；AC2 真实双屏 broker/Host 生命周期；AC3 真崩溃注入；AC4 真实 App 入口/坏包矩阵；AC6 UI freeze 真采样；AC8 原生截图。
 - **FEA-06-RESIDUAL-1 释放**：status `ready`；base_commit=`82529a3d5864a39f362e414b67bca774d743f862`（FEA-07 closeout head）；owner=codex；第一批范围 v1：R-1a UI memento、R-1b 分栏折叠、R-5a 设置离开未保存确认/Esc、R-6 组件 full 状态、R-7 headless 焦点环/motion、R-8 四 Fluent VM 拆分；OUT/blocked：R-2/R-3/R-4/R-5b（端口）、R-9（令牌/设计确认）、原生 DPI/a11y（D-1）。
 - **下一步**：scope-r1 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r1.md`）→ 冻结后按 W-10 派 Codex 实施；第二批待端口就绪。
+## 76. FEA-06-RESIDUAL-1 scope-r1 changes_requested（P1×3/P2×3）→ 范围 v2（2026-11-02）
+
+- **scope-r1**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `0e52c9daa`）：`doc/reviews/FEA-06-RESIDUAL-1-scope-r1.md`，changes_requested，P0=0 / P1=3 / P2=3；实跑基线 build 0/0、全量 1138/0/57、生成器/治理/pins 通过。
+- **S-001（P1）R-9 假阻塞**：`Nm.Elevation.*` 令牌/键已存在（Tokens.Global.axaml / Generated/NmKeys.g.cs），非外部依赖 → 范围 v2 将 R-9 纳入 IN（I-8：消费令牌 + 高对比回退 + V2 不变）。
+- **S-002（P1）验收不可判定**：范围 v1 的 IN 项验收仍是“等页面状态/full/可实现部分” → 范围 v2 为每个 IN 子项给出字段/入口/断言（I-1…I-10），并冻结 FEA-07 非回归矩阵、1138/0/57 基线、关闭口径。
+- **S-003（P1）IN/OUT 非穷尽互斥**：把 R-2/R-3/R-4/R-5/R-8 拆为穷尽子项：IN（I-9 未保存圆点、I-10 工具条自动隐藏、I-6/I-7）与 DEFERRED（D-1…D-6，承接方 FEA-10/12/13/09/11）+ BLOCKED（B-1…B-5，含原生 D-1），每项写明承接时点与恢复条件。
+- **S-004（P2）写域过宽**：allowed_paths 收窄为 `Views/Fluent/**`、`ViewModels/Fluent/**`、`Styles/AppStyles.axaml`、`Styles/FluentUi.cs`、DesignSystem 的 Accessibility/Styles/Theming、测试与证据/治理文件；明确禁止 Current V2、共享 KeyMap/IPresentation*/FEA-07 窗口接线、全局主题/焦点 ring 影响 V2、Generated/**。
+- **S-005（P2）R-8 丢失 PNG opt-in**：拆 I-6（1408 行 VM 纯移动重构）与 I-7（PNG 采证 opt-in，默认全量不写、禁止覆盖 FEA-06 已 pin PNG、输出本卡证据目录/临时目录）。
+- **S-006（P2）治理缺口**：front matter reviewer/Appointment、本批依赖（FEA-06/FEA-07）与未来端口依赖分离、Review Appointment（scope-r2 + impl-r1）、Resource Manifest 骨架、canonical/closeout pending 全部补齐。
+- **下一步**：scope-r2 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md`）；P0/P1=0 后 DSH 冻结范围 v2，按 W-10 派 Codex 实施 Batch A → Batch B。
