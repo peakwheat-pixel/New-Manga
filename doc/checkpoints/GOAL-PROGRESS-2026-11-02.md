@@ -946,3 +946,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 报告入库 `doc/reviews/FEA-06-RESIDUAL-2-impl-r2.md`；Task reviewer 状态更新；提交 `f5f34ba30`。
 - 已派 fresh Codex 实施 R2R2 返修（job `pwsh-3770a39b56b34738`，prompt workspace `impl-r2-findings-rework-prompt.md`，head f5f34ba30、基线 1274/0/57）：真实主题栈、真实页数据/控件状态、IconButton fluent-icon class、Slider thumb 真实令牌、粒子可见性、inventory/log/handoff 准确、禁伪造。
 - 完成后 DSH 核验 → 派 fresh 独立 impl-r3 Review（不得自审）→ 集成/关闭；D-14-STATUS-COLOR-FIX 保持 ready 待按顺序实施。
+## 146. R2R2 交付核验 + impl-r3 派发（2026-11-03 06:22）
+
+- Codex R2R2 返修（job `pwsh-3770a39b56b34738`，exit 0）：代码 `6b602c3fe`、证据 `445afc0ac`；全量 **1281/0/57**（+7）；视觉证据 **164 PNG / 164 清单行 / 164 唯一 SHA**。
+- DSH 独立核验：build 0/0、全量 1281/0/57（App 645、DS 114）、**164 PNG 无重复哈希**、check PASS(3)、pins 15/15、工作树干净、未 push；旧四 PNG SHA 未动（R2R2 自述，芳核验命令通过）。
+- 处置摘要（Codex 自报、待 impl-r3 核实）：真实 App 资源栈+ThemeManager+workspace 隔离 Appearance；每组件 light/dark；Reader 真实页图/进度/缩略/章节；IconButton NmIcon+checked；Slider thumb/track 令牌；粒子前景可见；渐变真实帧位；daemon 生命周期/失焦/隐藏接线；expected-tokens 锚点/D-11 映射；57 skip 原因；Handoff 更新。未完成：StatusBand 专用态、NavRail 独立折叠格、原生 DPI/a11y、逐图签署（待独审）。
+- 已派 **fresh Codex impl-r3 Review**（job `pwsh-96fc40f29fce4204`，prompt workspace `impl-review-r3-prompt.md`）：核验 R2R2-001…018、164 图逐图签署、门禁与禁止范围，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r3.md`。

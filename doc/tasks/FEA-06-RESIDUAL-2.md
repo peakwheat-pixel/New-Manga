@@ -14,7 +14,7 @@ base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 7e21b4de8（R2-011 状态通道 + Slider thumb + inventory head + 日志格式；29 PNG；余 R2-001 decor/R2-012/R2-017）
+delivery_head: 445afc0ac（R2R2 交付：真实主题栈/真实页数据/状态通道/164 PNG 唯一 SHA/全量 1281/0/57；impl-r3 复核中）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-2
