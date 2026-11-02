@@ -666,3 +666,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - workspace `dispatch-review.ps1` 就绪：Codex fresh session 读取 `impl-review-prompt.md` 执行独立复核，结果落 `impl-review-codex-result.md`、原始日志 `impl-review-codex-raw.log`，并检查 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md` 是否产出；00:23 额度恢复后直接运行。
 - 证据 pin 审计：Task `EV-FEA06R1-*` 7 行按当前文件 SHA 校验，修正 BATCHB/MATRIX 的提交指针与 SHA、修复 ACCOV 行换行；复审 **0 mismatch**；治理 PASS。
 - 下一步：00:24 提醒/额度恢复后运行 `dispatch-review.ps1`；findings 处置 → `integration-verify.ps1` → done/closed_with_limitations。
+## 97. FEA-06-RESIDUAL-1 reduce 阴影/装饰类别（2026-11-03 00:15）
+
+- `HighContrastElevationFocusTests` 增补：reduce 下阴影与 hairline 均保持不变（设计 01 §2.3）；`motion-decorative` 状态类随类别开关切换并有断言（实际装饰动画本体仍 D-8 暂缓）。
+- 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `eb13cfab0`；证据 SHA `da27944f…`。
+- 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review；ZCode 03:02 备用。
