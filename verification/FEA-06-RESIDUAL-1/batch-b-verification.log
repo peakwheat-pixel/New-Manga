@@ -95,3 +95,7 @@
 - `HighContrastElevationFocusTests` 增补设计 01 §2.3 断言：reduce 下 Elevation.1 阴影**保持不变**、hairline 边框不变（standard 恢复后同样）。
 - `FluentShellSurface` 增加 `motion-decorative` 状态类（消费 `MotionTimings.DecorativeEnabled`），`FluentMotionResidualTests` 断言 full=有类 / reduce+category-off=无类；实际装饰动画本体仍按 D-8 暂缓。
 - 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。
+
+## 补记 12（I-4 BookRow 指针态，全量 1195/0/57）
+- `FluentComponentPointerStatesTests` 扩展 BookRow：Bg.Canvas → hover Bg.Overlay → pressed/selected Accent.Muted（指针合成 + 类切换）；矩阵 BookCard/BookRow 行均升级 EFFECTIVE。
+- 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。

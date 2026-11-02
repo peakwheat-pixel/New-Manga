@@ -14,7 +14,7 @@
 | Toast / InfoBar | info/warn/error/success | AlertBanner severity：既有 `CustomControlsTests` 断言 Blocked 的 StatusMuted 背景 + 类名；其余 severity 声明存在于 `Controls.Custom.axaml` | DECLARED（Blocked 背景已断言） | 四种 severity 组合未逐格有效属性断言（纯视觉格 NOT_RUN） |
 | EmptyState / ErrorState | 空/筛选空/无权限/可重试 | 页面空态/错误态功能测试（Batch A/B） | COMMAND | 视觉 NOT_RUN |
 | Skeleton | 形状/行/卡 | DesignSystem Skeleton 既有测试 | EFFECTIVE（既有） | 本批未改 |
-| BookCard / BookRow | 默认/hover/pressed/selected/disabled | BookCard：hover=Bg.Overlay、pressed=Accent.Muted、selected=Accent.Muted（指针合成/类切换）；点击/选择行为（Shelf 既有测试） | **EFFECTIVE**（hover/pressed/selected） | BookRow 仅声明 + 功能测试；disabled 视觉 NOT_RUN |
+| BookCard / BookRow | 默认/hover/pressed/selected/disabled | BookCard：hover=Bg.Overlay、pressed/selected=Accent.Muted；BookRow：Bg.Canvas→hover Bg.Overlay→pressed/selected Accent.Muted（指针合成/类切换）；点击/选择行为（Shelf 既有测试） | **EFFECTIVE**（两类的 hover/pressed/selected） | disabled 视觉 NOT_RUN |
 | ChapterList / PageThumbStrip | 默认/选中/滚动 | 选择/滚动功能测试（Batch A） | COMMAND | 视觉 NOT_RUN |
 | RegionBox | hover/选中/锁定/冲突 | 选中/锁定功能（Workbench 既有测试）；冲突数据 B-7 BLOCKED | COMMAND | hover 视觉 NOT_RUN |
 | StreamingThumb / BatchMatrix / RunProjectionBar | 七状态/吸顶/投影 | BatchMatrix 数据绑定 B-2 BLOCKED；骨架样式声明 | DECLARED | 数据面由 B-2 承担 |

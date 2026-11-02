@@ -27,11 +27,12 @@ public sealed class FluentComponentPointerStatesTests
         var secondary = new Button { Content = "次操作", Classes = { "fluent-secondary" }, Width = 160, Height = 40 };
         var danger = new Button { Content = "危险", Classes = { "fluent-danger" }, Width = 160, Height = 40 };
         var card = new Button { Content = "作品", Classes = { "fluent-book-card" }, Width = 160, Height = 48 };
+        var bookRow = new Button { Content = "作品行", Classes = { "fluent-book-row" }, Width = 160, Height = 36 };
         var window = new Window
         {
             Width = 480,
-            Height = 520,
-            Content = new StackPanel { Spacing = 12, Children = { primary, secondary, danger, card } },
+            Height = 580,
+            Content = new StackPanel { Spacing = 12, Children = { primary, secondary, danger, card, bookRow } },
         };
         window.Show();
         Dispatcher.UIThread.RunJobs();
@@ -72,6 +73,20 @@ public sealed class FluentComponentPointerStatesTests
         MoveTo(window, danger);
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(TokenColor(app, "Nm.Color.StatusMuted.Failed"), Solid(danger.Background));
+
+        // BookRow: canvas → overlay (hover) → accent-muted (pressed/selected).
+        Assert.Equal(TokenColor(app, "Nm.Color.Bg.Canvas"), Solid(bookRow.Background));
+        MoveTo(window, bookRow);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Bg.Overlay"), Solid(bookRow.Background));
+        window.MouseDown(CenterOf(window, bookRow), MouseButton.Left, RawInputModifiers.None);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(bookRow.Background));
+        window.MouseUp(CenterOf(window, bookRow), MouseButton.Left, RawInputModifiers.None);
+        Dispatcher.UIThread.RunJobs();
+        bookRow.Classes.Add("selected");
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(bookRow.Background));
 
         // BookCard: raised → overlay (hover) → accent-muted (pressed) → selected keeps accent-muted surface.
         MoveTo(window, card);
