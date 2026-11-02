@@ -17,7 +17,7 @@
 |FEA-04b|FEA-01|**done**（设计基线 `fluent-v1.0.0` FROZEN；r5 approved；AC5 用户确认由 DSH 裁决替代）|
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
-|FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**proposed**（Fluent UI 四页；前置 1/2 均 done，待范围复核/冻结后置 ready）|
+|FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**proposed**（Fluent UI 四页；**owner=Codex**（用户 2026-11-02 指派）；前置 1/2 均 done；scope-r2 复核中）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
@@ -34,7 +34,7 @@
 READY 节点：无
 
 
-当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**，集成 `92cac5ab1`，1022/0/57）→ FEA-06（**proposed**，待范围复核/冻结后置 ready）
+当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**，集成 `92cac5ab1`，1022/0/57）→ FEA-06（**proposed**，owner=Codex，scope-r2 复核中）
 
 ## 历史快照（终态节点，非当前 DAG）
 

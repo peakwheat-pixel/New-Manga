@@ -243,3 +243,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **推送前验证**：`dotnet build -c Debug -warnaserror` exit 0（0w/0e）；App.Appearance/Host/ThemeEngine/DesignSystem/ApplicationCore 五工程全绿，App.Tests **452/0/7**；CoreClient **11 failed**（已知口径限制：依赖被剔除的 `AGENTS.md` + `verification/` 契约证据，非代码回归；完整仓库基线 1022/0/57）。
 - **推送**：`git push --no-follow-tags <url> HEAD:refs/heads/clean-snapshot-20261102` → `* [new branch]`，**exit 0**；远端回读 `clean-snapshot-20261102` = `ac7d488e…` 新建，`clean-snapshot-20261026/20261029`/`codex/clean-source-snapshot`/`main`/`public-release` 均**未变**（远端 `main` 仍 `b1c1f5a5…`）。
 - **记录**：`doc/PUSH_RECORD_2026-11-02.md`。未推送本地 `main`；未设置 upstream；未传播私有素材。
+## 32. FEA-06 Owner=Codex（用户指派）+ 范围修订 r2（2026-11-02）
+
+- **用户指令**：「四页 UI + 设计系统组件改造交给 codex」→ FEA-06 implementation **owner = Codex**（W-10）；Codex 可在 main 直接实现并提交单一实现 commit（仅 allowed_paths 内文件），**不得 push**；DSH 保留范围冻结 / Review Appointment / 实现复核 / 集成验证 / 证据收口 / 最终 push。
+- **Codex 通路核验**：本机 `codex-cli 0.162.0`；默认配置 model=`gpt-6.1-sol` 会 400（旧结论根因）；按 codex-dispatch skill 以 `-m gpt-6-luna` 探测 **exit 0**（回复 ok）→ 可用。派发一律 cwd=仓库根（桌面版可见）+ 显式 `-m gpt-6-luna`，结果写 workspace、session id 记录；不改全局 `~/.codex/config.toml`。
+- **范围修订 r2（FEA-06 卡）**：r1（P0=2/P1=7/P2=11）逐项处置——P0-1/P0-2/P1-1 已由 PREREQ-1/2 交付关闭；P1-2 状态矩阵绑 AC2–AC5、P1-3 Draft 错误映射冻结、P1-4 新增 AC6 组件清单、P1-5 W-6 映射、P1-6 AC5 字段逐字、P1-7 STATUS/PLAN 同步；写域追加 `Controls/**`/`Styles/**`/`Services/**`（W-9）；证据口径 W-11；baseline 更新为 **1022/0/57**；base_commit `5a4717009`。
+- **下一步**：派 **scope-r2** 独立上下文复核（subagent_zcode，被审 = 本卡修订 commit）→ P0/P1=0 后置 `ready`，按 W-10 派 Codex 实施（交付单一 commit + verification/FEA-06 证据 + handoff）→ 独立实现复核 → DSH 集成验证 → done。
