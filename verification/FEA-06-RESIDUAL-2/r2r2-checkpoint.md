@@ -10,3 +10,7 @@
 - 旧 impl-in1/in2a/in2b-verification.log 保留原字节；最终使用 impl-r2-rework-verification.log。未 push；本会话不得签发独立 Review。
 
 第二恢复点：013c24dfd 首次全量为 1280/0/57，但逐图检查发现 Progress/Thumb 无基类 ControlTheme、Slider hover track 仍走模板状态，因此不能把首轮测试通过当视觉通过。已继续修复：真实基类 Theme、横向 ItemsPanel、像素非空断言、模板 RepeatButton 排除外层按钮 tween、真实模板 PART_Root hover/pressed、Tooltip布局/等待；新增1个真实模板内容回归。decor shelf使用Canvas→Overlay，原像素裁切，先在fresh shell采样phase0/2000ms/reduce，避免复用先前暂停相位误标first。164帧内存捕获与全SHA唯一断言已通过（定向18s）；最终代码冻结后须重跑全量/opt-in，旧013c全量不作为最终head的回归结论。
+
+最终交付恢复点（2026-11-03，Codex）：TaskStatus=in_progress，ExecutionState=CHECKPOINTED，source/capture HEAD=6b602c3fe72a31b4bafa0e6c61d6b73ba9bfc43d，main / G:/CODEX/New Manga，common dir=G:/CODEX/New Manga/.git。最终build 0/0，全量1281/0/57（EXIT=0，较1274 +7，App645/0/7、DS114/0/0），默认git status前后均空；opt-in EXIT=0，仅visuals变更。164 PNG=pages8/components142/decor10/shell4，inventory164行/SHA164唯一，全部head为捕获时6b602c3fe。最终contact sheets已逐张查看；独立签署仍NOT_RUN。TokenGen292/ThemeGen --check、check.ps1 PASS(3)、pins15/15、旧四SHA/禁止写域均通过。证据日志含shell/host/head/原始命令输出/逐程序集/57条实际skip原因。050c794ea全量1281/0/57通过后，增加“失焦中重应用策略不重启、暂停粒子detach清缓存”边界回归并重新跑了上述最终全量。
+
+下一精确步骤：DSH接收 doc/handoffs/FEA-06-RESIDUAL-2-impl.md、r2r2-findings-disposition.md 与 impl-r2-rework-verification.log，更新其域内指针/历史过度声明并处置005剩余IN格/016死代码清理授权；重新Appointment fresh独立Reviewer按164图逐项签署。当前Task未关闭，不写AC-1/AC-3/D-14/OUT/BLOCKED达成，不push。资源：workspace/agent-output/codex/FEA-06-RESIDUAL-2/R2R2保留诊断/原始TRX/contact sheets；关键结果已复制进版本化verification，不依赖仓外文件作为唯一证据；本轮appearance Guid临时根已由测试Dispose删除，仅保留空父目录。
