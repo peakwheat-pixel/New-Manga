@@ -491,3 +491,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r10 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引/integration-verification.log）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）；其余 AC1–AC4/AC6/AC8 residual 一并登记。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；其依赖 FEA-09/10/11/12/13 端口未就绪，释放时需按端口就绪拆分并刷新 base_commit/scope review）。
+## 70. FEA-07 impl-r10 changes_requested（P2×1，文案）→ 最终处置（2026-11-02）
+
+- **r10 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `ebda36be9`/代码 `aedc7251c`）：`doc/reviews/FEA-07-impl-r10.md`，changes_requested，P0=0 / P1=0 / P2=1；**R-009（AC6 数值）与 R-011（证据 commit 定位）确认闭环**；剩余 R-007 为「最新已完成 Review」与「当前 Appointment」两种状态的文案冲突（r9→r10 只滚动轮次、未消除冲突）。
+- **R-007 最终处置（anti-churn）**：拆分两类事实并统一所有当前文档：最新已完成 Review=impl-r10（changes_requested P2=1，已处置）；**当前 Appointment=impl-r11（fresh Codex CLI，来源 handoff r10 §4），状态「复核进行中」**；canonical 保持 pending（r11 approved 并集成后置 complete）。Task/索引/STATUS/PLAN/checkpoint/handoff 全部按进行中表述，不再写下一轮「待派」。
+- 本批纯文档，代码 head 不变（`aedc7251c`）；全量 1138/0/57、build 0/0、两生成物 up-to-date、check PASS(3)、pins 15/15 沿用既有证据；提交前重新校验 Task pin/索引 SHA。
+
+## 71. FEA-07 r11 复核派发 + 收尾计划（2026-11-02）
+
+- r11：fresh Codex CLI 只读，被审文档 head=本批提交、代码 head `aedc7251c`；唯一允许写 `doc/reviews/FEA-07-impl-r11.md`；重点 Appointment 表述一致性与 R-009/R-011 维持闭环。
+- r11 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引 → `verification/FEA-07/integration-verification.log`）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 矩阵无硬件 → residual；AC1/AC2/AC3/AC4/AC6/AC8 边界一并登记（不伪造证据）。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；依赖 FEA-09/10/11/12/13 端口未就绪，释放时按端口就绪拆分并刷新 base_commit/scope review）。

@@ -1,12 +1,12 @@
 # FEA-07 证据索引（自动生成）
 
-- 生成时间: 2026-11-02 20:54:54 +08:00
-- 代码 head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0 (r8 返修提交；r9 仅文档修正)
+- 生成时间: 2026-11-02 21:03:49 +08:00
+- 代码 head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0 (r8 返修提交；r9/r10 仅文档修正)
 - 全量测试: **1138 passed / 0 failed / 57 skipped**（skip 直接原因: sidecar env 未设置）
 - 治理: check.ps1 PASS(3); verify_pins.ps1 PASS 15/15
 - 生成物: TokenGen --check 292 rows up-to-date; ThemeGen --check up-to-date
 - 性能: Release p50 109.89 / p95 381.43 / max(UI freeze upper bound) 383.05 ms / memory +456B / handles +1 => W-5 PASS（4 预热 + 20 单向切换；两次复测 p95 361.52/381.43 ms）
-- 复核: scope-r1/r2 approved; impl-r1–r5/r7/r8/r9 changes_requested 均已处置; impl-r6 approved; r10 待派 (r9 文档处置后)
+- 复核: scope-r1/r2 approved; impl-r1–r5/r7/r8/r9/r10 changes_requested 均已处置; impl-r6 approved; 当前 Appointment=impl-r11 复核中
 - 原生双屏/拔屏/DPI 矩阵: BLOCKED (D-1 无硬件)
 
 说明: 本文件不列自身 SHA; 外部 pin 以 Task EV-FEA07-* 与 final-evidence.log 为准。
