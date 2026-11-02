@@ -11,7 +11,7 @@
 | SurfaceCard | 默认/hover/选中/禁用 | Background=Raised、BorderThickness=Hairline、BoxShadow=Elevation.1、Corner=Corner.Fluent.Md | **EFFECTIVE** | hover/选中视觉 NOT_RUN |
 | Drawer | 开/关 | 打开/关闭行为（Shelf 回收站既有测试） | COMMAND | Elevation.2 声明；开合动画视觉 NOT_RUN |
 | Dialog | 默认/危险/加载 | Background/Border/BoxShadow=Elevation.3/Corner=Corner.Fluent.Lg/ZIndex=Modal | **EFFECTIVE** | 危险/加载态视觉 NOT_RUN |
-| Toast / InfoBar | info/warn/error/success | AlertBanner severity 既有测试 + 声明 | DECLARED | 四种 severity 组合未逐格有效属性断言 |
+| Toast / InfoBar | info/warn/error/success | AlertBanner severity：既有 `CustomControlsTests` 断言 Blocked 的 StatusMuted 背景 + 类名；其余 severity 声明存在于 `Controls.Custom.axaml` | DECLARED（Blocked 背景已断言） | 四种 severity 组合未逐格有效属性断言（纯视觉格 NOT_RUN） |
 | EmptyState / ErrorState | 空/筛选空/无权限/可重试 | 页面空态/错误态功能测试（Batch A/B） | COMMAND | 视觉 NOT_RUN |
 | Skeleton | 形状/行/卡 | DesignSystem Skeleton 既有测试 | EFFECTIVE（既有） | 本批未改 |
 | BookCard / BookRow | 默认/hover/pressed/selected/disabled | 选择/点击行为（Shelf 既有测试）；样式声明 hover/pressed/disabled | DECLARED | hover/pressed 视觉 **NOT_RUN** |
