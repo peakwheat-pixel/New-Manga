@@ -14,7 +14,7 @@ status: in_progress
 
 ## 1. 一句话现状
 
-FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 处于 `proposed`（范围冻结未通过：
+FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 已 `ready`（范围冻结通过：scope-r1/r2/r3 changes_requested → **scope-r4 approved（P0/P1/P2=0）**；
 scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**scope-r3 未产出报告**）**。
 全量测试 **979 passed / 0 failed / 57 skipped**；治理 `check.ps1` **PASS（3 warnings）**、`verify_pins` **15/15**。
 
@@ -23,7 +23,7 @@ scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**
 - 仓库：`G:\CODEX\New Manga`，分支 `main`，HEAD **`df089039c`**，工作区 **clean**。
 - 派生/临时产物：`G:\CODEX\New Manga.workspace\`（不得在 `G:\CODEX\` 根建临时目录）。
 - 当前 DAG（`doc/REBASELINE_PLAN.md`）：`FEA-06-PREREQ-1(done) → FEA-06-PREREQ-2(proposed) → FEA-06(proposed)`。
-- 当前 Task（`doc/STATUS.md`）：`FEA-06-PREREQ-2`（`proposed`）。
+- 当前 Task（`doc/STATUS.md`）：`FEA-06-PREREQ-2`（**`ready`**，scope-r4 approved）。
 - 进度主线：`doc/checkpoints/GOAL-PROGRESS-2026-11-02.md` §1–§25（**先读 §22 Q-32、§24 Q-34、§25 scope-r2**）。
 
 ## 3. 已完成（勿重做）

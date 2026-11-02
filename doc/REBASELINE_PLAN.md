@@ -19,7 +19,7 @@
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**proposed**（Fluent UI 四页；范围 r1 changes_requested，已拆前置）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
-|FEA-06-PREREQ-2|FEA-06-PREREQ-1|**proposed**（Fluent 激活/V2 并存 + W-9 承接；scope-r3 P1×1 已修，待 r4）|
+|FEA-06-PREREQ-2|FEA-06-PREREQ-1|**ready**（scope-r4 approved；Fluent 激活/V2 并存 + W-9 承接）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-C14-DRAFT、FEA-D06-GAP|—|done（2026-11-01 收口；证据见各 Task 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
@@ -31,10 +31,10 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-06-PREREQ-2
 
 
-当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**proposed**，待 r4）→ FEA-06（**proposed**）
+当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**ready**，scope-r4 approved）→ FEA-06（**proposed**）
 
 ## 历史快照（终态节点，非当前 DAG）
 

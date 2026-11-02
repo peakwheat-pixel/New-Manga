@@ -3,14 +3,14 @@ id: FEA-06-PREREQ-2
 title: Fluent frontend 激活与 V2 并存边界（组合根 + 双壳入口）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_review
+status: ready
+approval: scope_review_r4_approved_2026-11-02
 suggested_owner: dsh
 owner: null
 reviewer: null
 depends_on:
   - FEA-06-PREREQ-1
-base_commit: cad5ebde3
+base_commit: a33778608
 branch: null
 worktree: null
 integration_commit: null

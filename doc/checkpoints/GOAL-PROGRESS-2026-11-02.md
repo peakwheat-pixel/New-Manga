@@ -206,3 +206,11 @@ m.fluent.visual/1 manifest + ThemeValidator.Validate(fluent) + BuiltInThemes 加
 - **交接时状态**：HEAD df089039c（工作区 clean）；PREREQ-1 done；PREREQ-2 proposed（scope-r1/r2 changes_requested，P1×4 已处置，**scope-r3 报告缺失**）；全量 **979/0/57**；check.ps1 PASS（3 warnings）、erify_pins 15/15。
 - **用户已告知的环境事实**：主会话已切换模型供应商，**子代理仍走旧供应商 → 常报额度不足**；subagent_zcode 曾成功跑完长任务（产出 scope-r2），是目前较可靠的复核通道；Codex CLI 因模型/账号不匹配（400 model_not_found）不可用于复核；ZCode CLI 未安装。
 - **唯一下一步**：派独立上下文复核 scope-r3（被审 head df089039c），确认 r2 的 4 条 P1 关闭且无新增 P0/P1；P0/P1=0 → 置 eady + 同步 STATUS/PLAN → 开始实现 PREREQ-2。
+## 27. PREREQ-2 范围冻结通过（scope-r4 approved，2026-11-02）
+
+- **scope-r3**（df089039c 审）：changes_requested，P0=0 / P1=1 / P2=5——r2 的 4 条 P1 **全部实质闭合**（sink 注入点命中 ThemeEngineThemeStudioService.cs:82/StubThemeStudioService.cs:56；Q-33 residual③ 由 P7/AC7 承接且 ThemeMetadata.Extra 真实存在；**C-02 V-07 明确无需 UNFREEZE**；测试表 AC5/AC6/AC7 齐备）。唯一 P1：禁止范围残留旧授权声明。
+- **DSH 处置**（6652022d）：删除禁止范围的 ThemeMaterial.Fluent 授权句并改写为与 P6/W-11 一致；R14 计数措辞改为「59 不变 / 65→67」；STATUS/PLAN 指针更新为待 r4。
+- **scope-r4**（33778608 审）：**approved，P0=0 / P1=0 / P2=0** → 范围冻结通过。
+- **release（本轮）**：卡 status: ready、pproval: scope_review_r4_approved_2026-11-02、ase_commit: a33778608；STATUS.md 当前 Task → PREREQ-2 eady；REBASELINE_PLAN.md DAG 行 → eady、**READY 节点：FEA-06-PREREQ-2**；check.ps1 PASS（3 warnings）、erify_pins 15/15。
+- **实现范围（P1–P7 / AC1–AC7）要点**：① FrontendSelector（按 frontendId，CLI --frontend > AppearanceSettings > 缺省 v2；未知 → V2 fail-safe）；② App.axaml.cs 组合根按 selector 选壳 + Views/Fluent/ 骨架；③ P5 写者收敛（AppearanceCoordinator 迁入 NewManga.Appearance 成为唯一写者 + IThemeSettingsSink 双写一个 release）；④ P6 Nm.Material.Acrylic.Base/.Tint 主题层令牌（**不改枚举/签名**，R14 65→67）；⑤ P7 
+m.fluent.visual/1 manifest + ThemeValidator 测试。
