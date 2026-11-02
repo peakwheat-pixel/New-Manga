@@ -540,3 +540,13 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **S-005（P2）R-8 丢失 PNG opt-in**：拆 I-6（1408 行 VM 纯移动重构）与 I-7（PNG 采证 opt-in，默认全量不写、禁止覆盖 FEA-06 已 pin PNG、输出本卡证据目录/临时目录）。
 - **S-006（P2）治理缺口**：front matter reviewer/Appointment、本批依赖（FEA-06/FEA-07）与未来端口依赖分离、Review Appointment（scope-r2 + impl-r1）、Resource Manifest 骨架、canonical/closeout pending 全部补齐。
 - **下一步**：scope-r2 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md`）；P0/P1=0 后 DSH 冻结范围 v2，按 W-10 派 Codex 实施 Batch A → Batch B。
+## 77. FEA-06-RESIDUAL-1 scope-r2 changes_requested（P1×3/P2×3）→ 范围 v3（2026-11-02）
+
+- **scope-r2**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `04d7c79e3`）：`doc/reviews/FEA-06-RESIDUAL-1-scope-r2.md`，changes_requested，P0=0 / P1=3 / P2=3；构建/生成器/治理/pins 通过；**安全回归 1137/0/57**（排除会写旧证据的 `FluentPages_RenderHeadlessPngEvidence`；旧 1138/0/57 仅为同代码前序基线，未声称无过滤全量已复跑）。
+- **R2-001（P1）验收不可判定**：I-3 补保存/丢弃/取消三分支 + 保存失败保护；I-5 改用设计实际三态 `auto/full/reduce` × 三类 × 分类开关矩阵；新增 I-11 焦点环（2px/offset=1/高对比 3px、浮层焦点移入/返还、隐藏控件移出 Tab 序）。
+- **R2-002（P1）残项非穷尽**：范围 v3 改为 **IN=I-1…I-14 / BLOCKED=B-1…B-7 / 无 DEFERRED**；补 I-12 控制台入口导航、I-13 9 行状态视觉骨架、I-14 源不可用警示本体；数据绑定/恢复动作/投影分别归 B-2/B-3/B-6/B-7，唯一归属。
+- **R2-003（P1）I-8 违反冻结设计**：删除 reduce/减弱回退边框；standard 与 reduce 均保留 Elevation 阴影令牌，仅高对比回退 1px 边框（设计 03:62）。
+- **R2-004（P2）写域路径**：`Styles/FluentUi.cs` 更正为真实 `Controls/FluentUi.cs`；DesignSystem 三目录保留但限定 Fluent 消费/焦点/motion 文件，共享改动需 DSH 预批。
+- **R2-005（P2）治理指针**：Plan 依赖列改为 FEA-06/FEA-07（FEA-09/10/11/12/13 仅为 BLOCKED 承接方），STATUS/Plan 指向 scope-r3；Manifest 补全八类当前状态。
+- **R2-006（P2）组件断言**：I-4 先冻结组件×适用状态表，断言有效属性/命令零触发/浮层焦点，无法 headless 验证的格标 NOT_RUN，不以字符串选择器存在计 PASS。
+- **下一步**：scope-r3 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md`）；P0/P1=0 后 DSH 冻结范围 v3，按 W-10 派 Codex 实施 Batch A → Batch B。

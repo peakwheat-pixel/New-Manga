@@ -19,7 +19,7 @@
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
 |FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；scope-r2 + impl-r12 approved；全量 **1138/0/57**；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1；residual 见 Task 卡；AC5 原生矩阵待硬件/waiver）|
-|FEA-06-RESIDUAL-1|FEA-06、FEA-07、FEA-09/10/11/12/13|**ready**（2026-11-02 DSH 范围 v2：10 个 IN 子项 + DEFERRED/BLOCKED 穷尽拆分；scope-r1 changes_requested 已处置；scope-r2 复核进行中）|
+|FEA-06-RESIDUAL-1|FEA-06、FEA-07|**ready**（2026-11-02 DSH 范围 v3：I-1…I-14 IN、B-1…B-7 BLOCKED、无 DEFERRED；scope-r2 changes_requested 已处置；scope-r3 复核进行中；FEA-09/10/11/12/13 仅为 BLOCKED 承接方，非本批依赖）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
@@ -34,7 +34,7 @@
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
 READY 节点：FEA-06-RESIDUAL-1
-详情：范围 v2（IN=I-1…I-10；DEFERRED=D-1…D-6；BLOCKED=B-1…B-5）；owner=codex；scope-r2 复核中；base_commit 82529a3d5
+详情：范围 v3（IN=I-1…I-14；BLOCKED=B-1…B-7；无 DEFERRED）；owner=codex；scope-r3 复核中；base_commit 82529a3d5
 
 当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**closed_with_limitations**，集成 `aedc7251c`，1138/0/57；AC5 D-1 residual）；下一节点 FEA-06-RESIDUAL-1（**ready**，第一批范围 v1 已释放、scope-r1 复核中）
 
