@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
-reviewer: codex-cli（impl-r5 独立复核；报告 doc/reviews/FEA-07-impl-r5.md；r6 待派，见文末）
+reviewer: codex-cli（impl-r6 **approved**；报告 doc/reviews/FEA-07-impl-r6.md；R-022 修复 head 另派 r7，见文末）
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-04
@@ -17,8 +17,8 @@ base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 4e8510d431ac82df54b82991d14975da5c27f9a0（r5 返修代码提交；精确证据见 final-evidence.log）
-canonical_evidence_status: pending（r6 approved 并集成后置 complete）
+delivery_head: 5a495f80a208ccc17a34eededc21c91f6e18e720（r6 P2 返修代码提交；精确证据见 final-evidence.log）
+canonical_evidence_status: pending（r7 approved 并集成后置 complete）
 resource_closeout_status: pending
 evidence_dir: verification/FEA-07
 allowed_paths:
@@ -232,15 +232,24 @@ allowed_paths:
 - **R-007（P2）**：reviewer 指向 impl-r5、delivery_head=`4e8510d43`、handoff `doc/handoffs/FEA-07-impl-r5.md`、索引「r6 待派」；canonical 保持 pending。
 - **R-009 口径措辞**：性能摘要「20 次往返」修正为「20 次单向切换（10 次往返）」；Release 同 head 复测 p95 236.48 / 248.42 ms 均 PASS，记录 run p50 96.50 / p95 248.42 / max 349.30 / 冷启 612.38 ms / 内存 +2528 B / 句柄 0。
 - 验证：build 0/0；全量 **1134/0/57**；`rework-r5-verification.log`；`final-evidence.log`（head `4e8510d43`，SHA `3021dbb0…`）；两生成物 `--check` up-to-date；check PASS(3)；pins 15/15。
-- 待办：用新配置派 fresh Codex CLI 做 **r6** 只读复核（唯一允许写 `doc/reviews/FEA-07-impl-r6.md`）→ 处置 findings → DSH 集成验证 → done + AC5 原生 residual 登记。
+- 待办（下一批，已于 r6 处置，见下节）：用新配置派 fresh Codex CLI 做 **r6** 只读复核（唯一允许写 `doc/reviews/FEA-07-impl-r6.md`）→ 处置 findings → DSH 集成验证 → done + AC5 原生 residual 登记。
+## impl-r6 处置（approved + P2 修复，2026-11-02，owner=DSH）
+
+- 报告：`doc/reviews/FEA-07-impl-r6.md`（Codex CLI fresh，`gpt-6.1-sol` + `reasoning_effort=high`；**decision=approved**，P0=0/P1=0/P2=2；被审文档 `80b2203e5`/代码 `4e8510d43`）。R-020/R-021 闭环；保留 R-022/R-007 两项 P2，本批均由 DSH 处置。
+- **R-022（P2，AC1 窗口回滚完整性）**：全屏 Fluent Reader → V2 的切换在 Promote 阶段会退出全屏（R-020 成功路径清理），若随后 SaveAsync/journal finalize 失败回滚旧树，原全屏模式未恢复。
+  - 修复：`PresentationWindow.SwitchFrontendAsync` 在事务前快照 `WindowState` + Fluent reader 全屏状态，失败时与旧内容树一起恢复（成功路径保持当前清理策略，普通/最大化不受影响）。
+  - 测试：`PresentationWindowTests.FailedSwitch_RestoresTheOriginalFullScreenMode`（真实 Fluent surface + 全屏 + 构建失败 → 旧树、VM 全屏与 WindowState 一并恢复）；既有失败切换测试补 Normal 窗口断言。
+- **R-007（P2）**：reviewer 指向 impl-r6（approved）、delivery_head=`5a495f80a`、handoff `doc/handoffs/FEA-07-impl-r6.md`、索引「r7 待派」；canonical 保持 pending。
+- 验证：build 0/0；全量 **1135/0/57**（+1 测试）；`rework-r6-verification.log`；`final-evidence.log`（head `5a495f80a`，SHA `7fb048ab…`）；Release 两次复测 p95 292.65/261.38 ms 均 PASS（记录 run p50 88.42 / p95 261.38 / max 275.14 / 冷启 605.39 ms / 内存 +22496 B / 句柄 +3）；两生成物 `--check` up-to-date；check PASS(3)；pins 15/15。
+- 待办：用新配置派 fresh Codex CLI 做 **r7** 只读复核（R-022 修复 head；唯一允许写 `doc/reviews/FEA-07-impl-r7.md`）→ approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
 ## 验收标准
 
-- [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: 真实内容树 100 次切换（50 往返）状态保留/真实 staging 布局+Loaded+帧渲染门禁/失败回滚已过（R-001 part2）；R-017 外部外观同步回归已修（canonical 快照）、R-018 订阅解绑与 R-019 staging 输入隔离已补（r4）；原生 IME、A03 真库 DB/current/pinned/Lock 矩阵、ACK 重连与真实 Run/Intent 链路不可测，保持 PARTIAL>>`
+- [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: 真实内容树 100 次切换（50 往返）状态保留/真实 staging 布局+Loaded+帧渲染门禁/失败回滚已过（R-001 part2）；R-017 外部外观同步、R-018 订阅解绑、R-019 staging 输入隔离、R-020 全屏桥接、R-022 失败切换窗口模式回滚均已补（r4–r6）；原生 IME、A03 真库 DB/current/pinned/Lock 矩阵、ACK 重连与真实 Run/Intent 链路不可测，保持 PARTIAL>>`
 - [x] **AC2**：WindowBroker 主窗/弹窗/浮窗归属正确；第二窗口仅承载只读或独立会话内容，同一 `(SessionId, RegionId)` 草稿保持单一写入 owner；关闭/重建不 Dispose Host、不隐式 Start；退出协调归进程级 ExitCoordinator。 `<<PARTIAL: ExitCoordinator 已接 live 内容状态（设置草稿/Workbench 运行/导入运行）并阻断关闭；R-002 已聚合全部缓存内容树（隐藏树）且 V2 Theme Studio HasDraft 经生产 provider 真实阻断（r4 真实 draft 测试）；真实双屏 broker 归属与 (SessionId,RegionId) 单写 owner 集成待补>>`
 - [x] **AC3（A06）**：switch journal 崩溃恢复；暂停/进程中断后无部分切换状态、未完成步骤可追溯、interrupted 不自动执行；**暂停期间配置/源/Lock 变化后采用最新保护状态**（不漂移、不覆盖）。 `<<PARTIAL: journal 记录 previous/last-committed，启动恢复会还原上一已提交 frontend 并 Rollback；r4 起失败并发有确定性屏障证明（第二请求排队、补偿后才执行非 no-op 事务）；暂停期间保护状态变化与真实跨进程崩溃注入待补>>`
 - [x] **AC4（A07）**：safe startup 可诊断（trace/用户可见提示）；坏设置/坏包/未知 frontend/theme/scale 均 fail-safe 到 Current V2，保留有效设置且不硬套不兼容几何。 `<<PARTIAL: planner 现为组合根唯一决策源（返回 Selection），外观 fallback warnings 强制 Current V2（含 CLI fluent），坏 JSON 接线测试已过；真实 App 初始化入口与坏包/scale 矩阵待补（r4 维持 PARTIAL）>>`
-- [x] **AC5（A08/H2）**：原生双屏/拔屏/DPI 矩阵（**100/125/150/200%**、换主屏、拔副屏、全屏切换）：主窗+Inspector 浮窗归属与可见可操作、不丢屏外、目标不支持浮动则安全停靠、快捷键不重复执行；**拔屏时第二窗口内容回到主窗对应页面，未 flush 编辑态 fail-closed 留在主窗缓冲**；混合 DPI 各 Window 的提交/恢复正确；发布 manifest 实际启用 PerMonitorV2；**原生桌面验收（不得以 headless 断言代替）**。 `<<PARTIAL: memento/拓扑/PerMonitorV2 机械验证已过；R-020 全屏请求→WindowState 已在真实组合根 headless 回归（r5，含按钮/F/Esc/切换前后）；真机双屏/拔屏/DPI 100/125/150/200% 矩阵 blocked（D-1，无硬件）>>`
-- [x] **AC6（H3/W-5）**：热切换性能报告（固定机器 + 合成规模；p50/p95/峰值、最大 UI 冻结时长、内存/句柄变化；冷/热分开记录）：**热切换 p95 ≤ 1000 ms**；超预算 = AC6 不通过（除非 DSH 书面 waiver 登记）。 `<<PARTIAL: p95 PASS（真实口径：4 预热 + 20 单向切换；Release p50 96.50 / p95 248.42 / max 349.30 ms，两次复测 p95 236.48/248.42 ms 均 ≤1000ms）；UI freeze 为上限估计、真实规模合成负载与真机指标待补（R-009）>>`
+- [x] **AC5（A08/H2）**：原生双屏/拔屏/DPI 矩阵（**100/125/150/200%**、换主屏、拔副屏、全屏切换）：主窗+Inspector 浮窗归属与可见可操作、不丢屏外、目标不支持浮动则安全停靠、快捷键不重复执行；**拔屏时第二窗口内容回到主窗对应页面，未 flush 编辑态 fail-closed 留在主窗缓冲**；混合 DPI 各 Window 的提交/恢复正确；发布 manifest 实际启用 PerMonitorV2；**原生桌面验收（不得以 headless 断言代替）**。 `<<PARTIAL: memento/拓扑/PerMonitorV2 机械验证已过；R-020 全屏请求→WindowState 已在真实组合根 headless 回归（r5，按钮/F/Esc/切换前后）、R-022 失败切换恢复原全屏模式（r6）；真机双屏/拔屏/DPI 100/125/150/200% 矩阵 blocked（D-1，无硬件）>>`
+- [x] **AC6（H3/W-5）**：热切换性能报告（固定机器 + 合成规模；p50/p95/峰值、最大 UI 冻结时长、内存/句柄变化；冷/热分开记录）：**热切换 p95 ≤ 1000 ms**；超预算 = AC6 不通过（除非 DSH 书面 waiver 登记）。 `<<PARTIAL: p95 PASS（真实口径：4 预热 + 20 单向切换；Release p50 88.42 / p95 261.38 / max 275.14 ms，两次复测 p95 292.65/261.38 ms 均 ≤1000ms）；UI freeze 为上限估计、真实规模合成负载与真机指标待补（R-009）>>`
 - [x] **AC7（回归/启动/依赖门禁）**：全量 sln 不退化（基线 **1034/0/57**，记录 pass/fail/skip 与原因）；启动兼容矩阵：默认 Current V2、`--frontend` 覆盖、未知 `--frontend` fallback、`--shell=legacy` 均行为正确；**project-reference graph 机械检查**：允许 App→Presentation，禁止 Host/Core/ApplicationCore→Presentation/UI，既有项目 TFM 不变。 `<<MET>>`
 - [x] **AC8（隔离/证据）**：所有 data/theme/journal 路径限定在测试临时根，断言不触真实 `%APPDATA%`/真实用户数据；证据含 headless 故障/切换矩阵日志、原生双屏/拔屏/DPI 截图与矩阵、性能报告、全量 build/test、两生成物 `--check`、治理与 pins 输出。 `<<PARTIAL: headless 证据/性能 JSON/架构门禁/证据索引（无自引用、无控制字符，R-016）已归档；r4 更正 57 skip 直接原因为 sidecar env 未设置；原生双屏/拔屏/DPI 矩阵 blocked（D-1，无截图证据）>>`
 
@@ -273,8 +282,8 @@ allowed_paths:
 | AC1–AC3 | `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests` + `NewManga.Presentation.Avalonia.Tests`（切换/回滚/故障注入，合成数据；data/theme/journal 临时根） | .NET 9 / Avalonia.Headless + Host（`NEWMANGA_CORECLIENT_SIDECAR_DIR`） | PASS（headless 部分：真实门禁/状态保留/退出聚合/并发屏障/全屏桥接；原生/真库矩阵待补） | `rework-r5-verification.log`、`rework-r4-verification.log` |
 | AC4 | 启动矩阵：默认/`--frontend` 覆盖/未知值 fallback/`--shell=legacy`/坏设置/坏包（隔离根） | Windows 11 / .NET 9 | PASS（9 测试；真实 App 初始化入口与坏包/scale 矩阵仍 PARTIAL） | `slice-3-verification.log` |
 | AC5 | 原生双屏/拔屏/DPI 矩阵（100/125/150/200%、换主屏、拔副屏、全屏） | Windows 11 原生桌面；隔离 `--data-root`/`--theme-home` | PARTIAL（headless 拓扑/manifest/全屏→WindowState PASS；原生矩阵 blocked D-1） | `slice-4-verification.log`、`rework-r5-verification.log` |
-| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | PASS（Release p95 248.42ms ≤1000ms；两次复测均 PASS） | `performance-baseline-release.json` |
-| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | PASS（1134/0/57 + 架构门禁 3 测试） | `rework-r5-verification.log` |
+| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | PASS（Release p95 261.38ms ≤1000ms；两次复测均 PASS） | `performance-baseline-release.json` |
+| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | PASS（1135/0/57 + 架构门禁 3 测试） | `rework-r6-verification.log` |
 | AC8 | 证据归档（日志/截图/矩阵/性能报告/SHA-256 索引） | 全量 | PARTIAL（headless/性能/架构证据与索引已归档；原生矩阵 blocked D-1、无截图） | `performance-baseline.md`、`evidence-index.md`、`final-evidence.log` |
 
 ## Canonical Evidence
@@ -289,16 +298,17 @@ allowed_paths:
 | EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
 | EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
 | EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
-| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `4e8510d43` | `8e031becf9fcd38d2448d6758ddfab33ee566560b6a1873e270566a932561ed6` | CANONICAL |
+| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `5a495f80a` | `a06e3cfda3b362f3bc1bff7cf61fe173a68fcf247f45be21a4b3df9cf658a102` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 | EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
-| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `4e8510d43` | `3021dbb071c71e450d08827ebbcdd3e1e1a1334a85cc787188e7ab1de2e1fa64` | CANONICAL |
-| EV-FEA07-PERF-MD | AC6/AC8 | `verification/FEA-07/performance-baseline.md` | `4e8510d43` | `f18dbb25c731cf77c2d6911385f0d18f865c20b691f626438883faebe6d13498` | SUPPORTING |
+| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `5a495f80a` | `7fb048abbfcafa8055cb604a833bf6dc8eeb583c4b74b695cffc432187305d89` | CANONICAL |
+| EV-FEA07-PERF-MD | AC6/AC8 | `verification/FEA-07/performance-baseline.md` | `5a495f80a` | `1161f6368d3a6f13740516daa61b4c9272b655192995e15d24e74d4b6d0d8966` | SUPPORTING |
 | EV-FEA07-REWORK2 | AC1/AC2/AC3/AC4/AC6/AC8 | `verification/FEA-07/rework-part2-verification.log` | `-` | `725ec7f6e4d6295f386d0bb08a65771158536fc7fa02e7a4f640a713f38eaa01` | CANONICAL |
 | EV-FEA07-REWORK-R3-1 | AC1/AC3/AC6 | `verification/FEA-07/rework-r3-part1-verification.log` | `-` | `c6eefffef4fa6a2f9d7e0afa1b91f2ddff8110da2aa2b3c965293095c4e696a9` | CANONICAL |
 | EV-FEA07-REWORK-R3-2 | AC1/AC2/AC6/AC8 | `verification/FEA-07/rework-r3-part2-verification.log` | `100d487ff` | `aacf4ce239fb978d614dc4d958454fde084ed219d9d806940a7225743aaf3b28` | CANONICAL |
 | EV-FEA07-REWORK-R4 | AC1/AC2/AC3/AC6/AC8 | `verification/FEA-07/rework-r4-verification.log` | `b328f3488` | `f0cb74032c50e3b24fede26b59d053beef07f9a8a337fd7ec52bacd27c5a4c3b` | CANONICAL |
 | EV-FEA07-REWORK-R5 | AC1/AC2/AC5/AC6/AC8 | `verification/FEA-07/rework-r5-verification.log` | `4e8510d43` | `e773a93def145d258ff09f8cb02ae9783823e7588e06443de28ba3381a3619b9` | CANONICAL |
+| EV-FEA07-REWORK-R6 | AC1/AC5/AC6/AC8 | `verification/FEA-07/rework-r6-verification.log` | `5a495f80a` | `322475cb618a71cf1f69e3422908a4d2b435ac53567462ffe1ba2309b01c5ae9` | CANONICAL |
 
 ## Closeout Record
 

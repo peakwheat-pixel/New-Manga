@@ -437,3 +437,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r6 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`4e8510d43`（如无新代码变更）、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → 登记 residual（blocked D-1，不伪造证据）；R-020 全屏请求→WindowState 已在 headless 真实组合根回归，不依赖 D-1 硬件。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
+## 62. FEA-07 impl-r6 approved → R-022 P2 修复（2026-11-02）
+
+- **r6 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `80b2203e5`/代码 `4e8510d43`）：`doc/reviews/FEA-07-impl-r6.md`，**approved**，P0=0 / P1=0 / P2=2；指定验证全部通过（build 0/0、全量 1134/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15、Task pins 18/18）；R-020/R-021 闭环。
+- **R-022（P2）修复（`5a495f80a`）**：全屏 Fluent→V2 切换在 Promote 时退出全屏，SaveAsync/journal finalize 失败回滚旧树后原全屏模式未恢复。`PresentationWindow.SwitchFrontendAsync` 事务前快照 `WindowState` + Fluent reader 全屏状态，失败时与旧内容树一并恢复；成功路径保持原清理策略。新增 `FailedSwitch_RestoresTheOriginalFullScreenMode`；既有失败切换测试补 Normal 断言。
+- **R-007（P2）**：reviewer=impl-r6（approved）、delivery_head=`5a495f80a`、handoff `doc/handoffs/FEA-07-impl-r6.md`、索引 r7 待派；canonical 保持 pending。
+- **验证**：build 0/0；全量 **1135/0/57**（+1 测试）；`rework-r6-verification.log`、`final-evidence.log`（head `5a495f80a`，SHA `7fb048ab…`）；Release 两次复测 p95 292.65/261.38 ms 均 PASS（记录 run p50 88.42 / p95 261.38 / max 275.14 / 冷启 605.39 ms / 内存 +22496B / 句柄 +3）。
+
+## 63. FEA-07 r7 复核派发 + 集成/收尾计划（2026-11-02）
+
+- r7：fresh Codex CLI 只读，被审代码 head `5a495f80a` + 本证据/文档提交；唯一允许写 `doc/reviews/FEA-07-impl-r7.md`；重点 R-022 修复与回归。
+- r7 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`5a495f80a`（如无新代码变更）、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）；R-020/R-022 的全屏接线已在真实组合根 headless 回归，不依赖 D-1。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
