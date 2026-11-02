@@ -523,3 +523,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **关闭**：FEA-07 `status=closed_with_limitations`（AC7 MET；AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1 → residual；范围未全部达成，按协作协议不写 done）、`integration_commit=aedc7251c`、`canonical_evidence_status=complete`、`resource_closeout_status=complete`；Closeout Record 与 Residual 登记已填（不伪造证据）。
 - **RES: AC5 原生矩阵（D-1）**：真机双屏/拔屏/DPI 100/125/150/200% 无硬件，登记 residual（待硬件或用户书面 waiver）；其余 AC 边界同登记于 Task 卡。
 - **下一节点**：`FEA-06-RESIDUAL-1` 仍 proposed（依赖 FEA-09/10/11/12/13 端口）；释放前需刷新 base_commit=FEA-07 closeout head、按端口就绪拆分并走 scope review，不自动启动、不插队。
+## 75. FEA-07 关闭 + FEA-06-RESIDUAL-1 释放（2026-11-02）
+
+- **FEA-07 关闭**：r12 approved（P0=0/P1=0/P2=1 非阻塞 R-026 已处置）；集成验证 `verification/FEA-07/integration-verification.log`（SHA `412e8571…`，head `527a7ec37`）：build 0/0、全量 **1138/0/57**、两生成器 up-to-date、check PASS(3)、pins 15/15、Task pins 25/25、索引 24 行；`aedc7251c..527a7ec37` 无源码漂移。
+- **状态判定**：按协作协议与治理检查器（DONE 不允许 PARTIAL AC），FEA-07 终态为 **closed_with_limitations**（非 done）：AC7 MET；AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1 → Residual 登记；integration_commit=`aedc7251c`；canonical/resource complete；Closeout Record 已填。
+- **残项**：AC5 原生双屏/拔屏/DPI 矩阵（D-1 无硬件，waiver/待硬件）；AC1 原生 IME/A03 真库/ACK/Run；AC2 真实双屏 broker/Host 生命周期；AC3 真崩溃注入；AC4 真实 App 入口/坏包矩阵；AC6 UI freeze 真采样；AC8 原生截图。
+- **FEA-06-RESIDUAL-1 释放**：status `ready`；base_commit=`82529a3d5864a39f362e414b67bca774d743f862`（FEA-07 closeout head）；owner=codex；第一批范围 v1：R-1a UI memento、R-1b 分栏折叠、R-5a 设置离开未保存确认/Esc、R-6 组件 full 状态、R-7 headless 焦点环/motion、R-8 四 Fluent VM 拆分；OUT/blocked：R-2/R-3/R-4/R-5b（端口）、R-9（令牌/设计确认）、原生 DPI/a11y（D-1）。
+- **下一步**：scope-r1 独立复核（fresh Codex CLI，只写 `doc/reviews/FEA-06-RESIDUAL-1-scope-r1.md`）→ 冻结后按 W-10 派 Codex 实施；第二批待端口就绪。

@@ -3,8 +3,8 @@ id: FEA-06-RESIDUAL-1
 title: Fluent 四页规格补齐（FEA-06 AC1–AC7 residual）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_scope_review（FEA-06 closeout residual 转入）
+status: ready
+approval: scope_review_r1_pending_2026-11-02（DSH 释放第一批范围冻结 v1；FEA-06 residual 转入）
 suggested_owner: codex
 owner: codex
 reviewer: null
@@ -16,9 +16,9 @@ depends_on:
   - FEA-11
   - FEA-12
   - FEA-13
-base_commit: b26840acdf682d69cf531bec3161d17bf90cf9f4
-branch: null
-worktree: null
+base_commit: 82529a3d5864a39f362e414b67bca774d743f862（FEA-07 closeout head；2026-11-02 释放时刷新）
+branch: main
+worktree: G:\CODEX\New Manga
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -66,6 +66,23 @@ allowed_paths:
 | R-8 | P2 | 四 Fluent VM 拆分（`FluentPageViewModels.cs` 1373 行）、PNG 采证测试改 opt-in | 本卡技术债 |
 | R-9 | P2 | `Nm.Elevation.*` 阴影样式（当前 1px 边框替代） | 设计/令牌冻结确认后补 |
 
+## 释放范围（第一批 v1，2026-11-02 DSH 冻结，待 scope-r1 独立复核）
+
+- **范围原则**：只释放不依赖未落地端口、且不触碰冻结设计/契约/Core/生成物的 UI 与技术债项；端口依赖项与原生 D-1 项保持 blocked，不用模拟数据/假实现充数。
+- **本批 IN（可实施）**：
+  - R-1a：Fluent 页面级 UI memento 恢复（折叠/滚动等页面状态；不改变 FEA-07 窗口状态语义）。
+  - R-1b：Library/Workbench 列表-详情分栏折叠（符合 `doc/design/fluent-v1/` 冻结基线）。
+  - R-5a：设置页「离开未保存确认 + Esc」（复用 FEA-07 退出保护与 confirmed-draft 语义，不新增端口）。
+  - R-6：组件 full 状态（normal/hover/pressed/disabled/浮层开关）逐项补齐，登记「组件×状态×测试」矩阵。
+  - R-7：焦点环 + 三类 motion 状态（headless 可验证部分；原生 a11y 验收 blocked）。
+  - R-8：四 Fluent VM 拆分（`FluentPageViewModels.cs` 1373 行 → 四页各自 VM 文件；纯重构，行为等价，既有测试不改弱）。
+- **本批 OUT（blocked，登记不实施）**：R-2（回收站/扫描/满态统计，依赖 FEA-12/10 端口）、R-3（Run/BatchMatrix，依赖 FEA-10）、R-4（阅读器数据面，依赖 FEA-09/11）、R-5b 备份字段（依赖 FEA-13）、R-7 原生 a11y 验收、R-1c 与全部 200% DPI/原生桌面验收（D-1 无硬件）、R-9 `Nm.Elevation.*` 阴影（设计/令牌冻结确认缺失前 blocked）。
+- **AC 映射**：AC1–AC5 编号不改；IN 项在对应 AC 下逐项登记证据，OUT 项在该 AC 下以 `BLOCKED` 记录原因，不用假实现。
+- **交付物**：代码 + 测试 + `verification/FEA-06-RESIDUAL-1/`（日志、组件状态矩阵、全量回归、生成器/治理）+ Handoff。
+- **约束**：不改 Core/契约/schema/用户数据/生成物/冻结设计/组合根/`FrontendSelector`/Current V2；不 push；测试临时根；R-8 为行为等价重构，必须既有测试全绿。
+- **拆分**：本批不拆子 Task；OUT 项待对应端口 Task done 后由 DSH 再冻结第二批。
+
+
 ## 验收标准
 
 - [ ] **AC1 四页与 Shell residual 补齐**：R-1/R-2/R-3/R-4 中不依赖未就绪端口的 UI 部分先闭环；依赖端口的项在端口 Task done 后逐项闭环并登记证据。 `<<TODO>>`
@@ -78,12 +95,6 @@ allowed_paths:
 
 - 不改 Core/契约/schema/用户数据/生成物/冻结设计/组合根/`FrontendSelector`/Current V2；不 push；不扩大设计基线之外交互。
 - 依赖端口未就绪的残项**不得**用模拟数据/假实现充数；应登记为 blocked 并等待对应 Task。
-
-## 待 DSH 范围冻结事项
-
-- 释放时机：FEA-07 完成（至少 memento/DPI/窗口验收）后，按端口就绪情况分批；首批可先做 R-2（UI 部分）/R-3（UI 部分）/R-6/R-7。
-- 是否拆分多个子 Task（例如 UI-only 与 data-port 依赖分离）在 scope 复核时确定。
-- 本卡 `base_commit`/`allowed_paths` 在释放时刷新。
 
 ## 测试要求
 
