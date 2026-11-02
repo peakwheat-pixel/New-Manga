@@ -71,7 +71,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private FluentPage _currentPage;
     private Control? _activeDialog;
     private IInputElement? _focusBeforeDialog;
-    private bool _appearanceMotionSubscribed;
+    private volatile bool _appearanceMotionSubscribed;
+    private volatile int _motionAttachGeneration;
     private bool _motionNavigationEnabled;
     private MotionTimingProfile? _motionTimings;
     private FluentFrameAnimation? _overlayExit;
@@ -92,6 +93,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         Appearance = appearance;
         ThemeManager = themeManager;
         InitializeComponent();
+        this[!FocusRing.OffsetProperty] = new Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("Nm.Focus.Ring.Offset");
         KeyMap.EnsureValid(_keyMap);
 
         _frontendId = selection?.EffectiveFrontendId ?? FrontendSelector.CurrentV2FrontendId;
@@ -408,6 +410,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void OnPreviewKeyDown(object? sender, KeyEventArgs args)
     {
+        if (_currentPage == FluentPage.Reader) _readerView.NotifyInteraction();
         var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         _textInputFocused = focused is TextBox;
         if (HandleKeyForTest(args.Key, args.KeyModifiers, _textInputFocused)) args.Handled = true;
@@ -653,6 +656,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void OnAppearanceChangedForMotion(object? sender, EventArgs args)
     {
+        var generation = _motionAttachGeneration;
         if (!_appearanceMotionSubscribed)
         {
             return;
@@ -666,7 +670,11 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             return;
         }
 
-        Dispatcher.UIThread.Post(() => ApplyMotion(Appearance?.Settings ?? AppearanceDefaults.Settings));
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!_appearanceMotionSubscribed || generation != _motionAttachGeneration || !this.IsAttachedToVisualTree()) return;
+            ApplyMotion(Appearance?.Settings ?? AppearanceDefaults.Settings);
+        });
     }
 
     private void ApplyMotion(AppearanceSettings settings)
@@ -693,7 +701,10 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         ApplyFeedbackTransitions(_motionTimings);
         Classes.Set("motion-reduced", !resolution.Enabled);
         // I-10：reduce 下阅读器工具条直接切换、无淡出过渡（07:23）。
-        _readerModel.AreToolBarsReducedMotion = !resolution.Enabled;
+        _readerView.ConfigureMotion(_motionTimings, MotionClock);
+        _settingsView.ConfigureMotion(_motionTimings, MotionClock);
+        _shelfView.ConfigureMotion(_motionTimings, MotionClock);
+        _readerModel.AreToolBarsReducedMotion = !resolution.IsEnabled(MotionCategories.Navigation);
     }
 
     private void ApplyNavigationTransition(MotionTimingProfile timings)
@@ -744,18 +755,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     /// </summary>
     private void ApplyFeedbackTransitions(MotionTimingProfile? timings)
     {
-        var enabled = timings is not null && timings.FeedbackHoverMilliseconds > 0;
-        Transitions? transitions = enabled
-            ? new Transitions
-            {
-                new BrushTransition
-                {
-                    Property = TemplatedControl.BackgroundProperty,
-                    Duration = TimeSpan.FromMilliseconds(timings!.FeedbackHoverMilliseconds),
-                    Easing = new CubicEaseOut(),
-                },
-            }
-            : null;
+        var configuration = new FluentMotionScope.Configuration(timings, MotionClock);
 
         // impl-r1 R1-002: cached page views are detached from the visual tree when not current, so a walk
         // of `this` alone misses them (and their buttons were created before the current settings were
@@ -767,6 +767,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             {
                 continue;
             }
+            ((Control)root).SetValue(FluentMotionScope.ConfigurationProperty, configuration);
 
             // Content can already belong to the logical tree before its template/layout attaches it
             // to the visual tree. Include both so newly navigated pages get feedback before first use.
@@ -774,8 +775,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
                 .Concat(((Control)root).GetLogicalDescendants().OfType<Control>()).Distinct().ToArray();
             foreach (var button in controls.OfType<Button>())
             {
-                button.Transitions = transitions;
-                FluentFeedbackMotion.Configure(button, timings?.FeedbackPressedMilliseconds ?? 0, MotionClock);
+                FluentMotionScope.Apply(button, configuration);
             }
 
             foreach (var badge in controls.Where(control => control.Classes.Contains("fluent-feedback-badge")))
@@ -789,12 +789,13 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     {
         var button = source as Button ?? (source as Visual)?.GetVisualAncestors().OfType<Button>().FirstOrDefault();
         if (button is not null)
-            FluentFeedbackMotion.Configure(button, _motionTimings?.FeedbackPressedMilliseconds ?? 0, MotionClock);
+            FluentMotionScope.Apply(button, new FluentMotionScope.Configuration(_motionTimings, MotionClock));
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+        ++_motionAttachGeneration;
         // impl-r1 R1-006: balanced attach/detach subscription; a cached tree that is re-attached gets
         // exactly one listener and re-applies the resolved motion to the new visual tree.
         if (Appearance is not null && !_appearanceMotionSubscribed)
@@ -808,6 +809,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        ++_motionAttachGeneration;
         if (Appearance is not null && _appearanceMotionSubscribed)
         {
             Appearance.Changed -= OnAppearanceChangedForMotion;

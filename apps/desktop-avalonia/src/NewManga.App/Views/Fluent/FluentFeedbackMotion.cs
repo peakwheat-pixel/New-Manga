@@ -21,7 +21,7 @@ internal static class FluentFeedbackMotion
         private readonly bool _badge;
         private readonly ScaleTransform _scale = new(1, 1);
         private readonly FluentFrameAnimation _animation;
-        private readonly SplineEasing _easing = new(0.2, 0, 0, 1);
+        private readonly SplineEasing _easing = new(0.4, 0, 0.2, 1);
         private IFluentMotionClock _clock = FluentRenderClock.Instance;
         private double _duration;
 

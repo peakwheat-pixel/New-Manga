@@ -12,6 +12,7 @@ using Avalonia.Automation;
 using Avalonia.Threading;
 using NewManga.App.Controls;
 using NewManga.App.ViewModels.Fluent;
+using NewManga.Appearance;
 using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Icons;
 using DsReaderPage = NewManga.DesignSystem.Controls.ReaderPage;
@@ -45,6 +46,12 @@ public sealed class ReaderPageView : UserControl
     private readonly PageThumbStrip _thumbStrip;
     private readonly ReaderProgressBar _progress;
     private readonly DispatcherTimer _autoHideTimer;
+    private readonly FluentVisibilityMotion _topMotion;
+    private readonly FluentVisibilityMotion _bottomMotion;
+    private IFluentMotionClock _motionClock = FluentRenderClock.Instance;
+    private TimeSpan? _idleDeadline;
+    internal TimeSpan? IdleDeadline => _idleDeadline;
+    internal bool IdleTimerEnabled => _autoHideTimer.IsEnabled;
     private byte[]? _imageBytes;
     private Bitmap? _bitmap;
 
@@ -76,8 +83,10 @@ public sealed class ReaderPageView : UserControl
         _root.Children.Add(BuildReadingArea());
         _root.Children.Add(_bottomBar);
         Content = _root;
+        _topMotion = new FluentVisibilityMotion(_topBar);
+        _bottomMotion = new FluentVisibilityMotion(_bottomBar);
         _autoHideTimer = new DispatcherTimer { Interval = ToolBarAutoHideInterval };
-        _autoHideTimer.Tick += (_, _) => _viewModel.HideToolBarsAfterIdle();
+        _autoHideTimer.Tick += (_, _) => CheckIdleDeadline();
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         KeyDown += OnKeyDown;
         _pageSurface.DoubleTapped += (_, _) => _viewModel.ToggleDoublePage();
@@ -87,9 +96,14 @@ public sealed class ReaderPageView : UserControl
             _ = args.Delta.Y >= 0 ? _viewModel.PreviousAsync() : _viewModel.NextAsync();
             args.Handled = true;
         };
-        AddHandler(InputElement.PointerMovedEvent, (_, _) => WakeToolBars(), RoutingStrategies.Tunnel);
-        AttachedToVisualTree += (_, _) => { if (_viewModel.AreToolBarsVisible) _autoHideTimer.Start(); };
-        DetachedFromVisualTree += (_, _) => _autoHideTimer.Stop();
+        AddHandler(PointerMovedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
+        AddHandler(PointerPressedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
+        // Releasing a center tap resets time but must not undo its visibility toggle.
+        AddHandler(PointerReleasedEvent, (_, _) => NotifyInteraction(reveal: false), RoutingStrategies.Tunnel, handledEventsToo: true);
+        AddHandler(PointerWheelChangedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
+        AddHandler(KeyDownEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
+        AttachedToVisualTree += (_, _) => ResetIdleDeadline();
+        DetachedFromVisualTree += (_, _) => { _autoHideTimer.Stop(); _idleDeadline = null; };
         ApplyToolBarsMotionMode();
         ApplyToolBarsVisibility();
         ApplySideRailVisibility();
@@ -203,28 +217,43 @@ public sealed class ReaderPageView : UserControl
 
     private void WakeToolBars()
     {
-        _viewModel.PokeToolBars();
-        // impl-r1 R1-003: every interaction restarts the 2s idle deadline, even while the bars are
-        // already visible (PokeToolBars is idempotent for the bool, so the old code never restarted the
-        // timer and the bars could hide mid-interaction).
+        NotifyInteraction();
+    }
+
+    internal void NotifyInteraction(bool reveal = true)
+    {
+        if (reveal) _viewModel.PokeToolBars();
+        ResetIdleDeadline();
+    }
+
+    private void ResetIdleDeadline()
+    {
         if (_viewModel.AreToolBarsVisible && TopLevel.GetTopLevel(this) is not null)
         {
+            _idleDeadline = _motionClock.Now + ToolBarAutoHideInterval;
             _autoHideTimer.Stop();
             _autoHideTimer.Start();
         }
     }
 
+    internal void CheckIdleDeadline()
+    {
+        if (_idleDeadline is { } deadline && _motionClock.Now >= deadline && TopLevel.GetTopLevel(this) is not null)
+            _viewModel.HideToolBarsAfterIdle();
+    }
+
     private void ApplyToolBarsVisibility()
     {
-        _topBar.IsVisible = _viewModel.AreToolBarsVisible;
-        _bottomBar.IsVisible = _viewModel.AreToolBarsVisible;
+        _topMotion.SetVisible(_viewModel.AreToolBarsVisible);
+        _bottomMotion.SetVisible(_viewModel.AreToolBarsVisible);
         if (_viewModel.AreToolBarsVisible)
         {
-            _autoHideTimer.Start();
+            ResetIdleDeadline();
         }
         else
         {
             _autoHideTimer.Stop();
+            _idleDeadline = null;
         }
     }
 
@@ -236,17 +265,17 @@ public sealed class ReaderPageView : UserControl
 
     private void ApplyToolBarsMotionMode()
     {
-        // I-10：full/auto 下条带 160ms 淡出过渡（02-motion §2.1 浮层退出参数）；reduce 下直接切换（07:23）。
-        if (_viewModel.AreToolBarsReducedMotion)
-        {
-            _topBar.Transitions = null;
-            _bottomBar.Transitions = null;
-            return;
-        }
+        var duration = _viewModel.AreToolBarsReducedMotion ? 0 : ToolBarFadeDuration.TotalMilliseconds;
+        _topMotion.Configure(0, duration, _motionClock);
+        _bottomMotion.Configure(0, duration, _motionClock);
+    }
 
-        var fade = new Transitions { new DoubleTransition { Property = OpacityProperty, Duration = ToolBarFadeDuration } };
-        _topBar.Transitions = fade;
-        _bottomBar.Transitions = new Transitions { new DoubleTransition { Property = OpacityProperty, Duration = ToolBarFadeDuration } };
+    internal void ConfigureMotion(MotionTimingProfile timings, IFluentMotionClock clock)
+    {
+        _motionClock = clock;
+        _topMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
+        _bottomMotion.Configure(0, timings.NavigationOverlayOutMilliseconds, clock);
+        ResetIdleDeadline();
     }
 
     private void Render()

@@ -43,6 +43,8 @@ public sealed class ShelfPageView : UserControl
     private readonly Drawer _recycleDrawer;
     private readonly FluentDialog _dialog;
     private readonly Border _dialogScrim;
+    private readonly FluentVisibilityMotion _scrimMotion;
+    private readonly FluentVisibilityMotion[] _overlayMotions;
     private readonly TextBox _dialogInput;
     private readonly StackPanel _dialogBody;
     private readonly Button _dialogConfirm;
@@ -112,6 +114,8 @@ public sealed class ShelfPageView : UserControl
         _dialogInput = FluentUi.Input("名称", "输入作品或章节名称");
         _dialog = new FluentDialog { IsOpen = false };
         _dialogScrim = new Border { Classes = { "fluent-modal-scrim" }, IsVisible = false };
+        _scrimMotion = new FluentVisibilityMotion(_dialogScrim);
+        _overlayMotions = [new(_dialog, FluentDialog.IsOpenProperty), new(_recycleDrawer, Drawer.IsOpenProperty)];
         _dialogBody = FluentUi.Stack("fluent-page-layout");
         _dialogConfirm = FluentUi.Button("确认", "fluent-primary", () => _ = SubmitNameAsync(), "确认操作");
 
@@ -142,6 +146,14 @@ public sealed class ShelfPageView : UserControl
     public void ShowNewChapterDialog() => ShowNameDialog("chapter");
 
     public void OpenRecycleDrawer() => _recycleDrawer.IsOpen = true;
+
+    internal void ConfigureMotion(MotionTimingProfile timings, IFluentMotionClock clock)
+    {
+        _scrimMotion.Configure(timings.NavigationOverlayInMilliseconds > 0 ? timings.NavigationOverlayOutMilliseconds : 0,
+            timings.NavigationOverlayOutMilliseconds, clock);
+        foreach (var motion in _overlayMotions)
+            motion.Configure(timings.NavigationOverlayInMilliseconds, timings.NavigationOverlayOutMilliseconds, clock);
+    }
 
     public Task ImportFilesAsync() => PickAndImportFilesAsync();
 
@@ -424,14 +436,14 @@ public sealed class ShelfPageView : UserControl
         AddDialogActions("取消");
         _dialogInput.Text = string.Empty;
         _dialog.IsOpen = true;
-        _dialogScrim.IsVisible = true;
+        _scrimMotion.SetVisible(true);
         _dialogInput.Focus();
     }
 
     private void CloseDialog()
     {
         _dialog.IsOpen = false;
-        _dialogScrim.IsVisible = false;
+        _scrimMotion.SetVisible(false);
     }
 
     private async Task SubmitNameAsync()
@@ -501,11 +513,13 @@ public sealed class ShelfPageView : UserControl
             "fluent-status-text"));
         AddDialogActions("取消导入");
         _dialog.IsOpen = true;
-        _dialogScrim.IsVisible = true;
+        _scrimMotion.SetVisible(true);
     }
 
     private void AddDialogActions(string cancelName)
     {
+        // The cached confirm button still belongs to the previous (now detached) actions panel.
+        if (_dialogConfirm.Parent is Panel previous) previous.Children.Remove(_dialogConfirm);
         var actions = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         actions.Children.Add(FluentUi.Button("取消", "fluent-secondary", CloseDialog, cancelName));
         actions.Children.Add(_dialogConfirm);

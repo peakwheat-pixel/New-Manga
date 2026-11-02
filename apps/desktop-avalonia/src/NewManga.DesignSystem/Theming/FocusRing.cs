@@ -30,6 +30,13 @@ public sealed class FocusRing : AvaloniaObject
     public static readonly AttachedProperty<bool> IsEnabledProperty =
         AvaloniaProperty.RegisterAttached<FocusRing, Control, bool>("IsEnabled");
 
+    /// <summary>Opt-in outside gap. Fluent binds its frozen token; Current retains its existing zero gap.</summary>
+    public static readonly AttachedProperty<double> OffsetProperty =
+        AvaloniaProperty.RegisterAttached<FocusRing, Control, double>("Offset", defaultValue: 0d, inherits: true);
+
+    public static double GetOffset(Control control) => control.GetValue(OffsetProperty);
+    public static void SetOffset(Control control, double value) => control.SetValue(OffsetProperty, value);
+
     private static readonly ConditionalWeakTable<Control, RingState> States = new();
 
     /// <summary>Test-only instrumentation: is this control currently holding focus handlers?</summary>
@@ -43,6 +50,10 @@ public sealed class FocusRing : AvaloniaObject
     static FocusRing()
     {
         IsEnabledProperty.Changed.AddClassHandler<Control>(OnIsEnabledChanged);
+        OffsetProperty.Changed.AddClassHandler<Control>((control, _) =>
+        {
+            if (States.TryGetValue(control, out var state)) Position(control, state);
+        });
     }
 
     public static bool GetIsEnabled(Control control) => control.GetValue(IsEnabledProperty);
@@ -163,7 +174,9 @@ public sealed class FocusRing : AvaloniaObject
         // clipped by an ancestor ScrollViewer (or the window), hide the ring until it is fully visible.
         // The 2px stroke sits outside the control bounds, so visibility must include the stroke extent.
         var stroke = ResolveStroke(control);
-        var visible = state.KeyboardFocus && control.IsFocused && IsFullyVisible(control, stroke);
+        var offset = Math.Max(0, GetOffset(control));
+        var extent = new Thickness(stroke.Left + offset, stroke.Top + offset, stroke.Right + offset, stroke.Bottom + offset);
+        var visible = state.KeyboardFocus && control.IsFocused && IsFullyVisible(control, extent);
         state.Ring.IsVisible = visible;
         if (!visible)
         {
@@ -177,17 +190,17 @@ public sealed class FocusRing : AvaloniaObject
         }
 
         var bounds = control.Bounds;
-        state.Ring.Width = bounds.Width + (stroke.Left * 2);
-        state.Ring.Height = bounds.Height + (stroke.Top * 2);
+        state.Ring.Width = bounds.Width + extent.Left + extent.Right;
+        state.Ring.Height = bounds.Height + extent.Top + extent.Bottom;
         // BorderThickness is token-bound (R1-008); only the geometry is recomputed here.
         if (state.Host is Canvas canvas)
         {
-            Canvas.SetLeft(state.Ring, topLeft.Value.X - stroke.Left);
-            Canvas.SetTop(state.Ring, topLeft.Value.Y - stroke.Top);
+            Canvas.SetLeft(state.Ring, topLeft.Value.X - extent.Left);
+            Canvas.SetTop(state.Ring, topLeft.Value.Y - extent.Top);
         }
         else
         {
-            state.Ring.Margin = new Thickness(topLeft.Value.X - stroke.Left, topLeft.Value.Y - stroke.Top, 0, 0);
+            state.Ring.Margin = new Thickness(topLeft.Value.X - extent.Left, topLeft.Value.Y - extent.Top, 0, 0);
         }
     }
 

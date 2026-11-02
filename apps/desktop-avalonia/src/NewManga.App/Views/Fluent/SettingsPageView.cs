@@ -32,6 +32,8 @@ public sealed class SettingsPageView : UserControl
     private readonly FluentDialog _leaveDialog;
     private readonly Button _leaveCancelButton;
     private readonly Border _scrim;
+    private readonly FluentVisibilityMotion _scrimMotion;
+    private readonly FluentVisibilityMotion[] _dialogMotions;
     private Action? _pendingLeave;
     private IInputElement? _focusBeforeLeave;
     private BackupPackageInfo? _pendingBackup;
@@ -67,6 +69,8 @@ public sealed class SettingsPageView : UserControl
         _leaveCancelButton = FluentUi.Button("取消", "fluent-secondary", CancelLeave, "取消离开设置页");
         _leaveDialog = new FluentDialog { IsOpen = false, Child = BuildLeaveDialogContent() };
         _scrim = new Border { Classes = { "fluent-modal-scrim" }, IsVisible = false };
+        _scrimMotion = new FluentVisibilityMotion(_scrim);
+        _dialogMotions = [new(_confirmation, FluentDialog.IsOpenProperty), new(_leaveDialog, FluentDialog.IsOpenProperty)];
 
         var root = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto") };
         root.Children.Add(BuildToolbar());
@@ -224,7 +228,15 @@ public sealed class SettingsPageView : UserControl
         }
     }
 
-    private void UpdateScrimVisibility() => _scrim.IsVisible = _confirmation.IsOpen || _leaveDialog.IsOpen;
+    private void UpdateScrimVisibility() => _scrimMotion.SetVisible(_confirmation.IsOpen || _leaveDialog.IsOpen);
+
+    internal void ConfigureMotion(MotionTimingProfile timings, IFluentMotionClock clock)
+    {
+        _scrimMotion.Configure(timings.NavigationOverlayInMilliseconds > 0 ? timings.NavigationOverlayOutMilliseconds : 0,
+            timings.NavigationOverlayOutMilliseconds, clock);
+        foreach (var motion in _dialogMotions)
+            motion.Configure(timings.NavigationOverlayInMilliseconds, timings.NavigationOverlayOutMilliseconds, clock);
+    }
 
     private void HandleScrimPressed()
     {

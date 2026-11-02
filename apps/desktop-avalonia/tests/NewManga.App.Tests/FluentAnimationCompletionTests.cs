@@ -21,6 +21,7 @@ using NewManga.App.ViewModels.Fluent;
 using NewManga.App.Views.Fluent;
 using NewManga.Appearance;
 using NewManga.CoreClient;
+using NewManga.DesignSystem.Theming;
 
 namespace NewManga.App.Tests;
 
@@ -200,6 +201,8 @@ public sealed class FluentAnimationCompletionTests
     [AvaloniaFact]
     public async Task WorkbenchDraftEdit_BadgeSurvivesRender_AndNewButtonsReceivePressedMotion()
     {
+        using var theme = new DesignSystemThemeManager(Application.Current!);
+        Assert.True(theme.Initialize(NewManga.DesignSystem.Theming.AppearanceMode.Light), theme.LastError);
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
         host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 0)];
         host.RegionsByPage["page-1"] = new RegionPageProjection(
@@ -240,6 +243,7 @@ public sealed class FluentAnimationCompletionTests
 
             var button = surface.WorkbenchView.GetVisualDescendants().OfType<Button>()
                 .Single(b => AutomationProperties.GetName(b) == "开启草稿");
+            FluentR2ReworkTests.Hover(window, button, animated: true);
             button.Focus();
             window.KeyPressQwerty(PhysicalKey.Space, RawInputModifiers.None);
             Assert.True(button.IsPressed);
@@ -250,8 +254,22 @@ public sealed class FluentAnimationCompletionTests
             Motion(surface, MotionMode.Reduce);
             Assert.Equal(1, Scale(button).ScaleX);
             // Release without invoking the command under test: focus moves before the key is released.
-            Trigger(surface).Focus();
+            surface.WorkbenchView.Focusable = true;
+            surface.WorkbenchView.Focus();
             window.KeyReleaseQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            surface.WorkbenchViewModel.DraftText = "rebuild with feedback disabled";
+            Dispatcher.UIThread.RunJobs();
+            var reducedButton = surface.WorkbenchView.GetVisualDescendants().OfType<Button>()
+                .Single(b => AutomationProperties.GetName(b) == "开启草稿");
+            Assert.NotSame(button, reducedButton);
+            FluentR2ReworkTests.Hover(window, reducedButton, animated: false);
+            Motion(surface);
+            surface.WorkbenchViewModel.DraftText = "rebuild with feedback restored";
+            Dispatcher.UIThread.RunJobs();
+            var restoredButton = surface.WorkbenchView.GetVisualDescendants().OfType<Button>()
+                .Single(b => AutomationProperties.GetName(b) == "开启草稿");
+            Assert.NotSame(reducedButton, restoredButton);
+            FluentR2ReworkTests.Hover(window, restoredButton, animated: true);
         }
         finally { window.Close(); }
     }

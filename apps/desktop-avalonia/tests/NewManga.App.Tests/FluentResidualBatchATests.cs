@@ -242,6 +242,7 @@ public sealed class FluentResidualBatchATests : IDisposable
         Assert.True(shell.ReaderView.TopBar.IsVisible);
         Assert.True(shell.ReaderView.BottomBar.IsVisible);
 
+        shell.ReaderViewModel.AreToolBarsReducedMotion = true; // This case verifies the instant reduce path.
         shell.ReaderViewModel.HideToolBarsAfterIdle();
         Dispatcher.UIThread.RunJobs();
         Assert.False(shell.ReaderViewModel.AreToolBarsVisible);
@@ -288,17 +289,22 @@ public sealed class FluentResidualBatchATests : IDisposable
         shell.Navigate(FluentPage.Reader);
         Dispatcher.UIThread.RunJobs();
 
-        // full/auto：条带 160ms 淡出过渡（02-motion §2.1 浮层退出参数）。
+        var clock = new ManualFluentMotionClock();
+        shell.ReaderView.ConfigureMotion(MotionTimings.Resolve(new MotionSettings(MotionMode.Full, true, true, true, true)), clock);
+        // Full: assert real opacity interpolation, rather than a transition descriptor.
         shell.ReaderViewModel.AreToolBarsReducedMotion = false;
-        Dispatcher.UIThread.RunJobs();
-        var fade = Assert.Single(shell.ReaderView.TopBar.Transitions!.OfType<DoubleTransition>());
-        Assert.Equal(TimeSpan.FromMilliseconds(160), fade.Duration);
+        shell.ReaderViewModel.HideToolBarsAfterIdle();
+        clock.Advance(80);
+        Assert.True(shell.ReaderView.TopBar.IsVisible);
+        Assert.InRange(shell.ReaderView.TopBar.Opacity, .000001, .999999);
 
         // reduce：直接切换（07:23），无过渡。
         shell.ReaderViewModel.AreToolBarsReducedMotion = true;
         Dispatcher.UIThread.RunJobs();
         Assert.Null(shell.ReaderView.TopBar.Transitions);
         Assert.Null(shell.ReaderView.BottomBar.Transitions);
+        Assert.False(shell.ReaderView.TopBar.IsVisible);
+        Assert.Equal(0, shell.ReaderView.TopBar.Opacity);
     }
 
     [AvaloniaFact]
@@ -312,6 +318,7 @@ public sealed class FluentResidualBatchATests : IDisposable
         Assert.True(shell.ReaderView.SideRail.IsVisible);
 
         // 2s 空闲隐藏只作用于顶部/底部条；右侧浮动条常显（07:62）。
+        shell.ReaderViewModel.AreToolBarsReducedMotion = true;
         shell.ReaderViewModel.HideToolBarsAfterIdle();
         Dispatcher.UIThread.RunJobs();
         Assert.False(shell.ReaderView.TopBar.IsVisible);
