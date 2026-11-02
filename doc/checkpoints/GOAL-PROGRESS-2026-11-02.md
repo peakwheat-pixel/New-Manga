@@ -579,3 +579,12 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **D-7 待裁决（DSH 已按推荐执行）**：故障转移候选同时不可用时，是否允许 DSH 直接实施 Batch B 剩余项并在 agent 恢复后补独立 Review。推荐/采用：**允许**——变更均在冻结范围与 allowed_paths 内；保留逐子项提交；独立 Review 待 Codex/ZCode 恢复后补做（不得以 DSH 自审替代）。依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 实施（仅不得自审）。
 - **剩余**：I-4（组件 full 状态矩阵）、I-5（motion 三态×三类消费断言）、I-8（Elevation+高对比回退）、I-11（焦点环/浮层焦点/Tab 序）；Batch B 证据与 Handoff 待全部完成后补。
 - **下一步**：DSH 继续实施 Batch B 剩余项 → agent 恢复后派独立 impl 复核（Codex 优先）→ DSH 集成验证 → done/closed_with_limitations。
+## 82. FEA-06-RESIDUAL-1 Batch B 部分交付（DSH，2026-11-02 深夜）
+
+- **I-5**：`MotionTimings` 冻结参数表（02-motion §2）落地；FluentShellSurface 消费 navigation 页面过渡（240ms）并订阅 `AppearanceCoordinator.Changed`（Dispatcher 编组）实现运行时 mode/categories 变更即时重放；reduce/category-off → 无过渡。测试：表参数 + 运行时重放（2 tests）。
+- **I-8**：`Nm.Elevation.*` 消费（surface-card/detail-pane=1、drawer=2、dialog=3）；`DesignSystemThemeManager.SetContrast(High)` 运行时注入 `Nm.Border.Focus=3px` + Elevation 置空（1px 边框仍在），生成文件字节不变、Current V2 零改动；standard/reduce 阴影不变。测试：token 与渲染控件 BoxShadow/BorderThickness。
+- **I-11（部分）**：焦点环 2px↔高对比 3px（ring BorderThickness 断言）；设置页离开浮层焦点移入 + 取消后返还触发控件。隐藏控件 Tab 序未单测。
+- **I-4（部分）**：组件×状态声明覆盖测试（primary/secondary/danger/book-card/book-row/space-button/command-row + surface/detail/dialog/drawer）；`DesignRulesTests` 阴影规则由「禁止」更新为「只允许 DynamicResource Nm.Elevation.*」（对齐冻结设计 01 §2.3）。其余组件状态未补齐（NOT_RUN 清单见 Task）。
+- **验证**（`a315bee02`）：build 0/0；**无过滤全量 1177/0/57**（基线 1137 + Batch A 33 + Batch B 7）；旧 FEA-06 PNG 字节零漂移；生成器/治理/pins 全过。证据 `batch-b-verification.log`。
+- **D-7 状态**：双 agent 额度耗尽（Codex 00:23 / ZCode 03:02 恢复）；DSH 按推荐口径实施并保留独立 Review 待补（不得自审）。
+- **下一步**：收尾 I-4 剩余组件状态 + I-11 Tab 序 + I-5 feedback/decorative 消费；agent 恢复后派 fresh impl Review（Codex 优先）→ DSH 集成验证 → 按实际 AC done/closed_with_limitations。
