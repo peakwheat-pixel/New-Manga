@@ -15,10 +15,46 @@ public sealed class ReaderViewModel : FluentViewModel
     private double _scrollOffset;
     private byte[]? _pageBytes;
     private bool _isSavingProgress;
+    private bool _areToolBarsVisible = true;
+    private bool _isSideRailVisible = true;
+    private bool _areToolBarsReducedMotion;
     private string? _requestedBookId;
     private string? _requestedChapterId;
 
     public ReaderViewModel(IHostController? host) => _host = host;
+
+    /// <summary>I-10：顶部/底部条当前可见状态；2s 空闲后隐藏，交互唤醒（07:23）。</summary>
+    public bool AreToolBarsVisible
+    {
+        get => _areToolBarsVisible;
+        private set => Set(ref _areToolBarsVisible, value);
+    }
+
+    /// <summary>I-10：右侧浮动工具条常显、可显式隐藏（07:62）；不参与 2s 自动隐藏。</summary>
+    public bool IsSideRailVisible
+    {
+        get => _isSideRailVisible;
+        set => Set(ref _isSideRailVisible, value);
+    }
+
+    /// <summary>I-10：reduce 下工具条直接切换、无淡出过渡（07:23）；由 shell 在 motion 解析后同步。</summary>
+    public bool AreToolBarsReducedMotion
+    {
+        get => _areToolBarsReducedMotion;
+        set => Set(ref _areToolBarsReducedMotion, value);
+    }
+
+    /// <summary>I-10：任意指针/键盘交互让顶部/底部条重新可见（视图会重启 2s 空闲计时器）。</summary>
+    public void PokeToolBars() => AreToolBarsVisible = true;
+
+    /// <summary>I-10：点击页面中部切换顶部/底部条显隐（07:23）。</summary>
+    public void ToggleToolBars() => AreToolBarsVisible = !AreToolBarsVisible;
+
+    /// <summary>I-10：2s 空闲窗口到期（由视图的 DispatcherTimer 驱动）；reduce 下同样隐藏、只是切换方式不同。</summary>
+    public void HideToolBarsAfterIdle() => AreToolBarsVisible = false;
+
+    /// <summary>I-10：切换右侧浮动工具条显隐（常显语义下的显式隐藏入口）。</summary>
+    public void ToggleSideRail() => IsSideRailVisible = !IsSideRailVisible;
 
     public ReaderBookData? Book { get => _book; private set => Set(ref _book, value); }
     public int PageIndex { get => _pageIndex; private set => Set(ref _pageIndex, value); }

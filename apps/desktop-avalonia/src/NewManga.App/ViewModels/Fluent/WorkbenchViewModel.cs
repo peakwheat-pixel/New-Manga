@@ -25,6 +25,8 @@ public sealed class WorkbenchViewModel : FluentViewModel
     private IReadOnlyList<Draft> _drafts = Array.Empty<Draft>();
     private bool _isBatch;
     private bool _isApplying;
+    private bool _isInspectorCollapsed;
+    private double _filmStripScrollOffset;
 
     public WorkbenchViewModel(IHostController? host, string sessionId)
     {
@@ -56,6 +58,20 @@ public sealed class WorkbenchViewModel : FluentViewModel
     }
     public bool IsBatch { get => _isBatch; set => Set(ref _isBatch, value); }
     public bool IsApplying { get => _isApplying; private set => Set(ref _isApplying, value); }
+
+    /// <summary>I-1/I-2：检查器折叠状态；同一运行期 UI memento，不落盘（页面往返/frontend 切换后保留）。</summary>
+    public bool IsInspectorCollapsed
+    {
+        get => _isInspectorCollapsed;
+        set => Set(ref _isInspectorCollapsed, value);
+    }
+
+    /// <summary>I-1：film-strip 横向滚动偏移；同一运行期 UI memento，不落盘。</summary>
+    public double FilmStripScrollOffset
+    {
+        get => _filmStripScrollOffset;
+        set => Set(ref _filmStripScrollOffset, value);
+    }
     public bool IsReadOnly => _host is null || !_host.Snapshot.WritesAllowed;
     public bool HasUnsavedDraft => CurrentDraft is not null && !string.Equals(DraftText, _persistedDraftText, StringComparison.Ordinal);
     public string ErrorCategory { get; private set; } = string.Empty;

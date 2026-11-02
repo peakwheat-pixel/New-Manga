@@ -15,6 +15,8 @@ public sealed class ShelfViewModel : FluentViewModel
     private ChapterSummary? _selectedChapter;
     private bool _isImporting;
     private string _viewStatus = string.Empty;
+    private bool _isDetailPaneCollapsed;
+    private double _listScrollOffset;
     private IReadOnlyList<ChapterPageSummary> _previewPages = Array.Empty<ChapterPageSummary>();
 
     public ShelfViewModel(IHostController? host)
@@ -58,6 +60,20 @@ public sealed class ShelfViewModel : FluentViewModel
     {
         get => _isGrid;
         set => Set(ref _isGrid, value);
+    }
+
+    /// <summary>I-1/I-2：详情栏折叠状态；同一运行期 UI memento，不落盘（页面往返/frontend 切换后保留）。</summary>
+    public bool IsDetailPaneCollapsed
+    {
+        get => _isDetailPaneCollapsed;
+        set => Set(ref _isDetailPaneCollapsed, value);
+    }
+
+    /// <summary>I-1：书架列表滚动偏移；同一运行期 UI memento，不落盘。</summary>
+    public double ListScrollOffset
+    {
+        get => _listScrollOffset;
+        set => Set(ref _listScrollOffset, value);
     }
 
     public bool FavoritesOnly

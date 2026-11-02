@@ -1,7 +1,11 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Layout;
+using Avalonia.Media;
 using NewManga.App.Controls;
 using NewManga.App.Services;
 using NewManga.App.ViewModels.Fluent;
@@ -22,8 +26,12 @@ public sealed class SettingsPageView : UserControl
     private readonly SearchField _search;
     private readonly Button _saveButton;
     private readonly Button _cancelButton;
+    private readonly Ellipse _dirtyDot;
     private readonly FluentDialog _confirmation;
+    private readonly FluentDialog _leaveDialog;
+    private readonly Button _leaveCancelButton;
     private readonly Border _scrim;
+    private Action? _pendingLeave;
     private BackupPackageInfo? _pendingBackup;
     private string _pendingAction = string.Empty;
 
@@ -34,6 +42,10 @@ public sealed class SettingsPageView : UserControl
         _contentHost = new Border();
         _notice = FluentUi.Text(string.Empty, "fluent-status-text");
         _stateHost = new Border { IsVisible = false };
+        // I-9：设置页未保存圆点（dirty 指示；语义色 + Name，非仅颜色）。
+        _dirtyDot = new Ellipse { Width = 8, Height = 8, IsVisible = false };
+        _dirtyDot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Status.Blocked");
+        AutomationProperties.SetName(_dirtyDot, "有未保存的设置修改");
         _search = FluentUi.Search("搜索设置", "搜索设置分组");
         _search.PropertyChanged += (_, args) =>
         {
@@ -49,6 +61,8 @@ public sealed class SettingsPageView : UserControl
         _saveButton = FluentUi.Button("保存", "fluent-primary", () => _ = _viewModel.SaveAppearanceAsync(), "保存外观设置");
         _cancelButton = FluentUi.Button("取消", "fluent-secondary", CancelDraft, "取消未保存修改");
         _confirmation = new FluentDialog { IsOpen = false };
+        _leaveCancelButton = FluentUi.Button("取消", "fluent-secondary", CancelLeave, "取消离开设置页");
+        _leaveDialog = new FluentDialog { IsOpen = false, Child = BuildLeaveDialogContent() };
         _scrim = new Border { Classes = { "fluent-modal-scrim" }, IsVisible = false };
 
         var root = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto") };
@@ -83,6 +97,7 @@ public sealed class SettingsPageView : UserControl
             {
                 RenderButtons();
                 RenderNotice();
+                RenderDirtyState();
             }
         };
         RenderGroupNavigation();
@@ -90,15 +105,130 @@ public sealed class SettingsPageView : UserControl
         RenderState();
         RenderNotice();
         RenderButtons();
+        RenderDirtyState();
         _ = _viewModel.LoadAsync();
     }
 
     public SettingsViewModel ViewModel => _viewModel;
 
+    /// <summary>I-3：离开确认浮层当前是否打开。</summary>
+    public bool LeaveConfirmationVisible => _leaveDialog.IsOpen;
+
+    /// <summary>I-3：本页任意确认浮层（备份/Provider/网络编辑等）是否打开；Esc 优先于离开流关闭它。</summary>
+    public bool HasOpenConfirmation => _confirmation.IsOpen;
+
+    /// <summary>
+    /// I-3：离开设置页的确认流入口。干净（非 dirty）直接离开；有未保存修改时打开
+    /// 三分支确认（保存并离开 / 丢弃并离开 / 取消）并挂起导航，返回 false。
+    /// </summary>
+    public bool TryBeginLeave(Action proceed)
+    {
+        if (!_viewModel.IsDirty)
+        {
+            proceed();
+            return true;
+        }
+
+        _pendingLeave = proceed;
+        _leaveDialog.IsOpen = true;
+        UpdateScrimVisibility();
+        _leaveCancelButton.Focus();
+        return false;
+    }
+
+    /// <summary>I-3：「取消」分支：关闭确认浮层，留在本页且草稿保留。</summary>
+    public void CancelLeave()
+    {
+        _pendingLeave = null;
+        _leaveDialog.IsOpen = false;
+        UpdateScrimVisibility();
+    }
+
+    /// <summary>I-3/08 §7：浮层内 Esc=取消——普通确认浮层的公开关闭入口（供 shell Esc 协调）。</summary>
+    public void CancelConfirmation() => CloseConfirmation();
+
+    private Control BuildLeaveDialogContent()
+    {
+        // I-3：三分支 = 保存并离开 / 丢弃并离开 / 取消（设计 08 §5「保存/丢弃/取消」）；
+        // 默认焦点在「取消」（08 §7 危险确认口径）。
+        var panel = FluentUi.Stack("fluent-page-layout");
+        panel.Children.Add(FluentUi.Text("未保存的设置修改", "fluent-page-title"));
+        panel.Children.Add(FluentUi.Text("离开设置页前，请选择保存、丢弃或取消；保存失败时会留在本页并保留未保存值。"));
+        var actions = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        actions.Children.Add(FluentUi.Button("保存并离开", "fluent-primary", () => _ = SaveAndLeaveAsync(), "保存设置后离开"));
+        actions.Children.Add(FluentUi.Button("丢弃并离开", "fluent-danger", DiscardAndLeave, "丢弃未保存修改后离开"));
+        actions.Children.Add(_leaveCancelButton);
+        panel.Children.Add(actions);
+        return panel;
+    }
+
+    private async Task SaveAndLeaveAsync()
+    {
+        var saved = await _viewModel.SaveAppearanceAsync();
+        if (!saved)
+        {
+            // I-3：保存失败保护——留在本页、draft 保留（SaveAppearanceAsync 失败不改 Draft）、错误可见。
+            _pendingLeave = null;
+            _leaveDialog.IsOpen = false;
+            UpdateScrimVisibility();
+            RenderGroupContent();
+            RenderNotice();
+            RenderButtons();
+            RenderDirtyState();
+            return;
+        }
+
+        var proceed = TakePendingLeave();
+        proceed?.Invoke();
+    }
+
+    private void DiscardAndLeave()
+    {
+        if (_viewModel.AppearanceCoordinator is not null)
+        {
+            _viewModel.UpdateDraft(_viewModel.AppearanceCoordinator.Settings);
+        }
+
+        var proceed = TakePendingLeave();
+        RenderGroupContent();
+        RenderButtons();
+        RenderDirtyState();
+        proceed?.Invoke();
+    }
+
+    private Action? TakePendingLeave()
+    {
+        _leaveDialog.IsOpen = false;
+        UpdateScrimVisibility();
+        var proceed = _pendingLeave;
+        _pendingLeave = null;
+        return proceed;
+    }
+
+    private void UpdateScrimVisibility() => _scrim.IsVisible = _confirmation.IsOpen || _leaveDialog.IsOpen;
+
+    private void HandleScrimPressed()
+    {
+        // I-3/08 §7：遮罩点击与 Esc 同义——离开确认打开时=取消离开；否则关闭普通确认浮层。
+        if (_leaveDialog.IsOpen)
+        {
+            CancelLeave();
+        }
+        else
+        {
+            CloseConfirmation();
+        }
+    }
+
+    private void RenderDirtyState() => _dirtyDot.IsVisible = _viewModel.IsDirty;
+
     private Control BuildToolbar()
     {
         var toolbar = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
-        toolbar.Children.Add(FluentUi.Text("设置", "fluent-page-title"));
+        var title = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        title.Children.Add(FluentUi.Text("设置", "fluent-page-title"));
+        title.Children.Add(_dirtyDot);
+        toolbar.Children.Add(title);
         toolbar.Children.Add(_search);
         toolbar.Children.Add(_notice);
         return toolbar;
@@ -119,10 +249,12 @@ public sealed class SettingsPageView : UserControl
         overlay.Children.Add(root);
         overlay.Children.Add(_scrim);
         Grid.SetRowSpan(_scrim, 3);
-        _scrim.PointerPressed += (_, _) => CloseConfirmation();
-        _confirmation.Child = FluentUi.Stack("fluent-page-layout");
+        _scrim.PointerPressed += (_, _) => HandleScrimPressed();
+        _confirmation.Child ??= FluentUi.Stack("fluent-page-layout");
         overlay.Children.Add(_confirmation);
         Grid.SetRow(_confirmation, 1);
+        overlay.Children.Add(_leaveDialog);
+        Grid.SetRow(_leaveDialog, 1);
         return overlay;
     }
 
@@ -494,7 +626,7 @@ public sealed class SettingsPageView : UserControl
         stack.Children.Add(actions);
         _confirmation.Child = stack;
         _confirmation.IsOpen = true;
-        _scrim.IsVisible = true;
+        UpdateScrimVisibility();
         actions.Children.OfType<Button>().First().Focus();
     }
 
@@ -593,7 +725,7 @@ public sealed class SettingsPageView : UserControl
     {
         _confirmation.Child = content;
         _confirmation.IsOpen = true;
-        _scrim.IsVisible = true;
+        UpdateScrimVisibility();
         initialFocus.Focus();
     }
 
@@ -610,7 +742,7 @@ public sealed class SettingsPageView : UserControl
     private void CloseConfirmation()
     {
         _confirmation.IsOpen = false;
-        _scrim.IsVisible = false;
+        UpdateScrimVisibility();
         _pendingBackup = null;
         _pendingAction = string.Empty;
     }

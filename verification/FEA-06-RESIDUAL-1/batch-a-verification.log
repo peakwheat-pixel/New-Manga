@@ -1,0 +1,49 @@
+# FEA-06-RESIDUAL-1 Batch A 实现验证（ZCode 实现 + DSH 收尾）
+# time: 2026-11-02 23:30:00 +08:00
+# 实现 Agent：ZCode CLI headless（--mode yolo；Codex CLI 额度故障转移，用户 2026-11-02 规则）
+#   ZCode 会话原始日志：G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-1\impl-batch-a-zcode-raw.log
+#   结果：SSH 会话在收尾前崩溃（exit -1073740791 = 0xC0000409 STATUS_STACK_BUFFER_OVERRUN，无 JSON 回答），
+#   工作树遗留 WIP；DSH 完成收尾与验证（未改实现语义，仅修 1 个异步测试 pump 与恢复被覆盖的旧证据）。
+# start head: 3e7e39299（范围 v3 冻结）
+# 交付 commits: 83fa1b186 (I-6 四 VM 等价拆分) + 本批 Batch A 功能 commit（见 git log）
+# worktree 写域核对: 全部改动在 Task allowed_paths 内（Views/Fluent/**、ViewModels/Fluent/**、
+#   tests/NewManga.App.Tests/**）；无 Core/契约/schema/生成物/冻结设计/Current V2/共享 seam 改动。
+# 被 ZCode 默认全量运行覆盖的旧证据：verification/FEA-06/screens/{shelf,workbench,reader}.png
+#   → 已用 `git checkout -- verification/FEA-06/screens` 恢复 HEAD 字节（SHA 未变）。
+# DSH 修正：FluentResidualSettingsLeaveTests.I3_Esc_OnDirtySettingsPage_... 的异步保存后导航断言
+#   改为 PumpUntil(() => CurrentPage == Library)，避免单次 RunJobs 竞态（实现语义未改）。
+#
+# build（Debug, sln）: exit=0
+#   0 个警告
+#   0 个错误
+# 新增测试（FluentResidualBatchATests + FluentResidualSettingsLeaveTests）: 33/33 passed
+# 安全全量（排除会写旧证据的 PNG 用例）:
+#   dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
+#     --filter "FullyQualifiedName!~FluentPages_RenderHeadlessPngEvidence"
+#   exit=0；21+38+51+253+87+31+128+561 = **1170 passed / 0 failed / 57 skipped**
+#   （基线口径：1137/0/57 + 33 新测试；PNG 用例未运行，旧证据未被覆盖）
+# FEA-07 非回归子集（含于上述全量，均通过）：
+#   PresentationHostCompositionTests / PresentationWindowTests / PresentationInputRoutingTests /
+#   SettingsDraftSyncTests / FrontendHostCoordinatorTests
+# generators:
+#   TokenGen -- --check: exit 0（292 rows up-to-date）
+#   ThemeGen -- --check: exit 0（up-to-date）
+# governance:
+#   check.ps1: PASS (3 warnings)
+#   verify_pins.ps1: PASS 15/15
+# Batch A 子项状态：
+#   I-6 = 完成（commit 83fa1b186；FluentPageViewModels.cs 1408 行→四文件+共享基类；既有测试不改弱）
+#   I-1 = 完成（Workbench memento：collapse/scroll/selection 页面往返恢复，测试覆盖）
+#   I-2 = 完成（Shelf/Workbench 分栏折叠：点击+键盘+约束，测试覆盖）
+#   I-3 = 完成（离开确认三分支 + 保存失败保护 + Esc 优先级；DSH 修 1 个测试 pump）
+#   I-9 = 完成（Settings/Workbench dirty 圆点）
+#   I-10 = 完成（顶部/底部条 2s 自动隐藏 + 交互唤醒 + 全屏切换唤醒；右侧条语义按设计）
+#   I-12 = 完成（Console 空间入口导航 + 占位诚实文案；控制台内容投影仍 BLOCKED B-1/B-6）
+#   I-13 = 完成（工作台 9 行状态视觉骨架：readonly/error/console 入口态；数据绑定仍 BLOCKED B-2）
+#   I-14 = 完成（源不可用警示 banner + 禁用恢复动作；恢复动作仍 BLOCKED B-3）
+# 未完成（Batch B，待下一批）：I-4（组件 full 状态矩阵）、I-5（motion 三态×三类）、I-7（PNG opt-in）、
+#   I-8（Elevation 令牌消费+高对比回退）、I-11（焦点环/浮层焦点/Tab 序）
+# 已知限制 / NOT_RUN：
+#   - PNG 采证测试仍未 opt-in（I-7 属 Batch B）；因此本批所有全量验证均用排除 filter，不声称「无过滤全量已复跑」。
+#   - ZCode 崩溃原因未定位（STATUS_STACK_BUFFER_OVERRUN），本批收尾由 DSH 完成；Batch B 派发需新会话。
+#   - I-10 右侧浮动工具条「常显可隐藏」按设计 07:62 实现，未做逐像素视觉验收（headless 断言状态语义）。

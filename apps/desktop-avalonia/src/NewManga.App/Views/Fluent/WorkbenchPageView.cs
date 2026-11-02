@@ -1,7 +1,11 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using NewManga.App.Controls;
 using NewManga.App.ViewModels.Fluent;
@@ -22,16 +26,28 @@ public enum WorkbenchViewTab
 /// <summary>Fluent Workbench page backed exclusively by Host projections and the seven Draft ports.</summary>
 public sealed class WorkbenchPageView : UserControl
 {
+    /// <summary>I-2：检查器展开时的默认/最小/最大宽度（设计 06 §1 检查器 320；范围为实现约束）。</summary>
+    public const double InspectorWidth = 320;
+    public const double InspectorMinWidth = 240;
+    public const double InspectorMaxWidth = 480;
+
     private readonly WorkbenchViewModel _viewModel;
     private readonly Action _backToShelf;
+    private readonly Action? _openConsole;
     private readonly StackPanel _root;
     private readonly FluentTabStrip _tabStrip;
     private readonly ContentControl _mainHost;
     private readonly Control _pageLayout;
+    private readonly ScrollViewer _filmScroll;
     private readonly StackPanel _pageStrip;
     private readonly Canvas _canvas;
     private readonly StackPanel _regionList;
     private readonly StackPanel _inspector;
+    private readonly StackPanel _inspectorTitle;
+    private readonly SurfaceCard _inspectorCard;
+    private readonly Ellipse _dirtyDot;
+    private readonly TextBlock _dirtyStatus;
+    private readonly Button _inspectorToggle;
     private readonly Border _statusHost;
     private readonly Border _loadingHost;
     private readonly Border _dialogScrim;
@@ -40,18 +56,55 @@ public sealed class WorkbenchPageView : UserControl
     private TextBox? _draftInput;
     private WorkbenchViewTab _activeTab;
 
-    public WorkbenchPageView(WorkbenchViewModel viewModel, Action backToShelf)
+    public WorkbenchPageView(WorkbenchViewModel viewModel, Action backToShelf, Action? openConsole = null)
     {
         _viewModel = viewModel;
         _backToShelf = backToShelf;
+        _openConsole = openConsole;
         _root = FluentUi.Stack("fluent-page-layout");
         _tabStrip = new FluentTabStrip();
         AutomationProperties.SetName(_tabStrip, "工作台视图");
         _mainHost = new ContentControl();
         _pageStrip = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        _filmScroll = new ScrollViewer
+        {
+            Content = _pageStrip,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        };
+        // I-1：film-strip 横向滚动偏移属同一运行期 UI memento（不落盘）。
+        // 只把「用户滚动」（extent 不变、仅 offset 变化）记入 memento：Render 重建内容或布局
+        // clamp 引起的 offset 变化（ExtentDelta≠0）不代表用户位置，不能回写覆盖 memento。
+        _filmScroll.ScrollChanged += (_, args) =>
+        {
+            if (_filmScroll.IsArrangeValid && args.ExtentDelta.X == 0)
+            {
+                _viewModel.FilmStripScrollOffset = _filmScroll.Offset.X;
+            }
+        };
         _canvas = new Canvas { Classes = { "fluent-canvas" }, ClipToBounds = true };
         _regionList = FluentUi.Stack("fluent-chapter-list");
         _inspector = FluentUi.Stack("fluent-page-layout");
+        // I-9：未保存圆点（设计 06 §3 满态「标题旁圆点 + 底部文案」）；状态语义色 + Name，非仅颜色。
+        _dirtyDot = new Ellipse { Width = 8, Height = 8, IsVisible = false };
+        _dirtyDot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Status.Blocked");
+        AutomationProperties.SetName(_dirtyDot, "有未保存的译文草稿");
+        _dirtyStatus = FluentUi.Text("未保存的译文草稿", "fluent-status-text");
+        _dirtyStatus.Classes.Set("failed", false);
+        // 标题行只构造一次（Render 反复 Clear/重建 _inspector 时复用，避免圆点控件重复挂父）。
+        _inspectorTitle = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        _inspectorTitle.Children.Add(FluentUi.Text("检查器", "fluent-page-title"));
+        _inspectorTitle.Children.Add(_dirtyDot);
+        _inspectorCard = new SurfaceCard
+        {
+            Child = _inspector,
+            Width = InspectorWidth,
+            MinWidth = InspectorMinWidth,
+            MaxWidth = InspectorMaxWidth,
+        };
+        _inspectorCard.Classes.Add("fluent-inspector-pane");
+        _inspectorToggle = FluentUi.Button("折叠检查器", "fluent-secondary",
+            () => _viewModel.IsInspectorCollapsed = !_viewModel.IsInspectorCollapsed, "折叠或展开检查器");
         _statusHost = new Border { IsVisible = false };
         _loadingHost = new Border { IsVisible = false };
         _leaveDialog = new FluentDialog { IsOpen = false };
@@ -62,6 +115,7 @@ public sealed class WorkbenchPageView : UserControl
         _root.Children.Add(_statusHost);
         _root.Children.Add(_loadingHost);
         _root.Children.Add(BuildMainLayout());
+        _root.Children.Add(_dirtyStatus);
         _root.Children.Add(BuildLeaveOverlay());
         Content = _root;
         _viewModel.PropertyChanged += (_, args) =>
@@ -81,6 +135,11 @@ public sealed class WorkbenchPageView : UserControl
     public FluentTabStrip ViewTabs => _tabStrip;
     public WorkbenchViewTab ActiveTab => _activeTab;
     public Control? CurrentViewContent => _mainHost.Content as Control;
+    public SurfaceCard InspectorPane => _inspectorCard;
+    public Button InspectorToggle => _inspectorToggle;
+    public Ellipse DirtyDot => _dirtyDot;
+    public TextBlock DirtyStatus => _dirtyStatus;
+    public ScrollViewer FilmStripScroll => _filmScroll;
     public event Action<WorkbenchViewTab>? TabChanged;
 
     public void SelectConsoleTab() => SelectTab(WorkbenchViewTab.Console);
@@ -113,6 +172,8 @@ public sealed class WorkbenchPageView : UserControl
         toolbar.Children.Add(FluentUi.Text("工作台", "fluent-page-title"));
         toolbar.Children.Add(FluentUi.Button("返回书架", "fluent-secondary", _backToShelf, "返回书架"));
         toolbar.Children.Add(FluentUi.Button("刷新", "fluent-icon", () => _ = _viewModel.LoadAsync(_viewModel.SelectedPage is null ? null : GetChapterId()), "刷新工作台"));
+        // I-2：检查器折叠/展开入口（Enter/Space 激活；折叠后按钮仍在工具栏保持可达）。
+        toolbar.Children.Add(_inspectorToggle);
         return toolbar;
     }
 
@@ -143,7 +204,7 @@ public sealed class WorkbenchPageView : UserControl
         var leftCard = new SurfaceCard { Classes = { "fluent-detail-pane" } };
         var left = FluentUi.Stack("fluent-page-layout");
         left.Children.Add(FluentUi.Text("FilmStrip", "fluent-status-text"));
-        left.Children.Add(_pageStrip);
+        left.Children.Add(_filmScroll);
         left.Children.Add(FluentUi.Text("Regions", "fluent-status-text"));
         left.Children.Add(_regionList);
         leftCard.Child = left;
@@ -170,18 +231,23 @@ public sealed class WorkbenchPageView : UserControl
         Grid.SetColumn(center, 1);
         main.Children.Add(center);
 
-        var inspector = new SurfaceCard { Child = _inspector };
-        inspector.Classes.Add("fluent-inspector-pane");
-        Grid.SetColumn(inspector, 2);
-        main.Children.Add(inspector);
+        Grid.SetColumn(_inspectorCard, 2);
+        main.Children.Add(_inspectorCard);
         return main;
     }
 
     private Control BuildBatchLayout()
     {
+        // I-13（9 行状态表·空（批量无 Run）行）：视觉骨架。批量 Run 数据与「开始处理」动作归 B-2；
+        // 主按钮按占位禁用并披露原因，不显示矩阵数据格、不用模拟数据充数（设计 06 §3）。
         var content = FluentUi.Stack("fluent-page-layout");
         content.Children.Add(FluentUi.Text("批量处理", "fluent-page-title"));
-        content.Children.Add(FluentUi.Text("当前没有可显示的批量状态。", "fluent-status-text"));
+        content.Children.Add(FluentUi.Empty("没有正在处理的批量任务",
+            "批量 Run 投影来自 Host 的 step_flow 端口；当前端口尚未接入。", null, null));
+        var start = FluentUi.Button("开始处理", "fluent-primary", null, "开始处理");
+        start.IsEnabled = false;
+        ToolTip.SetTip(start, "批量 Run 端口尚未接入（B-2）；按钮为视觉骨架，不会触发任何动作。");
+        content.Children.Add(start);
         return new BatchMatrix { Content = content };
     }
 
@@ -194,6 +260,17 @@ public sealed class WorkbenchPageView : UserControl
             Child = FluentUi.Text("当前没有运行中的任务", "fluent-status-text"),
         });
         content.Children.Add(FluentUi.Text("Run 状态与错误由 Host 投影提供；当前端口尚未接入。", "fluent-subtle-text"));
+        // I-13（9 行状态表·运行中行）：Run 控制（暂停/停止/重试）视觉骨架，禁用并披露原因；数据归 B-2。
+        var runControls = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        var pause = FluentUi.Button("暂停", "fluent-secondary", null, "暂停当前 Run");
+        var stop = FluentUi.Button("停止", "fluent-danger", null, "停止当前 Run");
+        pause.IsEnabled = false;
+        stop.IsEnabled = false;
+        ToolTip.SetTip(pause, "Run 控制端口尚未接入（B-2）；按钮为视觉骨架。");
+        ToolTip.SetTip(stop, "Run 控制端口尚未接入（B-2）；按钮为视觉骨架。");
+        runControls.Children.Add(pause);
+        runControls.Children.Add(stop);
+        content.Children.Add(runControls);
         if (_viewModel.State == FluentPageState.Error && !string.IsNullOrWhiteSpace(_viewModel.Error))
         {
             content.Children.Add(FluentUi.Button("查看工作台错误", "fluent-secondary",
@@ -255,8 +332,16 @@ public sealed class WorkbenchPageView : UserControl
         _statusHost.IsVisible = _viewModel.State is FluentPageState.Error or FluentPageState.Conflict or FluentPageState.ReadOnly or FluentPageState.Partial;
         if (_viewModel.State == FluentPageState.Error)
         {
-            _statusHost.Child = FluentUi.Banner(StatusKind.Failed, "工作台错误", _viewModel.Error,
-                "重试", () => _ = _viewModel.LoadAsync(GetChapterId()));
+            // I-12：错误卡补「控制台入口」按钮（设计 06 §3 错误行「原因 + 重试 + 控制台入口」）。
+            var errorCard = FluentUi.Stack("fluent-page-layout");
+            errorCard.Children.Add(FluentUi.Banner(StatusKind.Failed, "工作台错误", _viewModel.Error,
+                "重试", () => _ = _viewModel.LoadAsync(GetChapterId())));
+            if (_openConsole is not null)
+            {
+                errorCard.Children.Add(FluentUi.Button("打开控制台", "fluent-secondary", _openConsole, "打开控制台"));
+            }
+
+            _statusHost.Child = FluentUi.Card(errorCard);
         }
         else if (_viewModel.State == FluentPageState.Conflict)
         {
@@ -287,8 +372,16 @@ public sealed class WorkbenchPageView : UserControl
             _loadingHost.Child = null;
         }
 
+        // I-2：检查器折叠（Auto 列宽 0 → 画布占满）；I-1：折叠状态为运行期 UI memento。
+        _inspectorCard.IsVisible = !_viewModel.IsInspectorCollapsed;
+        _inspectorToggle.Content = _viewModel.IsInspectorCollapsed ? "展开检查器" : "折叠检查器";
+        AutomationProperties.SetName(_inspectorToggle, _inspectorToggle.Content?.ToString() ?? "折叠或展开检查器");
+        // I-9：未保存圆点 + 底部文案（设计 06 §3 满态行）。
+        _dirtyDot.IsVisible = _viewModel.HasUnsavedDraft;
+        _dirtyStatus.IsVisible = _viewModel.HasUnsavedDraft;
+
         _inspector.Children.Clear();
-        _inspector.Children.Add(FluentUi.Text("检查器", "fluent-page-title"));
+        _inspector.Children.Add(_inspectorTitle);
         if (_viewModel.SelectedRegion is null)
         {
             _inspector.Children.Add(FluentUi.Empty("未选择区域", "在画布或列表中选择一个 Region。", null, null));
@@ -321,6 +414,12 @@ public sealed class WorkbenchPageView : UserControl
             {
                 foreach (var button in _inspector.Children.OfType<Button>()) button.IsEnabled = false;
             }
+        }
+
+        // I-1：Render 重建 film-strip 内容会重置滚动，这里从 UI memento 恢复横向偏移。
+        if (_filmScroll.Offset.X != _viewModel.FilmStripScrollOffset)
+        {
+            _filmScroll.Offset = new Vector(_viewModel.FilmStripScrollOffset, 0);
         }
 
         RenderRegions();

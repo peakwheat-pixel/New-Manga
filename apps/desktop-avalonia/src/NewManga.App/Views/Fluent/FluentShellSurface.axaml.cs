@@ -107,10 +107,12 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _readerModel = new FluentReaderViewModel(host);
         _settingsModel = new SettingsViewModel(host, appearance, themeManager);
         var picker = new AvaloniaFilePickerGateway(_ => TopLevel.GetTopLevel(this));
-        _shelfView = new ShelfPageView(_shelfModel, picker, OpenReader, OpenWorkbench);
+        // I-12：错误卡「打开控制台」入口走 shell 空间导航（进入 Console 空间，含导航/空间选中态更新）。
+        var openConsole = () => NavigateSpace(SpaceId.Console);
+        _shelfView = new ShelfPageView(_shelfModel, picker, OpenReader, OpenWorkbench, openConsole);
         Require<Button>("NavRecycle").Click += (_, _) => _shelfView.OpenRecycleDrawer();
         Require<Button>("NavImport").Click += async (_, _) => await _shelfView.ImportFilesAsync();
-        _workbenchView = new WorkbenchPageView(_workbenchModel, () => Navigate(FluentPage.Library));
+        _workbenchView = new WorkbenchPageView(_workbenchModel, () => Navigate(FluentPage.Library), openConsole);
         _workbenchView.TabChanged += tab =>
         {
             if (tab == WorkbenchViewTab.Page) _studioMode = StudioMode.Page;
@@ -155,6 +157,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     public SettingsViewModel SettingsViewModel => _settingsModel;
     public ShelfPageView ShelfView => _shelfView;
     public WorkbenchPageView WorkbenchView => _workbenchView;
+    public ReaderPageView ReaderView => _readerView;
+    public SettingsPageView SettingsView => _settingsView;
     public FluentResponsiveBand ResponsiveBand { get; private set; }
 
     /// <summary>Applies the hosting window viewport width to the responsive bands.</summary>
@@ -205,6 +209,13 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             UpdateNavSelection(_pageBeforeReader);
             UpdateStatus();
             CurrentPageChanged?.Invoke(this, _currentPage);
+            return;
+        }
+
+        // I-3：设置页有未保存修改时，导航被挂起，先走三分支离开确认（保存并离开/丢弃并离开/取消）。
+        if (_currentPage == FluentPage.Settings && page != FluentPage.Settings && _settingsModel.IsDirty)
+        {
+            _settingsView.TryBeginLeave(() => Navigate(page));
             return;
         }
 
@@ -283,6 +294,14 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void NavigateSpace(SpaceId space)
     {
+        // I-3：空间切换在设置页 dirty 时同样先走三分支离开确认；确认（dirty 清零）后才执行完整空间进入序列，
+        // 保证 Console/Studio 的空间选中态与页签状态不会因确认挂起而丢失。
+        if (_currentPage == FluentPage.Settings && _settingsModel.IsDirty)
+        {
+            _settingsView.TryBeginLeave(() => NavigateSpace(space));
+            return;
+        }
+
         if (space == SpaceId.Console)
         {
             Navigate(FluentPage.Workbench);
@@ -389,7 +408,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             case ShellCommandIds.QuickJump: OpenCommandPalette("快速跳转"); break;
             case ShellCommandIds.ThemeStudio: _settingsModel.SelectedGroup = SettingsGroupId.Appearance; Navigate(FluentPage.Settings); break;
             case ShellCommandIds.Help: OpenShortcutHelp(); break;
-            case ShellCommandIds.SurfaceBack: CloseTopSurface(); break;
+            case ShellCommandIds.SurfaceBack: HandleSurfaceBack(); break;
             case ShellCommandIds.ThemeToggle: ToggleTheme(); break;
             case ShellCommandIds.ObjectNext: _ = _shelfModel.MoveSelection(1); break;
             case ShellCommandIds.ObjectPrevious: _ = _shelfModel.MoveSelection(-1); break;
@@ -409,6 +428,38 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             case ShellCommandIds.StudioBatch: _studioMode = StudioMode.Batch; _workbenchView.SelectTab(WorkbenchViewTab.Batch); break;
             default: _statusText.Text = $"“{command.Title}”尚无可调用操作。"; break;
         }
+    }
+
+    /// <summary>
+    /// I-3（设计 03 §2「Esc=关闭当前浮层（若有），否则返回上一级」+ 08 §5）的 Esc 优先级：
+    /// 设置页浮层（离开确认/普通确认）打开时 Esc=取消浮层；设置页 dirty 且无浮层时 Esc=触发离开确认流；
+    /// 其余保持既有 surface.back 语义（shell 浮层/阅读器返回）。
+    /// </summary>
+    private void HandleSurfaceBack()
+    {
+        if (_currentPage == FluentPage.Settings)
+        {
+            if (_settingsView.LeaveConfirmationVisible)
+            {
+                _settingsView.CancelLeave();
+                return;
+            }
+
+            if (_settingsView.HasOpenConfirmation)
+            {
+                _settingsView.CancelConfirmation();
+                return;
+            }
+
+            if (_settingsModel.IsDirty)
+            {
+                // 页面内 Esc 触发离开流；确认后的离开目标为一级页（书架）。
+                _settingsView.TryBeginLeave(() => Navigate(FluentPage.Library));
+                return;
+            }
+        }
+
+        CloseTopSurface();
     }
 
     private void NavigatePage(int direction)
@@ -513,6 +564,8 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         ThemeManager?.SetReducedMotion(!resolution.Enabled);
         Classes.Set("motion-navigation", _motionNavigationEnabled);
         Classes.Set("motion-reduced", !resolution.Enabled);
+        // I-10：reduce 下阅读器工具条直接切换、无淡出过渡（07:23）。
+        _readerModel.AreToolBarsReducedMotion = !resolution.Enabled;
     }
 
     private static bool IsPlainTypingKey(Key key, KeyModifiers modifiers) =>

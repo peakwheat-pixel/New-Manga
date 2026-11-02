@@ -1493,9 +1493,17 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult<string?>("pre-" + backupId);
     }
     // FEA-05-PORT-1: Draft surface (default: unavailable in the fake host).
+    // FEA-06-RESIDUAL-1: scriptable draft surface for dirty-draft UI tests; defaults keep the
+    // previous behavior (no leases, empty session draft list).
+    /// <summary>Draft leases keyed by "{pageId}|{regionId}"; default empty.</summary>
+    public Dictionary<string, DraftLease?> DraftLeasesByPageRegion { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>Drafts returned by ListDraftsAsync for every session; default empty.</summary>
+    public IReadOnlyList<Draft> ScriptedDrafts { get; set; } = Array.Empty<Draft>();
+
     public Task<DraftLease?> OpenDraftAsync(string sessionId, string pageId, string? regionId,
         string? baseRevisionId, int pageBindingVersion, CancellationToken cancellationToken = default) =>
-        Task.FromResult<DraftLease?>(null);
+        Task.FromResult(DraftLeasesByPageRegion.TryGetValue(pageId + "|" + regionId, out var lease) ? lease : null);
 
     public Task<Draft?> PatchDraftAsync(string draftId, string sessionId, DraftPatchRequest patch,
         int? undoCursor = null, CancellationToken cancellationToken = default) =>
@@ -1515,7 +1523,7 @@ public sealed class FakeHostController : IHostController
 
     public Task<IReadOnlyList<Draft>> ListDraftsAsync(string sessionId,
         CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<Draft>>(Array.Empty<Draft>());
+        Task.FromResult(ScriptedDrafts);
 
     public Task DiscardDraftAsync(string draftId, string sessionId,
         CancellationToken cancellationToken = default) => Task.CompletedTask;

@@ -87,6 +87,10 @@ public partial class FluentShell : Window
 
     public WorkbenchPageView WorkbenchView => _surface.WorkbenchView;
 
+    public ReaderPageView ReaderView => _surface.ReaderView;
+
+    public SettingsPageView SettingsView => _surface.SettingsView;
+
     public FluentResponsiveBand ResponsiveBand => _surface.ResponsiveBand;
 
     public Button? NavigationButton(FluentPage page) => _surface.NavigationButton(page);

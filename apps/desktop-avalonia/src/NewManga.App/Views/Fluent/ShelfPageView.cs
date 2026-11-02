@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
@@ -19,18 +20,26 @@ namespace NewManga.App.Views.Fluent;
 /// <summary>Fluent Shelf page. Its state and data projections live in <see cref="ShelfViewModel"/>.</summary>
 public sealed class ShelfPageView : UserControl
 {
+    /// <summary>I-2：详情栏展开时的默认/最小/最大宽度（设计 05 §1 详情栏 320；范围为实现约束）。</summary>
+    public const double DetailPaneWidth = 320;
+    public const double DetailPaneMinWidth = 240;
+    public const double DetailPaneMaxWidth = 480;
+
     private readonly ShelfViewModel _viewModel;
     private readonly IFilePickerGateway? _filePicker;
     private readonly Action<BookSummary, ChapterSummary> _openReader;
     private readonly Action<BookSummary, ChapterSummary> _openWorkbench;
+    private readonly Action? _openConsole;
     private readonly StackPanel _root;
     private readonly WrapPanel _gridHost;
     private readonly StackPanel _listHost;
+    private readonly ScrollViewer _listScroll;
     private readonly ChapterList _chapterHost;
     private readonly StackPanel _pageThumbHost;
     private readonly Border _details;
     private readonly Border _stateHost;
     private readonly TextBlock _status;
+    private readonly Button _detailToggle;
     private readonly Drawer _recycleDrawer;
     private readonly FluentDialog _dialog;
     private readonly Border _dialogScrim;
@@ -50,12 +59,14 @@ public sealed class ShelfPageView : UserControl
         ShelfViewModel viewModel,
         IFilePickerGateway? filePicker,
         Action<BookSummary, ChapterSummary> openReader,
-        Action<BookSummary, ChapterSummary> openWorkbench)
+        Action<BookSummary, ChapterSummary> openWorkbench,
+        Action? openConsole = null)
     {
         _viewModel = viewModel;
         _filePicker = filePicker;
         _openReader = openReader;
         _openWorkbench = openWorkbench;
+        _openConsole = openConsole;
         _gridHost = new WrapPanel { Orientation = Orientation.Horizontal };
         _listHost = new StackPanel { Orientation = Orientation.Vertical, Classes = { "fluent-chapter-list" } };
         _chapterHost = new ChapterList();
@@ -69,7 +80,30 @@ public sealed class ShelfPageView : UserControl
         _pageThumbHost = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "fluent-page-toolbar" } };
         _status = FluentUi.Text(string.Empty, "fluent-status-text");
         _stateHost = new Border { IsVisible = false };
-        _details = new Border { Classes = { "fluent-detail-pane" }, IsVisible = false };
+        _details = new Border
+        {
+            Classes = { "fluent-detail-pane" },
+            IsVisible = false,
+            Width = DetailPaneWidth,
+            MinWidth = DetailPaneMinWidth,
+            MaxWidth = DetailPaneMaxWidth,
+        };
+        _listScroll = new ScrollViewer
+        {
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        };
+        // I-1：列表滚动偏移属同一运行期 UI memento（不落盘），页面往返/重建后恢复。
+        // 只把「用户滚动」（extent 不变、仅 offset 变化）记入 memento：Render 重建内容或布局
+        // clamp 引起的 offset 变化（ExtentDelta≠0）不代表用户位置，不能回写覆盖 memento。
+        _listScroll.ScrollChanged += (_, args) =>
+        {
+            if (_listScroll.IsArrangeValid && args.ExtentDelta.Y == 0)
+            {
+                _viewModel.ListScrollOffset = _listScroll.Offset.Y;
+            }
+        };
+        _detailToggle = FluentUi.Button("折叠详情栏", "fluent-secondary", () => _viewModel.IsDetailPaneCollapsed = !_viewModel.IsDetailPaneCollapsed, "折叠或展开详情栏");
         _recycleDrawer = new Drawer { IsOpen = false, Header = "回收站", Classes = { "fluent-drawer" } };
         _recycleDrawer.Content = FluentUi.Stack("fluent-page-layout");
         ((StackPanel)_recycleDrawer.Content).Children.Add(FluentUi.Text(
@@ -99,6 +133,9 @@ public sealed class ShelfPageView : UserControl
     public ShelfViewModel ViewModel => _viewModel;
     public SegmentedControl ViewModeControl => _viewModeControl;
     public ChapterList ChapterDetails => _chapterHost;
+    public Border DetailPane => _details;
+    public Button DetailPaneToggle => _detailToggle;
+    public ScrollViewer ListScroll => _listScroll;
 
     public void ShowNewBookDialog() => ShowNameDialog("book");
 
@@ -141,21 +178,18 @@ public sealed class ShelfPageView : UserControl
         toolbar.Children.Add(_importFolderButton);
         toolbar.Children.Add(FluentUi.Button("回收站", "fluent-secondary", () => _recycleDrawer.IsOpen = true, "打开回收站"));
         toolbar.Children.Add(FluentUi.Button("刷新", "fluent-icon", () => _ = _viewModel.RefreshAsync(), "刷新书架"));
+        // I-2：详情栏折叠/展开入口（Enter/Space 激活；折叠后按钮仍在工具栏保持可达）。
+        toolbar.Children.Add(_detailToggle);
         return toolbar;
     }
 
     private Control BuildBody()
     {
         var body = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
-        var listing = new ScrollViewer
-        {
-            Content = _gridHost,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        };
+        _listScroll.Content = _gridHost;
         _listHost.IsVisible = false;
         var lists = FluentUi.Stack("fluent-page-layout");
-        lists.Children.Add(listing);
+        lists.Children.Add(_listScroll);
         lists.Children.Add(_listHost);
         body.Children.Add(lists);
 
@@ -217,8 +251,16 @@ public sealed class ShelfPageView : UserControl
         }
         else if (_viewModel.State == FluentPageState.Error)
         {
-            _stateHost.Child = FluentUi.Banner(StatusKind.Failed, "书架读取失败", _viewModel.Error,
-                "重试", () => _ = _viewModel.RefreshAsync());
+            // I-12：错误卡保留「重试」并补「打开控制台」入口（设计 05 §3 错误行）；无 shell 回调时入口不渲染。
+            var errorCard = FluentUi.Stack("fluent-page-layout");
+            errorCard.Children.Add(FluentUi.Banner(StatusKind.Failed, "书架读取失败", _viewModel.Error,
+                "重试", () => _ = _viewModel.RefreshAsync()));
+            if (_openConsole is not null)
+            {
+                errorCard.Children.Add(FluentUi.Button("打开控制台", "fluent-secondary", _openConsole, "打开控制台"));
+            }
+
+            _stateHost.Child = FluentUi.Card(errorCard);
             _stateHost.IsVisible = true;
         }
         else if (_viewModel.State == FluentPageState.ReadOnly)
@@ -268,7 +310,10 @@ public sealed class ShelfPageView : UserControl
         _gridHost.IsVisible = _viewModel.IsGrid;
         _listHost.IsVisible = !_viewModel.IsGrid;
         _viewModeControl.SelectedIndex = _viewModel.IsGrid ? 0 : 1;
-        _details.IsVisible = _viewModel.SelectedBook is not null;
+        // I-2：详情栏在「已选作品且未折叠」时可见；折叠后 Auto 列宽为 0，列表占满主区。
+        _details.IsVisible = !_viewModel.IsDetailPaneCollapsed && _viewModel.SelectedBook is not null;
+        _detailToggle.Content = _viewModel.IsDetailPaneCollapsed ? "展开详情栏" : "折叠详情栏";
+        AutomationProperties.SetName(_detailToggle, _detailToggle.Content?.ToString() ?? "折叠或展开详情栏");
         if (_viewModel.SelectedBook is not null)
         {
             _chapterHost.Children.Add(FluentUi.Text(_viewModel.SelectedBook.Title, "fluent-status-text"));
@@ -297,6 +342,12 @@ public sealed class ShelfPageView : UserControl
             ? $"只读 · {_viewModel.ViewStatus}"
             : _viewModel.ViewStatus;
         _status.Classes.Set("failed", _viewModel.State == FluentPageState.Error);
+
+        // I-1：Render 重建列表内容会重置滚动，这里从 UI memento 恢复列表滚动偏移。
+        if (_listScroll.Offset.Y != _viewModel.ListScrollOffset)
+        {
+            _listScroll.Offset = new Vector(0, _viewModel.ListScrollOffset);
+        }
     }
 
     private BookCard BuildBookCard(BookSummary book)
