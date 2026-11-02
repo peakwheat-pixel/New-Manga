@@ -1012,3 +1012,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 为避免空等窗口，按 D-9（作者可派独立上下文子 agent 做 Review）已派 **D-14 独立 impl Review**（workflow job `workflow-33d5550690bf4ac5`，reviewed_head=`0d2a02202`；核验裁决 A 执行/越权/对比度独立复算/回归门禁/消费者一致，产出 `doc/reviews/D-14-STATUS-COLOR-FIX-impl-r1.md`）。
 - 已备 `FEA-08/scope-review-prompt.md`（独立 Scope Reviewer：范围与 FEA-08 定义一致、H4/H5/H6 可验证性、回收站全局隔离风险、3 个待决项、验收可判定性；approved 才释放 Task）。
 - ZCode 08:05 / Codex 10:25 窗口保留为补充复核与后续实施资源；当前 D-14 in_progress（1292/0/57）；未 push。
+## 157. D-14 impl-r1 changes_requested 处置 + impl-r2 派发（2026-11-03 08:00）
+
+- D-14 独立 impl-r1（D-9 workflow `workflow-33d5550690bf4ac5`）：**changes_requested P0=0/P1=3/P2=7**。实现本身核实通过（裁决 A 准确、无越权、对比度独立复算 Dark 7.96/7.14、Light 6.35/7.05，Disabled 对照全<4.5；两次全量 1292/0/57；只发现 Host TileChannel 偶发 flake 与本卡无关）；3 个 P1 全在证据/交付纪律层。
+- DSH 补正（`c48ea5e3c`）：① impl-verification.log 重写为完整格式（shell/SDK/head/base、命令/EXIT、逐程序集 1292/0/57、57 skip 原因、差值 1289→1292、复现命令）；② 修前失败判别力 **NOT_RUN** 如实记录；③ 新增 `doc/handoffs/D-14-STATUS-COLOR-FIX-impl.md`；④ 修复 Task 卡证据路径 NUL/VT 字符损坏并重算 SHA。
+- 已派 **impl-r2**（D-9 workflow `workflow-fd5083d9e2414d79`）核验补正与回归；approved 后 DSH 集成验证并关闭 D-14，再按 D-15 起草 FEA-08 scope。
+- 治理 PASS(3)、pins 15/15；未 push。
