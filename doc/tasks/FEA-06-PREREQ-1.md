@@ -62,11 +62,11 @@ allowed_paths:
 
 ## 验收标准
 
-- [x] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<PARTIAL: 读写与迁移已交付（13 测试）；`ThemeSettingsStore` 兼容写按 W-9 转 PREREQ-2（Q-32），本卡未闭环>>
+- [ ] **AC1**：`NewManga.Appearance` 项目 + `AppearanceSettings` **C-03 §2.2 逐字段** + 原子读写 + schemaVersion 迁移（旧 `ReducedMotion`→`motion.mode` 等价/幂等/旧文件只读顺序）；`NewManga.Appearance.Tests` 覆盖（往返/坏文件/迁移/兼容写）。<<PARTIAL: 读写与迁移已交付（13 测试）；`ThemeSettingsStore` 兼容写按 W-9 转 PREREQ-2（Q-32），本卡未闭环>>
 - [x] **AC2**：`AppearanceCoordinator` 读取/校验/变更通知（应用落点归 PREREQ-2）；`AppOptions.FrontendId` 可注入；既有 ThemeEngine 回归。<<MET>>
-- [x] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<PARTIAL: Focus/Corner/Elevation/Material 开关共 12 键已生成（--check up to date）；`Nm.Material.Acrylic.Base/Tint` 与主题层 schema/R14 计数按 W-9 转 PREREQ-2（Q-32）>>
+- [ ] **AC3**：G-1/G-1b/G-1c 令牌经 `TokenMap.DerivedGlobals`（+ `TokenValueKind.BoxShadows`）生成，`NmKeys.g.cs`/`Tokens.Global.axaml` 由生成器产出（`TokenGen -- --check` EXIT 0）。**主题层例外**：`Nm.Material.*` 有 `NmKeys` 常量但**不写入** `Tokens.Global.axaml`（主题包承载取值）；主题包 schema/`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 59/65 计数同步更新；**G-1b 矩阵列宽 96** 作为设计常量登记（`Nm.Size.MatrixColumnMin`）而非令牌派生。<<PARTIAL: Focus/Corner/Elevation/Material 开关共 12 键已生成（--check up to date）；`Nm.Material.Acrylic.Base/Tint` 与主题层 schema/R14 计数按 W-9 转 PREREQ-2（Q-32）>>
 - [x] **AC4**：`motion.mode` = `auto`/`full`/`reduce`（**无 `off`**）；`auto` 经 `IMotionPreferenceSource`（默认实现 + 注入测试）；`motion.categories=off` 0ms；设计 02 判据 ①–⑤ 有测试。<<MET>>
-- [x] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）；**两项校验**：`ThemeGen -- --check`（产物漂移）+ `ThemeValidator.Validate`/`BuiltInThemes` 加载（schema 合法）+ Current 主题不生效测试。<<PARTIAL: 包由 ThemeGen 生成（`--check` 覆盖）+ `BuiltInThemes` 懒加载 + Current 不变测试；`nm.fluent.visual/1` manifest 与 `ThemeValidator` 显式测试未加（P2-17）>>
+- [ ] **AC5**：`builtin.fluent-dark` 主题包落盘（`Themes/fluent-dark.nmtheme` + manifest `nm.fluent.visual/1` + 注册表条目）；**两项校验**：`ThemeGen -- --check`（产物漂移）+ `ThemeValidator.Validate`/`BuiltInThemes` 加载（schema 合法）+ Current 主题不生效测试。<<PARTIAL: 包由 ThemeGen 生成（`--check` 覆盖）+ `BuiltInThemes` 懒加载 + Current 不变测试；`nm.fluent.visual/1` manifest 与 `ThemeValidator` 显式测试未加（P2-17）>>
 - [x] **AC6**：全量 sln 不退化（基线 949/0/57）+ 证据。<<MET>>
 
 ## 禁止范围
