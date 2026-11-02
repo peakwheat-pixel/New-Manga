@@ -37,7 +37,7 @@ public enum FluentResponsiveBand
 }
 
 /// <summary>Fluent frontend shell; all application services are the shared composition-root instances.</summary>
-public partial class FluentShellSurface : UserControl
+public partial class FluentShellSurface : UserControl, IPresentationExitState
 {
     public static IReadOnlyList<FluentPage> Pages { get; } =
         [FluentPage.Library, FluentPage.Workbench, FluentPage.Reader, FluentPage.Settings];
@@ -163,6 +163,12 @@ public partial class FluentShellSurface : UserControl
     /// <summary>Raised when the surface wants the hosting window to toggle full screen.</summary>
     public Action<bool>? FullScreenRequested { get; set; }
     public Button? NavigationButton(FluentPage page) => _navButtons.GetValueOrDefault(page);
+
+    /// <summary>FEA-07 AC2: the host checks real content state before closing the stable window.</summary>
+    public bool HasUnsavedEdits => _settingsModel.IsDirty;
+
+    /// <summary>FEA-07 AC2: a running workbench job blocks process exit.</summary>
+    public bool HasActiveRuns => _workbenchModel.State == FluentPageState.Running;
 
     public static FluentResponsiveBand GetResponsiveBand(double width) =>
         width < ShellLayout.BreakpointNarrow ? FluentResponsiveBand.Narrow :

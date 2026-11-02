@@ -22,7 +22,7 @@ namespace NewManga.App.Shell.V2;
 /// The appearance switch goes through the merged <see cref="DesignSystemThemeManager"/> (token
 /// dictionaries swap, the window is never rebuilt).
 /// </summary>
-public partial class AppShellV2 : UserControl
+public partial class AppShellV2 : UserControl, IPresentationExitState
 {
     private readonly AppShellViewModel _viewModel;
     private readonly DesignSystemThemeManager? _themeManager;
@@ -77,6 +77,12 @@ public partial class AppShellV2 : UserControl
     }
 
     public AppShellViewModel ViewModel => _viewModel;
+
+    /// <summary>FEA-07 AC2: V2 pages commit immediately, so there is no draft buffer to lose.</summary>
+    public bool HasUnsavedEdits => false;
+
+    /// <summary>FEA-07 AC2: an active import blocks process exit.</summary>
+    public bool HasActiveRuns => _viewModel.Library.ImportDock.IsRunning;
 
     public CurrentFrontend Current => _viewModel.Current;
 

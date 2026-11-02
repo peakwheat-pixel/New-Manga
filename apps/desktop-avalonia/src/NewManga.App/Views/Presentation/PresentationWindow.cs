@@ -50,6 +50,10 @@ public sealed class PresentationWindow : Window
         if (initialMemento is { } state)
         {
             Position = new PixelPoint(state.X, state.Y);
+            if (state.IsMaximized)
+            {
+                WindowState = WindowState.Maximized;
+            }
         }
 
         ContentHost = new FrontendContentHost();
@@ -97,8 +101,11 @@ public sealed class PresentationWindow : Window
 
     private void OnClosing(object? sender, WindowClosingEventArgs args)
     {
+        // R-002: consult the live content tree (real draft/run state) plus registered process-level work.
+        var live = ContentHost.Current as IPresentationExitState;
+        var liveBlocked = live is { HasUnsavedEdits: true } or { HasActiveRuns: true };
         var decision = ExitCoordinator.RequestExit();
-        if (!decision.Allowed)
+        if (liveBlocked || !decision.Allowed)
         {
             args.Cancel = true;
         }

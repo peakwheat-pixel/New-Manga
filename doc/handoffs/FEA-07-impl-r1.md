@@ -9,3 +9,11 @@
 - Review：`doc/reviews/FEA-07-impl-r1.md`（changes_requested P0=0/P1=7/P2=5）；处置记录见 Task「impl-r1 处置」；R-007 生命周期字段已在本 handoff/卡内登记，R-011 精确 head 证据见 `verification/FEA-07/final-evidence.log`（提交后补）。
 - 证据：`verification/FEA-07/evidence-index.md`（SHA-256 索引）、`performance-baseline-release.json`（Release p95 344.93ms；W-5 ≤1000ms PASS）、`generators-check.log`（两生成物 byte-for-byte up-to-date）、各切片日志。
 - 待办：r2 独立复核（fresh Codex CLI，被审本 head）→ 若 approved → DSH 集成验证 → done；AC5 原生双屏/拔屏/DPI 矩阵仍 BLOCKED（D-1 无硬件）；AC1/AC2/AC6/AC8 的残余项按卡内 PARTIAL 理由继续保留或转 residual。
+## r2 返修（rework part2，2026-11-02）
+- R-013：FrontendHostCoordinator 串行门覆盖 no-op 检查/快照/事务（并发测试：两个并发切换均成功且终态=最后请求）。
+- R-003：journal 记录 previous frontend；App 启动前 `RecoverInterruptedSwitch` 在「target 已持久化、journal 未提交」崩溃窗口还原上一已提交 frontend。
+- R-004：StartupPlan 直接携带 Selection，组合根不再二次推导；外观 fallback 强制 Current V2（含 CLI fluent）。
+- R-001：真实 V2/Fluent 内容树 100 次切换（50 往返）+ 状态标记/页面保留断言；Layout/Loaded/Rendered 改为真实门禁（几何/Dispatcher 优先级）。
+- R-002：IPresentationExitState 接入 live 内容状态（设置草稿/Workbench 运行/导入运行）阻断关闭。
+- R-014：最大化 memento 恢复。R-009/R-011：数字校正、证据索引去掉自引用 pin。
+- 验证：全量 **1113/0/57**；证据 `verification/FEA-07/rework-part2-verification.log`；r3 独立复核待派。

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using NewManga.App.Services;
@@ -199,5 +200,105 @@ public sealed class PresentationWindowTests : IDisposable
 
         window.ExitCoordinator.CompletePendingEdit("shelf");
         window.Close();
+    }
+
+
+    [AvaloniaFact]
+    public async Task ConcurrentSwitches_AreSerializedAndEndOnTheLastRequestedFrontend()
+    {
+        var window = CreateWindow();
+        var toFluent = window.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
+        var backToV2 = window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+
+        var results = await Task.WhenAll(toFluent, backToV2);
+
+        Assert.All(results, result => Assert.True(result.Succeeded, result.Failure));
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, window.CurrentFrontendId);
+        Assert.Equal($"hosted:{FrontendSelector.CurrentV2FrontendId}", TextOf(window));
+        Assert.False(File.Exists(_journal.FilePath));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void LiveContentExitState_BlocksClose()
+    {
+        ExitBlockingControl? blocking = null;
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id =>
+            {
+                blocking = new ExitBlockingControl();
+                blocking.Child = new TextBlock { Text = id };
+                return blocking;
+            });
+
+        blocking!.HasUnsavedEdits = true;
+        var cancelled = false;
+        window.Closing += (_, args) => cancelled |= args.Cancel;
+        window.Close();
+        Assert.True(cancelled, "unsaved edits in the live content tree must block the close");
+
+        blocking.HasUnsavedEdits = false;
+        blocking.HasActiveRuns = true;
+        window.Close();
+        Assert.True(cancelled);
+
+        blocking.HasActiveRuns = false;
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void MaximizedMemento_IsRestored()
+    {
+        var memento = new NewManga.Presentation.Avalonia.Windows.WindowStateMemento(
+            X: 0, Y: 0, Width: 1400, Height: 900, DisplayId: null, Scale: 1.0, IsMaximized: true);
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id => Content(id, "hosted"),
+            memento);
+
+        Assert.Equal(WindowState.Maximized, window.WindowState);
+        Assert.True(window.CaptureWindowState().IsMaximized);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task InvalidGeometry_FailsTheSwitchAndKeepsTheOldContent()
+    {
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id => id == FrontendSelector.CurrentV2FrontendId ? new ZeroSizeControl() : Content(id, "hosted"));
+
+        var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("geometry", result.Failure);
+        Assert.Equal($"hosted:{FrontendSelector.FluentFrontendId}", TextOf(window));
+        Assert.Equal(FrontendSelector.FluentFrontendId, window.CurrentFrontendId);
+        window.Close();
+    }
+
+    private sealed class ZeroSizeControl : Control
+    {
+        protected override Size ArrangeOverride(Size finalSize) => default;
+    }
+
+    private sealed class ExitBlockingControl : Border, IPresentationExitState
+    {
+        public bool HasUnsavedEdits { get; set; }
+
+        public bool HasActiveRuns { get; set; }
     }
 }

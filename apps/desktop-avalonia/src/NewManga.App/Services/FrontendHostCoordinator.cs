@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using NewManga.Appearance;
@@ -11,16 +12,21 @@ namespace NewManga.App.Services;
 
 /// <summary>
 /// FEA-07 app-side switch orchestration: validates the requested frontend against the frozen selector
-/// semantics, builds the replacement content tree, persists <c>theme.frontendId</c> through the single
-/// appearance writer and swaps the content into the stable host. The previous tree is restored on any
-/// failure (§7.1 / §15.5).
+/// semantics, builds the replacement content tree, runs the real layout/loaded/rendered gates, persists
+/// <c>theme.frontendId</c> through the single appearance writer and swaps the content into the stable
+/// host. The previous tree is restored on any failure (§7.1 / §15.5). All state checks and snapshots are
+/// inside one switch gate so concurrent requests cannot return a stale success or roll back to an
+/// outdated UI (R-013).
 /// </summary>
 public sealed class FrontendHostCoordinator
 {
+    private static readonly Size FallbackViewport = new(1024, 640);
+
     private readonly FrontendContentHost _host;
     private readonly Func<string, Control> _contentFactory;
     private readonly AppearanceCoordinator _appearance;
     private readonly FrontendSwitchCoordinator _switcher;
+    private readonly SemaphoreSlim _switchGate = new(1, 1);
     private readonly object _sync = new();
     private string _currentFrontendId;
 
@@ -61,69 +67,105 @@ public sealed class FrontendHostCoordinator
     /// without touching the live UI (the startup selector keeps its fail-safe fallback, but an explicit
     /// runtime switch must not silently change the requested frontend).
     /// </summary>
-    public Task<SwitchResult> SwitchAsync(string requestedFrontendId, CancellationToken cancellationToken = default)
+    public async Task<SwitchResult> SwitchAsync(string requestedFrontendId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(requestedFrontendId);
 
-        var selection = FrontendSelector.Select(requestedFrontendId, persistedFrontendId: null);
-        if (selection.IsFallback)
+        await _switchGate.WaitAsync(cancellationToken).ConfigureAwait(true);
+        try
         {
-            return Task.FromResult(new SwitchResult(
-                Succeeded: false,
-                FinalStage: SwitchStage.Preparing,
-                Failure: selection.Diagnostic ?? $"unknown frontend id '{requestedFrontendId}'",
-                RolledBack: false));
-        }
-
-        var target = selection.EffectiveFrontendId;
-        if (string.Equals(target, CurrentFrontendId, StringComparison.Ordinal))
-        {
-            return Task.FromResult(new SwitchResult(Succeeded: true, SwitchStage.Committed, Failure: null, RolledBack: false));
-        }
-
-        Control? replacement = null;
-        var previous = _host.Current;
-        AppearanceSettings? previousSettings = null;
-
-        var callbacks = new SwitchCallbacks
-        {
-            ValidateAsync = _ => Task.CompletedTask,
-            BuildTreeAsync = _ => InvokeOnUiAsync(() =>
+            var selection = FrontendSelector.Select(requestedFrontendId, persistedFrontendId: null);
+            if (selection.IsFallback)
             {
-                replacement = _contentFactory(target);
-            }),
-            CommitAsync = async token =>
+                return new SwitchResult(
+                    Succeeded: false,
+                    FinalStage: SwitchStage.Preparing,
+                    Failure: selection.Diagnostic ?? $"unknown frontend id '{requestedFrontendId}'",
+                    RolledBack: false);
+            }
+
+            var target = selection.EffectiveFrontendId;
+            var previousFrontend = CurrentFrontendId;
+            if (string.Equals(target, previousFrontend, StringComparison.Ordinal))
             {
-                previousSettings = _appearance.Settings;
-                try
+                return new SwitchResult(Succeeded: true, SwitchStage.Committed, Failure: null, RolledBack: false);
+            }
+
+            Control? replacement = null;
+            var previous = _host.Current;
+            AppearanceSettings? previousSettings = null;
+
+            var callbacks = new SwitchCallbacks
+            {
+                ValidateAsync = _ => Task.CompletedTask,
+                BuildTreeAsync = _ => InvokeOnUiAsync(() =>
                 {
-                    await InvokeOnUiAsync(() =>
-                        _host.SetContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
-                    await _appearance.SaveAsync(previousSettings with { FrontendId = target }, token).ConfigureAwait(true);
-                }
-                catch
+                    replacement = _contentFactory(target);
+                }),
+                LayoutAsync = _ => InvokeOnUiAsync(() => ValidateLayout(replacement)),
+                LoadedAsync = _ => InvokeAtPriorityAsync(DispatcherPriority.Loaded),
+                RenderedAsync = _ => InvokeAtPriorityAsync(DispatcherPriority.Render),
+                CommitAsync = async token =>
                 {
-                    await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
-                    if (previousSettings is not null)
+                    previousSettings = _appearance.Settings;
+                    try
                     {
-                        await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
+                        await InvokeOnUiAsync(() =>
+                            _host.SetContent(replacement ?? throw new InvalidOperationException("replacement content tree was not built")));
+                        await _appearance.SaveAsync(previousSettings with { FrontendId = target }, token).ConfigureAwait(true);
+                    }
+                    catch
+                    {
+                        await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
+                        if (previousSettings is not null)
+                        {
+                            await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
+                        }
+
+                        throw;
                     }
 
-                    throw;
-                }
+                    lock (_sync)
+                    {
+                        _currentFrontendId = target;
+                    }
+                },
+                RollbackAsync = _ => InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder)),
+            };
 
-                lock (_sync)
-                {
-                    _currentFrontendId = target;
-                }
-            },
-            RollbackAsync = _ => InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder)),
-        };
+            return await _switcher.SwitchAsync(
+                new SwitchRequest(target, previousFrontend),
+                callbacks,
+                cancellationToken).ConfigureAwait(true);
+        }
+        finally
+        {
+            _switchGate.Release();
+        }
+    }
 
-        return _switcher.SwitchAsync(new SwitchRequest(target, CurrentFrontendId), callbacks, cancellationToken);
+    private void ValidateLayout(Control? replacement)
+    {
+        if (replacement is null)
+        {
+            throw new InvalidOperationException("replacement content tree was not built");
+        }
+
+        var viewport = _host.Bounds.Width > 0 && _host.Bounds.Height > 0
+            ? _host.Bounds.Size
+            : FallbackViewport;
+        replacement.Measure(viewport);
+        replacement.Arrange(new Rect(viewport));
+        if (replacement.Bounds.Width <= 0 || replacement.Bounds.Height <= 0)
+        {
+            throw new InvalidOperationException("replacement content tree has no valid geometry");
+        }
     }
 
     private static Control Placeholder => new Border();
 
     private static async Task InvokeOnUiAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
+
+    private static async Task InvokeAtPriorityAsync(DispatcherPriority priority) =>
+        await Dispatcher.UIThread.InvokeAsync(static () => { }, priority);
 }

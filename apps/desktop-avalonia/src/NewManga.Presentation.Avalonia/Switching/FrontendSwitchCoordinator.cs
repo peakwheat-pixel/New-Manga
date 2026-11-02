@@ -16,6 +16,15 @@ public sealed class SwitchCallbacks
 
     public required Func<CancellationToken, Task> RollbackAsync { get; init; }
 
+    /// <summary>Real layout gate: the replacement tree completed layout with valid geometry.</summary>
+    public Func<CancellationToken, Task>? LayoutAsync { get; init; }
+
+    /// <summary>Real loaded gate: Loaded callbacks completed after the tree entered a visual tree.</summary>
+    public Func<CancellationToken, Task>? LoadedAsync { get; init; }
+
+    /// <summary>Real rendered gate: at least one frame can be rendered before the swap is committed.</summary>
+    public Func<CancellationToken, Task>? RenderedAsync { get; init; }
+
     /// <summary>Optional stage observer for diagnostics/evidence.</summary>
     public Action<SwitchStage>? OnStage { get; init; }
 }
@@ -67,13 +76,13 @@ public sealed class FrontendSwitchCoordinator
             {
                 (SwitchStage.Preparing, callbacks.ValidateAsync),
                 (SwitchStage.Building, callbacks.BuildTreeAsync),
-                (SwitchStage.Layout, NoOpAsync),
-                (SwitchStage.Loaded, NoOpAsync),
-                (SwitchStage.Rendered, NoOpAsync),
+                (SwitchStage.Layout, callbacks.LayoutAsync ?? NoOpAsync),
+                (SwitchStage.Loaded, callbacks.LoadedAsync ?? NoOpAsync),
+                (SwitchStage.Rendered, callbacks.RenderedAsync ?? NoOpAsync),
                 (SwitchStage.Committed, callbacks.CommitAsync),
             };
 
-            _journal.Begin(request.TargetFrontendId);
+            _journal.Begin(request.TargetFrontendId, request.PreviousFrontendId);
 
             var current = SwitchStage.Preparing;
             try

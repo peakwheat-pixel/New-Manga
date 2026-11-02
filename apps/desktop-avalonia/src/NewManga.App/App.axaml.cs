@@ -71,6 +71,9 @@ public partial class App : Application
                 presentationPath,
                 legacyPath: themeHome.SettingsFilePath));
             appearance.Reload();
+            // R-003: a crash between persisting the target frontend and committing the journal is rolled
+            // back to the last committed frontend before the startup decision is made.
+            RecoverInterruptedSwitch(themeHome, appearance);
             var startupPlan = SafeStartupPlanner.Plan(options, appearance.Settings, appearance.Warnings);
             foreach (var diagnostic in startupPlan.Diagnostics)
             {
@@ -82,10 +85,8 @@ public partial class App : Application
                 Trace.TraceWarning("startup fell back to the Current V2 shell: " + startupPlan.EffectiveFrontendId);
             }
 
-            // R-004: the planner is the single decision source; its effective frontend is what starts.
-            var selection = startupPlan.IsFallback
-                ? FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null)
-                : FrontendSelector.Select(options.FrontendId, appearance.FrontendId);
+            // R-004: the planner is the single decision source; its selection object is what starts.
+            var selection = startupPlan.Selection;
 
             var controller = new HostController(options.ToHostOptions());
             var window = CreateShell(options, controller, selection, appearance, themeHome, _designSystemTheme, this);
@@ -210,15 +211,7 @@ public partial class App : Application
             ?? throw new InvalidOperationException("theme home has no directory");
         var journal = new SwitchJournal(Path.Combine(directory, "switch-journal.json"));
 
-        // FEA-07 AC3: an interrupted switch from the previous run is rolled back before the stable
-        // window starts; startup never resumes a partially switched content tree.
-        var switchCoordinator = new FrontendSwitchCoordinator(journal);
-        if (switchCoordinator.TryRecoverInterrupted(out var interrupted) && interrupted is not null)
-        {
-            var recovery = $"startup recovery: interrupted switch to '{interrupted.TargetFrontendId}' at {interrupted.Stage}";
-            journal.Rollback(recovery);
-            Trace.TraceWarning(recovery + "; starting the persisted frontend");
-        }
+
 
         // R-001/R-010: retain one content tree per frontend so switching back preserves page/session
         // state instead of rebuilding a fresh Fluent/V2 tree (and its subscriptions) every time.
@@ -323,6 +316,49 @@ public partial class App : Application
         }
     }
 
+    /// <summary>
+    /// R-003: recovers a crash between persisting the switch target and committing the switch journal.
+    /// When the persisted document already points at the interrupted target, the last committed frontend
+    /// recorded in the journal is restored before the startup decision is made; the journal is then
+    /// deterministically rolled back. Never resumes a partially switched UI.
+    /// </summary>
+    internal static void RecoverInterruptedSwitch(ThemeHomePaths themeHome, AppearanceCoordinator appearance)
+    {
+        ArgumentNullException.ThrowIfNull(themeHome);
+        ArgumentNullException.ThrowIfNull(appearance);
+        var directory = Path.GetDirectoryName(themeHome.SettingsFilePath);
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            return;
+        }
+
+        var journal = new SwitchJournal(Path.Combine(directory, "switch-journal.json"));
+        var switchCoordinator = new FrontendSwitchCoordinator(journal);
+        if (!switchCoordinator.TryRecoverInterrupted(out var interrupted) || interrupted is null)
+        {
+            return;
+        }
+
+        var restored = interrupted.PreviousFrontendId;
+        var crashWindowPersistedTarget = string.Equals(appearance.FrontendId, interrupted.TargetFrontendId, StringComparison.Ordinal);
+        if (crashWindowPersistedTarget && !string.IsNullOrWhiteSpace(restored))
+        {
+            try
+            {
+                appearance.SaveAsync(appearance.Settings with { FrontendId = restored }, CancellationToken.None)
+                    .GetAwaiter()
+                    .GetResult();
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException)
+            {
+                Trace.TraceWarning($"startup recovery: could not restore '{restored}': {ex.GetType().Name}");
+            }
+        }
+
+        var recovery = $"startup recovery: interrupted switch to '{interrupted.TargetFrontendId}' at {interrupted.Stage}; previous='{restored ?? "<unknown>"}'";
+        journal.Rollback(recovery);
+        Trace.TraceWarning(recovery);
+    }
     /// <summary>FEA-06-PREREQ-2 P5: Theme Studio production wiring (never blocks the shell on failure).</summary>
     private static void WireThemeStudio(
         AppShellV2 shell,

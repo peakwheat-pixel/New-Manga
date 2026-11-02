@@ -121,6 +121,9 @@ public sealed class PresentationHostCompositionTests : IDisposable
         journal.Advance(SwitchStage.Rendered);
         Assert.True(journal.HasInterruptedSwitch(out _));
 
+        // The App startup path runs the journal recovery before the shell decision.
+        App.RecoverInterruptedSwitch(themeHome, appearance);
+
         var selection = FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null);
         var window = App.CreatePresentationShell(options, NullHostController.Instance, selection, appearance, themeHome, themeManager, application);
         try
@@ -152,21 +155,37 @@ public sealed class PresentationHostCompositionTests : IDisposable
         var presentation = Assert.IsType<PresentationWindow>(window);
         try
         {
-            Control? fluentContent = null;
-            Control? v2Content = null;
-            for (var i = 0; i < 10; i++)
+            FluentShellSurface? fluentContent = null;
+            AppShellV2? v2Content = null;
+            for (var i = 0; i < 50; i++)
             {
                 var fluent = await presentation.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
                 Assert.True(fluent.Succeeded, fluent.Failure);
                 var fluentTree = Assert.IsType<FluentShellSurface>(presentation.ContentHost.Current);
-                fluentContent ??= fluentTree;
-                Assert.Same(fluentContent, fluentTree);
+                if (fluentContent is null)
+                {
+                    fluentContent = fluentTree;
+                    fluentTree.Navigate(FluentPage.Workbench);
+                }
+                else
+                {
+                    Assert.Same(fluentContent, fluentTree);
+                    Assert.Equal(FluentPage.Workbench, fluentTree.CurrentPage);
+                }
 
                 var v2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
                 Assert.True(v2.Succeeded, v2.Failure);
                 var v2Tree = Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
-                v2Content ??= v2Tree;
-                Assert.Same(v2Content, v2Tree);
+                if (v2Content is null)
+                {
+                    v2Content = v2Tree;
+                    v2Tree.Tag = "v2-state-marker";
+                }
+                else
+                {
+                    Assert.Same(v2Content, v2Tree);
+                    Assert.Equal("v2-state-marker", v2Tree.Tag);
+                }
                 Assert.Same(window, presentation);
             }
 

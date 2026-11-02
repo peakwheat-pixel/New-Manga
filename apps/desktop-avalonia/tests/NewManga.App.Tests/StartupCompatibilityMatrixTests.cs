@@ -121,8 +121,7 @@ public sealed class StartupCompatibilityMatrixTests : IDisposable
         Assert.Equal(FrontendSelector.CurrentV2FrontendId, plan.EffectiveFrontendId);
 
         var controller = new FakeHostController(FakeHostController.ReadySnapshot());
-        var selection = FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null);
-        var window = App.CreateShell(options, controller, selection, coordinator, ThemeHome.Resolve(options), manager, application);
+        var window = App.CreateShell(options, controller, plan.Selection, coordinator, ThemeHome.Resolve(options), manager, application);
         Assert.IsType<AppShellV2>(window.Content);
         window.Close();
     }

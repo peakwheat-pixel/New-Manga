@@ -6,6 +6,7 @@ namespace NewManga.Presentation.Avalonia.Switching;
 /// <summary>One durable switch-journal entry (FEA-07 / proposal §7.1 crash recovery).</summary>
 public sealed record SwitchJournalEntry(
     string TargetFrontendId,
+    string? PreviousFrontendId,
     SwitchStage Stage,
     DateTimeOffset StartedAt,
     DateTimeOffset UpdatedAt,
@@ -36,11 +37,11 @@ public sealed class SwitchJournal
     public string FilePath => _path;
 
     /// <summary>Starts (or restarts) a switch attempt for <paramref name="targetFrontendId"/>.</summary>
-    public SwitchJournalEntry Begin(string targetFrontendId)
+    public SwitchJournalEntry Begin(string targetFrontendId, string? previousFrontendId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(targetFrontendId);
         var now = DateTimeOffset.UtcNow;
-        var entry = new SwitchJournalEntry(targetFrontendId, SwitchStage.Preparing, now, now, Failure: null);
+        var entry = new SwitchJournalEntry(targetFrontendId, previousFrontendId, SwitchStage.Preparing, now, now, Failure: null);
         Write(entry);
         return entry;
     }

@@ -24,7 +24,8 @@ public sealed record StartupPlan(
     string EffectiveFrontendId,
     bool IsFallback,
     StartupShellKind ShellKind,
-    IReadOnlyList<string> Diagnostics);
+    IReadOnlyList<string> Diagnostics,
+    FrontendSelection Selection);
 
 /// <summary>
 /// FEA-07 AC4/AC7: decides the startup shell and effective frontend under the fail-safe policy. The
@@ -76,11 +77,15 @@ public static class SafeStartupPlanner
                 ? StartupShellKind.PresentationHost
                 : StartupShellKind.Default;
 
+        var effectiveSelection = isFallback
+            ? FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null)
+            : selection;
         return new StartupPlan(
             RequestedFrontendId: options.FrontendId ?? settings.FrontendId,
-            EffectiveFrontendId: isFallback ? FrontendSelector.CurrentV2FrontendId : selection.EffectiveFrontendId,
+            EffectiveFrontendId: effectiveSelection.EffectiveFrontendId,
             IsFallback: isFallback,
             ShellKind: shellKind,
-            Diagnostics: diagnostics);
+            Diagnostics: diagnostics,
+            Selection: effectiveSelection);
     }
 }
