@@ -1,10 +1,15 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.ThemeStudio;
@@ -365,6 +370,104 @@ public sealed class PresentationHostCompositionTests : IDisposable
             cancelled = false;
             presentation.Close();
             Assert.False(cancelled, "without the provider the draft no longer blocks the close (reverse validation)");
+        }
+        finally
+        {
+            presentation.Close();
+        }
+    }
+
+    /// <summary>
+    /// R-020 (r5): the stable window owns the native window state. Fluent full-screen requests (button / F /
+    /// Esc) must drive <see cref="WindowState"/> through the production composition root, only for the
+    /// visible tree, and switching frontends must restore a normal window.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task FluentFullScreenRequests_DriveTheStableWindowState()
+    {
+        var application = Application.Current!;
+        using var themeManager = new DesignSystemThemeManager(application);
+        themeManager.Initialize();
+        var appearance = Appearance();
+        var options = AppOptions.Parse(new[] { "--presentation-host=true" });
+        var selection = FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null);
+        var window = App.CreatePresentationShell(options, NullHostController.Instance, selection, appearance, ThemeHome(), themeManager, application);
+        var presentation = Assert.IsType<PresentationWindow>(window);
+        try
+        {
+            presentation.Show();
+            var fluent = Assert.IsType<FluentShellSurface>(presentation.ContentHost.Current);
+            fluent.Navigate(FluentPage.Reader);
+            Dispatcher.UIThread.RunJobs();
+
+            var fullScreenButton = fluent.GetVisualDescendants().OfType<Button>()
+                .FirstOrDefault(button => string.Equals(button.Content as string, "全屏", StringComparison.Ordinal));
+            var reader = fluent.GetVisualDescendants().OfType<ReaderPageView>().FirstOrDefault();
+            Assert.NotNull(fullScreenButton);
+            Assert.NotNull(reader);
+
+            // Button path: the visible Fluent reader asks the stable window for full screen and back.
+            fullScreenButton!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, presentation.WindowState);
+            fullScreenButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+            Assert.False(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.Normal, presentation.WindowState);
+
+            // F path: the reader key funnel toggles the native window state.
+            Assert.True(reader!.Focus());
+            Dispatcher.UIThread.RunJobs();
+            window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, presentation.WindowState);
+            window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            Assert.False(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.Normal, presentation.WindowState);
+
+            // Esc path: the Fluent surface closes the reader (SurfaceBack binding, FEA-06) and the stable
+            // window must leave full screen instead of leaving the user stuck in a full-screen library.
+            window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(WindowState.FullScreen, presentation.WindowState);
+            Assert.True(reader.Focus());
+            window.KeyPressQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            Assert.NotEqual(FluentPage.Reader, fluent.CurrentPage);
+            Assert.False(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.Normal, presentation.WindowState);
+
+            // Switching frontends restores a normal window, and the hidden cached Fluent tree can no longer
+            // drive the window chrome.
+            fluent.Navigate(FluentPage.Reader);
+            Dispatcher.UIThread.RunJobs();
+            fullScreenButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(WindowState.FullScreen, presentation.WindowState);
+
+            var toV2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+            Assert.True(toV2.Succeeded, toV2.Failure);
+            Assert.Equal(WindowState.Normal, presentation.WindowState);
+            Assert.False(fluent.ReaderViewModel.IsFullScreen);
+            fluent.FullScreenRequested?.Invoke(true);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(WindowState.Normal, presentation.WindowState);
+
+            // Switching back re-wires the same cached surface: the key funnel drives the window again.
+            var backToFluent = await presentation.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
+            Assert.True(backToFluent.Succeeded, backToFluent.Failure);
+            fluent.Navigate(FluentPage.Reader);
+            Dispatcher.UIThread.RunJobs();
+            var readerAgain = fluent.GetVisualDescendants().OfType<ReaderPageView>().First();
+            Assert.True(readerAgain.Focus());
+            Dispatcher.UIThread.RunJobs();
+            window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, presentation.WindowState);
         }
         finally
         {

@@ -16,6 +16,12 @@ public sealed class FrontendContentHost : UserControl
         Content = _slot;
     }
 
+    /// <summary>
+    /// Raised after the displayed tree changed (set or cleared). The hosting window uses it to attach
+    /// tree-owned window chrome (e.g. FEA-07 R-020 Fluent full-screen requests) to the visible tree only.
+    /// </summary>
+    public event EventHandler<Control?>? ContentChanged;
+
     /// <summary>The currently displayed frontend content tree.</summary>
     public Control? Current => _slot.Content as Control;
 
@@ -24,11 +30,13 @@ public sealed class FrontendContentHost : UserControl
     {
         ArgumentNullException.ThrowIfNull(content);
         _slot.Content = content;
+        ContentChanged?.Invoke(this, content);
     }
 
     /// <summary>Detaches the current content tree without displaying a replacement.</summary>
     public void Clear()
     {
         _slot.Content = null;
+        ContentChanged?.Invoke(this, null);
     }
 }

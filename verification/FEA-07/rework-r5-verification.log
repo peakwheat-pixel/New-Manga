@@ -1,0 +1,37 @@
+# FEA-07 r5 rework (R-020 Fluent full-screen bridge / R-021 duplicate-notification test / perf wording)
+# time: 2026-11-02 19:16:00 +08:00
+# head: ea27a7b10 (uncommitted rework; committed delivery head is pinned by final-evidence.log)
+# worktree: M apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShellSurface.axaml.cs
+#   M apps/desktop-avalonia/src/NewManga.App/Views/Presentation/PresentationWindow.cs
+#   M apps/desktop-avalonia/src/NewManga.Presentation.Avalonia/Hosting/FrontendContentHost.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/PresentationHostCompositionTests.cs
+#   M apps/desktop-avalonia/tests/NewManga.App.Tests/SettingsDraftSyncTests.cs
+#   M verification/FEA-07/performance-baseline.md
+#   A doc/reviews/FEA-07-impl-r5.md (r5 independent review report)
+# build (Debug, sln): exit=0
+#   0 个警告
+#   0 个错误
+# focused tests (PresentationHostComposition + SettingsDraftSync + FluentShell/Page + PresentationWindow
+#   + PresentationInputRouting): 40 passed / 0 failed
+# full-tests (sln, NewManga.runsettings): exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21 - NewManga.Appearance.Tests.dll
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38 - NewManga.Presentation.Avalonia.Tests.dll
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79 - NewManga.Host.Tests.dll
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253 - NewManga.ThemeEngine.Tests.dll
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87 - NewManga.DesignSystem.Tests.dll
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31 - NewManga.ApplicationCore.Tests.dll
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150 - NewManga.CoreClient.Tests.dll
+#   已通过! - 失败:     0，通过:   525，已跳过:     7，总计:   532 - NewManga.App.Tests.dll
+#   全量: 1134 passed / 0 failed / 57 skipped (previous head: 1132/0/57; +2 tests)
+#   skip reason (r4/r5 correction): Host 28 / CoreClient 22 / App 7 = 57, direct cause
+#   NEWMANGA_CORECLIENT_SIDECAR_DIR unset
+# performance baseline (Release, 4 warmup + 20 measured, real gates):
+#   run 1: p50 97.14 / p95 236.48 / max 250.27 / cold 628.43 / mem +304 B / handles 0 -> PASS
+#   run 2 (recorded JSON): p50 96.50 / p95 248.42 / max 349.30 / cold 612.38 / mem +2528 B / handles 0 -> PASS
+#   W-5 budget p95 <= 1000 ms: PASS on both runs
+# generators:
+#   TokenGen -- --check: rows 292; up to date (byte-for-byte) exit=0
+#   ThemeGen -- --check: up to date (byte-for-byte) exit=0
+# governance:
+#   check.ps1: PASS (3 warnings: 10 non-terminal tasks; STATUS/PLAN budget warnings)
+#   verify_pins.ps1: PASS 15/15

@@ -162,6 +162,24 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     /// <summary>Raised when the surface wants the hosting window to toggle full screen.</summary>
     public Action<bool>? FullScreenRequested { get; set; }
+
+    /// <summary>Raised after the visible page changed (the stable window uses it to keep chrome consistent).</summary>
+    public event EventHandler<FluentPage>? CurrentPageChanged;
+
+    /// <summary>
+    /// Leaves full-screen reading without user input (e.g. the stable window switches to another frontend),
+    /// keeping the reader state and the hosting window state consistent.
+    /// </summary>
+    public void ExitFullScreen()
+    {
+        if (!_readerModel.IsFullScreen)
+        {
+            return;
+        }
+
+        _readerModel.IsFullScreen = false;
+        FullScreenRequested?.Invoke(false);
+    }
     public Button? NavigationButton(FluentPage page) => _navButtons.GetValueOrDefault(page);
 
     /// <summary>FEA-07 AC2: the host checks real content state before closing the stable window.</summary>
@@ -186,6 +204,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             UpdateNavigationItems();
             UpdateNavSelection(_pageBeforeReader);
             UpdateStatus();
+            CurrentPageChanged?.Invoke(this, _currentPage);
             return;
         }
 
@@ -212,6 +231,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
             _workbenchView.SelectPageTab();
         }
         UpdateStatus();
+        CurrentPageChanged?.Invoke(this, _currentPage);
     }
 
     public bool Navigate(string page)

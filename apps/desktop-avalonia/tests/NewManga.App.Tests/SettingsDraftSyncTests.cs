@@ -121,17 +121,44 @@ public sealed class SettingsDraftSyncTests : IDisposable
     }
 
     [AvaloniaFact]
-    public async Task DuplicateCanonicalNotification_DoesNotClobberADirtyDraft()
+    public async Task ExternalContrastChange_WhenClean_MirrorsCanonicalSettings()
+    {
+        var settings = CreateSettings();
+        var highContrast = _appearance.Settings with { Contrast = AppearanceContrast.High };
+
+        await SaveAndSettleAsync(highContrast, () => settings.Draft.Contrast == AppearanceContrast.High);
+
+        Assert.Equal(highContrast, settings.Draft);
+        Assert.False(settings.IsDirty);
+    }
+
+    /// <summary>
+    /// R-021: the production coordinator suppresses duplicate Changed events, so the defensive
+    /// "unchanged canonical" branch is exercised through the production notification entry point with an
+    /// unchanged document. A dirty draft must survive it.
+    /// </summary>
+    [AvaloniaFact]
+    public void DuplicateCanonicalNotification_DoesNotClobberADirtyDraft()
     {
         var settings = CreateSettings();
         var draft = DirtyDraft(settings.Draft);
         settings.UpdateDraft(draft);
+        Assert.True(settings.IsDirty);
 
-        await _appearance.SaveAsync(_appearance.Settings); // unchanged document -> no Changed event
-        PumpUntil(() => false, timeoutMs: 50);
+        InvokeAppearanceChanged(settings);
+        Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(draft, settings.Draft);
         Assert.True(settings.IsDirty);
+    }
+
+    private void InvokeAppearanceChanged(SettingsViewModel settings)
+    {
+        var handler = typeof(SettingsViewModel).GetMethod(
+            "OnAppearanceChanged",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.NotNull(handler);
+        handler.Invoke(settings, new object?[] { _appearance, EventArgs.Empty });
     }
 
     /// <summary>

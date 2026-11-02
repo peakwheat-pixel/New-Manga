@@ -9,6 +9,7 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.Shell.V2;
+using NewManga.App.Views.Fluent;
 using NewManga.Appearance;
 using NewManga.DesignSystem;
 using NewManga.Presentation.Avalonia.Hosting;
@@ -28,6 +29,7 @@ public sealed class PresentationWindow : Window
 {
     private readonly FrontendHostCoordinator _coordinator;
     private readonly Func<IReadOnlyList<Control>>? _allContentProvider;
+    private FluentShellSurface? _fullScreenOwner;
 
     /// <summary>Creates the stable window and hosts the initial frontend content tree.</summary>
     /// <param name="allContentProvider">
@@ -66,6 +68,9 @@ public sealed class PresentationWindow : Window
         }
 
         ContentHost = new FrontendContentHost();
+        // R-020: the stable window owns the native window state; only the visible tree may request chrome
+        // changes (the standalone FluentShell facade used to be the only full-screen bridge).
+        ContentHost.ContentChanged += OnVisibleContentChanged;
         ContentHost.SetContent(contentFactory(selection.EffectiveFrontendId));
 
         // R-001: the hidden staging slot is attached to the same live visual tree as the visible slot but
@@ -149,6 +154,72 @@ public sealed class PresentationWindow : Window
         {
             args.Cancel = true;
         }
+    }
+
+    /// <summary>
+    /// R-020: connects window-owned chrome (full screen) to the visible Fluent tree. A hidden or cached
+    /// tree never drives the native window state; leaving such a tree restores a normal window.
+    /// </summary>
+    private void OnVisibleContentChanged(object? sender, Control? content)
+    {
+        if (content is FluentShellSurface fluent)
+        {
+            if (!ReferenceEquals(_fullScreenOwner, fluent))
+            {
+                if (_fullScreenOwner is not null)
+                {
+                    _fullScreenOwner.CurrentPageChanged -= OnFluentPageChanged;
+                }
+
+                _fullScreenOwner = fluent;
+                fluent.CurrentPageChanged += OnFluentPageChanged;
+            }
+
+            fluent.FullScreenRequested = ApplyFullScreenRequest;
+            return;
+        }
+
+        // Leaving the Fluent tree: its reader must not stay logically full-screen while the window is not.
+        if (_fullScreenOwner is not null)
+        {
+            _fullScreenOwner.CurrentPageChanged -= OnFluentPageChanged;
+            _fullScreenOwner.ExitFullScreen();
+        }
+
+        _fullScreenOwner = null;
+        if (WindowState == WindowState.FullScreen)
+        {
+            WindowState = WindowState.Normal;
+        }
+    }
+
+    /// <summary>
+    /// R-020: leaving the reader (Esc / back) while the stable window is full-screen restores a normal
+    /// window instead of leaving the user stuck in a full-screen non-reader page.
+    /// </summary>
+    private void OnFluentPageChanged(object? sender, FluentPage page)
+    {
+        if (_fullScreenOwner is null || !ReferenceEquals(sender, _fullScreenOwner) || page == FluentPage.Reader)
+        {
+            return;
+        }
+
+        if (WindowState == WindowState.FullScreen)
+        {
+            _fullScreenOwner.ExitFullScreen();
+            WindowState = WindowState.Normal;
+        }
+    }
+
+    private void ApplyFullScreenRequest(bool enabled)
+    {
+        // Ignore requests from a cached tree that is no longer the visible frontend.
+        if (_fullScreenOwner is null || !ReferenceEquals(ContentHost.Current, _fullScreenOwner))
+        {
+            return;
+        }
+
+        WindowState = enabled ? WindowState.FullScreen : WindowState.Normal;
     }
 
     private IEnumerable<Control> EnumerateLiveContentTrees()
