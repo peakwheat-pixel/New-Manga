@@ -99,3 +99,7 @@
 ## 补记 12（I-4 BookRow 指针态，全量 1195/0/57）
 - `FluentComponentPointerStatesTests` 扩展 BookRow：Bg.Canvas → hover Bg.Overlay → pressed/selected Accent.Muted（指针合成 + 类切换）；矩阵 BookCard/BookRow 行均升级 EFFECTIVE。
 - 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。
+
+## 补记 13（I-4 命令面板结果/空态，全量 1195/0/57）
+- `FluentCommandPaletteFocusTests` 扩展：命令面板初始渲染真实命令行（>0）、输入不存在查询后过滤为 0（诚实空结果，无假数据）、清空后恢复；焦点仍在搜索框。
+- 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。

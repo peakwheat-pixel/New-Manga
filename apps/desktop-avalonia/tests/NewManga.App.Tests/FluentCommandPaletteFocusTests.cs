@@ -62,7 +62,19 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
         var modal = shell.GetVisualDescendants().OfType<Border>()
             .First(border => border.Name == "FluentModalHost");
         Assert.True(modal.IsVisible);
-        Assert.IsType<TextBox>(shell.FocusManager?.GetFocusedElement());
+        var search = Assert.IsType<TextBox>(shell.FocusManager?.GetFocusedElement());
+
+        // Result/empty cells (inventory §3): the palette renders real commands, filters them by the query,
+        // and shows an honest empty result instead of fake data.
+        int RowCount() => shell.GetVisualDescendants().OfType<Button>()
+            .Count(button => button.Classes.Contains("fluent-command-row"));
+        Assert.True(RowCount() > 0);
+        search.Text = "不存在的命令-zzz";
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(0, RowCount());
+        search.Text = string.Empty;
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(RowCount() > 0);
 
         Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
         Dispatcher.UIThread.RunJobs();
