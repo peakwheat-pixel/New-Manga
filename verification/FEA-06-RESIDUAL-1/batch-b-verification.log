@@ -126,3 +126,8 @@
 - EXIT：build exit 0；全量 test exit 0（**1197 passed / 0 failed / 57 skipped**）；生成器 0；check 0；pins 0。
 - skip 明细（xUnit skip，平台/环境条件）：Host 28 + CoreClient 22 + App.Tests 7 = 57（各程序集输出见 runsettings 日志；均为既有环境性 skip，非本批新增）。
 - 差值：基线 1137/0/57（pre-I-7 安全口径）→ I-7 后 1138 起点 → Batch A +33 → Batch B 追加至 1197（只增不减）。
+
+## 补记 16（浮层进入 200ms 断言锁定，全量 1197/0/57）
+- `FluentCommandPaletteFocusTests`（改为 full motion 设置）断言浮层 scrim Transitions = 单个 DoubleTransition 且 Duration = `MotionTimings.NavigationOverlayInMilliseconds`（200ms），锁定 R1-001 浮层进入消费。
+- 仍余：浮层退出 160ms、feedback pressed 90ms/badge 150ms；完成后派 impl-r2。
+- 验证：build 0/0；无过滤全量 **1197/0/57**；旧 PNG 零漂移。

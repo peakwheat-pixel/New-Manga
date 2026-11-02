@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Animation;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -39,7 +41,7 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
     }
 
     [AvaloniaFact]
-    public void CommandPalette_MovesFocusIn_AndEscapeRestoresTheTrigger()
+    public async Task CommandPalette_MovesFocusIn_AndEscapeRestoresTheTrigger()
     {
         var appearance = new AppearanceCoordinator(new AppearanceStore(Path.Combine(_root, AppearanceStore.FileName)));
         appearance.Reload();
@@ -48,6 +50,9 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
             host: new FakeHostController(FakeHostController.ReadySnapshot("Sample Manga")),
             appearance: appearance);
         shell.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        await appearance.SaveAsync(AppearanceDefaults.Settings with { MotionMode = MotionMode.Full, MotionCategories = MotionCategories.All });
         Dispatcher.UIThread.RunJobs();
 
         var trigger = shell.GetVisualDescendants().OfType<Button>()
@@ -62,6 +67,13 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
         var modal = shell.GetVisualDescendants().OfType<Border>()
             .First(border => border.Name == "FluentModalHost");
         Assert.True(modal.IsVisible);
+        // impl-r1 R1-001: overlay entrance consumes the frozen 200ms navigation parameter.
+        var scrim = Assert.IsType<Border>(modal.Child);
+        var scrimTransitions = scrim.Transitions;
+        Assert.NotNull(scrimTransitions);
+        var overlayTransition = Assert.Single(scrimTransitions!);
+        Assert.Equal(TimeSpan.FromMilliseconds(MotionTimings.NavigationOverlayInMilliseconds),
+            Assert.IsType<DoubleTransition>(overlayTransition).Duration);
         var search = Assert.IsType<TextBox>(shell.FocusManager?.GetFocusedElement());
 
         // Result/empty cells (inventory §3): the palette renders real commands, filters them by the query,
