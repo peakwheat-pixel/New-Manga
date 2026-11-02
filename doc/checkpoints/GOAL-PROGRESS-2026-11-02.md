@@ -978,3 +978,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **Task 终态**：`closed_with_limitations`（AC1–AC4 MET；原生 200% DPI/a11y = BLOCKED/D-1；OUT loading/危险加载/新增组件状态；D-14 裁决 A 实施转后续卡）。Resource Manifest / Canonical Evidence / Closeout 已填写；关闭提交 `e226c08fe`（前序 `d1df8035a` 收录 review + 指针同步）。
 - **释放 D-14-STATUS-COLOR-FIX（ready，owner=codex）** 为当前 Task（STATUS/PLAN 已更新）；已排程 **08:06 ZCode 派发**（Codex 限额 10:25 备用）。
 - 治理 PASS(3)；未 push。
+## 151. D-14 实施（DSH/D-7）+ 独立复核待派（2026-11-03 07:46）
+
+- 按 **D-14 裁决 A** 实施（Codex 限额 10:25、ZCode ≈08:05，D-7 故障转移）：`StatusCatalog.ColorKey(NotStarted)` → `NmKeys.Color.Text.Secondary` + XML 注释；新增 `D14StatusNotStartedTests`（映射 + light/dark × Bg.Canvas/Bg.Panel 对比度 ≥4.5:1）。
+- 验证：build 0/0；定向 **3/3 PASS**；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；证据 `verification/D-14-STATUS-COLOR-FIX/impl-verification.log`（SHA `030245d6…`）；实施提交 `5ecc1e4c6`。
+- Task D-14 状态 `in_progress`（delivery_head 5ecc1e4c6；独立 impl Review 待）；STATUS/PLAN 指针已更新（进行中=D-14；READY=无）；PLAN 行数预算内（64 行）——已移除 FEA-06-RESIDUAL-1 历史行（关闭记录仍在 Task/STATUS/checkpoint）。
+- 已排程 **08:06 ZCode 派发**（改为：实现已完成，仅派独立 impl Review；Codex 10:25 备用）。
