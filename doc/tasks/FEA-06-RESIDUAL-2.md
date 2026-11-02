@@ -3,11 +3,11 @@ id: FEA-06-RESIDUAL-2
 title: Fluent 视觉残项补做（D-8 decorative + I-4 视觉格）
 kind: implementation
 governance_version: 3
-status: ready
-approval: scope_r2_change_requested_2026-11-03（D-9 独立子 agent，P0=0/P1=3/P2=12；范围 v3 按 R2R-001/002/003 + 直接 P2 处置，待 scope-r3 复核冻结）
+status: in_progress
+approval: scope-r3_approved_2026-11-03（ZCode CLI 独立上下文；reviewed_head b201d4489；P0=0/P1=0/P2=7）；范围 v3 冻结，按 IN-1.1/IN-1.2/IN-2A/IN-2B 实施
 suggested_owner: zcode
 owner: zcode
-reviewer: scope-r1/r2 changes_requested（doc/reviews/FEA-06-RESIDUAL-2-scope-r1.md、-scope-r2.md，D-9 独立子 agent）；待 scope-r3 复核
+reviewer: scope-r3 **approved**（doc/reviews/FEA-06-RESIDUAL-2-scope-r3.md，ZCode CLI）；实施完成后另派独立 impl Review
 depends_on:
   - FEA-06-RESIDUAL-1
 base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431

@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-06-RESIDUAL-2](tasks/FEA-06-RESIDUAL-2.md) `ready`（D-8+I-4 视觉格；scope-r1/r2 CR，v3 待 scope-r3）；FEA-06-RESIDUAL-1 已 closed_with_limitations（impl-r4 approved，669a4ae02，1245/0/57）。
+- 当前 Task：[FEA-06-RESIDUAL-2](tasks/FEA-06-RESIDUAL-2.md) `in_progress`（D-8+I-4 视觉格；scope-r3 approved，实施中）；FEA-06-RESIDUAL-1 已 closed_with_limitations（impl-r4 approved，669a4ae02，1245/0/57）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
 - 下一步：无 READY 节点；按用户顺序需释放下一 FEA 节点（FEA-09…13 端口或 AC2/D-8 视觉补做），当前无授权前不自行开工；`G-DELETE-IMPL` OPEN。
