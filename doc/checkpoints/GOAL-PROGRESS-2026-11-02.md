@@ -1007,3 +1007,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 草案列 3 个待 scope Review 决定项（是否允许隔离测试 SQLite、无硬件卷是否接受 LIMITED、H6 是否引入 Python 依赖需许可记录）。
 - 未释放 Task（D-15 待裁决；ZCode 08:05 窗口优先 D-14 独立 Review）；不与 D-14 冲突、不插队。
 - 当前 D-14 in_progress（1292/0/57）仅缺独立 Review；治理 PASS(3)、pins 15/15；未 push。
+## 156. D-14 复核经 D-9 派发 + FEA-08 scope Review prompt 就绪（2026-11-03 08:06）
+
+- 为避免空等窗口，按 D-9（作者可派独立上下文子 agent 做 Review）已派 **D-14 独立 impl Review**（workflow job `workflow-33d5550690bf4ac5`，reviewed_head=`0d2a02202`；核验裁决 A 执行/越权/对比度独立复算/回归门禁/消费者一致，产出 `doc/reviews/D-14-STATUS-COLOR-FIX-impl-r1.md`）。
+- 已备 `FEA-08/scope-review-prompt.md`（独立 Scope Reviewer：范围与 FEA-08 定义一致、H4/H5/H6 可验证性、回收站全局隔离风险、3 个待决项、验收可判定性；approved 才释放 Task）。
+- ZCode 08:05 / Codex 10:25 窗口保留为补充复核与后续实施资源；当前 D-14 in_progress（1292/0/57）；未 push。
