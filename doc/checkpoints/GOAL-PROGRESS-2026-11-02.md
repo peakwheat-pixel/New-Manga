@@ -722,3 +722,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **仍未完成**：R1-001 浮层退出 160ms、feedback pressed 90ms/badge 150ms；R1-002 完全动态控件统一机制；R1-009 矩阵/AC/日志口径刷新（shell/EXIT/逐条 skip 格式）。
 - 当前全量 **1197/0/57**，交付 `e327b64b5`；以上剩余项完成前不得派 impl-r2（避免重复返修），也不得判定 AC2 达成。
 - 下一步：完成剩余 R1-001/002/009 → 全量+证据刷新 → fresh Codex impl-r2（reviewed_head=e327b64b5 后的 head）→ 集成/关闭。
+## 108. R1-002/R1-009 修复（2026-11-03 00:58）
+
+- R1-002：OpenDialog 创建的命令行控件在创建时即获得 feedback 过渡（动态控件缺口收敛）；R1-009：Batch 日志补 shell/host/命令/EXIT/57 skip 明细，matrix 结论与 AC 覆盖刷新至 1197 与返修现状。
+- 余：R1-001 浮层退出 160ms、feedback pressed 90ms/badge 150ms；完成后再派 fresh Codex impl-r2。
+- 全量 **1197/0/57**；交付 `3ea4af605`。
