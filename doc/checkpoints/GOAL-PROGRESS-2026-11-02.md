@@ -814,3 +814,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Task 状态 `ready→in_progress`；approval/reviewer 更新；PLAN/STATUS/LEDGER 同步；治理 PASS(3)、pins 无变化；冻结提交 amend 为 `b52317259`。
 - 已按冻结范围派 ZCode 实施（job `pwsh-a1a3fdc7925743e1`，prompt workspace `impl-zcode-prompt.md`）：IN-1.1 书架渐变 8s、IN-1.2 翻页粒子 400ms（三态降级/暂停/无泄漏/真实帧源/截图）、IN-2A 16+1 组有效属性（expected-tokens 冻结）、IN-2B opt-in 像素证据 + 逐图 inventory；基线 1245/0/57 只增不减、旧 PNG SHA 不变、不 push、逐 IN 证据/handoff。
 - 完成后：DSH 核验（build/全量/PNG/生成器/治理/pins）→ 派独立 impl Review → 集成/关闭。
+## 125. FEA-06-RESIDUAL-2 实施中断与 WIP 保全（2026-11-03 03:45）
+
+- ZCode 实施（job `pwsh-a1a3fdc7925743e1`）运行约 29 分钟后于 03:42 遇 **HTTP 429**（anthropic-ratelimit-unified-status=rejected，retry-after 15771s≈08:05），exit=1；未提交。
+- WIP 保全（未回退，内容归 ZCode）：工作树 4 改（FluentUi.cs/MotionTimings.cs/ReaderPageView.cs/ShelfPageView.cs，+174/-2）+ 3 新文件（FluentDecorativeMotion.cs、FluentResidual2DecorativeTests.cs、FluentResidual2StateEffectiveTests.cs）；快照至 workspace `wip-snapshot/`（diff + 3 文件）。
+- WIP 当前**不可编译**：`FluentResidual2StateEffectiveTests.cs:416` ToolTip 无 IsOpen；`:441` AlertBanner 数组作 Children 初始化非法。IN-1 装饰层部分已有实现，IN-2A/2B 未完成。
+- 续接排程：05:24 提醒 Codex（额度约 05:23）用 prompt + WIP 快照续接：先修 2 个编译错误，再完成 IN-1/IN-2A/IN-2B、四条验收、commit、evidence/handoff；ZCode retry 约 08:05 为备用。完成后派独立 impl Review（不得自审）。
+- 仓库已提交文档与 scope 证据；未 push。
