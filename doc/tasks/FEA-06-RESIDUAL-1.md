@@ -170,7 +170,7 @@ allowed_paths:
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
 | EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `918e4a2e3` | `85d305f3d7a8f7fcdfa49bb72d500189f2c6301788a452f79c181f79bf708a45` | CANONICAL |
-| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `922a116ca` | `da843c5b4dc2ac6af5fac49303b6fc5d8f84c4ba9dffe56588f53d2b76f682dc` | CANONICAL |
+| EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `03f482400` | `30b629545b134707c535c3042c80db1c4a3f51068e8c1ea947b1c53f249f093f` | CANONICAL |
 | EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `922a116ca` | `4288b2fa04da48540a99475fec6dc1c228a8e89fdfe1894ff70796812357826a` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
