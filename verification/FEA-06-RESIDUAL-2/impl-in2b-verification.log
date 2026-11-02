@@ -1,0 +1,7 @@
+# FEA-06-RESIDUAL-2 IN-2B 像素证据（2026-11-03 04:26）
+
+- 新增 `FluentResidual2VisualEvidenceTests`：默认运行渲染全部帧并断言非空但**零仓库写入**；仅 `NEWMANGA_CAPTURE_RESIDUAL2_PNGS=1` 写 `verification/FEA-06-RESIDUAL-2/visuals/**` + `visual-inventory.md`。
+- opt-in 实跑生成 **35 个文件**（34 PNG + inventory）：pages 4×light/dark（shelf/workbench/reader/settings）、components 12×light/dark（SurfaceCard/BookCard/BookRow/PrimaryButton/IconButton/ToggleSwitch/Slider/RegionBox/ReaderProgressBar 等）、decor 2（shelf-gradient full/reduce）。页面 PNG 31–54KB、组件 1–3KB、decor 791B；allowlist 断言禁止写 `verification/FEA-06/**`（旧四 PNG 未变动）。
+- 验证：默认全量 **1272/0/57**（App 639，+1）/ EXIT=0；默认运行后 `git status` 仅本卡 visuals 未跟踪（无既有证据被改写）；inventory 含逐图 head/group/component/state/mode/viewport/theme/frame/command/EXIT + `signed_by` 待签署。
+- **签署状态**：未签署 = NOT_RUN；IN-2B 的 AC-3 需独立 Reviewer 逐图签署后方可判 MET；禁止以 PNG 存在替代视觉评审。
+- 未 push。
