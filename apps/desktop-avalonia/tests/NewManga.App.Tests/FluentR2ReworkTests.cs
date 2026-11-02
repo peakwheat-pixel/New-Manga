@@ -431,6 +431,239 @@ public sealed class FluentR2ReworkTests
     }
 
     [AvaloniaTheory]
+    [InlineData(MotionMode.Full, MotionCategories.All)]
+    [InlineData(MotionMode.Reduce, MotionCategories.All)]
+    [InlineData(MotionMode.Full, MotionCategories.Feedback)]
+    public async Task R3001_SamePointCenterClicks_ToggleFromPrePressState_ReleaseOnlyExtendsDeadline(
+        MotionMode mode, MotionCategories categories)
+    {
+        var (window, surface, clock, point) = await CreateLoadedReader(mode, categories);
+        try
+        {
+            var reader = surface.ReaderView;
+            var vm = surface.ReaderViewModel;
+            var instant = mode == MotionMode.Reduce || !categories.HasFlag(MotionCategories.Navigation);
+            var changes = 0;
+            vm.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(vm.AreToolBarsVisible)) changes++; };
+            Assert.True(vm.AreToolBarsVisible);
+            var initialDeadline = reader.IdleDeadline!.Value;
+            clock.Advance(1999);
+            reader.CheckIdleDeadline();
+            Assert.True(vm.AreToolBarsVisible);
+            clock.Advance(1);
+            Assert.Equal(initialDeadline, clock.Now);
+            reader.CheckIdleDeadline(); // Start hidden through the actual idle path, never Poke.
+            Assert.False(vm.AreToolBarsVisible);
+            AssertHidden();
+            Assert.Equal(1, changes);
+
+            // One MouseMove above, then all presses/releases use exactly the same window coordinate.
+            for (var click = 1; click <= 3; click++)
+            {
+                var expected = click != 2;
+                AssertPageHit();
+                var beforeChanges = changes;
+                window.MouseDown(point, MouseButton.Left, RawInputModifiers.None);
+                Assert.Equal(expected, vm.AreToolBarsVisible);
+                Assert.Equal(beforeChanges + 1, changes); // Exactly one visibility change per press.
+                if (expected)
+                {
+                    Assert.Equal(clock.Now + TimeSpan.FromSeconds(2), reader.IdleDeadline);
+                    foreach (var bar in new[] { reader.TopBar, reader.BottomBar })
+                    {
+                        Assert.True(bar.IsVisible);
+                        Assert.Equal(1, bar.Opacity);
+                        Assert.True(bar.IsHitTestVisible);
+                    }
+                }
+                else if (instant)
+                {
+                    // Check at MouseDown, before advancing even one animation frame.
+                    Assert.False(reader.TopBar.IsVisible);
+                    Assert.False(reader.BottomBar.IsVisible);
+                    Assert.Equal(0, reader.TopBar.Opacity);
+                    Assert.Equal(0, reader.BottomBar.Opacity);
+                }
+                clock.Advance(400); // Release must renew from release time, without toggling again.
+                window.MouseUp(point, MouseButton.Left, RawInputModifiers.None);
+                Assert.Equal(expected, vm.AreToolBarsVisible);
+                Assert.Equal(beforeChanges + 1, changes);
+                if (expected)
+                    Assert.Equal(clock.Now + TimeSpan.FromSeconds(2), reader.IdleDeadline);
+                else
+                {
+                    Assert.Null(reader.IdleDeadline);
+                    Assert.False(reader.IdleTimerEnabled);
+                    AssertHidden();
+                }
+            }
+
+            // The last interaction is MouseUp, 400ms after MouseDown.
+            var lastRelease = clock.Now;
+            Assert.Equal(lastRelease + TimeSpan.FromSeconds(2), reader.IdleDeadline);
+            clock.Advance(1600); // Old press deadline must not hide the bars.
+            reader.CheckIdleDeadline();
+            Assert.True(vm.AreToolBarsVisible);
+            clock.Advance(399);
+            reader.CheckIdleDeadline();
+            Assert.True(vm.AreToolBarsVisible);
+            clock.Advance(1);
+            reader.CheckIdleDeadline();
+            Assert.False(vm.AreToolBarsVisible);
+            AssertHidden();
+
+            AssertPageHit();
+            window.MouseDown(point, MouseButton.Left, RawInputModifiers.None);
+            window.MouseUp(point, MouseButton.Left, RawInputModifiers.None);
+            Assert.True(vm.AreToolBarsVisible);
+            Assert.True(reader.IdleTimerEnabled);
+            window.Content = null;
+            Assert.False(reader.IdleTimerEnabled);
+            Assert.Null(reader.IdleDeadline);
+            clock.Advance(3000);
+            reader.CheckIdleDeadline();
+            Assert.True(vm.AreToolBarsVisible);
+            Assert.Equal(1, reader.TopBar.Opacity);
+
+            void AssertPageHit()
+            {
+                window.UpdateLayout();
+                Pump(20);
+                var page = reader.PageSurface;
+                Assert.True(window.InputHitTest(point) is Visual hit &&
+                    (ReferenceEquals(hit, page) || hit.GetVisualAncestors().Contains(page)));
+                var local = page.TranslatePoint(new Point(), window)!.Value;
+                Assert.InRange((point.Y - local.Y) / page.Bounds.Height, .25, .75);
+            }
+
+            void AssertHidden()
+            {
+                foreach (var bar in new[] { reader.TopBar, reader.BottomBar })
+                {
+                    Assert.False(bar.IsHitTestVisible);
+                    if (instant)
+                    {
+                        Assert.False(bar.IsVisible);
+                        Assert.Equal(0, bar.Opacity);
+                    }
+                }
+                clock.Advance(160);
+                Assert.False(reader.TopBar.IsVisible);
+                Assert.False(reader.BottomBar.IsVisible);
+                Assert.Equal(0, reader.TopBar.Opacity);
+                Assert.Equal(0, reader.BottomBar.Opacity);
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(MotionMode.Full, MotionCategories.All, 0)]
+    [InlineData(MotionMode.Full, MotionCategories.All, 1)]
+    [InlineData(MotionMode.Full, MotionCategories.All, 2)]
+    [InlineData(MotionMode.Reduce, MotionCategories.All, 0)]
+    [InlineData(MotionMode.Reduce, MotionCategories.All, 1)]
+    [InlineData(MotionMode.Reduce, MotionCategories.All, 2)]
+    [InlineData(MotionMode.Full, MotionCategories.Feedback, 0)]
+    [InlineData(MotionMode.Full, MotionCategories.Feedback, 1)]
+    [InlineData(MotionMode.Full, MotionCategories.Feedback, 2)]
+    public async Task R3001_OtherControlPress_Wheel_AndShellHandledKey_WakeHiddenBarsAndRenewDeadline(
+        MotionMode mode, MotionCategories categories, int input)
+    {
+        var (window, surface, clock, pagePoint) = await CreateLoadedReader(mode, categories);
+        try
+        {
+            var reader = surface.ReaderView;
+            var vm = surface.ReaderViewModel;
+            Assert.False(vm.IsSideRailVisible);
+            window.UpdateLayout();
+            var restore = Named(reader, "显示浮动工具条");
+            var point = input == 0 ? restore.TranslatePoint(new Point(restore.Bounds.Width / 2, restore.Bounds.Height / 2), window)!.Value : pagePoint;
+            window.MouseMove(point, RawInputModifiers.None);
+            reader.PageSurface.Focus();
+            clock.Advance(2000);
+            reader.CheckIdleDeadline();
+            clock.Advance(160);
+            Assert.False(vm.AreToolBarsVisible);
+            Assert.False(reader.TopBar.IsVisible);
+            Assert.Null(reader.IdleDeadline);
+            window.UpdateLayout();
+            Pump(20); // Publish the new layout to headless hit-testing before selecting the target.
+            // Bars leaving the StackPanel shift the restore control; retarget without a waking MouseMove.
+            if (input == 0) point = restore.TranslatePoint(new Point(restore.Bounds.Width / 2, restore.Bounds.Height / 2), window)!.Value;
+            var target = input == 0 ? (Control)restore : reader.PageSurface;
+            Assert.True(window.InputHitTest(point) is Visual hit &&
+                (ReferenceEquals(hit, target) || hit.GetVisualAncestors().Contains(target)), $"target={target}; bounds={target.Bounds}; point={point}; hit={window.InputHitTest(point)}");
+
+            switch (input)
+            {
+                case 0:
+                    window.MouseDown(point, MouseButton.Left, RawInputModifiers.None);
+                    Assert.True(restore.IsPressed);
+                    break;
+                case 1:
+                    window.MouseWheel(point, new Vector(0, -1), RawInputModifiers.None);
+                    break;
+                case 2:
+                    window.KeyPressQwerty(PhysicalKey.K, RawInputModifiers.Control);
+                    window.KeyReleaseQwerty(PhysicalKey.K, RawInputModifiers.Control);
+                    Assert.True(surface.FindControl<Border>("FluentModalHost")!.IsVisible);
+                    break;
+            }
+            Assert.True(vm.AreToolBarsVisible);
+            Assert.True(reader.TopBar.IsVisible);
+            Assert.True(reader.BottomBar.IsVisible);
+            Assert.Equal(1, reader.TopBar.Opacity);
+            Assert.Equal(clock.Now + TimeSpan.FromSeconds(2), reader.IdleDeadline);
+            if (input == 0)
+            {
+                Assert.False(vm.IsSideRailVisible);
+                clock.Advance(400);
+                window.UpdateLayout();
+                Pump(20);
+                point = restore.TranslatePoint(new Point(restore.Bounds.Width / 2, restore.Bounds.Height / 2), window)!.Value;
+                window.MouseUp(point, MouseButton.Left, RawInputModifiers.None);
+                Assert.True(vm.IsSideRailVisible); // The other control still receives its click.
+                Assert.True(vm.AreToolBarsVisible);
+                Assert.Equal(clock.Now + TimeSpan.FromSeconds(2), reader.IdleDeadline);
+            }
+            clock.Advance(1999);
+            reader.CheckIdleDeadline();
+            Assert.True(vm.AreToolBarsVisible);
+            clock.Advance(1);
+            reader.CheckIdleDeadline();
+            Assert.False(vm.AreToolBarsVisible);
+        }
+        finally { window.Close(); }
+    }
+
+    private static async Task<(Window Window, FluentShellSurface Surface, ManualFluentMotionClock Clock, Point Point)>
+        CreateLoadedReader(MotionMode mode, MotionCategories categories)
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        var png = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
+        host.ReaderBooksByChapterId["chapter-key"] = new ReaderBookData("book-1", "Sample", "chapter-key", "Chapter", "fit-page",
+            [new ReaderPageData("page-1", 0, 1, 1, _ => Task.FromResult<byte[]?>(png))]);
+        var (window, surface, clock) = Create(host: host);
+        try
+        {
+            Motion(surface, mode, categories);
+            surface.Navigate(FluentPage.Reader);
+            await surface.ReaderView.LoadAsync("book-1", "chapter-key");
+            surface.ReaderViewModel.IsSideRailVisible = false;
+            var page = surface.ReaderView.PageSurface;
+            page.Height = 400;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Pump(300);
+            var point = page.TranslatePoint(new Point(page.Bounds.Width / 2, page.Bounds.Height / 2), window)!.Value;
+            window.MouseMove(point, RawInputModifiers.None);
+            return (window, surface, clock, point);
+        }
+        catch { window.Close(); throw; }
+    }
+
+    [AvaloniaTheory]
     [InlineData(false)]
     [InlineData(true)]
     public void R2004_BackgroundEvent_DetachAndOptionalReattach_InvalidateQueuedCallback(bool reattach)

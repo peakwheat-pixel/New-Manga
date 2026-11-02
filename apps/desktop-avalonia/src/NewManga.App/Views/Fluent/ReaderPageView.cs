@@ -10,6 +10,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Automation;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Controls;
 using NewManga.App.ViewModels.Fluent;
 using NewManga.Appearance;
@@ -90,14 +91,13 @@ public sealed class ReaderPageView : UserControl
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         KeyDown += OnKeyDown;
         _pageSurface.DoubleTapped += (_, _) => _viewModel.ToggleDoublePage();
-        _pageSurface.PointerPressed += (_, args) => HandleReadingAreaTap(args.GetPosition(_pageSurface));
         _pageSurface.PointerWheelChanged += (_, args) =>
         {
             _ = args.Delta.Y >= 0 ? _viewModel.PreviousAsync() : _viewModel.NextAsync();
             args.Handled = true;
         };
         AddHandler(PointerMovedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
-        AddHandler(PointerPressedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
+        AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel, handledEventsToo: true);
         // Releasing a center tap resets time but must not undo its visibility toggle.
         AddHandler(PointerReleasedEvent, (_, _) => NotifyInteraction(reveal: false), RoutingStrategies.Tunnel, handledEventsToo: true);
         AddHandler(PointerWheelChangedEvent, (_, _) => NotifyInteraction(), RoutingStrategies.Tunnel, handledEventsToo: true);
@@ -142,6 +142,16 @@ public sealed class ReaderPageView : UserControl
 
         _viewModel.ToggleToolBars();
         return true;
+    }
+
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs args)
+    {
+        // Decide the center toggle before any wake-up can change the pre-press visibility.
+        // Image descendants count as page hits; overlaid controls retain ordinary wake-up behavior.
+        var centerTap = args.Source is Visual source &&
+            (ReferenceEquals(source, _pageSurface) || source.GetVisualAncestors().Contains(_pageSurface)) &&
+            HandleReadingAreaTap(args.GetPosition(_pageSurface));
+        NotifyInteraction(reveal: !centerTap);
     }
 
     private StackPanel BuildTopBar()
