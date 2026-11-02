@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
-reviewer: codex-cli（impl-r7 changes_requested（P0=0/P1=0/P2=4，已全部处置）；报告 doc/reviews/FEA-07-impl-r7.md；r8 待派，见文末）
+reviewer: codex-cli（impl-r8 changes_requested（P0=0/P1=0/P2=2，已全部处置）；报告 doc/reviews/FEA-07-impl-r8.md；r9 待派，见文末）
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-04
@@ -17,8 +17,8 @@ base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 462141f57f7b00b34577dbf04d8415be7ab5fe95（r7 返修代码提交；精确证据见 final-evidence.log）
-canonical_evidence_status: pending（r8 approved 并集成后置 complete）
+delivery_head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0（r8 返修代码提交；精确证据见 final-evidence.log）
+canonical_evidence_status: pending（r9 approved 并集成后置 complete）
 resource_closeout_status: pending
 evidence_dir: verification/FEA-07
 allowed_paths:
@@ -252,7 +252,17 @@ allowed_paths:
 - **R-023（P2，测试判别力）**：新增 `FailedSwitchAfterPromote_RestoresTheOriginalFullScreenMode`（journal finalize 故障真实到达 Promote 后失败）、`CancelledSwitchAfterPromote_RestoresTheOriginalFullScreenMode`（取消路径，断言 OCE 传播 + 模式恢复）、`QueuedRejectedSwitch_DoesNotRestoreAStaleWindowMode`（R-024 屏障）——前两者在 r6 head 无补偿实现下会失败，具备判别力。
 - **R-007（P2）**：reviewer=impl-r7（changes_requested 已处置）、delivery_head=`462141f57`、handoff `doc/handoffs/FEA-07-impl-r7.md`、索引「r8 待派」；canonical 保持 pending。
 - 验证：build 0/0；全量 **1138/0/57**（+3 测试）；`rework-r7-verification.log`；`final-evidence.log`（head `462141f57`，SHA `dbfb7666…`）；Release 两次复测 p95 299.40/374.09 ms 均 PASS（记录 run p50 99.28 / p95 374.09 / max 389.99 / 冷启 675.10 ms / 内存 -1616 B / 句柄 0）；两生成物 `--check` up-to-date；check PASS(3)；pins 15/15；presentation 38 测试连续 3 次全绿。
-- 待办：用新配置派 fresh Codex CLI 做 **r8** 只读复核（唯一允许写 `doc/reviews/FEA-07-impl-r8.md`）→ approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
+- 待办（已于 r8 处置，见下节）：用新配置派 fresh Codex CLI 做 **r8** 只读复核（唯一允许写 `doc/reviews/FEA-07-impl-r8.md`）→ approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
+## impl-r8 处置（changes_requested P2×2 → 返修，2026-11-02，owner=DSH）
+
+- 报告：`doc/reviews/FEA-07-impl-r8.md`（Codex CLI fresh，`gpt-6.1-sol` + `reasoning_effort=high`；P0=0/P1=0/P2=2；被审文档 `b6b63574d`/代码 `462141f57`）。R-022/R-024 实现修复被确认成立。
+- **R-023 残余（P2，排队用例无判别力）**：r8 指出原排队测试在 Promote 清全屏后才发第二请求，旧「门外快照」实现同样满足最终 Normal，不能捕获 r7 修复。
+  - 修复：`FrontendHostCoordinator` 增 `beforeContentCommit` 诊断钩子（Promote 前）；`PresentationWindow` 内部 ctor 透传 `beforeCommit`；重写 `QueuedRejectedSwitch_DoesNotRestoreAStaleWindowMode`：屏障停在 **Promote 前**（旧树/窗口仍全屏）→ 发起第二请求并断言其未完成 → 释放后断言 A 成功（V2/Normal/reader 清全屏/journal 干净）、B 拒绝且不回滚。
+  - **mutation 实测**：临时把窗口模式快照移回 gate 外（模拟旧实现）→ 该用例 FAIL（Expected Normal / Actual FullScreen）；恢复实现后 19/19 全绿（日志 `rework-r8-verification.log` 记录）。
+  - 修正 r7 节对排队用例判别性的过宽表述：以本轮 mutation 实测为准。
+- **R-007（P2）**：reviewer=impl-r8（changes_requested 已处置）、delivery_head=`aedc7251c`、handoff `doc/handoffs/FEA-07-impl-r8.md`、索引「r9 待派」；canonical 保持 pending；Task/索引 appointment 文案与 STATUS/PLAN/checkpoint 同步。
+- 验证：build 0/0；全量 **1138/0/57**（测试改写、总数不变）；`rework-r8-verification.log`；`final-evidence.log`（head `aedc7251c`，SHA `e8ed8f29…`）；Release 两次复测 p95 361.52/381.43 ms 均 PASS（记录 run p50 109.89 / p95 381.43 / max 383.05 / 冷启 697.08 ms / 内存 +456 B / 句柄 +1）；两生成物 `--check` up-to-date；check PASS(3)；pins 15/15；presentation 36 测试连续 2 次全绿。
+- 待办：用新配置派 fresh Codex CLI 做 **r9** 只读复核（唯一允许写 `doc/reviews/FEA-07-impl-r9.md`）→ approved 后 DSH 集成验证 → done + AC5 原生 residual 登记。
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: 真实内容树 100 次切换（50 往返）状态保留/真实 staging 布局+Loaded+帧渲染门禁/失败回滚已过（R-001 part2）；R-017 外部外观同步、R-018 订阅解绑、R-019 staging 输入隔离、R-020 全屏桥接、R-022 失败/取消切换窗口模式回滚、R-024 排队拒绝不写陈旧模式均已补（r4–r7）；原生 IME、A03 真库 DB/current/pinned/Lock 矩阵、ACK 重连与真实 Run/Intent 链路不可测，保持 PARTIAL>>`
@@ -293,8 +303,8 @@ allowed_paths:
 | AC1–AC3 | `dotnet test apps\desktop-avalonia\tests\NewManga.App.Tests` + `NewManga.Presentation.Avalonia.Tests`（切换/回滚/故障注入，合成数据；data/theme/journal 临时根） | .NET 9 / Avalonia.Headless + Host（`NEWMANGA_CORECLIENT_SIDECAR_DIR`） | PASS（headless 部分：真实门禁/状态保留/退出聚合/并发屏障/全屏桥接；原生/真库矩阵待补） | `rework-r5-verification.log`、`rework-r4-verification.log` |
 | AC4 | 启动矩阵：默认/`--frontend` 覆盖/未知值 fallback/`--shell=legacy`/坏设置/坏包（隔离根） | Windows 11 / .NET 9 | PASS（9 测试；真实 App 初始化入口与坏包/scale 矩阵仍 PARTIAL） | `slice-3-verification.log` |
 | AC5 | 原生双屏/拔屏/DPI 矩阵（100/125/150/200%、换主屏、拔副屏、全屏） | Windows 11 原生桌面；隔离 `--data-root`/`--theme-home` | PARTIAL（headless 拓扑/manifest/全屏→WindowState PASS；原生矩阵 blocked D-1） | `slice-4-verification.log`、`rework-r5-verification.log` |
-| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | PASS（Release p95 374.09ms ≤1000ms；两次复测均 PASS） | `performance-baseline-release.json` |
-| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | PASS（1138/0/57 + 架构门禁 3 测试） | `rework-r7-verification.log` |
+| AC6 | 热切换性能 baseline（p50/p95/峰值、冻结时长、内存/句柄；冷/热分开） | 固定机器 + 合成规模数据 | PASS（Release p95 381.43ms ≤1000ms；两次复测均 PASS） | `performance-baseline-release.json` |
+| AC7 | 全量 sln + 两 `--check` + `check.ps1`/`verify_pins` + project-reference graph 检查 | 全量 | PASS（1138/0/57 + 架构门禁 3 测试） | `rework-r8-verification.log` |
 | AC8 | 证据归档（日志/截图/矩阵/性能报告/SHA-256 索引） | 全量 | PARTIAL（headless/性能/架构证据与索引已归档；原生矩阵 blocked D-1、无截图） | `performance-baseline.md`、`evidence-index.md`、`final-evidence.log` |
 
 ## Canonical Evidence
@@ -309,11 +319,11 @@ allowed_paths:
 | EV-FEA07-SLICE3 | AC4/AC7 | `verification/FEA-07/slice-3-verification.log` | `-` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` | CANONICAL |
 | EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
 | EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
-| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `462141f57` | `26eb150a100904fbabe4708c71ac3cb8040cb7e4012e2c19a6eaaa8048c480bf` | CANONICAL |
+| EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `aedc7251c` | `2ab2f5cfd7241238ca7676890db00b8a292548bb020eae9bbb8bcf7717ee20b7` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 | EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
-| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `462141f57` | `dbfb7666ec8ab29dcc9685b5f0a687fc4deecc6c7e80d7512a9ea699c5650bb3` | CANONICAL |
-| EV-FEA07-PERF-MD | AC6/AC8 | `verification/FEA-07/performance-baseline.md` | `462141f57` | `a1559f8595570d5f3688568150faf56c34aea291bc6d9fd4fe1777cbd94dc84f` | SUPPORTING |
+| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `aedc7251c` | `e8ed8f2934ae33a0d062c0a52e0c96fa59940e0d9ab9243a6f408584e8e43785` | CANONICAL |
+| EV-FEA07-PERF-MD | AC6/AC8 | `verification/FEA-07/performance-baseline.md` | `aedc7251c` | `d6b87c5a99868d90619354c1f71f0616669f5f6ac92a0d39cee44a586f85b458` | SUPPORTING |
 | EV-FEA07-REWORK2 | AC1/AC2/AC3/AC4/AC6/AC8 | `verification/FEA-07/rework-part2-verification.log` | `-` | `725ec7f6e4d6295f386d0bb08a65771158536fc7fa02e7a4f640a713f38eaa01` | CANONICAL |
 | EV-FEA07-REWORK-R3-1 | AC1/AC3/AC6 | `verification/FEA-07/rework-r3-part1-verification.log` | `-` | `c6eefffef4fa6a2f9d7e0afa1b91f2ddff8110da2aa2b3c965293095c4e696a9` | CANONICAL |
 | EV-FEA07-REWORK-R3-2 | AC1/AC2/AC6/AC8 | `verification/FEA-07/rework-r3-part2-verification.log` | `100d487ff` | `aacf4ce239fb978d614dc4d958454fde084ed219d9d806940a7225743aaf3b28` | CANONICAL |
@@ -321,7 +331,9 @@ allowed_paths:
 | EV-FEA07-REWORK-R5 | AC1/AC2/AC5/AC6/AC8 | `verification/FEA-07/rework-r5-verification.log` | `4e8510d43` | `e773a93def145d258ff09f8cb02ae9783823e7588e06443de28ba3381a3619b9` | CANONICAL |
 | EV-FEA07-REWORK-R6 | AC1/AC5/AC6/AC8 | `verification/FEA-07/rework-r6-verification.log` | `5a495f80a` | `322475cb618a71cf1f69e3422908a4d2b435ac53567462ffe1ba2309b01c5ae9` | CANONICAL |
 | EV-FEA07-REWORK-R7 | AC1/AC5/AC6/AC8 | `verification/FEA-07/rework-r7-verification.log` | `462141f57` | `9e4e04bd57bd9eadc238dd334b4cd502817fcfd2c7e8ac4904534b6c586e1144` | CANONICAL |
+| EV-FEA07-REWORK-R8 | AC1/AC5/AC6/AC8 | `verification/FEA-07/rework-r8-verification.log` | `aedc7251c` | `b739ac7c1f4c782e981a06b0ad01afa58ea12d64b38487998aeaa89c6504784a` | CANONICAL |
 
 ## Closeout Record
 
 - 待关闭时填写。
+

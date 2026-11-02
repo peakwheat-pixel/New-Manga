@@ -464,3 +464,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r8 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`462141f57`（如无新代码变更）、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
+## 66. FEA-07 impl-r8 changes_requested（P2×2）→ 返修（2026-11-02）
+
+- **r8 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `b6b63574d`/代码 `462141f57`）：`doc/reviews/FEA-07-impl-r8.md`，changes_requested，P0=0 / P1=0 / P2=2；指定验证全部通过（build 0/0、全量 1138/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15）；R-022/R-024 实现修复被确认成立。
+- **R-023 残余（`aedc7251c`）**：排队用例屏障从 Promote 后前移到 **Promote 前**（旧树/窗口仍全屏时发起第二请求并断言未完成）；协调器增 `beforeContentCommit` 诊断钩子、窗口内部 ctor 透传 `beforeCommit`；**mutation 实测**：把窗口模式快照移回 gate 外（模拟旧实现）→ 用例 FAIL（Expected Normal / Actual FullScreen），恢复后 19/19 全绿；Task r7 节过宽表述已按实测修正。
+- **R-007**：reviewer=impl-r8、delivery_head=`aedc7251c`、handoff `doc/handoffs/FEA-07-impl-r8.md`、索引 r9 待派；canonical 保持 pending。
+- **验证**：build 0/0；全量 **1138/0/57**（测试改写、总数不变）；`rework-r8-verification.log`、`final-evidence.log`（head `aedc7251c`，SHA `e8ed8f29…`）；Release 两次复测 p95 361.52/381.43 ms 均 PASS（记录 run p50 109.89 / p95 381.43 / max 383.05 / 冷启 697.08 ms / 内存 +456 B / 句柄 +1）。
+
+## 67. FEA-07 r9 复核派发 + 集成/收尾计划（2026-11-02）
+
+- r9：fresh Codex CLI 只读，被审代码 head `aedc7251c` + 本证据/文档提交；唯一允许写 `doc/reviews/FEA-07-impl-r9.md`；重点 R-023 屏障判别力/mutation 证据与 R-007 文案。
+- r9 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`aedc7251c`（如无新代码变更）、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。

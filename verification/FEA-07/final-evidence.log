@@ -1,7 +1,7 @@
-# FEA-07 final evidence @ clean r7-rework head
+# FEA-07 final evidence @ clean r8-rework head
 
-- time: 2026-11-02 20:07:34 +08:00
-- head: 462141f57f7b00b34577dbf04d8415be7ab5fe95
+- time: 2026-11-02 20:36:44 +08:00
+- head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0
 - worktree: clean before run
 - shell: PowerShell 7.6.8 / dotnet 10.0.401
 
@@ -12,14 +12,14 @@
 
 # command: dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
 # exit: 0
-#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 151 ms - NewManga.Appearance.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 430 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 890 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 126 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 361 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 760 ms - NewManga.Host.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 29 s - NewManga.CoreClient.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:   529，已跳过:     7，总计:   536，持续时间: 3 m 7 s - NewManga.App.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 28 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   529，已跳过:     7，总计:   536，持续时间: 2 m 24 s - NewManga.App.Tests.dll (net9.0)
 # skip summary: Host 28 / CoreClient 22 / App 7 = 57; direct cause NEWMANGA_CORECLIENT_SIDECAR_DIR unset
 # total: 1138 passed / 0 failed / 57 skipped
 
@@ -35,8 +35,8 @@
 # command: pwsh -NoProfile -File tools/governance/check.ps1
 # exit: 0
 #   WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-#   WARN: doc/STATUS.md 已达到预算的 80%：3149 bytes / 29 lines
-#   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4792 bytes / 64 lines
+#   WARN: doc/STATUS.md 已达到预算的 80%：3138 bytes / 29 lines
+#   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4759 bytes / 64 lines
 #   Governance check: PASS (3 warnings)
 
 # command: pwsh -NoProfile -File tools/governance/verify_pins.ps1

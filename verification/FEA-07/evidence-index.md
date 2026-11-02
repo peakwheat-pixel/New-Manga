@@ -1,12 +1,12 @@
 # FEA-07 证据索引（自动生成）
 
-- 生成时间: 2026-11-02 20:15:02 +08:00
-- 代码 head: 462141f57f7b00b34577dbf04d8415be7ab5fe95 (r7 返修提交)
+- 生成时间: 2026-11-02 20:43:31 +08:00
+- 代码 head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0 (r8 返修提交)
 - 全量测试: **1138 passed / 0 failed / 57 skipped**（skip 直接原因: sidecar env 未设置）
 - 治理: check.ps1 PASS(3); verify_pins.ps1 PASS 15/15
 - 生成物: TokenGen --check 292 rows up-to-date; ThemeGen --check up-to-date
-- 性能: Release p50 99.28 / p95 374.09 / max(UI freeze upper bound) 389.99 ms / memory -1616B / handles 0 => W-5 PASS（4 预热 + 20 单向切换；两次复测 p95 299.40/374.09 ms）
-- 复核: scope-r1/r2 approved; impl-r1/r2/r3/r4/r5/r7 changes_requested 均已处置; impl-r6 approved; r8 待派 (r7 返修 head)
+- 性能: Release p50 109.89 / p95 381.43 / max(UI freeze upper bound) 383.05 ms / memory +456B / handles +1 => W-5 PASS（4 预热 + 20 单向切换；两次复测 p95 361.52/381.43 ms）
+- 复核: scope-r1/r2 approved; impl-r1–r5/r7/r8 changes_requested 均已处置; impl-r6 approved; r9 待派 (r8 返修 head)
 - 原生双屏/拔屏/DPI 矩阵: BLOCKED (D-1 无硬件)
 
 说明: 本文件不列自身 SHA; 外部 pin 以 Task EV-FEA07-* 与 final-evidence.log 为准。
@@ -15,11 +15,11 @@
 
 | 文件 | 路径 | sha256 |
 |---|---|---|
-| final-evidence.log | verification/FEA-07/final-evidence.log | dbfb7666ec8ab29dcc9685b5f0a687fc4deecc6c7e80d7512a9ea699c5650bb3 |
+| final-evidence.log | verification/FEA-07/final-evidence.log | e8ed8f2934ae33a0d062c0a52e0c96fa59940e0d9ab9243a6f408584e8e43785 |
 | generators-check.log | verification/FEA-07/generators-check.log | c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921 |
 | performance-baseline-debug.json | verification/FEA-07/performance-baseline-debug.json | b9d094be8b22f2fdd34cca4b8bb42ebf5a51bfa234310e9945197ce441224ae1 |
-| performance-baseline-release.json | verification/FEA-07/performance-baseline-release.json | 26eb150a100904fbabe4708c71ac3cb8040cb7e4012e2c19a6eaaa8048c480bf |
-| performance-baseline.md | verification/FEA-07/performance-baseline.md | a1559f8595570d5f3688568150faf56c34aea291bc6d9fd4fe1777cbd94dc84f |
+| performance-baseline-release.json | verification/FEA-07/performance-baseline-release.json | 2ab2f5cfd7241238ca7676890db00b8a292548bb020eae9bbb8bcf7717ee20b7 |
+| performance-baseline.md | verification/FEA-07/performance-baseline.md | d6b87c5a99868d90619354c1f71f0616669f5f6ac92a0d39cee44a586f85b458 |
 | rework-part1-verification.log | verification/FEA-07/rework-part1-verification.log | 27fa7ab94a645317723ae83332e8e25f2c6480cf9d50f1680466334c5c14298a |
 | rework-part2-verification.log | verification/FEA-07/rework-part2-verification.log | 725ec7f6e4d6295f386d0bb08a65771158536fc7fa02e7a4f640a713f38eaa01 |
 | rework-r3-part1-verification.log | verification/FEA-07/rework-r3-part1-verification.log | c6eefffef4fa6a2f9d7e0afa1b91f2ddff8110da2aa2b3c965293095c4e696a9 |
@@ -28,6 +28,7 @@
 | rework-r5-verification.log | verification/FEA-07/rework-r5-verification.log | e773a93def145d258ff09f8cb02ae9783823e7588e06443de28ba3381a3619b9 |
 | rework-r6-verification.log | verification/FEA-07/rework-r6-verification.log | 322475cb618a71cf1f69e3422908a4d2b435ac53567462ffe1ba2309b01c5ae9 |
 | rework-r7-verification.log | verification/FEA-07/rework-r7-verification.log | 9e4e04bd57bd9eadc238dd334b4cd502817fcfd2c7e8ac4904534b6c586e1144 |
+| rework-r8-verification.log | verification/FEA-07/rework-r8-verification.log | b739ac7c1f4c782e981a06b0ad01afa58ea12d64b38487998aeaa89c6504784a |
 | slice-1-verification.log | verification/FEA-07/slice-1-verification.log | a63982423ba6e79f96f76bacc27049a2bba18506fdf9411c13df0c5f13dac78d |
 | slice-2-verification.log | verification/FEA-07/slice-2-verification.log | 55fd5e5fb1c5a9a146e3cda5e5a8087ebff4beeee9a5c480e81d539d6bbfe771 |
 | slice-2b-verification.log | verification/FEA-07/slice-2b-verification.log | 2c281f288af106ed5391eea065aaac25f8f6543063a5aecab0f7ec11a4cee88b |
