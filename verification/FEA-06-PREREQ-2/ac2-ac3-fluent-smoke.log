@@ -1,0 +1,5 @@
+# FEA-06-PREREQ-2 AC2/AC3 runtime smoke (Fluent frontend)
+# command: dotnet run --project apps/desktop-avalonia/src/NewManga.App -- --frontend builtin.fluent --theme-home <temp> --smoke
+# time: 2026-11-02 10:11:57 +08:00
+# exit: 0
+# output:

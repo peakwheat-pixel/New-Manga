@@ -132,6 +132,8 @@ allowed_paths:
 | E-P2-CHECK | Gate | `verification/FEA-06-PREREQ-2/governance-check.log` | `92cac5ab1` | `9fd5ad40131a58dab5c8409df053f967e6efd30dff8da7f65e21cf93d5a5edc4` | CANONICAL |
 | E-P2-PINS | Gate | `verification/FEA-06-PREREQ-2/verify-pins.log` | `92cac5ab1` | `cf0df19a460c144428b4f973b0f1de8b36e0e106d73c0593e15b4e95f84d3615` | CANONICAL |
 | E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `92cac5ab1` | `5043754da6159495c65cb0b5501e984c1753c620bddc3efeb2070dc89f6ec0f9` | CANONICAL |
+| E-P2-FLUENT-SMOKE | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-fluent-smoke.log` | `PENDING` | `d679b34e04a0ba1a295bcf37eadb73c0b37d45d1335753c53c66928f9ef77a51` | CANONICAL |
+| E-P2-V2-SMOKE | AC2 | `verification/FEA-06-PREREQ-2/ac2-v2-smoke.log` | `PENDING` | `11cb9ee6bb72b01648c23fa318eb336371d79fae2d98c68d6432eaf357e7f536` | CANONICAL |
 | E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `92cac5ab1` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
 
 ## Resource Manifest
