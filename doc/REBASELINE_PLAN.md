@@ -34,7 +34,7 @@
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
 READY 节点：FEA-06-RESIDUAL-2
-进行中：无（FEA-06-RESIDUAL-1 已 closed_with_limitations：impl-r4 approved，集成 `669a4ae02`，1245/0/57；残项转 FEA-06-RESIDUAL-2）
+进行中：无（FEA-06-RESIDUAL-2 ready，scope v3 待复核；FEA-06-RESIDUAL-1 已 closed_with_limitations `669a4ae02`，1245/0/57）
 
 当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**closed_with_limitations**，集成 `aedc7251c`，1138/0/57；AC5 D-1 residual）；下一节点 FEA-06-RESIDUAL-1（**in_progress**，范围 v3 冻结、Batch A 完成 `9337cbbe1`、Batch B 待派）
 
