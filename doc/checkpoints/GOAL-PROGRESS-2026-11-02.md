@@ -952,3 +952,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 独立核验：build 0/0、全量 1281/0/57（App 645、DS 114）、**164 PNG 无重复哈希**、check PASS(3)、pins 15/15、工作树干净、未 push；旧四 PNG SHA 未动（R2R2 自述，芳核验命令通过）。
 - 处置摘要（Codex 自报、待 impl-r3 核实）：真实 App 资源栈+ThemeManager+workspace 隔离 Appearance；每组件 light/dark；Reader 真实页图/进度/缩略/章节；IconButton NmIcon+checked；Slider thumb/track 令牌；粒子前景可见；渐变真实帧位；daemon 生命周期/失焦/隐藏接线；expected-tokens 锚点/D-11 映射；57 skip 原因；Handoff 更新。未完成：StatusBand 专用态、NavRail 独立折叠格、原生 DPI/a11y、逐图签署（待独审）。
 - 已派 **fresh Codex impl-r3 Review**（job `pwsh-96fc40f29fce4204`，prompt workspace `impl-review-r3-prompt.md`）：核验 R2R2-001…018、164 图逐图签署、门禁与禁止范围，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r3.md`。
+## 147. impl-r3 结论 + R2R3 返修派发（2026-11-03 06:30）
+
+- impl-r3（fresh Codex，job `pwsh-96fc40f29fce4204`）：**changes_requested P0=0/P1=2/P2=4**；164 图签署 **158 PASS / 6 REJECT**；报告 `doc/reviews/FEA-06-RESIDUAL-2-impl-r3.md`（70KB，含附录 C 实跑复现）。
+- P1：R2R3-001 冻结 IN 格缺 NavRail 折叠/StatusBand 错误运行态、宽度标签不实；R2R3-002 light 渐变像素差仅 2 不可辨（不能用 tolerance 当签署）。P2：R2R3-003 danger pressed 对比 1.18:1；R2R3-004 失焦经导航返回后错误 Resume；R2R3-005 粒子切 reduce 不移除旧层；R2R3-006 STATUS/PLAN 指针。
+- **R2R3-006 已由 DSH 修复**（STATUS 下一步、PLAN 进行中/DAG 指针统一，`8203b3d28`）。
+- 已派 fresh Codex 实施 R2R3-001…005（job `pwsh-7e94da7b2268495b`，prompt workspace `impl-r3-findings-rework-prompt.md`，head 8203b3d28/1281）：真实 NavRail/StatusBand 态、可辨渐变或诚实 NOT_RUN、danger pressed 对比、失焦生命周期、reduce 粒子清理；完成后 DSH 核验 → fresh impl-r4 Review。
