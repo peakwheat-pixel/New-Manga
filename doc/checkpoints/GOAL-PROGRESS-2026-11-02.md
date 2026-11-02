@@ -829,3 +829,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 处置：**完整快照 WIP → 回退工作树到干净基线**（未提交、未 push）；重跑 build 0/0、全量 **1245/0/57 恢复全绿**。快照：`workspace/FEA-06-RESIDUAL-2/wip-snapshot/`（diff 15165B + FluentDecorativeMotion.cs 9693B + FluentResidual2DecorativeTests.cs 17614B + FluentResidual2StateEffectiveTests.cs 22826B）。
 - 续接要点（05:24 Codex / 08:05 ZCode）：IN-1 代码可直接复用但必须先定位并消除 6 项动画回归（检查 FluentUi.cs 共享 helper 与既有 pressed/badge/overlay 机制耦合）；IN-2A 期望值按真实样式令牌校准（禁止改样式迁就测试）；IN-2B 未开始。
 - 仓库当前干净；Task2 仍 in_progress；scope 冻结不变。
+## 127. IN-1 装饰动画提交（DSH 收尾 ZCode WIP，2026-11-03 03:59）
+
+- DSH 按 D-7（双候选不可用）收尾 ZCode WIP：`d854d91b2` — IN-1.1 书架渐变 8s、IN-1.2 翻页粒子 400ms，含三态降级/失焦暂停/自动化全关/detach 停帧/真实帧源；新增 `FluentDecorativeMotion.cs` 与 12 个测试。
+- 回归处置：`HasMotion` 排除 decorative；`FluentAnimationCompletionTests` 默认分类收窄 Navigation|Feedback（注释说明，未删断言）→ 16/16 PASS；修复 ToolTip/AlertBanner 编译错误。
+- 验证：build 0/0；全量无过滤 **1257/0/57**（+12）；证据 `verification/FEA-06-RESIDUAL-2/impl-in1-verification.log`；未 push；旧四 PNG 未动。
+- 剩余：IN-2A（期望令牌校准，WIP 测试快照 9/14）、IN-2B（opt-in 像素+签署）；Codex 05:24 / ZCode 08:05 续接排程有效；完成后独立 impl Review。

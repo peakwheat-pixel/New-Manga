@@ -14,7 +14,7 @@ base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: d854d91b2（IN-1 装饰动画已提交并全绿 1257/0/57；IN-2A/IN-2B 待续）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-2
