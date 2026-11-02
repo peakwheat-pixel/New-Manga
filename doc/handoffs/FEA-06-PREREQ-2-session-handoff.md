@@ -17,6 +17,7 @@ status: in_progress
 FEA-06（Fluent 四页 UI）的两个前置任务中，**PREREQ-1 已 done**；**PREREQ-2 已 `ready`（范围冻结通过：scope-r1/r2/r3 changes_requested → **scope-r4 approved（P0/P1/P2=0）**；
 scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**scope-r3 未产出报告**）**。
 全量测试 **979 passed / 0 failed / 57 skipped**；治理 `check.ps1` **PASS（3 warnings）**、`verify_pins` **15/15**。
+**当前唯一可开工任务：实现 FEA-06-PREREQ-2。**
 
 ## 2. 关键坐标
 
@@ -56,8 +57,16 @@ scope-r1 changes_requested → scope-r2 changes_requested，P1×4 已处置，**
 - **R2-P1-3 C-02 V-07 合规** → **改判 P6**：`Nm.Material.Acrylic.Base/.Tint` 以**主题层令牌**承载（`NmKeys` 常量 + `ThemeLayerAllowedKeys` + 主题包 `colors`），**不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 签名** → 依 V-07「不新增枚举值、不改接口签名」**无需 UNFREEZE**；新增 **W-11**（Q-35）。
 - **R2-P1-4 测试表** → 补 AC5 / AC6 / AC7 行。
 
-### 4.3 下一步（唯一动作）
-派**独立上下文**复核 `scope-r4`（只核 R3-P1-1 闭合）。P0/P1=0 → 卡置 `ready` 并同步 `STATUS.md` / `REBASELINE_PLAN.md`（DAG 行 + 当前 DAG 段），随后开始实现 PREREQ-2（P1–P7 / AC1–AC7）。
+### 4.3 下一步（唯一动作）：**开始实现 PREREQ-2**
+
+范围已冻结（scope-r4 approved），卡 `ready`。按以下顺序实现（每步后跑 §7 全部命令）：
+
+1. **P3/AC1 `FrontendSelector`**：按 **frontendId**（`builtin.current-v2` / `builtin.fluent`）决策；优先级 `--frontend`(CLI) > `AppearanceSettings.FrontendId` > 缺省 `builtin.current-v2`；未知/缺失 → V2 + 记录（`builtin.fluent-dark` 是 visualThemeId，**不参与** selector）。含单测。
+2. **P1/P2 组合根**：`App.axaml.cs` 依据 selector 选壳；V2 路径语义不变；新增 `Views/Fluent/` 骨架（导航 + 四页占位，对照设计 `04-layout-responsive.md`）。
+3. **P5 写者收敛**：`AppearanceCoordinator` **迁入 `NewManga.Appearance`**（C-03 §2.1）并成为唯一写者；`ThemeSettingsStore` 标 `[Obsolete]`；App 侧 `IThemeSettingsSink` 双写一个 release；注入点为 `ThemeEngineThemeStudioService.cs` / `StubThemeStudioService.cs`。
+4. **P6 主题层 Material**：`NmKeys` 加 `Nm.Material.Acrylic.Base/.Tint`（不进 `Tokens.Global.axaml`）+ `ThemeLayerAllowedKeys` 放行 + 主题包 `colors` 承载；**不改 `ThemeMaterial` 枚举、不改 `ThemeTokenSet` 签名**；`R14ContractTests` 计数 **59 不变 / 65→67**。
+5. **P7/AC7 manifest**：`nm.fluent.visual/1` 落 `ThemeMetadata.Extra`；补 `ThemeValidator.Validate(fluent)` 与 `BuiltInThemes` 加载 / Current 不生效测试。
+6. **AC6 收口**：全量 sln 不退化（基线 979/0/57）+ 证据表 + Closeout → 派**实现复核**（独立上下文）。
 
 ## 5. 环境事实（会直接影响派发成败，务必先读）
 
