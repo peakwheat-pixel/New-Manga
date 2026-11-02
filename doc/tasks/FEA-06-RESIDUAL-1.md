@@ -173,7 +173,7 @@ allowed_paths:
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `c2d4ce4b6` | `15e822a73fa90305b44b16ef50c6c0987aa05a5de0e817aedf29b0627353bc74` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `b79241c9a` | `abb93fd7c8bdc1b37f707a60303c06bce7ce19659e1b9f26a7189e1e98f21350` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |
-| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `PENDING_COMMIT` | `aeb36c087d4f50c6696eddc28e0474e8cf669fe734d851e553818f5781c3fe06` | CANONICAL |
+| EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `66442e551` | `aeb36c087d4f50c6696eddc28e0474e8cf669fe734d851e553818f5781c3fe06` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
 
