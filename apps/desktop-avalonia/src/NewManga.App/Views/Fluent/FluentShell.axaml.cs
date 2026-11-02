@@ -1,78 +1,76 @@
-using System;
-using System.Collections.Generic;
+using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NewManga.App.Services;
 using NewManga.App.Shell;
 using NewManga.App.Shell.V2;
+using NewManga.App.ViewModels.Fluent;
+using NewManga.CoreClient;
 using NewManga.Appearance;
+using NewManga.DesignSystem.Controls;
 using NewManga.DesignSystem.Theming;
+using FluentReaderViewModel = NewManga.App.ViewModels.Fluent.ReaderViewModel;
 
 namespace NewManga.App.Views.Fluent;
 
-/// <summary>The four product pages the Fluent shell navigates (one level, frozen product scope).</summary>
+/// <summary>Four content surfaces hosted by the FEA Fluent shell.</summary>
 public enum FluentPage
 {
-    /// <summary>书架 (library).</summary>
     Library,
-
-    /// <summary>工作台 (workbench).</summary>
     Workbench,
-
-    /// <summary>阅读器 (reader).</summary>
     Reader,
-
-    /// <summary>设置 (settings).</summary>
     Settings,
 }
 
-/// <summary>
-/// FEA-06-PREREQ-2 P3/AC3: the Fluent shell skeleton. It hosts the frame frozen design 04 §1 defines —
-/// top command band (<c>Nm.Size.TopBand</c>), left navigation rail (<c>Nm.Size.TreeWidth</c>) and status
-/// band (<c>Nm.Size.StatusBandPage</c>) — with the four product pages as placeholders. Page content is
-/// FEA-06 work; this shell only has to start headlessly and navigate between the four pages.
-/// </summary>
+/// <summary>Responsive bands resolved from the frozen 1024/1280/1600 token breakpoints.</summary>
+public enum FluentResponsiveBand
+{
+    BelowMinimum,
+    Narrow,
+    Compact,
+    Full,
+}
+
+/// <summary>Fluent frontend shell; all application services are the shared composition-root instances.</summary>
 public partial class FluentShell : Window
 {
-    /// <summary>Navigation order of the four product pages.</summary>
     public static IReadOnlyList<FluentPage> Pages { get; } =
         [FluentPage.Library, FluentPage.Workbench, FluentPage.Reader, FluentPage.Settings];
 
-    private static readonly IReadOnlyDictionary<FluentPage, (string Title, string Placeholder)> PageCopy =
-        new Dictionary<FluentPage, (string, string)>
-        {
-            [FluentPage.Library] = (
-                "书架",
-                "书架页占位：书库网格、搜索/排序、书籍详情与导入坞由 FEA-06 实现。"),
-            [FluentPage.Workbench] = (
-                "工作台",
-                "工作台页占位：批量/页面模式、画布与检查器由 FEA-06 实现。"),
-            [FluentPage.Reader] = (
-                "阅读器",
-                "阅读器页占位：翻页、缩放与阅读设置由 FEA-06 实现。"),
-            [FluentPage.Settings] = (
-                "设置",
-                "设置页占位：外观、材质、动效与快捷键由 FEA-06 实现。"),
-        };
-
-    private readonly Dictionary<FluentPage, Button> _navButtons = new();
-    private readonly TextBlock? _pageTitle;
-    private readonly TextBlock? _pagePlaceholder;
-    private readonly TextBlock? _statusText;
-    private readonly TextBlock? _frontendLabel;
     private readonly string _frontendId;
+    private readonly Dictionary<FluentPage, Button> _navButtons = new();
+    private readonly ShelfViewModel _shelfModel;
+    private readonly WorkbenchViewModel _workbenchModel;
+    private readonly FluentReaderViewModel _readerModel;
+    private readonly SettingsViewModel _settingsModel;
+    private readonly ShelfPageView _shelfView;
+    private readonly WorkbenchPageView _workbenchView;
+    private readonly ReaderPageView _readerView;
+    private readonly SettingsPageView _settingsView;
+    private readonly ContentControl _pageHost;
+    private readonly Border _navRail;
+    private readonly Border _modalHost;
+    private readonly TextBlock _statusText;
+    private readonly TextBlock _breakpointText;
+    private readonly Button _spaceLibrary;
+    private readonly Button _spaceStudio;
+    private readonly Button _spaceConsole;
+    private readonly KeyMap _keyMap = KeyMap.Default;
+    private SpaceId _currentSpace = SpaceId.Library;
+    private StudioMode _studioMode = StudioMode.Page;
+    private FluentPage _pageBeforeReader = FluentPage.Library;
+    private FluentPage _currentPage;
+    private Control? _activeDialog;
+    private bool _motionNavigationEnabled;
+    private bool _textInputFocused;
 
-    /// <summary>Design-time / XAML loader constructor.</summary>
-    public FluentShell()
-        : this(options: null, selection: null)
-    {
-    }
+    public FluentShell() : this(null, null) { }
 
-    /// <summary>
-    /// Creates the shell for the selected frontend. <paramref name="options"/> only supplies geometry.
-    /// FEA-06 scope-r2 P0: the composition root injects the single shared services (Host controller,
-    /// appearance writer, design-system theme manager) so the four pages can reach data, Draft commands
-    /// and appearance persistence without creating a second Host/sidecar or a second appearance writer.
-    /// </summary>
     public FluentShell(
         AppOptions? options = null,
         FrontendSelection? selection = null,
@@ -83,58 +81,84 @@ public partial class FluentShell : Window
         HostController = host;
         Appearance = appearance;
         ThemeManager = themeManager;
-
         InitializeComponent();
+        KeyMap.EnsureValid(_keyMap);
 
         _frontendId = selection?.EffectiveFrontendId ?? FrontendSelector.CurrentV2FrontendId;
         Width = options?.WindowWidth ?? 1180;
         Height = options?.WindowHeight ?? 780;
         MinWidth = ShellLayout.BreakpointNarrow;
+        _pageHost = Require<ContentControl>("FluentPageHost");
+        _navRail = Require<Border>("FluentNavRail");
+        _modalHost = Require<Border>("FluentModalHost");
+        _statusText = Require<TextBlock>("FluentStatusText");
+        _breakpointText = Require<TextBlock>("FluentBreakpointText");
+        _spaceLibrary = Require<Button>("SpaceLibrary");
+        _spaceStudio = Require<Button>("SpaceStudio");
+        _spaceConsole = Require<Button>("SpaceConsole");
 
-        _pageTitle = this.FindControl<TextBlock>("FluentPageTitle");
-        _pagePlaceholder = this.FindControl<TextBlock>("FluentPagePlaceholder");
-        _statusText = this.FindControl<TextBlock>("FluentStatusText");
-        _frontendLabel = this.FindControl<TextBlock>("FluentFrontendLabel");
-
-        _navButtons[FluentPage.Library] = RequireButton("NavLibrary");
-        _navButtons[FluentPage.Workbench] = RequireButton("NavWorkbench");
-        _navButtons[FluentPage.Reader] = RequireButton("NavReader");
-        _navButtons[FluentPage.Settings] = RequireButton("NavSettings");
+        _navButtons[FluentPage.Library] = Require<Button>("NavLibrary");
+        _navButtons[FluentPage.Workbench] = Require<Button>("NavWorkbench");
+        _navButtons[FluentPage.Settings] = Require<Button>("NavSettings");
         foreach (var pair in _navButtons)
         {
             var page = pair.Key;
             pair.Value.Click += (_, _) => Navigate(page);
         }
+        _shelfModel = new ShelfViewModel(host);
+        _workbenchModel = new WorkbenchViewModel(host, Guid.NewGuid().ToString("N"));
+        _readerModel = new FluentReaderViewModel(host);
+        _settingsModel = new SettingsViewModel(host, appearance, themeManager);
+        var picker = new AvaloniaFilePickerGateway(_ => TopLevel.GetTopLevel(this));
+        _shelfView = new ShelfPageView(_shelfModel, picker, OpenReader, OpenWorkbench);
+        Require<Button>("NavRecycle").Click += (_, _) => _shelfView.OpenRecycleDrawer();
+        Require<Button>("NavImport").Click += async (_, _) => await _shelfView.ImportFilesAsync();
+        _workbenchView = new WorkbenchPageView(_workbenchModel, () => Navigate(FluentPage.Library));
+        _readerView = new ReaderPageView(_readerModel, CloseReader, SetFullScreen);
+        _settingsView = new SettingsPageView(_settingsModel);
 
-        if (_frontendLabel is not null)
-        {
-            _frontendLabel.Text = $"Fluent frontend · {_frontendId}";
-        }
-
+        Require<TextBlock>("FluentFrontendLabel").Text = $"Fluent frontend · {_frontendId}";
+        _spaceLibrary.Click += (_, _) => NavigateSpace(SpaceId.Library);
+        _spaceStudio.Click += (_, _) => NavigateSpace(SpaceId.Studio);
+        _spaceConsole.Click += (_, _) => NavigateSpace(SpaceId.Console);
+        Require<Button>("CommandPaletteButton").Click += (_, _) => OpenCommandPalette();
+        Require<Button>("HelpButton").Click += (_, _) => OpenShortcutHelp();
+        SizeChanged += (_, args) => ApplyResponsiveBand(args.NewSize.Width);
+        AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+        ApplyResponsiveBand(Width);
+        ApplyMotion(appearance?.Settings ?? AppearanceDefaults.Settings);
         Navigate(FluentPage.Library);
+        if (!string.IsNullOrWhiteSpace(options?.StartupPage)) Navigate(options.StartupPage);
     }
 
-    /// <summary>
-    /// FEA-06 scope-r2 P0: the single shared host controller injected by the composition root. FEA-06
-    /// pages read library/Draft state through this instance (never by constructing a second controller).
-    /// </summary>
     public IHostController? HostController { get; }
-
-    /// <summary>
-    /// FEA-06 scope-r2 P0: the single appearance writer shared with the V2 shell; Fluent pages must save
-    /// appearance through <c>SaveAsync</c> on this coordinator (never by writing the JSON directly).
-    /// </summary>
     public AppearanceCoordinator? Appearance { get; }
-
-    /// <summary>
-    /// FEA-06 scope-r2 P0: the application's single design-system theme manager (tokens/palette/overlays).
-    /// </summary>
     public DesignSystemThemeManager? ThemeManager { get; }
+    public FluentPage CurrentPage => _currentPage;
+    public string CurrentPageTitle => PageTitle(_currentPage);
+    public string CurrentPlaceholderText => _currentPage switch
+    {
+        FluentPage.Library => "书架：作品网格、筛选、章节和页面预览。",
+        FluentPage.Workbench => "工作台：页面画布、区域检查器和批量状态矩阵。",
+        FluentPage.Reader => "阅读器：页导航、缩放、阅读进度和方向设置。",
+        FluentPage.Settings => "设置：外观、Provider、网络、备份与关于。",
+        _ => string.Empty,
+    };
+    public string StatusText => _statusText.Text ?? string.Empty;
+    public KeyMap ShellKeyMap => _keyMap;
+    public ShelfViewModel ShelfViewModel => _shelfModel;
+    public WorkbenchViewModel WorkbenchViewModel => _workbenchModel;
+    public FluentReaderViewModel ReaderViewModel => _readerModel;
+    public SettingsViewModel SettingsViewModel => _settingsModel;
+    public FluentResponsiveBand ResponsiveBand { get; private set; }
+    public Button? NavigationButton(FluentPage page) => _navButtons.GetValueOrDefault(page);
 
-    /// <summary>
-    /// The composition-root factory: applies the same window-material policy as the other shells
-    /// (Mica on Windows 11, opaque fallback elsewhere — C-3-I1) and forwards the injected shared services.
-    /// </summary>
+    public static FluentResponsiveBand GetResponsiveBand(double width) =>
+        width < ShellLayout.BreakpointNarrow ? FluentResponsiveBand.BelowMinimum :
+        width < ShellLayout.BreakpointCompact ? FluentResponsiveBand.Narrow :
+        width < ShellLayout.BreakpointFull ? FluentResponsiveBand.Compact :
+        FluentResponsiveBand.Full;
+
     public static FluentShell CreateRoot(
         AppOptions? options = null,
         FrontendSelection? selection = null,
@@ -144,63 +168,49 @@ public partial class FluentShell : Window
     {
         var shell = new FluentShell(options, selection, host, appearance, themeManager);
         var material = WindowMaterial.ForCurrentOs();
-        shell.TransparencyLevelHint = material.Hints
-            .Select(hint => hint switch
-            {
-                "Mica" => WindowTransparencyLevel.Mica,
-                "Blur" => WindowTransparencyLevel.Blur,
-                _ => WindowTransparencyLevel.None,
-            })
-            .ToArray();
+        shell.TransparencyLevelHint = material.Hints.Select(hint => hint switch
+        {
+            "Mica" => WindowTransparencyLevel.Mica,
+            "Blur" => WindowTransparencyLevel.Blur,
+            _ => WindowTransparencyLevel.None,
+        }).ToArray();
         return shell;
     }
 
-    /// <summary>The currently selected product page.</summary>
-    public FluentPage CurrentPage { get; private set; }
-
-    /// <summary>Title currently rendered for the selected page (empty before the first navigate).</summary>
-    public string CurrentPageTitle => _pageTitle?.Text ?? string.Empty;
-
-    /// <summary>Placeholder copy currently rendered for the selected page (empty before the first navigate).</summary>
-    public string CurrentPlaceholderText => _pagePlaceholder?.Text ?? string.Empty;
-
-    /// <summary>Status-band text (records the frontend id and the selected page).</summary>
-    public string StatusText => _statusText?.Text ?? string.Empty;
-
-    /// <summary>The selected page's navigation button (UI evidence/tests).</summary>
-    public Button? NavigationButton(FluentPage page) =>
-        _navButtons.TryGetValue(page, out var button) ? button : null;
-
-    /// <summary>Switches the page and updates the skeleton content + status band.</summary>
     public void Navigate(FluentPage page)
     {
-        CurrentPage = page;
-        var copy = PageCopy[page];
-        if (_pageTitle is not null)
+        if (page == FluentPage.Reader)
         {
-            _pageTitle.Text = copy.Title;
+            if (_currentPage != FluentPage.Reader) _pageBeforeReader = _currentPage;
+            _currentPage = FluentPage.Reader;
+            _pageHost.Content = _readerView;
+            UpdateNavigationItems();
+            UpdateNavSelection(_pageBeforeReader);
+            UpdateStatus();
+            return;
         }
 
-        if (_pagePlaceholder is not null)
+        _currentPage = page;
+        _currentSpace = page switch
         {
-            _pagePlaceholder.Text = copy.Placeholder;
-        }
-
-        foreach (var pair in _navButtons)
+            FluentPage.Library => SpaceId.Library,
+            FluentPage.Workbench => SpaceId.Studio,
+            FluentPage.Settings => SpaceId.Console,
+            _ => _currentSpace,
+        };
+        _pageHost.Content = page switch
         {
-            pair.Value.Classes.Set("selected", pair.Key == page);
-        }
-
-        if (_statusText is not null)
-        {
-            _statusText.Text = $"Fluent shell · {_frontendId} · 当前页：{copy.Title}";
-        }
+            FluentPage.Library => _shelfView,
+            FluentPage.Workbench => _workbenchView,
+            FluentPage.Settings => _settingsView,
+            _ => _shelfView,
+        };
+        UpdateNavigationItems();
+        UpdateNavSelection(page);
+        UpdateSpaceSelection();
+        UpdateStatus();
     }
 
-    /// <summary>
-    /// Maps the existing <c>--page</c> evidence hook onto the four Fluent pages (the same page ids the V2
-    /// and legacy shells accept). Unknown ids leave the selection unchanged and return false.
-    /// </summary>
     public bool Navigate(string page)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(page);
@@ -212,17 +222,244 @@ public partial class FluentShell : Window
             "settings" or "console" => FluentPage.Settings,
             _ => (FluentPage?)null,
         };
-
-        if (target is not { } page2)
-        {
-            return false;
-        }
-
-        Navigate(page2);
+        if (target is not { } resolved) return false;
+        Navigate(resolved);
         return true;
     }
 
-    private Button RequireButton(string name) =>
-        this.FindControl<Button>(name) ??
-        throw new InvalidOperationException($"the Fluent shell skeleton is missing the '{name}' navigation button");
+    public bool HandleKeyForTest(Key key, KeyModifiers modifiers, bool textInputFocused = false)
+    {
+        if (textInputFocused && IsPlainTypingKey(key, modifiers)) return false;
+        if (!_keyMap.TryMatch(key, modifiers, _currentSpace, _studioMode, out var command)) return false;
+        ExecuteCommand(command);
+        return true;
+    }
+
+    private void NavigateSpace(SpaceId space)
+    {
+        _currentSpace = space;
+        Navigate(space switch
+        {
+            SpaceId.Library => FluentPage.Library,
+            SpaceId.Studio => FluentPage.Workbench,
+            SpaceId.Console => FluentPage.Settings,
+            _ => FluentPage.Library,
+        });
+    }
+
+    private void UpdateNavSelection(FluentPage page)
+    {
+        foreach (var pair in _navButtons) pair.Value.Classes.Set("selected", pair.Key == page);
+    }
+
+    private void UpdateNavigationItems()
+    {
+        var inLibrary = _currentSpace == SpaceId.Library;
+        var inStudio = _currentSpace == SpaceId.Studio;
+        var inConsole = _currentSpace == SpaceId.Console;
+        Require<Button>("NavLibrary").IsVisible = inLibrary;
+        Require<Button>("NavRecycle").IsVisible = inLibrary;
+        Require<Button>("NavImport").IsVisible = inLibrary;
+        Require<Button>("NavWorkbench").IsVisible = inStudio;
+        Require<Button>("NavSettings").IsVisible = inConsole;
+    }
+
+    private void UpdateSpaceSelection()
+    {
+        _spaceLibrary.Classes.Set("selected", _currentSpace == SpaceId.Library);
+        _spaceStudio.Classes.Set("selected", _currentSpace == SpaceId.Studio);
+        _spaceConsole.Classes.Set("selected", _currentSpace == SpaceId.Console);
+    }
+
+    private void ApplyResponsiveBand(double width)
+    {
+        ResponsiveBand = GetResponsiveBand(width);
+        _navRail.IsVisible = ResponsiveBand != FluentResponsiveBand.BelowMinimum;
+        _breakpointText.Text = ResponsiveBand switch
+        {
+            FluentResponsiveBand.BelowMinimum => "< 1024",
+            FluentResponsiveBand.Narrow => "1024–1279",
+            FluentResponsiveBand.Compact => "1280–1599",
+            _ => "≥ 1600",
+        };
+    }
+
+    private void UpdateStatus()
+    {
+        _statusText.Text = $"Fluent · {_frontendId} · {PageTitle(_currentPage)} · {ResponsiveBand}";
+    }
+
+    private void OpenReader(BookSummary book, ChapterSummary chapter)
+    {
+        _pageBeforeReader = _currentPage;
+        Navigate(FluentPage.Reader);
+        _ = _readerView.LoadAsync(book.BookId, chapter.ChapterId);
+    }
+
+    private void OpenWorkbench(BookSummary book, ChapterSummary chapter)
+    {
+        Navigate(FluentPage.Workbench);
+        _ = _workbenchView.LoadAsync(chapter.ChapterId);
+    }
+
+    private void CloseReader() => Navigate(_pageBeforeReader == FluentPage.Reader ? FluentPage.Library : _pageBeforeReader);
+
+    private void SetFullScreen(bool enabled)
+    {
+        WindowState = enabled ? WindowState.FullScreen : WindowState.Normal;
+    }
+
+    private void OnPreviewKeyDown(object? sender, KeyEventArgs args)
+    {
+        var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+        _textInputFocused = focused is TextBox;
+        if (HandleKeyForTest(args.Key, args.KeyModifiers, _textInputFocused)) args.Handled = true;
+    }
+
+    private void ExecuteCommand(ShellCommandDefinition command)
+    {
+        if (!command.IsAvailable)
+        {
+            _statusText.Text = command.UnavailableReason ?? $"“{command.Title}”当前不可用。";
+            return;
+        }
+
+        switch (command.Id)
+        {
+            case ShellCommandIds.SpaceLibrary: NavigateSpace(SpaceId.Library); break;
+            case ShellCommandIds.SpaceStudio: NavigateSpace(SpaceId.Studio); break;
+            case ShellCommandIds.SpaceConsole: NavigateSpace(SpaceId.Console); break;
+            case ShellCommandIds.StudioModeToggle: _studioMode = _studioMode == StudioMode.Page ? StudioMode.Batch : StudioMode.Page; _workbenchModel.IsBatch = _studioMode == StudioMode.Batch; UpdateStatus(); break;
+            case ShellCommandIds.CommandPalette: OpenCommandPalette(); break;
+            case ShellCommandIds.QuickJump: OpenCommandPalette("快速跳转"); break;
+            case ShellCommandIds.ThemeStudio: _settingsModel.SelectedGroup = SettingsGroupId.Appearance; Navigate(FluentPage.Settings); break;
+            case ShellCommandIds.Help: OpenShortcutHelp(); break;
+            case ShellCommandIds.SurfaceBack: CloseTopSurface(); break;
+            case ShellCommandIds.ThemeToggle: ToggleTheme(); break;
+            case ShellCommandIds.ObjectNext: _ = _shelfModel.MoveSelection(1); break;
+            case ShellCommandIds.ObjectPrevious: _ = _shelfModel.MoveSelection(-1); break;
+            case ShellCommandIds.PageNext: _ = _readerModel.NavigateAsync(1); break;
+            case ShellCommandIds.PagePrevious: _ = _readerModel.NavigateAsync(-1); break;
+            case ShellCommandIds.ChapterNext: _ = _shelfModel.MoveChapter(1); break;
+            case ShellCommandIds.ChapterPrevious: _ = _shelfModel.MoveChapter(-1); break;
+            case ShellCommandIds.LibraryRefresh: _ = _shelfModel.RefreshAsync(); break;
+            case ShellCommandIds.LibraryImportFiles: _ = _shelfView.ImportFilesAsync(); break;
+            case ShellCommandIds.LibraryImportFolder: _ = _shelfView.ImportFolderAsync(); break;
+            case ShellCommandIds.LibraryRecycle: _shelfView.OpenRecycleDrawer(); break;
+            case ShellCommandIds.LibraryNewBook: _shelfView.ShowNewBookDialog(); break;
+            case ShellCommandIds.LibraryNewChapter: _shelfView.ShowNewChapterDialog(); break;
+            case ShellCommandIds.LibraryOpenReader: _shelfView.OpenSelectedReader(); break;
+            case ShellCommandIds.LibraryClearSelection: _shelfModel.ClearSelection(); break;
+            case ShellCommandIds.StudioPage: _studioMode = StudioMode.Page; _workbenchModel.IsBatch = false; break;
+            case ShellCommandIds.StudioBatch: _studioMode = StudioMode.Batch; _workbenchModel.IsBatch = true; break;
+            default: _statusText.Text = $"“{command.Title}”尚无可调用操作。"; break;
+        }
+    }
+
+    private void OpenCommandPalette(string? initialQuery = null)
+    {
+        var search = new TextBox { Watermark = "输入命令名称", Text = initialQuery };
+        AutomationProperties.SetName(search, "搜索命令");
+        var list = new StackPanel { Classes = { "fluent-command-list" } };
+        void RenderCommands()
+        {
+            list.Children.Clear();
+            var query = search.Text ?? string.Empty;
+            foreach (var command in ShellCommands.Definitions.Where(item =>
+                         string.IsNullOrWhiteSpace(query) || item.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                var label = command.HasGesture ? $"{command.Title} · {command.GestureText}" : command.Title;
+                if (!command.IsAvailable) label += " · 不可用";
+                var button = new Button { Content = label, Classes = { "fluent-command-row" }, IsEnabled = command.IsAvailable };
+                AutomationProperties.SetName(button, label);
+                button.Click += (_, _) => { CloseTopSurface(); ExecuteCommand(command); };
+                list.Children.Add(button);
+            }
+        }
+        search.TextChanged += (_, _) => RenderCommands();
+        RenderCommands();
+        var scroll = new ScrollViewer { Content = list, VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
+        OpenDialog("命令面板", new Control[] { search, scroll });
+        search.Focus();
+    }
+
+    private void OpenShortcutHelp()
+    {
+        var rows = ShellCommands.Definitions.Where(item => item.HasGesture).Select(command =>
+            (Control)new TextBlock
+            {
+                Text = $"{command.GestureText}  ·  {command.Title}",
+                Classes = { "fluent-status-text" },
+                TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+            }).ToArray();
+        OpenDialog("键位速查", rows);
+    }
+
+    private void OpenDialog(string title, IEnumerable<Control> content)
+    {
+        var panel = new StackPanel { Classes = { "fluent-dialog-content" } };
+        panel.Children.Add(new TextBlock { Text = title, Classes = { "fluent-page-title" } });
+        foreach (var child in content) panel.Children.Add(child);
+        panel.Children.Add(new Button { Content = "关闭", Classes = { "fluent-secondary" }, Command = null });
+        var close = (Button)panel.Children[^1];
+        close.Click += (_, _) => CloseTopSurface();
+        var dialog = new FluentDialog { Child = panel, IsOpen = true, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, MaxWidth = ShellLayout.PaletteWidth };
+        var scrim = new Border { Classes = { "fluent-modal-scrim" }, Child = dialog };
+        scrim.PointerPressed += (_, args) =>
+        {
+            if (ReferenceEquals(args.Source, scrim)) CloseTopSurface();
+        };
+        _activeDialog = scrim;
+        _modalHost.Child = scrim;
+        _modalHost.IsVisible = true;
+        _modalHost.Focus();
+    }
+
+    private void CloseTopSurface()
+    {
+        if (_modalHost.IsVisible)
+        {
+            _modalHost.IsVisible = false;
+            _modalHost.Child = null;
+            _activeDialog = null;
+            return;
+        }
+        if (_currentPage == FluentPage.Reader) CloseReader();
+    }
+
+    private void ToggleTheme()
+    {
+        if (ThemeManager is null) return;
+        var next = ThemeManager.Appearance == NewManga.DesignSystem.Theming.AppearanceMode.Dark
+            ? NewManga.DesignSystem.Theming.AppearanceMode.Light
+            : NewManga.DesignSystem.Theming.AppearanceMode.Dark;
+        ThemeManager.SetAppearance(next);
+    }
+
+    private void ApplyMotion(AppearanceSettings settings)
+    {
+        var resolution = new MotionResolver(new WindowsMotionPreferenceSource()).Resolve(settings).Settings;
+        _motionNavigationEnabled = resolution.IsEnabled(MotionCategories.Navigation);
+        ThemeManager?.SetReducedMotion(!resolution.Enabled);
+        Classes.Set("motion-navigation", _motionNavigationEnabled);
+        Classes.Set("motion-reduced", !resolution.Enabled);
+    }
+
+    private static bool IsPlainTypingKey(Key key, KeyModifiers modifiers) =>
+        (modifiers & (KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Meta)) == 0 &&
+        (key is >= Key.A and <= Key.Z or >= Key.D0 and <= Key.D9 or Key.Space or Key.OemMinus or Key.OemPlus or
+            Key.OemComma or Key.OemPeriod or Key.OemOpenBrackets or Key.OemCloseBrackets or Key.Tab);
+
+    private static string PageTitle(FluentPage page) => page switch
+    {
+        FluentPage.Library => "书架",
+        FluentPage.Workbench => "工作台",
+        FluentPage.Reader => "阅读器",
+        FluentPage.Settings => "设置",
+        _ => page.ToString(),
+    };
+
+    private T Require<T>(string name) where T : Control =>
+        this.FindControl<T>(name) ?? throw new InvalidOperationException($"Fluent shell missing control '{name}'");
 }

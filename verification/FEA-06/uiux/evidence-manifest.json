@@ -1,0 +1,377 @@
+{
+  "schema_version": "1.3.3",
+  "run_id": "FEA06-CODEX-UIUX-20261102",
+  "evidence_policy": {
+    "profile": "local_private",
+    "retention_days": 365,
+    "release_retention_days": 365
+  },
+  "items": [
+    {
+      "id": "EV-FEA06-TASKBASE",
+      "status": "AVAILABLE",
+      "kind": "other",
+      "storage_class": "evidence",
+      "source_sha256": "85c21d6821b307ac9cf254baeb37b2548e1b1845603689f3f996bcb9c271651e",
+      "redacted_sha256": null,
+      "references": [
+        "3c7f311d88b24bde462a61690e15d2c66f8c4683:doc/tasks/FEA-06.md"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-scope",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-BUILD",
+      "status": "AVAILABLE",
+      "kind": "tool_log",
+      "storage_class": "evidence",
+      "source_sha256": "a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/build.log"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-build",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-FULLTEST",
+      "status": "AVAILABLE",
+      "kind": "test_log",
+      "storage_class": "evidence",
+      "source_sha256": "be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/full-test.log"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-full-test",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-PAGETEST",
+      "status": "AVAILABLE",
+      "kind": "test_log",
+      "storage_class": "evidence",
+      "source_sha256": "1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/page-tests.log"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-headless-pages",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-TOKENGEN",
+      "status": "AVAILABLE",
+      "kind": "tool_log",
+      "storage_class": "evidence",
+      "source_sha256": "0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/token-gen.log"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-token-gen",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-THEMEGEN",
+      "status": "AVAILABLE",
+      "kind": "tool_log",
+      "storage_class": "evidence",
+      "source_sha256": "ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/theme-gen.log"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-theme-gen",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-REGISTRY",
+      "status": "AVAILABLE",
+      "kind": "other",
+      "storage_class": "evidence",
+      "source_sha256": "a629145df96cdca76ca3703e8852d865810cc5077959115ae2854b02c267fff4",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/component-registry.md"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-component-registry",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-SHELF",
+      "status": "AVAILABLE",
+      "kind": "screenshot",
+      "storage_class": "evidence",
+      "source_sha256": "018af624d300e053b7276b702f7908e00426d432808eec810a6c8a4797f72c3f",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/screens/shelf.png"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-headless-screens",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-WORKBENCH",
+      "status": "AVAILABLE",
+      "kind": "screenshot",
+      "storage_class": "evidence",
+      "source_sha256": "4ea215345178215fb9e677dc71e0cae10bd2cad7251165752ae7cfb259d6ab41",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/screens/workbench.png"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-headless-screens",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-READER",
+      "status": "AVAILABLE",
+      "kind": "screenshot",
+      "storage_class": "evidence",
+      "source_sha256": "26e7a47a240cce5698396dd06ec9c4eac7e53ce1e7dbf69c1ce9a1f773f08374",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/screens/reader.png"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-headless-screens",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-SETTINGS",
+      "status": "AVAILABLE",
+      "kind": "screenshot",
+      "storage_class": "evidence",
+      "source_sha256": "73ab84ad2807534ef39b186c74bea144bcf8e92f057d54ecc61b584c52b282cd",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/screens/settings.png"
+      ],
+      "created_at": "2026-11-02T04:21:28Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-headless-screens",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-DSCOMPONENT",
+      "status": "AVAILABLE",
+      "kind": "test_log",
+      "storage_class": "evidence",
+      "source_sha256": "5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/design-system-component-tests.log"
+      ],
+      "created_at": "2026-11-02T04:25:39.048183Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-design-system-components",
+        "execution_level": "SIMULATED",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-GOVCHECK",
+      "status": "AVAILABLE",
+      "kind": "tool_log",
+      "storage_class": "evidence",
+      "source_sha256": "1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/governance-check.log"
+      ],
+      "created_at": "2026-11-02T04:25:39.048183Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-governance-check",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    },
+    {
+      "id": "EV-FEA06-VERIFYPINS",
+      "status": "AVAILABLE",
+      "kind": "tool_log",
+      "storage_class": "evidence",
+      "source_sha256": "cefc5376c8ea58cdd8297aa39674aff6aaaf31ac683dc446d16b2cbfb395a479",
+      "redacted_sha256": null,
+      "references": [
+        "verification/FEA-06/verify-pins.log"
+      ],
+      "created_at": "2026-11-02T04:25:39.048183Z",
+      "retention_policy": "manual",
+      "expiry_at": "2027-11-02T04:21:28Z",
+      "redaction": {
+        "kind": "none",
+        "method": "manual",
+        "recheck_status": "NOT_RECHECKED"
+      },
+      "provenance": {
+        "producer": "Codex FEA-06",
+        "probe_id": "probe-verify-pins",
+        "execution_level": "NONE",
+        "tool_log_ref": null,
+        "environment_digest": null
+      }
+    }
+  ],
+  "created_at": "2026-11-02T04:21:28Z",
+  "updated_at": "2026-11-02T04:29:12.874892Z"
+}

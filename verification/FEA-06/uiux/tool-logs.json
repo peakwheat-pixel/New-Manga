@@ -1,0 +1,284 @@
+[
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-BUILD",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "build",
+      "apps\\desktop-avalonia\\NewManga.sln",
+      "--nologo"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:27:24.314962Z",
+    "finished_at": "2026-11-02T04:27:25.424962Z",
+    "duration_ms": 1110,
+    "execution_level": "NONE",
+    "probe_id": "probe-build",
+    "evidence_refs": [
+      "EV-FEA06-BUILD"
+    ],
+    "log_sha256": "a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0",
+    "stdout_ref": "verification/FEA-06/build.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-FULLTEST",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "test",
+      "apps\\desktop-avalonia\\NewManga.sln",
+      "--no-build",
+      "--settings",
+      "apps\\desktop-avalonia\\tests\\NewManga.runsettings"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:27:29.439742Z",
+    "finished_at": "2026-11-02T04:28:35.439742Z",
+    "duration_ms": 66000,
+    "execution_level": "SIMULATED",
+    "probe_id": "probe-full-test",
+    "evidence_refs": [
+      "EV-FEA06-FULLTEST"
+    ],
+    "log_sha256": "be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21",
+    "stdout_ref": "verification/FEA-06/full-test.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-PAGETEST",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "test",
+      "apps\\desktop-avalonia\\tests\\NewManga.App.Tests\\NewManga.App.Tests.csproj",
+      "--no-build",
+      "--settings",
+      "apps\\desktop-avalonia\\tests\\NewManga.runsettings",
+      "--filter",
+      "FullyQualifiedName~Fluent",
+      "--logger",
+      "console;verbosity=minimal"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:27:10.242564Z",
+    "finished_at": "2026-11-02T04:27:13.242564Z",
+    "duration_ms": 3000,
+    "execution_level": "SIMULATED",
+    "probe_id": "probe-headless-pages",
+    "evidence_refs": [
+      "EV-FEA06-PAGETEST"
+    ],
+    "log_sha256": "1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c",
+    "stdout_ref": "verification/FEA-06/page-tests.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-TOKENGEN",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "apps\\desktop-avalonia\\src\\NewManga.DesignSystem\\tools\\NewManga.DesignSystem.TokenGen",
+      "--",
+      "--check"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:23:14.909756Z",
+    "finished_at": "2026-11-02T04:23:16.709756Z",
+    "duration_ms": 1800,
+    "execution_level": "NONE",
+    "probe_id": "probe-token-gen",
+    "evidence_refs": [
+      "EV-FEA06-TOKENGEN"
+    ],
+    "log_sha256": "0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977",
+    "stdout_ref": "verification/FEA-06/token-gen.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-THEMEGEN",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "apps\\desktop-avalonia\\src\\NewManga.ThemeEngine\\tools\\NewManga.ThemeEngine.ThemeGen",
+      "--",
+      "--check"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:23:19.859028Z",
+    "finished_at": "2026-11-02T04:23:21.759028Z",
+    "duration_ms": 1900,
+    "execution_level": "NONE",
+    "probe_id": "probe-theme-gen",
+    "evidence_refs": [
+      "EV-FEA06-THEMEGEN"
+    ],
+    "log_sha256": "ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e",
+    "stdout_ref": "verification/FEA-06/theme-gen.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-DSCOMPONENT",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "dotnet",
+    "tool_version": "10.0.401",
+    "command": [
+      "dotnet",
+      "test",
+      "apps\\desktop-avalonia\\tests\\NewManga.DesignSystem.Tests\\NewManga.DesignSystem.Tests.csproj",
+      "--no-build",
+      "--settings",
+      "apps\\desktop-avalonia\\tests\\NewManga.runsettings",
+      "--filter",
+      "FullyQualifiedName~FluentComponentsTests",
+      "--logger",
+      "console;verbosity=minimal"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:24:31.034256Z",
+    "finished_at": "2026-11-02T04:24:32.434256Z",
+    "duration_ms": 1400,
+    "execution_level": "SIMULATED",
+    "probe_id": "probe-design-system-components",
+    "evidence_refs": [
+      "EV-FEA06-DSCOMPONENT"
+    ],
+    "log_sha256": "5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838",
+    "stdout_ref": "verification/FEA-06/design-system-component-tests.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-GOVCHECK",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "pwsh",
+    "tool_version": "PowerShell 7",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "tools\\governance\\check.ps1"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:24:36.598219Z",
+    "finished_at": "2026-11-02T04:24:37.998219Z",
+    "duration_ms": 1400,
+    "execution_level": "NONE",
+    "probe_id": "probe-governance-check",
+    "evidence_refs": [
+      "EV-FEA06-GOVCHECK"
+    ],
+    "log_sha256": "1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f",
+    "stdout_ref": "verification/FEA-06/governance-check.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  },
+  {
+    "schema_version": "1.3.3",
+    "log_id": "TL-FEA06-VERIFYPINS",
+    "run_id": "FEA06-CODEX-UIUX-20261102",
+    "tool": "pwsh",
+    "tool_version": "PowerShell 7",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "tools\\governance\\verify_pins.ps1"
+    ],
+    "cwd": "G:\\CODEX\\New Manga",
+    "env_digest": null,
+    "input_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+    "output_digest": "cefc5376c8ea58cdd8297aa39674aff6aaaf31ac683dc446d16b2cbfb395a479",
+    "exit_code": 0,
+    "started_at": "2026-11-02T04:24:40.34696Z",
+    "finished_at": "2026-11-02T04:24:41.04696Z",
+    "duration_ms": 700,
+    "execution_level": "NONE",
+    "probe_id": "probe-verify-pins",
+    "evidence_refs": [
+      "EV-FEA06-VERIFYPINS"
+    ],
+    "log_sha256": "cefc5376c8ea58cdd8297aa39674aff6aaaf31ac683dc446d16b2cbfb395a479",
+    "stdout_ref": "verification/FEA-06/verify-pins.log",
+    "stderr_ref": null,
+    "redaction": {
+      "applied": false,
+      "kinds": []
+    }
+  }
+]

@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.3.3",
+  "run_id": "FEA06-CODEX-UIUX-20261102",
+  "mode": "new-build",
+  "source_fingerprint": {
+    "kind": "dir_digest",
+    "value": "60a3dc523607a362cc3eda056b036b2c382dcef6f1163ad6a9f65a3664ad8d63",
+    "algorithm": "sha256(sorted path NUL raw-bytes NUL; listed FEA-06 implementation files)"
+  },
+  "request_digest": "bdb9d98911dabd22c8f805b32a322ef6d7ccb95e8a084f29c9dd3c72c9ad11b9",
+  "gates": {
+    "G0": {
+      "gate_id": "G0",
+      "state": "PASS",
+      "applicability": "MANDATORY",
+      "required_runtime_level": "NONE",
+      "observed_runtime_level": "NONE",
+      "evidence_refs": [
+        {
+          "evidence_id": "EV-FEA06-TASKBASE",
+          "kind": "other",
+          "status": "AVAILABLE",
+          "sha256": "85c21d6821b307ac9cf254baeb37b2548e1b1845603689f3f996bcb9c271651e",
+          "probe_id": "probe-scope",
+          "evidence_level": "NONE"
+        }
+      ],
+      "probe_ids": [
+        "probe-scope"
+      ],
+      "tool_log_refs": [],
+      "reviewed_artifacts": [
+        "EV-FEA06-TASKBASE"
+      ],
+      "reason_codes": [],
+      "notes": "User-authorized Task FEA-06 scope and base task are recorded; the implementation did not write production data.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    },
+    "G1": {
+      "gate_id": "G1",
+      "state": "NOT_APPLICABLE",
+      "applicability": "NOT_APPLICABLE",
+      "required_runtime_level": "NONE",
+      "observed_runtime_level": "NONE",
+      "evidence_refs": [],
+      "probe_ids": [],
+      "tool_log_refs": [],
+      "reviewed_artifacts": [],
+      "reason_codes": [],
+      "notes": "Not requested by the new-build mode policy.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    },
+    "G2": {
+      "gate_id": "G2",
+      "state": "UNVERIFIED",
+      "applicability": "MANDATORY",
+      "required_runtime_level": "NONE",
+      "observed_runtime_level": "NONE",
+      "evidence_refs": [],
+      "probe_ids": [],
+      "tool_log_refs": [],
+      "reviewed_artifacts": [],
+      "reason_codes": [],
+      "notes": "Source/design inputs were consulted, but a persistent flows.json and cross-validated flow map were not produced.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    },
+    "G3": {
+      "gate_id": "G3",
+      "state": "UNVERIFIED",
+      "applicability": "MANDATORY",
+      "required_runtime_level": "NONE",
+      "observed_runtime_level": "NONE",
+      "evidence_refs": [],
+      "probe_ids": [],
+      "tool_log_refs": [],
+      "reviewed_artifacts": [],
+      "reason_codes": [],
+      "notes": "The frozen design baseline was followed; an independent L4 design review is not present.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    },
+    "G4": {
+      "gate_id": "G4",
+      "state": "PASS",
+      "applicability": "MANDATORY",
+      "required_runtime_level": "NONE",
+      "observed_runtime_level": "SIMULATED",
+      "evidence_refs": [
+        {
+          "evidence_id": "EV-FEA06-BUILD",
+          "kind": "tool_log",
+          "status": "AVAILABLE",
+          "sha256": "a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0",
+          "probe_id": "probe-build",
+          "evidence_level": "NONE"
+        },
+        {
+          "evidence_id": "EV-FEA06-FULLTEST",
+          "kind": "test_log",
+          "status": "AVAILABLE",
+          "sha256": "be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21",
+          "probe_id": "probe-full-test",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-PAGETEST",
+          "kind": "test_log",
+          "status": "AVAILABLE",
+          "sha256": "1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c",
+          "probe_id": "probe-headless-pages",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-TOKENGEN",
+          "kind": "tool_log",
+          "status": "AVAILABLE",
+          "sha256": "0cc5e6bbc598c2ed50a3f5557a7fca2f027540d599c1be48f13504ca08ca3977",
+          "probe_id": "probe-token-gen",
+          "evidence_level": "NONE"
+        },
+        {
+          "evidence_id": "EV-FEA06-THEMEGEN",
+          "kind": "tool_log",
+          "status": "AVAILABLE",
+          "sha256": "ee2948527883acfe211eb47f881c63ba1f0511d7ca38d648902bc183a692651e",
+          "probe_id": "probe-theme-gen",
+          "evidence_level": "NONE"
+        },
+        {
+          "evidence_id": "EV-FEA06-REGISTRY",
+          "kind": "other",
+          "status": "AVAILABLE",
+          "sha256": "a629145df96cdca76ca3703e8852d865810cc5077959115ae2854b02c267fff4",
+          "probe_id": "probe-component-registry",
+          "evidence_level": "NONE"
+        },
+        {
+          "evidence_id": "EV-FEA06-DSCOMPONENT",
+          "kind": "test_log",
+          "status": "AVAILABLE",
+          "sha256": "5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838",
+          "probe_id": "probe-design-system-components",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-GOVCHECK",
+          "kind": "tool_log",
+          "status": "AVAILABLE",
+          "sha256": "1141042fda8bdff7f268927511cd243da838b1e13eab4aff08d60fbf5f0b982f",
+          "probe_id": "probe-governance-check",
+          "evidence_level": "NONE"
+        },
+        {
+          "evidence_id": "EV-FEA06-VERIFYPINS",
+          "kind": "tool_log",
+          "status": "AVAILABLE",
+          "sha256": "cefc5376c8ea58cdd8297aa39674aff6aaaf31ac683dc446d16b2cbfb395a479",
+          "probe_id": "probe-verify-pins",
+          "evidence_level": "NONE"
+        }
+      ],
+      "probe_ids": [
+        "probe-build",
+        "probe-component-registry",
+        "probe-full-test",
+        "probe-theme-gen",
+        "probe-token-gen"
+      ],
+      "tool_log_refs": [
+        "TL-FEA06-BUILD",
+        "TL-FEA06-FULLTEST",
+        "TL-FEA06-PAGETEST",
+        "TL-FEA06-TOKENGEN",
+        "TL-FEA06-THEMEGEN",
+        "TL-FEA06-DSCOMPONENT",
+        "TL-FEA06-GOVCHECK",
+        "TL-FEA06-VERIFYPINS"
+      ],
+      "reviewed_artifacts": [
+        "EV-FEA06-BUILD",
+        "EV-FEA06-FULLTEST",
+        "EV-FEA06-TOKENGEN",
+        "EV-FEA06-THEMEGEN",
+        "EV-FEA06-REGISTRY"
+      ],
+      "reason_codes": [],
+      "notes": "Solution build, full test run, generated-token checks, and component registry are available.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    },
+    "G5": {
+      "gate_id": "G5",
+      "state": "UNVERIFIED",
+      "applicability": "MANDATORY",
+      "required_runtime_level": "NATIVE_APP",
+      "observed_runtime_level": "SIMULATED",
+      "evidence_refs": [
+        {
+          "evidence_id": "EV-FEA06-PAGETEST",
+          "kind": "test_log",
+          "status": "AVAILABLE",
+          "sha256": "1cd942044a0ab41326c9dedc9b9c6f3f1aa99e2f04059a92a14000b959a4439c",
+          "probe_id": "probe-headless-pages",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-SHELF",
+          "kind": "screenshot",
+          "status": "AVAILABLE",
+          "sha256": "018af624d300e053b7276b702f7908e00426d432808eec810a6c8a4797f72c3f",
+          "probe_id": "probe-headless-screens",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-WORKBENCH",
+          "kind": "screenshot",
+          "status": "AVAILABLE",
+          "sha256": "4ea215345178215fb9e677dc71e0cae10bd2cad7251165752ae7cfb259d6ab41",
+          "probe_id": "probe-headless-screens",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-READER",
+          "kind": "screenshot",
+          "status": "AVAILABLE",
+          "sha256": "26e7a47a240cce5698396dd06ec9c4eac7e53ce1e7dbf69c1ce9a1f773f08374",
+          "probe_id": "probe-headless-screens",
+          "evidence_level": "SIMULATED"
+        },
+        {
+          "evidence_id": "EV-FEA06-SETTINGS",
+          "kind": "screenshot",
+          "status": "AVAILABLE",
+          "sha256": "73ab84ad2807534ef39b186c74bea144bcf8e92f057d54ecc61b584c52b282cd",
+          "probe_id": "probe-headless-screens",
+          "evidence_level": "SIMULATED"
+        }
+      ],
+      "probe_ids": [
+        "probe-headless-pages",
+        "probe-headless-screens"
+      ],
+      "tool_log_refs": [
+        "TL-FEA06-PAGETEST"
+      ],
+      "reviewed_artifacts": [
+        "EV-FEA06-PAGETEST",
+        "EV-FEA06-SHELF",
+        "EV-FEA06-WORKBENCH",
+        "EV-FEA06-READER",
+        "EV-FEA06-SETTINGS"
+      ],
+      "reason_codes": [],
+      "notes": "Avalonia.Headless screenshots and tests ran at SIMULATED level; NATIVE_APP verification has not run.",
+      "computed_at": "2026-11-02T04:21:28Z"
+    }
+  },
+  "created_at": "2026-11-02T04:21:28Z"
+}

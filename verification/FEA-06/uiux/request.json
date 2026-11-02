@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.3.3",
+  "run_id": "FEA06-CODEX-UIUX-20261102",
+  "mode": "new-build",
+  "project_root": "G:\\CODEX\\New Manga",
+  "project": {
+    "name": "New Manga",
+    "has_existing_ui": true,
+    "tech_stack": "unknown"
+  },
+  "target_scope": [
+    "Fluent frontend four pages and DesignSystem controls"
+  ],
+  "caller": {
+    "kind": "direct",
+    "invoker": "Codex FEA-06 implementation session",
+    "git_management": "standalone",
+    "task_id": "FEA-06",
+    "role": "implementation owner",
+    "base_head": "3c7f311d88b24bde462a61690e15d2c66f8c4683",
+    "worktree_path": "G:\\CODEX\\New Manga",
+    "artifact_dir": "verification/FEA-06/uiux"
+  },
+  "policy": {
+    "schema_version": "1.3.3",
+    "policy_id": "POL-FEA06-CODEX",
+    "description": "FEA-06 scoped local implementation; explicit user task authorization; no production data writes or OS input.",
+    "roots": {
+      "read_roots": [
+        "G:\\CODEX\\New Manga"
+      ],
+      "report_write_root": "G:\\CODEX\\New Manga\\verification\\FEA-06\\uiux",
+      "sandbox_write_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\FEA-06\\uiux-sandbox",
+      "install_write_root": "G:\\CODEX\\New Manga.workspace\\artifacts\\FEA-06\\uiux-install",
+      "source_write_scope": {
+        "allowed_globs": [
+          "apps/desktop-avalonia/src/NewManga.App/Views/**",
+          "apps/desktop-avalonia/src/NewManga.App/ViewModels/**",
+          "apps/desktop-avalonia/src/NewManga.App/Shell/**",
+          "apps/desktop-avalonia/src/NewManga.App/Services/**",
+          "apps/desktop-avalonia/src/NewManga.App/Controls/**",
+          "apps/desktop-avalonia/src/NewManga.App/Styles/**",
+          "apps/desktop-avalonia/src/NewManga.DesignSystem/**",
+          "apps/desktop-avalonia/tests/NewManga.App.Tests/**",
+          "apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/**",
+          "verification/FEA-06/**",
+          "doc/tasks/FEA-06.md",
+          "doc/STATUS.md",
+          "doc/REBASELINE_PLAN.md",
+          "doc/TASK_LEDGER.md",
+          "doc/reviews/FEA-06-*.md",
+          "doc/handoffs/FEA-06-*.md"
+        ],
+        "denied_globs": [
+          "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
+          "apps/desktop-avalonia/src/NewManga.App/Services/FrontendSelector.cs",
+          "doc/design/fluent-v1/**",
+          "apps/desktop-avalonia/src/NewManga.DesignSystem/Generated/**"
+        ]
+      }
+    },
+    "permissions": {
+      "allow_network": false,
+      "allow_external_commands": [
+        "dotnet",
+        "python",
+        "pwsh"
+      ],
+      "deny_external_commands": [
+        "git push",
+        "git clean",
+        "git reset --hard"
+      ],
+      "os_input": {
+        "uia_patterns": false,
+        "physical": false,
+        "target_allowlist": []
+      },
+      "max_repair_cycles": 0
+    },
+    "authorization": {
+      "granted_by": "User via FEA-06 implementation brief",
+      "granted_at": "2026-11-02T04:21:28Z",
+      "expires_at": null,
+      "scopes": [
+        "production_write"
+      ],
+      "evidence_ref": "doc/tasks/FEA-06.md#W-10"
+    },
+    "git": {
+      "management": "standalone",
+      "snapshot_policy": "dir_digest"
+    },
+    "evidence": {
+      "profile": "local_private",
+      "retention_days": 365,
+      "release_retention_days": 365
+    },
+    "allowed_modes": [
+      "new-build"
+    ],
+    "created_at": "2026-11-02T04:21:28Z"
+  },
+  "execution_policy": {
+    "read_only_source": false,
+    "allow_production_data_write": false,
+    "allow_uia_input": false,
+    "allow_physical_os_input": false,
+    "os_input_target_allowlist": [],
+    "allowed_write_globs": [
+      "apps/desktop-avalonia/src/NewManga.App/Views/**",
+      "apps/desktop-avalonia/src/NewManga.App/ViewModels/**",
+      "apps/desktop-avalonia/src/NewManga.App/Shell/**",
+      "apps/desktop-avalonia/src/NewManga.App/Services/**",
+      "apps/desktop-avalonia/src/NewManga.App/Controls/**",
+      "apps/desktop-avalonia/src/NewManga.App/Styles/**",
+      "apps/desktop-avalonia/src/NewManga.DesignSystem/**",
+      "apps/desktop-avalonia/tests/NewManga.App.Tests/**",
+      "apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/**",
+      "verification/FEA-06/**",
+      "doc/tasks/FEA-06.md",
+      "doc/STATUS.md",
+      "doc/REBASELINE_PLAN.md",
+      "doc/TASK_LEDGER.md",
+      "doc/reviews/FEA-06-*.md",
+      "doc/handoffs/FEA-06-*.md"
+    ],
+    "max_total_repair_cycles": 0,
+    "require_native_for_production_complete": true
+  },
+  "evidence_policy": {
+    "profile": "local_private",
+    "retention_days": 365,
+    "release_retention_days": 365,
+    "redaction": {
+      "images": "none",
+      "paths": false,
+      "fields": false,
+      "recheck": false
+    }
+  },
+  "runtime_targets": [
+    "SIMULATED",
+    "NATIVE_APP"
+  ],
+  "requested_outputs": [
+    "gate-results.json",
+    "coverage-matrix.json",
+    "evidence-manifest.json"
+  ],
+  "review": {
+    "independent_required": true,
+    "reviewer_context_ref": null
+  },
+  "created_at": "2026-11-02T04:21:28Z"
+}

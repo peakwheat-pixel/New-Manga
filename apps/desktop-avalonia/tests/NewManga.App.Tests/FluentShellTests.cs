@@ -18,13 +18,14 @@ namespace NewManga.App.Tests;
 
 /// <summary>
 /// FEA-06-PREREQ-2 AC3 (P3): the Fluent shell skeleton starts headlessly with the frozen design-04 §1
-/// frame (top band / navigation rail / status band, all token-driven) and navigates the four placeholder
-/// pages. AC2 (P2): the composition root dispatches the selected frontend to the right shell.
+/// frame (top band / navigation rail / status band, all token-driven) and hosts the four product surfaces
+/// with space-scoped left navigation and Reader as an overlay. AC2 (P2): the composition root dispatches
+/// the selected frontend to the right shell.
 /// </summary>
 public sealed class FluentShellTests
 {
     [AvaloniaFact]
-    public void FluentShell_StartsHeadless_WithTheFourNavigationEntries()
+    public void FluentShell_StartsHeadless_WithFourPagesAndSpaceScopedNavigation()
     {
         var shell = FluentShell.CreateRoot();
         shell.Show();
@@ -36,11 +37,17 @@ public sealed class FluentShellTests
         Assert.Equal(FluentPage.Workbench, FluentShell.Pages[1]);
         Assert.Equal(FluentPage.Reader, FluentShell.Pages[2]);
         Assert.Equal(FluentPage.Settings, FluentShell.Pages[3]);
-        Assert.All(FluentShell.Pages, page => Assert.NotNull(shell.NavigationButton(page)));
+        Assert.NotNull(shell.NavigationButton(FluentPage.Library));
+        Assert.NotNull(shell.NavigationButton(FluentPage.Workbench));
+        Assert.NotNull(shell.NavigationButton(FluentPage.Settings));
+        Assert.Null(shell.NavigationButton(FluentPage.Reader));
         Assert.Equal("书架", shell.NavigationButton(FluentPage.Library)!.Content);
         Assert.Equal("工作台", shell.NavigationButton(FluentPage.Workbench)!.Content);
-        Assert.Equal("阅读器", shell.NavigationButton(FluentPage.Reader)!.Content);
         Assert.Equal("设置", shell.NavigationButton(FluentPage.Settings)!.Content);
+        Assert.True(shell.FindControl<Button>("NavRecycle")!.IsVisible);
+        Assert.True(shell.FindControl<Button>("NavImport")!.IsVisible);
+        Assert.False(shell.FindControl<Button>("NavWorkbench")!.IsVisible);
+        Assert.False(shell.FindControl<Button>("NavSettings")!.IsVisible);
 
         shell.Close();
     }
