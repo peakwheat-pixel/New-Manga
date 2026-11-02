@@ -1,13 +1,9 @@
-# FEA-07 final evidence @ clean head (R-011)
+# FEA-07 final evidence @ clean rework head (r2 findings closed)
 
-- time: 2026-11-02 16:12:10 +08:00
-- head: 251b5df0ddcd33c3a279719db4d3d2b1f6d34346
-- worktree: clean before run (Microsoft.PowerShell.Commands.TextMeasureInfo.Lines dirty)
+- time: 2026-11-02 16:39:12 +08:00
+- head: 3220abd599aed7e835fc1352a25f8e1f5c214a58
+- worktree: clean before run
 - shell: PowerShell 7.6.8 / dotnet 10.0.401
-
-# command: git status --short
-# exit: 0
-# output: (empty = clean)
 
 # command: dotnet build apps\desktop-avalonia\NewManga.sln --nologo
 # exit: 0
@@ -16,15 +12,15 @@
 
 # command: dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings
 # exit: 0
-#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 91 ms - NewManga.Appearance.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 285 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 600 ms - NewManga.Host.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 990 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 97 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 291 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 621 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
 #   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 23 s - NewManga.CoreClient.Tests.dll (net9.0)
-#   已通过! - 失败:     0，通过:   497，已跳过:     7，总计:   504，持续时间: 1 m 25 s - NewManga.App.Tests.dll (net9.0)
-# skip summary: Host 28 (sidecar env unset), CoreClient 22 (sidecar env unset), App 7 (BOOK/S4 seeded fixture unavailable) = 57
+#   已通过! - 失败:     0，通过:   504，已跳过:     7，总计:   511，持续时间: 1 m 24 s - NewManga.App.Tests.dll (net9.0)
+# skip summary: Host 28 (sidecar env unset), CoreClient 22 (sidecar env unset), App 7 (BOOK/S4 fixture unavailable) = 57
 
 # command: TokenGen -- --check
 # exit: 0
@@ -38,7 +34,7 @@
 # command: check.ps1
 # exit: 0
 #   WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-#   WARN: doc/STATUS.md 已达到预算的 80%：3085 bytes / 29 lines
+#   WARN: doc/STATUS.md 已达到预算的 80%：3077 bytes / 29 lines
 #   WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：4604 bytes / 64 lines
 #   Governance check: PASS (3 warnings)
 

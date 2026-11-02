@@ -17,7 +17,7 @@ base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 7ca2e367b09c41fe0253a68d77bbbfde99e8c772（impl-r1 返修完成；待 r2 复核）
+delivery_head: 3220abd599aed7e835fc1352a25f8e1f5c214a58（impl-r2 返修完成；r3 待复核）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-07
@@ -174,6 +174,18 @@ allowed_paths:
 - **R-010（P2，事件生命周期）**：内容树缓存复用已消除每次切换新建 VM/订阅；旧内容树长期存活策略待 r2 复核（暂登记 P2）。
 - **R-011（P2，证据精确定）**：待最终 head 上重跑并归档含 commit/exit/skip 原因的证据（下一提交）。
 - **R-012（P2，生成物证据）**：`verification/FEA-07/generators-check.log` 归档两项 `--check` 输出与 exit。
+## impl-r2 处置（changes_requested → 返修 part2，2026-11-02）
+
+- 报告：`doc/reviews/FEA-07-impl-r2.md`（Codex CLI fresh；P0=0/P1=6/P2=3；被审 `f28d97b99`/代码 `7ca2e367b`）。
+- **R-013（P1，并发）**：`FrontendHostCoordinator` 单串行门覆盖 no-op 检查/previous 快照/事务执行；并发切换测试（两个并发请求均成功、终态=最后请求、journal 干净）。
+- **R-001（P1，AC1）**：真实内容树 100 次切换（50 往返）+ 状态断言（Fluent 页面保留、V2 Tag 保留、同实例）；Layout/Loaded/Rendered 改为真实门禁（几何校验 + 真实 Dispatcher 优先级加载/渲染）。
+- **R-002（P1，AC2）**：新增 `IPresentationExitState`；Fluent（设置草稿 dirty/Workbench 运行）与 V2（导入运行）实现，`PresentationWindow.Closing` 直接查询 live 内容状态阻断关闭。
+- **R-003（P1，AC3）**：`SwitchJournal` 记录 previous frontend；`App.RecoverInterruptedSwitch` 在启动决策前处理「target 已持久化、journal 未提交」崩溃窗口并还原上一已提交 frontend；测试覆盖两种崩溃窗口。
+- **R-004（P1，AC4）**：`StartupPlan` 直接携带 `Selection`，组合根不再二次推导；外观 fallback 强制 Current V2（含 CLI fluent）；卡内 AC4 改为 PARTIAL。
+- **R-014（P2）**：最大化 memento 恢复 + 测试。
+- **R-009/R-011**：Task 性能数值统一为 Release p50 99.91/p95 344.93/max 344.93ms、内存 +208B/句柄 0；evidence-index 去掉自引用 pin（外部 pin 由 Task 与 final-evidence 绑定）。
+- **R-007**：reviewer 更新为 impl-r2、delivery_head 固定为 `3220abd59`、handoff 更新；canonical_evidence_status 待 r3 approved 后置 complete。
+- 验证：build 0/0；全量 **1113/0/57**；`verification/FEA-07/rework-part2-verification.log`、`final-evidence.log`（`3220abd59`，SHA `4ab4386d...`）。
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: 真实内容树 100 次切换（50 往返）状态保留/布局门禁/失败回滚已过；原生 IME、A03 真库 DB/current/pinned/Lock 矩阵与 ACK 重连待复核>>`
@@ -233,7 +245,7 @@ allowed_paths:
 | EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `5dd4c89724abdc3b1107d97c261ac71b95d1c38d6093212a32fe76ec039d6283` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 | EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
-| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `7ca2e367b`（代码 head） | `b52fddc6b8d0f0b9b780be6d492c4ce76eec5bf445781be4ac4d81769fdf3342` | CANONICAL |
+| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `3220abd59` | `4ab4386db8503a70ade78679ccaf4edf507378f6bdbe157529d423d0e77c58de` | CANONICAL |
 | EV-FEA07-REWORK2 | AC1/AC2/AC3/AC4/AC6/AC8 | `verification/FEA-07/rework-part2-verification.log` | `-` | `725ec7f6e4d6295f386d0bb08a65771158536fc7fa02e7a4f640a713f38eaa01` | CANONICAL |
 
 ## Closeout Record
