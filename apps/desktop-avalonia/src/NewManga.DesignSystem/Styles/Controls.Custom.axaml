@@ -56,6 +56,40 @@
     <Setter Property="BorderBrush" Value="{DynamicResource Nm.Color.Accent.Base}" />
     <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
   </Style>
+  <!-- I-4 (component inventory §3): hover/pressed/disabled states for segmented items. -->
+  <Style Selector="Button.segmented-item:pointerover">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Bg.Overlay}" />
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+  </Style>
+  <Style Selector="Button.segmented-item:pressed">
+    <Setter Property="Background" Value="{DynamicResource Nm.Color.Accent.Muted}" />
+  </Style>
+  <Style Selector="Button.segmented-item:disabled">
+    <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+  </Style>
+
+  <!-- I-4: Slider/TabItem state coverage from the frozen inventory (§1/§3); base template untouched. -->
+  <Style Selector="Slider">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Base}" />
+  </Style>
+  <Style Selector="Slider:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+  </Style>
+  <Style Selector="Slider:disabled">
+    <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+  </Style>
+  <Style Selector="TabItem">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Secondary}" />
+  </Style>
+  <Style Selector="TabItem:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Accent.Hover}" />
+  </Style>
+  <Style Selector="TabItem:selected">
+    <Setter Property="Foreground" Value="{DynamicResource Nm.Color.Text.Primary}" />
+  </Style>
+  <Style Selector="TabItem:disabled">
+    <Setter Property="Opacity" Value="{DynamicResource Nm.Opacity.Disabled}" />
+  </Style>
 
   <!-- SearchField: the inner TextBox carries its own input tokens (TextBox.search). -->
   <Style Selector="nmc|SearchField">

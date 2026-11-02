@@ -42,3 +42,9 @@
 #   - I-11 隐藏/不可见控件移出 Tab 序未加显式断言（依赖 Avalonia 可见性焦点语义，未截图/未合成 Tab 遍历）。
 #   - I-5 仅消费 navigation 页面切换时长；feedback/decorative 的视觉时长消费未接入动画（表已覆盖，接入待后续）。
 #   - 高对比阴影退化以“1px 边框仍在 + Elevation token 置空”实现，未做像素级截图对比。
+
+## 补记（Batch B 续作，全量 1178/0/57）
+- I-4 扩展：`Button.segmented-item`（selected/hover/pressed/disabled）、`Slider`（hover/disabled）、`TabItem`（hover/selected/disabled）状态样式与声明覆盖断言；TabItem 选中 Foreground 保持 Text.Primary（与既有 accent pipe 测试一致）。
+- I-11 扩展：`FocusOrderResidualTests` 断言隐藏控件不可获得焦点（Tab 序排除）、可见兄弟仍可聚焦。
+- 验证：build 0/0；无过滤全量 **1178 passed / 0 failed / 57 skipped**（21+38+51+253+90+31+128+566）；旧 FEA-06 PNG 零漂移。
+- 仍未完成（NOT_RUN）：CommandPalette/ContextMenu/Tooltip/Toast/BatchMatrix/RunProjectionBar 的独立状态补齐；hover/pressed 视觉截图；I-5 feedback/decorative 动画消费。
