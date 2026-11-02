@@ -50,7 +50,7 @@ allowed_paths:
 - **来源**：`FEA-06` done（集成 `b26840acd`；scope-r3 + impl-r2 approved）；AC8–AC10 MET，**AC1–AC7 为 PARTIAL**，经 DSH 处置转为本卡 residual（见 `doc/tasks/FEA-06.md` Closeout Record 与 `doc/reviews/FEA-06-impl-r1.md` / `-r2.md`）。
 - **设计基线**：`doc/design/fluent-v1/`（FROZEN v1.0.0，唯一设计输入；偏差走 v1.1 重冻结）。
 - **依赖**：多数 residual 需后续 Task 的 Host 端口/数据面落地后才能闭环（见 §残项与依赖）；**本卡不阻塞 FEA-07**，按端口就绪程度分批释放（可再拆子 Task）。
-- **Owner**：Codex（沿用用户 2026-11-02 指派；scope 冻结后按 W-10 派发）。
+- **Owner**：Codex（沿用用户 2026-11-02 指派；scope 冻结后按 W-10 派发）。`n- **顺序**：用户 2026-11-02 裁决「按原来的顺序进行」→ 本卡不插队，FEA-07 优先；本卡按端口就绪分批释放。
 
 ## 残项清单（来自 FEA-06 impl-r1/r2 与 Closeout）
 

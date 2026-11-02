@@ -275,3 +275,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **收口**：FEA-06 `status: done`、`integration_commit: b26840acd`、canonical_evidence_status/resource_closeout_status complete；AC8–AC10 MET；**AC1–AC7 PARTIAL 作为 residual 转 `FEA-06-RESIDUAL-1`**（依赖 FEA-07/09/10/11/12/13 端口逐项补齐，不阻塞 FEA-07）。
 - **新建卡**：`FEA-07`（运行期切换/窗口，proposed，待范围冻结）与 `FEA-06-RESIDUAL-1`（proposed，待端口）；PLAN/STATUS/LEDGER 指针滚动 → 当前 Task=FEA-07，READY 节点=无。
 - **下一步**：**FEA-07 范围复核/冻结（scope）** → ready → 派实施（owner 由 DSH 在 range 冻结时确认；Codex 通道已验证可用：`-m gpt-6-luna` + bypass sandbox）。
+## 37. 用户裁决「按原来的顺序进行」→ FEA-07 scope 准备（2026-11-02）
+
+- 用户在看到 FEA-06 四页 headless 截图与「residual UI 打磨可插队」选项后裁决：**按原来的顺序进行** → 按 PLAN DAG 先做 **FEA-07**，`FEA-06-RESIDUAL-1` 的 UI 打磨不插队，待端口/顺序就绪后释放。
+- **FEA-07 卡修订**：`base_commit` 刷新 `682fe17ae`；AC 对齐方案 §12.3 场景（A01/A02/A03/A05/A06/A08）；**H2/H3 验证纳入本卡 AC5/AC6**（无独立前置 Task）；新增 W-1…W-5 裁决点（写域边界/原生验收/owner/性能门槛候选 p95≤1s）；测试矩阵分 AC 组（切换矩阵/原生矩阵/性能/回归）；禁止使用真实漫画或真实 `%APPDATA%`。
+- **下一步**：派 **FEA-07 scope-r1 独立复核**（subagent_zcode）→ 处置 findings → 冻结范围（P0/P1=0）→ ready → 实施（owner 冻结时确认；Codex 通道已验证）。
