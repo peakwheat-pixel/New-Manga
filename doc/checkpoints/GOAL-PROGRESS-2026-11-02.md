@@ -1001,3 +1001,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 依据事实：`G-CONTRACT` 已于 2026-11-01 CLOSED（STATUS），AD-003 已记录；FEA-00/01 契约冻结；FEA-08 仍要求隔离原型 + 独立 Review、不产出生产 Source 实现。
 - 修正 D-15 推荐：D-14 关闭后由 DSH 起草 **FEA-08 scope 草案**（隔离原型、能力矩阵、NTFS/可移动/网络盘边界、不触真实库），交独立 scope Review；FEA-09 待 FEA-08 通过后释放。
 - 当前仍等待 ZCode 08:05 派 D-14 独立 impl Review（Codex 10:25 备用）。
+## 155. FEA-08 scope 草案就绪（D-15 推荐，2026-11-03 08:02）
+
+- 已在 workspace `FEA-08/FEA-08-scope-draft.md` 起草下一节点 **FEA-08（Source/回收站隔离原型）** scope：H4 源 lease、H5 Windows 回收站负向原型、H6 精确页面匹配 golden fixtures；能力矩阵 PASS/LIMITED/UNAVAILABLE + 技术报告 + 可复现原型；**不产出生产实现、不触真实库/用户文件**；原型在 workspace、报告/证据/Handoff 在仓库；独立 scope Review 冻结后释放。
+- 草案列 3 个待 scope Review 决定项（是否允许隔离测试 SQLite、无硬件卷是否接受 LIMITED、H6 是否引入 Python 依赖需许可记录）。
+- 未释放 Task（D-15 待裁决；ZCode 08:05 窗口优先 D-14 独立 Review）；不与 D-14 冲突、不插队。
+- 当前 D-14 in_progress（1292/0/57）仅缺独立 Review；治理 PASS(3)、pins 15/15；未 push。
