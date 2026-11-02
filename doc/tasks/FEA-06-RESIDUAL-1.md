@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 3ea4af605（impl-r1 返修：R1-003..008/Tab180/浮层入200/动态浮层过渡/证据口径已修；余 浮层退出160/feedback90/150）
+delivery_head: e25600431（impl-r1 返修：R1-003..008/Tab180/浮层入200/动态过渡/证据口径/浮层入断言；余 浮层退出160/feedback90/150）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -169,7 +169,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `3ea4af605` | `a4da2b9a6570a3db88d0a8fc5f5b1169df558b5fa3d2fd8a4f58759bc19b36b5` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `e25600431` | `c67adcf12c8db06d4f53e82bfbc3f5a8d6ee60579c9ce1b3a2760cdb0c32a8af` | CANONICAL |
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `3ea4af605` | `6d1381e7e9db5165833d9752be970748d48ba54f853279e14ffd0acf874819ef` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `35e80eabf` | `c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |

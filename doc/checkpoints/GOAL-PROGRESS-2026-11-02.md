@@ -727,3 +727,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - R1-002：OpenDialog 创建的命令行控件在创建时即获得 feedback 过渡（动态控件缺口收敛）；R1-009：Batch 日志补 shell/host/命令/EXIT/57 skip 明细，matrix 结论与 AC 覆盖刷新至 1197 与返修现状。
 - 余：R1-001 浮层退出 160ms、feedback pressed 90ms/badge 150ms；完成后再派 fresh Codex impl-r2。
 - 全量 **1197/0/57**；交付 `3ea4af605`。
+## 109. 浮层进入 200ms 断言锁定（2026-11-03 01:01）
+
+- 命令面板测试改为 full motion 并断言 scrim 过渡 Duration=200ms；R1-001 进入项闭环。
+- 余：浮层退出 160ms、feedback pressed 90/badge 150；完成后再派 impl-r2。全量 1197/0/57；交付 `e25600431`。
