@@ -796,3 +796,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 现状：Codex 额度至约 05:23、ZCode 至约 03:02；为不空转，按 **D-9**（2026-10-31 裁决允许作者派发独立上下文子 agent 做 Review）用 workflow 派发独立上下文 Scope Reviewer（job `workflow-c3e9f8b4f92341d4`），prompt 含草案范围、FEA-06-RESIDUAL-1 关闭/AC2 残项、四份 impl Review、冻结设计与 workspace 预研分析。
 - 产出目标 `doc/reviews/FEA-06-RESIDUAL-2-scope-r1.md`；ZCode 03:04 提醒保留为补充/备用复核资源。
 - 复核结果后：approved → 冻结 Task2 范围（ready→in_progress）并按 allowed_paths 派实施；changes_requested → 缩减范围再审。
+## 122. FEA-06-RESIDUAL-2 范围 v2 + scope-r2 派发（2026-11-03 02:54）
+
+- scope-r1（D-9 独立子 agent，`doc/reviews/FEA-06-RESIDUAL-2-scope-r1.md`）**changes_requested P0=0/P1=5/P2=6**：v1 视觉本体未定义、缺暂停/自动化/无泄漏/reduce 不创建、IN-2 非逐格且混入数据端口、BLOCKED 不完整、allowed_paths 落点不匹配等。
+- DSH 按附录 A 重写 Task v2（`bff3eee66`）：IN-1.1–1.3（decorative 三动画，含共同约束/降级/暂停/真实帧源/逐图签署）、IN-2A 17 组有效属性、IN-2B 像素格、OUT 理由、BLOCKED 表（数据端口+B-5/D-1）、证据形式（默认零写入/opt-in `verification/FEA-06-RESIDUAL-2/visuals/**`/旧 PNG SHA 对照）、验收命令与实现约束。
+- 已派 scope-r2 复核（D-9 workflow job `workflow-5e8f74838a2149cc`，产出 `doc/reviews/FEA-06-RESIDUAL-2-scope-r2.md`）；ZCode 03:02/03:04 提醒保留为实施主责与补充复核资源。
+- approved 后冻结 Task2（ready→in_progress）并按 allowed_paths 派实施；未冻结前不实施、不 push。
