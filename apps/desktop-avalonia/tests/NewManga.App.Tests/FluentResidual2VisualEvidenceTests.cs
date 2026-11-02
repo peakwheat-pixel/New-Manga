@@ -50,7 +50,6 @@ public sealed class FluentResidual2VisualEvidenceTests
             }
         }
 
-        shots.AddRange(CaptureDecor());
         Assert.All(shots, shot => Assert.True(
             shot.Frame.PixelSize.Width > 0 && shot.Frame.PixelSize.Height > 0,
             $"empty rendered frame: {shot.Name}/{shot.State}/{shot.Mode}/{shot.Theme}"));
@@ -145,14 +144,6 @@ public sealed class FluentResidual2VisualEvidenceTests
             yield return (item.Group, item.Name, item.State, item.Mode, item.Theme,
                 Render(item.Control, item.W, item.H));
         }
-    }
-
-    private static IEnumerable<(string, string, string, string, string, Bitmap)> CaptureDecor()
-    {
-        yield return ("decor", "shelf-gradient", "default", "full", "light",
-            Render(new Border { Width = 320, Height = 180, Background = Brushes.Gray }, 360, 220));
-        yield return ("decor", "shelf-gradient", "default", "reduce", "light",
-            Render(new Border { Width = 320, Height = 180, Background = Brushes.Gray }, 360, 220));
     }
 
     private static Bitmap Capture(FluentShell shell, FluentPage page)

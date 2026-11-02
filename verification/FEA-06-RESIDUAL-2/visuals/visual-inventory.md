@@ -32,5 +32,3 @@
 | `components--slider--default--full--dark.png` | components | slider | default | full | 220x80 | dark | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |
 | `components--region-box--default--full--dark.png` | components | region-box | default | full | 200x110 | dark | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |
 | `components--reader-progress--default--full--dark.png` | components | reader-progress | default | full | 300x70 | dark | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |
-| `decor--shelf-gradient--default--full--light.png` | decor | shelf-gradient | default | full | 360x220 | light | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |
-| `decor--shelf-gradient--default--reduce--light.png` | decor | shelf-gradient | default | reduce | 360x220 | light | mid | `dotnet test --filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` | 0 | (待独立 Reviewer) | — |
