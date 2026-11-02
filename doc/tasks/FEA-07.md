@@ -233,6 +233,7 @@ allowed_paths:
 | EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `5dd4c89724abdc3b1107d97c261ac71b95d1c38d6093212a32fe76ec039d6283` | CANONICAL |
 | EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 | EV-FEA07-GENERATORS | AC8 | `verification/FEA-07/generators-check.log` | `-` | `c14b314350fdb2fd9d88cfa9df4cd5f46e236d3f41964c25ca1252545b48c921` | CANONICAL |
+| EV-FEA07-FINAL | Gate | `verification/FEA-07/final-evidence.log` | `7ca2e367b`（代码 head） | `b52fddc6b8d0f0b9b780be6d492c4ce76eec5bf445781be4ac4d81769fdf3342` | CANONICAL |
 
 ## Closeout Record
 
