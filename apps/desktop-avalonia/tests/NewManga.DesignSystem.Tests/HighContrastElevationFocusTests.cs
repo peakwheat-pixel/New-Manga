@@ -46,6 +46,14 @@ public sealed class HighContrastElevationFocusTests
 
         Assert.True(surface.BoxShadow.Count > 0, "standard contrast must restore Nm.Elevation.1");
         Assert.Equal(2d, ThemeTestHarness.ValueOf<Thickness>(application, "Nm.Border.Focus").Left);
+
+        // design 01 §2.3: reduce motion does NOT change shadows (shadows are not motion); the 1px
+        // hairline border likewise stays untouched.
+        Assert.True(manager.SetReducedMotion(true), manager.LastError);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(surface.BoxShadow.Count > 0, "reduce must keep Nm.Elevation.1 shadows");
+        Assert.Equal(1d, surface.BorderThickness.Left, 3);
+        Assert.True(manager.SetReducedMotion(false), manager.LastError);
         window.Close();
     }
 }

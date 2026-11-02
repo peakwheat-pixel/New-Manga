@@ -88,6 +88,7 @@ public sealed class FluentMotionResidualTests : IDisposable
         var transition = Assert.IsType<DoubleTransition>(transitions!.Single());
         Assert.Equal(TimeSpan.FromMilliseconds(MotionTimings.NavigationPageMilliseconds), transition.Duration);
         Assert.Contains("motion-feedback", surface.Classes);
+        Assert.Contains("motion-decorative", surface.Classes);
         var feedbackButton = surface.GetVisualDescendants().OfType<Button>().First();
         Assert.NotNull(feedbackButton.Transitions);
 
@@ -95,6 +96,7 @@ public sealed class FluentMotionResidualTests : IDisposable
         Dispatcher.UIThread.RunJobs();
         Assert.Null(pageHost.Transitions);
         Assert.DoesNotContain("motion-feedback", surface.Classes);
+        Assert.DoesNotContain("motion-decorative", surface.Classes);
         Assert.Null(feedbackButton.Transitions);
 
         await appearance.SaveAsync(AppearanceDefaults.Settings with

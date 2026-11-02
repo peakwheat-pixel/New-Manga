@@ -90,3 +90,8 @@
 ## 补记 10（R3-004 Current 对照断言，全量 1195/0/57）
 - `FluentCurrentComparisonTests`：Fluent 高对比 3px/阴影置空 → 恢复标准后回到冻结基线；同进程切到 Current V2 再切回 Fluent，焦点环/ Elevation 令牌保持基线、Current 内容非 Fluent surface。覆盖 scope-r3 R3-004「Current 对照行为断言」。
 - 验证：无过滤全量 **1195 passed / 0 failed / 57 skipped**（DS 93 + App 580）；旧 FEA-06 PNG 零漂移。
+
+## 补记 11（I-8 reduce 阴影不变 + I-5 decorative 类别开关，全量 1195/0/57）
+- `HighContrastElevationFocusTests` 增补设计 01 §2.3 断言：reduce 下 Elevation.1 阴影**保持不变**、hairline 边框不变（standard 恢复后同样）。
+- `FluentShellSurface` 增加 `motion-decorative` 状态类（消费 `MotionTimings.DecorativeEnabled`），`FluentMotionResidualTests` 断言 full=有类 / reduce+category-off=无类；实际装饰动画本体仍按 D-8 暂缓。
+- 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移。

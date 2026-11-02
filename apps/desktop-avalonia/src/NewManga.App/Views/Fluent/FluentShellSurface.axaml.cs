@@ -609,6 +609,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         // I-5: feedback keeps its colour change but owns a transition only when motion is enabled;
         // reduce/category-off removes the class so the colour applies instantly.
         Classes.Set("motion-feedback", _motionTimings.FeedbackHoverMilliseconds > 0);
+        Classes.Set("motion-decorative", _motionTimings.DecorativeEnabled);
         ApplyFeedbackTransitions(_motionTimings);
         Classes.Set("motion-reduced", !resolution.Enabled);
         // I-10：reduce 下阅读器工具条直接切换、无淡出过渡（07:23）。
