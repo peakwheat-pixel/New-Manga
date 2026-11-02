@@ -808,3 +808,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 范围 v3（`1f53336e8`）：D-11 AlertBanner 按既有 StatusKind 九值（不新增变体）、D-12 IN-1.3 OUT 至 v1.1、D-13 登记 2 项扩域（FluentUi.cs / Themes/Controls）；IN-2A 收窄 16+1 组并冻结期望令牌表要求；IN-2B 逐图清单/签署/固定视口主题；分类完整性表、证据日志格式（逐程序集/skip/EXIT/差值/禁过滤冒充）、禁止范围/测试要求/AC 表、D-10/R4-001 权威链；PLAN/STATUS 同步。
 - 已按 ZCode 窗口（03:02 恢复）派发 **scope-r3**（job `pwsh-684b8fa3d43b4063`，prompt workspace `scope-r3-prompt.md`），产出 `doc/reviews/FEA-06-RESIDUAL-2-scope-r3.md`；若 ZCode 仍限额将记录探针并由 D-9 子 agent 复核。
 - approved 后冻结 Task2（ready→in_progress）并派实施；未冻结前不实施、不 push。
+## 124. FEA-06-RESIDUAL-2 scope-r3 approved + 实施派发 ZCode（2026-11-03 03:12）
+
+- ZCode CLI scope-r3（job `pwsh-684b8fa3d43b4063`，exit 0）：**approved P0=0/P1=0/P2=7**，reviewed_head `b201d4489`，报告 `doc/reviews/FEA-06-RESIDUAL-2-scope-r3.md`。范围 v3 冻结。
+- Task 状态 `ready→in_progress`；approval/reviewer 更新；PLAN/STATUS/LEDGER 同步；治理 PASS(3)、pins 无变化；冻结提交 amend 为 `b52317259`。
+- 已按冻结范围派 ZCode 实施（job `pwsh-a1a3fdc7925743e1`，prompt workspace `impl-zcode-prompt.md`）：IN-1.1 书架渐变 8s、IN-1.2 翻页粒子 400ms（三态降级/暂停/无泄漏/真实帧源/截图）、IN-2A 16+1 组有效属性（expected-tokens 冻结）、IN-2B opt-in 像素证据 + 逐图 inventory；基线 1245/0/57 只增不减、旧 PNG SHA 不变、不 push、逐 IN 证据/handoff。
+- 完成后：DSH 核验（build/全量/PNG/生成器/治理/pins）→ 派独立 impl Review → 集成/关闭。
