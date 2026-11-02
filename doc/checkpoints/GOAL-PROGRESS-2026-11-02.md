@@ -620,3 +620,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentFocusPageCoverageTests`：四页各自键盘聚焦后实际绘制共享焦点环；覆盖设计 03 §3「四页至少各 1 焦点场景」。
 - 验证：build 0/0；无过滤全量 **1180/0/57**（DS 91 + App 567）；旧 PNG 零漂移。交付 `9203c0031`；证据 SHA `a0ece253…`。
 - 剩余：hover/pressed 视觉格 NOT_RUN、decorative D-8、disabled 命令零触发未自动化；独立 impl Review 待 Codex 00:23（备用 ZCode 03:02）。
+## 88. FEA-06-RESIDUAL-1 I-5 三态×三类矩阵（2026-11-02 深夜）
+
+- `MotionMatrixResidualTests`（11 tests）：full/reduce × All/Navigation/Feedback/Decorative/None 逐格对照设计参数；auto 跟随平台/full 不读平台/读失败→full+warning；reduce 下 feedback 类别开/关语义。
+- 验证：build 0/0；无过滤全量 **1191/0/57**；旧 PNG 零漂移。交付 `7ca725bbf`；证据 SHA `85d305f3…`。
+- 剩余：hover/pressed 视觉格 NOT_RUN、Toast severity 组合、CommandPalette 结果态、disabled 命令零触发、decorative D-8；独立 impl Review 待 Codex 00:23（备用 ZCode 03:02）。
