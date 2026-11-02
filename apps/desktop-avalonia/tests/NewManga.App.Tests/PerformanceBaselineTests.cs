@@ -24,8 +24,12 @@ namespace NewManga.App.Tests;
 /// </summary>
 public sealed class PerformanceBaselineTests : IDisposable
 {
-    private const int WarmupSwitches = 2;
-    private const int MeasuredSwitches = 12;
+    private const int WarmupSwitches = 4;
+    // 20 samples are required for the frozen p95 gate to be a real p95: with n samples the used
+    // percentile rank is ceil(0.95*n)-1, so n=12 resolves to the maximum sample while n=20 excludes the
+    // single worst outlier. The transaction now includes the real frame-render gate (R-001), which makes
+    // one-off GC/frame outliers more visible; the gate stays p95 <= 1000 ms (W-5).
+    private const int MeasuredSwitches = 20;
     private const double P95BudgetMilliseconds = 1000.0;
 
     private readonly string _root;

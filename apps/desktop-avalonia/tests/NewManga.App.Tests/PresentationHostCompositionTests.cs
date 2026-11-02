@@ -4,14 +4,17 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
+using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
+using NewManga.App.ViewModels.V2.ThemeStudio;
 using NewManga.App.Views.Fluent;
 using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
 using NewManga.DesignSystem.Theming;
 using NewManga.Presentation.Avalonia.Switching;
 using NewManga.Presentation.Avalonia.Windows;
+using NewManga.ThemeEngine;
 using Xunit;
 
 namespace NewManga.App.Tests;
@@ -219,6 +222,15 @@ public sealed class PresentationHostCompositionTests : IDisposable
             }
 
             Assert.False(File.Exists(Path.Combine(_root, "theme-home", "switch-journal.json")));
+
+            // The memento is process-wide for the (shared) NullHostController instance: restore the default
+            // session values so later tests are not order-dependent on this state-preservation check.
+            if (v2Content is not null)
+            {
+                v2Content.ViewModel.SwitchSpace(SpaceId.Library);
+                v2Content.ViewModel.Current.Session.Console.RunIdInput = string.Empty;
+                v2Content.ViewModel.Current.Session.Reader.BookId = null;
+            }
         }
         finally
         {
@@ -228,11 +240,10 @@ public sealed class PresentationHostCompositionTests : IDisposable
 
     /// <summary>
     /// R-002: after a production content-tree switch the hidden (cached) Fluent tree still blocks the
-    /// close while it holds an unsaved settings draft, and the V2 shell reports the production Theme
-    /// Studio draft through its wired provider.
+    /// close while it holds an unsaved settings draft.
     /// </summary>
     [AvaloniaFact]
-    public async Task HiddenProductionContentTreeAndThemeStudioDraft_BlockCloseAfterSwitch()
+    public async Task HiddenProductionContentTree_BlocksCloseAfterSwitch()
     {
         var application = Application.Current!;
         using var themeManager = new DesignSystemThemeManager(application);
@@ -259,7 +270,6 @@ public sealed class PresentationHostCompositionTests : IDisposable
 
             var toV2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
             Assert.True(toV2.Succeeded, toV2.Failure);
-            var v2 = Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
 
             // R-001: the dirty draft survived the switch into the hidden Fluent tree.
             Assert.True(fluent.SettingsViewModel.IsDirty);
@@ -269,16 +279,6 @@ public sealed class PresentationHostCompositionTests : IDisposable
             presentation.Close();
             Assert.True(cancelled, "a hidden cached Fluent tree with an unsaved settings draft must block the close");
 
-            // R-002: the V2 shell reports the production Theme Studio draft (wired by the composition root);
-            // simulate an unapplied studio draft and verify it blocks the close as well.
-            Assert.NotNull(v2.ThemeStudioDraftProvider);
-            v2.ThemeStudioDraftProvider = () => true;
-            cancelled = false;
-            presentation.Close();
-            Assert.True(cancelled, "an unapplied Theme Studio draft in the V2 shell must block the close");
-
-            // Resolve both states: the close is allowed again.
-            v2.ThemeStudioDraftProvider = () => false;
             fluent.SettingsViewModel.UpdateDraft(appearance.Settings);
             Assert.False(fluent.SettingsViewModel.IsDirty);
             cancelled = false;
@@ -288,6 +288,97 @@ public sealed class PresentationHostCompositionTests : IDisposable
         finally
         {
             presentation.Close();
+        }
+    }
+
+    /// <summary>
+    /// R-002 (r4): the production Theme Studio draft really feeds the V2 exit gate. The provider is never
+    /// overridden: a real unapplied draft is created through the registered Theme Studio view model and
+    /// must flip <c>AppShellV2.HasUnsavedEdits</c> / block the close on its own. A last reverse check
+    /// removes the provider and proves the previous block came from it.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ThemeStudioUnappliedDraft_BlocksCloseThroughProductionProvider()
+    {
+        var application = Application.Current!;
+        using var themeManager = new DesignSystemThemeManager(application);
+        themeManager.Initialize();
+        var appearance = Appearance();
+        var options = AppOptions.Parse(new[] { "--presentation-host=true" });
+        var selection = FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null);
+        var window = App.CreatePresentationShell(options, NullHostController.Instance, selection, appearance, ThemeHome(), themeManager, application);
+        var presentation = Assert.IsType<PresentationWindow>(window);
+        var cancelled = false;
+        presentation.Closing += (_, args) => cancelled |= args.Cancel;
+        try
+        {
+            presentation.Show();
+            var toV2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+            Assert.True(toV2.Succeeded, toV2.Failure);
+            var v2 = Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
+
+            var adapter = Assert.IsType<ThemeStudioSurfaceAdapter>(
+                v2.ViewModel.State.GetSurfaceWorkspace(ShellSurface.ThemeStudio));
+            var studio = adapter.ViewModel;
+            var service = Assert.IsType<ThemeEngineThemeStudioService>(studio.Service);
+            await WaitUntilAsync(() => service.IsInitialized);
+
+            // Clean baseline: no draft, no exit blocker.
+            Assert.False(studio.HasDraft);
+            Assert.False(v2.HasUnsavedEdits);
+
+            // A real unapplied draft through the production editor (no provider override anywhere).
+            studio.Editor.SelectMaterial(ThemeMaterial.None);
+            if (!studio.HasDraft)
+            {
+                studio.Editor.SelectMaterial(ThemeMaterial.Solid);
+            }
+
+            Assert.True(studio.HasDraft, "the production Theme Studio editor did not create an unapplied draft");
+            Assert.True(v2.HasUnsavedEdits, "the V2 shell must report the real Theme Studio draft");
+
+            cancelled = false;
+            presentation.Close();
+            Assert.True(cancelled, "an unapplied Theme Studio draft must block the close through the wired provider");
+
+            // Discarding the draft through the real service unblocks the same gate.
+            await service.CancelPreviewAsync();
+            studio.NotifyDraftChanged();
+            Assert.False(studio.HasDraft);
+            Assert.False(v2.HasUnsavedEdits);
+
+            // Create a fresh draft and verify the block is really produced by the provider seam: removing
+            // it (simulated regression) both hides the draft state and lets the close through.
+            studio.Editor.SelectMaterial(ThemeMaterial.None);
+            if (!studio.HasDraft)
+            {
+                studio.Editor.SelectMaterial(ThemeMaterial.Solid);
+            }
+
+            Assert.True(studio.HasDraft);
+            cancelled = false;
+            presentation.Close();
+            Assert.True(cancelled);
+
+            v2.ThemeStudioDraftProvider = null;
+            Assert.False(v2.HasUnsavedEdits);
+            cancelled = false;
+            presentation.Close();
+            Assert.False(cancelled, "without the provider the draft no longer blocks the close (reverse validation)");
+        }
+        finally
+        {
+            presentation.Close();
+        }
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition, int timeoutMs = 10000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10);
         }
     }
 }

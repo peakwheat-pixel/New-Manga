@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using NewManga.App.Services;
@@ -195,9 +198,17 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
         Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
     }
 
+    /// <summary>
+    /// R-013: deterministic proof that a second request waits for the in-flight transaction instead of
+    /// returning an early no-op, and that it executes only after the first transaction's compensation.
+    /// The first transaction is paused inside journal finalize (holding the switch gate) and then fails;
+    /// the queued second request is a real switch (V2 -> Fluent), not a no-op.
+    /// </summary>
     [AvaloniaFact]
-    public async Task ConcurrentSwitch_FirstFailsAtJournalFinalize_SecondEndsConsistent()
+    public async Task QueuedSwitch_WaitsForFailingFirstTransaction_ThenExecutesAfterCompensation()
     {
+        var firstFinalizeEntered = new ManualResetEventSlim();
+        var releaseFirst = new ManualResetEventSlim();
         var finalizeAttempts = 0;
         var coordinator = new FrontendHostCoordinator(
             _host,
@@ -208,22 +219,159 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
             _journal,
             beforeJournalCommit: () =>
             {
-                if (Interlocked.Increment(ref finalizeAttempts) == 1)
+                if (Interlocked.Increment(ref finalizeAttempts) != 1)
                 {
-                    throw new InvalidOperationException("first finalize failed");
+                    return;
                 }
+
+                firstFinalizeEntered.Set();
+                releaseFirst.Wait(TimeSpan.FromSeconds(10));
+                throw new InvalidOperationException("first finalize failed");
             });
 
         var first = coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
-        var second = coordinator.SwitchAsync(FrontendSelector.CurrentV2FrontendId);
+        await WaitUntilAsync(() => firstFinalizeEntered.IsSet);
+        Assert.True(firstFinalizeEntered.IsSet, "the first transaction never reached journal finalize");
+
+        // The second request targets Fluent as well: once the first transaction rolls back to V2 this is a
+        // real switch (a pre-fix implementation would have returned an immediate no-op success).
+        var second = coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
+        await Task.Delay(150);
+        Assert.False(second.IsCompleted, "the second switch must wait for the in-flight transaction (switch gate)");
+
+        releaseFirst.Set();
         var results = await Task.WhenAll(first, second);
 
         Assert.False(results[0].Succeeded);
+        Assert.Contains("first finalize failed", results[0].Failure);
         Assert.True(results[1].Succeeded, results[1].Failure);
-        Assert.Equal(FrontendSelector.CurrentV2FrontendId, coordinator.CurrentFrontendId);
+        Assert.Equal(FrontendSelector.FluentFrontendId, coordinator.CurrentFrontendId);
+        Assert.Equal($"switched:{FrontendSelector.FluentFrontendId}", TextOf(_host));
+        Assert.Equal(FrontendSelector.FluentFrontendId, _appearance.FrontendId);
+        Assert.False(File.Exists(_journal.FilePath));
+    }
+
+    /// <summary>R-018: every switch transaction detaches its one-shot Loaded subscription from the tree.</summary>
+    [AvaloniaFact]
+    public async Task LoadedSubscription_IsReleasedAfterSuccessAndFailure()
+    {
+        var coordinator = CreateCoordinator();
+        for (var i = 0; i < 6; i++)
+        {
+            var target = i % 2 == 0 ? FrontendSelector.FluentFrontendId : FrontendSelector.CurrentV2FrontendId;
+            var result = await coordinator.SwitchAsync(target);
+            Assert.True(result.Succeeded, result.Failure);
+            Assert.Equal(0, ActiveLoadedSubscriptions(coordinator));
+        }
+
+        var failing = new FrontendHostCoordinator(
+            _host,
+            _staging,
+            FrontendSelector.CurrentV2FrontendId,
+            id => id == FrontendSelector.FluentFrontendId
+                ? new ZeroSizeControl()
+                : Content(id, "switched"),
+            _appearance,
+            _journal);
+        var failed = await failing.SwitchAsync(FrontendSelector.FluentFrontendId);
+
+        Assert.False(failed.Succeeded);
+        Assert.Equal(0, ActiveLoadedSubscriptions(failing));
+    }
+
+    /// <summary>R-019: input activation follows the commit, never the (hidden) staging mount.</summary>
+    [AvaloniaFact]
+    public async Task InputActivation_IsDisabledWhileStagedAndEnabledOnCommit()
+    {
+        InputAwareControl? created = null;
+        var coordinator = CreateCoordinator(id =>
+        {
+            created = new InputAwareControl();
+            return created;
+        });
+
+        var result = await coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
+
+        Assert.True(result.Succeeded, result.Failure);
+        Assert.Equal(new[] { false, true }, created!.ActivationLog);
+        Assert.True(created.IsInputActive);
+    }
+
+    [AvaloniaFact]
+    public async Task InputActivation_StaysInactiveWhenTheStagedTreeFailsTheGates()
+    {
+        ZeroGeometryInputAwareControl? created = null;
+        var coordinator = CreateCoordinator(id =>
+        {
+            created = new ZeroGeometryInputAwareControl();
+            return created;
+        });
+
+        var result = await coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains(false, created!.ActivationLog);
+        Assert.DoesNotContain(true, created.ActivationLog);
         Assert.Equal($"initial:{FrontendSelector.CurrentV2FrontendId}", TextOf(_host));
-        Assert.Equal(AppearanceDefaults.FrontendId, _appearance.FrontendId);
-        Assert.True(_journal.TryRead(out var entry, out _));
-        Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+    }
+
+    private static int ActiveLoadedSubscriptions(FrontendHostCoordinator coordinator)
+    {
+        var field = typeof(FrontendHostCoordinator).GetField(
+            "_loadedSubscriptions",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.NotNull(field);
+        var subscriptions = Assert.IsAssignableFrom<System.Collections.ICollection>(field.GetValue(coordinator));
+        return subscriptions.Count;
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition, int timeoutMs = 5000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10);
+        }
+    }
+
+    private sealed class ZeroSizeControl : Control
+    {
+        protected override Size ArrangeOverride(Size finalSize) => default;
+    }
+
+    private sealed class InputAwareControl : Border, IPresentationInputState
+    {
+        private bool _isInputActive = true;
+
+        public System.Collections.Generic.List<bool> ActivationLog { get; } = new();
+
+        public bool IsInputActive
+        {
+            get => _isInputActive;
+            set
+            {
+                _isInputActive = value;
+                ActivationLog.Add(value);
+            }
+        }
+    }
+
+    private sealed class ZeroGeometryInputAwareControl : Control, IPresentationInputState
+    {
+        private bool _isInputActive = true;
+
+        public System.Collections.Generic.List<bool> ActivationLog { get; } = new();
+
+        public bool IsInputActive
+        {
+            get => _isInputActive;
+            set
+            {
+                _isInputActive = value;
+                ActivationLog.Add(value);
+            }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize) => default;
     }
 }

@@ -1032,6 +1032,8 @@ public sealed class SettingsViewModel : FluentViewModel
     private readonly AppearanceCoordinator? _appearance;
     private readonly DesignSystemThemeManager? _themeManager;
     private AppearanceSettings _draft;
+    /// <summary>R-017: the canonical settings the draft was last synchronized from (frontend-switch detection).</summary>
+    private AppearanceSettings _observedSettings;
     private SettingsGroupId _selectedGroup;
     private string _search = string.Empty;
     private string _notice = string.Empty;
@@ -1046,6 +1048,7 @@ public sealed class SettingsViewModel : FluentViewModel
         _appearance = appearance;
         _themeManager = themeManager;
         _draft = appearance?.Settings ?? AppearanceDefaults.Settings;
+        _observedSettings = _draft;
         State = host is null ? FluentPageState.Error : FluentPageState.Ready;
         Status = "设置已加载。";
         if (_appearance is not null)
@@ -1110,6 +1113,7 @@ public sealed class SettingsViewModel : FluentViewModel
             if (_appearance is not null)
             {
                 Draft = _appearance.Settings;
+                _observedSettings = Draft;
             }
 
             if (_host is not null)
@@ -1384,14 +1388,21 @@ public sealed class SettingsViewModel : FluentViewModel
     {
         if (_appearance is null) return;
         var settings = _appearance.Settings;
+        var previous = _observedSettings;
+        if (Equals(previous, settings))
+        {
+            return; // no canonical change; never clobber an unapplied draft on a duplicate notification.
+        }
 
-        // FEA-07 R-001/A01: a runtime frontend switch persists only theme.frontendId. That single-field
-        // change must not silently discard the user's unapplied appearance draft (the hidden Fluent tree
-        // keeps its state across the switch); adopt the new frontend id into the draft and keep the rest.
-        // Any other external appearance change still mirrors the coordinator (single writer).
-        Draft = Equals(Draft with { FrontendId = settings.FrontendId }, settings)
-            ? settings
-            : Draft with { FrontendId = settings.FrontendId };
+        _observedSettings = settings;
+
+        // FEA-07 R-017/A01: a runtime frontend switch persists only theme.frontendId. Such a
+        // frontend-only canonical change must not silently discard the user's unapplied appearance draft
+        // (the hidden Fluent tree keeps its state across the switch); adopt the new frontend id into the
+        // draft and keep the rest. Any other external appearance change mirrors the single writer.
+        Draft = Equals(previous with { FrontendId = settings.FrontendId }, settings)
+            ? Draft with { FrontendId = settings.FrontendId }
+            : settings;
         Changed(nameof(IsDirty));
     }
 }

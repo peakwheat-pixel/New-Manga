@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.Appearance;
@@ -35,6 +37,9 @@ public sealed class FrontendHostCoordinator
     private readonly FrontendSwitchCoordinator _switcher;
     private readonly SemaphoreSlim _switchGate = new(1, 1);
     private readonly object _sync = new();
+
+    /// <summary>R-018: active one-shot Loaded subscriptions, removed when the switch transaction ends.</summary>
+    private readonly Dictionary<Control, EventHandler<RoutedEventArgs>> _loadedSubscriptions = new();
     private string _currentFrontendId;
 
     public FrontendHostCoordinator(
@@ -83,6 +88,7 @@ public sealed class FrontendHostCoordinator
         ArgumentException.ThrowIfNullOrWhiteSpace(requestedFrontendId);
 
         await _switchGate.WaitAsync(cancellationToken).ConfigureAwait(true);
+        Control? replacement = null;
         try
         {
             var selection = FrontendSelector.Select(requestedFrontendId, persistedFrontendId: null);
@@ -102,7 +108,6 @@ public sealed class FrontendHostCoordinator
                 return new SwitchResult(Succeeded: true, SwitchStage.Committed, Failure: null, RolledBack: false);
             }
 
-            Control? replacement = null;
             TaskCompletionSource<bool>? loadedSignal = null;
             var previous = _host.Current;
             AppearanceSettings? previousSettings = null;
@@ -115,8 +120,16 @@ public sealed class FrontendHostCoordinator
                     replacement = _contentFactory(target);
                     // R-001: subscribe to the real Loaded event before the tree enters the visual tree;
                     // the Loaded gate never fabricates a signal with a dispatcher-priority no-op.
+                    // R-018: the handler is tracked and detached when the transaction ends (success,
+                    // failure, timeout or cancellation) so cached trees never accumulate subscriptions.
                     var signal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                    replacement.Loaded += (_, _) => signal.TrySetResult(true);
+                    EventHandler<RoutedEventArgs> handler = (_, _) => signal.TrySetResult(true);
+                    lock (_sync)
+                    {
+                        _loadedSubscriptions[replacement] = handler;
+                    }
+
+                    replacement.Loaded += handler;
                     loadedSignal = signal;
                 }),
                 LayoutAsync = _ => MountAndValidateLayoutAsync(replacement),
@@ -169,6 +182,8 @@ public sealed class FrontendHostCoordinator
         }
         finally
         {
+            // R-018: detach the one-shot Loaded subscription of this transaction before the next switch.
+            await ReleaseLoadedSubscriptionAsync(replacement).ConfigureAwait(true);
             _switchGate.Release();
         }
     }
@@ -181,7 +196,12 @@ public sealed class FrontendHostCoordinator
     private async Task MountAndValidateLayoutAsync(Control? replacement)
     {
         var tree = replacement ?? throw new InvalidOperationException("replacement content tree was not built");
-        await InvokeOnUiAsync(() => _stagingHost.SetContent(tree));
+        await InvokeOnUiAsync(() =>
+        {
+            _stagingHost.SetContent(tree);
+            // R-019: a staged tree must not consume global shortcuts/focus that belong to the visible UI.
+            SetInputActive(tree, active: false);
+        });
 
         // The layout pass runs at the dispatcher's Layout priority, which is processed before the job
         // below; this continuation therefore observes the post-layout geometry of the mounted tree.
@@ -273,6 +293,8 @@ public sealed class FrontendHostCoordinator
     {
         _stagingHost.Clear();
         _host.SetContent(replacement);
+        // R-019: input routing follows the commit, not the (hidden) staging mount.
+        SetInputActive(replacement, active: true);
     }
 
     /// <summary>Restores the previous visible tree and drops any staged replacement.</summary>
@@ -280,6 +302,42 @@ public sealed class FrontendHostCoordinator
     {
         _stagingHost.Clear();
         _host.SetContent(previous ?? Placeholder);
+        SetInputActive(previous, active: true);
+    }
+
+    private static void SetInputActive(Control? tree, bool active)
+    {
+        if (tree is IPresentationInputState input)
+        {
+            input.IsInputActive = active;
+        }
+    }
+
+    /// <summary>R-018: removes this transaction's one-shot Loaded handler from the (cached) content tree.</summary>
+    private async Task ReleaseLoadedSubscriptionAsync(Control? tree)
+    {
+        if (tree is null)
+        {
+            return;
+        }
+
+        EventHandler<RoutedEventArgs> handler;
+        lock (_sync)
+        {
+            if (!_loadedSubscriptions.Remove(tree, out handler!))
+            {
+                return;
+            }
+        }
+
+        try
+        {
+            await InvokeOnUiAsync(() => tree.Loaded -= handler);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ObjectDisposedException)
+        {
+            // best-effort: the window may be closing; the handler is garbage-collected with the tree.
+        }
     }
 
     private static Control Placeholder => new Border();

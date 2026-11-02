@@ -22,12 +22,14 @@ namespace NewManga.App.Shell.V2;
 /// The appearance switch goes through the merged <see cref="DesignSystemThemeManager"/> (token
 /// dictionaries swap, the window is never rebuilt).
 /// </summary>
-public partial class AppShellV2 : UserControl, IPresentationExitState
+public partial class AppShellV2 : UserControl, IPresentationExitState, IPresentationInputState
 {
     private readonly AppShellViewModel _viewModel;
     private readonly DesignSystemThemeManager? _themeManager;
     private TopLevel? _topLevel;
     private bool _initializationStarted;
+    private bool _inputActive = true;
+    private bool _inputHandlerAttached;
 
     /// <summary>Designer / XAML-loader ctor (inert host; never starts a sidecar).</summary>
     public AppShellV2()
@@ -87,6 +89,26 @@ public partial class AppShellV2 : UserControl, IPresentationExitState
 
     /// <summary>FEA-07 AC2: an unapplied Theme Studio draft blocks process exit.</summary>
     public bool HasUnsavedEdits => ThemeStudioDraftProvider?.Invoke() ?? false;
+
+    /// <summary>
+    /// FEA-07 R-019: only the visible/committed frontend may consume application shortcuts. While this
+    /// tree sits in the hidden staging slot the composition root passes false, so the TopLevel tunnel
+    /// handler is detached and the previous UI keeps exclusive key routing.
+    /// </summary>
+    public bool IsInputActive
+    {
+        get => _inputActive;
+        set
+        {
+            if (_inputActive == value)
+            {
+                return;
+            }
+
+            _inputActive = value;
+            UpdateInputHandler();
+        }
+    }
 
     /// <summary>FEA-07 AC2: an active import blocks process exit.</summary>
     public bool HasActiveRuns => _viewModel.Library.ImportDock.IsRunning;
@@ -149,10 +171,7 @@ public partial class AppShellV2 : UserControl, IPresentationExitState
     {
         base.OnAttachedToVisualTree(e);
         _topLevel = TopLevel.GetTopLevel(this);
-        if (_topLevel is not null)
-        {
-            _topLevel.AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
-        }
+        UpdateInputHandler();
 
         if (!_initializationStarted)
         {
@@ -185,17 +204,51 @@ public partial class AppShellV2 : UserControl, IPresentationExitState
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        if (_topLevel is not null)
+        DetachInputHandler();
+        _topLevel = null;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    /// <summary>R-019: attach the TopLevel tunnel handler only while this frontend is the active one.</summary>
+    private void UpdateInputHandler()
+    {
+        if (_topLevel is null)
         {
-            _topLevel.RemoveHandler(KeyDownEvent, OnPreviewKeyDown);
-            _topLevel = null;
+            _inputHandlerAttached = false;
+            return;
         }
 
-        base.OnDetachedFromVisualTree(e);
+        if (_inputActive)
+        {
+            if (!_inputHandlerAttached)
+            {
+                _topLevel.AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+                _inputHandlerAttached = true;
+            }
+        }
+        else
+        {
+            DetachInputHandler();
+        }
+    }
+
+    private void DetachInputHandler()
+    {
+        if (_topLevel is not null && _inputHandlerAttached)
+        {
+            _topLevel.RemoveHandler(KeyDownEvent, OnPreviewKeyDown);
+        }
+
+        _inputHandlerAttached = false;
     }
 
     private void OnPreviewKeyDown(object? sender, KeyEventArgs e)
     {
+        if (!_inputActive)
+        {
+            return; // staged trees never consume the visible frontend's key routing.
+        }
+
         var focused = _topLevel?.FocusManager?.GetFocusedElement();
         var textInputFocused = focused is TextBox;
         _viewModel.HandleKey(e, textInputFocused);
