@@ -477,3 +477,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r9 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`aedc7251c`（如无新代码变更）、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
+## 68. FEA-07 impl-r9 changes_requested（P2×3，纯文档）→ 返修（2026-11-02）
+
+- **r9 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `563f248c7`/代码 `aedc7251c`）：`doc/reviews/FEA-07-impl-r9.md`，changes_requested，P0=0 / P1=0 / P2=3；**R-023 核心判别力（Promote 前屏障 + mutation 证据）确认闭环**；指定机械检查全部通过（build 0/0、全量 1138/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15）。
+- **R-007（appointment 文案）**：Task reviewer=r9、canonical=r10 approved、索引 r10 待派、handoff r8 补 r9 执行记录、新增 `doc/handoffs/FEA-07-impl-r9.md`。
+- **R-009（AC6 数值）**：AC6 验收行 r7 旧值（99.28/374.09/389.99）→ r8 当前值（p50 109.89 / p95 381.43 / max 383.05，两次 361.52/381.43）；r7 实施记录原字节保留。
+- **R-011（证据 commit 定位）**：`EV-FEA07-FINAL`/`EV-FEA07-PERF-MD` commit 列 `aedc7251c` → `563f248c7`（实际包含当前 r8 文件），文件内部 code_head 仍 `aedc7251c`，不重写旧证据。
+- 本批为纯文档修正，代码 head 不变（`aedc7251c`）；证据 SHA/索引/pin 在提交前重新校验一致。
+
+## 69. FEA-07 r10 复核派发 + 集成/收尾计划（2026-11-02）
+
+- r10：fresh Codex CLI 只读，被审代码 head `aedc7251c` + 文档 head（本批提交）；唯一允许写 `doc/reviews/FEA-07-impl-r10.md`；重点 R-007/R-009/R-011 闭环与指针一致性。
+- r10 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引/integration-verification.log）→ FEA-07 `done`、integration_commit=`aedc7251c`、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → residual（blocked D-1，不伪造证据）；其余 AC1–AC4/AC6/AC8 residual 一并登记。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队；其依赖 FEA-09/10/11/12/13 端口未就绪，释放时需按端口就绪拆分并刷新 base_commit/scope review）。

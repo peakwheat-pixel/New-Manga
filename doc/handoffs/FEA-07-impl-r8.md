@@ -23,7 +23,7 @@
 | r8 ID | 级别 | 处置 | 落点 |
 |---|---|---|---|
 | R-023 残余 | P2 | 排队用例屏障前移到 **Promote 前**（旧树/窗口仍全屏时发起第二请求，并断言其未完成）；`FrontendHostCoordinator` 增 `beforeContentCommit` 诊断钩子、`PresentationWindow` 内部 ctor 透传 `beforeCommit`；**mutation 实测**：把窗口模式快照移回 gate 外（模拟旧实现）→ 用例 FAIL（Expected Normal / Actual FullScreen），恢复后 19/19 全绿 | `FrontendHostCoordinator.cs`、`PresentationWindow.cs`、`PresentationWindowTests.cs`、`rework-r8-verification.log` |
-| R-007 | P2 | reviewer=impl-r8、delivery_head=`aedc7251c`、本 handoff、索引「r9 待派」、canonical pending；Task/索引 appointment 文案与 STATUS/PLAN/checkpoint 同步 | 本文件 + Task 卡 + 索引 |
+| R-007 | P2 | reviewer=impl-r8、delivery_head=`aedc7251c`、本 handoff、索引「r9 待派」、canonical pending；Task/索引 appointment 文案与 STATUS/PLAN/checkpoint 同步。**后续：r9 已于 2026-11-02 执行（changes_requested P0=0/P1=0/P2=3，见 `doc/reviews/FEA-07-impl-r9.md`），本 handoff 保留派发时字节** | 本文件 + Task 卡 + 索引 |
 
 同时在 Task impl-r8 节修正了 r7 节对排队用例判别性的过宽表述，以 mutation 实测为准。
 
