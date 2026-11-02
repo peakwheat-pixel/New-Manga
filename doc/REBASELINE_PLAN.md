@@ -19,7 +19,7 @@
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
 |FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；scope-r2 + impl-r12 approved；全量 **1138/0/57**；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1；residual 见 Task 卡；AC5 原生矩阵待硬件/waiver）|
-|FEA-06-RESIDUAL-1|FEA-06、FEA-07|**in_progress**（2026-11-02 范围 v3 冻结（scope-r3 approved）；impl Batch A 完成 `9337cbbe1`（I-1/I-2/I-3/I-6/I-9/I-10/I-12/I-13/I-14；安全回归 1170/0/57）；Batch B 收尾 `4388e50bb`（I-4 指针态/命令面板空态/I-5/I-8/I-11；1195/0/57）；I-4 剩余状态/审查待续；FEA-09/10/11/12/13 仅为 BLOCKED 承接方）|
+|FEA-06-RESIDUAL-1|FEA-06、FEA-07|**closed_with_limitations**（2026-11-02 范围 v3 冻结（scope-r3 approved）；impl Batch A 完成 `9337cbbe1`（I-1/I-2/I-3/I-6/I-9/I-10/I-12/I-13/I-14；安全回归 1170/0/57）；Batch B 收尾 `4388e50bb`（I-4 指针态/命令面板空态/I-5/I-8/I-11；1195/0/57）；I-4 剩余状态/审查待续；FEA-09/10/11/12/13 仅为 BLOCKED 承接方）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
@@ -33,8 +33,8 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
-进行中：FEA-06-RESIDUAL-1（范围 v3 冻结；Batch A 完成 `9337cbbe1`；Batch B 待派；BLOCKED=B-1…B-7）
+READY 节点：FEA-06-RESIDUAL-2
+进行中：无（FEA-06-RESIDUAL-1 已 closed_with_limitations：impl-r4 approved，集成 `669a4ae02`，1245/0/57；残项转 FEA-06-RESIDUAL-2）
 
 当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**closed_with_limitations**，集成 `aedc7251c`，1138/0/57；AC5 D-1 residual）；下一节点 FEA-06-RESIDUAL-1（**in_progress**，范围 v3 冻结、Batch A 完成 `9337cbbe1`、Batch B 待派）
 

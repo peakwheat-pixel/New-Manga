@@ -3,7 +3,7 @@ id: FEA-06-RESIDUAL-1
 title: Fluent 四页规格补齐（FEA-06 AC1–AC7 residual，第一批）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: null
-delivery_head: 669a4ae02（R3-001 返修：`3c3afe170` + 证据 `669a4ae02`；全量 1245/0/57；impl-r4 复核进行中）
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
+delivery_head: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431（R3-001 返修 3c3afe170 + 证据 669a4ae02；impl-r4 approved；全量 1245/0/57）
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-1
 allowed_paths:
   - doc/tasks/FEA-06-RESIDUAL-1.md
@@ -107,11 +107,11 @@ allowed_paths:
 - **R3-004**：I-8/I-11 增加 Current 对照行为断言（复用 `RealAppResourceStackTests` 基础），不扩写域。
 ## 验收标准
 
-- [ ] **AC1（四页与 Shell residual）**：I-1/I-2/I-9/I-10/I-12/I-13/I-14 逐项完成并登记断言；B-1/B-2/B-3/B-6/B-7 按 BLOCKED 登记原因与恢复条件，不写达成。 `<<TODO>>`
-- [ ] **AC2（组件/动效/焦点/A11y）**：I-4（组件×状态有效属性断言）/I-5（三态×三类×分类矩阵）/I-11（焦点环/浮层焦点/Tab 序）完成；B-5 原生 a11y 按 BLOCKED 登记。 `<<TODO>>`
-- [ ] **AC3（设置与确认流）**：I-3 三分支 + 保存失败保护 + FEA-07 退出保护不退化；B-4 登记 BLOCKED。 `<<TODO>>`
-- [ ] **AC4（技术债）**：I-6（1408 行拆分等价重构）/I-7（PNG opt-in，不覆盖旧 pin）/I-8（Elevation 消费；standard+reduce 阴影不变、仅高对比回退边框）完成。 `<<TODO>>`
-- [ ] **AC5（证据与回归）**：`verification/FEA-06-RESIDUAL-1/**` 日志/矩阵；安全回归基线 **1137/0/57**（PNG 用例排除，直接原因记录）→ I-7 后 **1138/0/57** 起点且新增测试只增不减；FEA-07 非回归矩阵（切换往返/退出保护/全屏/输入/关闭聚合）；两生成器 `--check`；check.ps1 PASS；verify_pins 15/15；测试均用临时根；旧 FEA-06 证据字节不变。 `<<TODO>>`
+- [x] **AC1（四页与 Shell residual）**：I-1/I-2/I-9/I-10/I-12/I-13/I-14 逐项完成并登记断言；B-1/B-2/B-3/B-6/B-7 按 BLOCKED 登记原因与恢复条件，不写达成。 <<MET>>
+- [ ] **AC2（组件/动效/焦点/A11y）**：I-4/I-5/I-11 有效属性、矩阵与真实动画消费已达成并有回归；**限制**：I-4 少数纯视觉状态格 NOT_RUN、D-8 decorative 视觉动画暂缓、B-5 原生 a11y BLOCKED（D-1 无硬件）→ 本 AC 不标 MET。 <<PARTIAL: I-4 少数纯视觉状态格 NOT_RUN；D-8 decorative 视觉动画暂缓；B-5 原生 a11y BLOCKED(D-1)>>
+- [x] **AC3（设置与确认流）**：I-3 三分支 + 保存失败保护 + FEA-07 退出保护不退化；B-4 登记 BLOCKED。 <<MET>>
+- [x] **AC4（技术债）**：I-6（1408 行拆分等价重构）/I-7（PNG opt-in，不覆盖旧 pin）/I-8（Elevation 消费；standard+reduce 阴影不变、仅高对比回退边框、Current 对照）完成。 <<MET>>
+- [x] **AC5（证据与回归）**：`verification/FEA-06-RESIDUAL-1/**` 日志/矩阵；安全回归基线 **1137/0/57**（PNG 用例排除，直接原因记录）→ I-7 后 **1138/0/57** 起点且新增测试只增不减；FEA-07 非回归矩阵（切换往返/退出保护/全屏/输入/关闭聚合）；两生成器 `--check`；check.ps1 PASS；verify_pins 15/15；测试均用临时根；旧 FEA-06 证据字节不变；impl-r4 approved（P0=0/P1=0/P2=1）。 <<MET>>
 
 ## 禁止范围
 
@@ -146,8 +146,14 @@ allowed_paths:
 
 ## Resource Manifest
 
-- 关闭时逐类填写（当前 pending）：worktree（无 linked worktree，main 内联）、verification artifacts（`verification/FEA-06-RESIDUAL-1/**` PRESERVE_REFERENCED）、task-env（未创建）、dataset/model/test-material（未创建/未使用）、temp（测试临时根，运行后清理）、agent-output（无）、exchange（无）、user data（未访问）。
-
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | 无 linked worktree；main checkout `G:\CODEX\New Manga` | NOT_APPLICABLE | 同一仓库 checkout | `669a4ae02` | `git worktree list` 仅 main checkout；未创建/删除 worktree；全部验证在 main 内联完成。 |
+| verification artifacts | `verification/FEA-06-RESIDUAL-1/**` | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-1/integration-verification.log` | `d6b5d34f9f0abdaa6bd1cd48234d0f131c49f596ae34701b3aa5120b7e8633e2` | 全部日志/矩阵/索引被 Task/Review/Handoff/Closeout 引用；集成日志 SHA-256 与登记一致；历史批次日志字节保留。 |
+| task-env / dataset / model / test-material | 未创建 / 未使用 | NOT_APPLICABLE | - | - | 未创建 task-env；未引入 dataset/model/test-material；测试使用 FakeHost/临时根。 |
+| temp | 测试 `%TEMP%` 临时根 | NOT_APPLICABLE | - | - | 每个测试使用唯一临时目录并在 dispose 清理；未写真实 `%APPDATA%`。 |
+| agent-output / exchange | `G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-1\`（派生 prompt/结果日志） | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-1/current-evidence-index.md` | `761ac17218d3166cc4632b828dc0dcdcdce3f3c1f345509e8655ef2b04d9a421` | prompt/结果日志保留在 workspace；当前证据索引入库并登记 SHA，不覆盖历史。 |
+| user data | 未访问 | NOT_APPLICABLE | - | - | 未访问用户源文件/AppData/DB；旧 FEA-06 证据 PNG 字节零漂移。 |
 ## 实施记录（Batch A，2026-11-02）
 
 - 实现执行：ZCode CLI（`--mode yolo`，Codex 额度故障转移）；会话在收尾前崩溃（`0xC0000409`），未写证据/Handoff；工作树遗留 WIP。
@@ -169,11 +175,14 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `e25600431` | `c67adcf12c8db06d4f53e82bfbc3f5a8d6ee60579c9ce1b3a2760cdb0c32a8af` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `fcf28bdfc` | `052f85cf9b60ccc4c76c0660ebf6d9226a728472049cc1941df25a9df11da7d7` | CANONICAL |
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `3ea4af605` | `6d1381e7e9db5165833d9752be970748d48ba54f853279e14ffd0acf874819ef` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `35e80eabf` | `c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |
 | EV-FEA06R1-ACCOV | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/ac-coverage.md` | `3ea4af605` | `50001d2a29bb07407276187f85570fb0e94c5dc5ac3a3698ee8f6e222d0d0bc2` | CANONICAL |
+| EV-FEA06R1-R4REVIEW | AC1–AC5 | `doc/reviews/FEA-06-RESIDUAL-1-impl-r4.md` | `4091ca253` | `e7479bb64b86baa6e362db008acf792fb87acae688ba45545be2df8be4b277c1` | CANONICAL |
+| EV-FEA06R1-INTEGRATION | AC5 | `verification/FEA-06-RESIDUAL-1/integration-verification.log` | `a63b56156` | `d6b5d34f9f0abdaa6bd1cd48234d0f131c49f596ae34701b3aa5120b7e8633e2` | CANONICAL |
+| EV-FEA06R1-CURRENT | AC1–AC5 | `verification/FEA-06-RESIDUAL-1/current-evidence-index.md` | `a63b56156` | `761ac17218d3166cc4632b828dc0dcdcdce3f3c1f345509e8655ef2b04d9a421` | CANONICAL |
 
 ## 待裁决（DSH 已按推荐口径推进，不阻塞）
 
