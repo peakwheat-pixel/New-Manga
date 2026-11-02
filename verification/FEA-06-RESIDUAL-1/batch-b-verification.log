@@ -54,3 +54,8 @@
 - 测试：`FluentMotionResidualTests.ShellConsumesMotionTable...` 增加断言——full 下 `motion-feedback` 类存在且按钮有过渡；reduce 下类移除且 `Transitions == null`。
 - 验证：build 0/0；无过滤全量 **1178/0/57**；旧 FEA-06 PNG 零漂移。
 - 仍未完成（NOT_RUN）：hover/pressed 视觉截图；decorative 类别专属动画消费（当前仅有表与 disabled 语义）；CommandPalette/Toast 独立状态（复用既有 Dialog/AlertBanner 组件）。
+
+## 补记 3（I-4 有效属性证据 + 矩阵/AC 评估，全量 1179/0/57）
+- `FluentComponentStateEffectiveTests`：PrimaryButton（Accent.Base/Accent.On/Corner.Fluent.Sm/ControlHeight）、disabled（Opacity.Disabled 且 IsEffectivelyEnabled=false）、DangerButton（Status.Failed 前景+描边/Hairline）、SurfaceCard（Bg.Raised/Hairline/Elevation.1/Corner.Md）、Dialog（Elevation.3/Corner.Lg/ZIndex.Modal）、TabItem（未选 Text.Secondary/选中 Text.Primary）有效属性断言；hover/pressed/loading 视觉格 NOT_RUN。
+- `component-state-matrix.md`：按 10-component-inventory §1–§3 逐组件登记 EFFECTIVE/COMMAND/FOCUS/DECLARED/NOT_RUN；`ac-coverage.md`：AC1–AC5 当前评估（AC2=PARTIAL：I-4 视觉格/I-5 decorative D-8）。
+- 验证：build 0/0；无过滤全量 **1179 passed / 0 failed / 57 skipped**（DS 91 + App 566 等）；旧 FEA-06 PNG 零漂移。
