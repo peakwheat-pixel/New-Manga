@@ -20,7 +20,11 @@ resource_closeout_status: pending
 evidence_dir: verification/FEA-06-PREREQ-2
 allowed_paths:
   - doc/tasks/FEA-06-PREREQ-2.md
+  - apps/desktop-avalonia/src/NewManga.App/Services/**
   - apps/desktop-avalonia/src/NewManga.ThemeEngine/Persistence/**
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Models/**
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Serialization/**
+  - apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/**
   - apps/desktop-avalonia/src/NewManga.DesignSystem/**
   - apps/desktop-avalonia/src/NewManga.Appearance/**
   - apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
@@ -30,6 +34,9 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/Services/FrontendSelector*.cs
   - apps/desktop-avalonia/src/NewManga.App/Views/Fluent/**
   - apps/desktop-avalonia/tests/NewManga.App.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.Appearance.Tests/**
   - verification/FEA-06-PREREQ-2/**
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
@@ -51,12 +58,12 @@ allowed_paths:
 | P2 | `App.axaml.cs`/`Program.cs` 改造：按 selector 创建对应 Shell；V2 既有路径不变 |
 | P3 | `Views/Fluent/` 目录与 Shell 骨架（仅导航 + 四页占位；页面内容由 FEA-06 实现） |
 | P4 | 测试：selector 选择逻辑（fluent/fluent-dark/v2/未知）+ V2 回归不破 |
-| P5 | **W-9 承接（Q-32）**：`ThemeSettingsStore` 兼容写/双者收敛——`AppearanceCoordinator` 成为唯一写者，`ThemeSettingsStore` 标 deprecated 并保留一个 release 兼容写（避免 ThemeEngine↔Appearance 循环：由 App 侧 sink 适配） |
-| P6 | **W-9 承接（Q-32）**：`Nm.Material.Acrylic.Base/Tint` 主题层键 + 主题包 schema 演进 + `ThemeLayerAllowedKeys` + `R14ContractTests` 59/65 计数更新 |
+| P5 | **W-9 承接（Q-32）**：写者收敛——`AppearanceCoordinator.SaveAsync(settings)` 调 `AppearanceStore.WriteAsync`（唯一写者 = `NewManga.Appearance`，不引入反向引用）；`ThemeSettingsStore.SaveAsync` 标 `[Obsolete]` 并在一个 release 内双写 `presentation-settings.json`（App 侧 sink adapter `IThemeSettingsSink`，避免 ThemeEngine→Appearance 引用） |
+| P6 | **W-9 承接（Q-32）**：`Nm.Material.Acrylic.Base/Tint` —— 选 **`ThemeTokenSet` 扩展**路径：`ThemeMaterial` 枚举加 `Fluent` 值 + `ThemeTokenSet` 增加 `Material(Base/Tint)` 字段 + `ThemePackageJson` 序列化；`NmKeys` 加两常量但**不进 `Tokens.Global.axaml`**；`ThemeLayerAllowedKeys`（`DesignSystemThemeManager.cs:123-130`）与 `R14ContractTests` 的 **59/65 计数**同步；C-02 V-07 公开面（`ThemeMaterial` 枚举值）在变更记录中登记 |
 
 ## 验收标准
 
-- [ ] **AC1**：`FrontendSelector` 决策表（`builtin.fluent`/`builtin.fluent-dark` → Fluent；其余 → V2；非法值 → V2 + 记录）。<<TODO>>
+- [ ] **AC1**：`FrontendSelector` 决策表按 **frontendId**（`builtin.current-v2` / `builtin.fluent`）——`builtin.fluent` → Fluent 壳；其余（含缺失/非法）→ V2 + 记录（`builtin.fluent-dark` 是 **visualThemeId**，不参与 selector）。<<TODO>>
 - [ ] **AC2**：组合根按 selector 建壳；V2 启动路径与既有测试不回归。<<TODO>>
 - [ ] **AC3**：Fluent Shell 骨架存在（四页占位 + 导航），可启动（headless 测试）。<<TODO>>
 - [ ] **AC4**：全量 sln 不退化 + 证据。<<TODO>>
@@ -65,13 +72,14 @@ allowed_paths:
 
 ## 禁止范围
 
-- 不实现四页内容（FEA-06）；不改 ThemeEngine 语义（前置 1 已做）；不改 Core/契约；不 push。
+- 不实现四页内容（FEA-06）；**不改 ThemeEngine 的既有主题包语义**（`newmanga-default` 字节不变；新增 `ThemeMaterial.Fluent` 值属本卡 W-9 范围）；不改 Core/契约；不 push。
 
 ## 附加裁决点（DSH 已裁）
 
 | # | 问题 | 裁决 | 依据 |
 |---|---|---|---|
 | W-1 | 并存策略 | 双壳并存：`frontendId` 选择；默认 V2（fail-safe）；Fluent 为可选前端 | 设计基线 + r1 P0-2 |
+| W-2b | CLI 优先级 | `--frontend`（显式）**优先于** `AppearanceSettings.FrontendId`；两者都缺省 → `builtin.current-v2`（fail-safe V2） | PREREQ-1 `AppOptions.FrontendId`；AC1 |
 | W-2 | 写域 | `App.axaml.cs`/`Program.cs`/`Shell/**`/`Views/Fluent/**` 纳入本卡（r1 P2 指出原 FEA-06 写域缺组合根） | r1 P0-2 |
 | W-3 | V2 回归 | V2 既有路径不改语义，只加 selector 分支 | AC2 |
 

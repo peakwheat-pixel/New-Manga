@@ -3,8 +3,8 @@ id: FEA-06-PREREQ-1
 title: 外观持久化与 Fluent 令牌生成（C-03 落地 + G-1/G-1b/G-1c）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: scope_review_r3_approved_2026-11-02; impl_review_r4_approved_2026-11-03（AC1/AC3/AC5 PARTIAL 保持 in_review）
+status: done
+approval: scope_review_r3_approved_2026-11-02; impl_review_r4_approved_2026-11-03; residual_transfer_Q-33_2026-11-03
 suggested_owner: dsh
 owner: null
 reviewer: null
@@ -15,8 +15,8 @@ branch: null
 worktree: null
 integration_commit: 06b7a1b10
 delivery_head: 06b7a1b10
-canonical_evidence_status: partial（AC1/AC3/AC5 待 PREREQ-2 闭环）
-resource_closeout_status: partial（同 AC 状态）
+canonical_evidence_status: complete（AC1/AC3/AC5 residual 已转 PREREQ-2 AC5/AC6）
+resource_closeout_status: complete（residual 已转）
 evidence_dir: verification/FEA-06-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-06-PREREQ-1.md
@@ -119,3 +119,9 @@ allowed_paths:
 - 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 
 eady，DSH 实现。
 - 2026-11-03 / DSH：FEA-06-PREREQ-1 实现完成并收口（ 6b7a1b10）——范围 r1–r3（r3 approved）、实现 impl-r1（P1×10 全关闭）→ impl-r2（P1×5：3 关闭 + W-9 裁决 P1-2/P1-4 转 PREREQ-2）；全量 sln **977/0/57**；TokenGen/ThemeGen --check up to date；置 in_review 待 impl-r3。
+## Q-33 residual 转移记录（2026-11-03，DSH 裁决）
+
+- **背景**：impl-r4 判 AC1/AC3/AC5 <<PARTIAL>>，且 PREREQ-2 依赖 PREREQ-1 → 若 PREREQ-1 因 PARTIAL 保持 in_review，PREREQ-2 永远不可释放（依赖环，PREREQ-2 scope-r1 P0-3）。
+- **裁决**：AC1/AC3/AC5 的 residual 已由 **Q-32 正式裁决 + PREREQ-2 AC5/AC6 承接**；PREREQ-1 以 done 关闭，<<PARTIAL>> 保留为历史事实（不勾选），residual 在 PREREQ-2 追踪。依据：转移目标已修订（P5/P6 + AC5/AC6 + 写域），非无主豁免。
+- **残余清单**（PREREQ-2 负责）：① ThemeSettingsStore 兼容写/写者收敛；② Nm.Material.Acrylic.Base/Tint + 主题层 schema/R14；③ 
+m.fluent.visual/1 manifest + ThemeValidator 显式测试。
