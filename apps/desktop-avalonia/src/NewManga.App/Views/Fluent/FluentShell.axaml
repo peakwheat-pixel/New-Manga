@@ -3,46 +3,4 @@
         x:Class="NewManga.App.Views.Fluent.FluentShell"
         Title="New Manga"
         Background="{DynamicResource Nm.Color.Bg.App}"
-        Classes="fluent-shell">
-  <Grid RowDefinitions="Auto,*,Auto">
-    <Border x:Name="FluentTopBand" Grid.Row="0" Classes="fluent-top-band">
-      <Grid ColumnDefinitions="Auto,*,Auto">
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Classes="fluent-page-toolbar">
-          <TextBlock Text="New Manga" Classes="fluent-shell-brand" VerticalAlignment="Center" />
-          <Button x:Name="SpaceLibrary" Content="资料柜" Classes="fluent-space-button selected" AutomationProperties.Name="切换到资料柜空间" />
-          <Button x:Name="SpaceStudio" Content="工位" Classes="fluent-space-button" AutomationProperties.Name="切换到工位空间" />
-          <Button x:Name="SpaceConsole" Content="控制台" Classes="fluent-space-button" AutomationProperties.Name="切换到控制台空间" />
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Classes="fluent-page-toolbar">
-          <TextBlock x:Name="FluentFrontendLabel" Classes="fluent-status-text" VerticalAlignment="Center" />
-          <Button x:Name="SettingsCommandButton" Content="设置" Classes="fluent-secondary" AutomationProperties.Name="打开设置" />
-          <Button x:Name="CommandPaletteButton" Content="命令面板" Classes="fluent-secondary" AutomationProperties.Name="打开命令面板" />
-          <Button x:Name="HelpButton" Content="键位速查" Classes="fluent-icon" AutomationProperties.Name="打开键位速查" />
-        </StackPanel>
-      </Grid>
-    </Border>
-
-    <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Classes="fluent-shell-body">
-      <Border x:Name="FluentNavRail" Grid.Column="0" Classes="fluent-nav-rail">
-        <StackPanel Classes="fluent-page-layout">
-          <Button x:Name="NavLibrary" Content="书架" Classes="fluent-nav" AutomationProperties.Name="导航到书架" />
-          <Button x:Name="NavRecycle" Content="回收站" Classes="fluent-nav" AutomationProperties.Name="打开回收站" />
-          <Button x:Name="NavImport" Content="导入" Classes="fluent-nav" AutomationProperties.Name="导入漫画" />
-          <Button x:Name="NavWorkbench" Content="工作台" Classes="fluent-nav" AutomationProperties.Name="导航到工作台" />
-          <Button x:Name="NavSettings" Content="设置" Classes="fluent-nav" AutomationProperties.Name="导航到设置" />
-        </StackPanel>
-      </Border>
-      <Grid Grid.Column="1" Classes="fluent-page-host">
-        <ContentControl x:Name="FluentPageHost" />
-        <Border x:Name="FluentModalHost" Classes="fluent-overlay-host" IsVisible="False" />
-      </Grid>
-    </Grid>
-
-    <Border x:Name="FluentStatusBand" Grid.Row="2" Classes="fluent-status-band">
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBlock x:Name="FluentStatusText" Classes="fluent-status-text" VerticalAlignment="Center" />
-        <TextBlock x:Name="FluentBreakpointText" Grid.Column="1" Classes="fluent-status-text" VerticalAlignment="Center" />
-      </Grid>
-    </Border>
-  </Grid>
-</Window>
+        Classes="fluent-shell" />

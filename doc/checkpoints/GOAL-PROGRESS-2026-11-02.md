@@ -319,3 +319,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 测试：`PresentationWindowTests` 5 例（初始内容/几何、切换保身份、构建失败回滚+journal、未知 id 拒绝、20 次往返单树）；证据 `verification/FEA-07/slice-2b-verification.log`；build 0/0；全量 **1072/0/57**（CoreClient 已知 flaky 首跑 1 failed、重跑全绿）。
 - **下一批**：②c App 组合根接入真实 content factory（V2 `AppShellV2` + Fluent content surface）+ 开关启用；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
 - 待裁决区沿用 §41（D-1 原生硬件 / D-2 默认化时机 / D-3 独立性 / D-4 legacy 保留期），均不阻塞。
+## 43. FEA-07 实施切片 2c-part1（Fluent 内容面抽取，2026-11-02）
+
+- **FluentShellSurface 抽取**：新增 `Views/Fluent/FluentShellSurface.axaml(.cs)`（UserControl，Fluent 内容/四页/导航/KeyMap/响应式带全量逻辑，`FullScreenRequested` + `SetViewportWidth`）；`FluentShell` 变薄宿主 Window facade（转发公开 API + `FindControl` + material 策略），**24 个既有 Fluent 测试全通过**；修复响应式状态：视口宽度变化需同时更新状态带（`SetViewportWidth`→`UpdateStatus`）。
+- 证据 `verification/FEA-07/slice-2c-part1-verification.log`；build 0/0；全量 **1072/0/57**。
+- **下一批**：②c-part2 App 组合根真实 factory 接入（V2 content 需带 Theme Studio 生产接线）+ `--presentation-host` 开关 + 端到端 headless 切换；③safe startup；④双屏/DPI；⑤回归/复核。

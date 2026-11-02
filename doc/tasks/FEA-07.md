@@ -110,6 +110,13 @@ allowed_paths:
 - 证据：`verification/FEA-07/slice-2b-verification.log`（build 0/0；窗口 5/0；全量 **1072/0/57**；CoreClient 已知 flaky 首跑 1 failed、重跑全绿）。
 - 下一批：②c App 组合根接入真实 content factory（V2 `AppShellV2` + Fluent content surface）+ 开关启用；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
 
+## 实施记录（切片 2c-part1，2026-11-02，owner=DSH）
+
+- **Fluent 内容面抽取**：新增 `Views/Fluent/FluentShellSurface.axaml(.cs)`（UserControl，承载全部 Fluent 内容/导航/四页/KeyMap/响应式带逻辑；`FullScreenRequested` 事件 + `SetViewportWidth` 公共入口）；`FluentShell.axaml` 改为仅宿主 Window，`FluentShell.axaml.cs` 变为薄 facade（转发全部公开 API + `FindControl` 到 surface + window material 策略），既有 24 个 Fluent 测试**全部经 facade 通过**。
+- 目的：为 `PresentationWindow` 的真实 content factory 提供可复用的 Fluent 内容树（稳定主窗切换 V2/Fluent 的前提）；同时保留 FluentShell 独立启动与测试路径。
+- 证据：`verification/FEA-07/slice-2c-part1-verification.log`（build 0/0；Fluent 24/0；全量 **1072/0/57**）。
+- 下一批：②c-part2 App 组合根接入真实 factory（V2 content 需携带 Theme Studio 生产接线）+ `--presentation-host` 开关 + 端到端 headless 切换测试；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -161,6 +168,7 @@ allowed_paths:
 | EV-FEA07-SLICE1 | AC1–AC3/AC8 | `verification/FEA-07/slice-1-verification.log` | `-` | `a63982423ba6e79f96f76bacc27049a2bba18506fdf9411c13df0c5f13dac78d` | CANONICAL |
 | EV-FEA07-SLICE2 | AC1/AC2/AC8 | `verification/FEA-07/slice-2-verification.log` | `-` | `55fd5e5fb1c5a9a146e3cda5e5a8087ebff4beeee9a5c480e81d539d6bbfe771` | CANONICAL |
 | EV-FEA07-SLICE2B | AC1/AC2/AC8 | `verification/FEA-07/slice-2b-verification.log` | `-` | `2c281f288af106ed5391eea065aaac25f8f6543063a5aecab0f7ec11a4cee88b` | CANONICAL |
+| EV-FEA07-SLICE2C1 | AC1/AC2/AC8 | `verification/FEA-07/slice-2c-part1-verification.log` | `-` | `d835a23daf53d64d90fbe026f3307570b74df6778a7f1c50f61e60cfe63ee7f1` | CANONICAL |
 
 ## Closeout Record
 
