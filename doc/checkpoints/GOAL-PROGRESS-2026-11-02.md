@@ -821,3 +821,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - WIP 当前**不可编译**：`FluentResidual2StateEffectiveTests.cs:416` ToolTip 无 IsOpen；`:441` AlertBanner 数组作 Children 初始化非法。IN-1 装饰层部分已有实现，IN-2A/2B 未完成。
 - 续接排程：05:24 提醒 Codex（额度约 05:23）用 prompt + WIP 快照续接：先修 2 个编译错误，再完成 IN-1/IN-2A/IN-2B、四条验收、commit、evidence/handoff；ZCode retry 约 08:05 为备用。完成后派独立 impl Review（不得自审）。
 - 仓库已提交文档与 scope 证据；未 push。
+## 126. ZCode WIP 诊断/隔离与基线恢复（2026-11-03 03:52）
+
+- DSH 诊断 ZCode 中断 WIP：可编译（修 `ToolTip.IsOpen`→`GetIsOpen` 与 AlertBanner Children 初始化后 build 0/0）。
+- **IN-1 装饰层有效**：`FluentResidual2DecorativeTests` **12/12 PASS**（书架渐变 8s/翻页粒子 400ms 等）。
+- **WIP 回归**：全量出现 6 项既有 `FluentAnimationCompletionTests` 失败（pressed/overlay exit/detached/disabled 组合）——由 ZCode WIP 共享改动（`FluentUi.cs`/Motion 相关）引起；IN-2A 测试 9/14（5 项期望令牌与实际样式不符，需校准）。
+- 处置：**完整快照 WIP → 回退工作树到干净基线**（未提交、未 push）；重跑 build 0/0、全量 **1245/0/57 恢复全绿**。快照：`workspace/FEA-06-RESIDUAL-2/wip-snapshot/`（diff 15165B + FluentDecorativeMotion.cs 9693B + FluentResidual2DecorativeTests.cs 17614B + FluentResidual2StateEffectiveTests.cs 22826B）。
+- 续接要点（05:24 Codex / 08:05 ZCode）：IN-1 代码可直接复用但必须先定位并消除 6 项动画回归（检查 FluentUi.cs 共享 helper 与既有 pressed/badge/overlay 机制耦合）；IN-2A 期望值按真实样式令牌校准（禁止改样式迁就测试）；IN-2B 未开始。
+- 仓库当前干净；Task2 仍 in_progress；scope 冻结不变。
