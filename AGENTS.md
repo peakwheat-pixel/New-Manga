@@ -40,6 +40,15 @@
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
 - 完成实现不等于完成集成：上下文独立的 Review、测试证据和 DSH 集成验证通过后，Task 才能进入 done；实现者与 Review 审查者不得为同一会话/实例（作者可派子 agent 审查；见 2026-10-31 裁决）。
 
+## 术语与简称约定
+
+用户与全体 Agent 的称呼约定（2026-11-02 用户指示落盘）：
+
+- **FEA 线**（日常简称）：即 **FEA 可切换前端架构线**——[FEA-00 方案](doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)、15 份冻结契约（C-01b…C-14 + FEA-01）、FEA-00a 与 FEA-01…FEA-15 实现候选、S0–S5 阶段。分线称 **FEA 契约线**（S0 冻结）、**FEA 实现线**（S0 之后实现）、**Source 线**（FEA-08/09/11/12/13）。
+- **新线路 / 新路线**：用于指代 **FEA 线**（2026-11-02 用户约定）；不再泛指 AD-002 以来的全部工作。
+- **V11R 程序**：2026-10-30 的 V1.1 整改 + 全新 UI/UX + Theme Studio 重建轮次，已收官并发布 v0.1.1；不属于 FEA 线，不与“新线路”混用。
+- 本约定只固定称呼与范围，不改变任何 Task、契约、Gate 或授权；FEA 线的当前状态仍以 [STATUS](doc/STATUS.md) 与 [REBASELINE_PLAN](doc/REBASELINE_PLAN.md) 为准。
+
 ## 产品边界
 
 当前唯一继续演进的产品架构为 Windows / C# .NET + Avalonia / Python Core / SQLite / ReferencedSource（新导入默认引用原文件、不复制不覆盖；既有 Managed Copy 数据继续读取），详见 [AD-002 架构决策](doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（2026-10-26 用户裁决，取代 AD-001）与 [AD-003 存储架构补充决策](doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)（2026-10-31 用户决定的正式记录，限定取代 AD-002 的 Managed Copy 默认策略）。后续 Task、缺陷诊断和修复只允许落在该架构；Tauri/React/WebView2 与 PySide6/QML 代码、测试和既有 Task 仅保留为历史证据，不再释放 Legacy 实现、诊断或修复任务。若旧架构暴露用户可见问题，只把对应产品行为转化为新架构需求并在新架构复现、修复和验收。产品仍只有书架、工作台、阅读器、设置四个一级页面，UI 视觉**着重参考** Saber-Translator（非 1:1 复刻）。

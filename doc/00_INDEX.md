@@ -64,6 +64,16 @@
 
 因此，2026-09-25 注册快照中的 QML 保留/parity 计划、旧 M2 释放列表和 Qoder 分工均不代表当前决定；详情仅在 [AD-001 pre-Rebaseline snapshot](../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 中作为原始历史文本保留。该归档副本不是权威来源。
 
+## 术语与简称约定
+
+称呼约定由 [AGENTS.md](../AGENTS.md) 承载（2026-11-02 用户指示落盘）；本文只登记索引，不复制第二套定义。
+
+| 简称 | 全称 / 范围 | 权威入口 |
+|---|---|---|
+| **FEA 线** | FEA 可切换前端架构线：FEA-00 方案 + 15 份冻结契约 + FEA-00a/01…15 实现候选 + S0–S5 | [FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)、[FEA-01 冻结清单](plan/FEA-01_CONTRACT_DRAFT.md)、[STATUS](STATUS.md)、[REBASELINE_PLAN](REBASELINE_PLAN.md) |
+| **新线路 / 新路线** | 2026-11-02 用户约定：特指 FEA 线 | 同上 |
+| **V11R 程序** | 2026-10-30 新 UI/UX 重建轮次，已收官（v0.1.1）；不属于 FEA 线 | [V11R_PROGRAM](V11R_PROGRAM.md)、[V11R_ACCEPTANCE_REPORT](V11R_ACCEPTANCE_REPORT.md) |
+
 ## Agent 默认最小读取集
 
 1. AGENTS.md
