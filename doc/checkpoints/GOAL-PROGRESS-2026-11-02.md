@@ -872,3 +872,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 预研 `workspace/FEA-06-RESIDUAL-2/in2b-capture-plan.md`：复用 `FluentPages_RenderHeadlessPngEvidence`（页面级）与 `ManualFluentMotionClock`（首/中/尾帧）、组件窗口 Headless 渲染；命名 `<group>--<component>--<state>--<mode>--<theme>.png`；最小清单覆盖 pages/components/decor；`visual-inventory.md` 列（含 signed_by/signed_at 待独立签署）；验收脚本（默认零写入、opt-in 仅本卡 visuals 新增、IN-1 mid-frame、旧四 PNG SHA 不变）。
 - 现状：IN-1（`d854d91b2`）+ IN-2A（`1d2df1d15`，含派生控件样式修复）已完成，全量 **1271/0/57**；仅余 IN-2B。
 - 05:24 Codex 提醒已更新为仅 IN-2B 续接；ZCode 08:05 备用；完成后派独立 impl Review（不得自审）→ 集成/关闭。
+## 134. IN-2B 完成：opt-in 像素证据 + inventory（2026-11-03 04:28）
+
+- `FluentResidual2VisualEvidenceTests`：默认零写入（渲染+断言非空）；`NEWMANGA_CAPTURE_RESIDUAL2_PNGS=1` 写 `verification/FEA-06-RESIDUAL-2/visuals/**` + `visual-inventory.md`；禁止写 `verification/FEA-06/**`。
+- 实跑生成 **34 PNG + inventory**（pages 4×2 主题、components 12×2、decor 2）；页面 31–54KB、组件 1–3KB；旧四 PNG 未变动。
+- 验证：默认全量 **1272/0/57**（App 639）；默认运行后无既有证据改写；证据 `impl-in2b-verification.log`；提交 `998d75bdb`；未 push。
+- **待办**：IN-2B 逐图签署（未签署=NOT_RUN）由独立 Reviewer 完成；D-14 待裁决（StatusCatalog NotStarted）；随后派独立 impl Review → findings 处置 → DSH 集成验证 → 按 AC 关闭。

@@ -14,7 +14,7 @@ base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 1d2df1d15（IN-1 `d854d91b2` + IN-2A `1d2df1d15`（含派生控件类样式修复）；全量 1271/0/57；仅余 IN-2B 像素证据）
+delivery_head: 998d75bdb（IN-1 `d854d91b2` + IN-2A `1d2df1d15` + IN-2B `998d75bdb` 35 文件；全量 1272/0/57；待独立 impl Review/逐图签署）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-2
