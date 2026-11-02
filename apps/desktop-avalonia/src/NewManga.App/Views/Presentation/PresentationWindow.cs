@@ -45,6 +45,33 @@ public sealed class PresentationWindow : Window
         Func<string, Control> contentFactory,
         WindowStateMemento? initialMemento = null,
         Func<IReadOnlyList<Control>>? allContentProvider = null)
+        : this(
+            options,
+            selection,
+            hostController,
+            appearance,
+            journal,
+            contentFactory,
+            initialMemento,
+            allContentProvider,
+            beforeJournalCommit: null)
+    {
+    }
+
+    /// <summary>
+    /// Test/diagnostics overload: <paramref name="beforeJournalCommit"/> injects a fault right before the
+    /// switch journal finalize (after the content promote), mirroring the coordinator seam.
+    /// </summary>
+    internal PresentationWindow(
+        AppOptions options,
+        FrontendSelection selection,
+        IHostController? hostController,
+        AppearanceCoordinator appearance,
+        SwitchJournal journal,
+        Func<string, Control> contentFactory,
+        WindowStateMemento? initialMemento,
+        Func<IReadOnlyList<Control>>? allContentProvider,
+        Action? beforeJournalCommit)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(selection);
@@ -99,7 +126,10 @@ public sealed class PresentationWindow : Window
             selection.EffectiveFrontendId,
             contentFactory,
             appearance,
-            journal);
+            journal,
+            beforeJournalCommit: beforeJournalCommit,
+            // R-022/R-024: the window-mode snapshot is taken inside the switch gate, tied to this transaction.
+            windowModeSnapshot: CaptureWindowMode);
 
         Broker = new WindowBroker();
         Broker.RegisterMain("presentation-main");
@@ -249,22 +279,18 @@ public sealed class PresentationWindow : Window
     }
 
     /// <summary>Switches the hosted content tree; the window identity is preserved and failures roll back.</summary>
-    public async Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default)
+    public Task<SwitchResult> SwitchFrontendAsync(string frontendId, CancellationToken cancellationToken = default) =>
+        _coordinator.SwitchAsync(frontendId, cancellationToken);
+
+    /// <summary>
+    /// R-022/R-024: snapshots the user-visible window mode for the transaction that is about to run. The
+    /// coordinator takes this inside the switch gate, so a rolled-back (or cancelled) transaction restores
+    /// the previous mode while queued/rejected requests never write a stale snapshot back.
+    /// </summary>
+    private IPresentationWindowModeTransaction? CaptureWindowMode(Control? previousContent)
     {
-        // R-022: a failed transaction must not change the user-visible window mode. Promote/leaving the
-        // Fluent tree clears full screen before the commit is known to succeed, so snapshot it here and
-        // restore it together with the previous content tree on failure (success keeps the cleanup policy).
-        var windowState = WindowState;
-        var fullScreenFluent = ContentHost.Current as FluentShellSurface;
-        var readerWasFullScreen = fullScreenFluent?.ReaderViewModel.IsFullScreen == true;
-
-        var result = await _coordinator.SwitchAsync(frontendId, cancellationToken).ConfigureAwait(true);
-        if (!result.Succeeded)
-        {
-            RestoreWindowMode(windowState, fullScreenFluent, readerWasFullScreen);
-        }
-
-        return result;
+        var fluent = previousContent as FluentShellSurface;
+        return new WindowModeTransaction(this, WindowState, fluent, fluent?.ReaderViewModel.IsFullScreen == true);
     }
 
     private void RestoreWindowMode(WindowState windowState, FluentShellSurface? fluent, bool readerWasFullScreen)
@@ -277,6 +303,40 @@ public sealed class PresentationWindow : Window
         if (WindowState != windowState)
         {
             WindowState = windowState;
+        }
+    }
+
+    private sealed class WindowModeTransaction : IPresentationWindowModeTransaction
+    {
+        private readonly PresentationWindow _window;
+        private readonly WindowState _windowState;
+        private readonly FluentShellSurface? _fluent;
+        private readonly bool _readerWasFullScreen;
+        private bool _completed;
+
+        public WindowModeTransaction(
+            PresentationWindow window,
+            WindowState windowState,
+            FluentShellSurface? fluent,
+            bool readerWasFullScreen)
+        {
+            _window = window;
+            _windowState = windowState;
+            _fluent = fluent;
+            _readerWasFullScreen = readerWasFullScreen;
+        }
+
+        public void Commit() => _completed = true;
+
+        public void Dispose()
+        {
+            if (_completed)
+            {
+                return;
+            }
+
+            _completed = true;
+            _window.RestoreWindowMode(_windowState, _fluent, _readerWasFullScreen);
         }
     }
 

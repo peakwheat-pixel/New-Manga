@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -364,6 +365,122 @@ public sealed class PresentationWindowTests : IDisposable
         }
     }
 
+    /// <summary>
+    /// R-022 (r7): the failing transaction must reach the promote stage first (so the old full-screen mode
+    /// was already cleared) before the journal finalize fault is injected; the mode must still be restored.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task FailedSwitchAfterPromote_RestoresTheOriginalFullScreenMode()
+    {
+        using var themeManager = new DesignSystemThemeManager(Application.Current!);
+        themeManager.Initialize();
+        var window = CreateRealFluentWindow(
+            themeManager,
+            _ => Content("v2", "hosted"),
+            beforeJournalCommit: () => throw new InvalidOperationException("finalize failed"),
+            out var fluent);
+        try
+        {
+            ShowFullScreenReader(window, fluent);
+
+            var result = await window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+
+            Assert.False(result.Succeeded);
+            Assert.Contains("finalize failed", result.Failure);
+            Assert.Same(fluent, window.ContentHost.Current);
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, window.WindowState);
+            Assert.True(_journal.TryRead(out var entry, out _));
+            Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    /// <summary>
+    /// R-022 (r7): a cancelled token after promote makes the switch coordinator rethrow
+    /// <see cref="OperationCanceledException"/>; the window mode must be compensated while the cancellation
+    /// keeps propagating to the caller.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task CancelledSwitchAfterPromote_RestoresTheOriginalFullScreenMode()
+    {
+        using var themeManager = new DesignSystemThemeManager(Application.Current!);
+        themeManager.Initialize();
+        using var cts = new CancellationTokenSource();
+        var window = CreateRealFluentWindow(
+            themeManager,
+            _ => Content("v2", "hosted"),
+            beforeJournalCommit: () =>
+            {
+                cts.Cancel();
+                throw new OperationCanceledException(cts.Token);
+            },
+            out var fluent);
+        try
+        {
+            ShowFullScreenReader(window, fluent);
+
+            await Assert.ThrowsAsync<OperationCanceledException>(
+                () => window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId, cts.Token));
+
+            Assert.Same(fluent, window.ContentHost.Current);
+            Assert.True(fluent.ReaderViewModel.IsFullScreen);
+            Assert.Equal(WindowState.FullScreen, window.WindowState);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    /// <summary>
+    /// R-024 (r7): a request queued behind a successful transaction and then rejected must not restore the
+    /// mode snapshot of the transaction it waited for (the snapshot now lives inside the switch gate).
+    /// </summary>
+    [AvaloniaFact]
+    public async Task QueuedRejectedSwitch_DoesNotRestoreAStaleWindowMode()
+    {
+        using var themeManager = new DesignSystemThemeManager(Application.Current!);
+        themeManager.Initialize();
+        var finalizeEntered = new ManualResetEventSlim();
+        var releaseFinalize = new ManualResetEventSlim();
+        var window = CreateRealFluentWindow(
+            themeManager,
+            _ => Content("v2", "hosted"),
+            beforeJournalCommit: () =>
+            {
+                finalizeEntered.Set();
+                releaseFinalize.Wait(TimeSpan.FromSeconds(10));
+            },
+            out var fluent);
+        try
+        {
+            ShowFullScreenReader(window, fluent);
+
+            var successful = window.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+            await WaitUntilAsync(() => finalizeEntered.IsSet);
+            Assert.True(finalizeEntered.IsSet);
+
+            // Queued behind the in-flight (successful) transaction; rejected after acquiring the gate.
+            var rejected = window.SwitchFrontendAsync("builtin.not-a-frontend");
+            releaseFinalize.Set();
+
+            var results = await Task.WhenAll(successful, rejected);
+
+            Assert.True(results[0].Succeeded, results[0].Failure);
+            Assert.False(results[1].Succeeded);
+            Assert.Equal(FrontendSelector.CurrentV2FrontendId, window.CurrentFrontendId);
+            Assert.Equal(WindowState.Normal, window.WindowState);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
     [AvaloniaFact]
     public void MaximizedMemento_IsRestored()
     {
@@ -421,6 +538,65 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.True(_journal.TryRead(out var entry, out _));
         Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
         window.Close();
+    }
+
+    private PresentationWindow CreateRealFluentWindow(
+        DesignSystemThemeManager themeManager,
+        Func<string, Control> targetFactory,
+        Action? beforeJournalCommit,
+        out FluentShellSurface fluent)
+    {
+        FluentShellSurface? created = null;
+        var window = new PresentationWindow(
+            AppOptions.Parse(Array.Empty<string>()),
+            FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+            hostController: null,
+            _appearance,
+            _journal,
+            id =>
+            {
+                if (id != FrontendSelector.FluentFrontendId)
+                {
+                    return targetFactory(id);
+                }
+
+                created = new FluentShellSurface(
+                    AppOptions.Parse(Array.Empty<string>()),
+                    FrontendSelector.Select(FrontendSelector.FluentFrontendId, persistedFrontendId: null),
+                    NullHostController.Instance,
+                    _appearance,
+                    themeManager);
+                return created;
+            },
+            initialMemento: null,
+            allContentProvider: null,
+            beforeJournalCommit: beforeJournalCommit);
+        fluent = created ?? throw new InvalidOperationException("the Fluent content tree was not created");
+        return window;
+    }
+
+    private static void ShowFullScreenReader(PresentationWindow window, FluentShellSurface fluent)
+    {
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        fluent.Navigate(FluentPage.Reader);
+        Dispatcher.UIThread.RunJobs();
+        var fullScreenButton = fluent.GetVisualDescendants().OfType<Button>()
+            .FirstOrDefault(button => string.Equals(button.Content as string, "全屏", StringComparison.Ordinal));
+        Assert.NotNull(fullScreenButton);
+        fullScreenButton!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(fluent.ReaderViewModel.IsFullScreen);
+        Assert.Equal(WindowState.FullScreen, window.WindowState);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition, int timeoutMs = 10000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10);
+        }
     }
 
     private sealed class ZeroSizeControl : Control

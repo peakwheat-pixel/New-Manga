@@ -35,6 +35,7 @@ public sealed class FrontendHostCoordinator
     private readonly Func<string, Control> _contentFactory;
     private readonly AppearanceCoordinator _appearance;
     private readonly FrontendSwitchCoordinator _switcher;
+    private readonly Func<Control?, IPresentationWindowModeTransaction?>? _windowModeSnapshot;
     private readonly SemaphoreSlim _switchGate = new(1, 1);
     private readonly object _sync = new();
 
@@ -49,7 +50,8 @@ public sealed class FrontendHostCoordinator
         Func<string, Control> contentFactory,
         AppearanceCoordinator appearance,
         SwitchJournal journal,
-        Action? beforeJournalCommit = null)
+        Action? beforeJournalCommit = null,
+        Func<Control?, IPresentationWindowModeTransaction?>? windowModeSnapshot = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(stagingHost);
@@ -63,6 +65,7 @@ public sealed class FrontendHostCoordinator
         _contentFactory = contentFactory;
         _appearance = appearance;
         _switcher = new FrontendSwitchCoordinator(journal, beforeJournalCommit: beforeJournalCommit);
+        _windowModeSnapshot = windowModeSnapshot;
         _currentFrontendId = initialFrontendId;
     }
 
@@ -89,6 +92,7 @@ public sealed class FrontendHostCoordinator
 
         await _switchGate.WaitAsync(cancellationToken).ConfigureAwait(true);
         Control? replacement = null;
+        IPresentationWindowModeTransaction? windowMode = null;
         try
         {
             var selection = FrontendSelector.Select(requestedFrontendId, persistedFrontendId: null);
@@ -175,15 +179,28 @@ public sealed class FrontendHostCoordinator
                 },
             };
 
-            return await _switcher.SwitchAsync(
+            // R-022/R-024: snapshot the window mode only for a real transaction that already passed the
+            // reject/no-op checks, and inside the switch gate so queued requests cannot restore stale state.
+            windowMode = _windowModeSnapshot?.Invoke(previous);
+
+            var result = await _switcher.SwitchAsync(
                 new SwitchRequest(target, previousFrontend),
                 callbacks,
                 cancellationToken).ConfigureAwait(true);
+            if (result.Succeeded)
+            {
+                windowMode?.Commit();
+            }
+
+            return result;
         }
         finally
         {
             // R-018: detach the one-shot Loaded subscription of this transaction before the next switch.
             await ReleaseLoadedSubscriptionAsync(replacement).ConfigureAwait(true);
+            // R-022: failed/cancelled transactions restore the previous window mode; committed ones dispose
+            // the snapshot without touching the live window.
+            windowMode?.Dispose();
             _switchGate.Release();
         }
     }
