@@ -940,3 +940,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Codex 裁决（job `pwsh-c512b0ff4dd34e9e`，exit 0）：**方案 A** —— `StatusCatalog.ColorKey(NotStarted)` 改为 `Nm.Color.Text.Secondary`；依据：两套普通主题 Secondary 对比度均 ≥4.5:1、Disabled 不足；报告 `doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`。
 - 已释放后续卡 **D-14-STATUS-COLOR-FIX（ready，owner=codex）**：allowed_paths 限定 `DesignSystem/Controls/Status.cs` + DesignSystem tests + 本卡证据；不改其它映射/样式；PLAN READY 节点已更新；Task2 不扩域、D-14 不写达成。
 - impl-r2 Review 仍在运行（workflow `workflow-8eb284e7f674494c`）；完成后处理其 findings 并集成/关闭 Task2。
+## 145. impl-r2 changes_requested + R2R2 返修派发 Codex（2026-11-03 05:36）
+
+- impl-r2（D-9 独立子 agent，job `workflow-8eb284e7f674494c`）：**changes_requested，P0=0 / P1=6 / P2=12**；门禁全 PASS（build、1274/0/57、生成器、check、pins、旧 PNG、禁止范围），但视觉证据仍不成立：4 张 light 页面实为 dark（未走真实主题栈）、ReaderPage 空章节、ReaderProgressBar/PageThumbStrip 空白、IconButton checked 同 SHA、Slider thumb 仍系统蓝、粒子被遮住、inventory/log/handoff 元数据不实；34 图签署 **15 PASS/19 REJECT**；AC-1/AC-3 NOT MET。
+- 报告入库 `doc/reviews/FEA-06-RESIDUAL-2-impl-r2.md`；Task reviewer 状态更新；提交 `f5f34ba30`。
+- 已派 fresh Codex 实施 R2R2 返修（job `pwsh-3770a39b56b34738`，prompt workspace `impl-r2-findings-rework-prompt.md`，head f5f34ba30、基线 1274/0/57）：真实主题栈、真实页数据/控件状态、IconButton fluent-icon class、Slider thumb 真实令牌、粒子可见性、inventory/log/handoff 准确、禁伪造。
+- 完成后 DSH 核验 → 派 fresh 独立 impl-r3 Review（不得自审）→ 集成/关闭；D-14-STATUS-COLOR-FIX 保持 ready 待按顺序实施。
