@@ -117,7 +117,7 @@ public static class AppearanceDefaults
 
     public const string VisualThemeId = "newmanga-default";
 
-    public const double AcrylicStrength = 0.5;
+    public const double AcrylicStrength = 0.85;
 
     public static AppearanceSettings Settings { get; } = new();
 }

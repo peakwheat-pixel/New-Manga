@@ -197,4 +197,17 @@ public sealed class AppOptionsCliRobustnessTests
         var empty = AppOptions.Parse(new[] { "--frontend=" });
         Assert.NotNull(empty.InvalidReason);
     }
+
+    /// <summary>
+    /// FEA-06-PREREQ-1 impl-r4 P2-4: an unknown frontend id is a pass-through value here;
+    /// the fail-safe decision (unknown -> V2) belongs to the FEA-06-PREREQ-2 selector.
+    /// </summary>
+    [Fact]
+    public void Frontend_UnknownId_IsPassedThrough()
+    {
+        var options = AppOptions.Parse(new[] { "--frontend", "not-a-frontend" });
+
+        Assert.Null(options.InvalidReason);
+        Assert.Equal("not-a-frontend", options.FrontendId);
+    }
 }

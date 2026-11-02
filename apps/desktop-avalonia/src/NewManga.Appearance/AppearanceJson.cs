@@ -17,6 +17,11 @@ public sealed record AppearanceReadResult(AppearanceSettings Settings, IReadOnly
 /// warnings, never blocking startup); the writer is canonical (sorted, two-space indent,
 /// LF, final newline) and always writes <c>schemaVersion: 2</c>.
 /// </summary>
+/// <remarks>
+/// Read/write口径（impl-r4 P2-10）：读侧同时接受「嵌套」canonical 形式（<c>{"theme":{"frontendId":...}}</c>）
+/// 与「扁平」旧形式（<c>{"themeId":...}</c>、<c>{"reducedMotion":true}</c>）；写侧**只写嵌套** canonical
+/// + <c>schemaVersion:2</c>，因此迁移后再读是幂等的。扁平形式仅为一次性兼容输入，不得成为持久化格式。
+/// </remarks>
 public static class AppearanceJson
 {
     /// <summary>Reads a document; never throws.</summary>
