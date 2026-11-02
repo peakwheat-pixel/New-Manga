@@ -31,7 +31,7 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-06（owner=Codex；scope-r3 approved；base `3c7f311d8`）
 
 
 当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**，集成 `92cac5ab1`，1022/0/57）→ FEA-06（**ready**，owner=Codex，待派实施）
