@@ -958,3 +958,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - P1：R2R3-001 冻结 IN 格缺 NavRail 折叠/StatusBand 错误运行态、宽度标签不实；R2R3-002 light 渐变像素差仅 2 不可辨（不能用 tolerance 当签署）。P2：R2R3-003 danger pressed 对比 1.18:1；R2R3-004 失焦经导航返回后错误 Resume；R2R3-005 粒子切 reduce 不移除旧层；R2R3-006 STATUS/PLAN 指针。
 - **R2R3-006 已由 DSH 修复**（STATUS 下一步、PLAN 进行中/DAG 指针统一，`8203b3d28`）。
 - 已派 fresh Codex 实施 R2R3-001…005（job `pwsh-7e94da7b2268495b`，prompt workspace `impl-r3-findings-rework-prompt.md`，head 8203b3d28/1281）：真实 NavRail/StatusBand 态、可辨渐变或诚实 NOT_RUN、danger pressed 对比、失焦生命周期、reduce 粒子清理；完成后 DSH 核验 → fresh impl-r4 Review。
+## 148. R2R3 交付核验 + impl-r4 派发（2026-11-03 06:56）
+
+- Codex R2R3 返修（job `pwsh-7e94da7b2268495b`，exit 0）：源码 `17a26d552`、证据 `c70d5c348`（172 图）、交付 `832103393`；全量 **1289/0/57**（+8）。
+- 逐项：001 NavRail 折叠/StatusBand 错误运行态+宽度标签；002 light 渐变最大 RGB 差 15（可辨）；003 pressed 对比 light 5.95:1 / dark 7.48:1；004 失焦导航返回保持暂停（粒子同路径）；005 三种降级×播放/暂停 6 格；006 DSH 已修。截图 164→**172**（136 同字节、24 更新、12 新增、4 移除）；本轮独立签署 NOT_RUN（待 impl-r4）。
+- DSH 独立核验：全量 **1289/0/57**（App 653、DS 114）、172 PNG、check PASS(3)、pins 15/15、工作树干净、未 push。
+- 已派 **fresh Codex impl-r4 Review**（job `pwsh-0fccb09844fd4656`，prompt workspace `impl-review-r4-prompt.md`）：核验 R2R3-001…006、172 图逐图签署与门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r4.md`。
+- approved 后：DSH 集成验证 → 按实际 AC 结果 done/closed_with_limitations；D-14-STATUS-COLOR-FIX 保持 ready。

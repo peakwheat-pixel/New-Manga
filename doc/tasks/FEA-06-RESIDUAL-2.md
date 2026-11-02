@@ -14,7 +14,7 @@ base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 445afc0ac（R2R2 交付：真实主题栈/真实页数据/状态通道/164 PNG 唯一 SHA/全量 1281/0/57；impl-r3 复核中）
+delivery_head: 832103393（R2R3 交付：NavRail/StatusBand 态、可辨渐变、danger 对比、失焦生命周期、reduce 粒子清理；172 PNG；全量 1289/0/57；impl-r4 复核中）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-2
