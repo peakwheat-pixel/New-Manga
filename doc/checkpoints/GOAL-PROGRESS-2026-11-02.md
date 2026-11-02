@@ -423,3 +423,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - r5 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`b328f3488`（如无新代码变更）、canonical=complete、Closeout Record。
 - **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → 登记为 residual（blocked D-1，不伪造证据），不因 headless 结果升级 AC5；待用户提供真机或书面降级后再验。
 - 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
+## 60. FEA-07 impl-r5 changes_requested → 返修（2026-11-02）
+
+- **r5 复核**（fresh Codex CLI，`gpt-6.1-sol` + `reasoning_effort=high`；被审 `ea27a7b10`/代码 `b328f3488`）：`doc/reviews/FEA-07-impl-r5.md`，P0=0 / P1=1 / P2=2；指定验证全部通过（build 0/0、全量 1132/0/57、两生成物 up-to-date、check PASS(3)、pins 15/15、Task pins 17/17）。
+- **R-020（P1）**：`--presentation-host=true` 下稳定窗口未承接 Fluent Reader 全屏请求（按钮/F/Esc 只改 VM）。返修：`FrontendContentHost.ContentChanged` → `PresentationWindow` 只对可见 Fluent 树连接 `FullScreenRequested`→`WindowState`；隐藏/缓存树请求忽略；离开 Fluent 树 `ExitFullScreen()`+Normal；`FluentShellSurface` 增 `CurrentPageChanged`/`ExitFullScreen()`，离开 Reader 页（Esc 的 SurfaceBack 属 FEA-06 键表）时退出全屏；真实组合根测试覆盖按钮/F/Esc、切换前后、隐藏树。
+- **R-021（P2）**：重复通知用例改为直接驱动生产通知处理入口；新增 clean+Contrast 镜像用例。
+- **R-007（P2）**：reviewer=impl-r5、delivery_head=`4e8510d43`、handoff `doc/handoffs/FEA-07-impl-r5.md`、索引 r6 待派；canonical 保持 pending。
+- **验证（`4e8510d43`）**：build 0/0；全量 **1134/0/57**（+2 测试）；`rework-r5-verification.log`、`final-evidence.log`（head `4e8510d43`，SHA `3021dbb0…`）；Release 两次复测 p95 236.48/248.42 ms 均 PASS（记录 run p50 96.50 / p95 248.42 / max 349.30 / 冷启 612.38 ms / 内存 +2528B / 句柄 0）；性能摘要「20 次往返」措辞更正为「20 次单向切换（10 次往返）」。
+
+## 61. FEA-07 r6 复核派发 + AC5 residual 计划（2026-11-02）
+
+- r6：fresh Codex CLI 只读，被审代码 head `4e8510d43` + 本证据/文档提交；唯一允许写 `doc/reviews/FEA-07-impl-r6.md`；`-m gpt-6.1-sol -c model_reasoning_effort="high"`。
+- r6 approved 后：DSH 集成验证（build/全量/两 `--check`/check/pins/证据索引）→ FEA-07 `done`、integration_commit=`4e8510d43`（如无新代码变更）、canonical=complete、Closeout Record。
+- **AC5 residual/waiver（D-1）**：原生双屏/拔屏/DPI 100/125/150/200% 矩阵无硬件 → 登记 residual（blocked D-1，不伪造证据）；R-020 全屏请求→WindowState 已在 headless 真实组合根回归，不依赖 D-1 硬件。
+- 之后按用户顺序 `FEA-06-RESIDUAL-1`（不插队）。
