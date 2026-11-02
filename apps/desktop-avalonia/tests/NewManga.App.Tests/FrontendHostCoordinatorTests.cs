@@ -158,4 +158,58 @@ public sealed class FrontendHostCoordinatorTests : IDisposable
             Assert.False(File.Exists(_journal.FilePath));
         }
     }
+
+
+    [AvaloniaFact]
+    public async Task JournalFinalizeFailure_CompensatesContentSettingsAndCurrentFrontend()
+    {
+        var coordinator = new FrontendHostCoordinator(
+            _host,
+            FrontendSelector.CurrentV2FrontendId,
+            id => Content(id, "switched"),
+            _appearance,
+            _journal,
+            beforeJournalCommit: () => throw new InvalidOperationException("journal finalize failed"));
+
+        var result = await coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("journal finalize failed", result.Failure);
+        Assert.Equal($"initial:{FrontendSelector.CurrentV2FrontendId}", TextOf(_host));
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, coordinator.CurrentFrontendId);
+        Assert.Equal(AppearanceDefaults.FrontendId, _appearance.FrontendId);
+        Assert.True(_journal.TryRead(out var entry, out _));
+        Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+    }
+
+    [AvaloniaFact]
+    public async Task ConcurrentSwitch_FirstFailsAtJournalFinalize_SecondEndsConsistent()
+    {
+        var finalizeAttempts = 0;
+        var coordinator = new FrontendHostCoordinator(
+            _host,
+            FrontendSelector.CurrentV2FrontendId,
+            id => Content(id, "switched"),
+            _appearance,
+            _journal,
+            beforeJournalCommit: () =>
+            {
+                if (Interlocked.Increment(ref finalizeAttempts) == 1)
+                {
+                    throw new InvalidOperationException("first finalize failed");
+                }
+            });
+
+        var first = coordinator.SwitchAsync(FrontendSelector.FluentFrontendId);
+        var second = coordinator.SwitchAsync(FrontendSelector.CurrentV2FrontendId);
+        var results = await Task.WhenAll(first, second);
+
+        Assert.False(results[0].Succeeded);
+        Assert.True(results[1].Succeeded, results[1].Failure);
+        Assert.Equal(FrontendSelector.CurrentV2FrontendId, coordinator.CurrentFrontendId);
+        Assert.Equal($"initial:{FrontendSelector.CurrentV2FrontendId}", TextOf(_host));
+        Assert.Equal(AppearanceDefaults.FrontendId, _appearance.FrontendId);
+        Assert.True(_journal.TryRead(out var entry, out _));
+        Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+    }
 }

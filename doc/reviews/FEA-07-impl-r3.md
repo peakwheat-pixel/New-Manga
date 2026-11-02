@@ -23,6 +23,7 @@ counts:
 
 - 复核基线为 `cbfb7bbc92d489541a24290038eae2117f8aa1ce`，文档/证据 reviewed head 为 `b3fa8dc0c2805f8790061b4d562af7c16ec71122`，实际代码 head 为 `3220abd599aed7e835fc1352a25f8e1f5c214a58`。代码判断及行号均以 `3220abd59` 为准。
 - 开始时 `git rev-parse HEAD` 为 `7b62c492bfb436416293d50c1725331cf5a98c3a`，分支 `main`，当前 checkout 的 common dir 为 `.git`，`git status --short` 为空。`3220abd59..HEAD` 仅有 Task/证据索引与 checkpoint 文档差异；`b3fa8dc0c..HEAD` 仅有 5 行 checkpoint 增量，不改变代码或证据内容。仓库另有其他 linked worktree；本次未进入或修改它们。
+- 报告写作期间共享仓库 HEAD 推进到 `52474fcbf842520806952e1dabd5d5233b721270`（`docs: 记录 Codex 模型 ID 与 reasoning effort 实测结论`），该提交包含本 Review 文件和 checkpoint 文档，无代码变化。本会话没有发起 commit/push；当前工作树仅保留本 Review 中 R-016 描述的一行文字修正。
 - `git diff --stat cbfb7bbc9..b3fa8dc0c`：65 files changed，4903 insertions(+)，553 deletions(-)。变更路径落在 FEA-07 Task 的 `allowed_paths` 内；没有发现新增越界路径。
 - 当前 checkout 的代码与 `3220abd59` 一致。r2 的 `rework-part2-verification.log` 记录的是提交前 `ddef44f81` 的 uncommitted rework；其精确提交后证据由 `final-evidence.log` 绑定至 `3220abd59`。
 
@@ -68,7 +69,7 @@ counts:
 | R-013 | P1 | `FrontendHostCoordinator.cs:29,70-145`；`PresentationWindowTests.cs:206-219` | 串行门的生产代码范围已正确，但并发测试未确定性制造事务重叠/第一请求失败，因此没有证明无过期快照回滚；目前只证明一次 back-to-back 双请求的成功终态。 | 测试只启动两次调用、`Task.WhenAll` 并断言成功、最终 V2、内容 V2、journal 不存在；没有 TCS/barrier 或失败注入。 | 加确定性 barrier：第一请求持有门并在 commit/保存阶段失败，第二请求排队；断言两个响应、UI、`CurrentFrontendId`、appearance 持久值和 journal 一致，且失败回滚没有覆盖后续状态。 | open |
 | R-015 | P1 | `FrontendSwitchCoordinator.cs:108-117`；`FrontendHostCoordinator.cs:108-133` | journal 的最终 `Commit()` 在 app Commit callback 已持久化 target 且已把 `_currentFrontendId` 设为 target 后执行。若 journal Commit 写入失败，catch 会 journal Rollback 并调用只恢复 Host 内容的 `RollbackAsync`；不会恢复 appearance 或 `_currentFrontendId`。可能返回失败但持久值/current id 是 target、显示内容是 previous。若 journal Rollback 自身也失败，rollback callback 不会执行。 | 故障路径可由代码顺序确认；现有 `FailureAtAnyStage` 在 Commit callback 前注入，未覆盖 journal 最终 Commit I/O 失败。 | 将 journal finalize 与 app 持久状态作为一个可补偿事务处理：所有失败路径都恢复内容、settings 和 current id；保证 journal 写失败不跳过 UI rollback；增加 final journal write/rollback fault tests。 | open |
 | R-009 | P2 | `doc/tasks/FEA-07.md:196` | AC6 验收行仍记 Release p95 `429.47ms`，而当前 release JSON、summary、索引和实现记录均为 `344.93ms`。 | `performance-baseline-release.json` 的 `p95Ms/maxMs=344.93`；`performance-baseline.md:9`、Task `:150,229` 与索引摘要一致；Task `:196` 为旧值。 | 更正 AC6 行旧数值，并让 Task 所有性能数字保持同一 Release baseline。 | open |
-| R-016 | P2 | `verification/FEA-07/evidence-index.md:1` | 索引说明中 `与 \final-evidence.log` 的首字符是实际 form-feed（U+000C），导致引用路径不是可读的 `final-evidence.log`。表格行自身路径正确，Task pin 与 SHA 不受影响。 | 读取文件原文发现控制字符；文件不列自身 SHA，13 个 Task canonical evidence hashes 匹配。 | 将控制字符替换为正常路径文本，复核索引格式与引用。 | open |
+| R-016 | P2 | `verification/FEA-07/evidence-index.md:1` | 索引说明在 `与` 后含实际 form-feed（U+000C），后接 `inal-evidence.log`，导致引用路径不是可读的 `final-evidence.log`。表格行自身路径正确，Task pin 与 SHA 不受影响。 | 读取文件原文发现控制字符；文件不列自身 SHA，13 个 Task canonical evidence hashes 匹配。 | 将控制字符替换为正常路径文本，复核索引格式与引用。 | open |
 
 ## 证据与治理核对
 

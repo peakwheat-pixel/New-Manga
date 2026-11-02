@@ -45,12 +45,17 @@ public sealed class FrontendSwitchCoordinator
 {
     private readonly SwitchJournal _journal;
     private readonly Func<SwitchStage, Exception?>? _faultInjector;
+    private readonly Action? _beforeJournalCommit;
     private readonly SemaphoreSlim _gate = new(1, 1);
 
-    public FrontendSwitchCoordinator(SwitchJournal journal, Func<SwitchStage, Exception?>? faultInjector = null)
+    public FrontendSwitchCoordinator(
+        SwitchJournal journal,
+        Func<SwitchStage, Exception?>? faultInjector = null,
+        Action? beforeJournalCommit = null)
     {
         _journal = journal ?? throw new ArgumentNullException(nameof(journal));
         _faultInjector = faultInjector;
+        _beforeJournalCommit = beforeJournalCommit;
     }
 
     /// <summary>True when the previous run left an in-flight switch that must be rolled back at startup.</summary>
@@ -105,20 +110,38 @@ public sealed class FrontendSwitchCoordinator
                     callbacks.OnStage?.Invoke(stage);
                 }
 
+                _beforeJournalCommit?.Invoke();
                 _journal.Commit();
                 return new SwitchResult(Succeeded: true, SwitchStage.Committed, Failure: null, RolledBack: false);
             }
             catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
             {
                 var failure = $"{current}: {ex.GetType().Name}: {ex.Message}";
-                _journal.Rollback(failure);
-                var rolledBack = await TryRollbackAsync(callbacks, cancellationToken).ConfigureAwait(false);
+                // R-015: the app-side compensation must run even if the journal rollback write fails.
+                var journalRolledBack = true;
+                try
+                {
+                    _journal.Rollback(failure);
+                }
+                catch (Exception journalError) when (journalError is IOException or InvalidOperationException or UnauthorizedAccessException)
+                {
+                    journalRolledBack = false;
+                }
+
+                var rolledBack = await TryRollbackAsync(callbacks, cancellationToken).ConfigureAwait(false) && journalRolledBack;
                 callbacks.OnStage?.Invoke(SwitchStage.RolledBack);
                 return new SwitchResult(Succeeded: false, current, failure, rolledBack);
             }
             catch (OperationCanceledException)
             {
-                _journal.Rollback("cancelled");
+                try
+                {
+                    _journal.Rollback("cancelled");
+                }
+                catch (Exception journalError) when (journalError is IOException or InvalidOperationException or UnauthorizedAccessException)
+                {
+                    // best-effort: cancellation still rolls the UI back below
+                }
                 await TryRollbackAsync(callbacks, CancellationToken.None).ConfigureAwait(false);
                 callbacks.OnStage?.Invoke(SwitchStage.RolledBack);
                 throw;

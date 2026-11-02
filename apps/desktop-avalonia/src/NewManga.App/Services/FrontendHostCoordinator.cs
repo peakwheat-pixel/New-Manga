@@ -35,7 +35,8 @@ public sealed class FrontendHostCoordinator
         string initialFrontendId,
         Func<string, Control> contentFactory,
         AppearanceCoordinator appearance,
-        SwitchJournal journal)
+        SwitchJournal journal,
+        Action? beforeJournalCommit = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentException.ThrowIfNullOrWhiteSpace(initialFrontendId);
@@ -46,7 +47,7 @@ public sealed class FrontendHostCoordinator
         _host = host;
         _contentFactory = contentFactory;
         _appearance = appearance;
-        _switcher = new FrontendSwitchCoordinator(journal);
+        _switcher = new FrontendSwitchCoordinator(journal, beforeJournalCommit: beforeJournalCommit);
         _currentFrontendId = initialFrontendId;
     }
 
@@ -130,7 +131,19 @@ public sealed class FrontendHostCoordinator
                         _currentFrontendId = target;
                     }
                 },
-                RollbackAsync = _ => InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder)),
+                RollbackAsync = async _ =>
+                {
+                    await InvokeOnUiAsync(() => _host.SetContent(previous ?? Placeholder));
+                    if (previousSettings is not null)
+                    {
+                        await _appearance.SaveAsync(previousSettings, CancellationToken.None).ConfigureAwait(true);
+                    }
+
+                    lock (_sync)
+                    {
+                        _currentFrontendId = previousFrontend;
+                    }
+                },
             };
 
             return await _switcher.SwitchAsync(

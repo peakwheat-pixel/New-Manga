@@ -386,3 +386,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   - `-m gpt-6.1-sol -c model_reasoning_effort="high"` → 正常（exit 0）。
   - `-m gpt-6-luna -c model_reasoning_effort="xhigh"` → 正常（exit 0；FEA-07 全部复核即用此形式）。
 - 结论：`-high`/`xhigh` 不是模型 ID 的一部分，而是 `model_reasoning_effort` 配置；CLI 只接受真实模型 ID。本账号支持 `gpt-6.1-sol` 与 `gpt-6-luna`，不存在 `gpt-6.1-sol-high` 模型。无需用户操作；如需 sol 高强度，用 `-m gpt-6.1-sol -c model_reasoning_effort="high"`。
+## 54. Codex 派发配置变更（用户指示，2026-11-02）
+
+- 用户指示：Codex 调用改为 `-m gpt-6.1-sol -c model_reasoning_effort="high"`。
+- 实测（嵌入 CLI 0.166.0-alpha.5.1，ChatGPT 账号）：exit 0（ok）。此前 `gpt-6.1-sol-high`/`"gpt-6-luna xhigh"` 作为模型 ID 均报 "not supported"（模型 ID 与 reasoning effort 是两个参数）。
+- 生效范围：自本轮起的 Codex 复核/实现派发统一使用该配置（历史报告不追溯修改）；r4 复核将用新配置。

@@ -1,4 +1,4 @@
-# FEA-07 Handoff（impl-r1 返修完成，待 r2 复核）
+# FEA-07 Handoff（impl-r3 返修进行中，待 r4 复核）
 
 - Task：`doc/tasks/FEA-07.md`（status: in_progress；owner: dsh；approval: scope_review_r2_approved_2026-11-02）
 - 范围：运行期双 UI 切换/稳定主窗/WindowBroker/switch journal/safe startup/双屏 DPI memento；`--presentation-host` 为 opt-in 开关；`--shell=legacy` 保持最高优先级。
@@ -17,3 +17,8 @@
 - R-002：IPresentationExitState 接入 live 内容状态（设置草稿/Workbench 运行/导入运行）阻断关闭。
 - R-014：最大化 memento 恢复。R-009/R-011：数字校正、证据索引去掉自引用 pin。
 - 验证：全量 **1113/0/57**；证据 `verification/FEA-07/rework-part2-verification.log`；r3 独立复核待派。
+## r3 返修 part1（2026-11-02）
+- R-015：journal finalize 失败补偿（内容/appearance/CurrentFrontendId 一起恢复；journal rollback 失败仍执行 UI 回滚）；并发确定性测试覆盖「首请求 finalize 失败、第二请求排队一致」。
+- R-013：确定性并发失败测试（finalize 注入）通过；R-009 AC6 数值统一 344.93；R-016 证据索引重生成；R-007 reviewer/handoff 更新。
+- 验证：全量 **1115/0/57**；证据 `verification/FEA-07/rework-r3-part1-verification.log`。
+- 待办：R-001 真实 Loaded/Rendered 门禁、R-002 隐藏缓存树聚合 + V2 Theme Studio draft；完成后用 `-m gpt-6.1-sol -c model_reasoning_effort="high"` 派 r4。
