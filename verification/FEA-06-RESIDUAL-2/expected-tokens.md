@@ -57,7 +57,7 @@ D-11 四态映射是既有九值的证据分组，不新增 AlertBanner 变体�
 
 D-14 例外保持：NotStarted glyph=Text.Secondary，catalog=Text.Disabled。裁决 A 已发布（`doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`），实现待 `D-14-STATUS-COLOR-FIX`；本卡九值交叉断言继续特判，不写 D-14 达成。
 
-像素与覆盖：见 `visuals/visual-inventory.md`；每图明确 HEAD/theme/frontend/frame/SHA256。每项签署均待独立 Reviewer（NOT_RUN）。StatusBand 错误/运行专用投影、原生 200% DPI/a11y 不用默认帧代替，见 Handoff 限制。
+像素与覆盖：见 `visuals/visual-inventory.md`；每图明确 HEAD/theme/frontend/frame/SHA256。每项签署均待独立 Reviewer（NOT_RUN）。R2R3 已补真实 NavRail 折叠与 StatusBand 错误/运行中通道；原生 200% DPI/a11y 仍 NOT_RUN，不用 headless 帧代替。
 
 R2R2-016：实际粒子执行器已迁至 Views/Fluent 内，尺寸变化才定位，帧内只写 Opacity/RenderTransform；进度为归一化传入值。域外 Controls/FluentUi.cs 的旧工厂/using 未改且不再被播放路径调用，其死代码清理为 NOT_RUN（需 DSH 扩域）。
 
@@ -65,4 +65,8 @@ R2R2-016：实际粒子执行器已迁至 Views/Fluent 内，尺寸变化才定�
 
 Slider 的 PART_DecreaseButton.Background 显式使用 DynamicResource 令牌（normal=Accent.Base，hover=Accent.Hover，disabled=Text.Disabled）；FluentMotionScope 不再给模板 RepeatButton 叠加通用按钮 tween。Fluent 按钮 hover/pressed 同时覆盖模板 PART_Root 背景，避免只有公开属性变色而实际像素仍走通用 ControlTheme。
 
-IN-1.1 渐变仍仅选既有 Bg 令牌：Canvas→Overlay（此前 Canvas→Sunken 的暗色差异不足）；循环仍为 8s，reduce 静态。decor shelf 原像素裁切 [216,95,1048,720]，viewport=1280x900；中间帧采样 2000ms，frame 明确 intermediate-2000ms，而非虚标精确半周期。生产时钟测试另实采 0/4000/7950ms。
+IN-1.1 当前 R2R3 渐变仅选既有 Bg 令牌：Overlay→Sunken；8s 循环，Opacity 波谷0、波峰1，reduce 静态1。decor shelf 原像素裁切 [216,95,1048,720]，viewport=1280x900；中间帧采样3000ms（Opacity≈0.853553），frame 明确 intermediate-3000ms，而非虚标精确半周期。生产时钟测试另实采0/4000/7950ms。R2R2 的 Canvas→Overlay / 0.55–1 仅属上一轮实现，light 可辨度已被 impl-r3 拒绝，本轮不继续引用该数值作达成证据。
+
+R2R3 追加有效属性：Danger pressed 的 Button.Background 基值与实际 PART_Root.Background 同为 `Nm.Color.Status.Failed`（Controls.Fluent.axaml:324/:404）；ContentPresenter.Foreground 与 Button.Foreground 同为 `Nm.Color.Bg.App`。对比度断言读取实际模板/文字，≥4.5:1；原图实色复核 light=5.9467:1 / dark=7.4751:1。公开 Background 正在 BrushTransition 插值时可能差一色阶，因此基值令牌和实际渲染对比度分别验证。
+
+StatusBand：实际当前页 `FluentPageState.Error/Conflict` → 文本 error class → `Nm.Color.Status.Failed`（Controls.Fluent.axaml:413）；`Running` → running class → `Nm.Color.Status.Running`（:416）。捕获用真实 Reader 页图读取异常与未完成的 Host 保存 await，不直接修改 Text/State 冒充投影。NavRail 通过顶部按钮真实隐藏/恢复；窗口1024/1280/1600分别断言Medium/Compact/Full，避免surface扣除边框后重新覆盖窗口断点。
