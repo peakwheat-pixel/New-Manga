@@ -716,3 +716,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Tab 切换 180ms、浮层进入 200ms 已实际消费并有断言；R1-003..008 维持已修复状态。
 - 余：浮层退出 160ms、feedback pressed 90/badge 150 消费、R1-002 统一动态控件、R1-009 台账/日志口径 → 完成后再派 fresh Codex impl-r2。
 - 全量 **1197/0/57**；交付 `e327b64b5`；证据 SHA `ff69d526…`。
+## 107. impl-r1 返修状态与剩余项（2026-11-03 00:57）
+
+- 已修复并有回归：R1-003/004/005/006/007/008；R1-001 已消费页面 240ms 淡入（含 Reader）、Tab 180ms、浮层进入 200ms；R1-002 已覆盖四个缓存页 feedback 过渡。
+- **仍未完成**：R1-001 浮层退出 160ms、feedback pressed 90ms/badge 150ms；R1-002 完全动态控件统一机制；R1-009 矩阵/AC/日志口径刷新（shell/EXIT/逐条 skip 格式）。
+- 当前全量 **1197/0/57**，交付 `e327b64b5`；以上剩余项完成前不得派 impl-r2（避免重复返修），也不得判定 AC2 达成。
+- 下一步：完成剩余 R1-001/002/009 → 全量+证据刷新 → fresh Codex impl-r2（reviewed_head=e327b64b5 后的 head）→ 集成/关闭。
