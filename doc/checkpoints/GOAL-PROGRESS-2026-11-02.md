@@ -179,3 +179,13 @@ m.fluent.visual 等被吞字符、Closeout 残留占位、测试表缺行；已�
   - **发现并记录偏差 D-1**：C-03 §2.1 要求唯一写者 AppearanceCoordinator 位于 NewManga.Appearance；PREREQ-1 交付在 NewManga.App/Services（只读）。已写入类 <remarks>、PREREQ-2 P5 强制项与新增 W-10。
   - impl-r4 P2 处置：P2-8（fluent-dark 的 light 槽改用 dark 调色板，避免 dark-only 包误用浅色值）、P2-12（移除 NewManga.Appearance 未使用的 ThemeEngine 引用）。
   - 全量 sln **978/0/57**；TokenGen/ThemeGen -- --check up to date；check.ps1 PASS（3 warnings）、erify_pins 15/15。
+## 24. 复核通道故障升级 + impl-r4 P2 清欠（2026-11-03，Round 20）
+
+- **复核通道全途径失败（Q-34 更新）**：本轮追加 3 次尝试全部失败——ea05-wire-scope-reviewer spawn（failed）、subagent_codex（product-error）、subagent_zcode（无产出）。另查明 **Codex CLI 可用但模型不可用**：codex-cli 0.162.0 存在，codex exec 对 gpt-6.1-sol 与 gpt-5-codex 均返回 400 model_not_found（"not supported when using Codex with a ChatGPT account"），即 CLI 配置为 API-key 模型但实际以 ChatGPT 账号鉴权。**结论：Codex/ZCode/派发子 agent 三条外部复核通道当前均不可用。**
+- **Q-34 建议（不变，附依据）**：① PREREQ-2 维持 proposed，不实施（范围冻结是 Gate，不自审放行）；② 通道恢复后立即补 scope-r2；③ 若需解锁，请用户裁决启用「DSH 自证 + 事后补审」降级路径（不推荐）；④ 可考虑的修复动作：把 Codex CLI 的默认模型改为该账号可用模型（属本机环境配置，需用户授权）。
+- **本轮已完成（不依赖复核通道）**：impl-r4 P2 清欠
+  - P2-15：AppearanceDefaults.AcrylicStrength 0.5 → **0.85**（对齐设计 01 Nm.Material.Acrylic.Opacity = 0.85）。
+  - P2-10：AppearanceJson 增加读/写口径 <remarks> 固化（读侧扁平+嵌套兼容；写侧只写嵌套 canonical + schemaVersion 2；迁移幂等）。
+  - P2-4：新增 Frontend_UnknownId_IsPassedThrough 测试，明确「未知 frontendId 在此层透传、fail-safe 归 PREREQ-2 selector」。
+  - P2-16 裁定为**非缺陷**：设计 01 G-1b 明确「96 作为设计常量，FEA-05 生成令牌时登记」，Nm.Size.MatrixColumnMin=96 以字面量令牌登记即符合该要求（非派生计算）。
+  - 全量 sln **979/0/57**（+1 测试）；两个 --check up to date；check.ps1 PASS（3 warnings）；erify_pins 15/15。
