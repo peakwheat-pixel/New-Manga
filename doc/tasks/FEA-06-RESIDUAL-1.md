@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；impl-r1 changes_requested（报告在库）；impl-r2 **changes_requested**（Codex fresh session，P0=0/P1=3/P2=3；doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md，reviewed_head eaf7b74d8）；R2 返修已交付（1233/0/57，`fcf28bdfc`）；当前：fresh Codex **impl-r3** 复核（job 运行中）；当前 Appointment：findings 返修（DSH，R1-001…R1-009）→ 待 fresh impl-r2 复核
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；impl-r1 changes_requested（报告在库）；impl-r2 **changes_requested**（Codex fresh session，P0=0/P1=3/P2=3；doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md，reviewed_head eaf7b74d8）；impl-r3 **changes_requested**（P0=0/P1=1：R3-001 Reader 中部点击无法唤回工具条；报告在库）；当前：R3-001 返修（Codex 实施 job 运行中）→ impl-r4；当前 Appointment：findings 返修（DSH，R1-001…R1-009）→ 待 fresh impl-r2 复核
 depends_on:
   - FEA-06
   - FEA-07
