@@ -14,7 +14,7 @@ base_commit: 669a4ae02bf8bf9d7dbdda01c4b2b9de71cb1431
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 0187b0920（R2 返修部分：删除假 decor、真实 light/dark、47 图、expected-tokens、派生控件选择器；余 R2-001 真实 decor/R2-006/008/009/011/012/017）
+delivery_head: 21e305249（R2-002/003/005 证据真实性修复：页面真实双主题、组件 theme=current、27 PNG；余 R2-001 decor/R2-006/008/009/011/012/017）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-2

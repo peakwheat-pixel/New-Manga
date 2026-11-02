@@ -891,3 +891,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - R2-004：新增 `verification/FEA-06-RESIDUAL-2/expected-tokens.md`（逐组期望令牌+锚点+D-14 特例+状态通道缺口如实标注）。
 - 验证：默认零写入、opt-in 仅本卡 visuals 新增；全量 **1272/0/57**；提交 `0187b0920`；未 push；旧四 PNG 未动。
 - 仍余：**R2-001 真实 decor 帧（P0 未闭环）**、R2-006 Slider thumb、R2-008 inventory head、R2-009 日志格式、R2-011 状态通道/R2-012 失焦与可读性、R2-017 Handoff；05:24 提醒已更新。
+## 137. R2-002/003/005 证据真实性修复（2026-11-03 05:02）
+
+- R2-002：页面 light/dark 经 AppearanceCoordinator 真实切换（16 对 SHA 全不同）；组件窗口因 palette provider 交换后 variant 不改变解析值，**如实标注 theme=current**（不再虚标双主题），删除重复 light/dark 组件文件。
+- R2-003：组件清单 17 状态（含 SurfaceCard default/disabled、BookRow disabled、Secondary/Danger、Slider disabled、ChapterList、PageThumbStrip、EmptyState 等）；总计 **27 PNG + inventory**（pages 8 + components 17 + 2 页面? 见 inventory）+ expected-tokens。
+- **R2-001 诚实处置**：真实 ShelfPageView 装饰层存在，但 headless `ForceRenderTimerTick` 下 FluentDecorativeLoop 未推进（3 帧同 SHA），Reader 粒子因 fake 单页章节 PageIndex 不前进；**已删除不可复现 decor 输出，不造假**，登记为待用可控帧源/测试钩子解决的 P0 残项。
+- 验证：默认零写入、opt-in 仅本卡 visuals 新增；全量 **1272/0/57**；提交 `21e305249`；未 push；旧四 PNG 未动。
+- 仍余：R2-001 decor 真实帧、R2-006 Slider thumb、R2-008 inventory head、R2-009 日志格式、R2-011 状态通道、R2-012 失焦/可读性、R2-017 Handoff；05:24 提醒已更新。
