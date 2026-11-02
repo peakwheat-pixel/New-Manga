@@ -90,14 +90,16 @@ public sealed class WorkbenchPageView : UserControl
         _inspector = FluentUi.Stack("fluent-page-layout");
         // I-9：未保存圆点（设计 06 §3 满态「标题旁圆点 + 底部文案」）；状态语义色 + Name，非仅颜色。
         _dirtyDot = new Ellipse { Width = 8, Height = 8, IsVisible = false };
+        _dirtyDot.Classes.Add("fluent-feedback-badge");
         _dirtyDot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Status.Blocked");
         AutomationProperties.SetName(_dirtyDot, "有未保存的译文草稿");
         _dirtyStatus = FluentUi.Text("未保存的译文草稿", "fluent-status-text");
         _dirtyStatus.Classes.Set("failed", false);
-        // 标题行只构造一次（Render 反复 Clear/重建 _inspector 时复用，避免圆点控件重复挂父）。
+        // 标题行保持挂载，避免 Render 中断圆点的出现动画。
         _inspectorTitle = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         _inspectorTitle.Children.Add(FluentUi.Text("检查器", "fluent-page-title"));
         _inspectorTitle.Children.Add(_dirtyDot);
+        _inspector.Children.Add(_inspectorTitle);
         _inspectorCard = new SurfaceCard
         {
             Child = _inspector,
@@ -416,8 +418,7 @@ public sealed class WorkbenchPageView : UserControl
         _dirtyDot.IsVisible = _viewModel.HasUnsavedDraft;
         _dirtyStatus.IsVisible = _viewModel.HasUnsavedDraft;
 
-        _inspector.Children.Clear();
-        _inspector.Children.Add(_inspectorTitle);
+        while (_inspector.Children.Count > 1) _inspector.Children.RemoveAt(_inspector.Children.Count - 1);
         if (_viewModel.SelectedRegion is null)
         {
             _inspector.Children.Add(FluentUi.Empty("未选择区域", "在画布或列表中选择一个 Region。", null, null));

@@ -7,6 +7,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Services;
@@ -73,6 +74,9 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     private bool _appearanceMotionSubscribed;
     private bool _motionNavigationEnabled;
     private MotionTimingProfile? _motionTimings;
+    private FluentFrameAnimation? _overlayExit;
+    private bool _overlayClosing;
+    internal IFluentMotionClock MotionClock { get; set; } = FluentRenderClock.Instance;
     private bool _textInputFocused;
 
     public FluentShellSurface() : this(null, null) { }
@@ -135,6 +139,10 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         Require<Button>("SettingsCommandButton").Click += (_, _) => Navigate(FluentPage.Settings);
         Require<Button>("HelpButton").Click += (_, _) => OpenShortcutHelp();
         SizeChanged += (_, args) => ApplyResponsiveBand(args.NewSize.Width);
+        // Some page commands are rebuilt from real projections after navigation. Prepare those
+        // buttons before their native input handler changes IsPressed, without changing that handler.
+        AddHandler(PointerPressedEvent, (_, args) => PreparePressedFeedback(args.Source), RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, (_, args) => PreparePressedFeedback(args.Source), RoutingStrategies.Tunnel);
         AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         ApplyResponsiveBand(ShellLayout.BreakpointFull);
         ApplyMotion(appearance?.Settings ?? AppearanceDefaults.Settings);
@@ -454,7 +462,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
     {
         // impl-r1 R1-005：最上层是 shell 浮层（命令面板/键位速查）时，Esc 必须先关闭它，
         // 不能被设置页下层的离开确认抢先处理。
-        if (_modalHost.IsVisible)
+        if (_modalHost.IsVisible && !_overlayClosing)
         {
             CloseTopSurface();
             return;
@@ -518,6 +526,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
                 button.Click += (_, _) => { CloseTopSurface(); ExecuteCommand(command); };
                 list.Children.Add(button);
             }
+            ApplyFeedbackTransitions(_motionTimings);
         }
         search.TextChanged += (_, _) => RenderCommands();
         RenderCommands();
@@ -540,6 +549,11 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void OpenDialog(string title, IEnumerable<Control> content)
     {
+        // A new overlay supersedes an exiting one; its old frame callback cannot hide the new host.
+        _overlayExit?.Cancel();
+        _overlayExit = null;
+        _overlayClosing = false;
+        _modalHost.IsHitTestVisible = true;
         var panel = new StackPanel { Classes = { "fluent-dialog-content" } };
         panel.Children.Add(new TextBlock { Text = title, Classes = { "fluent-page-title" } });
         foreach (var child in content) panel.Children.Add(child);
@@ -558,7 +572,7 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _activeDialog = scrim;
         _modalHost.Child = scrim;
         // I-5 / impl-r1 R1-001: overlay entrance consumes the frozen 200ms navigation parameter;
-        // reduce/category-off keeps it instant. (Exit 160ms remains TODO for the next batch.)
+        // reduce/category-off keeps it instant.
         var overlayInMs = _motionTimings?.NavigationOverlayInMilliseconds ?? 0d;
         scrim.Opacity = overlayInMs > 0d ? 0d : 1d;
         scrim.Transitions = overlayInMs > 0d
@@ -575,7 +589,10 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _modalHost.IsVisible = true;
         if (overlayInMs > 0d)
         {
-            Dispatcher.UIThread.Post(() => scrim.Opacity = 1d, DispatcherPriority.Render);
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (ReferenceEquals(_activeDialog, scrim) && !_overlayClosing) scrim.Opacity = 1d;
+            }, DispatcherPriority.Render);
         }
 
         _modalHost.Focus();
@@ -586,12 +603,29 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
 
     private void CloseTopSurface()
     {
-        if (_modalHost.IsVisible)
+        if (_modalHost.IsVisible && !_overlayClosing)
         {
-            _modalHost.IsVisible = false;
-            _modalHost.Child = null;
-            _activeDialog = null;
+            _overlayClosing = true;
+            _modalHost.IsHitTestVisible = false;
+            var scrim = _activeDialog!;
+            // End logical interaction and return focus immediately, while preserving the visual host
+            // for the entire resolved exit duration. Disable entrance transitions before frame updates.
+            var from = scrim.Opacity;
+            scrim.Transitions = null;
             RestoreFocusAfterDialog();
+            _overlayExit = new FluentFrameAnimation(scrim);
+            var easing = new SplineEasing(0.4, 0, 1, 1);
+            _overlayExit.Run(MotionClock, _motionTimings?.NavigationOverlayOutMilliseconds ?? 0,
+                progress => scrim.Opacity = from * (1 - easing.Ease(progress)),
+                () =>
+                {
+                    if (!ReferenceEquals(_activeDialog, scrim)) return;
+                    _modalHost.IsVisible = false;
+                    _modalHost.Child = null;
+                    _activeDialog = null;
+                    _overlayClosing = false;
+                    _overlayExit = null;
+                });
             return;
         }
         if (_currentPage == FluentPage.Reader) CloseReader();
@@ -642,6 +676,12 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         // I-5: consume the frozen motion parameter table instead of hard-coded durations. The page host
         // fades for the resolved navigation duration; reduce/category-off resolves to 0ms (no transition).
         _motionTimings = MotionTimings.Resolve(resolution);
+        if (_motionTimings.NavigationOverlayOutMilliseconds == 0 && _overlayClosing) _overlayExit?.Finish();
+        if (_motionTimings.NavigationOverlayInMilliseconds == 0 && _activeDialog is { } dialog)
+        {
+            dialog.Transitions = null;
+            dialog.Opacity = 1;
+        }
         ApplyNavigationTransition(_motionTimings);
         _workbenchView.ConfigureTabMotion(_motionTimings.NavigationTabMilliseconds);
         ThemeManager?.SetReducedMotion(!resolution.Enabled);
@@ -728,11 +768,28 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
                 continue;
             }
 
-            foreach (var button in root.GetVisualDescendants().OfType<Button>())
+            // Content can already belong to the logical tree before its template/layout attaches it
+            // to the visual tree. Include both so newly navigated pages get feedback before first use.
+            var controls = root.GetVisualDescendants().OfType<Control>()
+                .Concat(((Control)root).GetLogicalDescendants().OfType<Control>()).Distinct().ToArray();
+            foreach (var button in controls.OfType<Button>())
             {
                 button.Transitions = transitions;
+                FluentFeedbackMotion.Configure(button, timings?.FeedbackPressedMilliseconds ?? 0, MotionClock);
+            }
+
+            foreach (var badge in controls.Where(control => control.Classes.Contains("fluent-feedback-badge")))
+            {
+                FluentFeedbackMotion.Configure(badge, timings?.FeedbackBadgeMilliseconds ?? 0, MotionClock, badge: true);
             }
         }
+    }
+
+    private void PreparePressedFeedback(object? source)
+    {
+        var button = source as Button ?? (source as Visual)?.GetVisualAncestors().OfType<Button>().FirstOrDefault();
+        if (button is not null)
+            FluentFeedbackMotion.Configure(button, _motionTimings?.FeedbackPressedMilliseconds ?? 0, MotionClock);
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

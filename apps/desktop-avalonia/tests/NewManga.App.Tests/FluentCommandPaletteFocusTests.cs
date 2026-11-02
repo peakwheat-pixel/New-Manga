@@ -50,6 +50,8 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
             host: new FakeHostController(FakeHostController.ReadySnapshot("Sample Manga")),
             appearance: appearance);
         shell.Show();
+        var motionClock = new ManualFluentMotionClock();
+        shell.Surface.MotionClock = motionClock;
         Dispatcher.UIThread.RunJobs();
 
         await appearance.SaveAsync(AppearanceDefaults.Settings with { MotionMode = MotionMode.Full, MotionCategories = MotionCategories.All });
@@ -89,6 +91,8 @@ public sealed class FluentCommandPaletteFocusTests : IDisposable
         Assert.True(RowCount() > 0);
 
         Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        motionClock.Advance(160);
         Dispatcher.UIThread.RunJobs();
 
         Assert.False(modal.IsVisible);

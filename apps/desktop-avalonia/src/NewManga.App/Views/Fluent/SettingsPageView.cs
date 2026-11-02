@@ -46,6 +46,7 @@ public sealed class SettingsPageView : UserControl
         _stateHost = new Border { IsVisible = false };
         // I-9：设置页未保存圆点（dirty 指示；语义色 + Name，非仅颜色）。
         _dirtyDot = new Ellipse { Width = 8, Height = 8, IsVisible = false };
+        _dirtyDot.Classes.Add("fluent-feedback-badge");
         _dirtyDot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Status.Blocked");
         AutomationProperties.SetName(_dirtyDot, "有未保存的设置修改");
         _search = FluentUi.Search("搜索设置", "搜索设置分组");

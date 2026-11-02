@@ -325,6 +325,8 @@ public sealed class FluentResidualSettingsLeaveTests : IDisposable
     {
         var appearance = CreateAppearance();
         var shell = CreateDirtySettingsShell(appearance, out _);
+        var motionClock = new ManualFluentMotionClock();
+        shell.Surface.MotionClock = motionClock;
         var palette = shell.GetVisualDescendants().OfType<Button>()
             .First(button => AutomationProperties.GetName(button) == "打开命令面板");
         palette.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -335,6 +337,8 @@ public sealed class FluentResidualSettingsLeaveTests : IDisposable
 
         // 第一次 Esc 只关闭最上层 shell 浮层，不触发下层设置页离开确认。
         Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+        motionClock.Advance(160);
         Dispatcher.UIThread.RunJobs();
         Assert.False(modal.IsVisible);
         Assert.False(shell.SettingsView.LeaveConfirmationVisible);
