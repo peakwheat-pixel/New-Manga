@@ -62,7 +62,7 @@ allowed_paths:
 | P4 | 测试：selector 选择逻辑（fluent/fluent-dark/v2/未知）+ V2 回归不破 |
 | P5 | **W-9 承接（Q-32）**：写者收敛——**先把 `AppearanceCoordinator` 从 `NewManga.App/Services` 迁入 `NewManga.Appearance`（C-03 §2.1 唯一写者位置；PREREQ-1 偏差 D-1）**，再加 `AppearanceCoordinator.SaveAsync` 调 `AppearanceStore.WriteAsync`（唯一写者 = `NewManga.Appearance`，不引入反向引用）；`ThemeSettingsStore.SaveAsync` 标 `[Obsolete]` 并在一个 release 内双写 `presentation-settings.json`（App 侧 sink adapter `IThemeSettingsSink`，避免 ThemeEngine→Appearance 引用） |
 | P7 | **Q-33 residual ③ 承接（R2-P1-2 处置）**：`builtin.fluent-dark` 的 `nm.fluent.visual/1` manifest 条目（写入主题包 `metadata.extra` 或 descriptor 扩展位，按 `ThemePackageJson` 现有 schema 能承载的最小形式）+ `ThemeValidator.Validate` 显式测试 + `BuiltInThemes` 加载/Current 不生效断言 |
-| P6 | **W-9 承接（Q-32）+ C-02 V-07 合规路径（R2-P1-3 处置）**：`Nm.Material.Acrylic.Base/.Tint` 以**主题层令牌**承载——`NmKeys` 加两常量（**不写入** `Tokens.Global.axaml`）、`ThemeLayerAllowedKeys` 放行、主题包 `colors` 承载取值；`Nm.Material.Acrylic.Opacity`/`Mica.Enabled` 保持 PREREQ-1 已交付的全局令牌。**明确不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 构造器签名**（C-02 V-07：「不新增枚举值、不改公开方法签名」），因此**不需要契约 UNFREEZE**；`R14ContractTests` 的 59/65 计数随主题层键面 +2 同步。 |
+| P6 | **W-9 承接（Q-32）+ C-02 V-07 合规路径（R2-P1-3 处置）**：`Nm.Material.Acrylic.Base/.Tint` 以**主题层令牌**承载——`NmKeys` 加两常量（**不写入** `Tokens.Global.axaml`）、`ThemeLayerAllowedKeys` 放行、主题包 `colors` 承载取值；`Nm.Material.Acrylic.Opacity`/`Mica.Enabled` 保持 PREREQ-1 已交付的全局令牌。**明确不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 构造器签名**（C-02 V-07：「不新增枚举值、不改公开方法签名」），因此**不需要契约 UNFREEZE**；`R14ContractTests` 的计数：**59 不变**（全局令牌数不增），**65 → 67**（主题层可覆写键面 +2，即 `Nm.Material.Acrylic.Base/.Tint`）。 |
 
 ## 验收标准
 
@@ -76,7 +76,7 @@ allowed_paths:
 
 ## 禁止范围
 
-- 不实现四页内容（FEA-06）；**不改 ThemeEngine 的既有主题包语义**（`newmanga-default` 字节不变；新增 `ThemeMaterial.Fluent` 值属本卡 W-9 范围）；不改 Core/契约；不 push。
+- 不实现四页内容（FEA-06）；**不改 ThemeEngine 的既有主题包语义**（`newmanga-default` 字节不变；**不新增 `ThemeMaterial` 枚举值、不改 `ThemeTokenSet` 构造器签名**——Material 走主题层令牌，见 P6/W-11）；不改 Core/契约；不 push。
 
 ## 附加裁决点（DSH 已裁）
 
