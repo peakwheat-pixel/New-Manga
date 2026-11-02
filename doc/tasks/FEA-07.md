@@ -94,6 +94,15 @@ allowed_paths:
 - 证据：`verification/FEA-07/slice-1-verification.log`（build 0/0；Presentation 28/0；全量 **1062/0/57**；CoreClient 已知 flaky 首跑 1 failed、重跑全绿，已在日志注记）。
 - 下一批切片：②稳定主窗 + 内容树切换接线（App/Presentation 宿主 + Fluent content surface）；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/证据/独立复核。
 
+## 实施记录（切片 2，2026-11-02，owner=DSH）
+
+- `Presentation.Avalonia/Hosting/FrontendContentHost.cs`：稳定窗口内容槽（单一 `Content`，可替换/清空，不感知 frontend）。
+- `App/Services/FrontendHostCoordinator.cs`：切换编排——校验冻结 selector 语义（未知 id 拒绝、不静默改前端）、构建替换树、经唯一写者 `AppearanceCoordinator` 持久化 `theme.frontendId`、内容树 swap；任一失败恢复旧树/旧设置。
+- `NewManga.App.csproj` 增加对 `NewManga.Presentation.Avalonia` 的 `ProjectReference`（W-6 允许方向；Host/Core 方向未变）。
+- 测试：`NewManga.App.Tests/FrontendHostCoordinatorTests.cs` 5 测试全绿（切换成功/未知 id 拒绝不改 UI/构建失败回滚/journal 记录/幂等/100 次往返内容树唯一且 journal 干净）。
+- 证据：`verification/FEA-07/slice-2-verification.log`（build 0/0；切换 5/0；全量 **1067/0/57**；CoreClient 已知 flaky 首跑 1 failed、隔离重跑全绿）。
+- 下一批：②b 稳定主窗接入（`PresentationWindow` + 真实 V2/Fluent content factory + App 组合根）；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -143,6 +152,7 @@ allowed_paths:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-FEA07-SLICE1 | AC1–AC3/AC8 | `verification/FEA-07/slice-1-verification.log` | `-` | `a63982423ba6e79f96f76bacc27049a2bba18506fdf9411c13df0c5f13dac78d` | CANONICAL |
+| EV-FEA07-SLICE2 | AC1/AC2/AC8 | `verification/FEA-07/slice-2-verification.log` | `-` | `55fd5e5fb1c5a9a146e3cda5e5a8087ebff4beeee9a5c480e81d539d6bbfe771` | CANONICAL |
 
 ## Closeout Record
 

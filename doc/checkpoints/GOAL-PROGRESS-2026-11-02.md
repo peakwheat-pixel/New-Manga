@@ -298,3 +298,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **测试**：`tests/NewManga.Presentation.Avalonia.Tests/` 28 测试全绿（journal/阶段顺序/每阶段失败回滚/rollback 失败/并发串行/窗口/退出）。
 - **验证**：build 0/0；Presentation 28/0；全量 **1062/0/57**（基线 1034+28；CoreClient 已知时间敏感 flaky 首跑 1 failed、重跑全绿，日志注记）；证据 `verification/FEA-07/slice-1-verification.log`。
 - **下一批切片**：②稳定主窗 + 内容树切换接线（App/Presentation 宿主 + Fluent content surface）；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/证据/独立复核。
+## 41. FEA-07 实施切片 2 + 待裁决区（2026-11-02，owner=DSH）
+
+- **切片 2 完成**：`Presentation.Avalonia/Hosting/FrontendContentHost`（稳定窗口内容槽）+ `App/Services/FrontendHostCoordinator`（selector 校验→构建替换树→经 `AppearanceCoordinator` 单写者持久化 `theme.frontendId`→swap；失败恢复旧树/旧设置）+ App.csproj→Presentation 引用（W-6 方向）。
+- 测试：`FrontendHostCoordinatorTests` 5 例全绿（成功切换/未知 id 拒绝不改 UI/构建失败回滚+journal/幂等/100 次往返单树且 journal 干净）；证据 `verification/FEA-07/slice-2-verification.log`；build 0/0；全量 **1067/0/57**（CoreClient 已知 flaky 首跑 1 failed、重跑全绿，日志注记）。
+- 下一批：②b `PresentationWindow` + 真实 V2/Fluent content factory + App 组合根接入；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/独立复核。
+
+### 待裁决（非阻塞，按目标规则先推进并附推荐）
+
+| # | 事项 | 推荐 | 处置状态 |
+|---|---|---|---|
+| D-1 | 原生双屏/拔屏/DPI 矩阵需真机（本机可能无双屏/可切 DPI 环境） | 代码与 headless 证据先完成；AC5 原生项如无硬件则登记 blocked/residual，待用户提供真机或明确降级接受；**不伪造证据** | 继续推进，不阻塞其余切片 |
+| D-2 | 稳定主窗默认化时机（改默认启动路径会影响现有启动测试/用户可见行为） | 先实现 `PresentationWindow` 并以开关启用（测试可覆盖），AC1 全绿后再默认化；避免一次性破坏既有 463 个 App.Tests | 待切片 2b 实施 |
+| D-3 | FEA-07 实现者与复核者独立性 | Codex 已做 scope review → **不实现**；impl review 用 fresh Codex CLI 会话（不同上下文）；若 Codex 不可用则派 subagent_zcode（当前通道故障，需恢复） | 已按此执行 |
+| D-4 | `--shell=legacy` 运维回退保留期 | FEA-07 完成后保留一个 release，移除决策交 FEA-15/用户；FEA-07 不改其语义 | 继续保留 |
+| D-5 | 依赖 DSH 单方裁决的其他范围事项（如需用户产品取舍） | 暂无；出现时按目标规则交 Codex 裁决（Codex 非实现者情形）并记录依据 | 无 |

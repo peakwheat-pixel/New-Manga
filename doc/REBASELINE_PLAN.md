@@ -18,7 +18,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**in_progress**（owner=DSH；切片1 done：Presentation.Avalonia 模块+28 测试，全量 1062/0/57；剩余：稳定主窗接线/启动矩阵/双屏 DPI）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**in_progress**（owner=DSH；切片1/2 done：Presentation 模块 + 切换编排，全量 1067/0/57；剩余：稳定主窗接入/启动矩阵/双屏 DPI）|
 |FEA-06-RESIDUAL-1|FEA-06、FEA-07、FEA-09/10/11/12/13|**proposed**（Fluent 四页 AC1–AC7 residual；按端口就绪分批释放，不阻塞 FEA-07）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|

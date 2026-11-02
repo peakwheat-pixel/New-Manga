@@ -41,6 +41,7 @@
     <ProjectReference Include="..\NewManga.Appearance\NewManga.Appearance.csproj" />
     <!-- V11R-D-1: the design system is the single source of tokens/styles/controls. -->
     <ProjectReference Include="..\NewManga.DesignSystem\NewManga.DesignSystem.csproj" />
+    <ProjectReference Include="..\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj" />
   </ItemGroup>
 
 </Project>
