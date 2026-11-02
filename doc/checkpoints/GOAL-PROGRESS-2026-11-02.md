@@ -292,3 +292,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **置 ready（W-8）**：`status: ready`、`approval: scope_review_r2_approved_2026-11-02`、`owner: dsh`、`branch: main`、`worktree: G:\CODEX\New Manga`、`base_commit: cbfb7bbc9`（冻结 head）；STATUS/PLAN/READY/LEDGER 同步（READY=FEA-07）。
 - **实施分工**：FEA-07 owner=**DSH**（Codex 承担 scope/impl 独立复核，不实现）；实现后由 Codex CLI fresh session 做独立 impl review，DSH 集成验证。原生双屏/DPI 验收（AC5）需真机矩阵，若本机无对应硬件将按 residual/blocked 登记，不伪造证据。
 - **下一步**：DSH 开始 FEA-07 实施（切片：①Presentation.Avalonia 模块 + switch journal/window broker/exit 协调；②稳定主窗 + 内容树切换接线；③safe startup/启动矩阵；④双屏 DPI memento + 测试/证据；⑤全量回归 + 独立复核）。
+## 40. FEA-07 实施切片 1（2026-11-02，owner=DSH）
+
+- **新建模块**：`apps/desktop-avalonia/src/NewManga.Presentation.Avalonia/`（W-6）——`SwitchStage`/`SwitchJournal`（原子 JSON、损坏容忍、启动恢复）/`FrontendSwitchCoordinator`（阶段门禁+故障注入+回滚+并发串行）/`WindowBroker`（单一主窗+二窗登记、不拥有 Host）/`ExitCoordinator`（未保存编辑/运行中 Run 阻断退出）；已登记 sln。
+- **测试**：`tests/NewManga.Presentation.Avalonia.Tests/` 28 测试全绿（journal/阶段顺序/每阶段失败回滚/rollback 失败/并发串行/窗口/退出）。
+- **验证**：build 0/0；Presentation 28/0；全量 **1062/0/57**（基线 1034+28；CoreClient 已知时间敏感 flaky 首跑 1 failed、重跑全绿，日志注记）；证据 `verification/FEA-07/slice-1-verification.log`。
+- **下一批切片**：②稳定主窗 + 内容树切换接线（App/Presentation 宿主 + Fluent content surface）；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/证据/独立复核。

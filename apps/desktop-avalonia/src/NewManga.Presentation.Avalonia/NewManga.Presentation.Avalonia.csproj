@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NewManga.Presentation.Avalonia</RootNamespace>
+    <AssemblyName>NewManga.Presentation.Avalonia</AssemblyName>
+    <Description>FEA-07 runtime frontend switching (AD-002 / proposal §7): switch journal, window broker, process-level exit coordination and the switch transaction orchestrator. UI hosting lives in the app composition root; this module owns the restart-safe switching state machine and lifecycle bookkeeping.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj" />
+    <ProjectReference Include="..\NewManga.Appearance\NewManga.Appearance.csproj" />
+    <ProjectReference Include="..\NewManga.DesignSystem\NewManga.DesignSystem.csproj" />
+  </ItemGroup>
+
+</Project>

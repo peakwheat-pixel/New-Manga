@@ -3,7 +3,7 @@ id: FEA-07
 title: 运行期切换与窗口（双 UI 切换、WindowBroker、switch journal、安全启动）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
@@ -82,6 +82,18 @@ allowed_paths:
 | P6 | H2/H3 验证：稳定 Window + 内容替换承接双屏 Inspector；热切换性能 baseline（p50/p95/峰值、最大 UI 冻结、内存/句柄） | 方案 §12.1/§12.3、H2/H3 |
 | P7 | 测试与证据：切换矩阵/失败矩阵/启动矩阵/project-reference 检查/原生矩阵/性能报告；全量回归 | 方案 §12.1/§12.3 |
 
+## 实施记录（切片 1，2026-11-02，owner=DSH）
+
+- 新建 `apps/desktop-avalonia/src/NewManga.Presentation.Avalonia/`（W-6 模块落点）并登记 sln：
+  - `Switching/SwitchStage.cs`：切换阶段（Preparing→Building→Layout→Loaded→Rendered→Committed/RolledBack）
+  - `Switching/SwitchJournal.cs`：原子 JSON journal（Begin/Advance/Rollback/Commit/TryRead/HasInterruptedSwitch；损坏文件容忍）
+  - `Switching/FrontendSwitchCoordinator.cs`：切换事务编排（阶段门禁 + 每阶段故障注入 + 失败回滚 + 并发串行化 + 启动恢复查询）
+  - `Windows/WindowBroker.cs`：单一稳定主窗 + 二窗（Inspector/Floating）登记；不拥有 Host 生命周期
+  - `Lifecycle/ExitCoordinator.cs`：进程级退出判定（未保存编辑/运行中 Run 阻断）
+- 新建 `tests/NewManga.Presentation.Avalonia.Tests/`（28 测试，全绿）：journal 持久化/恢复/损坏容忍、阶段顺序、每阶段失败回滚、rollback 失败仍报失败、并发串行化、窗口 broker、退出协调。
+- 证据：`verification/FEA-07/slice-1-verification.log`（build 0/0；Presentation 28/0；全量 **1062/0/57**；CoreClient 已知 flaky 首跑 1 failed、重跑全绿，已在日志注记）。
+- 下一批切片：②稳定主窗 + 内容树切换接线（App/Presentation 宿主 + Fluent content surface）；③safe startup/启动矩阵；④双屏/DPI memento；⑤全量回归/证据/独立复核。
+
 ## 验收标准
 
 - [ ] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<TODO>>`
@@ -130,7 +142,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| EV-FEA07-SLICE1 | AC1–AC3/AC8 | `verification/FEA-07/slice-1-verification.log` | `-` | `a63982423ba6e79f96f76bacc27049a2bba18506fdf9411c13df0c5f13dac78d` | CANONICAL |
 
 ## Closeout Record
 
