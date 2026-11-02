@@ -371,3 +371,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **生命周期（251b5df0d）**：卡内登记 reviewer=codex-cli（impl-r1）、delivery_head=7ca2e367b（代码 head）、handoff `doc/handoffs/FEA-07-impl-r1.md`。
 - **精确 head 证据（f28d97b99）**：`verification/FEA-07/final-evidence.log`（head 7ca2e367b；build 0/0；全量 **1106/0/57**；check PASS(3)；pins 15/15；两生成物 byte-for-byte）；证据索引更新；Release perf p50 99.91ms / p95 344.93ms / max 344.93ms / 内存 +208B / 句柄 0（缓存复用后）。
 - **r2 复核已派发**（fresh Codex CLI，被审 f28d97b99/代码 head 7ca2e367b；job pwsh-ddae7f4df44e488f），等待结果。
+## 52. FEA-07 impl-r2 changes_requested → 返修 part2 + r3 复核派发（2026-11-02）
+
+- **Review r2**：`doc/reviews/FEA-07-impl-r2.md`（Codex CLI fresh，P0=0/P1=6/P2=3；被审 f28d97b99/代码 7ca2e367b）。处置：R-013 并发串行门（no-op/快照/事务同门）+ 并发测试；R-001 真实 100 次切换（50 往返）+ 状态断言 + Layout/Loaded/Rendered 真实门禁；R-002 `IPresentationExitState` live 状态（设置草稿/Workbench 运行/导入运行）；R-003 journal previous + 启动崩溃窗口还原；R-004 `StartupPlan.Selection` 单源；R-014 最大化 memento；R-009 数值校正；R-011 索引去自引用 pin；R-007 reviewer/delivery_head/handoff 更新。
+- **验证**：代码 head `3220abd59`；build 0/0；全量 **1113/0/57**；check PASS(3)；pins 15/15；两生成物 up-to-date；`final-evidence.log`（SHA 4ab4386d…）；证据提交 `b3fa8dc0c`。
+- **r3 复核已派发**（fresh Codex CLI，被审 b3fa8dc0c/代码 3220abd59；job pwsh-73017f1cb59d4226），等待结果。
