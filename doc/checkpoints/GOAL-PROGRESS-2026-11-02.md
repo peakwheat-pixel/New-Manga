@@ -686,3 +686,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - `FluentComponentPointerStatesTests` 增补 BookRow（Bg.Canvas→hover Bg.Overlay→pressed/selected Accent.Muted）；矩阵 BookCard/BookRow 均升级 EFFECTIVE。
 - 验证：build 0/0；无过滤全量 **1195/0/57**；旧 PNG 零漂移；治理 PASS。交付 `59ef3abef`；证据 SHA `177e5cc6…`。
 - 下一步：Codex 00:23 恢复后运行 `dispatch-review.ps1` 派独立 impl Review（所有前置就绪）；ZCode 03:02 备用。
+## 101. FEA-06-RESIDUAL-1 D-9 复核降级路径（2026-11-03 00:20）
+
+- 记录 D-9：若 Codex（00:23）与 ZCode（03:02）均不可用，独立 impl Review 改由 DSH 派发**独立上下文子 agent**（2026-10-31 裁决允许；只读 head、产出报告），DSH 仅做 findings 处置/集成验证，不自审。
+- 当前仍优先等待 Codex 00:23；`dispatch-review.ps1` 与 prompt 就绪。
