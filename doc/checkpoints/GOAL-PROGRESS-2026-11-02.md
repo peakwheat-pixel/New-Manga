@@ -706,3 +706,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P1**：R1-001 导航动画未实际触发（含 180/200/160/90/150ms 未消费、easing 非冻结 bezier、Reader 用全局 Enabled）；R1-002 feedback 过渡仅当前 visual tree（缓存页/新控件漏接、reduce 清理不全）；R1-003 Reader 工具条 idle 计时不重置；R1-004 Reader 导航绕过设置 dirty 确认；R1-005 Esc 浮层顺序错误（shell 面板被下层设置浮层抢先）。
 - **P2**：R1-006 Appearance.Changed 订阅未解除；R1-007 Reader 侧栏缺高对比 1px 边框；R1-008 已显示焦点环切高对比不即时 3px；R1-009 矩阵/AC 覆盖/日志口径陈旧与格式缺口。
 - 下一步：DSH 处置 findings（返修 R1-001…R1-009）→ 全量/证据刷新 → fresh Codex impl-r2 复核 → 集成验证/关闭。D-7 继续适用（实施由 DSH，复核保持独立）。
+## 105. FEA-06-RESIDUAL-1 impl-r1 findings 返修第一批（2026-11-03 00:56）
+
+- R1-003/004/005/006/007/008 **已修复并有回归测试**；R1-001（Tab 180 / 浮层 200/160 / feedback 90/150 实际消费）与 R1-002（完全动态控件统一机制）为**部分修复**，待下一批。
+- 全量 **1197/0/57**（+2 回归）；旧 PNG 零漂移。交付 `51c5afb47`；证据 SHA `0d86f0f7…`。
+- 下一步：完成 R1-001 剩余时长消费 + R1-002 统一机制 + R1-009 台账刷新 → 全量/证据 → fresh Codex impl-r2 复核。

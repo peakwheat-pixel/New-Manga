@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 4388e50bb（Batch B 收尾：I-4 指针态/命令面板结果空态/I-5 矩阵+消费/I-8+I-11；动画本体 D-8）
+delivery_head: 51c5afb47（impl-r1 返修第一批：R1-003/004/005/006/007/008 修复 + R1-001/002 部分；全量 1197/0/57）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -169,7 +169,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
 | EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
-| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `4388e50bb` | `77ad222107266f482c651652e86dfbe49382fc2783ed22ac78156207f2861e7b` | CANONICAL |
+| EV-FEA06R1-BATCHB | AC2/AC4/AC5 | `verification/FEA-06-RESIDUAL-1/batch-b-verification.log` | `51c5afb47` | `0d86f0f73bfe878c43e02434d9a4c0166a332a868aa377b8aa9e88e7520b5b3a` | CANONICAL |
 | EV-FEA06R1-MATRIX | AC2 | `verification/FEA-06-RESIDUAL-1/component-state-matrix.md` | `59ef3abef` | `481895525340a4cfdbf6fbb35883dfa9a93e6ee46788c8586b3a18d237f7cfa9` | CANONICAL |
 | EV-FEA06R1-ITEMSTATUS | AC1/AC2 | `verification/FEA-06-RESIDUAL-1/item-status.md` | `35e80eabf` | `c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc` | CANONICAL |
 | EV-FEA06R1-PREREVIEW | AC5 | `verification/FEA-06-RESIDUAL-1/pre-review-verification.log` | `84abc9c71` | `66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993` | CANONICAL |
