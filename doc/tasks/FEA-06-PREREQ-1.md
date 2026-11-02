@@ -96,20 +96,20 @@ allowed_paths:
 | AC2/AC4 | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests --filter MotionResolverTests` + 全量 App.Tests | Avalonia.Headless | **PASS**（9 / 433） | `verification/FEA-06-PREREQ-1/motion-tests.log` |
 | AC3 | `TokenGen -- --check` | 生成管线 | **PASS**（up to date，rows 290） | `verification/FEA-06-PREREQ-1/tokengen-check.log` |
 | AC5 | `ThemeGen -- --check`（含 fluent-dark 产物漂移） | 生成管线 | **PASS**（up to date） | `verification/FEA-06-PREREQ-1/themegen-check.log` |
-| AC6 | `dotnet build` + `dotnet test` 全量 sln（基线 949/0/57） | .NET 9 | **PASS**（**978/0/57**） | `verification/FEA-06-PREREQ-1/sln-test.log` |
+| AC6 | `dotnet build` + `dotnet test` 全量 sln（基线 949/0/57） | .NET 9 | **PASS**（**979/0/57**） | `verification/FEA-06-PREREQ-1/sln-test.log` |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `HEAD_PENDING` | `b0a02a1867ab93466bf277b7f1b981d1563a50a13fa6af060123597650d691f5` | CANONICAL |
-| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `HEAD_PENDING` | `09023dcc13656a1605b457f5093460664d13924225a21973429ad380eb5e1624` | CANONICAL |
-| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `HEAD_PENDING` | `f5aea7f7d28a68895f7d9666e57ba0c7d1a86c637400fff87e81d4566b102345` | CANONICAL |
-| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `HEAD_PENDING` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
-| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `HEAD_PENDING` | `1e312791e701b5a0cd091669a3f190cb384fcd9ff7d6edf4847529b1c0cf1c98` | CANONICAL |
-| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `HEAD_PENDING` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
-| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `HEAD_PENDING` | `125b645b485af69121f4fd88da8db1f52e82d27a04663a2fcbf9c37c4bbbdd46` | CANONICAL |
-| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `HEAD_PENDING` | `d886c996002845db59629e859e2ef350f881191ba594df37ea24594c0b0b8145` | CANONICAL |
+| E-P1-APPEARANCE | AC1 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs` | `177e145fa` | `b0a02a1867ab93466bf277b7f1b981d1563a50a13fa6af060123597650d691f5` | CANONICAL |
+| E-P1-APPEARANCE-TESTS | AC1 | `verification/FEA-06-PREREQ-1/appearance-tests.log` | `177e145fa` | `09023dcc13656a1605b457f5093460664d13924225a21973429ad380eb5e1624` | CANONICAL |
+| E-P1-COORDINATOR | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs` | `177e145fa` | `f5aea7f7d28a68895f7d9666e57ba0c7d1a86c637400fff87e81d4566b102345` | CANONICAL |
+| E-P1-TOKENS | AC3 | `verification/FEA-06-PREREQ-1/tokengen-check.log` | `177e145fa` | `b76bf6c6a12c22828662a19da43764bd449cd5f80d20111fa97026ef4058d4bb` | CANONICAL |
+| E-P1-MOTION | AC4 | `verification/FEA-06-PREREQ-1/motion-tests.log` | `177e145fa` | `1e312791e701b5a0cd091669a3f190cb384fcd9ff7d6edf4847529b1c0cf1c98` | CANONICAL |
+| E-P1-THEME | AC5 | `verification/FEA-06-PREREQ-1/themegen-check.log` | `177e145fa` | `28a3115171bd2d6e6227a439ce22d3fb855104c741681efef8b41cec0a584f49` | CANONICAL |
+| E-P1-SLN | AC6 | `verification/FEA-06-PREREQ-1/sln-test.log` | `177e145fa` | `125b645b485af69121f4fd88da8db1f52e82d27a04663a2fcbf9c37c4bbbdd46` | CANONICAL |
+| E-P1-BUILD | AC6 | `verification/FEA-06-PREREQ-1/build.log` | `177e145fa` | `d886c996002845db59629e859e2ef350f881191ba594df37ea24594c0b0b8145` | CANONICAL |
 
 ## Resource Manifest
 
@@ -124,7 +124,7 @@ allowed_paths:
 - 2026-11-02：范围复核 r1（P0×2/P1×8）→ r2（P0=0/P1×4）→ **r3 approved（P0/P1=0，P2×16）**；置 ready，DSH 实现。
 - 2026-11-03：实现完成（AC1–AC6 全部代码/测试/产物），实现复核 impl-r1（P1×10）→ impl-r2（P1×5）→ impl-r3（P1×5）→ **impl-r4 approved（P0=0/P1=0，P2×12）**。
 - 2026-11-03：Q-32 裁决（r2-P1-2/r2-P1-4 转 FEA-06-PREREQ-2）与 Q-33 拆环（PREREQ-1 以 done 关闭、AC1/AC3/AC5 的 `<<PARTIAL>>` 保留为历史事实、residual 由 PREREQ-2 AC5/AC6 追踪）。
-- 2026-11-03：全量 sln **978/0/57**；`TokenGen -- --check`、`ThemeGen -- --check` 均 up to date。
+- 2026-11-03：全量 sln **979/0/57**；`TokenGen -- --check`、`ThemeGen -- --check` 均 up to date。
 - **已知偏差 D-1**：C-03 §2.1 要求唯一写者 `AppearanceCoordinator` 位于 `NewManga.Appearance`；本卡交付为 `NewManga.App/Services`（只读）。已记入 `AppearanceCoordinator` 的 `<remarks>` 并作为 PREREQ-2 P5 的强制项。
 
 ## Q-33 residual 转移记录（2026-11-03，DSH 裁决）
