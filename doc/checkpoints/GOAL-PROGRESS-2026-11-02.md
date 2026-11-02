@@ -742,3 +742,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 两次尝试（Thread.Sleep+RunJobs、async Task.Delay+RunJobs）均无法在 headless 触发退出 DispatcherTimer；已完整回退，工作树/构建干净（`e25600431` 状态）。
 - **D-10**：浮层退出 160 / pressed 90 / badge 150 三项动画转 ZCode 视觉任务（03:02 后派发）实现+真实视觉验收；DSH 不再写不可验证动画。其余 R1-001（页面 240/Tab 180/浮层进入 200/冻结 bezier）已实现并有断言。
 - 下一步：03:02 后派 ZCode 实现这 3 项并视觉验收；完成后与其余返修一并派 fresh Codex impl-r2 → 集成/关闭。Task 保持 in_progress。
+## 112. 状态固化：等待 ZCode 窗口（2026-11-03 01:04，第 23 轮）
+
+- 可推进项已按 D-10 转 ZCode：浮层退出 160 / pressed 90 / badge 150 三项动画需要真实视觉验收，DSH headless 无法稳定验证（两次尝试已回退）；03:03 提醒已排程，ZCode 额度 03:02 恢复后派发。
+- 其余 impl-r1 findings 已修复并有回归；evidence pins 7 行复审 **0 mismatch**；工作树干净、未 push。
+- 独立 impl-r2 需在新 head（ZCode 3 项完成后）派发，避免对已知部分项重复返修。
+- 下一次可行动作：03:03 提醒→探测 ZCode→派发 3 项动画→完成后 fresh Codex impl-r2→集成/关闭。
