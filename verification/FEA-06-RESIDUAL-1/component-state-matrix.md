@@ -40,3 +40,39 @@
 - I-4 的**有效属性/焦点**子集已达成（Primary/Secondary/Danger/BookCard/BookRow 的指针态、SurfaceCard/Dialog/TabItem、disabled 零触发、命令面板结果/空态、焦点环）；
 - hover/pressed 已用 headless 指针合成升级为 EFFECTIVE；loading/checked 等**剩余视觉格**标 NOT_RUN，不以声明存在计 PASS；
 - 组件矩阵其余行按 DECLARED/COMMAND 登记，缺口（Toast severity 组合、CommandPalette 结果态、disabled 命令零触发、视觉格）留待后续批次或独立视觉复核。
+
+
+## 当前快照（R2-005，2026-11-03）
+
+> 本节取代前文“当前/最新”口径；前文及其1194/1195/1197等计数全部保留为历史快照，不自动升级为当前证据。历史impl-r2基线为 **1213/0/57**；本轮最新为 **1233/0/57**。
+> 被测实现 head：`8b39b13982cfaae9e7606fe62f13353700be68fe`（`8b39b1398`）；后续交付只追加证据/Handoff，不改源码测试字节。证据：`impl-r2-rework-verification.log`；四条验收命令原文/输出/EXIT及57条skip逐项原因均在其中。
+> build / 无过滤全量test / check.ps1 / verify_pins.ps1：**EXIT=0 / 0 / 0 / 0**；check PASS(3既有warnings)，pins **15/15**；TokenGen/ThemeGen --check 均EXIT=0。App=614/0/7、DesignSystem=97/0/0；合计1233 passed / 0 failed / 57 skipped（总1290），比基线+20（App+16、DS+4）。
+
+本节按有效属性/真实输入/命令/焦点证据登记，**EFFECTIVE不等于像素视觉验收**。NOT_RUN细分：①普通headless可验证但尚无断言；②原生/逐像素未跑。D-8属于待裁决且本体未实现，不能算已批准豁免。
+
+| 组件/状态组 | 当前有效证据 | 尚未覆盖的适用格 |
+|---|---|---|
+| TopBand/NavRail/StatusBand | 布局/断点既有行为回归 | 逐像素视觉NOT_RUN |
+| SurfaceCard | Raised/边框/Elevation/圆角有效属性 | hover/selected/disabled适用视觉格NOT_RUN，未新增普通属性断言 |
+| Drawer / Dialog | Shelf抽屉/对话框、Settings离开/普通确认的200ms进入、160ms退出及scrim160ms，full/reduce/navigation-off真实过程断言 | 危险/loading外观、抽屉焦点完整遍历及原生视觉NOT_RUN |
+| Toast / InfoBar | Blocked的StatusMuted背景既有断言 | 其余severity组合有效属性NOT_RUN（可headless验证的测试缺口） |
+| EmptyState / ErrorState / Skeleton | 页面功能、Skeleton既有属性回归 | 逐像素视觉NOT_RUN |
+| BookCard / BookRow | normal/hover/pressed/selected真实指针与有效颜色；既有选择行为 | disabled视觉逐格NOT_RUN，不影响通用disabled零命令触发已验证事实 |
+| ChapterList / PageThumbStrip | 选择/滚动行为 | 逐像素视觉NOT_RUN |
+| RegionBox | 选择/锁定行为 | hover有效属性NOT_RUN；冲突数据B-7 BLOCKED |
+| StreamingThumb / BatchMatrix / RunProjectionBar | 九行视觉骨架/声明 | 逐状态有效属性NOT_RUN；真实数据绑定B-2 BLOCKED |
+| ReaderPage / ReaderProgressBar | 分页/进度行为；顶底条80/159/160ms、真实交互后2s及detach断言 | 双页第二图/滚动数据B-3 BLOCKED；像素视觉NOT_RUN |
+| SettingsGroup / SettingsField | 分组、错误/只读行为；动态Providers/Backup重建后hover/pressed过程 | 错误/disabled全部有效外观格NOT_RUN |
+| Primary / Secondary / Danger Button | 既有normal/hover/pressed颜色、几何/前景/禁用透明度及零命令；本轮动态按钮120ms颜色插值与90ms缩放同源，分类切换/再次重建后仍正确 | loading完整外观、每种组件的disabled视觉格NOT_RUN |
+| IconButton | 页面点击/pressed缩放、Fluent局部持续配置 | hover/checked各自有效颜色NOT_RUN（可headless验证） |
+| ToggleSwitch | 既有on/off功能 | disabled有效属性NOT_RUN（可headless验证） |
+| Slider | 样式声明 | normal/hover/disabled有效属性NOT_RUN（可headless验证） |
+| SegmentedControl | 分段选择行为 | 选中/未选/hover/pressed全部有效外观格NOT_RUN |
+| TabStrip / TabItem | 已选/未选前景与accent pipe；180ms切换消费既有断言 | hover有效属性NOT_RUN |
+| SearchField | 搜索/清空行为、页面焦点 | 聚焦等全部有效外观格NOT_RUN |
+| CommandPalette | **结果/空态已验证**：真实命令行数>0→不匹配查询0→清空后>0（FluentCommandPaletteFocusTests）；焦点移入/返还；200/160ms既有时序断言 | loading态NOT_RUN，不再错误登记结果态为缺口 |
+| ContextMenu / Tooltip | 构建/绑定既有功能 | 禁用项/Tooltip有效视觉属性NOT_RUN |
+| 焦点环 | 新FocusRingOffsetTests：offset+stroke外宽高/四边gap、标准/高对比实时切换与滚动裁剪；Fluent=1，Current=0对照；既有四页焦点/返还回归 | 完整Tab遍历、原生a11y/200%DPI NOT_RUN，B-5仍BLOCKED |
+| disabled命令零触发 | **已验证**：FluentDisabledAutomationTests的Invoke异常、Click=0、Command=0、CanExecute=false；不再列为未完成 | 原生像素对照NOT_RUN |
+
+I-4整体仍PARTIAL；剩余普通有效属性格不能称为“硬件视觉阻塞”。I-5 decorative本体仍D-8未裁决、未实现。B-5原生桌面/DPI/a11y/视觉矩阵与最新PNG opt-in为NOT_RUN。旧快照中的“命令面板结果态、disabled零触发缺口”由本节明确取代，保留旧字节只为历史溯源。

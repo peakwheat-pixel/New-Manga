@@ -32,3 +32,26 @@
 - 最新无过滤全量：**1195 passed / 0 failed / 57 skipped**（DS 93 + App 580；预复核快照与集成脚本 dry-run 均 PASS）。
 - pre-I-7 安全基线 1137/0/57 → I-7 后起点 1138/0/57 → Batch A +33 → Batch B 追加（I-4/I-5/I-11 等）只增不减。
 - 旧 `verification/FEA-06/screens/**` 字节零漂移（每次全量后 `git status` 核对）。
+
+
+## 当前快照（R2-005，2026-11-03）
+
+> 本节取代前文“当前/最新”口径；前文及其1194/1195/1197等计数全部保留为历史快照，不自动升级为当前证据。历史impl-r2基线为 **1213/0/57**；本轮最新为 **1233/0/57**。
+> 被测实现 head：`8b39b13982cfaae9e7606fe62f13353700be68fe`（`8b39b1398`）；后续交付只追加证据/Handoff，不改源码测试字节。证据：`impl-r2-rework-verification.log`；四条验收命令原文/输出/EXIT及57条skip逐项原因均在其中。
+> build / 无过滤全量test / check.ps1 / verify_pins.ps1：**EXIT=0 / 0 / 0 / 0**；check PASS(3既有warnings)，pins **15/15**；TokenGen/ThemeGen --check 均EXIT=0。App=614/0/7、DesignSystem=97/0/0；合计1233 passed / 0 failed / 57 skipped（总1290），比基线+20（App+16、DS+4）。
+
+| 子项 | 当前实现/证据事实 | 当前限制 |
+|---|---|---|
+| I-1 / I-2 | 页面memento、分栏/约束/键盘既有回归通过 | 未新增持久化 |
+| I-3 | 三分支、失败保护、Reader导航不绕过确认、分层Esc既有回归通过；Settings两类浮层200/160ms新增断言 | B-4不算完成 |
+| I-4 | 已有有效属性、真实指针态、disabled自动化零触发、命令面板结果/空态与焦点断言；新增Providers/Backup/Workbench重建后的真实hover/pressed | PARTIAL；loading/checked及其余状态格NOT_RUN详见组件矩阵 |
+| I-5 | Reader淡出与分类、四种页面浮层200/160、hover120/pressed90/badge150消费及运行时降级、排队回调失效均有行为断言 | PARTIAL；D-8待处置，decorative三类本体未实现 |
+| I-6 | 原拆分提交83fa1b186及等价证据保留，旧测试未删除 | 本轮不重新移动VM |
+| I-7 | 全量包含默认内存渲染用例；四张旧PNG逐字节与base相同 | 本轮opt-in NOT_RUN；不重写旧采证 |
+| I-8 | standard/reduce阴影、高对比回退与Current往返既有断言通过 | 原生像素视觉NOT_RUN |
+| I-9 | dirty状态点150ms过程及设置/工作台既有断言通过 | 原生视觉NOT_RUN |
+| I-10 | 顶/底160ms过程、最后真实press/release/wheel/handled键后2s、中心点击释放保持切换、detach停止计时均已验证；侧栏原语义保留 | 全屏/原生视觉沿用原有限制，未凭headless计原生PASS |
+| I-11 | R2-006几何修复现已验证：Fluent offset=1，2/3px实时stroke、四边gap与滚动裁剪；Current默认offset=0 | 不再将旧stroke-only证据称完整I-11达成；整体待独立复核，完整Tab遍历/原生a11y仍NOT_RUN |
+| I-12 / I-13 / I-14 | Console入口、九行骨架、源不可用只读警示既有断言通过 | 内容/Run投影/恢复动作仍分别由B-1/B-2/B-3/B-6承接 |
+
+当前NOT_RUN：上述I-4未断言格、完整Tab遍历、原生视觉/DPI/a11y、最新opt-in采证。D-8待DSH独立裁决，未转成“完成”。新矩阵和本日志为当前事实；前文“全部完成/最新1195”等只属历史叙述。Task/STATUS/PLAN及Canonical Evidence登记由DSH更新，本实施者遵守本轮写域未改它们。

@@ -1,0 +1,84 @@
+{
+  "base_head": "ff9da7dcf8eb70333a8165d7c83106156a3107af",
+  "basis": "pre-append working-tree raw bytes",
+  "files": [
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/ac-coverage.md",
+      "mode": "prefix",
+      "length": 3238,
+      "sha256": "50001d2a29bb07407276187f85570fb0e94c5dc5ac3a3698ee8f6e222d0d0bc2"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/item-status.md",
+      "mode": "prefix",
+      "length": 5252,
+      "sha256": "c456a031cecd61b7ddbd6c1aca10277ee2fe22d6f12d468894cb4b48108978dc"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/component-state-matrix.md",
+      "mode": "prefix",
+      "length": 6974,
+      "sha256": "6d1381e7e9db5165833d9752be970748d48ba54f853279e14ffd0acf874819ef"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/batch-b-verification.log",
+      "mode": "prefix",
+      "length": 15722,
+      "sha256": "c67adcf12c8db06d4f53e82bfbc3f5a8d6ee60579c9ce1b3a2760cdb0c32a8af"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/batch-a-verification.log",
+      "mode": "full",
+      "length": 4036,
+      "sha256": "4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/pre-review-verification.log",
+      "mode": "full",
+      "length": 2388,
+      "sha256": "66db6559c782eb1124a64bb6e4b3c7a55ca17094e957f0d90ea1585a22a66993"
+    },
+    {
+      "path": "verification/FEA-06-RESIDUAL-1/impl-r1-animation-verification.log",
+      "mode": "full",
+      "length": 44716,
+      "sha256": "ec838ac35893bc6951bb02da5cb279dd19021c64463563579b4d6dad80d7d9b8"
+    },
+    {
+      "path": "doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md",
+      "mode": "full",
+      "length": 40701,
+      "sha256": "ae9c2c8b39beb2dace853641fa8847922206b21ab7cc8e6f5e73d3a6a99505a2"
+    },
+    {
+      "path": "doc/reviews/FEA-06-RESIDUAL-1-impl-r2.md",
+      "mode": "full",
+      "length": 38720,
+      "sha256": "c3ca49e95de9e8ad170b66c190ce42b6d3e419856663b55c0a4086ef914634eb"
+    },
+    {
+      "path": "verification/FEA-06/screens/reader.png",
+      "mode": "full",
+      "length": 26733,
+      "sha256": "8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2"
+    },
+    {
+      "path": "verification/FEA-06/screens/settings.png",
+      "mode": "full",
+      "length": 54085,
+      "sha256": "fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162"
+    },
+    {
+      "path": "verification/FEA-06/screens/shelf.png",
+      "mode": "full",
+      "length": 32737,
+      "sha256": "307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a"
+    },
+    {
+      "path": "verification/FEA-06/screens/workbench.png",
+      "mode": "full",
+      "length": 28724,
+      "sha256": "d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5"
+    }
+  ]
+}

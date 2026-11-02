@@ -1,0 +1,390 @@
+FEA-06-RESIDUAL-1 impl-r2 findings 返修验证
+BASE_HEAD=ff9da7dcf8eb70333a8165d7c83106156a3107af
+TESTED_HEAD=8b39b13982cfaae9e7606fe62f13353700be68fe
+开始时间=2026-11-03T01:46:35.4398858+08:00
+SHELL=Core 7.6.8
+DOTNET_SDK=10.0.401
+NEWMANGA_CORECLIENT_SIDECAR_DIR_SET=False
+NEWMANGA_CAPTURE_FLUENT_PNGS_SET=False
+NEWMANGA_EVIDENCE_SYNC_SET=False
+COMMAND: dotnet build apps\desktop-avalonia\NewManga.sln --nologo
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Debug\net9.0\NewManga.Appearance.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Debug\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Debug\net9.0\NewManga.Appearance.Tests.dll
+  NewManga.ApplicationCore.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Debug\net9.0\NewManga.ApplicationCore.Tests.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.CoreClient.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Debug\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.DesignSystem.TokenGen -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\bin\Debug\net9.0\NewManga.DesignSystem.TokenGen.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.DesignSystem.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Debug\net9.0\NewManga.DesignSystem.Tests.dll
+  NewManga.ThemeEngine.ThemeGen -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\bin\Debug\net9.0\NewManga.ThemeEngine.ThemeGen.dll
+  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Debug\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+  NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Debug\net9.0\NewManga.ThemeEngine.Tests.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:04.87
+BUILD_EXIT=0
+COMMAND: dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Debug\net9.0\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Debug\net9.0\NewManga.Presentation.Avalonia.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Debug\net9.0\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Debug\net9.0\NewManga.Appearance.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Debug\net9.0\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 97 ms - NewManga.Appearance.Tests.dll (net9.0)
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [SKIP]
+[xUnit.net 00:00:00.18]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [SKIP]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [1 ms]
+[xUnit.net 00:00:00.22]     NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration [SKIP]
+[xUnit.net 00:00:00.22]     NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [SKIP]
+  已跳过 NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration [1 ms]
+  已跳过 NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [1 ms]
+
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 301 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+[xUnit.net 00:00:00.45]     NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain [SKIP]
+  已跳过 NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain [1 ms]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe [SKIP]
+  已跳过 NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory [1 ms]
+  已跳过 NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact [1 ms]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe [1 ms]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths [SKIP]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames [1 ms]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry [1 ms]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths [1 ms]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant [SKIP]
+[xUnit.net 00:00:00.49]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled [SKIP]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled [1 ms]
+[xUnit.net 00:00:00.50]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [SKIP]
+[xUnit.net 00:00:00.51]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [SKIP]
+[xUnit.net 00:00:00.51]     NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [SKIP]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [1 ms]
+[xUnit.net 00:00:00.51]     NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook [SKIP]
+[xUnit.net 00:00:00.51]     NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError [SKIP]
+[xUnit.net 00:00:00.52]     NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog [SKIP]
+[xUnit.net 00:00:00.53]     NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames [SKIP]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook [1 ms]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError [1 ms]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog [1 ms]
+  已跳过 NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames [1 ms]
+[xUnit.net 00:00:00.82]     NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites [SKIP]
+[xUnit.net 00:00:00.82]     NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable [SKIP]
+[xUnit.net 00:00:00.82]     NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites [SKIP]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites [1 ms]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable [1 ms]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites [1 ms]
+
+已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 607 ms - NewManga.Host.Tests.dll (net9.0)
+
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 990 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+[xUnit.net 00:00:01.49]     NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [SKIP]
+
+已通过! - 失败:     0，通过:    97，已跳过:     0，总计:    97，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+  已跳过 NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [1 ms]
+
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+[xUnit.net 00:00:07.68]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame [1 ms]
+[xUnit.net 00:00:13.06]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings [SKIP]
+[xUnit.net 00:00:13.06]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty [SKIP]
+[xUnit.net 00:00:13.07]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides [1 ms]
+[xUnit.net 00:00:19.84]     NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [SKIP]
+[xUnit.net 00:00:19.84]     NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore [SKIP]
+[xUnit.net 00:00:19.84]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture [SKIP]
+[xUnit.net 00:00:19.84]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore [1 ms]
+[xUnit.net 00:00:19.84]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [1 ms]
+[xUnit.net 00:00:19.86]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [SKIP]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [1 ms]
+[xUnit.net 00:00:19.86]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [SKIP]
+[xUnit.net 00:00:19.86]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [SKIP]
+[xUnit.net 00:00:19.86]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [SKIP]
+[xUnit.net 00:00:19.86]     NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [SKIP]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [1 ms]
+  已跳过 NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [1 ms]
+[xUnit.net 00:00:22.73]     NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore [1 ms]
+
+已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+[xUnit.net 00:01:05.96]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [SKIP]
+[xUnit.net 00:01:05.96]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [SKIP]
+[xUnit.net 00:01:05.96]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [SKIP]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [1 ms]
+[xUnit.net 00:01:44.09]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [SKIP]
+[xUnit.net 00:01:44.09]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [SKIP]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [1 ms]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [1 ms]
+[xUnit.net 00:01:44.17]     NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [SKIP]
+  已跳过 NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [1 ms]
+
+已通过! - 失败:     0，通过:   614，已跳过:     7，总计:   621，持续时间: 1 m 44 s - NewManga.App.Tests.dll (net9.0)
+TEST_EXIT=0
+COMMAND: pwsh -NoProfile -File tools\governance\check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-06-RESIDUAL-1.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3197 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5068 bytes / 64 lines
+Governance check: PASS (3 warnings)
+CHECK_EXIT=0
+COMMAND: pwsh -NoProfile -File tools\governance\verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 694ce5bc8c8b
+OK C05 b34db8876879
+OK C06 b798dd8a9b38
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 15)
+PINS_EXIT=0
+COMMAND: dotnet apps/desktop-avalonia/src/NewManga.DesignSystem/tools/NewManga.DesignSystem.TokenGen/bin/Debug/net9.0/NewManga.DesignSystem.TokenGen.dll --check
+tokens:  G:\CODEX\New Manga\doc\design\redesign-v1\40-fusion\tokens.json
+project: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem
+rows:    292
+up to date: every generated artifact matches the frozen token source byte-for-byte
+TOKENGEN_EXIT=0
+COMMAND: dotnet apps/desktop-avalonia/src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen/bin/Debug/net9.0/NewManga.ThemeEngine.ThemeGen.dll --check
+tokens:  G:\CODEX\New Manga\doc\design\redesign-v1\40-fusion\tokens.json
+project: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine
+theme:   newmanga-default 1.0.0 (light 35 colors, dark 35 colors)
+  derived: motion slow duration = 220ms (R-15 default; no 'motion.duration.slow' token in the frozen baseline)
+  derived: Fluent acrylic material colours (theme layer): Nm.Material.Acrylic.Base=#1F1F1F, Nm.Material.Acrylic.Tint=rgba(0,122,204,0.2) (design 01 §41-42)
+  derived: line-height tier Nm.LineHeight.Display = font.size.2xl x 1.25 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Title = font.size.xl x 1.25 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Body = font.size.md x 1.45 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Label = font.size.sm x 1.35 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Meta = font.size.xs x 1.35 (DESIGN_SYSTEM §3)
+  derived: line-height tier Nm.LineHeight.Data = font.size.sm x 1.3 (DESIGN_SYSTEM §3)
+up to date: generated theme artifacts match the frozen token source byte-for-byte
+THEMEGEN_EXIT=0
+
+
+逐程序集计数（本次无过滤实跑）
+Appearance=21/0/0；Presentation.Avalonia=38/0/0；Host=51/0/28；ThemeEngine=253/0/0
+DesignSystem=97/0/0；ApplicationCore=31/0/0；CoreClient=128/0/22；App=614/0/7
+TOTAL=1233 passed / 0 failed / 57 skipped (1290 total)
+历史基线=1213/0/57（reviewed_head eaf7b74d8；不是本次最新值）；差值=+20 passed，App +16 / DesignSystem +4，旧用例未删除。
+
+逐 finding 可复现断言（实现提交 8b39b13982cfaae9e7606fe62f13353700be68fe）
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings --nologo --filter "FullyQualifiedName~FluentR2ReworkTests|FullyQualifiedName~FluentResidualBatchATests|FullyQualifiedName~FluentAnimationCompletionTests"
+定向最终工作树=55 passed / 0 failed / 0 skipped；EXIT=0。之后仅简化等价的 from 表达式并提交；固定提交上的全量也包含上述55项且 TEST_EXIT=0。
+R2-001_ASSERT=R2001_Reader_*：顶/底条 80ms ease-in 插值、159ms 仍可见、160ms opacity=0+隐藏；唤醒取消旧帧。R2001_ActualPageOverlays_* 的4个真实页面浮层逐个断言100/199/200ms进入、80/159/160ms退出；scrim160ms。R2001_NavigationOff_* 的2个模式对 Reader、Settings离开/普通确认、Shelf对话框/抽屉均断言瞬时终值；feedback-only不保留navigation。PASS。
+R2-002_ASSERT=R2002_RebuildHover_*：Settings Providers重建→真实hover→pressed45ms中间缩放→feedback分类关闭立即回1→Backup重建hover/pressed瞬时→缓存树切full→再重建hover/pressed恢复。WorkbenchDraftEdit_* 另验真实投影重建→hover→reduce→再重建→恢复full再重建；颜色与缩放同源配置。Hover仅替换Avalonia ClockBase脉冲，真实BrushTransition/指针/样式负责颜色；30ms中间RGB符合SplineEasing(.4,0,.2,1)，119/120ms边界，不只断言Transitions存在。PASS。
+R2-003_ASSERT=R2003_RealInput_* 四路真实MouseDown/MouseUp/wheel/被Shell消费Ctrl+K：t1500输入后deadline=3500ms；2000/3499ms仍显示，3500ms逻辑隐藏，+160ms视觉隐藏；detach后timer停、deadline清空，推进3000ms无回调改变状态。R2003_RealCenterPressAndRelease_*：真实图片命中链、中心按下隐藏、释放不反转、160ms后隐藏。PASS。
+R2-004_ASSERT=R2004_BackgroundEvent_*：真实AppearanceCoordinator.SaveAsync写各用例独立临时目录并从后台发Changed→detach→pump，pageHost过渡对象不被旧闭包替换；快速reattach应用当前full值，仅1个订阅；窗口关闭后清理临时目录。PASS。
+R2-005_ASSERT=python verification/FEA-06-RESIDUAL-1/verify-r2-evidence.py（结果在文件末尾追加）；核验最新表口径、57个实际SKIP及逐条原因、13项旧文件/前缀原字节、四PNG与base blob完全相同。
+R2-006_ASSERT=FocusRingOffsetTests的4项：标准/高对比实时切换，外宽高=控件+2*(offset+stroke)，四边内缘gap=1；滚动仅gap被裁剪时也隐藏/恢复；offset=0的Current对照几何不变。R2006_* 另验Fluent根动态令牌值1随子控件继承、移到Current树为0。PASS。
+
+本次57个SKIP逐条原因（来自当前控制台SKIP完整名称，与fixture源代码原因核对）
+NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog | SKIPPED | reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)
+SKIP_REASON_SOURCE=CoreClient.Tests/Support/SidecarFixture.cs:29-35；Host.Tests/Support/HostSidecarFactAttribute.cs→HostFixture；App.Tests/ChapterCreationTests.cs:278-284、RunControllerTests.cs同类fixture。环境变量未配置；不将skip计为通过。
+
+NOT_RUN=原生桌面/200%DPI/a11y/逐像素视觉矩阵（B-5；需硬件或用户书面waiver）；本轮PNG opt-in采证未运行（默认渲染用例已全量运行）。
+NOT_RUN=组件剩余有效属性格见component-state-matrix.md当前快照；其中可headless验证而未补断言的格属于测试缺口，不伪称硬件阻塞。
+D-8=PENDING_DISPOSITION；decorative三类动画本体未实现，参数/开关/reduce禁用已测，不将建议暂缓写成已批准豁免。
+早期定向尝试曾暴露Shelf确认按钮仍挂旧父节点、hover采样时钟和输入被焦点按钮打开的面板遮挡；已最小修复旧父节点并以真实命中、可控脉冲及非按钮焦点消除探针歧义。最终计数只来自本次无过滤全量。
+COMMAND: python verification/FEA-06-RESIDUAL-1/verify-r2-evidence.py
+RAW_BYTES_ASSERT=13/13；旧文件/前缀逐字节保留
+SKIP_ASSERT=57/57；每条实际 SKIP 均有完整名称与逐条原因
+CURRENT_AND_HISTORY_ASSERT=ac-coverage.md: PASS
+CURRENT_AND_HISTORY_ASSERT=item-status.md: PASS
+CURRENT_AND_HISTORY_ASSERT=component-state-matrix.md: PASS
+CURRENT_AND_HISTORY_ASSERT=batch-b-verification.log: PASS
+PNG_ASSERT=reader.png: 8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
+PNG_ASSERT=settings.png: fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
+PNG_ASSERT=shelf.png: 307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
+PNG_ASSERT=workbench.png: d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
+R2_005_ASSERT=PASS；EXIT=0
+EVIDENCE_AUDIT_EXIT=0
+POST_HANDOFF_COMMAND: pwsh -NoProfile -File tools\governance\check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-06-RESIDUAL-1.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3197 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5068 bytes / 64 lines
+Governance check: PASS (3 warnings)
+POST_HANDOFF_CHECK_EXIT=0
+POST_HANDOFF_COMMAND: pwsh -NoProfile -File tools\governance\verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 694ce5bc8c8b
+OK C05 b34db8876879
+OK C06 b798dd8a9b38
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 15)
+POST_HANDOFF_PINS_EXIT=0
+COMMAND: python -X utf8 verification/FEA-06-RESIDUAL-1/verify-r2-evidence.py
+RAW_BYTES_ASSERT=13/13；旧文件/前缀逐字节保留
+SKIP_ASSERT=57/57；每条实际 SKIP 均有完整名称与逐条原因
+CURRENT_AND_HISTORY_ASSERT=ac-coverage.md: PASS
+CURRENT_AND_HISTORY_ASSERT=item-status.md: PASS
+CURRENT_AND_HISTORY_ASSERT=component-state-matrix.md: PASS
+CURRENT_AND_HISTORY_ASSERT=batch-b-verification.log: PASS
+PNG_ASSERT=reader.png: 8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
+PNG_ASSERT=settings.png: fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
+PNG_ASSERT=shelf.png: 307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
+PNG_ASSERT=workbench.png: d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
+R2_005_ASSERT=PASS；EXIT=0
+POST_HANDOFF_EVIDENCE_AUDIT_EXIT=0
+COMMAND: git diff --name-only ff9da7dcf8eb70333a8165d7c83106156a3107af (plus untracked allowed-path audit)
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentFeedbackMotion.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentMotionScope.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShellSurface.axaml.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentVisibilityMotion.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs
+apps/desktop-avalonia/src/NewManga.DesignSystem/Theming/FocusRing.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentAnimationCompletionTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentR2ReworkTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidualBatchATests.cs
+apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/FocusRingOffsetTests.cs
+verification/FEA-06-RESIDUAL-1/ac-coverage.md
+verification/FEA-06-RESIDUAL-1/batch-b-verification.log
+verification/FEA-06-RESIDUAL-1/component-state-matrix.md
+verification/FEA-06-RESIDUAL-1/item-status.md
+doc/handoffs/FEA-06-RESIDUAL-1-impl-r2-rework.md
+verification/FEA-06-RESIDUAL-1/impl-r2-rework-verification.log
+verification/FEA-06-RESIDUAL-1/r2-history-manifest.json
+verification/FEA-06-RESIDUAL-1/verify-r2-evidence.py
+ALLOWED_PATH_AUDIT=PASS；20个路径全部在本轮允许路径内；Core/contracts/schema/generated/doc/design/CurrentV2/composition/FrontendSelector/FEA07 seam零改动；EXIT=0
+TASK_BASE_PNG_ASSERT=四PNG与git show 82529a3d5864a39f362e414b67bca774d743f862:verification/FEA-06/screens/<name>.png原始blob逐字节相同；SHA同本日志PNG_ASSERT；EXIT=0
+COMMAND: git diff --check ff9da7dcf8eb70333a8165d7c83106156a3107af
+DIFF_CHECK_EXIT=0
