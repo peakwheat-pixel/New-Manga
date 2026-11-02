@@ -923,3 +923,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   - **R2-001 P0**：真实 ShelfPageView 渐变（full first/mid + reduce）与 Reader particle（full mid + reduce），必须不同 SHA，可用 Manual clock/测试帧推进钩子；禁占位/灰图；
   - **R2-012**：Deactivated/IsVisible 真实接线 + 粒子可读性/detach 断言；**R2-017** Handoff；R2-016 D-14 不写达成。
 - 完成后：DSH 核验（build/全量/PNG/inventory/check/pins）→ 派 fresh 独立 impl-r2 Review（不得自审）→ 集成/关闭。ZCode 08:05 备用。
+## 142. R2-001 真实 decor 帧 + R2-017 Handoff + 派发 impl-r2（2026-11-03 05:22）
+
+- **R2-001 P0 闭环**（`dc1543005`）：`FluentResidual2DecorativeTests.Decor_Frames_Are_Captured_Only_When_Opted_In` 用 **ManualFluentMotionClock 驱动真实产品装饰层**，生成 5 张真实帧：shelf-gradient first/mid/static（46/50/43KB，SHA 全不同）+ page-turn-particles mid/none（29.7/29.9KB）；默认零写入、opt-in 仅本卡 visuals 新增；已追加 inventory 行（head 列）。
+- **R2-017**：`doc/handoffs/FEA-06-RESIDUAL-2-impl.md`（范围/提交链/验证/限制/交接要求）。
+- 验证：全量 **1274/0/57**（App 640、DS 112）；`check.ps1` PASS(3)；pins 15/15；未 push。
+- 已派 **独立上下文 impl-r2 Review**（D-9 workflow job `workflow-8eb284e7f674494c`）：核验 R2-001…017 处置、逐图视觉签署（pages/components/decor 共 32+ 张）与门禁，产出 `doc/reviews/FEA-06-RESIDUAL-2-impl-r2.md`。
+- approved 后：DSH 集成验证 → 按 AC 结果 done/closed_with_limitations；changes_requested 则继续返修。
