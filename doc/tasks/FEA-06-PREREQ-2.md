@@ -14,7 +14,7 @@ base_commit: a33778608
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: PENDING_COMMIT
+delivery_head: 92cac5ab1
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-PREREQ-2
@@ -105,34 +105,34 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E-P2-SELECTOR | AC1 | `apps/desktop-avalonia/src/NewManga.App/Services/FrontendSelector.cs` | `PENDING` | `6234f5861cc238489cf0307ca01a0050bf17c14454f1bd0000071392c0241f57` | CANONICAL |
-| E-P2-SELECTOR-TESTS | AC1 | `verification/FEA-06-PREREQ-2/ac1-selector-tests.log` | `PENDING` | `cc8141e3b205d8d8d75af33f02b3d83ef931bf4c6404dbd62ad2f219f73dae1a` | CANONICAL |
-| E-P2-COMPOSITION | AC2 | `apps/desktop-avalonia/src/NewManga.App/App.axaml.cs` | `PENDING` | `582fec7ff55fb991583b1cc1c62900d52dd16598e2994bc6ee0a66a75de1028b` | CANONICAL |
-| E-P2-FLUENT-SHELL | AC2/AC3 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml.cs` | `PENDING` | `d8665fb48daf11abe0ae7d6aa13a098763567d35ad31973bbc57930e9690a7c8` | CANONICAL |
-| E-P2-SHELL-TESTS | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-shell-tests.log` | `PENDING` | `2c3d58e4e199113bf199dae68c69ad00f1eedc1c863b12cee58ec34d41784eac` | CANONICAL |
-| E-P2-COORDINATOR | AC5 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceCoordinator.cs` | `PENDING` | `09232db8e315370d02122868f9c7bf27fb7c7ddec06483d9b61d79d79da344ea` | CANONICAL |
-| E-P2-SINK-CONTRACT | AC5 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/IThemeSettingsSink.cs` | `PENDING` | `170bc3f30d77ee6b2e1ea549317e93611b492cb7cd608af445d573f91d3cd637` | CANONICAL |
-| E-P2-COMPAT-WRITE | AC5 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Persistence/ThemeSettingsStore.cs` | `PENDING` | `c9c4d05beb17cca21588712e60c4044eb837327121e90eb50fe1038700f48ae2` | CANONICAL |
-| E-P2-SINK-ADAPTER | AC5 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceThemeSettingsSink.cs` | `PENDING` | `f96092e26503d0b7c96532c3914fe16becaefd01d622bce2cbf8664f50115158` | CANONICAL |
-| E-P2-APPEARANCE-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-appearance-tests.log` | `PENDING` | `9640258b6bc62ad684b3aec81453f6131b9dfb299104d1898f796adb8b62f759` | CANONICAL |
-| E-P2-SINK-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-sink-tests.log` | `PENDING` | `9476b0da4a7da644a932c467a14719772c5da5685c5dc37d134824f637f4712d` | CANONICAL |
-| E-P2-COMPAT-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-compat-write-tests.log` | `PENDING` | `53d3ffed096ea40760a4dacb6eadd619bc078801b7429faf0e8b409b398d4eb0` | CANONICAL |
-| E-P2-TOKEN-MAP | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Tokens/TokenMap.cs` | `PENDING` | `4a5b37fce512de571f7ecc050a887f15bf51736c8a252c7f7d933afe9aa11180` | CANONICAL |
-| E-P2-THEME-LAYER | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Theming/DesignSystemThemeManager.cs` | `PENDING` | `3472fa13368d9c4c00defcc6f04eef8b249b5fb22f1a053963d01b483239d157` | CANONICAL |
-| E-P2-FLUENT-PACKAGE | AC6/AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/fluent-dark.nmtheme` | `PENDING` | `0d2d223a3c653bf6ce032679d6c2d0e3d395966d9b06722fe10d0c143d938602` | CANONICAL |
-| E-P2-GENERATOR | AC6/AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/BuiltInThemeGenerator.cs` | `PENDING` | `28b3a577d51ab6bbbf12144012a2e44c83c9df7aac99a8d0f4b170ee0ec91ca3` | CANONICAL |
-| E-P2-VALIDATOR | AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Validation/ThemeValidator.cs` | `PENDING` | `3bbf8f6157dfa42dc63caf2e4cc498808800b8381200782f56772dad035401a9` | CANONICAL |
-| E-P2-R14-TESTS | AC6 | `verification/FEA-06-PREREQ-2/ac6-r14-tests.log` | `PENDING` | `308d9e50197a91e593fa5fd23f39ca2e9dd639ae05be7eb3cf68cc7ae542d4f5` | CANONICAL |
-| E-P2-MATERIAL-TESTS | AC6 | `verification/FEA-06-PREREQ-2/ac6-material-tests.log` | `PENDING` | `8417e073cac264e497cc92291d2569d08804992ea147814c5ebca511e7056ab8` | CANONICAL |
-| E-P2-MANIFEST-TESTS | AC7 | `verification/FEA-06-PREREQ-2/ac7-manifest-tests.log` | `PENDING` | `8d87afed2931e281f76cedbdbe9ffc63ff99cd71c1beb614fd9c36af31734702` | CANONICAL |
-| E-P2-TOKENGEN | AC6 | `verification/FEA-06-PREREQ-2/tokengen-check.log` | `PENDING` | `a81c35f854f379465c8494e19e61e93ff809e868ae57a1f1204f0f983234bba2` | CANONICAL |
-| E-P2-THEMEGEN | AC6/AC7 | `verification/FEA-06-PREREQ-2/themegen-check.log` | `PENDING` | `d9c4cf9b070a0b847b759fad7d1f497fd734cb4e0cbdce076e71f211242a65f0` | CANONICAL |
-| E-P2-BUILD | AC4 | `verification/FEA-06-PREREQ-2/build.log` | `PENDING` | `dafdb95132eb7c9f593da253522fbe2ecf00015bef04ef219cd51095a9a1d73c` | CANONICAL |
-| E-P2-TEST | AC4 | `verification/FEA-06-PREREQ-2/test.log` | `PENDING` | `1325f8408d401440cbd33ec6dfb2a4c6fa2c4eecb2794605c86897a6000f2dcf` | CANONICAL |
-| E-P2-CHECK | Gate | `verification/FEA-06-PREREQ-2/governance-check.log` | `PENDING` | `9fd5ad40131a58dab5c8409df053f967e6efd30dff8da7f65e21cf93d5a5edc4` | CANONICAL |
-| E-P2-PINS | Gate | `verification/FEA-06-PREREQ-2/verify-pins.log` | `PENDING` | `cf0df19a460c144428b4f973b0f1de8b36e0e106d73c0593e15b4e95f84d3615` | CANONICAL |
-| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `PENDING` | `5043754da6159495c65cb0b5501e984c1753c620bddc3efeb2070dc89f6ec0f9` | CANONICAL |
-| E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `PENDING` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
+| E-P2-SELECTOR | AC1 | `apps/desktop-avalonia/src/NewManga.App/Services/FrontendSelector.cs` | `92cac5ab1` | `6234f5861cc238489cf0307ca01a0050bf17c14454f1bd0000071392c0241f57` | CANONICAL |
+| E-P2-SELECTOR-TESTS | AC1 | `verification/FEA-06-PREREQ-2/ac1-selector-tests.log` | `92cac5ab1` | `cc8141e3b205d8d8d75af33f02b3d83ef931bf4c6404dbd62ad2f219f73dae1a` | CANONICAL |
+| E-P2-COMPOSITION | AC2 | `apps/desktop-avalonia/src/NewManga.App/App.axaml.cs` | `92cac5ab1` | `582fec7ff55fb991583b1cc1c62900d52dd16598e2994bc6ee0a66a75de1028b` | CANONICAL |
+| E-P2-FLUENT-SHELL | AC2/AC3 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml.cs` | `92cac5ab1` | `d8665fb48daf11abe0ae7d6aa13a098763567d35ad31973bbc57930e9690a7c8` | CANONICAL |
+| E-P2-SHELL-TESTS | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-shell-tests.log` | `92cac5ab1` | `2c3d58e4e199113bf199dae68c69ad00f1eedc1c863b12cee58ec34d41784eac` | CANONICAL |
+| E-P2-COORDINATOR | AC5 | `apps/desktop-avalonia/src/NewManga.Appearance/AppearanceCoordinator.cs` | `92cac5ab1` | `09232db8e315370d02122868f9c7bf27fb7c7ddec06483d9b61d79d79da344ea` | CANONICAL |
+| E-P2-SINK-CONTRACT | AC5 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Service/IThemeSettingsSink.cs` | `92cac5ab1` | `170bc3f30d77ee6b2e1ea549317e93611b492cb7cd608af445d573f91d3cd637` | CANONICAL |
+| E-P2-COMPAT-WRITE | AC5 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Persistence/ThemeSettingsStore.cs` | `92cac5ab1` | `c9c4d05beb17cca21588712e60c4044eb837327121e90eb50fe1038700f48ae2` | CANONICAL |
+| E-P2-SINK-ADAPTER | AC5 | `apps/desktop-avalonia/src/NewManga.App/Services/AppearanceThemeSettingsSink.cs` | `92cac5ab1` | `f96092e26503d0b7c96532c3914fe16becaefd01d622bce2cbf8664f50115158` | CANONICAL |
+| E-P2-APPEARANCE-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-appearance-tests.log` | `92cac5ab1` | `9640258b6bc62ad684b3aec81453f6131b9dfb299104d1898f796adb8b62f759` | CANONICAL |
+| E-P2-SINK-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-sink-tests.log` | `92cac5ab1` | `9476b0da4a7da644a932c467a14719772c5da5685c5dc37d134824f637f4712d` | CANONICAL |
+| E-P2-COMPAT-TESTS | AC5 | `verification/FEA-06-PREREQ-2/ac5-compat-write-tests.log` | `92cac5ab1` | `53d3ffed096ea40760a4dacb6eadd619bc078801b7429faf0e8b409b398d4eb0` | CANONICAL |
+| E-P2-TOKEN-MAP | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Tokens/TokenMap.cs` | `92cac5ab1` | `4a5b37fce512de571f7ecc050a887f15bf51736c8a252c7f7d933afe9aa11180` | CANONICAL |
+| E-P2-THEME-LAYER | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Theming/DesignSystemThemeManager.cs` | `92cac5ab1` | `3472fa13368d9c4c00defcc6f04eef8b249b5fb22f1a053963d01b483239d157` | CANONICAL |
+| E-P2-FLUENT-PACKAGE | AC6/AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/fluent-dark.nmtheme` | `92cac5ab1` | `0d2d223a3c653bf6ce032679d6c2d0e3d395966d9b06722fe10d0c143d938602` | CANONICAL |
+| E-P2-GENERATOR | AC6/AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Themes/BuiltInThemeGenerator.cs` | `92cac5ab1` | `28b3a577d51ab6bbbf12144012a2e44c83c9df7aac99a8d0f4b170ee0ec91ca3` | CANONICAL |
+| E-P2-VALIDATOR | AC7 | `apps/desktop-avalonia/src/NewManga.ThemeEngine/Validation/ThemeValidator.cs` | `92cac5ab1` | `3bbf8f6157dfa42dc63caf2e4cc498808800b8381200782f56772dad035401a9` | CANONICAL |
+| E-P2-R14-TESTS | AC6 | `verification/FEA-06-PREREQ-2/ac6-r14-tests.log` | `92cac5ab1` | `308d9e50197a91e593fa5fd23f39ca2e9dd639ae05be7eb3cf68cc7ae542d4f5` | CANONICAL |
+| E-P2-MATERIAL-TESTS | AC6 | `verification/FEA-06-PREREQ-2/ac6-material-tests.log` | `92cac5ab1` | `8417e073cac264e497cc92291d2569d08804992ea147814c5ebca511e7056ab8` | CANONICAL |
+| E-P2-MANIFEST-TESTS | AC7 | `verification/FEA-06-PREREQ-2/ac7-manifest-tests.log` | `92cac5ab1` | `8d87afed2931e281f76cedbdbe9ffc63ff99cd71c1beb614fd9c36af31734702` | CANONICAL |
+| E-P2-TOKENGEN | AC6 | `verification/FEA-06-PREREQ-2/tokengen-check.log` | `92cac5ab1` | `a81c35f854f379465c8494e19e61e93ff809e868ae57a1f1204f0f983234bba2` | CANONICAL |
+| E-P2-THEMEGEN | AC6/AC7 | `verification/FEA-06-PREREQ-2/themegen-check.log` | `92cac5ab1` | `d9c4cf9b070a0b847b759fad7d1f497fd734cb4e0cbdce076e71f211242a65f0` | CANONICAL |
+| E-P2-BUILD | AC4 | `verification/FEA-06-PREREQ-2/build.log` | `92cac5ab1` | `dafdb95132eb7c9f593da253522fbe2ecf00015bef04ef219cd51095a9a1d73c` | CANONICAL |
+| E-P2-TEST | AC4 | `verification/FEA-06-PREREQ-2/test.log` | `92cac5ab1` | `1325f8408d401440cbd33ec6dfb2a4c6fa2c4eecb2794605c86897a6000f2dcf` | CANONICAL |
+| E-P2-CHECK | Gate | `verification/FEA-06-PREREQ-2/governance-check.log` | `92cac5ab1` | `9fd5ad40131a58dab5c8409df053f967e6efd30dff8da7f65e21cf93d5a5edc4` | CANONICAL |
+| E-P2-PINS | Gate | `verification/FEA-06-PREREQ-2/verify-pins.log` | `92cac5ab1` | `cf0df19a460c144428b4f973b0f1de8b36e0e106d73c0593e15b4e95f84d3615` | CANONICAL |
+| E-P2-DELIVERY-NOTES | All | `verification/FEA-06-PREREQ-2/delivery-notes.md` | `92cac5ab1` | `5043754da6159495c65cb0b5501e984c1753c620bddc3efeb2070dc89f6ec0f9` | CANONICAL |
+| E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `92cac5ab1` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
 
 ## Resource Manifest
 
