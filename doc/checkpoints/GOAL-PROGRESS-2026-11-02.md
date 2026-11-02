@@ -835,3 +835,13 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 回归处置：`HasMotion` 排除 decorative；`FluentAnimationCompletionTests` 默认分类收窄 Navigation|Feedback（注释说明，未删断言）→ 16/16 PASS；修复 ToolTip/AlertBanner 编译错误。
 - 验证：build 0/0；全量无过滤 **1257/0/57**（+12）；证据 `verification/FEA-06-RESIDUAL-2/impl-in1-verification.log`；未 push；旧四 PNG 未动。
 - 剩余：IN-2A（期望令牌校准，WIP 测试快照 9/14）、IN-2B（opt-in 像素+签署）；Codex 05:24 / ZCode 08:05 续接排程有效；完成后独立 impl Review。
+## 128. IN-2A 校准诊断完成（2026-11-03 04:06）
+
+- WIP 测试恢复后重跑：9 PASS / 5 FAIL；逐项结论写入 workspace `FEA-06-RESIDUAL-2/in2a-calibration-notes.md`：
+  1) AlertBanner NotStarted 应期望 `Nm.Color.Text.Disabled`（StatusCatalog/Controls.Status 权威），测试期望错误；
+  2) TabItem hover 实际生效 `Nm.Color.Accent.Hover`（Controls.Custom 覆盖主题 Text.Primary），测试期望错误；
+  3) BookCard/BookRow disabled opacity=1：伪类刷新/实现缺口待证，需 UpdateLayout 探针后再定；
+  4) SurfaceCard 默认背景 null：测试未加载 fluent-surface-card 样式，非产品缺口；
+  5) RegionBox hover 待与 Controls.Custom 规则逐行核对。
+- 为保持主分支全绿，IN-2A 测试文件暂不提交（快照保留）；当前 build 0/0、基线 **1257/0/57**（IN-1 已提交 `d854d91b2`）。
+- 剩余：IN-2A 校准落地、IN-2B（opt-in PNG+inventory+签署）；Codex 05:24 / ZCode 08:05 续接；完成后独立 impl Review。
