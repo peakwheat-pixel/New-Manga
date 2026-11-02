@@ -1,0 +1,12 @@
+# FEA-07 证据索引（自动生成记录，2026-11-02）  - 生成时间：2026-11-02 16:00:33 +08:00 - 代码 head：`e4ef84efbaebdbab062433680870f1df27ee3d4f` - 全量测试基线：**1102 passed / 0 failed / 57 skipped**（起点 1034/0/57） - 治理：`check.ps1` PASS（3 warnings）；`verify_pins.ps1` 15/15 - 生成物：TokenGen `-- --check` 292 rows byte-for-byte up to date；ThemeGen `-- --check` byte-for-byte up to date - 性能（W-5）：Release 热切换 p50 118.51 ms / p95 429.47 ms / 冷启动首次 648.42 ms / 内存 +1.38 MB / 句柄 +3 → PASS - 独立复核：`doc/reviews/FEA-07-impl-r1.md`（进行中，结果到达后补入） - 原生双屏/拔屏/DPI 100/125/150/200% 矩阵：**blocked（D-1 无硬件）**，未伪造；逻辑/清单/持久化由 headless 证据覆盖  ## 证据文件与 SHA-256  | 文件 | 路径 | sha256 | |---|---|---| | performance-baseline-debug.json | `verification/FEA-07/performance-baseline-debug.json` | `b9d094be8b22f2fdd34cca4b8bb42ebf5a51bfa234310e9945197ce441224ae1` |
+| performance-baseline-release.json | `verification/FEA-07/performance-baseline-release.json` | `44f1768bbbb57a35aff415804b0e78a05948ccedc575f94ba9a58aa0a81474fc` |
+| performance-baseline.md | `verification/FEA-07/performance-baseline.md` | `eb6fa93a1fd1a2fd8912ecd791e011f533bc7c1b014c2266ddd228aa57c768b1` |
+| slice-1-verification.log | `verification/FEA-07/slice-1-verification.log` | `a63982423ba6e79f96f76bacc27049a2bba18506fdf9411c13df0c5f13dac78d` |
+| slice-2-verification.log | `verification/FEA-07/slice-2-verification.log` | `55fd5e5fb1c5a9a146e3cda5e5a8087ebff4beeee9a5c480e81d539d6bbfe771` |
+| slice-2b-verification.log | `verification/FEA-07/slice-2b-verification.log` | `2c281f288af106ed5391eea065aaac25f8f6543063a5aecab0f7ec11a4cee88b` |
+| slice-2c-part1-verification.log | `verification/FEA-07/slice-2c-part1-verification.log` | `d835a23daf53d64d90fbe026f3307570b74df6778a7f1c50f61e60cfe63ee7f1` |
+| slice-2c-part2-verification.log | `verification/FEA-07/slice-2c-part2-verification.log` | `7b848ca1a773e82e0b1faa1ee3e1a7f2d54f8ca49f2e0b3faaa80702ecb75973` |
+| slice-3-verification.log | `verification/FEA-07/slice-3-verification.log` | `bb11ca80e77ad3345a7410c5b0b8a7818a2df0f2ce329460d4007cc9e1886b26` |
+| slice-4-verification.log | `verification/FEA-07/slice-4-verification.log` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` |
+| slice-5-verification.log | `verification/FEA-07/slice-5-verification.log` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` |
+| slice-6-gapclosing-verification.log | `verification/FEA-07/slice-6-gapclosing-verification.log` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | 

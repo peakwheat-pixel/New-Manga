@@ -356,3 +356,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - AC1：真实 V2/Fluent content 在稳定窗口 10 次往返（20 切换）测试；AC2：`PresentationWindow` 内嵌 `WindowBroker` 注册唯一主窗 + 二窗登记测试；AC3：`App.CreatePresentationShell` 启动时回滚未完成 journal（Rendered→RolledBack）并 Trace 警告 + 测试。
 - 证据 `verification/FEA-07/slice-6-gapclosing-verification.log`；build 0/0；全量 **1102/0/57**（首跑偶发 2 例 App.Tests 失败、连续两次复跑通过，已注记）。
 - **impl review 仍在运行**（fresh Codex CLI；job pwsh-80ca8a0ff78c4feb），结果到达后处置 findings。
+## 49. FEA-07 复核等待期：证据索引与集成前置（2026-11-02）
+
+- 生成 `verification/FEA-07/evidence-index.md`（全部证据 SHA-256、基线、生成物检查、性能数字、复核状态、原生 blocked 说明）。
+- 集成前置实测：TokenGen `-- --check` 292 rows byte-for-byte up to date；ThemeGen `-- --check` byte-for-byte up to date；`check.ps1` PASS(3)；pins 15/15；全量 1102/0/57。
+- impl review 仍在运行（Codex CLI xhigh，大 diff + 全量测试），结果到达后处置。
