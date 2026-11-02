@@ -850,3 +850,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 追加诊断：BookCard/BookRow 的 `:disabled` Opacity 规则存在于 `DesignSystem/Styles/Controls.Fluent.axaml`（Button.fluent-book-card:disabled / Button.fluent-book-row:disabled），`SurfaceCard` 背景规则在 `Border.fluent-surface-card`；ZCode 测试失败更可能是测试未加载对应 Fluent 样式栈/未 UpdateLayout，而非产品缺口（待用 RealAppResourceStack 式加载验证）。
 - 已更新 05:24 提醒指令（schedule `schedule-6a417da5…`）：含 IN-1 已提交 `d854d91b2`（1257/0/57）、IN-2A 校准笔记/WIP 路径、IN-2B 要求与「不得改样式迁就测试」约束。
 - 当前主分支干净、全绿；Task2 in_progress；等待 Codex 05:23 / ZCode 08:05 窗口续接 IN-2A/IN-2B，随后独立 impl Review → 集成/关闭。
+## 130. IN-2A 期望校准（快照更新，2026-11-03 04:15）
+
+- 按权威令牌校准快照 `wip-snapshot/FluentResidual2StateEffectiveTests.cs` 两项：`StatusKind.NotStarted → Nm.Color.Text.Disabled`；TabItem hover Foreground → `Nm.Color.Accent.Hover`（Controls.Custom 覆盖）。
+- 校准说明更新至 workspace `FEA-06-RESIDUAL-2/in2a-calibration-notes.md`：余 3 项（BookCard/BookRow disabled、SurfaceCard 默认背景、RegionBox hover）需真实资源栈/UpdateLayout 探针或权威样式逐行核对；禁止改样式迁就测试。
+- 主分支未改动、仍全绿 1257/0/57；IN-2A 测试文件未提交（快照保留）；Task2 in_progress。
+- 下一步：Codex 05:24 / ZCode 08:05 依快照+notes 完成 IN-2A/IN-2B，随后独立 impl Review。
