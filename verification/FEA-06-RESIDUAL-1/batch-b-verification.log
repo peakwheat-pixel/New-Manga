@@ -86,3 +86,7 @@
 - `FluentComponentPointerStatesTests` 扩展：DangerButton hover=StatusMuted.Failed；BookCard hover=Bg.Overlay / pressed=Accent.Muted / selected=Accent.Muted（指针合成 + 类切换）。
 - 矩阵 DangerButton/BookCard 行升级为 EFFECTIVE（hover/pressed/selected）；BookRow 保持声明+功能测试。
 - 验证：无过滤全量 **1194/0/57** 保持；旧 PNG 零漂移。
+
+## 补记 10（R3-004 Current 对照断言，全量 1195/0/57）
+- `FluentCurrentComparisonTests`：Fluent 高对比 3px/阴影置空 → 恢复标准后回到冻结基线；同进程切到 Current V2 再切回 Fluent，焦点环/ Elevation 令牌保持基线、Current 内容非 Fluent surface。覆盖 scope-r3 R3-004「Current 对照行为断言」。
+- 验证：无过滤全量 **1195 passed / 0 failed / 57 skipped**（DS 93 + App 580）；旧 FEA-06 PNG 零漂移。
