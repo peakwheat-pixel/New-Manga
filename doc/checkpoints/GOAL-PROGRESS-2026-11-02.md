@@ -572,3 +572,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **验证**：build 0/0；安全全量（排除 PNG 用例）**1170/0/57**（基线 1137 + 33 新测试）；FEA-07 非回归子集全绿；TokenGen 292 rows / ThemeGen up-to-date；check PASS(3)；pins 15/15；旧 FEA-06 PNG 字节未变（restore 后 SHA 一致）。
 - **Batch B 待派**：I-4（组件 full 状态）、I-5（motion 三态×三类）、I-7（PNG opt-in，恢复无过滤 1138 起点）、I-8（Elevation+高对比回退+Current 对照）、I-11（焦点环/浮层焦点/Tab 序+Current 对照）。
 - **下一步**：Batch B（Codex 额度恢复优先 Codex，否则 ZCode 新会话）→ fresh impl 复核 → DSH 集成/关闭。
+## 81. FEA-06-RESIDUAL-1 Batch B 部分交付 + D-7（2026-11-02 深夜）
+
+- **I-7 完成**（`ce0bee67d`）：PNG 采证默认不写仓库/证据面；`NEWMANGA_CAPTURE_FLUENT_PNGS=1` opt-in 写 `verification/FEA-06-RESIDUAL-1/png/`；默认帧尺寸断言保留；`verification/FEA-06/screens/**` 字节未变（SHA 对照）；opt-in 实测生成 4 PNG 后移除。
+- **双 agent 额度耗尽**：Codex CLI 额度 2026-11-03 00:23 恢复（Batch B 派发时崩溃/额度错误），ZCode CLI 额度 2026-11-03 03:02 恢复（5 小时限额，错误码 1308）；Batch B 全量派发两次均失败（一次 0xC0000409 崩溃、一次额度错误）。
+- **D-7 待裁决（DSH 已按推荐执行）**：故障转移候选同时不可用时，是否允许 DSH 直接实施 Batch B 剩余项并在 agent 恢复后补独立 Review。推荐/采用：**允许**——变更均在冻结范围与 allowed_paths 内；保留逐子项提交；独立 Review 待 Codex/ZCode 恢复后补做（不得以 DSH 自审替代）。依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 实施（仅不得自审）。
+- **剩余**：I-4（组件 full 状态矩阵）、I-5（motion 三态×三类消费断言）、I-8（Elevation+高对比回退）、I-11（焦点环/浮层焦点/Tab 序）；Batch B 证据与 Handoff 待全部完成后补。
+- **下一步**：DSH 继续实施 Batch B 剩余项 → agent 恢复后派独立 impl 复核（Codex 优先）→ DSH 集成验证 → done/closed_with_limitations。

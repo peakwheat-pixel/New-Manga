@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch B（ZCode CLI，Codex 额度故障转移）进行中**（I-7/I-4/I-5/I-11/I-8）
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**impl Batch B 剩余项（I-4/I-5/I-8/I-11）由 DSH 继续**（Codex 额度 00:23 恢复、ZCode 额度 03:02 恢复；双 agent 均不可用，实施期独立 Review 待恢复后补）
 depends_on:
   - FEA-06
   - FEA-07
@@ -15,7 +15,7 @@ base_commit: 82529a3d5864a39f362e414b67bca774d743f862
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 9337cbbe1b522d03a60cccd747c58393fc5fba79（Batch A 交付；Batch B 未完成，终态交付待续）
+delivery_head: ce0bee67d（Batch B 首个交付：I-7 PNG opt-in；Batch B 其余 I-4/I-5/I-8/I-11 未完成）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06-RESIDUAL-1
@@ -156,11 +156,18 @@ allowed_paths:
 - 验证：build 0/0；新增测试 33/33；安全全量（排除 PNG 用例）**1170/0/57**（基线 1137 + 33）；FEA-07 非回归子集全绿；TokenGen/ThemeGen up-to-date；check PASS(3)；pins 15/15；证据 `verification/FEA-06-RESIDUAL-1/batch-a-verification.log`（SHA `4a7744f1…`）。
 - 未完成（Batch B）：I-4 组件 full 状态、I-5 motion、I-7 PNG opt-in、I-8 Elevation、I-11 焦点环/浮层焦点/Tab 序。I-7 落地前全量验证必须排除 `FluentPages_RenderHeadlessPngEvidence`，不得声称无过滤全量已复跑。
 
+## Batch B 记录（2026-11-02 深夜）
+
+- **I-7 完成**：`ce0bee67d`（`FluentPages_RenderHeadlessPngEvidence` 默认不写仓库/证据面 PNG；`NEWMANGA_CAPTURE_FLUENT_PNGS=1` opt-in 写 `verification/FEA-06-RESIDUAL-1/png/`；默认路径保留帧尺寸断言；`verification/FEA-06/screens/**` 字节未变）。验证：默认测试通过、opt-in 生成 4 PNG、git status 干净。
+- **剩余**：I-4（组件 full 状态矩阵）、I-5（motion 三态×三类消费）、I-8（Elevation+高对比回退）、I-11（焦点环/浮层焦点/Tab 序）。当前**双 agent 额度耗尽**（Codex 00:23、ZCode 03:02 恢复），DSH 继续实施；独立 Review 与最终验收待 agent 恢复后补。
+- **待裁决 D-7**：故障转移候选（Codex/ZCode）同时不可用时，是否允许 DSH 直接实施 Batch B 剩余项并在 agent 恢复后补独立 Review。DSH 推荐：**允许**（否则任务停摆；变更均在冻结范围/写域内，保留可复核提交粒度）。依据：用户 2026-11-02「可推进项不耗尽不停」+ 协作协议允许 DSH 作为 Lead/Integrator 实施（不得自审，Review 留待独立 agent）。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-FEA06R1-BATCHA | AC1/AC3/AC5 | `verification/FEA-06-RESIDUAL-1/batch-a-verification.log` | `9337cbbe1` | `4a7744f1128c861b6a4fb9e7ddae55284c76dadf3f6b19b7fb86b2a343e72e08` | CANONICAL |
+| EV-FEA06R1-I7 | AC4/AC5 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `ce0bee67d` | `f3563e5e5fc5d8d8df53d170c9778e84e96d53c13810e983cc10a3634932a560` | SOURCE_PIN |
 
 ## Closeout Record
 
