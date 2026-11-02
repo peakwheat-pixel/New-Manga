@@ -646,3 +646,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 扩展 `FluentComponentPointerStatesTests`：DangerButton hover=StatusMuted.Failed；BookCard hover/pressed/selected 有效属性。矩阵对应行升级 EFFECTIVE。
 - 验证：无过滤全量 **1194/0/57**；旧 PNG 零漂移；治理 PASS。交付 `3e879fba1`；证据 SHA `80b00f6b…`。
 - 下一步：Codex 00:23 恢复后派独立 impl Review（prompt/提醒已备）；ZCode 03:02 备用。
+## 93. FEA-06-RESIDUAL-1 预复核自检快照（2026-11-03 00:05）
+
+- `verification/FEA-06-RESIDUAL-1/pre-review-verification.log`（commit `84abc9c71`，SHA `66db6559…`）：记录 head、base→head 禁止范围零改动、build 0/0、无过滤全量 1194/0/57 逐程序集、旧 FEA-06 四张 PNG SHA、TokenGen/ThemeGen `--check` up-to-date、check PASS(3)、pins 15/15。
+- 用途：独立 impl Review 可直接对照该快照复核 DSH 自检结论；最终集成验证仍以 Review 后新跑日志为准。
+- 下一步：00:23 后派 Codex 独立 impl Review（prompt/提醒已备）；仍限则 03:02 转 ZCode。
