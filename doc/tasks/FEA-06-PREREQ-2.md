@@ -139,7 +139,7 @@ allowed_paths:
 | E-P2-FLUENT-SMOKE | AC2/AC3 | `verification/FEA-06-PREREQ-2/ac2-ac3-fluent-smoke.log` | `0d1037fd3` | `d679b34e04a0ba1a295bcf37eadb73c0b37d45d1335753c53c66928f9ef77a51` | CANONICAL |
 | E-P2-V2-SMOKE | AC2 | `verification/FEA-06-PREREQ-2/ac2-v2-smoke.log` | `0d1037fd3` | `11cb9ee6bb72b01648c23fa318eb336371d79fae2d98c68d6432eaf357e7f536` | CANONICAL |
 | E-P2-LEDGER-SOURCE | Gate | `verification/FEA-06-PREREQ-2/task-ledger.log` | `92cac5ab1` | `5faa94d01a8863486b362457850d8525eac69da23d9929469635f7b551d0456d` | SOURCE_PIN |
-| E-P2-INTEGRATION | AC4/Gate | `verification/FEA-06-PREREQ-2/integration-verification.log` | `PENDING` | `c5a347b2685a1d8c469652749d7480178474542876f9f8b1417e6ca57853f33a` | CANONICAL |
+| E-P2-INTEGRATION | AC4/Gate | `verification/FEA-06-PREREQ-2/integration-verification.log` | `f320aa462` | `c5a347b2685a1d8c469652749d7480178474542876f9f8b1417e6ca57853f33a` | CANONICAL |
 
 ## Resource Manifest
 
