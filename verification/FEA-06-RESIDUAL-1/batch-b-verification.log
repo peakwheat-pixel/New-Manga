@@ -59,3 +59,7 @@
 - `FluentComponentStateEffectiveTests`：PrimaryButton（Accent.Base/Accent.On/Corner.Fluent.Sm/ControlHeight）、disabled（Opacity.Disabled 且 IsEffectivelyEnabled=false）、DangerButton（Status.Failed 前景+描边/Hairline）、SurfaceCard（Bg.Raised/Hairline/Elevation.1/Corner.Md）、Dialog（Elevation.3/Corner.Lg/ZIndex.Modal）、TabItem（未选 Text.Secondary/选中 Text.Primary）有效属性断言；hover/pressed/loading 视觉格 NOT_RUN。
 - `component-state-matrix.md`：按 10-component-inventory §1–§3 逐组件登记 EFFECTIVE/COMMAND/FOCUS/DECLARED/NOT_RUN；`ac-coverage.md`：AC1–AC5 当前评估（AC2=PARTIAL：I-4 视觉格/I-5 decorative D-8）。
 - 验证：build 0/0；无过滤全量 **1179 passed / 0 failed / 57 skipped**（DS 91 + App 566 等）；旧 FEA-06 PNG 零漂移。
+
+## 补记 4（I-11 四页焦点场景，全量 1180/0/57）
+- `FluentFocusPageCoverageTests`：Library/Workbench/Reader/Settings 四页分别找到可见可聚焦控件 → 键盘焦点后共享 2px 焦点环实际绘制（ring Border 可见）→ 覆盖设计 03 §3「四页至少各 1 个焦点场景」。
+- 验证：无过滤全量 **1180 passed / 0 failed / 57 skipped**（DS 91 + App 567）；旧 FEA-06 PNG 零漂移。
