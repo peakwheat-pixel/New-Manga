@@ -19,7 +19,7 @@ base_commit: 3c7f311d88b24bde462a61690e15d2c66f8c4683
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: b0388df9ae2bb087649b44cf25a0921b2116934e
+delivery_head: 7cf305fe2534272dc75295c4644661ddb73221af
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-06
@@ -184,13 +184,13 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA06-AC1 | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `d9934017d33849c167867646d9737336cb957d23a77914459e83ec410d54c2d5` | CANONICAL |
-| EV-FEA06-AC2 | AC2 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `45e37d3fb38bfca7b030428b397193955afd1f06ace6e4cdecc559bdaa4115f8` | CANONICAL |
-| EV-FEA06-AC3 | AC3 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `7ed78e52fa1a1943bdbd58601b4eb12b25b5373f80eadfc1b9a388846eced74f` | CANONICAL |
+| EV-FEA06-AC1 | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `d9934017d33849c167867646d9737336cb957d23a77914459e83ec410d54c2d5` | CANONICAL |
+| EV-FEA06-AC2 | AC2 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `45e37d3fb38bfca7b030428b397193955afd1f06ace6e4cdecc559bdaa4115f8` | CANONICAL |
+| EV-FEA06-AC3 | AC3 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `7ed78e52fa1a1943bdbd58601b4eb12b25b5373f80eadfc1b9a388846eced74f` | CANONICAL |
 | EV-FEA06-AC4 | AC4 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `2b5fc10a95e9f1fdbe20cc12e3f9f543a2400ada6d47ccbaf7925298f7026919` | CANONICAL |
 | EV-FEA06-AC5 | AC5 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bb55cd59872e288ffc3da676900a784e9153e138d676c2aa71d11befd75dd53f` | CANONICAL |
-| EV-FEA06-AC6 | AC6 | `verification/FEA-06/component-registry.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `ca3680a3b79ff347233ade761ef60427b9685947024cca42a713b1cfb0787e0c` | CANONICAL |
-| EV-FEA06-AC7 | AC7 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `c8bb3e867bf96ca440bd4876c7e424f621b81c17e9143b399cd4ee9725bab25f` | CANONICAL |
+| EV-FEA06-AC6 | AC6 | `verification/FEA-06/component-registry.md` | `7cf305fe2534272dc75295c4644661ddb73221af` | `ca3680a3b79ff347233ade761ef60427b9685947024cca42a713b1cfb0787e0c` | CANONICAL |
+| EV-FEA06-AC7 | AC7 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `c8bb3e867bf96ca440bd4876c7e424f621b81c17e9143b399cd4ee9725bab25f` | CANONICAL |
 | EV-FEA06-AC8 | AC8 | `verification/FEA-06/full-test.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `be5fda55f2e55135bd5c81f902f9d2bf4b1d6aa10d78abc95b4451222890ad21` | CANONICAL |
 | EV-FEA06-AC8-BUILD | AC8 | `verification/FEA-06/build.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `a7d6f89bb743f1bd40d46c185344c85d9c6fb2c5bea6940cccebaa38d632ffa0` | CANONICAL |
 | EV-FEA06-AC6-TEST | AC6 | `verification/FEA-06/design-system-component-tests.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `5e3532f3b2af9efd01de8a75716f826c10d521a4797cb5ff568d708f52704838` | CANONICAL |
@@ -203,11 +203,11 @@ allowed_paths:
 | EV-FEA06-AC9-LEDGER | AC9 | `verification/FEA-06/task-ledger-in-review.log` | `-` | `0a62e1a2585f2fea8dc9a4049b361547d3d36fa5de4ebe392153a5c3e51a9f2f` | SOURCE_PIN |
 | EV-FEA06-AC9-PINS | AC9 | `verification/FEA-06/verify-pins-in-review.log` | `-` | `4013203b711a94e9c158cb226b545711e609778384702f982d25aedeaffae9a5` | SOURCE_PIN |
 | EV-FEA06-AC9-GOV-INREVIEW | AC9 | `verification/FEA-06/governance-in-review.log` | `-` | `dd09ac7e256b41fdd2907592b5438f7c08fe2cb2430e6f7488c7aa79c17faaf3` | SOURCE_PIN |
-| EV-FEA06-AC9 | AC9 | `verification/FEA-06/evidence-index.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `1ad65379071ecb7f33005728f48aa53d768ec93cd55e23541a87b414138408c9` | CANONICAL |
-| EV-FEA06-SCREEN-SHELF | AC9 | `verification/FEA-06/screens/shelf.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a` | CANONICAL |
-| EV-FEA06-SCREEN-WORKBENCH | AC9 | `verification/FEA-06/screens/workbench.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `d709a3238af9d3acc4aa529e5f26a8eb8c93f1f07c0128dfbabdc3e05ae37bac` | CANONICAL |
-| EV-FEA06-SCREEN-READER | AC9 | `verification/FEA-06/screens/reader.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2` | CANONICAL |
-| EV-FEA06-SCREEN-SETTINGS | AC9 | `verification/FEA-06/screens/settings.png` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162` | CANONICAL |
+| EV-FEA06-AC9 | AC9 | `verification/FEA-06/evidence-index.md` | `-` | `9688b043ce80df8dcc157f568f63b4bb7d5055855e469ea167dd699a10f5e81e` | SOURCE_PIN |
+| EV-FEA06-SCREEN-SHELF | AC9 | `verification/FEA-06/screens/shelf.png` | `7cf305fe2534272dc75295c4644661ddb73221af` | `307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a` | CANONICAL |
+| EV-FEA06-SCREEN-WORKBENCH | AC9 | `verification/FEA-06/screens/workbench.png` | `7cf305fe2534272dc75295c4644661ddb73221af` | `d709a3238af9d3acc4aa529e5f26a8eb8c93f1f07c0128dfbabdc3e05ae37bac` | CANONICAL |
+| EV-FEA06-SCREEN-READER | AC9 | `verification/FEA-06/screens/reader.png` | `7cf305fe2534272dc75295c4644661ddb73221af` | `8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2` | CANONICAL |
+| EV-FEA06-SCREEN-SETTINGS | AC9 | `verification/FEA-06/screens/settings.png` | `7cf305fe2534272dc75295c4644661ddb73221af` | `fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162` | CANONICAL |
 | EV-FEA06-UIUX-COVERAGE | AC9 | `verification/FEA-06/uiux/coverage-matrix.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `a9d74fd319b806c823db7fb0ca19394f90a1258afa356fd264ad282ec37322c8` | CANONICAL |
 | EV-FEA06-UIUX-GATES | AC9 | `verification/FEA-06/uiux/gate-results.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `dcdf1daf2139d78113cde29135d56531142fcbda942ffbdbdcc80aa6aa080b09` | CANONICAL |
 | EV-FEA06-UIUX-REQUEST | AC9 | `verification/FEA-06/uiux/request.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `74c0edac9e66c700f9b8bd0289ccc7591aeeb323ac231749c66c80c219ea4c19` | CANONICAL |
@@ -215,21 +215,21 @@ allowed_paths:
 | EV-FEA06-UIUX-MANIFEST | AC9 | `verification/FEA-06/uiux/evidence-manifest.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `dd1db40b8b1bef9318039d683f4aface7c3f80612a1708482e8f7637bbabeb4b` | CANONICAL |
 | EV-FEA06-UIUX-FINALIZE | AC9 | `verification/FEA-06/uiux/finalize.log` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `bde655d84ede10046dae7df6c03e0b180b46e6cf6ce78b2274ad8e4ed43c1b88` | CANONICAL |
 | EV-FEA06-UIUX-RESULT | AC9 | `verification/FEA-06/uiux/task-result.json` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cebe22f92c522074343ec4303f176c42bfe4c3a3e003f4673fc0502b96fb267f` | CANONICAL |
-| EV-FEA06-AC10 | AC10 | `verification/FEA-06/rework-scope-audit.md` | `-` | `4e0696c8944e99156d9b23268201aed9fd075f6347a821a4c9778f63dcb874d0` | SOURCE_PIN |
-| EV-FEA06-P1-1-STYLE | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `d6f72b97a336b3f1edce421cbb953b7991c8a5b57ccd5831f32ccb6375173075` | CANONICAL |
-| EV-FEA06-P1-1-GUARD | AC6 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentTokenResourceTests.cs` | `-` | `0549ab08c1f7a80583a6bafe877b0b14da6a08698e82696bd4e01c18ab3a372a` | SOURCE_PIN |
-| EV-FEA06-W13-SHELL-XAML | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `9fdacf5af8e1ffc90adf66308c9a44f88ad788d834c34ab6946950512ddf10d8` | CANONICAL |
-| EV-FEA06-W13-SHELL-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentShellTests.cs` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `f8cbb9eb1f26be141072716f2eaebd322356814175447ae8e4b335c8d2d368c8` | CANONICAL |
-| EV-FEA06-REWORK-BUILD | AC8 | `verification/FEA-06/rework-build.log` | `-` | `56581789d10b76aa06ec29e9e05268de879691dd2bb562ba61cb5441cabb5c21` | SOURCE_PIN |
-| EV-FEA06-REWORK-FULL-TEST | AC8 | `verification/FEA-06/rework-full-test.log` | `-` | `63c707807a6e1da0dc02dfe6aa56579e3e95eb9ab443fcf7e954e929b782e23e` | SOURCE_PIN |
-| EV-FEA06-REWORK-PAGE-TEST | AC1–AC7 | `verification/FEA-06/rework-page-tests.log` | `-` | `3fb25d527c432dc53f68b50acbec4ce6245f31d51e72401b81136c47ff03ca27` | SOURCE_PIN |
-| EV-FEA06-REWORK-DS-TEST | AC6 | `verification/FEA-06/rework-design-system-tests.log` | `-` | `1ab974fb7cbec32ae2377830be759cd3d0a5f1b1760b027253d815347d6f5737` | SOURCE_PIN |
-| EV-FEA06-REWORK-TOKEN-GEN | AC8 | `verification/FEA-06/rework-token-gen.log` | `-` | `90b91fbde2c349ee51bb31fc0c68cf71ac63243f66dc19654a0f9b854df50753` | SOURCE_PIN |
-| EV-FEA06-REWORK-THEME-GEN | AC8 | `verification/FEA-06/rework-theme-gen.log` | `-` | `169b9fe70e730c0503ab12d4ee4a7f51684318d52aa23b2ab0ba3e1c10b024ee` | SOURCE_PIN |
-| EV-FEA06-REWORK-ATTEMPT1 | AC8 | `verification/FEA-06/rework-full-test-attempt1.log` | `-` | `1547e6984fa27208a2d87b2c99a1d8b0e091d2add8afbc4e307f129f2677be22` | SOURCE_PIN |
-| EV-FEA06-REWORK-LEDGER | AC9 | `verification/FEA-06/rework-task-ledger.log` | `-` | `15c220f917421357be14c9cdf9065c5c543f96f8740a52bfb13614a580fd5248` | SOURCE_PIN |
-| EV-FEA06-REWORK-GOV | AC9 | `verification/FEA-06/rework-governance-check.log` | `-` | `07ebd871931f4aed985f8afcb1e7aeb53ed476501940d334a6a021c61e9cc8a9` | SOURCE_PIN |
-| EV-FEA06-REWORK-PINS | AC9 | `verification/FEA-06/rework-verify-pins.log` | `-` | `d521d266606edec817ac419e0252fca4aeca39c1b06463bf87d1411e49929e05` | SOURCE_PIN |
+| EV-FEA06-AC10 | AC10 | `verification/FEA-06/rework-scope-audit.md` | `7cf305fe2534272dc75295c4644661ddb73221af` | `4e0696c8944e99156d9b23268201aed9fd075f6347a821a4c9778f63dcb874d0` | CANONICAL |
+| EV-FEA06-P1-1-STYLE | AC6 | `apps/desktop-avalonia/src/NewManga.DesignSystem/Styles/Controls.Fluent.axaml` | `7cf305fe2534272dc75295c4644661ddb73221af` | `d6f72b97a336b3f1edce421cbb953b7991c8a5b57ccd5831f32ccb6375173075` | CANONICAL |
+| EV-FEA06-P1-1-GUARD | AC6 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentTokenResourceTests.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `0549ab08c1f7a80583a6bafe877b0b14da6a08698e82696bd4e01c18ab3a372a` | CANONICAL |
+| EV-FEA06-W13-SHELL-XAML | AC1 | `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShell.axaml` | `7cf305fe2534272dc75295c4644661ddb73221af` | `9fdacf5af8e1ffc90adf66308c9a44f88ad788d834c34ab6946950512ddf10d8` | CANONICAL |
+| EV-FEA06-W13-SHELL-TEST | AC1 | `apps/desktop-avalonia/tests/NewManga.App.Tests/FluentShellTests.cs` | `7cf305fe2534272dc75295c4644661ddb73221af` | `f8cbb9eb1f26be141072716f2eaebd322356814175447ae8e4b335c8d2d368c8` | CANONICAL |
+| EV-FEA06-REWORK-BUILD | AC8 | `verification/FEA-06/rework-build.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `56581789d10b76aa06ec29e9e05268de879691dd2bb562ba61cb5441cabb5c21` | CANONICAL |
+| EV-FEA06-REWORK-FULL-TEST | AC8 | `verification/FEA-06/rework-full-test.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `63c707807a6e1da0dc02dfe6aa56579e3e95eb9ab443fcf7e954e929b782e23e` | CANONICAL |
+| EV-FEA06-REWORK-PAGE-TEST | AC1–AC7 | `verification/FEA-06/rework-page-tests.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `3fb25d527c432dc53f68b50acbec4ce6245f31d51e72401b81136c47ff03ca27` | CANONICAL |
+| EV-FEA06-REWORK-DS-TEST | AC6 | `verification/FEA-06/rework-design-system-tests.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `1ab974fb7cbec32ae2377830be759cd3d0a5f1b1760b027253d815347d6f5737` | CANONICAL |
+| EV-FEA06-REWORK-TOKEN-GEN | AC8 | `verification/FEA-06/rework-token-gen.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `90b91fbde2c349ee51bb31fc0c68cf71ac63243f66dc19654a0f9b854df50753` | CANONICAL |
+| EV-FEA06-REWORK-THEME-GEN | AC8 | `verification/FEA-06/rework-theme-gen.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `169b9fe70e730c0503ab12d4ee4a7f51684318d52aa23b2ab0ba3e1c10b024ee` | CANONICAL |
+| EV-FEA06-REWORK-ATTEMPT1 | AC8 | `verification/FEA-06/rework-full-test-attempt1.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `1547e6984fa27208a2d87b2c99a1d8b0e091d2add8afbc4e307f129f2677be22` | CANONICAL |
+| EV-FEA06-REWORK-LEDGER | AC9 | `verification/FEA-06/rework-task-ledger.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `15c220f917421357be14c9cdf9065c5c543f96f8740a52bfb13614a580fd5248` | CANONICAL |
+| EV-FEA06-REWORK-GOV | AC9 | `verification/FEA-06/rework-governance-check.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `07ebd871931f4aed985f8afcb1e7aeb53ed476501940d334a6a021c61e9cc8a9` | CANONICAL |
+| EV-FEA06-REWORK-PINS | AC9 | `verification/FEA-06/rework-verify-pins.log` | `7cf305fe2534272dc75295c4644661ddb73221af` | `d521d266606edec817ac419e0252fca4aeca39c1b06463bf87d1411e49929e05` | CANONICAL |
 | EV-FEA06-AC10-BASE-SCOPE | AC10 | `verification/FEA-06/scope-audit.md` | `b0388df9ae2bb087649b44cf25a0921b2116934e` | `cec04b8135b13549f8c0114b43fe1259b00e5e335538cddccd6166cd8da90ea0` | CANONICAL |
 
 ## Resource Manifest
@@ -242,7 +242,7 @@ allowed_paths:
 
 ## Closeout Record
 
-- 实施交付：2026-11-02 / Codex；impl-r1 findings 已按 DSH adjudication 返修，交付 commit 与最终 pin 将在 fix commit 后写入；DSH 集成与 Task closeout 尚未执行。
+- 实施交付：2026-11-02 / Codex；impl-r1 findings 已按 DSH adjudication 返修，fix commit 为 `7cf305fe2534272dc75295c4644661ddb73221af`；DSH 集成与 Task closeout 尚未执行。
 - canonical_evidence_status：`complete`；resource_closeout_status：`pending`（由 DSH 在 approved 集成窗口核销）。
 - 删除、迁移、归档数量/字节数：0；未执行清理或数据迁移。
 - 未关闭项：`AC1–AC7` 有明确部分完成项；P2-2/P2-6/P2-7/P2-8/P2-9 与完整 Run 投影等 residual 已登记，待 DSH Review/集成验证。

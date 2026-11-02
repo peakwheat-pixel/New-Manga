@@ -80,7 +80,7 @@ DSH，请为现有 Task FEA-06 Appointment 一个独立审查上下文，审查 
 
 ## 返修记录（impl-r1 adjudication）
 
-- 返修依据：`doc/reviews/FEA-06-impl-r1.md` 与 `doc/reviews/FEA-06-impl-r1-adjudication.md`；被审实现 `b0388df9ae2bb087649b44cf25a0921b2116934e`；返修 fix commit 在本次记录提交后固定，并写入 Task `delivery_head`。
+- 返修依据：`doc/reviews/FEA-06-impl-r1.md` 与 `doc/reviews/FEA-06-impl-r1-adjudication.md`；被审实现 `b0388df9ae2bb087649b44cf25a0921b2116934e`；返修 fix commit：`7cf305fe2534272dc75295c4644661ddb73221af`；Task `delivery_head` 已固定到该提交。
 - P1-1：TabStrip 样式令牌改为 `Nm.Space.2`；新增 `FluentTokenResourceTests` 扫描 App/DesignSystem 样式及 Fluent XAML 的 `{DynamicResource Nm.*}`，逐键验证 Avalonia 应用资源可解析。
 - P2-1：Workbench 使用 TabStrip 承载页面/批量/控制台；Shelf 使用 SegmentedControl 切换网格/列表，ChapterList 承载书籍详情章节。
 - P2-2/P2-3：AC2/AC3 逐项记录 09 矩阵残差；断点状态文本与枚举统一为 Narrow `<1024`、Medium `1024–1279`，行为未改。
@@ -89,5 +89,5 @@ DSH，请为现有 Task FEA-06 Appointment 一个独立审查上下文，审查 
 - P2-6/P2-7/P2-8/P2-9 与完整 Run 投影 residual 已记入 Task/组件登记表；没有新增资产或依赖。
 - 验证：build 0 warning / 0 error；全量 **1034 passed / 0 failed / 57 skipped**（返修前 1030/0/57）；Fluent 定向测试 23/0/0；DesignSystem Fluent 组件测试 1/0/0；TokenGen 292 rows 与 ThemeGen 均 `--check` 通过；skip 分布与基线一致。
 - 首次全量尝试发现默认 V2 KeyMap 作用域不可扩大；该尝试记录在 `verification/FEA-06/rework-full-test-attempt1.log`。返修将 `[`/`]` 扩展限制在 Fluent Shell 的 Workbench 页内，最终全量测试通过；默认 `ShellCommands`/KeyMap 保持原行为。
-- 证据：`verification/FEA-06/rework-*.log`、更新后的四页 PNG、`rework-scope-audit.md` 与组件登记表；交付 commit 及 SHA 索引见 `doc/tasks/FEA-06.md` 和 `verification/FEA-06/evidence-index.md`。
+- 证据：`verification/FEA-06/rework-*.log`、更新后的四页 PNG、`rework-scope-audit.md` 与组件登记表；交付 commit：`7cf305fe2534272dc75295c4644661ddb73221af`；文件 SHA 索引见 `doc/tasks/FEA-06.md` 和 `verification/FEA-06/evidence-index.md`。
 - 接收者：DSH Appointment 独立上下文复核返修 head，优先核对悬空令牌守卫、Console/Settings 映射、V2 快捷键未变和 residual 登记；之后按 adjudication §4 决定集成验证。
