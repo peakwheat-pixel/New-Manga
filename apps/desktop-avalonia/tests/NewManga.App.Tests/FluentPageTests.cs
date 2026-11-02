@@ -5,6 +5,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.CoreClient;
@@ -237,6 +238,12 @@ public sealed class FluentPageTests
         shell.Close();
     }
 
+    /// <summary>
+    /// FEA-06-RESIDUAL-1 I-7 (scope-r3 R3-002): default run renders every page and asserts the captured
+    /// frame shape without writing any repository/evidence PNG. Explicit opt-in
+    /// (`NEWMANGA_CAPTURE_FLUENT_PNGS=1`) writes to this task's evidence directory only; the pinned
+    /// `verification/FEA-06/screens/**` bytes are never touched.
+    /// </summary>
     [AvaloniaFact]
     public async Task FluentPages_RenderHeadlessPngEvidence()
     {
@@ -251,19 +258,47 @@ public sealed class FluentPageTests
             appearance: appearance);
         shell.Show();
         Dispatcher.UIThread.RunJobs();
-        var output = Path.Combine(repositoryRoot, "verification", "FEA-06", "screens");
-        Directory.CreateDirectory(output);
 
-        Save(shell, FluentPage.Library, Path.Combine(output, "shelf.png"));
-        Save(shell, FluentPage.Workbench, Path.Combine(output, "workbench.png"));
+        var frames = new List<(string Name, Bitmap Frame)>
+        {
+            ("shelf", Capture(shell, FluentPage.Library)),
+            ("workbench", Capture(shell, FluentPage.Workbench)),
+        };
         await shell.ReaderViewModel.LoadAsync("book-0", "chapter-0");
-        Save(shell, FluentPage.Reader, Path.Combine(output, "reader.png"));
+        frames.Add(("reader", Capture(shell, FluentPage.Reader)));
         await shell.SettingsViewModel.LoadAsync();
-        Save(shell, FluentPage.Settings, Path.Combine(output, "settings.png"));
+        frames.Add(("settings", Capture(shell, FluentPage.Settings)));
 
-        Assert.All(new[] { "shelf.png", "workbench.png", "reader.png", "settings.png" },
-            file => Assert.True(new FileInfo(Path.Combine(output, file)).Length > 0, $"missing screenshot: {file}"));
+        Assert.All(frames, item => Assert.True(item.Frame.PixelSize.Width > 0 && item.Frame.PixelSize.Height > 0,
+            $"empty rendered frame: {item.Name}"));
+
+        var captureEnabled = string.Equals(
+            Environment.GetEnvironmentVariable("NEWMANGA_CAPTURE_FLUENT_PNGS"),
+            "1",
+            StringComparison.OrdinalIgnoreCase);
+        if (captureEnabled)
+        {
+            var output = Path.Combine(repositoryRoot, "verification", "FEA-06-RESIDUAL-1", "png");
+            Directory.CreateDirectory(output);
+            Assert.DoesNotContain(Path.Combine("verification", "FEA-06", "screens"), output, StringComparison.OrdinalIgnoreCase);
+            foreach (var (name, frame) in frames)
+            {
+                frame.Save(Path.Combine(output, $"{name}.png"));
+            }
+
+            Assert.All(frames, item => Assert.True(
+                new FileInfo(Path.Combine(output, item.Name + ".png")).Length > 0,
+                $"missing screenshot: {item.Name}"));
+        }
+
         shell.Close();
+    }
+
+    private static Bitmap Capture(FluentShell shell, FluentPage page)
+    {
+        shell.Navigate(page);
+        Dispatcher.UIThread.RunJobs();
+        return shell.CaptureRenderedFrame() ?? throw new InvalidOperationException($"frame capture failed: {page}");
     }
 
     private static void Save(FluentShell shell, FluentPage page, string path)
