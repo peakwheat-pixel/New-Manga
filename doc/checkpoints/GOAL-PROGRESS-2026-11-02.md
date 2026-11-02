@@ -700,3 +700,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Codex 探针 00:23:55 **恢复可用**（返回“可用”，exit 0）；D-9 降级路径不再需要（保留为记录）。
 - 已通过 workspace `dispatch-review.ps1` 派发 Codex fresh session 独立 impl Review：读取 `impl-review-prompt.md`（base `82529a3d5`→head `4388e50bb` 等交付提交、7 项审查重点、产出 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md`），后台 job `pwsh-84654685f3a34be5` 运行中。
 - 下一步：读取 review 报告 → DSH 处置 findings（P0/P1 返修、P2 登记）→ 运行 `integration-verify.ps1` 产出正式集成日志 → 按实际 AC 结果 done/closed_with_limitations。
+## 104. FEA-06-RESIDUAL-1 impl-r1 复核结论（2026-11-03 00:47）
+
+- Codex 独立 impl Review 完成：**changes_requested，P0=0 / P1=5 / P2=4**；报告 `doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md`（reviewed_head `9665e8573`，session `01a19d13-634e-7b02-9682-1f39c9c763b6`），已实跑 1195/0/57、生成器/治理/pins、旧 PNG 字节核对。
+- **P1**：R1-001 导航动画未实际触发（含 180/200/160/90/150ms 未消费、easing 非冻结 bezier、Reader 用全局 Enabled）；R1-002 feedback 过渡仅当前 visual tree（缓存页/新控件漏接、reduce 清理不全）；R1-003 Reader 工具条 idle 计时不重置；R1-004 Reader 导航绕过设置 dirty 确认；R1-005 Esc 浮层顺序错误（shell 面板被下层设置浮层抢先）。
+- **P2**：R1-006 Appearance.Changed 订阅未解除；R1-007 Reader 侧栏缺高对比 1px 边框；R1-008 已显示焦点环切高对比不即时 3px；R1-009 矩阵/AC 覆盖/日志口径陈旧与格式缺口。
+- 下一步：DSH 处置 findings（返修 R1-001…R1-009）→ 全量/证据刷新 → fresh Codex impl-r2 复核 → 集成验证/关闭。D-7 继续适用（实施由 DSH，复核保持独立）。

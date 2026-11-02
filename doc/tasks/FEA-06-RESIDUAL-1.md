@@ -7,7 +7,7 @@ status: in_progress
 approval: scope_review_r3_approved_2026-11-02（范围 v3 冻结；P2×4 实施期处置）
 suggested_owner: codex
 owner: codex
-reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；报告 doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；当前 Appointment：**实现续作（DSH）→ 待独立 impl Review**（Codex 00:23 恢复优先，否则 ZCode 03:02）（Codex 额度 00:23 恢复、ZCode 额度 03:02 恢复；双 agent 均不可用，实施期独立 Review 待恢复后补）
+reviewer: scope-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=4；doc/reviews/FEA-06-RESIDUAL-1-scope-r3.md）；impl-r1 **changes_requested**（Codex CLI fresh session，P0=0/P1=5/P2=4；doc/reviews/FEA-06-RESIDUAL-1-impl-r1.md，reviewed_head 9665e8573）；当前 Appointment：findings 返修（DSH，R1-001…R1-009）→ 待 fresh impl-r2 复核
 depends_on:
   - FEA-06
   - FEA-07
