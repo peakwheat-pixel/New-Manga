@@ -935,3 +935,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 提醒内容已过时（R2-001/011/012/017 均已由 DSH 完成，head 已从 9f5723cb0 前进到 4a22168f1，全量 1274/0/57）；不重复派发返修。
 - **Codex 探针 05:24:06 返回「可用」**（exit 0）：已按其恢复窗口派发 **D-14 裁决**（job `pwsh-c512b0ff4dd34e9e`，prompt workspace `d14-adjudication-codex-prompt.md`）——裁决 `StatusCatalog.ColorKey(NotStarted)`=Text.Disabled 与 `Controls.Status.axaml` glyph=Text.Secondary 的唯一正确方向、消费者影响、实施卡建议；产出 `doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`。
 - 独立 impl-r2 Review 仍在运行（D-9 workflow `workflow-8eb284e7f674494c`）。两者完成后：DSH 处置 → 集成验证 → 按 AC 关闭 FEA-06-RESIDUAL-2。
+## 144. D-14 裁决 A + 后续修复卡释放（2026-11-03 05:31）
+
+- Codex 裁决（job `pwsh-c512b0ff4dd34e9e`，exit 0）：**方案 A** —— `StatusCatalog.ColorKey(NotStarted)` 改为 `Nm.Color.Text.Secondary`；依据：两套普通主题 Secondary 对比度均 ≥4.5:1、Disabled 不足；报告 `doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md`。
+- 已释放后续卡 **D-14-STATUS-COLOR-FIX（ready，owner=codex）**：allowed_paths 限定 `DesignSystem/Controls/Status.cs` + DesignSystem tests + 本卡证据；不改其它映射/样式；PLAN READY 节点已更新；Task2 不扩域、D-14 不写达成。
+- impl-r2 Review 仍在运行（workflow `workflow-8eb284e7f674494c`）；完成后处理其 findings 并集成/关闭 Task2。

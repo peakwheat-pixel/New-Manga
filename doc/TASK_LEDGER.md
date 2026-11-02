@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 498 |
+| task files | 499 |
 | terminal | 488 |
-| non-terminal | 9 |
-| non-terminal named in the plan | 2 |
+| non-terminal | 10 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 498 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 9 |
 
 ## By status
@@ -26,11 +26,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 8 | yes |
 | `in_progress` | 3 | no |
 | `in_review` | 2 | no |
+| `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `proposed` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -44,6 +44,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
+| `D-14-STATUS-COLOR-FIX` | `ready` | mentioned |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 
 ## What this ledger does not say
