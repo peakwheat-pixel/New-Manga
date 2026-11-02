@@ -126,6 +126,7 @@ public sealed class FluentResidual2VisualEvidenceTests
         {
             ("surface-card", "default", new SurfaceCard { Width = 200, Height = 90 }, 280, 140),
             ("surface-card", "disabled", new SurfaceCard { Width = 200, Height = 90, IsEnabled = false }, 280, 140),
+            ("surface-card", "selected", new SurfaceCard { Width = 200, Height = 90, Classes = { "selected" } }, 280, 140),
             ("book-card", "default", new BookCard { Content = "作品", Width = 160, Height = 72 }, 220, 120),
             ("book-card", "disabled", new BookCard { Content = "作品", Width = 160, Height = 72, IsEnabled = false }, 220, 120),
             ("book-row", "default", new BookRow { Content = "作品行", Width = 240, Height = 36 }, 300, 90),
@@ -135,6 +136,7 @@ public sealed class FluentResidual2VisualEvidenceTests
             ("secondary-button", "default", new Button { Content = "次操作", Classes = { "fluent-secondary" }, Width = 120 }, 200, 80),
             ("danger-button", "default", new Button { Content = "危险", Classes = { "fluent-danger" }, Width = 120 }, 200, 80),
             ("icon-button", "default", new Button { Content = "图标", Width = 40 }, 90, 80),
+            ("icon-button", "checked", new Button { Content = "图标", Classes = { "checked" }, Width = 40 }, 90, 80),
             ("toggle-switch", "disabled", new ToggleSwitch { IsEnabled = false, Width = 80 }, 140, 70),
             ("slider", "default", new Slider { Width = 160, Value = 40 }, 220, 80),
             ("slider", "disabled", new Slider { Width = 160, Value = 40, IsEnabled = false }, 220, 80),

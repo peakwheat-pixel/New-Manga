@@ -60,34 +60,52 @@ public sealed class FluentResidual2StateEffectiveTests
             void AssertDefaultTokens(string context)
             {
                 Assert.Equal(TokenColor(app, "Nm.Color.Bg.Raised"), Solid(card.Background));
-                Assert.Equal(TokenColor(app, "Nm.Color.Line.Subtle"), Solid(card.BorderBrush));
                 Assert.Equal(ThemeTestHarness.ValueOf<Thickness>(app, "Nm.Border.Hairline"), card.BorderThickness);
                 Assert.Equal(ThemeTestHarness.ValueOf<CornerRadius>(app, "Nm.Corner.Fluent.Md"), card.CornerRadius);
                 Assert.Equal(ThemeTestHarness.ValueOf<BoxShadows>(app, "Nm.Elevation.1"), card.BoxShadow);
                 _ = context;
             }
 
-            // default
+                        // default
             AssertDefaultTokens("default");
-            // hover: SurfaceCard is a stateless container — the design-inventory hover cell has no
-            // style channel here, so the frozen default tokens must resolve unchanged (no drift).
+            Assert.Equal(TokenColor(app, "Nm.Color.Line.Subtle"), Solid(card.BorderBrush));
+            // hover (R2-011): border channel = Line.Default
             MoveTo(window, card);
             RunJobs();
             Assert.True(card.IsPointerOver);
-            AssertDefaultTokens("hover");
-            // selected class
+            Assert.Equal(TokenColor(app, "Nm.Color.Line.Default"), Solid(card.BorderBrush));
+            // selected (R2-011): accent border + elevation 2
             card.Classes.Add("selected");
             RunJobs();
-            AssertDefaultTokens("selected");
-            // disabled
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(card.BorderBrush));
+            Assert.Equal(ThemeTestHarness.ValueOf<BoxShadows>(app, "Nm.Elevation.2"), card.BoxShadow);
+            // disabled (R2-011): opacity token
             card.IsEnabled = false;
             RunJobs();
-            AssertDefaultTokens("disabled");
+            Assert.Equal(ThemeTestHarness.ValueOf<double>(app, "Nm.Opacity.Disabled"), card.Opacity);
             Assert.False(card.IsEffectivelyEnabled);
         }
         finally { window.Close(); }
     }
 
+    [AvaloniaFact]
+    public void IconButton_Checked_ResolvesTheAccentMutedStateChannel()
+    {
+        using var manager = ThemeTestHarness.CreateInitialized();
+        var app = Application.Current!;
+        var button = new Button { Content = "图标", Classes = { "fluent-icon" }, Width = 40 };
+        var window = new Window { Width = 160, Height = 80, Content = button };
+        try
+        {
+            window.Show();
+            RunJobs();
+            button.Classes.Add("checked");
+            RunJobs();
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(button.Background));
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(button.BorderBrush));
+        }
+        finally { window.Close(); }
+    }
     [AvaloniaFact]
     public void BookCardAndBookRow_Disabled_ResolveTheDisabledOpacityToken()
     {
@@ -153,7 +171,7 @@ public sealed class FluentResidual2StateEffectiveTests
     }
 
     [AvaloniaFact]
-    public void IconButton_HoverResolvesAccentMuted_CheckedKeepsDefaultTokens()
+    public void IconButton_HoverResolvesAccentMuted_CheckedResolvesTheStateChannel()
     {
         using var manager = ThemeTestHarness.CreateInitialized();
         var app = Application.Current!;
@@ -169,13 +187,13 @@ public sealed class FluentResidual2StateEffectiveTests
             Assert.True(icon.IsPointerOver);
             Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(icon.Background)); // hover
 
-            // The inventory lists a checked cell, but no style channel exists for it; the frozen default
-            // tokens must hold under the class (recorded as "no channel" in expected-tokens.md).
+            // R2-011: the checked class now has a real style channel (accent muted + accent border).
             window.MouseMove(new Point(5, 5), RawInputModifiers.None);
             RunJobs();
             icon.Classes.Add("checked");
             RunJobs();
-            Assert.Equal(TokenColor(app, "Nm.Color.Bg.Raised"), Solid(icon.Background));
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Muted"), Solid(icon.Background));
+            Assert.Equal(TokenColor(app, "Nm.Color.Accent.Base"), Solid(icon.BorderBrush));
         }
         finally { window.Close(); }
     }
