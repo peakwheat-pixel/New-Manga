@@ -690,3 +690,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 
 - 记录 D-9：若 Codex（00:23）与 ZCode（03:02）均不可用，独立 impl Review 改由 DSH 派发**独立上下文子 agent**（2026-10-31 裁决允许；只读 head、产出报告），DSH 仅做 findings 处置/集成验证，不自审。
 - 当前仍优先等待 Codex 00:23；`dispatch-review.ps1` 与 prompt 就绪。
+## 102. FEA-06-RESIDUAL-1 命令面板结果/空态 + Codex 探针（2026-11-03 00:23）
+
+- `FluentCommandPaletteFocusTests` 增补：真实命令行 >0 → 不存在查询过滤为 0（诚实空结果）→ 清空恢复；焦点保持搜索框。I-4 CommandPalette 结果/空态格由 NOT_RUN 升级为 COMMAND。
+- Codex 探针（00:23:16）仍返回 usage limit「try again at 12:23 AM」；继续等待/重试，若持续受限按 D-9 派独立上下文子 agent 复核。
+- 验证：无过滤全量 **1195/0/57**；旧 PNG 零漂移。交付 `4388e50bb`；证据 SHA `77ad2221…`。
