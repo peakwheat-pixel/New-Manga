@@ -200,3 +200,9 @@ m.fluent.visual/1 manifest + ThemeValidator.Validate(fluent) + BuiltInThemes 加
   - **R2-P1-3（C-02 V-07 合规路径未闭合）** → **改判 P6 实现路径**：Nm.Material.Acrylic.Base/.Tint 以**主题层令牌**承载（NmKeys + ThemeLayerAllowedKeys + 主题包 colors），**不新增 ThemeMaterial 枚举值、不改 ThemeTokenSet 签名** → 依 C-02 V-07「不新增枚举值、不改接口签名」**无需 UNFREEZE**；新增 **W-11** 记录该口径（Q-35）。
   - **R2-P1-4（测试表无 AC5/AC6）** → 测试表已补 AC5/AC6（前一轮遗漏）+ 本轮 AC7。
 - **下一步**：派 **scope-r3**（独立上下文，subagent_zcode 或复核队友）确认 4 条 P1 关闭；P0/P1=0 后置 eady 并开始实现。
+## 26. 会话交接（2026-11-02，用户将开新对话）
+
+- 交接材料：doc/handoffs/FEA-06-PREREQ-2-session-handoff.md（含当前坐标、已完成项、PREREQ-2 三轮复核轨迹、r2 的 P1×4 处置、环境事实与工作纪律、必跑命令、待裁决）。
+- **交接时状态**：HEAD df089039c（工作区 clean）；PREREQ-1 done；PREREQ-2 proposed（scope-r1/r2 changes_requested，P1×4 已处置，**scope-r3 报告缺失**）；全量 **979/0/57**；check.ps1 PASS（3 warnings）、erify_pins 15/15。
+- **用户已告知的环境事实**：主会话已切换模型供应商，**子代理仍走旧供应商 → 常报额度不足**；subagent_zcode 曾成功跑完长任务（产出 scope-r2），是目前较可靠的复核通道；Codex CLI 因模型/账号不匹配（400 model_not_found）不可用于复核；ZCode CLI 未安装。
+- **唯一下一步**：派独立上下文复核 scope-r3（被审 head df089039c），确认 r2 的 4 条 P1 关闭且无新增 P0/P1；P0/P1=0 → 置 eady + 同步 STATUS/PLAN → 开始实现 PREREQ-2。
