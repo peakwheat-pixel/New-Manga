@@ -261,3 +261,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **释放**：卡 `status: ready`、`approval: scope_review_r3_approved_2026-11-02`、`base_commit: 3c7f311d8`；owner=**Codex**（W-10）；r3 P2×3 已处置（卡 P3 旧口径改 7 方法/9 行；派发 brief 刷新 r3 引用与状态口径；approval/STATUS 同步）。
 - **派发**：brief = `G:\CODEX\New Manga.workspace\exchange\FEA-06-codex-brief.md`；命令模板：`codex exec --skip-git-repo-check -s workspace-write -m gpt-6-luna -c model_reasoning_effort="xhigh" -o <workspace>/exchange/fea-06-codex-result.md "<brief>"`，cwd=仓库根（桌面版会话可见）；结果/日志落 workspace/exchange。Codex 交付：单一实现 commit（仅 allowed_paths）+ `verification/FEA-06/**` 证据 + handoff；**不 push**。
 - **下一步**：Codex 完成后 DSH 验证（diff/测试/证据/治理）→ 派独立上下文实现复核（impl-rN）→ DSH 集成验证 → done；期间 DSH 不改 repo 文件（避免与 Codex 写冲突）。
+## 35. FEA-06 Codex 首轮实现 + impl-r1 复核与处置（2026-11-02）
+
+- **Codex 交付**（用户指派 owner）：实现 commit `b0388df9a`（37 文件、+7035/−232；四页 View/VM、15 个 Fluent 组件、19 测试、四页 headless PNG、UIUX finalizer PARTIAL）+ 文档 commit `966cedeac`（卡 `in_review`、STATUS/PLAN/LEDGER/handoff）；未 push，仓库干净。
+- **DSH 独立验证**：build 0/0；全量 **1030/0/57**（基线 1022+8）；TokenGen/ThemeGen up to date；`check.ps1` PASS(3)；`verify_pins` 15/15；37 路径全部在 allowed_paths；未改组合根/selector/Core/契约/生成物/设计。
+- **impl-r1**（独立上下文，被审 `b0388df9a`）：**changes_requested，P0=0 / P1=1 / P2=9**；AC1–AC7 PARTIAL **诚实成立**、AC8–AC10 MET；唯一 P1 = `Controls.Fluent.axaml:241` 悬空令牌 `Nm.Space.S1`（真实族 `Nm.Space.0…8`）+ 组件登记表（CANONICAL 证据）同步失实。
+- **DSH adjudication**（`doc/reviews/FEA-06-impl-r1-adjudication.md`）：P1-1 返修（改既有键 + 登记表 + 令牌存在性守卫测试）；P2-1/2/3/5/7 并入返修；**P2-4 裁决 W-13：控制台空间不得映射 Settings** → 控制台=Workbench 第三视图（Run 控制台面板，无数据显式「当前没有运行中的任务」），Settings 改非空间入口（顶部命令条+左导航，08:3）；P2-6/P2-8/P2-9 接受登记 residual/技术债。
+- **下一步**：Codex 同会话 `resume`（session `01a19a5e-2490-7943-a8c5-6cc05e13a4cb`）执行返修 → 单一 fix commit + 证据刷新 + 不 push → DSH 复核/集成验证 → 终态（AC1–AC7 PARTIAL 作 residual 或另立后续 Task）。

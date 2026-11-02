@@ -88,6 +88,13 @@ allowed_paths:
 - **释放**：`status: ready`；`approval: scope_review_r3_approved_2026-11-02`；`base_commit = 3c7f311d8`（r3 被审 head）；owner=**Codex**（W-10），DSH 派发 brief：`G:\CODEX\New Manga.workspace\exchange\FEA-06-codex-brief.md`。
 - 范围报告：`doc/reviews/FEA-06-scope-r1.md`（changes_requested）→ `-r2.md`（changes_requested）→ `-r3.md`（approved）。
 
+## impl-r1 复核与处置（2026-11-02，r1 = changes_requested / P0=0 / P1=1 / P2=9）
+
+- 复核报告：`doc/reviews/FEA-06-impl-r1.md`（独立上下文，被审 `b0388df9a`）；处置记录：`doc/reviews/FEA-06-impl-r1-adjudication.md`。
+- **P1-1（返修）**：`Controls.Fluent.axaml:241` 悬空令牌 `Nm.Space.S1` → 改既有键（建议 `Nm.Space.2`）+ 登记表同步 + 令牌存在性守卫测试。
+- **P2 处置**：P2-1 登记表页面归属（接线或改口径）、P2-2 09 细粒度缺口卡内补记、P2-3 响应式术语对齐、**P2-4 W-13 控制台空间映射**、P2-5 `[`/`]` 工作台翻页（可行则接线）、P2-7 Elevation 未消费登记 → 均交 Codex 返修；P2-6/P2-8/P2-9 接受并登记为 residual/技术债。
+- 返修后：DSH 复核 → 集成验证 → 终态裁定。
+
 ## 任务拆解（按页 + 组件）
 
 | 项 | 内容 | 设计输入 |
@@ -137,6 +144,7 @@ allowed_paths:
 | W-10 | Owner 与交付方式（用户 2026-11-02） | Owner = **Codex**；Codex 可在 main 直接实现并提交单一实现 commit（只含 allowed_paths 内文件），**不得 push**；DSH 负责 Review Appointment、独立实现复核、集成验证与最终 push | 用户 2026-11-02 指派 |
 | W-11 | 证据口径（处置 r1 P2-6） | 每页 ≥1 headless 状态测试（`AvaloniaFact`）+ 至少 1 张 headless 渲染截图（PNG，落 `verification/FEA-06/`）+ 组件登记表（Markdown）；日志含命令与 exit | r1 采证口径 |
 | W-12 | 组合根依赖注入预置（处置 **scope-r2 P0**） | Fluent 壳的依赖注入由 **DSH 单点预置**：`App.axaml.cs` 的 Fluent 分支传入 `controller/appearance/themeManager`，`FluentShell.CreateRoot`/ctor 扩为可选参数并暴露只读属性 `HostController`/`Appearance`/`ThemeManager`；不改 V2/legacy 分支与 selector 语义。Codex 只**消费**这些实例（不得新建第二个 `HostController` 或 `AppearanceCoordinator`）；`App.axaml.cs` 仍不在 FEA-06 写域 | scope-r2 §2.1 建议①；PREREQ-2 唯一写者/sidecar 单实例语义 |
+| W-13 | 控制台空间映射（处置 **impl-r1 P2-4**，DSH 裁决 2026-11-02） | `SpaceId.Console` **不得映射 Settings**：控制台空间承载 Workbench 第三视图「控制台」（最小 Run 控制台面板：运行状态/错误入口；无数据时显示「当前没有运行中的任务」，不得造假数据；完整 Run 数据由 FEA-07/FEA-10 承接，登记 residual）。**Settings 改为非空间入口**：顶部命令条「设置」按钮 + 左导航项（`08-page-settings.md:3`）；Shell 测试同步。返修按 `doc/reviews/FEA-06-impl-r1-adjudication.md` | impl-r1 P2-4；design `04:13`/`06:12`/`06:21`/`08:3` |
 
 ## 交付与运行记录
 
