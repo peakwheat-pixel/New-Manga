@@ -911,3 +911,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 结果：Shelf loop 仍未产生不同帧；Reader LoadAsync 在测试中**挂起**（>10 分钟，已 kill），无有效证据产出。
 - 处置：**完整回退**（git checkout 捕捉测试），仓库回到 `9f5723cb0` 干净全绿（1272/0/57，visual 测试单跑 PASS）；不产出同 SHA/占位证据。
 - 结论与移交：R2-001 P0 仍未闭环。建议续接者用 **ManualFluentMotionClock 注入/可控帧源**驱动真实装饰层（ShelfPageView.DecorativeLoop / ReaderPageView 粒子），或直接驱动其 update 回调后捕获帧；禁止伪造。05:23 提醒已更新为 R2-001/011/012/017 剩余项。
+## 140. R2-011 状态通道与证据（2026-11-03 05:26）
+
+- 新增 SurfaceCard 真实状态通道（hover=Line.Default 边框、selected=Accent.Base+Elevation.2、disabled=Opacity.Disabled）与 IconButton `.checked`（Accent.Muted+Accent.Base）；样式追加在文件末以覆盖基线优先级。
+- 测试：IN-2A 更新 SurfaceCard 逐状态断言 + IconButton checked 断言（15/15 PASS）；IN-2B 增 surface-card selected / icon-button checked 像素格 → **29 PNG + inventory**。
+- 验证：全量 **1272/0/57**；check PASS(3)；提交 `7e21b4de8`；未 push；旧四 PNG 未动。
+- 仍余：**R2-001 decor 真实帧**（需可控帧源；两次失败已记录 §139）、R2-012 失焦真实接线+粒子可读性、R2-017 Handoff；R2-016 D-14 待裁决。
