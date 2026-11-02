@@ -884,3 +884,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P0 已由 DSH 处置（`bfacfe09c`）**：删除 `CaptureDecor()` 灰色 Border 占位假证据（2 张 decor PNG + inventory 行），不伪造像素证据；保留真实 pages/components 32 PNG；默认零写入与 opt-in 行为不变；全量 **1272/0/57** 复验通过。
 - 仍余 P1/P2：light/dark 主题不实（R2-002）、IN-2B 清单缺口（R2-003）、expected-tokens.md 缺失（R2-004）、其余派生控件选择器（R2-005）、Slider thumb（R2-006）、失焦/粒子可读性（R2-012）、日志/inventory/handoff 格式（R2-008/009/017）、D-14（R2-016）。
 - 05:24 提醒已更新为完整返修指令（R2-002/003/004/005/006/008/009/011/012/017 + 禁造假 + 独立 impl-r2 复核）；ZCode 08:05 备用。
+## 136. R2 返修部分完成（2026-11-03 04:55）
+
+- P0 假证据：已删除占位 decor（`bfacfe09c`）；本轮重写 capture 测试用 **AppearanceCoordinator 真实 light/dark**（不再仅切 RequestedThemeVariant），pages 16/16 对 SHA 均不同；组件清单扩展至 18 状态×2 主题；总计 **46 PNG + inventory + expected-tokens.md**。
+- R2-005：其余派生控件选择器（ChapterList/StreamingThumb/BatchMatrix/RunProjectionBar/ReaderPage/ReaderProgressBar/SettingsGroup/SettingsField/TabStrip）全部 class-only + `x:SetterTargetType`，DS 构建 0/0。
+- R2-004：新增 `verification/FEA-06-RESIDUAL-2/expected-tokens.md`（逐组期望令牌+锚点+D-14 特例+状态通道缺口如实标注）。
+- 验证：默认零写入、opt-in 仅本卡 visuals 新增；全量 **1272/0/57**；提交 `0187b0920`；未 push；旧四 PNG 未动。
+- 仍余：**R2-001 真实 decor 帧（P0 未闭环）**、R2-006 Slider thumb、R2-008 inventory head、R2-009 日志格式、R2-011 状态通道/R2-012 失焦与可读性、R2-017 Handoff；05:24 提醒已更新。
