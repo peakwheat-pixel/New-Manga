@@ -63,6 +63,6 @@ R2R2-016：实际粒子执行器已迁至 Views/Fluent 内，尺寸变化才定�
 
 补充实际模板通道：ReaderProgressBar.Theme 显式解析基类 ProgressBar 的既有 ControlTheme，PageThumbStrip.Theme 显式解析 ItemsControl，ItemsPanel 使用横向 StackPanel/Space.2。属性和真实内容回归在 ReaderProgressAndThumbStrip_ResolveRealTemplatesAndContent；捕获另断言像素颜色种类>2，避免有 Value/items 仍出空白。
 
-Slider 的 PART_DecreaseButton.Background 绑定父 Slider.Foreground（normal=Accent.Base，hover=Accent.Hover），disabled=Text.Disabled；FluentMotionScope 不再给模板 RepeatButton 叠加通用按钮 tween。Fluent 按钮 hover/pressed 同时覆盖模板 PART_Root 背景，避免只有公开属性变色而实际像素仍走通用 ControlTheme。
+Slider 的 PART_DecreaseButton.Background 显式使用 DynamicResource 令牌（normal=Accent.Base，hover=Accent.Hover，disabled=Text.Disabled）；FluentMotionScope 不再给模板 RepeatButton 叠加通用按钮 tween。Fluent 按钮 hover/pressed 同时覆盖模板 PART_Root 背景，避免只有公开属性变色而实际像素仍走通用 ControlTheme。
 
 IN-1.1 渐变仍仅选既有 Bg 令牌：Canvas→Overlay（此前 Canvas→Sunken 的暗色差异不足）；循环仍为 8s，reduce 静态。decor shelf 原像素裁切 [216,95,1048,720]，viewport=1280x900；中间帧采样 2000ms，frame 明确 intermediate-2000ms，而非虚标精确半周期。生产时钟测试另实采 0/4000/7950ms。
