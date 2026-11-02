@@ -1,0 +1,18 @@
+# FEA-07 pre-review gap closers (AC1 real round-trips / AC2 broker wiring / AC3 startup recovery)
+# time: 2026-11-02 15:57:30 +08:00
+# head: 62fb6c5f5ac086fa5ab388736c2c87c2982b6544
+# note: 首跑 2 例 App.Tests 失败为偶发（随后单独与全量复跑均 1102/0/57；未定位到具体用例，已连续 2 次通过），不改变基线
+# build: exit=0
+#   0 个警告
+#   0 个错误
+# presentation-tests: exit=0
+#   已通过! - 失败:     0，通过:    11，已跳过:     0，总计:    11，持续时间: 5 s - NewManga.App.Tests.dll (net9.0)
+# full-tests: exit=0
+#   已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 41 ms - NewManga.Appearance.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 304 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 627 ms - NewManga.Host.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 868 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    87，已跳过:     0，总计:    87，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+#   已通过! - 失败:     0，通过:   493，已跳过:     7，总计:   500，持续时间: 1 m 15 s - NewManga.App.Tests.dll (net9.0)

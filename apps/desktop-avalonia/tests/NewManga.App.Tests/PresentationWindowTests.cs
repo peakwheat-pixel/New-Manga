@@ -8,6 +8,7 @@ using NewManga.App.Services;
 using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
 using NewManga.Presentation.Avalonia.Switching;
+using NewManga.Presentation.Avalonia.Windows;
 using Xunit;
 
 namespace NewManga.App.Tests;
@@ -166,6 +167,21 @@ public sealed class PresentationWindowTests : IDisposable
         Assert.Equal(1300, captured.Width);
         Assert.Equal(820, captured.Height);
         Assert.True(captured.Scale > 0);
+        window.Close();
+    }
+
+
+    [AvaloniaFact]
+    public void Broker_TracksOnlyOneStableMainWindow()
+    {
+        var window = CreateWindow();
+        Assert.NotNull(window.Broker.Main);
+        Assert.Equal(WindowRole.Main, window.Broker.Main!.Role);
+        Assert.Equal(0, window.Broker.SecondaryCount);
+
+        window.Broker.RegisterSecondary(WindowRole.Inspector, "inspector");
+        Assert.Equal(1, window.Broker.SecondaryCount);
+        Assert.True(window.Broker.Unregister("inspector"));
         window.Close();
     }
 }

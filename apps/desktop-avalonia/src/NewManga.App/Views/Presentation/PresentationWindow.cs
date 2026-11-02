@@ -63,7 +63,13 @@ public sealed class PresentationWindow : Window
             contentFactory,
             appearance,
             journal);
+
+        Broker = new WindowBroker();
+        Broker.RegisterMain("presentation-main");
     }
+
+    /// <summary>FEA-07 window broker: the stable main window is registered once; secondary windows are tracked.</summary>
+    public WindowBroker Broker { get; }
 
     /// <summary>The content slot the switch transaction replaces (exposed for headless verification).</summary>
     public FrontendContentHost ContentHost { get; }

@@ -351,3 +351,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **实现收尾**：全量 **1099/0/57**；build 0/0；check PASS(3)；pins 15/15；证据 `slice-5-verification.log`。
 - **AC 标记**：AC4/AC6/AC7 MET；AC1/AC2/AC3/AC5/AC8 PARTIAL（原生矩阵 D-1 blocked，其余为集成/真库/启动恢复接线缺口，待独立复核列出最小返修集）。
 - **下一步**：派独立 impl review（fresh Codex CLI 会话，被审 delivery head）→ findings 处置/返修 → DSH 集成验证。
+## 48. FEA-07 复核前补强（AC1/AC2/AC3，2026-11-02）
+
+- AC1：真实 V2/Fluent content 在稳定窗口 10 次往返（20 切换）测试；AC2：`PresentationWindow` 内嵌 `WindowBroker` 注册唯一主窗 + 二窗登记测试；AC3：`App.CreatePresentationShell` 启动时回滚未完成 journal（Rendered→RolledBack）并 Trace 警告 + 测试。
+- 证据 `verification/FEA-07/slice-6-gapclosing-verification.log`；build 0/0；全量 **1102/0/57**（首跑偶发 2 例 App.Tests 失败、连续两次复跑通过，已注记）。
+- **impl review 仍在运行**（fresh Codex CLI；job pwsh-80ca8a0ff78c4feb），结果到达后处置 findings。

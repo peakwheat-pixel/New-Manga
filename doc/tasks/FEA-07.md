@@ -151,6 +151,12 @@ allowed_paths:
 - **实现完成度**：AC4/AC6/AC7 `<<MET>>`；AC1/AC2/AC3/AC5/AC8 `<<PARTIAL: ...>>`（详见各 AC 行；原生矩阵按 D-1 blocked，不伪造证据）。
 - 下一步：独立 impl review（fresh Codex CLI 会话，被审 delivery head）→ findings 处置/返修 → DSH 集成验证 → AC residual 处置。
 
+## 复核前补强（2026-11-02，owner=DSH）
+
+- **AC1 real-content 往返**：`PresentationHostCompositionTests.RealContentRoundTrips_KeepOneStableWindowAndDreamTrees`——真实 `AppShellV2`/`FluentShellSurface` factory 在稳定窗口内 10 次往返（20 次切换），窗口身份不变、内容类型正确、journal 干净。
+- **AC2 WindowBroker 接线**：`PresentationWindow` 内嵌 `WindowBroker` 并注册唯一稳定主窗；`PresentationWindowTests.Broker_TracksOnlyOneStableMainWindow` 覆盖主窗唯一/二窗登记/移除。
+- **AC3 启动恢复接线**：`App.CreatePresentationShell` 启动时检查 `SwitchJournal` 未完成切换 → `Rollback("startup recovery: ...")` + Trace 警告，再以持久化 frontend 启动；`PresentationHostCompositionTests.InterruptedSwitchFromPreviousRun_IsRolledBackAtStartup` 覆盖（journal 写到 Rendered 后启动 → terminal RolledBack）。
+- 证据：`verification/FEA-07/slice-6-gapclosing-verification.log`（build 0/0；presentation 11/0；全量 **1102/0/57**；首跑偶发 2 例 App.Tests 失败、连续两次全量复跑通过，日志注记）。
 ## 验收标准
 
 - [x] **AC1（A01/A02/A03/A05/§15.5）**：Current↔Fluent 往返 100 次（含草稿/Reader/Run）：同一 Host/sidecar、相同 Session/Draft/Run/Intent，原生主窗标识不变；未失焦 IME/文本不丢不误提交；**旧结果仅 candidate**，且断言 **DB 文本/current/pinned revision/Lock/源文件/candidate 零变化**；ACK 丢失/重连后同 Intent 不双启动；**逐阶段注入失败（layout/Loaded/Render/有效几何）→ 不 commit → 回滚到旧 UI**，恢复 window 材质/bounds/焦点/输入路由/旧资源，未保存状态保留。 `<<PARTIAL: headless 100 次往返与每阶段回滚已过；原生 IME/A03 真库数据保护/ACK 重连矩阵待独立复核>>`
@@ -208,6 +214,7 @@ allowed_paths:
 | EV-FEA07-SLICE4 | AC5/AC8 | `verification/FEA-07/slice-4-verification.log` | `-` | `3197f8b536114bfd7c78c45ab362bf85a62edd0b370363cce03a30ec204b4ed0` | CANONICAL |
 | EV-FEA07-SLICE5 | AC4/AC6/AC7 | `verification/FEA-07/slice-5-verification.log` | `-` | `098d9991a0d0c7303ce7c6093b45179c4b16ccbf7516583a655257b906478ed9` | CANONICAL |
 | EV-FEA07-PERF | AC6 | `verification/FEA-07/performance-baseline-release.json` | `-` | `44f1768bbbb57a35aff415804b0e78a05948ccedc575f94ba9a58aa0a81474fc` | CANONICAL |
+| EV-FEA07-GAPCLOSING | AC1/AC2/AC3 | `verification/FEA-07/slice-6-gapclosing-verification.log` | `-` | `29e10eff99acb7beee864e316c0171d09f196ef51fa41a4c7e5ea73c3ffe3230` | CANONICAL |
 
 ## Closeout Record
 

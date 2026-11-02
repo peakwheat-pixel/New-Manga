@@ -11,6 +11,7 @@ using NewManga.App.Views.Presentation;
 using NewManga.Appearance;
 using NewManga.DesignSystem.Theming;
 using NewManga.Presentation.Avalonia.Switching;
+using NewManga.Presentation.Avalonia.Windows;
 using Xunit;
 
 namespace NewManga.App.Tests;
@@ -102,5 +103,72 @@ public sealed class PresentationHostCompositionTests : IDisposable
         Assert.True(AppOptions.Parse(new[] { "--presentation-host=true" }).PresentationHost);
         Assert.False(AppOptions.Parse(Array.Empty<string>()).PresentationHost);
         Assert.False(AppOptions.Parse(new[] { "--presentation-host=false" }).PresentationHost);
+    }
+
+
+    [AvaloniaFact]
+    public async Task InterruptedSwitchFromPreviousRun_IsRolledBackAtStartup()
+    {
+        var application = Application.Current!;
+        using var themeManager = new DesignSystemThemeManager(application);
+        themeManager.Initialize();
+        var appearance = new AppearanceCoordinator(new AppearanceStore(Path.Combine(_root, "presentation-settings.json")));
+        appearance.Reload();
+        var options = AppOptions.Parse(new[] { "--presentation-host=true" });
+        var themeHome = ThemeHome();
+        var journal = new SwitchJournal(Path.Combine(themeHome.ThemesDirectory, "..", "switch-journal.json"));
+        journal.Begin(FrontendSelector.FluentFrontendId);
+        journal.Advance(SwitchStage.Rendered);
+        Assert.True(journal.HasInterruptedSwitch(out _));
+
+        var selection = FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null);
+        var window = App.CreatePresentationShell(options, NullHostController.Instance, selection, appearance, themeHome, themeManager, application);
+        try
+        {
+            var presentation = Assert.IsType<PresentationWindow>(window);
+            Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
+            Assert.True(journal.TryRead(out var entry, out _));
+            Assert.Equal(SwitchStage.RolledBack, entry!.Stage);
+            Assert.Contains("startup recovery", entry.Failure);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+
+    [AvaloniaFact]
+    public async Task RealContentRoundTrips_KeepOneStableWindowAndDreamTrees()
+    {
+        var application = Application.Current!;
+        using var themeManager = new DesignSystemThemeManager(application);
+        themeManager.Initialize();
+        var appearance = new AppearanceCoordinator(new AppearanceStore(Path.Combine(_root, "presentation-settings.json")));
+        appearance.Reload();
+        var options = AppOptions.Parse(new[] { "--presentation-host=true" });
+        var selection = FrontendSelector.Select(FrontendSelector.CurrentV2FrontendId, persistedFrontendId: null);
+        var window = App.CreatePresentationShell(options, NullHostController.Instance, selection, appearance, ThemeHome(), themeManager, application);
+        var presentation = Assert.IsType<PresentationWindow>(window);
+        try
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                var fluent = await presentation.SwitchFrontendAsync(FrontendSelector.FluentFrontendId);
+                Assert.True(fluent.Succeeded, fluent.Failure);
+                Assert.IsType<FluentShellSurface>(presentation.ContentHost.Current);
+
+                var v2 = await presentation.SwitchFrontendAsync(FrontendSelector.CurrentV2FrontendId);
+                Assert.True(v2.Succeeded, v2.Failure);
+                Assert.IsType<AppShellV2>(presentation.ContentHost.Current);
+                Assert.Same(window, presentation);
+            }
+
+            Assert.False(File.Exists(Path.Combine(_root, "theme-home", "switch-journal.json")));
+        }
+        finally
+        {
+            presentation.Close();
+        }
     }
 }

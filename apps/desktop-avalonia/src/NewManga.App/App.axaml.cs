@@ -207,6 +207,16 @@ public partial class App : Application
             ?? throw new InvalidOperationException("theme home has no directory");
         var journal = new SwitchJournal(Path.Combine(directory, "switch-journal.json"));
 
+        // FEA-07 AC3: an interrupted switch from the previous run is rolled back before the stable
+        // window starts; startup never resumes a partially switched content tree.
+        var switchCoordinator = new FrontendSwitchCoordinator(journal);
+        if (switchCoordinator.TryRecoverInterrupted(out var interrupted) && interrupted is not null)
+        {
+            var recovery = $"startup recovery: interrupted switch to '{interrupted.TargetFrontendId}' at {interrupted.Stage}";
+            journal.Rollback(recovery);
+            Trace.TraceWarning(recovery + "; starting the persisted frontend");
+        }
+
         Control ContentFactory(string frontendId)
         {
             if (string.Equals(frontendId, FrontendSelector.FluentFrontendId, StringComparison.Ordinal))
