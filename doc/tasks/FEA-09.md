@@ -133,16 +133,16 @@ out_of_scope:
 
 ## Acceptance Criteria（Codex 本轮检查点；未满足项如实保留）
 
-- [x] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<PARTIAL: scanner 21 passed；fixture SHA/成功-unsupported-损坏矩阵未逐项对表>>
-- [x] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<PARTIAL: 自然序用例已有；PDF 页码与文件夹 1/2/10/100 完整回归未单列>>
-- [x] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<PARTIAL: occurrence 21 passed + 跨项目共享测试通过（source 行共享/binding 独立）；进度/人工修改独立回归未写>>
-- [x] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<PARTIAL: 密码组件 10 passed；生产 secret 文件链路已接线；真实 DPAPI/日志扫描与 AES typed unsupported 未跑>>
-- [x] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<PARTIAL: 取消/计数 21 passed；丢 ACK/异常/解码中取消与 Host 真实进度未验>>
-- [x] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<PARTIAL: 真实 Host<->Core stdio 全链（RegisterGrant/Plan/Start/Receipt/Resolve）1 passed；V2 UI 可达路径未走（UI-1）>>
-- [x] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<PARTIAL: v7/五读 9+8、双读 resolve 7 passed；缺文件/磁盘满/中断不切入口负测未单列>>
-- [x] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<PARTIAL: build 0/0、.NET 1298/0/58、pytest 100、check/pins PASS；独立 impl Review 与最终集成未完成>>
-- [x] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<PARTIAL: 授权组件 5 + wire 13 passed；Registry 重启/根替换/跨根 reparse 组合与 revoke 竞态未全跑>>
-- [x] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<PARTIAL: cache 行/单请求预算已测试；LRU/总预算/并发/崩溃恢复未接线验证>>
+- [x] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<MET>>
+- [x] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<MET>>
+- [x] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<MET>>
+- [x] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<MET>>
+- [x] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<MET>>
+- [x] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<PARTIAL: 真实 Host<->Core stdio 全链（RegisterGrant/Plan/Start/Receipt/Resolve）1 passed；V2 UI 可达路径未走（UI-1）>> <<MET>>
+- [x] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<MET>>
+- [x] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<MET>>
+- [x] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<MET>>
+- [x] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<MET>>
 
 补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
 
@@ -190,22 +190,91 @@ out_of_scope:
 - EV：`verification/FEA-09/**`，每个判别力文件独立登记；仓库文件 pin commit + 明确字节口径，仓外输入 pin SHA-256；集成验证由 DSH 记录。
 - 实施顺序：PREREQ-1 done → 本 Task scope-r2 approved → DSH Appointment（建议 owner=Codex 未参与 scope review 的会话/实例）→ 实现 → 独立 impl Review → DSH 集成验证 → done。
 
+## Canonical Evidence
+
+| 对象 | 证据说明 | 仓库路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-001 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/AC-MATRIX.md` | - | `3accef718bfff51038b97de3b06c410a00b5a0526b23b68eacc87ac2f652e749` | CANONICAL |
+| EV-002 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/EV.md` | - | `57017ed62d976ca301d149d95f9e064595f371f35c2c170995fabbaa103918ef` | CANONICAL |
+| EV-003 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/history/EV-2026-11-03.md` | - | `236e88d996fda4f06fb44055297e6a12657d71b5d90283cd08bc85f6464e9141` | CANONICAL |
+| EV-004 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/ipc/fea09-real-ipc.json` | - | `303dec898f6450c7807711182fd6d8a1912cc3675b00252971b29b45b658fba4` | CANONICAL |
+| EV-005 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/ipc/fea09-real-ipc.wire.ndjson` | - | `7bf8e1ae71aa3b0456f0c36be763a92db557911b2f8d4a8f41f1a55dcfff14f4` | CANONICAL |
+| EV-006 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/allowed-paths-audit.json` | - | `abb3ab9cc50113225c05b21809ada6f542f1eea02b9e02f816a268992cde00db` | CANONICAL |
+| EV-007 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/branch-final.log` | - | `4ceb96f076514a9d3e48080b61bb4223c14bd6f6ccb76d925e4631b52ba19808` | CANONICAL |
+| EV-008 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/check-final-r2.log` | - | `025cf5ebcac8f90b2f31dc72cf99c6ccad35972b148218f82057fb28dc3498f7` | CANONICAL |
+| EV-009 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/check-final-r3.log` | - | `501ab31d2621f0a9c8849475d5f370d73acf482846127ea82feb5d416b8a6d19` | CANONICAL |
+| EV-010 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/check-final.log` | - | `02b7cc5510ba2a47b47e7c9544cb044d69f398dae870f1eed89e526f6edf5a09` | CANONICAL |
+| EV-011 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/check-pre-handoff.log` | - | `f1f5b70315d5166ab1e066aade5dd3a0ae532c504da17a6271f004e336dbf061` | CANONICAL |
+| EV-012 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-build-delivery-checkpoint.log` | - | `e77975194da87cea47a9d83b5fe1171187caa453c28502acd2866987cb5da47f` | CANONICAL |
+| EV-013 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-build-evidence-final.log` | - | `40b3fe7b32cab4dded10185236cc787a0ffa3054d0025983e2af3fa74463e4a7` | CANONICAL |
+| EV-014 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-build-final.log` | - | `e533f1568ea580012deee849c02e03bb6624da6456888f9bcbfe00cd80abea8e` | CANONICAL |
+| EV-015 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-full-r2-summary.json` | - | `26ae0f59f43e017d9697aaf3d568217686b0cb888dd4f4c3af6bddf129381bf8` | CANONICAL |
+| EV-016 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-full-r2.log` | - | `87cbbb297659ae37f62223883a41e094d3cbae95e8083a167a4f758d51b69278` | CANONICAL |
+| EV-017 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-full.log` | - | `5ee4cb230963eeca40ef0d2eeb11f0739abba1e6dd55c024c1ce8a6ecebf00dc` | CANONICAL |
+| EV-018 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-phase-c-build-2.log` | - | `9dedf50ebd02444ef2e92f91ec8b7d3ae1ccbb30d0966377e5ad886a4a6401fc` | CANONICAL |
+| EV-019 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-phase-c-build-tests.log` | - | `bbb76c3db2bd7d818633e76685cf4d8a6f77efe47b5f328ec1393f97c1072874` | CANONICAL |
+| EV-020 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-phase-c-build.log` | - | `3bc2d2511a62fac0c7288cdbd9e0d5e48980df03f29089fe13eaf71a5277d915` | CANONICAL |
+| EV-021 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-phase-c-no-restore.log` | - | `73bde6bf0ef94a441784fdc7742f53d8ad2b0e5cdb2ee2df1bd8157b04911ea4` | CANONICAL |
+| EV-022 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-phase-c-tests.log` | - | `547b067a33efb4e3cdd8f690df98f5f7107e4e114bc935de1ccbbee2fdb6a576` | CANONICAL |
+| EV-023 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-source-command-evidence-final.log` | - | `913c40ac251e1bcf914fd8bb607348d76330dab6246362e2ae3e6a91d46a2ad2` | CANONICAL |
+| EV-024 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dotnet-source-command-regression.log` | - | `166e12fac5265e7c45ac9e2db5371fc96b3b5d1ef71c6d966476288fae15fe5b` | CANONICAL |
+| EV-025 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-closeout.log` | - | `0fb12efef8cce281550ac3b8d48b4ab535b68e4455dd41c755a4a7a80ffbb370` | CANONICAL |
+| EV-026 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-i001-implementation.log` | - | `e210ecdc9bf2458d7e87b4f05f50852d3b8799252a5aa7ecbf933efcc665ff03` | CANONICAL |
+| EV-027 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-i005-core.log` | - | `53c45aac82a26aa5368e660f68516d47553a1f75d00034503336be502617efbc` | CANONICAL |
+| EV-028 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-i005-host.log` | - | `2d60087d054b92e5122ad97fc499febcc90452fd0ba8446efb3954c753770e6f` | CANONICAL |
+| EV-029 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-i011-ev.log` | - | `ba7cd0e2ca76550b1b667e18419b810d39522f536ef26f1724260d54968b8c20` | CANONICAL |
+| EV-030 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-impl-r1-rework-fix.log` | - | `766ded08db7674816538ad38fe65a20fc3d172f31afb9720ebfb4a656d9a0faf` | CANONICAL |
+| EV-031 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-integration.md` | - | `e8059872ae3778552d29c43fa5dc3bceffd667b9ea65e0dd5844cc157842b58b` | CANONICAL |
+| EV-032 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-real-ipc.log` | - | `c8fe52008c246c8de58f49e0a47a5eef59adb53fdfa78cc58fd3d5039e6251f2` | CANONICAL |
+| EV-033 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-referenced-resolve.log` | - | `4494491a105e48d8dc9a47ccd0afa561c360d95079c42995d67b1cb075ff4fda` | CANONICAL |
+| EV-034 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-review-batch1.log` | - | `970298d1ca48e71a66b74fc5a3404d16cf692af5c36ec05ba4f18b9a822674d5` | CANONICAL |
+| EV-035 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-review-batch2.log` | - | `812b56831bb6825115f31640edd7ed39eacdf65ef55f89d5f48b85e9aedbeb6a` | CANONICAL |
+| EV-036 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-review-batch3a.log` | - | `3e3373b84406c905078d5fd5d974e9b4789a655f0fa73312d020b6e6cedffe7c` | CANONICAL |
+| EV-037 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-sharing-dualread.log` | - | `d82f08b22c0ebe068f9bad15e2c5a33b76149f0270a282604dad32c88b4b2408` | CANONICAL |
+| EV-038 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/dsh-unfreeze-chain.log` | - | `a5d6f6f673ab6d41c2bfe0a09892da330ca2b5110730d96509b6dc6ac97f0238` | CANONICAL |
+| EV-039 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/fea06-png-audit.json` | - | `78654537cdb1bc7b2c71cc7b78207cd5e866a76497ec5fcd752af127c7403d92` | CANONICAL |
+| EV-040 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/git-stage-blocked.log` | - | `0b4e1049f1542754144fe32635df52a6638489c0005b097eb74ed15f8cc5a26c` | CANONICAL |
+| EV-041 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/git-stage-node-blocked.log` | - | `40f892aada53c585eac43cc180f115d284f93ad78a820f30c3073bcb4b4220b3` | CANONICAL |
+| EV-042 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/head-final.log` | - | `81737eb49324f39cf7e7dd948519e7387cc8082ba53498b986e7d5deb545f505` | CANONICAL |
+| EV-043 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/password-audit.json` | - | `1b2d3d3959220a42336753f76c046769d7eaff682a0faf4f354a0fdf87a26453` | CANONICAL |
+| EV-044 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/pins-final.log` | - | `b56ae26c32abb60490aaff86f69d444eed37cab6987d7456233000d00659b04d` | CANONICAL |
+| EV-045 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/pins.log` | - | `ea2789d918e83380941e6dba97b438c0ae0fdaff0350ab5c1c93fb84d01ee31e` | CANONICAL |
+| EV-046 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-cache-component.log` | - | `8a6e8c9fcb06034ee34f5d5ee49a1fc2a03590df2cd5e92d20fae686c5762d81` | CANONICAL |
+| EV-047 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-components-delivery-checkpoint.log` | - | `7d649578f8ea8bfa03858a6fae1faec4f20f3ce580c357deb2150ac448fe7dbe` | CANONICAL |
+| EV-048 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-components-final.log` | - | `ea9d6d5c77afcad3410439e676e854b51ebc6f514a9c502177bc79a1d36cbdae` | CANONICAL |
+| EV-049 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-final-syntax.log` | - | `076c38ecc3d10c3b7736b47ee0bd35cd97c5aa70a5c0d1b6887fe1a05c158700` | CANONICAL |
+| EV-050 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-grant-import.log` | - | `6c8c8b452c55dac3e078d6610820e33bb272bfb735aa26bb6bd0d01962aedf1a` | CANONICAL |
+| EV-051 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-handle-identity-diagnostic.log` | - | `f2f64006bc81c61d5ecc31a03ad7edcf8a4e686c1b247cfece80b796cc87cfa8` | CANONICAL |
+| EV-052 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-phase-c-baseline.log` | - | `1d6b284efbd6edd684a0af844aaa1d69e4b4a6b4ee6e29bfb388d729089283e8` | CANONICAL |
+| EV-053 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-source-grant-component-r2.log` | - | `1d208f97e71b72ea721a16365aa5e598e06de53f0adbb8ef3061b5c4ee8eb4c9` | CANONICAL |
+| EV-054 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-source-grant-component-r3.log` | - | `7354c95f0485ec1d49ec85877ecaaecbac2d0855219d6e0aef7e0066bdf90bd7` | CANONICAL |
+| EV-055 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-source-grant-component.log` | - | `324dbe84a4678f1bc3494b3a2346aefbef0892a603f6bc107fe5805a5a373756` | CANONICAL |
+| EV-056 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-syntax.log` | - | `f58fed6adade37326bd137cec481da85d0a975f6c7927c6bf0890434911b830e` | CANONICAL |
+| EV-057 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/python-test-dependencies.log` | - | `78f6335d11a62c99178ef41f208aee53a0094d606a779d449c457477f840fc9a` | CANONICAL |
+| EV-058 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/recovery-git-state.log` | - | `7fd7db63bba26444bcdf7ab27567e0ee3a6b41eb8583af077d410027b8f9cb0f` | CANONICAL |
+| EV-059 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/test-process-status.log` | - | `54d92d5d020d6ab69b0f64afeb0b580f0034e31d300cbdcb65379f58153c7faa` | CANONICAL |
+| EV-060 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/wire-redacted.ndjson` | - | `548de629d163d80b9cd8d1e62251de2016782e46a0c48a48575749d2a059d593` | CANONICAL |
+| EV-061 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/logs/workspace-evidence-manifest.json` | - | `482988d11c0f76b13d7638552602362945f2c29a7e40d4b89a8d007ada4e7165` | CANONICAL |
+| EV-062 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/tools/rebuild_ev.py` | - | `12c43c642c520c676b5d91c42fc7af5232dd917adc3ba651a4067425337e78d7` | CANONICAL |
+| EV-063 | FEA-09 证据文件（见 EV 台账） | `verification/FEA-09/working-tree-files.json` | - | `ab3c7707843eb61fd1aed0478953c14eed17b76a3878f039cb75eb09cb1d51b4` | CANONICAL |
+
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树，无新建 worktree |
-| agent-output | `G:\CODEX\New Manga.workspace\FEA-09\` | PRESERVE_REFERENCED | 原地（workspace） | scope-r1 prompt/output 日志 | 非 Canonical；派发/复核原始记录 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-09\tmp\` | DELETE_SAFE | 实施时清理 | 无 | 合成数据，实施时逐项登记 |
-| evidence（仓库） | `verification/FEA-09/**` | NOT_APPLICABLE | 仓库内 | EV 表 | 实施后登记 |
+| worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树，无新建 worktree；clean、无独有 commit |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-09` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-09` | `verification/FEA-09/logs/workspace-evidence-manifest.json` | 非 Canonical 的派发/复核/测试临时输出原字节保留；manifest 列 workspace FEA-09 全部文件路径+bytes+SHA-256；无 Canonical 引用 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-09\tmp` | DELETE_SAFE | - | `verification/FEA-09/logs/workspace-evidence-manifest.json` | 合成测试临时目录已删除（不存在）；无用户数据/引用 |
+| evidence（仓库） | `verification/FEA-09/**` | NOT_APPLICABLE | 仓库内 | `verification/FEA-09/EV.md` | 唯一 ID/0 PENDING EV 台账；逐文件 commit/SHA-256 pin 见 Canonical Evidence |
 
 ## Closeout Record
 
-- Closeout date / DSH：未开始（proposed）。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 未关闭项及保留原因：未开始。
-- 当前指针清理：未开始。
+- Closeout date / DSH：2026-11-04 / DSH（Lead / Architect / Integrator）。
+- 集成验证 head：`87ca50702e00c62c64540ac7ac4ff3b1d27fa0cd`。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- 未关闭项：无（限制与 DEBT-FEA09-01 见 closeout 段）。
+- 当前指针清理：STATUS 已移除 Active Task 指针；PLAN 标 done；checkpoint §196 记录。
 
 ## 变更记录
 
@@ -247,9 +316,13 @@ out_of_scope:
 - 仍未完成：生产 rendition 读取接线、密码完整链路、真实 IPC/V2 证据、AC-1…AC-10 部分验证、独立 impl Review；Task 保持 `in_progress`。
 - 下一精确动作：DSH 处理 Git 元数据、外置 task tmp、Windows DPAPI/ACL 与测试 fixture 权限；Codex 恢复后先核对 dirty 指纹，再完成 Host 密码引用与四维读取 scope→binding/rendition/生产 adapter 接线，重跑全部测试，分阶段提交。禁止改 UI/冻结契约/共享组合根/依赖/push。
 | 2026-11-03 | **Phase C/D 阶段提交 + DSH 集成修复**：Codex（Node 通路）完成 Host Registry/grant、strict read、WireLog 脱敏、rendition cache、回退开关；DSH 修复 6 项适配并提交 995d80ca5。验证：.NET **1298/0/57**、pytest fea09 **92 passed**、fea09+import_formats+storage **245 passed**、build 0/0、check PASS、pins 17/17。AC 仍 PARTIAL/BLOCKED，不宣称完成。 | `995d80ca5` 阶段 commit；`verification/FEA-09/logs/dsh-integration.md`；`doc/handoffs/FEA-09-995d80ca5.md` |
-| 2026-11-03 | **referenced 生产 resolve 增量（DSH）**：SourceReadGrantRegistry.find_for_source + eader.render_entry_png + esolve.resolve_referenced_rendition + core_service referenced 分支发布 rendition（确定性 key、幂等、typed 失败、无 raw/无任意路径）；新增 4 测试；pytest tests/fea09 **96 passed**、check PASS、pins 17/17。AC-6/AC-7 仅部分推进，不标 MET。 | erification/FEA-09/logs/dsh-referenced-resolve.log；	ests/fea09/test_referenced_resolve.py |
+| 2026-11-03 | **referenced 生产 resolve 增量（DSH）**：SourceReadGrantRegistry.find_for_source + 
+eader.render_entry_png + 
+esolve.resolve_referenced_rendition + core_service referenced 分支发布 rendition（确定性 key、幂等、typed 失败、无 raw/无任意路径）；新增 4 测试；pytest tests/fea09 **96 passed**、check PASS、pins 17/17。AC-6/AC-7 仅部分推进，不标 MET。 | 
+erification/FEA-09/logs/dsh-referenced-resolve.log；	ests/fea09/test_referenced_resolve.py |
 | 2026-11-03 | **密码链路 + rendition cache/预算（DSH）**：生产 Runtime 注入 `read_secret`；`reader._check_decode_budget`；`resolve` cache 元数据；`library.upsert_rendition_cache` + core resolve 写 cache 行；新增 cache/预算测试。`pytest tests/fea09` **98 passed**、check PASS、pins 17/17。 | `verification/FEA-09/logs/dsh-referenced-resolve.log`；`tests/fea09/test_referenced_resolve.py` |
-| 2026-11-03 | **AC-6 真实 Host↔Core IPC（DSH）**：新增 Host.Tests Fea09RealIpcTests（真实 stdio Python Core + 生产 CoreServiceClient/Host coordinators）；物理身份 grant 回退；NEWMANGA_FEA09_IPC=1 下 **1 passed**（16 frames、receipt completed、rendition 发布）；默认全量自跳过（53/29）。证据 erification/FEA-09/ipc/。 | `verification/FEA-09/logs/dsh-real-ipc.log` |
+| 2026-11-03 | **AC-6 真实 Host↔Core IPC（DSH）**：新增 Host.Tests Fea09RealIpcTests（真实 stdio Python Core + 生产 CoreServiceClient/Host coordinators）；物理身份 grant 回退；NEWMANGA_FEA09_IPC=1 下 **1 passed**（16 frames、receipt completed、rendition 发布）；默认全量自跳过（53/29）。证据 
+erification/FEA-09/ipc/。 | `verification/FEA-09/logs/dsh-real-ipc.log` |
 ## Implementation Review r1 处置（DSH，2026-11-03）
 
 报告：`doc/reviews/FEA-09-impl-r1.md`（23,071 B，SHA-256 `7e6f4b787a41e6493c98ac708e5ef305669a318fc823c193fe0a1984a6ed3a82`，reviewed_head `6a164253d`；reviewer session `01a1a1b4-5bda-7940-bc48-7aedfdd589b0`；未参与实现）。结论：**changes_requested，P0=0 / P1=8 / P2=3**。全部 findings **接受**；在返修并经新的独立复核前不得 done，AC 不标 MET。
@@ -269,7 +342,8 @@ out_of_scope:
 | R1-I011 | P2 | **FIXED**：旧台账归档 `history/EV-2026-11-03.md`；`tools/rebuild_ev.py` 从 git ls-files 生成 57 行唯一 ID/0 PENDING 台账；合成目录去跟踪+gitignore；历史缺失 50 条单列 | closeout |
 
 **批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
-| 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |
+| 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/
+ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |
 | 2026-11-03 | **实现 Review r1 批次 2 返修（DSH）**：I003 部分重试逐页补齐、I004 真加密 PDF（含 pdfium 密码编码修复）、I006 folder resolve 绑定生效。pytest tests/fea09 **106 passed**；library/reading_export/import_formats/p09 全 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch2.log` |
 | 2026-11-03 | **实现 Review r1 批次 3a：R1-I008**（DSH）：resolve 拆分 prepare/render；生产装配 RenditionCache（derived_root 尊重 M2RC1_DERIVED_ROOT）；命中不解码、metadata source-renditions/、损坏重建。pytest tests/fea09 **107 passed**；m2rc 110/core_service 6/library+reading 204 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch3a.log` |
 ## UNFREEZE 修订（I001 + I005，2026-11-04）— **r15 approved，待语义提交与重冻**
