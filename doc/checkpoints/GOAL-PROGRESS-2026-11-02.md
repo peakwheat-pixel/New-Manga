@@ -1278,3 +1278,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **r2 修订**：按 U-001…U-009 处置并拆 A 包（I001：C-05 v1.2/C-15 v1.1）与 B 包（I005：C-16 v1.1/M2-C1 2.12）；新增 artifact-only 投影扩域、迁移三路径同连接验证、fresh signed grant 绑定 secret、capability/四象限、两阶段冻结。
 - **r2 Review**：**changes_requested P0=0/P1=6/P2=2**；U-001/U-007/U-008 CLOSED；R2-001…R2-008（P1×6/P2×2）指向投影 DTO/正尺寸口径、secret 文件身份/一次性 claim、同键替换失效、冻结字节复核顺序与下游登记；归档 `doc/reviews/FEA-09-UNFREEZE-r2-review.md`。
 - **状态**：重冻前不释放 I001/I005 生产返修；r3 修订与第三次独立复核待做。治理门禁 PASS、pins 17/17（契约正文尚未改，pin 未变）。
+## 194. FEA-09 UNFREEZE 链收敛：r15 approved（2026-11-04）
+
+- 15 轮独立复核（Codex r1–r14、ZCode r15——Codex 额度耗尽按授权故障转移）；最终 **approved P0=0/P1=0/P2=1**。
+- 收敛策略：去除 wire/DTO 变更；契约只冻结外部可观察语义/安全不变量；内部实现委托 impl-design + 实现 Review。
+- 最终包：C-05 v1.2 / C-15 v1.1 / C-16 v1.1；M2-C1 无字节变更。
+- 下一步：语义提交→三指纹/old-new blob→已提交字节独立复核→仅元数据重冻→check+17 pins→释放 I001/I005。
