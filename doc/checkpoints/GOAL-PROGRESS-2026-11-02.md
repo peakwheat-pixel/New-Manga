@@ -1043,3 +1043,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 按最小修订更新 Task `doc/tasks/FEA-08.md`（提交 `cd5692f1b`）：AC-1 三断言；AC-2 判定操作+禁清空 API+仅合成路径+fixture 处置+receipt 恢复；AC-3 按 :457/:469 二分+digest 类型；AC-4 二维矩阵+证据类型（mock≤LIMITED）；路径偏差登记；depends_on=FEA-01-FREEZE-1；ADJ-001 纠正；SQLite 范围外写入 BLOCKED；3 待决项裁决写入。
 - 已派 **scope-r2**（ZCode fresh session，job `pwsh-1e2681f64bc5459a`）：逐条核验 F08R1-001…008、可判定性与 ready 条件；approved 后置 ready 并派实施。
 - 治理 PASS(3)、pins 15/15；未 push。
+## 162. FEA-08 scope-r2 approved → ready → 实施派发（2026-11-03 09:00）
+
+- FEA-08 scope-r2（ZCode CLI fresh session）：**approved P0=0/P1=0/P2=2**；报告 `doc/reviews/FEA-08-scope-r2.md`。P2：dispatch prompt AC 摘要需同步冻结口径（已改）；base/reviewer 元数据待置 ready 收敛（已做）。
+- DSH 冻结：Task `status: ready` → 随即派实施 → `in_progress`；base_commit `2870a9fa5`（scope-r2 approved head）；owner=zcode；AC 已冻结（H4 三断言/H5 判定操作与禁清空 API/H6 :457/:469/AC4 二维矩阵+measured/mocked/inferred）。
+- 已派 **FEA-08 实施**（ZCode fresh session，job `pwsh-674c4ee48de74cb2`，prompt workspace `implementation-dispatch-prompt.md` 已同步冻结 AC）：隔离原型 H4/H5/H6 + `doc/research/FEA-08-source-capability.md` + `verification/FEA-08/**` + Handoff；不触真实库/用户文件/生产代码。
+- STATUS/PLAN 指针更新（当前 Task=FEA-08 in_progress；READY=无）；提交 `026bea8b1`（ready 冻结）；治理 PASS(3)、pins 15/15；未 push。

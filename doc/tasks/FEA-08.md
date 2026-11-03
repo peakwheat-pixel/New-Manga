@@ -3,10 +3,10 @@ id: FEA-08
 title: Source/回收站隔离原型（H4/H5/H6 能力矩阵与技术报告）
 kind: prototype
 governance_version: 3
-status: ready
+status: in_progress
 approval: scope-r2 **approved**（ZCode CLI fresh session，P0=0/P1=0/P2=2；2026-11-03；报告 doc/reviews/FEA-08-scope-r2.md）
-suggested_owner: codex
-owner: codex
+suggested_owner: zcode
+owner: zcode
 reviewer: scope-r2 approved（ZCode）；impl Reviewer 待 DSH Appointment
 depends_on:
   - FEA-01-FREEZE-1
