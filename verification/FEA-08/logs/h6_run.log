@@ -1,0 +1,23 @@
+$ python h6_run.py
+EXIT=0
+
+[h6] M1_unchanged_image_bytes                     -> exact_match
+[h6] M2_reencoded_image                           -> candidate
+[h6] M3_flipped_image                             -> no_match
+[h6] M4_exif_orientation_normalized               -> exact_match
+[h6] M5_physically_rotated                        -> candidate
+[h6] M6_gray_vs_rgb_mode                          -> exact_match
+[h6] M7_cmyk_vs_rgb                               -> candidate
+[h6] M8M9_folder_diff_and_dup_occurrences         -> needs_confirmation
+[h6] M10_zip_recompressed_members                 -> exact_match
+[h6] M11_cbz_same_members                         -> exact_match
+[h6] M12_duplicate_member_names                   -> candidate
+[h6] M13_encrypted_zip                            -> exact_match
+[h6] M14_pdf_regenerated_pages                    -> exact_match
+[h6] M15_encrypted_pdf                            -> exact_match
+[h6] M16_gif_first_frame_only                     -> exact_match
+[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (15 scenarios)
+
+--- stderr ---
+G:\CODEX\New Manga.workspace\FEA-08\prototype\h6_run.py:39: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(g.getdata())

@@ -1,0 +1,107 @@
+{
+  "img_base": {
+    "path": "img_base.png",
+    "sha256": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+    "note": "无损基线图"
+  },
+  "img_copy": {
+    "path": "img_copy.png",
+    "sha256": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+    "note": "基线逐字节副本(另一路径)"
+  },
+  "img_reenc": {
+    "path": "img_reenc.jpg",
+    "sha256": "863d49deb2906fac893953e35150b1600bc0cc645baf0d29d4d372037b87012c",
+    "note": "同像素 JPEG q85 重编码"
+  },
+  "img_flipped": {
+    "path": "img_flipped.png",
+    "sha256": "8c4b9bff2fabe004bbfe159926afdc39bb6d3d5dc351caeb1903900a1dc435c8",
+    "note": "水平翻转"
+  },
+  "img_exif_o6": {
+    "path": "img_exif_o6.png",
+    "sha256": "b125c108b081fd0d59c19090a182ed7507f9a739f5079494f2b9e69460e71bff",
+    "note": "物理CCW90+EXIF orientation=6 (无损PNG)"
+  },
+  "img_rotated_phys": {
+    "path": "img_rotated_phys.png",
+    "sha256": "3937a0debc3c1bc12f39246ce56257e7b7e2ea446ac0559dce0cf9a33bddd095",
+    "note": "物理CCW90无EXIF"
+  },
+  "img_gray": {
+    "path": "img_gray.png",
+    "sha256": "34f0b239609575302cc2f1b2e4a57e26ea69d1b27cb984dc0877a7f43f292c2c",
+    "note": "灰度版"
+  },
+  "img_gray_as_rgb": {
+    "path": "img_gray_as_rgb.png",
+    "sha256": "d4723bb228449cd6203c21b665f31ff8c5726aa42ff5644afa1c226a6a67e744",
+    "note": "灰度内容存为RGB"
+  },
+  "img_cmyk": {
+    "path": "img_cmyk.jpg",
+    "sha256": "0d17f9bd7b8e51ed51c237410a77255c31120b7902e50f875da62a926d01199b",
+    "note": "CMYK JPEG"
+  },
+  "anim": {
+    "path": "anim.gif",
+    "sha256": "7dd78b8dcefe5b5adc3bea15b25c9b76e1df59ebf97c5471bf8c4214553ab2fd",
+    "note": "3帧GIF(红/蓝/绿)"
+  },
+  "firstframe_extract": {
+    "path": "firstframe_extract.png",
+    "sha256": "f411173051663150ef31d5b3d86a9f5ddb9177d9c5cd5ff2b44c35d3b436ae0f",
+    "note": "从GIF解码导出的帧0(红,含量化)"
+  },
+  "wrongframe_blue": {
+    "path": "wrongframe_blue.png",
+    "sha256": "b9c21277c74c0f24dbd06c770443b182de40c8a439993e01b08ee84e7ce04b4e",
+    "note": "从GIF解码导出的帧1(蓝,反证用)"
+  },
+  "book_v1": {
+    "path": "book_v1.zip",
+    "sha256": "daf82966ce19ca6b5669d40d75bda5f23e385bcee8aa0d78a734a8f0deaae383",
+    "note": "ZIP 基线(deflate)"
+  },
+  "book_v1_recompressed": {
+    "path": "book_v1_recompressed.zip",
+    "sha256": "5377558597897da5ea5c70591b4883c28b7671bcfd9f1980b0007f7443d162b8",
+    "note": "同成员内容 STORED+倒序(容器重编码)"
+  },
+  "book_v1_cbz": {
+    "path": "book_v1.cbz",
+    "sha256": "daf82966ce19ca6b5669d40d75bda5f23e385bcee8aa0d78a734a8f0deaae383",
+    "note": "CBZ(同 book_v1 成员)"
+  },
+  "book_dup": {
+    "path": "book_dup.zip",
+    "sha256": "ce33d7406efbb5fb367964bb607348b5e3c5cdb642b554de70b0ec1834e75777",
+    "note": "同名成员×2(不同内容)"
+  },
+  "book_enc_zipcrypto": {
+    "path": "book_enc_zipcrypto.zip",
+    "sha256": "46784e1a00265f279b293faac5e246c5c27f073cf93465c2ab10377de352e7c6",
+    "note": "7-Zip ZipCrypto 加密(密码 FEA08pass)"
+  },
+  "book_enc_aes256": {
+    "path": "book_enc_aes.zip",
+    "sha256": "a1f3d7203731840df087269da785fda2cb1862bf058e5ac60efc4dae1950b542",
+    "note": "7-Zip AES256 加密(密码 FEA08pass)"
+  },
+  "doc_v1": {
+    "path": "doc_v1.pdf",
+    "sha256": "a4accf5171f8b60c6b10e29685fbc6e2ed9a978870fa3ac11327f573a8f9d9d1",
+    "note": "PDF 基线 2 页"
+  },
+  "doc_v1_regen": {
+    "path": "doc_v1_regen.pdf",
+    "sha256": "6fef737230ab28ddf0878477f40523247ae472a9373512ef41552739d4089c31",
+    "note": "同内容重新生成(/ID 时间戳对象号不同)"
+  },
+  "doc_enc": {
+    "path": "doc_enc.pdf",
+    "sha256": "a6a780fa5f93b61b743adeaa678490d39b6e1a3972f5a2a11f417574989f1f04",
+    "note": "AES-256 加密 PDF(密码 FEA08pass)"
+  }
+}

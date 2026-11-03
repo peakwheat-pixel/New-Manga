@@ -1,0 +1,30 @@
+{
+  "steps": [
+    {
+      "step": "make_fixtures.py",
+      "exit": 0
+    },
+    {
+      "step": "h4_run.py",
+      "exit": 0
+    },
+    {
+      "step": "h5_run.py",
+      "exit": 0
+    },
+    {
+      "step": "h6_run.py",
+      "exit": 0
+    },
+    {
+      "step": "matrix.py",
+      "exit": 0
+    }
+  ],
+  "env": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "tmp_removed": [
+    "fixtures",
+    "h4_lab"
+  ],
+  "tmp_remaining": []
+}

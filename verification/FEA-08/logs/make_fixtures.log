@@ -1,0 +1,8 @@
+$ python make_fixtures.py
+EXIT=0
+
+[fixtures] 21 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
+
+--- stderr ---
+C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'page.png'
+  return self._open_to_write(zinfo, force_zip64=force_zip64)

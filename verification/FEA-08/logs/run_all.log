@@ -1,0 +1,47 @@
+===== fixtures =====
+[fixtures] 21 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
+===== H4 =====
+[h4] S1_baseline_no_fault                         -> complete_old_digest
+[h4] S2_strict_share_blocks_writers               -> complete_old_digest
+[h4] S3a_mid_read_osreplace_attempt               -> complete_old_digest
+[h4] S3b_mid_read_replace_via_renames             -> complete_old_digest
+[h4] S4_mid_read_writefile_unread_region          -> unavailable
+[h4] S5a_mmap_write_unmapped_after                -> undetected_mixed
+[h4] S5b_mmap_write_mapping_held                  -> undetected_mixed
+[h4] S5c_strict_share_blocks_mmap_writer          -> complete_old_digest
+[h4] S6_mid_read_delete_tolerant                  -> complete_old_digest
+[h4] S7_mid_read_rename_tolerant                  -> complete_old_digest
+[h4] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h4_results.json (10 scenarios)
+===== H5 =====
+[h5] R1_file_recycle_success                        -> PASS
+[h5] R2_dir_recycle_success                         -> PASS
+[h5] R3_empty_dir_recycle                           -> PASS
+[h5] R4_busy_file_recycle_fails_keeps               -> PASS
+[h5] R5_path_replaced_before_execute                -> PASS
+[h5] R5b_target_replaced_by_directory               -> PASS
+[h5] R6a_crash_before_execution_recovery            -> PASS
+[h5] R6b_crash_after_execution_recovery             -> PASS
+[h5] R9_batch_partial_failure                       -> PASS
+[h5] R7_unrecyclable_volume_network_drive           -> LIMITED(mocked)
+[h5] R8_user_cancel                                 -> LIMITED(mocked)
+[h5] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h5_results.json (11 scenarios); bin 0->0 items, leftover=0
+===== H6 =====
+[h6] M1_unchanged_image_bytes                     -> exact_match
+[h6] M2_reencoded_image                           -> candidate
+[h6] M3_flipped_image                             -> no_match
+[h6] M4_exif_orientation_normalized               -> exact_match
+[h6] M5_physically_rotated                        -> candidate
+[h6] M6_gray_vs_rgb_mode                          -> exact_match
+[h6] M7_cmyk_vs_rgb                               -> candidate
+[h6] M8M9_folder_diff_and_dup_occurrences         -> needs_confirmation
+[h6] M10_zip_recompressed_members                 -> exact_match
+[h6] M11_cbz_same_members                         -> exact_match
+[h6] M12_duplicate_member_names                   -> candidate
+[h6] M13_encrypted_zip                            -> exact_match
+[h6] M14_pdf_regenerated_pages                    -> exact_match
+[h6] M15_encrypted_pdf                            -> exact_match
+[h6] M16_gif_first_frame_only                     -> exact_match
+[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (15 scenarios)
+===== matrix =====
+[matrix] G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.json / G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.md; counts={'PASS': 15, 'LIMITED(mocked)': 30, 'LIMITED(inferred)': 10, 'UNAVAILABLE(inferred)': 5}
+[run_all] done; tmp cleaned (2 trees/files removed); results in G:\CODEX\New Manga.workspace\FEA-08\out

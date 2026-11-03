@@ -1,0 +1,14 @@
+$ python h4_run.py
+EXIT=0
+
+[h4] S1_baseline_no_fault                         -> complete_old_digest
+[h4] S2_strict_share_blocks_writers               -> complete_old_digest
+[h4] S3a_mid_read_osreplace_attempt               -> complete_old_digest
+[h4] S3b_mid_read_replace_via_renames             -> complete_old_digest
+[h4] S4_mid_read_writefile_unread_region          -> unavailable
+[h4] S5a_mmap_write_unmapped_after                -> undetected_mixed
+[h4] S5b_mmap_write_mapping_held                  -> undetected_mixed
+[h4] S5c_strict_share_blocks_mmap_writer          -> complete_old_digest
+[h4] S6_mid_read_delete_tolerant                  -> complete_old_digest
+[h4] S7_mid_read_rename_tolerant                  -> complete_old_digest
+[h4] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h4_results.json (10 scenarios)

@@ -1,0 +1,290 @@
+{
+  "module": "h6_run.py",
+  "canonicalization": "exif_transpose -> RGB 8bit -> raw size (no resize)",
+  "candidate_rule": "dhash hamming <= 10 => candidate (never exact)",
+  "fixtures_manifest": "fixtures/fixtures_manifest.json",
+  "results": [
+    {
+      "result": "exact_match",
+      "digest_type": "bytes_sha256",
+      "digest": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+      "scenario": "M1_unchanged_image_bytes"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 0,
+      "size": [
+        256,
+        256
+      ],
+      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
+      "canonical_b": "be9bf1343f82c2f688e31b0e3e3e85dd21b7d8b1d1c564462e59df9c9c11bc0b",
+      "scenario": "M2_reencoded_image"
+    },
+    {
+      "result": "no_match",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 36,
+      "size": [
+        256,
+        256
+      ],
+      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
+      "canonical_b": "3bcceb52025a40a2b5cc3d2f9bd7653efabcc8bbb8c7d814cd6eef386a97e0f1",
+      "scenario": "M3_flipped_image"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "canonical_pixel_sha256",
+      "digest": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
+      "size": [
+        256,
+        256
+      ],
+      "orientation_applied": true,
+      "scenario": "M4_exif_orientation_normalized"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 5,
+      "size": [
+        256,
+        256
+      ],
+      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
+      "canonical_b": "944dc86084e0f8b891e0d05759e4a4dddb713400dc9b30d127c3d5ab0f0be162",
+      "scenario": "M5_physically_rotated"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "canonical_pixel_sha256",
+      "digest": "bc95a3667249df348d6d635192862a134171de5e1383f154a56e7c47ba2d9c90",
+      "size": [
+        256,
+        256
+      ],
+      "orientation_applied": true,
+      "scenario": "M6_gray_vs_rgb_mode"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 0,
+      "size": [
+        256,
+        256
+      ],
+      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
+      "canonical_b": "21e40a8c77555cdf2a8ea628d39657f79ffa4e0eb32e1cc451eb2b22009faa71",
+      "scenario": "M7_cmyk_vs_rgb"
+    },
+    {
+      "result": "needs_confirmation",
+      "digest_type": "folder_membership+bytes_sha256",
+      "members_a": 3,
+      "members_b": 3,
+      "unchanged": [
+        "p1.png"
+      ],
+      "changed": [],
+      "missing": [
+        "p2.png",
+        "p3.png"
+      ],
+      "added": [
+        "p2renamed.png",
+        "p4.png"
+      ],
+      "rename_candidates": [
+        {
+          "from": "p2.png",
+          "to": "p2renamed.png",
+          "content_digest": "da0ad99a91ffff15d6fefcb417c9c1adf1a4160a15718cd16ba4bddc202164f1"
+        }
+      ],
+      "duplicate_identical_images_kept_separate": {
+        "p1.png": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+        "folder_v2/p4.png": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+        "same_digest": true,
+        "separate_occurrences": true
+      },
+      "scenario": "M8M9_folder_diff_and_dup_occurrences"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "member_content_sha256",
+      "members_a": 3,
+      "members_b": 3,
+      "multiset_equal": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [],
+      "occurrences_kept_separate": true,
+      "scenario": "M10_zip_recompressed_members"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "member_content_sha256",
+      "members_a": 3,
+      "members_b": 3,
+      "multiset_equal": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [],
+      "occurrences_kept_separate": true,
+      "scenario": "M11_cbz_same_members"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "member_content_sha256",
+      "members_a": 2,
+      "members_b": 2,
+      "multiset_equal": true,
+      "duplicate_member_names_a": [
+        "page.png"
+      ],
+      "duplicate_member_names_b": [
+        "page.png"
+      ],
+      "occurrences_kept_separate": true,
+      "duplicate_occurrences": [
+        {
+          "name": "page.png",
+          "ordinal": 0,
+          "digest": "18640fe476c4c2f0bd7106f501b3e5bf15f594a321905aee9652c4c59176554e"
+        },
+        {
+          "name": "page.png",
+          "ordinal": 1,
+          "digest": "37d35154f79de57c81465ab8283399ca960dcfd20fa3f1537ab4ef66bce84c1f"
+        }
+      ],
+      "duplicate_name_ambiguity": "同名不同内容 → 歧义，仅候选，需用户确认",
+      "scenario": "M12_duplicate_member_names"
+    },
+    {
+      "zipcrypto_flag": {
+        "encrypted": true
+      },
+      "zipcrypto_no_password": {
+        "result": "needs_password",
+        "note": "encrypted: File <ZipInfo filename='enc_page.png' compress_type=deflate external_attr=0x20 file_size=8954 compress_size=8859> is encrypted, password required for extraction"
+      },
+      "zipcrypto_with_password": {
+        "result": "exact_match",
+        "digest_type": "member_content_sha256",
+        "members_a": 1,
+        "members_b": 1,
+        "multiset_equal": true,
+        "duplicate_member_names_a": [],
+        "duplicate_member_names_b": [],
+        "occurrences_kept_separate": true
+      },
+      "aes_flag": {
+        "encrypted": true
+      },
+      "aes_with_password": {
+        "result": "error",
+        "error": "NotImplementedError: That compression method is not supported",
+        "note": "AES 加密 ZIP：标准库 zipfile 不支持，需要 pyzipper（未引入）"
+      },
+      "result": "exact_match",
+      "digest_type": "member_content_sha256(with password)",
+      "scenario": "M13_encrypted_zip"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "rendered_pixel_sha256",
+      "bytes_digest_a": "a4accf5171f8b60c6b10e29685fbc6e2ed9a978870fa3ac11327f573a8f9d9d1",
+      "bytes_digest_b": "6fef737230ab28ddf0878477f40523247ae472a9373512ef41552739d4089c31",
+      "container_bytes_differ": true,
+      "page_count_a": 2,
+      "page_count_b": 2,
+      "pages": [
+        {
+          "page_no": 1,
+          "rendered_digest": "2df07d70f51de45cf2a6a4a73d96600c32e65b4f4ed0e06ebcc4a5f1348fc3f8",
+          "pixel_size": [
+            534,
+            534
+          ]
+        },
+        {
+          "page_no": 2,
+          "rendered_digest": "1119c0a9f65a1e7812b0d53371e2dd8752a92f97036a04c512fc0d3c468c9a8f",
+          "pixel_size": [
+            534,
+            534
+          ]
+        }
+      ],
+      "render_params": {
+        "engine": "pypdfium2",
+        "pdfium_info": "153.0.7999.0",
+        "dpi": 150,
+        "scale": 2.0833333333333335,
+        "colorspace": "RGB8"
+      },
+      "content_stream_digests_a": [
+        "857e42f0ee642268dff2f312018e0628d783e81bc9f5e24c85f46eeb7cd56427",
+        "dae6b58aefe0e8b1e0e86c10c9b45b12c579ffa631e58c33cef9f0d8fe871c81"
+      ],
+      "content_stream_digests_b": [
+        "857e42f0ee642268dff2f312018e0628d783e81bc9f5e24c85f46eeb7cd56427",
+        "dae6b58aefe0e8b1e0e86c10c9b45b12c579ffa631e58c33cef9f0d8fe871c81"
+      ],
+      "scenario": "M14_pdf_regenerated_pages"
+    },
+    {
+      "no_password": {
+        "result": "needs_password",
+        "error": "PdfiumError: Failed to load document (PDFium: Incorrect password error)."
+      },
+      "with_password": {
+        "result": "exact_match",
+        "digest_type": "rendered_pixel_sha256",
+        "bytes_digest_a": "a6a780fa5f93b61b743adeaa678490d39b6e1a3972f5a2a11f417574989f1f04",
+        "bytes_digest_b": "a6a780fa5f93b61b743adeaa678490d39b6e1a3972f5a2a11f417574989f1f04",
+        "container_bytes_differ": false,
+        "page_count_a": 2,
+        "page_count_b": 2,
+        "pages": [
+          {
+            "page_no": 1,
+            "rendered_digest": "2df07d70f51de45cf2a6a4a73d96600c32e65b4f4ed0e06ebcc4a5f1348fc3f8",
+            "pixel_size": [
+              534,
+              534
+            ]
+          },
+          {
+            "page_no": 2,
+            "rendered_digest": "1119c0a9f65a1e7812b0d53371e2dd8752a92f97036a04c512fc0d3c468c9a8f",
+            "pixel_size": [
+              534,
+              534
+            ]
+          }
+        ],
+        "render_params": {
+          "engine": "pypdfium2",
+          "pdfium_info": "153.0.7999.0",
+          "dpi": 150,
+          "scale": 2.0833333333333335,
+          "colorspace": "RGB8"
+        }
+      },
+      "result": "exact_match",
+      "digest_type": "rendered_pixel_sha256(with password)",
+      "scenario": "M15_encrypted_pdf"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "canonical_pixel_sha256(gif frame 0 vs standalone png)",
+      "gif_frame0_digest": "8a95da9693bda86714cd4d8ec330ca2658febd62581d5216fc17f68e0cd04952",
+      "blue_frame_digest_would_not_match": true,
+      "policy": "GIF 仅取帧 0；非首帧内容不参与匹配",
+      "scenario": "M16_gif_first_frame_only"
+    }
+  ]
+}

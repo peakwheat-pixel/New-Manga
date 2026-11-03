@@ -1,0 +1,205 @@
+{
+  "module": "h5_run.py",
+  "api": "SHFileOperationW(FO_DELETE, FOF_ALLOWUNDO|FOF_SILENT|FOF_NOCONFIRMATION|FOF_NOERRORUI)",
+  "recycle_query_api": "SHQueryRecycleBinW (read-only)",
+  "empty_api_used": false,
+  "notes": "SHEmptyRecycleBin 等 API 未封装且未调用；回收/还原仅针对 lab 合成路径",
+  "bin_baseline": {
+    "items": 0,
+    "size": 0
+  },
+  "bin_final": {
+    "items": 0,
+    "size": 0
+  },
+  "recycle_bin_leftover_for_lab": 0,
+  "restore_log": [
+    {
+      "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\page_001.png",
+      "restored": true,
+      "$i_removed": true,
+      "$r_moved": true
+    },
+    {
+      "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\vol01",
+      "restored": true,
+      "$i_removed": true,
+      "$r_moved": true
+    },
+    {
+      "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\empty_dir",
+      "restored": true,
+      "$i_removed": true,
+      "$r_moved": true
+    },
+    {
+      "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\crash_after.png",
+      "restored": true,
+      "$i_removed": true,
+      "$r_moved": true
+    },
+    {
+      "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_a.png",
+      "restored": true,
+      "$i_removed": true,
+      "$r_moved": true
+    }
+  ],
+  "results": [
+    {
+      "api": "SHFileOperationW FO_DELETE+ALLOWUNDO",
+      "ret": 0,
+      "aborted": false,
+      "de": null,
+      "bin_before": {
+        "items": 0,
+        "size": 0
+      },
+      "bin_after": {
+        "items": 1,
+        "size": 40960
+      },
+      "fs_fact_target_kept_at_origin": false,
+      "recycle_entry_found": true,
+      "entry_meta_orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\page_001.png",
+      "restored": [
+        {
+          "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\page_001.png",
+          "restored": true,
+          "$i_removed": true,
+          "$r_moved": true
+        }
+      ],
+      "restored_digest_matches": true,
+      "bin_after_restore": {
+        "items": 0,
+        "size": 0
+      },
+      "verdict": "PASS",
+      "scenario": "R1_file_recycle_success"
+    },
+    {
+      "ret": 0,
+      "aborted": false,
+      "de": null,
+      "fs_fact_target_kept_at_origin": false,
+      "recycle_entry_found": true,
+      "restored_count": 1,
+      "members_digest_match": true,
+      "verdict": "PASS",
+      "scenario": "R2_dir_recycle_success"
+    },
+    {
+      "ret": 0,
+      "aborted": false,
+      "de": null,
+      "fs_fact_target_kept_at_origin": false,
+      "recycle_entry_found": 1,
+      "fallback_rmdir_used": false,
+      "note": "empty dir recycle measured; on failure target is kept (no rmdir fallback)",
+      "verdict": "PASS",
+      "scenario": "R3_empty_dir_recycle"
+    },
+    {
+      "ret": 32,
+      "aborted": false,
+      "de": null,
+      "fs_fact_target_kept_at_origin": true,
+      "digest_unchanged": true,
+      "recycle_entry_found": 0,
+      "verdict": "PASS",
+      "scenario": "R4_busy_file_recycle_fails_keeps"
+    },
+    {
+      "plan_identity": {
+        "volume_serial": 3401956556,
+        "file_index": 4785074607423907,
+        "size": 24576,
+        "mtime_100ns": 134381419327178033
+      },
+      "current_identity": {
+        "volume_serial": 3401956556,
+        "file_index": 5066549584134564,
+        "size": 24576,
+        "mtime_100ns": 134381419327228235
+      },
+      "identity_match": false,
+      "refused_to_execute": true,
+      "no_destructive_issued": true,
+      "fs_fact_target_kept_at_origin": true,
+      "verdict": "PASS",
+      "scenario": "R5_path_replaced_before_execute"
+    },
+    {
+      "identity_match": false,
+      "type_changed": true,
+      "refused_to_execute": true,
+      "no_destructive_issued": true,
+      "fs_fact_target_kept_at_origin": true,
+      "verdict": "PASS",
+      "scenario": "R5b_target_replaced_by_directory"
+    },
+    {
+      "recovery_ops": [
+        {
+          "path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\crash_before.png",
+          "fact": "present",
+          "identity_match": true,
+          "decision": "retained"
+        }
+      ],
+      "no_destructive_reissued": true,
+      "fs_fact_target_kept": true,
+      "verdict": "PASS",
+      "scenario": "R6a_crash_before_execution_recovery"
+    },
+    {
+      "recovery_ops": [
+        {
+          "path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\crash_after.png",
+          "fact": "in_recycle_bin",
+          "decision": "completed"
+        }
+      ],
+      "decision_by_fs_facts": "completed",
+      "restored": [
+        {
+          "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\crash_after.png",
+          "restored": true,
+          "$i_removed": true,
+          "$r_moved": true
+        }
+      ],
+      "restored_digest_matches": true,
+      "verdict": "PASS",
+      "scenario": "R6b_crash_after_execution_recovery"
+    },
+    {
+      "ret": 32,
+      "aborted": false,
+      "de": null,
+      "fs_fact_kept": {
+        "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_a.png": false,
+        "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_b.png": true,
+        "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_c.png": true
+      },
+      "recycle_entries": 1,
+      "per_file_digest_after_restore_ok": true,
+      "note": "busy file kept at origin; completed items recovered from bin",
+      "verdict": "PASS",
+      "scenario": "R9_batch_partial_failure"
+    },
+    {
+      "evidence_type": "inferred(mocked)",
+      "basis": "FOF_ALLOWUNDO 仅当卷支持回收站时产生 undo；网络盘/部分可移动卷会失败或直接永久删除——本机无可移动/网络卷，未实测；生产 Host 须按卷能力探测后决定是否禁用 D 流程",
+      "verdict": "LIMITED(mocked)",
+      "scenario": "R7_unrecyclable_volume_network_drive"
+    },
+    {
+      "evidence_type": "inferred(mocked)",
+      "basis": "取消路径返回 DE_CANCELED(0x4C7)/fAnyOperationsAborted=TRUE，与 R4 同构：目标保留于原路径；无人值守环境无法触发真实确认 UI",
+      "verdict": "LIMITED(mocked)",
+      "scenario": "R8_user_cancel"
+    }
+  ]
+}

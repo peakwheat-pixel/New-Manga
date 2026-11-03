@@ -1,0 +1,186 @@
+{
+  "module": "h4_run.py",
+  "protocol": "StableReadLease: open+verify identity -> handle-only read -> reverify identity",
+  "identity_basis": "BY_HANDLE_FILE_INFORMATION: volume_serial + file_index + size + mtime",
+  "allowed_outcomes": [
+    "complete_old_digest",
+    "unavailable",
+    "fault_blocked"
+  ],
+  "results": [
+    {
+      "scenario": "S1_baseline_no_fault",
+      "lease_share": "R|D",
+      "fault": "none",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "assert_digest_matches_file": true
+    },
+    {
+      "scenario": "S2_strict_share_blocks_writers",
+      "lease_share": "R",
+      "fault": "write_open+replace attempts",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "writer_attempts": {
+        "write_open": "blocked(win32=None)",
+        "os.replace": "blocked([WinError 5] 拒绝访问。: 'G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-08\\\\tmp\\\\h4_lab\\\\replacement.bin' -> 'G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-08\\\\tmp\\\\h4_lab\\\\source_page.png')"
+      },
+      "target_bytes_unchanged": true,
+      "assert_all_blocked": true
+    },
+    {
+      "scenario": "S3a_mid_read_osreplace_attempt",
+      "lease_share": "R|W|D",
+      "fault": "os.replace(mid-read)",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "os_replace_result": {
+        "os.replace": "blocked(winerr=5)"
+      },
+      "target_bytes_unchanged": true,
+      "assert_rejected_and_old_digest": true
+    },
+    {
+      "scenario": "S3b_mid_read_replace_via_renames",
+      "lease_share": "R|W|D",
+      "fault": "rename-aside+rename-in(mid-read)",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "path_reopen_digest_wrong_impl": "d87438b22de89f463fb38ac6aefedd43cbb2ca934b34374391cb94bc784948b3",
+      "path_reopen_digest_is_new_content": true,
+      "aside_stream_survives": true,
+      "assert_old_digest_or_unavailable": true
+    },
+    {
+      "scenario": "S4_mid_read_writefile_unread_region",
+      "lease_share": "R|W|D",
+      "fault": "WriteFile@65536(mid-read)",
+      "classification": "unavailable",
+      "detail": {
+        "outcome": "unavailable",
+        "reason": "identity_changed_after_read",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1688849863606685,
+          "size": 131072,
+          "mtime_100ns": 134381419314087366
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1688849863606685,
+          "size": 131072,
+          "mtime_100ns": 134381419314122684
+        },
+        "observed_data_digest_diagnostic_only": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+        "mixed_digest_risk": true
+      },
+      "mixed_digest_if_unchecked": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+      "write_landed_on_disk": true,
+      "no_check_control_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+      "no_check_control_is_mixed": true,
+      "assert_unavailable": true,
+      "assert_observed_stream_was_mixed": true
+    },
+    {
+      "scenario": "S5a_mmap_write_unmapped_after",
+      "lease_share": "R|W|D",
+      "fault": "mmap write @65536 (mapping held=False)",
+      "classification": "undetected_mixed",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+        "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+        "mixed_digest_risk": false
+      },
+      "mixed_digest_if_unchecked": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+      "write_landed_on_disk": true,
+      "mtime_changed": false,
+      "assert_blinding_documented": true,
+      "blinding_risk": true
+    },
+    {
+      "scenario": "S5b_mmap_write_mapping_held",
+      "lease_share": "R|W|D",
+      "fault": "mmap write @65536 (mapping held=True)",
+      "classification": "undetected_mixed",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+        "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+        "mixed_digest_risk": false
+      },
+      "mixed_digest_if_unchecked": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
+      "write_landed_on_disk": true,
+      "mtime_changed": false,
+      "assert_blinding_documented": true,
+      "blinding_risk": true
+    },
+    {
+      "scenario": "S5c_strict_share_blocks_mmap_writer",
+      "lease_share": "R|D",
+      "fault": "mapped-writer open attempt",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "mmap_writer_open": {
+        "mapped_writer_open": "blocked(win32=32)"
+      },
+      "target_bytes_unchanged": true,
+      "assert_mmap_blocked_and_old_digest": true
+    },
+    {
+      "scenario": "S6_mid_read_delete_tolerant",
+      "lease_share": "R|W|D",
+      "fault": "DeleteFile(mid-read)",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "path_exists_after": false,
+      "assert_old_digest_or_unavailable": true
+    },
+    {
+      "scenario": "S7_mid_read_rename_tolerant",
+      "lease_share": "R|W|D",
+      "fault": "rename(mid-read)",
+      "classification": "complete_old_digest",
+      "detail": {
+        "outcome": "digest_returned",
+        "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "mixed_digest_risk": false
+      },
+      "old_path_exists": false,
+      "new_path_exists": true,
+      "assert_old_digest_or_unavailable": true
+    }
+  ]
+}

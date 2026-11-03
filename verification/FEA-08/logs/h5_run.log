@@ -1,0 +1,15 @@
+$ python h5_run.py
+EXIT=0
+
+[h5] R1_file_recycle_success                        -> PASS
+[h5] R2_dir_recycle_success                         -> PASS
+[h5] R3_empty_dir_recycle                           -> PASS
+[h5] R4_busy_file_recycle_fails_keeps               -> PASS
+[h5] R5_path_replaced_before_execute                -> PASS
+[h5] R5b_target_replaced_by_directory               -> PASS
+[h5] R6a_crash_before_execution_recovery            -> PASS
+[h5] R6b_crash_after_execution_recovery             -> PASS
+[h5] R9_batch_partial_failure                       -> PASS
+[h5] R7_unrecyclable_volume_network_drive           -> LIMITED(mocked)
+[h5] R8_user_cancel                                 -> LIMITED(mocked)
+[h5] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h5_results.json (11 scenarios); bin 0->0 items, leftover=0
