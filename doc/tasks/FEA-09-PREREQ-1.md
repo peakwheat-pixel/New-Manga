@@ -3,21 +3,21 @@ id: FEA-09-PREREQ-1
 title: Source 存储与读取协议契约冻结（C-15 DDL/迁移 + C-16 source-read wire v1.1）
 kind: design
 governance_version: 3
-status: ready
-approval: DSH 范围冻结 2026-11-03（依据 FEA-09 scope-r1 changes_requested R1-001/R1-002/R1-006/R1-008/R1-009 与 G-CONTRACT 关闭裁定 §3.3；契约字节须独立复核 approved 后才可冻结）
+status: done
+approval: scope frozen；r7 **approved**（P0/P1/P2=0，doc/reviews/FEA-09-PREREQ-1-r7.md）；DSH 集成收口 2026-11-03
 suggested_owner: dsh
 owner: DSH（Lead / Architect / Integrator；契约起草者）
-reviewer: 契约独立复核待 Appointment（候选 Codex 独立会话；不得由起草者同一会话/实例自审；复核报告 doc/reviews/FEA-09-PREREQ-1-*.md）
+reviewer: r7 **approved**（Codex 独立会话 01a1a0c1-a96a-7331-90e3-db9b3be296c0；报告 doc/reviews/FEA-09-PREREQ-1-r7.md；未参与起草/实现）
 depends_on:
   - FEA-01-FREEZE-1
   - FEA-08
 base_commit: 6e274dd94c5b64d8fbc3f9d578363d3c502a2b68
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: null
-delivery_head: 未开始
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 24c10567926fb302d9bac6ba63ae92d673cf9e83
+delivery_head: 24c10567926fb302d9bac6ba63ae92d673cf9e83
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-09-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-09-PREREQ-1.md
@@ -93,13 +93,13 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC-1（C-15 冻结）**：C-15 草案完成并经独立复核 `approved`（P0/P1=0）；冻结记录含冻结字节 SHA-256、条件逐条、边界；覆盖 §内容要求（C-15）全部条目（7 表归属、逐表 DDL、迁移 v 版本、完整性与 C-05 衔接、五读路径、Host Registry 约束归属、跨存储次序）。
-- [ ] **AC-2（C-16 冻结）**：C-16 草案完成并经独立复核 `approved`（P0/P1=0）；冻结记录完整；覆盖 5 命令、scope/预算、密码短期引用、plan/receipt/取消、旧语义兼容、协议载体与 UNFREEZE 结论。
-- [ ] **AC-3（跨存储一致性可判定）**：冻结文本给出 Host/Core 失败恢复次序与可执行负测口径（含「Core complete / Host 未持久化」反例、Host 持久化失败拒绝签发、Registry 损坏 fail-closed）。
-- [ ] **AC-4（零生产改动）**：`git diff --name-only` 仅限 allowed_paths；无 `src/**`、`apps/**`、`tests/**` 改动；无依赖/打包变更。
-- [ ] **AC-5（治理同步）**：freeze matrix 追加 C-15/C-16 行并更新 C-05/C-06；STATUS/PLAN/checkpoint/`task_ledger.py --write` 同步；FEA-09 的 `depends_on`/`allowed_paths`/AC 引用真实 Task ID；Handoff 记录契约 pin 与复核报告；`verify_pins.ps1` 扩展覆盖 17 项且缺记录/pin 不匹配失败。
-- [ ] **AC-6（独立复核纪律）**：复核者未参与起草；报告记录 reviewer 身份/来源、reviewed_head、被审字节 hash、未覆盖项；P0/P1 未解决不得判 approved；不得在同一会话自审。
-- [ ] **AC-7（门禁）**：`check.ps1` PASS（既有 3 warnings 允许）、`verify_pins.ps1` **17/17**（扩展 checker 覆盖 C-15/C-16、缺记录失败）、旧 FEA-06 四 PNG 不变、未 push；以上命令行/EXIT/环境逐次入 `verification/FEA-09-PREREQ-1/`。
+- [x] **AC-1（C-15 冻结）**：C-15 草案完成并经独立复核 `approved`（P0/P1=0）；冻结记录含冻结字节 SHA-256、条件逐条、边界；覆盖 §内容要求（C-15）全部条目（7 表归属、逐表 DDL、迁移 v 版本、完整性与 C-05 衔接、五读路径、Host Registry 约束归属、跨存储次序）。 <<MET>>
+- [x] **AC-2（C-16 冻结）**：C-16 草案完成并经独立复核 `approved`（P0/P1=0）；冻结记录完整；覆盖 5 命令、scope/预算、密码短期引用、plan/receipt/取消、旧语义兼容、协议载体与 UNFREEZE 结论。 <<MET>>
+- [x] **AC-3（跨存储一致性可判定）**：冻结文本给出 Host/Core 失败恢复次序与可执行负测口径（含「Core complete / Host 未持久化」反例、Host 持久化失败拒绝签发、Registry 损坏 fail-closed）。 <<MET>>
+- [x] **AC-4（零生产改动）**：`git diff --name-only` 仅限 allowed_paths；无 `src/**`、`apps/**`、`tests/**` 改动；无依赖/打包变更。 <<MET>>
+- [x] **AC-5（治理同步）**：freeze matrix 追加 C-15/C-16 行并更新 C-05/C-06；STATUS/PLAN/checkpoint/`task_ledger.py --write` 同步；FEA-09 的 `depends_on`/`allowed_paths`/AC 引用真实 Task ID；Handoff 记录契约 pin 与复核报告；`verify_pins.ps1` 扩展覆盖 17 项且缺记录/pin 不匹配失败。 <<MET>>
+- [x] **AC-6（独立复核纪律）**：复核者未参与起草；报告记录 reviewer 身份/来源、reviewed_head、被审字节 hash、未覆盖项；P0/P1 未解决不得判 approved；不得在同一会话自审。 <<MET>>
+- [x] **AC-7（门禁）**：`check.ps1` PASS（既有 3 warnings 允许）、`verify_pins.ps1` **17/17**（扩展 checker 覆盖 C-15/C-16、缺记录失败）、旧 FEA-06 四 PNG 不变、未 push；以上命令行/EXIT/环境逐次入 `verification/FEA-09-PREREQ-1/`。 <<MET>>
 
 ## 允许修改范围
 
@@ -128,16 +128,22 @@ out_of_scope:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- Handoff：[FEA-09-PREREQ-1](../handoffs/FEA-09-PREREQ-1.md)。
+- Review：r7 approved（`doc/reviews/FEA-09-PREREQ-1-r7.md`）。
+- 实际测试：见 Canonical Evidence（check/pins/DDL/负测/范围）。
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项填写。当前无证据（`proposed/ready` 阶段不预填假 pin）。
+冻结与集成收口证据（commit A = 冻结 commit）：
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| EV-01 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/check.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `c74cab3d0d005843fb40a358d696b1a635a7565831689db614b7a14760823f90` | CANONICAL |
+| EV-02 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/ddl-validation.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `14ba340275b39d61092d1517f018ba332052e2859a3d17a57e1995735795eef5` | CANONICAL |
+| EV-03 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/freeze-hashes.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `af5fb47e8b51960ece6a4bbbb8186c5c42972aebfe5c07a529b3d1c118245ad8` | CANONICAL |
+| EV-04 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/pin-negative.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `3bbed2b261809c355237ee22782d7b89f1d3ec0dd4c14b7cefcad3a215f272cc` | CANONICAL |
+| EV-05 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/pins.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `351a0b70a377504b33b444b2eb9b913fca56ea2d599f248027e799740195ed47` | CANONICAL |
+| EV-06 | AC-7/Gate | `verification/FEA-09-PREREQ-1/logs/scope-and-png.log` | `24c10567926fb302d9bac6ba63ae92d673cf9e83` | `f0fa5c4879a2add2653bdee21969e3cc0b711f25536d1ca880e3812ec20b4a99` | CANONICAL |
 
 ## Resource Manifest
 
@@ -145,15 +151,16 @@ out_of_scope:
 |---|---|---|---|---|---|
 | worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树，无新建 worktree |
 | temp | 无 | NOT_APPLICABLE | - | - | 本 Task 无临时数据 |
-| agent-output | `G:\CODEX\New Manga.workspace\FEA-09-PREREQ-1\` | PRESERVE_REFERENCED | 原地（workspace） | 派发/复核原始日志 | 非 Canonical；需要时登记 |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-09-PREREQ-1\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-09-PREREQ-1` | `verification/FEA-09-PREREQ-1/logs/freeze-hashes.log` | 非 Canonical；目录存在，原始日志保留 |
 
 ## Closeout Record
 
-- Closeout date / DSH：未开始。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 未关闭项及保留原因：未开始。
-- 当前指针清理：未开始。
+- Closeout date / DSH：2026-11-03（DSH；r7 approved + 17/17 pin + 集成验证）。
+- canonical_evidence_status：`complete`（6 项证据逐文件 pin @ `24c10567926fb302d9bac6ba63ae92d673cf9e83`）。
+- resource_closeout_status：`complete`（无 worktree/temp 新建；workspace agent-output PRESERVE_REFERENCED）。
+- 删除/迁移/归档：0（本 Task 只写治理文档与证据）。
+- 未关闭项及保留原因：无（C-15/C-16 的产品实现与 UI 接线分别在 FEA-09 / FEA-09-UI-1）。
+- 当前指针清理：STATUS/PLAN/checkpoint/ledger 已同步；FEA-09 进入 scope-r2。
 
 ## 变更记录
 
@@ -165,3 +172,5 @@ out_of_scope:
 | 2026-11-03 | 按契约复核 r4 收口：C-15/C-16 定稿 **v5**（迁移断言限定、PDF 重复 occurrence 禁用位置锚定、receipt 示例/计数统一）；门禁统一 **17/17**；FEA-09 AC-7 登记 `SOURCE_PROJECT_MISMATCH` 负测；清理 trailing whitespace | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-001…R4-004 |
 | 2026-11-03 | 按契约复核 r5 收口：C-16 **v6**（accepted 取消示例、`planned_pages` 定义与 remaining 公式、C-15 v5 引用统一）；C-15 v5 不变 | `doc/reviews/FEA-09-PREREQ-1-r5.md` R5-001/R5-002 |
 | 2026-11-03 | 按契约复核 r6 收口：C-16 **v7**（按页 planned_pages/skipped_pages、整源跳过与部分已引用实例、四类示例完整字段） | `doc/reviews/FEA-09-PREREQ-1-r6.md` R6-001 |
+
+| 2026-11-03 | **同批冻结 + done**：C-05/C-06 v1.1、C-15/C-16 v1.0 冻结；17/17 pin；r7 approved；集成 commit `24c10567926fb302d9bac6ba63ae92d673cf9e83` | FEA-09-PREREQ-1 AC-1…AC-7 |

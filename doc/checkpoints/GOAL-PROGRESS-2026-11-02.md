@@ -1183,3 +1183,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **指针同步**：STATUS 当前 Task → FEA-09-PREREQ-1（ready），FEA-09 保持 proposed；PLAN READY 节点=FEA-09-PREREQ-1，当前 DAG 更新（旧 FEA-06-RESIDUAL-2 in_progress 叙述纠正，R1-013）；ledger `--write`。
 - **门禁**：check.ps1 PASS、verify_pins 15/15、旧 FEA-06 四 PNG 不变、无 push（见本轮提交与 `verification/FEA-09-PREREQ-1/` 后续证据）。
 - **下一步**：DSH 起草 C-15/C-16 → 派独立复核（Codex 新会话）→ 冻结并 done PREREQ-1 → FEA-09 scope-r2（Codex 新独立上下文）→ approved 后 Appointment 实现（建议 owner=Codex，写域按本卡）。
+
+## 181. FEA-09-PREREQ-1 契约冻结 + done（2026-11-03）
+
+- **复核链收口**：契约复核 r1→r6 均 changes_requested（P1 11→6→3→2→0；P2 2→2→3→2→1），r7 **approved**（P0/P1/P2=0，Codex 独立会话 $session）；报告 r1–r7 全部原字节归档 doc/reviews/FEA-09-PREREQ-1-r1…r7.md。
+- **同批冻结（commit $commit）**：C-05 **v1.1**（referenced 可见性模式分派 + 三谓词拆分）、C-06 **v1.1**（Host 铸造型四维 scope + 双侧 Verify + 撤销 ACK/EOF）、C-15 **v1.0**（草案 v5：v7 DDL/迁移校验/Registry 规范/跨存储次序）、C-16 **v1.0**（草案 v7：source-read wire 1.1/密码短期引用/异步 receipt/WireLog 脱敏）。UNFREEZE 载体 doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md。
+- **pin**：erify_pins.ps1 扩展为 **17 项**（C15/C16 纳入、缺记录失败），PASS 17/17；check PASS(3)；pin 负测（缺记录/错 pin）EXIT 1；DDL 内存验证 PASS；范围 diff（src/apps/tests）空；旧 FEA-06 四 PNG 前缀匹配。证据 erification/FEA-09-PREREQ-1/logs/。
+- **Task done**：C-15/C-16 FROZEN 记录建立；FROZEN-C05/C06 更新（保留 v1.0 pin）；freeze matrix 17 对象；Task EV 6 项 @ 冻结 commit；Handoff doc/handoffs/FEA-09-PREREQ-1.md；STATUS 指向 FEA-09（proposed，scope-r2 待派）。
+- **下一步**：FEA-09 scope-r2（Codex 新独立上下文；prompt 见 workspace FEA-09-PREREQ-1\scope-r2-prompt.md，需按冻结后状态更新引用）；approved 后 DSH Appointment 实现（建议 owner=Codex）。不 push；不重开 FEA-08。
