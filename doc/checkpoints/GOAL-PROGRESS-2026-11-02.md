@@ -1208,3 +1208,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **DSH 范围裁决**：扩写域 	ests/storage/test_purge_integrity.py（v7 page_bindings 反向引用 + pages 新列的必要适配），已记入 Task 变更记录。
 - **现场**：HEAD d3d7cd564；未提交 src/application/importing/referenced/errors.py（ZCode Phase B 半成品，保留，续跑者检查）。Task in_progress，owner=codex（待 20:40 恢复续跑 Phase B–D）。
 - **下一步**：20:45 自动提醒（schedule）→ Codex resume 实施 Phase B–D（referenced 编排/授权 wire/cache/真实 IPC/证据/Handoff）→ 独立 impl Review → DSH 集成验证。两个实施 Agent 当前均为额度硬阻塞，非可推进项耗尽；不 pause 目标。
+
+## 184. FEA-09 Phase B 交付 + Phase C 续跑排期（2026-11-03 19:30）
+
+- **Phase B**：ZCode 恢复额度后完成 referenced 导入编排（五类输入/plan/异步状态机/密码短期引用），commit `ceae03edb`。DSH 用 `git stash -u` 隔离 Phase C 半成品后干净验证 `python -m pytest tests/fea09 -q` → **69 passed**；随后 ZCode 触发 5 小时额度（23:41 重置），Phase C 中断。
+- **现场**：当前 head `ceae03edb`；未提交 Phase C 材料 `src/bootstrap/core_assembly.py`/`core_service.py` 修改 + `src/infrastructure/resource_channel/source_read_refs.py`/`tests/fea09/test_referenced_wire.py` 新增；已 stash/pop 验证可恢复，保留给续跑。
+- **排期**：Codex 20:40 额度恢复；已建 20:42 schedule 提醒（`schedule-53890cec`）派发 `codex-impl-r2-prompt.md` 续跑 Phase C–D；完成后 DSH 做 pytest/dotnet/check/pins 集成验证并提交。
+- **门禁**：check PASS(3)、pins 17/17；不 push；不重开 FEA-08。

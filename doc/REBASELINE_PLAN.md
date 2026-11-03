@@ -34,7 +34,7 @@
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
 READY 节点：无
-进行中：FEA-09（in_progress；Phase A commit d3d7cd564，DSH 验证 47 passed；Phase B–D 等 Codex 20:40 恢复）；FEA-09-UI-1（proposed）；FEA-08/FEA-09-PREREQ-1 已 done
+进行中：FEA-09（in_progress；Phase A `d3d7cd564` + Phase B `ceae03edb`，DSH 验证 47+69 passed；Phase C 半成品保留；Codex 20:42 续跑 Phase C–D）；FEA-09-UI-1（proposed）；FEA-08/FEA-09-PREREQ-1 已 done
 
 当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done，契约冻结）→ **FEA-09（in_progress，Phase A done）** → FEA-10/FEA-11；FEA-09-UI-1（proposed）协同；FEA-12 待 `G-DELETE-IMPL`
 
