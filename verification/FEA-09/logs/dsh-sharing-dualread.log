@@ -1,0 +1,13 @@
+# FEA-09 AC-3 跨项目共享 + AC-7 双读 resolve 增量（DSH 2026-11-03）
+
+## 新增
+- tests/fea09/test_referenced_sharing.py：同一物理源被 b1/c1 与 b2/c2 两个项目引用；页面/binding 独立（不同 page_id/project_id），source 行共享（COUNT(sources)=1）。
+- tests/fea09/test_referenced_resolve.py::test_dual_read_managed_and_referenced_resolve：同库 managed 页与 referenced 页分别 resolve（page-original-* / page-rendition-*），两个 derived artifact 均存在。
+
+## 验证
+- python -m pytest tests/fea09 -q → 100 passed
+- check.ps1 -TaskPath doc/tasks/FEA-09.md → PASS(3)
+- verify_pins.ps1 → 17/17 PASS
+
+## 仍缺口
+AC-3：两项目阅读进度/人工修改/处理结果独立未测；AC-7：缺文件/磁盘满/中断不切入口未测；真实 Host IPC/V2 与独立 impl Review 未完成。

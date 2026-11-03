@@ -13,7 +13,7 @@ import time
 import pytest
 from PIL import Image
 
-from support import FakeSourceReadAccess, build_runtime
+from support import FakeSourceReadAccess, build_runtime, png_bytes
 from application.importing.referenced.errors import SourceImportError
 from application.importing.referenced.resolve import resolve_referenced_rendition
 
@@ -212,3 +212,65 @@ def test_render_entry_png_enforces_decode_budget(tmp_path):
     with pytest.raises(SourceImportError) as caught:
         render_entry_png(resolved, entry)
     assert caught.value.code == "SOURCE_BUDGET_EXCEEDED"
+
+
+def test_dual_read_managed_and_referenced_resolve(tmp_path, repo, book_chapter):
+    """AC-7: managed and referenced pages coexist and both resolve."""
+    from types import SimpleNamespace
+
+    from bootstrap.core_service import CoreServiceServer
+    from infrastructure.resource_channel.catalog_store import (
+        ResourceCatalogStore,
+        initialize_namespace,
+    )
+    from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+    from conftest import add_managed_page
+
+    access = FakeSourceReadAccess()
+    source = tmp_path / "ref.jpg"
+    source.write_bytes(_jpeg_bytes())
+    access.add_file(GRANT, "image", source)
+    runtime = build_runtime(repo, access)
+    # Import one referenced page into c1.
+    plan = runtime._planner.plan(chapter_id="c1", grants=[GRANT], duplicate_policy="skip")
+    runtime.start(
+        chapter_id="c1", plan_id=plan["plan_id"], plan_digest=plan["plan_digest"],
+        grants=[GRANT], duplicate_policy="skip", operation_id=OP,
+    )
+    receipt = _wait_terminal(runtime, OP)
+    assert receipt["state"] == "completed"
+    referenced = repo.list_pages("c1")[-1]
+    binding = repo.get_page_binding(referenced.page_id)
+    access._grant_sources[GRANT] = binding["source_id"]
+    managed_id = "p-managed-dual"
+    add_managed_page(repo._conn, managed_id)
+
+    class _Trust:
+        def read_bytes(self, ref):
+            return png_bytes(4, 4)
+
+    catalog_db = tmp_path / "catalog" / "catalog.sqlite"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    publisher = RenderPreviewPublisher(derived_root, ResourceCatalogStore(catalog_db))
+    server = object.__new__(CoreServiceServer)
+    server._core = SimpleNamespace(
+        repository=repo, source_read_refs=access, managed_root_trust=_Trust(),
+        image_decoder=None, document_raster=None,
+    )
+    server._render_previews = publisher
+
+    managed_result = server.handle_resolve_page_resource({"page_id": managed_id})
+    referenced_result = server.handle_resolve_page_resource(
+        {"page_id": referenced.page_id}
+    )
+    assert managed_result["resource_id"] == f"page-original-{managed_id}"
+    assert referenced_result["resource_id"] == f"page-rendition-{referenced.page_id}"
+    assert publisher.artifact_exists(
+        publisher.lookup(managed_result["resource_id"]).rel_path
+    )
+    assert publisher.artifact_exists(
+        publisher.lookup(referenced_result["resource_id"]).rel_path
+    )
