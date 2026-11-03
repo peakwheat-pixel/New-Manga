@@ -1049,3 +1049,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 冻结：Task `status: ready` → 随即派实施 → `in_progress`；base_commit `2870a9fa5`（scope-r2 approved head）；owner=zcode；AC 已冻结（H4 三断言/H5 判定操作与禁清空 API/H6 :457/:469/AC4 二维矩阵+measured/mocked/inferred）。
 - 已派 **FEA-08 实施**（ZCode fresh session，job `pwsh-674c4ee48de74cb2`，prompt workspace `implementation-dispatch-prompt.md` 已同步冻结 AC）：隔离原型 H4/H5/H6 + `doc/research/FEA-08-source-capability.md` + `verification/FEA-08/**` + Handoff；不触真实库/用户文件/生产代码。
 - STATUS/PLAN 指针更新（当前 Task=FEA-08 in_progress；READY=无）；提交 `026bea8b1`（ready 冻结）；治理 PASS(3)、pins 15/15；未 push。
+## 163. FEA-08 实施交付 + DSH 核验 + impl-r1 派发（2026-11-03 09:28）
+
+- FEA-08 实施（ZCode fresh session，job `pwsh-674c4ee48de74cb2`，exit 0）：实现 `c422bf164`、Task 登记 `42de98812`（in_review，AC1–4 <<MET>>，Canonical Evidence 36 项 pin）；交付 H4/H5/H6 隔离原型（`workspace/FEA-08/prototype`）+ 能力矩阵（`out/capability_matrix.{md,json}`）+ 技术报告 `doc/research/FEA-08-source-capability.md` + `verification/FEA-08/**` + Handoff。
+- DSH 核验：build 0 错误；无过滤全量通过（App 653、其余不变，总 **1292/0/57**）；check PASS(3)；pins 15/15；**src_changes=0（无生产代码改动）**；旧四 PNG 未动（未含改动）。
+- 已派 **impl-r1 独立复核**（D-9 workflow `workflow-ee455a2363be4b01`）：按冻结 AC 审计 H4 同句柄/mmap、H5 判定操作/禁清空 API/fixture 处置、H6 口径、AC4 矩阵 measured/mocked/inferred、安全/门禁/可复现；approved 后 DSH 集成验证并关闭 FEA-08。
+- 未 push；Codex 10:25 窗口备用（可作第二复核/后续）。
