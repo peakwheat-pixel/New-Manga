@@ -6,8 +6,8 @@ governance_version: 3
 status: in_progress
 approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1=0/P2=2；doc/reviews/FEA-09-scope-r2.md，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`）；前置 FEA-09-PREREQ-1 **done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）
 suggested_owner: codex
-owner: zcode（DSH 2026-11-03 故障转移 Appointment；Codex usage limit 18:00–20:40 不可用）
-claimed_at: 2026-11-03T09:59:49.695Z（codex 认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 与 git-stage-blocked.log 保留为证据）；2026-11-03 故障转移改派 zcode 接续认领
+owner: codex（Phase A 由 ZCode 完成；ZCode 周/月额度耗尽至 2026-11-07，Codex 2026-11-03 20:40 恢复后续跑 Phase B–D）
+claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`
 reviewer: 实现 Review 待 Appointment（候选：未参与实现/scope-r2 的独立 Codex 会话；不得由实现者同一会话自审）
 depends_on:
   - FEA-08
@@ -53,6 +53,7 @@ allowed_paths:
   - tests/m2_resource_channel/**
   - tests/storage/test_schema_migration.py
   - tests/storage/test_upgrade_schema_data.py
+  - tests/storage/test_purge_integrity.py（DSH 2026-11-03 扩域：v7 新增 page_bindings 反向引用 pages + pages 新列，该测试 fixture/期望表必须适配，否则 Phase A 测试不可通过）
   - tests/fea09/**
   - apps/desktop-avalonia/tests/**
 out_of_scope:
@@ -214,3 +215,6 @@ out_of_scope:
 | 2026-11-03 | scope-r2 前置就绪：PREREQ-1 done（C-05/C-06 v1.1 + C-15/C-16 v1.0，17/17）；AC 标记更新为待 scope-r2 | `doc/reviews/FEA-09-PREREQ-1-r7.md`；`doc/plan/FEA-CONTRACT-FROZEN-C15.md`/`C16` |
 | 2026-11-03 | **scope-r2 approved + 释放**：R2S-001/002 处置；owner=Codex 待认领；base=19e621004；STATUS/PLAN/checkpoint/ledger 同步 | `doc/reviews/FEA-09-scope-r2.md` |
 | 2026-11-03 | Codex 认领（in_progress），git add 被 `.git/index.lock` Permission denied 阻断未提交；随后 Codex 触发 usage limit，DSH 按故障转移改派 **zcode** 接续实施；遗留 diff/日志（`verification/FEA-09/logs/git-stage-blocked.log`、`pins.log`）随认领 commit 入库 | DSH 派发指令（2026-11-03）；`verification/FEA-09/logs/` |
+| 2026-11-03 | **实施启动 + 故障转移**：Codex 认领后 18:00 触发 usage limit（20:40 恢复）；DSH 按长期授权转 ZCode（故障转移候选仅 ZCode）；ZCode 完成 **Phase A**（C-15 v7 迁移/五读路径/测试）commit `d3d7cd564`，18:39 亦触发周/月额度（2026-11-07 重置）。DSH 集成验证 `tests/fea09 + storage 定向` **47 passed**（日志 `G:\CODEX\New Manga.workspace\FEA-09\phase-a-int-verify.log`）。 | 本卡 Appointment；`verification/FEA-09/logs/`；Task 卡变更记录 |
+| 2026-11-03 | **DSH 范围裁决（扩域）**：`allowed_paths` 增加 `tests/storage/test_purge_integrity.py`。依据：C-15 v7 新增 `page_bindings` 对 `pages(page_id)` 的反向引用与 `pages.source_mode/integrity_status` 列，既有 purge 完整性测试的 fixture/依赖表断言为真实不变量，必须同步；仅适配 schema，不改变产品语义。 | Phase A commit `d3d7cd564`；C-15 v7 DDL |
+| 2026-11-03 | **续跑安排**：Phase B–D（referenced 编排/授权 wire/cache/证据）待 Codex 2026-11-03 20:40 额度恢复后 resume 实施；未提交 `src/application/importing/referenced/errors.py` 保留现场，由续跑者检查后使用或重建。 | 本卡 Appointment/变更记录；ZCode session 日志 |

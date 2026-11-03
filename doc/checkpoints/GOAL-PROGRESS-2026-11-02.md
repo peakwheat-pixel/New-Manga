@@ -1199,3 +1199,12 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **前置**：FEA-09-PREREQ-1 done 24c105679；C-15 v1.0 / C-16 v1.0 / C-05 v1.1 / C-06 v1.1 冻结；erify_pins 17/17；check PASS(3)。
 - **释放**：FEA-09 proposed → ready；owner=**Codex**（DSH Appointment；待认领 in_progress）；实现 Reviewer 待 Appointment（不得由实现者同一会话自审）；base=19e621004；FEA-09-UI-1 保持独立 scope（FEA-09 不宣称完整 UI 验收）。
 - **下一步**：Owner 认领后按 Task 卡 AC-1…AC-10 实施（写域/证据口径见卡），交付 Handoff + EV → 独立 impl Review → DSH 集成验证；不 push、不重开 FEA-08、不碰真实用户数据。
+
+## 183. FEA-09 实施启动 + 双实施 Agent 额度阻塞（2026-11-03 18:40）
+
+- **派发**：按用户指示直接派发 Codex 实施 FEA-09（-s workspace-write，gpt-6.1-sol medium）；Codex 18:00 触发账号 usage limit（20:40 恢复）。
+- **故障转移**：按长期授权转 ZCode（zcode.cjs 0.17.1，session sess_fa37f46a-8bde-4f91-85d1-5364a6c1434b，--mode yolo 且写域受 Task 卡约束）。ZCode 完成 **Phase A**：v7 迁移/五读路径/完整性守卫/测试，commit d3d7cd564（10 文件 +1495/−26）；随后 18:39 触发 ZCode 周/月额度（2026-11-07 16:44 重置）。
+- **DSH 集成验证（Phase A）**：python -m pytest tests/fea09 tests/storage/test_schema_migration.py tests/storage/test_upgrade_schema_data.py tests/storage/test_purge_integrity.py -q → **47 passed**；日志 G:\CODEX\New Manga.workspace\FEA-09\phase-a-int-verify.log。
+- **DSH 范围裁决**：扩写域 	ests/storage/test_purge_integrity.py（v7 page_bindings 反向引用 + pages 新列的必要适配），已记入 Task 变更记录。
+- **现场**：HEAD d3d7cd564；未提交 src/application/importing/referenced/errors.py（ZCode Phase B 半成品，保留，续跑者检查）。Task in_progress，owner=codex（待 20:40 恢复续跑 Phase B–D）。
+- **下一步**：20:45 自动提醒（schedule）→ Codex resume 实施 Phase B–D（referenced 编排/授权 wire/cache/真实 IPC/证据/Handoff）→ 独立 impl Review → DSH 集成验证。两个实施 Agent 当前均为额度硬阻塞，非可推进项耗尽；不 pause 目标。
