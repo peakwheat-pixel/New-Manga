@@ -91,4 +91,20 @@ class SourceGrantTests(unittest.TestCase):
         self.assert_code("FILE_IDENTITY_CHANGED",lambda:self.registry.verify_before_commit(p["grant_id"]))
 
 
+    def test_import_binding_requires_exact_source_version_entry(self):
+        """R1-I002: resolve only honors the grant that imported this binding."""
+        p=self.payload();self.registry.register(p);g=p["grant_id"]
+        self.registry.bind_imported_entry(g,"src-1","sv-1","se-1")
+        found,resolved=self.registry.find_bound_for_source("src-1","sv-1","se-1")
+        self.assertEqual(g,found)
+        self.assertEqual(g,resolved.grant_id)
+        for args in (("src-1","sv-2","se-1"),("src-1","sv-1","se-2"),
+                     ("src-2","sv-1","se-1")):
+            self.assert_code("SOURCE_ACCESS_DENIED",
+                             lambda a=args:self.registry.find_bound_for_source(*a))
+        self.registry.revoke_grants("registry",2,[])
+        self.assert_code("SOURCE_ACCESS_DENIED",
+                         lambda:self.registry.find_bound_for_source("src-1","sv-1","se-1"))
+
+
 if __name__=="__main__":unittest.main()

@@ -40,6 +40,10 @@ COUNT_FIELDS = (
 )
 
 _OPERATION_ID = re.compile(r"^[A-Za-z0-9_-]{16,128}$")
+#: R1-I010: known transactional storage guards mapped onto frozen reasons.
+_STORAGE_ERROR_CODES = {
+    "SourceProjectMismatch": "SOURCE_PROJECT_MISMATCH",
+}
 TERMINAL_STATES = ("completed", "cancelled", "failed")
 DECODER_NAME = "referenced-import/1"
 DECODER_VERSION = "1"
@@ -205,6 +209,12 @@ class ReferencedImportRuntime:
             raise SourceImportError(
                 "SOURCE_PROJECT_MISMATCH", "import chapter has no project"
             )
+        # R1-I009: the plan is bound to its original project + duplicate policy.
+        if record.book_id != book_id or record.duplicate_policy != duplicate_policy:
+            raise SourceImportError(
+                "SOURCE_PLAN_STALE",
+                "import plan project or duplicate policy changed since planning",
+            )
         with self._lock:
             holder = self._active_books.get(book_id)
             if (
@@ -344,6 +354,19 @@ class ReferencedImportRuntime:
                             progress.reason_code = halt.code
                             progress.counts["failed_sources"] = 1
                         failed = True
+                    break
+                except Exception as error:  # noqa: BLE001 - typed storage reasons
+                    # R1-I010: known storage guards (e.g. SourceProjectMismatch)
+                    # must surface as frozen reason codes instead of a bare
+                    # null-reason failure; pending/failed counts stay visible.
+                    reason = _STORAGE_ERROR_CODES.get(type(error).__name__)
+                    if reason is None:
+                        raise
+                    if progress.outcome == "pending":
+                        progress.outcome = "failed"
+                        progress.reason_code = reason
+                        progress.counts["failed_sources"] = 1
+                    failed = True
                     break
                 if progress.outcome == "failed":
                     failed = True
@@ -528,6 +551,12 @@ class ReferencedImportRuntime:
             except SourceImportError as error:
                 raise _HaltOperation(error.code) from error
             first_page = False
+            # R1-I002: bind the imported ids to the grant so the read face can
+            # authorize exactly this (source, version, entry) — no path or
+            # identity fallback.
+            bind_entry = getattr(self._access, "bind_imported_entry", None)
+            if bind_entry is not None:
+                bind_entry(source.grant_id, source_id, version_id, bound_entry_id)
             progress.committed_pages += 1
             progress.committed_entries += 1
             progress.counts["pending_pages"] -= 1
@@ -596,6 +625,8 @@ class ReferencedImportRuntime:
 
     def _probe_entry(self, resolved, entry, password: bytes | None):
         """Decode-probe one entry for width/height/mime (no byte copies)."""
+        from application.importing.referenced.reader import check_decode_budget
+
         if resolved.source_kind == "pdf":
             data = read_verified_bytes(
                 resolved.container_path,
@@ -605,10 +636,23 @@ class ReferencedImportRuntime:
             handle = self._pdf_open(data, password)
             try:
                 width, height = handle.page_size(entry.ordinal)
+                # R1-I007: budget is checked from page dimensions before any
+                # raster buffer is allocated.
+                check_decode_budget(resolved, int(width), int(height))
                 return int(width), int(height), "application/pdf"
             finally:
                 handle.close()
         payload = self._read_entry_bytes(resolved, entry, password)
+        from PIL import Image
+
+        try:
+            with Image.open(io.BytesIO(payload)) as header:
+                width, height = header.size
+        except Exception as error:  # noqa: BLE001 - typed refusal
+            raise SourceImportError(
+                "SOURCE_FORMAT_UNSUPPORTED", "entry image could not be decoded"
+            ) from error
+        check_decode_budget(resolved, int(width), int(height))
         decoded = self._image_decoder.decode(payload)
         return decoded.width, decoded.height, decoded.mime_type
 

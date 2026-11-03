@@ -96,6 +96,10 @@ class SourceReadGrantRegistry(SourceReadAccess):
         self._clock = clock
         self._lock = threading.RLock()
         self._grants: dict[str, _SourceReadGrant] = {}
+        #: FEA-09/R1-I002: Core-side mapping from an import-time grant to the
+        #: source/version/entry ids it created. Resolve only reads a page
+        #: through a grant bound here (four-dimension scope, no path fallback).
+        self._bindings: dict[str, dict] = {}
         self._session_id: str | None = None
         self._disconnected = False
         self._min_generation: dict[str, int] = {}  # registry_id -> floor
@@ -297,6 +301,72 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 or not math.isfinite(expiry) or expiry <= self._clock()
                 or any(expiry > g.expires_at for g in matching)):
                 raise SourceImportError("SOURCE_PASSWORD_REQUIRED", "password reference is unavailable")
+
+    def bind_imported_entry(
+        self, grant_id: str, source_id: str, version_id: str, entry_id: str
+    ) -> None:
+        """Record that ``grant_id`` imported one entry (R1-I002).
+
+        Called by the import runtime right after a page unit commits. The
+        mapping is the only way ``resolve_page_resource`` can authorize a
+        referenced page: the grant must still be live and the page binding's
+        (source_id, accepted_source_version, entry_id) must equal the mapped
+        ids exactly.
+        """
+        if not all(
+            isinstance(value, str) and 0 < len(value) <= 192
+            for value in (grant_id, source_id, version_id, entry_id)
+        ):
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "import binding is invalid")
+        with self._lock:
+            self._checked(grant_id)
+            binding = self._bindings.setdefault(
+                grant_id,
+                {"source_id": source_id, "version_id": version_id, "entry_ids": set()},
+            )
+            if (
+                binding["source_id"] != source_id
+                or binding["version_id"] != version_id
+            ):
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "import binding conflicts with the grant"
+                )
+            binding["entry_ids"].add(entry_id)
+
+    def find_bound_for_source(
+        self, source_id: str, version_id: str, entry_id: str
+    ) -> tuple[str, ResolvedSourceRead]:
+        """Return the live grant that imported exactly this binding (R1-I002).
+
+        All four frozen scope dimensions that can be checked in the Core are
+        bound: source, version and entry (the rendition is derived from the
+        binding's source kind at read time). An unbound grant, a different
+        version/entry or a revoked grant stays a typed refusal.
+        """
+        if not all(
+            isinstance(value, str) and value
+            for value in (source_id, version_id, entry_id)
+        ):
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "page binding is invalid")
+        with self._lock:
+            matches: list[_SourceReadGrant] = []
+            for grant_id, binding in self._bindings.items():
+                if (
+                    binding["source_id"] == source_id
+                    and binding["version_id"] == version_id
+                    and entry_id in binding["entry_ids"]
+                ):
+                    try:
+                        matches.append(self._checked(grant_id))
+                    except SourceImportError:
+                        continue
+            if not matches:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "no active source-read grant is bound to this page binding",
+                )
+            chosen = max(matches, key=lambda grant: (grant.generation, grant.grant_id))
+        return chosen.grant_id, self.resolve(chosen.grant_id)
 
     def find_for_identity(
         self, *, content_digest: str, volume_serial: int, file_id: int

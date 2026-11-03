@@ -256,11 +256,11 @@ out_of_scope:
 
 | ID | 级别 | DSH 处置 | 批次 |
 |---|---|---|---|
-| R1-I001 | P1 | 接受：生产 get/list/projection 改为 C-05 v1.1 模式分派（managed=V_artifact 不要求导入列完整性；artifact-only 旧页可见）；mapper 允许 NULL managed ref 的 artifact 投影；补双向反例测试 | 批次 1 |
-| R1-I002 | P1 | 接受：resolve 选 grant 时严格校验四维 scope（source_id/version/entry/rendition）+ binding 身份；补充负测（错误 version/entry/rendition/物理文件不匹配） | 批次 1 |
-| R1-I007 | P1 | 接受：解码/渲染预算在分配前检查（entry 声明尺寸、PDF page_size、图片 header；预算超限不进入昂贵解码） | 批次 1 |
-| R1-I009 | P2 | 接受：PlanRecord 保存并校验原 book/duplicate_policy；不一致 → SOURCE_PLAN_STALE | 批次 1 |
-| R1-I010 | P2 | 接受：非 SourceImportError 存储错误转 typed reason，保留 counts/pending；测试断言 reason_code | 批次 1 |
+| R1-I001 | P1 | 接受；**Codex 裁决选 B（UNFREEZE 前置）**：C-05/C-15 未表述“Managed Copy original 等价物”，artifact-only 直接实现会隐藏正常导入页、补 ORIGINAL 行亦违反 C-15 §1。先 UNFREEZE `V_managed=V_artifact∨V_copy_original` 并重冻，再返修 get/list/projection/mapper/迁移验证。裁决 `doc/reviews/FEA-09-I001-adjudication.md` | 阻塞：UNFREEZE |
+| R1-I002 | P1 | **FIXED 批次 1**：Core 记录 grant→(source,version,entry) 绑定，resolve 只认绑定匹配且 live 的 grant；删除物理身份回退；新增负测 | 批次 1 |
+| R1-I007 | P1 | **FIXED 批次 1**：PDF page_size→预算→render；图片 header→预算→load；runtime probe 同序；预算拒绝=unsupported entry；hook decoder 零调用测试 | 批次 1 |
+| R1-I009 | P2 | **FIXED 批次 1**：PlanRecord.book_id + start 复核项目/策略；负测 SOURCE_PLAN_STALE | 批次 1 |
+| R1-I010 | P2 | **FIXED 批次 1**：SourceProjectMismatch→SOURCE_PROJECT_MISMATCH typed reason，保留 failed_sources/pending_pages；测试断言 | 批次 1 |
 | R1-I003 | P1 | 接受：区分全部/部分已绑定；部分已引用时逐 entry 补齐未提交页（不整源 skip）；补真实部分重试测试 | 批次 2 |
 | R1-I004 | P1 | 接受：加密 PDF 正确密码导入（解密后参与页映射，不因旧 plan entries 空而 plan stale）；补加密 PDF 无密/错密/重试测试 | 批次 2 |
 | R1-I006 | P1 | 接受：folder 导入后 resolve 的授权映射（四维 scope 重新绑定，非路径回退）；补 folder import→resolve 测试 | 批次 2 |
@@ -269,3 +269,4 @@ out_of_scope:
 | R1-I011 | P2 | 接受：closeout 前重建最终 EV 逐文件清单（唯一 ID、current/historical 分离、commit pin、PENDING 清零、未登记文件处置） | closeout |
 
 **批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
+| 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |

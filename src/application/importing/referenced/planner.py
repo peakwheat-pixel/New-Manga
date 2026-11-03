@@ -46,6 +46,9 @@ class PlannedSource:
 class PlanRecord:
     plan_id: str
     chapter_id: str
+    #: R1-I009: the plan is bound to one project and one duplicate policy;
+    #: start re-confirms both (a changed chapter/book or policy is stale).
+    book_id: str
     duplicate_policy: str
     plan_digest: str
     expires_at: float
@@ -117,6 +120,7 @@ class ReferencedImportPlanner:
         record = PlanRecord(
             plan_id=plan_id,
             chapter_id=chapter_id,
+            book_id=project_id,
             duplicate_policy=duplicate_policy,
             plan_digest=digest,
             expires_at=now + self._plan_ttl,

@@ -42,6 +42,11 @@ def _check_decode_budget(resolved, width: int, height: int) -> None:
         )
 
 
+def check_decode_budget(resolved, width: int, height: int) -> None:
+    """R1-I007: refuse a decode/render before allocating the pixel buffer."""
+    _check_decode_budget(resolved, width, height)
+
+
 def read_entry_bytes(resolved, entry, password: bytes | None = None) -> bytes:
     """Read exactly one entry's bytes (container/member/folder/PDF page)."""
     if resolved.source_kind == "image":
@@ -105,6 +110,9 @@ def render_entry_png(
             )
         handle = document_raster.open(raw)
         try:
+            # R1-I007: page dimensions are known before rasterizing.
+            page_width, page_height = handle.page_size(entry.ordinal)
+            _check_decode_budget(resolved, int(page_width), int(page_height))
             rendered = handle.render_page(entry.ordinal)
         finally:
             handle.close()
@@ -114,8 +122,13 @@ def render_entry_png(
     from PIL import Image, ImageOps
 
     try:
+        # R1-I007: header-only open first; the pixel buffer is only allocated
+        # after the decode budget admitted the declared dimensions.
         image = Image.open(io.BytesIO(raw))
+        _check_decode_budget(resolved, int(image.size[0]), int(image.size[1]))
         image.load()
+    except SourceImportError:
+        raise
     except Exception as error:  # noqa: BLE001 - typed refusal
         raise SourceImportError(
             "SOURCE_FORMAT_UNSUPPORTED", "entry image could not be decoded"
@@ -125,9 +138,9 @@ def render_entry_png(
         if image.mode not in ("RGB", "RGBA"):
             image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
         width, height = image.size
+        _check_decode_budget(resolved, int(width), int(height))
         output = io.BytesIO()
         image.save(output, format="PNG", optimize=False)
-        _check_decode_budget(resolved, int(width), int(height))
         return output.getvalue(), int(width), int(height)
     finally:
         try:

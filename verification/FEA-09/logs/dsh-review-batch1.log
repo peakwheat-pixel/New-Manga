@@ -1,0 +1,30 @@
+# FEA-09 实现 Review r1 批次 1 返修（DSH 2026-11-03）
+
+## R1-I001（契约冲突）→ Codex 裁决：方案 B
+- 裁决归档 `doc/reviews/FEA-09-I001-adjudication.md`（SHA-256 88fdd165…，reviewer session 未参与实现/Review）。
+- 结论：C-05/C-15 冻结文本未表述“Managed Copy 引用 = ORIGINAL 等价物”；直接 artifact-only 会隐藏正常导入页，A 补 ORIGINAL 行亦违反 C-15 §1（仍需 UNFREEZE）。选择 B：先 UNFREEZE 增加 `V_managed = V_artifact ∨ V_copy_original`，重冻后再返修 I001。
+- 当前状态：I001 = 阻塞于契约修订（不是实现缺陷）；不得标 FIXED；UNFREEZE 材料/复核/重冻进行中。
+
+## R1-I002（grant 四维绑定）修复
+- `SourceReadGrantRegistry.bind_imported_entry` / `find_bound_for_source`：Core 在每页提交后把 grant 绑定到 (source_id, version_id, entry_id)；resolve 只接受绑定完全匹配且仍 live 的 grant；删除物理身份回退。
+- 测试：`test_import_binding_requires_exact_source_version_entry`（错误 source/version/entry、撤销 → SOURCE_ACCESS_DENIED）；真实 IPC（严格绑定下 Plan/Start/Receipt/Resolve）1 passed。
+
+## R1-I007（预算前置）修复
+- `reader.check_decode_budget`：PDF 先 `page_size` 再预算再 rander；图片先 header 检查 size 再 `load()`；runtime `_probe_entry` 同样先 header 预算后 decoder。预算拒绝计为 unsupported entry（C-16 §4④）。
+- 测试：`test_probe_decode_budget_refuses_before_decoder`（HookDecoder.calls == []）。
+
+## R1-I009（plan 绑定项目/策略）修复
+- `PlanRecord.book_id`；start 复核 `record.book_id == 当前 project` 且 `duplicate_policy` 相同，否则 SOURCE_PLAN_STALE。
+- 测试：`test_plan_is_bound_to_project_and_duplicate_policy`。
+
+## R1-I010（后台异常丢原因/计数）修复
+- 已知存储守卫（SourceProjectMismatch）转为 `SOURCE_PROJECT_MISMATCH` typed reason，保留 failed_sources/pending_pages；原有 `test_project_mismatch_rolls_back_unit` 增断言。
+
+## 验证（实际执行）
+- `pytest tests/fea09` → **103 passed**（+3）
+- 相关套件：library 63、import_formats 32、m2_resource_channel 110、core_service 6 全 PASS
+- `Fea09RealIpcTests`（NEWMANGA_FEA09_IPC=1）→ 1 passed（严格绑定）
+- 待做：批次 2（I003/I004/I006）、批次 3（I005/I008）、I001 UNFREEZE、I011 EV 收敛。
+
+## 备注
+`find_for_identity`/`get_source_identity` 已不再被 resolve 使用（保留无调用路径，closeout 前删除或标注）。

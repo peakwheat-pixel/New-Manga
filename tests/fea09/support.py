@@ -69,6 +69,7 @@ class FakeSourceReadAccess:
     def __init__(self) -> None:
         self._grants: dict[str, ResolvedSourceRead] = {}
         self._grant_sources: dict[str, str] = {}
+        self._bound: dict[str, dict] = {}
         self._revoked: set[str] = set()
         self._expired: set[str] = set()
         self._fail_verify: dict[str, str] = {}
@@ -138,6 +139,27 @@ class FakeSourceReadAccess:
         code = self._fail_verify.get(grant_id)
         if code is not None:
             raise SourceImportError(code, "grant verification failed")
+
+    def bind_imported_entry(self, grant_id, source_id, version_id, entry_id):
+        self._bound.setdefault(
+            grant_id, {"source_id": source_id, "version_id": version_id, "entry_ids": set()}
+        )["entry_ids"].add(entry_id)
+        self._bound[grant_id]["source_id"] = source_id
+        self._bound[grant_id]["version_id"] = version_id
+
+    def find_bound_for_source(self, source_id, version_id, entry_id):
+        matching = [
+            grant_id for grant_id, bound in self._bound.items()
+            if bound["source_id"] == source_id
+            and bound["version_id"] == version_id
+            and entry_id in bound["entry_ids"]
+        ]
+        if not matching:
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED", "no active grant is bound to this page binding"
+            )
+        grant_id = sorted(matching)[-1]
+        return grant_id, self.resolve(grant_id)
 
     def find_for_source(self, source_id: str) -> tuple[str, ResolvedSourceRead]:
         matching = [

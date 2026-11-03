@@ -606,6 +606,12 @@ def test_project_mismatch_rolls_back_unit(tmp_path, repo, book_chapter):
     )
     receipt = _wait_terminal(runtime, OP)
     assert receipt["state"] == "failed"
+    # R1-I010: the transactional guard keeps a frozen reason + visible counts.
+    item = receipt["items"][0]
+    assert item["outcome"] == "failed"
+    assert item["reason_code"] == "SOURCE_PROJECT_MISMATCH"
+    assert item["counts"]["failed_sources"] == 1
+    assert item["counts"]["pending_pages"] == 1
     counts = conn.execute(
         "SELECT (SELECT COUNT(*) FROM pages) p,"
         " (SELECT COUNT(*) FROM page_bindings) b,"
