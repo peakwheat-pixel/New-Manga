@@ -45,7 +45,7 @@
 
 ## 4. 复核与重冻流程
 
-1. 本载体 + C-05 v1.1 + C-06 v1.1 + C-15 v5 / C-16 v6（最终草案版本）同批交**独立上下文**只读复核（未参与起草；reviewer 不得参与实现）。
+1. 本载体 + C-05 v1.1 + C-06 v1.1 + C-15 v5 / C-16 v7（最终草案版本）同批交**独立上下文**只读复核（未参与起草；reviewer 不得参与实现）。
 2. 复核 `approved` 且 P0/P1=0 后：按 FROZEN 记录纪律，在**冻结提交前**完成最后元数据编辑（状态行改为 FROZEN v1.1），再计算新 pin（工作树字节 + `git cat-file` LF 双口径）。
 3. 更新 `FEA-CONTRACT-FROZEN-C05.md` / `FEA-CONTRACT-FROZEN-C06.md`：§1 新 pin、§1B「v1.1 复核字节」、§5 变更记录；旧 pin 保留在历史行。`verify_pins.ps1` 自动读取新 pin（不静默替换历史）。
 4. 更新 `FEA-CONTRACT_FREEZE_MATRIX.md` 的 C-05/C-06 版本注记；C-15/C-16 冻结记录同批建立。
