@@ -1,0 +1,50 @@
+{"timestamp":"2026-11-03T12:47:14.576Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Python314/python.exe","args":["-m","pip","install","--target","G:/CODEX/New Manga.workspace/FEA-09/tmp/pytest-packages","pytest==9.1.1"]}
+WARNING: There was an error checking the latest version of pip.
+Collecting pytest==9.1.1
+  Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting colorama>=0.4 (from pytest==9.1.1)
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting iniconfig>=1.0.1 (from pytest==9.1.1)
+  Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting packaging>=22 (from pytest==9.1.1)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest==9.1.1)
+  Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting pygments>=2.7.2 (from pytest==9.1.1)
+  Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ---------------------------------------- 1.3/1.3 MB 4.1 MB/s  0:00:00
+Installing collected packages: pygments, pluggy, packaging, iniconfig, colorama, pytest
+
+Successfully installed colorama-0.4.6 iniconfig-2.3.1 packaging-26.3 pluggy-1.7.0 pygments-2.21.0 pytest-9.1.1
+ERROR: Exception:
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\pip\_internal\cli\base_command.py", line 109, in _run_wrapper
+    status = _inner_run()
+  File "C:\Python314\Lib\site-packages\pip\_internal\cli\base_command.py", line 102, in _inner_run
+    return self.run(options, args)
+           ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\pip\_internal\cli\req_command.py", line 101, in wrapper
+    return func(self, options, args)
+  File "C:\Python314\Lib\site-packages\pip\_internal\commands\install.py", line 597, in run
+    self._handle_target_dir(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        options.target_dir, target_temp_dir, options.upgrade
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site-packages\pip\_internal\commands\install.py", line 607, in _handle_target_dir
+    ensure_dir(target_dir)
+    ~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\pip\_internal\utils\misc.py", line 99, in ensure_dir
+    os.makedirs(path)
+    ~~~~~~~~~~~^^^^^^
+  File "<frozen os>", line 236, in makedirs
+PermissionError: [WinError 5] �ܾ����ʡ�: 'G:\\CODEX\\New Manga.workspace\\FEA-09\\tmp\\pytest-packages'
+
+{"exit":2,"signal":null}

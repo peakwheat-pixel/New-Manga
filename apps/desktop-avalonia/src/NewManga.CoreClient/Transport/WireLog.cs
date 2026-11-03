@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using System.Globalization;
 using NewManga.CoreClient.Wire;
 
@@ -81,6 +83,12 @@ public sealed class WireLog
 
     public void Add(WireFrame frame)
     {
+        // Construct the saveable frame only after both directions are rewritten.
+        var request = Redact(frame.RequestLine);
+        var response = Redact(frame.ResponseLine);
+        frame = new WireFrame(frame.Sidecar, request, response,
+            AsciiWire.Hex(Encoding.UTF8.GetBytes(request)), AsciiWire.Hex(Encoding.UTF8.GetBytes(response)),
+            AsciiWire.IsAscii(request), AsciiWire.IsAscii(response), frame.ElapsedMs, frame.TimestampUtc);
         lock (_gate)
         {
             _frames.Add(frame);
@@ -89,6 +97,48 @@ public sealed class WireLog
                 File.AppendAllText(_ndjsonPath!, Serialize(frame) + Environment.NewLine);
             }
         }
+    }
+
+    private static readonly HashSet<string> Sensitive = new(StringComparer.OrdinalIgnoreCase)
+    { "secret_ref", "signing_key", "host_session_credential", "path", "source_path", "target_path", "password" };
+
+    public static string Redact(string line)
+    {
+        if (line.Length == 0) return line;
+        try
+        {
+            using var document = JsonDocument.Parse(line);
+            var changed = false;
+            var safe = WireJson.Write(writer => Rewrite(writer, document.RootElement, ref changed));
+            return changed ? safe : line;
+        }
+        catch (JsonException) { return "{\"redacted\":\"unparseable frame\"}"; }
+    }
+
+    private static void Rewrite(Utf8JsonWriter writer, JsonElement value, ref bool changed)
+    {
+        if (value.ValueKind == JsonValueKind.Object)
+        {
+            writer.WriteStartObject();
+            foreach (var property in value.EnumerateObject())
+            {
+                writer.WritePropertyName(property.Name);
+                if (Sensitive.Contains(property.Name))
+                { writer.WriteStringValue("[REDACTED]"); changed = true; }
+                else Rewrite(writer, property.Value, ref changed);
+            }
+            writer.WriteEndObject();
+        }
+        else if (value.ValueKind == JsonValueKind.Array)
+        {
+            writer.WriteStartArray();
+            foreach (var item in value.EnumerateArray()) Rewrite(writer, item, ref changed);
+            writer.WriteEndArray();
+        }
+        else if (value.ValueKind == JsonValueKind.String && value.GetString() is { } text
+            && (Path.IsPathFullyQualified(text) || text.StartsWith("/")))
+        { writer.WriteStringValue("[REDACTED]"); changed = true; }
+        else value.WriteTo(writer);
     }
 
     private static string Serialize(WireFrame frame) => WireJson.Write(writer =>

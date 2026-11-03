@@ -328,6 +328,7 @@ def test_assemble_services_closes_connection_when_migration_fails(
             connection: sqlite3.Connection,
             migrations: object,
             backup_provider: object = None,
+            validate: object = None,
         ) -> None:
             pass
 

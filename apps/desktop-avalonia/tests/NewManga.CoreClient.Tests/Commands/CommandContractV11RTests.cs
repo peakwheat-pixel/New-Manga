@@ -69,6 +69,7 @@ public sealed class CommandContractV11RTests
     {
         var declared = Document.Value.BaselineRows.Select(row => row.Command)
             .Concat(Document.Value.PendingCommandNames)
+            .Concat(HostCommandRegistry.SourceCommandNames)
             .ToHashSet(StringComparer.Ordinal);
 
         var undeclared = HostCommandRegistry.All.Keys
@@ -83,6 +84,25 @@ public sealed class CommandContractV11RTests
             HostCommandRegistry.All.Count >= Document.Value.BaselineRows.Count,
             $"registry ({HostCommandRegistry.All.Count}) must not shrink below the signed baseline " +
             $"({Document.Value.BaselineRows.Count})");
+    }
+
+    [Fact]
+    public void SourceAdditions_AreDeclaredByFrozenC16_AndRemainHostLocal()
+    {
+        var sourceContract = File.ReadAllText(Path.Combine(RepoLocator.Root, "doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md"));
+        var pairs = new Dictionary<string, string>
+        {
+            ["source_register_root"] = "source_register_root", ["source_list_roots"] = "source_list_roots",
+            ["source_revoke_root"] = "source_revoke_root", ["source_reset_registry"] = "source_reset_registry",
+            ["plan_import_references"] = "PlanImportReferences", ["start_import_references"] = "StartImportReferences",
+            ["get_import_receipt"] = "GetImportReceipt", ["cancel_import"] = "CancelImport"
+        };
+        Assert.Equal(pairs.Keys.ToHashSet(StringComparer.Ordinal), HostCommandRegistry.SourceCommandNames);
+        foreach (var pair in pairs)
+        {
+            Assert.Contains(pair.Value, sourceContract, StringComparison.Ordinal);
+            Assert.Equal(HostCommandChannel.HostLocal, HostCommandRegistry.Get(pair.Key).Channel);
+        }
     }
 
     [Fact]

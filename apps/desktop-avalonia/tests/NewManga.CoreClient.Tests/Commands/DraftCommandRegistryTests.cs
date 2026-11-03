@@ -36,14 +36,15 @@ public sealed class DraftCommandRegistryTests
     }
 
     [Fact]
-    public void Additive_Set_IsTheUnionOfTheThreeFamilies()
+    public void Additive_Set_IsTheUnionOfTheDeclaredFamilies()
     {
         var expected = HostCommandRegistry.RegionWriteCommandNames
             .Concat(HostCommandRegistry.RegionReadCommandNames)
             .Concat(HostCommandRegistry.DraftsCommandNames)
+            .Concat(HostCommandRegistry.SourceCommandNames)
             .ToHashSet(System.StringComparer.Ordinal);
 
-        Assert.Equal(17, HostCommandRegistry.V11RAdditiveCommandNames.Count);
+        Assert.Equal(25, HostCommandRegistry.V11RAdditiveCommandNames.Count);
         Assert.Equal(expected, HostCommandRegistry.V11RAdditiveCommandNames.ToHashSet(System.StringComparer.Ordinal));
     }
 

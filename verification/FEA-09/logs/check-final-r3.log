@@ -1,0 +1,9 @@
+{"timestamp":"2026-11-03T13:13:56.979Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Program Files/PowerShell/7/pwsh.exe","args":["-NoProfile","-File","tools/governance/check.ps1","-TaskPath","doc/tasks/FEA-09.md"]}
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-09.md
+WARN: ���� 10 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��
+WARN: doc/STATUS.md �ѴﵽԤ��� 80%��3157 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��5059 bytes / 64 lines
+Governance check: PASS (3 warnings)
+
+EXIT=0

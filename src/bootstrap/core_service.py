@@ -222,6 +222,9 @@ from bootstrap.core_assembly import (
 from domain.regions.entities import RegionGeometry, RegionType, SfxPolicy
 from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
 from infrastructure.importing import PillowImageDecoder, SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.resource_channel.source_read_refs import SourceReadGrantRegistry  # noqa: F401 (FEA-09 type re-export)
+from application.importing.referenced.errors import SourceImportError
+from application.importing.referenced.runtime import ReferencedImportRuntime  # noqa: F401
 from infrastructure.providers.handlers import typeset_style_defaults
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
@@ -302,9 +305,18 @@ _CREATE_FIELDS = {
     "CreateChapter": (("book_id", True), ("title", True), ("chapter_number", False)),
 }
 # HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
+# FEA-09 (C-16 §0/§2): the source-read grant pair joins the envelope as an
+# additive widening — existing commands keep their frozen semantics.
 _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
     "RegisterExportTarget", "RevokeExportTarget", "CloseHostSession",
+    "RegisterSourceReadGrant", "RevokeSourceReadGrant",
+})
+#: FEA-09 async import face (C-16 §4): ordinary application-channel
+#: commands; the protocol minor stays 3 (additive widening precedent).
+_REFERENCED_IMPORT_COMMANDS = frozenset({
+    "PlanImportReferences", "StartImportReferences",
+    "GetImportReceipt", "CancelImport",
 })
 _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
@@ -948,6 +960,18 @@ def _import_ref_error_envelope(code: str) -> dict[str, Any]:
     )
 
 
+def _source_import_error_envelope(error: SourceImportError) -> dict[str, Any]:
+    """FEA-09: map a SourceImportError onto the frozen C-16 §6 table."""
+    details = error.details or None
+    return make_error_envelope(
+        code=error.code,
+        category=error.category,
+        message=str(error) or error.code,
+        retryable=error.retryable,
+        details=[details] if isinstance(details, dict) else None,
+    )
+
+
 def _import_page_result(
     page_index: int,
     outcome: str,
@@ -1253,9 +1277,16 @@ class CoreServiceServer:
     def _invalidate_host_session(self) -> None:
         if self._host_session_credential is None:
             return
+        source_registry = getattr(self._core, "source_read_refs", None)
+        if source_registry is not None:
+            source_registry.revoke_all_for_session()
         for grant_id, kind in tuple(self._host_grants.items()):
             if kind == "import":
                 self._revoke_import_source({"grant_id": grant_id})
+            elif kind == "source-read":
+                registry = getattr(self._core, "source_read_refs", None)
+                if registry is not None:
+                    registry.revoke_grant_ids([grant_id])
             else:
                 self._revoke_export_target({"grant_id": grant_id})
         self._host_session_credential = None
@@ -1335,6 +1366,38 @@ class CoreServiceServer:
 
         if command not in _HOST_CONTROL_COMMANDS - {"OpenHostSession", "CloseHostSession"}:
             return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host control request is invalid")
+        if command in ("RegisterSourceReadGrant", "RevokeSourceReadGrant"):
+            # FEA-09 source-read grant pair (C-16 §2/§7.7): distinct payload
+            # shape, so it branches before the Import/Export grant handling.
+            if not isinstance(payload, dict):
+                return self._host_control_response(
+                    request_id, None,
+                    _source_import_error_envelope(SourceImportError(
+                        "SOURCE_ACCESS_DENIED", "source-read grant payload is malformed"
+                    )),
+                )
+            try:
+                if command == "RegisterSourceReadGrant":
+                    if payload.get("session_id") != self._host_session_id:
+                        raise SourceImportError(
+                            "SOURCE_ACCESS_DENIED", "grant session does not match"
+                        )
+                    result = self._register_source_read_grant(payload)
+                else:
+                    result = self._revoke_source_read_grant(payload)
+            except SourceImportError as caught:
+                return self._host_control_response(
+                    request_id, None, _source_import_error_envelope(caught)
+                )
+            except Exception:
+                return self._reject_host_control(
+                    request_id, "UNKNOWN", "internal", "Host control operation failed"
+                )
+            if command == "RegisterSourceReadGrant" and isinstance(
+                payload.get("grant_id"), str
+            ):
+                self._host_grants[payload["grant_id"]] = "source-read"
+            return self._host_control_response(request_id, result, None)
         is_import = command.endswith("ImportSource")
         is_register = command.startswith("Register")
         if not isinstance(payload, dict):
@@ -1403,7 +1466,9 @@ class CoreServiceServer:
                 "major": PROTOCOL_MAJOR,
                 "minor": PROTOCOL_MINOR,
             },
-            "capabilities": ["library.list_books"],
+            # FEA-09 (C-16 §0): `source.read/1` is checked per-operation by
+            # the Host before dispatching any source command.
+            "capabilities": ["library.list_books", "source.read/1"],
         }
 
     def handle_list_books(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -3326,7 +3391,13 @@ class CoreServiceServer:
         if self._render_previews is None:
             raise RuntimeError("resource catalog is not configured")
         page = self._core.repository.get_page(page_id)
-        if page is None or not page.managed_original_ref:
+        if page is None:
+            raise RegionLookupError(page_id)
+        if getattr(page, "source_mode", "managed") == "referenced":
+            # No arbitrary-path fallback while the rendition production chain
+            # is not assembled. Visibility is independent from authorization.
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "source rendition authorization is unavailable")
+        if not page.managed_original_ref:
             raise RegionLookupError(page_id)
         # The wire gate admits exactly the decode face's suffixes; the suffix is
         # checked BEFORE any read so an unsupported ref stays the documented
@@ -3534,6 +3605,100 @@ class CoreServiceServer:
             raise TypedResourceChannelError("REF_UNKNOWN_ID")
         registry.revoke(payload["grant_id"])
         return {"revoked": True}
+
+    def _register_source_read_grant(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """FEA-09 RegisterSourceReadGrant (C-16 §2, host-control)."""
+        registry = getattr(self._core, "source_read_refs", None)
+        if registry is None:
+            raise SourceImportError(
+                "SOURCE_REGISTRY_UNAVAILABLE", "source-read grants are unavailable"
+            )
+        registry.register(payload)
+        return {"registered": True}
+
+    def _revoke_source_read_grant(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """FEA-09 RevokeSourceReadGrant (C-16 §0/§7.7, host-control).
+
+        The Host only reports success to its caller after this ACK; the Core
+        kills the grants immediately and running imports stop at the next
+        commit-unit boundary (verify_before_commit fails typed).
+        """
+        registry = getattr(self._core, "source_read_refs", None)
+        if registry is None:
+            raise SourceImportError(
+                "SOURCE_REGISTRY_UNAVAILABLE", "source-read grants are unavailable"
+            )
+        if (
+            not isinstance(payload, dict)
+            or set(payload) != {"registry_id", "generation", "grant_ids"}
+        ):
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED", "revocation payload is malformed"
+            )
+        revoked = registry.revoke_grants(
+            payload["registry_id"], payload["generation"], payload["grant_ids"]
+        )
+        return {"revoked": True, "grants_revoked": revoked}
+
+    def _dispatch_referenced_import(
+        self, command: str, raw_payload: object
+    ) -> dict[str, Any]:
+        """FEA-09 plan/start/receipt/cancel application-channel face."""
+        runtime = getattr(self._core, "referenced_import", None)
+        if runtime is None or getattr(self._core, "referenced_planner", None) is None:
+            raise SourceImportError(
+                "CORE_CAPABILITY_MISSING", "referenced import is unavailable"
+            )
+        if not isinstance(raw_payload, dict):
+            raise SourceImportError(
+                "SOURCE_OPERATION_CONFLICT", "import request is invalid"
+            )
+        payload = raw_payload
+        if command in {"PlanImportReferences", "StartImportReferences"} and not getattr(self._core, "referenced_import_enabled", True):
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "referenced import is disabled")
+        if command == "PlanImportReferences":
+            required = {"chapter_id", "grants", "duplicate_policy"}
+            if set(payload) != required:
+                raise SourceImportError(
+                    "SOURCE_OPERATION_CONFLICT", "import plan request is invalid"
+                )
+            return self._core.referenced_planner.plan(
+                chapter_id=payload["chapter_id"],
+                grants=payload["grants"],
+                duplicate_policy=payload["duplicate_policy"],
+            )
+        if command == "StartImportReferences":
+            required = {
+                "chapter_id", "plan_id", "plan_digest", "grants",
+                "duplicate_policy", "operation_id",
+            }
+            if not required.issubset(payload) or set(payload) - required - {"secret_ref"}:
+                raise SourceImportError(
+                    "SOURCE_OPERATION_CONFLICT", "import start request is invalid"
+                )
+            registry = getattr(self._core, "source_read_refs", None)
+            if registry is not None:
+                registry.verify_secret_ref(payload["grants"], payload.get("secret_ref"))
+            return runtime.start(
+                chapter_id=payload["chapter_id"],
+                plan_id=payload["plan_id"],
+                plan_digest=payload["plan_digest"],
+                grants=payload["grants"],
+                duplicate_policy=payload["duplicate_policy"],
+                operation_id=payload["operation_id"],
+                secret_ref=payload.get("secret_ref"),
+            )
+        if command == "GetImportReceipt":
+            if set(payload) != {"operation_id"}:
+                raise SourceImportError(
+                    "SOURCE_OPERATION_CONFLICT", "receipt request is invalid"
+                )
+            return runtime.receipt(payload["operation_id"])
+        if set(payload) != {"operation_id"}:
+            raise SourceImportError(
+                "SOURCE_OPERATION_CONFLICT", "cancel request is invalid"
+            )
+        return runtime.cancel(payload["operation_id"])
 
     def handle_import_pages(self, payload: dict[str, Any]) -> dict[str, Any]:
         required = {"chapter_id", "sources"}
@@ -4572,6 +4737,9 @@ class CoreServiceServer:
                     )
                 result = self.handle_import_pages(payload)
                 error = None
+            except SourceImportError as caught:
+                result = None
+                error = _source_import_error_envelope(caught)
             except P16WireError as caught:
                 result = None
                 error = make_error_envelope(
@@ -4584,6 +4752,30 @@ class CoreServiceServer:
                 result = None
                 error = make_error_envelope(
                     "UNKNOWN", "internal", "Import operation failed", retryable=False
+                )
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": result,
+                "error": error,
+            }, False)
+
+        if command in _REFERENCED_IMPORT_COMMANDS:
+            # FEA-09 (C-16 §4): async accept→poll import face. Minor stays 3
+            # (additive widening); every typed failure maps through the
+            # frozen C-16 §6 table.
+            try:
+                result = self._dispatch_referenced_import(command, raw_payload)
+                error = None
+            except SourceImportError as caught:
+                result = None
+                error = _source_import_error_envelope(caught)
+            except Exception:
+                result = None
+                error = make_error_envelope(
+                    "UNKNOWN", "internal", "Referenced import operation failed",
+                    retryable=False,
                 )
             return ({
                 "protocol": PROTOCOL_NAME,
@@ -5492,6 +5684,11 @@ class CoreServiceServer:
         if command == "resolve_page_resource":
             try:
                 result = self.handle_resolve_page_resource(payload)
+            except SourceImportError as caught:
+                return ({"protocol": PROTOCOL_NAME,
+                         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                         "request_id": request_id, "result": None,
+                         "error": _source_import_error_envelope(caught)}, False)
             except RegionRequestError as error:
                 return (
                     {

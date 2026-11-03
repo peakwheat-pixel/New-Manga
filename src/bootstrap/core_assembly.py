@@ -127,6 +127,10 @@ from infrastructure.export.qt_free import QtFreePdfComposer
 from infrastructure.export.target_refs import ExportTargetGrantRegistry
 from infrastructure.resource_channel.handle_resolver import ManagedRootTrust
 from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
+from infrastructure.resource_channel.source_read_refs import SourceReadGrantRegistry
+from application.importing.referenced.pdf_probe import PdfiumSourceInspector
+from application.importing.referenced.planner import ReferencedImportPlanner
+from application.importing.referenced.runtime import ReferencedImportRuntime
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.nmbak import NmbakBackupService
 from infrastructure.plugins.sandbox import AppContainerSandbox
@@ -780,6 +784,14 @@ class CoreServices:
     image_decoder: object = None
     document_raster: object = None
     import_source_refs: object = None
+    #: FEA-09 (C-15/C-16): in-process source-read grant registry, the plan
+    #: face and the async import runtime. ``None`` keeps existing
+    #: constructions valid; the wire face then fails closed with
+    #: CORE_CAPABILITY_MISSING instead of crashing start-up.
+    referenced_import_enabled: bool = True
+    source_read_refs: object = None
+    referenced_planner: object = None
+    referenced_import: object = None
     provider_profile_store: object = None
     network_profile_store: object = None
     provider_binding_store: object = None
@@ -1136,6 +1148,36 @@ def assemble_core_services(
             document_raster,
             copy_store,
             repository,
+        )
+        # FEA-09 (C-15/C-16): the referenced-import stack rides the same
+        # repository/decoder adapters; grants live in-process only and the
+        # runtime is the single writer while an import operation runs.
+        source_read_refs = SourceReadGrantRegistry()
+        referenced_pdf_open = PdfiumSourceInspector().open
+
+        def _project_of_chapter(chapter_id: str):
+            chapter = repository.get_chapter(chapter_id)
+            return None if chapter is None else chapter.book_id
+
+        from application.importing.referenced import scanner as referenced_scanner
+        from infrastructure.resource_channel.source_strict_read import (
+            read_verified_bytes as strict_read_verified_bytes,
+        )
+
+        referenced_scanner.install_verified_reader(strict_read_verified_bytes)
+        referenced_planner = ReferencedImportPlanner(
+            access=source_read_refs,
+            repository=repository,
+            project_of_chapter=_project_of_chapter,
+            pdf_open=referenced_pdf_open,
+        )
+        referenced_import = ReferencedImportRuntime(
+            repository=repository,
+            access=source_read_refs,
+            planner=referenced_planner,
+            project_of_chapter=_project_of_chapter,
+            image_decoder=image_decoder,
+            pdf_open=referenced_pdf_open,
         )
         # TASK-021 trash subset: page-level soft delete / batch restore /
         # controlled-only purge. The manifest lives next to the managed data.
@@ -1598,6 +1640,10 @@ def assemble_core_services(
             image_decoder=image_decoder,
             document_raster=document_raster,
             import_source_refs=ImportSourceGrantRegistry(),
+            referenced_import_enabled=os.environ.get("NEWMANGA_REFERENCED_IMPORT_ENABLED", "true").lower() == "true",
+            source_read_refs=source_read_refs,
+            referenced_planner=referenced_planner,
+            referenced_import=referenced_import,
             provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
             network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
             provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),

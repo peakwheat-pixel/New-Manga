@@ -1,0 +1,27 @@
+{
+  "cwd": "G:/CODEX/New Manga",
+  "head": "f9a2fa8e077f21c93131237171a32e85f6942200",
+  "exe": "git",
+  "args": [
+    "add",
+    "--",
+    "doc/tasks/FEA-09.md",
+    "src/bootstrap/core_assembly.py",
+    "src/bootstrap/core_service.py",
+    "src/infrastructure/resource_channel/source_read_refs.py",
+    "src/infrastructure/resource_channel/source_strict_read.py",
+    "src/application/importing/referenced/scanner.py",
+    "src/application/importing/referenced/runtime.py",
+    "src/application/importing/referenced/errors.py",
+    "tests/fea09/test_referenced_wire.py",
+    "apps/desktop-avalonia/src/NewManga.Host/Sources",
+    "apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs",
+    "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+    "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs",
+    "apps/desktop-avalonia/src/NewManga.CoreClient/Transport/WireLog.cs"
+  ],
+  "exit": 128,
+  "stdout": "",
+  "stderr": "fatal: Unable to create 'G:/CODEX/New Manga/.git/index.lock': Permission denied\n",
+  "note": "本轮先前实际执行的原始 argv/result 补全登记；未重复执行，未绕过 Git 写保护"
+}

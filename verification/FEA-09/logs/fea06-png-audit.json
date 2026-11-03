@@ -1,0 +1,36 @@
+{
+  "cwd": "G:/CODEX/New Manga",
+  "head": "f9a2fa8e077f21c93131237171a32e85f6942200",
+  "command": "git show f9a2fa8e0:<each FEA-06 PNG> vs filesystem bytes",
+  "files": [
+    {
+      "path": "verification/FEA-06/screens/reader.png",
+      "sha256": "8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2",
+      "base_sha256": "8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2",
+      "unchanged": true,
+      "exit": 0
+    },
+    {
+      "path": "verification/FEA-06/screens/settings.png",
+      "sha256": "fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162",
+      "base_sha256": "fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162",
+      "unchanged": true,
+      "exit": 0
+    },
+    {
+      "path": "verification/FEA-06/screens/shelf.png",
+      "sha256": "307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a",
+      "base_sha256": "307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a",
+      "unchanged": true,
+      "exit": 0
+    },
+    {
+      "path": "verification/FEA-06/screens/workbench.png",
+      "sha256": "d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5",
+      "base_sha256": "d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5",
+      "unchanged": true,
+      "exit": 0
+    }
+  ],
+  "exit": 0
+}

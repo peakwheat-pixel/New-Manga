@@ -10,6 +10,7 @@ from __future__ import annotations
 
 #: Frozen closed set (C-16 §6): code -> (category, retryable).
 SOURCE_ERROR_TABLE: dict[str, tuple[str, bool]] = {
+    "REF_SIGNATURE_INVALID": ("validation", False),
     "SOURCE_ACCESS_DENIED": ("authorization", False),
     "SOURCE_GRANT_EXPIRED": ("authorization", True),
     "SOURCE_GRANT_REVOKED": ("authorization", False),

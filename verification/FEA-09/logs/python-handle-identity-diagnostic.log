@@ -1,0 +1,6 @@
+{"timestamp":"2026-11-03T13:01:43.550Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Python314/python.exe","args":["-c","import sys,pathlib,os;sys.path.insert(0,'src');from infrastructure.resource_channel import handle_resolver as h;p=next(pathlib.Path('verification/FEA-09/grant-component').glob('*/source.bin')).absolute();s=p.stat();fd=h._open_read_handle(p);print('stat identity',s.st_dev,s.st_ino,s.st_size);print('handle identity',h._identity_of(fd),h._size_of(fd));print('final-path-matches',h._normalized(h._display_path(h._final_path_of(fd)))==h._normalized(str(p)));h._k32.CloseHandle(fd)"]}
+stat identity 15333285442011643084 844424933623778 16
+handle identity (3401956556, 844424933623778) 16
+final-path-matches True
+
+EXIT=0

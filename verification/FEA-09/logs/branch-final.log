@@ -1,0 +1,4 @@
+{"timestamp":"2026-11-03T13:13:18.918Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"git","args":["branch","--show-current"]}
+main
+
+EXIT=0

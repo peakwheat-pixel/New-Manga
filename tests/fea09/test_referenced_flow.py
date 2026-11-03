@@ -306,7 +306,9 @@ def test_revocation_halts_at_commit_boundary(tmp_path, repo, book_chapter):
 
     def fail_after_five(grant_id):
         original_verify(grant_id)
-        if len(access.verify_calls) == 6:
+        # Phase C strict lease: each page triggers read-verify + commit-verify,
+        # so the 6th page's pre-commit check is call 12 (5 pages already committed).
+        if len(access.verify_calls) == 12:
             raise SourceImportError(
                 "SOURCE_GRANT_REVOKED", "grant was revoked mid-run"
             )

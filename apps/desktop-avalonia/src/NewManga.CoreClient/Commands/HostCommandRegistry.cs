@@ -63,6 +63,8 @@ public static class HostCommandRegistry
 
     private static readonly string[] LibraryNames =
     {
+        "source_register_root", "source_list_roots", "source_revoke_root", "source_reset_registry",
+        "plan_import_references", "start_import_references", "get_import_receipt", "cancel_import",
         "library_list_books",
         "library_list_recycle_bin_books",
         "library_create_book",
@@ -263,6 +265,8 @@ public static class HostCommandRegistry
     /// </summary>
     private static readonly HashSet<string> HostLocalBindings = new(StringComparer.Ordinal)
     {
+        "source_register_root", "source_list_roots", "source_revoke_root", "source_reset_registry",
+        "plan_import_references", "start_import_references", "get_import_receipt", "cancel_import",
         "library_import_file",
         "library_import_folder",
         "library_reveal_export_folder",
@@ -340,9 +344,13 @@ public static class HostCommandRegistry
     /// 66-command snapshot. The parity test asserts the registry minus the
     /// frozen snapshot equals exactly this set.
     /// </summary>
+    public static IReadOnlySet<string> SourceCommandNames { get; } = new HashSet<string>(StringComparer.Ordinal)
+    { "source_register_root", "source_list_roots", "source_revoke_root", "source_reset_registry",
+      "plan_import_references", "start_import_references", "get_import_receipt", "cancel_import" };
+
     public static IReadOnlySet<string> V11RAdditiveCommandNames { get; } =
         new HashSet<string>(
-            RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames),
+            RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames).Concat(SourceCommandNames),
             StringComparer.Ordinal);
 
     public static HostCommandDescriptor Get(string name) =>

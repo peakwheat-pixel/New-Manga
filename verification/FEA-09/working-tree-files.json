@@ -1,0 +1,133 @@
+{
+  "head": "f9a2fa8e077f21c93131237171a32e85f6942200",
+  "delivery_head": null,
+  "task_status": "in_progress",
+  "basis": "工作树原始字节；未提交，不是 commit 验证",
+  "files": [
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs",
+      "size": 21265,
+      "sha256": "a0317fd4b9770a9a450698a58b5c5d0676dd8710bd4abe75cb9e879b6dbd8608"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs",
+      "size": 67382,
+      "sha256": "99381db881b328caf4eb1e3ba4b654ee77014bdfaa85160e8d5e966a681585dc"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Transport/WireLog.cs",
+      "size": 5434,
+      "sha256": "9ad9596b8b5b6dbed0924a5e559496a686406d811830a59ab4b4776c036b89f2"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs",
+      "size": 3365,
+      "sha256": "a0e8b177f3518dfc68fb1f19a47859be5dcabd6ecb5392e04e62a9c8c437bae4"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+      "size": 36394,
+      "sha256": "e326d22e44b510ec185e353a9383e2b6b78f449583362ad1e7ca4bf552b0d565"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandContractV11RTests.cs",
+      "size": 12616,
+      "sha256": "74ac24b3fa409a4ad84930ff6f5d2aa8ace9b5bb465dacc05b9946180b12fd2b"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs",
+      "size": 4866,
+      "sha256": "83d98d2bb5a86dc3ca10dc6655c7e96302c4a23915b0854c017e269de8086587"
+    },
+    {
+      "path": "doc/tasks/FEA-09.md",
+      "size": 33121,
+      "sha256": "725ed54b4ef73e3f8f41af776c5ac99eaa20bc2c44332b50e8bc0aeac83eebb1"
+    },
+    {
+      "path": "src/application/importing/referenced/errors.py",
+      "size": 2141,
+      "sha256": "8109b40e828b9a8b6d2162e71b4bb514b4cd1998760519d3a391d0cd1c03aaaa"
+    },
+    {
+      "path": "src/application/importing/referenced/runtime.py",
+      "size": 33582,
+      "sha256": "43fbc6cc3491c6355caf5151c47739e13b9ea308e038b43220d88ab646dcc791"
+    },
+    {
+      "path": "src/application/importing/referenced/scanner.py",
+      "size": 17085,
+      "sha256": "064123e2c8818bf208e5f24dd8ac163834a5003b0e294e12342e59195ea96985"
+    },
+    {
+      "path": "src/bootstrap/core_assembly.py",
+      "size": 78018,
+      "sha256": "e781d3face709d6dcde2792ca576e02aec1f88221cd7a08f8e5798652d8ce3ff"
+    },
+    {
+      "path": "src/bootstrap/core_service.py",
+      "size": 299666,
+      "sha256": "c588586ce76f9b7cbf1f622baadf431ec497315024ac57a56f4a836477e63b67"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+      "size": 10529,
+      "sha256": "ff209d3d1224f9a23a7de9eab0ad7a675a98efe688a377061ac7f7aec82faf88"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+      "size": 10875,
+      "sha256": "8ef42ae8aca1fe5627594aada7cdb64295f7feeb357272f71a812d3016b4fadb"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecurity.cs",
+      "size": 6516,
+      "sha256": "b4abae96f55cf858f848a71ad10b0a0fd03713fbc5ff761e0865d1dbaf9fa942"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireLogSourceRedactionTests.cs",
+      "size": 3343,
+      "sha256": "dd8c5edb45f74dc0b7b5849aa96775910b806258e954629f95b0fa58953ae15b"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs",
+      "size": 3078,
+      "sha256": "a401ce731519edf780670c2fc717c0eac42fb6f98c31159c40dad3211392bb25"
+    },
+    {
+      "path": "doc/handoffs/FEA-09-f9a2fa8e0.md",
+      "size": 10971,
+      "sha256": "798c57918786b814b377717edbe17b13ca56d03c5ae14cbe5f4d26d22938467e"
+    },
+    {
+      "path": "src/infrastructure/resource_channel/rendition_cache.py",
+      "size": 9588,
+      "sha256": "8ff3338a8622a992897d342d10912b75255072c4789f111573896fa5eaba55b8"
+    },
+    {
+      "path": "src/infrastructure/resource_channel/source_read_refs.py",
+      "size": 22560,
+      "sha256": "05d17787fa46190822f3d3b18cbca4b9a1c999cbe917afdee13525d2d2185fc4"
+    },
+    {
+      "path": "src/infrastructure/resource_channel/source_strict_read.py",
+      "size": 2916,
+      "sha256": "7adec5a7f1b44acac2b5967459a94f626edcfc91ba1d0d5cc015a0e987f98248"
+    },
+    {
+      "path": "tests/fea09/test_referenced_wire.py",
+      "size": 16763,
+      "sha256": "eff89f89e1b46ca9d608402596e6fa8c7a0fded16d85b4b7c001f99e45f25bac"
+    },
+    {
+      "path": "tests/fea09/test_rendition_cache_unittest.py",
+      "size": 5434,
+      "sha256": "dbf2fb2ebe101c9a488637d527ddbbb87fdac59bb6c68a8c5743e925ee9404b0"
+    },
+    {
+      "path": "tests/fea09/test_source_grants_unittest.py",
+      "size": 4761,
+      "sha256": "e973d8eb6bea46d368193c972344bb3d00d241f5b76439d583b6530973fa6510"
+    }
+  ]
+}

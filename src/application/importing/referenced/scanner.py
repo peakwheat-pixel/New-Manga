@@ -55,50 +55,27 @@ def _reject_reparse(path: Path) -> None:
             )
 
 
+_verified_reader = None
+
+
+def install_verified_reader(reader) -> None:
+    """Inject the strict-read adapter (bootstrap owns infra wiring)."""
+    global _verified_reader
+    _verified_reader = reader
+
+
 def read_verified_bytes(path: str, facts: GrantFacts, *, max_bytes: int) -> bytes:
     """Strict verified read of one granted file (H4/C-16 §2).
 
-    Opens after a per-component reparse check, verifies volume/file identity
-    and size from the stat of the same path, enforces ``max_bytes`` and
-    verifies the full-content sha256 before returning the bytes.
+    The lease implementation lives in the infrastructure adapter and is
+    injected by bootstrap; the application layer must not import
+    infrastructure directly.
     """
-    target = Path(path)
-    if not target.is_absolute():
-        raise SourceImportError("SOURCE_ACCESS_DENIED", "grant path must be absolute")
-    _reject_reparse(target)
-    try:
-        info = target.stat()
-    except OSError as error:
+    if _verified_reader is None:
         raise SourceImportError(
-            "SOURCE_ENTRY_MISSING", "granted source file is missing"
-        ) from error
-    if not stat.S_ISREG(info.st_mode):
-        raise SourceImportError("SOURCE_ACCESS_DENIED", "grant path is not a file")
-    if int(info.st_dev) != int(facts.volume_serial) or int(info.st_ino) != int(
-        facts.file_id
-    ):
-        raise SourceImportError(
-            "FILE_IDENTITY_CHANGED", "granted source identity no longer matches"
+            "SOURCE_REGISTRY_UNAVAILABLE", "strict source reader is not installed"
         )
-    if int(info.st_size) != int(facts.size):
-        raise SourceImportError(
-            "FILE_IDENTITY_CHANGED", "granted source size no longer matches"
-        )
-    if int(facts.size) > int(max_bytes):
-        raise SourceImportError(
-            "SOURCE_BUDGET_EXCEEDED", "granted source exceeds the read budget"
-        )
-    try:
-        data = target.read_bytes()
-    except OSError as error:
-        raise SourceImportError(
-            "SOURCE_ENTRY_MISSING", "granted source file is unreadable"
-        ) from error
-    if len(data) != int(facts.size) or sha256_hex(data) != facts.sha256:
-        raise SourceImportError(
-            "FILE_IDENTITY_CHANGED", "granted source digest no longer matches"
-        )
-    return data
+    return _verified_reader(path, facts, max_bytes)
 
 
 def _stat_folder_entry(path: str, root: str) -> tuple[int, int, int]:
@@ -180,7 +157,11 @@ def scan_folder(resolved: ResolvedSourceRead) -> ScannedSource:
                 "SOURCE_ACCESS_DENIED", "folder member name is unsafe"
             ) from error
         dev, ino, size = _stat_folder_entry(path, root)
-        if dev != facts.volume_serial or ino != facts.file_id or size != facts.size:
+        expected_volume = facts.volume_serial
+        if os.name == "nt":
+            dev &= 0xffffffff
+            expected_volume &= 0xffffffff
+        if dev != expected_volume or ino != facts.file_id or size != facts.size:
             raise SourceImportError(
                 "FILE_IDENTITY_CHANGED", "granted folder member identity drifted"
             )

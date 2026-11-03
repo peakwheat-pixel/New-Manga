@@ -1,0 +1,4 @@
+{"timestamp":"2026-11-03T12:45:24.712Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"python","args":["-m","pytest","tests/fea09","-q","--basetemp=G:/CODEX/New Manga.workspace/FEA-09/tmp/pytest-c-baseline"]}
+C:\Python314\python.exe: No module named pytest
+
+{"exit":1,"signal":null}

@@ -1,0 +1,4 @@
+{"timestamp":"2026-11-03T13:10:08.446Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Program Files/PowerShell/7/pwsh.exe","args":["-NoProfile","-Command","Get-CimInstance Win32_Process | Where-Object { $_.Name -match '^(testhost|dotnet)(\\.exe)?$' } | Select-Object ProcessId,ParentProcessId,CreationDate,Name | ConvertTo-Json -Compress"]}
+[31;1mGet-CimInstance: [31;1m�ܾ����� [0m
+
+EXIT=1

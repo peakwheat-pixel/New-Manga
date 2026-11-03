@@ -6,8 +6,8 @@ governance_version: 3
 status: in_progress
 approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1=0/P2=2；doc/reviews/FEA-09-scope-r2.md，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`）；前置 FEA-09-PREREQ-1 **done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）
 suggested_owner: codex
-owner: codex（Phase A 由 ZCode 完成；ZCode 周/月额度耗尽至 2026-11-07，Codex 2026-11-03 20:40 恢复后续跑 Phase B–D）
-claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`
+owner: codex（DSH 2026-11-03 额度恢复后续跑）
+claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`；2026-11-03 Codex 本轮通过 Node 通路恢复，接续 ZCode Phase A/B 及 Phase C 半成品
 reviewer: 实现 Review 待 Appointment（候选：未参与实现/scope-r2 的独立 Codex 会话；不得由实现者同一会话自审）
 depends_on:
   - FEA-08
@@ -17,7 +17,7 @@ base_commit: 19e6210047e664d1206347bd5259a6f075a9c028（scope-r2 reviewed_head�
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 未开始
+delivery_head: null # 本轮 Git index.lock 拒绝写入；代码仍在工作树，不能填写虚假交付 commit
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-09
@@ -50,6 +50,8 @@ allowed_paths:
   - tests/library/test_sqlite_library.py
   - tests/core/test_p09_fu2_import_pages.py
   - tests/core/test_page_resource_resolve.py
+  - tests/core/test_core_service.py（DSH 2026-11-03 扩域：C-16 新增能力 `source.read/1` 使 `core.ping.capabilities` 断言与 E2E 探针必须同步；属冻结协议行为，测试滞后）
+  - tests/core/test_bootstrap.py（DSH 2026-11-03 扩域：C-15 要求 `MigrationRunner` 注入 validate callback，bootstrap 的 fake runner 需接受新参数）
   - tests/m2_resource_channel/**
   - tests/storage/test_schema_migration.py
   - tests/storage/test_upgrade_schema_data.py
@@ -68,9 +70,9 @@ out_of_scope:
   - push
 ---
 
-# FEA-09 — 引用源与导入（in_progress：zcode 实施，DSH 2026-11-03 故障转移 Appointment）
+# FEA-09 — 引用源与导入（in_progress：Codex 接续 Phase C–D；未提交检查点）
 
-> 状态：`proposed`。scope-r1（Codex）判 `changes_requested`（P0=0/P1=9/P2=4）；本卡已完成逐项处置并按裁决收窄范围/写域/AC。**仍不得实施**：须先完成 `FEA-09-PREREQ-1`（C-15 存储契约 + C-16 source-read wire 冻结、独立复核）并通过 scope-r2。
+> 当前状态：`in_progress`。PREREQ-1 已 done、scope-r2 已 approved，按 DSH Appointment 实施。Phase A/B 由 ZCode 交付；Codex 本轮接续 Phase C–D。尚未完成生产读接线、真实 IPC/V2、全量回归与提交，不进入 in_review。
 > 本 Task **不宣称**提案 `:1040` 的 UI 部分已由本 Task 完成；该部分由 `FEA-09-UI-1` 协同交付，二者均完成后才能宣称 Source 导入 UI 验收通过。
 
 ## 依据
@@ -129,18 +131,18 @@ out_of_scope:
 - 冻结契约字节不动：wire 载体为 C-16 **新文档**；若既有冻结文档（如 C-07 inventory）需登记新命令，由 PREREQ-1/DSH 走 `doc/reviews/CONTRACT-UNFREEZE-<DATE>.md` 载体，不得用 `doc/contracts/**` 通配授权代替。
 - 共享组合根与 `App.axaml`/`App.axaml.cs`/`NewManga.App.csproj`/`NewManga.sln` 仍仅 DSH 单点提交；owners 提供 patch/需求。
 
-## Acceptance Criteria（定稿草案；proposed 阶段全部 BLOCKED，未实施）
+## Acceptance Criteria（Codex 本轮检查点；未满足项如实保留）
 
-- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<PARTIAL: Phase B 已有五类输入实现；本轮 pytest 格式矩阵未运行，strict 读取改动待完整回归>>
+- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<PARTIAL: 已有排序实现并补 Host 文件夹自然顺序；Python 格式/排序全回归未运行>>
+- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<PARTIAL: Phase A/B 已有 occurrence/binding 实现；本轮未重跑跨项目共享与人工数据回归>>
+- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<PARTIAL: 签名绑定 secret_ref 拒绝与 WireLog 脱敏已补；真实密码 Host 签发/消费链未接通，原生 DPAPI 测试失败>>
+- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<PARTIAL: Phase B 状态机/receipt 保留；本轮未执行取消/丢 ACK/重启完整矩阵，Start 确认前强重验仍需检查>>
+- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: 真实 Host IPC + 现有 V2 生产 adapter 证据尚未取得；referenced 页 rendition 读取尚未接通>>
+- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<PARTIAL: 已有迁移/五读实现；本轮补关闭新导入门禁及 referenced typed fail-closed，双读成功与迁移全回归仍未验证>>
+- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<PARTIAL: 构建 0w/0e、定向 .NET 19 passed、Python 组件 10 passed、check/pins/PNG/写域通过；全量超时且失败、pytest 缺失、Git 拒写，独审及 DSH 集成未执行>>
+- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<PARTIAL: Core scope/signature/generation/EOF/strict handle 组件 5 passed；Host DPAPI/ACL 测试 2 failed，持久化/跨进程/真实 wire 矩阵仍缺>>
+- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<PARTIAL: 有界缓存组件 5 passed；尚未接入生产 rendition/资源通道，未完成实际 decoder 尺寸/源守恒/通道端到端验证>>
 
 补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
 
@@ -217,7 +219,30 @@ out_of_scope:
 | 2026-11-03 | Codex 认领（in_progress），git add 被 `.git/index.lock` Permission denied 阻断未提交；随后 Codex 触发 usage limit，DSH 按故障转移改派 **zcode** 接续实施；遗留 diff/日志（`verification/FEA-09/logs/git-stage-blocked.log`、`pins.log`）随认领 commit 入库 | DSH 派发指令（2026-11-03）；`verification/FEA-09/logs/` |
 | 2026-11-03 | **实施启动 + 故障转移**：Codex 认领后 18:00 触发 usage limit（20:40 恢复）；DSH 按长期授权转 ZCode（故障转移候选仅 ZCode）；ZCode 完成 **Phase A**（C-15 v7 迁移/五读路径/测试）commit `d3d7cd564`，18:39 亦触发周/月额度（2026-11-07 重置）。DSH 集成验证 `tests/fea09 + storage 定向` **47 passed**（日志 `G:\CODEX\New Manga.workspace\FEA-09\phase-a-int-verify.log`）。 | 本卡 Appointment；`verification/FEA-09/logs/`；Task 卡变更记录 |
 | 2026-11-03 | **DSH 范围裁决（扩域）**：`allowed_paths` 增加 `tests/storage/test_purge_integrity.py`。依据：C-15 v7 新增 `page_bindings` 对 `pages(page_id)` 的反向引用与 `pages.source_mode/integrity_status` 列，既有 purge 完整性测试的 fixture/依赖表断言为真实不变量，必须同步；仅适配 schema，不改变产品语义。 | Phase A commit `d3d7cd564`；C-15 v7 DDL |
+| 2026-11-03 | **DSH 范围裁决（扩域 2）**：`allowed_paths` 增加 `tests/core/test_core_service.py`、`tests/core/test_bootstrap.py`。依据：C-16 冻结新增 `source.read/1` 能力使既有 capability/E2E 断言过期；C-15 冻结要求 `MigrationRunner` 注入 validate callback 使 bootstrap fake runner 需适配。均属协议升级的必要测试同步，不改变产品语义。 | DSH 集成验证（4 failed 定位）；C-15/C-16 v1.0 |
 | 2026-11-03 | **续跑安排**：Phase B–D（referenced 编排/授权 wire/cache/证据）待 Codex 2026-11-03 20:40 额度恢复后 resume 实施；未提交 `src/application/importing/referenced/errors.py` 保留现场，由续跑者检查后使用或重建。 | 本卡 Appointment/变更记录；ZCode session 日志 |
 | 2026-11-03 | **Phase B 交付**：ZCode 恢复额度后完成 referenced 导入编排（五类输入/plan/异步状态机/密码短期引用），commit `ceae03edb`；DSH 用 `git stash` 隔离 Phase C 半成品后干净验证 `tests/fea09` **69 passed**。随后 ZCode 触发 5 小时额度（23:41 重置）。 | `G:\CODEX\New Manga.workspace\FEA-09\phase-b-int-verify.log`；commit `ceae03edb` |
 | 2026-11-03 | **Phase C 半成品保留**：工作树 uncommitted `core_assembly.py`/`core_service.py` 改动 + `source_read_refs.py`/`test_referenced_wire.py`（ZCode 中断现场，已验证 stash/pop 可恢复）；由 Codex 20:42 续跑检查后继续或重写。 | git status；本卡 Appointment |
 | 2026-11-03 | **续跑计划**：Codex 20:40 额度恢复；已建 20:42 schedule 提醒派发 `codex-impl-r2-prompt.md`（Phase C–D：授权 wire/cache/回退开关/证据/门禁）。 | schedule `schedule-53890cec`；Task 卡 |
+
+## Codex Phase C–D 本轮检查点（2026-11-03）
+
+- 恢复通路：Node `child_process`/`fs`；HEAD 实测 `f9a2fa8e077f21c93131237171a32e85f6942200`、branch=main；保留并接续四份 Phase C 半成品。
+- owner=`codex（DSH 2026-11-03 额度恢复后续跑）`；本轮认领时间 2026-11-03T13:09:27.842Z。Phase A/B 作者仍为 ZCode，commits `d3d7cd564` / `ceae03edb`，未改历史署名。
+- Host Registry/命令、Core grant/strict lease、WireLog 脱敏、缓存组件和回退开关已有工作树实现；不表示 Phase C–D 完成。
+- `git add` EXIT 128：`.git/index.lock Permission denied`。本轮没有 commit、没有 push；delivery_head 留 null，integration_commit 留 null。
+- 当前 Handoff：[FEA-09-f9a2fa8e0](../handoffs/FEA-09-f9a2fa8e0.md)。逐文件工作树 SHA-256/EV：[EV](../../verification/FEA-09/EV.md)，commit pin 待真正提交后补齐；canonical_evidence_status 保持 pending。
+- 原始失败与实际命令见 `verification/FEA-09/logs/`。完整 pytest/真实 IPC/V2/独立 Review/DSH 集成均不宣称 PASS。
+
+## DSH 集成修复检查点（2026-11-03 21:35）
+
+- Codex 工作树无法执行 `git add`（受限进程 `.git/index.lock` Permission denied）；DSH 主会话接手 Git 与环境验证，**不丢失** Codex 已写实现。
+- DSH 修复（集成适配，均为冻结协议/环境的必要同步）：
+  1. `scanner.py`：移除 application→infrastructure 动态 import，改为 **`install_verified_reader` 端口注入**；`source_strict_read.py` 提供 `read_verified_bytes`；`core_assembly.py` 与 `tests/fea09/conftest.py` 注入。
+  2. `tests/core/test_bootstrap.py`：fake `MigrationRunner` 接受 C-15 新增 `validate` 注入。
+  3. `tests/core/test_core_service.py`：capability/E2E 断言同步 C-16 新增 `source.read/1`。
+  4. `SourceSecurity.PrivateDirectory`：先 `SetOwner(当前用户)` 再校验 owner（修复 repo 内证据目录继承 Administrators owner 导致的误拒），并保留仅当前用户 ACE 校验。
+- DSH 实际验证：`pytest tests/fea09` **92 passed**；`pytest tests/core/test_architecture.py tests/core/test_bootstrap.py tests/core/test_core_service.py` **EXIT 0**；`Host.SourceRegistryTests` **2 passed**；`dotnet build` **0 warning/0 error**；全量 .NET 复跑见 `G:\CODEX\New Manga.workspace\FEA-09\dotnet-dsh-full-r2.log`。
+- 范围：工作树变更全部落在 `allowed_paths`；冻结契约/共享组合根/UI/依赖未改。待全量绿后由 DSH 提交阶段 commit（实现者署名 Codex/ZCode；DSH 仅集成修复与提交）。
+- 仍未完成：生产 rendition 读取接线、密码完整链路、真实 IPC/V2 证据、AC-1…AC-10 部分验证、独立 impl Review；Task 保持 `in_progress`。
+- 下一精确动作：DSH 处理 Git 元数据、外置 task tmp、Windows DPAPI/ACL 与测试 fixture 权限；Codex 恢复后先核对 dirty 指纹，再完成 Host 密码引用与四维读取 scope→binding/rendition/生产 adapter 接线，重跑全部测试，分阶段提交。禁止改 UI/冻结契约/共享组合根/依赖/push。

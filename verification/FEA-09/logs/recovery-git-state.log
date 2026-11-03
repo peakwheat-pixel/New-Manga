@@ -1,0 +1,58 @@
+{"timestamp":"2026-11-03T13:11:29.578Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"git","args":["status","--short"]}
+ M apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
+ M apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+ M apps/desktop-avalonia/src/NewManga.CoreClient/Transport/WireLog.cs
+ M apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+ M apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+ M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandContractV11RTests.cs
+ M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs
+ M doc/tasks/FEA-09.md
+ M src/application/importing/referenced/errors.py
+ M src/application/importing/referenced/runtime.py
+ M src/application/importing/referenced/scanner.py
+ M src/bootstrap/core_assembly.py
+ M src/bootstrap/core_service.py
+?? apps/desktop-avalonia/src/NewManga.Host/Sources/
+?? apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireLogSourceRedactionTests.cs
+?? apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+?? doc/handoffs/FEA-09-f9a2fa8e0.md
+?? src/infrastructure/resource_channel/rendition_cache.py
+?? src/infrastructure/resource_channel/source_read_refs.py
+?? src/infrastructure/resource_channel/source_strict_read.py
+?? tests/fea09/test_referenced_wire.py
+?? tests/fea09/test_rendition_cache_unittest.py
+?? tests/fea09/test_source_grants_unittest.py
+?? verification/FEA-09/cache-component/
+?? verification/FEA-09/grant-component/
+?? verification/FEA-09/logs/allowed-paths-audit.json
+?? verification/FEA-09/logs/check-pre-handoff.log
+?? verification/FEA-09/logs/dotnet-build-delivery-checkpoint.log
+?? verification/FEA-09/logs/dotnet-build-final.log
+?? verification/FEA-09/logs/dotnet-full-r2-summary.json
+?? verification/FEA-09/logs/dotnet-full-r2.log
+?? verification/FEA-09/logs/dotnet-full.log
+?? verification/FEA-09/logs/dotnet-phase-c-build-2.log
+?? verification/FEA-09/logs/dotnet-phase-c-build-tests.log
+?? verification/FEA-09/logs/dotnet-phase-c-build.log
+?? verification/FEA-09/logs/dotnet-phase-c-no-restore.log
+?? verification/FEA-09/logs/dotnet-phase-c-tests.log
+?? verification/FEA-09/logs/dotnet-source-command-regression.log
+?? verification/FEA-09/logs/fea06-png-audit.json
+?? verification/FEA-09/logs/git-stage-node-blocked.log
+?? verification/FEA-09/logs/password-audit.json
+?? verification/FEA-09/logs/pins-final.log
+?? verification/FEA-09/logs/python-cache-component.log
+?? verification/FEA-09/logs/python-components-final.log
+?? verification/FEA-09/logs/python-final-syntax.log
+?? verification/FEA-09/logs/python-grant-import.log
+?? verification/FEA-09/logs/python-handle-identity-diagnostic.log
+?? verification/FEA-09/logs/python-phase-c-baseline.log
+?? verification/FEA-09/logs/python-source-grant-component-r2.log
+?? verification/FEA-09/logs/python-source-grant-component-r3.log
+?? verification/FEA-09/logs/python-source-grant-component.log
+?? verification/FEA-09/logs/python-syntax.log
+?? verification/FEA-09/logs/python-test-dependencies.log
+?? verification/FEA-09/logs/test-process-status.log
+?? verification/FEA-09/native-registry/
+
+EXIT=0

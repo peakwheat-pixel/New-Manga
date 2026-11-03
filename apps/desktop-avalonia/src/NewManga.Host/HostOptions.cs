@@ -80,5 +80,7 @@ public sealed class HostOptions
     /// </summary>
     public Func<CancellationToken, Task<CorePing>>? StartupPingProbe { get; init; }
 
+    public bool ReferencedImportEnabled { get; init; } = true;
+
     public bool EnableWireEvidence { get; init; } = true;
 }

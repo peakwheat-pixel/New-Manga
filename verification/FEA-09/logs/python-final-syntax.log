@@ -1,0 +1,4 @@
+{"timestamp":"2026-11-03T13:10:08.702Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Python314/python.exe","args":["-c","import ast,pathlib;files=['src/bootstrap/core_assembly.py','src/bootstrap/core_service.py']+list(map(str,pathlib.Path('src/application/importing/referenced').glob('*.py')))+list(map(str,pathlib.Path('src/infrastructure/resource_channel').glob('*.py')));[ast.parse(pathlib.Path(p).read_text(encoding='utf-8')) for p in files];print('AST_OK',len(files))"]}
+AST_OK 22
+
+EXIT=0

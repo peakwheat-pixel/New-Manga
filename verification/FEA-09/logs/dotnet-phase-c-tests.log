@@ -1,0 +1,59 @@
+{"timestamp":"2026-11-03T12:55:10.139Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"dotnet","args":["test","apps/desktop-avalonia/NewManga.sln","--no-build","--settings","apps/desktop-avalonia/tests/NewManga.runsettings","--nologo","--filter","FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests"]}
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Debug\net9.0\NewManga.Appearance.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Debug\net9.0\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Debug\net9.0\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Debug\net9.0\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Debug\net9.0\NewManga.Presentation.Avalonia.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Debug\net9.0\NewManga.Appearance.Tests.dll
+
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Debug\net9.0\NewManga.ApplicationCore.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Debug\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Debug\net9.0\NewManga.ThemeEngine.Tests.dll
+
+
+
+
+已通过! - 失败:     0，通过:     2，已跳过:     0，总计:     2，持续时间: 22 ms - NewManga.CoreClient.Tests.dll (net9.0)
+  失败 NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal [9 ms]
+  错误消息:
+   NewManga.Host.Sources.SourceAccessException : SOURCE_REGISTRY_UNAVAILABLE
+  堆栈跟踪:
+     at NewManga.Host.Sources.DpapiSecretProtector.Transform(Byte[] bytes, Boolean protect) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\Sources\SourceSecurity.cs:line 35
+   at NewManga.Host.Sources.DpapiSecretProtector.Protect(Byte[] plaintext) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\Sources\SourceSecurity.cs:line 23
+   at NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\SourceRegistryTests.cs:line 14
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  失败 NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset [11 ms]
+  错误消息:
+   System.UnauthorizedAccessException : Attempted to perform an unauthorized operation.
+  堆栈跟踪:
+     at System.Security.AccessControl.Win32.SetSecurityInfo(ResourceType type, String name, SafeHandle handle, SecurityInfos securityInformation, SecurityIdentifier owner, SecurityIdentifier group, GenericAcl sacl, GenericAcl dacl)
+   at System.Security.AccessControl.NativeObjectSecurity.Persist(String name, SafeHandle handle, AccessControlSections includeSections, Object exceptionContext)
+   at System.Security.AccessControl.NativeObjectSecurity.Persist(String name, AccessControlSections includeSections)
+   at System.Security.AccessControl.FileSystemSecurity.Persist(String fullPath)
+   at NewManga.Host.Sources.SourceSecurity.PrivateDirectory(String directory) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\Sources\SourceSecurity.cs:line 73
+   at NewManga.Host.Sources.SourceAccessRegistry..ctor(String dataRoot, ISecretProtector protector) in G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\Sources\SourceAccessRegistry.cs:line 30
+   at NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\SourceRegistryTests.cs:line 30
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+失败!  - 失败:     2，通过:     0，已跳过:     0，总计:     2，持续时间: 17 ms - NewManga.Host.Tests.dll (net9.0)
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Debug\net9.0\NewManga.DesignSystem.Tests.dll
+
+No test matches the given testcase filter `FullyQualifiedName~SourceRegistryTests|FullyQualifiedName~WireLogSourceRedactionTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+
+[xUnit.net 00:00:00.28]     NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal [FAIL]
+[xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset [FAIL]
+
+EXIT=1

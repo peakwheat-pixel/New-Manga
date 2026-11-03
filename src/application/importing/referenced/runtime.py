@@ -9,6 +9,7 @@ persisted; committed pages are the only durable outcome (C-16 §4).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from contextlib import nullcontext
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -503,23 +504,29 @@ class ReferencedImportRuntime:
                 if existing_version_id is not None
                 else fresh_entry_ids.get(entry.ordinal)
             )
-            page_id, bound_entry_id = self._commit_page_unit(
-                operation=operation,
-                resolved=resolved,
-                scanned=scanned,
-                entry=entry,
-                entry_digest=entry.content_digest,
-                width=width,
-                height=height,
-                mime_type=mime_type,
-                source_order=next_order,
-                source_id=source_id,
-                version_id=version_id,
-                insert_source=first_page and existing_source_id is None,
-                insert_metadata=first_page and existing_version_id is None,
-                fresh_entry_ids=fresh_entry_ids,
-                bound_entry_id=final_entry_id,
-            )
+            guard = getattr(self._access, "commit_guard", None)
+            try:
+                with guard(source.grant_id) if guard else nullcontext():
+                    self._access.verify_before_commit(source.grant_id)
+                    page_id, bound_entry_id = self._commit_page_unit(
+                        operation=operation,
+                        resolved=resolved,
+                        scanned=scanned,
+                        entry=entry,
+                        entry_digest=entry.content_digest,
+                        width=width,
+                        height=height,
+                        mime_type=mime_type,
+                        source_order=next_order,
+                        source_id=source_id,
+                        version_id=version_id,
+                        insert_source=first_page and existing_source_id is None,
+                        insert_metadata=first_page and existing_version_id is None,
+                        fresh_entry_ids=fresh_entry_ids,
+                        bound_entry_id=final_entry_id,
+                    )
+            except SourceImportError as error:
+                raise _HaltOperation(error.code) from error
             first_page = False
             progress.committed_pages += 1
             progress.committed_entries += 1

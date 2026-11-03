@@ -242,6 +242,8 @@ public sealed class CoreServiceOptions
 
     public string? ManagedRoot { get; init; }
 
+    public bool ReferencedImportEnabled { get; init; } = true;
+
     public required string StderrLogPath { get; init; }
 
     public string? WireLogPath { get; init; }
@@ -354,6 +356,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
         var environment = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["NEWMANGA_DATA_ROOT"] = options.DataRoot,
+            ["NEWMANGA_REFERENCED_IMPORT_ENABLED"] = options.ReferencedImportEnabled ? "true" : "false",
             ["M2RC1_DERIVED_ROOT"] = options.DerivedRoot,
             ["M2RC2_CATALOG_DB"] = options.CatalogDbPath,
         };

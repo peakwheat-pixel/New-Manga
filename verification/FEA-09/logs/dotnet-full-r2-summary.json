@@ -1,0 +1,247 @@
+{
+  "complete": false,
+  "exit": null,
+  "termination": "ETIMEDOUT (170000 ms)",
+  "failures": [
+    "NewManga.Host.Tests.TileChannelTests.Containment_OutsideRoot_And_Junction_Rejected",
+    "NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtReadTime_AfterPathReplacement",
+    "NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtIssue",
+    "NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal",
+    "NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset",
+    "NewManga.App.Tests.FluentResidual2DecorativeTests.TokenGradient_DetachUnsubscribes_AndReattachRefreshes",
+    "NewManga.App.Tests.FluentResidual2DecorativeTests.PageTurnParticles_ProductionClock_SamplesVisibleMidAndRemovedTail",
+    "NewManga.App.Tests.FluentResidual2DecorativeTests.Decor_Frames_Are_Captured_Only_When_Opted_In",
+    "NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In"
+  ],
+  "skips": [
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    },
+    {
+      "name": "NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason",
+      "reason": "原始 stdout 未给出逐项详细 skip 原因；未补齐 sidecar/fixture，不推断为基线 skip"
+    }
+  ],
+  "completedAssemblySummaries": [
+    "已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 52 ms - NewManga.Appearance.Tests.dll (net9.0)\r",
+    "已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 186 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)\r",
+    "失败!  - 失败:     5，通过:    48，已跳过:    28，总计:    81，持续时间: 681 ms - NewManga.Host.Tests.dll (net9.0)\r",
+    "已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)\r",
+    "已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)\r",
+    "已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)\r",
+    "已通过! - 失败:     0，通过:   131，已跳过:    22，总计:   153，持续时间: 41 s - NewManga.CoreClient.Tests.dll (net9.0)\r"
+  ]
+}

@@ -20,6 +20,12 @@ import pytest  # noqa: E402
 from infrastructure.sqlite.library import SqliteLibraryRepository  # noqa: E402
 from infrastructure.sqlite.migrator import MigrationRunner  # noqa: E402
 from infrastructure.sqlite.schema import default_migrations  # noqa: E402
+from infrastructure.resource_channel.source_strict_read import (  # noqa: E402
+    read_verified_bytes as strict_read_verified_bytes,
+)
+from application.importing.referenced import scanner as referenced_scanner  # noqa: E402
+
+referenced_scanner.install_verified_reader(strict_read_verified_bytes)
 
 NOW = "2026-11-03T00:00:00.000+00:00"
 

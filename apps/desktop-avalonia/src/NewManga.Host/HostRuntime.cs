@@ -6,6 +6,7 @@ using NewManga.CoreClient.Diagnostics;
 using NewManga.Host.Credentials;
 using NewManga.CoreClient.Transport;
 using NewManga.Host.Resources;
+using NewManga.Host.Sources;
 
 namespace NewManga.Host;
 
@@ -46,6 +47,8 @@ public sealed class HostRuntime : IAsyncDisposable
 
     /// <summary>GRANT-ISSUER-1: host-control grant chain + whitelisted shell actions (null until ready).</summary>
     public HostGrantCoordinator? Grants { get; private set; }
+
+    public SourceReadCoordinator? Sources { get; private set; }
 
     /// <summary>CREDENTIAL-PORT-1: OS-vault credential port + Core bind/clear bridge (null when unavailable).</summary>
     public HostCredentialCoordinator? Credentials { get; private set; }
@@ -621,7 +624,7 @@ public sealed class HostRuntime : IAsyncDisposable
 
             var decision = CoexistenceRules.Decide(LegacyShell.Detected, _options.ParityReached);
             _policy = DataRootPolicy.For(_options.DataRoot, decision.Mode);
-            _log.Info($"mode={decision.Mode} reason={decision.Reason} data_root={_options.DataRoot}");
+            _log.Info($"mode={decision.Mode} reason={decision.Reason}");
 
             if (_options.FirstRunBackupEnabled)
             {
@@ -662,6 +665,7 @@ public sealed class HostRuntime : IAsyncDisposable
                     DerivedRoot = derivedRoot,
                     CatalogDbPath = catalogDb,
                     ManagedRoot = managedRoot,
+                    ReferencedImportEnabled = _options.ReferencedImportEnabled,
                     StderrLogPath = _log.CoreServiceStderrPath,
                     WireLogPath = coreWire,
                     StartupTimeout = _options.StartupTimeout,
@@ -707,6 +711,13 @@ public sealed class HostRuntime : IAsyncDisposable
                 System.Text.Json.JsonElement payload,
                 CancellationToken token)
             {
+                if (HostCommandRegistry.SourceCommandNames.Contains(name))
+                {
+                    if (name is not ("source_list_roots" or "get_import_receipt")) RequireWritesAllowed();
+                    var sources = Sources ?? throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+                    return new HostCommandResult(name, HostCommandStatus.Implemented, HostCommandChannel.HostLocal,
+                        await sources.InvokeAsync(name, payload, token).ConfigureAwait(false));
+                }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
                     var credentials = Credentials
@@ -730,6 +741,13 @@ public sealed class HostRuntime : IAsyncDisposable
                 _log.Info($"host-control session opened ({session.HostSessionId})");
                 Grants = new HostGrantCoordinator(
                     CoreService, _options.DataRoot, _options.LogDirectory, _options.RequestTimeout);
+                try
+                {
+                    Sources = new SourceReadCoordinator(CoreService, new SourceAccessRegistry(_options.DataRoot),
+                        () => _options.ReferencedImportEnabled);
+                }
+                catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
+                { _log.Warn("source registry unavailable"); }
                 Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)

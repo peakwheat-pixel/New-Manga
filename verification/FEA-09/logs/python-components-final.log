@@ -1,0 +1,18 @@
+{"timestamp":"2026-11-03T13:06:09.912Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Python314/python.exe","args":["-c","import sys,unittest;sys.path.insert(0,'src');sys.path.insert(0,'tests/fea09');suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(n) for n in ['test_source_grants_unittest','test_rendition_cache_unittest']);r=unittest.TextTestRunner(verbosity=2).run(suite);sys.exit(not r.wasSuccessful())"]}
+test_all_four_scope_dimensions_are_bound (test_source_grants_unittest.SourceGrantTests.test_all_four_scope_dimensions_are_bound) ... ok
+test_expiry_and_changed_identity_refuse_commit (test_source_grants_unittest.SourceGrantTests.test_expiry_and_changed_identity_refuse_commit) ... ok
+test_generation_revoke_and_eof (test_source_grants_unittest.SourceGrantTests.test_generation_revoke_and_eof) ... ok
+test_signature_priority_and_entry_budget (test_source_grants_unittest.SourceGrantTests.test_signature_priority_and_entry_budget) ... ok
+test_strict_handle_blocks_replacement_until_commit_ends (test_source_grants_unittest.SourceGrantTests.test_strict_handle_blocks_replacement_until_commit_ends) ... ok
+test_corruption_rebuild_and_crash_recovery (test_rendition_cache_unittest.RenditionCacheTests.test_corruption_rebuild_and_crash_recovery) ... ok
+test_key_changes_with_version_entry_decoder_and_parameters (test_rendition_cache_unittest.RenditionCacheTests.test_key_changes_with_version_entry_decoder_and_parameters) ... ok
+test_lru_tie_large_first_and_active_protection (test_rendition_cache_unittest.RenditionCacheTests.test_lru_tie_large_first_and_active_protection) ... ok
+test_preflight_pin_and_concurrent_decode_queue (test_rendition_cache_unittest.RenditionCacheTests.test_preflight_pin_and_concurrent_decode_queue) ... ok
+test_single_request_budget_precedes_decode (test_rendition_cache_unittest.RenditionCacheTests.test_single_request_budget_precedes_decode) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.202s
+
+OK
+
+EXIT=0

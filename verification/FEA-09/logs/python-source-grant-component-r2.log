@@ -1,0 +1,94 @@
+{"timestamp":"2026-11-03T13:01:37.974Z","cwd":"G:/CODEX/New Manga","head":"f9a2fa8e077f21c93131237171a32e85f6942200","exe":"C:/Python314/python.exe","args":["-c","import sys,unittest;sys.path.insert(0,'src');sys.path.insert(0,'tests/fea09');suite=unittest.defaultTestLoader.loadTestsFromName('test_source_grants_unittest');r=unittest.TextTestRunner(verbosity=2).run(suite);sys.exit(not r.wasSuccessful())"]}
+test_all_four_scope_dimensions_are_bound (test_source_grants_unittest.SourceGrantTests.test_all_four_scope_dimensions_are_bound) ... ok
+test_expiry_and_changed_identity_refuse_commit (test_source_grants_unittest.SourceGrantTests.test_expiry_and_changed_identity_refuse_commit) ... ERROR
+test_generation_revoke_and_eof (test_source_grants_unittest.SourceGrantTests.test_generation_revoke_and_eof) ... ERROR
+test_signature_priority_and_entry_budget (test_source_grants_unittest.SourceGrantTests.test_signature_priority_and_entry_budget) ... FAIL
+test_strict_handle_blocks_replacement_until_commit_ends (test_source_grants_unittest.SourceGrantTests.test_strict_handle_blocks_replacement_until_commit_ends) ... ERROR
+
+======================================================================
+ERROR: test_expiry_and_changed_identity_refuse_commit (test_source_grants_unittest.SourceGrantTests.test_expiry_and_changed_identity_refuse_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\tests/fea09\test_source_grants_unittest.py", line 78, in test_expiry_and_changed_identity_refuse_commit
+    self.registry.verify_before_commit(p["grant_id"])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_read_refs.py", line 267, in verify_before_commit
+    with self.commit_guard(grant_id):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_read_refs.py", line 278, in commit_guard
+    stack.enter_context(source_lease(path, facts, grant.budget.max_bytes))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 530, in enter_context
+    result = _enter(cm)
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_strict_read.py", line 31, in source_lease
+    raise SourceImportError("FILE_IDENTITY_CHANGED", "source identity changed")
+application.importing.referenced.errors.SourceImportError: source identity changed
+
+======================================================================
+ERROR: test_generation_revoke_and_eof (test_source_grants_unittest.SourceGrantTests.test_generation_revoke_and_eof)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\tests/fea09\test_source_grants_unittest.py", line 71, in test_generation_revoke_and_eof
+    self.registry.verify_before_commit(fresh["grant_id"])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_read_refs.py", line 267, in verify_before_commit
+    with self.commit_guard(grant_id):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_read_refs.py", line 278, in commit_guard
+    stack.enter_context(source_lease(path, facts, grant.budget.max_bytes))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 530, in enter_context
+    result = _enter(cm)
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_strict_read.py", line 31, in source_lease
+    raise SourceImportError("FILE_IDENTITY_CHANGED", "source identity changed")
+application.importing.referenced.errors.SourceImportError: source identity changed
+
+======================================================================
+ERROR: test_strict_handle_blocks_replacement_until_commit_ends (test_source_grants_unittest.SourceGrantTests.test_strict_handle_blocks_replacement_until_commit_ends)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\tests/fea09\test_source_grants_unittest.py", line 86, in test_strict_handle_blocks_replacement_until_commit_ends
+    with self.registry.commit_guard(p["grant_id"]):
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_read_refs.py", line 278, in commit_guard
+    stack.enter_context(source_lease(path, facts, grant.budget.max_bytes))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 530, in enter_context
+    result = _enter(cm)
+  File "C:\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "G:\CODEX\New Manga\src\infrastructure\resource_channel\source_strict_read.py", line 31, in source_lease
+    raise SourceImportError("FILE_IDENTITY_CHANGED", "source identity changed")
+application.importing.referenced.errors.SourceImportError: source identity changed
+
+======================================================================
+FAIL: test_signature_priority_and_entry_budget (test_source_grants_unittest.SourceGrantTests.test_signature_priority_and_entry_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\tests/fea09\test_source_grants_unittest.py", line 56, in test_signature_priority_and_entry_budget
+    self.assert_code("SOURCE_BUDGET_EXCEEDED",lambda:self.registry.register(p))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga\tests/fea09\test_source_grants_unittest.py", line 50, in assert_code
+    self.assertEqual(code,caught.exception.code)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SOURCE_BUDGET_EXCEEDED' != 'SOURCE_ACCESS_DENIED'
+- SOURCE_BUDGET_EXCEEDED
++ SOURCE_ACCESS_DENIED
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.069s
+
+FAILED (failures=1, errors=3)
+
+EXIT=1
