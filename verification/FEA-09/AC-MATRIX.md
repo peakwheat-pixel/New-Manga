@@ -11,7 +11,7 @@
 | AC-5 取消/进度/计数 | `test_referenced_flow.py`（21，含 accepted 取消/部分取消/失败/计数/跨重启/自然键） | passed | PARTIAL | 丢 ACK/异常/解码中取消的扩展场景未单列；Host 可观察进度的真实 IPC 未验 |
 | AC-6 隔离与 V2 | `test_referenced_resolve.py`（7，含 Core wire face/双读）；Host `SourceRegistryTests` 2；**`Fea09RealIpcTests` 真实 stdio**（Plan/Start/Receipt/Resolve + `HostCommandDispatcher` V2 adapter，17 frames） | real IPC 1 passed；组件 9 passed | PARTIAL | 真实 Host IPC 与生产 V2 command adapter 已过；UI 视图/ViewModel 归 FEA-09-UI-1；其余 AC 行为未逐一 IPC 化 |
 | AC-7 完整性/迁移/回退 | `test_v7_migration.py`（9）、`test_read_paths.py`（8）、`test_referenced_resolve.py`（7，含双读 managed+referenced resolve）、flow `test_disabled_flag_rejects_new_imports` | passed | PARTIAL | 缺文件/磁盘满/中断不切入口负测未单列；迁移双集合已测 |
-| AC-8 证据与交付 | `dotnet build` 0/0；`.NET` 全量 **1298/0/57**；`pytest tests/fea09` **98**；`check.ps1` PASS；`verify_pins` 17/17；FEA-06 四 PNG 未变 | 全绿 | PARTIAL | 独立 impl Review 未 Appointment/进行；最终 DSH 集成验证未完成；EV 需最终 pin 收敛 |
+| AC-8 证据与交付 | `dotnet build` 0/0；`.NET` 全量 **1298/0/58**（含真实 IPC 测试默认跳过）；`pytest tests/fea09` **100**；`check.ps1` PASS；`verify_pins` 17/17；FEA-06 四 PNG 未变 | 全绿 | PARTIAL | 独立 impl Review 未 Appointment/进行；最终 DSH 集成验证未完成 |
 | AC-9 授权/lease | `test_source_grants_unittest.py`（5）、`test_referenced_wire.py`（13，含 Host 命令/脱敏/撤销） | 18 passed | PARTIAL | Registry 重启/根替换/跨根 reparse 的原生组合未全跑；Host 侧 Revoke ACK/EOF 竞态未集成测 |
 | AC-10 cache/预算 | `test_rendition_cache_unittest.py`（5）、`test_referenced_resolve.py`（cache 行/预算 2） | 7 passed | PARTIAL | LRU/总字节上限/并发解码上限/崩溃恢复/通道隔离未接线验证（当前仅 row 写入 + 单请求预算） |
 

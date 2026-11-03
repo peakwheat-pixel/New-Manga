@@ -1244,3 +1244,7 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **验证**：`pytest tests/fea09` 100 passed；check PASS、pins 17/17；证据 `verification/FEA-09/ipc/`。
 - **AC 矩阵**：AC-6 更新为“真实 IPC 已完成、V2 UI 路径未走（UI-1）”；其余 AC 仍 PARTIAL。
 - **下一可推进项**：V2 可达路径（C# HostCommandDispatcher/生产 adapter 层）断言、AC-1/2/4/5/9/10 缺口补齐、独立 impl Review。
+### round 2 收口
+- 全量 .NET（含新 IPC 测试默认跳过）：**1298 passed / 0 failed / 58 skipped**（0 warning）；`pytest tests/fea09` 100；check PASS、pins 17/17。
+- AC-6 真实 IPC + HostCommandDispatcher V2 adapter 已过；EV-093..095 已 pin。
+- 下一优先级：独立 impl Review（ Appointment 未参与实现/scope-r2 的 Codex/ZCode 会话）、AC-1/2/4/5/9/10 剩余矩阵、最终 DSH 集成。
