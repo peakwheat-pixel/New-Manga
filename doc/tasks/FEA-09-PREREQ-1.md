@@ -163,3 +163,4 @@ out_of_scope:
 | 2026-11-03 | 按契约独立复核 r1（changes_requested，P0=0/P1=11/P2=2）扩域：新增 **C-05 v1.1 / C-06 v1.1 UNFREEZE 载体**（`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）与对应冻结记录/矩阵更新；写域增加 C-05/C-06 草案与冻结记录；C-15/C-16 返修 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-001/R1-002 等；C-05/C-06 冻结记录「修订须 UNFREEZE」纪律 |
 | 2026-11-03 | 按契约复核 r2/r3 返修：C-15 v4/C-16 v4 + C-05/C-06 v1.1；扩展写域至 `tools/governance/verify_pins.ps1`（17 项 pin 覆盖）与 freeze matrix 的 C-05/C-06 重冻注记；r1/r2/r3 报告归档供原文闭环 | `doc/reviews/FEA-09-PREREQ-1-r2.md`、`-r3.md` |
 | 2026-11-03 | 按契约复核 r4 收口：C-15/C-16 定稿 **v5**（迁移断言限定、PDF 重复 occurrence 禁用位置锚定、receipt 示例/计数统一）；门禁统一 **17/17**；FEA-09 AC-7 登记 `SOURCE_PROJECT_MISMATCH` 负测；清理 trailing whitespace | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-001…R4-004 |
+| 2026-11-03 | 按契约复核 r5 收口：C-16 **v6**（accepted 取消示例、`planned_pages` 定义与 remaining 公式、C-15 v5 引用统一）；C-15 v5 不变 | `doc/reviews/FEA-09-PREREQ-1-r5.md` R5-001/R5-002 |
