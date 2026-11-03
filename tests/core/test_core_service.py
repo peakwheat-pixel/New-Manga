@@ -152,7 +152,9 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (three domain commands)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
         assert res["result"]["protocol_version"] == {"major": 2, "minor": 3}
-        assert res["result"]["capabilities"] == ["library.list_books", "source.read/1"]
+        assert res["result"]["capabilities"] == [
+            "library.list_books", "source.read/1", "source.resolve-secret/1",
+        ]
 
         # 6. ListBooks on empty repository
         list_req = json.dumps({
@@ -238,7 +240,9 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
         assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 3}
-        assert ping_resp["result"]["capabilities"] == ["library.list_books", "source.read/1"]
+        assert ping_resp["result"]["capabilities"] == [
+            "library.list_books", "source.read/1", "source.resolve-secret/1",
+        ]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):
         # no weights exist under this temp data root, so the assembled manga
