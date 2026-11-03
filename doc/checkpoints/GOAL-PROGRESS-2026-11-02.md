@@ -1253,3 +1253,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 独立 Codex 会话（`01a1a1b4…`，未参与实现）reviewed_head `6a164253d`，报告 `doc/reviews/FEA-09-impl-r1.md`（SHA-256 `7e6f4b78…`）：**P0=0 / P1=8 / P2=3**。
 - P1 关键项：managed V_artifact 生产读路径回归（I001）、grant 四维 scope/身份校验缺失（I002）、部分导入重试整源跳过（I003）、加密 PDF 导入失败（I004）、加密源 resolve 无密码（I005）、folder resolve 不可用（I006）、解码预算后置（I007）、生产 cache 绕过冻结约束（I008）；P2：plan 未绑定 book/policy（I009）、后台异常丢原因/计数（I010）、EV 证据链未 final（I011）。
 - DSH 处置：全部接受；分三批返修（I001/I002/I007/I009/I010 → I003/I004/I006 → I005/I008；I011 closeout）；返修后必须新的独立实现复核，再 DSH 集成；AC 保持 PARTIAL。
+## 190. FEA-09 Review r1 处置与批次 1（2026-11-03）
+
+- **实现 Review r1**（Codex 独立会话 `01a1a1b4…`，reviewed_head `6a164253d`）：**changes_requested P0=0/P1=8/P2=3**；报告 `doc/reviews/FEA-09-impl-r1.md`（SHA-256 `7e6f4b78…`）。
+- **I001 裁决**（Codex 独立裁决会话，未参与实现/Review）：选 **B=先 UNFREEZE C-05/C-15**（新增 `V_managed=V_artifact∨V_copy_original`），重冻后再返修；归档 `doc/reviews/FEA-09-I001-adjudication.md`（`88fdd165…`）。理由：直接 artifact-only 会隐藏正常导入页；补 ORIGINAL 行违反 C-15 §1 且需 UNFREEZE。
+- **批次 1 返修（DSH）**：I002 grant 四维绑定（`bind_imported_entry`/`find_bound_for_source`，删身份回退）；I007 预算前置（PDF page_size/图片 header 先检查，hook decoder 零调用）；I009 plan 绑定 book/policy；I010 typed 存储原因+counts。`pytest tests/fea09` **103 passed**；library 63、import_formats 32、m2_resource_channel 110、core_service 6 全 PASS；真实 IPC 1 passed。
+- **待办**：批次 2（I003/I004/I006）、批次 3（I005/I008）、I001 UNFREEZE 材料+独立复核+重冻+返修、I011 EV 收敛、新独立复核。
