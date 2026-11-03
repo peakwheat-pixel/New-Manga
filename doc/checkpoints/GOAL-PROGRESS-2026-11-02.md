@@ -1055,3 +1055,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 核验：build 0 错误；无过滤全量通过（App 653、其余不变，总 **1292/0/57**）；check PASS(3)；pins 15/15；**src_changes=0（无生产代码改动）**；旧四 PNG 未动（未含改动）。
 - 已派 **impl-r1 独立复核**（D-9 workflow `workflow-ee455a2363be4b01`）：按冻结 AC 审计 H4 同句柄/mmap、H5 判定操作/禁清空 API/fixture 处置、H6 口径、AC4 矩阵 measured/mocked/inferred、安全/门禁/可复现；approved 后 DSH 集成验证并关闭 FEA-08。
 - 未 push；Codex 10:25 窗口备用（可作第二复核/后续）。
+## 164. 新会话交接包（2026-11-03 09:35）
+
+- 用户将开新会话继续；已写交接包 `G:\CODEX\New Manga.workspace\HANDOFF-NEW-SESSION-2026-11-03.md`（状态/指针/立即要做/CLI 配方/约束/债务/首命令）。
+- 当前 head `e69f8164c`；FEA-08 in_review（实现 `c422bf164`/登记 `42de98812`，AC1–4 MET，36 pins；DSH 核验 1292/0/57、src_changes=0、check PASS、pins 15/15）。
+- **impl-r1 复核在旧会话 workflow `workflow-ee455a2363be4b01` 运行中**；若旧会话关闭导致中断，新会话先从 `doc/reviews/FEA-08-impl-r1.md` 是否存在判断，缺则重派独立 Review。
+- 治理 PASS(3)；未 push。
