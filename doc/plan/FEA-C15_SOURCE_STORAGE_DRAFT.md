@@ -1,6 +1,6 @@
-# FEA-C15 Source 存储契约（草案 v4，处置契约复核 r3）
+# FEA-C15 Source 存储契约（草案 v5，处置契约复核 r4）
 
-状态：**草案 v4 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
+状态：**草案 v5 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
 日期：2026-11-03
 作者：DSH（Lead / Architect / Integrator）
 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05/C-06/C-14 冻结契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）。
@@ -39,7 +39,7 @@
 - **v7 验证断言（最小集）**：
   1. 旧 `_COMPLETE_PAGE_WHERE` 集合（含软删）= 迁移后 managed `is_complete_page` 集合（逐 page_id）；
   2. 同一 t/父级条件下的旧 C-05 v1.0 `V_artifact` 可见集合 = 迁移后 C-05 v1.1 managed 分支 `V` 集合（逐 page_id 与顺序）；**不得**要求 `V` 集合 = complete 集合（导入元数据不完整但 artifact/revision valid 的旧页仍可见）；
-  3. 旧不可见/半写行仍为 `incomplete` 且进入待恢复清单（不删除、不误标 complete）；
+  3. 旧完整性谓词（`_COMPLETE_PAGE_WHERE`）不成立的半写/placeholder 行保持 `incomplete` 并进入待恢复清单；旧 complete 但 V 不可见的行（无 artifact、软删、父级删除）保持 `complete` 且仍不可见（不得改成 incomplete，也不得把其它 incomplete 行提升 complete）；
   4. `sort_order`/`source_order`/`managed_original_ref`/`source_hash`/Lock/人工数据行数与基线逐项相等；
   5. **旧 Managed 资源可读性**：资源校验对象 = 上述第 2 条旧 `V` 可见页解析到的 original revision `managed_path`（及 `pages.managed_original_ref` 若非空）；无任何可解析 original 路径的 V 页 → `SOURCE_MIGRATION_RESOURCE_UNVERIFIED`；缺失/不可读 → 同上（附 page_id 列表），**回滚并拒绝切换入口**。**不得**假定 V 页必有 `managed_original_ref`（v1 placeholder/artifact-only 行）。
   - 产品门禁（build/全量测试/旧 FEA-06 四 PNG/check/vpins）属集成验证，不是 SQLite 回调内部动作。
@@ -197,7 +197,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 
 - `page_bindings.verified_digest` 必须等于对应 `source_entries.content_digest`；referenced 页面可读谓词包含该一致性（§4）。
 - `project_id` = 所属 `books.book_id`（项目粒度裁决为 **book**）；同一 book 内一个 entry 只能有一个非 superseded binding（软删页面的 binding 仍占位，重导入按“已引用”处理，不新建重复页）。
-- `source_entries.entry_id` 跨版本保续规则见 §3.3；`(version_id, ordinal)` 与 `(version_id, stable_sort_key)` 双唯一防止排序键冲突。
+- `source_entries.entry_id` 跨版本保续规则见 §3.2；`(version_id, ordinal)` 与 `(version_id, stable_sort_key)` 双唯一防止排序键冲突。
 - `rendition_cache.rel_path` 必须是 derived 根内相对路径且以 `source-renditions/` 开头（应用层校验；DDL 不替代该边界），`rendition_kind` 不含 raw 原始字节发布。
 - `source_locations` 唯一规则：`UNIQUE(source_id, content_digest, volume_serial, file_id)`（同一 source 的物理身份只一行）＋ 部分唯一 `is_current=1`（每个 source 只有一个当前位置）。重授权/重新注册**原地更新**该行的 `registry_id/authorization_generation/last_verified_at`，**不新建重复 location**；移动/改名产生新物理身份时，先把旧行置 `is_current=0` 再插入新行。跨 Registry 命中同一物理身份时同样复用 source/location 并原地更新注册信息。
 - **book 归属守卫（应用层，冻结）**：绑定提交事务内必须验证 `pages.page_id → chapters.chapter_id → chapters.book_id == page_bindings.project_id`；不符 → typed `SOURCE_PROJECT_MISMATCH` 并回滚。DDL 只分别校验 `page_id`/`project_id` 存在，**不声称**覆盖该关系；AC-7 含该负测。
@@ -225,7 +225,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
   1. **版本内验证身份** = `content_digest`（page-identity/encoded），只用于该版本行与 binding 的 `verified_digest`，**不单独承担**跨版本匹配；
   2. **跨版本成员匹配证据** = `pixel_digest` + `width/height` + `orientation`（`pixel-digest/1`），仅用于容器内容变化后的候选匹配与人工确认；
   3. 同一 source 且容器 digest 未变 → 逐 entry 身份/入口直接保留（decoder/scale 变化只更新观察列，不触发匹配）；
-  4. 容器 digest 变化（重编码/插页/成员增删）→ 以 pixel 证据在旧版本中找唯一匹配（重复 occurrence 需 `ordinal`/`locator` 锚定）；唯一匹配 → 复用 `entry_id` 并新建版本行；歧义/无匹配 → 新 `entry_id` + `needs_confirmation`；
+  4. 容器 digest 变化（重编码/插页/成员增删）→ 以**可比 pixel 证据**（同一 `pixel_digest_algorithm` + `decoder_name`/`decoder_version`/`decoder_params`；不可比时按冻结参数重算后再比较）在旧版本中找**一对一唯一匹配**；重复 occurrence（同 pixel 证据多份）**不得**以 ordinal/locator 锚定自动保续，整组进入 `needs_confirmation`（保留旧 PageId/人工版本/进度，不自动迁移）；唯一页匹配 → 复用 `entry_id` 并新建版本行；无匹配 → 新 `entry_id` + `needs_confirmation`；
   5. **不得**仅凭 `container_digest + ordinal` 跨版本保续，也不得按 digest 自动合并重复 occurrence 或迁移人工内容。
 - 同内容不同物理源（volume/file id 不同）→ 不同 `source_id`（I-3）；`import_as_new` 不能绕过项目内 entry 唯一性（C-16 §4）。
 - **源复用规则（v3）**：Core 写入前按**物理身份** `(content_digest, volume_serial, file_id)` 查 `source_locations`；命中则复用同一 `source_id`/version/entries，并**原地更新**该 location 的 `registry_id/authorization_generation/last_verified_at`（不新建重复 location；DDL 的 `UNIQUE(source_id, content_digest, volume_serial, file_id)` + 部分唯一 `is_current=1` 保证每个 source 只有一个当前物理位置）。未命中才新建 source/location。重授权/重新注册不改变 `source_id`；旧 binding 的 `authorization_generation` 允许 ≤ 当前 Host generation，读取时以 Host grant 的 identity/generation 复核为准（不要求等值）。
@@ -333,4 +333,4 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案：v7 DDL、Host Registry 约束、跨存储次序 | FEA-09 scope-r1 |
-| 2026-11-03 | **v4（处置契约复核 r3）**：删除 location 旧唯一键残留，统一为 source 内物理身份唯一 + 每 source 单一 current + 原地重授权；PDF 跨版本保续改为「版本内 identity / 跨版本 pixel 匹配证据」职责分离；迁移断言拆分为 complete 集合与 V_artifact 集合双守恒 + 资源校验对象明确；新增 `SOURCE_PROJECT_MISMATCH` 应用层 book 归属守卫 | `doc/reviews/FEA-09-PREREQ-1-r3.md` R3-001/R3-002/R3-003/R3-006 |
+| 2026-11-03 | **v5（处置契约复核 r4）**：迁移第 3 条限定为半写/placeholder 保持 incomplete，旧 complete 不可见行保持 complete 且不可见；PDF 重复 occurrence 禁止位置锚定自动保续，跨版本 pixel 证据要求可比 profile/一对一唯一匹配；修正 §3.3→§3.2 节号 | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-001/R4-002/R4-004 |
