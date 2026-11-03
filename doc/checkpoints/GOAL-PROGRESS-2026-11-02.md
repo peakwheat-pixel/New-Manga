@@ -1191,3 +1191,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **pin**：erify_pins.ps1 扩展为 **17 项**（C15/C16 纳入、缺记录失败），PASS 17/17；check PASS(3)；pin 负测（缺记录/错 pin）EXIT 1；DDL 内存验证 PASS；范围 diff（src/apps/tests）空；旧 FEA-06 四 PNG 前缀匹配。证据 erification/FEA-09-PREREQ-1/logs/。
 - **Task done**：C-15/C-16 FROZEN 记录建立；FROZEN-C05/C06 更新（保留 v1.0 pin）；freeze matrix 17 对象；Task EV 6 项 @ 冻结 commit；Handoff doc/handoffs/FEA-09-PREREQ-1.md；STATUS 指向 FEA-09（proposed，scope-r2 待派）。
 - **下一步**：FEA-09 scope-r2（Codex 新独立上下文；prompt 见 workspace FEA-09-PREREQ-1\scope-r2-prompt.md，需按冻结后状态更新引用）；approved 后 DSH Appointment 实现（建议 owner=Codex）。不 push；不重开 FEA-08。
+
+## 182. FEA-09 scope-r2 approved + ready（2026-11-03）
+
+- **Scope-r2**：Codex 独立会话（未参与 FEA-09 草案/scope-r1 处置/契约起草），**approved**（P0=0/P1=0/P2=2）；报告原字节归档 doc/reviews/FEA-09-scope-r2.md（SHA-256 3fd18cbc…，reviewed_head 19e621004）。
+- **P2 处置**：R2S-001 → AC-5/AC-7 补判别（V 可见≠R 可读；重启 receipt 不持久；managed artifact-only 旧页仍按 V_artifact 可见）；R2S-002 → 验证计划补 planned 命令/环境/证据文件（全部 NOT_RUN，不伪装 PASS）。
+- **前置**：FEA-09-PREREQ-1 done 24c105679；C-15 v1.0 / C-16 v1.0 / C-05 v1.1 / C-06 v1.1 冻结；erify_pins 17/17；check PASS(3)。
+- **释放**：FEA-09 proposed → ready；owner=**Codex**（DSH Appointment；待认领 in_progress）；实现 Reviewer 待 Appointment（不得由实现者同一会话自审）；base=19e621004；FEA-09-UI-1 保持独立 scope（FEA-09 不宣称完整 UI 验收）。
+- **下一步**：Owner 认领后按 Task 卡 AC-1…AC-10 实施（写域/证据口径见卡），交付 Handoff + EV → 独立 impl Review → DSH 集成验证；不 push、不重开 FEA-08、不碰真实用户数据。

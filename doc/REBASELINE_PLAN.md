@@ -33,10 +33,10 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
-进行中：FEA-09（proposed：前置 FEA-09-PREREQ-1 已 done，C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17；待 scope-r2）；FEA-09-UI-1（proposed：最小 UI 接线草案）；FEA-08 已 done（1292/0/57）；D-14 等已终态
+READY 节点：FEA-09
+进行中：FEA-09（ready；scope-r2 approved；owner=Codex 待认领）；FEA-09-UI-1（proposed：最小 UI 接线草案）；FEA-08 已 done（1292/0/57）；FEA-09-PREREQ-1 已 done（契约冻结 17/17）
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done，契约冻结）→ FEA-09（proposed，待 scope-r2）→ FEA-10/FEA-11；FEA-09-UI-1（proposed）协同；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done，契约冻结）→ **FEA-09（ready，待认领）** → FEA-10/FEA-11；FEA-09-UI-1（proposed）协同；FEA-12 待 `G-DELETE-IMPL`
 
 ## 历史快照（终态节点，非当前 DAG）
 

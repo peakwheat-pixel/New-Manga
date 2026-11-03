@@ -3,16 +3,16 @@ id: FEA-09
 title: 引用源与导入（Core source schema/read/cache、Host SourceAccessRegistry/授权、导入 plan/receipt）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope-r1 **changes_requested** 已逐项处置；前置 **FEA-09-PREREQ-1 已 done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）；待 scope-r2
+status: ready
+approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1=0/P2=2；doc/reviews/FEA-09-scope-r2.md，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`）；前置 FEA-09-PREREQ-1 **done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）
 suggested_owner: codex
-owner: 未指派（scope-r2 approved 且 FEA-09-PREREQ-1 done 后由 DSH Appointment）
-reviewer: scope-r1 changes_requested（Codex 独立会话 01a1a05a-3afc-7af2-b46c-412f8cf3373c；报告 doc/reviews/FEA-09-scope-r1.md）；scope-r2 待 Appointment
+owner: codex（DSH Appointment 2026-11-03；待认领后 in_progress）
+reviewer: 实现 Review 待 Appointment（候选：未参与实现/scope-r2 的独立 Codex 会话；不得由实现者同一会话自审）
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
   - FEA-09-PREREQ-1
-base_commit: 6e274dd94c5b64d8fbc3f9d578363d3c502a2b68（scope-r1 被审 head；scope-r2 冻结时更新）
+base_commit: 19e6210047e664d1206347bd5259a6f075a9c028（scope-r2 reviewed_head；实施从 main 当前 head 起）
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
@@ -66,7 +66,7 @@ out_of_scope:
   - push
 ---
 
-# FEA-09 — 引用源与导入（scope-r1 处置后，待前置冻结与 scope-r2）
+# FEA-09 — 引用源与导入（ready：前置 C-15/C-16 已冻结，待 Owner 认领实施）
 
 > 状态：`proposed`。scope-r1（Codex）判 `changes_requested`（P0=0/P1=9/P2=4）；本卡已完成逐项处置并按裁决收窄范围/写域/AC。**仍不得实施**：须先完成 `FEA-09-PREREQ-1`（C-15 存储契约 + C-16 source-read wire 冻结、独立复核）并通过 scope-r2。
 > 本 Task **不宣称**提案 `:1040` 的 UI 部分已由本 Task 完成；该部分由 `FEA-09-UI-1` 协同交付，二者均完成后才能宣称 Source 导入 UI 验收通过。
@@ -75,7 +75,7 @@ out_of_scope:
 
 - 提案 S3 `FEA-09` 行（`:648`）、写域（`:930`）、可观察 AC（`:1040`）、§15.4 出口（`:891–:903`）、§15.7 追溯（`:941–:955`）；[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5/§3.6/§3.8；[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 冻结契约：C-01b（SC-01…SC-39）、C-05（页可见性）、C-06（Host 授权面 + source-read grant + 5 命令，wire v1.1）、C-14（容器映射/同步/缓存边界，不含 DDL）。
-- Gate：`G-CONTRACT` CLOSED（2026-11-01），**但 Source 表 DDL 未冻结**（[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；AD-003 `:117`；C-14 `:197`）——由 `FEA-09-PREREQ-1` 处理。
+- Gate/前置：`G-CONTRACT` CLOSED（2026-11-01）；Source 表 DDL 曾未冻结（G-CONTRACT 关闭裁定 §3.3）——该前置已由 **FEA-09-PREREQ-1 于 2026-11-03 done** 关闭：**C-15 v1.0**（Source 存储契约）与 **C-16 v1.0**（source-read wire）已 FROZEN，`verify_pins` 17/17。
 - FEA-08 已闭环（`verification/FEA-08/**`）：H4 strict-only、H5 回收站语义、H6 精确匹配、能力矩阵；本 Task **不得**回退或重新解释其判定边界，只消费结论。
 - `G-DELETE-IMPL` 与本 Task **无关**：前提是保持只读源、导入与缓存范围，不加入回收站/原件删除。
 
@@ -133,15 +133,24 @@ out_of_scope:
 - [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
-- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 - [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 
 补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
 
+
+## Release / Appointment（2026-11-03）
+
+- **scope-r2**：approved（P0=0/P1=0/P2=2；报告 `doc/reviews/FEA-09-scope-r2.md`，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`；reviewed_head `19e6210047e664d1206347bd5259a6f075a9c028`）。
+- **R2S-001/002 处置**：AC-5/AC-7 增加判别补充（V 可见 ≠ R 可读；重启 receipt 不持久；managed artifact-only 旧页仍按原 V）；验证计划补 planned 命令/环境/证据文件，未运行项明确 NOT_RUN。
+- **前置**：FEA-09-PREREQ-1 **done**（`24c105679`；C-15 v1.0/C-16 v1.0/C-05 v1.1/C-06 v1.1 冻结；`verify_pins` 17/17）。
+- **Appointment**：owner = **Codex**（DSH 2026-11-03；Owner 认领后置 in_progress）；实现 **Reviewer** 待 DSH Appointment（候选为未参与实现/scope-r2 的独立 Codex 会话；不得同一会话自审）。
+- **释放条件已满足**：STATUS/PLAN/checkpoint/ledger 同步；check PASS/17 pin；UI-1 独立冻结，FEA-09 不宣称完整 UI 验收；`G-DELETE-IMPL` 与本 Task 无关。
+- **禁止**：改冻结契约字节、真实用户数据、外部卷、新依赖、push；不重开 FEA-08。
 ## 允许修改范围
 
 - 代码写域见 frontmatter `allowed_paths`：`src/application/importing/referenced/`（新增）、既有 `images/`/`documents/` 兼容改造、`application/resource_channel`、`infrastructure/resource_channel`、`infrastructure/importing.py`、`domain/pages/entities.py`、`bootstrap/core_assembly.py`、`bootstrap/core_service.py`、`infrastructure/sqlite/{schema,migrator,library}.py`、`NewManga.Host/**`、`NewManga.CoreClient/{Issuer,Commands,Wire}/**`+`CoreServiceClient.cs`+`Transport/WireLog.cs`、对应 tests。
@@ -156,17 +165,17 @@ out_of_scope:
 
 ## 验证计划（planned / NOT_RUN，实施时按精确命令登记）
 
-| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+| 场景/AC | planned 命令 / 步骤（实施时逐字登记） | 前提/环境 | 实际结果 | 计划证据 |
 |---|---|---|---|---|
-| AC-8 构建与 .NET 全量 | `dotnet build apps\desktop-avalonia\NewManga.sln --nologo`；`dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo` | 主工作树；期望 1292/0/57（总数 1349） | NOT_RUN（planned） | `verification/FEA-09/logs/` |
-| AC-1/AC-2/AC-3 格式/排序/occurrence | Python targeted suite（`tests/import_formats/**`、`tests/fea09/**` 等；精确命令实施时登记） | 隔离 fixture；合成数据 | NOT_RUN（planned） | 同上 |
-| AC-4 密码安全 | 上述 suite + wire/evidence 日志审计（含 WireLog 可逆编码搜索） | 隔离 fixture | NOT_RUN（planned） | 同上 |
-| AC-5 取消/进度/计数 | 注入 seam 负测 + receipt 重查 + 重启恢复 | 隔离 DB/数据根 | NOT_RUN（planned） | 同上 |
-| AC-6 真实 IPC/现有 V2 | 启动隔离 sidecar，经 Host/CoreClient 真实序列化；现有 V2 生产 adapter 消费断言 | 隔离数据根；不碰真实 AppData | NOT_RUN（planned） | 同上 |
-| AC-7 完整性/迁移/回退 | `tests/storage/**`、`tests/core/**` 定向 + 新旧 schema 负测 | 隔离库 | NOT_RUN（planned） | 同上 |
-| AC-9 授权/lease | 授权生命周期正负测（重启/撤销/generation/失联） | 隔离 Host 数据根 | NOT_RUN（planned） | 同上 |
-| AC-10 cache 预算 | 预算/淘汰/崩溃校验负测 | 隔离 cache 根 | NOT_RUN（planned） | 同上 |
-| 门禁 | `pwsh -NoProfile -File tools\governance\check.ps1 -TaskPath doc/tasks/FEA-09.md`；`pwsh -NoProfile -File tools\governance\verify_pins.ps1`；旧四 PNG hash；`git diff --name-only` | 仓库根 | NOT_RUN（planned） | 同上 |
+| AC-8 构建与 .NET 全量 | `dotnet build apps\desktop-avalonia\NewManga.sln --nologo`；`dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo` | 主工作树；期望 1292/0/57（总数 1349）；环境/head 入日志头 | NOT_RUN（planned） | `verification/FEA-09/logs/dotnet-build.log`、`dotnet-test.log` |
+| AC-1/2/3 格式/排序/occurrence | `python -m pytest tests/fea09 tests/import_formats -q`（新测试目录 `tests/fea09`；fixture SHA 表入 Handoff） | 外置 task-env；隔离 fixture；合成数据 | NOT_RUN（planned） | `verification/FEA-09/logs/python-import.log` |
+| AC-4 密码安全 | `python -m pytest tests/fea09 -q -k password`；证据扫描：wire NDJSON/Host/Core 日志/receipt 对密码字面量+UTF-8 hex/base64/url-encoded 0 命中 | 隔离 fixture；不触碰真实密码 | NOT_RUN（planned） | `verification/FEA-09/logs/password-audit.log` |
+| AC-5 取消/进度/计数 | `python -m pytest tests/fea09 -q -k 'cancel or replay or busy or counts'`；6 场景（accepted 取消/部分取消/部分失败/unsupported-only/整源跳过/部分已引用）+ 跨重启自然键 | 隔离 DB/数据根 | NOT_RUN（planned） | `verification/FEA-09/logs/cancel-receipt.log` |
+| AC-6 真实 IPC/现有 V2 | 启动隔离 sidecar（Host 测试 host，隔离 `DataRoot`），经 `NewManga.CoreClient` 真实序列化；现有 V2 生产 adapter 消费断言；fake controller 不计证据 | 隔离数据根；不碰真实 AppData | NOT_RUN（planned） | `verification/FEA-09/logs/ipc-v2.log` |
+| AC-7 完整性/迁移/回退 | `python -m pytest tests/storage tests/core tests/library -q`；v7 迁移双集合守恒/资源缺失回滚/半写负测/旧二进制拒写；`SOURCE_PROJECT_MISMATCH` 负测 | 隔离库；迁移前备份 | NOT_RUN（planned） | `verification/FEA-09/logs/migration-integrity.log` |
+| AC-9 授权/lease | `python -m pytest tests/fea09 tests/m2_resource_channel -q -k 'source_read or grant or lease'`；重启/撤销/generation/失联/越根/reparse 正负测 | 隔离 Host 数据根 | NOT_RUN（planned） | `verification/FEA-09/logs/source-auth.log` |
+| AC-10 cache 预算 | `python -m pytest tests/fea09 tests/m2_resource_channel -q -k 'cache or budget'`；预算/淘汰/并发/崩溃校验/通道隔离 | 隔离 cache 根 | NOT_RUN（planned） | `verification/FEA-09/logs/cache-budget.log` |
+| 门禁 | `pwsh -NoProfile -File tools\governance\check.ps1 -TaskPath doc/tasks/FEA-09.md`；`pwsh -NoProfile -File tools\governance\verify_pins.ps1`（17/17）；旧四 PNG hash；`git diff --name-only` 对照 allowed_paths | 仓库根；命令/cwd/head/shell/EXIT 入日志头 | NOT_RUN（planned） | `verification/FEA-09/logs/gates.log` |
 
 - Python 测试与 .NET 基准必须分列；skip 逐条解释；不得用旧 FEA-08 EV 总数、pin 自例外或 LF 配置作为本 Task 自动授权。
 
@@ -202,3 +211,4 @@ out_of_scope:
 | 2026-11-03 | **scope-r1 处置**：报告归档；13 项 findings 逐项处置；五项裁决定稿；范围改 8 条；写域补齐；AC-1…AC-10 定稿（BLOCKED）；新增前置 `FEA-09-PREREQ-1` 与协同切片 `FEA-09-UI-1`；仍保持 `proposed`，待前置冻结 + scope-r2 | `doc/reviews/FEA-09-scope-r1.md`；`doc/tasks/FEA-09-PREREQ-1.md`；`doc/tasks/FEA-09-UI-1.md` |
 
 | 2026-11-03 | scope-r2 前置就绪：PREREQ-1 done（C-05/C-06 v1.1 + C-15/C-16 v1.0，17/17）；AC 标记更新为待 scope-r2 | `doc/reviews/FEA-09-PREREQ-1-r7.md`；`doc/plan/FEA-CONTRACT-FROZEN-C15.md`/`C16` |
+| 2026-11-03 | **scope-r2 approved + 释放**：R2S-001/002 处置；owner=Codex 待认领；base=19e621004；STATUS/PLAN/checkpoint/ledger 同步 | `doc/reviews/FEA-09-scope-r2.md` |
