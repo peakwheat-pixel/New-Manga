@@ -1,67 +1,86 @@
-FEA-08 Canonical Evidence pin self-check (R2 / F08I1-002)
-method: blob sha256 = SHA-256(git cat-file blob <blob>) from staged index
-        (identical to `git cat-file -p <commit>:<path>` after commit, which never rewrites blobs);
-        worktree sha256 = SHA-256(working-tree bytes);
-        task-table sha256 = value registered in doc/tasks/FEA-08.md EV table;
-        clean-checkout sha256 = SHA-256(git checkout-index export bytes, .gitattributes-driven).
-note: this log carries no commit/tree anchor on purpose (self-reference would make pin values depend on the commit containing them).
-note: logs/pin-verify.log itself is excluded from the checked set (its own content changes with each run); it is still registered in the task-card EV table with the SHA-256 of its final bytes.
+FEA-08 Canonical Evidence pin self-check (R3 / F08I1-002 + F08I2-001)
+method: pin sha256 = SHA-256(git cat-file -p <commit>:<path>) for rows with a commit;
+        SHA-only rows (commit "-", file first appears in the registration commit) are
+        checked against the working-tree bytes;
+        every row is additionally cross-checked against the stage-index blob and a
+        clean checkout export (`git checkout-index -f --prefix=... -- <files>`,
+        .gitattributes-driven LF for text evidence).
+note: this log carries no commit/tree anchor on purpose (self-reference would
+      make pin values depend on the commit containing them).
+note: logs/pin-verify.log itself is excluded from the checked set; its final bytes
+      are registered in the task-card EV table as a SHA-256 pin.
 
-path                                                       blob work task  chk
+path                                                   work commit blob  chk
 ------------------------------------------------------------------------------------------------------------------------
-verification/FEA-08/fixtures/anim.gif                        OK   OK   OK   OK
-verification/FEA-08/fixtures/book_dup.zip                    OK   OK   OK   OK
-verification/FEA-08/fixtures/book_dup_copy.zip               OK   OK   OK   OK
-verification/FEA-08/fixtures/book_enc_aes.zip                OK   OK   OK   OK
-verification/FEA-08/fixtures/book_enc_zipcrypto.zip          OK   OK   OK   OK
-verification/FEA-08/fixtures/book_enc_zipcrypto_copy.zip     OK   OK   OK   OK
-verification/FEA-08/fixtures/book_v1.cbz                     OK   OK   OK   OK
-verification/FEA-08/fixtures/book_v1.zip                     OK   OK   OK   OK
-verification/FEA-08/fixtures/book_v1_recompressed.zip        OK   OK   OK   OK
-verification/FEA-08/fixtures/doc_enc.pdf                     OK   OK   OK   OK
-verification/FEA-08/fixtures/doc_enc_copy.pdf                OK   OK   OK   OK
-verification/FEA-08/fixtures/doc_v1.pdf                      OK   OK   OK   OK
-verification/FEA-08/fixtures/doc_v1_regen.pdf                OK   OK   OK   OK
-verification/FEA-08/fixtures/evidence_manifest.json          OK   OK   OK   OK
-verification/FEA-08/fixtures/firstframe_extract.png          OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v1/p1.png                OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v1/p2.png                OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v1/p3.png                OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v2/p1.png                OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v2/p2renamed.png         OK   OK   OK   OK
-verification/FEA-08/fixtures/folder_v2/p4.png                OK   OK   OK   OK
-verification/FEA-08/fixtures/img_base.png                    OK   OK   OK   OK
-verification/FEA-08/fixtures/img_cmyk.jpg                    OK   OK   OK   OK
-verification/FEA-08/fixtures/img_copy.png                    OK   OK   OK   OK
-verification/FEA-08/fixtures/img_dhash_dist10.png            OK   OK   OK   OK
-verification/FEA-08/fixtures/img_dhash_dist11.png            OK   OK   OK   OK
-verification/FEA-08/fixtures/img_dhash_ref.png               OK   OK   OK   OK
-verification/FEA-08/fixtures/img_exif_o6.png                 OK   OK   OK   OK
-verification/FEA-08/fixtures/img_flipped.png                 OK   OK   OK   OK
-verification/FEA-08/fixtures/img_gray.png                    OK   OK   OK   OK
-verification/FEA-08/fixtures/img_gray_as_rgb.png             OK   OK   OK   OK
-verification/FEA-08/fixtures/img_reenc.jpg                   OK   OK   OK   OK
-verification/FEA-08/fixtures/img_rotated_phys.png            OK   OK   OK   OK
-verification/FEA-08/fixtures/wrongframe_blue.png             OK   OK   OK   OK
-verification/FEA-08/logs/gates.log                           OK   OK   OK   OK
-verification/FEA-08/logs/h4_run.log                          OK   OK   OK   OK
-verification/FEA-08/logs/h5_run.log                          OK   OK   OK   OK
-verification/FEA-08/logs/h6_run.log                          OK   OK   OK   OK
-verification/FEA-08/logs/make_fixtures.log                   OK   OK   OK   OK
-verification/FEA-08/logs/make_fixtures_regeneration.log      OK   OK   OK   OK
-verification/FEA-08/logs/matrix.log                          OK   OK   OK   OK
-verification/FEA-08/logs/run_all.log                         OK   OK   OK   OK
-verification/FEA-08/logs/stage_evidence.log                  OK   OK   OK   OK
-verification/FEA-08/prototype_hashes.txt                     OK   OK   OK   OK
-verification/FEA-08/results/capability_matrix.json           OK   OK   OK   OK
-verification/FEA-08/results/capability_matrix.md             OK   OK   OK   OK
-verification/FEA-08/results/fixtures_manifest.json           OK   OK   OK   OK
-verification/FEA-08/results/h4_results.json                  OK   OK   OK   OK
-verification/FEA-08/results/h5_results.json                  OK   OK   OK   OK
-verification/FEA-08/results/h6_results.json                  OK   OK   OK   OK
-verification/FEA-08/results/run_all_log.json                 OK   OK   OK   OK
+verification/FEA-08/fixtures/anim.gif                    OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_dup.zip                OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_dup_copy.zip           OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_dupcontent_a.zip       OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_dupcontent_b.zip       OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_enc_aes.zip            OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_enc_zipcrypto.zip      OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_enc_zipcrypto_copy.zip   OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_v1.cbz                 OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_v1.zip                 OK    n/a   OK   OK
+verification/FEA-08/fixtures/book_v1_recompressed.zip    OK    n/a   OK   OK
+verification/FEA-08/fixtures/doc_enc.pdf                 OK    n/a   OK   OK
+verification/FEA-08/fixtures/doc_enc_copy.pdf            OK    n/a   OK   OK
+verification/FEA-08/fixtures/doc_v1.pdf                  OK    n/a   OK   OK
+verification/FEA-08/fixtures/doc_v1_regen.pdf            OK    n/a   OK   OK
+verification/FEA-08/fixtures/evidence_manifest.json      OK    n/a   OK   OK
+verification/FEA-08/fixtures/firstframe_extract.png      OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v1/p1.png            OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v1/p2.png            OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v1/p3.png            OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v2/p1.png            OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v2/p2renamed.png     OK    n/a   OK   OK
+verification/FEA-08/fixtures/folder_v2/p4.png            OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_base.png                OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_cmyk.jpg                OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_copy.png                OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_dhash_dist10.png        OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_dhash_dist11.png        OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_dhash_ref.png           OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_dims_a.png              OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_dims_b.png              OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_exif_o6.png             OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_flipped.png             OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_gray.png                OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_gray_as_rgb.png         OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_reenc.jpg               OK    n/a   OK   OK
+verification/FEA-08/fixtures/img_rotated_phys.png        OK    n/a   OK   OK
+verification/FEA-08/fixtures/wrongframe_blue.png         OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/01-build.log          OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/02-test-attempt1.log   OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/02-test.log           OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/03-check.log          OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/04-freeze-pins.log    OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/05-fea06-png.log      OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/06-forbidden-diff.log   OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/07-clearing-api-search.log   OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/gates-raw-manifest.json   OK    n/a   OK   OK
+verification/FEA-08/logs/gates-raw/phase1-values.json    OK    n/a   OK   OK
+verification/FEA-08/logs/gates.log                       OK    n/a   OK   OK
+verification/FEA-08/logs/h4_run.log                      OK    n/a   OK   OK
+verification/FEA-08/logs/h5_run.log                      OK    n/a   OK   OK
+verification/FEA-08/logs/h6_run.log                      OK    n/a   OK   OK
+verification/FEA-08/logs/make_fixtures.log               OK    n/a   OK   OK
+verification/FEA-08/logs/make_fixtures_regeneration.log   OK    n/a   OK   OK
+verification/FEA-08/logs/matrix.log                      OK    n/a   OK   OK
+verification/FEA-08/logs/run_all.log                     OK    n/a   OK   OK
+verification/FEA-08/logs/stage_evidence.log              OK    n/a   OK   OK
+verification/FEA-08/logs/test-skip-inventory.md          OK    n/a   OK   OK
+verification/FEA-08/prototype_hashes.txt                 OK    n/a   OK   OK
+verification/FEA-08/results/capability_matrix.json       OK    n/a   OK   OK
+verification/FEA-08/results/capability_matrix.md         OK    n/a   OK   OK
+verification/FEA-08/results/fixtures_manifest.json       OK    n/a   OK   OK
+verification/FEA-08/results/h4_results.json              OK    n/a   OK   OK
+verification/FEA-08/results/h5_results.json              OK    n/a   OK   OK
+verification/FEA-08/results/h6_results.json              OK    n/a   OK   OK
+verification/FEA-08/results/run_all_log.json             OK    n/a   OK   OK
 ------------------------------------------------------------------------------------------------------------------------
-TOTAL files under verification/FEA-08: 51
-blob==worktree==task-table==clean-checkout: 51/51
-EV-table coverage (files registered in task card): 51/51
+TOTAL files under verification/FEA-08: 66
+rows checked (commit-blob/worktree/index-blob/clean-checkout): 66/66
+EV-table coverage (files registered in task card): 66/66
+EV rows whose path is missing on disk: 0
 RESULT: PASS

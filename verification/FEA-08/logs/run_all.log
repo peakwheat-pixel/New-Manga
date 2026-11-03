@@ -2,14 +2,17 @@ $ python run_all.py
 EXIT=0
 
 ===== fixtures (staged generation) =====
+[fixtures] self-check (R3): dims raw equal & dim-bound digest differs; M20 duplicate-content -> needs_confirmation
 [fixtures] self-check: dhash dist ref-vs-d10=10, ref-vs-d11=11; enc_pdf copy bytes differ=True; dup copy bytes differ=True; zipcrypto copy same-bytes=False
-[fixtures] 33 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
-[stage] fixtures -> G:\CODEX\New Manga\verification\FEA-08\fixtures: 33 files (excluded _enc_src/fixtures_manifest.json)
+[fixtures] 37 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
 ===== fixtures (regeneration control) =====
+[fixtures] self-check (R3): dims raw equal & dim-bound digest differs; M20 duplicate-content -> needs_confirmation
 [fixtures] self-check: dhash dist ref-vs-d10=10, ref-vs-d11=11; enc_pdf copy bytes differ=True; dup copy bytes differ=True; zipcrypto copy same-bytes=False
-[fixtures] 33 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
+[fixtures] 37 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
+[promote] dir G:\CODEX\New Manga\verification\FEA-08\fixtures <- G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures (old backup=G:\CODEX\New Manga.workspace\FEA-08\out\_promote_backup\0_fixtures)
+[stage] fixtures -> G:\CODEX\New Manga\verification\FEA-08\fixtures: 37 files
 ===== evidence manifest =====
-fixtures_manifest written: 33 entries (deterministic 22/33); unmatched-actual=[]; unmatched-generated=[]
+fixtures_manifest written: 37 entries (deterministic 30/37); unmatched-actual=[]; unmatched-generated=[]
 ===== H4 =====
 [h4] S1_baseline_no_fault                         -> complete_old_digest
 [h4] S2_strict_share_blocks_writers               -> complete_old_digest
@@ -54,9 +57,23 @@ fixtures_manifest written: 33 entries (deterministic 22/33); unmatched-actual=[]
 [h6] M16_gif_first_frame_only                     -> exact_match
 [h6] M17_dhash_boundary_dist10_candidate          -> candidate
 [h6] M18_dhash_boundary_dist11_no_match           -> no_match
-[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (17 scenarios); fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures (env FEA08_FIXTURES); manifest=G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json
+[h6] M19_size_mismatch_same_pixel_bytes           -> candidate
+[h6] M20_container_duplicate_content_ambiguous    -> needs_confirmation
+[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (19 scenarios); fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures (env FEA08_FIXTURES); manifest=G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json
 ===== matrix =====
 [matrix] G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.json / G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.md; counts={'PASS(strict) / UNAVAILABLE(mmap-blind)': 1, 'PASS': 6, 'LIMITED(inferred: volume-level, format-agnostic)': 7, 'PASS(Non-AES) / LIMITED(pyzipper)(AES)': 1, 'LIMITED(mocked)': 30, 'LIMITED(inferred)': 10, 'UNAVAILABLE(inferred)': 5}
-[run_all][verify] OK: h4 10 scenarios classified as expected; h5 all expected-PASS scenarios PASS; h6 17 scenario results as expected; h6 fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures
-[stage] results -> G:\CODEX\New Manga\verification\FEA-08\results: 5 files; logs -> G:\CODEX\New Manga\verification\FEA-08\logs: 7 files
+[run_all][verify] OK: h4 10 scenarios classified as expected; h5 all expected-PASS scenarios PASS; h6 19 scenario results as expected; h6 fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures
+[promote] file G:\CODEX\New Manga\verification\FEA-08\results\h4_results.json <- G:\CODEX\New Manga.workspace\FEA-08\out\h4_results.json
+[promote] file G:\CODEX\New Manga\verification\FEA-08\results\h5_results.json <- G:\CODEX\New Manga.workspace\FEA-08\out\h5_results.json
+[promote] file G:\CODEX\New Manga\verification\FEA-08\results\h6_results.json <- G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json
+[promote] file G:\CODEX\New Manga\verification\FEA-08\results\capability_matrix.json <- G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.json
+[promote] file G:\CODEX\New Manga\verification\FEA-08\results\capability_matrix.md <- G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.md
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\make_fixtures.log <- G:\CODEX\New Manga.workspace\FEA-08\out\make_fixtures.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\make_fixtures_regeneration.log <- G:\CODEX\New Manga.workspace\FEA-08\out\make_fixtures_regeneration.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\stage_evidence.log <- G:\CODEX\New Manga.workspace\FEA-08\out\stage_evidence.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\h4_run.log <- G:\CODEX\New Manga.workspace\FEA-08\out\h4_run.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\h5_run.log <- G:\CODEX\New Manga.workspace\FEA-08\out\h5_run.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\h6_run.log <- G:\CODEX\New Manga.workspace\FEA-08\out\h6_run.log
+[promote] file G:\CODEX\New Manga\verification\FEA-08\logs\matrix.log <- G:\CODEX\New Manga.workspace\FEA-08\out\matrix.log
+[stage] promoted 7 results + managed logs into G:\CODEX\New Manga\verification\FEA-08
 [run_all] tmp cleaned: removed=['fixtures', 'h4_lab']; remaining=[]

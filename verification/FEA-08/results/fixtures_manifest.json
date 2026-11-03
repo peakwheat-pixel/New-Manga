@@ -6,7 +6,7 @@
   },
   "book_dup": {
     "path": "book_dup.zip",
-    "sha256": "dcd801c16dda0cc2c30f14b9e7be548dea86f2fe542d4d40af782dc791306397",
+    "sha256": "00457a41ad6c5c2f33be3bb53090c2ded69ef3cee68e13c048edaef468bf36c8",
     "note": "同名成员×2(不同内容)"
   },
   "book_dup_copy": {
@@ -14,54 +14,64 @@
     "sha256": "bfc7b351471da8c3bd2fd3639a0a23407dfdf2cbf161d23cae57bed4d16ebc05",
     "note": "同名成员×2 独立副本(独立构造，M12 两路径比较用)"
   },
+  "book_dupcontent_a": {
+    "path": "book_dupcontent_a.zip",
+    "sha256": "f6c20b10ab9a778a63abb6a49c6918ecbe9346cc0ae3b0843bd974f1bae553f9",
+    "note": "重复同图×2，成员名 a/b（M20 反例 A）"
+  },
+  "book_dupcontent_b": {
+    "path": "book_dupcontent_b.zip",
+    "sha256": "e9fb2198ab881d6a9f84fd0f6b84f514b0876eed2283c04819e966f81c4c3da9",
+    "note": "重复同图×2，成员名 c/d（M20 反例 B：名不同→无法唯一映射）"
+  },
   "book_enc_aes256": {
     "path": "book_enc_aes.zip",
-    "sha256": "fe4338f1f3250419b5eb351706896f6536d6bab472c7ef0e60e7bf70d62f46d1",
+    "sha256": "8d3dc714c8875e2c9d29b7663b383357f3dc06571da75b3839f952f23a82f295",
     "note": "7-Zip AES256 加密(密码 FEA08pass)"
   },
   "book_enc_zipcrypto": {
     "path": "book_enc_zipcrypto.zip",
-    "sha256": "e1da6e144f2a3a27393c3fca1ccea81ab80cd98994a6a40e4a70555e8baaf5bd",
+    "sha256": "dfc1db20eecb0a2367d4d29e64f1cf14253475bd0b8ff4d77e409ff3e5b850e2",
     "note": "7-Zip ZipCrypto 加密(密码 FEA08pass)"
   },
   "book_enc_zipcrypto_copy": {
     "path": "book_enc_zipcrypto_copy.zip",
-    "sha256": "9014175f97ac98cd7cdd4308a4237f15c860c9760f050db817005f4ee43c7ce7",
+    "sha256": "c32877df6ce5410fdc0376d7e6dcd844d2f4b5ef98ccc1a526e6ae926808663d",
     "note": "ZipCrypto 独立第二份密文(同明文同密码独立加密实例；密文与主件逐位不同——ZipCrypto 密钥流由密码推导，无随机 IV 语义)"
   },
   "book_v1_cbz": {
     "path": "book_v1.cbz",
-    "sha256": "4f1503cf0c86d29c970d3eb037d78b4d3bf405096e8b37ae0323ff520f706166",
+    "sha256": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
     "note": "CBZ(同 book_v1 成员)"
   },
   "book_v1": {
     "path": "book_v1.zip",
-    "sha256": "4f1503cf0c86d29c970d3eb037d78b4d3bf405096e8b37ae0323ff520f706166",
+    "sha256": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
     "note": "ZIP 基线(deflate)"
   },
   "book_v1_recompressed": {
     "path": "book_v1_recompressed.zip",
-    "sha256": "313174905b7e7c14626befe171d8ff6c398e1ebff8a723cf091554c46eccd383",
+    "sha256": "cd487841b636bb504e21e3938aa4b0a37c5384659f326dae70bdb6a3ab9ab3a7",
     "note": "同成员内容 STORED+倒序(容器重编码)"
   },
   "doc_enc": {
     "path": "doc_enc.pdf",
-    "sha256": "f7e7694299573e54086dfc6d6d362e3c389c78ded1521b2388609b39f00b4b8d",
+    "sha256": "5b46f1e693a68bf6e8916d352305c7a90c87f560cfa8228464b4f5a0250180ca",
     "note": "AES-256 加密 PDF(密码 FEA08pass)"
   },
   "doc_enc_copy": {
     "path": "doc_enc_copy.pdf",
-    "sha256": "d6458d3a3e220ce42efe8f311bb4889a4db3efb272d769a405f83f1720bd4515",
+    "sha256": "1e669833b0c36c196b536b9ce018fc9f66841f3457ef1db4f2eb2166a714a473",
     "note": "AES-256 加密 PDF 独立第二份密文(M15 两路径比较用)"
   },
   "doc_v1": {
     "path": "doc_v1.pdf",
-    "sha256": "84369184d113196e05c3062d83e37352113cac13049348c14b8de594960b3ef4",
+    "sha256": "270a0aa90737bfba0d8b00e74b993050ae59faae5ba7ba899ff80532fa3bfdaf",
     "note": "PDF 基线 2 页"
   },
   "doc_v1_regen": {
     "path": "doc_v1_regen.pdf",
-    "sha256": "d97714600647593bb89725932bed07d0c62d3d46c237457658370a6a17e35c8d",
+    "sha256": "6eba0ca2df9b48af50361d2ab65b5097a9f48622c395da176b8d780a54784fc2",
     "note": "同内容重新生成(/ID 时间戳对象号不同)"
   },
   "firstframe_extract": {
@@ -128,6 +138,16 @@
     "path": "img_dhash_ref.png",
     "sha256": "6d791ee79e1ab53fbdf02aa40e09aa47e55ada861e4062a36c9216282651d03a",
     "note": "dhash 邻界基准(9x8 灰度水平递增)"
+  },
+  "img_dims_a": {
+    "path": "img_dims_a.png",
+    "sha256": "4b6c236c544ccc21e68b653d03a8cc51b8f4cafa07857c8ca713ec1f2492a0c2",
+    "note": "2×6 与 img_dims_b 像素字节相同、形状不同（尺寸绑定反例 A）"
+  },
+  "img_dims_b": {
+    "path": "img_dims_b.png",
+    "sha256": "13180946b6a81a2009889ac3946ae26c234e85c8df6d4fece86e5cdbe0227342",
+    "note": "3×4 与 img_dims_a 像素字节相同、形状不同（尺寸绑定反例 B）"
   },
   "img_exif_o6": {
     "path": "img_exif_o6.png",

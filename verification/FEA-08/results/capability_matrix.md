@@ -1,27 +1,30 @@
-# FEA-08 能力矩阵（卷类型 × 输入类别；NTFS 行状态由 h4/h5/h6 结果推导，F08I1-008）
+# FEA-08 能力矩阵（卷类型 × 输入类别；NTFS 行状态由 h4/h5/h6 结果 + 语义断言推导）
 
-| 卷类型 | 输入类别 | H4 稳定读取 | H5 回收 | H6 精确匹配 | 证据 | 现状 | 需新增 |
+每格格式：`状态（证据来源）`；证据来源 = measured / mocked / inferred。
+F08I2-004：每个卷分支显式赋值 H4/H5/H6 各自来源；F08I2-005：NTFS 行由逐场景语义断言推导，断言失败即降级。
+
+| 卷类型 | 输入类别 | H4 稳定读取 | H5 回收 | H6 精确匹配 | H4 现状 | H5 现状 | H6 现状 |
 |---|---|---|---|---|---|---|---|
-| NTFS-local | 单图 | PASS(strict) / UNAVAILABLE(mmap-blind) | PASS | PASS | measured | S1-S7/S5c strict 链 + S4 unavailable + S5a/b 盲区实测（volume-leve | tolerant 共享如需启用：补 USN/change journal 或双读校验（mmap 盲区缓解） |
-| NTFS-local | 文件夹 | LIMITED(inferred: volume-level, format-agnostic) | PASS | PASS | inferred | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolera | 如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解 |
-| NTFS-local | ZIP | LIMITED(inferred: volume-level, format-agnostic) | LIMITED(inferred: volume-level, format-agnostic) | PASS(Non-AES) / LIMITED(pyzipper)(AES) | inferred | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolera | 如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解 |
-| NTFS-local | CBZ | LIMITED(inferred: volume-level, format-agnostic) | LIMITED(inferred: volume-level, format-agnostic) | PASS | inferred | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolera | 如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解 |
-| NTFS-local | PDF | LIMITED(inferred: volume-level, format-agnostic) | LIMITED(inferred: volume-level, format-agnostic) | PASS | inferred | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolera | 如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解 |
-| USB-FAT32/exFAT | 单图 | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| USB-FAT32/exFAT | 文件夹 | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| USB-FAT32/exFAT | ZIP | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| USB-FAT32/exFAT | CBZ | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| USB-FAT32/exFAT | PDF | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| SMB-network | 单图 | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| SMB-network | 文件夹 | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| SMB-network | ZIP | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| SMB-network | CBZ | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| SMB-network | PDF | LIMITED(mocked) | LIMITED(mocked) | LIMITED(mocked) | inferred | 未实测（无硬件） | 真机实测后升级 |
-| Cloud-placeholder | 单图 | LIMITED(inferred) | UNAVAILABLE(inferred) | LIMITED(inferred) | inferred | 未实测（按 API 文档推断） | hydration/断连语义专项 |
-| Cloud-placeholder | 文件夹 | LIMITED(inferred) | UNAVAILABLE(inferred) | LIMITED(inferred) | inferred | 未实测（按 API 文档推断） | hydration/断连语义专项 |
-| Cloud-placeholder | ZIP | LIMITED(inferred) | UNAVAILABLE(inferred) | LIMITED(inferred) | inferred | 未实测（按 API 文档推断） | hydration/断连语义专项 |
-| Cloud-placeholder | CBZ | LIMITED(inferred) | UNAVAILABLE(inferred) | LIMITED(inferred) | inferred | 未实测（按 API 文档推断） | hydration/断连语义专项 |
-| Cloud-placeholder | PDF | LIMITED(inferred) | UNAVAILABLE(inferred) | LIMITED(inferred) | inferred | 未实测（按 API 文档推断） | hydration/断连语义专项 |
+| NTFS-local | 单图 | PASS(strict) / UNAVAILABLE(mmap-blind)（measured） | PASS（measured） | PASS（measured） | S1-S7/S5c strict 链 + S4 unavailable + S5a/b 盲区实测（volume-level, format-agnostic 合 | R1(文件)/R2/R3(目录) 实测；R4-R6b/R9 全分支 measured | 内容层能力（卷无关）：M1/M4/M6 exact（bytes/规范像素 digest）；重编码/CMYK→candidate（M2/M7）；GIF 首帧 ex |
+| NTFS-local | 文件夹 | LIMITED(inferred: volume-level, format-agnostic)（inferred） | PASS（measured） | PASS（measured） | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格 | R1(文件)/R2/R3(目录) 实测；R4-R6b/R9 全分支 measured | 内容层能力（卷无关）：M8/M9 membership+成员 digest diff；重命名仅候选；重复同图独立 occurrence |
+| NTFS-local | ZIP | LIMITED(inferred: volume-level, format-agnostic)（inferred） | LIMITED(inferred: volume-level, format-agnostic)（inferred） | PASS(Non-AES) / LIMITED(pyzipper)(AES)（measured） | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格 | 卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验 | 内容层能力（卷无关）：M10 容器重编码 exact（成员 digest）；M12 重复名歧义→candidate；M13 ZipCrypto 带密 exact |
+| NTFS-local | CBZ | LIMITED(inferred: volume-level, format-agnostic)（inferred） | LIMITED(inferred: volume-level, format-agnostic)（inferred） | PASS（measured） | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格 | 卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验 | 内容层能力（卷无关）：M11 CBZ 与 ZIP 同构 exact |
+| NTFS-local | PDF | LIMITED(inferred: volume-level, format-agnostic)（inferred） | LIMITED(inferred: volume-level, format-agnostic)（inferred） | PASS（measured） | 卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格 | 卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验 | 内容层能力（卷无关）：M14 重生成 exact（页渲染 digest+内容流 digest，参数记录）；M15 加密 PDF 带密 exact（独立密文两路径 |
+| USB-FAT32/exFAT | 单图 | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| USB-FAT32/exFAT | 文件夹 | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| USB-FAT32/exFAT | ZIP | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| USB-FAT32/exFAT | CBZ | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| USB-FAT32/exFAT | PDF | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| SMB-network | 单图 | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| SMB-network | 文件夹 | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| SMB-network | ZIP | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| SMB-network | CBZ | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| SMB-network | PDF | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | LIMITED(mocked)（mocked） | 未实测（无硬件） | 未实测（无硬件） | 能力同 NTFS 行（内容层），该卷上未 measured |
+| Cloud-placeholder | 单图 | LIMITED(inferred)（inferred） | UNAVAILABLE(inferred)（inferred） | LIMITED(inferred)（inferred） | 未实测（按 API 文档推断） | 未实测；生产默认禁用 D 流程 | 能力同 NTFS 行（内容层），该卷上可达性未测 |
+| Cloud-placeholder | 文件夹 | LIMITED(inferred)（inferred） | UNAVAILABLE(inferred)（inferred） | LIMITED(inferred)（inferred） | 未实测（按 API 文档推断） | 未实测；生产默认禁用 D 流程 | 能力同 NTFS 行（内容层），该卷上可达性未测 |
+| Cloud-placeholder | ZIP | LIMITED(inferred)（inferred） | UNAVAILABLE(inferred)（inferred） | LIMITED(inferred)（inferred） | 未实测（按 API 文档推断） | 未实测；生产默认禁用 D 流程 | 能力同 NTFS 行（内容层），该卷上可达性未测 |
+| Cloud-placeholder | CBZ | LIMITED(inferred)（inferred） | UNAVAILABLE(inferred)（inferred） | LIMITED(inferred)（inferred） | 未实测（按 API 文档推断） | 未实测；生产默认禁用 D 流程 | 能力同 NTFS 行（内容层），该卷上可达性未测 |
+| Cloud-placeholder | PDF | LIMITED(inferred)（inferred） | UNAVAILABLE(inferred)（inferred） | LIMITED(inferred)（inferred） | 未实测（按 API 文档推断） | 未实测；生产默认禁用 D 流程 | 能力同 NTFS 行（内容层），该卷上可达性未测 |
 
 ## 需新增（生产化要点）
 

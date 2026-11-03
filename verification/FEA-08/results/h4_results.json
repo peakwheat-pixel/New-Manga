@@ -20,15 +20,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709361817
+          "mtime_100ns": 134381494453771483
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709361817
+          "mtime_100ns": 134381494453771483
         },
         "mixed_digest_risk": false
       },
@@ -45,15 +45,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709421844
+          "mtime_100ns": 134381494453811491
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709421844
+          "mtime_100ns": 134381494453811491
         },
         "mixed_digest_risk": false
       },
@@ -75,15 +75,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709461845
+          "mtime_100ns": 134381494453861679
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709461845
+          "mtime_100ns": 134381494453861679
         },
         "mixed_digest_risk": false
       },
@@ -104,15 +104,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709511845
+          "mtime_100ns": 134381494453916719
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185593,
+          "file_index": 281474980053998,
           "size": 131072,
-          "mtime_100ns": 134381474709511845
+          "mtime_100ns": 134381494453916719
         },
         "mixed_digest_risk": false
       },
@@ -131,15 +131,15 @@
         "reason": "identity_changed_after_read",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709596920
+          "mtime_100ns": 134381494453996825
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709636921
+          "mtime_100ns": 134381494454029752
         },
         "observed_data_digest_diagnostic_only": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "mixed_digest_risk": true
@@ -163,15 +163,15 @@
         "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709676921
+          "mtime_100ns": 134381494454070321
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709676921
+          "mtime_100ns": 134381494454070321
         },
         "mixed_digest_risk": true,
         "outcome_protocol": "digest_returned",
@@ -196,15 +196,15 @@
         "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709768405
+          "mtime_100ns": 134381494454142681
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709768405
+          "mtime_100ns": 134381494454142681
         },
         "mixed_digest_risk": true,
         "outcome_protocol": "digest_returned",
@@ -229,15 +229,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709858435
+          "mtime_100ns": 134381494454217706
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709858435
+          "mtime_100ns": 134381494454217706
         },
         "mixed_digest_risk": false
       },
@@ -258,15 +258,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709904398
+          "mtime_100ns": 134381494454252791
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1125899910185594,
+          "file_index": 281474980053999,
           "size": 131072,
-          "mtime_100ns": 134381474709904398
+          "mtime_100ns": 134381494454252791
         },
         "mixed_digest_risk": false
       },
@@ -284,15 +284,15 @@
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1407374886896250,
+          "file_index": 562949956764655,
           "size": 131072,
-          "mtime_100ns": 134381474709944542
+          "mtime_100ns": 134381494454292841
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1407374886896250,
+          "file_index": 562949956764655,
           "size": 131072,
-          "mtime_100ns": 134381474709944542
+          "mtime_100ns": 134381494454292841
         },
         "mixed_digest_risk": false
       },

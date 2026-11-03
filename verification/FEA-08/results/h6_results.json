@@ -1,7 +1,8 @@
 {
   "module": "h6_run.py",
-  "canonicalization": "exif_transpose -> RGB 8bit -> raw size (no resize)",
+  "canonicalization": "exif_transpose -> RGB 8bit -> raw size (no resize); digest binds dimensions: sha256(\"WxH\\0\" + RGB bytes)",
   "candidate_rule": "dhash hamming <= 10 => candidate (never exact); boundary fixtures M17/M18",
+  "container_identity_rule": "exact requires content multiset equal AND a unique member identity mapping; duplicate identical content without name/ordinal anchor => needs_confirmation (M20); duplicate member names with differing content => candidate",
   "fixtures_root": "G:\\CODEX\\New Manga\\verification\\FEA-08\\fixtures",
   "fixtures_root_source": "env FEA08_FIXTURES",
   "fixtures_manifest": "G:\\CODEX\\New Manga\\verification\\FEA-08\\results\\fixtures_manifest.json",
@@ -10,40 +11,61 @@
       "result": "exact_match",
       "digest_type": "bytes_sha256",
       "digest": "869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa",
+      "size": [
+        256,
+        256
+      ],
       "scenario": "M1_unchanged_image_bytes"
     },
     {
       "result": "candidate",
       "digest_type": "dhash_candidate",
       "dhash_distance": 0,
-      "size": [
+      "size_a": [
         256,
         256
       ],
-      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
-      "canonical_b": "be9bf1343f82c2f688e31b0e3e3e85dd21b7d8b1d1c564462e59df9c9c11bc0b",
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
+      "canonical_a": "3897f09631978b14128950a45c446e184d91d6406fafceb6c9cec135cbbc78e3",
+      "canonical_b": "2ce0b8877ba41b4686b6812d5eb5ff672d58562b0d03f2a4d84ca708654f37e1",
+      "exact_blocked_by_size_mismatch": false,
       "scenario": "M2_reencoded_image"
     },
     {
       "result": "no_match",
       "digest_type": "dhash_candidate",
       "dhash_distance": 36,
-      "size": [
+      "size_a": [
         256,
         256
       ],
-      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
-      "canonical_b": "3bcceb52025a40a2b5cc3d2f9bd7653efabcc8bbb8c7d814cd6eef386a97e0f1",
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
+      "canonical_a": "3897f09631978b14128950a45c446e184d91d6406fafceb6c9cec135cbbc78e3",
+      "canonical_b": "5c885adf0716853a77b77aaf1d1772a647b301e610b3521ee90cddb3ff54c220",
+      "exact_blocked_by_size_mismatch": false,
       "scenario": "M3_flipped_image"
     },
     {
       "result": "exact_match",
-      "digest_type": "canonical_pixel_sha256",
-      "digest": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
-      "size": [
+      "digest_type": "canonical_pixel_sha256(dim-bound)",
+      "digest": "3897f09631978b14128950a45c446e184d91d6406fafceb6c9cec135cbbc78e3",
+      "size_a": [
         256,
         256
       ],
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
       "orientation_applied": true,
       "scenario": "M4_exif_orientation_normalized"
     },
@@ -51,22 +73,33 @@
       "result": "candidate",
       "digest_type": "dhash_candidate",
       "dhash_distance": 5,
-      "size": [
+      "size_a": [
         256,
         256
       ],
-      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
-      "canonical_b": "944dc86084e0f8b891e0d05759e4a4dddb713400dc9b30d127c3d5ab0f0be162",
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
+      "canonical_a": "3897f09631978b14128950a45c446e184d91d6406fafceb6c9cec135cbbc78e3",
+      "canonical_b": "78e29818703c2d107445dcb001b43efed71555755d2c2c2e59bf9081c0c07f4a",
+      "exact_blocked_by_size_mismatch": false,
       "scenario": "M5_physically_rotated"
     },
     {
       "result": "exact_match",
-      "digest_type": "canonical_pixel_sha256",
-      "digest": "bc95a3667249df348d6d635192862a134171de5e1383f154a56e7c47ba2d9c90",
-      "size": [
+      "digest_type": "canonical_pixel_sha256(dim-bound)",
+      "digest": "a4eba2ed9e639cc4cb2f3f325b709d64ea530b1463e070c414b4595e62db46e6",
+      "size_a": [
         256,
         256
       ],
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
       "orientation_applied": true,
       "scenario": "M6_gray_vs_rgb_mode"
     },
@@ -74,12 +107,18 @@
       "result": "candidate",
       "digest_type": "dhash_candidate",
       "dhash_distance": 0,
-      "size": [
+      "size_a": [
         256,
         256
       ],
-      "canonical_a": "ec205c0bcc9b24795b4063380b4e7f2691a2cfc76686df85ae2a69235e062c2f",
-      "canonical_b": "21e40a8c77555cdf2a8ea628d39657f79ffa4e0eb32e1cc451eb2b22009faa71",
+      "size_b": [
+        256,
+        256
+      ],
+      "size_mismatch": false,
+      "canonical_a": "3897f09631978b14128950a45c446e184d91d6406fafceb6c9cec135cbbc78e3",
+      "canonical_b": "1f6ce80805c268a41c1a0f8efad58c26f27a1811c52cab1ed215c1bd6161664e",
+      "exact_blocked_by_size_mismatch": false,
       "scenario": "M7_cmyk_vs_rgb"
     },
     {
@@ -120,6 +159,9 @@
       "members_a": 3,
       "members_b": 3,
       "multiset_equal": true,
+      "keyed_identity_equal": true,
+      "sorted_names_equal": true,
+      "duplicate_content_present": false,
       "duplicate_member_names_a": [],
       "duplicate_member_names_b": [],
       "occurrences_kept_separate": true,
@@ -131,6 +173,9 @@
       "members_a": 3,
       "members_b": 3,
       "multiset_equal": true,
+      "keyed_identity_equal": true,
+      "sorted_names_equal": true,
+      "duplicate_content_present": false,
       "duplicate_member_names_a": [],
       "duplicate_member_names_b": [],
       "occurrences_kept_separate": true,
@@ -142,6 +187,9 @@
       "members_a": 2,
       "members_b": 2,
       "multiset_equal": true,
+      "keyed_identity_equal": true,
+      "sorted_names_equal": true,
+      "duplicate_content_present": false,
       "duplicate_member_names_a": [
         "page.png"
       ],
@@ -169,6 +217,9 @@
         "members_a": 2,
         "members_b": 2,
         "multiset_equal": true,
+        "keyed_identity_equal": true,
+        "sorted_names_equal": true,
+        "duplicate_content_present": false,
         "duplicate_member_names_a": [
           "page.png"
         ],
@@ -208,6 +259,9 @@
         "members_a": 1,
         "members_b": 1,
         "multiset_equal": true,
+        "keyed_identity_equal": true,
+        "sorted_names_equal": true,
+        "duplicate_content_present": false,
         "duplicate_member_names_a": [],
         "duplicate_member_names_b": [],
         "occurrences_kept_separate": true,
@@ -231,15 +285,15 @@
     {
       "result": "exact_match",
       "digest_type": "rendered_pixel_sha256",
-      "bytes_digest_a": "84369184d113196e05c3062d83e37352113cac13049348c14b8de594960b3ef4",
-      "bytes_digest_b": "d97714600647593bb89725932bed07d0c62d3d46c237457658370a6a17e35c8d",
+      "bytes_digest_a": "270a0aa90737bfba0d8b00e74b993050ae59faae5ba7ba899ff80532fa3bfdaf",
+      "bytes_digest_b": "6eba0ca2df9b48af50361d2ab65b5097a9f48622c395da176b8d780a54784fc2",
       "container_bytes_differ": true,
       "page_count_a": 2,
       "page_count_b": 2,
       "pages": [
         {
           "page_no": 1,
-          "rendered_digest": "2df07d70f51de45cf2a6a4a73d96600c32e65b4f4ed0e06ebcc4a5f1348fc3f8",
+          "rendered_digest": "ebf7df7094f68c4ba4bb12f912e4d4256a9863762c156f2e1f7d77889af140ef",
           "pixel_size": [
             534,
             534
@@ -247,7 +301,7 @@
         },
         {
           "page_no": 2,
-          "rendered_digest": "1119c0a9f65a1e7812b0d53371e2dd8752a92f97036a04c512fc0d3c468c9a8f",
+          "rendered_digest": "8f2b622953bd0f3ed7cdee62a1f970f43b34d2534da0b52fecb54d6dd7467d7b",
           "pixel_size": [
             534,
             534
@@ -280,15 +334,15 @@
       "with_password": {
         "result": "exact_match",
         "digest_type": "rendered_pixel_sha256",
-        "bytes_digest_a": "f7e7694299573e54086dfc6d6d362e3c389c78ded1521b2388609b39f00b4b8d",
-        "bytes_digest_b": "d6458d3a3e220ce42efe8f311bb4889a4db3efb272d769a405f83f1720bd4515",
+        "bytes_digest_a": "5b46f1e693a68bf6e8916d352305c7a90c87f560cfa8228464b4f5a0250180ca",
+        "bytes_digest_b": "1e669833b0c36c196b536b9ce018fc9f66841f3457ef1db4f2eb2166a714a473",
         "container_bytes_differ": true,
         "page_count_a": 2,
         "page_count_b": 2,
         "pages": [
           {
             "page_no": 1,
-            "rendered_digest": "2df07d70f51de45cf2a6a4a73d96600c32e65b4f4ed0e06ebcc4a5f1348fc3f8",
+            "rendered_digest": "ebf7df7094f68c4ba4bb12f912e4d4256a9863762c156f2e1f7d77889af140ef",
             "pixel_size": [
               534,
               534
@@ -296,7 +350,7 @@
           },
           {
             "page_no": 2,
-            "rendered_digest": "1119c0a9f65a1e7812b0d53371e2dd8752a92f97036a04c512fc0d3c468c9a8f",
+            "rendered_digest": "8f2b622953bd0f3ed7cdee62a1f970f43b34d2534da0b52fecb54d6dd7467d7b",
             "pixel_size": [
               534,
               534
@@ -318,8 +372,16 @@
     },
     {
       "result": "exact_match",
-      "digest_type": "canonical_pixel_sha256(gif frame 0 vs standalone png)",
-      "gif_frame0_digest": "8a95da9693bda86714cd4d8ec330ca2658febd62581d5216fc17f68e0cd04952",
+      "digest_type": "canonical_pixel_sha256(dim-bound; gif frame 0 vs standalone png)",
+      "gif_frame0_digest": "0e0617de6da773a89a42a31986883c9d6451d29099fa7e72b0f977f1716a1708",
+      "gif_frame0_size": [
+        256,
+        256
+      ],
+      "standalone_size": [
+        256,
+        256
+      ],
       "blue_frame_digest_would_not_match": true,
       "policy": "GIF 仅取帧 0；非首帧内容不参与匹配",
       "scenario": "M16_gif_first_frame_only"
@@ -328,12 +390,18 @@
       "result": "candidate",
       "digest_type": "dhash_candidate",
       "dhash_distance": 10,
-      "size": [
+      "size_a": [
         9,
         8
       ],
-      "canonical_a": "44eedc71ba396ae3173be2d2ad595b04d125f60b1bb216da39f7be462175666c",
-      "canonical_b": "f4fbbaf66d921b8ac7088193c5ad97be453ba44eeb2c3d91b8c33f9542f5e37c",
+      "size_b": [
+        9,
+        8
+      ],
+      "size_mismatch": false,
+      "canonical_a": "84502cc9553d3706dedad0275d6e93495f69f825057f7bfd9ee4ae4770975f86",
+      "canonical_b": "b7add7ba08205a4383dada0067cc080ca7c1941e8a661ebdf8c0a22f00e06e3d",
+      "exact_blocked_by_size_mismatch": false,
       "assert_distance_is_10": true,
       "scenario": "M17_dhash_boundary_dist10_candidate"
     },
@@ -341,14 +409,60 @@
       "result": "no_match",
       "digest_type": "dhash_candidate",
       "dhash_distance": 11,
-      "size": [
+      "size_a": [
         9,
         8
       ],
-      "canonical_a": "44eedc71ba396ae3173be2d2ad595b04d125f60b1bb216da39f7be462175666c",
-      "canonical_b": "81e163fc4ffe8cf614497967b679c478e70f8b5555526a6f99c1e089ce2af2fb",
+      "size_b": [
+        9,
+        8
+      ],
+      "size_mismatch": false,
+      "canonical_a": "84502cc9553d3706dedad0275d6e93495f69f825057f7bfd9ee4ae4770975f86",
+      "canonical_b": "a2a4da746c2d53551fc7494e13f166d00d410b2cebf2a10b49bab81ae3d7b919",
+      "exact_blocked_by_size_mismatch": false,
       "assert_distance_is_11": true,
       "scenario": "M18_dhash_boundary_dist11_no_match"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 0,
+      "size_a": [
+        2,
+        6
+      ],
+      "size_b": [
+        3,
+        4
+      ],
+      "size_mismatch": true,
+      "canonical_a": "e12ce18022d917f6bf8c889b1fefd3f78776400d3bd5ca1d95939082c5e0085c",
+      "canonical_b": "5a883478a0114b92de2c1a40f242288d916b6220e12f1e3246c587832d696678",
+      "exact_blocked_by_size_mismatch": true,
+      "assert_not_exact": true,
+      "assert_size_mismatch": true,
+      "assert_canonical_differs": true,
+      "scenario": "M19_size_mismatch_same_pixel_bytes"
+    },
+    {
+      "result": "needs_confirmation",
+      "digest_type": "member_content_sha256",
+      "members_a": 2,
+      "members_b": 2,
+      "multiset_equal": true,
+      "keyed_identity_equal": false,
+      "sorted_names_equal": false,
+      "duplicate_content_present": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [],
+      "occurrences_kept_separate": true,
+      "duplicate_content_ambiguity": "重复同图但成员身份（名/ordinal）不同，无法唯一一对一定位 → 需确认",
+      "comparison_mode": "independent-copy(two paths, distinct member names, duplicate identical content)",
+      "assert_not_exact": true,
+      "assert_multiset_equal": true,
+      "assert_duplicate_content_ambiguity": true,
+      "scenario": "M20_container_duplicate_content_ambiguous"
     }
   ]
 }

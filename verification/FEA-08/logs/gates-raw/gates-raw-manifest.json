@@ -1,0 +1,154 @@
+{
+  "env": {
+    "os": "Windows 11",
+    "shell": "pwsh 7",
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "cwd": "G:\\CODEX\\New Manga",
+    "captured_at": "2026-11-03 11:31:26"
+  },
+  "phase1_values": {
+    "env": {
+      "os": "Windows 11",
+      "shell": "pwsh 7",
+      "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+      "cwd": "G:\\CODEX\\New Manga",
+      "captured_at": "2026-11-03 11:24:46"
+    },
+    "build_exit": 0,
+    "build_warnings": 0,
+    "build_errors": 0,
+    "test_attempts": [
+      {
+        "attempt": 1,
+        "exit": 1,
+        "log": "verification/FEA-08/logs/gates-raw/02-test-attempt1.log"
+      },
+      {
+        "attempt": 2,
+        "exit": 0,
+        "log": "verification/FEA-08/logs/gates-raw/02-test.log"
+      }
+    ],
+    "test_flake_retried": true,
+    "test_exit": 0,
+    "test_assemblies": [
+      {
+        "failed": 0,
+        "passed": 21,
+        "skipped": 0,
+        "total": 21,
+        "assembly": "NewManga.Appearance.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 38,
+        "skipped": 0,
+        "total": 38,
+        "assembly": "NewManga.Presentation.Avalonia.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 51,
+        "skipped": 28,
+        "total": 79,
+        "assembly": "NewManga.Host.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 253,
+        "skipped": 0,
+        "total": 253,
+        "assembly": "NewManga.ThemeEngine.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 117,
+        "skipped": 0,
+        "total": 117,
+        "assembly": "NewManga.DesignSystem.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 31,
+        "skipped": 0,
+        "total": 31,
+        "assembly": "NewManga.ApplicationCore.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 128,
+        "skipped": 22,
+        "total": 150,
+        "assembly": "NewManga.CoreClient.Tests.dll"
+      },
+      {
+        "failed": 0,
+        "passed": 653,
+        "skipped": 7,
+        "total": 660,
+        "assembly": "NewManga.App.Tests.dll"
+      }
+    ],
+    "test_totals": {
+      "passed": 1292,
+      "failed": 0,
+      "skipped": 57,
+      "total": 1349
+    },
+    "skip_count": 57,
+    "skip_inventory": "verification/FEA-08/logs/test-skip-inventory.md",
+    "pins_exit": 0,
+    "pins_pass": true,
+    "fea06_png_exit": 0,
+    "fea06_png": {
+      "reader.png": "8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2",
+      "settings.png": "fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162",
+      "shelf.png": "307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a",
+      "workbench.png": "d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5"
+    },
+    "forbidden_diff_exit": 0,
+    "forbidden_diff_clean": true,
+    "clearing_api_exit": 0,
+    "clearing_api_matches": false,
+    "head": "7e22f47a4f38a90844f94a186fe37ae0f721c46f"
+  },
+  "check": {
+    "exit": 0,
+    "pass": true,
+    "warnings": 3
+  },
+  "raw_logs": [
+    {
+      "file": "verification/FEA-08/logs/gates-raw/01-build.log",
+      "sha256": "e1398031306ee3eb48e11eaf103e864c7844214dbafa5ecd81484d28d1f2a1e0"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/02-test-attempt1.log",
+      "sha256": "61fd4c873e0c20bb40d4a15b81de9cd37d7cccf2e2d3bf9322bdecc3100180a4"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/02-test.log",
+      "sha256": "3bbf1d4dabce11eff31535d6b1551ff2c91c7ce467709777eeea632356ea0209"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/03-check.log",
+      "sha256": "e4b6106915bf78ad2a86a3ead67502d551925c2fee3053ef7369fef6995d05cb"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/04-freeze-pins.log",
+      "sha256": "004fa33a102da365619312d7caf928795b126a29cc4e46bb823adae57537a40b"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/05-fea06-png.log",
+      "sha256": "ca51175d42dc19416460491d52a43cb026bc34df48c0e4b42f17794e1d7a48cc"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/06-forbidden-diff.log",
+      "sha256": "8876559ebf9e96afc6d0ca66e35387d51a5537e07abb17c9c40b58d7c0a91c1c"
+    },
+    {
+      "file": "verification/FEA-08/logs/gates-raw/07-clearing-api-search.log",
+      "sha256": "c0448d6ca1b78d2521cb391a1dbfc3a97096e8ec1cc9b34ce86c6b692c4a2b67"
+    }
+  ]
+}

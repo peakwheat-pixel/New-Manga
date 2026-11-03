@@ -1,50 +1,40 @@
-FEA-08 R2 门禁记录（verification/FEA-08/logs/gates.log）
-口径：本文件记录 FEA-08 R2 交付（delivery commit 7b176be6a 的证据 + 本登记工作树）的门禁实测值，
-      逐命令可复现；原始输出同时留档 workspace\FEA-08\r2-gates-raw.log（非 Git）。
-环境：Windows 11 / .NET SDK 10.0.401 / Python 3.14.6；记录时间：2026-11-03（Asia/Shanghai）。
-head：7b176be6a（R2 证据交付 commit）；7b176be6a..HEAD 仅治理/登记文档变更，证据字节不变。
+FEA-08 门禁摘要（R3 / F08I2-007）
+口径：本文件是**摘要 + 原始日志指针**；完整原始输出（命令/EXIT/shell/解释器）在
+      logs/gates-raw/**，逐项 skip 来源在 logs/test-skip-inventory.md。
+记录时间：2026-11-03 11:31:26（Asia/Shanghai）；Python 3.14.6
+head（采集时）：7e22f47a4f38a90844f94a186fe37ae0f721c46f（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
 
-[1] dotnet build apps\desktop-avalonia\NewManga.sln --nologo
-    EXIT=0；0 warning / 0 error
+[1] build：dotnet build apps\desktop-avalonia\NewManga.sln --nologo
+    EXIT=0；0 warning / 0 error（原始输出 gates-raw/01-build.log）
+[2] 无过滤全量 test：dotnet test ... --no-build --settings ...
+    EXIT=0；1292 passed / 0 failed / 57 skipped
+    逐程序集（通过/失败/跳过）：
+      NewManga.Appearance.Tests.dll 21/0/0
+      NewManga.Presentation.Avalonia.Tests.dll 38/0/0
+      NewManga.Host.Tests.dll 51/0/28
+      NewManga.ThemeEngine.Tests.dll 253/0/0
+      NewManga.DesignSystem.Tests.dll 117/0/0
+      NewManga.ApplicationCore.Tests.dll 31/0/0
+      NewManga.CoreClient.Tests.dll 128/0/22
+      NewManga.App.Tests.dll 653/0/7
+    注意：attempt1 出现失败（原始日志保留于 gates-raw/02-test-attempt1.log）；按项目已知偶发 flake 惯例重跑 attempt2 通过，本摘要数值取 attempt2。
+    skip 逐项来源清单：verification/FEA-08/logs/test-skip-inventory.md（57 项）
+    原始输出：gates-raw/02-test.log
+[3] check.ps1：pwsh -NoProfile -File tools\governance\check.ps1
+    EXIT=0；PASS（3 warnings；原始输出 gates-raw/03-check.log）
+[4] 冻结 pins：pwsh -NoProfile -File tools\governance\verify_pins.ps1
+    EXIT=0；PASS (all 15)（原始输出 gates-raw/04-freeze-pins.log）
+[5] 旧 FEA-06 四 PNG：Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
+    reader.png 8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
+    settings.png fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
+    shelf.png  307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
+    workbench.png d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
+    （原始输出 gates-raw/05-fea06-png.log；与 FEA-06 卡登记一致=未变）
+[6] 禁止范围 diff：git diff --name-only 2870a9fa5..HEAD -- src apps experiments tests packaging scripts tools
+    空输出 → src_changes=0（原始输出 gates-raw/06-forbidden-diff.log）
+[7] 安全边界：git grep -n -E "SHEmptyRecycleBin|EmptyRecycleBin|SHERB_" -- src apps experiments tests packaging scripts tools
+    代码路径无匹配（调用=0）（原始输出 gates-raw/07-clearing-api-search.log；文档/证据中的 API 名不构成调用）
 
-[2] dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo
-    EXIT=0；1292 passed / 0 failed / 57 skipped（无过滤全量；基线 1292/0/57 不变）
-    逐程序集 通过/失败/跳过：
-      NewManga.Appearance.Tests 21/0/0；NewManga.Presentation.Avalonia.Tests 38/0/0；
-      NewManga.Host.Tests 51/0/28；NewManga.ThemeEngine.Tests 253/0/0；
-      NewManga.DesignSystem.Tests 117/0/0；NewManga.ApplicationCore.Tests 31/0/0；
-      NewManga.CoreClient.Tests 128/0/22；NewManga.App.Tests 653/0/7
-
-[3] pwsh -NoProfile -File tools\governance\check.ps1
-    EXIT=0；Governance check: PASS (3 warnings)
-    warnings：9 个非终态 Task（r38 不得批量关闭）；STATUS 预算 80%；PLAN 预算 80%
-
-[4] pwsh -NoProfile -File tools\governance\verify_pins.ps1
-    EXIT=0；PIN AUDIT: PASS (all 15)（14 份契约 + FEA-01）
-
-[5] Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
-    reader    8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
-    settings  fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
-    shelf     307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
-    workbench d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
-    → 与 FEA-06 卡登记一致（旧四 PNG 未变）
-
-[6] git diff --name-only 2870a9fa5..7b176be6a -- src apps experiments tests packaging scripts tools
-    空输出 → src_changes=0（R2 无生产代码改动）
-
-[7] git status --porcelain -- src apps experiments experiments tests packaging scripts tools（工作树侧）
-    空输出 → 工作树同样零改动
-
-[8] Canonical Evidence pin 自校验
-    python G:\CODEX\New Manga.workspace\FEA-08\prototype\pin_selfcheck.py（在 git add 之后运行）
-    EXIT=0；blob == worktree == Task 表 51/51；另做干净 checkout（git checkout-index 受 .gitattributes
-    eol=lf 支配）逐文件复现；详见 logs\pin-verify.log。
-    （pin-verify.log 由该脚本生成，自引用无收敛解故不参与自校验集合；其最终字节 SHA-256 在 Task 卡
-      EV 表以 SHA-256 pin 登记。）
-
-[9] 安全边界复核
-    全仓 + 原型搜索 SHEmptyRecycleBin|EmptyRecycleBin|SHERB_ 调用=0（仅注释）；
-    H5 destructive 仅经 recycle_guarded（lab 合成路径白名单）；G: 回收站 0→0、leftover=0；
-    tmp 运行后实际清理：tmp_remaining=[]（见 results/run_all_log.json）。
-
-结论：R2 交付门禁全部通过；无生产代码改动；未 push。
+说明：check 原始日志在本阶段运行后才落盘，故其登记只能以 SHA-256 pin（commit 列 -）；
+      这不是自引用漏洞：其内容由 check 运行时的证据集决定，登记后复跑仍 PASS。
+结论：R3 交付门禁全部通过；无生产代码改动；未 push。

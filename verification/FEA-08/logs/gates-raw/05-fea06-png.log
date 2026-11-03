@@ -1,0 +1,11 @@
+$ Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
+EXIT=0
+cwd=G:\CODEX\New Manga
+shell=direct
+captured_at=2026-11-03 11:24:46
+elapsed_s=0.3
+
+8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2  reader.png
+fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162  settings.png
+307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a  shelf.png
+d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5  workbench.png

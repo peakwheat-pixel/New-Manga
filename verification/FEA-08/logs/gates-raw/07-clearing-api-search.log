@@ -1,0 +1,8 @@
+$ git grep -n -E 'SHEmptyRecycleBin|EmptyRecycleBin|SHERB_' -- src apps experiments tests packaging scripts tools
+EXIT=0
+cwd=G:\CODEX\New Manga
+shell=direct
+captured_at=2026-11-03 11:24:46
+elapsed_s=0.3
+
+NO_MATCHES_IN_CODE_PATHS
