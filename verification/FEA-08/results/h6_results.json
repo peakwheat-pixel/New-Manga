@@ -162,6 +162,7 @@
       "keyed_identity_equal": true,
       "sorted_names_equal": true,
       "duplicate_content_present": false,
+      "unique_content_mapping": true,
       "duplicate_member_names_a": [],
       "duplicate_member_names_b": [],
       "occurrences_kept_separate": true,
@@ -176,6 +177,7 @@
       "keyed_identity_equal": true,
       "sorted_names_equal": true,
       "duplicate_content_present": false,
+      "unique_content_mapping": true,
       "duplicate_member_names_a": [],
       "duplicate_member_names_b": [],
       "occurrences_kept_separate": true,
@@ -190,6 +192,7 @@
       "keyed_identity_equal": true,
       "sorted_names_equal": true,
       "duplicate_content_present": false,
+      "unique_content_mapping": true,
       "duplicate_member_names_a": [
         "page.png"
       ],
@@ -220,6 +223,7 @@
         "keyed_identity_equal": true,
         "sorted_names_equal": true,
         "duplicate_content_present": false,
+        "unique_content_mapping": true,
         "duplicate_member_names_a": [
           "page.png"
         ],
@@ -262,6 +266,7 @@
         "keyed_identity_equal": true,
         "sorted_names_equal": true,
         "duplicate_content_present": false,
+        "unique_content_mapping": true,
         "duplicate_member_names_a": [],
         "duplicate_member_names_b": [],
         "occurrences_kept_separate": true,
@@ -285,8 +290,8 @@
     {
       "result": "exact_match",
       "digest_type": "rendered_pixel_sha256",
-      "bytes_digest_a": "270a0aa90737bfba0d8b00e74b993050ae59faae5ba7ba899ff80532fa3bfdaf",
-      "bytes_digest_b": "6eba0ca2df9b48af50361d2ab65b5097a9f48622c395da176b8d780a54784fc2",
+      "bytes_digest_a": "b71c13d4b9b14ae96189175ec2f0bcb8d2530480ae95e0cb3645a4eaa4800aca",
+      "bytes_digest_b": "db0bd7e7118e5083d1672e7a7f56a1cd7b778e7589f67783e2a0aec29f8e0b14",
       "container_bytes_differ": true,
       "page_count_a": 2,
       "page_count_b": 2,
@@ -334,8 +339,8 @@
       "with_password": {
         "result": "exact_match",
         "digest_type": "rendered_pixel_sha256",
-        "bytes_digest_a": "5b46f1e693a68bf6e8916d352305c7a90c87f560cfa8228464b4f5a0250180ca",
-        "bytes_digest_b": "1e669833b0c36c196b536b9ce018fc9f66841f3457ef1db4f2eb2166a714a473",
+        "bytes_digest_a": "8d93951e8325ec86b5c6e96fae627eb8ae6f9deedb8d734ed0e70023f9334caf",
+        "bytes_digest_b": "82c84e3bc591b91df9d0518e5c09659adfc201018d8529ffe4ac6be1ad9cc794",
         "container_bytes_differ": true,
         "page_count_a": 2,
         "page_count_b": 2,
@@ -454,15 +459,50 @@
       "keyed_identity_equal": false,
       "sorted_names_equal": false,
       "duplicate_content_present": true,
+      "unique_content_mapping": false,
       "duplicate_member_names_a": [],
       "duplicate_member_names_b": [],
       "occurrences_kept_separate": true,
-      "duplicate_content_ambiguity": "重复同图但成员身份（名/ordinal）不同，无法唯一一对一定位 → 需确认",
+      "duplicate_content_ambiguity": "重复同图但成员身份（名/ordinal）锚不一致，无法一对一定位 → 需确认",
       "comparison_mode": "independent-copy(two paths, distinct member names, duplicate identical content)",
       "assert_not_exact": true,
       "assert_multiset_equal": true,
       "assert_duplicate_content_ambiguity": true,
       "scenario": "M20_container_duplicate_content_ambiguous"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "member_content_sha256",
+      "members_a": 2,
+      "members_b": 2,
+      "multiset_equal": true,
+      "keyed_identity_equal": false,
+      "sorted_names_equal": false,
+      "duplicate_content_present": false,
+      "unique_content_mapping": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [],
+      "occurrences_kept_separate": true,
+      "comparison_mode": "independent-copy(unique content per member; member names changed: a/b -> c/d)",
+      "assert_exact_unique_mapping": true,
+      "scenario": "M21_container_unique_content_renamed_exact"
+    },
+    {
+      "result": "exact_match",
+      "digest_type": "member_content_sha256",
+      "members_a": 3,
+      "members_b": 3,
+      "multiset_equal": true,
+      "keyed_identity_equal": false,
+      "sorted_names_equal": false,
+      "duplicate_content_present": true,
+      "unique_content_mapping": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [],
+      "occurrences_kept_separate": true,
+      "comparison_mode": "independent-copy(duplicate content with same-name anchors a/b plus one unique renamed item)",
+      "assert_exact_anchored": true,
+      "scenario": "M22_container_duplicate_content_anchored_exact"
     }
   ]
 }

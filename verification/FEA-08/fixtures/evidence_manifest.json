@@ -1,6 +1,6 @@
 {
   "note": "预生成 fixture 以入库原件 SHA-256 为准（本清单由 stage_evidence.py 对 verification/FEA-08/fixtures 目录递归重算生成）；图片类可确定性重建，ZIP/PDF 容器含时间戳重建不逐位复现（H6 场景的核心输入特征）。deterministic_rebuild 对照源=本次 make_fixtures 运行的 generation manifest。",
-  "deterministic_count": "30/37",
+  "deterministic_count": "34/41",
   "fixtures": {
     "anim": {
       "file": "fixtures/anim.gif",
@@ -11,8 +11,8 @@
     },
     "book_dup": {
       "file": "fixtures/book_dup.zip",
-      "sha256_evidence_copy": "00457a41ad6c5c2f33be3bb53090c2ded69ef3cee68e13c048edaef468bf36c8",
-      "sha256_at_generation": "00457a41ad6c5c2f33be3bb53090c2ded69ef3cee68e13c048edaef468bf36c8",
+      "sha256_evidence_copy": "d3146cefeed39a5c27961fcbefc57c2662698864b38588fc57e4a394f658c6ee",
+      "sha256_at_generation": "d3146cefeed39a5c27961fcbefc57c2662698864b38588fc57e4a394f658c6ee",
       "deterministic_rebuild": true,
       "note": "同名成员×2(不同内容)"
     },
@@ -23,87 +23,115 @@
       "deterministic_rebuild": true,
       "note": "同名成员×2 独立副本(独立构造，M12 两路径比较用)"
     },
+    "book_dupanchor_left": {
+      "file": "fixtures/book_dupanchor_left.zip",
+      "sha256_evidence_copy": "0dc59b5e0686a715a2ccbf060ad6d846894269949da84937141cd6e62cc63dc0",
+      "sha256_at_generation": "0dc59b5e0686a715a2ccbf060ad6d846894269949da84937141cd6e62cc63dc0",
+      "deterministic_rebuild": true,
+      "note": "红×2（a/b 锚）+ 绿 c（M22 正例 A）"
+    },
+    "book_dupanchor_right": {
+      "file": "fixtures/book_dupanchor_right.zip",
+      "sha256_evidence_copy": "4544fb814d99f4beb28766fa24ad3b0a50a72168b03c6a61a2d098e604fbf185",
+      "sha256_at_generation": "4544fb814d99f4beb28766fa24ad3b0a50a72168b03c6a61a2d098e604fbf185",
+      "deterministic_rebuild": true,
+      "note": "红×2（同名锚不变）+ 绿改名 d（M22 正例 B：应 exact）"
+    },
     "book_dupcontent_a": {
       "file": "fixtures/book_dupcontent_a.zip",
-      "sha256_evidence_copy": "f6c20b10ab9a778a63abb6a49c6918ecbe9346cc0ae3b0843bd974f1bae553f9",
-      "sha256_at_generation": "f6c20b10ab9a778a63abb6a49c6918ecbe9346cc0ae3b0843bd974f1bae553f9",
+      "sha256_evidence_copy": "2c48bd07cf6cbca8b17fb75de254981fb7be892bd7e97790bb50a4d840bd8e26",
+      "sha256_at_generation": "2c48bd07cf6cbca8b17fb75de254981fb7be892bd7e97790bb50a4d840bd8e26",
       "deterministic_rebuild": true,
       "note": "重复同图×2，成员名 a/b（M20 反例 A）"
     },
     "book_dupcontent_b": {
       "file": "fixtures/book_dupcontent_b.zip",
-      "sha256_evidence_copy": "e9fb2198ab881d6a9f84fd0f6b84f514b0876eed2283c04819e966f81c4c3da9",
-      "sha256_at_generation": "e9fb2198ab881d6a9f84fd0f6b84f514b0876eed2283c04819e966f81c4c3da9",
+      "sha256_evidence_copy": "7cf92d21c18fd2bc3d7352f9b825dc936c5e8f6788f265b12101cd11ac3c4488",
+      "sha256_at_generation": "7cf92d21c18fd2bc3d7352f9b825dc936c5e8f6788f265b12101cd11ac3c4488",
       "deterministic_rebuild": true,
       "note": "重复同图×2，成员名 c/d（M20 反例 B：名不同→无法唯一映射）"
     },
     "book_enc_aes256": {
       "file": "fixtures/book_enc_aes.zip",
-      "sha256_evidence_copy": "8d3dc714c8875e2c9d29b7663b383357f3dc06571da75b3839f952f23a82f295",
-      "sha256_at_generation": "d4f49886d05dd79ec4c9eea380b468e9149904d6bcaee1265e62b4d01bae7305",
+      "sha256_evidence_copy": "adc5bf721482279fb95bc40eda923d8323c03d8e389ef9704e5b3374a13fef67",
+      "sha256_at_generation": "3c5d6afd9c9ef8af67b0055c47d4ea01bf2f3db36cf52dc72d1038e4f4c3200a",
       "deterministic_rebuild": false,
       "note": "7-Zip AES256 加密(密码 FEA08pass)"
     },
     "book_enc_zipcrypto": {
       "file": "fixtures/book_enc_zipcrypto.zip",
-      "sha256_evidence_copy": "dfc1db20eecb0a2367d4d29e64f1cf14253475bd0b8ff4d77e409ff3e5b850e2",
-      "sha256_at_generation": "d88d540c85a2f9069977bdf724b4d3741eeeb6f242c58d75f18541ecd82742b4",
+      "sha256_evidence_copy": "1353579e074bdc92fe53a5842892933fd88a6fcb149a4ca7ead9196e17d377b4",
+      "sha256_at_generation": "89d885d4f646c944372cb5f5adedb2961edc37e227a3a25b814ba227307505de",
       "deterministic_rebuild": false,
       "note": "7-Zip ZipCrypto 加密(密码 FEA08pass)"
     },
     "book_enc_zipcrypto_copy": {
       "file": "fixtures/book_enc_zipcrypto_copy.zip",
-      "sha256_evidence_copy": "c32877df6ce5410fdc0376d7e6dcd844d2f4b5ef98ccc1a526e6ae926808663d",
-      "sha256_at_generation": "ab0a1cbda8d4d51e5471a6050f3e407f5c8da751d120cf72161c1174611eb0db",
+      "sha256_evidence_copy": "9d745df34306f18d459e6bc24fb749fbf989b2b518d19d1b61f8d45b56ff11c0",
+      "sha256_at_generation": "314459258286976dbf6512d2c2cf03beac0a0bfb9e8ffe30495c367b6268c14a",
       "deterministic_rebuild": false,
       "note": "ZipCrypto 独立第二份密文(同明文同密码独立加密实例；密文与主件逐位不同——ZipCrypto 密钥流由密码推导，无随机 IV 语义)"
     },
+    "book_renamed_left": {
+      "file": "fixtures/book_renamed_left.zip",
+      "sha256_evidence_copy": "7d124e470b8c90ad932d31118ffa87b55bb5a7af8b6d3cd4fa86ed32552888f9",
+      "sha256_at_generation": "7d124e470b8c90ad932d31118ffa87b55bb5a7af8b6d3cd4fa86ed32552888f9",
+      "deterministic_rebuild": true,
+      "note": "唯一内容成员 a=红/b=绿（M21 正例 A）"
+    },
+    "book_renamed_right": {
+      "file": "fixtures/book_renamed_right.zip",
+      "sha256_evidence_copy": "ef62635fc92d8160c6d8c18da59dd873caa9e4b156499ce5bb5c5b0b4e92e003",
+      "sha256_at_generation": "ef62635fc92d8160c6d8c18da59dd873caa9e4b156499ce5bb5c5b0b4e92e003",
+      "deterministic_rebuild": true,
+      "note": "同内容改名并换位 c=绿/d=红（M21 正例 B：唯一一一映射）"
+    },
     "book_v1_cbz": {
       "file": "fixtures/book_v1.cbz",
-      "sha256_evidence_copy": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
-      "sha256_at_generation": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
+      "sha256_evidence_copy": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
+      "sha256_at_generation": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
       "deterministic_rebuild": true,
       "note": "CBZ(同 book_v1 成员)"
     },
     "book_v1": {
       "file": "fixtures/book_v1.zip",
-      "sha256_evidence_copy": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
-      "sha256_at_generation": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
+      "sha256_evidence_copy": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
+      "sha256_at_generation": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
       "deterministic_rebuild": true,
       "note": "ZIP 基线(deflate)"
     },
     "book_v1_recompressed": {
       "file": "fixtures/book_v1_recompressed.zip",
-      "sha256_evidence_copy": "cd487841b636bb504e21e3938aa4b0a37c5384659f326dae70bdb6a3ab9ab3a7",
-      "sha256_at_generation": "cd487841b636bb504e21e3938aa4b0a37c5384659f326dae70bdb6a3ab9ab3a7",
+      "sha256_evidence_copy": "23286742a879a310c4a224967db102c585ae3dc95e83da967cad56a9b502b4e9",
+      "sha256_at_generation": "23286742a879a310c4a224967db102c585ae3dc95e83da967cad56a9b502b4e9",
       "deterministic_rebuild": true,
       "note": "同成员内容 STORED+倒序(容器重编码)"
     },
     "doc_enc": {
       "file": "fixtures/doc_enc.pdf",
-      "sha256_evidence_copy": "5b46f1e693a68bf6e8916d352305c7a90c87f560cfa8228464b4f5a0250180ca",
-      "sha256_at_generation": "8910321c9c87951e07650e1ab2381148b180e1274ef457c5c299ed098f452bb5",
+      "sha256_evidence_copy": "8d93951e8325ec86b5c6e96fae627eb8ae6f9deedb8d734ed0e70023f9334caf",
+      "sha256_at_generation": "1ed07443d914e2ec39469f18645c9210684a9a95febd116d24a60343338312d4",
       "deterministic_rebuild": false,
       "note": "AES-256 加密 PDF(密码 FEA08pass)"
     },
     "doc_enc_copy": {
       "file": "fixtures/doc_enc_copy.pdf",
-      "sha256_evidence_copy": "1e669833b0c36c196b536b9ce018fc9f66841f3457ef1db4f2eb2166a714a473",
-      "sha256_at_generation": "f162de32141e328e038448e3dc7a15742e1c69c77149dcb479f313dbc0a1832e",
+      "sha256_evidence_copy": "82c84e3bc591b91df9d0518e5c09659adfc201018d8529ffe4ac6be1ad9cc794",
+      "sha256_at_generation": "18fa4156fccd674e67d5f964e99158c1389719a35b8fbee19e535c433cdb1fe9",
       "deterministic_rebuild": false,
       "note": "AES-256 加密 PDF 独立第二份密文(M15 两路径比较用)"
     },
     "doc_v1": {
       "file": "fixtures/doc_v1.pdf",
-      "sha256_evidence_copy": "270a0aa90737bfba0d8b00e74b993050ae59faae5ba7ba899ff80532fa3bfdaf",
-      "sha256_at_generation": "2eed6845b23fd36353f94b06943ddbf78e9d365b1d8ff778c5517ed64831d0b1",
+      "sha256_evidence_copy": "b71c13d4b9b14ae96189175ec2f0bcb8d2530480ae95e0cb3645a4eaa4800aca",
+      "sha256_at_generation": "ec61f4bf628df4e72513a75fa302ff301603a531111f15ecd4bb7b5727ea55ed",
       "deterministic_rebuild": false,
       "note": "PDF 基线 2 页"
     },
     "doc_v1_regen": {
       "file": "fixtures/doc_v1_regen.pdf",
-      "sha256_evidence_copy": "6eba0ca2df9b48af50361d2ab65b5097a9f48622c395da176b8d780a54784fc2",
-      "sha256_at_generation": "d181c50a81be90ed3bcb4bb46a2fdbd9c5a971ee6dfc3ec5651672866339437d",
+      "sha256_evidence_copy": "db0bd7e7118e5083d1672e7a7f56a1cd7b778e7589f67783e2a0aec29f8e0b14",
+      "sha256_at_generation": "0f320da797b2d6a9c84d5c0fdccf225f302680f4b0a029aa6dbacd5a89406f03",
       "deterministic_rebuild": false,
       "note": "同内容重新生成(/ID 时间戳对象号不同)"
     },

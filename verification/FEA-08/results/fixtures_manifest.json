@@ -6,7 +6,7 @@
   },
   "book_dup": {
     "path": "book_dup.zip",
-    "sha256": "00457a41ad6c5c2f33be3bb53090c2ded69ef3cee68e13c048edaef468bf36c8",
+    "sha256": "d3146cefeed39a5c27961fcbefc57c2662698864b38588fc57e4a394f658c6ee",
     "note": "同名成员×2(不同内容)"
   },
   "book_dup_copy": {
@@ -14,64 +14,84 @@
     "sha256": "bfc7b351471da8c3bd2fd3639a0a23407dfdf2cbf161d23cae57bed4d16ebc05",
     "note": "同名成员×2 独立副本(独立构造，M12 两路径比较用)"
   },
+  "book_dupanchor_left": {
+    "path": "book_dupanchor_left.zip",
+    "sha256": "0dc59b5e0686a715a2ccbf060ad6d846894269949da84937141cd6e62cc63dc0",
+    "note": "红×2（a/b 锚）+ 绿 c（M22 正例 A）"
+  },
+  "book_dupanchor_right": {
+    "path": "book_dupanchor_right.zip",
+    "sha256": "4544fb814d99f4beb28766fa24ad3b0a50a72168b03c6a61a2d098e604fbf185",
+    "note": "红×2（同名锚不变）+ 绿改名 d（M22 正例 B：应 exact）"
+  },
   "book_dupcontent_a": {
     "path": "book_dupcontent_a.zip",
-    "sha256": "f6c20b10ab9a778a63abb6a49c6918ecbe9346cc0ae3b0843bd974f1bae553f9",
+    "sha256": "2c48bd07cf6cbca8b17fb75de254981fb7be892bd7e97790bb50a4d840bd8e26",
     "note": "重复同图×2，成员名 a/b（M20 反例 A）"
   },
   "book_dupcontent_b": {
     "path": "book_dupcontent_b.zip",
-    "sha256": "e9fb2198ab881d6a9f84fd0f6b84f514b0876eed2283c04819e966f81c4c3da9",
+    "sha256": "7cf92d21c18fd2bc3d7352f9b825dc936c5e8f6788f265b12101cd11ac3c4488",
     "note": "重复同图×2，成员名 c/d（M20 反例 B：名不同→无法唯一映射）"
   },
   "book_enc_aes256": {
     "path": "book_enc_aes.zip",
-    "sha256": "8d3dc714c8875e2c9d29b7663b383357f3dc06571da75b3839f952f23a82f295",
+    "sha256": "adc5bf721482279fb95bc40eda923d8323c03d8e389ef9704e5b3374a13fef67",
     "note": "7-Zip AES256 加密(密码 FEA08pass)"
   },
   "book_enc_zipcrypto": {
     "path": "book_enc_zipcrypto.zip",
-    "sha256": "dfc1db20eecb0a2367d4d29e64f1cf14253475bd0b8ff4d77e409ff3e5b850e2",
+    "sha256": "1353579e074bdc92fe53a5842892933fd88a6fcb149a4ca7ead9196e17d377b4",
     "note": "7-Zip ZipCrypto 加密(密码 FEA08pass)"
   },
   "book_enc_zipcrypto_copy": {
     "path": "book_enc_zipcrypto_copy.zip",
-    "sha256": "c32877df6ce5410fdc0376d7e6dcd844d2f4b5ef98ccc1a526e6ae926808663d",
+    "sha256": "9d745df34306f18d459e6bc24fb749fbf989b2b518d19d1b61f8d45b56ff11c0",
     "note": "ZipCrypto 独立第二份密文(同明文同密码独立加密实例；密文与主件逐位不同——ZipCrypto 密钥流由密码推导，无随机 IV 语义)"
+  },
+  "book_renamed_left": {
+    "path": "book_renamed_left.zip",
+    "sha256": "7d124e470b8c90ad932d31118ffa87b55bb5a7af8b6d3cd4fa86ed32552888f9",
+    "note": "唯一内容成员 a=红/b=绿（M21 正例 A）"
+  },
+  "book_renamed_right": {
+    "path": "book_renamed_right.zip",
+    "sha256": "ef62635fc92d8160c6d8c18da59dd873caa9e4b156499ce5bb5c5b0b4e92e003",
+    "note": "同内容改名并换位 c=绿/d=红（M21 正例 B：唯一一一映射）"
   },
   "book_v1_cbz": {
     "path": "book_v1.cbz",
-    "sha256": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
+    "sha256": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
     "note": "CBZ(同 book_v1 成员)"
   },
   "book_v1": {
     "path": "book_v1.zip",
-    "sha256": "2e65f1c7e9d2b1326d07d15f1394cdd40aad3abe463d0a33fc72041a170b061c",
+    "sha256": "91356041a114dd2a41b5c72edf8a93b3ad46d0b23900eeaa7e9f88fe938a6b70",
     "note": "ZIP 基线(deflate)"
   },
   "book_v1_recompressed": {
     "path": "book_v1_recompressed.zip",
-    "sha256": "cd487841b636bb504e21e3938aa4b0a37c5384659f326dae70bdb6a3ab9ab3a7",
+    "sha256": "23286742a879a310c4a224967db102c585ae3dc95e83da967cad56a9b502b4e9",
     "note": "同成员内容 STORED+倒序(容器重编码)"
   },
   "doc_enc": {
     "path": "doc_enc.pdf",
-    "sha256": "5b46f1e693a68bf6e8916d352305c7a90c87f560cfa8228464b4f5a0250180ca",
+    "sha256": "8d93951e8325ec86b5c6e96fae627eb8ae6f9deedb8d734ed0e70023f9334caf",
     "note": "AES-256 加密 PDF(密码 FEA08pass)"
   },
   "doc_enc_copy": {
     "path": "doc_enc_copy.pdf",
-    "sha256": "1e669833b0c36c196b536b9ce018fc9f66841f3457ef1db4f2eb2166a714a473",
+    "sha256": "82c84e3bc591b91df9d0518e5c09659adfc201018d8529ffe4ac6be1ad9cc794",
     "note": "AES-256 加密 PDF 独立第二份密文(M15 两路径比较用)"
   },
   "doc_v1": {
     "path": "doc_v1.pdf",
-    "sha256": "270a0aa90737bfba0d8b00e74b993050ae59faae5ba7ba899ff80532fa3bfdaf",
+    "sha256": "b71c13d4b9b14ae96189175ec2f0bcb8d2530480ae95e0cb3645a4eaa4800aca",
     "note": "PDF 基线 2 页"
   },
   "doc_v1_regen": {
     "path": "doc_v1_regen.pdf",
-    "sha256": "6eba0ca2df9b48af50361d2ab65b5097a9f48622c395da176b8d780a54784fc2",
+    "sha256": "db0bd7e7118e5083d1672e7a7f56a1cd7b778e7589f67783e2a0aec29f8e0b14",
     "note": "同内容重新生成(/ID 时间戳对象号不同)"
   },
   "firstframe_extract": {

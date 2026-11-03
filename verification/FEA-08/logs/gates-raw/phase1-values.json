@@ -4,7 +4,7 @@
     "shell": "pwsh 7",
     "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
     "cwd": "G:\\CODEX\\New Manga",
-    "captured_at": "2026-11-03 11:24:46"
+    "captured_at": "2026-11-03 11:55:57"
   },
   "build_exit": 0,
   "build_warnings": 0,
@@ -12,16 +12,11 @@
   "test_attempts": [
     {
       "attempt": 1,
-      "exit": 1,
-      "log": "verification/FEA-08/logs/gates-raw/02-test-attempt1.log"
-    },
-    {
-      "attempt": 2,
       "exit": 0,
       "log": "verification/FEA-08/logs/gates-raw/02-test.log"
     }
   ],
-  "test_flake_retried": true,
+  "test_flake_retried": false,
   "test_exit": 0,
   "test_assemblies": [
     {
@@ -102,5 +97,5 @@
   "forbidden_diff_clean": true,
   "clearing_api_exit": 0,
   "clearing_api_matches": false,
-  "head": "7e22f47a4f38a90844f94a186fe37ae0f721c46f"
+  "head": "f4846031620e44adfcdcae026039abc7e2494201"
 }

@@ -2,7 +2,7 @@ $ git diff --name-only 2870a9fa5..HEAD -- src apps experiments tests packaging s
 EXIT=0
 cwd=G:\CODEX\New Manga
 shell=direct
-captured_at=2026-11-03 11:24:46
+captured_at=2026-11-03 11:55:57
 elapsed_s=0.3
 
 ---

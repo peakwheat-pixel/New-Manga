@@ -2,7 +2,7 @@ $ pwsh -NoProfile -File tools/governance/verify_pins.ps1
 EXIT=0
 cwd=G:\CODEX\New Manga
 shell=direct
-captured_at=2026-11-03 11:24:46
+captured_at=2026-11-03 11:55:57
 elapsed_s=0.6
 
 OK C01b 3c9f5af7d74f

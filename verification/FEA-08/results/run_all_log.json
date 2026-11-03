@@ -35,8 +35,8 @@
   ],
   "env": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
   "repo": "G:\\CODEX\\New Manga",
-  "staging": "atomic: build in workspace -> verify -> promote; failure rolls back previous canonical set (F08I2-006)",
-  "staged_fixtures": 37,
+  "staging": "atomic (F08I2-006/F08I3-002/003): build in workspace -> verify -> promote with journal; any promotion failure restores every entry and does not publish success logs",
+  "staged_fixtures": 41,
   "tmp_removed": [
     "fixtures",
     "h4_lab"

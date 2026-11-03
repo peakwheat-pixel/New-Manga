@@ -1,8 +1,8 @@
-FEA-08 门禁摘要（R3 / F08I2-007）
+FEA-08 门禁摘要（R4 / F08I2-007 + F08I3-005；原始输出含耗时与环境快照）
 口径：本文件是**摘要 + 原始日志指针**；完整原始输出（命令/EXIT/shell/解释器）在
       logs/gates-raw/**，逐项 skip 来源在 logs/test-skip-inventory.md。
-记录时间：2026-11-03 11:31:26（Asia/Shanghai）；Python 3.14.6
-head（采集时）：7e22f47a4f38a90844f94a186fe37ae0f721c46f（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
+记录时间：2026-11-03 11:59:41（Asia/Shanghai）；Python 3.14.6
+head（采集时）：f4846031620e44adfcdcae026039abc7e2494201（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
 
 [1] build：dotnet build apps\desktop-avalonia\NewManga.sln --nologo
     EXIT=0；0 warning / 0 error（原始输出 gates-raw/01-build.log）
@@ -17,11 +17,10 @@ head（采集时）：7e22f47a4f38a90844f94a186fe37ae0f721c46f（证据 commit �
       NewManga.ApplicationCore.Tests.dll 31/0/0
       NewManga.CoreClient.Tests.dll 128/0/22
       NewManga.App.Tests.dll 653/0/7
-    注意：attempt1 出现失败（原始日志保留于 gates-raw/02-test-attempt1.log）；按项目已知偶发 flake 惯例重跑 attempt2 通过，本摘要数值取 attempt2。
     skip 逐项来源清单：verification/FEA-08/logs/test-skip-inventory.md（57 项）
     原始输出：gates-raw/02-test.log
 [3] check.ps1：pwsh -NoProfile -File tools\governance\check.ps1
-    EXIT=0；PASS（3 warnings；原始输出 gates-raw/03-check.log）
+    EXIT=1；FAIL（3 warnings；原始输出 gates-raw/03-check.log）
 [4] 冻结 pins：pwsh -NoProfile -File tools\governance\verify_pins.ps1
     EXIT=0；PASS (all 15)（原始输出 gates-raw/04-freeze-pins.log）
 [5] 旧 FEA-06 四 PNG：Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256

@@ -2,7 +2,7 @@ $ Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
 EXIT=0
 cwd=G:\CODEX\New Manga
 shell=direct
-captured_at=2026-11-03 11:24:46
+captured_at=2026-11-03 11:55:57
 elapsed_s=0.3
 
 8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2  reader.png
