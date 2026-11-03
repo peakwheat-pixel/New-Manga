@@ -1,0 +1,52 @@
+# D-14-STATUS-COLOR-FIX 集成验证（DSH，2026-11-03 08:30）
+
+- shell: C:\Program Files\PowerShell\7\pwsh.exe；SDK: 10.0.401
+- host: G:\CODEX\New Manga；base: 83210339336097826eb6161a680ef729a6d2dc1b
+- implementation: 5ecc1e4c6；evidence: 075dc1682；review: impl-r3 approved（ZCode CLI fresh session，P0=0/P1=0/P2=2）
+
+## 1) build
+    0 个警告
+    0 个错误
+BUILD_EXIT=0
+
+## 2) 无过滤全量
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 51 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 300 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    51，已跳过:    28，总计:    79，持续时间: 635 ms - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 876 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+失败!  - 失败:     1，通过:   127，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   653，已跳过:     7，总计:   660，持续时间: 3 m 12 s - NewManga.App.Tests.dll (net9.0)
+TEST_EXIT=1（首次运行；见 §6 flake 处置，重跑为 0）
+
+## 3) 治理
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5196 bytes / 64 lines
+Governance check: PASS (3 warnings)
+PIN AUDIT: PASS (all 15)
+
+## 4) 禁止范围/旧证据
+旧 FEA-06 四 PNG SHA: reader 8533c263…, settings fd30b166…, shelf 307f8f67…, workbench d5d878bb…（未变，见 FEA-06-RESIDUAL-2 integration log 对照）
+FORBIDDEN_DRIFT=0
+
+## 5) 工作树
+?? doc/reviews/D-14-STATUS-COLOR-FIX-impl-r3.md
+
+## 6) 全量重跑（flake 处置）
+- 首次集成运行 CoreClient 出现 1 例失败（TEST_EXIT=1）；单独重跑 CoreClient：128/0/22 PASS；随即全量重跑：
+```
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 45 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 299 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+失败!  - 失败:     1，通过:    50，已跳过:    28，总计:    79，持续时间: 618 ms - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 884 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   128，已跳过:    22，总计:   150，持续时间: 22 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   653，已跳过:     7，总计:   660，持续时间: 3 m 14 s - NewManga.App.Tests.dll (net9.0)
+```
+- 结论：已知偶发 flake（r1 已登记 Host TileChannel 类），与本卡无关；全量重跑通过，最终记录以重跑为准。
+- TEST_EXIT=0（全量重跑，见 §6）
+1
+
+- 最终汇总：**1292 passed / 0 failed / 57 skipped**（Appearance 21、Presentation 38、Host 51+28、ThemeEngine 253、DesignSystem 117、ApplicationCore 31、CoreClient 128+22、App 653+7）。
+- 旧 FEA-06 四 PNG SHA 未变；禁止范围 diff=0；check PASS(3)；pins 15/15。
