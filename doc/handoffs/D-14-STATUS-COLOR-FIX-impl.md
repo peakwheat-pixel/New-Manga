@@ -48,3 +48,11 @@ status: delivered
 - 交付物：能力矩阵 + 技术报告 + 可复现原型 + 证据/Handoff。
 - 验证命令、环境与完成 Gate：见草案 AC；after scope freeze。
 - 可直接转发给 Agent 的指令：待 DSH 释放 FEA-08 Task 后由 Task 卡提供。
+
+## 风险与遗留
+
+- D14R1-004：FEA-06-RESIDUAL-2 已关闭测试中仍有 NotStarted 特判/注释指向已修复 catalog（历史卡证据，不重写字节；后续清理卡）。
+- D14R1-006：V2 三处 NotStarted 前景（`StudioTheme.axaml:49-50`、`Statuses.cs:71`、`V2LocalStyles.axaml:191-192`）仍为 Disabled，与 catalog 分裂；属 V2 线，非本卡。
+- 全仓 14 个受跟踪 md 含 NUL/VT 字符损坏（历史债；本卡只修 D-14 Task 卡）。
+- Host/CoreClient 偶发 flake（TileChannel/sidecar 环境）非本卡引入；集成日志已记录重跑处置。
+- 原生 DPI/a11y 不在本卡范围。

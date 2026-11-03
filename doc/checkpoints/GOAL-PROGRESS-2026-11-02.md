@@ -1029,3 +1029,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 提醒内容（派 D-14 impl-r1）已被超越，不重复派发：D-14 已走完 impl-r1（changes_requested P1=3）→ impl-r2（changes_requested P1=1/P2=5）→ DSH r2 补正（完整日志/57 skip 明细/模板 Handoff/git blob pin）→ **impl-r3 正在运行**（ZCode fresh session，job `pwsh-a6c4fe05691947a1`），核验的是补正后 HEAD 而非 r1。
 - **ZCode 可用性已由实跑确认**（08:05 窗口后成功启动 r3 Reviewer；无需再探测）。
 - 后续：r3 approved → DSH 集成验证关闭 D-14 → 派 FEA-08 scope Review（prompt 已备）→ 释放/实施 FEA-08；Codex 10:25 备用。
+## 160. D-14 关闭（done）+ FEA-08 卡建立（proposed）（2026-11-03 08:45）
+
+- D-14 impl-r3（**ZCode CLI fresh session**，job `pwsh-a6c4fe05691947a1`）：**approved P0=0/P1=0/P2=2**（P2=STATUS/Task 生命周期滞后、Handoff 缺风险章节）。
+- DSH 集成验证 `verification/D-14-STATUS-COLOR-FIX/integration-verification.log`：build 0/0；无过滤 **1292/0/57**（首次 CoreClient 1 例 flake，重跑通过并记录）；check PASS(3)；pins 15/15；旧四 PNG 未变；禁止范围 diff=0。
+- **D-14 关闭 `done`**：impl 5ecc1e4c6 + 证据补正 075dc1682 + 集成 e36a7442b；AC1–AC3 MET；Resource Manifest/Closeout 已填；r3 的 2 个 P2 已补（STATUS/PLAN/Task 生命周期；Handoff 增加「风险与遗留」）。
+- **FEA-08 Task 卡建立**（`doc/tasks/FEA-08.md`，`proposed`，来源 workspace 草案）：H4/H5/H6 能力矩阵+技术报告，隔离原型不触真实库；待独立 scope Review 冻结后置 ready。STATUS/PLAN 指针已更新（当前 Task=FEA-08 proposed；READY=无）。
+- 治理 PASS(3)；pins 15/15；未 push。
