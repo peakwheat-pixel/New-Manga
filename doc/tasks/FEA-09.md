@@ -272,3 +272,13 @@ out_of_scope:
 | 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |
 | 2026-11-03 | **实现 Review r1 批次 2 返修（DSH）**：I003 部分重试逐页补齐、I004 真加密 PDF（含 pdfium 密码编码修复）、I006 folder resolve 绑定生效。pytest tests/fea09 **106 passed**；library/reading_export/import_formats/p09 全 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch2.log` |
 | 2026-11-03 | **实现 Review r1 批次 3a：R1-I008**（DSH）：resolve 拆分 prepare/render；生产装配 RenditionCache（derived_root 尊重 M2RC1_DERIVED_ROOT）；命中不解码、metadata source-renditions/、损坏重建。pytest tests/fea09 **107 passed**；m2rc 110/core_service 6/library+reading 204 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch3a.log` |
+## UNFREEZE 修订（I001 + I005，2026-11-04）
+
+| 轮次 | 提案 | 独立 Review | 结论 |
+|---|---|---|---|
+| r1 | `doc/reviews/FEA-09-UNFREEZE-r1-amendments.md` | `doc/reviews/FEA-09-UNFREEZE-r1-review.md`（Codex 独立，reviewed_head `68a46dfe5`） | **changes_requested** P0=0/P1=6/P2=3（U-001…U-009） |
+| r2 | `doc/reviews/FEA-09-UNFREEZE-r2-amendments.md`（A 包 C-05 v1.2/C-15 v1.1；B 包 C-16 v1.1/M2-C1 2.12） | `doc/reviews/FEA-09-UNFREEZE-r2-review.md`（Codex 独立，同 head） | **changes_requested** P0=0/P1=6/P2=2；U-001/U-007/U-008 CLOSED，其余 OPEN + 新 R2-001…R2-008 |
+
+- **R2 P1**：R2-001 artifact-only 缺 source_hash 等列的合法投影形状/Page 扩域不完整；R2-002 reader projection 零尺寸/缺 original 与 M2-C1 冻结 DTO 冲突；R2-003 旧 `_COMPLETE_PAGE_WHERE` 正尺寸口径未统一；R2-004 resolve secret 消费时 token/path/reparse/替换身份未冻结；R2-005 一次性 claim/并发准入/锁定清理未闭环；R2-006 同 `resource_id` 内容替换与 first-publish-wins 失效规则缺失。
+- **R2 P2**：R2-007 冻结流程需先固定契约实际字节再复核；R2-008 下游 C-14/UI-1 影响与 A/B 共改 M2-C1 的版本衔接需登记。
+- **状态**：I001/I005 **生产返修仍冻结**；r3 修订中；重冻前不得改生产代码/Schema/依赖/UI。M2-C1 不并入 17 pin（单独登记指纹/批准）。

@@ -1272,3 +1272,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 生产 `main` 装配 `RenditionCache`（derived_root 尊重 M2RC1_DERIVED_ROOT）；resolve 先 `cache.acquire` 后发布；metadata=`source-renditions/`，命中零解码，损坏自动重建；catalog key 幂等镜像。
 - 测试：fea09 **107 passed**；m2_resource_channel 110、core_service 6、library+reading_export 204 全 PASS；真实 IPC 1 passed。
 - 余：I005 需与 I001 一并 UNFREEZE（resolve 可选 secret_ref）；I011 EV 收敛；新独立复核。
+## 193. FEA-09 UNFREEZE r1/r2 契约复核（2026-11-04）
+
+- **r1 提案**（C-05 v1.2/C-15 v1.1/C-16 v1.1/M2-C1 2.12 单包）独立 Review：**changes_requested P0=0/P1=6/P2=3**（U-001…U-009）；归档 `doc/reviews/FEA-09-UNFREEZE-r1-review.md`（Codex 独立，reviewed_head `68a46dfe5`）。
+- **r2 修订**：按 U-001…U-009 处置并拆 A 包（I001：C-05 v1.2/C-15 v1.1）与 B 包（I005：C-16 v1.1/M2-C1 2.12）；新增 artifact-only 投影扩域、迁移三路径同连接验证、fresh signed grant 绑定 secret、capability/四象限、两阶段冻结。
+- **r2 Review**：**changes_requested P0=0/P1=6/P2=2**；U-001/U-007/U-008 CLOSED；R2-001…R2-008（P1×6/P2×2）指向投影 DTO/正尺寸口径、secret 文件身份/一次性 claim、同键替换失效、冻结字节复核顺序与下游登记；归档 `doc/reviews/FEA-09-UNFREEZE-r2-review.md`。
+- **状态**：重冻前不释放 I001/I005 生产返修；r3 修订与第三次独立复核待做。治理门禁 PASS、pins 17/17（契约正文尚未改，pin 未变）。
