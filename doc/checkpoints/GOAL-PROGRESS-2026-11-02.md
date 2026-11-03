@@ -1068,3 +1068,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P1-001**：文件夹 golden fixtures（`folder_v1/folder_v2`）未入库，M8/M9 无法从证据复现；**P1-002**：9/36 Canonical Evidence pin 不能按 git-cat-file 复现（CRLF 工作树 vs LF blob，仅 27/36 匹配）。P2 含 AC-1 mmap 状态字段、H4 证据字段、H5 时序/harness exit、H5 分支证据、H6 自比较/AES/边界、矩阵逐格现状/需新增、门禁记录、temp 清理、manifest 指针。
 - 处置：FEA-08 保持 in_review；**下一会话首步派 R2 返修**（ZCode fresh session 或 Codex 10:25 后）：补 folder fixtures 入库+哈希、pin 统一按 LF blob 重算或改 worktree SHA 口径、逐项 P2；完成后派 impl-r2 Review。旧会话不预派（避免随会话关闭中断）。
 - 未 push；治理 PASS(3)。
+## 166. FEA-08 R2 返修派发 + pin 口径裁决（2026-11-03 10:15）
+
+- 新会话（模型切换后）先读事实：git log/status、交接包、STATUS/PLAN、Task FEA-08、impl-r1 报告、checkpoint §160–165；**check PASS(3)、pins 15/15**；head `b21350fbe`、工作树干净。
+- **P1-002 独立复核确认**：9 个不一致文件（EV-F08-11/28/30/31/32/33/34/35/36）工作树为纯 CRLF、Git blob 为 LF，字节差恰等于 CRLF 数；Task 卡登记值 = 工作树 SHA-256。impl-r1 结论成立。
+- **DSH 裁决（Architect/Integrator，长期授权范围内，无需用户拍板）**：Canonical Evidence pin 口径统一为**被 pin commit 的 Git blob 字节 SHA-256（LF 规范）**，复现 `git cat-file -p <commit>:<path>`；同时要求 checkout 后工作树 `Get-FileHash` 与之一致。集成处置：`.gitattributes` 增加 `verification/FEA-08/*.json`、`**/*.json`、`**/*.log`、`**/*.md`、`**/*.txt` → `text eol=lf`（PNG/GIF/ZIP/PDF 二进制不标记，保持字节精确）。`.gitattributes` 不在 Task allowed_paths，由 DSH 直接修改并单独提交 `07724b88d`（不属实现写域；Review 时按治理 commit 区分）。
+- **P1-001 处置**：要求 R2 把 `folder_v1/v2` 六个成员纳入 `verification/FEA-08/fixtures/`，逐文件 SHA-256 入 manifest/EV 表，并让 H6 可从入库证据直接复现 M8/M9（不采用降级方案）。
+- 已派 **FEA-08 R2 返修**（ZCode CLI fresh session，job `pwsh-0fa6baa574764bc7`，prompt `workspace/FEA-08/r2-dispatch-prompt.md`）：P1-001/P1-002 闭合 + 9 个 P2 逐项处置 + 门禁（build 0/0、1292/0/57 只增不减、check PASS(3)、pins 15/15、旧 FEA-06 四 PNG 不变、禁止范围 diff=0、src_changes=0）+ 重出 Canonical Evidence/门禁记录/Handoff。
+- 后续：R2 交付后派 **impl-r2 独立 Review**（D-9 独立上下文子 agent；Codex 10:25 后若可用则优先 Codex）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。不 push；Codex 窗口 10:25 备用。
