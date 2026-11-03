@@ -1,0 +1,4 @@
+$ python stage_evidence.py
+EXIT=0
+
+fixtures_manifest written: 33 entries (deterministic 22/33); unmatched-actual=[]; unmatched-generated=[]

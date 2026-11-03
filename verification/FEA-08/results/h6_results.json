@@ -1,8 +1,10 @@
 {
   "module": "h6_run.py",
   "canonicalization": "exif_transpose -> RGB 8bit -> raw size (no resize)",
-  "candidate_rule": "dhash hamming <= 10 => candidate (never exact)",
-  "fixtures_manifest": "fixtures/fixtures_manifest.json",
+  "candidate_rule": "dhash hamming <= 10 => candidate (never exact); boundary fixtures M17/M18",
+  "fixtures_root": "G:\\CODEX\\New Manga\\verification\\FEA-08\\fixtures",
+  "fixtures_root_source": "env FEA08_FIXTURES",
+  "fixtures_manifest": "G:\\CODEX\\New Manga\\verification\\FEA-08\\results\\fixtures_manifest.json",
   "results": [
     {
       "result": "exact_match",
@@ -160,6 +162,35 @@
         }
       ],
       "duplicate_name_ambiguity": "同名不同内容 → 歧义，仅候选，需用户确认",
+      "comparison_mode": "independent-copy(two paths, independently built)",
+      "self_read_control": {
+        "result": "candidate",
+        "digest_type": "member_content_sha256",
+        "members_a": 2,
+        "members_b": 2,
+        "multiset_equal": true,
+        "duplicate_member_names_a": [
+          "page.png"
+        ],
+        "duplicate_member_names_b": [
+          "page.png"
+        ],
+        "occurrences_kept_separate": true,
+        "duplicate_occurrences": [
+          {
+            "name": "page.png",
+            "ordinal": 0,
+            "digest": "18640fe476c4c2f0bd7106f501b3e5bf15f594a321905aee9652c4c59176554e"
+          },
+          {
+            "name": "page.png",
+            "ordinal": 1,
+            "digest": "37d35154f79de57c81465ab8283399ca960dcfd20fa3f1537ab4ef66bce84c1f"
+          }
+        ],
+        "duplicate_name_ambiguity": "同名不同内容 → 歧义，仅候选，需用户确认",
+        "comparison_mode": "self-consistency(same file self-read; trivially equal)"
+      },
       "scenario": "M12_duplicate_member_names"
     },
     {
@@ -168,7 +199,8 @@
       },
       "zipcrypto_no_password": {
         "result": "needs_password",
-        "note": "encrypted: File <ZipInfo filename='enc_page.png' compress_type=deflate external_attr=0x20 file_size=8954 compress_size=8859> is encrypted, password required for extraction"
+        "note": "encrypted: File <ZipInfo filename='enc_page.png' compress_type=deflate external_attr=0x20 file_size=8954 compress_size=8859> is encrypted, password required for extraction",
+        "comparison_mode": "self-consistency probe(no-password behavior, not match evidence)"
       },
       "zipcrypto_with_password": {
         "result": "exact_match",
@@ -178,8 +210,11 @@
         "multiset_equal": true,
         "duplicate_member_names_a": [],
         "duplicate_member_names_b": [],
-        "occurrences_kept_separate": true
+        "occurrences_kept_separate": true,
+        "comparison_mode": "independent-ciphertext(two paths, independently encrypted with same password)"
       },
+      "independent_ciphertext_bytes_identical": false,
+      "independent_ciphertext_note": "独立第二份密文与主件逐位不同（ZipCrypto 密钥流由密码推导、无随机 IV，但 7-Zip 容器条目时间戳参与字节；路径无关性由两路径内容 digest 比较证明）",
       "aes_flag": {
         "encrypted": true
       },
@@ -188,6 +223,7 @@
         "error": "NotImplementedError: That compression method is not supported",
         "note": "AES 加密 ZIP：标准库 zipfile 不支持，需要 pyzipper（未引入）"
       },
+      "aes_note": "AES ZIP：标准库 zipfile NotImplementedError → 矩阵 ZIP H6 标 LIMITED(pyzipper)；生产需 pyzipper(MIT)（未引入，产品裁决）",
       "result": "exact_match",
       "digest_type": "member_content_sha256(with password)",
       "scenario": "M13_encrypted_zip"
@@ -195,8 +231,8 @@
     {
       "result": "exact_match",
       "digest_type": "rendered_pixel_sha256",
-      "bytes_digest_a": "a4accf5171f8b60c6b10e29685fbc6e2ed9a978870fa3ac11327f573a8f9d9d1",
-      "bytes_digest_b": "6fef737230ab28ddf0878477f40523247ae472a9373512ef41552739d4089c31",
+      "bytes_digest_a": "84369184d113196e05c3062d83e37352113cac13049348c14b8de594960b3ef4",
+      "bytes_digest_b": "d97714600647593bb89725932bed07d0c62d3d46c237457658370a6a17e35c8d",
       "container_bytes_differ": true,
       "page_count_a": 2,
       "page_count_b": 2,
@@ -238,14 +274,15 @@
     {
       "no_password": {
         "result": "needs_password",
-        "error": "PdfiumError: Failed to load document (PDFium: Incorrect password error)."
+        "error": "PdfiumError: Failed to load document (PDFium: Incorrect password error).",
+        "comparison_mode": "self-consistency probe(no-password behavior, not match evidence)"
       },
       "with_password": {
         "result": "exact_match",
         "digest_type": "rendered_pixel_sha256",
-        "bytes_digest_a": "a6a780fa5f93b61b743adeaa678490d39b6e1a3972f5a2a11f417574989f1f04",
-        "bytes_digest_b": "a6a780fa5f93b61b743adeaa678490d39b6e1a3972f5a2a11f417574989f1f04",
-        "container_bytes_differ": false,
+        "bytes_digest_a": "f7e7694299573e54086dfc6d6d362e3c389c78ded1521b2388609b39f00b4b8d",
+        "bytes_digest_b": "d6458d3a3e220ce42efe8f311bb4889a4db3efb272d769a405f83f1720bd4515",
+        "container_bytes_differ": true,
         "page_count_a": 2,
         "page_count_b": 2,
         "pages": [
@@ -272,7 +309,8 @@
           "dpi": 150,
           "scale": 2.0833333333333335,
           "colorspace": "RGB8"
-        }
+        },
+        "comparison_mode": "independent-ciphertext(two paths, independently encrypted with same password; /ID timestamps differ)"
       },
       "result": "exact_match",
       "digest_type": "rendered_pixel_sha256(with password)",
@@ -285,6 +323,32 @@
       "blue_frame_digest_would_not_match": true,
       "policy": "GIF 仅取帧 0；非首帧内容不参与匹配",
       "scenario": "M16_gif_first_frame_only"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 10,
+      "size": [
+        9,
+        8
+      ],
+      "canonical_a": "44eedc71ba396ae3173be2d2ad595b04d125f60b1bb216da39f7be462175666c",
+      "canonical_b": "f4fbbaf66d921b8ac7088193c5ad97be453ba44eeb2c3d91b8c33f9542f5e37c",
+      "assert_distance_is_10": true,
+      "scenario": "M17_dhash_boundary_dist10_candidate"
+    },
+    {
+      "result": "no_match",
+      "digest_type": "dhash_candidate",
+      "dhash_distance": 11,
+      "size": [
+        9,
+        8
+      ],
+      "canonical_a": "44eedc71ba396ae3173be2d2ad595b04d125f60b1bb216da39f7be462175666c",
+      "canonical_b": "81e163fc4ffe8cf614497967b679c478e70f8b5555526a6f99c1e089ce2af2fb",
+      "assert_distance_is_11": true,
+      "scenario": "M18_dhash_boundary_dist11_no_match"
     }
   ]
 }

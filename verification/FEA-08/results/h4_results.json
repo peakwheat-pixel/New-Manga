@@ -7,6 +7,7 @@
     "unavailable",
     "fault_blocked"
   ],
+  "production_constraint": "HARD CONSTRAINT: 生产 SourceReadLease 必须 strict 共享（不授 FILE_SHARE_WRITE）；tolerant 共享下 mmap 写不更新 mtime，存在混合流假成功盲区（S5a/S5b 实测 undetected_mixed），只能判 UNAVAILABLE",
   "results": [
     {
       "scenario": "S1_baseline_no_fault",
@@ -17,6 +18,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709361817
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709361817
+        },
         "mixed_digest_risk": false
       },
       "assert_digest_matches_file": true
@@ -30,10 +43,22 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709421844
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709421844
+        },
         "mixed_digest_risk": false
       },
       "writer_attempts": {
-        "write_open": "blocked(win32=None)",
+        "write_open": "blocked(win32=32)",
         "os.replace": "blocked([WinError 5] 拒绝访问。: 'G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-08\\\\tmp\\\\h4_lab\\\\replacement.bin' -> 'G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-08\\\\tmp\\\\h4_lab\\\\source_page.png')"
       },
       "target_bytes_unchanged": true,
@@ -48,6 +73,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709461845
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709461845
+        },
         "mixed_digest_risk": false
       },
       "os_replace_result": {
@@ -65,6 +102,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709511845
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185593,
+          "size": 131072,
+          "mtime_100ns": 134381474709511845
+        },
         "mixed_digest_risk": false
       },
       "path_reopen_digest_wrong_impl": "d87438b22de89f463fb38ac6aefedd43cbb2ca934b34374391cb94bc784948b3",
@@ -82,15 +131,15 @@
         "reason": "identity_changed_after_read",
         "identity_before": {
           "volume_serial": 3401956556,
-          "file_index": 1688849863606685,
+          "file_index": 1125899910185594,
           "size": 131072,
-          "mtime_100ns": 134381419314087366
+          "mtime_100ns": 134381474709596920
         },
         "identity_after": {
           "volume_serial": 3401956556,
-          "file_index": 1688849863606685,
+          "file_index": 1125899910185594,
           "size": 131072,
-          "mtime_100ns": 134381419314122684
+          "mtime_100ns": 134381474709636921
         },
         "observed_data_digest_diagnostic_only": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "mixed_digest_risk": true
@@ -99,6 +148,7 @@
       "write_landed_on_disk": true,
       "no_check_control_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
       "no_check_control_is_mixed": true,
+      "mtime_changed": true,
       "assert_unavailable": true,
       "assert_observed_stream_was_mixed": true
     },
@@ -108,16 +158,32 @@
       "fault": "mmap write @65536 (mapping held=False)",
       "classification": "undetected_mixed",
       "detail": {
-        "outcome": "digest_returned",
+        "outcome": "unavailable",
         "digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
-        "mixed_digest_risk": false
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709676921
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709676921
+        },
+        "mixed_digest_risk": true,
+        "outcome_protocol": "digest_returned",
+        "outcome_evaluation": "LIMITED(mmap-blind): identity+size+mtime 检测不到 mmap 写",
+        "returned_digest_matches_no_legal_whole": true
       },
       "mixed_digest_if_unchecked": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
       "write_landed_on_disk": true,
       "mtime_changed": false,
       "assert_blinding_documented": true,
-      "blinding_risk": true
+      "blinding_risk": true,
+      "mixed_digest_risk_field_consistent": true
     },
     {
       "scenario": "S5b_mmap_write_mapping_held",
@@ -125,16 +191,32 @@
       "fault": "mmap write @65536 (mapping held=True)",
       "classification": "undetected_mixed",
       "detail": {
-        "outcome": "digest_returned",
+        "outcome": "unavailable",
         "digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
         "data_digest": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
-        "mixed_digest_risk": false
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709768405
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709768405
+        },
+        "mixed_digest_risk": true,
+        "outcome_protocol": "digest_returned",
+        "outcome_evaluation": "LIMITED(mmap-blind): identity+size+mtime 检测不到 mmap 写",
+        "returned_digest_matches_no_legal_whole": true
       },
       "mixed_digest_if_unchecked": "dce53b89aca0d098846e7ec733a8b20fa5bb687aae850ccc526e183270d18801",
       "write_landed_on_disk": true,
       "mtime_changed": false,
       "assert_blinding_documented": true,
-      "blinding_risk": true
+      "blinding_risk": true,
+      "mixed_digest_risk_field_consistent": true
     },
     {
       "scenario": "S5c_strict_share_blocks_mmap_writer",
@@ -145,6 +227,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709858435
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709858435
+        },
         "mixed_digest_risk": false
       },
       "mmap_writer_open": {
@@ -162,6 +256,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709904398
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1125899910185594,
+          "size": 131072,
+          "mtime_100ns": 134381474709904398
+        },
         "mixed_digest_risk": false
       },
       "path_exists_after": false,
@@ -176,6 +282,18 @@
         "outcome": "digest_returned",
         "digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
         "data_digest": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+        "identity_before": {
+          "volume_serial": 3401956556,
+          "file_index": 1407374886896250,
+          "size": 131072,
+          "mtime_100ns": 134381474709944542
+        },
+        "identity_after": {
+          "volume_serial": 3401956556,
+          "file_index": 1407374886896250,
+          "size": 131072,
+          "mtime_100ns": 134381474709944542
+        },
         "mixed_digest_risk": false
       },
       "old_path_exists": false,

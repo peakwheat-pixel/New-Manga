@@ -1,0 +1,9 @@
+$ python make_fixtures.py
+EXIT=0
+
+[fixtures] self-check: dhash dist ref-vs-d10=10, ref-vs-d11=11; enc_pdf copy bytes differ=True; dup copy bytes differ=True; zipcrypto copy same-bytes=False
+[fixtures] 33 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
+
+--- stderr ---
+C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'page.png'
+  return self._open_to_write(zinfo, force_zip64=force_zip64)

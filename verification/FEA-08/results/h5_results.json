@@ -4,6 +4,7 @@
   "recycle_query_api": "SHQueryRecycleBinW (read-only)",
   "empty_api_used": false,
   "notes": "SHEmptyRecycleBin 等 API 未封装且未调用；回收/还原仅针对 lab 合成路径",
+  "entry_visibility": "F08I1-005：期望在场的回收站条目经有界轮询确认（500ms × 上限 12 次，超时如实记录）",
   "bin_baseline": {
     "items": 0,
     "size": 0
@@ -60,6 +61,10 @@
         "size": 40960
       },
       "fs_fact_target_kept_at_origin": false,
+      "entries_poll": {
+        "iterations": 0,
+        "timed_out": false
+      },
       "recycle_entry_found": true,
       "entry_meta_orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\page_001.png",
       "restored": [
@@ -83,6 +88,10 @@
       "aborted": false,
       "de": null,
       "fs_fact_target_kept_at_origin": false,
+      "entries_poll": {
+        "iterations": 0,
+        "timed_out": false
+      },
       "recycle_entry_found": true,
       "restored_count": 1,
       "members_digest_match": true,
@@ -94,9 +103,23 @@
       "aborted": false,
       "de": null,
       "fs_fact_target_kept_at_origin": false,
+      "entries_poll": {
+        "iterations": 0,
+        "timed_out": false
+      },
       "recycle_entry_found": 1,
       "fallback_rmdir_used": false,
-      "note": "empty dir recycle measured; on failure target is kept (no rmdir fallback)",
+      "measured_branch": "recyclable(measured)",
+      "unrecyclable_branch_disposition": {
+        "evidence_type": "LIMITED(mocked)",
+        "injected_ret": "0x79 (DE_ACCESSDENIEDSRC)",
+        "disposition": {
+          "decision": "keep_at_origin",
+          "fallback_rmdir_used": false,
+          "reason": "recycle refused (ret=0x79)"
+        }
+      },
+      "note": "empty dir recycle measured; the :514 keep-without-rmdir-fallback branch did not trigger on Win11+NTFS and is exercised via mock injection only (LIMITED)",
       "verdict": "PASS",
       "scenario": "R3_empty_dir_recycle"
     },
@@ -113,15 +136,15 @@
     {
       "plan_identity": {
         "volume_serial": 3401956556,
-        "file_index": 4785074607423907,
+        "file_index": 1970324840317566,
         "size": 24576,
-        "mtime_100ns": 134381419327178033
+        "mtime_100ns": 134381474722859655
       },
       "current_identity": {
         "volume_serial": 3401956556,
-        "file_index": 5066549584134564,
+        "file_index": 1407374886896255,
         "size": 24576,
-        "mtime_100ns": 134381419327228235
+        "mtime_100ns": 134381474722909663
       },
       "identity_match": false,
       "refused_to_execute": true,
@@ -131,8 +154,19 @@
       "scenario": "R5_path_replaced_before_execute"
     },
     {
-      "identity_match": false,
+      "plan_type": "file",
+      "plan_identity": {
+        "volume_serial": 3401956556,
+        "file_index": 2251799817028222,
+        "size": 6144,
+        "mtime_100ns": 134381474723034836
+      },
+      "current_type": "directory",
+      "current_attributes": "0x10",
+      "current_identity": null,
+      "current_identity_note": "open_handle(GENERIC_READ) on directory blocked(win32=5) — 句柄级 FileIdentity 语义只定义在文件上，类型改由属性判定",
       "type_changed": true,
+      "identity_match": false,
       "refused_to_execute": true,
       "no_destructive_issued": true,
       "fs_fact_target_kept_at_origin": true,
@@ -162,6 +196,10 @@
         }
       ],
       "decision_by_fs_facts": "completed",
+      "destructive_calls_before_execute": 4,
+      "destructive_calls_after_execute": 5,
+      "destructive_calls_after_recovery": 5,
+      "no_destructive_reissued": true,
       "restored": [
         {
           "orig_path": "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\crash_after.png",
@@ -182,6 +220,10 @@
         "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_a.png": false,
         "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_b.png": true,
         "G:\\CODEX\\New Manga.workspace\\FEA-08\\tmp\\recycle_lab\\batch_c.png": true
+      },
+      "entries_poll": {
+        "iterations": 0,
+        "timed_out": false
       },
       "recycle_entries": 1,
       "per_file_digest_after_restore_ok": true,

@@ -6,87 +6,117 @@
       "inputs": {
         "单图": {
           "h4_stable_read": {
-            "status": "PASS",
+            "status": "PASS(strict) / UNAVAILABLE(mmap-blind)",
             "evidence": "measured",
-            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed）"
+            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed，F08I1-003 双态表达）",
+            "current": "S1-S7/S5c strict 链 + S4 unavailable + S5a/b 盲区实测（volume-level, format-agnostic 合成单文件）",
+            "needed": "tolerant 共享如需启用：补 USN/change journal 或双读校验（mmap 盲区缓解）"
           },
           "h5_recycle": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)"
+            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)",
+            "current": "R1(文件)/R2/R3(目录) 实测；R4-R6b/R9 全分支 measured",
+            "needed": "IFileOperation per-item sink 语义实跑（当前以 SHFileOperationW 承载）"
           },
           "h6_match": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "卷无关（measured）：M1/M4/M6 exact（bytes/规范像素 digest）；重编码/CMYK→candidate（M2/M7）；GIF 首帧 exact+反证（M16）"
+            "note": "卷无关（measured）：M1/M4/M6 exact（bytes/规范像素 digest）；重编码/CMYK→candidate（M2/M7）；GIF 首帧 exact+反证（M16）；dhash 阈值邻界 M17=10→candidate / M18=11→no_match",
+            "current": "内容层能力（卷无关）：M1/M4/M6 exact（bytes/规范像素 digest）；重编码/CMYK→candidate（M2/M7）；GIF 首帧 exact+反证（M16）；dhash 阈值邻界 M17=10→candidate / M18=11→no_match",
+            "needed": ""
           }
         },
         "文件夹": {
           "h4_stable_read": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed）"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "文件夹 输入的 H4 未逐类实测；按 volume-level measured, format-agnostic 推断（卷级句柄语义与文件内容格式无关）；AC-4 口径下推断格不记 PASS",
+            "current": "卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格",
+            "needed": "如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解"
           },
           "h5_recycle": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)"
+            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)",
+            "current": "R1(文件)/R2/R3(目录) 实测；R4-R6b/R9 全分支 measured",
+            "needed": "IFileOperation per-item sink 语义实跑（当前以 SHFileOperationW 承载）"
           },
           "h6_match": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "卷无关（measured）：M8/M9 membership+成员 digest diff；重命名仅候选；重复同图独立 occurrence"
+            "note": "卷无关（measured）：M8/M9 membership+成员 digest diff；重命名仅候选；重复同图独立 occurrence",
+            "current": "内容层能力（卷无关）：M8/M9 membership+成员 digest diff；重命名仅候选；重复同图独立 occurrence",
+            "needed": ""
           }
         },
         "ZIP": {
           "h4_stable_read": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed）"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "ZIP 输入的 H4 未逐类实测；按 volume-level measured, format-agnostic 推断（卷级句柄语义与文件内容格式无关）；AC-4 口径下推断格不记 PASS",
+            "current": "卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格",
+            "needed": "如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解"
           },
           "h5_recycle": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "ZIP 输入的 H5 未逐类实测；回收语义按 volume-level measured, format-agnostic 推断",
+            "current": "卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验",
+            "needed": "如需逐格式 measured：补 per-format 回收场景"
           },
           "h6_match": {
-            "status": "PASS",
+            "status": "PASS(Non-AES) / LIMITED(pyzipper)(AES)",
             "evidence": "measured",
-            "note": "卷无关（measured）：M10 容器重编码 exact（成员 digest）；M12 重复名歧义→candidate；M13 ZipCrypto 带密 exact、AES 需 pyzipper（未引入）"
+            "note": "卷无关（measured）：M10 容器重编码 exact（成员 digest）；M12 重复名歧义→candidate；M13 ZipCrypto 带密 exact（独立密文两路径）；AES=LIMITED(pyzipper)（标准库 NotImplementedError）",
+            "current": "内容层能力（卷无关）：M10 容器重编码 exact（成员 digest）；M12 重复名歧义→candidate；M13 ZipCrypto 带密 exact（独立密文两路径）；AES=LIMITED(pyzipper)（标准库 NotImplementedError）",
+            "needed": "AES ZIP 需 pyzipper(MIT)（产品裁决）"
           }
         },
         "CBZ": {
           "h4_stable_read": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed）"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "CBZ 输入的 H4 未逐类实测；按 volume-level measured, format-agnostic 推断（卷级句柄语义与文件内容格式无关）；AC-4 口径下推断格不记 PASS",
+            "current": "卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格",
+            "needed": "如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解"
           },
           "h5_recycle": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "CBZ 输入的 H5 未逐类实测；回收语义按 volume-level measured, format-agnostic 推断",
+            "current": "卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验",
+            "needed": "如需逐格式 measured：补 per-format 回收场景"
           },
           "h6_match": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "卷无关（measured）：M11 CBZ 与 ZIP 同构 exact"
+            "note": "卷无关（measured）：M11 CBZ 与 ZIP 同构 exact",
+            "current": "内容层能力（卷无关）：M11 CBZ 与 ZIP 同构 exact",
+            "needed": ""
           }
         },
         "PDF": {
           "h4_stable_read": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "strict lease 实测（S1/S2/S3/S5c/S6/S7 complete_old_digest；S4 unavailable）；tolerant+mmap=UNAVAILABLE（S5a/b undetected_mixed）"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "PDF 输入的 H4 未逐类实测；按 volume-level measured, format-agnostic 推断（卷级句柄语义与文件内容格式无关）；AC-4 口径下推断格不记 PASS",
+            "current": "卷级 measured（format-agnostic）：H4 为句柄/卷语义，未逐格式实验；strict/tolerant 结论同单图像格",
+            "needed": "如需逐格式 measured：补 per-format H4 场景；tolerant 同需 mmap 缓解"
           },
           "h5_recycle": {
-            "status": "PASS",
-            "evidence": "measured",
-            "note": "R1-R9 measured：成功可还原 digest 一致；失败/中断保留；R7/R8 分支 LIMITED(mocked)"
+            "status": "LIMITED(inferred: volume-level, format-agnostic)",
+            "evidence": "inferred",
+            "note": "PDF 输入的 H5 未逐类实测；回收语义按 volume-level measured, format-agnostic 推断",
+            "current": "卷级 measured（format-agnostic）：回收 API 对路径操作，未逐格式实验",
+            "needed": "如需逐格式 measured：补 per-format 回收场景"
           },
           "h6_match": {
             "status": "PASS",
             "evidence": "measured",
-            "note": "卷无关（measured）：M14 重生成 exact（页渲染 digest+内容流 digest，参数记录）；M15 加密 PDF 带密 exact"
+            "note": "卷无关（measured）：M14 重生成 exact（页渲染 digest+内容流 digest，参数记录）；M15 加密 PDF 带密 exact（独立密文两路径）",
+            "current": "内容层能力（卷无关）：M14 重生成 exact（页渲染 digest+内容流 digest，参数记录）；M15 加密 PDF 带密 exact（独立密文两路径）",
+            "needed": ""
           }
         }
       }
@@ -98,86 +128,116 @@
         "单图": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "文件夹": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "ZIP": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "CBZ": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "PDF": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         }
       }
@@ -189,86 +249,116 @@
         "单图": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "文件夹": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "ZIP": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "CBZ": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         },
         "PDF": {
           "h4_stable_read": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级"
+            "evidence": "inferred",
+            "note": "无硬件：身份基（file index）与共享语义按文档推断，须实测后升级",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h5_recycle": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据"
+            "evidence": "inferred",
+            "note": "不可回收卷/网络盘：D 流程应按卷能力禁用（:512）；mock 不满足 PASS 判据",
+            "current": "未实测（无硬件）",
+            "needed": "真机实测后升级"
           },
           "h6_match": {
             "status": "LIMITED(mocked)",
-            "evidence": "mocked",
-            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured"
+            "evidence": "measured",
+            "note": "H6 为内容层能力（卷无关，见 NTFS 行）；mock 卷上无法 measured",
+            "current": "能力同 NTFS 行（内容层），该卷上未 measured",
+            "needed": "真机实测后升级"
           }
         }
       }
@@ -281,85 +371,115 @@
           "h4_stable_read": {
             "status": "LIMITED(inferred)",
             "evidence": "inferred",
-            "note": "云占位 hydration 行为未实测；lease 语义待专项"
+            "note": "云占位 hydration 行为未实测；lease 语义待专项",
+            "current": "未实测（按 API 文档推断）",
+            "needed": "hydration/断连语义专项"
           },
           "h5_recycle": {
             "status": "UNAVAILABLE(inferred)",
             "evidence": "inferred",
-            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项"
+            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项",
+            "current": "未实测；生产默认禁用 D 流程",
+            "needed": "回收站语义专项"
           },
           "h6_match": {
             "status": "LIMITED(inferred)",
-            "evidence": "inferred",
-            "note": "内容层同 NTFS 行（measured），但卷上可达性未测"
+            "evidence": "measured",
+            "note": "内容层同 NTFS 行（measured），但卷上可达性未测",
+            "current": "能力同 NTFS 行（内容层），该卷上可达性未测",
+            "needed": "真机实测后升级"
           }
         },
         "文件夹": {
           "h4_stable_read": {
             "status": "LIMITED(inferred)",
             "evidence": "inferred",
-            "note": "云占位 hydration 行为未实测；lease 语义待专项"
+            "note": "云占位 hydration 行为未实测；lease 语义待专项",
+            "current": "未实测（按 API 文档推断）",
+            "needed": "hydration/断连语义专项"
           },
           "h5_recycle": {
             "status": "UNAVAILABLE(inferred)",
             "evidence": "inferred",
-            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项"
+            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项",
+            "current": "未实测；生产默认禁用 D 流程",
+            "needed": "回收站语义专项"
           },
           "h6_match": {
             "status": "LIMITED(inferred)",
-            "evidence": "inferred",
-            "note": "内容层同 NTFS 行（measured），但卷上可达性未测"
+            "evidence": "measured",
+            "note": "内容层同 NTFS 行（measured），但卷上可达性未测",
+            "current": "能力同 NTFS 行（内容层），该卷上可达性未测",
+            "needed": "真机实测后升级"
           }
         },
         "ZIP": {
           "h4_stable_read": {
             "status": "LIMITED(inferred)",
             "evidence": "inferred",
-            "note": "云占位 hydration 行为未实测；lease 语义待专项"
+            "note": "云占位 hydration 行为未实测；lease 语义待专项",
+            "current": "未实测（按 API 文档推断）",
+            "needed": "hydration/断连语义专项"
           },
           "h5_recycle": {
             "status": "UNAVAILABLE(inferred)",
             "evidence": "inferred",
-            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项"
+            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项",
+            "current": "未实测；生产默认禁用 D 流程",
+            "needed": "回收站语义专项"
           },
           "h6_match": {
             "status": "LIMITED(inferred)",
-            "evidence": "inferred",
-            "note": "内容层同 NTFS 行（measured），但卷上可达性未测"
+            "evidence": "measured",
+            "note": "内容层同 NTFS 行（measured），但卷上可达性未测",
+            "current": "能力同 NTFS 行（内容层），该卷上可达性未测",
+            "needed": "真机实测后升级"
           }
         },
         "CBZ": {
           "h4_stable_read": {
             "status": "LIMITED(inferred)",
             "evidence": "inferred",
-            "note": "云占位 hydration 行为未实测；lease 语义待专项"
+            "note": "云占位 hydration 行为未实测；lease 语义待专项",
+            "current": "未实测（按 API 文档推断）",
+            "needed": "hydration/断连语义专项"
           },
           "h5_recycle": {
             "status": "UNAVAILABLE(inferred)",
             "evidence": "inferred",
-            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项"
+            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项",
+            "current": "未实测；生产默认禁用 D 流程",
+            "needed": "回收站语义专项"
           },
           "h6_match": {
             "status": "LIMITED(inferred)",
-            "evidence": "inferred",
-            "note": "内容层同 NTFS 行（measured），但卷上可达性未测"
+            "evidence": "measured",
+            "note": "内容层同 NTFS 行（measured），但卷上可达性未测",
+            "current": "能力同 NTFS 行（内容层），该卷上可达性未测",
+            "needed": "真机实测后升级"
           }
         },
         "PDF": {
           "h4_stable_read": {
             "status": "LIMITED(inferred)",
             "evidence": "inferred",
-            "note": "云占位 hydration 行为未实测；lease 语义待专项"
+            "note": "云占位 hydration 行为未实测；lease 语义待专项",
+            "current": "未实测（按 API 文档推断）",
+            "needed": "hydration/断连语义专项"
           },
           "h5_recycle": {
             "status": "UNAVAILABLE(inferred)",
             "evidence": "inferred",
-            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项"
+            "note": "云占位卷回收站语义不明；D 流程默认禁用待专项",
+            "current": "未实测；生产默认禁用 D 流程",
+            "needed": "回收站语义专项"
           },
           "h6_match": {
             "status": "LIMITED(inferred)",
-            "evidence": "inferred",
-            "note": "内容层同 NTFS 行（measured），但卷上可达性未测"
+            "evidence": "measured",
+            "note": "内容层同 NTFS 行（measured），但卷上可达性未测",
+            "current": "能力同 NTFS 行（内容层），该卷上可达性未测",
+            "needed": "真机实测后升级"
           }
         }
       }
@@ -369,16 +489,19 @@
     "strict_lease_blocks_all_writers": true,
     "tolerant_writefile_detected_by_mtime": true,
     "tolerant_mmap_write_blinding": true,
-    "conclusion": "strict lease（不共享 WRITE）= NTFS 可证明一致读取（PASS/measured）；tolerant（R|W|D）下 WriteFile 由 mtime 检出（unavailable），mmap 写不更新 mtime → 混合流假成功盲区 → tolerant 对 mmap UNAVAILABLE"
+    "ntfs_h4_dual_status_derived": "PASS(strict) / UNAVAILABLE(mmap-blind)",
+    "conclusion": "strict lease（不共享 WRITE）= NTFS 可证明一致读取（PASS(strict)/measured）；tolerant（R|W|D）下 WriteFile 由 mtime 检出（unavailable），mmap 写不更新 mtime → 混合流假成功盲区 → tolerant 对 mmap UNAVAILABLE。PRODUCTION HARD CONSTRAINT: strict-only（或补 USN/双读缓解后方可放宽）"
   },
   "h5_summary": {
     "measured_core_pass": true,
+    "ntfs_h5_status_derived": "PASS",
     "conclusion": "SHFileOperation+ALLOWUNDO：成功回收可还原且 digest 一致；失败/占用/替换/中断全部保留或按事实核对恢复，无永久删除路径；不可回收卷/取消 = LIMITED(mocked)"
   },
+  "derivation_note": "F08I1-008：NTFS 行各格状态由 h4/h5/h6_results.json 逐场景推导；推导不满足时不写 PASS，如实降级。H4/H5 为卷级句柄/路径语义，对文件夹/ZIP/CBZ/PDF 未逐格式实验的格标 inferred（volume-level measured, format-agnostic）。",
   "needs_new": [
     [
       "生产 SourceReadLease（Host 侧）",
-      "默认 strict 共享（不授 FILE_SHARE_WRITE）；tolerant 仅在拒绝 mmap 写者的环境可用"
+      "默认 strict 共享（不授 FILE_SHARE_WRITE）——硬约束；tolerant 仅在缓解 mmap 盲区（USN/双读）后可用"
     ],
     [
       "mmap 盲区缓解",
@@ -406,7 +529,10 @@
     ]
   ],
   "status_counts": {
-    "PASS": 15,
+    "PASS(strict) / UNAVAILABLE(mmap-blind)": 1,
+    "PASS": 6,
+    "LIMITED(inferred: volume-level, format-agnostic)": 7,
+    "PASS(Non-AES) / LIMITED(pyzipper)(AES)": 1,
     "LIMITED(mocked)": 30,
     "LIMITED(inferred)": 10,
     "UNAVAILABLE(inferred)": 5

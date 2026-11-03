@@ -13,3 +13,4 @@ EXIT=0
 [h5] R7_unrecyclable_volume_network_drive           -> LIMITED(mocked)
 [h5] R8_user_cancel                                 -> LIMITED(mocked)
 [h5] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h5_results.json (11 scenarios); bin 0->0 items, leftover=0
+[h5] gate: all 9 expected-PASS scenarios PASS

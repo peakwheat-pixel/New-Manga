@@ -1,7 +1,15 @@
 {
   "steps": [
     {
-      "step": "make_fixtures.py",
+      "step": "make_fixtures.py (staged generation)",
+      "exit": 0
+    },
+    {
+      "step": "make_fixtures.py (regeneration control)",
+      "exit": 0
+    },
+    {
+      "step": "stage_evidence.py",
       "exit": 0
     },
     {
@@ -19,9 +27,15 @@
     {
       "step": "matrix.py",
       "exit": 0
+    },
+    {
+      "step": "run_all.verify_results (results JSON verdicts)",
+      "exit": 0
     }
   ],
   "env": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "repo": "G:\\CODEX\\New Manga",
+  "staged_fixtures": 33,
   "tmp_removed": [
     "fixtures",
     "h4_lab"

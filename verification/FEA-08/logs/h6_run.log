@@ -16,7 +16,9 @@ EXIT=0
 [h6] M14_pdf_regenerated_pages                    -> exact_match
 [h6] M15_encrypted_pdf                            -> exact_match
 [h6] M16_gif_first_frame_only                     -> exact_match
-[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (15 scenarios)
+[h6] M17_dhash_boundary_dist10_candidate          -> candidate
+[h6] M18_dhash_boundary_dist11_no_match           -> no_match
+[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (17 scenarios); fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures (env FEA08_FIXTURES); manifest=G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json
 
 --- stderr ---
 G:\CODEX\New Manga.workspace\FEA-08\prototype\h6_run.py:39: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.

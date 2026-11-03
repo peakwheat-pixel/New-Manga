@@ -1,4 +1,4 @@
 $ python matrix.py
 EXIT=0
 
-[matrix] G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.json / G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.md; counts={'PASS': 15, 'LIMITED(mocked)': 30, 'LIMITED(inferred)': 10, 'UNAVAILABLE(inferred)': 5}
+[matrix] G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.json / G:\CODEX\New Manga.workspace\FEA-08\out\capability_matrix.md; counts={'PASS(strict) / UNAVAILABLE(mmap-blind)': 1, 'PASS': 6, 'LIMITED(inferred: volume-level, format-agnostic)': 7, 'PASS(Non-AES) / LIMITED(pyzipper)(AES)': 1, 'LIMITED(mocked)': 30, 'LIMITED(inferred)': 10, 'UNAVAILABLE(inferred)': 5}
