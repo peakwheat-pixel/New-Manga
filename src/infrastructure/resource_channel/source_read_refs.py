@@ -298,6 +298,35 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 or any(expiry > g.expires_at for g in matching)):
                 raise SourceImportError("SOURCE_PASSWORD_REQUIRED", "password reference is unavailable")
 
+    def find_for_source(self, source_id: str) -> tuple[str, ResolvedSourceRead]:
+        """Return the live grant bound to ``source_id`` (highest generation).
+
+        ``resolve_page_resource`` has no grant parameter on the frozen wire, so
+        the Core derives the grant from the page binding's source. Missing,
+        expired or revoked grants stay typed refusals.
+        """
+        if not isinstance(source_id, str) or not source_id:
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "source id is invalid")
+        with self._lock:
+            candidates = [
+                grant for grant in self._grants.values()
+                if grant.scope.get("source_id") == source_id
+            ]
+            live: list[_SourceReadGrant] = []
+            for grant in candidates:
+                try:
+                    self._checked(grant.grant_id)
+                except SourceImportError:
+                    continue
+                live.append(grant)
+            if not live:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "no active source-read grant covers this source",
+                )
+            chosen = max(live, key=lambda grant: (grant.generation, grant.grant_id))
+        return chosen.grant_id, self.resolve(chosen.grant_id)
+
     def verify_scope(self, grant_id, *, source_id, version, rendition, entries):
         with self._lock:
             grant = self._checked(grant_id)

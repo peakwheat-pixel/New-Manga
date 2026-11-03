@@ -3394,9 +3394,49 @@ class CoreServiceServer:
         if page is None:
             raise RegionLookupError(page_id)
         if getattr(page, "source_mode", "managed") == "referenced":
-            # No arbitrary-path fallback while the rendition production chain
-            # is not assembled. Visibility is independent from authorization.
-            raise SourceImportError("SOURCE_ACCESS_DENIED", "source rendition authorization is unavailable")
+            # C-15 §4.2: referenced pages resolve only through a live
+            # source-read grant and publish a decoded/re-encoded rendition —
+            # never raw user-source bytes, never an arbitrary-path fallback.
+            from application.importing.referenced.resolve import (
+                resolve_referenced_rendition,
+            )
+
+            registry = getattr(self._core, "source_read_refs", None)
+            if registry is None:
+                raise SourceImportError(
+                    "SOURCE_REGISTRY_UNAVAILABLE",
+                    "source-read grants are unavailable",
+                )
+            rendition = resolve_referenced_rendition(
+                page.page_id,
+                repository=self._core.repository,
+                access=registry,
+                image_decoder=getattr(self._core, "image_decoder", None),
+                document_raster=getattr(self._core, "document_raster", None),
+            )
+            resource_id = f"page-rendition-{page.page_id}"
+            entry = self._render_previews.lookup(resource_id)
+            if entry is not None and self._render_previews.artifact_exists(
+                entry.rel_path
+            ):
+                return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
+            import tempfile
+
+            temp_path = None
+            try:
+                with tempfile.NamedTemporaryFile(
+                    suffix=".png", delete=False
+                ) as temp:
+                    temp_path = Path(temp.name)
+                    temp.write(rendition["png"])
+                    temp.flush()
+                    os.fsync(temp.fileno())
+                return self._render_previews.publish_original(
+                    temp_path, resource_id, ".png"
+                )
+            finally:
+                if temp_path is not None:
+                    temp_path.unlink(missing_ok=True)
         if not page.managed_original_ref:
             raise RegionLookupError(page_id)
         # The wire gate admits exactly the decode face's suffixes; the suffix is

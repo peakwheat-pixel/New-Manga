@@ -613,42 +613,9 @@ class ReferencedImportRuntime:
         return decoded.width, decoded.height, decoded.mime_type
 
     def _read_entry_bytes(self, resolved, entry, password: bytes | None) -> bytes:
-        if resolved.source_kind == "image":
-            return read_verified_bytes(
-                resolved.container_path,
-                resolved.container_facts,
-                max_bytes=resolved.budget.max_bytes,
-            )
-        if resolved.source_kind in {"zip", "cbz"}:
-            data = read_verified_bytes(
-                resolved.container_path,
-                resolved.container_facts,
-                max_bytes=resolved.budget.max_bytes,
-            )
-            archive = _open_archive(data)
-            with archive:
-                ordered = ordered_archive_members(archive)
-                if entry.ordinal >= len(ordered):
-                    raise SourceImportError(
-                        "SOURCE_ENTRY_MISSING", "archive member is missing"
-                    )
-                info = ordered[entry.ordinal]
-                try:
-                    return archive.read(info, pwd=password)
-                except (RuntimeError, zipfile.BadZipFile, OSError) as error:
-                    raise SourceImportError(
-                        "SOURCE_PASSWORD_INVALID", "archive member could not be read"
-                    ) from error
-        if resolved.source_kind == "folder":
-            for path, facts in resolved.folder_entries:
-                if _folder_rel(path, resolved.folder_root) == entry.locator:
-                    return read_verified_bytes(
-                        path, facts, max_bytes=resolved.budget.max_bytes
-                    )
-            raise SourceImportError("SOURCE_ENTRY_MISSING", "folder member is missing")
-        raise SourceImportError(
-            "SOURCE_FORMAT_UNSUPPORTED", "source kind is not supported"
-        )
+        from application.importing.referenced.reader import read_entry_bytes
+
+        return read_entry_bytes(resolved, entry, password)
 
     def _commit_page_unit(
         self,

@@ -68,6 +68,7 @@ class FakeSourceReadAccess:
 
     def __init__(self) -> None:
         self._grants: dict[str, ResolvedSourceRead] = {}
+        self._grant_sources: dict[str, str] = {}
         self._revoked: set[str] = set()
         self._expired: set[str] = set()
         self._fail_verify: dict[str, str] = {}
@@ -75,7 +76,8 @@ class FakeSourceReadAccess:
 
     def add_file(self, grant_id: str, kind: str, path: str | Path, *,
                  generation: int = 1, registry_id: str = "reg-1",
-                 budget: SourceReadBudget | None = None) -> ResolvedSourceRead:
+                 budget: SourceReadBudget | None = None,
+                 source_id: str | None = None) -> ResolvedSourceRead:
         facts = capture_facts(path)
         resolved = ResolvedSourceRead(
             grant_id=grant_id,
@@ -88,12 +90,15 @@ class FakeSourceReadAccess:
             container_facts=facts,
         )
         self._grants[grant_id] = resolved
+        if source_id is not None:
+            self._grant_sources[grant_id] = source_id
         return resolved
 
     def add_folder(self, grant_id: str, root: str | Path,
                    members: list[str], *, generation: int = 1,
                    registry_id: str = "reg-1",
-                   budget: SourceReadBudget | None = None) -> ResolvedSourceRead:
+                   budget: SourceReadBudget | None = None,
+                   source_id: str | None = None) -> ResolvedSourceRead:
         resolved = ResolvedSourceRead(
             grant_id=grant_id,
             registry_id=registry_id,
@@ -107,6 +112,8 @@ class FakeSourceReadAccess:
             ),
         )
         self._grants[grant_id] = resolved
+        if source_id is not None:
+            self._grant_sources[grant_id] = source_id
         return resolved
 
     def resolve(self, grant_id: str) -> ResolvedSourceRead:
@@ -131,6 +138,18 @@ class FakeSourceReadAccess:
         code = self._fail_verify.get(grant_id)
         if code is not None:
             raise SourceImportError(code, "grant verification failed")
+
+    def find_for_source(self, source_id: str) -> tuple[str, ResolvedSourceRead]:
+        matching = [
+            grant_id for grant_id, bound in self._grant_sources.items()
+            if bound == source_id
+        ]
+        if not matching:
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED", "no active grant covers this source"
+            )
+        grant_id = sorted(matching)[-1]
+        return grant_id, self.resolve(grant_id)
 
     def revoke_all_for_session(self) -> int:
         count = len(self._grants)

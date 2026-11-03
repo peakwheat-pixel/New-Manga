@@ -1,0 +1,29 @@
+# FEA-09 referenced 生产 resolve 增量（DSH 2026-11-03 22:05）
+
+## 实现
+
+- `src/infrastructure/resource_channel/source_read_refs.py`：`SourceReadGrantRegistry.find_for_source(source_id)`——按 grant `scope.source_id` 查找活跃 grant（未撤销/未过期/generation floor），返回 `(grant_id, ResolvedSourceRead)`；无 grant → `SOURCE_ACCESS_DENIED` typed。
+- `src/application/importing/referenced/reader.py`（新增）：`read_entry_bytes`（image/folder/ZIP/CBZ/PDF 单 entry 严格读取，复用注入的 strict-read 端口）与 `render_entry_png`（PDF 经注入 `document_raster` 渲染 PNG；其它经 Pillow 解码 + EXIF 修正 + 重编码 PNG，绝不发布 raw 源字节）。
+- `src/application/importing/referenced/resolve.py`（新增）：`resolve_referenced_rendition`——binding healthy 校验、entry 行定位、grant 查找与 generation 校验、rendition 渲染；typed 失败。
+- `src/bootstrap/core_service.py`：`handle_resolve_page_resource` referenced 分支接线——经上述 resolve 后发布到 derived root（确定性 `page-rendition-{page_id}` key，catalog 命中幂等，无任意路径回退）。
+- `src/application/importing/referenced/runtime.py`：`_read_entry_bytes` 委托 reader（消除重复实现）。
+- `tests/fea09/test_referenced_resolve.py`（新增 4 项）：PNG rendition + 非 raw 断言、无 grant typed、撤销 typed、Core 跨进程面发布/幂等。
+- `tests/fea09/support.py`：fake access 增加 `source_id` 绑定与 `find_for_source`。
+
+## 验证（本机真实执行）
+
+| 命令 | 结果 |
+|---|---|
+| `python -m pytest tests/fea09 -q` | **96 passed**（原 92 + 新增 4） |
+| `python -m pytest tests/fea09/test_referenced_resolve.py -q` | 4 passed |
+| `python -m pytest tests/core/test_architecture.py tests/core/test_bootstrap.py tests/core/test_core_service.py -q` | EXIT 0 |
+| `pwsh tools\governance\check.ps1 -TaskPath doc\tasks\FEA-09.md` | PASS(3) |
+| `pwsh tools\governance\verify_pins.ps1` | 17/17 PASS |
+
+## 仍未完成
+
+- 真实 Host IPC + 现有 V2 生产 adapter 端到端证据（AC-6）。
+- 密码完整链路（resolve 对加密源目前无密码参数 → typed `SOURCE_PASSWORD_REQUIRED`；导入侧 DPAPI 秘密读取已具备）。
+- PDF resolve 在生产 `document_raster` 已注入但本增量仅以 fake/单元覆盖，未跑真实 PDF resolver 端到端。
+- rendition_cache 表行写入尚未在 resolve 发布路径落地（当前复用 catalog/publisher；AC-10 的预算/LRU/淘汰仍需接线验证）。
+- AC 仍不标 MET；独立 impl Review 未进行。
