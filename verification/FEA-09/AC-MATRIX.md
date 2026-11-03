@@ -9,7 +9,7 @@
 | AC-3 occurrence/共享 | `test_referenced_flow.py`（21，occurrence）+ `test_referenced_sharing.py`（1，跨项目共享同一源/source 行共享、binding 独立） | passed | PARTIAL | 两项目阅读进度/人工修改/处理结果独立回归未写 |
 | AC-4 密码 | `test_referenced_password.py`（10） | 10 passed | PARTIAL | 生产 secret 文件 → 导入解密 → 删除链路已接线（`read_secret`）；真实 DPAPI 产品路径与日志扫描未跑；AES 仅 typed unsupported |
 | AC-5 取消/进度/计数 | `test_referenced_flow.py`（21，含 accepted 取消/部分取消/失败/计数/跨重启/自然键） | passed | PARTIAL | 丢 ACK/异常/解码中取消的扩展场景未单列；Host 可观察进度的真实 IPC 未验 |
-| AC-6 隔离与 V2 | `test_referenced_resolve.py`（6，含 Core wire face 发布/幂等/typed）；Host `SourceRegistryTests` 2 passed | 6 + 2 passed | PARTIAL | **真实 Host IPC + 现有 V2 生产 adapter 端到端未完成**（仍为关键缺口） |
+| AC-6 隔离与 V2 | `test_referenced_resolve.py`（7，含 Core wire face/双读）；Host `SourceRegistryTests` 2；**`Fea09RealIpcTests` 真实 stdio**（Plan/Start/Receipt/Resolve，16 frames） | real IPC 1 passed；组件 9 passed | PARTIAL | 真实 Host IPC 已完成；V2 UI 视图/ViewModel 可达路径未走（FEA-09-UI-1） |
 | AC-7 完整性/迁移/回退 | `test_v7_migration.py`（9）、`test_read_paths.py`（8）、`test_referenced_resolve.py`（7，含双读 managed+referenced resolve）、flow `test_disabled_flag_rejects_new_imports` | passed | PARTIAL | 缺文件/磁盘满/中断不切入口负测未单列；迁移双集合已测 |
 | AC-8 证据与交付 | `dotnet build` 0/0；`.NET` 全量 **1298/0/57**；`pytest tests/fea09` **98**；`check.ps1` PASS；`verify_pins` 17/17；FEA-06 四 PNG 未变 | 全绿 | PARTIAL | 独立 impl Review 未 Appointment/进行；最终 DSH 集成验证未完成；EV 需最终 pin 收敛 |
 | AC-9 授权/lease | `test_source_grants_unittest.py`（5）、`test_referenced_wire.py`（13，含 Host 命令/脱敏/撤销） | 18 passed | PARTIAL | Registry 重启/根替换/跨根 reparse 的原生组合未全跑；Host 侧 Revoke ACK/EOF 竞态未集成测 |

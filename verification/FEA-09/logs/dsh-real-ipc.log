@@ -1,0 +1,16 @@
+# FEA-09 AC-6: real Host<->Core stdio IPC (DSH 2026-11-03)
+
+## 实现
+- `SourceReadGrantRegistry.find_for_identity`：import 前铸造的 grant 按物理身份（content_digest+volume_serial+file_id）匹配。
+- `SqliteLibraryRepository.get_source_identity`：binding source 的当前 location 物理身份。
+- `resolve_referenced_rendition`：source_id 匹配失败时回退物理身份（仍 typed/无任意路径）。
+- Host.Tests `Fea09RealIpcTests.cs`：真实 stdio 子进程（`python -X utf8 -c "import bootstrap.core_service"`，隔离 DataRoot）→ `CoreServiceClient` + `SourceAccessRegistry` + `SourceReadCoordinator` → RegisterSourceReadGrant → PlanImportReferences → StartImportReferences → GetImportReceipt → resolve_page_resource。
+
+## 验证
+- `NEWMANGA_FEA09_IPC=1 dotnet test Host.Tests --filter Fea09RealIpcTests` → **1 passed**（16 wire frames；receipt completed；published rendition sha256）
+- 默认 `dotnet test Host.Tests` → 53 passed / 29 skipped（新测试自跳过，基线不破坏）
+- `pytest tests/fea09` → 100 passed
+- 证据：`verification/FEA-09/ipc/fea09-real-ipc.json`、`fea09-real-ipc.wire.ndjson`
+
+## 边界
+真实 IPC 使用生产 CoreServiceClient/Host 协调器；未走 V2 UI 视图/ViewModel（归 FEA-09-UI-1），未用 fake controller。仍缺：V2 可达路径 UI 侧断言、独立 impl Review。

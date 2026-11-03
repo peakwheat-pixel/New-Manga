@@ -68,7 +68,25 @@ def resolve_referenced_rendition(
         content_digest=row.get("content_digest"),
         content_digest_kind=row.get("content_digest_kind") or "encoded",
     )
-    grant_id, resolved = access.find_for_source(binding["source_id"])
+    try:
+        grant_id, resolved = access.find_for_source(binding["source_id"])
+    except SourceImportError as source_error:
+        # Import-time grants are minted before the Core assigns a source id;
+        # fall back to the binding's physical identity (same file, same grant
+        # root). Still typed/authorized — never an arbitrary path.
+        identity_of = getattr(repository, "get_source_identity", None)
+        find_for_identity = getattr(access, "find_for_identity", None)
+        identity = identity_of(binding["source_id"]) if identity_of else None
+        if identity is None or find_for_identity is None:
+            raise
+        try:
+            grant_id, resolved = find_for_identity(
+                content_digest=identity["content_digest"],
+                volume_serial=int(identity["volume_serial"]),
+                file_id=int(identity["file_id"]),
+            )
+        except SourceImportError:
+            raise source_error
     if int(binding.get("authorization_generation") or 0) > int(
         getattr(resolved, "generation", 0)
     ):

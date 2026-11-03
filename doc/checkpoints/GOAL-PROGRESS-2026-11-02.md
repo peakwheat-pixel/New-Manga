@@ -1237,3 +1237,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **commits**：`78bda22c`（resolve）、`3f205655`（密码/cache）、`79d97cff`（AC-3/AC-7 证据）及 EV pin commits `0aa8a2d8`/`a7b8dac7`/`96bd2cad`。
 - **下一可推进项（计划）**：真实 Host IPC/V2 证据（AC-6）——需构建当前 Core sidecar、Host.Tests 增加真实 stdio 测试（CoreServiceClient + SourceAccessRegistry + SourceReadCoordinator → Plan/Start/GetReceipt/Resolve），并保存证据；之后独立 impl Review。
 - 不 push；未触碰冻结契约/UI/共享组合根/依赖/真实用户数据。
+## 188. FEA-09 真实 Host↔Core IPC（goal round 2）
+
+- **AC-6 真实 IPC**：Host.Tests `Fea09RealIpcTests`（真实 stdio Python Core 进程 + 生产 `CoreServiceClient`/`SourceAccessRegistry`/`SourceReadCoordinator`）：RegisterSourceReadGrant → PlanImportReferences → StartImportReferences → GetImportReceipt（completed）→ resolve_page_resource（`page-rendition-*`，derived PNG 已发布）；16 wire frames。`NEWMANGA_FEA09_IPC=1` → 1 passed；默认跳过（Host.Tests 53/29）。
+- **物理身份 grant 回退**：import 前铸造的 grant 无法预知 Core source_id，resolve 以 binding 的 content_digest+volume_file_id 匹配 grant（`find_for_identity`/`get_source_identity`）；仍 typed/无任意路径。
+- **验证**：`pytest tests/fea09` 100 passed；check PASS、pins 17/17；证据 `verification/FEA-09/ipc/`。
+- **AC 矩阵**：AC-6 更新为“真实 IPC 已完成、V2 UI 路径未走（UI-1）”；其余 AC 仍 PARTIAL。
+- **下一可推进项**：V2 可达路径（C# HostCommandDispatcher/生产 adapter 层）断言、AC-1/2/4/5/9/10 缺口补齐、独立 impl Review。

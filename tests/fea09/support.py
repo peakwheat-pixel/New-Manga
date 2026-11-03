@@ -151,6 +151,24 @@ class FakeSourceReadAccess:
         grant_id = sorted(matching)[-1]
         return grant_id, self.resolve(grant_id)
 
+    def find_for_identity(self, *, content_digest, volume_serial, file_id):
+        matching = []
+        for grant_id, resolved in self._grants.items():
+            facts = resolved.container_facts
+            if (
+                facts is not None
+                and facts.sha256 == content_digest
+                and facts.volume_serial == volume_serial
+                and facts.file_id == file_id
+            ):
+                matching.append(grant_id)
+        if not matching:
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED", "no active grant covers this identity"
+            )
+        grant_id = sorted(matching)[-1]
+        return grant_id, self.resolve(grant_id)
+
     def revoke_all_for_session(self) -> int:
         count = len(self._grants)
         self._revoked.update(self._grants)

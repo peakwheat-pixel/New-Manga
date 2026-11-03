@@ -1498,6 +1498,20 @@ class SqliteLibraryRepository:
                  size_bytes, observed_at, created_at),
             )
 
+    def get_source_identity(self, source_id: str) -> dict[str, Any] | None:
+        """Physical identity of a source's current location (C-15 §2.3).
+
+        Used by the resolve path when the live grant was minted before the
+        Core assigned the source id: the grant is matched by physical facts
+        (content digest + volume/file id) instead.
+        """
+        row = self._conn.execute(
+            "SELECT content_digest, volume_serial, file_id FROM source_locations"
+            " WHERE source_id = ? AND is_current = 1",
+            (source_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
     def get_source_version(self, source_id: str, version_id: str) -> dict[str, Any] | None:
         row = self._conn.execute(
             "SELECT version_id, source_id, location_id, content_digest,"

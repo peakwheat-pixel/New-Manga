@@ -298,6 +298,50 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 or any(expiry > g.expires_at for g in matching)):
                 raise SourceImportError("SOURCE_PASSWORD_REQUIRED", "password reference is unavailable")
 
+    def find_for_identity(
+        self, *, content_digest: str, volume_serial: int, file_id: int
+    ) -> tuple[str, ResolvedSourceRead]:
+        """Return the live grant covering one physical source identity.
+
+        Import-time grants are minted before the Core assigns a source id, so
+        ``resolve_page_resource`` falls back to the binding's physical facts
+        (content digest + volume/file id). A revoked/expired grant stays a
+        typed refusal; no arbitrary-path fallback exists.
+        """
+        if (
+            not isinstance(content_digest, str)
+            or not _SHA256.fullmatch(content_digest)
+            or isinstance(volume_serial, bool)
+            or not isinstance(volume_serial, int)
+            or isinstance(file_id, bool)
+            or not isinstance(file_id, int)
+        ):
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED", "source identity is invalid"
+            )
+        with self._lock:
+            candidates = [
+                grant for grant in self._grants.values()
+                if grant.container_facts is not None
+                and grant.container_facts.sha256 == content_digest
+                and grant.container_facts.volume_serial == volume_serial
+                and grant.container_facts.file_id == file_id
+            ]
+            live: list[_SourceReadGrant] = []
+            for grant in candidates:
+                try:
+                    self._checked(grant.grant_id)
+                except SourceImportError:
+                    continue
+                live.append(grant)
+            if not live:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "no active source-read grant covers this physical source",
+                )
+            chosen = max(live, key=lambda grant: (grant.generation, grant.grant_id))
+        return chosen.grant_id, self.resolve(chosen.grant_id)
+
     def find_for_source(self, source_id: str) -> tuple[str, ResolvedSourceRead]:
         """Return the live grant bound to ``source_id`` (highest generation).
 

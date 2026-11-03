@@ -80,9 +80,12 @@ def test_referenced_resolve_renders_png_through_grant(tmp_path, repo, book_chapt
 
 
 def test_referenced_resolve_without_grant_is_typed_denied(tmp_path, repo, book_chapter):
-    access, page = _imported_image_page(tmp_path, repo)
+    _access, page = _imported_image_page(tmp_path, repo)
+    # A fresh access with no grant at all: neither source-id nor physical
+    # identity matching can authorize the read.
+    empty = FakeSourceReadAccess()
     with pytest.raises(SourceImportError) as caught:
-        resolve_referenced_rendition(page.page_id, repository=repo, access=access)
+        resolve_referenced_rendition(page.page_id, repository=repo, access=empty)
     assert caught.value.code == "SOURCE_ACCESS_DENIED"
 
 
