@@ -84,6 +84,12 @@ LATEST_TABLES = (
     "book_cleanup_manifests",
     "plugin_state",
     "plugin_events",
+    "sources",
+    "source_locations",
+    "source_versions",
+    "source_entries",
+    "page_bindings",
+    "rendition_cache",
 )
 
 BOOK_ID = "book-legacy"

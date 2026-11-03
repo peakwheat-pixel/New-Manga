@@ -14,6 +14,11 @@ class Page:
     current ordering (D03 §5.3, AC-PAGE-001). ``managed_original_ref`` points
     at the Managed Copy of the original image and must exist before the page
     is committed (D07 §38, AC-IMPORT-003).
+
+    FEA-09 (C-15 v7): ``source_mode`` splits managed pages from referenced
+    pages. A referenced page binds to a source entry instead of a Managed
+    Copy, so ``managed_original_ref`` may be empty in that mode; the
+    binding itself lives in ``page_bindings`` (C-15 §2.6).
     """
 
     page_id: str
@@ -25,13 +30,20 @@ class Page:
     source_size_bytes: int
     width: int
     height: int
-    managed_original_ref: str
+    #: Managed Copy reference (managed mode). NULL for referenced pages
+    #: (FEA-09/C-15 §3.1), which bind via ``page_bindings`` instead.
+    managed_original_ref: str | None
     page_locked: bool = False
     review_state: str = "unreviewed"
     overall_status: str = "not_started"
     created_at: str = field(default_factory=utc_now)
     updated_at: str = field(default_factory=utc_now)
     deleted_at: str | None = None
+    #: FEA-09/C-15 §2.1: 'managed' (legacy Managed Copy) or 'referenced'.
+    source_mode: str = "managed"
+    #: FEA-09/C-15 §4.1: 'incomplete' until the same-transaction commit made
+    #: the row data-complete; half-written/failing paths stay incomplete.
+    integrity_status: str = "complete"
 
     def __post_init__(self) -> None:
         if not self.chapter_id:
@@ -40,8 +52,17 @@ class Page:
             raise ValueError("page requires the source file hash")
         if self.width <= 0 or self.height <= 0:
             raise ValueError("decoded image must have positive width/height")
-        if not self.managed_original_ref:
+        if self.source_mode not in ("managed", "referenced"):
+            raise ValueError("page source_mode must be 'managed' or 'referenced'")
+        if self.integrity_status not in ("incomplete", "complete"):
+            raise ValueError("page integrity_status must be 'incomplete' or 'complete'")
+        if self.source_mode == "managed" and not self.managed_original_ref:
             raise ValueError("page requires a managed copy reference for the original")
+        if self.source_mode == "referenced" and not self.managed_original_ref:
+            # referenced pages bind through page_bindings; managed_original_ref
+            # stays empty (C-15 §3.1) and the binding is written by the
+            # import orchestration in the same transaction.
+            pass
 
     def reorder(self, sort_order: int) -> None:
         """User drag-and-drop reordering never touches source_order."""

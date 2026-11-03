@@ -24,6 +24,21 @@ from domain.pages.entities import Page
 from infrastructure.filesystem.managed_storage import _is_reparse_point, _sanitize_component
 from infrastructure.filesystem.win_unlink import unlink_by_handle
 
+#: FEA-09/C-15 v7 page column list (order matches ``_PAGE_COLUMNS`` and
+#: ``add_page``/``update_page`` parameter packing).
+_PAGE_COLUMN_LIST = (
+    "page_id", "chapter_id", "source_filename", "source_order", "sort_order",
+    "source_hash", "source_size_bytes", "width", "height", "managed_original_ref",
+    "page_locked", "review_state", "overall_status", "created_at", "updated_at",
+    "deleted_at", "source_mode", "integrity_status",
+)
+
+
+class SourceProjectMismatch(RuntimeError):
+    """FEA-09/C-15 §2 book-ownership guard: page→chapter→book does not match
+    the binding's ``project_id``; the commit transaction rolls back and the
+    wire layer maps this to ``SOURCE_PROJECT_MISMATCH``."""
+
 
 class SqliteLibraryRepository:
     def __init__(self, conn: sqlite3.Connection) -> None:
@@ -78,10 +93,17 @@ class SqliteLibraryRepository:
     @staticmethod
     def _page_from_row(row: sqlite3.Row) -> Page | None:
         """A page without full import provenance is a v1 placeholder, not a
-        Page — the mapper refuses to fabricate hash/copy/dimensions."""
-        if row["source_hash"] is None or row["managed_original_ref"] is None:
+        Page — the mapper refuses to fabricate hash/copy/dimensions.
+
+        FEA-09/C-15 §3.1: referenced pages have no managed_original_ref;
+        their completeness is the binding (P8), so the mapper only demands
+        hash + dimensions in that mode."""
+        source_mode = row["source_mode"] if "source_mode" in row.keys() else "managed"
+        if row["source_hash"] is None:
             return None
         if row["width"] is None or row["height"] is None:
+            return None
+        if source_mode == "managed" and row["managed_original_ref"] is None:
             return None
         return Page(
             page_id=row["page_id"],
@@ -100,6 +122,10 @@ class SqliteLibraryRepository:
             created_at=row["created_at"],
             updated_at=row["updated_at"],
             deleted_at=row["deleted_at"],
+            source_mode=source_mode,
+            integrity_status=(
+                row["integrity_status"] if "integrity_status" in row.keys() else "complete"
+            ),
         )
 
     # ------------------------------------------------------------------
@@ -293,12 +319,52 @@ class SqliteLibraryRepository:
         "page_id, chapter_id, source_filename, source_order, sort_order,"
         " source_hash, source_size_bytes, width, height, managed_original_ref,"
         " page_locked, review_state, overall_status, created_at, updated_at,"
-        " deleted_at"
+        " deleted_at, source_mode, integrity_status"
     )
 
     _COMPLETE_PAGE_WHERE = (
         "source_hash IS NOT NULL AND managed_original_ref IS NOT NULL"
         " AND width IS NOT NULL AND height IS NOT NULL"
+    )
+
+    #: FEA-09 / C-15 §4.1 ``is_complete_page`` — data completeness, ignoring
+    #: deleted_at/time/resources. managed branch keeps the legacy column
+    #: predicate (v7 backfill marks exactly that set complete); the
+    #: referenced branch additionally requires a healthy binding whose
+    #: verified_digest matches the bound entry (P7 ∧ P8).
+    _IS_COMPLETE_PAGE_WHERE = (
+        "((pages.source_mode = 'managed' AND pages.integrity_status = 'complete'"
+        " AND pages.source_hash IS NOT NULL AND pages.managed_original_ref IS NOT NULL"
+        " AND pages.width IS NOT NULL AND pages.height IS NOT NULL)"
+        " OR (pages.source_mode = 'referenced' AND pages.integrity_status = 'complete'"
+        " AND pages.source_hash IS NOT NULL AND pages.width IS NOT NULL"
+        " AND pages.height IS NOT NULL"
+        " AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e"
+        "  ON (e.source_id, e.version_id, e.entry_id) ="
+        "     (b.source_id, b.accepted_source_version, b.entry_id)"
+        "  WHERE b.page_id = pages.page_id AND b.status = 'healthy'"
+        "    AND b.verified_digest = e.content_digest)))"
+    )
+
+    #: FEA-09 / C-05 v1.1 ``V(p,t)`` visibility predicate (mode dispatch).
+    #: managed branch = legacy behaviour (unchanged column predicate; the
+    #: artifact/revision branch keeps its pre-v7 semantics — see C-05 §3.1
+    #: 反例判据 ②). referenced branch = P7 ∧ P8 (P1/P5 are added by the
+    #: caller's JOIN/WHERE on parents and time).
+    _VISIBLE_PAGE_WHERE = (
+        "((pages.source_mode = 'managed'"
+        " AND pages.source_hash IS NOT NULL AND pages.managed_original_ref IS NOT NULL"
+        " AND pages.width IS NOT NULL AND pages.height IS NOT NULL)"
+        " OR (pages.source_mode = 'referenced'"
+        " AND pages.integrity_status = 'complete'"
+        " AND pages.source_hash IS NOT NULL"
+        " AND pages.width IS NOT NULL AND pages.width > 0"
+        " AND pages.height IS NOT NULL AND pages.height > 0"
+        " AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e"
+        "  ON (e.source_id, e.version_id, e.entry_id) ="
+        "     (b.source_id, b.accepted_source_version, b.entry_id)"
+        "  WHERE b.page_id = pages.page_id AND b.status = 'healthy'"
+        "    AND b.verified_digest = e.content_digest)))"
     )
 
     def existing_source_hashes(self, chapter_id: str) -> set[str]:
@@ -310,14 +376,15 @@ class SqliteLibraryRepository:
         deliberately still counts trashed pages, so a later restore can never
         collide with a page imported in the meantime.
 
-        NOTE: ``application/importing/images/ports.py`` still documents the
-        previous "soft-deleted rows stay visible here" contract; that docstring
-        is outside TASK-044's allowed paths and is owed as a follow-up.
+        FEA-09/C-15 §4.2: the predicate is now the mode-dispatched
+        ``is_complete_page`` (managed and referenced pages share it); dedup
+        policy stays with the import layer, which must not collapse
+        occurrences by digest.
         """
         rows = self._conn.execute(
             "SELECT source_hash FROM pages"
             " WHERE chapter_id = ? AND deleted_at IS NULL AND "
-            + self._COMPLETE_PAGE_WHERE,
+            + self._IS_COMPLETE_PAGE_WHERE,
             (chapter_id,),
         ).fetchall()
         return {row["source_hash"] for row in rows}
@@ -328,10 +395,13 @@ class SqliteLibraryRepository:
         Keeping soft-deleted rows in the maximum is intentional: their order
         slots are reserved until the batch is restored or purged, so appending
         a new import after them cannot hand two pages the same order.
+
+        FEA-09/C-15 §4.2: uses ``is_complete_page`` (soft-deleted pages
+        included on purpose — this is not the live-only predicate).
         """
         row = self._conn.execute(
             "SELECT MAX(source_order) AS max_order FROM pages"
-            " WHERE chapter_id = ? AND " + self._COMPLETE_PAGE_WHERE,
+            " WHERE chapter_id = ? AND " + self._IS_COMPLETE_PAGE_WHERE,
             (chapter_id,),
         ).fetchone()
         return int(row["max_order"]) if row and row["max_order"] is not None else 0
@@ -340,7 +410,7 @@ class SqliteLibraryRepository:
         with self._conn:
             self._conn.execute(
                 "INSERT INTO pages (" + self._PAGE_COLUMNS + ")"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     page.page_id, page.chapter_id, page.source_filename,
                     page.source_order, page.sort_order, page.source_hash,
@@ -348,6 +418,7 @@ class SqliteLibraryRepository:
                     page.managed_original_ref, int(page.page_locked),
                     page.review_state, page.overall_status,
                     page.created_at, page.updated_at, page.deleted_at,
+                    page.source_mode, page.integrity_status,
                 ),
             )
 
@@ -355,20 +426,29 @@ class SqliteLibraryRepository:
         # Soft-deleted pages are hidden here too, consistent with
         # list_pages (AC-IMPORT semantics; recycle-bin/restore views are a
         # later slice with their own queries).
+        # FEA-09/C-15 §4.2: V(p,t) — parent deletion is checked through the
+        # chapter/book JOIN (C-05 v1.1 P1 covers all three levels).
         row = self._conn.execute(
-            "SELECT " + self._PAGE_COLUMNS + " FROM pages"
-            " WHERE page_id = ? AND deleted_at IS NULL AND "
-            + self._COMPLETE_PAGE_WHERE,
+            "SELECT " + self._page_columns_aliased() + " FROM pages"
+            " JOIN chapters c ON c.chapter_id = pages.chapter_id"
+            " JOIN books b ON b.book_id = c.book_id"
+            " WHERE pages.page_id = ? AND pages.deleted_at IS NULL"
+            " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
+            + self._VISIBLE_PAGE_WHERE,
             (page_id,),
         ).fetchone()
         return self._page_from_row(row) if row else None
 
     def list_pages(self, chapter_id: str) -> list[Page]:
+        # FEA-09/C-15 §4.2: V(p,t) with parent-deletion visibility (P1).
         rows = self._conn.execute(
-            "SELECT " + self._PAGE_COLUMNS + " FROM pages"
-            " WHERE chapter_id = ? AND deleted_at IS NULL AND "
-            + self._COMPLETE_PAGE_WHERE +
-            " ORDER BY sort_order",
+            "SELECT " + self._page_columns_aliased() + " FROM pages"
+            " JOIN chapters c ON c.chapter_id = pages.chapter_id"
+            " JOIN books b ON b.book_id = c.book_id"
+            " WHERE pages.chapter_id = ? AND pages.deleted_at IS NULL"
+            " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
+            + self._VISIBLE_PAGE_WHERE +
+            " ORDER BY pages.sort_order",
             (chapter_id,),
         ).fetchall()
         pages = []
@@ -379,22 +459,30 @@ class SqliteLibraryRepository:
         return pages
 
     def update_page(self, page: Page) -> None:
+        # FEA-09/C-15 §4.3: update_page never flips integrity_status —
+        # only an explicit validated transition may do that.
         with self._conn:
             self._conn.execute(
                 "UPDATE pages SET source_filename = ?, source_order = ?,"
                 " sort_order = ?, source_hash = ?, source_size_bytes = ?,"
                 " width = ?, height = ?, managed_original_ref = ?,"
                 " page_locked = ?, review_state = ?, overall_status = ?,"
-                " updated_at = ?, deleted_at = ? WHERE page_id = ?",
+                " updated_at = ?, deleted_at = ?,"
+                " source_mode = ?, integrity_status = ? WHERE page_id = ?",
                 (
                     page.source_filename, page.source_order, page.sort_order,
                     page.source_hash, page.source_size_bytes, page.width,
                     page.height, page.managed_original_ref,
                     int(page.page_locked), page.review_state,
                     page.overall_status, page.updated_at, page.deleted_at,
+                    page.source_mode, page.integrity_status,
                     page.page_id,
                 ),
             )
+
+    @staticmethod
+    def _page_columns_aliased() -> str:
+        return ", ".join("pages." + col.strip() for col in _PAGE_COLUMN_LIST)
 
     def soft_delete_page(self, page_id: str) -> None:
         with self._conn:
@@ -1323,6 +1411,181 @@ class SqliteLibraryRepository:
                 )
             return True
         return False
+    # ------------------------------------------------------------------
+    # FEA-09 / C-15 §2–§3: source storage + page bindings
+    # ------------------------------------------------------------------
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 §3.2 源复用规则). Returns the
+        matched location row joined with its source_id, or None."""
+        row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def insert_source(
+        self, source_id: str, source_kind: str, display_name: str,
+        created_at: str, updated_at: str,
+    ) -> None:
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO sources (source_id, source_kind, display_name,"
+                " created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+                (source_id, source_kind, display_name, created_at, updated_at),
+            )
+
+    def insert_source_location(
+        self, location_id: str, source_id: str, registry_id: str,
+        authorization_generation: int, content_digest: str, volume_serial: int,
+        file_id: int, size_bytes: int, observed_at: str, created_at: str,
+        mtime_hint: str | None = None,
+    ) -> None:
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO source_locations (location_id, source_id,"
+                " registry_id, authorization_generation, content_digest,"
+                " volume_serial, file_id, size_bytes, mtime_hint, observed_at,"
+                " created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (location_id, source_id, registry_id, authorization_generation,
+                 content_digest, volume_serial, file_id, size_bytes, mtime_hint,
+                 observed_at, created_at),
+            )
+
+    def refresh_source_location_auth(
+        self, source_id: str, content_digest: str, volume_serial: int,
+        file_id: int, registry_id: str, authorization_generation: int,
+        last_verified_at: str,
+    ) -> int:
+        """Re-registration updates the matched physical location **in place**
+        (registry/generation/last_verified_at) — no duplicate location row
+        (C-15 §2 约束语义)."""
+        with self._conn:
+            cursor = self._conn.execute(
+                "UPDATE source_locations SET registry_id = ?,"
+                " authorization_generation = ?, last_verified_at = ?"
+                " WHERE source_id = ? AND content_digest = ?"
+                " AND volume_serial = ? AND file_id = ?",
+                (registry_id, authorization_generation, last_verified_at,
+                 source_id, content_digest, volume_serial, file_id),
+            )
+            return cursor.rowcount
+
+    def supersede_source_location(self, location_id: str, superseded_marker: str) -> None:
+        with self._conn:
+            self._conn.execute(
+                "UPDATE source_locations SET is_current = 0 WHERE location_id = ?",
+                (location_id,),
+            )
+
+    def insert_source_version(
+        self, version_id: str, source_id: str, location_id: str,
+        content_digest: str, size_bytes: int, observed_at: str,
+        created_at: str,
+    ) -> None:
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO source_versions (version_id, source_id,"
+                " location_id, content_digest, size_bytes, observed_at,"
+                " created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (version_id, source_id, location_id, content_digest,
+                 size_bytes, observed_at, created_at),
+            )
+
+    def get_source_version(self, source_id: str, version_id: str) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT version_id, source_id, location_id, content_digest,"
+            " size_bytes, observed_at FROM source_versions"
+            " WHERE source_id = ? AND version_id = ?",
+            (source_id, version_id),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def insert_source_entries(self, entries: Sequence[dict[str, Any]]) -> None:
+        """Insert ``source_entries`` rows (one per occurrence — duplicate
+        locators keep separate rows distinguished by ordinal; C-15 §3.2)."""
+        with self._conn:
+            self._conn.executemany(
+                "INSERT INTO source_entries (source_id, version_id, entry_id,"
+                " locator, ordinal, stable_sort_key, content_digest_kind,"
+                " content_digest, encoded_digest, pixel_digest,"
+                " pixel_digest_algorithm, size_bytes, mime_type, width, height,"
+                " orientation, decoder_name, decoder_version,"
+                " decoder_params_json, created_at)"
+                " VALUES (:source_id, :version_id, :entry_id, :locator,"
+                " :ordinal, :stable_sort_key, :content_digest_kind,"
+                " :content_digest, :encoded_digest, :pixel_digest,"
+                " :pixel_digest_algorithm, :size_bytes, :mime_type, :width,"
+                " :height, :orientation, :decoder_name, :decoder_version,"
+                " :decoder_params_json, :created_at)",
+                [dict(entry) for entry in entries],
+            )
+
+    def find_current_binding_for_entry(
+        self, project_id: str, source_id: str, entry_id: str
+    ) -> dict[str, Any] | None:
+        """Natural key for idempotent retries: same book + same entry with a
+        non-superseded binding ⇒ already referenced (C-16 §4)."""
+        row = self._conn.execute(
+            "SELECT binding_id, page_id, status FROM page_bindings"
+            " WHERE project_id = ? AND source_id = ? AND entry_id = ?"
+            " AND status <> 'superseded'",
+            (project_id, source_id, entry_id),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def insert_page_binding(self, binding: dict[str, Any]) -> None:
+        """Insert a page_binding row with the frozen book-ownership guard
+        (C-15 §2): page→chapter→book must equal ``project_id`` inside the
+        same transaction, otherwise :class:`SourceProjectMismatch` rolls
+        everything back."""
+        row = self._conn.execute(
+            "SELECT c.book_id FROM pages p JOIN chapters c"
+            " ON c.chapter_id = p.chapter_id WHERE p.page_id = ?",
+            (binding["page_id"],),
+        ).fetchone()
+        if row is None or row["book_id"] != binding["project_id"]:
+            raise SourceProjectMismatch(
+                "page->chapter->book does not match binding project_id"
+                f" (page_id={binding['page_id']})"
+            )
+        self._conn.execute(
+            "INSERT INTO page_bindings (binding_id, page_id, project_id,"
+            " binding_version, source_id, entry_id, accepted_source_version,"
+            " status, previous_binding_id, authorization_generation,"
+            " authorized_at, verified_digest, created_at, updated_at)"
+            " VALUES (:binding_id, :page_id, :project_id, :binding_version,"
+            " :source_id, :entry_id, :accepted_source_version, :status,"
+            " :previous_binding_id, :authorization_generation, :authorized_at,"
+            " :verified_digest, :created_at, :updated_at)",
+            dict(binding),
+        )
+
+    def get_page_binding(self, page_id: str) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT binding_id, page_id, project_id, binding_version,"
+            " source_id, entry_id, accepted_source_version, status,"
+            " authorization_generation, verified_digest"
+            " FROM page_bindings WHERE page_id = ? AND status <> 'superseded'",
+            (page_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def mark_page_integrity_complete(self, page_id: str, updated_at: str) -> None:
+        """Explicit, validated integrity transition for a referenced page
+        commit (C-15 §4.3: update_page itself never flips the status)."""
+        with self._conn:
+            self._conn.execute(
+                "UPDATE pages SET integrity_status = 'complete', updated_at = ?"
+                " WHERE page_id = ? AND source_mode = 'referenced'",
+                (updated_at, page_id),
+            )
+
 
 
 
@@ -1350,8 +1613,6 @@ _RUN_JSON_LOCATOR_KEYS = frozenset(
         "step_run_ids",
     }
 )
-
-
 def strip_run_json_locators(value: Any) -> Any:
     """AC6 (R-003): drop nested target/task/step locators from a run_json tree.
 

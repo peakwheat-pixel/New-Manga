@@ -107,9 +107,15 @@ from infrastructure.settings.json_profile_stores import (
 )
 from ports.rendering.ports import FontCatalog, ImageCompositor, TextLayoutEngine
 from infrastructure.sqlite.artifacts import SqliteArtifactRepository
-from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
+from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database, open_readonly
 from infrastructure.sqlite.library import SqliteLibraryRepository
-from infrastructure.sqlite.migrator import MigrationRunner, read_schema_version
+from infrastructure.sqlite.migrator import (
+    MigrationError,
+    MigrationRunner,
+    capture_pre_v7_baseline,
+    make_v7_validator,
+    read_schema_version,
+)
 from infrastructure.sqlite.reading_export import (
     SqliteExportHistoryStore,
     SqliteReadingProgressStore,
@@ -962,6 +968,53 @@ def default_data_root() -> Path:
     return base / "New Manga"
 
 
+class _ManagedRootResourceVerifier:
+    """``IResourceVerifier`` seam for the v7 migration callback (C-15 §1):
+    read-only existence/readability check against the managed root only —
+    no writes, no network, no Host calls, no second SQLite connection."""
+
+    def __init__(self, managed_root: str | Path) -> None:
+        self._root = Path(managed_root)
+
+    def verify_readable(self, managed_paths) -> list[str]:
+        missing: list[str] = []
+        try:
+            root_resolved = self._root.resolve()
+        except OSError:
+            return list(managed_paths)
+        for rel in managed_paths:
+            target = self._root / rel
+            try:
+                if target.resolve().relative_to(root_resolved) is None:
+                    missing.append(rel)
+                    continue
+                if not target.is_file():
+                    missing.append(rel)
+            except (OSError, ValueError):
+                missing.append(rel)
+        return missing
+
+
+def _maybe_v7_validator(db_path, latest_known: int, managed_root) -> "Callable | None":
+    """FEA-09/C-15 §1: when the v7 migration is pending, capture the frozen
+    baseline on a separate read-only connection and return the in-transaction
+    validator. Returns None otherwise (fresh databases get an empty baseline,
+    which trivially satisfies every assertion)."""
+    try:
+        baseline_conn = open_readonly(db_path)
+    except sqlite3.Error:
+        # No file yet: a brand-new database — nothing to conserve.
+        return None
+    try:
+        current = read_schema_version(baseline_conn) or 0
+        if not (current < 7 <= latest_known):
+            return None
+        baseline = capture_pre_v7_baseline(baseline_conn)
+    finally:
+        baseline_conn.close()
+    return make_v7_validator(baseline, _ManagedRootResourceVerifier(managed_root))
+
+
 def assemble_core_services(
     db_path: str | Path,
     managed_root: str | Path,
@@ -1012,8 +1065,20 @@ def assemble_core_services(
                 managed_root,
                 app_version=_APP_VERSION,
             ),
+            validate=_maybe_v7_validator(db_path, latest_known, managed_root),
         )
-        applied = runner.apply_pending()
+        try:
+            applied = runner.apply_pending()
+        except MigrationError as exc:
+            # FEA-09/C-15 §1: typed startup failure — the database stays on
+            # its previous version; the process must not serve a partially
+            # upgraded library.
+            print(
+                f"[core.schema] SOURCE_MIGRATION_FAILED code={exc.code}: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
+            raise
         # REALUSE-DATA-SAFETY-1 AC4: the Host can run a "read-only until parity"
         # session, yet this assembly still opens the library writable and applies
         # pending DDL. That is intentional (schema bootstrap must not be skipped)

@@ -28,6 +28,9 @@ SCHEMA_VERSION_V4 = 4
 SCHEMA_VERSION_V5 = 5
 #: PLUGIN-RUNTIME-1 (design §4.1–§4.4, D2/D5): additive plugin state + audit.
 SCHEMA_VERSION_V6 = 6
+#: FEA-09 (C-15 v1.0 frozen DDL): source storage — six Source tables plus
+#: pages.source_mode/integrity_status; migration backfills legacy complete set.
+SCHEMA_VERSION_V7 = 7
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -594,6 +597,153 @@ CREATE INDEX idx_plugin_events_type ON plugin_events(event_type, occurred_at);
 """
 
 
+MIGRATION_V7_NAME = "v7__source_storage"
+
+#: The SQL below is the frozen C-15 v1.0 §2 block, copied verbatim
+#: (doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md, extract 口径同 PREREQ-1 r7
+#: validate_c15_ddl.extract_v7; comments preserved per C-15 §2).
+MIGRATION_V7_SQL = """-- 2.1 pages：source mode + 完整性（新列默认 incomplete；迁移回填旧 complete 集）
+ALTER TABLE pages ADD COLUMN source_mode TEXT NOT NULL DEFAULT 'managed'
+    CHECK (source_mode IN ('managed', 'referenced'));
+ALTER TABLE pages ADD COLUMN integrity_status TEXT NOT NULL DEFAULT 'incomplete'
+    CHECK (integrity_status IN ('incomplete', 'complete'));
+UPDATE pages SET integrity_status = 'complete'
+ WHERE source_hash IS NOT NULL AND managed_original_ref IS NOT NULL
+   AND width IS NOT NULL AND width > 0 AND height IS NOT NULL AND height > 0;
+
+-- 2.2 源
+CREATE TABLE sources (
+    source_id TEXT PRIMARY KEY CHECK (length(source_id) > 0),
+    source_kind TEXT NOT NULL CHECK (source_kind IN ('image', 'folder', 'zip', 'cbz', 'pdf')),
+    display_name TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    deleted_at TEXT
+);
+
+-- 2.3 源位置/授权绑定：不保存绝对路径；同物理身份唯一（I-3）
+CREATE TABLE source_locations (
+    location_id TEXT PRIMARY KEY CHECK (length(location_id) > 0),
+    source_id TEXT NOT NULL REFERENCES sources(source_id),
+    registry_id TEXT NOT NULL CHECK (length(registry_id) > 0),
+    authorization_generation INTEGER NOT NULL CHECK (authorization_generation >= 1),
+    content_digest TEXT NOT NULL CHECK (length(content_digest) = 64),
+    volume_serial INTEGER NOT NULL CHECK (volume_serial >= 0),
+    file_id INTEGER NOT NULL CHECK (file_id >= 0),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0),
+    mtime_hint TEXT,
+    observed_at TEXT NOT NULL,
+    last_verified_at TEXT,
+    is_current INTEGER NOT NULL DEFAULT 1 CHECK (is_current IN (0, 1)),
+    created_at TEXT NOT NULL,
+    UNIQUE (source_id, location_id),
+    UNIQUE (source_id, content_digest, volume_serial, file_id)
+);
+CREATE INDEX idx_source_locations_source ON source_locations(source_id, is_current);
+CREATE UNIQUE INDEX uq_source_locations_current
+    ON source_locations(source_id) WHERE is_current = 1;
+
+-- 2.4 内容版本（content identity；rendition 观察在 entries 行）
+CREATE TABLE source_versions (
+    version_id TEXT PRIMARY KEY CHECK (length(version_id) > 0),
+    source_id TEXT NOT NULL REFERENCES sources(source_id),
+    location_id TEXT NOT NULL,
+    content_digest TEXT NOT NULL CHECK (length(content_digest) = 64),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0),
+    observed_at TEXT NOT NULL,
+    superseded_at TEXT,
+    created_at TEXT NOT NULL,
+    UNIQUE (source_id, version_id),
+    UNIQUE (source_id, content_digest),
+    FOREIGN KEY (source_id, location_id) REFERENCES source_locations(source_id, location_id)
+);
+CREATE INDEX idx_source_versions_source ON source_versions(source_id, observed_at);
+
+-- 2.5 容器成员/文件条目：行键 (source, version, entry)；稳定排序键版本内唯一
+CREATE TABLE source_entries (
+    source_id TEXT NOT NULL,
+    version_id TEXT NOT NULL,
+    entry_id TEXT NOT NULL CHECK (length(entry_id) > 0),
+    locator TEXT NOT NULL CHECK (length(locator) > 0),
+    ordinal INTEGER NOT NULL CHECK (ordinal >= 0),
+    stable_sort_key TEXT NOT NULL CHECK (length(stable_sort_key) > 0),
+    content_digest_kind TEXT NOT NULL CHECK (content_digest_kind IN ('encoded', 'page-identity')),
+    content_digest TEXT NOT NULL CHECK (length(content_digest) = 64),
+    encoded_digest TEXT CHECK (encoded_digest IS NULL OR length(encoded_digest) = 64),
+    pixel_digest TEXT CHECK (pixel_digest IS NULL OR length(pixel_digest) = 64),
+    pixel_digest_algorithm TEXT CHECK (pixel_digest_algorithm IS NULL
+        OR pixel_digest_algorithm = 'pixel-digest/1'),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0),
+    mime_type TEXT,
+    width INTEGER CHECK (width IS NULL OR width > 0),
+    height INTEGER CHECK (height IS NULL OR height > 0),
+    orientation INTEGER CHECK (orientation IS NULL OR orientation IN (1, 3, 6, 8)),
+    decoder_name TEXT NOT NULL DEFAULT '',
+    decoder_version TEXT NOT NULL DEFAULT '',
+    decoder_params_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (source_id, version_id, entry_id),
+    UNIQUE (version_id, ordinal),
+    UNIQUE (version_id, stable_sort_key),
+    FOREIGN KEY (source_id, version_id) REFERENCES source_versions(source_id, version_id)
+);
+CREATE INDEX idx_source_entries_identity ON source_entries(source_id, entry_id);
+CREATE INDEX idx_source_entries_digest ON source_entries(version_id, content_digest);
+
+-- 2.6 页绑定：项目（book）内 entry 当前唯一；每页 current binding 唯一
+CREATE TABLE page_bindings (
+    binding_id TEXT PRIMARY KEY CHECK (length(binding_id) > 0),
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    project_id TEXT NOT NULL REFERENCES books(book_id),
+    binding_version INTEGER NOT NULL CHECK (binding_version >= 1),
+    source_id TEXT NOT NULL,
+    entry_id TEXT NOT NULL,
+    accepted_source_version TEXT NOT NULL,
+    status TEXT NOT NULL
+        CHECK (status IN ('healthy', 'needs_confirmation', 'missing', 'superseded')),
+    previous_binding_id TEXT REFERENCES page_bindings(binding_id),
+    authorization_generation INTEGER NOT NULL CHECK (authorization_generation >= 1),
+    authorized_at TEXT NOT NULL,
+    verified_digest TEXT NOT NULL CHECK (length(verified_digest) = 64),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE (page_id, binding_version),
+    FOREIGN KEY (source_id, accepted_source_version)
+        REFERENCES source_versions(source_id, version_id),
+    FOREIGN KEY (source_id, accepted_source_version, entry_id)
+        REFERENCES source_entries(source_id, version_id, entry_id)
+);
+CREATE UNIQUE INDEX uq_page_bindings_current
+    ON page_bindings(page_id) WHERE status <> 'superseded';
+CREATE UNIQUE INDEX uq_page_bindings_project_entry
+    ON page_bindings(project_id, entry_id) WHERE status <> 'superseded';
+CREATE INDEX idx_page_bindings_source ON page_bindings(source_id, accepted_source_version);
+
+-- 2.7 rendition 缓存元数据（可再生产物；只允许 decoded/re-encoded rendition，禁 raw user-source 字节）
+CREATE TABLE rendition_cache (
+    cache_key TEXT PRIMARY KEY CHECK (length(cache_key) > 0),
+    source_id TEXT NOT NULL,
+    version_id TEXT NOT NULL,
+    entry_id TEXT NOT NULL,
+    rendition_kind TEXT NOT NULL
+        CHECK (rendition_kind IN ('thumbnail', 'tile', 'pdf_raster', 'archive_page', 'page_preview')),
+    decoder_name TEXT NOT NULL,
+    decoder_version TEXT NOT NULL,
+    params_digest TEXT NOT NULL CHECK (length(params_digest) = 64),
+    rel_path TEXT NOT NULL CHECK (length(rel_path) > 0),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0),
+    content_digest TEXT NOT NULL CHECK (length(content_digest) = 64),
+    created_at TEXT NOT NULL,
+    last_used_at TEXT NOT NULL,
+    active_references INTEGER NOT NULL DEFAULT 0 CHECK (active_references >= 0),
+    FOREIGN KEY (source_id, version_id, entry_id)
+        REFERENCES source_entries(source_id, version_id, entry_id)
+);
+CREATE INDEX idx_rendition_cache_lru ON rendition_cache(last_used_at);
+CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id, entry_id);
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -602,4 +752,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V4, MIGRATION_V4_NAME, MIGRATION_V4_SQL),
         Migration(SCHEMA_VERSION_V5, MIGRATION_V5_NAME, MIGRATION_V5_SQL),
         Migration(SCHEMA_VERSION_V6, MIGRATION_V6_NAME, MIGRATION_V6_SQL),
+        Migration(SCHEMA_VERSION_V7, MIGRATION_V7_NAME, MIGRATION_V7_SQL),
     )

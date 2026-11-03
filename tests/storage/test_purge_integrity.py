@@ -113,8 +113,10 @@ def purge_world(tmp_path: Path):
             conn.execute(
                 "INSERT INTO pages (page_id, chapter_id, sort_order, created_at,"
                 " updated_at, source_filename, source_order, source_hash,"
-                " source_size_bytes, width, height, managed_original_ref)"
-                " VALUES (?, 'chapter-1', ?, ?, ?, ?, ?, ?, ?, 4, 3, ?)",
+                " source_size_bytes, width, height, managed_original_ref,"
+                " source_mode, integrity_status)"
+                " VALUES (?, 'chapter-1', ?, ?, ?, ?, ?, ?, ?, 4, 3, ?,"
+                " 'managed', 'complete')",
                 (
                     page_id,
                     source_order,
@@ -269,9 +271,11 @@ def test_fixture_populates_every_table_that_references_pages(purge_world) -> Non
     purge_world["add_dependents"]("p1")
 
     referenced = _tables_referencing(conn, "pages")
+    # FEA-09 (C-15 v7): page_bindings also references pages(page_id).
     assert {table for table, _ in referenced} == {
         "media_artifacts",
         "regions",
+        "page_bindings",
     }
     all_dependent_tables = [
         "media_artifacts",
