@@ -256,7 +256,7 @@ out_of_scope:
 
 | ID | 级别 | DSH 处置 | 批次 |
 |---|---|---|---|
-| R1-I001 | P1 | 接受；**Codex 裁决选 B（UNFREEZE 前置）**：C-05/C-15 未表述“Managed Copy original 等价物”，artifact-only 直接实现会隐藏正常导入页、补 ORIGINAL 行亦违反 C-15 §1。先 UNFREEZE `V_managed=V_artifact∨V_copy_original` 并重冻，再返修 get/list/projection/mapper/迁移验证。裁决 `doc/reviews/FEA-09-I001-adjudication.md` | 阻塞：UNFREEZE |
+| R1-I001 | P1 | **FIXED（实现完成，待独立实现复核）**：UNFREEZE B 已重冻（C-05 v1.2/C-15 v1.1，pins 17/17）；实现 managed `V=V_artifact∨V_copy_original` SQL、`PageView` 只读投影、`get/list` 不丢 V 行、managed resolve 资源选择、迁移 union 断言/同事务 get-list-纯投影三路径/非空强制 verifier；测试 `tests/fea09/test_i001_managed_visibility.py`（11）+ `test_v7_migration.py`（+2）；Python 套件全绿 | 批次 4 |
 | R1-I002 | P1 | **FIXED 批次 1**：Core 记录 grant→(source,version,entry) 绑定，resolve 只认绑定匹配且 live 的 grant；删除物理身份回退；新增负测 | 批次 1 |
 | R1-I007 | P1 | **FIXED 批次 1**：PDF page_size→预算→render；图片 header→预算→load；runtime probe 同序；预算拒绝=unsupported entry；hook decoder 零调用测试 | 批次 1 |
 | R1-I009 | P2 | **FIXED 批次 1**：PlanRecord.book_id + start 复核项目/策略；负测 SOURCE_PLAN_STALE | 批次 1 |
@@ -264,7 +264,7 @@ out_of_scope:
 | R1-I003 | P1 | **FIXED 批次 2**：整源 skip 仅当 `will_import==0`；部分已绑定逐 entry 补齐；3 页 zip 中断后重试 imported=2/skipped=1 | 批次 2 |
 | R1-I004 | P1 | **FIXED 批次 2**：真加密 PDF（R2/RC4）无密/错密/正确密码；解密 rescan participants；修复 pdfium bytes 密码 TypeError 误分类 | 批次 2 |
 | R1-I006 | P1 | **FIXED 批次 2**：Core grant 绑定对 folder 生效；`test_folder_import_resolves_through_bound_grant` 通过（无路径回退） | 批次 2 |
-| R1-I005 | P1 | 阻塞：需 UNFREEZE（M2-C1/C-16 resolve 可选 `secret_ref`）；实现前保持 typed `SOURCE_PASSWORD_REQUIRED`，不持久化口令 | 批次 3 → UNFREEZE |
+| R1-I005 | P1 | **PARTIAL（Core 完成；Host fresh-grant 协议待实现）**：C-16 v1.1 已重冻；Core 实现 `source.resolve-secret/1` 能力 + `claim_secret_for_binding`（0/1/多 Secret-G、一次性/重放/路径/token/TTL、DPAPI 读取+零填充删除）+ bootstrap cache-miss 消费 + 加密 member 无密码→REQUIRED；测试 8+2。待办：Host C# `SourceReadCoordinator` fresh-grant（capability 先检查→DPAPI 文件→克隆 scope 注册→revoke 前一个→超时/孤儿回收）+ Host 集成测试 | 批次 5（Host 待续） |
 | R1-I008 | P1 | **FIXED 批次 3a**：生产 resolve 先走 RenditionCache（key/预算/LRU/active/崩溃校验/digest），metadata=`source-renditions/`，命中不重复解码，损坏自动重建；集成测试覆盖 | 批次 3 |
 | R1-I011 | P2 | 接受：closeout 前重建最终 EV 逐文件清单（唯一 ID、current/historical 分离、commit pin、PENDING 清零、未登记文件处置） | closeout |
 
