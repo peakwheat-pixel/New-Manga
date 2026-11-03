@@ -1215,3 +1215,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **现场**：当前 head `ceae03edb`；未提交 Phase C 材料 `src/bootstrap/core_assembly.py`/`core_service.py` 修改 + `src/infrastructure/resource_channel/source_read_refs.py`/`tests/fea09/test_referenced_wire.py` 新增；已 stash/pop 验证可恢复，保留给续跑。
 - **排期**：Codex 20:40 额度恢复；已建 20:42 schedule 提醒（`schedule-53890cec`）派发 `codex-impl-r2-prompt.md` 续跑 Phase C–D；完成后 DSH 做 pytest/dotnet/check/pins 集成验证并提交。
 - **门禁**：check PASS(3)、pins 17/17；不 push；不重开 FEA-08。
+
+## 185. FEA-09 Phase C/D 阶段提交 + DSH 集成修复（2026-11-03 21:45）
+
+- **实施**：Codex 恢复额度后经 Node 通路续跑 Phase C/D（Host SourceAccessRegistry/grant、strict read、WireLog 脱敏、rendition cache、回退开关），但受限进程无法写 Git；DSH 接手 Git 与环境。
+- **DSH 集成修复 6 项**：scanner 端口注入（消除 application→infrastructure）、conftest/core_assembly 注入、MigrationRunner.validate fake 适配、capability source.read/1 断言、SourceSecurity owner 后置强制、撤销边界测试计数（双次验证）。
+- **阶段 commit**：`995d80ca5`（实现署名 Codex/ZCode；DSH 提交与修复）。验证：dotnet build 0/0；.NET 全量 **1298/0/57**；pytest tests/fea09 **92**；ea09+import_formats+storage **245**；Host.SourceRegistryTests 2；check PASS(3)；pins 17/17。
+- **未完成**：生产 rendition 读取接线、密码完整链路、真实 IPC/V2 端到端证据、AC-1…AC-10 部分验证、独立 impl Review、最终集成；Task 保持 in_progress，canonical_evidence_status pending。
+- **恢复基线**：`995d80ca5`；Handoff doc/handoffs/FEA-09-995d80ca5.md；证据 erification/FEA-09/logs/dsh-integration.md。

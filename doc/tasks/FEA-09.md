@@ -17,7 +17,7 @@ base_commit: 19e6210047e664d1206347bd5259a6f075a9c028（scope-r2 reviewed_head�
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: null # 本轮 Git index.lock 拒绝写入；代码仍在工作树，不能填写虚假交付 commit
+delivery_head: 995d80ca54fbd8dad8a27ae19ab69c7ef45813d8 # 阶段 commit（DSH 提交，Phase C/D 工作树；integration_commit 待最终集成）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-09
@@ -246,3 +246,4 @@ out_of_scope:
 - 范围：工作树变更全部落在 `allowed_paths`；冻结契约/共享组合根/UI/依赖未改。待全量绿后由 DSH 提交阶段 commit（实现者署名 Codex/ZCode；DSH 仅集成修复与提交）。
 - 仍未完成：生产 rendition 读取接线、密码完整链路、真实 IPC/V2 证据、AC-1…AC-10 部分验证、独立 impl Review；Task 保持 `in_progress`。
 - 下一精确动作：DSH 处理 Git 元数据、外置 task tmp、Windows DPAPI/ACL 与测试 fixture 权限；Codex 恢复后先核对 dirty 指纹，再完成 Host 密码引用与四维读取 scope→binding/rendition/生产 adapter 接线，重跑全部测试，分阶段提交。禁止改 UI/冻结契约/共享组合根/依赖/push。
+| 2026-11-03 | **Phase C/D 阶段提交 + DSH 集成修复**：Codex（Node 通路）完成 Host Registry/grant、strict read、WireLog 脱敏、rendition cache、回退开关；DSH 修复 6 项适配并提交 995d80ca5。验证：.NET **1298/0/57**、pytest fea09 **92 passed**、fea09+import_formats+storage **245 passed**、build 0/0、check PASS、pins 17/17。AC 仍 PARTIAL/BLOCKED，不宣称完成。 | `995d80ca5` 阶段 commit；`verification/FEA-09/logs/dsh-integration.md`；`doc/handoffs/FEA-09-995d80ca5.md` |
