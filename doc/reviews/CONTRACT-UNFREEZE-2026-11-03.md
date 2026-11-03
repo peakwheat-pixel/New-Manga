@@ -21,7 +21,7 @@
 - 新增 **§3.1 模式分派与 referenced 页分支**：总可见性按 `source_mode` 分派 —— `V = (managed ∧ V_artifact) ∨ (referenced ∧ V_ref)`；`V_artifact`（原 P1–P5）**字节/语义均不变且仅限 managed**；`V_ref` 使用 `integrity_status='complete'` + healthy `page_bindings` + `verified_digest` 一致，不使用 artifact/revision。referenced 页即使存在 valid artifact 也不得经 artifact 分支可见（防止绕过完整性分支）。
 - 新增 **§3.2 三谓词拆分**：`is_complete_page`（数据完整性）、`V`（数据库可见性）、`R`（当前可读性/资源授权）分开；读取层不得把 `V` 当 `R`。
 - §2 数据模型事实追加 `pages.source_mode/integrity_status`（C-15 v7 列）。
-- §5 失败语义追加 referenced 行（incomplete/binding 非 healthy → 不可见；授权撤销/失联 → `V` 仍真但读取 typed 失败）。
+- §3.2 失败语义追加 referenced 行（incomplete/binding 非 healthy → 不可见；授权撤销/失联 → `V` 仍真但读取 typed 失败）。
 - 变更记录追加 v1.1 行。
 
 **不改**：managed/derived 分支 P1–P5、`VISIBLE_TYPES`、`S(p,t)` active runs 语义、C-05 冻结条件（仍要求独立复核 + check PASS）。
@@ -45,7 +45,7 @@
 
 ## 4. 复核与重冻流程
 
-1. 本载体 + C-05 v1.1 + C-06 v1.1 + C-15 v2 + C-16 v2 同批交**独立上下文**只读复核（未参与起草；reviewer 不得参与实现）。
+1. 本载体 + C-05 v1.1 + C-06 v1.1 + C-15/C-16（最终 v4）同批交**独立上下文**只读复核（未参与起草；reviewer 不得参与实现）。
 2. 复核 `approved` 且 P0/P1=0 后：按 FROZEN 记录纪律，在**冻结提交前**完成最后元数据编辑（状态行改为 FROZEN v1.1），再计算新 pin（工作树字节 + `git cat-file` LF 双口径）。
 3. 更新 `FEA-CONTRACT-FROZEN-C05.md` / `FEA-CONTRACT-FROZEN-C06.md`：§1 新 pin、§1B「v1.1 复核字节」、§5 变更记录；旧 pin 保留在历史行。`verify_pins.ps1` 自动读取新 pin（不静默替换历史）。
 4. 更新 `FEA-CONTRACT_FREEZE_MATRIX.md` 的 C-05/C-06 版本注记；C-15/C-16 冻结记录同批建立。
@@ -63,3 +63,4 @@
 |---|---|---|
 | 2026-11-03 | 建立 UNFREEZE 载体：C-05 v1.1（referenced 可见性 + 三谓词拆分）、C-06 v1.1（Host 铸造型发放/四维 scope/双侧 Verify/撤销通道）；复核+重冻流程与回退 | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-001/R1-002/R1-003 |
 | 2026-11-03 | 处置复核 r2：C-05 改为**模式分派**（managed V 语义保留；referenced 不得经 artifact 绕过）；C-06 修正旧 revision 可见性引用；r1/r2 报告按原字节归档为 `doc/reviews/FEA-09-PREREQ-1-r1.md` / `-r2.md`（供 r3 原文闭环） | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-001/R2-008/R2-009 |
+| 2026-11-03 | 处置复核 r3：同步 C-15/C-16 最终版本引用；修正失败语义章节定位；明确冻结前扩展 `verify_pins.ps1` 覆盖 17 项（不由本载体替代检查） | `doc/reviews/FEA-09-PREREQ-1-r3.md` R3-005/§8 |

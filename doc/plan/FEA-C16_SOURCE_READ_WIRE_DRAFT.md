@@ -1,9 +1,9 @@
-# FEA-C16 Source 读取与导入 wire 协议（草案 v3，处置契约复核 r2）
+# FEA-C16 Source 读取与导入 wire 协议（草案 v4，处置契约复核 r3）
 
-状态：**草案 v2 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
+状态：**草案 v4 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
 日期：2026-11-03
 作者：DSH（Lead / Architect / Integrator）
-依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15 v2（同批）、C-01b/C-05 v1.1/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）。
+依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15 v4（同批）、C-01b/C-05 v1.1/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）。
 
 **边界**：冻结 source-read 与引用导入通信面（命令、字段、签名、scope、能力、错误、密码引用、异步状态机、receipt）。**不修改**既有冻结文档字节（C-06 的必要修订走 v1.1 UNFREEZE 载体）；**不新增 Core→Host 反向 RPC 通道**；**不实现** UI 接线（FEA-09-UI-1）与删除/回收站（FEA-12）。
 
@@ -93,19 +93,21 @@
 - **operation_id 绑定与重放矩阵**：`operation_id` 绑定请求指纹 `sha256(canonical{chapter_id, plan_id, plan_digest, grants, duplicate_policy})`。同 id+同指纹：`accepted/running` → 返回当前状态；`completed/cancelled/failed` → 返回同一 receipt（终态不重跑）；不同指纹 → `SOURCE_OPERATION_CONFLICT`。同项目（book）同时只允许一个非终态 import；`StartImportReferences` 在**返回 accepted 之前原子预占**项目锁（先到先得），任何终态（completed/cancelled/failed）或进程退出释放；预占失败 → `SOURCE_IMPORT_BUSY`，不创建 operation。
 - **跨重启**：receipt 为会话内（重启后 `SOURCE_OPERATION_NOT_FOUND`）；已提交页是唯一持久结果；重试经**自然键**（同项目同 entry 已有非 superseded binding）判为 `skipped`/`ALREADY_REFERENCED`，不产生重复页。
 - **`import_as_new` 裁决**：在 referenced 模式下只影响**本次导入内**重复内容/occurrence 的处理，**不得**绕过项目内 entry 唯一性（同 book 同 entry 已绑定 → 仍按已引用处理）；`skip` 为默认。
-- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。计数：`imported` 按已提交页；`skipped` 按来源项；`failed`/`unsupported` 按来源项；`pending`/`remaining_pages` 为未处理；`totals` 与逐项 counts 之和一致（断言）。**计数示例**：一个 20 页容器取消于第 12 页并含 1 个 unsupported 成员 → item `{outcome:"pending", committed_pages:12, remaining_pages:7, committed_entries:12, unsupported:1}`，totals `{imported:12, skipped:0, failed:0, unsupported:1, pending:7}`；若最终 `state="failed"` 而部分页已提交，item `outcome="failed"`，`committed_pages` 保留实际值，不得改写成 0。
+- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。**计数单位（字段名即单位，逐项与 totals 一致）**：`imported_pages`（已提交页）、`skipped_source`（整 source 因已引用/重复策略跳过，0/1）、`failed_source`（整 source 失败，0/1）、`unsupported_entries`（不支持成员/页数）、`pending_pages`（未处理页数）。**示例**：20 页容器取消于第 12 页且含 1 个 unsupported 成员 → item `{outcome:"pending", committed_pages:12, remaining_pages:7, committed_entries:12, counts:{imported_pages:12, skipped_source:0, failed_source:0, unsupported_entries:1, pending_pages:7}}`，totals 取逐项之和；若最终 `state="failed"` 而部分页已提交，`outcome="failed"` 但 `committed_pages` 保留实际值（如 12），不得改写 0。
 - **部分容器取消/崩溃**：逐项 receipt 记录 `committed_pages`、`remaining_pages`、`committed_entries`；重试/继续只补未提交单元，不回滚已提交页（不声称整次导入原子）。
 - **receipt（冻结形状）**：
   ```json
   {"operation_id":"<opaque>","chapter_id":"<id>","plan_id":"<id>","plan_digest":"<sha256>",
-   "state":"running|completed|cancelled|failed","cancel_requested":false,
+   "state":"accepted|running|completed|cancelled|failed","cancel_requested":false,
    "committed_boundary":12,
    "items":[{"source_index":0,"source_name":"a.zip","source_kind":"zip",
              "outcome":"imported|skipped|failed|pending|unsupported","reason_code":null,
              "committed_pages":12,"remaining_pages":3,"committed_entries":12,
              "pages":[{"page_id","entry_id","source_order","source_hash"}],
-             "counts":{"imported":12,"skipped":0,"failed":0,"unsupported":0,"pending":3}}],
-   "totals":{"imported":12,"skipped":0,"failed":0,"unsupported":0,"pending":3}}
+             "counts":{"imported_pages":12,"skipped_source":0,"failed_source":0,
+                       "unsupported_entries":1,"pending_pages":7}}],
+   "totals":{"imported_pages":12,"skipped_sources":0,"failed_sources":0,
+             "unsupported_entries":1,"pending_pages":7}}
   ```
 - **进度**：Host/UI 轮询 `GetImportReceipt` 获取 `state/committed_boundary/totals`；不新增独立 event 通道（现有 event frame 不承载本协议的状态收敛）。
 
@@ -132,7 +134,8 @@
 | `SOURCE_BUDGET_EXCEEDED` | validation | false | 读取/解码预算超限 |
 | `SOURCE_OPERATION_NOT_FOUND` | not_found | false | receipt 不存在（含跨重启） |
 | `SOURCE_OPERATION_CONFLICT` | conflict | false | operation_id 指纹不匹配 |
-| `SOURCE_IMPORT_BUSY` | conflict | true | 同项目已有 running import |
+| `SOURCE_IMPORT_BUSY` | conflict | true | 同项目已有非终态 import |
+| `SOURCE_PROJECT_MISMATCH` | validation | false | binding 的 page→chapter→book 与 `project_id` 不符（C-15 §2 应用层守卫） |
 | `FILE_IDENTITY_CHANGED` | conflict | true | 复用既有（strict 读取） |
 | `CORE_CAPABILITY_MISSING` | protocol | false | 复用既有（无 `source.read/1`） |
 | `PROTOCOL_VERSION_UNSUPPORTED` | protocol | false | 复用既有 |
@@ -155,7 +158,7 @@
 | 对象 | 接口 |
 |---|---|
 | C-06 v1.1（UNFREEZE） | 方向/Verify 归属/四维 scope/撤销通道写进 C-06 v1.1；本契约是其协议实现 |
-| C-15 v2 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验 |
+| C-15 v4 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验；book 归属守卫 `SOURCE_PROJECT_MISMATCH` |
 | C-07 | FEA-09 不新增 `IHostController`；UI-1 走 UNFREEZE |
 | C-01b/C-14 | 缓存/通道隔离沿用 SC-02/03/20、SC-S14…S17；不重写 |
 | FEA-09-UI-1 | 消费 Registry 命令、密码入口、plan/进度/取消；本契约不实现 UI |
@@ -167,9 +170,9 @@
 
 ## 10. 冻结条件与变更记录
 
-冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与 C-15 v2 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
+冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与 C-15 v4 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案 | FEA-09 scope-r1 |
-| 2026-11-03 | **v3（处置契约复核 r2）**：加密源 Plan 改为有限预览（不解密/无明文摘要，仅容器级 digest）；异步状态机补 accepted/replay/busy 预占/cancel 语义与计数示例；WireLog 脱敏覆盖全部相关命令、嵌套路径、原行与 hex（进入 Frames 前完成）；引用 r1/r2 报告实际归档路径 | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-002/R2-005/R2-007/R2-008 |
+| 2026-11-03 | **v4（处置契约复核 r3）**：receipt 固定形状补 `accepted` 状态与按单位命名的计数（`imported_pages/skipped_source/failed_source/unsupported_entries/pending_pages`）；补 `SOURCE_PROJECT_MISMATCH`；同步 C-15 v4 引用与版本控制信息 | `doc/reviews/FEA-09-PREREQ-1-r3.md` R3-004/R3-005/R3-006 |

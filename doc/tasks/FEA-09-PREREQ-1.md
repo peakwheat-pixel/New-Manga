@@ -31,6 +31,7 @@ allowed_paths:
   - doc/plan/FEA-CONTRACT-FROZEN-C15.md
   - doc/plan/FEA-CONTRACT-FROZEN-C16.md
   - doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md
+  - tools/governance/verify_pins.ps1
   - doc/reviews/FEA-09-PREREQ-1-*.md
   - doc/reviews/FEA-C15-*.md
   - doc/reviews/FEA-C16-*.md
@@ -65,7 +66,8 @@ out_of_scope:
 2. `doc/plan/FEA-CONTRACT-FROZEN-C15.md`：C-15 冻结记录（冻结字节 SHA-256、条件逐条、边界、不构成什么）。
 3. `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`：source-read wire v1.1 协议契约草案。
 4. `doc/plan/FEA-CONTRACT-FROZEN-C16.md`：C-16 冻结记录。
-5. `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`：仅追加 C-15/C-16 两行（既有行不改）。
+5. `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`：追加 C-15/C-16 两行，并更新 C-05/C-06 行（UNFREEZE 重冻注记）；其它行保持原字节。
+6. `tools/governance/verify_pins.ps1`：扩展 map 覆盖 C-15/C-16，冻结缺失记录/pin 不匹配失败（预期冻结全集 **17 项**）；任务/证据登记该治理动作。
 6. `doc/reviews/FEA-09-PREREQ-1-*.md` / `FEA-C15-*.md` / `FEA-C16-*.md`：独立复核报告（reviewer 只写报告）。
 7. `doc/handoffs/FEA-09-PREREQ-1-*.md`：交付 Handoff。
 8. `verification/FEA-09-PREREQ-1/**`：只读核验证据（check/vpins 原始日志、冻结 hash、schema 静态对照、路径存在性、零 src/apps diff）。
@@ -95,7 +97,7 @@ out_of_scope:
 - [ ] **AC-2（C-16 冻结）**：C-16 草案完成并经独立复核 `approved`（P0/P1=0）；冻结记录完整；覆盖 5 命令、scope/预算、密码短期引用、plan/receipt/取消、旧语义兼容、协议载体与 UNFREEZE 结论。
 - [ ] **AC-3（跨存储一致性可判定）**：冻结文本给出 Host/Core 失败恢复次序与可执行负测口径（含「Core complete / Host 未持久化」反例、Host 持久化失败拒绝签发、Registry 损坏 fail-closed）。
 - [ ] **AC-4（零生产改动）**：`git diff --name-only` 仅限 allowed_paths；无 `src/**`、`apps/**`、`tests/**` 改动；无依赖/打包变更。
-- [ ] **AC-5（治理同步）**：freeze matrix 追加 C-15/C-16 行；STATUS/PLAN/checkpoint/`task_ledger.py --write` 同步；FEA-09 的 `depends_on`/`allowed_paths`/AC 引用真实 Task ID；Handoff 记录契约 pin 与复核报告。
+- [ ] **AC-5（治理同步）**：freeze matrix 追加 C-15/C-16 行并更新 C-05/C-06；STATUS/PLAN/checkpoint/`task_ledger.py --write` 同步；FEA-09 的 `depends_on`/`allowed_paths`/AC 引用真实 Task ID；Handoff 记录契约 pin 与复核报告；`verify_pins.ps1` 扩展覆盖 17 项且缺记录/pin 不匹配失败。
 - [ ] **AC-6（独立复核纪律）**：复核者未参与起草；报告记录 reviewer 身份/来源、reviewed_head、被审字节 hash、未覆盖项；P0/P1 未解决不得判 approved；不得在同一会话自审。
 - [ ] **AC-7（门禁）**：`check.ps1` PASS（既有 3 warnings 允许）、`verify_pins.ps1` 15/15、旧 FEA-06 四 PNG 不变、未 push；以上命令行/EXIT/环境逐次入 `verification/FEA-09-PREREQ-1/`。
 
@@ -158,4 +160,5 @@ out_of_scope:
 | 日期 | 变更 | 依据 |
 |---|---|---|
 | 2026-11-03 | 建立并冻结范围：C-15（Source 存储 DDL/迁移/跨存储次序）+ C-16（source-read wire v1.1）；owner=DSH，状态 ready | FEA-09 scope-r1 R1-001/R1-002/R1-006/R1-008/R1-009；G-CONTRACT 关闭裁定 §3.3；C-06 冻结记录 §3 |
-| 2026-11-03 | 按契约独立复核 r1（changes_requested，P0=0/P1=11/P2=2）扩域：新增 **C-05 v1.1 / C-06 v1.1 UNFREEZE 载体**（`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）与对应冻结记录/矩阵更新；写域增加 C-05/C-06 草案与冻结记录；C-15/C-16 返修 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-001/R1-002 等；C-05/C-06 冻结记录「修订须 UNFREEZE」纪律 | 
+| 2026-11-03 | 按契约独立复核 r1（changes_requested，P0=0/P1=11/P2=2）扩域：新增 **C-05 v1.1 / C-06 v1.1 UNFREEZE 载体**（`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）与对应冻结记录/矩阵更新；写域增加 C-05/C-06 草案与冻结记录；C-15/C-16 返修 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-001/R1-002 等；C-05/C-06 冻结记录「修订须 UNFREEZE」纪律 |
+| 2026-11-03 | 按契约复核 r2/r3 返修：C-15 v4/C-16 v4 + C-05/C-06 v1.1；扩展写域至 `tools/governance/verify_pins.ps1`（17 项 pin 覆盖）与 freeze matrix 的 C-05/C-06 重冻注记；r1/r2/r3 报告归档供原文闭环 | `doc/reviews/FEA-09-PREREQ-1-r2.md`、`-r3.md` | 
