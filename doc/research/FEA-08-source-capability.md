@@ -1,6 +1,6 @@
 # FEA-08 技术报告：Source 稳定读取 / Windows 回收站 / 精确页面匹配能力矩阵
 
-- Task：[FEA-08](../tasks/FEA-08.md)（scope-r2 approved，2026-11-03；范围冻结 base `2870a9fa5`；本版为 R4 返修后证据收口版）
+- Task：[FEA-08](../tasks/FEA-08.md)（scope-r2 approved，2026-11-03；范围冻结 base `2870a9fa5`；本版为 R5 返修后证据收口版）
 - 性质：隔离原型（无生产代码改动；实施 diff 仅落 `doc/research|handoffs|tasks` 与 `verification/FEA-08/**`）
 - 原型：`G:\CODEX\New Manga.workspace\FEA-08\prototype\`（非 Git；16 脚本 SHA-256 见 `verification/FEA-08/prototype_hashes.txt`）
 - 证据：`verification/FEA-08/`（results/logs/fixtures；`run_all` 顶层 EXIT=0 + results verdict 双层校验）
@@ -91,10 +91,10 @@
 
 - 图片：`bytes_sha256`（强 digest）→ `canonical_pixel_sha256`（规范解码：exif_transpose→RGB8→原始分辨率；**R3/F08I2-002 起 digest 绑定尺寸** `sha256("WxH\0"+RGB)`，不同尺寸不得 exact）→ `dhash_candidate`（8×8 差分 hash，汉明距离 ≤10 仅候选）
 - 文件夹：`folder_membership + bytes_sha256`（成员身份+逐成员 digest）
-- 容器：`member_content_sha256`（成员内容 digest，压缩/顺序无关；同名多 occurrence 按 ZipInfo 句柄独立读取）。**R3/F08I2-003 起 exact 还要求成员映射唯一确定；R4/F08I3-004 细化为按 occurrence 构建“内容 → 成员名多重集”映射**：唯一内容可跨名唯一对应（改名/换位仍 exact，M21）；重复内容必须有相同 name/ordinal 锚（M22 exact）；锚不一致 → `needs_confirmation`（M20）；重复名且内容不同 → `candidate`（M12）
+- 容器：`member_content_sha256`（成员内容 digest，压缩/顺序无关；同名多 occurrence 按 ZipInfo 句柄独立读取）。**R3/F08I2-003 起 exact 还要求成员映射唯一确定；R4/F08I3-004 细化为按 occurrence 构建“内容 → 成员名多重集”映射**：唯一内容可跨名唯一对应（改名/换位仍 exact，M21）；重复内容必须有相同 name/ordinal 锚（M22 exact）；锚不一致 → `needs_confirmation`（M20）；重复名且内容不同 → `candidate`（M12）；**重复成员名在任一侧都独立核验**（F08I4-003：A 唯一名 vs B 重复名两方向均 candidate，M23）
 - PDF：`rendered_pixel_sha256`（pypdfium2 渲染，**digest 绑定页渲染尺寸**，参数记录：pdfium 153.0.7999.0 / dpi 150 / scale 2.0833 / RGB8）+ 内容流 digest 双判据，页码 1-based
 
-### 5.2 场景矩阵（21 场景全 measured；fixtures 全部入库，可从仓库复现）
+### 5.2 场景矩阵（22 场景全 measured；fixtures 全部入库，可从仓库复现）
 
 | 场景 | 判定 | digest 类型 | 说明 |
 |---|---|---|---|
@@ -117,15 +117,15 @@
 | M17 dhash 邻界=10 | **candidate** | dhash(距离恰 10) | 9×8 灰度邻界 fixture（翻转格 +100 精确控制）：距离恰 10 → 候选边界内 |
 | M18 dhash 邻界=11 | **no_match** | dhash(距离恰 11) | 同法构造：距离恰 11 → 边界外不匹配 |
 | M19 不同尺寸同像素字节（F08I2-002 反例） | **candidate** | canonical_pixel_sha256(**dim-bound**) | `img_dims_a`=2×6 与 `img_dims_b`=3×4 像素字节序列相同；尺寸绑定 digest 不同 → 不得 exact（`size_mismatch=true`、`exact_blocked_by_size_mismatch=true`），dhash 距离 0 仅候选 |
-| M20 容器重复同图·成员名不同（F08I2-003 反例） | **needs_confirmation** | member_content_sha256 + 身份锚 | `book_dupcontent_a`(a/b) vs `book_dupcontent_b`(c/d) 四成员内容全同；多重集相等但无 name/ordinal 唯一映射 → `duplicate_content_ambiguity`，不误判 exact |\n| M21 唯一内容成员改名/换位（F08I3-004 正例） | **exact_match** | member_content_sha256 + 内容唯一映射 | `book_renamed_left`(a=红,b=绿) vs `book_renamed_right`(c=绿,d=红)：内容各自唯一 → 跨名唯一对应，`unique_content_mapping=true`（不得误拒） |\n| M22 重复内容带同名锚 + 唯一项改名（F08I3-004 正例） | **exact_match** | member_content_sha256 + 身份锚 | `book_dupanchor_left`(a=红,b=红,c=绿) vs `book_dupanchor_right`(a=红,b=红,d=绿)：重复项有相同 name 锚、绿图唯一 → exact |
+| M20 容器重复同图·成员名不同（F08I2-003 反例） | **needs_confirmation** | member_content_sha256 + 身份锚 | `book_dupcontent_a`(a/b) vs `book_dupcontent_b`(c/d) 四成员内容全同；多重集相等但无 name/ordinal 唯一映射 → `duplicate_content_ambiguity`，不误判 exact |\n| M21 唯一内容成员改名/换位（F08I3-004 正例） | **exact_match** | member_content_sha256 + 内容唯一映射 | `book_renamed_left`(a=红,b=绿) vs `book_renamed_right`(c=绿,d=红)：内容各自唯一 → 跨名唯一对应，`unique_content_mapping=true`（不得误拒） |\n| M22 重复内容带同名锚 + 唯一项改名（F08I3-004 正例） | **exact_match** | member_content_sha256 + 身份锚 | `book_dupanchor_left`(a=红,b=红,c=绿) vs `book_dupanchor_right`(a=红,b=红,d=绿)：重复项有相同 name 锚、绿图唯一 → exact |\n| M23 非对称重复名（F08I4-003 反例） | **candidate** | member_content_sha256 + 双侧重复名核验 | `book_asym_left`(a=红,b=绿，唯一名) vs `book_asym_right`(page.png=红,page.png=绿，重复名)：两方向运行均为 candidate（不因 A 侧唯一而误 exact） |
 
 ### 5.3 结论
 
-冻结判据全项落地：精确/候选二分、判定 digest 类型披露、文件夹成员身份+digest、容器成员 digest+规范解码像素 digest+**尺寸绑定**+方向+**唯一一对一定位**、重复成员名独立 occurrence、感知 hash 仅候选（含阈值邻界 M17/M18）、GIF 仅首帧、PDF 页码+渲染参数记录。**R3（F08I2-002/003）新增两个真实反例场景**：不同尺寸同像素字节不得 exact（M19）、重复同图但成员身份不同名时只给候选/需确认（M20）；由此 digest 语义从“原始 RGB 字节”升级为“尺寸绑定规范表示”，容器匹配从“内容多重集相等”升级为“内容多重集相等 + 成员唯一映射”。**R4（F08I3-004）补齐正例**：唯一内容成员改名/换位（M21）与重复内容带同名锚+唯一项改名（M22）均为 exact，避免“安全保守”退化成误拒；仅锚不一致时（M20）才 needs_confirmation。加密格式采用**预生成 fixture+SHA-256**路径（scope-r2 待决项 3 的选项一）：7-Zip 生成 ZipCrypto/AES256（及 ZipCrypto 独立副本）、PyMuPDF 生成 AES-256 PDF（及独立副本）入库（`fixtures/evidence_manifest.json` 登记原件 SHA），未引入 pyzipper 新依赖。**M12/M13/M15 的匹配证据均为两路径独立副本/独立密文比较，非同文件自比**（F08I1-007）。
+冻结判据全项落地：精确/候选二分、判定 digest 类型披露、文件夹成员身份+digest、容器成员 digest+规范解码像素 digest+**尺寸绑定**+方向+**唯一一对一定位**、重复成员名独立 occurrence、感知 hash 仅候选（含阈值邻界 M17/M18）、GIF 仅首帧、PDF 页码+渲染参数记录。**R3（F08I2-002/003）新增两个真实反例场景**：不同尺寸同像素字节不得 exact（M19）、重复同图但成员身份不同名时只给候选/需确认（M20）；由此 digest 语义从“原始 RGB 字节”升级为“尺寸绑定规范表示”，容器匹配从“内容多重集相等”升级为“内容多重集相等 + 成员唯一映射”。**R4（F08I3-004）补齐正例**：唯一内容成员改名/换位（M21）与重复内容带同名锚+唯一项改名（M22）均为 exact，避免“安全保守”退化成误拒；仅锚不一致时（M20）才 needs_confirmation。**R5（F08I4-003）**：重复成员名改为**双侧独立核验**——任一侧出现重复名即 candidate（M23 两方向均为 candidate），消除“左侧唯一、右侧重复”时的不对称误判。加密格式采用**预生成 fixture+SHA-256**路径（scope-r2 待决项 3 的选项一）：7-Zip 生成 ZipCrypto/AES256（及 ZipCrypto 独立副本）、PyMuPDF 生成 AES-256 PDF（及独立副本）入库（`fixtures/evidence_manifest.json` 登记原件 SHA），未引入 pyzipper 新依赖。**M12/M13/M15 的匹配证据均为两路径独立副本/独立密文比较，非同文件自比**（F08I1-007）。
 
 ## 6. 能力矩阵（AC-4）
 
-完整 JSON/MD 见 `verification/FEA-08/results/capability_matrix.{json,md}`。R2 起矩阵逐格含 **current（现状）/needed（需新增）** 字段，NTFS 行状态由 h4/h5/h6 结果 JSON **逐场景推导**（推导不满足时不写 PASS，如实降级；F08I1-008）。**R3（F08I2-004/005）**：每个卷分支显式赋值 H4/H5/H6 各自 evidence（非 NTFS 卷不再继承 measured）；NTFS 行推导不再只看顶层 classification/result，而是消费**语义断言集**（strict 拦截断言、GIF 蓝帧反证、尺寸绑定、容器唯一映射、回收分支计数与类型拒绝）；断言被破坏即降级。**R4（F08I3-001）**：H5 语义门禁进一步收紧——还原 digest、目标保留/类型、不得 fallback 永久 rmdir、destructive 计数必须存在且为整数（`None` 不得通过）、回收站轮询字段合法；矩阵与总驱动共享同一组必需断言。摘要：
+完整 JSON/MD 见 `verification/FEA-08/results/capability_matrix.{json,md}`。R2 起矩阵逐格含 **current（现状）/needed（需新增）** 字段，NTFS 行状态由 h4/h5/h6 结果 JSON **逐场景推导**（推导不满足时不写 PASS，如实降级；F08I1-008）。**R3（F08I2-004/005）**：每个卷分支显式赋值 H4/H5/H6 各自 evidence（非 NTFS 卷不再继承 measured）；NTFS 行推导不再只看顶层 classification/result，而是消费**语义断言集**（strict 拦截断言、GIF 蓝帧反证、尺寸绑定、容器唯一映射、回收分支计数与类型拒绝）；断言被破坏即降级。**R4（F08I3-001）**：H5 语义门禁进一步收紧——还原 digest、目标保留/类型、不得 fallback 永久 rmdir、destructive 计数必须存在且为整数（`None` 不得通过）、回收站轮询字段合法。**R5（F08I4-001）**：矩阵此前只验过子集，已补齐与 `run_all.verify_results` **逐字段一致**的全部 H5 必需事实（R1/R2/R4/R5/R5b/R6a/R6b/R9/entries_poll）。摘要：
 
 | 卷类型 | 输入类别 | H4 稳定读取 | H5 回收 | H6 精确匹配 | 证据 |
 |---|---|---|---|---|---|
@@ -181,8 +181,8 @@
 ## 10. 证据索引
 
 - 结果：`verification/FEA-08/results/`（h4/h5/h6/capability_matrix/fixtures_manifest/run_all_log，共 7 件）
-- 日志：`verification/FEA-08/logs/`（每脚本 stdout+EXIT：`make_fixtures.log` / `make_fixtures_regeneration.log` / `stage_evidence.log` / `h4_run.log` / `h5_run.log` / `h6_run.log` / `matrix.log` / `run_all.log` 共 8 件，统一 LF；另 `pin-verify.log`、`gates.log`、`test-skip-inventory.md`（57 项逐项来源）、`gates-raw/`（build/test/check/pins/四 PNG/禁止 diff/安全搜索的完整原始输出，均含命令/EXIT/cwd/shell/解释器/耗时 + `gates-raw-manifest.json` + `phase1-values.json`），共 70 项证据入库）
-- Fixtures：`verification/FEA-08/fixtures/`（目录 **42 文件 = 41 内容文件 + `evidence_manifest.json`**；41 内容 = 21 项预生成原件 + 6 个 folder 成员 + 3 个独立副本（book_dup_copy/book_enc_zipcrypto_copy/doc_enc_copy）+ 3 个 dhash 邻界 + 2 个尺寸反例（img_dims_a/b）+ 2 个重复同图容器反例（book_dupcontent_a/b）+ 4 个唯一映射正例（book_renamed_left/right、book_dupanchor_left/right）；`evidence_manifest.json` 登记 41 项原件 SHA-256，双 manifest 各 41 项逐项一致）
+- 日志：`verification/FEA-08/logs/`（每脚本 stdout+EXIT：`make_fixtures.log` / `make_fixtures_regeneration.log` / `stage_evidence.log` / `h4_run.log` / `h5_run.log` / `h6_run.log` / `matrix.log` / `run_all.log` 共 8 件，统一 LF；另 `pin-verify.log`、`gates.log`、`test-skip-inventory.md`（57 项逐项来源）、`gates-raw/`（**7 份** build/test/check/pins/四 PNG/禁止 diff/安全搜索的完整原始输出，均含命令/EXIT/cwd/shell/elapsed，OS/Python/shell 环境见 03-check 与 `gates-raw-manifest.json` + `phase1-values.json`），共 72 项证据入库）
+- Fixtures：`verification/FEA-08/fixtures/`（目录 **44 文件 = 43 内容文件 + `evidence_manifest.json`**；43 内容 = 21 项预生成原件 + 6 个 folder 成员 + 3 个独立副本 + 3 个 dhash 邻界 + 2 个尺寸反例 + 2 个重复同图容器反例 + 4 个唯一映射正例 + 2 个非对称重复名反例（book_asym_left/right）；`evidence_manifest.json` 登记 43 项原件 SHA-256，双 manifest 各 43 项逐项一致）
 - 原型：`workspace\FEA-08\prototype\`（非 Git；`prototype_hashes.txt` **16 脚本** SHA-256；`run_all.py` 执行 5 个核心场景步骤 + 双生成 fixtures + 原子 evidence staging（失败回滚，F08I2-006），`stage_evidence.py` 单独生成 manifest，`pin_selfcheck.py` 逐行 commit/worktree/index/clean-checkout 四方校验，`gates_capture.py` 采集门禁原始日志与 skip 清单）
 - 复现（从干净 checkout）：
   ```
@@ -191,4 +191,4 @@
   python G:\CODEX\New Manga.workspace\FEA-08\prototype\gates_capture.py --phase1   # 门禁原始日志 + 57 项 skip 来源清单
   python G:\CODEX\New Manga.workspace\FEA-08\prototype\gates_capture.py --phase2   # check 原始日志 + gates.log 摘要 + raw manifest
   ```
-- Canonical Evidence pin 口径（F08I1-002 + F08I2-001）：pin sha256 = 被 pin commit 的 **Git blob 字节（LF）** SHA-256，复现 `git cat-file -p <commit>:<path>`；工作树哈希与之一致（`.gitattributes` 已为 `verification/FEA-08` 文本证据钉 `eol=lf`）；`pin_selfcheck.py` **逐行按登记 commit 复核** + stage-index blob + 干净 checkout 四方校验，结果见 `logs/pin-verify.log`（R2 曾因只信 index 而漏报一条 commit 断链，R3 已修；R4 仅 `pin-verify.log` 一项为 SHA-only，其余 69 文件均有 commit pin）。
+- Canonical Evidence pin 口径（F08I1-002 + F08I2-001）：pin sha256 = 被 pin commit 的 **Git blob 字节（LF）** SHA-256，复现 `git cat-file -p <commit>:<path>`；工作树哈希与之一致（`.gitattributes` 已为 `verification/FEA-08` 文本证据钉 `eol=lf`）；`pin_selfcheck.py` **逐行按登记 commit 复核** + stage-index blob + 干净 checkout 四方校验，结果见 `logs/pin-verify.log`（R2 曾因只信 index 而漏报一条 commit 断链，R3 已修；R5 仅 `pin-verify.log` 一项为 SHA-only，其余 71 文件均有 commit pin）。

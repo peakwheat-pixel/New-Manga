@@ -2,7 +2,7 @@ $ git grep -n -E 'SHEmptyRecycleBin|EmptyRecycleBin|SHERB_' -- src apps experime
 EXIT=0
 cwd=G:\CODEX\New Manga
 shell=direct
-captured_at=2026-11-03 11:55:57
+captured_at=2026-11-03 12:15:51
 elapsed_s=0.3
 
 NO_MATCHES_IN_CODE_PATHS

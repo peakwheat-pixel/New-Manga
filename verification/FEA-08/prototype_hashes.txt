@@ -1,21 +1,21 @@
-# FEA-08 workspace 原型脚本 SHA-256（R4：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
-# 双生成 fixtures + 事务化原子 evidence staging（失败逐项回滚并核对）+ results 双层校验 +
-# tmp 清理；stage_evidence.py 生成入库 fixtures manifest；pin_selfcheck.py 生成 commit/工作树/
+# FEA-08 workspace 原型脚本 SHA-256（R5：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
+# 双生成 fixtures + 事务化 evidence staging（旧集 hash 快照、逐项恢复并核对）+ results 双层校验
+# + tmp 清理；stage_evidence.py 生成入库 fixtures manifest；pin_selfcheck.py 生成 commit/工作树/
 # 干净 checkout 四方 pin 校验；gates_capture.py 采集门禁原始日志与 skip 清单；
 # probe_env.py 为环境探测；其余 h4_diag*/h5_diag*/h5_cleanup* 为诊断/清理脚本，不在 run_all 链路）
 03ee9592ce3bc90c8fc281b4812e8294751988a5c574432d8a7600b3a1ca8099  fwin.py
-2ee62ae3d8e3aec97369845256e2e2a24090bdc00165a7d8c5937c0e7a782e2c  gates_capture.py
+e542b9aa4e5c2c2bf4c1a891fc9339a4cb6d2e2e9506ccac53fc81d3136f4f14  gates_capture.py
 9c3620366f29f6983e17d521eed077110adb499b8775de113fbc87537401e49e  h4_diag_replace.py
 2888d494792417b905dcbfde99d8f9fb3dbac572cd4cfb51310a89aed4c66df2  h4_run.py
 49cfa341e29a6492fb6b70c4d27397a6e25829bd654349ffda01436034004671  h5_cleanup_leftovers.py
 919cde6697b3bae58f0319ad8568cf8ccd2841eb3bb20766afcd4efde3fd05ce  h5_diag.py
 3f65ef043998bd61add6eee9139bd4405ea68a4431fd3ee720f2d6f38adebe6e  h5_diag2.py
 ce3408d6414d0f9d86a63c32339c33540710900bcdd0403123ea264c74e718a7  h5_run.py
-3df546e3b64e5ac5fb444d42fb6982178b2d8be1cb97278f88473982128f11bc  h6_run.py
+7829a53c77f918dd58c3b5c53a25c6608ec51f8ecc068afdcd1baedaa6ce384a  h6_run.py
 85972c52fd5da1892cefee32932d145007e7e5a89a8bf47227446e3e805bf4e5  lease.py
-de90f0fb891290c76ae06d15c8e7ddae8818b8971c4e1981a7be35934176a636  make_fixtures.py
-2aeedf10fe03e3b470deb096ddcc9eeac597b5a6fc57490e2a30ce0f22d0c6e2  matrix.py
+623cf189fd42a20df8df0d631e8ef21d5ae6a10c51fa3e276fcaacbb90a9696a  make_fixtures.py
+952a5b75095f83d9a74f66b2c886361327b17ad8c13d7f58ada3421c694d4b01  matrix.py
 7aacbbe680336e33ea01de914b2344b05d1cda2d3dba8505566b64b8fc588fa8  pin_selfcheck.py
 e960ede4c92aa6ab05534f02d2a9a49aea187721bd2f3774d5c54fc5f2ff0f6d  probe_env.py
-8df534aec562de4dc06c4344a8758d9e715538c559cf79d971674c86cd6f1333  run_all.py
-8a36064e3af0683062cfeb61182ebd77241282853c4a2533a7aea1280ca75547  stage_evidence.py
+6de91a5121eb58814baabcc465c0cc2ce2772b8d364c06a3998df5c4ba077b53  run_all.py
+ab795200538c2bf7603f849a3a5cbb9a963fca0a52357397054377a079d9dd11  stage_evidence.py

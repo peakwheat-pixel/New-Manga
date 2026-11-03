@@ -200,7 +200,19 @@
         "page.png"
       ],
       "occurrences_kept_separate": true,
-      "duplicate_occurrences": [
+      "duplicate_occurrences_a": [
+        {
+          "name": "page.png",
+          "ordinal": 0,
+          "digest": "18640fe476c4c2f0bd7106f501b3e5bf15f594a321905aee9652c4c59176554e"
+        },
+        {
+          "name": "page.png",
+          "ordinal": 1,
+          "digest": "37d35154f79de57c81465ab8283399ca960dcfd20fa3f1537ab4ef66bce84c1f"
+        }
+      ],
+      "duplicate_occurrences_b": [
         {
           "name": "page.png",
           "ordinal": 0,
@@ -231,7 +243,19 @@
           "page.png"
         ],
         "occurrences_kept_separate": true,
-        "duplicate_occurrences": [
+        "duplicate_occurrences_a": [
+          {
+            "name": "page.png",
+            "ordinal": 0,
+            "digest": "18640fe476c4c2f0bd7106f501b3e5bf15f594a321905aee9652c4c59176554e"
+          },
+          {
+            "name": "page.png",
+            "ordinal": 1,
+            "digest": "37d35154f79de57c81465ab8283399ca960dcfd20fa3f1537ab4ef66bce84c1f"
+          }
+        ],
+        "duplicate_occurrences_b": [
           {
             "name": "page.png",
             "ordinal": 0,
@@ -290,8 +314,8 @@
     {
       "result": "exact_match",
       "digest_type": "rendered_pixel_sha256",
-      "bytes_digest_a": "b71c13d4b9b14ae96189175ec2f0bcb8d2530480ae95e0cb3645a4eaa4800aca",
-      "bytes_digest_b": "db0bd7e7118e5083d1672e7a7f56a1cd7b778e7589f67783e2a0aec29f8e0b14",
+      "bytes_digest_a": "e6e77604a955224e15f3b2840c2d47106ba5e88fb794a5b484c1629d9ab9d6c3",
+      "bytes_digest_b": "07bce0293aafdfe4c3da496613b9652de48e38867694a2a74d77fcd0c2563c21",
       "container_bytes_differ": true,
       "page_count_a": 2,
       "page_count_b": 2,
@@ -339,8 +363,8 @@
       "with_password": {
         "result": "exact_match",
         "digest_type": "rendered_pixel_sha256",
-        "bytes_digest_a": "8d93951e8325ec86b5c6e96fae627eb8ae6f9deedb8d734ed0e70023f9334caf",
-        "bytes_digest_b": "82c84e3bc591b91df9d0518e5c09659adfc201018d8529ffe4ac6be1ad9cc794",
+        "bytes_digest_a": "89adee6fa0a99e98bd46352563d9b3b661f9db29c372aed8431cf32206fab6f5",
+        "bytes_digest_b": "df4dcac585b419742844080bae139d86419d591caa47fa2e226215b99d446b49",
         "container_bytes_differ": true,
         "page_count_a": 2,
         "page_count_b": 2,
@@ -503,6 +527,40 @@
       "comparison_mode": "independent-copy(duplicate content with same-name anchors a/b plus one unique renamed item)",
       "assert_exact_anchored": true,
       "scenario": "M22_container_duplicate_content_anchored_exact"
+    },
+    {
+      "result": "candidate",
+      "digest_type": "member_content_sha256",
+      "members_a": 2,
+      "members_b": 2,
+      "multiset_equal": true,
+      "keyed_identity_equal": false,
+      "sorted_names_equal": false,
+      "duplicate_content_present": false,
+      "unique_content_mapping": true,
+      "duplicate_member_names_a": [],
+      "duplicate_member_names_b": [
+        "page.png"
+      ],
+      "occurrences_kept_separate": true,
+      "duplicate_occurrences_b": [
+        {
+          "name": "page.png",
+          "ordinal": 0,
+          "digest": "18640fe476c4c2f0bd7106f501b3e5bf15f594a321905aee9652c4c59176554e"
+        },
+        {
+          "name": "page.png",
+          "ordinal": 1,
+          "digest": "37d35154f79de57c81465ab8283399ca960dcfd20fa3f1537ab4ef66bce84c1f"
+        }
+      ],
+      "duplicate_name_ambiguity": "同名不同内容 → 歧义，仅候选，需用户确认",
+      "comparison_mode": "asymmetric(unique names vs duplicate names, same content multiset)",
+      "assert_left_to_right_candidate": true,
+      "reversed_result": "candidate",
+      "assert_symmetric_candidate": true,
+      "scenario": "M23_duplicate_name_asymmetric_candidate"
     }
   ]
 }

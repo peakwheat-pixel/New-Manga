@@ -22,7 +22,8 @@ EXIT=0
 [h6] M20_container_duplicate_content_ambiguous    -> needs_confirmation
 [h6] M21_container_unique_content_renamed_exact   -> exact_match
 [h6] M22_container_duplicate_content_anchored_exact -> exact_match
-[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (21 scenarios); fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures (env FEA08_FIXTURES); manifest=G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json
+[h6] M23_duplicate_name_asymmetric_candidate      -> candidate
+[h6] wrote G:\CODEX\New Manga.workspace\FEA-08\out\h6_results.json (22 scenarios); fixtures_root=G:\CODEX\New Manga\verification\FEA-08\fixtures (env FEA08_FIXTURES); manifest=G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json
 
 --- stderr ---
 G:\CODEX\New Manga.workspace\FEA-08\prototype\h6_run.py:48: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.

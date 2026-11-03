@@ -1,8 +1,8 @@
-FEA-08 门禁摘要（R4 / F08I2-007 + F08I3-005；原始输出含耗时与环境快照）
+FEA-08 门禁摘要（R5 / F08I2-007 + F08I3-005 + F08I4-004）
 口径：本文件是**摘要 + 原始日志指针**；完整原始输出（命令/EXIT/shell/解释器）在
       logs/gates-raw/**，逐项 skip 来源在 logs/test-skip-inventory.md。
-记录时间：2026-11-03 11:59:41（Asia/Shanghai）；Python 3.14.6
-head（采集时）：f4846031620e44adfcdcae026039abc7e2494201（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
+记录时间：2026-11-03 12:19:18（Asia/Shanghai）；Python 3.14.6
+head（采集时）：8609c6591634cde4feffa295998f6dbf53c56c3c（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
 
 [1] build：dotnet build apps\desktop-avalonia\NewManga.sln --nologo
     EXIT=0；0 warning / 0 error（原始输出 gates-raw/01-build.log）
@@ -20,7 +20,7 @@ head（采集时）：f4846031620e44adfcdcae026039abc7e2494201（证据 commit �
     skip 逐项来源清单：verification/FEA-08/logs/test-skip-inventory.md（57 项）
     原始输出：gates-raw/02-test.log
 [3] check.ps1：pwsh -NoProfile -File tools\governance\check.ps1
-    EXIT=1；FAIL（3 warnings；原始输出 gates-raw/03-check.log）
+    EXIT=0；PASS（3 warnings；原始输出 gates-raw/03-check.log）
 [4] 冻结 pins：pwsh -NoProfile -File tools\governance\verify_pins.ps1
     EXIT=0；PASS (all 15)（原始输出 gates-raw/04-freeze-pins.log）
 [5] 旧 FEA-06 四 PNG：Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
@@ -34,6 +34,6 @@ head（采集时）：f4846031620e44adfcdcae026039abc7e2494201（证据 commit �
 [7] 安全边界：git grep -n -E "SHEmptyRecycleBin|EmptyRecycleBin|SHERB_" -- src apps experiments tests packaging scripts tools
     代码路径无匹配（调用=0）（原始输出 gates-raw/07-clearing-api-search.log；文档/证据中的 API 名不构成调用）
 
-说明：check 原始日志在本阶段运行后才落盘，故其登记只能以 SHA-256 pin（commit 列 -）；
-      这不是自引用漏洞：其内容由 check 运行时的证据集决定，登记后复跑仍 PASS。
-结论：R3 交付门禁全部通过；无生产代码改动；未 push。
+说明：gates-raw 共 7 份；command/EXIT/cwd/shell/elapsed 各份具备，OS/Python/shell 环境见 03-check.log 与 gates-raw-manifest.json。
+      本摘要只记录本次采集运行的事实；其登记 commit 以 Task 卡 EV 表为准；若 EV 在采集后更新，以最终登记的原始日志与复跑结果为准。
+结论：本次采集的门禁运行全部通过；无生产代码改动；未 push。
