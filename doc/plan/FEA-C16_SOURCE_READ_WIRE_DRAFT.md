@@ -1,9 +1,9 @@
-# FEA-C16 Source 读取与导入 wire 协议（草案 v5，处置契约复核 r4）
+# FEA-C16 Source 读取与导入 wire 协议（草案 v6，处置契约复核 r5）
 
-状态：**草案 v5 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
+状态：**草案 v6 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
 日期：2026-11-03
 作者：DSH（Lead / Architect / Integrator）
-依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15 v4（同批）、C-01b/C-05 v1.1/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）。
+依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15 v5（同批）、C-01b/C-05 v1.1/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）。
 
 **边界**：冻结 source-read 与引用导入通信面（命令、字段、签名、scope、能力、错误、密码引用、异步状态机、receipt）。**不修改**既有冻结文档字节（C-06 的必要修订走 v1.1 UNFREEZE 载体）；**不新增 Core→Host 反向 RPC 通道**；**不实现** UI 接线（FEA-09-UI-1）与删除/回收站（FEA-12）。
 
@@ -93,7 +93,7 @@
 - **operation_id 绑定与重放矩阵**：`operation_id` 绑定请求指纹 `sha256(canonical{chapter_id, plan_id, plan_digest, grants, duplicate_policy})`。同 id+同指纹：`accepted/running` → 返回当前状态；`completed/cancelled/failed` → 返回同一 receipt（终态不重跑）；不同指纹 → `SOURCE_OPERATION_CONFLICT`。同项目（book）同时只允许一个非终态 import；`StartImportReferences` 在**返回 accepted 之前原子预占**项目锁（先到先得），任何终态（completed/cancelled/failed）或进程退出释放；预占失败 → `SOURCE_IMPORT_BUSY`，不创建 operation。
 - **跨重启**：receipt 为会话内（重启后 `SOURCE_OPERATION_NOT_FOUND`）；已提交页是唯一持久结果；重试经**自然键**（同项目同 entry 已有非 superseded binding）判为 `skipped`/`ALREADY_REFERENCED`，不产生重复页。
 - **`import_as_new` 裁决**：在 referenced 模式下只影响**本次导入内**重复内容/occurrence 的处理，**不得**绕过项目内 entry 唯一性（同 book 同 entry 已绑定 → 仍按已引用处理）；`skip` 为默认。
-- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。**计数单位与聚合（冻结）**：item.counts 与 totals 使用同一组字段名（复数仅表示聚合）：`imported_pages`（已提交页）、`skipped_sources`（整 source 因已引用/重复策略跳过；若部分成员已引用、其余导入则该 source 记 imported_pages>0，不计 skipped）、`failed_sources`（整 source 失败，0/1）、`unsupported_entries`（不支持成员/页数）、`pending_pages`（未处理页数）；`totals` = 各 item counts 之和；`remaining_pages = 计划总页数 - committed_pages - unsupported_entries`（固定公式，unsupported 不重试）。**完整示例（冻结）**：① accepted 即取消 → `state="cancelled"`, `committed_boundary=0`, counts 全 0, `remaining_pages=计划总页数`；② 20 页含 1 unsupported、提交 12 页后取消 → `state="cancelled"`, committed_pages=12, unsupported_entries=1, pending_pages=7, remaining_pages=7；③ 同容器提交 12 页后失败 → `state="failed"`, outcome="failed", failed_sources=1, committed_pages=12, pending_pages=7, remaining_pages=7（已提交不回滚）；④ unsupported-only → `state="completed"`, outcome="unsupported", imported_pages=0, unsupported_entries=N, pending_pages=0, remaining_pages=0。
+- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。**计数单位与聚合（冻结）**：item.counts 与 totals 使用同一组字段名（复数仅表示聚合）：`imported_pages`（已提交页）、`skipped_sources`（整 source 因已引用/重复策略跳过；若部分成员已引用、其余导入则该 source 记 imported_pages>0，不计 skipped）、`failed_sources`（整 source 失败，0/1）、`unsupported_entries`（不支持成员/页数）、`pending_pages`（未处理页数）；`totals` = 各 item counts 之和；**`planned_pages`** = plan 中 `will_import` 的页数（`already_referenced`/策略跳过的 source 不计入 planned_pages，仅计 `skipped_sources`；后续判定为不支持的成员计入 planned_pages 且同时计入 `unsupported_entries`）；`remaining_pages = planned_pages - committed_pages - unsupported_entries`（固定公式，unsupported 不重试）。**完整示例（冻结）**：① accepted 即取消 → `state="cancelled"`, `committed_boundary=0`, `counts:{imported_pages:0, skipped_sources:0, failed_sources:0, unsupported_entries:0, pending_pages:planned_pages}`, `remaining_pages=planned_pages`；② 20 页含 1 unsupported、提交 12 页后取消 → `state="cancelled"`, committed_pages=12, unsupported_entries=1, pending_pages=7, remaining_pages=7；③ 同容器提交 12 页后失败 → `state="failed"`, outcome="failed", failed_sources=1, committed_pages=12, pending_pages=7, remaining_pages=7（已提交不回滚）；④ unsupported-only → `state="completed"`, outcome="unsupported", imported_pages=0, unsupported_entries=N, pending_pages=0, remaining_pages=0。
 - **部分容器取消/崩溃**：逐项 receipt 记录 `committed_pages`、`remaining_pages`、`committed_entries`；重试/继续只补未提交单元，不回滚已提交页（不声称整次导入原子）。
 - **receipt（冻结形状）**：
   ```json
@@ -158,7 +158,7 @@
 | 对象 | 接口 |
 |---|---|
 | C-06 v1.1（UNFREEZE） | 方向/Verify 归属/四维 scope/撤销通道写进 C-06 v1.1；本契约是其协议实现 |
-| C-15 v4 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验；book 归属守卫 `SOURCE_PROJECT_MISMATCH` |
+| C-15 v5 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验；book 归属守卫 `SOURCE_PROJECT_MISMATCH` |
 | C-07 | FEA-09 不新增 `IHostController`；UI-1 走 UNFREEZE |
 | C-01b/C-14 | 缓存/通道隔离沿用 SC-02/03/20、SC-S14…S17；不重写 |
 | FEA-09-UI-1 | 消费 Registry 命令、密码入口、plan/进度/取消；本契约不实现 UI |
@@ -170,9 +170,9 @@
 
 ## 10. 冻结条件与变更记录
 
-冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与 C-15 v4 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
+冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与 C-15 v5 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案 | FEA-09 scope-r1 |
-| 2026-11-03 | **v5（处置契约复核 r4）**：receipt 固定示例与计数键统一（item/totals 同名字段、`remaining_pages` 公式），补 accepted 取消/部分提交取消/部分提交失败/unsupported-only 四个完整示例 | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-003 |
+| 2026-11-03 | **v6（处置契约复核 r5）**：accepted 取消示例改为 pending_pages=planned_pages；冻结 `planned_pages` 定义（排除已引用/策略跳过；unsupported 计入 planned 与 unsupported_entries）与 remaining 公式；C-15 引用统一 v5 | `doc/reviews/FEA-09-PREREQ-1-r5.md` R5-001/R5-002 |
