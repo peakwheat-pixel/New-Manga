@@ -3,14 +3,14 @@ id: FEA-08
 title: Source/回收站隔离原型（H4/H5/H6 能力矩阵与技术报告）
 kind: prototype
 governance_version: 3
-status: proposed
-approval: scope-r1 changes_requested（ZCode，P0=0/P1=3/P2=5）→ 已按最小修订更新，待 scope-r2
+status: ready
+approval: scope-r2 **approved**（ZCode CLI fresh session，P0=0/P1=0/P2=2；2026-11-03；报告 doc/reviews/FEA-08-scope-r2.md）
 suggested_owner: codex
 owner: codex
-reviewer: 待 scope-r2 + impl Review appointment
+reviewer: scope-r2 approved（ZCode）；impl Reviewer 待 DSH Appointment
 depends_on:
   - FEA-01-FREEZE-1
-base_commit: 7ded8bd37fb9c8f35c3c86defc3c4329edeaf8e1
+base_commit: 2870a9fa52b73fdf344cc723e59957d76d60e395（scope-r2 approved head；范围冻结）
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
@@ -29,7 +29,7 @@ allowed_paths:
 # FEA-08：Source/回收站隔离原型
 
 > 依据：`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md` S3 FEA-08 行、H4/H5/H6 表（:794–:796）、§15.4 出口定义（:929）、精确匹配口径（:457/:469）、回收站语义（:512–:514）；`doc/contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md`；`doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md`；`G-CONTRACT`/`G-DELETE-CONTRACT` 已 CLOSED（2026-11-01，AD-003 §5/STATUS；提案内 "OPEN" 为冻结时快照，字节不动）。
-> 本卡在独立 scope Review 冻结前为 `proposed`，不得实施；workspace 派发 prompt 仅在 scope approved 后使用（本轮修订需同步）。
+> 范围已由 scope-r2 approved 冻结（2026-11-03）；`ready` 可实施；workspace 派发 prompt 已按冻结 AC 同步。
 
 ## 路径口径裁定（有意偏差登记，F08R1-003）
 - **原型/脚本**：`G:\CODEX\New Manga.workspace\FEA-08\prototype\`（非 Git，控制仓库体积；FEA 线 workspace 根级实践）；Task/证据登记路径与每个脚本 SHA-256。
