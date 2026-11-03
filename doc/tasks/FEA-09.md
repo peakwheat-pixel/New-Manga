@@ -3,10 +3,11 @@ id: FEA-09
 title: 引用源与导入（Core source schema/read/cache、Host SourceAccessRegistry/授权、导入 plan/receipt）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1=0/P2=2；doc/reviews/FEA-09-scope-r2.md，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`）；前置 FEA-09-PREREQ-1 **done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）
 suggested_owner: codex
-owner: codex（DSH Appointment 2026-11-03；待认领后 in_progress）
+owner: zcode（DSH 2026-11-03 故障转移 Appointment；Codex usage limit 18:00–20:40 不可用）
+claimed_at: 2026-11-03T09:59:49.695Z（codex 认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 与 git-stage-blocked.log 保留为证据）；2026-11-03 故障转移改派 zcode 接续认领
 reviewer: 实现 Review 待 Appointment（候选：未参与实现/scope-r2 的独立 Codex 会话；不得由实现者同一会话自审）
 depends_on:
   - FEA-08
@@ -66,7 +67,7 @@ out_of_scope:
   - push
 ---
 
-# FEA-09 — 引用源与导入（ready：前置 C-15/C-16 已冻结，待 Owner 认领实施）
+# FEA-09 — 引用源与导入（in_progress：zcode 实施，DSH 2026-11-03 故障转移 Appointment）
 
 > 状态：`proposed`。scope-r1（Codex）判 `changes_requested`（P0=0/P1=9/P2=4）；本卡已完成逐项处置并按裁决收窄范围/写域/AC。**仍不得实施**：须先完成 `FEA-09-PREREQ-1`（C-15 存储契约 + C-16 source-read wire 冻结、独立复核）并通过 scope-r2。
 > 本 Task **不宣称**提案 `:1040` 的 UI 部分已由本 Task 完成；该部分由 `FEA-09-UI-1` 协同交付，二者均完成后才能宣称 Source 导入 UI 验收通过。
@@ -212,3 +213,4 @@ out_of_scope:
 
 | 2026-11-03 | scope-r2 前置就绪：PREREQ-1 done（C-05/C-06 v1.1 + C-15/C-16 v1.0，17/17）；AC 标记更新为待 scope-r2 | `doc/reviews/FEA-09-PREREQ-1-r7.md`；`doc/plan/FEA-CONTRACT-FROZEN-C15.md`/`C16` |
 | 2026-11-03 | **scope-r2 approved + 释放**：R2S-001/002 处置；owner=Codex 待认领；base=19e621004；STATUS/PLAN/checkpoint/ledger 同步 | `doc/reviews/FEA-09-scope-r2.md` |
+| 2026-11-03 | Codex 认领（in_progress），git add 被 `.git/index.lock` Permission denied 阻断未提交；随后 Codex 触发 usage limit，DSH 按故障转移改派 **zcode** 接续实施；遗留 diff/日志（`verification/FEA-09/logs/git-stage-blocked.log`、`pins.log`）随认领 commit 入库 | DSH 派发指令（2026-11-03）；`verification/FEA-09/logs/` |
