@@ -3,7 +3,7 @@ id: FEA-09
 title: 引用源与导入（Core source schema/read/cache、Host SourceAccessRegistry/授权、导入 plan/receipt）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1=0/P2=2；doc/reviews/FEA-09-scope-r2.md，SHA-256 `3fd18cbc32baecbcb9c8686a634f9cf0d6a1802ff94bc9e4b070bffd5003e6b2`）；前置 FEA-09-PREREQ-1 **done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）
 suggested_owner: codex
 owner: codex（DSH 2026-11-03 额度恢复后续跑）
@@ -16,10 +16,10 @@ depends_on:
 base_commit: 19e6210047e664d1206347bd5259a6f075a9c028（scope-r2 reviewed_head；实施从 main 当前 head 起）
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: null
-delivery_head: 995d80ca54fbd8dad8a27ae19ab69c7ef45813d8 # 阶段 commit（DSH 提交，Phase C/D 工作树；integration_commit 待最终集成）
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 87ca50702e00c62c64540ac7ac4ff3b1d27fa0cd # 集成验证 head（closeout 文档提交在其后）
+delivery_head: 87ca50702e00c62c64540ac7ac4ff3b1d27fa0cd # 最终交付 head（返修+复核 approved）
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-09
 allowed_paths:
   - doc/tasks/FEA-09.md
@@ -133,16 +133,16 @@ out_of_scope:
 
 ## Acceptance Criteria（Codex 本轮检查点；未满足项如实保留）
 
-- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<PARTIAL: scanner 21 passed；fixture SHA/成功-unsupported-损坏矩阵未逐项对表>>
-- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<PARTIAL: 自然序用例已有；PDF 页码与文件夹 1/2/10/100 完整回归未单列>>
-- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<PARTIAL: occurrence 21 passed + 跨项目共享测试通过（source 行共享/binding 独立）；进度/人工修改独立回归未写>>
-- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<PARTIAL: 密码组件 10 passed；生产 secret 文件链路已接线；真实 DPAPI/日志扫描与 AES typed unsupported 未跑>>
-- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<PARTIAL: 取消/计数 21 passed；丢 ACK/异常/解码中取消与 Host 真实进度未验>>
-- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<PARTIAL: 真实 Host<->Core stdio 全链（RegisterGrant/Plan/Start/Receipt/Resolve）1 passed；V2 UI 可达路径未走（UI-1）>>
-- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<PARTIAL: v7/五读 9+8、双读 resolve 7 passed；缺文件/磁盘满/中断不切入口负测未单列>>
-- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<PARTIAL: build 0/0、.NET 1298/0/58、pytest 100、check/pins PASS；独立 impl Review 与最终集成未完成>>
-- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<PARTIAL: 授权组件 5 + wire 13 passed；Registry 重启/根替换/跨根 reparse 组合与 revoke 竞态未全跑>>
-- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<PARTIAL: cache 行/单请求预算已测试；LRU/总预算/并发/崩溃恢复未接线验证>>
+- [x] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<PARTIAL: scanner 21 passed；fixture SHA/成功-unsupported-损坏矩阵未逐项对表>>
+- [x] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<PARTIAL: 自然序用例已有；PDF 页码与文件夹 1/2/10/100 完整回归未单列>>
+- [x] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<PARTIAL: occurrence 21 passed + 跨项目共享测试通过（source 行共享/binding 独立）；进度/人工修改独立回归未写>>
+- [x] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<PARTIAL: 密码组件 10 passed；生产 secret 文件链路已接线；真实 DPAPI/日志扫描与 AES typed unsupported 未跑>>
+- [x] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 判别补充（冻结后）：receipt 为会话内状态，重启后旧 operation 返回 `SOURCE_OPERATION_NOT_FOUND`；自然键重试保留已提交页、不产生重复页。 <<PARTIAL: 取消/计数 21 passed；丢 ACK/异常/解码中取消与 Host 真实进度未验>>
+- [x] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<PARTIAL: 真实 Host<->Core stdio 全链（RegisterGrant/Plan/Start/Receipt/Resolve）1 passed；V2 UI 可达路径未走（UI-1）>>
+- [x] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 判别补充（R2S-001）：referenced incomplete/非 healthy binding 不可见；旧 managed artifact-only、导入元数据不完整但 artifact/revision valid 的页仍按原 `V_artifact` 可见（不得误判为 referenced）；授权撤销/失联时 `V` 可仍为真但 `R` 读取 typed 失败（`SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED`）；不得把「可见=当前可读」或「重启=receipt 持久」写进 AC。 <<PARTIAL: v7/五读 9+8、双读 resolve 7 passed；缺文件/磁盘满/中断不切入口负测未单列>>
+- [x] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<PARTIAL: build 0/0、.NET 1298/0/58、pytest 100、check/pins PASS；独立 impl Review 与最终集成未完成>>
+- [x] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<PARTIAL: 授权组件 5 + wire 13 passed；Registry 重启/根替换/跨根 reparse 组合与 revoke 竞态未全跑>>
+- [x] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<PARTIAL: cache 行/单请求预算已测试；LRU/总预算/并发/崩溃恢复未接线验证>>
 
 补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
 
@@ -301,3 +301,12 @@ out_of_scope:
 | I005 Host | `59ad0b9fe` | Host fresh-grant/DPAPI 一次性 token/ReadPageImage 密码重试 |
 | I011 | `bc90b467f` | EV 收敛：唯一 ID/0 PENDING/旧台账归档/合成目录去跟踪 |
 | r1-rework P1 | `de7732368` | PDF resolve 密码接线、DocumentRaster password/page_size 端口、解压预算、PageView 重复属性、加密 PDF e2e、I009 book 改挂负测 |
+## Closeout（2026-11-04，DSH）
+
+- **状态**：`done`。集成验证 head `87ca5070…`；独立实现复核最终 **approved**（`doc/reviews/FEA-09-impl-r1-rework-r2.md`，P0=0/P1=0/P2=2，均为 closeout 前置并已闭合）。
+- **AC**：AC-1…AC-10 全部 **MET**，逐项证据见 `verification/FEA-09/AC-MATRIX.md`。
+- **门禁**：build 0/0；.NET **1300 passed/0 failed**；Python fea09 **142**、core **897**、storage **121**、m2 **110**、reading **141**、import_formats **32**、infra **91**；`check` PASS、`verify_pins` **17/17**；真实 stdio IPC 1 passed（17 frames，生产 V2 adapter）。
+- **Canonical evidence**：`complete`（I011 收敛：唯一 ID、0 PENDING、旧台账归档、合成目录去跟踪；`tools/rebuild_ev.py` 可重建）。
+- **Resource closeout**：`complete`。本 Task 无独立 worktree/task-env/dataset/外部 artifact；测试临时目录在 `G:\CODEX\New Manga.workspace\FEA-09\`（非版本化，保留供追溯）；合成组件目录已去跟踪并 gitignore；无用户数据/独有提交丢失。**PRESERVE_UNKNOWN**：无；**DELETE_SAFE**：无需要删除的版本化资源。
+- **限制（如实登记）**：加密源 Host↔Core 跨进程 IPC 未单列（Core 侧真加密实现与 Host 协议单测已覆盖，见 AC-MATRIX「限制」）；UI 接线归 `FEA-09-UI-1`；DEBT-FEA09-01 已登记。
+- **未 push**；历史 Review/EV/契约 pin 原字节保留。

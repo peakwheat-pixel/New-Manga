@@ -1289,3 +1289,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 语义提交 `ed570681b`/`a9276fbae`；已提交字节两次独立复核（ZCode sem1/sem2，最终 approved P0=0/P1=0/P2=0）。
 - 重冻载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md`；FROZEN 记录 C05 v1.2/C15 v1.1/C16 v1.1；新 pin `f6e6f3cb…`/`d8c0a3bc…`/`0b9511a5…`；`verify_pins` **17/17 PASS**；M2-C1 无字节变更登记。
 - 实现释放：R1-I001/R1-I005 可实施（契约不变量 + impl-design + 测试矩阵）；完成后新独立实现复核 + DSH 集成。
+## 196. FEA-09 closeout（2026-11-04）
+
+- Task FEA-09 → **done**：集成 head `87ca5070`；AC-1…AC-10 全部 MET（`verification/FEA-09/AC-MATRIX.md`）；独立实现复核 r1-rework r2 **approved**（P0=0/P1=0/P2=2）。
+- 门禁：build 0/0、.NET 1300/0、Python fea09 142/core 897/storage 121/m2 110/reading 141/import_formats 32/infra 91、check PASS、pins 17/17、真实 stdio IPC 1 passed。
+- 交付：C-05 v1.2/C-15 v1.1/C-16 v1.1 重冻（17/17）；I001/I005 实现闭环；I011 EV 收敛（唯一 ID/0 PENDING）。
+- 限制/债务：加密源跨进程 IPC 未单列；UI 归 FEA-09-UI-1；DEBT-FEA09-01 已登记。未 push。
+- 下一步：释放 FEA-09-UI-1 或推进 G-DELETE-IMPL；handoff `doc/handoffs/FEA-09-closeout.md`。

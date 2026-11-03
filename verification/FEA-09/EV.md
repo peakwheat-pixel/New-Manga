@@ -1,15 +1,15 @@
 # FEA-09 逐文件 EV（I011 收敛后；零 PENDING）
 
-- 生成时间：2026-11-03T16:54:29+00:00
-- HEAD：`59ad0b9fed912c636bf5e6b46287a4554c95bdee`
+- 生成时间：2026-11-03T17:28:26+00:00
+- HEAD：`87ca50702e00c62c64540ac7ac4ff3b1d27fa0cd`
 - 口径：SHA-256 为工作树原始字节（不按 LF 归一）；`added_commit` = `git log --diff-filter=A`，`last_commit` = 最后一次修改该路径的提交。
 - 唯一 ID：EV-001…顺序编号，无重复、无 PENDING；旧台账原字节保留在 `verification/FEA-09/history/EV-2026-11-03.md`（HISTORICAL 行）。
 - 合成组件目录（`cache-component/`、`grant-component/`、`native-registry/`）由测试每次重新生成，已从版本控制移出并写入 `.gitignore`；不作为 canonical 证据。
 
 | EV | 仓库路径 | bytes | 工作树 SHA-256 | added_commit | last_commit | 类别 |
 |---|---|---:|---|---|---|---|
-| EV-001 | `verification/FEA-09/AC-MATRIX.md` | 4302 | `8e3d06acc072f6ff6438fb2260bffb010bd1696998951967d8d1c9c716268959` | `3d308f449c979a6d6ee626f7db94fe4b0e171182` | `6a164253d1fa9ad801036d150c9bc981964689ca` | CANONICAL |
-| EV-002 | `verification/FEA-09/history/EV-2026-11-03.md` | 29128 | `236e88d996fda4f06fb44055297e6a12657d71b5d90283cd08bc85f6464e9141` | `-` | `-` | HISTORICAL |
+| EV-001 | `verification/FEA-09/AC-MATRIX.md` | 6736 | `3accef718bfff51038b97de3b06c410a00b5a0526b23b68eacc87ac2f652e749` | `3d308f449c979a6d6ee626f7db94fe4b0e171182` | `6a164253d1fa9ad801036d150c9bc981964689ca` | CANONICAL |
+| EV-002 | `verification/FEA-09/history/EV-2026-11-03.md` | 29128 | `236e88d996fda4f06fb44055297e6a12657d71b5d90283cd08bc85f6464e9141` | `bc90b467fa6cc3310912148258a641674b04d7a9` | `bc90b467fa6cc3310912148258a641674b04d7a9` | HISTORICAL |
 | EV-003 | `verification/FEA-09/ipc/fea09-real-ipc.json` | 1465 | `303dec898f6450c7807711182fd6d8a1912cc3675b00252971b29b45b658fba4` | `081cb2c39d9851487f701496e689f21151ad00e2` | `59ad0b9fed912c636bf5e6b46287a4554c95bdee` | IPC |
 | EV-004 | `verification/FEA-09/ipc/fea09-real-ipc.wire.ndjson` | 4028 | `7bf8e1ae71aa3b0456f0c36be763a92db557911b2f8d4a8f41f1a55dcfff14f4` | `081cb2c39d9851487f701496e689f21151ad00e2` | `59ad0b9fed912c636bf5e6b46287a4554c95bdee` | IPC |
 | EV-005 | `verification/FEA-09/logs/allowed-paths-audit.json` | 9436 | `abb3ab9cc50113225c05b21809ada6f542f1eea02b9e02f816a268992cde00db` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
@@ -34,43 +34,45 @@
 | EV-024 | `verification/FEA-09/logs/dsh-i001-implementation.log` | 949 | `e210ecdc9bf2458d7e87b4f05f50852d3b8799252a5aa7ecbf933efcc665ff03` | `2931dbc0d04fa73aff461e5c639b5abc8aed54af` | `2931dbc0d04fa73aff461e5c639b5abc8aed54af` | LOG |
 | EV-025 | `verification/FEA-09/logs/dsh-i005-core.log` | 1046 | `53c45aac82a26aa5368e660f68516d47553a1f75d00034503336be502617efbc` | `65c220fffb9960746b4385dbdef7972983a7b3ec` | `65c220fffb9960746b4385dbdef7972983a7b3ec` | LOG |
 | EV-026 | `verification/FEA-09/logs/dsh-i005-host.log` | 1242 | `2d60087d054b92e5122ad97fc499febcc90452fd0ba8446efb3954c753770e6f` | `59ad0b9fed912c636bf5e6b46287a4554c95bdee` | `59ad0b9fed912c636bf5e6b46287a4554c95bdee` | LOG |
-| EV-027 | `verification/FEA-09/logs/dsh-integration.md` | 3419 | `e8059872ae3778552d29c43fa5dc3bceffd667b9ea65e0dd5844cc157842b58b` | `7b7e4b16bcf4136f12f2468f6e76286f4173629b` | `7b7e4b16bcf4136f12f2468f6e76286f4173629b` | LOG |
-| EV-028 | `verification/FEA-09/logs/dsh-real-ipc.log` | 1758 | `c8fe52008c246c8de58f49e0a47a5eef59adb53fdfa78cc58fd3d5039e6251f2` | `081cb2c39d9851487f701496e689f21151ad00e2` | `ab3f3131aeb1a6920e0f07066a0d8d2c493b7b76` | LOG |
-| EV-029 | `verification/FEA-09/logs/dsh-referenced-resolve.log` | 3415 | `4494491a105e48d8dc9a47ccd0afa561c360d95079c42995d67b1cb075ff4fda` | `78bda22c53e1aa3e3170d65e1788393eb81b1e6b` | `3f2056555716c6880b1ddc10007a375f01e27568` | LOG |
-| EV-030 | `verification/FEA-09/logs/dsh-review-batch1.log` | 2533 | `970298d1ca48e71a66b74fc5a3404d16cf692af5c36ec05ba4f18b9a822674d5` | `e8c7f6af21e58fadf4bdff2aa297f401b35ff46e` | `e8c7f6af21e58fadf4bdff2aa297f401b35ff46e` | LOG |
-| EV-031 | `verification/FEA-09/logs/dsh-review-batch2.log` | 1767 | `812b56831bb6825115f31640edd7ed39eacdf65ef55f89d5f48b85e9aedbeb6a` | `b2c7a362d9c571d4229b1dccccbaf8163d5e6f02` | `b2c7a362d9c571d4229b1dccccbaf8163d5e6f02` | LOG |
-| EV-032 | `verification/FEA-09/logs/dsh-review-batch3a.log` | 1599 | `3e3373b84406c905078d5fd5d974e9b4789a655f0fa73312d020b6e6cedffe7c` | `e3b6fe7f0d134be5e09a9c60b1ad56f3067b3b3b` | `e3b6fe7f0d134be5e09a9c60b1ad56f3067b3b3b` | LOG |
-| EV-033 | `verification/FEA-09/logs/dsh-sharing-dualread.log` | 845 | `d82f08b22c0ebe068f9bad15e2c5a33b76149f0270a282604dad32c88b4b2408` | `79d97cff87bebb31036f5c91c06b55eafd675e40` | `79d97cff87bebb31036f5c91c06b55eafd675e40` | LOG |
-| EV-034 | `verification/FEA-09/logs/dsh-unfreeze-chain.log` | 2652 | `a5d6f6f673ab6d41c2bfe0a09892da330ca2b5110730d96509b6dc6ac97f0238` | `566aa4e49c247d5609a5374e4974d8533b8a3c65` | `83015d684a7e0386d0aa55bf3dddd7f216029b69` | LOG |
-| EV-035 | `verification/FEA-09/logs/fea06-png-audit.json` | 1327 | `78654537cdb1bc7b2c71cc7b78207cd5e866a76497ec5fcd752af127c7403d92` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-036 | `verification/FEA-09/logs/git-stage-blocked.log` | 339 | `0b4e1049f1542754144fe32635df52a6638489c0005b097eb74ed15f8cc5a26c` | `bb87e62972afc685bcd700deefdeacda51061523` | `bb87e62972afc685bcd700deefdeacda51061523` | LOG |
-| EV-037 | `verification/FEA-09/logs/git-stage-node-blocked.log` | 1160 | `40f892aada53c585eac43cc180f115d284f93ad78a820f30c3073bcb4b4220b3` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-038 | `verification/FEA-09/logs/head-final.log` | 231 | `81737eb49324f39cf7e7dd948519e7387cc8082ba53498b986e7d5deb545f505` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-039 | `verification/FEA-09/logs/password-audit.json` | 201 | `1b2d3d3959220a42336753f76c046769d7eaff682a0faf4f354a0fdf87a26453` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-040 | `verification/FEA-09/logs/pins-final.log` | 625 | `b56ae26c32abb60490aaff86f69d444eed37cab6987d7456233000d00659b04d` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-041 | `verification/FEA-09/logs/pins.log` | 769 | `ea2789d918e83380941e6dba97b438c0ae0fdaff0350ab5c1c93fb84d01ee31e` | `bb87e62972afc685bcd700deefdeacda51061523` | `bb87e62972afc685bcd700deefdeacda51061523` | LOG |
-| EV-042 | `verification/FEA-09/logs/python-cache-component.log` | 1301 | `8a6e8c9fcb06034ee34f5d5ee49a1fc2a03590df2cd5e92d20fae686c5762d81` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-043 | `verification/FEA-09/logs/python-components-delivery-checkpoint.log` | 2070 | `7d649578f8ea8bfa03858a6fae1faec4f20f3ce580c357deb2150ac448fe7dbe` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-044 | `verification/FEA-09/logs/python-components-final.log` | 2070 | `ea9d6d5c77afcad3410439e676e854b51ebc6f514a9c502177bc79a1d36cbdae` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-045 | `verification/FEA-09/logs/python-final-syntax.log` | 537 | `076c38ecc3d10c3b7736b47ee0bd35cd97c5aa70a5c0d1b6887fe1a05c158700` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-046 | `verification/FEA-09/logs/python-grant-import.log` | 325 | `6c8c8b452c55dac3e078d6610820e33bb272bfb735aa26bb6bd0d01962aedf1a` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-047 | `verification/FEA-09/logs/python-handle-identity-diagnostic.log` | 782 | `f2f64006bc81c61d5ecc31a03ad7edcf8a4e686c1b247cfece80b796cc87cfa8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-048 | `verification/FEA-09/logs/python-phase-c-baseline.log` | 321 | `1d6b284efbd6edd684a0af844aaa1d69e4b4a6b4ee6e29bfb388d729089283e8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-049 | `verification/FEA-09/logs/python-source-grant-component-r2.log` | 6742 | `1d208f97e71b72ea721a16365aa5e598e06de53f0adbb8ef3061b5c4ee8eb4c9` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-050 | `verification/FEA-09/logs/python-source-grant-component-r3.log` | 1226 | `7354c95f0485ec1d49ec85877ecaaecbac2d0855219d6e0aef7e0066bdf90bd7` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-051 | `verification/FEA-09/logs/python-source-grant-component.log` | 5243 | `324dbe84a4678f1bc3494b3a2346aefbef0892a603f6bc107fe5805a5a373756` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-052 | `verification/FEA-09/logs/python-syntax.log` | 653 | `f58fed6adade37326bd137cec481da85d0a975f6c7927c6bf0890434911b830e` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-053 | `verification/FEA-09/logs/python-test-dependencies.log` | 2862 | `78f6335d11a62c99178ef41f208aee53a0094d606a779d449c457477f840fc9a` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-054 | `verification/FEA-09/logs/recovery-git-state.log` | 3203 | `7fd7db63bba26444bcdf7ab27567e0ee3a6b41eb8583af077d410027b8f9cb0f` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-055 | `verification/FEA-09/logs/test-process-status.log` | 448 | `54d92d5d020d6ab69b0f64afeb0b580f0034e31d300cbdcb65379f58153c7faa` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
-| EV-056 | `verification/FEA-09/logs/wire-redacted.ndjson` | 4170 | `4434963e12df2d315784e19f6fbb116997bd49ff8323decdf1d0b6883fcebb3b` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `65c220fffb9960746b4385dbdef7972983a7b3ec` | LOG |
-| EV-057 | `verification/FEA-09/working-tree-files.json` | 4964 | `ab3c7707843eb61fd1aed0478953c14eed17b76a3878f039cb75eb09cb1d51b4` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | SUPPORTING |
+| EV-027 | `verification/FEA-09/logs/dsh-i011-ev.log` | 658 | `ba7cd0e2ca76550b1b667e18419b810d39522f536ef26f1724260d54968b8c20` | `bc90b467fa6cc3310912148258a641674b04d7a9` | `bc90b467fa6cc3310912148258a641674b04d7a9` | LOG |
+| EV-028 | `verification/FEA-09/logs/dsh-impl-r1-rework-fix.log` | 1225 | `766ded08db7674816538ad38fe65a20fc3d172f31afb9720ebfb4a656d9a0faf` | `de773236834423da341f1404c694d3436e2b8bbf` | `de773236834423da341f1404c694d3436e2b8bbf` | LOG |
+| EV-029 | `verification/FEA-09/logs/dsh-integration.md` | 3419 | `e8059872ae3778552d29c43fa5dc3bceffd667b9ea65e0dd5844cc157842b58b` | `7b7e4b16bcf4136f12f2468f6e76286f4173629b` | `7b7e4b16bcf4136f12f2468f6e76286f4173629b` | LOG |
+| EV-030 | `verification/FEA-09/logs/dsh-real-ipc.log` | 1758 | `c8fe52008c246c8de58f49e0a47a5eef59adb53fdfa78cc58fd3d5039e6251f2` | `081cb2c39d9851487f701496e689f21151ad00e2` | `ab3f3131aeb1a6920e0f07066a0d8d2c493b7b76` | LOG |
+| EV-031 | `verification/FEA-09/logs/dsh-referenced-resolve.log` | 3415 | `4494491a105e48d8dc9a47ccd0afa561c360d95079c42995d67b1cb075ff4fda` | `78bda22c53e1aa3e3170d65e1788393eb81b1e6b` | `3f2056555716c6880b1ddc10007a375f01e27568` | LOG |
+| EV-032 | `verification/FEA-09/logs/dsh-review-batch1.log` | 2533 | `970298d1ca48e71a66b74fc5a3404d16cf692af5c36ec05ba4f18b9a822674d5` | `e8c7f6af21e58fadf4bdff2aa297f401b35ff46e` | `e8c7f6af21e58fadf4bdff2aa297f401b35ff46e` | LOG |
+| EV-033 | `verification/FEA-09/logs/dsh-review-batch2.log` | 1767 | `812b56831bb6825115f31640edd7ed39eacdf65ef55f89d5f48b85e9aedbeb6a` | `b2c7a362d9c571d4229b1dccccbaf8163d5e6f02` | `b2c7a362d9c571d4229b1dccccbaf8163d5e6f02` | LOG |
+| EV-034 | `verification/FEA-09/logs/dsh-review-batch3a.log` | 1599 | `3e3373b84406c905078d5fd5d974e9b4789a655f0fa73312d020b6e6cedffe7c` | `e3b6fe7f0d134be5e09a9c60b1ad56f3067b3b3b` | `e3b6fe7f0d134be5e09a9c60b1ad56f3067b3b3b` | LOG |
+| EV-035 | `verification/FEA-09/logs/dsh-sharing-dualread.log` | 845 | `d82f08b22c0ebe068f9bad15e2c5a33b76149f0270a282604dad32c88b4b2408` | `79d97cff87bebb31036f5c91c06b55eafd675e40` | `79d97cff87bebb31036f5c91c06b55eafd675e40` | LOG |
+| EV-036 | `verification/FEA-09/logs/dsh-unfreeze-chain.log` | 2652 | `a5d6f6f673ab6d41c2bfe0a09892da330ca2b5110730d96509b6dc6ac97f0238` | `566aa4e49c247d5609a5374e4974d8533b8a3c65` | `83015d684a7e0386d0aa55bf3dddd7f216029b69` | LOG |
+| EV-037 | `verification/FEA-09/logs/fea06-png-audit.json` | 1327 | `78654537cdb1bc7b2c71cc7b78207cd5e866a76497ec5fcd752af127c7403d92` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-038 | `verification/FEA-09/logs/git-stage-blocked.log` | 339 | `0b4e1049f1542754144fe32635df52a6638489c0005b097eb74ed15f8cc5a26c` | `bb87e62972afc685bcd700deefdeacda51061523` | `bb87e62972afc685bcd700deefdeacda51061523` | LOG |
+| EV-039 | `verification/FEA-09/logs/git-stage-node-blocked.log` | 1160 | `40f892aada53c585eac43cc180f115d284f93ad78a820f30c3073bcb4b4220b3` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-040 | `verification/FEA-09/logs/head-final.log` | 231 | `81737eb49324f39cf7e7dd948519e7387cc8082ba53498b986e7d5deb545f505` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-041 | `verification/FEA-09/logs/password-audit.json` | 201 | `1b2d3d3959220a42336753f76c046769d7eaff682a0faf4f354a0fdf87a26453` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-042 | `verification/FEA-09/logs/pins-final.log` | 625 | `b56ae26c32abb60490aaff86f69d444eed37cab6987d7456233000d00659b04d` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-043 | `verification/FEA-09/logs/pins.log` | 769 | `ea2789d918e83380941e6dba97b438c0ae0fdaff0350ab5c1c93fb84d01ee31e` | `bb87e62972afc685bcd700deefdeacda51061523` | `bb87e62972afc685bcd700deefdeacda51061523` | LOG |
+| EV-044 | `verification/FEA-09/logs/python-cache-component.log` | 1301 | `8a6e8c9fcb06034ee34f5d5ee49a1fc2a03590df2cd5e92d20fae686c5762d81` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-045 | `verification/FEA-09/logs/python-components-delivery-checkpoint.log` | 2070 | `7d649578f8ea8bfa03858a6fae1faec4f20f3ce580c357deb2150ac448fe7dbe` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-046 | `verification/FEA-09/logs/python-components-final.log` | 2070 | `ea9d6d5c77afcad3410439e676e854b51ebc6f514a9c502177bc79a1d36cbdae` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-047 | `verification/FEA-09/logs/python-final-syntax.log` | 537 | `076c38ecc3d10c3b7736b47ee0bd35cd97c5aa70a5c0d1b6887fe1a05c158700` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-048 | `verification/FEA-09/logs/python-grant-import.log` | 325 | `6c8c8b452c55dac3e078d6610820e33bb272bfb735aa26bb6bd0d01962aedf1a` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-049 | `verification/FEA-09/logs/python-handle-identity-diagnostic.log` | 782 | `f2f64006bc81c61d5ecc31a03ad7edcf8a4e686c1b247cfece80b796cc87cfa8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-050 | `verification/FEA-09/logs/python-phase-c-baseline.log` | 321 | `1d6b284efbd6edd684a0af844aaa1d69e4b4a6b4ee6e29bfb388d729089283e8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-051 | `verification/FEA-09/logs/python-source-grant-component-r2.log` | 6742 | `1d208f97e71b72ea721a16365aa5e598e06de53f0adbb8ef3061b5c4ee8eb4c9` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-052 | `verification/FEA-09/logs/python-source-grant-component-r3.log` | 1226 | `7354c95f0485ec1d49ec85877ecaaecbac2d0855219d6e0aef7e0066bdf90bd7` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-053 | `verification/FEA-09/logs/python-source-grant-component.log` | 5243 | `324dbe84a4678f1bc3494b3a2346aefbef0892a603f6bc107fe5805a5a373756` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-054 | `verification/FEA-09/logs/python-syntax.log` | 653 | `f58fed6adade37326bd137cec481da85d0a975f6c7927c6bf0890434911b830e` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-055 | `verification/FEA-09/logs/python-test-dependencies.log` | 2862 | `78f6335d11a62c99178ef41f208aee53a0094d606a779d449c457477f840fc9a` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-056 | `verification/FEA-09/logs/recovery-git-state.log` | 3203 | `7fd7db63bba26444bcdf7ab27567e0ee3a6b41eb8583af077d410027b8f9cb0f` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-057 | `verification/FEA-09/logs/test-process-status.log` | 448 | `54d92d5d020d6ab69b0f64afeb0b580f0034e31d300cbdcb65379f58153c7faa` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | LOG |
+| EV-058 | `verification/FEA-09/logs/wire-redacted.ndjson` | 5004 | `548de629d163d80b9cd8d1e62251de2016782e46a0c48a48575749d2a059d593` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `87ca50702e00c62c64540ac7ac4ff3b1d27fa0cd` | LOG |
+| EV-059 | `verification/FEA-09/tools/rebuild_ev.py` | 5883 | `12c43c642c520c676b5d91c42fc7af5232dd917adc3ba651a4067425337e78d7` | `bc90b467fa6cc3310912148258a641674b04d7a9` | `bc90b467fa6cc3310912148258a641674b04d7a9` | SUPPORTING |
+| EV-060 | `verification/FEA-09/working-tree-files.json` | 4964 | `ab3c7707843eb61fd1aed0478953c14eed17b76a3878f039cb75eb09cb1d51b4` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | `995d80ca54fbd8dad8a27ae19ab69c7ef45813d8` | SUPPORTING |
 
 ## 历史/已删除证据（不能用作当前交付证据）
 
 | 仓库路径 | 旧台账 pin | 处置 |
 |---|---|---|
-| `verification/FEA-09/EV.md` | `PENDING（未提交）` | 仅存在于 git 历史（合成/临时证据，未纳入 canonical） |
 | `verification/FEA-09/cache-component/038c6e60d5c34cb198148311770e9605/derived/source-renditions/231ac80e5b5234abe2999d585dedb8d409d55e6af97aad9afe18ddb21564ce29.bin` | `PENDING（未提交）` | 仅存在于 git 历史（合成/临时证据，未纳入 canonical） |
 | `verification/FEA-09/cache-component/038c6e60d5c34cb198148311770e9605/derived/source-renditions/370efd26c279ec64a615cd1fd3314a9fb438e3310bb6b5748def9cf7725ed472.bin` | `PENDING（未提交）` | 仅存在于 git 历史（合成/临时证据，未纳入 canonical） |
 | `verification/FEA-09/cache-component/038c6e60d5c34cb198148311770e9605/derived/source-renditions/c885528757122a553241699befef82b98cbf3f7b6ae0693d78f040174a8c027e.bin` | `PENDING（未提交）` | 仅存在于 git 历史（合成/临时证据，未纳入 canonical） |

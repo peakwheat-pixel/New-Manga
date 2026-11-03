@@ -1,0 +1,15 @@
+FEA-09 closeout verification (2026-11-04, DSH; integration head 87ca5070)
+- pytest tests/fea09: 142 passed
+- pytest tests/core: 897 passed
+- pytest tests/storage: 121 passed
+- pytest tests/m2_resource_channel: 110 passed
+- pytest tests/reading_export: 141 passed
+- pytest tests/import_formats: 32 passed
+- pytest tests/infrastructure: 91 passed
+- dotnet build: 0 warning / 0 error
+- dotnet test: 1300 passed / 0 failed
+- real stdio IPC (NEWMANGA_FEA09_IPC=1): 1 passed, 17 frames
+- check.ps1: PASS; verify_pins: 17/17
+- independent implementation review: r1-rework r2 approved (P0=0/P1=0/P2=2)
+- AC: AC-1..AC-10 MET; canonical evidence complete; resource closeout complete
+- limitations: encrypted-source cross-process IPC not separately run; UI belongs FEA-09-UI-1; DEBT-FEA09-01 registered
