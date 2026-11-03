@@ -1160,6 +1160,7 @@ def assemble_core_services(
             return None if chapter is None else chapter.book_id
 
         from application.importing.referenced import scanner as referenced_scanner
+        from application.importing.referenced.secrets import read_secret
         from infrastructure.resource_channel.source_strict_read import (
             read_verified_bytes as strict_read_verified_bytes,
         )
@@ -1178,6 +1179,7 @@ def assemble_core_services(
             project_of_chapter=_project_of_chapter,
             image_decoder=image_decoder,
             pdf_open=referenced_pdf_open,
+            secret_reader=read_secret,
         )
         # TASK-021 trash subset: page-level soft delete / batch restore /
         # controlled-only purge. The manifest lives next to the managed data.

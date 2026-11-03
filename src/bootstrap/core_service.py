@@ -3419,6 +3419,7 @@ class CoreServiceServer:
             if entry is not None and self._render_previews.artifact_exists(
                 entry.rel_path
             ):
+                self._record_rendition_cache(page, rendition, entry)
                 return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
             import tempfile
 
@@ -3431,9 +3432,11 @@ class CoreServiceServer:
                     temp.write(rendition["png"])
                     temp.flush()
                     os.fsync(temp.fileno())
-                return self._render_previews.publish_original(
+                published = self._render_previews.publish_original(
                     temp_path, resource_id, ".png"
                 )
+                self._record_rendition_cache(page, rendition, None)
+                return published
             finally:
                 if temp_path is not None:
                     temp_path.unlink(missing_ok=True)
@@ -3483,6 +3486,47 @@ class CoreServiceServer:
             )
         finally:
             temp_source.unlink(missing_ok=True)
+
+    def _record_rendition_cache(self, page, rendition, catalog_entry) -> None:
+        """Record the reproducible rendition observation (C-15 §2.7).
+
+        Derived-only metadata: never user bytes/manual results. A cache write
+        failure must not fail resolve (the artifact is already servable); it is
+        logged for diagnosis.
+        """
+        repository = self._core.repository
+        upsert = getattr(repository, "upsert_rendition_cache", None)
+        if upsert is None or self._render_previews is None:
+            return
+        resource_id = f"page-rendition-{page.page_id}"
+        entry = catalog_entry or self._render_previews.lookup(resource_id)
+        if entry is None:
+            return
+        now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        cache = rendition["cache"]
+        try:
+            upsert(
+                {
+                    "cache_key": cache["cache_key"],
+                    "source_id": rendition["source_id"],
+                    "version_id": rendition["version_id"],
+                    "entry_id": rendition["entry_id"],
+                    "rendition_kind": cache["rendition_kind"],
+                    "decoder_name": cache["decoder_name"],
+                    "decoder_version": cache["decoder_version"],
+                    "params_digest": cache["params_digest"],
+                    "rel_path": entry.rel_path,
+                    "size_bytes": cache["size_bytes"],
+                    "content_digest": cache["content_digest"],
+                    "created_at": now,
+                    "last_used_at": now,
+                }
+            )
+        except Exception as error:  # noqa: BLE001 - cache is derived metadata
+            print(
+                f"[core.resolve_page_resource] rendition cache write failed: {error!r}",
+                file=sys.stderr,
+            )
 
     def handle_get_reader_projection(self, payload: dict[str, Any]) -> dict[str, Any]:
         if set(payload) != {"chapter_id", "mode", "start_position"}:

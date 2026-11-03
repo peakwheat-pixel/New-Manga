@@ -1599,6 +1599,38 @@ class SqliteLibraryRepository:
         ).fetchone()
         return dict(row) if row else None
 
+    def upsert_rendition_cache(self, entry: dict[str, Any]) -> None:
+        """Record/refresh one reproducible rendition observation (C-15 §2.7).
+
+        The cache row is derived-only metadata: it never carries user-source
+        bytes or manual results. Existing keys refresh usage/size/digest.
+        """
+        now = entry["created_at"]
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO rendition_cache (cache_key, source_id, version_id,"
+                " entry_id, rendition_kind, decoder_name, decoder_version,"
+                " params_digest, rel_path, size_bytes, content_digest,"
+                " created_at, last_used_at, active_references)"
+                " VALUES (:cache_key, :source_id, :version_id, :entry_id,"
+                " :rendition_kind, :decoder_name, :decoder_version,"
+                " :params_digest, :rel_path, :size_bytes, :content_digest,"
+                " :created_at, :last_used_at, :active_references)"
+                " ON CONFLICT(cache_key) DO UPDATE SET"
+                " rel_path = excluded.rel_path,"
+                " size_bytes = excluded.size_bytes,"
+                " content_digest = excluded.content_digest,"
+                " last_used_at = excluded.last_used_at",
+                {
+                    **entry,
+                    "created_at": now,
+                    "last_used_at": entry.get("last_used_at", now),
+                    "active_references": int(
+                        entry.get("active_references", 0) or 0
+                    ),
+                },
+            )
+
     def list_source_entries(self, version_id: str) -> list[dict[str, Any]]:
         rows = self._conn.execute(
             "SELECT entry_id, locator, ordinal, stable_sort_key,"

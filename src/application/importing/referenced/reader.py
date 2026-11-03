@@ -34,6 +34,14 @@ def _folder_rel(path: str, root: str) -> str:
     return rel.replace(os.sep, "/")
 
 
+def _check_decode_budget(resolved, width: int, height: int) -> None:
+    max_decode = int(getattr(resolved.budget, "max_decode_bytes", 0) or 0)
+    if max_decode and width * height * 4 > max_decode:
+        raise SourceImportError(
+            "SOURCE_BUDGET_EXCEEDED", "rendition decode budget exceeded"
+        )
+
+
 def read_entry_bytes(resolved, entry, password: bytes | None = None) -> bytes:
     """Read exactly one entry's bytes (container/member/folder/PDF page)."""
     if resolved.source_kind == "image":
@@ -100,6 +108,7 @@ def render_entry_png(
             rendered = handle.render_page(entry.ordinal)
         finally:
             handle.close()
+        _check_decode_budget(resolved, int(rendered.width), int(rendered.height))
         return rendered.png_bytes, int(rendered.width), int(rendered.height)
 
     from PIL import Image, ImageOps
@@ -118,6 +127,7 @@ def render_entry_png(
         width, height = image.size
         output = io.BytesIO()
         image.save(output, format="PNG", optimize=False)
+        _check_decode_budget(resolved, int(width), int(height))
         return output.getvalue(), int(width), int(height)
     finally:
         try:

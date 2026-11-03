@@ -136,3 +136,79 @@ def test_core_resolve_publishes_referenced_rendition(tmp_path, repo, book_chapte
     again = server.handle_resolve_page_resource({"page_id": page.page_id})
     assert again == result
     assert len(list((derived_root / "pages").iterdir())) == 1
+
+
+def test_rendition_cache_row_written_on_resolve(tmp_path, repo, book_chapter):
+    from types import SimpleNamespace
+
+    from bootstrap.core_service import CoreServiceServer
+    from infrastructure.resource_channel.catalog_store import (
+        ResourceCatalogStore,
+        initialize_namespace,
+    )
+    from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+
+    access, page = _imported_image_page(tmp_path, repo)
+    binding = repo.get_page_binding(page.page_id)
+    access._grant_sources[GRANT] = binding["source_id"]
+
+    catalog_db = tmp_path / "catalog" / "catalog.sqlite"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    publisher = RenderPreviewPublisher(derived_root, ResourceCatalogStore(catalog_db))
+    server = object.__new__(CoreServiceServer)
+    server._core = SimpleNamespace(
+        repository=repo, source_read_refs=access,
+        image_decoder=None, document_raster=None,
+    )
+    server._render_previews = publisher
+
+    server.handle_resolve_page_resource({"page_id": page.page_id})
+    row = repo._conn.execute(
+        "SELECT cache_key, source_id, version_id, entry_id, rendition_kind,"
+        " decoder_name, params_digest, rel_path, size_bytes, content_digest"
+        " FROM rendition_cache"
+    ).fetchone()
+    assert row is not None
+    assert row["source_id"] == binding["source_id"]
+    assert row["version_id"] == binding["accepted_source_version"]
+    assert row["entry_id"] == binding["entry_id"]
+    assert row["rendition_kind"] == "page_preview"
+    assert row["decoder_name"] == "pillow"
+    assert len(row["params_digest"]) == 64
+    assert row["rel_path"].startswith("pages/")
+    assert row["size_bytes"] > 0 and len(row["content_digest"]) == 64
+
+
+def test_render_entry_png_enforces_decode_budget(tmp_path):
+    from support import capture_facts
+    from application.importing.referenced.model import (
+        ResolvedSourceRead,
+        ScannedEntry,
+        SourceReadBudget,
+    )
+    from application.importing.referenced.reader import render_entry_png
+
+    path = tmp_path / "photo.jpg"
+    path.write_bytes(_jpeg_bytes())
+    resolved = ResolvedSourceRead(
+        grant_id="g-img-0000000001",
+        registry_id="reg-1",
+        generation=1,
+        source_kind="image",
+        budget=SourceReadBudget(
+            max_bytes=1024 * 1024, max_decode_bytes=8, max_entries=10
+        ),
+        expires_at=1e12,
+        container_path=str(path),
+        container_facts=capture_facts(path),
+    )
+    entry = ScannedEntry(
+        locator="photo.jpg", ordinal=0, size_bytes=path.stat().st_size,
+        content_digest=None, content_digest_kind="encoded",
+    )
+    with pytest.raises(SourceImportError) as caught:
+        render_entry_png(resolved, entry)
+    assert caught.value.code == "SOURCE_BUDGET_EXCEEDED"

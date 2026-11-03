@@ -27,3 +27,12 @@
 - PDF resolve 在生产 `document_raster` 已注入但本增量仅以 fake/单元覆盖，未跑真实 PDF resolver 端到端。
 - rendition_cache 表行写入尚未在 resolve 发布路径落地（当前复用 catalog/publisher；AC-10 的预算/LRU/淘汰仍需接线验证）。
 - AC 仍不标 MET；独立 impl Review 未进行。
+
+## 追加（2026-11-03 22:20）：密码链路 + rendition cache/预算
+
+- core_assembly.py：生产 ReferencedImportRuntime(secret_reader=read_secret)——密码短期 secret 文件链路正式接线（此前 assembly 未注入，密码源必失败）。
+- reader.py：_check_decode_budget 强制 max_decode_bytes（SOURCE_BUDGET_EXCEEDED）。
+- resolve.py：返回 cache 元数据（cache_key/kind/decoder/params_digest/content_digest）。
+- library.py：upsert_rendition_cache（派生元数据，不写用户字节/人工数据；冲突刷新 last_used_at/size/digest）。
+- core_service.py：_record_rendition_cache 在 resolve 发布/命中时写入 rendition_cache。
+- 测试：cache 行字段断言、decode 预算 typed 拒绝；pytest tests/fea09 **98 passed**；core 定向 EXIT 0；check PASS；pins 17/17。
