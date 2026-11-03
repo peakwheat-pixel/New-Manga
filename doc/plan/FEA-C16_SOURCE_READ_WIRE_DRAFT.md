@@ -189,7 +189,7 @@
 | 对象 | 接口 |
 |---|---|
 | C-06 v1.1（UNFREEZE） | 方向/Verify 归属/四维 scope/撤销通道写进 C-06 v1.1；本契约是其协议实现 |
-| C-15 v5 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验；book 归属守卫 `SOURCE_PROJECT_MISMATCH` |
+| C-15 v1.1 | `registry_id/generation/entry_id/content_digest/verified_digest/pixel_digest_algorithm` 一一对应；commit 前强校验；book 归属守卫 `SOURCE_PROJECT_MISMATCH` |
 | C-07 | FEA-09 不新增 `IHostController`；UI-1 走 UNFREEZE |
 | C-01b/C-14 | 缓存/通道隔离沿用 SC-02/03/20、SC-S14…S17；不重写 |
 | FEA-09-UI-1 | 消费 Registry 命令、密码入口、plan/进度/取消；本契约不实现 UI |
@@ -201,7 +201,7 @@
 
 ## 10. 冻结条件与变更记录
 
-冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与 C-15 v5 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
+冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
 
 | 日期 | 变更 | 记录 |
 |---|---|---|

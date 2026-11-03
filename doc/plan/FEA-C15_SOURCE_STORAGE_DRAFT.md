@@ -242,7 +242,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
    p.source_mode = 'managed' AND p.integrity_status = 'complete'
      AND p.source_hash IS NOT NULL AND p.managed_original_ref IS NOT NULL
      AND p.width > 0 AND p.height > 0
-   -- referenced：C-05 v1.1 P7 ∧ P8（healthy binding + verified_digest 一致）
+   -- referenced：C-05 v1.2 P7 ∧ P8（healthy binding + verified_digest 一致）
    OR (p.source_mode = 'referenced' AND p.integrity_status = 'complete'
        AND p.source_hash IS NOT NULL AND p.width > 0 AND p.height > 0
        AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e
@@ -271,7 +271,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 | `max_source_order` | `is_complete_page`（**包含软删页**，沿用现有语义）；不得复用含 `deleted_at` 的 live 谓词 |
 | `get_page` / `list_pages` | `V(p,t)`（含父级删除与时间）；**必须可见 V 全集**：可完整构造行保持既有 `Page` 契约；V 真但无法构造 `Page`（artifact-only/仅非 original artifact）以**只读投影**可观察（§4.4）；不得过滤；未知 ID 仍 None |
 | `handle_resolve_page_resource` | managed：合格 current `original` revision `managed_path` → 否则 `pages.managed_original_ref`；既有受管根/derived publish/稳定键语义不变；资源不可变（同键已发布摘要变化 → typed 冲突，不替换；文件缺失自愈仍先比较既有摘要）。referenced：**只允许经 source-read grant 读取并按 rendition_cache 规则发布 decoded/re-encoded rendition**（`rendition_kind` 白名单；预算/淘汰/校验按 C-14 SC-S14…S17），禁止把 raw user-source 字节直接发布；加密源按 C-16 v1.1 fresh-grant 密码通道；无有效授权 → `SOURCE_ACCESS_DENIED` 等 typed，**禁止**回退任意路径 |
-| reader projection | 纯投影构建器（同连接只读、不 publish/resolve、固定 t）返回 V 全集（可读 + 只读投影）。wire `GetReaderProjection` 字节不变：`pages[]` 仅含正尺寸可读页；V 真但 R 不可读页**不进入 wire**，由管理/诊断读路径暴露；reader 对逐页 `PAGE_UNAVAILABLE_CODES` 跳过该页、其余错误整请求失败；恢复语义：pages[]=章节可读全集（不截断）、`beginning` 取首可读页 offset 0、`resume` 按保存页可读/不可读/已移出/无进度规则，保存页可读时保留原 offset（Webtoon 像素坐标、分页 0，不取整不归一化），替代页 offset 0，`initial_position.page_id ∈ pages[]`；零可读/V 空均返回既有 `TARGET_NOT_FOUND` |
+| reader projection | 纯投影构建器（同连接只读、不 publish/resolve、固定 t）返回 V 全集（可读 + 只读投影）。wire `GetReaderProjection` 字节不变：`pages[]` = 章节**全部可读页**（V 真且 R 可读，按规范 V 序 `sort_order ASC, page_id ASC` **完整返回，不随 initial_position 截断前后缀**）；V 真但 R 不可读页不进入 `pages[]`，由管理/诊断读路径暴露；逐页 `PAGE_UNAVAILABLE_CODES`（C-16 §6 既有 11 码）→ 跳过该页，其余任何错误 → 整请求失败（原 envelope，无部分结果）。`start_position` 分派：`beginning` → 忽略保存进度、取首可读页且 offset 0、**saved_progress 不删除/不改写**；`resume`（无进度等同 beginning）→ ①保存页可读：initial_position={保存页, 保存 offset 原值}；②保存页属于 V 但不可读：锚点 a=该页 logical_order，initial_position={首个 logical_order>=a 的可读页（无则回绕到最小可读页），offset 0}；③保存页已不在 V 且 DB 页行存在：a = V 页中满足 `(P.sort_order,P.page_id) < (保存页.sort_order,保存页.page_id)` 的页数（完整二元组 0-based 插入位置；同 sort_order 按 page_id），无 DB 页行则 a=0，initial_position={首个 logical_order>=a 的可读页（无则回绕），offset 0}。offset 单位规范性引用 **M2-C1 §6.3**：Webtoon 为逻辑 Page 源图像素坐标（非负有限 `number`，合法范围/页高校验沿 M2-C1，不取整不归一化），分页章节为 0；替代页/回绕/beginning/无进度均 offset 0。不变量：`initial_position.page_id ∈ pages[]`。零可读（V 非空或 V 空）→ 既有 `TARGET_NOT_FOUND`，不返回成功空集、不扩展 reader wire |
 
 ### 4.3 旧 Managed 写入对完整性列的维护（R1-006；v1.1 补充）
 
@@ -331,7 +331,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 
 | 契约 | 接口 |
 |---|---|
-| **C-05 v1.1（UNFREEZE）** | referenced 可见性分支与三谓词拆分写入 C-05 v1.1 §3.1/§3.2；本契约 §4.1 与其一致；不改 C-05 既有 managed/artifact 分支 |
+| **C-05 v1.2（UNFREEZE）** | managed `V=V_artifact∨V_copy_original` 与 referenced 分支/三谓词拆分写入 C-05 v1.2 §3.1/§3.2；本契约 §4.1/§4.2/§4.4 与其一致；不改 C-05 既有 P1–P5/P7/P8 字节 |
 | **C-06 v1.1（UNFREEZE）** | Host 铸造型发放/四维 scope/双侧 Verify/即时撤销写入 C-06 v1.1 §2.2/§2.3/§3；本契约 §5/§6 与 C-16 同批复核 |
 | C-01b | SC-01/02/03/07/19/25/28/29 的存储落点；SC-04 由 §3 身份规则落地 |
 | C-14 | SC-S09…S13 → §3 身份/排序/occurrence/绑定；SC-S14…S17 → `rendition_cache` + §4 读取缓存边界；DDL 由本契约冻结，语义不复写 |
