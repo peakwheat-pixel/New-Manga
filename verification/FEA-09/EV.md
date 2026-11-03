@@ -99,3 +99,4 @@
 | EV-META | `verification/FEA-09/EV.md` | SELF | 自引用元数据不做自身 hash | PENDING（未提交） | 非产品验收证据；本清单不自行证明独审/提交/集成成功 |
 | EV-090 | `verification/FEA-09/logs/dsh-referenced-resolve.log` | 3415 | `4494491a105e48d8dc9a47ccd0afa561c360d95079c42995d67b1cb075ff4fda` | `3f2056555716c6880b1ddc10007a375f01e27568` | CANONICAL：referenced 生产 resolve + 密码接线 + cache/预算（实现/测试/命令/结果）；不替代真实 IPC/V2 与独立 Review |
 | EV-091 | `verification/FEA-09/AC-MATRIX.md` | 4141 | `d6dfab11d9d1ed6ab014794bfd10e6b3aac13d1beaceb9cab6a749a46176d959` | `3d308f449c979a6d6ee626f7db94fe4b0e171182` | CANONICAL：AC-1…AC-10 覆盖/缺口矩阵（全部 PARTIAL） |
+| EV-092 | `verification/FEA-09/logs/dsh-sharing-dualread.log` | 845 | `d82f08b22c0ebe068f9bad15e2c5a33b76149f0270a282604dad32c88b4b2408` | `79d97cff87bebb31036f5c91c06b55eafd675e40` | CANONICAL：AC-3 共享/AC-7 双读增量 |
