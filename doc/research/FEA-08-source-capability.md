@@ -1,6 +1,6 @@
 # FEA-08 技术报告：Source 稳定读取 / Windows 回收站 / 精确页面匹配能力矩阵
 
-- Task：[FEA-08](../tasks/FEA-08.md)（scope-r2 approved，2026-11-03；范围冻结 base `2870a9fa5`；本版为 R5 返修后证据收口版）
+- Task：[FEA-08](../tasks/FEA-08.md)（scope-r2 approved，2026-11-03；范围冻结 base `2870a9fa5`；本版为 R6 返修后证据收口版）
 - 性质：隔离原型（无生产代码改动；实施 diff 仅落 `doc/research|handoffs|tasks` 与 `verification/FEA-08/**`）
 - 原型：`G:\CODEX\New Manga.workspace\FEA-08\prototype\`（非 Git；16 脚本 SHA-256 见 `verification/FEA-08/prototype_hashes.txt`）
 - 证据：`verification/FEA-08/`（results/logs/fixtures；`run_all` 顶层 EXIT=0 + results verdict 双层校验）
@@ -125,7 +125,7 @@
 
 ## 6. 能力矩阵（AC-4）
 
-完整 JSON/MD 见 `verification/FEA-08/results/capability_matrix.{json,md}`。R2 起矩阵逐格含 **current（现状）/needed（需新增）** 字段，NTFS 行状态由 h4/h5/h6 结果 JSON **逐场景推导**（推导不满足时不写 PASS，如实降级；F08I1-008）。**R3（F08I2-004/005）**：每个卷分支显式赋值 H4/H5/H6 各自 evidence（非 NTFS 卷不再继承 measured）；NTFS 行推导不再只看顶层 classification/result，而是消费**语义断言集**（strict 拦截断言、GIF 蓝帧反证、尺寸绑定、容器唯一映射、回收分支计数与类型拒绝）；断言被破坏即降级。**R4（F08I3-001）**：H5 语义门禁进一步收紧——还原 digest、目标保留/类型、不得 fallback 永久 rmdir、destructive 计数必须存在且为整数（`None` 不得通过）、回收站轮询字段合法。**R5（F08I4-001）**：矩阵此前只验过子集，已补齐与 `run_all.verify_results` **逐字段一致**的全部 H5 必需事实（R1/R2/R4/R5/R5b/R6a/R6b/R9/entries_poll）。摘要：
+完整 JSON/MD 见 `verification/FEA-08/results/capability_matrix.{json,md}`。R2 起矩阵逐格含 **current（现状）/needed（需新增）** 字段，NTFS 行状态由 h4/h5/h6 结果 JSON **逐场景推导**（推导不满足时不写 PASS，如实降级；F08I1-008）。**R3（F08I2-004/005）**：每个卷分支显式赋值 H4/H5/H6 各自 evidence（非 NTFS 卷不再继承 measured）；NTFS 行推导不再只看顶层 classification/result，而是消费**语义断言集**（strict 拦截断言、GIF 蓝帧反证、尺寸绑定、容器唯一映射、回收分支计数与类型拒绝）；断言被破坏即降级。**R4（F08I3-001）**：H5 语义门禁进一步收紧——还原 digest、目标保留/类型、不得 fallback 永久 rmdir、destructive 计数必须存在且为整数（`None` 不得通过）、回收站轮询字段合法。**R5（F08I4-001）**：矩阵此前只验过子集，已补齐与 `run_all.verify_results` **逐字段一致**的全部 H5 必需事实（R1/R2/R4/R5/R5b/R6a/R6b/R9/entries_poll）。**R6（F08I5-001/003）**：矩阵补 R6b `restored` 列表逐项断言；计数校验拒绝 JSON boolean（`bool` 不得冒充 `int`）。摘要：
 
 | 卷类型 | 输入类别 | H4 稳定读取 | H5 回收 | H6 精确匹配 | 证据 |
 |---|---|---|---|---|---|
@@ -181,7 +181,7 @@
 ## 10. 证据索引
 
 - 结果：`verification/FEA-08/results/`（h4/h5/h6/capability_matrix/fixtures_manifest/run_all_log，共 7 件）
-- 日志：`verification/FEA-08/logs/`（每脚本 stdout+EXIT：`make_fixtures.log` / `make_fixtures_regeneration.log` / `stage_evidence.log` / `h4_run.log` / `h5_run.log` / `h6_run.log` / `matrix.log` / `run_all.log` 共 8 件，统一 LF；另 `pin-verify.log`、`gates.log`、`test-skip-inventory.md`（57 项逐项来源）、`gates-raw/`（**7 份** build/test/check/pins/四 PNG/禁止 diff/安全搜索的完整原始输出，均含命令/EXIT/cwd/shell/elapsed，OS/Python/shell 环境见 03-check 与 `gates-raw-manifest.json` + `phase1-values.json`），共 72 项证据入库）
+- 日志：`verification/FEA-08/logs/`（每脚本 stdout+EXIT：`make_fixtures.log` / `make_fixtures_regeneration.log` / `stage_evidence.log` / `h4_run.log` / `h5_run.log` / `h6_run.log` / `matrix.log` / `run_all.log` 共 8 件，统一 LF；另 `pin-verify.log`、`gates.log`、`test-skip-inventory.md`（57 项逐项来源）、`gates-raw/`（**7 份** build/test/check/pins/四 PNG/禁止 diff/安全搜索的完整原始输出，均含命令/EXIT/cwd/shell/elapsed，OS/Python/shell 环境见 03-check 与 `gates-raw-manifest.json` + `phase1-values.json`；R6 起采集器按实际结果汇总，失败即非零退出且结论 FAIL），共 72 项证据入库）
 - Fixtures：`verification/FEA-08/fixtures/`（目录 **44 文件 = 43 内容文件 + `evidence_manifest.json`**；43 内容 = 21 项预生成原件 + 6 个 folder 成员 + 3 个独立副本 + 3 个 dhash 邻界 + 2 个尺寸反例 + 2 个重复同图容器反例 + 4 个唯一映射正例 + 2 个非对称重复名反例（book_asym_left/right）；`evidence_manifest.json` 登记 43 项原件 SHA-256，双 manifest 各 43 项逐项一致）
 - 原型：`workspace\FEA-08\prototype\`（非 Git；`prototype_hashes.txt` **16 脚本** SHA-256；`run_all.py` 执行 5 个核心场景步骤 + 双生成 fixtures + 原子 evidence staging（失败回滚，F08I2-006），`stage_evidence.py` 单独生成 manifest，`pin_selfcheck.py` 逐行 commit/worktree/index/clean-checkout 四方校验，`gates_capture.py` 采集门禁原始日志与 skip 清单）
 - 复现（从干净 checkout）：

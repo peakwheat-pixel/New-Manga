@@ -12,8 +12,8 @@ EXIT=0
 [fixtures] self-check: dhash dist ref-vs-d10=10, ref-vs-d11=11; enc_pdf copy bytes differ=True; dup copy bytes differ=True; zipcrypto copy same-bytes=False
 [fixtures] 43 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
 ===== evidence manifest =====
-fixtures_manifest written: 43 entries (deterministic 28/43); fixtures_dir=G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures; results_dir=G:\CODEX\New Manga.workspace\FEA-08\out\staged-results; unmatched-actual=[]; unmatched-generated=[]
-[promote] dir G:\CODEX\New Manga\verification\FEA-08\fixtures <- G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures (old backup=G:\CODEX\New Manga.workspace\FEA-08\out\_promote_backup\0_fixtures)
+fixtures_manifest written: 43 entries (deterministic 24/43); fixtures_dir=G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures; results_dir=G:\CODEX\New Manga.workspace\FEA-08\out\staged-results; unmatched-actual=[]; unmatched-generated=[]
+[promote] dir G:\CODEX\New Manga\verification\FEA-08\fixtures <- G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures (old backup=G:\CODEX\New Manga.workspace\FEA-08\backup\promote-20261103-123458-40900\0_fixtures)
 [promote] file G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json <- G:\CODEX\New Manga.workspace\FEA-08\out\staged-results\fixtures_manifest.json
 [stage] fixtures -> G:\CODEX\New Manga\verification\FEA-08\fixtures: 44 files (+ fixtures_manifest.json)
 ===== H4 =====

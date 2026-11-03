@@ -1,4 +1,4 @@
 $ python stage_evidence.py
 EXIT=0
 
-fixtures_manifest written: 43 entries (deterministic 28/43); fixtures_dir=G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures; results_dir=G:\CODEX\New Manga.workspace\FEA-08\out\staged-results; unmatched-actual=[]; unmatched-generated=[]
+fixtures_manifest written: 43 entries (deterministic 24/43); fixtures_dir=G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures; results_dir=G:\CODEX\New Manga.workspace\FEA-08\out\staged-results; unmatched-actual=[]; unmatched-generated=[]

@@ -1,10 +1,10 @@
-# FEA-08 workspace 原型脚本 SHA-256（R5：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
-# 双生成 fixtures + 事务化 evidence staging（旧集 hash 快照、逐项恢复并核对）+ results 双层校验
-# + tmp 清理；stage_evidence.py 生成入库 fixtures manifest；pin_selfcheck.py 生成 commit/工作树/
-# 干净 checkout 四方 pin 校验；gates_capture.py 采集门禁原始日志与 skip 清单；
-# probe_env.py 为环境探测；其余 h4_diag*/h5_diag*/h5_cleanup* 为诊断/清理脚本，不在 run_all 链路）
+# FEA-08 workspace 原型脚本 SHA-256（R6：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
+# 双生成 fixtures + 事务化 evidence staging（旧集 hash 快照、backup 置于 OUT 之外、恢复完整核对）
+# + results 双层校验 + tmp 清理；stage_evidence.py 生成入库 fixtures manifest；pin_selfcheck.py
+# 生成 commit/工作树/干净 checkout 四方 pin 校验；gates_capture.py 采集门禁原始日志与 skip 清单
+# 并按实际结果给出 PASS/FAIL 汇总；probe_env.py 为环境探测；其余为诊断/清理脚本）
 03ee9592ce3bc90c8fc281b4812e8294751988a5c574432d8a7600b3a1ca8099  fwin.py
-e542b9aa4e5c2c2bf4c1a891fc9339a4cb6d2e2e9506ccac53fc81d3136f4f14  gates_capture.py
+f7ff20aab83d6fdb11ee79af27c0f686d3de8b094b095f44d73a305cddb7fc2f  gates_capture.py
 9c3620366f29f6983e17d521eed077110adb499b8775de113fbc87537401e49e  h4_diag_replace.py
 2888d494792417b905dcbfde99d8f9fb3dbac572cd4cfb51310a89aed4c66df2  h4_run.py
 49cfa341e29a6492fb6b70c4d27397a6e25829bd654349ffda01436034004671  h5_cleanup_leftovers.py
@@ -14,8 +14,8 @@ ce3408d6414d0f9d86a63c32339c33540710900bcdd0403123ea264c74e718a7  h5_run.py
 7829a53c77f918dd58c3b5c53a25c6608ec51f8ecc068afdcd1baedaa6ce384a  h6_run.py
 85972c52fd5da1892cefee32932d145007e7e5a89a8bf47227446e3e805bf4e5  lease.py
 623cf189fd42a20df8df0d631e8ef21d5ae6a10c51fa3e276fcaacbb90a9696a  make_fixtures.py
-952a5b75095f83d9a74f66b2c886361327b17ad8c13d7f58ada3421c694d4b01  matrix.py
+57b796b8876eee3c6d6a6d79d3d00bc6492457c5ddf294210b10099fd4c617ed  matrix.py
 7aacbbe680336e33ea01de914b2344b05d1cda2d3dba8505566b64b8fc588fa8  pin_selfcheck.py
 e960ede4c92aa6ab05534f02d2a9a49aea187721bd2f3774d5c54fc5f2ff0f6d  probe_env.py
-6de91a5121eb58814baabcc465c0cc2ce2772b8d364c06a3998df5c4ba077b53  run_all.py
+4c735a9185444f0cb8e916cfa2a6c8c101b18f7f34b610c33708d689615869a7  run_all.py
 ab795200538c2bf7603f849a3a5cbb9a963fca0a52357397054377a079d9dd11  stage_evidence.py

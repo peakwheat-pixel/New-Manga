@@ -1125,3 +1125,14 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 004/005：所有证据更新后重新采集门禁原始日志（03-check EXIT=0/PASS(3)/elapsed 1.2s，7 份 raw 齐全），摘要口径修正；脚本定稿后重生成 `prototype_hashes.txt`（16/16 实际 SHA 一致）。
 - **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3)；pins 15/15；旧四 PNG 不变；禁止 diff=0；证据 72 项（fixtures 44 文件=43 内容+manifest；71 文件四方 pin + pin-verify 自身 SHA）；未 push。
 - **下一步**：派 **impl-r5 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
+## 174. FEA-08 impl-r5 Review（Codex）changes_requested P1=0/P2=4 + R6 范围冻结（2026-11-03 12:45）
+
+- **impl-r5 Review（Codex 新独立会话，主审 + 2 辅助只读 Reviewer）**：**changes_requested P0=0/P1=0/P2=4**；报告 `doc/reviews/FEA-08-impl-r5.md`（reviewed_head `b44d4a748`）。72 项 EV、16 脚本 SHA、pin 逐 commit、构建/测试/check/pins 均独立复跑通过；R4 findings 已闭合。
+- **P2 findings**：001 矩阵 H5 仍漏验 R6b `restored` 列表；002 恢复失败 backup 漏报、二次启动会删除旧 backup（backup 位于 `out/` 内）；003 整数计数校验接受 JSON boolean（`bool` 是 `int` 子类）；004 门禁采集器遇到失败仍总结“全部通过”（不失败退出）。
+- **处置（DSH 裁决）**：全部修；R6 范围冻结为「矩阵 R6b 还原列表 + 计数拒绝 bool + backup 移出 out/并保留报告 + 采集器失败感知汇总/退出码」。实施：DSH；impl-r6 交 Codex 新独立上下文。
+## 175. FEA-08 R6 返修交付（DSH）（2026-11-03 12:52）
+
+- **R6 交付**（证据 commit 见 Task delivery_head）：impl-r5 P2=4 全部处置。
+- 001：矩阵 R6b 断言补 `restored` 非空且逐项 `restored is True`（与总驱动一致）。003：`_is_int` 拒绝 bool，matrix/run_all 的计数与 entries_poll 均改用。002：`BACKUP` 移到 `workspace/FEA-08/backup/promote-<ts>-<pid>`（out/ 每次启动清空，原位置会删未恢复备份），失败 JSON 增加 `backup_dir_kept`，未恢复 backup 报告保留。004：`gates_capture.py` phase1 汇总失败项并非零退出；phase2 计算 `gates_ok`，结论按事实 PASS/FAIL、失败非零退出；gates.log 追加“整体门禁”行。
+- **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3) elapsed 1.3s；pins 15/15；phase1 failures=none；整体门禁 PASS；旧四 PNG 不变；禁止 diff=0；证据 72 项；未 push。
+- **下一步**：派 **impl-r6 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
