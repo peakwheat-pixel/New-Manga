@@ -1136,3 +1136,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 001：矩阵 R6b 断言补 `restored` 非空且逐项 `restored is True`（与总驱动一致）。003：`_is_int` 拒绝 bool，matrix/run_all 的计数与 entries_poll 均改用。002：`BACKUP` 移到 `workspace/FEA-08/backup/promote-<ts>-<pid>`（out/ 每次启动清空，原位置会删未恢复备份），失败 JSON 增加 `backup_dir_kept`，未恢复 backup 报告保留。004：`gates_capture.py` phase1 汇总失败项并非零退出；phase2 计算 `gates_ok`，结论按事实 PASS/FAIL、失败非零退出；gates.log 追加“整体门禁”行。
 - **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3) elapsed 1.3s；pins 15/15；phase1 failures=none；整体门禁 PASS；旧四 PNG 不变；禁止 diff=0；证据 72 项；未 push。
 - **下一步**：派 **impl-r6 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
+## 176. FEA-08 impl-r6 Review（Reviewer 故障转移：DSH 独立子 agent）changes_requested P2=5 + R7 范围冻结（2026-11-03 13:08）
+
+- **Review 通道事件**：Codex impl-r6 Review 过程中额度耗尽（重置 15:40，未产出报告）；ZCode CLI 探测遇 HTTP 429（retry-after ≈29 分钟）。按 2026-10-31 裁决“作者可派发新子 agent（独立上下文、只读被审 head）”，改由 **DSH 派发的独立上下文子 agent** 完成 Review（未参与实现/返修；报告如实署名）。
+- **报告**：`doc/reviews/FEA-08-impl-r6.md`（reviewed_head `72e1939ea`，隔离证据 `workspace/FEA-08/review-r6-impl-20261103/`）：**changes_requested P0=0/P1=0/P2=5**。独立复核确认 R6 四个修复方向的主路径生效（矩阵 R6b restored 断言对齐、backup 移出 out/、bool 计数被拒、采集器失败感知），但收口声明不成立。
+- **P2 findings**：001 计数残余（run_all entries_poll 仍接受 bool、R2 restored_count 接受 true/1.0、负数通过；matrix/run_all 分歧）；002 helper 自恢复失败时 backup 漏列（`backups_left_for_manual_recovery` 只从 JOURNAL 收集）；003 test 重试失败时 phase1 未写 values 即退出 → 旧 values 残留 → phase2 可假 PASS 并 EXIT0；004 文档仍写 69 文件（实际 71 commit + 1 SHA-only）、字面 `\n` 破坏 Markdown；005 M19 仍接受 no_match（Task/报告写仅 candidate）。
+- **处置（DSH 裁决）**：全部修；R7 范围冻结为「计数严格整数+范围、helper backup 纳入 failure JSON、门禁 values 失效/新鲜度校验（堵假 PASS）、文档计数与换行、M19 收紧」。实施：DSH；impl-r7 交新独立上下文。
+## 177. FEA-08 R7 返修交付（DSH）（2026-11-03 13:25）
+
+- **R7 交付**（证据 commit 见 Task delivery_head）：impl-r6 P2=5 全部处置。
+- 001：`_is_int` 统一；R2.restored_count 严格整数==1；R1/R2/R9 entries_poll 严格整数>=0；R6b 计数严格整数>=0；matrix/run_all 一致。002：helper 自恢复失败记入 `HELPER_PROBLEMS`/`KEPT_BACKUPS`，failure JSON 合并报告。003：phase1 启动删旧 values、test 失败先写 aborted values 再退出；phase2 校验 `status=complete` 的新鲜度，不新鲜 FAIL 非零。004：Task/报告 69→71、字面 `\n`→真实换行。005：M19 仅 `candidate`。
+- **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3) elapsed 1.3s；pins 15/15；phase1 status=complete/failures=none；整体门禁 PASS；旧四 PNG 不变；禁止 diff=0；证据 72 项；未 push。
+- **下一步**：派 **impl-r7 独立 Review**（未参与 R7 的新上下文；Codex 15:40 恢复后可用，或继续 DSH 独立子 agent）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。

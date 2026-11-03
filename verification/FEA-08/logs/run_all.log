@@ -13,7 +13,7 @@ EXIT=0
 [fixtures] 43 fixtures at G:\CODEX\New Manga.workspace\FEA-08\tmp\fixtures; manifest sha256 written
 ===== evidence manifest =====
 fixtures_manifest written: 43 entries (deterministic 24/43); fixtures_dir=G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures; results_dir=G:\CODEX\New Manga.workspace\FEA-08\out\staged-results; unmatched-actual=[]; unmatched-generated=[]
-[promote] dir G:\CODEX\New Manga\verification\FEA-08\fixtures <- G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures (old backup=G:\CODEX\New Manga.workspace\FEA-08\backup\promote-20261103-123458-40900\0_fixtures)
+[promote] dir G:\CODEX\New Manga\verification\FEA-08\fixtures <- G:\CODEX\New Manga.workspace\FEA-08\tmp\stage-fixtures (old backup=G:\CODEX\New Manga.workspace\FEA-08\backup\promote-20261103-130901-8220\0_fixtures)
 [promote] file G:\CODEX\New Manga\verification\FEA-08\results\fixtures_manifest.json <- G:\CODEX\New Manga.workspace\FEA-08\out\staged-results\fixtures_manifest.json
 [stage] fixtures -> G:\CODEX\New Manga\verification\FEA-08\fixtures: 44 files (+ fixtures_manifest.json)
 ===== H4 =====

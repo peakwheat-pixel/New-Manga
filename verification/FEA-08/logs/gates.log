@@ -1,8 +1,8 @@
 FEA-08 门禁摘要（R5 / F08I2-007 + F08I3-005 + F08I4-004）
 口径：本文件是**摘要 + 原始日志指针**；完整原始输出（命令/EXIT/shell/解释器）在
       logs/gates-raw/**，逐项 skip 来源在 logs/test-skip-inventory.md。
-记录时间：2026-11-03 12:38:39（Asia/Shanghai）；Python 3.14.6
-head（采集时）：b44d4a74884652d879e61060a5648270e680f5cf（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
+记录时间：2026-11-03 13:15:50（Asia/Shanghai）；Python 3.14.6
+head（采集时）：72e1939ead3832ffe23d2e1f233f13d002ea019d（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
 
 [1] build：dotnet build apps\desktop-avalonia\NewManga.sln --nologo
     EXIT=0；0 warning / 0 error（原始输出 gates-raw/01-build.log）
@@ -37,4 +37,4 @@ head（采集时）：b44d4a74884652d879e61060a5648270e680f5cf（证据 commit �
 说明：gates-raw 共 7 份；command/EXIT/cwd/shell/elapsed 各份具备，OS/Python/shell 环境见 03-check.log 与 gates-raw-manifest.json。
       本摘要只记录本次采集运行的事实；其登记 commit 以 Task 卡 EV 表为准；若 EV 在采集后更新，以最终登记的原始日志与复跑结果为准。
 结论：本次采集的门禁运行全部通过；无生产代码改动；未 push。
-整体门禁：PASS；phase1 failures=none
+整体门禁：PASS；phase1 status=complete failures=none

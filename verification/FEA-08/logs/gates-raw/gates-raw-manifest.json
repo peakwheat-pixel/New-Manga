@@ -4,7 +4,7 @@
     "shell": "pwsh 7",
     "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
     "cwd": "G:\\CODEX\\New Manga",
-    "captured_at": "2026-11-03 12:38:39"
+    "captured_at": "2026-11-03 13:15:50"
   },
   "phase1_values": {
     "env": {
@@ -12,7 +12,7 @@
       "shell": "pwsh 7",
       "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
       "cwd": "G:\\CODEX\\New Manga",
-      "captured_at": "2026-11-03 12:35:09"
+      "captured_at": "2026-11-03 13:12:48"
     },
     "build_exit": 0,
     "build_warnings": 0,
@@ -105,8 +105,9 @@
     "forbidden_diff_clean": true,
     "clearing_api_exit": 0,
     "clearing_api_matches": false,
-    "head": "b44d4a74884652d879e61060a5648270e680f5cf",
-    "failures": []
+    "head": "72e1939ead3832ffe23d2e1f233f13d002ea019d",
+    "failures": [],
+    "status": "complete"
   },
   "check": {
     "exit": 0,
@@ -116,31 +117,31 @@
   "raw_logs": [
     {
       "file": "verification/FEA-08/logs/gates-raw/01-build.log",
-      "sha256": "41868b6d19d0b1eeda246ed05c70e7846552f1ea635dd94d5186f54403f0b97e"
+      "sha256": "14d4d8144d732228f828ab4236f4e215647a0ba992fb6292061940c6a3b6fdca"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/02-test.log",
-      "sha256": "2e1db9f3377f54a0c84c6da60b85242c1e1d13c1a3513c9a999acdec99ef6fae"
+      "sha256": "cb08ae72402823f00396eac7304c8006eb976534a176aa1b8906e3230fbecb3a"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/03-check.log",
-      "sha256": "561089b21ab2272dfa2981449624b6e457649a5c11b50bee1a2abe697452b58e"
+      "sha256": "0af1f0a32d84b830591b9465f592f4712d30e89167d92a8b21afad6b8217ee40"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/04-freeze-pins.log",
-      "sha256": "f80f1ec95329b71f91dcd6983fb0afe07714acad3c1f228631758e7a7f79e0f2"
+      "sha256": "940f74a96f522ba725a9c904c19c9ac8151608ba95ae56f01ea0f81759ea3b25"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/05-fea06-png.log",
-      "sha256": "c548630329b1c9ef25880344f08e33ebf65c206eea9cf90d8e9dc318675a068e"
+      "sha256": "b3d065fef3973c35a5a35b8bc8e8027551eb58b1e812dd373a4642a67699cce1"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/06-forbidden-diff.log",
-      "sha256": "3a4686cc81c118966eb6df21a546aa101afd7a466509a528defa64341568da69"
+      "sha256": "60f533a52e60c09707fdec69b7b4c8fcb19c762babd2120119a701b0726172b8"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/07-clearing-api-search.log",
-      "sha256": "4183caa4ae0c2f4068a91e31b2c169d1131ffa83ea32aec326d93bdca58138ed"
+      "sha256": "1ff77a7931eec4712ce7ed5bcdad100146302808ae6f6c9ae6460315aadac59f"
     }
   ]
 }
