@@ -1,0 +1,26 @@
+# freeze fingerprints
+timestamp=2026-11-03T17:41:42+08:00
+head=220979ba81f37e857f241049535caef7246c97b1
+shell=pwsh 7.6.8 C:\Program Files\PowerShell\7\pwsh.exe
+python=C:\Python314\python.exe
+
+file=doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md
+  worktree_sha256=a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82
+  git_hash_object=b57d1c3aa57013d0cb9f9c6f66d8ce8577a95d3e
+  blob_sha256=a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82
+file=doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+  worktree_sha256=8faa8cd139f2e9c599dcd34063a5ac1a85941ecac287fcd693eb43d2109b2003
+  git_hash_object=93a3390972cfb2ceeaa3ddd00a1b23f6b2cf804f
+  blob_sha256=8faa8cd139f2e9c599dcd34063a5ac1a85941ecac287fcd693eb43d2109b2003
+file=doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md
+  worktree_sha256=6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc
+  git_hash_object=04d2101893d7eeba6d9aee9f973f0245968d5848
+  blob_sha256=6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc
+file=doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+  worktree_sha256=6e7f8d3d7a81c3588a8db1878579e4b1f4fd5330e4bbbab54e5ff5165afa1b0f
+  git_hash_object=b9ad6001e8aa363677ec3b04c5682e7b138aa723
+  blob_sha256=6e7f8d3d7a81c3588a8db1878579e4b1f4fd5330e4bbbab54e5ff5165afa1b0f
+file=doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md
+  worktree_sha256=f6a78549c5bef2c79cc47af9bb42ecf89cf0c5250b2acbd91894dd6c0a932dd2
+  git_hash_object=4e6c926e149900a30ad2f357ef8dd83d7f95ec81
+  blob_sha256=f6a78549c5bef2c79cc47af9bb42ecf89cf0c5250b2acbd91894dd6c0a932dd2

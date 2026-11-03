@@ -12,7 +12,9 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md` |
-| sha256（冻结后最终字节） | `b34db88768790a982c00d6b78a9649c24047e15d2ba86e3c0bf6a5a293ec8d25` |
+| sha256（v1.1 冻结后最终字节，verify_pins 口径） | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82` |
+| git hash-object（v1.1 blob id） | `b57d1c3aa57013d0cb9f9c6f66d8ce8577a95d3e` |
+| blob 内容 sha256（LF 原始字节） | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
@@ -24,6 +26,10 @@
 | 复核后到冻结的改动 | 仅状态行 |
 | 处置 | 无需补复核 |
 
+| **v1.1 复核（2026-11-03）** | r7 approved（`doc/reviews/FEA-09-PREREQ-1-r7.md`） |
+| **v1.1 复核字节** | `13ff436af7bfbdc2a65181153a2b6140902e4aff1a8665a28e1c9c5b60167a39`（工作树 SHA-256，草案 v1.1） |
+| **v1.1 冻结字节** | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82`（仅状态行由 UNFREEZE 草案改为 FROZEN v1.1；条款字节=复核字节） |
+| **v1.0 pin（历史，保留）** | `b34db88768790a982c00d6b78a9649c24047e15d2ba86e3c0bf6a5a293ec8d25` |
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
 ## 2. 冻结条件逐条核验
@@ -73,3 +79,5 @@
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |
 | 2026-11-01 | pin 修正：原 pin 指向冻结前草案（状态行改动前），改为最终字节 `b34db88768790a982c00d6b78a9649c24047e15d2ba86e3c0bf6a5a293ec8d25`；新增 §1A 修正记录与纪律（见上） | DSH |
+
+| 2026-11-03 | **UNFREEZE v1.1 重冻**：referenced 页可见性分支 + 三谓词拆分（[载体](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)）；r7 approved；新 pin `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82`；保留 v1.0 pin 于 §1A/§1B | DSH；FEA-09-PREREQ-1 |

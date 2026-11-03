@@ -1,6 +1,6 @@
 # FEA-C05 页可见性谓词（草案）
 
-状态：**FROZEN v1.0（2026-11-01）/ UNFREEZE v1.1 草案（2026-11-03，待独立复核后重冻；载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)）**
+状态：**FROZEN v1.1（2026-11-03 重冻；v1.0 于 2026-11-01 冻结）**（载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；冻结记录 [FEA-CONTRACT-FROZEN-C05](FEA-CONTRACT-FROZEN-C05.md)；独立复核 r7 approved）
 日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-05、[FEA-00 方案 r4](../design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)、[C-01b 存储契约](FEA-C01b_STORAGE_CONTRACT_DRAFT.md)（SC-01…SC-39）、代码现状（`src/infrastructure/sqlite/schema.py`）

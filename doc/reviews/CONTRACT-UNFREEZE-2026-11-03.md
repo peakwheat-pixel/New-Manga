@@ -1,6 +1,6 @@
 # CONTRACT-UNFREEZE-2026-11-03 — C-05 / C-06 v1.1
 
-状态：**UNFREEZE 草案 / 待独立复核后重冻**
+状态：**APPROVED / 重冻完成（r7 approved，2026-11-03）**
 日期：2026-11-03
 发起人：DSH（Lead / Architect / Integrator）
 依据：C-05/C-06 冻结记录自身纪律（「修订须走 UNFREEZE 载体 + 重新独立复核 + 重新冻结」）；[FEA-09-PREREQ-1 契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（changes_requested；R1-001 C-05 冲突、R1-002/R1-003 C-06 方向/四维 scope/即时撤销）；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)（Source 生产实现前置）；AGENTS.md（DSH 在上下文独立复核下可冻结/重冻）。
@@ -65,3 +65,14 @@
 | 2026-11-03 | 处置复核 r2：C-05 改为**模式分派**（managed V 语义保留；referenced 不得经 artifact 绕过）；C-06 修正旧 revision 可见性引用；r1/r2 报告按原字节归档为 `doc/reviews/FEA-09-PREREQ-1-r1.md` / `-r2.md`（供 r3 原文闭环） | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-001/R2-008/R2-009 |
 | 2026-11-03 | 处置复核 r3：同步 C-15/C-16 最终版本引用；修正失败语义章节定位；明确冻结前扩展 `verify_pins.ps1` 覆盖 17 项（不由本载体替代检查） | `doc/reviews/FEA-09-PREREQ-1-r3.md` R3-005/§8 |
 | 2026-11-03 | 处置复核 r4：C-15/C-16 定稿版本 v5；冻结前门禁统一 17/17；Task AC-7 登记 17 项与缺记录失败 | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-004 |
+
+## 7. 重冻结果（2026-11-03）
+
+| 契约 | 新 pin（工作树 SHA-256） | blob id | 复核 |
+|---|---|---|---|
+| C-05 v1.1 | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82` | `b57d1c3aa57013d0cb9f9c6f66d8ce8577a95d3e` | [r7 approved](../reviews/FEA-09-PREREQ-1-r7.md) |
+| C-06 v1.1 | `8faa8cd139f2e9c599dcd34063a5ac1a85941ecac287fcd693eb43d2109b2003` | `93a3390972cfb2ceeaa3ddd00a1b23f6b2cf804f` | [r7 approved](../reviews/FEA-09-PREREQ-1-r7.md) |
+| C-15 v1.0（草案 v5） | `6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc` | `04d2101893d7eeba6d9aee9f973f0245968d5848` | [r7 approved](../reviews/FEA-09-PREREQ-1-r7.md) |
+| C-16 v1.0（草案 v7） | `6e7f8d3d7a81c3588a8db1878579e4b1f4fd5330e4bbbab54e5ff5165afa1b0f` | `b9ad6001e8aa363677ec3b04c5682e7b138aa723` | [r7 approved](../reviews/FEA-09-PREREQ-1-r7.md) |
+
+冻结记录：`FEA-CONTRACT-FROZEN-C05`/`C06`（更新）、`C15`/`C16`（新建）；`verify_pins.ps1` 已扩展为 17 项且缺记录失败。状态行差异见各冻结记录 §1B（条款字节=复核字节）。

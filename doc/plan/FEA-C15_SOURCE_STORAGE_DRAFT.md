@@ -1,6 +1,6 @@
 # FEA-C15 Source 存储契约（草案 v5，处置契约复核 r4）
 
-状态：**草案 v5 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
+状态：**FROZEN v1.0（2026-11-03；冻结自草案 v5）**（冻结记录 [FEA-CONTRACT-FROZEN-C15](FEA-CONTRACT-FROZEN-C15.md)；独立复核 r7 approved）
 日期：2026-11-03
 作者：DSH（Lead / Architect / Integrator）
 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05/C-06/C-14 冻结契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）。

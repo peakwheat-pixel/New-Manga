@@ -1,6 +1,6 @@
 # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
 
-状态：**FROZEN v1.0 / UNFREEZE v1.1 草案（2026-11-03，待独立复核后重冻；载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)）**
+状态：**FROZEN v1.1（2026-11-03 重冻；v1.0 于 2026-11-01 冻结）**（载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；独立复核 r7 approved）
 日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）

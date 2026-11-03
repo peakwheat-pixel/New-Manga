@@ -9,13 +9,13 @@ $map = @{
  'C05'='FEA-C05_PAGE_VISIBILITY_DRAFT.md'; 'C06'='FEA-C06_SOURCE_AUTH_DRAFT.md';
  'C07'='FEA-C07_API_INVENTORY.md'; 'C08'='FEA-C08_RUN_SNAPSHOT_DRAFT.md';
  'C11'='FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md'; 'C12'='FEA-C12_CHECKER_SCOPE_DRAFT.md';
- 'C13'='FEA-C13_DRAFT_PROTECTION_DRAFT.md'; 'C14'='FEA-C14_SOURCE_RELOCATION_DRAFT.md'; 'C09'='FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md'; 'C10'='FEA-C10_INTERACTION_DRAFT.md'; 'FEA01'='FEA-01_CONTRACT_DRAFT.md'
+ 'C13'='FEA-C13_DRAFT_PROTECTION_DRAFT.md'; 'C14'='FEA-C14_SOURCE_RELOCATION_DRAFT.md'; 'C15'='FEA-C15_SOURCE_STORAGE_DRAFT.md'; 'C16'='FEA-C16_SOURCE_READ_WIRE_DRAFT.md'; 'C09'='FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md'; 'C10'='FEA-C10_INTERACTION_DRAFT.md'; 'FEA01'='FEA-01_CONTRACT_DRAFT.md'
 }
 $bad = 0
 foreach ($id in ($map.Keys | Sort-Object)) {
   $rec = Join-Path $root "doc/plan/FEA-CONTRACT-FROZEN-$id.md"
   $src = Join-Path $root "doc/plan/$($map[$id])"
-  if (-not (Test-Path $rec)) { Write-Output "MISSING-RECORD $id (not yet frozen; skipped)"; continue }
+  if (-not (Test-Path $rec)) { Write-Output "MISSING-RECORD $id"; $bad++; continue }
   if (-not (Test-Path $src)) { Write-Output "MISSING-CONTRACT $id"; $bad++; continue }
   $m = Select-String -Path $rec -Pattern '\|\s*sha256[^|]*\|\s*`([0-9a-f]{64})`' | Select-Object -First 1
   if (-not $m) { Write-Output "NO-PIN $id"; $bad++; continue }

@@ -1,0 +1,11 @@
+# command: pwsh -NoProfile -File tools/governance/check.ps1
+# cwd: G:\CODEX\New Manga
+# shell: pwsh 7.6.8 C:\Program Files\PowerShell\7\pwsh.exe
+# head: 220979ba81f37e857f241049535caef7246c97b1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-09-PREREQ-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3125 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5162 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0

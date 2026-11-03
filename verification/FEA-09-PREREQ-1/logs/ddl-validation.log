@@ -1,0 +1,16 @@
+# command: python -B G:\CODEX\New Manga.workspace\FEA-09-PREREQ-1\validate_c15_ddl.py
+# cwd: G:\CODEX\New Manga
+# python: C:\Python314\python.exe
+# head: 220979ba81f37e857f241049535caef7246c97b1
+v7 apply/backfill/FK OK: {'p_managed': ('managed', 'complete'), 'p_ref': ('managed', 'incomplete'), 'p_half': ('managed', 'incomplete')}
+location reuse/current + page-identity OK
+completeness predicate OK: ['p_managed', 'p_ref']
+UNIQUE(version, stable_sort_key) OK
+FK (source, location) cross-source rejected
+UNIQUE(project, entry) current binding OK
+rendition_cache triple FK cross-source rejected
+superseded history + valid cache OK
+old writer refusal: SchemaTooNewError
+v7 failure rollback OK: version=6 tables=0 new_columns=0
+C15 v2 DDL VALIDATION: PASS
+EXIT=0

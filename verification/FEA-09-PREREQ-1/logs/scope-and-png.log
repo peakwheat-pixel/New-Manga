@@ -1,0 +1,9 @@
+# scope: git diff --name-only 6e274dd94..HEAD -- src apps tests
+# head: 220979ba81f37e857f241049535caef7246c97b1
+# shell: pwsh 7.6.8 C:\Program Files\PowerShell\7\pwsh.exe
+EXIT=0
+changed=<none>
+PNG verification/FEA-06/screens/reader.png sha256=8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2 expected_prefix=8533c263 match=True
+PNG verification/FEA-06/screens/shelf.png sha256=307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a expected_prefix=307f8f67 match=True
+PNG verification/FEA-06/screens/workbench.png sha256=d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5 expected_prefix=d5d878bb match=True
+PNG verification/FEA-06/screens/settings.png sha256=fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162 expected_prefix=fd30b166 match=True
