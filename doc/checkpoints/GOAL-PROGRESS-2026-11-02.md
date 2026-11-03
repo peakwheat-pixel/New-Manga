@@ -1168,3 +1168,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 
 - 适用范围：FEA-09 scope review 及后续所有 Codex 任务；本次变更只影响派发参数，不改任何 Task 范围/证据。
 - 生效时点：Codex 额度 15:40 恢复后的下一轮派发；若届时仍不可用，按故障转移规则走 ZCode 或 DSH 独立子 agent。
+
+## 180. FEA-09 scope-r1（Codex）changes_requested → 处置 + 前置任务建立（2026-11-03）
+
+- **复核通道**：Codex 额度 15:40 恢复；按用户配置 `-m gpt-6.1-sol -c 'model_reasoning_effort="medium"'`，15:31 探测失败（提示 3:40 PM），15:40:30 定时重试成功；session `01a1a05a-3afc-7af2-b46c-412f8cf3373c`；15:50:59 完成（EXIT 0，208,024 tokens）。
+- **报告**：`doc/reviews/FEA-09-scope-r1.md`（Codex 原字节归档，32,902 bytes，SHA-256 `ed2639c7…b8501122`；被审 head `6e274dd94`；被审 Task blob `55abafbe…`；审查前后工作树 clean、HEAD 未变；报告声明未修改任何文件）。
+- **Verdict：`changes_requested`（P0=0 / P1=9 / P2=4）**，findings R1-001…R1-013。核心阻断：①Source DDL 前置未处理且与 out_of_scope 冲突；②Registry 存储归属已有冻结答案（C-06 Host 私有）而草案仍列 Core SQLite 待选；③写域不足（domain Page/decoder/CoreClient/协议/Python tests）；④Core→Host 进程内断言不满足提案 `:1040` 的 Core→Host→UI；⑤授权生命周期/cache 预算/完整性迁移/密码传输缺可判定 AC；另有 importing 前提错误（实际 7 个 `.py`）、AES 能力混淆、提交粒度未定义、v3 证据表缺失、PLAN 叙述陈旧等。
+- **DSH 处置（不假 MET，保持 `proposed`）**：
+  - 报告原字节归档；13 项 findings 全部接受并逐项落到 Task/前置；五项裁决定稿写入 `doc/tasks/FEA-09.md`。
+  - 新建 **`FEA-09-PREREQ-1`**（`ready`，owner=DSH）：冻结 **C-15** Source 存储契约（DDL/迁移/完整性-可见性衔接/五读路径/Host Registry 实现约束/跨存储发布恢复次序）+ **C-16** source-read wire v1.1（5 命令/scope+budget/密码短期引用/plan-receipt-取消/兼容边界/UNFREEZE 结论）；契约须独立复核 approved，done 前 FEA-09 不得 ready。
+  - 新建 **`FEA-09-UI-1`**（`proposed`，scope 草案；owner 待 Appointment=ZCode）：最小 UI/适配接线（ImportDock plan 预览/密码/取消/进度），作为提案 `:1040` UI 部分的协同切片；FEA-09 不宣称该部分完成。
+  - **FEA-09 重写**：范围改 8 条；`allowed_paths` 按 R1-004 补齐并精确到文件/目录；AC-1…AC-10 定稿（全部 `<<BLOCKED: FEA-09-PREREQ-1 未冻结>>`）；补验证计划表、EV 政策、Resource Manifest；`depends_on += FEA-09-PREREQ-1`；`base_commit=6e274dd94`；状态仍 `proposed`（scope-r2 待前置冻结后派发）。
+- **五项裁决（摘要）**：①AES ZIP = 预生成 fixture+SHA-256 + 生产 typed unsupported，不新增 pyzipper/依赖；支持的加密子格式=ZipCrypto/PDFium PDF；产品限制登记。②Registry = Host 私有（C-06），格式/DPAPI/锁/恢复约束冻结于 C-15 附录；Core DDL 由 C-15 冻结。③UI 证据 = 真实 Host IPC + 现有 V2 生产 adapter；新增 UI 操作归 FEA-09-UI-1；不用 fake/进程内冒充。④IFileOperation per-item sink/IFileCancel/真实系统取消不在本 Task（维持 FEA-08 LIMITED/UNAVAILABLE，归 FEA-12/D）；导入取消用可注入 seam+提交单元+receipt 验证并标层级。⑤importing 落点 = 新增 `src/application/importing/referenced/`，不并入 `resource_channel`；`resource_channel` 继续读/授权/lease/rendition/cache；`application/sources/` 留给 FEA-11。
+- **指针同步**：STATUS 当前 Task → FEA-09-PREREQ-1（ready），FEA-09 保持 proposed；PLAN READY 节点=FEA-09-PREREQ-1，当前 DAG 更新（旧 FEA-06-RESIDUAL-2 in_progress 叙述纠正，R1-013）；ledger `--write`。
+- **门禁**：check.ps1 PASS、verify_pins 15/15、旧 FEA-06 四 PNG 不变、无 push（见本轮提交与 `verification/FEA-09-PREREQ-1/` 后续证据）。
+- **下一步**：DSH 起草 C-15/C-16 → 派独立复核（Codex 新会话）→ 冻结并 done PREREQ-1 → FEA-09 scope-r2（Codex 新独立上下文）→ approved 后 Appointment 实现（建议 owner=Codex，写域按本卡）。

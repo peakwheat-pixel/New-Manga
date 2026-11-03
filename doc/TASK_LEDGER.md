@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 501 |
+| task files | 503 |
 | terminal | 491 |
-| non-terminal | 9 |
-| non-terminal named in the plan | 2 |
+| non-terminal | 11 |
+| non-terminal named in the plan | 4 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 501 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 2 |
 | non-terminal tracked by git | 9 |
 
 ## By status
@@ -24,13 +24,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
+| `proposed` | 3 | no |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
-| `proposed` | 2 | no |
+| `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -43,7 +43,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-09` | `proposed` | mentioned |
+| `FEA-09-UI-1` | `proposed` | mentioned |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
+| `FEA-09-PREREQ-1` | `ready` | mentioned |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 
 ## What this ledger does not say

@@ -4,16 +4,18 @@ title: 引用源与导入（Core source schema/read/cache、Host SourceAccessReg
 kind: implementation
 governance_version: 3
 status: proposed
-approval: pending_scope_review（草案；未冻结前不得实施）
+approval: scope-r1 **changes_requested**（Codex；P0=0/P1=9/P2=4）→ 已逐项处置（2026-11-03）；待 FEA-09-PREREQ-1 契约冻结 + 独立复核后提交 scope-r2；未冻结前不得实施
 suggested_owner: codex
-owner: 未指派（scope review approved 后由 DSH Appointment）
-reviewer: pending scope review（独立上下文；scope-r1 待派发）
+owner: 未指派（scope-r2 approved 且 FEA-09-PREREQ-1 done 后由 DSH Appointment）
+reviewer: scope-r1 changes_requested（Codex gpt-6.1-sol/medium 独立会话 01a1a05a-3afc-7af2-b46c-412f8cf3373c；报告 doc/reviews/FEA-09-scope-r1.md，SHA-256 ed2639c7…；被审 head 6e274dd94）；scope-r2 待 Appointment
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
-base_commit: 待 scope 冻结时登记（草案基于 2870a9fa5 + FEA-08 收口）
+  - FEA-09-PREREQ-1
+base_commit: 6e274dd94c5b64d8fbc3f9d578363d3c502a2b68（scope-r1 被审 head；scope-r2 冻结时更新）
 branch: main
 worktree: G:\CODEX\New Manga
+integration_commit: null
 delivery_head: 未开始
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -23,63 +25,178 @@ allowed_paths:
   - doc/handoffs/FEA-09-*.md
   - doc/reviews/FEA-09-*.md
   - verification/FEA-09/**
-  - src/application/importing/
-  - src/application/resource_channel/
-  - src/infrastructure/resource_channel/
+  - src/application/importing/referenced/**
+  - src/application/importing/images/**
+  - src/application/importing/documents/**
+  - src/application/resource_channel/**
+  - src/infrastructure/resource_channel/**
+  - src/infrastructure/importing.py
+  - src/domain/pages/entities.py
   - src/bootstrap/core_assembly.py
   - src/bootstrap/core_service.py
-  - src/infrastructure/sqlite/
-  - apps/desktop-avalonia/src/NewManga.Host/
-  - apps/desktop-avalonia/tests/
+  - src/infrastructure/sqlite/schema.py
+  - src/infrastructure/sqlite/migrator.py
+  - src/infrastructure/sqlite/library.py
+  - apps/desktop-avalonia/src/NewManga.Host/**
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/**
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/**
+  - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Wire/**
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Transport/WireLog.cs
+  - tests/import_formats/**
+  - tests/library/test_import_images.py
+  - tests/library/test_import_sources.py
+  - tests/library/test_sqlite_library.py
+  - tests/core/test_p09_fu2_import_pages.py
+  - tests/core/test_page_resource_resolve.py
+  - tests/m2_resource_channel/**
+  - tests/storage/test_schema_migration.py
+  - tests/storage/test_upgrade_schema_data.py
+  - tests/fea09/**
+  - apps/desktop-avalonia/tests/**
 out_of_scope:
-  - UI V2 视图/ViewModel 写域（FEA-14 系列）；本 Task 只经 Core→Host 提供可观察结果与进程内断言
-  - 生产 Schema DDL、共享契约/C-04b 等冻结字节改动（需 DSH 另行裁决）
-  - 真实用户数据/真实外部卷/真实永久删除流程（FEA-12 与 D 流程）
-  - `G-DELETE-IMPL`、FEA-11 变化/重定位、备份/迁移（FEA-13）
+  - UI 视图/ViewModel 写域（归 FEA-09-UI-1；本 Task 只提供 Core→Host 可观察结果与现有 V2 生产 adapter 可达证据）
+  - 真实用户数据/真实外部卷/AppData 生产根/真实回收站或 Windows 原生取消
+  - IFileOperation per-item sink、IFileCancel、原文件删除/回收站（FEA-12 与 D 流程；G-DELETE-IMPL）
+  - FEA-11 scan/diff/relink/resync 状态机；FEA-13 备份/恢复/迁移产品流程
+  - 未被 C-15/C-16 冻结的 DDL/协议/错误码字节改动；未经 UNFREEZE 的冻结契约修改
+  - requirements*.txt、packaging/**、新增 NuGet/Python 依赖（AES ZIP 本轮 typed unsupported）
+  - 把进程内断言或 fake controller 冒充 UI 证据；把 mock/LIMITED 升级为 PASS
+  - 共享组合根（`NewManga.sln`、`App.axaml`、`App.axaml.cs`、`NewManga.App.csproj`）——仅 DSH 单点提交
   - push
 ---
 
-# FEA-09 — 引用源与导入（scope 草案，待独立 scope review）
+# FEA-09 — 引用源与导入（scope-r1 处置后，待前置冻结与 scope-r2）
+
+> 状态：`proposed`。scope-r1（Codex）判 `changes_requested`（P0=0/P1=9/P2=4）；本卡已完成逐项处置并按裁决收窄范围/写域/AC。**仍不得实施**：须先完成 `FEA-09-PREREQ-1`（C-15 存储契约 + C-16 source-read wire 冻结、独立复核）并通过 scope-r2。
+> 本 Task **不宣称**提案 `:1040` 的 UI 部分已由本 Task 完成；该部分由 `FEA-09-UI-1` 协同交付，二者均完成后才能宣称 Source 导入 UI 验收通过。
 
 ## 依据
 
-- 提案 S3 `FEA-09` 行（:648）、写域（:930）、可观察 AC（:1040）、§15.4 出口、§15.7 追溯（:457/:469/:512–:514）；[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)（引用源、独立授权面、`SourceAccessRegistry`、Windows 回收站桥、回退开关）。
-- FEA-08 已闭环（`verification/FEA-08/**`）：H4（strict 拦截/混合流不可证）、H5（回收站保留/还原语义）、H6（精确匹配判据）、能力矩阵与原始门禁证据；本 Task **不得**回退或重新解释 FEA-08 的判定边界，只消费其结论。
-- Gate：`G-CONTRACT` 已 CLOSED（STATUS 2026-11-01）；`src/application/importing/` 为既有包路径但当前无 `.py` 源文件（本草案按提案 :930 登记，scope review 须核对实际包布局后再冻结）。
+- 提案 S3 `FEA-09` 行（`:648`）、写域（`:930`）、可观察 AC（`:1040`）、§15.4 出口（`:891–:903`）、§15.7 追溯（`:941–:955`）；[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5/§3.6/§3.8；[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
+- 冻结契约：C-01b（SC-01…SC-39）、C-05（页可见性）、C-06（Host 授权面 + source-read grant + 5 命令，wire v1.1）、C-14（容器映射/同步/缓存边界，不含 DDL）。
+- Gate：`G-CONTRACT` CLOSED（2026-11-01），**但 Source 表 DDL 未冻结**（[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；AD-003 `:117`；C-14 `:197`）——由 `FEA-09-PREREQ-1` 处理。
+- FEA-08 已闭环（`verification/FEA-08/**`）：H4 strict-only、H5 回收站语义、H6 精确匹配、能力矩阵；本 Task **不得**回退或重新解释其判定边界，只消费结论。
+- `G-DELETE-IMPL` 与本 Task **无关**：前提是保持只读源、导入与缓存范围，不加入回收站/原件删除。
 
-## 范围（草案）
+## Scope Review r1 处置（2026-11-03，DSH）
 
-1. **Core source schema/read/cache**：引用源登记（locator/identity facts/authorization generation）、读取路径与可再生产物（cache key 至少含 SourceVersion/Entry/decoder 版本/参数）；不复制永久全尺寸原件。
-2. **Host SourceAccessRegistry/授权**：Host 私有、**持久化**的授权面 + 新 `source-read` grant；旧一次性 `ImportPages` grant（≤300 秒、直属成员、进程内）不得复用为持久通行证（AD-003 §3.5）。
-3. **导入 plan/receipt**：五类输入（单图/文件夹/ZIP/CBZ/PDF）的 plan/receipt、失败项原因、可跳过、取消语义（已提交保留、未提交不出现）、按项目进度与成功/失败/跳过汇总。
-4. **完整性谓词（F-11/F-38）**：旧“完整页”谓词要求 managed ref 的路径必须适配引用源；五读路径/半写负例继续成立；对 source 原字节零写入。
-5. **回退**：关闭引用导入后 managed 双读保持；新 Schema 禁旧写。
+报告：`doc/reviews/FEA-09-scope-r1.md`（Codex 原字节归档，SHA-256 `ed2639c76bfb975ec405b7fd381854846a6031c80e8cd7b6a32e2bdcb8501122`，32902 bytes；reviewer session `01a1a05a-3afc-7af2-b46c-412f8cf3373c`；被审 head `6e274dd94`；审查前后工作树 clean）。
+结论：`changes_requested`（P0=0 / P1=9 / P2=4）；**不在同一会话自审，不据此冻结范围、不假 MET。**
 
-## Acceptance Criteria（草案，scope review 冻结）
+| ID | 级别 | 问题（摘要） | 处置 | 落点 |
+|---|---|---|---|---|
+| R1-001 | P1 | 范围含生产 Source schema 却排除 DDL，遗漏前置 | **接受**：拆出 `FEA-09-PREREQ-1`（C-15 存储契约）；本 Task 只实施 C-15 冻结的精确 DDL，`depends_on` 增加该 Task | 本卡 §前置与协同；`doc/tasks/FEA-09-PREREQ-1.md` |
+| R1-002 | P1 | 把 Registry 写 Core SQLite 当待选，违反已冻结归属 | **接受**：固定 Host 私有（C-06 已冻结），删除 Core SQLite 选项；格式/位置/加密/代次/锁/恢复写入 C-15 附录并经独立复核 | 本卡裁决 2；PREREQ-1 §内容要求（C-15） |
+| R1-003 | P2 | 「importing 无 `.py`」错误前提 | **接受**：删除该前提；实际存在 7 个 `.py`（`documents/` 3 + `images/` 4）；新增 `referenced/` 子包 | 本卡裁决 5；范围 3 |
+| R1-004 | P1 | 写域不足（domain Page/decoder/CoreClient/协议/Python tests） | **接受**：`allowed_paths` 补齐精确路径（域模型、`infrastructure/importing.py`、CoreClient Issuer/Commands/Wire/WireLog、Python tests）；共享组合根仍 DSH 单点 | 本卡 frontmatter `allowed_paths` |
+| R1-005 | P1 | 把三层 UI 结果缩为进程内 | **接受**：保留真实 Host IPC + 现有 V2 生产 adapter 证据；新增 `FEA-09-UI-1`（ZCode）承载新增 UI 操作；本 Task 不宣称 UI 部分完成 | 本卡裁决 3；`doc/tasks/FEA-09-UI-1.md` |
+| R1-006 | P1 | 授权失效/重启/根替换/strict lease 无可执行负测 | **接受**：新增 AC-9（授权与 lease 正负测） | 本卡 AC-9 |
+| R1-007 | P1 | 五读路径未列名，缺迁移守恒/半写回填 | **接受**：AC-7 明列五路径 + reader projection + 迁移守恒 + 失败矩阵 | 本卡 AC-7 |
+| R1-008 | P1 | cache 只有 key 描述，无预算/淘汰/崩溃校验 | **接受**：新增 AC-10（预算/LRU/并发/重建/通道隔离） | 本卡 AC-10 |
+| R1-009 | P1 | plan/receipt/密码传输无冻结载体 | **接受**：由 C-16 冻结命令/版本/能力拒绝/receipt/重试/密码短期引用；验证 wire/evidence 日志无可逆密码 | PREREQ-1 §内容要求（C-16）；本卡 AC-4 |
+| R1-010 | P1 | AES fixture 覆盖与生产解密能力混淆 | **接受**：裁决 1（AES 本轮 typed unsupported；不新增依赖） | 本卡裁决 1；AC-1/AC-4 |
+| R1-011 | P2 | 提交粒度/计数未定义 | **接受**：C-16 冻结提交单元与计数口径；AC-5 覆盖文件/容器/页/项目 | PREREQ-1（C-16）；本卡 AC-5 |
+| R1-012 | P2 | v3 AC 缺标记、验证表、Evidence、Resource Manifest | **接受**：本卡补齐 v3 标记、验证计划表、EV 政策、Resource Manifest | 本卡 AC/验证/证据/Manifest |
+| R1-013 | P2 | PLAN 叙述指向已终态 residual in_progress | **接受**：DSH 已同步 PLAN 当前 DAG（本次处置提交） | `doc/REBASELINE_PLAN.md`；checkpoint §180 |
 
-- [ ] **AC-1（草案）**：五类输入（单图/文件夹/ZIP/CBZ/PDF）分别建立成功/不支持/损坏 fixture；每类给出可复现判定与证据。
-- [ ] **AC-2（草案）**：PDF 按页码、文件路径按**自然数字排序**（不是字典序），并用边界 fixture（1/2/10/100）断言。
-- [ ] **AC-3（草案）**：重复归档名按 **occurrence 保序**独立处理，不得仅用 digest 合并或丢失 occurrence；给出重复名/重复同图负例。
-- [ ] **AC-4（草案）**：加密项目支持密码重试；**日志与持久快照不得出现明文密码**；失败项有明确原因且可跳过。
-- [ ] **AC-5（草案）**：取消后已提交项目保留、未提交项目不出现；按当前项目显示可观测进度并汇总成功/失败/跳过。
-- [ ] **AC-6（草案）**：每项以**隔离数据**断言 Core→Host 可观察结果，且 source 文件原字节（hash/mtime）不变；共享源项目结果独立。
-- [ ] **AC-7（草案）**：完整性谓词五读路径/半写负例在引用源路径下成立；旧 managed 双读保持；新 Schema 禁旧写测试。
-- [ ] **AC-8（草案）**：证据=fixture + 隔离断言 + 独立 Review + DSH 集成验证；不触真实用户数据；不 push。
+## 五项裁决（DSH 定稿，2026-11-03）
 
-## 待 scope review 裁决
+1. **AES ZIP**：采用**预生成 AES ZIP fixture + SHA-256**；生产对 AES ZIP 返回**明确 typed unsupported**，**不新增 pyzipper（生产或测试闭包）**。支持的加密子格式 = stdlib 可解 ZipCrypto ZIP/CBZ + PDFium 可解密 PDF，须验证真实密码重试。AES 解密能力登记为**产品限制**；若用户要求支持，须另开生产依赖/许可/打包决策（精确版本、传递依赖、许可材料、requirements/spec、许可清单、干净打包 smoke），**仅改测试依赖不足以交付生产 AES 能力**。本裁决为范围处置，不改变 `requirements*.txt`/`packaging/**` 写域。
+2. **`SourceAccessRegistry` 持久化载体**：**Host 私有存储，不写 Core DB**（C-06 已冻结，不是待选方案）。实现约束：`<HostOptions.DataRoot>/host/source-access/registry.v1.dat`；带格式版本 UTF-8 JSON + Windows DPAPI CurrentUser；不持久化短期 grant/session key/lease/密码；`generation`/撤销状态/根身份持久化；重启重验根身份并建新 session（旧 grant 不恢复）；同数据根专用跨进程锁（冲突拒绝第二写者）；同目录临时文件 + flush + 原子替换；损坏/解密失败/不确定恢复 fail-closed；持久化失败拒绝签发；备份导出接口交 FEA-13，跨机恢复不自动继承授权。**Core Source 表 DDL 不由本裁决冻结**：由 `FEA-09-PREREQ-1`/C-15 冻结，本 Task 只实施已冻结的精确 DDL。
+3. **UI 可观察路径**：采用**真实 Host IPC + 现有 V2 生产 adapter 的隔离证据**；仅 Core→Host 进程内断言不足，fake controller 不算证据。现有 V2 可达路径由本 Task 断言；**新增 UI 操作（plan 确认、密码输入、运行中取消、逐项进度）由 `FEA-09-UI-1` 单独冻结并接线**，本 Task 不修改 UI 视图/ViewModel，也不宣称提案 `:1040` 的 UI 部分已完成。两者证据合并后才可宣称 Source 导入 UI 验收通过。
+4. **`IFileOperation` per-item sink / 真实取消**：本 Task **不验证、不实现** Windows 回收站 per-item sink、`IFileCancel` 或真实系统取消；继承 FEA-08 的 `LIMITED/UNAVAILABLE`，归 FEA-12/D 流程。本 Task 验证的是**导入取消**：Host/Application 可注入 seam、提交边界、丢 ACK/重启恢复、receipt 可重复查询；mock/注入证据标层级，**不得**升级为 Windows 原生取消 PASS；不新增回收站生产代码或 destructive OS 测试。
+5. **`src/application/importing/` 落点**：新增 **`src/application/importing/referenced/`** 子包，承载引用导入编排（plan/确认/提交/receipt/取消/密码短期引用/去重策略），**不并入 `resource_channel`**。`resource_channel` 继续负责受限读取、授权、lease、rendition/cache，不承担导入业务编排；`src/application/sources/` 保留给 FEA-11 的 scan/diff/relink/resync，本 Task 不提前建设该状态机。保留旧 managed 导入代码与兼容测试，不通过重写旧服务隐式改变旧 grant/命令语义；不得复用旧「按 digest 去重」策略丢失合法重复 occurrence。
 
-1. AES ZIP 是否引入 pyzipper（MIT；仅 fixture/测试闭包，不进生产闭包）或预生成 fixture。
-2. `SourceAccessRegistry` 持久化载体与 Schema 边界（SQLite 表 vs Host 私有存储），须先确认是否触碰共享 Schema 冻结。
-3. UI 可观察路径：以现有 V2 页面经 Host IPC 断言，或仅 Core→Host 进程内断言（本 Task out_of_scope 已排除 UI 写域）。
-4. IFileOperation per-item sink 与真实取消的验证方式（LIMITED 或真机）。
-5. `src/application/importing/` 当前无源文件——按拟议新包冻结，还是并入 `resource_channel`；scope review 必须给出结论。
+## 范围（定稿，scope-r2 复审对象）
 
-## 验证方式（草案）
+1. 消费 FEA-08 已冻结的 strict-only、卷能力限制和 occurrence 结论；不得重开其原型或升级未经实测的能力。
+2. 在 **C-15 冻结的 Core Source 存储契约**上实现引用登记、entry/version/binding、受限读取及有上限的 rendition/cache；不创建永久全尺寸输入副本。
+3. 在 **`src/application/importing/referenced/`** 实现五类输入（单图/文件夹/ZIP/CBZ/PDF）的预览 plan、确认、提交、receipt、失败重试/跳过、取消和进度。
+4. Host **私有持久化 Registry** 与短期 `source-read` grant 分离；旧一次性 `ImportPages` grant 及旧命令语义保持兼容。
+5. 完成 referenced 页与旧 managed 页的双读及完整性迁移；合法 NULL managed ref 不伪装成 managed，也不绕过 binding 校验。
+6. 为**真实 Host IPC** 和既有 V2 可达行为提供隔离证据；新增 UI 操作由 `FEA-09-UI-1` 单独冻结接线，本 Task 不越界。
+7. 本轮 **AES ZIP 仅验证 typed unsupported**；支持的加密子格式验证密码重试；该能力限制按裁决 1 登记产品处置。
+8. 实现引用导入回退开关（拟议名 `ReferencedImportEnabled`）：关闭后禁止新引用导入，保留既有 managed/referenced 双读和已提交数据。
 
-- Gate：build 0w/0e、全量测试不减少、check/vpins、`src_changes` 仅限 allowed_paths、旧 FEA-06 四 PNG 不变、未 push。
-- 隔离证据：Core→Host 断言日志、fixture SHA、source bytes hash 前后一致、密码不落日志的审计；TEMP/证据外置、不写真实用户数据。
-- 生命周期：scope review（独立上下文）→ DSH 冻结 → 实现 → 独立 impl Review → DSH 集成验证 → done。
+## 前置与协同
+
+- **`FEA-09-PREREQ-1`（`ready`，owner=DSH）**：冻结 C-15（Source 存储 DDL/迁移/完整性-可见性衔接/Host-Core 跨存储次序）与 C-16（source-read wire v1.1：命令/信封/错误码/密码短期引用/plan-receipt-取消/兼容边界），均须独立复核 `approved`。**该 Task done 前本 Task 不得 ready/in_progress。**
+- **`FEA-09-UI-1`（`proposed`，owner 待 Appointment=ZCode）**：最小 UI/适配接线（ImportDock 的 plan 预览/密码/取消/进度）；与本 Task 为**协同交付**，不放入本 Task `depends_on`（并行准备），但本 Task 的完成判定不得宣称 UI 部分；两者证据合并后才满足提案 `:1040`。
+- `G-CONTRACT` CLOSED；`G-DELETE-IMPL` 与本 Task 无关（保持只读源/导入/缓存范围）。
+- 冻结契约字节不动：wire 载体为 C-16 **新文档**；若既有冻结文档（如 C-07 inventory）需登记新命令，由 PREREQ-1/DSH 走 `doc/reviews/CONTRACT-UNFREEZE-<DATE>.md` 载体，不得用 `doc/contracts/**` 通配授权代替。
+- 共享组合根与 `App.axaml`/`App.axaml.cs`/`NewManga.App.csproj`/`NewManga.sln` 仍仅 DSH 单点提交；owners 提供 patch/需求。
+
+## Acceptance Criteria（定稿草案；proposed 阶段全部 BLOCKED，未实施）
+
+- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 15/15、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+
+补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
+
+## 允许修改范围
+
+- 代码写域见 frontmatter `allowed_paths`：`src/application/importing/referenced/`（新增）、既有 `images/`/`documents/` 兼容改造、`application/resource_channel`、`infrastructure/resource_channel`、`infrastructure/importing.py`、`domain/pages/entities.py`、`bootstrap/core_assembly.py`、`bootstrap/core_service.py`、`infrastructure/sqlite/{schema,migrator,library}.py`、`NewManga.Host/**`、`NewManga.CoreClient/{Issuer,Commands,Wire}/**`+`CoreServiceClient.cs`+`Transport/WireLog.cs`、对应 tests。
+- 精确 DDL 只允许 **C-15 冻结的表/迁移版本**；不得借宽目录改无关功能；域模型/Schema/旧导入服务只允许本 Task 所需兼容改造。
+- 证据写域：`verification/FEA-09/**`（每个判别力文件独立 EV 行）；Task/Handoff/Review 路径见 frontmatter。
+- 共享组合根与 App Views/ViewModels 不在本写域（UI 归 FEA-09-UI-1，组合根归 DSH）。
+- **协议文档**：C-16 为 PREREQ-1 冻结的新文档；本 Task 不修改任何冻结文档字节；需要 UNFREEZE 时由 DSH 作为集成动作执行并登记。
+
+## 禁止范围
+
+见 frontmatter `out_of_scope`。特别地：不得实施未冻结 DDL/协议、不得触碰真实用户数据/真实外部卷/回收站、不得把 mock/进程内/fake 证据升级为 PASS、不得改冻结契约字节、不得新增依赖、不得 push。
+
+## 验证计划（planned / NOT_RUN，实施时按精确命令登记）
+
+| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC-8 构建与 .NET 全量 | `dotnet build apps\desktop-avalonia\NewManga.sln --nologo`；`dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo` | 主工作树；期望 1292/0/57（总数 1349） | NOT_RUN（planned） | `verification/FEA-09/logs/` |
+| AC-1/AC-2/AC-3 格式/排序/occurrence | Python targeted suite（`tests/import_formats/**`、`tests/fea09/**` 等；精确命令实施时登记） | 隔离 fixture；合成数据 | NOT_RUN（planned） | 同上 |
+| AC-4 密码安全 | 上述 suite + wire/evidence 日志审计（含 WireLog 可逆编码搜索） | 隔离 fixture | NOT_RUN（planned） | 同上 |
+| AC-5 取消/进度/计数 | 注入 seam 负测 + receipt 重查 + 重启恢复 | 隔离 DB/数据根 | NOT_RUN（planned） | 同上 |
+| AC-6 真实 IPC/现有 V2 | 启动隔离 sidecar，经 Host/CoreClient 真实序列化；现有 V2 生产 adapter 消费断言 | 隔离数据根；不碰真实 AppData | NOT_RUN（planned） | 同上 |
+| AC-7 完整性/迁移/回退 | `tests/storage/**`、`tests/core/**` 定向 + 新旧 schema 负测 | 隔离库 | NOT_RUN（planned） | 同上 |
+| AC-9 授权/lease | 授权生命周期正负测（重启/撤销/generation/失联） | 隔离 Host 数据根 | NOT_RUN（planned） | 同上 |
+| AC-10 cache 预算 | 预算/淘汰/崩溃校验负测 | 隔离 cache 根 | NOT_RUN（planned） | 同上 |
+| 门禁 | `pwsh -NoProfile -File tools\governance\check.ps1 -TaskPath doc/tasks/FEA-09.md`；`pwsh -NoProfile -File tools\governance\verify_pins.ps1`；旧四 PNG hash；`git diff --name-only` | 仓库根 | NOT_RUN（planned） | 同上 |
+
+- Python 测试与 .NET 基准必须分列；skip 逐条解释；不得用旧 FEA-08 EV 总数、pin 自例外或 LF 配置作为本 Task 自动授权。
+
+## 交付与证据
+
+- Handoff：`doc/handoffs/FEA-09-<head>.md`（实施后）。
+- Independent Review：`doc/reviews/FEA-09-impl-r*.md`（未参与实现/返修的独立上下文；DSH Appointment）。
+- EV：`verification/FEA-09/**`，每个判别力文件独立登记；仓库文件 pin commit + 明确字节口径，仓外输入 pin SHA-256；集成验证由 DSH 记录。
+- 实施顺序：PREREQ-1 done → 本 Task scope-r2 approved → DSH Appointment（建议 owner=Codex 未参与 scope review 的会话/实例）→ 实现 → 独立 impl Review → DSH 集成验证 → done。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树，无新建 worktree |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-09\` | PRESERVE_REFERENCED | 原地（workspace） | scope-r1 prompt/output 日志 | 非 Canonical；派发/复核原始记录 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-09\tmp\` | DELETE_SAFE | 实施时清理 | 无 | 合成数据，实施时逐项登记 |
+| evidence（仓库） | `verification/FEA-09/**` | NOT_APPLICABLE | 仓库内 | EV 表 | 实施后登记 |
 
 ## Closeout Record
 
-- 未开始（proposed）。
+- Closeout date / DSH：未开始（proposed）。
+- canonical_evidence_status：`pending`。
+- resource_closeout_status：`pending`。
+- 未关闭项及保留原因：未开始。
+- 当前指针清理：未开始。
+
+## 变更记录
+
+| 日期 | 变更 | 依据 |
+|---|---|---|
+| 2026-11-03 | 建立 scope 草案（proposed，AC-1…AC-8） | FEA-08 关闭释放；提案 `:648/:930/:1040` |
+| 2026-11-03 | **scope-r1 处置**：报告归档；13 项 findings 逐项处置；五项裁决定稿；范围改 8 条；写域补齐；AC-1…AC-10 定稿（BLOCKED）；新增前置 `FEA-09-PREREQ-1` 与协同切片 `FEA-09-UI-1`；仍保持 `proposed`，待前置冻结 + scope-r2 | `doc/reviews/FEA-09-scope-r1.md`；`doc/tasks/FEA-09-PREREQ-1.md`；`doc/tasks/FEA-09-UI-1.md` |
