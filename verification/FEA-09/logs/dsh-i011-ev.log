@@ -1,0 +1,6 @@
+
+## I011 EV 收敛（2026-11-04，DSH）
+- 旧台账原字节归档：erification/FEA-09/history/EV-2026-11-03.md。
+- 新台账由 erification/FEA-09/tools/rebuild_ev.py 从 git ls-files 生成：**57 行、EV-001…057 唯一 ID、0 PENDING**；每行含 bytes/SHA-256/added_commit/last_commit/类别。
+- 合成组件目录（cache-component/grant-component/native-registry，约 440 个测试生成文件）已从索引移除并写入 .gitignore；旧台账中 50 条仅存于历史的路径列入「历史/已删除证据」区，不冒充 canonical。
+- 限制：文件级索引不证明 AC；AC 状态仍以 AC-MATRIX + 独立实现复核为准。
