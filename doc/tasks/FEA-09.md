@@ -4,10 +4,10 @@ title: 引用源与导入（Core source schema/read/cache、Host SourceAccessReg
 kind: implementation
 governance_version: 3
 status: proposed
-approval: scope-r1 **changes_requested**（Codex；P0=0/P1=9/P2=4）→ 已逐项处置（2026-11-03）；待 FEA-09-PREREQ-1 契约冻结 + 独立复核后提交 scope-r2；未冻结前不得实施
+approval: scope-r1 **changes_requested** 已逐项处置；前置 **FEA-09-PREREQ-1 已 done**（C-05/C-06 v1.1 + C-15/C-16 v1.0 冻结、17/17）；待 scope-r2
 suggested_owner: codex
 owner: 未指派（scope-r2 approved 且 FEA-09-PREREQ-1 done 后由 DSH Appointment）
-reviewer: scope-r1 changes_requested（Codex gpt-6.1-sol/medium 独立会话 01a1a05a-3afc-7af2-b46c-412f8cf3373c；报告 doc/reviews/FEA-09-scope-r1.md，SHA-256 ed2639c7…；被审 head 6e274dd94）；scope-r2 待 Appointment
+reviewer: scope-r1 changes_requested（Codex 独立会话 01a1a05a-3afc-7af2-b46c-412f8cf3373c；报告 doc/reviews/FEA-09-scope-r1.md）；scope-r2 待 Appointment
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
@@ -121,7 +121,7 @@ out_of_scope:
 
 ## 前置与协同
 
-- **`FEA-09-PREREQ-1`（`ready`，owner=DSH）**：冻结 C-15（Source 存储 DDL/迁移/完整性-可见性衔接/Host-Core 跨存储次序）与 C-16（source-read wire v1.1：命令/信封/错误码/密码短期引用/plan-receipt-取消/兼容边界），均须独立复核 `approved`。**该 Task done 前本 Task 不得 ready/in_progress。**
+- **`FEA-09-PREREQ-1`（`done`，owner=DSH；契约已冻结、17/17）**：冻结 C-15（Source 存储 DDL/迁移/完整性-可见性衔接/Host-Core 跨存储次序）与 C-16（source-read wire v1.1：命令/信封/错误码/密码短期引用/plan-receipt-取消/兼容边界），均须独立复核 `approved`。该 Task 已于 2026-11-03 done；FEA-09 现等待 scope-r2。
 - **`FEA-09-UI-1`（`proposed`，owner 待 Appointment=ZCode）**：最小 UI/适配接线（ImportDock 的 plan 预览/密码/取消/进度）；与本 Task 为**协同交付**，不放入本 Task `depends_on`（并行准备），但本 Task 的完成判定不得宣称 UI 部分；两者证据合并后才满足提案 `:1040`。
 - `G-CONTRACT` CLOSED；`G-DELETE-IMPL` 与本 Task 无关（保持只读源/导入/缓存范围）。
 - 冻结契约字节不动：wire 载体为 C-16 **新文档**；若既有冻结文档（如 C-07 inventory）需登记新命令，由 PREREQ-1/DSH 走 `doc/reviews/CONTRACT-UNFREEZE-<DATE>.md` 载体，不得用 `doc/contracts/**` 通配授权代替。
@@ -129,16 +129,16 @@ out_of_scope:
 
 ## Acceptance Criteria（定稿草案；proposed 阶段全部 BLOCKED，未实施）
 
-- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
-- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<BLOCKED: FEA-09-PREREQ-1 未冻结，尚未实施>>
+- [ ] **AC-1（格式矩阵）**：单图、文件夹、ZIP、CBZ、PDF 各有成功、typed unsupported、损坏/空内容 fixture；登记 decoder、fixture SHA-256、错误类别、支持限制和无副作用断言；AES ZIP 明确 typed unsupported，不计解密成功。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-2（顺序）**：PDF 按数值页码；文件夹按授权范围内相对路径及文件名自然数字排序；覆盖 1/2/10/100、嵌套目录、同排序键与稳定 tie-break。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-3（occurrence 与共享）**：重复归档名、重复同图保留独立 entry/occurrence/binding；按 occurrence 保序；默认已引用源跳过与显式继续引用区分；两个项目共享同一源时，阅读进度、人工修改、处理结果分别独立。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-4（密码与错误）**：支持的加密子格式覆盖无密、错密、重试成功、跳过；密码只经短期安全引用，不进入普通 task、snapshot、Registry、receipt、异常、wire/evidence 日志及其可逆编码；AES ZIP typed unsupported；失败项有明确原因且可跳过。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-5（取消、进度与计数）**：冻结文件/容器/页/项目计数和提交单元；取消后已提交保留、未提交不可见；覆盖提交前、解码中、提交后、丢 ACK、异常及重启恢复；Host 可观察当前项目进度及成功/失败/跳过/待处理汇总；重试不重复提交。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-6（隔离链路与源守恒）**：各必需行为具有隔离 Core→Host 结果证据；真实 IPC 使用生产 adapter；现有 V2 可达路径经生产 adapter 消费（不得用 fake controller）。源 hash/mtime 不变；既有 managed/derived 不删除；无新增永久全尺寸输入副本。**新增 UI 操作的可观察结果由 `FEA-09-UI-1` 承担，本 Task 不宣称该部分完成。** <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-7（完整性、升级与回退）**：明列 `existing_source_hashes`、`max_source_order`、`get_page`、`list_pages`、`handle_resolve_page_resource`，另测 reader projection。referenced complete 页可见可解析；各半写/断 binding 负例不可见且可恢复；旧 managed 页 ID/顺序/计数/资源/人工数据/Lock 守恒；缺文件、磁盘满、中断不切入口；旧二进制遇新 Schema 拒写；关闭引用导入后新导入被拒，既有双读保持；另含 `SOURCE_PROJECT_MISMATCH` 负测（page→chapter→book 与 `project_id` 不符 → 同事务拒绝并回滚）。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-8（证据与交付）**：build 0 warning/0 error；.NET 全量基准 1292/0/57（总数 1349），新增测试与变化单列，skip 逐项解释；另跑 Python 相关回归；`check.ps1` PASS、`verify_pins.ps1` 17/17、旧 FEA-06 四 PNG 不变、范围 diff 对照 allowed_paths、独立 Review、DSH 集成验证；EV 逐文件登记；不 push。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-9（授权与 lease）**：Registry 重启持久化、`generation`、撤销、根替换、跨根/reparse、错误 scope/version/entry/rendition、过期、Host 失联均有正负测；失败拒绝新读及提交；旧一次性 grant 不升级为长期通行证；读取采用 strict lease、同一验证流；commit 前重取并强校验有效授权。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
+- [ ] **AC-10（cache 与预算）**：cache key 含 SourceVersion/entry/decoder 版本/参数；content identity 与 rendition observation 分离；每请求预算、总字节上限、并发解码上限强制生效；LRU/同时刻大文件优先、活跃引用保护、损坏缓存重建、崩溃恢复有负测；缓存不含唯一人工/结果/恢复数据、不写源目录；源读取与 derived 通道隔离。 <<BLOCKED: 尚未实施（proposed；待 scope-r2 approved）>>
 
 补充要求（来自 scope-r1）：plan 冻结目标/类型/顺序/源版本及必要授权代，确认前源变化必须拒绝或更新预览；ZIP/CBZ 覆盖路径穿越、绝对路径、重复成员、编码、解压炸弹和预算超限，不把成员名直接用作可写路径；文件夹扫描忽略隐藏/系统文件，递归不越授权根、不跟随越根 reparse；GIF 首帧、PDF 页码及渲染参数显式断言；v3 AC 行末使用合法标记，实现后按真实结果更新，不提前标 MET。
 
@@ -200,3 +200,5 @@ out_of_scope:
 |---|---|---|
 | 2026-11-03 | 建立 scope 草案（proposed，AC-1…AC-8） | FEA-08 关闭释放；提案 `:648/:930/:1040` |
 | 2026-11-03 | **scope-r1 处置**：报告归档；13 项 findings 逐项处置；五项裁决定稿；范围改 8 条；写域补齐；AC-1…AC-10 定稿（BLOCKED）；新增前置 `FEA-09-PREREQ-1` 与协同切片 `FEA-09-UI-1`；仍保持 `proposed`，待前置冻结 + scope-r2 | `doc/reviews/FEA-09-scope-r1.md`；`doc/tasks/FEA-09-PREREQ-1.md`；`doc/tasks/FEA-09-UI-1.md` |
+
+| 2026-11-03 | scope-r2 前置就绪：PREREQ-1 done（C-05/C-06 v1.1 + C-15/C-16 v1.0，17/17）；AC 标记更新为待 scope-r2 | `doc/reviews/FEA-09-PREREQ-1-r7.md`；`doc/plan/FEA-CONTRACT-FROZEN-C15.md`/`C16` |
