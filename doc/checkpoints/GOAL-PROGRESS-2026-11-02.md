@@ -1223,3 +1223,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **阶段 commit**：`995d80ca5`（实现署名 Codex/ZCode；DSH 提交与修复）。验证：dotnet build 0/0；.NET 全量 **1298/0/57**；pytest tests/fea09 **92**；ea09+import_formats+storage **245**；Host.SourceRegistryTests 2；check PASS(3)；pins 17/17。
 - **未完成**：生产 rendition 读取接线、密码完整链路、真实 IPC/V2 端到端证据、AC-1…AC-10 部分验证、独立 impl Review、最终集成；Task 保持 in_progress，canonical_evidence_status pending。
 - **恢复基线**：`995d80ca5`；Handoff doc/handoffs/FEA-09-995d80ca5.md；证据 erification/FEA-09/logs/dsh-integration.md。
+## 186. FEA-09 referenced resolve + 密码/cache 增量（2026-11-03 22:35）
+
+- **DSH 续跑增量（goal round 1）**：referenced 生产 resolve 接线（`SourceReadGrantRegistry.find_for_source` + `reader.render_entry_png` + `resolve.resolve_referenced_rendition` + `core_service` 发布 rendition/cache 行）；`core_assembly` 注入 `read_secret`；`reader._check_decode_budget`；`library.upsert_rendition_cache`；`tests/fea09` **98 passed**（+6）。
+- **证据**：`verification/FEA-09/logs/dsh-referenced-resolve.log`、`verification/FEA-09/AC-MATRIX.md`；commit `78bda22c`、`3f205655`（后续 EV pin）。
+- **AC 矩阵**：AC-1…AC-10 全 **PARTIAL**，无 MET；关键缺口：真实 Host IPC + V2 adapter 端到端（AC-6）、双读/回退开关集成断言（AC-7）、AC-1/2/4/5/9/10 的完整矩阵、独立 impl Review。
+- 门禁：check PASS(3)、pins 17/17；未 push。
