@@ -18,7 +18,7 @@
 
 ### 2.1 C-05 v1.1
 
-- 新增 **§3.1 referenced 页分支**：`source_mode='referenced'` 的页以 `integrity_status='complete'` + healthy `page_bindings` + `verified_digest` 一致作为可见条件，不使用 artifact/revision；总可见性 `V = V_artifact ∨ V_ref`，`V_artifact`（原 P1–P5）**字节不变**。
+- 新增 **§3.1 模式分派与 referenced 页分支**：总可见性按 `source_mode` 分派 —— `V = (managed ∧ V_artifact) ∨ (referenced ∧ V_ref)`；`V_artifact`（原 P1–P5）**字节/语义均不变且仅限 managed**；`V_ref` 使用 `integrity_status='complete'` + healthy `page_bindings` + `verified_digest` 一致，不使用 artifact/revision。referenced 页即使存在 valid artifact 也不得经 artifact 分支可见（防止绕过完整性分支）。
 - 新增 **§3.2 三谓词拆分**：`is_complete_page`（数据完整性）、`V`（数据库可见性）、`R`（当前可读性/资源授权）分开；读取层不得把 `V` 当 `R`。
 - §2 数据模型事实追加 `pages.source_mode/integrity_status`（C-15 v7 列）。
 - §5 失败语义追加 referenced 行（incomplete/binding 非 healthy → 不可见；授权撤销/失联 → `V` 仍真但读取 typed 失败）。
@@ -62,3 +62,4 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | 建立 UNFREEZE 载体：C-05 v1.1（referenced 可见性 + 三谓词拆分）、C-06 v1.1（Host 铸造型发放/四维 scope/双侧 Verify/撤销通道）；复核+重冻流程与回退 | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-001/R1-002/R1-003 |
+| 2026-11-03 | 处置复核 r2：C-05 改为**模式分派**（managed V 语义保留；referenced 不得经 artifact 绕过）；C-06 修正旧 revision 可见性引用；r1/r2 报告按原字节归档为 `doc/reviews/FEA-09-PREREQ-1-r1.md` / `-r2.md`（供 r3 原文闭环） | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-001/R2-008/R2-009 |

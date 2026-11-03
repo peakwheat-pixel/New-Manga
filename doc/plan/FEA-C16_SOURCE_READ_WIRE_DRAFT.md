@@ -1,4 +1,4 @@
-# FEA-C16 Source 读取与导入 wire 协议（草案 v2，处置契约复核 r1）
+# FEA-C16 Source 读取与导入 wire 协议（草案 v3，处置契约复核 r2）
 
 状态：**草案 v2 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
 日期：2026-11-03
@@ -70,7 +70,7 @@
 
 ## 3. 密码短期安全引用（加密源）
 
-- **Plan 阶段不消费密码**：`PlanImportReferences` 只检测“是否加密/是否支持”（ZIP 读 general-purpose flag / PDF 读加密标记），不请求密码、不创建 secret 文件。
+- **Plan 阶段不消费密码（加密源为有限预览）**：`PlanImportReferences` 只检测“是否加密/是否支持”（ZIP 读 general-purpose flag / PDF 读加密标记），**不请求密码、不解密、不创建 secret 文件**。加密源在 plan 中的 `status="encrypted"`、`will_import=null`、**不提供成员/页级 content digest**；plan_digest 只绑定容器级 digest（加密归档/PDF 原始字节 sha256）+ 可读结构元数据（ZIP 成员名/ordinal；PDF 页数若不可得则为 `unknown`）。确认（`StartImportReferences`）时先重验容器级 digest + registry generation，再凭密码解密并在导入中计算逐 entry digest；加密源不承诺“预览即可见明文摘要”，也不得为凑摘要而提前解密。
 - **Import 阶段一次性引用**：Host 在 dispatch `StartImportReferences` 前生成 32-byte `token`（base64url）并写 `<DataRoot>/host/source-secrets/<token>.bin`（父目录用户级 ACL；文件 = `"NMSSR1\0"` + DPAPI CurrentUser 密文）；每次密码重试生成新 token/新文件；TTL ≤300s 且 ≤ operation。
 - **Core 读**：从 grant `secret_ref.path` 读取、校验 magic/长度/DPAPI 解密（ctypes `CryptUnprotectData`，`CRYPTPROTECT_UI_FORBIDDEN`）；解密后立即零填充删除文件（失败也删）；密码只存局部变量，用后尽力清零，不写任何持久结构/日志/证据。
 - **清理**：操作结束/取消/异常双端删除；Host 启动清扫过期/孤儿 `source-secrets/*`（仅本目录、按 token 模式、超 TTL）。
@@ -89,11 +89,11 @@
 | `GetImportReceipt` | `{operation_id}` | receipt（含 `state`）；不存在/跨重启 → `SOURCE_OPERATION_NOT_FOUND` |
 | `CancelImport` | `{operation_id}` | `{operation_id, accepted:true|false, state}` |
 
-- **operation 状态机**：`accepted → running → completed | cancelled | failed`。终态不可再变；`CancelImport` 在 running 时置 `cancel_requested=true`，Core 在提交单元边界停止；completed 后到达的 cancel 返回 `accepted:false, state:"completed"`。
-- **operation_id 绑定**：`operation_id` 绑定请求指纹 `sha256(canonical{chapter_id, plan_id, plan_digest, grants, duplicate_policy})`。同 id+同指纹：running → 返回当前状态；completed → 返回同一 receipt；不同指纹 → `SOURCE_OPERATION_CONFLICT`。同项目（book）同时只允许一个 running import → `SOURCE_IMPORT_BUSY`（先到先得，退出/终止后释放）。
+- **operation 状态机**：`accepted → running → completed | cancelled | failed`。终态不可再变；`CancelImport` 在 accepted/running 时置 `cancel_requested=true` 并返回 `accepted:true, state`（accepted 阶段取消 → 直接进入 cancelled，不启动工作）；终态后到达的 cancel 返回 `accepted:false, state`。receipt 的 `state` 枚举**必须包含 accepted**。
+- **operation_id 绑定与重放矩阵**：`operation_id` 绑定请求指纹 `sha256(canonical{chapter_id, plan_id, plan_digest, grants, duplicate_policy})`。同 id+同指纹：`accepted/running` → 返回当前状态；`completed/cancelled/failed` → 返回同一 receipt（终态不重跑）；不同指纹 → `SOURCE_OPERATION_CONFLICT`。同项目（book）同时只允许一个非终态 import；`StartImportReferences` 在**返回 accepted 之前原子预占**项目锁（先到先得），任何终态（completed/cancelled/failed）或进程退出释放；预占失败 → `SOURCE_IMPORT_BUSY`，不创建 operation。
 - **跨重启**：receipt 为会话内（重启后 `SOURCE_OPERATION_NOT_FOUND`）；已提交页是唯一持久结果；重试经**自然键**（同项目同 entry 已有非 superseded binding）判为 `skipped`/`ALREADY_REFERENCED`，不产生重复页。
 - **`import_as_new` 裁决**：在 referenced 模式下只影响**本次导入内**重复内容/occurrence 的处理，**不得**绕过项目内 entry 唯一性（同 book 同 entry 已绑定 → 仍按已引用处理）；`skip` 为默认。
-- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。计数：`imported` 按已提交页；`skipped` 按来源项；`failed`/`unsupported` 按来源项；`pending`/`remaining_pages` 为未处理；`totals` 与逐项 counts 之和一致（断言）。
+- **提交单元与计数（冻结）**：一个单元 = 一页（`pages` + `page_bindings` + 必要 source/version/entry 元数据，同一 SQLite 事务）；`committed_boundary` = 已提交页数；已提交页保留，未提交页不出现；取消只发生在单元边界。计数：`imported` 按已提交页；`skipped` 按来源项；`failed`/`unsupported` 按来源项；`pending`/`remaining_pages` 为未处理；`totals` 与逐项 counts 之和一致（断言）。**计数示例**：一个 20 页容器取消于第 12 页并含 1 个 unsupported 成员 → item `{outcome:"pending", committed_pages:12, remaining_pages:7, committed_entries:12, unsupported:1}`，totals `{imported:12, skipped:0, failed:0, unsupported:1, pending:7}`；若最终 `state="failed"` 而部分页已提交，item `outcome="failed"`，`committed_pages` 保留实际值，不得改写成 0。
 - **部分容器取消/崩溃**：逐项 receipt 记录 `committed_pages`、`remaining_pages`、`committed_entries`；重试/继续只补未提交单元，不回滚已提交页（不声称整次导入原子）。
 - **receipt（冻结形状）**：
   ```json
@@ -111,8 +111,8 @@
 
 ## 5. Plan 的 canonical 内容与确认
 
-- `plan_digest = sha256(canonical-json{plan_id, chapter_id, duplicate_policy, registry_id/generation per grant, ordered sources/entries with {source_kind, locator, ordinal, content_digest, expected_entry_id?}})`；plan 有效期 ≤300s。
-- 确认（`StartImportReferences`）时 Core 必须：①校验 `plan_digest` 与当前 plan 一致；②对每个 grant 重新校验 generation/identity/entry digest（不得只信保存的 plan）；③目标 chapter 存在且未删除、项目未变化。任一变化 → `SOURCE_PLAN_STALE`（附计数，不泄露路径），要求重新预览。
+- `plan_digest = sha256(canonical-json{plan_id, chapter_id, duplicate_policy, registry_id/generation per grant, container_digests, ordered sources})`；非加密源再包含逐 entry `{source_kind, locator, ordinal, content_digest, expected_entry_id?}`；**加密源不包含任何明文/像素 digest**（`entries:null` 或仅 `{locator, ordinal}`），plan 有效期 ≤300s。
+- 确认（`StartImportReferences`）时 Core 必须：①校验 `plan_digest` 与当前 plan 一致；②对每个 grant 重新校验 generation/identity/容器 digest（非加密源另校验逐 entry digest，不得只信保存的 plan）；③加密源在确认后才解密并计算逐 entry digest；容器 digest 无法重验一致 → `SOURCE_PLAN_STALE`；④目标 chapter 存在且未删除、项目未变化。任一变化 → `SOURCE_PLAN_STALE`（附计数，不泄露路径），要求重新预览。
 - plan 保存于 Core 进程内（可含一次性 grant 引用）；不写 DB、不含密码；过期/被替换的 plan 不可再确认。
 
 ## 6. 错误码闭集与映射
@@ -141,7 +141,7 @@
 
 ## 7. 安全与证据约束（含 WireLog 抑制位置）
 
-1. **脱敏发生在进入 `WireLog.Frames` 与 NDJSON 之前**：对 `RegisterSourceReadGrant` 的请求/响应行，`secret_ref` 整体替换为 `"<redacted>"`，`signing_key` 替换为 `"<redacted>"`；Host 侧 `host_session_credential` 等既有敏感字段按既有口径处理。测试必须断言 Frames/NDJSON 中不含密码字面量、其 hex/base64/url-encoded 形式、secret_ref token/path、signing_key。
+1. **脱敏发生在进入 `WireLog.Frames` 与 NDJSON 之前，覆盖所有携带敏感/路径字段的命令**：至少 `RegisterSourceReadGrant`、`PlanImportReferences`、`StartImportReferences`、`RegisterImportSource`（既有口径）以及其响应；字段至少 `secret_ref`（整对象）、`signing_key`、`host_session_credential`、`scope.entries[].path`、`entries[].path`、任何嵌套 `path` 键。实现必须在构造可保存 Frame **之前**完成重写：`request`/`response` 原行重序列化为脱敏版本，`request_utf8_hex`/`response_utf8_hex` 从**脱敏后的字节**计算，内存 Frames 与 NDJSON 均不保留原行；Host 日志同口径。测试逐项断言：密码字面量及其 hex/base64/url-encoded、secret_ref token/path、signing_key、绝对路径在 Frames/NDJSON/日志中 0 命中，且脱敏后 JSON 仍可解析。
 2. 密码/secret_ref 内容不得进入：task/snapshot/Registry 明文/receipt/异常/verification 证据；`secret_ref` 元数据允许在签名 payload/内存中，但不得进 WireLog/日志/UI/receipt。
 3. 绝对路径仅允许出现在 Host→Core 的签名 grant payload（既有 import grant 同口径）；receipt/UI/错误/日志不出现。
 4. `user-source` 不得进入 derived-cache grant；derived 产物不得作为 SourceVersion 证据（C-01b SC-20 / C-14 SC-S17）。
@@ -172,4 +172,4 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案 | FEA-09 scope-r1 |
-| 2026-11-03 | **v2（处置契约复核 r1）**：C-06 v1.1 UNFREEZE 方向裁决；四维 scope/entry locator 映射；按操作能力检查；`RevokeSourceReadGrant` 即时撤销/ACK/失联 fail-closed；Plan 不消费密码、Import 一次性引用；异步 `StartImportReferences`+轮询+Cancel 状态机；operation 指纹/冲突/busy/跨重启/idempotency；receipt 状态与计数/剩余边界；`import_as_new` 裁决；WireLog 前置脱敏；错误码闭集与优先级 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-002/R1-003/R1-007/R1-008/R1-009/R1-013 |
+| 2026-11-03 | **v3（处置契约复核 r2）**：加密源 Plan 改为有限预览（不解密/无明文摘要，仅容器级 digest）；异步状态机补 accepted/replay/busy 预占/cancel 语义与计数示例；WireLog 脱敏覆盖全部相关命令、嵌套路径、原行与 hex（进入 Frames 前完成）；引用 r1/r2 报告实际归档路径 | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-002/R2-005/R2-007/R2-008 |

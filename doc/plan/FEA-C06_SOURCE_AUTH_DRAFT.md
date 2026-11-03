@@ -72,7 +72,7 @@
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
 - **C-01b**：SC-21（引用源读取需独立授权面）由本草案落地；**SC-01**（新导入不复制）依赖长期读取授权；SC-07（旧 managed 双读）**不依赖**本授权面。
-- **C-05**：源读取产生的 revision 进入可见性谓词（`integrity_status` 校验同口径）。
+- **C-05 v1.1**：源读取产生的 referenced 页进入 C-05 v1.1 `V_ref` 分支（完整性由 binding/`integrity_status` 承载，**不**创建 artifact/revision）；artifact/revision 可见性谓词只适用于 managed/derived 页。
 - **C-04b**：删除授权（AD-003 §3.7 / PD-02/PD-03；注意 PD-05=事务边界、PD-06=失败回滚）与本授权面**独立**——删除不撤销源读取授权，反之亦然。
 
 > 注：ADJ-001 的 PD-05 = 事务边界、PD-06 = 失败回滚；删除**授权**在 AD-003 §3.7（`：95`）/PD-02/PD-03，不在 PD-05/PD-06。

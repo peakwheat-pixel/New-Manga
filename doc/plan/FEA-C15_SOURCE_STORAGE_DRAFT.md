@@ -1,4 +1,4 @@
-# FEA-C15 Source 存储契约（草案 v2，处置契约复核 r1）
+# FEA-C15 Source 存储契约（草案 v3，处置契约复核 r2）
 
 状态：**草案 v2 / 待独立复核后由 DSH 冻结**（FEA-09-PREREQ-1 交付物；冻结后字节不得改，修订须 UNFREEZE）
 日期：2026-11-03
@@ -33,7 +33,7 @@
 - 新增 **`v7__source_storage`**（`SCHEMA_VERSION_V7=7`、`MIGRATION_V7_NAME/SQL` 追加到 `default_migrations()`）。v1–v6 字节不变；**每个迁移版本各自一个事务**（现有 `MigrationRunner` 语义，`migrator.py:82–100/141–174`），**不声称** v1→v7 整链一个事务。
 - **失败停留状态**：从 v6 升级时 v7 失败 → DB 保持 v6（v7 语句与元数据全部回滚）；从更早版本升级时，先前各版本的 additive 迁移可能已提交，这是既有行为，不是 v7 引入的新风险；启动必须 typed 失败（`SOURCE_MIGRATION_FAILED`），**不得**以部分升级库继续服务。
 - **pre-commit 验证回调（冻结 API 语义）**：`MigrationRunner` 增加可选 `validate: Callable[[sqlite3.Connection], None]`，在 `_apply_one` 的 `BEGIN IMMEDIATE` 事务内、全部 v7 语句执行后、写 `schema_migrations`/`application_metadata` **之前**调用：
-  - 回调只能使用该同一 `sqlite3.Connection` 做只读查询；**禁止** commit/rollback/close、禁止执行 DDL/DML、禁止访问 Host/网络/文件系统写；违规由 runner 包装为 `MigrationValidationError`；
+  - 回调只能使用该同一 `sqlite3.Connection` 做**只读 DB 查询**；外部资源验证只允许经注入的 **`IResourceVerifier` 接缝**（对本机受管根做只读存在/可读检查；禁止任何写、网络、Host 调用或第二 SQLite 连接）；**禁止** commit/rollback/close、禁止 DDL/DML；违规由 runner 包装为 `MigrationValidationError`；
   - 回调抛 `MigrationValidationError(code, detail)` 或非 `sqlite3.Error` 异常 → runner rollback 并抛出 typed `MigrationError`（启动失败，不切换入口）；
   - **基线捕获**：迁移前在独立只读连接上捕获（页 ID/顺序、source_hash、managed_original_ref、width/height、Lock、人工数据行计数、reader projection 可见页 ID 顺序），作为内存对象传给回调；不得在回调内重新查询 Host。
 - **v7 验证断言（最小集）**：
@@ -86,9 +86,11 @@ CREATE TABLE source_locations (
     is_current INTEGER NOT NULL DEFAULT 1 CHECK (is_current IN (0, 1)),
     created_at TEXT NOT NULL,
     UNIQUE (source_id, location_id),
-    UNIQUE (registry_id, content_digest, volume_serial, file_id)
+    UNIQUE (source_id, content_digest, volume_serial, file_id)
 );
 CREATE INDEX idx_source_locations_source ON source_locations(source_id, is_current);
+CREATE UNIQUE INDEX uq_source_locations_current
+    ON source_locations(source_id) WHERE is_current = 1;
 
 -- 2.4 内容版本（content identity；rendition 观察在 entries 行）
 CREATE TABLE source_versions (
@@ -114,7 +116,7 @@ CREATE TABLE source_entries (
     locator TEXT NOT NULL CHECK (length(locator) > 0),
     ordinal INTEGER NOT NULL CHECK (ordinal >= 0),
     stable_sort_key TEXT NOT NULL CHECK (length(stable_sort_key) > 0),
-    content_digest_kind TEXT NOT NULL CHECK (content_digest_kind IN ('encoded', 'pixel')),
+    content_digest_kind TEXT NOT NULL CHECK (content_digest_kind IN ('encoded', 'page-identity')),
     content_digest TEXT NOT NULL CHECK (length(content_digest) = 64),
     encoded_digest TEXT CHECK (encoded_digest IS NULL OR length(encoded_digest) = 64),
     pixel_digest TEXT CHECK (pixel_digest IS NULL OR length(pixel_digest) = 64),
@@ -205,40 +207,47 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 | kind | content digest（`sources/source_locations/source_versions`） | entry 产生 |
 |---|---|---|
 | `image` | 文件原始字节 sha256 | 单 entry，locator=文件名，`encoded` |
-| `pdf` | 文件原始字节 sha256 | 每页 entry，locator=十进制页码，`pixel`（`pixel-digest/1`） |
+| `pdf` | 文件原始字节 sha256 | 每页 entry，locator=十进制页码；`content_digest_kind='page-identity'`，`content_digest = sha256("pdf-page/1\0" + container_digest + "\0" + page_ordinal)`；pixel digest 仅作 rendition 观察 |
 | `zip`/`cbz` | 归档原始字节 sha256 | 每成员 entry，locator=成员名（允许重复名），`encoded` |
 | `folder` | **folder-manifest/1**：`sha256(canonical-json({"format":"folder-manifest/1","entries":[{"rel_path","size_bytes","sha256"}...按 rel_path 排序]}))`；目录 identity=volume serial+file id | 每个直接子文件 entry，locator=相对路径（`/` 分隔），`encoded` |
 
-- PDF 的 `pixel-digest/1` = `sha256("WxH\0" + RGB 字节)`（沿用 FEA-08 口径），算法版本写入 `pixel_digest_algorithm`；decoder/scale/编码参数变化只更新 rendition 观察列（`decoder_*`、width/height、entries 的 pixel 观察），**不得**产生新 `SourceVersion` 或改变 `entry_id`（SC-28）。
-- `pages.source_hash`：managed = 原文件字节 sha256；referenced = 对应 entry 的 `content_digest`；`pages.source_size_bytes` = entry `size_bytes`；width/height 取 entry 解码结果。
+- PDF 的 **page-identity** 是不可变的内容身份：`sha256("pdf-page/1\0" + 容器原始字节 sha256 + "\0" + 页码 ordinal)`，不依赖 decoder/scale/像素；decoder/scale/编码参数变化只更新 rendition 观察列（`decoder_*`、`pixel_digest`、width/height、orientation），**不得**改变 `content_digest`/`entry_id`/binding 的 `verified_digest`（SC-28）。`pixel-digest/1` = `sha256("WxH\0" + RGB 字节)` 仅作精确匹配/确认的 rendition 观察，写入 `pixel_digest` + `pixel_digest_algorithm='pixel-digest/1'`；不得作为 binding 的 content digest。
+- `pages.source_hash`：managed = 原文件字节 sha256；referenced = 对应 entry 的 `content_digest`（image/archive=`encoded`，pdf=`page-identity`）；`pages.source_size_bytes` = entry `size_bytes`；width/height 取 entry 解码结果。
 - `stable_sort_key`：由导入层按“自然排序键 + 稳定 tie-break”生成（PDF=页码数值；文件夹=相对路径自然排序；归档=成员 ordinal/名称自然排序），必须满足 DDL 的版本内唯一；同键冲突时导入层追加 ordinal tie-break，不得静默覆盖。
 - `locator` 安全规则：禁止绝对路径/盘符/UNC/`..`/NUL/控制字符；文件夹相对路径使用 `/`；最大 4096 字符。`source_filename` 仅 basename（禁止 `/`、`\`，≤255）；`display_name` 去控制字符、≤512；`decoder_params_json` 为 canonical JSON、无绝对路径、≤4KB（应用层校验）。
 
 ### 3.2 重复 occurrence 与 entry 身份保续
 
 - 重复归档名/重复同图：每个 occurrence 独立 entry（以 `ordinal` 区分），**不得**按 digest 合并或丢弃 occurrence（ADR/提案 `:457`/`:469`；C-14 SC-S10）。
-- 跨版本 `entry_id` 保续：仅在同一 `source_id` 内、按**内容指纹**（encoded digest；PDF 用 pixel-digest/1）匹配；若多个候选同 digest（重复 occurrence）→ 按 `stable_sort_key` 锚定唯一匹配才保续；仍歧义 → 新 entry_id + 受影响 binding 置 `needs_confirmation`，**不得**仅凭 digest 自动合并/迁移人工内容。
+- 跨版本 `entry_id` 保续：仅在同一 `source_id` 内、按**不可变内容身份**匹配（image/archive 用 encoded digest；PDF 用 page-identity）确定候选；同一身份在多个 occurrence（重复名/重复同图）时按 `stable_sort_key` 锚定唯一匹配才保续；`pixel_digest` 只可用于**候选比较/人工确认**（重编码容器），不得单独作为身份或自动合并依据。仍歧义 → 新 entry_id + 受影响 binding 置 `needs_confirmation`，**不得**仅凭 digest 自动合并/迁移人工内容。
 - 同内容不同物理源（volume/file id 不同）→ 不同 `source_id`（I-3）；`import_as_new` 不能绕过项目内 entry 唯一性（C-16 §4）。
+- **源复用规则（v3）**：Core 写入前按**物理身份** `(content_digest, volume_serial, file_id)` 查 `source_locations`；命中则复用同一 `source_id`/version/entries，并**原地更新**该 location 的 `registry_id/authorization_generation/last_verified_at`（不新建重复 location；DDL 的 `UNIQUE(source_id, content_digest, volume_serial, file_id)` + 部分唯一 `is_current=1` 保证每个 source 只有一个当前物理位置）。未命中才新建 source/location。重授权/重新注册不改变 `source_id`；旧 binding 的 `authorization_generation` 允许 ≤ 当前 Host generation，读取时以 Host grant 的 identity/generation 复核为准（不要求等值）。
 
 ## 4. 完整性 / 可见性 / 可读性拆分与五读路径
 
 ### 4.1 三个谓词（冻结）
 
-1. **`is_complete_page(p)`**（数据完整性；不看 deleted/时间）：
+1. **`is_complete_page(p)`**（数据完整性；不看 deleted/时间/资源）：
    ```text
-   p.integrity_status = 'complete' AND p.source_hash IS NOT NULL AND p.width > 0 AND p.height > 0
-   AND (
-     (p.source_mode = 'managed'   AND p.managed_original_ref IS NOT NULL)
-     OR
-     (p.source_mode = 'referenced' AND EXISTS (
-        SELECT 1 FROM page_bindings b
-        JOIN source_entries e ON (e.source_id, e.version_id, e.entry_id) =
-             (b.source_id, b.accepted_source_version, b.entry_id)
-        WHERE b.page_id = p.page_id AND b.status = 'healthy'
-          AND b.verified_digest = e.content_digest))
-   )
+   -- managed：旧完整性谓词 + v7 状态列
+   p.source_mode = 'managed' AND p.integrity_status = 'complete'
+     AND p.source_hash IS NOT NULL AND p.managed_original_ref IS NOT NULL
+     AND p.width > 0 AND p.height > 0
+   -- referenced：C-05 v1.1 P7 ∧ P8（healthy binding + verified_digest 一致）
+   OR (p.source_mode = 'referenced' AND p.integrity_status = 'complete'
+       AND p.source_hash IS NOT NULL AND p.width > 0 AND p.height > 0
+       AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e
+           ON (e.source_id,e.version_id,e.entry_id)=(b.source_id,b.accepted_source_version,b.entry_id)
+           WHERE b.page_id=p.page_id AND b.status='healthy'
+             AND b.verified_digest=e.content_digest))
    ```
-2. **`V(p,t)`**（C-05 v1.1 可见性）：父书/章节/页未软删 ∧ `is_complete_page(p)` ∧ `p.created_at <= t`（managed 分支仍按 artifact/revision 条件；referenced 分支按 C-05 v1.1 §3.1）。
+2. **`V(p,t)`**（C-05 v1.1 §3.1 权威，模式分派）：
+   ```text
+   V(p,t) ≡ (p.source_mode='managed'    AND V_artifact(p,t))
+          OR (p.source_mode='referenced' AND V_ref(p,t))
+   V_artifact = C-05 原 P1–P5（artifact/revision；不要求 pages.integrity_status，字节不变）
+   V_ref      = C-05 v1.1 P1 ∧ P7 ∧ P8 ∧ P5（父级未删/页未删/referenced 完整性/健康 binding/时间）
+   ```
 3. **`R(p,t)`**（当前可读/可解析）：`V(p,t)` ∧ 资源授权有效 —— managed：受管根校验可读；referenced：C-16 的有效 source-read grant + identity digest 匹配。**读取层不得把 `V` 当 `R`**；导出/阅读器读取失败要 typed，不静默显示空页。
 
 ### 4.2 五读路径（FEA-09 必改/必回归）
@@ -289,7 +298,7 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 
 1. **Host 先持久化授权**：`source_register_root` 或操作前校验 Registry 并（必要时）原子持久化 generation；失败 → 不进入 Core 写阶段。
 2. **Host 在 dispatch 前铸造 source-read grant**（签名、四维 scope、budget、expiry，C-16 §2）；Host 在铸造时完成 `VerifySourceRead` 的 **scope→授权根**解析。
-3. **Core 侧 VerifySourceRead**：每次读取前/每次 commit 前校验签名/session/expiry/generation/identity（同一验证句柄的 digest/volume/file id），失败不读/不提交。
+3. **Core 侧 VerifySourceRead**：每次读取前/每次 commit 前校验签名/session/expiry/generation/identity（同一验证句柄的 digest/volume/file id），失败不读/不提交。既有 binding 的 `authorization_generation` 允许 ≤ 当前 Host generation；只要 Host 当前授权覆盖同一物理 identity 即可读，generation 递增本身不使 binding 失效。
 4. **Core 读取/解码在 DB 事务之外**；**单事务提交**：source rows + pages（mode/integrity）+ binding（healthy, verified_digest 一致）；失败整体回滚，未提交页不可见。
 5. **即时撤销（R1-003）**：用户撤销 → Host 持久化 generation+1 → 向 Core 推送 `RevokeSourceReadGrant`（含 registry_id/generation/grant ids）→ Core 立即废止本地 grant 并在**下一个提交边界**停止；Core ACK 后 Host 才返回撤销成功。提交边界前已提交的页合法保留；撤销成功后的新读/新 commit 一律拒绝（`SOURCE_GRANT_REVOKED`）。
 6. **Host 失联**：Core 检测 stdin EOF/transport 失败 → 立即废止全部 source grant、停止后续读取与 commit（fail-closed）；不得以“grant 未过期”继续。
@@ -317,4 +326,4 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案：v7 DDL、Host Registry 约束、跨存储次序 | FEA-09 scope-r1 |
-| 2026-11-03 | **v2（处置契约复核 r1）**：拆分完整性/可见性/可读性；C-05/C-06 UNFREEZE 依赖；DDL 增加同源复合 FK、稳定排序键/项目内 entry 唯一、cache 三列 FK、pixel-digest 算法；源身份/复用/occurrence 判据；managed 写入 integrity 规则；迁移 pre-commit 回调/基线/资源守恒/失败停留；Registry 逐根身份/锁重载/缺失vs损坏/reset/DPAPI 测试边界；§6 即时撤销/失联 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-001…R1-013 |
+| 2026-11-03 | **v3（处置契约复核 r2）**：C-05 模式分派一致化（managed V 不改、referenced 不得借 artifact 绕过）；PDF page-identity 与 pixel rendition 分离；location 唯一键改为 `(source_id, content_digest, volume_serial, file_id)` + 当前位置部分唯一，重授权原地更新；callback 允许 `IResourceVerifier` 只读文件验证；binding generation ≤ 当前代次规则 | `doc/reviews/FEA-09-PREREQ-1-r2.md` R2-001/R2-003/R2-004/R2-006 |

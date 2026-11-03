@@ -48,24 +48,32 @@ S(p, t) ≡ V(p, t) ∧ active_runs(p) = ∅
 
 其中 `VISIBLE_TYPES = {'original','thumbnail','clean','translated','render_preview','export'}`（`detection_overlay`/`mask`/`debug_*` 是中间产物，**不**构成可见性）。
 
-### 3.1 referenced 页分支（v1.1 UNFREEZE 追加；引用 C-15 v2 §4.1）
+### 3.1 模式分派与 referenced 页分支（v1.1 UNFREEZE 追加）
 
-引用源页（`source_mode='referenced'`）**不使用** artifact/revision 模型。其可见性定义为：
+**总可见性按 `source_mode` 分派，不得让两种模型互相穿透**：
 
-```
-V_ref(p, t) ≡
-  P1. p.deleted_at IS NULL ∧ c.deleted_at IS NULL ∧ b.deleted_at IS NULL
-∧ P7. pages.source_mode = 'referenced' ∧ pages.integrity_status = 'complete'
-      ∧ pages.source_hash IS NOT NULL ∧ pages.width > 0 ∧ pages.height > 0
-∧ P8. ∃ binding ∈ page_bindings:
-        binding.page_id = p.page_id
-        ∧ binding.status = 'healthy'
-        ∧ binding.verified_digest = entry(binding).content_digest
-        ∧ entry/version 行完整（C-15 v2 §4.1）
-∧ P5. p.created_at <= t
+```text
+V(p,t) ≡
+  (pages.source_mode = 'managed'    ∧ V_artifact(p,t))
+∨ (pages.source_mode = 'referenced' ∧ V_ref(p,t))
 ```
 
-**总可见性**：`V(p,t) ≡ V_artifact(p,t) ∨ V_ref(p,t)`，其中 `V_artifact` 是 §3 原 P1–P5 的 managed/derived 分支（字节不变）。稳定性 `S(p,t) = V(p,t) ∧ active_runs(p)=∅` 对两分支一致。
+- `V_artifact(p,t)` = §3 原 P1–P5，**字节与语义均不变**；**仅当** `source_mode='managed'` 时适用。**不要求** `pages.integrity_status`（保持旧 managed 行为；artifact/revision 自身的 integrity 仍是内容可读前提）。
+- `V_ref(p,t)`（referenced 页不使用 artifact/revision）：
+
+```text
+P1. p.deleted_at IS NULL ∧ c.deleted_at IS NULL ∧ b.deleted_at IS NULL
+P7. pages.source_mode = 'referenced' ∧ pages.integrity_status = 'complete'
+    ∧ pages.source_hash IS NOT NULL ∧ pages.width > 0 ∧ pages.height > 0
+P8. ∃ b ∈ page_bindings:
+      b.page_id = p.page_id ∧ b.status = 'healthy'
+      ∧ b.verified_digest = e.content_digest
+      ∧ (b.source_id, b.accepted_source_version, b.entry_id) 指向存在且同 source 的 entry/version
+P5. p.created_at <= t
+```
+
+- 稳定性不变：`S(p,t) = V(p,t) ∧ active_runs(p)=∅`。
+- **冻结反例判据**：① referenced 页即使存在 valid artifact/revision，也**不得**经 `V_artifact` 变为可见（mode 分派阻止）；② managed 页即使 `pages.integrity_status` 列异常，`V` 仍只按原 artifact/revision 条件判定（旧行为不变）；③ 旧 managed 页导入元数据不完整但 artifact/revision 有效 → 仍可见。
 
 ### 3.2 三谓词拆分（v1.1 UNFREEZE 追加；R1-001）
 
@@ -73,8 +81,8 @@ C-05 v1.1 明确区分，不得混用：
 
 | 谓词 | 定义 | 用途 |
 |---|---|---|
-| `is_complete_page(p)` | 数据完整性：managed 分支要求 `source_hash/managed_original_ref/width/height` 非空且 `integrity_status='complete'`；referenced 分支要求 `integrity_status='complete'` + healthy binding + `verified_digest` 一致。**不看 deleted_at/时间/资源** | 迁移守恒、缓存/计数、重导入判重 |
-| `V(p,t)` | 数据库可见性：父书/章节/页未软删 ∧ `is_complete_page` ∧ `created_at<=t`（managed 分支另需 artifact/revision 条件） | reader/导出/删除预览的数据库投影 |
+| `is_complete_page(p)` | 数据完整性（**不看** deleted/时间/资源）：managed = `source_hash/managed_original_ref/width/height` 非空且 `integrity_status='complete'`；referenced = P7 ∧ P8。 | 迁移守恒、缓存/计数、重导入判重 |
+| `V(p,t)` | 数据库可见性：§3.1 的模式分派（managed 分支 = 原 P1–P5；referenced 分支 = P1∧P7∧P8∧P5） | reader/导出/删除预览的数据库投影 |
 | `R(p,t)` | 当前可读性：`V(p,t)` ∧ 资源授权有效（managed：受管根校验；referenced：C-16 有效 source-read grant + identity 匹配） | 实际读取/解析；`V` 为真不代表此刻可读，读取失败必须 typed |
 
 **失败语义（v1.1 追加行）**：
@@ -83,7 +91,7 @@ C-05 v1.1 明确区分，不得混用：
 |---|---|
 | referenced 页 `integrity_status='incomplete'` 或 binding 非 healthy | 不可见（P7/P8 不满足）；行保留、可诊断/可恢复；记内部 `DATA_INTEGRITY_INCOMPLETE` |
 | referenced 页 `V` 为真但 Host 授权撤销/失联/identity 漂移 | 数据库投影仍可见；读取返回 `SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`/`FILE_IDENTITY_CHANGED` typed；不得显示空页或回退路径读 |
-| 旧 managed 页缺受管文件 | `is_complete_page` 仍按数据列判定；读取/导出按既有失败语义；迁移期由 C-15 §1 资源守恒阻断切入口 |
+| 旧 managed 页缺受管文件 | `is_complete_page` 仍按数据列判定；`V` 按原 artifact/revision 分支；读取/导出按既有失败语义；迁移期由 C-15 §1 资源守恒阻断切入口 |
 
 **判别 SQL（参考实现，非冻结 SQL）**：
 
