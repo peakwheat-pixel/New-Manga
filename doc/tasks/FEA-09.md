@@ -8,7 +8,7 @@ approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1
 suggested_owner: codex
 owner: codex（DSH 2026-11-03 额度恢复后续跑）
 claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`；2026-11-03 Codex 本轮通过 Node 通路恢复，接续 ZCode Phase A/B 及 Phase C 半成品
-reviewer: 实现 Review r1 changes_requested（P0=0/P1=8/P2=3，doc/reviews/FEA-09-impl-r1.md）；返修后 **r1-rework changes_requested（P0=0/P1=1/P2=4，doc/reviews/FEA-09-impl-r1-rework-r1.md，ZCode sess_b421a1f9…，reviewed_head 59ad0b9fe）**；P1（PDF resolve 密码）与 P2-1/2/3 已修，待新上下文最终复核；P2-4（RenditionCache 装配失败降级 legacy）登记债务候选
+reviewer: 实现 Review r1 changes_requested（P0=0/P1=8/P2=3，doc/reviews/FEA-09-impl-r1.md）；返修后 **r1-rework changes_requested（P0=0/P1=1/P2=4，doc/reviews/FEA-09-impl-r1-rework-r1.md，ZCode sess_b421a1f9…，reviewed_head 59ad0b9fe）**；P1（PDF resolve 密码）与 P2-1/2/3 已修，待新上下文最终复核；P2-4（RenditionCache 装配失败降级 legacy）已登记债务（见文末「债务候选」）；最终复核 r2 approved（doc/reviews/FEA-09-impl-r1-rework-r2.md，ZCode sess_8fd2ec28…，P0=0/P1=0/P2=2）
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
@@ -288,3 +288,16 @@ out_of_scope:
 - **重冻**：`CONTRACT-UNFREEZE-2026-11-04.md`；FROZEN 记录 C05 v1.2 / C15 v1.1 / C16 v1.1；新 pin `f6e6f3cb…` / `d8c0a3bc…` / `0b9511a5…`；旧 pin/载体/Review 原字节保留；`verify_pins` **17/17 PASS**。
 - **M2-C1 无字节变更**（单独登记，不并入 17 pin）。
 - **实现释放**：R1-I001（C-05 v1.2/C-15 v1.1）与 R1-I005（C-16 v1.1）现可实施；实现须以契约不变量 + impl-design + 测试矩阵为准，完成后需新的独立实现复核 + DSH 集成。**I001/I005 仍为返修项，Task 不得 done。**
+## 债务候选（DSH 裁决，2026-11-04）
+
+| ID | 内容 | 裁决 | 跟踪 |
+|---|---|---|---|
+| DEBT-FEA09-01 | RenditionCache 装配失败仅日志并置 None，resolve 静默降级 legacy 无预算/LRU/并发约束路径（`core_service.py` 装配处） | 不影响契约安全（加密源 legacy 仍 typed REQUIRED）；本轮不修，登记债务 | 建议后续 FEA 前端/资源通道 Task 收敛为 fail-closed 或 typed 降级能力 |
+
+## 返修批次记录（2026-11-04）
+
+| 批次 | commit | 内容 |
+|---|---|---|
+| I005 Host | `59ad0b9fe` | Host fresh-grant/DPAPI 一次性 token/ReadPageImage 密码重试 |
+| I011 | `bc90b467f` | EV 收敛：唯一 ID/0 PENDING/旧台账归档/合成目录去跟踪 |
+| r1-rework P1 | `de7732368` | PDF resolve 密码接线、DocumentRaster password/page_size 端口、解压预算、PageView 重复属性、加密 PDF e2e、I009 book 改挂负测 |

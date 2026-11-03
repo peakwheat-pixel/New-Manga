@@ -6,6 +6,8 @@ duplicate policy).
 
 from __future__ import annotations
 
+import pytest
+
 import time
 
 from application.importing.referenced.errors import SourceImportError
@@ -75,3 +77,30 @@ def test_plan_is_bound_to_project_and_duplicate_policy(tmp_path, repo, book_chap
         assert error.code == "SOURCE_PLAN_STALE"
     else:  # pragma: no cover - the planner must bind the policy
         raise AssertionError("start accepted a plan from another policy")
+
+
+def test_stale_plan_when_chapter_moves_to_another_book(tmp_path, repo, book_chapter):
+    """R1-I009 P2-b: a plan is bound to the chapter's book, not just the policy."""
+    access = FakeSourceReadAccess()
+    _image_grant(access, tmp_path, "p.png", "g-image-0000000001")
+    runtime = build_runtime(repo, access)
+    plan = runtime._planner.plan(
+        chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+    )
+    repo._conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('book-2', 'other', '2026-11-01T00:00:00.000+00:00',"
+        " '2026-11-01T00:00:00.000+00:00')"
+    )
+    repo._conn.execute(
+        "UPDATE chapters SET book_id = 'book-2' WHERE chapter_id = 'c1'"
+    )
+    repo._conn.commit()
+    with pytest.raises(SourceImportError) as caught:
+        runtime.start(
+            chapter_id="c1", plan_id=plan["plan_id"],
+            plan_digest=plan["plan_digest"],
+            grants=["g-image-0000000001"], duplicate_policy="skip",
+            operation_id=OP,
+        )
+    assert caught.value.code == "SOURCE_PLAN_STALE"
