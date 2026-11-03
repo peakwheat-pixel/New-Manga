@@ -1229,3 +1229,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **证据**：`verification/FEA-09/logs/dsh-referenced-resolve.log`、`verification/FEA-09/AC-MATRIX.md`；commit `78bda22c`、`3f205655`（后续 EV pin）。
 - **AC 矩阵**：AC-1…AC-10 全 **PARTIAL**，无 MET；关键缺口：真实 Host IPC + V2 adapter 端到端（AC-6）、双读/回退开关集成断言（AC-7）、AC-1/2/4/5/9/10 的完整矩阵、独立 impl Review。
 - 门禁：check PASS(3)、pins 17/17；未 push。
+## 187. FEA-09 goal round 1 续跑（2026-11-03 22:00）
+
+- **DSH 直接实现增量（不等待外部 Agent）**：referenced 生产 resolve（grant 派生查找/strict read/PNG rendition 发布/typed 失败/无 raw/无任意路径）；`read_secret` 生产注入；decode 预算；`rendition_cache` 行写入。
+- **测试**：`pytest tests/fea09` 由 92 → **100 passed**（新增 resolve 6、sharing 1、dual-read 1 等）；core 定向 EXIT 0；check PASS、pins 17/17。
+- **AC 矩阵**：`verification/FEA-09/AC-MATRIX.md` 建立；AC-1…AC-10 全 PARTIAL（无 MET），AC-3 跨项目共享、AC-7 双读 resolve 已补证据。
+- **commits**：`78bda22c`（resolve）、`3f205655`（密码/cache）、`79d97cff`（AC-3/AC-7 证据）及 EV pin commits `0aa8a2d8`/`a7b8dac7`/`96bd2cad`。
+- **下一可推进项（计划）**：真实 Host IPC/V2 证据（AC-6）——需构建当前 Core sidecar、Host.Tests 增加真实 stdio 测试（CoreServiceClient + SourceAccessRegistry + SourceReadCoordinator → Plan/Start/GetReceipt/Resolve），并保存证据；之后独立 impl Review。
+- 不 push；未触碰冻结契约/UI/共享组合根/依赖/真实用户数据。
