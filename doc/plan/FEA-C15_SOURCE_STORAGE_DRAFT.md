@@ -1,6 +1,6 @@
 # FEA-C15 Source 存储契约（草案 v5，处置契约复核 r4）
 
-状态：**UNFREEZE v1.1 候审（2026-11-04；按 r15 approved 提交语义修订，待已提交字节独立复核后重冻）**（已冻结历史：v1.0 FROZEN 2026-11-03；载体待建 `CONTRACT-UNFREEZE-2026-11-04.md`）
+状态：**FROZEN v1.1（2026-11-04 重冻；v1.0 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-04](../reviews/CONTRACT-UNFREEZE-2026-11-04.md)；冻结记录 [FEA-CONTRACT-FROZEN-C15](FEA-CONTRACT-FROZEN-C15.md)；UNFREEZE r15 approved + 已提交字节独立复核 approved（P0=0/P1=0））
 日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05 v1.2/C-06/C-14 冻结/修订契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）；v1.1 依据实现 Review r1 R1-I001 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。

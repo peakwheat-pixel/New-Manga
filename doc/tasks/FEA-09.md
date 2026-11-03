@@ -281,3 +281,10 @@ out_of_scope:
 - 实现设计委托：`doc/handoffs/FEA-09-impl-design-I001-I005.md`（内部算法/端口/状态机/DTO 映射；由实现 Review 校验）。
 - **下一步**：语义修订提交 → 三指纹/old-new blob → 已提交字节独立复核 → 仅元数据重冻；冻结后释放 I001/I005 实现。
 - 记录：`verification/FEA-09/logs/dsh-unfreeze-chain.log`。
+## UNFREEZE 修订单已重冻（2026-11-04）
+
+- **语义修订**：`ed570681b`（C-05 v1.2/C-15 v1.1/C-16 v1.1）+ `a9276fbae`（C-15 §4.2 reader 恢复算法/offset 规范引用 + 版本引用补正）。
+- **复核**：UNFREEZE r15 approved（ZCode 故障转移）；已提交字节独立复核 ZCode `sess_1517188b…`（P1×1/P2×1）→ 补正 → `sess_f155bf21…` **approved P0/P1/P2=0**。
+- **重冻**：`CONTRACT-UNFREEZE-2026-11-04.md`；FROZEN 记录 C05 v1.2 / C15 v1.1 / C16 v1.1；新 pin `f6e6f3cb…` / `d8c0a3bc…` / `0b9511a5…`；旧 pin/载体/Review 原字节保留；`verify_pins` **17/17 PASS**。
+- **M2-C1 无字节变更**（单独登记，不并入 17 pin）。
+- **实现释放**：R1-I001（C-05 v1.2/C-15 v1.1）与 R1-I005（C-16 v1.1）现可实施；实现须以契约不变量 + impl-design + 测试矩阵为准，完成后需新的独立实现复核 + DSH 集成。**I001/I005 仍为返修项，Task 不得 done。**

@@ -1,6 +1,6 @@
 # FEA-C16 Source 读取与导入 wire 协议（草案 v7，处置契约复核 r6）
 
-状态：**UNFREEZE v1.1 候审（2026-11-04；按 r15 approved 提交语义修订，待已提交字节独立复核后重冻）**（已冻结历史：v1.0 FROZEN 2026-11-03；载体待建 `CONTRACT-UNFREEZE-2026-11-04.md`）
+状态：**FROZEN v1.1（2026-11-04 重冻；v1.0 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-04](../reviews/CONTRACT-UNFREEZE-2026-11-04.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；UNFREEZE r15 approved + 已提交字节独立复核 approved（P0=0/P1=0））
 日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15（同批）、C-01b/C-05/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）；v1.1 依据实现 Review r1 R1-I005 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。

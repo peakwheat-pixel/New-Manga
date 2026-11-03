@@ -1,7 +1,7 @@
 # C05 页可见性谓词 · 冻结记录
 
 **契约**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`
-**冻结时间**：2026-11-01
+**冻结时间**：2026-11-01（v1.0）/ 2026-11-03（v1.1）/ 2026-11-04（v1.2）
 **冻结人**：DSH（Lead / Architect / Integrator）
 **授权**：[用户裁决记录 2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md) + [冻结矩阵](../plan/FEA-CONTRACT_FREEZE_MATRIX.md)
 
@@ -12,9 +12,10 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md` |
-| sha256（v1.1 冻结后最终字节，verify_pins 口径） | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82` |
-| git hash-object（v1.1 blob id） | `b57d1c3aa57013d0cb9f9c6f66d8ce8577a95d3e` |
-| blob 内容 sha256（LF 原始字节） | `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82` |
+| 冻结版本 | **v1.2**（2026-11-04 UNFREEZE 重冻；v1.1/v1.0 历史） |
+| sha256（v1.2 冻结后最终字节，verify_pins 口径） | `f6e6f3cb1fe19b253688f14ddf55f106b8bb89d3d3ab946a185cc12c34dc4714` |
+| git hash-object（v1.2 blob id） | `32d039c0e8d10063076ecded1b333a4f4a512ab6` |
+| blob 内容 sha256（LF 原始字节） | `f6e6f3cb1fe19b253688f14ddf55f106b8bb89d3d3ab946a185cc12c34dc4714` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
@@ -81,3 +82,14 @@
 | 2026-11-01 | pin 修正：原 pin 指向冻结前草案（状态行改动前），改为最终字节 `b34db88768790a982c00d6b78a9649c24047e15d2ba86e3c0bf6a5a293ec8d25`；新增 §1A 修正记录与纪律（见上） | DSH |
 
 | 2026-11-03 | **UNFREEZE v1.1 重冻**：referenced 页可见性分支 + 三谓词拆分（[载体](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)）；r7 approved；新 pin `a234346fb0eec2304c598024740bd0c26eea18117dde6dae5b49410192d58e82`；保留 v1.0 pin 于 §1A/§1B | DSH；FEA-09-PREREQ-1 |
+## 6. v1.2 UNFREEZE 重冻（2026-11-04）
+
+| 项 | 值 |
+|---|---|
+| 载体 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md` |
+| 语义修订提交（复核字节） | `ed570681b57e1343cb8c477f5dd7d23200a2dab4` |
+| 已提交字节独立复核 | ZCode `sess_1517188b…`（P1→补正）→ `ed570681b` 补正提交 `a9276fbae…` → ZCode `sess_f155bf21…` **approved P0/P1/P2=0** |
+| 复核字节 sha256 | `284ce9552e4d569e67bc885386c316b5c40c971e2eb33b578abfeec5429357e7` |
+| 冻结字节 sha256 | `f6e6f3cb1fe19b253688f14ddf55f106b8bb89d3d3ab946a185cc12c34dc4714`（**仅状态行**差异） |
+| 历史 pin（保留） | v1.1 `a234346fb0ee…`；v1.0 `b34db8876879…` |
+| 修订内容 | `V_managed=V_artifact∨V_copy_original`、witness 独立、V/R 分离、反例 1–8、参考投影 |

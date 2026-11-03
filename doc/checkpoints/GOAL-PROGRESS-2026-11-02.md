@@ -1284,3 +1284,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 收敛策略：去除 wire/DTO 变更；契约只冻结外部可观察语义/安全不变量；内部实现委托 impl-design + 实现 Review。
 - 最终包：C-05 v1.2 / C-15 v1.1 / C-16 v1.1；M2-C1 无字节变更。
 - 下一步：语义提交→三指纹/old-new blob→已提交字节独立复核→仅元数据重冻→check+17 pins→释放 I001/I005。
+## 195. FEA-09 UNFREEZE 重冻完成（2026-11-04）
+
+- 语义提交 `ed570681b`/`a9276fbae`；已提交字节两次独立复核（ZCode sem1/sem2，最终 approved P0=0/P1=0/P2=0）。
+- 重冻载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md`；FROZEN 记录 C05 v1.2/C15 v1.1/C16 v1.1；新 pin `f6e6f3cb…`/`d8c0a3bc…`/`0b9511a5…`；`verify_pins` **17/17 PASS**；M2-C1 无字节变更登记。
+- 实现释放：R1-I001/R1-I005 可实施（契约不变量 + impl-design + 测试矩阵）；完成后新独立实现复核 + DSH 集成。

@@ -1,7 +1,7 @@
 # C15 Source 存储契约 · 冻结记录
 
 **契约**：`doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md`
-**冻结时间**：2026-11-03
+**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）
 **冻结人**：DSH（Lead / Architect / Integrator）
 **授权**：FEA-09-PREREQ-1；独立复核 r7 **approved**（[FEA-09-PREREQ-1-r7](../reviews/FEA-09-PREREQ-1-r7.md)，reviewed_head `220979ba81f37e857f241049535caef7246c97b1`）；冻结自草案 v5
 
@@ -12,9 +12,9 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md` |
-| 冻结版本 | **v1.0**（对应草案 v5） |
-| sha256（工作树最终字节，verify_pins 口径） | `6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc` |
-| git hash-object（blob id） | `04d2101893d7eeba6d9aee9f973f0245968d5848` |
+| 冻结版本 | **v1.1**（2026-11-04 UNFREEZE 重冻；v1.0 历史） |
+| sha256（v1.1 冻结后最终字节，verify_pins 口径） | `d8c0a3bcfc21229bff8f6feb6853866cdea7dc902b76f1ae45b0d374ce6579d6` |
+| git hash-object（v1.1 blob id） | `a0286bac06aa89587a6a7cbcf08461aae8add865` |
 | blob 内容 sha256（LF 原始字节） | `6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
@@ -58,3 +58,14 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | 建立：C-15 v1.0 冻结（来自草案 v5），记录三种指纹、条件核验与边界 | DSH；FEA-09-PREREQ-1；r7 approved |
+## 6. v1.1 UNFREEZE 重冻（2026-11-04）
+
+| 项 | 值 |
+|---|---|
+| 载体 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md` |
+| 语义修订提交（复核字节） | `ed570681b57e1343cb8c477f5dd7d23200a2dab4` + 补正 `a9276fbaeeb7dd9fa85569910dfe314ee45bbff0` |
+| 已提交字节独立复核 | ZCode `sess_1517188b…`（P1×1/P2×1）→ 补正 → ZCode `sess_f155bf21…` **approved P0/P1/P2=0** |
+| 复核字节 sha256 | `6b93a3683c85771c897ee56531287f8e16f284020d5af7185fbf14e4774c02f9` |
+| 冻结字节 sha256 | `d8c0a3bcfc21229bff8f6feb6853866cdea7dc902b76f1ae45b0d374ce6579d6`（**仅状态行**差异） |
+| 历史 pin（保留） | v1.0 `6da686178f4d…` |
+| 修订内容 | 正尺寸迁移基线、union 守恒断言、V 行可观察、§4.4 只读投影、reader 恢复算法与 M2-C1 §6.3 offset 引用 |
