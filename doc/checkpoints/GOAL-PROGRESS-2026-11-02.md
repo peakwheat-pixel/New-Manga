@@ -1061,3 +1061,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 当前 head `e69f8164c`；FEA-08 in_review（实现 `c422bf164`/登记 `42de98812`，AC1–4 MET，36 pins；DSH 核验 1292/0/57、src_changes=0、check PASS、pins 15/15）。
 - **impl-r1 复核在旧会话 workflow `workflow-ee455a2363be4b01` 运行中**；若旧会话关闭导致中断，新会话先从 `doc/reviews/FEA-08-impl-r1.md` 是否存在判断，缺则重派独立 Review。
 - 治理 PASS(3)；未 push。
+## 165. FEA-08 impl-r1 changes_requested（2026-11-03 09:44）
+
+- FEA-08 impl-r1（D-9 独立子 agent，job `workflow-ee455a2363be4b01`，reviewed_head `0a2a069a8`）：**changes_requested P0=0/P1=2/P2=9**；报告 `doc/reviews/FEA-08-impl-r1.md`。
+- 技术结论大体成立（H4 同句柄/流+身份一致读取、H5 合成回收/还原/失败保留/零清空 API、H6 exact/candidate 与 digest 类型、AC-4 60 格矩阵 mock 无 PASS；build 0/0、1292/0/57、check/pins、旧四 PNG 不变、产品源码零 diff）。
+- **P1-001**：文件夹 golden fixtures（`folder_v1/folder_v2`）未入库，M8/M9 无法从证据复现；**P1-002**：9/36 Canonical Evidence pin 不能按 git-cat-file 复现（CRLF 工作树 vs LF blob，仅 27/36 匹配）。P2 含 AC-1 mmap 状态字段、H4 证据字段、H5 时序/harness exit、H5 分支证据、H6 自比较/AES/边界、矩阵逐格现状/需新增、门禁记录、temp 清理、manifest 指针。
+- 处置：FEA-08 保持 in_review；**下一会话首步派 R2 返修**（ZCode fresh session 或 Codex 10:25 后）：补 folder fixtures 入库+哈希、pin 统一按 LF blob 重算或改 worktree SHA 口径、逐项 P2；完成后派 impl-r2 Review。旧会话不预派（避免随会话关闭中断）。
+- 未 push；治理 PASS(3)。
