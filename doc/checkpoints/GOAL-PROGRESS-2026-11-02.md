@@ -1248,3 +1248,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 全量 .NET（含新 IPC 测试默认跳过）：**1298 passed / 0 failed / 58 skipped**（0 warning）；`pytest tests/fea09` 100；check PASS、pins 17/17。
 - AC-6 真实 IPC + HostCommandDispatcher V2 adapter 已过；EV-093..095 已 pin。
 - 下一优先级：独立 impl Review（ Appointment 未参与实现/scope-r2 的 Codex/ZCode 会话）、AC-1/2/4/5/9/10 剩余矩阵、最终 DSH 集成。
+## 189. FEA-09 实现 Review r1 = changes_requested（2026-11-03）
+
+- 独立 Codex 会话（`01a1a1b4…`，未参与实现）reviewed_head `6a164253d`，报告 `doc/reviews/FEA-09-impl-r1.md`（SHA-256 `7e6f4b78…`）：**P0=0 / P1=8 / P2=3**。
+- P1 关键项：managed V_artifact 生产读路径回归（I001）、grant 四维 scope/身份校验缺失（I002）、部分导入重试整源跳过（I003）、加密 PDF 导入失败（I004）、加密源 resolve 无密码（I005）、folder resolve 不可用（I006）、解码预算后置（I007）、生产 cache 绕过冻结约束（I008）；P2：plan 未绑定 book/policy（I009）、后台异常丢原因/计数（I010）、EV 证据链未 final（I011）。
+- DSH 处置：全部接受；分三批返修（I001/I002/I007/I009/I010 → I003/I004/I006 → I005/I008；I011 closeout）；返修后必须新的独立实现复核，再 DSH 集成；AC 保持 PARTIAL。

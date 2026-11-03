@@ -8,7 +8,7 @@ approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1
 suggested_owner: codex
 owner: codex（DSH 2026-11-03 额度恢复后续跑）
 claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`；2026-11-03 Codex 本轮通过 Node 通路恢复，接续 ZCode Phase A/B 及 Phase C 半成品
-reviewer: 实现 Review 待 Appointment（候选：未参与实现/scope-r2 的独立 Codex 会话；不得由实现者同一会话自审）
+reviewer: 实现 Review r1 **changes_requested**（P0=0/P1=8/P2=3；Codex 独立会话 01a1a1b4-5bda-7940-bc48-7aedfdd589b0；报告 doc/reviews/FEA-09-impl-r1.md，SHA-256 7e6f4b78…）；DSH 处置中，返修后需新独立复核
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
@@ -250,3 +250,22 @@ out_of_scope:
 | 2026-11-03 | **referenced 生产 resolve 增量（DSH）**：SourceReadGrantRegistry.find_for_source + eader.render_entry_png + esolve.resolve_referenced_rendition + core_service referenced 分支发布 rendition（确定性 key、幂等、typed 失败、无 raw/无任意路径）；新增 4 测试；pytest tests/fea09 **96 passed**、check PASS、pins 17/17。AC-6/AC-7 仅部分推进，不标 MET。 | erification/FEA-09/logs/dsh-referenced-resolve.log；	ests/fea09/test_referenced_resolve.py |
 | 2026-11-03 | **密码链路 + rendition cache/预算（DSH）**：生产 Runtime 注入 `read_secret`；`reader._check_decode_budget`；`resolve` cache 元数据；`library.upsert_rendition_cache` + core resolve 写 cache 行；新增 cache/预算测试。`pytest tests/fea09` **98 passed**、check PASS、pins 17/17。 | `verification/FEA-09/logs/dsh-referenced-resolve.log`；`tests/fea09/test_referenced_resolve.py` |
 | 2026-11-03 | **AC-6 真实 Host↔Core IPC（DSH）**：新增 Host.Tests Fea09RealIpcTests（真实 stdio Python Core + 生产 CoreServiceClient/Host coordinators）；物理身份 grant 回退；NEWMANGA_FEA09_IPC=1 下 **1 passed**（16 frames、receipt completed、rendition 发布）；默认全量自跳过（53/29）。证据 erification/FEA-09/ipc/。 | `verification/FEA-09/logs/dsh-real-ipc.log` |
+## Implementation Review r1 处置（DSH，2026-11-03）
+
+报告：`doc/reviews/FEA-09-impl-r1.md`（23,071 B，SHA-256 `7e6f4b787a41e6493c98ac708e5ef305669a318fc823c193fe0a1984a6ed3a82`，reviewed_head `6a164253d`；reviewer session `01a1a1b4-5bda-7940-bc48-7aedfdd589b0`；未参与实现）。结论：**changes_requested，P0=0 / P1=8 / P2=3**。全部 findings **接受**；在返修并经新的独立复核前不得 done，AC 不标 MET。
+
+| ID | 级别 | DSH 处置 | 批次 |
+|---|---|---|---|
+| R1-I001 | P1 | 接受：生产 get/list/projection 改为 C-05 v1.1 模式分派（managed=V_artifact 不要求导入列完整性；artifact-only 旧页可见）；mapper 允许 NULL managed ref 的 artifact 投影；补双向反例测试 | 批次 1 |
+| R1-I002 | P1 | 接受：resolve 选 grant 时严格校验四维 scope（source_id/version/entry/rendition）+ binding 身份；补充负测（错误 version/entry/rendition/物理文件不匹配） | 批次 1 |
+| R1-I007 | P1 | 接受：解码/渲染预算在分配前检查（entry 声明尺寸、PDF page_size、图片 header；预算超限不进入昂贵解码） | 批次 1 |
+| R1-I009 | P2 | 接受：PlanRecord 保存并校验原 book/duplicate_policy；不一致 → SOURCE_PLAN_STALE | 批次 1 |
+| R1-I010 | P2 | 接受：非 SourceImportError 存储错误转 typed reason，保留 counts/pending；测试断言 reason_code | 批次 1 |
+| R1-I003 | P1 | 接受：区分全部/部分已绑定；部分已引用时逐 entry 补齐未提交页（不整源 skip）；补真实部分重试测试 | 批次 2 |
+| R1-I004 | P1 | 接受：加密 PDF 正确密码导入（解密后参与页映射，不因旧 plan entries 空而 plan stale）；补加密 PDF 无密/错密/重试测试 | 批次 2 |
+| R1-I006 | P1 | 接受：folder 导入后 resolve 的授权映射（四维 scope 重新绑定，非路径回退）；补 folder import→resolve 测试 | 批次 2 |
+| R1-I005 | P1 | 接受：加密源 resolve 的短期 secret 读取流程（一次性、不持久化） | 批次 3 |
+| R1-I008 | P1 | 接受：生产 resolve 接入 rendition_cache 强约束（key/大小/总预算/LRU/并发/活跃引用/崩溃校验；`source-renditions/` 前缀；stale key 重建） | 批次 3 |
+| R1-I011 | P2 | 接受：closeout 前重建最终 EV 逐文件清单（唯一 ID、current/historical 分离、commit pin、PENDING 清零、未登记文件处置） | closeout |
+
+**批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
