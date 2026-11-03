@@ -1,8 +1,8 @@
-FEA-08 门禁摘要（R5 / F08I2-007 + F08I3-005 + F08I4-004）
+FEA-08 门禁摘要（最终收口；F08I2-007 + F08I3-005 + F08I4-004 + F08I6-003 + F08I7-002）
 口径：本文件是**摘要 + 原始日志指针**；完整原始输出（命令/EXIT/shell/解释器）在
       logs/gates-raw/**，逐项 skip 来源在 logs/test-skip-inventory.md。
-记录时间：2026-11-03 13:15:50（Asia/Shanghai）；Python 3.14.6
-head（采集时）：72e1939ead3832ffe23d2e1f233f13d002ea019d（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
+记录时间：2026-11-03 13:47:17（Asia/Shanghai）；Python 3.14.6
+head（采集时）：14fe6fb3c45b1db39a742aba235c00d9aae44a39（证据 commit 见 Task 卡 EV 表；本文件为交付前快照）
 
 [1] build：dotnet build apps\desktop-avalonia\NewManga.sln --nologo
     EXIT=0；0 warning / 0 error（原始输出 gates-raw/01-build.log）

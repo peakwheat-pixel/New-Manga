@@ -4,7 +4,7 @@
     "shell": "pwsh 7",
     "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
     "cwd": "G:\\CODEX\\New Manga",
-    "captured_at": "2026-11-03 13:15:50"
+    "captured_at": "2026-11-03 13:47:17"
   },
   "phase1_values": {
     "env": {
@@ -12,7 +12,7 @@
       "shell": "pwsh 7",
       "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
       "cwd": "G:\\CODEX\\New Manga",
-      "captured_at": "2026-11-03 13:12:48"
+      "captured_at": "2026-11-03 13:44:07"
     },
     "build_exit": 0,
     "build_warnings": 0,
@@ -105,7 +105,7 @@
     "forbidden_diff_clean": true,
     "clearing_api_exit": 0,
     "clearing_api_matches": false,
-    "head": "72e1939ead3832ffe23d2e1f233f13d002ea019d",
+    "head": "14fe6fb3c45b1db39a742aba235c00d9aae44a39",
     "failures": [],
     "status": "complete"
   },
@@ -117,31 +117,31 @@
   "raw_logs": [
     {
       "file": "verification/FEA-08/logs/gates-raw/01-build.log",
-      "sha256": "14d4d8144d732228f828ab4236f4e215647a0ba992fb6292061940c6a3b6fdca"
+      "sha256": "d376c154b5cffa75d0a50e365684f128183e4c1cfc248f6919054df78ef8004f"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/02-test.log",
-      "sha256": "cb08ae72402823f00396eac7304c8006eb976534a176aa1b8906e3230fbecb3a"
+      "sha256": "33a6ebc90fb933fd08c20efe209ec553684f34be7683ec05ebd08179f7b812d2"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/03-check.log",
-      "sha256": "0af1f0a32d84b830591b9465f592f4712d30e89167d92a8b21afad6b8217ee40"
+      "sha256": "24c161177b53b5448348669a2e137709713af6e0c8da4f66e856e4144d35d15b"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/04-freeze-pins.log",
-      "sha256": "940f74a96f522ba725a9c904c19c9ac8151608ba95ae56f01ea0f81759ea3b25"
+      "sha256": "ec30d572f330838b69a52970ea481a17970562e327960be9e06f72bce7964803"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/05-fea06-png.log",
-      "sha256": "b3d065fef3973c35a5a35b8bc8e8027551eb58b1e812dd373a4642a67699cce1"
+      "sha256": "d173d5db6d23cffccd57d4da30f65059220c860cf2f240b20779eb6198b10144"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/06-forbidden-diff.log",
-      "sha256": "60f533a52e60c09707fdec69b7b4c8fcb19c762babd2120119a701b0726172b8"
+      "sha256": "ceaa23d694fe0736f514a60b709a039baecd57bbc3059e7d62527af0a6b42e4f"
     },
     {
       "file": "verification/FEA-08/logs/gates-raw/07-clearing-api-search.log",
-      "sha256": "1ff77a7931eec4712ce7ed5bcdad100146302808ae6f6c9ae6460315aadac59f"
+      "sha256": "71163f515c3abe3a2c53401211ab01eb84353737d47c9896f1c9c9b79f56b2d6"
     }
   ]
 }

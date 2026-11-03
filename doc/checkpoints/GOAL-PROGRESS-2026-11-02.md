@@ -1148,3 +1148,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 001：`_is_int` 统一；R2.restored_count 严格整数==1；R1/R2/R9 entries_poll 严格整数>=0；R6b 计数严格整数>=0；matrix/run_all 一致。002：helper 自恢复失败记入 `HELPER_PROBLEMS`/`KEPT_BACKUPS`，failure JSON 合并报告。003：phase1 启动删旧 values、test 失败先写 aborted values 再退出；phase2 校验 `status=complete` 的新鲜度，不新鲜 FAIL 非零。004：Task/报告 69→71、字面 `\n`→真实换行。005：M19 仅 `candidate`。
 - **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3) elapsed 1.3s；pins 15/15；phase1 status=complete/failures=none；整体门禁 PASS；旧四 PNG 不变；禁止 diff=0；证据 72 项；未 push。
 - **下一步**：派 **impl-r7 独立 Review**（未参与 R7 的新上下文；Codex 15:40 恢复后可用，或继续 DSH 独立子 agent）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
+## 178. FEA-08 关闭（done）+ FEA-09 scope 草案释放（2026-11-03 13:50）
+
+- **impl-r7 Review：approved**（DSH 派发独立上下文子 agent；reviewed_head `14fe6fb3c`；P0=0/P1=0/P2=2 残余建议；报告 `doc/reviews/FEA-08-impl-r7.md`）。独立复跑：build 0w/0e、全量 1292/0/57、check PASS(3)、pins 15/15、EV 72/72、四 PNG 与 base 逐字节一致、禁止 diff 空。
+- **残余处置（F08I7-001/002，集成硬化）**：`prototype_hashes.txt` 定稿后重生成（16/16 实际 SHA 一致）；`gates_capture.py` phase2 对 values 缺失/`status=aborted` 改为写可审计 FAIL 摘要并非零退出；隔离负控 missing→EXIT1/FAIL、aborted→EXIT1/FAIL、complete→EXIT0/PASS；重采集门禁并 re-pin。
+- **DSH 集成验证**（`verification/FEA-08/logs/integration-verification.log`）：build 0w/0e；全量 1292/0/57；check PASS(3)；pins 15/15；旧 FEA-06 四 PNG 未变；禁止范围 diff/status 空；清空类 API 0；EV 73 项（72 文件四方 + pin-verify 自身 SHA）；未 push（ahead=660，无远端分支包含 HEAD）。
+- **FEA-08 关闭**：`status: done`；`resource_closeout_status: complete`；AC-1…AC-4 `<<MET>>`（LIMITED 子能力如实登记）；Closeout Record 已填；Task 卡 73 项 EV 逐项 pin。
+- **FEA-09 释放**：新建 `doc/tasks/FEA-09.md`（`proposed`，引用源与导入；写域按提案 :930；AC-1…AC-8 草案；待 scope review 裁决 5 项）。STATUS 已指向 FEA-09；PLAN 更新为「FEA-09 scope 待 Review」。
+- **下一步**：派 FEA-09 scope review（独立上下文）→ DSH 裁决并冻结范围 → Appointment 实现。不 push。

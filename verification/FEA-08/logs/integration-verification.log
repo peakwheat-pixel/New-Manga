@@ -1,0 +1,36 @@
+# FEA-08 集成验证记录（DSH Integrator）
+
+- 日期：2026-11-03（Asia/Shanghai）
+- 基线：`2870a9fa5`；被集成交付：`14fe6fb3c`（impl-r7 approved head）+ R8 收口工作树；本记录提交后 `integration_commit` 见 Task 卡 frontmatter。
+- 环境：Windows 11；.NET SDK（net9.0 测试目标）；Python 3.14.6；PowerShell 7；Avalonia 解决方案 `apps/desktop-avalonia/NewManga.sln`。
+- 原始输出：`G:\CODEX\New Manga.workspace\FEA-08\integration\`（01-build.log、02-test.log、08-check-final.log、09-pins-final.log、10-png-final.log、11-diff-final.log、12-security-final.log、13-pinselfcheck.log、14-ahead.log、15-remote-contains.log、gates-neg/probe.json）。
+
+## 1. 产品门禁
+
+| 门禁 | 命令 | EXIT | 结果 |
+|---|---|---|---|
+| build | `dotnet build apps\desktop-avalonia\NewManga.sln --nologo` | 0 | 0 warning / 0 error |
+| 无过滤全量测试 | `dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo` | 0 | **1292 passed / 0 failed / 57 skipped**（总 1349；逐程序集 21/38/51/253/117/31/128/653，skip 0/0/28/0/0/0/22/7；一次通过） |
+| 治理检查 | `pwsh -NoProfile -File tools\governance\check.ps1` | 0 | PASS (3 warnings：9 个非终态 Task、STATUS/PLAN 预算 80%) |
+| 冻结 pins | `pwsh -NoProfile -File tools\governance\verify_pins.ps1` | 0 | 15/15 PASS（14 契约 + FEA-01） |
+| Canonical Evidence | `python prototype\pin_selfcheck.py` | 0 | 72/72（71 文件四方 pin + `pin-verify.log` 自身 SHA-256）；本记录入库后为 73/73 |
+
+## 2. 边界与字节保留
+
+| 项 | 命令 | 结果 |
+|---|---|---|
+| 旧 FEA-06 四 PNG | `Get-FileHash verification\FEA-06\screens\*.png` | reader `8533c263…`、settings `fd30b166…`、shelf `307f8f67…`、workbench `d5d878bb…`（与 FEA-06 卡一致，未变） |
+| 禁止范围 diff | `git diff --name-only 2870a9fa5..HEAD -- src apps experiments tests packaging scripts tools`；同范围 `git status --porcelain` | 均为空（**src_changes=0**；本 Task 无生产代码改动） |
+| 清空类 API | `git grep -n -E "SHEmptyRecycleBin\|EmptyRecycleBin\|SHERB_" -- src apps experiments tests packaging scripts tools` | 无匹配（grep EXIT=1 即 0 调用） |
+| 未 push | `git branch -r --contains HEAD`；`git rev-list --count origin/main..HEAD` | 无远端分支包含 HEAD（0 行）；ahead=660（本地领先，未推送） |
+
+## 3. 返修残余处置（F08I7-001/002，impl-r7 approved 后集成硬化）
+
+- **F08I7-001**：脚本定稿后重新生成 `verification/FEA-08/prototype_hashes.txt`，16/16 与 workspace 实际 SHA 一致（含 `gates_capture.py`）；随后重采集门禁原始证据并 re-pin。
+- **F08I7-002**：`gates_capture.py` phase2 加固——values 缺失/`status=aborted` 时不再抛关键异常，而是写可审计 `整体门禁：FAIL` 摘要并非零退出；隔离负控（`integration/gates-neg`）实测：missing → EXIT=1/FAIL，aborted → EXIT=1/FAIL，complete → EXIT=0/PASS。
+- 上述为证据/门禁可靠性硬化，无产品代码改动；门禁与 EV pin 已在本记录提交上重新生成/复核。
+
+## 4. 结论
+
+- 产品门禁、边界、Canonical Evidence 与资源处置均通过；impl-r7 独立 Review verdict=approved（P0=0/P1=0/P2=2 残余建议已在本轮集成硬化中处置）。
+- **允许关闭 FEA-08（status=done）**；不 push。

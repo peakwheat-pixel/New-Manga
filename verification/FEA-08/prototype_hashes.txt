@@ -1,10 +1,10 @@
-# FEA-08 workspace 原型脚本 SHA-256（R7：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
+# FEA-08 workspace 原型脚本 SHA-256（最终收口：16 个登记脚本；run_all.py 执行 5 个核心场景步骤 +
 # 双生成 fixtures + 事务化 evidence staging（旧集 hash 快照、backup 置于 OUT 之外、helper 自恢复
 # 失败保留 backup 并纳入 failure JSON、恢复完整核对）+ results 双层校验 + tmp 清理；
 # stage_evidence.py 生成入库 fixtures manifest；pin_selfcheck.py 生成四方 pin 校验；
-# gates_capture.py 采集门禁原始日志并按实际结果 PASS/FAIL 汇总（含 phase1 失败值）。）
+# gates_capture.py 采集门禁原始日志并按实际结果 PASS/FAIL 汇总（phase1 失败 values 可审计）。）
 03ee9592ce3bc90c8fc281b4812e8294751988a5c574432d8a7600b3a1ca8099  fwin.py
-7cccd16461bad6dbe9813fb17dc724aa95369661f306685c6963ae0ff5452334  gates_capture.py
+84b0ac0d8c19613a0fb9327de07b3e186f119e2f6c425b7a1ea4676b6767afb5  gates_capture.py
 9c3620366f29f6983e17d521eed077110adb499b8775de113fbc87537401e49e  h4_diag_replace.py
 2888d494792417b905dcbfde99d8f9fb3dbac572cd4cfb51310a89aed4c66df2  h4_run.py
 49cfa341e29a6492fb6b70c4d27397a6e25829bd654349ffda01436034004671  h5_cleanup_leftovers.py

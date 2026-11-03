@@ -4,7 +4,7 @@
     "shell": "pwsh 7",
     "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
     "cwd": "G:\\CODEX\\New Manga",
-    "captured_at": "2026-11-03 13:12:48"
+    "captured_at": "2026-11-03 13:44:07"
   },
   "build_exit": 0,
   "build_warnings": 0,
@@ -97,7 +97,7 @@
   "forbidden_diff_clean": true,
   "clearing_api_exit": 0,
   "clearing_api_matches": false,
-  "head": "72e1939ead3832ffe23d2e1f233f13d002ea019d",
+  "head": "14fe6fb3c45b1db39a742aba235c00d9aae44a39",
   "failures": [],
   "status": "complete"
 }
