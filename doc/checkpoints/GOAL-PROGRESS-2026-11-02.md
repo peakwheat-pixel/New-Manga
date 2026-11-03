@@ -1083,3 +1083,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **交付**：`7b176be6a`（证据 commit）；Canonical Evidence **51 项** @该 commit（`gates.log` 以 SHA-256 pin）；Task 卡重写（AC 收口说明、门禁记录、Resource Manifest、EV 表）；Handoff `doc/handoffs/FEA-08-impl-r2.md`；报告 §10 更新。
 - **门禁**：build 0w/0e；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；旧 FEA-06 四 PNG 未变；禁止范围 diff=0（src_changes=0）；未 push。pin 自校验 51/51（blob==worktree==Task 表 + 干净 checkout）。
 - **下一步**：派 **impl-r2 独立 Review**（Codex，未参与实现；高 reasoning）→ approved 后 DSH 集成验证 → 关闭 FEA-08（填 Resource Manifest/Closeout）→ 释放 FEA-09（引用源与导入）scope。
+## 168. FEA-08 impl-r2 Review（Codex）changes_requested + R3 处置（2026-11-03 11:12）
+
+- **impl-r2 Review（Codex 独立会话 `01a19f56` + Standards/Spec 独立子会话）**：**changes_requested P0=0/P1=3/P2=4**；报告 `doc/reviews/FEA-08-impl-r2.md`（reviewed_head `c583454e0`）。门禁独立实测：build 0w/0e、test **1292/0/57**、check PASS(3)、冻结 pins 15/15、FEA-06 四 PNG 不变、产品路径 diff 空；H5 隔离三连跑 9 PASS+2 LIMITED、G: 每轮 0→0；H6 入库 fixtures 独立复跑 17 场景结果一致（M8M9 成立）。
+- **P1**：001 `EV-F08-43`（prototype_hashes.txt）仍 pin 到 `7b176be6a` 而该文件在 `00a6c8579` 已变更——pin_selfcheck 只校验 index 未校验指定 commit（自校验掩盖断链）；002 H6 规范像素 digest 未绑定尺寸（2×6 vs 3×4 同像素字节误判 exact_match）；003 容器匹配只比内容 digest 多重集，不同名重复同图无法唯一 occurrence 映射仍误判 exact_match（违反 :457 一对多默认需确认）。
+- **P2**：004 矩阵非 NTFS 分支 evidence 继承污染（USB/SMB/Cloud H6 记 measured）；005 derive 缺必需断言（S5c 拦截、M16 反证等）——变异后仍 PASS；006 run_all staging 先破坏旧 Canonical、失败留下新输入+旧 PASS 混合证据；007 门禁原始输出未版本化（gates.log 仅摘要、57 skip 无逐项来源）。
+- **处置（DSH 裁决）**：P1 全部修（not downgrade）；AC-3/AC-4 维持目标 MET 但须以修复后证据为准；R3 返修范围冻结为「h6 尺寸/唯一性判据 + fixtures/结果重出 + pin_selfcheck commit 口径 + 矩阵 evidence/断言 + run_all 原子 staging + 门禁原始日志与 skip 清单 + EV re-pin @新交付 head」。实施：DSH 直接执行（Codex 已担任 r2 Reviewer，ZCode 额度 13:13 后才有；DSH 不得自审，R3 交 Codex 新独立上下文 Review）。
+- 已入库 Review 报告；Task 保持 `in_review`；不 push。
