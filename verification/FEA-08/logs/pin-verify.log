@@ -1,0 +1,67 @@
+FEA-08 Canonical Evidence pin self-check (R2 / F08I1-002)
+method: blob sha256 = SHA-256(git cat-file blob <blob>) from staged index
+        (identical to `git cat-file -p <commit>:<path>` after commit, which never rewrites blobs);
+        worktree sha256 = SHA-256(working-tree bytes);
+        task-table sha256 = value registered in doc/tasks/FEA-08.md EV table;
+        clean-checkout sha256 = SHA-256(git checkout-index export bytes, .gitattributes-driven).
+note: this log carries no commit/tree anchor on purpose (self-reference would make pin values depend on the commit containing them).
+note: logs/pin-verify.log itself is excluded from the checked set (its own content changes with each run); it is still registered in the task-card EV table with the SHA-256 of its final bytes.
+
+path                                                       blob work task  chk
+------------------------------------------------------------------------------------------------------------------------
+verification/FEA-08/fixtures/anim.gif                        OK   OK   OK   OK
+verification/FEA-08/fixtures/book_dup.zip                    OK   OK   OK   OK
+verification/FEA-08/fixtures/book_dup_copy.zip               OK   OK   OK   OK
+verification/FEA-08/fixtures/book_enc_aes.zip                OK   OK   OK   OK
+verification/FEA-08/fixtures/book_enc_zipcrypto.zip          OK   OK   OK   OK
+verification/FEA-08/fixtures/book_enc_zipcrypto_copy.zip     OK   OK   OK   OK
+verification/FEA-08/fixtures/book_v1.cbz                     OK   OK   OK   OK
+verification/FEA-08/fixtures/book_v1.zip                     OK   OK   OK   OK
+verification/FEA-08/fixtures/book_v1_recompressed.zip        OK   OK   OK   OK
+verification/FEA-08/fixtures/doc_enc.pdf                     OK   OK   OK   OK
+verification/FEA-08/fixtures/doc_enc_copy.pdf                OK   OK   OK   OK
+verification/FEA-08/fixtures/doc_v1.pdf                      OK   OK   OK   OK
+verification/FEA-08/fixtures/doc_v1_regen.pdf                OK   OK   OK   OK
+verification/FEA-08/fixtures/evidence_manifest.json          OK   OK   OK   OK
+verification/FEA-08/fixtures/firstframe_extract.png          OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v1/p1.png                OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v1/p2.png                OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v1/p3.png                OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v2/p1.png                OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v2/p2renamed.png         OK   OK   OK   OK
+verification/FEA-08/fixtures/folder_v2/p4.png                OK   OK   OK   OK
+verification/FEA-08/fixtures/img_base.png                    OK   OK   OK   OK
+verification/FEA-08/fixtures/img_cmyk.jpg                    OK   OK   OK   OK
+verification/FEA-08/fixtures/img_copy.png                    OK   OK   OK   OK
+verification/FEA-08/fixtures/img_dhash_dist10.png            OK   OK   OK   OK
+verification/FEA-08/fixtures/img_dhash_dist11.png            OK   OK   OK   OK
+verification/FEA-08/fixtures/img_dhash_ref.png               OK   OK   OK   OK
+verification/FEA-08/fixtures/img_exif_o6.png                 OK   OK   OK   OK
+verification/FEA-08/fixtures/img_flipped.png                 OK   OK   OK   OK
+verification/FEA-08/fixtures/img_gray.png                    OK   OK   OK   OK
+verification/FEA-08/fixtures/img_gray_as_rgb.png             OK   OK   OK   OK
+verification/FEA-08/fixtures/img_reenc.jpg                   OK   OK   OK   OK
+verification/FEA-08/fixtures/img_rotated_phys.png            OK   OK   OK   OK
+verification/FEA-08/fixtures/wrongframe_blue.png             OK   OK   OK   OK
+verification/FEA-08/logs/gates.log                           OK   OK   OK   OK
+verification/FEA-08/logs/h4_run.log                          OK   OK   OK   OK
+verification/FEA-08/logs/h5_run.log                          OK   OK   OK   OK
+verification/FEA-08/logs/h6_run.log                          OK   OK   OK   OK
+verification/FEA-08/logs/make_fixtures.log                   OK   OK   OK   OK
+verification/FEA-08/logs/make_fixtures_regeneration.log      OK   OK   OK   OK
+verification/FEA-08/logs/matrix.log                          OK   OK   OK   OK
+verification/FEA-08/logs/run_all.log                         OK   OK   OK   OK
+verification/FEA-08/logs/stage_evidence.log                  OK   OK   OK   OK
+verification/FEA-08/prototype_hashes.txt                     OK   OK   OK   OK
+verification/FEA-08/results/capability_matrix.json           OK   OK   OK   OK
+verification/FEA-08/results/capability_matrix.md             OK   OK   OK   OK
+verification/FEA-08/results/fixtures_manifest.json           OK   OK   OK   OK
+verification/FEA-08/results/h4_results.json                  OK   OK   OK   OK
+verification/FEA-08/results/h5_results.json                  OK   OK   OK   OK
+verification/FEA-08/results/h6_results.json                  OK   OK   OK   OK
+verification/FEA-08/results/run_all_log.json                 OK   OK   OK   OK
+------------------------------------------------------------------------------------------------------------------------
+TOTAL files under verification/FEA-08: 51
+blob==worktree==task-table==clean-checkout: 51/51
+EV-table coverage (files registered in task card): 51/51
+RESULT: PASS

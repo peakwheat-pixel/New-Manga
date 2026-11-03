@@ -142,6 +142,7 @@ R2 交付：全部文件 pin @ `7b176be6a`（R2 证据 commit）；`sha256` = Gi
 | EV-F08-49 | AC-3 | verification/FEA-08/results/h6_results.json | 7b176be6a | 56c43a175a6e148c4c045d3b6cbc4394f2686354731ac6feb36af4eee5f0a12e | CANONICAL |
 | EV-F08-50 | AC-1..4 | verification/FEA-08/results/run_all_log.json | 7b176be6a | 981a585aaedaec91c61457176a356ba16c6478e6528737ecd3d480388ad40356 | CANONICAL |
 | EV-F08-51 | AC-1..4 | verification/FEA-08/logs/gates.log | - | fd227b34a27093c1498fbe73622bf33ca16661e0f3995cb138635f9911d6f177 | CANONICAL |
+| EV-F08-52 | AC-1..4 | verification/FEA-08/logs/pin-verify.log | - | 52eab88ec81243bd216675f46fb30fbd758f69c079092dcc96bd326cb3f3936c | CANONICAL |
 
 ## 门禁记录（R2 交付，2026-11-03；原始输出 `logs/gates.log`）
 
