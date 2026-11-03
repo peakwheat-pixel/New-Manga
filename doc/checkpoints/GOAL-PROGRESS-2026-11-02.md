@@ -1111,3 +1111,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 005：`gates_capture.py` phase2 为 check 计时并写 elapsed/env；重新采集门禁原始日志。附带勘误：fixtures 42 文件=41 内容+manifest、证据 70 项、仅 pin-verify.log 为 SHA-only。
 - **门禁**：build 0w/0e；全量 **1292/0/57**（一次通过）；check PASS(3)（elapsed 3.4s）；pins 15/15；旧四 PNG 不变；禁止范围 diff=0；pin 69/69 文件四方 + pin-verify 自身 SHA（70 项）；未 push。
 - **下一步**：派 **impl-r4 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
+## 172. FEA-08 impl-r4 Review（Codex）changes_requested P1=0/P2=5 + R5 范围冻结（2026-11-03 12:05）
+
+- **impl-r4 Review（Codex 新独立会话 `01a19f92` + semantic/standards 两名辅助 Reviewer）**：**changes_requested P0=0/P1=0/P2=5**；报告 `doc/reviews/FEA-08-impl-r4.md`（reviewed_head `8609c6591`）。pin 逐 commit、尺寸绑定、M19/M20、60 格来源、manifest 计数、H4/H5 实跑等回归通过；门禁独立复跑 1292/0/57（隔离补齐 sidecar 输入）、当前 check PASS(3)、pins 15/15、70/70 EV。
+- **P2 findings**：001 矩阵 H5 门禁仍漏验还原 digest/R2/R4/R5/R6a/R9 等事实（与总驱动不一致）；002 晋升失败仍可丢旧证据/误报 rolled_back（move 前抛错、journal 先移除、恢复只查存在不查 hash、临时文件残留）；003 重复名歧义只查左侧容器（A 唯一名 vs B 重复名误 exact、反向 candidate 不对称）；004 `03-check.log` 实为 FAIL 快照（登记前采集），与交付 PASS 声明矛盾、摘要口径残留 R3；005 `prototype_hashes.txt` 中 gates_capture 实际 SHA 不符（编辑后未重生成）。
+- **处置（DSH 裁决）**：全部修；R5 范围冻结为「矩阵 H5 全量语义（与总驱动逐字段一致）+ 事务升级（旧集 hash 快照、逐项登记/恢复、恢复完整核对才报 rolled_back）+ 重复名双侧核验/M23 + 门禁重采集与口径修正 + prototype_hashes 重生成」。实施：DSH；impl-r5 交 Codex 新独立上下文。
+## 173. FEA-08 R5 返修交付（DSH）（2026-11-03 12:32）
+
+- **R5 交付**（证据 commit 见 Task delivery_head）：impl-r4 P2=5 全部处置。
+- 001：矩阵与 `run_all.verify_results` 逐字段一致的 H5 全量语义断言（R1/R2/R4/R5/R5b/R6a/R6b/R9/entries_poll）。
+- 002：晋升前旧 Canonical 集 hash 快照（文件/目录树）；promote 先登记 journal 再移动；失败恢复本项并保留未恢复 backup；`rollback` 完整核对旧集 hash 后才报 rolled_back；stage_evidence 改 staging 目录、与 fixtures 同事务。
+- 003：重复名双侧核验 + 非对称 fixture/M23（两方向 candidate）。
+- 004/005：所有证据更新后重新采集门禁原始日志（03-check EXIT=0/PASS(3)/elapsed 1.2s，7 份 raw 齐全），摘要口径修正；脚本定稿后重生成 `prototype_hashes.txt`（16/16 实际 SHA 一致）。
+- **门禁**：build 0w/0e；全量 1292/0/57（一次通过）；check PASS(3)；pins 15/15；旧四 PNG 不变；禁止 diff=0；证据 72 项（fixtures 44 文件=43 内容+manifest；71 文件四方 pin + pin-verify 自身 SHA）；未 push。
+- **下一步**：派 **impl-r5 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
