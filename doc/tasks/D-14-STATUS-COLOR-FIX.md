@@ -7,7 +7,7 @@ status: in_progress
 approval: Codex CLI 裁决 A（doc/reviews/ADJ-2026-11-03-D14-STATUS-NOTSTARTED.md，2026-11-03）；由 DSH 释放
 suggested_owner: codex
 owner: codex
-reviewer: impl-r1 **changes_requested**（D-9 独立子 agent：P0=0/P1=3/P2=7，均为证据/交付纪律层；报告 doc/reviews/D-14-STATUS-COLOR-FIX-impl-r1.md）——证据补正后 impl-r2
+reviewer: impl-r1 changes_requested（P1=3）→ impl-r2 changes_requested（P1=1/P2=5，仍证据纪律）→ 已 r2 补正（完整日志+57 skip 明细+模板 Handoff+pin 修正）；**impl-r3 复核中**
 depends_on:
   - FEA-06-RESIDUAL-2
 base_commit: 195422c2fdf72f0460d2e265b53e22a2c5eff6fd
@@ -62,7 +62,7 @@ commit + `verification/D-14-STATUS-COLOR-FIX/impl-verification.log` + `doc/hando
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-D14-IMPL | AC-映射/对比度/回归 | verification/D-14-STATUS-COLOR-FIX/impl-verification.log | 5ecc1e4c6 | 289384ade531880e08b6ca3911635de5b0c761c8c415e0a25e5015592b582ff9 | CANONICAL |
+| EV-D14-IMPL | AC-映射/对比度/回归 | verification/D-14-STATUS-COLOR-FIX/impl-verification.log | 075dc1682 | e699fe813905e16dfac35eef36af7a3602f7c20d25109ba07703421d9055f681（git blob，复现：git cat-file -p 075dc1682:verification/D-14-STATUS-COLOR-FIX/impl-verification.log） | CANONICAL |
 
 ## 后续节点
 
