@@ -90,19 +90,20 @@ def test_translated_reader_preview_registers_a_reclaimable_origin(tmp_path: Path
         with core.conn:
             core.conn.execute(
                 "INSERT INTO books (book_id, title, created_at, updated_at)"
-                " VALUES ('b1', 'Book 1', 'now', 'now')"
+                " VALUES ('b1', 'Book 1', '2026-11-01T00:00:00.000+00:00', '2026-11-01T00:00:00.000+00:00')"
             )
             core.conn.execute(
                 "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
-                " VALUES ('c1', 'b1', 'Ch', 'now', 'now')"
+                " VALUES ('c1', 'b1', 'Ch', '2026-11-01T00:00:00.000+00:00', '2026-11-01T00:00:00.000+00:00')"
             )
             # pages carries no translated_* columns: the reader projection
             # derives the translated face entirely from the artifact tables.
             core.conn.execute(
                 "INSERT INTO pages (page_id, chapter_id, managed_original_ref,"
                 " source_filename, source_hash, source_size_bytes, width, height,"
-                " created_at, updated_at)"
-                " VALUES ('p1', 'c1', ?, 'p1.png', ?, ?, 10, 10, 'now', 'now')",
+                " created_at, updated_at, source_mode, integrity_status)"
+                " VALUES ('p1', 'c1', ?, 'p1.png', ?, ?, 10, 10, '2026-11-01T00:00:00.000+00:00', '2026-11-01T00:00:00.000+00:00',"
+                " 'managed', 'complete')",
                 (
                     rel_original,
                     hashlib.sha256(_ORIGINAL_BYTES).hexdigest(),
@@ -112,13 +113,13 @@ def test_translated_reader_preview_registers_a_reclaimable_origin(tmp_path: Path
             core.conn.execute(
                 "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id,"
                 " page_id, artifact_type, current_revision_id, created_at, updated_at)"
-                " VALUES ('a1', 'b1', 'c1', 'p1', 'translated', 'ar1', 'now', 'now')"
+                " VALUES ('a1', 'b1', 'c1', 'p1', 'translated', 'ar1', '2026-11-01T00:00:00.000+00:00', '2026-11-01T00:00:00.000+00:00')"
             )
             core.conn.execute(
                 "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
                 " revision_no, managed_path, file_hash, mime_type, size_bytes,"
                 " integrity_status, created_at)"
-                " VALUES ('ar1', 'a1', 1, ?, ?, 'image/png', ?, 'valid', 'now')",
+                " VALUES ('ar1', 'a1', 1, ?, ?, 'image/png', ?, 'valid', '2026-11-01T00:00:00.000+00:00')",
                 (
                     rel_translated,
                     hashlib.sha256(_TRANSLATED_BYTES).hexdigest(),

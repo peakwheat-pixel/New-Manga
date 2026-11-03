@@ -21,7 +21,7 @@ from typing import Any
 from datetime import datetime, timezone
 
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
-from domain.pages.entities import Page
+from domain.pages.entities import Page, PageView
 from infrastructure.filesystem.managed_storage import _is_reparse_point, _sanitize_component
 from infrastructure.filesystem.win_unlink import unlink_by_handle
 
@@ -347,26 +347,90 @@ class SqliteLibraryRepository:
         "    AND b.verified_digest = e.content_digest)))"
     )
 
-    #: FEA-09 / C-05 v1.1 ``V(p,t)`` visibility predicate (mode dispatch).
-    #: managed branch = legacy behaviour (unchanged column predicate; the
-    #: artifact/revision branch keeps its pre-v7 semantics — see C-05 §3.1
-    #: 反例判据 ②). referenced branch = P7 ∧ P8 (P1/P5 are added by the
-    #: caller's JOIN/WHERE on parents and time).
-    _VISIBLE_PAGE_WHERE = (
-        "((pages.source_mode = 'managed'"
-        " AND pages.source_hash IS NOT NULL AND pages.managed_original_ref IS NOT NULL"
-        " AND pages.width IS NOT NULL AND pages.height IS NOT NULL)"
-        " OR (pages.source_mode = 'referenced'"
-        " AND pages.integrity_status = 'complete'"
-        " AND pages.source_hash IS NOT NULL"
-        " AND pages.width IS NOT NULL AND pages.width > 0"
-        " AND pages.height IS NOT NULL AND pages.height > 0"
-        " AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e"
-        "  ON (e.source_id, e.version_id, e.entry_id) ="
-        "     (b.source_id, b.accepted_source_version, b.entry_id)"
-        "  WHERE b.page_id = pages.page_id AND b.status = 'healthy'"
-        "    AND b.verified_digest = e.content_digest)))"
+    #: FEA-09 / C-05 v1.2 ``V(p,t)`` visibility predicate (mode dispatch).
+    #: managed = artifact witness OR copy-original witness; referenced = P7 ∧ P8
+    #: (P1/P5 are added by the caller's JOIN/WHERE on parents and time).
+    #: The moment is embedded as a validated SQL literal so callers keep their
+    #: existing parameter tuples (and validators can pin one instant).
+    _VISIBLE_TYPES_SQL = (
+        "'original','thumbnail','clean','translated','render_preview','export'"
     )
+
+    @staticmethod
+    def _sql_timestamp(moment: str | None) -> str:
+        from datetime import datetime, timezone
+
+        if moment is None:
+            moment = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        try:
+            datetime.fromisoformat(moment.replace("Z", "+00:00"))
+        except ValueError as error:  # pragma: no cover - internal input
+            raise ValueError(f"invalid visibility moment: {moment!r}") from error
+        return "'" + moment.replace("'", "''") + "'"
+
+    @classmethod
+    def _artifact_witness_sql(cls, timestamp: str) -> str:
+        return (
+            "EXISTS (SELECT 1 FROM media_artifacts a"
+            " JOIN artifact_revisions r"
+            " ON r.artifact_revision_id = a.current_revision_id"
+            " WHERE a.page_id = pages.page_id"
+            " AND a.artifact_type IN (" + cls._VISIBLE_TYPES_SQL + ")"
+            " AND r.integrity_status = 'valid'"
+            " AND r.created_at <= " + timestamp + ")"
+        )
+
+    @classmethod
+    def _copy_witness_sql(cls, timestamp: str) -> str:
+        return (
+            "(pages.source_mode = 'managed'"
+            " AND pages.integrity_status = 'complete'"
+            " AND pages.source_hash IS NOT NULL"
+            " AND pages.managed_original_ref IS NOT NULL"
+            " AND pages.width > 0 AND pages.height > 0"
+            " AND pages.created_at <= " + timestamp + ")"
+        )
+
+    @classmethod
+    def _visible_page_where(cls, timestamp: str) -> str:
+        return (
+            "((pages.source_mode = 'managed' AND ("
+            + cls._artifact_witness_sql(timestamp)
+            + " OR " + cls._copy_witness_sql(timestamp)
+            + ")) OR (pages.source_mode = 'referenced'"
+            " AND pages.integrity_status = 'complete'"
+            " AND pages.source_hash IS NOT NULL"
+            " AND pages.width IS NOT NULL AND pages.width > 0"
+            " AND pages.height IS NOT NULL AND pages.height > 0"
+            " AND pages.created_at <= " + timestamp +
+            " AND EXISTS (SELECT 1 FROM page_bindings b JOIN source_entries e"
+            "  ON (e.source_id, e.version_id, e.entry_id) ="
+            "     (b.source_id, b.accepted_source_version, b.entry_id)"
+            "  WHERE b.page_id = pages.page_id AND b.status = 'healthy'"
+            "    AND b.verified_digest = e.content_digest)))"
+        )
+
+    @classmethod
+    def _artifact_original_select(cls, timestamp: str) -> str:
+        base = (
+            "SELECT r.{column} FROM media_artifacts a"
+            " JOIN artifact_revisions r"
+            " ON r.artifact_revision_id = a.current_revision_id"
+            " WHERE a.page_id = pages.page_id"
+            " AND a.artifact_type = 'original'"
+            " AND r.integrity_status = 'valid'"
+            " AND r.created_at <= " + timestamp +
+            " ORDER BY r.created_at DESC LIMIT 1)"
+        )
+        return (
+            ", (" + base.format(column="file_hash") + " AS artifact_file_hash"
+            ", (" + base.format(column="managed_path") + " AS artifact_managed_path"
+            ", (" + base.format(column="width") + " AS artifact_width"
+            ", (" + base.format(column="height") + " AS artifact_height"
+            ", (" + base.format(column="size_bytes") + " AS artifact_size_bytes"
+            ", (" + cls._artifact_witness_sql(timestamp) + ") AS has_artifact_witness"
+            ", (" + cls._copy_witness_sql(timestamp) + ") AS has_copy_witness"
+        )
 
     def existing_source_hashes(self, chapter_id: str) -> set[str]:
         """Hashes of the chapter's **live** complete pages.
@@ -423,41 +487,87 @@ class SqliteLibraryRepository:
                 ),
             )
 
-    def get_page(self, page_id: str) -> Page | None:
+    def get_page(self, page_id: str, *, at: str | None = None) -> Page | PageView | None:
         # Soft-deleted pages are hidden here too, consistent with
         # list_pages (AC-IMPORT semantics; recycle-bin/restore views are a
         # later slice with their own queries).
-        # FEA-09/C-15 §4.2: V(p,t) — parent deletion is checked through the
-        # chapter/book JOIN (C-05 v1.1 P1 covers all three levels).
+        # FEA-09/C-15 v1.1 §4.2: V(p,t) — parent deletion is checked through
+        # the chapter/book JOIN (C-05 v1.2 P1 covers all three levels).
+        timestamp = self._sql_timestamp(at)
         row = self._conn.execute(
-            "SELECT " + self._page_columns_aliased() + " FROM pages"
+            "SELECT " + self._page_columns_aliased(timestamp) + " FROM pages"
             " JOIN chapters c ON c.chapter_id = pages.chapter_id"
             " JOIN books b ON b.book_id = c.book_id"
             " WHERE pages.page_id = ? AND pages.deleted_at IS NULL"
             " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
-            + self._VISIBLE_PAGE_WHERE,
+            + self._visible_page_where(timestamp),
             (page_id,),
         ).fetchone()
-        return self._page_from_row(row) if row else None
+        return self._page_or_view_from_row(row) if row else None
 
-    def list_pages(self, chapter_id: str) -> list[Page]:
-        # FEA-09/C-15 §4.2: V(p,t) with parent-deletion visibility (P1).
+    def list_pages(self, chapter_id: str, *, at: str | None = None) -> list[Page | PageView]:
+        # FEA-09/C-15 v1.1 §4.2: V(p,t) with parent-deletion visibility (P1);
+        # every V row is observable (Page when constructible, else PageView).
+        timestamp = self._sql_timestamp(at)
         rows = self._conn.execute(
-            "SELECT " + self._page_columns_aliased() + " FROM pages"
+            "SELECT " + self._page_columns_aliased(timestamp) + " FROM pages"
             " JOIN chapters c ON c.chapter_id = pages.chapter_id"
             " JOIN books b ON b.book_id = c.book_id"
             " WHERE pages.chapter_id = ? AND pages.deleted_at IS NULL"
             " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
-            + self._VISIBLE_PAGE_WHERE +
-            " ORDER BY pages.sort_order",
+            + self._visible_page_where(timestamp) +
+            " ORDER BY pages.sort_order, pages.page_id",
             (chapter_id,),
         ).fetchall()
-        pages = []
+        pages: list[Page | PageView] = []
         for row in rows:
-            page = self._page_from_row(row)
+            page = self._page_or_view_from_row(row)
             if page is not None:
                 pages.append(page)
         return pages
+
+    def list_page_views(self, chapter_id: str, *, at: str | None = None) -> list[PageView]:
+        """C-15 v1.1 §4.4 pure projection: every V row as a read-only view.
+
+        Used by migration validation / reader pure projection; never publishes
+        or resolves resources and does not open another connection.
+        """
+        timestamp = self._sql_timestamp(at)
+        rows = self._conn.execute(
+            "SELECT " + self._page_columns_aliased(timestamp) + " FROM pages"
+            " JOIN chapters c ON c.chapter_id = pages.chapter_id"
+            " JOIN books b ON b.book_id = c.book_id"
+            " WHERE pages.chapter_id = ? AND pages.deleted_at IS NULL"
+            " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
+            + self._visible_page_where(timestamp) +
+            " ORDER BY pages.sort_order, pages.page_id",
+            (chapter_id,),
+        ).fetchall()
+        return [self._page_view_from_row(row) for row in rows]
+
+    def get_visible_original_path(self, page_id: str, *, at: str | None = None) -> str | None:
+        """Selected managed original for R: eligible original revision, else
+        ``pages.managed_original_ref`` (C-15 v1.1 §4.2); None when the row is
+        not V or has no resolvable path."""
+        timestamp = self._sql_timestamp(at)
+        row = self._conn.execute(
+            "SELECT pages.managed_original_ref AS page_ref,"
+            " (SELECT r.managed_path FROM media_artifacts a"
+            "  JOIN artifact_revisions r ON r.artifact_revision_id = a.current_revision_id"
+            "  WHERE a.page_id = pages.page_id AND a.artifact_type = 'original'"
+            "  AND r.integrity_status = 'valid'"
+            "  AND r.created_at <= " + timestamp +
+            "  ORDER BY r.created_at DESC LIMIT 1) AS artifact_path"
+            " FROM pages JOIN chapters c ON c.chapter_id = pages.chapter_id"
+            " JOIN books b ON b.book_id = c.book_id"
+            " WHERE pages.page_id = ? AND pages.deleted_at IS NULL"
+            " AND c.deleted_at IS NULL AND b.deleted_at IS NULL AND "
+            + self._visible_page_where(timestamp),
+            (page_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return row["artifact_path"] or row["page_ref"]
 
     def update_page(self, page: Page) -> None:
         # FEA-09/C-15 §4.3: update_page never flips integrity_status —
@@ -481,9 +591,82 @@ class SqliteLibraryRepository:
                 ),
             )
 
-    @staticmethod
-    def _page_columns_aliased() -> str:
-        return ", ".join("pages." + col.strip() for col in _PAGE_COLUMN_LIST)
+    def _page_columns_aliased(self, timestamp: str) -> str:
+        return (
+            ", ".join("pages." + col.strip() for col in _PAGE_COLUMN_LIST)
+            + self._artifact_original_select(timestamp)
+        )
+
+    def _page_view_from_row(self, row: sqlite3.Row) -> PageView:
+        mode = row["source_mode"] if "source_mode" in row.keys() else "managed"
+        artifact_hash = row["artifact_file_hash"]
+        page_ref = row["managed_original_ref"]
+        artifact_ref = row["artifact_managed_path"]
+        width = row["width"] if row["width"] and row["width"] > 0 else row["artifact_width"]
+        height = row["height"] if row["height"] and row["height"] > 0 else row["artifact_height"]
+        has_artifact = bool(row["has_artifact_witness"])
+        has_copy = bool(row["has_copy_witness"])
+        witness = (
+            "artifact+copy" if has_artifact and has_copy else
+            "artifact" if has_artifact else
+            "copy" if has_copy else "referenced"
+        )
+        ref = artifact_ref or page_ref
+        return PageView(
+            page_id=row["page_id"],
+            chapter_id=row["chapter_id"],
+            source_mode=mode,
+            sort_order=int(row["sort_order"] or 0),
+            visibility_witness=witness,
+            original_available=bool(ref),
+            integrity_status=row["integrity_status"] or "incomplete",
+            source_filename=row["source_filename"],
+            source_order=row["source_order"],
+            created_at=row["created_at"],
+            # Never use a non-original artifact hash as the source hash.
+            source_hash=row["source_hash"] or artifact_hash,
+            source_size_bytes=row["source_size_bytes"] or row["artifact_size_bytes"],
+            managed_original_ref=ref,
+            width=int(width) if width else None,
+            height=int(height) if height else None,
+            artifact_revision_id=None,
+        )
+
+    def _page_or_view_from_row(self, row: sqlite3.Row) -> Page | PageView | None:
+        """C-15 v1.1 §4.4: full Page when constructible, else read-only view."""
+        mode = row["source_mode"] if "source_mode" in row.keys() else "managed"
+        if mode == "referenced":
+            page = self._page_from_row(row)
+            return page if page is not None else self._page_view_from_row(row)
+        artifact_hash = row["artifact_file_hash"]
+        page_ref = row["managed_original_ref"]
+        artifact_ref = row["artifact_managed_path"]
+        width = row["width"] if row["width"] and row["width"] > 0 else row["artifact_width"]
+        height = row["height"] if row["height"] and row["height"] > 0 else row["artifact_height"]
+        source_hash = row["source_hash"] or artifact_hash
+        ref = page_ref or artifact_ref
+        if source_hash and ref and width and height and width > 0 and height > 0:
+            return Page(
+                page_id=row["page_id"],
+                chapter_id=row["chapter_id"],
+                source_filename=row["source_filename"] or "",
+                source_order=row["source_order"],
+                sort_order=row["sort_order"],
+                source_hash=source_hash,
+                source_size_bytes=row["source_size_bytes"] or row["artifact_size_bytes"] or 0,
+                width=int(width),
+                height=int(height),
+                managed_original_ref=ref,
+                page_locked=bool(row["page_locked"]),
+                review_state=row["review_state"] or "unreviewed",
+                overall_status=row["overall_status"] or "not_started",
+                created_at=row["created_at"],
+                updated_at=row["updated_at"],
+                deleted_at=row["deleted_at"],
+                source_mode=mode,
+                integrity_status=row["integrity_status"] or "incomplete",
+            )
+        return self._page_view_from_row(row)
 
     def soft_delete_page(self, page_id: str) -> None:
         with self._conn:

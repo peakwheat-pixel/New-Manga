@@ -372,9 +372,9 @@ def _seed_complete_page(core, page_id: str, width: int, height: int) -> None:
         core.conn.execute(
             "INSERT INTO pages (page_id, chapter_id, sort_order, source_hash,"
             " source_size_bytes, width, height, managed_original_ref,"
-            " created_at, updated_at)"
+            " created_at, updated_at, source_mode, integrity_status)"
             " VALUES (?, 'chapter-c', 0, 'hash-c', 1, ?, ?, 'managed/ref',"
-            " ?, ?)",
+            " ?, ?, 'managed', 'complete')",
             (page_id, width, height, NOW, NOW),
         )
 

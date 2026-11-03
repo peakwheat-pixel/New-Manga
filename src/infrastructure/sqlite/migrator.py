@@ -311,11 +311,15 @@ class V7MigrationBaseline:
     region_rows: int
     region_revision_rows: int
     complete_page_ids: frozenset[str]
-    #: Pages satisfying the legacy ``_COMPLETE_PAGE_WHERE`` column predicate
-    #: (soft-deleted rows included, per C-15 §1 assertion 1).
+    #: Pages satisfying the legacy **positive-dimension** copy predicate
+    #: (soft-deleted rows included, per C-15 v1.1 §1 assertion 1).
     v_artifact_page_ids: tuple[str, ...]
     #: Reader-projection visible order under the old C-05 v1.0 V_artifact
     #: predicate (same t / parent conditions, ordered by chapter + sort).
+    expected_managed_v_ids: tuple[str, ...]
+    #: C-05 v1.2 managed V expected set in canonical order:
+    #: old V_artifact ∪ old positive-dimension copy visible set, deduplicated
+    #: and ordered by (chapter_id, sort_order, page_id).
     v_original_paths: tuple[tuple[str, str], ...]
     #: (page_id, managed_path) pairs resolvable for V pages: the original
     #: revision path when present, else pages.managed_original_ref.
@@ -325,9 +329,11 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
+#: C-15 v1.1 §1 positive-dimension legacy baseline (the v7 backfill predicate).
 _LEGACY_COMPLETE_WHERE = (
     "source_hash IS NOT NULL AND managed_original_ref IS NOT NULL"
-    " AND width IS NOT NULL AND height IS NOT NULL"
+    " AND width IS NOT NULL AND width > 0"
+    " AND height IS NOT NULL AND height > 0"
 )
 
 #: Old C-05 v1.0 ``V_artifact`` predicate (judgement SQL from C-05 §3; the
@@ -357,6 +363,42 @@ WHERE p.deleted_at IS NULL
   AND r.integrity_status = 'valid'
 ORDER BY p.page_id
 """
+
+#: New C-05 v1.2 managed-branch V predicate: artifact witness OR
+#: copy-original witness (the ``?`` parameters pin the same instant twice).
+_V7_MANAGED_V_SQL = """
+SELECT DISTINCT p.page_id
+FROM pages p
+JOIN chapters c ON c.chapter_id = p.chapter_id
+JOIN books b ON b.book_id = c.book_id
+WHERE p.source_mode = 'managed'
+  AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND b.deleted_at IS NULL
+  AND (
+    EXISTS (SELECT 1 FROM media_artifacts a
+            JOIN artifact_revisions r
+              ON r.artifact_revision_id = a.current_revision_id
+            WHERE a.page_id = p.page_id
+              AND a.artifact_type IN ('original','thumbnail','clean','translated','render_preview','export')
+              AND r.integrity_status = 'valid'
+              AND r.created_at <= ?)
+    OR (p.integrity_status = 'complete'
+        AND p.source_hash IS NOT NULL AND p.managed_original_ref IS NOT NULL
+        AND p.width > 0 AND p.height > 0
+        AND p.created_at <= ?)
+  )
+ORDER BY c.chapter_id, p.sort_order, p.page_id
+"""
+
+#: Legacy positive-dimension copy visible set (pre-v7 columns only).
+_LEGACY_COPY_VISIBLE_SQL = """
+SELECT p.page_id, c.chapter_id, p.sort_order
+FROM pages p
+JOIN chapters c ON c.chapter_id = p.chapter_id
+JOIN books b ON b.book_id = c.book_id
+WHERE p.deleted_at IS NULL AND c.deleted_at IS NULL AND b.deleted_at IS NULL
+  AND {predicate}
+  AND p.created_at <= ?
+""".format(predicate=_LEGACY_COMPLETE_WHERE)
 
 #: New C-05 v1.1 managed-branch V predicate (source_mode dispatch added on
 #: top of the unchanged V_artifact judgement SQL).
@@ -394,6 +436,7 @@ def capture_pre_v7_baseline(conn: sqlite3.Connection) -> V7MigrationBaseline:
         region_revision_rows=0,
         complete_page_ids=frozenset(),
         v_artifact_page_ids=(),
+        expected_managed_v_ids=(),
         v_original_paths=(),
     )
     if not _table_exists("pages"):
@@ -426,6 +469,24 @@ def capture_pre_v7_baseline(conn: sqlite3.Connection) -> V7MigrationBaseline:
     v_ids = tuple(
         row["page_id"] for row in conn.execute(_V_ARTIFACT_SQL, (now,)).fetchall()
     )
+    copy_ids = {
+        row["page_id"]
+        for row in conn.execute(_LEGACY_COPY_VISIBLE_SQL, (now,)).fetchall()
+    }
+    expected_set = set(v_ids) | copy_ids
+    order_rows = conn.execute(
+        "SELECT p.page_id, c.chapter_id, p.sort_order FROM pages p"
+        " JOIN chapters c ON c.chapter_id = p.chapter_id"
+        " JOIN books b ON b.book_id = c.book_id"
+    ).fetchall()
+    order_map = {
+        row["page_id"]: (row["chapter_id"], row["sort_order"], row["page_id"])
+        for row in order_rows
+    }
+    expected_v_ids = tuple(
+        sorted(expected_set, key=lambda page_id: order_map.get(
+            page_id, ("", 0, page_id)))
+    )
     original_paths: dict[str, str] = {}
     for row in conn.execute(_V_ORIGINAL_PATH_SQL).fetchall():
         original_paths[row["page_id"]] = row["managed_path"]
@@ -438,7 +499,7 @@ def capture_pre_v7_baseline(conn: sqlite3.Connection) -> V7MigrationBaseline:
     }
     resolved = tuple(
         (page_id, original_paths.get(page_id) or refs.get(page_id) or "")
-        for page_id in v_ids
+        for page_id in expected_v_ids
     )
     return V7MigrationBaseline(
         page_rows=page_rows,
@@ -446,6 +507,7 @@ def capture_pre_v7_baseline(conn: sqlite3.Connection) -> V7MigrationBaseline:
         region_revision_rows=_count("SELECT COUNT(*) FROM region_revisions", "region_revisions"),
         complete_page_ids=complete_ids,
         v_artifact_page_ids=v_ids,
+        expected_managed_v_ids=expected_v_ids,
         v_original_paths=resolved,
     )
 
@@ -478,18 +540,56 @@ def make_v7_validator(
                 f" missing={missing[:10]} extra={extra[:10]}",
             )
 
-        # Assertion 2: old C-05 v1.0 V_artifact visible set equals the new
-        # managed-branch V set, per page_id and in order.
+        # Assertion 2 (C-15 v1.1): managed V v1.2 (artifact ∪ copy witness)
+        # equals the frozen union baseline in canonical order.
         new_v = tuple(
-            row["page_id"] for row in conn.execute(_V7_MANAGED_SQL, (moment,)).fetchall()
+            row["page_id"]
+            for row in conn.execute(_V7_MANAGED_V_SQL, (moment, moment)).fetchall()
         )
-        if new_v != baseline.v_artifact_page_ids:
+        if new_v != baseline.expected_managed_v_ids:
             raise MigrationValidationError(
                 "V7_MANAGED_V_DIVERGED",
-                f"managed V set diverged from baseline V_artifact set;"
-                f" baseline={list(baseline.v_artifact_page_ids)[:10]}"
+                f"managed V set diverged from expected union baseline;"
+                f" baseline={list(baseline.expected_managed_v_ids)[:10]}"
                 f" actual={list(new_v)[:10]}",
             )
+
+        # Assertion 2b (C-15 v1.1): the same transaction's production read
+        # paths (get/list/pure projection) must agree with the expected union;
+        # no second connection, no publish/resolve, fixed moment.
+        from infrastructure.sqlite.library import SqliteLibraryRepository
+
+        repository = SqliteLibraryRepository(conn)
+        chapter_ids = [
+            row["chapter_id"]
+            for row in conn.execute(
+                "SELECT chapter_id FROM chapters ORDER BY chapter_id"
+            ).fetchall()
+        ]
+        page_objects = [
+            page for chapter_id in chapter_ids
+            for page in repository.list_pages(chapter_id, at=moment)
+        ]
+        ordered_ids = tuple(
+            page.page_id
+            for page in sorted(
+                page_objects,
+                key=lambda page: (page.chapter_id, page.sort_order, page.page_id),
+            )
+        )
+        if ordered_ids != baseline.expected_managed_v_ids:
+            raise MigrationValidationError(
+                "V7_PROJECTION_DIVERGED",
+                "production list path disagreed with expected managed V set",
+            )
+        for chapter_id in chapter_ids:
+            repository.list_page_views(chapter_id, at=moment)
+        for page_id in baseline.expected_managed_v_ids:
+            if repository.get_page(page_id, at=moment) is None:
+                raise MigrationValidationError(
+                    "V7_PROJECTION_DIVERGED",
+                    f"production get path dropped visible page {page_id}",
+                )
 
         # Assertion 3: backfill touched exactly the legacy complete set —
         # half-written/placeholder rows stay incomplete, V-invisible legacy
@@ -560,6 +660,11 @@ def make_v7_validator(
         # Assertion 5: legacy managed resource readability through the
         # injected IResourceVerifier seam (read-only; no Host calls).
         if resource_verifier is None:
+            if baseline.v_original_paths:
+                raise MigrationValidationError(
+                    "SOURCE_MIGRATION_RESOURCE_UNVERIFIED",
+                    "non-empty managed V resource set requires an injected resource verifier",
+                )
             return
         unverifiable: list[str] = []
         to_check: list[str] = []

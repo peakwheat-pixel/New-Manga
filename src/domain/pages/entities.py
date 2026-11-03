@@ -73,6 +73,47 @@ class Page:
         self.deleted_at = utc_now()
         self.updated_at = self.deleted_at
 
+
+@dataclass(frozen=True)
+class PageView:
+    """FEA-09/C-15 v1.1 §4.4: read-only projection for V-true rows that cannot
+    be materialised as a full :class:`Page` (managed artifact-only witness,
+    missing import columns, or superseded representation).
+
+    It is **not** a write model: no path through the repository accepts a
+    ``PageView`` for insert/update/import. Fields that are unknown stay None —
+    in particular ``source_hash`` must only ever come from an eligible
+    ORIGINAL revision (or ``pages.source_hash``), never from a thumbnail/clean
+    artifact.
+    """
+
+    page_id: str
+    chapter_id: str
+    source_mode: str
+    sort_order: int
+    visibility_witness: str  # artifact | copy | artifact+copy | referenced
+    original_available: bool
+    integrity_status: str
+    source_filename: str | None = None
+    source_order: int | None = None
+    created_at: str | None = None
+    source_hash: str | None = None
+    source_size_bytes: int | None = None
+    managed_original_ref: str | None = None
+    width: int | None = None
+    height: int | None = None
+    artifact_revision_id: str | None = None
+
+    @property
+    def deleted(self) -> bool:
+        return False
+
+    def reorder(self, _sort_order: int) -> None:
+        raise TypeError("PageView is a read-only projection; reorder the Page")
+
+    def soft_delete(self) -> None:
+        raise TypeError("PageView is a read-only projection; soft-delete the Page")
+
     @property
     def deleted(self) -> bool:
         return self.deleted_at is not None

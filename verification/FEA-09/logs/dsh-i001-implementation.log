@@ -1,0 +1,8 @@
+
+## I001 实现（2026-11-04，DSH）
+- src/infrastructure/sqlite/library.py：V v1.2 SQL（artifact ∨ copy witness，witness 列）、PageView 只读投影、list_page_views、get_visible_original_path（artifact→copy）；get_page/list_pages 不再丢 V 行（Page 或 PageView）。
+- src/domain/pages/entities.py：PageView（只读、禁写）。
+- src/bootstrap/core_service.py：managed resolve 资源选择（eligible original revision → Managed Copy）。
+- src/infrastructure/sqlite/migrator.py：正尺寸基线、union 守恒、同事务 get/list/纯投影三路径、非空资源强制 verifier；空基线补字段。
+- 测试：	ests/fea09/test_i001_managed_visibility.py（witness 矩阵 11）、	est_v7_migration.py +2（union/verifier）；	ests/core 两处旧 fixture 补 v7 列。
+- 结果：Python 套件全绿（见 log erification/FEA-09/logs/dsh-i001-implementation.log）。未运行：.NET/build/IPC（后续）。

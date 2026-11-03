@@ -3475,13 +3475,20 @@ class CoreServiceServer:
             finally:
                 if temp_path is not None:
                     temp_path.unlink(missing_ok=True)
-        if not page.managed_original_ref:
+        # C-15 v1.1 §4.2 / C-05 v1.2 R: the eligible current ORIGINAL revision
+        # is preferred, then the Page Managed Copy; either fails typed.
+        selected_path = None
+        selector = getattr(self._core.repository, "get_visible_original_path", None)
+        if selector is not None:
+            selected_path = selector(page.page_id)
+        managed_ref = selected_path or page.managed_original_ref
+        if not managed_ref:
             raise RegionLookupError(page_id)
         # The wire gate admits exactly the decode face's suffixes; the suffix is
         # checked BEFORE any read so an unsupported ref stays the documented
         # UNKNOWN/internal anomaly (never PAGE_NOT_FOUND because the file it
         # points at happens to be missing).
-        suffix = Path(page.managed_original_ref).suffix.lower()
+        suffix = Path(managed_ref).suffix.lower()
         if suffix not in _ORIGINAL_SUFFIXES:
             raise RuntimeError(f"unsupported managed original format: {suffix!r}")
         # P09-MANAGED-READ-ROOT-TRUST-1: the managed original is admitted through
@@ -3493,7 +3500,7 @@ class CoreServiceServer:
         if trust is None:
             raise RuntimeError("managed original escaped the Managed Copy root")
         try:
-            source_bytes = trust.read_bytes(page.managed_original_ref)
+            source_bytes = trust.read_bytes(managed_ref)
         except TypedResourceChannelError as error:
             if error.code == E_NOT_FOUND:
                 raise RegionLookupError(page_id) from error
@@ -3513,7 +3520,7 @@ class CoreServiceServer:
             # key whose file is gone forever.
             return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
         temp_source = self._materialise_verified_managed_copy(
-            page.managed_original_ref, source_bytes
+            managed_ref, source_bytes
         )
         try:
             return self._render_previews.publish_original(
