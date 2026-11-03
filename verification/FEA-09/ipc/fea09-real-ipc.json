@@ -1,18 +1,20 @@
 {
-  "generated_at": "2026-11-03T13:52:26.3138472\u002B00:00",
+  "generated_at": "2026-11-03T13:54:41.5400159\u002B00:00",
   "mode": "real Host\u003C-\u003ECore stdio (python source process)",
   "python": "C:\\Python314\\python.exe",
   "source_file_sha256": "c414cd0e204de974f73753c7e28d7638e7b3691bb8b1a2bab6b25bb7fed7ce77",
-  "grant_id": "source-26f47dde02d3429a8c127b0be8420516",
-  "chapter_id": "1432c17ff5aa49889d57111544bb5b13",
-  "plan_id": "plan-490d1a5af23640f3a8e7eca3fd00179c",
-  "plan_digest": "33b8d7046ede4ff82d3242569f744ddb4d30d18591b6e17d38fc5c153a7c4f4c",
-  "operation_id": "op-1a3516de28be4f73a0586671b2be37e0",
+  "grant_id": "source-c49aa8b7479b43e78f6898f88e64bac0",
+  "chapter_id": "65886f54dfe740ebb1fb273e69c36b1f",
+  "plan_id": "plan-35e41aadc43949e3b1f7018ed35f345d",
+  "plan_digest": "c3384e87fde0014452b7fafd35b54296d4c62116dbb9f0889edae645a76d7b74",
+  "operation_id": "op-09281a253ad64b428dd3ed1005071243",
   "receipt_state": "completed",
-  "page_id": "525a74527419480b96f72f06965e0e22",
-  "resource_id": "page-rendition-525a74527419480b96f72f06965e0e22",
+  "page_id": "4775d244ccf14dff95e4afdf2ccf496b",
+  "resource_id": "page-rendition-4775d244ccf14dff95e4afdf2ccf496b",
+  "v2_adapter": "HostCommandDispatcher.resolve_page_resource -\u003E CoreServiceClient (CoreService channel)",
+  "v2_adapter_resource_id": "page-rendition-4775d244ccf14dff95e4afdf2ccf496b",
   "published_png_sha256": "3f6f1757f00fe9a0c812b7e440151342761ead65a6652aa39e9d98983770a01c",
-  "wire_frame_count": 16,
+  "wire_frame_count": 17,
   "wire_commands": [
     "core.ping",
     "OpenHostSession",
@@ -29,6 +31,7 @@
     "GetImportReceipt",
     "core.ping",
     "GetImportReceipt",
+    "resolve_page_resource",
     "resolve_page_resource"
   ]
 }

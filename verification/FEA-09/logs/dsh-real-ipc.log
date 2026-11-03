@@ -14,3 +14,7 @@
 
 ## 边界
 真实 IPC 使用生产 CoreServiceClient/Host 协调器；未走 V2 UI 视图/ViewModel（归 FEA-09-UI-1），未用 fake controller。仍缺：V2 可达路径 UI 侧断言、独立 impl Review。
+
+## 追加：V2 command adapter 路径（2026-11-03）
+- Fea09RealIpcTests 增加 `HostCommandDispatcher.InvokeAsync("resolve_page_resource")`（生产 V2 adapter，CoreService channel）并与直接 client 结果一致。
+- 重启真实 stdio 测试：1 passed，17 wire frames；证据 `verification/FEA-09/ipc/fea09-real-ipc.json`（含 `v2_adapter`/`v2_adapter_resource_id`）。

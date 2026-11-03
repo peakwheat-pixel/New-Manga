@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using NewManga.CoreClient;
+using NewManga.CoreClient.Commands;
 using NewManga.Host.Sources;
 using Xunit;
 
@@ -109,6 +110,16 @@ public sealed class Fea09RealIpcTests
 
         var resolved = await client.ResolvePageResourceAsync(pageId);
         Assert.Equal("page-rendition-" + pageId, resolved.ResourceId);
+        // The same command through the production V2 command adapter
+        // (HostCommandDispatcher -> CoreServiceClient), not a fake controller.
+        var dispatcher = new HostCommandDispatcher(client);
+        var dispatched = await dispatcher.InvokeAsync(
+            "resolve_page_resource",
+            JsonDocument.Parse($"{{\"page_id\":\"{pageId}\"}}").RootElement.Clone());
+        Assert.Equal(HostCommandChannel.CoreService, dispatched.Channel);
+        Assert.Equal(
+            resolved.ResourceId,
+            dispatched.Value.GetProperty("resource_id").GetString());
         var published = Path.Combine(options.DerivedRoot, "pages", resolved.ResourceId + ".png");
         Assert.True(File.Exists(published), "referenced resolve must publish a derived PNG rendition");
         Assert.NotEqual(sourceDigest, Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(published))).ToLowerInvariant());
@@ -153,6 +164,8 @@ public sealed class Fea09RealIpcTests
             ["receipt_state"] = receipt.GetProperty("state").GetString(),
             ["page_id"] = pageId,
             ["resource_id"] = resolved.ResourceId,
+            ["v2_adapter"] = "HostCommandDispatcher.resolve_page_resource -> CoreServiceClient (CoreService channel)",
+            ["v2_adapter_resource_id"] = dispatched.Value.GetProperty("resource_id").GetString(),
             ["published_png_sha256"] = Convert.ToHexString(
                 SHA256.HashData(await File.ReadAllBytesAsync(published))).ToLowerInvariant(),
             ["wire_frame_count"] = client.Wire.Frames.Count,
