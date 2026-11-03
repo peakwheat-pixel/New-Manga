@@ -24,6 +24,10 @@ allowed_paths:
   - doc/tasks/FEA-09.md
   - doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md
   - doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+  - doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md
+  - doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C05.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C06.md
   - doc/plan/FEA-CONTRACT-FROZEN-C15.md
   - doc/plan/FEA-CONTRACT-FROZEN-C16.md
   - doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md
@@ -153,4 +157,5 @@ out_of_scope:
 
 | 日期 | 变更 | 依据 |
 |---|---|---|
-| 2026-11-03 | 建立并冻结范围：C-15（Source 存储 DDL/迁移/跨存储次序）+ C-16（source-read wire v1.1）；owner=DSH，状态 ready | FEA-09 scope-r1 R1-001/R1-002/R1-006/R1-008/R1-009；G-CONTRACT 关闭裁定 §3.3；C-06 冻结记录 §3 | 
+| 2026-11-03 | 建立并冻结范围：C-15（Source 存储 DDL/迁移/跨存储次序）+ C-16（source-read wire v1.1）；owner=DSH，状态 ready | FEA-09 scope-r1 R1-001/R1-002/R1-006/R1-008/R1-009；G-CONTRACT 关闭裁定 §3.3；C-06 冻结记录 §3 |
+| 2026-11-03 | 按契约独立复核 r1（changes_requested，P0=0/P1=11/P2=2）扩域：新增 **C-05 v1.1 / C-06 v1.1 UNFREEZE 载体**（`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）与对应冻结记录/矩阵更新；写域增加 C-05/C-06 草案与冻结记录；C-15/C-16 返修 | `doc/reviews/FEA-09-PREREQ-1-r1.md` R1-001/R1-002 等；C-05/C-06 冻结记录「修订须 UNFREEZE」纪律 | 

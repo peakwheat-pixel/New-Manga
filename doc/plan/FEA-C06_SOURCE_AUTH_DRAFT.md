@@ -1,7 +1,7 @@
 # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
 
-状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C06.md)）**
-日期：2026-11-01
+状态：**FROZEN v1.0 / UNFREEZE v1.1 草案（2026-11-03，待独立复核后重冻；载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)）**
+日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）
 
@@ -34,11 +34,12 @@
 
 | 项 | 内容 |
 |---|---|
-| 申请方 | Core（导入/同步/重定位时），经 Host |
-| 授予方 | Host（校验 `SourceAccessRegistry` + `identityFacts`） |
-| grant 字段（候选） | `{ grantId, registryId, generation, expiresAt, scope }`；`scope` **按 `SourceId / version / entry / rendition` 限定**（AD-003 §3.5），**不是**裸 `paths[]`；附**大小与解码预算**（单次字节上限 + 解码尺寸上限），UI **不得**获得任意 `ReadFile(path)` |
-| 有效期 | **短期**（≤ 单次操作，建议 ≤300 秒）；**不得**作为长期通行证复用 |
+| 申请方 | Core（导入/同步/重定位时）；现有传输无 Core→Host RPC，故由 Host 承载操作请求并在 **dispatch 前**按 Registry 铸造 grant（C-06 v1.1；语义上 Core 仍是申请方，Host 是唯一授予方） |
+| 授予方 | Host（校验 `SourceAccessRegistry` + 逐根 identity；铸造时完成 scope→授权根解析） |
+| grant 字段（v1.1 冻结） | `{ grantId, registryId, generation, expiresAt, scope{ sourceId, version, entry[], rendition }, budget{ maxBytes, maxDecodeBytes, maxEntries }, entries[{entryKey, entryId?, locator, ordinal, path, facts}], secretRef?, signingKey, signature }`；`scope` **按 SourceId/version/entry/rendition 四维**限定（AD-003 §3.5），**不是**裸 `paths[]`；UI **不得**获得任意 `ReadFile(path)`；签名覆盖全部 signed fields |
+| 有效期 | **短期**（≤ 单次操作，≤300 秒）；**不得**作为长期通行证复用 |
 | 与旧 grant 的关系 | 旧 `ImportPages` 一次性 grant **保持原语义**（≤300 秒、直属成员、进程内）；`source-read` 是**独立**的新 grant 类型，不复用旧类型 |
+| 撤销/失联（v1.1） | 用户撤销 → Host 持久化 generation+1 → 推送 `RevokeSourceReadGrant`（Host→Core）→ Core 立即废止 grant、下一提交边界停止并 ACK → Host 收到 ACK 后才向调用方返回成功；Core 检测 stdin EOF/transport 失败 → 全部 grant 立即失效（fail-closed）。**不得以 300 秒 TTL 代替即时撤销** |
 | 失败 | registry 不存在/过期/generation 不匹配/identity 变化 → `SOURCE_ACCESS_DENIED`（fail-closed，不降级读取） |
 
 ### 2.3 命令/字段（协议增量，候选）
@@ -48,8 +49,9 @@
 | `RegisterSourceRoot` | UI → Host | `{ locator, roots[] }`（`locator` = 用户选择的源展示名；`roots[]` = 授权根绝对路径列表，Host 校验规范化后互不包含、均在用户可选范围内） | `{ registryId, generation }` |
 | `ListSourceRoots` | UI → Host | `{}` | `{ entries: [{ registryId, locator, roots[], generation, createdAt, lastUsedAt }] }`（重启后 UI 列出/撤销已授权根） |
 | `RevokeSourceRoot` | UI → Host | `{ registryId }` | `{}` |
-| `RequestSourceRead` | Core → Host | `{ registryId, generation, scope{ sourceId, version, entry, rendition }, budget{ maxBytes, maxDecodeBytes } }` | `{ grantId, expiresAt }` |
-| `VerifySourceRead` | Host 内部 | `{ grantId, scope, identityFacts{ digest, volumeSerial, fileId } }` | `{ ok, reason? }`；**归属校验**：`scope.sourceId/entry` 必须解析到某 `authorizedRoots` 内的路径（映射在 Verify 时做，越根即拒绝） |
+| `RequestSourceRead` | Host 铸造（操作 dispatch 前） | 语义请求：`{ registryId, generation, scope{ sourceId, version, entry[], rendition }, budget{ maxBytes, maxDecodeBytes, maxEntries } }`（v1.1 四维 scope） | `{ grantId, expiresAt }`；Host 是唯一授予方，无 Core→Host RPC |
+| `VerifySourceRead` | 双侧（v1.1） | Host 铸造时：`{ grantId, scope, facts }` → 解析 scope→授权根并拒绝越根；Core 读取前/commit 前：签名/session/expiry/generation/identity facts 校验 | Host：`{ ok, reason? }`；Core：本地 typed 拒绝（不回 Host） |
+| `RevokeSourceReadGrant`（v1.1 新增） | Host→Core（host-control） | `{ registryId, generation, grantIds[] }` | `{ revoked:true, grantsRevoked:n }` ACK；Host 收到 ACK 后才返回撤销成功 |
 
 新增命令按 **minor** 递增（当前资源控制面 wire v1 → 本组命令 v1.1；**不改 major**）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。**读取面**：`RequestSourceRead` 的 `scope` 必须按 `SourceId/version/entry/rendition` 表达并带预算，**不接受** `paths[]` 形式。
 
@@ -64,6 +66,8 @@
 7. **读取预算**：每次 grant 有字节上限与解码尺寸上限；超限 → 拒绝（不截断）。
 8. **`user-source` 不得进入 derived-cache grant**：源读取与 derived 缓存是两条独立通道（C-01b SC-20）。
 9. **外部写/删只收敛到 registry + 回收站桥**：除 `SourceAccessRegistry` 与 Windows 回收站桥外，任何路径不得对外部源文件写/删（AD-003 §3.7）。
+10. **即时撤销/失联 fail-closed（v1.1）**：撤销以 Host 持久化 generation+1 并收到 Core `RevokeSourceReadGrant` ACK 为线性化点；撤销成功后新读/新 commit 一律拒绝。Core 检测 Host 失联（stdin EOF/transport 失败）即废止全部 grant；不得以 TTL 或旧签名继续读取。
+11. **commit 前确认（v1.1）**：每个提交单元在事务提交前重验本地 grant 有效性（撤销集合/generation/expiry/identity），任一失败中止后续单元；已提交单元保留（不声称整次导入原子）。
 
 ## 4. 与 C-01b / C-05 / C-04b 的接口
 
@@ -86,3 +90,4 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表、SourceAccessRegistry 条目、source-read grant、4 条命令、5 条安全约束、与三份契约接口、冻结条件 | DSH |
+| 2026-11-03 | **v1.1 UNFREEZE**：§2.2 明确 Host 铸造型发放与逐根 identity；grant 增加四维 scope/entries/budget/secretRef/signature 与撤销/失联线性化；§2.3 `RequestSourceRead`/`VerifySourceRead` 双侧归属修订 + 新增 `RevokeSourceReadGrant`；§3 增加约束 10/11。载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；待独立复核后重冻并重算 pin | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-002/R1-003 |
