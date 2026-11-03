@@ -103,6 +103,8 @@ class SourceReadGrantRegistry(SourceReadAccess):
         self._session_id: str | None = None
         self._disconnected = False
         self._min_generation: dict[str, int] = {}  # registry_id -> floor
+        #: C-16 v1.1 §3.1: Secret-G grant ids already consumed (one-shot).
+        self._consumed_secrets: set[str] = set()
 
     # ------------------------------------------------------------- register
     def register(self, payload: dict) -> None:
@@ -301,6 +303,99 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 or not math.isfinite(expiry) or expiry <= self._clock()
                 or any(expiry > g.expires_at for g in matching)):
                 raise SourceImportError("SOURCE_PASSWORD_REQUIRED", "password reference is unavailable")
+
+    def claim_secret_for_binding(
+        self, source_id: str, version_id: str, entry_id: str
+    ) -> bytes | None:
+        """C-16 v1.1 §3.1: consume the one fresh Secret-G for a page binding.
+
+        Returns ``None`` when no live secret-bearing grant matches the binding
+        (plain source). Exactly one match is required; two or more is typed
+        ``SOURCE_ACCESS_DENIED`` (ambiguous), a malformed/expired secret ref is
+        ``SOURCE_PASSWORD_REQUIRED``, and a replay is refused. The secret file
+        is read + DPAPI-unprotected + zero-filled/deleted by ``read_secret``.
+        """
+        if not all(
+            isinstance(value, str) and value
+            for value in (source_id, version_id, entry_id)
+        ):
+            raise SourceImportError("SOURCE_ACCESS_DENIED", "page binding is invalid")
+        with self._lock:
+            candidates: list[_SourceReadGrant] = []
+            matched_errors: list[SourceImportError] = []
+            for grant in self._grants.values():
+                if grant.secret_ref is None:
+                    continue
+                scope = grant.scope
+                if (
+                    scope.get("source_id") != source_id
+                    or scope.get("version") != version_id
+                ):
+                    continue
+                raw_entries = scope.get("entries") or []
+                if not any(
+                    isinstance(item, dict) and item.get("entry_key") == entry_id
+                    for item in raw_entries
+                ):
+                    continue
+                try:
+                    live = self._checked(grant.grant_id)
+                except SourceImportError as error:
+                    matched_errors.append(error)
+                    continue
+                candidates.append(live)
+            if not candidates:
+                if matched_errors:
+                    raise matched_errors[0]
+                return None
+            if len(candidates) > 1:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "multiple secret grants match the binding"
+                )
+            grant = candidates[0]
+            if grant.grant_id in self._consumed_secrets:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "password grant was already consumed"
+                )
+            secret_ref = grant.secret_ref
+            if not isinstance(secret_ref, dict):
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_REQUIRED", "password reference is invalid"
+                )
+            token = secret_ref.get("token")
+            path = secret_ref.get("path")
+            expiry = secret_ref.get("expires_at")
+            if (
+                not isinstance(token, str)
+                or not re.fullmatch(r"[A-Za-z0-9_-]{22,64}", token)
+                or not isinstance(path, str)
+                or not path
+                or isinstance(expiry, bool)
+                or not isinstance(expiry, (int, float))
+                or not math.isfinite(expiry)
+                or expiry <= self._clock()
+                or expiry > grant.expires_at
+            ):
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_REQUIRED", "password reference is invalid"
+                )
+            secret_path = Path(path)
+            if (
+                not secret_path.is_absolute()
+                or secret_path.name != f"{token}.bin"
+                or secret_path.parent.name != "source-secrets"
+            ):
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_REQUIRED", "password reference path is invalid"
+                )
+            self._reject_reparse(secret_path.parent)
+            self._reject_reparse(secret_path)
+            # Consume before reading so a concurrent/replayed resolve cannot
+            # observe the same file twice.
+            self._consumed_secrets.add(grant.grant_id)
+        from application.importing.referenced.secrets import read_secret
+
+        return read_secret(secret_ref)
 
     def bind_imported_entry(
         self, grant_id: str, source_id: str, version_id: str, entry_id: str

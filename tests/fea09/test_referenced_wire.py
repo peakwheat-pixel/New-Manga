@@ -330,7 +330,7 @@ def test_wire_ping_advertises_source_read_capability():
     server = _make_server(SourceReadGrantRegistry(), None, None)
     response = _dispatch(server, _request("core.ping", {}))
     assert response["result"]["capabilities"] == [
-        "library.list_books", "source.read/1",
+        "library.list_books", "source.read/1", "source.resolve-secret/1",
     ]
 
 

@@ -69,9 +69,21 @@ def read_entry_bytes(resolved, entry, password: bytes | None = None) -> bytes:
                     "SOURCE_ENTRY_MISSING", "archive member is missing"
                 )
             info = ordered[entry.ordinal]
+            # C-16 v1.1 §3.1: an encrypted member without the fresh Secret-G
+            # is a password-required refusal, not a wrong-password attempt.
+            if (info.flag_bits & 0x1) and password is None:
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_REQUIRED",
+                    "encrypted archive member requires a password",
+                )
             try:
                 return archive.read(info, pwd=password)
             except (RuntimeError, OSError) as error:
+                if password is None:
+                    raise SourceImportError(
+                        "SOURCE_PASSWORD_REQUIRED",
+                        "encrypted archive member requires a password",
+                    ) from error
                 raise SourceImportError(
                     "SOURCE_PASSWORD_INVALID", "archive member could not be read"
                 ) from error

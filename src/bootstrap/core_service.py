@@ -1468,7 +1468,7 @@ class CoreServiceServer:
             },
             # FEA-09 (C-16 §0): `source.read/1` is checked per-operation by
             # the Host before dispatching any source command.
-            "capabilities": ["library.list_books", "source.read/1"],
+            "capabilities": ["library.list_books", "source.read/1", "source.resolve-secret/1"],
         }
 
     def handle_list_books(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -3422,10 +3422,22 @@ class CoreServiceServer:
                 )
 
                 def _produce() -> bytes:
+                    # C-16 v1.1 §3.1: a cache MISS on an encrypted source
+                    # consumes the one fresh Secret-G; cache hits never reach
+                    # here (no token requested/consumed).
+                    password = None
+                    claim = getattr(registry, "claim_secret_for_binding", None)
+                    if claim is not None:
+                        password = claim(
+                            prepared["source_id"],
+                            prepared["version_id"],
+                            prepared["entry_id"],
+                        )
                     png, _width, _height = render_prepared_rendition(
                         prepared,
                         image_decoder=getattr(self._core, "image_decoder", None),
                         document_raster=getattr(self._core, "document_raster", None),
+                        password=password,
                     )
                     return png
 

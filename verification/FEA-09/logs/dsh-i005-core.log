@@ -1,0 +1,7 @@
+
+## I005 Core 实现（2026-11-04，DSH；Host 部分待续）
+- source_read_refs.py：claim_secret_for_binding(source,version,entry)——0 个返回 None（明文源）、1 个消费、>=2 DENIED、重放 DENIED、过期/撤销 typed、secret 路径必须 Host source-secrets/<token>.bin 且无 reparse；一次性由 ead_secret 零填充删除。
+- core_service.py：core.ping 增 source.resolve-secret/1；referenced resolve cache-miss 的 _produce 先 claim Secret-G 再 decode（cache hit 不消费）。
+- eader.py：加密 archive member 无密码 → SOURCE_PASSWORD_REQUIRED（不再误报 INVALID）。
+- 测试：	ests/fea09/test_i005_resolve_secret.py（8：DPAPI/无 grant/重放/多义/scope/过期/路径/撤销）+ 	est_i005_encrypted_resolve.py（2：真实 zipcrypto 加密页 cache-miss 消费+删除、cache-hit 免 token、无 Secret-G typed REQUIRED）。
+- 结果：fea09 128 passed；.NET build 0 warn/0 err；dotnet test 1297 passed/0 failed。未运行：真实 IPC/DPAPI 生产、Host fresh-grant（待实现）。
