@@ -32,3 +32,8 @@
 ## 下一步
 1. 语义修订提交（C-05/C-15/C-16）→ 三指纹/old-new blob → 已提交字节独立复核（ZCode，Codex 04:33 后可用则 Codex）→ 仅元数据冻结（FROZEN/矩阵/载体 §8/旧 pin）→ check+17 pins。
 2. 冻结后释放 I001/I005 实现 + 测试矩阵 + 新独立实现复核 + DSH 集成。
+
+## 重冻（2026-11-04）
+- 语义提交 ed570681b + 补正 a9276fbae；已提交字节复核 ZCode sem1（P1×1/P2×1）→ 补正 → sem2 **approved P0/P1/P2=0**。
+- 重冻载体 doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md；FROZEN C05 v1.2 / C15 v1.1 / C16 v1.1；新 pin f6e6f3cb… / d8c0a3bc… / 0b9511a5…；check PASS、pins 17/17；M2-C1 无字节变更。
+- 实现释放：R1-I001 / R1-I005。
