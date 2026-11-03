@@ -1155,4 +1155,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **DSH 集成验证**（`verification/FEA-08/logs/integration-verification.log`）：build 0w/0e；全量 1292/0/57；check PASS(3)；pins 15/15；旧 FEA-06 四 PNG 未变；禁止范围 diff/status 空；清空类 API 0；EV 73 项（72 文件四方 + pin-verify 自身 SHA）；未 push（ahead=660，无远端分支包含 HEAD）。
 - **FEA-08 关闭**：`status: done`；`resource_closeout_status: complete`；AC-1…AC-4 `<<MET>>`（LIMITED 子能力如实登记）；Closeout Record 已填；Task 卡 73 项 EV 逐项 pin。
 - **FEA-09 释放**：新建 `doc/tasks/FEA-09.md`（`proposed`，引用源与导入；写域按提案 :930；AC-1…AC-8 草案；待 scope review 裁决 5 项）。STATUS 已指向 FEA-09；PLAN 更新为「FEA-09 scope 待 Review」。
-- **下一步**：派 FEA-09 scope review（独立上下文）→ DSH 裁决并冻结范围 → Appointment 实现。不 push。
+- **下一步**：派 FEA-09 scope review（独立上下文）→ DSH 裁决并冻结范围 → Appointment 实现。不 push。## 179. Codex 派发配置变更（用户指示，2026-11-03）
+
+- **用户指示**：Codex 模型 = `gpt-6.1-sol`，思考强度 = `mid`（按 CLI 取值映射为 `model_reasoning_effort="medium"`）。
+- 自本条起，所有 Codex CLI 派发（实现/Review/诊断）统一使用：
+
+```powershell
+& C:\Users\49745\AppData\Local\OpenAI\Codex\bin\22cfb1d302613eae\codex.exe exec `
+  --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox `
+  -m gpt-6.1-sol -c 'model_reasoning_effort="medium"' -o $out $prompt
+```
+
+- 适用范围：FEA-09 scope review 及后续所有 Codex 任务；本次变更只影响派发参数，不改任何 Task 范围/证据。
+- 生效时点：Codex 额度 15:40 恢复后的下一轮派发；若届时仍不可用，按故障转移规则走 ZCode 或 DSH 独立子 agent。
