@@ -50,3 +50,13 @@ verification/GOV-UNTRACKED-BACKLOG-DISPOSITION-1/anomalies/** -text
 # working-tree bytes. With core.autocrlf=true the checkout was CRLF while the blob is LF, so pins
 # broke on any LF checkout. Pin LF so the recorded hashes are reproducible everywhere.
 verification/REALUSE-DATA-SAFETY-6/** text eol=lf
+
+# FEA-08 (impl-r1 F08I1-002): Canonical Evidence pins are SHA-256 of the Git blob (LF). With
+# core.autocrlf=true the working tree was CRLF, so 9/36 pins could not be reproduced via
+# `git cat-file`. Pin eol=lf for the *text* evidence only; fixtures (PNG/GIF/ZIP/PDF) stay
+# byte-exact and must never be marked text.
+verification/FEA-08/*.json text eol=lf
+verification/FEA-08/**/*.json text eol=lf
+verification/FEA-08/**/*.log text eol=lf
+verification/FEA-08/**/*.md text eol=lf
+verification/FEA-08/**/*.txt text eol=lf
