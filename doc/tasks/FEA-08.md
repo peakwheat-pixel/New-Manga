@@ -13,8 +13,8 @@ depends_on:
 base_commit: 2870a9fa52b73fdf344cc723e59957d76d60e395（scope-r2 approved head；范围冻结）
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: 634086efb（R8 收口前的 approved delivery head；R8 收口 commit 见下）
-delivery_head: 待 R8 收口 commit（本 commit；证据 73 项随 R8 提交登记）
+integration_commit: c27b61c25（R8 收口 commit：集成验证记录 + Closeout）
+delivery_head: c27b61c25（R8 收口 commit；Canonical Evidence 73 项逐项 pin @该 commit）
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-08
@@ -99,79 +99,79 @@ R7 交付：全部文件 pin @ R7 证据 commit（见 git log 与下表 commit �
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-F08-01 | AC-3/AC-4 | verification/FEA-08/fixtures/anim.gif | - | 7dd78b8dcefe5b5adc3bea15b25c9b76e1df59ebf97c5471bf8c4214553ab2fd | SOURCE_PIN |
-| EV-F08-02 | AC-3/AC-4 | verification/FEA-08/fixtures/book_asym_left.zip | - | 9dff425f7fad997a45923f59eec81c432dc41aab8ab8f4efc1c95b503d680b3d | SOURCE_PIN |
-| EV-F08-03 | AC-3/AC-4 | verification/FEA-08/fixtures/book_asym_right.zip | - | 83a300cd38193c5f12adc7b862cce5788b275cc1b1172cd2fff176d915b1617f | SOURCE_PIN |
-| EV-F08-04 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dup.zip | - | 83a300cd38193c5f12adc7b862cce5788b275cc1b1172cd2fff176d915b1617f | SOURCE_PIN |
-| EV-F08-05 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dup_copy.zip | - | bfc7b351471da8c3bd2fd3639a0a23407dfdf2cbf161d23cae57bed4d16ebc05 | SOURCE_PIN |
-| EV-F08-06 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupanchor_left.zip | - | 58de5851653febff231853b3cb9f6f9383bdd4876036984a1957892a216c1b33 | SOURCE_PIN |
-| EV-F08-07 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupanchor_right.zip | - | 495ede59e94a8a567f7a8c7406bb9785b3180a482b82349228f40b7cf8f78d0d | SOURCE_PIN |
-| EV-F08-08 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupcontent_a.zip | - | 1ddb626cd7a5810f039c36903d3a6ec40ab09fb577bd58a5f7c466641db4ca8f | SOURCE_PIN |
-| EV-F08-09 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupcontent_b.zip | - | d8b5581c2a22af287688df18575d0151ffb36a5bad3d5940e00cbf4f9014de24 | SOURCE_PIN |
-| EV-F08-10 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_aes.zip | - | 5304dc768a72422695a34de5dc5474573d2f525cbc8e39b031b8112e9f10e7bc | SOURCE_PIN |
-| EV-F08-11 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_zipcrypto.zip | - | 1218a6bd16faa4e42f7398f0cbdda8af5a716ee4e8c04d3cb09ef8af88d04813 | SOURCE_PIN |
-| EV-F08-12 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_zipcrypto_copy.zip | - | aba0739142cf61db2b4de6c04a27911e00a2cc06585565a96f78f83832cc51ee | SOURCE_PIN |
-| EV-F08-13 | AC-3/AC-4 | verification/FEA-08/fixtures/book_renamed_left.zip | - | 9dff425f7fad997a45923f59eec81c432dc41aab8ab8f4efc1c95b503d680b3d | SOURCE_PIN |
-| EV-F08-14 | AC-3/AC-4 | verification/FEA-08/fixtures/book_renamed_right.zip | - | 377f22ead7c9adfd787f75733c78e89a1433691e919be7c0348d8660640d306f | SOURCE_PIN |
-| EV-F08-15 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1.cbz | - | 9a09aadc99f9b8d8430c6fab5646e56607508e92f4c59d4e15db13b3ea350221 | SOURCE_PIN |
-| EV-F08-16 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1.zip | - | 9a09aadc99f9b8d8430c6fab5646e56607508e92f4c59d4e15db13b3ea350221 | SOURCE_PIN |
-| EV-F08-17 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1_recompressed.zip | - | 7c7da30f0c5d982cc6cafaeb138e5812b72d474687f1edfde68044e5704380fe | SOURCE_PIN |
-| EV-F08-18 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_enc.pdf | - | d89322de51387009509c8dd2c19aa557caae8441b54aa9a59673bca104155727 | SOURCE_PIN |
-| EV-F08-19 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_enc_copy.pdf | - | cd5d779ed26c45e709f97090783d9401481fe7591fe3ebc734a2eb0c1303e777 | SOURCE_PIN |
-| EV-F08-20 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_v1.pdf | - | 63f15be8910ab6fb00928696d08e4355d81576a4e673482c1923c6fdc49cb631 | SOURCE_PIN |
-| EV-F08-21 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_v1_regen.pdf | - | 19448856dbd6f2ec4ca8b2a2990da266cee8d45446898b8c894a2bb1b3ae61b5 | SOURCE_PIN |
-| EV-F08-22 | AC-3/AC-4 | verification/FEA-08/fixtures/evidence_manifest.json | - | 59bfbd0ab6fdf8cf8736747fe5ef34cfb2ffb54580046467aefa42b7248b3691 | SOURCE_PIN |
-| EV-F08-23 | AC-3/AC-4 | verification/FEA-08/fixtures/firstframe_extract.png | - | f411173051663150ef31d5b3d86a9f5ddb9177d9c5cd5ff2b44c35d3b436ae0f | SOURCE_PIN |
-| EV-F08-24 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p1.png | - | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
-| EV-F08-25 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p2.png | - | da0ad99a91ffff15d6fefcb417c9c1adf1a4160a15718cd16ba4bddc202164f1 | SOURCE_PIN |
-| EV-F08-26 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p3.png | - | 796c1b31e4463efed47d54f9bff124d20a17f1a2aafca7259ca5bd90b4449678 | SOURCE_PIN |
-| EV-F08-27 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p1.png | - | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
-| EV-F08-28 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p2renamed.png | - | da0ad99a91ffff15d6fefcb417c9c1adf1a4160a15718cd16ba4bddc202164f1 | SOURCE_PIN |
-| EV-F08-29 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p4.png | - | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
-| EV-F08-30 | AC-3/AC-4 | verification/FEA-08/fixtures/img_base.png | - | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
-| EV-F08-31 | AC-3/AC-4 | verification/FEA-08/fixtures/img_cmyk.jpg | - | 0d17f9bd7b8e51ed51c237410a77255c31120b7902e50f875da62a926d01199b | SOURCE_PIN |
-| EV-F08-32 | AC-3/AC-4 | verification/FEA-08/fixtures/img_copy.png | - | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
-| EV-F08-33 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_dist10.png | - | 5ba3df93071ee7a2710e63757fa9d3194a418aca493410530db385928a0c565c | SOURCE_PIN |
-| EV-F08-34 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_dist11.png | - | 68b2ce3459521c379291f7e58cd58a74407788ff0a41d0d72a5cb9ede679e4c4 | SOURCE_PIN |
-| EV-F08-35 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_ref.png | - | 6d791ee79e1ab53fbdf02aa40e09aa47e55ada861e4062a36c9216282651d03a | SOURCE_PIN |
-| EV-F08-36 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dims_a.png | - | 4b6c236c544ccc21e68b653d03a8cc51b8f4cafa07857c8ca713ec1f2492a0c2 | SOURCE_PIN |
-| EV-F08-37 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dims_b.png | - | 13180946b6a81a2009889ac3946ae26c234e85c8df6d4fece86e5cdbe0227342 | SOURCE_PIN |
-| EV-F08-38 | AC-3/AC-4 | verification/FEA-08/fixtures/img_exif_o6.png | - | b125c108b081fd0d59c19090a182ed7507f9a739f5079494f2b9e69460e71bff | SOURCE_PIN |
-| EV-F08-39 | AC-3/AC-4 | verification/FEA-08/fixtures/img_flipped.png | - | 8c4b9bff2fabe004bbfe159926afdc39bb6d3d5dc351caeb1903900a1dc435c8 | SOURCE_PIN |
-| EV-F08-40 | AC-3/AC-4 | verification/FEA-08/fixtures/img_gray.png | - | 34f0b239609575302cc2f1b2e4a57e26ea69d1b27cb984dc0877a7f43f292c2c | SOURCE_PIN |
-| EV-F08-41 | AC-3/AC-4 | verification/FEA-08/fixtures/img_gray_as_rgb.png | - | d4723bb228449cd6203c21b665f31ff8c5726aa42ff5644afa1c226a6a67e744 | SOURCE_PIN |
-| EV-F08-42 | AC-3/AC-4 | verification/FEA-08/fixtures/img_reenc.jpg | - | 863d49deb2906fac893953e35150b1600bc0cc645baf0d29d4d372037b87012c | SOURCE_PIN |
-| EV-F08-43 | AC-3/AC-4 | verification/FEA-08/fixtures/img_rotated_phys.png | - | 3937a0debc3c1bc12f39246ce56257e7b7e2ea446ac0559dce0cf9a33bddd095 | SOURCE_PIN |
-| EV-F08-44 | AC-3/AC-4 | verification/FEA-08/fixtures/wrongframe_blue.png | - | b9c21277c74c0f24dbd06c770443b182de40c8a439993e01b08ee84e7ce04b4e | SOURCE_PIN |
-| EV-F08-45 | AC-1..4 | verification/FEA-08/logs/gates-raw/01-build.log | - | d376c154b5cffa75d0a50e365684f128183e4c1cfc248f6919054df78ef8004f | CANONICAL |
-| EV-F08-46 | AC-1..4 | verification/FEA-08/logs/gates-raw/02-test.log | - | 33a6ebc90fb933fd08c20efe209ec553684f34be7683ec05ebd08179f7b812d2 | CANONICAL |
-| EV-F08-47 | AC-1..4 | verification/FEA-08/logs/gates-raw/03-check.log | - | 24c161177b53b5448348669a2e137709713af6e0c8da4f66e856e4144d35d15b | CANONICAL |
-| EV-F08-48 | AC-1..4 | verification/FEA-08/logs/gates-raw/04-freeze-pins.log | - | ec30d572f330838b69a52970ea481a17970562e327960be9e06f72bce7964803 | CANONICAL |
-| EV-F08-49 | AC-1..4 | verification/FEA-08/logs/gates-raw/05-fea06-png.log | - | d173d5db6d23cffccd57d4da30f65059220c860cf2f240b20779eb6198b10144 | CANONICAL |
-| EV-F08-50 | AC-1..4 | verification/FEA-08/logs/gates-raw/06-forbidden-diff.log | - | ceaa23d694fe0736f514a60b709a039baecd57bbc3059e7d62527af0a6b42e4f | CANONICAL |
-| EV-F08-51 | AC-1..4 | verification/FEA-08/logs/gates-raw/07-clearing-api-search.log | - | 71163f515c3abe3a2c53401211ab01eb84353737d47c9896f1c9c9b79f56b2d6 | CANONICAL |
-| EV-F08-52 | AC-1..4 | verification/FEA-08/logs/gates-raw/gates-raw-manifest.json | - | 146c2a61d22c547b2c856203a6eda559c396f46616a64037c9b866e49ddeefd7 | CANONICAL |
-| EV-F08-53 | AC-1..4 | verification/FEA-08/logs/gates-raw/phase1-values.json | - | 4347b18a8132ddac390409e14bd023018fd13dbfa3567936349e8db9bd5bf2d2 | CANONICAL |
-| EV-F08-54 | AC-1..4 | verification/FEA-08/logs/gates.log | - | ac5f5d59612113a9b94b3445250a3ca2dbba45a9b81320f2e0ceef50e06e26be | CANONICAL |
-| EV-F08-55 | AC-1 | verification/FEA-08/logs/h4_run.log | - | 4a2e8d7af50220cfc7025f348e61b28f7334dd7444f7737d2018c5abe9c72b7c | CANONICAL |
-| EV-F08-56 | AC-2 | verification/FEA-08/logs/h5_run.log | - | 5589b33da77857243def405918ac8fa370904e719653a47e36869a17319aa5fd | CANONICAL |
-| EV-F08-57 | AC-3 | verification/FEA-08/logs/h6_run.log | - | 1707f3db7021d59dd9dafc739927e2e2bd51f7f4a260d1e239d52993950dffc6 | CANONICAL |
-| EV-F08-58 | AC-1..4 | verification/FEA-08/logs/integration-verification.log | - | 01a5b6a8a51cfb8b3fa2d5ee898ce7fb6bc91f155cb26a6951358bf86b301421 | CANONICAL |
-| EV-F08-59 | AC-1..4 | verification/FEA-08/logs/make_fixtures.log | - | de9113023032d42429261130473b20200f871447c9c329606ba43214edaeda4d | CANONICAL |
-| EV-F08-60 | AC-1..4 | verification/FEA-08/logs/make_fixtures_regeneration.log | - | de9113023032d42429261130473b20200f871447c9c329606ba43214edaeda4d | CANONICAL |
-| EV-F08-61 | AC-4 | verification/FEA-08/logs/matrix.log | - | 98ee99d44af2425c0f7da00a5aa908adbb0aef2d1305d408e4421a4009385817 | CANONICAL |
-| EV-F08-62 | AC-1..4 | verification/FEA-08/logs/run_all.log | - | e044dc13502e5489fac0a9c9eedba31649d953f7fd71a27f0bcc434edcdf247f | CANONICAL |
-| EV-F08-63 | AC-1..4 | verification/FEA-08/logs/stage_evidence.log | - | abead797f8bfdde752df60d2a6c00fec93ad37c38767700f12a6fafe271cf6bc | CANONICAL |
-| EV-F08-64 | AC-1..4 | verification/FEA-08/logs/test-skip-inventory.md | - | 24a23dbfd6ec9b1e02913edb8da8804a2cc3680fbbada39893110234904d0f35 | CANONICAL |
-| EV-F08-65 | AC-3/AC-4 | verification/FEA-08/prototype_hashes.txt | - | 025e62b696860dcf14bb02bc5db715df0d9d0ffba26432c07c97ee30a6d99fa9 | CANONICAL |
-| EV-F08-66 | AC-4 | verification/FEA-08/results/capability_matrix.json | - | 0fdca8deaa9e43455276b15d4aecba3b7521a473d7de543158f6b8730ab9e1ac | CANONICAL |
-| EV-F08-67 | AC-4 | verification/FEA-08/results/capability_matrix.md | - | b0061009e4bb3f0851cde642e2efb98944b9659a939203d0b1b3a91aa4688997 | CANONICAL |
-| EV-F08-68 | AC-3 | verification/FEA-08/results/fixtures_manifest.json | - | ad4935b95976c9faf93e3a68c0f17512f4635d875db8b3f1c08047d2456294fe | CANONICAL |
-| EV-F08-69 | AC-1 | verification/FEA-08/results/h4_results.json | - | 521f8b159b30fbfb77361d581bed1689a05b6fb876a24f1c573f80afaffe6191 | CANONICAL |
-| EV-F08-70 | AC-2 | verification/FEA-08/results/h5_results.json | - | 8338baa51582c4403d30c0102b879a86842fd3b25e594f092ac661f12371ec8f | CANONICAL |
-| EV-F08-71 | AC-3 | verification/FEA-08/results/h6_results.json | - | 497b90778d4a88b9b83e74293ab2cda7b145320ad08ea92aeba53195ff5a1b21 | CANONICAL |
-| EV-F08-72 | AC-1..4 | verification/FEA-08/results/run_all_log.json | - | 276008896b0c7539b7158d4a1d7ceabea177acedbb1cd6ba7880d47e2d9cc0c3 | CANONICAL |
-| EV-F08-73 | AC-1..4 | verification/FEA-08/logs/pin-verify.log | - | c68a018b60a51db8c759f5da7389ab5d260cbcfe17e2a2eb8d36e6215f16a1be | CANONICAL |
+| EV-F08-01 | AC-3/AC-4 | verification/FEA-08/fixtures/anim.gif | c27b61c25 | 7dd78b8dcefe5b5adc3bea15b25c9b76e1df59ebf97c5471bf8c4214553ab2fd | SOURCE_PIN |
+| EV-F08-02 | AC-3/AC-4 | verification/FEA-08/fixtures/book_asym_left.zip | c27b61c25 | 9dff425f7fad997a45923f59eec81c432dc41aab8ab8f4efc1c95b503d680b3d | SOURCE_PIN |
+| EV-F08-03 | AC-3/AC-4 | verification/FEA-08/fixtures/book_asym_right.zip | c27b61c25 | 83a300cd38193c5f12adc7b862cce5788b275cc1b1172cd2fff176d915b1617f | SOURCE_PIN |
+| EV-F08-04 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dup.zip | c27b61c25 | 83a300cd38193c5f12adc7b862cce5788b275cc1b1172cd2fff176d915b1617f | SOURCE_PIN |
+| EV-F08-05 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dup_copy.zip | c27b61c25 | bfc7b351471da8c3bd2fd3639a0a23407dfdf2cbf161d23cae57bed4d16ebc05 | SOURCE_PIN |
+| EV-F08-06 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupanchor_left.zip | c27b61c25 | 58de5851653febff231853b3cb9f6f9383bdd4876036984a1957892a216c1b33 | SOURCE_PIN |
+| EV-F08-07 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupanchor_right.zip | c27b61c25 | 495ede59e94a8a567f7a8c7406bb9785b3180a482b82349228f40b7cf8f78d0d | SOURCE_PIN |
+| EV-F08-08 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupcontent_a.zip | c27b61c25 | 1ddb626cd7a5810f039c36903d3a6ec40ab09fb577bd58a5f7c466641db4ca8f | SOURCE_PIN |
+| EV-F08-09 | AC-3/AC-4 | verification/FEA-08/fixtures/book_dupcontent_b.zip | c27b61c25 | d8b5581c2a22af287688df18575d0151ffb36a5bad3d5940e00cbf4f9014de24 | SOURCE_PIN |
+| EV-F08-10 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_aes.zip | c27b61c25 | 5304dc768a72422695a34de5dc5474573d2f525cbc8e39b031b8112e9f10e7bc | SOURCE_PIN |
+| EV-F08-11 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_zipcrypto.zip | c27b61c25 | 1218a6bd16faa4e42f7398f0cbdda8af5a716ee4e8c04d3cb09ef8af88d04813 | SOURCE_PIN |
+| EV-F08-12 | AC-3/AC-4 | verification/FEA-08/fixtures/book_enc_zipcrypto_copy.zip | c27b61c25 | aba0739142cf61db2b4de6c04a27911e00a2cc06585565a96f78f83832cc51ee | SOURCE_PIN |
+| EV-F08-13 | AC-3/AC-4 | verification/FEA-08/fixtures/book_renamed_left.zip | c27b61c25 | 9dff425f7fad997a45923f59eec81c432dc41aab8ab8f4efc1c95b503d680b3d | SOURCE_PIN |
+| EV-F08-14 | AC-3/AC-4 | verification/FEA-08/fixtures/book_renamed_right.zip | c27b61c25 | 377f22ead7c9adfd787f75733c78e89a1433691e919be7c0348d8660640d306f | SOURCE_PIN |
+| EV-F08-15 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1.cbz | c27b61c25 | 9a09aadc99f9b8d8430c6fab5646e56607508e92f4c59d4e15db13b3ea350221 | SOURCE_PIN |
+| EV-F08-16 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1.zip | c27b61c25 | 9a09aadc99f9b8d8430c6fab5646e56607508e92f4c59d4e15db13b3ea350221 | SOURCE_PIN |
+| EV-F08-17 | AC-3/AC-4 | verification/FEA-08/fixtures/book_v1_recompressed.zip | c27b61c25 | 7c7da30f0c5d982cc6cafaeb138e5812b72d474687f1edfde68044e5704380fe | SOURCE_PIN |
+| EV-F08-18 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_enc.pdf | c27b61c25 | d89322de51387009509c8dd2c19aa557caae8441b54aa9a59673bca104155727 | SOURCE_PIN |
+| EV-F08-19 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_enc_copy.pdf | c27b61c25 | cd5d779ed26c45e709f97090783d9401481fe7591fe3ebc734a2eb0c1303e777 | SOURCE_PIN |
+| EV-F08-20 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_v1.pdf | c27b61c25 | 63f15be8910ab6fb00928696d08e4355d81576a4e673482c1923c6fdc49cb631 | SOURCE_PIN |
+| EV-F08-21 | AC-3/AC-4 | verification/FEA-08/fixtures/doc_v1_regen.pdf | c27b61c25 | 19448856dbd6f2ec4ca8b2a2990da266cee8d45446898b8c894a2bb1b3ae61b5 | SOURCE_PIN |
+| EV-F08-22 | AC-3/AC-4 | verification/FEA-08/fixtures/evidence_manifest.json | c27b61c25 | 59bfbd0ab6fdf8cf8736747fe5ef34cfb2ffb54580046467aefa42b7248b3691 | SOURCE_PIN |
+| EV-F08-23 | AC-3/AC-4 | verification/FEA-08/fixtures/firstframe_extract.png | c27b61c25 | f411173051663150ef31d5b3d86a9f5ddb9177d9c5cd5ff2b44c35d3b436ae0f | SOURCE_PIN |
+| EV-F08-24 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p1.png | c27b61c25 | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
+| EV-F08-25 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p2.png | c27b61c25 | da0ad99a91ffff15d6fefcb417c9c1adf1a4160a15718cd16ba4bddc202164f1 | SOURCE_PIN |
+| EV-F08-26 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v1/p3.png | c27b61c25 | 796c1b31e4463efed47d54f9bff124d20a17f1a2aafca7259ca5bd90b4449678 | SOURCE_PIN |
+| EV-F08-27 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p1.png | c27b61c25 | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
+| EV-F08-28 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p2renamed.png | c27b61c25 | da0ad99a91ffff15d6fefcb417c9c1adf1a4160a15718cd16ba4bddc202164f1 | SOURCE_PIN |
+| EV-F08-29 | AC-3/AC-4 | verification/FEA-08/fixtures/folder_v2/p4.png | c27b61c25 | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
+| EV-F08-30 | AC-3/AC-4 | verification/FEA-08/fixtures/img_base.png | c27b61c25 | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
+| EV-F08-31 | AC-3/AC-4 | verification/FEA-08/fixtures/img_cmyk.jpg | c27b61c25 | 0d17f9bd7b8e51ed51c237410a77255c31120b7902e50f875da62a926d01199b | SOURCE_PIN |
+| EV-F08-32 | AC-3/AC-4 | verification/FEA-08/fixtures/img_copy.png | c27b61c25 | 869e410694cd5f808803c2af5f2d6ce95dd651c76e5e44e1baafe66dbffc38fa | SOURCE_PIN |
+| EV-F08-33 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_dist10.png | c27b61c25 | 5ba3df93071ee7a2710e63757fa9d3194a418aca493410530db385928a0c565c | SOURCE_PIN |
+| EV-F08-34 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_dist11.png | c27b61c25 | 68b2ce3459521c379291f7e58cd58a74407788ff0a41d0d72a5cb9ede679e4c4 | SOURCE_PIN |
+| EV-F08-35 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dhash_ref.png | c27b61c25 | 6d791ee79e1ab53fbdf02aa40e09aa47e55ada861e4062a36c9216282651d03a | SOURCE_PIN |
+| EV-F08-36 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dims_a.png | c27b61c25 | 4b6c236c544ccc21e68b653d03a8cc51b8f4cafa07857c8ca713ec1f2492a0c2 | SOURCE_PIN |
+| EV-F08-37 | AC-3/AC-4 | verification/FEA-08/fixtures/img_dims_b.png | c27b61c25 | 13180946b6a81a2009889ac3946ae26c234e85c8df6d4fece86e5cdbe0227342 | SOURCE_PIN |
+| EV-F08-38 | AC-3/AC-4 | verification/FEA-08/fixtures/img_exif_o6.png | c27b61c25 | b125c108b081fd0d59c19090a182ed7507f9a739f5079494f2b9e69460e71bff | SOURCE_PIN |
+| EV-F08-39 | AC-3/AC-4 | verification/FEA-08/fixtures/img_flipped.png | c27b61c25 | 8c4b9bff2fabe004bbfe159926afdc39bb6d3d5dc351caeb1903900a1dc435c8 | SOURCE_PIN |
+| EV-F08-40 | AC-3/AC-4 | verification/FEA-08/fixtures/img_gray.png | c27b61c25 | 34f0b239609575302cc2f1b2e4a57e26ea69d1b27cb984dc0877a7f43f292c2c | SOURCE_PIN |
+| EV-F08-41 | AC-3/AC-4 | verification/FEA-08/fixtures/img_gray_as_rgb.png | c27b61c25 | d4723bb228449cd6203c21b665f31ff8c5726aa42ff5644afa1c226a6a67e744 | SOURCE_PIN |
+| EV-F08-42 | AC-3/AC-4 | verification/FEA-08/fixtures/img_reenc.jpg | c27b61c25 | 863d49deb2906fac893953e35150b1600bc0cc645baf0d29d4d372037b87012c | SOURCE_PIN |
+| EV-F08-43 | AC-3/AC-4 | verification/FEA-08/fixtures/img_rotated_phys.png | c27b61c25 | 3937a0debc3c1bc12f39246ce56257e7b7e2ea446ac0559dce0cf9a33bddd095 | SOURCE_PIN |
+| EV-F08-44 | AC-3/AC-4 | verification/FEA-08/fixtures/wrongframe_blue.png | c27b61c25 | b9c21277c74c0f24dbd06c770443b182de40c8a439993e01b08ee84e7ce04b4e | SOURCE_PIN |
+| EV-F08-45 | AC-1..4 | verification/FEA-08/logs/gates-raw/01-build.log | c27b61c25 | d376c154b5cffa75d0a50e365684f128183e4c1cfc248f6919054df78ef8004f | CANONICAL |
+| EV-F08-46 | AC-1..4 | verification/FEA-08/logs/gates-raw/02-test.log | c27b61c25 | 33a6ebc90fb933fd08c20efe209ec553684f34be7683ec05ebd08179f7b812d2 | CANONICAL |
+| EV-F08-47 | AC-1..4 | verification/FEA-08/logs/gates-raw/03-check.log | c27b61c25 | 24c161177b53b5448348669a2e137709713af6e0c8da4f66e856e4144d35d15b | CANONICAL |
+| EV-F08-48 | AC-1..4 | verification/FEA-08/logs/gates-raw/04-freeze-pins.log | c27b61c25 | ec30d572f330838b69a52970ea481a17970562e327960be9e06f72bce7964803 | CANONICAL |
+| EV-F08-49 | AC-1..4 | verification/FEA-08/logs/gates-raw/05-fea06-png.log | c27b61c25 | d173d5db6d23cffccd57d4da30f65059220c860cf2f240b20779eb6198b10144 | CANONICAL |
+| EV-F08-50 | AC-1..4 | verification/FEA-08/logs/gates-raw/06-forbidden-diff.log | c27b61c25 | ceaa23d694fe0736f514a60b709a039baecd57bbc3059e7d62527af0a6b42e4f | CANONICAL |
+| EV-F08-51 | AC-1..4 | verification/FEA-08/logs/gates-raw/07-clearing-api-search.log | c27b61c25 | 71163f515c3abe3a2c53401211ab01eb84353737d47c9896f1c9c9b79f56b2d6 | CANONICAL |
+| EV-F08-52 | AC-1..4 | verification/FEA-08/logs/gates-raw/gates-raw-manifest.json | c27b61c25 | 146c2a61d22c547b2c856203a6eda559c396f46616a64037c9b866e49ddeefd7 | CANONICAL |
+| EV-F08-53 | AC-1..4 | verification/FEA-08/logs/gates-raw/phase1-values.json | c27b61c25 | 4347b18a8132ddac390409e14bd023018fd13dbfa3567936349e8db9bd5bf2d2 | CANONICAL |
+| EV-F08-54 | AC-1..4 | verification/FEA-08/logs/gates.log | c27b61c25 | ac5f5d59612113a9b94b3445250a3ca2dbba45a9b81320f2e0ceef50e06e26be | CANONICAL |
+| EV-F08-55 | AC-1 | verification/FEA-08/logs/h4_run.log | c27b61c25 | 4a2e8d7af50220cfc7025f348e61b28f7334dd7444f7737d2018c5abe9c72b7c | CANONICAL |
+| EV-F08-56 | AC-2 | verification/FEA-08/logs/h5_run.log | c27b61c25 | 5589b33da77857243def405918ac8fa370904e719653a47e36869a17319aa5fd | CANONICAL |
+| EV-F08-57 | AC-3 | verification/FEA-08/logs/h6_run.log | c27b61c25 | 1707f3db7021d59dd9dafc739927e2e2bd51f7f4a260d1e239d52993950dffc6 | CANONICAL |
+| EV-F08-58 | AC-1..4 | verification/FEA-08/logs/integration-verification.log | c27b61c25 | 01a5b6a8a51cfb8b3fa2d5ee898ce7fb6bc91f155cb26a6951358bf86b301421 | CANONICAL |
+| EV-F08-59 | AC-1..4 | verification/FEA-08/logs/make_fixtures.log | c27b61c25 | de9113023032d42429261130473b20200f871447c9c329606ba43214edaeda4d | CANONICAL |
+| EV-F08-60 | AC-1..4 | verification/FEA-08/logs/make_fixtures_regeneration.log | c27b61c25 | de9113023032d42429261130473b20200f871447c9c329606ba43214edaeda4d | CANONICAL |
+| EV-F08-61 | AC-4 | verification/FEA-08/logs/matrix.log | c27b61c25 | 98ee99d44af2425c0f7da00a5aa908adbb0aef2d1305d408e4421a4009385817 | CANONICAL |
+| EV-F08-62 | AC-1..4 | verification/FEA-08/logs/run_all.log | c27b61c25 | e044dc13502e5489fac0a9c9eedba31649d953f7fd71a27f0bcc434edcdf247f | CANONICAL |
+| EV-F08-63 | AC-1..4 | verification/FEA-08/logs/stage_evidence.log | c27b61c25 | abead797f8bfdde752df60d2a6c00fec93ad37c38767700f12a6fafe271cf6bc | CANONICAL |
+| EV-F08-64 | AC-1..4 | verification/FEA-08/logs/test-skip-inventory.md | c27b61c25 | 24a23dbfd6ec9b1e02913edb8da8804a2cc3680fbbada39893110234904d0f35 | CANONICAL |
+| EV-F08-65 | AC-3/AC-4 | verification/FEA-08/prototype_hashes.txt | c27b61c25 | 025e62b696860dcf14bb02bc5db715df0d9d0ffba26432c07c97ee30a6d99fa9 | CANONICAL |
+| EV-F08-66 | AC-4 | verification/FEA-08/results/capability_matrix.json | c27b61c25 | 0fdca8deaa9e43455276b15d4aecba3b7521a473d7de543158f6b8730ab9e1ac | CANONICAL |
+| EV-F08-67 | AC-4 | verification/FEA-08/results/capability_matrix.md | c27b61c25 | b0061009e4bb3f0851cde642e2efb98944b9659a939203d0b1b3a91aa4688997 | CANONICAL |
+| EV-F08-68 | AC-3 | verification/FEA-08/results/fixtures_manifest.json | c27b61c25 | ad4935b95976c9faf93e3a68c0f17512f4635d875db8b3f1c08047d2456294fe | CANONICAL |
+| EV-F08-69 | AC-1 | verification/FEA-08/results/h4_results.json | c27b61c25 | 521f8b159b30fbfb77361d581bed1689a05b6fb876a24f1c573f80afaffe6191 | CANONICAL |
+| EV-F08-70 | AC-2 | verification/FEA-08/results/h5_results.json | c27b61c25 | 8338baa51582c4403d30c0102b879a86842fd3b25e594f092ac661f12371ec8f | CANONICAL |
+| EV-F08-71 | AC-3 | verification/FEA-08/results/h6_results.json | c27b61c25 | 497b90778d4a88b9b83e74293ab2cda7b145320ad08ea92aeba53195ff5a1b21 | CANONICAL |
+| EV-F08-72 | AC-1..4 | verification/FEA-08/results/run_all_log.json | c27b61c25 | 276008896b0c7539b7158d4a1d7ceabea177acedbb1cd6ba7880d47e2d9cc0c3 | CANONICAL |
+| EV-F08-73 | AC-1..4 | verification/FEA-08/logs/pin-verify.log | - | d72ebb98fd4b895947448a344c6112c61bdf70e44f89eae4bd77eef10e2c878f | CANONICAL |
 
 ## 门禁记录（R5 交付，2026-11-03；原始输出 `logs/gates-raw/**`（7 份，含 command/EXIT/cwd/shell/elapsed），摘要 `logs/gates.log`）
 
