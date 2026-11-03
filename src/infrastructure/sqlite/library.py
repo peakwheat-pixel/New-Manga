@@ -1648,7 +1648,8 @@ class SqliteLibraryRepository:
     def list_source_entries(self, version_id: str) -> list[dict[str, Any]]:
         rows = self._conn.execute(
             "SELECT entry_id, locator, ordinal, stable_sort_key,"
-            " content_digest_kind, content_digest, size_bytes FROM source_entries"
+            " content_digest_kind, content_digest, size_bytes, width, height"
+            " FROM source_entries"
             " WHERE version_id = ? ORDER BY ordinal",
             (version_id,),
         ).fetchall()

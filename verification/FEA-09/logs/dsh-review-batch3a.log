@@ -1,0 +1,15 @@
+# FEA-09 实现 Review r1 批次 3a：R1-I008 生产 rendition cache（DSH 2026-11-03）
+
+## 实现
+- `resolve.py` 拆分：`prepare_referenced_rendition`（授权/entry/binding/cache identity/维度，**不解码**）+ `render_prepared_rendition`（解码）；`resolve_referenced_rendition` 保留为兼容组合。
+- `RenditionCache` 支持 `derived_root`（尊重 M2RC1_DERIVED_ROOT）；生产 `core_service.main` 装配 `core.rendition_cache`（失败仅 stderr 记录并回落 typed 旧路径）。
+- `handle_resolve_page_resource` referenced 分支：cache 存在时 **先** `cache.acquire(...)`（key=source/version/entry/decoder/version/params；预算/LRU/active refs/崩溃校验由 cache 负责）再发布；命中不重复解码；catalog `page-rendition-*` 仅镜像；metadata 由 cache 写 `source-renditions/{key}.bin`（不再写 pages/ 前缀）。
+- `library.list_source_entries` 补 width/height 供 cache 预检。
+
+## 测试
+- 新增 `tests/fea09/test_rendition_cache_integration.py`：首次 resolve 解码 1 次并写 cache 行（rel_path=source-renditions/、digest/size 匹配、source/version/entry 绑定）；第二次命中 0 解码；cache 文件损坏后自动 drop+重建（第 2 次解码）。
+- `pytest tests/fea09` → **107 passed**；m2_resource_channel 110、core_service 6、library+reading_export 204 全 PASS；真实 IPC 1 passed（cache 已启用）。
+
+## 仍余
+- R1-I005（加密源 resolve 密码）：需 C-16/M2-C1 wire 增加 resolve 可选 `secret_ref` → 与 I001 一起走 UNFREEZE。
+- I001 UNFREEZE、I011 EV 收敛、新独立复核。

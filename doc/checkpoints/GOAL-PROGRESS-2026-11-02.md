@@ -1266,3 +1266,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - I006：Core grant 绑定对 folder 生效，folder import→resolve 测试通过。
 - 验证：`pytest tests/fea09` **106 passed**；library 63、reading_export 141、import_formats 32、p09 30 PASS；真实 IPC 1 passed。
 - 余：批次 3（I005 加密源 resolve、I008 cache 强约束）、I001 UNFREEZE、I011 EV 收敛、新独立复核。
+## 192. FEA-09 Review r1 批次 3a：I008 cache（2026-11-03）
+
+- resolve 拆 `prepare_referenced_rendition`（授权/identity/维度，不解码）与 `render_prepared_rendition`；兼容 API 保留。
+- 生产 `main` 装配 `RenditionCache`（derived_root 尊重 M2RC1_DERIVED_ROOT）；resolve 先 `cache.acquire` 后发布；metadata=`source-renditions/`，命中零解码，损坏自动重建；catalog key 幂等镜像。
+- 测试：fea09 **107 passed**；m2_resource_channel 110、core_service 6、library+reading_export 204 全 PASS；真实 IPC 1 passed。
+- 余：I005 需与 I001 一并 UNFREEZE（resolve 可选 secret_ref）；I011 EV 收敛；新独立复核。

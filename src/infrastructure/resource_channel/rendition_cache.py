@@ -28,12 +28,16 @@ def rendition_key(source_id, version_id, entry_id, kind, decoder, decoder_versio
 
 
 class RenditionCache:
-    def __init__(self, *, data_root, connection, max_bytes=512 * 1024 * 1024,
+    def __init__(self, *, data_root, connection, derived_root=None,
+                 max_bytes=512 * 1024 * 1024,
                  max_file_bytes=256 * 1024 * 1024, max_decodes=2, clock=None):
         if any(isinstance(n, bool) or not isinstance(n, int) or n <= 0
                for n in (max_bytes, max_file_bytes, max_decodes)):
             raise ValueError("cache limits must be positive integers")
-        self._root = Path(data_root) / "derived" / "source-renditions"
+        # R1-I008: the production derived root can be relocated through
+        # M2RC1_DERIVED_ROOT; the cache must live inside that same namespace.
+        root = Path(derived_root) if derived_root is not None else Path(data_root) / "derived"
+        self._root = root / "source-renditions"
         self._reject_links(self._root)
         self._root.mkdir(parents=True, exist_ok=True)
         self._conn = connection

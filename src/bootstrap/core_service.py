@@ -3398,6 +3398,8 @@ class CoreServiceServer:
             # source-read grant and publish a decoded/re-encoded rendition —
             # never raw user-source bytes, never an arbitrary-path fallback.
             from application.importing.referenced.resolve import (
+                prepare_referenced_rendition,
+                render_prepared_rendition,
                 resolve_referenced_rendition,
             )
 
@@ -3407,6 +3409,40 @@ class CoreServiceServer:
                     "SOURCE_REGISTRY_UNAVAILABLE",
                     "source-read grants are unavailable",
                 )
+            resource_id = f"page-rendition-{page.page_id}"
+            cache = getattr(self._core, "rendition_cache", None)
+            if cache is not None:
+                # R1-I008: the constrained rendition cache decides reuse
+                # (key/budget/LRU/active refs/crash recovery/digest) BEFORE
+                # any decode; the catalog only mirrors the served bytes.
+                prepared = prepare_referenced_rendition(
+                    page.page_id,
+                    repository=self._core.repository,
+                    access=registry,
+                )
+
+                def _produce() -> bytes:
+                    png, _width, _height = render_prepared_rendition(
+                        prepared,
+                        image_decoder=getattr(self._core, "image_decoder", None),
+                        document_raster=getattr(self._core, "document_raster", None),
+                    )
+                    return png
+
+                with cache.acquire(
+                    source_id=prepared["source_id"],
+                    version_id=prepared["version_id"],
+                    entry_id=prepared["entry_id"],
+                    kind=prepared["rendition_kind"],
+                    decoder=prepared["decoder_name"],
+                    decoder_version=prepared["decoder_version"],
+                    params=prepared["params"],
+                    width=prepared["width"],
+                    height=prepared["height"],
+                    max_decode_bytes=prepared["max_decode_bytes"],
+                    produce=_produce,
+                ) as png:
+                    return self._publish_rendition_bytes(resource_id, png)
             rendition = resolve_referenced_rendition(
                 page.page_id,
                 repository=self._core.repository,
@@ -3414,7 +3450,6 @@ class CoreServiceServer:
                 image_decoder=getattr(self._core, "image_decoder", None),
                 document_raster=getattr(self._core, "document_raster", None),
             )
-            resource_id = f"page-rendition-{page.page_id}"
             entry = self._render_previews.lookup(resource_id)
             if entry is not None and self._render_previews.artifact_exists(
                 entry.rel_path
@@ -3486,6 +3521,29 @@ class CoreServiceServer:
             )
         finally:
             temp_source.unlink(missing_ok=True)
+
+    def _publish_rendition_bytes(self, resource_id: str, png: bytes) -> dict:
+        """Mirror one cached rendition into the served catalog (idempotent)."""
+        entry = self._render_previews.lookup(resource_id)
+        if entry is not None and self._render_previews.artifact_exists(
+            entry.rel_path
+        ):
+            return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
+        import tempfile
+
+        temp_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp:
+                temp_path = Path(temp.name)
+                temp.write(png)
+                temp.flush()
+                os.fsync(temp.fileno())
+            return self._render_previews.publish_original(
+                temp_path, resource_id, ".png"
+            )
+        finally:
+            if temp_path is not None:
+                temp_path.unlink(missing_ok=True)
 
     def _record_rendition_cache(self, page, rendition, catalog_entry) -> None:
         """Record the reproducible rendition observation (C-15 §2.7).
@@ -6189,6 +6247,26 @@ def main() -> int:
     core = None
     try:
         core = assemble_production_core(data_root)
+        # R1-I008: production referenced resolve goes through the constrained
+        # rendition cache (budget/LRU/active refs/crash recovery). A cache
+        # start-up failure is logged and leaves resolve on its typed legacy
+        # path instead of taking the whole Core down.
+        try:
+            from infrastructure.resource_channel.rendition_cache import (
+                RenditionCache,
+            )
+
+            core.rendition_cache = RenditionCache(
+                data_root=data_root,
+                derived_root=derived_root,
+                connection=core.conn,
+            )
+        except Exception as error:  # noqa: BLE001 - derived cache is optional
+            print(
+                f"[core.rendition_cache] cache unavailable: {error!r}",
+                file=sys.stderr,
+            )
+            core.rendition_cache = None
         # REALUSE-DATA-SAFETY-1 AC2: the Host-side first-run backup only copied
         # the derived catalog, so an existing user library had no rollback
         # point. Keep one verified package before serving; idempotent and never
