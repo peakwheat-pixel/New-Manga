@@ -1024,3 +1024,8 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 补正：`075dc1682`（证据日志完整格式 + **57 条 skip 逐条**（原因 sidecar fixture 缺失，TRX 实测）+ 正确 shell/SDK/host/base/head + 差值 + 复现命令；修前 artefact 保持 NOT_RUN）；`12046945e`（Task pin 改为 **git blob SHA**（`git cat-file -p 075dc1682:...` = `e699fe81…`）；Handoff 重写为模板字段；reviewer 状态更新）。
 - 已派 **impl-r3**（ZCode fresh session，job `pwsh-a6c4fe05691947a1`，prompt workspace `d14-impl-r3-review-prompt.md`）：核验补正、pin 可复现、代码未漂移、P2 登记；approved 后 DSH 集成验证并关闭 D-14。
 - 治理 PASS(3)、pins 15/15；未 push。
+## 159. 08:06 提醒处置（2026-11-03 08:14）
+
+- 提醒内容（派 D-14 impl-r1）已被超越，不重复派发：D-14 已走完 impl-r1（changes_requested P1=3）→ impl-r2（changes_requested P1=1/P2=5）→ DSH r2 补正（完整日志/57 skip 明细/模板 Handoff/git blob pin）→ **impl-r3 正在运行**（ZCode fresh session，job `pwsh-a6c4fe05691947a1`），核验的是补正后 HEAD 而非 r1。
+- **ZCode 可用性已由实跑确认**（08:05 窗口后成功启动 r3 Reviewer；无需再探测）。
+- 后续：r3 approved → DSH 集成验证关闭 D-14 → 派 FEA-08 scope Review（prompt 已备）→ 释放/实施 FEA-08；Codex 10:25 备用。
