@@ -1036,3 +1036,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **D-14 关闭 `done`**：impl 5ecc1e4c6 + 证据补正 075dc1682 + 集成 e36a7442b；AC1–AC3 MET；Resource Manifest/Closeout 已填；r3 的 2 个 P2 已补（STATUS/PLAN/Task 生命周期；Handoff 增加「风险与遗留」）。
 - **FEA-08 Task 卡建立**（`doc/tasks/FEA-08.md`，`proposed`，来源 workspace 草案）：H4/H5/H6 能力矩阵+技术报告，隔离原型不触真实库；待独立 scope Review 冻结后置 ready。STATUS/PLAN 指针已更新（当前 Task=FEA-08 proposed；READY=无）。
 - 治理 PASS(3)；pins 15/15；未 push。
+## 161. FEA-08 scope-r1 changes_requested 处置 + scope-r2 派发（2026-11-03 08:55）
+
+- FEA-08 scope-r1（ZCode CLI fresh session）：**changes_requested P0=0/P1=3/P2=5**；报告 `doc/reviews/FEA-08-scope-r1.md`。
+- P1：001 AC-1 未承载 H4 同句柄 digest/不得混合假成功/mmap 写；002 AC-2 缺判定操作（还原后 digest 一致）、未禁清空类 API、fixture 回收站条目处置、unknown/partial 分支；003 路径口径三处不一致 + depends_on 非存在 Task。P2：ADJ-001 路径、H5 分支枚举、矩阵 measured/mocked/inferred 与二维结构、H6 锚点、治理卫生（dispatch prompt/G-CONTRACT 快照/ready 元数据）。
+- DSH 按最小修订更新 Task `doc/tasks/FEA-08.md`（提交 `cd5692f1b`）：AC-1 三断言；AC-2 判定操作+禁清空 API+仅合成路径+fixture 处置+receipt 恢复；AC-3 按 :457/:469 二分+digest 类型；AC-4 二维矩阵+证据类型（mock≤LIMITED）；路径偏差登记；depends_on=FEA-01-FREEZE-1；ADJ-001 纠正；SQLite 范围外写入 BLOCKED；3 待决项裁决写入。
+- 已派 **scope-r2**（ZCode fresh session，job `pwsh-1e2681f64bc5459a`）：逐条核验 F08R1-001…008、可判定性与 ready 条件；approved 后置 ready 并派实施。
+- 治理 PASS(3)、pins 15/15；未 push。
