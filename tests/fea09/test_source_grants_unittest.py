@@ -107,4 +107,16 @@ class SourceGrantTests(unittest.TestCase):
                          lambda:self.registry.find_bound_for_source("src-1","sv-1","se-1"))
 
 
+
+    def test_unbound_grant_cannot_resolve_and_wrong_version_is_refused(self):
+        """P2-3: a live grant with no import binding never authorizes a page."""
+        p = self.payload()
+        self.registry.register(p)
+        self.assert_code(
+            "SOURCE_ACCESS_DENIED",
+            lambda: self.registry.find_bound_for_source("source-1", "version-1", "entry-1"),
+        )
+        self.registry.bind_imported_entry(p["grant_id"], "source-1", "version-1", "entry-1")
+        found, _resolved = self.registry.find_bound_for_source("source-1", "version-1", "entry-1")
+        self.assertEqual(p["grant_id"], found)
 if __name__=="__main__":unittest.main()

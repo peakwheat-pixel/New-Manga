@@ -312,7 +312,7 @@ class PdfiumDocumentRaster:
     def __init__(self, scale: float = 2.0) -> None:
         self.scale = float(scale)
 
-    def open(self, data: bytes):
+    def open(self, data: bytes, password: bytes | None = None):
         from application.importing.documents.ports import DocumentDecodeError
 
         try:
@@ -328,7 +328,17 @@ class PdfiumDocumentRaster:
             ) from error
 
         try:
-            document = pdfium.PdfDocument(data)
+            # FEA-09/C-16 v1.1: PDFium wants str; a non-text password is a
+            # typed refusal, never a silent guess.
+            engine_password = None
+            if password is not None:
+                try:
+                    engine_password = password.decode("utf-8")
+                except UnicodeDecodeError as error:
+                    raise DocumentDecodeError(
+                        "ENCRYPTED", "the PDF password is not valid text"
+                    ) from error
+            document = pdfium.PdfDocument(data, password=engine_password)
         except pdfium.PdfiumError as error:
             message = str(error)
             if "password" in message.lower():
@@ -347,6 +357,18 @@ class _PdfiumDocumentHandle:
     @property
     def page_count(self) -> int:
         return len(self._document)
+
+    def page_size(self, index: int) -> tuple[float, float]:
+        """R1-I007: page dimensions before rasterisation (PDF points)."""
+        from application.importing.documents.ports import DocumentDecodeError
+
+        if index < 0 or index >= len(self._document):
+            raise DocumentDecodeError("INVALID_DOCUMENT", "PDF page index is out of range")
+        try:
+            width, height = self._document[index].get_size()
+        except Exception as error:  # pdfium-level failure on this page
+            raise DocumentDecodeError("INVALID_DOCUMENT", str(error)) from error
+        return float(width), float(height)
 
     def render_page(self, index: int):
         from application.importing.documents.ports import (
@@ -425,7 +447,7 @@ class MobiDocumentRaster:
     ``MISSING_DEPENDENCY`` (F-9 caliber, same as the PDF path).
     """
 
-    def open(self, data: bytes):
+    def open(self, data: bytes, password: bytes | None = None):
         from application.importing.documents.ports import DocumentDecodeError
 
         try:

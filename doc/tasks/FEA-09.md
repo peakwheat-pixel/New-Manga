@@ -8,7 +8,7 @@ approval: scope-r1 changes_requested 已处置；**scope-r2 approved**（P0=0/P1
 suggested_owner: codex
 owner: codex（DSH 2026-11-03 额度恢复后续跑）
 claimed_at: 2026-11-03T09:59:49.695Z（Codex 首认领，git add 因 .git/index.lock Permission denied 未提交，遗留 diff 保留为证据）；2026-11-03 18:00 故障转移 ZCode 接续；18:39 ZCode 额度耗尽（429 周/月限额，2026-11-07 16:44 重置）；Phase A 已交付 commit `d3d7cd564`；2026-11-03 Codex 本轮通过 Node 通路恢复，接续 ZCode Phase A/B 及 Phase C 半成品
-reviewer: 实现 Review r1 **changes_requested**（P0=0/P1=8/P2=3；Codex 独立会话 01a1a1b4-5bda-7940-bc48-7aedfdd589b0；报告 doc/reviews/FEA-09-impl-r1.md，SHA-256 7e6f4b78…）；DSH 处置中，返修后需新独立复核
+reviewer: 实现 Review r1 changes_requested（P0=0/P1=8/P2=3，doc/reviews/FEA-09-impl-r1.md）；返修后 **r1-rework changes_requested（P0=0/P1=1/P2=4，doc/reviews/FEA-09-impl-r1-rework-r1.md，ZCode sess_b421a1f9…，reviewed_head 59ad0b9fe）**；P1（PDF resolve 密码）与 P2-1/2/3 已修，待新上下文最终复核；P2-4（RenditionCache 装配失败降级 legacy）登记债务候选
 depends_on:
   - FEA-08
   - FEA-01-FREEZE-1
@@ -258,15 +258,15 @@ out_of_scope:
 |---|---|---|---|
 | R1-I001 | P1 | **FIXED（实现完成，待独立实现复核）**：UNFREEZE B 已重冻（C-05 v1.2/C-15 v1.1，pins 17/17）；实现 managed `V=V_artifact∨V_copy_original` SQL、`PageView` 只读投影、`get/list` 不丢 V 行、managed resolve 资源选择、迁移 union 断言/同事务 get-list-纯投影三路径/非空强制 verifier；测试 `tests/fea09/test_i001_managed_visibility.py`（11）+ `test_v7_migration.py`（+2）；Python 套件全绿 | 批次 4 |
 | R1-I002 | P1 | **FIXED 批次 1**：Core 记录 grant→(source,version,entry) 绑定，resolve 只认绑定匹配且 live 的 grant；删除物理身份回退；新增负测 | 批次 1 |
-| R1-I007 | P1 | **FIXED 批次 1**：PDF page_size→预算→render；图片 header→预算→load；runtime probe 同序；预算拒绝=unsupported entry；hook decoder 零调用测试 | 批次 1 |
+| R1-I007 | P1 | **FIXED（含 r1-rework P2）**：PDF page_size→预算→render；图片 header→预算→load；runtime probe 同序；预算拒绝=unsupported entry；hook decoder 零调用测试 | 批次 1 |
 | R1-I009 | P2 | **FIXED 批次 1**：PlanRecord.book_id + start 复核项目/策略；负测 SOURCE_PLAN_STALE | 批次 1 |
 | R1-I010 | P2 | **FIXED 批次 1**：SourceProjectMismatch→SOURCE_PROJECT_MISMATCH typed reason，保留 failed_sources/pending_pages；测试断言 | 批次 1 |
 | R1-I003 | P1 | **FIXED 批次 2**：整源 skip 仅当 `will_import==0`；部分已绑定逐 entry 补齐；3 页 zip 中断后重试 imported=2/skipped=1 | 批次 2 |
 | R1-I004 | P1 | **FIXED 批次 2**：真加密 PDF（R2/RC4）无密/错密/正确密码；解密 rescan participants；修复 pdfium bytes 密码 TypeError 误分类 | 批次 2 |
 | R1-I006 | P1 | **FIXED 批次 2**：Core grant 绑定对 folder 生效；`test_folder_import_resolves_through_bound_grant` 通过（无路径回退） | 批次 2 |
-| R1-I005 | P1 | **PARTIAL（Core 完成；Host fresh-grant 协议待实现）**：C-16 v1.1 已重冻；Core 实现 `source.resolve-secret/1` 能力 + `claim_secret_for_binding`（0/1/多 Secret-G、一次性/重放/路径/token/TTL、DPAPI 读取+零填充删除）+ bootstrap cache-miss 消费 + 加密 member 无密码→REQUIRED；测试 8+2。待办：Host C# `SourceReadCoordinator` fresh-grant（capability 先检查→DPAPI 文件→克隆 scope 注册→revoke 前一个→超时/孤儿回收）+ Host 集成测试 | 批次 5（Host 待续） |
+| R1-I005 | P1 | **CLOSED（返修后）**：Core `source.resolve-secret/1` + `claim_secret_for_binding`（0/1/多/重放/路径/TTL/DPAPI/一次性）+ cache-miss 消费 + **PDF raster 密码接线**（DocumentRaster.open 增 password；pdfium 传 str；ENCRYPTED→REQUIRED/INVALID）；Host `SourceReadCoordinator` fresh-grant + `SourceSecretStore` DPAPI + `HostRuntime` 重试/清理；测试：zip 2+8、PDF e2e 2、Host 2；独立复核 r1-rework P1 已修 | 批次 5 + 返修 |
 | R1-I008 | P1 | **FIXED 批次 3a**：生产 resolve 先走 RenditionCache（key/预算/LRU/active/崩溃校验/digest），metadata=`source-renditions/`，命中不重复解码，损坏自动重建；集成测试覆盖 | 批次 3 |
-| R1-I011 | P2 | 接受：closeout 前重建最终 EV 逐文件清单（唯一 ID、current/historical 分离、commit pin、PENDING 清零、未登记文件处置） | closeout |
+| R1-I011 | P2 | **FIXED**：旧台账归档 `history/EV-2026-11-03.md`；`tools/rebuild_ev.py` 从 git ls-files 生成 57 行唯一 ID/0 PENDING 台账；合成目录去跟踪+gitignore；历史缺失 50 条单列 | closeout |
 
 **批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
 | 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |

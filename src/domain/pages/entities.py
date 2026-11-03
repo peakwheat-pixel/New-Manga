@@ -113,7 +113,3 @@ class PageView:
 
     def soft_delete(self) -> None:
         raise TypeError("PageView is a read-only projection; soft-delete the Page")
-
-    @property
-    def deleted(self) -> bool:
-        return self.deleted_at is not None

@@ -69,6 +69,15 @@ def read_entry_bytes(resolved, entry, password: bytes | None = None) -> bytes:
                     "SOURCE_ENTRY_MISSING", "archive member is missing"
                 )
             info = ordered[entry.ordinal]
+            # R1-I007 P2: bound the *decompressed* member size before
+            # ``archive.read`` allocates it (the container byte budget does not
+            # cap a zip bomb's expansion).
+            max_decode = int(getattr(resolved.budget, "max_decode_bytes", 0) or 0)
+            if max_decode and int(info.file_size) > max_decode:
+                raise SourceImportError(
+                    "SOURCE_BUDGET_EXCEEDED",
+                    "archive member exceeds the decode budget",
+                )
             # C-16 v1.1 §3.1: an encrypted member without the fresh Secret-G
             # is a password-required refusal, not a wrong-password attempt.
             if (info.flag_bits & 0x1) and password is None:
@@ -120,7 +129,23 @@ def render_entry_png(
             raise SourceImportError(
                 "SOURCE_FORMAT_UNSUPPORTED", "PDF rendition raster is unavailable"
             )
-        handle = document_raster.open(raw)
+        from application.importing.documents.ports import DocumentDecodeError
+
+        try:
+            # C-16 v1.1 §3.1: the one-shot Secret-G password is handed to the
+            # raster seam; an encrypted PDF without it is REQUIRED, a rejected
+            # password is INVALID (never a silent plain decode attempt).
+            handle = document_raster.open(raw, password=password)
+        except DocumentDecodeError as error:
+            if error.reason == "ENCRYPTED":
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_REQUIRED" if password is None
+                    else "SOURCE_PASSWORD_INVALID",
+                    "the PDF is password-protected",
+                ) from error
+            raise SourceImportError(
+                "SOURCE_FORMAT_UNSUPPORTED", "PDF rendition raster failed"
+            ) from error
         try:
             # R1-I007: page dimensions are known before rasterizing.
             page_width, page_height = handle.page_size(entry.ordinal)
@@ -129,7 +154,7 @@ def render_entry_png(
         finally:
             handle.close()
         _check_decode_budget(resolved, int(rendered.width), int(rendered.height))
-        return rendered.png_bytes, int(rendered.width), int(rendered.height)
+        return rendered.png, int(rendered.width), int(rendered.height)
 
     from PIL import Image, ImageOps
 

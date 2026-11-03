@@ -48,12 +48,19 @@ class DocumentHandle(Protocol):
     @property
     def page_count(self) -> int: ...
 
+    def page_size(self, index: int) -> tuple[float, float]: ...
+
     def render_page(self, index: int) -> RenderedDocumentPage: ...
 
     def close(self) -> None: ...
 
 
 class DocumentRaster(Protocol):
-    """Opens document bytes for rasterisation; production binds PDFium."""
+    """Opens document bytes for rasterisation; production binds PDFium.
 
-    def open(self, data: bytes) -> DocumentHandle: ...
+    FEA-09/C-16 v1.1 §3.1: an encrypted document is admitted only with the
+    one-shot password obtained from the fresh Secret-G; the adapter must pass
+    it to the underlying PDF engine and never persist it.
+    """
+
+    def open(self, data: bytes, password: bytes | None = None) -> DocumentHandle: ...

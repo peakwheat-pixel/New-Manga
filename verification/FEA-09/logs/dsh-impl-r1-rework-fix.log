@@ -1,0 +1,9 @@
+
+## 实现 Review r1-rework 处置（2026-11-04，DSH）
+- 报告归档：doc/reviews/FEA-09-impl-r1-rework-r1.md（ZCode sess_b421a1f9…，changes_requested P0=0/P1=1/P2=4，reviewed_head 59ad0b9fe）。
+- **P1-1 已修**：DocumentRaster.open(data, password=None)；Pdfium 适配器传 str 密码、ENCRYPTED→REQUIRED/INVALID；_PdfiumDocumentHandle.page_size 补齐 R1-I007 端口（此前 PDF resolve 真实路径会 AttributeError）；reader 用 endered.png；新增加密 PDF import→resolve e2e 2 例（真实 R2/RC4 PDF + PdfiumDocumentRaster），含无 Secret-G→REQUIRED。
+- **P2-1 已修**：zip 成员 info.file_size > max_decode_bytes → SOURCE_BUDGET_EXCEEDED（解压炸弹），测试 2。
+- **P2-2 已修**：PageView 重复 deleted property 删除。
+- **P2-3 部分**：新增 unbound grant 拒绝测试；Task 行刷新；chapter 改挂 book 负测保留债务候选。
+- **P2-4 登记债务候选**：RenditionCache 装配失败仅日志降级 legacy（DSH 裁决：登记而非本轮修复，因涉及 bootstrap fail-closed 语义与既有测试基线）。
+- Python 全量：fea09 132 / core 897 / storage 121 / m2 110 / reading 141 / import_formats 32 / infra 91 全绿；.NET 待复跑。
