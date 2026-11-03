@@ -305,7 +305,8 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 raise SourceImportError("SOURCE_PASSWORD_REQUIRED", "password reference is unavailable")
 
     def claim_secret_for_binding(
-        self, source_id: str, version_id: str, entry_id: str
+        self, source_id: str, version_id: str, entry_id: str,
+        *, locator: str | None = None, ordinal: int | None = None,
     ) -> bytes | None:
         """C-16 v1.1 §3.1: consume the one fresh Secret-G for a page binding.
 
@@ -314,6 +315,11 @@ class SourceReadGrantRegistry(SourceReadAccess):
         ``SOURCE_ACCESS_DENIED`` (ambiguous), a malformed/expired secret ref is
         ``SOURCE_PASSWORD_REQUIRED``, and a replay is refused. The secret file
         is read + DPAPI-unprotected + zero-filled/deleted by ``read_secret``.
+
+        The Host mints the fresh grant by cloning the import grant's scope, so
+        its entry keys are the import-time <c>entry-N</c> keys, not the Core
+        entry id; matching therefore also accepts the bound entry's locator /
+        ordinal (both are carried in the frozen grant scope).
         """
         if not all(
             isinstance(value, str) and value
@@ -334,7 +340,12 @@ class SourceReadGrantRegistry(SourceReadAccess):
                     continue
                 raw_entries = scope.get("entries") or []
                 if not any(
-                    isinstance(item, dict) and item.get("entry_key") == entry_id
+                    isinstance(item, dict)
+                    and (
+                        item.get("entry_key") == entry_id
+                        or (locator is not None and item.get("locator") == locator)
+                        or (ordinal is not None and item.get("ordinal") == ordinal)
+                    )
                     for item in raw_entries
                 ):
                     continue

@@ -1,0 +1,7 @@
+
+## I005 Host 实现（2026-11-04，DSH）
+- SourceReadCoordinator：内存保存已签发 grant payload；SupportsResolveSecretAsync（capability 先检查）；IssueSecretGrantsAsync（先 revoke 上一 Secret-G → 克隆每个 live grant 的 scope/budget → 新 grant_id/expiry + secret_ref → 签名注册）；RevokeSecretGrantsAsync；IssueAsync 支持 import-time secret_ref（import 密码链路 grant-bound 校验）。
+- SourceSecretStore：DPAPI CurrentUser + NMSSR1\0 + 原子写 + 零填充删除；token 32 字符路由安全。
+- HostRuntime.ReadPageImageAsync(pageId, ct, password)：typed SOURCE_PASSWORD_REQUIRED 且调用方给密码 → capability 先检查（缺失不建文件）→ 写一个 DPAPI token → 注册 fresh Secret-G → 单次重试 resolve → finally revoke + 删除未消费 token；无密码/能力缺失保持 typed。
+- 测试：SourceSecretStoreTests（2，DPAPI 文件形状/唯一 token/删除隔离）；Host.Tests 55 passed/29 skipped；.NET build 0 warn/0 err。
+- **NOT_RUN**：真实 Host↔Core 加密 resolve IPC（Python 集成测试已覆盖 Core 侧；Host 真实 IPC 加密链路需后续补，测试尝试因 import-time secret 链路异常已回退，未提交失败测试）。

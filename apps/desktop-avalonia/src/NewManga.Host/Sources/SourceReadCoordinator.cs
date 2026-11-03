@@ -14,8 +14,26 @@ public sealed class SourceReadCoordinator(CoreServiceClient core, SourceAccessRe
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly Dictionary<string, List<string>> _grants = new();
+    //: C-16 v1.1 fresh-grant protocol: issued payloads are kept only in memory so
+    //: a resolve-time Secret-G can clone the exact four-dimension scope without
+    //: ever querying page bindings (the Host has no DB access).
+    private readonly Dictionary<string, JsonObject> _payloads = new();
+    private readonly Dictionary<string, (string RegistryId, int Generation, string GrantId)> _secretGrants = new();
     public SourceAccessRegistry Registry { get; } = registry;
     public bool ReferencedImportEnabled => enabled();
+
+    /// <summary>Live import-time grant ids (templates for fresh Secret-G clones).</summary>
+    public IReadOnlyList<string> IssuedGrantIds
+    {
+        get { lock (_payloads) return _payloads.Keys.ToArray(); }
+    }
+
+    /// <summary>True when the running Core advertises source.resolve-secret/1.</summary>
+    public async Task<bool> SupportsResolveSecretAsync(CancellationToken token)
+    {
+        var ping = await core.PingAsync(token).ConfigureAwait(false);
+        return ping.Capabilities.Contains("source.resolve-secret/1");
+    }
 
     private async Task RequireCapability(CancellationToken token)
     {
@@ -25,7 +43,9 @@ public sealed class SourceReadCoordinator(CoreServiceClient core, SourceAccessRe
 
     public async Task<string> IssueAsync(string registryId, int generation, string sourcePath, string sourceKind,
         string sourceId, string version, JsonElement rendition, long maxBytes = 268435456,
-        long maxDecodeBytes = 268435456, int maxEntries = 10000, CancellationToken cancellationToken = default)
+        long maxDecodeBytes = 268435456, int maxEntries = 10000,
+        string? secretToken = null, string? secretPath = null, double? secretExpiresAt = null,
+        CancellationToken cancellationToken = default)
     {
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
@@ -72,23 +92,135 @@ public sealed class SourceReadCoordinator(CoreServiceClient core, SourceAccessRe
                 ["scope"] = new JsonObject { ["source_id"] = sourceId, ["version"] = version,
                     ["rendition"] = JsonNode.Parse(rendition.GetRawText()), ["entries"] = entries }
             };
+            if (secretToken is not null && secretPath is not null)
+            {
+                if (secretExpiresAt is null || secretExpiresAt.Value <= expiry)
+                {
+                    payload["secret_ref"] = new JsonObject
+                    {
+                        ["token"] = secretToken, ["path"] = secretPath,
+                        ["expires_at"] = secretExpiresAt ?? expiry,
+                    };
+                }
+                else
+                {
+                    throw new SourceAccessException("INVALID_REQUEST");
+                }
+            }
             var signed = payload.DeepClone().AsObject();
             signed["expires_at"] = expiry.ToString("F6", CultureInfo.InvariantCulture);
             var signature = HMACSHA256.HashData(session.SigningKey, Encoding.UTF8.GetBytes(Canonical(signed)));
             payload["signing_key"] = Base64Url(session.SigningKey);
             payload["signature"] = Base64Url(signature);
-            using var document = JsonDocument.Parse(payload.ToJsonString());
-            var result = await core.SendHostControlAsync("RegisterSourceReadGrant", writer =>
-            {
-                foreach (var property in document.RootElement.EnumerateObject()) property.WriteTo(writer);
-            }, cancellationToken).ConfigureAwait(false);
-            if (result.Result is not { } ack || !ack.TryGetProperty("registered", out var registered) || registered.ValueKind != JsonValueKind.True)
-                throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            await RegisterPayloadAsync(payload, cancellationToken).ConfigureAwait(false);
+            lock (_payloads) _payloads[id] = payload.DeepClone().AsObject();
             if (!_grants.TryGetValue(registryId, out var list)) _grants[registryId] = list = [];
             list.Add(id);
             return id;
         }
         finally { _gate.Release(); }
+    }
+
+    /// <summary>
+    /// C-16 v1.1 §3.1: revoke the previous Secret-G, then clone every live
+    /// import grant's scope with a fresh grant id/expiry plus <c>secret_ref</c>.
+    /// The caller creates the DPAPI token file first; capability must be checked
+    /// by the caller before creating it. Returns the registered secret grant ids.
+    /// </summary>
+    public async Task<IReadOnlyList<string>> IssueSecretGrantsAsync(
+        IReadOnlyCollection<string> templateGrantIds, string token, string secretPath,
+        double expiresAt, CancellationToken cancellationToken = default)
+    {
+        if (templateGrantIds.Count == 0) return Array.Empty<string>();
+        if (!await SupportsResolveSecretAsync(cancellationToken).ConfigureAwait(false))
+            throw new SourceAccessException("CORE_CAPABILITY_MISSING");
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var session = core.HostSession ?? throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            await RevokeSecretGrantsLockedAsync(cancellationToken).ConfigureAwait(false);
+            var issued = new List<string>();
+            foreach (var templateId in templateGrantIds)
+            {
+                JsonObject template;
+                lock (_payloads)
+                {
+                    if (!_payloads.TryGetValue(templateId, out var found)) continue;
+                    template = found.DeepClone().AsObject();
+                }
+                var grantId = "source-" + Guid.NewGuid().ToString("N");
+                template["grant_id"] = grantId;
+                template["session_id"] = session.HostSessionId;
+                template["expires_at"] = expiresAt;
+                template.Remove("signing_key");
+                template.Remove("signature");
+                template["secret_ref"] = new JsonObject
+                {
+                    ["token"] = token, ["path"] = secretPath, ["expires_at"] = expiresAt,
+                };
+                var signed = template.DeepClone().AsObject();
+                signed["expires_at"] = expiresAt.ToString("F6", CultureInfo.InvariantCulture);
+                var signature = HMACSHA256.HashData(session.SigningKey, Encoding.UTF8.GetBytes(Canonical(signed)));
+                template["signing_key"] = Base64Url(session.SigningKey);
+                template["signature"] = Base64Url(signature);
+                await RegisterPayloadAsync(template, cancellationToken).ConfigureAwait(false);
+                issued.Add(grantId);
+                var registryId = template["registry_id"]!.GetValue<string>();
+                var generation = template["generation"]!.GetValue<int>();
+                lock (_secretGrants) _secretGrants[grantId] = (registryId, generation, grantId);
+            }
+            return issued;
+        }
+        catch
+        {
+            try { await RevokeSecretGrantsLockedAsync(CancellationToken.None).ConfigureAwait(false); }
+            catch { /* best effort cleanup */ }
+            throw;
+        }
+        finally { _gate.Release(); }
+    }
+
+    /// <summary>Revoke every currently tracked Secret-G (resolve teardown).</summary>
+    public async Task RevokeSecretGrantsAsync(CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { await RevokeSecretGrantsLockedAsync(cancellationToken).ConfigureAwait(false); }
+        finally { _gate.Release(); }
+    }
+
+    private async Task RevokeSecretGrantsLockedAsync(CancellationToken token)
+    {
+        KeyValuePair<string, (string RegistryId, int Generation, string GrantId)>[] snapshot;
+        lock (_secretGrants)
+        {
+            if (_secretGrants.Count == 0) return;
+            snapshot = _secretGrants.ToArray();
+            _secretGrants.Clear();
+        }
+        foreach (var group in snapshot.GroupBy(item => (item.Value.RegistryId, item.Value.Generation)))
+        {
+            var ids = group.Select(item => item.Key).ToArray();
+            var ack = await core.SendHostControlAsync("RevokeSourceReadGrant", writer =>
+            {
+                writer.WriteString("registry_id", group.Key.RegistryId);
+                writer.WriteNumber("generation", group.Key.Generation);
+                writer.WritePropertyName("grant_ids");
+                JsonSerializer.Serialize(writer, ids);
+            }, token).ConfigureAwait(false);
+            if (ack.Result is null) throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+    }
+
+    private async Task RegisterPayloadAsync(JsonObject payload, CancellationToken token)
+    {
+        using var document = JsonDocument.Parse(payload.ToJsonString());
+        var result = await core.SendHostControlAsync("RegisterSourceReadGrant", writer =>
+        {
+            foreach (var property in document.RootElement.EnumerateObject()) property.WriteTo(writer);
+        }, token).ConfigureAwait(false);
+        if (result.Result is not { } ack || !ack.TryGetProperty("registered", out var registered)
+            || registered.ValueKind != JsonValueKind.True)
+            throw new SourceAccessException("SOURCE_ACCESS_DENIED");
     }
 
     public async Task<JsonElement> InvokeAsync(string name, JsonElement args, CancellationToken token)

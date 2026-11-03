@@ -3432,6 +3432,8 @@ class CoreServiceServer:
                             prepared["source_id"],
                             prepared["version_id"],
                             prepared["entry_id"],
+                            locator=prepared["entry"].locator,
+                            ordinal=prepared["entry"].ordinal,
                         )
                     png, _width, _height = render_prepared_rendition(
                         prepared,

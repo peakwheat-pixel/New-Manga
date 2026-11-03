@@ -7,6 +7,7 @@ using NewManga.Host.Credentials;
 using NewManga.CoreClient.Transport;
 using NewManga.Host.Resources;
 using NewManga.Host.Sources;
+using System.Text;
 
 namespace NewManga.Host;
 
@@ -511,14 +512,15 @@ public sealed class HostRuntime : IAsyncDisposable
     /// (handle-verified, digest-checked whole-file read). No path or digest leaves the Host.
     /// The resource pipe is strictly request/response, so the whole sequence is serialized.
     /// </summary>
-    public async Task<byte[]> ReadPageImageAsync(string pageId, CancellationToken cancellationToken = default)
+    public async Task<byte[]> ReadPageImageAsync(string pageId, CancellationToken cancellationToken = default, string? password = null)
     {
         await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             var core = CoreService ?? throw NotReady();
             var bridge = HostBridge ?? throw NotReady();
-            var resolved = await core.ResolvePageResourceAsync(pageId, cancellationToken).ConfigureAwait(false);
+            var resolved = await ResolvePageResourceWithSecretAsync(core, pageId, password, cancellationToken)
+                .ConfigureAwait(false);
             var issued = await bridge.IssueAsync(resolved.ResourceId, resolved.Revision, cancellationToken).ConfigureAwait(false);
             try
             {
@@ -568,6 +570,50 @@ public sealed class HostRuntime : IAsyncDisposable
         finally
         {
             _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// C-16 v1.1 §3.1 Host fresh-grant protocol: on a typed
+    /// SOURCE_PASSWORD_REQUIRED (and only when the caller supplied a password)
+    /// check the capability BEFORE creating any secret file, write one DPAPI
+    /// token, clone every live grant scope as a fresh Secret-G, retry the
+    /// resolve exactly once, then always revoke the clones and delete any
+    /// unconsumed token. A missing capability or absent password stays typed.
+    /// </summary>
+    private async Task<ResolvedPageResource> ResolvePageResourceWithSecretAsync(
+        CoreServiceClient core, string pageId, string? password, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await core.ResolvePageResourceAsync(pageId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (CoreOperationException error) when (
+            error.Code == "SOURCE_PASSWORD_REQUIRED" && password is not null)
+        {
+            var sources = Sources ?? throw new CoreOperationException(
+                "CORE_CAPABILITY_MISSING", "protocol", false, "source registry unavailable", null);
+            if (!await sources.SupportsResolveSecretAsync(cancellationToken).ConfigureAwait(false))
+                throw new CoreOperationException(
+                    "CORE_CAPABILITY_MISSING", "protocol", false,
+                    "core does not advertise source.resolve-secret/1", null);
+            var (token, secretPath) = SourceSecretStore.WritePassword(
+                _options.DataRoot, Encoding.UTF8.GetBytes(password));
+            var expiresAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0 + 60;
+            try
+            {
+                await sources.IssueSecretGrantsAsync(
+                    sources.IssuedGrantIds, token, secretPath, expiresAt, cancellationToken)
+                    .ConfigureAwait(false);
+                return await core.ResolvePageResourceAsync(pageId, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                try { await sources.RevokeSecretGrantsAsync(CancellationToken.None).ConfigureAwait(false); }
+                catch { /* best effort: grants expire on their own */ }
+                SourceSecretStore.DeleteIfPresent(secretPath);
+            }
         }
     }
 
