@@ -1076,3 +1076,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P1-001 处置**：要求 R2 把 `folder_v1/v2` 六个成员纳入 `verification/FEA-08/fixtures/`，逐文件 SHA-256 入 manifest/EV 表，并让 H6 可从入库证据直接复现 M8/M9（不采用降级方案）。
 - 已派 **FEA-08 R2 返修**（ZCode CLI fresh session，job `pwsh-0fa6baa574764bc7`，prompt `workspace/FEA-08/r2-dispatch-prompt.md`）：P1-001/P1-002 闭合 + 9 个 P2 逐项处置 + 门禁（build 0/0、1292/0/57 只增不减、check PASS(3)、pins 15/15、旧 FEA-06 四 PNG 不变、禁止范围 diff=0、src_changes=0）+ 重出 Canonical Evidence/门禁记录/Handoff。
 - 后续：R2 交付后派 **impl-r2 独立 Review**（D-9 独立上下文子 agent；Codex 10:25 后若可用则优先 Codex）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。不 push；Codex 窗口 10:25 备用。
+## 167. FEA-08 R2 交付（ZCode 部分 + DSH 收口）（2026-11-03 10:55）
+
+- **ZCode R2**（fresh session，job `pwsh-0fa6baa574764bc7`，prompt `workspace/FEA-08/r2-dispatch-prompt.md`）：10:08 启动，完成 9 个脚本与证据改造（folder fixtures reg/入库、H4 S2/S5 字段、H5 轮询+exit+分支、H6 独立副本/dhash 邻界、矩阵 current/needed、pin_selfcheck、stage_evidence、run_all verdict 校验、probe_env 修正）并跑通首轮全链；**10:39:56 触及 ZCode 5 小时额度上限**（13:13 重置）中断，未提交。Codex 同期恢复可用（低 reasoning 探针 `PROBE_OK`）。
+- **DSH 收口（Integrator，长期授权范围内）**：修复 2 个自洽缺陷（h4 `mixed_digest_risk_field_consistent` 在 evaluate 之前求值恒 false；h6 M13 `same_bytes` 字段/note 语义与实测相反）；重写 `run_all.py` 为「双生成 fixtures（入库来源 + 确定性对照）→ staging 入库 → stage_evidence → H4/H5/H6(直接对入库 fixtures)/矩阵 → results verdict 校验 → 结果/日志 staging → tmp 实际清理」；删除 ZCode 畸形 `h6_evidence_rerun.log`；重跑全链（EXIT=0，17 场景 h6、9 PASS h5），证据 50 文件 + `gates.log` 重出并全量 re-pin。
+- **交付**：`7b176be6a`（证据 commit）；Canonical Evidence **51 项** @该 commit（`gates.log` 以 SHA-256 pin）；Task 卡重写（AC 收口说明、门禁记录、Resource Manifest、EV 表）；Handoff `doc/handoffs/FEA-08-impl-r2.md`；报告 §10 更新。
+- **门禁**：build 0w/0e；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；旧 FEA-06 四 PNG 未变；禁止范围 diff=0（src_changes=0）；未 push。pin 自校验 51/51（blob==worktree==Task 表 + 干净 checkout）。
+- **下一步**：派 **impl-r2 独立 Review**（Codex，未参与实现；高 reasoning）→ approved 后 DSH 集成验证 → 关闭 FEA-08（填 Resource Manifest/Closeout）→ 释放 FEA-09（引用源与导入）scope。

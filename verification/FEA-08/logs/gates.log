@@ -1,0 +1,50 @@
+FEA-08 R2 门禁记录（verification/FEA-08/logs/gates.log）
+口径：本文件记录 FEA-08 R2 交付（delivery commit 7b176be6a 的证据 + 本登记工作树）的门禁实测值，
+      逐命令可复现；原始输出同时留档 workspace\FEA-08\r2-gates-raw.log（非 Git）。
+环境：Windows 11 / .NET SDK 10.0.401 / Python 3.14.6；记录时间：2026-11-03（Asia/Shanghai）。
+head：7b176be6a（R2 证据交付 commit）；7b176be6a..HEAD 仅治理/登记文档变更，证据字节不变。
+
+[1] dotnet build apps\desktop-avalonia\NewManga.sln --nologo
+    EXIT=0；0 warning / 0 error
+
+[2] dotnet test apps\desktop-avalonia\NewManga.sln --no-build --settings apps\desktop-avalonia\tests\NewManga.runsettings --nologo
+    EXIT=0；1292 passed / 0 failed / 57 skipped（无过滤全量；基线 1292/0/57 不变）
+    逐程序集 通过/失败/跳过：
+      NewManga.Appearance.Tests 21/0/0；NewManga.Presentation.Avalonia.Tests 38/0/0；
+      NewManga.Host.Tests 51/0/28；NewManga.ThemeEngine.Tests 253/0/0；
+      NewManga.DesignSystem.Tests 117/0/0；NewManga.ApplicationCore.Tests 31/0/0；
+      NewManga.CoreClient.Tests 128/0/22；NewManga.App.Tests 653/0/7
+
+[3] pwsh -NoProfile -File tools\governance\check.ps1
+    EXIT=0；Governance check: PASS (3 warnings)
+    warnings：9 个非终态 Task（r38 不得批量关闭）；STATUS 预算 80%；PLAN 预算 80%
+
+[4] pwsh -NoProfile -File tools\governance\verify_pins.ps1
+    EXIT=0；PIN AUDIT: PASS (all 15)（14 份契约 + FEA-01）
+
+[5] Get-FileHash verification\FEA-06\screens\*.png -Algorithm SHA256
+    reader    8533c263c79bd53cefa68a21d2aabe6501556fd62218ebf653b528c9cbec78b2
+    settings  fd30b166e30aec7a43e4d82ecd1fefb14dffef3bebe2f5f952e41d45e324a162
+    shelf     307f8f6748522d1cdb3226135a3f733961744a3b2aa5d410f89aad3fde138b0a
+    workbench d5d878bbba9e47e2b59d9dd03816a370688a7afebec6d6e00016f262a46e2df5
+    → 与 FEA-06 卡登记一致（旧四 PNG 未变）
+
+[6] git diff --name-only 2870a9fa5..7b176be6a -- src apps experiments tests packaging scripts tools
+    空输出 → src_changes=0（R2 无生产代码改动）
+
+[7] git status --porcelain -- src apps experiments experiments tests packaging scripts tools（工作树侧）
+    空输出 → 工作树同样零改动
+
+[8] Canonical Evidence pin 自校验
+    python G:\CODEX\New Manga.workspace\FEA-08\prototype\pin_selfcheck.py（在 git add 之后运行）
+    EXIT=0；blob == worktree == Task 表 51/51；另做干净 checkout（git checkout-index 受 .gitattributes
+    eol=lf 支配）逐文件复现；详见 logs\pin-verify.log。
+    （pin-verify.log 由该脚本生成，自引用无收敛解故不参与自校验集合；其最终字节 SHA-256 在 Task 卡
+      EV 表以 SHA-256 pin 登记。）
+
+[9] 安全边界复核
+    全仓 + 原型搜索 SHEmptyRecycleBin|EmptyRecycleBin|SHERB_ 调用=0（仅注释）；
+    H5 destructive 仅经 recycle_guarded（lab 合成路径白名单）；G: 回收站 0→0、leftover=0；
+    tmp 运行后实际清理：tmp_remaining=[]（见 results/run_all_log.json）。
+
+结论：R2 交付门禁全部通过；无生产代码改动；未 push。

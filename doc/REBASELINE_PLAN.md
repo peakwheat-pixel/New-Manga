@@ -34,7 +34,7 @@
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
 READY 节点：无
-进行中：FEA-08（impl 交付 c422bf164；impl-r1 changes_requested P1=2/P2=9 → R2 返修中）；D-14-STATUS-COLOR-FIX 已 done `075dc1682`（1292/0/57）
+进行中：FEA-08（impl 交付 c422bf164；R2 交付 7b176be6a 待 impl-r2 Review）；D-14-STATUS-COLOR-FIX 已 done `075dc1682`（1292/0/57）
 
 当前 DAG：FEA-06-PREREQ-1（**done**）→ FEA-06-PREREQ-2（**done**）→ FEA-06（**done**，`b26840acd`，1034/0/57）→ FEA-07（**closed_with_limitations**，集成 `aedc7251c`，1138/0/57；AC5 D-1 residual）；下一节点 FEA-06-RESIDUAL-2（**in_progress**，impl-r3 changes_requested → R2R3 返修；FEA-06-RESIDUAL-1 已 closed_with_limitations）
 
