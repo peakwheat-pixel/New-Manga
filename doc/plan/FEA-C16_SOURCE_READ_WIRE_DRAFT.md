@@ -1,9 +1,9 @@
 # FEA-C16 Source 读取与导入 wire 协议（草案 v7，处置契约复核 r6）
 
-状态：**FROZEN v1.0（2026-11-03；冻结自草案 v7）**（冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；独立复核 r7 approved）
-日期：2026-11-03
+状态：**UNFREEZE v1.1 候审（2026-11-04；按 r15 approved 提交语义修订，待已提交字节独立复核后重冻）**（已冻结历史：v1.0 FROZEN 2026-11-03；载体待建 `CONTRACT-UNFREEZE-2026-11-04.md`）
+日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
-依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15 v5（同批）、C-01b/C-05 v1.1/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）。
+依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15（同批）、C-01b/C-05/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）；v1.1 依据实现 Review r1 R1-I005 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
 
 **边界**：冻结 source-read 与引用导入通信面（命令、字段、签名、scope、能力、错误、密码引用、异步状态机、receipt）。**不修改**既有冻结文档字节（C-06 的必要修订走 v1.1 UNFREEZE 载体）；**不新增 Core→Host 反向 RPC 通道**；**不实现** UI 接线（FEA-09-UI-1）与删除/回收站（FEA-12）。
 
@@ -18,6 +18,7 @@
 
 - **方向裁决（C-06 v1.1）**：现有传输只有 Host→Core 请求/应答，不存在 Core→Host RPC。C-06「Core 申请、Host 授予」落地为：Core 的操作请求由 Host 承载；**Host 在 dispatch 前按 Registry 铸造 source-read grant**（Host 是唯一授予方并完成 scope→授权根解析）；Core 侧执行本地 `VerifySourceRead`（签名/scope/identity/expiry/generation）后才读取。该落地写进 C-06 v1.1 §2.2/§2.3，并经独立复核；本契约引用之，不构成对 C-06 的暗改。
 - **能力协商**：Core `core.ping.capabilities` 追加 `source.read/1`（保留 `library.list_books`）。**按操作检查**：Host dispatch 任何 source 命令前校验该能力，缺失 → `CORE_CAPABILITY_MISSING`（拒绝该操作；**不**沿用 `StartupSelfCheck` 的 Degraded-but-writable 放行）。旧 Host 不认识新命令 → 不发送；旧 Core → fail-closed。
+- **v1.1 能力追加**：`source.resolve-secret/1`——加密 referenced 页 resolve 的 fresh-grant 密码通道（§3.1）。Host 在创建 secret 文件前探测；缺失/探测异常 → `CORE_CAPABILITY_MISSING`，**不创建**文件、不发送；旧 Core 无该能力 → Host 拒绝加密 resolve（加密页读 typed `SOURCE_PASSWORD_REQUIRED`）。能力缺失不得靠“发送后看结果”判断。
 - **即时撤销通道**：Host 可向其已连接的 Core 推送 **`RevokeSourceReadGrant`**（Host→Core 的新增 host-control 命令）；Host 只有在收到 Core ACK 后才向调用方返回撤销成功。Core 检测 stdin EOF/transport 失败 → 全部 source grant 立即无效（fail-closed）。
 
 ## 1. Registry 命令（UI→Host；FEA-09 实现 Host handler，UI 接线归 FEA-09-UI-1）
@@ -77,6 +78,34 @@
 - **错误分类**：无密码或 secret_ref 缺失/过期 → `SOURCE_PASSWORD_REQUIRED`；解密/口令错误 → `SOURCE_PASSWORD_INVALID`；连续失败 ≥3 次 → 该 source 失败并允许跳过。
 - **AES ZIP**：检测 method 99 → `SOURCE_FORMAT_UNSUPPORTED`（不请求密码、不计解密成功）；fixture 预生成 + SHA-256，**不新增 pyzipper/依赖**。支持子格式：ZipCrypto ZIP/CBZ（stdlib 可解）、PDFium 可解密 PDF（**产品能力须由 FEA-09 实测证明**，本轮不得预先写成已验证）。
 - **审计**：自动化扫描已知密码字面量及其 UTF-8 hex/base64/url-encoded 形式，覆盖 wire NDJSON、Host/Core 日志、receipt、Registry 明文视图、verification 证据 → 0 命中；`secret_ref` 元数据本身允许出现在签名 payload，但**不得**出现在 WireLog/日志/receipt/UI（§7）。
+
+### 3.1 Resolve 加密源的密码通道（v1.1 UNFREEZE；**不改变 resolve wire 字节**）
+
+用于 `source_mode='referenced'` 且源为加密 ZIP/CBZ/PDF 的页 `resolve_page_resource`。**请求/响应字节不变**（仍 `{page_id}`）；密码经 **Host fresh-grant 协议**传递：
+
+```text
+1) Host：能力 source.resolve-secret/1 检查通过后，每次加密 referenced 页 resolve 前：
+   a. revoke 上一 secret grant（若存在），确保最多一个；
+   b. 生成 token [A-Za-z0-9_-]{22,64}，写 <DataRoot>/host/source-secrets/<token>.bin
+      （"NMSSR1\0"+DPAPI CurrentUser；私有 ACL；原子创建；TTL<=300s 且<=单次请求）；
+   c. 用既有 RegisterSourceReadGrant 注册**恰好一个** fresh grant：scope/roots/facts/entries 与页 binding 的源一致；
+      secret_ref={token,path,expires_at}（C-06 既有字段，不新增字段/不放宽 scope）。
+2) Host 调 resolve_page_resource {page_id}。
+3) Core：binding healthy；存在 live grant 的 scope 与 binding 的 source/version/entry/rendition 一致（Auth）；
+   对加密页另要求**恰好一个** live grant 带 secret_ref 且其 scope 与 binding 一致（Secret-G）：
+   - 0 个 → SOURCE_PASSWORD_REQUIRED；≥2 个 → SOURCE_ACCESS_DENIED；
+   - secret 路径必须规范位于 Host 私有秘密目录、祖先无 reparse、普通文件、独占同句柄读取→零填充→删除；
+     未通过验证的路径绝不读取/清理；一次性消费；重放/多义拒绝；
+   - cache 命中不要求 Secret-G/不消费 token，但 Auth 必须成立；禁止绕过授权返回缓存；
+   - 仅 Core 清理已验证并消费对象；Host 负责超时/取消侧删除与启动孤儿回收（仅本目录 token 模式 + TTL）。
+4) 错误码：复用 §6 既有码——grant 过期→SOURCE_GRANT_EXPIRED；撤销/EOF 失效→SOURCE_GRANT_REVOKED；
+   多义/claim 重放→SOURCE_ACCESS_DENIED；token/secret 缺失或过期→SOURCE_PASSWORD_REQUIRED；
+   DPAPI/口令错误→SOURCE_PASSWORD_INVALID；AES ZIP→SOURCE_FORMAT_UNSUPPORTED。
+5) 密码/token/path 零泄漏（wire log/NDJSON/日志/receipt/UI/证据）；PDF raster 密码接缝；不持久化密码。
+```
+
+- 内部候选选择函数、错误检查代码顺序、锁/句柄 API 委托 `doc/handoffs/FEA-09-impl-design-I001-I005.md`；实现 Review 以“同输入唯一结果 + 本条不变量”校验。
+- 旧/新 Host×Core 四象限：旧×旧保持现状；新×旧 capability 缺失 → typed 拒绝且不建文件；旧×新不承诺密码链路（cache/Auth 行为不变）；新×新生效。
 
 ## 4. 导入命令：异步状态机
 
@@ -142,6 +171,8 @@
 
 消息不得含绝对路径/密码/内部结构；`details` 只允许计数/枚举/registry_id/operation_id。
 
+**v1.1 补充**：resolve 密码通道复用上表既有码与 category/retryable，不新增码；`SOURCE_PASSWORD_REQUIRED` 同时用于“无 Secret-G/secret_ref 过期/路径对象非法”，`SOURCE_PASSWORD_INVALID` 用于 DPAPI/口令错误与冷却；撤销保留 `SOURCE_GRANT_REVOKED`（不得改为 DENIED），多义/重放用 `SOURCE_ACCESS_DENIED`。
+
 ## 7. 安全与证据约束（含 WireLog 抑制位置）
 
 1. **脱敏发生在进入 `WireLog.Frames` 与 NDJSON 之前，覆盖所有携带敏感/路径字段的命令**：至少 `RegisterSourceReadGrant`、`PlanImportReferences`、`StartImportReferences`、`RegisterImportSource`（既有口径）以及其响应；字段至少 `secret_ref`（整对象）、`signing_key`、`host_session_credential`、`scope.entries[].path`、`entries[].path`、任何嵌套 `path` 键。实现必须在构造可保存 Frame **之前**完成重写：`request`/`response` 原行重序列化为脱敏版本，`request_utf8_hex`/`response_utf8_hex` 从**脱敏后的字节**计算，内存 Frames 与 NDJSON 均不保留原行；Host 日志同口径。测试逐项断言：密码字面量及其 hex/base64/url-encoded、secret_ref token/path、signing_key、绝对路径在 Frames/NDJSON/日志中 0 命中，且脱敏后 JSON 仍可解析。
@@ -176,3 +207,4 @@
 |---|---|---|
 | 2026-11-03 | v1 草案 | FEA-09 scope-r1 |
 | 2026-11-03 | **v7（处置契约复核 r6）**：`planned_pages` 改为按页口径（排除已引用/策略跳过；整 source 跳过 planned=0），补 `skipped_pages` 字段与整源跳过/部分已引用两个实例，四类既有示例给完整 counts/remaining/outcome | `doc/reviews/FEA-09-PREREQ-1-r6.md` R6-001 |
+| 2026-11-04 | **v1.1 UNFREEZE**：§0 增 `source.resolve-secret/1` 能力门禁；§3.1 增 resolve 加密源 fresh-grant 密码通道（**resolve 请求字节不变**；一次性/路径/清理/零泄漏/撤销码映射）；§6 补错误码复用说明。依据 R1-I005 + UNFREEZE r15 approved；已提交字节复核后重冻并重算 pin | DSH；`doc/reviews/FEA-09-UNFREEZE-r15-review.md` |

@@ -1,11 +1,11 @@
 # FEA-C15 Source 存储契约（草案 v5，处置契约复核 r4）
 
-状态：**FROZEN v1.0（2026-11-03；冻结自草案 v5）**（冻结记录 [FEA-CONTRACT-FROZEN-C15](FEA-CONTRACT-FROZEN-C15.md)；独立复核 r7 approved）
-日期：2026-11-03
+状态：**UNFREEZE v1.1 候审（2026-11-04；按 r15 approved 提交语义修订，待已提交字节独立复核后重冻）**（已冻结历史：v1.0 FROZEN 2026-11-03；载体待建 `CONTRACT-UNFREEZE-2026-11-04.md`）
+日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
-依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05/C-06/C-14 冻结契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）。
+依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05 v1.2/C-06/C-14 冻结/修订契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）；v1.1 依据实现 Review r1 R1-I001 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
 
-**边界**：本契约只补 Source 生产实现的存储缺口（DDL、迁移安全、身份/排序规则、完整性与可见性拆分、Host Registry 规范、跨存储次序、rendition cache 边界）。**不复写** C-01b/C-05/C-06/C-14 已冻结语义；对 C-05/C-06 的必要语义扩展通过 **v1.1 UNFREEZE** 载体（`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）显式登记并重新复核，**不得**以新文档声明代替。
+**边界**：本契约只补 Source 生产实现的存储缺口（DDL、迁移安全、身份/排序规则、完整性与可见性拆分、Host Registry 规范、跨存储次序、rendition cache 边界）。**不复写** C-01b/C-05/C-06/C-14 已冻结语义；对 C-05/C-06/C-16 的必要语义扩展通过 **UNFREEZE 载体**（v1.0：`doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`；v1.1：`doc/reviews/CONTRACT-UNFREEZE-2026-11-04.md`）显式登记并重新复核，**不得**以新文档声明代替。
 
 ---
 
@@ -25,8 +25,10 @@
 **UNFREEZE 依赖（本契约冻结的前置）**：
 
 - **C-05 v1.1**：新增 referenced 页可见性分支，并把 `is_complete_page` / `V(p,t)` / `R(p,t)` 拆开（R1-001）。
+- **C-05 v1.2（v1.1 UNFREEZE 追加）**：managed `V` 增加 `V_copy_original` 等价 witness、witness 独立性；本契约迁移断言/读路径同步。
+- **C-16 v1.1（同批）**：`source.resolve-secret/1` 与 Host fresh-grant 协议（无 wire 字段变更）；本契约 §4.2 resolve 行引用之。
 - **C-06 v1.1**：grant 四维 scope、Host 铸造型发放、Host/Core 双侧 Verify 归属、`RevokeSourceReadGrant` 与即时撤销/失联语义（R1-002/R1-003）。
-- 两份 UNFREEZE 载体与 C-15/C-16 同批独立复核；approved 后按冻结记录纪律重算 pin 并重新冻结（C-05/C-06 的新 pin 写入各自 FROZEN 记录；`verify_pins.ps1` 自动读取新 pin）。
+- UNFREEZE 载体与 C-15/C-16 同批独立复核；approved 后按冻结记录纪律重算 pin 并重新冻结（C-05/C-06/C-16 的新 pin 写入各自 FROZEN 记录；`verify_pins.ps1` 自动读取新 pin）。
 
 ## 1. 迁移与版本
 
@@ -36,12 +38,12 @@
   - 回调只能使用该同一 `sqlite3.Connection` 做**只读 DB 查询**；外部资源验证只允许经注入的 **`IResourceVerifier` 接缝**（对本机受管根做只读存在/可读检查；禁止任何写、网络、Host 调用或第二 SQLite 连接）；**禁止** commit/rollback/close、禁止 DDL/DML；违规由 runner 包装为 `MigrationValidationError`；
   - 回调抛 `MigrationValidationError(code, detail)` 或非 `sqlite3.Error` 异常 → runner rollback 并抛出 typed `MigrationError`（启动失败，不切换入口）；
   - **基线捕获**：迁移前在独立只读连接上捕获（页 ID/顺序、source_hash、managed_original_ref、width/height、Lock、人工数据行计数、reader projection 可见页 ID 顺序），作为内存对象传给回调；不得在回调内重新查询 Host。
-- **v7 验证断言（最小集）**：
-  1. 旧 `_COMPLETE_PAGE_WHERE` 集合（含软删）= 迁移后 managed `is_complete_page` 集合（逐 page_id）；
-  2. 同一 t/父级条件下的旧 C-05 v1.0 `V_artifact` 可见集合 = 迁移后 C-05 v1.1 managed 分支 `V` 集合（逐 page_id 与顺序）；**不得**要求 `V` 集合 = complete 集合（导入元数据不完整但 artifact/revision valid 的旧页仍可见）；
-  3. 旧完整性谓词（`_COMPLETE_PAGE_WHERE`）不成立的半写/placeholder 行保持 `incomplete` 并进入待恢复清单；旧 complete 但 V 不可见的行（无 artifact、软删、父级删除）保持 `complete` 且仍不可见（不得改成 incomplete，也不得把其它 incomplete 行提升 complete）；
-  4. `sort_order`/`source_order`/`managed_original_ref`/`source_hash`/Lock/人工数据行数与基线逐项相等；
-  5. **旧 Managed 资源可读性**：资源校验对象 = 上述第 2 条旧 `V` 可见页解析到的 original revision `managed_path`（及 `pages.managed_original_ref` 若非空）；无任何可解析 original 路径的 V 页 → `SOURCE_MIGRATION_RESOURCE_UNVERIFIED`；缺失/不可读 → 同上（附 page_id 列表），**回滚并拒绝切换入口**。**不得**假定 V 页必有 `managed_original_ref`（v1 placeholder/artifact-only 行）。
+- **v7 验证断言（v1.1 修订；最小集）**：
+  1. **正尺寸旧基线**：`_LEGACY_COMPLETE_WHERE_POSITIVE = source_hash 非空 ∧ managed_original_ref 非空 ∧ width>0 ∧ height>0`。旧正尺寸 complete 集合（含软删）= 迁移后 managed `is_complete_page` 集合（逐 page_id）；旧 NULL/零/负尺寸行保持 `incomplete` 并进入待恢复清单（page_id 列表，写迁移诊断，不改变回填集合）。
+  2. **union 守恒**：同一固定 t/父级条件下，`expected = 旧 C-05 v1.0 V_artifact 可见集合(managed) ∪ 旧正尺寸 copy 可见集合`（旧列推导，固定顺序）；迁移后 C-05 v1.2 managed `V` 集合与 expected 逐 page_id/顺序相等；artifact 分支与 copy 分支**分别**守恒；**不得**要求 `V`=complete，也**不得**要求 `V`=旧 artifact 集合（copy witness 是合法新增来源）。验证使用**同一迁移事务连接**（禁止第二连接/写/网络/DDL/DML），固定 t，并通过 `get_page`/`list_pages`/纯投影三者一致核验；非空资源不得跳过 verifier；人为破坏任一查询或 mapper 必须使验证失败。
+  3. **完整性守恒与可见性扩展分开**：旧正尺寸 complete 无 artifact 页保持 `complete`；未删/父未删/`created_at<=t` 时经 copy witness 可见；`deleted_at` 非空或 `created_at>t` 时保持 `complete` 但不可见；半写/placeholder 行保持 `incomplete`（不得提升）；软删/未来时间反例保留。
+  4. `sort_order`/`source_order`/`managed_original_ref`/`source_hash`/Lock/人工数据行数与基线逐项相等。
+  5. **旧 Managed 资源可读性**：资源校验对象 = 合格 `original` revision 的 `managed_path`（若存在）否则 `pages.managed_original_ref`；无任何可解析路径的 V 页 → `SOURCE_MIGRATION_RESOURCE_UNVERIFIED`；缺失/不可读 → 同上（附 page_id 列表），**回滚并拒绝切换入口**。**不得**假定 V 页必有 `managed_original_ref`（artifact-only），也**不得**假定 V 页必有 artifact；非空待验资源必须注入 verifier（禁止 None 跳过）。**不得**通过隐藏 V 页消除资源失败。
   - 产品门禁（build/全量测试/旧 FEA-06 四 PNG/check/vpins）属集成验证，不是 SQLite 回调内部动作。
 - **旧二进制拒写**：v7 库交给仅认识 v1–v6 的旧迁移器 → `SchemaTooNewError`（现有 `migrator.py:76–80`）；不得“忽略新列”。
 - **降级**：无自动降级；恢复迁移前 verified 备份到隔离新根（SC-37）。
@@ -248,14 +250,18 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
            WHERE b.page_id=p.page_id AND b.status='healthy'
              AND b.verified_digest=e.content_digest))
    ```
-2. **`V(p,t)`**（C-05 v1.1 §3.1 权威，模式分派）：
+2. **`V(p,t)`**（C-05 v1.2 §3.1 权威，模式分派）：
    ```text
-   V(p,t) ≡ (p.source_mode='managed'    AND V_artifact(p,t))
+   V(p,t) ≡ (p.source_mode='managed'    AND V_managed(p,t))
           OR (p.source_mode='referenced' AND V_ref(p,t))
-   V_artifact = C-05 原 P1–P5（artifact/revision；不要求 pages.integrity_status，字节不变）
-   V_ref      = C-05 v1.1 P1 ∧ P7 ∧ P8 ∧ P5（父级未删/页未删/referenced 完整性/健康 binding/时间）
+   V_managed(p,t) = V_artifact(p,t) ∨ V_copy_original(p,t)
+   V_artifact      = C-05 原 P1–P5（artifact/revision；不要求 pages.integrity_status，字节不变）
+   V_copy_original = P1 ∧ integrity_status='complete' ∧ source_hash/managed_original_ref 非空
+                     ∧ width>0 ∧ height>0 ∧ pages.created_at<=t
+   V_ref           = C-05 现有 P1 ∧ P7 ∧ P8 ∧ P5（字节不变）
+   不变量：witness 独立；V 真不保证 R；R 失败 typed 且不得隐藏 V 行。
    ```
-3. **`R(p,t)`**（当前可读/可解析）：`V(p,t)` ∧ 资源授权有效 —— managed：受管根校验可读；referenced：C-16 的有效 source-read grant + identity digest 匹配。**读取层不得把 `V` 当 `R`**；导出/阅读器读取失败要 typed，不静默显示空页。
+3. **`R(p,t)`**（当前可读/可解析）：`V(p,t)` ∧ 资源授权有效 —— managed：优先合格 `original` revision 的 `managed_path`，否则 `pages.managed_original_ref`，经**受管根校验**读取；referenced：C-16 的有效 source-read grant + identity digest 匹配（加密源另需 C-16 v1.1 fresh-grant 密码通道）。**读取层不得把 `V` 当 `R`**；导出/阅读器读取失败要 typed，不静默显示空页；V 真 R 失败不得隐藏/过滤该行。
 
 ### 4.2 五读路径（FEA-09 必改/必回归）
 
@@ -263,17 +269,26 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 |---|---|
 | `existing_source_hashes` | `is_complete_page` ∧ `deleted_at IS NULL`；managed/referenced 同一谓词；去重策略由导入层决定，**不按 digest 合并 occurrence** |
 | `max_source_order` | `is_complete_page`（**包含软删页**，沿用现有语义）；不得复用含 `deleted_at` 的 live 谓词 |
-| `get_page` / `list_pages` | `V(p,t)`（含父级删除与时间） |
-| `handle_resolve_page_resource` | managed：既有受管根解析与 derived publish 不变；referenced：**只允许经 source-read grant 读取并按 rendition_cache 规则发布 decoded/re-encoded rendition**（`rendition_kind` 白名单；预算/淘汰/校验按 C-14 SC-S14…S17），禁止把 raw user-source 字节直接发布；无有效 grant → `SOURCE_ACCESS_DENIED` 等 typed，**禁止**回退任意路径 |
-| reader projection | 基于 `list_pages`/C-05 v1.1；referenced 页可见且可解析；人工数据/进度/顺序不因 mode 改变 |
+| `get_page` / `list_pages` | `V(p,t)`（含父级删除与时间）；**必须可见 V 全集**：可完整构造行保持既有 `Page` 契约；V 真但无法构造 `Page`（artifact-only/仅非 original artifact）以**只读投影**可观察（§4.4）；不得过滤；未知 ID 仍 None |
+| `handle_resolve_page_resource` | managed：合格 current `original` revision `managed_path` → 否则 `pages.managed_original_ref`；既有受管根/derived publish/稳定键语义不变；资源不可变（同键已发布摘要变化 → typed 冲突，不替换；文件缺失自愈仍先比较既有摘要）。referenced：**只允许经 source-read grant 读取并按 rendition_cache 规则发布 decoded/re-encoded rendition**（`rendition_kind` 白名单；预算/淘汰/校验按 C-14 SC-S14…S17），禁止把 raw user-source 字节直接发布；加密源按 C-16 v1.1 fresh-grant 密码通道；无有效授权 → `SOURCE_ACCESS_DENIED` 等 typed，**禁止**回退任意路径 |
+| reader projection | 纯投影构建器（同连接只读、不 publish/resolve、固定 t）返回 V 全集（可读 + 只读投影）。wire `GetReaderProjection` 字节不变：`pages[]` 仅含正尺寸可读页；V 真但 R 不可读页**不进入 wire**，由管理/诊断读路径暴露；reader 对逐页 `PAGE_UNAVAILABLE_CODES` 跳过该页、其余错误整请求失败；恢复语义：pages[]=章节可读全集（不截断）、`beginning` 取首可读页 offset 0、`resume` 按保存页可读/不可读/已移出/无进度规则，保存页可读时保留原 offset（Webtoon 像素坐标、分页 0，不取整不归一化），替代页 offset 0，`initial_position.page_id ∈ pages[]`；零可读/V 空均返回既有 `TARGET_NOT_FOUND` |
 
-### 4.3 旧 Managed 写入对完整性列的维护（R1-006）
+### 4.3 旧 Managed 写入对完整性列的维护（R1-006；v1.1 补充）
 
 - 所有 managed 创建路径必须在同一事务内显式写 `source_mode='managed'`、`integrity_status='complete'`，且只在 Managed Copy 已存在后提交：
   `application/importing/images/service.py`（`add_page` 前受管副本已存在）、`documents/service.py`、`bootstrap/core_service.py` 的旧 `ImportPages` 适配、任何其它 `Page(...)`/`add_page` 调用点。
 - 半写/失败路径保持默认 `incomplete`，不可见但可恢复；`update_page` 不得把 incomplete 静默翻成 complete（只允许带验证的显式状态迁移）。
+- **v1.1 澄清**：`incomplete` 页若同时存在**合格 artifact witness**，按 C-05 v1.2 `V_artifact` 可见（V 与数据完整性分离）；无合格 witness 时不可见。不得因本条把 V 集合改回 complete 集合。
 - 升级后旧 `ImportPages` 必须回归通过（AC-7 增加该用例）；v1 placeholder 行永久保持 incomplete（除非显式修复流程，FEA-09 不实现修复流程）。
 - 完整性/可见性/授权拆分见 §4.1；`max_source_order` 的含软删集合单独实现（R1-006）。
+
+### 4.4 只读投影与不可读 V 页（v1.1 新增，冻结最小集）
+
+- `PageView`（只读投影；不属于 domain 实体，不接受写入/import 回写）最少字段：`page_id/chapter_id/source_mode/sort_order`、`visibility_witness ∈ {artifact, copy, artifact+copy, referenced}`、`original_available`、`source_hash`（仅合格 original revision `file_hash` 或 `pages.source_hash`；**绝不用** thumbnail/clean hash）、`original_ref`（合格 original `managed_path` 或 `pages.managed_original_ref`）、`width_px/height_px`（无合格值为 NULL，不用 0 假值）、`integrity_status`。
+- 可完整构造的行仍返回 domain `Page`；不可构造但 V=true 的行必须以 `PageView` 可观察；混排按 `sort_order`（同序按 `page_id`）。未知 ID 仍 None。
+- `original_available=false` 仅表示 DB 投影可知无合格 original 资源，**不**表示实时可读性；`R` 仍须尝试授权/读取并 typed 失败。
+- 同一页多 artifact 按 page 去重；选择顺序：合格 original revision（valid + current + `created_at<=t`）→ `pages.managed_original_ref` → 无。
+- 迁移验证与 reader 纯投影使用同一套投影构建；wire handler 不因投影存在而 publish/resolve。
 
 ## 5. Host `SourceAccessRegistry` 实现规范（C-06 落地）
 
@@ -328,9 +343,10 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 
 ## 9. 冻结条件与变更记录
 
-冻结条件：①C-05 v1.1/C-06 v1.1 UNFREEZE 与本契约同批独立复核 approved（P0/P1=0）；②DDL 内存实测与迁移失败注入证据；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 口径与 §1B 复核字节。
+冻结条件：①C-05/C-06/C-16 UNFREEZE 与本契约同批独立复核 approved（P0/P1=0）；②DDL 内存实测与迁移失败注入证据；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 口径与 §1B 复核字节。
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-03 | v1 草案：v7 DDL、Host Registry 约束、跨存储次序 | FEA-09 scope-r1 |
 | 2026-11-03 | **v5（处置契约复核 r4）**：迁移第 3 条限定为半写/placeholder 保持 incomplete，旧 complete 不可见行保持 complete 且不可见；PDF 重复 occurrence 禁止位置锚定自动保续，跨版本 pixel 证据要求可比 profile/一对一唯一匹配；修正 §3.3→§3.2 节号 | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-001/R4-002/R4-004 |
+| 2026-11-04 | **v1.1 UNFREEZE**：§1 断言 1/2/3/5 改为正尺寸基线 + V_artifact∪copy 并集守恒（同事务连接、固定 t、三路径核验、非空禁跳 verifier、破坏必失败）；§4.1 V=C-05 v1.2；§4.2 五读路径（V 行不丢、managed 资源选择/不可变、reader wire 不变与恢复语义）；§4.3 澄清 incomplete+合格 artifact witness 可见；新增 §4.4 只读投影最小集；§0 依赖更新。依据 R1-I001 + UNFREEZE r15 approved；已提交字节复核后重冻并重算 pin | DSH；`doc/reviews/FEA-09-UNFREEZE-r15-review.md` |
