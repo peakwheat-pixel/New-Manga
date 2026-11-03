@@ -1,0 +1,19 @@
+# FEA-09 实现 Review r1 批次 2 返修（DSH 2026-11-03）
+
+## R1-I003（部分导入重试整源跳过）
+- `_process_source` 整源 skip 条件增加 `source.will_import == 0`：仅当所有可导入页都已绑定时跳过；部分已导入进入逐 entry 循环补齐剩余页。
+- 测试 `test_partial_import_retry_imports_remaining_pages`：3 页 zip 撤销中断（1 页已提交）→ 新 grant 重试默认 skip → imported_pages=2、skipped_pages=1、共 3 页。
+
+## R1-I004（加密 PDF 正确密码导入）
+- 真加密 PDF（`tests/import_formats/test_document_import.py::encrypted_pdf`，R2/RC4，user password `secret`）无密 → SOURCE_PASSWORD_REQUIRED；错密 → SOURCE_PASSWORD_INVALID；正确密码 → 解密 rescan 的 entries 成为 participants（不再 plan-stale），完成导入。
+- 附带修复真实 bug：pypdfium2 需要 **str** 密码，DPAPI secret 是 bytes；`PdfiumSourceInspector.open` 先 UTF-8 解码，避免 TypeError 被归类为 SOURCE_FORMAT_UNSUPPORTED。
+- 测试 `test_encrypted_pdf_requires_then_imports_with_password`（无密/错密/正确密码 三阶段；receipt 不含口令）。
+
+## R1-I006（folder resolve）
+- 批次 1 的 Core 端 grant→(source,version,entry) 绑定对 folder 同样生效；新增 `test_folder_import_resolves_through_bound_grant`（2 成员文件夹 import→resolve PNG）通过；无需放宽为路径回退。
+
+## 验证（实际执行）
+- `pytest tests/fea09` → **106 passed**
+- `library` 63、`reading_export` 141、`import_formats` 32、`core/test_p09_fu2_import_pages` 30 全 PASS
+- 真实 Host↔Core IPC → 1 passed（批次 2 后）
+- 待办：批次 3（I005 加密源 resolve、I008 cache 强约束）、I001 UNFREEZE、I011 EV 收敛、新独立 Review。

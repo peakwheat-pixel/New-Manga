@@ -635,3 +635,34 @@ def test_disabled_flag_rejects_new_imports(tmp_path, repo, book_chapter):
         _plan_and_start(disabled, ["g-image-0000000002"], operation=OP2)
     assert caught.value.code == "SOURCE_ACCESS_DENIED"
     assert len(repo.list_pages("c1")) == 1
+
+
+def test_partial_import_retry_imports_remaining_pages(tmp_path, repo, book_chapter):
+    """R1-I003: a partial commit must not turn retry into a whole-source skip."""
+    access = FakeSourceReadAccess()
+    path = write_zip(
+        tmp_path / "three.zip",
+        [("001.png", png_bytes(4, 4)), ("002.png", png_bytes(4, 4)),
+         ("003.png", png_bytes(4, 4))],
+    )
+    access.add_file("g-zip-000000000001", "zip", path)
+    decoder = HookDecoder(
+        hook=lambda count, _data: access.revoke_grants(
+            "reg-1", 2, ["g-zip-000000000001"]
+        ) if count == 2 else None
+    )
+    runtime = build_runtime(repo, access, decoder=decoder)
+    _plan_and_start(runtime, ["g-zip-000000000001"])
+    first = _wait_terminal(runtime, OP)
+    assert first["state"] == "failed"
+    assert len(repo.list_pages("c1")) == 1
+
+    access.add_file("g-zip-000000000002", "zip", path)
+    retry = build_runtime(repo, access)
+    _plan_and_start(retry, ["g-zip-000000000002"], operation=OP2)
+    second = _wait_terminal(retry, OP2)
+    assert second["state"] == "completed"
+    assert second["totals"]["imported_pages"] == 2
+    assert second["totals"]["skipped_pages"] == 1
+    assert len(repo.list_pages("c1")) == 3
+

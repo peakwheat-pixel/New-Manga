@@ -398,9 +398,12 @@ class ReferencedImportRuntime:
         if (
             source.status == "ok"
             and source.already_referenced
+            and source.will_import == 0
             and operation.duplicate_policy == "skip"
         ):
-            # Whole-source skip: planned=0, skipped_sources=1 (C-16 §4 ⑤).
+            # Whole-source skip only when EVERY importable page is bound
+            # (R1-I003). A partially imported source enters the per-entry loop
+            # so the remaining pages are still imported (counts unchanged).
             progress.outcome = "skipped"
             progress.counts["skipped_sources"] = 1
             progress.counts["pending_pages"] = 0
@@ -452,6 +455,18 @@ class ReferencedImportRuntime:
                 return
 
         existing_source_id, existing_version_id = self._existing_metadata(scanned, resolved)
+        if source.status == "encrypted":
+            # R1-I004: the encrypted plan is structural-only (no entries). After
+            # the password-authorized rescan the decrypted entries become the
+            # participants; pending counts reflect them.
+            participants = self._encrypted_participants(
+                scanned, existing_source_id, existing_version_id, operation
+            )
+            progress.counts["pending_pages"] = sum(
+                1 for page in participants if not page["already_referenced"]
+            )
+        else:
+            participants = source.pages
         source_id = existing_source_id or f"src-{uuid.uuid4().hex}"
         version_id = existing_version_id or f"sv-{uuid.uuid4().hex}"
         metadata_committed = existing_version_id is not None
@@ -465,7 +480,7 @@ class ReferencedImportRuntime:
         else:
             # Reusing a committed version: every participating page must map
             # to an existing entry row (natural-key retry, C-16 §4).
-            for page in source.pages:
+            for page in participants:
                 if (
                     not page["already_referenced"]
                     and not page["unsupported"]
@@ -477,17 +492,12 @@ class ReferencedImportRuntime:
                     return
         next_order = self._repository.max_source_order(operation.chapter_id)
         first_page = True
-        for entry in scanned.entries:
-            plan_page = next(
-                (
-                    page
-                    for page in source.pages
-                    if page["ordinal"] == entry.ordinal
-                    and page["locator"] == entry.locator
-                ),
-                None,
+        entries_by_key = {(entry.ordinal, entry.locator): entry for entry in scanned.entries}
+        for plan_page in participants:
+            entry = entries_by_key.get(
+                (plan_page["ordinal"], plan_page["locator"])
             )
-            if plan_page is None:
+            if entry is None:
                 progress.outcome = "failed"
                 progress.reason_code = "SOURCE_PLAN_STALE"
                 progress.counts["failed_sources"] = 1
@@ -595,6 +605,51 @@ class ReferencedImportRuntime:
         if version is None:
             return existing["source_id"], None
         return existing["source_id"], version["version_id"]
+
+    def _encrypted_participants(
+        self, scanned, existing_source_id, existing_version_id, operation
+    ) -> list[dict]:
+        """R1-I004: decrypted entries for an encrypted source (plan is empty).
+
+        On a retry the committed version supplies entry ids; a changed entry
+        set stays a typed plan-stale refusal (no silent re-import).
+        """
+        entry_ids: dict[int, str] = {}
+        if existing_source_id is not None and existing_version_id is not None:
+            for row in self._repository.list_source_entries(existing_version_id):
+                entry_ids[row["ordinal"]] = row["entry_id"]
+        participants: list[dict] = []
+        for entry in scanned.entries:
+            entry_id = entry_ids.get(entry.ordinal)
+            if existing_version_id is not None and entry_id is None:
+                raise SourceImportError(
+                    "SOURCE_PLAN_STALE",
+                    "encrypted source entries changed since the plan",
+                )
+            already = False
+            if entry_id is not None and existing_source_id is not None:
+                already = (
+                    self._repository.find_current_binding_for_entry(
+                        operation.book_id, existing_source_id, entry_id
+                    )
+                    is not None
+                )
+            participants.append(
+                {
+                    "locator": entry.locator,
+                    "ordinal": entry.ordinal,
+                    "size_bytes": entry.size_bytes,
+                    "content_digest": entry.content_digest,
+                    "content_digest_kind": entry.content_digest_kind,
+                    "encrypted": entry.encrypted,
+                    "entry_id": entry_id,
+                    "source_id": existing_source_id,
+                    "already_referenced": already,
+                    "unsupported": entry.content_digest is None
+                    and not entry.encrypted,
+                }
+            )
+        return participants
 
     def _obtain_password(
         self,

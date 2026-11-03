@@ -1259,3 +1259,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **I001 裁决**（Codex 独立裁决会话，未参与实现/Review）：选 **B=先 UNFREEZE C-05/C-15**（新增 `V_managed=V_artifact∨V_copy_original`），重冻后再返修；归档 `doc/reviews/FEA-09-I001-adjudication.md`（`88fdd165…`）。理由：直接 artifact-only 会隐藏正常导入页；补 ORIGINAL 行违反 C-15 §1 且需 UNFREEZE。
 - **批次 1 返修（DSH）**：I002 grant 四维绑定（`bind_imported_entry`/`find_bound_for_source`，删身份回退）；I007 预算前置（PDF page_size/图片 header 先检查，hook decoder 零调用）；I009 plan 绑定 book/policy；I010 typed 存储原因+counts。`pytest tests/fea09` **103 passed**；library 63、import_formats 32、m2_resource_channel 110、core_service 6 全 PASS；真实 IPC 1 passed。
 - **待办**：批次 2（I003/I004/I006）、批次 3（I005/I008）、I001 UNFREEZE 材料+独立复核+重冻+返修、I011 EV 收敛、新独立复核。
+## 191. FEA-09 Review r1 批次 2（2026-11-03）
+
+- I003：整源 skip 仅当 `will_import==0`；部分中断后重试逐页补齐（imported=2/skipped=1）。
+- I004：真加密 PDF（R2/RC4 fixture）无密/错密/正确密码全链；修复 pypdfium2 需要 str 密码而 DPAPI 给 bytes 的 TypeError 误分类。
+- I006：Core grant 绑定对 folder 生效，folder import→resolve 测试通过。
+- 验证：`pytest tests/fea09` **106 passed**；library 63、reading_export 141、import_formats 32、p09 30 PASS；真实 IPC 1 passed。
+- 余：批次 3（I005 加密源 resolve、I008 cache 强约束）、I001 UNFREEZE、I011 EV 收敛、新独立复核。

@@ -53,8 +53,19 @@ class PdfiumSourceInspector:
                 "CORE_CAPABILITY_MISSING",
                 "the pypdfium2 binding required for PDF sources is unavailable",
             ) from error
+        # R1-I004: pypdfium2 expects a text password; the DPAPI secret is
+        # bytes. Decoding here keeps required/invalid passwords typed instead
+        # of surfacing a TypeError as SOURCE_FORMAT_UNSUPPORTED.
+        password_text = None
+        if password is not None:
+            try:
+                password_text = password.decode("utf-8")
+            except UnicodeDecodeError as error:
+                raise SourceImportError(
+                    "SOURCE_PASSWORD_INVALID", "the pdf password was rejected"
+                ) from error
         try:
-            document = pdfium.PdfDocument(data, password=password)
+            document = pdfium.PdfDocument(data, password=password_text)
         except Exception as error:  # noqa: BLE001 - classify every open failure
             message = str(error).lower()
             if "password" in message:

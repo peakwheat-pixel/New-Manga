@@ -79,6 +79,34 @@ def test_referenced_resolve_renders_png_through_grant(tmp_path, repo, book_chapt
     assert result["png"] != (tmp_path / "photo.jpg").read_bytes()
 
 
+def test_folder_import_resolves_through_bound_grant(tmp_path, repo, book_chapter):
+    """R1-I006: folder imports resolve through the Core-recorded binding."""
+    access = FakeSourceReadAccess()
+    root = tmp_path / "folder"
+    root.mkdir()
+    members = []
+    for name in ("001.png", "002.png"):
+        member = root / name
+        member.write_bytes(png_bytes(5, 5))
+        members.append(str(member))
+    access.add_folder("g-folder-00000001", root, members)
+    runtime = build_runtime(repo, access)
+    plan = runtime._planner.plan(
+        chapter_id="c1", grants=["g-folder-00000001"], duplicate_policy="skip"
+    )
+    runtime.start(
+        chapter_id="c1", plan_id=plan["plan_id"], plan_digest=plan["plan_digest"],
+        grants=["g-folder-00000001"], duplicate_policy="skip", operation_id=OP,
+    )
+    receipt = _wait_terminal(runtime, OP)
+    assert receipt["state"] == "completed"
+    page = repo.list_pages("c1")[0]
+    result = resolve_referenced_rendition(page.page_id, repository=repo, access=access)
+    assert result["png"].startswith(b"\x89PNG\r\n\x1a\n")
+    with Image.open(io.BytesIO(result["png"])) as image:
+        assert image.size == (5, 5)
+
+
 def test_referenced_resolve_without_grant_is_typed_denied(tmp_path, repo, book_chapter):
     _access, page = _imported_image_page(tmp_path, repo)
     # A fresh access with no grant at all: neither source-id nor physical

@@ -261,12 +261,13 @@ out_of_scope:
 | R1-I007 | P1 | **FIXED 批次 1**：PDF page_size→预算→render；图片 header→预算→load；runtime probe 同序；预算拒绝=unsupported entry；hook decoder 零调用测试 | 批次 1 |
 | R1-I009 | P2 | **FIXED 批次 1**：PlanRecord.book_id + start 复核项目/策略；负测 SOURCE_PLAN_STALE | 批次 1 |
 | R1-I010 | P2 | **FIXED 批次 1**：SourceProjectMismatch→SOURCE_PROJECT_MISMATCH typed reason，保留 failed_sources/pending_pages；测试断言 | 批次 1 |
-| R1-I003 | P1 | 接受：区分全部/部分已绑定；部分已引用时逐 entry 补齐未提交页（不整源 skip）；补真实部分重试测试 | 批次 2 |
-| R1-I004 | P1 | 接受：加密 PDF 正确密码导入（解密后参与页映射，不因旧 plan entries 空而 plan stale）；补加密 PDF 无密/错密/重试测试 | 批次 2 |
-| R1-I006 | P1 | 接受：folder 导入后 resolve 的授权映射（四维 scope 重新绑定，非路径回退）；补 folder import→resolve 测试 | 批次 2 |
+| R1-I003 | P1 | **FIXED 批次 2**：整源 skip 仅当 `will_import==0`；部分已绑定逐 entry 补齐；3 页 zip 中断后重试 imported=2/skipped=1 | 批次 2 |
+| R1-I004 | P1 | **FIXED 批次 2**：真加密 PDF（R2/RC4）无密/错密/正确密码；解密 rescan participants；修复 pdfium bytes 密码 TypeError 误分类 | 批次 2 |
+| R1-I006 | P1 | **FIXED 批次 2**：Core grant 绑定对 folder 生效；`test_folder_import_resolves_through_bound_grant` 通过（无路径回退） | 批次 2 |
 | R1-I005 | P1 | 接受：加密源 resolve 的短期 secret 读取流程（一次性、不持久化） | 批次 3 |
 | R1-I008 | P1 | 接受：生产 resolve 接入 rendition_cache 强约束（key/大小/总预算/LRU/并发/活跃引用/崩溃校验；`source-renditions/` 前缀；stale key 重建） | 批次 3 |
 | R1-I011 | P2 | 接受：closeout 前重建最终 EV 逐文件清单（唯一 ID、current/historical 分离、commit pin、PENDING 清零、未登记文件处置） | closeout |
 
 **批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
 | 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |
+| 2026-11-03 | **实现 Review r1 批次 2 返修（DSH）**：I003 部分重试逐页补齐、I004 真加密 PDF（含 pdfium 密码编码修复）、I006 folder resolve 绑定生效。pytest tests/fea09 **106 passed**；library/reading_export/import_formats/p09 全 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch2.log` |

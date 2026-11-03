@@ -317,3 +317,62 @@ def test_error_messages_never_leak_password(tmp_path):
         assert error.code == "SOURCE_PASSWORD_INVALID"
     else:
         raise AssertionError("wrong password must fail typed")
+
+
+def test_encrypted_pdf_requires_then_imports_with_password(
+    tmp_path, repo, book_chapter
+):
+    """R1-I004: a real encrypted PDF imports after the password gate."""
+    from support import build_pdf_open
+    from tests.import_formats.test_document_import import encrypted_pdf
+
+    access = FakeSourceReadAccess()
+    pdf = tmp_path / "locked.pdf"
+    pdf.write_bytes(encrypted_pdf())
+    access.add_file("g-pdf-000000000001", "pdf", pdf)
+    runtime = build_runtime(repo, access, pdf_open=build_pdf_open())
+    secret_path = tmp_path / "secret.pdf.bin"
+    wrong = tmp_path / "wrong.pdf.bin"
+    ref = _write_secret(secret_path, b"secret")
+    wrong_ref = _write_secret(wrong, b"wrong-password")
+
+    plan = runtime._planner.plan(
+        chapter_id="c1", grants=["g-pdf-000000000001"], duplicate_policy="skip"
+    )
+    assert plan["sources"][0]["status"] == "encrypted"
+    runtime.start(
+        chapter_id="c1", plan_id=plan["plan_id"], plan_digest=plan["plan_digest"],
+        grants=["g-pdf-000000000001"], duplicate_policy="skip", operation_id=OP,
+        secret_ref=None,
+    )
+    missing = _wait_terminal(runtime, OP)
+    assert missing["state"] == "failed"
+    assert missing["items"][0]["reason_code"] == "SOURCE_PASSWORD_REQUIRED"
+
+    plan = runtime._planner.plan(
+        chapter_id="c1", grants=["g-pdf-000000000001"], duplicate_policy="skip"
+    )
+    runtime.start(
+        chapter_id="c1", plan_id=plan["plan_id"], plan_digest=plan["plan_digest"],
+        grants=["g-pdf-000000000001"], duplicate_policy="skip", operation_id=OP2,
+        secret_ref=wrong_ref,
+    )
+    invalid = _wait_terminal(runtime, OP2)
+    assert invalid["state"] == "failed"
+    assert invalid["items"][0]["reason_code"] == "SOURCE_PASSWORD_INVALID"
+
+    plan = runtime._planner.plan(
+        chapter_id="c1", grants=["g-pdf-000000000001"], duplicate_policy="skip"
+    )
+    runtime.start(
+        chapter_id="c1", plan_id=plan["plan_id"], plan_digest=plan["plan_digest"],
+        grants=["g-pdf-000000000001"], duplicate_policy="skip",
+        operation_id="op-0000000000000003", secret_ref=ref,
+    )
+    receipt = _wait_terminal(runtime, "op-0000000000000003")
+    assert receipt["state"] == "completed", receipt
+    assert receipt["totals"]["imported_pages"] == 1
+    pages = repo.list_pages("c1")
+    assert len(pages) == 1
+    assert pages[0].source_mode == "referenced"
+    assert "secret" not in str(receipt)
