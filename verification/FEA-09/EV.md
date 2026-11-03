@@ -97,4 +97,4 @@
 | EV-091 | `verification/FEA-09/working-tree-files.json` | 4964 | `ab3c7707843eb61fd1aed0478953c14eed17b76a3878f039cb75eb09cb1d51b4` | PENDING（未提交） | 工作树恢复清单 |
 
 | EV-META | `verification/FEA-09/EV.md` | SELF | 自引用元数据不做自身 hash | PENDING（未提交） | 非产品验收证据；本清单不自行证明独审/提交/集成成功 |
-| EV-090 | `verification/FEA-09/logs/dsh-referenced-resolve.log` | 2589 | `4fe18f06905fa193148c675dbb4a1bba5904bd396f4090a835954208da6b597d` | `78bda22c53e1aa3e3170d65e1788393eb81b1e6b` | CANONICAL：referenced 生产 resolve 增量（实现/测试/命令/结果）；不替代真实 IPC/V2 与独立 Review |
+| EV-090 | `verification/FEA-09/logs/dsh-referenced-resolve.log` | 3415 | `4494491a105e48d8dc9a47ccd0afa561c360d95079c42995d67b1cb075ff4fda` | `3f2056555716c6880b1ddc10007a375f01e27568` | CANONICAL：referenced 生产 resolve + 密码接线 + cache/预算（实现/测试/命令/结果）；不替代真实 IPC/V2 与独立 Review |
