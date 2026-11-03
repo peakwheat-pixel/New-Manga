@@ -26,7 +26,12 @@ NOW = "2026-11-03T00:00:00.000+00:00"
 
 @pytest.fixture()
 def conn() -> sqlite3.Connection:
-    connection = sqlite3.connect(":memory:")
+    # check_same_thread=False: the referenced-import runtime commits from a
+    # worker thread (the production path uses ThreadRoutedConnection, which
+    # gives each thread its own real connection to the same file; the
+    # in-memory test stand-in shares one connection and the runtime is the
+    # only writer while an operation runs).
+    connection = sqlite3.connect(":memory:", check_same_thread=False)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     MigrationRunner(connection, default_migrations()).apply_pending()

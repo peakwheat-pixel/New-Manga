@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
+import uuid
 from collections.abc import Sequence
 from typing import Any
 from datetime import datetime, timezone
@@ -1585,6 +1586,141 @@ class SqliteLibraryRepository:
                 " WHERE page_id = ? AND source_mode = 'referenced'",
                 (updated_at, page_id),
             )
+
+    def get_source_version_by_digest(
+        self, source_id: str, content_digest: str
+    ) -> dict[str, Any] | None:
+        """Find a source's version by container digest (version reuse)."""
+        row = self._conn.execute(
+            "SELECT version_id, source_id, location_id, content_digest,"
+            " size_bytes, observed_at FROM source_versions"
+            " WHERE source_id = ? AND content_digest = ?",
+            (source_id, content_digest),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def list_source_entries(self, version_id: str) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            "SELECT entry_id, locator, ordinal, stable_sort_key,"
+            " content_digest_kind, content_digest, size_bytes FROM source_entries"
+            " WHERE version_id = ? ORDER BY ordinal",
+            (version_id,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def entry_binding_exists_for_source(
+        self, project_id: str, source_id: str
+    ) -> bool:
+        """Source-level already-referenced probe: any non-superseded binding
+        of this source inside the project (C-16 §4 whole-source skip)."""
+        row = self._conn.execute(
+            "SELECT 1 FROM page_bindings WHERE project_id = ? AND source_id = ?"
+            " AND status <> 'superseded' LIMIT 1",
+            (project_id, source_id),
+        ).fetchone()
+        return row is not None
+
+    def _current_location_id(self, source_id: str) -> str:
+        row = self._conn.execute(
+            "SELECT location_id FROM source_locations WHERE source_id = ?"
+            " AND is_current = 1",
+            (source_id,),
+        ).fetchone()
+        if row is None:
+            raise SourceProjectMismatch(
+                f"source {source_id} has no current location to version"
+            )
+        return str(row["location_id"])
+
+    def commit_referenced_page_unit(
+        self,
+        *,
+        page: Page,
+        binding: dict[str, Any],
+        source: dict[str, Any] | None,
+        location: dict[str, Any] | None,
+        version: dict[str, Any] | None,
+        entries: Sequence[dict[str, Any]] | None,
+    ) -> None:
+        """FEA-09 one-page commit unit (C-15 §6.4/C-16 §4).
+
+        A single SQLite transaction inserts (as needed) the source,
+        location, version and all version entries, then the page and its
+        healthy binding. ``SourceProjectMismatch`` and any constraint
+        failure roll the whole unit back — uncommitted pages never become
+        visible. Read/decode work happens outside this transaction.
+        """
+        with self._conn:
+            location_id: str | None = None
+            if source is not None and location is not None:
+                self._conn.execute(
+                    "INSERT INTO sources (source_id, source_kind, display_name,"
+                    " created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+                    (
+                        source["source_id"], source["source_kind"],
+                        source["display_name"], source["created_at"],
+                        source["updated_at"],
+                    ),
+                )
+                location_id = f"sl-{uuid.uuid4().hex}"
+                self._conn.execute(
+                    "INSERT INTO source_locations (location_id, source_id,"
+                    " registry_id, authorization_generation, content_digest,"
+                    " volume_serial, file_id, size_bytes, mtime_hint,"
+                    " observed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?,"
+                    " ?, ?, ?)",
+                    (
+                        location_id, location["source_id"], location["registry_id"],
+                        location["authorization_generation"],
+                        location["content_digest"], location["volume_serial"],
+                        location["file_id"], location["size_bytes"],
+                        location.get("mtime_hint"), location["observed_at"],
+                        location["created_at"],
+                    ),
+                )
+            if version is not None:
+                if location_id is None:
+                    location_id = self._current_location_id(version["source_id"])
+                self._conn.execute(
+                    "INSERT INTO source_versions (version_id, source_id,"
+                    " location_id, content_digest, size_bytes, observed_at,"
+                    " created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        version["version_id"], version["source_id"], location_id,
+                        version["content_digest"], version["size_bytes"],
+                        version["observed_at"], version["created_at"],
+                    ),
+                )
+            if entries:
+                self._conn.executemany(
+                    "INSERT INTO source_entries (source_id, version_id, entry_id,"
+                    " locator, ordinal, stable_sort_key, content_digest_kind,"
+                    " content_digest, encoded_digest, pixel_digest,"
+                    " pixel_digest_algorithm, size_bytes, mime_type, width,"
+                    " height, orientation, decoder_name, decoder_version,"
+                    " decoder_params_json, created_at)"
+                    " VALUES (:source_id, :version_id, :entry_id, :locator,"
+                    " :ordinal, :stable_sort_key, :content_digest_kind,"
+                    " :content_digest, :encoded_digest, :pixel_digest,"
+                    " :pixel_digest_algorithm, :size_bytes, :mime_type, :width,"
+                    " :height, :orientation, :decoder_name, :decoder_version,"
+                    " :decoder_params_json, :created_at)",
+                    [dict(entry) for entry in entries],
+                )
+            self._conn.execute(
+                "INSERT INTO pages (" + self._PAGE_COLUMNS + ")"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    page.page_id, page.chapter_id, page.source_filename,
+                    page.source_order, page.sort_order, page.source_hash,
+                    page.source_size_bytes, page.width, page.height,
+                    page.managed_original_ref, int(page.page_locked),
+                    page.review_state, page.overall_status,
+                    page.created_at, page.updated_at, page.deleted_at,
+                    page.source_mode, page.integrity_status,
+                ),
+            )
+            self.insert_page_binding(dict(binding))
 
 
 
