@@ -1090,3 +1090,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P2**：004 矩阵非 NTFS 分支 evidence 继承污染（USB/SMB/Cloud H6 记 measured）；005 derive 缺必需断言（S5c 拦截、M16 反证等）——变异后仍 PASS；006 run_all staging 先破坏旧 Canonical、失败留下新输入+旧 PASS 混合证据；007 门禁原始输出未版本化（gates.log 仅摘要、57 skip 无逐项来源）。
 - **处置（DSH 裁决）**：P1 全部修（not downgrade）；AC-3/AC-4 维持目标 MET 但须以修复后证据为准；R3 返修范围冻结为「h6 尺寸/唯一性判据 + fixtures/结果重出 + pin_selfcheck commit 口径 + 矩阵 evidence/断言 + run_all 原子 staging + 门禁原始日志与 skip 清单 + EV re-pin @新交付 head」。实施：DSH 直接执行（Codex 已担任 r2 Reviewer，ZCode 额度 13:13 后才有；DSH 不得自审，R3 交 Codex 新独立上下文 Review）。
 - 已入库 Review 报告；Task 保持 `in_review`；不 push。
+## 169. FEA-08 R3 返修交付（DSH 直接实施）（2026-11-03 11:45）
+
+- **R3 交付 `f7f00848f`**（证据 commit，45 文件、+1443/−412）：impl-r2 findings（P1=3/P2=4）全部处置。
+- **P1**：001 `pin_selfcheck.py` 重写为**逐行读取 Task 表登记 commit** 的 `git cat-file -p <commit>:<path>` 复核（+ stage-index blob + 干净 checkout 四方），R3 证据全部重 pin @`f7f00848f`；002 H6 规范像素 digest 绑定尺寸 `sha256("WxH\0"+RGB)`，新增 2×6 vs 3×4 同像素字节反例 fixture + M19（candidate，`exact_blocked_by_size_mismatch=true`）；003 容器 exact 增加成员身份唯一映射，新增四成员同内容不同名反例 fixture + M20（needs_confirmation，`duplicate_content_ambiguity`）。
+- **P2**：004 矩阵逐卷显式 evidence（USB/SMB=mocked、Cloud=inferred，不再继承 measured）；005 `derive_ntfs` 消费语义断言集（strict 拦截/GIF 反证/尺寸绑定/唯一映射/回收分支计数），断言破坏即降级；006 `run_all.py` 原子晋升 + 失败回滚旧 Canonical（journal/rollback，失败日志只留 workspace）；007 新增 `gates_capture.py`：build/test/pins/四 PNG/禁止 diff/安全搜索**原始输出**入库 `logs/gates-raw/**`（命令/EXIT/shell/解释器/耗时），`test-skip-inventory.md` 57/57 逐项来源，`gates.log` 改摘要+指针；attempt1 偶发测试 flake 原始日志保留并重跑通过（项目既有债务，已登记报告 §9）。
+- **门禁**：build 0w/0e；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；旧四 PNG 不变；禁止范围 diff=0；pin 66/66 文件四方 + pin-verify 自身 SHA（共 67 项 EV）；未 push。
+- **下一步**：派 **impl-r3 独立 Review**（Codex 新会话；DSH 未自审）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
