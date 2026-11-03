@@ -1018,3 +1018,9 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - DSH 补正（`c48ea5e3c`）：① impl-verification.log 重写为完整格式（shell/SDK/head/base、命令/EXIT、逐程序集 1292/0/57、57 skip 原因、差值 1289→1292、复现命令）；② 修前失败判别力 **NOT_RUN** 如实记录；③ 新增 `doc/handoffs/D-14-STATUS-COLOR-FIX-impl.md`；④ 修复 Task 卡证据路径 NUL/VT 字符损坏并重算 SHA。
 - 已派 **impl-r2**（D-9 workflow `workflow-fd5083d9e2414d79`）核验补正与回归；approved 后 DSH 集成验证并关闭 D-14，再按 D-15 起草 FEA-08 scope。
 - 治理 PASS(3)、pins 15/15；未 push。
+## 158. D-14 impl-r2 处置 + impl-r3（ZCode）派发（2026-11-03 08:20）
+
+- D-14 impl-r2（D-9 workflow `workflow-fd5083d9e2414d79`）：**changes_requested P0=0/P1=1/P2=5**；产品实现与回归仍成立（裁决 A 单点、对比度独立复算 PASS、1292/0/57、门禁 PASS），剩余问题全在证据纪律（日志头部 SDK/shell 不符、57 skip 未逐条、reviewed_head 旧、pin 不可复现、Handoff 非模板、STATUS/Task 滞后、P2 漏登记、全仓 14 个 md 仍含 NUL）。
+- DSH 补正：`075dc1682`（证据日志完整格式 + **57 条 skip 逐条**（原因 sidecar fixture 缺失，TRX 实测）+ 正确 shell/SDK/host/base/head + 差值 + 复现命令；修前 artefact 保持 NOT_RUN）；`12046945e`（Task pin 改为 **git blob SHA**（`git cat-file -p 075dc1682:...` = `e699fe81…`）；Handoff 重写为模板字段；reviewer 状态更新）。
+- 已派 **impl-r3**（ZCode fresh session，job `pwsh-a6c4fe05691947a1`，prompt workspace `d14-impl-r3-review-prompt.md`）：核验补正、pin 可复现、代码未漂移、P2 登记；approved 后 DSH 集成验证并关闭 D-14。
+- 治理 PASS(3)、pins 15/15；未 push。
