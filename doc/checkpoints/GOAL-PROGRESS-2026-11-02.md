@@ -1097,3 +1097,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **P2**：004 矩阵逐卷显式 evidence（USB/SMB=mocked、Cloud=inferred，不再继承 measured）；005 `derive_ntfs` 消费语义断言集（strict 拦截/GIF 反证/尺寸绑定/唯一映射/回收分支计数），断言破坏即降级；006 `run_all.py` 原子晋升 + 失败回滚旧 Canonical（journal/rollback，失败日志只留 workspace）；007 新增 `gates_capture.py`：build/test/pins/四 PNG/禁止 diff/安全搜索**原始输出**入库 `logs/gates-raw/**`（命令/EXIT/shell/解释器/耗时），`test-skip-inventory.md` 57/57 逐项来源，`gates.log` 改摘要+指针；attempt1 偶发测试 flake 原始日志保留并重跑通过（项目既有债务，已登记报告 §9）。
 - **门禁**：build 0w/0e；无过滤全量 **1292/0/57**；check PASS(3)；pins 15/15；旧四 PNG 不变；禁止范围 diff=0；pin 66/66 文件四方 + pin-verify 自身 SHA（共 67 项 EV）；未 push。
 - **下一步**：派 **impl-r3 独立 Review**（Codex 新会话；DSH 未自审）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
+## 170. FEA-08 impl-r3 Review（Codex）changes_requested P1=0/P2=5 + R4 范围冻结（2026-11-03 11:56）
+
+- **impl-r3 Review（Codex 新独立会话 `01a19f7a` + 两名辅助 Reviewer）**：**changes_requested P0=0/P1=0/P2=5**；报告 `doc/reviews/FEA-08-impl-r3.md`（reviewed_head `f48460316`）。R2 的三个 P1 保守反例全部确认修复：67 项 pin 逐 commit 成立；异尺寸同像素不 exact；重复同图无身份锚不 exact；门禁独立复跑 1292/0/57（隔离补齐 sidecar 输入后）、check PASS(3)、pins 15/15、67/67 EV。
+- **P2 findings**：001 H5 仍主要相信 verdict（还原 digest=false / 永久 fallback / 计数缺失 None==None 仍 PASS）；002 晋升移动/复制失败时旧文件丢失、journal 漏登记；003 自日志晋升在 journal 提交后，失败留新 Canonical+EXIT0；004 唯一内容成员改名被误拒（应按内容唯一映射 exact）；005 check 原始日志缺 elapsed/环境快照。
+- **处置（DSH 裁决）**：全部修（不降级 AC）；R4 范围冻结为「H5 语义门禁 + 事务化晋升（先写新再换、逐项回滚并核对、成功才提交）+ 容器唯一映射正例 M21/M22 + check 日志耗时/环境 + fixtures/EV 计数勘误」。实施：DSH（Codex 已任 r3 Reviewer），impl-r4 交 Codex 新独立上下文。
+## 171. FEA-08 R4 返修交付（DSH）（2026-11-03 12:15）
+
+- **R4 交付 `90e73c224`**（证据 commit，45 文件、+647/−675）：impl-r3 P2=5 全部处置。
+- 001：`matrix.derive_ntfs` + `run_all.verify_results` 加 H5 语义门禁（R1/R6b 还原 digest 与 restored 列表、R2 成员 digest、R3 禁止永久 fallback、R4 保留+digest、R5/R5b 拒绝零 destructive、R6a 不重发、**R6b 计数必须整数且执行后==恢复后**、R9 逐文件 digest、entries_poll 合法）。
+- 002/003：`promote_file` 先写临时文件再登记 journal/换旧文件；`promote_dir` 同法；`rollback` 逐项恢复并核对；结果/日志/自日志同一事务，全部成功才 `commit_journal`，失败只写 workspace failure json、不发布 EXIT0 日志。
+- 004：容器按 occurrence “内容→成员名多重集”映射；唯一内容跨名 exact（M21）、重复内容需同名锚（M22）、锚不一致 needs_confirmation（M20）。新增 4 fixtures/M21/M22，共 21 场景。
+- 005：`gates_capture.py` phase2 为 check 计时并写 elapsed/env；重新采集门禁原始日志。附带勘误：fixtures 42 文件=41 内容+manifest、证据 70 项、仅 pin-verify.log 为 SHA-only。
+- **门禁**：build 0w/0e；全量 **1292/0/57**（一次通过）；check PASS(3)（elapsed 3.4s）；pins 15/15；旧四 PNG 不变；禁止范围 diff=0；pin 69/69 文件四方 + pin-verify 自身 SHA（70 项）；未 push。
+- **下一步**：派 **impl-r4 独立 Review**（Codex 新会话）→ approved 后 DSH 集成验证 → 关闭 FEA-08 → 释放 FEA-09 scope。
