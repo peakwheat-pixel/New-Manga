@@ -142,20 +142,30 @@ public sealed class Fea09UiImportIpcProductionTests : IClassFixture<Fea09Product
         var vm = Vm(chapter);
         var path = await Image("stale/page.png");
         await vm.PlanReferenceImportAsync(new[] { Source(path) });
-        var wireBefore = string.Join("\n", (await Task.WhenAll(
-            Directory.GetFiles(_f.LogRoot, "*.ndjson", SearchOption.AllDirectories).Select(ReadSharedAsync))));
+        var wireFiles = Directory.GetFiles(_f.LogRoot, "*.ndjson", SearchOption.AllDirectories);
+        var offsets = new Dictionary<string, long>();
+        foreach (var file in wireFiles) offsets[file] = new FileInfo(file).Length;
         await File.AppendAllTextAsync(path, "changed");
         await vm.ConfirmReferenceImportAsync().WaitAsync(TimeSpan.FromSeconds(45));
-        var observed = vm.ReferenceErrorText + vm.ReferenceProgressText + string.Join(" ", vm.ReferenceReceiptItems.Select(r => r.OutcomeText));
-        var wireAfter = string.Join("\n", (await Task.WhenAll(
-            Directory.GetFiles(_f.LogRoot, "*.ndjson", SearchOption.AllDirectories).Select(ReadSharedAsync))));
-        var delta = wireAfter.Length > wireBefore.Length ? wireAfter[wireBefore.Length..] : string.Empty;
-        // This request specifically must be rejected: require the real typed reason in this operation's UI text
-        // AND in the frames appended by the confirm call (not any earlier AES/wrong-password frame).
-        Assert.Contains("FILE_IDENTITY_CHANGED", observed + (_f.Controller.Snapshot.LastError ?? ""));
+        // Only frames appended by THIS confirm may prove the rejection (per-file offsets; no global length slicing).
+        var deltaBuilder = new System.Text.StringBuilder();
+        foreach (var file in wireFiles)
+        {
+            var before = offsets[file];
+            var after = new FileInfo(file).Length;
+            if (after <= before) continue;
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            stream.Seek(before, SeekOrigin.Begin);
+            using var reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+            deltaBuilder.AppendLine(await reader.ReadToEndAsync());
+        }
+        var delta = deltaBuilder.ToString();
+        // The UI row and the real Core frames from this operation must both carry the typed reason.
+        Assert.Contains(vm.ReferenceReceiptItems, row => row.OutcomeText.Contains("FILE_IDENTITY_CHANGED", StringComparison.Ordinal));
         Assert.Contains("FILE_IDENTITY_CHANGED", delta);
         Assert.Empty(await _f.Controller.ListChapterPagesAsync(chapter));
-        Record("changed-before-confirm", vm, 0, observed);
+        Record("changed-before-confirm", vm, 0,
+            vm.ReferenceErrorText + vm.ReferenceProgressText + string.Join(" ", vm.ReferenceReceiptItems.Select(r => r.OutcomeText)));
     }
 
     [ProductionIpcFact]

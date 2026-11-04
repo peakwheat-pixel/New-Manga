@@ -1,0 +1,1125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="61947f32-1392-4b83-aad7-8fa5d8d26e43" name="49745@HOME-MY 2026-11-04 10:14:40" runUser="HOME-MY\49745" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T10:14:40.9778565+08:00" queuing="2026-11-04T10:14:40.9778571+08:00" start="2026-11-04T10:14:39.8113107+08:00" finish="2026-11-04T10:14:45.6739611+08:00" />
+  <TestSettings name="default" id="74098e83-f168-40ba-9c33-69ecf16955f3">
+    <Deployment runDeploymentRoot="49745_HOME-MY_2026-11-04_10_14_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="adb40b62-c46d-4ecf-9bab-f7ea6bad299f" testId="c3b62b97-8997-ad3f-d7d1-f9bda97a8506" testName="NewManga.Host.Tests.TileChannelTests.IdentityChange_SameLengthReplacement_Rejected" computerName="HOME-MY" duration="00:00:00.0121943" startTime="2026-11-04T10:14:45.3090433+08:00" endTime="2026-11-04T10:14:45.3090435+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adb40b62-c46d-4ecf-9bab-f7ea6bad299f" />
+    <UnitTestResult executionId="0aca0af1-8b61-49c1-8e99-bb073633034b" testId="f8f7d949-8918-c138-2fa3-899662a4c52f" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9478819+08:00" endTime="2026-11-04T10:14:40.9478820+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0aca0af1-8b61-49c1-8e99-bb073633034b">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ed837f8f-fceb-4b0b-9269-d0364df5d05a" testId="90c1eef0-75be-7393-ad13-008bd6387503" testName="NewManga.Host.Tests.CredentialPortTests.Clear_ClearsCoreAndRemovesLeftoverVaultEntries" computerName="HOME-MY" duration="00:00:00.0077190" startTime="2026-11-04T10:14:44.9867355+08:00" endTime="2026-11-04T10:14:44.9867356+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed837f8f-fceb-4b0b-9269-d0364df5d05a" />
+    <UnitTestResult executionId="c9168f2e-2ea7-4f7b-ace9-2d377e65cb36" testId="b2bfb782-d365-dfc3-568e-40558c43fd56" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9615237+08:00" endTime="2026-11-04T10:14:40.9615241+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9168f2e-2ea7-4f7b-ace9-2d377e65cb36">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9da62c37-53f0-433c-adb2-945887b3505e" testId="e9cbdaa2-ac53-9b7a-7722-552add364da6" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_6_ContractFreeze_CoreToHostTileManifest_AndUiViews" computerName="HOME-MY" duration="00:00:00.0036626" startTime="2026-11-04T10:14:45.5960211+08:00" endTime="2026-11-04T10:14:45.5960212+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9da62c37-53f0-433c-adb2-945887b3505e" />
+    <UnitTestResult executionId="2b7e601c-5b5c-48f3-8a18-1eb424ac3c2c" testId="9e9a7806-4fc6-aef4-8983-6f96b4342143" testName="NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1090003+08:00" endTime="2026-11-04T10:14:45.1090003+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b7e601c-5b5c-48f3-8a18-1eb424ac3c2c">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6ce1deca-d852-44d3-87cc-76d13a348626" testId="df655e20-058f-8452-3958-1a6c2da593fc" testName="NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4745395+08:00" endTime="2026-11-04T10:14:45.4745395+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ce1deca-d852-44d3-87cc-76d13a348626">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b67062bd-c55b-4262-a6ba-bc29ca1d1a6d" testId="9395b648-4114-d714-b44c-bd7f5702674b" testName="NewManga.Host.Tests.CredentialPortTests.VaultPrefix_MatchesCoreMakeCredentialRef" computerName="HOME-MY" duration="00:00:00.0002879" startTime="2026-11-04T10:14:44.9938806+08:00" endTime="2026-11-04T10:14:44.9938807+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b67062bd-c55b-4262-a6ba-bc29ca1d1a6d" />
+    <UnitTestResult executionId="e5f6e53a-f6de-4e49-9740-dae5b609395e" testId="ef819064-b3da-dd11-fb0f-8f5f11253b38" testName="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyUntilParity, expected: False)" computerName="HOME-MY" duration="00:00:00.0001563" startTime="2026-11-04T10:14:45.6028542+08:00" endTime="2026-11-04T10:14:45.6028543+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5f6e53a-f6de-4e49-9740-dae5b609395e" />
+    <UnitTestResult executionId="eb51af87-b06c-4e3a-8555-bc7525921217" testId="44d74a1e-34fe-fa5d-01ee-ca9d2fc6cb9b" testName="NewManga.Host.Tests.SingleInstanceTests.DefaultGlobalName_IsPinnedByAdr" computerName="HOME-MY" duration="00:00:00.0000233" startTime="2026-11-04T10:14:45.4719325+08:00" endTime="2026-11-04T10:14:45.4719325+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb51af87-b06c-4e3a-8555-bc7525921217" />
+    <UnitTestResult executionId="da05b4a4-7539-4a84-b28d-c2d1fb1bba10" testId="d0eccc48-8235-5ef9-5f6a-179e3e1bd663" testName="NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4736590+08:00" endTime="2026-11-04T10:14:45.4736591+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da05b4a4-7539-4a84-b28d-c2d1fb1bba10">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0b29a142-bc5e-4896-b9fe-ecf7902811bf" testId="5311b292-c218-bce3-0420-d12958f63b58" testName="NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset" computerName="HOME-MY" duration="00:00:00.0490278" startTime="2026-11-04T10:14:45.4620282+08:00" endTime="2026-11-04T10:14:45.4620284+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b29a142-bc5e-4896-b9fe-ecf7902811bf" />
+    <UnitTestResult executionId="592b13b7-9996-401a-adae-1b292a338882" testId="5053e5e2-5c70-195b-c639-b3e239754eef" testName="NewManga.Host.Tests.CoexistenceTests.LegacyDetector_UsesInjectedProbe" computerName="HOME-MY" duration="00:00:00.0050101" startTime="2026-11-04T10:14:45.0038657+08:00" endTime="2026-11-04T10:14:45.0038659+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="592b13b7-9996-401a-adae-1b292a338882" />
+    <UnitTestResult executionId="302ec4c2-2790-48ca-af7a-0169223af474" testId="a4e7db1b-3a62-8fa6-7322-c4d633f858df" testName="NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_BlocksWrites_WithTypedCode" computerName="HOME-MY" duration="00:00:00.0000613" startTime="2026-11-04T10:14:45.4704667+08:00" endTime="2026-11-04T10:14:45.4704668+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="302ec4c2-2790-48ca-af7a-0169223af474" />
+    <UnitTestResult executionId="0f012e6b-2271-4d5a-9c61-c521d7222c9e" testId="df14d6f6-a60d-26bb-27be-039ca65bb49e" testName="NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4723103+08:00" endTime="2026-11-04T10:14:45.4723103+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f012e6b-2271-4d5a-9c61-c521d7222c9e">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7f34c445-5288-44d6-b257-59a1ff81f342" testId="ada55101-3705-d7a5-c002-a232e7548cc1" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9474493+08:00" endTime="2026-11-04T10:14:40.9474493+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f34c445-5288-44d6-b257-59a1ff81f342">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="591e9322-012b-463a-b01d-b34840343d3c" testId="4b09ea0d-03d1-c039-787f-1b2cff07ada9" testName="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadWrite, expected: True)" computerName="HOME-MY" duration="00:00:00.0000048" startTime="2026-11-04T10:14:45.6029242+08:00" endTime="2026-11-04T10:14:45.6029242+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="591e9322-012b-463a-b01d-b34840343d3c" />
+    <UnitTestResult executionId="5316fb2a-36e5-43e8-aa82-e528f543796b" testId="e830935d-6c26-c981-3d53-d93f0ac90bab" testName="NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.6017187+08:00" endTime="2026-11-04T10:14:45.6017188+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5316fb2a-36e5-43e8-aa82-e528f543796b">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0bba9a6c-4a2a-4855-a741-aa67f86015fa" testId="fd2fc259-4fca-403c-2ad2-bb03c6e16108" testName="NewManga.Host.Tests.SingleInstanceTests.FakeBackend_CanReportAlreadyRunning" computerName="HOME-MY" duration="00:00:00.0001195" startTime="2026-11-04T10:14:45.4718465+08:00" endTime="2026-11-04T10:14:45.4718466+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bba9a6c-4a2a-4855-a741-aa67f86015fa" />
+    <UnitTestResult executionId="39b443c5-d34a-4ab5-990a-8be88c2cf7bf" testId="ce67bcf1-110c-f6a5-bf7c-e68920722cb3" testName="NewManga.Host.Tests.WritePolicyTests.LegacyShell_StillWins_OverDefaultParity" computerName="HOME-MY" duration="00:00:00.0001083" startTime="2026-11-04T10:14:45.4622961+08:00" endTime="2026-11-04T10:14:45.4622962+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39b443c5-d34a-4ab5-990a-8be88c2cf7bf" />
+    <UnitTestResult executionId="d58a97ea-bb8a-4c62-9b0f-cd8267abb928" testId="b6221f39-7ae8-ee68-9baa-2cbd39f17b39" testName="NewManga.Host.Tests.LegacyShellRealTests.RealProcessNamedNewManga_IsDetectedByProbe" computerName="HOME-MY" duration="00:00:00.0465427" startTime="2026-11-04T10:14:45.0523098+08:00" endTime="2026-11-04T10:14:45.0523099+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d58a97ea-bb8a-4c62-9b0f-cd8267abb928" />
+    <UnitTestResult executionId="f3ff45e3-84f8-4556-bdf5-812995301b04" testId="d66ac4b9-3ab6-5ad1-6204-0e6ce5e6b407" testName="NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.6015846+08:00" endTime="2026-11-04T10:14:45.6015847+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3ff45e3-84f8-4556-bdf5-812995301b04">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b915fe2b-b675-4e30-af3f-29e151f442d5" testId="6dfca282-c144-0b8b-708a-673ac7f66a23" testName="NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4721148+08:00" endTime="2026-11-04T10:14:45.4721149+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b915fe2b-b675-4e30-af3f-29e151f442d5">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="132e6dbd-f582-4ec6-8e7e-4526225410e2" testId="23781c7a-8f40-204d-d62a-d1c3fe93fdc8" testName="NewManga.Host.Tests.StartupSelfCheckTests.MatchingCore_IsPassed_AndWritesStayOpen" computerName="HOME-MY" duration="00:00:00.0013159" startTime="2026-11-04T10:14:45.4698274+08:00" endTime="2026-11-04T10:14:45.4698275+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="132e6dbd-f582-4ec6-8e7e-4526225410e2" />
+    <UnitTestResult executionId="88016af6-5e03-4a50-8a3d-2022571f0731" testId="1ff15924-90a6-1012-5601-5246816f419b" testName="NewManga.Host.Tests.SourceSecretStoreTests.DeleteIfPresentIsIdempotentForMissingFile" computerName="HOME-MY" duration="00:00:00.0001340" startTime="2026-11-04T10:14:45.1077343+08:00" endTime="2026-11-04T10:14:45.1077344+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88016af6-5e03-4a50-8a3d-2022571f0731" />
+    <UnitTestResult executionId="16224c63-c4d5-49ea-af39-29ecc5b24ead" testId="0148af44-1a12-fa90-d845-0a0f8036cc80" testName="NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0780278+08:00" endTime="2026-11-04T10:14:45.0780278+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16224c63-c4d5-49ea-af39-29ecc5b24ead">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f62e5b06-c33f-436b-8238-022376deff2a" testId="d98deacd-4311-c8b6-0a3b-25926f63f053" testName="NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4629714+08:00" endTime="2026-11-04T10:14:45.4629715+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f62e5b06-c33f-436b-8238-022376deff2a">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="989de95f-9f59-4d29-b1ac-5dd2885b8af5" testId="b0461855-e93c-782f-8d68-440df9038e0a" testName="NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4738108+08:00" endTime="2026-11-04T10:14:45.4738108+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="989de95f-9f59-4d29-b1ac-5dd2885b8af5">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ab1218f9-931a-4138-883a-1f9d744ada03" testId="10bf9e0a-0139-5115-cee4-5d9aacbd2884" testName="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0769555+08:00" endTime="2026-11-04T10:14:45.0769556+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab1218f9-931a-4138-883a-1f9d744ada03">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="80e181ae-ecd4-453e-a5db-de1b25c1f5e4" testId="42b867c7-fb22-d40f-ef0d-76244be5b852" testName="NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4627230+08:00" endTime="2026-11-04T10:14:45.4627231+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80e181ae-ecd4-453e-a5db-de1b25c1f5e4">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="502aaf8a-567e-4f34-bb56-6f1594bd260b" testId="0fac0deb-55e2-18b5-375d-721ad856e971" testName="NewManga.Host.Tests.StartupSelfCheckTests.MinorOlderThanRegistry_BlocksWrites_WithTypedCode" computerName="HOME-MY" duration="00:00:00.0000594" startTime="2026-11-04T10:14:45.4703858+08:00" endTime="2026-11-04T10:14:45.4703858+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="502aaf8a-567e-4f34-bb56-6f1594bd260b" />
+    <UnitTestResult executionId="388cdf20-cb69-4689-94ed-42520613f2fc" testId="74ca2dde-ddda-ce63-7c88-e58f52c40ea5" testName="NewManga.Host.Tests.HostRuntimeIntegrationTests.MissingSidecarDirectory_IsTypedFailure_NoThrow" computerName="HOME-MY" duration="00:00:00.0048085" startTime="2026-11-04T10:14:45.6010764+08:00" endTime="2026-11-04T10:14:45.6010765+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="388cdf20-cb69-4689-94ed-42520613f2fc" />
+    <UnitTestResult executionId="e85665c7-37dc-403e-8a3e-fd3373afd5a1" testId="46d377cf-3d53-e853-b246-60411d318bdc" testName="NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4741339+08:00" endTime="2026-11-04T10:14:45.4741340+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e85665c7-37dc-403e-8a3e-fd3373afd5a1">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6221d410-ada4-448d-b2bd-4a9e30d640a5" testId="fb2307bf-ee4f-c49b-c2d1-9d80cb025cb6" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_6_PageBudget_DigestShareWithinTenPercentOf60msBudget" computerName="HOME-MY" duration="00:00:00.0120036" startTime="2026-11-04T10:14:45.4860467+08:00" endTime="2026-11-04T10:14:45.4860468+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6221d410-ada4-448d-b2bd-4a9e30d640a5" />
+    <UnitTestResult executionId="3a41ba4e-ebab-45f0-a691-a68cf24add08" testId="9c88de84-d6b3-1d11-e92f-9ae580b43849" testName="NewManga.Host.Tests.StartupSelfCheckTests.NotReadyCore_BlocksWrites_WithTypedCode" computerName="HOME-MY" duration="00:00:00.0001269" startTime="2026-11-04T10:14:45.4702138+08:00" endTime="2026-11-04T10:14:45.4702138+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a41ba4e-ebab-45f0-a691-a68cf24add08" />
+    <UnitTestResult executionId="c6095a99-2784-470a-a613-4c5126caeb8d" testId="a481b4ae-90bc-a1db-f3f8-d780311b62d9" testName="NewManga.Host.Tests.TileChannelTests.AuthorizationCache_HitsWithinOneSecond_AndRevokeInvalidatesImmediately" computerName="HOME-MY" duration="00:00:00.0056875" startTime="2026-11-04T10:14:45.4114276+08:00" endTime="2026-11-04T10:14:45.4114277+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6095a99-2784-470a-a613-4c5126caeb8d" />
+    <UnitTestResult executionId="94e3bade-9346-40c6-adf1-d4f97f99a131" testId="d438022a-a354-0457-9082-062d9ffe45f5" testName="NewManga.Host.Tests.TileChannelTests.Issue_Read_Revoke_TypedAndUiSafe" computerName="HOME-MY" duration="00:00:00.0071836" startTime="2026-11-04T10:14:45.2870827+08:00" endTime="2026-11-04T10:14:45.2870829+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94e3bade-9346-40c6-adf1-d4f97f99a131" />
+    <UnitTestResult executionId="d65599e2-517f-4e88-bf89-4baeabe2ec07" testId="487491e4-ec18-4a29-22b3-c863887dfc90" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtIssue" computerName="HOME-MY" duration="00:00:00.0422219" startTime="2026-11-04T10:14:45.5790227+08:00" endTime="2026-11-04T10:14:45.5790237+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d65599e2-517f-4e88-bf89-4baeabe2ec07" />
+    <UnitTestResult executionId="60b314e1-9805-443d-847b-695e0c8b830a" testId="2b1d5982-56ee-6073-64f5-361e922d1de6" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9480604+08:00" endTime="2026-11-04T10:14:40.9480604+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60b314e1-9805-443d-847b-695e0c8b830a">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aab86cc3-47c6-4ae6-93c0-11a535b54217" testId="c2917fd8-1048-c3e0-ce06-f4866e656e6a" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_1_EqualLengthRewrite_WithRestoredMtime_RejectedWithoutMtimeDependency" computerName="HOME-MY" duration="00:00:00.0124486" startTime="2026-11-04T10:14:45.5366849+08:00" endTime="2026-11-04T10:14:45.5366850+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aab86cc3-47c6-4ae6-93c0-11a535b54217" />
+    <UnitTestResult executionId="fbdb75af-cb31-4bcf-a77d-6ffc74478f52" testId="7f9839fe-30d2-5869-6472-cf051b344cf2" testName="NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0782383+08:00" endTime="2026-11-04T10:14:45.0782384+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fbdb75af-cb31-4bcf-a77d-6ffc74478f52">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="eaa8af02-7fe4-456c-8a81-619fb44f6e76" testId="bce5acb7-9a72-e4ff-351e-e054fc58a576" testName="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: False, expected: ReadOnlyUntilParity)" computerName="HOME-MY" duration="00:00:00.0000643" startTime="2026-11-04T10:14:45.0054029+08:00" endTime="2026-11-04T10:14:45.0054029+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eaa8af02-7fe4-456c-8a81-619fb44f6e76" />
+    <UnitTestResult executionId="a3f7a91b-0192-4ddc-b764-52848ee13edf" testId="e2da67fc-5ea4-a89d-4aa8-69461027cc03" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtReadTime_AfterPathReplacement" computerName="HOME-MY" duration="00:00:00.0380121" startTime="2026-11-04T10:14:45.5241358+08:00" endTime="2026-11-04T10:14:45.5241360+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3f7a91b-0192-4ddc-b764-52848ee13edf" />
+    <UnitTestResult executionId="dad70f9c-cd0d-4fbb-a4a8-c6c720748919" testId="3f570c0d-564b-ea17-da58-8723ed4b93c2" testName="NewManga.Host.Tests.StartupSelfCheckTests.RequiredMinor_IsTheBaseProtocolMinor" computerName="HOME-MY" duration="00:00:00.0000950" startTime="2026-11-04T10:14:45.4685312+08:00" endTime="2026-11-04T10:14:45.4685313+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dad70f9c-cd0d-4fbb-a4a8-c6c720748919" />
+    <UnitTestResult executionId="01ad4ea2-0aea-4dd3-a7a7-42c5a15a32fc" testId="6a8ee7ae-94b5-a688-2f6b-461745f97207" testName="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0771645+08:00" endTime="2026-11-04T10:14:45.0771646+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01ad4ea2-0aea-4dd3-a7a7-42c5a15a32fc">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8d245014-f878-401e-b10d-03bbf9c2403c" testId="fc4d0b7a-f3a4-bc4c-1f56-8f96f53e7a13" testName="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: True, expected: ReadOnlyLegacyShellRunning)" computerName="HOME-MY" duration="00:00:00.0001672" startTime="2026-11-04T10:14:45.0055689+08:00" endTime="2026-11-04T10:14:45.0055695+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d245014-f878-401e-b10d-03bbf9c2403c" />
+    <UnitTestResult executionId="86664388-3d3d-4cb9-a4b6-aa954d06313a" testId="51738a5d-8ca1-c5bf-8ec4-632f311db999" testName="NewManga.Host.Tests.TileChannelTests.Containment_OutsideRoot_And_Junction_Rejected" computerName="HOME-MY" duration="00:00:00.0421364" startTime="2026-11-04T10:14:45.3611865+08:00" endTime="2026-11-04T10:14:45.3611867+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86664388-3d3d-4cb9-a4b6-aa954d06313a" />
+    <UnitTestResult executionId="1eb95b18-2fc9-458f-83ad-e7e4f9f8ce90" testId="cd2a92c2-81ff-e7fd-f204-ad63afebb19f" testName="NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4739760+08:00" endTime="2026-11-04T10:14:45.4739761+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1eb95b18-2fc9-458f-83ad-e7e4f9f8ce90">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0c65c88b-b9f5-47db-813c-f8ca012ec55e" testId="b1117716-fa51-6205-9511-e505ec393057" testName="NewManga.Host.Tests.CredentialPortTests.Put_CreatesVaultEntry_AndBindsCoreRef_WithLegacyRefFormat" computerName="HOME-MY" duration="00:00:00.0067689" startTime="2026-11-04T10:14:44.9935506+08:00" endTime="2026-11-04T10:14:44.9935508+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c65c88b-b9f5-47db-813c-f8ca012ec55e" />
+    <UnitTestResult executionId="b7505328-9737-459c-ba28-eb14277b7c3d" testId="f5585d42-b7d5-6f48-c2c3-7b77378f7d9e" testName="NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0776272+08:00" endTime="2026-11-04T10:14:45.0776273+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7505328-9737-459c-ba28-eb14277b7c3d">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3c85dce4-d7a1-4bd0-af77-336c45e6a1e1" testId="98c488fb-4699-fa43-7c79-8777ce9a0171" testName="NewManga.Host.Tests.CredentialPortTests.Put_BindFailure_DeletesVaultEntry_NoOrphan" computerName="HOME-MY" duration="00:00:00.0033052" startTime="2026-11-04T10:14:44.9985955+08:00" endTime="2026-11-04T10:14:44.9985955+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c85dce4-d7a1-4bd0-af77-336c45e6a1e1" />
+    <UnitTestResult executionId="d22e6e63-81b3-4129-97cd-761e5193ee0a" testId="cf801b23-475d-89a9-54f2-bb0ca7567cf6" testName="NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:44.9691497+08:00" endTime="2026-11-04T10:14:44.9691498+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d22e6e63-81b3-4129-97cd-761e5193ee0a">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="48dcf260-889a-4d0e-93d9-d10997152b85" testId="12652c7b-2ce1-4a63-5398-69ec86bfe610" testName="NewManga.Host.Tests.TileChannelTests.Performance_ColdRead_AndDigestOverheadMeasured" computerName="HOME-MY" duration="00:00:00.0444066" startTime="2026-11-04T10:14:45.4056878+08:00" endTime="2026-11-04T10:14:45.4056879+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48dcf260-889a-4d0e-93d9-d10997152b85" />
+    <UnitTestResult executionId="f4cfbaec-5b95-4684-b4cc-c65be25977fa" testId="15aa3433-d56d-8773-d58f-77bbe3d5341f" testName="NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0778213+08:00" endTime="2026-11-04T10:14:45.0778214+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4cfbaec-5b95-4684-b4cc-c65be25977fa">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="579f10d9-bd71-4c35-95cd-bc113cb8e17d" testId="e668d010-cecf-d162-47fa-9308d7a6f21e" testName="NewManga.Host.Tests.TileChannelTests.EqualLengthRewrite_SameSize_RejectedAsDigestMismatch" computerName="HOME-MY" duration="00:00:00.0098774" startTime="2026-11-04T10:14:45.3189737+08:00" endTime="2026-11-04T10:14:45.3189739+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="579f10d9-bd71-4c35-95cd-bc113cb8e17d" />
+    <UnitTestResult executionId="453a11f9-7070-471e-a77a-482241437912" testId="b75d90c8-c6dc-625c-0ad9-09d2b657587a" testName="NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0059954+08:00" endTime="2026-11-04T10:14:45.0059955+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="453a11f9-7070-471e-a77a-482241437912">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d0456204-26a7-497e-876c-fab2741b6693" testId="a91a3320-f3dc-f19c-99a7-a1f257ffd955" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9616559+08:00" endTime="2026-11-04T10:14:40.9616560+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d0456204-26a7-497e-876c-fab2741b6693">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="149a325f-1fb5-499f-a7dc-faceba377a93" testId="e4f46522-351c-7f0f-f307-0b8824bf5463" testName="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_CopiesOnce_AndStaysIdempotent" computerName="HOME-MY" duration="00:00:00.0030214" startTime="2026-11-04T10:14:45.6091819+08:00" endTime="2026-11-04T10:14:45.6091820+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="149a325f-1fb5-499f-a7dc-faceba377a93" />
+    <UnitTestResult executionId="a928dd76-859e-497b-a37b-39a5694c47a2" testId="39504bf6-516a-6f0c-db51-c60a6026c846" testName="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_SkipsWhenNoCatalog" computerName="HOME-MY" duration="00:00:00.0005397" startTime="2026-11-04T10:14:45.6061253+08:00" endTime="2026-11-04T10:14:45.6061254+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a928dd76-859e-497b-a37b-39a5694c47a2" />
+    <UnitTestResult executionId="43698ae1-bae9-44d2-8505-09cd43b7ff2d" testId="9013804a-6d3b-fc25-25d2-7099e7080c29" testName="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyLegacyShellRunning, expected: False)" computerName="HOME-MY" duration="00:00:00.0014087" startTime="2026-11-04T10:14:45.6026603+08:00" endTime="2026-11-04T10:14:45.6026604+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43698ae1-bae9-44d2-8505-09cd43b7ff2d" />
+    <UnitTestResult executionId="73be4275-6083-4c81-bc8b-b96fde416731" testId="eaebaec7-9d83-ca92-089b-2776bc23fbbb" testName="NewManga.Host.Tests.WritePolicyTests.HostOptions_DefaultParity_IsWritable" computerName="HOME-MY" duration="00:00:00.0000827" startTime="2026-11-04T10:14:45.4628165+08:00" endTime="2026-11-04T10:14:45.4628166+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73be4275-6083-4c81-bc8b-b96fde416731" />
+    <UnitTestResult executionId="5119aad9-97b6-4d63-a23e-c952b97b57ea" testId="fa0f3161-873f-8c7a-3c5e-0d04ec275559" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9478192+08:00" endTime="2026-11-04T10:14:40.9478193+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5119aad9-97b6-4d63-a23e-c952b97b57ea">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c6fbba4a-c645-44d6-9be8-a9f05bb104d3" testId="3755a788-1a64-09a5-0555-575992116ce2" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9480030+08:00" endTime="2026-11-04T10:14:40.9480031+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6fbba4a-c645-44d6-9be8-a9f05bb104d3">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="25303d4c-ffd1-4ee3-af2d-0826ce3ca4d1" testId="d190789a-455e-70a6-2790-f8cd32c8eee5" testName="NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_BlocksWrites_WithTypedCode" computerName="HOME-MY" duration="00:00:00.0000599" startTime="2026-11-04T10:14:45.4703014+08:00" endTime="2026-11-04T10:14:45.4703015+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25303d4c-ffd1-4ee3-af2d-0826ce3ca4d1" />
+    <UnitTestResult executionId="d0aaf854-b4d0-4ecb-9618-bf90dbdace35" testId="2e27d604-8b5a-75a1-024d-2f3ce326cbf1" testName="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.0773668+08:00" endTime="2026-11-04T10:14:45.0773669+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d0aaf854-b4d0-4ecb-9618-bf90dbdace35">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="72d3e9d7-cbe5-4290-8a0b-69263b159dd2" testId="abe112c6-c7bd-1b2e-91f3-a2976ee7d0ef" testName="NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal" computerName="HOME-MY" duration="00:00:00.0013368" startTime="2026-11-04T10:14:45.4129356+08:00" endTime="2026-11-04T10:14:45.4129357+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72d3e9d7-cbe5-4290-8a0b-69263b159dd2" />
+    <UnitTestResult executionId="e5a2ce69-62d9-4f0b-9c34-df0d758a5871" testId="0353e8e7-e8d9-330a-25a5-6a90edddadcf" testName="NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4684064+08:00" endTime="2026-11-04T10:14:45.4684065+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5a2ce69-62d9-4f0b-9c34-df0d758a5871">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6b8726b2-93b1-4d44-a3b4-692d7616849d" testId="273a08c7-583f-ef14-339e-676171a37894" testName="NewManga.Host.Tests.TileChannelTests.TamperedTile_PreservingSize_Rejected" computerName="HOME-MY" duration="00:00:00.0095926" startTime="2026-11-04T10:14:45.2967515+08:00" endTime="2026-11-04T10:14:45.2967517+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b8726b2-93b1-4d44-a3b4-692d7616849d" />
+    <UnitTestResult executionId="fd25c10c-8dcc-49c0-9343-b589cb93d49c" testId="18bd15f7-0000-d8cc-15fc-6479d0319bd0" testName="NewManga.Host.Tests.SingleInstanceTests.SecondAcquire_OnAnotherThread_ReportsAlreadyRunning" computerName="HOME-MY" duration="00:00:00.0005338" startTime="2026-11-04T10:14:45.4714014+08:00" endTime="2026-11-04T10:14:45.4714014+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd25c10c-8dcc-49c0-9343-b589cb93d49c" />
+    <UnitTestResult executionId="dc6f6bb0-cd8f-419d-bb27-e743759a9336" testId="e95fc23a-e365-32b8-76fd-48df4df721f3" testName="NewManga.Host.Tests.TileChannelTests.Expiry_RejectsAfterTtl" computerName="HOME-MY" duration="00:00:00.1715649" startTime="2026-11-04T10:14:45.2798380+08:00" endTime="2026-11-04T10:14:45.2798382+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc6f6bb0-cd8f-419d-bb27-e743759a9336" />
+    <UnitTestResult executionId="08d41794-411a-4648-acf8-409eeca9a844" testId="29ab4af8-5b4d-9d30-444f-0cc35896f73e" testName="NewManga.Host.Tests.CredentialPortTests.Put_IntentMismatch_IsTypedConflict_AndWritesNothing" computerName="HOME-MY" duration="00:00:00.0013233" startTime="2026-11-04T10:14:44.9952455+08:00" endTime="2026-11-04T10:14:44.9952456+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08d41794-411a-4648-acf8-409eeca9a844" />
+    <UnitTestResult executionId="91473ef2-2da1-45be-a0b3-07151a9d1c55" testId="1b7fd0ec-44cf-6aa1-d627-c0e7d46974ce" testName="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1085316+08:00" endTime="2026-11-04T10:14:45.1085317+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="91473ef2-2da1-45be-a0b3-07151a9d1c55">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dba29895-c7ff-4482-8c9f-b7a128ae6efd" testId="8499d4a1-cdac-2fea-0ac4-c97b1ce1c6fe" testName="NewManga.Host.Tests.CoexistenceTests.ReadOnlyUntilParity_NamesTheSchemaWriteSeam" computerName="HOME-MY" duration="00:00:00.0012717" startTime="2026-11-04T10:14:45.0051906+08:00" endTime="2026-11-04T10:14:45.0051906+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dba29895-c7ff-4482-8c9f-b7a128ae6efd" />
+    <UnitTestResult executionId="42345727-f5f2-4dfb-a4a2-c5c9a9ab34ed" testId="c44650f0-f0a8-177e-3224-9998012b0097" testName="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_IgnoresCorePackages_SoARealBackupStillHappens" computerName="HOME-MY" duration="00:00:00.0026332" startTime="2026-11-04T10:14:45.6055471+08:00" endTime="2026-11-04T10:14:45.6055473+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42345727-f5f2-4dfb-a4a2-c5c9a9ab34ed" />
+    <UnitTestResult executionId="740b37b2-8d40-485b-87fc-e4c681af04ac" testId="bafe24a2-6a6d-a114-19df-feb6d6a37d9f" testName="NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1087034+08:00" endTime="2026-11-04T10:14:45.1087034+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="740b37b2-8d40-485b-87fc-e4c681af04ac">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="16b01581-828a-441c-a4fa-fa61de966b71" testId="7c1a0ebc-758a-97e3-e4cb-dd02f41c4e98" testName="NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:44.9695340+08:00" endTime="2026-11-04T10:14:44.9695341+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16b01581-828a-441c-a4fa-fa61de966b71">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9bd40ef3-8fda-4f59-a5c7-db3c7c7bdf1b" testId="2e98f718-b62a-631f-c2fe-169c02cda63d" testName="NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4706254+08:00" endTime="2026-11-04T10:14:45.4706255+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9bd40ef3-8fda-4f59-a5c7-db3c7c7bdf1b">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca470d61-c250-46a8-9364-4aa7a6c35741" testId="09a1c002-0744-da4c-6462-3f1e106a386a" testName="NewManga.Host.Tests.CoreTileEmitEndToEndTests.HostTileChannel_ConsumesRealCoreArtifact_AllDigestsMatch" computerName="HOME-MY" duration="00:00:00.0234771" startTime="2026-11-04T10:14:45.0766994+08:00" endTime="2026-11-04T10:14:45.0766995+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca470d61-c250-46a8-9364-4aa7a6c35741" />
+    <UnitTestResult executionId="2edfe053-c695-4050-aeb2-644176970113" testId="e8a51a0c-26c8-18b6-4859-ac167556f271" testName="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: True, expected: ReadWrite)" computerName="HOME-MY" duration="00:00:00.0000054" startTime="2026-11-04T10:14:45.0056448+08:00" endTime="2026-11-04T10:14:45.0056448+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2edfe053-c695-4050-aeb2-644176970113" />
+    <UnitTestResult executionId="35ec0441-7e85-49f7-9c1f-8c5ac4048731" testId="6e91944c-16ff-b453-83d3-d944ba3c6b71" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9459936+08:00" endTime="2026-11-04T10:14:40.9460017+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35ec0441-7e85-49f7-9c1f-8c5ac4048731">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="21b4c1b0-1192-4f21-bb55-34e2d8310180" testId="b67c5d95-f4d6-b89c-68a0-432b84ca1423" testName="NewManga.Host.Tests.SourceSecretStoreTests.WriteCreatesPrivateOneShotTokenUnderSourceSecrets" computerName="HOME-MY" duration="00:00:00.0305124" startTime="2026-11-04T10:14:45.1075511+08:00" endTime="2026-11-04T10:14:45.1075514+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21b4c1b0-1192-4f21-bb55-34e2d8310180" />
+    <UnitTestResult executionId="b97cad57-6aaf-4f6a-88ce-c5cd224e97f3" testId="7485fd71-194b-500d-2733-41927dea0850" testName="NewManga.Host.Tests.CoexistenceTests.ModeDescription_IsHumanReadable" computerName="HOME-MY" duration="00:00:00.0000551" startTime="2026-11-04T10:14:45.0052982+08:00" endTime="2026-11-04T10:14:45.0052983+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b97cad57-6aaf-4f6a-88ce-c5cd224e97f3" />
+    <UnitTestResult executionId="05a3ea02-cba0-4734-90d9-4b1e3ebe8dd6" testId="7c473a54-0160-c17f-4c38-7ade49a95403" testName="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1082483+08:00" endTime="2026-11-04T10:14:45.1082484+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05a3ea02-cba0-4734-90d9-4b1e3ebe8dd6">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e9448823-f5f7-4293-852e-cb24d13039db" testId="466243e8-469a-1082-eb5f-c484104ae9f9" testName="NewManga.Host.Tests.CredentialPortTests.InvalidTargets_AreRejectedBeforeAnyVaultWrite" computerName="HOME-MY" duration="00:00:00.0059445" startTime="2026-11-04T10:14:44.9792634+08:00" endTime="2026-11-04T10:14:44.9792635+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e9448823-f5f7-4293-852e-cb24d13039db" />
+    <UnitTestResult executionId="7b45accf-4de0-4c70-93b4-41f5c4ed82ea" testId="11d46627-de17-8693-6453-149f0c332983" testName="NewManga.Host.Tests.LegacyShellRealTests.DefaultGlobalMutex_AcquiresOrFallsBackToLocal" computerName="HOME-MY" duration="00:00:00.0007547" startTime="2026-11-04T10:14:45.0531367+08:00" endTime="2026-11-04T10:14:45.0531370+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b45accf-4de0-4c70-93b4-41f5c4ed82ea" />
+    <UnitTestResult executionId="3bff25a1-3a50-4cc0-ab6c-782f12922485" testId="b56fd37f-5d76-024a-c9eb-426cee9a5749" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9479353+08:00" endTime="2026-11-04T10:14:40.9479353+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3bff25a1-3a50-4cc0-ab6c-782f12922485">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="51b20c35-4e34-4af2-bd85-3bc1b6fed0fe" testId="d610ea50-d426-9016-770b-0703a67a6d74" testName="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1084106+08:00" endTime="2026-11-04T10:14:45.1084107+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51b20c35-4e34-4af2-bd85-3bc1b6fed0fe">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cb1ef9fb-1fde-4b9e-bb58-89b276ebbb1f" testId="1e218259-e516-4bdc-7c84-9e56e3833de3" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9477569+08:00" endTime="2026-11-04T10:14:40.9477569+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb1ef9fb-1fde-4b9e-bb58-89b276ebbb1f">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="60e8b63d-f30f-458e-82af-d7f97677bca2" testId="780862af-42c1-ef79-accc-8e2a0e0c9748" testName="NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1088353+08:00" endTime="2026-11-04T10:14:45.1088353+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60e8b63d-f30f-458e-82af-d7f97677bca2">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="41a04014-1794-48a4-b891-56cd7ed1690d" testId="b80b9b78-950b-ec2b-803d-17b33350d8da" testName="NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.5965702+08:00" endTime="2026-11-04T10:14:45.5965704+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41a04014-1794-48a4-b891-56cd7ed1690d">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3d40534d-6c24-4ef4-9e28-da3c958034db" testId="01627b3b-4403-e956-9d9d-5e0895f2f8d0" testName="NewManga.Host.Tests.SingleInstanceTests.FakeBackend_ReportsAbandonedRecovery" computerName="HOME-MY" duration="00:00:00.0001934" startTime="2026-11-04T10:14:45.4717623+08:00" endTime="2026-11-04T10:14:45.4717624+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d40534d-6c24-4ef4-9e28-da3c958034db" />
+    <UnitTestResult executionId="7cf27a91-5c75-48f8-88eb-a3ecd1b82b79" testId="43cd7f64-19b3-b4be-91a4-4986b69f93f5" testName="NewManga.Host.Tests.StartupSelfCheckTests.ProbeFailure_IsDegraded_WithTypedDiagnostic_AndKeepsWritesOpen" computerName="HOME-MY" duration="00:00:00.0004483" startTime="2026-11-04T10:14:45.4710039+08:00" endTime="2026-11-04T10:14:45.4710040+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7cf27a91-5c75-48f8-88eb-a3ecd1b82b79" />
+    <UnitTestResult executionId="257617ba-58b5-4d5b-95e7-9337c98a595e" testId="ce36c94e-654b-492d-f171-2ba4f3f29b2b" testName="NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:44.9693179+08:00" endTime="2026-11-04T10:14:44.9693180+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="257617ba-58b5-4d5b-95e7-9337c98a595e">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8fc7a22c-b475-4f52-b336-7fa2b39059f0" testId="c1635b18-c055-3d33-01b3-c24fa8cbea61" testName="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:40.9476854+08:00" endTime="2026-11-04T10:14:40.9476854+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fc7a22c-b475-4f52-b336-7fa2b39059f0">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e37aa560-b8c2-45d3-a0f6-b20de25001e3" testId="dee8e4d4-3404-f5d6-0fbb-4d0f73ad3d5f" testName="NewManga.Host.Tests.D4SecurityHarnessTests.D4_5_IdentityChange_VolumeFileIndex_Rejected" computerName="HOME-MY" duration="00:00:00.0131224" startTime="2026-11-04T10:14:45.5922746+08:00" endTime="2026-11-04T10:14:45.5922748+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e37aa560-b8c2-45d3-a0f6-b20de25001e3" />
+    <UnitTestResult executionId="969123c2-05e1-458f-86e8-9cd3df0487b5" testId="44372f94-211c-62b0-9b5a-a5dc4adb72fd" testName="NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4709208+08:00" endTime="2026-11-04T10:14:45.4709209+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="969123c2-05e1-458f-86e8-9cd3df0487b5">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e96f40dd-8517-4c8e-a25d-55696c4ef05d" testId="0d52eaea-ca0e-1226-cbfe-abc2f73b5dcb" testName="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: False, expected: ReadOnlyLegacyShellRunning)" computerName="HOME-MY" duration="00:00:00.0000023" startTime="2026-11-04T10:14:45.0057111+08:00" endTime="2026-11-04T10:14:45.0057112+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e96f40dd-8517-4c8e-a25d-55696c4ef05d" />
+    <UnitTestResult executionId="d946ae28-602a-408c-a99a-2934b876b2da" testId="6fdf61c4-163d-57ff-780a-afc1d48b2597" testName="NewManga.Host.Tests.WritePolicyTests.LegacyShellDetected_KeepsHostReadOnly_EvenWithDefaultParity" computerName="HOME-MY" duration="00:00:00.0057005" startTime="2026-11-04T10:14:45.4681951+08:00" endTime="2026-11-04T10:14:45.4681953+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d946ae28-602a-408c-a99a-2934b876b2da" />
+    <UnitTestResult executionId="93e0d03d-bcb6-4f27-a535-e7e992f93a4a" testId="b0969cfc-8996-5ad0-8be7-b83b38acb5ee" testName="NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.4707743+08:00" endTime="2026-11-04T10:14:45.4707744+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93e0d03d-bcb6-4f27-a535-e7e992f93a4a">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18d2b8c1-0ead-4692-b295-e8d470d4213b" testId="fba56359-5ddb-cf4f-2252-a0fe86842e0b" testName="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe" computerName="HOME-MY" duration="00:00:00.0010000" startTime="2026-11-04T10:14:45.1080787+08:00" endTime="2026-11-04T10:14:45.1080789+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18d2b8c1-0ead-4692-b295-e8d470d4213b">
+      <Output>
+        <ErrorInfo>
+          <Message>reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="NewManga.Host.Tests.SingleInstanceTests.DefaultGlobalName_IsPinnedByAdr" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="44d74a1e-34fe-fa5d-01ee-ca9d2fc6cb9b">
+      <Execution id="eb51af87-b06c-4e3a-8555-bc7525921217" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SingleInstanceTests" name="DefaultGlobalName_IsPinnedByAdr" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="2e98f718-b62a-631f-c2fe-169c02cda63d">
+      <Execution id="9bd40ef3-8fda-4f59-a5c7-db3c7c7bdf1b" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MajorMismatch_DowngradesToReadOnly_AndRefusesWrites" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.NotReadyCore_BlocksWrites_WithTypedCode" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="9c88de84-d6b3-1d11-e92f-9ae580b43849">
+      <Execution id="3a41ba4e-ebab-45f0-a691-a68cf24add08" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="NotReadyCore_BlocksWrites_WithTypedCode" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.IdentityChange_SameLengthReplacement_Rejected" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="c3b62b97-8997-ad3f-d7d1-f9bda97a8506">
+      <Execution id="adb40b62-c46d-4ecf-9bab-f7ea6bad299f" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="IdentityChange_SameLengthReplacement_Rejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="cd2a92c2-81ff-e7fd-f204-ad63afebb19f">
+      <Execution id="1eb95b18-2fc9-458f-83ad-e7e4f9f8ce90" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcTests" name="EncryptedZipPasswordRetryOverRealStdio" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.VaultPrefix_MatchesCoreMakeCredentialRef" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="9395b648-4114-d714-b44c-bd7f5702674b">
+      <Execution id="b67062bd-c55b-4262-a6ba-bc29ca1d1a6d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="VaultPrefix_MatchesCoreMakeCredentialRef" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoreTileEmitEndToEndTests.HostTileChannel_ConsumesRealCoreArtifact_AllDigestsMatch" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="09a1c002-0744-da4c-6462-3f1e106a386a">
+      <Execution id="ca470d61-c250-46a8-9364-4aa7a6c35741" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoreTileEmitEndToEndTests" name="HostTileChannel_ConsumesRealCoreArtifact_AllDigestsMatch" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SingleInstanceTests.SecondAcquire_OnAnotherThread_ReportsAlreadyRunning" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="18bd15f7-0000-d8cc-15fc-6479d0319bd0">
+      <Execution id="fd25c10c-8dcc-49c0-9343-b589cb93d49c" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SingleInstanceTests" name="SecondAcquire_OnAnotherThread_ReportsAlreadyRunning" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="7c473a54-0160-c17f-4c38-7ade49a95403">
+      <Execution id="05a3ea02-cba0-4734-90d9-4b1e3ebe8dd6" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests" name="RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b0969cfc-8996-5ad0-8be7-b83b38acb5ee">
+      <Execution id="93e0d03d-bcb6-4f27-a535-e7e992f93a4a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="RealHost_PassesCheapChecks_AndStaysWritable" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_IgnoresCorePackages_SoARealBackupStillHappens" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="c44650f0-f0a8-177e-3224-9998012b0097">
+      <Execution id="42345727-f5f2-4dfb-a4a2-c5c9a9ab34ed" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="FirstRunBackup_IgnoresCorePackages_SoARealBackupStillHappens" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="5311b292-c218-bce3-0420-d12958f63b58">
+      <Execution id="0b29a142-bc5e-4896-b9fe-ecf7902811bf" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SourceRegistryTests" name="EncryptedPersistenceGenerationCorruptionAndExplicitReset" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="df14d6f6-a60d-26bb-27be-039ca65bb49e">
+      <Execution id="0f012e6b-2271-4d5a-9c61-c521d7222c9e" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.RealTranslateProviderTests" name="RealOpenCodeProvider_HostConfiguration" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SourceSecretStoreTests.WriteCreatesPrivateOneShotTokenUnderSourceSecrets" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b67c5d95-f4d6-b89c-68a0-432b84ca1423">
+      <Execution id="21b4c1b0-1192-4f21-bb55-34e2d8310180" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SourceSecretStoreTests" name="WriteCreatesPrivateOneShotTokenUnderSourceSecrets" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="3755a788-1a64-09a5-0555-575992116ce2">
+      <Execution id="c6fbba4a-c645-44d6-9be8-a9f05bb104d3" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="H_SecretRegistrationRefusedCleansUp" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="9e9a7806-4fc6-aef4-8983-6f96b4342143">
+      <Execution id="2b7e601c-5b5c-48f3-8a18-1eb424ac3c2c" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09RealIpcTests" name="ReferencedImportAndResolveOverRealStdio" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadWrite, expected: True)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="4b09ea0d-03d1-c039-787f-1b2cff07ada9">
+      <Execution id="591e9322-012b-463a-b01d-b34840343d3c" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="DataRootPolicy_OnlyWritableAfterParity" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.Clear_ClearsCoreAndRemovesLeftoverVaultEntries" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="90c1eef0-75be-7393-ad13-008bd6387503">
+      <Execution id="ed837f8f-fceb-4b0b-9269-d0364df5d05a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="Clear_ClearsCoreAndRemovesLeftoverVaultEntries" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_BlocksWrites_WithTypedCode" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="a4e7db1b-3a62-8fa6-7322-c4d633f858df">
+      <Execution id="302ec4c2-2790-48ca-af7a-0169223af474" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MajorMismatch_BlocksWrites_WithTypedCode" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="df655e20-058f-8452-3958-1a6c2da593fc">
+      <Execution id="6ce1deca-d852-44d3-87cc-76d13a348626" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcTests" name="WriteEvidenceAndAssertZeroPasswordLeakage" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.Expiry_RejectsAfterTtl" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e95fc23a-e365-32b8-76fd-48df4df721f3">
+      <Execution id="dc6f6bb0-cd8f-419d-bb27-e743759a9336" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="Expiry_RejectsAfterTtl" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="1e218259-e516-4bdc-7c84-9e56e3833de3">
+      <Execution id="cb1ef9fb-1fde-4b9e-bb58-89b276ebbb1f" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="D_CancelAfterOneCommitThenRetryConservesPages" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SourceSecretStoreTests.DeleteIfPresentIsIdempotentForMissingFile" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="1ff15924-90a6-1012-5601-5246816f419b">
+      <Execution id="88016af6-5e03-4a50-8a3d-2022571f0731" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SourceSecretStoreTests" name="DeleteIfPresentIsIdempotentForMissingFile" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="f8f7d949-8918-c138-2fa3-899662a4c52f">
+      <Execution id="0aca0af1-8b61-49c1-8e99-bb073633034b" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="F_FolderUsesHostEnumerationAndOrdering" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="0353e8e7-e8d9-330a-25a5-6a90edddadcf">
+      <Execution id="e5a2ce69-62d9-4f0b-9c34-df0d758a5871" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyLegacyShellRunning, expected: False)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="9013804a-6d3b-fc25-25d2-7099e7080c29">
+      <Execution id="43698ae1-bae9-44d2-8505-09cd43b7ff2d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="DataRootPolicy_OnlyWritableAfterParity" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MinorOlderThanRegistry_BlocksWrites_WithTypedCode" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="0fac0deb-55e2-18b5-375d-721ad856e971">
+      <Execution id="502aaf8a-567e-4f34-bb56-6f1594bd260b" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MinorOlderThanRegistry_BlocksWrites_WithTypedCode" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SingleInstanceTests.FakeBackend_CanReportAlreadyRunning" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="fd2fc259-4fca-403c-2ad2-bb03c6e16108">
+      <Execution id="0bba9a6c-4a2a-4855-a741-aa67f86015fa" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SingleInstanceTests" name="FakeBackend_CanReportAlreadyRunning" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_CopiesOnce_AndStaysIdempotent" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e4f46522-351c-7f0f-f307-0b8824bf5463">
+      <Execution id="149a325f-1fb5-499f-a7dc-faceba377a93" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="FirstRunBackup_CopiesOnce_AndStaysIdempotent" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="f5585d42-b7d5-6f48-c2c3-7b77378f7d9e">
+      <Execution id="b7505328-9737-459c-ba28-eb14277b7c3d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.GrantIssuerTests" name="ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b80b9b78-950b-ec2b-803d-17b33350d8da">
+      <Execution id="41a04014-1794-48a4-b891-56cd7ed1690d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRuntimeIntegrationTests" name="ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: False, expected: ReadOnlyUntilParity)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="bce5acb7-9a72-e4ff-351e-e054fc58a576">
+      <Execution id="eaa8af02-7fe4-456c-8a81-619fb44f6e76" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="Decide_Table" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.Performance_ColdRead_AndDigestOverheadMeasured" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="12652c7b-2ce1-4a63-5398-69ec86bfe610">
+      <Execution id="48dcf260-889a-4d0e-93d9-d10997152b85" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="Performance_ColdRead_AndDigestOverheadMeasured" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="6dfca282-c144-0b8b-708a-673ac7f66a23">
+      <Execution id="b915fe2b-b675-4e30-af3f-29e151f442d5" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.ExportStalePolicyWireTests" name="BothPolicies_AreSentToTheCore_AsStartExportFrames" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="0148af44-1a12-fa90-d845-0a0f8036cc80">
+      <Execution id="16224c63-c4d5-49ea-af39-29ecc5b24ead" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.GrantIssuerTests" name="Import_IntoNewChapter_Executes_AndRegistersGrant" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="7f9839fe-30d2-5869-6472-cf051b344cf2">
+      <Execution id="fbdb75af-cb31-4bcf-a77d-6ffc74478f52" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.GrantIssuerTests" name="ShellActions_RealOpener_OpensExplorer_WhenEnabled" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.LegacyDetector_UsesInjectedProbe" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="5053e5e2-5c70-195b-c639-b3e239754eef">
+      <Execution id="592b13b7-9996-401a-adae-1b292a338882" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="LegacyDetector_UsesInjectedProbe" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d0eccc48-8235-5ef9-5f6a-179e3e1bd663">
+      <Execution id="da05b4a4-7539-4a84-b28d-c2d1fb1bba10" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcTests" name="AesZipPlanIsTypedUnsupportedOverRealStdio" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="1b7fd0ec-44cf-6aa1-d627-c0e7d46974ce">
+      <Execution id="91473ef2-2da1-45be-a0b3-07151a9d1c55" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests" name="RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="780862af-42c1-ef79-accc-8e2a0e0c9748">
+      <Execution id="60e8b63d-f30f-458e-82af-d7f97677bca2" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostReaderChaptersIntegrationTests" name="ListChapters_MatchesReaderProjection" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="ada55101-3705-d7a5-c002-a232e7548cc1">
+      <Execution id="7f34c445-5288-44d6-b257-59a1ff81f342" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="B_AesTypedUnsupported" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="46d377cf-3d53-e853-b246-60411d318bdc">
+      <Execution id="e85665c7-37dc-403e-8a3e-fd3373afd5a1" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcTests" name="PlanPreviewConfirmAndReceiptOverRealStdio" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_6_ContractFreeze_CoreToHostTileManifest_AndUiViews" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e9cbdaa2-ac53-9b7a-7722-552add364da6">
+      <Execution id="9da62c37-53f0-433c-adb2-945887b3505e" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_6_ContractFreeze_CoreToHostTileManifest_AndUiViews" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.RequiredMinor_IsTheBaseProtocolMinor" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="3f570c0d-564b-ea17-da58-8723ed4b93c2">
+      <Execution id="dad70f9c-cd0d-4fbb-a4a8-c6c720748919" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="RequiredMinor_IsTheBaseProtocolMinor" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e830935d-6c26-c981-3d53-d93f0ac90bab">
+      <Execution id="5316fb2a-36e5-43e8-aa82-e528f543796b" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRuntimeIntegrationTests" name="SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d98deacd-4311-c8b6-0a3b-25926f63f053">
+      <Execution id="f62e5b06-c33f-436b-8238-022376deff2a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.EqualLengthRewrite_SameSize_RejectedAsDigestMismatch" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e668d010-cecf-d162-47fa-9308d7a6f21e">
+      <Execution id="579f10d9-bd71-4c35-95cd-bc113cb8e17d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="EqualLengthRewrite_SameSize_RejectedAsDigestMismatch" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="c1635b18-c055-3d33-01b3-c24fa8cbea61">
+      <Execution id="8fc7a22c-b475-4f52-b336-7fa2b39059f0" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="C_SingleEncryptedSourceWrongPasswordThenRetry" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRuntimeIntegrationTests.MissingSidecarDirectory_IsTypedFailure_NoThrow" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="74ca2dde-ddda-ce63-7c88-e58f52c40ea5">
+      <Execution id="388cdf20-cb69-4689-94ed-42520613f2fc" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRuntimeIntegrationTests" name="MissingSidecarDirectory_IsTypedFailure_NoThrow" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="15aa3433-d56d-8773-d58f-77bbe3d5341f">
+      <Execution id="f4cfbaec-5b95-4684-b4cc-c65be25977fa" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.GrantIssuerTests" name="Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.Put_BindFailure_DeletesVaultEntry_NoOrphan" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="98c488fb-4699-fa43-7c79-8777ce9a0171">
+      <Execution id="3c85dce4-d7a1-4bd0-af77-336c45e6a1e1" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="Put_BindFailure_DeletesVaultEntry_NoOrphan" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_6_PageBudget_DigestShareWithinTenPercentOf60msBudget" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="fb2307bf-ee4f-c49b-c2d1-9d80cb025cb6">
+      <Execution id="6221d410-ada4-448d-b2bd-4a9e30d640a5" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_6_PageBudget_DigestShareWithinTenPercentOf60msBudget" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.Issue_Read_Revoke_TypedAndUiSafe" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d438022a-a354-0457-9082-062d9ffe45f5">
+      <Execution id="94e3bade-9346-40c6-adf1-d4f97f99a131" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="Issue_Read_Revoke_TypedAndUiSafe" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: False, expected: ReadOnlyLegacyShellRunning)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="0d52eaea-ca0e-1226-cbfe-abc2f73b5dcb">
+      <Execution id="e96f40dd-8517-4c8e-a25d-55696c4ef05d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="Decide_Table" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="42b867c7-fb22-d40f-ef0d-76244be5b852">
+      <Execution id="80e181ae-ecd4-453e-a5db-de1b25c1f5e4" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="DefaultStart_IsReadWrite_AndCanCreateBook" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.DataRootPolicy_OnlyWritableAfterParity(mode: ReadOnlyUntilParity, expected: False)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="ef819064-b3da-dd11-fb0f-8f5f11253b38">
+      <Execution id="e5f6e53a-f6de-4e49-9740-dae5b609395e" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="DataRootPolicy_OnlyWritableAfterParity" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="fba56359-5ddb-cf4f-2252-a0fe86842e0b">
+      <Execution id="18d2b8c1-0ead-4692-b295-e8d470d4213b" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests" name="RegionReads_SerializeOnTheCorePipe" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b56fd37f-5d76-024a-c9eb-426cee9a5749">
+      <Execution id="3bff25a1-3a50-4cc0-ab6c-782f12922485" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="G_SecretCapabilityMissingCleansUp" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SingleInstanceTests.FakeBackend_ReportsAbandonedRecovery" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="01627b3b-4403-e956-9d9d-5e0895f2f8d0">
+      <Execution id="3d40534d-6c24-4ef4-9e28-da3c958034db" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SingleInstanceTests" name="FakeBackend_ReportsAbandonedRecovery" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="44372f94-211c-62b0-9b5a-a5dc4adb72fd">
+      <Execution id="969123c2-05e1-458f-86e8-9cd3df0487b5" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MissingCapability_DowngradesToReadOnly_AndRefusesWrites" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: False, parityReached: True, expected: ReadWrite)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e8a51a0c-26c8-18b6-4859-ac167556f271">
+      <Execution id="2edfe053-c695-4050-aeb2-644176970113" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="Decide_Table" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_1_EqualLengthRewrite_WithRestoredMtime_RejectedWithoutMtimeDependency" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="c2917fd8-1048-c3e0-ce06-f4866e656e6a">
+      <Execution id="aab86cc3-47c6-4ae6-93c0-11a535b54217" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_1_EqualLengthRewrite_WithRestoredMtime_RejectedWithoutMtimeDependency" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.DataSafetyTests.FirstRunBackup_SkipsWhenNoCatalog" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="39504bf6-516a-6f0c-db51-c60a6026c846">
+      <Execution id="a928dd76-859e-497b-a37b-39a5694c47a2" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.DataSafetyTests" name="FirstRunBackup_SkipsWhenNoCatalog" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.LegacyShellDetected_KeepsHostReadOnly_EvenWithDefaultParity" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="6fdf61c4-163d-57ff-780a-afc1d48b2597">
+      <Execution id="d946ae28-602a-408c-a99a-2934b876b2da" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="LegacyShellDetected_KeepsHostReadOnly_EvenWithDefaultParity" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.ProbeFailure_IsDegraded_WithTypedDiagnostic_AndKeepsWritesOpen" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="43cd7f64-19b3-b4be-91a4-4986b69f93f5">
+      <Execution id="7cf27a91-5c75-48f8-88eb-a3ecd1b82b79" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="ProbeFailure_IsDegraded_WithTypedDiagnostic_AndKeepsWritesOpen" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="cf801b23-475d-89a9-54f2-bb0ca7567cf6">
+      <Execution id="d22e6e63-81b3-4129-97cd-761e5193ee0a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.ExportE2ETests" name="Export_Zip_Produces_RealArtifact_AndSnapshotHistory" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.ModeDescription_IsHumanReadable" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="7485fd71-194b-500d-2733-41927dea0850">
+      <Execution id="b97cad57-6aaf-4f6a-88ce-c5cd224e97f3" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="ModeDescription_IsHumanReadable" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MatchingCore_IsPassed_AndWritesStayOpen" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="23781c7a-8f40-204d-d62a-d1c3fe93fdc8">
+      <Execution id="132e6dbd-f582-4ec6-8e7e-4526225410e2" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MatchingCore_IsPassed_AndWritesStayOpen" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="abe112c6-c7bd-1b2e-91f3-a2976ee7d0ef">
+      <Execution id="72d3e9d7-cbe5-4290-8a0b-69263b159dd2" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.SourceRegistryTests" name="NativeDpapiCurrentUserRoundTripAndTamperRefusal" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.ReadOnlyUntilParity_NamesTheSchemaWriteSeam" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="8499d4a1-cdac-2fea-0ac4-c97b1ce1c6fe">
+      <Execution id="dba29895-c7ff-4482-8c9f-b7a128ae6efd" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="ReadOnlyUntilParity_NamesTheSchemaWriteSeam" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="6a8ee7ae-94b5-a688-2f6b-461745f97207">
+      <Execution id="01ad4ea2-0aea-4dd3-a7a7-42c5a15a32fc" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostReaderProgressIntegrationTests" name="SaveReadingProgress_UnknownPage_IsTypedCoreRejection" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.HostOptions_DefaultParity_IsWritable" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="eaebaec7-9d83-ca92-089b-2776bc23fbbb">
+      <Execution id="73be4275-6083-4c81-bc8b-b96fde416731" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="HostOptions_DefaultParity_IsWritable" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.WritePolicyTests.LegacyShell_StillWins_OverDefaultParity" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="ce67bcf1-110c-f6a5-bf7c-e68920722cb3">
+      <Execution id="39b443c5-d34a-4ab5-990a-8be88c2cf7bf" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.WritePolicyTests" name="LegacyShell_StillWins_OverDefaultParity" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="2e27d604-8b5a-75a1-024d-2f3ce326cbf1">
+      <Execution id="d0aaf854-b4d0-4ecb-9618-bf90dbdace35" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostReaderProgressIntegrationTests" name="SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="10bf9e0a-0139-5115-cee4-5d9aacbd2884">
+      <Execution id="ab1218f9-931a-4138-883a-1f9d744ada03" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostReaderProgressIntegrationTests" name="SaveReadingProgress_PersistsAcrossHostRestart_AndResumes" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.InvalidTargets_AreRejectedBeforeAnyVaultWrite" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="466243e8-469a-1082-eb5f-c484104ae9f9">
+      <Execution id="e9448823-f5f7-4293-852e-cb24d13039db" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="InvalidTargets_AreRejectedBeforeAnyVaultWrite" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_BlocksWrites_WithTypedCode" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d190789a-455e-70a6-2790-f8cd32c8eee5">
+      <Execution id="25303d4c-ffd1-4ee3-af2d-0826ce3ca4d1" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.StartupSelfCheckTests" name="MissingCapability_BlocksWrites_WithTypedCode" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b75d90c8-c6dc-625c-0ad9-09d2b657587a">
+      <Execution id="453a11f9-7070-471e-a77a-482241437912" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.LegacyShellRealTests" name="LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="6e91944c-16ff-b453-83d3-d944ba3c6b71">
+      <Execution id="35ec0441-7e85-49f7-9c1f-8c5ac4048731" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="A_OrdinarySuccessAndWholeSourceSkip" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="fa0f3161-873f-8c7a-3c5e-0d04ec275559">
+      <Execution id="5119aad9-97b6-4d63-a23e-c952b97b57ea" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="E_ChangedSourceBeforeConfirmIsRejectedByRealCore" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.Put_CreatesVaultEntry_AndBindsCoreRef_WithLegacyRefFormat" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b1117716-fa51-6205-9511-e505ec393057">
+      <Execution id="0c65c88b-b9f5-47db-813c-f8ca012ec55e" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="Put_CreatesVaultEntry_AndBindsCoreRef_WithLegacyRefFormat" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="2b1d5982-56ee-6073-64f5-361e922d1de6">
+      <Execution id="60b314e1-9805-443d-847b-695e0c8b830a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="I_SecretStartRefusedCleansUp" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b0461855-e93c-782f-8d68-440df9038e0a">
+      <Execution id="989de95f-9f59-4d29-b1ac-5dd2885b8af5" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcTests" name="CancelKeepsCommittedPagesOverRealStdio" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.AuthorizationCache_HitsWithinOneSecond_AndRevokeInvalidatesImmediately" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="a481b4ae-90bc-a1db-f3f8-d780311b62d9">
+      <Execution id="c6095a99-2784-470a-a613-4c5126caeb8d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="AuthorizationCache_HitsWithinOneSecond_AndRevokeInvalidatesImmediately" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.LegacyShellRealTests.RealProcessNamedNewManga_IsDetectedByProbe" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b6221f39-7ae8-ee68-9baa-2cbd39f17b39">
+      <Execution id="d58a97ea-bb8a-4c62-9b0f-cd8267abb928" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.LegacyShellRealTests" name="RealProcessNamedNewManga_IsDetectedByProbe" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtIssue" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="487491e4-ec18-4a29-22b3-c863887dfc90">
+      <Execution id="d65599e2-517f-4e88-bf89-4baeabe2ec07" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_3_Escape_RejectedAtIssue" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d66ac4b9-3ab6-5ad1-6204-0e6ce5e6b407">
+      <Execution id="f3ff45e3-84f8-4556-bdf5-812995301b04" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRuntimeIntegrationTests" name="ParityReached_ChineseRoundTrip_IsExact_ThroughHost" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="b2bfb782-d365-dfc3-568e-40558c43fd56">
+      <Execution id="c9168f2e-2ea7-4f7b-ace9-2d377e65cb36" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="J_SecretReplanFailedCleansUp" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="a91a3320-f3dc-f19c-99a7-a1f257ffd955">
+      <Execution id="d0456204-26a7-497e-876c-fab2741b6693" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.Fea09UiImportIpcProductionTests" name="Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CoexistenceTests.Decide_Table(legacyRunning: True, parityReached: True, expected: ReadOnlyLegacyShellRunning)" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="fc4d0b7a-f3a4-bc4c-1f56-8f96f53e7a13">
+      <Execution id="8d245014-f878-401e-b10d-03bbf9c2403c" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CoexistenceTests" name="Decide_Table" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.TamperedTile_PreservingSize_Rejected" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="273a08c7-583f-ef14-339e-676171a37894">
+      <Execution id="6b8726b2-93b1-4d44-a3b4-692d7616849d" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="TamperedTile_PreservingSize_Rejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtReadTime_AfterPathReplacement" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="e2da67fc-5ea4-a89d-4aa8-69461027cc03">
+      <Execution id="a3f7a91b-0192-4ddc-b764-52848ee13edf" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_3_Escape_RejectedAtReadTime_AfterPathReplacement" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="ce36c94e-654b-492d-f171-2ba4f3f29b2b">
+      <Execution id="257617ba-58b5-4d5b-95e7-9337c98a595e" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.ExportE2ETests" name="Export_Cancel_LeavesNoArtifact" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="7c1a0ebc-758a-97e3-e4cb-dd02f41c4e98">
+      <Execution id="16b01581-828a-441c-a4fa-fa61de966b71" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="CredentialPutAndClear_AgainstFrozenSidecar_FullChain" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.LegacyShellRealTests.DefaultGlobalMutex_AcquiresOrFallsBackToLocal" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="11d46627-de17-8693-6453-149f0c332983">
+      <Execution id="7b45accf-4de0-4c70-93b4-41f5c4ed82ea" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.LegacyShellRealTests" name="DefaultGlobalMutex_AcquiresOrFallsBackToLocal" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="bafe24a2-6a6d-a114-19df-feb6d6a37d9f">
+      <Execution id="740b37b2-8d40-485b-87fc-e4c681af04ac" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostReaderChaptersIntegrationTests" name="ConcurrentChapterAndProjectionReads_AreSerialized" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.TileChannelTests.Containment_OutsideRoot_And_Junction_Rejected" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="51738a5d-8ca1-c5bf-8ec4-632f311db999">
+      <Execution id="86664388-3d3d-4cb9-a4b6-aa954d06313a" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.TileChannelTests" name="Containment_OutsideRoot_And_Junction_Rejected" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="d610ea50-d426-9016-770b-0703a67a6d74">
+      <Execution id="51b20c35-4e34-4af2-bd85-3bc1b6fed0fe" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests" name="RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.CredentialPortTests.Put_IntentMismatch_IsTypedConflict_AndWritesNothing" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="29ab4af8-5b4d-9d30-444f-0cc35896f73e">
+      <Execution id="08d41794-411a-4648-acf8-409eeca9a844" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.CredentialPortTests" name="Put_IntentMismatch_IsTypedConflict_AndWritesNothing" />
+    </UnitTest>
+    <UnitTest name="NewManga.Host.Tests.D4SecurityHarnessTests.D4_5_IdentityChange_VolumeFileIndex_Rejected" storage="g:\codex\new manga\apps\desktop-avalonia\tests\newmanga.host.tests\bin\release\net9.0\newmanga.host.tests.dll" id="dee8e4d4-3404-f5d6-0fbb-4d0f73ad3d5f">
+      <Execution id="e37aa560-b8c2-45d3-a0f6-b20de25001e3" />
+      <TestMethod codeBase="G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="NewManga.Host.Tests.D4SecurityHarnessTests" name="D4_5_IdentityChange_VolumeFileIndex_Rejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c3b62b97-8997-ad3f-d7d1-f9bda97a8506" executionId="adb40b62-c46d-4ecf-9bab-f7ea6bad299f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8f7d949-8918-c138-2fa3-899662a4c52f" executionId="0aca0af1-8b61-49c1-8e99-bb073633034b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90c1eef0-75be-7393-ad13-008bd6387503" executionId="ed837f8f-fceb-4b0b-9269-d0364df5d05a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2bfb782-d365-dfc3-568e-40558c43fd56" executionId="c9168f2e-2ea7-4f7b-ace9-2d377e65cb36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e9cbdaa2-ac53-9b7a-7722-552add364da6" executionId="9da62c37-53f0-433c-adb2-945887b3505e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e9a7806-4fc6-aef4-8983-6f96b4342143" executionId="2b7e601c-5b5c-48f3-8a18-1eb424ac3c2c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df655e20-058f-8452-3958-1a6c2da593fc" executionId="6ce1deca-d852-44d3-87cc-76d13a348626" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9395b648-4114-d714-b44c-bd7f5702674b" executionId="b67062bd-c55b-4262-a6ba-bc29ca1d1a6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef819064-b3da-dd11-fb0f-8f5f11253b38" executionId="e5f6e53a-f6de-4e49-9740-dae5b609395e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44d74a1e-34fe-fa5d-01ee-ca9d2fc6cb9b" executionId="eb51af87-b06c-4e3a-8555-bc7525921217" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0eccc48-8235-5ef9-5f6a-179e3e1bd663" executionId="da05b4a4-7539-4a84-b28d-c2d1fb1bba10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5311b292-c218-bce3-0420-d12958f63b58" executionId="0b29a142-bc5e-4896-b9fe-ecf7902811bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5053e5e2-5c70-195b-c639-b3e239754eef" executionId="592b13b7-9996-401a-adae-1b292a338882" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4e7db1b-3a62-8fa6-7322-c4d633f858df" executionId="302ec4c2-2790-48ca-af7a-0169223af474" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df14d6f6-a60d-26bb-27be-039ca65bb49e" executionId="0f012e6b-2271-4d5a-9c61-c521d7222c9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ada55101-3705-d7a5-c002-a232e7548cc1" executionId="7f34c445-5288-44d6-b257-59a1ff81f342" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b09ea0d-03d1-c039-787f-1b2cff07ada9" executionId="591e9322-012b-463a-b01d-b34840343d3c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e830935d-6c26-c981-3d53-d93f0ac90bab" executionId="5316fb2a-36e5-43e8-aa82-e528f543796b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd2fc259-4fca-403c-2ad2-bb03c6e16108" executionId="0bba9a6c-4a2a-4855-a741-aa67f86015fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce67bcf1-110c-f6a5-bf7c-e68920722cb3" executionId="39b443c5-d34a-4ab5-990a-8be88c2cf7bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6221f39-7ae8-ee68-9baa-2cbd39f17b39" executionId="d58a97ea-bb8a-4c62-9b0f-cd8267abb928" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d66ac4b9-3ab6-5ad1-6204-0e6ce5e6b407" executionId="f3ff45e3-84f8-4556-bdf5-812995301b04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6dfca282-c144-0b8b-708a-673ac7f66a23" executionId="b915fe2b-b675-4e30-af3f-29e151f442d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23781c7a-8f40-204d-d62a-d1c3fe93fdc8" executionId="132e6dbd-f582-4ec6-8e7e-4526225410e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ff15924-90a6-1012-5601-5246816f419b" executionId="88016af6-5e03-4a50-8a3d-2022571f0731" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0148af44-1a12-fa90-d845-0a0f8036cc80" executionId="16224c63-c4d5-49ea-af39-29ecc5b24ead" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d98deacd-4311-c8b6-0a3b-25926f63f053" executionId="f62e5b06-c33f-436b-8238-022376deff2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0461855-e93c-782f-8d68-440df9038e0a" executionId="989de95f-9f59-4d29-b1ac-5dd2885b8af5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10bf9e0a-0139-5115-cee4-5d9aacbd2884" executionId="ab1218f9-931a-4138-883a-1f9d744ada03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42b867c7-fb22-d40f-ef0d-76244be5b852" executionId="80e181ae-ecd4-453e-a5db-de1b25c1f5e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0fac0deb-55e2-18b5-375d-721ad856e971" executionId="502aaf8a-567e-4f34-bb56-6f1594bd260b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74ca2dde-ddda-ce63-7c88-e58f52c40ea5" executionId="388cdf20-cb69-4689-94ed-42520613f2fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46d377cf-3d53-e853-b246-60411d318bdc" executionId="e85665c7-37dc-403e-8a3e-fd3373afd5a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb2307bf-ee4f-c49b-c2d1-9d80cb025cb6" executionId="6221d410-ada4-448d-b2bd-4a9e30d640a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c88de84-d6b3-1d11-e92f-9ae580b43849" executionId="3a41ba4e-ebab-45f0-a691-a68cf24add08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a481b4ae-90bc-a1db-f3f8-d780311b62d9" executionId="c6095a99-2784-470a-a613-4c5126caeb8d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d438022a-a354-0457-9082-062d9ffe45f5" executionId="94e3bade-9346-40c6-adf1-d4f97f99a131" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="487491e4-ec18-4a29-22b3-c863887dfc90" executionId="d65599e2-517f-4e88-bf89-4baeabe2ec07" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b1d5982-56ee-6073-64f5-361e922d1de6" executionId="60b314e1-9805-443d-847b-695e0c8b830a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2917fd8-1048-c3e0-ce06-f4866e656e6a" executionId="aab86cc3-47c6-4ae6-93c0-11a535b54217" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f9839fe-30d2-5869-6472-cf051b344cf2" executionId="fbdb75af-cb31-4bcf-a77d-6ffc74478f52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bce5acb7-9a72-e4ff-351e-e054fc58a576" executionId="eaa8af02-7fe4-456c-8a81-619fb44f6e76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2da67fc-5ea4-a89d-4aa8-69461027cc03" executionId="a3f7a91b-0192-4ddc-b764-52848ee13edf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f570c0d-564b-ea17-da58-8723ed4b93c2" executionId="dad70f9c-cd0d-4fbb-a4a8-c6c720748919" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a8ee7ae-94b5-a688-2f6b-461745f97207" executionId="01ad4ea2-0aea-4dd3-a7a7-42c5a15a32fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc4d0b7a-f3a4-bc4c-1f56-8f96f53e7a13" executionId="8d245014-f878-401e-b10d-03bbf9c2403c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51738a5d-8ca1-c5bf-8ec4-632f311db999" executionId="86664388-3d3d-4cb9-a4b6-aa954d06313a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd2a92c2-81ff-e7fd-f204-ad63afebb19f" executionId="1eb95b18-2fc9-458f-83ad-e7e4f9f8ce90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b1117716-fa51-6205-9511-e505ec393057" executionId="0c65c88b-b9f5-47db-813c-f8ca012ec55e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5585d42-b7d5-6f48-c2c3-7b77378f7d9e" executionId="b7505328-9737-459c-ba28-eb14277b7c3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="98c488fb-4699-fa43-7c79-8777ce9a0171" executionId="3c85dce4-d7a1-4bd0-af77-336c45e6a1e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf801b23-475d-89a9-54f2-bb0ca7567cf6" executionId="d22e6e63-81b3-4129-97cd-761e5193ee0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12652c7b-2ce1-4a63-5398-69ec86bfe610" executionId="48dcf260-889a-4d0e-93d9-d10997152b85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15aa3433-d56d-8773-d58f-77bbe3d5341f" executionId="f4cfbaec-5b95-4684-b4cc-c65be25977fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e668d010-cecf-d162-47fa-9308d7a6f21e" executionId="579f10d9-bd71-4c35-95cd-bc113cb8e17d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b75d90c8-c6dc-625c-0ad9-09d2b657587a" executionId="453a11f9-7070-471e-a77a-482241437912" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a91a3320-f3dc-f19c-99a7-a1f257ffd955" executionId="d0456204-26a7-497e-876c-fab2741b6693" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4f46522-351c-7f0f-f307-0b8824bf5463" executionId="149a325f-1fb5-499f-a7dc-faceba377a93" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39504bf6-516a-6f0c-db51-c60a6026c846" executionId="a928dd76-859e-497b-a37b-39a5694c47a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9013804a-6d3b-fc25-25d2-7099e7080c29" executionId="43698ae1-bae9-44d2-8505-09cd43b7ff2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaebaec7-9d83-ca92-089b-2776bc23fbbb" executionId="73be4275-6083-4c81-bc8b-b96fde416731" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa0f3161-873f-8c7a-3c5e-0d04ec275559" executionId="5119aad9-97b6-4d63-a23e-c952b97b57ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3755a788-1a64-09a5-0555-575992116ce2" executionId="c6fbba4a-c645-44d6-9be8-a9f05bb104d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d190789a-455e-70a6-2790-f8cd32c8eee5" executionId="25303d4c-ffd1-4ee3-af2d-0826ce3ca4d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e27d604-8b5a-75a1-024d-2f3ce326cbf1" executionId="d0aaf854-b4d0-4ecb-9618-bf90dbdace35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="abe112c6-c7bd-1b2e-91f3-a2976ee7d0ef" executionId="72d3e9d7-cbe5-4290-8a0b-69263b159dd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0353e8e7-e8d9-330a-25a5-6a90edddadcf" executionId="e5a2ce69-62d9-4f0b-9c34-df0d758a5871" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="273a08c7-583f-ef14-339e-676171a37894" executionId="6b8726b2-93b1-4d44-a3b4-692d7616849d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18bd15f7-0000-d8cc-15fc-6479d0319bd0" executionId="fd25c10c-8dcc-49c0-9343-b589cb93d49c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e95fc23a-e365-32b8-76fd-48df4df721f3" executionId="dc6f6bb0-cd8f-419d-bb27-e743759a9336" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29ab4af8-5b4d-9d30-444f-0cc35896f73e" executionId="08d41794-411a-4648-acf8-409eeca9a844" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b7fd0ec-44cf-6aa1-d627-c0e7d46974ce" executionId="91473ef2-2da1-45be-a0b3-07151a9d1c55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8499d4a1-cdac-2fea-0ac4-c97b1ce1c6fe" executionId="dba29895-c7ff-4482-8c9f-b7a128ae6efd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c44650f0-f0a8-177e-3224-9998012b0097" executionId="42345727-f5f2-4dfb-a4a2-c5c9a9ab34ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bafe24a2-6a6d-a114-19df-feb6d6a37d9f" executionId="740b37b2-8d40-485b-87fc-e4c681af04ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c1a0ebc-758a-97e3-e4cb-dd02f41c4e98" executionId="16b01581-828a-441c-a4fa-fa61de966b71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e98f718-b62a-631f-c2fe-169c02cda63d" executionId="9bd40ef3-8fda-4f59-a5c7-db3c7c7bdf1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09a1c002-0744-da4c-6462-3f1e106a386a" executionId="ca470d61-c250-46a8-9364-4aa7a6c35741" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8a51a0c-26c8-18b6-4859-ac167556f271" executionId="2edfe053-c695-4050-aeb2-644176970113" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e91944c-16ff-b453-83d3-d944ba3c6b71" executionId="35ec0441-7e85-49f7-9c1f-8c5ac4048731" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b67c5d95-f4d6-b89c-68a0-432b84ca1423" executionId="21b4c1b0-1192-4f21-bb55-34e2d8310180" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7485fd71-194b-500d-2733-41927dea0850" executionId="b97cad57-6aaf-4f6a-88ce-c5cd224e97f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c473a54-0160-c17f-4c38-7ade49a95403" executionId="05a3ea02-cba0-4734-90d9-4b1e3ebe8dd6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="466243e8-469a-1082-eb5f-c484104ae9f9" executionId="e9448823-f5f7-4293-852e-cb24d13039db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11d46627-de17-8693-6453-149f0c332983" executionId="7b45accf-4de0-4c70-93b4-41f5c4ed82ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b56fd37f-5d76-024a-c9eb-426cee9a5749" executionId="3bff25a1-3a50-4cc0-ab6c-782f12922485" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d610ea50-d426-9016-770b-0703a67a6d74" executionId="51b20c35-4e34-4af2-bd85-3bc1b6fed0fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e218259-e516-4bdc-7c84-9e56e3833de3" executionId="cb1ef9fb-1fde-4b9e-bb58-89b276ebbb1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="780862af-42c1-ef79-accc-8e2a0e0c9748" executionId="60e8b63d-f30f-458e-82af-d7f97677bca2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b80b9b78-950b-ec2b-803d-17b33350d8da" executionId="41a04014-1794-48a4-b891-56cd7ed1690d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01627b3b-4403-e956-9d9d-5e0895f2f8d0" executionId="3d40534d-6c24-4ef4-9e28-da3c958034db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43cd7f64-19b3-b4be-91a4-4986b69f93f5" executionId="7cf27a91-5c75-48f8-88eb-a3ecd1b82b79" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce36c94e-654b-492d-f171-2ba4f3f29b2b" executionId="257617ba-58b5-4d5b-95e7-9337c98a595e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1635b18-c055-3d33-01b3-c24fa8cbea61" executionId="8fc7a22c-b475-4f52-b336-7fa2b39059f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dee8e4d4-3404-f5d6-0fbb-4d0f73ad3d5f" executionId="e37aa560-b8c2-45d3-a0f6-b20de25001e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44372f94-211c-62b0-9b5a-a5dc4adb72fd" executionId="969123c2-05e1-458f-86e8-9cd3df0487b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d52eaea-ca0e-1226-cbfe-abc2f73b5dcb" executionId="e96f40dd-8517-4c8e-a25d-55696c4ef05d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fdf61c4-163d-57ff-780a-afc1d48b2597" executionId="d946ae28-602a-408c-a99a-2934b876b2da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0969cfc-8996-5ad0-8be7-b83b38acb5ee" executionId="93e0d03d-bcb6-4f27-a535-e7e992f93a4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fba56359-5ddb-cf4f-2252-a0fe86842e0b" executionId="18d2b8c1-0ead-4692-b295-e8d470d4213b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="100" executed="55" passed="55" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.04]   Discovering: NewManga.Host.Tests&#xD;
+[xUnit.net 00:00:00.07]   Discovered:  NewManga.Host.Tests&#xD;
+[xUnit.net 00:00:00.07]   Starting:    NewManga.Host.Tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.89]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp”。&#xD;
+[xUnit.net 00:00:00.91]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+[xUnit.net 00:00:00.91]       reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence”。&#xD;
+[xUnit.net 00:00:04.91]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:04.91]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:04.91]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain”。&#xD;
+[xUnit.net 00:00:04.95]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites”。&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.02]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled”。&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.05]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio”。&#xD;
+[xUnit.net 00:00:05.41]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.41]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.41]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog”。&#xD;
+[xUnit.net 00:00:05.42]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.42]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.42]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites”。&#xD;
+[xUnit.net 00:00:05.42]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.42]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.42]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+[xUnit.net 00:00:05.42]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+[xUnit.net 00:00:05.42]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+[xUnit.net 00:00:05.42]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio”。&#xD;
+[xUnit.net 00:00:05.42]       reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test&#xD;
+[xUnit.net 00:00:05.54]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked”。&#xD;
+[xUnit.net 00:00:05.55]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.55]       reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)&#xD;
+[xUnit.net 00:00:05.56]   Finished:    NewManga.Host.Tests&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost”。&#xD;
+在测试运行中跳过测试“NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars”。&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9458048+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9475128+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9477169+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9477827+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9478308+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9479068+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9479522+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9480289+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9480587+08:00">
+        <Text>[xUnit.net 00:00:00.89]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9824820+08:00">
+        <Text>[xUnit.net 00:00:00.91]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:40.9824988+08:00">
+        <Text>[xUnit.net 00:00:00.91]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:44.9693043+08:00">
+        <Text>[xUnit.net 00:00:04.91]     NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:44.9693507+08:00">
+        <Text>[xUnit.net 00:00:04.91]     NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:44.9695428+08:00">
+        <Text>[xUnit.net 00:00:04.91]     NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0059761+08:00">
+        <Text>[xUnit.net 00:00:04.95]     NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0770096+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0771353+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0773340+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0776284+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0777934+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0779877+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.0782104+08:00">
+        <Text>[xUnit.net 00:00:05.02]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1081279+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1082538+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1084035+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1085465+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1087246+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1088525+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.1090182+08:00">
+        <Text>[xUnit.net 00:00:05.05]     NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4625875+08:00">
+        <Text>[xUnit.net 00:00:05.41]     NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4629693+08:00">
+        <Text>[xUnit.net 00:00:05.41]     NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4684134+08:00">
+        <Text>[xUnit.net 00:00:05.41]     NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4706842+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4707941+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4709196+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4720906+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4722932+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4736387+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4737924+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4739454+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4741066+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.4748374+08:00">
+        <Text>[xUnit.net 00:00:05.42]     NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.5964878+08:00">
+        <Text>[xUnit.net 00:00:05.54]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.6019627+08:00">
+        <Text>[xUnit.net 00:00:05.55]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="HOME-MY" outcome="Warning" timestamp="2026-11-04T10:14:45.6019798+08:00">
+        <Text>[xUnit.net 00:00:05.55]     NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [SKIP]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

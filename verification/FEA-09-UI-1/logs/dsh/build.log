@@ -1,17 +1,20 @@
+COMMAND: dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo
+CWD: G:\CODEX\New Manga
+DATE: 2026-11-04T10:35:00+08:00
   正在确定要还原的项目…
   所有项目均是最新的，无法还原。
   NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
   NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
   NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
-  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
-  NewManga.Appearance.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
-  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
   NewManga.DesignSystem.TokenGen -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\bin\Release\net9.0\NewManga.DesignSystem.TokenGen.dll
   NewManga.ApplicationCore.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll
+  NewManga.Appearance.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
   NewManga.DesignSystem.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll
   NewManga.ThemeEngine.ThemeGen -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\bin\Release\net9.0\NewManga.ThemeEngine.ThemeGen.dll
-  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
   NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll
+  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
   NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
   NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
   NewManga.CoreClient.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll
@@ -23,5 +26,5 @@
     0 个警告
     0 个错误
 
-已用时间 00:00:01.27
+已用时间 00:00:01.17
 EXIT=0

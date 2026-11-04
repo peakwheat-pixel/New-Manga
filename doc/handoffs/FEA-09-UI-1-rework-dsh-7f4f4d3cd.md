@@ -54,3 +54,11 @@
 - N4/P2 源变化负测：只对本次 confirm 新增 wire 帧断言 `FILE_IDENTITY_CHANGED`，并断言 UI 行同码、0 页。
 - N5/P2 Task `delivery_head` 更新、proposed 段落标为历史；frontmatter 与当前状态一致。
 - 复跑：build 0/0；全量 1317/0/74；真实 IPC 16/16；C-07 PASS；pins 17/17；check PASS。证据 `logs/gates.json`。
+
+## Review r3 处置（DSH，2026-11-04）
+
+- r3：changes_requested P0=0/P1=0/P2=3（N1 分程序集 TRX/命令头、N4 E 断言关联、N5 交付指针）。
+- N1：按 8 个测试项目分别跑并保存唯一 TRX（`logs/dsh/trx/dsh-full-<project>.trx`），日志均带 COMMAND/CWD/DATE 头与 EXIT；IPC 同。
+- N4：E 改为逐文件记录 offset，仅对本次 confirm **追加帧**断言 `FILE_IDENTITY_CHANGED`；同时断言 receipt 行 OutcomeText 同码、0 页；移除 Snapshot.LastError 兜底。
+- N5：本文件之后由 DSH 固定 `delivery_head`、EV commit 列与 Closeout 当前状态。
+- 复跑：build EXIT=0；8 项目全绿（合计 1317/0/74）；IPC EXIT=0（16/16）；C-07/check/pins 全绿。

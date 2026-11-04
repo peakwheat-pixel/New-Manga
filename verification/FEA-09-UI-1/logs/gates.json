@@ -1,8 +1,8 @@
 {
   "cwd": "G:/CODEX/New Manga",
-  "head_at_start": "64ab9b9a8425a8b9e5e5babe4029b0427b89f9ef",
+  "head_at_start": "091f702bfd331d02f4384af4278f9740d1731c47",
   "base_commit": "7f4f4d3cd",
-  "generated_at": "2026-11-04T02:30:00Z",
+  "generated_at": "2026-11-04T02:45:00Z",
   "owner": "ZCode (initial) / Codex (rework) ; integrated by DSH",
   "gates": [
     {
@@ -62,10 +62,11 @@
   },
   "environment_note": "Owner run was blocked by Codex sandbox workspace write ACL; DSH rerun with native environment passed all gates. Production fixture launcher was fixed to line-pump stdin / stream stdout; no product code replaced.",
   "raw_evidence": {
-    "build": "verification/FEA-09-UI-1/logs/dsh/build.log (EXIT=0)",
-    "full_test": "verification/FEA-09-UI-1/logs/dsh/full-test.log (EXIT=0) + logs/dsh/trx/dsh-full.trx",
-    "ipc_test": "verification/FEA-09-UI-1/logs/dsh/ipc-test.log (EXIT=0, 16/16) + logs/dsh/trx/dsh-ipc.trx",
-    "env": "NEWMANGA_FEA09_IPC=1; NEWMANGA_BUILD_PYTHON=C:/Python314/python.exe"
+    "build": "logs/dsh/build.log (COMMAND header + EXIT=0)",
+    "full_test": "logs/dsh/full-test.log (per-project COMMAND header + EXIT=0 each; 8 projects) + logs/dsh/trx/dsh-full-<project>.trx (8 unique files)",
+    "ipc_test": "logs/dsh/ipc-test.log (COMMAND header + EXIT=0, 16/16) + logs/dsh/trx/dsh-ipc.trx",
+    "env": "NEWMANGA_FEA09_IPC=1; NEWMANGA_BUILD_PYTHON=C:/Python314/python.exe",
+    "note": "per-assembly TRX are unique (no overwrite); totals 1317 passed / 0 failed / 74 skipped"
   },
   "r2_findings": {
     "N1": "raw EXIT/TRX logs added above",
@@ -73,5 +74,10 @@
     "N3": "registry raw bytes scanned; claim narrowed",
     "N4": "E source-change asserts typed FILE_IDENTITY_CHANGED in this confirm's appended frames",
     "N5": "Task delivery_head/proposed wording updated"
+  },
+  "r3_findings": {
+    "N1": "per-project TRX + command headers added (no overwrite)",
+    "N4": "E asserts per-file appended frames + receipt row OutcomeText; no Snapshot.LastError fallback",
+    "N5": "delivery_head/EV commit fixed in follow-up docs commit"
   }
 }

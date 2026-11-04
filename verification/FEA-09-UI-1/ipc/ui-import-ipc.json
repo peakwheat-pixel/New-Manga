@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-04T02:06:30.2648262\u002B00:00",
+  "generated_at": "2026-11-04T02:14:57.3486882\u002B00:00",
   "mode": "real Host\u003C-\u003ECore stdio (python source process) \u002B production SourceImportCoordinator",
   "python": "NEWMANGA_BUILD_PYTHON (path redacted)",
   "password_probe_sha256": "3bfe01ab21f1a5ed570e1747c13bcc926d163d9595ace8dba2f40a9999c57157",
@@ -34,7 +34,7 @@
     },
     {
       "case": "plan-confirm",
-      "chapter_id": "c4cfbcd8a8164419a3034d893d9c6d75",
+      "chapter_id": "ea57495056194499b57c6b208df7e4cb",
       "plan_totals": 1,
       "receipt_state": "Completed",
       "imported_pages": 1,

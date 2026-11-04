@@ -7,7 +7,7 @@ status: in_review
 approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a71b396`（释放 commit）；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
 suggested_owner: zcode
 owner: zcode→codex（ZCode 额度 429 后按用户授权由全新 Codex 会话完成返修；DSH 集成）
-reviewer: codex（r1 changes_requested P1=5/P2=2 → 返修；r2 changes_requested P1=1/P2=4（N1–N5）→ DSH 处置完成；r3 待全新上下文 Codex 复审）
+reviewer: codex（r1 P1=5/P2=2 → 返修；r2 P1=1/P2=4（N1–N5）→ 处置；r3 P2=3（N1/N4/N5）→ 处置完成；r4 待全新上下文 Codex 复审）
 depends_on:
   - FEA-09-PREREQ-1
   - FEA-09
@@ -94,45 +94,52 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 
 ## Canonical Evidence
 
-（工作树 SHA-256；DSH 提交后回填 commit）
+（工作树 SHA-256；commit 列在紧随其后的文档提交回填）
 
 | evidence_id | 证据说明 | 仓库路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-001 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/AC-MATRIX.md` | pending | `2c5c4fb5712e59855fea7ac777315b4f42e0fbe1f4a7acd34865a79301debd32` | CANONICAL |
+| EV-001 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/AC-MATRIX.md` | pending | `86e71c73a402dba560d64925560a4d82a3d2ca6d90baf67f72b7c279a3eb9421` | CANONICAL |
 | EV-002 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/production-ui-import-ipc.json` | pending | `a1da1ecf54e809641b3fbb42a8aaaf3a455114a4b502aa44b9c9f8f484c7d16f` | CANONICAL |
-| EV-003 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/production-ui-import-ipc.wire.ndjson` | pending | `3387ae83de1defa33bd644d2ebc5ddb7191994037c3092ca814582794ac77772` | CANONICAL |
-| EV-004 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.json` | pending | `d6a91121438fc42841ad1a577373638d235671c9ecfde93ab9577aff072d0d41` | CANONICAL |
-| EV-005 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.wire.ndjson` | pending | `6af847951c25253a16b752e32cf4876fac2a5b6ba418e1670281e1680ae63618` | CANONICAL |
+| EV-003 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/production-ui-import-ipc.wire.ndjson` | pending | `79eabd23b3acea0a2988c39c8f8d7f360558bfced9f99e4e9f8bdf2307249e6c` | CANONICAL |
+| EV-004 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.json` | pending | `c616c25b22521d6b04b41c978b28f81ac3d3313f8279458307716a47cd6e290e` | CANONICAL |
+| EV-005 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.wire.ndjson` | pending | `9b125edd05f96fe449d91691bd0980870f0db6f8e3e3d30419b933f49917e421` | CANONICAL |
 | EV-006 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh-integration.json` | pending | `cec8e91c26bc59b5bf1dc6db12f0250f47946c00cad69d6d1b746b44c853999e` | CANONICAL |
 | EV-007 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh-scope-diff.txt` | pending | `fe51190dec3bebfec7691b29b931ccd7a807de43ebecf69b2e774b181cd9c713` | CANONICAL |
-| EV-008 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/build.log` | pending | `c1e45e8dde902ab2c694b5a430e65d654f2b82f685e5105f6b75bd73b3559ed0` | CANONICAL |
-| EV-009 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/full-test.log` | pending | `08690dedfd0088d891dcaa0b007cd16849e50996ba491d9443ef6bfa2bd6e18e` | CANONICAL |
-| EV-010 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/ipc-test.log` | pending | `18c82c3df87538b8f8e3cb10eccd83f93a876d4412ae79ce282273aa1d9b0ead` | CANONICAL |
-| EV-011 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full.trx` | pending | `9c55091c4da500a7fcb61aba47da4dcfac2b1d039126eb136c5a22cba40f3b40` | CANONICAL |
-| EV-012 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-ipc.trx` | pending | `57daccba87c8d41f52019f57b288010483636a4b2a5f1615b6aac2d3405d8cef` | CANONICAL |
-| EV-013 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/gates.json` | pending | `2913163aae674cf20fc754dcb428de038644f9191c19535d1f291b861cd64bca` | CANONICAL |
-| EV-014 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-api.log` | pending | `f5a23d415a32c51b6691a96b2a7fb7c4534646e9502ec21b5647f3e20348f852` | CANONICAL |
-| EV-015 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build-initial.log` | pending | `8a281d7de093d1f8e020e9f67a68d33148521bdbae2054847f29312051edee5b` | CANONICAL |
-| EV-016 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build.log` | pending | `395f602828a4b759fdcccda5e9dd476f5ad82afb63d68b4134a4dcef6d57bfc3` | CANONICAL |
-| EV-017 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-fea09-restore.json` | pending | `d81bcf9da8e328e31d00c51659464558aed192c0925bad25faaaddd885c59531` | CANONICAL |
-| EV-018 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full-inventory.json` | pending | `02f0317c519942676295efb23ce18399f83e9be704fc629c38382bfc9bcc0b5d` | CANONICAL |
-| EV-019 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full.log` | pending | `d56504fe24bf03fd9f747195e6183c64a1e053501cf45340f47a74979a96e348` | CANONICAL |
-| EV-020 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-governance.log` | pending | `d6f42ff9c343d164471566c3314ff84bcbb43a6462124ef8cae67a6098c1bdf3` | CANONICAL |
-| EV-021 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-ipc.log` | pending | `40833e4c504a06686c2ca9b5cd56c1ff8584661ba0410ce4d920a7859c58b320` | CANONICAL |
-| EV-022 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-password-audit.json` | pending | `eba126b2a2465f2af5bcfff954b0c6e9804e5ad82f432277eeb062a4834842a4` | CANONICAL |
-| EV-023 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-pins.log` | pending | `fa4b978d09a934466f0816073ef2fbdf0bc6fd150fe3b9ec045d02466ba2a34c` | CANONICAL |
-| EV-024 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-scope-diff.json` | pending | `c5eefec626b0a9ce2b29faaceae0f7b8ab3e2028a5682bc81c3d468b25b130ae` | CANONICAL |
-| EV-025 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-vm.log` | pending | `db58720205555268d61279e276d5906f05ea446a0bb2f568a7b1183a637423cb` | CANONICAL |
-| EV-026 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093436.trx` | pending | `206b2e02c1e21b8493b613680a93944e29c72793b9da309d401230451185bbe6` | CANONICAL |
-| EV-027 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093437.trx` | pending | `7175680b2e594f7ba750207147fd7b9932ae7cdcee8ff8db5d48c351661b1c54` | CANONICAL |
-| EV-028 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093438.trx` | pending | `f7b1c4955e3b7804fbccdbea74c7f293ae6806c967fbefd39ed3cf12357e672f` | CANONICAL |
-| EV-029 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093439.trx` | pending | `85bd052baf6a24cae328ad819622335a3db7bfab9240774eec6f01fdff53ffb9` | CANONICAL |
-| EV-030 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093440.trx` | pending | `e9f475be87371a2ff67149aecd65f3ae9ae8360a0071b2aadfe34e85f2d6585c` | CANONICAL |
-| EV-031 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093441.trx` | pending | `1dfe0604cc3a730a52705481d50fe7f117c29ea5f4dc1249a082ff87ad4429cb` | CANONICAL |
-| EV-032 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093513.trx` | pending | `da46d4b6e033cf0c93f4226ad54cc9a82dfdfbe1c3d3048b6520e1a96129c178` | CANONICAL |
-| EV-033 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093703.trx` | pending | `cedf9c52189b49fcf70709d794762a8d6ebb88791467abc4ca4801b77674a4d8` | CANONICAL |
-| EV-034 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/repair-checkpoint.md` | pending | `a7932523da6ec52813308f844b8ec4c78adbc2b454360f2f77fca6b6e3d43ec8` | CANONICAL |
-| EV-035 | FEA-09-UI-1 证据文件 | `doc/handoffs/FEA-09-UI-1-rework-dsh-7f4f4d3cd.md` | pending | `1693e462e1085b0a723ec20cdd4be37b0d5d34ce7b993c5719eeecf7ae00dd1c` | CANONICAL |
+| EV-008 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/build.log` | pending | `c64d07b3ef5930ee7cff111c3d6bcfa47bb1f6f25ea7529ff33de0e0b52ed21c` | CANONICAL |
+| EV-009 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/full-test.log` | pending | `d538d93f02b132ce747989db0b67b8a8775c8ea8791bf3a02cfbcdbfeebf9a05` | CANONICAL |
+| EV-010 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/ipc-test.log` | pending | `9f585e0df486e2d09677e4e627af6a351db03c43e5396d0cab087df10aa4a07b` | CANONICAL |
+| EV-011 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.App.Tests.trx` | pending | `ea938fb62663fea4659397cdd5e5784431943a2449e3c4811db66a624ac5ff15` | CANONICAL |
+| EV-012 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.Appearance.Tests.trx` | pending | `dfaad33fbb50dc1860c3ae4ff50fb4afffc4ffcf767286461fbd9da3ec3dd3c5` | CANONICAL |
+| EV-013 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.ApplicationCore.Tests.trx` | pending | `8beaa6ec2ddd63b95cb0b1bb418c9b7457a784512fbd0cc847ef2689b96bb4be` | CANONICAL |
+| EV-014 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.CoreClient.Tests.trx` | pending | `3eb19966525ac91b09adcce6ba3c3f8b16df4e73b5d12eaa29386a2227d1f8d1` | CANONICAL |
+| EV-015 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.DesignSystem.Tests.trx` | pending | `cacfef0c656dfad3431604e25931356a69937cd936213ecb03f2430d57743745` | CANONICAL |
+| EV-016 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.Host.Tests.trx` | pending | `56435422541e040c96232661576bbb15bd483e30efcfc5cf232acebaede1e800` | CANONICAL |
+| EV-017 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.Presentation.Avalonia.Tests.trx` | pending | `09d9c0e2017b52b434415fb07777464f20c3f8d442dd73f02bdf3393a28a5b3f` | CANONICAL |
+| EV-018 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-full-NewManga.ThemeEngine.Tests.trx` | pending | `11501e7db0ea2077d905efd87d50aa851dbedae45b8c6d0d37157de53a1b33e5` | CANONICAL |
+| EV-019 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh/trx/dsh-ipc.trx` | pending | `cb9608803e14401ca013056c540731757f5e52db08498b4f86a280e50ca7592b` | CANONICAL |
+| EV-020 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/gates.json` | pending | `020ed3ee8dfea67855f4aae742d1eb7145e330bc4e1b60ff398ddbf9a6ce9569` | CANONICAL |
+| EV-021 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-api.log` | pending | `f5a23d415a32c51b6691a96b2a7fb7c4534646e9502ec21b5647f3e20348f852` | CANONICAL |
+| EV-022 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build-initial.log` | pending | `8a281d7de093d1f8e020e9f67a68d33148521bdbae2054847f29312051edee5b` | CANONICAL |
+| EV-023 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build.log` | pending | `395f602828a4b759fdcccda5e9dd476f5ad82afb63d68b4134a4dcef6d57bfc3` | CANONICAL |
+| EV-024 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-fea09-restore.json` | pending | `d81bcf9da8e328e31d00c51659464558aed192c0925bad25faaaddd885c59531` | CANONICAL |
+| EV-025 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full-inventory.json` | pending | `02f0317c519942676295efb23ce18399f83e9be704fc629c38382bfc9bcc0b5d` | CANONICAL |
+| EV-026 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full.log` | pending | `d56504fe24bf03fd9f747195e6183c64a1e053501cf45340f47a74979a96e348` | CANONICAL |
+| EV-027 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-governance.log` | pending | `d6f42ff9c343d164471566c3314ff84bcbb43a6462124ef8cae67a6098c1bdf3` | CANONICAL |
+| EV-028 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-ipc.log` | pending | `40833e4c504a06686c2ca9b5cd56c1ff8584661ba0410ce4d920a7859c58b320` | CANONICAL |
+| EV-029 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-password-audit.json` | pending | `eba126b2a2465f2af5bcfff954b0c6e9804e5ad82f432277eeb062a4834842a4` | CANONICAL |
+| EV-030 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-pins.log` | pending | `fa4b978d09a934466f0816073ef2fbdf0bc6fd150fe3b9ec045d02466ba2a34c` | CANONICAL |
+| EV-031 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-scope-diff.json` | pending | `c5eefec626b0a9ce2b29faaceae0f7b8ab3e2028a5682bc81c3d468b25b130ae` | CANONICAL |
+| EV-032 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-vm.log` | pending | `db58720205555268d61279e276d5906f05ea446a0bb2f568a7b1183a637423cb` | CANONICAL |
+| EV-033 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093436.trx` | pending | `206b2e02c1e21b8493b613680a93944e29c72793b9da309d401230451185bbe6` | CANONICAL |
+| EV-034 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093437.trx` | pending | `7175680b2e594f7ba750207147fd7b9932ae7cdcee8ff8db5d48c351661b1c54` | CANONICAL |
+| EV-035 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093438.trx` | pending | `f7b1c4955e3b7804fbccdbea74c7f293ae6806c967fbefd39ed3cf12357e672f` | CANONICAL |
+| EV-036 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093439.trx` | pending | `85bd052baf6a24cae328ad819622335a3db7bfab9240774eec6f01fdff53ffb9` | CANONICAL |
+| EV-037 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093440.trx` | pending | `e9f475be87371a2ff67149aecd65f3ae9ae8360a0071b2aadfe34e85f2d6585c` | CANONICAL |
+| EV-038 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093441.trx` | pending | `1dfe0604cc3a730a52705481d50fe7f117c29ea5f4dc1249a082ff87ad4429cb` | CANONICAL |
+| EV-039 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093513.trx` | pending | `da46d4b6e033cf0c93f4226ad54cc9a82dfdfbe1c3d3048b6520e1a96129c178` | CANONICAL |
+| EV-040 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093703.trx` | pending | `cedf9c52189b49fcf70709d794762a8d6ebb88791467abc4ca4801b77674a4d8` | CANONICAL |
+| EV-041 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/repair-checkpoint.md` | pending | `a7932523da6ec52813308f844b8ec4c78adbc2b454360f2f77fca6b6e3d43ec8` | CANONICAL |
+| EV-042 | FEA-09-UI-1 证据文件 | `doc/handoffs/FEA-09-UI-1-rework-dsh-7f4f4d3cd.md` | pending | `9d1fa5ea1dd340335f0f7bef485fbd6335453a645cb0ab5e5bad920d28e9fdad` | CANONICAL |
 
 
 ## Closeout Record
@@ -207,3 +214,11 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 - 处置：N1 补 DSH 成功原始日志+TRX（`logs/dsh/**`）；N2 receipt Grid `RowDefinitions="Auto,Auto"`；N3 改为扫描 Registry 原始 opaque 字节并收窄声明；N4 仅对本次 confirm 新增帧断言 `FILE_IDENTITY_CHANGED`；N5 更新 delivery_head/proposed 历史说明。
 - 复跑：build 0/0；全量 .NET **1317/0/74**；真实 IPC **16/16**；C-07 `--check` PASS；check.ps1 PASS；pins 17/17。
 - 下一步：全新上下文 Codex Review r3；approved 后 DSH 集成 closeout。
+
+## Review r3 处置（DSH，2026-11-04）
+
+- r3：changes_requested P0=0/P1=0/P2=3。
+- N1：按 8 个测试项目分别运行并保存唯一 TRX（`logs/dsh/trx/dsh-full-<project>.trx`），日志带命令头/CWD/EXIT；IPC 日志/TRX 同。
+- N4：E 改为逐文件 offset 只断言本次 confirm 追加帧 `FILE_IDENTITY_CHANGED` + receipt 行同码 + 0 页，去掉 Snapshot.LastError 兜底。
+- N5：固定 delivery_head/EV commit/Closeout 当前状态（紧随本次代码提交的文档提交）。
+- 复跑：build EXIT=0；8 项目合计 **1317/0/74**；IPC **16/16** EXIT=0；C-07/check/pins 全绿。
