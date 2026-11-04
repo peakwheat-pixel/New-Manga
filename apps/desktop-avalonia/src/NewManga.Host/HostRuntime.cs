@@ -60,6 +60,7 @@ public sealed class HostRuntime : IAsyncDisposable
 
     /// <summary>GRANT-ISSUER-1: host-control grant chain + whitelisted shell actions (null until ready).</summary>
     public HostGrantCoordinator? Grants { get; private set; }
+    public SourceAccessRegistry? Registry { get; private set; }
 
     public SourceReadCoordinator? Sources { get; private set; }
 
@@ -807,79 +808,138 @@ public sealed class HostRuntime : IAsyncDisposable
             // it; ACK/recovery/failure stay on the operation face.
             async Task<(string OperationId, System.Text.Json.JsonElement Result)> SourceOperationJournalAsync(
                 string name, System.Text.Json.JsonElement payload,
-                Func<CancellationToken, Task<NewManga.CoreClient.Wire.CoreResponse>> call,
+                Func<System.Text.Json.JsonElement, CancellationToken, Task<NewManga.CoreClient.Wire.CoreResponse>> call,
                 CancellationToken token)
             {
                 var operations = Operations ?? throw new CoreOperationException(
                     "CORE_UNAVAILABLE", "unavailable", false, "source operation journal unavailable", null);
+                var registry = Registry ?? throw new CoreOperationException(
+                    "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
+                    "source registry unavailable", null);
                 await SourceSyncCapabilityAsync(name, token).ConfigureAwait(false);
-                string? StringField(string key) =>
-                    payload.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && payload.TryGetProperty(key, out var value)
+                string? StringField(System.Text.Json.JsonElement element, string key) =>
+                    element.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && element.TryGetProperty(key, out var value)
                     && value.ValueKind == System.Text.Json.JsonValueKind.String
                         ? value.GetString() : null;
-                var planId = StringField("plan_id") ?? string.Empty;
-                var planDigest = StringField("plan_digest") ?? new string('0', 64);
+                var planId = StringField(payload, "plan_id") ?? string.Empty;
+                var planDigest = StringField(payload, "plan_digest") ?? new string('0', 64);
                 var kind = name switch
                 {
                     "source_relink" => "relink",
                     "source_repoint" => "repoint",
                     _ => "resync",
                 };
-                // P0-1/P0-2: the operation id and authorization are the Host's
-                // durable facts. The journal stores the request digest the Host
-                // generated (or the one the caller froze) so the ACK can replay
-                // the exact CompletionRequest.
-                var operationId = StringField("operation_id")
-                    ?? throw new CoreOperationException(
-                        "INVALID_REQUEST", "validation", false, "apply request has no operation id", null);
-                string? authorizationJson = null;
-                string? requestDigest = null;
-                string? hostReceiptId = null;
                 var grantIds = new List<string>();
-                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object)
+                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && payload.TryGetProperty("grant_ids", out var grantArray)
+                    && grantArray.ValueKind == System.Text.Json.JsonValueKind.Array)
                 {
-                    if (payload.TryGetProperty("authorization", out var authorization)
-                        && authorization.ValueKind == System.Text.Json.JsonValueKind.Object)
+                    foreach (var grant in grantArray.EnumerateArray())
                     {
-                        authorizationJson = authorization.GetRawText();
-                        if (authorization.TryGetProperty("request_digest", out var digest)
-                            && digest.ValueKind == System.Text.Json.JsonValueKind.String)
+                        if (grant.ValueKind == System.Text.Json.JsonValueKind.String
+                            && grant.GetString() is { Length: > 0 } grantId)
                         {
-                            requestDigest = digest.GetString();
-                        }
-                        if (authorization.TryGetProperty("host_receipt_id", out var receipt)
-                            && receipt.ValueKind == System.Text.Json.JsonValueKind.String)
-                        {
-                            hostReceiptId = receipt.GetString();
-                        }
-                    }
-                    if (payload.TryGetProperty("grant_ids", out var grants)
-                        && grants.ValueKind == System.Text.Json.JsonValueKind.Array)
-                    {
-                        foreach (var grant in grants.EnumerateArray())
-                        {
-                            if (grant.ValueKind == System.Text.Json.JsonValueKind.String
-                                && grant.GetString() is { Length: > 0 } grantId)
-                            {
-                                grantIds.Add(grantId);
-                            }
+                            grantIds.Add(grantId);
                         }
                     }
                 }
-                if (authorizationJson is null || requestDigest is null || hostReceiptId is null)
+
+                var registryAuthorizations = new List<Dictionary<string, object?>>();
+                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && payload.TryGetProperty("authorization", out var incoming)
+                    && incoming.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && incoming.TryGetProperty("authorizations", out var incomingAuthorizations)
+                    && incomingAuthorizations.ValueKind == System.Text.Json.JsonValueKind.Array)
+                {
+                    foreach (var item in incomingAuthorizations.EnumerateArray())
+                    {
+                        var registryId = StringField(item, "registry_id");
+                        var identityDigest = StringField(item, "identity_digest");
+                        var generation = item.ValueKind == System.Text.Json.JsonValueKind.Object
+                            && item.TryGetProperty("generation", out var generationValue)
+                            && generationValue.ValueKind == System.Text.Json.JsonValueKind.Number
+                                ? generationValue.GetInt32() : 0;
+                        if (string.IsNullOrWhiteSpace(registryId)
+                            || string.IsNullOrWhiteSpace(identityDigest) || generation < 1)
+                        {
+                            throw new CoreOperationException(
+                                "INVALID_REQUEST", "validation", false,
+                                "apply request carries a malformed authorizations entry", null);
+                        }
+                        registryAuthorizations.Add(new Dictionary<string, object?>
+                        {
+                            ["registry_id"] = registryId,
+                            ["generation"] = generation,
+                            ["identity_digest"] = identityDigest,
+                        });
+                    }
+                }
+                if (registryAuthorizations.Count == 0)
                 {
                     throw new CoreOperationException(
                         "INVALID_REQUEST", "validation", false,
-                        "apply request lacks a host authorization", null);
+                        "apply request carries no registry authorizations", null);
+                }
+                var operationId = "op-" + Convert.ToHexString(
+                    System.Security.Cryptography.RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
+                var requestDigest = CanonicalJson.Sha256Hex(new Dictionary<string, object?>
+                {
+                    ["operation_id"] = operationId,
+                    ["plan_id"] = planId,
+                    ["plan_digest"] = planDigest,
+                    ["kind"] = kind,
+                });
+                registryAuthorizations.Sort((left, right) => string.CompareOrdinal(
+                    (string)left["registry_id"]!, (string)right["registry_id"]!));
+                var authorizationDigest = CanonicalJson.Sha256Hex(registryAuthorizations);
+                var hostReceiptId = "hr-" + Convert.ToHexString(
+                    System.Security.Cryptography.RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
+                var authorizedAt = DateTimeOffset.UtcNow.ToString(
+                    "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", System.Globalization.CultureInfo.InvariantCulture);
+                var authorization = new Dictionary<string, object?>
+                {
+                    ["operation_id"] = operationId,
+                    ["request_digest"] = requestDigest,
+                    ["authorization_digest"] = authorizationDigest,
+                    ["authorizations"] = registryAuthorizations,
+                    ["host_receipt_id"] = hostReceiptId,
+                    ["authorized_at"] = authorizedAt,
+                };
+                var authorizationJson = CanonicalJson.Text(authorization);
+                var known = registry.List().ToDictionary(item => item.RegistryId, item => item);
+                foreach (var item in registryAuthorizations)
+                {
+                    var registryId = (string)item["registry_id"]!;
+                    if (!known.TryGetValue(registryId, out var knownRegistry))
+                    {
+                        throw new CoreOperationException(
+                            "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
+                            "authorization references an unknown source registry", null);
+                    }
+                    registry.Authorize(registryId, (int)item["generation"]!, new[] { knownRegistry.Locator });
                 }
                 var entry = operations.Begin(
                     planId, planDigest, kind, requestDigest, operationId, grantIds);
                 operations.Authorize(entry.OperationId, authorizationJson, hostReceiptId);
-                var response = await call(token).ConfigureAwait(false);
+                var injected = new Dictionary<string, object?>();
+                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object)
+                {
+                    foreach (var property in payload.EnumerateObject())
+                    {
+                        if (property.Name is "operation_id" or "authorization")
+                        {
+                            continue;
+                        }
+                        injected[property.Name] = System.Text.Json.JsonSerializer.Deserialize<object?>(property.Value.GetRawText());
+                    }
+                }
+                injected["operation_id"] = operationId;
+                injected["authorization"] = authorization;
+                var finalPayload = System.Text.Json.JsonSerializer.SerializeToElement(injected);
+
+                var response = await call(finalPayload, token).ConfigureAwait(false);
                 var result = response.Result ?? default;
-                // The Core receipt digest is read from the operation row (the
-                // dispatch result carries the state only).
                 var lookup = await CoreService.SendAsync(
                         "source_get_operation", 3,
                         writer =>
@@ -1098,7 +1158,8 @@ public sealed class HostRuntime : IAsyncDisposable
                     CoreService, _options.DataRoot, _options.LogDirectory, _options.RequestTimeout);
                 try
                 {
-                    Sources = new SourceReadCoordinator(CoreService, new SourceAccessRegistry(_options.DataRoot),
+                    Registry = new SourceAccessRegistry(_options.DataRoot);
+                Sources = new SourceReadCoordinator(CoreService, Registry,
                         () => _options.ReferencedImportEnabled);
                     Operations = new SourceOperationCoordinator(
                         CoreService, _options.DataRoot, () => _options.ReferencedImportEnabled);

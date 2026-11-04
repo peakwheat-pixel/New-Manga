@@ -45,7 +45,7 @@ public sealed class HostCommandDispatcher
     private readonly Func<
         string,
         JsonElement,
-        Func<CancellationToken, Task<CoreResponse>>,
+        Func<JsonElement, CancellationToken, Task<CoreResponse>>,
         CancellationToken,
         Task<(string OperationId, JsonElement Result)>>? _journal;
 
@@ -62,7 +62,7 @@ public sealed class HostCommandDispatcher
         CoreServiceClient? core = null,
         HostBridgeClient? bridge = null,
         Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null,
-        Func<string, JsonElement, Func<CancellationToken, Task<CoreResponse>>, CancellationToken,
+        Func<string, JsonElement, Func<JsonElement, CancellationToken, Task<CoreResponse>>, CancellationToken,
             Task<(string OperationId, JsonElement Result)>>? journal = null,
         Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null,
         Func<string, CancellationToken, Task>? capabilityGate = null)
@@ -187,17 +187,18 @@ public sealed class HostCommandDispatcher
         var journal = _journal;
         if (journal is not null && HostCommandRegistry.IsSourceSyncWrite(descriptor.Name))
         {
-            // The journal delegate owns the ordering; the Core call is handed
-            // to it lazily so a journal-only unit test needs no live sidecar.
+            // The journal delegate owns the ordering *and* the final payload:
+            // the Host injects the operation_id/host authorization it minted
+            // (C-17 §5.2), then hands the payload back for the Core call.
             var coreForJournal = _core;
-            Func<CancellationToken, Task<CoreResponse>> call = coreForJournal is null
-                ? _ => throw new SidecarException(
+            Func<JsonElement, CancellationToken, Task<CoreResponse>> call = coreForJournal is null
+                ? (_, _) => throw new SidecarException(
                     SidecarErrorCode.ProcessExited,
                     SidecarSpec.CoreServiceName,
                     $"{descriptor.Name} requires a running core_service")
-                : ct => coreForJournal.SendHostControlAsync(
+                : (finalPayload, ct) => coreForJournal.SendHostControlAsync(
                     descriptor.CoreCommand!,
-                    writer => WriteCorePayload(descriptor.Name, args, writer),
+                    writer => finalPayload.WriteTo(writer),
                     TimeSpan.FromSeconds(120),
                     coreForJournal.HostSession,
                     ct);

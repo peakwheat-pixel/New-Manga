@@ -3,7 +3,7 @@ id: FEA-11-HOST-AUTH-1
 title: FEA-11 Host durable authorization 自签与编排（C-17 §5.2 续）
 kind: implementation
 governance_version: 3
-status: proposed
+status: in_progress
 approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；待 scope review
 suggested_owner: codex
 owner: null
@@ -43,7 +43,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core `application.sources.model` 冻结公式逐字节一致（跨实现测试向量）。 <<PARTIAL: 待实施>>
-- [ ] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest。 <<PARTIAL: 待实施>>
-- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 待实施>>
+- [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 4/4）。 <<MET>>
+- [ ] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest。 <<PARTIAL: 已实现（canonical + 自签 + 注入），Host 级集成测试待补>>
+- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序已实现（registry.Authorize → Begin → Authorize）；崩溃点/集成测试待补>>
 - [ ] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<PARTIAL: 待实施>>
