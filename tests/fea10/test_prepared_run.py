@@ -312,3 +312,59 @@ def test_default_local_ocr_binding_is_typed_replayable():
         assert created and run.provider_binding_snapshot['ocr']['execution']['model'] == 'manga-ocr-v1'
     finally:
         core.conn.close()
+
+
+def test_nested_auth_material_in_defaults_and_glossary_values_is_rejected():
+    # FR-01: arbitrary nested authentication keys are rejected, including defaults/glossary values.
+    core, _, region = _new_workspace(workspace('fr01-nested'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+            core.pipeline.prepare_run('ocr_region', scope, overrides={
+                'settings': {'translate': {'glossary': {'nested': {'headers': {'authorization': 'x'}}}}}})
+        # A mapping glossary with a term literally named "token" stays legal.
+        preview = core.pipeline.prepare_run('ocr_region', scope, overrides={
+            'settings': {'translate': {'glossary': {'token': '令牌', 'normal': 'ordinary'}}}})
+        assert preview['settingsSnapshot']['translate']['glossary']['token'] == '令牌'
+    finally:
+        core.conn.close()
+
+
+def test_local_primary_freezes_its_fallback_chain():
+    # FR-03: a local typed primary freezes its declared fallback chain or fails closed.
+    from infrastructure.providers.registry import ProviderDescriptor
+
+    class LocalOcr:
+        provider_id = 'manga-ocr'
+        provider_type = 'local-manga-ocr'
+        model = 'manga-ocr-v1'
+
+        def recognize(self, request):
+            raise AssertionError('not reached')
+
+    core, _, region = _new_workspace(workspace('fr03-local-fallback'))
+    try:
+        core.providers.registry.register(
+            ProviderDescriptor('manga-ocr', 'local-manga-ocr', frozenset({'ocr'})), LocalOcr)
+        core.providers.registry.register(
+            ProviderDescriptor('manga-ocr-backup', 'docTR-blob', frozenset({'ocr'})), LocalOcr)
+        core.pipeline_defaults.save_provider_binding(
+            'ocr', {'provider_id': 'manga-ocr', 'fallback': ['manga-ocr-backup']})
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+            core.pipeline.prepare_run('ocr_region', scope)
+    finally:
+        core.conn.close()
+
+
+def test_illegal_execution_section_shape_is_rejected():
+    # FR-07: an execution section with a non-mapping shape fails with a typed incomplete error.
+    core, _, region = _new_workspace(workspace('fr07-shape'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+            core.pipeline.prepare_run(
+                'ocr_region', scope, overrides={'settings': {'typeset': ['not', 'a', 'mapping']}})
+    finally:
+        core.conn.close()
+

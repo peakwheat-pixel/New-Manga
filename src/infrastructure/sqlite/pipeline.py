@@ -1511,12 +1511,18 @@ _REDACTION_ALLOWED_KEYS = frozenset({"context_token_budget"})
 
 def _redact(value: Any) -> Any:
     if isinstance(value, Mapping):
-        return {
-            str(key): _redact(item)
-            for key, item in value.items()
-            if str(key) in _REDACTION_ALLOWED_KEYS
-            or not any(part in str(key).lower() for part in _SENSITIVE_PARTS)
-        }
+        cleaned: dict[str, Any] = {}
+        for key, item in value.items():
+            lowered = str(key).lower()
+            if lowered == "glossary" and isinstance(item, Mapping):
+                # FR-06: glossary term names are user words (e.g. "token"); keep them, redact values.
+                cleaned[str(key)] = {str(term): _redact(term_value) for term, term_value in item.items()}
+                continue
+            if (str(key) not in _REDACTION_ALLOWED_KEYS
+                    and any(part in lowered for part in _SENSITIVE_PARTS)):
+                continue
+            cleaned[str(key)] = _redact(item)
+        return cleaned
     if isinstance(value, (tuple, list)):
         return [_redact(item) for item in value]
     return value

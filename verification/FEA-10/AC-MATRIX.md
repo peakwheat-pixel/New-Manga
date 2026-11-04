@@ -82,3 +82,13 @@
 - RR-07（P2，已修复）：tracked `ipc/real-ipc.txt` 稳定化为历史说明，无随机 DataRoot。
 - RR-08（P2）：文档计数/测试名/R-005 口径已按本轮实跑校正；build 日志已保存（`logs/dsh-rework2-dotnet.log`）。
 
+## DSH rework r3（2026-11-04，按 FEA-10-final-review-r1 处置）
+
+- 最终 Review changes_requested（FR-01/FR-02/FR-03 P1；FR-04…FR-08 P2）。
+- FR-01：认证扫描覆盖任意嵌套键（mapping glossary 仅豁免词条名、值继续扫描）；settings 快照整体扫描。回归 `test_nested_auth_material_in_defaults_and_glossary_values_is_rejected`。
+- FR-02：EV commit 指向包含 AC-MATRIX 字节的提交；manifest 记录 `excluded_docs`。
+- FR-03：mock/local/remote typed primary 统一冻结 fallback；未 typed fallback fail-closed。回归 `test_local_primary_freezes_its_fallback_chain`。
+- FR-04：Prepare 拒绝 null `provider_bindings`；FR-05：accept 后 settings 重新 freeze；FR-06：mapping glossary 词条名保留；FR-07：执行段非法形状报错。回归 `test_illegal_execution_section_shape_is_rejected`。
+- FR-08：文档测试名/日志路径校正。
+- 门禁（实跑，`logs/dsh-rework3-*.log`）：pytest 1055 passed、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17、FEA-09 零 diff。
+

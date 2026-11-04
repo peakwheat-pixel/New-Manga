@@ -4557,8 +4557,8 @@ class CoreServiceServer:
                         raise PipelineError("INVALID_REQUEST", "PrepareRun fields are invalid")
                     # RR-06: the same binding-shape gate StartRun applies; never a Core AttributeError.
                     prepared_overrides = payload.get("overrides", {})
-                    prepared_bindings = prepared_overrides.get("provider_bindings")
-                    if prepared_bindings is not None and not isinstance(prepared_bindings, dict):
+                    if ("provider_bindings" in prepared_overrides
+                            and not isinstance(prepared_overrides.get("provider_bindings"), dict)):
                         raise PipelineError("INVALID_REQUEST", "provider_bindings must be an object")
                     # R-004: Prepare carries the same override semantics as StartRun (wire 2.7 only).
                     if "provider_profiles" in prepared_overrides:

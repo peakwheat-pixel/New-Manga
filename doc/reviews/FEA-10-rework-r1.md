@@ -38,3 +38,18 @@
 
 - 本记录由实现方（DSH）撰写，**不是独立 Review**；`a9293458` 的 Review 结论不适用于 rework head。
 - 需派全新上下文 Review 审查 rework head（Codex 19:50 后优先；否则 ZCode/独立子 agent）；approved 后才能 closeout。
+
+## DSH rework r3（2026-11-04，按 FEA-10-final-review-r1 处置）
+
+- 最终 Review（Codex 全新上下文，reviewed_head `5be507e2`）changes_requested：P0=0、P1=3（FR-01/FR-02/FR-03）、P2=5。报告正文见 `doc/reviews/FEA-10-final-review-r1.md`（Codex 只读会话未能落盘，DSH 据其最终回复归档）。
+- FR-01（已修复）：认证材料扫描改为「任意位置嵌套键拒绝」，仅 mapping glossary 的**词条名**豁免、词条值继续扫描；settings 快照整体扫描（含 defaults）；`glossary.nested.headers.authorization` 类走私与 `typeset.font_family.headers.authorization` 均拒绝。
+- FR-02（已修复）：Canonical Evidence 的 commit 回填为包含 AC-MATRIX 字节的提交（见 Task 卡 EV 行）；DELIVERY-MANIFEST 记录 `excluded_docs` 与生成时 head。
+- FR-03（已修复）：新增 `_freeze_fallbacks` helper，mock/local/remote 三类 typed primary 统一冻结 fallback 链；未注册/未 typed fallback 统一 `RUN_SNAPSHOT_INCOMPLETE`。
+- FR-04（已修复）：Core Prepare 拒绝 `provider_bindings=null`（存在即须为对象）。
+- FR-05（已修复）：accept 后 settings 快照重新 `freeze_snapshot`，不可变。
+- FR-06（已修复）：`_redact` 保留 mapping glossary 的词条名（`token` 词条不再被删），值仍 redact。
+- FR-07（已修复）：执行段非 Mapping 形状保留并触发 `RUN_SNAPSHOT_INCOMPLETE`（不再静默丢弃）。
+- FR-08（已修复）：本文档的 C# 测试名改为实际 `RunControllerNullFakeTests.PreparedRunPayload_CarriesTheHostDefaultBindings`；日志指向实际入库的 `verification/FEA-10/logs/dsh-rework2-*.log` / `dsh-rework3-*.log`。
+- 回归：`test_nested_auth_material_in_defaults_and_glossary_values_is_rejected`、`test_local_primary_freezes_its_fallback_chain`、`test_illegal_execution_section_shape_is_rejected`、`test_default_local_ocr_binding_is_typed_replayable` 等。
+- 门禁（DSH 实跑，`logs/dsh-rework3-*.log`）：pytest 主套件 **1055 passed**、providers 559/4、build 0/0、.NET **1345/0/75**、真实 IPC 1、check PASS（4 warnings）、pins 17/17、FEA-09 零 diff、范围 0 域外。
+

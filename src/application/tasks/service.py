@@ -19,6 +19,7 @@ from application.tasks.store import (
     TargetCatalog,
     filter_prepared_overrides,
     filter_prepared_settings,
+    freeze_snapshot,
     prepared_quartet,
     snapshot_digest,
     snapshot_value,
@@ -473,8 +474,9 @@ class PipelineService:
                     or prepared["snapshotDigest"] != prepared["preparedDigest"]):
                 raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun digest differs")
             run = self.create_run(command, scope, overrides=overrides, _persist=False)
-            # RR-01: the accepted Run persists exactly the prepared (filtered) settings surface.
-            run.settings_snapshot = filter_prepared_settings(prepared["settingsSnapshot"])
+            # RR-01/FR-05: the accepted Run persists exactly the prepared (filtered) surface,
+            # re-frozen so the returned Run cannot mutate the persisted snapshot afterwards.
+            run.settings_snapshot = freeze_snapshot(filter_prepared_settings(prepared["settingsSnapshot"]))
             validate_prepared_snapshots(run)
 
             def validate() -> None:
@@ -482,7 +484,8 @@ class PipelineService:
                 current = self.create_run(command, scope, overrides=overrides, _persist=False)
                 # Current configuration is compared on the same filtered surface, so a
                 # pre-accept settings change still fails stale instead of silently narrowing.
-                current.settings_snapshot = filter_prepared_settings(current.settings_snapshot)
+                current.settings_snapshot = freeze_snapshot(
+                    filter_prepared_settings(current.settings_snapshot))
                 if snapshot_digest(prepared_quartet(current)) != prepared["preparedDigest"]:
                     raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun no longer matches current state")
                 if prepared_quartet(current) != prepared_quartet(run):

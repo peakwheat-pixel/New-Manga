@@ -139,3 +139,10 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 - 未修复（非阻断债务，登记 AC-MATRIX rework 节）：R-005（版本漂移覆盖边界）、R-006（StartRun 不完整 typed 配置提前失败）、R-007（AC6 is_terminal 无生产消费者）、R-011（Host 候选缓存）、R-013（crash_restart 断言边界）、R-015（source lease 错误码）、R-016（preview 吞异常）。
 - 门禁：pytest 1051、providers 559/4、build 0/0、.NET 全量/真实 IPC、check PASS（4 warnings）、pins 17/17（日志 `workspace/FEA-10/logs/dsh/dsh-rework-*`）。
 - 新 head 的独立 Review 未做；在此之前不得 closeout。
+
+## DSH rework r3（2026-11-04，按最终 Review FR-01…FR-08 处置）
+
+- FR-01 认证材料任意嵌套扫描（mapping glossary 词条名豁免、值扫描）；FR-03 统一冻结 typed primary fallback；FR-04/05/06/07 修复；FR-02/FR-08 证据与文档修正。
+- 门禁：pytest 1055、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17（日志 `verification/FEA-10/logs/dsh-rework3-*.log`）。
+- 新 head 独立 Review 未做；不得 closeout。
+

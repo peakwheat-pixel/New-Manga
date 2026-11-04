@@ -7,15 +7,14 @@ src/application/tasks/service.py
 src/application/tasks/store.py
 src/bootstrap/core_service.py
 src/infrastructure/providers/registry.py
+src/infrastructure/sqlite/pipeline.py
 tests/fea10/test_prepared_run.py
 verification/FEA-10/AC-MATRIX.md
-verification/FEA-10/ipc/real-ipc.txt
-verification/FEA-10/record_delivery.py
 COMMAND=git ls-files --others --exclude-standard
-doc/reviews/FEA-10-rework-review-r1.md
-verification/FEA-10/logs/dsh-rework2-dotnet.log
-verification/FEA-10/logs/dsh-rework2-providers.log
-verification/FEA-10/logs/dsh-rework2-pytest.log
+doc/reviews/FEA-10-final-review-r1.md
+verification/FEA-10/logs/dsh-rework3-dotnet.log
+verification/FEA-10/logs/dsh-rework3-providers.log
+verification/FEA-10/logs/dsh-rework3-pytest.log
 COMMAND=compare all changed/untracked paths against doc/tasks/FEA-10.md allowed_paths
 OUT_OF_SCOPE=[]
 FEA09_DIFF=EMPTY

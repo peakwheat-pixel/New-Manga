@@ -97,7 +97,12 @@ def filter_prepared_settings(settings: Mapping[str, Any]) -> dict[str, Any]:
     filtered: dict[str, Any] = {}
     for section, values in settings.items():
         fields = _EXECUTION_SETTINGS_FIELDS.get(section)
-        if fields is None or not isinstance(values, Mapping):
+        if fields is None:
+            continue  # non-execution settings pages never enter a prepared Run
+        if not isinstance(values, Mapping):
+            # FR-07: keep the illegal shape so validate_prepared_snapshots raises a typed error
+            # instead of silently dropping the whole execution section.
+            filtered[section] = values
             continue
         # Execution sections keep their keys so validate_prepared_snapshots can fail closed on an
         # unknown execution field; only non-execution sections are dropped outright (RR-01).
@@ -118,6 +123,7 @@ def filter_prepared_overrides(overrides: Mapping[str, Any] | None) -> dict[str, 
 
 def validate_prepared_snapshots(run: PipelineRun) -> None:
     """Explicit replay fields for the new prepared path; unknown execution fields fail closed."""
+    _scan_auth_material(run.settings_snapshot)
     for section, values in run.settings_snapshot.items():
         if not isinstance(values, Mapping):
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings snapshot is not replay-safe")
@@ -235,17 +241,21 @@ _AUTH_MATERIAL_KEYS = frozenset({
 })
 
 
-_AUTH_SKIP_SUBTREES = frozenset({"glossary"})
-
-
 def _scan_auth_material(value: Any) -> None:
+    """FR-01: reject authentication keys anywhere, including nested defaults.
+
+    Only a *mapping glossary's term names* are exempt (a user term may literally be ``token``);
+    the term values are still scanned, so ``glossary`` cannot smuggle a nested credential object.
+    """
     if isinstance(value, Mapping):
         for key, item in value.items():
             lowered = str(key).lower()
+            if lowered == "glossary" and isinstance(item, Mapping):
+                for term_value in item.values():
+                    _scan_auth_material(term_value)
+                continue
             if lowered in _AUTH_MATERIAL_KEYS:
                 raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-            if lowered in _AUTH_SKIP_SUBTREES:
-                continue  # user glossaries legitimately contain words like "token"
             _scan_auth_material(item)
     elif isinstance(value, (tuple, list)):
         for item in value:

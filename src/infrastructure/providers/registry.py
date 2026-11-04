@@ -328,6 +328,28 @@ class ProviderRegistry:
     _LOCAL_TYPED_PROVIDER_TYPES = frozenset({"local-manga-ocr", "local-manga-ocr-onnx", "local-paddleocr"})
 
 
+    def _freeze_fallbacks(self, step, binding, snapshots):
+        """FR-03: every typed primary (mock/local/remote) freezes its declared fallback chain."""
+        if not isinstance(binding, Mapping):
+            return None
+        from infrastructure.providers.fallback import chain_from_binding
+        from application.tasks.store import FrozenRunSnapshots, snapshot_value
+        chain = chain_from_binding(binding)
+        if chain is None or not chain.explicit_fallbacks:
+            return None
+        from domain.tasks.models import PipelineError as _PipelineError
+        frozen_fallbacks = {}
+        for fallback_id in chain.explicit_fallbacks:
+            frozen = snapshot_value(self.freeze_run_snapshots(FrozenRunSnapshots(
+                snapshots.settings, {step: fallback_id}, snapshots.constraint_snapshot_ref,
+                snapshots.context_policy)).provider_bindings[step])
+            if not isinstance(frozen, Mapping) or "execution" not in frozen:
+                raise _PipelineError(
+                    "RUN_SNAPSHOT_INCOMPLETE",
+                    "fallback provider has no complete replay configuration")
+            frozen_fallbacks[fallback_id] = frozen
+        return frozen_fallbacks
+
     def freeze_run_snapshots(self, snapshots):
         """Capture only the typed provider execution fields; never instance __dict__."""
         from application.tasks.store import FrozenRunSnapshots, snapshot_value, snapshot_digest
@@ -370,6 +392,9 @@ class ProviderRegistry:
                     value = {"provider_id": provider_id} if isinstance(binding, str) else {
                         **dict(binding), "provider_id": provider_id}
                     value.update(execution=execution, execution_digest=snapshot_digest(execution))
+                    frozen = self._freeze_fallbacks(step, binding, snapshots)
+                    if frozen is not None:
+                        value["frozen_fallbacks"] = frozen
                     bindings[step] = value
                 else:
                     # R-004/R-005: a registered pure-local inference provider (manga-ocr / paddle /
@@ -390,6 +415,9 @@ class ProviderRegistry:
                         value = {"provider_id": provider_id} if isinstance(binding, str) else {
                             **dict(binding), "provider_id": provider_id}
                         value.update(execution=execution, execution_digest=snapshot_digest(execution))
+                        frozen = self._freeze_fallbacks(step, binding, snapshots)
+                        if frozen is not None:
+                            value["frozen_fallbacks"] = frozen
                         bindings[step] = value
                 continue
             from infrastructure.providers.openai_client import OpenAiCompatibleConfig, default_network_profile
@@ -418,24 +446,9 @@ class ProviderRegistry:
                 **dict(binding), "provider_id": provider_id}
             value["execution"] = execution
             value["execution_digest"] = snapshot_digest(execution)
-            if isinstance(binding, Mapping):
-                from infrastructure.providers.fallback import chain_from_binding
-                chain = chain_from_binding(binding)
-                if chain is not None and chain.explicit_fallbacks:
-                    from domain.tasks.models import PipelineError as _PipelineError
-                    frozen_fallbacks = {}
-                    for fallback_id in chain.explicit_fallbacks:
-                        frozen = snapshot_value(self.freeze_run_snapshots(FrozenRunSnapshots(
-                            snapshots.settings, {step: fallback_id}, snapshots.constraint_snapshot_ref,
-                            snapshots.context_policy)).provider_bindings[step])
-                        if not isinstance(frozen, Mapping) or "execution" not in frozen:
-                            # R-003: an unregistered/untyped fallback must fail closed with the
-                            # frozen error code, never leak a TypeError from the validator.
-                            raise _PipelineError(
-                                "RUN_SNAPSHOT_INCOMPLETE",
-                                "fallback provider has no complete replay configuration")
-                        frozen_fallbacks[fallback_id] = frozen
-                    value["frozen_fallbacks"] = frozen_fallbacks
+            frozen = self._freeze_fallbacks(step, binding, snapshots)
+            if frozen is not None:
+                value["frozen_fallbacks"] = frozen
             bindings[step] = value
         return FrozenRunSnapshots(snapshots.settings, freeze_snapshot(bindings),
                                   snapshots.constraint_snapshot_ref, snapshots.context_policy)
