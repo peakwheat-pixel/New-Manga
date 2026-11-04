@@ -146,3 +146,9 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 - 门禁：pytest 1055、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17（日志 `verification/FEA-10/logs/dsh-rework3-*.log`）。
 - 新 head 独立 Review 未做；不得 closeout。
 
+## DSH rework r5（2026-11-04，按 FEA-10-final-review-r2 处置）
+
+- F2-01 glossary 路径绑定豁免（仅 translate.glossary 词条名一层，值与其他路径不豁免）；F2-02 EV commit 回填；F2-03 完整门禁日志；F2-04 导航更正。
+- 门禁：fea10 53、主套件 1056、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17（`verification/FEA-10/logs/dsh-rework4-*.log`）。
+- 新 head 独立 Review 未做；不得 closeout。
+

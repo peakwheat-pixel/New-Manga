@@ -3,18 +3,16 @@ COMMAND=git diff --name-only
 doc/handoffs/FEA-10-handoff.md
 doc/reviews/FEA-10-rework-r1.md
 doc/tasks/FEA-10.md
-src/application/tasks/service.py
 src/application/tasks/store.py
-src/bootstrap/core_service.py
-src/infrastructure/providers/registry.py
 src/infrastructure/sqlite/pipeline.py
 tests/fea10/test_prepared_run.py
 verification/FEA-10/AC-MATRIX.md
 COMMAND=git ls-files --others --exclude-standard
-doc/reviews/FEA-10-final-review-r1.md
-verification/FEA-10/logs/dsh-rework3-dotnet.log
-verification/FEA-10/logs/dsh-rework3-providers.log
-verification/FEA-10/logs/dsh-rework3-pytest.log
+doc/reviews/FEA-10-final-review-r2.md
+verification/FEA-10/logs/dsh-rework4-dotnet.log
+verification/FEA-10/logs/dsh-rework4-providers.log
+verification/FEA-10/logs/dsh-rework4-pytest-main.log
+verification/FEA-10/logs/dsh-rework4-pytest.log
 COMMAND=compare all changed/untracked paths against doc/tasks/FEA-10.md allowed_paths
 OUT_OF_SCOPE=[]
 FEA09_DIFF=EMPTY

@@ -1,67 +1,56 @@
 {
-  "head": "2b0cbfb1e21abf5f194f4b3d314f8cbc02cc9339",
+  "head": "e23b01a919b4bc52a7e619ed1892bf2a5c3b50db",
   "branch": "main",
   "excluded_docs": [
     "doc/handoffs/FEA-10-handoff.md",
-    "doc/reviews/FEA-10-final-review-r1.md",
+    "doc/reviews/FEA-10-final-review-r2.md",
     "doc/reviews/FEA-10-rework-r1.md",
     "doc/tasks/FEA-10.md"
   ],
-  "created_at": "2026-11-04T12:10:18.931120+00:00",
+  "created_at": "2026-11-04T12:24:03.469835+00:00",
   "uncommitted": true,
   "self_hash_excluded": true,
   "files": [
     {
-      "path": "src/application/tasks/service.py",
-      "bytes": 77768,
-      "sha256": "5de6673a79b9e329e702162299a05fad57269690f65967278adeef018d7c1d75"
-    },
-    {
       "path": "src/application/tasks/store.py",
-      "bytes": 32507,
-      "sha256": "d025ea35d8705ed580049e5e025e15ad37d4aafb8d43bd6ea80cfed79d6e4ebb"
-    },
-    {
-      "path": "src/bootstrap/core_service.py",
-      "bytes": 310881,
-      "sha256": "8682350f63ff12eccf54130446517ca95ffb2386ce7c9f3a6fd3cd5486b74f7f"
-    },
-    {
-      "path": "src/infrastructure/providers/registry.py",
-      "bytes": 28839,
-      "sha256": "6faecb70a03ca536d9afefb8b4d5dd2dd19cb492233e8bb1340c7036ef8d0e7d"
+      "bytes": 32768,
+      "sha256": "dd3c7fcae0eea7eb0232de1901bb9068aed3b4cc66ae783d0d0db5f8565ec160"
     },
     {
       "path": "src/infrastructure/sqlite/pipeline.py",
-      "bytes": 79200,
-      "sha256": "5bc65de69d8ae0c1826387db343514158d920b61c3be02d046efdf995e689507"
+      "bytes": 79425,
+      "sha256": "e465a1a9a91c286472b198cc02e6022378f34ab9f08184a67124317cbc7966f2"
     },
     {
       "path": "tests/fea10/test_prepared_run.py",
-      "bytes": 19268,
-      "sha256": "39fd8354f0a39ac66a0ae9c19174150078a7d13261ac36b6dcc573cc2e4bd9f7"
+      "bytes": 20362,
+      "sha256": "6bf44d994e1f1345244c303a62dd3e3ea73bcd637234c5569d45418006fd6d4b"
     },
     {
       "path": "verification/FEA-10/AC-MATRIX.md",
-      "bytes": 13510,
-      "sha256": "2d26422419239b59fab092239416494bbe1f5e38e588247e7560cb728dbe91d7"
+      "bytes": 14229,
+      "sha256": "0eb384c52893d35f9bdc4637db2a9065262448e4a2bd5af1b81496c324fd59ba"
     },
     {
-      "path": "verification/FEA-10/logs/dsh-rework3-dotnet.log",
-      "bytes": 25150,
-      "sha256": "e04bab03b355c2451b9e8b6ee165e80e4bc5b1ed12aa6dba5a2bb14705f50864"
+      "path": "verification/FEA-10/logs/dsh-rework4-dotnet.log",
+      "bytes": 25687,
+      "sha256": "ae725d309bb0cb457b477e2c2d151c9fba4f88c185ab3fdc357cbecb12fa73bf"
     },
     {
-      "path": "verification/FEA-10/logs/dsh-rework3-providers.log",
-      "bytes": 715,
-      "sha256": "28ff71ef22110b680b57e542e7acc5123e00c50c6a4a6bd0001729d9e6e0e9a0"
+      "path": "verification/FEA-10/logs/dsh-rework4-providers.log",
+      "bytes": 979,
+      "sha256": "2e9450881b97d764b2e816cc2c9bd71cf39eef1ded62cd3bbdca6801f1568ad7"
     },
     {
-      "path": "verification/FEA-10/logs/dsh-rework3-pytest.log",
-      "bytes": 7590,
-      "sha256": "1404474408d9415ff33c55f0d969a3402e9e558945726176285ba9fa57fd8692"
+      "path": "verification/FEA-10/logs/dsh-rework4-pytest-main.log",
+      "bytes": 7786,
+      "sha256": "50ae3b43a1e0d9907ed123386d041540a09cfb2c9e8f33e0341521dedf1f67a9"
+    },
+    {
+      "path": "verification/FEA-10/logs/dsh-rework4-pytest.log",
+      "bytes": 398,
+      "sha256": "800f709ddf79a6a4f72f2954737745876626c2b7d2cd4ec8a1f55bed2fc4b664"
     }
   ],
-  "out_of_scope": [],
-  "generated_after_head": "2b0cbfb1e21abf5f194f4b3d314f8cbc02cc9339"
+  "out_of_scope": []
 }

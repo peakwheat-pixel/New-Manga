@@ -368,3 +368,22 @@ def test_illegal_execution_section_shape_is_rejected():
     finally:
         core.conn.close()
 
+
+def test_renested_or_misplaced_glossary_does_not_restore_the_exemption():
+    # F2-01: the glossary term-name exemption is bound to translate.glossary only.
+    core, _, region = _new_workspace(workspace('f201-renested'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        for settings in (
+            {'typeset': {'font_family': {'glossary': {'authorization': 'SENTINEL'}}}},
+            {'translate': {'glossary': {'outer': {'glossary': {'authorization': 'SENTINEL'}}}}},
+        ):
+            with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+                core.pipeline.prepare_run('ocr_region', scope, overrides={'settings': settings})
+        # The legitimate translate.glossary term names still survive.
+        preview = core.pipeline.prepare_run('ocr_region', scope, overrides={
+            'settings': {'translate': {'glossary': {'token': '令牌', 'normal': 'ordinary'}}}})
+        assert preview['settingsSnapshot']['translate']['glossary']['token'] == '令牌'
+    finally:
+        core.conn.close()
+

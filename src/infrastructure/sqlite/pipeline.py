@@ -1509,22 +1509,24 @@ _SENSITIVE_PARTS = ("secret", "password", "token", "api_key", "apikey")
 _REDACTION_ALLOWED_KEYS = frozenset({"context_token_budget"})
 
 
-def _redact(value: Any) -> Any:
+def _redact(value: Any, parent: str | None = None) -> Any:
     if isinstance(value, Mapping):
         cleaned: dict[str, Any] = {}
         for key, item in value.items():
             lowered = str(key).lower()
-            if lowered == "glossary" and isinstance(item, Mapping):
-                # FR-06: glossary term names are user words (e.g. "token"); keep them, redact values.
-                cleaned[str(key)] = {str(term): _redact(term_value) for term, term_value in item.items()}
+            if lowered == "glossary" and parent == "translate" and isinstance(item, Mapping):
+                # F2-01/FR-06: only the real translate.glossary term names are user words
+                # (e.g. "token"); values are still redacted and no other path is exempt.
+                cleaned[str(key)] = {str(term): _redact(term_value, parent="glossary-value")
+                                     for term, term_value in item.items()}
                 continue
             if (str(key) not in _REDACTION_ALLOWED_KEYS
                     and any(part in lowered for part in _SENSITIVE_PARTS)):
                 continue
-            cleaned[str(key)] = _redact(item)
+            cleaned[str(key)] = _redact(item, parent=lowered)
         return cleaned
     if isinstance(value, (tuple, list)):
-        return [_redact(item) for item in value]
+        return [_redact(item, parent=parent) for item in value]
     return value
 
 

@@ -241,25 +241,27 @@ _AUTH_MATERIAL_KEYS = frozenset({
 })
 
 
-def _scan_auth_material(value: Any) -> None:
-    """FR-01: reject authentication keys anywhere, including nested defaults.
+def _scan_auth_material(value: Any, parent: str | None = None) -> None:
+    """F2-01: reject authentication keys anywhere, including nested defaults.
 
-    Only a *mapping glossary's term names* are exempt (a user term may literally be ``token``);
-    the term values are still scanned, so ``glossary`` cannot smuggle a nested credential object.
+    The glossary term-name exemption is bound to the real business path ``translate.glossary``
+    (one level, and never again inside a term value): a term may literally be named ``token``,
+    but ``typeset.font_family.glossary...`` or ``translate.glossary.outer.glossary...`` gain no
+    exemption and their authentication keys are rejected.
     """
     if isinstance(value, Mapping):
         for key, item in value.items():
             lowered = str(key).lower()
-            if lowered == "glossary" and isinstance(item, Mapping):
+            if lowered == "glossary" and parent == "translate" and isinstance(item, Mapping):
                 for term_value in item.values():
-                    _scan_auth_material(term_value)
+                    _scan_auth_material(term_value, parent="glossary-value")
                 continue
             if lowered in _AUTH_MATERIAL_KEYS:
                 raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-            _scan_auth_material(item)
+            _scan_auth_material(item, parent=lowered)
     elif isinstance(value, (tuple, list)):
         for item in value:
-            _scan_auth_material(item)
+            _scan_auth_material(item, parent=parent)
 
 
 def validate_prepared_overrides(value: Any) -> None:

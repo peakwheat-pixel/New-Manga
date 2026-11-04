@@ -53,3 +53,12 @@
 - 回归：`test_nested_auth_material_in_defaults_and_glossary_values_is_rejected`、`test_local_primary_freezes_its_fallback_chain`、`test_illegal_execution_section_shape_is_rejected`、`test_default_local_ocr_binding_is_typed_replayable` 等。
 - 门禁（DSH 实跑，`logs/dsh-rework3-*.log`）：pytest 主套件 **1055 passed**、providers 559/4、build 0/0、.NET **1345/0/75**、真实 IPC 1、check PASS（4 warnings）、pins 17/17、FEA-09 零 diff、范围 0 域外。
 
+## DSH rework r4（2026-11-04，按 FEA-10-final-review-r2 处置）
+
+- 第 4 轮 Review（Codex，reviewed_head `e23b01a9`）：changes_requested，P0=0/P1=2（F2-01/F2-02）+P2=2（F2-03/F2-04）。报告 `doc/reviews/FEA-10-final-review-r2.md`。
+- F2-01（已修复）：glossary 词条名豁免改为**路径绑定**——仅 `translate.glossary` 的 mapping 词条名豁免一层，词条值与任何其他路径（`typeset.font_family.glossary`、`translate.glossary.outer.glossary`）不再获得豁免；`_redact` 同步路径化。新增回归 `test_renested_or_misplaced_glossary_does_not_restore_the_exemption`。
+- F2-02（已修复）：Task 卡 Canonical Evidence 的 commit 精确回填为包含 AC-MATRIX `2d264224…` 的提交（见 EV 行）；manifest 继续记录 `head`/`excluded_docs`。
+- F2-03（已修复）：本轮门禁日志（`logs/dsh-rework4-*.log`）逐次记录完整 COMMAND、shell、TEMP/TMP 与 EXIT；历史不完整日志保留不改写。
+- F2-04（已修复）：旧导航的历史条目保留原字节，但在当前导航中标注其失效/被替代，指向实际用例 `RunControllerNullFakeTests.PreparedRunPayload_CarriesTheHostDefaultBindings` 与实际日志路径。
+- 门禁（实跑）：pytest tests/fea10 **53 passed**、主套件 **1056 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1，均 EXIT=0；check PASS、pins 17/17、FEA-09 零 diff、范围 0 域外。
+

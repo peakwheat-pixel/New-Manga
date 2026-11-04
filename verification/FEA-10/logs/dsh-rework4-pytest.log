@@ -1,0 +1,5 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10 -q
+shell=pwsh; TEMP=G:\CODEX\New Manga.workspace\FEA-10\fixtures\dsh-f201-gates; TMP=G:\CODEX\New Manga.workspace\FEA-10\fixtures\dsh-f201-gates; python=C:/Python314/python.exe; 2026-11-04T20:18:48.8799171+08:00
+.....................................................                    [100%]
+53 passed in 4.16s
+EXIT=0 (pytest tests/fea10)

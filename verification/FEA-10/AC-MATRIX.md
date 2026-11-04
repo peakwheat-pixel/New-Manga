@@ -92,3 +92,11 @@
 - FR-08：文档测试名/日志路径校正。
 - 门禁（实跑，`logs/dsh-rework3-*.log`）：pytest 1055 passed、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17、FEA-09 零 diff。
 
+## DSH rework r4（2026-11-04，按 FEA-10-final-review-r2 处置）
+
+- F2-01：glossary 词条名豁免路径绑定（仅 translate.glossary 一层；其他/再次嵌套不豁免），`_redact` 同步。回归 `test_renested_or_misplaced_glossary_does_not_restore_the_exemption`。
+- F2-02：EV commit 回填为包含本 AC-MATRIX 版本的提交。
+- F2-03：门禁日志（`logs/dsh-rework4-*.log`）含完整 COMMAND/shell/TEMP/TMP/EXIT。
+- F2-04：当前导航标注旧条目失效并指向实际用例与日志；历史原字节保留。
+- 门禁（实跑）：fea10 53 passed、主套件 1056 passed、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
+

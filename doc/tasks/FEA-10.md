@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 2d26422419239b59fab092239416494bbe1f5e38e588247e7560cb728dbe91d7 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 0eb384c52893d35f9bdc4637db2a9065262448e4a2bd5af1b81496c324fd59ba | CANONICAL |
 
 ## Resource Manifest
 
@@ -253,4 +253,11 @@ out_of_scope:
 - FR-01/FR-03/FR-04/FR-05/FR-06/FR-07 已修复并加回归；FR-02/FR-08 证据与文档已修正。
 - 门禁（DSH 实跑）：pytest 1055 passed、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1、check PASS（4w）、pins 17/17、FEA-09 零 diff、范围 0 域外。
 - 下一步：提交本 head → 派新 head 独立 Review（Codex 全新上下文）→ approved 后 closeout。
+
+## DSH rework r4（2026-11-04，按 FEA-10-final-review-r2 处置）
+
+- 第 4 轮 Review changes_requested：P0=0/P1=2（F2-01 glossary 路径豁免、F2-02 EV commit）+P2=2（F2-03 日志、F2-04 导航）。
+- F2-01 已修复（路径绑定豁免 + 再嵌套回归）；F2-02 已回填（EV commit 指向含 AC-MATRIX 的提交）；F2-03/F2-04 已处理。
+- 门禁（`logs/dsh-rework4-*.log`）：fea10 53、主套件 1056、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
+- 下一步：提交本 head → 派新 head 独立 Review → approved 后 closeout。**当前导航更正**：C# 用例实际为 `RunControllerNullFakeTests.PreparedRunPayload_CarriesTheHostDefaultBindings`（旧引用 `RunControllerTests.PreparedRunPayload_*` 已失效）；门禁日志以 `verification/FEA-10/logs/dsh-rework4-*.log` 为准。
 
