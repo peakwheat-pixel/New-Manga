@@ -29,10 +29,8 @@ allowed_paths:
   - src/application/tasks/service.py
   - src/application/tasks/store.py
   - src/application/tasks/projection.py
-  - src/application/tasks/__init__.py
   - src/infrastructure/pipeline/assembly.py
   - src/infrastructure/pipeline/executor.py
-  - src/infrastructure/pipeline/__init__.py
   - src/infrastructure/sqlite/pipeline.py
   - src/infrastructure/providers/handlers.py
   - src/infrastructure/providers/retry.py
@@ -59,13 +57,13 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/HostRuntimeIntegrationTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs
-DraftBufferTests.cs
-IntentCoordinatorTests.cs
-RequestExecutorTests.cs
-RunMonitorTests.cs
-TestSupport.cs
-RunControllerTests.cs
-RunIndexTests.cs
+  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/DraftBufferTests.cs
+  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/IntentCoordinatorTests.cs
+  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/RequestExecutorTests.cs
+  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/RunMonitorTests.cs
+  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/TestSupport.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/RunControllerTests.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/RunIndexTests.cs
   - tests/core/test_p13_run_runtime.py
   - tests/core/test_p13_lifecycle_discriminators.py
   - tests/core/test_fea00a_pipeline_seam.py
@@ -85,7 +83,6 @@ RunIndexTests.cs
   - tests/pipeline/test_retype_candidate_persistence.py
   - tests/pipeline/test_clean_availability.py
   - tests/pipeline/test_fea00a_source_boundaries.py
-  - tests/pipeline/conftest.py
   - src/ports/translation/protocol.py
   - src/infrastructure/providers/translation_openai.py
   - src/infrastructure/providers/openai_client.py
@@ -146,9 +143,9 @@ out_of_scope:
 | AC1/AC2 | `tests/fea10/test_prepared_run.py`（新） | `python -m pytest tests/fea10 -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/`（每例唯一 DataRoot/DB） | Prepare 零 DB/零执行；过期/不完整码；敏感面 | `verification/FEA-10/logs/` |
 | AC3/AC4 | `tests/fea10/test_snapshot_retry.py`（新）；复用 `tests/core/test_p13_run_runtime.py` | `python -m pytest tests/fea10 tests/core -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 四元组 digest；payload digest 同值；stale；retry 两分支 | 同上 |
 | AC5/AC6 | `tests/fea10/test_commit_zero_write.py`（新）；扩展 `tests/core/test_fea00a_pipeline_seam.py` | `python -m pytest tests/core tests/fea10 -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 10 条件逐项三处零变化/完成数不增；事务单位；控制 pending | 同上 |
-| AC7 | `tests/fea10/test_idempotent_receipt.py`（新）+ `tests/fea10/support/restart_core.py` | 同上；测试内 `python tests/fea10/support/restart_core.py --data-root <fixture> --db <fixture>/library.db --stop|--start` 后重开同一 DB | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 丢 ACK/重启找回；异 fingerprint；request_id 非键 | 同上 |
+| AC7 | `tests/fea10/test_idempotent_receipt.py`（新）+ `tests/fea10/support/restart_core.py` | 同上；先 `python tests/fea10/support/restart_core.py --data-root <fixture> --db <fixture>/library.db --stop`，再 `python tests/fea10/support/restart_core.py --data-root <fixture> --db <fixture>/library.db --start`（两次调用复用同一 DataRoot/DB） | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 丢 ACK/重启找回；异 fingerprint；request_id 非键 | 同上 |
 | AC8 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs`（新，`[Fact]`/env 门）；既有 .NET 回归 | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build`；`$env:NEWMANGA_FEA10_IPC='1'; $env:NEWMANGA_BUILD_PYTHON='C:/Python314/python.exe'; dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Fea10RunIpcTests` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/`（每例唯一 DataRoot） | 生产 assembly/IPC；回归不减少；日志含命令/EXIT | `verification/FEA-10/logs/dsh/` |
-| AC9/AC10 | `check.ps1`、`verify_pins.ps1`、`git diff --name-only` | `pwsh -NoProfile -File tools/governance/check.ps1`；`verify_pins.ps1` | 主工作树 | PASS/17/17/范围合规 | EV + Handoff |
+| AC9/AC10 | `check.ps1`、`verify_pins.ps1`、`git diff --name-only` | `pwsh -NoProfile -File tools/governance/check.ps1`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 主工作树 | PASS/17/17/范围合规 | EV + Handoff |
 
 ## 依赖与硬前置
 

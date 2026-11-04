@@ -72,3 +72,13 @@
   - P2-1：PREREQ 增 build 步骤、真实测试类过滤（`CoreProtocolTests|AsciiWireTests`）、完整 `verify_pins.ps1` 调用与日志路径；FEA-10 统一 `workspace/FEA-10/fixtures/<case>/` 隔离根，AC7 明确 `restart_core.py` 参数与同库重开；
   - P2-2：修正 request builder 路径（拆开 protocol/translation_openai/openai_client）；PREREQ 错误类型改为 `Wire/CoreProtocol.cs` 的 `CoreErrorInfo/CoreOperationException`，移除传输枚举扩写。
 - 下一轮：scope review r5（全新上下文）；仍不写生产代码、不 push。
+
+## Scope Review r5 处置（DSH，2026-11-04）
+
+- Reviewer：Codex 全新上下文；报告 `doc/reviews/FEA-10-scope-r5.md`（reviewed_head `185415347`）。
+- 结果：**PREREQ-1 scope approved**（仅非阻断 P2）；FEA-10 changes_requested P0=0/P1=1/P2=2。
+- DSH 处置：**全部接受**。
+  - P1-1：修复 FEA-10 allowed_paths 七行裸文件名（恢复完整路径/列表前缀）；移除无用途的 `__init__.py` 与 `tests/pipeline/conftest.py` 授权；
+  - P2-1：AC7 restart 命令拆成 `--stop`、`--start` 两次可执行调用（同一 DataRoot/DB）；`verify_pins.ps1` 补完整调用；
+  - P2-2：PREREQ 移除 `WireJson.cs` 授权/用途（真实错误解析在 `CoreProtocol.cs`）。
+- 下一轮：scope review r6（全新上下文）；PREREQ-1 已 approved，r6 通过后先 Appointment/释放 PREREQ-1，FEA-10 等其 done；仍不写生产代码、不 push。

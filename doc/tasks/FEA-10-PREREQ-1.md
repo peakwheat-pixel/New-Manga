@@ -23,7 +23,6 @@ allowed_paths:
   - doc/tasks/FEA-10.md
   - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
   - apps/desktop-avalonia/src/NewManga.CoreClient/Wire/CoreProtocol.cs
-  - apps/desktop-avalonia/src/NewManga.CoreClient/Wire/WireJson.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
   - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
@@ -57,7 +56,6 @@ out_of_scope:
 |---|---|---|
 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | rev 2.12 命令行/结果/3 码/§8/例外登记 | AC1 |
 | `apps/desktop-avalonia/src/NewManga.CoreClient/Wire/CoreProtocol.cs` | 业务错误类型 `CoreErrorInfo`/`CoreOperationException`；`code/category/retryable` 白名单投影落点 | AC2 |
-| `apps/desktop-avalonia/src/NewManga.CoreClient/Wire/WireJson.cs` | 错误 payload 解析（只读复用；如需窄改由 DSH 批准） | AC2 |
 | `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | 客户端命令 registry 映射 | AC1/AC2 |
 | `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs` | dispatch/payload 形状校验 | AC2/AC3 |
 | `apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs` | host 投影层/`allowedRunErrorCodes` | AC2/AC3 |
