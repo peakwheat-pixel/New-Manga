@@ -273,6 +273,10 @@ class SourceSyncService:
                     now=now,
                 )
                 self._store.mark_applied(plan_id, now)
+                # R-008 (FEA-11 r1): re-verify the live authorization and the
+                # lease right before COMMIT — a revocation during the
+                # transaction must not publish a new generation (C-17 §6.1).
+                self._verify_live_authorization(request, authorization, body)
                 conn.commit()
             except BaseException:
                 conn.rollback()
@@ -454,6 +458,29 @@ class SourceSyncService:
                 "SOURCE_SYNC_STATE_CONFLICT",
                 "relink requires unchanged content; create a resync plan",
             )
+        # R-006 (FEA-11 r1): relink means the SAME physical file was renamed or
+        # moved. Identical bytes in a new file (a copy) have a new physical
+        # identity and must go through repoint/resync.
+        if kind == "relink" and grant is not None:
+            location = store.get_source_location_current(body["source_id"])
+            if location is not None:
+                from application.importing.referenced.identity import (
+                    normalize_identity,
+                )
+
+                expected = normalize_identity(
+                    location["volume_serial"], location["file_id"]
+                )
+                observed = normalize_identity(
+                    grant.container_facts.volume_serial,
+                    grant.container_facts.file_id,
+                )
+                if observed != expected:
+                    raise SourceSyncError(
+                        "SOURCE_SYNC_STATE_CONFLICT",
+                        "relink requires the same physical file; a copy needs "
+                        "repoint or resync",
+                    )
 
         # --- new container version (and possibly a new location row).
         new_version_id = None

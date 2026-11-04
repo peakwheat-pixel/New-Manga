@@ -83,10 +83,17 @@ class SourceScanner:
             )
         old_version_row = self._store.latest_source_version(source_id)
 
-        references = self._store.list_source_references(source_id, project_ids)
+        # R-007 (FEA-11 r1): the frozen reference set is whole-source; the
+        # selected projects only bound the decision scope. The digest universe
+        # must cover every book referencing the source (scope=all equality is
+        # checked against that whole set).
+        full_references = self._store.list_source_references(source_id)
+        references = [
+            row for row in full_references if row["project"] in project_ids
+        ]
         # scope guards (C-17 §5.3): current → exactly one project; all → the
         # frozen reference set's distinct books must equal project_ids.
-        books = sorted({row["project"] for row in references})
+        books = sorted({row["project"] for row in full_references})
         if scope == "current":
             if len(project_ids) != 1:
                 raise _invalid("scope=current needs exactly one project")
@@ -289,7 +296,9 @@ class SourceScanner:
                 missing_by_source[key] for key in sorted(missing_by_source)
             ],
             "bases": bases,
-            "reference_set_digest": self._store.reference_set_digest(references),
+            "reference_set_digest": self._store.reference_set_digest(
+                full_references
+            ),
             "diff": diff,
             "totals": totals,
         }

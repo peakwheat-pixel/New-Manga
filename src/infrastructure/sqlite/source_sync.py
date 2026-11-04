@@ -366,28 +366,40 @@ class SourceSyncStore:
 
     # -------------------------------------------- reference projections
     def list_source_references(
-        self, source_id: str, project_ids: Sequence[str]
+        self, source_id: str, project_ids: Sequence[str] | None = None
     ) -> list[dict[str, Any]]:
         """The frozen reference set (C-17 §5.3): every non-superseded binding
-        of ``source_id`` inside the projects, soft-deleted pages included."""
-        if not project_ids:
+        of ``source_id``, soft-deleted pages included. ``project_ids=None``
+        returns the whole-source set (the scope=all digest universe); a
+        sequence narrows it for the decision scope."""
+        if project_ids is not None and not project_ids:
             return []
+        columns = (
+            "SELECT b.project_id AS project, b.page_id AS page,"
+            " b.binding_id AS binding, b.accepted_source_version AS version,"
+            " b.status AS status,"
+            " CASE WHEN p.deleted_at IS NULL THEN 0 ELSE 1 END AS deleted,"
+            " b.binding_version AS binding_version, b.entry_id AS entry_id,"
+            " b.previous_binding_id AS previous_binding_id,"
+            " b.authorization_generation AS authorization_generation,"
+            " b.verified_digest AS verified_digest"
+            " FROM page_bindings b JOIN pages p ON p.page_id = b.page_id"
+            " WHERE b.source_id = ? AND b.status <> 'superseded'"
+        )
+        if project_ids is None:
+            return _rows(
+                self._conn.execute(
+                    columns + " ORDER BY b.project_id, p.sort_order, b.page_id",
+                    (source_id,),
+                )
+            )
         marks = ",".join("?" for _ in project_ids)
         return _rows(
             self._conn.execute(
-                "SELECT b.project_id AS project, b.page_id AS page,"
-                " b.binding_id AS binding, b.accepted_source_version AS version,"
-                " b.status AS status,"
-                " CASE WHEN p.deleted_at IS NULL THEN 0 ELSE 1 END AS deleted,"
-                " b.binding_version AS binding_version, b.entry_id AS entry_id,"
-                " b.previous_binding_id AS previous_binding_id,"
-                " b.authorization_generation AS authorization_generation,"
-                " b.verified_digest AS verified_digest"
-                " FROM page_bindings b JOIN pages p ON p.page_id = b.page_id"
-                f" WHERE b.source_id = ? AND b.status <> 'superseded'"
-                f" AND b.project_id IN ({marks})"
-                " ORDER BY b.project_id, p.sort_order, b.page_id",
-                [source_id, *project_ids],
+                columns
+                + f" AND b.project_id IN ({marks})"
+                + " ORDER BY b.project_id, p.sort_order, b.page_id",
+                (source_id, *project_ids),
             )
         )
 

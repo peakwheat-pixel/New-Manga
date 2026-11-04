@@ -16,12 +16,14 @@ from tests.fea11.conftest import (
     add_referenced_page,
     add_source_tree,
     build_plan_body,
+    file_facts,
     host_authorization,
     mint_grant,
     png_bytes,
     run_full_sync,
     write_zip,
 )
+from application.sources.errors import SourceSyncError
 from application.sources.model import request_digest_of
 
 
@@ -35,6 +37,7 @@ def _seed(conn, scratch_dir):
         scratch_dir / "old.zip", [("001.png", page1), ("002.png", page2)]
     )
     digest = _digest(zip_path.read_bytes())
+    facts = file_facts(zip_path)
     add_source_tree(
         conn,
         source_id="s1",
@@ -45,6 +48,8 @@ def _seed(conn, scratch_dir):
             ("e2", "002.png", _digest(page2)),
         ],
         legacy_v7_evidence=False,
+        volume_serial=facts["volume_serial"],
+        file_id=facts["file_id"],
     )
     add_referenced_page(
         conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",
@@ -79,7 +84,7 @@ def test_relink_renamed_same_container_keeps_binding_and_page(
     refreshed to the live grant."""
     zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
     renamed = scratch_dir / "old-renamed.zip"
-    renamed.write_bytes(zip_path.read_bytes())  # identical bytes, new path
+    zip_path.rename(renamed)  # really the same file: same inode, new path
     grant_id, scan = _scan_with_container(stack, registry, renamed, kind="relink")
     assert scan["totals"] == {
         "unchanged": 2, "added": 0, "missing": 0, "changed": 0, "ambiguous": 0,
@@ -104,6 +109,23 @@ def test_relink_renamed_same_container_keeps_binding_and_page(
     )
     assert operation["state"] == "core-committed"
     assert operation["commit_digest"]
+
+
+def test_relink_rejects_an_identical_copy_as_a_new_physical_file(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """R-006 (FEA-11 r1): same bytes, different physical file = a copy, not a
+    relink; it must be repointed/resynced instead."""
+    zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    copied = scratch_dir / "old-copied.zip"
+    copied.write_bytes(zip_path.read_bytes())
+    grant_id, scan = _scan_with_container(stack, registry, copied, kind="relink")
+    with pytest.raises(SourceSyncError) as error:
+        run_full_sync(
+            stack, scan, grant_ids=[grant_id], kind="relink",
+            command="RelinkSource",
+        )
+    assert error.value.code == "SOURCE_SYNC_STATE_CONFLICT"
 
 
 def test_relink_rejects_changed_container(
