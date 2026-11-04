@@ -1,0 +1,63 @@
+{
+  "task": "FEA-11",
+  "generated_at": "2026-11-05",
+  "head": "ed5b29482",
+  "resources": [
+    {
+      "path": "verification/FEA-11/AC-MATRIX.md",
+      "sha256": "d9eb71a209d7947e486cb342ea151e0a60ff292bb8eeb17c3119f3e3ca4f691c",
+      "bytes": 4097
+    },
+    {
+      "path": "verification/FEA-11/changed-files.txt",
+      "sha256": "05ceefc3e1b87c89342fc446007ba805821ed251bacc25e71a0d7b958cf6e5be",
+      "bytes": 3129
+    },
+    {
+      "path": "verification/FEA-11/DELIVERY-MANIFEST.json",
+      "sha256": "2aab06aeaf75d0b88bbf2458c83d92e9802b28164cefe78646c0c4ad476a332c",
+      "bytes": 3783
+    },
+    {
+      "path": "verification/FEA-11/EV.md",
+      "sha256": "265e00f345c5cdfbcb5ca4458ec63fdf5c2862f88b3744dee37354c0d6e64da0",
+      "bytes": 2160
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-C6-final.log",
+      "sha256": "11f1ddca340fd7f5e7623b4bcde46fc1a4f26776e3a7bd8c451c6882e0325ac9",
+      "bytes": 324
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-C6-gates.log",
+      "sha256": "efc283ec3f1acb54c899de33c97647126b9193e421b97de6e424db3bd783f30a",
+      "bytes": 402
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-C6-r2.log",
+      "sha256": "dc67366002fdd80963164ce498739ecdae03bd9d2637580bdca8ea6cf516c405",
+      "bytes": 1693
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-C6-r3.log",
+      "sha256": "16e5ee9ef0c34a97c19512ee9eb1cd1bbe9853031a4573d0756d84f3a3a21407",
+      "bytes": 1946
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-C6-r4.log",
+      "sha256": "fe9bba66425714c267e0e618b64893034f039f3dad251bb2f774de428ebd6e4d",
+      "bytes": 2871
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-phaseB-main.log",
+      "sha256": "9046e7caa61c49724f7b3ddbd67edde787dd27791ecb7d1c27e61d2a572e7256",
+      "bytes": 134582
+    },
+    {
+      "path": "verification/FEA-11/logs/dsh-phaseB-providers.log",
+      "sha256": "63f3e76f9022247e78f5233d4553b987dacf1fceb5a0da00c19e73851070a4fb",
+      "bytes": 967
+    }
+  ],
+  "disposition": "PRESERVE_REFERENCED"
+}

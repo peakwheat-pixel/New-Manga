@@ -908,7 +908,11 @@ public sealed class HostRuntime : IAsyncDisposable
                         : throw new CoreOperationException(
                             "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
                             "operation receipt is unavailable", null);
-                operations.MarkCommitted(entry.OperationId, commitDigest);
+                operations.MarkCommitted(
+                    entry.OperationId, commitDigest,
+                    lookup.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
+                        ? lookup.Result.Value.GetRawText()
+                        : null);
                 return (entry.OperationId, result);
             }
 

@@ -1,51 +1,49 @@
-# FEA-11 Handoff（DSH 接手阶段 → Phase C 交接）
+# FEA-11 Handoff（DSH 返修阶段 → r5 复审交接）
 
-状态：**in_progress**（未完成；不得 closeout/Review）。Owner：ZCode 启动 → DSH 接手（Codex/ZCode 额度耗尽期间）；Reviewer 待 Appointment（全新上下文）。
+状态：**changes_requested（返修完成，待 r5 复审）**。Owner：DSH（ZCode/Codex 额度耗尽期间接手）；Reviewer：fresh subagent（r1/r2/r3/r4 均独立上下文）。
 
 ## 恢复点
 
-- 仓库：`G:/CODEX/New Manga`（main）；HEAD 与 WIP 链：`40cc6508`（ZCode 中断快照）→ `0ca363cd` → `ec40c51e`（Phase A 收尾）→ `29749af2` → `f912b41` → `3ab6c8ef` → `64db448d`（v8 迁移测试）→ 本提交（AC-MATRIX/Handoff）。
-- Task：`doc/tasks/FEA-11.md`（in_progress；10 AC；逐文件写域；条件项）。
-- 契约：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`（v1.0 FROZEN）+ 冻结记录；pins 18/18。
+- 仓库：`G:/CODEX/New Manga`（main）；交付基线 HEAD 见本文件提交。
+- Task：`doc/tasks/FEA-11.md`（10 AC；AC11-2 MET（仅 Core seam），其余 9 项 PARTIAL 并内联原因）。
+- 契约：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`（v1.0 FROZEN，pin 18/18）。
+- Review 历史：`doc/reviews/FEA-11-r1.md`（P0=2/P1=11/P2=12）、`FEA-11-r2.md`（P0=2/P1=4/P2=10）、`FEA-11-r3.md`（P0=1/P1=6/P2=11）、r4（P0=1 deferral/P1=1/P2=13；正文由 DSH 落盘 `FEA-11-r4.md`）。
 - 进度：`G:/CODEX/New Manga.workspace/FEA-10/agent-output/DSH-PROGRESS-2026-11-04.md`。
 
-## 已完成
+## 已完成（实施 + r1–r4 返修）
 
-### Phase A（`ec40c51e`）
-v8 迁移（schema.py `default_migrations()` 追加 `v8__source_sync` 四表）；`src/application/sources/`（scanner/matcher/planner/service/runtime/model/ports/errors）；`src/infrastructure/sqlite/source_sync.py`；`core_service.py` 命令 dispatch 与 capability；`core_assembly.py` 装配。
-修复 9 处：scanner 1 元 tuple version_id、matcher 逐侧重复检测、missing/defer 校验、planner target 键、授权先于 location、current-location 更新顺序、operation 先于 publications（FK）、CAS 页顺序、locator 回退不复用已配对 entry、CAS 物理 page 行（非 V(p,t) 视图）。
+### Phase A/B（Core seam）
+v8 迁移四表；`src/application/sources/*`（scanner/matcher/planner/service/runtime/model/ports/errors/identity）；`src/infrastructure/sqlite/source_sync.py`；`core_service.py` dispatch/capability/渲染去重；`core_assembly.py` 装配；`tests/fea11/*`。
 
-### Phase B（`29749af2`…`64db448d`）
-- `tests/fea11/test_source_scan.py`（8）：scan/diff/plan/stale 零写。
-- `test_source_sync.py`（4）：apply 幂等/tombstone/ACK 开门/replay 拒绝/cancel。
-- `test_source_relink.py`（4）：relink 保续/拒绝内容变/repoint 需 resync 确认/成功发布。
-- `test_source_operation.py`（4）：durable 恢复/伪造摘要拒绝/未知操作。
-- `test_source_lineage.py`（2）：captured_v7/legacy_unverified 冻结。
-- `test_v8_migration.py`（4）：全起点迁移/旧数据守恒/旧端拒写/约束守卫。
-- 实跑：`pytest tests/fea11` **26 passed**；`tests/core + tests/storage + tests/fea11` **1046 passed**；check PASS；pins 18/18。
+### Phase C（Host/C# 与真实 IPC）
+C1 `SourceOperationCoordinator`（DPAPI 原子 journal、状态机、Begin 终态保护）；C2 命令注册（15 命令、通道切分）；C3 dispatcher journal/operationJournal 路由 + HostRuntime 注入（ACK/recovery/failure 6 字段、真实 CommitReceipt digest、capability probe 门）；C4 真实 IPC 全链（new_zip：changed→pending gate→ACK→新 binding v2→源守恒）。
 
-### 证据
-`verification/FEA-11/AC-MATRIX.md`（逐 AC 状态与缺口）；测试输出可直接复跑（命令见 AC-MATRIX）。
+### r1–r4 返修
+- r1：R-003 新增页 grant→binding、R-004 fail_operation SQL/recover、R-005 无页 missing 投影、R-006 relink 物理身份、R-007 全源 reference digest、R-008 COMMIT 前重验、R-010 IPC new_zip、P0-2 ACK 接线。
+- r2：P1-1 回归修复（`_verify_cas` 全源）、P0-2 生产接线、Begin 终态、folder relink 防御、`_verify_fresh` 严格化。
+- r3：P1-01 命令名对齐（Host↔Core）、P1-02 recovery 取 receipt、P1-03 failure 校验/终态、P1-04 capability DTO、P1-05 DAG 解环、P1-06 folder relink 拒绝。
+- r4：P1-04 闭集值 + probe 门；回归测试（registry 缺失）；文档单一口径；AC11-4 承接卡；证据件（EV/Manifests）。
 
-## 未完成（2026-11-05 更新）
+## 剩余（r5 前/后）
 
-1. **Host/C#**：C1 `SourceOperationCoordinator`（DPAPI 原子 journal/状态机/ACK）✅；C2 命令注册 ✅；C3 dispatcher journal 路由 + HostRuntime 注入 ✅；C4 首版真实 IPC（fail-closed + grant 发放 + ScanSourceSync）✅；**剩余** C4 尾（C# 侧 plan→preview→confirm→apply→ack→resolve 链；payload 生成器 `tests/fea11/support/ipc_apply.py` 已提交待联调）。
-2. **真实 IPC**：`Fea11SourceIpcTests.cs`（Host→Core→DB→resolve→实际字节；源守恒；fail-closed）；`SourceOperationTests.cs`（崩溃点矩阵/ACK/恢复/撤销）；`SourceRegistryTests.cs`/`HostRuntimeIntegrationTests.cs` 回归。
-3. **resolve 版本选择**：C-17 §7.2 `page-rendition-v2-*` 选择函数 + `core_service.py` 窄接缝；同步后生产 resolve/issue 读新图断言；旧资源键不可变。
-4. **迁移/回归**：真实 v7→v8 升级（Host 侧装配）、主套件/providers、全量 .NET（build 0/0、test 不减少）、check/pins、范围 0 域外、FEA-09/10 tracked 证据零 diff。
-5. AC-MATRIX 完成态、`verification/FEA-11/logs/**` 证据、Task 卡 AC 标记如实（未验证不得 MET）、status → in_review。
+1. **r5 复审**（新上下文；reviewed_head = 本 Handoff 的 HEAD）。
+2. **P0-1** Host 自签 HostAuthorization → 承接 `FEA-11-HOST-AUTH-1`（proposed；需产品显式接受 Core-only limitation 或该卡完成）。
+3. **R-009** lineage 读隔离 → `FEA-11-LINEAGE-1`（禁止 done-with-limitation 的安全项）。
+4. **AC11-4** 并发/DB 失败/第三区域 → `FEA-11-AC4-GAPS-1`（proposed）。
+5. **AC11-3** pixel profile → `FEA-11-MATCH-1`；AC11-1 定时/watcher → `FEA-11-SCAN-1`。
+6. 未清 P2：P2-09 完整 CommitReceipt 落 journal、N-01 Host↔Core 对表测试、r4 报告落盘、IPC flaky 定位。
 
-## 门禁（2026-11-05 最新）
+## 门禁（`verification/FEA-11/logs/dsh-C6-r4.log`）
 
-- `pytest tests` 全量 **3037 passed / 0 failed / 10 skipped**；`tests/fea11` **31 passed**；`tests/fea09` 142 passed（冷启动也绿）；全量 `.NET` **1355 passed / 0 failed / 75 skipped**；`NEWMANGA_FEA11_IPC=1` **2 passed**（真实 Core）；`check.ps1` PASS；`verify_pins.ps1` 18/18；工作树 clean；未 push；冻结契约/组合根/FEA-08-10 证据零改动。证据日志：`verification/FEA-11/logs/dsh-C6-gates.log`。
-- 已知 flaky：`NewManga.App.Tests` 全量偶发 1 失败（单独跑 671/0）。
-- ZCode CLI 损坏（`@zcode/tui` 缺失）；Codex 额度仍受限。
+- pytest 全量 **3048 passed / 0 failed / 10 skipped**；`tests/fea11` **38 passed**；全量 .NET **1359 passed / 0 failed / 78 skipped**（重跑确认；首次环境竞争 688/EXIT=1 已记录）；`NEWMANGA_FEA11_IPC=1` **3/3**（flaky 已记录）；check PASS；pins 18/18。
+- 冻结契约/组合根/FEA-08-10 tracked 证据零 diff；未 push。
+- 已知 flaky：App.Tests 全量偶发 1；IPC 在全量 .NET 之后偶发 1（复跑 3/3）。
 
-## 交接指令
+## 交付件（AC11-10）
 
-见 `G:/CODEX/New Manga.workspace/FEA-11/codex-impl-continue.md`（Phase C 部分）与 Appointment `doc/reviews/FEA-11-appointment.md`。写域外文件（render_preview.py/regions.py/drafts.py 等）先报 DSH；不 commit/push。
+- `verification/FEA-11/EV.md`、`RESOURCE-MANIFEST.json`、`DELIVERY-MANIFEST.json`、`changed-files.txt`、`AC-MATRIX.md`、`logs/dsh-C6-r1..r4.log`。
+- `canonical_evidence_status: pending`（待 r5 approved + 集成提交后回填）。
 
-## 资源
+## 交接指令（r5 Reviewer）
 
-- 隔离根：`G:/CODEX/New Manga.workspace/FEA-11/`（fixtures/TEMP/TMP/诊断日志/phaseA-diag/phaseB-diag）。
-- 证据：`verification/FEA-11/AC-MATRIX.md`（+ 后续 logs/）。
+> 只读 `G:/CODEX/New Manga` 的 r5 reviewed_head；按 `doc/templates/REVIEW.md` 输出报告；核对 r4 findings（P1-04 闭集/probe 门、测试、文档、交付件、P2 项）、AC 状态与 done/closed_with_limitations 意见；不得修改工作树、不得 commit/push；报告交 DSH 落盘 `doc/reviews/FEA-11-r5.md`。

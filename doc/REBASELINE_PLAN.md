@@ -14,6 +14,7 @@
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**proposed**（承接 r2 P0-1：Host durable authorization 自签/编排；可与 FEA-11 并行，FEA-11 done 前须完成或获用户接受 limitation）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**proposed**（承接 r2 R-009：lineage native 写入 + 读路径隔离；AC11-5 安全属性，完成前 FEA-11 不得 done，但本卡不依赖 FEA-11，可并行）||
 |FEA-11-MATCH-1|FEA-11-PREREQ-1|**proposed**（承接 r2 R-012：pixel profile 提取/旧库 fixture/独立 match 测试；AC11-3 done-with-limitation 的落实前提）||
+|FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**proposed**（承接 r4 P2-11：AC11-4 并发 apply/DB 失败/第三区域证据；可与 FEA-11 并行）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|

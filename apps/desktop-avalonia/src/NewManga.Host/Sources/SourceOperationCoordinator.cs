@@ -57,6 +57,7 @@ public sealed class SourceOperationCoordinator
         string? GrantIds,
         string? HostReceiptId,
         string? CommitDigest,
+        string? CommitReceiptJson,
         string? AcknowledgedAt,
         string CreatedAt,
         string UpdatedAt);
@@ -90,6 +91,7 @@ public sealed class SourceOperationCoordinator
             AuthorizationDigest: null,
             AuthorizationJson: null,
             GrantIds: grantIds is null ? null : string.Join(",", grantIds),
+            CommitReceiptJson: null,
             HostReceiptId: null,
             CommitDigest: null,
             AcknowledgedAt: null,
@@ -127,7 +129,8 @@ public sealed class SourceOperationCoordinator
 
     /// <summary>FEA-11: record a Core commit performed by the caller (the
     /// Host dispatcher owns the Core call; the journal owns durability).</summary>
-    public JournalEntry MarkCommitted(string operationId, string commitDigest)
+    public JournalEntry MarkCommitted(
+        string operationId, string commitDigest, string? commitReceiptJson = null)
     {
         RequireEnabled();
         lock (gate)
@@ -138,6 +141,7 @@ public sealed class SourceOperationCoordinator
             {
                 State = "core-committed",
                 CommitDigest = commitDigest,
+                CommitReceiptJson = commitReceiptJson,
                 UpdatedAt = UtcNow(),
             };
             Write(next);
