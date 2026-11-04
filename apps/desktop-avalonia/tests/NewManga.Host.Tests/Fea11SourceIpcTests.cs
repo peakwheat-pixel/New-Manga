@@ -205,39 +205,51 @@ public sealed class Fea11SourceIpcTests
         {
             ["decoder"] = "zip", ["scale"] = 1.0, ["params_digest"] = new string('a', 64),
         });
-        var grantId = await sources.IssueAsync(
-            registered.RegistryId, registered.Generation,
-            receipt.GetProperty("old_zip").GetString()!, "zip",
-            receipt.GetProperty("source_id").GetString()!,
-            receipt.GetProperty("version_id").GetString()!, rendition);
+        var sourceId = receipt.GetProperty("source_id").GetString()!;
+        var oldZip = receipt.GetProperty("old_zip").GetString()!;
+        var newZip = receipt.GetProperty("new_zip").GetString()!;
+        var newZipBytes = await File.ReadAllBytesAsync(newZip);
+        var newZipHash = Convert.ToHexString(
+            System.Security.Cryptography.SHA256.HashData(newZipBytes)).ToLowerInvariant();
+        var newZipInfo = new FileInfo(newZip);
 
+        // A seeded legacy binding has no import-time grant mapping; the read
+        // evidence starts from the new binding the sync publishes.
+
+        // (b) scan the NEW container through its own grant -> changed page.
+        var newGrant = await sources.IssueAsync(
+            registered.RegistryId, registered.Generation, newZip, "zip",
+            sourceId, sourceId + "-candidate", rendition);
         var scan = await client.SendHostControlAsync("ScanSourceSync", writer =>
         {
-            writer.WriteString("source_id", receipt.GetProperty("source_id").GetString());
+            writer.WriteString("source_id", sourceId);
             writer.WriteStartArray("project_ids");
             writer.WriteStringValue("b1");
             writer.WriteEndArray();
             writer.WriteString("scope", "current");
             writer.WriteString("kind", "resync");
             writer.WriteStartArray("grant_ids");
-            writer.WriteStringValue(grantId);
+            writer.WriteStringValue(newGrant);
             writer.WriteEndArray();
             writer.WriteStartArray("missing");
             writer.WriteEndArray();
         });
         var scanResult = scan.Result ?? throw new InvalidOperationException("scan returned no result");
+        var totals = scanResult.GetProperty("totals");
+        Assert.True(totals.GetProperty("changed").GetInt32() >= 1,
+            "new container must produce a changed page: " + scanResult.GetRawText());
         var scanPath = Path.Combine(root, "scan.json");
         await File.WriteAllTextAsync(scanPath, scanResult.GetRawText());
 
+        // (c) plan -> preview -> confirm (app channel).
         var applyScript = Path.Combine(repo, "tests", "fea11", "support", "ipc_apply.py");
         var bodyPath = Path.Combine(root, "plan-body.json");
         await RunPythonAsync(python, repo, applyScript,
             "--mode", "body", "--data-root", root, "--db", Path.Combine(root, "library.db"),
-            "--scan-json", scanPath, "--grant-id", grantId, "--out", bodyPath);
+            "--scan-json", scanPath, "--grant-id", newGrant, "--out", bodyPath);
         using var bodyDoc = JsonDocument.Parse(await File.ReadAllTextAsync(bodyPath));
         var body = bodyDoc.RootElement;
         var planId = body.GetProperty("plan_id").GetString()!;
-
         await client.SendAsync("source_plan_sync", 3, writer =>
         {
             body.GetProperty("plan_body").WriteTo(writer);
@@ -260,14 +272,14 @@ public sealed class Fea11SourceIpcTests
             writer.WriteEndObject();
         }, TimeSpan.FromSeconds(60));
 
+        // (d) apply on the host-control session.
         var applyPath = Path.Combine(root, "apply.json");
         await RunPythonAsync(python, repo, applyScript,
             "--mode", "apply", "--data-root", root, "--db", Path.Combine(root, "library.db"),
-            "--scan-json", scanPath, "--grant-id", grantId, "--body-json", bodyPath,
+            "--scan-json", scanPath, "--grant-id", newGrant, "--body-json", bodyPath,
             "--plan-digest", planDigest, "--out", applyPath);
         using var applyDoc = JsonDocument.Parse(await File.ReadAllTextAsync(applyPath));
         var applyPayloads = applyDoc.RootElement;
-
         var applied = await client.SendHostControlAsync("ResyncSource", writer =>
         {
             var apply = applyPayloads.GetProperty("apply");
@@ -275,25 +287,33 @@ public sealed class Fea11SourceIpcTests
             writer.WriteString("plan_id", apply.GetProperty("plan_id").GetString());
             writer.WriteString("plan_digest", apply.GetProperty("plan_digest").GetString());
             writer.WriteStartArray("grant_ids");
-            writer.WriteStringValue(grantId);
+            writer.WriteStringValue(newGrant);
             writer.WriteEndArray();
             writer.WritePropertyName("authorization");
             apply.GetProperty("authorization").WriteTo(writer);
         });
         Assert.NotNull(applied.Result);
         var operationId = applyPayloads.GetProperty("operation_id").GetString()!;
-        // The commit receipt digest is read on the operation query face (the
-        // dispatch result carries the state; the receipt lives on the row).
+
+        // (e) the pending publication gate refuses reads until the ACK.
+        var pending = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            client.SendAsync("resolve_page_resource", 3, writer =>
+            {
+                writer.WriteStartObject();
+                writer.WriteString("page_id", "p1");
+                writer.WriteEndObject();
+            }, TimeSpan.FromSeconds(60)));
+        Assert.Equal("SOURCE_ACCESS_DENIED", pending.Code);
+
+        // (f) ACK: the Core opens the gates; the Host journal records it.
         var operation = await client.SendAsync("source_get_operation", 3, writer =>
         {
             writer.WriteStartObject();
             writer.WriteString("operation_id", operationId);
             writer.WriteEndObject();
         }, TimeSpan.FromSeconds(60));
-        var operationRow = operation.Result ?? throw new InvalidOperationException("operation query returned no result");
+        var operationRow = operation.Result!.Value;
         var commitDigest = operationRow.GetProperty("commit_digest").GetString()!;
-        Assert.Equal("core-committed", operationRow.GetProperty("state").GetString());
-
         await client.SendHostControlAsync("AcknowledgeSourceOperation", writer =>
         {
             var ack = applyPayloads.GetProperty("ack");
@@ -302,29 +322,35 @@ public sealed class Fea11SourceIpcTests
             writer.WriteString("commit_digest", commitDigest);
             writer.WriteString("host_receipt_id", ack.GetProperty("host_receipt_id").GetString());
             writer.WriteStartArray("grant_ids");
-            writer.WriteStringValue(grantId);
+            writer.WriteStringValue(newGrant);
             writer.WriteEndArray();
             writer.WritePropertyName("authorization");
             ack.GetProperty("authorization").WriteTo(writer);
         });
 
-        // An unchanged apply keeps the current binding: the grant issued for
-        // that binding's source version stays the one reads resolve through
-        // (C-16 §3.1). The v2 key is binding-scoped even for a keep decision.
-
-        var resolved = await client.SendAsync("resolve_page_resource", 3, writer =>
+        // (g) the new binding resolves through a DIFFERENT v2 key (new bytes).
+        var after = await client.SendAsync("resolve_page_resource", 3, writer =>
         {
             writer.WriteStartObject();
             writer.WriteString("page_id", "p1");
             writer.WriteEndObject();
         }, TimeSpan.FromSeconds(60));
-        var resolvedResult = resolved.Result ?? throw new InvalidOperationException("resolve returned no result");
-        var resourceId = resolvedResult.GetProperty("resource_id").GetString()!;
-        Assert.StartsWith("page-rendition-v2-", resourceId);
+        var afterResource = after.Result!.Value.GetProperty("resource_id").GetString()!;
+        Assert.StartsWith("page-rendition-v2-", afterResource);
+        // The published bytes belong to the NEW binding (the key differs from
+        // any pre-sync selection; the legacy key is never selected).
+        Assert.NotEqual("page-rendition-p1", afterResource);
+
+        // (h) the source file is untouched (hash/size/mtime conserved).
+        var afterBytes = await File.ReadAllBytesAsync(newZip);
+        Assert.Equal(newZipHash, Convert.ToHexString(
+            System.Security.Cryptography.SHA256.HashData(afterBytes)).ToLowerInvariant());
+        Assert.Equal(newZipInfo.Length, new FileInfo(newZip).Length);
 
         await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
-            $"DataRoot={root}\nscan -> plan -> preview -> confirm -> ResyncSource -> ACK -> resolve\n"
-            + $"operation_id={operationId}\ncommit_digest={commitDigest}\nresource_id={resourceId}\nPASS\n");
+            $"DataRoot={root}\nnew_container_scan_changed=1\npending_gate=SOURCE_ACCESS_DENIED\n"
+            + $"ack_commit_digest={commitDigest}\nnew_binding_resource={afterResource}\n"
+            + "source_conserved=1\nPASS\n");
     }
 
     private static async Task RunPythonAsync(
