@@ -9,12 +9,12 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
-|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**changes_requested**（实施完成；r1→r2→r3→r4 均 changes_requested；r4 后 P1-04 已修，r5 待派）||
-|FEA-11-SCAN-1|FEA-11|**proposed**（定时扫描/后台调度；卡已建，待 FEA-11 done 后独立 scope review；承接 AC11-1 延期项）|
-|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**proposed**（承接 r2 P0-1：Host durable authorization 自签/编排；可与 FEA-11 并行，FEA-11 done 前须完成或获用户接受 limitation）||
-|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**proposed**（承接 r2 R-009：lineage native 写入 + 读路径隔离；AC11-5 安全属性，完成前 FEA-11 不得 done，但本卡不依赖 FEA-11，可并行）||
-|FEA-11-MATCH-1|FEA-11-PREREQ-1|**proposed**（承接 r2 R-012：pixel profile 提取/旧库 fixture/独立 match 测试；AC11-3 done-with-limitation 的落实前提）||
-|FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**proposed**（承接 r4 P2-11：AC11-4 并发 apply/DB 失败/第三区域证据；可与 FEA-11 并行）||
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
+|FEA-11-SCAN-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-1 定时/watcher 承接）|
+|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；P0-1/L-1 承接；DSH 实施）||
+|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；R-009/L-2 承接；完成前禁止 UI/读路径消费同步 binding）||
+|FEA-11-MATCH-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-3 承接）||
+|FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-4 承接）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
@@ -45,9 +45,9 @@
 
 READY 节点：无
 
-完成：FEA-10 **done**（`d1972f0f`）；FEA-11-PREREQ-1 **done**（C-17 v1.0 FROZEN，pins 18/18，集成 `75d11739b`）。当前：**FEA-11 changes_requested（r4 后返修，r5 待派）**。
+完成：FEA-10 **done**；FEA-11-PREREQ-1 **done**（C-17 FROZEN）；**FEA-11 closed_with_limitations**（2026-11-05）。当前：承接卡 ready（HOST-AUTH-1/LINEAGE-1/MATCH-1/AC4-GAPS-1/SCAN-1）。
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → **FEA-11（changes_requested，r6 复审中）**；承接 HOST-AUTH-1/LINEAGE-1/MATCH-1/SCAN-1（proposed）；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → **FEA-11（closed_with_limitations，2026-11-05）** → **承接卡（ready，已授权）**；FEA-12 已获「隔离模拟」G-DELETE-IMPL 口径，可 scope review
 
 ## 历史快照（终态节点，非当前 DAG）
 

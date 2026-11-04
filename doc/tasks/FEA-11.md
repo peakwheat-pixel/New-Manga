@@ -3,11 +3,11 @@ id: FEA-11
 title: Source 变化 / 重定位 / 同步（scan/diff/plan + 页匹配/lineage + relink/repoint/resync + durable operation）
 kind: implementation
 governance_version: 3
-status: changes_requested
+status: closed_with_limitations
 approval: **scope-r1 处置完成；PREREQ-1 done；scope-r2 approved（ZCode 全新上下文，P0=0/P1=0/P2=4 已处置）；DSH 冻结 scope + Appointment 2026-11-04（Owner=ZCode；实际 AC 数=10，AC11-1…10）**
 suggested_owner: codex
 owner: zcode（Appointment 2026-11-04；待认领）
-reviewer: 独立上下文子 agent（fresh subagent，reviewer_kind=subagent；r1–r5 均未参与实现）；报告 doc/reviews/FEA-11-r1.md…FEA-11-r5.md
+reviewer: 独立上下文子 agent（fresh subagent，reviewer_kind=subagent；r1–r7 均未参与实现）；报告 doc/reviews/FEA-11-r1.md…FEA-11-r7.md；用户裁决 doc/reviews/FEA-11-r7-acceptance.md
 depends_on:
   - FEA-09
   - FEA-10
@@ -15,10 +15,10 @@ depends_on:
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3a9e68bf5
+delivery_head: 3e675de5
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11
 allowed_paths:
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
@@ -220,6 +220,16 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 - Host/CoreClient 接缝：`HostCommandDispatcher.cs`、`HostCommandModel.cs`、`HostRuntime.cs`、`SourceOperationCoordinator.cs`、`NewManga.Host.Tests/*`、`NewManga.CoreClient.Tests/*`。
 - 实施期间暴露的既有缺陷修复：`src/application/importing/referenced/identity.py`、`referenced/scanner.py`、`resource_channel/{handle_resolver,import_source_refs,source_strict_read}.py`、`tests/fea09/*`（12 文件）、`tests/core/test_p09_fu2_import_pages.py`。
 - 治理指针与承接卡：`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/reviews/FEA-11-r*.md`、`doc/tasks/FEA-11-{HOST-AUTH-1,LINEAGE-1,MATCH-1,AC4-GAPS-1}.md`、`doc/handoffs/FEA-11-handoff.md`。
+
+## Closeout Record（closed_with_limitations，2026-11-05）
+
+- 用户裁决：**closed_with_limitations**（见 `doc/reviews/FEA-11-r7-acceptance.md`；本记录即其落盘）。
+- 实施：Phase A/B/C1–C5 + r1–r7 返修（Core seam 完整；Host journal/ACK/recovery/capability 接线；真实 IPC 全链 new_zip；命令名对齐/全源 digest/relink 物理身份/COMMIT 前重验/lineage 冻结/新增页绑定）。
+- 独立 Review：r1–r7（fresh subagent，均非实现者）→ 结论均 changes_requested；剩余阻塞为承接范围（HOST-AUTH-1/LINEAGE-1），用户已接受 limitation。
+- 证据定稿：`verification/FEA-11/EV.md`、`RESOURCE-MANIFEST.json`、`DELIVERY-MANIFEST.json`（delivery_head=3e675de5、evidence commit 携带）、`changed-files.txt`、`AC-MATRIX.md`、`logs/dsh-C6-*.log`（含 r7）。
+- Limitation：L-1…L-11（P0-1、lineage 读隔离、AC11-1/3/4/6/7/8/9/10、IPC flake）；**LINEAGE-1 完成前任何 UI/读路径/渲染/导出/Run 不得消费同步 binding**。
+- 集成：DSH 集成验证（pytest 全量 3051/0/10、.NET 1360/0/78、IPC 3/3、check PASS、pins 18/18；FEA-09 证据零 diff）；integration_commit 见 front matter；未 push。
+- 承接卡（用户已授权启动）：FEA-11-HOST-AUTH-1、FEA-11-LINEAGE-1、FEA-11-AC4-GAPS-1、FEA-11-MATCH-1、FEA-11-SCAN-1。
 
 ## Closeout Record
 
