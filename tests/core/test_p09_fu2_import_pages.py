@@ -106,7 +106,10 @@ def _register_source(
     if source_kind == "directory":
         selected_paths.sort(key=lambda path: natural_sort_key(path.name))
         info = source_path.stat()
-        scope_identity = [int(info.st_dev), int(info.st_ino)]
+        from application.importing.referenced.identity import normalize_identity
+
+        volume_serial, file_id = normalize_identity(info.st_dev, info.st_ino)
+        scope_identity = [volume_serial, file_id]
     else:
         scope_identity = None
     entries = [

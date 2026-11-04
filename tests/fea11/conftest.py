@@ -114,12 +114,15 @@ def book_chapter(conn: sqlite3.Connection) -> tuple[str, str]:
 
 def file_facts(path: str | Path) -> dict:
     """Host-style physical identity facts for one real file."""
+    from application.importing.referenced.identity import normalize_identity
+
     info = os.stat(path)
     data = Path(path).read_bytes()
+    volume_serial, file_id = normalize_identity(info.st_dev, info.st_ino)
     return {
-        # Host facts are representable signed 64-bit integers (C-17 §5).
-        "volume_serial": int(info.st_dev) % (2**63),
-        "file_id": int(info.st_ino) % (2**63),
+        # C-16/C-17 §5: the single normalized physical identity.
+        "volume_serial": volume_serial,
+        "file_id": file_id,
         "size": int(info.st_size),
         "sha256": hashlib.sha256(data).hexdigest(),
     }

@@ -33,10 +33,13 @@ def _b64u(raw: bytes) -> str:
 def _facts_of(path) -> dict:
     import os
 
+    from application.importing.referenced.identity import normalize_identity
+
     info = os.stat(path)
+    volume_serial, file_id = normalize_identity(info.st_dev, info.st_ino)
     return {
-        "volume_serial": int(info.st_dev) % (2**53),
-        "file_id": int(info.st_ino) % (2**53),
+        "volume_serial": volume_serial,
+        "file_id": file_id,
         "size": int(info.st_size),
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
     }

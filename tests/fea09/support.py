@@ -32,12 +32,15 @@ DEFAULT_BUDGET = SourceReadBudget(
 )
 
 
+from application.importing.referenced.identity import normalize_identity
+
+
 def capture_facts(path: str | Path) -> GrantFacts:
     info = os.stat(path)
     data = Path(path).read_bytes()
     return GrantFacts(
-        volume_serial=int(info.st_dev) % (2**53),
-        file_id=int(info.st_ino) % (2**53),
+        volume_serial=normalize_identity(info.st_dev, info.st_ino)[0],
+        file_id=normalize_identity(info.st_dev, info.st_ino)[1],
         size=int(info.st_size),
         sha256=hashlib.sha256(data).hexdigest(),
     )
@@ -265,3 +268,26 @@ def _project_of_chapter(repo):
         )
 
     return project_of_chapter
+
+
+def add_managed_page(conn, page_id: str, chapter_id: str = "c1",
+                     *, order: int = 1, digest: str | None = None,
+                     soft_deleted: bool = False) -> str:
+    """Direct-SQL managed page with complete import columns (C-15 §4.3)."""
+    import sqlite3
+
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc).isoformat()
+    digest = digest or (page_id.encode("utf-8").hex() * 4)[:64]
+    conn.execute(
+        "INSERT INTO pages (page_id, chapter_id, sort_order, created_at,"
+        " updated_at, source_filename, source_order, source_hash,"
+        " source_size_bytes, width, height, managed_original_ref, deleted_at,"
+        " source_mode, integrity_status)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 4, 3, ?, ?, 'managed', 'complete')",
+        (page_id, chapter_id, order, now, now, f"{page_id}.png", order, digest,
+         10, f"managed/{page_id}.png", now if soft_deleted else None),
+    )
+    conn.commit()
+    return digest

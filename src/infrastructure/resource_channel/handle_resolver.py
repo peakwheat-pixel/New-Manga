@@ -159,7 +159,10 @@ def _identity_of(handle: int) -> tuple[int, int]:
     info = _BY_HANDLE_FILE_INFORMATION()
     if not _k32.GetFileInformationByHandle(wintypes.HANDLE(handle), ctypes.byref(info)):
         raise TypedResourceChannelError(E_OPEN_FAILED, f"win32 error {ctypes.get_last_error()}")
-    return info.identity()
+    from application.importing.referenced.identity import normalize_identity
+
+    volume_serial, file_index = info.identity()
+    return normalize_identity(volume_serial, file_index)
 
 
 def _size_of(handle: int) -> int:

@@ -256,7 +256,7 @@ def test_dual_read_managed_and_referenced_resolve(tmp_path, repo, book_chapter):
         initialize_namespace,
     )
     from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
-    from conftest import add_managed_page
+    from support import add_managed_page
 
     access = FakeSourceReadAccess()
     source = tmp_path / "ref.jpg"

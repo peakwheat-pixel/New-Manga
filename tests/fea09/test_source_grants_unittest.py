@@ -33,7 +33,7 @@ class SourceGrantTests(unittest.TestCase):
                budget=dict(max_bytes=1024,max_decode_bytes=1024,max_entries=10),
                scope=dict(source_id="source",version="version",rendition=dict(decoder="image",scale=1,params_digest="0"*64),
                           entries=[dict(entry_key="entry",entry_id=None,locator=self.path.name,ordinal=0,path=str(self.path),
-                          facts=dict(volume_serial=info.st_dev,file_id=info.st_ino,size=info.st_size,
+                          facts=dict(volume_serial=int(info.st_dev) & 0xFFFFFFFF,file_id=int(info.st_ino) & ((1<<53)-1),size=info.st_size,
                                      sha256=hashlib.sha256(self.path.read_bytes()).hexdigest()))]))
         return self.sign(p)
 

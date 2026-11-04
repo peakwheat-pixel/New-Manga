@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from application.importing.referenced.errors import SourceImportError
+from application.importing.referenced.identity import normalize_identity
 from application.importing.referenced.reader import read_entry_bytes
 from support import png_bytes
 
@@ -20,8 +21,8 @@ def _resolved(path, max_decode):
         source_kind="cbz",
         container_path=str(path),
         container_facts=SimpleNamespace(
-            volume_serial=info.st_dev,
-            file_id=info.st_ino,
+            volume_serial=normalize_identity(info.st_dev, info.st_ino)[0],
+            file_id=normalize_identity(info.st_dev, info.st_ino)[1],
             size=info.st_size,
             sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
         ),

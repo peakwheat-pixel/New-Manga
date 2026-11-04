@@ -298,7 +298,11 @@ class ImportSourceGrantRegistry:
         if grant.source_kind == "directory":
             if not stat.S_ISDIR(info.st_mode):
                 raise TypedResourceChannelError(E_SCOPE_DENIED)
-            if (int(info.st_dev), int(info.st_ino)) != grant.scope_identity:
+            from application.importing.referenced.identity import (
+                normalize_identity,
+            )
+
+            if normalize_identity(info.st_dev, info.st_ino) != grant.scope_identity:
                 raise TypedResourceChannelError(E_IDENTITY_CHANGED)
         elif not stat.S_ISREG(info.st_mode):
             raise TypedResourceChannelError(E_SCOPE_DENIED)

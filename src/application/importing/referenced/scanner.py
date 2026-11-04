@@ -94,7 +94,11 @@ def _stat_folder_entry(path: str, root: str) -> tuple[int, int, int]:
         raise SourceImportError(
             "SOURCE_ACCESS_DENIED", "granted folder member escapes its root"
         )
-    return int(info.st_dev), int(info.st_ino), int(info.st_size)
+    from application.importing.referenced.identity import normalize_identity
+
+    return normalize_identity(info.st_dev, info.st_ino) + (
+        int(info.st_size),
+    )
 
 
 def scan_image(resolved: ResolvedSourceRead) -> ScannedSource:
