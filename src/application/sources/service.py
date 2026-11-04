@@ -356,10 +356,13 @@ class SourceSyncService:
             raise stale("source", "target container changed since the plan")
 
     def _verify_cas(self, body: dict) -> None:
-        """Re-read every §6.1 baseline inside the transaction."""
-        references = self._store.list_source_references(
-            body["source_id"], body["project_ids"]
-        )
+        """Re-read every §6.1 baseline inside the transaction.
+
+        The reference-set digest covers the WHOLE source (every sharing
+        project, C-17 §5.3), so the recheck must use the same universe as the
+        scan that froze the plan (r2 P1-1 regression: comparing the scoped
+        set made every shared-source apply stale)."""
+        references = self._store.list_source_references(body["source_id"])
         if self._store.reference_set_digest(references) != body[
             "reference_set_digest"
         ]:
@@ -463,7 +466,8 @@ class SourceSyncService:
         # identity and must go through repoint/resync.
         if kind == "relink" and grant is not None:
             location = store.get_source_location_current(body["source_id"])
-            if location is not None:
+            facts = getattr(grant, "container_facts", None)
+            if location is not None and facts is not None:
                 from application.importing.referenced.identity import (
                     normalize_identity,
                 )
@@ -472,8 +476,8 @@ class SourceSyncService:
                     location["volume_serial"], location["file_id"]
                 )
                 observed = normalize_identity(
-                    grant.container_facts.volume_serial,
-                    grant.container_facts.file_id,
+                    facts.volume_serial,
+                    facts.file_id,
                 )
                 if observed != expected:
                     raise SourceSyncError(

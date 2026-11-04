@@ -780,6 +780,26 @@ public sealed class HostRuntime : IAsyncDisposable
                     return new HostCommandResult(name, HostCommandStatus.Implemented, HostCommandChannel.HostLocal,
                         await sources.InvokeAsync(name, payload, token).ConfigureAwait(false));
                 }
+                if (name == "source_get_sync_capabilities")
+                {
+                    return new HostCommandResult(name, HostCommandStatus.Implemented,
+                        HostCommandChannel.HostLocal,
+                        System.Text.Json.JsonSerializer.SerializeToElement(new
+                        {
+                            source_sync = Operations is not null,
+                            commands = new[]
+                            {
+                                "source_scan_sync", "source_plan_sync",
+                                "source_preview_sync_plan", "source_confirm_sync_plan",
+                                "source_invalidate_sync_plan", "source_apply_sync_plan",
+                                "source_relink", "source_repoint", "source_resync",
+                                "source_get_operation", "source_cancel_operation",
+                                "source_acknowledge_operation",
+                                "source_complete_operation_recovery",
+                                "source_record_operation_failure",
+                            },
+                        }));
+                }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
                     var credentials = Credentials
@@ -892,6 +912,64 @@ public sealed class HostRuntime : IAsyncDisposable
                 return (entry.OperationId, result);
             }
 
+            // FEA-11 (C-17 §3.2/§3.3): ACK/recovery/failure are Host-coordinated
+            // through the durable journal; the Core call stays inside the
+            // coordinator so a failed call never regresses the journal state.
+            async Task<System.Text.Json.JsonElement> SourceOperationCompletionAsync(
+                string name, System.Text.Json.JsonElement payload,
+                CancellationToken token)
+            {
+                var operations = Operations ?? throw new CoreOperationException(
+                    "CORE_UNAVAILABLE", "unavailable", false, "source operation journal unavailable", null);
+                var operationId = payload.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && payload.TryGetProperty("operation_id", out var id)
+                    && id.ValueKind == System.Text.Json.JsonValueKind.String
+                        ? id.GetString()
+                        : null;
+                if (string.IsNullOrWhiteSpace(operationId))
+                {
+                    throw new CoreOperationException(
+                        "INVALID_REQUEST", "validation", false, "operation id is required", null);
+                }
+                switch (name)
+                {
+                    case "source_acknowledge_operation":
+                    {
+                        var entry = await operations.AcknowledgeAsync(operationId!, token)
+                            .ConfigureAwait(false);
+                        return System.Text.Json.JsonSerializer.SerializeToElement(entry);
+                    }
+                    case "source_complete_operation_recovery":
+                    {
+                        var entry = await operations.RecoverAsync(operationId!, token)
+                            .ConfigureAwait(false);
+                        return System.Text.Json.JsonSerializer.SerializeToElement(entry);
+                    }
+                    default:
+                    {
+                        var entry = operations.MarkFailed(operationId!);
+                        try
+                        {
+                            await CoreService.SendHostControlAsync(
+                                    "RecordSourceOperationFailure",
+                                    writer =>
+                                    {
+                                        payload.WriteTo(writer);
+                                    },
+                                    _options.RequestTimeout, CoreService.HostSession, token)
+                                .ConfigureAwait(false);
+                        }
+                        catch (CoreOperationException error)
+                            when (error.Code == "SOURCE_OPERATION_NOT_FOUND")
+                        {
+                            // The failure is durable on the Host side even when
+                            // the Core row is gone (crash-window recovery).
+                        }
+                        return System.Text.Json.JsonSerializer.SerializeToElement(entry);
+                    }
+                }
+            }
+
             // GRANT-ISSUER-1: open the HOST-ISSUER-1 host-control session and wire the dispatcher.
             // A session failure is logged and leaves grant commands typed-unavailable; it does not
             // fail the whole Host (reads and credential commands keep working).
@@ -911,7 +989,8 @@ public sealed class HostRuntime : IAsyncDisposable
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
                 Commands = new HostCommandDispatcher(
-                    CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync);
+                    CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
+                    SourceOperationCompletionAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {

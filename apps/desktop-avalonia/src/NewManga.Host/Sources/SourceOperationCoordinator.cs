@@ -69,9 +69,19 @@ public sealed class SourceOperationCoordinator
     {
         RequireEnabled();
         var now = UtcNow();
+        var resolvedId = operationId
+            ?? ("op-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant());
+        lock (gate)
+        {
+            if (File.Exists(PathOf(resolvedId)))
+            {
+                // r2 P2: a re-used operation id must never overwrite durable
+                // journal state (an acknowledged op would silently regress).
+                throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+            }
+        }
         var entry = new JournalEntry(
-            OperationId: operationId
-                ?? ("op-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant()),
+            OperationId: resolvedId,
             PlanId: planId,
             PlanDigest: planDigest,
             Kind: kind,

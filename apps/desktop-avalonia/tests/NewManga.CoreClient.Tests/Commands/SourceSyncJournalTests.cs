@@ -60,4 +60,35 @@ public sealed class SourceSyncJournalTests
             () => dispatcher.InvokeAsync(command, JsonSerializer.SerializeToElement(new { })));
         Assert.Equal(0, journalCalls);
     }
+
+    [Theory]
+    [InlineData("source_acknowledge_operation")]
+    [InlineData("source_complete_operation_recovery")]
+    [InlineData("source_record_operation_failure")]
+    public async Task OperationCompletionCommands_RideTheCompletionDelegate(string command)
+    {
+        var completionCalls = new List<string>();
+        var journalCalls = 0;
+        var dispatcher = new HostCommandDispatcher(
+            bridge: null,
+            hostLocal: null,
+            journal: (name, args, _, _) =>
+            {
+                journalCalls += 1;
+                return Task.FromResult(("op", JsonSerializer.SerializeToElement(new { })));
+            },
+            operationJournal: (name, _, _) =>
+            {
+                completionCalls.Add(name);
+                return Task.FromResult(JsonSerializer.SerializeToElement(
+                    new Dictionary<string, object?> { ["state"] = "acknowledged" }));
+            });
+
+        using var args = JsonDocument.Parse("{\"operation_id\":\"op-" + new string('0', 32) + "\"}");
+        var result = await dispatcher.InvokeAsync(command, args.RootElement.Clone());
+
+        Assert.Equal(command, Assert.Single(completionCalls));
+        Assert.Equal(0, journalCalls);
+        Assert.True(result.Value.TryGetProperty("state", out _));
+    }
 }

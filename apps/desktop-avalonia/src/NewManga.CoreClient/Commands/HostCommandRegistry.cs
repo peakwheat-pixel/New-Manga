@@ -415,6 +415,12 @@ public static class HostCommandRegistry
     public static bool IsSourceSyncWrite(string name) => name is
         "source_apply_sync_plan" or "source_relink" or "source_repoint" or "source_resync";
 
+    /// <summary>FEA-11 (C-17 §3.2): ACK/recovery/failure ride the Host
+    /// operation coordinator (durable journal), not a direct Core passthrough.</summary>
+    public static bool IsSourceOperationCompletion(string name) => name is
+        "source_acknowledge_operation" or "source_complete_operation_recovery"
+        or "source_record_operation_failure";
+
     public static IReadOnlySet<string> SourceSyncCommandNames { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "source_scan_sync", "source_plan_sync", "source_preview_sync_plan",

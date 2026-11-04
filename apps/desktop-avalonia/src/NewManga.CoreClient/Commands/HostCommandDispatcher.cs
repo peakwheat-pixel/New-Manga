@@ -49,17 +49,23 @@ public sealed class HostCommandDispatcher
         CancellationToken,
         Task<(string OperationId, JsonElement Result)>>? _journal;
 
+    /// <summary>FEA-11 (C-17 §3.2): ACK/recovery/failure are Host-coordinated;
+    /// the delegate owns the Core call and the durable journal transition.</summary>
+    private readonly Func<string, JsonElement, CancellationToken, Task<JsonElement>>? _operationJournal;
+
     public HostCommandDispatcher(
         CoreServiceClient? core = null,
         HostBridgeClient? bridge = null,
         Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null,
         Func<string, JsonElement, Func<CancellationToken, Task<CoreResponse>>, CancellationToken,
-            Task<(string OperationId, JsonElement Result)>>? journal = null)
+            Task<(string OperationId, JsonElement Result)>>? journal = null,
+        Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null)
     {
         _core = core;
         _bridge = bridge;
         _hostLocal = hostLocal;
         _journal = journal;
+        _operationJournal = operationJournal;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -155,6 +161,16 @@ public sealed class HostCommandDispatcher
         JsonElement args,
         CancellationToken cancellationToken)
     {
+        var operationJournal = _operationJournal;
+        if (operationJournal is not null
+            && HostCommandRegistry.IsSourceOperationCompletion(descriptor.Name))
+        {
+            var result = await operationJournal(descriptor.Name, args, cancellationToken)
+                .ConfigureAwait(false);
+            return new HostCommandResult(
+                descriptor.Name, descriptor.Status, descriptor.Channel, result);
+        }
+
         var journal = _journal;
         if (journal is not null && HostCommandRegistry.IsSourceSyncWrite(descriptor.Name))
         {

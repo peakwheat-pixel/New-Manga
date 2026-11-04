@@ -428,3 +428,41 @@ def test_apply_after_grant_revocation_is_refused(
         stack["service"].apply("ResyncSource", payload)
     assert error.value.code in ("SOURCE_GRANT_REVOKED", "SOURCE_ACCESS_DENIED")
     assert _table_digest(conn) == baseline
+
+
+def test_shared_source_scope_current_apply_succeeds_without_drift(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """r2 P1-1 regression: the plan digest covers the whole source; a
+    scope=current apply on a shared source must not be stale when nothing
+    drifted (the CAS recheck used the scoped subset before)."""
+    zip_path, page1, _page2, _container = _seed_two_page_source(conn, scratch_dir)
+    now = __import__('tests.fea11.conftest', fromlist=['NOW']).NOW
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b2', 'Book 2', ?, ?)", (now, now))
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+        " VALUES ('c2', 'b2', 'Ch', ?, ?)", (now, now))
+    add_referenced_page(
+        conn, "p3", "c2", "b2", order=1, source_id="s1", version_id="sv1",
+        entry_id="e1", digest=_digest(page1),
+    )
+    conn.commit()
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="zip",
+        entries=[(zip_path, zip_path.name, 0)],
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1"], "scope": "current",
+            "kind": "resync", "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    assert scan["totals"]["unchanged"] == 2  # only b1's pages are in scope
+    payload = _apply_payload(stack, scan, [grant_id])
+    dispatch = stack["service"].apply("ResyncSource", payload)
+    assert dispatch["state"] == "core-committed"
+    # b1 and b2 both keep their bindings; nothing drifted.
+    for page_id in ("p1", "p2", "p3"):
+        assert stack["store"].current_binding_of_page(page_id)["binding_version"] == 1
