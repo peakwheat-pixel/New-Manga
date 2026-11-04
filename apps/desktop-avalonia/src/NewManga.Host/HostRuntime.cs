@@ -782,7 +782,11 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 if (name == "source_get_sync_capabilities")
                 {
-                    return SourceSyncCapabilities();
+                    var items = await RunCapabilityProbeAsync().ConfigureAwait(false);
+                    return new HostCommandResult(
+                        name, HostCommandStatus.Implemented,
+                        HostCommandChannel.HostLocal,
+                        System.Text.Json.JsonSerializer.SerializeToElement(new { items }));
                 }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
@@ -950,15 +954,6 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
             }
 
-
-            HostCommandResult SourceSyncCapabilities()
-            {
-                var items = RunCapabilityProbeAsync().GetAwaiter().GetResult();
-                return new HostCommandResult(
-                    "source_get_sync_capabilities", HostCommandStatus.Implemented,
-                    HostCommandChannel.HostLocal,
-                    System.Text.Json.JsonSerializer.SerializeToElement(new { items }));
-            }
 
             async Task<object[]> RunCapabilityProbeAsync()
             {

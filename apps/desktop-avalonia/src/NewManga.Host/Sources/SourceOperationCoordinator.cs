@@ -242,6 +242,9 @@ public sealed class SourceOperationCoordinator
                     },
                     TimeSpan.FromSeconds(60), cancellationToken)
                 .ConfigureAwait(false);
+            var receiptJson = lookup.Result?.ValueKind == JsonValueKind.Object
+                ? lookup.Result.Value.GetRawText()
+                : null;
             commitDigest = lookup.Result?.ValueKind == JsonValueKind.Object
                 && lookup.Result.Value.TryGetProperty("commit_digest", out var digest)
                 && digest.ValueKind == JsonValueKind.String
@@ -250,7 +253,12 @@ public sealed class SourceOperationCoordinator
             lock (gate)
             {
                 var current = Read(entry.OperationId);
-                Write(current with { CommitDigest = commitDigest, UpdatedAt = UtcNow() });
+                Write(current with
+                {
+                    CommitDigest = commitDigest,
+                    CommitReceiptJson = receiptJson,
+                    UpdatedAt = UtcNow(),
+                });
             }
         }
         using var authorization = JsonDocument.Parse(authorizationJson);
