@@ -97,10 +97,10 @@ out_of_scope:
 - [x] **AC11-2（scan/diff/plan）**：目录/容器 diff 分类（未变/新增/缺失/变化/歧义）数量=明细；plan 绑定 book/页集合/旧新 SourceVersion/binding generation/用户决定/digest；预览与 apply 使用同一不可变 plan；plan 的合法预先持久化与 stale Apply 拒绝基线分别记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
 - [ ] **AC11-3（页匹配，按 C-15 §3.2 冻结规则）**：同源同容器 digest 直接保续 与 容器变化后的跨版本匹配是两条路径；跨版本逐项验证 pixel profile 的 algorithm/decoder/version/params/尺寸/方向可比性与一对一唯一匹配；重复名/重复像素 occurrence 整组 needs_confirmation，不按 ordinal/locator 自动搬运人工成果；PDF 插页/ZIP 重排/目录重复内容不合并 occurrence；旧证据缺失/profile 不可比且不能按冻结参数重算时降为待确认/不可验证，禁止从新图伪造旧证据；以 FEA-09 真实导入旧库 fixture 验证。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 无独立 match 测试与 FEA-09 旧库 fixture；分类路径已测>>
 - [x] **AC11-4（CAS/原子性/零写）**：明确三类代次（SourceVersion/binding_version/Host authorization generation + 人工 revision/Lock/draft 基线）的比较对象与事务内重读位置；单 plan/多项目原子单元与批次最后一项冲突时整批回滚唯一口径；并发 apply 仅一个成功、源/绑定/范围/决定/授权各自漂移、授权撤销/失联、第三区域 BaseRevisionId 冲突、DB 失败均有断言；stale Apply 零业务写（比较 pages/bindings/source rows/regions/text/current/revisions/保护/进度/operation receipt，不偷偷发布部分新代次）；拒绝审计落盘若需要须 DSH 明确与 A10 零写边界。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
-- [x] **AC11-5（同步应用/守恒/lineage）**：未变且唯一对应页保留 PageId/用户顺序/人工版本/进度/保护；新增页新 PageId 且顺序由 plan 明示；缺失页 tombstone 可找回（问题/人工修改保留，不连带删除）；变化页新 binding generation、旧区域/旧 revision 的 lineage 映射可恢复且隔离（新图编辑/渲染/导出/Run 目标读取不套旧坐标）；手动迁移新 RegionCandidate/revision、BaseRevisionId 与 Lock 检查，第三项失败整批回滚；Prepare 后同步→旧 Accept/结果 apply 被阻止（结果留 candidate）、旧 edit token 不写新 binding；不自动改写已接受 Run 快照。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [x] **AC11-5（同步应用/守恒/lineage）**：未变且唯一对应页保留 PageId/用户顺序/人工版本/进度/保护；新增页新 PageId 且顺序由 plan 明示；缺失页 tombstone 可找回（问题/人工修改保留，不连带删除）；变化页新 binding generation、旧区域/旧 revision 的 lineage 映射可恢复且隔离（新图编辑/渲染/导出/Run 目标读取不套旧坐标）；手动迁移新 RegionCandidate/revision、BaseRevisionId 与 Lock 检查，第三项失败整批回滚；Prepare 后同步→旧 Accept/结果 apply 被阻止（结果留 candidate）、旧 edit token 不写新 binding；不自动改写已接受 Run 快照。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: lineage native 写入与读隔离承接 FEA-11-LINEAGE-1 (R-009)>>
 - [x] **AC11-6（relink/repoint/resync）**：三操作分列 preview、命令/确认文案、身份/版本断言；relink（同一物理文件改名/移动）保留 EntryId/PageId/人工版本/区域/进度；repoint（改指向另一文件）改 EntryId、内容已变须走 resync 确认；resync（容器替换/重排/增删页）走页匹配与确认；仅当前/全部引用由用户选择且只更新预览中确认的集合，确认前引用集合变化须重新预览；其他项目 accepted binding/人工/进度不误改（诊断字段变化单列允许）；跨卷重新验证；同 bytes 不同物理文件不自动合并权限/identity；容器成员重排不改变已绑定页用户顺序（SC-S11）。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
 - [ ] **AC11-7（缺失/无备份与诊断出口）**：原文件不在且无备份时保留元数据/人工修改并诚实显示缺失；管理诊断读取 missing/needs_confirmation/tombstone 走既有 V/R 可见性区分（C-05 P8），不为"显示缺失"暗改可见性契约、不扩 V(p,t)；reader 返回 typed 失败；不以新源或 derived 文件冒充旧源证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 管理诊断查询接线未在本卡实现>>
-- [x] **AC11-8（durable operation 与双确认）**：C-15 的 Host durable authorization 保持在前（不得反序两阶段提交）；operationId 与请求 digest/目标集合绑定；每步 durable receipt、ACK/重放/恢复核对顺序冻结；相同 key+相同请求返回原结果、相同 key+不同 plan/范围拒绝、响应丢失重试不新增 binding；若需 Core 提交后 Host ACK，ACK 前读门控须持久化并在重启后维持（不能内存标志）；分别在 Host 持久化前后、Core 事务前后、ACK 前后杀进程，用真实新进程读取 journal/registry/DB 验证恢复；授权撤销、磁盘满、旧 registry snapshot、grant 过期/失联均有结果断言且不重放破坏性 OS 操作。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [x] **AC11-8（durable operation 与双确认）**：C-15 的 Host durable authorization 保持在前（不得反序两阶段提交）；operationId 与请求 digest/目标集合绑定；每步 durable receipt、ACK/重放/恢复核对顺序冻结；相同 key+相同请求返回原结果、相同 key+不同 plan/范围拒绝、响应丢失重试不新增 binding；若需 Core 提交后 Host ACK，ACK 前读门控须持久化并在重启后维持（不能内存标志）；分别在 Host 持久化前后、Core 事务前后、ACK 前后杀进程，用真实新进程读取 journal/registry/DB 验证恢复；授权撤销、磁盘满、旧 registry snapshot、grant 过期/失联均有结果断言且不重放破坏性 OS 操作。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: Host 自签完整 HostAuthorization 承接 FEA-11-HOST-AUTH-1 (P0-1)；ACK/Recovery 6 字段接线已修>>
 - [x] **AC11-9（生产链路/读图/回归）**：真实生产装配 Host→Core→DB→resolve→资源字节；先 resolve 旧绑定并读取字节→同步新绑定→生产 resolve/issue 读取新内容且旧资源键/已发布摘要不可变（资源版本选择由 PREREQ 冻结，不覆盖同键旧图）；验收至 Host/API（真实 IPC），不含用户可达 UI（UI 后续独立切片承接，不得宣称用户流程完成）；源原始 hash/mtime/文件数前后守恒、应用不写源；managed 五读路径/既有命令回归；缺能力/撤销/预算/密码错误 fail-closed；pytest/.NET 全量不减少且 skip 原因逐项记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
 - [ ] **AC11-10（范围/冻结/证据/资源）**：逐项 evidence pin 与范围 diff；v1–v7 迁移字节、冻结契约、FEA-08/09/10 closeout/证据不变；新迁移失败可回滚、旧端拒写新 schema；独立 Review + DSH 集成；Handoff+EV+Resource Manifest；证据/隔离根固定在 `G:/CODEX/New Manga.workspace/FEA-11/` 子目录，重复运行不复写 FEA-09/10 tracked 证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 独立上下文 Review 待 Appointment>>
 
@@ -190,6 +190,21 @@ Reviewer：fresh subagent（parent session-20e77fbf），只读 HEAD `5aadb3cd`�
 - **AC 状态修正**（按 Reviewer 判定）：AC11-3/4/5/6/8/9 由 MET 改 **PARTIAL/BLOCKED**（实现缺失或证据不足），AC11-2 可接受（保留），AC11-1/7/10 维持 PARTIAL（done 前须补）。
 - **范围窄批登记**（R-013，DSH 作为 Integrator 逐项批准，因实施期间暴露的既有缺陷/集成必要）：`HostCommandDispatcher.cs`、`HostCommandModel.cs`、`src/application/importing/referenced/identity.py`、`src/application/importing/referenced/scanner.py`、`src/infrastructure/resource_channel/handle_resolver.py`、`import_source_refs.py`、`source_strict_read.py`、`tests/fea09/*`（12 个：identity/flaky/v2 键/迁移断言同步）、`tests/fea11/support/*`（2 个 ipc 脚本）、`tests/core/test_p09_fu2_import_pages.py`、`apps/.../SourceSyncJournalTests.cs`、`tests/fea09/test_referenced_resolve.py`；治理指针（STATUS/PLAN/TASK_LEDGER 的 FEA-11 行）与 `doc/tasks/FEA-11-SCAN-1.md`。allowed_paths 中不存在的条目（`test_source_match.py`、`test_source_plan.py`、`support/restart_core.py`）从验证矩阵移除（已在实施证据节更正）。
 - 返修完成后：复跑全量门禁 → 请求新上下文复审（新 reviewed_head）→ DSH 集成 closeout。
+
+### Review r1 返修进展（2026-11-05，DSH）
+
+已修复（提交 `80b01229`/`33080869`/`ed0685e0`/`6b1ea62e`）：
+- R-003 新增页 grant→binding（receipt.bindings）；R-004 fail_operation SQL + failed→recovered；R-005 无页 missing 页级投影；
+- P0-2 Host ACK/Recovery 接线（6 字段 CompletionRequest、Core 成功后才落 acknowledged、真实 CommitReceipt digest、RecoverAsync 调 Core）；
+- R-006 relink 物理身份（copy 拒绝，真实 rename 测试）；R-007 全源引用集合（reference_set_digest 覆盖全源共享）；R-008 COMMIT 前 live authorization 重验；
+- R-010 真实 IPC 全链改 new_zip（changed→pending gate 拒绝→ACK→新 binding 新字节→源守恒，3/3 passed）。
+
+**DSH 裁决承接**（不满足 done 的部分如实 PARTIAL）：
+- P0-1（Host 自签完整 HostAuthorization 的 canonical 摘要与编排）→ 承接 **FEA-11-HOST-AUTH-1**（proposed）。
+- R-009（lineage native 写入与读路径隔离）→ 承接 **FEA-11-LINEAGE-1**（proposed）。
+- 承接依据：两者均需 Host 摘要规范/写域外路径（regions/render/export/Run），超出本卡冻结范围；DSH 作为 Lead/Architect 裁决登记，Review 复审时判定是否接受。
+
+待办：R-011/R-012（AC11-4/3 证据补强）、P2 文档一致性、复跑全量门禁、新上下文复审。
 
 ## Closeout Record
 
