@@ -22,13 +22,14 @@ allowed_paths:
   - doc/tasks/FEA-10-PREREQ-1.md
   - doc/tasks/FEA-10.md
   - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
-  - apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarErrorCode.cs
-  - apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarException.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Wire/CoreProtocol.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Wire/WireJson.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
   - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/HostRuntimeIntegrationTests.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10PrereqProjectionTests.cs
   - doc/reviews/FEA-10-PREREQ-1-*.md
   - doc/handoffs/FEA-10-PREREQ-1-*.md
   - verification/FEA-10-PREREQ-1/**
@@ -55,8 +56,8 @@ out_of_scope:
 | 文件 | 用途 | AC |
 |---|---|---|
 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | rev 2.12 命令行/结果/3 码/§8/例外登记 | AC1 |
-| `apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarErrorCode.cs` | 错误码枚举/安全投影 | AC2 |
-| `apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarException.cs` | typed 异常保留原 code | AC2 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Wire/CoreProtocol.cs` | 业务错误类型 `CoreErrorInfo`/`CoreOperationException`；`code/category/retryable` 白名单投影落点 | AC2 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Wire/WireJson.cs` | 错误 payload 解析（只读复用；如需窄改由 DSH 批准） | AC2 |
 | `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | 客户端命令 registry 映射 | AC1/AC2 |
 | `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs` | dispatch/payload 形状校验 | AC2/AC3 |
 | `apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs` | host 投影层/`allowedRunErrorCodes` | AC2/AC3 |
@@ -84,8 +85,8 @@ out_of_scope:
 | 场景/AC | 计划命令 | 前提/环境 | 期望 |
 |---|---|---|---|
 | AC1 | `git diff -- doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` + 逐条对照 C-08 §3 | 主工作树 | 仅增量；无旧语义改动 |
-| AC2/AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release --no-build --filter FullyQualifiedName~WireTests`；`dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Fea10PrereqProjectionTests` | .NET 9；隔离测试数据根 `G:/CODEX/New Manga.workspace/FEA-10-PREREQ-1/` | 白名单/unknown 降级通过 |
-| AC4 | `pwsh -NoProfile -File tools/governance/check.ps1`；`verify_pins.ps1`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build`（不减少） | 主工作树 | PASS；17/17 |
+| AC2/AC3 | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo`；`dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~CoreProtocolTests|FullyQualifiedName~AsciiWireTests"`；`dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Fea10PrereqProjectionTests` | .NET 9；隔离测试数据根 `G:/CODEX/New Manga.workspace/FEA-10-PREREQ-1/`；日志/EXIT 写 `verification/FEA-10-PREREQ-1/logs/` | 白名单/unknown 降级通过；日志可复现 |
+| AC4 | `pwsh -NoProfile -File tools/governance/check.ps1`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build`（不减少） | 主工作树；日志/EXIT 写 `verification/FEA-10-PREREQ-1/logs/` | PASS；17/17 |
 | AC5 | 证据写 `verification/FEA-10-PREREQ-1/**`；`git diff --name-only` 对照写域 | 主工作树 | 全合规；独立 Review approved |
 
 ## 文档 rev 与 wire 版本边界（P2-3 澄清）

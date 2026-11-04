@@ -63,3 +63,12 @@
   - P2-2：AC5 计数限定为「成功提交回执/完成计数不增加」，允许失败/控制状态按冻结语义持久化。
   - 补 request builder 边界：`ports/translation/protocol.py`、`translation_openai.py`、`openai_client.py` 默认只读复用；现有 `payload_hash` 不冒充 endpoint/model/body 全摘要；如需窄改须 DSH 批准。
 - 下一轮：scope review r4（全新上下文）；仍不写生产代码、不 push。
+
+## Scope Review r4 处置（DSH，2026-11-04）
+
+- Reviewer：Codex 全新上下文；报告 `doc/reviews/FEA-10-scope-r4.md`（reviewed_head `9bc2093d`）；结论 changes_requested P0=0/P1=1/P2=2。
+- DSH 处置：**全部接受**。
+  - P1-1：补 `Fea10PrereqProjectionTests.cs` 授权；删除 FEA-10 误列 Host.Tests/RunMonitorTests.cs；矩阵改逐文件与用途/AC；
+  - P2-1：PREREQ 增 build 步骤、真实测试类过滤（`CoreProtocolTests|AsciiWireTests`）、完整 `verify_pins.ps1` 调用与日志路径；FEA-10 统一 `workspace/FEA-10/fixtures/<case>/` 隔离根，AC7 明确 `restart_core.py` 参数与同库重开；
+  - P2-2：修正 request builder 路径（拆开 protocol/translation_openai/openai_client）；PREREQ 错误类型改为 `Wire/CoreProtocol.cs` 的 `CoreErrorInfo/CoreOperationException`，移除传输枚举扩写。
+- 下一轮：scope review r5（全新上下文）；仍不写生产代码、不 push。

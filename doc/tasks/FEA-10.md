@@ -58,15 +58,14 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/CoreServiceIntegrationTests.cs
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/HostRuntimeIntegrationTests.cs
-  - apps/desktop-avalonia/tests/NewManga.Host.Tests/RunMonitorTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs
-  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/DraftBufferTests.cs
-  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/IntentCoordinatorTests.cs
-  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/RequestExecutorTests.cs
-  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/RunMonitorTests.cs
-  - apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/TestSupport.cs
-  - apps/desktop-avalonia/tests/NewManga.App.Tests/RunControllerTests.cs
-  - apps/desktop-avalonia/tests/NewManga.App.Tests/RunIndexTests.cs
+DraftBufferTests.cs
+IntentCoordinatorTests.cs
+RequestExecutorTests.cs
+RunMonitorTests.cs
+TestSupport.cs
+RunControllerTests.cs
+RunIndexTests.cs
   - tests/core/test_p13_run_runtime.py
   - tests/core/test_p13_lifecycle_discriminators.py
   - tests/core/test_fea00a_pipeline_seam.py
@@ -115,16 +114,15 @@ out_of_scope:
 | `src/infrastructure/sqlite/pipeline.py` | Run store/事务、`BEGIN IMMEDIATE`、receipt | AC5/AC6/AC7 |
 | `src/infrastructure/providers/{handlers,retry,step_writes,registry}.py` | provider 绑定快照、step seam、candidate 写入 | AC2/AC4/AC5 |
 | `src/bootstrap/{core_service,core_assembly}.py` | `_RUN_COMMANDS`/dispatch/装配（协议注册后） | AC8/AC10 |
-| `NewManga.CoreClient/{CoreServiceClient.cs, Commands/*}` | 生产客户端、命令注册/错误投影、Run 绑定默认值 | AC1/AC8 |
+| `NewManga.CoreClient/CoreServiceClient.cs`、`Commands/{HostCommandDispatcher,HostCommandRegistry,RunBindingDefaults,DomainServices}.cs` | 生产客户端、命令注册/错误投影、Run 绑定默认值 | AC1/AC8 |
 | `NewManga.Host/HostRuntime.cs` | Host 命令面/真实 IPC 路由 | AC8 |
 | `NewManga.App/Services/{HostController,IHostController,NullHostController,RunContracts}.cs` | 生产 adapter/typed 端口 | AC8 |
 | `NewManga.ApplicationCore/{RunMonitor,RunStateStore,IntentCoordinator,RequestExecutor,DraftBuffer}.cs` | intent/receipt/控制状态、UI 可观察投影 | AC5/AC6/AC7 |
-| `src/{ports/translation/protocol.py,infrastructure/providers/translation_openai.py,openai_client.py}` | request builder 边界：默认只读复用；如经 DSH 批准窄改，需证明现有 `payload_hash` 不等于 endpoint/model/body 全摘要 | AC2/AC3 |
-| `tests/fea10/`（新）、`tests/core/test_{p13_run_runtime,p13_lifecycle_discriminators,fea00a_pipeline_seam,pipeline_defaults_assembly,pipeline_defaults_service}.py`、`tests/pipeline/` | Python 回归/新增 | AC1–AC7 |
-| `NewManga.CoreClient.Tests/{CoreServiceIntegrationTests,WireTests}.cs` | 协议/回归 | AC8 |
-| `NewManga.Host.Tests/{HostRuntimeIntegrationTests,RunMonitorTests,Fea10RunIpcTests}.cs` | 真实 Host/IPC/回归 | AC8 |
+| `src/ports/translation/protocol.py`、`src/infrastructure/providers/translation_openai.py`、`src/infrastructure/providers/openai_client.py` | request builder 边界：默认只读复用；如经 DSH 批准窄改，需证明现有 `payload_hash` 不等于 endpoint/model/body 全摘要 | AC2/AC3 |
+| `tests/fea10/{test_prepared_run,test_snapshot_retry,test_commit_zero_write,test_idempotent_receipt}.py`、`tests/fea10/support/restart_core.py`、`tests/core/{test_p13_run_runtime,test_p13_lifecycle_discriminators,test_fea00a_pipeline_seam,test_pipeline_defaults_assembly,test_pipeline_defaults_service}.py`、`tests/pipeline/{test_pipeline_production_seam,test_pipeline,test_run_store_cache_race,test_store,test_models,test_regionless_rebinding,test_retype_candidate_persistence,test_clean_availability,test_fea00a_source_boundaries}.py` | Python 回归/新增（逐文件） | AC1–AC7 |
+| `NewManga.CoreClient.Tests/{CoreServiceIntegrationTests.cs,WireTests.cs}` | 协议/回归 | AC8 |
+| `NewManga.Host.Tests/{HostRuntimeIntegrationTests.cs,Fea10RunIpcTests.cs}`（**不含 RunMonitorTests.cs**；该测试在 ApplicationCore.Tests） | 真实 Host/IPC/回归 | AC8 |
 | `NewManga.ApplicationCore.Tests/{DraftBufferTests,IntentCoordinatorTests,RequestExecutorTests,RunMonitorTests,TestSupport}.cs`、`NewManga.App.Tests/{RunControllerTests,RunIndexTests}.cs` | state/projection/adapter 测试 | AC6/AC8 |
-| `NewManga.Host.Tests/RunMonitorTests.cs` **不写**（该测试实际在 ApplicationCore.Tests） | — | — |
 
 共享接口新增/改动须 DSH 明确授权；组合根仍 DSH 单点提交。
 
@@ -145,10 +143,10 @@ out_of_scope:
 
 | AC | 测试文件（新增/复用） | 命令（CWD=`G:\CODEX\New Manga`） | 隔离环境 | 关键断言 | 证据 |
 |---|---|---|---|---|---|
-| AC1/AC2 | `tests/fea10/test_prepared_run.py`（新） | `python -m pytest tests/fea10 -q` | 临时 DataRoot/DB | Prepare 零 DB/零执行；过期/不完整码；敏感面 | `verification/FEA-10/logs/` |
-| AC3/AC4 | `tests/fea10/test_snapshot_retry.py`（新）；复用 `tests/core/test_p13_run_runtime.py` | `python -m pytest tests/fea10 tests/core -q` | 临时 DB | 四元组 digest；payload digest 同值；stale；retry 两分支 | 同上 |
-| AC5/AC6 | `tests/fea10/test_commit_zero_write.py`（新）；扩展 `tests/core/test_fea00a_pipeline_seam.py` | `python -m pytest tests/core tests/fea10 -q` | 隔离 DB | 10 条件逐项三处零变化/完成数不增；事务单位；控制 pending | 同上 |
-| AC7 | `tests/fea10/test_idempotent_receipt.py`（新）+ `tests/fea10/support/restart_core.py` | 同上，并由 `restart_core.py` 停止/重启 Core 后重开同一 DB | `G:/CODEX/New Manga.workspace/FEA-10/` 下隔离根 | 丢 ACK/重启找回；异 fingerprint；request_id 非键 | 同上 |
+| AC1/AC2 | `tests/fea10/test_prepared_run.py`（新） | `python -m pytest tests/fea10 -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/`（每例唯一 DataRoot/DB） | Prepare 零 DB/零执行；过期/不完整码；敏感面 | `verification/FEA-10/logs/` |
+| AC3/AC4 | `tests/fea10/test_snapshot_retry.py`（新）；复用 `tests/core/test_p13_run_runtime.py` | `python -m pytest tests/fea10 tests/core -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 四元组 digest；payload digest 同值；stale；retry 两分支 | 同上 |
+| AC5/AC6 | `tests/fea10/test_commit_zero_write.py`（新）；扩展 `tests/core/test_fea00a_pipeline_seam.py` | `python -m pytest tests/core tests/fea10 -q` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 10 条件逐项三处零变化/完成数不增；事务单位；控制 pending | 同上 |
+| AC7 | `tests/fea10/test_idempotent_receipt.py`（新）+ `tests/fea10/support/restart_core.py` | 同上；测试内 `python tests/fea10/support/restart_core.py --data-root <fixture> --db <fixture>/library.db --stop|--start` 后重开同一 DB | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/` | 丢 ACK/重启找回；异 fingerprint；request_id 非键 | 同上 |
 | AC8 | `apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs`（新，`[Fact]`/env 门）；既有 .NET 回归 | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build`；`$env:NEWMANGA_FEA10_IPC='1'; $env:NEWMANGA_BUILD_PYTHON='C:/Python314/python.exe'; dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Fea10RunIpcTests` | `G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>/`（每例唯一 DataRoot） | 生产 assembly/IPC；回归不减少；日志含命令/EXIT | `verification/FEA-10/logs/dsh/` |
 | AC9/AC10 | `check.ps1`、`verify_pins.ps1`、`git diff --name-only` | `pwsh -NoProfile -File tools/governance/check.ps1`；`verify_pins.ps1` | 主工作树 | PASS/17/17/范围合规 | EV + Handoff |
 
