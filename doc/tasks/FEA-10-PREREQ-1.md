@@ -3,14 +3,14 @@ id: FEA-10-PREREQ-1
 title: C-08 块②协议注册（M2-C1 rev 2.12：PrepareRun/AcceptRun + 3 错误码 + host 投影白名单）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending scope freeze（Codex 2026-11-04 裁决 FEA-10 优先；C-08 冻结记录 §3 为释放前置）
+status: ready
+approval: **scope approved（r5 Codex，P0=0/P1=0；仅 P2 残留）+ DSH Appointment 2026-11-04**；C-08 冻结记录 §3 为释放前置；等 Codex 额度恢复（13:31 后）认领实施
 suggested_owner: codex
-owner: null
-reviewer: pending scope review（独立上下文；新 Appointment 后登记）
+owner: codex（Appointment 2026-11-04；待 Codex 额度恢复后认领）
+reviewer: implementation review 待 Appointment（全新上下文；不得由实现者自审）
 depends_on:
   - FEA-01-FREEZE-1
-base_commit: d831cf968cd856674c0320fe67ce854f4ef9d4b3
+base_commit: 1254d4e01608d3c9577872abb1dedea5661889aa
 branch: null
 worktree: null
 integration_commit: null

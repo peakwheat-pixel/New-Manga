@@ -82,3 +82,12 @@
   - P2-1：AC7 restart 命令拆成 `--stop`、`--start` 两次可执行调用（同一 DataRoot/DB）；`verify_pins.ps1` 补完整调用；
   - P2-2：PREREQ 移除 `WireJson.cs` 授权/用途（真实错误解析在 `CoreProtocol.cs`）。
 - 下一轮：scope review r6（全新上下文）；PREREQ-1 已 approved，r6 通过后先 Appointment/释放 PREREQ-1，FEA-10 等其 done；仍不写生产代码、不 push。
+
+## Scope Review r6 状态（2026-11-04，DSH）
+
+- r5 后 FEA-10 已按 P1/P2 修订（allowed_paths YAML 修复、AC7 两次调用、pins 完整命令、PREREQ 移除 WireJson），但 **r6 独立复审未完成**：
+  - Codex：usage limit，提示 13:31 后重试（EXIT=1）；
+  - ZCode：HTTP 429（EXIT=1）。
+- 处置：**不把 FEA-10 置 ready/Appointment**；FEA-10 保持 proposed，待额度恢复后交全新上下文 scope r6。
+- `FEA-10-PREREQ-1`：r5 已 **approved**，DSH 接受并冻结 scope + Appointment（owner=Codex）；Task → `ready`，PLAN READY 节点登记；实施待 Codex 额度恢复后认领。
+- 不 push、不改冻结字节。

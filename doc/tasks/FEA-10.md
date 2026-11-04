@@ -4,7 +4,7 @@ title: 快照 / 候选 / 提交安全（PreparedRun 两阶段 + canonical reques
 kind: implementation
 governance_version: 3
 status: proposed
-approval: pending scope review r4（Codex 2026-11-04 裁决首选；须先完成 FEA-10-PREREQ-1 协议注册）
+approval: pending scope review r6（r5 后已按 P1/P2 修订；因 Codex/ZCode 额度耗尽暂缓复审）；须先完成 FEA-10-PREREQ-1 协议注册
 suggested_owner: codex
 owner: null
 reviewer: pending scope review（独立上下文；实施 Review 另行 Appointment）
