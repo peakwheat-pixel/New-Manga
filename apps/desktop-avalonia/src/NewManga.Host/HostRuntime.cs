@@ -816,133 +816,26 @@ public sealed class HostRuntime : IAsyncDisposable
                 var registry = Registry ?? throw new CoreOperationException(
                     "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
                     "source registry unavailable", null);
-                await SourceSyncCapabilityAsync(name, token).ConfigureAwait(false);
-                string? StringField(System.Text.Json.JsonElement element, string key) =>
-                    element.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && element.TryGetProperty(key, out var value)
-                    && value.ValueKind == System.Text.Json.JsonValueKind.String
-                        ? value.GetString() : null;
-                var planId = StringField(payload, "plan_id") ?? string.Empty;
-                var planDigest = StringField(payload, "plan_digest") ?? new string('0', 64);
-                var kind = name switch
-                {
-                    "source_relink" => "relink",
-                    "source_repoint" => "repoint",
-                    _ => "resync",
-                };
-                var grantIds = new List<string>();
-                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && payload.TryGetProperty("grant_ids", out var grantArray)
-                    && grantArray.ValueKind == System.Text.Json.JsonValueKind.Array)
-                {
-                    foreach (var grant in grantArray.EnumerateArray())
+                var orchestrator = new NewManga.Host.Sources.HostOperationOrchestrator(
+                    operations,
+                    registry,
+                    SourceSyncCapabilityAsync,
+                    async (operationId, cancellationToken) =>
                     {
-                        if (grant.ValueKind == System.Text.Json.JsonValueKind.String
-                            && grant.GetString() is { Length: > 0 } grantId)
-                        {
-                            grantIds.Add(grantId);
-                        }
-                    }
-                }
-
-                var registryAuthorizations = new List<Dictionary<string, object?>>();
-                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && payload.TryGetProperty("authorization", out var incoming)
-                    && incoming.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && incoming.TryGetProperty("authorizations", out var incomingAuthorizations)
-                    && incomingAuthorizations.ValueKind == System.Text.Json.JsonValueKind.Array)
-                {
-                    foreach (var item in incomingAuthorizations.EnumerateArray())
-                    {
-                        var registryId = StringField(item, "registry_id");
-                        var identityDigest = StringField(item, "identity_digest");
-                        var generation = item.ValueKind == System.Text.Json.JsonValueKind.Object
-                            && item.TryGetProperty("generation", out var generationValue)
-                            && generationValue.ValueKind == System.Text.Json.JsonValueKind.Number
-                                ? generationValue.GetInt32() : 0;
-                        if (string.IsNullOrWhiteSpace(registryId)
-                            || string.IsNullOrWhiteSpace(identityDigest) || generation < 1)
-                        {
-                            throw new CoreOperationException(
-                                "INVALID_REQUEST", "validation", false,
-                                "apply request carries a malformed authorizations entry", null);
-                        }
-                        registryAuthorizations.Add(new Dictionary<string, object?>
-                        {
-                            ["registry_id"] = registryId,
-                            ["generation"] = generation,
-                            ["identity_digest"] = identityDigest,
-                        });
-                    }
-                }
-                if (registryAuthorizations.Count == 0)
-                {
-                    throw new CoreOperationException(
-                        "INVALID_REQUEST", "validation", false,
-                        "apply request carries no registry authorizations", null);
-                }
-                var minted = HostAuthorizationMinter.Mint(
-                    planId, planDigest, kind, registryAuthorizations);
-                var operationId = minted.OperationId;
-                var requestDigest = minted.RequestDigest;
-                var authorizationJson = CanonicalJson.Text(minted.Authorization);
-                var hostReceiptId = minted.HostReceiptId;
-                var known = registry.List().ToDictionary(item => item.RegistryId, item => item);
-                foreach (var item in registryAuthorizations)
-                {
-                    var registryId = (string)item["registry_id"]!;
-                    if (!known.TryGetValue(registryId, out var knownRegistry))
-                    {
-                        throw new CoreOperationException(
-                            "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
-                            "authorization references an unknown source registry", null);
-                    }
-                    registry.Authorize(registryId, (int)item["generation"]!, new[] { knownRegistry.Locator });
-                }
-                var entry = operations.Begin(
-                    planId, planDigest, kind, requestDigest, operationId, grantIds);
-                operations.Authorize(entry.OperationId, authorizationJson, hostReceiptId);
-                var injected = new Dictionary<string, object?>();
-                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object)
-                {
-                    foreach (var property in payload.EnumerateObject())
-                    {
-                        if (property.Name is "operation_id" or "authorization")
-                        {
-                            continue;
-                        }
-                        injected[property.Name] = System.Text.Json.JsonSerializer.Deserialize<object?>(property.Value.GetRawText());
-                    }
-                }
-                injected["operation_id"] = operationId;
-                injected["authorization"] = minted.Authorization;
-                var finalPayload = System.Text.Json.JsonSerializer.SerializeToElement(injected);
-
-                var response = await call(finalPayload, token).ConfigureAwait(false);
-                var result = response.Result ?? default;
-                var lookup = await CoreService.SendAsync(
-                        "source_get_operation", 3,
-                        writer =>
-                        {
-                            writer.WriteStartObject();
-                            writer.WriteString("operation_id", operationId);
-                            writer.WriteEndObject();
-                        },
-                        _options.RequestTimeout, token)
+                        var lookup = await CoreService.SendAsync(
+                                "source_get_operation", 3,
+                                writer =>
+                                {
+                                    writer.WriteStartObject();
+                                    writer.WriteString("operation_id", operationId);
+                                    writer.WriteEndObject();
+                                },
+                                _options.RequestTimeout, cancellationToken)
+                            .ConfigureAwait(false);
+                        return lookup.Result ?? default;
+                    });
+                return await orchestrator.ApplyAsync(name, payload, call, token)
                     .ConfigureAwait(false);
-                var commitDigest = lookup.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
-                    && lookup.Result.Value.TryGetProperty("commit_digest", out var digestValue)
-                    && digestValue.ValueKind == System.Text.Json.JsonValueKind.String
-                        ? digestValue.GetString()!
-                        : throw new CoreOperationException(
-                            "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
-                            "operation receipt is unavailable", null);
-                operations.MarkCommitted(
-                    entry.OperationId, commitDigest,
-                    lookup.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
-                        ? lookup.Result.Value.GetRawText()
-                        : null);
-                return (entry.OperationId, result);
             }
 
             async Task SourceSyncCapabilityAsync(
