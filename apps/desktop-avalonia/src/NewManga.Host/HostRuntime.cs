@@ -794,6 +794,43 @@ public sealed class HostRuntime : IAsyncDisposable
                 return await grants.HandleCommandAsync(name, payload, token).ConfigureAwait(false);
             }
 
+            // FEA-11 (C-17 §5.2): journal-wrap the operation-kind writes. The
+            // Host journals *before* the Core call and records the commit after
+            // it; ACK/recovery/failure stay on the operation face.
+            async Task<(string OperationId, System.Text.Json.JsonElement Result)> SourceOperationJournalAsync(
+                string name, System.Text.Json.JsonElement payload,
+                Func<CancellationToken, Task<NewManga.CoreClient.Wire.CoreResponse>> call,
+                CancellationToken token)
+            {
+                var operations = Operations ?? throw new CoreOperationException(
+                    "CORE_UNAVAILABLE", "unavailable", false, "source operation journal unavailable", null);
+                string? StringField(string key) =>
+                    payload.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && payload.TryGetProperty(key, out var value)
+                    && value.ValueKind == System.Text.Json.JsonValueKind.String
+                        ? value.GetString() : null;
+                var planId = StringField("plan_id") ?? string.Empty;
+                var planDigest = StringField("plan_digest") ?? new string('0', 64);
+                var kind = name switch
+                {
+                    "source_relink" => "relink",
+                    "source_repoint" => "repoint",
+                    _ => "resync",
+                };
+                var entry = operations.Begin(planId, planDigest, kind, Sha256Hex(payload.GetRawText()));
+                operations.Authorize(entry.OperationId, payload.GetRawText(), "host-session");
+                var response = await call(token).ConfigureAwait(false);
+                var result = response.Result ?? default;
+                operations.MarkCommitted(entry.OperationId,
+                    Sha256Hex(result.ValueKind == System.Text.Json.JsonValueKind.Undefined
+                        ? "null" : result.GetRawText()));
+                return (entry.OperationId, result);
+            }
+
+            static string Sha256Hex(string text) => Convert.ToHexString(
+                System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
+
             // GRANT-ISSUER-1: open the HOST-ISSUER-1 host-control session and wire the dispatcher.
             // A session failure is logged and leaves grant commands typed-unavailable; it does not
             // fail the whole Host (reads and credential commands keep working).
@@ -812,7 +849,8 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
-                Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
+                Commands = new HostCommandDispatcher(
+                    CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {

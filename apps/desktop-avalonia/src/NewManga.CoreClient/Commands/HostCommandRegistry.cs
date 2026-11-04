@@ -410,6 +410,11 @@ public static class HostCommandRegistry
       "plan_import_references", "start_import_references", "get_import_receipt", "cancel_import" };
 
     /// <summary>FEA-11 (C-17 §5.1): the source-sync plan/operation command face.</summary>
+    /// <summary>FEA-11 (C-17 §5.2): the four operation-kind writes the Host
+    /// journals before the Core call (scan is journal-free).</summary>
+    public static bool IsSourceSyncWrite(string name) => name is
+        "source_apply_sync_plan" or "source_relink" or "source_repoint" or "source_resync";
+
     public static IReadOnlySet<string> SourceSyncCommandNames { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "source_scan_sync", "source_plan_sync", "source_preview_sync_plan",

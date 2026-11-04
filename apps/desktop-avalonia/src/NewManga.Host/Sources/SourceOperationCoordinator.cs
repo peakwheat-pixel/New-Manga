@@ -139,6 +139,26 @@ public sealed class SourceOperationCoordinator
         }
     }
 
+    /// <summary>FEA-11: record a Core commit performed by the caller (the
+    /// Host dispatcher owns the Core call; the journal owns durability).</summary>
+    public JournalEntry MarkCommitted(string operationId, string commitDigest)
+    {
+        RequireEnabled();
+        lock (gate)
+        {
+            var entry = Read(operationId);
+            RequireState(entry, "host-authorized");
+            var next = entry with
+            {
+                State = "core-committed",
+                CommitDigest = commitDigest,
+                UpdatedAt = UtcNow(),
+            };
+            Write(next);
+            return next;
+        }
+    }
+
     /// <summary>FEA-11: Host durable ACK first, then tell the Core; the ACK
     /// opens the read gate (C-17 §3.3) and is idempotent on replay.</summary>
     public async Task<JournalEntry> AcknowledgeAsync(

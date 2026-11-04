@@ -39,14 +39,27 @@ public sealed class HostCommandDispatcher
     private readonly HostBridgeClient? _bridge;
     private readonly Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? _hostLocal;
 
+    /// <summary>FEA-11 (C-17 §5.2): Host-injected durable journal. The Host
+    /// begins/authorizes the operation, runs the Core call it receives, and
+    /// returns (operation_id, core result).</summary>
+    private readonly Func<
+        string,
+        JsonElement,
+        Func<CancellationToken, Task<CoreResponse>>,
+        CancellationToken,
+        Task<(string OperationId, JsonElement Result)>>? _journal;
+
     public HostCommandDispatcher(
         CoreServiceClient? core = null,
         HostBridgeClient? bridge = null,
-        Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null)
+        Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null,
+        Func<string, JsonElement, Func<CancellationToken, Task<CoreResponse>>, CancellationToken,
+            Task<(string OperationId, JsonElement Result)>>? journal = null)
     {
         _core = core;
         _bridge = bridge;
         _hostLocal = hostLocal;
+        _journal = journal;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -142,6 +155,37 @@ public sealed class HostCommandDispatcher
         JsonElement args,
         CancellationToken cancellationToken)
     {
+        var journal = _journal;
+        if (journal is not null && HostCommandRegistry.IsSourceSyncWrite(descriptor.Name))
+        {
+            // The journal delegate owns the ordering; the Core call is handed
+            // to it lazily so a journal-only unit test needs no live sidecar.
+            var coreForJournal = _core;
+            Func<CancellationToken, Task<CoreResponse>> call = coreForJournal is null
+                ? _ => throw new SidecarException(
+                    SidecarErrorCode.ProcessExited,
+                    SidecarSpec.CoreServiceName,
+                    $"{descriptor.Name} requires a running core_service")
+                : ct => coreForJournal.SendHostControlAsync(
+                    descriptor.CoreCommand!,
+                    writer => WriteCorePayload(descriptor.Name, args, writer),
+                    TimeSpan.FromSeconds(120),
+                    coreForJournal.HostSession,
+                    ct);
+            var (operationId, result) = await journal(
+                    descriptor.Name,
+                    args,
+                    call,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var merged = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+            {
+                ["operation_id"] = operationId,
+                ["result"] = result.ValueKind == JsonValueKind.Undefined ? null : result.Clone(),
+            });
+            return new HostCommandResult(descriptor.Name, descriptor.Status, descriptor.Channel, merged);
+        }
+
         var core = _core
             ?? throw new SidecarException(
                 SidecarErrorCode.ProcessExited,
