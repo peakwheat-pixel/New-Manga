@@ -1296,3 +1296,10 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 交付：C-05 v1.2/C-15 v1.1/C-16 v1.1 重冻（17/17）；I001/I005 实现闭环；I011 EV 收敛（唯一 ID/0 PENDING）。
 - 限制/债务：加密源跨进程 IPC 未单列；UI 归 FEA-09-UI-1；DEBT-FEA09-01 已登记。未 push。
 - 下一步：释放 FEA-09-UI-1 或推进 G-DELETE-IMPL；handoff `doc/handoffs/FEA-09-closeout.md`。
+## 197. FEA-09-UI-1 closeout（2026-11-04）
+
+- Task FEA-09-UI-1 → **done**：集成 head `b14e04da`；AC-1…AC-5 MET；独立 Review r1→r4 收敛，**r4 approved P0=0/P1=0/P2=2（非阻断）**。
+- 门禁：build 0/0；全量 .NET 1317/0/74（逐项目唯一 TRX+命令头/EXIT）；真实 IPC 16/16（真实 HostController+VM+HostRuntime+Python stdio）；C-07 inventory PASS（未改冻结 IHostController）；check PASS；pins 17/17。
+- 交付：ImportDock 引用源导入最小接线（plan/密码/取消/进度/汇总）；独立 `ISourceImportController`；旧 managed 路径保留；未 push。
+- 限制：多加密源逐源确认；folder 交 Host EnumerateFolder；Registry 审计 opaque；UI 控件级证据；FEA-09 证据复写债务候选。
+- 下一步：无 Active Task；下一候选按 PLAN 需 DSH Appointment。
