@@ -121,7 +121,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-PREREQ1-C17 | AC-P1…P6/P8（契约提案） | doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md | pending | cb7c574987d9694f094a65c7aea4e286ab2a0df2347d05ea11433b369452e00b | CANONICAL |
+| EV-PREREQ1-C17 | AC-P1…P6/P8（契约提案） | doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md | pending | 1d425887c9831f796168209ce07e3dd78e0c29f28baf9d94ce73cf44a372ecd8 | CANONICAL |
 | EV-PREREQ1-WIRE | AC-P3（命令/DTO 形状） | verification/FEA-11-PREREQ-1/wire-schema.json | pending | 9fed28fa1e8b6579934edba889b9aed87be1b3542a9ec77320c3f44f8b32de1e | CANONICAL |
 | EV-PREREQ1-LOGS | AC-P1…P4（隔离验证） | verification/FEA-11-PREREQ-1/sql-validation.log | pending | 63113979cbc589c3af5a60ff9e235bcb799ca7fb3ceb9c7c57b73ba1689d297c | SOURCE_PIN |
 | EV-PREREQ1-EXAMPLES | AC-P2/P4/P5/P6（规范模型） | verification/FEA-11-PREREQ-1/examples.log | pending | cecabea533a2e7c2a31a4e220fce2f629c2cd9e316cd307b032ae1c83052203c | SOURCE_PIN |
