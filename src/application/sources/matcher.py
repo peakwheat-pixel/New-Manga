@@ -248,7 +248,10 @@ def match_entries(
                 continue
         # --- locator-unique correspondence with different content.
         locator_matches = [
-            entry for entry in new_entries if entry["locator"] == old["locator"]
+            entry
+            for entry in new_entries
+            if entry["locator"] == old["locator"]
+            and entry["entry_id"] not in paired_new_ids
         ]
         old_locator_matches = [
             entry for entry in old_entries
