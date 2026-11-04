@@ -22,6 +22,11 @@ allowed_paths:
   - doc/tasks/FEA-11-MATCH-1.md
   - doc/reviews/FEA-11-MATCH-1-*.md
   - doc/handoffs/FEA-11-MATCH-1-*.md
+  - src/application/sources/scanner.py
+  - src/application/sources/matcher.py
+  - src/application/sources/model.py
+  - tests/fea11/test_source_match.py
+  - tests/fea11/fixtures/**
   - verification/FEA-11-MATCH-1/**
 ---
 
@@ -32,3 +37,9 @@ allowed_paths:
 - 范围：生产 scan 的 new entry pixel profile（pixel-digest/1 算法、方向/尺寸/参数可比性）、重复 pixel occurrence 的 needs_confirmation、FEA-09 真实 v7 导入旧库 fixture、独立 match 测试（`test_source_match.py`）。
 - 现状：AC11-3 在 FEA-11 中为 PARTIAL 且明确降级——生产 scan 不写 pixel profile，`unique_pixel` 仅在既有数据提供 profile 时生效；测试只有 scan 分类路径。
 - 依据：`doc/reviews/FEA-11-r1.md` R-012/P1-11；C-17 §7.3。
+
+## Acceptance Criteria
+
+- [ ] **AC1**：生产 scan 的 new entry pixel profile（pixel-digest/1：algorithm/decoder/params/尺寸/方向），与 C-17 §7.3 冻结参数一致。 <<PARTIAL: 待实施>>
+- [ ] **AC2**：重复 pixel occurrence → needs_confirmation；旧证据缺失降级路径有测试。 <<PARTIAL: 待实施>>
+- [ ] **AC3**：FEA-09 真实 v7 导入旧库 fixture + 独立 match 测试。 <<PARTIAL: 待实施>>

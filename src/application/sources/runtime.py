@@ -186,6 +186,10 @@ class SourceSyncOperations:
         authorization = request["authorization"]
         if authorization["operation_id"] != row["operation_id"]:
             raise _invalid("authorization operation id mismatch")
+        if authorization.get("request_digest") != request["request_digest"]:
+            raise _invalid("authorization request digest mismatch")
+        if authorization.get("host_receipt_id") != request["host_receipt_id"]:
+            raise _invalid("authorization host receipt mismatch")
         recomputed = authorization_digest_of(authorization["authorizations"])
         if recomputed != authorization["authorization_digest"]:
             raise SourceSyncError(
@@ -208,11 +212,14 @@ class SourceSyncOperations:
                     "SOURCE_GRANT_REVOKED",
                     "authorization generation is below the committed baseline",
                 )
+        # r2 P2-9: the fresh authorization must still cover every committed
+        # registry (a dropped registry would silently relax the ACK).
+        fresh_ids = {item["registry_id"] for item in authorization["authorizations"]}
+        if set(committed_base) - fresh_ids:
+            raise _invalid("fresh authorization omits a committed registry")
         if not request["grant_ids"]:
             # Missing-source operations carry no read grants; their receipts
             # only ever open gates, never publish new content.
-            if committed["authorizations"]:
-                return
             return
         for grant_id in request["grant_ids"]:
             try:

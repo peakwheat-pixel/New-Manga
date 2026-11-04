@@ -9,8 +9,11 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
-|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**in_progress**（scope-r2 approved + Appointment；ZCode 实施中断于额度上限，WIP `40cc6508`；待 Codex 00:51 续接）|
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**changes_requested**（实施完成；r1 changes_requested P0=2/P1=11 → r2 changes_requested P0=2/P1=4；返修中，r3 待派）||
 |FEA-11-SCAN-1|FEA-11|**proposed**（定时扫描/后台调度；卡已建，待 FEA-11 done 后独立 scope review；承接 AC11-1 延期项）|
+|FEA-11-HOST-AUTH-1|FEA-11|**proposed**（承接 r2 P0-1：Host durable authorization 自签/编排；待 FEA-11 r3 后 scope review）||
+|FEA-11-LINEAGE-1|FEA-11|**proposed**（承接 r2 R-009：lineage native 写入 + 读路径隔离；AC11-5 安全属性，LINEAGE-1 完成前 FEA-11 不得 done）||
+|FEA-11-MATCH-1|FEA-11|**proposed**（承接 r2 R-012：pixel profile 提取/旧库 fixture/独立 match 测试；AC11-3 done-with-limitation 的落实前提）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
@@ -43,7 +46,7 @@ READY 节点：无
 
 完成：FEA-10 **done**（`d1972f0f`）；FEA-11-PREREQ-1 **done**（C-17 v1.0 FROZEN，pins 18/18，集成 `75d11739b`）。当前：**FEA-11 ready**（scope-r2 approved；Appointment 2026-11-04 Owner=ZCode）。
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → FEA-11（ready）；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → **FEA-11（changes_requested，r2；返修→r3）**；承接 HOST-AUTH-1/LINEAGE-1/MATCH-1/SCAN-1（proposed）；FEA-12 待 `G-DELETE-IMPL`
 
 ## 历史快照（终态节点，非当前 DAG）
 

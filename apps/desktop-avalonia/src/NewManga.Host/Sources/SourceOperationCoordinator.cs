@@ -125,38 +125,6 @@ public sealed class SourceOperationCoordinator
         }
     }
 
-    /// <summary>FEA-11: dispatch one write command on the Core host-control
-    /// session and journal the commit (apply/relink/repoint/resync).
-    /// The journal is core-committed only after the Core returned a result;
-    /// a failed call leaves the operation in host-authorized for recovery.</summary>
-    public async Task<JournalEntry> ApplyAsync(
-        string operationId,
-        string command,
-        Action<Utf8JsonWriter> payload,
-        CancellationToken cancellationToken = default)
-    {
-        RequireEnabled();
-        var entry = EnsureAuthorized(operationId);
-        var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
-        var response = await client.SendHostControlAsync(
-                command, payload, TimeSpan.FromSeconds(120), client.HostSession, cancellationToken)
-            .ConfigureAwait(false);
-        var resultText = response.Result?.GetRawText() ?? "null";
-        lock (gate)
-        {
-            var current = Read(operationId);
-            RequireState(current, "host-authorized");
-            var next = current with
-            {
-                State = "core-committed",
-                CommitDigest = Sha256Hex(resultText),
-                UpdatedAt = UtcNow(),
-            };
-            Write(next);
-            return next;
-        }
-    }
-
     /// <summary>FEA-11: record a Core commit performed by the caller (the
     /// Host dispatcher owns the Core call; the journal owns durability).</summary>
     public JournalEntry MarkCommitted(string operationId, string commitDigest)

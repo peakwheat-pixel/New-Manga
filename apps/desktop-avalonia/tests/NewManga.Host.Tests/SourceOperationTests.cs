@@ -72,11 +72,10 @@ public sealed class SourceOperationTests : IDisposable
         var coordinator = NewCoordinator();
         var entry = coordinator.Begin("plan-3", new string('e', 64), "repoint", new string('f', 64));
 
-        // Apply before authorization is refused (never a silent Core call).
-        await Assert.ThrowsAsync<SourceAccessException>(() => coordinator.ApplyAsync(
-            entry.OperationId, "ResyncSource", _ => { }));
-        // Acknowledge before commit is refused.
+        // Acknowledge before commit is refused (never a silent Core call).
         await Assert.ThrowsAsync<SourceAccessException>(() => coordinator.AcknowledgeAsync(entry.OperationId));
+        // Recover before a commit is refused as well.
+        await Assert.ThrowsAsync<SourceAccessException>(() => coordinator.RecoverAsync(entry.OperationId));
 
         coordinator.Authorize(entry.OperationId, "{}", "receipt-2");
         // Authorize twice is refused (started-only transition).
@@ -96,5 +95,20 @@ public sealed class SourceOperationTests : IDisposable
         Assert.Equal("failed", failed!.State);
         // Re-marking is a no-op, not a refusal.
         Assert.Equal("failed", coordinator.MarkFailed(entry.OperationId).State);
+    }
+
+    [Fact]
+    public void ReusedOperationId_CannotOverwriteJournalState()
+    {
+        var coordinator = NewCoordinator();
+        var entry = coordinator.Begin("plan-5", new string('3', 64), "resync", new string('4', 64));
+        coordinator.Authorize(entry.OperationId, "{\"host_receipt_id\":\"r\"}", "r");
+        coordinator.MarkCommitted(entry.OperationId, new string('5', 64));
+
+        // A second Begin with the same operation id is refused (r2 P2-6).
+        Assert.Throws<SourceAccessException>(() => coordinator.Begin(
+            "plan-5", new string('3', 64), "resync", new string('4', 64),
+            entry.OperationId));
+        Assert.Equal("core-committed", coordinator.Get(entry.OperationId)!.State);
     }
 }

@@ -1,17 +1,17 @@
 # FEA-11 AC-MATRIX（实施中；DSH 维护）
 
-状态：**in_review**（Phase A/B/C1–C5 完成；C6 门禁证据见 `logs/dsh-C6-final.log`；AC11-1/3/7/10 如实为 PARTIAL，其余 MET）。
+状态：**changes_requested**（r1 changes_requested P0=2/P1=11 → r2 changes_requested P0=2/P1=4；返修中，r3 待派）。AC 状态与 Task 卡同步：AC11-2 MET（保留，P1-1 已修）；AC11-4/6/9 由 MET 降 PARTIAL；AC11-1/3/5/7/8/10 PARTIAL（原因内联于卡）。
 隔离根：`G:/CODEX/New Manga.workspace/FEA-11/`；C-17 v1.0 FROZEN（`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`、`doc/plan/FEA-CONTRACT-FROZEN-C17.md`）。
 
 ## 证据基线（实跑）
 
 | 命令 | 结果 | 记录 |
 |---|---|---|
-| `pytest tests/fea11` | **31 passed** | Phase A/B/C5 |
-| `pytest tests`（全量） | **3042 passed / 0 failed / 10 skipped** | 含 FEA-09 identity 统一、conftest 冲突修复、v8 迁移 |
+| `pytest tests/fea11` | **37 passed** | Phase A/B/C5 + r1/r2 返修测试 |
+| `pytest tests`（全量） | **3047 passed / 0 failed / 10 skipped** | 含 r1/r2 返修；日志 `logs/dsh-C6-r2.log` |
 | `pytest tests/fea09`（多次 + 冷启动） | **142 passed** 稳定 | 物理身份归一化（`identity.py`） |
 | `dotnet build` | 0 warnings / 0 errors | Release |
-| `dotnet test`（全量） | **1355 passed / 0 failed / 75 skipped**（App.Tests 偶发 1 flaky，单独 671/0） | C1/C2/C3 |
+| `dotnet test`（全量） | **1355 passed / 0 failed / 78 skipped**（3 个 IPC opt-in skip；App.Tests 偶发 1 flaky） | C1/C2/C3 + r1/r2 |
 | `NEWMANGA_FEA11_IPC=1` Host.Tests | **3 passed**（真实 Python Core） | `Fea11SourceIpcTests`（fail-closed / grant+scan / 全链 scan→plan→confirm→apply→ACK→resolve v2） |
 | `pwsh tools/governance/check.ps1` | PASS（2 warnings） | 指针治理 |
 | `pwsh tools/governance/verify_pins.ps1` | PASS 18/18 | C-17 第 18 pin |
@@ -23,12 +23,12 @@
 | AC11-1 变化检测/强验证/Dirty | scan 测试：同 mtime/size 不同字节可发现；过期 grant typed 拒绝；watcher 消费者属 FEA-11-SCAN-1 | **PARTIAL** |
 | AC11-2 scan/diff/plan | `test_source_scan.py`（8）：数量=明细、scope all 冻结引用、plan 预览/确认 | **MET（seam）** |
 | AC11-3 页匹配（C-15 §3.2） | unique_pixel/added/missing、重复组、旧证据降级（matcher 层） | **PARTIAL**（PDF/ZIP 重排/旧库 fixture 待补） |
-| AC11-4 CAS/原子性/零写 | stale 零写逐表快照、replay 拒绝、事务发布 | **MET（seam）** |
+| AC11-4 CAS/原子性/零写 | stale 零写逐表快照、replay 拒绝、事务发布、多项目 scope=all、末项漂移整批回滚、apply 前撤销；缺并发/DB 失败/第三区域 | **PARTIAL** |
 | AC11-5 守恒/tombstone/lineage | tombstone、captured_v7/legacy_unverified 冻结、relink 保序（lineage 2 测试） | **MET（seam；在途 Run/draft 交错待生产装配）** |
-| AC11-6 relink/repoint/resync | 4 测试：保续/拒绝内容变/repoint 需确认/成功发布 | **MET（seam）** |
+| AC11-6 relink/repoint/resync | 保续/内容变拒绝/repoint 需确认/成功发布 + 物理身份（copy 拒绝）；缺其他项目不误改/跨卷/成员重排 | **PARTIAL** |
 | AC11-7 缺失/诊断出口 | missing observation、tombstone 保留；管理诊断接线待 Phase C 尾 | **PARTIAL** |
 | AC11-8 durable operation/双确认 | operation 恢复/伪造摘要拒绝/ACK 开门/cancel；Host journal（C1/C3：DPAPI 原子 journal、状态机、测试） | **MET（seam + Host journal 单测；真实 HostCore ACK 链待 C4 尾）** |
-| AC11-9 生产链路/读图/回归 | **真实 IPC 全链 3/3**：fail-closed、Host 发 grant + ScanSourceSync、scan→plan→preview→confirm→ResyncSource→ACK→resolve（v2 键）；`test_source_resolve.py` 5 测试（键确定性/同键不同 bytes 拒绝） | **MET** |
+| AC11-9 生产链路/读图/回归 | 真实 IPC 全链 3/3（new_zip：changed→pending gate→ACK→新 binding v2→源守恒）——**Core 直连，未走 HostRuntime**；旧键/旧摘要不可变与 pre-sync 旧 binding 证据缺失 | **PARTIAL** |
 | AC11-10 范围/冻结/证据 | check/pins 18/18、冻结契约零改动、v8 迁移测试、AC-MATRIX/Handoff；最终门禁/Review 待做 | **PARTIAL** |
 
 ## 未完成清单（收尾）
