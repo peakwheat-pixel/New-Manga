@@ -41,3 +41,15 @@
   - 增验证矩阵与既有实现复用清单。
 - **拆分裁定（P2-4）**：C-08 冻结记录 §3 原「与 C-04b 共用 Task」是冻结期安排；C-04b 已冻结且删除线不属于 FEA-10 范围，DSH 裁定硬前置独立为 `FEA-10-PREREQ-1`，仅做协议注册/投影，不碰删除线；该替代安排登记于本 ADJ，不修改 C-08 冻结字节。
 - 下一轮：两卡修订后交**全新上下文 Codex** scope review r2；仍不写生产代码、不 push。
+
+## Scope Review r2 处置（DSH，2026-11-04）
+
+- Reviewer：Codex 全新上下文（未参与建卡/实现）；报告 `doc/reviews/FEA-10-scope-r2.md`（reviewed_head `1ac21de7`）；结论 changes_requested P0=0/P1=3/P2=3。
+- DSH 处置：**全部接受**。
+  - P1-1：FEA-10 改**文件级写域矩阵**（bootstrap/CoreClient/Host/App/Services/ApplicationCore/Python tests 逐文件）；PREREQ 也收窄到文件级；
+  - P1-2：AC7 增「关闭/重启 Core、重开同一 DB 后同键找回原 Run」；
+  - P1-3：AC5 增 10 项逐条故障注入矩阵 + 两类事务单位定义（多 Region 编辑 apply vs Pipeline step seam）；
+  - P2-1：明确 `preparedDigest` 按冻结四元组算法校验，另比较 `payloadDigestPreview == payloadDigestSend`，不要求两种不同摘要相等；
+  - P2-3：PREREQ 明确登记 C-08 §3 已批准 wire 2.12，文档 rev 与 `PROTOCOL_MINOR` 分离，客户端 registry/Core dispatch 归属分开；
+  - P2-5：验证矩阵补精确文件/命令/solution/DataRoot/门径/证据出口。
+- 下一轮：两卡修订后交**全新上下文 Codex** scope review r3；仍不写生产代码、不 push。

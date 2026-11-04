@@ -22,10 +22,13 @@ allowed_paths:
   - doc/tasks/FEA-10-PREREQ-1.md
   - doc/tasks/FEA-10.md
   - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
-  - apps/desktop-avalonia/src/NewManga.CoreClient/
-  - apps/desktop-avalonia/src/NewManga.Host/
-  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/
-  - apps/desktop-avalonia/tests/NewManga.Host.Tests/
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarErrorCode.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarException.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/HostRuntimeIntegrationTests.cs
   - doc/reviews/FEA-10-PREREQ-1-*.md
   - doc/handoffs/FEA-10-PREREQ-1-*.md
   - verification/FEA-10-PREREQ-1/**
@@ -56,7 +59,7 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1（M2-C1 字节增量）**：rev 2.12 只新增/登记 §3 所列内容；既有冻结命令/结果/错误/状态/事件语义零改动；文档 diff 逐条对照 C-08 §3；Core 协议 minor 未提升（除 DSH 批准）。
+- [ ] **AC1（M2-C1 字节增量与 wire 登记）**：rev 2.12 只新增/登记 §3 所列内容；既有冻结命令/结果/错误/状态/事件语义零改动；文档 diff 逐条对照 C-08 §3；登记 C-08 §3 **已批准的 wire 版本 2.12**（文档 rev 与 Core `PROTOCOL_MINOR` 不是同一概念；是否提升运行 minor 由 DSH 明确批准）；明确客户端 registry/错误投影映射与测试归属（PREREQ 只做文档+host 白名单；Core dispatch/运行实现归 FEA-10）。
 - [ ] **AC2（host 白名单）**：`allowedRunErrorCodes` 实现；未注册错误码投影为 `category=unknown`、安全消息、原 `code` 保留；三个新码仅在注册后进入白名单；**未注册码不得触发专属恢复/重试动作，也不得作为 UI 分支依据**。
 - [ ] **AC3（负向对照）**：模拟未注册码 → 断言 host 投影降级 unknown（不拒绝、不改 code、无专属恢复/重试动作）；注册后 → 断言按冻结 category/retryable 投影。
 - [ ] **AC4（回归与冻结面）**：既有 Run 命令 wire/测试不回归；`check.ps1`、`verify_pins.ps1` 17/17；C-05/C-15/C-16 字节未改；无生产 Run 实现。
@@ -73,9 +76,9 @@ out_of_scope:
 
 ## 文档 rev 与 wire 版本边界（P2-3 澄清）
 
-- `M2-C1 rev 2.12` 是**协议文档修订号**，不等于 Core `PROTOCOL_MINOR` 提升；本卡只登记 PrepareRun/AcceptRun 命令形状与 3 码的文档增量。
-- Core 运行版本、`_RUN_COMMANDS`/dispatch 与兼容回归由 **FEA-10 实现卡**承接（`src/bootstrap/core_service.py`、`core_assembly.py`、`CoreServiceClient.cs` 等）；本卡不实现命令。
-- 若实现需要提升 Core `PROTOCOL_MINOR`，须 DSH 另行批准并登记；未批准前不得改运行版本。
+- C-08 冻结记录 §3 已批准新命令登记为 **wire 版本 2.12**；`M2-C1 rev 2.12` 是该登记对应的**文档修订号**。Core `PROTOCOL_MINOR` 是否需要提升是独立问题，由 DSH 在实施前明确，不因文档 rev 自动提升。
+- 本卡登记：M2-C1 命令行/结果形状/3 码/§8 未观察/例外；客户端 registry 与错误投影映射/白名单；负向对照测试。
+- Core `_RUN_COMMANDS`/dispatch、`core_assembly.py`、`CoreServiceClient.cs` 的运行实现与兼容回归由 **FEA-10 实现卡**承接；本卡不实现命令、不改运行语义。
 
 ## 依赖、风险与阻塞
 
