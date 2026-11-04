@@ -266,7 +266,7 @@ commit_digest=sha256(canonical(CommitReceipt))。Host journal 用本DTO完整保
 
 - Scan TTL、Plan TTL 均≤300s（Plan不晚于scan.expires_at）；按Core时间校验，恢复已提交receipt/ACK不受plan TTL影响，但授权/grant必须有效。
 - `totals` 必须严格等于各 classification 明细计数；diff按item_id、bases按(project_id,page_id)、base_sources按(source_id,version_id)、authorizations按registry_id、decisions按item_id排序，均唯一；target.entries按ordinal、bindings按page_id排序。所有参考ID均由Core核实。
-- scope=current时project_ids恰好一个；all时等于冻结引用集合book去重值。reference_set_digest覆盖所有引用的(project,page,binding,version,status,deleted)，current也捕获全源共享集合；任何引用变化要求重新预览。 scope=all 时若冻结引用集合的 book 去重数超过 project_ids 数组上限 20，Scan/PlanBody 以 INVALID_REQUEST 拒绝并提示按 project_ids 分批（不静默截断、不回退 current 语义）。
+- scope=current时project_ids恰好一个；all时等于冻结引用集合book去重值。reference_set_digest覆盖所有引用的(project,page,binding,version,status,deleted)，current也捕获全源共享集合；任何引用变化要求重新预览。scope=all 时若冻结引用集合的 book 去重数超过 project_ids 数组上限 20，Scan/PlanBody 以 INVALID_REQUEST 拒绝并提示按 project_ids 分批（不静默截断、不回退 current 语义）。
 - added: page/old_entry=null，new_entry非null；missing相反；其余旧新均非null。unchanged须direct/unique_pixel；duplicate/missing_old/incomparable不可自动keep。defer不发布该歧义的新绑定，旧绑定保持needs_confirmation；tombstone保留旧页/人工/问题，不删除。
 - decisions与diff一一对应。add有target_chapter/new_order且target_page=null；bind/keep/tombstone有target_page且与diff一致，新增顺序由plan明确，existing顺序不随容器重排；defer无迁移。migrate_revision_ids仅changed/repoint且显式bind允许，必须新建revision；其他数组为空。
 - SourceObservation.status=ok时version_id/content_digest/identity_digest必非null，reason_code=null；missing时三者均null、entries为空、reason_code=SOURCE_ENTRY_MISSING；encrypted/unsupported时仅有可实际验证的容器摘要/identity，缺项为null，不造值。新增候选版本/entry的ID由Core在scan时分配，apply复用，不由Host伪造。

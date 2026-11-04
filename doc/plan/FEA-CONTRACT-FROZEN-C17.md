@@ -1,22 +1,22 @@
-# C-17 Source 同步契约 · 冻结记录草案
+# C-17 Source 同步契约 · 冻结记录
 
-**状态：DRAFT / 未冻结 / 不构成实现授权。** 日期：2026-11-04。
-契约：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`。起草 Owner：Codex；冻结人：**待 DSH**。
-依据：`doc/tasks/FEA-11-PREREQ-1.md`、Appointment、scope-r1 approved（后者只批准范围）。
+**状态：FROZEN v1.0（DSH 冻结 2026-11-04）。** 本冻结不构成 FEA-11 生产实施授权；实施须另经 FEA-11 scope-r2 + DSH Appointment 释放。
+契约：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`。起草 Owner：Codex；冻结人：**DSH（2026-11-04）**；上下文独立 Review：**ZCode 全新上下文**（r1 reviewed_head `69d7c31ee`；轻量复核 head `c7940fa7`）。
+依据：`doc/tasks/FEA-11-PREREQ-1.md`、Appointment、scope-r1 approved（只批准范围）、`doc/reviews/FEA-11-PREREQ-1-r1.md`（approved P0/P1=0）、`doc/reviews/FEA-11-PREREQ-1-r1-light.md`（轻量复核 approved P0/P1/P2=0）。
 
 ## 1. 冻结字节（由 DSH 在最终集成流程回填）
 
 | 项 | 值 |
 |---|---|
-| 最终 ID / 冻结版本 / 时间 | PENDING_DSH（候选 C-17 v1.0） |
-| 最终语义 commit | PENDING_DSH；当前未提交 |
-| 实际 reviewed_head | PENDING_REVIEW；不可填当前 base 冒充已审语义 head |
-| Reviewer 身份/来源/报告 | PENDING_APPOINTMENT（全新上下文，不得由起草会话自审） |
-| sha256（最终工作树 pin） | PENDING_DSH_FINAL_BYTES |
-| git blob ID（最终语义/冻结 head 分列） | PENDING_DSH |
-| blob 内容 SHA-256（原始 Git blob bytes） | PENDING_DSH |
-| 迁移版本与登记名 | 8 / v8__source_sync 仅候选；待 DSH 核对未占用后分配 |
-| per-command / 默认 minor / 文档 rev | 新面2.3 / 默认3不变 / C-17候选v1.0；M2-C1 rev2.12无增量 |
+| 最终 ID / 冻结版本 / 时间 | **C-17 v1.0 / 2026-11-04（DSH 冻结）** |
+| 最终语义 commit | PENDING_SEMANTIC_COMMIT（DSH 提交后回填） |
+| 实际 reviewed_head | r1 `69d7c31ee60318c6f8a042c60c3f749a0ffda6a6`（ZCode 契约 Review r1）；轻量复核 `c7940fa7179e2b1d029fa58fb09e9a8dea13f5eb` |
+| Reviewer 身份/来源/报告 | **ZCode 全新上下文**（r1 session `sess_ec2aaf7b-c0cd-4c1c-8696-436c55733bf3`；轻量 session `sess_39a3cee4-31a4-4f5c-a4b0-fcf3a328d1f6`；未参与起草/返修）；报告 `doc/reviews/FEA-11-PREREQ-1-r1.md`、`doc/reviews/FEA-11-PREREQ-1-r1-light.md`；结论 approved（r1 P0/P1=0、P2=6 已处置；轻量 P0/P1/P2=0） |
+| sha256（最终工作树 pin） | PENDING_FINAL_BYTES（DSH 最后编辑后复算） |
+| git blob ID（最终语义/冻结 head 分列） | PENDING_FINAL_BYTES |
+| blob 内容 SHA-256（原始 Git blob bytes） | PENDING_FINAL_BYTES |
+| 迁移版本与登记名 | **v8 / v8__source_sync（DSH 冻结；已核对 schema.py/migrator.py 未占用 v8；v1–v7 SQL/checksum 不变）** |
+| per-command / 默认 minor / 文档 rev | 新面 2.3 / 默认 3 不变 / C-17 v1.0；M2-C1 rev 2.12 **无增量（NO_INCREMENT）** |
 
 候选三指纹与命令保存在 `verification/FEA-11-PREREQ-1/candidate-fingerprints.json`。它记录工作树原始SHA-256、Git过滤后候选blob ID与候选blob字节摘要；**不是已提交blob读取证据，也不是最终pin**。本记录不填可被verify_pins误认的候选sha256。冻结后才由DSH填写上表最终pin并单点追加map `C17=FEA-C17_SOURCE_SYNC_DRAFT.md`。
 
@@ -28,12 +28,12 @@
 
 | 项 | 值 |
 |---|---|
-| 独立复核字节 SHA-256 / blob ID / blob SHA-256 | PENDING_REVIEW |
-| 最终冻结字节三指纹 | PENDING_DSH |
-| 差异清单 | PENDING；仅允许明确记录的状态行/冻结链接元数据差异 |
-| 条款/SQL/DTO相等的复核 | PENDING；有任何语义变动必须新head复审 |
+| 独立复核字节 SHA-256 / blob ID / blob SHA-256 | r1 `69d7c31ee` 与轻量 `c7940fa7` 的 C-17 Git blob 由 DSH 读取后回填（见提交后指纹节） |
+| 最终冻结字节三指纹 | PENDING_FINAL_BYTES（DSH 最后编辑后复算） |
+| 差异清单 | 已核对：r1→轻量仅 6 处说明性文字（§2.1/§3.1/§5.1/§5.3/§7.1/§8），SQL/DTO/错误表/状态机零变化；wire-schema SHA-256 `9fed28fa…` 未变；无状态行/冻结链接外的字节差异 |
+| 条款/SQL/DTO相等的复核 | **相等**（ZCode 轻量复核确认；validate_wire 文档实时编译 == 冻结 schema） |
 
-最后一次编辑后重新计算，禁止提前计算pin后再修改状态行。本记录不签发approved/frozen/done。
+最后一次编辑后重新计算，禁止提前计算pin后再修改状态行。本记录已由 DSH 冻结（FROZEN v1.0）；FEA-11 生产实施仍须 scope-r2 + DSH Appointment。
 
 ## 2. 条件核验
 
@@ -41,9 +41,9 @@
 |---|---|---|
 | DDL/状态/命令/CAS/lineage/resolve提案及AC索引 | DRAFT_DELIVERED | 契约§1–9；Owner隔离脚本/日志 |
 | 隔离SQL、DTO、模型验证 | EXECUTED，限证据声明范围 | verification专属目录；DSH复跑 |
-| 最终语义固定commit与上下文独立Review approved | NOT_RUN | DSH Appointment/处置 |
-| 最终ID/schema号/wire策略确认 | PENDING_DSH | 不预占v8，不修改旧面 |
-| 最终指纹/pins18/18/冻结后check | NOT_RUN | DSH单点，Owner只交候选 |
+| 最终语义固定commit与上下文独立Review approved | **DONE**（r1 approved + 轻量复核 approved；语义 commit 提交后回填） |
+| 最终ID/schema号/wire策略确认 | **DONE**（C-17 v1.0 / v8 / 新面 2.3 / M2-C1 无增量） |
+| 最终指纹/pins18/18/冻结后check | PENDING_FINAL（提交 2 回填） |
 | 当前旧17pins、治理与写域门禁 | 见最终日志 | 不能替代上述条件 |
 | M2-C1 | NO_INCREMENT | 新命令/错误闭集由C-17承载，不改M2-C1字节 |
 
