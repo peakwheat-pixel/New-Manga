@@ -10,7 +10,7 @@
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**in_progress**（scope-r2 approved + Appointment；ZCode 实施中断于额度上限，WIP `40cc6508`；待 Codex 00:51 续接）|
-|FEA-11-SCAN-1|FEA-11|**proposed（待建卡）**（定时扫描/后台调度生产者，承接 FEA-11 AC11-1 延期项；本卡仅三路+watcher 消费者）|
+|FEA-11-SCAN-1|FEA-11|**proposed**（定时扫描/后台调度；卡已建，待 FEA-11 done 后独立 scope review；承接 AC11-1 延期项）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
