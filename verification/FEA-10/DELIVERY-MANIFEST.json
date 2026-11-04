@@ -1,154 +1,79 @@
 {
-  "head": "25ba7cb2e613a8100d835f3540fc975cfa71b5a5",
+  "head": "3e01fae83738fcc0441882cb8b827202e4319c10",
   "branch": "main",
-  "created_at": "2026-11-04T09:27:38.398342+00:00",
+  "created_at": "2026-11-04T10:20:57.837151+00:00",
   "uncommitted": true,
   "self_hash_excluded": true,
   "files": [
     {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Services/RunContracts.cs",
+      "bytes": 25321,
+      "sha256": "c8eeaefd781ebafb545666d4ecf03393b700d24def05121318ffdb6721949659"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/RunControllerTests.cs",
+      "bytes": 30380,
+      "sha256": "29c38112860bf2ee1817f551435e8fa753e422030bd955837e350178504e138d"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs",
+      "bytes": 5418,
+      "sha256": "e492c99abe1a65fe576f7d50554a31ac7a0d8d21486c29276aab7cc24300d7a4"
+    },
+    {
       "path": "doc/handoffs/FEA-10-handoff.md",
-      "bytes": 16124,
-      "sha256": "a0870b5c04f6fd3e775c560e2f66c55743a10b4fb853e151d894a06e18b4bcd2"
+      "bytes": 18396,
+      "sha256": "49a67778aaecabc19bfc77488bba619008bd557c08f1715fe121ee23d397f526"
+    },
+    {
+      "path": "doc/reviews/FEA-10-impl-r1.md",
+      "bytes": 29230,
+      "sha256": "100d6a84aa7358e1429bbe0ba0aaa54a4b6d7e6191892bcde64e1b70b5f296ac"
+    },
+    {
+      "path": "doc/reviews/FEA-10-rework-r1.md",
+      "bytes": 5088,
+      "sha256": "217546721301a0f9022534997ee94f447a9b79efa2606b2fad24d14f2719309f"
     },
     {
       "path": "doc/tasks/FEA-10.md",
-      "bytes": 26463,
-      "sha256": "5a6de269ae73727cfc57f3c8ee8116d9fe447ac18e675606eb932879cd27b3c0"
-    },
-    {
-      "path": "src/application/tasks/service.py",
-      "bytes": 76883,
-      "sha256": "10a6ef9fb615f3a044bc678c25c307bcc97bc9c8038619da40ca0ded00619a91"
+      "bytes": 29441,
+      "sha256": "2615eca2de202fd01f69a86db9385ca815e0665bd21db1c396844b325c43f622"
     },
     {
       "path": "src/application/tasks/store.py",
-      "bytes": 28571,
-      "sha256": "dcfba79336ccc85e21fd22cdbf0239348ef42c4a870a399c23169ca0d40ccaca"
+      "bytes": 31332,
+      "sha256": "a2ee5c780846e32255934cfe9d9adde4cdf38cc8cd602034deaf8be3566d6fb1"
     },
     {
-      "path": "src/bootstrap/core_assembly.py",
-      "bytes": 79952,
-      "sha256": "85e4c89cd54db455fab32fbd6090f4a5fbeffbab8165586abe87019b8c9d3ce5"
-    },
-    {
-      "path": "src/infrastructure/providers/handlers.py",
-      "bytes": 67347,
-      "sha256": "ce1b0aa87a1d284bbd6a4d002fc654d41616b9ea61eb98511994fe7d662c0959"
-    },
-    {
-      "path": "src/infrastructure/providers/openai_client.py",
-      "bytes": 13125,
-      "sha256": "2e83cede0f41f73943b07b855480e51c302c784529893281ad94d26adfd6063a"
+      "path": "src/bootstrap/core_service.py",
+      "bytes": 310444,
+      "sha256": "e678fa4b71217eb7c04e120d4ba6a0d0c43555591256bf1c0e62f5d4f07032e9"
     },
     {
       "path": "src/infrastructure/providers/registry.py",
-      "bytes": 24399,
-      "sha256": "bd217ce7c7a3c121644bf7d51f60b5d78a9331e921bd6cea239115c7a4339792"
-    },
-    {
-      "path": "src/infrastructure/providers/translation_openai.py",
-      "bytes": 6104,
-      "sha256": "154966be132398717a7326761f3f1691400bec75e7fb568043c9df4a7ab0461d"
-    },
-    {
-      "path": "src/ports/translation/protocol.py",
-      "bytes": 13109,
-      "sha256": "274d42716a63400abea6df580debd374798b333a4cd5b4bc315d531ca37cabaa"
-    },
-    {
-      "path": "tests/fea10/support/restart_core.py",
-      "bytes": 3389,
-      "sha256": "71292e2a9ae5a27bc636ad649a04f0f65c772787c7f5c85a2ad8cece06e5a1f7"
-    },
-    {
-      "path": "tests/fea10/test_control_terminal.py",
-      "bytes": 7017,
-      "sha256": "4d4d30816b29609fa39308bfcb58d3217b6f03088e092a4d3803a36dc34f94ac"
+      "bytes": 28203,
+      "sha256": "b8b5af0ff56524ec9769620030896f08369b8eb9ae42feca0216c5b592c00105"
     },
     {
       "path": "tests/fea10/test_prepared_run.py",
-      "bytes": 9656,
-      "sha256": "daca89ea742f41289fd945267452d1192339ab2fd33df4a7dc7d170fa06b4d14"
-    },
-    {
-      "path": "tests/fea10/test_snapshot_retry.py",
-      "bytes": 15275,
-      "sha256": "6893158e089645c72f1517c6ecfdc8fc8b76ee33de8e766f3fb0bd5bc3dcd687"
+      "bytes": 15374,
+      "sha256": "0919f78f2054f2fa357f2d09c3b7cdc1669e6a2aba83093996ba4cea499445b3"
     },
     {
       "path": "verification/FEA-10/AC-MATRIX.md",
-      "bytes": 8316,
-      "sha256": "7428c009b94e58ce08a3938e93baf6511fba42f1502591253c753e230ffb41f7"
+      "bytes": 10628,
+      "sha256": "77ac045019c9c30b1f5883bf90ba157f10609acc27c5ed3c4191a9b260ba9db6"
     },
     {
-      "path": "verification/FEA-10/RESOURCE-MANIFEST.json",
-      "bytes": 242748,
-      "sha256": "54a47cc54dab11877ae57bcc972d4314473f56a2d6904c74a54ff2a783fbb343"
+      "path": "verification/FEA-10/logs/dsh-rework-dotnet.log",
+      "bytes": 22201,
+      "sha256": "db2ec5229736c495bdec5fd7caef357842a67720301a84beb8f013ff6fd4d1fd"
     },
     {
-      "path": "verification/FEA-10/changed-files.txt",
-      "bytes": 1203,
-      "sha256": "e2aeef6e4de3a626ba19b1940da53e4610c8b2bd7caeab988a0b4586e4617e01"
-    },
-    {
-      "path": "verification/FEA-10/ipc/real-ipc.txt",
-      "bytes": 247,
-      "sha256": "db408a0e01021de036e8d7ab7642400c623370495a6bf6d93916d9ac670f021f"
-    },
-    {
-      "path": "verification/FEA-10/logs/dotnet-build-r2.log",
-      "bytes": 2969,
-      "sha256": "9120a8c13a62ddbbc0600372df6bcf4ef6f60c71349b30d4369c5f5814d8272a"
-    },
-    {
-      "path": "verification/FEA-10/logs/dotnet-tests-r2.log",
-      "bytes": 21994,
-      "sha256": "13c71e90c1f9c083671f10f9afc7d1f6b9a0231b8c5c350d814a5272b41b4fe9"
-    },
-    {
-      "path": "verification/FEA-10/logs/governance-r2.log",
-      "bytes": 1085,
-      "sha256": "f8619cc30062fca0b993de230d85157823a589818538e67095114a1fa5f99c06"
-    },
-    {
-      "path": "verification/FEA-10/logs/ipc-r2.log",
-      "bytes": 586,
-      "sha256": "69161e61d3a2963cc20f2a0f6aa5c1061d9394185edf78dbda6966ddc8d755b1"
-    },
-    {
-      "path": "verification/FEA-10/logs/pins-r2.log",
-      "bytes": 456,
-      "sha256": "1ae119bfe5264214384dd8c82a28ac8965c0eace36525637f6592f764602f9bc"
-    },
-    {
-      "path": "verification/FEA-10/logs/provider-regressions-r2.log",
-      "bytes": 826,
-      "sha256": "7b332b10e547d93f23767da560fe86bfd16af87d089d33580112a6acc9a60161"
-    },
-    {
-      "path": "verification/FEA-10/logs/python-files-validated-r2.log",
-      "bytes": 412,
-      "sha256": "b3625d1d2ef135ffa77d538dd53dddd482735126759d624606281404ffea7f6d"
-    },
-    {
-      "path": "verification/FEA-10/logs/python-main-r2.log",
-      "bytes": 7816,
-      "sha256": "a7a7fb01f771f5de6a888218f3509fb5a16c263719cff569157b2201bc68dc9d"
-    },
-    {
-      "path": "verification/FEA-10/logs/scope-r1-preserved.log",
-      "bytes": 3245,
-      "sha256": "c6568ac3a90e555964577c1f9ada00ed046c3af703ae109ee1dc8cbecc228128"
-    },
-    {
-      "path": "verification/FEA-10/logs/scope-r2.log",
-      "bytes": 1146,
-      "sha256": "282a16632f8ed226326ee51c7b5b9076cc5bbd6ce324565655dc965d461f08d1"
-    },
-    {
-      "path": "verification/FEA-10/logs/scope.log",
-      "bytes": 1505,
-      "sha256": "e677d1c5e0535286ba66e8cc0fa051f2b2f1c21d3e02c5b1373f01f58f5e701e"
+      "path": "verification/FEA-10/logs/dsh-rework-pytest.log",
+      "bytes": 11166,
+      "sha256": "722a55ea4e7e51494575c778e2e098b270627f7243b73cbc080a4b569fff073b"
     }
   ],
   "out_of_scope": []

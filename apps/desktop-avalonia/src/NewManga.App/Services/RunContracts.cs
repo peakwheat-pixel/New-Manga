@@ -410,13 +410,41 @@ public static class RunPayloads
         writer.WriteString("command", request.Command);
         writer.WritePropertyName("scope");
         WriteObject(writer, request.Scope);
-        if (request.Overrides is not null)
+        var overrides = PrepareRunOverrides(request.Overrides);
+        if (overrides is not null)
         {
             writer.WritePropertyName("overrides");
-            WriteObject(writer, request.Overrides);
+            WriteObject(writer, overrides);
         }
         writer.WriteEndObject();
     });
+
+    /// <summary>
+    /// R-004: a PreparedRun must carry the same Host-side default <c>overrides.provider_bindings</c>
+    /// that <c>HostCommandDispatcher.WriteStartRunOverrides</c> injects for StartRun; otherwise an
+    /// accepted Prepared Run would execute under different bindings than an equivalent StartRun.
+    /// Explicit user bindings always win and the environment can disable the injection.
+    /// </summary>
+    private static IReadOnlyDictionary<string, object?>? PrepareRunOverrides(
+        IReadOnlyDictionary<string, object?>? overrides)
+    {
+        if (overrides is not null && overrides.ContainsKey("provider_bindings"))
+        {
+            return overrides;
+        }
+
+        var defaults = NewManga.CoreClient.Commands.RunBindingDefaults.Resolve();
+        if (defaults is null)
+        {
+            return overrides;
+        }
+
+        var merged = overrides is null
+            ? new Dictionary<string, object?>()
+            : new Dictionary<string, object?>(overrides);
+        merged["provider_bindings"] = defaults.Value;
+        return merged;
+    }
     /// <summary>
     /// C056 StartRun payload. Note the dispatcher (<c>HostCommandDispatcher.WriteCorePayload</c>)
     /// injects the Host-side default <c>overrides.provider_bindings</c> when the caller sends none, so
@@ -515,6 +543,10 @@ public static class RunPayloads
             case JsonElement element:
                 writer.WritePropertyName(property);
                 element.WriteTo(writer);
+                break;
+            case IReadOnlyDictionary<string, object?> nested:
+                writer.WritePropertyName(property);
+                WriteObject(writer, nested);
                 break;
             case IEnumerable<string> items:
                 writer.WritePropertyName(property);

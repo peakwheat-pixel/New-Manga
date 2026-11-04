@@ -25,6 +25,49 @@ public sealed class RunControllerNullFakeTests
             key);
     }
 
+    // R-004: a PreparedRun must carry the same Host-side default provider_bindings as StartRun.
+    [Fact]
+    public void PreparedRunPayload_CarriesTheHostDefaultBindings()
+    {
+        var previous = Environment.GetEnvironmentVariable(
+            NewManga.CoreClient.Commands.RunBindingDefaults.EnvironmentVariable);
+        Environment.SetEnvironmentVariable(
+            NewManga.CoreClient.Commands.RunBindingDefaults.EnvironmentVariable, null);
+        try
+        {
+            var request = Request(command: "ocr_region");
+            using var prepared = System.Text.Json.JsonDocument.Parse(RunPayloads.PrepareRun(request).GetRawText());
+            Assert.True(prepared.RootElement.TryGetProperty("overrides", out var overrides));
+            Assert.True(overrides.TryGetProperty("provider_bindings", out var bindings));
+            Assert.Equal("manga-ocr", bindings.GetProperty("ocr").GetString());
+
+            // Explicit user bindings always win over the Host default.
+            var explicitRequest = new RunStartRequest(
+                "ocr_region",
+                new Dictionary<string, object?> { ["kind"] = "chapter", ["chapter_id"] = "chapter-1" },
+                new Dictionary<string, object?>
+                {
+                    ["provider_bindings"] = new Dictionary<string, object?> { ["ocr"] = "custom-ocr" },
+                },
+                "n/a");
+            using var explicitPayload = System.Text.Json.JsonDocument.Parse(
+                RunPayloads.PrepareRun(explicitRequest).GetRawText());
+            Assert.Equal("custom-ocr", explicitPayload.RootElement.GetProperty("overrides")
+                .GetProperty("provider_bindings").GetProperty("ocr").GetString());
+
+            // The environment knob disables the injection (no overrides branch at all).
+            Environment.SetEnvironmentVariable(
+                NewManga.CoreClient.Commands.RunBindingDefaults.EnvironmentVariable, "off");
+            using var disabled = System.Text.Json.JsonDocument.Parse(RunPayloads.PrepareRun(request).GetRawText());
+            Assert.False(disabled.RootElement.TryGetProperty("overrides", out _));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(
+                NewManga.CoreClient.Commands.RunBindingDefaults.EnvironmentVariable, previous);
+        }
+    }
+
     [Fact]
     public async Task NullController_StartRun_IsDeterministicAndReusesIdempotencyKey()
     {
@@ -619,4 +662,5 @@ internal static class RunFixture
             // best effort; temp roots are disposable
         }
     }
+
 }

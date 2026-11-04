@@ -69,9 +69,8 @@ public sealed class Fea10RunIpcTests
             }, TimeSpan.FromSeconds(30));
             Assert.Equal(runId, replay.Result!.Value.GetProperty("run_id").GetString());
         }
-        var evidence = Path.Combine(repo, "verification", "FEA-10", "ipc");
-        Directory.CreateDirectory(evidence);
-        await File.WriteAllTextAsync(Path.Combine(evidence, "real-ipc.txt"),
+        // R-008: evidence goes to the isolated workspace, never to a tracked repository file.
+        await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
             $"DataRoot={root}\nPrepareRun -> Host candidate -> AcceptRun -> same-key replay -> Core process restart -> replay same run_id\nrun_id={runId}\nPASS\n");
     }
 

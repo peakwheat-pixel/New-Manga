@@ -69,13 +69,40 @@ def test_invalid_preview_is_rejected_without_writes(change, code):
     finally: core.conn.close()
 
 
-def test_prepared_schema_rejects_unknown_settings_before_candidate_escape():
+def test_prepared_settings_filter_non_execution_sections_and_reject_unknown_execution_keys():
     core, _, region = _new_workspace(workspace('snapshot-safety'))
     try:
+        # R-001: a settings page outside the execution surface is filtered, not fatal.
         core.pipeline_defaults.save_settings_section('untyped', {'unregistered': 'value'})
+        preview, _ = prepare(core, region)
+        assert preview['preparedDigest'].startswith('sha256:')
+        # R-001: legitimate frozen settings keys are replayable (typeset surface).
+        core.pipeline_defaults.save_settings_section(
+            'typeset', {'stroke_enabled': True, 'auto_font_size': True})
+        preview, _ = prepare(core, region)
+        assert preview['preparedDigest'].startswith('sha256:')
+        # An unknown key inside an execution section still fails closed before any candidate.
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
         with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
-            prepare(core, region)
+            core.pipeline.prepare_run('ocr_region', scope, overrides={'settings': {'typeset': {'undocumented': 1}}})
         assert core.pipeline._store.list_ids() == ()
+    finally: core.conn.close()
+
+
+def test_glossary_term_named_token_is_not_treated_as_authentication_material():
+    # R-014: user content words must not be rejected by the authentication-key scan.
+    core, _, region = _new_workspace(workspace('glossary-token'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        preview = core.pipeline.prepare_run(
+            'ocr_region', scope,
+            overrides={'settings': {'translate': {'glossary': [{'term': 'token', 'translation': '令牌'}]}}})
+        assert preview['preparedDigest'].startswith('sha256:')
+        # Endpoint authentication smuggled through provider bindings is still refused.
+        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+            core.pipeline.prepare_run(
+                'ocr_region', scope,
+                overrides={'provider_bindings': {'ocr': {'id': 'manga-ocr', 'token': 'leak'}}})
     finally: core.conn.close()
 
 
@@ -183,3 +210,83 @@ def test_snapshot_carries_no_authentication_material_and_rejects_smuggling():
         assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
         assert set(core.pipeline._store.list_ids()) == runs_before
     finally: core.conn.close()
+
+
+def test_mapping_binding_shapes_stay_available_at_plan():
+    # R-002: every frozen binding shape (provider_id / provider_profile_id / id) must be replayable.
+    from infrastructure.providers.registry import ProviderDescriptor
+    for shape in ('id', 'provider_profile_id'):
+        core, _, region = _new_workspace(workspace('mapping-' + shape))
+        try:
+            _remote_translation_provider(core, region, provider_id='fea10-mapping')
+            core.pipeline_defaults.save_provider_binding('translate', {shape: 'fea10-mapping'})
+            scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+            preview = core.pipeline.prepare_run('retranslate_region', scope)
+            binding = preview['providerBindingSnapshot']['translate']
+            assert binding['provider_id'] == 'fea10-mapping'
+            # R-002: planning readiness must resolve the same shape instead of KeyError->unavailable.
+            assert core.providers.registry.run_binding_available('translate', binding) is True
+            run, created = core.pipeline.accept_prepared_run(
+                preview, scope, idempotency_key='mapping-' + shape)
+            assert created
+        finally:
+            core.conn.close()
+
+
+def test_untyped_fallback_fails_closed_with_frozen_error_code():
+    # R-003: an unregistered/untyped fallback must raise RUN_SNAPSHOT_INCOMPLETE, never TypeError.
+    from infrastructure.providers.registry import ProviderDescriptor
+
+    class LegacyTranslationProvider:
+        provider_id = 'fea10-legacy'
+        provider_type = 'docTR-blob'
+        model = 'legacy-model'
+
+        def translate(self, payload):
+            raise AssertionError('not reached')
+
+    core, _, region = _new_workspace(workspace('ac2-fallback'))
+    try:
+        _remote_translation_provider(core, region, provider_id='fea10-primary')
+        core.providers.registry.register(
+            ProviderDescriptor('fea10-legacy', 'docTR-blob', frozenset({'translation'})),
+            LegacyTranslationProvider)
+        core.pipeline_defaults.save_provider_binding(
+            'translate', {'provider_id': 'fea10-primary', 'fallback': ['fea10-legacy']})
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        with pytest.raises(PipelineError) as caught:
+            core.pipeline.prepare_run('retranslate_region', scope)
+        assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
+        assert core.pipeline._store.list_ids() == ()
+    finally:
+        core.conn.close()
+
+
+def test_default_local_ocr_binding_is_typed_replayable():
+    # R-004/R-005: the Host default {"ocr": "manga-ocr"} must be preparable on a production registry.
+    from infrastructure.providers.registry import ProviderDescriptor
+
+    class LocalOcr:
+        provider_id = 'manga-ocr'
+        provider_type = 'local-manga-ocr'
+        model = 'manga-ocr-v1'
+        options = ()
+
+        def recognize(self, request):
+            raise AssertionError('not reached')
+
+    core, _, region = _new_workspace(workspace('local-typed'))
+    try:
+        core.providers.registry.register(
+            ProviderDescriptor('manga-ocr', 'local-manga-ocr', frozenset({'ocr'})), LocalOcr)
+        core.pipeline_defaults.save_provider_binding('ocr', 'manga-ocr')
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        preview = core.pipeline.prepare_run('ocr_region', scope)
+        execution = preview['providerBindingSnapshot']['ocr']['execution']
+        assert execution['provider_type'] == 'local-manga-ocr'
+        assert execution['model'] == 'manga-ocr-v1'
+        assert execution['adapter_version'] == 'local:local-manga-ocr:v1'
+        run, created = core.pipeline.accept_prepared_run(preview, scope, idempotency_key='local-typed')
+        assert created and run.provider_binding_snapshot['ocr']['execution']['model'] == 'manga-ocr-v1'
+    finally:
+        core.conn.close()

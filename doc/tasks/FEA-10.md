@@ -189,14 +189,14 @@ out_of_scope:
 - 起点：HEAD `25ba7cb2e`（DSH 固定的 r1 阶段 commit）+ 7 个文件的 r2 半成品（Codex 会话中断遗留，方向正确、未自测）。r2 会话保留其骨架（typed execution 校验/快照构建/probe 接线/三文件窄改），在其上修复、接线并补齐测试。
 - 生产代码：`src/application/tasks/{service,store}.py`（typed execution 白名单校验+digest 闭环+probe；r2 会话核对定稿）、`src/bootstrap/core_assembly.py`（`_provider_probe` 装配）、`src/infrastructure/providers/registry.py`（mock-local/openai-compatible 双 typed 快照构建+`resolve_for_run` 版本校验+`run_binding_available`）、`src/infrastructure/providers/handlers.py`（**r2 新接线**：`canonical_translation_request` 与 `handle_translate` 改用 `provider.freeze_request`/`translate_frozen`，`payloadDigestSend` 取自实际发送的冻结请求）、三文件窄改 `src/ports/translation/protocol.py`（`request_digest`）、`src/infrastructure/providers/{translation_openai,openai_client}.py`（`freeze_request`/`complete_frozen`/`FrozenCompletionRequest`，complete 走冻结 endpoint/body 并拒绝异 config）。
 - 测试：`tests/fea10/test_prepared_run.py` +3（unsupported 类型 fail-closed+StartRun 兼容、不完整 model fail-closed、敏感面零泄漏+token 走私拒绝+白名单外 options 拒绝）、`tests/fea10/test_snapshot_retry.py` +4（requires_upstream_output 预览标记+Accept 后配置隔离、凭据阻挡+恢复、版本阻挡+恢复、retry 差异确认新 Run 不写回）、新增 `tests/fea10/test_control_terminal.py`（AC6 专项 4 条）、`tests/fea10/support/restart_core.py`（播种后清 ocr binding：mock binding 在生产 Core 下 Prepare 必须 fail-closed 是 r2 正确语义，IPC 测试改测 Prepare/Accept/重放 wire 链路本身；--start 重放前恢复 binding 保持 quartet 匹配）。
-- r2 门禁（全 EXIT=0，logs/`*-r2.log`）：主套件 pytest 1047 passed（1036+11 新增，FEA-10 专项 33→44，无 failed）；providers 559 passed/4 skipped（与 r1 等量）；卡中逐文件（含 control 文件共 20 文件）248 passed；build 0 warning/0 error；.NET 全量 1344 passed/0 failed/75 skipped（与基线完全一致）；真实 IPC 1 passed（restart_core 调整后）；check PASS（3 warnings）；pins 17/17；范围 0 域外（含 untracked，`test_control_terminal.py` 已按 DSH r2 授权入 allowed_paths）；FEA-09 被测重写的 1 文件已 checkout 恢复并断言零 diff。
+- r2 门禁（全 EXIT=0，logs/`*-r2.log`）：主套件 pytest 1047 passed（1036+11 新增，FEA-10 专项 33→44，无 failed）；providers 559 passed/4 skipped（与 r1 等量）；卡中逐文件（含 control 文件共 20 文件）248 passed；build 0 warning/0 error；.NET 全量 1344 passed/0 failed/75 skipped（与基线完全一致）；真实 IPC 1 passed（restart_core 调整后）；check PASS（4 warnings）；pins 17/17；范围 0 域外（含 untracked，`test_control_terminal.py` 已按 DSH r2 授权入 allowed_paths）；FEA-09 被测重写的 1 文件已 checkout 恢复并断言零 diff。
 - 已知边界（如实）：真实 IPC 场景下生产 Core 无法注册 mock provider，带 mock binding 的 Prepare fail-closed 属预期语义，该链路对 provider 快照的正向覆盖由 Python 侧测试承担；IPC 测试继续覆盖 Prepare→Accept→同键重放→Core 重启重放的完整 wire 链路。C# RunMonitor 无代码改动（结构性只投影 Core 查询结果）。AC9 的独立 Review/集成仍归 DSH。
 - 无 commit/push；`delivery_head` 留空待 DSH。
 
 ## DSH r2 集成复核（2026-11-04）
 
 - r2 会话（Codex → ZCode 接力）因 Codex 额度耗尽（19:50 重置）、ZCode 429（21:51 重置）先后中断；DSH 作为 Lead/Architect 接手收尾并复跑门禁（授权记录：ADJ-2026-11-04-FEA-10-R2 §3）。
-- **DSH 独立复跑门禁**（`G:/CODEX/New Manga.workspace/FEA-10/logs/dsh/dsh-gates-r2.log`）：build EXIT=0（0 warning/0 error）；pytest `tests/fea10 tests/core tests/pipeline` EXIT=0（**1047 passed**）；`tests/providers` EXIT=0（559 passed / 4 skipped）；`dotnet test` EXIT=0（**1344 passed / 0 failed / 75 skipped**，不减少）；真实 IPC EXIT=0（1 passed）；check EXIT=0（PASS，3 warnings）；pins 17/17；范围 0 域外；FEA-09 证据在 DSH 跑测中被重写 1 文件，已恢复并断言零 diff。
+- **DSH 独立复跑门禁**（`G:/CODEX/New Manga.workspace/FEA-10/logs/dsh/dsh-gates-r2.log`）：build EXIT=0（0 warning/0 error）；pytest `tests/fea10 tests/core tests/pipeline` EXIT=0（**1047 passed**）；`tests/providers` EXIT=0（559 passed / 4 skipped）；`dotnet test` EXIT=0（**1344 passed / 0 failed / 75 skipped**，不减少）；真实 IPC EXIT=0（1 passed）；check EXIT=0（PASS，4 warnings）；pins 17/17；范围 0 域外；FEA-09 证据在 DSH 跑测中被重写 1 文件，已恢复并断言零 diff。
 - 证据刷新（DSH）：`record_delivery.py` → changed_files=30、out_of_scope=[]、FEA09_DIFF=EMPTY；AC-MATRIX 新 pin `7428c009…` 回填本卡 Canonical Evidence。
 - AC 结论：AC1–AC8、AC10 MET；AC9 的独立 Review/最终集成由 DSH 继续（Review 待 Agent 额度恢复后派全新上下文）。
 - 结论：r2 字节满足集成条件，可固定为最终交付 commit；独立实现 Review 未完成前不得 closeout/done。
@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 7428c009b94e58ce08a3938e93baf6511fba42f1502591253c753e230ffb41f7 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 77ac045019c9c30b1f5883bf90ba157f10609acc27c5ed3c4191a9b260ba9db6 | CANONICAL |
 
 ## Resource Manifest
 
@@ -231,3 +231,11 @@ out_of_scope:
 - 删除/迁移/归档：0；未清理 linked worktree、build、fixture 或早期临时材料（早期系统 TEMP 材料 PRESERVE_UNKNOWN）。
 - 未关闭：独立实现 Review、final closeout。
 - 下一步：Review → findings 处置 → closeout done → 按 PLAN 释放 FEA-11；不 push。
+
+## DSH rework r1（2026-11-04，按 FEA-10-impl-r1 Review 处置）
+
+- Review：`doc/reviews/FEA-10-impl-r1.md`（独立子 agent，reviewed_head `a9293458`）changes_requested（R-001 P0 + R-002/R-003/R-004 P1 + 12 P2）。
+- 处置：R-001/R-002/R-003/R-004 已修复并加回归（settings 白名单/三形状 binding/fallback fail-closed/Prepare 默认 binding 与 P15 门径/本地 provider typed 快照）；R-008/R-009/R-010/R-012/R-014 已处理；R-005/R-006/R-007/R-011/R-013/R-015/R-016 登记为非阻断债务（见 AC-MATRIX rework 节）。
+- 门禁（DSH 实跑）：pytest 主套件 1051 passed（+4 新回归）、providers 559/4；build 0/0；.NET 全量/真实 IPC 见 `logs/dsh/dsh-rework-*.log`；check PASS（4 warnings）；pins 17/17。
+- AC 状态：AC1–AC8、AC10 MET（按 rework 证据）；AC9 只余**新 head 的独立 Review**与 closeout。
+- 下一步：DSH 刷新证据/清单 → 提交 rework head → 派全新上下文 Review（新 head）→ approved 后 closeout。

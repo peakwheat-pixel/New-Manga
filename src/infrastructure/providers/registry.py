@@ -322,6 +322,12 @@ class ProviderRegistry:
             stage="resolve",
         )
 
+    #: R-004/R-005: registered pure-local inference providers have no endpoint or credential; their
+    #: replay snapshot is (provider_type, model, adapter_version) and a live version drift blocks the
+    #: Run. Types outside this set stay fail-closed in the prepared path until a typed adapter exists.
+    _LOCAL_TYPED_PROVIDER_TYPES = frozenset({"local-manga-ocr", "local-manga-ocr-onnx", "local-paddleocr"})
+
+
     def freeze_run_snapshots(self, snapshots):
         """Capture only the typed provider execution fields; never instance __dict__."""
         from application.tasks.store import FrozenRunSnapshots, snapshot_value, snapshot_digest
@@ -336,9 +342,10 @@ class ProviderRegistry:
             if not provider_id:
                 continue
             descriptor = self.descriptor(provider_id, capability=capability)
-            if descriptor is None or descriptor.provider_type not in {
-                "openai-compatible", "openai-compatible-vision", "local-sakura", "mock-local"
-            }:
+            if descriptor is None or descriptor.provider_type not in (
+                {"openai-compatible", "openai-compatible-vision", "local-sakura", "mock-local"}
+                | self._LOCAL_TYPED_PROVIDER_TYPES
+            ):
                 # Legacy StartRun remains compatible; Prepare rejects this incomplete binding.
                 continue
             slot = self.binding_aliases.get((provider_id, capability), provider_id)
@@ -360,9 +367,30 @@ class ProviderRegistry:
                                      base_url="", model=provider.model, credential_ref=None,
                                      timeout_seconds=0, extra_options=[], network_profile=None,
                                      target_language="", options=[], adapter_version="mock-local-v1")
-                    value = {"provider_id": provider_id} if isinstance(binding, str) else dict(binding)
+                    value = {"provider_id": provider_id} if isinstance(binding, str) else {
+                        **dict(binding), "provider_id": provider_id}
                     value.update(execution=execution, execution_digest=snapshot_digest(execution))
                     bindings[step] = value
+                else:
+                    # R-004/R-005: a registered pure-local inference provider (manga-ocr / paddle /
+                    # korean OCR) carries no endpoint or credential. Freeze its own type+model so a
+                    # legitimate default binding can be prepared and version drift can block the Run.
+                    local_type = getattr(provider, "provider_type", None) or getattr(
+                        descriptor, "provider_type", None)
+                    local_model = getattr(provider, "model", None)
+                    if (isinstance(local_type, str) and local_type in self._LOCAL_TYPED_PROVIDER_TYPES
+                            and isinstance(local_model, str) and local_model):
+                        execution = dict(provider_id=provider_id, provider_type=local_type,
+                                         base_url="", model=local_model, credential_ref=None,
+                                         timeout_seconds=0, extra_options=[], network_profile=None,
+                                         target_language="", options=[],
+                                         adapter_version="local:%s:v1" % local_type)
+                        from application.tasks.store import validate_provider_execution as _validate_local
+                        _validate_local(execution)
+                        value = {"provider_id": provider_id} if isinstance(binding, str) else {
+                            **dict(binding), "provider_id": provider_id}
+                        value.update(execution=execution, execution_digest=snapshot_digest(execution))
+                        bindings[step] = value
                 continue
             from infrastructure.providers.openai_client import OpenAiCompatibleConfig, default_network_profile
             from infrastructure.providers.translation_openai import OpenAiTranslationProvider
@@ -386,19 +414,28 @@ class ProviderRegistry:
             execution["options"] = list(getattr(provider, "options", ()))
             from application.tasks.store import validate_provider_execution
             validate_provider_execution(execution)
-            value = {"provider_id": provider_id} if isinstance(binding, str) else dict(binding)
+            value = {"provider_id": provider_id} if isinstance(binding, str) else {
+                **dict(binding), "provider_id": provider_id}
             value["execution"] = execution
             value["execution_digest"] = snapshot_digest(execution)
             if isinstance(binding, Mapping):
                 from infrastructure.providers.fallback import chain_from_binding
                 chain = chain_from_binding(binding)
                 if chain is not None and chain.explicit_fallbacks:
-                    value["frozen_fallbacks"] = {
-                        fallback_id: snapshot_value(self.freeze_run_snapshots(FrozenRunSnapshots(
+                    from domain.tasks.models import PipelineError as _PipelineError
+                    frozen_fallbacks = {}
+                    for fallback_id in chain.explicit_fallbacks:
+                        frozen = snapshot_value(self.freeze_run_snapshots(FrozenRunSnapshots(
                             snapshots.settings, {step: fallback_id}, snapshots.constraint_snapshot_ref,
                             snapshots.context_policy)).provider_bindings[step])
-                        for fallback_id in chain.explicit_fallbacks
-                    }
+                        if not isinstance(frozen, Mapping) or "execution" not in frozen:
+                            # R-003: an unregistered/untyped fallback must fail closed with the
+                            # frozen error code, never leak a TypeError from the validator.
+                            raise _PipelineError(
+                                "RUN_SNAPSHOT_INCOMPLETE",
+                                "fallback provider has no complete replay configuration")
+                        frozen_fallbacks[fallback_id] = frozen
+                    value["frozen_fallbacks"] = frozen_fallbacks
             bindings[step] = value
         return FrozenRunSnapshots(snapshots.settings, freeze_snapshot(bindings),
                                   snapshots.constraint_snapshot_ref, snapshots.context_policy)
@@ -421,6 +458,15 @@ class ProviderRegistry:
             if execution["model"] != getattr(provider, "model", None):
                 raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
             return replace(provider, model=execution["model"])
+        if str(execution.get("adapter_version", "")).startswith("local:"):
+            # R-005: a live local-provider version drift blocks the Run instead of silently
+            # running under a different model than the accepted snapshot.
+            if execution["model"] != getattr(provider, "model", None):
+                raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
+            try:
+                return replace(provider, model=execution["model"])
+            except TypeError:
+                return provider
         if execution.get("adapter_version") != "openai-compatible-v1":
             raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
         from infrastructure.providers.openai_client import OpenAiCompatibleClient, OpenAiCompatibleConfig
@@ -445,8 +491,14 @@ class ProviderRegistry:
         if not isinstance(binding, Mapping) or "execution" not in binding:
             return True  # Preserve the released legacy planner behavior.
         capability = {"translate": "translation", "detect": "detection"}.get(step, step)
+        # R-002: accept every binding shape the frozen pipeline accepts
+        # (``provider_id`` / ``provider_profile_id`` / ``id``), not just one key.
+        named = next((binding.get(key) for key in ("provider_id", "provider_profile_id", "id")
+                      if binding.get(key)), None)
+        if not named:
+            return False
         try:
-            provider = self.resolve_for_run(capability, binding["provider_id"], binding)
+            provider = self.resolve_for_run(capability, named, binding)
             config = getattr(provider, "config", None)
             if config is not None and config.credential_ref:
                 resolver = provider.client._credential_resolver

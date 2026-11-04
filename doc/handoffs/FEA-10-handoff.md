@@ -131,3 +131,11 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 - 证据刷新：`changed-files=30`、`out_of_scope=[]`、`FEA09_DIFF=EMPTY`；AC-MATRIX pin `7428c009…` 已回填 Task 卡。
 - 最终交付 commit：`a92934585088fe75ce8ec53452a67c0a72496d31`（`delivery_head`）；`integration_commit` 待 closeout 回填。
 - 未关闭：独立实现 Review（需 Agent 额度恢复后派全新上下文）与 DSH closeout；在此之前 Task 保持 `in_review`，不 push。
+
+## DSH rework r1（2026-11-04，按 FEA-10-impl-r1 Review 处置）
+
+- Review changes_requested（R-001 P0；R-002/R-003/R-004 P1；12 P2），报告 `doc/reviews/FEA-10-impl-r1.md`。
+- 已修复：R-001 settings 白名单（执行段强白名单 + 非执行段过滤 + 真实 typeset 键）；R-002 三形状 binding；R-003 fallback fail-closed 冻结错误码；R-004 Prepare 与 StartRun 默认 binding/P15 门径同源 + 本地 provider typed 快照；R-008 IPC 证据移出 tracked；R-009/R-010 证据措辞与 scope 口径；R-014 glossary token 不误拒。
+- 未修复（非阻断债务，登记 AC-MATRIX rework 节）：R-005（版本漂移覆盖边界）、R-006（StartRun 不完整 typed 配置提前失败）、R-007（AC6 is_terminal 无生产消费者）、R-011（Host 候选缓存）、R-013（crash_restart 断言边界）、R-015（source lease 错误码）、R-016（preview 吞异常）。
+- 门禁：pytest 1051、providers 559/4、build 0/0、.NET 全量/真实 IPC、check PASS（4 warnings）、pins 17/17（日志 `workspace/FEA-10/logs/dsh/dsh-rework-*`）。
+- 新 head 的独立 Review 未做；在此之前不得 closeout。

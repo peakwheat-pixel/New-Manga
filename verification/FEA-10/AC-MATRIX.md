@@ -1,6 +1,6 @@
 # FEA-10 实施验收矩阵（Owner，2026-11-04；r2 刷新）
 
-实现基线 `aa7bcd6161be5df07e2b8bf546600fec04af038f`（r1）/ 起点 `25ba7cb2e`（r2 阶段 commit），`main` 主工作树；无 commit/push。以下是 Owner 验证，不是独立 Review 或 DSH 集成结论。**r2 后 AC1–AC8、AC10 均 MET；AC9 BLOCKED（独立 Review 与 DSH 集成未做）；不可关闭 Task。**
+实现基线 `aa7bcd6161be5df07e2b8bf546600fec04af038f`（r1）/ 起点 `25ba7cb2e`（r2 阶段 commit），`main` 主工作树；无 commit/push。以下是 Owner 验证，不是独立 Review 或 DSH 集成结论。**r2 + DSH rework r1 后：AC1–AC8、AC10 MET（R-001…R-004 已修复并加回归）；AC9 待独立 Review 与 closeout。**
 
 | AC | Owner 结论（r2） | 实际证据及边界 |
 |---|---|---|
@@ -21,7 +21,7 @@
 - `provider-regressions-r2.log`：559 passed / 4 skipped、EXIT=0。
 - `python-files-validated-r2.log`：卡中 20 文件 248 passed、EXIT=0。
 - `dotnet-build-r2.log`：0 warning/0 error、EXIT=0；`dotnet-tests-r2.log`：1344/0/75、EXIT=0。
-- `ipc-r2.log`：真实 IPC 1 passed、EXIT=0（首次失败为 r2 语义收紧的预期暴露，详见 handoff 风险 8，适配后通过；失败历史保留于本 log 首次运行段）。
+- `ipc-r2.log`：真实 IPC 1 passed、EXIT=0（r2 语义收紧后的适配结果；首次失败历史在 r1 `real-ipc.log`，本 log 仅保留通过运行）。
 - `governance-r2.log`：PASS（4 warnings）、EXIT=0；`pins-r2.log`：17/17、EXIT=0；`scope-r2.log` + 脚本刷新的 `scope.log`：0 域外、FEA-09 EMPTY。
 
 ## r1 核心日志（历史保留）
@@ -51,3 +51,21 @@
 - 曾在 .NET 全量 testhost 尚未结束时启动 build，因 DLL 被占用而 EXIT=1（`dotnet-build-final.log`）；等待测试结束后 build 0 warning/0 error。失败日志保留，不作 canonical 成功证据。
 - r1 未运行：独立实现 Review、DSH 集成/push、真实模型质量/外网 provider、Windows 系统级 source lease 故障、原生 UI 端到端、完整 provider/非法终态/重连专项矩阵（其中终态/控制矩阵已由 r2 补齐）。
 - 初始失败和中间日志均保留，以便诊断；最终通过不改写失败历史。
+
+## DSH rework r1（2026-11-04，按 FEA-10-impl-r1 Review 处置）
+
+- Review 结论 changes_requested（1 P0 + 3 P1 + 12 P2），报告 `doc/reviews/FEA-10-impl-r1.md`（reviewed_head `a9293458`）。
+- 修复（DSH 实现；独立复查待新 head Review）：
+  - R-001（P0）：settings replay 白名单改为「执行段强白名单 + 非执行段过滤」，补真实 `typeset` 键；合法用户设置不再使 Prepare 失败。
+  - R-002（P1）：`run_binding_available` 接受 `provider_id`/`provider_profile_id`/`id` 三形状；freeze 规范化 `provider_id`。
+  - R-003（P1）：未注册/未 typed fallback 在 freeze/validate 统一 fail-closed `RUN_SNAPSHOT_INCOMPLETE`（不再泄漏 TypeError）。
+  - R-004（P1）：`RunPayloads.PrepareRun` 注入与 StartRun 相同的 Host 默认 provider_bindings；Core Prepare 继承 StartRun 的 `provider_profiles` 门径；本地 provider（manga-ocr/paddle/korean OCR）typed 快照，默认 `{"ocr":"manga-ocr"}` 可 Prepare。
+  - R-005：本地 provider 版本漂移在 resolve 校验（typed local adapter）。
+  - R-012：InMemory 适配器与 SQLite seam 的 pause/cancel 差异显式标注，等价 seam 由 AC5 故障注入覆盖（既有 pipeline 语义测试保持绿）。
+  - R-008：真实 IPC 证据改写 workspace（不再污染 tracked 文件）。
+  - R-009/R-010：check 警告数修正为 4；scope 基线说明见下。
+  - R-014：认证材料键扫描限定 provider_bindings/设置浅层，glossary 词条 `token` 不再误拒。
+  - 其余 P2（R-006/R-007/R-011/R-013/R-015/R-016）登记为非阻断债务，未在本次修复。
+- 新回归：`test_prepared_run.py` +4（settings 过滤/合法键、glossary token、mapping 形状、untyped fallback、local typed 默认 binding）；Host 单测 `PreparedRunPayload_CarriesTheSameHostDefaultBindingsAsStartRun`。
+- 门禁（DSH 实跑，`logs/dsh/dsh-rework-*.log`）：pytest 主套件 1051 passed、providers 559/4；build 0/0；.NET 全量与真实 IPC 结果见同日日志。
+- scope 口径（R-010）：AC9 的「0 域外」指 **Owner 字节**；DSH 治理指针文件（PLAN/STATUS/ADJ/Handoff）为 Integrator 单点编辑，不属 Owner 写域；`git diff aa7bcd6..<head> -- doc/contracts verification/FEA-08 verification/FEA-09 组合根` 为空。

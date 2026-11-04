@@ -72,7 +72,13 @@ def prepared_quartet(run: PipelineRun) -> dict[str, Any]:
 
 
 def validate_prepared_snapshots(run: PipelineRun) -> None:
-    """Explicit replay fields for the new prepared path; unknown fields fail closed."""
+    """Explicit replay fields for the new prepared path; unknown execution fields fail closed.
+
+    The whitelist mirrors the frozen settings surface (``bootstrap.settings_sections``) for the
+    execution-relevant sections. Sections that do not participate in Run replay
+    (``providers``/``network``/other settings pages) are filtered, not rejected: they are already
+    redacted by the snapshot builder and must not make a legitimate user configuration unusable.
+    """
     settings_fields = {
         "ocr": {"script", "direction"},
         "translate": {"context_pages", "context_token_budget", "glossary", "target_language"},
@@ -81,27 +87,34 @@ def validate_prepared_snapshots(run: PipelineRun) -> None:
         "model_gpu": {"device_preference", "allow_cpu_fallback"},
         "sfx": {"policy"},
         "typeset": {"font_family", "font_size", "font_size_offset", "manual_font_size", "text_color",
-                    "stroke_color", "stroke_width", "line_spacing", "text_align", "text_direction",
-                    "auto_font_size_enabled"},
+                    "stroke_enabled", "stroke_color", "stroke_width", "line_spacing", "text_align",
+                    "text_direction", "auto_font_size", "auto_font_size_enabled"},
         "inpaint": {"dilate_radius", "erode_radius", "is_speech_bubble", "is_solid_background",
                     "is_lineart", "has_screentone", "is_color_webtoon", "structure_crossing_mask",
                     "preferred_quality", "background_complexity"},
     }
     for section, values in run.settings_snapshot.items():
-        if (section not in settings_fields or not isinstance(values, Mapping)
-                or set(values) - settings_fields[section]):
+        if not isinstance(values, Mapping):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings snapshot is not replay-safe")
+        replay_keys = settings_fields.get(section)
+        if replay_keys is None:
+            continue  # Non-execution settings sections never enter Run replay (ADJ §2.2).
+        if set(values) - replay_keys:
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings contain unsupported replay fields")
     binding_fields = {"provider_id", "provider_profile_id", "id", "enabled", "available",
                       "fallback", "execution", "execution_digest", "frozen_fallbacks"}
     for value in run.provider_binding_snapshot.values():
-        if not isinstance(value, str) and (not isinstance(value, Mapping) or set(value) - binding_fields):
+        if not isinstance(value, Mapping) or set(value) - binding_fields:
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider binding is not snapshot-safe")
-        if not isinstance(value, Mapping) or "execution" not in value:
+        if "execution" not in value:
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider has no complete replay configuration")
         validate_provider_execution(value["execution"])
         if snapshot_digest(value["execution"]) != value.get("execution_digest"):
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider replay digest differs")
         for fallback in value.get("frozen_fallbacks", {}).values():
+            if not isinstance(fallback, Mapping) or "execution" not in fallback:
+                raise PipelineError(
+                    "RUN_SNAPSHOT_INCOMPLETE", "fallback provider has no complete replay configuration")
             validate_provider_execution(fallback["execution"])
             if snapshot_digest(fallback["execution"]) != fallback.get("execution_digest"):
                 raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "fallback replay digest differs")
@@ -154,6 +167,15 @@ def validate_provider_execution(value: Any) -> None:
         if value["provider_type"] != "mock-local" or value["base_url"] or value["credential_ref"] is not None:
             reject()
         return
+    if isinstance(value["adapter_version"], str) and value["adapter_version"].startswith("local:"):
+        # R-004/R-005: a pure-local inference provider has no endpoint, credential or network
+        # profile; its replay identity is (provider_type, model, adapter_version).
+        if (not value["provider_type"].startswith("local-") or value["provider_type"] in {
+                "local-sakura", "local-simple-fill", "local-edge-bleed", "local-diffusion"}
+                or value["base_url"] or value["credential_ref"] is not None
+                or value["network_profile"] is not None):
+            reject()
+        return
     if value["adapter_version"] != "openai-compatible-v1" or value["provider_type"] not in {
         "openai-compatible", "openai-compatible-vision", "local-sakura"
     }:
@@ -182,17 +204,42 @@ def validate_provider_execution(value: Any) -> None:
     validate_prepared_overrides(value)
 
 
+_AUTH_MATERIAL_KEYS = frozenset({
+    "token", "password", "api_key", "apikey", "authorization", "secret", "access_token",
+    "refresh_token", "bearer", "headers", "signing_key", "host_session_credential",
+})
+
+
+def _reject_auth_keys(mapping: Mapping[str, Any], *, deep: bool) -> None:
+    for key, item in mapping.items():
+        if str(key).lower() in _AUTH_MATERIAL_KEYS:
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
+        if deep and isinstance(item, Mapping):
+            _reject_auth_keys(item, deep=True)
+
+
 def validate_prepared_overrides(value: Any) -> None:
-    """Reject authentication material before it can enter a transient candidate."""
-    if isinstance(value, Mapping):
-        for key, item in value.items():
-            if str(key).lower() in {"token", "password", "api_key", "apikey", "authorization", "secret", "access_token",
-                                    "refresh_token", "bearer", "headers", "signing_key", "host_session_credential"}:
-                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-            validate_prepared_overrides(item)
-    elif isinstance(value, (tuple, list)):
-        for item in value:
-            validate_prepared_overrides(item)
+    """Reject authentication material where an override can actually carry it (R-014).
+
+    ``overrides.provider_bindings`` is checked recursively (endpoint credentials live there);
+    settings sections are checked one level deep only, so user content such as a glossary term
+    named ``token`` is legitimate data and does not fail the Prepare.
+    """
+    if not isinstance(value, Mapping):
+        return
+    bindings = value.get("provider_bindings")
+    if isinstance(bindings, Mapping):
+        _reject_auth_keys(bindings, deep=True)
+    settings = value.get("settings")
+    if isinstance(settings, Mapping):
+        for section in settings.values():
+            if isinstance(section, Mapping):
+                _reject_auth_keys(section, deep=False)
+    for key, item in value.items():
+        if str(key).lower() in _AUTH_MATERIAL_KEYS:
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
+        if key not in ("provider_bindings", "settings") and isinstance(item, Mapping):
+            _reject_auth_keys(item, deep=False)
 
 
 @dataclass(frozen=True)
@@ -373,8 +420,11 @@ class InMemoryTargetCatalog:
             return CatalogCommit("input_revision_changed", "current Revision changed")
         if current.lock != expected_lock:
             return CatalogCommit("lock_changed", "current Lock changed")
-        # This deterministic adapter has no prepared candidate transaction.
-        # Complete the current atomic step; the scheduler honors intent at the next boundary.
+        # R-012 (documented adapter divergence): this deterministic test adapter has no prepared
+        # candidate transaction, so the scheduler honors a pause/cancel intent at the next boundary
+        # (the released semantics the pipeline tests pin). The production SqliteTargetCatalog seam
+        # refuses the live write itself; that equivalence is covered by the AC5 pause/cancel fault
+        # injection in tests/fea10/test_commit_zero_write.py.
 
         if current.target_type is TargetType.PAGE:
             updated = replace(
