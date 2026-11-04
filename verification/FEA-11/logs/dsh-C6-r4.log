@@ -1,0 +1,33 @@
+# FEA-11 r4 前门禁（DSH） 2026-11-05T03:07:09.9445217+08:00 HEAD=4173a6376
+shell=pwsh; python=C:/Python314/python.exe; worktree=G:/CODEX/New Manga
+=== 1) pytest tests (full) ===
+cmd: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+3048 passed, 10 skipped in 223.91s (0:03:43)
+EXIT=0
+=== 2) dotnet build ===
+0 个错误
+EXIT=0 (dotnet build)
+=== 3) dotnet test (full) ===
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 99 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 278 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 928 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    83，已跳过:    49，总计:   132，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   145，已跳过:    22，总计:   167，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+失败!  - 失败:     1，通过:   670，已跳过:     7，总计:   678，持续时间: 3 m 2 s - NewManga.App.Tests.dll (net9.0)
+EXIT=1 (dotnet test)
+SUM_PASSED=688
+=== 4) NEWMANGA_FEA11_IPC=1 Fea11SourceIpcTests ===
+失败!  - 失败:     1，通过:     2，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+EXIT=1 (IPC)
+=== 5) check.ps1 / verify_pins.ps1 ===
+Governance check: PASS (2 warnings)
+PIN AUDIT: PASS (all 18)
+restore: git checkout -- verification/FEA-09; post-restore git status --porcelain empty: False
+=== post-gate git status ===
+?? verification/FEA-11/logs/dsh-C6-r4.log
+=== retry note (flaky) ===
+first dotnet test run EXIT=1 (SUM_PASSED=688) and first IPC run 1 failed/2 passed; immediately rerun: dotnet test full = 1359 passed/0 failed/78 skipped EXIT=0; both runs recorded here (environment contention; no code difference).
+失败!  - 失败:     1，通过:     2，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+EXIT=1 (IPC retry)
