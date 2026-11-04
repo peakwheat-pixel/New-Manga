@@ -786,13 +786,13 @@ public sealed class HostRuntime : IAsyncDisposable
                     // with name/available/reason (Host-local aggregation).
                     var capabilities = new[]
                     {
-                        Capability("source.sync.scan"),
-                        Capability("source.sync.plan"),
-                        Capability("source.sync.apply"),
-                        Capability("source.sync.relink"),
-                        Capability("source.sync.repoint"),
-                        Capability("source.sync.resync"),
-                        Capability("source.read/1"),
+                        Capability("scan"),
+                        Capability("plan"),
+                        Capability("apply"),
+                        Capability("relink"),
+                        Capability("repoint"),
+                        Capability("resync"),
+                        Capability("operation"),
                     };
                     return new HostCommandResult(name, HostCommandStatus.Implemented,
                         HostCommandChannel.HostLocal,
@@ -823,6 +823,7 @@ public sealed class HostRuntime : IAsyncDisposable
             {
                 var operations = Operations ?? throw new CoreOperationException(
                     "CORE_UNAVAILABLE", "unavailable", false, "source operation journal unavailable", null);
+                await RequireSourceSyncCapabilitiesAsync(name, token).ConfigureAwait(false);
                 string? StringField(string key) =>
                     payload.ValueKind == System.Text.Json.JsonValueKind.Object
                     && payload.TryGetProperty(key, out var value)
@@ -918,6 +919,51 @@ public sealed class HostRuntime : IAsyncDisposable
                     ["available"] = true,
                     ["reason"] = null,
                 };
+
+            async Task RequireSourceSyncCapabilitiesAsync(
+                string name, CancellationToken token)
+            {
+                var ping = await CoreService.SendAsync(
+                        "core.ping", 3,
+                        writer => writer.WriteStartObject(),
+                        _options.RequestTimeout, token)
+                    .ConfigureAwait(false);
+                var advertised = new HashSet<string>(StringComparer.Ordinal);
+                if (ping.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && ping.Result.Value.TryGetProperty("capabilities", out var caps)
+                    && caps.ValueKind == System.Text.Json.JsonValueKind.Array)
+                {
+                    foreach (var capability in caps.EnumerateArray())
+                    {
+                        if (capability.ValueKind == System.Text.Json.JsonValueKind.String
+                            && capability.GetString() is { } value)
+                        {
+                            advertised.Add(value);
+                        }
+                    }
+                }
+                var required = new List<string>
+                {
+                    "source.sync.plan/1", "source.sync.apply/1",
+                    "source.sync.operation/1",
+                };
+                required.Add(name switch
+                {
+                    "ScanSourceSync" => "source.sync.scan/1",
+                    "RelinkSource" => "source.sync.relink/1",
+                    "RepointSource" => "source.sync.repoint/1",
+                    _ => "source.sync.resync/1",
+                });
+                foreach (var capability in required)
+                {
+                    if (!advertised.Contains(capability))
+                    {
+                        throw new CoreOperationException(
+                            "CORE_CAPABILITY_MISSING", "unavailable", true,
+                            "the Core does not advertise " + capability, null);
+                    }
+                }
+            }
 
             // FEA-11 (C-17 §3.2/§3.3): ACK/recovery/failure are Host-coordinated
             // through the durable journal; the Core call stays inside the

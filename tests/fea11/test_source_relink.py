@@ -214,3 +214,91 @@ def test_repoint_with_resync_confirmation_publishes_new_binding(
     binding = stack["store"].current_binding_of_page("p1")
     assert binding["binding_version"] == 2
     assert binding["previous_binding_id"] == "pb-p1"
+
+
+def test_relink_rejects_changed_container(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-6: relink never accepts a changed container — that is resync."""
+    zip_path, page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    changed = write_zip(
+        scratch_dir / "changed.zip", [("001.png", png_bytes(color=(7, 7, 7)))]
+    )
+    grant_id, scan = _scan_with_container(stack, registry, changed, kind="relink")
+    with pytest.raises(Exception) as caught:
+        run_full_sync(
+            stack, scan, grant_ids=[grant_id], kind="relink", command="RelinkSource"
+        )
+    assert caught.value.code == "SOURCE_SYNC_STATE_CONFLICT"
+
+
+def test_repoint_changed_content_requires_resync_confirmation(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-6/C-14: repointing to a different file whose content changed is
+    only allowed together with the explicit resync confirmation."""
+    zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    other = write_zip(
+        scratch_dir / "other.zip",
+        [("001.png", png_bytes(color=(0, 0, 255))),
+         ("002.png", png_bytes(color=(128, 0, 128)))],
+    )
+    grant_id, scan = _scan_with_container(stack, registry, other, kind="repoint")
+    body = build_plan_body(scan, kind="repoint", resync_content=False)
+    with pytest.raises(Exception) as caught:
+        stack["planner"].create(body)
+    assert caught.value.code == "INVALID_REQUEST"
+    return
+    plan = stack["planner"].create(body)
+    stack["planner"].preview(
+        {"plan_id": body["plan_id"], "plan_digest": plan["plan_digest"]}
+    )
+    stack["planner"].confirm(
+        {
+            "plan_id": body["plan_id"],
+            "plan_digest": plan["plan_digest"],
+            "confirmation": body["confirmation"],
+        }
+    )
+    operation_id = "op-repoint-noconfirm"
+    request_digest = request_digest_of(
+        operation_id, body["plan_id"], plan["plan_digest"], "repoint"
+    )
+    with pytest.raises(Exception) as caught:
+        stack["service"].apply(
+            "RepointSource",
+            {
+                "operation_id": operation_id,
+                "plan_id": body["plan_id"],
+                "plan_digest": plan["plan_digest"],
+                "grant_ids": [grant_id],
+                "authorization": host_authorization(
+                    operation_id=operation_id,
+                    request_digest=request_digest,
+                    authorizations=scan["authorizations"],
+                ),
+            },
+        )
+    assert caught.value.code in (
+        "INVALID_REQUEST", "SOURCE_SYNC_STATE_CONFLICT", "SOURCE_PLAN_STALE",
+    )
+
+
+def test_repoint_with_resync_confirmation_publishes_new_binding(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-6: an explicitly confirmed repoint publishes the new file."""
+    zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    other = write_zip(
+        scratch_dir / "other.zip",
+        [("001.png", png_bytes(color=(5, 5, 5))), ("002.png", png_bytes())],
+    )
+    grant_id, scan = _scan_with_container(stack, registry, other, kind="repoint")
+    plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="repoint",
+        command="RepointSource",
+    )
+    assert dispatch["state"] == "core-committed"
+    binding = stack["store"].current_binding_of_page("p1")
+    assert binding["binding_version"] == 2
+    assert binding["previous_binding_id"] == "pb-p1"

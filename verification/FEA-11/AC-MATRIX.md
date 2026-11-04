@@ -1,6 +1,6 @@
 # FEA-11 AC-MATRIX（实施中；DSH 维护）
 
-状态：**changes_requested**（r1 changes_requested P0=2/P1=11 → r2 changes_requested P0=2/P1=4；返修中，r3 待派）。AC 状态与 Task 卡同步：AC11-2 MET（保留，P1-1 已修）；AC11-4/6/9 由 MET 降 PARTIAL；AC11-1/3/5/7/8/10 PARTIAL（原因内联于卡）。
+状态：**changes_requested**（r1→r2→r3→r4 均为 changes_requested；r4：P0=1 deferral 阻断 / P1=1（P1-04 已修，待 r5）/ P2=13）。AC 状态与 Task 卡同步：AC11-2 MET（仅 Core seam）；其余 9 项 PARTIAL（原因内联于卡）。
 隔离根：`G:/CODEX/New Manga.workspace/FEA-11/`；C-17 v1.0 FROZEN（`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`、`doc/plan/FEA-CONTRACT-FROZEN-C17.md`）。
 
 ## 证据基线（实跑）
@@ -24,10 +24,10 @@
 | AC11-2 scan/diff/plan | `test_source_scan.py`（8）：数量=明细、scope all 冻结引用、plan 预览/确认 | **MET（seam）** |
 | AC11-3 页匹配（C-15 §3.2） | unique_pixel/added/missing、重复组、旧证据降级（matcher 层） | **PARTIAL**（PDF/ZIP 重排/旧库 fixture 待补） |
 | AC11-4 CAS/原子性/零写 | stale 零写逐表快照、replay 拒绝、事务发布、多项目 scope=all、末项漂移整批回滚、apply 前撤销；缺并发/DB 失败/第三区域 | **PARTIAL** |
-| AC11-5 守恒/tombstone/lineage | tombstone、captured_v7/legacy_unverified 冻结、relink 保序（lineage 2 测试） | **MET（seam；在途 Run/draft 交错待生产装配）** |
+| AC11-5 守恒/tombstone/lineage | tombstone、captured_v7/legacy_unverified 冻结、relink 保序（lineage 2 测试）；**lineage 读隔离未实现**（LINEAGE-1 承接） | **PARTIAL** |
 | AC11-6 relink/repoint/resync | 保续/内容变拒绝/repoint 需确认/成功发布 + 物理身份（copy 拒绝）；缺其他项目不误改/跨卷/成员重排 | **PARTIAL** |
 | AC11-7 缺失/诊断出口 | missing observation、tombstone 保留；管理诊断接线待 Phase C 尾 | **PARTIAL** |
-| AC11-8 durable operation/双确认 | operation 恢复/伪造摘要拒绝/ACK 开门/cancel；Host journal（C1/C3：DPAPI 原子 journal、状态机、测试） | **MET（seam + Host journal 单测；真实 HostCore ACK 链待 C4 尾）** |
+| AC11-8 durable operation/双确认 | operation 恢复/伪造摘要拒绝/ACK 开门/cancel；Host journal；ACK/recovery/failure 已接 Host 指挥面（r3） | **PARTIAL**（P0-1 Host 自签授权 deferred → HOST-AUTH-1；崩溃点杀进程 NOT_RUN） |
 | AC11-9 生产链路/读图/回归 | 真实 IPC 全链 3/3（new_zip：changed→pending gate→ACK→新 binding v2→源守恒）——**Core 直连，未走 HostRuntime**；旧键/旧摘要不可变与 pre-sync 旧 binding 证据缺失 | **PARTIAL** |
 | AC11-10 范围/冻结/证据 | check/pins 18/18、冻结契约零改动、v8 迁移测试、AC-MATRIX/Handoff；最终门禁/Review 待做 | **PARTIAL** |
 

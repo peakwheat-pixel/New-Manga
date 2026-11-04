@@ -27,7 +27,7 @@ allowed_paths:
   - src/infrastructure/sqlite/source_sync.py
   - src/infrastructure/sqlite/regions.py
   - src/application/rendering/**
-  - src/application/exporting/**
+  - src/application/export/**
   - src/bootstrap/core_service.py
   - tests/fea11/test_source_lineage.py
   - verification/FEA-11-LINEAGE-1/**

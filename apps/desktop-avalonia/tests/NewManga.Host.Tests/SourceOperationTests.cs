@@ -111,4 +111,5 @@ public sealed class SourceOperationTests : IDisposable
             entry.OperationId));
         Assert.Equal("core-committed", coordinator.Get(entry.OperationId)!.State);
     }
+
 }

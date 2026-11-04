@@ -65,15 +65,12 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireLogSourceRedactionTests.cs
   - tests/fea11/conftest.py
   - tests/fea11/test_source_scan.py
-  - tests/fea11/test_source_match.py
-  - tests/fea11/test_source_plan.py
   - tests/fea11/test_source_sync.py
   - tests/fea11/test_source_relink.py
   - tests/fea11/test_source_operation.py
   - tests/fea11/test_source_lineage.py
   - tests/fea11/test_source_resolve.py
   - tests/fea11/test_v8_migration.py
-  - tests/fea11/support/restart_core.py
   - tests/core/test_core_assembly.py
   - tests/storage/test_schema_migration.py
   - tests/storage/test_upgrade_schema_data.py
@@ -168,12 +165,12 @@ out_of_scope:
 | AC11-1 | PARTIAL | `test_source_scan.py`：访问前强验证/同 mtime-size 字节变可发现/过期 grant typed；**定时扫描生产与 watcher 消费者**承接 `FEA-11-SCAN-1`（DSH 裁决 2026-11-04） |
 | AC11-2 | MET | `test_source_scan.py`：diff 数量=明细、scope all 冻结引用集合、plan 预览/确认/失效 |
 | AC11-3 | PARTIAL | `test_source_scan.py`：直接保续、unique_pixel/added/missing 分类；无独立 match 测试文件与 FEA-09 旧库 fixture（缺口如实登记） |
-| AC11-4 | MET | `test_source_sync.py`：stale 零写逐表快照、replay 冲突拒绝、事务发布 |
-| AC11-5 | MET | `test_source_lineage.py` + `test_source_sync.py`：tombstone/lineage captured_v7·legacy_unverified 冻结/relink 保序 |
-| AC11-6 | MET | `test_source_relink.py`：relink 保续、内容变拒绝、repoint 需 resync 确认、成功发布 |
+| AC11-4 | PARTIAL | `test_source_sync.py`：stale 零写逐表快照、replay 冲突拒绝、事务发布 |
+| AC11-5 | PARTIAL | `test_source_lineage.py` + `test_source_sync.py`：tombstone/lineage captured_v7·legacy_unverified 冻结/relink 保序 |
+| AC11-6 | PARTIAL | `test_source_relink.py`：relink 保续、内容变拒绝、repoint 需 resync 确认、成功发布 |
 | AC11-7 | PARTIAL | missing 观察/tombstone 保留在 scan/sync 路径；管理诊断查询接线未在本卡实现（缺口登记，UI 承接） |
-| AC11-8 | MET | `test_source_operation.py` + C1 `SourceOperationTests`：durable 恢复/伪造摘要拒绝/ACK 门控/Host journal 状态机 |
-| AC11-9 | MET | `Fea11SourceIpcTests`（`NEWMANGA_FEA11_IPC=1`）3/3：fail-closed、Host 发 grant + ScanSourceSync、**scan→plan→preview→confirm→ResyncSource→ACK→resolve v2 键**；`test_source_resolve.py` v2 键/同键不同 bytes 拒绝 |
+| AC11-8 | PARTIAL | `test_source_operation.py` + C1 `SourceOperationTests`：durable 恢复/伪造摘要拒绝/ACK 门控/Host journal 状态机 |
+| AC11-9 | PARTIAL | `Fea11SourceIpcTests`（`NEWMANGA_FEA11_IPC=1`）3/3：fail-closed、Host 发 grant + ScanSourceSync、**scan→plan→preview→confirm→ResyncSource→ACK→resolve v2 键**；`test_source_resolve.py` v2 键/同键不同 bytes 拒绝 |
 | AC11-10 | PARTIAL | `test_v8_migration.py` 全起点迁移/旧数据守恒/旧端拒写；check/pins 18/18；冻结契约与 FEA-08/09/10 证据零 diff；**独立上下文 Review 待 Appointment** |
 
 实现中修复的真实缺口：source-sync 命令边界持久化（plan/operation durable）、同步操作 grant→binding 绑定（`bind_imported_entry`）、scanner 页级 diff 投影（未绑定 unchanged 不破坏 decisions 1:1）、物理身份统一（`normalize_identity`）。

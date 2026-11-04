@@ -466,3 +466,39 @@ def test_shared_source_scope_current_apply_succeeds_without_drift(
     # b1 and b2 both keep their bindings; nothing drifted.
     for page_id in ("p1", "p2", "p3"):
         assert stack["store"].current_binding_of_page(page_id)["binding_version"] == 1
+
+
+def test_completion_that_omits_a_committed_registry_is_refused(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """r4 P2-9: the ACK must re-verify every committed registry."""
+    from application.sources.errors import SourceSyncError
+
+    zip_path, _page1, _page2, _container = _seed_two_page_source(conn, scratch_dir)
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="zip",
+        entries=[(zip_path, zip_path.name, 0)],
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1"], "scope": "current",
+            "kind": "resync", "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    plan, dispatch = run_full_sync(stack, scan, grant_ids=[grant_id])
+    operation = stack["operations"].get(
+        {"operation_id": dispatch["operation_id"]})
+    authorization = host_authorization(
+        operation_id=operation["operation_id"],
+        request_digest=operation["request_digest"],
+        authorizations=[],
+    )
+    with pytest.raises(SourceSyncError):
+        stack["operations"].acknowledge({
+            "operation_id": operation["operation_id"],
+            "request_digest": operation["request_digest"],
+            "commit_digest": operation["commit_digest"],
+            "host_receipt_id": authorization["host_receipt_id"],
+            "authorization": authorization,
+            "grant_ids": [grant_id],
+        })
