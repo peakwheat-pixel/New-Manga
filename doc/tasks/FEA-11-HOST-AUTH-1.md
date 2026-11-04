@@ -41,6 +41,15 @@ allowed_paths:
 - 依据：`doc/reviews/FEA-11-r1.md` P0-1；C-17 v1.0 FROZEN §3.2/§5.2。
 - 状态：proposed（DSH 2026-11-05 裁决承接；FEA-11 的 Host 侧当前为透传实现，Core 侧已完整）。
 
+## 实施证据与 AC 状态（DSH，2026-11-05）
+
+- AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 4/4（与 Core canonical_bytes 逐字节一致的跨实现向量）。
+- AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 3/3；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
+- AC3 PARTIAL：`HostOperationOrchestrator` 顺序（Mint→Registry.Authorize(roots)→journal→Core→MarkCommitted）+ `Fea11HostAuthTests` 3/3（注入/失败留 host-authorized/capability 门先于 journal）；**完整 HostRuntime→Core 端到端与 ACK 重发无自动化测试**（IPC 测试为 Core 直连）。
+- AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡独立 Review 判定。
+- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 1370/0、IPC 复跑 3/3、check PASS、pins 18/18；含 IPC flaky 说明）。
+- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）。
+
 ## Acceptance Criteria
 
 - [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 4/4）。 <<MET>>
