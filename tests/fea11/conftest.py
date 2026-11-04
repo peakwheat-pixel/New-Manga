@@ -369,6 +369,7 @@ def build_plan_body(
     plan_id: str | None = None,
     decisions: list[dict] | None = None,
     resync_content: bool = True,
+    scope: str = "current",
 ) -> dict:
     """Assemble a PlanBody from a Scan result with explicit decisions."""
     from application.sources.model import now_millis
@@ -383,7 +384,7 @@ def build_plan_body(
         "kind": kind,
         "project_ids": sorted({base["project_id"] for base in scan["bases"]})
         or ["b1"],
-        "scope": "current",
+        "scope": scope,
         "base_sources": scan["base_sources"],
         "authorizations": scan["authorizations"],
         "missing": scan["missing"],

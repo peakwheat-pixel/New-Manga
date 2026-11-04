@@ -272,3 +272,159 @@ def test_operation_cancel_before_commit_keeps_zero_business_writes(
         ).fetchone()[0]
         == 2
     )
+
+
+# ---------------------------------------------------------------------------
+# R-011 (FEA-11 r1): AC11-4 breadth — multi-project scope, final-item drift
+# rollback and revocation before apply.
+# ---------------------------------------------------------------------------
+
+def _table_digest(conn):
+    import hashlib as _hashlib
+
+    rows = []
+    for table in (
+        "pages", "page_bindings", "source_versions", "source_entries",
+        "source_locations", "source_sync_plans", "source_operations",
+        "source_binding_publications", "source_revision_lineage",
+    ):
+        try:
+            values = conn.execute(f"SELECT * FROM {table} ORDER BY 1").fetchall()
+        except Exception:
+            values = []
+        rows.append((table, [tuple(row) for row in values]))
+    return _hashlib.sha256(repr(rows).encode("utf-8")).hexdigest()
+
+
+def _apply_payload(stack, scan, grant_ids, kind="resync", scope="current"):
+    from application.sources.model import request_digest_of
+
+    body = build_plan_body(scan, kind=kind, scope=scope)
+    plan = stack["planner"].create(body)
+    stack["planner"].preview(
+        {"plan_id": body["plan_id"], "plan_digest": plan["plan_digest"]}
+    )
+    stack["planner"].confirm(
+        {
+            "plan_id": body["plan_id"],
+            "plan_digest": plan["plan_digest"],
+            "confirmation": body["confirmation"],
+        }
+    )
+    operation_id = "op-" + __import__("uuid").uuid4().hex[:16]
+    request_digest = request_digest_of(
+        operation_id, body["plan_id"], plan["plan_digest"], kind
+    )
+    return {
+        "operation_id": operation_id,
+        "plan_id": body["plan_id"],
+        "plan_digest": plan["plan_digest"],
+        "grant_ids": grant_ids,
+        "authorization": host_authorization(
+            operation_id=operation_id,
+            request_digest=request_digest,
+            authorizations=scan["authorizations"],
+        ),
+    }
+
+
+def test_scope_all_covers_every_referencing_project(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-4/R-011: scope=all spans the whole-source reference set (books)."""
+    zip_path, page1, _page2, _container_digest = _seed_two_page_source(conn, scratch_dir)
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b2', 'Book 2', ?, ?)", (__import__('tests.fea11.conftest',
+        fromlist=['NOW']).NOW,) * 2)
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+        " VALUES ('c2', 'b2', 'Ch', ?, ?)", (__import__('tests.fea11.conftest',
+        fromlist=['NOW']).NOW,) * 2)
+    add_referenced_page(
+        conn, "p3", "c2", "b2", order=1, source_id="s1", version_id="sv1",
+        entry_id="e1", digest=_digest(page1),
+    )
+    conn.commit()
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="zip",
+        entries=[(zip_path, zip_path.name, 0)],
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1", "b2"], "scope": "all",
+            "kind": "resync", "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    assert sorted({row["project_id"] for row in scan["bases"]}) == ["b1", "b2"]
+    # two entries (e1 is referenced by both p1 and p3), both unchanged
+    assert scan["totals"]["unchanged"] == 2
+    payload = _apply_payload(stack, scan, [grant_id], scope="all")
+    dispatch = stack["service"].apply("ResyncSource", payload)
+    assert dispatch["state"] == "core-committed"
+    # Both projects stay on their bindings (all keep).
+    for page_id in ("p1", "p2", "p3"):
+        binding = stack["store"].current_binding_of_page(page_id)
+        assert binding["binding_version"] == 1
+
+
+def test_final_item_drift_rolls_back_the_whole_batch(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-4/R-011: a drift on the LAST bases entry aborts with zero writes."""
+    zip_path, page1, page2, _digest = _seed_two_page_source(conn, scratch_dir)
+    changed = png_bytes(color=(0, 0, 255))
+    new_zip = write_zip(
+        scratch_dir / "new.zip", [("001.png", changed), ("002.png", page2)]
+    )
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="zip",
+        entries=[(new_zip, new_zip.name, 0)],
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1"], "scope": "current",
+            "kind": "resync", "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    payload = _apply_payload(stack, scan, [grant_id])
+    # Drift the LAST bases entry (p2) after the plan was frozen.
+    conn.execute("UPDATE pages SET sort_order = 99 WHERE page_id = 'p2'")
+    conn.commit()
+    baseline = _table_digest(conn)
+    from application.sources.errors import SourceSyncError
+
+    with pytest.raises(SourceSyncError):
+        stack["service"].apply("ResyncSource", payload)
+    assert _table_digest(conn) == baseline  # zero business writes
+
+
+def test_apply_after_grant_revocation_is_refused(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC11-4/R-011: revoking the grant before COMMIT refuses the apply."""
+    zip_path, page1, page2, _digest = _seed_two_page_source(conn, scratch_dir)
+    changed = png_bytes(color=(0, 0, 255))
+    new_zip = write_zip(
+        scratch_dir / "new.zip", [("001.png", changed), ("002.png", page2)]
+    )
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="zip",
+        entries=[(new_zip, new_zip.name, 0)],
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1"], "scope": "current",
+            "kind": "resync", "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    payload = _apply_payload(stack, scan, [grant_id])
+    registry.revoke_grant_ids([grant_id])
+    from application.importing.referenced.errors import SourceImportError
+    from application.sources.errors import SourceSyncError
+
+    baseline = _table_digest(conn)
+    with pytest.raises((SourceSyncError, SourceImportError)) as error:
+        stack["service"].apply("ResyncSource", payload)
+    assert error.value.code in ("SOURCE_GRANT_REVOKED", "SOURCE_ACCESS_DENIED")
+    assert _table_digest(conn) == baseline
