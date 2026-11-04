@@ -3,11 +3,11 @@ id: FEA-09-UI-1
 title: 引用源导入最小 UI/适配接线（V2 ImportDock：plan 预览、密码、取消、进度）
 kind: implementation
 governance_version: 3
-status: in_review
+status: in_progress
 approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a5894282`（释放 commit；Appointment base `19a71b396`）；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
 suggested_owner: zcode
 owner: zcode（Appointment 2026-11-04；2026-11-04T00:38:20Z 认领；交付于 2026-11-04T01:05:00Z 置 in_review——工作树未提交，base `1a5894282` + 本卡变更清单，由 DSH 提交）
-reviewer: codex（独立实现 Review 会话；未参与本 Task 实现/返修）
+reviewer: codex（独立实现 Review r1 changes_requested：P0=0/P1=5/P2=2，`doc/reviews/FEA-09-UI-1-impl-r1.md`，reviewed_head `e40c0f74`；DSH 处置 `doc/reviews/FEA-09-UI-1-impl-r1-adjudication.md`；返修后需全新上下文 Codex 复审）
 depends_on:
   - FEA-09-PREREQ-1
   - FEA-09
@@ -144,3 +144,14 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 - **结果**：`python tools/generate_api_inventory.py --check` **PASS**（C-07 冻结面未变）；build 0/0；全量 .NET/真实 IPC/门禁结果见 `verification/FEA-09-UI-1/logs/dsh-integration.log`。
 - **C-07 待办撤销**：不再需要 UNFREEZE 载体；本 Task 未改任何冻结契约字节。
 - 文档同步：Handoff / AC-MATRIX 中“IHostController +4 / C-07 UNFREEZE”描述作废，以本节为准。
+## Implementation Review r1 处置（DSH，2026-11-04）
+
+| ID | 级别 | DSH 处置 | 状态 |
+|---|---|---|---|
+| R1 | P1 | 接受：token 创建即登记清理上下文；所有未 accepted 出口统一 Delete+Revoke；补失败负测 | 返修中 |
+| R2 | P1 | 接受：receipt 暂时失败保持运行中状态，可恢复轮询/取消；终态才释放 | 返修中 |
+| R3 | P1 | 接受 + **DSH 接缝裁决**：folder 交 Host `IssueAsync` 枚举（App 不递归/排序/授权）；最小改动不可行则入口 typed unavailable 并如实登记 | 返修中 |
+| R4 | P1 | 接受：补真实 `HostController`+`ImportDockViewModel`→IPC 闭环（普通/AES/单加密源重试/取消守恒/源变化拒绝） | 返修中 |
+| R5 | P1 | 接受：>1 加密源 App 层 typed 拒绝，逐源独立确认/token；不扩 Core wire | 返修中 |
+| R6 | P2 | 接受：绑定并显示每项 CountsText；补测试 | 返修中 |
+| R7 | P2 | 接受：分别显示 skipped_pages/skipped_sources；补整源跳过测试 | 返修中 |
