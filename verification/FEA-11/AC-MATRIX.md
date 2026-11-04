@@ -7,11 +7,11 @@
 
 | 命令 | 结果 | 记录 |
 |---|---|---|
-| `pytest tests/fea11` | **37 passed** | Phase A/B/C5 + r1/r2 返修测试 |
-| `pytest tests`（全量） | **3047 passed / 0 failed / 10 skipped** | 含 r1/r2 返修；日志 `logs/dsh-C6-r2.log` |
+| `pytest tests/fea11` | **40 passed** | Phase A/B/C5 + r1/r2 返修测试 |
+| `pytest tests`（全量） | **3051 passed / 0 failed / 10 skipped** | 含 r1/r2 返修；日志 `logs/dsh-C6-r2.log` |
 | `pytest tests/fea09`（多次 + 冷启动） | **142 passed** 稳定 | 物理身份归一化（`identity.py`） |
 | `dotnet build` | 0 warnings / 0 errors | Release |
-| `dotnet test`（全量） | **1355 passed / 0 failed / 78 skipped**（3 个 IPC opt-in skip；App.Tests 偶发 1 flaky） | C1/C2/C3 + r1/r2 |
+| `dotnet test`（全量） | **1359 passed / 0 failed / 78 skipped**（3 个 IPC opt-in skip；App.Tests 偶发 1 flaky） | C1/C2/C3 + r1/r2 |
 | `NEWMANGA_FEA11_IPC=1` Host.Tests | **3 passed**（真实 Python Core） | `Fea11SourceIpcTests`（fail-closed / grant+scan / 全链 scan→plan→confirm→apply→ACK→resolve v2） |
 | `pwsh tools/governance/check.ps1` | PASS（2 warnings） | 指针治理 |
 | `pwsh tools/governance/verify_pins.ps1` | PASS 18/18 | C-17 第 18 pin |

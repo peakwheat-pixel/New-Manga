@@ -780,25 +780,6 @@ public sealed class HostRuntime : IAsyncDisposable
                     return new HostCommandResult(name, HostCommandStatus.Implemented, HostCommandChannel.HostLocal,
                         await sources.InvokeAsync(name, payload, token).ConfigureAwait(false));
                 }
-                if (name == "source_get_sync_capabilities")
-                {
-                    // r3 P1-04: the §5.2 Capabilities DTO — exactly seven items
-                    // with name/available/reason (Host-local aggregation).
-                    var capabilities = new[]
-                    {
-                        Capability("scan"),
-                        Capability("plan"),
-                        Capability("apply"),
-                        Capability("relink"),
-                        Capability("repoint"),
-                        Capability("resync"),
-                        Capability("operation"),
-                    };
-                    return new HostCommandResult(name, HostCommandStatus.Implemented,
-                        HostCommandChannel.HostLocal,
-                        System.Text.Json.JsonSerializer.SerializeToElement(
-                            new { items = capabilities }));
-                }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
                     var credentials = Credentials
@@ -823,7 +804,7 @@ public sealed class HostRuntime : IAsyncDisposable
             {
                 var operations = Operations ?? throw new CoreOperationException(
                     "CORE_UNAVAILABLE", "unavailable", false, "source operation journal unavailable", null);
-                await RequireSourceSyncCapabilitiesAsync(name, token).ConfigureAwait(false);
+                await SourceSyncCapabilityAsync(name, token).ConfigureAwait(false);
                 string? StringField(string key) =>
                     payload.ValueKind == System.Text.Json.JsonValueKind.Object
                     && payload.TryGetProperty(key, out var value)
@@ -916,15 +897,7 @@ public sealed class HostRuntime : IAsyncDisposable
                 return (entry.OperationId, result);
             }
 
-            static Dictionary<string, object?> Capability(string capabilityName) =>
-                new()
-                {
-                    ["name"] = capabilityName,
-                    ["available"] = true,
-                    ["reason"] = null,
-                };
-
-            async Task RequireSourceSyncCapabilitiesAsync(
+            async Task SourceSyncCapabilityAsync(
                 string name, CancellationToken token)
             {
                 var ping = await CoreService.SendAsync(
@@ -946,24 +919,28 @@ public sealed class HostRuntime : IAsyncDisposable
                         }
                     }
                 }
+                // r5: the delegate receives the HOST command name; every sync
+                // write kind maps to its own capability, plus the read floor.
                 var required = new List<string>
                 {
+                    "source.read/1",
                     "source.sync.plan/1", "source.sync.apply/1",
                     "source.sync.operation/1",
                 };
                 required.Add(name switch
                 {
-                    "ScanSourceSync" => "source.sync.scan/1",
-                    "RelinkSource" => "source.sync.relink/1",
-                    "RepointSource" => "source.sync.repoint/1",
-                    _ => "source.sync.resync/1",
+                    "source_scan_sync" => "source.sync.scan/1",
+                    "source_relink" => "source.sync.relink/1",
+                    "source_repoint" => "source.sync.repoint/1",
+                    "source_resync" => "source.sync.resync/1",
+                    _ => "source.sync.apply/1",
                 });
                 foreach (var capability in required)
                 {
                     if (!advertised.Contains(capability))
                     {
                         throw new CoreOperationException(
-                            "CORE_CAPABILITY_MISSING", "unavailable", true,
+                            "CORE_CAPABILITY_MISSING", "protocol", false,
                             "the Core does not advertise " + capability, null);
                     }
                 }
@@ -990,6 +967,48 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 switch (name)
                 {
+                    case "source_get_sync_capabilities":                    {
+                        var ping = await CoreService.SendAsync(
+                                "core.ping", 3,
+                                writer => writer.WriteStartObject(),
+                                _options.RequestTimeout, token)
+                            .ConfigureAwait(false);
+                        var advertised = new HashSet<string>(StringComparer.Ordinal);
+                        if (ping.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
+                            && ping.Result.Value.TryGetProperty("capabilities", out var caps)
+                            && caps.ValueKind == System.Text.Json.JsonValueKind.Array)
+                        {
+                            foreach (var capability in caps.EnumerateArray())
+                            {
+                                if (capability.ValueKind == System.Text.Json.JsonValueKind.String
+                                    && capability.GetString() is { } value)
+                                {
+                                    advertised.Add(value);
+                                }
+                            }
+                        }
+                        var tokens = new (string Name, string Probe)[]
+                        {
+                            ("scan", "source.sync.scan/1"),
+                            ("plan", "source.sync.plan/1"),
+                            ("apply", "source.sync.apply/1"),
+                            ("relink", "source.sync.relink/1"),
+                            ("repoint", "source.sync.repoint/1"),
+                            ("resync", "source.sync.resync/1"),
+                            ("operation", "source.sync.operation/1"),
+                        };
+                        var items = tokens.Select(token => new Dictionary<string, object?>
+                        {
+                            ["name"] = token.Name,
+                            ["available"] = advertised.Contains(token.Probe)
+                                && advertised.Contains("source.read/1"),
+                            ["reason"] = advertised.Contains(token.Probe)
+                                ? null
+                                : "CORE_CAPABILITY_MISSING",
+                        }).ToArray();
+                        return System.Text.Json.JsonSerializer.SerializeToElement(
+                            new { items });
+                    }
                     case "source_acknowledge_operation":
                     {
                         var entry = await operations.AcknowledgeAsync(operationId!, token)
@@ -1072,7 +1091,7 @@ public sealed class HostRuntime : IAsyncDisposable
                 { _log.Warn("source registry unavailable"); }
                 Commands = new HostCommandDispatcher(
                     CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
-                    SourceOperationCompletionAsync);
+                    SourceOperationCompletionAsync, SourceSyncCapabilityAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {

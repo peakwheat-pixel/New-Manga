@@ -16,6 +16,8 @@ doc/handoffs/FEA-11-handoff.md
 doc/reviews/FEA-11-r1.md
 doc/reviews/FEA-11-r2.md
 doc/reviews/FEA-11-r3.md
+doc/reviews/FEA-11-r4.md
+doc/tasks/FEA-11-AC4-GAPS-1.md
 doc/tasks/FEA-11-HOST-AUTH-1.md
 doc/tasks/FEA-11-LINEAGE-1.md
 doc/tasks/FEA-11-MATCH-1.md
@@ -54,6 +56,7 @@ tests/fea09/test_v7_migration.py
 tests/fea11/conftest.py
 tests/fea11/support/ipc_apply.py
 tests/fea11/support/ipc_seed.py
+tests/fea11/test_source_command_parity.py
 tests/fea11/test_source_lineage.py
 tests/fea11/test_source_operation.py
 tests/fea11/test_source_relink.py
@@ -63,10 +66,15 @@ tests/fea11/test_source_sync.py
 tests/fea11/test_v8_migration.py
 tests/storage/test_upgrade_schema_data.py
 verification/FEA-11/AC-MATRIX.md
+verification/FEA-11/DELIVERY-MANIFEST.json
+verification/FEA-11/EV.md
+verification/FEA-11/RESOURCE-MANIFEST.json
+verification/FEA-11/changed-files.txt
 verification/FEA-11/logs/dsh-C6-final.log
 verification/FEA-11/logs/dsh-C6-gates.log
 verification/FEA-11/logs/dsh-C6-r2.log
 verification/FEA-11/logs/dsh-C6-r3.log
 verification/FEA-11/logs/dsh-C6-r4.log
+verification/FEA-11/logs/dsh-C6-r5.log
 verification/FEA-11/logs/dsh-phaseB-main.log
 verification/FEA-11/logs/dsh-phaseB-providers.log

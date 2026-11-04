@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11](tasks/FEA-11.md) `changes_requested`（独立上下文 Review r1：P0=2/P1=11/P2=12，[报告](reviews/FEA-11-r1.md)；返修中：Host durable authorization/ACK 接线 + P1 11 项 + AC 状态修正；复跑门禁后复审）。
+- 当前 Task：[FEA-11](tasks/FEA-11.md) `changes_requested`（独立上下文 Review r1–r5；r5 返修中：P1-04 residual/证据件/测试卫生）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)。
 - 下一步：DSH 按 `doc/reviews/FEA-11-r1.md` 处置（P0→P1 返修）→ 复跑全量门禁 → 新上下文复审 → 集成 closeout；随后 FEA-11-SCAN-1 scope；FEA-12 需先解 G-DELETE-IMPL。

@@ -47,7 +47,7 @@ READY 节点：无
 
 完成：FEA-10 **done**（`d1972f0f`）；FEA-11-PREREQ-1 **done**（C-17 v1.0 FROZEN，pins 18/18，集成 `75d11739b`）。当前：**FEA-11 changes_requested（r4 后返修，r5 待派）**。
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → **FEA-11（changes_requested，r2；返修→r5）**；承接 HOST-AUTH-1/LINEAGE-1/MATCH-1/SCAN-1（proposed）；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（done，C-17 FROZEN/pins 18）** → **FEA-11（changes_requested，r5 返修中）**；承接 HOST-AUTH-1/LINEAGE-1/MATCH-1/SCAN-1（proposed）；FEA-12 待 `G-DELETE-IMPL`
 
 ## 历史快照（终态节点，非当前 DAG）
 

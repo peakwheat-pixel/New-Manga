@@ -53,19 +53,26 @@ public sealed class HostCommandDispatcher
     /// the delegate owns the Core call and the durable journal transition.</summary>
     private readonly Func<string, JsonElement, CancellationToken, Task<JsonElement>>? _operationJournal;
 
+    /// <summary>FEA-11 (C-17 §4): the sync capability probe gate runs before
+    /// dispatch for sync commands that do not ride the operation journal
+    /// (scan). Missing capabilities must fail closed, never UNKNOWN_COMMAND.</summary>
+    private readonly Func<string, CancellationToken, Task>? _capabilityGate;
+
     public HostCommandDispatcher(
         CoreServiceClient? core = null,
         HostBridgeClient? bridge = null,
         Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? hostLocal = null,
         Func<string, JsonElement, Func<CancellationToken, Task<CoreResponse>>, CancellationToken,
             Task<(string OperationId, JsonElement Result)>>? journal = null,
-        Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null)
+        Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null,
+        Func<string, CancellationToken, Task>? capabilityGate = null)
     {
         _core = core;
         _bridge = bridge;
         _hostLocal = hostLocal;
         _journal = journal;
         _operationJournal = operationJournal;
+        _capabilityGate = capabilityGate;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -161,6 +168,12 @@ public sealed class HostCommandDispatcher
         JsonElement args,
         CancellationToken cancellationToken)
     {
+        var capabilityGate = _capabilityGate;
+        if (capabilityGate is not null && descriptor.Name == "source_scan_sync")
+        {
+            await capabilityGate(descriptor.Name, cancellationToken).ConfigureAwait(false);
+        }
+
         var operationJournal = _operationJournal;
         if (operationJournal is not null
             && HostCommandRegistry.IsSourceOperationCompletion(descriptor.Name))

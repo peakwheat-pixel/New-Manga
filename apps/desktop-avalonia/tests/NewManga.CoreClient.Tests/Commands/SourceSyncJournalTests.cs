@@ -91,4 +91,25 @@ public sealed class SourceSyncJournalTests
         Assert.Equal(0, journalCalls);
         Assert.True(result.Value.TryGetProperty("state", out _));
     }
+
+    [Fact]
+    public async Task ScanCommand_IsGatedOnTheCapabilityProbeBeforeDispatch()
+    {
+        var gateCalls = new List<string>();
+        var dispatcher = new HostCommandDispatcher(
+            bridge: null,
+            hostLocal: null,
+            capabilityGate: (name, _) =>
+            {
+                gateCalls.Add(name);
+                throw new CoreOperationException(
+                    "CORE_CAPABILITY_MISSING", "protocol", false,
+                    "the Core does not advertise source.sync.scan/1", null);
+            });
+        using var args = JsonDocument.Parse("{}");
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            dispatcher.InvokeAsync("source_scan_sync", args.RootElement.Clone()));
+        Assert.Equal("CORE_CAPABILITY_MISSING", error.Code);
+        Assert.Equal("source_scan_sync", Assert.Single(gateCalls));
+    }
 }
