@@ -419,7 +419,7 @@ public static class HostCommandRegistry
     /// operation coordinator (durable journal), not a direct Core passthrough.</summary>
     public static bool IsSourceOperationCompletion(string name) => name is
         "source_acknowledge_operation" or "source_complete_operation_recovery"
-        or "source_record_operation_failure" or "source_get_sync_capabilities";
+        or "source_record_operation_failure";
 
     public static IReadOnlySet<string> SourceSyncCommandNames { get; } = new HashSet<string>(StringComparer.Ordinal)
     {

@@ -1,7 +1,7 @@
 {
   "task": "FEA-11",
   "base_commit": "3472cffd",
-  "delivery_head": "fceb0766f",
+  "delivery_head": "ac4b6fabc",
   "changed_files": [
     "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
     "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandModel.cs",
@@ -84,5 +84,5 @@
     "verification/FEA-11/logs/dsh-phaseB-main.log",
     "verification/FEA-11/logs/dsh-phaseB-providers.log"
   ],
-  "status": "pending_review_r5"
+  "status": "pending_review_r6"
 }

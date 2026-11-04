@@ -780,6 +780,10 @@ public sealed class HostRuntime : IAsyncDisposable
                     return new HostCommandResult(name, HostCommandStatus.Implemented, HostCommandChannel.HostLocal,
                         await sources.InvokeAsync(name, payload, token).ConfigureAwait(false));
                 }
+                if (name == "source_get_sync_capabilities")
+                {
+                    return SourceSyncCapabilities();
+                }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
                     var credentials = Credentials
@@ -946,6 +950,65 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
             }
 
+
+            HostCommandResult SourceSyncCapabilities()
+            {
+                var items = RunCapabilityProbeAsync().GetAwaiter().GetResult();
+                return new HostCommandResult(
+                    "source_get_sync_capabilities", HostCommandStatus.Implemented,
+                    HostCommandChannel.HostLocal,
+                    System.Text.Json.JsonSerializer.SerializeToElement(new { items }));
+            }
+
+            async Task<object[]> RunCapabilityProbeAsync()
+            {
+                var advertised = new HashSet<string>(StringComparer.Ordinal);
+                try
+                {
+                    var ping = await CoreService.SendAsync(
+                            "core.ping", 3,
+                            writer => writer.WriteStartObject(),
+                            _options.RequestTimeout, CancellationToken.None)
+                        .ConfigureAwait(false);
+                    if (ping.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
+                        && ping.Result.Value.TryGetProperty("capabilities", out var caps)
+                        && caps.ValueKind == System.Text.Json.JsonValueKind.Array)
+                    {
+                        foreach (var capability in caps.EnumerateArray())
+                        {
+                            if (capability.ValueKind == System.Text.Json.JsonValueKind.String
+                                && capability.GetString() is { } value)
+                            {
+                                advertised.Add(value);
+                            }
+                        }
+                    }
+                }
+                catch (CoreOperationException)
+                {
+                    // Core unavailable: every sync capability reports unavailable.
+                }
+                var tokens = new (string Name, string Probe)[]
+                {
+                    ("scan", "source.sync.scan/1"),
+                    ("plan", "source.sync.plan/1"),
+                    ("apply", "source.sync.apply/1"),
+                    ("relink", "source.sync.relink/1"),
+                    ("repoint", "source.sync.repoint/1"),
+                    ("resync", "source.sync.resync/1"),
+                    ("operation", "source.sync.operation/1"),
+                };
+                return tokens.Select(token => (object)new Dictionary<string, object?>
+                {
+                    ["name"] = token.Name,
+                    ["available"] = advertised.Contains(token.Probe)
+                        && advertised.Contains("source.read/1"),
+                    ["reason"] = advertised.Contains(token.Probe)
+                        ? null
+                        : "capability_missing",
+                }).ToArray();
+            }
+
             // FEA-11 (C-17 §3.2/§3.3): ACK/recovery/failure are Host-coordinated
             // through the durable journal; the Core call stays inside the
             // coordinator so a failed call never regresses the journal state.
@@ -967,48 +1030,6 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 switch (name)
                 {
-                    case "source_get_sync_capabilities":                    {
-                        var ping = await CoreService.SendAsync(
-                                "core.ping", 3,
-                                writer => writer.WriteStartObject(),
-                                _options.RequestTimeout, token)
-                            .ConfigureAwait(false);
-                        var advertised = new HashSet<string>(StringComparer.Ordinal);
-                        if (ping.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
-                            && ping.Result.Value.TryGetProperty("capabilities", out var caps)
-                            && caps.ValueKind == System.Text.Json.JsonValueKind.Array)
-                        {
-                            foreach (var capability in caps.EnumerateArray())
-                            {
-                                if (capability.ValueKind == System.Text.Json.JsonValueKind.String
-                                    && capability.GetString() is { } value)
-                                {
-                                    advertised.Add(value);
-                                }
-                            }
-                        }
-                        var tokens = new (string Name, string Probe)[]
-                        {
-                            ("scan", "source.sync.scan/1"),
-                            ("plan", "source.sync.plan/1"),
-                            ("apply", "source.sync.apply/1"),
-                            ("relink", "source.sync.relink/1"),
-                            ("repoint", "source.sync.repoint/1"),
-                            ("resync", "source.sync.resync/1"),
-                            ("operation", "source.sync.operation/1"),
-                        };
-                        var items = tokens.Select(token => new Dictionary<string, object?>
-                        {
-                            ["name"] = token.Name,
-                            ["available"] = advertised.Contains(token.Probe)
-                                && advertised.Contains("source.read/1"),
-                            ["reason"] = advertised.Contains(token.Probe)
-                                ? null
-                                : "CORE_CAPABILITY_MISSING",
-                        }).ToArray();
-                        return System.Text.Json.JsonSerializer.SerializeToElement(
-                            new { items });
-                    }
                     case "source_acknowledge_operation":
                     {
                         var entry = await operations.AcknowledgeAsync(operationId!, token)
