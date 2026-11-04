@@ -8,7 +8,7 @@
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
-|FEA-11-PREREQ-1|FEA-09、FEA-10|**proposed**（Source 同步契约前置：v8+ DDL/状态机/命令/错误/能力/CAS/lineage/resolve；待 DSH scope review）|
+|FEA-11-PREREQ-1|FEA-09、FEA-10|**ready**（scope r1 approved P0/P1=0；Appointment 2026-11-04 Owner=Codex 待认领；契约 C-17/冻结矩阵/pins 18 待起草与冻结）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**proposed**（Source 变化/重定位/同步；scope-r1 处置完成；待 PREREQ done + scope-r2 approved；逐 AC/写域已修订）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
@@ -38,7 +38,7 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-11-PREREQ-1
 
 完成：FEA-10 **done**（`d1972f0f`，7 轮独立 Review approved P0/P1=0，AC1–AC10 MET）。下一候选：**FEA-11**（proposed；需 DSH 建卡 + 独立 scope review）。
 
