@@ -35,8 +35,8 @@ def _facts_of(path) -> dict:
 
     info = os.stat(path)
     return {
-        "volume_serial": int(info.st_dev),
-        "file_id": int(info.st_ino),
+        "volume_serial": int(info.st_dev) % (2**53),
+        "file_id": int(info.st_ino) % (2**53),
         "size": int(info.st_size),
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
     }

@@ -3553,7 +3553,11 @@ class CoreServiceServer:
                 published = self._render_previews.publish_original(
                     temp_path, resource_id, ".png"
                 )
-                self._record_rendition_cache(page, rendition, None)
+                # C-17 §7.2: record the cache row against the binding-scoped
+                # v2 key, not the legacy page key (lookup would miss it).
+                self._record_rendition_cache(
+                    page, rendition, None, resource_id=resource_id
+                )
                 return published
             finally:
                 if temp_path is not None:

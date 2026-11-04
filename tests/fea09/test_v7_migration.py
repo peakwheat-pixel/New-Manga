@@ -73,7 +73,7 @@ def test_v7_full_chain_backfill_and_conservation() -> None:
     MigrationRunner(conn, default_migrations()).apply_pending()
 
     assert conn.execute(
-        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 8
     rows = {
         row["page_id"]: (row["source_mode"], row["integrity_status"])
         for row in conn.execute("SELECT page_id, source_mode, integrity_status FROM pages")
@@ -136,7 +136,7 @@ def test_validator_passes_on_conserved_library() -> None:
         validate=make_v7_validator(baseline, resource_verifier=OkVerifier()),
     ).apply_pending()
     assert conn.execute(
-        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 8
 
 
 def test_validator_rejects_tampered_backfill() -> None:
@@ -245,7 +245,7 @@ def test_resource_verifier_accepts_readable_original() -> None:
         validate=make_v7_validator(baseline, resource_verifier=OkVerifier()),
     ).apply_pending()
     assert conn.execute(
-        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 8
 
 
 def test_fresh_database_migrates_with_empty_baseline() -> None:
@@ -260,7 +260,7 @@ def test_fresh_database_migrates_with_empty_baseline() -> None:
         conn, default_migrations(), validate=make_v7_validator(baseline)
     ).apply_pending()
     assert conn.execute(
-        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+        "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 8
 
 def test_legacy_complete_copy_without_artifact_is_visible_after_v7() -> None:
     """C-15 v1.1 union conservation: the legacy positive-dimension copy set is

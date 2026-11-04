@@ -96,7 +96,7 @@ def test_resolve_uses_rendition_cache_and_rebuilds_corruption(
     resolve_module.render_prepared_rendition = _counting_render
 
     first = server.handle_resolve_page_resource({"page_id": page.page_id})
-    assert first["resource_id"] == f"page-rendition-{page.page_id}"
+    assert first["resource_id"].startswith("page-rendition-v2-")
     assert len(produce_calls) == 1
 
     rows = repo._conn.execute(

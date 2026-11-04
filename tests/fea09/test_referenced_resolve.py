@@ -157,7 +157,8 @@ def test_core_resolve_publishes_referenced_rendition(tmp_path, repo, book_chapte
     server._render_previews = publisher
 
     result = server.handle_resolve_page_resource({"page_id": page.page_id})
-    resource_id = f"page-rendition-{page.page_id}"
+    resource_id = result["resource_id"]
+    assert resource_id.startswith("page-rendition-v2-")
     assert result == {"resource_id": resource_id, "revision": "original"}
     entry = publisher.lookup(resource_id)
     assert entry is not None and publisher.artifact_exists(entry.rel_path)
@@ -298,7 +299,7 @@ def test_dual_read_managed_and_referenced_resolve(tmp_path, repo, book_chapter):
         {"page_id": referenced.page_id}
     )
     assert managed_result["resource_id"] == f"page-original-{managed_id}"
-    assert referenced_result["resource_id"] == f"page-rendition-{referenced.page_id}"
+    assert referenced_result["resource_id"].startswith("page-rendition-v2-")
     assert publisher.artifact_exists(
         publisher.lookup(managed_result["resource_id"]).rel_path
     )

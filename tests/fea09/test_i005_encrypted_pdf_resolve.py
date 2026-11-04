@@ -134,7 +134,7 @@ def test_encrypted_pdf_resolve_uses_secret_and_pdfium_password(
                                            FakeSourceReadAccess())
     server._core.document_raster = PdfiumDocumentRaster()
     response = server.handle_resolve_page_resource({"page_id": page_id})
-    assert response["resource_id"] == f"page-rendition-{page_id}"
+    assert response["resource_id"].startswith("page-rendition-v2-")
     assert not secret_path.exists(), "one-shot secret must be consumed"
     assert list(derived.rglob("*.png")), "PDF rendition must be published"
     # cache hit needs no new Secret-G (grant consumed, Auth only)

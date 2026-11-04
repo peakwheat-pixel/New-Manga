@@ -97,8 +97,8 @@ class _Env:
                     ordinal=0,
                     path=str(self.source),
                     facts=dict(
-                        volume_serial=info.st_dev,
-                        file_id=info.st_ino,
+                        volume_serial=info.st_dev % (2**53),
+                        file_id=info.st_ino % (2**53),
                         size=info.st_size,
                         sha256=hashlib.sha256(self.source.read_bytes()).hexdigest(),
                     ),

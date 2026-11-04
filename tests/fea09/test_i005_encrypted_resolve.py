@@ -216,7 +216,7 @@ def test_encrypted_resolve_consumes_one_secret_and_cache_hit_needs_none(
     server, cache, derived = _build_server(tmp_path, repo, registry, access)
 
     response = server.handle_resolve_page_resource({"page_id": page_id})
-    assert response["resource_id"] == f"page-rendition-{page_id}"
+    assert response["resource_id"].startswith("page-rendition-v2-")
     assert not secret_path.exists()  # one-shot consumed
     published = list(derived.glob("renditions/*"))
     assert published or list(derived.rglob("*.png"))

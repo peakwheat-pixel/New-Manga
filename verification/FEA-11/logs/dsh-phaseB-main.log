@@ -1,0 +1,2378 @@
+COMMAND=C:/Python314/python.exe -m pytest tests -q -p no:warnings
+shell=pwsh; TEMP=G:\CODEX\New Manga.workspace\FEA-11\gates; TMP=G:\CODEX\New Manga.workspace\FEA-11\gates; python=C:/Python314/python.exe; head=1f0b57960; 2026-11-04T23:59:38.9308588+08:00
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+.................F.........FFFF..................FFFFFFFFFFFFFFFFFFFFFF. [ 35%]
+...FFFFF.FFFFFFF.FFFF.....................F...........F.F............F.. [ 37%]
+F...FF.................................................................. [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+.............................................................s.......... [ 56%]
+........................................................................ [ 59%]
+.............sssss...................................................... [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+...............................s........................................ [ 80%]
+........................................................................ [ 82%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+....................                                                     [100%]
+================================== FAILURES ===================================
+_______ test_ac3_shared_source_keeps_per_project_page_state_independent _______
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_ac3_shared_source_keeps_p0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A8C9B0>
+book_chapter = ('b1', 'c1')
+
+    def test_ac3_shared_source_keeps_per_project_page_state_independent(
+        tmp_path, repo, book_chapter
+    ):
+        import time
+    
+        from support import build_runtime
+    
+        path = tmp_path / "shared.png"
+        path.write_bytes(png_bytes(3, 3))
+        access = FakeSourceReadAccess()
+        access.add_file("g-s1", "image", path)
+        runtime = build_runtime(repo, access)
+    
+        repo._conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('book-b', 'b', '2026-11-01T00:00:00.000+00:00',"
+            " '2026-11-01T00:00:00.000+00:00')"
+        )
+        repo._conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+            " VALUES ('c2', 'book-b', 'c2', '2026-11-01T00:00:00.000+00:00',"
+            " '2026-11-01T00:00:00.000+00:00')"
+        )
+        repo._conn.commit()
+    
+        for chapter, operation in (
+            ("c1", "op-0000000000000201"),
+            ("c2", "op-0000000000000202"),
+        ):
+>           plan = runtime._planner.plan(
+                chapter_id=chapter, grants=["g-s1"], duplicate_policy="skip"
+            )
+
+tests\fea09\test_ac_1_2_3_closure.py:181: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A8C9B0>
+content_digest = 'f51fc64785d79272f740891377a0aef1467be9fe24d9df14b399c6a6c497fa2f'
+volume_serial = 15333285442011643084, file_id = 844424933842999
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_________ test_encrypted_pdf_resolve_uses_secret_and_pdfium_password __________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_pdf_resolve_use0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DA18B0>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_pdf_resolve_uses_secret_and_pdfium_password(
+        tmp_path, repo, book_chapter
+    ):
+>       page_id = _import_encrypted_pdf(tmp_path, repo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_i005_encrypted_pdf_resolve.py:114: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_i005_encrypted_pdf_resolve.py:52: in _import_encrypted_pdf
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DA18B0>
+content_digest = '1ed7cadad03349d15bbd2c6eaa4da7f14fda3f51de83c4c0cb63b69fdd755ce4'
+volume_serial = 15333285442011643084, file_id = 1407374887264336
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________ test_encrypted_pdf_resolve_without_secret_is_required ____________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_pdf_resolve_wit0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A878E0>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_pdf_resolve_without_secret_is_required(
+        tmp_path, repo, book_chapter
+    ):
+>       page_id = _import_encrypted_pdf(tmp_path, repo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_i005_encrypted_pdf_resolve.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_i005_encrypted_pdf_resolve.py:52: in _import_encrypted_pdf
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A878E0>
+content_digest = '1ed7cadad03349d15bbd2c6eaa4da7f14fda3f51de83c4c0cb63b69fdd755ce4'
+volume_serial = 15333285442011643084, file_id = 281474980421761
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_____ test_encrypted_resolve_consumes_one_secret_and_cache_hit_needs_none _____
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_resolve_consume0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F88960>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_resolve_consumes_one_secret_and_cache_hit_needs_none(
+        tmp_path, repo, book_chapter
+    ):
+>       page_id = _import_encrypted(tmp_path, repo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_i005_encrypted_resolve.py:196: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_i005_encrypted_resolve.py:103: in _import_encrypted
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F88960>
+content_digest = '2cb6daf25ad7a2a6f6fd6b30f62ce65d3b7c6c25d619515fa462874f6004c92c'
+volume_serial = 15333285442011643084, file_id = 281474980421765
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_____ test_encrypted_resolve_cache_miss_without_secret_grant_is_required ______
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_resolve_cache_m0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A01C20>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_resolve_cache_miss_without_secret_grant_is_required(
+        tmp_path, repo, book_chapter
+    ):
+>       page_id = _import_encrypted(tmp_path, repo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_i005_encrypted_resolve.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_i005_encrypted_resolve.py:103: in _import_encrypted
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A01C20>
+content_digest = '2cb6daf25ad7a2a6f6fd6b30f62ce65d3b7c6c25d619515fa462874f6004c92c'
+volume_serial = 15333285442011643084, file_id = 281474980421771
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+________________________ test_import_images_full_flow _________________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_import_images_full_flow0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A7E210>
+book_chapter = ('b1', 'c1')
+
+    def test_import_images_full_flow(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "001.png", "g-image-0000000001")
+        _image_grant_(access, tmp_path, "002.png", "g-image-0000000002")
+        runtime = build_runtime(repo, access)
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1",
+            grants=["g-image-0000000001", "g-image-0000000002"],
+            duplicate_policy="skip",
+        )
+
+tests\fea09\test_referenced_flow.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A7E210>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 281474980421830
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________________ test_import_zip_occurrences_and_order ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_import_zip_occurrences_an0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A7FB10>
+book_chapter = ('b1', 'c1')
+
+    def test_import_zip_occurrences_and_order(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        members = [
+            ("002.png", png_bytes(3, 3, (0, 255, 0))),
+            ("001.png", png_bytes(3, 3, (255, 0, 0))),
+            ("dup/001.png", png_bytes(3, 3, (255, 0, 0))),
+            ("010.png", png_bytes(3, 3, (0, 0, 255))),
+        ]
+        path = write_zip(tmp_path / "book.zip", members)
+        access.add_file("g-zip-0000000000001", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-zip-0000000000001"])
+
+tests\fea09\test_referenced_flow.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A7FB10>
+content_digest = '36992d805173b514205af2aca613ce939a223e134f5ebfc627a2a9e6603d53c3'
+volume_serial = 15333285442011643084, file_id = 281474980421834
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________________________ test_import_pdf_pages ____________________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_import_pdf_pages0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D449D5220>
+book_chapter = ('b1', 'c1')
+
+    def test_import_pdf_pages(tmp_path, repo, book_chapter):
+        path = tmp_path / "doc.pdf"
+        path.write_bytes(make_flat_pdf(3))
+        access = FakeSourceReadAccess()
+        access.add_file("g-pdf-00000000000001", "pdf", path)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-pdf-00000000000001"])
+
+tests\fea09\test_referenced_flow.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D449D5220>
+content_digest = '70a6b1c1000c51d368e305276904baeaf54e6555c04dbc27fcf68b52f12fdc7c'
+volume_serial = 15333285442011643084, file_id = 281474980421837
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________________ test_import_folder_nested_order _______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_import_folder_nested_orde0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EE8DC0>
+book_chapter = ('b1', 'c1')
+
+    def test_import_folder_nested_order(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        root = tmp_path / "src"
+        root.mkdir()
+        names = ["1.png", "2.png", "10.png", "100.png", "nested/a.png"]
+        paths = []
+        for name in names:
+            target = root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(png_bytes(3, 3))
+            paths.append(target)
+        access.add_folder("g-folder-0000000001", root, paths)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-folder-0000000001"])
+
+tests\fea09\test_referenced_flow.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EE8DC0>
+content_digest = '5a47e407007fea5f956cb1433cd37fcc1b8f6746cab379b452f01f0a9bf1ba85'
+volume_serial = 15333285442011643084, file_id = 281474980421841
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________________ test_scenario_1_accepted_cancel _______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_1_accepted_cance0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EFAE40>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_1_accepted_cancel(tmp_path, repo, book_chapter):
+        """accepted ��ȡ����planned=20��imported=0��pending=20��remaining=20��"""
+        path = write_zip(
+            tmp_path / "cancel.zip", [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(20)]
+        )
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-0000000000002", "zip", path)
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-zip-0000000000002"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:194: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EFAE40>
+content_digest = '2c0395ebbe25c5abd4b5b01178d4f6cdca2cc10802124745038674278b88ce7b'
+volume_serial = 15333285442011643084, file_id = 281474980421849
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________ test_scenario_2_partial_cancel_with_unsupported _______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_2_partial_cancel0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EBA530>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_2_partial_cancel_with_unsupported(tmp_path, repo, book_chapter):
+        """�ύ 12 ҳ��ȡ����20 ҳ�� 1 unsupported����pending=7�����ύ������"""
+        members = [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(19)]
+        members.insert(0, ("000-note.txt", b"note"))
+        path = write_zip(tmp_path / "mixed.zip", members)
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-0000000000003", "zip", path)
+    
+        runtime_holder = {}
+    
+        def hook(call_index, data):
+            if call_index == 12:
+                runtime_holder["runtime"].cancel(OP)
+    
+        decoder = HookDecoder(hook=hook)
+        runtime = build_runtime(repo, access, decoder=decoder)
+        runtime_holder["runtime"] = runtime
+    
+>       _plan_and_start(runtime, ["g-zip-0000000000003"])
+
+tests\fea09\test_referenced_flow.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EBA530>
+content_digest = 'ca7d19afea4232012d4ee0608da101aeb97d74ea5bcc4345e2ad2d03c11850be'
+volume_serial = 15333285442011643084, file_id = 281474980421852
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________________ test_scenario_3_midrun_failure ________________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_3_midrun_failure0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D32350>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_3_midrun_failure(tmp_path, repo, book_chapter):
+        """�ύ 12 ҳ��ʧ�ܣ�failed_sources=1�����ύ���ع���pending=7��"""
+        members = [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(19)]
+        members.insert(0, ("000-note.txt", b"note"))
+        path = write_zip(tmp_path / "fail.zip", members)
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-0000000000004", "zip", path)
+    
+        def hook(call_index, data):
+            if call_index == 13:
+                raise SourceImportError(
+                    "FILE_IDENTITY_CHANGED", "member identity drifted"
+                )
+    
+        runtime = build_runtime(repo, access, decoder=HookDecoder(hook=hook))
+    
+>       _plan_and_start(runtime, ["g-zip-0000000000004"])
+
+tests\fea09\test_referenced_flow.py:282: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D32350>
+content_digest = 'ca7d19afea4232012d4ee0608da101aeb97d74ea5bcc4345e2ad2d03c11850be'
+volume_serial = 15333285442011643084, file_id = 281474980421855
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+__________________ test_revocation_halts_at_commit_boundary ___________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_revocation_halts_at_commi0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E4A120>
+book_chapter = ('b1', 'c1')
+
+    def test_revocation_halts_at_commit_boundary(tmp_path, repo, book_chapter):
+        """RevokeSourceReadGrant ���壺commit ǰ����ʧ�� �� ��ֹ������Ԫ��"""
+        path = write_zip(
+            tmp_path / "rev.zip", [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(10)]
+        )
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-000000000005", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+        original_verify = access.verify_before_commit
+    
+        def fail_after_five(grant_id):
+            original_verify(grant_id)
+            # Phase C strict lease: each page triggers read-verify + commit-verify,
+            # so the 6th page's pre-commit check is call 12 (5 pages already committed).
+            if len(access.verify_calls) == 12:
+                raise SourceImportError(
+                    "SOURCE_GRANT_REVOKED", "grant was revoked mid-run"
+                )
+    
+        access.verify_before_commit = fail_after_five
+>       _plan_and_start(runtime, ["g-zip-000000000005"])
+
+tests\fea09\test_referenced_flow.py:317: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E4A120>
+content_digest = 'd1d738e1809d112bbe168ba0d46f6775773c4fe5881198d24ee7b73e4544beb6'
+volume_serial = 15333285442011643084, file_id = 281474980421858
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________________ test_scenario_4_unsupported_only _______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_4_unsupported_on0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36ED5EF0>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_4_unsupported_only(tmp_path, repo, book_chapter):
+        """unsupported-only��20 ҳ����planned=20��unsupported=20��completed��"""
+        members = [(f"n{i:03d}.txt", b"note") for i in range(20)]
+        path = write_zip(tmp_path / "text.zip", members)
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-000000000006", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-zip-000000000006"])
+
+tests\fea09\test_referenced_flow.py:335: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36ED5EF0>
+content_digest = '4f3ac86c6a922af3c0a88801b7a6af0318c8ee6ed6f016498a1acdc2064ec42d'
+volume_serial = 15333285442011643084, file_id = 281474980421861
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________________ test_scenario_5_whole_source_skip ______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_5_whole_source_s0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E49630>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_5_whole_source_skip(tmp_path, repo, book_chapter):
+        """��Դ������������planned=0��skipped_sources=1��skip ���߶��ε��룩��"""
+        path = write_zip(
+            tmp_path / "again.zip", [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(6)]
+        )
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-000000000007", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-zip-000000000007"], operation=OP)
+
+tests\fea09\test_referenced_flow.py:355: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E49630>
+content_digest = 'b46f72ac74801cb26eac5d94a730744055442c3184a73f503a83f35eeac23857'
+volume_serial = 15333285442011643084, file_id = 844424933836071
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_________________ test_scenario_6_partial_already_referenced __________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_scenario_6_partial_alread0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D31C70>
+book_chapter = ('b1', 'c1')
+
+    def test_scenario_6_partial_already_referenced(tmp_path, repo, book_chapter):
+        """���������ã�import_as_new ���Ѱ� entry �����������ƹ�Ψһ�ԣ���"""
+        members = [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(8)]
+        path = write_zip(tmp_path / "part.zip", members)
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-000000000008", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+>       _plan_and_start(runtime, ["g-zip-000000000008"], operation=OP)
+
+tests\fea09\test_referenced_flow.py:379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D31C70>
+content_digest = 'b2d5327ecdb9a9475e013ef52fb9c6cd71558dd11032318acec2ff15ce2ec06d'
+volume_serial = 15333285442011643084, file_id = 562949957125979
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________________ test_replay_same_id_same_fingerprint _____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_replay_same_id_same_finge0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EBA170>
+book_chapter = ('b1', 'c1')
+
+    def test_replay_same_id_same_fingerprint(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "r.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:401: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EBA170>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 562949957126728
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+________________ test_replay_conflicting_fingerprint_rejected _________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_replay_conflicting_finger0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EF8FA0>
+book_chapter = ('b1', 'c1')
+
+    def test_replay_conflicting_fingerprint_rejected(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "c.png", "g-image-0000000001")
+        _image_grant_(access, tmp_path, "d.png", "g-image-0000000002")
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:429: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EF8FA0>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 1125899910548115
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________________ test_project_lock_single_flight _______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_project_lock_single_fligh0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EE9AE0>
+book_chapter = ('b1', 'c1')
+
+    def test_project_lock_single_flight(tmp_path, repo, book_chapter):
+        """ͬ��Ŀͬʱֻ����һ������̬ import �� SOURCE_IMPORT_BUSY��"""
+        path = write_zip(
+            tmp_path / "busy.zip", [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(30)]
+        )
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-000000000009", "zip", path)
+        runtime = build_runtime(repo, access)
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-zip-000000000009"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:458: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36EE9AE0>
+content_digest = '5fdae02ea45917e216b8b467685c8626a276f4f880e89a6d726c673e3d65a520'
+volume_serial = 15333285442011643084, file_id = 562949957127588
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_____________________ test_cancel_after_terminal_rejected _____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_cancel_after_terminal_rej0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A9A260>
+book_chapter = ('b1', 'c1')
+
+    def test_cancel_after_terminal_rejected(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "t.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       _plan_and_start(runtime, ["g-image-0000000001"])
+
+tests\fea09\test_referenced_flow.py:492: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A9A260>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 562949957128646
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________________ test_cross_restart_operation_not_found ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_cross_restart_operation_n0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A02350>
+book_chapter = ('b1', 'c1')
+
+    def test_cross_restart_operation_not_found(tmp_path, repo, book_chapter):
+        """Receipt �ǻỰ��״̬���� runtime ʵ�����������壩�� NOT_FOUND��"""
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "x.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       _plan_and_start(runtime, ["g-image-0000000001"])
+
+tests\fea09\test_referenced_flow.py:503: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A02350>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 844424933839350
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+__________________ test_natural_key_retry_no_duplicate_pages __________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_natural_key_retry_no_dupl0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E126C0>
+book_chapter = ('b1', 'c1')
+
+    def test_natural_key_retry_no_duplicate_pages(tmp_path, repo, book_chapter):
+        """���Ծ���Ȼ���� skipped���������ظ�ҳ��C-16 ��4����"""
+        path = write_zip(
+            tmp_path / "retry.zip", [(f"{i:03d}.png", png_bytes(2, 2)) for i in range(5)]
+        )
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-00000000000a", "zip", path)
+        runtime = build_runtime(repo, access)
+>       _plan_and_start(runtime, ["g-zip-00000000000a"], operation=OP)
+
+tests\fea09\test_referenced_flow.py:519: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D36E126C0>
+content_digest = 'aa50b084837da1ef2967747a157c626149db123e80c9d1738a704b16bf512593'
+volume_serial = 15333285442011643084, file_id = 562949957130467
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________________ test_plan_stale_when_container_changes ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_plan_stale_when_container0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D449D4FA0>
+book_chapter = ('b1', 'c1')
+
+    def test_plan_stale_when_container_changes(tmp_path, repo, book_chapter):
+        """ȷ��ǰԴ�仯������ digest Ư�� �� strict ���� typed ʧ�ܡ�"""
+        import io
+        import zipfile
+    
+        path = write_zip(tmp_path / "stale.zip", [("001.png", png_bytes(2, 2))])
+        access = FakeSourceReadAccess()
+        access.add_file("g-zip-00000000000b", "zip", path)
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-zip-00000000000b"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:538: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D449D4FA0>
+content_digest = 'aa3797672f68b17896391d49025982fdb89f4c0e304a87379ad9f11c36a2e4fe'
+volume_serial = 15333285442011643084, file_id = 1125899910551837
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________________ test_start_rejects_wrong_digest _______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_start_rejects_wrong_diges0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A31720>
+book_chapter = ('b1', 'c1')
+
+    def test_start_rejects_wrong_digest(tmp_path, repo, book_chapter):
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "w.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:560: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A31720>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 844424933842565
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________________ test_project_mismatch_rolls_back_unit ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_project_mismatch_rolls_ba0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A852C0>
+book_chapter = ('b1', 'c1')
+
+    def test_project_mismatch_rolls_back_unit(tmp_path, repo, book_chapter):
+        """SOURCE_PROJECT_MISMATCH��page��chapter��book �� project_id ���� �� �ع���"""
+        conn = repo._conn
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('b2', 'Other', '2026-11-03T00:00:00', '2026-11-03T00:00:00')"
+        )
+        conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+            " VALUES ('c2', 'b2', 'Ch2', '2026-11-03T00:00:00', '2026-11-03T00:00:00')"
+        )
+        conn.commit()
+    
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "mm.png", "g-image-0000000001")
+    
+        def wrong_project(chapter_id):
+            return "b2"  # chapter c1 belongs to b1 �� the binding must be refused
+    
+        planner = ReferencedImportPlanner(
+            access=access, repository=repo, project_of_chapter=wrong_project,
+            pdf_open=build_pdf_open(),
+        )
+        runtime = ReferencedImportRuntime(
+            repository=repo, access=access, planner=planner,
+            project_of_chapter=wrong_project, image_decoder=HookDecoder(),
+            pdf_open=build_pdf_open(),
+        )
+>       plan = planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_flow.py:600: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A852C0>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 281474980421863
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________________ test_disabled_flag_rejects_new_imports ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_disabled_flag_rejects_new0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A8FA70>
+book_chapter = ('b1', 'c1')
+
+    def test_disabled_flag_rejects_new_imports(tmp_path, repo, book_chapter):
+        """ReferencedImportEnabled=false�����µ��룬���ύ���ݱ���˫����"""
+        access = FakeSourceReadAccess()
+        _image_grant_(access, tmp_path, "on.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       _plan_and_start(runtime, ["g-image-0000000001"])
+
+tests\fea09\test_referenced_flow.py:628: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44A8FA70>
+content_digest = '77845f63cbd1ecb93e10fbaff7e657044d25d59f0586905c9bdbddeb2c477309'
+volume_serial = 15333285442011643084, file_id = 281474980421866
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________ test_partial_import_retry_imports_remaining_pages ______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_partial_import_retry_impo0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44ACBD40>
+book_chapter = ('b1', 'c1')
+
+    def test_partial_import_retry_imports_remaining_pages(tmp_path, repo, book_chapter):
+        """R1-I003: a partial commit must not turn retry into a whole-source skip."""
+        access = FakeSourceReadAccess()
+        path = write_zip(
+            tmp_path / "three.zip",
+            [("001.png", png_bytes(4, 4)), ("002.png", png_bytes(4, 4)),
+             ("003.png", png_bytes(4, 4))],
+        )
+        access.add_file("g-zip-000000000001", "zip", path)
+        decoder = HookDecoder(
+            hook=lambda count, _data: access.revoke_grants(
+                "reg-1", 2, ["g-zip-000000000001"]
+            ) if count == 2 else None
+        )
+        runtime = build_runtime(repo, access, decoder=decoder)
+>       _plan_and_start(runtime, ["g-zip-000000000001"])
+
+tests\fea09\test_referenced_flow.py:655: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_flow.py:46: in _plan_and_start
+    plan = planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D44ACBD40>
+content_digest = '22cec6117113b84ba8c2635071273da816c07d15efc34213a0add09878af6b35'
+volume_serial = 15333285442011643084, file_id = 281474980421869
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________________ test_encrypted_plan_is_structural_only ____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_plan_is_structu0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34248A00>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_plan_is_structural_only(tmp_path, repo, book_chapter):
+        path, _a, _b = _locked_zip(tmp_path)
+        access = FakeSourceReadAccess()
+        access.add_file("g-cbz-0000000000001", "cbz", path)
+        runtime = build_runtime(repo, access)
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-cbz-0000000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_password.py:145: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34248A00>
+content_digest = '39b2fac2af0dfc270fb88a885b702915dd258eea927b25089efc6d9f31d2b11d'
+volume_serial = 15333285442011643084, file_id = 281474980421882
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_________________ test_encrypted_import_with_secret_succeeds __________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_import_with_sec0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34208B90>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_import_with_secret_succeeds(tmp_path, repo, book_chapter):
+        path, payload_a, _b = _locked_zip(tmp_path)
+        access = FakeSourceReadAccess()
+        access.add_file("g-cbz-0000000000002", "cbz", path)
+        runtime = build_runtime(repo, access)
+    
+        secret_path = tmp_path / "host" / "source-secrets" / "tok2.bin"
+        secret_path.parent.mkdir(parents=True)
+        ref = _write_secret(secret_path, PASSWORD)
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-cbz-0000000000002"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_password.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34208B90>
+content_digest = '39b2fac2af0dfc270fb88a885b702915dd258eea927b25089efc6d9f31d2b11d'
+volume_serial = 15333285442011643084, file_id = 281474980421885
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________ test_encrypted_import_without_secret_requires_password ____________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_import_without_0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71E1E7B0>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_import_without_secret_requires_password(
+        tmp_path, repo, book_chapter
+    ):
+        path, _a, _b = _locked_zip(tmp_path)
+        access = FakeSourceReadAccess()
+        access.add_file("g-cbz-0000000000003", "cbz", path)
+        runtime = build_runtime(repo, access)
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-cbz-0000000000003"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_password.py:200: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71E1E7B0>
+content_digest = '39b2fac2af0dfc270fb88a885b702915dd258eea927b25089efc6d9f31d2b11d'
+volume_serial = 15333285442011643084, file_id = 281474980421891
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+__________ test_encrypted_import_wrong_password_then_retry_succeeds ___________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_import_wrong_pa0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D3408EDF0>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_import_wrong_password_then_retry_succeeds(
+        tmp_path, repo, book_chapter
+    ):
+        """����ʧ�� �� �� token ���Գɹ���C-16 ��3 ÿ���������ļ�����"""
+        path, _a, _b = _locked_zip(tmp_path)
+        access = FakeSourceReadAccess()
+        access.add_file("g-cbz-0000000000004", "cbz", path)
+        runtime = build_runtime(repo, access)
+    
+        secrets_dir = tmp_path / "host" / "source-secrets"
+        secrets_dir.mkdir(parents=True)
+        bad = _write_secret(secrets_dir / "tok-bad.bin", b"wr0ng password")
+>       plan1 = runtime._planner.plan(
+            chapter_id="c1", grants=["g-cbz-0000000000004"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_password.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D3408EDF0>
+content_digest = '39b2fac2af0dfc270fb88a885b702915dd258eea927b25089efc6d9f31d2b11d'
+volume_serial = 15333285442011643084, file_id = 281474980421894
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________ test_password_failures_lock_after_three_attempts _______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_password_failures_lock_af0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34049590>
+book_chapter = ('b1', 'c1')
+
+    def test_password_failures_lock_after_three_attempts(tmp_path, repo, book_chapter):
+        """����ʧ�� ��3 �� �� �� source ʧ�ܲ�����������C-16 ��3����"""
+        path, _a, _b = _locked_zip(tmp_path)
+        access = FakeSourceReadAccess()
+        access.add_file("g-cbz-0000000000005", "cbz", path)
+        runtime = build_runtime(repo, access)
+        secrets_dir = tmp_path / "host" / "source-secrets"
+        secrets_dir.mkdir(parents=True)
+    
+        for attempt in range(3):
+            bad = _write_secret(
+                secrets_dir / f"tok-bad-{attempt}.bin", b"wr0ng password"
+            )
+>           plan = runtime._planner.plan(
+                chapter_id="c1", grants=["g-cbz-0000000000005"], duplicate_policy="skip"
+            )
+
+tests\fea09\test_referenced_password.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34049590>
+content_digest = '39b2fac2af0dfc270fb88a885b702915dd258eea927b25089efc6d9f31d2b11d'
+volume_serial = 15333285442011643084, file_id = 281474980421900
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________ test_encrypted_pdf_requires_then_imports_with_password ____________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_encrypted_pdf_requires_th0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DC9EA0>
+book_chapter = ('b1', 'c1')
+
+    def test_encrypted_pdf_requires_then_imports_with_password(
+        tmp_path, repo, book_chapter
+    ):
+        """R1-I004: a real encrypted PDF imports after the password gate."""
+        from support import build_pdf_open
+        from tests.import_formats.test_document_import import encrypted_pdf
+    
+        access = FakeSourceReadAccess()
+        pdf = tmp_path / "locked.pdf"
+        pdf.write_bytes(encrypted_pdf())
+        access.add_file("g-pdf-000000000001", "pdf", pdf)
+        runtime = build_runtime(repo, access, pdf_open=build_pdf_open())
+        secret_path = tmp_path / "secret.pdf.bin"
+        wrong = tmp_path / "wrong.pdf.bin"
+        ref = _write_secret(secret_path, b"secret")
+        wrong_ref = _write_secret(wrong, b"wrong-password")
+    
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-pdf-000000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_password.py:339: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DC9EA0>
+content_digest = '1ed7cadad03349d15bbd2c6eaa4da7f14fda3f51de83c4c0cb63b69fdd755ce4'
+volume_serial = 15333285442011643084, file_id = 281474980421910
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________ test_referenced_resolve_renders_png_through_grant ______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_referenced_resolve_render0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F75040>
+book_chapter = ('b1', 'c1')
+
+    def test_referenced_resolve_renders_png_through_grant(tmp_path, repo, book_chapter):
+>       access, page = _imported_image_page(tmp_path, repo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_referenced_resolve.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_resolve.py:46: in _imported_image_page
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F75040>
+content_digest = '46e60421b5988da4389e6cb22d7724013cf4713f6b8e6a400a355abda38235f9'
+volume_serial = 15333285442011643084, file_id = 281474980421915
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________ test_folder_import_resolves_through_bound_grant _______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_folder_import_resolves_th0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DA3070>
+book_chapter = ('b1', 'c1')
+
+    def test_folder_import_resolves_through_bound_grant(tmp_path, repo, book_chapter):
+        """R1-I006: folder imports resolve through the Core-recorded binding."""
+        access = FakeSourceReadAccess()
+        root = tmp_path / "folder"
+        root.mkdir()
+        members = []
+        for name in ("001.png", "002.png"):
+            member = root / name
+            member.write_bytes(png_bytes(5, 5))
+            members.append(str(member))
+        access.add_folder("g-folder-00000001", root, members)
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-folder-00000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_resolve.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71DA3070>
+content_digest = 'e2e501f0feb183ca65d1385a72947ff342a91227c98033b29736e8a0adaeafdb'
+volume_serial = 15333285442011643084, file_id = 281474980421919
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________ test_referenced_resolve_without_grant_is_typed_denied ____________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_referenced_resolve_withou0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F8B250>
+book_chapter = ('b1', 'c1')
+
+    def test_referenced_resolve_without_grant_is_typed_denied(tmp_path, repo, book_chapter):
+>       _access, page = _imported_image_page(tmp_path, repo)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_referenced_resolve.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_resolve.py:46: in _imported_image_page
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33F8B250>
+content_digest = '46e60421b5988da4389e6cb22d7724013cf4713f6b8e6a400a355abda38235f9'
+volume_serial = 15333285442011643084, file_id = 281474980421923
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_______________ test_referenced_resolve_revoked_grant_is_typed ________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_referenced_resolve_revoke0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71D3F3E0>
+book_chapter = ('b1', 'c1')
+
+    def test_referenced_resolve_revoked_grant_is_typed(tmp_path, repo, book_chapter):
+>       access, page = _imported_image_page(tmp_path, repo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_referenced_resolve.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_resolve.py:46: in _imported_image_page
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71D3F3E0>
+content_digest = '46e60421b5988da4389e6cb22d7724013cf4713f6b8e6a400a355abda38235f9'
+volume_serial = 15333285442011643084, file_id = 281474980421926
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+______________ test_core_resolve_publishes_referenced_rendition _______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_core_resolve_publishes_re0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71E15040>
+book_chapter = ('b1', 'c1')
+
+    def test_core_resolve_publishes_referenced_rendition(tmp_path, repo, book_chapter):
+        """Core wire face: referenced resolve publishes a deterministic rendition key."""
+        from types import SimpleNamespace
+    
+        from bootstrap.core_service import CoreServiceServer
+        from infrastructure.resource_channel.catalog_store import (
+            ResourceCatalogStore,
+            initialize_namespace,
+        )
+        from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+    
+>       access, page = _imported_image_page(tmp_path, repo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_referenced_resolve.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_resolve.py:46: in _imported_image_page
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024C71E15040>
+content_digest = '46e60421b5988da4389e6cb22d7724013cf4713f6b8e6a400a355abda38235f9'
+volume_serial = 15333285442011643084, file_id = 281474980421929
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_________________ test_rendition_cache_row_written_on_resolve _________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_rendition_cache_row_writt0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34211220>
+book_chapter = ('b1', 'c1')
+
+    def test_rendition_cache_row_written_on_resolve(tmp_path, repo, book_chapter):
+        from types import SimpleNamespace
+    
+        from bootstrap.core_service import CoreServiceServer
+        from infrastructure.resource_channel.catalog_store import (
+            ResourceCatalogStore,
+            initialize_namespace,
+        )
+        from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+    
+>       access, page = _imported_image_page(tmp_path, repo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_referenced_resolve.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_resolve.py:46: in _imported_image_page
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D34211220>
+content_digest = '46e60421b5988da4389e6cb22d7724013cf4713f6b8e6a400a355abda38235f9'
+volume_serial = 15333285442011643084, file_id = 281474980421932
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+________________ test_dual_read_managed_and_referenced_resolve ________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_dual_read_managed_and_ref0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D3402B2F0>
+book_chapter = ('b1', 'c1')
+
+    def test_dual_read_managed_and_referenced_resolve(tmp_path, repo, book_chapter):
+        """AC-7: managed and referenced pages coexist and both resolve."""
+        from types import SimpleNamespace
+    
+        from bootstrap.core_service import CoreServiceServer
+        from infrastructure.resource_channel.catalog_store import (
+            ResourceCatalogStore,
+            initialize_namespace,
+        )
+        from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+>       from conftest import add_managed_page
+E       ImportError: cannot import name 'add_managed_page' from 'conftest' (G:\CODEX\New Manga\tests\workbench\conftest.py)
+
+tests\fea09\test_referenced_resolve.py:258: ImportError
+_______________ test_probe_decode_budget_refuses_before_decoder _______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_probe_decode_budget_refus0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D340E80A0>
+book_chapter = ('b1', 'c1')
+
+    def test_probe_decode_budget_refuses_before_decoder(tmp_path, repo, book_chapter):
+        """R1-I007: a tiny decode budget fails before the decoder is called."""
+        access = FakeSourceReadAccess()
+        budget = SourceReadBudget(
+            max_bytes=1024 * 1024, max_decode_bytes=4, max_entries=10
+        )
+        _image_grant(access, tmp_path, "big.png", "g-image-0000000001", budget=budget)
+        decoder = HookDecoder()
+        runtime = build_runtime(repo, access, decoder=decoder)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_review_batch1.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D340E80A0>
+content_digest = '9fa0f2ae2b655c877690c6ed5649dad9f248147f7e21d0f8011636c20d627162'
+volume_serial = 15333285442011643084, file_id = 281474980421940
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_____________ test_plan_is_bound_to_project_and_duplicate_policy ______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_plan_is_bound_to_project_0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33FD23A0>
+book_chapter = ('b1', 'c1')
+
+    def test_plan_is_bound_to_project_and_duplicate_policy(tmp_path, repo, book_chapter):
+        """R1-I009: a plan taken with another policy is stale, not accepted."""
+        access = FakeSourceReadAccess()
+        _image_grant(access, tmp_path, "p.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_review_batch1.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D33FD23A0>
+content_digest = '9fa0f2ae2b655c877690c6ed5649dad9f248147f7e21d0f8011636c20d627162'
+volume_serial = 15333285442011643084, file_id = 281474980421943
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+_____________ test_stale_plan_when_chapter_moves_to_another_book ______________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_stale_plan_when_chapter_m0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D341C6350>
+book_chapter = ('b1', 'c1')
+
+    def test_stale_plan_when_chapter_moves_to_another_book(tmp_path, repo, book_chapter):
+        """R1-I009 P2-b: a plan is bound to the chapter's book, not just the policy."""
+        access = FakeSourceReadAccess()
+        _image_grant(access, tmp_path, "p.png", "g-image-0000000001")
+        runtime = build_runtime(repo, access)
+>       plan = runtime._planner.plan(
+            chapter_id="c1", grants=["g-image-0000000001"], duplicate_policy="skip"
+        )
+
+tests\fea09\test_referenced_review_batch1.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D341C6350>
+content_digest = '9fa0f2ae2b655c877690c6ed5649dad9f248147f7e21d0f8011636c20d627162'
+volume_serial = 15333285442011643084, file_id = 281474980421946
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+___________________ test_same_source_shared_across_projects ___________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_same_source_shared_across0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D386E0>
+book_chapter = ('b1', 'c1')
+
+    def test_same_source_shared_across_projects(tmp_path, repo, book_chapter):
+        _add_second_project(repo)
+        access = FakeSourceReadAccess()
+        path = tmp_path / "shared.png"
+        path.write_bytes(png_bytes(5, 5))
+        access.add_file("g-image-0000000021", "image", path)
+        access.add_file("g-image-0000000022", "image", path)
+        runtime = build_runtime(repo, access)
+    
+>       _import_into(runtime, repo, "g-image-0000000021", "c1", OP1)
+
+tests\fea09\test_referenced_sharing.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_referenced_sharing.py:44: in _import_into
+    plan = runtime._planner.plan(
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D386E0>
+content_digest = '7e0dae9dd0d8ad829ea4d732410e4ee47c95da1742669d273aded0f93e0f8eda'
+volume_serial = 15333285442011643084, file_id = 281474980422022
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+____________________ test_wire_referenced_import_commands _____________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_wire_referenced_import_co0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48C663F0>
+book_chapter = ('b1', 'c1')
+clock = <test_referenced_wire._Clock object at 0x0000024D48C7B200>
+
+    def test_wire_referenced_import_commands(tmp_path, repo, book_chapter, clock):
+        from application.importing.referenced.pdf_probe import PdfiumSourceInspector
+        from application.importing.referenced.planner import ReferencedImportPlanner
+        from application.importing.referenced.runtime import ReferencedImportRuntime
+        from infrastructure.importing import PillowImageDecoder
+    
+        registry = SourceReadGrantRegistry(clock=clock)
+        planner = ReferencedImportPlanner(
+            access=registry, repository=repo,
+            project_of_chapter=lambda chapter: "b1",
+            pdf_open=PdfiumSourceInspector().open,
+        )
+        runtime = ReferencedImportRuntime(
+            repository=repo, access=registry, planner=planner,
+            project_of_chapter=lambda chapter: "b1",
+            image_decoder=PillowImageDecoder(),
+            pdf_open=PdfiumSourceInspector().open,
+        )
+        server = _make_server(registry, planner, runtime)
+    
+        path = write_zip(tmp_path / "w.zip", [("001.png", png_bytes(2, 2))])
+        registry.register(mint_grant(
+            grant_id="g-src-000000000e", path=path, kind="zip",
+            expires_at=clock.now + 300,
+        ))
+    
+        plan = _dispatch(server, _request("PlanImportReferences", {
+            "chapter_id": "c1", "grants": ["g-src-000000000e"],
+            "duplicate_policy": "skip",
+        }))
+>       assert plan["error"] is None
+E       AssertionError: assert {'code': 'UNKNOWN', 'category': 'internal', 'message': 'Referenced import operation failed', 'retryable': False} is None
+
+tests\fea09\test_referenced_wire.py:416: AssertionError
+__________ test_resolve_uses_rendition_cache_and_rebuilds_corruption __________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/FEA-11/gates/pytest-of-49745/pytest-0/test_resolve_uses_rendition_ca0')
+repo = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D057C0>
+book_chapter = ('b1', 'c1')
+
+    def test_resolve_uses_rendition_cache_and_rebuilds_corruption(
+        tmp_path, repo, book_chapter
+    ):
+        decoder = HookDecoder()
+>       access, page = _import_page(tmp_path, repo, decoder)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\fea09\test_rendition_cache_integration.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\fea09\test_rendition_cache_integration.py:39: in _import_page
+    plan = runtime._planner.plan(chapter_id="c1", grants=[GRANT], duplicate_policy="skip")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:115: in plan
+    sources.append(self._plan_source(index, read, scanned, project_id))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\importing\referenced\planner.py:158: in _plan_source
+    existing = self._repository.find_source_by_physical_identity(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x0000024D48D057C0>
+content_digest = 'fd2b6b6fac34d9dde69b3e16ab957f33c73ce6e5d8a6ea470378a03212bbc612'
+volume_serial = 15333285442011643084, file_id = 281474980422062
+
+    def find_source_by_physical_identity(
+        self, content_digest: str, volume_serial: int, file_id: int
+    ) -> dict[str, Any] | None:
+        """Locate an existing source by physical identity ``(content_digest,
+        volume_serial, file_id)`` (C-15 ��3.2 Դ���ù���). Returns the
+        matched location row joined with its source_id, or None."""
+>       row = self._conn.execute(
+            "SELECT l.source_id, l.location_id, l.is_current"
+            " FROM source_locations l WHERE l.content_digest = ?"
+            " AND l.volume_serial = ? AND l.file_id = ?",
+            (content_digest, volume_serial, file_id),
+        ).fetchone()
+E       OverflowError: Python int too large to convert to SQLite INTEGER
+
+src\infrastructure\sqlite\library.py:1608: OverflowError
+________________ test_v7_full_chain_backfill_and_conservation _________________
+
+    def test_v7_full_chain_backfill_and_conservation() -> None:
+        conn = fresh_v6()
+        seed_v6_library(conn)
+        MigrationRunner(conn, default_migrations()).apply_pending()
+    
+>       assert conn.execute(
+            "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+E       assert 8 == 7
+
+tests\fea09\test_v7_migration.py:75: AssertionError
+_________________ test_validator_passes_on_conserved_library __________________
+
+    def test_validator_passes_on_conserved_library() -> None:
+        conn = fresh_v6()
+        seed_v6_library(conn)
+        baseline = capture_pre_v7_baseline(conn)
+        assert baseline.expected_managed_v_ids == ("p_ok",)
+    
+        class OkVerifier:
+            def verify_readable(self, paths):
+                return []
+    
+        MigrationRunner(
+            conn, default_migrations(),
+            validate=make_v7_validator(baseline, resource_verifier=OkVerifier()),
+        ).apply_pending()
+>       assert conn.execute(
+            "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+E       assert 8 == 7
+
+tests\fea09\test_v7_migration.py:138: AssertionError
+______________ test_resource_verifier_accepts_readable_original _______________
+
+    def test_resource_verifier_accepts_readable_original() -> None:
+        conn = fresh_v6()
+        seed_v6_library(conn)
+        conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+            " artifact_type, current_revision_id, created_at, updated_at)"
+            " VALUES ('art1', 'b1', 'c1', 'p_ok', 'original', 'rev1', ?, ?)", (NOW, NOW))
+        conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+            " revision_no, managed_path, file_hash, mime_type, size_bytes,"
+            " integrity_status, is_pinned, created_at)"
+            " VALUES ('rev1', 'art1', 1, 'managed/a.png', ?, 'image/png', 10,"
+            " 'valid', 0, ?)",
+            ("a" * 64, NOW))
+        conn.commit()
+        baseline = capture_pre_v7_baseline(conn)
+    
+        class OkVerifier:
+            def verify_readable(self, paths):
+                return []
+    
+        MigrationRunner(
+            conn, default_migrations(),
+            validate=make_v7_validator(baseline, resource_verifier=OkVerifier()),
+        ).apply_pending()
+>       assert conn.execute(
+            "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+E       assert 8 == 7
+
+tests\fea09\test_v7_migration.py:247: AssertionError
+______________ test_fresh_database_migrates_with_empty_baseline _______________
+
+    def test_fresh_database_migrates_with_empty_baseline() -> None:
+        """A brand-new database has no pages table at capture time; the empty
+        baseline trivially satisfies every frozen assertion."""
+        conn = sqlite3.connect(":memory:")
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        baseline = capture_pre_v7_baseline(conn)
+        assert baseline.page_rows == ()
+        MigrationRunner(
+            conn, default_migrations(), validate=make_v7_validator(baseline)
+        ).apply_pending()
+>       assert conn.execute(
+            "SELECT MAX(schema_version) FROM schema_migrations").fetchone()[0] == 7
+E       assert 8 == 7
+
+tests\fea09\test_v7_migration.py:262: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/fea09/test_ac_1_2_3_closure.py::test_ac3_shared_source_keeps_per_project_page_state_independent
+FAILED tests/fea09/test_i005_encrypted_pdf_resolve.py::test_encrypted_pdf_resolve_uses_secret_and_pdfium_password
+FAILED tests/fea09/test_i005_encrypted_pdf_resolve.py::test_encrypted_pdf_resolve_without_secret_is_required
+FAILED tests/fea09/test_i005_encrypted_resolve.py::test_encrypted_resolve_consumes_one_secret_and_cache_hit_needs_none
+FAILED tests/fea09/test_i005_encrypted_resolve.py::test_encrypted_resolve_cache_miss_without_secret_grant_is_required
+FAILED tests/fea09/test_referenced_flow.py::test_import_images_full_flow - Ov...
+FAILED tests/fea09/test_referenced_flow.py::test_import_zip_occurrences_and_order
+FAILED tests/fea09/test_referenced_flow.py::test_import_pdf_pages - OverflowE...
+FAILED tests/fea09/test_referenced_flow.py::test_import_folder_nested_order
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_1_accepted_cancel
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_2_partial_cancel_with_unsupported
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_3_midrun_failure - ...
+FAILED tests/fea09/test_referenced_flow.py::test_revocation_halts_at_commit_boundary
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_4_unsupported_only
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_5_whole_source_skip
+FAILED tests/fea09/test_referenced_flow.py::test_scenario_6_partial_already_referenced
+FAILED tests/fea09/test_referenced_flow.py::test_replay_same_id_same_fingerprint
+FAILED tests/fea09/test_referenced_flow.py::test_replay_conflicting_fingerprint_rejected
+FAILED tests/fea09/test_referenced_flow.py::test_project_lock_single_flight
+FAILED tests/fea09/test_referenced_flow.py::test_cancel_after_terminal_rejected
+FAILED tests/fea09/test_referenced_flow.py::test_cross_restart_operation_not_found
+FAILED tests/fea09/test_referenced_flow.py::test_natural_key_retry_no_duplicate_pages
+FAILED tests/fea09/test_referenced_flow.py::test_plan_stale_when_container_changes
+FAILED tests/fea09/test_referenced_flow.py::test_start_rejects_wrong_digest
+FAILED tests/fea09/test_referenced_flow.py::test_project_mismatch_rolls_back_unit
+FAILED tests/fea09/test_referenced_flow.py::test_disabled_flag_rejects_new_imports
+FAILED tests/fea09/test_referenced_flow.py::test_partial_import_retry_imports_remaining_pages
+FAILED tests/fea09/test_referenced_password.py::test_encrypted_plan_is_structural_only
+FAILED tests/fea09/test_referenced_password.py::test_encrypted_import_with_secret_succeeds
+FAILED tests/fea09/test_referenced_password.py::test_encrypted_import_without_secret_requires_password
+FAILED tests/fea09/test_referenced_password.py::test_encrypted_import_wrong_password_then_retry_succeeds
+FAILED tests/fea09/test_referenced_password.py::test_password_failures_lock_after_three_attempts
+FAILED tests/fea09/test_referenced_password.py::test_encrypted_pdf_requires_then_imports_with_password
+FAILED tests/fea09/test_referenced_resolve.py::test_referenced_resolve_renders_png_through_grant
+FAILED tests/fea09/test_referenced_resolve.py::test_folder_import_resolves_through_bound_grant
+FAILED tests/fea09/test_referenced_resolve.py::test_referenced_resolve_without_grant_is_typed_denied
+FAILED tests/fea09/test_referenced_resolve.py::test_referenced_resolve_revoked_grant_is_typed
+FAILED tests/fea09/test_referenced_resolve.py::test_core_resolve_publishes_referenced_rendition
+FAILED tests/fea09/test_referenced_resolve.py::test_rendition_cache_row_written_on_resolve
+FAILED tests/fea09/test_referenced_resolve.py::test_dual_read_managed_and_referenced_resolve
+FAILED tests/fea09/test_referenced_review_batch1.py::test_probe_decode_budget_refuses_before_decoder
+FAILED tests/fea09/test_referenced_review_batch1.py::test_plan_is_bound_to_project_and_duplicate_policy
+FAILED tests/fea09/test_referenced_review_batch1.py::test_stale_plan_when_chapter_moves_to_another_book
+FAILED tests/fea09/test_referenced_sharing.py::test_same_source_shared_across_projects
+FAILED tests/fea09/test_referenced_wire.py::test_wire_referenced_import_commands
+FAILED tests/fea09/test_rendition_cache_integration.py::test_resolve_uses_rendition_cache_and_rebuilds_corruption
+FAILED tests/fea09/test_v7_migration.py::test_v7_full_chain_backfill_and_conservation
+FAILED tests/fea09/test_v7_migration.py::test_validator_passes_on_conserved_library
+FAILED tests/fea09/test_v7_migration.py::test_resource_verifier_accepts_readable_original
+FAILED tests/fea09/test_v7_migration.py::test_fresh_database_migrates_with_empty_baseline
+50 failed, 2987 passed, 10 skipped in 229.68s (0:03:49)
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT=1 (pytest tests)

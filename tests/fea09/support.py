@@ -36,8 +36,8 @@ def capture_facts(path: str | Path) -> GrantFacts:
     info = os.stat(path)
     data = Path(path).read_bytes()
     return GrantFacts(
-        volume_serial=int(info.st_dev),
-        file_id=int(info.st_ino),
+        volume_serial=int(info.st_dev) % (2**53),
+        file_id=int(info.st_ino) % (2**53),
         size=int(info.st_size),
         sha256=hashlib.sha256(data).hexdigest(),
     )
