@@ -222,6 +222,33 @@ public sealed class SourceOperationCoordinator
         var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
         var authorizationJson = entry.AuthorizationJson
             ?? throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+        // r3 P1-02: the crash window between the Core COMMIT and the Host
+        // MarkCommitted leaves CommitDigest empty. Re-read the Core receipt
+        // first (C-17 §3.2) instead of sending an empty digest.
+        var commitDigest = entry.CommitDigest;
+        if (string.IsNullOrWhiteSpace(commitDigest))
+        {
+            var lookup = await client.SendAsync(
+                    "source_get_operation", 3,
+                    writer =>
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("operation_id", entry.OperationId);
+                        writer.WriteEndObject();
+                    },
+                    TimeSpan.FromSeconds(60), cancellationToken)
+                .ConfigureAwait(false);
+            commitDigest = lookup.Result?.ValueKind == JsonValueKind.Object
+                && lookup.Result.Value.TryGetProperty("commit_digest", out var digest)
+                && digest.ValueKind == JsonValueKind.String
+                    ? digest.GetString()
+                    : throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+            lock (gate)
+            {
+                var current = Read(entry.OperationId);
+                Write(current with { CommitDigest = commitDigest, UpdatedAt = UtcNow() });
+            }
+        }
         using var authorization = JsonDocument.Parse(authorizationJson);
         var grantIds = string.IsNullOrWhiteSpace(entry.GrantIds)
             ? Array.Empty<string>()
@@ -233,7 +260,7 @@ public sealed class SourceOperationCoordinator
                     writer.WriteStartObject();
                     writer.WriteString("operation_id", entry.OperationId);
                     writer.WriteString("request_digest", entry.RequestDigest);
-                    writer.WriteString("commit_digest", entry.CommitDigest ?? string.Empty);
+                    writer.WriteString("commit_digest", commitDigest ?? string.Empty);
                     writer.WriteString("host_receipt_id", entry.HostReceiptId ?? string.Empty);
                     writer.WriteStartArray("grant_ids");
                     foreach (var grantId in grantIds)
@@ -267,6 +294,9 @@ public sealed class SourceOperationCoordinator
         {
             var entry = Read(operationId);
             if (entry.State == "failed") return entry;
+            // r3 P1-03: acknowledged/recovered are terminal; failed must never
+            // regress them (C-17 §3.2).
+            RequireState(entry, "started", "host-authorized", "core-committed");
             var next = entry with { State = "failed", UpdatedAt = UtcNow() };
             Write(next);
             return next;

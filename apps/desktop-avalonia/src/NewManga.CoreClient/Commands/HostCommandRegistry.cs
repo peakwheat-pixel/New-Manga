@@ -168,17 +168,17 @@ public static class HostCommandRegistry
         // FEA-11 (C-17 §5.1): the source-sync face. Write commands ride the Core
         // host-control private session; plan lifecycle/query stays on the
         // ordinary application channel. Protocol minor stays 3 (additive).
-        ["source_scan_sync"] = new("ScanSourceSync", 3),
-        ["source_plan_sync"] = new("PlanSourceSync", 3),
-        ["source_preview_sync_plan"] = new("PreviewSourceSyncPlan", 3),
-        ["source_confirm_sync_plan"] = new("ConfirmSourceSyncPlan", 3),
-        ["source_invalidate_sync_plan"] = new("InvalidateSourceSyncPlan", 3),
+        ["source_scan_sync"] = new("ScanSourceSync", 3),  // host-control (CamelCase per C-17 §4)
+        ["source_plan_sync"] = new("source_plan_sync", 3),  // app channel (lowercase per C-17 §5.1)
+        ["source_preview_sync_plan"] = new("source_preview_sync_plan", 3),
+        ["source_confirm_sync_plan"] = new("source_confirm_sync_plan", 3),
+        ["source_invalidate_sync_plan"] = new("source_invalidate_sync_plan", 3),
         ["source_apply_sync_plan"] = new("ApplySourceSyncPlan", 3),
         ["source_relink"] = new("RelinkSource", 3),
         ["source_repoint"] = new("RepointSource", 3),
         ["source_resync"] = new("ResyncSource", 3),
-        ["source_get_operation"] = new("GetSourceOperation", 3),
-        ["source_cancel_operation"] = new("CancelSourceOperation", 3),
+        ["source_get_operation"] = new("source_get_operation", 3),
+        ["source_cancel_operation"] = new("source_cancel_operation", 3),
         ["source_acknowledge_operation"] = new("AcknowledgeSourceOperation", 3),
         ["source_complete_operation_recovery"] = new("CompleteSourceOperationRecovery", 3),
         ["source_record_operation_failure"] = new("RecordSourceOperationFailure", 3),

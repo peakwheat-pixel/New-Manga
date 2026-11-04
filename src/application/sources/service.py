@@ -467,7 +467,16 @@ class SourceSyncService:
         if kind == "relink" and grant is not None:
             location = store.get_source_location_current(body["source_id"])
             facts = getattr(grant, "container_facts", None)
-            if location is not None and facts is not None:
+            if facts is None:
+                # r3 P1-06: a folder grant's physical identity lives in its
+                # member facts, not in container_facts; relink cannot prove the
+                # SAME physical directory. Refuse instead of silently passing.
+                raise SourceSyncError(
+                    "SOURCE_SYNC_STATE_CONFLICT",
+                    "folder relink cannot prove the same physical source; "
+                    "use repoint or resync",
+                )
+            if location is not None:
                 from application.importing.referenced.identity import (
                     normalize_identity,
                 )

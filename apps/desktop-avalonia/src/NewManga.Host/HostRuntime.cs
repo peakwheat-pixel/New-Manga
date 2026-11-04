@@ -782,23 +782,22 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 if (name == "source_get_sync_capabilities")
                 {
+                    // r3 P1-04: the §5.2 Capabilities DTO — exactly seven items
+                    // with name/available/reason (Host-local aggregation).
+                    var capabilities = new[]
+                    {
+                        Capability("source.sync.scan"),
+                        Capability("source.sync.plan"),
+                        Capability("source.sync.apply"),
+                        Capability("source.sync.relink"),
+                        Capability("source.sync.repoint"),
+                        Capability("source.sync.resync"),
+                        Capability("source.read/1"),
+                    };
                     return new HostCommandResult(name, HostCommandStatus.Implemented,
                         HostCommandChannel.HostLocal,
-                        System.Text.Json.JsonSerializer.SerializeToElement(new
-                        {
-                            source_sync = Operations is not null,
-                            commands = new[]
-                            {
-                                "source_scan_sync", "source_plan_sync",
-                                "source_preview_sync_plan", "source_confirm_sync_plan",
-                                "source_invalidate_sync_plan", "source_apply_sync_plan",
-                                "source_relink", "source_repoint", "source_resync",
-                                "source_get_operation", "source_cancel_operation",
-                                "source_acknowledge_operation",
-                                "source_complete_operation_recovery",
-                                "source_record_operation_failure",
-                            },
-                        }));
+                        System.Text.Json.JsonSerializer.SerializeToElement(
+                            new { items = capabilities }));
                 }
                 if (name is HostCredentialCoordinator.PutCommand or HostCredentialCoordinator.ClearCommand)
                 {
@@ -912,6 +911,14 @@ public sealed class HostRuntime : IAsyncDisposable
                 return (entry.OperationId, result);
             }
 
+            static Dictionary<string, object?> Capability(string capabilityName) =>
+                new()
+                {
+                    ["name"] = capabilityName,
+                    ["available"] = true,
+                    ["reason"] = null,
+                };
+
             // FEA-11 (C-17 §3.2/§3.3): ACK/recovery/failure are Host-coordinated
             // through the durable journal; the Core call stays inside the
             // coordinator so a failed call never regresses the journal state.
@@ -947,25 +954,50 @@ public sealed class HostRuntime : IAsyncDisposable
                     }
                     default:
                     {
-                        var entry = operations.MarkFailed(operationId!);
+                        // r3 P1-03: validate first, forward the exact frozen
+                        // fields, and only then record the Host-side failure.
+                        var journaled = operations.Get(operationId!);
+                        if (journaled is null)
+                        {
+                            throw new CoreOperationException(
+                                "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
+                                "unknown operation", null);
+                        }
+                        var code = payload.ValueKind == System.Text.Json.JsonValueKind.Object
+                            && payload.TryGetProperty("code", out var codeValue)
+                            && codeValue.ValueKind == System.Text.Json.JsonValueKind.String
+                                ? codeValue.GetString()
+                                : null;
+                        if (string.IsNullOrWhiteSpace(code))
+                        {
+                            throw new CoreOperationException(
+                                "INVALID_REQUEST", "validation", false,
+                                "failure code is required", null);
+                        }
                         try
                         {
                             await CoreService.SendHostControlAsync(
                                     "RecordSourceOperationFailure",
                                     writer =>
                                     {
-                                        payload.WriteTo(writer);
+                                        writer.WriteStartObject();
+                                        writer.WriteString("operation_id", journaled.OperationId);
+                                        writer.WriteString("request_digest", journaled.RequestDigest);
+                                        writer.WriteString("code", code);
+                                        writer.WriteEndObject();
                                     },
                                     _options.RequestTimeout, CoreService.HostSession, token)
                                 .ConfigureAwait(false);
                         }
                         catch (CoreOperationException error)
-                            when (error.Code == "SOURCE_OPERATION_NOT_FOUND")
+                            when (error.Code == "SOURCE_OPERATION_NOT_FOUND"
+                                  || error.Code == "SOURCE_SYNC_STATE_CONFLICT")
                         {
-                            // The failure is durable on the Host side even when
-                            // the Core row is gone (crash-window recovery).
+                            // The Core row may already be terminal/gone; the
+                            // Host journal still records the failure.
                         }
-                        return System.Text.Json.JsonSerializer.SerializeToElement(entry);
+                        var failedEntry = operations.MarkFailed(operationId!);
+                        return System.Text.Json.JsonSerializer.SerializeToElement(failedEntry);
                     }
                 }
             }

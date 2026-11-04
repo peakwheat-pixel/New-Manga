@@ -9,7 +9,7 @@ suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
-  - FEA-11
+  - FEA-11-PREREQ-1
 base_commit: null
 branch: null
 worktree: null
