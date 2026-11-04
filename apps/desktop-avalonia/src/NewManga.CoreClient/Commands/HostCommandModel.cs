@@ -11,6 +11,8 @@ public enum HostCommandDomain
     Resource,
     Workbench,
     Drafts,
+    /// <summary>FEA-11 (C-17 §5.1): the Source sync plan/operation face.</summary>
+    SourceSync,
 }
 
 public enum HostCommandChannel
@@ -20,6 +22,8 @@ public enum HostCommandChannel
     HostBridge,
     /// <summary>GRANT-ISSUER-1: Host-local action (grant issuance / OS shell), no Core round-trip.</summary>
     HostLocal,
+    /// <summary>FEA-11 (C-17 §4): Core host-control private-session commands only.</summary>
+    CoreHostControl,
 }
 
 public enum HostCommandStatus

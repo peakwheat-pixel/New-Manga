@@ -135,9 +135,13 @@ public sealed class CommandParityContractTests
         foreach (var command in implemented)
         {
             Assert.True(
-                command.Channel is HostCommandChannel.CoreService or HostCommandChannel.HostBridge or HostCommandChannel.HostLocal,
+                command.Channel is HostCommandChannel.CoreService
+                    or HostCommandChannel.CoreHostControl
+                    or HostCommandChannel.HostBridge
+                    or HostCommandChannel.HostLocal,
                 $"{command.Name} has no sidecar channel");
-            if (command.Channel == HostCommandChannel.CoreService)
+            if (command.Channel is HostCommandChannel.CoreService
+                or HostCommandChannel.CoreHostControl)
             {
                 Assert.False(string.IsNullOrWhiteSpace(command.CoreCommand));
                 Assert.True(command.CoreMinor > 0);

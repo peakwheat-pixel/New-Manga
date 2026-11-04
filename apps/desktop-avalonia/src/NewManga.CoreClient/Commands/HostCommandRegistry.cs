@@ -165,6 +165,23 @@ public static class HostCommandRegistry
     private static readonly Dictionary<string, CoreBinding> CoreBindings = new(StringComparer.Ordinal)
     {
         ["core_ping"] = new("core.ping", 3),
+        // FEA-11 (C-17 §5.1): the source-sync face. Write commands ride the Core
+        // host-control private session; plan lifecycle/query stays on the
+        // ordinary application channel. Protocol minor stays 3 (additive).
+        ["source_scan_sync"] = new("ScanSourceSync", 3),
+        ["source_plan_sync"] = new("PlanSourceSync", 3),
+        ["source_preview_sync_plan"] = new("PreviewSourceSyncPlan", 3),
+        ["source_confirm_sync_plan"] = new("ConfirmSourceSyncPlan", 3),
+        ["source_invalidate_sync_plan"] = new("InvalidateSourceSyncPlan", 3),
+        ["source_apply_sync_plan"] = new("ApplySourceSyncPlan", 3),
+        ["source_relink"] = new("RelinkSource", 3),
+        ["source_repoint"] = new("RepointSource", 3),
+        ["source_resync"] = new("ResyncSource", 3),
+        ["source_get_operation"] = new("GetSourceOperation", 3),
+        ["source_cancel_operation"] = new("CancelSourceOperation", 3),
+        ["source_acknowledge_operation"] = new("AcknowledgeSourceOperation", 3),
+        ["source_complete_operation_recovery"] = new("CompleteSourceOperationRecovery", 3),
+        ["source_record_operation_failure"] = new("RecordSourceOperationFailure", 3),
         ["library_list_books"] = new("ListBooks", 3),
         ["library_list_recycle_bin_books"] = new("ListRecycleBinBooks", 3),
         ["library_create_book"] = new("CreateBook", 8),
@@ -291,6 +308,32 @@ public static class HostCommandRegistry
         "plugins_open_directory",
         "credential_put",
         "credential_clear",
+        "source_get_sync_capabilities",
+    };
+
+
+    /// <summary>FEA-11 (C-17 §4): write commands riding the Core host-control
+    /// private session (the application channel refuses them).</summary>
+    private static readonly HashSet<string> HostControlBindings = new(StringComparer.Ordinal)
+    {
+        "source_scan_sync",
+        "source_apply_sync_plan",
+        "source_relink",
+        "source_repoint",
+        "source_resync",
+        "source_acknowledge_operation",
+        "source_complete_operation_recovery",
+        "source_record_operation_failure",
+    };
+
+    private static readonly string[] SourceSyncNames =
+    {
+        "source_scan_sync", "source_plan_sync", "source_preview_sync_plan",
+        "source_confirm_sync_plan", "source_invalidate_sync_plan",
+        "source_apply_sync_plan", "source_relink", "source_repoint",
+        "source_resync", "source_get_operation", "source_cancel_operation",
+        "source_acknowledge_operation", "source_complete_operation_recovery",
+        "source_record_operation_failure", "source_get_sync_capabilities",
     };
 
     private static readonly IReadOnlyDictionary<string, HostCommandDescriptor> Commands =
@@ -366,9 +409,21 @@ public static class HostCommandRegistry
     { "source_register_root", "source_list_roots", "source_revoke_root", "source_reset_registry",
       "plan_import_references", "start_import_references", "get_import_receipt", "cancel_import" };
 
+    /// <summary>FEA-11 (C-17 §5.1): the source-sync plan/operation command face.</summary>
+    public static IReadOnlySet<string> SourceSyncCommandNames { get; } = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "source_scan_sync", "source_plan_sync", "source_preview_sync_plan",
+        "source_confirm_sync_plan", "source_invalidate_sync_plan",
+        "source_apply_sync_plan", "source_relink", "source_repoint",
+        "source_resync", "source_get_operation", "source_cancel_operation",
+        "source_acknowledge_operation", "source_complete_operation_recovery",
+        "source_record_operation_failure", "source_get_sync_capabilities",
+    };
+
     public static IReadOnlySet<string> V11RAdditiveCommandNames { get; } =
         new HashSet<string>(
-            RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames).Concat(SourceCommandNames),
+            RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames)
+                .Concat(SourceCommandNames).Concat(SourceSyncCommandNames),
             StringComparer.Ordinal);
 
     public static HostCommandDescriptor Get(string name) =>
@@ -387,6 +442,7 @@ public static class HostCommandRegistry
         AddDomain(descriptors, HostCommandDomain.Resource, ResourceNames);
         AddDomain(descriptors, HostCommandDomain.Workbench, WorkbenchNames);
     AddDomain(descriptors, HostCommandDomain.Drafts, DraftsNames);
+    AddDomain(descriptors, HostCommandDomain.SourceSync, SourceSyncNames);
 
         var byName = descriptors.ToDictionary(descriptor => descriptor.Name, StringComparer.Ordinal);
         if (byName.Count != descriptors.Count)
@@ -403,10 +459,13 @@ public static class HostCommandRegistry
         {
             if (CoreBindings.TryGetValue(name, out var binding))
             {
+                var channel = HostControlBindings.Contains(name)
+                    ? HostCommandChannel.CoreHostControl
+                    : HostCommandChannel.CoreService;
                 target.Add(new HostCommandDescriptor(
                     name,
                     domain,
-                    HostCommandChannel.CoreService,
+                    channel,
                     HostCommandStatus.Implemented,
                     null,
                     binding.CoreCommand,

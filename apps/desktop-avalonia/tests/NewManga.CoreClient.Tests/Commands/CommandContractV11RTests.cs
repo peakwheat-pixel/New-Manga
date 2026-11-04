@@ -70,6 +70,7 @@ public sealed class CommandContractV11RTests
         var declared = Document.Value.BaselineRows.Select(row => row.Command)
             .Concat(Document.Value.PendingCommandNames)
             .Concat(HostCommandRegistry.SourceCommandNames)
+            .Concat(HostCommandRegistry.SourceSyncCommandNames)
             .ToHashSet(StringComparer.Ordinal);
 
         var undeclared = HostCommandRegistry.All.Keys

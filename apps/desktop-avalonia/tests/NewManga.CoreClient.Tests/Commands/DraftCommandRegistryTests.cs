@@ -42,9 +42,10 @@ public sealed class DraftCommandRegistryTests
             .Concat(HostCommandRegistry.RegionReadCommandNames)
             .Concat(HostCommandRegistry.DraftsCommandNames)
             .Concat(HostCommandRegistry.SourceCommandNames)
+            .Concat(HostCommandRegistry.SourceSyncCommandNames)
             .ToHashSet(System.StringComparer.Ordinal);
 
-        Assert.Equal(25, HostCommandRegistry.V11RAdditiveCommandNames.Count);
+        Assert.Equal(40, HostCommandRegistry.V11RAdditiveCommandNames.Count);
         Assert.Equal(expected, HostCommandRegistry.V11RAdditiveCommandNames.ToHashSet(System.StringComparer.Ordinal));
     }
 

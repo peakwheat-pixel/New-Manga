@@ -69,6 +69,9 @@ public sealed class HostCommandDispatcher
             {
                 HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
                     .ConfigureAwait(false),
+
+                HostCommandChannel.CoreHostControl => await InvokeHostControlAsync(descriptor, payload, cancellationToken)
+                    .ConfigureAwait(false),
                 HostCommandChannel.HostBridge => await InvokeBridgeAsync(descriptor, payload, cancellationToken)
                     .ConfigureAwait(false),
                 HostCommandChannel.HostLocal when _hostLocal is not null => await _hostLocal(
@@ -124,6 +127,32 @@ public sealed class HostCommandDispatcher
                 descriptor.CoreMinor,
                 writer => WriteCorePayload(descriptor.Name, args, writer),
                 TimeSpan.FromSeconds(30),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return new HostCommandResult(
+            descriptor.Name,
+            descriptor.Status,
+            descriptor.Channel,
+            response.Result ?? EmptyObject());
+    }
+
+    private async Task<HostCommandResult> InvokeHostControlAsync(
+        HostCommandDescriptor descriptor,
+        JsonElement args,
+        CancellationToken cancellationToken)
+    {
+        var core = _core
+            ?? throw new SidecarException(
+                SidecarErrorCode.ProcessExited,
+                SidecarSpec.CoreServiceName,
+                $"{descriptor.Name} requires a running core_service");
+
+        var response = await core.SendHostControlAsync(
+                descriptor.CoreCommand!,
+                writer => WriteCorePayload(descriptor.Name, args, writer),
+                TimeSpan.FromSeconds(60),
+                core.HostSession,
                 cancellationToken)
             .ConfigureAwait(false);
 
