@@ -38,3 +38,15 @@
 - pins 17→18 由 **DSH 单点**在 Review approved 后追加；冻结记录三指纹由 DSH 回填。
 - M2-C1：默认**无增量**（命令面由 C-17 承载）；若 Review 认为需要增量，须 DSH 明确授权具体章节/命令/错误/版本策略后才写。
 - 未 commit/push（DSH 集成提交）。
+
+## 契约 Review r1（ZCode 全新上下文）与 P2 处置（DSH，2026-11-04）
+
+- Review：`doc/reviews/FEA-11-PREREQ-1-r1.md`（ZCode 全新上下文，reviewed_head `69d7c31e`）**approved P0=0/P1=0/P2=6**。
+- R17-1（已处置）：`STALE_BASE_REVISION` retryable 与 FEA-05 差异已在 §8 注明命令级投影视口径。
+- R17-2（已处置）：§5.3 补 scope=all 超 20 book 时 INVALID_REQUEST 拒绝并提示分批（不静默截断）。
+- R17-3（已处置）：§3.1 apply 守卫显式含 plan 未过期（expires_at）；§2.1 runner 措辞精确化（v5 FK check/v7 validate）。
+- R17-4（已处置）：§7.1 明确 captured_v7 行 operation_id 回填、native 留 NULL。
+- R17-5（不改契约）：examples 判别力边界如实保留，由 FEA-11 生产装配测试承接。
+- R17-6（已处置）：§5.1 明确 Core 不注册 `source_get_sync_capabilities`（按未知命令拒绝）。
+- 新 head 轻量复核（FROZEN-C17 §1B）已派 ZCode；复核通过后由 DSH 冻结三指纹 + pins 18 + 集成提交 + Task done。
+

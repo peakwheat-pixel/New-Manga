@@ -1,4 +1,5 @@
 COMMAND=C:/Python314/python.exe -B verification/FEA-11-PREREQ-1/validate_examples.py
+shell=pwsh; TEMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1; TMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1; python=C:/Python314/python.exe; head=69d7c31ee + P2 处置工作树; 2026-11-04T22:11:56.2792239+08:00
 COMMAND: python -B verification/FEA-11-PREREQ-1/validate_examples.py
 ENV: shell=PowerShell; interpreter=C:\Python314\python.exe; Python=3.14.6; SQLite=3.50.4; DB=:memory:
 LIMIT: isolated SQL persistence and normative models; no real Host/Core restart, IPC, OS lease, or images
@@ -28,4 +29,4 @@ GOLDEN_SHA256: db6a0f2ebe94b34e63a8bbcc767de7852280476696e69e1152bdbb07a6f3cf32
 PASS canonical model: UTF-8 code-point keys, no whitespace, no normalization
 RESULT: all listed normative examples passed; 0 skipped; production behavior NOT_RUN
 EXIT: 0
-EXIT=0 (examples)
+EXIT=0

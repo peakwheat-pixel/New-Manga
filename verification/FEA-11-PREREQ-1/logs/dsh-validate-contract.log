@@ -1,4 +1,5 @@
-COMMAND=C:/Python314/python.exe -B verification/FEA-11-PREREQ-1/validate_contract.py; TEMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1; TMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1
+COMMAND=C:/Python314/python.exe -B verification/FEA-11-PREREQ-1/validate_contract.py
+shell=pwsh; TEMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1; TMP=G:\CODEX\New Manga.workspace\FEA-11-PREREQ-1; python=C:/Python314/python.exe; head=69d7c31ee + P2 处置工作树; 2026-11-04T22:11:56.2792239+08:00
 COMMAND: python -B verification/FEA-11-PREREQ-1/validate_contract.py
 ENV: shell=PowerShell; interpreter=C:\Python314\python.exe; Python=3.14.6; SQLite=3.50.4; DB=:memory:; no TEMP/AppData/real DB
 BASELINE: G:\CODEX\New Manga
@@ -64,4 +65,4 @@ PASS actual MigrationRunner mid-migration rollback
 PASS final FK check
 RESULT: 32 passed; 0 skipped; contract probes only
 EXIT: 0
-EXIT=0 (contract)
+EXIT=0

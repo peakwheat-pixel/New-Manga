@@ -115,7 +115,7 @@ CREATE INDEX idx_source_revision_lineage_origin ON source_revision_lineage(from_
 
 ### 2.1 迁移、回滚与旧端拒写
 
-追加一个 `Migration(candidate_version,"v8__source_sync",SQL)`（最终号变更时同步 name），沿现有 `MigrationRunner`：逐 migration `BEGIN IMMEDIATE`→全部语句→同连接断言/FK check→`schema_migrations` 及 `application_metadata.schema_version`→COMMIT；任一步异常 rollback 并中止启动。不能用会隐式提交的 executescript 包裹迁移，不额外嵌套业务 repository 自带提交。仅用新增表/索引，初始空，无 v7 回填/旧数据修改。lineage 在首次受影响同步的统一事务捕获，见 §7。
+追加一个 `Migration(candidate_version,"v8__source_sync",SQL)`（最终号变更时同步 name），沿现有 `MigrationRunner`：逐 migration `BEGIN IMMEDIATE`→全部语句→（实际 runner 仅对 v5 执行 `PRAGMA foreign_key_check`、对 v7 执行 validate 回调；v8 为纯新增空表，不触发两者）→`schema_migrations` 及 `application_metadata.schema_version`→COMMIT；任一步异常 rollback 并中止启动。不能用会隐式提交的 executescript 包裹迁移，不额外嵌套业务 repository 自带提交。仅用新增表/索引，初始空，无 v7 回填/旧数据修改。lineage 在首次受影响同步的统一事务捕获，见 §7。
 
 v7→候选 v8 失败后：sqlite_master（表/索引/SQL）、旧数据、schema_migrations 和 application_metadata 与迁移前完全一致；不是只检查版本数字。从更早版本启动时，先前已成功 migration 保留，不声称整条升级链回滚。失败 typed SOURCE_MIGRATION_FAILED，不能进入可写服务。沿用已有迁移前备份政策；本卡不做备份/降级实现。
 
@@ -139,7 +139,7 @@ v7→候选 v8 失败后：sqlite_master（表/索引/SQL）、旧数据、schem
 | 无 | PlanSourceSync | scan 活、范围/基线有效、同 ID 未绑定其他 body | Core | 创建 plan 的事务 COMMIT | draft |
 | draft | PreviewSourceSyncPlan | digest 一致、全部明细计数/映射可展示 | Core | previewed_at 事务 COMMIT，才返回完整预览 | previewed |
 | previewed | ConfirmSourceSyncPlan | 同摘要、未过期、所有歧义有显式决定、确认 kind/范围 | Core | confirmed_at 事务 COMMIT | confirmed |
-| confirmed | apply | §6 全部 CAS、Host durable 授权在先 | Core | **整 plan 业务事务**（含 receipt/gates）COMMIT | applied |
+| confirmed | apply | plan 未过期（expires_at）、§6 全部 CAS、Host durable 授权在先 | Core | **整 plan 业务事务**（含 receipt/gates）COMMIT | applied |
 | draft/previewed/confirmed | InvalidateSourceSyncPlan | 明确取消或主动失效；无已提交 operation | Core | stale_reason 事务 COMMIT | stale |
 | 任意已有态 | 同命令重放 | body/digest/事件相同 | Core | 返回已有结果；无新增业务写 | 原态 |
 
@@ -224,7 +224,7 @@ Core 业务提交时新 binding 可以 healthy/complete（C-15 不改），但�
 | AcknowledgeSourceOperation / Host内部 | CompletionRequest | Operation | host-control；先Host durable ACK；幂等开门 |
 | CompleteSourceOperationRecovery / Host内部 | CompletionRequest | Operation | host-control；只恢复已提交operation，不重复业务SQL |
 | RecordSourceOperationFailure / Host内部 | operation_id! ID; request_digest! H; code! FailureCode | Operation | 显式记录已提交但尚未确认的失败；不属stale Apply拒绝路径 |
-| GetSourceSyncCapabilities / source_get_sync_capabilities | {} | Capabilities | Host本地聚合ping+Registry；不是Core新RPC；无写 |
+| GetSourceSyncCapabilities / source_get_sync_capabilities | {} | Capabilities | Host本地聚合ping+Registry；不是Core新RPC；无写；**Core 不注册该名**，向 Core 发送按 M2-C1 既有未知命令语义拒绝（UNKNOWN_COMMAND） |
 
 Dispatch 是接受响应，不是全部完成；Core 后台只允许一个 SQLite 写者，串行处理提交与cancel，不能长期阻塞stdio无法查询/撤销。提交前取消只改Host journal，Core业务事务回滚；完成查询可observed origin=host failed(code=SOURCE_SYNC_CANCELLED)。提交已赢得竞争则cancel返回accepted=false，继续确认/恢复。Apply可先返回accepted；业务前每个守卫失败由查询返回Host失败，Core receipt不存在；同步阶段直接发现stale则直接错误且Core零写。Host不能把accepted展示成成功。
 
@@ -266,7 +266,7 @@ commit_digest=sha256(canonical(CommitReceipt))。Host journal 用本DTO完整保
 
 - Scan TTL、Plan TTL 均≤300s（Plan不晚于scan.expires_at）；按Core时间校验，恢复已提交receipt/ACK不受plan TTL影响，但授权/grant必须有效。
 - `totals` 必须严格等于各 classification 明细计数；diff按item_id、bases按(project_id,page_id)、base_sources按(source_id,version_id)、authorizations按registry_id、decisions按item_id排序，均唯一；target.entries按ordinal、bindings按page_id排序。所有参考ID均由Core核实。
-- scope=current时project_ids恰好一个；all时等于冻结引用集合book去重值。reference_set_digest覆盖所有引用的(project,page,binding,version,status,deleted)，current也捕获全源共享集合；任何引用变化要求重新预览。
+- scope=current时project_ids恰好一个；all时等于冻结引用集合book去重值。reference_set_digest覆盖所有引用的(project,page,binding,version,status,deleted)，current也捕获全源共享集合；任何引用变化要求重新预览。 scope=all 时若冻结引用集合的 book 去重数超过 project_ids 数组上限 20，Scan/PlanBody 以 INVALID_REQUEST 拒绝并提示按 project_ids 分批（不静默截断、不回退 current 语义）。
 - added: page/old_entry=null，new_entry非null；missing相反；其余旧新均非null。unchanged须direct/unique_pixel；duplicate/missing_old/incomparable不可自动keep。defer不发布该歧义的新绑定，旧绑定保持needs_confirmation；tombstone保留旧页/人工/问题，不删除。
 - decisions与diff一一对应。add有target_chapter/new_order且target_page=null；bind/keep/tombstone有target_page且与diff一致，新增顺序由plan明确，existing顺序不随容器重排；defer无迁移。migrate_revision_ids仅changed/repoint且显式bind允许，必须新建revision；其他数组为空。
 - SourceObservation.status=ok时version_id/content_digest/identity_digest必非null，reason_code=null；missing时三者均null、entries为空、reason_code=SOURCE_ENTRY_MISSING；encrypted/unsupported时仅有可实际验证的容器摘要/identity，缺项为null，不造值。新增候选版本/entry的ID由Core在scan时分配，apply复用，不由Host伪造。
@@ -304,6 +304,7 @@ stale Apply 零写以此前合法持久化confirmed plan为基线：pages/bindin
 ### 7.1 lineage 存储和隔离
 
 `source_revision_lineage` 一行对应一个不可变Region revision；`source_binding_publications` 同时保存旧→新binding边、relation和durable读门。首次同步切换前，在同一业务事务将受影响旧region的**当前revision**快照归属旧binding(provenance=captured_v7)，其他无证据历史revision登记legacy_unverified(binding_id=null)。captured_v7仅证明切换时当前基线，不证明任意历史图；若已有previous链或已知revision的source基线不符，当前revision也必须legacy_unverified，不能猜。已由native/migrated记录的归属不改。无current_revision的旧region仅作历史/诊断，不冒充新图可编辑区域。
+- `source_revision_lineage.operation_id` 归属：captured_v7 行回填当次 operation_id（可审计）；native 日常写入留 NULL。
 
 所有后续新revision写入必须同事务登记native/migrated lineage。对本卡涉及的同步页，编辑/渲染/导出/Run读取“当前区域”必须满足region.current_revision的lineage binding等于当前binding，或沿publication.previous仅经过**same_content**边可达；并验证region/revision/page归属。same_content只有direct/unique_pixel且尺寸/方向/坐标profile等价、无内容改变时成立。changed/repoint/missing切断坐标继承；同bytes不同源的repoint也不自动复用旧区域。
 
@@ -370,7 +371,7 @@ stale Apply 零写以此前合法持久化confirmed plan为基线：pages/bindin
 | SOURCE_PROJECT_MISMATCH | validation | false | 既有；事务内归属守卫 |
 | FILE_IDENTITY_CHANGED | conflict | true | 既有；重新验证/预览 |
 | REF_SIGNATURE_INVALID | validation | false | 既有grant校验；不能降级授权 |
-| STALE_BASE_REVISION | conflict | true | 既有编辑冲突；重prepare/确认 |
+| STALE_BASE_REVISION | conflict | true | 既有编辑冲突；重prepare/确认。本面 retryable=true 表示"重新 prepare/确认后可重试"；FEA-05 drafts_apply 面对同 code 的 retryable=false 表示"同请求原样重发不可重试"。retryable 是命令级投影（M2-C1 §8），同一 code 在两面并存不构成全局映射 |
 | SOURCE_SYNC_STATE_CONFLICT | conflict | false | **C-17新增局部码**；非法状态事件/操作kind不符 |
 | SOURCE_SYNC_UNSTABLE | conflict | true | **新增**；无法取得覆盖全目标的稳定lease，条件改变后重试 |
 | SOURCE_SYNC_CANCELLED | conflict | false | **新增**；提交前取消，业务零写；显式重试同ID须plan仍有效 |
