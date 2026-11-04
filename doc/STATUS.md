@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-PREREQ-1](tasks/FEA-11-PREREQ-1.md) `ready`（scope r1 approved P0/P1=0；Appointment 2026-11-04 Owner=Codex 待认领；v8+ DDL/状态机/命令/CAS/lineage/resolve 契约待起草冻结；FEA-10 已 `done`）。
+- 当前 Task：[FEA-11](tasks/FEA-11.md) `proposed`（待 PREREQ done 后的 scope-r2；FEA-11-PREREQ-1 已 `done`：C-17 v1.0 FROZEN、pins 18/18）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)。
-- 下一步：释放 PREREQ 契约起草（Codex）→ 契约最终字节独立 Review → DSH 冻结 C-17/pins 18 → done → FEA-11 scope-r2；FEA-12 需先解 G-DELETE-IMPL。
+- 下一步：派全新上下文执行 FEA-11 scope-r2（PREREQ done 已满足）→ DSH 冻结 scope/Appointment → 释放 FEA-11 实施；FEA-12 需先解 G-DELETE-IMPL。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 17/17 PASS（机械校验，不替代复核）。
 

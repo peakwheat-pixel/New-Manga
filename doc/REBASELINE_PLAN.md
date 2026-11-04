@@ -8,7 +8,7 @@
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
-|FEA-11-PREREQ-1|FEA-09、FEA-10|**in_review**（契约 C-17 提案+隔离验证已交付；待独立 Review 与 DSH 冻结/pins 18）|
+|FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**proposed**（Source 变化/重定位/同步；scope-r1 处置完成；待 PREREQ done + scope-r2 approved；逐 AC/写域已修订）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|

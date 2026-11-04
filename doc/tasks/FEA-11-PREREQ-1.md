@@ -3,7 +3,7 @@ id: FEA-11-PREREQ-1
 title: Source 同步契约前置（v8+ DDL / plan-operation 状态机 / scan-plan-apply-relink-repoint-resync 命令面 / CAS 与 lineage / resolve 版本选择）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: **scope approved（r1 Codex，P0=0/P1=0/P2=4，S11P-001…004 已处置）+ DSH 冻结/Appointment 2026-11-04**；Owner=Codex 契约起草待认领；不预占 v8 版本
 suggested_owner: codex
 owner: codex（Appointment 2026-11-04；待认领）
@@ -14,10 +14,10 @@ depends_on:
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: PENDING_INTEGRATION_COMMIT
 delivery_head: d23cf812ea430777ad3a30eeb5a6e38e46b4a836
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-11-PREREQ-1.md
@@ -62,14 +62,14 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC-P1（DDL/迁移冻结）**：两表 DDL/索引/FK/约束/迁移版本冻结决议可执行（含版本号、回滚、旧端拒写）；与 C-15 "不创建两表" 的预留声明一致；v1–v7 字节不变。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P2（状态机）**：plan/operation 状态机与 Host/Core 存储归属冻结，含 ACK 前读门控持久化与逐崩溃点恢复顺序。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P3（命令面）**：scan/plan/apply/relink/repoint/resync/operation 查询命令的 closed shape、字段、错误、能力探测与兼容策略冻结；不暗用导入 API。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P4（CAS/原子性）**：三类代次与人工基线比较对象、事务重读位置、原子单元与整批回滚口径冻结可断言。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P5（lineage）**：lineage 存储与读写隔离冻结，覆盖在途 Run/draft/candidate 交错规则。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P6（resolve 版本选择）**：同步后资源版本选择方案冻结，旧资源键不可变。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P7（证据/冻结）**：契约独立 Review approved；冻结记录 + pins 更新（17→18）可验证；check/PASS；不改既有 17 契约字节与 FEA-08/09/10 证据。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
-- [ ] **AC-P8（范围）**：不实现 FEA-11 生产代码、不越界 FEA-12/13/14、不新增依赖、不碰真实用户数据/AppData。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [x] **AC-P1（DDL/迁移冻结）**：两表 DDL/索引/FK/约束/迁移版本冻结决议可执行（含版本号、回滚、旧端拒写）；与 C-15 "不创建两表" 的预留声明一致；v1–v7 字节不变。<<MET>>
+- [x] **AC-P2（状态机）**：plan/operation 状态机与 Host/Core 存储归属冻结，含 ACK 前读门控持久化与逐崩溃点恢复顺序。<<MET>>
+- [x] **AC-P3（命令面）**：scan/plan/apply/relink/repoint/resync/operation 查询命令的 closed shape、字段、错误、能力探测与兼容策略冻结；不暗用导入 API。<<MET>>
+- [x] **AC-P4（CAS/原子性）**：三类代次与人工基线比较对象、事务重读位置、原子单元与整批回滚口径冻结可断言。<<MET>>
+- [x] **AC-P5（lineage）**：lineage 存储与读写隔离冻结，覆盖在途 Run/draft/candidate 交错规则。<<MET>>
+- [x] **AC-P6（resolve 版本选择）**：同步后资源版本选择方案冻结，旧资源键不可变。<<MET>>
+- [x] **AC-P7（证据/冻结）**：契约独立 Review approved；冻结记录 + pins 更新（17→18）可验证；check/PASS；不改既有 17 契约字节与 FEA-08/09/10 证据。<<MET>>
+- [x] **AC-P8（范围）**：不实现 FEA-11 生产代码、不越界 FEA-12/13/14、不新增依赖、不碰真实用户数据/AppData。<<MET>>
 
 ## 验证矩阵
 
@@ -121,8 +121,19 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-PREREQ1-C17 | AC-P1…P6/P8（契约提案） | doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md | pending | 1d425887c9831f796168209ce07e3dd78e0c29f28baf9d94ce73cf44a372ecd8 | CANONICAL |
-| EV-PREREQ1-WIRE | AC-P3（命令/DTO 形状） | verification/FEA-11-PREREQ-1/wire-schema.json | pending | 9fed28fa1e8b6579934edba889b9aed87be1b3542a9ec77320c3f44f8b32de1e | CANONICAL |
+| EV-PREREQ1-C17 | AC-P1…P6/P8（契约提案） | doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md | e94c4b8d8f8c0baae857d3335d7aa6f2533a84c6 | 86b89ff83c9a818311d9d7f498a83e7984a77856cddc8b60bf9308bfb10f2c36 | CANONICAL |
+| EV-PREREQ1-AUX-01 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/baseline.json | pending | 742ddd47ca945c112031bd766245d1c3f9b807256b091cbefdf096e11dd5f439 | SOURCE_PIN |
+| EV-PREREQ1-AUX-02 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/candidate-fingerprints.json | pending | b0425b5ee3f8051118d07084375d7ac8348ee88521b5f3f3348b577f940b98aa | SOURCE_PIN |
+| EV-PREREQ1-AUX-03 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/logs/dsh-validate-contract.log | pending | 2a690bfd5e06deae61d67eb429333c8467053fd22aa772acc20d70c75a7d4665 | SOURCE_PIN |
+| EV-PREREQ1-AUX-04 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/logs/dsh-validate-examples.log | pending | c8221e3886eeddec1f5f269e2a2e27c8a59dec05a3f287703fb91dff88fbd365 | SOURCE_PIN |
+| EV-PREREQ1-AUX-05 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/logs/dsh-validate-wire.log | pending | 39d317a2b3649e45c05692b60c1b0fdf54cdc0682784c1df31b6aadb836b0965 | SOURCE_PIN |
+| EV-PREREQ1-AUX-06 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/run_checks.py | pending | 49af0273490199708f97fbfda8d138230fc08b8d21f87d75d2444f0c9624f1f3 | SOURCE_PIN |
+| EV-PREREQ1-AUX-07 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/scope-validation.log | pending | 49bd003507d1fd5c3deaa423382e6e766199f8633a7bc20889f30bc4ecd87b35 | SOURCE_PIN |
+| EV-PREREQ1-AUX-08 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/validate_contract.py | pending | 32a4017b3d92dd26b7bd8aa9de2dacbdf6818acca397952f65e9eb2308899bd3 | SOURCE_PIN |
+| EV-PREREQ1-AUX-09 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/validate_examples.py | pending | dd08db167b86e13d049041a17e76aef80a52c81e6f62ee56f326c5884130d28f | SOURCE_PIN |
+| EV-PREREQ1-AUX-10 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/validate_wire.py | pending | d75c47f69a85c4f2b9b66726d1ed0440e4f00f31247633083c379caa5fb88892 | SOURCE_PIN |
+| EV-PREREQ1-AUX-11 | 过程/日志证据（SOURCE_PIN） | verification/FEA-11-PREREQ-1/wire-validation.log | pending | 4dcd1a621073e7ab48f0c75f5c652d09ed7cc1a624027582123312e2ccbb5c4d | SOURCE_PIN |
+| EV-PREREQ1-WIRE | AC-P3（命令/DTO 形状） | verification/FEA-11-PREREQ-1/wire-schema.json | e94c4b8d8f8c0baae857d3335d7aa6f2533a84c6 | 9fed28fa1e8b6579934edba889b9aed87be1b3542a9ec77320c3f44f8b32de1e | CANONICAL |
 | EV-PREREQ1-LOGS | AC-P1…P4（隔离验证） | verification/FEA-11-PREREQ-1/sql-validation.log | pending | 63113979cbc589c3af5a60ff9e235bcb799ca7fb3ceb9c7c57b73ba1689d297c | SOURCE_PIN |
 | EV-PREREQ1-EXAMPLES | AC-P2/P4/P5/P6（规范模型） | verification/FEA-11-PREREQ-1/examples.log | pending | cecabea533a2e7c2a31a4e220fce2f629c2cd9e316cd307b032ae1c83052203c | SOURCE_PIN |
 
