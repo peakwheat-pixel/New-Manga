@@ -14,7 +14,7 @@ depends_on:
 base_commit: null
 branch: null
 worktree: null
-integration_commit: PENDING_INTEGRATION_COMMIT
+integration_commit: 75d11739b20137df67640a13f6f9199063cfb487
 delivery_head: d23cf812ea430777ad3a30eeb5a6e38e46b4a836
 canonical_evidence_status: complete
 resource_closeout_status: complete
