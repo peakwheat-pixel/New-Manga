@@ -334,17 +334,23 @@ class SourceSyncService:
                 or row["source_id"] != base["source_id"]
             ):
                 raise stale("binding", "page binding drifted since the plan")
-            page = self._repository.get_page(base["page_id"])
-            if page is None:
+            # CAS reads the physical page row, not a UI visibility view
+            # (C-17 §6.2 baseline: the V(p,t) projection is a read concern).
+            page_row = self._store._conn.execute(  # noqa: SLF001
+                "SELECT page_id, chapter_id, deleted_at, source_order,"
+                " sort_order FROM pages WHERE page_id = ?",
+                (base["page_id"],),
+            ).fetchone()
+            if page_row is None:
                 raise stale("binding", "reference page disappeared")
-            if page.chapter_id != base["chapter_id"]:
+            if page_row["chapter_id"] != base["chapter_id"]:
                 raise stale("binding", "page ownership drifted since the plan")
             if (
-                int(page.source_order) != int(base["source_order"])
-                or int(page.sort_order) != int(base["sort_order"])
+                int(page_row["source_order"]) != int(base["source_order"])
+                or int(page_row["sort_order"]) != int(base["sort_order"])
             ):
                 raise stale("binding", "page order drifted since the plan")
-            deleted_now = getattr(page, "deleted_at", None) is not None
+            deleted_now = page_row["deleted_at"] is not None
             if deleted_now != base["deleted"]:
                 raise stale("binding", "page delete state drifted since the plan")
             regions = self._store.regions_manual_projection(base["page_id"])
