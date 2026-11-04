@@ -31,3 +31,6 @@ restore: git checkout -- verification/FEA-09; post-restore git status --porcelai
 first dotnet test run EXIT=1 (SUM_PASSED=688) and first IPC run 1 failed/2 passed; immediately rerun: dotnet test full = 1359 passed/0 failed/78 skipped EXIT=0; both runs recorded here (environment contention; no code difference).
 失败!  - 失败:     1，通过:     2，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
 EXIT=1 (IPC retry)
+已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+EXIT=0 (IPC final confirmation)
+IPC flaky note: across r4 gate runs the IPC suite produced 1 failed/2 passed twice and 3/3 three times (same code); observed only right after a full .NET run. Recorded as known environment-order flaky (r3 P2-11); final confirmed run is 3/3.
