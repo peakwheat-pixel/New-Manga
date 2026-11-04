@@ -1,0 +1,15 @@
+# FEA-11 Review r1 返修后门禁 (DSH) 2026-11-05T02:10:00.1340566+08:00 HEAD=1e197f587
+3047 passed, 10 skipped in 225.25s (0:03:45)
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 101 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 288 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 682 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    82，已跳过:    49，总计:   131，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   142，已跳过:    22，总计:   164，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 3 m 2 s - NewManga.App.Tests.dll (net9.0)
+失败!  - 失败:     1，通过:     2，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+Governance check: PASS (2 warnings)
+PIN AUDIT: PASS (all 18)
+# IPC 复跑（首次在全量 .NET 后出现 1 个 flaky，紧接着复跑 3/3）：
+已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
