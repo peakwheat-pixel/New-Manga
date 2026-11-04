@@ -3,7 +3,7 @@ id: FEA-10
 title: 快照 / 候选 / 提交安全（PreparedRun 两阶段 + canonical request builder + retry 快照 + candidate-only apply）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: **scope approved r6（Codex，P0=0/P1=0/P2=2 非阻断）+ DSH Appointment 2026-11-04**；硬前置 FEA-10-PREREQ-1 已 done；DSH 2026-11-04 释放 Owner 实施；r2（AC2/3/4/6 补齐）2026-11-04 转 in_review
 suggested_owner: codex
 owner: codex（认领 2026-11-04；DSH 释放）
@@ -17,10 +17,10 @@ depends_on:
 base_commit: d831cf968cd856674c0320fe67ce854f4ef9d4b3
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: a92934585088fe75ce8ec53452a67c0a72496d31
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: PENDING_CLOSEOUT_COMMIT
+delivery_head: d1972f0f7cd9b3e17c5289818b5b3b25e164d5e9
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-10
 allowed_paths:
   - doc/tasks/FEA-10.md
@@ -135,7 +135,7 @@ out_of_scope:
 - [x] **AC6（控制/完成口径）**：控制请求持久化≠状态改变；UI 不早于 Core 持久 status 显示 paused/cancelled；终态共同不变量（processing=0/waiting=0 + 各终态附加判据）；重启后同源可复读。r2 按 DSH ADJ §2.4 新增 `tests/fea10/test_control_terminal.py`（4 passed）：pause/stop 请求持久化后 status 仍 running、projection 只报 Core 持久 status；调度器 unit 边界兑现后 projection 才报 paused/cancelled；四终态共同不变量+completed/completed_with_failures 附加判据+非法组合（终态标签下有 waiting 页）拒绝；同 DataRoot/DB 重开 Core 后 PAUSED 状态与请求位可复读。C# RunMonitor/RunStateStore 结构上只投影 Core 查询结果（无第二真值），既有 .NET 回归覆盖。 <<MET>>
 - [x] **AC7（SC-R09 durable receipt）**：提交成功但响应丢失→同键重放找回原 `run_id`、无第二 Run；**关闭/重启 Core 并重开同一 DB 后同键仍找回原 Run**；同键异 fingerprint→`IDEMPOTENCY_KEY_REUSED`；相同 `request_id` 不同 key 视为两个操作；仅覆盖冻结三类带 key 操作（StartRun/RetryFailedTargets/ControlRun restart），不新增命令。 <<MET>>
 - [x] **AC8（真实生产链路与回归）**：生产 assembly `Prepare/Accept/commit`；真实 Host↔Core IPC（`Fea10RunIpcTests`，`NEWMANGA_FEA10_IPC=1` 门径，隔离 DataRoot）；相关 pytest/.NET 全量不减少；旧 managed 路径、既有 Run 命令、`tests/core/test_p13_run_runtime.py` 等不回归。 <<MET>>
-- [ ] **AC9（范围/冻结/证据）**：C-05/C-15/C-16/C-07 冻结字节与 FEA-08/FEA-09 closeout 未改；范围 diff 合规；独立实现 Review approved；DSH 集成；Handoff + EV + Resource Manifest。 <<BLOCKED: r2 已闭合冻结 pins 17/17、FEA-09 零 diff、范围 0 域外、check PASS；余下独立实现 Review、DSH 集成与 commit pins 归 DSH>>
+- [x] **AC9（范围/冻结/证据）**：C-05/C-15/C-16/C-07 冻结字节与 FEA-08/FEA-09 closeout 未改；范围 diff 合规；独立实现 Review approved；DSH 集成；Handoff + EV + Resource Manifest。 <<MET>>
 - [x] **AC10（不越界）**：不提前实现 FEA-11/12/13/14 或 provider 新能力；不新增未冻结 Schema/wire；source 校验消费既有能力；共享组合根仅 DSH 单点提交。 <<MET>>
 
 ## 验证矩阵（AC→文件→命令→断言→证据）
@@ -210,17 +210,87 @@ out_of_scope:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | d1972f0f7cd9b3e17c5289818b5b3b25e164d5e9 | 65f6dee67b5cec1e2a57fc973006c7e221021c1bd2a490e04999b0da6a03df68 | CANONICAL |
+| EV-FEA10-AUX-001 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-build-r2.log | pending | 9120a8c13a62ddbbc0600372df6bcf4ef6f60c71349b30d4369c5f5814d8272a | SOURCE_PIN |
+| EV-FEA10-AUX-002 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-build-release.log | pending | dc1a9ab660c0c8fd5a17eb1c4cd97c5955ad780fc508010135088d5081996f2a | SOURCE_PIN |
+| EV-FEA10-AUX-003 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-build.log | pending | 18ab52410eca6ab39131923fdd0ebe206d1b73585454e8b50462d8b54d18b4d5 | SOURCE_PIN |
+| EV-FEA10-AUX-004 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-final-build.log | pending | 79c2a76978f37786a258f1ee855aaac43b91a66067af0eee435a02c3068cfe59 | SOURCE_PIN |
+| EV-FEA10-AUX-005 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-final-tests.log | pending | dc5d96965d3b98c0eb633d6f84c2f3543e87d791f8eec7a3795fd984ee52865a | SOURCE_PIN |
+| EV-FEA10-AUX-006 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-isolated.log | pending | f616a487a9f1231734c87a6373b9809341a381ca4dec52c0e8963bef1dfc499a | SOURCE_PIN |
+| EV-FEA10-AUX-007 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-test-release.log | pending | e61a298386aa2ae5038b346742c22178d5667d877299115e8e0c32c417f472c5 | SOURCE_PIN |
+| EV-FEA10-AUX-008 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-test.log | pending | 56b8f01da50d007d8f1981953ea36e1b1143c588617a5337bccf0584257fccc5 | SOURCE_PIN |
+| EV-FEA10-AUX-009 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-tests-r2.log | pending | 13c71e90c1f9c083671f10f9afc7d1f6b9a0231b8c5c350d814a5272b41b4fe9 | SOURCE_PIN |
+| EV-FEA10-AUX-010 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework-dotnet.log | pending | db2ec5229736c495bdec5fd7caef357842a67720301a84beb8f013ff6fd4d1fd | SOURCE_PIN |
+| EV-FEA10-AUX-011 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework-pytest.log | pending | 722a55ea4e7e51494575c778e2e098b270627f7243b73cbc080a4b569fff073b | SOURCE_PIN |
+| EV-FEA10-AUX-012 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework2-dotnet.log | pending | b97f4733b63022223b079678007aef9eb3af99a3f0c4c52fd50464958437347c | SOURCE_PIN |
+| EV-FEA10-AUX-013 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework2-providers.log | pending | fb650710468168a0c83c692d7276df0e2a50366d77b68d8a427c0c395a23192c | SOURCE_PIN |
+| EV-FEA10-AUX-014 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework2-pytest.log | pending | e95446834349b6ca001dadbe1516463cb1b6995b9800da01c0a8a7e56349ac7d | SOURCE_PIN |
+| EV-FEA10-AUX-015 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework3-dotnet.log | pending | e04bab03b355c2451b9e8b6ee165e80e4bc5b1ed12aa6dba5a2bb14705f50864 | SOURCE_PIN |
+| EV-FEA10-AUX-016 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework3-providers.log | pending | 28ff71ef22110b680b57e542e7acc5123e00c50c6a4a6bd0001729d9e6e0e9a0 | SOURCE_PIN |
+| EV-FEA10-AUX-017 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework3-pytest.log | pending | 1404474408d9415ff33c55f0d969a3402e9e558945726176285ba9fa57fd8692 | SOURCE_PIN |
+| EV-FEA10-AUX-018 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework4-dotnet.log | pending | ae725d309bb0cb457b477e2c2d151c9fba4f88c185ab3fdc357cbecb12fa73bf | SOURCE_PIN |
+| EV-FEA10-AUX-019 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework4-providers.log | pending | 2e9450881b97d764b2e816cc2c9bd71cf39eef1ded62cd3bbdca6801f1568ad7 | SOURCE_PIN |
+| EV-FEA10-AUX-020 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework4-pytest-main.log | pending | 50ae3b43a1e0d9907ed123386d041540a09cfb2c9e8f33e0341521dedf1f67a9 | SOURCE_PIN |
+| EV-FEA10-AUX-021 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework4-pytest.log | pending | 800f709ddf79a6a4f72f2954737745876626c2b7d2cd4ec8a1f55bed2fc4b664 | SOURCE_PIN |
+| EV-FEA10-AUX-022 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework5-dotnet.log | pending | 555e461ad0329f3c9f76cb153616a986ed205b172042400932f6866d4b44e755 | SOURCE_PIN |
+| EV-FEA10-AUX-023 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework5-providers.log | pending | cae01b5471887e9c1142cf8346dac5146d76415c466bf2852f3e369487f11805 | SOURCE_PIN |
+| EV-FEA10-AUX-024 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework5-pytest-main.log | pending | 78612811f8446dd8950ff7522ffc12f3e7ce7af06029437e5fdfee84c13b037f | SOURCE_PIN |
+| EV-FEA10-AUX-025 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework6-dotnet.log | pending | e0958ae1df9bd249b263c42ce602df5cc97f5b9250fb6c54da51fd49e9167710 | SOURCE_PIN |
+| EV-FEA10-AUX-026 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework6-providers.log | pending | 9d64f27e50d6d32a7701af2e1a2c99cd8a90418514cb5d94a9d4da3b65fe5efe | SOURCE_PIN |
+| EV-FEA10-AUX-027 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/dsh-rework6-pytest-main.log | pending | 2566944255a49bfd2deb269a0bb31043bfa5bd6a723edd04134e24e19d063c80 | SOURCE_PIN |
+| EV-FEA10-AUX-028 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/environment.log | pending | 3e4e71b7e2925a6bf57b9d3c3b447c09614c6a5de954b6a475f207cdc7235d14 | SOURCE_PIN |
+| EV-FEA10-AUX-029 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/fault-matrix.log | pending | c7dc779d13ef022fb5573613ffefa5c5f66f068280cd7f80319d09048c598adc | SOURCE_PIN |
+| EV-FEA10-AUX-030 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/fea10-complete.log | pending | c45d854aa3ccfdaaa2543ccd9cd9f57dfeaa0c6c0b59971c249834d9147718f5 | SOURCE_PIN |
+| EV-FEA10-AUX-031 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/fea10-fallback-final.log | pending | a6b07135784d495a313ac462a357676fb8c29a5519712202bee9e5bdad52d6da | SOURCE_PIN |
+| EV-FEA10-AUX-032 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/fea10-focused-final.log | pending | 4f1236bdc39e1545f18708c5d535b482c16798b036a25a05cd8826e708de3712 | SOURCE_PIN |
+| EV-FEA10-AUX-033 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/fea10-focused.log | pending | 74958f173751a9825c678235cb6ce8c4c9544d8519635417515f7bc0ef15163e | SOURCE_PIN |
+| EV-FEA10-AUX-034 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/governance-final.log | pending | 86a598e3db59042425d3b0fcc9a2815485f75b253ff2443b1c9b0366f2dea8f9 | SOURCE_PIN |
+| EV-FEA10-AUX-035 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/governance-initial.log | pending | d3868a7d14609338cf8507025cf318358e7c480bdd62d16f3e88711ba01711a1 | SOURCE_PIN |
+| EV-FEA10-AUX-036 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/governance-r2.log | pending | f8619cc30062fca0b993de230d85157823a589818538e67095114a1fa5f99c06 | SOURCE_PIN |
+| EV-FEA10-AUX-037 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/ipc-final.log | pending | 88fc137d9793cf1e5c397a1d75040a121b6b90f1012444faaf4a056cbb208067 | SOURCE_PIN |
+| EV-FEA10-AUX-038 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/ipc-r2.log | pending | 69161e61d3a2963cc20f2a0f6aa5c1061d9394185edf78dbda6966ddc8d755b1 | SOURCE_PIN |
+| EV-FEA10-AUX-039 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/pins-final.log | pending | cdc6bebd6bf6a64f5f0c68b19f8a0cb8d52eddc078cf4879d108874dc453115f | SOURCE_PIN |
+| EV-FEA10-AUX-040 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/pins-r2.log | pending | 1ae119bfe5264214384dd8c82a28ac8965c0eace36525637f6592f764602f9bc | SOURCE_PIN |
+| EV-FEA10-AUX-041 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/pins.log | pending | 51e3cf1f978815a174c549990278928c4e46e713d74885df76ca33bcd80be3ee | SOURCE_PIN |
+| EV-FEA10-AUX-042 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/provider-regressions-r2.log | pending | 7b332b10e547d93f23767da560fe86bfd16af87d089d33580112a6acc9a60161 | SOURCE_PIN |
+| EV-FEA10-AUX-043 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/provider-regressions-second.log | pending | 83c2ada76b99b003e2451916e61a294b7b0b873c0165dccb7473cb76d4b97930 | SOURCE_PIN |
+| EV-FEA10-AUX-044 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/provider-regressions.log | pending | 795a158453d3b8c0bbffc8c09c9fc84c7164ca78f7cbbc4417b82f5a5c475727 | SOURCE_PIN |
+| EV-FEA10-AUX-045 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-delivery.log | pending | 5d04e1afcc243ed44e443b78017fbdda1e86595ebc6e66504bb1754773670106 | SOURCE_PIN |
+| EV-FEA10-AUX-046 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-file-regressions.log | pending | d19c57be3790db9b76dda0b1d0641376693e963e6704c774740822deaaf420a6 | SOURCE_PIN |
+| EV-FEA10-AUX-047 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-files-validated-r2.log | pending | b3625d1d2ef135ffa77d538dd53dddd482735126759d624606281404ffea7f6d | SOURCE_PIN |
+| EV-FEA10-AUX-048 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-files-validated.log | pending | 0d019ede46205e3d4a39b3abc1ee73fd9e43afdc974df1da6d586983a67fd049 | SOURCE_PIN |
+| EV-FEA10-AUX-049 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-final.log | pending | 16c39508d15c6e95c1d8eaa4ad1d695589e4bc54e2770835b5353018a2ddc4c5 | SOURCE_PIN |
+| EV-FEA10-AUX-050 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-initial.log | pending | 61861bc860aee8df527b3efb02eee2c23989822616e1c3720a60da6ca257a881 | SOURCE_PIN |
+| EV-FEA10-AUX-051 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-isolated.log | pending | b7ce705eaeaa93bac5557cd155745a4b02205b11db739b8508ee65ba753107f4 | SOURCE_PIN |
+| EV-FEA10-AUX-052 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-main-r2.log | pending | a7a7fb01f771f5de6a888218f3509fb5a16c263719cff569157b2201bc68dc9d | SOURCE_PIN |
+| EV-FEA10-AUX-053 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-release.log | pending | 9a9612e29f2747eef364881d468ce2dea02de774c8f5a0aae2e2a275291d10f0 | SOURCE_PIN |
+| EV-FEA10-AUX-054 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-second.log | pending | 7177ee11533f0563060afaeb213e34f8806eebb3af13732f2c19276220bf8abe | SOURCE_PIN |
+| EV-FEA10-AUX-055 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/python-validated.log | pending | 79bc6073394f449d89b394fc82ec8a1085e816b45f32dc1ba1ead0c4617b1065 | SOURCE_PIN |
+| EV-FEA10-AUX-056 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/real-ipc-delivery.log | pending | 45a488f92096f36643255b6969898ac69cf06ec527aa0e86c3a09f34af8e83b2 | SOURCE_PIN |
+| EV-FEA10-AUX-057 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/real-ipc-second.log | pending | 45a488f92096f36643255b6969898ac69cf06ec527aa0e86c3a09f34af8e83b2 | SOURCE_PIN |
+| EV-FEA10-AUX-058 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/real-ipc.log | pending | eaa358c9bc332c217b99cb8117fda2c95acb54f6e4fb81b4600699bf7c26901a | SOURCE_PIN |
+| EV-FEA10-AUX-059 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/restart-core.log | pending | c77644a874d041101485c7603af98c2fb4105dd3f00f1e605a351533a9fc645f | SOURCE_PIN |
+| EV-FEA10-AUX-060 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope-r1-preserved.log | pending | c6568ac3a90e555964577c1f9ada00ed046c3af703ae109ee1dc8cbecc228128 | SOURCE_PIN |
+| EV-FEA10-AUX-061 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope-r2.log | pending | 282a16632f8ed226326ee51c7b5b9076cc5bbd6ce324565655dc965d461f08d1 | SOURCE_PIN |
+| EV-FEA10-AUX-062 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope.log | pending | faa0cd3c98ffa8f5ce3dfc803a3dadcf21f509e17b8bf28c76fad84c56c75e51 | SOURCE_PIN |
+| EV-FEA10-SP-01 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/changed-files.txt | pending | 5b4131dc05d5853d0f5d50f4b3b229a9b48cf4d794bd9305222fb37e12037ef0 | SOURCE_PIN |
+| EV-FEA10-SP-02 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/DELIVERY-MANIFEST.json | pending | ca31e5eab7fd6fe5624af899664bb7964da30713828a8d4d6f2f3740d2b3b86c | SOURCE_PIN |
+| EV-FEA10-SP-03 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/OWNER-CHECKPOINT.md | pending | 5d1ef4c26135bc3f5820b5b9093e8f37e56bf291038b1ed47215d85d20686d41 | SOURCE_PIN |
+| EV-FEA10-SP-04 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/record_delivery.py | pending | fd47bbbc7671eaa58d123b161401e0b0e97ba366bb29cb1382c4e8565db34715 | SOURCE_PIN |
+| EV-FEA10-SP-05 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/RESOURCE-MANIFEST.json | pending | 293057e2817699f3cd117204d2375c36c2455a753cf3f019af8feacf3a6ff611 | SOURCE_PIN |
+| EV-FEA10-SP-06 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/ipc/real-ipc.txt | pending | 19faf80c7836f3abad95a5394ed4b54a24220429082fbdcab194c354bdf37bec | SOURCE_PIN |
+| EV-FEA10-SP-07 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/logs/canonical-commit.log | pending | f335327841717fdc07d19eeb5ffba63f5803360417c51b7accccb7c3804a6888 | SOURCE_PIN |
+| EV-FEA10-SP-08 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/logs/dotnet-build-final.log | pending | 1ee72b23356ddac500980b85ba4b00a978edb2b9e4bb59875eabf057ba5a4363 | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | 原位 | verification/FEA-10/DELIVERY-MANIFEST.json | 主树，dirty 实现交付；无新 linked worktree，不移动/删除 |
-| task-env / model / exchange | NOT_APPLICABLE | NOT_APPLICABLE | - | 无新增依赖/模型/交换目录 | 复用 Python314 / .NET 10 / Node 24 |
-| test-material / temp | G:/CODEX/New Manga.workspace/FEA-10/fixtures | PRESERVE_REFERENCED | 原位 | verification/FEA-10/RESOURCE-MANIFEST.json | 每例独立 DB；仅同库重启场景复用指定库；测试结束后保留 |
-| artifact | apps/desktop-avalonia/**/bin、obj | PRESERVE_REFERENCED | 原位 | 构建日志 | 既有构建布局；本次无清理/迁移 |
-| evidence / agent-output | verification/FEA-10 | PRESERVE_REFERENCED | 原位 | 本表 Canonical Evidence + DELIVERY-MANIFEST | 原始命令/EXIT/失败历史保留 |
-| early regression temp | C:/Users/49745/AppData/Local/Temp（既有测试默认 TEMP） | PRESERVE_UNKNOWN | 原位 | 未扫描/未清理 | 运行目录偏差；未接入真实应用库；交 DSH 裁决 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/FEA-10/DELIVERY-MANIFEST.json | 主树最终交付已提交；无新 linked worktree，不移动/删除 |
+| task-env / model / exchange | NOT_APPLICABLE | NOT_APPLICABLE | - | verification/FEA-10/DELIVERY-MANIFEST.json | 无新增依赖/模型/交换目录；复用 Python314/.NET 10/Node 24 |
+| test-material / temp | G:/CODEX/New Manga.workspace/FEA-10/fixtures | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-10/fixtures | verification/FEA-10/RESOURCE-MANIFEST.json | 每例独立 DB 且保留；含 final5-review helper 目录 |
+| artifact | G:/CODEX/New Manga/apps/desktop-avalonia | PRESERVE_REFERENCED | G:/CODEX/New Manga/apps/desktop-avalonia | verification/FEA-10/RESOURCE-MANIFEST.json | bin/obj 原位保留，无清理/迁移 |
+| evidence / agent-output | G:/CODEX/New Manga/verification/FEA-10 | PRESERVE_REFERENCED | G:/CODEX/New Manga/verification/FEA-10 | verification/FEA-10/DELIVERY-MANIFEST.json | 原始命令/EXIT/失败历史保留 |
+| early regression temp | C:/Users/49745/AppData/Local/Temp | PRESERVE_UNKNOWN | C:/Users/49745/AppData/Local/Temp | verification/FEA-10/RESOURCE-MANIFEST.json | 未扫描/未清理；未接入真实应用库 |
 
 ## Closeout Record
 
@@ -274,4 +344,14 @@ out_of_scope:
 - 新增回归 `test_glossary_exemption_is_bound_to_the_flat_business_path_only`：6 种绕过形状 × override/defaults 共 12 组全部拒绝；合法 `translate.glossary={token,headers}` 词条保留。
 - F4-03（已处理）：本轮门禁日志（`logs/dsh-rework6-*.log`）记录完整 COMMAND/shell/TEMP/TMP/EXIT；历史日志保留原字节。
 - 门禁（实跑）：fea10 **55 passed**、主套件 **1058 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1，均 EXIT=0。
+
+## Closeout Record（2026-11-04，DSH 集成）
+
+- 独立实现 Review：**approved（P0=0/P1=0，3 项非阻断 P2）** — `doc/reviews/FEA-10-final-review-r5.md`（Codex 全新上下文，reviewed_head `290717f1`；F4-01/F4-02 由 26 Prepare + 26 篡改 Accept 探针闭合；合法 token/headers 保留）。
+- 交付链：r1 `25ba7cb2`/`a9293458` → rework r1..r6（`ed60c1d2`、`f01e35d8`、`2b0cbfb1`、`1ee761e7`、`cdaf441a`、`d1972f0f`）→ 最终 head `290717f1`；`delivery_head=d1972f0f`。
+- DSH 集成验证（最终）：pytest `tests/fea10` **55 passed**、主套件 **1058 passed**、providers 559/4、Release build 0 warning/0 error、.NET **1345 passed / 0 failed / 75 skipped**、真实 IPC 1 passed、`check.ps1` PASS（4 warnings）、pins 17/17、范围 0 域外、FEA-09 证据零 diff。
+- AC：AC1–AC10 全部 MET（AC2 保留 F5-01/F5-03 非阻断边界；AC3 按 ADJ §2.1 口径；AC5 seam 层；AC6 Core 专项/C# 结构；AC8 所覆盖链路）。
+- 非阻断债务（已登记，不阻塞 closeout）：R-005/R-006/R-007/R-011/R-013/R-015/R-016；F5-01（非 Mapping glossary 类型口径）、F5-02（Python 日志命令局部不完整）、F5-03（`_redact` 非认证验证器的策略差异）。
+- 冻结契约字节、FEA-08/FEA-09 closeout/证据、共享组合根均未改；未 push。
+- Resource：fixtures/证据/build 全部原位 PRESERVE_REFERENCED；early system TEMP PRESERVE_UNKNOWN（不扫描/不清理）。
 

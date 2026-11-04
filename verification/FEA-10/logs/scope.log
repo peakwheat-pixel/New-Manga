@@ -1,18 +1,19 @@
 DataRoot=N/A (read-only Git scope); fixtures=G:/CODEX/New Manga.workspace/FEA-10/fixtures/
 COMMAND=git diff --name-only
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
 doc/handoffs/FEA-10-handoff.md
-doc/reviews/FEA-10-rework-r1.md
 doc/tasks/FEA-10.md
-src/application/tasks/store.py
-src/infrastructure/sqlite/pipeline.py
-tests/fea10/test_prepared_run.py
-verification/FEA-10/AC-MATRIX.md
+verification/FEA-10/DELIVERY-MANIFEST.json
+verification/FEA-10/RESOURCE-MANIFEST.json
+verification/FEA-10/changed-files.txt
+verification/FEA-10/logs/scope.log
+verification/FEA-10/record_delivery.py
 COMMAND=git ls-files --others --exclude-standard
-doc/reviews/FEA-10-final-review-r4.md
-verification/FEA-10/logs/dsh-rework6-dotnet.log
-verification/FEA-10/logs/dsh-rework6-providers.log
-verification/FEA-10/logs/dsh-rework6-pytest-main.log
+doc/reviews/FEA-10-final-review-r5.md
+doc/tasks/FEA-11.md
 COMMAND=compare all changed/untracked paths against doc/tasks/FEA-10.md allowed_paths
-OUT_OF_SCOPE=[]
+OUT_OF_SCOPE=["doc/REBASELINE_PLAN.md", "doc/STATUS.md", "doc/TASK_LEDGER.md", "doc/tasks/FEA-11.md"]
 FEA09_DIFF=EMPTY
-EXIT=0
+EXIT=1

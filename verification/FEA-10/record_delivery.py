@@ -62,6 +62,7 @@ def main():
     (EVIDENCE / 'RESOURCE-MANIFEST.json').write_text(json.dumps(resources, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     entries = []
     excluded_docs = [relative for relative in changed if relative.startswith('doc/')]
+    integrator_docs = {'doc/REBASELINE_PLAN.md', 'doc/STATUS.md'}
     for relative in changed:
         if relative == 'verification/FEA-10/DELIVERY-MANIFEST.json' or relative.startswith('doc/'):
             continue

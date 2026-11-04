@@ -7,7 +7,8 @@
 |节点/目标|依赖|状态|
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
-|FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
+|FEA-C11-PREREQ-1|FEA-11|FEA-09、FEA-10|**proposed**（Source 变化/重定位/同步；待 DSH 建卡/scope review；新表/命令面需先冻结）|
+|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
@@ -25,7 +26,7 @@
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
 |FEA-09-UI-1|FEA-09|**done**（`b14e04da`；AC1–5 MET；r4 approved）|
 |FEA-10-PREREQ-1|FEA-01-FREEZE-1|**done**（C-08 块②协议注册；集成 `728c8bb0`；impl r1 approved）|
-|FEA-10|FEA-00A、03、09、FEA-10-PREREQ-1|**in_progress**（scope r6 approved；Codex Owner r1 部分实现；AC2/3/4/6 续作中）|
+|FEA-10|FEA-00A、03、09、FEA-10-PREREQ-1|**done**（最终 head `290717f1`，delivery `d1972f0f`；7 轮独立 Review approved P0/P1=0；AC1–AC10 MET；债务 R-005…R-016/F5-01…03）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
@@ -38,9 +39,9 @@
 
 READY 节点：无
 
-完成：FEA-10-PREREQ-1 **done**（`728c8bb0`，impl r1 approved）。当前活动：**FEA-10 in_progress**（Codex r1 部分实现，Task `in_review`；AC2/3/4/6 待续作；AC9 待 DSH 集成）。
+完成：FEA-10 **done**（`d1972f0f`，7 轮独立 Review approved P0/P1=0，AC1–AC10 MET）。下一候选：**FEA-11**（proposed；需 DSH 建卡 + 独立 scope review）。
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（in_progress）** → FEA-11；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → FEA-11（proposed）；FEA-12 待 `G-DELETE-IMPL`
 
 ## 历史快照（终态节点，非当前 DAG）
 

@@ -166,3 +166,10 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 - F4-03（已处理）：本轮门禁日志（`logs/dsh-rework6-*.log`）记录完整 COMMAND/shell/TEMP/TMP/EXIT；历史日志保留原字节。
 - 门禁（实跑）：fea10 **55 passed**、主套件 **1058 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1，均 EXIT=0。
 
+## Closeout（2026-11-04，DSH）
+
+- 独立实现 Review **approved**（P0=0/P1=0，3 项非阻断 P2）：`doc/reviews/FEA-10-final-review-r5.md`（Codex 全新上下文，reviewed_head `290717f1`）。
+- 最终交付：`delivery_head=d1972f0f`；集成 head 见 STATUS；AC1–AC10 MET；债务 R-005…R-016 与 F5-01…03 已登记。
+- 集成门禁：.NET 1345/0/75、pytest 1058、真实 IPC 1、build 0/0、check PASS（4w）、pins 17/17、FEA-09 零 diff、范围 0 域外。
+- 下一步：FEA-11 建卡 + 独立 scope review（不自动释放实施）；不 push。
+
