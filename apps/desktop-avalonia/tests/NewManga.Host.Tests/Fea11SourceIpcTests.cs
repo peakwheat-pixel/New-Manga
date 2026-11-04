@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using NewManga.CoreClient;
 using NewManga.CoreClient.Wire;
+using NewManga.Host.Sources;
 using Xunit;
 
 namespace NewManga.Host.Tests;
@@ -138,6 +139,110 @@ public sealed class Fea11SourceIpcTests
         await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
             $"DataRoot={root}\n" + string.Join("\n", evidence) + "\nPASS\n");
     }
+
+    [Fea11IpcFact]
+    public async Task ScanWithAHostIssuedGrant_WorksEndToEnd()
+    {
+        var (repo, python, root, receipt) = await SeedAsync();
+        var options = BuildOptions(repo, python, root);
+        await using var client = await CoreServiceClient.StartAsync(options);
+        await client.OpenHostSessionAsync();
+        Assert.Contains("source.sync.scan/1", (await client.PingAsync()).Capabilities);
+
+        var registry = new SourceAccessRegistry(root);
+        var registered = registry.Register("fea11-ipc", [receipt.GetProperty("old_zip").GetString()!]);
+        var sources = new SourceReadCoordinator(client, registry, () => true);
+        var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["decoder"] = "zip",
+            ["scale"] = 1.0,
+            ["params_digest"] = new string('a', 64),
+        });
+        var grantId = await sources.IssueAsync(
+            registered.RegistryId, registered.Generation,
+            receipt.GetProperty("old_zip").GetString()!, "zip",
+            receipt.GetProperty("source_id").GetString()!,
+            receipt.GetProperty("version_id").GetString()!,
+            rendition);
+
+        var scan = await client.SendHostControlAsync("ScanSourceSync", writer =>
+        {
+            writer.WriteString("source_id", receipt.GetProperty("source_id").GetString());
+            writer.WriteStartArray("project_ids");
+            writer.WriteStringValue("b1");
+            writer.WriteEndArray();
+            writer.WriteString("scope", "current");
+            writer.WriteString("kind", "resync");
+            writer.WriteStartArray("grant_ids");
+            writer.WriteStringValue(grantId);
+            writer.WriteEndArray();
+            writer.WriteStartArray("missing");
+            writer.WriteEndArray();
+        });
+        var result = scan.Result ?? throw new InvalidOperationException("scan returned no result");
+        Assert.Equal(JsonValueKind.Object, result.ValueKind);
+        Assert.True(result.TryGetProperty("observations", out _) || result.TryGetProperty("diff", out _),
+            "scan result has neither observations nor diff: " + result.GetRawText());
+
+        await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
+            $"DataRoot={root}\nregistry_generation={registered.Generation}\n"
+            + "ScanSourceSync(with issued grant) -> OK\nPASS\n");
+    }
+
+    private static async Task<(string Repo, string Python, string Root, JsonElement Receipt)> SeedAsync()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        var repo = directory?.FullName ?? throw new InvalidOperationException("repository not found");
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(repo + ".workspace", "FEA-11", "fixtures", "ipc-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var seedInfo = new ProcessStartInfo(python)
+        {
+            WorkingDirectory = repo, UseShellExecute = false, CreateNoWindow = true,
+            RedirectStandardOutput = true, RedirectStandardError = true,
+        };
+        foreach (var argument in new[]
+                 {
+                     "tests/fea11/support/ipc_seed.py",
+                     "--data-root", root,
+                     "--db", Path.Combine(root, "library.db"),
+                 })
+        {
+            seedInfo.ArgumentList.Add(argument);
+        }
+        using (var seed = Process.Start(seedInfo)!)
+        {
+            var stdout = seed.StandardOutput.ReadToEndAsync();
+            var stderr = seed.StandardError.ReadToEndAsync();
+            await seed.WaitForExitAsync();
+            Assert.True(seed.ExitCode == 0, await stdout + await stderr);
+        }
+        using var receiptDoc = JsonDocument.Parse(
+            await File.ReadAllTextAsync(Path.Combine(root, "ipc-seed-receipt.json")));
+        return (repo, python, root, receiptDoc.RootElement.Clone());
+    }
+
+    private static CoreServiceOptions BuildOptions(string repo, string python, string root) => new()
+    {
+        ExecutablePath = python,
+        AdditionalArguments =
+        [
+            "-X", "utf8", "-c",
+            $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+            + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+        ],
+        DataRoot = root,
+        DerivedRoot = Path.Combine(root, "derived"),
+        CatalogDbPath = Path.Combine(root, "catalog.sqlite"),
+        StderrLogPath = Path.Combine(root, "core.stderr.log"),
+        WireLogPath = Path.Combine(root, "wire.ndjson"),
+        StartupTimeout = TimeSpan.FromSeconds(90),
+        RequestTimeout = TimeSpan.FromSeconds(60),
+    };
 
     private sealed class Fea11IpcFactAttribute : FactAttribute
     {
