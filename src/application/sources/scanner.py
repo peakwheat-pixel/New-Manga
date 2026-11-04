@@ -235,7 +235,10 @@ class SourceScanner:
             # keep); leaving it in the diff would make the 1:1 decisions
             # contract unsatisfiable. Real containers routinely carry unused
             # members, so this filter is the honest page-level projection.
-            if page_id is None and item.classification == "unchanged":
+            if page_id is None and item.classification in ("unchanged", "missing"):
+                # R-005: an unused member disappearing is not a page-level
+                # difference either; a null-page missing item would make the
+                # frozen PlanBody contract unsatisfiable.
                 continue
             diff.append(
                 {

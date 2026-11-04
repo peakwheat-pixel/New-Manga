@@ -175,3 +175,35 @@ def test_unknown_operation_is_a_typed_error(
     assert caught.value.code in (
         "SOURCE_OPERATION_NOT_FOUND", "SOURCE_SYNC_STATE_CONFLICT",
     )
+
+
+def test_failed_operation_can_recover_and_opens_gates(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """R-004 (FEA-11 r1): fail_operation persists and failed -> recovered is
+    reachable (the recovery face clears the failure marker and opens gates)."""
+    from application.sources.model import now_millis
+
+    grant_id, scan, plan, dispatch, operation = _apply_one_sync(
+        stack, registry, conn, scratch_dir
+    )
+    store = stack["store"]
+    operation_id = operation["operation_id"]
+    store.fail_operation(
+        operation_id, code="SOURCE_ACCESS_DENIED", retryable=True,
+        now=now_millis(),
+    )
+    failed = store.find_operation(operation_id)
+    assert failed["state"] == "failed"
+    assert failed["error_code"] == "SOURCE_ACCESS_DENIED"
+    assert failed["retryable"] == 1
+
+    completion = _completion(stack, registry, grant_id, scan, operation)
+    recovered = stack["operations"].recover(completion)
+    assert recovered["state"] == "recovered"
+    row = store.find_operation(operation_id)
+    assert row["error_code"] is None
+    assert row["retryable"] == 0
+    binding = store.current_binding_of_page("p1")
+    gate = store.gate_of_binding(binding["binding_id"]) if binding else None
+    assert gate is None or gate["read_gate"] == "open"

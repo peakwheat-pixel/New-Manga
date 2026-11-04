@@ -226,7 +226,8 @@ class SourceSyncStore:
         cursor = self._conn.execute(
             "UPDATE source_operations SET state = 'recovered',"
             " acknowledged_at = ?, error_code = NULL, retryable = 0,"
-            " updated_at = ? WHERE operation_id = ? AND state = 'core-committed'",
+            " updated_at = ? WHERE operation_id = ?"
+            " AND state IN ('core-committed', 'failed')",
             (now, now, operation_id),
         )
         if cursor.rowcount != 1:
@@ -245,7 +246,7 @@ class SourceSyncStore:
             "UPDATE source_operations SET state = 'failed', error_code = ?,"
             " retryable = ?, updated_at = ? WHERE operation_id = ?"
             " AND state IN ('core-committed', 'host-authorized')",
-            (code, 1 if retryable else 0, now, now, operation_id),
+            (code, 1 if retryable else 0, now, operation_id),
         )
         if cursor.rowcount != 1:
             from application.sources.errors import SourceSyncError

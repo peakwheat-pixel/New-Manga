@@ -280,7 +280,7 @@ class SourceSyncService:
         # C-16 §3.1 / C-17 §7.2: a synced binding must be readable through the
         # operation's grant. bind_imported_entry is the frozen grant→binding
         # map; the sync face is the second producer besides import.
-        self._bind_operation_grant(body, request)
+        self._bind_operation_grant(body, request, receipt)
         return {
             "operation_id": operation_id,
             "request_digest": request_digest,
@@ -288,30 +288,40 @@ class SourceSyncService:
             "state": "core-committed",
         }
 
-    def _bind_operation_grant(self, body: dict, request: dict) -> None:
+    def _bind_operation_grant(
+        self, body: dict, request: dict, receipt: dict
+    ) -> None:
+        """R-003 (FEA-11 r1): every healthy binding the operation produced (or
+        kept) must be readable through the operation's grant — including the
+        pages an ``add`` decision created (their page ids come from the
+        receipt, not from ``target_page_id``)."""
         bind = getattr(self._access, "bind_imported_entry", None)
         grant_id = request["grant_ids"][0] if request["grant_ids"] else None
         if bind is None or grant_id is None:
             return
-        affected: list[str] = []
-        for decision in body["decisions"]:
-            if decision["action"] in ("keep", "bind", "add"):
-                page_id = decision.get("target_page_id")
-                if page_id:
-                    affected.append(page_id)
-        for page_id in affected:
-            row = self._store.current_binding_of_page(page_id)
-            if row is None:
+        for binding in receipt.get("bindings", []):
+            if binding["status"] != "healthy":
                 continue
             try:
                 bind(
                     grant_id,
-                    row["source_id"],
-                    row["accepted_source_version"],
-                    row["entry_id"],
+                    binding["source_id"],
+                    binding["version_id"],
+                    binding["entry_id"],
                 )
             except SourceImportError as error:
+                # A kept page keeps the grant it was imported with; the
+                # operation grant scopes the target version only. A different
+                # version is therefore expected here and stays fail-closed
+                # through the kept page's own grant.
+                if binding["version_id"] != self._target_version(body):
+                    continue
                 raise SourceSyncError(error.code, str(error)) from error
+
+    @staticmethod
+    def _target_version(body: dict) -> str | None:
+        target = body.get("target") or {}
+        return target.get("version_id")
 
     def _verify_target_lease(self, request: dict, body: dict) -> None:
         """Re-scan the container under the lease and prove the target
