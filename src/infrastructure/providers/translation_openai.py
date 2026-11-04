@@ -75,18 +75,23 @@ class OpenAiTranslationProvider:
         return self.config.model
 
     def translate(self, payload: TranslationRequestPayload) -> TranslationCallResult:
+        return self.translate_frozen(payload, self.freeze_request(payload))
+
+    def freeze_request(self, payload: TranslationRequestPayload):
         if not payload.regions:
             raise ProviderInputError(
                 "translation request carries no target region",
                 provider_id=self.provider_id,
                 stage="translate",
             )
-        completion = self.client.complete(
+        return self.client.freeze_request(
             user_text=self._build_user_text(payload),
             system_prompt=TRANSLATION_SYSTEM_PROMPT,
             options=dict(self.options) or None,
-            stage="translate",
         )
+
+    def translate_frozen(self, payload: TranslationRequestPayload, request) -> TranslationCallResult:
+        completion = self.client.complete_frozen(request, stage="translate")
         report = validate_response(completion.raw_text, payload.region_ids)
         translations = require_valid_response(
             report, provider_id=self.provider_id, model=self.config.model

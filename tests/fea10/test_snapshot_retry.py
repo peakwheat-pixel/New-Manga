@@ -1,6 +1,6 @@
-from tests.fea10.test_prepared_run import workspace
+from tests.fea10.test_prepared_run import workspace, _remote_translation_provider
 from tests.core.test_fea00a_pipeline_seam import _new_workspace
-from domain.tasks.models import PipelineRunStatus, PipelineScope, PipelineTaskStatus, ScopeType
+from domain.tasks.models import PlanDecision, PipelineRunStatus, PipelineScope, PipelineTaskStatus, ScopeType
 
 
 def test_new_retry_freezes_current_context_but_same_key_replays_unchanged():
@@ -113,4 +113,124 @@ def test_preview_and_real_transport_body_use_same_builder_and_pinned_config():
         assert expected != prepared['preparedDigest']
         assert core.pipeline.commit_step_result(step.step_run_id, result).status == 'committed'
         assert core.pipeline.get_run_snapshot(run.run_id, fresh=True).step_runs[-1].status.value == 'completed'
+    finally: core.conn.close()
+
+
+def test_upstream_dependent_step_previews_flag_and_send_uses_accepted_freeze():
+    """AC3 (DSH ADJ §2.1.3): OCR-dependent steps flag ``requires_upstream_output``
+    in preview and never claim future body bytes; after Accept, settings /
+    provider / neighbour changes cannot alter what is actually sent."""
+    import json
+    from dataclasses import replace
+    from tests.core.test_fea00a_pipeline_seam import _prepare_ocr
+
+    core, page, region = _new_workspace(workspace('upstream-freeze'))
+    try:
+        _, ocr, _, ocr_result = _prepare_ocr(core, region)
+        assert core.pipeline.commit_step_result(ocr.step_run_id, ocr_result).status == 'committed'
+        provider, calls = _remote_translation_provider(core, region, provider_id='fea10-upstream')
+        scope = PipelineScope(ScopeType.PAGE, selected_ids=(page,))
+        prepared = core.pipeline.prepare_run('translate_single', scope)
+        preview = prepared['redactedPayloadPreview']
+        assert preview.get('translationPayload') == 'requires_upstream_output'
+        assert not any('payloadDigestPreview' in str(key) for key in (preview,))
+        run, _ = core.pipeline.accept_prepared_run(prepared, scope, idempotency_key='upstream')
+        # Post-accept configuration / defaults / provider drift must not reach the wire.
+        provider.config = replace(provider.config, base_url='https://drifted.invalid/v1', model='drifted-model')
+        core.pipeline_defaults.save_settings_section('translate', {'context_token_budget': 1, 'target_language': 'ko'})
+        core.pipeline.plan_run(run.run_id)
+        task = run.tasks[0]
+        unit = next(item for item in task.units if item.step_type == 'translate')
+        step = core.pipeline.record_step_attempt(task.task_id, 'translate')
+        result = core.pipeline._executor.execute(step, unit, run)
+        assert len(calls) == 1
+        assert calls[0].url == 'https://fixture.invalid/v1/chat/completions'
+        body = json.loads(calls[0].body)
+        assert body['model'] == 'pinned-model'
+        provenance = result.outputs['provenance']
+        # Send-time consistency check: the frozen bytes posted are the frozen bytes digested.
+        assert provenance['payloadDigestPreview'] == provenance['payloadDigestSend']
+        assert provenance['payloadDigestSend'] != prepared['preparedDigest']
+    finally: core.conn.close()
+
+
+def test_missing_credential_blocks_run_until_vault_recovers():
+    """AC4 (DSH ADJ §2.3): an unresolvable credential is a blocked run, not a
+    failed send; freezing never dereferences the vault."""
+    from tests.core.test_fea00a_pipeline_seam import _prepare_ocr
+
+    core, _, region = _new_workspace(workspace('credential-block'))
+    try:
+        _, ocr, _, ocr_result = _prepare_ocr(core, region)
+        assert core.pipeline.commit_step_result(ocr.step_run_id, ocr_result).status == 'committed'
+        vault = {'secret': None}
+        _remote_translation_provider(
+            core, region, provider_id='fea10-cred-block', credential_ref='vault:ref',
+            credential_resolver=lambda ref: vault['secret'])
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        prepared = core.pipeline.prepare_run('retranslate_region', scope)  # freeze needs no secret
+        run, _ = core.pipeline.accept_prepared_run(prepared, scope, idempotency_key='cred-block')
+        core.pipeline.plan_run(run.run_id)
+        assert run.status is PipelineRunStatus.BLOCKED
+        blocked_reasons = [unit.reason for task in run.tasks for unit in task.units
+                      if unit.decision is PlanDecision.BLOCKED]
+        assert 'PROVIDER_UNAVAILABLE' in blocked_reasons
+        vault['secret'] = 'resolved-secret'
+        core.pipeline.plan_run(run.run_id, mode='resume_blocked')
+        assert run.status is not PipelineRunStatus.BLOCKED
+    finally: core.conn.close()
+
+
+def test_frozen_provider_version_unavailable_blocks_run():
+    """AC4 (DSH ADJ §2.3): a local provider whose live version no longer matches
+    the frozen snapshot blocks the run instead of silently replaying another version."""
+    from tests.core.test_fea00a_pipeline_seam import _prepare_ocr
+
+    core, _, region = _new_workspace(workspace('version-block'))
+    try:
+        _, ocr, _, ocr_result = _prepare_ocr(core, region)
+        assert core.pipeline.commit_step_result(ocr.step_run_id, ocr_result).status == 'committed'
+        core.pipeline_defaults.save_provider_binding('translate', 'm2ac1-mock-translate')
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        prepared = core.pipeline.prepare_run('retranslate_region', scope)
+        frozen_model = prepared['providerBindingSnapshot']['translate']['execution']['model']
+        run, _ = core.pipeline.accept_prepared_run(prepared, scope, idempotency_key='version-block')
+        live = core.providers.registry.resolve('translation', 'm2ac1-mock-translate')
+        live.model = 'mock-translate-v2'
+        core.pipeline.plan_run(run.run_id)
+        assert run.status is PipelineRunStatus.BLOCKED
+        blocked_reasons = [unit.reason for task in run.tasks for unit in task.units
+                      if unit.decision is PlanDecision.BLOCKED]
+        assert 'PROVIDER_UNAVAILABLE' in blocked_reasons
+        live.model = frozen_model
+        core.pipeline.plan_run(run.run_id, mode='resume_blocked')
+        assert run.status is not PipelineRunStatus.BLOCKED
+    finally: core.conn.close()
+
+
+def test_retry_after_provider_change_creates_linked_run_without_writeback():
+    """AC4 (DSH ADJ §2.3): retrying with a changed provider configuration is a
+    new linked run (source_run_id -> old run); the old run's frozen snapshot is
+    never rewritten."""
+    from tests.core.test_fea00a_pipeline_seam import _prepare_ocr
+
+    core, page, region = _new_workspace(workspace('retry-provider-change'))
+    try:
+        core.pipeline_defaults.save_provider_binding('translate', 'm2ac1-mock-translate')
+        parent = core.pipeline.create_run('reocr_single', PipelineScope(ScopeType.PAGE, selected_ids=(page,)))
+        core.pipeline.plan_run(parent.run_id)
+        parent.status = PipelineRunStatus.COMPLETED_WITH_FAILURES
+        parent.tasks[0].status = PipelineTaskStatus.FAILED
+        core.pipeline._persist(parent)
+        parent_binding = parent.provider_binding_snapshot['translate']
+        # The user confirms a different provider configuration for the retry.
+        _remote_translation_provider(core, region, provider_id='fea10-retry-new', model='new-model')
+        child, created = core.pipeline.accept_retry_failed_targets(parent.run_id, 'retry-changed')
+        assert created and child.source_run_id == parent.run_id
+        child_execution = child.provider_binding_snapshot['translate']['execution']
+        assert child_execution['model'] == 'new-model'
+        # The old run keeps its accepted freeze byte-for-byte.
+        fresh_parent = core.pipeline.get_run_snapshot(parent.run_id, fresh=True)
+        assert fresh_parent.provider_binding_snapshot['translate'] == parent_binding
+        assert fresh_parent.status is PipelineRunStatus.COMPLETED_WITH_FAILURES
     finally: core.conn.close()

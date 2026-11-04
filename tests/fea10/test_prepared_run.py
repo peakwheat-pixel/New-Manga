@@ -77,3 +77,109 @@ def test_prepared_schema_rejects_unknown_settings_before_candidate_escape():
             prepare(core, region)
         assert core.pipeline._store.list_ids() == ()
     finally: core.conn.close()
+
+
+def _remote_translation_provider(core, region, *, provider_id, model='pinned-model',
+                                 base_url='https://fixture.invalid/v1', credential_ref=None,
+                                 credential_resolver=None, options=()):
+    import json as _json
+    from infrastructure.providers.registry import ProviderDescriptor
+    from infrastructure.providers.translation_openai import OpenAiTranslationProvider
+    from infrastructure.providers.openai_client import OpenAiCompatibleClient, OpenAiCompatibleConfig
+    from ports.network.transport import TransportOutcome, TransportResponse
+    calls = []
+
+    class Transport:
+        def send(self, request, profile):
+            calls.append(request)
+            body = {'choices': [{'message': {'content': _json.dumps({'translations': [
+                {'region_id': region, 'translated_text': 'translated'}]})}}]}
+            return TransportOutcome(TransportResponse(status=200, body=_json.dumps(body).encode()))
+
+    config = OpenAiCompatibleConfig(provider_id, 'openai-compatible', base_url=base_url,
+                                    model=model, credential_ref=credential_ref)
+    provider = OpenAiTranslationProvider(
+        config, OpenAiCompatibleClient(config, Transport(), credential_resolver=credential_resolver),
+        provider_id=provider_id, options=options)
+    core.providers.registry.register(
+        ProviderDescriptor(provider_id, 'openai-compatible', frozenset({'translation'})), lambda: provider)
+    core.pipeline_defaults.save_provider_binding('translate', provider_id)
+    return provider, calls
+
+
+def test_unsupported_provider_type_prepare_fails_closed_but_start_run_survives():
+    from infrastructure.providers.registry import ProviderDescriptor
+
+    class LegacyTranslationProvider:
+        provider_id = 'fea10-legacy'
+        provider_type = 'docTR-blob'
+        model = 'legacy-model'
+        target_language = ''
+        options = ()
+
+        def translate(self, payload):
+            raise AssertionError('not reached')
+
+    core, _, region = _new_workspace(workspace('ac2-unsupported-type'))
+    try:
+        core.providers.registry.register(
+            ProviderDescriptor('fea10-legacy', 'docTR-blob', frozenset({'translation'})),
+            LegacyTranslationProvider)
+        core.pipeline_defaults.save_provider_binding('translate', 'fea10-legacy')
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        # Prepare must fail closed: an ID-only binding is not a replayable snapshot.
+        with pytest.raises(PipelineError) as caught:
+            core.pipeline.prepare_run('retranslate_region', scope)
+        assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
+        assert core.pipeline._store.list_ids() == ()
+        # The released StartRun path keeps working for the same legacy binding.
+        run = core.pipeline.create_run('retranslate_region', scope)
+        assert run.provider_binding_snapshot.get('translate')
+        assert 'execution' not in (
+            run.provider_binding_snapshot['translate']
+            if isinstance(run.provider_binding_snapshot['translate'], dict) else {})
+    finally: core.conn.close()
+
+
+def test_incomplete_remote_config_fails_closed_at_prepare():
+    core, _, region = _new_workspace(workspace('ac2-incomplete-model'))
+    try:
+        _remote_translation_provider(core, region, provider_id='fea10-nomodel', model='')
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        with pytest.raises(PipelineError) as caught:
+            core.pipeline.prepare_run('retranslate_region', scope)
+        assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
+        assert core.pipeline._store.list_ids() == ()
+    finally: core.conn.close()
+
+
+def test_snapshot_carries_no_authentication_material_and_rejects_smuggling():
+    from tests.core.test_fea00a_pipeline_seam import _prepare_ocr
+    core, _, region = _new_workspace(workspace('ac2-sensitive-surface'))
+    try:
+        _, ocr_step, _, ocr_result = _prepare_ocr(core, region)
+        assert core.pipeline.commit_step_result(ocr_step.step_run_id, ocr_result).status == 'committed'
+        runs_before = set(core.pipeline._store.list_ids())
+        secret = 'SUPER-SECRET-TOKEN-VALUE'
+        provider, _ = _remote_translation_provider(
+            core, region, provider_id='fea10-cred', credential_ref='vault:opaque-ref',
+            credential_resolver=lambda ref: secret, options=(('temperature', '0.5'),))
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        prepared = core.pipeline.prepare_run('retranslate_region', scope)
+        serialized = json.dumps(prepared, ensure_ascii=False, default=str)
+        assert secret not in serialized
+        execution = prepared['providerBindingSnapshot']['translate']['execution']
+        assert execution['credential_ref'] == 'vault:opaque-ref'
+        assert 'authorization' not in serialized.lower()
+        # Authentication material smuggled through run overrides is rejected outright.
+        with pytest.raises(PipelineError) as caught:
+            core.pipeline.prepare_run(
+                'retranslate_region', scope, overrides={'translate': {'token': secret}})
+        assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
+        # Options outside the frozen replay whitelist never reach a candidate.
+        provider.options = (('undocumented_key', '1'),)
+        with pytest.raises(PipelineError) as caught:
+            core.pipeline.prepare_run('retranslate_region', scope)
+        assert caught.value.code == 'RUN_SNAPSHOT_INCOMPLETE'
+        assert set(core.pipeline._store.list_ids()) == runs_before
+    finally: core.conn.close()

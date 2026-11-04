@@ -3,8 +3,8 @@ id: FEA-10
 title: 快照 / 候选 / 提交安全（PreparedRun 两阶段 + canonical request builder + retry 快照 + candidate-only apply）
 kind: implementation
 governance_version: 3
-status: in_progress
-approval: **scope approved r6（Codex，P0=0/P1=0/P2=2 非阻断）+ DSH Appointment 2026-11-04**；硬前置 FEA-10-PREREQ-1 已 done；DSH 2026-11-04 释放 Owner 实施
+status: in_review
+approval: **scope approved r6（Codex，P0=0/P1=0/P2=2 非阻断）+ DSH Appointment 2026-11-04**；硬前置 FEA-10-PREREQ-1 已 done；DSH 2026-11-04 释放 Owner 实施；r2（AC2/3/4/6 补齐）2026-11-04 转 in_review
 suggested_owner: codex
 owner: codex（认领 2026-11-04；DSH 释放）
 claimed_at: 2026-11-04T07:44:00.000Z
@@ -74,6 +74,7 @@ allowed_paths:
   - tests/fea10/test_snapshot_retry.py
   - tests/fea10/test_commit_zero_write.py
   - tests/fea10/test_idempotent_receipt.py
+  - tests/fea10/test_control_terminal.py
   - tests/fea10/support/restart_core.py
   - tests/pipeline/test_pipeline_production_seam.py
   - tests/pipeline/test_pipeline.py
@@ -127,14 +128,14 @@ out_of_scope:
 ## Acceptance Criteria（草案）
 
 - [x] **AC1（Prepare 两阶段）**：`PrepareRun` 生成 `PreparedRunId/snapshotDigest/generation/expiresAt/displaySummary/redactedPayloadPreview` 且**零 DB 写、零执行**；`AcceptRun` 仅 digest 匹配后写 Run；候选过期→`RUN_PREVIEW_EXPIRED`；三码按 M2-C1 冻结投影。 <<MET>>
-- [ ] **AC2（快照完整与敏感面）**：settings/provider snapshot 为完整可重放值；缺失/不完整→`RUN_SNAPSHOT_INCOMPLETE`；敏感认证材料不入普通快照/日志/错误/证据；强类型白名单落盘（非整字典）。 <<PARTIAL: 远程 typed config 已实现，其他 provider 完整版本/参数快照未闭环>>
-- [ ] **AC3（预览 stale、配置隔离与 digest 语义）**：确认前目标/源/草稿/保护/配置变化→stale 拒绝零副作用；接受后 defaults/邻页变化不静默改变 payload。**`preparedDigest` 严格按冻结四元组算法校验**；另以 `payloadDigestPreview` 与 `payloadDigestSend` 比较（二者同源同值），**不要求四元组摘要与 payload 摘要相等**；邻页上下文不可变 pin 可验证。 <<PARTIAL: 已知源文本翻译与邻页 pin 已验证，上游 OCR 请求精确预览待 DSH 裁决>>
-- [ ] **AC4（retry 两分支）**：同键重放返回原 Run 不新建；新 key 的 `RetryFailedTargets` 新建 Run（`source_run_id`）、目标=失败页子集、上下文按接受时重读冻结；凭据/版本不可用→阻塞；新配置须差异确认创建关联任务，不写回旧 run。 <<PARTIAL: retry 两分支已验证，凭据/版本 blocked 与新配置确认未闭环>>
+- [x] **AC2（快照完整与敏感面）**：settings/provider snapshot 为完整可重放值；缺失/不完整→`RUN_SNAPSHOT_INCOMPLETE`；敏感认证材料不入普通快照/日志/错误/证据；强类型白名单落盘（非整字典）。r2 按 DSH ADJ §2.2 二选一口径落地：mock-local（`mock-local-v1`）与 openai-compatible 家族（`openai-compatible-v1`，含 local-sakura/vision）走 typed 完整快照（`execution`+`execution_digest` 闭环校验）；其余类型/未注册 provider/不完整配置/白名单外选项在 Prepare fail-closed 抛 `RUN_SNAPSHOT_INCOMPLETE`，既有 StartRun 兼容不回归；凭据只存 opaque `credential_ref`，token/password 键与可逆编码在 overrides/快照面全拒（`test_prepared_run.py` 11 passed）。 <<MET>>
+- [x] **AC3（预览 stale、配置隔离与 digest 语义）**：确认前目标/源/草稿/保护/配置变化→stale 拒绝零副作用；接受后 defaults/邻页变化不静默改变 payload。**`preparedDigest` 严格按冻结四元组算法校验**；另以 `payloadDigestPreview` 与 `payloadDigestSend` 比较（二者同源同值），**不要求四元组摘要与 payload 摘要相等**；邻页上下文不可变 pin 可验证。r2 按 DSH ADJ §2.1 口径落地：三文件窄改 `freeze_request`/`complete_frozen`/`request_digest`，preview 与 send 共用同一 builder、同一冻结 config 对象，`payloadDigestSend` 取自实际发送的冻结字节；可确定请求（`retranslate_region`）transport 拦截四路一致（r1 保持）；上游 OCR 依赖步骤 preview 标 `requires_upstream_output` 不制造正文，Accept 后 settings/provider/defaults 漂移下 send 仍用冻结 endpoint/model（`test_snapshot_retry.py` 7 passed）；wire/命令面/冻结契约零改动，providers 回归 559 passed/4 skipped。 <<MET>>
+- [x] **AC4（retry 两分支）**：同键重放返回原 Run 不新建；新 key 的 `RetryFailedTargets` 新建 Run（`source_run_id`）、目标=失败页子集、上下文按接受时重读冻结；凭据/版本不可用→阻塞；新配置须差异确认创建关联任务，不写回旧 run。r2 补齐：凭据不可解析→plan 期 BLOCKED(PROVIDER_UNAVAILABLE)、vault 恢复后 resume 解除；本地 provider 版本漂移（冻结 model≠live model）→BLOCKED、复原后解除；retry 时 provider 配置差异→新 Run（`source_run_id`→旧 run、新 binding 冻结）且旧 run 快照字节不变（`test_snapshot_retry.py`）。 <<MET>>
 - [x] **AC5（candidate-only 与零提前写）**：以下每个条件均单独故障注入并断言 seam 未成功时 `regions.text_json`、`current_revision_id`、`region_revisions` 行数与前态完全相同、Run receipt/counts 不增加、candidate 可诊断/恢复、成功时 live/revision/Run receipt 同事务：① revision 冲突；② Lock；③ manual/final 保护；④ `STALE_RUN_SNAPSHOT`；⑤ source lease 失效；⑥ PageBinding generation 变化；⑦ draft token/sequence 不匹配；⑧ DB 失败；⑨ pause/cancel；⑩ prepare 后崩溃重启。断言限定为**成功提交回执/完成计数不增加**；允许失败/控制状态按冻结语义合法持久化。**事务单位**：a) C-13 多 Region 编辑 apply = 单 `BEGIN IMMEDIATE` 覆盖全部目标 Region（全有/全无，逐 Region expected map）；b) Pipeline step seam = 以 `StepId/TargetIds` 为单位的单事务（`commit_step_result`，含 Run receipt/counts）；两者不得混用 candidate 存储。 <<MET>>
-- [ ] **AC6（控制/完成口径）**：控制请求持久化≠状态改变；UI 不早于 Core 持久 status 显示 paused/cancelled；终态共同不变量（processing=0/waiting=0 + 各终态附加判据）；重启后同源可复读。 <<PARTIAL: 已修控制/终态边界，完整 UI 重连与终态专项矩阵未完成>>
+- [x] **AC6（控制/完成口径）**：控制请求持久化≠状态改变；UI 不早于 Core 持久 status 显示 paused/cancelled；终态共同不变量（processing=0/waiting=0 + 各终态附加判据）；重启后同源可复读。r2 按 DSH ADJ §2.4 新增 `tests/fea10/test_control_terminal.py`（4 passed）：pause/stop 请求持久化后 status 仍 running、projection 只报 Core 持久 status；调度器 unit 边界兑现后 projection 才报 paused/cancelled；四终态共同不变量+completed/completed_with_failures 附加判据+非法组合（终态标签下有 waiting 页）拒绝；同 DataRoot/DB 重开 Core 后 PAUSED 状态与请求位可复读。C# RunMonitor/RunStateStore 结构上只投影 Core 查询结果（无第二真值），既有 .NET 回归覆盖。 <<MET>>
 - [x] **AC7（SC-R09 durable receipt）**：提交成功但响应丢失→同键重放找回原 `run_id`、无第二 Run；**关闭/重启 Core 并重开同一 DB 后同键仍找回原 Run**；同键异 fingerprint→`IDEMPOTENCY_KEY_REUSED`；相同 `request_id` 不同 key 视为两个操作；仅覆盖冻结三类带 key 操作（StartRun/RetryFailedTargets/ControlRun restart），不新增命令。 <<MET>>
 - [x] **AC8（真实生产链路与回归）**：生产 assembly `Prepare/Accept/commit`；真实 Host↔Core IPC（`Fea10RunIpcTests`，`NEWMANGA_FEA10_IPC=1` 门径，隔离 DataRoot）；相关 pytest/.NET 全量不减少；旧 managed 路径、既有 Run 命令、`tests/core/test_p13_run_runtime.py` 等不回归。 <<MET>>
-- [ ] **AC9（范围/冻结/证据）**：C-05/C-15/C-16/C-07 冻结字节与 FEA-08/FEA-09 closeout 未改；范围 diff 合规；独立实现 Review approved；DSH 集成；Handoff + EV + Resource Manifest。 <<BLOCKED: PLAN READY 指针不一致；独立 Review、DSH 集成与 commit pins 待完成>>
+- [ ] **AC9（范围/冻结/证据）**：C-05/C-15/C-16/C-07 冻结字节与 FEA-08/FEA-09 closeout 未改；范围 diff 合规；独立实现 Review approved；DSH 集成；Handoff + EV + Resource Manifest。 <<BLOCKED: r2 已闭合冻结 pins 17/17、FEA-09 零 diff、范围 0 域外、check PASS；余下独立实现 Review、DSH 集成与 commit pins 归 DSH>>
 - [x] **AC10（不越界）**：不提前实现 FEA-11/12/13/14 或 provider 新能力；不新增未冻结 Schema/wire；source 校验消费既有能力；共享组合根仅 DSH 单点提交。 <<MET>>
 
 ## 验证矩阵（AC→文件→命令→断言→证据）
@@ -183,13 +184,30 @@ out_of_scope:
 - 裁决全文：[ADJ-2026-11-04-FEA-10-R2](../reviews/ADJ-2026-11-04-FEA-10-R2.md)：AC3 口径限定；批准 request builder 三文件窄改；AC2/4/6 完成口径；r2 写域与完成标准。
 - r1 字节已由 DSH 固定为阶段集成 commit（partial，不改变 AC 结论）；r2 由 Codex 全新实现会话续作补齐 AC2/3/4/6，Task 保持 `in_progress`。
 
+## 实施与交付记录（r2，2026-11-04，ZCode 续作 Codex r2 中断会话）
+
+- 起点：HEAD `25ba7cb2e`（DSH 固定的 r1 阶段 commit）+ 7 个文件的 r2 半成品（Codex 会话中断遗留，方向正确、未自测）。r2 会话保留其骨架（typed execution 校验/快照构建/probe 接线/三文件窄改），在其上修复、接线并补齐测试。
+- 生产代码：`src/application/tasks/{service,store}.py`（typed execution 白名单校验+digest 闭环+probe；r2 会话核对定稿）、`src/bootstrap/core_assembly.py`（`_provider_probe` 装配）、`src/infrastructure/providers/registry.py`（mock-local/openai-compatible 双 typed 快照构建+`resolve_for_run` 版本校验+`run_binding_available`）、`src/infrastructure/providers/handlers.py`（**r2 新接线**：`canonical_translation_request` 与 `handle_translate` 改用 `provider.freeze_request`/`translate_frozen`，`payloadDigestSend` 取自实际发送的冻结请求）、三文件窄改 `src/ports/translation/protocol.py`（`request_digest`）、`src/infrastructure/providers/{translation_openai,openai_client}.py`（`freeze_request`/`complete_frozen`/`FrozenCompletionRequest`，complete 走冻结 endpoint/body 并拒绝异 config）。
+- 测试：`tests/fea10/test_prepared_run.py` +3（unsupported 类型 fail-closed+StartRun 兼容、不完整 model fail-closed、敏感面零泄漏+token 走私拒绝+白名单外 options 拒绝）、`tests/fea10/test_snapshot_retry.py` +4（requires_upstream_output 预览标记+Accept 后配置隔离、凭据阻挡+恢复、版本阻挡+恢复、retry 差异确认新 Run 不写回）、新增 `tests/fea10/test_control_terminal.py`（AC6 专项 4 条）、`tests/fea10/support/restart_core.py`（播种后清 ocr binding：mock binding 在生产 Core 下 Prepare 必须 fail-closed 是 r2 正确语义，IPC 测试改测 Prepare/Accept/重放 wire 链路本身；--start 重放前恢复 binding 保持 quartet 匹配）。
+- r2 门禁（全 EXIT=0，logs/`*-r2.log`）：主套件 pytest 1047 passed（1036+11 新增，FEA-10 专项 33→44，无 failed）；providers 559 passed/4 skipped（与 r1 等量）；卡中逐文件（含 control 文件共 20 文件）248 passed；build 0 warning/0 error；.NET 全量 1344 passed/0 failed/75 skipped（与基线完全一致）；真实 IPC 1 passed（restart_core 调整后）；check PASS（3 warnings）；pins 17/17；范围 0 域外（含 untracked，`test_control_terminal.py` 已按 DSH r2 授权入 allowed_paths）；FEA-09 被测重写的 1 文件已 checkout 恢复并断言零 diff。
+- 已知边界（如实）：真实 IPC 场景下生产 Core 无法注册 mock provider，带 mock binding 的 Prepare fail-closed 属预期语义，该链路对 provider 快照的正向覆盖由 Python 侧测试承担；IPC 测试继续覆盖 Prepare→Accept→同键重放→Core 重启重放的完整 wire 链路。C# RunMonitor 无代码改动（结构性只投影 Core 查询结果）。AC9 的独立 Review/集成仍归 DSH。
+- 无 commit/push；`delivery_head` 留空待 DSH。
+
+## DSH r2 集成复核（2026-11-04）
+
+- r2 会话（Codex → ZCode 接力）因 Codex 额度耗尽（19:50 重置）、ZCode 429（21:51 重置）先后中断；DSH 作为 Lead/Architect 接手收尾并复跑门禁（授权记录：ADJ-2026-11-04-FEA-10-R2 §3）。
+- **DSH 独立复跑门禁**（`G:/CODEX/New Manga.workspace/FEA-10/logs/dsh/dsh-gates-r2.log`）：build EXIT=0（0 warning/0 error）；pytest `tests/fea10 tests/core tests/pipeline` EXIT=0（**1047 passed**）；`tests/providers` EXIT=0（559 passed / 4 skipped）；`dotnet test` EXIT=0（**1344 passed / 0 failed / 75 skipped**，不减少）；真实 IPC EXIT=0（1 passed）；check EXIT=0（PASS，3 warnings）；pins 17/17；范围 0 域外；FEA-09 证据在 DSH 跑测中被重写 1 文件，已恢复并断言零 diff。
+- 证据刷新（DSH）：`record_delivery.py` → changed_files=30、out_of_scope=[]、FEA09_DIFF=EMPTY；AC-MATRIX 新 pin `7428c009…` 回填本卡 Canonical Evidence。
+- AC 结论：AC1–AC8、AC10 MET；AC9 的独立 Review/最终集成由 DSH 继续（Review 待 Agent 额度恢复后派全新上下文）。
+- 结论：r2 字节满足集成条件，可固定为最终交付 commit；独立实现 Review 未完成前不得 closeout/done。
+
 ## Canonical Evidence
 
 工作树 SHA-256 pin 是本轮只读复核入口；遵守用户“不 commit”要求，commit 暂填 pending。DSH 固定集成/交付提交后补 commit，不能将起始 HEAD 填作包含新证据的 commit。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 PARTIAL/BLOCKED 与门禁索引） | verification/FEA-10/AC-MATRIX.md | pending | 814d6a1745990f0bec4dc61f5016de6ed76e0260df71b0bccfd0c5f7e6417009 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | pending | 7428c009b94e58ce08a3938e93baf6511fba42f1502591253c753e230ffb41f7 | CANONICAL |
 
 ## Resource Manifest
 

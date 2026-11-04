@@ -35,12 +35,22 @@ def main():
             run, created = core.pipeline.accept_prepared_run(prepared, scope, idempotency_key='restart-durable')
             assert created
             receipt_path.write_text(json.dumps({'run_id': run.run_id, 'region_id': region, 'prepared': prepared}), encoding='utf-8')
+            # FEA-10 r2: a mock-local binding only exists under the mock
+            # assembly. The production Core this fixture is handed to never
+            # registers it, so PrepareRun on that binding must fail closed
+            # (RUN_SNAPSHOT_INCOMPLETE). Clear the binding so the real-IPC
+            # exercise tests the Prepare/Accept/replay wire path itself.
+            core.pipeline_defaults.clear_provider_binding('ocr')
             print('COMMITTED_WITH_ACK_DROPPED run_id=' + run.run_id)
         finally: core.conn.close()
     else:
         receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
         core = _assemble(root)
         try:
+            # The seeding pass cleared the mock binding for the production
+            # Core; this mock-assembly replay must see the binding the seed's
+            # prepared quartet was frozen with, or the digest is stale.
+            core.pipeline_defaults.save_provider_binding('ocr', 'm2ac1-mock-ocr')
             # Expiry cannot hide an already committed durable receipt.
             receipt['prepared']['expiresAt'] = '2000-01-01T00:00:00+00:00'
             scope = PipelineScope(ScopeType.REGION, selected_ids=(receipt['region_id'],))

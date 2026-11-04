@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 
 from ports.network.profiles import NetworkProfile
 from ports.network.transport import Transport, TransportError, TransportRequest
+from ports.translation.protocol import request_digest
 from ports.providers.errors import (
     MissingCredential,
     ProviderAuthenticationError,
@@ -109,6 +110,19 @@ class OpenAiCompatibleConfig:
 
 
 @dataclass(frozen=True)
+class FrozenCompletionRequest:
+    """Authentication-free bytes built once from one immutable configuration."""
+
+    config: OpenAiCompatibleConfig = field(repr=False)
+    endpoint: str
+    body: bytes = field(repr=False)
+
+    @property
+    def digest(self) -> str:
+        return request_digest(endpoint=self.endpoint, model=self.config.model, body=self.body)
+
+
+@dataclass(frozen=True)
 class CompletionResult:
     raw_text: str
     status: int
@@ -159,10 +173,7 @@ class OpenAiCompatibleClient:
         options: dict[str, object] | None = None,
         stage: str = "complete",
     ) -> CompletionResult:
-        import time
-
-        self.config.require_configured()
-        payload = self._build_payload(
+        request = self.freeze_request(
             user_text=user_text,
             system_prompt=system_prompt,
             image_bytes=image_bytes,
@@ -170,6 +181,28 @@ class OpenAiCompatibleClient:
             response_format_json=response_format_json,
             options=options,
         )
+        return self.complete_frozen(request, stage=stage)
+
+    def freeze_request(
+        self, *, user_text: str, system_prompt: str = "", image_bytes: bytes | None = None,
+        image_mime: str = "image/png", response_format_json: bool = True,
+        options: dict[str, object] | None = None,
+    ) -> FrozenCompletionRequest:
+        config = self.config
+        config.require_configured()
+        payload = self._build_payload(
+            user_text=user_text, system_prompt=system_prompt, image_bytes=image_bytes,
+            image_mime=image_mime, response_format_json=response_format_json, options=options,
+        )
+        return FrozenCompletionRequest(config, config.url(),
+                                       json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+
+    def complete_frozen(self, request: FrozenCompletionRequest, *, stage: str = "complete") -> CompletionResult:
+        import time
+
+        # A different client/config cannot silently redirect an already frozen request.
+        if request.config is not self.config:
+            raise ProviderInputError("frozen request configuration differs", stage=stage)
         headers = {"Content-Type": "application/json"}
         if self.config.credential_ref:
             headers["Authorization"] = f"Bearer {self._resolve_credential()}"
@@ -180,9 +213,9 @@ class OpenAiCompatibleClient:
             outcome = self._transport.send(
                 TransportRequest(
                     method="POST",
-                    url=self.config.url(),
+                    url=request.endpoint,
                     headers=headers,
-                    body=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                    body=request.body,
                 ),
                 profile,
             )

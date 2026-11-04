@@ -1,0 +1,9 @@
+# CMD: pwsh -NoProfile -File tools/governance/check.ps1 (final, after Task card r2 update)
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-10.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3167 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5332 bytes / 53 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-10\changed-files.txt, G:\CODEX\New Manga\verification\FEA-10\DELIVERY-MANIFEST.json, G:\CODEX\New Manga\verification\FEA-10\OWNER-CHECKPOINT.md, G:\CODEX\New Manga\verification\FEA-10\record_delivery.py, G:\CODEX\New Manga\verification\FEA-10\RESOURCE-MANIFEST.json, G:\CODEX\New Manga\verification\FEA-10\ipc\real-ipc.txt, G:\CODEX\New Manga\verification\FEA-10\logs\canonical-commit.log, G:\CODEX\New Manga\verification\FEA-10\logs\dotnet-build-final.log
+Governance check: PASS (4 warnings)
+EXIT=0

@@ -761,15 +761,15 @@ class PipelineService:
             return frozenset({"inpaint"})
         return frozenset()
 
-    @staticmethod
-    def _provider_available(run: PipelineRun, step_type: str) -> bool:
+    def _provider_available(self, run: PipelineRun, step_type: str) -> bool:
         binding = run.provider_binding_snapshot.get(step_type)
         if binding is None:
             return True
         if isinstance(binding, Mapping):
             if binding.get("available") is False or binding.get("enabled") is False:
                 return False
-        return binding is not False
+        probe = getattr(self, "_provider_probe", None)
+        return binding is not False and (probe is None or probe(step_type, binding))
 
     @staticmethod
     def _planned_task_status(units: Sequence[PlanUnit]) -> PipelineTaskStatus:

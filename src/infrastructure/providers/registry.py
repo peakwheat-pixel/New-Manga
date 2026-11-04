@@ -327,27 +327,54 @@ class ProviderRegistry:
         from application.tasks.store import FrozenRunSnapshots, snapshot_value, snapshot_digest
         from domain.tasks.models import freeze_snapshot
         bindings = snapshot_value(snapshots.provider_bindings)
-        for step, capability in (("translate", "translation"), ("ocr", "ocr")):
-            binding = bindings.get(step)
+        for step, binding in tuple(bindings.items()):
+            capability = {"translate": "translation", "detect": "detection"}.get(step, step)
             if not binding:
                 continue
             provider_id = binding if isinstance(binding, str) else next((
                 binding.get(key) for key in ("provider_id", "provider_profile_id", "id") if binding.get(key)), None)
             if not provider_id:
                 continue
-            try:
-                provider = self.resolve(capability, provider_id)
-            except ProviderError:
-                # Preserve unavailable bindings: the existing planner owns blocking.
+            descriptor = self.descriptor(provider_id, capability=capability)
+            if descriptor is None or descriptor.provider_type not in {
+                "openai-compatible", "openai-compatible-vision", "local-sakura", "mock-local"
+            }:
+                # Legacy StartRun remains compatible; Prepare rejects this incomplete binding.
                 continue
+            slot = self.binding_aliases.get((provider_id, capability), provider_id)
+            registration = self._registrations[slot]
+            if registration.factory is None:
+                continue
+            # Snapshot creation must never dereference a credential reference or probe the network.
+            provider = self._instances.get(slot)
+            if provider is None:
+                provider = registration.factory()
+                self._instances[slot] = provider
             config = getattr(provider, "config", None)
             if config is None:
+                from infrastructure.providers.mock_local import (
+                    MockLocalDetectionProvider, MockLocalOcrProvider, MockLocalTranslationProvider,
+                )
+                if type(provider) in {MockLocalDetectionProvider, MockLocalOcrProvider, MockLocalTranslationProvider}:
+                    execution = dict(provider_id=provider_id, provider_type="mock-local",
+                                     base_url="", model=provider.model, credential_ref=None,
+                                     timeout_seconds=0, extra_options=[], network_profile=None,
+                                     target_language="", options=[], adapter_version="mock-local-v1")
+                    value = {"provider_id": provider_id} if isinstance(binding, str) else dict(binding)
+                    value.update(execution=execution, execution_digest=snapshot_digest(execution))
+                    bindings[step] = value
+                continue
+            from infrastructure.providers.openai_client import OpenAiCompatibleConfig, default_network_profile
+            from infrastructure.providers.translation_openai import OpenAiTranslationProvider
+            from infrastructure.providers.ocr_vision import VisionOcrProvider
+            if type(config) is not OpenAiCompatibleConfig or type(provider) not in {OpenAiTranslationProvider, VisionOcrProvider}:
                 continue
             # A credential reference is an opaque vault lookup, never authentication bytes.
             execution = {key: getattr(config, key) for key in (
                 "provider_id", "provider_type", "base_url", "model", "credential_ref",
                 "timeout_seconds", "extra_options")}
-            profile = config.network_profile
+            execution["adapter_version"] = "openai-compatible-v1"
+            profile = config.network_profile or default_network_profile()
             execution["network_profile"] = None if profile is None else {
                 key: snapshot_value(getattr(profile, key)) for key in (
                     "network_profile_id", "name", "mode", "http_proxy", "https_proxy", "socks5_proxy",
@@ -357,17 +384,8 @@ class ProviderRegistry:
                 execution["network_profile"]["bypass_hosts"] = sorted(profile.bypass_hosts)
             execution["target_language"] = getattr(provider, "target_language", "")
             execution["options"] = list(getattr(provider, "options", ()))
-            allowed_options = {"temperature", "top_p", "max_tokens", "max_completion_tokens", "seed",
-                               "frequency_penalty", "presence_penalty", "stop"}
-            if any(key not in allowed_options for key, _ in execution["options"]):
-                from domain.tasks.models import PipelineError
-                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider options contain unsupported replay fields")
-            # Endpoint credentials are prohibited even when smuggled via query/userinfo.
-            from urllib.parse import urlsplit
-            url = urlsplit(config.base_url)
-            if url.username or url.password or url.query or url.fragment:
-                from domain.tasks.models import PipelineError
-                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider endpoint is not snapshot-safe")
+            from application.tasks.store import validate_provider_execution
+            validate_provider_execution(execution)
             value = {"provider_id": provider_id} if isinstance(binding, str) else dict(binding)
             value["execution"] = execution
             value["execution_digest"] = snapshot_digest(execution)
@@ -399,6 +417,12 @@ class ProviderRegistry:
         execution = binding["execution"]
         if snapshot_digest(execution) != binding.get("execution_digest"):
             raise ProviderUnavailable("frozen provider configuration is incomplete", stage="resolve")
+        if execution.get("adapter_version") == "mock-local-v1":
+            if execution["model"] != getattr(provider, "model", None):
+                raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
+            return replace(provider, model=execution["model"])
+        if execution.get("adapter_version") != "openai-compatible-v1":
+            raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
         from infrastructure.providers.openai_client import OpenAiCompatibleClient, OpenAiCompatibleConfig
         from ports.network.profiles import NetworkProfile
         config_values = {key: execution[key] for key in (
@@ -415,6 +439,22 @@ class ProviderRegistry:
         if hasattr(provider, "target_language"):
             values["target_language"] = execution["target_language"]
         return replace(provider, **values)
+
+    def run_binding_available(self, step: str, binding: Any) -> bool:
+        """Readiness is checked at planning, separate from authentication-free freezing."""
+        if not isinstance(binding, Mapping) or "execution" not in binding:
+            return True  # Preserve the released legacy planner behavior.
+        capability = {"translate": "translation", "detect": "detection"}.get(step, step)
+        try:
+            provider = self.resolve_for_run(capability, binding["provider_id"], binding)
+            config = getattr(provider, "config", None)
+            if config is not None and config.credential_ref:
+                resolver = provider.client._credential_resolver
+                if resolver is None or not resolver(config.credential_ref):
+                    return False
+            return True
+        except (ProviderError, KeyError, TypeError, ValueError):
+            return False
 
     def invalidate(self, provider_id: str | None = None) -> None:
         """Drop cached instances (e.g. after an OOM unload or a settings edit)."""

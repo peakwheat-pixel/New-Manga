@@ -96,13 +96,97 @@ def validate_prepared_snapshots(run: PipelineRun) -> None:
     for value in run.provider_binding_snapshot.values():
         if not isinstance(value, str) and (not isinstance(value, Mapping) or set(value) - binding_fields):
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider binding is not snapshot-safe")
+        if not isinstance(value, Mapping) or "execution" not in value:
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider has no complete replay configuration")
+        validate_provider_execution(value["execution"])
+        if snapshot_digest(value["execution"]) != value.get("execution_digest"):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider replay digest differs")
+        for fallback in value.get("frozen_fallbacks", {}).values():
+            validate_provider_execution(fallback["execution"])
+            if snapshot_digest(fallback["execution"]) != fallback.get("execution_digest"):
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "fallback replay digest differs")
+
+
+def validate_provider_execution(value: Any) -> None:
+    """Closed typed replay schema. Errors never echo rejected values."""
+    from urllib.parse import urlsplit
+    import math
+
+    def reject():
+        raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider replay configuration is incomplete or unsafe")
+
+    required = {"provider_id", "provider_type", "base_url", "model", "credential_ref", "timeout_seconds",
+                "extra_options", "network_profile", "target_language", "options", "adapter_version"}
+    if not isinstance(value, Mapping) or set(value) != required:
+        reject()
+    for key in ("provider_id", "provider_type", "base_url", "model", "target_language", "adapter_version"):
+        if not isinstance(value[key], str):
+            reject()
+    if not value["provider_id"] or not value["model"]:
+        reject()
+    if value["credential_ref"] is not None and not isinstance(value["credential_ref"], str):
+        reject()
+    for options in (value["options"], value["extra_options"]):
+        if not isinstance(options, (tuple, list)):
+            reject()
+        seen = set()
+        for item in options:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                reject()
+            key, option = item
+            if not isinstance(key, str) or key in seen:
+                reject()
+            seen.add(key)
+            if key not in {"temperature", "top_p", "max_tokens", "max_completion_tokens", "seed",
+                           "frequency_penalty", "presence_penalty", "stop"}:
+                reject()
+            if key == "stop":
+                if not isinstance(option, str) and not (
+                    isinstance(option, (tuple, list)) and all(isinstance(s, str) for s in option)):
+                    reject()
+            else:
+                try:
+                    if isinstance(option, bool) or not math.isfinite(float(option)):
+                        reject()
+                except (ValueError, TypeError):
+                    reject()
+    if value["adapter_version"] == "mock-local-v1":
+        if value["provider_type"] != "mock-local" or value["base_url"] or value["credential_ref"] is not None:
+            reject()
+        return
+    if value["adapter_version"] != "openai-compatible-v1" or value["provider_type"] not in {
+        "openai-compatible", "openai-compatible-vision", "local-sakura"
+    }:
+        reject()
+    def safe_url(raw):
+        if not isinstance(raw, str):
+            reject()
+        try:
+            url = urlsplit(raw)
+            if url.scheme not in {"http", "https", "socks5", "socks5h"} or not url.hostname or url.username or url.password or url.query or url.fragment:
+                reject()
+        except ValueError:
+            reject()
+    safe_url(value["base_url"])
+    if not isinstance(value["timeout_seconds"], (int, float)) or not math.isfinite(value["timeout_seconds"]) or value["timeout_seconds"] <= 0:
+        reject()
+    profile = value["network_profile"]
+    fields = {"network_profile_id", "name", "mode", "http_proxy", "https_proxy", "socks5_proxy", "username",
+              "credential_ref", "inherit_system", "timeout_seconds", "verify_tls",
+              "allow_proxy_failure_direct_fallback", "created_at", "updated_at", "bypass_hosts"}
+    if not isinstance(profile, Mapping) or set(profile) != fields:
+        reject()
+    for key in ("http_proxy", "https_proxy", "socks5_proxy"):
+        if profile[key]:
+            safe_url(profile[key])
+    validate_prepared_overrides(value)
 
 
 def validate_prepared_overrides(value: Any) -> None:
     """Reject authentication material before it can enter a transient candidate."""
     if isinstance(value, Mapping):
         for key, item in value.items():
-            if str(key).lower() in {"password", "api_key", "apikey", "authorization", "secret", "access_token",
+            if str(key).lower() in {"token", "password", "api_key", "apikey", "authorization", "secret", "access_token",
                                     "refresh_token", "bearer", "headers", "signing_key", "host_session_credential"}:
                 raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
             validate_prepared_overrides(item)

@@ -28,6 +28,14 @@ from dataclasses import dataclass, field
 from ports.providers.errors import ProviderInputError, is_retryable
 
 
+def request_digest(*, endpoint: str, model: str, body: bytes) -> str:
+    """Full request identity, distinct from the domain-only payload_hash."""
+    value = {"endpoint": endpoint, "model": model, "body": json.loads(body)}
+    canonical = json.dumps(value, ensure_ascii=False, sort_keys=True,
+                           separators=(",", ":"), allow_nan=False).encode("utf-8")
+    return "sha256:" + hashlib.sha256(canonical).hexdigest()
+
+
 def estimate_tokens(text: str) -> int:
     """Cheap CJK-aware estimate (≈0.5–1 char per token); protocol-grade."""
     return max(1, sum(2 if ord(char) > 0x2E80 else 1 for char in text) // 2)

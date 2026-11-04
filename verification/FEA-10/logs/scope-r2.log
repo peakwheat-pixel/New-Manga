@@ -1,0 +1,26 @@
+# scope check (tracked diff + untracked vs allowed_paths)
+# CMD: git diff --name-only + git status --short untracked
+# files: see below
+src/application/tasks/service.py
+src/application/tasks/store.py
+src/bootstrap/core_assembly.py
+src/infrastructure/providers/handlers.py
+src/infrastructure/providers/openai_client.py
+src/infrastructure/providers/registry.py
+src/infrastructure/providers/translation_openai.py
+src/ports/translation/protocol.py
+tests/fea10/support/restart_core.py
+tests/fea10/test_control_terminal.py
+tests/fea10/test_prepared_run.py
+tests/fea10/test_snapshot_retry.py
+verification/FEA-09/logs/wire-redacted.ndjson
+verification/FEA-10/ipc/real-ipc.txt
+verification/FEA-10/logs/dotnet-build-r2.log
+verification/FEA-10/logs/dotnet-tests-r2.log
+verification/FEA-10/logs/governance-r2.log
+verification/FEA-10/logs/ipc-r2.log
+verification/FEA-10/logs/pins-r2.log
+verification/FEA-10/logs/provider-regressions-r2.log
+verification/FEA-10/logs/python-files-validated-r2.log
+verification/FEA-10/logs/python-main-r2.log
+# FEA-09: rewritten by .NET run -> git checkout -- verification/FEA-09 -> git diff --exit-code = 0 (zero diff restored)

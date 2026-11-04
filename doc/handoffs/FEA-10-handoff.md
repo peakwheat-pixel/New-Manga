@@ -1,13 +1,57 @@
 ---
 task_id: FEA-10
-author: Codex（本次全新实现上下文；未自审）
+author: Codex（r1 全新实现上下文；未自审）+ ZCode（r2 续作 Codex 中断会话；未自审）
 recipient: DeepSeek Harness
-base_commit: aa7bcd6161be5df07e2b8bf546600fec04af038f
+base_commit: aa7bcd6161be5df07e2b8bf546600fec04af038f（r1）；25ba7cb2e613a8100d835f3540fc975cfa71b5a5（r2 起点，DSH 阶段 commit）
 delivery_head: null
-status: partial_delivery
+status: in_review
 ---
 
 # Handoff：FEA-10
+
+## r2 续作交付（ZCode，2026-11-04；按 ADJ-2026-11-04-FEA-10-R2 授权）
+
+**AC2/AC3/AC4/AC6 已补齐，AC1–AC8、AC10 均 MET；AC9 仍 BLOCKED（独立 Review 与集成归 DSH）。** 起点=HEAD `25ba7cb2e` + Codex r2 会话中断遗留的 7 个文件半成品（未自测）；本会话保留其骨架、修复接线并补齐测试，无 commit/push。
+
+### r2 改动清单（在 r1 之上）
+
+- 三文件窄改（DSH ADJ §2.1.2 批准）：`src/ports/translation/protocol.py`（`request_digest`：endpoint/model/body 全摘要）、`src/infrastructure/providers/openai_client.py`（`FrozenCompletionRequest`/`freeze_request`/`complete_frozen`：认证无关字节一次构建，complete 发送冻结 endpoint/body 并拒绝异 config）、`src/infrastructure/providers/translation_openai.py`（`translate` 分解为 `freeze_request`+`translate_frozen`）。
+- `src/infrastructure/providers/handlers.py`（r2 本会话新接线）：`canonical_translation_request` 与 `handle_translate` 的 send 路径共用 `provider.freeze_request(payload)`，`payloadDigestSend` 取自**实际发送的冻结请求**（不再事后重组）；mock-local 等无 freeze 能力的 provider 保持 r1 兼容路径。
+- `src/application/tasks/store.py`/`registry.py`/`service.py`/`core_assembly.py`（Codex r2 半成品，本会话核对定稿）：typed `execution` 白名单（provider/endpoint/model/超时/网络 profile/options/目标语言/凭据引用/adapter_version）+ `execution_digest` 闭环校验；mock-local 与 openai-compatible 家族双 typed 快照；`resolve_for_run` 版本/摘要校验；`run_binding_available` probe 挂到 plan 期（凭据不可解析或版本漂移→`BLOCKED(PROVIDER_UNAVAILABLE)`）。
+- 测试：`test_prepared_run.py` +3（unsupported 类型 Prepare fail-closed 且 StartRun 兼容、缺 model fail-closed、敏感面零泄漏+token 走私拒绝+白名单外 options 拒绝）；`test_snapshot_retry.py` +4（requires_upstream_output 预览标记+Accept 后 settings/provider 漂移下 send 用冻结 endpoint/model、凭据阻挡+vault 恢复、版本阻挡+复原、retry 换 provider→新 Run 指回旧 run 且旧 run 快照不变）；新增 `test_control_terminal.py`（AC6 四条）；`restart_core.py` 调整（见风险 8）。
+
+### r2 门禁（全部实跑；命令/EXIT/隔离根见 `verification/FEA-10/logs/*-r2.log`）
+
+| 门禁 | 命令 | EXIT / 结果 |
+|---|---|---|
+| Python 主套件 | `TEMP/TMP=<workspace fixtures/r2-gates-*> C:/Python314/python.exe -m pytest tests/fea10 tests/core tests/pipeline -q` | 0；**1047 passed**（r1 1036 + 11 新增；FEA-10 专项 33→44） |
+| providers 回归 | 同环境 `pytest tests/providers -q` | 0；559 passed / 4 skipped（与 r1 等量） |
+| 卡中逐文件 | 20 文件（含新增 control 文件）`-q` | 0；248 passed |
+| Release build | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release` | 0；0 warning / 0 error |
+| .NET 全量 | `dotnet test ... -c Release --no-build` | 0；**1344 passed / 0 failed / 75 skipped（与基线完全一致）** |
+| 真实 IPC | `NEWMANGA_FEA10_IPC=1 NEWMANGA_BUILD_PYTHON=C:/Python314/python.exe dotnet test NewManga.Host.Tests --filter Fea10RunIpcTests` | 0；1 passed（含 Core 重启同 run_id 重放） |
+| 治理 | `pwsh tools/governance/check.ps1` | 0；PASS（4 warnings，与 DSH r1 复跑口径一致） |
+| 冻结 pins | `pwsh tools/governance/verify_pins.ps1` | 0；17/17 PASS |
+| 范围 | diff+untracked 对 allowed_paths（`test_control_terminal.py` 已按 r2 授权入卡） | 0 域外 |
+| FEA-09 完整性 | .NET 跑测重写 `wire-redacted.ndjson` 后 `git checkout -- verification/FEA-09` | 恢复后 `git diff --exit-code` = 0 |
+
+### r2 NOT_RUN 与已知边界
+
+1. 独立实现 Review、DSH 集成/push：NOT_RUN（AC9，归 DSH）。
+2. 真实外网 provider/真实模型质量：NOT_RUN（transport 均为固定响应 fixture）。
+3. C# RunMonitor/RunStateStore：无代码改动（结构性只投影 Core 查询结果，无第二真值路径）；「UI 不早于 Core」在 Python projection 层专项验证，C# 侧由既有 .NET 回归与真实 IPC 覆盖。
+4. Windows 系统级 source lease 故障、原生 UI 端到端点击：NOT_RUN（沿用 r1 口径）。
+5. `test_control_terminal.py` 的重启复读用同进程重开 DB 模拟（`_assemble` 同一 DataRoot/DB 重建），两进程 stdio 级重启已由 `restart_core.py`/IPC 测试覆盖。
+
+### r2 风险与遗留（在 r1 七条之上）
+
+8. **r2 语义收紧的 IPC 适配**：生产 Core 从不注册 mock provider，mock binding 在其 Prepare 下 fail-closed（`RUN_SNAPSHOT_INCOMPLETE`）是 AC2 二选一的**正确行为**；`restart_core.py` 播种后清除 ocr binding，IPC 测试改为验证 Prepare/Accept/同键重放/Core 重启重放的 wire 链路本身，不再携带 mock binding 正向路径（该路径由 Python 侧 typed 快照测试承担）。`--start` 重放前恢复 binding 保持 seed quartet 匹配。
+9. store 的 `validate_provider_execution` 是**闭合 schema**（字段集合严格相等）；未来新增可重放字段必须先扩此白名单与 `execution_digest` 口径，否则 Prepare 全量 fail-closed（这是设计意图，不是缺陷）。
+10. r1 遗留七条风险继续有效（精确预览仅限可确定请求、本地非 mock provider 家族的 typed 快照为 fail-closed 而非快照化、注入式 seam 非系统级故障、治理指针归 DSH、早期系统 TEMP 材料保留、失败日志保留、无删除/迁移授权）。
+
+---
+
+## r1 交付（Codex，2026-11-04；历史保留）
 
 ## 交付结果
 

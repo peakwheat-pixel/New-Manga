@@ -1549,6 +1549,7 @@ def assemble_core_services(
                 yield
 
         pipeline._catalog.guard_reader = run_guard_value
+        pipeline._provider_probe = provider_runtime.registry.run_binding_available
         pipeline._catalog.source_commit_guard = run_source_guard
         # Legacy callers keep the released eager-recovery behavior. The
         # production Core defers recovery until its process-wide scheduler

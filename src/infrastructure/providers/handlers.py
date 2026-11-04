@@ -249,13 +249,23 @@ class ProductionHandlers:
         return dict(self._handlers)
 
     def canonical_translation_request(self, payload, run, provider_id=None):
-        """Reuse the existing transport body builder; domain payload_hash is narrower."""
+        """Preview and send share one builder: the provider's frozen request.
+
+        ``freeze_request`` builds the immutable ``{endpoint, model, body}``
+        triple from the run-pinned configuration object; the domain-only
+        ``payload_hash`` stays deliberately narrower (DSH ADJ 2026-11-04 §2.1).
+        """
         binding = run.provider_binding_snapshot.get(STEP_TRANSLATE)
         chain = self._chain(run, STEP_TRANSLATE)
         provider_id = provider_id or chain.primary
         resolver = getattr(self.deps.registry, "resolve_for_run", None)
         provider = (resolver(CAPABILITY_TRANSLATION, provider_id, binding) if callable(resolver)
                     else self.deps.registry.resolve(CAPABILITY_TRANSLATION, provider_id))
+        freeze = getattr(provider, "freeze_request", None)
+        if callable(freeze):
+            request = freeze(payload)
+            return {"endpoint": request.endpoint, "model": request.config.model,
+                    "body": json.loads(request.body)}
         client = getattr(provider, "client", None)
         if client is not None and hasattr(provider, "_build_user_text"):
             from infrastructure.providers.translation_openai import TRANSLATION_SYSTEM_PROMPT
@@ -549,11 +559,24 @@ class ProductionHandlers:
             ),
         )
         preview_digests = {}
+        frozen_send_digests = {}
 
         def invoke_translation(provider_id):
             preview_digests[provider_id] = snapshot_digest(self.canonical_translation_request(payload, run, provider_id))
-            return self._invoke_provider(provider_id, CAPABILITY_TRANSLATION,
-                                         lambda provider: provider.translate(payload), run=run)
+
+            def send(provider):
+                freeze = getattr(provider, "freeze_request", None)
+                if callable(freeze) and hasattr(provider, "translate_frozen"):
+                    # Preview and send share this exact builder call; the digest
+                    # is taken from the bytes the transport will actually post.
+                    request = freeze(payload)
+                    frozen_send_digests[provider_id] = snapshot_digest(
+                        {"endpoint": request.endpoint, "model": request.config.model,
+                         "body": json.loads(request.body)})
+                    return provider.translate_frozen(payload, request)
+                return provider.translate(payload)
+
+            return self._invoke_provider(provider_id, CAPABILITY_TRANSLATION, send, run=run)
         outcome = run_chain(
             chain,
             invoke_translation,
@@ -562,7 +585,10 @@ class ProductionHandlers:
         )
         result = outcome.result
         payload_digest_preview = preview_digests[outcome.final_provider_id]
-        payload_digest_send = snapshot_digest(self.canonical_translation_request(payload, run, outcome.final_provider_id))
+        payload_digest_send = frozen_send_digests.get(
+            outcome.final_provider_id,
+            snapshot_digest(self.canonical_translation_request(payload, run, outcome.final_provider_id)),
+        )
         if payload_digest_send != payload_digest_preview:
             raise ProviderInputError("translation request changed during execution", stage=STEP_TRANSLATE)
         translations = dict(result.translations)
