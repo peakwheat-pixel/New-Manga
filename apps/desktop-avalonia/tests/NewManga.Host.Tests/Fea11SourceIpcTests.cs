@@ -199,7 +199,7 @@ public sealed class Fea11SourceIpcTests
         await client.OpenHostSessionAsync();
 
         var registry = new SourceAccessRegistry(root);
-        var registered = registry.Register("fea11-ipc", [receipt.GetProperty("old_zip").GetString()!]);
+        var registered = registry.Register("fea11-ipc", [root]);
         var sources = new SourceReadCoordinator(client, registry, () => true);
         var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
         {
@@ -308,13 +308,9 @@ public sealed class Fea11SourceIpcTests
             ack.GetProperty("authorization").WriteTo(writer);
         });
 
-        // A sync switch binds a new source version: reads need a fresh grant
-        // scoped to that version (C-16 §3.1; stale grants stay fail-closed).
-        var newVersion = scanResult.GetProperty("source").GetProperty("version_id").GetString()!;
-        var newGrantId = await sources.IssueAsync(
-            registered.RegistryId, registered.Generation,
-            receipt.GetProperty("new_zip").GetString()!, "zip",
-            receipt.GetProperty("source_id").GetString()!, newVersion, rendition);
+        // An unchanged apply keeps the current binding: the grant issued for
+        // that binding's source version stays the one reads resolve through
+        // (C-16 §3.1). The v2 key is binding-scoped even for a keep decision.
 
         var resolved = await client.SendAsync("resolve_page_resource", 3, writer =>
         {
