@@ -57,8 +57,8 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [ ] **AC1（M2-C1 字节增量）**：rev 2.12 只新增/登记 §3 所列内容；既有冻结命令/结果/错误/状态/事件语义零改动；文档 diff 逐条对照 C-08 §3；Core 协议 minor 未提升（除 DSH 批准）。
-- [ ] **AC2（host 白名单）**：`allowedRunErrorCodes` 实现；未注册错误码投影为 `category=unknown`、安全消息、原 `code` 保留；三个新码仅在注册后进入白名单。
-- [ ] **AC3（负向对照）**：模拟未注册码 → 断言 host 投影降级 unknown（不拒绝、不改 code）；注册后 → 断言按冻结 category/retryable 投影。
+- [ ] **AC2（host 白名单）**：`allowedRunErrorCodes` 实现；未注册错误码投影为 `category=unknown`、安全消息、原 `code` 保留；三个新码仅在注册后进入白名单；**未注册码不得触发专属恢复/重试动作，也不得作为 UI 分支依据**。
+- [ ] **AC3（负向对照）**：模拟未注册码 → 断言 host 投影降级 unknown（不拒绝、不改 code、无专属恢复/重试动作）；注册后 → 断言按冻结 category/retryable 投影。
 - [ ] **AC4（回归与冻结面）**：既有 Run 命令 wire/测试不回归；`check.ps1`、`verify_pins.ps1` 17/17；C-05/C-15/C-16 字节未改；无生产 Run 实现。
 - [ ] **AC5（证据与 Review）**：真实命令/测试日志（含 EXIT）、范围 diff、独立实现 Review、Handoff、EV/Resource Manifest。
 
@@ -70,6 +70,12 @@ out_of_scope:
 | AC2/AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests` / `NewManga.Host.Tests`（新增投影测试） | .NET 9；隔离数据 | 白名单/unknown 降级通过 |
 | AC4 | `pwsh tools/governance/check.ps1`；`verify_pins.ps1`；全量 `dotnet test`（不减少） | 主工作树 | PASS；17/17 |
 | AC5 | 证据写 `verification/FEA-10-PREREQ-1/**`；`git diff --name-only` 对照写域 | 主工作树 | 全合规；独立 Review approved |
+
+## 文档 rev 与 wire 版本边界（P2-3 澄清）
+
+- `M2-C1 rev 2.12` 是**协议文档修订号**，不等于 Core `PROTOCOL_MINOR` 提升；本卡只登记 PrepareRun/AcceptRun 命令形状与 3 码的文档增量。
+- Core 运行版本、`_RUN_COMMANDS`/dispatch 与兼容回归由 **FEA-10 实现卡**承接（`src/bootstrap/core_service.py`、`core_assembly.py`、`CoreServiceClient.cs` 等）；本卡不实现命令。
+- 若实现需要提升 Core `PROTOCOL_MINOR`，须 DSH 另行批准并登记；未批准前不得改运行版本。
 
 ## 依赖、风险与阻塞
 

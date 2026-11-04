@@ -27,3 +27,17 @@
 - PREREQ-1：scope review（全新 Codex）→ 处置 findings → 冻结 ready + Appointment（Owner 建议 Codex；只改 M2-C1 块② + host 投影白名单与测试）。
 - FEA-10：待 PREREQ-1 done 后释放（Owner Codex；L2 高风险；真实 IPC + 隔离故障注入）。
 - 不 push；C-05/C-15/C-16 冻结字节、FEA-08/FEA-09 closeout 文件不动；共享组合根仍仅 DSH 单点提交。
+
+## Scope Review r1 处置（DSH，2026-11-04）
+
+- Reviewer：Codex 全新上下文（未参与建卡/实现）；报告 `doc/reviews/FEA-10-scope-r1.md`（reviewed_head `ae1d2392`）。
+- 结论：changes_requested；P0=0 / P1=3（写域缺口、SC-R09 验收、提交安全 AC 覆盖）/ P2=5。
+- DSH 处置：**全部接受**。
+  - 写域补 `src/bootstrap/core_service.py`/`core_assembly.py`、`CoreServiceClient.cs`、Python `tests/**` 精确文件；其余目录收窄；
+  - AC 增 SC-R09 durable receipt（丢 ACK/重启找回/异 fingerprint/request_id 非键）；
+  - 提交安全 AC 逐项覆盖 lease/binding/manual/final/draft token/Run receipt，明确多 Region 编辑 apply 与 Pipeline seam 事务单位；
+  - PreparedRun 增 Prepare 零 DB 写/零执行、`RUN_PREVIEW_EXPIRED`、payload digest 一致；
+  - PREREQ-1 增「未注册码不作 UI 分支依据」与 rev 2.12 vs wire minor 边界；
+  - 增验证矩阵与既有实现复用清单。
+- **拆分裁定（P2-4）**：C-08 冻结记录 §3 原「与 C-04b 共用 Task」是冻结期安排；C-04b 已冻结且删除线不属于 FEA-10 范围，DSH 裁定硬前置独立为 `FEA-10-PREREQ-1`，仅做协议注册/投影，不碰删除线；该替代安排登记于本 ADJ，不修改 C-08 冻结字节。
+- 下一轮：两卡修订后交**全新上下文 Codex** scope review r2；仍不写生产代码、不 push。
