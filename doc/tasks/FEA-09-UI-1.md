@@ -3,15 +3,15 @@ id: FEA-09-UI-1
 title: 引用源导入最小 UI/适配接线（V2 ImportDock：plan 预览、密码、取消、进度）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending_scope_review（scope 草案；FEA-09-PREREQ-1 契约冻结后由 DSH 复审并置 ready 后实施）
+status: ready
+approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a71b396eb177627f872d829c59dd7e440ebbbe`；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
 suggested_owner: zcode
-owner: 未指派（scope review approved 后由 DSH Appointment）
-reviewer: pending scope review（独立上下文；scope-r1 待派发）
+owner: zcode（Appointment 2026-11-04；认领后置 in_progress）
+reviewer: codex（独立实现 Review 会话；未参与本 Task 实现/返修）
 depends_on:
   - FEA-09-PREREQ-1
   - FEA-09
-base_commit: null（scope 冻结时登记）
+base_commit: 19a71b396eb177627f872d829c59dd7e440ebbbe
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
@@ -27,8 +27,15 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml
   - apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml.cs
   - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
-  - apps/desktop-avalonia/src/NewManga.App/Services/
-  - apps/desktop-avalonia/tests/
+  - apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/ImportExportContracts.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/**
 out_of_scope:
   - Core/Host 契约、wire、持久化与授权实现（FEA-09 / FEA-09-PREREQ-1 写域）
   - 其它页面/组件/设计基线与 Fluent 视觉重设计（FEA-14 系列/设计基线 v1.1）
@@ -94,3 +101,12 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 | 日期 | 变更 | 依据 |
 |---|---|---|
 | 2026-11-03 | 建立 scope 草案（proposed）：最小 UI/适配接线，作为 FEA-09 的 UI 证据协同切片 | `doc/reviews/FEA-09-scope-r1.md` R1-005；提案 `:1040`；现有 ImportDock 现状 |
+## Release / Appointment（2026-11-04，DSH）
+
+- 用户指令释放本 Task；范围冻结与 Appointment 见 `doc/reviews/FEA-09-UI-1-appointment.md`。
+- Owner：**ZCode**（新 headless 会话；认领后 Task → `in_progress`）；Reviewer：**Codex**（全新上下文，实现完成后独立 Review）；DSH Integrator。
+- base_commit：`19a71b396eb177627f872d829c59dd7e440ebbbe`。
+- 精确 allowed_paths 已冻结（见 frontmatter）：仅 App 层 ImportDock/Services、CoreClient command adapter 既有 source 命令 pass-through、App/Host 测试、本 Task 文档与 evidence。
+- AC-1…AC-5 冻结；验证门禁：`dotnet build`、`dotnet test`（基准 1300/0）、真实 IPC（`NEWMANGA_FEA09_IPC=1`）、`check.ps1`、`verify_pins.ps1`（17/17）、范围 diff；证据 `verification/FEA-09-UI-1/`。
+- 禁止：改 C-05/C-15/C-16 冻结字节、改 FEA-08/FEA-09 closeout 文件、fake/进程内冒充真实 IPC、push。发现需扩围 → 停并写「待裁决」交 DSH。
+- 完成路径：实现 + 测试 + Evidence + Handoff → `in_review` → Codex 独立 Review → DSH 集成验证 → `done`。

@@ -33,7 +33,7 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-09-UI-1
 完成：FEA-09 **done**（2026-11-04，集成 head `87ca5070`；AC-1…AC-10 MET；独立实现复核 approved；.NET 1300/0、pytest fea09 142）。下一候选 FEA-09-UI-1（proposed）。历史记录（完成前）：FEA-09（in_progress；阶段 commit `995d80ca5`；.NET 1298/0/57、pytest 245/92；剩余生产接线/AC/独立 review）；FEA-09-UI-1（proposed）；FEA-08/FEA-09-PREREQ-1 已 done
 
 当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done，契约冻结）→ **FEA-09（done，2026-11-04）** → FEA-10/FEA-11；FEA-09-UI-1（proposed）协同；FEA-12 待 `G-DELETE-IMPL`
