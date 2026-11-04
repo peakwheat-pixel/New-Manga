@@ -1505,7 +1505,9 @@ public sealed class HostController : IHostController, ISourceImportController
 
         try
         {
-            return await imports.GetReceiptAsync(operationId, cancellationToken).ConfigureAwait(false);
+            var receipt = await imports.GetReceiptAsync(operationId, cancellationToken).ConfigureAwait(false);
+            SetLastError(receipt is null ? "HOST_UNAVAILABLE" : null);
+            return receipt;
         }
         catch (Exception ex) when (ex is SourceAccessException or CoreOperationException or SidecarException or IOException or InvalidOperationException or OperationCanceledException)
         {

@@ -1,0 +1,19 @@
+{
+  "command": "git checkout -- verification/FEA-09",
+  "exit": 128,
+  "stderr": "fatal: Unable to create 'G:/CODEX/New Manga/.git/index.lock': Permission denied\n",
+  "fallback": "if checkout denied: exact HEAD blob bytes via git show, no index writes",
+  "restored": [
+    "verification/FEA-09/logs/wire-redacted.ndjson"
+  ],
+  "remainingDiff": "",
+  "finalByteIdentity": {
+    "path": "verification/FEA-09/logs/wire-redacted.ndjson",
+    "headSha256": "5bc320343d0a00ceb962578ad07fbc68eeb2e013dd3611cd870ca38885195e3e",
+    "workingSha256": "5bc320343d0a00ceb962578ad07fbc68eeb2e013dd3611cd870ca38885195e3e",
+    "equal": true,
+    "diffExit": 0,
+    "gitStatus": "M verification/FEA-09/logs/wire-redacted.ndjson",
+    "note": "git status still M while HEAD/worktree raw bytes and git diff are identical; .git/index.lock creation denied. Index not modified."
+  }
+}

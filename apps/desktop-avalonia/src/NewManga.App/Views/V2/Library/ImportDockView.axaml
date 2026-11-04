@@ -11,7 +11,7 @@
           MaxWidth="{DynamicResource Nm.Size.Drawer}"
           Padding="{DynamicResource Nm.Padding.Panel}">
     <StackPanel Spacing="{DynamicResource Nm.Space.3}">
-      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
         <StackPanel Spacing="{DynamicResource Nm.Space.1}">
           <TextBlock Classes="section-title" Text="{Binding Title}" TextWrapping="Wrap" />
           <TextBlock Classes="meta" Text="{Binding Summary}" />
@@ -89,6 +89,8 @@
         <Button Classes="ghost sm"
                 Content="选择源并预览"
                 Command="{Binding PickReferenceSourcesCommand}" />
+        <Button Classes="ghost sm" Content="选择目录并预览"
+                Command="{Binding PickReferenceFolderCommand}" />
         <Button Classes="primary sm"
                 x:Name="ConfirmReferenceButton"
                 Content="确认导入"
@@ -155,6 +157,8 @@
                            Classes="meta"
                            Text="{Binding OutcomeText}"
                            VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Classes="meta"
+                           Text="{Binding CountsText}" TextWrapping="Wrap" />
               </Grid>
             </Border>
           </DataTemplate>

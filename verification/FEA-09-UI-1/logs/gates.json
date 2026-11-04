@@ -1,8 +1,9 @@
 {
   "cwd": "G:/CODEX/New Manga",
-  "head_at_start": "1a5894282b8b6e459b6292f762816bcfad5ac720 (clean)",
-  "generated_at": "2026-11-04T00:58:35Z",
-  "owner": "ZCode (FEA-09-UI-1, Appointment 2026-11-04)",
+  "head_at_start": "7f4f4d3cda882cc4c3bb7c24c37a180480333a17",
+  "base_commit": "7f4f4d3cd",
+  "generated_at": "2026-11-04T02:10:00Z",
+  "owner": "ZCode (initial) / Codex (rework) ; integrated by DSH",
   "gates": [
     {
       "command": "dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo",
@@ -10,44 +11,54 @@
     },
     {
       "command": "dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo",
-      "result": "PASS 1313 passed / 0 failed / 63 skipped across 8 test assemblies (baseline 1300/0 kept; +13 = ReferencedImportUiTests; skips: Host.Tests 34 = 29 existing + 5 new real-IPC gate, CoreClient 22 existing, App 7 existing)",
+      "result": "PASS 1317 passed / 0 failed / 74 skipped across 8 assemblies (baseline 1300/0 kept; new tests included)",
       "assemblies": {
         "NewManga.Appearance.Tests": "21/0/0",
         "NewManga.Presentation.Avalonia.Tests": "38/0/0",
-        "NewManga.Host.Tests": "55/0/34",
+        "NewManga.Host.Tests": "55/0/45",
         "NewManga.ThemeEngine.Tests": "253/0/0",
         "NewManga.DesignSystem.Tests": "117/0/0",
         "NewManga.ApplicationCore.Tests": "31/0/0",
         "NewManga.CoreClient.Tests": "132/0/22",
-        "NewManga.App.Tests": "666/0/7"
+        "NewManga.App.Tests": "670/0/7"
       }
     },
     {
-      "command": "NEWMANGA_FEA09_IPC=1 NEWMANGA_BUILD_PYTHON=<python> dotnet test tests/NewManga.Host.Tests -c Release --no-build --filter FullyQualifiedName~Fea09UiImportIpcTests",
-      "result": "PASS 5/5 (plan+confirm+receipt / AES typed unsupported / ZipCrypto wrong-password then retry / cancel committed-page conservation / wire evidence + zero password leakage)"
+      "command": "NEWMANGA_FEA09_IPC=1 NEWMANGA_BUILD_PYTHON=C:/Python314/python.exe dotnet test tests/NewManga.Host.Tests -c Release --no-build --filter FullyQualifiedName~Fea09UiImportIpc",
+      "result": "PASS 16/16 (11 production HostController+VM+HostRuntime+Python stdio cases + 5 lower-layer coordinator cases)"
+    },
+    {
+      "command": "python tools/generate_api_inventory.py --check",
+      "result": "PASS (C-07 frozen inventory unchanged: 54 methods; no UNFREEZE)"
     },
     {
       "command": "pwsh -NoProfile -File tools/governance/check.ps1",
-      "result": "FAIL 1 error: READY DAG only allows status ready; FEA-09-UI-1 is in_progress. Cause: doc/REBASELINE_PLAN.md READY-node line was not advanced alongside the Owner claim; PLAN/STATUS are outside the Owner's frozen allowed_paths, so the sync is the DSH integration step (same transition pattern FEA-09 went through). 3 warnings are the pre-existing persistent ones (non-terminal ledger 9, STATUS/PLAN budget 80%).",
-      "disposition": "owner-cannot-fix (out of write domain); recorded in Task + Handoff for DSH"
+      "result": "PASS 3 persistent warnings"
     },
     {
       "command": "pwsh -NoProfile -File tools/governance/verify_pins.ps1",
       "result": "PASS 17/17 (C05/C06/C11-C16/FEA01 pins intact)"
     },
     {
-      "command": "git diff --name-only (post-delivery, after restoring FEA-09 canonical evidence)",
-      "result": "all paths within frozen allowed_paths; C-05/C-15/C-16 frozen contract bytes untouched; FEA-08/FEA-09 closeout files untouched",
-      "note": "FEA-09 canonical evidence is rewritable by routine test reruns: Fea09RealIpcTests (IPC gate) rewrites verification/FEA-09/ipc/* (EV-004/EV-005) and NewManga.CoreClient.Tests/WireLogSourceRedactionTests (DEFAULT gate, no IPC env needed) rewrites logs/wire-redacted.ndjson (EV-060). Both classes of rewrite were restored to committed bytes with git checkout and the EV-060 pin re-verified (548de629...9d593). DSH must restore-or-repin after any full rerun; registered as a debt candidate."
+      "command": "git diff --name-only",
+      "result": "all changed/new files within allowed_paths; PLAN/STATUS/TASK_LEDGER are DSH integration files",
+      "note": "FEA-09 canonical evidence overwritten by routine test rerun was restored with git checkout; working tree has no verification/FEA-09/** change"
     },
     {
-      "command": "FEA-06 four PNG audit (sha256 vs verification/FEA-09/logs/fea06-png-audit.json baseline)",
+      "command": "FEA-06 four PNG audit",
       "result": "4/4 UNCHANGED (reader/settings/shelf/workbench)"
     }
   ],
   "password_audit": {
-    "probe": "frozen FEA-09 fixture password literal + utf8-hex(upper/lower) + base64",
-    "scanned": ["wire frames (113)", "core stderr log", "evidence json"],
-    "result": "0 hits (asserted in Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage)"
-  }
+    "probe": "correct/wrong/UI probe password literals, utf8 hex, base64",
+    "scanned": [
+      "request+response wire NDJSON (11 production cases)",
+      "stdout/stderr/host logs",
+      "registry files",
+      "UI error texts/failure results",
+      "Task evidence"
+    ],
+    "result": "0 hits (asserted in Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence)"
+  },
+  "environment_note": "Owner run was blocked by Codex sandbox workspace write ACL; DSH rerun with native environment passed all gates. Production fixture launcher was fixed to line-pump stdin / stream stdout; no product code replaced."
 }

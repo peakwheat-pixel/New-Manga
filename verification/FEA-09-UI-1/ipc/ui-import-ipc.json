@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-04T01:19:41.4429644\u002B00:00",
+  "generated_at": "2026-11-04T01:51:28.7151524\u002B00:00",
   "mode": "real Host\u003C-\u003ECore stdio (python source process) \u002B production SourceImportCoordinator",
   "python": "NEWMANGA_BUILD_PYTHON (path redacted)",
   "password_probe_sha256": "3bfe01ab21f1a5ed570e1747c13bcc926d163d9595ace8dba2f40a9999c57157",
-  "wire_frame_count": 113,
+  "wire_frame_count": 97,
   "cases": [
     {
       "case": "aes-unsupported",
@@ -34,7 +34,7 @@
     },
     {
       "case": "plan-confirm",
-      "chapter_id": "494256bd8e86403f88fc8792a62065aa",
+      "chapter_id": "97ee05977ddd4ba2b9e627db86ca6a4f",
       "plan_totals": 1,
       "receipt_state": "Completed",
       "imported_pages": 1,

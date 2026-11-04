@@ -1,3 +1,4 @@
+using Avalonia.VisualTree;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Interactivity;
@@ -399,5 +400,85 @@ public sealed class ReferencedImportUiTests
         var progress = view.GetControl<TextBlock>("ReferenceProgressText");
         Assert.NotNull(progress);
         Assert.DoesNotContain(@"C:\manga", viewModel.ReferencePlanSummary + viewModel.ReferencePlanItems.Single().DisplayName);
+    }
+
+    [AvaloniaFact]
+    public async Task MultipleEncryptedSourcesAreRefusedBeforeStart()
+    {
+        var host = new FakeHostController(ReadySnapshot());
+        var plan = Plan(true);
+        host.ScriptedReferencePlans.Enqueue(plan with { Items = new[] { plan.Items[0], plan.Items[0] with { SourceIndex = 1, DisplayName = "second.cbz" } } });
+        var (vm, _) = Create(host);
+        await vm.PlanReferenceImportAsync(new[] { new ReferenceImportSource("locked.cbz", false), new ReferenceImportSource("second.cbz", false) });
+        vm.ReferencePassword = SecretProbe;
+        await vm.ConfirmReferenceImportAsync();
+        Assert.False(vm.CanConfirmReference);
+        Assert.False(vm.HasReferencePlan);
+        Assert.Contains("一次仅支持一个加密源，请分别确认", vm.ReferenceErrorText);
+        Assert.Contains("SOURCE_PASSWORD_REQUIRED", vm.ReferenceErrorText);
+        Assert.Equal(0, host.ReferenceStartCalls);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task TemporaryReceiptFailureKeepsOperationAndRecoversBeforeCancel(bool throws)
+    {
+        var host = new FakeHostController(ReadySnapshot());
+        var gate = new SemaphoreSlim(0);
+        var notices = new List<string>();
+        var vm = new ImportDockViewModel(host, null, (t, _) => notices.Add(t), () => "ch-1", () => "chapter",
+            () => Task.CompletedTask, () => { }, () => gate.WaitAsync());
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        await vm.PlanReferenceImportAsync(new[] { new ReferenceImportSource("page.png", false) });
+        host.ScriptedReferenceStarts.Enqueue(SourceImportStartResult.Accepted("op-recover"));
+        host.ReferenceReceiptOverride = () => throws ? Task.FromException<SourceImportReceipt?>(new IOException(SecretProbe)) : Task.FromResult<SourceImportReceipt?>(null);
+        var confirming = vm.ConfirmReferenceImportAsync();
+        gate.Release();
+        Pump();
+        Assert.True(vm.IsReferenceRunning);
+        Assert.True(vm.CanCancelReference);
+        Assert.Contains("状态未知", vm.ReferenceProgressText);
+        vm.Close();
+        Assert.True(vm.IsOpen);
+        Assert.False(vm.CanReplanReference);
+        host.ReferenceReceiptOverride = null;
+        host.ScriptedReferenceReceipts.Enqueue(Receipt("op-recover", SourceImportOperationState.Running, 1, 1));
+        gate.Release();
+        Pump();
+        Assert.Contains("已导入 1", vm.ReferenceProgressText);
+        Assert.Empty(vm.ReferenceErrorText);
+        await vm.CancelReferenceImportAsync();
+        Assert.Equal("op-recover", Assert.Single(host.ReferenceCancelCalls));
+        host.ScriptedReferenceReceipts.Enqueue(Receipt("op-recover", SourceImportOperationState.Cancelled, 1, 1));
+        gate.Release();
+        await confirming;
+        Assert.False(vm.IsReferenceRunning);
+        Assert.False(vm.CanCancelReference);
+        Assert.DoesNotContain(SecretProbe, string.Join(" ", AllVisibleText(vm).Concat(notices)));
+    }
+
+    [AvaloniaFact]
+    public async Task ReceiptControlsShowCommittedPendingAndWholeSourceSkipCounts()
+    {
+        var host = new FakeHostController(ReadySnapshot());
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        host.ScriptedReferenceStarts.Enqueue(SourceImportStartResult.Accepted("op-skip"));
+        var counts = new SourceImportCounts(SkippedSources: 1);
+        host.ScriptedReferenceReceipts.Enqueue(new SourceImportReceipt("op-skip", "ch-1", SourceImportOperationState.Completed,
+            false, 0, new[] { new SourceImportReceiptItem(0, "page.png", "image", "skipped", null, 0, 0, counts) }, counts));
+        var (vm, _) = Create(host);
+        var view = new ImportDockView { DataContext = vm };
+        var window = new Window { Content = view };
+        window.Show();
+        await vm.PlanReferenceImportAsync(new[] { new ReferenceImportSource("page.png", false) });
+        await vm.ConfirmReferenceImportAsync();
+        Pump();
+        var text = Assert.Single(vm.ReferenceReceiptItems).CountsText;
+        Assert.Contains("已提交 0 页 · 待处理 0 页", text);
+        Assert.Contains("跳过 0 页 / 1 源", text);
+        Assert.Contains("跳过 0 页 / 1 源", vm.ReferenceProgressText);
+        Assert.Contains(view.GetVisualDescendants().OfType<TextBlock>(), block => block.Text == text);
+        window.Close();
     }
 }

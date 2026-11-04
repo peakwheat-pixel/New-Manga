@@ -1,0 +1,141 @@
+{
+  "mode": "real HostController \u002B VM \u002B HostRuntime \u002B Python Core stdio",
+  "cases": [
+    {
+      "case": "ordinary",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 1 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 1 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 1,
+      "rows": [
+        "page.png \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 1 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "whole-source-skip",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 1 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 1 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 1,
+      "rows": [
+        "page.png \u5DF2\u8DF3\u8FC7 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 1 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "aes-typed-unsupported",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 1 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 0,
+      "rows": [
+        "aes_member.zip \u4E0D\u652F\u6301\uFF08\u683C\u5F0F\u4E0D\u652F\u6301\uFF08\u542B AES \u52A0\u5BC6 ZIP\uFF09\uFF0CSOURCE_FORMAT_UNSUPPORTED\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "password-wrong",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 2",
+      "error": "",
+      "chapter_pages": 0,
+      "rows": [
+        "zipcrypto_page.cbz \u5931\u8D25\uFF08\u5BC6\u7801\u9519\u8BEF\uFF0CSOURCE_PASSWORD_INVALID\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 2 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "password-retry",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 2,
+      "rows": [
+        "zipcrypto_page.cbz \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 2 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "cancel-at-committed-boundary",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 3 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5DF2\u53D6\u6D88 \u00B7 \u5DF2\u5BFC\u5165 1 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 2 \u00B7 \u53D6\u6D88\u5DF2\u8BF7\u6C42",
+      "error": "",
+      "chapter_pages": 1,
+      "rows": [
+        "a.png \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 1 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90",
+        "b.png \u5F85\u5904\u7406 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90",
+        "c.png \u5F85\u5904\u7406 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "cancel-retry-no-duplicate",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 1 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u9875 / 1 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 3,
+      "rows": [
+        "a.png \u5DF2\u8DF3\u8FC7 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 1 \u6E90",
+        "b.png \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 1 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90",
+        "c.png \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 1 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "changed-before-confirm",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 1 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1",
+      "error": "",
+      "chapter_pages": 0,
+      "rows": [
+        "page.png \u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF0CFILE_IDENTITY_CHANGED\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": [
+        "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1\u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF0CFILE_IDENTITY_CHANGED\uFF09"
+      ]
+    },
+    {
+      "case": "host-folder",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5B8C\u6210 \u00B7 \u5DF2\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 0 \u00B7 \u5F85\u5904\u7406 0",
+      "error": "",
+      "chapter_pages": 2,
+      "rows": [
+        "folder \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 2 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": []
+    },
+    {
+      "case": "secret-failure-capability",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "tokens_remaining": 0
+    },
+    {
+      "case": "secret-failure-register",
+      "error_code": "SOURCE_ACCESS_DENIED",
+      "tokens_remaining": 0
+    },
+    {
+      "case": "secret-failure-start",
+      "error_code": "SOURCE_PLAN_STALE",
+      "tokens_remaining": 0
+    },
+    {
+      "case": "secret-failure-replan",
+      "error_code": "SOURCE_PLAN_STALE",
+      "tokens_remaining": 0
+    }
+  ],
+  "audit_scope": "request\u002Bresponse (wire NDJSON), stdout/stderr/host logs, registry, UI errors, failure results and Task evidence",
+  "password_hits": 0
+}

@@ -462,7 +462,7 @@ public static class SourceImportText
     {
         "ok" => "可导入",
         "encrypted" => "已加密（导入时需要密码）",
-        "unsupported" => "不支持（" + CodeText(reasonCode) + "）",
+        "unsupported" => "不支持（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
         "error" => "读取失败（" + CodeText(reasonCode) + "）",
         _ => "未知状态",
     };
@@ -471,9 +471,9 @@ public static class SourceImportText
     {
         "imported" => "已导入",
         "skipped" => "已跳过",
-        "failed" => "失败（" + CodeText(reasonCode) + "）",
+        "failed" => "失败（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
         "pending" => "待处理",
-        "unsupported" => "不支持（" + CodeText(reasonCode) + "）",
+        "unsupported" => "不支持（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
         _ => outcome,
     };
 
@@ -588,6 +588,13 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
             return SourceImportStartResult.Failed("INVALID_REQUEST", "导入计划无效");
         }
 
+        var accepted = false;
+        await CleanupSecretAsync().ConfigureAwait(false);
+        if (plan.Items.Count(item => item.Status == "encrypted") > 1)
+        {
+            return SourceImportStartResult.Failed("SOURCE_PASSWORD_REQUIRED", "一次仅支持一个加密源，请分别确认");
+        }
+
         var grants = plan.GrantIds;
         string planId = plan.PlanId;
         string planDigest = plan.PlanDigest;
@@ -615,63 +622,52 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
                 var (token, secretPath) = SourceSecretStore.WritePassword(
                     _dataRoot,
                     Encoding.UTF8.GetBytes(password));
+                _activeSecret = (token, secretPath);
                 var expiresAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0 + 120;
-                try
+                var secretGrants = await _sources
+                    .IssueSecretGrantsAsync(plan.GrantIds, token, secretPath, expiresAt, cancellationToken)
+                    .ConfigureAwait(false);
+                // The start request must carry exactly the grants of the plan it confirms, so
+                // the secret clones need their own plan before start.
+                var replan = await _commands
+                    .InvokeAsync(
+                        "plan_import_references",
+                        SourceImportPayloads.PlanRequest(plan.ChapterId, secretGrants, plan.DuplicatePolicy),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                var replanned = SourceImportJson.ParsePlan(plan.ChapterId, plan.DuplicatePolicy, secretGrants, replan.Value);
+                if (replanned is null)
                 {
-                    var secretGrants = await _sources
-                        .IssueSecretGrantsAsync(plan.GrantIds, token, secretPath, expiresAt, cancellationToken)
-                        .ConfigureAwait(false);
-                    // The start request must carry exactly the grants of the plan it confirms, so
-                    // the secret clones need their own plan before start.
-                    var replan = await _commands
-                        .InvokeAsync(
-                            "plan_import_references",
-                            SourceImportPayloads.PlanRequest(plan.ChapterId, secretGrants, plan.DuplicatePolicy),
-                            cancellationToken)
-                        .ConfigureAwait(false);
-                    var replanned = SourceImportJson.ParsePlan(plan.ChapterId, plan.DuplicatePolicy, secretGrants, replan.Value);
-                    if (replanned is null)
-                    {
-                        return SourceImportStartResult.Failed("SOURCE_PLAN_STALE", SourceImportText.CodeText("SOURCE_PLAN_STALE"));
-                    }
-
-                    planId = replanned.PlanId;
-                    planDigest = replanned.PlanDigest;
-                    grants = secretGrants;
-                    secretRef = (token, secretPath, expiresAt);
+                    return SourceImportStartResult.Failed("SOURCE_PLAN_STALE", SourceImportText.CodeText("SOURCE_PLAN_STALE"));
                 }
-                catch
-                {
-                    SourceSecretStore.DeleteIfPresent(secretPath);
-                    try
-                    {
-                        await _sources.RevokeSecretGrantsAsync(CancellationToken.None).ConfigureAwait(false);
-                    }
-                    catch
-                    {
-                        // best effort: grants expire on their own
-                    }
 
-                    throw;
-                }
+                planId = replanned.PlanId;
+                planDigest = replanned.PlanDigest;
+                grants = secretGrants;
+                secretRef = (token, secretPath, expiresAt);
             }
 
             var operationId = "op-" + Guid.NewGuid().ToString("N");
-            await _commands
+            var start = await _commands
                 .InvokeAsync(
                     "start_import_references",
                     SourceImportPayloads.StartRequest(
                         plan.ChapterId, planId, planDigest, grants, plan.DuplicatePolicy, operationId, secretRef),
                     cancellationToken)
                 .ConfigureAwait(false);
-            _activeSecret = secretRef is { } secret ? (secret.Token, secret.Path) : null;
+            if (!SourceImportJson.ReadBool(start.Value, "accepted", false))
+                return SourceImportStartResult.Failed("SOURCE_OPERATION_CONFLICT", SourceImportText.CodeText("SOURCE_OPERATION_CONFLICT"));
+            accepted = true;
             return SourceImportStartResult.Accepted(operationId);
         }
         catch (Exception ex) when (IsTypedFailure(ex))
         {
-            await CleanupSecretAsync().ConfigureAwait(false);
             var code = TypedCode(ex);
             return SourceImportStartResult.Failed(code, SourceImportText.CodeText(code));
+        }
+        finally
+        {
+            if (!accepted) await CleanupSecretAsync().ConfigureAwait(false);
         }
     }
 
@@ -723,133 +719,26 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
 
     public async ValueTask DisposeAsync() => await CleanupSecretAsync().ConfigureAwait(false);
 
-    /// <summary>
-    /// Issues one grant per selected source. A FOLDER becomes one image grant per visible file
-    /// (natural-number order, hidden/system skipped): the Core's frozen source-read verification
-    /// accepts multi-entry folder grants only with per-member locators that the Host-side
-    /// coordinator does not produce, and per-file image grants are the shape FEA-09's flow tests
-    /// use for folders — same Core semantics (entry facts + natural key), zero new contract.
-    /// </summary>
+    /// <summary>Pass the selected path and kind to Host; only Host enumerates and authorizes folders.</summary>
     private async Task<IReadOnlyList<string>> IssueGrantsAsync(ReferenceImportSource source, CancellationToken cancellationToken)
     {
         var path = Path.GetFullPath(source.Path);
         var authorization = await FindOrRegisterRootAsync(path, cancellationToken).ConfigureAwait(false);
-        if (!source.IsFolder)
+        var kind = source.IsFolder ? "folder" : KindOf(path);
+        return new[]
         {
-            return new[]
-            {
-                await _sources
-                    .IssueAsync(
-                        authorization.RegistryId,
-                        authorization.Generation,
-                        path,
-                        KindOf(path),
-                        StableSourceId(path),
-                        "1",
-                        RenditionOf(KindOf(path)),
-                        cancellationToken: cancellationToken)
-                    .ConfigureAwait(false),
-            };
-        }
-
-        var members = EnumerateVisibleFiles(path);
-        if (members.Count == 0)
-        {
-            throw new SourceAccessException("SOURCE_ENTRY_MISSING");
-        }
-
-        var grants = new List<string>(members.Count);
-        foreach (var member in members)
-        {
-            grants.Add(await _sources
-                .IssueAsync(
-                    authorization.RegistryId,
-                    authorization.Generation,
-                    member,
-                    "image",
-                    StableSourceId(member),
-                    "1",
-                    RenditionOf("image"),
-                    cancellationToken: cancellationToken)
-                .ConfigureAwait(false));
-        }
-
-        return grants;
-    }
-
-    /// <summary>Recursive, hidden/system-skipping file enumeration in natural-number order.</summary>
-    private static List<string> EnumerateVisibleFiles(string root)
-    {
-        var files = new List<string>();
-        var pending = new Stack<string>();
-        pending.Push(root);
-        while (pending.TryPop(out var directory))
-        {
-            foreach (var entry in Directory.EnumerateFileSystemEntries(directory).Order(StringComparer.Ordinal))
-            {
-                var flags = File.GetAttributes(entry);
-                if ((flags & (FileAttributes.Hidden | FileAttributes.System)) != 0)
-                {
-                    continue;
-                }
-
-                if ((flags & FileAttributes.Directory) != 0)
-                {
-                    pending.Push(entry);
-                }
-                else
-                {
-                    files.Add(entry);
-                }
-            }
-        }
-
-        return files
-            .OrderBy(file => Path.GetRelativePath(root, file), NaturalPathComparer.Instance)
-            .ToList();
-    }
-
-    private sealed class NaturalPathComparer : IComparer<string>
-    {
-        public static readonly NaturalPathComparer Instance = new();
-
-        public int Compare(string? left, string? right)
-        {
-            left ??= string.Empty;
-            right ??= string.Empty;
-            var leftParts = System.Text.RegularExpressions.Regex.Split(left.Replace('\\', '/'), "(\\d+)");
-            var rightParts = System.Text.RegularExpressions.Regex.Split(right.Replace('\\', '/'), "(\\d+)");
-            var count = Math.Min(leftParts.Length, rightParts.Length);
-            for (var index = 0; index < count; index++)
-            {
-                var isNumber = index % 2 == 1;
-                int result;
-                if (isNumber &&
-                    long.TryParse(leftParts[index], out var leftNumber) &&
-                    long.TryParse(rightParts[index], out var rightNumber))
-                {
-                    result = leftNumber.CompareTo(rightNumber);
-                }
-                else
-                {
-                    result = string.Compare(leftParts[index], rightParts[index], StringComparison.OrdinalIgnoreCase);
-                }
-
-                if (result != 0)
-                {
-                    return result;
-                }
-            }
-
-            return leftParts.Length.CompareTo(rightParts.Length);
-        }
+            await _sources.IssueAsync(
+                authorization.RegistryId, authorization.Generation, path, kind,
+                source.IsFolder ? authorization.RegistryId : StableSourceId(path),
+                "1", RenditionOf(kind), cancellationToken: cancellationToken).ConfigureAwait(false),
+        };
     }
 
     /// <summary>
     /// Reuses an existing non-revoked entry with exactly the same root set (the registry appends
     /// a new entry on every register, so blind registering would grow it without bound).
     /// </summary>
-    private async Task<SourceAuthorization> FindOrRegisterRootAsync(string path, CancellationToken cancellationToken)
+    private async Task<(string RegistryId, int Generation)> FindOrRegisterRootAsync(string path, CancellationToken cancellationToken)
     {
         var response = await _commands
             .InvokeAsync("source_list_roots", default, cancellationToken)
@@ -875,14 +764,7 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
                 if (string.Equals(root, path, StringComparison.OrdinalIgnoreCase) &&
                     !string.IsNullOrEmpty(registryId) && generation is { } alive)
                 {
-                    try
-                    {
-                        return _sources.Registry.Authorize(registryId, alive, [path]);
-                    }
-                    catch (SourceAccessException)
-                    {
-                        // identity/generation drifted: fall through to a fresh registration
-                    }
+                    return (registryId, alive);
                 }
             }
         }
@@ -897,7 +779,7 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
             throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
         }
 
-        return _sources.Registry.Authorize(id, createdGeneration.Value, [path]);
+        return (id, createdGeneration.Value);
     }
 
     private async Task CleanupSecretAsync()

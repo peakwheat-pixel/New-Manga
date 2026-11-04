@@ -76,6 +76,7 @@ public sealed class ImportDockViewModel : ObservableObject
         CloseCommand = new RelayCommand(Close);
         RequestCreateChapterCommand = new RelayCommand(RequestCreateChapter);
         PickReferenceSourcesCommand = new RelayCommand(() => _ = PickReferenceSourcesAsync());
+        PickReferenceFolderCommand = new RelayCommand(() => _ = PickReferenceFolderAsync());
         ConfirmReferenceImportCommand = new RelayCommand(() => _ = ConfirmReferenceImportAsync());
         CancelReferenceImportCommand = new RelayCommand(() => _ = CancelReferenceImportAsync());
         ReplanReferenceImportCommand = new RelayCommand(() => _ = ReplanReferenceImportAsync());
@@ -99,6 +100,8 @@ public sealed class ImportDockViewModel : ObservableObject
     public RelayCommand RequestCreateChapterCommand { get; }
 
     public RelayCommand PickReferenceSourcesCommand { get; }
+
+    public RelayCommand PickReferenceFolderCommand { get; }
 
     public RelayCommand ConfirmReferenceImportCommand { get; }
 
@@ -254,6 +257,14 @@ public sealed class ImportDockViewModel : ObservableObject
             .ConfigureAwait(true);
     }
 
+    public async Task PickReferenceFolderAsync()
+    {
+        if (_picker is null) return;
+        var path = await _picker.PickFolderAsync().ConfigureAwait(true);
+        if (!string.IsNullOrWhiteSpace(path))
+            await PlanReferenceImportAsync(new[] { new ReferenceImportSource(path, IsFolder: true) }).ConfigureAwait(true);
+    }
+
     /// <summary>Plan preview: registers the sources with the Host, renders the Core's plan (AC-1).</summary>
     public async Task PlanReferenceImportAsync(IReadOnlyList<ReferenceImportSource> sources)
     {
@@ -334,7 +345,8 @@ public sealed class ImportDockViewModel : ObservableObject
         }
         finally
         {
-            IsReferenceRunning = false;
+            ReferencePassword = string.Empty;
+            IsReferenceRunning = _activeOperationId is not null;
         }
     }
 
@@ -380,16 +392,34 @@ public sealed class ImportDockViewModel : ObservableObject
         while (_activeOperationId is { } operationId)
         {
             await _referencePollDelay().ConfigureAwait(true);
-            var receipt = await sourceImport.GetReferencedImportReceiptAsync(operationId).ConfigureAwait(true);
+            SourceImportReceipt? receipt;
+            try
+            {
+                receipt = await sourceImport.GetReferencedImportReceiptAsync(operationId).ConfigureAwait(true);
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or OperationCanceledException or NewManga.CoreClient.Diagnostics.SidecarException)
+            {
+                // Transport failures do not prove that the Core operation has stopped.
+                receipt = null;
+            }
             if (receipt is null)
             {
-                ReferenceErrorText = "无法读取导入进度（Host/核心不可用）";
-                return;
+                if (_controller.Snapshot.LastError == "SOURCE_OPERATION_NOT_FOUND")
+                {
+                    ReferenceErrorText = "导入操作不存在（SOURCE_OPERATION_NOT_FOUND）";
+                    _activeOperationId = null;
+                    break;
+                }
+                ReferenceErrorText = "状态未知：暂时无法读取进度，正在重试；仍可取消";
+                ReferenceProgressText = "状态未知（运行中）";
+                continue;
             }
 
+            ReferenceErrorText = string.Empty;
             ApplyReceipt(receipt);
             if (receipt.IsTerminal)
             {
+                _activeOperationId = null;
                 break;
             }
         }
@@ -399,8 +429,19 @@ public sealed class ImportDockViewModel : ObservableObject
 
     private void ApplyPlan(SourcePlanPreview plan)
     {
-        _activePlan = plan;
+        _activePlan = null;
+        ReferencePassword = string.Empty;
         ReferencePlanItems.Clear();
+        if (plan.Items.Count(item => item.Status == "encrypted") > 1)
+        {
+            ReferenceErrorText = "一次仅支持一个加密源，请分别确认（SOURCE_PASSWORD_REQUIRED）";
+            ReferencePlanSummary = string.Empty;
+            ReferenceProgressText = string.Empty;
+            ReferenceReceiptItems.Clear();
+            RaiseReferenceDerived();
+            return;
+        }
+        _activePlan = plan;
         foreach (var item in plan.Items)
         {
             ReferencePlanItems.Add(new ReferencePlanRowView(
@@ -427,12 +468,12 @@ public sealed class ImportDockViewModel : ObservableObject
             ReferenceReceiptItems.Add(new ReferenceReceiptRowView(
                 item.SourceName,
                 SourceImportText.ReceiptOutcome(item.Outcome, item.ReasonCode),
-                $"已提交 {item.CommittedPages} 页 · 待处理 {item.RemainingPages} 页"));
+                $"已提交 {item.CommittedPages} 页 · 待处理 {item.RemainingPages} 页 · 跳过 {item.Counts.SkippedPages} 页 / {item.Counts.SkippedSources} 源"));
         }
 
         var totals = receipt.Totals;
         ReferenceProgressText =
-            $"{SourceImportText.StateText(receipt.State)} · 已导入 {totals.ImportedPages} · 跳过 {totals.SkippedPages}" +
+            $"{SourceImportText.StateText(receipt.State)} · 已导入 {totals.ImportedPages} · 跳过 {totals.SkippedPages} 页 / {totals.SkippedSources} 源" +
             $" · 不支持 {totals.UnsupportedEntries} · 失败源 {totals.FailedSources} · 待处理 {totals.PendingPages}" +
             (receipt.CancelRequested ? " · 取消已请求" : string.Empty);
         OnPropertyChanged(nameof(HasReferenceReceipt));

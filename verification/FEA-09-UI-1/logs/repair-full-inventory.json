@@ -1,0 +1,616 @@
+{
+  "exit": 1,
+  "totals": {
+    "total": 1391,
+    "passed": 1306,
+    "failed": 11,
+    "skipped": 74
+  },
+  "assemblies": [
+    {
+      "file": "repair-full_net9.0_20261104093436.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.appearance.tests\\bin\\release\\net9.0\\newmanga.appearance.tests.dll",
+      "counters": {
+        "total": 21,
+        "executed": 21,
+        "passed": 21,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093437.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.presentation.avalonia.tests\\bin\\release\\net9.0\\newmanga.presentation.avalonia.tests.dll",
+      "counters": {
+        "total": 38,
+        "executed": 38,
+        "passed": 38,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093438.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.host.tests\\bin\\release\\net9.0\\newmanga.host.tests.dll",
+      "counters": {
+        "total": 100,
+        "executed": 55,
+        "passed": 49,
+        "failed": 6,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093439.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.themeengine.tests\\bin\\release\\net9.0\\newmanga.themeengine.tests.dll",
+      "counters": {
+        "total": 253,
+        "executed": 253,
+        "passed": 253,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093440.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.designsystem.tests\\bin\\release\\net9.0\\newmanga.designsystem.tests.dll",
+      "counters": {
+        "total": 117,
+        "executed": 117,
+        "passed": 117,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093441.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.applicationcore.tests\\bin\\release\\net9.0\\newmanga.applicationcore.tests.dll",
+      "counters": {
+        "total": 31,
+        "executed": 31,
+        "passed": 31,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093513.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.coreclient.tests\\bin\\release\\net9.0\\newmanga.coreclient.tests.dll",
+      "counters": {
+        "total": 154,
+        "executed": 132,
+        "passed": 132,
+        "failed": 0,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    },
+    {
+      "file": "repair-full_net9.0_20261104093703.trx",
+      "assembly": "g:\\codex\\new manga\\apps\\desktop-avalonia\\tests\\newmanga.app.tests\\bin\\release\\net9.0\\newmanga.app.tests.dll",
+      "counters": {
+        "total": 677,
+        "executed": 670,
+        "passed": 665,
+        "failed": 5,
+        "error": 0,
+        "timeout": 0,
+        "aborted": 0,
+        "inconclusive": 0,
+        "passedButRunAborted": 0,
+        "notRunnable": 0,
+        "notExecuted": 0,
+        "disconnected": 0,
+        "warning": 0,
+        "completed": 0,
+        "inProgress": 0,
+        "pending": 0
+      }
+    }
+  ],
+  "failed": [
+    {
+      "test": "NewManga.Host.Tests.SourceRegistryTests.NativeDpapiCurrentUserRoundTripAndTamperRefusal",
+      "reason": "NewManga.Host.Sources.SourceAccessException : SOURCE_REGISTRY_UNAVAILABLE",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtIssue",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'junc' is denied.",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset",
+      "reason": "System.UnauthorizedAccessException : Attempted to perform an unauthorized operation.",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.D4SecurityHarnessTests.D4_3_Escape_RejectedAtReadTime_AfterPathReplacement",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'sub' is denied.",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.TileChannelTests.Containment_OutsideRoot_And_Junction_Rejected",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'junc' is denied.",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.SourceSecretStoreTests.WriteCreatesPrivateOneShotTokenUnderSourceSecrets",
+      "reason": "NewManga.Host.Sources.SourceAccessException : SOURCE_PASSWORD_INVALID",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'G:\\CODEX\\New Manga.workspace\\task-env\\FEA-06-RESIDUAL-2\\f5f2a98f74724043a7eac0a7c3e1fd68' is denied.",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.FluentResidual2DecorativeTests.Decor_Frames_Are_Captured_Only_When_Opted_In",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'G:\\CODEX\\New Manga.workspace\\task-env\\FEA-06-RESIDUAL-2\\96270cf347b644379171438534b3310f' is denied.",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.FluentResidual2DecorativeTests.TokenGradient_DetachUnsubscribes_AndReattachRefreshes",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'G:\\CODEX\\New Manga.workspace\\task-env\\FEA-06-RESIDUAL-2\\45afeda1f4404b84be7f721becb7e63f' is denied.",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.ThemeRetirementR4Tests.No_font_binaries_ship_with_the_application",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'G:\\CODEX\\New Manga\\verification\\FEA-09\\native-registry\\2477cdd7f7c44877a3e613628489c6f4\\isolated-data\\host' is denied.",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.FluentResidual2DecorativeTests.PageTurnParticles_ProductionClock_SamplesVisibleMidAndRemovedTail",
+      "reason": "System.UnauthorizedAccessException : Access to the path 'G:\\CODEX\\New Manga.workspace\\task-env\\FEA-06-RESIDUAL-2\\544d0bfbda2f4a2087f635885a5a59fe' is denied.",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    }
+  ],
+  "skipped": [
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 for real HostController + ImportDockViewModel stdio tests",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio",
+      "reason": "reason: set NEWMANGA_FEA09_IPC=1 to run the real Python-source Core stdio IPC test",
+      "trx": "repair-full_net9.0_20261104093438.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093513.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    },
+    {
+      "test": "NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly",
+      "reason": "reason: needs sidecar fixture - set NEWMANGA_CORECLIENT_SIDECAR_DIR or run apps/desktop-avalonia/scripts/test.ps1 (AC11 unlabelled copy)",
+      "trx": "repair-full_net9.0_20261104093703.trx"
+    }
+  ]
+}

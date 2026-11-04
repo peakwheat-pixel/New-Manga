@@ -688,6 +688,8 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public Queue<SourceImportStartResult> ScriptedReferenceStarts { get; } = new();
 
+    public Func<Task<SourceImportReceipt?>>? ReferenceReceiptOverride { get; set; }
+
     public Queue<SourceImportReceipt?> ScriptedReferenceReceipts { get; } = new();
 
     public List<string> ReferenceCancelCalls { get; } = new();
@@ -726,6 +728,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         string operationId,
         CancellationToken cancellationToken = default)
     {
+        if (ReferenceReceiptOverride is { } receipt) return receipt();
         return Task.FromResult(ScriptedReferenceReceipts.Count > 0
             ? ScriptedReferenceReceipts.Dequeue()
             : null);

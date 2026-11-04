@@ -3,11 +3,11 @@ id: FEA-09-UI-1
 title: 引用源导入最小 UI/适配接线（V2 ImportDock：plan 预览、密码、取消、进度）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: in_review
 approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a5894282`（释放 commit；Appointment base `19a71b396`）；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
 suggested_owner: zcode
-owner: zcode（Appointment 2026-11-04；2026-11-04T00:38:20Z 认领；交付于 2026-11-04T01:05:00Z 置 in_review——工作树未提交，base `1a5894282` + 本卡变更清单，由 DSH 提交）
-reviewer: codex（独立实现 Review r1 changes_requested：P0=0/P1=5/P2=2，`doc/reviews/FEA-09-UI-1-impl-r1.md`，reviewed_head `e40c0f74`；DSH 处置 `doc/reviews/FEA-09-UI-1-impl-r1-adjudication.md`；返修后需全新上下文 Codex 复审）
+owner: zcode→codex（ZCode 额度 429 后按用户授权由全新 Codex 会话完成返修；DSH 集成）
+reviewer: codex（独立实现 Review r1 changes_requested 已返修；r2 待全新上下文 Codex 复审；reviewed_head 待登记）
 depends_on:
   - FEA-09-PREREQ-1
   - FEA-09
@@ -15,7 +15,7 @@ base_commit: 19a71b396eb177627f872d829c59dd7e440ebbbe
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 工作树未提交（base `1a5894282`；变更见「变更记录」与 Handoff；由 DSH 提交后回填）
+delivery_head: 工作树未提交（返修 base `7f4f4d3cda882cc4c3bb7c24c37a180480333a17`；IPC 环境阻塞，非完成交付；不得 commit/push）
 canonical_evidence_status: pending（工作树 SHA-256 已登记 Canonical Evidence 表；commit pin 待 DSH 提交后回填）
 resource_closeout_status: pending
 evidence_dir: verification/FEA-09-UI-1
@@ -79,7 +79,7 @@ out_of_scope:
 
 Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；设计基线；真实用户数据/外部卷/回收站；以 fake/进程内证据替代真实 IPC/UI；push。
 
-## 测试要求
+## 测试要求（下表为首版历史记录，当前返修见末节）
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
@@ -94,26 +94,48 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 
 ## Canonical Evidence
 
-（工作树 SHA-256；commit 列由 DSH 提交后回填——实现者不得自提交）
+（工作树 SHA-256；DSH 提交后回填 commit）
 
 | evidence_id | 证据说明 | 仓库路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-001 | 逐 AC 证据矩阵（AC-1…AC-5 MET + 限制） | `verification/FEA-09-UI-1/AC-MATRIX.md` | pending | `1127d7d2122641840ccf8808cd537ea7017b45880528738bd310c81bb9fb9121` | CANONICAL |
-| EV-002 | 真实 IPC 案例摘要（plan/AES/密码重试/取消 + 密码审计） | `verification/FEA-09-UI-1/ipc/ui-import-ipc.json` | pending | `8417a47893f8008e1883e8d379d3f5a044f71dfe12634ff8a214c6fc60bd99d0` | CANONICAL |
-| EV-003 | 真实 IPC wire 记录（路径脱敏、密码 0 命中） | `verification/FEA-09-UI-1/ipc/ui-import-ipc.wire.ndjson` | pending | `1c657d52a099762f71c3da9316f5c4f7c1d672cff025fa1d849d30ec91aae4dd` | CANONICAL |
-| EV-004 | Owner 门禁结果（build/test/真实 IPC/check/pins/diff/PNG） | `verification/FEA-09-UI-1/logs/gates.json` | pending | `3a4a15209475ff923dd8d6eb53877e5deb24773524712d7bcd0865ddda888bba` | CANONICAL |
-| EV-005 | Owner Handoff（变更清单/命令/结果/风险） | `doc/handoffs/FEA-09-UI-1-1a5894282.md` | pending | `b7a7a25d92712a71d316fab5fc0bf4194d057da71e54560ea2b3bec10edf2845` | CANONICAL |
-| EV-006 | DSH 集成验证结果（build/全量/真实 IPC/C-07/pins） | `verification/FEA-09-UI-1/logs/dsh-integration.json` | pending | `9415f574712a205ccea2207fe9c53f1b7441207e6ee02e0a992be9782c9c675f` | CANONICAL |
-| EV-007 | DSH 集成范围 diff（工作树路径清单） | `verification/FEA-09-UI-1/logs/dsh-scope-diff.txt` | pending | `c181ed057e4d592f1e19806ffafa98cfd10dad64d04a279eb4c0665f98ce98c8` | CANONICAL |
+| EV-001 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/AC-MATRIX.md` | pending | `b28ee7e4d9d4063682bd55147c5ea473b61d0c19462ea3f46f970363a37b01b8` | CANONICAL |
+| EV-002 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/production-ui-import-ipc.json` | pending | `d802bc6cd6656c9947371fde33b92a90d34509eb94d4f05b9221c0706eb751c9` | CANONICAL |
+| EV-003 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/production-ui-import-ipc.wire.ndjson` | pending | `1f0c97514b93424645d40628d28f10c5fa760182faf39106f48992a1f0075d60` | CANONICAL |
+| EV-004 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.json` | pending | `33e6ae70e3898c0d82a07b8940709f997f0233cd53649272a92203d7e3fb692e` | CANONICAL |
+| EV-005 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/ipc/ui-import-ipc.wire.ndjson` | pending | `9b0b8a2a14e5da242008293bc351b4b50907fdf9497ce1af355f49db4c2c1743` | CANONICAL |
+| EV-006 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh-integration.json` | pending | `cec8e91c26bc59b5bf1dc6db12f0250f47946c00cad69d6d1b746b44c853999e` | CANONICAL |
+| EV-007 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/dsh-scope-diff.txt` | pending | `fe51190dec3bebfec7691b29b931ccd7a807de43ebecf69b2e774b181cd9c713` | CANONICAL |
+| EV-008 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/gates.json` | pending | `56027c85b47230b4cfcc2ded4243499060cda3214f4db18399dd59792a2b8aa6` | CANONICAL |
+| EV-009 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-api.log` | pending | `f5a23d415a32c51b6691a96b2a7fb7c4534646e9502ec21b5647f3e20348f852` | CANONICAL |
+| EV-010 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build-initial.log` | pending | `8a281d7de093d1f8e020e9f67a68d33148521bdbae2054847f29312051edee5b` | CANONICAL |
+| EV-011 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-build.log` | pending | `395f602828a4b759fdcccda5e9dd476f5ad82afb63d68b4134a4dcef6d57bfc3` | CANONICAL |
+| EV-012 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-fea09-restore.json` | pending | `d81bcf9da8e328e31d00c51659464558aed192c0925bad25faaaddd885c59531` | CANONICAL |
+| EV-013 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full-inventory.json` | pending | `02f0317c519942676295efb23ce18399f83e9be704fc629c38382bfc9bcc0b5d` | CANONICAL |
+| EV-014 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-full.log` | pending | `d56504fe24bf03fd9f747195e6183c64a1e053501cf45340f47a74979a96e348` | CANONICAL |
+| EV-015 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-governance.log` | pending | `d6f42ff9c343d164471566c3314ff84bcbb43a6462124ef8cae67a6098c1bdf3` | CANONICAL |
+| EV-016 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-ipc.log` | pending | `40833e4c504a06686c2ca9b5cd56c1ff8584661ba0410ce4d920a7859c58b320` | CANONICAL |
+| EV-017 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-password-audit.json` | pending | `eba126b2a2465f2af5bcfff954b0c6e9804e5ad82f432277eeb062a4834842a4` | CANONICAL |
+| EV-018 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-pins.log` | pending | `fa4b978d09a934466f0816073ef2fbdf0bc6fd150fe3b9ec045d02466ba2a34c` | CANONICAL |
+| EV-019 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-scope-diff.json` | pending | `c5eefec626b0a9ce2b29faaceae0f7b8ab3e2028a5682bc81c3d468b25b130ae` | CANONICAL |
+| EV-020 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/repair-vm.log` | pending | `db58720205555268d61279e276d5906f05ea446a0bb2f568a7b1183a637423cb` | CANONICAL |
+| EV-021 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093436.trx` | pending | `206b2e02c1e21b8493b613680a93944e29c72793b9da309d401230451185bbe6` | CANONICAL |
+| EV-022 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093437.trx` | pending | `7175680b2e594f7ba750207147fd7b9932ae7cdcee8ff8db5d48c351661b1c54` | CANONICAL |
+| EV-023 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093438.trx` | pending | `f7b1c4955e3b7804fbccdbea74c7f293ae6806c967fbefd39ed3cf12357e672f` | CANONICAL |
+| EV-024 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093439.trx` | pending | `85bd052baf6a24cae328ad819622335a3db7bfab9240774eec6f01fdff53ffb9` | CANONICAL |
+| EV-025 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093440.trx` | pending | `e9f475be87371a2ff67149aecd65f3ae9ae8360a0071b2aadfe34e85f2d6585c` | CANONICAL |
+| EV-026 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093441.trx` | pending | `1dfe0604cc3a730a52705481d50fe7f117c29ea5f4dc1249a082ff87ad4429cb` | CANONICAL |
+| EV-027 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093513.trx` | pending | `da46d4b6e033cf0c93f4226ad54cc9a82dfdfbe1c3d3048b6520e1a96129c178` | CANONICAL |
+| EV-028 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/logs/test-results/repair-full_net9.0_20261104093703.trx` | pending | `cedf9c52189b49fcf70709d794762a8d6ebb88791467abc4ca4801b77674a4d8` | CANONICAL |
+| EV-029 | FEA-09-UI-1 证据文件 | `verification/FEA-09-UI-1/repair-checkpoint.md` | pending | `a7932523da6ec52813308f844b8ec4c78adbc2b454360f2f77fca6b6e3d43ec8` | CANONICAL |
+| EV-030 | FEA-09-UI-1 证据文件 | `doc/handoffs/FEA-09-UI-1-rework-dsh-7f4f4d3cd.md` | pending | `c4b36975f0072907d592b07f9e4a6154ebcd3008d0397ac426249ac257e50e3b` | CANONICAL |
 
 
 ## Closeout Record
 
-- Owner 交付（2026-11-04，ZCode）：实现 + 测试 + 证据 + Handoff；Task `in_review`。
-- DSH 复核返修（2026-11-04）：撤回 `IHostController` 新增，改独立 `ISourceImportController`；`generate_api_inventory.py --check` PASS（C-07 冻结清单不变，无需 UNFREEZE）。
-- DSH 集成验证：build 0/0；全量 .NET 1313/0/63；真实 IPC 5/5；pins 17/17；范围 diff 合规（DSH 集成文件 PLAN/STATUS/TASK_LEDGER 除外）；FEA-09 canonical 证据复跑污染已恢复。
-- 未提交：工作树；未 push；由 DSH 提交后回填 commit 列。
-- 已知事项：见 AC-MATRIX「限制」（FEA-09 canonical 证据可被常规测试复跑重写的债务候选；folder 逐文件 grant 接线限制）。
+- Owner 首版：ZCode（Appointment 2026-11-04）；Review r1：Codex changes_requested（P1=5/P2=2）；返修：Codex 全新上下文（用户授权故障转移）；集成/门禁：DSH。
+- 当前：返修完成，DSH 门禁全绿，Task `in_review`；等全新上下文 Codex 复审 r2。
+- 未提交/未 push：工作树；由 DSH 提交后回填 commit。
+- 已知事项：见 AC-MATRIX「限制」。
 
 ## 变更记录
 
@@ -123,7 +145,7 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 | 2026-11-04 | ZCode 认领（in_progress）；实现交付（工作树）：新增 `Services/SourceImportModels.cs`（UI 模型+payload+`SourceImportCoordinator` 生产编排：register→issue→plan / 密码 DPAPI secret_ref→重签 Secret-G→重 plan→start / receipt 轮询+终态清理 / cancel）；`IHostController`+`HostController`+`NullHostController` 增 4 方法（Plan/Start/GetReceipt/Cancel，typed 不抛）；`ImportDockViewModel`+`ImportDockView.axaml` 引用导入面（plan 预览/密码框/确认/取消/重试/进度，旧路径零改动）；`FakeHostController` 补 scripted 面；Host.Tests 引用 App；新测试 `ReferencedImportUiTests`（13）+`Fea09UiImportIpcTests`（5，真实 stdio）；证据 4 件。**HostCommandDispatcher/Registry 零改动**（source 命令 pass-through 已由 FEA-09 交付，核实无缺口）。Task → in_review | 本卡 Appointment；`verification/FEA-09-UI-1/**`；Handoff |
 | 2026-11-04 | **DSH 复核返修 r1**：IHostController 改动撤回 → 独立 `ISourceImportController`；`generate_api_inventory.py --check` PASS（C-07 冻结面未变）；DSH 复跑 build 0/0、全量 1313/0/63、真实 IPC 5/5、pins 17/17；证据补 DSH 集成日志/范围 diff | DSH 集成；`doc/reviews/FEA-09-UI-1-appointment.md` |
 
-## 变更记录
+
 
 | 日期 | 变更 | 依据 |
 |---|---|---|
@@ -155,3 +177,21 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 | R5 | P1 | 接受：>1 加密源 App 层 typed 拒绝，逐源独立确认/token；不扩 Core wire | 返修中 |
 | R6 | P2 | 接受：绑定并显示每项 CountsText；补测试 | 返修中 |
 | R7 | P2 | 接受：分别显示 skipped_pages/skipped_sources；补整源跳过测试 | 返修中 |
+
+## 返修 r2 完成（Codex 实现 + DSH 集成，2026-11-04）
+
+- **状态：返修完成，DSH 门禁全绿，Task → `in_review`，等全新上下文 Codex 复审。**
+- 实现者：Codex 全新上下文（ZCode 429 额度不可用，按用户授权故障转移；返修者不得自审）。
+- 修复：R1 token/Secret-G 异常清理；R2 receipt 暂时失败保持可取消运行态；R3 folder 改交 Host `IssueAsync`/EnumerateFolder（App 不递归/排序/授权）；R4 新增真实 `HostController`+`ImportDockViewModel`+Python stdio 闭环；R5 >1 加密源 typed 拒绝；R6 绑定 CountsText；R7 skipped_pages/skipped_sources 分别显示。
+- DSH 集成复跑：build 0/0；全量 .NET **1317 passed / 0 failed / 74 skipped**；真实 IPC **16/16**（11 production + 5 下层）；`generate_api_inventory.py --check` PASS（C-07 未变，无 UNFREEZE）；`check.ps1` PASS（3 warnings）；pins **17/17**；范围全部 allowed_paths；FEA-09 canonical 证据复跑污染已恢复。
+- 证据：`verification/FEA-09-UI-1/AC-MATRIX.md`、`ipc/production-ui-import-ipc.*`、`logs/gates.json`、`logs/dsh-integration.json`；Handoff `doc/handoffs/FEA-09-UI-1-rework-dsh-7f4f4d3cd.md`。
+- 限制：多加密源逐源确认；folder 交 Host；FEA-09 证据可被常规测试复跑重写（既有债务候选）；UI 证据为控件级。
+
+
+## 返修 r1 与 DSH 集成（2026-11-04）
+
+- R1–R7 已按 `doc/reviews/FEA-09-UI-1-impl-r1-adjudication.md` 全部修复；实现：Codex 全新上下文（ZCode 429 不可用，用户授权故障转移）。
+- DSH 复跑门禁：build 0/0；全量 .NET **1317/0/74**；真实 IPC **16/16**（11 production HostController+VM+HostRuntime+Python stdio + 5 下层）；C-07 inventory `--check` **PASS**；check.ps1 PASS（3 warnings）；pins **17/17**；范围合规；FEA-09 canonical 证据污染已恢复。
+- 证据：`verification/FEA-09-UI-1/AC-MATRIX.md`、`ipc/production-ui-import-ipc.*`、`logs/gates.json`、`logs/dsh-integration.json`；Handoff：`doc/handoffs/FEA-09-UI-1-rework-dsh-7f4f4d3cd.md`。
+- 限制：多加密源逐源确认；folder 交 Host EnumerateFolder；FEA-09 证据复跑重写为既有债务候选。
+- 下一步：全新上下文 Codex 复审（r2）；approved 后 DSH 集成 → done。
