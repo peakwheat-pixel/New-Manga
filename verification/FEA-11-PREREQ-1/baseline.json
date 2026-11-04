@@ -1,0 +1,97 @@
+{
+  "base_commit": "692239408cba40296f4187afb6571e2cf423f417",
+  "branch": "main",
+  "git_common_dir": ".git",
+  "start_workspace": "clean (observed before first edit)",
+  "protected": {
+    "tools/governance/verify_pins.ps1": {
+      "git_blob": "116a1c2c0b35e9520261bfafc6355b79d054aebb",
+      "workspace_sha256": "145ff76954306a6f608eb9d10ba778ff0426a1b3efcaf0e7680a1d3934ce6667"
+    },
+    "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md": {
+      "git_blob": "d8e334f744857d5c12532f4aa052c20b4f35f18e",
+      "workspace_sha256": "d734250ae3f5e6e15c88fa8430b38e13e0915056803ec453c61034b47442e242"
+    },
+    "src/infrastructure/sqlite/schema.py": {
+      "git_blob": "c5e2df173fd2277daf42352c0374f4b7bb462eab",
+      "workspace_sha256": "c7d672edeaf39ae39914e85c42f85f2e9916a944ece0fa9d37e2d5d90ef11eb7"
+    },
+    "src/infrastructure/sqlite/migrator.py": {
+      "git_blob": "1fdd17a6c0ddc66b48a22ce3679df35d3f2f9609",
+      "workspace_sha256": "211063f71a1b05622f35507212d25fd6b97d092bd009e0ede1d491dd856fedda"
+    },
+    "doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md": {
+      "git_blob": "7127d06437832e76f634d02455d070a0fb6e24de",
+      "workspace_sha256": "3c9f5af7d74f28af53214262cff97ab266321737c483b8919fe43304aceb11db"
+    },
+    "doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md": {
+      "git_blob": "fcea994ae43a8221572f9488c94e2c90a74d6f7b",
+      "workspace_sha256": "bb365ca891a7d48960da4a593d2f3f5e3785727a63fc4f5a2016732b06b1565a"
+    },
+    "doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md": {
+      "git_blob": "81738c04976d30a222c880f0b3746ed26dcfaa71",
+      "workspace_sha256": "b77e7968a00b4c35c7b3cd03efe92f1999a3b9c6dec4a22ff5c504c8211608be"
+    },
+    "doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md": {
+      "git_blob": "07beee7eed1782d271a18c7a1adb5ba49103d0bd",
+      "workspace_sha256": "694ce5bc8c8bcb21f45858e57a110d3b5c02ec48f487980d9119a122cd419947"
+    },
+    "doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md": {
+      "git_blob": "32d039c0e8d10063076ecded1b333a4f4a512ab6",
+      "workspace_sha256": "f6e6f3cb1fe19b253688f14ddf55f106b8bb89d3d3ab946a185cc12c34dc4714"
+    },
+    "doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md": {
+      "git_blob": "93a3390972cfb2ceeaa3ddd00a1b23f6b2cf804f",
+      "workspace_sha256": "8faa8cd139f2e9c599dcd34063a5ac1a85941ecac287fcd693eb43d2109b2003"
+    },
+    "doc/plan/FEA-C07_API_INVENTORY.md": {
+      "git_blob": "cd51f8e63b8976cdd8e96fa705a391ad92ea79e9",
+      "workspace_sha256": "3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714"
+    },
+    "doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md": {
+      "git_blob": "b09291c19de9e0cfb7f6cdec838a6d35da656a4b",
+      "workspace_sha256": "453f993c1a16eab9db783f5b3a24710ac6e24b9a290a2b05bcba45f463fa8517"
+    },
+    "doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md": {
+      "git_blob": "0f1e7b163c58f8a050903cf5d3c26f85a542788b",
+      "workspace_sha256": "44f4273f7ad1566c5f3a0cadb8342e3e41dcb22d839db572122bc86593cc19cc"
+    },
+    "doc/plan/FEA-C12_CHECKER_SCOPE_DRAFT.md": {
+      "git_blob": "a5a17fd9b3c4fcaa3e4100a92f4021cae071db9b",
+      "workspace_sha256": "f498358601436c746129123db294750bd00c4a7321f185f8057b3bcc9eff7612"
+    },
+    "doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md": {
+      "git_blob": "5a0cb284cf57dc288a6d5ca802af3f7be68e2909",
+      "workspace_sha256": "8faf1e805eac500ab20037d8628b8594f8720e455387a85639897f1127afd45c"
+    },
+    "doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md": {
+      "git_blob": "111a2ce184a09a13c7faaed31e38411d13e67386",
+      "workspace_sha256": "05056cbf65f950bc1fdfd1632e6e065bb3f65cb8b75e5e9843d2384430b749e9"
+    },
+    "doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md": {
+      "git_blob": "a0286bac06aa89587a6a7cbcf08461aae8add865",
+      "workspace_sha256": "d8c0a3bcfc21229bff8f6feb6853866cdea7dc902b76f1ae45b0d374ce6579d6"
+    },
+    "doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md": {
+      "git_blob": "bd36fc19c0c54df469c7dfe68ee824f6af531b17",
+      "workspace_sha256": "0b9511a55ea15fafdc2de7d33fb204e5c7e2cf2efed69977ee6dd092f22e5905"
+    },
+    "doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md": {
+      "git_blob": "9870d73a4d9aa6304b28c16dc58ecc1bc4591357",
+      "workspace_sha256": "dc51226b336ce6af60fb6586bdeeb3660dff07011b415c52ac41d042cb9a4ec6"
+    },
+    "doc/plan/FEA-C10_INTERACTION_DRAFT.md": {
+      "git_blob": "5cea9445bb11a122458fb78e7fcc53a364064234",
+      "workspace_sha256": "ec8fd862f95f7e169723a43305db71d6f735d910446475b3365786e44e31fa87"
+    },
+    "doc/plan/FEA-01_CONTRACT_DRAFT.md": {
+      "git_blob": "0f0c2d149201e3897cae23a0ec07cdf2db1d89b1",
+      "workspace_sha256": "0370c18932b14baf47697c92a38909c2886475305e8c539799d63c074967cfd5"
+    }
+  },
+  "old_frozen_count": 17,
+  "migration_policy": "v1-v7 unchanged; candidate v8 not reserved",
+  "user_data": "NOT_ACCESSED",
+  "DB": ":memory:",
+  "external_resources_created": []
+}

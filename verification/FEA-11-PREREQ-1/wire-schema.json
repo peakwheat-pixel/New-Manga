@@ -1,0 +1,1047 @@
+{
+  "format": "c17-field-tables/1",
+  "dtos": {
+    "Capability": {
+      "name": {
+        "nullable": false,
+        "type": "scan|plan|apply|relink|repoint|resync|operation"
+      },
+      "available": {
+        "nullable": false,
+        "type": "boolean"
+      },
+      "reason": {
+        "nullable": true,
+        "type": "capability_missing|registry_unavailable|schema_incompatible|lease_unavailable|disabled"
+      }
+    },
+    "Capabilities": {
+      "items": {
+        "nullable": false,
+        "type": "Capability[恰好7，按上表顺序]"
+      }
+    },
+    "SourceBase": {
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "version_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "content_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "AuthorizationBase": {
+      "registry_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "generation": {
+        "nullable": false,
+        "type": "G"
+      },
+      "identity_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "MissingObservation": {
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "registry_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "generation": {
+        "nullable": false,
+        "type": "G"
+      },
+      "expected_identity_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "observed_at": {
+        "nullable": false,
+        "type": "T"
+      }
+    },
+    "PageBase": {
+      "page_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "project_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "chapter_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "binding_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "binding_version": {
+        "nullable": false,
+        "type": "G"
+      },
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "version_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "entry_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "source_order": {
+        "nullable": false,
+        "type": "I"
+      },
+      "sort_order": {
+        "nullable": false,
+        "type": "I"
+      },
+      "deleted": {
+        "nullable": false,
+        "type": "boolean"
+      },
+      "manual_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "protection_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "drafts_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "runs_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "PixelProfile": {
+      "algorithm": {
+        "nullable": false,
+        "type": "pixel-digest/1"
+      },
+      "decoder": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "decoder_version": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "params_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "width": {
+        "nullable": false,
+        "type": "G"
+      },
+      "height": {
+        "nullable": false,
+        "type": "G"
+      },
+      "orientation": {
+        "nullable": false,
+        "type": "1|3|6|8"
+      },
+      "pixel_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "EntryEvidence": {
+      "entry_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "locator": {
+        "nullable": false,
+        "type": "string(1..4096,C-15相对locator)"
+      },
+      "ordinal": {
+        "nullable": false,
+        "type": "N"
+      },
+      "content_digest_kind": {
+        "nullable": false,
+        "type": "encoded|page-identity"
+      },
+      "content_digest": {
+        "nullable": true,
+        "type": "H"
+      },
+      "pixel": {
+        "nullable": true,
+        "type": "PixelProfile"
+      },
+      "reason": {
+        "nullable": true,
+        "type": "encrypted|unsupported|missing_evidence|incomparable"
+      }
+    },
+    "SourceObservation": {
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "version_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "content_digest": {
+        "nullable": true,
+        "type": "H"
+      },
+      "identity_digest": {
+        "nullable": true,
+        "type": "H"
+      },
+      "entries": {
+        "nullable": false,
+        "type": "EntryEvidence[]"
+      },
+      "status": {
+        "nullable": false,
+        "type": "ok|missing|encrypted|unsupported"
+      },
+      "reason_code": {
+        "nullable": true,
+        "type": "ExistingSourceCode"
+      }
+    },
+    "DiffItem": {
+      "item_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "classification": {
+        "nullable": false,
+        "type": "unchanged|added|missing|changed|ambiguous"
+      },
+      "page_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "old_entry_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "new_entry_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "evidence": {
+        "nullable": false,
+        "type": "direct|unique_pixel|duplicate_group|missing_old|incomparable|none"
+      }
+    },
+    "Totals": {
+      "unchanged": {
+        "nullable": false,
+        "type": "N"
+      },
+      "added": {
+        "nullable": false,
+        "type": "N"
+      },
+      "missing": {
+        "nullable": false,
+        "type": "N"
+      },
+      "changed": {
+        "nullable": false,
+        "type": "N"
+      },
+      "ambiguous": {
+        "nullable": false,
+        "type": "N"
+      }
+    },
+    "Scan": {
+      "scan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "expires_at": {
+        "nullable": false,
+        "type": "T"
+      },
+      "source": {
+        "nullable": false,
+        "type": "SourceObservation"
+      },
+      "base_sources": {
+        "nullable": false,
+        "type": "SourceBase[]"
+      },
+      "authorizations": {
+        "nullable": false,
+        "type": "AuthorizationBase[]"
+      },
+      "missing": {
+        "nullable": false,
+        "type": "MissingObservation[]"
+      },
+      "bases": {
+        "nullable": false,
+        "type": "PageBase[]"
+      },
+      "reference_set_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "diff": {
+        "nullable": false,
+        "type": "DiffItem[]"
+      },
+      "totals": {
+        "nullable": false,
+        "type": "Totals"
+      }
+    },
+    "Decision": {
+      "item_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "action": {
+        "nullable": false,
+        "type": "keep|add|tombstone|bind|defer"
+      },
+      "target_page_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "target_chapter_id": {
+        "nullable": true,
+        "type": "ID"
+      },
+      "new_source_order": {
+        "nullable": true,
+        "type": "I"
+      },
+      "new_sort_order": {
+        "nullable": true,
+        "type": "I"
+      },
+      "migrate_revision_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      }
+    },
+    "Confirmation": {
+      "kind": {
+        "nullable": false,
+        "type": "relink|repoint|resync"
+      },
+      "project_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      },
+      "reference_set_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "resync_content": {
+        "nullable": false,
+        "type": "boolean"
+      }
+    },
+    "PlanBody": {
+      "format": {
+        "nullable": false,
+        "type": "source-sync-plan/1"
+      },
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "scan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "kind": {
+        "nullable": false,
+        "type": "relink|repoint|resync"
+      },
+      "project_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      },
+      "scope": {
+        "nullable": false,
+        "type": "current|all"
+      },
+      "base_sources": {
+        "nullable": false,
+        "type": "SourceBase[]"
+      },
+      "authorizations": {
+        "nullable": false,
+        "type": "AuthorizationBase[]"
+      },
+      "missing": {
+        "nullable": false,
+        "type": "MissingObservation[]"
+      },
+      "bases": {
+        "nullable": false,
+        "type": "PageBase[]"
+      },
+      "target": {
+        "nullable": false,
+        "type": "SourceObservation"
+      },
+      "reference_set_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "diff": {
+        "nullable": false,
+        "type": "DiffItem[]"
+      },
+      "totals": {
+        "nullable": false,
+        "type": "Totals"
+      },
+      "decisions": {
+        "nullable": false,
+        "type": "Decision[]"
+      },
+      "confirmation": {
+        "nullable": false,
+        "type": "Confirmation"
+      }
+    },
+    "Plan": {
+      "body": {
+        "nullable": false,
+        "type": "PlanBody"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "state": {
+        "nullable": false,
+        "type": "draft|previewed|confirmed|applied|stale"
+      },
+      "created_at": {
+        "nullable": false,
+        "type": "T"
+      },
+      "expires_at": {
+        "nullable": false,
+        "type": "T"
+      },
+      "previewed_at": {
+        "nullable": true,
+        "type": "T"
+      },
+      "confirmed_at": {
+        "nullable": true,
+        "type": "T"
+      },
+      "applied_at": {
+        "nullable": true,
+        "type": "T"
+      },
+      "stale_reason": {
+        "nullable": true,
+        "type": "StaleReason"
+      }
+    },
+    "ApplyRequest": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "grant_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      },
+      "authorization": {
+        "nullable": false,
+        "type": "HostAuthorization"
+      }
+    },
+    "HostAuthorization": {
+      "host_receipt_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "authorization_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "authorizations": {
+        "nullable": false,
+        "type": "AuthorizationBase[]"
+      },
+      "authorized_at": {
+        "nullable": false,
+        "type": "T"
+      }
+    },
+    "Dispatch": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "accepted": {
+        "nullable": false,
+        "type": "true"
+      },
+      "state": {
+        "nullable": false,
+        "type": "OperationState"
+      }
+    },
+    "BindingResult": {
+      "page_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "binding_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "binding_version": {
+        "nullable": false,
+        "type": "G"
+      },
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "version_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "entry_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "status": {
+        "nullable": false,
+        "type": "healthy|needs_confirmation|missing"
+      }
+    },
+    "CommitReceipt": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "bindings": {
+        "nullable": false,
+        "type": "BindingResult[]"
+      },
+      "committed_at": {
+        "nullable": false,
+        "type": "T"
+      }
+    },
+    "Operation": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "kind": {
+        "nullable": false,
+        "type": "relink|repoint|resync"
+      },
+      "origin": {
+        "nullable": false,
+        "type": "host|core"
+      },
+      "state": {
+        "nullable": false,
+        "type": "OperationState"
+      },
+      "commit": {
+        "nullable": true,
+        "type": "CommitReceipt"
+      },
+      "commit_digest": {
+        "nullable": true,
+        "type": "H"
+      },
+      "error_code": {
+        "nullable": true,
+        "type": "FailureCode"
+      },
+      "retryable": {
+        "nullable": false,
+        "type": "boolean"
+      },
+      "acknowledged_at": {
+        "nullable": true,
+        "type": "T"
+      }
+    },
+    "CompletionRequest": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "commit_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "host_receipt_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "authorization": {
+        "nullable": false,
+        "type": "HostAuthorization"
+      },
+      "grant_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      }
+    },
+    "CancelResult": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "accepted": {
+        "nullable": false,
+        "type": "boolean"
+      },
+      "state": {
+        "nullable": false,
+        "type": "OperationState"
+      }
+    },
+    "HostJournal": {
+      "format": {
+        "nullable": false,
+        "type": "source-operation/1"
+      },
+      "authorization": {
+        "nullable": true,
+        "type": "HostAuthorization"
+      },
+      "operation": {
+        "nullable": false,
+        "type": "Operation"
+      },
+      "updated_at": {
+        "nullable": false,
+        "type": "T"
+      }
+    },
+    "ScanSourceSyncRequest": {
+      "source_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "project_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      },
+      "scope": {
+        "nullable": false,
+        "type": "current|all"
+      },
+      "kind": {
+        "nullable": false,
+        "type": "relink|repoint|resync"
+      },
+      "grant_ids": {
+        "nullable": false,
+        "type": "ID[]"
+      },
+      "missing": {
+        "nullable": false,
+        "type": "MissingObservation[]"
+      }
+    },
+    "PlanSourceSyncRequest": {
+      "body": {
+        "nullable": false,
+        "type": "PlanBody"
+      }
+    },
+    "PreviewSourceSyncPlanRequest": {
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "ConfirmSourceSyncPlanRequest": {
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "confirmation": {
+        "nullable": false,
+        "type": "Confirmation"
+      }
+    },
+    "InvalidateSourceSyncPlanRequest": {
+      "plan_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "plan_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "reason": {
+        "nullable": false,
+        "type": "StaleReason"
+      }
+    },
+    "GetSourceOperationRequest": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      }
+    },
+    "CancelSourceOperationRequest": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      }
+    },
+    "RecordSourceOperationFailureRequest": {
+      "operation_id": {
+        "nullable": false,
+        "type": "ID"
+      },
+      "request_digest": {
+        "nullable": false,
+        "type": "H"
+      },
+      "code": {
+        "nullable": false,
+        "type": "FailureCode"
+      }
+    },
+    "Empty": {}
+  },
+  "commands": {
+    "ScanSourceSync": {
+      "host": "source_scan_sync",
+      "request": "ScanSourceSyncRequest",
+      "response": "Scan",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "PlanSourceSync": {
+      "host": "source_plan_sync",
+      "request": "PlanSourceSyncRequest",
+      "response": "Plan",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "PreviewSourceSyncPlan": {
+      "host": "source_preview_sync_plan",
+      "request": "PreviewSourceSyncPlanRequest",
+      "response": "Plan",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "ConfirmSourceSyncPlan": {
+      "host": "source_confirm_sync_plan",
+      "request": "ConfirmSourceSyncPlanRequest",
+      "response": "Plan",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "InvalidateSourceSyncPlan": {
+      "host": "source_invalidate_sync_plan",
+      "request": "InvalidateSourceSyncPlanRequest",
+      "response": "Plan",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "ApplySourceSyncPlan": {
+      "host": "source_apply_sync_plan",
+      "request": "ApplyRequest",
+      "response": "Dispatch",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "RelinkSource": {
+      "host": "source_relink",
+      "request": "ApplyRequest",
+      "response": "Dispatch",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "RepointSource": {
+      "host": "source_repoint",
+      "request": "ApplyRequest",
+      "response": "Dispatch",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "ResyncSource": {
+      "host": "source_resync",
+      "request": "ApplyRequest",
+      "response": "Dispatch",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "GetSourceOperation": {
+      "host": "source_get_operation",
+      "request": "GetSourceOperationRequest",
+      "response": "Operation",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "CancelSourceOperation": {
+      "host": "source_cancel_operation",
+      "request": "CancelSourceOperationRequest",
+      "response": "CancelResult",
+      "minor": 3,
+      "transport": "stdio"
+    },
+    "AcknowledgeSourceOperation": {
+      "host": "Host内部",
+      "request": "CompletionRequest",
+      "response": "Operation",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "CompleteSourceOperationRecovery": {
+      "host": "Host内部",
+      "request": "CompletionRequest",
+      "response": "Operation",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "RecordSourceOperationFailure": {
+      "host": "Host内部",
+      "request": "RecordSourceOperationFailureRequest",
+      "response": "Operation",
+      "minor": 3,
+      "transport": "host-control"
+    },
+    "GetSourceSyncCapabilities": {
+      "host": "source_get_sync_capabilities",
+      "request": "Empty",
+      "response": "Capabilities",
+      "minor": 3,
+      "transport": "host-local"
+    }
+  },
+  "errors": {
+    "INVALID_REQUEST": {
+      "category": "validation",
+      "retryable": false
+    },
+    "CORE_CAPABILITY_MISSING": {
+      "category": "protocol",
+      "retryable": false
+    },
+    "PROTOCOL_VERSION_UNSUPPORTED": {
+      "category": "protocol",
+      "retryable": false
+    },
+    "HOST_ONLY_REQUIRED": {
+      "category": "validation",
+      "retryable": false
+    },
+    "HOST_SESSION_INVALID": {
+      "category": "conflict",
+      "retryable": false
+    },
+    "CORE_SESSION_MISMATCH": {
+      "category": "conflict",
+      "retryable": false
+    },
+    "SOURCE_PLAN_STALE": {
+      "category": "conflict",
+      "retryable": true
+    },
+    "SOURCE_OPERATION_CONFLICT": {
+      "category": "conflict",
+      "retryable": false
+    },
+    "SOURCE_OPERATION_NOT_FOUND": {
+      "category": "not_found",
+      "retryable": false
+    },
+    "SOURCE_ACCESS_DENIED": {
+      "category": "authorization",
+      "retryable": false
+    },
+    "SOURCE_GRANT_EXPIRED": {
+      "category": "authorization",
+      "retryable": true
+    },
+    "SOURCE_GRANT_REVOKED": {
+      "category": "authorization",
+      "retryable": false
+    },
+    "SOURCE_REGISTRY_UNAVAILABLE": {
+      "category": "internal",
+      "retryable": true
+    },
+    "SOURCE_REGISTRY_BUSY": {
+      "category": "internal",
+      "retryable": true
+    },
+    "SOURCE_PASSWORD_REQUIRED": {
+      "category": "validation",
+      "retryable": false
+    },
+    "SOURCE_PASSWORD_INVALID": {
+      "category": "validation",
+      "retryable": false
+    },
+    "SOURCE_FORMAT_UNSUPPORTED": {
+      "category": "validation",
+      "retryable": false
+    },
+    "SOURCE_ENTRY_MISSING": {
+      "category": "not_found",
+      "retryable": false
+    },
+    "SOURCE_BUDGET_EXCEEDED": {
+      "category": "validation",
+      "retryable": false
+    },
+    "SOURCE_PROJECT_MISMATCH": {
+      "category": "validation",
+      "retryable": false
+    },
+    "FILE_IDENTITY_CHANGED": {
+      "category": "conflict",
+      "retryable": true
+    },
+    "REF_SIGNATURE_INVALID": {
+      "category": "validation",
+      "retryable": false
+    },
+    "STALE_BASE_REVISION": {
+      "category": "conflict",
+      "retryable": true
+    },
+    "SOURCE_SYNC_STATE_CONFLICT": {
+      "category": "conflict",
+      "retryable": false
+    },
+    "SOURCE_SYNC_UNSTABLE": {
+      "category": "conflict",
+      "retryable": true
+    },
+    "SOURCE_SYNC_CANCELLED": {
+      "category": "conflict",
+      "retryable": false
+    },
+    "SOURCE_SYNC_STORAGE_FAILED": {
+      "category": "internal",
+      "retryable": true
+    },
+    "SOURCE_MIGRATION_FAILED": {
+      "category": "internal",
+      "retryable": false
+    }
+  },
+  "operation_states": [
+    "started",
+    "host-authorized",
+    "core-committed",
+    "acknowledged",
+    "failed",
+    "recovered"
+  ],
+  "stale_reasons": [
+    "expired",
+    "source",
+    "binding",
+    "authorization",
+    "scope",
+    "manual",
+    "decision",
+    "cancelled"
+  ]
+}

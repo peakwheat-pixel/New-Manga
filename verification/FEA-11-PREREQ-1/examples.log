@@ -1,0 +1,33 @@
+COMMAND: C:\Python314\python.exe -B "G:\CODEX\New Manga\verification\FEA-11-PREREQ-1\validate_examples.py"
+ENV: shell=PowerShell; OS=Windows-11-10.0.26300-SP0; launcher=C:\Python314\python.exe; cwd=G:\CODEX\New Manga; HEAD=692239408cba40296f4187afb6571e2cf423f417; DB=:memory: (Python probes); no system TEMP/AppData
+COMMAND: python -B verification/FEA-11-PREREQ-1/validate_examples.py
+ENV: shell=PowerShell; interpreter=C:\Python314\python.exe; Python=3.14.6; SQLite=3.50.4; DB=:memory:
+LIMIT: isolated SQL persistence and normative models; no real Host/Core restart, IPC, OS lease, or images
+PASS COMMIT-before-ACK: gates persist in independent in-memory snapshot; no volatile bypass
+PASS ACK transaction interruption: operation and all gates remain pre-ACK
+PASS ACK/replay: all gates open atomically; saved receipt returned; no new binding
+PASS CAS model stale source_version: no Core SQL writes
+PASS CAS model stale binding_version: no Core SQL writes
+PASS CAS model stale host_generation: no Core SQL writes
+PASS CAS model stale manual: no Core SQL writes
+PASS CAS model stale lock: no Core SQL writes
+PASS CAS model stale draft: no Core SQL writes
+PASS CAS model stale run: no Core SQL writes
+PASS CAS model stale scope: no Core SQL writes
+PASS CAS model stale decision: no Core SQL writes
+PASS generation model: accepted binding generation 7 may read under same-identity grant 8; old-plan apply CAS fails
+PASS lineage model: changed excludes R1; same_content retains R1; unverified never inherits new coordinates
+PASS old-draft model: old baseline rejected; preserved as history/draft/candidate, no rebasing
+PASS old-edit-token model: old baseline rejected; preserved as history/draft/candidate, no rebasing
+PASS old-prepared-run model: old baseline rejected; preserved as history/draft/candidate, no rebasing
+PASS old-candidate model: old baseline rejected; preserved as history/draft/candidate, no rebasing
+PASS resolve model: {"B1_key": "page-rendition-v2-a6930b30ed63e0ee3d1247cd95a768b3c8e9601f53dff84db681df3f76708fe1", "B2_key": "page-rendition-v2-457d62572bf73ae5ab621af5f73e388a6c3f769f55c685b47cb89e36dcdc3223", "new_digest": "c4374d9adc7af8b41fd3e7bde587071301af76b6506bdcdf886d2b251d6f3357", "old_digest": "f0bd9f20f03b1bc8ab2312d09026ca217477ab2a37e38f5ec26ef600649df207", "old_key": "page-rendition-P1"}
+PASS resolve profile change: decoder params choose a different immutable key
+PASS evidence model: comparable unique / duplicate group / absent old / incomparable; no ordinal or new-image substitute
+GOLDEN_CANONICAL_HEX: 7b2261223a5b312c747275652c6e756c6c5d2c227a223a22e4b8ade69687227d
+GOLDEN_SHA256: db6a0f2ebe94b34e63a8bbcc767de7852280476696e69e1152bdbb07a6f3cf32
+PASS canonical model: UTF-8 code-point keys, no whitespace, no normalization
+RESULT: all listed normative examples passed; 0 skipped; production behavior NOT_RUN
+EXIT: 0
+
+PROCESS_EXIT: 0

@@ -1,0 +1,17 @@
+{
+  "status": "DRAFT_CANDIDATE_NOT_FROZEN",
+  "source": "doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md",
+  "base_commit": "692239408cba40296f4187afb6571e2cf423f417",
+  "reviewed_head": null,
+  "semantic_commit": null,
+  "final_pin": null,
+  "workspace_sha256": "cb7c574987d9694f094a65c7aea4e286ab2a0df2347d05ea11433b369452e00b",
+  "git_filtered_blob_id": "84fbd2b1c2e777f1a5c1c0638f6ac99e82c86de3",
+  "raw_blob_id": "84fbd2b1c2e777f1a5c1c0638f6ac99e82c86de3",
+  "candidate_filtered_blob_sha256": "cb7c574987d9694f094a65c7aea4e286ab2a0df2347d05ea11433b369452e00b",
+  "hash_basis": "workspace raw bytes for future verify_pins; filtered candidate bytes verified against git hash-object, NOT a committed blob",
+  "command": [
+    "git hash-object --path=doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md",
+    "git hash-object --no-filters doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md"
+  ]
+}

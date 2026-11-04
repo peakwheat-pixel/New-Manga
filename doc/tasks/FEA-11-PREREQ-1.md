@@ -3,7 +3,7 @@ id: FEA-11-PREREQ-1
 title: Source 同步契约前置（v8+ DDL / plan-operation 状态机 / scan-plan-apply-relink-repoint-resync 命令面 / CAS 与 lineage / resolve 版本选择）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **scope approved（r1 Codex，P0=0/P1=0/P2=4，S11P-001…004 已处置）+ DSH 冻结/Appointment 2026-11-04**；Owner=Codex 契约起草待认领；不预占 v8 版本
 suggested_owner: codex
 owner: codex（Appointment 2026-11-04；待认领）
@@ -15,7 +15,7 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: PENDING_DSH_COMMIT
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-PREREQ-1
@@ -62,14 +62,14 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC-P1（DDL/迁移冻结）**：两表 DDL/索引/FK/约束/迁移版本冻结决议可执行（含版本号、回滚、旧端拒写）；与 C-15 "不创建两表" 的预留声明一致；v1–v7 字节不变。<<PARTIAL: 待 scope 冻结与契约评审>>
-- [ ] **AC-P2（状态机）**：plan/operation 状态机与 Host/Core 存储归属冻结，含 ACK 前读门控持久化与逐崩溃点恢复顺序。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P3（命令面）**：scan/plan/apply/relink/repoint/resync/operation 查询命令的 closed shape、字段、错误、能力探测与兼容策略冻结；不暗用导入 API。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P4（CAS/原子性）**：三类代次与人工基线比较对象、事务重读位置、原子单元与整批回滚口径冻结可断言。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P5（lineage）**：lineage 存储与读写隔离冻结，覆盖在途 Run/draft/candidate 交错规则。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P6（resolve 版本选择）**：同步后资源版本选择方案冻结，旧资源键不可变。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P7（证据/冻结）**：契约独立 Review approved；冻结记录 + pins 更新（17→18）可验证；check/PASS；不改既有 17 契约字节与 FEA-08/09/10 证据。<<PARTIAL: 待 scope 冻结>>
-- [ ] **AC-P8（范围）**：不实现 FEA-11 生产代码、不越界 FEA-12/13/14、不新增依赖、不碰真实用户数据/AppData。<<PARTIAL: 待 scope 冻结>>
+- [ ] **AC-P1（DDL/迁移冻结）**：两表 DDL/索引/FK/约束/迁移版本冻结决议可执行（含版本号、回滚、旧端拒写）；与 C-15 "不创建两表" 的预留声明一致；v1–v7 字节不变。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P2（状态机）**：plan/operation 状态机与 Host/Core 存储归属冻结，含 ACK 前读门控持久化与逐崩溃点恢复顺序。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P3（命令面）**：scan/plan/apply/relink/repoint/resync/operation 查询命令的 closed shape、字段、错误、能力探测与兼容策略冻结；不暗用导入 API。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P4（CAS/原子性）**：三类代次与人工基线比较对象、事务重读位置、原子单元与整批回滚口径冻结可断言。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P5（lineage）**：lineage 存储与读写隔离冻结，覆盖在途 Run/draft/candidate 交错规则。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P6（resolve 版本选择）**：同步后资源版本选择方案冻结，旧资源键不可变。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P7（证据/冻结）**：契约独立 Review approved；冻结记录 + pins 更新（17→18）可验证；check/PASS；不改既有 17 契约字节与 FEA-08/09/10 证据。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
+- [ ] **AC-P8（范围）**：不实现 FEA-11 生产代码、不越界 FEA-12/13/14、不新增依赖、不碰真实用户数据/AppData。<<PARTIAL: 契约提案与隔离验证已交付；待独立 Review 与 DSH 冻结>>
 
 ## 验证矩阵
 
@@ -109,3 +109,27 @@ out_of_scope:
 - Review：`doc/reviews/FEA-11-PREREQ-1-scope-r1.md`（Codex 全新上下文，reviewed_head `d1341945`）**approved P0=0/P1=0/P2=4**；全部接受。
 - S11P-001：AC-P1…P8 改为 lifecycle v3 勾选框 `- [ ]`；S11P-002：交付物改为登记现有 `doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`（不造新 INDEX）；S11P-003：scope-r2 触发点统一为 PREREQ **done** 后；S11P-004：新增"冻结可执行清单"作为 AC-P1…P8 验收索引。
 - Appointment：`doc/reviews/FEA-11-PREREQ-1-appointment.md`；Owner=Codex 契约起草（新实现会话）；最终契约 Review 由另一全新上下文执行。
+
+## 实施与交付记录（Codex 起草 / DSH 收尾，2026-11-04）
+
+- 交付：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`（9 章；含规范 SQL/状态机/15 命令/DTO/错误/CAS/lineage/resolve/冻结可执行清单）、`doc/plan/FEA-CONTRACT-FROZEN-C17.md`（DRAFT）、冻结矩阵 C-17 候选行、`doc/handoffs/FEA-11-PREREQ-1-handoff.md`、`verification/FEA-11-PREREQ-1/**`。
+- 验证（DSH 复跑）：`validate_contract.py` 32 passed；`validate_examples.py` 全部通过；`validate_wire.py` 34 DTO/15 命令/28 错误/639 形状负例（schema 由 DSH 在表最终编辑后重新生成）；`run_checks.py` EXIT=0。日志见 `verification/FEA-11-PREREQ-1/logs/`。
+- 未提交/未 push（DSH 集成提交）；pins 仍 17/17（C-17 pin 由 DSH 在 Review approved 后追加为 18）。
+- 未完成：契约最终字节独立 Review（DSH 派发中，Codex 额度耗尽至 2026-11-05 00:51 → 切 ZCode）；DSH 冻结记录/三指纹/pin 18；M2-C1 无增量决定待 Review 确认。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-PREREQ1-C17 | AC-P1…P6/P8（契约提案） | doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md | pending | cb7c574987d9694f094a65c7aea4e286ab2a0df2347d05ea11433b369452e00b | CANONICAL |
+| EV-PREREQ1-WIRE | AC-P3（命令/DTO 形状） | verification/FEA-11-PREREQ-1/wire-schema.json | pending | 9fed28fa1e8b6579934edba889b9aed87be1b3542a9ec77320c3f44f8b32de1e | CANONICAL |
+| EV-PREREQ1-LOGS | AC-P1…P4（隔离验证） | verification/FEA-11-PREREQ-1/sql-validation.log | pending | 63113979cbc589c3af5a60ff9e235bcb799ca7fb3ceb9c7c57b73ba1689d297c | SOURCE_PIN |
+| EV-PREREQ1-EXAMPLES | AC-P2/P4/P5/P6（规范模型） | verification/FEA-11-PREREQ-1/examples.log | pending | cecabea533a2e7c2a31a4e220fce2f629c2cd9e316cd307b032ae1c83052203c | SOURCE_PIN |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| evidence | G:/CODEX/New Manga/verification/FEA-11-PREREQ-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga/verification/FEA-11-PREREQ-1 | verification/FEA-11-PREREQ-1/baseline.json | 原始脚本/日志/基线保留 |
+| isolated temp | G:/CODEX/New Manga.workspace/FEA-11-PREREQ-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-11-PREREQ-1 | verification/FEA-11-PREREQ-1/baseline.json | 隔离 SQLite/TEMP/TMP；不清理 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/FEA-11-PREREQ-1/baseline.json | 主树；无新 worktree |

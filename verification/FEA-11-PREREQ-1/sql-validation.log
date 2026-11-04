@@ -1,0 +1,69 @@
+COMMAND: C:\Python314\python.exe -B "G:\CODEX\New Manga\verification\FEA-11-PREREQ-1\validate_contract.py"
+ENV: shell=PowerShell; OS=Windows-11-10.0.26300-SP0; launcher=C:\Python314\python.exe; cwd=G:\CODEX\New Manga; HEAD=692239408cba40296f4187afb6571e2cf423f417; DB=:memory: (Python probes); no system TEMP/AppData
+COMMAND: python -B verification/FEA-11-PREREQ-1/validate_contract.py
+ENV: shell=PowerShell; interpreter=C:\Python314\python.exe; Python=3.14.6; SQLite=3.50.4; DB=:memory:; no TEMP/AppData/real DB
+BASELINE: G:\CODEX\New Manga
+CANDIDATE_SQL_SHA256: d8e76e80a5abadcb335edc7be75c1cffbd8e5311d45d2fe3fa5d49f4c82b21d1
+V1_V7_CHECKSUMS: {"1": "f68cb4ab8facda4b6e701a934ed14b240bce13c50fe1527a3989de1c987994bd", "2": "b984eaeeb5a3a162040d2de458f09ecde1479519d30a48fd7c36118295875d5b", "3": "359d97f42cad9cb18d676ffc113abae4e81cb237c4841ef82262a8736518a0c2", "4": "c8e0b4899026784bda958c49e6e1d13896f7ac083dafd1acf04a030677a88394", "5": "6b12ad337ab2fe0fb0b4d6bdd6835a69166c080a36fc1ac80326ff4faa03597c", "6": "eef3ddb5dadd819e3af6de030aec8edff010e1a0d012409bf14330fb5fb43331", "7": "abbf4e5f9415f392596faebc38690b6a58dd7f96941f51802621b68a2a3f8a91"}
+PASS candidate migration / FK check / old source-page-binding data conserved
+EXPECTED plan source FK: FOREIGN KEY constraint failed
+PASS plan source FK
+EXPECTED plan state CHECK: CHECK constraint failed: state IN ('draft','previewed','confirmed','applied','stale')
+PASS plan state CHECK
+EXPECTED plan digest CHECK: CHECK constraint failed: length(plan_digest)=64 AND plan_digest NOT GLOB '*[^0-9a-f]*'
+PASS plan digest CHECK
+EXPECTED plan confirmation timestamp CHECK: CHECK constraint failed: state NOT IN ('confirmed','applied') OR confirmed_at IS NOT NULL
+PASS plan confirmation timestamp CHECK
+EXPECTED plan applied timestamp CHECK: CHECK constraint failed: (state='applied')=(applied_at IS NOT NULL)
+PASS plan applied timestamp CHECK
+EXPECTED plan stale reason CHECK: CHECK constraint failed: (state='stale')=(stale_reason IS NOT NULL)
+PASS plan stale reason CHECK
+EXPECTED operation plan UNIQUE: UNIQUE constraint failed: source_operations.plan_id
+PASS operation plan UNIQUE
+EXPECTED operation composite plan FK: FOREIGN KEY constraint failed
+PASS operation composite plan FK
+EXPECTED operation plan digest FK: FOREIGN KEY constraint failed
+PASS operation plan digest FK
+EXPECTED operation plan kind FK: FOREIGN KEY constraint failed
+PASS operation plan kind FK
+EXPECTED operation state CHECK: CHECK constraint failed: state IN
+        ('started','host-authorized','core-committed','acknowledged','failed','recovered')
+PASS operation state CHECK
+EXPECTED operation ACK timestamp CHECK: CHECK constraint failed: (state IN ('acknowledged','recovered'))=(acknowledged_at IS NOT NULL)
+PASS operation ACK timestamp CHECK
+EXPECTED operation commit receipt CHECK: CHECK constraint failed: (commit_digest IS NULL)=(commit_receipt_json IS NULL)
+PASS operation commit receipt CHECK
+EXPECTED operation failure code CHECK: CHECK constraint failed: (state='failed')=(error_code IS NOT NULL)
+PASS operation failure code CHECK
+EXPECTED publication binding UNIQUE: UNIQUE constraint failed: source_binding_publications.binding_id
+PASS publication binding UNIQUE
+EXPECTED publication binding FK: FOREIGN KEY constraint failed
+PASS publication binding FK
+EXPECTED publication operation FK: FOREIGN KEY constraint failed
+PASS publication operation FK
+EXPECTED publication pending-open timestamp CHECK: CHECK constraint failed: (read_gate='open')=(opened_at IS NOT NULL)
+PASS publication pending-open timestamp CHECK
+EXPECTED publication relation CHECK: CHECK constraint failed: (relation='added')=(previous_binding_id IS NULL)
+PASS publication relation CHECK
+EXPECTED lineage revision UNIQUE: UNIQUE constraint failed: source_revision_lineage.revision_id
+PASS lineage revision UNIQUE
+EXPECTED lineage binding FK: FOREIGN KEY constraint failed
+PASS lineage binding FK
+EXPECTED lineage unknown-with-binding CHECK: CHECK constraint failed: (provenance='legacy_unverified')=(binding_id IS NULL)
+PASS lineage unknown-with-binding CHECK
+EXPECTED lineage migrated-source CHECK: CHECK constraint failed: (provenance='migrated')=(from_revision_id IS NOT NULL)
+PASS lineage migrated-source CHECK
+EXPECTED lineage source FK: FOREIGN KEY constraint failed
+PASS lineage source FK
+EXPECTED lineage self-cycle CHECK: CHECK constraint failed: revision_id<>from_revision_id
+PASS lineage self-cycle CHECK
+PASS whole plan last-item failure rolls back pages/plan/operation/publication
+PASS actual v7 runner SchemaTooNewError before writes; DB identical
+PASS migration failure mid-DDL: schema/data/both metadata rolled back to v7
+PASS migration failure after-metadata: schema/data/both metadata rolled back to v7
+PASS actual MigrationRunner mid-migration rollback
+PASS final FK check
+RESULT: 32 passed; 0 skipped; contract probes only
+EXIT: 0
+
+PROCESS_EXIT: 0

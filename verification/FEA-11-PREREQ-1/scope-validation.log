@@ -1,0 +1,17 @@
+COMMAND: git diff --name-only HEAD; git ls-files --others --exclude-standard; git diff --cached --name-only; protected diff
+ENV: PowerShell / Python 3.14.6 / C:\Python314\python.exe; cwd=G:\CODEX\New Manga; HEAD=692239408cba40296f4187afb6571e2cf423f417
+doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md
+doc/plan/FEA-CONTRACT-FROZEN-C17.md
+verification/FEA-11-PREREQ-1/examples.log
+verification/FEA-11-PREREQ-1/logs/dsh-validate-contract.log
+verification/FEA-11-PREREQ-1/logs/dsh-validate-examples.log
+verification/FEA-11-PREREQ-1/logs/dsh-validate-wire.log
+verification/FEA-11-PREREQ-1/run_checks.py
+verification/FEA-11-PREREQ-1/sql-validation.log
+verification/FEA-11-PREREQ-1/validate_contract.py
+verification/FEA-11-PREREQ-1/validate_examples.py
+verification/FEA-11-PREREQ-1/validate_wire.py
+verification/FEA-11-PREREQ-1/wire-schema.json
+verification/FEA-11-PREREQ-1/wire-validation.log
+PASS: 0 outside paths; 0 staged; main/HEAD unchanged; M2-C1/pins/17 frozen contracts/schema/migrator unchanged; no production paths changed
+EXIT: 0
