@@ -3,11 +3,11 @@ id: FEA-11
 title: Source 变化 / 重定位 / 同步（scan/diff/plan + 页匹配/lineage + relink/repoint/resync + durable operation）
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: **scope-r1 处置完成；PREREQ-1 done；scope-r2 approved（ZCode 全新上下文，P0=0/P1=0/P2=4 已处置）；DSH 冻结 scope + Appointment 2026-11-04（Owner=ZCode；实际 AC 数=10，AC11-1…10）**
 suggested_owner: codex
 owner: zcode（Appointment 2026-11-04；待认领）
-reviewer: 独立上下文 Review 待 Appointment（Codex 恢复后或新 ZCode 会话；不得自审）
+reviewer: 独立上下文子 agent（fresh subagent，reviewer_kind=subagent；未参与实现，只读 5aadb3cd）；报告 doc/reviews/FEA-11-r1.md
 depends_on:
   - FEA-09
   - FEA-10
@@ -179,6 +179,17 @@ commit 暂为 pending（"不 commit/push" 约束；DSH 集成提交后回填）�
 | EV-AC11-C6-GATES | AC11-1…10（早期门禁基线） | verification/FEA-11/logs/dsh-C6-gates.log | pending | efc283ec3f1acb54c899de33c97647126b9193e421b97de6e424db3bd783f30a | SOURCE_PIN |
 | EV-AC11-PHASEB-MAIN | AC11-2/4/5/6/8（主套件回归） | verification/FEA-11/logs/dsh-phaseB-main.log | pending | 9046e7caa61c49724f7b3ddbd67edde787dd27791ecb7d1c27e61d2a572e7256 | SOURCE_PIN |
 | EV-AC11-PHASEB-PROVIDERS | AC11-10（providers 回归） | verification/FEA-11/logs/dsh-phaseB-providers.log | pending | 63f3e76f9022247e78f5233d4553b987dacf1fceb5a0da00c19e73851070a4fb | SOURCE_PIN |
+
+## Review r1 处置（DSH，2026-11-05）
+
+Reviewer：fresh subagent（parent session-20e77fbf），只读 HEAD `5aadb3cd`；报告 `doc/reviews/FEA-11-r1.md`；**decision=changes_requested（P0=2 / P1=11 / P2=12）**。DSH 处置：**不批准**，进入有限返修。
+
+- **P0（必修，阻断）**：R-001 Host durable authorization 空壳（生成完整 HostAuthorization 并注入 ApplyRequest、走 Registry 持久化授权、op id 绑定）；R-002 Host ACK/recovery 接线错误（6 字段 CompletionRequest、CommitReceipt canonical digest、失败不先落 acknowledged、补 capability handler、修 AC 证据矛盾）。
+- **P1（必修，批准条件）**：R-003 新增页 grant→binding；R-004 fail_operation SQL / recover 状态机；R-005 无页 missing 的页级投影；R-006 relink 物理身份；R-007 scope=all 全源引用；R-008 COMMIT 前重验 grant/撤销；R-009 lineage native 写入与读路径；R-010 IPC 全链改 new_zip（新 binding/门控/新字节/旧键不可变）；R-011 AC11-4 补多项目/并发/末项/撤销/DB 失败/第三区域；R-012 AC11-3 pixel profile 写入与独立 match 测试/旧库 fixture；R-013 范围越界逐项窄批登记（见下）。
+- **P2（登记/defer）**：文档矛盾、证据处跳过数解释、FEA-09 证据恢复步骤显式化、App.Tests flaky 登记等 12 项。
+- **AC 状态修正**（按 Reviewer 判定）：AC11-3/4/5/6/8/9 由 MET 改 **PARTIAL/BLOCKED**（实现缺失或证据不足），AC11-2 可接受（保留），AC11-1/7/10 维持 PARTIAL（done 前须补）。
+- **范围窄批登记**（R-013，DSH 作为 Integrator 逐项批准，因实施期间暴露的既有缺陷/集成必要）：`HostCommandDispatcher.cs`、`HostCommandModel.cs`、`src/application/importing/referenced/identity.py`、`src/application/importing/referenced/scanner.py`、`src/infrastructure/resource_channel/handle_resolver.py`、`import_source_refs.py`、`source_strict_read.py`、`tests/fea09/*`（12 个：identity/flaky/v2 键/迁移断言同步）、`tests/fea11/support/*`（2 个 ipc 脚本）、`tests/core/test_p09_fu2_import_pages.py`、`apps/.../SourceSyncJournalTests.cs`、`tests/fea09/test_referenced_resolve.py`；治理指针（STATUS/PLAN/TASK_LEDGER 的 FEA-11 行）与 `doc/tasks/FEA-11-SCAN-1.md`。allowed_paths 中不存在的条目（`test_source_match.py`、`test_source_plan.py`、`support/restart_core.py`）从验证矩阵移除（已在实施证据节更正）。
+- 返修完成后：复跑全量门禁 → 请求新上下文复审（新 reviewed_head）→ DSH 集成 closeout。
 
 ## Closeout Record
 
