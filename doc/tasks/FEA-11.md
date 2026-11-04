@@ -100,12 +100,12 @@ out_of_scope:
 
 > 本卡实际 **10 条** AC（AC11-1…10）；历史提交信息中「12 AC」为笔误，以本表为准（scope-r2 P2-1 澄清）。
 
-- [ ] **AC11-1（变化检测与阻断）**：启动/访问前检查、操作前强验证、定时扫描、目录 watcher 生产者/消费者四路各有调用证据；丢 hint/overflow 后可全量重枚举检测；相同 mtime/size 但字节变可发现；mtime/size 未变不作内容未变证明；强验证=稳定 lease+digest，不被缓存替代；Dirty 阻断依赖旧绑定的新写入而不是直接换 binding。定时扫描若本卡不做，须由 PREREQ/DSH 裁定并登记承接 Task，不得静默缺失。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 定时扫描/watcher 生产承接 FEA-11-SCAN-1；本卡三路+消费者>>
+- [ ] **AC11-1（变化检测与阻断）**：启动/访问前检查、操作前强验证、目录 watcher 生产者路径（本卡两条已测；定时扫描与 watcher 消费者承接 FEA-11-SCAN-1）；丢 hint/overflow 后可全量重枚举检测；相同 mtime/size 但字节变可发现；mtime/size 未变不作内容未变证明；强验证=稳定 lease+digest，不被缓存替代；Dirty 阻断依赖旧绑定的新写入而不是直接换 binding。定时扫描若本卡不做，须由 PREREQ/DSH 裁定并登记承接 Task，不得静默缺失。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 定时扫描/watcher 生产承接 FEA-11-SCAN-1；本卡两条已测路径（定时/消费者承接 SCAN-1）>>
 - [x] **AC11-2（scan/diff/plan）**：目录/容器 diff 分类（未变/新增/缺失/变化/歧义）数量=明细；plan 绑定 book/页集合/旧新 SourceVersion/binding generation/用户决定/digest；预览与 apply 使用同一不可变 plan；plan 的合法预先持久化与 stale Apply 拒绝基线分别记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
 - [ ] **AC11-3（页匹配，按 C-15 §3.2 冻结规则）**：同源同容器 digest 直接保续 与 容器变化后的跨版本匹配是两条路径；跨版本逐项验证 pixel profile 的 algorithm/decoder/version/params/尺寸/方向可比性与一对一唯一匹配；重复名/重复像素 occurrence 整组 needs_confirmation，不按 ordinal/locator 自动搬运人工成果；PDF 插页/ZIP 重排/目录重复内容不合并 occurrence；旧证据缺失/profile 不可比且不能按冻结参数重算时降为待确认/不可验证，禁止从新图伪造旧证据；以 FEA-09 真实导入旧库 fixture 验证。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 生产 scan 不写 pixel profile（unique_pixel 仅在有既有 profile 时生效），pixel 提取/旧库 fixture/独立 match 测试承接 FEA-11-MATCH-1 (R-012)>>
 - [ ] **AC11-4（CAS/原子性/零写）**：明确三类代次（SourceVersion/binding_version/Host authorization generation + 人工 revision/Lock/draft 基线）的比较对象与事务内重读位置；单 plan/多项目原子单元与批次最后一项冲突时整批回滚唯一口径；并发 apply 仅一个成功、源/绑定/范围/决定/授权各自漂移、授权撤销/失联、第三区域 BaseRevisionId 冲突、DB 失败均有断言；stale Apply 零业务写（比较 pages/bindings/source rows/regions/text/current/revisions/保护/进度/operation receipt，不偷偷发布部分新代次）；拒绝审计落盘若需要须 DSH 明确与 A10 零写边界。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: r2：并发 apply/DB 失败/第三区域 BaseRevision 冲突证据缺失；多项目/末项回滚/撤销已补>>
 - [ ] **AC11-5（同步应用/守恒/lineage）**：未变且唯一对应页保留 PageId/用户顺序/人工版本/进度/保护；新增页新 PageId 且顺序由 plan 明示；缺失页 tombstone 可找回（问题/人工修改保留，不连带删除）；变化页新 binding generation、旧区域/旧 revision 的 lineage 映射可恢复且隔离（新图编辑/渲染/导出/Run 目标读取不套旧坐标）；手动迁移新 RegionCandidate/revision、BaseRevisionId 与 Lock 检查，第三项失败整批回滚；Prepare 后同步→旧 Accept/结果 apply 被阻止（结果留 candidate）、旧 edit token 不写新 binding；不自动改写已接受 Run 快照。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: lineage native 写入与读隔离承接 FEA-11-LINEAGE-1 (R-009)>>
-- [ ] **AC11-6（relink/repoint/resync）**：三操作分列 preview、命令/确认文案、身份/版本断言；relink（同一物理文件改名/移动）保留 EntryId/PageId/人工版本/区域/进度；repoint（改指向另一文件）改 EntryId、内容已变须走 resync 确认；resync（容器替换/重排/增删页）走页匹配与确认；仅当前/全部引用由用户选择且只更新预览中确认的集合，确认前引用集合变化须重新预览；其他项目 accepted binding/人工/进度不误改（诊断字段变化单列允许）；跨卷重新验证；同 bytes 不同物理文件不自动合并权限/identity；容器成员重排不改变已绑定页用户顺序（SC-S11）。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: r2：其他项目不误改/跨卷/成员重排/共享源只读场景证据不足>>
+- [ ] **AC11-6（relink/repoint/resync）**（limitation：folder source 的 relink 一律 typed 拒绝，需走 repoint/resync）：三操作分列 preview、命令/确认文案、身份/版本断言；relink（同一物理文件改名/移动）保留 EntryId/PageId/人工版本/区域/进度；repoint（改指向另一文件）改 EntryId、内容已变须走 resync 确认；resync（容器替换/重排/增删页）走页匹配与确认；仅当前/全部引用由用户选择且只更新预览中确认的集合，确认前引用集合变化须重新预览；其他项目 accepted binding/人工/进度不误改（诊断字段变化单列允许）；跨卷重新验证；同 bytes 不同物理文件不自动合并权限/identity；容器成员重排不改变已绑定页用户顺序（SC-S11）。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: r2：其他项目不误改/跨卷/成员重排/共享源只读场景证据不足>>
 - [ ] **AC11-7（缺失/无备份与诊断出口）**：原文件不在且无备份时保留元数据/人工修改并诚实显示缺失；管理诊断读取 missing/needs_confirmation/tombstone 走既有 V/R 可见性区分（C-05 P8），不为"显示缺失"暗改可见性契约、不扩 V(p,t)；reader 返回 typed 失败；不以新源或 derived 文件冒充旧源证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 管理诊断查询接线未在本卡实现>>
 - [ ] **AC11-8（durable operation 与双确认）**：C-15 的 Host durable authorization 保持在前（不得反序两阶段提交）；operationId 与请求 digest/目标集合绑定；每步 durable receipt、ACK/重放/恢复核对顺序冻结；相同 key+相同请求返回原结果、相同 key+不同 plan/范围拒绝、响应丢失重试不新增 binding；若需 Core 提交后 Host ACK，ACK 前读门控须持久化并在重启后维持（不能内存标志）；分别在 Host 持久化前后、Core 事务前后、ACK 前后杀进程，用真实新进程读取 journal/registry/DB 验证恢复；授权撤销、磁盘满、旧 registry snapshot、grant 过期/失联均有结果断言且不重放破坏性 OS 操作。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: Host 自签完整 HostAuthorization 承接 FEA-11-HOST-AUTH-1 (P0-1)；ACK/Recovery 6 字段接线已修>>
 - [ ] **AC11-9（生产链路/读图/回归）**：真实生产装配 Host→Core→DB→resolve→资源字节；先 resolve 旧绑定并读取字节→同步新绑定→生产 resolve/issue 读取新内容且旧资源键/已发布摘要不可变（资源版本选择由 PREREQ 冻结，不覆盖同键旧图）；验收至 Host/API（真实 IPC），不含用户可达 UI（UI 后续独立切片承接，不得宣称用户流程完成）；源原始 hash/mtime/文件数前后守恒、应用不写源；managed 五读路径/既有命令回归；缺能力/撤销/预算/密码错误 fail-closed；pytest/.NET 全量不减少且 skip 原因逐项记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: r2：IPC 为 Core 直连（未走 HostRuntime/dispatcher）；旧键/旧摘要不可变与 pre-sync 旧 binding 证据缺失>>
@@ -212,6 +212,14 @@ Reviewer：fresh subagent（parent session-20e77fbf），只读 HEAD `5aadb3cd`�
 - 承接依据：两者均需 Host 摘要规范/写域外路径（regions/render/export/Run），超出本卡冻结范围；DSH 作为 Lead/Architect 裁决登记，Review 复审时判定是否接受。
 
 待办：R-011/R-012（AC11-4/3 证据补强）、P2 文档一致性、复跑全量门禁、新上下文复审。
+
+## 窄批范围登记（DSH）
+
+FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件清单的部分；批准位置即本节）：
+
+- Host/CoreClient 接缝：`HostCommandDispatcher.cs`、`HostCommandModel.cs`、`HostRuntime.cs`、`SourceOperationCoordinator.cs`、`NewManga.Host.Tests/*`、`NewManga.CoreClient.Tests/*`。
+- 实施期间暴露的既有缺陷修复：`src/application/importing/referenced/identity.py`、`referenced/scanner.py`、`resource_channel/{handle_resolver,import_source_refs,source_strict_read}.py`、`tests/fea09/*`（12 文件）、`tests/core/test_p09_fu2_import_pages.py`。
+- 治理指针与承接卡：`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/reviews/FEA-11-r*.md`、`doc/tasks/FEA-11-{HOST-AUTH-1,LINEAGE-1,MATCH-1,AC4-GAPS-1}.md`、`doc/handoffs/FEA-11-handoff.md`。
 
 ## Closeout Record
 

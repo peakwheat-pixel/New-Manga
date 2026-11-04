@@ -25,7 +25,7 @@
 | AC11-3 页匹配（C-15 §3.2） | unique_pixel/added/missing、重复组、旧证据降级（matcher 层） | **PARTIAL**（PDF/ZIP 重排/旧库 fixture 待补） |
 | AC11-4 CAS/原子性/零写 | stale 零写逐表快照、replay 拒绝、事务发布、多项目 scope=all、末项漂移整批回滚、apply 前撤销；缺并发/DB 失败/第三区域 | **PARTIAL** |
 | AC11-5 守恒/tombstone/lineage | tombstone、captured_v7/legacy_unverified 冻结、relink 保序（lineage 2 测试）；**lineage 读隔离未实现**（LINEAGE-1 承接） | **PARTIAL** |
-| AC11-6 relink/repoint/resync | 保续/内容变拒绝/repoint 需确认/成功发布 + 物理身份（copy 拒绝）；缺其他项目不误改/跨卷/成员重排 | **PARTIAL** |
+| AC11-6 relink/repoint/resync（**limitation：folder source 的 relink 一律 typed 拒绝**，需 repoint/resync；跨卷/成员重排/他项目不误改证据不足） | 保续/内容变拒绝/repoint 需确认/成功发布 + 物理身份（copy 拒绝）；缺其他项目不误改/跨卷/成员重排 | **PARTIAL** |
 | AC11-7 缺失/诊断出口 | missing observation、tombstone 保留；管理诊断接线待 Phase C 尾 | **PARTIAL** |
 | AC11-8 durable operation/双确认 | operation 恢复/伪造摘要拒绝/ACK 开门/cancel；Host journal；ACK/recovery/failure 已接 Host 指挥面（r3） | **PARTIAL**（P0-1 Host 自签授权 deferred → HOST-AUTH-1；崩溃点杀进程 NOT_RUN） |
 | AC11-9 生产链路/读图/回归 | 真实 IPC 全链 3/3（new_zip：changed→pending gate→ACK→新 binding v2→源守恒）——**Core 直连，未走 HostRuntime**；旧键/旧摘要不可变与 pre-sync 旧 binding 证据缺失 | **PARTIAL** |
