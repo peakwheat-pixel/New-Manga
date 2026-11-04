@@ -1,7 +1,7 @@
 {
   "task": "FEA-11",
   "generated_at": "2026-11-05",
-  "head": "ac4b6fabc",
+  "head": "d0e49471f",
   "resources": [
     {
       "path": "verification/FEA-11/AC-MATRIX.md",
@@ -10,18 +10,18 @@
     },
     {
       "path": "verification/FEA-11/changed-files.txt",
-      "sha256": "bfe2b0880c12e8eae7f1b161961f913fe8c5b3a205febc5acad4c7190e48fd06",
-      "bytes": 3424
+      "sha256": "4fda95b84cfa8ed6184e5e3b73cf5d78ed07cf649ac82fa80c5ce959036aa90a",
+      "bytes": 3490
     },
     {
       "path": "verification/FEA-11/DELIVERY-MANIFEST.json",
-      "sha256": "2ae1abbb97299a089d71e3da55978cf0ea8c74e325493a15035c32811d4ad98b",
-      "bytes": 4134
+      "sha256": "a4859dffa8724a560f224aa4bda8ac1ed70894c9a92f5e09dad90f0f8a710201",
+      "bytes": 4214
     },
     {
       "path": "verification/FEA-11/EV.md",
-      "sha256": "265e00f345c5cdfbcb5ca4458ec63fdf5c2862f88b3744dee37354c0d6e64da0",
-      "bytes": 2160
+      "sha256": "ea862fc1504593a694b667ad2e3bbf91f625301eee29d03ce27bd5f3d7bcbc23",
+      "bytes": 2291
     },
     {
       "path": "verification/FEA-11/logs/dsh-C6-final.log",
@@ -55,8 +55,8 @@
     },
     {
       "path": "verification/FEA-11/logs/dsh-C6-r6.log",
-      "sha256": "fdc3f82cce33e2f3a9a23b1d706eb943cb511d7a23061ce001be24b9544be551",
-      "bytes": 370
+      "sha256": "a2031c3a8163523dcfd319683be92e926af84206ca202b039a4c431f18dc4968",
+      "bytes": 1809
     },
     {
       "path": "verification/FEA-11/logs/dsh-phaseB-main.log",

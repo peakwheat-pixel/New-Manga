@@ -7,7 +7,7 @@ status: changes_requested
 approval: **scope-r1 处置完成；PREREQ-1 done；scope-r2 approved（ZCode 全新上下文，P0=0/P1=0/P2=4 已处置）；DSH 冻结 scope + Appointment 2026-11-04（Owner=ZCode；实际 AC 数=10，AC11-1…10）**
 suggested_owner: codex
 owner: zcode（Appointment 2026-11-04；待认领）
-reviewer: 独立上下文子 agent（fresh subagent，reviewer_kind=subagent；r1/r2/r3 三轮均未参与实现）；报告 doc/reviews/FEA-11-r1.md、FEA-11-r2.md、FEA-11-r3.md
+reviewer: 独立上下文子 agent（fresh subagent，reviewer_kind=subagent；r1–r5 均未参与实现）；报告 doc/reviews/FEA-11-r1.md…FEA-11-r5.md
 depends_on:
   - FEA-09
   - FEA-10

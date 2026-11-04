@@ -1,6 +1,6 @@
 # FEA-11 AC-MATRIX（实施中；DSH 维护）
 
-状态：**changes_requested**（r1→r2→r3→r4 均为 changes_requested；r4：P0=1 deferral 阻断 / P1=1（P1-04 已修，待 r5）/ P2=13）。AC 状态与 Task 卡同步：AC11-2 MET（仅 Core seam）；其余 9 项 PARTIAL（原因内联于卡）。
+状态：**changes_requested**（r1–r5 均 changes_requested；r5 P1-04R 已在 r6 修复，待 r6 复审）/ P2=13）。AC 状态与 Task 卡同步：AC11-2 MET（仅 Core seam）；其余 9 项 PARTIAL（原因内联于卡）。
 隔离根：`G:/CODEX/New Manga.workspace/FEA-11/`；C-17 v1.0 FROZEN（`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`、`doc/plan/FEA-CONTRACT-FROZEN-C17.md`）。
 
 ## 证据基线（实跑）

@@ -1,6 +1,6 @@
 # FEA-11 EV（证据索引）
 
-生成：2026-11-05，HEAD `ac4b6fabc`（DSH）。状态：r6 复审前；`canonical_evidence_status: pending`。
+生成：2026-11-05，HEAD `d0e49471f`（DSH）。状态：r6 复审前；`canonical_evidence_status: pending`。
 
 | ID | AC | 证据文件 | 状态 |
 |---|---|---|---|

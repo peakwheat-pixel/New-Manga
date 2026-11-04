@@ -33,7 +33,7 @@ C1 `SourceOperationCoordinator`（DPAPI 原子 journal、状态机、Begin 终�
 5. **AC11-3** pixel profile → `FEA-11-MATCH-1`；AC11-1 定时/watcher → `FEA-11-SCAN-1`。
 6. 未清 P2：IPC flaky 定位；capability 门/聚合已补（r5 residual 返修）。
 
-## 门禁（`verification/FEA-11/logs/dsh-C6-r4.log`）
+## 门禁（`verification/FEA-11/logs/dsh-C6-r6.log`）
 
 - pytest 全量 **3051 passed / 0 failed / 10 skipped**；`tests/fea11` **40 passed**；全量 .NET **1359 passed / 0 failed / 78 skipped**（重跑确认；首次环境竞争 688/EXIT=1 已记录）；`NEWMANGA_FEA11_IPC=1` **3/3**（flaky 已记录）；check PASS；pins 18/18。
 - 冻结契约/组合根/FEA-08-10 tracked 证据零 diff；未 push。
