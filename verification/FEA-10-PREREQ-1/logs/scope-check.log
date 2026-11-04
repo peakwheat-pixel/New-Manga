@@ -1,0 +1,51 @@
+COMMAND: git diff --name-only
+apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
+apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs
+doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+doc/tasks/FEA-10-PREREQ-1.md
+
+COMMAND: git ls-files --others --exclude-standard
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10PrereqProjectionTests.cs
+doc/handoffs/FEA-10-PREREQ-1-1254d4e01.md
+doc/reviews/FEA-10-appointment.md
+doc/reviews/FEA-10-scope-r6.md
+verification/FEA-10-PREREQ-1/AC-MATRIX.md
+verification/FEA-10-PREREQ-1/ENVIRONMENT.md
+verification/FEA-10-PREREQ-1/REGISTRATION-COMPARISON.md
+verification/FEA-10-PREREQ-1/delivery-manifest.json
+verification/FEA-10-PREREQ-1/logs/build-absolute-dotnet.log
+verification/FEA-10-PREREQ-1/logs/build-cache-no-telemetry.log
+verification/FEA-10-PREREQ-1/logs/build-diagnostic.log
+verification/FEA-10-PREREQ-1/logs/build-direct-environment.log
+verification/FEA-10-PREREQ-1/logs/build-env-fixed.log
+verification/FEA-10-PREREQ-1/logs/build-initial.log
+verification/FEA-10-PREREQ-1/logs/build-no-node-reuse.log
+verification/FEA-10-PREREQ-1/logs/build-no-restore-telemetry-optout.log
+verification/FEA-10-PREREQ-1/logs/build-no-restore.log
+verification/FEA-10-PREREQ-1/logs/build-sdk9.log
+verification/FEA-10-PREREQ-1/logs/build.log
+verification/FEA-10-PREREQ-1/logs/coreclient-tests.log
+verification/FEA-10-PREREQ-1/logs/fea09-restore.log
+verification/FEA-10-PREREQ-1/logs/governance-final-readable.log
+verification/FEA-10-PREREQ-1/logs/governance-final.log
+verification/FEA-10-PREREQ-1/logs/governance-in-progress.log
+verification/FEA-10-PREREQ-1/logs/host-projection-tests.log
+verification/FEA-10-PREREQ-1/logs/pins-final.log
+verification/FEA-10-PREREQ-1/logs/pins.log
+verification/FEA-10-PREREQ-1/logs/registration-comparison.log
+verification/FEA-10-PREREQ-1/logs/scope-check.log
+verification/FEA-10-PREREQ-1/logs/skipped-tests.json
+verification/FEA-10-PREREQ-1/logs/solution-tests.log
+
+OWNER ALLOWED_PATHS: PASS (all Owner delivery files match frozen allowed_paths)
+FULL WORKTREE OUTSIDE PATHS (not created/edited by this session; provenance pending DSH):
+doc/reviews/FEA-10-appointment.md
+doc/reviews/FEA-10-scope-r6.md
+FULL WORKTREE SCOPE EXIT: 1
+COMMAND: git diff --check
+warning: in the working copy of 'apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md', LF will be replaced by CRLF the next time Git touches it
+EXIT: 0
+COMMAND: git diff --name-only -- verification/FEA-09
+EXIT: 0

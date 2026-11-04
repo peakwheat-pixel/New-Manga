@@ -15,11 +15,15 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
+> **rev 2.12（2026-11-04，FEA-10-PREREQ-1 / C-08 块②）**：仅增量登记 §5.5 `PrepareRun` / `AcceptRun` 请求与结果、三个 C-08 错误码、§8 Proposed（未观察）与证据/taxonomy 例外，以及 Host `allowedRunErrorCodes` 投影。C-08 §3 已批准新命令目标 wire **2.12**（major 2 / minor 12）；文档 rev 与 Core 运行常量分离，**本卡不提升 `PROTOCOL_MINOR` 或客户端默认 minor，不实现新命令**。既有命令、结果、错误、状态与事件语义零改动。
 
-状态：文档 rev `2.11`；**Core protocol 仍为 major `2` / minor `3`**（本修订未提升协议版本）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
+**前次修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
+
+状态：文档 rev `2.12`；**Core protocol 仍为 major `2` / minor `3`**（本修订未提升协议版本）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 
 ## Revision history
+
+- `2.12`（FEA-10-PREREQ-1，2026-11-04）：按 C-08 冻结记录 §3 登记目标 wire 2.12、§5.5 两命令与 PreparedRun DTO、三错误码、§8 未观察与两个局部例外；Host 白名单与负向对照属本卡。Core dispatch、候选存储、接受事务及运行兼容验证归 FEA-10；不改变运行协议版本或既有 wire。
 
 - `2.10`（P09-AC3-DELETE-1 AC1 第二次冻结，2026-10-18）：在保留 rev 2.9 单条命令 wire 原样的前提下，新增独立批量命令 `PermanentlyDeleteBooks` / `library_delete_books_permanently`。请求必须给出 1..20 个唯一 `book_ids`、顺序相同的 `confirmed_book_ids`、与数组长度相同的 `confirm_count` 和 `confirm_permanent_delete: true`；完整预检后 DB 删除全有/全无，提交后文件清理逐本处理并返回安全逐项状态。新增批量错误字面值，不改全局 `ErrorEnvelope` 字段/enum；major 保持 2，minor `9→10`。同时冻结 Pipeline Run/Task 历史保留并脱离已删除项目、用户导出文件不删除、全库历史备份不纳入删除操作。仅契约冻结，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
 - `2.9`（P09-AC3-DELETE-1 AC1，2026-10-18）：冻结 `PermanentlyDeleteBook` / `library_delete_book_permanently` 单条请求、返回、错误码与 production-only ACL 名称；major 保持 2，minor `8→9`。请求需要 `confirm_permanent_delete: true`；不复用软删除命令、不接受批量目标或路径。只新增 command/error values，既有命令与 envelope 字段不变；本修订仅冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
@@ -119,6 +123,8 @@ Event<T> = {
 
 ### 3.2 Compatibility proposal
 
+- FEA-10-PREREQ-1 / C-08 块②登记 `PrepareRun` / `AcceptRun` 的目标 **wire 2.12（major 2 / minor 12，DSH 已批准）**，仅 additive 命令与错误字符串。文档 rev 2.12 不等于 Core `PROTOCOL_MINOR=12`：本卡不改变当前 Core `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`，不改变客户端 `CoreProtocol.DefaultMinor=3`、既有命令 per-command minor 或发送行为；新增命令尚无可执行 registry 路由。运行版本启用、Core dispatch 与配对兼容回归须由 DSH 在 FEA-10 明确释放。
+
 - `major` 不同必须在执行命令前拒绝，返回 `PROTOCOL_VERSION_UNSUPPORTED`；不得猜测兼容。
 - 同 major 下 minor 可向前增加可选字段和新 command/event；接收端忽略未知可选字段，但未知 command/event/status 必须显式返回/保留 `UNKNOWN`，不能重解释成其他状态。
 - 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。**例外**：经授权 Task 在 Revision history 登记的 nullability widening（`T → T | null`）不升 major，现仅有 §5 `ListBooks` 的 `BookSummary.page_count`（`1.2` 修订，[M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)）；1.1 版消费者遇 `null` 属该登记修订的授权破坏面。
@@ -194,6 +200,8 @@ Event<T> = {
 | `GetRunSnapshot` | `{run_id: RunId}` | `RunSnapshot` | §3.1、§3.2–§3.3、§6.1 |
 | `GetTaskProjection` | `{run_id: RunId}` | `TaskProjection` | §3.1、§7.2 |
 | `RetryFailedTargets` | `{run_id: RunId, idempotency_key: IdempotencyKey}` | `RunAccepted` | §2.1–§2.2、§3.1、§3.3、§5.3 |
+| `PrepareRun` | `{command: PipelineCommand, scope: PipelineScope, overrides?: JsonObject}` | `PreparedRun` | C-08 SC-R01/R04；wire 2.12 已登记、运行未实现 |
+| `AcceptRun` | `{prepared_run: PreparedRun, idempotency_key: IdempotencyKey}` | `RunAccepted` | C-08 SC-R01/R04/R05；wire 2.12 已登记、运行未实现 |
 
 DTO 与幂等语义：
 
@@ -204,6 +212,45 @@ DTO 与幂等语义：
 - `RunSnapshot` 是只读的 Core 持久 Run 视图，至少含 `{run_id, command, scope, status, targets: [{target_id, target_type, order}], source_run_id?, retry_reason?}`。`targets` 是接受时冻结且有序的成员，不随当前 UI selection 变化；不得在该 DTO 中暴露凭据、secret 或本地绝对路径。它不是恢复真值的替代品；Core 仍以完整持久 Run/Task/StepRun 与执行快照恢复。
 - `GetTaskProjection` 返回 §6.1 冻结的只读 `TaskProjection`。统计、Page rows、Task/Step 详情、current Page / Step 与 controls 必须由同一权威 Run/Task/StepRun 数据源生成，PageList 不得另行查询或重算另一份状态。
 - `RetryFailedTargets` 只接受 `completed_with_failures` 且至少含一个失败 Page 的 Run；新 Run 只冻结该来源 Run 的失败 Page，写入 `source_run_id` / `retry_reason="retry_failed_targets"`，源 Run 与其历史不变。没有失败 Page 复用 `TARGET_NOT_FOUND`；状态不合法使用 `INVALID_RUN_TRANSITION`。
+
+#### C-08 块②增量：PreparedRun（文档登记，运行未实现）
+
+本段仅定义新命令形状，不替换以上六条命令的请求/结果或幂等语义。字段区分大小写；请求沿用 snake_case envelope/payload，PreparedRun 内使用 C-08 四元组的 camelCase 键：
+
+```text
+PreparedRun = {
+  preparedRunId: OpaqueId,
+  command: PipelineCommand,
+  scope: PipelineScope,
+  overrides?: JsonObject,
+  requestedTargets: JsonObject[],
+  settingsSnapshot: JsonObject,
+  providerBindingSnapshot: JsonObject,
+  constraintSnapshotRef: OpaqueId | null,
+  preparedDigest: string,              # sha256:<64 lowercase hex>
+  snapshotDigest: string,              # 与 preparedDigest 同值；非 payload digest
+  generation: integer,                 # Host 候选代次，非 Run 状态
+  expiresAt: Timestamp,
+  displaySummary: JsonObject,          # 安全展示摘要
+  redactedPayloadPreview: JsonObject   # 脱敏预览，非执行请求的替代品
+}
+```
+
+- `PrepareRun` 从 command/scope/overrides 计算完整快照、摘要与 digest，**零 DB 写、零执行**。Host 临时 candidate store 保存完整候选直到接受或过期，候选不落 Core DB；有效期建议 ≤10 分钟，不以本登记固定为运行常量。不得把候选状态加入 `PipelineRunStatus`。
+- `requestedTargets` 是有序的完整目标快照对象数组，不是当前 UI selection；snapshot/ref 值是冻结四元组的其余成员，完整可重放内容不得以可变配置指针替代。目标/设置/provider 内容复用 Core 快照数据，不另建领域真值。完整候选仅供受信 Host/Core；UI 只得到安全摘要与脱敏预览，凭据、secret、本地绝对路径不进入 UI DTO 或日志。
+- `preparedDigest` = `sha256:` + 对**恰好** `{requestedTargets, settingsSnapshot, providerBindingSnapshot, constraintSnapshotRef}` 做 canonical JSON（对象键递归排序、UTF-8、无空白）后计算的 SHA-256 小写 hex；数组顺序保留，四个键必备。它与 preview/send 的实际 payload digest 是两种摘要，后者同源一致的实现验证归 FEA-10。
+- `AcceptRun` 携带完整 `prepared_run` 与独立 `idempotency_key`，Host 先校验候选身份/代次/过期，Core 在接受边界校验完整性、digest 与当前目标/配置一致性，成功后才以同一事务写入 Run 及全部快照并返回既有 `RunAccepted`。拒绝零副作用；仅有 digest 不构成接受授权。
+- 新 `AcceptRun` 的 durable receipt 沿用创建 Run 的同键规则：同键同 fingerprint 找回原 Run 当前状态（含提交成功但丢 ACK、Core 重启后的重放），不因候选已消费/过期再创建 Run；同键异 fingerprint → `IDEMPOTENCY_KEY_REUSED`。fingerprint 沿用操作/command/规范化 scope/overrides，`request_id` 不参与去重；幂等记录随 Run History 保留。不新增按 request 查询入口，也不修改 SC-R09 已列既有操作的覆盖范围。
+
+新增命令错误语义（C-08 冻结值；错误响应继续 `result=null`，不改既有错误行）：
+
+| code | category | retryable | 触发与恢复 |
+|---|---|---|---|
+| `RUN_STALE_PREVIEW` | `conflict` | `false` | digest 不一致、目标或配置变化；零副作用，需重新预览 |
+| `RUN_PREVIEW_EXPIRED` | `conflict` | `false` | Host 候选过期；重新 prepare 生成新 preview |
+| `RUN_SNAPSHOT_INCOMPLETE` | `unavailable` | `true` | 接受快照缺失或不完整；拒绝接受，重试资格不等于自动执行 |
+
+客户端归属：本卡只在 `HostCommandRegistry.AllowedRunErrorCodes` 注册错误，在 `HostCommandDispatcher` 的既有 Run 出口投影；`allowedRunErrorCodes` 精确匹配大小写，三新码按上表规范化。未注册码保留原 `code`，投影 `category=unknown`、安全短消息、`retryable=false`；不得触发专属恢复/重试或作为 UI 分支依据，UI 只作通用失败呈现。已登记旧码保留原 category/retryable/message。Core §8 的自由字符串解析不变。**本卡不新增可执行 PrepareRun/AcceptRun 客户端路由/请求 builder**；Core `_RUN_COMMANDS`/dispatch、`CoreServiceClient`、Host 候选与接受逻辑、运行版本启用及真实 IPC 验证归 FEA-10。负向对照在 `Fea10PrereqProjectionTests` 使用去除三新码的注册集合；原始 envelope/ASCII 保真由 `CoreProtocolTests` / `AsciiWireTests` 覆盖。
 
 Control 与恢复状态矩阵（完整枚举来自 P11 §4.2/§4.5；未列为合法的动作均拒绝且不得有副作用）：
 
@@ -1117,6 +1164,20 @@ ErrorEnvelope = {
 | unclassified Python exception / worker crash | `unknown` or `internal` | Exact mapping/redaction policy **UNKNOWN**; never leak traceback to UI. |
 
 `retryable` defaults to `unknown` unless Core has an evidence-backed decision. `message` is diagnostic text, not a stable programmatic selector. UI branches on `code` / `category`, never English text.
+
+**C-08 局部例外（原 :1119）**：§5.5 三个新码的 retryable 直接采用 C-08 已冻结规范值（false/false/true），依据为冻结契约，不冒充 Core 已观察运行证据。该例外不改变其他码的证据规则；未注册 Run code 只作诊断保留，不得作为 UI 分支依据或触发专属恢复/重试。
+
+**C-08 taxonomy 局部例外（原 :1122）**：下列 Proposed（未观察）的三个 code/category/retryable 映射已由 C-08 冻结，属于命令级规范登记；不把 §8 其余 PROPOSAL/观察提升为全局冻结 taxonomy，不修改 ErrorEnvelope 字段或 Core 解析。
+
+### Proposed（未观察）
+
+| code | category | retryable | 依据/状态 |
+|---|---|---|---|
+| `RUN_STALE_PREVIEW` | `conflict` | `false` | C-08 SC-R01；已注册，运行未观察 |
+| `RUN_PREVIEW_EXPIRED` | `conflict` | `false` | C-08 SC-R04；已注册，运行未观察 |
+| `RUN_SNAPSHOT_INCOMPLETE` | `unavailable` | `true` | C-08 SC-R05；已注册，运行未观察 |
+
+### 既有命令级实现观察
 
 <a id="rerender-page-error-envelope-observation"></a>
 **命令级实现观察（2026-10-10；非全局规范）**：本节仍为 `PROPOSAL`；以下只记录当前 handler 的命令级 envelope 映射，不冻结 `ErrorEnvelope` taxonomy。交叉引用：[§5 `RerenderPage` 行](#rerender-page-command)、[RC-4 `rerender_page` 行](M2-RC4_DOMAIN_COMMANDS.md#rc4-rerender-page-command)。`category` 与 `retryable` 是独立字段；`category="unavailable"` 不推出 `retryable=true`。

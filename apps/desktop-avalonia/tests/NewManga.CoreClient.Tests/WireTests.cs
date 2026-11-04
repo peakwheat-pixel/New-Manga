@@ -59,6 +59,29 @@ public sealed class AsciiWireTests
 
 public sealed class CoreProtocolTests
 {
+    [Theory]
+    [InlineData("RUN_STALE_PREVIEW")]
+    [InlineData("RUN_PREVIEW_EXPIRED")]
+    [InlineData("RUN_SNAPSHOT_INCOMPLETE")]
+    [InlineData("RUN_FUTURE_ERROR")]
+    public void ParseResponse_RunCodesRemainRawUntilHostProjection(string code)
+    {
+        var line = JsonSerializer.Serialize(new
+        {
+            request_id = "wire-run",
+            result = (object?)null,
+            error = new { code, category = "internal", retryable = true, message = "安全消息😀" },
+        });
+        var escaped = AsciiWire.Escape(line);
+        Assert.True(AsciiWire.IsAscii(escaped));
+        var response = CoreProtocol.Parse(escaped);
+        Assert.Equal(code, response.Error!.Code);
+        Assert.Equal("internal", response.Error.Category);
+        Assert.True(response.Error.Retryable);
+        Assert.Equal("安全消息😀", response.Error.Message);
+        Assert.Equal("wire-run", response.RequestId);
+    }
+
     [Fact]
     public void RequestEnvelope_MatchesProtocol23()
     {

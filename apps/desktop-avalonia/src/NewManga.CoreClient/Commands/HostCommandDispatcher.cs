@@ -63,16 +63,48 @@ public sealed class HostCommandDispatcher
         }
 
         var payload = args.ValueKind == JsonValueKind.Object ? args : EmptyObject();
-        return descriptor.Channel switch
+        try
         {
-            HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
-                .ConfigureAwait(false),
-            HostCommandChannel.HostBridge => await InvokeBridgeAsync(descriptor, payload, cancellationToken)
-                .ConfigureAwait(false),
-            HostCommandChannel.HostLocal when _hostLocal is not null => await _hostLocal(
-                    descriptor.Name, payload, cancellationToken)
-                .ConfigureAwait(false),
-            _ => throw new HostCommandNotSupportedException(descriptor),
+            return descriptor.Channel switch
+            {
+                HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
+                    .ConfigureAwait(false),
+                HostCommandChannel.HostBridge => await InvokeBridgeAsync(descriptor, payload, cancellationToken)
+                    .ConfigureAwait(false),
+                HostCommandChannel.HostLocal when _hostLocal is not null => await _hostLocal(
+                        descriptor.Name, payload, cancellationToken)
+                    .ConfigureAwait(false),
+                _ => throw new HostCommandNotSupportedException(descriptor),
+            };
+        }
+        catch (CoreOperationException error) when (HostCommandRegistry.IsRunCommand(name))
+        {
+            throw ProjectRunError(error, HostCommandRegistry.AllowedRunErrorCodes);
+        }
+    }
+
+    /// <summary>Host projection only. Unknown codes are diagnostic, never UI action selectors.
+    /// The explicit registration set also permits a pre-registration compatibility check.
+    /// No recovery or retry action is executed by this projection.</summary>
+    public static CoreOperationException ProjectRunError(
+        CoreOperationException error, IReadOnlySet<string> allowedRunErrorCodes)
+    {
+        if (!allowedRunErrorCodes.Contains(error.Code))
+        {
+            return new CoreOperationException(
+                error.Code, "unknown", false, "Run operation failed", error.RequestId);
+        }
+
+        // Normative C-08 values apply only AFTER registration, regardless of source taxonomy.
+        return error.Code switch
+        {
+            "RUN_STALE_PREVIEW" => new(error.Code, "conflict", false,
+                "Run preview is stale; prepare again", error.RequestId),
+            "RUN_PREVIEW_EXPIRED" => new(error.Code, "conflict", false,
+                "Run preview expired; prepare again", error.RequestId),
+            "RUN_SNAPSHOT_INCOMPLETE" => new(error.Code, "unavailable", true,
+                "Run snapshot is incomplete", error.RequestId),
+            _ => error, // Existing registered command-level mappings remain unchanged.
         };
     }
 

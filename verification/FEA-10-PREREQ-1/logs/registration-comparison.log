@@ -1,0 +1,4 @@
+COMMAND: compare HEAD M2-C1 §5.5 nonempty lines with current document; verify new code absence/presence
+BASE HEAD: e45baa8b5946a1d581f30b025db045c77e99a6df
+PASS: all existing Run command/DTO/idempotency/control/error lines retained verbatim; three new codes absent at baseline and present after registration
+EXIT: 0

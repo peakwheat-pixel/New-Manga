@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace NewManga.CoreClient.Commands;
 
 /// <summary>
@@ -24,6 +26,22 @@ namespace NewManga.CoreClient.Commands;
 /// </summary>
 public static class HostCommandRegistry
 {
+    // FEA-10-PREREQ-1: application errors only; no transport enum or new runnable routes.
+    public static IReadOnlySet<string> AllowedRunErrorCodes { get; } = new[]
+    {
+        "INVALID_REQUEST", "TARGET_NOT_FOUND", "IDEMPOTENCY_KEY_REUSED",
+        "INVALID_RUN_TRANSITION", "RUN_NOT_INTERRUPTED", "MISSING_REQUIRED_INPUT",
+        "SETTINGS_CONFLICT", "SETTINGS_UNAVAILABLE", "UNKNOWN",
+        "PROVIDER_NOT_CONFIGURED", "PROVIDER_DEPENDENCY_MISSING", "PROVIDER_FAILED",
+        "PROVIDER_UNAVAILABLE", "CORE_UNAVAILABLE", "PROTOCOL_VERSION_UNSUPPORTED", "UNKNOWN_COMMAND",
+        // M2-C1 rev 2.12 / C-08 registration (not runtime support).
+        "RUN_STALE_PREVIEW", "RUN_PREVIEW_EXPIRED", "RUN_SNAPSHOT_INCOMPLETE",
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    public static bool IsRunCommand(string name) => name is
+        "library_start_run" or "library_control_run" or "library_resume_blocked_run" or
+        "library_get_run_snapshot" or "library_get_task_projection" or "library_retry_failed_targets";
+
     private static readonly string[] SettingsNames =
     {
         "settings_get",

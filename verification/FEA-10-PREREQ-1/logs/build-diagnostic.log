@@ -1,0 +1,16 @@
+COMMAND: dotnet build apps/desktop-avalonia/src/NewManga.CoreClient/NewManga.CoreClient.csproj -c Release --nologo -v:diag
+REDACTED EXCERPT: only NuGet path exception; general diagnostic environment dump omitted.
+14:58:09.585   1:5>C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj]
+                     System.ArgumentNullException: Value cannot be null. (Parameter 'path1')
+                        at System.ArgumentNullException.Throw(String paramName)
+                        at System.IO.Path.Combine(String path1, String path2)
+                        at NuGet.Common.NuGetEnvironment.CalculateFolderPath(NuGetFolderPath folder)
+                        at NuGet.Common.NuGetEnvironment.GetFolderPath(NuGetFolderPath folder)
+                        at NuGet.Common.NuGetEnvironment.CalculateFolderPath(NuGetFolderPath folder)
+                        at NuGet.Common.NuGetEnvironment.GetFolderPath(NuGetFolderPath folder)
+                        at NuGet.Configuration.XPlatMachineWideSetting..ctor()
+                        at NuGet.Build.Tasks.GetRestoreSettingsTask.<>c.<.cctor>b__87_0()
+                        at NuGet.Build.Tasks.RestoreSettingsUtils.ReadSettings(String solutionDirectory, String restoreDirectory, String restoreConfigFile, Lazy`1 machineWideSettings, SettingsLoadingContext settingsLoadContext)
+                        at NuGet.Build.Tasks.GetRestoreSettingsTask.Execute() (任务 ID: 23)
+                     C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj]
+EXIT: 1

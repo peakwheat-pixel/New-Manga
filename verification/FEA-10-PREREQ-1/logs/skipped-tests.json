@@ -1,0 +1,302 @@
+{
+  "command": "dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build",
+  "count": 74,
+  "skips": [
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio",
+      "reason": "NEWMANGA_FEA09_IPC 未设置为 1；既有 opt-in 真实 IPC 测试"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    },
+    {
+      "test": "NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys",
+      "reason": "NEWMANGA_CORECLIENT_SIDECAR_DIR 未配置；依赖该条件的 sidecar/book/region fixture 在首个 gate 跳过"
+    }
+  ]
+}

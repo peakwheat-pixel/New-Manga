@@ -1,0 +1,53 @@
+COMMAND: dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo
+CWD: G:/CODEX/New Manga
+START: 2026-11-04T06:58:00.420Z
+ENV: APPDATA=C:/Users/49745/AppData/Roaming; DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true
+  正在确定要还原的项目…
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\NewManga.ApplicationCore.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\NewManga.Appearance.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\NewManga.Host.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\NewManga.ThemeEngine.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\NewManga.Appearance.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\NewManga.CoreClient.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\NewManga.Presentation.Avalonia.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\NewManga.DesignSystem.TokenGen.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\NewManga.ThemeEngine.ThemeGen.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj]
+
+生成失败。
+
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\NewManga.ApplicationCore.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\NewManga.Appearance.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\NewManga.Host.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\NewManga.ThemeEngine.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\NewManga.Appearance.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\NewManga.CoreClient.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\NewManga.Presentation.Avalonia.Tests.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\NewManga.DesignSystem.TokenGen.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\NewManga.ThemeEngine.ThemeGen.csproj]
+C:\Program Files\dotnet\sdk\10.0.401\NuGet.targets(782,5): error : Value cannot be null. (Parameter 'path1') [G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj]
+    0 个警告
+    18 个错误
+
+已用时间 00:00:00.35
+
+STDERR:
+
+EXIT: 1
+END: 2026-11-04T06:58:01.206Z

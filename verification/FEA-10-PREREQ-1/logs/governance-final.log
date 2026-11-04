@@ -1,0 +1,17 @@
+COMMAND: C:/Program Files/PowerShell/7/pwsh.exe -NoProfile -File tools/governance/check.ps1
+CWD: G:/CODEX/New Manga
+START: 2026-11-04T07:08:00.436Z
+ENV: APPDATA=C:/Users/49745/AppData/Roaming; DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-10-PREREQ-1.md
+WARN: ���� 10 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��
+WARN: doc/STATUS.md �ѴﵽԤ��� 80%��3102 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��5603 bytes / 52 lines
+WARN: evidence_dir ��δ�Ǽǹ����ļ������� workspace ����Ϊ SOURCE_PIN����G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\ENVIRONMENT.md, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-absolute-dotnet.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-cache-no-telemetry.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-diagnostic.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-direct-environment.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-env-fixed.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-initial.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-no-node-reuse.log
+FAIL: READY DAG ֻ���� status: ready��FEA-10-PREREQ-1 ��ǰΪ in_review
+Governance check: FAIL (1 errors, 4 warnings)
+
+STDERR:
+
+EXIT: 1
+END: 2026-11-04T07:08:01.690Z

@@ -1,0 +1,12 @@
+COMMAND: git diff --name-only -- verification/FEA-09/logs/wire-redacted.ndjson verification/FEA-09/ipc
+verification/FEA-09/logs/wire-redacted.ndjson
+
+COMMAND: git checkout -- verification/FEA-09/logs/wire-redacted.ndjson verification/FEA-09/ipc
+fatal: Unable to create 'G:/CODEX/New Manga/.git/index.lock': Permission denied
+
+EXIT: 128
+
+FALLBACK: git cat-file --filters HEAD:verification/FEA-09/logs/wire-redacted.ndjson -> restore same worktree file bytes (read-only Git; no index mutation)
+EXIT: 0
+POSTCHECK: git diff --name-only -- verification/FEA-09
+EXIT: 0

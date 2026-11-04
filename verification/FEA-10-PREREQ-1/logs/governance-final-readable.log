@@ -1,0 +1,17 @@
+COMMAND: C:/Program Files/PowerShell/7/pwsh.exe -NoProfile -Command [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new(); & './tools/governance/check.ps1'; exit $LASTEXITCODE
+CWD: G:/CODEX/New Manga
+START: 2026-11-04T07:09:39.676Z
+ENV: APPDATA=C:/Users/49745/AppData/Roaming; DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-10-PREREQ-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3102 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5603 bytes / 52 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\delivery-manifest.json, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\ENVIRONMENT.md, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-absolute-dotnet.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-cache-no-telemetry.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-diagnostic.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-direct-environment.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-env-fixed.log, G:\CODEX\New Manga\verification\FEA-10-PREREQ-1\logs\build-initial.log
+FAIL: READY DAG 只允许 status: ready；FEA-10-PREREQ-1 当前为 in_review
+Governance check: FAIL (1 errors, 4 warnings)
+
+STDERR:
+
+EXIT: 1
+END: 2026-11-04T07:09:40.947Z
