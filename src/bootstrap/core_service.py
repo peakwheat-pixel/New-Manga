@@ -4005,12 +4005,12 @@ class CoreServiceServer:
             "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
             "ResyncSource",
         ):
-            return stack["service"].apply(command, payload)
+            return self._commit_source_sync(stack["service"].apply(command, payload))
         if command == "AcknowledgeSourceOperation":
-            return stack["operations"].acknowledge(payload)
+            return self._commit_source_sync(stack["operations"].acknowledge(payload))
         if command == "CompleteSourceOperationRecovery":
-            return stack["operations"].recover(payload)
-        return stack["operations"].record_failure(payload)
+            return self._commit_source_sync(stack["operations"].recover(payload))
+        return self._commit_source_sync(stack["operations"].record_failure(payload))
 
     def _dispatch_source_sync_app(
         self, command: str, payload: dict[str, Any]
@@ -4022,16 +4022,26 @@ class CoreServiceServer:
                 "CORE_CAPABILITY_MISSING", "source sync is unavailable"
             )
         if command == "source_plan_sync":
-            return stack["planner"].create(payload)
+            return self._commit_source_sync(stack["planner"].create(payload))
         if command == "source_preview_sync_plan":
-            return stack["planner"].preview(payload)
+            return self._commit_source_sync(stack["planner"].preview(payload))
         if command == "source_confirm_sync_plan":
-            return stack["planner"].confirm(payload)
+            return self._commit_source_sync(stack["planner"].confirm(payload))
         if command == "source_invalidate_sync_plan":
-            return stack["planner"].invalidate(payload)
+            return self._commit_source_sync(stack["planner"].invalidate(payload))
         if command == "source_get_operation":
             return stack["operations"].get(payload)
-        return stack["operations"].cancel(payload)
+        return self._commit_source_sync(stack["operations"].cancel(payload))
+
+    def _commit_source_sync(self, result: dict[str, Any]) -> dict[str, Any]:
+        """FEA-11 (C-17 §5.2): plan/operation rows are durable at the command
+        boundary. The store writers run inside the receiver's transaction; a
+        later ``BEGIN IMMEDIATE`` (apply) must not see an open transaction."""
+        repository = getattr(self._core, "repository", None)
+        conn = getattr(repository, "_conn", None)
+        if conn is not None:
+            conn.commit()
+        return result
 
     def _assert_source_sync_gate(self, page_id: str) -> None:
         """FEA-11 (C-17 §3.3): refuse reads/writes through a binding whose

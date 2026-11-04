@@ -150,7 +150,8 @@ public sealed class Fea11SourceIpcTests
         Assert.Contains("source.sync.scan/1", (await client.PingAsync()).Capabilities);
 
         var registry = new SourceAccessRegistry(root);
-        var registered = registry.Register("fea11-ipc", [receipt.GetProperty("old_zip").GetString()!]);
+        // The registry authorizes roots; the containers live under the root.
+        var registered = registry.Register("fea11-ipc", [root]);
         var sources = new SourceReadCoordinator(client, registry, () => true);
         var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
         {
@@ -279,11 +280,19 @@ public sealed class Fea11SourceIpcTests
             writer.WritePropertyName("authorization");
             apply.GetProperty("authorization").WriteTo(writer);
         });
-        var appliedResult = applied.Result ?? throw new InvalidOperationException("apply returned no result");
-        var commitDigest = appliedResult.TryGetProperty("commit_digest", out var committed)
-            ? committed.GetString()!
-            : throw new InvalidOperationException("apply result lacks commit_digest: " + appliedResult.GetRawText());
+        Assert.NotNull(applied.Result);
         var operationId = applyPayloads.GetProperty("operation_id").GetString()!;
+        // The commit receipt digest is read on the operation query face (the
+        // dispatch result carries the state; the receipt lives on the row).
+        var operation = await client.SendAsync("source_get_operation", 3, writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("operation_id", operationId);
+            writer.WriteEndObject();
+        }, TimeSpan.FromSeconds(60));
+        var operationRow = operation.Result ?? throw new InvalidOperationException("operation query returned no result");
+        var commitDigest = operationRow.GetProperty("commit_digest").GetString()!;
+        Assert.Equal("core-committed", operationRow.GetProperty("state").GetString());
 
         await client.SendHostControlAsync("AcknowledgeSourceOperation", writer =>
         {
@@ -298,6 +307,14 @@ public sealed class Fea11SourceIpcTests
             writer.WritePropertyName("authorization");
             ack.GetProperty("authorization").WriteTo(writer);
         });
+
+        // A sync switch binds a new source version: reads need a fresh grant
+        // scoped to that version (C-16 §3.1; stale grants stay fail-closed).
+        var newVersion = scanResult.GetProperty("source").GetProperty("version_id").GetString()!;
+        var newGrantId = await sources.IssueAsync(
+            registered.RegistryId, registered.Generation,
+            receipt.GetProperty("new_zip").GetString()!, "zip",
+            receipt.GetProperty("source_id").GetString()!, newVersion, rendition);
 
         var resolved = await client.SendAsync("resolve_page_resource", 3, writer =>
         {
