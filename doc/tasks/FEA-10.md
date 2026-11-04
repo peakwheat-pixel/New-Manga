@@ -271,9 +271,9 @@ out_of_scope:
 | EV-FEA10-AUX-059 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/restart-core.log | pending | c77644a874d041101485c7603af98c2fb4105dd3f00f1e605a351533a9fc645f | SOURCE_PIN |
 | EV-FEA10-AUX-060 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope-r1-preserved.log | pending | c6568ac3a90e555964577c1f9ada00ed046c3af703ae109ee1dc8cbecc228128 | SOURCE_PIN |
 | EV-FEA10-AUX-061 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope-r2.log | pending | 282a16632f8ed226326ee51c7b5b9076cc5bbd6ce324565655dc965d461f08d1 | SOURCE_PIN |
-| EV-FEA10-AUX-062 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope.log | pending | faa0cd3c98ffa8f5ce3dfc803a3dadcf21f509e17b8bf28c76fad84c56c75e51 | SOURCE_PIN |
-| EV-FEA10-SP-01 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/changed-files.txt | pending | 5b4131dc05d5853d0f5d50f4b3b229a9b48cf4d794bd9305222fb37e12037ef0 | SOURCE_PIN |
-| EV-FEA10-SP-02 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/DELIVERY-MANIFEST.json | pending | ca31e5eab7fd6fe5624af899664bb7964da30713828a8d4d6f2f3740d2b3b86c | SOURCE_PIN |
+| EV-FEA10-AUX-062 | 过程/日志证据（SOURCE_PIN） | verification/FEA-10/logs/scope.log | pending | dd502a054e77d933fac239f77c6513d28514f66402f75ee2683de0b9901980eb | SOURCE_PIN |
+| EV-FEA10-SP-01 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/changed-files.txt | pending | 80b2912c28889febbdc9c54215b9ed226f50a0c4fa3b7178a048b76dfc7f4d00 | SOURCE_PIN |
+| EV-FEA10-SP-02 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/DELIVERY-MANIFEST.json | pending | 1dd0fca5250865381430295519bc2407ad3b701067c9df12869d3cfb4c7de8a0 | SOURCE_PIN |
 | EV-FEA10-SP-03 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/OWNER-CHECKPOINT.md | pending | 5d1ef4c26135bc3f5820b5b9093e8f37e56bf291038b1ed47215d85d20686d41 | SOURCE_PIN |
 | EV-FEA10-SP-04 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/record_delivery.py | pending | fd47bbbc7671eaa58d123b161401e0b0e97ba366bb29cb1382c4e8565db34715 | SOURCE_PIN |
 | EV-FEA10-SP-05 | 过程/清单证据（SOURCE_PIN） | verification/FEA-10/RESOURCE-MANIFEST.json | pending | 293057e2817699f3cd117204d2375c36c2455a753cf3f019af8feacf3a6ff611 | SOURCE_PIN |
