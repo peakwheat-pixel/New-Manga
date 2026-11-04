@@ -53,6 +53,8 @@ public sealed class SourceOperationCoordinator
         string RequestDigest,
         string State,
         string? AuthorizationDigest,
+        string? AuthorizationJson,
+        string? GrantIds,
         string? HostReceiptId,
         string? CommitDigest,
         string? AcknowledgedAt,
@@ -61,18 +63,23 @@ public sealed class SourceOperationCoordinator
 
     /// <summary>FEA-11: begin an operation; the Host journals *before* any
     /// authorization or Core call (C-17 §5.2 durable-first rule).</summary>
-    public JournalEntry Begin(string planId, string planDigest, string kind, string requestDigest)
+    public JournalEntry Begin(
+        string planId, string planDigest, string kind, string requestDigest,
+        string? operationId = null, IEnumerable<string>? grantIds = null)
     {
         RequireEnabled();
         var now = UtcNow();
         var entry = new JournalEntry(
-            OperationId: "op-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant(),
+            OperationId: operationId
+                ?? ("op-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant()),
             PlanId: planId,
             PlanDigest: planDigest,
             Kind: kind,
             RequestDigest: requestDigest,
             State: "started",
             AuthorizationDigest: null,
+            AuthorizationJson: null,
+            GrantIds: grantIds is null ? null : string.Join(",", grantIds),
             HostReceiptId: null,
             CommitDigest: null,
             AcknowledgedAt: null,
@@ -99,6 +106,7 @@ public sealed class SourceOperationCoordinator
             {
                 State = "host-authorized",
                 AuthorizationDigest = Sha256Hex(authorizationJson),
+                AuthorizationJson = authorizationJson,
                 HostReceiptId = hostReceiptId,
                 UpdatedAt = UtcNow(),
             };
@@ -171,51 +179,103 @@ public sealed class SourceOperationCoordinator
             committed = Read(operationId);
             if (committed.State == "acknowledged") return committed;
             RequireState(committed, "core-committed");
-            var next = committed with
+        }
+
+        var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
+        var authorizationJson = committed.AuthorizationJson
+            ?? throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+        using var authorization = JsonDocument.Parse(authorizationJson);
+        var grantIds = string.IsNullOrWhiteSpace(committed.GrantIds)
+            ? Array.Empty<string>()
+            : committed.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        await client.SendHostControlAsync(
+                "AcknowledgeSourceOperation",
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("operation_id", committed.OperationId);
+                    writer.WriteString("request_digest", committed.RequestDigest);
+                    writer.WriteString("commit_digest", committed.CommitDigest ?? string.Empty);
+                    writer.WriteString("host_receipt_id", committed.HostReceiptId ?? string.Empty);
+                    writer.WriteStartArray("grant_ids");
+                    foreach (var grantId in grantIds)
+                    {
+                        writer.WriteStringValue(grantId);
+                    }
+                    writer.WriteEndArray();
+                    writer.WritePropertyName("authorization");
+                    authorization.RootElement.WriteTo(writer);
+                    writer.WriteEndObject();
+                },
+                TimeSpan.FromSeconds(60),
+                client.HostSession,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        // The Core accepted the ACK: record the Host-side durable acknowledgement.
+        lock (gate)
+        {
+            var current = Read(operationId);
+            var next = current with
             {
                 State = "acknowledged",
                 AcknowledgedAt = UtcNow(),
                 UpdatedAt = UtcNow(),
             };
             Write(next);
-            committed = next;
+            return next;
         }
-
-        try
-        {
-            var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
-            await client.SendHostControlAsync(
-                    "AcknowledgeSourceOperation",
-                    writer =>
-                    {
-                        writer.WriteStartObject();
-                        writer.WriteString("operation_id", operationId);
-                        writer.WriteString("commit_digest", committed.CommitDigest ?? "");
-                        writer.WriteEndObject();
-                    },
-                    TimeSpan.FromSeconds(60),
-                    client.HostSession,
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (CoreOperationException error) when (error.Code == "SOURCE_OPERATION_NOT_FOUND")
-        {
-            // Acknowledged after a Core restart: the Host journal is the durable
-            // ACK; the Core already opened gates on recovery. Keep acknowledged.
-        }
-        return committed;
     }
 
-    /// <summary>FEA-11: finish a recovery after a crash (C-17 §5.2).</summary>
-    public JournalEntry MarkRecovered(string operationId)
+    /// <summary>FEA-11: finish a recovery after a crash (C-17 §5.2); the Core
+    /// recovery closes the pending gates, the Host journal records the state.</summary>
+    public async Task<JournalEntry> RecoverAsync(
+        string operationId, CancellationToken cancellationToken = default)
     {
         RequireEnabled();
+        JournalEntry entry;
         lock (gate)
         {
-            var entry = Read(operationId);
+            entry = Read(operationId);
             if (entry.State == "recovered") return entry;
-            RequireState(entry, "core-committed", "host-authorized");
-            var next = entry with { State = "recovered", UpdatedAt = UtcNow() };
+            RequireState(entry, "core-committed", "host-authorized", "failed");
+        }
+
+        var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
+        var authorizationJson = entry.AuthorizationJson
+            ?? throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+        using var authorization = JsonDocument.Parse(authorizationJson);
+        var grantIds = string.IsNullOrWhiteSpace(entry.GrantIds)
+            ? Array.Empty<string>()
+            : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        await client.SendHostControlAsync(
+                "CompleteSourceOperationRecovery",
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("operation_id", entry.OperationId);
+                    writer.WriteString("request_digest", entry.RequestDigest);
+                    writer.WriteString("commit_digest", entry.CommitDigest ?? string.Empty);
+                    writer.WriteString("host_receipt_id", entry.HostReceiptId ?? string.Empty);
+                    writer.WriteStartArray("grant_ids");
+                    foreach (var grantId in grantIds)
+                    {
+                        writer.WriteStringValue(grantId);
+                    }
+                    writer.WriteEndArray();
+                    writer.WritePropertyName("authorization");
+                    authorization.RootElement.WriteTo(writer);
+                    writer.WriteEndObject();
+                },
+                TimeSpan.FromSeconds(60),
+                client.HostSession,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        lock (gate)
+        {
+            var current = Read(operationId);
+            var next = current with { State = "recovered", UpdatedAt = UtcNow() };
             Write(next);
             return next;
         }

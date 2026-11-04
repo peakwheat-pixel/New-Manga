@@ -817,19 +817,80 @@ public sealed class HostRuntime : IAsyncDisposable
                     "source_repoint" => "repoint",
                     _ => "resync",
                 };
-                var entry = operations.Begin(planId, planDigest, kind, Sha256Hex(payload.GetRawText()));
-                operations.Authorize(entry.OperationId, payload.GetRawText(), "host-session");
+                // P0-1/P0-2: the operation id and authorization are the Host's
+                // durable facts. The journal stores the request digest the Host
+                // generated (or the one the caller froze) so the ACK can replay
+                // the exact CompletionRequest.
+                var operationId = StringField("operation_id")
+                    ?? throw new CoreOperationException(
+                        "INVALID_REQUEST", "validation", false, "apply request has no operation id", null);
+                string? authorizationJson = null;
+                string? requestDigest = null;
+                string? hostReceiptId = null;
+                var grantIds = new List<string>();
+                if (payload.ValueKind == System.Text.Json.JsonValueKind.Object)
+                {
+                    if (payload.TryGetProperty("authorization", out var authorization)
+                        && authorization.ValueKind == System.Text.Json.JsonValueKind.Object)
+                    {
+                        authorizationJson = authorization.GetRawText();
+                        if (authorization.TryGetProperty("request_digest", out var digest)
+                            && digest.ValueKind == System.Text.Json.JsonValueKind.String)
+                        {
+                            requestDigest = digest.GetString();
+                        }
+                        if (authorization.TryGetProperty("host_receipt_id", out var receipt)
+                            && receipt.ValueKind == System.Text.Json.JsonValueKind.String)
+                        {
+                            hostReceiptId = receipt.GetString();
+                        }
+                    }
+                    if (payload.TryGetProperty("grant_ids", out var grants)
+                        && grants.ValueKind == System.Text.Json.JsonValueKind.Array)
+                    {
+                        foreach (var grant in grants.EnumerateArray())
+                        {
+                            if (grant.ValueKind == System.Text.Json.JsonValueKind.String
+                                && grant.GetString() is { Length: > 0 } grantId)
+                            {
+                                grantIds.Add(grantId);
+                            }
+                        }
+                    }
+                }
+                if (authorizationJson is null || requestDigest is null || hostReceiptId is null)
+                {
+                    throw new CoreOperationException(
+                        "INVALID_REQUEST", "validation", false,
+                        "apply request lacks a host authorization", null);
+                }
+                var entry = operations.Begin(
+                    planId, planDigest, kind, requestDigest, operationId, grantIds);
+                operations.Authorize(entry.OperationId, authorizationJson, hostReceiptId);
                 var response = await call(token).ConfigureAwait(false);
                 var result = response.Result ?? default;
-                operations.MarkCommitted(entry.OperationId,
-                    Sha256Hex(result.ValueKind == System.Text.Json.JsonValueKind.Undefined
-                        ? "null" : result.GetRawText()));
+                // The Core receipt digest is read from the operation row (the
+                // dispatch result carries the state only).
+                var lookup = await CoreService.SendAsync(
+                        "source_get_operation", 3,
+                        writer =>
+                        {
+                            writer.WriteStartObject();
+                            writer.WriteString("operation_id", operationId);
+                            writer.WriteEndObject();
+                        },
+                        _options.RequestTimeout, token)
+                    .ConfigureAwait(false);
+                var commitDigest = lookup.Result?.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && lookup.Result.Value.TryGetProperty("commit_digest", out var digestValue)
+                    && digestValue.ValueKind == System.Text.Json.JsonValueKind.String
+                        ? digestValue.GetString()!
+                        : throw new CoreOperationException(
+                            "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
+                            "operation receipt is unavailable", null);
+                operations.MarkCommitted(entry.OperationId, commitDigest);
                 return (entry.OperationId, result);
             }
-
-            static string Sha256Hex(string text) => Convert.ToHexString(
-                System.Security.Cryptography.SHA256.HashData(
-                    System.Text.Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
 
             // GRANT-ISSUER-1: open the HOST-ISSUER-1 host-control session and wire the dispatcher.
             // A session failure is logged and leaves grant commands typed-unavailable; it does not
