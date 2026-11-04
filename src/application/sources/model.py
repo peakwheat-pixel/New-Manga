@@ -583,9 +583,10 @@ def validate_diff_item(value: object, *, field: str = "DiffItem") -> dict:
                 or result["new_entry_id"] is None:
             raise _invalid(f"{field}: added requires old null / new non-null")
     elif classification == "missing":
-        if result["page_id"] is not None or result["new_entry_id"] is not None \
+        # C-17 §5.3: missing keeps the old page/entry and no new entry.
+        if result["page_id"] is None or result["new_entry_id"] is not None \
                 or result["old_entry_id"] is None:
-            raise _invalid(f"{field}: missing requires new null / old non-null")
+            raise _invalid(f"{field}: missing requires page/old non-null / new null")
     else:
         if result["old_entry_id"] is None or result["new_entry_id"] is None:
             raise _invalid(f"{field}: {classification} requires both entries")

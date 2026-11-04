@@ -109,22 +109,39 @@ def match_entries(
     # once on EITHER side freezes the whole occurrence group into
     # needs_confirmation — no ordinal/locator anchoring, no automatic manual
     # work carry (C-15 §3.2, C-17 §7.3 row 3).
-    digest_counts: dict[str, int] = {}
-    locator_counts: dict[str, int] = {}
-    for entry in all_entries:
+    # Duplicate detection is per SIDE (C-15 §3.2): an occurrence repeated
+    # twice on the OLD side or twice on the NEW side freezes the group; one
+    # occurrence on each side is the unique correspondence, not a duplicate.
+    old_digest_counts: dict[str, int] = {}
+    new_digest_counts: dict[str, int] = {}
+    old_locator_counts: dict[str, int] = {}
+    new_locator_counts: dict[str, int] = {}
+    for entry in old_entries:
         digest = entry.get("content_digest")
         if digest:
-            digest_counts[digest] = digest_counts.get(digest, 0) + 1
-        locator_counts[entry["locator"]] = locator_counts.get(
-            entry["locator"], 0
-        ) + 1
+            old_digest_counts[digest] = old_digest_counts.get(digest, 0) + 1
+        old_locator_counts[entry["locator"]] = (
+            old_locator_counts.get(entry["locator"], 0) + 1
+        )
+    for entry in new_entries:
+        digest = entry.get("content_digest")
+        if digest:
+            new_digest_counts[digest] = new_digest_counts.get(digest, 0) + 1
+        new_locator_counts[entry["locator"]] = (
+            new_locator_counts.get(entry["locator"], 0) + 1
+        )
 
-    duplicated_digests = {
-        digest for digest, count in digest_counts.items() if count > 1
-    }
-    duplicated_locators = {
-        locator for locator, count in locator_counts.items() if count > 1
-    }
+    def _dup_digest(digest: str | None) -> bool:
+        return bool(digest) and (
+            old_digest_counts.get(digest, 0) > 1
+            or new_digest_counts.get(digest, 0) > 1
+        )
+
+    def _dup_locator(locator: str) -> bool:
+        return (
+            old_locator_counts.get(locator, 0) > 1
+            or new_locator_counts.get(locator, 0) > 1
+        )
 
     paired_new_ids: set[str] = set()
 
@@ -143,11 +160,11 @@ def match_entries(
     # ambiguous added rows below via the same duplicate sets).
     for old in old_entries:
         digest = old.get("content_digest")
-        if digest in duplicated_digests or old["locator"] in duplicated_locators:
+        if _dup_digest(digest) or _dup_locator(old["locator"]):
             candidate = _pair_for(old)
             if candidate is not None and (
-                candidate.get("content_digest") in duplicated_digests
-                or candidate["locator"] in duplicated_locators
+                _dup_digest(candidate.get("content_digest"))
+                or _dup_locator(candidate["locator"])
             ):
                 paired_new_ids.add(candidate["entry_id"])
             result.items.append(
@@ -170,7 +187,11 @@ def match_entries(
             for entry in new_entries
             if digest and entry.get("content_digest") == digest
         ]
-        if len(matches) == 1 and digest_counts.get(digest) == 2:
+        if (
+            len(matches) == 1
+            and old_digest_counts.get(digest) == 1
+            and new_digest_counts.get(digest) == 1
+        ):
             # exactly one occurrence on each side → byte/page-identity
             # equality; the pixel profile comparison follows from the
             # identical bytes (the only honest "recompute" of missing old
@@ -200,13 +221,19 @@ def match_entries(
                 for entry in pixel_matches
                 if _profiles_comparable(old, entry)
             ]
-            pixel_total = sum(
+            old_pixel_count = sum(
                 1
-                for candidate in [*old_entries, *new_entries]
+                for candidate in old_entries
                 if _pixel_present(candidate)
                 and candidate.get("pixel_digest") == old["pixel_digest"]
             )
-            if len(unique) == 1 and pixel_total == 2:
+            new_pixel_count = sum(
+                1
+                for candidate in new_entries
+                if _pixel_present(candidate)
+                and candidate.get("pixel_digest") == old["pixel_digest"]
+            )
+            if len(unique) == 1 and old_pixel_count == 1 and new_pixel_count == 1:
                 new = unique[0]
                 paired_new_ids.add(new["entry_id"])
                 result.items.append(
@@ -266,9 +293,9 @@ def match_entries(
     for new in new_entries:
         if new["entry_id"] in paired_new_ids:
             continue
-        if new.get("content_digest") in duplicated_digests or new[
-            "locator"
-        ] in duplicated_locators:
+        if _dup_digest(new.get("content_digest")) or _dup_locator(
+            new["locator"]
+        ):
             result.items.append(
                 MatchItem(
                     item_id="",

@@ -72,6 +72,11 @@ class SourceScanner:
 
         location = self._store.get_source_location_current(source_id)
         if location is None:
+            if grant_ids:
+                # C-17 §5.3/§8: the live authorization check precedes business
+                # lookups, so a revoked/expired grant reports its own typed
+                # error instead of a generic missing-location result.
+                self._resolve_grants(source_id, grant_ids, {})
             raise SourceSyncError(
                 "SOURCE_OPERATION_NOT_FOUND",
                 "source has no current location",
@@ -177,7 +182,7 @@ class SourceScanner:
                         source_id,
                         old_version_row["version_id"],
                         digest,
-                        resolved["identity_digest"],
+                        resolved["authorizations"][0]["identity_digest"],
                         new_entries,
                     )
                 else:
@@ -199,7 +204,7 @@ class SourceScanner:
                         source_id,
                         version_id,
                         digest,
-                        resolved["identity_digest"],
+                        resolved["authorizations"][0]["identity_digest"],
                         [
                             _entry_evidence(entry) for entry in candidate_entries
                         ],
@@ -262,7 +267,7 @@ class SourceScanner:
                     "version_id": (
                         old_version_row["version_id"]
                         if old_version_row is not None
-                        else location["content_digest"][:64],
+                        else location["content_digest"][:64]
                     ),
                     "content_digest": location["content_digest"],
                 }

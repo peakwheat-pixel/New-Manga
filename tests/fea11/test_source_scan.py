@@ -136,6 +136,7 @@ def test_scan_same_mtime_size_bytes_changed_discovered(
     add_source_tree(
         conn, source_id="s1", version_id="sv1", digest=container_digest,
         entries=[("e1", "001.png", _digest(page1))],
+        legacy_v7_evidence=False,
     )
     add_referenced_page(
         conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",

@@ -59,7 +59,9 @@ def scratch_dir(request) -> Path:
 
 @pytest.fixture()
 def conn() -> sqlite3.Connection:
-    connection = sqlite3.connect(":memory:", check_same_thread=False)
+    connection = sqlite3.connect(
+        ":memory:", check_same_thread=False, isolation_level=None
+    )
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     MigrationRunner(connection, default_migrations()).apply_pending()
@@ -115,8 +117,9 @@ def file_facts(path: str | Path) -> dict:
     info = os.stat(path)
     data = Path(path).read_bytes()
     return {
-        "volume_serial": int(info.st_dev),
-        "file_id": int(info.st_ino),
+        # Host facts are representable signed 64-bit integers (C-17 §5).
+        "volume_serial": int(info.st_dev) % (2**63),
+        "file_id": int(info.st_ino) % (2**63),
         "size": int(info.st_size),
         "sha256": hashlib.sha256(data).hexdigest(),
     }
@@ -414,7 +417,7 @@ def default_decisions(scan: dict) -> list[dict]:
                 "ambiguous": "defer",
             }[classification],
             "target_page_id": item["page_id"]
-            if classification in ("unchanged", "changed", "ambiguous", "missing")
+            if classification in ("unchanged", "changed", "missing")
             else None,
             "target_chapter_id": "c1" if classification == "added" else None,
             "new_source_order": None,

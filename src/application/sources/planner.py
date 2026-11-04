@@ -185,11 +185,14 @@ class SourceSyncPlanner:
     def _assert_matches_scan(self, body: dict, scan: dict) -> None:
         """The plan body must equal the live scan observation (C-17 §5.1:
         body.scan_id live and consistent with the body)."""
-        comparable = (
-            "source", "base_sources", "authorizations", "missing", "bases",
+        # PlanBody carries the live scan's ``source`` observation as
+        # ``target`` (C-17 §5.2); every other comparable key keeps its name.
+        if canonical_bytes(body["target"]) != canonical_bytes(scan["source"]):
+            raise _invalid("plan body target does not match the live scan")
+        for key in (
+            "base_sources", "authorizations", "missing", "bases",
             "reference_set_digest", "diff", "totals",
-        )
-        for key in comparable:
+        ):
             if canonical_bytes(body[key]) != canonical_bytes(scan[key]):
                 raise _invalid(f"plan body {key} does not match the live scan")
 

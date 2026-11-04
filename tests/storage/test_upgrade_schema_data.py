@@ -90,6 +90,10 @@ LATEST_TABLES = (
     "source_entries",
     "page_bindings",
     "rendition_cache",
+    "source_sync_plans",
+    "source_operations",
+    "source_binding_publications",
+    "source_revision_lineage",
 )
 
 BOOK_ID = "book-legacy"

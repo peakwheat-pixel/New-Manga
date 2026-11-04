@@ -243,11 +243,9 @@ class SourceSyncService:
                 body = json.loads(plan["body_json"])
                 self._verify_live_authorization(request, authorization, body)
                 self._verify_cas(body)
-                receipt = self._execute_decisions(
-                    body, request, authorization, operation_id, kind
-                )
-                now = receipt["committed_at"]
-                commit_digest = digest_of(receipt)
+                # The operation row is the FK target of publications/gates and
+                # receipt rows; it must exist before the business writes
+                # (C-17 §3.2 host-authorized → core-committed inside one txn).
                 self._store.insert_operation(
                     operation_id=operation_id,
                     plan_id=plan_id,
@@ -259,8 +257,13 @@ class SourceSyncService:
                         authorization
                     ).decode("utf-8"),
                     host_receipt_id=authorization["host_receipt_id"],
-                    now=now,
+                    now=now_millis(),
                 )
+                receipt = self._execute_decisions(
+                    body, request, authorization, operation_id, kind
+                )
+                now = receipt["committed_at"]
+                commit_digest = digest_of(receipt)
                 self._store.commit_operation(
                     operation_id,
                     commit_receipt_json=canonical_bytes(receipt).decode(
@@ -336,6 +339,11 @@ class SourceSyncService:
                 raise stale("binding", "reference page disappeared")
             if page.chapter_id != base["chapter_id"]:
                 raise stale("binding", "page ownership drifted since the plan")
+            if (
+                int(page.source_order) != int(base["source_order"])
+                or int(page.sort_order) != int(base["sort_order"])
+            ):
+                raise stale("binding", "page order drifted since the plan")
             deleted_now = getattr(page, "deleted_at", None) is not None
             if deleted_now != base["deleted"]:
                 raise stale("binding", "page delete state drifted since the plan")
@@ -642,6 +650,13 @@ class SourceSyncService:
                 or int(facts.file_id) != int(location["file_id"])
             ):
                 new_location_id = f"sl-{uuid.uuid4().hex}"
+                # The partial unique index keeps exactly one current location:
+                # clear the old current row BEFORE inserting the replacement.
+                store._conn.execute(
+                    "UPDATE source_locations SET is_current = 0"
+                    " WHERE location_id = ?",
+                    (location_id,),
+                )
                 store.insert_source_location_row(
                     {
                         "location_id": new_location_id,
@@ -656,11 +671,6 @@ class SourceSyncService:
                         "observed_at": now,
                         "created_at": now,
                     }
-                )
-                store._conn.execute(
-                    "UPDATE source_locations SET is_current = 0"
-                    " WHERE location_id = ?",
-                    (location_id,),
                 )
                 location_id = new_location_id
         store.insert_source_version_row(
