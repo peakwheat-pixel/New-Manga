@@ -63,6 +63,10 @@ public sealed class HostRuntime : IAsyncDisposable
 
     public SourceReadCoordinator? Sources { get; private set; }
 
+    /// <summary>FEA-11 (C-17 §5.2): the Host durable operation journal and
+    /// acknowledgement coordinator (null when the source registry is off).</summary>
+    public SourceOperationCoordinator? Operations { get; private set; }
+
     /// <summary>CREDENTIAL-PORT-1: OS-vault credential port + Core bind/clear bridge (null when unavailable).</summary>
     public HostCredentialCoordinator? Credentials { get; private set; }
 
@@ -803,6 +807,8 @@ public sealed class HostRuntime : IAsyncDisposable
                 {
                     Sources = new SourceReadCoordinator(CoreService, new SourceAccessRegistry(_options.DataRoot),
                         () => _options.ReferencedImportEnabled);
+                    Operations = new SourceOperationCoordinator(
+                        CoreService, _options.DataRoot, () => _options.ReferencedImportEnabled);
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
