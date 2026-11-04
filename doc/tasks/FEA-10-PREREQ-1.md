@@ -50,6 +50,20 @@ out_of_scope:
 - **当前 M2-C1 为 rev 2.11，未含 PrepareRun/AcceptRun 与 3 个错误码**（`grep` 实证）；host 错误投影白名单亦未实现 → C-08 释放前置 (b) 未完成。
 - 本 Task **只做协议注册与投影注册**，不实现 Run 的两阶段/候选/提交逻辑；不得提前实现 FEA-10。
 
+## 文件级写域矩阵
+
+| 文件 | 用途 | AC |
+|---|---|---|
+| `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | rev 2.12 命令行/结果/3 码/§8/例外登记 | AC1 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarErrorCode.cs` | 错误码枚举/安全投影 | AC2 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Diagnostics/SidecarException.cs` | typed 异常保留原 code | AC2 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs` | 客户端命令 registry 映射 | AC1/AC2 |
+| `apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs` | dispatch/payload 形状校验 | AC2/AC3 |
+| `apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs` | host 投影层/`allowedRunErrorCodes` | AC2/AC3 |
+| `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireTests.cs` | 注册/投影测试 | AC2/AC3 |
+| `apps/desktop-avalonia/tests/NewManga.Host.Tests/HostRuntimeIntegrationTests.cs` | host 投影负向对照 | AC3/AC4 |
+| `apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10PrereqProjectionTests.cs`（新） | 3 码白名单/unknown 降级 | AC2/AC3 |
+
 ## 交付物
 
 1. `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`：rev 2.12 增量（PrepareRun/AcceptRun 请求/结果形状、3 码、§8 未观察、retryable/taxonomy 例外；既有行语义不改）。
@@ -70,8 +84,8 @@ out_of_scope:
 | 场景/AC | 计划命令 | 前提/环境 | 期望 |
 |---|---|---|---|
 | AC1 | `git diff -- doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` + 逐条对照 C-08 §3 | 主工作树 | 仅增量；无旧语义改动 |
-| AC2/AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests` / `NewManga.Host.Tests`（新增投影测试） | .NET 9；隔离数据 | 白名单/unknown 降级通过 |
-| AC4 | `pwsh tools/governance/check.ps1`；`verify_pins.ps1`；全量 `dotnet test`（不减少） | 主工作树 | PASS；17/17 |
+| AC2/AC3 | `dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj -c Release --no-build --filter FullyQualifiedName~WireTests`；`dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Fea10PrereqProjectionTests` | .NET 9；隔离测试数据根 `G:/CODEX/New Manga.workspace/FEA-10-PREREQ-1/` | 白名单/unknown 降级通过 |
+| AC4 | `pwsh -NoProfile -File tools/governance/check.ps1`；`verify_pins.ps1`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build`（不减少） | 主工作树 | PASS；17/17 |
 | AC5 | 证据写 `verification/FEA-10-PREREQ-1/**`；`git diff --name-only` 对照写域 | 主工作树 | 全合规；独立 Review approved |
 
 ## 文档 rev 与 wire 版本边界（P2-3 澄清）
@@ -88,4 +102,4 @@ out_of_scope:
 
 ## Closeout Record
 
-- 未开始（proposed）。
+- 未开始（proposed，scope review r4 待派发）。

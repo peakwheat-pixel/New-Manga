@@ -53,3 +53,13 @@
   - P2-3：PREREQ 明确登记 C-08 §3 已批准 wire 2.12，文档 rev 与 `PROTOCOL_MINOR` 分离，客户端 registry/Core dispatch 归属分开；
   - P2-5：验证矩阵补精确文件/命令/solution/DataRoot/门径/证据出口。
 - 下一轮：两卡修订后交**全新上下文 Codex** scope review r3；仍不写生产代码、不 push。
+
+## Scope Review r3 处置（DSH，2026-11-04）
+
+- Reviewer：Codex 全新上下文；报告 `doc/reviews/FEA-10-scope-r3.md`（reviewed_head `bb569c19`）；结论 changes_requested P0=0/P1=1/P2=2。
+- DSH 处置：**全部接受**。
+  - P1-1：测试写域改文件级（ApplicationCore.Tests/App.Tests 逐文件；`tests/fea10/*`、`tests/pipeline/*` 逐文件；`Commands/*` 改具体文件；删除误列 Host.Tests/RunMonitorTests.cs）；PREREQ 增文件→用途→AC 矩阵。
+  - P2-1：PREREQ 补精确测试项目/过滤命令；FEA-10 补 `restart_core.py`、workspace 隔离 DataRoot、solution 路径与证据出口。
+  - P2-2：AC5 计数限定为「成功提交回执/完成计数不增加」，允许失败/控制状态按冻结语义持久化。
+  - 补 request builder 边界：`ports/translation/protocol.py`、`translation_openai.py`、`openai_client.py` 默认只读复用；现有 `payload_hash` 不冒充 endpoint/model/body 全摘要；如需窄改须 DSH 批准。
+- 下一轮：scope review r4（全新上下文）；仍不写生产代码、不 push。
