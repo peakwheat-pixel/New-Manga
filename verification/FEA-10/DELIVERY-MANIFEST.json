@@ -1,5 +1,5 @@
 {
-  "head": "5be507e2787dff54fd020ae83671f87e39f56597",
+  "head": "2b0cbfb1e21abf5f194f4b3d314f8cbc02cc9339",
   "branch": "main",
   "excluded_docs": [
     "doc/handoffs/FEA-10-handoff.md",
@@ -62,5 +62,6 @@
       "sha256": "1404474408d9415ff33c55f0d969a3402e9e558945726176285ba9fa57fd8692"
     }
   ],
-  "out_of_scope": []
+  "out_of_scope": [],
+  "generated_after_head": "2b0cbfb1e21abf5f194f4b3d314f8cbc02cc9339"
 }
