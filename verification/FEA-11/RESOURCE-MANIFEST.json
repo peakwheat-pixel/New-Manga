@@ -1,27 +1,27 @@
 {
   "task": "FEA-11",
   "generated_at": "2026-11-05",
-  "head": "d0e49471f",
+  "head": "3e675de59",
   "resources": [
     {
       "path": "verification/FEA-11/AC-MATRIX.md",
-      "sha256": "3907ccb693111dadd8f1a7ccfe4d0a8df85ee892659da7561d9b1dcddaae1cdf",
-      "bytes": 4097
+      "sha256": "e443c40a9d661cb592414016950a2daff2da3720dd5a9e4aa16b3191683d069f",
+      "bytes": 4211
     },
     {
       "path": "verification/FEA-11/changed-files.txt",
-      "sha256": "4fda95b84cfa8ed6184e5e3b73cf5d78ed07cf649ac82fa80c5ce959036aa90a",
-      "bytes": 3490
+      "sha256": "bc9ce2cdd31c56f98610a4e0c7260c62c920c26d4bab7ac2362c2588e806eb79",
+      "bytes": 3516
     },
     {
       "path": "verification/FEA-11/DELIVERY-MANIFEST.json",
-      "sha256": "a4859dffa8724a560f224aa4bda8ac1ed70894c9a92f5e09dad90f0f8a710201",
-      "bytes": 4214
+      "sha256": "22dd992d30ef4e41c95eacd8a6f93d9a41c70ff238e75c14aa51c78a71e6c406",
+      "bytes": 4366
     },
     {
       "path": "verification/FEA-11/EV.md",
-      "sha256": "ea862fc1504593a694b667ad2e3bbf91f625301eee29d03ce27bd5f3d7bcbc23",
-      "bytes": 2291
+      "sha256": "61b16c8e2cd242ed3a7aea96a3dfcc71d3c35f4b7cc4958eee9464ce74932652",
+      "bytes": 2462
     },
     {
       "path": "verification/FEA-11/logs/dsh-C6-final.log",
@@ -55,8 +55,8 @@
     },
     {
       "path": "verification/FEA-11/logs/dsh-C6-r6.log",
-      "sha256": "a2031c3a8163523dcfd319683be92e926af84206ca202b039a4c431f18dc4968",
-      "bytes": 1809
+      "sha256": "87268285cee1017fbc6babcc52b94c74b43766e039bd458bcdd90bf04807891f",
+      "bytes": 2228
     },
     {
       "path": "verification/FEA-11/logs/dsh-phaseB-main.log",

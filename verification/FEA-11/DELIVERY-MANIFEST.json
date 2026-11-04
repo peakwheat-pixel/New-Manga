@@ -1,7 +1,7 @@
 {
   "task": "FEA-11",
   "base_commit": "3472cffd",
-  "delivery_head": "d0e49471f",
+  "delivery_head": "3e675de59",
   "changed_files": [
     "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
     "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandModel.cs",
@@ -23,6 +23,7 @@
     "doc/reviews/FEA-11-r3.md",
     "doc/reviews/FEA-11-r4.md",
     "doc/reviews/FEA-11-r5.md",
+    "doc/reviews/FEA-11-r6.md",
     "doc/tasks/FEA-11-AC4-GAPS-1.md",
     "doc/tasks/FEA-11-HOST-AUTH-1.md",
     "doc/tasks/FEA-11-LINEAGE-1.md",
@@ -86,5 +87,6 @@
     "verification/FEA-11/logs/dsh-phaseB-main.log",
     "verification/FEA-11/logs/dsh-phaseB-providers.log"
   ],
-  "status": "pending_review_r6"
+  "evidence_note": "delivery_head 为代码+文档完成提交；证据件由紧随其后的 evidence commit 携带",
+  "status": "pending_review_r7"
 }
