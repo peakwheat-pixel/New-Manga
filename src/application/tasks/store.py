@@ -71,15 +71,10 @@ def prepared_quartet(run: PipelineRun) -> dict[str, Any]:
     })
 
 
-def validate_prepared_snapshots(run: PipelineRun) -> None:
-    """Explicit replay fields for the new prepared path; unknown execution fields fail closed.
-
-    The whitelist mirrors the frozen settings surface (``bootstrap.settings_sections``) for the
-    execution-relevant sections. Sections that do not participate in Run replay
-    (``providers``/``network``/other settings pages) are filtered, not rejected: they are already
-    redacted by the snapshot builder and must not make a legitimate user configuration unusable.
-    """
-    settings_fields = {
+#: Frozen execution settings surface: only these sections/keys enter a PreparedRun. Sections
+#: outside this surface (providers/network/other settings pages) are removed from the prepared
+#: snapshot, never merely skipped: nothing unrecognized may ride into a persisted Run (RR-01).
+_EXECUTION_SETTINGS_FIELDS: dict[str, set[str]] = {
         "ocr": {"script", "direction"},
         "translate": {"context_pages", "context_token_budget", "glossary", "target_language"},
         "detect": {"empty_detection_policy"},
@@ -89,17 +84,45 @@ def validate_prepared_snapshots(run: PipelineRun) -> None:
         "typeset": {"font_family", "font_size", "font_size_offset", "manual_font_size", "text_color",
                     "stroke_enabled", "stroke_color", "stroke_width", "line_spacing", "text_align",
                     "text_direction", "auto_font_size", "auto_font_size_enabled"},
-        "inpaint": {"dilate_radius", "erode_radius", "is_speech_bubble", "is_solid_background",
-                    "is_lineart", "has_screentone", "is_color_webtoon", "structure_crossing_mask",
-                    "preferred_quality", "background_complexity"},
-    }
+    "inpaint": {"dilate_radius", "erode_radius", "is_speech_bubble", "is_solid_background",
+                "is_lineart", "has_screentone", "is_color_webtoon", "structure_crossing_mask",
+                "preferred_quality", "background_complexity"},
+}
+
+_LOCAL_TYPED_PROVIDER_TYPES = frozenset({"local-manga-ocr", "local-manga-ocr-onnx", "local-paddleocr"})
+
+
+def filter_prepared_settings(settings: Mapping[str, Any]) -> dict[str, Any]:
+    """RR-01: normalize a settings snapshot down to the replayable execution surface."""
+    filtered: dict[str, Any] = {}
+    for section, values in settings.items():
+        fields = _EXECUTION_SETTINGS_FIELDS.get(section)
+        if fields is None or not isinstance(values, Mapping):
+            continue
+        # Execution sections keep their keys so validate_prepared_snapshots can fail closed on an
+        # unknown execution field; only non-execution sections are dropped outright (RR-01).
+        filtered[section] = {key: snapshot_value(item) for key, item in values.items()}
+    return filtered
+
+
+def filter_prepared_overrides(overrides: Mapping[str, Any] | None) -> dict[str, Any]:
+    """RR-01: prepared overrides keep the execution settings surface only."""
+    if not isinstance(overrides, Mapping):
+        return {}
+    filtered = {key: snapshot_value(item) for key, item in overrides.items() if key != "settings"}
+    settings = overrides.get("settings")
+    if isinstance(settings, Mapping):
+        filtered["settings"] = filter_prepared_settings(settings)
+    return filtered
+
+
+def validate_prepared_snapshots(run: PipelineRun) -> None:
+    """Explicit replay fields for the new prepared path; unknown execution fields fail closed."""
     for section, values in run.settings_snapshot.items():
         if not isinstance(values, Mapping):
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings snapshot is not replay-safe")
-        replay_keys = settings_fields.get(section)
-        if replay_keys is None:
-            continue  # Non-execution settings sections never enter Run replay (ADJ §2.2).
-        if set(values) - replay_keys:
+        replay_keys = _EXECUTION_SETTINGS_FIELDS.get(section)
+        if replay_keys is None or set(values) - replay_keys:
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings contain unsupported replay fields")
     binding_fields = {"provider_id", "provider_profile_id", "id", "enabled", "available",
                       "fallback", "execution", "execution_digest", "frozen_fallbacks"}
@@ -111,7 +134,10 @@ def validate_prepared_snapshots(run: PipelineRun) -> None:
         validate_provider_execution(value["execution"])
         if snapshot_digest(value["execution"]) != value.get("execution_digest"):
             raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider replay digest differs")
-        for fallback in value.get("frozen_fallbacks", {}).values():
+        frozen_fallbacks = value.get("frozen_fallbacks", {})
+        if not isinstance(frozen_fallbacks, Mapping):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "fallback map is not snapshot-safe")
+        for fallback in frozen_fallbacks.values():
             if not isinstance(fallback, Mapping) or "execution" not in fallback:
                 raise PipelineError(
                     "RUN_SNAPSHOT_INCOMPLETE", "fallback provider has no complete replay configuration")
@@ -170,8 +196,7 @@ def validate_provider_execution(value: Any) -> None:
     if isinstance(value["adapter_version"], str) and value["adapter_version"].startswith("local:"):
         # R-004/R-005: a pure-local inference provider has no endpoint, credential or network
         # profile; its replay identity is (provider_type, model, adapter_version).
-        if (not value["provider_type"].startswith("local-") or value["provider_type"] in {
-                "local-sakura", "local-simple-fill", "local-edge-bleed", "local-diffusion"}
+        if (value["provider_type"] not in _LOCAL_TYPED_PROVIDER_TYPES
                 or value["base_url"] or value["credential_ref"] is not None
                 or value["network_profile"] is not None):
             reject()
@@ -210,36 +235,26 @@ _AUTH_MATERIAL_KEYS = frozenset({
 })
 
 
-def _reject_auth_keys(mapping: Mapping[str, Any], *, deep: bool) -> None:
-    for key, item in mapping.items():
-        if str(key).lower() in _AUTH_MATERIAL_KEYS:
-            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-        if deep and isinstance(item, Mapping):
-            _reject_auth_keys(item, deep=True)
+_AUTH_SKIP_SUBTREES = frozenset({"glossary"})
+
+
+def _scan_auth_material(value: Any) -> None:
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            lowered = str(key).lower()
+            if lowered in _AUTH_MATERIAL_KEYS:
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
+            if lowered in _AUTH_SKIP_SUBTREES:
+                continue  # user glossaries legitimately contain words like "token"
+            _scan_auth_material(item)
+    elif isinstance(value, (tuple, list)):
+        for item in value:
+            _scan_auth_material(item)
 
 
 def validate_prepared_overrides(value: Any) -> None:
-    """Reject authentication material where an override can actually carry it (R-014).
-
-    ``overrides.provider_bindings`` is checked recursively (endpoint credentials live there);
-    settings sections are checked one level deep only, so user content such as a glossary term
-    named ``token`` is legitimate data and does not fail the Prepare.
-    """
-    if not isinstance(value, Mapping):
-        return
-    bindings = value.get("provider_bindings")
-    if isinstance(bindings, Mapping):
-        _reject_auth_keys(bindings, deep=True)
-    settings = value.get("settings")
-    if isinstance(settings, Mapping):
-        for section in settings.values():
-            if isinstance(section, Mapping):
-                _reject_auth_keys(section, deep=False)
-    for key, item in value.items():
-        if str(key).lower() in _AUTH_MATERIAL_KEYS:
-            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-        if key not in ("provider_bindings", "settings") and isinstance(item, Mapping):
-            _reject_auth_keys(item, deep=False)
+    """Reject authentication material anywhere in an override (RR-01) except glossary content."""
+    _scan_auth_material(value)
 
 
 @dataclass(frozen=True)

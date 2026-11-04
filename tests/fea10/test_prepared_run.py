@@ -72,22 +72,44 @@ def test_invalid_preview_is_rejected_without_writes(change, code):
 def test_prepared_settings_filter_non_execution_sections_and_reject_unknown_execution_keys():
     core, _, region = _new_workspace(workspace('snapshot-safety'))
     try:
-        # R-001: a settings page outside the execution surface is filtered, not fatal.
+        # R-001/RR-01: a settings page outside the execution surface is removed, not copied.
         core.pipeline_defaults.save_settings_section('untyped', {'unregistered': 'value'})
         preview, _ = prepare(core, region)
         assert preview['preparedDigest'].startswith('sha256:')
+        assert 'untyped' not in preview['settingsSnapshot']
         # R-001: legitimate frozen settings keys are replayable (typeset surface).
         core.pipeline_defaults.save_settings_section(
             'typeset', {'stroke_enabled': True, 'auto_font_size': True})
         preview, _ = prepare(core, region)
-        assert preview['preparedDigest'].startswith('sha256:')
+        assert preview['settingsSnapshot']['typeset']['stroke_enabled'] is True
         # An unknown key inside an execution section still fails closed before any candidate.
         scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
         with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
             core.pipeline.prepare_run('ocr_region', scope, overrides={'settings': {'typeset': {'undocumented': 1}}})
         assert core.pipeline._store.list_ids() == ()
-    finally: core.conn.close()
+    finally:
+        core.conn.close()
 
+
+def test_nested_authentication_material_cannot_enter_a_prepared_run():
+    # RR-01: nested/unknown authentication keys must be rejected, never persisted with a Run.
+    core, _, region = _new_workspace(workspace('rr01-auth'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        for overrides in (
+            {'settings': {'ocr': {'headers': 'Bearer leak'}}},
+            {'settings': {'untyped': {'headers': 'leak'}}},
+            {'translate': {'token': 'leak'}},
+        ):
+            with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+                core.pipeline.prepare_run('ocr_region', scope, overrides=overrides)
+        preview = core.pipeline.prepare_run(
+            'ocr_region', scope, overrides={'settings': {'untyped': {'value': 1}}})
+        assert 'untyped' not in preview['settingsSnapshot']
+        run, _ = core.pipeline.accept_prepared_run(preview, scope, idempotency_key='rr01')
+        assert 'untyped' not in run.settings_snapshot
+    finally:
+        core.conn.close()
 
 def test_glossary_term_named_token_is_not_treated_as_authentication_material():
     # R-014: user content words must not be rejected by the authentication-key scan.

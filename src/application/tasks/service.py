@@ -17,6 +17,8 @@ from application.tasks.store import (
     PipelineStore,
     SnapshotProvider,
     TargetCatalog,
+    filter_prepared_overrides,
+    filter_prepared_settings,
     prepared_quartet,
     snapshot_digest,
     snapshot_value,
@@ -397,6 +399,8 @@ class PipelineService:
         """Read-only planning. The trusted Host owns this transient candidate."""
         validate_prepared_overrides(overrides or {})
         run = self.create_run(command_type, scope, overrides=overrides, _persist=False)
+        # RR-01: only the replayable execution surface enters the prepared quartet/persistence.
+        run.settings_snapshot = filter_prepared_settings(run.settings_snapshot)
         validate_prepared_snapshots(run)
         quartet = prepared_quartet(run)
         digest = snapshot_digest(quartet)
@@ -404,7 +408,7 @@ class PipelineService:
         payload_preview = preview_builder(run) if callable(preview_builder) else {"targetCount": len(run.targets)}
         return {
             "preparedRunId": _new_id("prepared"), "command": run.command_type.value,
-            "scope": self._wire_scope(scope), "overrides": snapshot_value(overrides or {}),
+            "scope": self._wire_scope(scope), "overrides": filter_prepared_overrides(overrides),
             **quartet, "preparedDigest": digest, "snapshotDigest": digest,
             "generation": 1,
             "expiresAt": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
@@ -469,11 +473,16 @@ class PipelineService:
                     or prepared["snapshotDigest"] != prepared["preparedDigest"]):
                 raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun digest differs")
             run = self.create_run(command, scope, overrides=overrides, _persist=False)
+            # RR-01: the accepted Run persists exactly the prepared (filtered) settings surface.
+            run.settings_snapshot = filter_prepared_settings(prepared["settingsSnapshot"])
             validate_prepared_snapshots(run)
 
             def validate() -> None:
                 # The durable store invokes this under BEGIN IMMEDIATE, before its first write.
                 current = self.create_run(command, scope, overrides=overrides, _persist=False)
+                # Current configuration is compared on the same filtered surface, so a
+                # pre-accept settings change still fails stale instead of silently narrowing.
+                current.settings_snapshot = filter_prepared_settings(current.settings_snapshot)
                 if snapshot_digest(prepared_quartet(current)) != prepared["preparedDigest"]:
                     raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun no longer matches current state")
                 if prepared_quartet(current) != prepared_quartet(run):

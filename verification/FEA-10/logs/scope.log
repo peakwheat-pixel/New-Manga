@@ -1,20 +1,21 @@
 DataRoot=N/A (read-only Git scope); fixtures=G:/CODEX/New Manga.workspace/FEA-10/fixtures/
 COMMAND=git diff --name-only
-apps/desktop-avalonia/src/NewManga.App/Services/RunContracts.cs
-apps/desktop-avalonia/tests/NewManga.App.Tests/RunControllerTests.cs
-apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs
 doc/handoffs/FEA-10-handoff.md
+doc/reviews/FEA-10-rework-r1.md
 doc/tasks/FEA-10.md
+src/application/tasks/service.py
 src/application/tasks/store.py
 src/bootstrap/core_service.py
 src/infrastructure/providers/registry.py
 tests/fea10/test_prepared_run.py
 verification/FEA-10/AC-MATRIX.md
+verification/FEA-10/ipc/real-ipc.txt
+verification/FEA-10/record_delivery.py
 COMMAND=git ls-files --others --exclude-standard
-doc/reviews/FEA-10-impl-r1.md
-doc/reviews/FEA-10-rework-r1.md
-verification/FEA-10/logs/dsh-rework-dotnet.log
-verification/FEA-10/logs/dsh-rework-pytest.log
+doc/reviews/FEA-10-rework-review-r1.md
+verification/FEA-10/logs/dsh-rework2-dotnet.log
+verification/FEA-10/logs/dsh-rework2-providers.log
+verification/FEA-10/logs/dsh-rework2-pytest.log
 COMMAND=compare all changed/untracked paths against doc/tasks/FEA-10.md allowed_paths
 OUT_OF_SCOPE=[]
 FEA09_DIFF=EMPTY

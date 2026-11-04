@@ -61,13 +61,15 @@ def main():
                  'build_artifacts': {'source': 'apps/desktop-avalonia/**/bin, obj', 'disposition': 'PRESERVE_REFERENCED'}}
     (EVIDENCE / 'RESOURCE-MANIFEST.json').write_text(json.dumps(resources, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     entries = []
+    excluded_docs = [relative for relative in changed if relative.startswith('doc/')]
     for relative in changed:
-        if relative == 'verification/FEA-10/DELIVERY-MANIFEST.json':
+        if relative == 'verification/FEA-10/DELIVERY-MANIFEST.json' or relative.startswith('doc/'):
             continue
         path = ROOT / relative
         if path.is_file():
             entries.append({'path': relative, 'bytes': path.stat().st_size, 'sha256': sha(path)})
     delivery = {'head': git('rev-parse', 'HEAD'), 'branch': git('branch', '--show-current'),
+                'excluded_docs': excluded_docs,
                 'created_at': datetime.now(timezone.utc).isoformat(), 'uncommitted': True,
                 'self_hash_excluded': True, 'files': entries, 'out_of_scope': outside}
     (EVIDENCE / 'DELIVERY-MANIFEST.json').write_text(json.dumps(delivery, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

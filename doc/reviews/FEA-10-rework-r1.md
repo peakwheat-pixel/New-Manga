@@ -16,7 +16,7 @@
 | R-006 | P2 | **未修（登记债务 DEBT-FEA10-R006）**：StartRun 对「支持类型但配置不完整」提前 fail-closed 的行为变化未加兼容分支；已在 AC-MATRIX 披露。 | AC-MATRIX rework 节 |
 | R-007 | P2 | **未修（登记债务 DEBT-FEA10-R007）**：AC6 的 `is_terminal` 仍无生产消费者；AC6 结论限定为 Python projection/DB 层（AC-MATRIX 已注明）。 | AC-MATRIX |
 | R-008 | P2 | **已修复**：`Fea10RunIpcTests` 证据改写到隔离 workspace 的 `root/real-ipc.txt`，不再写 tracked `verification/FEA-10/ipc/real-ipc.txt`。 | `Fea10RunIpcTests.cs` |
-| R-009 | P2 | **已修复**：AC-MATRIX 的 ipc 失败历史指向与 check warnings 数（4）修正；DELIVERY-MANIFEST 随 rework head 重新生成。 | `verification/FEA-10/AC-MATRIX.md`、`DELIVERY-MANIFEST.json` |
+| R-009 | P2 | **已修复（rework r2 复核）**：AC-MATRIX/Handoff 的 warnings 计数修正为 4；DELIVERY-MANIFEST 在最终 head 提交前重新生成并记录 `excluded_docs`（RR-02）。 | `verification/FEA-10/AC-MATRIX.md`、`DELIVERY-MANIFEST.json` |
 | R-010 | P2 | **已修复（口径）**：AC9 的「0 域外」明确限定为 Owner 字节；DSH 治理指针文件为 Integrator 单点编辑并在 AC-MATRIX 单列。 | AC-MATRIX rework 节 |
 | R-011 | P2 | **未修（登记债务 DEBT-FEA10-R011）**：Host 候选缓存清理/上限未改。 | AC-MATRIX |
 | R-012 | P2 | **已处理（文档化差异）**：InMemory 适配器与 SQLite seam 的 pause/cancel 语义差异显式标注；等价 seam 由 AC5 故障注入覆盖；既有 pipeline 测试保持绿（不恢复会破坏已发布测试语义）。 | `store.py` 注释 + `test_commit_zero_write.py` |

@@ -1,4 +1,5 @@
-DataRoot=G:\CODEX\New Manga.workspace\FEA-10\fixtures\ipc-c475336cdb2944f2b0d8f29c558f1d0a
-PrepareRun -> Host candidate -> AcceptRun -> same-key replay -> Core process restart -> replay same run_id
-run_id=run-cf4be943d4684df29b418ee2506ef18c
-PASS
+# FEA-10 real Host<->Core stdio IPC evidence (history)
+Since R-008 the test writes its per-run receipt to the isolated workspace DataRoot
+(G:/CODEX/New Manga.workspace/FEA-10/fixtures/ipc-<uuid>/real-ipc.txt) instead of this file.
+Latest DSH rework gate: Fea10RunIpcTests 1 passed, EXIT=0 (2026-11-04).
+See verification/FEA-10/logs/dsh-rework2-dotnet.log for the command and exit code.

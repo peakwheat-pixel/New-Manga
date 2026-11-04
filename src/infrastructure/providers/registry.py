@@ -459,9 +459,11 @@ class ProviderRegistry:
                 raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
             return replace(provider, model=execution["model"])
         if str(execution.get("adapter_version", "")).startswith("local:"):
-            # R-005: a live local-provider version drift blocks the Run instead of silently
-            # running under a different model than the accepted snapshot.
-            if execution["model"] != getattr(provider, "model", None):
+            # R-005/RR-05: a live local-provider type or version drift blocks the Run instead of
+            # silently running under a different implementation than the accepted snapshot.
+            live_type = getattr(provider, "provider_type", None)
+            if (execution["model"] != getattr(provider, "model", None)
+                    or (isinstance(live_type, str) and live_type != execution["provider_type"])):
                 raise ProviderUnavailable("frozen provider version is unavailable", stage="resolve")
             try:
                 return replace(provider, model=execution["model"])

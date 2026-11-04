@@ -1,79 +1,70 @@
 {
-  "head": "3e01fae83738fcc0441882cb8b827202e4319c10",
+  "head": "ed60c1d2293234d326ecf8d265a8ca4e711fd026",
   "branch": "main",
-  "created_at": "2026-11-04T10:20:57.837151+00:00",
+  "excluded_docs": [
+    "doc/handoffs/FEA-10-handoff.md",
+    "doc/reviews/FEA-10-rework-r1.md",
+    "doc/reviews/FEA-10-rework-review-r1.md",
+    "doc/tasks/FEA-10.md"
+  ],
+  "created_at": "2026-11-04T10:53:36.919127+00:00",
   "uncommitted": true,
   "self_hash_excluded": true,
   "files": [
     {
-      "path": "apps/desktop-avalonia/src/NewManga.App/Services/RunContracts.cs",
-      "bytes": 25321,
-      "sha256": "c8eeaefd781ebafb545666d4ecf03393b700d24def05121318ffdb6721949659"
-    },
-    {
-      "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/RunControllerTests.cs",
-      "bytes": 30380,
-      "sha256": "29c38112860bf2ee1817f551435e8fa753e422030bd955837e350178504e138d"
-    },
-    {
-      "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs",
-      "bytes": 5418,
-      "sha256": "e492c99abe1a65fe576f7d50554a31ac7a0d8d21486c29276aab7cc24300d7a4"
-    },
-    {
-      "path": "doc/handoffs/FEA-10-handoff.md",
-      "bytes": 18396,
-      "sha256": "49a67778aaecabc19bfc77488bba619008bd557c08f1715fe121ee23d397f526"
-    },
-    {
-      "path": "doc/reviews/FEA-10-impl-r1.md",
-      "bytes": 29230,
-      "sha256": "100d6a84aa7358e1429bbe0ba0aaa54a4b6d7e6191892bcde64e1b70b5f296ac"
-    },
-    {
-      "path": "doc/reviews/FEA-10-rework-r1.md",
-      "bytes": 5088,
-      "sha256": "217546721301a0f9022534997ee94f447a9b79efa2606b2fad24d14f2719309f"
-    },
-    {
-      "path": "doc/tasks/FEA-10.md",
-      "bytes": 29441,
-      "sha256": "2615eca2de202fd01f69a86db9385ca815e0665bd21db1c396844b325c43f622"
+      "path": "src/application/tasks/service.py",
+      "bytes": 77599,
+      "sha256": "1072ac7bb5985ea0d0699793b8e49010826c2967874f5dad8fbd16373f6429f9"
     },
     {
       "path": "src/application/tasks/store.py",
-      "bytes": 31332,
-      "sha256": "a2ee5c780846e32255934cfe9d9adde4cdf38cc8cd602034deaf8be3566d6fb1"
+      "bytes": 31858,
+      "sha256": "3c6311c2487fd2a35a72534fa54de4a5095da7e61762520179f604de2626ca71"
     },
     {
       "path": "src/bootstrap/core_service.py",
-      "bytes": 310444,
-      "sha256": "e678fa4b71217eb7c04e120d4ba6a0d0c43555591256bf1c0e62f5d4f07032e9"
+      "bytes": 310897,
+      "sha256": "f6fa8e38b27b63a6ea6ed5975822c808ecb38b9aa2b7fc98356d2796ffdb7644"
     },
     {
       "path": "src/infrastructure/providers/registry.py",
-      "bytes": 28203,
-      "sha256": "b8b5af0ff56524ec9769620030896f08369b8eb9ae42feca0216c5b592c00105"
+      "bytes": 28391,
+      "sha256": "80e0d4e121ef7ebabd22981c8c97925a2b3f60f59716da924c45cab82aa17eaa"
     },
     {
       "path": "tests/fea10/test_prepared_run.py",
-      "bytes": 15374,
-      "sha256": "0919f78f2054f2fa357f2d09c3b7cdc1669e6a2aba83093996ba4cea499445b3"
+      "bytes": 16539,
+      "sha256": "937c6d956618acb7ce514bdf971b43e92046f5a0b899d210292146634388f3b5"
     },
     {
       "path": "verification/FEA-10/AC-MATRIX.md",
-      "bytes": 10628,
-      "sha256": "77ac045019c9c30b1f5883bf90ba157f10609acc27c5ed3c4191a9b260ba9db6"
+      "bytes": 12412,
+      "sha256": "189dbfb79dabbfd2c13d55a47f7163461c644bcda1dbf72397625167c173f09e"
     },
     {
-      "path": "verification/FEA-10/logs/dsh-rework-dotnet.log",
-      "bytes": 22201,
-      "sha256": "db2ec5229736c495bdec5fd7caef357842a67720301a84beb8f013ff6fd4d1fd"
+      "path": "verification/FEA-10/ipc/real-ipc.txt",
+      "bytes": 391,
+      "sha256": "19faf80c7836f3abad95a5394ed4b54a24220429082fbdcab194c354bdf37bec"
     },
     {
-      "path": "verification/FEA-10/logs/dsh-rework-pytest.log",
-      "bytes": 11166,
-      "sha256": "722a55ea4e7e51494575c778e2e098b270627f7243b73cbc080a4b569fff073b"
+      "path": "verification/FEA-10/logs/dsh-rework2-dotnet.log",
+      "bytes": 25322,
+      "sha256": "b97f4733b63022223b079678007aef9eb3af99a3f0c4c52fd50464958437347c"
+    },
+    {
+      "path": "verification/FEA-10/logs/dsh-rework2-providers.log",
+      "bytes": 771,
+      "sha256": "fb650710468168a0c83c692d7276df0e2a50366d77b68d8a427c0c395a23192c"
+    },
+    {
+      "path": "verification/FEA-10/logs/dsh-rework2-pytest.log",
+      "bytes": 7669,
+      "sha256": "e95446834349b6ca001dadbe1516463cb1b6995b9800da01c0a8a7e56349ac7d"
+    },
+    {
+      "path": "verification/FEA-10/record_delivery.py",
+      "bytes": 4637,
+      "sha256": "5bf0c1c791aec3af99151a1b2dcf6bb94c4a7a45719f834348e829c66a99386a"
     }
   ],
   "out_of_scope": []

@@ -69,3 +69,16 @@
 - 新回归：`test_prepared_run.py` +4（settings 过滤/合法键、glossary token、mapping 形状、untyped fallback、local typed 默认 binding）；Host 单测 `PreparedRunPayload_CarriesTheSameHostDefaultBindingsAsStartRun`。
 - 门禁（DSH 实跑，`logs/dsh/dsh-rework-*.log`）：pytest 主套件 1051 passed、providers 559/4；build 0/0；.NET 全量与真实 IPC 结果见同日日志。
 - scope 口径（R-010）：AC9 的「0 域外」指 **Owner 字节**；DSH 治理指针文件（PLAN/STATUS/ADJ/Handoff）为 Integrator 单点编辑，不属 Owner 写域；`git diff aa7bcd6..<head> -- doc/contracts verification/FEA-08 verification/FEA-09 组合根` 为空。
+
+## DSH rework r2（2026-11-04，按 FEA-10-rework-review-r1 处置）
+
+- Review（新 head `ed60c1d2`）changes_requested：P0=0、P1=2（RR-01/RR-02）、P2=6。报告 `doc/reviews/FEA-10-rework-review-r1.md`。
+- RR-01（P1，已修复）：prepared 的 settings/overrides 现在**规范化到执行面**——非执行段从 `settingsSnapshot` 与持久化 Run 中移除（不是仅跳过校验）；认证材料扫描恢复为任意嵌套键拒绝（glossary 子树豁免）；执行段未知键仍 fail-closed；accept 时对当前配置过滤后比较，保持 stale 检测（`test_nested_authentication_material_cannot_enter_a_prepared_run` 等）。
+- RR-02（P1，已修复）：Canonical Evidence commit 回填为包含证据的 rework/final 提交；DELIVERY-MANIFEST 在提交前生成并在清单中记录 `excluded_docs`（Task/Handoff/Review 属 DSH 指针文档，不参与字节清单）；handoff 的 warnings 计数修正为 4；rework 记录措辞修正。
+- RR-03（P2）：pytest 日志按本轮实跑保存（`logs/dsh-rework2-*.log`）；此前日志的失败历史保留未改写，本表只引用实跑结果（1052 passed）。
+- RR-04（P2，已修复）：`frozen_fallbacks` 非 Mapping 时统一 `RUN_SNAPSHOT_INCOMPLETE`。
+- RR-05（P2，已修复）：本地 typed resolve 同时校验 provider_type 与 model；执行 validate 限定已知本地类型集合。
+- RR-06（P2，已修复）：Core Prepare 拒绝非对象 `provider_bindings`（`INVALID_REQUEST`），不再落成 UNKNOWN。
+- RR-07（P2，已修复）：tracked `ipc/real-ipc.txt` 稳定化为历史说明，无随机 DataRoot。
+- RR-08（P2）：文档计数/测试名/R-005 口径已按本轮实跑校正；build 日志已保存（`logs/dsh-rework2-dotnet.log`）。
+

@@ -127,7 +127,7 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 ## DSH r2 集成复核（2026-11-04）
 
 - Codex r2 额度耗尽（19:50 重置）与 ZCode 429（21:51 重置）双中断后，DSH 按 `ADJ-2026-11-04-FEA-10-R2` §3 接手收尾并完成集成；上述风险 1/2/4 由 r2 的 AC2/3/4/6 补齐与专项测试消除（保留原文作为历史记录）。
-- DSH 独立复跑（`G:/CODEX/New Manga.workspace/FEA-10/logs/dsh/dsh-gates-r2.log`）：build EXIT=0（0 warning/0 error）、pytest 1047 passed、providers 559 passed / 4 skipped、.NET 1344 passed / 0 failed / 75 skipped、真实 IPC 1 passed、`check.ps1` PASS（3 warnings）、pins 17/17、范围 0 域外、FEA-09 零 diff（DSH 跑测重写后已恢复原字节）。
+- DSH 独立复跑（`G:/CODEX/New Manga.workspace/FEA-10/logs/dsh/dsh-gates-r2.log`）：build EXIT=0（0 warning/0 error）、pytest 1047 passed、providers 559 passed / 4 skipped、.NET 1344 passed / 0 failed / 75 skipped、真实 IPC 1 passed、`check.ps1` PASS（4 warnings）、pins 17/17、范围 0 域外、FEA-09 零 diff（DSH 跑测重写后已恢复原字节）。
 - 证据刷新：`changed-files=30`、`out_of_scope=[]`、`FEA09_DIFF=EMPTY`；AC-MATRIX pin `7428c009…` 已回填 Task 卡。
 - 最终交付 commit：`a92934585088fe75ce8ec53452a67c0a72496d31`（`delivery_head`）；`integration_commit` 待 closeout 回填。
 - 未关闭：独立实现 Review（需 Agent 额度恢复后派全新上下文）与 DSH closeout；在此之前 Task 保持 `in_review`，不 push。

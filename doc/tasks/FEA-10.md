@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 77ac045019c9c30b1f5883bf90ba157f10609acc27c5ed3c4191a9b260ba9db6 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 189dbfb79dabbfd2c13d55a47f7163461c644bcda1dbf72397625167c173f09e | CANONICAL |
 
 ## Resource Manifest
 
@@ -239,3 +239,11 @@ out_of_scope:
 - 门禁（DSH 实跑）：pytest 主套件 1051 passed（+4 新回归）、providers 559/4；build 0/0；.NET 全量/真实 IPC 见 `logs/dsh/dsh-rework-*.log`；check PASS（4 warnings）；pins 17/17。
 - AC 状态：AC1–AC8、AC10 MET（按 rework 证据）；AC9 只余**新 head 的独立 Review**与 closeout。
 - 下一步：DSH 刷新证据/清单 → 提交 rework head → 派全新上下文 Review（新 head）→ approved 后 closeout。
+
+## DSH rework r2（2026-11-04，按 FEA-10-rework-review-r1 处置）
+
+- 新 head Review：`doc/reviews/FEA-10-rework-review-r1.md`（reviewed_head `ed60c1d2`）changes_requested（P0=0；RR-01/RR-02 P1；RR-03…RR-08 P2）。
+- RR-01/RR-02/RR-04/RR-05/RR-06/RR-07 已修复并加回归（prepared 规范化到执行面 + 嵌套认证材料拒绝 + fallback/本地类型/Prepare binding 形状校验 + IPC 证据稳定化）；RR-03/RR-08 证据与文档已按实跑校正。
+- 本轮门禁（DSH 实跑，`logs/dsh-rework2-*.log`）：pytest 主套件 1052 passed、providers 559/4、build 0/0、.NET 全量、真实 IPC、check、pins、范围、FEA-09 零 diff。
+- 下一步：提交本 head → 再派全新上下文 Review（最终）；approved 后 closeout。
+

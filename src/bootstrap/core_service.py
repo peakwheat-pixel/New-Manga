@@ -4555,8 +4555,13 @@ class CoreServiceServer:
                         raise PipelineError("INVALID_REQUEST", "PrepareRun shape is invalid")
                     if payload["command"] not in COMMAND_CATALOG or not isinstance(payload.get("overrides", {}), dict):
                         raise PipelineError("INVALID_REQUEST", "PrepareRun fields are invalid")
+                    # RR-06: the same binding-shape gate StartRun applies; never a Core AttributeError.
+                    prepared_overrides = payload.get("overrides", {})
+                    prepared_bindings = prepared_overrides.get("provider_bindings")
+                    if prepared_bindings is not None and not isinstance(prepared_bindings, dict):
+                        raise PipelineError("INVALID_REQUEST", "provider_bindings must be an object")
                     # R-004: Prepare carries the same override semantics as StartRun (wire 2.7 only).
-                    if "provider_profiles" in payload.get("overrides", {}):
+                    if "provider_profiles" in prepared_overrides:
                         raise PipelineError("INVALID_REQUEST", "provider profile overrides require Core 2.6")
                     result = self._core.pipeline.prepare_run(
                         payload["command"], self._parse_run_scope(payload["scope"]),
