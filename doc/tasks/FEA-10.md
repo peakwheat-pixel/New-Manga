@@ -3,11 +3,11 @@ id: FEA-10
 title: 快照 / 候选 / 提交安全（PreparedRun 两阶段 + canonical request builder + retry 快照 + candidate-only apply）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: pending scope review r6（r5 后已按 P1/P2 修订；因 Codex/ZCode 额度耗尽暂缓复审）；须先完成 FEA-10-PREREQ-1 协议注册
+status: ready
+approval: **scope approved r6（Codex，P0=0/P1=0/P2=2 非阻断）+ DSH Appointment 2026-11-04**；硬前置 FEA-10-PREREQ-1 已 done；待 Owner 认领实施
 suggested_owner: codex
-owner: null
-reviewer: pending scope review（独立上下文；实施 Review 另行 Appointment）
+owner: codex（Appointment 2026-11-04；待认领）
+reviewer: implementation Review 待 Appointment（全新上下文；不得由实现者自审）
 depends_on:
   - FEA-00A-IMPL-1
   - FEA-03
@@ -167,4 +167,4 @@ out_of_scope:
 
 ## Closeout Record
 
-- 未开始（proposed，scope review r4 待派发）。
+- 未开始（ready；scope 已冻结，Appointment 2026-11-04；Owner Codex 待认领）。
