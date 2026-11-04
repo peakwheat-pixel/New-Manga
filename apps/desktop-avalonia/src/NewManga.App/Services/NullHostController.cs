@@ -5,9 +5,11 @@ namespace NewManga.App.Services;
 
 /// <summary>
 /// Inert controller used by the XAML runtime loader / visual designers. It never starts a sidecar;
-/// production always constructs <see cref="HostController"/>.
+/// production always constructs <see cref="HostController"/>. FEA-09-UI-1: also implements
+/// <see cref="ISourceImportController"/> — a SEPARATE face, so the frozen C-07
+/// <see cref="IHostController"/> inventory (54 members) stays byte-identical.
 /// </summary>
-public sealed class NullHostController : IHostController
+public sealed class NullHostController : IHostController, ISourceImportController
 {
     public static NullHostController Instance { get; } = new();
 
@@ -233,6 +235,31 @@ public sealed class NullHostController : IHostController
         string duplicatePolicy = "skip",
         CancellationToken cancellationToken = default) =>
         Task.FromResult(ImportOutcome.NotReady());
+
+    // FEA-09-UI-1: the designer/inert shell has no Core, so the referenced import face reports
+    // the typed "not ready" outcome instead of pretending to plan/import anything.
+    public Task<SourcePlanPreview?> PlanReferencedImportAsync(
+        string chapterId,
+        IReadOnlyList<ReferenceImportSource> sources,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<SourcePlanPreview?>(null);
+
+    public Task<SourceImportStartResult> StartReferencedImportAsync(
+        SourcePlanPreview plan,
+        string? password,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SourceImportStartResult.NotReady());
+
+    public Task<SourceImportReceipt?> GetReferencedImportReceiptAsync(
+        string operationId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<SourceImportReceipt?>(null);
+
+    public Task<SourceImportCancelResult> CancelReferencedImportAsync(
+        string operationId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SourceImportCancelResult.Failed("HOST_NOT_READY"));
 
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,

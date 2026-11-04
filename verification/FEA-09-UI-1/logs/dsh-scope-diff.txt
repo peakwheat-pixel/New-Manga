@@ -1,0 +1,10 @@
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
+doc/tasks/FEA-09-UI-1.md

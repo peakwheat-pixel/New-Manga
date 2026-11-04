@@ -13,6 +13,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NewManga.Host\NewManga.Host.csproj" />
+    <!-- FEA-09-UI-1: the real-IPC import tests drive the production App-side orchestrator
+         (Services/SourceImportModels.cs) over the real stdio Core; that is the point of the
+         evidence, so the test project references the App assembly. -->
+    <ProjectReference Include="..\..\src\NewManga.App\NewManga.App.csproj" />
   </ItemGroup>
 
   <ItemGroup>

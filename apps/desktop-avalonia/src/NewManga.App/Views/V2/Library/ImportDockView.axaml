@@ -76,6 +76,90 @@
       <TextBlock Classes="meta"
                  TextWrapping="Wrap"
                  Text="每个文件单独调用 Host 导入命令，状态为真实结果（已导入 / 跳过重复 / 失败 + 错误码）；文件夹为单次调用，显示聚合结果。路径不显示（隐私）。" />
+
+      <!-- FEA-09-UI-1：引用源导入（引用原文件，不复制不覆盖）。plan 预览 → （加密源）密码 → 确认 → 运行中可取消 → 逐项 receipt。 -->
+      <Separator />
+
+      <TextBlock Classes="section-title" Text="引用源导入（引用原文件）" />
+      <TextBlock Classes="meta"
+                 TextWrapping="Wrap"
+                 Text="先预览导入计划（源只读、不复制不覆盖），确认后由 Host 提交；AES 加密 ZIP 显示为「不支持」。路径与密码不显示、不记录。" />
+
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+        <Button Classes="ghost sm"
+                Content="选择源并预览"
+                Command="{Binding PickReferenceSourcesCommand}" />
+        <Button Classes="primary sm"
+                x:Name="ConfirmReferenceButton"
+                Content="确认导入"
+                Command="{Binding ConfirmReferenceImportCommand}"
+                IsEnabled="{Binding CanConfirmReference}" />
+        <Button Classes="ghost sm"
+                Content="取消导入"
+                Command="{Binding CancelReferenceImportCommand}"
+                IsEnabled="{Binding CanCancelReference}" />
+        <Button Classes="ghost sm"
+                Content="重新预览"
+                Command="{Binding ReplanReferenceImportCommand}"
+                IsEnabled="{Binding CanReplanReference}" />
+      </StackPanel>
+
+      <TextBlock Classes="meta" Text="{Binding ReferencePlanSummary}" TextWrapping="Wrap" IsVisible="{Binding HasReferencePlan}" />
+      <TextBlock x:Name="ReferenceProgressText" Classes="meta" Text="{Binding ReferenceProgressText}" TextWrapping="Wrap" />
+      <TextBlock Classes="meta" Text="{Binding ReferenceErrorText}" TextWrapping="Wrap" IsVisible="{Binding HasReferenceError}" />
+
+      <!-- 加密源：密码只存在于输入框到单次提交之间（Host 一次性安全引用；不写入任何日志/错误文案） -->
+      <TextBox x:Name="ReferencePasswordBox"
+               PasswordChar="•"
+               Watermark="加密源密码（仅本次导入使用，不保存）"
+               Text="{Binding ReferencePassword, Mode=TwoWay}"
+               IsVisible="{Binding NeedsPassword}" />
+
+      <ItemsControl ItemsSource="{Binding ReferencePlanItems}" IsVisible="{Binding HasReferencePlan}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ReferencePlanRowView">
+            <Border Classes="raised"
+                    Padding="{DynamicResource Nm.Padding.ControlSm}">
+              <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0"
+                           Classes="label"
+                           Text="{Binding DisplayName}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Classes="meta"
+                           Text="{Binding StatusText}"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2"
+                           Classes="meta"
+                           Text="{Binding WillImportText}"
+                           VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <ItemsControl ItemsSource="{Binding ReferenceReceiptItems}" IsVisible="{Binding HasReferenceReceipt}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ReferenceReceiptRowView">
+            <Border Classes="raised"
+                    Padding="{DynamicResource Nm.Padding.ControlSm}">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                <TextBlock Grid.Column="0"
+                           Classes="label"
+                           Text="{Binding SourceName}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Classes="meta"
+                           Text="{Binding OutcomeText}"
+                           VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
     </StackPanel>
   </Border>
 </UserControl>

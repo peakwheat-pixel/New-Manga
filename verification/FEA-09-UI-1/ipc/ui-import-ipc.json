@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-11-04T01:19:41.4429644\u002B00:00",
+  "mode": "real Host\u003C-\u003ECore stdio (python source process) \u002B production SourceImportCoordinator",
+  "python": "NEWMANGA_BUILD_PYTHON (path redacted)",
+  "password_probe_sha256": "3bfe01ab21f1a5ed570e1747c13bcc926d163d9595ace8dba2f40a9999c57157",
+  "wire_frame_count": 113,
+  "cases": [
+    {
+      "case": "aes-unsupported",
+      "status": "unsupported",
+      "reason_code": "SOURCE_FORMAT_UNSUPPORTED",
+      "needs_password": false
+    },
+    {
+      "case": "cancel",
+      "planned_pages": 5,
+      "terminal_cancel_accepted": false,
+      "terminal_cancel_state": "completed",
+      "first_imported": 5,
+      "midrun_cancel_accepted": true,
+      "midrun_state": "Cancelled",
+      "second_imported": 0,
+      "chapter_pages_total": 5
+    },
+    {
+      "case": "zipcrypto-password",
+      "plan_status": "encrypted",
+      "wrong_password_reason": "SOURCE_PASSWORD_INVALID",
+      "wrong_password_imported": 0,
+      "retry_state": "Completed",
+      "retry_imported_pages": 2,
+      "retry_chapter_pages": 2,
+      "secret_tokens_remaining": 0
+    },
+    {
+      "case": "plan-confirm",
+      "chapter_id": "494256bd8e86403f88fc8792a62065aa",
+      "plan_totals": 1,
+      "receipt_state": "Completed",
+      "imported_pages": 1,
+      "chapter_pages_visible": 1
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "build": "PASS 0 warnings / 0 errors",
+  "real_ipc": "PASS 5/5 (Fea09UiImportIpcTests; NEWMANGA_FEA09_IPC=1)",
+  "untracked_scope": "all new files within allowed_paths",
+  "base_commit": "1a5894282b8b6e459b6292f762816bcfad5ac720",
+  "notes": "Owner revision: IHostController unchanged; new ISourceImportController, C-07 frozen inventory untouched.",
+  "fea06_png": "4/4 UNCHANGED (from Owner gates.json)",
+  "scope_diff": [
+    "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs",
+    "apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs",
+    "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs",
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml",
+    "apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs",
+    "apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj",
+    "doc/REBASELINE_PLAN.md",
+    "doc/STATUS.md",
+    "doc/TASK_LEDGER.md",
+    "doc/tasks/FEA-09-UI-1.md"
+  ],
+  "fea09_canonical_restored": "git checkout -- verification/FEA-09/logs/wire-redacted.ndjson (test-run overwrite restored)",
+  "dotnet_tests": "PASS 1313 passed / 0 failed / 63 skipped",
+  "head_before_commit": "working-tree",
+  "integration_by": "DSH",
+  "pins": "17/17 PASS",
+  "c07_inventory_check": "PASS (python tools/generate_api_inventory.py --check)",
+  "generated_at": "2026-11-04T09:20:00+08:00"
+}

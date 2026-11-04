@@ -4,8 +4,13 @@ using NewManga.CoreClient;
 
 namespace NewManga.App.Tests;
 
-/// <summary>Scriptable controller for headless UI tests (no sidecars, no window lifecycle).</summary>
-public sealed class FakeHostController : IHostController
+/// <summary>
+/// Scriptable controller for headless UI tests (no sidecars, no window lifecycle).
+/// FEA-09-UI-1: also implements <see cref="ISourceImportController"/> (the scriptable
+/// referenced-import face) — that face is deliberately OUTSIDE the frozen C-07
+/// <see cref="IHostController"/> inventory; see Services/SourceImportModels.cs.
+/// </summary>
+public sealed class FakeHostController : IHostController, ISourceImportController
 {
     public FakeHostController(HostViewSnapshot snapshot)
     {
@@ -673,6 +678,67 @@ public sealed class FakeHostController : IHostController
         return Task.FromResult(ScriptedImportResults.Count > 0
             ? ScriptedImportResults.Dequeue()
             : ImportOutcome.Success(1, 0));
+    }
+
+    // FEA-09-UI-1: scriptable referenced-import face (VM state-machine tests only — the real
+    // IPC evidence lives in NewManga.Host.Tests under NEWMANGA_FEA09_IPC=1).
+    public List<(string ChapterId, IReadOnlyList<ReferenceImportSource> Sources, string Policy)> ReferencePlanCalls { get; } = new();
+
+    public Queue<SourcePlanPreview?> ScriptedReferencePlans { get; } = new();
+
+    public Queue<SourceImportStartResult> ScriptedReferenceStarts { get; } = new();
+
+    public Queue<SourceImportReceipt?> ScriptedReferenceReceipts { get; } = new();
+
+    public List<string> ReferenceCancelCalls { get; } = new();
+
+    public Queue<SourceImportCancelResult> ScriptedReferenceCancels { get; } = new();
+
+    public string? LastStartPassword { get; private set; }
+
+    public int ReferenceStartCalls { get; private set; }
+
+    public Task<SourcePlanPreview?> PlanReferencedImportAsync(
+        string chapterId,
+        IReadOnlyList<ReferenceImportSource> sources,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default)
+    {
+        ReferencePlanCalls.Add((chapterId, sources, duplicatePolicy));
+        return Task.FromResult(ScriptedReferencePlans.Count > 0
+            ? ScriptedReferencePlans.Dequeue()
+            : null);
+    }
+
+    public Task<SourceImportStartResult> StartReferencedImportAsync(
+        SourcePlanPreview plan,
+        string? password,
+        CancellationToken cancellationToken = default)
+    {
+        ReferenceStartCalls++;
+        LastStartPassword = password;
+        return Task.FromResult(ScriptedReferenceStarts.Count > 0
+            ? ScriptedReferenceStarts.Dequeue()
+            : SourceImportStartResult.Accepted("op-fake-" + ReferenceStartCalls));
+    }
+
+    public Task<SourceImportReceipt?> GetReferencedImportReceiptAsync(
+        string operationId,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(ScriptedReferenceReceipts.Count > 0
+            ? ScriptedReferenceReceipts.Dequeue()
+            : null);
+    }
+
+    public Task<SourceImportCancelResult> CancelReferencedImportAsync(
+        string operationId,
+        CancellationToken cancellationToken = default)
+    {
+        ReferenceCancelCalls.Add(operationId);
+        return Task.FromResult(ScriptedReferenceCancels.Count > 0
+            ? ScriptedReferenceCancels.Dequeue()
+            : new SourceImportCancelResult(true, true, "running", null));
     }
 
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(

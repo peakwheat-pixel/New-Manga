@@ -5,11 +5,16 @@ using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Wire;
 using NewManga.Host;
+using NewManga.Host.Sources;
 
 namespace NewManga.App.Services;
 
-/// <summary>Production controller: starts <see cref="HostRuntime"/> and maps typed failures to UI text.</summary>
-public sealed class HostController : IHostController
+/// <summary>
+/// Production controller: starts <see cref="HostRuntime"/> and maps typed failures to UI text.
+/// FEA-09-UI-1: also implements <see cref="ISourceImportController"/> — a SEPARATE face, so the
+/// frozen C-07 <see cref="IHostController"/> inventory (54 members) stays byte-identical.
+/// </summary>
+public sealed class HostController : IHostController, ISourceImportController
 {
     private readonly HostOptions _options;
     private readonly object _startLock = new();
@@ -1369,6 +1374,181 @@ public sealed class HostController : IHostController
         }
     }
 
+    // ---------------------------------------------------------------------------------------
+    // FEA-09-UI-1: referenced-source import face (ISourceImportController — kept OUTSIDE the
+    // frozen C-07 IHostController inventory; C-16 v1.1 §1/§4). All four entries delegate
+    // to the production SourceImportCoordinator (real HostCommandDispatcher routing + real
+    // SourceReadCoordinator grants); refusals are typed outcomes, never thrown into the UI, and
+    // the plaintext password exists only inside one Start call (C-16 v1.1 §3 secret_ref).
+    // ---------------------------------------------------------------------------------------
+
+    private SourceImportCoordinator? _sourceImports;
+    private HostRuntime? _sourceImportsRuntime;
+
+    /// <summary>
+    /// The coordinator is cached per runtime instance so the one-shot password context of a
+    /// running import survives the plan→start→receipt sequence; a restart replaces it (the
+    /// stale context is cleaned best-effort — secrets expire on their own regardless).
+    /// </summary>
+    private SourceImportCoordinator? SourceImports
+    {
+        get
+        {
+            var runtime = _runtime;
+            if (runtime is null || !runtime.Result.IsReady ||
+                runtime.Commands is not { } commands || runtime.Sources is not { } sources)
+            {
+                return null;
+            }
+
+            if (!ReferenceEquals(_sourceImportsRuntime, runtime))
+            {
+                var stale = _sourceImports;
+                _sourceImports = null;
+                _sourceImportsRuntime = runtime;
+                if (stale is not null)
+                {
+                    _ = stale.DisposeAsync();
+                }
+            }
+
+            return _sourceImports ??= new SourceImportCoordinator(commands, sources, _options.DataRoot);
+        }
+    }
+
+    public async Task<SourcePlanPreview?> PlanReferencedImportAsync(
+        string chapterId,
+        IReadOnlyList<ReferenceImportSource> sources,
+        string duplicatePolicy = "skip",
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId) || sources.Count == 0)
+        {
+            SetLastError("INVALID_REQUEST");
+            return null;
+        }
+
+        var imports = SourceImports;
+        if (imports is null)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        if (!_runtime!.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return null;
+        }
+
+        try
+        {
+            var plan = await imports.PlanAsync(chapterId, sources, duplicatePolicy, cancellationToken).ConfigureAwait(false);
+            SetLastError(plan is null ? "HOST_UNAVAILABLE" : null);
+            return plan;
+        }
+        catch (Exception ex) when (ex is SourceAccessException or CoreOperationException or SidecarException or HostCommandInvalidArgumentsException or IOException or InvalidOperationException or OperationCanceledException)
+        {
+            SetLastError(ex is CoreOperationException core ? core.Code
+                : ex is SourceAccessException source ? source.Message
+                : ex is SidecarException sidecar ? sidecar.Code.ToString()
+                : ex is HostCommandInvalidArgumentsException ? "INVALID_ARGUMENTS"
+                : ex is OperationCanceledException ? "CANCELLED"
+                : "HOST_UNAVAILABLE");
+            return null;
+        }
+    }
+
+    public async Task<SourceImportStartResult> StartReferencedImportAsync(
+        SourcePlanPreview plan,
+        string? password,
+        CancellationToken cancellationToken = default)
+    {
+        if (plan is null)
+        {
+            return SourceImportStartResult.Failed("INVALID_REQUEST", "导入计划无效");
+        }
+
+        var imports = SourceImports;
+        if (imports is null)
+        {
+            SetLastError("HOST_NOT_READY");
+            return SourceImportStartResult.NotReady();
+        }
+
+        if (!_runtime!.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return SourceImportStartResult.ReadOnly();
+        }
+
+        var result = await imports.StartAsync(plan, password, cancellationToken).ConfigureAwait(false);
+        SetLastError(result.Ok ? null : result.ErrorCode);
+        return result;
+    }
+
+    public async Task<SourceImportReceipt?> GetReferencedImportReceiptAsync(
+        string operationId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(operationId))
+        {
+            return null;
+        }
+
+        var imports = SourceImports;
+        if (imports is null)
+        {
+            SetLastError("HOST_NOT_READY");
+            return null;
+        }
+
+        try
+        {
+            return await imports.GetReceiptAsync(operationId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is SourceAccessException or CoreOperationException or SidecarException or IOException or InvalidOperationException or OperationCanceledException)
+        {
+            SetLastError(ex is CoreOperationException core ? core.Code
+                : ex is SourceAccessException source ? source.Message
+                : ex is SidecarException sidecar ? sidecar.Code.ToString()
+                : ex is OperationCanceledException ? "CANCELLED"
+                : "HOST_UNAVAILABLE");
+            return null;
+        }
+    }
+
+    public async Task<SourceImportCancelResult> CancelReferencedImportAsync(
+        string operationId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(operationId))
+        {
+            return SourceImportCancelResult.Failed("INVALID_REQUEST");
+        }
+
+        var imports = SourceImports;
+        if (imports is null)
+        {
+            SetLastError("HOST_NOT_READY");
+            return SourceImportCancelResult.Failed("HOST_NOT_READY");
+        }
+
+        if (!_runtime!.Policy.WritesAllowed)
+        {
+            SetLastError("HOST_READ_ONLY");
+            return SourceImportCancelResult.Failed("HOST_READ_ONLY");
+        }
+
+        var result = await imports.CancelAsync(operationId, cancellationToken).ConfigureAwait(false);
+        if (!result.Ok)
+        {
+            SetLastError(result.ErrorCode);
+        }
+
+        return result;
+    }
+
     public async Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
         CancellationToken cancellationToken = default)
@@ -2151,6 +2331,13 @@ public sealed class HostController : IHostController
 
     public async ValueTask DisposeAsync()
     {
+        // FEA-09-UI-1: release any one-shot password context before the runtime goes away.
+        if (_sourceImports is not null)
+        {
+            await _sourceImports.DisposeAsync().ConfigureAwait(false);
+            _sourceImports = null;
+        }
+
         if (_runtime is not null)
         {
             await _runtime.DisposeAsync().ConfigureAwait(false);

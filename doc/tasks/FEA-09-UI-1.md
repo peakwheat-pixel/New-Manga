@@ -3,10 +3,10 @@ id: FEA-09-UI-1
 title: 引用源导入最小 UI/适配接线（V2 ImportDock：plan 预览、密码、取消、进度）
 kind: implementation
 governance_version: 3
-status: ready
-approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a71b396eb177627f872d829c59dd7e440ebbbe`；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
+status: in_review
+approval: **RELEASE APPROVED（2026-11-04，DSH）**：scope 冻结 + Appointment——owner=ZCode（新 headless 会话）、reviewer=Codex（全新上下文）、base_commit `19a5894282`（释放 commit；Appointment base `19a71b396`）；范围/AC/门禁见 `doc/reviews/FEA-09-UI-1-appointment.md`
 suggested_owner: zcode
-owner: zcode（Appointment 2026-11-04；认领后置 in_progress）
+owner: zcode（Appointment 2026-11-04；2026-11-04T00:38:20Z 认领；交付于 2026-11-04T01:05:00Z 置 in_review——工作树未提交，base `1a5894282` + 本卡变更清单，由 DSH 提交）
 reviewer: codex（独立实现 Review 会话；未参与本 Task 实现/返修）
 depends_on:
   - FEA-09-PREREQ-1
@@ -15,8 +15,8 @@ base_commit: 19a71b396eb177627f872d829c59dd7e440ebbbe
 branch: main
 worktree: G:\CODEX\New Manga
 integration_commit: null
-delivery_head: 未开始
-canonical_evidence_status: pending
+delivery_head: 工作树未提交（base `1a5894282`；变更见「变更记录」与 Handoff；由 DSH 提交后回填）
+canonical_evidence_status: pending（工作树 SHA-256 已登记 Canonical Evidence 表；commit pin 待 DSH 提交后回填）
 resource_closeout_status: pending
 evidence_dir: verification/FEA-09-UI-1
 allowed_paths:
@@ -63,13 +63,13 @@ out_of_scope:
 4. 汇总：按当前项目显示进度与成功/失败/跳过/待处理逐项原因；不支持/损坏/加密（含 AES ZIP typed unsupported）逐项可读。
 5. 可访问性/键盘：新交互沿用既有 V2 控件与 Fluent 语义，不新增设计令牌/组件变体；超出即停等 DSH 裁决（设计基线 v1.1 或 OUT）。
 
-## Acceptance Criteria（草案，scope review 冻结）
+## Acceptance Criteria（scope 冻结；Owner 交付自评——待 Codex 独立 Review + DSH 集成验证）
 
-- [ ] **AC-1**：plan 预览经真实 Host IPC 生成并可确认/取消；确认前源变化时 UI 呈现拒绝或更新预览，不静默提交。
-- [ ] **AC-2**：密码重试路径经真实 IPC 走通（支持的加密子格式），密码不出现在日志/快照/错误文案/证据；AES ZIP 显示 typed unsupported。
-- [ ] **AC-3**：运行中取消可触发；已提交项目保留、未提交不出现；重试不重复提交；汇总计数与 FEA-09 receipt 一致。
-- [ ] **AC-4**：以隔离 fixture + 真实 production adapter 断言 UI 可观察结果（非 fake controller、非进程内替代）；证据含 UI 状态/原因/计数。
-- [ ] **AC-5**：不改变旧 managed 导入路径行为；旧 FEA-06 四 PNG 不变；无真实用户数据；全量测试不减少；未 push。
+- [x] **AC-1**：plan 预览经真实 Host IPC 生成并可确认/取消；确认前源变化时 UI 呈现拒绝或更新预览，不静默提交。 <<MET>>
+- [x] **AC-2**：密码重试路径经真实 IPC 走通（支持的加密子格式），密码不出现在日志/快照/错误文案/证据；AES ZIP 显示 typed unsupported。 <<MET>>
+- [x] **AC-3**：运行中取消可触发；已提交项目保留、未提交不出现；重试不重复提交；汇总计数与 FEA-09 receipt 一致。 <<MET>>
+- [x] **AC-4**：以隔离 fixture + 真实 production adapter 断言 UI 可观察结果（非 fake controller、非进程内替代）；证据含 UI 状态/原因/计数。 <<MET>>
+- [x] **AC-5**：不改变旧 managed 导入路径行为；旧 FEA-06 四 PNG 不变；无真实用户数据；全量测试不减少；未 push。 <<MET>>
 
 ## 允许修改范围
 
@@ -83,8 +83,8 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC-1…AC-4 | 计划：`dotnet build apps\desktop-avalonia\NewManga.sln --nologo`；`dotnet test ... --settings ...runsettings`；headless UI 场景脚本（待 scope 冻结登记精确命令） | 主工作树；隔离 fixture；不碰真实 AppData | NOT_RUN（planned） | `verification/FEA-09-UI-1/` |
-| AC-5 | 同全量基准 1292/0/57；旧四 PNG hash 对照；`git diff --name-only` 对照 allowed_paths | 同上 | NOT_RUN（planned） | 同上 |
+| AC-1…AC-4 | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo`；`dotnet test … -c Release --no-build`；`NEWMANGA_FEA09_IPC=1 NEWMANGA_BUILD_PYTHON=<python> dotnet test tests/NewManga.Host.Tests -c Release --no-build --filter "FullyQualifiedName~Fea09UiImportIpcTests"`；headless：`--filter "FullyQualifiedName~ReferencedImportUiTests"` | 主工作树；隔离 fixture（workspace `FEA-09-UI-1/ipc-*` + 冻结 FEA-09 fixture）；不碰真实 AppData | build **0/0**；全量 **1313/0/63**；真实 IPC **5/5**；VM **13/13** | `verification/FEA-09-UI-1/logs/gates.json`、`ipc/ui-import-ipc.json`、`ipc/ui-import-ipc.wire.ndjson`、`AC-MATRIX.md` |
+| AC-5 | 同全量基准（Appointment 1300/0）；旧四 PNG hash 对照；`git diff --name-only` 对照 allowed_paths；`verify_pins` 17/17；`check.ps1` | 同上 | 1313/0（≥基准）；PNG **4/4 UNCHANGED**；diff 全部 allowed_paths 内；pins **17/17**；check **FAIL 1 error**（READY DAG 滞后，PLAN 同步属 DSH 集成步骤；3 既有 warning） | 同上 |
 
 ## 依赖、风险与阻塞
 
@@ -92,9 +92,36 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 - 风险：①FEA-09 命令面未冻结前接线会返工；②UI 证据易被 fake/进程内测试冒充——必须真实 production adapter；③密码输入与日志安全需独立负测；④与 FEA-09 写域重叠（App/Services）必须由 DSH 指定单一写者。
 - 阻塞解除：FEA-09 scope-r2 approved + PREREQ-1 done 后本卡提交 scope review。
 
+## Canonical Evidence
+
+（工作树 SHA-256；commit 列由 DSH 提交后回填——实现者不得自提交）
+
+| evidence_id | 证据说明 | 仓库路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-001 | 逐 AC 证据矩阵（AC-1…AC-5 MET + 限制） | `verification/FEA-09-UI-1/AC-MATRIX.md` | pending | `1127d7d2122641840ccf8808cd537ea7017b45880528738bd310c81bb9fb9121` | CANONICAL |
+| EV-002 | 真实 IPC 案例摘要（plan/AES/密码重试/取消 + 密码审计） | `verification/FEA-09-UI-1/ipc/ui-import-ipc.json` | pending | `8417a47893f8008e1883e8d379d3f5a044f71dfe12634ff8a214c6fc60bd99d0` | CANONICAL |
+| EV-003 | 真实 IPC wire 记录（路径脱敏、密码 0 命中） | `verification/FEA-09-UI-1/ipc/ui-import-ipc.wire.ndjson` | pending | `1c657d52a099762f71c3da9316f5c4f7c1d672cff025fa1d849d30ec91aae4dd` | CANONICAL |
+| EV-004 | Owner 门禁结果（build/test/真实 IPC/check/pins/diff/PNG） | `verification/FEA-09-UI-1/logs/gates.json` | pending | `3a4a15209475ff923dd8d6eb53877e5deb24773524712d7bcd0865ddda888bba` | CANONICAL |
+| EV-005 | Owner Handoff（变更清单/命令/结果/风险） | `doc/handoffs/FEA-09-UI-1-1a5894282.md` | pending | `b7a7a25d92712a71d316fab5fc0bf4194d057da71e54560ea2b3bec10edf2845` | CANONICAL |
+| EV-006 | DSH 集成验证结果（build/全量/真实 IPC/C-07/pins） | `verification/FEA-09-UI-1/logs/dsh-integration.json` | pending | `9415f574712a205ccea2207fe9c53f1b7441207e6ee02e0a992be9782c9c675f` | CANONICAL |
+| EV-007 | DSH 集成范围 diff（工作树路径清单） | `verification/FEA-09-UI-1/logs/dsh-scope-diff.txt` | pending | `c181ed057e4d592f1e19806ffafa98cfd10dad64d04a279eb4c0665f98ce98c8` | CANONICAL |
+
+
 ## Closeout Record
 
-- 未开始（proposed 草案）。
+- Owner 交付（2026-11-04，ZCode）：实现 + 测试 + 证据 + Handoff；Task `in_review`。
+- DSH 复核返修（2026-11-04）：撤回 `IHostController` 新增，改独立 `ISourceImportController`；`generate_api_inventory.py --check` PASS（C-07 冻结清单不变，无需 UNFREEZE）。
+- DSH 集成验证：build 0/0；全量 .NET 1313/0/63；真实 IPC 5/5；pins 17/17；范围 diff 合规（DSH 集成文件 PLAN/STATUS/TASK_LEDGER 除外）；FEA-09 canonical 证据复跑污染已恢复。
+- 未提交：工作树；未 push；由 DSH 提交后回填 commit 列。
+- 已知事项：见 AC-MATRIX「限制」（FEA-09 canonical 证据可被常规测试复跑重写的债务候选；folder 逐文件 grant 接线限制）。
+
+## 变更记录
+
+| 日期 | 变更 | 依据 |
+|---|---|---|
+| 2026-11-03 | 建立 scope 草案（proposed）：最小 UI/适配接线，作为 FEA-09 的 UI 证据协同切片 | `doc/reviews/FEA-09-scope-r1.md` R1-005；提案 `:1040`；现有 ImportDock 现状 |
+| 2026-11-04 | ZCode 认领（in_progress）；实现交付（工作树）：新增 `Services/SourceImportModels.cs`（UI 模型+payload+`SourceImportCoordinator` 生产编排：register→issue→plan / 密码 DPAPI secret_ref→重签 Secret-G→重 plan→start / receipt 轮询+终态清理 / cancel）；`IHostController`+`HostController`+`NullHostController` 增 4 方法（Plan/Start/GetReceipt/Cancel，typed 不抛）；`ImportDockViewModel`+`ImportDockView.axaml` 引用导入面（plan 预览/密码框/确认/取消/重试/进度，旧路径零改动）；`FakeHostController` 补 scripted 面；Host.Tests 引用 App；新测试 `ReferencedImportUiTests`（13）+`Fea09UiImportIpcTests`（5，真实 stdio）；证据 4 件。**HostCommandDispatcher/Registry 零改动**（source 命令 pass-through 已由 FEA-09 交付，核实无缺口）。Task → in_review | 本卡 Appointment；`verification/FEA-09-UI-1/**`；Handoff |
+| 2026-11-04 | **DSH 复核返修 r1**：IHostController 改动撤回 → 独立 `ISourceImportController`；`generate_api_inventory.py --check` PASS（C-07 冻结面未变）；DSH 复跑 build 0/0、全量 1313/0/63、真实 IPC 5/5、pins 17/17；证据补 DSH 集成日志/范围 diff | DSH 集成；`doc/reviews/FEA-09-UI-1-appointment.md` |
 
 ## 变更记录
 
@@ -110,3 +137,10 @@ Core/Host 契约与实现、Schema、授权、wire、持久化；其它页面；
 - AC-1…AC-5 冻结；验证门禁：`dotnet build`、`dotnet test`（基准 1300/0）、真实 IPC（`NEWMANGA_FEA09_IPC=1`）、`check.ps1`、`verify_pins.ps1`（17/17）、范围 diff；证据 `verification/FEA-09-UI-1/`。
 - 禁止：改 C-05/C-15/C-16 冻结字节、改 FEA-08/FEA-09 closeout 文件、fake/进程内冒充真实 IPC、push。发现需扩围 → 停并写「待裁决」交 DSH。
 - 完成路径：实现 + 测试 + Evidence + Handoff → `in_review` → Codex 独立 Review → DSH 集成验证 → `done`。
+## 返修 r1（2026-11-04，DSH 复核 / ZCode 执行）
+
+- **触发**：Owner 首版把 4 个方法加进 `IHostController` → `tools/generate_api_inventory.py --check` FAIL（C-07 FROZEN 清单 54 方法基线被改），需要 C-07 UNFREEZE，超出本 Task 授权。
+- **返修**：改为**独立接口** `ISourceImportController`（`Services/SourceImportModels.cs`；4 个 typed 方法），`HostController`/`NullHostController`/测试 fake 同时实现；`ImportDockViewModel` 通过 `controller as ISourceImportController` 能力探测（缺失=typed unavailable，旧 managed 路径不变）；`IHostController.cs` 恢复 HEAD 原字节。
+- **结果**：`python tools/generate_api_inventory.py --check` **PASS**（C-07 冻结面未变）；build 0/0；全量 .NET/真实 IPC/门禁结果见 `verification/FEA-09-UI-1/logs/dsh-integration.log`。
+- **C-07 待办撤销**：不再需要 UNFREEZE 载体；本 Task 未改任何冻结契约字节。
+- 文档同步：Handoff / AC-MATRIX 中“IHostController +4 / C-07 UNFREEZE”描述作废，以本节为准。

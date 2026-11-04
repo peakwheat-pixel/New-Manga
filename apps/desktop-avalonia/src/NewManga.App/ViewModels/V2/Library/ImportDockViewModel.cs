@@ -11,19 +11,38 @@ namespace NewManga.App.ViewModels.V2.Library;
 /// single Host call, so its row honestly reports the aggregate result.
 /// The "no chapter yet" entry closes audit F011: it calls the real Core <c>CreateChapterAsync</c>
 /// (V11R-A-1, merged); it never pretends to succeed and never fabricates a chapter.
+/// FEA-09-UI-1: the dock additionally carries the referenced-source import face (plan preview →
+/// optional password → confirm → running cancel → receipt polling) through the C-16 v1.1
+/// command face. That face is the SEPARATE <see cref="ISourceImportController"/> capability
+/// (the frozen C-07 <see cref="IHostController"/> inventory is not widened); the dock resolves
+/// it from the injected controller and reports a typed refusal when it is absent. The legacy
+/// managed path above is untouched; the password never appears in any displayed text and is
+/// cleared immediately after the single start call.
 /// </summary>
 public sealed class ImportDockViewModel : ObservableObject
 {
     private readonly IHostController _controller;
+    private readonly ISourceImportController? _sourceImport;
     private readonly IFilePickerGateway? _picker;
     private readonly Action<string, NmStatus> _notify;
     private readonly Func<string?> _chapterId;
     private readonly Func<string?> _chapterTitle;
     private readonly Func<Task> _afterImport;
     private readonly Action _requestCreateChapter;
+    private readonly Func<Task> _referencePollDelay;
     private bool _isOpen;
     private bool _isRunning;
     private string _summary = string.Empty;
+
+    // FEA-09-UI-1 referenced-import state.
+    private SourcePlanPreview? _activePlan;
+    private IReadOnlyList<ReferenceImportSource>? _referenceSources;
+    private string? _activeOperationId;
+    private bool _isReferenceRunning;
+    private string _referencePassword = string.Empty;
+    private string _referencePlanSummary = string.Empty;
+    private string _referenceProgressText = string.Empty;
+    private string _referenceErrorText = string.Empty;
 
     public ImportDockViewModel(
         IHostController controller,
@@ -32,24 +51,42 @@ public sealed class ImportDockViewModel : ObservableObject
         Func<string?> chapterId,
         Func<string?> chapterTitle,
         Func<Task> afterImport,
-        Action requestCreateChapter)
+        Action requestCreateChapter,
+        Func<Task>? referencePollDelay = null)
     {
         _controller = controller;
+        // FEA-09-UI-1: the referenced-import face is an OPTIONAL capability next to the frozen
+        // C-07 IHostController inventory — no constructor signature change (LibraryViewModel and
+        // every existing fake keep compiling); when a controller does not implement it, the
+        // reference-import entries report a typed "unavailable" refusal below.
+        _sourceImport = controller as ISourceImportController;
         _picker = picker;
         _notify = notify;
         _chapterId = chapterId;
         _chapterTitle = chapterTitle;
         _afterImport = afterImport;
         _requestCreateChapter = requestCreateChapter;
+        _referencePollDelay = referencePollDelay ?? (() => Task.Delay(300));
         Rows = new ObservableCollection<ImportRowViewModel>();
+        ReferencePlanItems = new ObservableCollection<ReferencePlanRowView>();
+        ReferenceReceiptItems = new ObservableCollection<ReferenceReceiptRowView>();
         StartCommand = new RelayCommand(() => _ = StartAsync());
         RetryFailedCommand = new RelayCommand(RetryFailed);
         SkipFailedCommand = new RelayCommand(SkipFailed);
         CloseCommand = new RelayCommand(Close);
         RequestCreateChapterCommand = new RelayCommand(RequestCreateChapter);
+        PickReferenceSourcesCommand = new RelayCommand(() => _ = PickReferenceSourcesAsync());
+        ConfirmReferenceImportCommand = new RelayCommand(() => _ = ConfirmReferenceImportAsync());
+        CancelReferenceImportCommand = new RelayCommand(() => _ = CancelReferenceImportAsync());
+        ReplanReferenceImportCommand = new RelayCommand(() => _ = ReplanReferenceImportAsync());
     }
 
     public ObservableCollection<ImportRowViewModel> Rows { get; }
+
+    // FEA-09-UI-1: referenced-import face.
+    public ObservableCollection<ReferencePlanRowView> ReferencePlanItems { get; }
+
+    public ObservableCollection<ReferenceReceiptRowView> ReferenceReceiptItems { get; }
 
     public RelayCommand StartCommand { get; }
 
@@ -60,6 +97,14 @@ public sealed class ImportDockViewModel : ObservableObject
     public RelayCommand CloseCommand { get; }
 
     public RelayCommand RequestCreateChapterCommand { get; }
+
+    public RelayCommand PickReferenceSourcesCommand { get; }
+
+    public RelayCommand ConfirmReferenceImportCommand { get; }
+
+    public RelayCommand CancelReferenceImportCommand { get; }
+
+    public RelayCommand ReplanReferenceImportCommand { get; }
 
     public bool IsOpen
     {
@@ -115,6 +160,291 @@ public sealed class ImportDockViewModel : ObservableObject
         : "先选择作品与章节，再导入文件。";
 
     public bool CanStart => IsOpen && !IsRunning && HasPending && HasTargetChapter;
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-09-UI-1: referenced-source import (C-16 v1.1). Displayed text carries file names,
+    // typed codes and counts only — never paths, never the password.
+    // ---------------------------------------------------------------------------------------
+
+    public bool IsReferenceRunning
+    {
+        get => _isReferenceRunning;
+        private set
+        {
+            if (Set(ref _isReferenceRunning, value))
+            {
+                RaiseReferenceDerived();
+            }
+        }
+    }
+
+    /// <summary>
+    /// The password lives ONLY in this property between input and the single start call; it is
+    /// cleared the moment the call returns and never appears in any other field or text.
+    /// </summary>
+    public string ReferencePassword
+    {
+        get => _referencePassword;
+        set
+        {
+            if (Set(ref _referencePassword, value))
+            {
+                RaiseReferenceDerived();
+            }
+        }
+    }
+
+    public string ReferencePlanSummary
+    {
+        get => _referencePlanSummary;
+        private set => Set(ref _referencePlanSummary, value);
+    }
+
+    public string ReferenceProgressText
+    {
+        get => _referenceProgressText;
+        private set => Set(ref _referenceProgressText, value);
+    }
+
+    public string ReferenceErrorText
+    {
+        get => _referenceErrorText;
+        private set
+        {
+            if (Set(ref _referenceErrorText, value))
+            {
+                OnPropertyChanged(nameof(HasReferenceError));
+            }
+        }
+    }
+
+    public bool HasReferenceError => !string.IsNullOrEmpty(ReferenceErrorText);
+
+    public bool HasReferencePlan => _activePlan is not null;
+
+    public bool NeedsPassword => _activePlan?.NeedsPassword == true;
+
+    public bool HasReferenceReceipt => ReferenceReceiptItems.Count > 0;
+
+    public bool CanConfirmReference =>
+        HasReferencePlan && !IsReferenceRunning && !IsRunning && HasTargetChapter &&
+        (!NeedsPassword || !string.IsNullOrEmpty(ReferencePassword));
+
+    public bool CanCancelReference => IsReferenceRunning && _activeOperationId is not null;
+
+    /// <summary>Re-preview after a terminal state (retry = fresh plan → fresh operation; the Core's
+    /// natural keys keep already-committed pages from being duplicated).</summary>
+    public bool CanReplanReference => !IsReferenceRunning && _referenceSources is { Count: > 0 };
+
+    public async Task PickReferenceSourcesAsync()
+    {
+        if (_picker is null)
+        {
+            _notify("文件选择器不可用（Host/窗口未就绪）", NmStatus.Blocked);
+            return;
+        }
+
+        var paths = await _picker.PickFilesAsync().ConfigureAwait(true);
+        if (paths.Count == 0)
+        {
+            return;
+        }
+
+        await PlanReferenceImportAsync(paths.Select(path => new ReferenceImportSource(path, IsFolder: false)).ToList())
+            .ConfigureAwait(true);
+    }
+
+    /// <summary>Plan preview: registers the sources with the Host, renders the Core's plan (AC-1).</summary>
+    public async Task PlanReferenceImportAsync(IReadOnlyList<ReferenceImportSource> sources)
+    {
+        if (IsReferenceRunning)
+        {
+            _notify("引用导入进行中：完成或取消后再开始新的预览", NmStatus.Running);
+            return;
+        }
+
+        if (_sourceImport is null)
+        {
+            _notify("引用导入不可用：当前控制器未提供引用导入能力（SOURCE_IMPORT_UNSUPPORTED）", NmStatus.Blocked);
+            return;
+        }
+
+        var chapterId = _chapterId();
+        if (string.IsNullOrWhiteSpace(chapterId))
+        {
+            _notify("引用导入被拒绝：尚未选择章节（不会伪造章节或导入结果）", NmStatus.Blocked);
+            return;
+        }
+
+        _referenceSources = sources;
+        IsOpen = true;
+        var plan = await _sourceImport.PlanReferencedImportAsync(chapterId, sources).ConfigureAwait(true);
+        if (plan is null)
+        {
+            var code = _controller.Snapshot.LastError;
+            ReferenceErrorText = $"预览失败：{SourceImportText.CodeText(code)}（{code}）";
+            _notify("引用导入预览失败：" + SourceImportText.CodeText(code), NmStatus.Blocked);
+            return;
+        }
+
+        ApplyPlan(plan);
+    }
+
+    /// <summary>Confirm: one start call (never re-submits a consumed plan), then receipt polling.</summary>
+    public async Task ConfirmReferenceImportAsync()
+    {
+        if (!CanConfirmReference || _activePlan is not { } plan || _sourceImport is not { } sourceImport)
+        {
+            return;
+        }
+
+        var password = NeedsPassword ? ReferencePassword : null;
+        if (NeedsPassword && string.IsNullOrEmpty(password))
+        {
+            ReferenceErrorText = "该计划包含加密源：请输入密码后再确认";
+            return;
+        }
+
+        IsReferenceRunning = true;
+        try
+        {
+            var result = await sourceImport.StartReferencedImportAsync(plan, password).ConfigureAwait(true);
+            // The plaintext password's lifetime ends here — wiped from the view model state.
+            ReferencePassword = string.Empty;
+            if (!result.Ok)
+            {
+                ReferenceErrorText = result.ErrorCode is { Length: > 0 }
+                    ? $"{result.Message}（{result.ErrorCode}）"
+                    : result.Message;
+                if (result.ErrorCode == "SOURCE_PLAN_STALE")
+                {
+                    // The plan is consumed/stale — force a fresh preview before any new confirm.
+                    _activePlan = null;
+                    RaiseReferenceDerived();
+                }
+
+                _notify("引用导入未提交：" + result.Message, NmStatus.Failed);
+                return;
+            }
+
+            _activeOperationId = result.OperationId;
+            _activePlan = null;
+            RaiseReferenceDerived();
+            await PollReferenceReceiptAsync(sourceImport).ConfigureAwait(true);
+        }
+        finally
+        {
+            IsReferenceRunning = false;
+        }
+    }
+
+    /// <summary>Running cancel (C-16 cancel_import); the receipt converges through the poll loop.</summary>
+    public async Task CancelReferenceImportAsync()
+    {
+        if (!CanCancelReference || _activeOperationId is not { } operationId || _sourceImport is not { } sourceImport)
+        {
+            return;
+        }
+
+        var result = await sourceImport.CancelReferencedImportAsync(operationId).ConfigureAwait(true);
+        if (!result.Ok)
+        {
+            ReferenceErrorText = "取消失败：" + SourceImportText.CodeText(result.ErrorCode);
+        }
+        else if (!result.Accepted)
+        {
+            ReferenceProgressText = "取消请求被拒绝（导入可能已结束：" +
+                SourceImportText.StateText(SourceImportJson.ParseState(result.State)) + "）";
+        }
+        else
+        {
+            ReferenceProgressText = "已请求取消，等待导入停止…";
+        }
+    }
+
+    /// <summary>Retry entry: a FRESH plan (the old operation stays committed-side; the Core's
+    /// natural keys deduplicate already-committed pages — C-16 §4).</summary>
+    public async Task ReplanReferenceImportAsync()
+    {
+        if (!CanReplanReference || _referenceSources is not { } sources)
+        {
+            return;
+        }
+
+        ReferenceErrorText = string.Empty;
+        await PlanReferenceImportAsync(sources).ConfigureAwait(true);
+    }
+
+    private async Task PollReferenceReceiptAsync(ISourceImportController sourceImport)
+    {
+        while (_activeOperationId is { } operationId)
+        {
+            await _referencePollDelay().ConfigureAwait(true);
+            var receipt = await sourceImport.GetReferencedImportReceiptAsync(operationId).ConfigureAwait(true);
+            if (receipt is null)
+            {
+                ReferenceErrorText = "无法读取导入进度（Host/核心不可用）";
+                return;
+            }
+
+            ApplyReceipt(receipt);
+            if (receipt.IsTerminal)
+            {
+                break;
+            }
+        }
+
+        await _afterImport().ConfigureAwait(true);
+    }
+
+    private void ApplyPlan(SourcePlanPreview plan)
+    {
+        _activePlan = plan;
+        ReferencePlanItems.Clear();
+        foreach (var item in plan.Items)
+        {
+            ReferencePlanItems.Add(new ReferencePlanRowView(
+                item.DisplayName,
+                item.SourceKind,
+                SourceImportText.PlanStatus(item.Status, item.ReasonCode),
+                item.WillImport is { } count ? $"将导入 {count} 页" : "—",
+                item.AlreadyReferenced ? "已引用" : string.Empty));
+        }
+
+        ReferencePlanSummary =
+            $"计划：导入 {plan.Totals.Import} · 跳过 {plan.Totals.Skip} · 不支持 {plan.Totals.Unsupported} · 失败 {plan.Totals.Failed}";
+        ReferenceErrorText = string.Empty;
+        ReferenceProgressText = string.Empty;
+        ReferenceReceiptItems.Clear();
+        RaiseReferenceDerived();
+    }
+
+    private void ApplyReceipt(SourceImportReceipt receipt)
+    {
+        ReferenceReceiptItems.Clear();
+        foreach (var item in receipt.Items)
+        {
+            ReferenceReceiptItems.Add(new ReferenceReceiptRowView(
+                item.SourceName,
+                SourceImportText.ReceiptOutcome(item.Outcome, item.ReasonCode),
+                $"已提交 {item.CommittedPages} 页 · 待处理 {item.RemainingPages} 页"));
+        }
+
+        var totals = receipt.Totals;
+        ReferenceProgressText =
+            $"{SourceImportText.StateText(receipt.State)} · 已导入 {totals.ImportedPages} · 跳过 {totals.SkippedPages}" +
+            $" · 不支持 {totals.UnsupportedEntries} · 失败源 {totals.FailedSources} · 待处理 {totals.PendingPages}" +
+            (receipt.CancelRequested ? " · 取消已请求" : string.Empty);
+        OnPropertyChanged(nameof(HasReferenceReceipt));
+    }
+
+    private void RaiseReferenceDerived() => OnPropertyChanged(
+        nameof(HasReferencePlan),
+        nameof(NeedsPassword),
+        nameof(CanConfirmReference),
+        nameof(CanCancelReference),
+        nameof(CanReplanReference),
+        nameof(HasReferenceReceipt));
 
     public async Task OpenWithFilesAsync(IReadOnlyList<string> paths)
     {
@@ -287,16 +617,26 @@ public sealed class ImportDockViewModel : ObservableObject
 
     public void Close()
     {
-        if (IsRunning)
+        if (IsRunning || IsReferenceRunning)
         {
-            _notify("导入进行中：完成后再关闭导入面板", NmStatus.Running);
+            _notify("导入进行中：完成或取消后再关闭导入面板", NmStatus.Running);
             return;
         }
 
         IsOpen = false;
         Rows.Clear();
         Summary = string.Empty;
+        // FEA-09-UI-1: drop the referenced-import face with the panel (never mid-operation).
+        _activePlan = null;
+        _activeOperationId = null;
+        _referencePassword = string.Empty;
+        ReferencePlanItems.Clear();
+        ReferenceReceiptItems.Clear();
+        ReferencePlanSummary = string.Empty;
+        ReferenceProgressText = string.Empty;
+        ReferenceErrorText = string.Empty;
         RaiseDerived();
+        RaiseReferenceDerived();
     }
 
     public void RequestCreateChapter()
@@ -386,3 +726,20 @@ public sealed class ImportDockViewModel : ObservableObject
         nameof(Title),
         nameof(TargetChapterText));
 }
+
+/// <summary>
+/// FEA-09-UI-1: one plan-preview row. Pre-formatted text (file name + typed status + counts);
+/// the source path and any secret material are deliberately not carried.
+/// </summary>
+public sealed record ReferencePlanRowView(
+    string DisplayName,
+    string KindText,
+    string StatusText,
+    string WillImportText,
+    string AlreadyReferencedText);
+
+/// <summary>FEA-09-UI-1: one receipt row (file name + typed outcome + committed/remaining counts).</summary>
+public sealed record ReferenceReceiptRowView(
+    string SourceName,
+    string OutcomeText,
+    string CountsText);
