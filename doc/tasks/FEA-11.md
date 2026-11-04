@@ -3,11 +3,11 @@ id: FEA-11
 title: Source 变化 / 重定位 / 同步（scan/diff/plan + 页匹配/lineage + relink/repoint/resync + durable operation）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope-r1（Codex，changes_requested P0=0/P1=8/P2=3）已由 DSH 逐项处置；待 `FEA-11-PREREQ-1` done + 独立 scope-r2 approved 后 Appointment/ready
+status: ready
+approval: **scope-r1 处置完成；PREREQ-1 done；scope-r2 approved（ZCode 全新上下文，P0=0/P1=0/P2=4 已处置）；DSH 冻结 scope + Appointment 2026-11-04（Owner=ZCode；实际 AC 数=10，AC11-1…10）**
 suggested_owner: codex
-owner: null
-reviewer: null
+owner: zcode（Appointment 2026-11-04；待认领）
+reviewer: 独立上下文 Review 待 Appointment（Codex 恢复后或新 ZCode 会话；不得自审）
 depends_on:
   - FEA-09
   - FEA-10
@@ -69,7 +69,7 @@ allowed_paths:
   - tests/storage/test_upgrade_schema_data.py
 out_of_scope:
   - FEA-12 删除/回收站/GC；FEA-13 备份/迁移/数据根；FEA-14 子项；FEA-15 发布
-  - 冻结契约字节（C-01b/C-05/C-08/C-13/C-14/C-15/C-16/FEA-01）与历史 closeout/证据
+  - 冻结契约字节（C-01b/C-05/C-08/C-13/C-14/C-15/C-16/**C-17**/FEA-01/**M2-C1 rev 2.12**）与历史 closeout/证据
   - 共享组合根（App.axaml/App.axaml.cs/NewManga.App.csproj/NewManga.sln）
   - App View/ViewModel 与冻结 IHostController/RunContracts；未冻结的新 UI
   - 真实用户数据/AppData/外部卷/回收站；push；新依赖
@@ -87,9 +87,11 @@ out_of_scope:
 - FEA-09 done：referenced source 基础、`source_versions/source_entries/page_bindings`、SourceReadGrantRegistry/lease/scanner/reader/resolve、Host Sources。
 - FEA-10 done：Prepare/Accept 两阶段、digest、candidate-only、durable receipt 原则（**不作为源操作真值**）。
 - **硬前置 `FEA-11-PREREQ-1`**：冻结 v8+ DDL、plan/operation 状态机、命令/错误/能力/兼容、CAS 与跨存储发布边界、lineage 存储、resolve 版本选择；未 done 前本卡不得 ready/实施。
-- 冻结契约：C-14、C-15 v1.1、C-16、C-05 v1.2、C-13（SC-D07/08）；不修改其字节。
+- 冻结契约：**C-17 v1.0（Source 同步契约，本卡最直接上游）**、C-14、C-15 v1.1、C-16 v1.1、C-05 v1.2、C-13（SC-D07/08）、M2-C1 rev 2.12（NO_INCREMENT）；不修改其字节。
 
 ## Acceptance Criteria
+
+> 本卡实际 **10 条** AC（AC11-1…10）；历史提交信息中「12 AC」为笔误，以本表为准（scope-r2 P2-1 澄清）。
 
 - **AC11-1（变化检测与阻断）**：启动/访问前检查、操作前强验证、定时扫描、目录 watcher 生产者/消费者四路各有调用证据；丢 hint/overflow 后可全量重枚举检测；相同 mtime/size 但字节变可发现；mtime/size 未变不作内容未变证明；强验证=稳定 lease+digest，不被缓存替代；Dirty 阻断依赖旧绑定的新写入而不是直接换 binding。定时扫描若本卡不做，须由 PREREQ/DSH 裁定并登记承接 Task，不得静默缺失。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
 - **AC11-2（scan/diff/plan）**：目录/容器 diff 分类（未变/新增/缺失/变化/歧义）数量=明细；plan 绑定 book/页集合/旧新 SourceVersion/binding generation/用户决定/digest；预览与 apply 使用同一不可变 plan；plan 的合法预先持久化与 stale Apply 拒绝基线分别记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
@@ -124,12 +126,12 @@ out_of_scope:
 - Canonical Evidence：`verification/FEA-11/AC-MATRIX.md`（逐 AC 断言/命令/EXIT）、日志 `verification/FEA-11/logs/**`、IPC 输出目录、迁移负测；EV 行在实施后回填。Resource Manifest：fixtures/DB/Host registry/TRX/bin-obj 全部固定到 `G:/CODEX/New Manga.workspace/FEA-11/` 并登记 PRESERVE_REFERENCED；不清理、不复写 FEA-09/10 tracked 证据。
 - 证据出口：EV-AC11-1…10（每 AC 独立 pin）；行为断言优先于数量；passed/failed/skipped 与原因分别记录。
 
-## 待 DSH 裁决（剩余）
+## 待 DSH 裁决（scope-r2 后状态）
 
-1. PREREQ 契约 ID（建议新 C-17「Source 同步契约」）与 pins 扩展方式。
-2. 定时扫描/目录 watcher 生产者归属：本卡或登记承接 Task。
-3. relink/repoint/resync 的 wire/命令面与命令文案由 PREREQ 冻结后回填。
-4. 若后续纳入 UI：由 ZCode 独立切片（精确 View/VM/端口与可达性 AC）。
+1. ~~PREREQ 契约 ID 与 pins 扩展~~ → **已闭合**：C-17 v1.0 FROZEN、pins 18/18（`1c519aec` 前完成）。
+2. **定时扫描/目录 watcher 生产者归属** → **DSH 裁决（2026-11-04）**：本卡首版实现三路（启动/访问前检查、操作前强验证、watcher 消费者消费 hint 并全量重枚举），**定时扫描生产者与后台调度登记承接 Task `FEA-11-SCAN-1`（后续小卡，不在本卡写域/AC 强制）**；AC11-1 相应口径：缺定时/生产者须登记承接，不得静默缺失。
+3. ~~relink/repoint/resync 的 wire/命令面与文案~~ → **已闭合**：C-17 v1.0 §5.1/§5.3 冻结命令面与确认语义。
+4. 若后续纳入 UI：由独立切片（精确 View/VM/端口与可达性 AC），不在本卡。
 
 ## 验证矩阵
 
@@ -149,3 +151,12 @@ out_of_scope:
 ## Closeout Record
 
 - 未开始（proposed；scope-r1 已处置；待 FEA-11-PREREQ-1 done + scope-r2 approved + DSH Appointment）。
+
+## scope-r2 处置与 Appointment（DSH，2026-11-04）
+
+- Review：`doc/reviews/FEA-11-scope-r2.md`（ZCode 全新上下文，baseline `1c519aec`）**approved P0=0/P1=0/P2=4**；全部接受。
+- P2-1：实际 AC 数 = **10 条**（AC11-1…10；提交信息「12 AC」为笔误，本卡已澄清）。
+- P2-2：out_of_scope/依赖节补列 **C-17 v1.0**、**M2-C1 rev 2.12（NO_INCREMENT）**。
+- P2-3：PLAN 文末叙述行刷新（PREREQ done；FEA-11 ready）。
+- P2-4：待裁决清单闭合/裁决——定时扫描与 watcher 生产者登记承接 Task **FEA-11-SCAN-1**（本卡实现三路 + watcher 消费者）；命令面已由 C-17 冻结。
+- Appointment：`doc/reviews/FEA-11-appointment.md`（Owner=ZCode 立即启动，Codex 额度耗尽至 2026-11-05 00:51；Reviewer=独立上下文，不得自审）。
