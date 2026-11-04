@@ -142,14 +142,18 @@ public sealed class Fea09UiImportIpcProductionTests : IClassFixture<Fea09Product
         var vm = Vm(chapter);
         var path = await Image("stale/page.png");
         await vm.PlanReferenceImportAsync(new[] { Source(path) });
+        var wireBefore = string.Join("\n", (await Task.WhenAll(
+            Directory.GetFiles(_f.LogRoot, "*.ndjson", SearchOption.AllDirectories).Select(ReadSharedAsync))));
         await File.AppendAllTextAsync(path, "changed");
         await vm.ConfirmReferenceImportAsync().WaitAsync(TimeSpan.FromSeconds(45));
-        // Core may accept the operation then reject at its commit guard, or reject start itself.
         var observed = vm.ReferenceErrorText + vm.ReferenceProgressText + string.Join(" ", vm.ReferenceReceiptItems.Select(r => r.OutcomeText));
-        // Real Core must reject with a typed SOURCE_* code (UI text and/or wire response).
-        var wire = string.Join("\n", (await Task.WhenAll(
+        var wireAfter = string.Join("\n", (await Task.WhenAll(
             Directory.GetFiles(_f.LogRoot, "*.ndjson", SearchOption.AllDirectories).Select(ReadSharedAsync))));
-        Assert.Contains("SOURCE_", observed + (_f.Controller.Snapshot.LastError ?? "") + wire);
+        var delta = wireAfter.Length > wireBefore.Length ? wireAfter[wireBefore.Length..] : string.Empty;
+        // This request specifically must be rejected: require the real typed reason in this operation's UI text
+        // AND in the frames appended by the confirm call (not any earlier AES/wrong-password frame).
+        Assert.Contains("FILE_IDENTITY_CHANGED", observed + (_f.Controller.Snapshot.LastError ?? ""));
+        Assert.Contains("FILE_IDENTITY_CHANGED", delta);
         Assert.Empty(await _f.Controller.ListChapterPagesAsync(chapter));
         Record("changed-before-confirm", vm, 0, observed);
     }
@@ -223,11 +227,21 @@ public sealed class Fea09UiImportIpcProductionTests : IClassFixture<Fea09Product
         Assert.Contains("StartImportReferences", wires);
         Assert.Contains("RevokeSourceReadGrant", wires);
         var document = new JsonObject { ["mode"] = "real HostController + VM + HostRuntime + Python Core stdio", ["cases"] = new JsonArray(Cases.Select(c => (JsonNode)c.DeepClone()).ToArray()),
-            ["audit_scope"] = "request+response (wire NDJSON), stdout/stderr/host logs, registry, UI errors, failure results and Task evidence", ["password_hits"] = 0 };
+            ["audit_scope"] = "request+response (wire NDJSON), stdout/stderr/host logs, registry raw persistence bytes (opaque/DPAPI), UI errors, failure results and Task evidence", ["password_hits"] = 0 };
         var json = document.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(Path.Combine(evidence, "production-ui-import-ipc.json"), json);
         await File.WriteAllTextAsync(Path.Combine(evidence, "production-ui-import-ipc.wire.ndjson"), wires);
         var texts = new List<string> { json, wires };
+        // Registry persistence is opaque/DPAPI bytes; scan the raw files plus every text view we can read.
+        var registryFiles = Directory.GetFiles(_f.DataRoot, "*", SearchOption.AllDirectories)
+            .Where(file => file.Contains("registry", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        foreach (var registryFile in registryFiles)
+        {
+            var bytes = await File.ReadAllBytesAsync(registryFile);
+            texts.Add(Convert.ToHexString(bytes));
+            texts.Add(Encoding.UTF8.GetString(bytes));
+        }
         foreach (var file in Directory.GetFiles(_f.Root, "*", SearchOption.AllDirectories)
             .Where(p => p.EndsWith(".log") || p.EndsWith(".ndjson") || p.EndsWith(".json"))) texts.Add(await ReadSharedAsync(file));
         foreach (var file in Directory.GetFiles(Path.Combine(_f.Repo, "verification", "FEA-09-UI-1"), "*", SearchOption.AllDirectories)) texts.Add(await ReadSharedAsync(file));

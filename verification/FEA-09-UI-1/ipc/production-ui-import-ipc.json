@@ -97,10 +97,10 @@
       "error": "",
       "chapter_pages": 0,
       "rows": [
-        "page.png \u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF0CFILE_IDENTITY_CHANGED\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+        "page.png \u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
       ],
       "observations": [
-        "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1\u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF0CFILE_IDENTITY_CHANGED\uFF09"
+        "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1\u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF09"
       ]
     },
     {
@@ -136,6 +136,6 @@
       "tokens_remaining": 0
     }
   ],
-  "audit_scope": "request\u002Bresponse (wire NDJSON), stdout/stderr/host logs, registry, UI errors, failure results and Task evidence",
+  "audit_scope": "request\u002Bresponse (wire NDJSON), stdout/stderr/host logs, registry raw persistence bytes (opaque/DPAPI), UI errors, failure results and Task evidence",
   "password_hits": 0
 }

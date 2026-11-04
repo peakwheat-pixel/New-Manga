@@ -462,18 +462,22 @@ public static class SourceImportText
     {
         "ok" => "可导入",
         "encrypted" => "已加密（导入时需要密码）",
-        "unsupported" => "不支持（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
+        "unsupported" => "不支持（" + ReasonText(reasonCode) + "）",
         "error" => "读取失败（" + CodeText(reasonCode) + "）",
         _ => "未知状态",
     };
+
+    private static string ReasonText(string? reasonCode) =>
+        string.IsNullOrEmpty(reasonCode) ? string.Empty :
+        CodeText(reasonCode) == reasonCode ? reasonCode : CodeText(reasonCode) + "，" + reasonCode;
 
     public static string ReceiptOutcome(string outcome, string? reasonCode) => outcome switch
     {
         "imported" => "已导入",
         "skipped" => "已跳过",
-        "failed" => "失败（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
+        "failed" => "失败（" + ReasonText(reasonCode) + "）",
         "pending" => "待处理",
-        "unsupported" => "不支持（" + CodeText(reasonCode) + (string.IsNullOrEmpty(reasonCode) ? "" : "，" + reasonCode) + "）",
+        "unsupported" => "不支持（" + ReasonText(reasonCode) + "）",
         _ => outcome,
     };
 

@@ -11,7 +11,7 @@
           MaxWidth="{DynamicResource Nm.Size.Drawer}"
           Padding="{DynamicResource Nm.Padding.Panel}">
     <StackPanel Spacing="{DynamicResource Nm.Space.3}">
-      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
         <StackPanel Spacing="{DynamicResource Nm.Space.1}">
           <TextBlock Classes="section-title" Text="{Binding Title}" TextWrapping="Wrap" />
           <TextBlock Classes="meta" Text="{Binding Summary}" />
@@ -147,7 +147,7 @@
           <DataTemplate x:DataType="vm:ReferenceReceiptRowView">
             <Border Classes="raised"
                     Padding="{DynamicResource Nm.Padding.ControlSm}">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                 <TextBlock Grid.Column="0"
                            Classes="label"
                            Text="{Binding SourceName}"

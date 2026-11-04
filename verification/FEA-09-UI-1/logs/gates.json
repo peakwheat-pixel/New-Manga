@@ -1,8 +1,8 @@
 {
   "cwd": "G:/CODEX/New Manga",
-  "head_at_start": "7f4f4d3cda882cc4c3bb7c24c37a180480333a17",
+  "head_at_start": "64ab9b9a8425a8b9e5e5babe4029b0427b89f9ef",
   "base_commit": "7f4f4d3cd",
-  "generated_at": "2026-11-04T02:10:00Z",
+  "generated_at": "2026-11-04T02:30:00Z",
   "owner": "ZCode (initial) / Codex (rework) ; integrated by DSH",
   "gates": [
     {
@@ -52,13 +52,26 @@
   "password_audit": {
     "probe": "correct/wrong/UI probe password literals, utf8 hex, base64",
     "scanned": [
-      "request+response wire NDJSON (11 production cases)",
+      "request+response wire NDJSON (each production case)",
       "stdout/stderr/host logs",
-      "registry files",
+      "registry raw persistence bytes (opaque/DPAPI; no plaintext List view asserted)",
       "UI error texts/failure results",
       "Task evidence"
     ],
-    "result": "0 hits (asserted in Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence)"
+    "result": "0 hits (Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence); registry coverage is raw opaque bytes, not a decrypted List() view"
   },
-  "environment_note": "Owner run was blocked by Codex sandbox workspace write ACL; DSH rerun with native environment passed all gates. Production fixture launcher was fixed to line-pump stdin / stream stdout; no product code replaced."
+  "environment_note": "Owner run was blocked by Codex sandbox workspace write ACL; DSH rerun with native environment passed all gates. Production fixture launcher was fixed to line-pump stdin / stream stdout; no product code replaced.",
+  "raw_evidence": {
+    "build": "verification/FEA-09-UI-1/logs/dsh/build.log (EXIT=0)",
+    "full_test": "verification/FEA-09-UI-1/logs/dsh/full-test.log (EXIT=0) + logs/dsh/trx/dsh-full.trx",
+    "ipc_test": "verification/FEA-09-UI-1/logs/dsh/ipc-test.log (EXIT=0, 16/16) + logs/dsh/trx/dsh-ipc.trx",
+    "env": "NEWMANGA_FEA09_IPC=1; NEWMANGA_BUILD_PYTHON=C:/Python314/python.exe"
+  },
+  "r2_findings": {
+    "N1": "raw EXIT/TRX logs added above",
+    "N2": "receipt Grid RowDefinitions Auto,Auto added",
+    "N3": "registry raw bytes scanned; claim narrowed",
+    "N4": "E source-change asserts typed FILE_IDENTITY_CHANGED in this confirm's appended frames",
+    "N5": "Task delivery_head/proposed wording updated"
+  }
 }

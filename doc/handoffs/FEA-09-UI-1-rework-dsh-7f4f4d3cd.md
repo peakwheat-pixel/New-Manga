@@ -2,7 +2,7 @@
 
 - Task：FEA-09-UI-1（引用源导入最小 UI/适配接线）
 - base：`7f4f4d3cd`；返修实现：Codex 全新上下文（ZCode 429 额度不可用，按用户授权故障转移）；集成/门禁：DSH。
-- 状态：返修完成，DSH 复跑全部门禁通过，交**全新上下文 Codex** 复审（不得由返修者自审）。
+- 状态：r2 Review changes_requested（P1=1/P2=4）→ DSH 处置 N1–N5 后复跑全部门禁通过，交**全新上下文 Codex** 复审 r3。
 - 未 commit/push（本文件写入时）；提交由 DSH 完成。
 
 ## 返修内容（R1–R7）
@@ -45,3 +45,12 @@
 
 - **FEA-09-UI-1 实现 Review r2**（全新上下文 Codex；不得由返修者自审）。
 - 复审通过后：DSH 集成验证 + Task done + EV commit 回填 + closeout。
+
+## Review r2 处置（DSH，2026-11-04）
+
+- N1/P1 成功门禁原始记录：补 `logs/dsh/build.log`（EXIT=0）、`logs/dsh/full-test.log`（EXIT=0）+`trx/dsh-full.trx`、`logs/dsh/ipc-test.log`（EXIT=0，16/16）+`trx/dsh-ipc.trx`。
+- N2/P2 receipt Grid 补 `RowDefinitions="Auto,Auto"`（标题 Grid 误放的 RowDefinitions 移除）。
+- N3/P2 Registry 审计：改为扫描 Registry 原始持久化字节（opaque/DPAPI）；AC-MATRIX/gates 声明收窄，不冒充 List() 明文视图。
+- N4/P2 源变化负测：只对本次 confirm 新增 wire 帧断言 `FILE_IDENTITY_CHANGED`，并断言 UI 行同码、0 页。
+- N5/P2 Task `delivery_head` 更新、proposed 段落标为历史；frontmatter 与当前状态一致。
+- 复跑：build 0/0；全量 1317/0/74；真实 IPC 16/16；C-07 PASS；pins 17/17；check PASS。证据 `logs/gates.json`。
