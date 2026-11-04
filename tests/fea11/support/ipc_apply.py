@@ -26,14 +26,9 @@ sys.path.insert(0, str(REPO / "tests" / "fea11"))
 from application.sources.model import (  # noqa: E402
     authorization_digest_of,
     now_millis,
+    plan_digest_of,
     request_digest_of,
 )
-from application.sources.ports import build_source_sync_stack  # noqa: E402
-from infrastructure.resource_channel.source_read_refs import (  # noqa: E402
-    SourceReadGrantRegistry,
-)
-from infrastructure.sqlite.library import SqliteLibraryRepository  # noqa: E402
-from infrastructure.sqlite.source_sync import SourceSyncStore  # noqa: E402
 import conftest as fea11_conftest  # noqa: E402
 
 
@@ -45,6 +40,9 @@ def main() -> int:
     parser.add_argument("--grant-id", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--kind", default="resync")
+    parser.add_argument("--mode", choices=("body", "apply"), default="body")
+    parser.add_argument("--body-json", type=Path)
+    parser.add_argument("--plan-digest")
     args = parser.parse_args()
 
     root = args.data_root.resolve()
@@ -53,55 +51,65 @@ def main() -> int:
         parser.error("only an isolated FEA-11 fixture library.db is allowed")
 
     scan = json.loads(args.scan_json.read_text(encoding="utf-8"))
-    conn = sqlite3.connect(args.db, isolation_level=None)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON")
-    try:
-        store = SourceSyncStore(conn)
-        stack = build_source_sync_stack(
-            store=store,
-            access=SourceReadGrantRegistry(),
-            repository=SqliteLibraryRepository(conn),
-        )
+    if args.mode == "body":
         body = fea11_conftest.build_plan_body(scan, kind=args.kind)
-        plan = stack["planner"].create(body)
-        operation_id = "op-" + uuid.uuid4().hex[:16]
-        request_digest = request_digest_of(
-            operation_id, body["plan_id"], plan["plan_digest"], args.kind
-        )
-        authorization = {
-            "host_receipt_id": "host-" + uuid.uuid4().hex[:16],
-            "operation_id": operation_id,
-            "request_digest": request_digest,
-            "authorization_digest": authorization_digest_of(scan["authorizations"]),
-            "authorizations": scan["authorizations"],
-            "authorized_at": now_millis(),
-        }
         payloads = {
             "kind": args.kind,
             "plan_id": body["plan_id"],
-            "plan_digest": plan["plan_digest"],
+            "plan_digest": plan_digest_of(body),
             "plan_body": body,
-            "preview": {"plan_id": body["plan_id"], "plan_digest": plan["plan_digest"]},
-            "confirm": {
-                "plan_id": body["plan_id"],
-                "plan_digest": plan["plan_digest"],
-                "confirmation": body["confirmation"],
-            },
-            "operation_id": operation_id,
-            "request_digest": request_digest,
-            "apply": {
-                "operation_id": operation_id,
-                "plan_id": body["plan_id"],
-                "plan_digest": plan["plan_digest"],
-                "grant_ids": [args.grant_id],
-                "authorization": authorization,
-            },
+            "confirmation": body["confirmation"],
         }
         args.out.write_text(json.dumps(payloads, indent=1), encoding="utf-8")
-    finally:
-        conn.close()
-    print("FEA11_IPC_APPLY_OK " + json.dumps({"plan_id": body["plan_id"], "plan_digest": plan["plan_digest"]}))
+        print("FEA11_IPC_APPLY_OK body " + json.dumps({"plan_id": body["plan_id"]}))
+        return 0
+
+    if args.body_json is None or not args.plan_digest:
+        parser.error("apply mode requires --body-json and --plan-digest")
+    body_payload = json.loads(args.body_json.read_text(encoding="utf-8"))
+    body = body_payload["plan_body"]
+    plan_id = body["plan_id"]
+    plan_digest = args.plan_digest
+    operation_id = "op-" + uuid.uuid4().hex[:16]
+    request_digest = request_digest_of(operation_id, plan_id, plan_digest, args.kind)
+    authorization = {
+        "host_receipt_id": "host-" + uuid.uuid4().hex[:16],
+        "operation_id": operation_id,
+        "request_digest": request_digest,
+        "authorization_digest": authorization_digest_of(scan["authorizations"]),
+        "authorizations": scan["authorizations"],
+        "authorized_at": now_millis(),
+    }
+    apply = {
+        "operation_id": operation_id,
+        "plan_id": plan_id,
+        "plan_digest": plan_digest,
+        "grant_ids": [args.grant_id],
+        "authorization": authorization,
+    }
+    payloads = {
+        "kind": args.kind,
+        "plan_id": plan_id,
+        "plan_digest": plan_digest,
+        "preview": {"plan_id": plan_id, "plan_digest": plan_digest},
+        "confirm": {
+            "plan_id": plan_id,
+            "plan_digest": plan_digest,
+            "confirmation": body["confirmation"],
+        },
+        "operation_id": operation_id,
+        "request_digest": request_digest,
+        "apply": apply,
+        "ack": {
+            "operation_id": operation_id,
+            "request_digest": request_digest,
+            "host_receipt_id": authorization["host_receipt_id"],
+            "authorization": authorization,
+            "grant_ids": [args.grant_id],
+        },
+    }
+    args.out.write_text(json.dumps(payloads, indent=1), encoding="utf-8")
+    print("FEA11_IPC_APPLY_OK apply " + json.dumps({"operation_id": operation_id}))
     return 0
 
 

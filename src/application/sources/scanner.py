@@ -230,6 +230,13 @@ class SourceScanner:
                 page_id = reference["page"] if reference else None
             else:
                 page_id = None
+            # C-17 §3.2 decision contract: an unchanged entry that no page is
+            # bound to is not a page-level difference (there is no page to
+            # keep); leaving it in the diff would make the 1:1 decisions
+            # contract unsatisfiable. Real containers routinely carry unused
+            # members, so this filter is the honest page-level projection.
+            if page_id is None and item.classification == "unchanged":
+                continue
             diff.append(
                 {
                     "item_id": item.item_id,
@@ -245,6 +252,8 @@ class SourceScanner:
                 }
             )
         diff.sort(key=lambda row: row["item_id"])
+        for index, row in enumerate(diff):
+            row["item_id"] = f"di-{index:06d}"
 
         bases = []
         for row in references:

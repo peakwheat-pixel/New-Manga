@@ -189,6 +189,151 @@ public sealed class Fea11SourceIpcTests
             + "ScanSourceSync(with issued grant) -> OK\nPASS\n");
     }
 
+    [Fea11IpcFact]
+    public async Task FullSyncChain_PublishesNewGeneration_AndResolvesV2()
+    {
+        var (repo, python, root, receipt) = await SeedAsync();
+        var options = BuildOptions(repo, python, root);
+        await using var client = await CoreServiceClient.StartAsync(options);
+        await client.OpenHostSessionAsync();
+
+        var registry = new SourceAccessRegistry(root);
+        var registered = registry.Register("fea11-ipc", [receipt.GetProperty("old_zip").GetString()!]);
+        var sources = new SourceReadCoordinator(client, registry, () => true);
+        var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["decoder"] = "zip", ["scale"] = 1.0, ["params_digest"] = new string('a', 64),
+        });
+        var grantId = await sources.IssueAsync(
+            registered.RegistryId, registered.Generation,
+            receipt.GetProperty("old_zip").GetString()!, "zip",
+            receipt.GetProperty("source_id").GetString()!,
+            receipt.GetProperty("version_id").GetString()!, rendition);
+
+        var scan = await client.SendHostControlAsync("ScanSourceSync", writer =>
+        {
+            writer.WriteString("source_id", receipt.GetProperty("source_id").GetString());
+            writer.WriteStartArray("project_ids");
+            writer.WriteStringValue("b1");
+            writer.WriteEndArray();
+            writer.WriteString("scope", "current");
+            writer.WriteString("kind", "resync");
+            writer.WriteStartArray("grant_ids");
+            writer.WriteStringValue(grantId);
+            writer.WriteEndArray();
+            writer.WriteStartArray("missing");
+            writer.WriteEndArray();
+        });
+        var scanResult = scan.Result ?? throw new InvalidOperationException("scan returned no result");
+        var scanPath = Path.Combine(root, "scan.json");
+        await File.WriteAllTextAsync(scanPath, scanResult.GetRawText());
+
+        var applyScript = Path.Combine(repo, "tests", "fea11", "support", "ipc_apply.py");
+        var bodyPath = Path.Combine(root, "plan-body.json");
+        await RunPythonAsync(python, repo, applyScript,
+            "--mode", "body", "--data-root", root, "--db", Path.Combine(root, "library.db"),
+            "--scan-json", scanPath, "--grant-id", grantId, "--out", bodyPath);
+        using var bodyDoc = JsonDocument.Parse(await File.ReadAllTextAsync(bodyPath));
+        var body = bodyDoc.RootElement;
+        var planId = body.GetProperty("plan_id").GetString()!;
+
+        await client.SendAsync("source_plan_sync", 3, writer =>
+        {
+            body.GetProperty("plan_body").WriteTo(writer);
+        }, TimeSpan.FromSeconds(60));
+        var preview = await client.SendAsync("source_preview_sync_plan", 3, writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("plan_id", planId);
+            writer.WriteString("plan_digest", body.GetProperty("plan_digest").GetString());
+            writer.WriteEndObject();
+        }, TimeSpan.FromSeconds(60));
+        var planDigest = preview.Result!.Value.GetProperty("plan_digest").GetString()!;
+        await client.SendAsync("source_confirm_sync_plan", 3, writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("plan_id", planId);
+            writer.WriteString("plan_digest", planDigest);
+            writer.WritePropertyName("confirmation");
+            body.GetProperty("confirmation").WriteTo(writer);
+            writer.WriteEndObject();
+        }, TimeSpan.FromSeconds(60));
+
+        var applyPath = Path.Combine(root, "apply.json");
+        await RunPythonAsync(python, repo, applyScript,
+            "--mode", "apply", "--data-root", root, "--db", Path.Combine(root, "library.db"),
+            "--scan-json", scanPath, "--grant-id", grantId, "--body-json", bodyPath,
+            "--plan-digest", planDigest, "--out", applyPath);
+        using var applyDoc = JsonDocument.Parse(await File.ReadAllTextAsync(applyPath));
+        var applyPayloads = applyDoc.RootElement;
+
+        var applied = await client.SendHostControlAsync("ResyncSource", writer =>
+        {
+            var apply = applyPayloads.GetProperty("apply");
+            writer.WriteString("operation_id", apply.GetProperty("operation_id").GetString());
+            writer.WriteString("plan_id", apply.GetProperty("plan_id").GetString());
+            writer.WriteString("plan_digest", apply.GetProperty("plan_digest").GetString());
+            writer.WriteStartArray("grant_ids");
+            writer.WriteStringValue(grantId);
+            writer.WriteEndArray();
+            writer.WritePropertyName("authorization");
+            apply.GetProperty("authorization").WriteTo(writer);
+        });
+        var appliedResult = applied.Result ?? throw new InvalidOperationException("apply returned no result");
+        var commitDigest = appliedResult.TryGetProperty("commit_digest", out var committed)
+            ? committed.GetString()!
+            : throw new InvalidOperationException("apply result lacks commit_digest: " + appliedResult.GetRawText());
+        var operationId = applyPayloads.GetProperty("operation_id").GetString()!;
+
+        await client.SendHostControlAsync("AcknowledgeSourceOperation", writer =>
+        {
+            var ack = applyPayloads.GetProperty("ack");
+            writer.WriteString("operation_id", ack.GetProperty("operation_id").GetString());
+            writer.WriteString("request_digest", ack.GetProperty("request_digest").GetString());
+            writer.WriteString("commit_digest", commitDigest);
+            writer.WriteString("host_receipt_id", ack.GetProperty("host_receipt_id").GetString());
+            writer.WriteStartArray("grant_ids");
+            writer.WriteStringValue(grantId);
+            writer.WriteEndArray();
+            writer.WritePropertyName("authorization");
+            ack.GetProperty("authorization").WriteTo(writer);
+        });
+
+        var resolved = await client.SendAsync("resolve_page_resource", 3, writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("page_id", "p1");
+            writer.WriteEndObject();
+        }, TimeSpan.FromSeconds(60));
+        var resolvedResult = resolved.Result ?? throw new InvalidOperationException("resolve returned no result");
+        var resourceId = resolvedResult.GetProperty("resource_id").GetString()!;
+        Assert.StartsWith("page-rendition-v2-", resourceId);
+
+        await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
+            $"DataRoot={root}\nscan -> plan -> preview -> confirm -> ResyncSource -> ACK -> resolve\n"
+            + $"operation_id={operationId}\ncommit_digest={commitDigest}\nresource_id={resourceId}\nPASS\n");
+    }
+
+    private static async Task RunPythonAsync(
+        string python, string cwd, string script, params string[] arguments)
+    {
+        var info = new ProcessStartInfo(python)
+        {
+            WorkingDirectory = cwd, UseShellExecute = false, CreateNoWindow = true,
+            RedirectStandardOutput = true, RedirectStandardError = true,
+        };
+        info.ArgumentList.Add(script);
+        foreach (var argument in arguments)
+        {
+            info.ArgumentList.Add(argument);
+        }
+        using var process = Process.Start(info)!;
+        var stdout = process.StandardOutput.ReadToEndAsync();
+        var stderr = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+        Assert.True(process.ExitCode == 0, await stdout + await stderr);
+    }
+
     private static async Task<(string Repo, string Python, string Root, JsonElement Receipt)> SeedAsync()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
