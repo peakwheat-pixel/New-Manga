@@ -311,6 +311,18 @@ _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
     "RegisterExportTarget", "RevokeExportTarget", "CloseHostSession",
     "RegisterSourceReadGrant", "RevokeSourceReadGrant",
+    # FEA-11 (C-17 §4): scan/apply/relink/repoint/resync plus the
+    # ACK/recovery/failure pair ride the host-control private session.
+    "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
+    "ResyncSource", "AcknowledgeSourceOperation",
+    "CompleteSourceOperationRecovery", "RecordSourceOperationFailure",
+})
+#: FEA-11 (C-17 §4/§5.1): the plan lifecycle/query face stays on the
+#: ordinary Request/Response channel (protocol minor 3, additive).
+_SOURCE_SYNC_APP_COMMANDS = frozenset({
+    "source_plan_sync", "source_preview_sync_plan", "source_confirm_sync_plan",
+    "source_invalidate_sync_plan", "source_get_operation",
+    "source_cancel_operation",
 })
 #: FEA-09 async import face (C-16 §4): ordinary application-channel
 #: commands; the protocol minor stays 3 (additive widening precedent).
@@ -1399,6 +1411,37 @@ class CoreServiceServer:
             ):
                 self._host_grants[payload["grant_id"]] = "source-read"
             return self._host_control_response(request_id, result, None)
+        if command in (
+            "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource",
+            "RepointSource", "ResyncSource", "AcknowledgeSourceOperation",
+            "CompleteSourceOperationRecovery", "RecordSourceOperationFailure",
+        ):
+            # FEA-11 (C-17 §4/§5.1): the source-sync host-control face. The
+            # session was verified above; typed failures map through the
+            # frozen C-17 §8 table (SourceSyncError carries it).
+            if not isinstance(payload, dict):
+                return self._host_control_response(
+                    request_id, None,
+                    make_error_envelope(
+                        "INVALID_REQUEST", "validation",
+                        "Source sync request is invalid", False,
+                    ),
+                )
+            try:
+                result = self._dispatch_source_sync(command, payload)
+            except SourceImportError as caught:
+                return self._host_control_response(
+                    request_id, None, _source_import_error_envelope(caught)
+                )
+            except Exception:
+                return self._host_control_response(
+                    request_id, None,
+                    make_error_envelope(
+                        "SOURCE_SYNC_STORAGE_FAILED", "internal",
+                        "Source sync operation failed", True,
+                    ),
+                )
+            return self._host_control_response(request_id, result, None)
         is_import = command.endswith("ImportSource")
         is_register = command.startswith("Register")
         if not isinstance(payload, dict):
@@ -1461,15 +1504,28 @@ class CoreServiceServer:
 
     def handle_ping(self, payload: dict[str, Any]) -> dict[str, Any]:
         del payload
+        capabilities = [
+            "library.list_books", "source.read/1", "source.resolve-secret/1",
+        ]
+        # FEA-11 (C-17 §4): the seven source.sync capabilities are advertised
+        # only when the sync stack is actually assembled; the Host probes
+        # them before any sync dispatch (CORE_CAPABILITY_MISSING otherwise).
+        if getattr(self._core, "source_sync", None) is not None:
+            capabilities.extend(
+                (
+                    "source.sync.scan/1", "source.sync.plan/1",
+                    "source.sync.apply/1", "source.sync.relink/1",
+                    "source.sync.repoint/1", "source.sync.resync/1",
+                    "source.sync.operation/1",
+                )
+            )
         return {
             "status": "ready",
             "protocol_version": {
                 "major": PROTOCOL_MAJOR,
                 "minor": PROTOCOL_MINOR,
             },
-            # FEA-09 (C-16 §0): `source.read/1` is checked per-operation by
-            # the Host before dispatching any source command.
-            "capabilities": ["library.list_books", "source.read/1", "source.resolve-secret/1"],
+            "capabilities": capabilities,
         }
 
     def handle_list_books(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -3125,7 +3181,11 @@ class CoreServiceServer:
         self, command: str, payload: dict[str, Any]
     ) -> dict[str, Any]:
         """Route one of the ten V11R region write commands (additive surface,
-        same typed-error envelope as the existing Region family)."""
+        same typed-error envelope as the existing Region family).
+
+        FEA-11 (C-17 §3.3): live edits through a binding whose publication
+        gate is still pending are refused (SOURCE_ACCESS_DENIED)."""
+        self._refuse_pending_gate_writes(payload)
         if command == "create_region":
             return self.handle_create_region(payload)
         if command == "delete_region":
@@ -3410,17 +3470,25 @@ class CoreServiceServer:
                     "SOURCE_REGISTRY_UNAVAILABLE",
                     "source-read grants are unavailable",
                 )
-            resource_id = f"page-rendition-{page.page_id}"
+            # FEA-11 (C-17 §3.3): the pending publication gate refuses reads
+            # until the Host ACKs the operation (fail-closed, never V-side).
+            self._assert_source_sync_gate(page.page_id)
+            prepared = prepare_referenced_rendition(
+                page.page_id,
+                repository=self._core.repository,
+                access=registry,
+            )
+            # FEA-11 (C-17 §7.2): referenced resolves select the
+            # binding-scoped v2 resource key; the legacy
+            # ``page-rendition-{page_id}`` key (and its published digest)
+            # stays immutable — a same-key/different-digest collision is a
+            # typed refusal, never a replacement.
+            resource_id = self._referenced_resource_id(prepared)
             cache = getattr(self._core, "rendition_cache", None)
             if cache is not None:
                 # R1-I008: the constrained rendition cache decides reuse
                 # (key/budget/LRU/active refs/crash recovery/digest) BEFORE
                 # any decode; the catalog only mirrors the served bytes.
-                prepared = prepare_referenced_rendition(
-                    page.page_id,
-                    repository=self._core.repository,
-                    access=registry,
-                )
 
                 def _produce() -> bytes:
                     # C-16 v1.1 §3.1: a cache MISS on an encrypted source
@@ -3544,12 +3612,63 @@ class CoreServiceServer:
         finally:
             temp_source.unlink(missing_ok=True)
 
+    def _render_previews_preview_root(self) -> Path | None:
+        """Derived-root accessor for read-back checks (same attribute-access
+        precedent as the preview catalog pickup above)."""
+        return getattr(self._render_previews, "_root", None)
+
+    def _referenced_resource_id(self, prepared: dict) -> str:
+        """FEA-11 (C-17 §7.2): the binding-scoped v2 rendition key.
+
+        ``page-rendition-v2-`` + sha256(canonical({page_id,binding_id,
+        source_id,version_id,entry_id,verified_digest,rendition_kind,
+        decoder_name,decoder_version,params_digest})). A different binding or
+        decoder profile necessarily selects a different key; the legacy
+        ``page-rendition-{page_id}`` key keeps returning its original digest.
+        """
+        from application.sources.model import digest_of
+
+        binding = prepared["binding"]
+        return "page-rendition-v2-" + digest_of(
+            {
+                "page_id": binding["page_id"],
+                "binding_id": binding["binding_id"],
+                "source_id": binding["source_id"],
+                "version_id": binding["accepted_source_version"],
+                "entry_id": binding["entry_id"],
+                "verified_digest": binding.get("verified_digest"),
+                "rendition_kind": prepared["rendition_kind"],
+                "decoder_name": prepared["decoder_name"],
+                "decoder_version": prepared["decoder_version"],
+                "params_digest": prepared["params_digest"],
+            }
+        )
+
     def _publish_rendition_bytes(self, resource_id: str, png: bytes) -> dict:
-        """Mirror one cached rendition into the served catalog (idempotent)."""
+        """Mirror one cached rendition into the served catalog (idempotent).
+
+        FEA-11 (C-17 §7.2): a same-key collision with different bytes is a
+        typed refusal — an already-published digest is never replaced."""
         entry = self._render_previews.lookup(resource_id)
         if entry is not None and self._render_previews.artifact_exists(
             entry.rel_path
         ):
+            root = self._render_previews_preview_root()
+            if root is not None:
+                try:
+                    existing_bytes = (root / entry.rel_path).read_bytes()
+                except OSError as error:
+                    raise SourceImportError(
+                        "SOURCE_REGISTRY_UNAVAILABLE",
+                        "published rendition could not be read back",
+                    ) from error
+                if hashlib.sha256(existing_bytes).hexdigest() != (
+                    hashlib.sha256(png).hexdigest()
+                ):
+                    raise SourceImportError(
+                        "SOURCE_ACCESS_DENIED",
+                        "resource key is already published with different bytes",
+                    )
             return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
         import tempfile
 
@@ -3567,7 +3686,9 @@ class CoreServiceServer:
             if temp_path is not None:
                 temp_path.unlink(missing_ok=True)
 
-    def _record_rendition_cache(self, page, rendition, catalog_entry) -> None:
+    def _record_rendition_cache(
+        self, page, rendition, catalog_entry, resource_id: str | None = None
+    ) -> None:
         """Record the reproducible rendition observation (C-15 §2.7).
 
         Derived-only metadata: never user bytes/manual results. A cache write
@@ -3578,7 +3699,7 @@ class CoreServiceServer:
         upsert = getattr(repository, "upsert_rendition_cache", None)
         if upsert is None or self._render_previews is None:
             return
-        resource_id = f"page-rendition-{page.page_id}"
+        resource_id = resource_id or f"page-rendition-{page.page_id}"
         entry = catalog_entry or self._render_previews.lookup(resource_id)
         if entry is None:
             return
@@ -3614,6 +3735,9 @@ class CoreServiceServer:
         chapter_id, mode, start = payload.get("chapter_id"), payload.get("mode"), payload.get("start_position")
         if not isinstance(chapter_id, str) or not chapter_id or mode not in ("original", "translated") or start not in ("resume", "beginning"):
             raise P16WireError("INVALID_REQUEST", "validation", "Reader request is invalid")
+        # FEA-11 (C-17 §3.3): pending publication gates refuse the reader
+        # projection for the affected chapter.
+        self._refuse_pending_gate_chapter(chapter_id)
         chapter = self._core.repository.get_chapter(chapter_id)
         if chapter is None:
             raise P16WireError("TARGET_NOT_FOUND", "not_found", "Reader chapter was not found")
@@ -3863,6 +3987,134 @@ class CoreServiceServer:
                 "SOURCE_OPERATION_CONFLICT", "cancel request is invalid"
             )
         return runtime.cancel(payload["operation_id"])
+
+    def _dispatch_source_sync(self, command: str, payload: dict[str, Any]) -> dict[str, Any]:
+        """FEA-11 (C-17 §5.1): route the source-sync command family."""
+        stack = getattr(self._core, "source_sync", None)
+        if stack is None:
+            raise SourceImportError(
+                "CORE_CAPABILITY_MISSING", "source sync is unavailable"
+            )
+        if command == "ScanSourceSync":
+            return stack["scanner"].scan(payload)
+        if command in (
+            "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
+            "ResyncSource",
+        ):
+            return stack["service"].apply(command, payload)
+        if command == "AcknowledgeSourceOperation":
+            return stack["operations"].acknowledge(payload)
+        if command == "CompleteSourceOperationRecovery":
+            return stack["operations"].recover(payload)
+        return stack["operations"].record_failure(payload)
+
+    def _dispatch_source_sync_app(
+        self, command: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """FEA-11 plan lifecycle/query face (application channel, minor 3)."""
+        stack = getattr(self._core, "source_sync", None)
+        if stack is None:
+            raise SourceImportError(
+                "CORE_CAPABILITY_MISSING", "source sync is unavailable"
+            )
+        if command == "source_plan_sync":
+            return stack["planner"].create(payload)
+        if command == "source_preview_sync_plan":
+            return stack["planner"].preview(payload)
+        if command == "source_confirm_sync_plan":
+            return stack["planner"].confirm(payload)
+        if command == "source_invalidate_sync_plan":
+            return stack["planner"].invalidate(payload)
+        if command == "source_get_operation":
+            return stack["operations"].get(payload)
+        return stack["operations"].cancel(payload)
+
+    def _assert_source_sync_gate(self, page_id: str) -> None:
+        """FEA-11 (C-17 §3.3): refuse reads/writes through a binding whose
+        publication gate is still pending (SOURCE_ACCESS_DENIED). Legacy v7
+        bindings without a publication row keep the old rules; a *new sync*
+        binding without one is corruption and fails closed."""
+        stack = getattr(self._core, "source_sync", None)
+        if stack is None:
+            return
+        store = stack["store"]
+        binding = store.current_binding_of_page(page_id)
+        if binding is None:
+            return
+        gate = store.gate_of_binding(binding["binding_id"])
+        if gate is None:
+            # No publication row: a pre-v8 (legacy) binding. Only bindings
+            # created after v8 always carry one — check lineage provenance
+            # markers by looking for any publication referencing the page's
+            # binding chain (fail-closed for fresh sync bindings).
+            previous = store.gate_of_binding(
+                binding["previous_binding_id"]
+            ) if binding.get("previous_binding_id") else None
+            if previous is not None:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "page binding has no read gate",
+                )
+            return
+        if gate["read_gate"] != "open":
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED",
+                "page binding is pending acknowledgement",
+            )
+
+    def _assert_source_sync_gates(self, page_ids: list[str]) -> None:
+        for page_id in page_ids:
+            self._assert_source_sync_gate(page_id)
+
+    def _refuse_pending_gate_writes(self, payload: dict[str, Any]) -> None:
+        """Region write face gate: extract the page(s) a write touches and
+        refuse when their binding publication gate is pending."""
+        stack = getattr(self._core, "source_sync", None)
+        if stack is None or not isinstance(payload, dict):
+            return
+        store = stack["store"]
+        page_ids: list[str] = []
+        page_id = payload.get("page_id")
+        if isinstance(page_id, str) and page_id:
+            page_ids.append(page_id)
+        region_ids: list[str] = []
+        region_id = payload.get("region_id")
+        if isinstance(region_id, str) and region_id:
+            region_ids.append(region_id)
+        raw_region_ids = payload.get("region_ids")
+        if isinstance(raw_region_ids, list):
+            region_ids.extend(
+                item for item in raw_region_ids if isinstance(item, str)
+            )
+        for candidate in region_ids:
+            row = store._conn.execute(  # noqa: SLF001 - store owns the conn
+                "SELECT page_id FROM regions WHERE region_id = ?",
+                (candidate,),
+            ).fetchone()
+            if row is not None:
+                page_ids.append(row["page_id"])
+        pending = store.pending_gate_pages(page_ids)
+        if pending:
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED",
+                "page binding is pending acknowledgement",
+            )
+
+    def _refuse_pending_gate_chapter(self, chapter_id: str) -> None:
+        """Reader projection gate: refuse while any page of the chapter is
+        still behind a pending publication gate (C-17 §3.3)."""
+        stack = getattr(self._core, "source_sync", None)
+        if stack is None:
+            return
+        pages = self._core.repository.list_pages(chapter_id)
+        pending = stack["store"].pending_gate_pages(
+            [page.page_id for page in pages]
+        )
+        if pending:
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED",
+                "page binding is pending acknowledgement",
+            )
 
     def handle_import_pages(self, payload: dict[str, Any]) -> dict[str, Any]:
         required = {"chapter_id", "sources"}
@@ -4983,6 +5235,34 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
+        if isinstance(command, str) and command in _SOURCE_SYNC_APP_COMMANDS:
+            # FEA-11 (C-17 §5.1): plan lifecycle/query face, minor 3 additive.
+            # GetSourceSyncCapabilities is Host-local aggregation — the Core
+            # deliberately does NOT register it (UNKNOWN_COMMAND per §5.1).
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise SourceImportError(
+                        "INVALID_REQUEST", "source sync request is invalid"
+                    )
+                result = self._dispatch_source_sync_app(command, payload)
+                error = None
+            except SourceImportError as caught:
+                result = None
+                error = _source_import_error_envelope(caught)
+            except Exception:
+                result = None
+                error = make_error_envelope(
+                    "SOURCE_SYNC_STORAGE_FAILED", "internal",
+                    "Source sync operation failed", True,
+                )
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": result,
+                "error": error,
+            }, False)
+
         if command in ("GetReaderProjection", "SaveReadingProgress", "StartExport",
                        "GetExportSnapshot", "GetExportHistory", "CancelExport"):
             try:
@@ -5023,6 +5303,11 @@ class CoreServiceServer:
             except ExportTargetRefError as caught:
                 result = None
                 error = _export_ref_error_envelope(caught.code)
+            except SourceImportError as caught:
+                # FEA-11: pending publication gates / source-read refusals
+                # keep their typed C-16/C-17 projection on this face.
+                result = None
+                error = _source_import_error_envelope(caught)
             except Exception:
                 result = None
                 error = make_error_envelope("UNKNOWN", "internal", "Reader or export operation failed", retryable=False)
@@ -5631,6 +5916,22 @@ class CoreServiceServer:
         if command in _REGION_WRITE_COMMANDS:
             try:
                 result = self._dispatch_region_write(command, payload)
+            except SourceImportError as caught:
+                # FEA-11: pending publication gates refuse live edits with
+                # their typed C-17 projection.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {
+                            "major": PROTOCOL_MAJOR,
+                            "minor": PROTOCOL_MINOR,
+                        },
+                        "request_id": request_id,
+                        "result": None,
+                        "error": _source_import_error_envelope(caught),
+                    },
+                    False,
+                )
             except RegionRequestError as error:
                 return (
                     {

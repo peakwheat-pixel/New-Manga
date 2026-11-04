@@ -793,6 +793,11 @@ class CoreServices:
     source_read_refs: object = None
     referenced_planner: object = None
     referenced_import: object = None
+    #: FEA-11 (C-17 v1.0): the source-sync stack facade (scanner/planner/
+    #: service/operations over the v8 store). ``None`` keeps existing
+    #: constructions valid; the sync wire face then fails closed with
+    #: CORE_CAPABILITY_MISSING and core.ping hides the source.sync caps.
+    source_sync: object = None
     provider_profile_store: object = None
     network_profile_store: object = None
     provider_binding_store: object = None
@@ -1155,6 +1160,19 @@ def assemble_core_services(
         # runtime is the single writer while an import operation runs.
         source_read_refs = SourceReadGrantRegistry()
         referenced_pdf_open = PdfiumSourceInspector().open
+        # FEA-11 (C-17 v1.0): the source-sync stack over the same live grant
+        # registry and the v8 storage gateway. The stack shares the import
+        # face's grant session (one host-control session, one registry).
+        from application.sources.ports import build_source_sync_stack
+        from infrastructure.sqlite.source_sync import SourceSyncStore
+
+        source_sync_store = SourceSyncStore(conn)
+        source_sync = build_source_sync_stack(
+            store=source_sync_store,
+            access=source_read_refs,
+            repository=repository,
+            pdf_open=referenced_pdf_open,
+        )
 
         def _project_of_chapter(chapter_id: str):
             chapter = repository.get_chapter(chapter_id)
@@ -1543,6 +1561,14 @@ def assemble_core_services(
                 return
             if binding["status"] != "healthy":
                 raise PipelineError("TARGET_NOT_FOUND", "source binding is unavailable")
+            # FEA-11 (C-17 §3.3): run inputs refuse a binding whose
+            # publication gate is still pending (pre-ACK sync).
+            if source_sync_store is not None:
+                gate = source_sync_store.gate_of_binding(binding["binding_id"])
+                if gate is not None and gate["read_gate"] != "open":
+                    raise PipelineError(
+                        "TARGET_NOT_FOUND", "source binding is pending acknowledgement"
+                    )
             grant_id, _ = source_read_refs.find_bound_for_source(
                 binding["source_id"], binding["accepted_source_version"], binding["entry_id"])
             with source_read_refs.commit_guard(grant_id):
@@ -1676,6 +1702,7 @@ def assemble_core_services(
             source_read_refs=source_read_refs,
             referenced_planner=referenced_planner,
             referenced_import=referenced_import,
+            source_sync=source_sync,
             provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
             network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
             provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),

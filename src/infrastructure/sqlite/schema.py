@@ -31,6 +31,10 @@ SCHEMA_VERSION_V6 = 6
 #: FEA-09 (C-15 v1.0 frozen DDL): source storage — six Source tables plus
 #: pages.source_mode/integrity_status; migration backfills legacy complete set.
 SCHEMA_VERSION_V7 = 7
+#: FEA-11 (C-17 v1.0 frozen DDL, §2): source sync — plans, durable
+#: operations, binding publications (read gates) and revision lineage.
+#: Pure additive empty tables; v1–v7 SQL/name/checksum stay byte-identical.
+SCHEMA_VERSION_V8 = 8
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -744,6 +748,96 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
 """
 
 
+MIGRATION_V8_NAME = "v8__source_sync"
+
+#: The SQL below is the frozen C-17 v1.0 §2 block, copied verbatim (doc/plan/
+#: FEA-C17_SOURCE_SYNC_DRAFT.md §2). No ON DELETE CASCADE (this migration
+#: decides no deletion history); JSON TEXT closed-shape/canonical/cross-row
+#: guards are application-layer duties (C-17 §2.2), not DDL claims.
+MIGRATION_V8_SQL = """CREATE TABLE source_sync_plans (
+    plan_id TEXT NOT NULL PRIMARY KEY CHECK (length(plan_id) BETWEEN 1 AND 128),
+    source_id TEXT NOT NULL REFERENCES sources(source_id),
+    kind TEXT NOT NULL CHECK (kind IN ('relink','repoint','resync')),
+    state TEXT NOT NULL CHECK (state IN ('draft','previewed','confirmed','applied','stale')),
+    plan_digest TEXT NOT NULL CHECK (length(plan_digest)=64 AND plan_digest NOT GLOB '*[^0-9a-f]*'),
+    body_json TEXT NOT NULL CHECK (length(body_json)>1),
+    created_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    previewed_at TEXT,
+    confirmed_at TEXT,
+    applied_at TEXT,
+    stale_reason TEXT CHECK (stale_reason IS NULL OR stale_reason IN
+        ('expired','source','binding','authorization','scope','manual','decision','cancelled')),
+    CHECK (state NOT IN ('previewed','confirmed','applied') OR previewed_at IS NOT NULL),
+    CHECK (state NOT IN ('confirmed','applied') OR confirmed_at IS NOT NULL),
+    CHECK ((state='applied')=(applied_at IS NOT NULL)),
+    CHECK ((state='stale')=(stale_reason IS NOT NULL)),
+    UNIQUE (plan_id,plan_digest,kind)
+);
+CREATE INDEX idx_source_sync_plans_source_state ON source_sync_plans(source_id,state);
+CREATE INDEX idx_source_sync_plans_expiry ON source_sync_plans(state,expires_at);
+
+CREATE TABLE source_operations (
+    operation_id TEXT NOT NULL PRIMARY KEY CHECK (length(operation_id) BETWEEN 1 AND 128),
+    plan_id TEXT NOT NULL UNIQUE,
+    plan_digest TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('relink','repoint','resync')),
+    request_digest TEXT NOT NULL CHECK (length(request_digest)=64 AND request_digest NOT GLOB '*[^0-9a-f]*'),
+    state TEXT NOT NULL CHECK (state IN
+        ('started','host-authorized','core-committed','acknowledged','failed','recovered')),
+    authorization_digest TEXT NOT NULL CHECK (length(authorization_digest)=64 AND authorization_digest NOT GLOB '*[^0-9a-f]*'),
+    authorization_json TEXT NOT NULL CHECK (length(authorization_json)>1),
+    host_receipt_id TEXT NOT NULL CHECK (length(host_receipt_id) BETWEEN 1 AND 128),
+    commit_receipt_json TEXT,
+    commit_digest TEXT CHECK (commit_digest IS NULL OR
+        (length(commit_digest)=64 AND commit_digest NOT GLOB '*[^0-9a-f]*')),
+    error_code TEXT,
+    retryable INTEGER NOT NULL DEFAULT 0 CHECK (retryable IN (0,1)),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    committed_at TEXT,
+    acknowledged_at TEXT,
+    CHECK ((commit_digest IS NULL)=(commit_receipt_json IS NULL)),
+    CHECK ((committed_at IS NULL)=(commit_digest IS NULL)),
+    CHECK (state NOT IN ('core-committed','acknowledged','recovered') OR committed_at IS NOT NULL),
+    CHECK ((state IN ('acknowledged','recovered'))=(acknowledged_at IS NOT NULL)),
+    CHECK ((state='failed')=(error_code IS NOT NULL)),
+    FOREIGN KEY (plan_id,plan_digest,kind)
+        REFERENCES source_sync_plans(plan_id,plan_digest,kind)
+);
+CREATE INDEX idx_source_operations_state ON source_operations(state,updated_at);
+
+CREATE TABLE source_binding_publications (
+    binding_id TEXT NOT NULL PRIMARY KEY REFERENCES page_bindings(binding_id),
+    operation_id TEXT NOT NULL REFERENCES source_operations(operation_id),
+    previous_binding_id TEXT REFERENCES page_bindings(binding_id),
+    relation TEXT NOT NULL CHECK (relation IN ('same_content','changed','repoint','added','missing')),
+    read_gate TEXT NOT NULL CHECK (read_gate IN ('pending','open')),
+    opened_at TEXT,
+    CHECK ((read_gate='open')=(opened_at IS NOT NULL)),
+    CHECK ((relation='added')=(previous_binding_id IS NULL)),
+    CHECK (binding_id<>previous_binding_id)
+);
+CREATE INDEX idx_source_binding_publications_operation ON source_binding_publications(operation_id,read_gate);
+CREATE INDEX idx_source_binding_publications_previous ON source_binding_publications(previous_binding_id);
+
+CREATE TABLE source_revision_lineage (
+    revision_id TEXT NOT NULL PRIMARY KEY REFERENCES region_revisions(region_revision_id),
+    region_id TEXT NOT NULL REFERENCES regions(region_id),
+    binding_id TEXT REFERENCES page_bindings(binding_id),
+    provenance TEXT NOT NULL CHECK (provenance IN ('captured_v7','native','migrated','legacy_unverified')),
+    from_revision_id TEXT REFERENCES region_revisions(region_revision_id),
+    operation_id TEXT REFERENCES source_operations(operation_id),
+    created_at TEXT NOT NULL,
+    CHECK ((provenance='legacy_unverified')=(binding_id IS NULL)),
+    CHECK ((provenance='migrated')=(from_revision_id IS NOT NULL)),
+    CHECK (revision_id<>from_revision_id)
+);
+CREATE INDEX idx_source_revision_lineage_binding ON source_revision_lineage(binding_id,region_id);
+CREATE INDEX idx_source_revision_lineage_origin ON source_revision_lineage(from_revision_id);
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -753,4 +847,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V5, MIGRATION_V5_NAME, MIGRATION_V5_SQL),
         Migration(SCHEMA_VERSION_V6, MIGRATION_V6_NAME, MIGRATION_V6_SQL),
         Migration(SCHEMA_VERSION_V7, MIGRATION_V7_NAME, MIGRATION_V7_SQL),
+        Migration(SCHEMA_VERSION_V8, MIGRATION_V8_NAME, MIGRATION_V8_SQL),
     )
