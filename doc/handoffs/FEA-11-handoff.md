@@ -27,17 +27,19 @@ v8 迁移（schema.py `default_migrations()` 追加 `v8__source_sync` 四表）�
 ### 证据
 `verification/FEA-11/AC-MATRIX.md`（逐 AC 状态与缺口）；测试输出可直接复跑（命令见 AC-MATRIX）。
 
-## 未完成（Phase C 清单）
+## 未完成（2026-11-05 更新）
 
-1. **Host/C#**：`apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs`（Host durable journal/授权/ACK/恢复；DPAPI/锁/原子替换复用 C-15 §5）、`SourceReadCoordinator.cs` 命令映射、`HostRuntime.cs` 路由/写 Gate、`NewManga.CoreClient/Commands/HostCommandRegistry.cs`、`CoreServiceClient.cs`、`Wire/CoreProtocol.cs`（按 C-17 命令面；不扩冻结面）。
+1. **Host/C#**：C1 `SourceOperationCoordinator`（DPAPI 原子 journal/状态机/ACK）✅；C2 命令注册 ✅；C3 dispatcher journal 路由 + HostRuntime 注入 ✅；C4 首版真实 IPC（fail-closed + grant 发放 + ScanSourceSync）✅；**剩余** C4 尾（C# 侧 plan→preview→confirm→apply→ack→resolve 链；payload 生成器 `tests/fea11/support/ipc_apply.py` 已提交待联调）。
 2. **真实 IPC**：`Fea11SourceIpcTests.cs`（Host→Core→DB→resolve→实际字节；源守恒；fail-closed）；`SourceOperationTests.cs`（崩溃点矩阵/ACK/恢复/撤销）；`SourceRegistryTests.cs`/`HostRuntimeIntegrationTests.cs` 回归。
 3. **resolve 版本选择**：C-17 §7.2 `page-rendition-v2-*` 选择函数 + `core_service.py` 窄接缝；同步后生产 resolve/issue 读新图断言；旧资源键不可变。
 4. **迁移/回归**：真实 v7→v8 升级（Host 侧装配）、主套件/providers、全量 .NET（build 0/0、test 不减少）、check/pins、范围 0 域外、FEA-09/10 tracked 证据零 diff。
 5. AC-MATRIX 完成态、`verification/FEA-11/logs/**` 证据、Task 卡 AC 标记如实（未验证不得 MET）、status → in_review。
 
-## 门禁（当前已跑）
+## 门禁（2026-11-05 最新）
 
-- `pytest tests/fea11` 26 passed；`tests/core+storage+fea11` 1046 passed；`check.ps1` PASS；`verify_pins.ps1` 18/18；工作树 clean；未 push；冻结契约/组合根/FEA-08-10 证据零改动。
+- `pytest tests` 全量 **3037 passed / 0 failed / 10 skipped**；`tests/fea11` **31 passed**；`tests/fea09` 142 passed（冷启动也绿）；全量 `.NET` **1355 passed / 0 failed / 75 skipped**；`NEWMANGA_FEA11_IPC=1` **2 passed**（真实 Core）；`check.ps1` PASS；`verify_pins.ps1` 18/18；工作树 clean；未 push；冻结契约/组合根/FEA-08-10 证据零改动。证据日志：`verification/FEA-11/logs/dsh-C6-gates.log`。
+- 已知 flaky：`NewManga.App.Tests` 全量偶发 1 失败（单独跑 671/0）。
+- ZCode CLI 损坏（`@zcode/tui` 缺失）；Codex 额度仍受限。
 
 ## 交接指令
 

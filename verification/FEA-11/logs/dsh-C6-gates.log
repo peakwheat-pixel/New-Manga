@@ -1,0 +1,7 @@
+# FEA-11 C6 门禁证据 (DSH) 2026-11-05T01:17:35.5682410+08:00 HEAD=8ec30c2fc
+...............................                                          [100%]
+31 passed in 2.79s
+已通过! - 失败:     0，通过:     2，已跳过:     0，总计:     2，持续时间: 2 s - NewManga.Host.Tests.dll (net9.0)
+Governance check: PASS (2 warnings)
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
