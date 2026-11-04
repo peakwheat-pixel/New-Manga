@@ -152,3 +152,9 @@ Task 卡原 `base_commit=d831cf...` 保留为 scope 历史；本次实际实现�
 - 门禁：fea10 53、主套件 1056、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17（`verification/FEA-10/logs/dsh-rework4-*.log`）。
 - 新 head 独立 Review 未做；不得 closeout。
 
+## DSH rework r5（2026-11-04，按 FEA-10-final-review-r3 处置）
+
+- F3-01 修复：glossary 豁免仅限 translate.glossary 纯标量词条；嵌套词条值不再豁免；_redact 同步；新增回归。
+- 门禁：fea10 54、主套件 1057、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS（4w）、pins 17/17（`verification/FEA-10/logs/dsh-rework5-*.log`）。
+- 新 head 独立 Review 未做；不得 closeout。
+

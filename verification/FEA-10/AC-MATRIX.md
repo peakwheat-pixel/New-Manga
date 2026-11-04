@@ -100,3 +100,9 @@
 - F2-04：当前导航标注旧条目失效并指向实际用例与日志；历史原字节保留。
 - 门禁（实跑）：fea10 53 passed、主套件 1056 passed、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
 
+## DSH rework r5（2026-11-04，按 FEA-10-final-review-r3 处置）
+
+- F3-01 修复：glossary 词条名豁免仅限 `translate.glossary` 纯标量词条；嵌套对象/列表词条值消耗豁免（内部 glossary 不再豁免）；`_redact` 同步。回归 `test_glossary_exemption_cannot_be_regained_by_nesting`。
+- F2-02/F2-03/F2-04 已由上一轮 Review 判定闭合。
+- 门禁（`logs/dsh-rework5-*.log`）：fea10 54 passed、主套件 1057、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
+

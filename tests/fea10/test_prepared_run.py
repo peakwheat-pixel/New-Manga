@@ -387,3 +387,22 @@ def test_renested_or_misplaced_glossary_does_not_restore_the_exemption():
     finally:
         core.conn.close()
 
+
+def test_glossary_exemption_cannot_be_regained_by_nesting():
+    # F3-01: a nested translate.glossary inside a term value must not regain the exemption.
+    core, _, region = _new_workspace(workspace('f301-nested-translate'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        for settings in (
+            {'translate': {'glossary': {'outer': {'glossary': {'authorization': 'SENTINEL'}}}}},
+            {'typeset': {'font_family': {'glossary': {'authorization': 'SENTINEL'}},
+                         'font_size': {'glossary': {'token': {'authorization': 'SENTINEL'}}}}},
+        ):
+            with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+                core.pipeline.prepare_run('ocr_region', scope, overrides={'settings': settings})
+        preview = core.pipeline.prepare_run('ocr_region', scope, overrides={
+            'settings': {'translate': {'glossary': {'token': '令牌', 'normal': 'ordinary'}}}})
+        assert preview['settingsSnapshot']['translate']['glossary']['token'] == '令牌'
+    finally:
+        core.conn.close()
+

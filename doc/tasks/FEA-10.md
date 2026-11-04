@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | 1ee761e7e4b25bf1cb15a5ae7b4e1c36693cb77a | 0eb384c52893d35f9bdc4637db2a9065262448e4a2bd5af1b81496c324fd59ba | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | 1ee761e7e4b25bf1cb15a5ae7b4e1c36693cb77a | d354bfc207815e2d340ad4f4c32e453d5a6adca0a178f5a9a1a3ddac0ebb0502 | CANONICAL |
 
 ## Resource Manifest
 
@@ -260,4 +260,10 @@ out_of_scope:
 - F2-01 已修复（路径绑定豁免 + 再嵌套回归）；F2-02 已回填（EV commit 指向含 AC-MATRIX 的提交）；F2-03/F2-04 已处理。
 - 门禁（`logs/dsh-rework4-*.log`）：fea10 53、主套件 1056、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
 - 下一步：提交本 head → 派新 head 独立 Review → approved 后 closeout。**当前导航更正**：C# 用例实际为 `RunControllerNullFakeTests.PreparedRunPayload_CarriesTheHostDefaultBindings`（旧引用 `RunControllerTests.PreparedRunPayload_*` 已失效）；门禁日志以 `verification/FEA-10/logs/dsh-rework4-*.log` 为准。
+
+## DSH rework r5（2026-11-04，按 FEA-10-final-review-r3 处置）
+
+- 第 5 轮 Review changes_requested：P0=0/P1=1（F3-01）。
+- F3-01 已修复（豁免仅 translate.glossary 纯标量词条；嵌套值消耗豁免）。门禁：fea10 54、主套件 1057、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
+- 下一步：提交本 head → 派新 head 独立 Review → approved 后 closeout。
 

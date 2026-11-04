@@ -62,3 +62,9 @@
 - F2-04（已修复）：旧导航的历史条目保留原字节，但在当前导航中标注其失效/被替代，指向实际用例 `RunControllerNullFakeTests.PreparedRunPayload_CarriesTheHostDefaultBindings` 与实际日志路径。
 - 门禁（实跑）：pytest tests/fea10 **53 passed**、主套件 **1056 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1，均 EXIT=0；check PASS、pins 17/17、FEA-09 零 diff、范围 0 域外。
 
+## DSH rework r5（2026-11-04，按 FEA-10-final-review-r3 处置）
+
+- 第 5 轮 Review（Codex，reviewed_head `b218b52e`）：changes_requested，P0=0/P1=1（F3-01：嵌套 translate.glossary 可重新获得词条名豁免）。F2-02/F2-03/F2-04 已闭合。
+- F3-01（已修复）：豁免只在 `translate.glossary` 且**全部词条值为标量文本**时生效；任何嵌套对象/列表词条值都会消耗豁免、内部 glossary 不再豁免；`_redact` 同步。新增回归 `test_glossary_exemption_cannot_be_regained_by_nesting`。
+- 门禁（实跑，`logs/dsh-rework5-*.log`）：fea10 54 passed、主套件 **1057 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
+
