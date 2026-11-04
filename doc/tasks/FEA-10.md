@@ -18,7 +18,7 @@ base_commit: d831cf968cd856674c0320fe67ce854f4ef9d4b3
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: a92934585088fe75ce8ec53452a67c0a72496d31
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-10
@@ -200,6 +200,8 @@ out_of_scope:
 - 证据刷新（DSH）：`record_delivery.py` → changed_files=30、out_of_scope=[]、FEA09_DIFF=EMPTY；AC-MATRIX 新 pin `7428c009…` 回填本卡 Canonical Evidence。
 - AC 结论：AC1–AC8、AC10 MET；AC9 的独立 Review/最终集成由 DSH 继续（Review 待 Agent 额度恢复后派全新上下文）。
 - 结论：r2 字节满足集成条件，可固定为最终交付 commit；独立实现 Review 未完成前不得 closeout/done。
+- 最终交付 commit：`a92934585088fe75ce8ec53452a67c0a72496d31`（`delivery_head` 已回填；`integration_commit` 待 closeout 时回填）。
+- 下一步：派全新上下文实现 Review（Codex 额度 19:50 恢复后首选；若不可用切 ZCode/DSH 独立子 agent）→ findings 处置 → closeout `done`。
 
 ## Canonical Evidence
 
@@ -207,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | pending | 7428c009b94e58ce08a3938e93baf6511fba42f1502591253c753e230ffb41f7 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | a92934585088fe75ce8ec53452a67c0a72496d31 | 7428c009b94e58ce08a3938e93baf6511fba42f1502591253c753e230ffb41f7 | CANONICAL |
 
 ## Resource Manifest
 
@@ -222,9 +224,10 @@ out_of_scope:
 
 ## Closeout Record
 
-- 阶段事实：2026-11-04 Codex r1 部分交付；DSH 独立复跑门禁通过并固定阶段集成 commit（partial）；Task `in_progress`（r2 续作中），未 closeout/done。
-- canonical_evidence_status：`pending`（阶段字节已固定；最终 Review/集成后补 pins）。
+- 阶段事实：2026-11-04 r1 Codex 部分交付 → DSH 裁决/阶段提交 `25ba7cb2` → r2（Codex 中断 → ZCode 续作 → DSH 收尾）→ DSH 独立复跑门禁全绿 → 最终交付 commit `a9293458`（`delivery_head`）。
+- Task 状态：`in_review`；AC1–AC8、AC10 MET；AC9 只余独立实现 Review 与最终 closeout 由 DSH 执行。
+- canonical_evidence_status：`pending`（证据 pin 已回填 commit；closeout 时置 complete）。
 - resource_closeout_status：`pending`（资源原位保留，DSH 最终 disposition）。
 - 删除/迁移/归档：0；未清理 linked worktree、build、fixture 或早期临时材料（早期系统 TEMP 材料 PRESERVE_UNKNOWN）。
-- 未关闭：AC2/3/4/6 续作（r2）、独立实现 Review、DSH 最终集成；详见 ADJ-2026-11-04-FEA-10-R2。
-- 下一步：r2 完成 → DSH 门禁 → 最终集成提交 → 全新上下文 Codex Review → closeout；不自动开始 FEA-11，不 push。
+- 未关闭：独立实现 Review、final closeout。
+- 下一步：Review → findings 处置 → closeout done → 按 PLAN 释放 FEA-11；不 push。
