@@ -9,6 +9,8 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from enum import Enum
+from dataclasses import replace
+from contextlib import ExitStack
 from typing import Any, Callable, Mapping
 
 from application.tasks.store import (
@@ -46,6 +48,7 @@ from domain.tasks.models import (
     TargetType,
     freeze_snapshot,
 )
+from application.tasks.store import snapshot_digest
 
 
 def _now() -> str:
@@ -617,6 +620,7 @@ class SqlitePipelineStore(PipelineStore):
     def accept(
         self, run: PipelineRun, *, idempotency_key: str,
         request_fingerprint: str, operation_type: str,
+        validate: Callable[[], None] | None = None,
     ) -> tuple[PipelineRun, bool]:
         self._conn.execute("BEGIN IMMEDIATE")
         try:
@@ -634,6 +638,8 @@ class SqlitePipelineStore(PipelineStore):
                     raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
                 self._conn.commit()
                 return existing, False
+            if validate is not None:
+                validate()
             self._write_run(run)
             self._conn.execute(
                 "INSERT INTO pipeline_run_idempotency "
@@ -829,6 +835,7 @@ class SqliteTargetCatalog(TargetCatalog):
     ) -> CatalogCommit:
         candidates: dict[str, dict[str, Any]] = {}
         published_paths: list[str] = []
+        leases = ExitStack()
         try:
             self._conn.execute("BEGIN IMMEDIATE")
             # Resolve candidate rows before target lookup so a deleted/missing
@@ -853,6 +860,8 @@ class SqliteTargetCatalog(TargetCatalog):
                 if row is not None:
                     candidates[token] = dict(row)
             current = self.current(target_id)
+            if callable(getattr(self, "source_commit_guard", None)):
+                leases.enter_context(self.source_commit_guard(current.page_id))
             target_type = current.target_type.value
             if target_type not in {TargetType.REGION.value, TargetType.PAGE.value}:
                 return self._reject_prepared(
@@ -926,7 +935,7 @@ class SqliteTargetCatalog(TargetCatalog):
 
             if any(
                 current.current_revisions.get(key) != value
-                for key, value in expected_revisions.items()
+                for key, value in expected_revisions.items() if key not in {"__fea10_guard__", "__fea10_protection__"}
             ):
                 return self._reject_prepared(
                     "input_revision_changed", "current Revision changed", candidates.values()
@@ -935,6 +944,22 @@ class SqliteTargetCatalog(TargetCatalog):
                 return self._reject_prepared(
                     "lock_changed", "current Lock changed", candidates.values()
                 )
+            if ("__fea10_guard__" in expected_revisions and
+                    expected_revisions["__fea10_guard__"] != snapshot_digest(current.metadata.get("commit_guard", {}))):
+                return self._reject_prepared("lock_changed", "source binding or active draft changed", candidates.values())
+            if ("__fea10_protection__" in expected_revisions and expected_revisions["__fea10_protection__"] !=
+                    snapshot_digest([current.manual_edited, current.final_confirmed])):
+                return self._reject_prepared("lock_changed", "manual/final protection changed", candidates.values())
+            if current.manual_edited or current.final_confirmed:
+                live_text = json.loads(self._conn.execute(
+                    "SELECT text_json FROM regions WHERE region_id=?", (current.region_id,)).fetchone()[0])
+                protected_keys = ("edited_translation", "edited_confirmed", "final_translation", "final_source", "manual_edited")
+                if any(candidate["result_kind"] == "region" and any(
+                    candidate["payload"]["text_json"].get(key) != live_text.get(key) for key in protected_keys
+                ) for candidate in candidates.values()):
+                    return self._reject_prepared("lock_changed", "candidate would replace protected translation", candidates.values())
+            if candidates and current.metadata.get("commit_guard", {}).get("drafts"):
+                return self._reject_prepared("lock_changed", "active draft requires candidate review", candidates.values())
             if run_id is not None:
                 request_row = self._conn.execute(
                     "SELECT pause_requested, cancel_requested FROM pipeline_runs WHERE run_id = ?",
@@ -994,6 +1019,8 @@ class SqliteTargetCatalog(TargetCatalog):
             return self._reject_prepared(
                 "db_failed", repr(error), candidates.values(), published_paths=published_paths
             )
+        finally:
+            leases.close()
 
     def _write_region_candidate(
         self, current: TargetSnapshot, candidate: Mapping[str, Any], payload: Mapping[str, Any]
@@ -1355,6 +1382,8 @@ class SqliteTargetCatalog(TargetCatalog):
             metadata={
                 "source_filename": row["source_filename"],
                 "managed_original_ref": row["managed_original_ref"],
+                "source_hash": row["source_hash"],
+                "commit_guard": self._commit_guard_value(page_id),
             },
         )
 
@@ -1392,7 +1421,7 @@ class SqliteTargetCatalog(TargetCatalog):
             current_revisions=region.current_revisions,
             stage_states=region.stage_states,
             regions=(region,),
-            metadata=region.metadata,
+            metadata={**region.metadata, "commit_guard": self._commit_guard_value(row["page_id"])},
         )
 
     def _region_from_id(self, region_id: str) -> RegionSnapshot:
@@ -1418,8 +1447,36 @@ class SqliteTargetCatalog(TargetCatalog):
             final_confirmed=bool(text.get("edited_confirmed", False)),
             current_revisions={"region": row["current_revision_id"]},
             stage_states=self._stage_states("region", region_id),
-            metadata={"final_source": text.get("final_source")},
+            metadata={"final_source": text.get("final_source"), "ocr_text": text.get("ocr_text", "")},
         )
+
+    def _commit_guard_value(self, page_id: str) -> Mapping[str, Any]:
+        reader = getattr(self, "guard_reader", None)
+        return reader(page_id) if callable(reader) else {}
+
+    def freeze_context(self, targets: tuple[TargetSnapshot, ...], window: int) -> tuple[TargetSnapshot, ...]:
+        pinned = []
+        for target in targets:
+            rows = self._conn.execute(
+                "SELECT page_id, sort_order FROM pages WHERE chapter_id=? AND page_id<>?"
+                " AND deleted_at IS NULL ORDER BY ABS(sort_order-?), sort_order, page_id LIMIT ?",
+                (target.chapter_id, target.page_id, target.page_order, window),
+            ).fetchall()
+            contexts = []
+            for page in rows:
+                regions = [dict(row) for row in self._conn.execute(
+                    "SELECT region_id, current_revision_id, text_json FROM regions WHERE page_id=?"
+                    " AND deleted_at IS NULL ORDER BY reading_order, region_id", (page["page_id"],))]
+                text = "\n".join(json.loads(region["text_json"]).get("ocr_text", "") for region in regions)
+                contexts.append({
+                    "page_id": page["page_id"], "reading_order": page["sort_order"],
+                    "position": "before" if page["sort_order"] < target.page_order else "after",
+                    "text": text,
+                    "revisions": {region["region_id"]: region["current_revision_id"] for region in regions},
+                    "content_digest": snapshot_digest(text),
+                })
+            pinned.append(replace(target, metadata={**target.metadata, "context_pages": contexts}))
+        return tuple(pinned)
 
     def _page_deleted(self, page_id: str) -> bool:
         row = self._conn.execute(
@@ -1476,8 +1533,10 @@ class SqliteSnapshotProvider(SnapshotProvider):
         provider_bindings: Mapping[str, Any] | None = None,
         constraint_snapshot_ref: str | None = None,
         context_policy: Mapping[str, Any] | None = None,
+        transform: Callable | None = None,
     ) -> None:
         self._conn = conn
+        self._transform = transform
         if any(item is not None for item in (settings, provider_bindings, constraint_snapshot_ref, context_policy)):
             self.set_defaults(
                 settings=settings or {},
@@ -1524,8 +1583,8 @@ class SqliteSnapshotProvider(SnapshotProvider):
         del run_id
         row = self._conn.execute("SELECT * FROM pipeline_defaults WHERE defaults_id = 1").fetchone()
         if row is None:
-            self.set_defaults(settings={}, provider_bindings={}, constraint_snapshot_ref=None, context_policy={})
-            row = self._conn.execute("SELECT * FROM pipeline_defaults WHERE defaults_id = 1").fetchone()
+            # PrepareRun is read-only even when defaults have not been seeded.
+            return FrozenRunSnapshots(freeze_snapshot({}), freeze_snapshot({}), None, freeze_snapshot({}))
         overrides = overrides or {}
         settings_overrides = overrides.get("settings")
         if settings_overrides is None:
@@ -1537,12 +1596,13 @@ class SqliteSnapshotProvider(SnapshotProvider):
         settings = _merge(_load(row["settings_json"]), settings_overrides if isinstance(settings_overrides, Mapping) else {})
         providers = _merge(_load(row["provider_bindings_json"]), overrides.get("provider_bindings", {}))
         context = _merge(_load(row["context_policy_json"]), overrides.get("context_policy", {}))
-        return FrozenRunSnapshots(
+        frozen = FrozenRunSnapshots(
             settings=freeze_snapshot(_redact(settings)),
             provider_bindings=freeze_snapshot(_redact(providers)),
             constraint_snapshot_ref=row["constraint_snapshot_ref"],
             context_policy=freeze_snapshot(_redact(context)),
         )
+        return self._transform(frozen) if self._transform is not None else frozen
 
 
 class SqliteRunLedgerMaintenance:

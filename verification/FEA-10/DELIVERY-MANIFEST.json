@@ -1,0 +1,335 @@
+{
+  "head": "aa7bcd6161be5df07e2b8bf546600fec04af038f",
+  "branch": "main",
+  "created_at": "2026-11-04T08:35:38.292713+00:00",
+  "uncommitted": true,
+  "self_hash_excluded": true,
+  "files": [
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs",
+      "bytes": 103478,
+      "sha256": "9bb1d6c32166674c35aa0e86d4ed8902fd0e80ded5689d756b2bccb5b63ccdf1"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs",
+      "bytes": 25422,
+      "sha256": "5d3d552f4692ca5ac57b534fad416eee70acf1b835b3b9f2a043cf3c94182941"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Services/RunContracts.cs",
+      "bytes": 23968,
+      "sha256": "8bc03be8beaa1ec223bc21f0be168b485326fbba9a28541e2263584f4fd895dd"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs",
+      "bytes": 70830,
+      "sha256": "2c9a6ea4ece3dcede883dc320c1888ac283be59869c12ad482a30973c9298624"
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+      "bytes": 39555,
+      "sha256": "7231229cfa99cd2e6d9aa15d280b67200b58990f9ba3118635876386d017adcc"
+    },
+    {
+      "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea10RunIpcTests.cs",
+      "bytes": 5448,
+      "sha256": "f47e4fea98df9c3316500490f452de671296d559e4ab351ff66882de17065bb1"
+    },
+    {
+      "path": "doc/handoffs/FEA-10-handoff.md",
+      "bytes": 10361,
+      "sha256": "7746e237b69de0d39d4d1af24f774a9069a6e0629a288caff8765edf4bc4d1d4"
+    },
+    {
+      "path": "doc/tasks/FEA-10.md",
+      "bytes": 20630,
+      "sha256": "6c072c7b6e1f8ffc3404409107f774bb9035883feb77fb0aa0242c5eeab76857"
+    },
+    {
+      "path": "src/application/tasks/projection.py",
+      "bytes": 15896,
+      "sha256": "b820f19420062461e57564d91799c0c9d1f891bbf748fa896b1247a27a997c57"
+    },
+    {
+      "path": "src/application/tasks/service.py",
+      "bytes": 76791,
+      "sha256": "70dd1914b5d9ffdfe464206b1b95383ca6f9c8f473e6a964f7fd249fb8f113d3"
+    },
+    {
+      "path": "src/application/tasks/store.py",
+      "bytes": 24218,
+      "sha256": "3b3345a67181fcde81b688421c465044a621a2027f65815cf6d2bae986334cf4"
+    },
+    {
+      "path": "src/bootstrap/core_assembly.py",
+      "bytes": 79868,
+      "sha256": "f99a3224cad5e6e3932a77130ba86474b2fca95ea8b220e60a667325ca7d90fa"
+    },
+    {
+      "path": "src/bootstrap/core_service.py",
+      "bytes": 310153,
+      "sha256": "382e60d3af80ba61dce65b84d08666cedbc6e4b0bd18764d7b0b8a8c95f28e3a"
+    },
+    {
+      "path": "src/infrastructure/pipeline/assembly.py",
+      "bytes": 1903,
+      "sha256": "1e211c957c55291dc995617503cb3b4879fcff41ab397ef35fb3ddb39aa41955"
+    },
+    {
+      "path": "src/infrastructure/pipeline/executor.py",
+      "bytes": 2794,
+      "sha256": "7f93701450260eaf02899f1db2651bcc43dcdf5bca5d48c1e33c0de003c24748"
+    },
+    {
+      "path": "src/infrastructure/providers/handlers.py",
+      "bytes": 66063,
+      "sha256": "4214f00820b155d1076ae122e9dbb45d9728fbdcc2789e2e2d1be91262386c4b"
+    },
+    {
+      "path": "src/infrastructure/providers/registry.py",
+      "bytes": 21594,
+      "sha256": "97198729e32b336716c49b52e080fe2b688b1cadcc900b8fc7b40e769490d99d"
+    },
+    {
+      "path": "src/infrastructure/sqlite/pipeline.py",
+      "bytes": 78786,
+      "sha256": "f575cc5136b263bf1714253951cf89e72cb9d49b42ad248019c71a90b4f626a4"
+    },
+    {
+      "path": "tests/fea10/support/restart_core.py",
+      "bytes": 2645,
+      "sha256": "b1452aac2601a97517be141a17172c4949044a8a27629937b8eb7459ec830016"
+    },
+    {
+      "path": "tests/fea10/test_commit_zero_write.py",
+      "bytes": 7855,
+      "sha256": "b1a9d7ab9f2d8de866371b58839288c9587ea85c4f55938e8d61c3a840dacef1"
+    },
+    {
+      "path": "tests/fea10/test_idempotent_receipt.py",
+      "bytes": 4039,
+      "sha256": "2b26b005d14d60f51838098844c708543efdc7e9c94b9d889deb06665a5c9bd2"
+    },
+    {
+      "path": "tests/fea10/test_prepared_run.py",
+      "bytes": 3866,
+      "sha256": "25e5a1a579ffb0d0aee1229e65607710f5f243091db29aa83dab0c113b42d018"
+    },
+    {
+      "path": "tests/fea10/test_snapshot_retry.py",
+      "bytes": 7948,
+      "sha256": "939262a896ffa576a09a0521126814290b899c2f60a026ca05698fad55baaef8"
+    },
+    {
+      "path": "verification/FEA-10/AC-MATRIX.md",
+      "bytes": 7033,
+      "sha256": "814d6a1745990f0bec4dc61f5016de6ed76e0260df71b0bccfd0c5f7e6417009"
+    },
+    {
+      "path": "verification/FEA-10/OWNER-CHECKPOINT.md",
+      "bytes": 1879,
+      "sha256": "5d1ef4c26135bc3f5820b5b9093e8f37e56bf291038b1ed47215d85d20686d41"
+    },
+    {
+      "path": "verification/FEA-10/RESOURCE-MANIFEST.json",
+      "bytes": 106548,
+      "sha256": "e47617e7778bbdb10573d7da0438262c8e08c6c62a695416835ed96021fc6a16"
+    },
+    {
+      "path": "verification/FEA-10/changed-files.txt",
+      "bytes": 2943,
+      "sha256": "f53e7ce6b6aff101ba4393df515407fd51d067ddc9b05f84ab7b4e94d73fd75a"
+    },
+    {
+      "path": "verification/FEA-10/ipc/real-ipc.txt",
+      "bytes": 247,
+      "sha256": "e9f2395f912430387e797e24f997e135cc009b396f62786e486e2bfa6ee34e2e"
+    },
+    {
+      "path": "verification/FEA-10/logs/canonical-commit.log",
+      "bytes": 343,
+      "sha256": "f335327841717fdc07d19eeb5ffba63f5803360417c51b7accccb7c3804a6888"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-build-final.log",
+      "bytes": 47010,
+      "sha256": "1ee72b23356ddac500980b85ba4b00a978edb2b9e4bb59875eabf057ba5a4363"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-build-release.log",
+      "bytes": 3022,
+      "sha256": "dc1a9ab660c0c8fd5a17eb1c4cd97c5955ad780fc508010135088d5081996f2a"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-build.log",
+      "bytes": 2999,
+      "sha256": "18ab52410eca6ab39131923fdd0ebe206d1b73585454e8b50462d8b54d18b4d5"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-final-build.log",
+      "bytes": 3185,
+      "sha256": "79c2a76978f37786a258f1ee855aaac43b91a66067af0eee435a02c3068cfe59"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-final-tests.log",
+      "bytes": 22148,
+      "sha256": "dc5d96965d3b98c0eb633d6f84c2f3543e87d791f8eec7a3795fd984ee52865a"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-isolated.log",
+      "bytes": 22148,
+      "sha256": "f616a487a9f1231734c87a6373b9809341a381ca4dec52c0e8963bef1dfc499a"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-test-release.log",
+      "bytes": 21986,
+      "sha256": "e61a298386aa2ae5038b346742c22178d5667d877299115e8e0c32c417f472c5"
+    },
+    {
+      "path": "verification/FEA-10/logs/dotnet-test.log",
+      "bytes": 21981,
+      "sha256": "56b8f01da50d007d8f1981953ea36e1b1143c588617a5337bccf0584257fccc5"
+    },
+    {
+      "path": "verification/FEA-10/logs/environment.log",
+      "bytes": 253,
+      "sha256": "3e4e71b7e2925a6bf57b9d3c3b447c09614c6a5de954b6a475f207cdc7235d14"
+    },
+    {
+      "path": "verification/FEA-10/logs/fault-matrix.log",
+      "bytes": 2622,
+      "sha256": "c7dc779d13ef022fb5573613ffefa5c5f66f068280cd7f80319d09048c598adc"
+    },
+    {
+      "path": "verification/FEA-10/logs/fea10-complete.log",
+      "bytes": 237,
+      "sha256": "c45d854aa3ccfdaaa2543ccd9cd9f57dfeaa0c6c0b59971c249834d9147718f5"
+    },
+    {
+      "path": "verification/FEA-10/logs/fea10-fallback-final.log",
+      "bytes": 237,
+      "sha256": "a6b07135784d495a313ac462a357676fb8c29a5519712202bee9e5bdad52d6da"
+    },
+    {
+      "path": "verification/FEA-10/logs/fea10-focused-final.log",
+      "bytes": 237,
+      "sha256": "4f1236bdc39e1545f18708c5d535b482c16798b036a25a05cd8826e708de3712"
+    },
+    {
+      "path": "verification/FEA-10/logs/fea10-focused.log",
+      "bytes": 237,
+      "sha256": "74958f173751a9825c678235cb6ce8c4c9544d8519635417515f7bc0ef15163e"
+    },
+    {
+      "path": "verification/FEA-10/logs/governance-final.log",
+      "bytes": 1226,
+      "sha256": "86a598e3db59042425d3b0fcc9a2815485f75b253ff2443b1c9b0366f2dea8f9"
+    },
+    {
+      "path": "verification/FEA-10/logs/governance-initial.log",
+      "bytes": 552,
+      "sha256": "d3868a7d14609338cf8507025cf318358e7c480bdd62d16f3e88711ba01711a1"
+    },
+    {
+      "path": "verification/FEA-10/logs/ipc-final.log",
+      "bytes": 840,
+      "sha256": "88fc137d9793cf1e5c397a1d75040a121b6b90f1012444faaf4a056cbb208067"
+    },
+    {
+      "path": "verification/FEA-10/logs/pins-final.log",
+      "bytes": 551,
+      "sha256": "cdc6bebd6bf6a64f5f0c68b19f8a0cb8d52eddc078cf4879d108874dc453115f"
+    },
+    {
+      "path": "verification/FEA-10/logs/pins.log",
+      "bytes": 459,
+      "sha256": "51e3cf1f978815a174c549990278928c4e46e713d74885df76ca33bcd80be3ee"
+    },
+    {
+      "path": "verification/FEA-10/logs/provider-regressions-second.log",
+      "bytes": 821,
+      "sha256": "83c2ada76b99b003e2451916e61a294b7b0b873c0165dccb7473cb76d4b97930"
+    },
+    {
+      "path": "verification/FEA-10/logs/provider-regressions.log",
+      "bytes": 55486,
+      "sha256": "795a158453d3b8c0bbffc8c09c9fc84c7164ca78f7cbbc4417b82f5a5c475727"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-delivery.log",
+      "bytes": 2022,
+      "sha256": "5d04e1afcc243ed44e443b78017fbdda1e86595ebc6e66504bb1754773670106"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-file-regressions.log",
+      "bytes": 971,
+      "sha256": "d19c57be3790db9b76dda0b1d0641376693e963e6704c774740822deaaf420a6"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-files-validated.log",
+      "bytes": 947,
+      "sha256": "0d019ede46205e3d4a39b3abc1ee73fd9e43afdc974df1da6d586983a67fd049"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-final.log",
+      "bytes": 4203,
+      "sha256": "16c39508d15c6e95c1d8eaa4ad1d695589e4bc54e2770835b5353018a2ddc4c5"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-initial.log",
+      "bytes": 9254,
+      "sha256": "61861bc860aee8df527b3efb02eee2c23989822616e1c3720a60da6ca257a881"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-isolated.log",
+      "bytes": 2145,
+      "sha256": "b7ce705eaeaa93bac5557cd155745a4b02205b11db739b8508ee65ba753107f4"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-release.log",
+      "bytes": 2022,
+      "sha256": "9a9612e29f2747eef364881d468ce2dea02de774c8f5a0aae2e2a275291d10f0"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-second.log",
+      "bytes": 2022,
+      "sha256": "7177ee11533f0563060afaeb213e34f8806eebb3af13732f2c19276220bf8abe"
+    },
+    {
+      "path": "verification/FEA-10/logs/python-validated.log",
+      "bytes": 2022,
+      "sha256": "79bc6073394f449d89b394fc82ec8a1085e816b45f32dc1ba1ead0c4617b1065"
+    },
+    {
+      "path": "verification/FEA-10/logs/real-ipc-delivery.log",
+      "bytes": 715,
+      "sha256": "45a488f92096f36643255b6969898ac69cf06ec527aa0e86c3a09f34af8e83b2"
+    },
+    {
+      "path": "verification/FEA-10/logs/real-ipc-second.log",
+      "bytes": 715,
+      "sha256": "45a488f92096f36643255b6969898ac69cf06ec527aa0e86c3a09f34af8e83b2"
+    },
+    {
+      "path": "verification/FEA-10/logs/real-ipc.log",
+      "bytes": 1458,
+      "sha256": "eaa358c9bc332c217b99cb8117fda2c95acb54f6e4fb81b4600699bf7c26901a"
+    },
+    {
+      "path": "verification/FEA-10/logs/restart-core.log",
+      "bytes": 1304,
+      "sha256": "c77644a874d041101485c7603af98c2fb4105dd3f00f1e605a351533a9fc645f"
+    },
+    {
+      "path": "verification/FEA-10/logs/scope.log",
+      "bytes": 3245,
+      "sha256": "c6568ac3a90e555964577c1f9ada00ed046c3af703ae109ee1dc8cbecc228128"
+    },
+    {
+      "path": "verification/FEA-10/record_delivery.py",
+      "bytes": 4389,
+      "sha256": "dd693896b985620f1f34ff190b8080b672a4cc39c21cd67e1f438a972cb04dfa"
+    }
+  ],
+  "out_of_scope": []
+}

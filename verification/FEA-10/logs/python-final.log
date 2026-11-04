@@ -1,0 +1,57 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10 tests/core tests/pipeline -q
+DataRoot=G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>-<uuid>/; regressions use pytest isolated tmp_path
+..............F......................................................... [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 27%]
+........................................................................ [ 34%]
+........................................................................ [ 41%]
+........................................................................ [ 48%]
+........................................................................ [ 55%]
+........................................................................ [ 62%]
+........................................................................ [ 69%]
+........................................................................ [ 76%]
+........................................................................ [ 83%]
+........................................................................ [ 90%]
+........................................................................ [ 97%]
+.......................                                                  [100%]
+================================== FAILURES ===================================
+______ test_editing_multi_region_apply_uses_existing_guarded_batch[True] ______
+
+stale_last = True
+
+    @pytest.mark.parametrize('stale_last', [False, True])
+    def test_editing_multi_region_apply_uses_existing_guarded_batch(stale_last):
+        from domain.regions.entities import BBox, RegionGeometry
+        from application.editing.errors import DraftError
+        core, page, first = _new_workspace(workspace('editing-batch'))
+        try:
+            ids = [first] + [core.editing.create_region(page, RegionGeometry(bbox=BBox(1, 1, 4, 4)), reading_order=i).region_id
+                             for i in (2, 3)]
+            lease = core.drafts.open_draft('fea10-edit', page, None, base_revision_id=None, page_binding_version=1)
+            candidates = [core.drafts.prepare_candidate(region, {'text': {'edited_translation': 'edited'}},
+                          origin='user', draft_id=lease.draft.draft_id) for region in ids]
+            if stale_last:
+                core.editing.set_region_type(ids[-1], 'sfx', current_global_sfx_policy='skip')
+            before = [_region_snapshot(core, region) for region in ids]
+            trace = []; core.conn.set_trace_callback(trace.append)
+            if stale_last:
+>               with pytest.raises(DraftError, match='STALE_BASE_REVISION'):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: Regex pattern did not match.
+E                 Expected regex: 'STALE_BASE_REVISION'
+E                 Actual message: 'BaseRevisionId changed before apply'
+
+tests\fea10\test_commit_zero_write.py:90: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 7 migration(s) up to v7; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/fea10/test_commit_zero_write.py::test_editing_multi_region_apply_uses_existing_guarded_batch[True]
+1 failed, 1030 passed, 1 warning in 77.26s (0:01:17)
+EXIT=1

@@ -1,0 +1,149 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10 tests/core tests/pipeline -q
+DataRoot=G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>-<uuid>/; regressions use pytest isolated tmp_path
+F...................F...F............................................... [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 28%]
+........................................................................ [ 35%]
+........................................................................ [ 42%]
+........................................................................ [ 49%]
+........................................................................ [ 56%]
+........................................................................ [ 63%]
+........................................................................ [ 70%]
+........................................................................ [ 77%]
+........................................................................ [ 84%]
+........................................................................ [ 91%]
+............FF.......................................................... [ 98%]
+....................                                                     [100%]
+================================== FAILURES ===================================
+_____ test_each_failed_seam_preserves_live_and_success_receipts[revision] _____
+
+fault = 'revision'
+
+    @pytest.mark.parametrize('fault', [
+        'revision', 'lock', 'manual', 'final', 'stale_run', 'source_lease', 'binding_generation',
+        'draft_sequence', 'db', 'pause', 'cancel', 'crash_restart',
+    ])
+    def test_each_failed_seam_preserves_live_and_success_receipts(fault):
+        root = workspace('zero-' + fault)
+        core, _, region = _new_workspace(root)
+        try:
+            run, step, _, result = _prepare_ocr(core, region, running=True)
+            candidate_id = result.revision_updates['region']
+>           if fault == 'revision': core.editing.set_region_type(region, 'sfx')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: RegionEditingService.set_region_type() missing 1 required keyword-only argument: 'current_global_sfx_policy'
+
+tests\fea10\test_commit_zero_write.py:23: TypeError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 7 migration(s) up to v7; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+_ test_invalid_preview_is_rejected_without_writes[revision-RUN_STALE_PREVIEW] _
+
+change = 'revision', code = 'RUN_STALE_PREVIEW'
+
+    @pytest.mark.parametrize('change,code', [('digest', 'RUN_STALE_PREVIEW'), ('settings', 'RUN_STALE_PREVIEW'),
+        ('lock', 'RUN_STALE_PREVIEW'), ('revision', 'RUN_STALE_PREVIEW'), ('expired', 'RUN_PREVIEW_EXPIRED'),
+        ('missing', 'RUN_SNAPSHOT_INCOMPLETE')])
+    def test_invalid_preview_is_rejected_without_writes(change, code):
+        core, _, region = _new_workspace(workspace('stale-' + change))
+        try:
+            prepared, scope = prepare(core, region)
+            if change == 'digest': prepared['preparedDigest'] = 'sha256:' + '0' * 64
+            elif change == 'settings': core.pipeline_defaults.save_settings_section('ocr', {'script': 'chinese'})
+            elif change == 'lock':
+                with core.conn: core.conn.execute('UPDATE regions SET region_locked=1 WHERE region_id=?', (region,))
+>           elif change == 'revision': core.editing.set_region_type(region, 'sfx')
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: RegionEditingService.set_region_type() missing 1 required keyword-only argument: 'current_global_sfx_policy'
+
+tests\fea10\test_prepared_run.py:60: TypeError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 7 migration(s) up to v7; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+____ test_new_retry_freezes_current_context_but_same_key_replays_unchanged ____
+
+    def test_new_retry_freezes_current_context_but_same_key_replays_unchanged():
+        core, page, region = _new_workspace(workspace('retry-context'))
+        try:
+            pipeline = core.pipeline
+            parent = pipeline.create_run('reocr_single', PipelineScope(ScopeType.PAGE, selected_ids=(page,)))
+            pipeline.plan_run(parent.run_id)
+            parent.status = PipelineRunStatus.COMPLETED_WITH_FAILURES
+            parent.tasks[0].status = PipelineTaskStatus.FAILED
+            pipeline._persist(parent)
+            old_settings = parent.settings_snapshot
+>           core.editing.set_region_type(region, 'sfx')
+E           TypeError: RegionEditingService.set_region_type() missing 1 required keyword-only argument: 'current_global_sfx_policy'
+
+tests\fea10\test_snapshot_retry.py:16: TypeError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 7 migration(s) up to v7; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+_______ test_pause_is_safe_boundary_and_continue_reuses_completed_step ________
+
+    def test_pause_is_safe_boundary_and_continue_reuses_completed_step() -> None:
+        pipeline, _, _ = service()
+        executor = DeterministicStepExecutor()
+        pipeline._executor = executor
+        run = create_and_plan(
+            pipeline,
+            "retranslate_region",
+            scope=PipelineScope(ScopeType.REGION, selected_ids=("r1",)),
+        )
+    
+        paused_once = {"value": False}
+    
+        def pause_after_translate(step_run, unit, running):
+            if unit.step_type == "translate" and not paused_once["value"]:
+                paused_once["value"] = True
+                pipeline.control_run(running.run_id, "pause")
+    
+        executor.on_execute = pause_after_translate
+        assert pipeline.execute_run(run.run_id).status is PipelineRunStatus.PAUSED
+        pipeline.control_run(run.run_id, "continue")
+        assert pipeline.execute_run(run.run_id).status is PipelineRunStatus.COMPLETED
+>       assert [step.step_type for step in run.step_runs].count("translate") == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = <built-in method count of list object at 0x000001D324B1B740>('translate')
+E        +    where <built-in method count of list object at 0x000001D324B1B740> = ['translate', 'translate', 'render'].count
+
+tests\pipeline\test_pipeline.py:442: AssertionError
+_______ test_stop_preserves_completed_steps_and_cancels_remaining_work ________
+
+    def test_stop_preserves_completed_steps_and_cancels_remaining_work() -> None:
+        executor = DeterministicStepExecutor()
+        pipeline, _, _ = service(executor=executor)
+        stopped = {"value": False}
+    
+        def stop_after_first(step_run, unit, running):
+            if not stopped["value"]:
+                stopped["value"] = True
+                pipeline.control_run(running.run_id, "stop")
+    
+        executor.on_execute = stop_after_first
+        run = create_and_plan(
+            pipeline,
+            "retranslate_region_full",
+            scope=PipelineScope(ScopeType.REGION, selected_ids=("r1",)),
+        )
+        result = pipeline.execute_run(run.run_id)
+        assert result.status is PipelineRunStatus.CANCELLED
+>       assert result.step_runs[0].status.value == "completed"
+E       AssertionError: assert 'cancelled' == 'completed'
+E         
+E         - completed
+E         + cancelled
+
+tests\pipeline\test_pipeline.py:463: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[revision]
+FAILED tests/fea10/test_prepared_run.py::test_invalid_preview_is_rejected_without_writes[revision-RUN_STALE_PREVIEW]
+FAILED tests/fea10/test_snapshot_retry.py::test_new_retry_freezes_current_context_but_same_key_replays_unchanged
+FAILED tests/pipeline/test_pipeline.py::test_pause_is_safe_boundary_and_continue_reuses_completed_step
+FAILED tests/pipeline/test_pipeline.py::test_stop_preserves_completed_steps_and_cancels_remaining_work
+5 failed, 1023 passed, 1 warning in 73.79s (0:01:13)
+EXIT=1

@@ -54,6 +54,7 @@ from application.reading.service import ReadingService
 from application.rendering.service import RenderService
 from application.resource_channel.dto import E_NOT_FOUND, TypedResourceChannelError
 from application.tasks.service import PipelineService
+from domain.tasks.models import PipelineError
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
 from domain.regions.entities import (
@@ -1520,7 +1521,35 @@ def assemble_core_services(
             provider_bindings=defaults["provider_bindings"] or None,
             constraint_snapshot_ref=defaults["constraint_snapshot_ref"],
             context_policy=defaults["context_policy"] or None,
+            snapshot_transform=provider_runtime.registry.freeze_run_snapshots,
         )
+        # FEA-10: guard data is derived from existing bindings/drafts, never a second store.
+        def run_guard_value(page_id):
+            binding = repository.get_page_binding(page_id)
+            return {
+                "binding": binding,
+                "drafts": sorted((draft.draft_id, draft.draft_sequence, draft.status.value)
+                                 for draft in drafts.list_drafts()
+                                 if draft.page_id == page_id and draft.status.value == "active"),
+            }
+
+        from contextlib import contextmanager
+
+        @contextmanager
+        def run_source_guard(page_id):
+            binding = repository.get_page_binding(page_id)
+            if binding is None:
+                yield
+                return
+            if binding["status"] != "healthy":
+                raise PipelineError("TARGET_NOT_FOUND", "source binding is unavailable")
+            grant_id, _ = source_read_refs.find_bound_for_source(
+                binding["source_id"], binding["accepted_source_version"], binding["entry_id"])
+            with source_read_refs.commit_guard(grant_id):
+                yield
+
+        pipeline._catalog.guard_reader = run_guard_value
+        pipeline._catalog.source_commit_guard = run_source_guard
         # Legacy callers keep the released eager-recovery behavior. The
         # production Core defers recovery until its process-wide scheduler
         # lease is held (P11 §6.1).

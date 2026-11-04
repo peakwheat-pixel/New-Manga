@@ -1,0 +1,8 @@
+COMMAND=C:/Python314/python.exe --version; dotnet --version; node --version; git rev-parse HEAD; git branch --show-current; git rev-parse --git-common-dir
+Python 3.14.6
+10.0.401
+v24.15.0
+aa7bcd6161be5df07e2b8bf546600fec04af038f
+main
+.git
+EXIT=0

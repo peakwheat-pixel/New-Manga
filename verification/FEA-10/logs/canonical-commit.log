@@ -1,0 +1,5 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10/test_snapshot_retry.py::test_preview_and_real_transport_body_use_same_builder_and_pinned_config -q
+DataRoot=G:/CODEX/New Manga.workspace/FEA-10/fixtures/canonical-request-<uuid>/
+.                                                                        [100%]
+1 passed in 0.38s
+EXIT=0

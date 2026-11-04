@@ -20,7 +20,7 @@ Readiness states (AC-OPTIONAL-002):
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from infrastructure.providers.dependencies import (
@@ -321,6 +321,100 @@ class ProviderRegistry:
             f"binding for capability {capability!r} names no provider",
             stage="resolve",
         )
+
+    def freeze_run_snapshots(self, snapshots):
+        """Capture only the typed provider execution fields; never instance __dict__."""
+        from application.tasks.store import FrozenRunSnapshots, snapshot_value, snapshot_digest
+        from domain.tasks.models import freeze_snapshot
+        bindings = snapshot_value(snapshots.provider_bindings)
+        for step, capability in (("translate", "translation"), ("ocr", "ocr")):
+            binding = bindings.get(step)
+            if not binding:
+                continue
+            provider_id = binding if isinstance(binding, str) else next((
+                binding.get(key) for key in ("provider_id", "provider_profile_id", "id") if binding.get(key)), None)
+            if not provider_id:
+                continue
+            try:
+                provider = self.resolve(capability, provider_id)
+            except ProviderError:
+                # Preserve unavailable bindings: the existing planner owns blocking.
+                continue
+            config = getattr(provider, "config", None)
+            if config is None:
+                continue
+            # A credential reference is an opaque vault lookup, never authentication bytes.
+            execution = {key: getattr(config, key) for key in (
+                "provider_id", "provider_type", "base_url", "model", "credential_ref",
+                "timeout_seconds", "extra_options")}
+            profile = config.network_profile
+            execution["network_profile"] = None if profile is None else {
+                key: snapshot_value(getattr(profile, key)) for key in (
+                    "network_profile_id", "name", "mode", "http_proxy", "https_proxy", "socks5_proxy",
+                    "username", "credential_ref", "inherit_system", "timeout_seconds", "verify_tls",
+                    "allow_proxy_failure_direct_fallback", "created_at", "updated_at")}
+            if profile is not None:
+                execution["network_profile"]["bypass_hosts"] = sorted(profile.bypass_hosts)
+            execution["target_language"] = getattr(provider, "target_language", "")
+            execution["options"] = list(getattr(provider, "options", ()))
+            allowed_options = {"temperature", "top_p", "max_tokens", "max_completion_tokens", "seed",
+                               "frequency_penalty", "presence_penalty", "stop"}
+            if any(key not in allowed_options for key, _ in execution["options"]):
+                from domain.tasks.models import PipelineError
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider options contain unsupported replay fields")
+            # Endpoint credentials are prohibited even when smuggled via query/userinfo.
+            from urllib.parse import urlsplit
+            url = urlsplit(config.base_url)
+            if url.username or url.password or url.query or url.fragment:
+                from domain.tasks.models import PipelineError
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider endpoint is not snapshot-safe")
+            value = {"provider_id": provider_id} if isinstance(binding, str) else dict(binding)
+            value["execution"] = execution
+            value["execution_digest"] = snapshot_digest(execution)
+            if isinstance(binding, Mapping):
+                from infrastructure.providers.fallback import chain_from_binding
+                chain = chain_from_binding(binding)
+                if chain is not None and chain.explicit_fallbacks:
+                    value["frozen_fallbacks"] = {
+                        fallback_id: snapshot_value(self.freeze_run_snapshots(FrozenRunSnapshots(
+                            snapshots.settings, {step: fallback_id}, snapshots.constraint_snapshot_ref,
+                            snapshots.context_policy)).provider_bindings[step])
+                        for fallback_id in chain.explicit_fallbacks
+                    }
+            bindings[step] = value
+        return FrozenRunSnapshots(snapshots.settings, freeze_snapshot(bindings),
+                                  snapshots.constraint_snapshot_ref, snapshots.context_policy)
+
+    def resolve_for_run(self, capability: str, provider_id: str, binding: Any) -> Any:
+        provider = self.resolve(capability, provider_id)
+        if not isinstance(binding, Mapping) or "execution" not in binding:
+            return provider
+        named = next((binding.get(key) for key in ("provider_id", "provider_profile_id", "id") if binding.get(key)), None)
+        if provider_id != named:
+            fallback = binding.get("frozen_fallbacks", {}).get(provider_id)
+            if fallback is None:
+                raise ProviderUnavailable("fallback has no frozen execution configuration", stage="resolve")
+            return self.resolve_for_run(capability, provider_id, fallback)
+        from application.tasks.store import snapshot_digest
+        execution = binding["execution"]
+        if snapshot_digest(execution) != binding.get("execution_digest"):
+            raise ProviderUnavailable("frozen provider configuration is incomplete", stage="resolve")
+        from infrastructure.providers.openai_client import OpenAiCompatibleClient, OpenAiCompatibleConfig
+        from ports.network.profiles import NetworkProfile
+        config_values = {key: execution[key] for key in (
+            "provider_id", "provider_type", "base_url", "model", "credential_ref", "timeout_seconds")}
+        profile = execution["network_profile"]
+        config_values["network_profile"] = None if profile is None else NetworkProfile(
+            **{**profile, "bypass_hosts": frozenset(profile["bypass_hosts"])})
+        config_values["extra_options"] = tuple(tuple(item) for item in execution["extra_options"])
+        config = OpenAiCompatibleConfig(**config_values)
+        client = provider.client
+        frozen_client = OpenAiCompatibleClient(config, client._transport,
+                                              credential_resolver=client._credential_resolver)
+        values = {"config": config, "client": frozen_client, "options": tuple(tuple(item) for item in execution["options"])}
+        if hasattr(provider, "target_language"):
+            values["target_language"] = execution["target_language"]
+        return replace(provider, **values)
 
     def invalidate(self, provider_id: str | None = None) -> None:
         """Drop cached instances (e.g. after an OOM unload or a settings edit)."""

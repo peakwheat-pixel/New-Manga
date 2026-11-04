@@ -1,0 +1,30 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10/test_commit_zero_write.py -v
+DataRoot=G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>-<uuid>/
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 17 items
+
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[revision] PASSED [  5%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[lock] PASSED [ 11%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[manual] PASSED [ 17%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[final] PASSED [ 23%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[stale_run] PASSED [ 29%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[source_lease] PASSED [ 35%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[binding_generation] PASSED [ 41%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[draft_sequence] PASSED [ 47%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[db] PASSED [ 52%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[pause] PASSED [ 58%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[cancel] PASSED [ 64%]
+tests/fea10/test_commit_zero_write.py::test_each_failed_seam_preserves_live_and_success_receipts[crash_restart] PASSED [ 70%]
+tests/fea10/test_commit_zero_write.py::test_success_live_revision_and_run_receipt_share_one_transaction PASSED [ 76%]
+tests/fea10/test_commit_zero_write.py::test_editing_multi_region_apply_uses_existing_guarded_batch[False] PASSED [ 82%]
+tests/fea10/test_commit_zero_write.py::test_editing_multi_region_apply_uses_existing_guarded_batch[True] PASSED [ 88%]
+tests/fea10/test_commit_zero_write.py::test_actual_draft_change_after_step_start_blocks_pipeline_commit PASSED [ 94%]
+tests/fea10/test_commit_zero_write.py::test_edit_token_and_sequence_mismatch_preserves_live_and_candidate PASSED [100%]
+
+============================= 17 passed in 1.31s ==============================
+EXIT=0

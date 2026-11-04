@@ -14,7 +14,7 @@ namespace NewManga.App.Services;
 /// FEA-09-UI-1: also implements <see cref="ISourceImportController"/> — a SEPARATE face, so the
 /// frozen C-07 <see cref="IHostController"/> inventory (54 members) stays byte-identical.
 /// </summary>
-public sealed class HostController : IHostController, ISourceImportController
+public sealed class HostController : IHostController, ISourceImportController, IPreparedRunController
 {
     private readonly HostOptions _options;
     private readonly object _startLock = new();
@@ -2105,6 +2105,37 @@ public sealed class HostController : IHostController, ISourceImportController
             SetLastError(ErrorCodeOf(ex));
             return null;
         }
+    }
+
+    public async Task<PreparedRunPreview?> PrepareRunAsync(RunStartRequest request, CancellationToken ct = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady) { SetLastError("HOST_NOT_READY"); return null; }
+        if (request is null || string.IsNullOrWhiteSpace(request.Command) || request.Scope is null)
+        { SetLastError("INVALID_REQUEST"); return null; }
+        try
+        {
+            var payload = RunPayloads.PrepareRun(request);
+            var preview = await _runtime.PrepareRunAsync(payload, ct).ConfigureAwait(false);
+            SetLastError(null);
+            return preview;
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex)) { SetLastError(ErrorCodeOf(ex)); return null; }
+    }
+
+    public async Task<RunStartInfo?> AcceptRunAsync(string preparedRunId, int generation, string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady) { SetLastError("HOST_NOT_READY"); return null; }
+        if (!_runtime.Policy.WritesAllowed) { SetLastError("HOST_READ_ONLY"); return null; }
+        if (string.IsNullOrWhiteSpace(preparedRunId) || string.IsNullOrWhiteSpace(idempotencyKey))
+        { SetLastError("INVALID_REQUEST"); return null; }
+        try
+        {
+            var accepted = await _runtime.AcceptRunAsync(preparedRunId, generation, idempotencyKey, ct).ConfigureAwait(false);
+            SetLastError(null);
+            return RunStartInfo.FromJson(accepted);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex)) { SetLastError(ErrorCodeOf(ex)); return null; }
     }
 
     public async Task<RunControlInfo?> ControlRunAsync(

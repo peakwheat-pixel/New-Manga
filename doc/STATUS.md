@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-10](tasks/FEA-10.md) `ready`（scope approved r6；Appointment 2026-11-04；owner=Codex 待认领；前置 `FEA-10-PREREQ-1` done）。
+- 当前 Task：[FEA-10](tasks/FEA-10.md) `in_progress`（Owner=Codex 已认领；r1 部分实现、Task 卡 `in_review`；AC1/5/7/8/10 MET，AC2/3/4/6 PARTIAL 续作中；AC9 待 DSH 集成）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate 状态**：`G-CONTRACT` **✅ CLOSED（2026-11-01）**——D05 五项全有冻结承载；`G-DELETE-CONTRACT` **✅ CLOSED（2026-11-01）**——D04–D07 全覆盖（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，保留项 L-1…L-9，**L-5 整库恢复锁已明文认定**）。**边界**：FEA-12 的 `G-DELETE-CONTRACT` 阻塞已随后者 CLOSED 解除（2026-11-01）；四表 DDL 未冻（实现前置）。 裁决记录：[ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)（R=D 零字节 / U-03=B draft owner / U-04=批准 / U-05a=纳入 / U-05b=保留 / U-05c=用户优先）。
-- 下一步：无 Active Task（FEA-09-UI-1 已 closeout）；下一候选需 DSH Appointment，按 REBASELINE_PLAN 推进。
+- 下一步：FEA-10 续作（Codex r2 补 AC2/3/4/6）→ DSH 集成 → 全新上下文实现 Review → closeout；随后 FEA-11 建卡/scope review。
 - **FEA 方案（非 Task）**：r4 第 8 轮独立 Review **approved**（[r8](reviews/FEA-00-dsh-r8.md)，0 P0 / 0 P1 / 9 P2）；**14 份契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已全部冻结**（门禁链 4/4）。存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告统一在 `doc/reviews/`。
 - 冻结校验：`verify_pins.ps1` **17/17** PASS（16 份契约 + FEA-01；含 C-15/C-16；机械校验，不替代复核）。

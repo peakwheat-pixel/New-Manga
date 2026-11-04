@@ -1,0 +1,11 @@
+DataRoot=G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6
+COMMAND=C:/Python314/python.exe tests/fea10/support/restart_core.py --data-root G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6 --db G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6\library.db --stop
+[core.schema] applied 7 migration(s) up to v7; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+COMMITTED_WITH_ACK_DROPPED run_id=run-468ce2715d3e48dd9ebb80bb04d8fe26
+DataRoot=G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6
+EXIT=0
+COMMAND=C:/Python314/python.exe tests/fea10/support/restart_core.py --data-root G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6 --db G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6\library.db --start
+[core.schema] schema v7 already current; this session performed no write
+REOPEN_SAME_DB_RECEIPT_PASS run_id=run-468ce2715d3e48dd9ebb80bb04d8fe26
+DataRoot=G:\CODEX\New Manga.workspace\FEA-10\fixtures\explicit-restart-4ce095f2f33c439ca503db0d07f7fbe6
+EXIT=0

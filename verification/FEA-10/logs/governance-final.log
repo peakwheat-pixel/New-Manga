@@ -1,0 +1,11 @@
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+DataRoot=N/A (read-only governance); fixtures=G:/CODEX/New Manga.workspace/FEA-10/fixtures/
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-10.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3098 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5580 bytes / 52 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-10\changed-files.txt, G:\CODEX\New Manga\verification\FEA-10\DELIVERY-MANIFEST.json, G:\CODEX\New Manga\verification\FEA-10\OWNER-CHECKPOINT.md, G:\CODEX\New Manga\verification\FEA-10\record_delivery.py, G:\CODEX\New Manga\verification\FEA-10\RESOURCE-MANIFEST.json, G:\CODEX\New Manga\verification\FEA-10\ipc\real-ipc.txt, G:\CODEX\New Manga\verification\FEA-10\logs\canonical-commit.log, G:\CODEX\New Manga\verification\FEA-10\logs\dotnet-build-final.log
+FAIL: READY DAG 只允许 status: ready；FEA-10 当前为 in_review
+Governance check: FAIL (1 errors, 4 warnings)
+EXIT=1

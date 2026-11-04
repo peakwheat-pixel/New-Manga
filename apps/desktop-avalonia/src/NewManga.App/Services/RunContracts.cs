@@ -356,6 +356,12 @@ public sealed record TaskProjectionInfo(
 /// <see cref="ControlRunAsync"/> requires one only for <see cref="RunControlAction.Restart"/>.
 /// A missing/blank key is refused locally with <c>INVALID_REQUEST</c> — never silently generated.
 /// </summary>
+public interface IPreparedRunController
+{
+    Task<NewManga.CoreClient.PreparedRunPreview?> PrepareRunAsync(RunStartRequest request, CancellationToken ct = default);
+    Task<RunStartInfo?> AcceptRunAsync(string preparedRunId, int generation, string idempotencyKey, CancellationToken ct = default);
+}
+
 public interface IRunController
 {
     /// <summary>C056 <c>library_start_run</c> → Core <c>StartRun</c> (minor 3).</summary>
@@ -398,6 +404,19 @@ public interface IRunController
 /// </summary>
 public static class RunPayloads
 {
+    public static JsonElement PrepareRun(RunStartRequest request) => Build(writer =>
+    {
+        writer.WriteStartObject();
+        writer.WriteString("command", request.Command);
+        writer.WritePropertyName("scope");
+        WriteObject(writer, request.Scope);
+        if (request.Overrides is not null)
+        {
+            writer.WritePropertyName("overrides");
+            WriteObject(writer, request.Overrides);
+        }
+        writer.WriteEndObject();
+    });
     /// <summary>
     /// C056 StartRun payload. Note the dispatcher (<c>HostCommandDispatcher.WriteCorePayload</c>)
     /// injects the Host-side default <c>overrides.provider_bindings</c> when the caller sends none, so

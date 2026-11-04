@@ -1,0 +1,5 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/fea10 -q
+DataRoot=G:/CODEX/New Manga.workspace/FEA-10/fixtures/<case>-<uuid>/
+.................................                                        [100%]
+33 passed in 3.34s
+EXIT=0

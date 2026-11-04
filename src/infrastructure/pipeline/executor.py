@@ -41,6 +41,16 @@ class ProductionStepExecutor(StepExecutor):
             raise StepExecutionError("INVALID_PROVIDER_OUTPUT", "handler did not return StepResult")
         return result
 
+    def preview_run(self, run: PipelineRun) -> Mapping[str, Any]:
+        preview = getattr(self._handlers.get("translate"), "preview_run", None)
+        if callable(preview):
+            try:
+                return preview(run)
+            except Exception:
+                # Readiness remains explicit. No provider request is executed for a preview.
+                return {"targetCount": len(run.targets), "translationPayload": "unavailable"}
+        return {"targetCount": len(run.targets)}
+
     def _resolve(self, step_type: str, binding: Any) -> StepHandler | None:
         handler = self._handlers.get(step_type)
         if handler is not None:

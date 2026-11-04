@@ -1,0 +1,4 @@
+DataRoot=G:\CODEX\New Manga.workspace\FEA-10\fixtures\ipc-95171cb52b7441e9a6540869bc969773
+PrepareRun -> Host candidate -> AcceptRun -> same-key replay -> Core process restart -> replay same run_id
+run_id=run-cc5734788e44471eb609413f30752c08
+PASS

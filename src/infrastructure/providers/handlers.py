@@ -52,6 +52,7 @@ from application.translation.inpaint.step import (
 from application.translation.knowledge.term_extraction import TermExtractionService
 from application.translation.pipeline.executor import StepExecutionError
 from domain.tasks.models import PipelineRun, PlanUnit, StageState, StepResult, StepRun
+from application.tasks.store import snapshot_digest
 from infrastructure.providers.fallback import (
     FallbackChain,
     chain_from_binding,
@@ -217,6 +218,7 @@ class ProductionHandlers:
                 (STEP_RENDER, self.handle_render),
             )
         }
+        self._handlers[STEP_TRANSLATE].preview_run = self.preview_run
 
     @staticmethod
     def _typed(handler: Any) -> Any:
@@ -245,6 +247,50 @@ class ProductionHandlers:
 
     def as_mapping(self) -> dict[str, Any]:
         return dict(self._handlers)
+
+    def canonical_translation_request(self, payload, run, provider_id=None):
+        """Reuse the existing transport body builder; domain payload_hash is narrower."""
+        binding = run.provider_binding_snapshot.get(STEP_TRANSLATE)
+        chain = self._chain(run, STEP_TRANSLATE)
+        provider_id = provider_id or chain.primary
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+        provider = (resolver(CAPABILITY_TRANSLATION, provider_id, binding) if callable(resolver)
+                    else self.deps.registry.resolve(CAPABILITY_TRANSLATION, provider_id))
+        client = getattr(provider, "client", None)
+        if client is not None and hasattr(provider, "_build_user_text"):
+            from infrastructure.providers.translation_openai import TRANSLATION_SYSTEM_PROMPT
+            body = client._build_payload(
+                user_text=provider._build_user_text(payload), system_prompt=TRANSLATION_SYSTEM_PROMPT,
+                image_bytes=None, image_mime="image/png", response_format_json=True,
+                options=dict(provider.options) or None,
+            )
+            return {"endpoint": provider.config.url(), "model": provider.config.model, "body": body}
+        return {"provider": provider_id, "model": getattr(provider, "model", ""), "body": payload.payload()}
+
+    def preview_run(self, run):
+        if run.command_type.value != "retranslate_region":
+            # OCR-dependent payloads do not exist yet; never manufacture their text.
+            return {"targetCount": len(run.targets), "translationPayload": "requires_upstream_output"}
+        previews = []
+        settings = self._section(run.settings_snapshot, "translate")
+        for target in run.targets:
+            for region in target.snapshot.region_snapshots():
+                text = region.metadata.get("ocr_text", "")
+                if not text.strip():
+                    raise ProviderInputError("translation snapshot has no source text", stage=STEP_TRANSLATE)
+                payload = build_request_payload(
+                    target.page_id, [RegionInput(region.region_id, text, region.region_type)],
+                    context_pages=self._context_pages(target.page_id, region.region_id, run),
+                    glossary=self._glossary(run),
+                    token_budget=int(settings.get("context_token_budget", DEFAULT_CONTEXT_TOKEN_BUDGET)),
+                )
+                by_provider = {provider_id: snapshot_digest(self.canonical_translation_request(payload, run, provider_id))
+                               for provider_id in self._chain(run, STEP_TRANSLATE).providers()}
+                previews.append({"regionId": region.region_id,
+                                 "payloadDigestPreview": snapshot_digest(self.canonical_translation_request(payload, run)),
+                                 "payloadDigestsPreviewByProvider": by_provider,
+                                 "body": payload.payload()})
+        return {"requests": previews}
 
     # ------------------------------------------------------------------
     # detect (TASK-049 AC ①②: page-level input face for region steps)
@@ -473,6 +519,12 @@ class ProductionHandlers:
                 f"region {region_id!r} is not available", stage=STEP_TRANSLATE
             )
         source_text = region.text.ocr_text
+        # A translate-only Run consumes its accepted source, not a later mutable neighbour/target.
+        if getattr(getattr(run, "command_type", None), "value", None) == "retranslate_region":
+            for target in run.targets:
+                for snapshot in target.snapshot.region_snapshots():
+                    if snapshot.region_id == region_id and "ocr_text" in snapshot.metadata:
+                        source_text = snapshot.metadata["ocr_text"]
         if not source_text.strip():
             raise ProviderInputError(
                 "region has no OCR text to translate",
@@ -496,18 +548,23 @@ class ProductionHandlers:
                 settings.get("context_token_budget", DEFAULT_CONTEXT_TOKEN_BUDGET)
             ),
         )
+        preview_digests = {}
+
+        def invoke_translation(provider_id):
+            preview_digests[provider_id] = snapshot_digest(self.canonical_translation_request(payload, run, provider_id))
+            return self._invoke_provider(provider_id, CAPABILITY_TRANSLATION,
+                                         lambda provider: provider.translate(payload), run=run)
         outcome = run_chain(
             chain,
-            lambda provider_id: self._invoke_provider(
-                provider_id,
-                CAPABILITY_TRANSLATION,
-                lambda provider: provider.translate(payload),
-                run=run,
-            ),
+            invoke_translation,
             policy=self._retry_policy_for_run(run),
             payload_hash_provider=payload.payload_hash,
         )
         result = outcome.result
+        payload_digest_preview = preview_digests[outcome.final_provider_id]
+        payload_digest_send = snapshot_digest(self.canonical_translation_request(payload, run, outcome.final_provider_id))
+        if payload_digest_send != payload_digest_preview:
+            raise ProviderInputError("translation request changed during execution", stage=STEP_TRANSLATE)
         translations = dict(result.translations)
         if set(translations) != {region_id}:
             raise ProviderInputError(
@@ -537,6 +594,8 @@ class ProductionHandlers:
                 **result.provenance(),
                 **outcome.as_provenance(),
                 "payload_hash": payload.payload_hash(),
+                "payloadDigestPreview": payload_digest_preview,
+                "payloadDigestSend": payload_digest_send,
                 "device_host": self._device_host(),
             },
         }
@@ -1000,7 +1059,10 @@ class ProductionHandlers:
     def _invoke_provider(
         self, provider_id: str, capability: str, call, *, run: PipelineRun
     ):
-        provider = self.deps.registry.resolve(capability, provider_id)
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+        binding = getattr(run, "provider_binding_snapshot", {}).get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+        provider = (resolver(capability, provider_id, binding) if callable(resolver)
+                    else self.deps.registry.resolve(capability, provider_id))
 
         def invoke():
             return call(provider)
@@ -1114,6 +1176,10 @@ class ProductionHandlers:
         self, page_id: str, region_id: str, run: PipelineRun
     ) -> tuple[ContextPage, ...]:
         """Neighbouring-page context (D06 §13/§84); never a write target."""
+        for target in run.targets:
+            if target.page_id == page_id and "context_pages" in target.snapshot.metadata:
+                return tuple(ContextPage(item["page_id"], item["position"], item["text"], item["reading_order"])
+                             for item in target.snapshot.metadata["context_pages"] if item["text"].strip())
         settings = self._section(run.settings_snapshot, "translate")
         window = int(settings.get("context_pages", DEFAULT_CONTEXT_PAGES))
         if window <= 0:
@@ -1128,14 +1194,14 @@ class ProductionHandlers:
             for region in target.snapshot.region_snapshots():
                 if not region.region_id:
                     continue
-                live = self.deps.regions.get_region(region.region_id)
-                if live is None or not live.text.ocr_text.strip():
+                pinned_text = region.metadata.get("ocr_text")
+                if not isinstance(pinned_text, str) or not pinned_text.strip():
                     continue
                 context.append(
                     ContextPage(
                         page_id=target.page_id,
                         position="after",
-                        text=live.text.ocr_text,
+                        text=pinned_text,
                         reading_order=target.target_order,
                     )
                 )

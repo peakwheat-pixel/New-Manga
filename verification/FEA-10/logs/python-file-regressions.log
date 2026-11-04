@@ -1,0 +1,7 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/core/test_p13_run_runtime.py tests/core/test_p13_lifecycle_discriminators.py tests/core/test_fea00a_pipeline_seam.py tests/core/test_pipeline_defaults_assembly.py tests/core/test_pipeline_defaults_service.py tests/pipeline/test_pipeline_production_seam.py tests/pipeline/test_pipeline.py tests/pipeline/test_run_store_cache_race.py tests/pipeline/test_store.py tests/pipeline/test_models.py tests/pipeline/test_regionless_rebinding.py tests/pipeline/test_retype_candidate_persistence.py tests/pipeline/test_clean_availability.py tests/pipeline/test_fea00a_source_boundaries.py -q
+DataRoot=pytest per-test tmp_path (isolated, no AppData/real source)
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+............................................................             [100%]
+204 passed in 8.01s
+EXIT=0

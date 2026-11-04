@@ -9,9 +9,13 @@ namespace NewManga.App.Services;
 /// <see cref="ISourceImportController"/> — a SEPARATE face, so the frozen C-07
 /// <see cref="IHostController"/> inventory (54 members) stays byte-identical.
 /// </summary>
-public sealed class NullHostController : IHostController, ISourceImportController
+public sealed class NullHostController : IHostController, ISourceImportController, IPreparedRunController
 {
     public static NullHostController Instance { get; } = new();
+
+    public Task<PreparedRunPreview?> PrepareRunAsync(RunStartRequest request, CancellationToken ct = default) => Task.FromResult<PreparedRunPreview?>(null);
+    public Task<RunStartInfo?> AcceptRunAsync(string preparedRunId, int generation, string idempotencyKey,
+        CancellationToken ct = default) => Task.FromResult<RunStartInfo?>(null);
 
     private int _createdChapters;
 

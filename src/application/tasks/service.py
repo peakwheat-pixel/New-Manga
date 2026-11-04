@@ -8,6 +8,7 @@ import threading
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from typing import Any, Mapping, Sequence
 
 from application.tasks.store import (
@@ -16,6 +17,11 @@ from application.tasks.store import (
     PipelineStore,
     SnapshotProvider,
     TargetCatalog,
+    prepared_quartet,
+    snapshot_digest,
+    snapshot_value,
+    validate_prepared_snapshots,
+    validate_prepared_overrides,
 )
 from application.translation.context.gate import (
     SFX_SKIP_REASON,
@@ -242,7 +248,8 @@ class PipelineService:
         retry_reason: str | None = None,
         _persist: bool = True,
     ) -> PipelineRun:
-        self._ensure_scheduler_owner()
+        if _persist:
+            self._ensure_scheduler_owner()
         command = CommandType(command_type)
         if isinstance(scope, PipelineScope):
             actual_scope = scope
@@ -257,6 +264,11 @@ class PipelineService:
         raw_targets = self._catalog.expand(actual_scope)
         run_id = _new_id("run")
         frozen = self._snapshots.freeze(run_id, overrides=overrides)
+        freeze_context = getattr(self._catalog, "freeze_context", None)
+        if callable(freeze_context):
+            section = frozen.settings.get("translate", {})
+            window = section.get("context_pages", 1) if isinstance(section, Mapping) else 1
+            raw_targets = freeze_context(raw_targets, max(0, int(window)))
         requested = actual_scope.selected_ids
         if not requested:
             requested = tuple(
@@ -373,6 +385,103 @@ class PipelineService:
                 idempotency_key=key,
                 request_fingerprint=fingerprint,
                 operation_type="StartRun",
+            )
+            if created:
+                self._remember_event_state(accepted)
+            return accepted, created
+
+    def prepare_run(
+        self, command_type: CommandType | str, scope: PipelineScope, *,
+        overrides: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Read-only planning. The trusted Host owns this transient candidate."""
+        validate_prepared_overrides(overrides or {})
+        run = self.create_run(command_type, scope, overrides=overrides, _persist=False)
+        validate_prepared_snapshots(run)
+        quartet = prepared_quartet(run)
+        digest = snapshot_digest(quartet)
+        preview_builder = getattr(self._executor, "preview_run", None)
+        payload_preview = preview_builder(run) if callable(preview_builder) else {"targetCount": len(run.targets)}
+        return {
+            "preparedRunId": _new_id("prepared"), "command": run.command_type.value,
+            "scope": self._wire_scope(scope), "overrides": snapshot_value(overrides or {}),
+            **quartet, "preparedDigest": digest, "snapshotDigest": digest,
+            "generation": 1,
+            "expiresAt": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
+            "displaySummary": {"command": run.command_type.value, "targetCount": len(run.targets)},
+            "redactedPayloadPreview": snapshot_value(payload_preview),
+        }
+
+    @staticmethod
+    def _wire_scope(scope: PipelineScope) -> dict[str, Any]:
+        kind = scope.scope_type.value
+        field = {"book": "book_id", "chapter": "chapter_id", "page": "page_id",
+                 "region": "region_id", "page_selection": "page_ids"}[kind]
+        value = (scope.book_id if kind == "book" else scope.chapter_id if kind == "chapter"
+                 else list(scope.selected_ids) if kind == "page_selection" else scope.selected_ids[0])
+        return {"kind": kind, field: value}
+
+    def accept_prepared_run(
+        self, prepared: Mapping[str, Any], scope: PipelineScope, *, idempotency_key: str,
+    ) -> tuple[PipelineRun, bool]:
+        self._ensure_scheduler_owner()
+        key = self._require_idempotency_key(idempotency_key)
+        required = {"preparedRunId", "command", "scope", "requestedTargets", "settingsSnapshot",
+                    "providerBindingSnapshot", "constraintSnapshotRef", "preparedDigest", "snapshotDigest",
+                    "generation", "expiresAt", "displaySummary", "redactedPayloadPreview"}
+        if not required <= set(prepared):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "PreparedRun is incomplete")
+        try:
+            command = CommandType(prepared["command"])
+            overrides = prepared.get("overrides", {})
+            validate_prepared_overrides(overrides)
+            if not isinstance(overrides, Mapping):
+                raise ValueError()
+            fingerprint = self._request_fingerprint({
+                "operation": "StartRun", "command": command.value,
+                "scope": self._scope_fingerprint(scope), "overrides": snapshot_value(overrides),
+            })
+        except (ValueError, TypeError):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "PreparedRun fields are invalid") from None
+        with self._accept_lock:
+            # Receipt lookup precedes expiry, target reads and configuration reads.
+            record = self._store.get_idempotency(key)
+            if record is not None:
+                if record.request_fingerprint != fingerprint:
+                    raise PipelineError("IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs")
+                return self._require_run(record.run_id), False
+            try:
+                expires = datetime.fromisoformat(prepared["expiresAt"])
+                if expires.tzinfo is None:
+                    raise ValueError()
+            except (ValueError, TypeError):
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "PreparedRun expiry is invalid") from None
+            if expires <= datetime.now(timezone.utc):
+                raise PipelineError("RUN_PREVIEW_EXPIRED", "PreparedRun expired")
+            quartet = {name: prepared[name] for name in (
+                "requestedTargets", "settingsSnapshot", "providerBindingSnapshot", "constraintSnapshotRef")}
+            if (not isinstance(quartet["requestedTargets"], (list, tuple))
+                    or not quartet["requestedTargets"]
+                    or not isinstance(quartet["settingsSnapshot"], Mapping)
+                    or not isinstance(quartet["providerBindingSnapshot"], Mapping)):
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "PreparedRun snapshots are incomplete")
+            if (snapshot_digest(quartet) != prepared["preparedDigest"]
+                    or prepared["snapshotDigest"] != prepared["preparedDigest"]):
+                raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun digest differs")
+            run = self.create_run(command, scope, overrides=overrides, _persist=False)
+            validate_prepared_snapshots(run)
+
+            def validate() -> None:
+                # The durable store invokes this under BEGIN IMMEDIATE, before its first write.
+                current = self.create_run(command, scope, overrides=overrides, _persist=False)
+                if snapshot_digest(prepared_quartet(current)) != prepared["preparedDigest"]:
+                    raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun no longer matches current state")
+                if prepared_quartet(current) != prepared_quartet(run):
+                    raise PipelineError("RUN_STALE_PREVIEW", "PreparedRun changed during acceptance")
+
+            accepted, created = self._store.accept(
+                run, idempotency_key=key, request_fingerprint=fingerprint,
+                operation_type="StartRun", validate=validate,
             )
             if created:
                 self._remember_event_state(accepted)
@@ -721,6 +830,9 @@ class PipelineService:
     ) -> StepRun:
         current = self._catalog.current(unit.target_id)
         input_refs = dict(current.current_revisions)
+        if "commit_guard" in current.metadata:
+            input_refs["__fea10_guard__"] = snapshot_digest(current.metadata["commit_guard"])
+            input_refs["__fea10_protection__"] = snapshot_digest([current.manual_edited, current.final_confirmed])
         lock = current.lock
         step_run = StepRun(
             step_run_id=_new_id("step"),
@@ -948,6 +1060,7 @@ class PipelineService:
                 if len(run.step_runs) >= self._limits.max_step_runs:
                     run.fatal_error = "RESOURCE_LIMIT_EXCEEDED"
                     run.status = PipelineRunStatus.FAILED
+                    self._cancel_pending_tasks(run)
                     self._cancel_remaining(run, task, unit)
                     self._persist(run)
                     return run
@@ -1131,6 +1244,7 @@ class PipelineService:
                 raise PipelineError("INVALID_RUN_TRANSITION", "abandon requires an undisposed interrupted run")
             run.status = PipelineRunStatus.CANCELLED
             run.termination_reason = "abandoned_after_interruption"
+            self._cancel_pending_tasks(run)
             self._persist(run)
             return ControlResult(run.run_id, run.status)
 
@@ -1366,6 +1480,7 @@ class PipelineService:
 
     def _aggregate_run(self, run: PipelineRun) -> None:
         if run.fatal_error:
+            self._cancel_pending_tasks(run)
             run.status = PipelineRunStatus.FAILED
             return
         if run.cancel_requested:
@@ -1404,6 +1519,10 @@ class PipelineService:
             elif statuses and statuses <= {PipelineTaskStatus.COMPLETED}:
                 key = "completed"
             elif statuses and statuses <= {PipelineTaskStatus.SKIPPED}:
+                key = "skipped"
+            elif PipelineTaskStatus.CANCELLED in statuses and statuses <= {
+                PipelineTaskStatus.CANCELLED, PipelineTaskStatus.SKIPPED, PipelineTaskStatus.COMPLETED
+            }:
                 key = "skipped"
             else:
                 key = "waiting"

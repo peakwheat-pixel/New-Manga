@@ -152,7 +152,12 @@ class TaskProjection:
 
     @property
     def is_terminal(self) -> bool:
-        return self.run_status in _TERMINAL_STATUSES
+        return (self.run_status in _TERMINAL_STATUSES
+                and self.processing_page_count == 0 and self.waiting_page_count == 0
+                and (self.run_status != "completed" or (
+                    self.failed_page_count == 0 and self.blocked_page_count == 0))
+                and (self.run_status != "completed_with_failures" or (
+                    self.failed_page_count > 0 and self.blocked_page_count == 0)))
 
 
 _TERMINAL_STATUSES = frozenset(
@@ -339,6 +344,10 @@ def _classify_page(tasks: Sequence) -> tuple[str, str | None]:
     if statuses and statuses <= {PipelineTaskStatus.COMPLETED}:
         return STATUS_COMPLETED, None
     if statuses and statuses <= {PipelineTaskStatus.SKIPPED}:
+        return STATUS_SKIPPED, None
+    if PipelineTaskStatus.CANCELLED in statuses and statuses <= {
+        PipelineTaskStatus.CANCELLED, PipelineTaskStatus.SKIPPED, PipelineTaskStatus.COMPLETED
+    }:
         return STATUS_SKIPPED, None
     return STATUS_WAITING, None
 

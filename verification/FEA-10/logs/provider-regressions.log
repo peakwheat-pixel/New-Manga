@@ -1,0 +1,1089 @@
+COMMAND=C:/Python314/python.exe -m pytest tests/providers -q
+DataRoot=pytest tmp_path; no real provider endpoint/model credentials
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+........................................................................ [ 38%]
+...............................................................F.....FFF [ 51%]
+FFFFFFFFFFFFFF.FFFF....F.........F...................................... [ 64%]
+........................................................................ [ 77%]
+......s................................................................. [ 90%]
+........................................................                 [100%]
+================================== FAILURES ===================================
+_____________ test_translate_call_site_uses_the_run_tasks_policy ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000027D8CE9D240>
+
+    def test_translate_call_site_uses_the_run_tasks_policy(monkeypatch) -> None:
+        recorder = _RecordingRunChain()
+        monkeypatch.setattr(handlers_module, "run_chain", recorder)
+        region = SimpleNamespace(
+            region_id="r1",
+            deleted=False,
+            text=SimpleNamespace(ocr_text="ԭ��"),
+            region_type=SimpleNamespace(value="speech"),
+        )
+        handlers = _handlers(regions=SimpleNamespace(get_region=lambda rid: region))
+        base = handlers.deps.retry_policy
+        run = _run(
+            {"tasks": {"retry_backoff_seconds": 10}},
+            provider_binding_snapshot={"translate": "fake-provider"},
+            targets=(),
+            run_id="run-b1",
+        )
+        unit = SimpleNamespace(
+            target_id="t1", region_id="r1", page_id="p1", step_type="translate"
+        )
+    
+        with pytest.raises(_StopDispatch):
+>           handlers.handle_translate(SimpleNamespace(), unit, run)
+
+tests\providers\test_handlers_b1_settings.py:306: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEAAD50>
+step_run = namespace()
+unit = namespace(target_id='t1', region_id='r1', page_id='p1', step_type='translate')
+run = namespace(settings_snapshot={'tasks': {'retry_backoff_seconds': 10}}, provider_binding_snapshot={'translate': 'fake-provider'}, targets=(), run_id='run-b1')
+
+    def handle_translate(
+        self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
+    ) -> StepResult:
+        region_id = self._require_region(unit)
+        region = self.deps.regions.get_region(region_id)
+        if region is None or region.deleted:
+            raise ProviderInputError(
+                f"region {region_id!r} is not available", stage=STEP_TRANSLATE
+            )
+        source_text = region.text.ocr_text
+        # A translate-only Run consumes its accepted source, not a later mutable neighbour/target.
+>       if run.command_type.value == "retranslate_region":
+           ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'command_type'
+
+src\infrastructure\providers\handlers.py:523: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot0-None] ________
+
+snapshot = {}, expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEABB90>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CE17ED0>
+run = namespace(settings_snapshot={})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot1-None] ________
+
+snapshot = {'model_gpu': None}, expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8C3BB950>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CEBCEB0>
+run = namespace(settings_snapshot={'model_gpu': None})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot2-None] ________
+
+snapshot = {'model_gpu': {}}, expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEAA0F0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF26A30>
+run = namespace(settings_snapshot={'model_gpu': {}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot3-None] ________
+
+snapshot = {'model_gpu': {'device_preference': 'auto'}}
+expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEA8770>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF25220>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'auto'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot4-None] ________
+
+snapshot = {'model_gpu': {'device_preference': 'tpu'}}
+expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEAB6B0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF23AB0>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'tpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot5-None] ________
+
+snapshot = {'model_gpu': {'device_preference': 1}}, expected_preference = None
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEAAF90>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CC0CF60>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 1}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot6-cpu] _________
+
+snapshot = {'model_gpu': {'device_preference': 'cpu'}}
+expected_preference = 'cpu'
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CBECF50>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF25380>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'cpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+________ test_heavy_runner_forwarded_device_preference[snapshot7-gpu] _________
+
+snapshot = {'model_gpu': {'device_preference': 'gpu'}}
+expected_preference = 'gpu'
+
+    @pytest.mark.parametrize(
+        "snapshot,expected_preference",
+        [
+            ({}, None),
+            ({"model_gpu": None}, None),
+            ({"model_gpu": {}}, None),
+            ({"model_gpu": {"device_preference": "auto"}}, None),
+            # a corrupted/unknown value must not invent a preference
+            ({"model_gpu": {"device_preference": "tpu"}}, None),
+            ({"model_gpu": {"device_preference": 1}}, None),
+            ({"model_gpu": {"device_preference": "cpu"}}, "cpu"),
+            ({"model_gpu": {"device_preference": "gpu"}}, "gpu"),
+        ],
+    )
+    def test_heavy_runner_forwarded_device_preference(
+        snapshot: dict, expected_preference: str | None
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        provider = _Provider()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       assert _invoke(handlers, _run(snapshot)) == "called"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:434: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CF3BEF0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF21900>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+______ test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu0-True] _______
+
+model_gpu = {'device_preference': 'gpu'}, expected_allow = True
+
+    @pytest.mark.parametrize(
+        "model_gpu,expected_allow",
+        [
+            ({"device_preference": "gpu"}, True),  # design default
+            ({"device_preference": "gpu", "allow_cpu_fallback": False}, False),
+            ({"device_preference": "gpu", "allow_cpu_fallback": True}, True),
+            # malformed switch -> the conservative design default (allowed)
+            ({"device_preference": "gpu", "allow_cpu_fallback": "false"}, True),
+            ({"device_preference": "gpu", "allow_cpu_fallback": 0}, True),
+        ],
+    )
+    def test_heavy_runner_forwarded_cpu_fallback_switch(
+        model_gpu: dict, expected_allow: bool
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider(), requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": model_gpu}))
+
+tests\providers\test_handlers_b1_settings.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEA8410>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8C41D850>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+______ test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu1-False] ______
+
+model_gpu = {'device_preference': 'gpu', 'allow_cpu_fallback': False}
+expected_allow = False
+
+    @pytest.mark.parametrize(
+        "model_gpu,expected_allow",
+        [
+            ({"device_preference": "gpu"}, True),  # design default
+            ({"device_preference": "gpu", "allow_cpu_fallback": False}, False),
+            ({"device_preference": "gpu", "allow_cpu_fallback": True}, True),
+            # malformed switch -> the conservative design default (allowed)
+            ({"device_preference": "gpu", "allow_cpu_fallback": "false"}, True),
+            ({"device_preference": "gpu", "allow_cpu_fallback": 0}, True),
+        ],
+    )
+    def test_heavy_runner_forwarded_cpu_fallback_switch(
+        model_gpu: dict, expected_allow: bool
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider(), requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": model_gpu}))
+
+tests\providers\test_handlers_b1_settings.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEA9F10>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF25B10>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': False}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+______ test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu2-True] _______
+
+model_gpu = {'device_preference': 'gpu', 'allow_cpu_fallback': True}
+expected_allow = True
+
+    @pytest.mark.parametrize(
+        "model_gpu,expected_allow",
+        [
+            ({"device_preference": "gpu"}, True),  # design default
+            ({"device_preference": "gpu", "allow_cpu_fallback": False}, False),
+            ({"device_preference": "gpu", "allow_cpu_fallback": True}, True),
+            # malformed switch -> the conservative design default (allowed)
+            ({"device_preference": "gpu", "allow_cpu_fallback": "false"}, True),
+            ({"device_preference": "gpu", "allow_cpu_fallback": 0}, True),
+        ],
+    )
+    def test_heavy_runner_forwarded_cpu_fallback_switch(
+        model_gpu: dict, expected_allow: bool
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider(), requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": model_gpu}))
+
+tests\providers\test_handlers_b1_settings.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEA91F0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF27A00>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': True}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+______ test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu3-True] _______
+
+model_gpu = {'device_preference': 'gpu', 'allow_cpu_fallback': 'false'}
+expected_allow = True
+
+    @pytest.mark.parametrize(
+        "model_gpu,expected_allow",
+        [
+            ({"device_preference": "gpu"}, True),  # design default
+            ({"device_preference": "gpu", "allow_cpu_fallback": False}, False),
+            ({"device_preference": "gpu", "allow_cpu_fallback": True}, True),
+            # malformed switch -> the conservative design default (allowed)
+            ({"device_preference": "gpu", "allow_cpu_fallback": "false"}, True),
+            ({"device_preference": "gpu", "allow_cpu_fallback": 0}, True),
+        ],
+    )
+    def test_heavy_runner_forwarded_cpu_fallback_switch(
+        model_gpu: dict, expected_allow: bool
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider(), requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": model_gpu}))
+
+tests\providers\test_handlers_b1_settings.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB61B0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CEBE1F0>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': 'false'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+______ test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu4-True] _______
+
+model_gpu = {'device_preference': 'gpu', 'allow_cpu_fallback': 0}
+expected_allow = True
+
+    @pytest.mark.parametrize(
+        "model_gpu,expected_allow",
+        [
+            ({"device_preference": "gpu"}, True),  # design default
+            ({"device_preference": "gpu", "allow_cpu_fallback": False}, False),
+            ({"device_preference": "gpu", "allow_cpu_fallback": True}, True),
+            # malformed switch -> the conservative design default (allowed)
+            ({"device_preference": "gpu", "allow_cpu_fallback": "false"}, True),
+            ({"device_preference": "gpu", "allow_cpu_fallback": 0}, True),
+        ],
+    )
+    def test_heavy_runner_forwarded_cpu_fallback_switch(
+        model_gpu: dict, expected_allow: bool
+    ) -> None:
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider(), requires_gpu=True, supports_cpu_fallback=True),
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": model_gpu}))
+
+tests\providers\test_handlers_b1_settings.py:466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB6750>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CCF3270>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': 0}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_____________ test_non_gpu_provider_ignores_the_device_preference _____________
+
+    def test_non_gpu_provider_ignores_the_device_preference() -> None:
+        """Review M3: a remote / CPU-only provider must not fail on a user gpu pick.
+    
+        Translation / vision OCR descriptors declare ``requires_gpu=False`` and
+        ``supports_cpu_fallback=False``; a Run-wide ``gpu`` preference must not
+        turn their calls into ``DeviceUnavailable``.
+        """
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_Provider()),  # descriptor requires_gpu=False
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": {"device_preference": "gpu"}}))
+
+tests\providers\test_handlers_b1_settings.py:484: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEAA030>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D89F1DB10>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_______ test_descriptor_flags_win_over_conflicting_instance_attributes ________
+
+    def test_descriptor_flags_win_over_conflicting_instance_attributes() -> None:
+        """Review B1: the descriptor is the declaration source of truth."""
+    
+        class _InstanceDeclared:
+            requires_gpu = True
+            supports_cpu_fallback = True
+    
+            def echo(self) -> str:
+                return "called"
+    
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner,
+            registry=_registry(_InstanceDeclared()),  # descriptor declares False/False
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": {"device_preference": "cpu"}}))
+
+tests\providers\test_handlers_b1_settings.py:507: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEA8770>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF25E80>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'cpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_______ test_instance_attributes_are_the_fallback_without_a_descriptor ________
+
+    def test_instance_attributes_are_the_fallback_without_a_descriptor() -> None:
+        """A registry that cannot answer a descriptor keeps the historical read."""
+        provider = _Provider()
+        provider.requires_gpu = True
+        provider.supports_cpu_fallback = True
+    
+        class _RegistryWithoutDescriptor:
+            def resolve(self, capability: str, provider_id: str):
+                return provider
+    
+            def descriptor(self, provider_id: str, *, capability=None):
+                return None
+    
+        runner = _RecordingHeavyRunner()
+        handlers = _handlers(
+            heavy_runner=runner, registry=_RegistryWithoutDescriptor()
+        )
+    
+>       _invoke(handlers, _run({"model_gpu": {"device_preference": "gpu"}}))
+
+tests\providers\test_handlers_b1_settings.py:532: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB6E10>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF22560>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_________ test_without_a_heavy_runner_the_provider_is_called_directly _________
+
+    def test_without_a_heavy_runner_the_provider_is_called_directly() -> None:
+        provider = _Provider()
+        handlers = _handlers(
+            registry=_registry(provider, requires_gpu=True, supports_cpu_fallback=True)
+        )
+    
+        # No heavy runner assembled: the historical direct call, no device gate.
+>       assert _invoke(handlers, _run({"model_gpu": {"device_preference": "gpu"}})) == (
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "called"
+        )
+
+tests\providers\test_handlers_b1_settings.py:546: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:405: in _invoke
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB72F0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _invoke.<locals>.<lambda> at 0x0000027D8CF23740>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu'}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_____ test_descriptor_cpu_fallback_is_reachable_on_the_real_device_chain ______
+
+    def test_descriptor_cpu_fallback_is_reachable_on_the_real_device_chain() -> None:
+        """B1: descriptor True + user allows + no GPU -> the call runs on CPU."""
+        calls: list[str] = []
+        handlers = _device_chain_handlers(
+            _Provider(), requires_gpu=True, supports_cpu_fallback=True
+        )
+        snapshot = {"model_gpu": {"device_preference": "gpu", "allow_cpu_fallback": True}}
+    
+        with gpu_state(available=False):
+>           assert _execute(handlers, calls, snapshot) == "executed"
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:630: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:616: in _execute
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB4EF0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _execute.<locals>.call at 0x0000027D8CF054E0>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': True}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+____ test_descriptor_cpu_fallback_disabled_by_the_user_is_a_typed_refusal _____
+
+    def test_descriptor_cpu_fallback_disabled_by_the_user_is_a_typed_refusal() -> None:
+        """B1: descriptor True but the user switch is off -> typed refusal, no call."""
+        calls: list[str] = []
+        handlers = _device_chain_handlers(
+            _Provider(), requires_gpu=True, supports_cpu_fallback=True
+        )
+        snapshot = {"model_gpu": {"device_preference": "gpu", "allow_cpu_fallback": False}}
+    
+        with gpu_state(available=False):
+            with pytest.raises(DeviceUnavailable):
+>               _execute(handlers, calls, snapshot)
+
+tests\providers\test_handlers_b1_settings.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:616: in _execute
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB6390>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _execute.<locals>.call at 0x0000027D8CF05F30>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': False}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+__________ test_descriptor_without_cpu_support_stays_a_typed_refusal __________
+
+    def test_descriptor_without_cpu_support_stays_a_typed_refusal() -> None:
+        """B1: descriptor False ANDs with the user switch, which cannot enable it."""
+        calls: list[str] = []
+        handlers = _device_chain_handlers(
+            _Provider(), requires_gpu=True, supports_cpu_fallback=False
+        )
+        snapshot = {"model_gpu": {"device_preference": "gpu", "allow_cpu_fallback": True}}
+    
+        with gpu_state(available=False):
+            with pytest.raises(DeviceUnavailable):
+>               _execute(handlers, calls, snapshot)
+
+tests\providers\test_handlers_b1_settings.py:660: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:616: in _execute
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB6FF0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _execute.<locals>.call at 0x0000027D8C41D900>
+run = namespace(settings_snapshot={'model_gpu': {'device_preference': 'gpu', 'allow_cpu_fallback': True}})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+_______________ test_auto_path_ignores_the_descriptor_gpu_flags _______________
+
+    def test_auto_path_ignores_the_descriptor_gpu_flags() -> None:
+        """B1 non-regression: ``auto`` still runs the un-planned historical path."""
+        calls: list[str] = []
+        handlers = _device_chain_handlers(
+            _Provider(), requires_gpu=True, supports_cpu_fallback=True
+        )
+    
+        with gpu_state(available=False):
+            # no model_gpu section -> preferred_device=None -> run_guarded as before
+>           assert _execute(handlers, calls, {}) == "executed"
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_handlers_b1_settings.py:674: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\providers\test_handlers_b1_settings.py:616: in _execute
+    return handlers._invoke_provider(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFB7EF0>
+provider_id = 'fake-provider', capability = 'ocr'
+call = <function _execute.<locals>.call at 0x0000027D8CF21FE0>
+run = namespace(settings_snapshot={})
+
+    def _invoke_provider(
+        self, provider_id: str, capability: str, call, *, run: PipelineRun
+    ):
+        resolver = getattr(self.deps.registry, "resolve_for_run", None)
+>       binding = run.provider_binding_snapshot.get("translate" if capability == CAPABILITY_TRANSLATION else "ocr")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'provider_binding_snapshot'
+
+src\infrastructure\providers\handlers.py:1063: AttributeError
+___________ test_ocr_keeps_manual_translation_and_reports_the_hint ____________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000027D8D5F4DD0>, 'regions': <infrastru...000027D8CEAB950>, 'handlers': <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CEABEF0>, ...}
+
+    def test_ocr_keeps_manual_translation_and_reports_the_hint(workspace) -> None:
+        """AC-OCR-002 stays the domain's decision, not the adapter's."""
+        conn = workspace["conn"]
+        service = _pipeline(workspace)
+        run = service.create_run(
+            CommandType.OCR_REGION, PipelineScope(ScopeType.REGION, selected_ids=("region-c",))
+        )
+        service.plan_run(run.run_id)
+        executed = service.execute_run(run.run_id)
+    
+>       assert executed.status is PipelineRunStatus.COMPLETED
+E       AssertionError: assert <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'> is <PipelineRunStatus.COMPLETED: 'completed'>
+E        +  where <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'> = PipelineRun(run_id='run-8ea93b451a574f99b098cfaf466a97f0', command_type=<CommandType.OCR_REGION: 'ocr_region'>, scope=...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).status
+E        +  and   <PipelineRunStatus.COMPLETED: 'completed'> = PipelineRunStatus.COMPLETED
+
+tests\providers\test_handlers_pipeline.py:355: AssertionError
+_____ test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean ______
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000027DCAE57450>, 'regions': <infrastru...000027D8CFD4C50>, 'handlers': <infrastructure.providers.handlers.ProductionHandlers object at 0x0000027D8CFD4D10>, ...}
+
+    def test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean(workspace) -> None:
+        """Page-scope commands expand into Region units (D06 ��48) and stay cumulative."""
+        conn = workspace["conn"]
+        # Every Region of the page has already been OCR'ed (the planner requires a
+        # valid OCR stage before segment; see the fixture note).
+        for region_id in ("region-a", "region-c"):
+            conn.execute(
+                "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+                " VALUES ('region', ?, 'ocr', 'completed', ?)",
+                (region_id, NOW),
+            )
+        conn.commit()
+        service = _pipeline(
+            workspace,
+            settings={
+                "inpaint": {
+                    "dilate_radius": 0,
+                    "erode_radius": 0,
+                    "route_policy": {
+                        "allowed_routes": [ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED],
+                        "requirements": {ROUTE_SIMPLE_FILL: True, ROUTE_EDGE_BLEED: True},
+                    },
+                }
+            },
+        )
+        run = service.create_run(
+            CommandType.REINPAINT_ALL, PipelineScope(ScopeType.PAGE, selected_ids=("page-1",))
+        )
+        service.plan_run(run.run_id)
+        executed = service.execute_run(run.run_id)
+    
+>       assert executed.status is PipelineRunStatus.COMPLETED, [
+            (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+        ]
+E       AssertionError: [('segment', None, None), ('mask_refine', None, None), ('inpaint', None, None), ('segment', None, None), ('mask_refine', None, None), ('inpaint', None, None), ...]
+E       assert <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'> is <PipelineRunStatus.COMPLETED: 'completed'>
+E        +  where <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'> = PipelineRun(run_id='run-c156ad0a420c49f8be63d304bc135531', command_type=<CommandType.REINPAINT_ALL: 'reinpaint_all'>, ...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).status
+E        +  and   <PipelineRunStatus.COMPLETED: 'completed'> = PipelineRunStatus.COMPLETED
+
+tests\providers\test_handlers_pipeline.py:741: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_handlers_b1_settings.py::test_translate_call_site_uses_the_run_tasks_policy
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot0-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot1-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot2-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot3-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot4-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot5-None]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot6-cpu]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_device_preference[snapshot7-gpu]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu0-True]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu1-False]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu2-True]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu3-True]
+FAILED tests/providers/test_handlers_b1_settings.py::test_heavy_runner_forwarded_cpu_fallback_switch[model_gpu4-True]
+FAILED tests/providers/test_handlers_b1_settings.py::test_non_gpu_provider_ignores_the_device_preference
+FAILED tests/providers/test_handlers_b1_settings.py::test_descriptor_flags_win_over_conflicting_instance_attributes
+FAILED tests/providers/test_handlers_b1_settings.py::test_instance_attributes_are_the_fallback_without_a_descriptor
+FAILED tests/providers/test_handlers_b1_settings.py::test_without_a_heavy_runner_the_provider_is_called_directly
+FAILED tests/providers/test_handlers_b1_settings.py::test_descriptor_cpu_fallback_is_reachable_on_the_real_device_chain
+FAILED tests/providers/test_handlers_b1_settings.py::test_descriptor_cpu_fallback_disabled_by_the_user_is_a_typed_refusal
+FAILED tests/providers/test_handlers_b1_settings.py::test_descriptor_without_cpu_support_stays_a_typed_refusal
+FAILED tests/providers/test_handlers_b1_settings.py::test_auto_path_ignores_the_descriptor_gpu_flags
+FAILED tests/providers/test_handlers_pipeline.py::test_ocr_keeps_manual_translation_and_reports_the_hint
+FAILED tests/providers/test_handlers_pipeline.py::test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean
+24 failed, 535 passed, 4 skipped in 19.12s
+EXIT=1

@@ -319,6 +319,7 @@ _REFERENCED_IMPORT_COMMANDS = frozenset({
     "GetImportReceipt", "CancelImport",
 })
 _RUN_COMMANDS = frozenset({
+    "PrepareRun", "AcceptRun",
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
 })
@@ -4541,12 +4542,33 @@ class CoreServiceServer:
         try:
             if not payload_is_object:
                 raise PipelineError("INVALID_REQUEST", "payload must be a JSON object")
-            if command in {"StartRun", "ControlRun", "ResumeBlockedRun", "RetryFailedTargets"}:
+            if command in {"AcceptRun", "StartRun", "ControlRun", "ResumeBlockedRun", "RetryFailedTargets"}:
                 if not self._run_owner and not self._serving:
                     self._start_run_scheduler()
                 if not self._run_owner:
                     raise PipelineError("INVALID_RUN_TRANSITION", "Run scheduler owner is unavailable")
-            if command == "StartRun":
+            if command in {"PrepareRun", "AcceptRun"}:
+                if protocol_minor != 12:
+                    raise PipelineError("INVALID_REQUEST", "PreparedRun requires wire 2.12")
+                if command == "PrepareRun":
+                    if not {"command", "scope"} <= set(payload) or set(payload) - {"command", "scope", "overrides"}:
+                        raise PipelineError("INVALID_REQUEST", "PrepareRun shape is invalid")
+                    if payload["command"] not in COMMAND_CATALOG or not isinstance(payload.get("overrides", {}), dict):
+                        raise PipelineError("INVALID_REQUEST", "PrepareRun fields are invalid")
+                    result = self._core.pipeline.prepare_run(
+                        payload["command"], self._parse_run_scope(payload["scope"]),
+                        overrides=payload.get("overrides", {}),
+                    )
+                else:
+                    prepared = payload.get("prepared_run")
+                    if set(payload) != {"prepared_run", "idempotency_key"} or not isinstance(prepared, dict):
+                        raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "PreparedRun is required")
+                    run, created = self._core.pipeline.accept_prepared_run(
+                        prepared, self._parse_run_scope(prepared.get("scope")),
+                        idempotency_key=payload.get("idempotency_key"),
+                    )
+                    result = {"run_id": run.run_id, "status": "pending" if created else run.status.value}
+            elif command == "StartRun":
                 raw_command = payload.get("command")
                 key = payload.get("idempotency_key")
                 if not isinstance(raw_command, str) or raw_command not in COMMAND_CATALOG:
@@ -4671,6 +4693,9 @@ class CoreServiceServer:
                 "TARGET_NOT_FOUND": "not_found",
                 "IDEMPOTENCY_KEY_REUSED": "conflict",
                 "INVALID_RUN_TRANSITION": "conflict",
+                "RUN_STALE_PREVIEW": "conflict",
+                "RUN_PREVIEW_EXPIRED": "conflict",
+                "RUN_SNAPSHOT_INCOMPLETE": "unavailable",
             }.get(code, "validation")
             message = {
                 "INVALID_REQUEST": "Run request is invalid",
@@ -4683,7 +4708,7 @@ class CoreServiceServer:
                 "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
                 "request_id": request_id,
                 "result": None,
-                "error": make_error_envelope(code, category, message, retryable=False),
+                "error": make_error_envelope(code, category, message, retryable=code == "RUN_SNAPSHOT_INCOMPLETE"),
             }
         except Exception as error:
             code = getattr(error, "code", "UNKNOWN")
@@ -4696,6 +4721,8 @@ class CoreServiceServer:
                     str(code), "internal", "Run operation failed", retryable=False
                 ),
             }
+        if command in {"PrepareRun", "AcceptRun"}:
+            response["version"]["minor"] = 12
         return response, False
 
     def _dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
@@ -5971,7 +5998,9 @@ class CoreServiceServer:
         requested_minor = version.get("minor") if isinstance(version, dict) else None
         command = request.get("command")
         response, should_exit = self._dispatch_request(raw_line)
-        if command in _CREATE_COMMANDS:
+        if command in {"PrepareRun", "AcceptRun"}:
+            response_minor = 12
+        elif command in _CREATE_COMMANDS:
             response_minor = _CREATE_PROTOCOL_MINOR
         elif command in _DELETE_COMMANDS:
             response_minor = _DELETE_PROTOCOL_MINOR

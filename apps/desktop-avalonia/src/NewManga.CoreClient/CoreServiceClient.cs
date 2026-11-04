@@ -263,6 +263,56 @@ public sealed class CoreServiceOptions
 /// </summary>
 public sealed class CoreServiceClient : IAsyncDisposable
 {
+    private readonly object _preparedGate = new();
+    private readonly Dictionary<string, JsonElement> _preparedRuns = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _preparedAttempts = new(StringComparer.Ordinal);
+
+    /// <summary>Host-only temporary candidates. UI receives only the safe preview record.</summary>
+    public async Task<PreparedRunPreview> PrepareRunAsync(JsonElement request, CancellationToken ct = default)
+    {
+        var response = await SendAsync("PrepareRun", 12, writer => request.WriteTo(writer),
+            _options.RequestTimeout, ct).ConfigureAwait(false);
+        var candidate = response.Result!.Value.Clone();
+        var id = candidate.GetProperty("preparedRunId").GetString()!;
+        lock (_preparedGate)
+        {
+            foreach (var expired in _preparedRuns.Where(pair =>
+                pair.Value.GetProperty("expiresAt").GetDateTimeOffset() <= DateTimeOffset.UtcNow &&
+                !_preparedAttempts.ContainsValue(pair.Key)).Select(pair => pair.Key).ToArray())
+                _preparedRuns.Remove(expired);
+            _preparedRuns[id] = candidate;
+        }
+        return new(id, candidate.GetProperty("snapshotDigest").GetString()!,
+            candidate.GetProperty("generation").GetInt32(), candidate.GetProperty("expiresAt").GetDateTimeOffset(),
+            candidate.GetProperty("displaySummary").Clone(), candidate.GetProperty("redactedPayloadPreview").Clone());
+    }
+
+    public async Task<JsonElement> AcceptRunAsync(string preparedRunId, int generation, string idempotencyKey,
+        CancellationToken ct = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(idempotencyKey);
+        JsonElement candidate;
+        lock (_preparedGate)
+        {
+            if (!_preparedRuns.TryGetValue(preparedRunId, out candidate) ||
+                candidate.GetProperty("generation").GetInt32() != generation)
+                throw new CoreOperationException("RUN_STALE_PREVIEW", "conflict", false, "Run preview is stale", null);
+            // An attempted key may have committed before an ACK was lost. Replay reaches durable Core truth.
+            if (!_preparedAttempts.ContainsKey(idempotencyKey) &&
+                candidate.GetProperty("expiresAt").GetDateTimeOffset() <= DateTimeOffset.UtcNow)
+                throw new CoreOperationException("RUN_PREVIEW_EXPIRED", "conflict", false, "Run preview expired", null);
+            _preparedAttempts.TryAdd(idempotencyKey, preparedRunId);
+        }
+        var response = await SendAsync("AcceptRun", 12, writer =>
+        {
+            writer.WriteStartObject();
+            writer.WritePropertyName("prepared_run");
+            candidate.WriteTo(writer);
+            writer.WriteString("idempotency_key", idempotencyKey);
+            writer.WriteEndObject();
+        }, _options.RequestTimeout, ct).ConfigureAwait(false);
+        return response.Result!.Value.Clone();
+    }
     /// <summary>M2-PAGE-NAV-PROJECTION-1: <c>list_chapter_pages</c> was introduced at protocol minor 6.</summary>
     private const int ChapterPagesMinor = 6;
 
@@ -1471,6 +1521,8 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         _disposed = true;
+        // Await pipe/process release before another Core opens this DataRoot's scheduler lease.
+        await _process.StopAsync().ConfigureAwait(false);
         await _process.DisposeAsync().ConfigureAwait(false);
     }
 
@@ -1618,6 +1670,10 @@ public sealed class CoreServiceClient : IAsyncDisposable
             ? value.GetInt32()
             : 0;
 }
+
+/// <summary>Safe UI projection: full target/settings/provider snapshots stay within Host/Core.</summary>
+public sealed record PreparedRunPreview(string PreparedRunId, string SnapshotDigest, int Generation,
+    DateTimeOffset ExpiresAt, JsonElement DisplaySummary, JsonElement RedactedPayloadPreview);
 
 /// <summary>Frozen <c>GetReaderProjection.start_position</c> values (contract M2-C1 §5).</summary>
 public static class ReaderStartPosition

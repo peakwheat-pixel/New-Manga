@@ -9,7 +9,10 @@ slice can supply the same operations without changing scheduling semantics.
 from __future__ import annotations
 
 from copy import deepcopy
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, replace, fields, is_dataclass
+from enum import Enum
+import hashlib
+import json
 import threading
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
@@ -38,6 +41,74 @@ class FrozenRunSnapshots:
     provider_bindings: Mapping[str, Any]
     constraint_snapshot_ref: str | None
     context_policy: Mapping[str, Any]
+
+
+def snapshot_value(value: Any) -> Any:
+    """JSON value of the existing immutable records, preserving array order."""
+    if isinstance(value, Enum):
+        return value.value
+    if is_dataclass(value):
+        return {item.name: snapshot_value(getattr(value, item.name)) for item in fields(value)}
+    if isinstance(value, Mapping):
+        return {key: snapshot_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [snapshot_value(item) for item in value]
+    return value
+
+
+def snapshot_digest(value: Any) -> str:
+    encoded = json.dumps(snapshot_value(value), ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":"), allow_nan=False).encode("utf-8")
+    return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
+def prepared_quartet(run: PipelineRun) -> dict[str, Any]:
+    return snapshot_value({
+        "requestedTargets": [target.snapshot for target in run.targets],
+        "settingsSnapshot": run.settings_snapshot,
+        "providerBindingSnapshot": run.provider_binding_snapshot,
+        "constraintSnapshotRef": run.constraint_snapshot_ref,
+    })
+
+
+def validate_prepared_snapshots(run: PipelineRun) -> None:
+    """Explicit replay fields for the new prepared path; unknown fields fail closed."""
+    settings_fields = {
+        "ocr": {"script", "direction"},
+        "translate": {"context_pages", "context_token_budget", "glossary", "target_language"},
+        "detect": {"empty_detection_policy"},
+        "tasks": {"retry_max_attempts", "retry_backoff_seconds"},
+        "model_gpu": {"device_preference", "allow_cpu_fallback"},
+        "sfx": {"policy"},
+        "typeset": {"font_family", "font_size", "font_size_offset", "manual_font_size", "text_color",
+                    "stroke_color", "stroke_width", "line_spacing", "text_align", "text_direction",
+                    "auto_font_size_enabled"},
+        "inpaint": {"dilate_radius", "erode_radius", "is_speech_bubble", "is_solid_background",
+                    "is_lineart", "has_screentone", "is_color_webtoon", "structure_crossing_mask",
+                    "preferred_quality", "background_complexity"},
+    }
+    for section, values in run.settings_snapshot.items():
+        if (section not in settings_fields or not isinstance(values, Mapping)
+                or set(values) - settings_fields[section]):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "settings contain unsupported replay fields")
+    binding_fields = {"provider_id", "provider_profile_id", "id", "enabled", "available",
+                      "fallback", "execution", "execution_digest", "frozen_fallbacks"}
+    for value in run.provider_binding_snapshot.values():
+        if not isinstance(value, str) and (not isinstance(value, Mapping) or set(value) - binding_fields):
+            raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "provider binding is not snapshot-safe")
+
+
+def validate_prepared_overrides(value: Any) -> None:
+    """Reject authentication material before it can enter a transient candidate."""
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            if str(key).lower() in {"password", "api_key", "apikey", "authorization", "secret", "access_token",
+                                    "refresh_token", "bearer", "headers", "signing_key", "host_session_credential"}:
+                raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
+            validate_prepared_overrides(item)
+    elif isinstance(value, (tuple, list)):
+        for item in value:
+            validate_prepared_overrides(item)
 
 
 @dataclass(frozen=True)
@@ -94,6 +165,7 @@ class PipelineStore(Protocol):
     def accept(
         self, run: PipelineRun, *, idempotency_key: str,
         request_fingerprint: str, operation_type: str,
+        validate: Callable[[], None] | None = None,
     ) -> tuple[PipelineRun, bool]: ...
 
     def accept_restart(
@@ -217,10 +289,8 @@ class InMemoryTargetCatalog:
             return CatalogCommit("input_revision_changed", "current Revision changed")
         if current.lock != expected_lock:
             return CatalogCommit("lock_changed", "current Lock changed")
-        if cancel_requested:
-            return CatalogCommit("cancelled", "run cancellation requested before seam commit")
-        if pause_requested:
-            return CatalogCommit("paused", "run pause requested before seam commit")
+        # This deterministic adapter has no prepared candidate transaction.
+        # Complete the current atomic step; the scheduler honors intent at the next boundary.
 
         if current.target_type is TargetType.PAGE:
             updated = replace(
@@ -468,6 +538,7 @@ class InMemoryPipelineStore:
     def accept(
         self, run: PipelineRun, *, idempotency_key: str,
         request_fingerprint: str, operation_type: str,
+        validate: Callable[[], None] | None = None,
     ) -> tuple[PipelineRun, bool]:
         with self._lock:
             record = self._idempotency.get(idempotency_key)
@@ -480,6 +551,8 @@ class InMemoryPipelineStore:
                 if existing is None:
                     raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
                 return existing, False
+            if validate is not None:
+                validate()
             self._runs[run.run_id] = run
             self._idempotency[idempotency_key] = IdempotencyRecord(
                 idempotency_key, request_fingerprint, run.run_id, operation_type

@@ -44,6 +44,18 @@ public sealed class HostRuntime : IAsyncDisposable
 
     public CoreServiceClient? CoreService { get; private set; }
 
+    public Task<PreparedRunPreview> PrepareRunAsync(System.Text.Json.JsonElement request,
+        CancellationToken ct = default) => (CoreService ?? throw new InvalidOperationException("Core unavailable"))
+        .PrepareRunAsync(request, ct);
+
+    public Task<System.Text.Json.JsonElement> AcceptRunAsync(string preparedRunId, int generation,
+        string idempotencyKey, CancellationToken ct = default)
+    {
+        if (!Policy.WritesAllowed) throw new InvalidOperationException("Host is read-only");
+        return (CoreService ?? throw new InvalidOperationException("Core unavailable"))
+            .AcceptRunAsync(preparedRunId, generation, idempotencyKey, ct);
+    }
+
     public HostBridgeClient? HostBridge { get; private set; }
 
     /// <summary>GRANT-ISSUER-1: host-control grant chain + whitelisted shell actions (null until ready).</summary>

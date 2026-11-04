@@ -1,0 +1,21 @@
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+DataRoot=N/A (read-only pin audit); fixtures=G:/CODEX/New Manga.workspace/FEA-10/fixtures/
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 694ce5bc8c8b
+OK C05 f6e6f3cb1fe1
+OK C06 8faa8cd139f2
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 d8c0a3bcfc21
+OK C16 0b9511a55ea1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 17)
+EXIT=0

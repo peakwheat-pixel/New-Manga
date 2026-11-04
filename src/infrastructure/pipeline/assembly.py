@@ -29,6 +29,7 @@ def build_production_pipeline(
     limits: ResourceLimits | None = None,
     clean_probe: Callable[[str], bool] | None = None,
     storage: ManagedFileStoragePort | None = None,
+    snapshot_transform: Callable | None = None,
 ) -> PipelineService:
     """Build a production service with no InMemory/Deterministic defaults.
 
@@ -45,6 +46,7 @@ def build_production_pipeline(
             provider_bindings=provider_bindings,
             constraint_snapshot_ref=constraint_snapshot_ref,
             context_policy=context_policy,
+            transform=snapshot_transform,
         ),
         executor=ProductionStepExecutor(handlers),
         limits=limits,
