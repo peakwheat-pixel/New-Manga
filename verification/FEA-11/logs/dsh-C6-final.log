@@ -1,0 +1,5 @@
+# FEA-11 C6 终版门禁 (DSH) 2026-11-05T01:31:40.9332540+08:00 HEAD=96b38c19f
+3042 passed, 10 skipped in 231.92s (0:03:51)
+已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+Governance check: PASS (2 warnings)
+PIN AUDIT: PASS (all 18)

@@ -3,7 +3,7 @@ id: FEA-11
 title: Source 变化 / 重定位 / 同步（scan/diff/plan + 页匹配/lineage + relink/repoint/resync + durable operation）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: in_review
 approval: **scope-r1 处置完成；PREREQ-1 done；scope-r2 approved（ZCode 全新上下文，P0=0/P1=0/P2=4 已处置）；DSH 冻结 scope + Appointment 2026-11-04（Owner=ZCode；实际 AC 数=10，AC11-1…10）**
 suggested_owner: codex
 owner: zcode（Appointment 2026-11-04；待认领）
@@ -93,16 +93,16 @@ out_of_scope:
 
 > 本卡实际 **10 条** AC（AC11-1…10）；历史提交信息中「12 AC」为笔误，以本表为准（scope-r2 P2-1 澄清）。
 
-- **AC11-1（变化检测与阻断）**：启动/访问前检查、操作前强验证、定时扫描、目录 watcher 生产者/消费者四路各有调用证据；丢 hint/overflow 后可全量重枚举检测；相同 mtime/size 但字节变可发现；mtime/size 未变不作内容未变证明；强验证=稳定 lease+digest，不被缓存替代；Dirty 阻断依赖旧绑定的新写入而不是直接换 binding。定时扫描若本卡不做，须由 PREREQ/DSH 裁定并登记承接 Task，不得静默缺失。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-2（scan/diff/plan）**：目录/容器 diff 分类（未变/新增/缺失/变化/歧义）数量=明细；plan 绑定 book/页集合/旧新 SourceVersion/binding generation/用户决定/digest；预览与 apply 使用同一不可变 plan；plan 的合法预先持久化与 stale Apply 拒绝基线分别记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-3（页匹配，按 C-15 §3.2 冻结规则）**：同源同容器 digest 直接保续 与 容器变化后的跨版本匹配是两条路径；跨版本逐项验证 pixel profile 的 algorithm/decoder/version/params/尺寸/方向可比性与一对一唯一匹配；重复名/重复像素 occurrence 整组 needs_confirmation，不按 ordinal/locator 自动搬运人工成果；PDF 插页/ZIP 重排/目录重复内容不合并 occurrence；旧证据缺失/profile 不可比且不能按冻结参数重算时降为待确认/不可验证，禁止从新图伪造旧证据；以 FEA-09 真实导入旧库 fixture 验证。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-4（CAS/原子性/零写）**：明确三类代次（SourceVersion/binding_version/Host authorization generation + 人工 revision/Lock/draft 基线）的比较对象与事务内重读位置；单 plan/多项目原子单元与批次最后一项冲突时整批回滚唯一口径；并发 apply 仅一个成功、源/绑定/范围/决定/授权各自漂移、授权撤销/失联、第三区域 BaseRevisionId 冲突、DB 失败均有断言；stale Apply 零业务写（比较 pages/bindings/source rows/regions/text/current/revisions/保护/进度/operation receipt，不偷偷发布部分新代次）；拒绝审计落盘若需要须 DSH 明确与 A10 零写边界。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-5（同步应用/守恒/lineage）**：未变且唯一对应页保留 PageId/用户顺序/人工版本/进度/保护；新增页新 PageId 且顺序由 plan 明示；缺失页 tombstone 可找回（问题/人工修改保留，不连带删除）；变化页新 binding generation、旧区域/旧 revision 的 lineage 映射可恢复且隔离（新图编辑/渲染/导出/Run 目标读取不套旧坐标）；手动迁移新 RegionCandidate/revision、BaseRevisionId 与 Lock 检查，第三项失败整批回滚；Prepare 后同步→旧 Accept/结果 apply 被阻止（结果留 candidate）、旧 edit token 不写新 binding；不自动改写已接受 Run 快照。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-6（relink/repoint/resync）**：三操作分列 preview、命令/确认文案、身份/版本断言；relink（同一物理文件改名/移动）保留 EntryId/PageId/人工版本/区域/进度；repoint（改指向另一文件）改 EntryId、内容已变须走 resync 确认；resync（容器替换/重排/增删页）走页匹配与确认；仅当前/全部引用由用户选择且只更新预览中确认的集合，确认前引用集合变化须重新预览；其他项目 accepted binding/人工/进度不误改（诊断字段变化单列允许）；跨卷重新验证；同 bytes 不同物理文件不自动合并权限/identity；容器成员重排不改变已绑定页用户顺序（SC-S11）。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-7（缺失/无备份与诊断出口）**：原文件不在且无备份时保留元数据/人工修改并诚实显示缺失；管理诊断读取 missing/needs_confirmation/tombstone 走既有 V/R 可见性区分（C-05 P8），不为"显示缺失"暗改可见性契约、不扩 V(p,t)；reader 返回 typed 失败；不以新源或 derived 文件冒充旧源证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-8（durable operation 与双确认）**：C-15 的 Host durable authorization 保持在前（不得反序两阶段提交）；operationId 与请求 digest/目标集合绑定；每步 durable receipt、ACK/重放/恢复核对顺序冻结；相同 key+相同请求返回原结果、相同 key+不同 plan/范围拒绝、响应丢失重试不新增 binding；若需 Core 提交后 Host ACK，ACK 前读门控须持久化并在重启后维持（不能内存标志）；分别在 Host 持久化前后、Core 事务前后、ACK 前后杀进程，用真实新进程读取 journal/registry/DB 验证恢复；授权撤销、磁盘满、旧 registry snapshot、grant 过期/失联均有结果断言且不重放破坏性 OS 操作。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-9（生产链路/读图/回归）**：真实生产装配 Host→Core→DB→resolve→资源字节；先 resolve 旧绑定并读取字节→同步新绑定→生产 resolve/issue 读取新内容且旧资源键/已发布摘要不可变（资源版本选择由 PREREQ 冻结，不覆盖同键旧图）；验收至 Host/API（真实 IPC），不含用户可达 UI（UI 后续独立切片承接，不得宣称用户流程完成）；源原始 hash/mtime/文件数前后守恒、应用不写源；managed 五读路径/既有命令回归；缺能力/撤销/预算/密码错误 fail-closed；pytest/.NET 全量不减少且 skip 原因逐项记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
-- **AC11-10（范围/冻结/证据/资源）**：逐项 evidence pin 与范围 diff；v1–v7 迁移字节、冻结契约、FEA-08/09/10 closeout/证据不变；新迁移失败可回滚、旧端拒写新 schema；独立 Review + DSH 集成；Handoff+EV+Resource Manifest；证据/隔离根固定在 `G:/CODEX/New Manga.workspace/FEA-11/` 子目录，重复运行不复写 FEA-09/10 tracked 证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>>
+- [ ] **AC11-1（变化检测与阻断）**：启动/访问前检查、操作前强验证、定时扫描、目录 watcher 生产者/消费者四路各有调用证据；丢 hint/overflow 后可全量重枚举检测；相同 mtime/size 但字节变可发现；mtime/size 未变不作内容未变证明；强验证=稳定 lease+digest，不被缓存替代；Dirty 阻断依赖旧绑定的新写入而不是直接换 binding。定时扫描若本卡不做，须由 PREREQ/DSH 裁定并登记承接 Task，不得静默缺失。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 定时扫描/watcher 生产承接 FEA-11-SCAN-1；本卡三路+消费者>>
+- [x] **AC11-2（scan/diff/plan）**：目录/容器 diff 分类（未变/新增/缺失/变化/歧义）数量=明细；plan 绑定 book/页集合/旧新 SourceVersion/binding generation/用户决定/digest；预览与 apply 使用同一不可变 plan；plan 的合法预先持久化与 stale Apply 拒绝基线分别记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [ ] **AC11-3（页匹配，按 C-15 §3.2 冻结规则）**：同源同容器 digest 直接保续 与 容器变化后的跨版本匹配是两条路径；跨版本逐项验证 pixel profile 的 algorithm/decoder/version/params/尺寸/方向可比性与一对一唯一匹配；重复名/重复像素 occurrence 整组 needs_confirmation，不按 ordinal/locator 自动搬运人工成果；PDF 插页/ZIP 重排/目录重复内容不合并 occurrence；旧证据缺失/profile 不可比且不能按冻结参数重算时降为待确认/不可验证，禁止从新图伪造旧证据；以 FEA-09 真实导入旧库 fixture 验证。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 无独立 match 测试与 FEA-09 旧库 fixture；分类路径已测>>
+- [x] **AC11-4（CAS/原子性/零写）**：明确三类代次（SourceVersion/binding_version/Host authorization generation + 人工 revision/Lock/draft 基线）的比较对象与事务内重读位置；单 plan/多项目原子单元与批次最后一项冲突时整批回滚唯一口径；并发 apply 仅一个成功、源/绑定/范围/决定/授权各自漂移、授权撤销/失联、第三区域 BaseRevisionId 冲突、DB 失败均有断言；stale Apply 零业务写（比较 pages/bindings/source rows/regions/text/current/revisions/保护/进度/operation receipt，不偷偷发布部分新代次）；拒绝审计落盘若需要须 DSH 明确与 A10 零写边界。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [x] **AC11-5（同步应用/守恒/lineage）**：未变且唯一对应页保留 PageId/用户顺序/人工版本/进度/保护；新增页新 PageId 且顺序由 plan 明示；缺失页 tombstone 可找回（问题/人工修改保留，不连带删除）；变化页新 binding generation、旧区域/旧 revision 的 lineage 映射可恢复且隔离（新图编辑/渲染/导出/Run 目标读取不套旧坐标）；手动迁移新 RegionCandidate/revision、BaseRevisionId 与 Lock 检查，第三项失败整批回滚；Prepare 后同步→旧 Accept/结果 apply 被阻止（结果留 candidate）、旧 edit token 不写新 binding；不自动改写已接受 Run 快照。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [x] **AC11-6（relink/repoint/resync）**：三操作分列 preview、命令/确认文案、身份/版本断言；relink（同一物理文件改名/移动）保留 EntryId/PageId/人工版本/区域/进度；repoint（改指向另一文件）改 EntryId、内容已变须走 resync 确认；resync（容器替换/重排/增删页）走页匹配与确认；仅当前/全部引用由用户选择且只更新预览中确认的集合，确认前引用集合变化须重新预览；其他项目 accepted binding/人工/进度不误改（诊断字段变化单列允许）；跨卷重新验证；同 bytes 不同物理文件不自动合并权限/identity；容器成员重排不改变已绑定页用户顺序（SC-S11）。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [ ] **AC11-7（缺失/无备份与诊断出口）**：原文件不在且无备份时保留元数据/人工修改并诚实显示缺失；管理诊断读取 missing/needs_confirmation/tombstone 走既有 V/R 可见性区分（C-05 P8），不为"显示缺失"暗改可见性契约、不扩 V(p,t)；reader 返回 typed 失败；不以新源或 derived 文件冒充旧源证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 管理诊断查询接线未在本卡实现>>
+- [x] **AC11-8（durable operation 与双确认）**：C-15 的 Host durable authorization 保持在前（不得反序两阶段提交）；operationId 与请求 digest/目标集合绑定；每步 durable receipt、ACK/重放/恢复核对顺序冻结；相同 key+相同请求返回原结果、相同 key+不同 plan/范围拒绝、响应丢失重试不新增 binding；若需 Core 提交后 Host ACK，ACK 前读门控须持久化并在重启后维持（不能内存标志）；分别在 Host 持久化前后、Core 事务前后、ACK 前后杀进程，用真实新进程读取 journal/registry/DB 验证恢复；授权撤销、磁盘满、旧 registry snapshot、grant 过期/失联均有结果断言且不重放破坏性 OS 操作。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [x] **AC11-9（生产链路/读图/回归）**：真实生产装配 Host→Core→DB→resolve→资源字节；先 resolve 旧绑定并读取字节→同步新绑定→生产 resolve/issue 读取新内容且旧资源键/已发布摘要不可变（资源版本选择由 PREREQ 冻结，不覆盖同键旧图）；验收至 Host/API（真实 IPC），不含用户可达 UI（UI 后续独立切片承接，不得宣称用户流程完成）；源原始 hash/mtime/文件数前后守恒、应用不写源；managed 五读路径/既有命令回归；缺能力/撤销/预算/密码错误 fail-closed；pytest/.NET 全量不减少且 skip 原因逐项记录。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<MET>>
+- [ ] **AC11-10（范围/冻结/证据/资源）**：逐项 evidence pin 与范围 diff；v1–v7 迁移字节、冻结契约、FEA-08/09/10 closeout/证据不变；新迁移失败可回滚、旧端拒写新 schema；独立 Review + DSH 集成；Handoff+EV+Resource Manifest；证据/隔离根固定在 `G:/CODEX/New Manga.workspace/FEA-11/` 子目录，重复运行不复写 FEA-09/10 tracked 证据。<<PARTIAL: 待 scope-r2 冻结逐项断言>> <<PARTIAL: 独立上下文 Review 待 Appointment>>
 
 > 状态标记将在 scope-r2 approved 后按冻结断言细化；本卡禁止把未执行项标 MET。
 
@@ -138,8 +138,8 @@ out_of_scope:
 | AC | 断言（最少） | 测试/命令 | 证据 |
 |---|---|---|---|
 | AC11-1 | 四路调用证据；丢 hint 全量重枚举；同 mtime/size 字节变可发现；Dirty 阻新写；lease/digest 强验证 | `tests/fea11/test_source_scan.py`（TEMP/TMP=`workspace/FEA-11/fixtures/<case>/`） | EV-AC11-1 + 日志 |
-| AC11-2 | 数量=明细；plan 绑定与 digest；预览/apply 同一 plan；stale 拒绝基线 | `test_source_plan.py` | EV-AC11-2 |
-| AC11-3 | 直接保续 vs 跨版本；profile 可比/唯一；重复组待确认；旧证据缺失降级；FEA-09 旧库 fixture | `test_source_match.py` + 旧库 fixture | EV-AC11-3 |
+| AC11-2 | 数量=明细；plan 绑定与 digest；预览/apply 同一 plan；stale 拒绝基线 | `test_source_scan.py`（plan 生命周期） | EV-AC11-2 |
+| AC11-3 | 直接保续 vs 跨版本；profile 可比/唯一；重复组待确认；旧证据缺失降级；FEA-09 旧库 fixture | `test_source_scan.py`（diff 分类/匹配路径；旧库 fixture 待补） | EV-AC11-3 |
 | AC11-4 | 三类代次 CAS；并发/漂移/撤销；整批回滚；零业务写精确比较 | `test_source_sync.py` | EV-AC11-4 |
 | AC11-5 | 守恒/顺序/保护/进度；tombstone；lineage 隔离；迁移 revision；Run/draft 交错 | `test_source_lineage.py` + `test_source_sync.py` | EV-AC11-5 |
 | AC11-6 | 三操作身份/确认；当前/全部范围；其他项目不误改；SC-S11 顺序 | `test_source_relink.py` | EV-AC11-6 |
@@ -148,9 +148,43 @@ out_of_scope:
 | AC11-9 | 真实 IPC 至 Host/API；源字节/mtime/文件数守恒；managed 回归；fail-closed | `Fea11SourceIpcTests.cs` + 全量 | EV-AC11-9 |
 | AC11-10 | 迁移 v1–v7 守恒/旧端拒写；冻结字节零 diff；EV/资源核销；独立 Review | `test_v8_migration.py`、check/pins/diff | EV-AC11-10 |
 
+## 实施证据与 AC 状态（DSH，2026-11-05）
+
+实施由 DSH 接手完成（ZCode 中断、Codex 额度受限、ZCode CLI 损坏）。证据基线（`verification/FEA-11/logs/`）：
+`pytest tests` 全量 **3042 passed / 0 failed / 10 skipped**；`pytest tests/fea11` 31 passed；全量 `.NET` **1355 passed / 0 failed / 75 skipped**；`NEWMANGA_FEA11_IPC=1` Host.Tests **3/3**（真实 Python Core）；`check.ps1` PASS；`verify_pins.ps1` **18/18**。
+
+| AC | 状态 | 证据 / 缺口 |
+|---|---|---|
+| AC11-1 | PARTIAL | `test_source_scan.py`：访问前强验证/同 mtime-size 字节变可发现/过期 grant typed；**定时扫描生产与 watcher 消费者**承接 `FEA-11-SCAN-1`（DSH 裁决 2026-11-04） |
+| AC11-2 | MET | `test_source_scan.py`：diff 数量=明细、scope all 冻结引用集合、plan 预览/确认/失效 |
+| AC11-3 | PARTIAL | `test_source_scan.py`：直接保续、unique_pixel/added/missing 分类；无独立 match 测试文件与 FEA-09 旧库 fixture（缺口如实登记） |
+| AC11-4 | MET | `test_source_sync.py`：stale 零写逐表快照、replay 冲突拒绝、事务发布 |
+| AC11-5 | MET | `test_source_lineage.py` + `test_source_sync.py`：tombstone/lineage captured_v7·legacy_unverified 冻结/relink 保序 |
+| AC11-6 | MET | `test_source_relink.py`：relink 保续、内容变拒绝、repoint 需 resync 确认、成功发布 |
+| AC11-7 | PARTIAL | missing 观察/tombstone 保留在 scan/sync 路径；管理诊断查询接线未在本卡实现（缺口登记，UI 承接） |
+| AC11-8 | MET | `test_source_operation.py` + C1 `SourceOperationTests`：durable 恢复/伪造摘要拒绝/ACK 门控/Host journal 状态机 |
+| AC11-9 | MET | `Fea11SourceIpcTests`（`NEWMANGA_FEA11_IPC=1`）3/3：fail-closed、Host 发 grant + ScanSourceSync、**scan→plan→preview→confirm→ResyncSource→ACK→resolve v2 键**；`test_source_resolve.py` v2 键/同键不同 bytes 拒绝 |
+| AC11-10 | PARTIAL | `test_v8_migration.py` 全起点迁移/旧数据守恒/旧端拒写；check/pins 18/18；冻结契约与 FEA-08/09/10 证据零 diff；**独立上下文 Review 待 Appointment** |
+
+实现中修复的真实缺口：source-sync 命令边界持久化（plan/operation durable）、同步操作 grant→binding 绑定（`bind_imported_entry`）、scanner 页级 diff 投影（未绑定 unchanged 不破坏 decisions 1:1）、物理身份统一（`normalize_identity`）。
+
+## Canonical Evidence
+
+commit 暂为 pending（"不 commit/push" 约束；DSH 集成提交后回填）。sha256 为当前工作树 pin。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-AC11-MATRIX | AC11-1…10（逐 AC 状态与证据索引） | verification/FEA-11/AC-MATRIX.md | pending | b9de1dbf3002e821e6d3b6239a958524acf99018451ddc130dc03bfcdc39d9fd | CANONICAL |
+| EV-AC11-C6-FINAL | AC11-1…10（终版门禁：pytest 3042 / IPC 3/3 / check / pins） | verification/FEA-11/logs/dsh-C6-final.log | pending | 11f1ddca340fd7f5e7623b4bcde46fc1a4f26776e3a7bd8c451c6882e0325ac9 | CANONICAL |
+| EV-AC11-C6-GATES | AC11-1…10（早期门禁基线） | verification/FEA-11/logs/dsh-C6-gates.log | pending | efc283ec3f1acb54c899de33c97647126b9193e421b97de6e424db3bd783f30a | SOURCE_PIN |
+| EV-AC11-PHASEB-MAIN | AC11-2/4/5/6/8（主套件回归） | verification/FEA-11/logs/dsh-phaseB-main.log | pending | 9046e7caa61c49724f7b3ddbd67edde787dd27791ecb7d1c27e61d2a572e7256 | SOURCE_PIN |
+| EV-AC11-PHASEB-PROVIDERS | AC11-10（providers 回归） | verification/FEA-11/logs/dsh-phaseB-providers.log | pending | 63f3e76f9022247e78f5233d4553b987dacf1fceb5a0da00c19e73851070a4fb | SOURCE_PIN |
+
 ## Closeout Record
 
-- 未开始（proposed；scope-r1 已处置；待 FEA-11-PREREQ-1 done + scope-r2 approved + DSH Appointment）。
+- 实施完成（DSH 接手；Phase A/B/C1/C2/C3/C4/C5），Task → `in_review`（2026-11-05）。
+- 待独立上下文 Review（不得自审）→ findings 处置 → DSH 集成验证 → closeout/EV/Resource Manifest。
+- 已知缺口如实登记：AC11-1（定时扫描/watcher 生产承接 FEA-11-SCAN-1）、AC11-3（旧库 fixture/独立 match 测试）、AC11-7（管理诊断查询接线）、App.Tests 偶发 flaky。
 
 ## scope-r2 处置与 Appointment（DSH，2026-11-04）
 
