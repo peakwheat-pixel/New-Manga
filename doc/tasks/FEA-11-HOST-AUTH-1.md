@@ -44,6 +44,6 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 4/4）。 <<MET>>
-- [ ] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest。 <<PARTIAL: 已实现（canonical + 自签 + 注入），Host 级集成测试待补>>
-- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序已实现（registry.Authorize → Begin → Authorize）；崩溃点/集成测试待补>>
+- [x] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest（`HostAuthorizationMinter` + 单测 3/3：六字段/排序/canonical digest/唯一性；注入在 HostRuntime 实现）。 <<MET>>
+- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序已实现（registry.Authorize → Begin → Authorize）；崩溃点/Host→Core 集成测试待补>>
 - [ ] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<PARTIAL: 待实施>>

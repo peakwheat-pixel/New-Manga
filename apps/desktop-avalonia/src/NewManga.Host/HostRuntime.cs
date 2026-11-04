@@ -881,32 +881,12 @@ public sealed class HostRuntime : IAsyncDisposable
                         "INVALID_REQUEST", "validation", false,
                         "apply request carries no registry authorizations", null);
                 }
-                var operationId = "op-" + Convert.ToHexString(
-                    System.Security.Cryptography.RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
-                var requestDigest = CanonicalJson.Sha256Hex(new Dictionary<string, object?>
-                {
-                    ["operation_id"] = operationId,
-                    ["plan_id"] = planId,
-                    ["plan_digest"] = planDigest,
-                    ["kind"] = kind,
-                });
-                registryAuthorizations.Sort((left, right) => string.CompareOrdinal(
-                    (string)left["registry_id"]!, (string)right["registry_id"]!));
-                var authorizationDigest = CanonicalJson.Sha256Hex(registryAuthorizations);
-                var hostReceiptId = "hr-" + Convert.ToHexString(
-                    System.Security.Cryptography.RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
-                var authorizedAt = DateTimeOffset.UtcNow.ToString(
-                    "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", System.Globalization.CultureInfo.InvariantCulture);
-                var authorization = new Dictionary<string, object?>
-                {
-                    ["operation_id"] = operationId,
-                    ["request_digest"] = requestDigest,
-                    ["authorization_digest"] = authorizationDigest,
-                    ["authorizations"] = registryAuthorizations,
-                    ["host_receipt_id"] = hostReceiptId,
-                    ["authorized_at"] = authorizedAt,
-                };
-                var authorizationJson = CanonicalJson.Text(authorization);
+                var minted = HostAuthorizationMinter.Mint(
+                    planId, planDigest, kind, registryAuthorizations);
+                var operationId = minted.OperationId;
+                var requestDigest = minted.RequestDigest;
+                var authorizationJson = CanonicalJson.Text(minted.Authorization);
+                var hostReceiptId = minted.HostReceiptId;
                 var known = registry.List().ToDictionary(item => item.RegistryId, item => item);
                 foreach (var item in registryAuthorizations)
                 {
@@ -935,7 +915,7 @@ public sealed class HostRuntime : IAsyncDisposable
                     }
                 }
                 injected["operation_id"] = operationId;
-                injected["authorization"] = authorization;
+                injected["authorization"] = minted.Authorization;
                 var finalPayload = System.Text.Json.JsonSerializer.SerializeToElement(injected);
 
                 var response = await call(finalPayload, token).ConfigureAwait(false);
