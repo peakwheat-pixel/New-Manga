@@ -7,8 +7,9 @@
 |节点/目标|依赖|状态|
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
-|FEA-C11-PREREQ-1|FEA-11|FEA-09、FEA-10|**proposed**（Source 变化/重定位/同步；待 DSH 建卡/scope review；新表/命令面需先冻结）|
-|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
+|FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
+|FEA-11-PREREQ-1|FEA-09、FEA-10|**proposed**（Source 同步契约前置：v8+ DDL/状态机/命令/错误/能力/CAS/lineage/resolve；待 DSH scope review）|
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**proposed**（Source 变化/重定位/同步；scope-r1 处置完成；待 PREREQ done + scope-r2 approved；逐 AC/写域已修订）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
@@ -41,7 +42,7 @@ READY 节点：无
 
 完成：FEA-10 **done**（`d1972f0f`，7 轮独立 Review approved P0/P1=0，AC1–AC10 MET）。下一候选：**FEA-11**（proposed；需 DSH 建卡 + 独立 scope review）。
 
-当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → FEA-11（proposed）；FEA-12 待 `G-DELETE-IMPL`
+当前 DAG：FEA-08（done）→ FEA-09-PREREQ-1（done）→ FEA-09（done）→ FEA-09-UI-1（done）→ FEA-10-PREREQ-1（done）→ **FEA-10（done）** → **FEA-11-PREREQ-1（proposed，契约前置）** → FEA-11（proposed）；FEA-12 待 `G-DELETE-IMPL`
 
 ## 历史快照（终态节点，非当前 DAG）
 
