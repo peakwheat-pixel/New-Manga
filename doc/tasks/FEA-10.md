@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | cdaf441aa8a133a31771debc7064426d53913998 | 65f6dee67b5cec1e2a57fc973006c7e221021c1bd2a490e04999b0da6a03df68 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | d1972f0f7cd9b3e17c5289818b5b3b25e164d5e9 | 65f6dee67b5cec1e2a57fc973006c7e221021c1bd2a490e04999b0da6a03df68 | CANONICAL |
 
 ## Resource Manifest
 
