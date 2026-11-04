@@ -8,10 +8,10 @@ src/infrastructure/sqlite/pipeline.py
 tests/fea10/test_prepared_run.py
 verification/FEA-10/AC-MATRIX.md
 COMMAND=git ls-files --others --exclude-standard
-doc/reviews/FEA-10-final-review-r3.md
-verification/FEA-10/logs/dsh-rework5-dotnet.log
-verification/FEA-10/logs/dsh-rework5-providers.log
-verification/FEA-10/logs/dsh-rework5-pytest-main.log
+doc/reviews/FEA-10-final-review-r4.md
+verification/FEA-10/logs/dsh-rework6-dotnet.log
+verification/FEA-10/logs/dsh-rework6-providers.log
+verification/FEA-10/logs/dsh-rework6-pytest-main.log
 COMMAND=compare all changed/untracked paths against doc/tasks/FEA-10.md allowed_paths
 OUT_OF_SCOPE=[]
 FEA09_DIFF=EMPTY

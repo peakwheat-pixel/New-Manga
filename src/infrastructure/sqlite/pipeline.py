@@ -1509,35 +1509,26 @@ _SENSITIVE_PARTS = ("secret", "password", "token", "api_key", "apikey")
 _REDACTION_ALLOWED_KEYS = frozenset({"context_token_budget"})
 
 
-def _redact(value: Any, parent: str | None = None, glossary_exemption_used: bool = False) -> Any:
+def _redact(value: Any, path: tuple[str, ...] = ()) -> Any:
     if isinstance(value, Mapping):
         cleaned: dict[str, Any] = {}
         for key, item in value.items():
             lowered = str(key).lower()
-            if (lowered == "glossary" and parent == "translate" and isinstance(item, Mapping)
-                    and not glossary_exemption_used):
-                # F3-01/FR-06: term names are user words only for the scalar translate.glossary
-                # shape; nested term values are redacted strictly with the exemption consumed.
-                nested = [v for v in item.values() if isinstance(v, (Mapping, list, tuple))]
-                if not nested:
-                    cleaned[str(key)] = {
-                        str(term): _redact(term_value, parent="glossary-value",
-                                           glossary_exemption_used=True)
-                        for term, term_value in item.items()}
-                    continue
-                cleaned[str(key)] = _redact(item, parent="glossary-value",
-                                            glossary_exemption_used=True)
+            new_path = path + (lowered,)
+            if (new_path in (("translate", "glossary"), ("settings", "translate", "glossary"))
+                    and isinstance(item, Mapping)
+                    and not any(isinstance(term_value, (Mapping, list, tuple))
+                                for term_value in item.values())):
+                # F4-01/F4-02: only the flat scalar business glossary keeps its user term names.
+                cleaned[str(key)] = {str(term): term_value for term, term_value in item.items()}
                 continue
             if (str(key) not in _REDACTION_ALLOWED_KEYS
                     and any(part in lowered for part in _SENSITIVE_PARTS)):
                 continue
-            cleaned[str(key)] = _redact(
-                item, parent=lowered,
-                glossary_exemption_used=glossary_exemption_used or lowered == "glossary")
+            cleaned[str(key)] = _redact(item, new_path)
         return cleaned
     if isinstance(value, (tuple, list)):
-        return [_redact(item, parent=parent,
-                        glossary_exemption_used=glossary_exemption_used) for item in value]
+        return [_redact(item, path) for item in value]
     return value
 
 

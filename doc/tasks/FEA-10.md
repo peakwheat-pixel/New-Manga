@@ -209,7 +209,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | cdaf441aa8a133a31771debc7064426d53913998 | d354bfc207815e2d340ad4f4c32e453d5a6adca0a178f5a9a1a3ddac0ebb0502 | CANONICAL |
+| EV-FEA10-OWNER | AC1–AC10（含 r2 口径与门禁索引；DSH 复核后工作树 pin） | verification/FEA-10/AC-MATRIX.md | cdaf441aa8a133a31771debc7064426d53913998 | 65f6dee67b5cec1e2a57fc973006c7e221021c1bd2a490e04999b0da6a03df68 | CANONICAL |
 
 ## Resource Manifest
 
@@ -266,4 +266,12 @@ out_of_scope:
 - 第 5 轮 Review changes_requested：P0=0/P1=1（F3-01）。
 - F3-01 已修复（豁免仅 translate.glossary 纯标量词条；嵌套值消耗豁免）。门禁：fea10 54、主套件 1057、providers 559/4、build 0/0、.NET 1345/0/75、IPC 1、check PASS、pins 17/17、FEA-09 零 diff。
 - 下一步：提交本 head → 派新 head 独立 Review → approved 后 closeout。
+
+## DSH rework r6（2026-11-04，按 FEA-10-final-review-r4 处置）
+
+- 第 6 轮 Review changes_requested：P0=0/P1=2（F4-01 错置 translate.glossary 首次豁免、F4-02 混合词条表漏扫同级认证键）+P2=1（F4-03 r5 IPC 日志头）。
+- F4-01/F4-02（已修复，根治）：取消「父键=translate」判断，改为**完整路径绑定**——豁免只存在于 `translate.glossary`（settings 根）或 `settings.translate.glossary`（override 根），且仅当**全部词条值为标量**；任何层叠/混合/列表形状直接 `RUN_SNAPSHOT_INCOMPLETE`（不再部分扫描）；`_redact` 同步同一路径与形状规则。
+- 新增回归 `test_glossary_exemption_is_bound_to_the_flat_business_path_only`：6 种绕过形状 × override/defaults 共 12 组全部拒绝；合法 `translate.glossary={token,headers}` 词条保留。
+- F4-03（已处理）：本轮门禁日志（`logs/dsh-rework6-*.log`）记录完整 COMMAND/shell/TEMP/TMP/EXIT；历史日志保留原字节。
+- 门禁（实跑）：fea10 **55 passed**、主套件 **1058 passed**、providers 559/4、build 0/0、.NET 1345/0/75、真实 IPC 1，均 EXIT=0。
 

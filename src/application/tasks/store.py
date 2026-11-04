@@ -241,39 +241,32 @@ _AUTH_MATERIAL_KEYS = frozenset({
 })
 
 
-def _scan_auth_material(
-    value: Any, parent: str | None = None, glossary_exemption_used: bool = False,
-) -> None:
-    """F3-01: reject authentication keys anywhere, including nested defaults.
+def _scan_auth_material(value: Any, path: tuple[str, ...] = ()) -> None:
+    """F4-01/F4-02: reject authentication keys anywhere; no path can regain an exemption.
 
-    The glossary term-name exemption exists only for the real business shape
-    ``translate.glossary`` where **every term value is scalar text**. A nested object/list term
-    value is scanned with the exemption consumed, so ``translate.glossary.outer.glossary...`` and
-    any ``<other>.glossary...`` cannot regain it.
+    The only exemption exists at the exact business paths ``translate.glossary`` (settings root)
+    or ``settings.translate.glossary`` (override root), and only when **every term value is scalar
+    text**. Any layered/heterogeneous glossary shape is rejected outright instead of partially
+    scanned, so a sibling authentication key can never be skipped.
     """
     if isinstance(value, Mapping):
         for key, item in value.items():
             lowered = str(key).lower()
-            if (lowered == "glossary" and parent == "translate" and isinstance(item, Mapping)
-                    and not glossary_exemption_used):
-                nested = [term_value for term_value in item.values()
-                          if isinstance(term_value, (Mapping, list, tuple))]
-                if not nested:
-                    continue  # pure scalar mapping glossary: term names are user words
-                for term_value in nested:
-                    _scan_auth_material(
-                        term_value, parent="glossary-value", glossary_exemption_used=True)
+            new_path = path + (lowered,)
+            if new_path in (("translate", "glossary"), ("settings", "translate", "glossary")):
+                if not isinstance(item, Mapping):
+                    _scan_auth_material(item, new_path)
+                    continue
+                if any(isinstance(term_value, (Mapping, list, tuple)) for term_value in item.values()):
+                    raise PipelineError(
+                        "RUN_SNAPSHOT_INCOMPLETE", "glossary shape is not replay-safe")
                 continue
             if lowered in _AUTH_MATERIAL_KEYS:
                 raise PipelineError("RUN_SNAPSHOT_INCOMPLETE", "authentication material cannot be snapshotted")
-            _scan_auth_material(
-                item, parent=lowered,
-                glossary_exemption_used=glossary_exemption_used or lowered == "glossary")
+            _scan_auth_material(item, new_path)
     elif isinstance(value, (tuple, list)):
         for item in value:
-            _scan_auth_material(
-                item, parent=parent,
-                glossary_exemption_used=glossary_exemption_used)
+            _scan_auth_material(item, path)
 
 
 def validate_prepared_overrides(value: Any) -> None:

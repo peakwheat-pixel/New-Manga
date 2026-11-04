@@ -406,3 +406,41 @@ def test_glossary_exemption_cannot_be_regained_by_nesting():
     finally:
         core.conn.close()
 
+
+def test_glossary_exemption_is_bound_to_the_flat_business_path_only():
+    # F4-01/F4-02: layered/misplaced/mixed glossary shapes are rejected, never partially scanned.
+    core, _, region = _new_workspace(workspace('f401-paths'))
+    try:
+        scope = PipelineScope(ScopeType.REGION, selected_ids=(region,))
+        sentinel = 'SYNTHETIC-F401'
+        cases = (
+            {'typeset': {'font_family': {'translate': {'glossary': {'authorization': sentinel}}}}},
+            {'translate': {'glossary': {'outer': {'glossary': {'authorization': sentinel}}}}},
+            {'translate': {'glossary': {'authorization': sentinel, 'outer': {'normal': 'value'}}}},
+            {'typeset': {'font_family': [{'translate': {'glossary': {'authorization': sentinel}}}]}},
+            {'translate': {'target_language': {'translate': {'glossary': {'authorization': sentinel}}}}},
+            {'translate': {'glossary': {'outer': [{'translate': {'glossary': {'authorization': sentinel}}}]}}},
+        )
+        for settings in cases:
+            for mode in ('override', 'defaults'):
+                core2, _, region2 = _new_workspace(workspace('f401-' + mode))
+                try:
+                    scope2 = PipelineScope(ScopeType.REGION, selected_ids=(region2,))
+                    if mode == 'defaults':
+                        for section, values in settings.items():
+                            core2.pipeline_defaults.save_settings_section(section, values)
+                        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+                            core2.pipeline.prepare_run('ocr_region', scope2)
+                    else:
+                        with pytest.raises(PipelineError, match='RUN_SNAPSHOT_INCOMPLETE'):
+                            core2.pipeline.prepare_run(
+                                'ocr_region', scope2, overrides={'settings': settings})
+                finally:
+                    core2.conn.close()
+        preview = core.pipeline.prepare_run('ocr_region', scope, overrides={
+            'settings': {'translate': {'glossary': {'token': '令牌', 'headers': '词条'}}}})
+        assert preview['settingsSnapshot']['translate']['glossary']['token'] == '令牌'
+        assert preview['settingsSnapshot']['translate']['glossary']['headers'] == '词条'
+    finally:
+        core.conn.close()
+
