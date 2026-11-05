@@ -251,16 +251,83 @@ public sealed class Fea11HostAuthTests : IDisposable
         var failedEntry = _operations.Get(operationId)!;
 
         var retriedCallPayload = default(JsonElement);
-        var (retriedId, _) = await orchestrator.RetryAsync(operationId, (finalPayload, _) =>
-        {
-            retriedCallPayload = finalPayload.Clone();
-            return Task.FromResult(new CoreResponse(
-                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
-        }, CancellationToken.None);
+        var retryPayload = CallerPayload();
+        var (retriedId, _) = await orchestrator.RetryAsync("source_resync", operationId, retryPayload,
+            (finalPayload, _) =>
+            {
+                retriedCallPayload = finalPayload.Clone();
+                return Task.FromResult(new CoreResponse(
+                    null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
+            }, CancellationToken.None);
 
         Assert.Equal(operationId, retriedId);
         Assert.Equal(failedEntry.RequestDigest,
             retriedCallPayload.GetProperty("authorization").GetProperty("request_digest").GetString());
+        Assert.NotEqual(
+            failedEntry.HostReceiptId,
+            retriedCallPayload.GetProperty("authorization").GetProperty("host_receipt_id").GetString());
         Assert.Equal("core-committed", _operations.Get(operationId)!.State);
+    }
+
+    [Fact]
+    public async Task Retry_TypedRejectionIsDurablyFailedAgain()
+    {
+        var orchestrator = NewOrchestrator();
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", CallerPayload(),
+            (_, _) => throw new CoreOperationException("SOURCE_PLAN_STALE", "conflict", true, "stale", null),
+            CancellationToken.None));
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.RetryAsync(
+            "source_resync", operationId, CallerPayload(),
+            (_, _) => throw new CoreOperationException("SOURCE_GRANT_EXPIRED", "protocol", true, "expired", null),
+            CancellationToken.None));
+
+        var journaled = _operations.Get(operationId)!;
+        Assert.Equal("failed", journaled.State);
+        Assert.Equal("SOURCE_GRANT_EXPIRED", journaled.ErrorCode);
+        Assert.True(journaled.Retryable);
+    }
+
+    [Fact]
+    public async Task Retry_RefusesACommittedFailure()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+        await orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => Task.FromResult(new CoreResponse(
+                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null)),
+            CancellationToken.None);
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        // A committed operation is terminal for retry (recovery instead).
+        await Assert.ThrowsAsync<SourceAccessException>(() =>
+            orchestrator.RetryAsync("source_resync", operationId, payload,
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Retry_RefusesANonRetryableFailure()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new CoreOperationException("SOURCE_ACCESS_DENIED", "protocol", false, "denied", null),
+            CancellationToken.None));
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+
+        await Assert.ThrowsAsync<SourceAccessException>(() =>
+            orchestrator.RetryAsync("source_resync", operationId, payload,
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
     }
 }

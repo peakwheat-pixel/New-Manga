@@ -52,7 +52,7 @@ allowed_paths:
 
 - AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 4/4（与 Core canonical_bytes 逐字节一致的跨实现向量）。
 - AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 3/3；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
-- AC3 PARTIAL（r3 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现**（`RetryAsync` + `RetryFailed`，C-17 §3.2 行 163）；`Fea11HostAuthTests` 11/11（注入/typed 失败×3 retryable/歧义失败/retry round-trip/顺序探针/capability 门/缺 plan_digest/固定向量）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
+- AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现且符合 §3.2 行 163**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 14/14。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
 - AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡复审（r2）判定。
 - 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 1370/0、IPC 复跑 3/3、check PASS、pins 18/18；含 IPC flaky 说明）。
 - 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）。

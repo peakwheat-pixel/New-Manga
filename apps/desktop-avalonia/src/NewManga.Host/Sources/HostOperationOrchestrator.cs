@@ -36,29 +36,114 @@ public sealed class HostOperationOrchestrator
     /// transport/ambiguity codes (CORE_*) leave the journal host-authorized for
     /// receipt re-read / recovery.</summary>
     /// <summary>C-17 §3.2 line 163: retry a failed (never committed) operation
-    /// with the SAME operation id/request digest. The Host reuses the frozen
-    /// authorization it minted, so the retried request is byte-identical.</summary>
+    /// with the SAME operation/request digest but a FRESH HostAuthorization —
+    /// the registry is re-read/authorized and the new authorization is recorded
+    /// durably before the dispatch.</summary>
     public async Task<(string OperationId, JsonElement Result)> RetryAsync(
+        string hostCommandName,
         string operationId,
+        JsonElement payload,
         Func<JsonElement, CancellationToken, Task<CoreResponse>> call,
         CancellationToken token)
     {
-        var entry = _operations.RetryFailed(operationId);
-        var authorizationJson = entry.AuthorizationJson
+        await _capability(hostCommandName, token).ConfigureAwait(false);
+        var entry = _operations.Get(operationId)
             ?? throw new CoreOperationException(
-                "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
-                "retried operation has no durable authorization", null);
-        using var authorization = JsonDocument.Parse(authorizationJson);
-        var injected = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+                "SOURCE_OPERATION_NOT_FOUND", "conflict", false, "unknown operation", null);
+        var kind = hostCommandName switch
+        {
+            "source_relink" => "relink",
+            "source_repoint" => "repoint",
+            _ => "resync",
+        };
+        var registryAuthorizations = new List<Dictionary<string, object?>>();
+        if (payload.ValueKind == JsonValueKind.Object
+            && payload.TryGetProperty("authorization", out var incoming)
+            && incoming.ValueKind == JsonValueKind.Object
+            && incoming.TryGetProperty("authorizations", out var items)
+            && items.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in items.EnumerateArray())
+            {
+                var registryId = StringField(item, "registry_id");
+                var identityDigest = StringField(item, "identity_digest");
+                var generation = item.ValueKind == JsonValueKind.Object
+                    && item.TryGetProperty("generation", out var generationValue)
+                    && generationValue.ValueKind == JsonValueKind.Number
+                    && generationValue.TryGetInt32(out var parsedGeneration)
+                        ? parsedGeneration : 0;
+                if (string.IsNullOrWhiteSpace(registryId)
+                    || string.IsNullOrWhiteSpace(identityDigest) || generation < 1)
+                {
+                    throw new CoreOperationException(
+                        "INVALID_REQUEST", "validation", false,
+                        "retry request carries a malformed authorizations entry", null);
+                }
+                registryAuthorizations.Add(new Dictionary<string, object?>
+                {
+                    ["registry_id"] = registryId,
+                    ["generation"] = generation,
+                    ["identity_digest"] = identityDigest,
+                });
+            }
+        }
+        var minted = HostAuthorizationMinter.Mint(
+            entry.PlanId, entry.PlanDigest, kind, registryAuthorizations,
+            operationId: entry.OperationId);
+        var known = _registry.List().ToDictionary(item => item.RegistryId, item => item);
+        foreach (var item in minted.Authorizations)
+        {
+            var registryId = (string)item["registry_id"]!;
+            if (!known.TryGetValue(registryId, out var knownRegistry))
+            {
+                throw new CoreOperationException(
+                    "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
+                    "authorization references an unknown source registry", null);
+            }
+            var roots = knownRegistry.Roots
+                .Where(root => root.Readable)
+                .Select(root => root.Root)
+                .ToArray();
+            if (roots.Length == 0)
+            {
+                throw new CoreOperationException(
+                    "SOURCE_REGISTRY_UNAVAILABLE", "protocol", false,
+                    "source registry has no readable root", null);
+            }
+            _registry.Authorize(registryId, (int)item["generation"]!, roots);
+        }
+        var authorizationJson = CanonicalJson.Text(minted.Authorization);
+        _operations.RetryFailed(
+            entry.OperationId, authorizationJson, minted.HostReceiptId);
+
+        var injected = new Dictionary<string, object?>
         {
             ["operation_id"] = entry.OperationId,
             ["plan_id"] = entry.PlanId,
             ["plan_digest"] = entry.PlanDigest,
             ["grant_ids"] = (entry.GrantIds ?? string.Empty)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries),
-            ["authorization"] = JsonSerializer.Deserialize<object?>(authorization.RootElement.GetRawText()),
-        });
-        var response = await call(injected, token).ConfigureAwait(false);
+            ["authorization"] = minted.Authorization,
+        };
+        var finalPayload = JsonSerializer.SerializeToElement(injected);
+        CoreResponse response;
+        try
+        {
+            response = await call(finalPayload, token).ConfigureAwait(false);
+        }
+        catch (CoreOperationException error) when (IsPreCommitRejection(error.Code))
+        {
+            _operations.MarkFailed(
+                entry.OperationId, error.Code, retryable: error.Retryable ?? true);
+            throw;
+        }
+        catch (Exception)
+        {
+            throw new CoreOperationException(
+                "CORE_UNAVAILABLE", "unavailable", true,
+                "source operation " + entry.OperationId
+                + " is host-authorized; recover or retry it", entry.OperationId);
+        }
         var result = response.Result ?? default;
         var row = await _lookup(entry.OperationId, token).ConfigureAwait(false);
         var commitDigest = row.ValueKind == JsonValueKind.Object
@@ -74,6 +159,12 @@ public sealed class HostOperationOrchestrator
         return (entry.OperationId, result);
     }
 
+    private static string? StringField(JsonElement element, string key) =>
+        element.ValueKind == JsonValueKind.Object
+        && element.TryGetProperty(key, out var value)
+        && value.ValueKind == JsonValueKind.String
+            ? value.GetString() : null;
+
     private static bool IsPreCommitRejection(string code) => code is
         not ("CORE_UNAVAILABLE" or "CORE_TIMEOUT" or "CORE_PROTOCOL_ERROR"
              or "CORE_SESSION_MISMATCH" or "CORE_SHUTDOWN" or "CORE_BUSY"
@@ -86,12 +177,6 @@ public sealed class HostOperationOrchestrator
         CancellationToken token)
     {
         await _capability(hostCommandName, token).ConfigureAwait(false);
-        string? StringField(JsonElement element, string key) =>
-            element.ValueKind == JsonValueKind.Object
-            && element.TryGetProperty(key, out var value)
-            && value.ValueKind == JsonValueKind.String
-                ? value.GetString() : null;
-
         var planId = StringField(payload, "plan_id");
         var planDigest = StringField(payload, "plan_digest");
         if (string.IsNullOrWhiteSpace(planId) || planDigest is null)

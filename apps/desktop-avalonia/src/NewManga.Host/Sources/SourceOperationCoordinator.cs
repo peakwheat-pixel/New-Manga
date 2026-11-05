@@ -304,16 +304,27 @@ public sealed class SourceOperationCoordinator
     }
 
     /// <summary>FEA-11: terminal failure record (never a silent drop).</summary>
-    /// <summary>C-17 §3.2 line 163: a failed (never committed) operation may be
-    /// retried with the same operation/request digest; the journal goes back to
-    /// host-authorized and the Core dispatch is re-run by the caller.</summary>
-    public JournalEntry RetryFailed(string operationId)
+    /// <summary>C-17 §3.2 line 163: a failed (NEVER committed) operation may be
+    /// retried with the same operation/request digest. The caller re-reads the
+    /// registry, mints a FRESH HostAuthorization and hands it here so the
+    /// journal records the new durable authorization atomically; a already
+    /// committed failure must go through recovery instead.</summary>
+    public JournalEntry RetryFailed(
+        string operationId, string authorizationJson, string hostReceiptId)
     {
         RequireEnabled();
+        if (string.IsNullOrWhiteSpace(authorizationJson) || string.IsNullOrWhiteSpace(hostReceiptId))
+        {
+            throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+        }
         lock (gate)
         {
             var entry = Read(operationId);
             RequireState(entry, "failed");
+            if (entry.CommitDigest is not null)
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
             if (entry.Retryable == false)
             {
                 throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
@@ -321,6 +332,9 @@ public sealed class SourceOperationCoordinator
             var next = entry with
             {
                 State = "host-authorized",
+                AuthorizationJson = authorizationJson,
+                AuthorizationDigest = Sha256Hex(authorizationJson),
+                HostReceiptId = hostReceiptId,
                 ErrorCode = null,
                 Retryable = null,
                 UpdatedAt = UtcNow(),
