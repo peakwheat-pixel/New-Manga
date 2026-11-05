@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+
 #: Evidence completeness for a v7-era entry row: the import runtime wrote
 #: pixel/orientation None, so width/height presence is the observable proof
 #: the entry was ever decode-verified (C-17 §7.3 note on _entry_row).
@@ -35,14 +36,61 @@ def _pixel_present(entry: dict) -> bool:
     )
 
 
+def _geometry(entry: dict) -> tuple[int, int]:
+    return (int(entry.get("width") or 0), int(entry.get("height") or 0))
+
+
+def _canonical_params(value) -> str | None:
+    """Canonical JSON for a params value (object or JSON text); None if bad.
+
+    Comparability is decided on the **object**, never on the raw stored
+    string: key order/whitespace differences must not fork the profile
+    (C-17 §7.3 row 2; card C8).
+    """
+    import json
+
+    if value is None:
+        return None
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except (TypeError, ValueError):
+            return None
+    try:
+        return json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+    except (TypeError, ValueError):
+        return None
+
+
 def _profiles_comparable(old: dict, new: dict) -> bool:
-    """C-15 §3.2: same algorithm/decoder/version/params only."""
-    return (
-        old.get("pixel_digest_algorithm") == new.get("pixel_digest_algorithm")
-        and old.get("decoder_name") == new.get("decoder_name")
-        and old.get("decoder_version") == new.get("decoder_version")
-        and old.get("decoder_params_json") == new.get("decoder_params_json")
-    )
+    """C-17 §7.3 row 2: all seven dimensions must be equal.
+
+    ``algorithm + decoder + decoder_version + canonical params + width +
+    height + orientation``.  A missing side is never comparable.
+    """
+    if not _pixel_present(old) or not _pixel_present(new):
+        return False
+    if old.get("pixel_digest_algorithm") != new.get("pixel_digest_algorithm"):
+        return False
+    if old.get("decoder_name") != new.get("decoder_name"):
+        return False
+    if old.get("decoder_version") != new.get("decoder_version"):
+        return False
+    old_params = _canonical_params(old.get("decoder_params_json"))
+    new_params = _canonical_params(new.get("decoder_params_json"))
+    if old_params is None or new_params is None or old_params != new_params:
+        return False
+    if _geometry(old) != _geometry(new):
+        return False
+    if int(old.get("orientation") or 0) != int(new.get("orientation") or 0):
+        return False
+    return True
 
 
 @dataclass
@@ -69,6 +117,15 @@ class MatchResult:
         for item in self.items:
             counts[item.classification] += 1
         return counts
+
+
+def _counts(entries: list[dict], getter) -> dict:
+    counts: dict = {}
+    for entry in entries:
+        value = getter(entry)
+        if value:
+            counts[value] = counts.get(value, 0) + 1
+    return counts
 
 
 def match_entries(
@@ -101,35 +158,20 @@ def match_entries(
             )
         return result
 
-    old_by_id = {entry["entry_id"]: entry for entry in old_entries}
-    new_by_id = {entry["entry_id"]: entry for entry in new_entries}
-    all_entries = [*old_entries, *new_entries]
-
-    # --- duplicate groups first: a digest or a locator occurring more than
-    # once on EITHER side freezes the whole occurrence group into
-    # needs_confirmation — no ordinal/locator anchoring, no automatic manual
-    # work carry (C-15 §3.2, C-17 §7.3 row 3).
-    # Duplicate detection is per SIDE (C-15 §3.2): an occurrence repeated
-    # twice on the OLD side or twice on the NEW side freezes the group; one
-    # occurrence on each side is the unique correspondence, not a duplicate.
-    old_digest_counts: dict[str, int] = {}
-    new_digest_counts: dict[str, int] = {}
-    old_locator_counts: dict[str, int] = {}
-    new_locator_counts: dict[str, int] = {}
-    for entry in old_entries:
-        digest = entry.get("content_digest")
-        if digest:
-            old_digest_counts[digest] = old_digest_counts.get(digest, 0) + 1
-        old_locator_counts[entry["locator"]] = (
-            old_locator_counts.get(entry["locator"], 0) + 1
-        )
-    for entry in new_entries:
-        digest = entry.get("content_digest")
-        if digest:
-            new_digest_counts[digest] = new_digest_counts.get(digest, 0) + 1
-        new_locator_counts[entry["locator"]] = (
-            new_locator_counts.get(entry["locator"], 0) + 1
-        )
+    # --- duplicate occurrence statistics, per side (C-15 §3.2): a content
+    # digest, a locator or a pixel digest repeated on EITHER side freezes the
+    # occurrence group into needs_confirmation.  Pixel digests are part of
+    # the identity triad since FEA-11-MATCH-1 (AC-M3).
+    old_digest_counts = _counts(old_entries, lambda entry: entry.get("content_digest"))
+    new_digest_counts = _counts(new_entries, lambda entry: entry.get("content_digest"))
+    old_locator_counts = _counts(old_entries, lambda entry: entry["locator"])
+    new_locator_counts = _counts(new_entries, lambda entry: entry["locator"])
+    old_pixel_counts = _counts(
+        old_entries, lambda entry: entry.get("pixel_digest")
+    )
+    new_pixel_counts = _counts(
+        new_entries, lambda entry: entry.get("pixel_digest")
+    )
 
     def _dup_digest(digest: str | None) -> bool:
         return bool(digest) and (
@@ -143,60 +185,151 @@ def match_entries(
             or new_locator_counts.get(locator, 0) > 1
         )
 
-    paired_new_ids: set[str] = set()
+    def _dup_pixel(digest: str | None) -> bool:
+        return bool(digest) and (
+            old_pixel_counts.get(digest, 0) > 1
+            or new_pixel_counts.get(digest, 0) > 1
+        )
 
-    def _pair_for(old: dict) -> dict | None:
+    def _is_duplicate_member(entry: dict) -> bool:
+        return (
+            _dup_digest(entry.get("content_digest"))
+            or _dup_locator(entry["locator"])
+            or (_pixel_present(entry) and _dup_pixel(entry.get("pixel_digest")))
+        )
+
+    paired_new_ids: set[str] = set()
+    paired_old_ids: set[str] = set()
+
+    def _candidate_for(old: dict) -> dict | None:
+        """Best cross-side counterpart for a duplicate member (unpaired only).
+
+        Preference is content digest → locator → pixel digest.  This is a
+        diagnostic pairing for an ``ambiguous`` row, never an automatic
+        keep/bind decision: duplicate groups are only allowed to end in
+        bind/defer decisions downstream.
+        """
         digest = old.get("content_digest")
         if digest:
             for entry in new_entries:
+                if entry["entry_id"] in paired_new_ids:
+                    continue
                 if entry.get("content_digest") == digest:
                     return entry
         for entry in new_entries:
+            if entry["entry_id"] in paired_new_ids:
+                continue
             if entry["locator"] == old["locator"]:
                 return entry
+        if _pixel_present(old):
+            for entry in new_entries:
+                if entry["entry_id"] in paired_new_ids:
+                    continue
+                if (
+                    _pixel_present(entry)
+                    and entry.get("pixel_digest") == old["pixel_digest"]
+                ):
+                    return entry
         return None
 
-    # duplicate_group pass (old-side rows; new-side-only members surface as
-    # ambiguous added rows below via the same duplicate sets).
+    # --- duplicate_group pass (old side).  AC-M4: a duplicate member with NO
+    # cross-side counterpart is honestly missing/none — a duplicate_group row
+    # with one side null would violate the C-17 §5.3 combination guard
+    # (ambiguous requires both entries).
     for old in old_entries:
-        digest = old.get("content_digest")
-        if _dup_digest(digest) or _dup_locator(old["locator"]):
-            candidate = _pair_for(old)
-            if candidate is not None and (
-                _dup_digest(candidate.get("content_digest"))
-                or _dup_locator(candidate["locator"])
-            ):
-                paired_new_ids.add(candidate["entry_id"])
+        if not _is_duplicate_member(old):
+            continue
+        paired_old_ids.add(old["entry_id"])
+        candidate = _candidate_for(old)
+        if candidate is None:
             result.items.append(
                 MatchItem(
                     item_id="",
-                    classification="ambiguous",
-                    evidence="duplicate_group",
+                    classification="missing",
+                    evidence="none",
                     old_entry=old,
-                    new_entry=candidate,
+                    new_entry=None,
                 )
             )
+            continue
+        paired_new_ids.add(candidate["entry_id"])
+        result.items.append(
+            MatchItem(
+                item_id="",
+                classification="ambiguous",
+                evidence="duplicate_group",
+                old_entry=old,
+                new_entry=candidate,
+            )
+        )
 
-    # --- unique digest / pixel continuation pass.
+    # --- byte-identity pass: exactly one occurrence on each side.  Identical
+    # bytes imply identical pixels, but a repeated pixel occurrence still
+    # freezes the group (AC-M3: the byte branch must not bypass duplicates).
     for old in old_entries:
-        if any(item.old_entry is old for item in result.items):
+        if old["entry_id"] in paired_old_ids:
             continue
         digest = old.get("content_digest")
+        if not digest:
+            continue
         matches = [
             entry
             for entry in new_entries
-            if digest and entry.get("content_digest") == digest
+            if entry["entry_id"] not in paired_new_ids
+            and entry.get("content_digest") == digest
         ]
-        if (
+        if not (
             len(matches) == 1
             and old_digest_counts.get(digest) == 1
             and new_digest_counts.get(digest) == 1
         ):
-            # exactly one occurrence on each side → byte/page-identity
-            # equality; the pixel profile comparison follows from the
-            # identical bytes (the only honest "recompute" of missing old
-            # evidence C-17 §7.3 row 4 permits — same bytes, same pixels).
-            new = matches[0]
+            continue
+        new = matches[0]
+        paired_old_ids.add(old["entry_id"])
+        paired_new_ids.add(new["entry_id"])
+        pixel_duplicate = (
+            (_pixel_present(old) and _dup_pixel(old.get("pixel_digest")))
+            or (_pixel_present(new) and _dup_pixel(new.get("pixel_digest")))
+        )
+        result.items.append(
+            MatchItem(
+                item_id="",
+                classification="ambiguous" if pixel_duplicate else "unchanged",
+                evidence=(
+                    "duplicate_group" if pixel_duplicate else "unique_pixel"
+                ),
+                old_entry=old,
+                new_entry=new,
+            )
+        )
+
+    # --- unique pixel continuation pass (C-17 §7.3 row 2): the pixel digest
+    # must occur exactly once on each side AND all seven profile dimensions
+    # must be comparable, otherwise the pair is not a proven continuation.
+    for old in old_entries:
+        if old["entry_id"] in paired_old_ids or not _pixel_present(old):
+            continue
+        pixel_digest = old["pixel_digest"]
+        candidates = [
+            entry
+            for entry in new_entries
+            if entry["entry_id"] not in paired_new_ids
+            and _pixel_present(entry)
+            and entry.get("pixel_digest") == pixel_digest
+        ]
+        comparable = [
+            entry
+            for entry in candidates
+            if _profiles_comparable(old, entry)
+        ]
+        if (
+            len(candidates) == 1
+            and len(comparable) == 1
+            and old_pixel_counts.get(pixel_digest, 0) == 1
+            and new_pixel_counts.get(pixel_digest, 0) == 1
+        ):
+            new = comparable[0]
+            paired_old_ids.add(old["entry_id"])
             paired_new_ids.add(new["entry_id"])
             result.items.append(
                 MatchItem(
@@ -207,81 +340,53 @@ def match_entries(
                     new_entry=new,
                 )
             )
+
+    # --- locator-unique correspondence with different content (C-17 §7.3 row
+    # 4).  ``changed`` is only a deterministic assertion when BOTH sides carry
+    # complete, comparable pixel evidence and the pixels differ; anything
+    # less degrades to needs-confirmation (AC-M4).
+    for old in old_entries:
+        if old["entry_id"] in paired_old_ids:
             continue
-        if _pixel_present(old):
-            pixel_matches = [
-                entry
-                for entry in new_entries
-                if _pixel_present(entry)
-                and entry["pixel_digest"] == old["pixel_digest"]
-                and entry["entry_id"] not in paired_new_ids
-            ]
-            unique = [
-                entry
-                for entry in pixel_matches
-                if _profiles_comparable(old, entry)
-            ]
-            old_pixel_count = sum(
-                1
-                for candidate in old_entries
-                if _pixel_present(candidate)
-                and candidate.get("pixel_digest") == old["pixel_digest"]
-            )
-            new_pixel_count = sum(
-                1
-                for candidate in new_entries
-                if _pixel_present(candidate)
-                and candidate.get("pixel_digest") == old["pixel_digest"]
-            )
-            if len(unique) == 1 and old_pixel_count == 1 and new_pixel_count == 1:
-                new = unique[0]
-                paired_new_ids.add(new["entry_id"])
-                result.items.append(
-                    MatchItem(
-                        item_id="",
-                        classification="unchanged",
-                        evidence="unique_pixel",
-                        old_entry=old,
-                        new_entry=new,
-                    )
-                )
-                continue
-        # --- locator-unique correspondence with different content.
         locator_matches = [
             entry
             for entry in new_entries
-            if entry["locator"] == old["locator"]
-            and entry["entry_id"] not in paired_new_ids
+            if entry["entry_id"] not in paired_new_ids
+            and entry["locator"] == old["locator"]
         ]
         old_locator_matches = [
-            entry for entry in old_entries
-            if entry["locator"] == old["locator"]
+            entry for entry in old_entries if entry["locator"] == old["locator"]
         ]
-        if len(locator_matches) == 1 and len(old_locator_matches) == 1:
-            new = locator_matches[0]
-            paired_new_ids.add(new["entry_id"])
-            if not _old_evidence_complete(old):
-                # v7-era row without decode evidence: the correspondence is
-                # positional only — degrade to needs-confirmation, never
-                # forge the old profile from the new image (C-17 §7.3 P1/P3).
-                classification, evidence = "ambiguous", "missing_old"
-            elif _pixel_present(old) and _pixel_present(new) and not (
-                _profiles_comparable(old, new)
-            ):
-                classification, evidence = "ambiguous", "incomparable"
-            else:
-                classification, evidence = "changed", "direct"
-            result.items.append(
-                MatchItem(
-                    item_id="",
-                    classification=classification,
-                    evidence=evidence,
-                    old_entry=old,
-                    new_entry=new,
-                )
-            )
+        if not (len(locator_matches) == 1 and len(old_locator_matches) == 1):
             continue
-        # --- no correspondence at all: the page is gone from the container.
+        new = locator_matches[0]
+        paired_old_ids.add(old["entry_id"])
+        paired_new_ids.add(new["entry_id"])
+        if not _pixel_present(old):
+            # v7-era row (pixel/orientation None; at most W/H present): the
+            # positional correspondence is unverifiable — never forge the old
+            # profile from the new image (C-17 §7.3 row 4).
+            classification, evidence = "ambiguous", "missing_old"
+        elif not _pixel_present(new):
+            classification, evidence = "ambiguous", "incomparable"
+        elif not _profiles_comparable(old, new):
+            classification, evidence = "ambiguous", "incomparable"
+        else:
+            classification, evidence = "changed", "direct"
+        result.items.append(
+            MatchItem(
+                item_id="",
+                classification=classification,
+                evidence=evidence,
+                old_entry=old,
+                new_entry=new,
+            )
+        )
+
+    # --- no correspondence at all: the page is gone from the container.
+    for old in old_entries:
+        if old["entry_id"] in paired_old_ids:
+            continue
         result.items.append(
             MatchItem(
                 item_id="",
@@ -292,22 +397,10 @@ def match_entries(
             )
         )
 
-    # --- brand-new members.
+    # --- brand-new members.  A duplicate occurrence with no cross-side
+    # counterpart is an honest add (AC-M4), not a one-sided ambiguous row.
     for new in new_entries:
         if new["entry_id"] in paired_new_ids:
-            continue
-        if _dup_digest(new.get("content_digest")) or _dup_locator(
-            new["locator"]
-        ):
-            result.items.append(
-                MatchItem(
-                    item_id="",
-                    classification="ambiguous",
-                    evidence="duplicate_group",
-                    old_entry=None,
-                    new_entry=new,
-                )
-            )
             continue
         result.items.append(
             MatchItem(
@@ -331,6 +424,4 @@ def match_entries(
     result.items.sort(key=_order)
     for index, item in enumerate(result.items):
         item.item_id = f"di-{index:06d}"
-    # Keep only entries the caller knows about (defensive; superset of none).
-    del old_by_id, new_by_id
     return result

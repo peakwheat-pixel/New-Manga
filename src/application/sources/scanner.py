@@ -31,6 +31,41 @@ from application.sources.model import (
 #: Scan TTL (C-17 §5.3: scan/plan TTL both ≤ 300s).
 SCAN_TTL_SECONDS = 300.0
 
+#: Frozen pixel-profile contract (FEA-11-MATCH-1 card C1–C9; C-17 §5.2
+#: ``PixelProfile``). The values are contract-level constants: a decoder or
+#: Pillow upgrade must change them explicitly, never silently reuse an old
+#: digest as "comparable".
+PIXEL_PROFILE_ALGORITHM = "pixel-digest/1"
+#: ``decoder``/``decoder_version`` are contract IDs (C-17 §5: no path
+#: characters), so the legacy ``referenced-import/1`` default cannot be used
+#: verbatim — the version lives in its own field (pending DSH adjudication).
+PIXEL_DECODER_NAME = "referenced-import"
+PIXEL_DECODER_VERSION = "1"
+PIXEL_PILLOW_VERSION = "12.3.0"  # requirements.txt pins pillow==12.3.0
+PIXEL_PARAMS: dict = {
+    "alpha": "opaque-only",
+    "color_management": "none",
+    "exif_transpose": True,
+    "frame": 0,
+    "mode": "RGB",
+    "pillow_version": PIXEL_PILLOW_VERSION,
+    "profile": "fea11-match-rgb/1",
+}
+
+
+def canonical_pixel_params_json() -> str:
+    """The frozen decoder params as canonical JSON (C8)."""
+    import json
+
+    return json.dumps(
+        PIXEL_PARAMS,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    )
+
+
 
 def _invalid(message: str) -> SourceSyncError:
     return SourceSyncError("INVALID_REQUEST", message)
@@ -195,8 +230,14 @@ class SourceScanner:
                 else:
                     version_id = f"sv-{uuid.uuid4().hex}"
                     now = now_millis()
+                    # C12: the pixel profile is only extracted on the changed
+                    # container path; same-container scans reuse committed
+                    # rows and never re-decode (C-17 §6.1 observation-only).
+                    profiles = _extract_pixel_profiles(
+                        resolved["resolved"], scanned.entries
+                    )
                     candidate_entries = _candidate_entries(
-                        source_id, version_id, scanned.entries, now
+                        source_id, version_id, scanned.entries, now, profiles
                     )
                     candidate_version = {
                         "version_id": version_id,
@@ -207,14 +248,15 @@ class SourceScanner:
                         "created_at": now,
                     }
                     new_entries = candidate_entries
+                    # ``_observation_ok`` converts rows to EntryEvidence once;
+                    # passing pre-built evidence would silently drop the
+                    # pixel profile on the second conversion.
                     target = _observation_ok(
                         source_id,
                         version_id,
                         digest,
                         resolved["authorizations"][0]["identity_digest"],
-                        [
-                            _entry_evidence(entry) for entry in candidate_entries
-                        ],
+                        candidate_entries,
                     )
                 old_entries = (
                     self._store.list_entries_of_version(
@@ -477,59 +519,77 @@ def _container_size(resolved) -> int:
 
 
 def _candidate_entries(
-    source_id: str, version_id: str, scanned_entries, now: str
+    source_id: str, version_id: str, scanned_entries, now: str,
+    profiles: list[tuple[dict | None, str | None]] | None = None,
 ) -> list[dict]:
     from application.importing.referenced.model import stable_sort_key
 
     rows: list[dict] = []
     for ordinal, item in enumerate(scanned_entries):
-        rows.append(
-            {
-                "source_id": source_id,
-                "version_id": version_id,
-                "entry_id": f"se-{uuid.uuid4().hex}",
-                "locator": item.locator,
-                "ordinal": ordinal,
-                "stable_sort_key": stable_sort_key(item.locator, ordinal),
-                "content_digest_kind": item.content_digest_kind,
-                "content_digest": item.content_digest,
-                "encoded_digest": (
-                    item.content_digest
-                    if item.content_digest_kind == "encoded" and item.content_digest
-                    else None
-                ),
-                "pixel_digest": None,
-                "pixel_digest_algorithm": None,
-                "size_bytes": item.size_bytes,
-                "mime_type": None,
-                "width": None,
-                "height": None,
-                "orientation": None,
-                "decoder_name": "",
-                "decoder_version": "",
-                "decoder_params_json": "{}",
-                "created_at": now,
-            }
+        pixel, reason = (
+            profiles[ordinal] if profiles is not None else (None, None)
         )
+        row = {
+            "source_id": source_id,
+            "version_id": version_id,
+            "entry_id": f"se-{uuid.uuid4().hex}",
+            "locator": item.locator,
+            "ordinal": ordinal,
+            "stable_sort_key": stable_sort_key(item.locator, ordinal),
+            "content_digest_kind": item.content_digest_kind,
+            "content_digest": item.content_digest,
+            "encoded_digest": (
+                item.content_digest
+                if item.content_digest_kind == "encoded" and item.content_digest
+                else None
+            ),
+            "pixel_digest": None,
+            "pixel_digest_algorithm": None,
+            "size_bytes": item.size_bytes,
+            "mime_type": None,
+            "width": None,
+            "height": None,
+            "orientation": None,
+            "decoder_name": "",
+            "decoder_version": "",
+            "decoder_params_json": "{}",
+            "created_at": now,
+            # Diagnostic only (never persisted): why this entry carries no
+            # complete pixel profile, projected as EntryEvidence.reason (C10).
+            "pixel_reason": reason,
+        }
+        if pixel is not None:
+            row.update(pixel)
+            row["pixel_reason"] = None
+        rows.append(row)
     return rows
 
 
 def _entry_evidence(entry: dict) -> dict:
     pixel = None
+    reason = entry.get("pixel_reason")
     if entry.get("pixel_digest"):
-        pixel = {
-            "algorithm": entry.get("pixel_digest_algorithm")
-            or "pixel-digest/1",
-            "decoder": entry.get("decoder_name") or "referenced-import/1",
-            "decoder_version": entry.get("decoder_version") or "1",
-            "params_digest": _params_digest(entry),
-            "width": int(entry.get("width") or 0),
-            "height": int(entry.get("height") or 0),
-            "orientation": int(entry.get("orientation") or 1),
-            "pixel_digest": entry["pixel_digest"],
-        }
-    reason = None
-    if entry.get("content_digest") is None:
+        params_digest = _params_digest(entry)
+        if params_digest is None:
+            # The stored params are not a canonical JSON object: the profile is
+            # not comparable and must never be disguised as "{}" (C8).
+            reason = "incomparable"
+        else:
+            pixel = {
+                "algorithm": entry.get("pixel_digest_algorithm")
+                or PIXEL_PROFILE_ALGORITHM,
+                "decoder": entry.get("decoder_name") or PIXEL_DECODER_NAME,
+                "decoder_version": (
+                    entry.get("decoder_version") or PIXEL_DECODER_VERSION
+                ),
+                "params_digest": params_digest,
+                "width": int(entry.get("width") or 0),
+                "height": int(entry.get("height") or 0),
+                "orientation": int(entry.get("orientation") or 1),
+                "pixel_digest": entry["pixel_digest"],
+            }
+            reason = None
+    elif reason is None and entry.get("content_digest") is None:
         reason = "missing_evidence"
     return {
         "entry_id": entry["entry_id"],
@@ -542,17 +602,207 @@ def _entry_evidence(entry: dict) -> dict:
     }
 
 
-def _params_digest(entry: dict) -> str:
+def _params_digest(entry: dict) -> str | None:
+    """sha256 over the **canonical JSON object** of the decoder params (C8).
+
+    The v7 scanner hashed the raw JSON *string literal* (double encoding);
+    a profile digest must be computed from the object so key order and
+    whitespace do not change comparability.  Unparseable params return
+    ``None`` — the caller degrades honestly instead of pretending ``{}``.
+    """
     import hashlib
     import json
 
-    return hashlib.sha256(
-        json.dumps(
-            entry.get("decoder_params_json") or "{}",
+    value = entry.get("decoder_params_json")
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except (TypeError, ValueError):
+            return None
+    if value is None:
+        return None
+    try:
+        canonical = json.dumps(
+            value,
             sort_keys=True,
             separators=(",", ":"),
-        ).encode("utf-8")
-    ).hexdigest()
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+    except (TypeError, ValueError):
+        return None
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# AC-M1: pixel profile extraction (C1–C10; PDF is out of scope, L-M1)
+# ---------------------------------------------------------------------------
+
+
+def _reason_for_import_error(error) -> str | None:
+    """C10 mapping for the *entry profile* failure; None means re-raise.
+
+    Only profile-extraction failures may be degraded.  Grant/lease/identity
+    and container failures stay typed rejections (C11) — never a catch-all.
+    """
+    code = getattr(error, "code", "")
+    if code in ("SOURCE_PASSWORD_REQUIRED", "SOURCE_PASSWORD_INVALID"):
+        return "encrypted"
+    if code in ("SOURCE_FORMAT_UNSUPPORTED", "SOURCE_BUDGET_EXCEEDED"):
+        return "unsupported"
+    return None
+
+
+def _extract_pixel_profiles(resolved, entries) -> list[tuple[dict | None, str | None]]:
+    return [_extract_pixel_profile(resolved, entry) for entry in entries]
+
+
+def _extract_pixel_profile(
+    resolved, entry
+) -> tuple[dict | None, str | None]:
+    """Return ``(pixel_columns, reason)`` for one scanned entry.
+
+    Bytes are read through the strict verified-read path only (C2); the
+    decode follows C1/C4/C5/C6 and the digest follows C7.  Any failure that
+    is allowed to degrade produces ``pixel=None`` + a C10 reason; other
+    errors propagate as typed rejections.
+    """
+    from application.importing.referenced.errors import SourceImportError
+
+    if resolved.source_kind == "pdf":
+        # L-M1: no document-raster seam / raw-RGB port in this slice.
+        return None, "unsupported"
+    if entry.content_digest is None:
+        return None, "missing_evidence"
+    from application.importing.referenced.reader import read_entry_bytes
+
+    try:
+        raw = read_entry_bytes(resolved, entry)
+    except SourceImportError as error:
+        reason = _reason_for_import_error(error)
+        if reason is None:
+            raise
+        return None, reason
+    return _decode_pixel_profile(raw, resolved)
+
+
+def _decode_pixel_profile(
+    raw: bytes, resolved
+) -> tuple[dict | None, str | None]:
+    """Decode one entry's bytes into the frozen ``pixel-digest/1`` columns."""
+    import hashlib
+    import io
+
+    from application.importing.referenced.errors import SourceImportError
+    from application.importing.referenced.reader import check_decode_budget
+
+    try:
+        from PIL import Image, ImageOps
+    except ImportError:  # pragma: no cover - Pillow is a pinned dependency
+        return None, "unsupported"
+    try:
+        # Header-only open first; the budget is checked before the pixel
+        # buffer is allocated (reader.py R1-I007 same-source semantics, C3).
+        image = Image.open(io.BytesIO(raw))
+        try:
+            check_decode_budget(
+                resolved, int(image.size[0]), int(image.size[1])
+            )
+            image.load()
+            exif_orientation = _exif_orientation(image)
+            if exif_orientation is None:
+                return None, "unsupported"
+            normalised = ImageOps.exif_transpose(image)
+            columns = _rgb_pixel_columns(normalised)
+        finally:
+            try:
+                image.close()
+            except Exception:  # pragma: no cover - closing never raises
+                pass
+    except SourceImportError:
+        # Decode-budget refusal for this entry is a per-entry degradation (C3).
+        return None, "unsupported"
+    except Exception:  # noqa: BLE001 - corrupt/unsupported entry, typed degrade
+        return None, "unsupported"
+    if columns is None:
+        return None, "unsupported"
+    h = hashlib.sha256()
+    h.update(f"{columns[0]}x{columns[1]}".encode("ascii"))
+    h.update(b"\x00")
+    h.update(columns[2])
+    return (
+        {
+            "pixel_digest": h.hexdigest(),
+            "pixel_digest_algorithm": PIXEL_PROFILE_ALGORITHM,
+            "width": columns[0],
+            "height": columns[1],
+            "orientation": 1,
+            "decoder_name": PIXEL_DECODER_NAME,
+            "decoder_version": PIXEL_DECODER_VERSION,
+            "decoder_params_json": canonical_pixel_params_json(),
+        },
+        None,
+    )
+
+
+def _exif_orientation(image) -> int | None:
+    """The EXIF orientation tag, or None when it must not be guessed (C4).
+
+    Missing tag = 1 (normal).  Anything outside 1..8 — including the invalid
+    0/9 and non-integer values — is refused instead of being normalised with
+    an arbitrary rotation (C4/L-M7).
+    """
+    try:
+        exif = image.getexif()
+        orientation = exif.get(0x0112, 1)
+    except Exception:  # noqa: BLE001 - unreadable EXIF is not guessable
+        return None
+    if isinstance(orientation, bool) or not isinstance(orientation, int):
+        return None
+    if orientation not in (1, 2, 3, 4, 5, 6, 7, 8):
+        return None
+    return orientation
+
+
+def _rgb_pixel_columns(image) -> tuple[int, int, bytes] | None:
+    """``(width, height, tightly-packed RGB bytes)`` or None if unsupported.
+
+    First version requires an opaque 8-bit RGB raster (C6/L-M7): a non-fully
+    opaque alpha channel (RGBA or palette transparency) yields no profile.
+    """
+    try:
+        if image.mode == "RGB":
+            rgb = image
+        elif image.mode == "RGBA":
+            if _alpha_min(image) < 255:
+                return None
+            rgb = image.convert("RGB")
+        else:
+            if "transparency" in getattr(image, "info", {}):
+                return None
+            if "A" in image.getbands():
+                rgba = image.convert("RGBA")
+                if _alpha_min(rgba) < 255:
+                    return None
+                rgb = rgba.convert("RGB")
+            else:
+                rgb = image.convert("RGB")
+        width, height = rgb.size
+        if rgb.mode != "RGB" or width <= 0 or height <= 0:
+            return None
+        pixels = rgb.tobytes()
+        if len(pixels) != width * height * 3:
+            return None
+        return int(width), int(height), pixels
+    except Exception:  # noqa: BLE001 - unsupported colour model
+        return None
+
+
+def _alpha_min(image) -> int:
+    try:
+        return int(image.getchannel("A").getextrema()[0])
+    except Exception:  # noqa: BLE001 - no readable alpha plane
+        return 0
 
 
 def _observation_ok(
