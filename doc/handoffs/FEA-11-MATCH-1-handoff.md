@@ -26,7 +26,7 @@ status: in_review
 | **R1-02** | P2 | 字节同一守卫测试改为**可达形态**（旧行 v7 无 profile → 前置 duplicate pass 不吸收；新侧一字节同一 + 一同像素成员）；删除字节分支守卫的 M6 变异现在会红（沿用 Reviewer 变异方法）。 | `test_source_match.py::test_byte_identity_does_not_bypass_a_duplicate_pixel_group` |
 | **R1-03** | P2 | 6 份日志全部按真实机器时间重生成（`recorded_at=datetime.now()`），并重新签 Canonical Evidence pin；日志正文为 r2 实跑结果。 | `verification/FEA-11-MATCH-1/logs/*.log` + 卡面 Canonical Evidence |
 | R1-04 | P3 | 删除 `_old_evidence_complete` 死代码及其“W/H = decode 证据”错误 docstring。 | `matcher.py` |
-| R1-05 | P3 | scan 只读快照改为 `sqlite_master` **全表**枚举（当前 40 表），不再固定 17 表子集；卡/Handoff/EV 口径统一为“全表”。 | `test_source_match.py::_snapshot` |
+| R1-05 | P3 | scan 只读快照改为 `sqlite_master` **全表**枚举（运行期 36 张用户表；迁移 SQL 40 条 CREATE 含 4 个 *_v5 重建临时表），不再固定 17 表子集；卡/Handoff/EV 口径统一为“全表”。 | `test_source_match.py::_snapshot` |
 | R1-06 | P3 | gates.log 的最终 check 复跑在 EV-M10 登记**之后**执行并记录（3 warnings，PASS）；重新签 sha。 | `logs/gates.log` |
 | R1-07 | P3 | lost-scan 用例断言具体 `SOURCE_PLAN_STALE` + `details.cause=="expired"`，并显式断言 `source_operations`/`source_binding_publications` 无新行。 | `test_source_match.py` |
 | R1-08 | P3 | `changed/direct` 前加显式 `pixel_digest` 不同守卫（相等 → `ambiguous/duplicate_group`；当前 pass 顺序下不可达，防御未来重排）。 | `matcher.py` |

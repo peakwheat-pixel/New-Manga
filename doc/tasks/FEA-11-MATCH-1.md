@@ -3,20 +3,20 @@ id: FEA-11-MATCH-1
 title: FEA-11 页匹配 pixel profile 提取与旧库 fixture（C-17 §7.3 续）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**2026-11-06 实施交付（in_review）**：Owner=`fea12-dsim-impl`（DSH Agent Teams，Lead `lead`），交付 head `b4ad109da`，AC-M1…AC-M6 MET（`.NET` NOT_RUN），check.ps1 PASS；**r1 独立上下文 Review approved（P0/P1=0；P2×3/P3×7）**；**2026-11-06 r2 最小返修交付 head `e8b0b2db8`（R1-01/02/03 修复 + P3 同批，R1-12 卡外登记），待窄面复审**
+status: done
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**2026-11-06 实施交付（in_review）**：Owner=`fea12-dsim-impl`（DSH Agent Teams，Lead `lead`），交付 head `b4ad109da`，AC-M1…AC-M6 MET（`.NET` NOT_RUN），check.ps1 PASS；**r1 独立上下文 Review approved（P0/P1=0；P2×3/P3×7）**；**2026-11-06 r2 最小返修交付 head `e8b0b2db8` → r2 窄面 Review approved（P0/P1/P2=0）→ done closeout（AC-M1…M6 全 MET；delivery `869b6d5d5`；AC11-3 回填 MET 带 L-M1/L-M4 limitation）**
 suggested_owner: codex
 owner: fea12-dsim-impl（DSH Agent Teams 成员；Lead `lead`）
-reviewer: null
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-MATCH-1-r1.md` session `b9716b1a-a95a-41bf-9400-533dc797e7b0`；r2 窄面 `doc/reviews/FEA-11-MATCH-1-r2.md` session `2658835c-a883-472a-89a5-e0e2f5c01c3e`；均未参与实现）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 2d9a4a219   # 释放点 main head（AC4-GAPS-1 closeout 后）
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: e8b0b2db8   # r2 实现+测试交付 head（r1: 7bd8efe47 / 2d61e43c3 / b4ad109da / docs c12023ab6；r2: e8b0b2db8；r2 docs 紧随其后）
-canonical_evidence_status: pinned
-resource_closeout_status: pending
+integration_commit: 869b6d5d5
+delivery_head: 869b6d5d5   # 交付 head（含证据/卡/Handoff）；实现+测试 head=e8b0b2db8；r1 交付 c12023ab6（含 7bd8efe47/2d61e43c3/b4ad109da）
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-MATCH-1
 allowed_paths:
   - doc/tasks/FEA-11-MATCH-1.md
@@ -44,7 +44,7 @@ out_of_scope:
 
 # FEA-11-MATCH-1：页匹配 pixel profile 提取与旧库 fixture
 
-> **状态：`in_review`（r1 已 approved，2026-11-06 r2 交付，Owner=`fea12-dsim-impl`，交付 head `e8b0b2db8`）。** r1 独立上下文 Review approved（P0/P1=0；P2×3/P3×7，报告 `doc/reviews/FEA-11-MATCH-1-r1.md`）；r2 已按 findings 最小返修：R1-01 改名不可比 counterpart → `ambiguous/incomparable`（保留 bind 可能）、R1-02 字节分支重复守卫判别测试可达、R1-03 全部证据日志按真实机器时间重生成并重签 pin，并同批处置 R1-04/R1-05/R1-06/R1-07/R1-08/R1-09/R1-10/R1-11；R1-12 属卡外登记后续。门禁（r2 tree）：`tests/fea11` **108 passed**、`test_source_match.py` **20 passed**、全量 **3203 passed / 10 skipped**、pins **18/18**、`check.ps1 -TaskPath` **PASS**、契约/schema/依赖/apps 零 diff、`.NET` NOT_RUN。待窄面 fresh Review；`integration_commit` 由 DSH closeout 填写。
+> **状态：`done`（r1 approved → r2 最小返修 → r2 窄面 Review approved（P0/P1/P2=0）→ closeout；Owner=`fea12-dsim-impl`；delivery head `869b6d5d5`，实现+测试 head `e8b0b2db8`）。** r1 独立上下文 Review approved（P0/P1=0；P2×3/P3×7，报告 `doc/reviews/FEA-11-MATCH-1-r1.md`）；r2 已按 findings 最小返修：R1-01 改名不可比 counterpart → `ambiguous/incomparable`（保留 bind 可能）、R1-02 字节分支重复守卫判别测试可达、R1-03 全部证据日志按真实机器时间重生成并重签 pin，并同批处置 R1-04/R1-05/R1-06/R1-07/R1-08/R1-09/R1-10/R1-11；R1-12 属卡外登记后续。门禁（r2 tree）：`tests/fea11` **108 passed**、`test_source_match.py` **20 passed**、全量 **3203 passed / 10 skipped**、pins **18/18**、`check.ps1 -TaskPath` **PASS**、契约/schema/依赖/apps 零 diff、`.NET` NOT_RUN。r2 窄面 Review：`doc/reviews/FEA-11-MATCH-1-r2.md`（session `2658835c…`）**approved（P0/P1/P2=0；P3×3 已在本 closeout 处置）**；`integration_commit=869b6d5d5`。
 
 ## 来源与目标
 
@@ -153,7 +153,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 | AC-M3 重复组 | 同上（1:2/2:1/重名/同像素交叠 + scan→plan 全链） | 隔离 fixture | **PASS** | `logs/pytest-match.log`、`AC-MATRIX.md` |
 | AC-M4 降级/counterpart-less | 同上（真实 v7 fixture 全链 + 单测矩阵） | 生产 v7 + 真实导入 | **PASS** | `logs/pytest-match.log`、`AC-MATRIX.md` |
 | AC-M5 真实 v7 fixture/只读 | 同上（旧行形态查询 + DB 全表快照 + 两代 resync + scan 丢失零提交） | 隔离 root（conftest 既有 `workspace/FEA-11/fixtures`）；生产 v7 | **PASS** | `logs/pytest-match.log`、`logs/pytest-fea11.log`（108 passed） |
-| AC-M6 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --name-only <base>..<head> -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt apps` | 仓库根；释放日基线实跑 | **PASS**：fea11 107 passed；全量 **3203 passed / 10 skipped**；check 见 `logs/gates.log`；pins 18/18；零 diff | `verification/FEA-11-MATCH-1/{EV.md,changed-files.txt,logs/*.log}` |
+| AC-M6 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --name-only <base>..<head> -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt apps` | 仓库根；释放日基线实跑 | **PASS**：fea11 **108 passed**（R2-02 修正）；全量 **3203 passed / 10 skipped**；check 见 `logs/gates.log`；pins 18/18；零 diff | `verification/FEA-11-MATCH-1/{EV.md,changed-files.txt,logs/*.log}` |
 
 ## 预期行为变更（Review 不判回归）
 
@@ -219,6 +219,8 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 | EV-M8 | 零漂移 | `verification/FEA-11-MATCH-1/logs/static-diff.log` | - | `3b5927ff316ade17215cf0d4a10361f145eccf7bec91b706915ceede4b8fd581` | CANONICAL |
 | EV-M9 | 变更清单 | `verification/FEA-11-MATCH-1/changed-files.txt` | - | `2b7bb65c1617239cdc9bfc12f9df2f3e2343219b4ec117d379fa5c680b84d66b` | CANONICAL |
 | EV-M10 | check.ps1 PASS（R1-06：登记后复跑） | `verification/FEA-11-MATCH-1/logs/gates.log` | - | `09cae20fab4f29f6fe0448295d1a9e465bc317cb881ae0a9a9198280dd25bf63` | SOURCE_PIN |
+| EV-R1-REVIEW | r1 独立复审（approved P0/P1=0） | doc/reviews/FEA-11-MATCH-1-r1.md | - | 3f88c269e0e729c54c0cacac8aec8ff0e2aae24583de0943f31d07b4b63224de | CANONICAL |
+| EV-R2-REVIEW | r2 窄面复审（approved P0/P1/P2=0） | doc/reviews/FEA-11-MATCH-1-r2.md | - | f19f6c2c1d260235e027afdd6ff6cfd9986163bca74f6acf369775035792cfde | CANONICAL |
 
 check.ps1 运行结果与门禁摘录见 `verification/FEA-11-MATCH-1/logs/gates.log`（命令/EXIT/输出；已以 `SOURCE_PIN` 登记在 EV-M10）。
 
@@ -227,14 +229,18 @@ check.ps1 运行结果与门禁摘录见 `verification/FEA-11-MATCH-1/logs/gates
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树；本卡在 `main` 上层提交，未新建 worktree） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures`（pytest `tmp_path` + conftest 既有隔离根） | DELETE_SAFE（pytest 自清理；无提交二进制） | — | — | 已用于真实 zip/v7 导入 fixture；无 tracked 文件写入 |
-| agent-output | `verification/FEA-11-MATCH-1/**`（仓库内证据，非 workspace agent-output） | KEEP（canonical evidence） | — | 见 Canonical Evidence | 已登记 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures`（pytest `tmp_path` + conftest 既有隔离根） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | verification/FEA-11-MATCH-1/EV.md | pytest 自清理隔离根；保留不清理（无 tracked 文件写入、无独有产物）；真实 zip/v7 导入 fixture 已用 |
+| evidence | `verification/FEA-11-MATCH-1/`（仓库内证据） | PRESERVE_REFERENCED | `verification/FEA-11-MATCH-1` | verification/FEA-11-MATCH-1/EV.md | Canonical Evidence 已登记（EV.md/AC-MATRIX/changed-files/logs）；原位保留不清理 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：L-M1…L-M7（见上）。
-- 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
+- Closeout date / DSH：2026-11-06 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；delivery_head / integration_commit = **`869b6d5d5`**（含证据/卡/Handoff；实现+测试 head `e8b0b2db8`；r1 交付 `c12023ab6`）。
+- Review 链：r1 独立复审 approved（P0/P1=0；P2×3/P3×7）→ r2 最小返修（R1-01/02/03 + P3 同批）→ r2 窄面 **approved（P0/P1/P2=0；P3×3）**；Reviewer 均为 fresh subagent（session 见 frontmatter）。
+- AC 定稿：**AC-M1…AC-M6 全 MET**；W1/W1b 窄批按 DSH 裁决落实（补真实 pixel profile，未放宽断言）；C9 常量经 DSH 裁决更正为 `decoder="referenced-import"` + `decoder_version="1"`（C-17 §5.2 ID 规则；契约字节零改）。
+- 证据真实性：r2 全部 7 份日志按真实机器时间重生成、与 mtime 一致（Δ+0.88…+4.83s）、晚于代码提交早于 docs 提交；10 条 Canonical Evidence 复算 10/10 MATCH；gates.log 的 check 自指属不可避免（closeout 复跑记最终 PASS）。
+- 残余风险/limitation：**L-M1** PDF 不产 pixel profile（PDF 插页不承接）；**L-M2** 导入路径不写 profile（首次 resync 不自动像素匹配，第二代起）；**L-M3** `service.py::_entries_from_target` 保真缺陷（未扩写域；live scan 丢失→typed `SOURCE_PLAN_STALE`）；**L-M4** 旧证据按冻结参数重算未实现；L-M5 无解码诊断计数；L-M6 性能未优化（成本未标定）；L-M7 EXIF 镜像不可区分/非全不透明 alpha 不产 profile/不宣称所有可解码图必有 profile；R1-12（非图片成员 `content_digest=None` 的 apply NOT NULL 风险）为卡外既有问题，登记后续；directory-source 重复内容不合并 occurrence（与 zip 同机制但无 folder-source 专项断言）。
+- r2 Review P3 处置：**R2-01** 「40 表」更正为运行期 36 张用户表（迁移 SQL 40 条 CREATE 含 4 个 *_v5 重建临时表；测试注释 comment-only、无行为变化）；**R2-02** 本卡测试表 fea11 107→**108**；**R2-03** r1/r2 Review 报告已落盘 `doc/reviews/` 并回填 `reviewer`。
+- **AC11-3 回填（FEA-11）**：`MET（带 limitation：L-M1 PDF 插页 / L-M4 旧证据重算；另注 folder-source 无专项断言）`；已在 FEA-11 卡 Closeout 补充回填。
+- 删除、迁移、归档数量/字节数：0（`FEA-11\fixtures` 为 pytest 自清理隔离根，无提交二进制）。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。

@@ -237,7 +237,7 @@ def _source_rows(conn, version_id: str) -> list[sqlite3.Row]:
 
 #: The read-only snapshot covers **every** user table in the database
 #: (enumerated from ``sqlite_master``, R1-05) so "scan writes nothing" cannot
-#: silently miss a table; the schema currently has 40 of them.
+#: silently miss a table; the schema currently has 36 user tables (the migration SQL contains 40 CREATE TABLE statements, 4 of which are *_v5 rebuild temporaries).
 def _snapshot(conn) -> dict:
     tables = [
         row[0]
