@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `in_progress`（用户 2026-11-05 授权启动；DSH 实施；P0-1 闭合路径；r1–r8 复审已 approved（待用户裁决 closed_with_limitations））。
+- 当前 Task：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `in_progress`（r8 approved；用户 2026-11-05 交 Codex 终态裁决，待 closeout）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `in_review`（r1 changes→r2 返修中）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `ready`（scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)。
-- 下一步：FEA-11-HOST-AUTH-1 实施（canonical 摘要 + 自签授权 + Registry durable + ACK 重发/崩溃点测试）→ 独立 Review → 集成；与 FEA-11-LINEAGE-1 并行；FEA-12 已获「隔离模拟回收站」验证口径，可进入 scope review。
+- 下一步：HOST-AUTH-1 按 Codex 裁决 closeout；LINEAGE-1 r2 Review→closeout；FEA-12-PREREQ-1 实施→独立 Review→释放 FEA-12-CORE/DSIM-1。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
