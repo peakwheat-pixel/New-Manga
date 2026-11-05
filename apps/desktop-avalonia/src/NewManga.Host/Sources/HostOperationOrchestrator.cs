@@ -56,6 +56,19 @@ public sealed class HostOperationOrchestrator
             "source_repoint" => "repoint",
             _ => "resync",
         };
+        // C-17 §3.2:163 — retry keys off the same kind/digest; a mismatched
+        // command or a missing durable authorization must fail before any
+        // registry authorization happens.
+        if (!string.Equals(entry.Kind, kind, StringComparison.Ordinal))
+        {
+            throw new CoreOperationException(
+                "SOURCE_SYNC_STATE_CONFLICT", "conflict", false,
+                "retry kind does not match the journaled operation", null);
+        }
+        if (entry.State != "failed" || entry.CommitDigest is not null || entry.Retryable == false)
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
         var registryAuthorizations = new List<Dictionary<string, object?>>();
         if (payload.ValueKind == JsonValueKind.Object
             && payload.TryGetProperty("authorization", out var incoming)
@@ -90,6 +103,12 @@ public sealed class HostOperationOrchestrator
         var minted = HostAuthorizationMinter.Mint(
             entry.PlanId, entry.PlanDigest, kind, registryAuthorizations,
             operationId: entry.OperationId);
+        if (!string.Equals(minted.RequestDigest, entry.RequestDigest, StringComparison.Ordinal))
+        {
+            throw new CoreOperationException(
+                "SOURCE_SYNC_STATE_CONFLICT", "conflict", false,
+                "retried operation must keep its request digest", null);
+        }
         var known = _registry.List().ToDictionary(item => item.RegistryId, item => item);
         foreach (var item in minted.Authorizations)
         {

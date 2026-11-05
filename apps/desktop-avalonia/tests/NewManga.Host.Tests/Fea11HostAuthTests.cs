@@ -361,4 +361,69 @@ public sealed class Fea11HostAuthTests : IDisposable
         Assert.Equal(retryable, HostErrorCodes.RetryableOf(code));
         Assert.False(HostErrorCodes.IsKnown("NOT_A_C17_CODE"));
     }
+
+    [Fact]
+    public async Task Retry_PersistsTheFreshAuthorizationInTheJournal()
+    {
+        var orchestrator = NewOrchestrator();
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", CallerPayload(),
+            (_, _) => throw new CoreOperationException("SOURCE_PLAN_STALE", "conflict", true, "stale", null),
+            CancellationToken.None));
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        var before = _operations.Get(operationId)!;
+
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.RetryAsync(
+            "source_resync", operationId, CallerPayload(),
+            (_, _) => throw new CoreOperationException("SOURCE_SYNC_UNSTABLE", "conflict", true, "unstable", null),
+            CancellationToken.None));
+        var after = _operations.Get(operationId)!;
+
+        Assert.Equal(before.RequestDigest, after.RequestDigest);
+        Assert.NotEqual(before.HostReceiptId, after.HostReceiptId);
+        Assert.NotEqual(before.AuthorizationJson, after.AuthorizationJson);
+        Assert.Equal("failed", after.State);
+        Assert.Equal("SOURCE_SYNC_UNSTABLE", after.ErrorCode);
+    }
+
+    [Fact]
+    public async Task Retry_RefusesACommandKindMismatch()
+    {
+        var orchestrator = NewOrchestrator();
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", CallerPayload(),
+            (_, _) => throw new CoreOperationException("SOURCE_PLAN_STALE", "conflict", true, "stale", null),
+            CancellationToken.None));
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            orchestrator.RetryAsync("source_relink", operationId, CallerPayload(),
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
+        Assert.Equal("SOURCE_SYNC_STATE_CONFLICT", error.Code);
+    }
+
+    [Fact]
+    public async Task Retry_RunsTheCapabilityGateBeforeTouchingTheJournal()
+    {
+        var orchestrator = NewOrchestrator((_, _) => throw new CoreOperationException(
+            "CORE_CAPABILITY_MISSING", "protocol", false, "missing", null));
+        var payload = CallerPayload();
+
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new CoreOperationException("SOURCE_PLAN_STALE", "conflict", true, "stale", null),
+            CancellationToken.None));
+        // Apply used the same orchestrator: with a failing gate it cannot have
+        // journaled anything, so the retry itself must also fail on the gate.
+        Assert.False(Directory.Exists(Path.Combine(_root, "host", "source-operations")));
+        await Assert.ThrowsAsync<CoreOperationException>(() =>
+            orchestrator.RetryAsync("source_resync", "op-00000000000000000000000000000000", payload,
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
+    }
 }
