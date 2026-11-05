@@ -55,10 +55,10 @@ allowed_paths:
 
 - AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 5/5（含 non-BMP）（跨实现向量：request/authorization/mixed/escapes + non-BMP code-point 排序；sha256 由 Python Core 生成）。
 - AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 6/6（含固定 id 外部向量）；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
-- AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现（Host 侧四项守卫：kind/request_digest/state/CommitDigest/Retryable；plan 有效性由 Core `take_confirmed` 在 apply 事务内复核）**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 22/22（17 方法）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
-- AC4 PARTIAL（路径层依据已具备）：`doc/reviews/FEA-11-r3.md` 第 38 行「HOST-AUTH-1 可接受（有条件，并接受为 P0-1 闭合路径）」；P0-1 的实际闭合取决于 AC1–AC3，待 r6 复审判定。
-- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 首跑全绿 / 重跑 1390/0/78（r5 全量运行 head 0b7e5e03b；r6 复跑 Host.Tests 105/0/49）、IPC 3/3（Core 直连；命令/env 见 gates.log）、check PASS、pins 18/18；含 flaky 说明）。
-- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）；dispatcher 无冻结 retry 命令（retry 为 Host 编排 API）；receipt 核对/canonical 重算与 registry scope 精度登记 deferral。
+- AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现（Host 侧四项守卫：kind/request_digest/state/CommitDigest/Retryable；plan 有效性由 Core `take_confirmed` 在 apply 事务内复核）**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 24/24（19 方法）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
+- AC4 PARTIAL（路径层依据已具备）：`doc/reviews/FEA-11-r3.md` 第 38 行「HOST-AUTH-1 可接受（有条件，并接受为 P0-1 闭合路径）」；P0-1 的实际闭合取决于 AC1–AC3，r6 changes_requested；r7 复审后收口。
+- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 首跑全绿 / 重跑 1390/0/78（r5 全量运行 head 0b7e5e03b；r6 复跑 Host.Tests 105/0/49）、IPC 3/3（Core 直连；命令/env 见 gates.log）、check PASS、pins 18/18；含门禁命令/EXIT/provenance）。
+- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）；dispatcher 无冻结 retry 命令（retry 为 Host 编排 API）；plan 有效性由 Core `take_confirmed` 事务内兜底；receipt 核对/canonical 重算、registry scope 精度、R7-P2-01 守卫补测（已补测）登记 deferral。
 
 ## Deferral 登记表（r5 收口）
 
@@ -84,5 +84,5 @@ allowed_paths:
 
 - [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 5/5，含 non-BMP）。 <<MET>>
 - [x] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest（`HostAuthorizationMinter` + 单测 6/6：六字段/排序/canonical digest/唯一性/固定向量/格式拒绝；注入在 HostRuntime 实现）。 <<MET>>
-- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序+失败语义+retry 由 HostOperationOrchestrator 保证，`Fea11HostAuthTests` 19/19（顺序探针/typed 失败/failed+error_code/歧义/retry fresh auth/kind 守卫/capability 门）；完整 HostRuntime→Core e2e 与 ACK 重发/崩溃点矩阵待补（FEA-11 L-8/L-9 limitation）>>
-- [ ] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<PARTIAL: `doc/reviews/FEA-11-r3.md:38` 已接受本卡为 P0-1 闭合路径；P0-1 实际闭合取决于 AC1–AC3，待 r6 复审判定>>
+- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序+失败语义+retry 由 HostOperationOrchestrator 保证，`Fea11HostAuthTests` 24/24（19 方法）（顺序探针/typed 失败/failed+error_code/歧义/retry fresh auth/kind 守卫/capability 门）；完整 HostRuntime→Core e2e 与 ACK 重发/崩溃点矩阵待补（FEA-11 L-8/L-9 limitation）>>
+- [ ] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<PARTIAL: `doc/reviews/FEA-11-r3.md:38` 已接受本卡为 P0-1 闭合路径；P0-1 实际闭合取决于 AC1–AC3，r6 changes_requested；r7 复审后收口>>

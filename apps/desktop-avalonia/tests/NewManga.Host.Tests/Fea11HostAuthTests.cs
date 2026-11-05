@@ -427,4 +427,53 @@ public sealed class Fea11HostAuthTests : IDisposable
                 CancellationToken.None));
         Assert.Equal("CORE_CAPABILITY_MISSING", retryError.Code);
     }
+
+    [Fact]
+    public async Task Retry_RefusesAJournaledRequestDigestMismatch()
+    {
+        // r7-P2-01: journal a failed operation whose request digest would not be
+        // reproduced by the retry mint — the digest guard must reject it before
+        // the registry authorization happens.
+        var operationId = "op-" + new string('0', 32);
+        _operations.Begin(
+            "pl-1", new string('a', 64), "resync", new string('f', 64), operationId);
+        _operations.MarkFailed(operationId, "SOURCE_PLAN_STALE", retryable: true);
+        var lastUsedBefore = _registry.List().Single().LastUsedAt;
+        var orchestrator = NewOrchestrator();
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            orchestrator.RetryAsync("source_resync", operationId, CallerPayload(),
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
+
+        Assert.Equal("SOURCE_SYNC_STATE_CONFLICT", error.Code);
+        Assert.Equal("failed", _operations.Get(operationId)!.State);
+        Assert.Equal(lastUsedBefore, _registry.List().Single().LastUsedAt);
+    }
+
+    [Fact]
+    public async Task Retry_RefusesACommittedFailedOperationWithCommitDigest()
+    {
+        // r7-P2-01: C-17 §3.2:162 records a committed failure with a commit
+        // digest; such an operation must go through recovery, never retry.
+        var orchestrator = NewOrchestrator();
+        await orchestrator.ApplyAsync("source_resync", CallerPayload(),
+            (_, _) => Task.FromResult(new CoreResponse(
+                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null)),
+            CancellationToken.None);
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        _operations.MarkFailed(operationId, "SOURCE_SYNC_STORAGE_FAILED", retryable: true);
+
+        var error = await Assert.ThrowsAsync<SourceAccessException>(() =>
+            orchestrator.RetryAsync("source_resync", operationId, CallerPayload(),
+                (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
+                CancellationToken.None));
+
+        Assert.Equal("SOURCE_SYNC_STATE_CONFLICT", error.Code);
+        var journaled = _operations.Get(operationId)!;
+        Assert.Equal("failed", journaled.State);
+        Assert.NotNull(journaled.CommitDigest);
+    }
 }

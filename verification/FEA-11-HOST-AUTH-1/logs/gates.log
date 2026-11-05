@@ -24,3 +24,5 @@ Governance check: PASS (2 warnings)
 PIN AUDIT: PASS (all 18)
 # 7) worktree
 post_restore_git_status=dirty (residual path: M verification/FEA-11-HOST-AUTH-1/logs/gates.log — this log file itself; no other residue)
+# 8) full .NET at HEAD 04954d209 (r7 Reviewer independent run): 1393 passed / 0 failed / 78 skipped, EXIT=0; IPC 3/3; verification/FEA-09 restored via git checkout.
+# 9) r7 guard tests added: Fea11HostAuthTests 24/24 (19 methods) after commit.
