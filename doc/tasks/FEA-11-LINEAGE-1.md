@@ -4,10 +4,10 @@ title: FEA-11 lineage native 写入与读路径隔离（C-17 §7.1 续）
 kind: implementation
 governance_version: 3
 status: in_review
-approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 返修范围与口径由 DSH（Lead）2026-11-05 裁决确认（4 点，见 r2 DSH 裁决节）；r2 Review changes_requested（P1=1/P2=3/P3=5）→ r3 最小返修（R2-01/R2-02/R2-03/R2-05，见 r3 实施记录）；r3 交付 `in_review` 待 fresh 复审
+approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 DSH 4 点裁决；r2 Review changes_requested → r3 最小返修完成；**r3 Review changes_requested（P0=0/P1=0/P2=1/P3=4，仅 L1/矩阵过度声明的卡面与限制登记修正，非代码返修）→ Lead 处置（r4 待 fresh 复核）**
 suggested_owner: codex
-owner: lineage-impl（r2/r3 返修，DSH 派发 Team teammate）
-reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-LINEAGE-1-r1.md`；r2 `doc/reviews/FEA-11-LINEAGE-1-r2.md`，reviewer session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`；r3 待派）
+owner: lineage-impl（r2/r3 返修，DSH 派发 Team teammate）；r3 Review 处置由 Lead 执行（findings disposition）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-LINEAGE-1-r1.md`；r2 `doc/reviews/FEA-11-LINEAGE-1-r2.md` session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`；r3 `doc/reviews/FEA-11-LINEAGE-1-r3.md` session `49d520be-0862-41b2-87f0-0ec35dc28b3d`）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 81c28d305
@@ -40,6 +40,7 @@ allowed_paths:
   - tests/fea11/test_source_lineage.py
   - tests/fea11/test_source_lineage_native.py
   - tests/fea11/test_source_lineage_assembly.py（r2 新增：装配级）
+  - tests/fea11/test_source_lineage_run.py（r3 新增：Run 执行链判别性测试；r3 Review P3 补登）
   - tests/fea11/conftest.py（r2 窄批：add_sync_switch 种子）
   - verification/FEA-11-LINEAGE-1/**
 ---
@@ -108,7 +109,7 @@ allowed_paths:
 |---|---|---|---|---|---|---|
 | managed 页（无 binding） | 跳过 | 全部可见 | 允许（无 lineage） | 放行（进入原渲染路径） | 允许 | 保持预 LINEAGE-1 行为 |
 | referenced 页从未同步切换 | 跳过 | 全部可见 | 允许，登记 native(当前唯一 binding) | 放行 | 允许 | P0 回归保护；不因缺 lineage 拒绝 |
-| 同步页 changed 切断 | 启用 | 过滤旧 region（计数可见） | 拒绝 `LINEAGE_BINDING_CHANGED` | `BLOCKED` 同 code | region-scope 拒绝同 code；page-scope 过滤，执行链 detect 只复用可见集合、全 hidden 时在新图检测（R2-01） | 旧坐标对新图不可见 |
+| 同步页 changed 切断 | 启用 | 过滤旧 region（计数可见） | 拒绝 `LINEAGE_BINDING_CHANGED` | `BLOCKED` 同 code | region-scope 拒绝同 code；page-scope 过滤，执行链 detect 只复用可见集合、全 hidden 时在**测试装配 stub 图源**上检测（R2-01；真实 referenced 图源受既有 managed-original 门槛限制，见 L10） | 旧坐标对新图不可见 |
 | 同步页 same_content（可多跳） | 启用 | 可见（沿等价边） | 允许，新 revision native 当前 binding | 放行 | 允许 | 坐标等价，C-17 §7.1 允许 |
 | 同步页缺 lineage 行 / `legacy_unverified` | 启用 | 过滤（计数可见） | 拒绝 `LINEAGE_UNVERIFIED` | `BLOCKED` 同 code | region-scope 拒绝同 code | 不可验证即 fail-closed |
 | 同步页全 hidden + page-scope RERENDER_*/REINPAINT_* | 启用 | 过滤 | n/a | n/a | planner 干净终态（task SKIPPED、run COMPLETED，R2-01） | 无页级 unit → 不会 DB_FAILED/INVALID_INPUT |
@@ -123,7 +124,7 @@ allowed_paths:
 
 ## limitation 修订（r2/r3）
 
-- **L1（导出/Run/ListRegions/单区域渲染守卫）**：**已闭环（r3）**——r2 已实现 ListRegions/文本读过滤、export 文本面过滤、单 region rerender typed `BLOCKED`、page render 过滤+reports、Run region-scope 守卫；r3 修复 page-scope Run 执行链（R2-01）：detect 复用只取 lineage 可见集合、全 hidden 在新图检测、全 hidden 的 render/inpaint page 步骤为干净终态、candidate 提交窗口 typed 投影为既有 conflict。无 deferral。
+- **L1（导出/Run/ListRegions/单区域渲染守卫）**：**执行链守卫已闭环（r3 Review 限定口径）**——r2 实现 ListRegions/文本读过滤、export 文本面过滤、单 region rerender typed `BLOCKED`、page render 过滤+reports、Run region-scope 守卫；r3 修复 page-scope Run 执行链（R2-01）：detect 复用只取 lineage 可见集合、全 hidden 在**测试装配的 stub 图源**上执行检测、全 hidden 的 render/inpaint page 步骤为干净终态、candidate 提交窗口 typed 投影为既有 conflict。**不得**表述为「真实 referenced 图源已闭环」：provider 图像源仍是 Managed Copy original（`core_assembly.py:351-428`），纯 referenced 同步页在 `_page_or_error` 即被既有 `managed_original_ref` 门槛拒绝（`pipeline.py:1433-1434`）；该缺口见 L10。
 - **L2（AC11-5 集成测试）**：**已闭环**——真实 SQLite 仓储 + 装配级集成测试覆盖 native 写入→changed 拒绝 / same_content 放行（多跳）/ 无 lineage typed 诊断 / 回滚无孤儿行 / draft/Run/restore/批量登记；r3 补 page-scope Run 执行链判别性测试。
 - **L3（same_content 读边）**：**已闭环**——`SourceSyncLineageFacts.same_content_reachable` 沿 `publication.previous` 只经 `same_content` 边多跳；changed/repoint/missing 切断，测试覆盖。
 - **L4（已知限制，r3 登记，R2-06）**：mixed 页（visible + hidden 并存）的 `reorder_regions` 仍要求 `ordered_region_ids` 等于**全部** live id（含 hidden），UI 不可见 hidden id 时无法重排；`create_region` 的 page cap 也计入 hidden；`list_page_region_texts` 显式 region_ids 命中 hidden 时返回 `TARGET_NOT_FOUND`（与未知/已删不可区分，stderr 有计数）。均非数据安全问题，建议后续卡把 reorder/merge 校验改到可见集合或返回显式 typed 诊断码。
@@ -132,6 +133,8 @@ allowed_paths:
 - **L7（残余，r2 保留）**：reader 投影（`handle_get_reader_projection`）只消费 translated artifact，不读 region 坐标；旧渲染 artifact 的 stale 判定沿用 FEA-11 既有 `rendered_from_revision_id`/`current_source_revision_id` 逻辑，未纳入本卡范围。
 - **L8（裁决依据，不是限制）**：非同步页（managed 页 / 从未切换的 referenced 页）缺 lineage 不拒绝，是 DSH r2 裁决 ① 按 C-17 §7.1「本卡涉及的同步页」字面范围的结果；同步页内仍严格 fail-closed。判别证据：`test_mixed_library_scope_matrix_is_diagnosable`（gates-r3.log gate 2）。
 - **L9（分层说明）**：`run_source_guard`（lease/gate）与 lineage guard 是两层独立守卫；本卡只新增 lineage 层。
+- **L10（集成限制，r3 Review R3-01 登记）**：page-scope Run 的「全 hidden → 在**新图**检测」只在测试装配的 stub 图源成立，**不是**真实 referenced 图源闭环：①纯 AD-003 referenced 同步页（`managed_original_ref IS NULL`）在既有 `_page_or_error` 门槛即被拒绝（`pipeline.py:1433-1434`，TARGET_NOT_FOUND「page has no managed original」）——这是既有门槛，非 r3 引入；②provider 图像源 `_ManagedPageImageSource` 读取 Managed Copy original（`core_assembly.py:351-428`），不是当前 binding 的 C-17 §7.2 rendition；③r3 判别测试页是「referenced + managed_original 非空」的混合构造，`_StubImages` 未验证图像内容。**风险**：若混合页的 managed original 与当前 binding 图像不同，detect 输出坐标可能以 native lineage 记到新 binding（旧坐标 native 化）；当前真实 referenced 路径被既有门槛挡住，未证实为生产泄漏。**后续**：接 C-17 §7.2 rendition 图源后，需用真实新图与旧 managed original 不同的页断言 detect 输入来自当前 binding，否则禁止写 native；并补「纯 referenced 页 TARGET_NOT_FOUND」边界测试。
+- **L11（行为说明/后续增强，r3 Review P3 登记）**：①`lineage_hidden_regions` 进入 page target metadata 后会影响 prepared-snapshot digest，已 prepared 的 Run 可能一次性得到 `RUN_STALE_PREVIEW`（安全、可重预览；后续可考虑把计数从 digest 输入中剥离）；②`_backfill_detected_regions` 对 `LINEAGE_*` 码按「不可读跳过」处理（当前无 stderr 计数），建议后续补诊断计数以便观测。
 
 ## Canonical Evidence
 
@@ -150,5 +153,17 @@ allowed_paths:
 - **r3 复审就绪**：请 Lead 指派独立上下文 fresh subagent 做 r3 Review（被审 head：r3 修复 `d8ed04e13` + 测试 `6c0ab6594` + 证据 `280bb7bd0` + 本卡 commit；重点：R2-01 执行链/空集终态、R2-02 candidate 投影语义与「结果留 candidate」判定、R2-03 四测试判别力、R2-05 归属校验、L4-L7 已知限制登记是否充分）。
 - 本实现者**不自审**；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
 - 门禁（Python-only）：`pytest tests/fea11` 62 passed；`pytest tests` 3073 passed / 10 skipped（基线 3060/10，新增 13）；`check.ps1` PASS；`verify_pins.ps1` 18/18 PASS；冻结契约零 diff；未 push。
-- 本实现者**不自审**：请求 Lead 指派独立上下文 fresh reviewer 按本卡 + `doc/reviews/FEA-11-LINEAGE-1-r1.md` + r2 DSH 裁决做 r2 Review（重点：P0-1 六条写路径、守卫作用域裁决、typed 入口覆盖、backfill 幂等/不抢占 captured_v7、真实混合库矩阵证据）。
-- 交付 head 与 commit 列表以最终报告为准（本卡 frontmatter `delivery_head` 由 Lead 集成时填写）。
+- **r3 Review 结果**：changes_requested（P0=0/P1=0/P2=1/P3=4；代码/测试层 R2-01/R2-02/R2-03/R2-05 均核销，R2-02 语义获 approve；唯一 P2 = R3-01 卡面 L1/矩阵过度声明；AC1/AC3 MET、AC2 按原文 MET）。
+
+## r3 Review 处置（Lead，2026-11-05；findings disposition）
+
+> 依据：`doc/reviews/FEA-11-LINEAGE-1-r3.md`（fresh subagent session `49d520be-0862-41b2-87f0-0ec35dc28b3d`；reviewed_head `90a8c8218`）。本轮**无代码/测试返修**（Reviewer 明确非代码阻断），仅卡面与限制登记修正；完成后派 fresh subagent r4 复核。
+
+- **R3-01（P2，已处置）**：L1 改为「执行链守卫已闭环（限定口径）」；新增 **L10** 记录真实 referenced 图源缺口（`pipeline.py:1433-1434` 既有门槛、`core_assembly.py:351-428` Managed Copy 图源、混合页旧图坐标潜在风险、后续接 C-17 §7.2 rendition 的判别测试要求）；行为矩阵「全 hidden 时在新图检测」改为「测试装配 stub 图源」。**裁决**：本轮接受该缺口为**已知集成限制**（真实 referenced 页 page-scope Run 属后续卡），不得据此宣称 AD-003 referenced 页已支持；如用户要求本轮闭环，需另开卡接 rendition 图源。
+- **R3-02（P3，已登记 L11①）**：`lineage_hidden_regions` 进入 `TargetSnapshot.metadata` → prepared digest，旧 prepared run 一次性 `RUN_STALE_PREVIEW`（安全、可重预览）；后续可把计数从 digest 输入剥离。
+- **R3-03（P3，已登记 L11②）**：`_backfill_detected_regions` 对 `LINEAGE_*` 静默 skip；建议后续补 stderr 计数（本轮不改代码，登记增强）。
+- **R3-04（P3，已修）**：`tests/fea11/test_source_lineage_run.py` 已补进 frontmatter allowed_paths；删除本卡尾部残留的 r2 门禁/自审段落；历史行号引用以 r3 Report/本卡滚动内容为准。
+- **R3-05（P3，已记录）**：gates-r3.log gate1 缺 `-p no:cacheprovider`（复跑一致性瑕疵，不影响结果）；check 警告数差异属并发文档环境，closeout 记录实测值。
+- **r4 复核范围**：只确认 ①L1/L10/矩阵修正是否消除过度声明；②R3-02/03 已登记为 L11；③R3-04/R3-05 处置；④AC 标记与 limitation 一致；不重跑全量（引用 r3 独立复跑 69/3093/10 + check/pins），但需复核工作树/commit 范围与冻结零 diff。
+
+- 本实现者**不自审**；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
