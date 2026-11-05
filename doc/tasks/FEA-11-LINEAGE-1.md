@@ -3,20 +3,20 @@ id: FEA-11-LINEAGE-1
 title: FEA-11 lineage native 写入与读路径隔离（C-17 §7.1 续）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 DSH 4 点裁决；r2 Review changes_requested → r3 最小返修完成；**r3 Review changes_requested（P0=0/P1=0/P2=1/P3=4，仅 L1/矩阵过度声明的卡面与限制登记修正，非代码返修）→ Lead 处置（r4 待 fresh 复核）**
+status: done
+approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 DSH 4 点裁决；r1/r2/r3 changes_requested → 返修；**r4 Review approved（P0/P1/P2=0，P3=1 cosmetic）→ DSH 集成 closeout**
 suggested_owner: codex
-owner: lineage-impl（r2/r3 返修，DSH 派发 Team teammate）；r3 Review 处置由 Lead 执行（findings disposition）
-reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-LINEAGE-1-r1.md`；r2 `doc/reviews/FEA-11-LINEAGE-1-r2.md` session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`；r3 `doc/reviews/FEA-11-LINEAGE-1-r3.md` session `49d520be-0862-41b2-87f0-0ec35dc28b3d`）
+owner: lineage-impl（r2/r3 返修，DSH 派发 Team teammate）；r3 Review 处置/closeout 由 Lead 执行（findings disposition / integration）
+reviewer: 独立上下文 fresh subagent（r1 `-r1.md`；r2 `-r2.md` session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`；r3 `-r3.md` session `49d520be-0862-41b2-87f0-0ec35dc28b3d`；r4 `-r4.md` session `dde30402-06b5-43e7-ae1d-374408e55823` approved）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 81c28d305
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 90a8c8218
+delivery_head: 90a8c8218
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-LINEAGE-1
 allowed_paths:
   - doc/tasks/FEA-11-LINEAGE-1.md
@@ -143,6 +143,7 @@ allowed_paths:
 | EV-0 | r1 门禁日志（r1 head 的 fea11 49/native 9/9/全量 3060/0/10/.NET 见日志；保留原字节） | verification/FEA-11-LINEAGE-1/logs/gates.log | acd3f2263 | e4861691e820aaf37e8ca6bba9c18a8548ae76d065112ec555ba2f076abdabf9 | CANONICAL |
 | EV-1 | r2 门禁日志（fea11/全量 pytest/check/pins/grep/诊断矩阵，含命令/EXIT/head） | verification/FEA-11-LINEAGE-1/logs/gates-r2.log | 791cfef28 | a2b2aa86d2290890ba8f9ad25bdf36e07483d67202569250c9f79480cb95dfff | CANONICAL |
 | EV-2 | r3 门禁日志（fea11 69/全量 3093/10/check/pins/R2-01/R2-02 判别性输出、shell 头、冻结契约零 diff、worktree 快照） | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 280bb7bd0 | 729ed81edf28f5f618146c7e8517bafcd8b8b56c84ac870b097cd8dd2fa5d4ad | CANONICAL |
+| EV-3 | r4 独立复核（approved P0/P1/P2=0；R3 处置核销；独立复跑 fea11 69/check/pins） | doc/reviews/FEA-11-LINEAGE-1-r4.md | - | d73d4358689d717e6716f4f03feaee9d94c112cda2782e925303706d42b3a5f3 | CANONICAL |
 
 ## r2 / r3 就绪声明
 
@@ -152,8 +153,9 @@ allowed_paths:
 - **r3 门禁（Python-only，head `6c0ab6594`；日志 EV-2）**：`pytest tests/fea11` 69 passed；`pytest tests` 3093 passed / 10 skipped；`check.ps1`（默认与本卡 `-TaskPath`）PASS；`verify_pins.ps1` 18/18 PASS；本卡 r3 commit 范围冻结契约/FEA-09/apps 零 diff；未 push；全量 pytest 后已恢复 tracked `verification/FEA-09` 原字节。
 - **r3 复审就绪**：请 Lead 指派独立上下文 fresh subagent 做 r3 Review（被审 head：r3 修复 `d8ed04e13` + 测试 `6c0ab6594` + 证据 `280bb7bd0` + 本卡 commit；重点：R2-01 执行链/空集终态、R2-02 candidate 投影语义与「结果留 candidate」判定、R2-03 四测试判别力、R2-05 归属校验、L4-L7 已知限制登记是否充分）。
 - 本实现者**不自审**；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
-- 门禁（Python-only）：`pytest tests/fea11` 62 passed；`pytest tests` 3073 passed / 10 skipped（基线 3060/10，新增 13）；`check.ps1` PASS；`verify_pins.ps1` 18/18 PASS；冻结契约零 diff；未 push。
+- 门禁（Python-only，**r2 时点历史数字**）：`pytest tests/fea11` 62 passed；`pytest tests` 3073 passed / 10 skipped（基线 3060/10）；`check.ps1` PASS；`verify_pins.ps1` 18/18 PASS；冻结契约零 diff；未 push。
 - **r3 Review 结果**：changes_requested（P0=0/P1=0/P2=1/P3=4；代码/测试层 R2-01/R2-02/R2-03/R2-05 均核销，R2-02 语义获 approve；唯一 P2 = R3-01 卡面 L1/矩阵过度声明；AC1/AC3 MET、AC2 按原文 MET）。
+- **r4 Review 结果（2026-11-05）**：**approved（P0/P1/P2=0，P3=1 cosmetic）**；R3-01/R3-02/R3-03/R3-05 核销，R3-04 仅剩一处 cosmetic（本卡 line 155 r2 门禁数字已标注为历史、line 169 重复自审句已删除）。报告 `doc/reviews/FEA-11-LINEAGE-1-r4.md`（session `dde30402-06b5-43e7-ae1d-374408e55823`）；独立复跑 fea11 69、check PASS、pins 18/18、`90a8c8218..f11bff37e` src/tests/apps 零 diff。
 
 ## r3 Review 处置（Lead，2026-11-05；findings disposition）
 
@@ -166,4 +168,24 @@ allowed_paths:
 - **R3-05（P3，已记录）**：gates-r3.log gate1 缺 `-p no:cacheprovider`（复跑一致性瑕疵，不影响结果）；check 警告数差异属并发文档环境，closeout 记录实测值。
 - **r4 复核范围**：只确认 ①L1/L10/矩阵修正是否消除过度声明；②R3-02/03 已登记为 L11；③R3-04/R3-05 处置；④AC 标记与 limitation 一致；不重跑全量（引用 r3 独立复跑 69/3093/10 + check/pins），但需复核工作树/commit 范围与冻结零 diff。
 
-- 本实现者**不自审**；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 无 worktree 创建/删除/prune |
+| artifact/temp/agent-output/dataset | NOT_APPLICABLE（实现与证据均在仓库内；pytest 使用 `:memory:`/`tmp_path`） | NOT_APPLICABLE | — | — | 无本任务专属仓外资源；pytest 缓存已用 `-p no:cacheprovider` 规避 |
+| evidence | verification/FEA-11-LINEAGE-1/logs/gates.log、gates-r2.log、gates-r3.log | PRESERVE_REFERENCED | verification/FEA-11-LINEAGE-1/logs | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 当前 Task/Review 引用；原位保留不清理 |
+| 代码/测试 | src/application/{editing,sources,rendering,export}/**、src/infrastructure/sqlite/**、src/infrastructure/providers/handlers.py、src/application/tasks/service.py、src/bootstrap/{core_assembly,core_service}.py、tests/fea11/** | PRESERVE_REFERENCED | src | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 已集成 main（delivery `90a8c8218`）；不回滚；行级证据见 EV-2 |
+
+## Closeout Record
+
+- Closeout date / DSH：2026-11-05 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；integration_commit / delivery_head = `90a8c8218`（main 线性集成，无 merge commit）。
+- Review 链：r1 changes_requested（P0=1）→ r2 changes_requested（P1=1）→ r3 changes_requested（P2=1，仅卡面过度声明）→ **r4 approved（P0/P1/P2=0，P3=1 cosmetic）**；所有 Reviewer 均为独立上下文 fresh subagent，session 见 frontmatter/各报告。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- AC 定稿：AC1 MET、AC2 MET（按原文口径；限定由 L1/L10 承接）、AC3 MET。
+- 未完成/保留项（limitation）：L1（执行链守卫已闭环，限定口径）、L2/L3（闭环）、L4/L5（mixed 页 reorder/text 诊断、freeze_context 过滤；后续卡）、L6（Host `AllowedRunErrorCodes` 未含 LINEAGE_*；apps/** 后续 Host 窄批）、L7（reader 投影未纳入；后续卡）、L8（非同步页 fail-open 为 DSH 裁决）、L9（分层说明）、**L10（真实 AD-003 referenced 图源缺口：纯 referenced 页被既有 managed-original 门槛拒绝；detect 图源为 Managed Copy original 而非 C-17 §7.2 rendition；混合页旧图坐标潜在风险）**、L11（prepared-snapshot digest 一次性 `RUN_STALE_PREVIEW`、`_backfill_detected_regions` 静默 skip 待补计数）。
+- 残余 P3（cosmetic，已处置）：r4 指出的 r2 门禁数字已标注历史、重复自审句已删除；gates-r3 gate1 缺 `-p no:cacheprovider` 属记录瑕疵，不影响结果。
+- 删除、迁移、归档数量/字节数：0。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG；**LINEAGE-1 完成后，FEA-11 r7-acceptance 的「LINEAGE-1 完成前禁止消费同步 binding」硬约束解除**（以本卡 done 为条件）。
+- 后续：真实 referenced 图源（C-17 §7.2 rendition）接入、Host 窄批 LIMIT 登记、mixed 页诊断、context 过滤等仅在**新授权**下另开卡。
