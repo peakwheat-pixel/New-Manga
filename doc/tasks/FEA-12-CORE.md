@@ -3,15 +3,15 @@ id: FEA-12-CORE
 title: FEA-12 删除线首版实现（A 软删/恢复 + C 彻底删除 + 统一 ProtectionPolicy + Host 命令桥）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）
+status: ready
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；**依赖已满足**：FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（写域空出，`90a8c8218`）；DSH 2026-11-05 释放
 suggested_owner: dsh（dsh-agent-team teammates 分片，Lead 集成）
 owner: null
 reviewer: 独立上下文 fresh subagent（未参与实现；会话 id 记录在 Review 报告）
 depends_on:
   - FEA-12-PREREQ-1
   - FEA-11-LINEAGE-1
-base_commit: null   # 释放时由 Lead 固定（PREREQ-1 closeout 后的 main head）
+base_commit: e47fd47e41add3edeb7f67e578eefeb48eddce50   # 2026-11-05 释放点 main head
 branch: null
 worktree: null
 integration_commit: null
