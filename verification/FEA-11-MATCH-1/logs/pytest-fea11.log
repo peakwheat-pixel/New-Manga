@@ -1,13 +1,13 @@
-# FEA-11-MATCH-1 evidence log
+# FEA-11-MATCH-1 evidence log (r2 re-signed)
 # command: C:/Python314/python.exe -m pytest tests/fea11 -q -p no:cacheprovider
 # cwd: G:\CODEX\New Manga
-# base: 2d9a4a219  head: b4ad109dabb9fb99ab2193e9d83c703b72d27438
+# base: 2d9a4a219  head: e8b0b2db811828d306a263eba55416a81fb00db6
 # python: C:/Python314/python.exe (3.14.6)  Pillow: 12.3.0
-# recorded_at: 2026-11-06T01:52:00+08:00
+# recorded_at: 2026-11-06T01:53:01+08:00  (machine clock of this regeneration; R1-03)
 # exit: 0
 
-........................................................................ [ 67%]
-...................................                                      [100%]
+........................................................................ [ 66%]
+....................................                                     [100%]
 ============================== warnings summary ===============================
 tests\fea11\test_source_scan.py:1
   G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
@@ -42,4 +42,4 @@ tests\fea11\test_source_scan.py:1
     """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-107 passed, 8 warnings in 2.89s
+108 passed, 8 warnings in 2.97s

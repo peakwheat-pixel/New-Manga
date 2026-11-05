@@ -1,9 +1,9 @@
-# FEA-11-MATCH-1 evidence log
+# FEA-11-MATCH-1 evidence log (r2 re-signed)
 # command: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
 # cwd: G:\CODEX\New Manga
-# base: 2d9a4a219  head: b4ad109dabb9fb99ab2193e9d83c703b72d27438
+# base: 2d9a4a219  head: e8b0b2db811828d306a263eba55416a81fb00db6
 # python: C:/Python314/python.exe (3.14.6)  Pillow: 12.3.0
-# recorded_at: 2026-11-06T01:52:00+08:00
+# recorded_at: 2026-11-06T01:53:01+08:00  (machine clock of this regeneration; R1-03)
 # exit: 0
 
 ........................................................................ [  2%]
@@ -32,8 +32,8 @@
 ........................................................................ [ 53%]
 ........................................................................ [ 56%]
 ........................................................................ [ 58%]
-.........s.............................................................. [ 60%]
-.................................sssss.................................. [ 62%]
+..........s............................................................. [ 60%]
+..................................sssss................................. [ 62%]
 ........................................................................ [ 65%]
 ........................................................................ [ 67%]
 ........................................................................ [ 69%]
@@ -41,24 +41,24 @@
 ........................................................................ [ 74%]
 ........................................................................ [ 76%]
 ........................................................................ [ 78%]
-...................................................s.................... [ 80%]
-........................................................................ [ 83%]
-..................................................................file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+....................................................s................... [ 80%]
+........................................................................ [ 82%]
+...................................................................file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 ..file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
-.file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 . [ 85%]
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
-....................................................................... [ 87%]
+.file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+...................................................................... [ 87%]
 ........................................................................ [ 89%]
 ........................................................................ [ 91%]
 ........................................................................ [ 94%]
 ........................................................................ [ 96%]
 ........................................................................ [ 98%]
-.........................................                                [100%]
-3202 passed, 10 skipped in 237.79s (0:03:57)
+..........................................                               [100%]
+3203 passed, 10 skipped in 237.42s (0:03:57)
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
@@ -74,6 +74,7 @@ file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeEr
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
@@ -88,7 +89,6 @@ file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeEr
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null

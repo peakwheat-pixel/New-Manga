@@ -1,15 +1,19 @@
 # FEA-11-MATCH-1 changed files
 # base: 2d9a4a219
-# delivery head (implementation+tests): b4ad109dabb9fb99ab2193e9d83c703b72d27438
-# commits: 7bd8efe47 (src), 2d61e43c3 (tests), b4ad109da (C8 strict params); docs/evidence in the follow-up commit.
+# r2 delivery head (implementation+tests): e8b0b2db811828d306a263eba55416a81fb00db6
+# commits: 7bd8efe47 (r1 src), 2d61e43c3 (r1 tests), b4ad109da (r1 C8), c12023ab6 (r1 docs), e8b0b2db8 (r2 R1-01/02/04/05/07/08); r2 docs follow.
+# note: only Owner-scope paths listed; other Agents' uncommitted apps/** WIP excluded.
 
 ## committed vs base
 doc/REBASELINE_PLAN.md
 doc/STATUS.md
 doc/TASK_LEDGER.md
+doc/handoffs/FEA-11-MATCH-1-handoff.md
 doc/reviews/FEA-11-AC4-GAPS-1-r1.md
 doc/tasks/FEA-11-AC4-GAPS-1.md
+doc/tasks/FEA-11-HOST-AUTH-1.md
 doc/tasks/FEA-11-MATCH-1.md
+doc/tasks/FEA-11-SCAN-1.md
 doc/tasks/FEA-11.md
 src/application/sources/matcher.py
 src/application/sources/scanner.py
@@ -17,8 +21,25 @@ tests/fea11/test_source_match.py
 tests/fea11/test_source_relink.py
 tests/fea11/test_source_scan.py
 tests/fea11/test_source_sync.py
+verification/FEA-11-MATCH-1/AC-MATRIX.md
+verification/FEA-11-MATCH-1/EV.md
+verification/FEA-11-MATCH-1/changed-files.txt
+verification/FEA-11-MATCH-1/logs/gates.log
+verification/FEA-11-MATCH-1/logs/pytest-baseline.log
+verification/FEA-11-MATCH-1/logs/pytest-fea11.log
+verification/FEA-11-MATCH-1/logs/pytest-full.log
+verification/FEA-11-MATCH-1/logs/pytest-match.log
+verification/FEA-11-MATCH-1/logs/static-diff.log
+verification/FEA-11-MATCH-1/logs/verify-pins.log
 
-## still uncommitted at recording time (docs/evidence + handoff)
- M doc/tasks/FEA-11-MATCH-1.md
-?? doc/handoffs/FEA-11-MATCH-1-handoff.md
-?? verification/FEA-11-MATCH-1/
+## still uncommitted at recording time (r2 docs/evidence, Owner scope)
+ M doc/handoffs/FEA-11-MATCH-1-handoff.md
+ M verification/FEA-11-MATCH-1/AC-MATRIX.md
+ M verification/FEA-11-MATCH-1/EV.md
+ M verification/FEA-11-MATCH-1/changed-files.txt
+ M verification/FEA-11-MATCH-1/logs/pytest-baseline.log
+ M verification/FEA-11-MATCH-1/logs/pytest-fea11.log
+ M verification/FEA-11-MATCH-1/logs/pytest-full.log
+ M verification/FEA-11-MATCH-1/logs/pytest-match.log
+ M verification/FEA-11-MATCH-1/logs/static-diff.log
+ M verification/FEA-11-MATCH-1/logs/verify-pins.log

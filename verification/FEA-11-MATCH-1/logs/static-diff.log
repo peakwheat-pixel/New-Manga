@@ -1,49 +1,44 @@
-# FEA-11-MATCH-1 zero-drift evidence
+# FEA-11-MATCH-1 zero-drift evidence (r2 re-signed)
 # cwd: G:\CODEX\New Manga
-# base: 2d9a4a219  head: b4ad109dabb9fb99ab2193e9d83c703b72d27438
-# recorded_at: 2026-11-06T01:54:00+08:00
+# base: 2d9a4a219  head: e8b0b2db811828d306a263eba55416a81fb00db6
+# recorded_at: 2026-11-06T01:56:16+08:00  (machine clock of this regeneration; R1-03)
 # exit: 0
+# note: shared worktree contains other Agents' uncommitted apps/** WIP; it is NOT part
+#       of this card and is not added by the Owner (only own allowed_paths are added).
+# note: pyproject.toml does not exist in this repository (R1-10); real dependency/DDL
+#       files are requirements.txt + schema.py + migrator.py.
 
 $ git rev-parse HEAD
 EXIT=0
-b4ad109dabb9fb99ab2193e9d83c703b72d27438
-$ git log --format='%h %s' -5
+e8b0b2db811828d306a263eba55416a81fb00db6
+$ git log --format='%h %s' -6
 EXIT=0
+e8b0b2db8 fix(fea11-match-1): r2 R1-01/R1-02/R1-04/R1-05/R1-08 minimal rework
+b621a3310 docs(fea-11-scan-1): 释放 ready（Host 方案 A；base e0c370870；ZCode SCOPE-ADJ 冻结）
+e0c370870 docs(fea-11-host-auth-1): 登记 3 个 closeout 证据为 SOURCE_PIN（消除 evidence_dir 未登记 warning；不改历史字节）
+c12023ab6 docs(fea11-match-1): 交付 in_review —— AC-M1..M6 MET + 证据/门禁/Handoff
 b4ad109da fix(fea11-match-1): decoder params must be a canonical JSON object (C8)
 a85874186 docs(fea-11-match-1): 指针转 in_review（清 READY 节点；STATUS/PLAN/ledger 对齐）
-2d61e43c3 test(fea11-match-1): AC-M1..M5 evidence matrix + W1/W1b fixture fixes
-7bd8efe47 feat(fea11-match-1): pixel-digest/1 profile extraction + 7-dim honest matching (AC-M1..M4)
-9bf3fcb42 docs(fea-11): closeout 补充——AC11-4 由 FEA-11-AC4-GAPS-1 闭环(MET)；AC11-3/AC11-1 承接状态回填
 $ git diff --name-only 2d9a4a219..HEAD -- doc/plan doc/contracts apps
 EXIT=0
 
-$ git diff --name-only 2d9a4a219..HEAD -- src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt pyproject.toml
+$ git diff --name-only 2d9a4a219..HEAD -- src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt
 EXIT=0
 
-$ git diff --stat 2d9a4a219..HEAD
+$ git diff --name-only 2d9a4a219..HEAD -- apps
 EXIT=0
- doc/REBASELINE_PLAN.md              |    4 +-
- doc/STATUS.md                       |    4 +-
- doc/TASK_LEDGER.md                  |   15 +-
- doc/reviews/FEA-11-AC4-GAPS-1-r1.md |  145 +++++
- doc/tasks/FEA-11-AC4-GAPS-1.md      |   32 +-
- doc/tasks/FEA-11-MATCH-1.md         |    6 +-
- doc/tasks/FEA-11.md                 |    7 +
- src/application/sources/matcher.py  |  377 +++++++-----
- src/application/sources/scanner.py  |  354 +++++++++--
- tests/fea11/test_source_match.py    | 1112 +++++++++++++++++++++++++++++++++++
- tests/fea11/test_source_relink.py   |    7 +
- tests/fea11/test_source_scan.py     |   10 +-
- tests/fea11/test_source_sync.py     |   60 ++
- 13 files changed, 1908 insertions(+), 225 deletions(-)
+
 $ git diff --name-only 2d9a4a219..HEAD
 EXIT=0
 doc/REBASELINE_PLAN.md
 doc/STATUS.md
 doc/TASK_LEDGER.md
+doc/handoffs/FEA-11-MATCH-1-handoff.md
 doc/reviews/FEA-11-AC4-GAPS-1-r1.md
 doc/tasks/FEA-11-AC4-GAPS-1.md
+doc/tasks/FEA-11-HOST-AUTH-1.md
 doc/tasks/FEA-11-MATCH-1.md
+doc/tasks/FEA-11-SCAN-1.md
 doc/tasks/FEA-11.md
 src/application/sources/matcher.py
 src/application/sources/scanner.py
@@ -51,8 +46,25 @@ tests/fea11/test_source_match.py
 tests/fea11/test_source_relink.py
 tests/fea11/test_source_scan.py
 tests/fea11/test_source_sync.py
-$ git status --porcelain
+verification/FEA-11-MATCH-1/AC-MATRIX.md
+verification/FEA-11-MATCH-1/EV.md
+verification/FEA-11-MATCH-1/changed-files.txt
+verification/FEA-11-MATCH-1/logs/gates.log
+verification/FEA-11-MATCH-1/logs/pytest-baseline.log
+verification/FEA-11-MATCH-1/logs/pytest-fea11.log
+verification/FEA-11-MATCH-1/logs/pytest-full.log
+verification/FEA-11-MATCH-1/logs/pytest-match.log
+verification/FEA-11-MATCH-1/logs/static-diff.log
+verification/FEA-11-MATCH-1/logs/verify-pins.log
+$ git status --porcelain -- doc/tasks/FEA-11-MATCH-1.md doc/handoffs/FEA-11-MATCH-1-handoff.md verification/FEA-11-MATCH-1
 EXIT=0
- M doc/tasks/FEA-11-MATCH-1.md
-?? doc/handoffs/FEA-11-MATCH-1-handoff.md
-?? verification/FEA-11-MATCH-1/
+ M doc/handoffs/FEA-11-MATCH-1-handoff.md
+ M verification/FEA-11-MATCH-1/AC-MATRIX.md
+ M verification/FEA-11-MATCH-1/EV.md
+ M verification/FEA-11-MATCH-1/changed-files.txt
+ M verification/FEA-11-MATCH-1/logs/pytest-baseline.log
+ M verification/FEA-11-MATCH-1/logs/pytest-fea11.log
+ M verification/FEA-11-MATCH-1/logs/pytest-full.log
+ M verification/FEA-11-MATCH-1/logs/pytest-match.log
+ M verification/FEA-11-MATCH-1/logs/static-diff.log
+ M verification/FEA-11-MATCH-1/logs/verify-pins.log
