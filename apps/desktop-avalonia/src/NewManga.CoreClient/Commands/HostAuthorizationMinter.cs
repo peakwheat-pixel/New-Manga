@@ -50,7 +50,7 @@ public static class HostAuthorizationMinter
                 ["generation"] = item["generation"],
                 ["identity_digest"] = item["identity_digest"],
             })
-            .OrderBy(item => (string)item["registry_id"]!, StringComparer.Ordinal)
+            .OrderBy(item => (string)item["registry_id"]!, CanonicalJson.UnicodeCodePointComparer.Instance)
             .ToList();
         if (ordered.Count == 0)
         {

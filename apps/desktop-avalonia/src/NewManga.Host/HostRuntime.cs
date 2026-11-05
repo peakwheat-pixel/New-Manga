@@ -1014,7 +1014,7 @@ public sealed class HostRuntime : IAsyncDisposable
                             // The Core row may already be terminal/gone; the
                             // Host journal still records the failure.
                         }
-                        var failedEntry = operations.MarkFailed(operationId!);
+                        var failedEntry = operations.MarkFailed(operationId!, code);
                         return System.Text.Json.JsonSerializer.SerializeToElement(failedEntry);
                     }
                 }

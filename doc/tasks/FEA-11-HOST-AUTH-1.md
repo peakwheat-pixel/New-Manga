@@ -7,7 +7,7 @@ status: in_progress
 approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记
 suggested_owner: codex
 owner: dsh（2026-11-05 用户授权启动）
-reviewer: 独立上下文 fresh subagent（doc/reviews/FEA-11-HOST-AUTH-1-r1.md）
+reviewer: 独立上下文 fresh subagent（r1/r2/r3；报告 doc/reviews/FEA-11-HOST-AUTH-1-r1.md…-r3.md）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 7ab9eea87

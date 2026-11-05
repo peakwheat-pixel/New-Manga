@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -303,8 +304,34 @@ public sealed class SourceOperationCoordinator
     }
 
     /// <summary>FEA-11: terminal failure record (never a silent drop).</summary>
+    /// <summary>C-17 §3.2 line 163: a failed (never committed) operation may be
+    /// retried with the same operation/request digest; the journal goes back to
+    /// host-authorized and the Core dispatch is re-run by the caller.</summary>
+    public JournalEntry RetryFailed(string operationId)
+    {
+        RequireEnabled();
+        lock (gate)
+        {
+            var entry = Read(operationId);
+            RequireState(entry, "failed");
+            if (entry.Retryable == false)
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            var next = entry with
+            {
+                State = "host-authorized",
+                ErrorCode = null,
+                Retryable = null,
+                UpdatedAt = UtcNow(),
+            };
+            Write(next);
+            return next;
+        }
+    }
+
     public JournalEntry MarkFailed(
-        string operationId, string? errorCode = null, bool retryable = true)
+        string operationId, string errorCode, bool retryable = true)
     {
         RequireEnabled();
         lock (gate)
@@ -521,7 +548,7 @@ public sealed class SourceOperationCoordinator
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 
     private static string UtcNow() =>
-        DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture);
 
     private static void CryptoSafeDelete(string path)
     {

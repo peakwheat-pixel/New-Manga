@@ -90,11 +90,11 @@ public sealed class SourceOperationTests : IDisposable
     {
         var coordinator = NewCoordinator();
         var entry = coordinator.Begin("plan-4", new string('1', 64), "resync", new string('2', 64));
-        coordinator.MarkFailed(entry.OperationId);
+        coordinator.MarkFailed(entry.OperationId, "SOURCE_ACCESS_DENIED", retryable: true);
         var failed = coordinator.Get(entry.OperationId);
         Assert.Equal("failed", failed!.State);
         // Re-marking is a no-op, not a refusal.
-        Assert.Equal("failed", coordinator.MarkFailed(entry.OperationId).State);
+        Assert.Equal("failed", coordinator.MarkFailed(entry.OperationId, "SOURCE_ACCESS_DENIED", retryable: true).State);
     }
 
     [Fact]

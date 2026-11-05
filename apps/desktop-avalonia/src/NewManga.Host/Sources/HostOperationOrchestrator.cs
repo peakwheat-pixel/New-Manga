@@ -31,10 +31,53 @@ public sealed class HostOperationOrchestrator
         _lookup = lookup;
     }
 
+    /// <summary>C-17 §3.2 line 159: a typed Core business rejection means the
+    /// Core wrote nothing, so the Host journal must record failed + code. Only
+    /// transport/ambiguity codes (CORE_*) leave the journal host-authorized for
+    /// receipt re-read / recovery.</summary>
+    /// <summary>C-17 §3.2 line 163: retry a failed (never committed) operation
+    /// with the SAME operation id/request digest. The Host reuses the frozen
+    /// authorization it minted, so the retried request is byte-identical.</summary>
+    public async Task<(string OperationId, JsonElement Result)> RetryAsync(
+        string operationId,
+        Func<JsonElement, CancellationToken, Task<CoreResponse>> call,
+        CancellationToken token)
+    {
+        var entry = _operations.RetryFailed(operationId);
+        var authorizationJson = entry.AuthorizationJson
+            ?? throw new CoreOperationException(
+                "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
+                "retried operation has no durable authorization", null);
+        using var authorization = JsonDocument.Parse(authorizationJson);
+        var injected = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["operation_id"] = entry.OperationId,
+            ["plan_id"] = entry.PlanId,
+            ["plan_digest"] = entry.PlanDigest,
+            ["grant_ids"] = (entry.GrantIds ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries),
+            ["authorization"] = JsonSerializer.Deserialize<object?>(authorization.RootElement.GetRawText()),
+        });
+        var response = await call(injected, token).ConfigureAwait(false);
+        var result = response.Result ?? default;
+        var row = await _lookup(entry.OperationId, token).ConfigureAwait(false);
+        var commitDigest = row.ValueKind == JsonValueKind.Object
+            && row.TryGetProperty("commit_digest", out var digestValue)
+            && digestValue.ValueKind == JsonValueKind.String
+                ? digestValue.GetString()!
+                : throw new CoreOperationException(
+                    "SOURCE_OPERATION_NOT_FOUND", "conflict", false,
+                    "operation receipt is unavailable", null);
+        _operations.MarkCommitted(
+            entry.OperationId, commitDigest,
+            row.ValueKind == JsonValueKind.Object ? row.GetRawText() : null);
+        return (entry.OperationId, result);
+    }
+
     private static bool IsPreCommitRejection(string code) => code is
-        "SOURCE_ACCESS_DENIED" or "SOURCE_PLAN_STALE" or "SOURCE_SYNC_STATE_CONFLICT"
-        or "SOURCE_OPERATION_CONFLICT" or "SOURCE_GRANT_REVOKED" or "INVALID_REQUEST"
-        or "REF_SIGNATURE_INVALID" or "SOURCE_REGISTRY_UNAVAILABLE";
+        not ("CORE_UNAVAILABLE" or "CORE_TIMEOUT" or "CORE_PROTOCOL_ERROR"
+             or "CORE_SESSION_MISMATCH" or "CORE_SHUTDOWN" or "CORE_BUSY"
+             or "OPERATION_CANCELLED" or "INVALID_RESPONSE");
 
     public async Task<(string OperationId, JsonElement Result)> ApplyAsync(
         string hostCommandName,
@@ -177,7 +220,8 @@ public sealed class HostOperationOrchestrator
         {
             // C-17 §3.2: a typed pre-commit rejection is durable on the Host as
             // failed + error_code/retryable (the Core wrote nothing).
-            _operations.MarkFailed(minted.OperationId, error.Code, retryable: false);
+            _operations.MarkFailed(
+                minted.OperationId, error.Code, retryable: error.Retryable ?? true);
             throw;
         }
         catch (Exception)
@@ -188,7 +232,7 @@ public sealed class HostOperationOrchestrator
             throw new CoreOperationException(
                 "CORE_UNAVAILABLE", "unavailable", true,
                 "source operation " + minted.OperationId
-                + " is host-authorized; recover or retry it", null);
+                + " is host-authorized; recover or retry it", minted.OperationId);
         }
         var result = response.Result ?? default;
         var operationRow = await _lookup(minted.OperationId, token).ConfigureAwait(false);

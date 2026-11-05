@@ -212,4 +212,55 @@ public sealed class Fea11HostAuthTests : IDisposable
         Assert.Equal("INVALID_REQUEST", error.Code);
         Assert.False(Directory.Exists(Path.Combine(_root, "host", "source-operations")));
     }
+
+    [Theory]
+    [InlineData("SOURCE_PLAN_STALE", true)]
+    [InlineData("SOURCE_GRANT_EXPIRED", true)]
+    [InlineData("SOURCE_ACCESS_DENIED", false)]
+    public async Task Apply_PersistsTheCoreRetryableFlag(string code, bool retryable)
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new CoreOperationException(code, "conflict", retryable, "x", null),
+            CancellationToken.None));
+
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        var journaled = _operations.Get(operationId)!;
+        Assert.Equal("failed", journaled.State);
+        Assert.Equal(code, journaled.ErrorCode);
+        Assert.Equal(retryable, journaled.Retryable);
+    }
+
+    [Fact]
+    public async Task Retry_ReusesTheSameOperationAndDigestAndCommits()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new CoreOperationException("SOURCE_PLAN_STALE", "conflict", true, "stale", null),
+            CancellationToken.None));
+        var operationId = Path.GetFileName(Directory.GetFiles(
+                Path.Combine(_root, "host", "source-operations"), "*.dat").Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        var failedEntry = _operations.Get(operationId)!;
+
+        var retriedCallPayload = default(JsonElement);
+        var (retriedId, _) = await orchestrator.RetryAsync(operationId, (finalPayload, _) =>
+        {
+            retriedCallPayload = finalPayload.Clone();
+            return Task.FromResult(new CoreResponse(
+                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
+        }, CancellationToken.None);
+
+        Assert.Equal(operationId, retriedId);
+        Assert.Equal(failedEntry.RequestDigest,
+            retriedCallPayload.GetProperty("authorization").GetProperty("request_digest").GetString());
+        Assert.Equal("core-committed", _operations.Get(operationId)!.State);
+    }
 }

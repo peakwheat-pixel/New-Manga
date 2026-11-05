@@ -58,9 +58,11 @@ public static class CanonicalJson
 
     /// <summary>canonical-json/1 orders object keys by Unicode code point, which
     /// is not UTF-16 ordinal order for non-BMP keys (surrogate pairs).</summary>
-    private sealed class UnicodeCodePointComparer : IComparer<string>
+    /// <summary>Public so other canonical-JSON producers (e.g. the Host
+    /// authorization minter) order arrays by the same code point rule.</summary>
+    public sealed class UnicodeCodePointComparer : IComparer<string>
     {
-        public static readonly UnicodeCodePointComparer Instance = new();
+        public static readonly IComparer<string> Instance = new UnicodeCodePointComparer();
 
         public int Compare(string? left, string? right)
         {
