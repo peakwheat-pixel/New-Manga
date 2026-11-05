@@ -139,29 +139,29 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | null | 1aa0777eabfc7623572fb997e02e8cfb40dc6655d0ae85a42f70d69885704098 | CANONICAL |
-| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | null | 1bd4dc26fb814814270d0980e8bdcdbf1b0eff088805aad0ca06f6fdb312b690 | CANONICAL |
-| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | null | 01f9e6e6eef3f2b39f8d72f911cbcc958a165044b6eb12f1cedeeecda24a7cd9 | CANONICAL |
-| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | null | 483d04036a3d79bda9e71a21a663343a43e68a4f62ab9e7b8126677ca7d63416 | CANONICAL |
-| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | null | 58fd30b4da53a41ffabecd4a9973e1759e92b945548555e151b3c7a6696cfa0a | CANONICAL |
-| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | null | 90d55d903e5dbe7874dce56bebcf952d367668c173a7e5f9fc2cc56719647f7f | CANONICAL |
-| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | null | 8ba3328ad9f8b894f4e47d628d31884bbcbf748369db98b674f6300840afa2c0 | CANONICAL |
-| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | null | d0ec0ccc7f3f5f53e84087b7c0fa13b06be7400616e0a90b3567cec2814f5d82 | CANONICAL |
-| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | null | 274cb41b8c5a069daa11617e0f3fccfde60e956b35db98d32c9e2cf18c405303 | CANONICAL |
-| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | null | a16cdbc52dad49611cf52d54af2b3a868833e88a4bcbd7f389098267f2bed418 | CANONICAL |
-| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | null | 175f99b8abb676b6db9ed829afa98eb29df427bc3837840c99e8ccd10851b88e | CANONICAL |
-| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | null | 82652896fed7272efc9c8ae09d5c7cbc41b9e1996e4c7faef50fe09a08b117a8 | CANONICAL |
-| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | null | 9f602a487527f3589b77c1e24c2eb7af1b473f952c6f0988759cb7b3b0e35fb0 | CANONICAL |
-| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | null | 47453ebef4a0c57fd6a95ce6f46730f7552f1a00257d9759c2f1d37ebe429f58 | CANONICAL |
-| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | null | 638de24effd6faf19230fc5c8078d0b6df4baf235b6d3e629aaca7022d7c6308 | CANONICAL |
-| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总 | verification/FEA-12-CORE/logs/gates-core-py.log | null | 76341321c73716d7ffef67daf3056d3d5c6a2b6c5c814dd1176a0d58b082193b | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | null | e6f4bd11a7639d0f31450d24c6cba8acd9df9a355dfce4c88274ffa4e89c4421 | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | null | 92f6614d197da7a55e85fe4dac5eb791e3433b4f8df5904c160dfc502c84bf7a | CANONICAL |
-| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | null | ab5d5708cd2cbf51cb922c26ef3f137c4a8a0b2bedab245fe606219da5b00d6d | CANONICAL |
-| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | null | c1235d55039154b509ba0b060e107652e60301803f85645eb01661cfd9110edb | CANONICAL |
-| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | null | e7c4e5d822f43e1276ad05be4e9a1e63e2f374fdee02bf9a4d6b2e62bcc6134e | SOURCE_PIN |
-| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | null | 997b0333e37d6115013a3a925818daf69466aaa503c6d82ad3ffb18ac104f0d1 | SOURCE_PIN |
-| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | null | 49ee56113d52042fd145cabf45c8e6c124f6b48380944d4b4a7c3d79fb389e57 | CANONICAL |
+| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总 | verification/FEA-12-CORE/logs/gates-core-py.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 27dfd7514 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 27dfd7514 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | 27dfd7514 | null | CANONICAL |
 
 ## Resource Manifest
 

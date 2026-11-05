@@ -9,10 +9,15 @@
 
 ## 1. Commit 列表（仅本卡 allowed_paths）
 
-> 实际 SHA 见本文件所在 commit 及 `git log --oneline -- doc/tasks/FEA-12-CORE.md`；两个 commit：
+> 实际 SHA（按入仓顺序；未 push）：
 >
-> 1. `feat(fea-12-core): Python Core A/C 删除流程（软删/恢复/ListTrash + preview/digest/单事务/X1/PD-08）` — 源码 + 测试
-> 2. `docs(fea-12-core): 分片 A 实施记录/AC 证据/门禁日志/任务卡/Handoff` — 证据 + 卡 + Handoff
+> 1. **`5fb300fd2`** `feat(fea-12-core): Python Core A/C 删除流程（软删/恢复/ListTrash + preview/digest/单事务/X1/PD-08）`
+>    — 源码（5 个文件）+ 测试（6 个文件，含 3 个新增）。
+> 2. **`27dfd7514`** `docs(fea-12-core): 分片 A 实施记录/AC 证据/门禁日志/任务卡/Handoff（in_review）`
+>    — 任务卡 + Handoff + `verification/FEA-12-CORE/**` 本分片证据（25 个文件）。
+> 3. （本 commit）`docs(fea-12-core): 证据表改用 evidence commit pin（行尾无关）+ Handoff commit 终稿`
+>    — 只改任务卡 Canonical Evidence 表（`commit=27dfd7514`、`sha256=null`，避免 CRLF/LF 行尾差异
+>    使证据 pin 在另一次 checkout 失效）与本节 commit 列表；不新增/修改证据字节。
 >
 > 只 add 了：`src/application/library/service.py`、`src/application/maintenance/ports.py`、
 > `src/domain/books/entities.py`、`src/infrastructure/sqlite/library.py`、`src/bootstrap/core_service.py`、
@@ -101,9 +106,10 @@
 
 ## 7. 最终 check 复跑（避免日志自指）
 
-- Canonical Evidence 表定稿后复跑：
-  `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md` → **PASS**
-  （warnings 同上；登记于本节与 `logs/core-py-check.log` 的定稿前一次同参复跑）。
+- Canonical Evidence 表定稿（`commit=27dfd7514` evidence pin）后复跑：
+  `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md` → **PASS (4 warnings)**
+  （命令/EXIT 记录于本节；`logs/core-py-check.log` 为定稿前一次同参 PASS 复跑，避免 check 日志自指）。
+- `verify_pins.ps1` → **PASS (all 18)**（`logs/core-py-pins.log`）。
 - 若集成时 READY DAG/STATUS 再次变化，以 Lead 集成复跑为准（本分片不再改 Lead-owned 文档）。
 
 ## 8. Review 就绪声明
