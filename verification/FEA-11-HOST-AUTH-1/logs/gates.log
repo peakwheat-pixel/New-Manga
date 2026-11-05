@@ -1,35 +1,32 @@
-# FEA-11-HOST-AUTH-1 门禁（DSH，r4 前） 2026-11-05T08:54:40.7335602+08:00 head=cb1d85833
+# FEA-11-HOST-AUTH-1 门禁（DSH，r5 前） 2026-11-05T09:21:03.2916338+08:00 head=0b7e5e03b
 repo=G:/CODEX/New Manga; python=C:/Python314/python.exe
 worktree_clean=True
 cmd: pytest tests -q -p no:warnings --tb=no
-3051 passed, 10 skipped in 229.35s (0:03:49)
+3051 passed, 10 skipped in 223.81s (0:03:43)
 EXIT=0 (pytest tests)
 已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 96 ms - NewManga.Appearance.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 288 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 908 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 289 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 937 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    94，已跳过:    49，总计:   143，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   102，已跳过:    49，总计:   151，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   156，已跳过:    22，总计:   178，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 49 s - NewManga.App.Tests.dll (net9.0)
-EXIT=0 (dotnet full, first run)
+已通过! - 失败:     0，通过:   157，已跳过:    22，总计:   179，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 55 s - NewManga.App.Tests.dll (net9.0)
+EXIT=0 (dotnet full first run)
 --- immediate full rerun ---
-已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 41 ms - NewManga.Appearance.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 307 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 771 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 43 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 294 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 769 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    94，已跳过:    49，总计:   143，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   102，已跳过:    49，总计:   151，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   156，已跳过:    22，总计:   178，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 51 s - NewManga.App.Tests.dll (net9.0)
-EXIT=0 (rerun) SUM_PASSED=1381 SUM_FAILED=0
-失败!  - 失败:     2，通过:     1，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
-EXIT=1 (IPC; Core-direct, NOT Host e2e)
+已通过! - 失败:     0，通过:   157，已跳过:    22，总计:   179，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 50 s - NewManga.App.Tests.dll (net9.0)
+EXIT=0 (rerun) SUM_PASSED=1390 SUM_FAILED=0
+已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
+EXIT=0 (IPC; Core-direct, NOT Host e2e)
 Governance check: PASS (2 warnings)
 PIN AUDIT: PASS (all 18)
-restore: git checkout -- verification/FEA-09 (full .NET rewrote tracked evidence)
+restore: git checkout -- verification/FEA-09
 worktree_clean_after=False
-已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
-EXIT=0 (IPC retry)
-IPC flaky note: right after the full solution run the suite produced 2 failed/1 passed; the immediate filtered retry is recorded above. The suite is Core-direct and is NOT Host e2e evidence (FEA-11 L-9).
-trx=fea11-ipc-final.trx
+first run: every assembly 0 failed (App.Tests 671/0/7); DOTNET_FIRST_FAILED printing above was a grep artifact ('失败: 0' lines).
