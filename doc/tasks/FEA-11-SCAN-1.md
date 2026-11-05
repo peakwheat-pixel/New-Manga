@@ -3,20 +3,20 @@ id: FEA-11-SCAN-1
 title: FEA-11 源后台定时扫描（Host 进程内只读周期触发切片）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-1 的「定时扫描生产者」延期项（L-3 半边）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: codex
 owner: fea12-core-host
-reviewer: null
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-SCAN-1-r1.md` session `074cebe5-157b-4d75-833d-d0624f979fa6`（changes_requested P1=1）；r2 窄面 `doc/reviews/FEA-11-SCAN-1-r2.md` session `41de61d5-f944-49fc-9938-d9798e3059f2`（approved P0/P1/P2=0）；均未参与实现）
 depends_on:
   - FEA-11
 base_commit: e0c370870   # 释放点 main head（MATCH-1 交付后）
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: 7080167e1   # r2 返修 commit（含证据重签/卡/Handoff）；r1 实现 73d01fd2b
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 7080167e1
+delivery_head: 7080167e1   # r2 返修 commit（含证据重签/卡/Handoff）；r1 实现 73d01fd2b；docs head 9daa94a25
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-SCAN-1
 allowed_paths:
   - doc/tasks/FEA-11-SCAN-1.md
@@ -116,7 +116,7 @@ out_of_scope:
   - Core 会话失效（`HOST_SESSION_INVALID`/`CORE_SESSION_MISMATCH`/sidecar exit）→ `paused`，不自行重开 host session。
   - 判别测试：fake clock + fake core；`Start×2 → 1 循环`；`TickAsync×3` 按注入 now 精确断言 `next_tick`；`Pause` 后 tick 0 调用；`Stop` 后 tick 0 调用；边界/非法配置；会话失效注入。
 - [x] **AC-S2 目标注册、单飞与“只扫不写”** <<MET>>
-  - App 在引用导入终态 `Completed` 成功后注册 `(source_id, path, kind='resync', project_ids=[bookId], version)`；重复注册按 `source_id` 覆盖（目标数不增长）；失败/取消不注册。
+  - App 在引用导入终态 `Completed` 成功后注册 `(source_id, path, kind='resync', project_ids=[bookId], version)`；重复注册按 `source_id` 覆盖（实现注记：registry 解析为 **exact match 优先 + 受控 containment 回退**，exact 命中但已撤销→fail-closed；见处置表 P2-5）（目标数不增长）；失败/取消不注册。
   - 同一 `source_id` 在飞期间再次触发 → 合并/跳过，不产生第二个 `ScanSourceSync`；不同 `source_id` 可顺序处理。
   - 一次 tick 中调度器只发送 `ScanSourceSync`；fake core 收到的命令集合**精确等于** `{ScanSourceSync}`（逐 tick 命令序列留证）。
   - 扫描失败不写任何 Core 状态（Core 侧 `scan()` 零写）；Host 侧只更新内存状态。
@@ -257,20 +257,26 @@ r1 Review：`doc/reviews/FEA-11-SCAN-1-r1.md`（session `074cebe5-157b-4d75-833d
 | EV-15 | Gate 记录（r2） | `verification/FEA-11-SCAN-1/logs/gates.log` | null | `6e825e8c45c60aa58d9580b6ca7730bc5038ec28970e1d217493213e922bc0bb` | CANONICAL |
 | EV-16 | AC-S5（脱敏；r1 未变） | `verification/FEA-11-SCAN-1/logs/status-redaction.log` | null | `f5da210e610afa1d91d7bfcf6abbc1033b2c3ed2be732beda8cbe0e23806b689` | CANONICAL |
 | EV-17 | P3-3（changed files） | `verification/FEA-11-SCAN-1/changed-files.txt` | null | `5dc392131d0849570f7775456d8da7b8dab317b0f2a8ef5a7641e625a1c97bdf` | CANONICAL |
+| EV-18 | r1 复审（changes_requested P1=1） | doc/reviews/FEA-11-SCAN-1-r1.md | - | 5ec6e1da59c9d6b3b3501cac54294be47b008123c1102237fda88fb300736aae | SOURCE_PIN |
+| EV-19 | r2 窄面复审（approved P0/P1/P2=0） | doc/reviews/FEA-11-SCAN-1-r2.md | - | efff6ad5fff147505f36f31642ef536031ba592445b2c7f6f1dd3ae56d3e0996 | CANONICAL |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\`（门禁/测试原始日志） | PRESERVE_REFERENCED | 同上 | 交付后由 DSH closeout 时登记 manifest | 原始日志为仓内 `logs/` 证据的上游副本；仓内证据已按 sha256 pin |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-*`（隔离 IPC fixture，含真实 zip/v8 DB） | DELETE_SAFE（交付后） | — | — | 隔离根由冻结 seed 脚本守卫（只允许 FEA-11 fixtures 下 library.db）；无真实用户数据；DSH closeout 时删除 |
-| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\`（check 日志等过程输出） | PRESERVE_REFERENCED | 同上 | 交付后由 DSH closeout 时登记 | check 日志避免仓内自指（FEA-12-PREREQ-1 R-003 先例） |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\`（门禁/测试原始日志） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1` | G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\api-inventory-r2.log | 原始日志为仓内 `logs/` 证据的上游副本；仓内证据已按 sha256 pin；保留不清理 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\ipc-*`（隔离 IPC fixture，含真实 zip/v8 DB） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | G:\CODEX\New Manga.workspace\FEA-11\fixtures\ipc-001a2d8bb8d94f398a21bfb73ae216b3\library.db | 隔离根由冻结 seed 脚本守卫（只允许 FEA-11 fixtures 下 library.db）；无真实用户数据；保留（pytest/fixture 自清理策略） |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\`（check 日志等过程输出） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1` | G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\check-final.log | check 日志避免仓内自指（FEA-12-PREREQ-1 R-003 先例）；保留 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：L-A…L-F（见上）；AC11-1 仍 PARTIAL（watcher/启动扫描未承接）。
-- 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
+- Closeout date / DSH：2026-11-06 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；delivery_head / integration_commit = **`7080167e1`**（r2 返修 commit，含证据重签/卡/Handoff；r1 实现 `73d01fd2b`；docs head `9daa94a25`）。
+- Review 链：r1 changes_requested（P1=1：changed 覆盖 identity baseline；P2×5/P3×4）→ r2 最小返修 → **r2 窄面 approved（P0/P1/P2=0；P3×3）**；Reviewer 均为 fresh subagent（session 见 frontmatter）。
+- AC 定稿：**AC-S1…AC-S6 全 MET**（AC-S4 由 real-IPC `changed → deleted → missing` + mutation 判别修复后恢复）；默认 enabled=true/900s、env [60,86400]、预算/退避/单飞、wire 精确四元集合、DB 零写、App Completed-only 注册均验证。
+- 证据：EV-01…EV-19（17 项实现/门禁 + r1/r2 Review）；17/17 sha256 复核 MATCH（r2 Reviewer）。
+- P3 closeout 处置：**①** Handoff EV 计数修正为 EV-01…EV-19（原写 15）；**②** 卡 I-2 补实现注记（exact-first + 受控 containment 回退）；**③** P3-2 残余（WARN 文案/HostRuntime 接线测试）登记 follow-up：由 `FEA-11-WATCH-1`（proposed）实施时补测，Owner 待该卡释放时固定。
+- 残余风险/limitation：L-A（仅本会话目标，重启丢失）、L-B（预算/退避边界）、L-C（脱敏日志）、L-D（能力/会话/校验失败→paused 不重试）、L-E（成本未在真实大库标定）、L-F（真实 IPC flaky 与全量 .NET 既有 flaky 债务；本卡 RUN2 曾触发 `FluentResidual2VisualEvidenceTests`，隔离复跑 PASS，未称稳定）、**L-G**（首次 ok 前源消失只能 fail-closed `error`；持久 identity 归 SCAN-2）。
+- **AC11-1 不回填 MET**：本卡仅闭合「定时扫描生产者」半边；watcher 与启动扫描仍归 `FEA-11-WATCH-1`/`FEA-11-SCAN-2`（proposed，未释放）。FEA-11 卡 Closeout 补充同步该口径。
+- 删除、迁移、归档数量/字节数：0；`G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\` 按 PRESERVE_REFERENCED 保留（check 过程日志）。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。

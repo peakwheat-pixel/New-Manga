@@ -235,7 +235,7 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 
 - **AC11-4（CAS/原子性/零写）缺口已闭环**：承接卡 `FEA-11-AC4-GAPS-1` **done**（r1 独立复审 approved P0/P1=0；delivery `2d9a4a219`；AC1–AC5 全 MET）；本卡验收口径注明 AC11-4 可判定 MET（G4–G11 漂移矩阵 + 16 表零写比较集；G12 按 C-17 §6.2 非缺口，非缺口不补）。L-5 由该卡承接关闭；L1–L4 转入该卡 limitation。
 - **AC11-3（旧库 fixture/独立 match 测试）已闭环**：承接卡 `FEA-11-MATCH-1` **done**（r2 窄面 approved P0/P1/P2=0；delivery `869b6d5d5`）；回填口径 **MET（带 limitation）**：L-M1（PDF 插页不产 pixel profile）/L-M4（旧证据按冻结参数重算未实现）；另注 directory-source 重复内容不合并 occurrence（与 zip 同机制、无 folder-source 专项断言）。
-- **AC11-1（定时扫描/watcher）**：`FEA-11-SCAN-1` 冻结为 Host 侧只读周期扫描切片（AC11-1 仍 PARTIAL，仅闭合定时扫描半边）；watcher/冷启动全源枚举登记 `FEA-11-WATCH-1`/`FEA-11-SCAN-2`，不得静默缺失。
+- **AC11-1（定时扫描/watcher）仍 PARTIAL（不回填 MET）**：`FEA-11-SCAN-1` **done**（r2 窄面 approved；delivery `7080167e1`），仅闭合「Host 定时扫描生产者」半边；watcher 与启动扫描未承接，登记 `FEA-11-WATCH-1`/`FEA-11-SCAN-2`（proposed，未释放），不得静默缺失。
 - 本补充不改变本卡 `closed_with_limitations` 终态、历史证据字节或 delivery_head。
 
 ## Closeout Record

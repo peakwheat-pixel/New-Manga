@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `in_review`（方案 A 实施完成：Host SourceScanScheduler/状态/App 注册/测试；独立 Review 中）。已闭环：[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（r2 窄面 approved；delivery `869b6d5d5`；AC11-3 回填 MET 带 L-M1/L-M4 limitation）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`；AC11-4 可判 MET）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`；AC1–AC12 全 MET）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
+- 当前 Task：[FEA-12-UI](tasks/FEA-12-UI.md) `ready`（V2 回收站 UI 切片实施中；ZCode SCOPE-ADJ 冻结；base `9daa94a25`）。已闭环：[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（r2 窄面 approved；delivery `7080167e1`；AC11-1 仍 PARTIAL）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：FEA-11-SCAN-1 独立 Review → closeout（AC11-1 仍 PARTIAL，仅闭合定时扫描半边）；随后释放 FEA-12-UI（单本删除/独立 ITrashController/L2）。
+- 下一步：FEA-12-UI 实施→独立 Review→closeout；随后按需释放 FEA-11-WATCH-1/SCAN-2（proposed，scope 未冻结，需先 scope review）。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
