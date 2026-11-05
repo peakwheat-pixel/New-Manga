@@ -171,28 +171,45 @@ def _fingerprint(path: Path) -> tuple[str, int, str]:
     """``(kind, size_bytes, sha256)`` for one selected object.
 
     Directories are fingerprinted recursively (relative path + size + digest
-    per file, sorted), so a folder entry is verified as one unit too.
+    per file, sorted), so a folder entry is verified as one unit too.  The
+    walk never follows a junction/symlink: a selected folder containing one
+    is refused as ``unsupported_entry`` instead of being read (and later
+    moved) as if the reparse point were ordinary content.
     """
-    if path.is_symlink():
+    entry_stat = path.lstat()
+    if _is_reparse_point(entry_stat):
         raise _UnsupportedEntry
-    if path.is_file():
-        return ("file", path.stat().st_size, _sha256_file(path))
-    if not path.is_dir():
+    if stat.S_ISREG(entry_stat.st_mode):
+        return ("file", entry_stat.st_size, _sha256_file(path))
+    if not stat.S_ISDIR(entry_stat.st_mode):
         raise _UnsupportedEntry
     digest = hashlib.sha256()
     total = 0
-    for child in sorted(path.rglob("*")):
-        relative = child.relative_to(path).as_posix()
-        if child.is_symlink():
-            raise _UnsupportedEntry
-        if child.is_file():
-            size = child.stat().st_size
+    for current, dirnames, filenames in os.walk(path, followlinks=False):
+        current_path = Path(current)
+        dirnames.sort()
+        filenames.sort()
+        for name in dirnames:
+            child = current_path / name
+            if _is_reparse_point(child.lstat()):
+                raise _UnsupportedEntry
             digest.update(
-                f"{relative}\0{size}\0{_sha256_file(child)}\n".encode("utf-8")
+                f"{child.relative_to(path).as_posix()}/\n".encode("utf-8")
             )
-            total += size
-        elif child.is_dir():
-            digest.update(f"{relative}/\n".encode("utf-8"))
+        for name in filenames:
+            child = current_path / name
+            child_stat = child.lstat()
+            if _is_reparse_point(child_stat) or not stat.S_ISREG(
+                child_stat.st_mode
+            ):
+                raise _UnsupportedEntry
+            digest.update(
+                (
+                    f"{child.relative_to(path).as_posix()}\0"
+                    f"{child_stat.st_size}\0{_sha256_file(child)}\n"
+                ).encode("utf-8")
+            )
+            total += child_stat.st_size
     return ("directory", total, digest.hexdigest())
 
 
@@ -206,6 +223,24 @@ def _reason_for_oserror(error: OSError) -> str:
     if error.errno in (13, 16):  # EACCES / EBUSY
         return REASON_ACCESS_DENIED if error.errno == 13 else REASON_IN_USE
     return REASON_RECYCLE_REJECTED
+
+
+def _path_key(path: Path) -> str:
+    """Normalised absolute key: case-insensitive on Windows, exact on POSIX."""
+    return os.path.normcase(os.path.abspath(str(path)))
+
+
+def _same_path(left: Path, right: Path) -> bool:
+    return _path_key(left) == _path_key(right)
+
+
+def _is_within(path: Path, root: Path) -> bool:
+    """True when ``path`` is ``root`` or lives below it (normalised)."""
+    path_key = _path_key(path)
+    root_key = _path_key(root)
+    return path_key == root_key or path_key.startswith(
+        root_key + os.sep
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -328,10 +363,9 @@ class SimulatedRecycleBin:
             source = self._confine(entry.path)
         except _ItemFailure as refusal:
             return _failed(entry, refusal.reason)
-        if source == self._root:
+        if _same_path(source, self._root):
             return _failed(entry, REASON_INVALID_REQUEST)
-        bin_dir = Path(os.path.abspath(str(self._bin_dir)))
-        if source == bin_dir or bin_dir in source.parents:
+        if _is_within(source, self._bin_dir):
             return _failed(entry, REASON_ALREADY_IN_BIN)
         if not source.exists():
             return _failed(entry, REASON_PATH_NOT_FOUND)
@@ -339,6 +373,8 @@ class SimulatedRecycleBin:
             kind, size_bytes, digest = _fingerprint(source)
         except _UnsupportedEntry:
             return _failed(entry, REASON_UNSUPPORTED_ENTRY)
+        except FileNotFoundError:
+            return _failed(entry, REASON_PATH_NOT_FOUND)
         except OSError:
             return _failed(entry, REASON_ACCESS_DENIED)
         try:
