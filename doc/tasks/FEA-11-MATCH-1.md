@@ -3,14 +3,14 @@ id: FEA-11-MATCH-1
 title: FEA-11 页匹配 pixel profile 提取与旧库 fixture（C-17 §7.3 续）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
+status: ready
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
   - FEA-11-PREREQ-1
-base_commit: null
+base_commit: 2d9a4a219   # 释放点 main head（AC4-GAPS-1 closeout 后）
 branch: null
 worktree: null
 integration_commit: null
