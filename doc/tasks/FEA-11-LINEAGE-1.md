@@ -55,8 +55,17 @@ allowed_paths:
 - 依据：`doc/reviews/FEA-11-r1.md` R-009；C-17 §7.1；AC11-5 的隔离部分。
 - 状态：proposed（DSH 2026-11-05 裁决承接；FEA-11 已实现 captured_v7/legacy_unverified/migrated 写入与 2 个 seam 测试）。
 
+## 实施记录与 limitation（DSH，2026-11-05）
+
+- **AC1 写入**：`RevisionLineage` 在 `application.editing.ports`；`regions.py` 写路径同事务 INSERT；`RegionEditingService(lineage_binding=...)` 写 native；测试 6/6（single/batch/回滚/服务层）。
+- **AC2 渲染读守卫**：`RenderService.lineage_binding/lineage_of_revision` + `LineageBindingMismatch`；`core_assembly` 从 `SourceSyncStore` 注入；测试 3/3；全量 pytest 3060/0/10 通过。
+- **limitation L1（导出/Run/ListRegions 守卫）**：`CoreServices` 增加 store 字段会破坏 59 项导出/验收测试（冻结 dataclass 装配敏感）；`_export_regions` 窄批守卫同样破坏面大。两项均回退，登记为后续独立装配变更。
+- **limitation L2（AC11-5 完整集成测试）**：页面 binding 切换的种子数据（source_versions/source_entries/page_bindings 约束 + `LineageBindingMismatch` 集成）构造复杂，两轮尝试回退；以渲染守卫 3 项 mismatch 测试作为核心证据。
+- **limitation L3（same_content 边）**：C-17 §7.1 的 publication.previous/same_content 链未在仓库实现（FEA-11 已登记为 read 兼容后续）；本卡的读守卫按 binding 精确匹配，same_content 继承 deferral。
+- **验证**：pytest 全量 3060/0/10；fea11 9/9（lineage native）；未 push。
+
 ## Acceptance Criteria
 
 - [ ] **AC1**：region/draft 写路径同事务登记 native lineage（C-17 §7.1）；B1/R1→B2、same_content 边、changed 切断有测试。 <<PARTIAL: 写入路径已完成（RevisionLineage 值对象在 application.editing.ports；regions.py 同事务 INSERT；RegionEditingService 注入 lineage_binding 写 native；测试 6/6）；B1/R1→B2、same_content、changed 边测试待补>>
-- [ ] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝）。 <<PARTIAL: 渲染入口已实现并接线（RenderService._active_regions + LineageBindingMismatch + 3 测试；core_assembly 从 SourceSyncStore 注入只读 providers）；编辑入口写入 native lineage 已接线；**导出/Run/ListRegions 守卫待补**（导出 `_export_regions` 的守卫实现因影响面回退，需单独窄批）>>
-- [ ] **AC3**：AC11-5 隔离证据（旧坐标对新图不可见）与回归测试；FEA-11 r3 复审接受。 <<PARTIAL: 待实施>>
+- [ ] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝）。 <<PARTIAL: 渲染入口已实现并接线（RenderService._active_regions + LineageBindingMismatch + 3 测试；core_assembly 从 SourceSyncStore 注入只读 providers）；编辑入口写入 native lineage 已接线；**导出/Run/ListRegions 守卫未实现**（两次窄批尝试均因影响面回退：CoreServices 字段暴露会破坏 59 项导出/验收测试；导出 `_export_regions` 守卫同）→ 登记 limitation（owner DSH，目标：Source 线后续以独立装配变更实现）>>
+- [ ] **AC3**：AC11-5 隔离证据（旧坐标对新图不可见）与回归测试；FEA-11 r3 复审接受。 <<PARTIAL: 渲染守卫的 mismatch 拒绝测试已构成「旧坐标不可见」的核心证据（3 项）；完整 AC11-5 集成测试（页面 binding 切换 + 旧 region 拒绝）因种子数据复杂度登记 limitation（owner DSH）>>
