@@ -3,14 +3,14 @@ id: FEA-11-SCAN-1
 title: FEA-11 源后台定时扫描（Host 进程内只读周期触发切片）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 AC11-1 的「定时扫描生产者」延期项（L-3 半边）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
+status: ready
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-1 的「定时扫描生产者」延期项（L-3 半边）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
   - FEA-11
-base_commit: null
+base_commit: e0c370870   # 释放点 main head（MATCH-1 交付后）
 branch: null
 worktree: null
 integration_commit: null

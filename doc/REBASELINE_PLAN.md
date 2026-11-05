@@ -10,7 +10,7 @@
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
-|FEA-11-SCAN-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-1 定时/watcher 承接）|
+|FEA-11-SCAN-1|FEA-11|**ready**（2026-11-06 DSH 释放；ZCode SCOPE-ADJ 冻结为 Host 方案 A；base `e0c370870`；AC11-1 定时扫描半边）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
@@ -46,7 +46,7 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：无
+READY 节点：FEA-11-SCAN-1
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done（C-17 FROZEN）；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 scope 冻结（ADJ-2026-11-05）。
 
