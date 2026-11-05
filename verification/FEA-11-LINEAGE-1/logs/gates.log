@@ -24,3 +24,6 @@ cmd: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build
 EXIT=1
 SUM_PASSED=1238
 restore: git checkout -- verification/FEA-09
+--- rerun ---
+first full .NET run: CoreClient.Tests 1 failed (156/1/22) -> known flaky class (FEA-11 L-11); immediate rerun: 1395 passed / 0 failed / 78 skipped EXIT=0 (21+38+253+117+107+31+157+671).
+restore: git checkout -- verification/FEA-09 after the rerun.
