@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `in_review`（r2 fresh Reviewer 审查中）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `in_progress`（Team 实施中）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A，2026-11-05；AC3 PARTIAL + 10 limitations，不进入 READY）。
+- 当前 Task：[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `changes_requested`（r2 Review P1=1 → r3 返修中）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `in_review`（fresh Reviewer 审查中）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `ready`（模拟回收站切片）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A，2026-11-05；AC3 PARTIAL + 10 limitations，不进入 READY）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)。
 - 下一步：LINEAGE-1 r2 Review 处置→closeout；FEA-12-PREREQ-1 实施→独立 Review→释放 FEA-12-CORE/DSIM-1。

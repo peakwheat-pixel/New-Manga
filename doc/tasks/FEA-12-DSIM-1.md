@@ -3,8 +3,9 @@ id: FEA-12-DSIM-1
 title: FEA-12 D 流程模拟切片（可注入原文件回收适配器 + SimulatedRecycleBin，无真实 OS API）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 用户 2026-11-05 口径（隔离 fixture + 模拟回收站路径，不触碰真实回收站）；ADJ-2026-11-05-FEA-12-SCOPE D5
+status: ready
+
+approval: 用户 2026-11-05 口径（隔离 fixture + 模拟回收站路径，不触碰真实回收站）；ADJ-2026-11-05-FEA-12-SCOPE D5；DSH 2026-11-05 释放
 suggested_owner: dsh（dsh-agent-team teammate）
 owner: null
 reviewer: 独立上下文 fresh subagent（未参与实现；会话 id 记录在 Review 报告）
