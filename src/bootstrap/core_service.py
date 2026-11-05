@@ -1737,6 +1737,57 @@ class CoreServiceServer:
             return "retry", None
         return "missing", None
 
+    def _derived_cleanup_entries(self, book_id: str) -> list[dict[str, str]]:
+        """Catalog preview / page-original derived files the cleanup removes.
+
+        r1 R-001: PD-01/C-04b require ``deletedFiles``/``deletedBytes`` to
+        cover *managed/derived* files, and ``cleanup_book_files`` removes two
+        derived families besides the managed sweep list:
+
+        * artifact preview resources published into the derived root
+          (``RenderPreviewPublisher`` / catalog ``preview-<uuid>`` entries);
+        * page-original preview resources (``page-original-<page_id>``).
+
+        The disclosure is computed from the same catalog lookups the cleanup
+        path uses, so what is disclosed is exactly what will be removed.  When
+        no preview publisher is assembled the derived families are empty (the
+        cleanup path then has nothing to remove either).  A catalog read
+        failure is NOT swallowed: an incomplete disclosure must surface as the
+        retryable ``BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`` instead of
+        a silently under-reported inventory (PD-01/PD-03).
+        """
+        publisher = self._render_previews
+        if publisher is None:
+            return []
+        catalog = getattr(publisher, "_catalog", None)
+        derived_root = getattr(publisher, "_root", None)
+        if catalog is None or derived_root is None:
+            return []
+        repository = self._core.repository
+        page_ids = repository.list_book_page_ids(book_id)
+        if not page_ids:
+            manifest = repository.get_cleanup_manifest_data(book_id)
+            if manifest:
+                page_ids = list(manifest.get("page_ids", []))
+        resource_ids: list[str] = list(
+            catalog.preview_resource_ids_for_artifacts(
+                repository.list_page_artifact_ids(page_ids)
+            )
+        )
+        resource_ids.extend(f"page-original-{page_id}" for page_id in page_ids)
+        entries: list[dict[str, str]] = []
+        seen: set[str] = set()
+        for resource_id in resource_ids:
+            if resource_id in seen:
+                continue
+            seen.add(resource_id)
+            entry = catalog.lookup(resource_id)
+            rel_path = getattr(entry, "rel_path", None) if entry is not None else None
+            if not rel_path:
+                continue
+            entries.append({"resource_id": resource_id, "rel_path": str(rel_path)})
+        return entries
+
     def _finalize_delete_inventory(self, raw: dict[str, Any]) -> dict[str, Any]:
         """Complete the PD-01 inventory with Core-only facts.
 
@@ -1749,6 +1800,9 @@ class CoreServiceServer:
           facts (an in-flight export has no persistent row yet).
         * ``sharedFileRefs``: managed shared files (opaque hashed id) plus
           shared referenced-source entries.
+        * ``deletedFiles``/``deletedBytes``: the managed sweep list **plus the
+          catalog preview / page-original derived files** the cleanup removes
+          (r1 R-001), de-duplicated by absolute path.
         """
         inventory = dict(raw)
         repository = self._core.repository
@@ -1812,6 +1866,41 @@ class CoreServiceServer:
         inventory["unsafe_shared_ref_count"] = (
             1 if raw["source_graph_conflict"] else 0
         )
+        # r1 R-001: disclose the derived preview/page-original files that the
+        # cleanup phase removes (same lookups as ``_collect_delete_targets``).
+        deleted_files = int(raw["deleted_files"])
+        deleted_bytes = int(raw["deleted_bytes"])
+        counted_paths: set[str] = set()
+        try:
+            for relative_path in raw["cleanup_targets"]:
+                absolute = Path(
+                    self._core.storage.absolute_path(relative_path)
+                )
+                counted_paths.add(
+                    os.path.normcase(os.path.abspath(str(absolute)))
+                )
+        except Exception:
+            counted_paths = set()
+        derived_root = getattr(self._render_previews, "_root", None)
+        derived_count = 0
+        if derived_root is not None:
+            derived_base = os.path.abspath(str(derived_root))
+            for entry in self._derived_cleanup_entries(raw["book_id"]):
+                absolute = os.path.normcase(
+                    os.path.abspath(os.path.join(derived_base, entry["rel_path"]))
+                )
+                if absolute in counted_paths:
+                    continue
+                counted_paths.add(absolute)
+                derived_count += 1
+                deleted_files += 1
+                try:
+                    deleted_bytes += int(Path(absolute).stat().st_size)
+                except OSError:
+                    pass
+        inventory["deleted_files"] = deleted_files
+        inventory["deleted_bytes"] = deleted_bytes
+        inventory["derived_cleanup_files"] = derived_count
         return inventory
 
     @staticmethod
@@ -2402,8 +2491,12 @@ class CoreServiceServer:
                     },
                 )
             except PermanentDeleteBlockedError as caught:
+                # r1 R-009: use the code/attribution carried by the write
+                # boundary itself (preflight passed, then the state changed).
+                # The batch surfaces the typed BOOK_BUSY at the top level and
+                # attributes the exact item; the other items stay not_started.
                 return None, self._delete_error(
-                    "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    caught.code,
                     "conflict",
                     details={
                         "phase": "preflight",
@@ -2413,7 +2506,11 @@ class CoreServiceServer:
                             {
                                 "book_id": book_id,
                                 "status": "not_started",
-                                "error_code": None,
+                                "error_code": (
+                                    caught.code
+                                    if book_id == caught.book_id
+                                    else None
+                                ),
                             }
                             for book_id in book_ids
                         ],

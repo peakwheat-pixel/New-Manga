@@ -989,12 +989,27 @@ def test_delete_book_cleanup_pending_retry_cleans_derived_and_manifest(
 
         digest = _single_digest(server, "b1")
         original_lookup = catalog.lookup
+        repository = core.repository
+        real_cleanup = repository.cleanup_book_files
 
         def faulty_lookup(res_id: str):
             raise RuntimeError("Injected catalog lookup failure")
 
-        catalog.lookup = faulty_lookup
-        res1 = _delete_single(server, "b1", digest)
+        def cleanup_with_fault(*args, **kwargs):
+            # r2 R-001: the disclosure now consults the catalog too, so the
+            # fault must be scoped to the CLEANUP phase (a cleanup-time planned
+            # failure), not to the pre-commit inventory computation.
+            catalog.lookup = faulty_lookup
+            try:
+                return real_cleanup(*args, **kwargs)
+            finally:
+                catalog.lookup = original_lookup
+
+        repository.cleanup_book_files = cleanup_with_fault
+        try:
+            res1 = _delete_single(server, "b1", digest)
+        finally:
+            repository.cleanup_book_files = real_cleanup
         assert res1["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
         assert core.conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
         manifest_data = core.repository.get_cleanup_manifest_data("b1")
@@ -1002,7 +1017,6 @@ def test_delete_book_cleanup_pending_retry_cleans_derived_and_manifest(
         assert "p1" in manifest_data["page_ids"]
         assert derived_file.is_file()
 
-        catalog.lookup = original_lookup
         res2 = _delete_single(server, "b1", digest)
         assert res2["error"] is None
         assert res2["result"]["deleted"] is True
@@ -1207,3 +1221,263 @@ def test_delete_book_with_multi_target_run_detaches_without_collision(
     assert server._core.conn.execute(
         "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
     ).fetchone()[0] == 0
+
+
+# --- r1 R-009: preflight -> transaction race keeps the typed item code ---
+
+
+def test_delete_books_write_boundary_race_projects_busy_item(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """R-009: when a source operation becomes non-terminal *after* preflight
+    but before the transaction's write-boundary check, the batch must still
+    report the typed ``BOOK_BUSY`` on that item (previously item_code=None)."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    calls = {"n": 0}
+
+    def racing_busy(book_id: str) -> list[str]:
+        calls["n"] += 1
+        # 1-2: per-book inventory; 3-4: per-book preflight; 5+: write boundary.
+        if calls["n"] >= 5 and book_id == "b1":
+            return ["op-race"]
+        return []
+
+    monkeypatch.setattr(
+        repository, "list_book_source_busy_operation_ids", racing_busy
+    )
+    res = _delete_batch(server, ["b1", "b2"], collection, digests)
+    # r1 R-009 (Lead ruling): the write-boundary refusal surfaces the typed
+    # BOOK_BUSY at the top level and attributes the exact item.
+    assert res["error"]["code"] == "BOOK_BUSY"
+    assert res["error"]["category"] == "conflict"
+    items = res["error"]["details"]["items"]
+    assert next(it for it in items if it["book_id"] == "b1")["error_code"] == "BOOK_BUSY"
+    assert next(it for it in items if it["book_id"] == "b2")["error_code"] is None
+    # Zero side effects: the transaction rolled back and no file went away.
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id IN ('b1','b2')"
+    ).fetchone()[0] == 2
+
+
+# --- r1 R-010: out-of-target page_bindings.previous -> target binding ---
+
+
+def test_delete_book_unsafe_binding_previous_reference_conflicts(
+    server: CoreServiceServer,
+) -> None:
+    """R-010: an out-of-target ``page_bindings.previous_binding_id`` pointing
+    at the book's binding is an inconsistent graph for this delete; it must be
+    ``BOOK_DELETE_CONFLICT`` from the preflight (not an FK failure later)."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    _seed_sources_graph(server)
+    with server._core.conn:
+        for binding_id, page_id, project_id, previous in (
+            ("bind-1", "p1", "b1", None),
+            ("bind-2", "p2", "b2", "bind-1"),
+        ):
+            server._core.conn.execute(
+                "INSERT INTO page_bindings (binding_id, page_id, project_id,"
+                " binding_version, source_id, entry_id, accepted_source_version,"
+                " status, previous_binding_id, authorization_generation,"
+                " authorized_at, verified_digest, created_at, updated_at)"
+                " VALUES (?, ?, ?, 1, 'src-1', 'entry-1', 'ver-1', 'healthy', ?, 1, ?, ?, ?, ?)",
+                (binding_id, page_id, project_id, previous, NOW, "a" * 64, NOW, NOW),
+            )
+    assert server._core.repository.has_unsafe_source_references("b1") is True
+    res = _delete_single_auto(server, "b1")
+    assert res["error"]["code"] == "BOOK_DELETE_CONFLICT"
+    assert res["error"]["category"] == "conflict"
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM page_bindings"
+    ).fetchone()[0] == 2
+
+
+# --- r1 R-008: mixed live + PD-07 retry batch (documented limitation) ---
+
+
+def test_delete_books_mixed_retry_batch_validates_live_per_book_digest(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """R-008 limitation: a batch containing a PD-07 retry target skips the
+    *collection-level* digest comparison (no Book row to re-preview), but the
+    per-book digest of every live target is still strictly validated."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")  # keeps the library "whole" check false
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_single(server, "b1", digests["b1"])
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+
+    # (a) live per-book digest mismatch inside a mixed retry batch => stale,
+    # zero side effects (the collection digest is only shape-checked).
+    res = _delete_batch(server, ["b1", "b2"], FAKE_DIGEST, {"b1": digests["b1"], "b2": FAKE_DIGEST})
+    assert res["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    items = res["error"]["details"]["items"]
+    assert next(it for it in items if it["book_id"] == "b2")["error_code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b2'"
+    ).fetchone()[0] == 1
+
+    # (b) correct live digest + shape-valid collection digest => the retry is
+    # allowed (PD-07 does not re-run the preview) and the live book is deleted.
+    res = _delete_batch(
+        server, ["b1", "b2"], FAKE_DIGEST, {"b1": digests["b1"], "b2": digests["b2"]}
+    )
+    assert res["error"] is None, res["error"]
+    assert res["result"]["items"] == [
+        {"book_id": "b1", "status": "deleted", "error_code": None},
+        {"book_id": "b2", "status": "deleted", "error_code": None},
+    ]
+    assert repository.get_cleanup_manifest_data("b1") is None
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b2'"
+    ).fetchone()[0] == 0
+
+
+# --- r1 R-012: batch cleanup-pending -> explicit retry (direct evidence) ---
+
+
+def test_delete_books_batch_cleanup_pending_then_explicit_retry(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """R-012: the batch path of PD-07 has direct evidence.
+
+    One item's file cleanup is refused after the DB commit -> the batch
+    reports ``BOOK_DELETE_BATCH_CLEANUP_PENDING`` with per-item statuses
+    (``cleanup_pending`` vs ``deleted``); an explicit retry that only carries
+    the pending ID re-runs the cleanup without a new preview (PD-07 §5.11.1a)
+    and then reports the item deleted; a second replay is a zero-side-effect
+    ``BOOK_NOT_FOUND`` (idempotent, no hidden retry).
+    """
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    rel_p2 = _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def partial_cleanup(book_id, *args, **kwargs):
+        if book_id == "b1":
+            return False  # controlled refusal: leaves b1's manifest pending
+        return real_cleanup(book_id, *args, **kwargs)
+
+    monkeypatch.setattr(repository, "cleanup_book_files", partial_cleanup)
+    first = _delete_batch(server, ["b1", "b2"], collection, digests)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+    details = first["error"]["details"]
+    assert details["phase"] == "cleanup"
+    assert details["requested_count"] == 2
+    assert details["completed_count"] == 1
+    assert details["items"] == [
+        {"book_id": "b1", "status": "cleanup_pending", "error_code": None},
+        {"book_id": "b2", "status": "deleted", "error_code": None},
+    ]
+    # The DB commit is durable; only b1's file manifest is pending.
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id IN ('b1','b2')"
+    ).fetchone()[0] == 0
+    assert repository.get_cleanup_manifest_data("b1") is not None
+    assert Path(server._core.storage.absolute_path(rel_p1)).is_file()
+    assert not Path(server._core.storage.absolute_path(rel_p2)).exists()
+    assert repository.get_cleanup_manifest_data("b2") is None
+
+    # Explicit retry with only the pending ID; the collection digest is only
+    # shape-checked because there is no Book row to re-preview (PD-07).
+    retry = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    assert retry["error"] is None, retry["error"]
+    assert retry["result"]["requested_count"] == 1
+    assert retry["result"]["completed_count"] == 1
+    assert retry["result"]["items"] == [
+        {"book_id": "b1", "status": "deleted", "error_code": None}
+    ]
+    assert not Path(server._core.storage.absolute_path(rel_p1)).exists()
+    assert repository.get_cleanup_manifest_data("b1") is None
+
+    # Idempotent replay: nothing is pending any more -> typed preflight
+    # failure, zero side effects, no silent disappearance of a live book.
+    replay = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    assert replay["error"]["code"] == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
+    assert replay["error"]["details"]["items"] == [
+        {"book_id": "b1", "status": "not_started", "error_code": "BOOK_NOT_FOUND"}
+    ]
+
+
+def test_delete_books_batch_cleanup_pending_mixed_retry_items(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """R-008/R-012 together: a mixed live+retry batch keeps the per-item
+    status vocabulary across all three states (deleted / cleanup_pending /
+    not_started) and validates the live book's per-book digest strongly."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def partial_cleanup(book_id, *args, **kwargs):
+        if book_id == "b1":
+            return False
+        return real_cleanup(book_id, *args, **kwargs)
+
+    monkeypatch.setattr(repository, "cleanup_book_files", partial_cleanup)
+    first = _delete_batch(server, ["b1", "b2"], collection, digests)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+
+    # Live b4 + pending b1: wrong per-book digest for the live target must
+    # still be a hard STALE (collection-level is only shape-checked).
+    _seed_book(server, "b4", "Book 4")
+    _seed_chapter_and_page(server, "b4", "c4", "p4")
+    stale = _delete_batch(
+        server, ["b1", "b4"], FAKE_DIGEST, {"b1": digests["b1"], "b4": FAKE_DIGEST}
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert next(
+        it for it in stale["error"]["details"]["items"] if it["book_id"] == "b4"
+    )["error_code"] == "BOOK_DELETE_STALE_PREVIEW"
+
+    # Correct live digest + pending b1: the retry proceeds and both items end
+    # ``deleted`` (b1's pending cleanup + b4's delete), in request order.
+    live_digest = _single_digest(server, "b4")
+    retry = _delete_batch(
+        server, ["b1", "b4"], FAKE_DIGEST, {"b1": digests["b1"], "b4": live_digest}
+    )
+    assert retry["error"] is None, retry["error"]
+    assert retry["result"]["items"] == [
+        {"book_id": "b1", "status": "deleted", "error_code": None},
+        {"book_id": "b4", "status": "deleted", "error_code": None},
+    ]
+    assert repository.get_cleanup_manifest_data("b1") is None

@@ -13,7 +13,7 @@ Two independent checks:
 Every path is derived from this file; nothing is hard-coded to a drive or user
 profile, and the isolated root is removed afterwards.
 
-Run: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_isolation_scan.py
+Run: python verification/FEA-12-CORE/scripts/core_py_isolation_scan.py
 """
 
 from __future__ import annotations
@@ -102,11 +102,24 @@ def _static_scan() -> dict:
         ):
             if token in text:
                 module_hits.append(f"{module.relative_to(REPO)}:{token}")
+    # r1 R-004: actually apply the drive-path detector — neither the delete
+    # implementation modules nor these evidence probes may hard-code a real
+    # volume path.
+    drive_hits: list[str] = []
+    drive_scan_targets = list(DELETE_MODULES) + sorted(
+        (REPO / "verification" / "FEA-12-CORE" / "scripts").glob("*.py")
+    )
+    for path in drive_scan_targets:
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for match in DRIVE_PATH.finditer(text):
+            drive_hits.append(f"{path.relative_to(REPO)}:{match.group(0)!r}")
     return {
         "src_python_files_scanned": scanned,
         "windows_recycle_api_hits": recycle_hits,
         "delete_module_real_root_hits": module_hits,
-        "pass": not recycle_hits and not module_hits,
+        "drive_path_hits": drive_hits,
+        "drive_path_files_scanned": len(drive_scan_targets),
+        "pass": not recycle_hits and not module_hits and not drive_hits,
     }
 
 
@@ -123,12 +136,14 @@ def main() -> int:
 
     core = assemble_production_core(WORK_ROOT / "data")
     server = CoreServiceServer(core)
+    data_root = Path(core.data_root).resolve()
+    # r1 R-004: a real containment check (Path.is_relative_to), and the value
+    # participates in ``runtime["pass"]`` below.
+    data_root_under_workspace_temp = data_root.is_relative_to(WORK_ROOT.resolve())
     runtime: dict = {
         "data_root": str(Path(core.data_root)),
-        "data_root_under_workspace_temp": str(
-            WORK_ROOT.resolve()
-        ) in str(Path(core.data_root).resolve().parents)
-        or Path(core.data_root).resolve() == WORK_ROOT.resolve(),
+        "workspace_temp_root": str(WORK_ROOT.resolve()),
+        "data_root_under_workspace_temp": data_root_under_workspace_temp,
     }
     try:
         book = core.library.create_book(title="Isolation Probe")
@@ -194,6 +209,7 @@ def main() -> int:
     runtime["sentinel_files"] = sorted(after)
     runtime["pass"] = (
         static["pass"]
+        and data_root_under_workspace_temp
         and runtime["sentinel_unchanged"]
         and runtime.get("c_preview_error") is None
         and runtime.get("managed_file_removed") is True

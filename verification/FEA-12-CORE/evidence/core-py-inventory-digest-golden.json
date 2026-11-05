@@ -29,8 +29,8 @@
           "chapters": 1,
           "pages": 1,
           "artifacts": 1,
-          "deletedFiles": 2,
-          "deletedBytes": 32
+          "deletedFiles": 3,
+          "deletedBytes": 46
         },
         "sharedFileRefs": []
       },
@@ -48,12 +48,12 @@
         "chapters": 1,
         "pages": 1,
         "artifacts": 1,
-        "deletedFiles": 2,
-        "deletedBytes": 32,
+        "deletedFiles": 3,
+        "deletedBytes": 46,
         "sharedFileRefs": []
       },
-      "expected_inventoryDigest": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
-      "actual_inventoryDigest": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+      "expected_inventoryDigest": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
+      "actual_inventoryDigest": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
       "match": true
     },
     {
@@ -65,24 +65,32 @@
         ]
       },
       "expected_inventoryDigests": {
-        "book-golden": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+        "book-golden": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
         "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
       },
       "actual_inventoryDigests": {
-        "book-golden": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+        "book-golden": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
         "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
       },
-      "expected_inventoryDigest": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
-      "actual_inventoryDigest": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
+      "expected_inventoryDigest": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
+      "actual_inventoryDigest": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
       "match": true
     }
   ],
   "all_match": true,
+  "derived_disclosure": {
+    "derived_rel_path_kind": "catalog preview/page-original under derived root",
+    "derived_bytes": 14,
+    "preview_deletedFiles": 3,
+    "preview_deletedBytes": 46,
+    "expected_deletedFiles": 3,
+    "expected_deletedBytes": 46
+  },
   "order_sensitivity": {
-    "forward": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
-    "reordered": "sha256:1725a6a3b6ebd9262d8461a3a966088dd115c45d18e011bb9210b9e21eda6060",
+    "forward": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
+    "reordered": "sha256:f3c57764d8b753d6368ef419e2ba9d5f26627650dcdf9ee9756472479fa06db6",
     "per_book_digests_stable": true,
     "collection_differs": true
   },
-  "computedAt": "2026-11-05T08:44:23.424+00:00"
+  "computedAt": "2026-11-05T09:35:17.023+00:00"
 }

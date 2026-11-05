@@ -1,4 +1,4 @@
-# FEA-12-CORE shard A evidence
+# FEA-12-CORE shard A evidence (r2)
 # command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 # EXIT: 0
 # ----------------------------------------------------------------------

@@ -245,7 +245,9 @@ def test_preview_reports_full_pd01_disclosure(server: CoreServiceServer) -> None
     protection = item["protection"]
     assert protection["lockCount"] == 2  # rg1 flag + rg2 text_json union
     assert protection["manualRegionCount"] == 1
-    assert protection["currentRevisionId"] in {"rr1", "rr2"}
+    # r1 R-011: pin the Lead-ruled order — "first lineage-visible region in
+    # reading order" is rg1/rr1 here; rr2 is only the pinned-revision case.
+    assert protection["currentRevisionId"] == "rr1"
     assert protection["pinnedRevisionIds"] == ["ar1", "rr2"]
     assert protection["activeRunIds"] == []
     assert protection["draftPageCount"] == 1
@@ -452,3 +454,99 @@ def test_preview_inventory_unavailable_is_typed(server: CoreServiceServer, monke
         "retryable": True,
     }
     assert server._core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0] == 1
+
+
+# --- r1 R-001: derived preview/page-original files are disclosed --------
+
+
+def _derived_world(tmp_path: Path):
+    """Core with a real derived-preview catalog (isolated under tmp_path)."""
+    from infrastructure.resource_channel.catalog_store import (
+        ResourceCatalogStore,
+        initialize_namespace,
+    )
+    from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+
+    core = assemble_production_core(tmp_path / "data")
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    catalog_db = tmp_path / "derived" / "catalog.db"
+    initialize_namespace(catalog_db, derived_root)
+    catalog = ResourceCatalogStore(catalog_db)
+    publisher = RenderPreviewPublisher(derived_root, catalog)
+    server = CoreServiceServer(core, render_previews=publisher)
+    return core, catalog, derived_root, server
+
+
+def test_preview_counts_catalog_derived_files_and_delete_removes_them(
+    tmp_path: Path,
+) -> None:
+    """R-001 (P2): PD-01 requires managed **and derived** file disclosure.
+
+    ``cleanup_book_files`` removes the catalog preview/page-original files in
+    the derived root; the preview must count them (de-duplicated against the
+    managed sweep list) and the digest must bind the count, so a changed
+    derived file invalidates the confirmation (PD-04).
+    """
+    core, catalog, derived_root, server = _derived_world(tmp_path)
+    try:
+        _seed_book(server, "b1", "Derived")
+        rel_path = _seed_page_with_region(
+            server, book_id="b1", chapter_id="c1", page_id="p1",
+            region_id="rg1", revision_id="rr1", managed_bytes=b"managed-bytes",
+        )
+        derived_rel = "previews/derived-p1.png"
+        derived_file = derived_root / derived_rel
+        derived_file.parent.mkdir(parents=True, exist_ok=True)
+        derived_file.write_bytes(b"derived-bytes")
+        catalog.upsert("page-original-p1", "derived-read-only", derived_rel)
+
+        first = _preview(server, ["b1"])["items"][0]
+        content = first["contentSummary"]
+        assert content["deletedFiles"] == 2, content  # managed page + derived
+        assert content["deletedBytes"] == len(b"managed-bytes") + len(b"derived-bytes")
+        first_digest = _preview(server, ["b1"])["inventoryDigests"]["b1"]
+        assert core.repository.get_cleanup_manifest_data("b1") is None
+
+        # PD-04: the derived file is part of the bound disclosure.
+        derived_file.write_bytes(b"derived-bytes-v2")
+        second = _preview(server, ["b1"])
+        assert second["inventoryDigests"]["b1"] != first_digest
+        assert second["items"][0]["contentSummary"]["deletedBytes"] == (
+            len(b"managed-bytes") + len(b"derived-bytes-v2")
+        )
+
+        # And the cleanup really removes it (disclosure == actual deletion).
+        deleted = _rpc(
+            server,
+            "PermanentlyDeleteBook",
+            {
+                "book_id": "b1",
+                "confirm_permanent_delete": True,
+                "inventory_digest": second["inventoryDigests"]["b1"],
+            },
+            minor=10,
+        )
+        assert deleted["error"] is None, deleted["error"]
+        assert not derived_file.exists()
+        assert not Path(core.storage.absolute_path(rel_path)).exists()
+        assert catalog.lookup("page-original-p1") is None
+    finally:
+        catalog.close()
+        core.conn.close()
+
+
+def test_preview_derived_disclosure_requires_a_preview_publisher(
+    server: CoreServiceServer,
+) -> None:
+    """Without a preview publisher the cleanup has no derived family to
+    remove; the disclosure must stay at the managed counts (no fabricated
+    derived numbers)."""
+    _seed_book(server, "b1")
+    _seed_page_with_region(
+        server, book_id="b1", chapter_id="c1", page_id="p1", region_id="rg1",
+        revision_id="rr1", managed_bytes=b"only-managed",
+    )
+    item = _preview(server, ["b1"])["items"][0]
+    assert item["contentSummary"]["deletedFiles"] == 1
+    assert item["contentSummary"]["deletedBytes"] == len(b"only-managed")

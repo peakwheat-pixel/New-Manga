@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence
+# FEA-12-CORE shard A evidence (r2)
 # command: pytest tests/fea12/test_core_delete_protection.py tests/maintenance/test_cleanup.py -k "not isolation and not windows and not user_data"
 # EXIT: 0
 #----------------------------------------------------------------------
 .....................                                                    [100%]
-21 passed, 2 deselected in 0.67s
+21 passed, 2 deselected in 0.62s
 

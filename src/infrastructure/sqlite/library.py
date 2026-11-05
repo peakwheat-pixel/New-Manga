@@ -48,12 +48,15 @@ class PermanentDeleteBlockedError(RuntimeError):
     caller can project the code (``BOOK_BUSY``) with zero side effects.  It is
     raised for the state checks that must be re-read at the write boundary
     (D1 X1 non-terminal source operation; recovery of the transaction is the
-    ``with`` block's job).
+    ``with`` block's job).  ``book_id`` lets the batch projection attribute the
+    code to the exact item that changed between preflight and the transaction
+    (r1 R-009).
     """
 
-    def __init__(self, code: str) -> None:
+    def __init__(self, code: str, *, book_id: str | None = None) -> None:
         super().__init__(code)
         self.code = code
+        self.book_id = book_id
 
 
 class SqliteLibraryRepository:
@@ -953,14 +956,30 @@ class SqliteLibraryRepository:
 
     def restore_book_from_trash(self, book_id: str) -> bool:
         """Clear ``deleted_at`` only; ``False`` when the entry is not in the
-        trash (a per-item conflict, never a batch failure)."""
-        now = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
-        cursor = self._conn.execute(
-            "UPDATE books SET deleted_at = NULL, updated_at = ?"
-            " WHERE book_id = ? AND deleted_at IS NOT NULL",
-            (now, book_id),
-        )
-        return cursor.rowcount == 1
+        trash (a per-item conflict, never a batch failure).
+
+        R-007: ``Book.restore`` is the single domain authority for what restore
+        means (clear the marker + bump ``updated_at``, touch nothing else);
+        this adapter loads the row, applies it, and writes only those two
+        columns back under the same ``deleted_at IS NOT NULL`` guard, so the
+        per-item atomicity of the batch is preserved.
+        """
+        with self._conn:
+            row = self._conn.execute(
+                "SELECT " + self._BOOK_COLUMNS + " FROM books"
+                " WHERE book_id = ? AND deleted_at IS NOT NULL",
+                (book_id,),
+            ).fetchone()
+            if row is None:
+                return False
+            book = self._book_from_row(row)
+            book.restore()
+            cursor = self._conn.execute(
+                "UPDATE books SET deleted_at = ?, updated_at = ?"
+                " WHERE book_id = ? AND deleted_at IS NOT NULL",
+                (book.deleted_at, book.updated_at, book_id),
+            )
+            return cursor.rowcount == 1
 
     def list_trash_entries(
         self, *, after: tuple[str, str] | None, limit: int
@@ -1291,6 +1310,18 @@ class SqliteLibraryRepository:
                 "     OR lin.from_revision_id IN (" + revisions + ")"
                 "     OR lin.region_id IN (" + regions + ")) LIMIT 1",
                 (book_id, book_id, book_id, book_id),
+            ),
+            # r1 R-010: an out-of-target binding whose ``previous_binding_id``
+            # points at the book's binding.  The self-FK cannot be detached
+            # without corrupting the other project's chain and the
+            # ``UNIQUE(page_id) WHERE status <> 'superseded'`` rule forbids
+            # inventing a replacement, so this inconsistent graph fails the
+            # preflight as BOOK_DELETE_CONFLICT instead of an FK error later.
+            (
+                "SELECT 1 FROM page_bindings b"
+                " WHERE b.binding_id NOT IN (" + bindings + ")"
+                "   AND b.previous_binding_id IN (" + bindings + ") LIMIT 1",
+                (book_id, book_id),
             ),
         )
         for sql, params in checks:
@@ -1798,7 +1829,7 @@ class SqliteLibraryRepository:
                 # A non-terminal operation is re-read at this write boundary so
                 # a race with source-sync cannot slip past the preflight.
                 if self.list_book_source_busy_operation_ids(book_id):
-                    raise PermanentDeleteBlockedError("BOOK_BUSY")
+                    raise PermanentDeleteBlockedError("BOOK_BUSY", book_id=book_id)
                 self._delete_book_source_graph(book_id)
 
                 exp_rows = self._conn.execute(

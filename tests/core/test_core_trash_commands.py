@@ -26,6 +26,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from bootstrap.core_service import CoreServiceServer, assemble_production_core  # noqa: E402
+from domain.books.entities import Book  # noqa: E402
 
 NOW = "2026-11-05T00:00:00+00:00"
 
@@ -425,3 +426,40 @@ def test_core_ping_advertises_fea12_capabilities(server: CoreServiceServer) -> N
         "library.trash.write/1",
     ):
         assert name in capabilities
+
+
+# --- r1 R-007: Book.restore is the single domain authority ---------------
+
+
+def test_book_restore_domain_helper_clears_only_the_marker() -> None:
+    """R-007: ``Book.restore`` only clears ``deleted_at`` + bumps
+    ``updated_at``; the SQLite adapter now reapplies these values through the
+    same ``deleted_at IS NOT NULL`` guard, so A flow is genuinely wired to the
+    domain rule instead of duplicating it as raw SQL."""
+    book = Book(
+        book_id="b-domain",
+        title="Domain",
+        author="Author",
+        notes="notes",
+        source_url="https://example.invalid/book",
+    )
+    book.soft_delete()
+    # Pin a distinguishable old timestamp so the bump is observable (the
+    # millisecond clock could otherwise return the same instant).
+    book.updated_at = "2000-01-01T00:00:00.000+00:00"
+    before = {
+        field: getattr(book, field)
+        for field in (
+            "book_id", "title", "author", "publisher", "series_title",
+            "description", "source_language", "target_language", "source_url",
+            "notes", "default_chapter_type", "default_reading_direction",
+            "is_favorite", "is_archived", "last_opened_at", "created_at",
+        )
+    }
+    assert book.deleted is True
+    book.restore()
+    assert book.deleted_at is None
+    assert book.deleted is False
+    assert book.updated_at != "2000-01-01T00:00:00.000+00:00"
+    for field, value in before.items():
+        assert getattr(book, field) == value, field

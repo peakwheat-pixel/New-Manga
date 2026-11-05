@@ -10,7 +10,7 @@ No real user data, no fixed drive path, no roaming/local app-data variable and
 no recycle-bin API is involved; every path is derived from this file's
 location and removed afterwards.
 
-Run: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_inventory_digest.py
+Run: python verification/FEA-12-CORE/scripts/core_py_inventory_digest.py
 """
 
 from __future__ import annotations
@@ -29,9 +29,17 @@ EVIDENCE = REPO / "verification" / "FEA-12-CORE" / "evidence" / "core-py-invento
 sys.path.insert(0, str(REPO / "src"))
 
 from bootstrap.core_service import CoreServiceServer, assemble_production_core  # noqa: E402
+from infrastructure.resource_channel.catalog_store import (  # noqa: E402
+    ResourceCatalogStore,
+    initialize_namespace,
+)
+from infrastructure.resource_channel.render_preview import RenderPreviewPublisher  # noqa: E402
 
 NOW = "2026-11-05T00:00:00+00:00"
 PREFIX = "sha256:"
+#: r1 R-001: derived preview bytes counted into deletedFiles/deletedBytes.
+DERIVED_BYTES = b"derived-golden"
+DERIVED_REL_PATH = "previews/derived-golden.png"
 
 
 def _canonical_payload(book_id: str, item: dict) -> dict:
@@ -163,7 +171,16 @@ def main() -> int:
     shutil.rmtree(WORK_ROOT, ignore_errors=True)
     WORK_ROOT.mkdir(parents=True, exist_ok=True)
     core = assemble_production_core(WORK_ROOT / "data")
-    server = CoreServiceServer(core)
+    # r1 R-001: a real derived-preview publisher so the disclosure must count
+    # the catalog preview / page-original files the cleanup removes.
+    derived_root = WORK_ROOT / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    catalog_db = WORK_ROOT / "catalog" / "catalog.db"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    catalog = ResourceCatalogStore(catalog_db)
+    publisher = RenderPreviewPublisher(derived_root, catalog)
+    server = CoreServiceServer(core, render_previews=publisher)
     storage_root = Path(core.storage.root)
     evidence: dict = {
         "capability": "library.delete.preview/1",
@@ -179,9 +196,35 @@ def main() -> int:
     }
     try:
         _seed(core, storage_root)
+        # r1 R-001: one existing derived page-original preview file that the
+        # cleanup phase removes and the PD-01 disclosure must therefore count.
+        derived_file = derived_root / DERIVED_REL_PATH
+        derived_file.parent.mkdir(parents=True, exist_ok=True)
+        derived_file.write_bytes(DERIVED_BYTES)
+        catalog.upsert(
+            "page-original-page-golden", "derived-read-only", DERIVED_REL_PATH
+        )
         single = _preview(server, ["book-golden"])
         single_item = single["items"][0]
         expected_single = _digest(_canonical_payload("book-golden", single_item))
+        evidence["derived_disclosure"] = {
+            "derived_rel_path_kind": "catalog preview/page-original under derived root",
+            "derived_bytes": len(DERIVED_BYTES),
+            "preview_deletedFiles": single_item["contentSummary"]["deletedFiles"],
+            "preview_deletedBytes": single_item["contentSummary"]["deletedBytes"],
+            "expected_deletedFiles": 3,  # page original + artifact path + derived preview
+            "expected_deletedBytes": (
+                len(b"golden-page-bytes")
+                + len(b"golden-artifact")
+                + len(DERIVED_BYTES)
+            ),
+        }
+        evidence["all_match"] &= (
+            single_item["contentSummary"]["deletedFiles"]
+            == evidence["derived_disclosure"]["expected_deletedFiles"]
+            and single_item["contentSummary"]["deletedBytes"]
+            == evidence["derived_disclosure"]["expected_deletedBytes"]
+        )
         evidence["vectors"].append({
             "name": "single-book-full-protection",
             "request": {"bookIds": ["book-golden"]},
@@ -239,6 +282,7 @@ def main() -> int:
         )
         evidence["computedAt"] = ordered["computedAt"]
     finally:
+        catalog.close()
         core.conn.close()
         shutil.rmtree(WORK_ROOT, ignore_errors=True)
 

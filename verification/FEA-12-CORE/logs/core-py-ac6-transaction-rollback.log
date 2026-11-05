@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence
-# command: pytest tests/core/test_core_delete_commands.py -k "begin_immediate or rollback or cleanup_pending or output_refs or multi_target"
+# FEA-12-CORE shard A evidence (r2)
+# command: pytest tests/core/test_core_delete_commands.py -k "begin_immediate or rollback or cleanup_pending or output_refs or multi_target or batch_cleanup"
 # EXIT: 0
 #----------------------------------------------------------------------
-.....                                                                    [100%]
-5 passed, 23 deselected in 0.73s
+.......                                                                  [100%]
+7 passed, 26 deselected in 0.84s
 
