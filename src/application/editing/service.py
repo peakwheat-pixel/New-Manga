@@ -443,12 +443,13 @@ class RegionEditingService:
         :class:`RegionNotFound` (wire TARGET_NOT_FOUND) with ZERO write.
         """
         lineage = self._lineage_for(staged.page_id)
+        extra = {"lineage": lineage} if lineage is not None else {}
         result = self._committer.commit_region_revision(
             staged,
             revision,
             expected_current_revision_id=expected_current_revision_id,
             lock_snapshot=lock_snapshot,
-            lineage=lineage,
+            **extra,
         )
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
@@ -463,7 +464,7 @@ class RegionEditingService:
         binding_id = self._lineage_binding(page_id)
         if not binding_id:
             return None
-        from infrastructure.sqlite.regions import RevisionLineage
+        from application.editing.ports import RevisionLineage
 
         return RevisionLineage(binding_id=binding_id, provenance="native")
 

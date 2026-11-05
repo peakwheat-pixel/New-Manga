@@ -20,6 +20,7 @@ from typing import Mapping, Sequence
 
 from application.editing.ports import (
     RegionCommitResult,
+    RevisionLineage,
     RegionCommitStatus,
     RegionLockSnapshot,
     RegionProtectionGuard,
@@ -41,18 +42,6 @@ _REGION_COLUMNS = (
     " style_json, sfx_policy, region_locked, translation_locked, inpaint_locked,"
     " current_revision_id, created_at, updated_at, deleted_at"
 )
-
-
-@dataclass(frozen=True, slots=True)
-class RevisionLineage:
-    """Native lineage committed together with a region revision (FEA-11-LINEAGE-1,
-    C-17 §7.1). ``binding_id`` is the source binding the revision's coordinates
-    were captured against; ``provenance`` is the frozen lineage value."""
-
-    binding_id: str | None
-    provenance: str
-    from_revision_id: str | None = None
-    operation_id: str | None = None
 
 
 class SqliteRegionRepository:

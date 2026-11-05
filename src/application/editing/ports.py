@@ -112,3 +112,14 @@ class RegionRevisionCommitter(Protocol):
         updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]",
         protection_guards: "Sequence[RegionProtectionGuard]",
     ) -> RegionCommitResult: ...
+
+@dataclass(frozen=True, slots=True)
+class RevisionLineage:
+    """FEA-11-LINEAGE-1 AC1: native lineage committed with a region revision
+    (C-17 §7.1). ``binding_id`` is the source binding the revision was captured
+    against; ``provenance`` is the frozen lineage value."""
+
+    binding_id: str | None
+    provenance: str
+    from_revision_id: str | None = None
+    operation_id: str | None = None
