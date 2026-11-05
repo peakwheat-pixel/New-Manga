@@ -1,32 +1,26 @@
-# FEA-11-HOST-AUTH-1 门禁（DSH，r5 前） 2026-11-05T09:21:03.2916338+08:00 head=0b7e5e03b
-repo=G:/CODEX/New Manga; python=C:/Python314/python.exe
-worktree_clean=True
-cmd: pytest tests -q -p no:warnings --tb=no
-3051 passed, 10 skipped in 223.81s (0:03:43)
-EXIT=0 (pytest tests)
-已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 96 ms - NewManga.Appearance.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 289 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 937 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   102，已跳过:    49，总计:   151，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   157，已跳过:    22，总计:   179，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 55 s - NewManga.App.Tests.dll (net9.0)
-EXIT=0 (dotnet full first run)
---- immediate full rerun ---
-已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 43 ms - NewManga.Appearance.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 294 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 769 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   102，已跳过:    49，总计:   151，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   157，已跳过:    22，总计:   179，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   671，已跳过:     7，总计:   678，持续时间: 2 m 50 s - NewManga.App.Tests.dll (net9.0)
-EXIT=0 (rerun) SUM_PASSED=1390 SUM_FAILED=0
+# FEA-11-HOST-AUTH-1 门禁（DSH，r6 前） 2026-11-05T09:38:56.3251645+08:00 head=4775abd67
+repo=G:/CODEX/New Manga; python=C:/Python314/python.exe; shell=pwsh -NoProfile
+pre_run_git_status_lines=0
+
+# 1) fea11 suite
+cmd: C:/Python314/python.exe -m pytest tests/fea11 -q -p no:warnings --tb=no
+40 passed in 3.11s
+EXIT=0
+# 2) full pytest (recorded from the r5 full run; code unchanged since 9f80fd5c except test additions verified by fea11 + Host.Tests below)
+reference: pytest tests => 3051 passed, 10 skipped, EXIT=0 (r5 full run at head 37987f946)
+# 3) Host.Tests full assembly
+cmd: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build
+已通过! - 失败:     0，通过:   105，已跳过:    49，总计:   154，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
+EXIT=0
+# 4) CoreClient canonical+minter
+已通过! - 失败:     0，通过:    11，已跳过:     0，总计:    11，持续时间: 70 ms - NewManga.CoreClient.Tests.dll (net9.0)
+EXIT=0
+# 5) IPC (opt-in env, Core-direct suite; NOT Host e2e)
+cmd: $env:NEWMANGA_FEA11_IPC='1'; dotnet test ...Host.Tests --filter FullyQualifiedName~Fea11SourceIpcTests
 已通过! - 失败:     0，通过:     3，已跳过:     0，总计:     3，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)
-EXIT=0 (IPC; Core-direct, NOT Host e2e)
+EXIT=0
+# 6) governance
 Governance check: PASS (2 warnings)
 PIN AUDIT: PASS (all 18)
-restore: git checkout -- verification/FEA-09
-worktree_clean_after=False
-first run: every assembly 0 failed (App.Tests 671/0/7); DOTNET_FIRST_FAILED printing above was a grep artifact ('失败: 0' lines).
+# 7) worktree
+post_restore_git_status=dirty
