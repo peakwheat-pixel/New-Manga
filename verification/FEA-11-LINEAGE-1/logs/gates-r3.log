@@ -1,0 +1,135 @@
+# FEA-11-LINEAGE-1 r3 gates
+
+- 日期: 2026-11-05T15:46:46+08:00
+- gate head: 6c0ab65946e382227039eca51aa91bac557b1af5 (main; r3 修复 commit d8ed04e13 + r3 测试 commit 6c0ab6594)
+- 解释器: C:/Python314/python.exe (Python 3.14.6), sqlite 3.50.4
+- shell: PowerShell 7.6.8 / Microsoft Windows NT 10.0.26300.0
+- venv: 无（系统解释器 C:/Python314）
+- 基线: r2 时点 fea11 62 passed / 全量 pytest 3073 passed, 10 skipped
+- 说明: 本任务 Python-only，未改 .NET 代码，故未跑 dotnet test；apps/** 在 gate head 空 diff。
+- gate 运行期间/之后的并发工作: 其他 Agent 的 FEA-12 提交与未跟踪目录 verification/FEA-12-DSIM-1/ 不属于本卡；本卡文件在 gate head 全部已提交。
+- worktree snapshot（gate 记录时，已恢复 verification/FEA-09 原字节后）:
+  ?? verification/FEA-12-DSIM-1/
+
+## gate 1: pytest tests/fea11
+$ C:/Python314/python.exe -m pytest tests/fea11 -q -p no:warnings --tb=no
+EXIT=0
+69 passed in 1.82s
+
+## gate 2: r3 判别性证据（R2-01/R2-02/R2-03/R2-05；pytest -s 捕获诊断）
+$ C:/Python314/python.exe -m pytest tests/fea11/test_source_lineage_run.py tests/fea11/test_source_lineage_native.py::test_mixed_library_scope_matrix_is_diagnosable tests/fea11/test_source_lineage_assembly.py -q -p no:warnings -s
+EXIT=0
+[pipeline.lineage] page=p1 lineage_hidden=1
+
+[pipeline.lineage] page=p1 lineage_hidden=1
+
+[providers.detect] page=p1 lineage_hidden=1
+
+[pipeline.lineage] page=p1 lineage_hidden=1
+
+[pipeline.lineage] page=p1 lineage_hidden=1
+
+[pipeline.lineage] page=p-cut lineage_hidden=1
+
+...lineage-matrix: page scope lineage guarded hidden_code visible edit
+
+lineage-matrix: p-managed lineage=none guarded=False hidden=- visible=1 edit=allowed
+
+lineage-matrix: p-ref lineage=none guarded=False hidden=- visible=1 edit=allowed
+
+lineage-matrix: p-cut lineage=captured_v7:pb-cut guarded=True hidden=LINEAGE_BINDING_CHANGED visible=0 edit=LINEAGE_BINDING_CHANGED
+
+lineage-matrix: p-same lineage=captured_v7:pb-same guarded=True hidden=- visible=1 edit=allowed
+
+lineage-matrix: p-stock lineage=legacy_unverified:- guarded=True hidden=LINEAGE_UNVERIFIED visible=0 edit=LINEAGE_UNVERIFIED
+
+[core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+
+[core.schema] schema v8 already current; this session performed no write
+
+[core.lineage] legacy lineage backfill: 1 revision(s) registered as legacy_unverified
+
+[core.schema] schema v8 already current; this session performed no write
+
+[core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+
+[core.export_text] page=p2 lineage_hidden=1
+
+[core.list_regions] page=p2 lineage_hidden=1
+
+[core.list_page_region_texts] page=p2 lineage_hidden=1
+
+[core.lineage] refused: code=LINEAGE_BINDING_CHANGED page=p2 region=2690f83b69134968a0088c2fae98354a
+
+[core.rerender_page] code=LINEAGE_BINDING_CHANGED detail=page has no lineage-verifiable region for the current source binding
+
+8 passed in 0.69s
+
+## gate 3: pytest tests（全量；测试内 QML stderr 噪声单独写 workspace）
+$ C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no 2> G:/CODEX/New Manga.workspace/FEA-11/pytest-full-r3-stderr.log
+EXIT=0
+3093 passed, 10 skipped in 278.83s (0:04:38)
+
+## gate 4: pwsh -NoProfile -File tools/governance/check.ps1
+EXIT=0
+WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+ WARN: doc/STATUS.md 已达到预算的 80%：2562 bytes / 26 lines
+ WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6656 bytes / 63 lines
+ Governance check: PASS (3 warnings)
+
+## gate 5: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-LINEAGE-1.md
+EXIT=0
+WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+ WARN: doc/STATUS.md 已达到预算的 80%：2562 bytes / 26 lines
+ WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6656 bytes / 63 lines
+ Governance check: PASS (3 warnings)
+
+## gate 6: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+EXIT=0
+OK C14 05056cbf65f9
+ OK C15 d8c0a3bcfc21
+ OK C16 0b9511a55ea1
+ OK C17 86b89ff83c9a
+ OK FEA01 0370c18932b1
+ PIN AUDIT: PASS (all 18)
+
+## gate 7: 冻结契约/FEA-09/apps 零 diff（本卡 r3 commit 范围 d8ed04e13^..6c0ab6594）
+$ git diff --stat d8ed04e13^..6c0ab6594 -- doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md doc/contracts doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md verification/FEA-09 'apps/**'
+(空 diff：本卡 r3 两个 commit 未触碰冻结契约/FEA-09/apps；035468a81..gate head 范围内的 contracts/apps 变更为其他 Agent 的并发提交通道，不计入本卡)
+## gate 8: revision 写路径/lineage 覆盖 grep（R2-01 detect 复用修复）
+src/infrastructure/sqlite/pipeline.py:1100:            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+src/infrastructure/sqlite/regions.py:690:            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+src/infrastructure/sqlite/source_sync.py:846:            "INSERT INTO region_revisions (region_revision_id, region_id,"
+
+--- insert_lineage call sites ---
+
+src/application/sources/service.py:811:                        self._store.insert_lineage(
+src/application/sources/service.py:822:                self._store.insert_lineage(
+src/application/sources/service.py:859:                self._store.insert_lineage(
+src/application/sources/service.py:889:            self._store.insert_lineage(
+src/infrastructure/sqlite/pipeline.py:1112:            SourceSyncStore(self._conn).insert_lineage(
+src/infrastructure/sqlite/regions.py:709:            SourceSyncStore(self._conn).insert_lineage(
+src/infrastructure/sqlite/source_sync.py:314:    def insert_lineage(
+
+--- detect lineage guard wiring ---
+
+src/bootstrap/core_assembly.py:804:    lineage_guard: object = None
+src/bootstrap/core_assembly.py:1147:        lineage_guard = LineageIsolationGuard(SourceSyncLineageFacts(conn))
+src/bootstrap/core_assembly.py:1154:        regions = SqliteRegionRepository(conn, lineage_guard=lineage_guard)
+src/bootstrap/core_assembly.py:1480:            lineage_guard=lineage_guard,
+src/bootstrap/core_assembly.py:1490:            lineage_guard=lineage_guard,
+src/bootstrap/core_assembly.py:1568:            lineage_guard=lineage_guard,
+src/bootstrap/core_assembly.py:1608:        pipeline._catalog.lineage_guard = lineage_guard
+src/bootstrap/core_assembly.py:1772:            lineage_guard=lineage_guard,
+src/infrastructure/providers/handlers.py:206:    lineage_guard: LineageIsolationGuard | None = None
+src/infrastructure/providers/handlers.py:461:        guard = self.deps.lineage_guard
+src/infrastructure/providers/handlers.py:1497:    lineage_guard: LineageIsolationGuard | None = None,
+src/infrastructure/providers/handlers.py:1528:            lineage_guard=lineage_guard,
+
+## r3 说明与证据卫生（R2-09 部分）
+- EV pin: 本文件的 sha256 与 EV-2/EV-3 的 pin 由卡面 Canonical Evidence 记录（closeout 补 delivery_head/canonical_evidence_status；Lead 集成时填 delivery_head）。
+- R2-01 证据: gate 2 输出 [providers.detect] page=p1 lineage_hidden=1（detect 只复用可见集合，全隐藏时在新图检测）；[pipeline.lineage] 计数。
+- R2-02 证据: test_source_lineage_run.py 的 prepare→cut 用例断言 outcome.status=candidate、error_code=INPUT_REVISION_CHANGED、detail 含 LINEAGE_BINDING_CHANGED、零写、candidate 行非 abandoned。
+- R2-03 证据: 4 个新测试（draft cut 拒绝零写、reorder/merge 写入拒绝零写、backfill 失败不阻断装配+stderr、page render reports + handle_rerender_page LINEAGE 映射）。
+- R2-05 证据: corrupt region attribution 用例（lineage.region_id 与 region 不符 → LINEAGE_UNVERIFIED）。
+- R2-06/R2-07/R2-08: 登记为已知限制/集成限制（见卡面 limitation 与后续卡建议），本卡不扩大范围。
