@@ -3,12 +3,12 @@ id: FEA-12-PREREQ-1
 title: FEA-12 删除/回收站 wire 契约注册（M2-C1 rev 2.13 + Host 投影/白名单 + 负向对照）
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结范围 → 实施）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE；C-04b `:99`/C-09 `:110-129` 明文要求"实现前独立字节修订 Task"；DSH 2026-11-05 释放；DSH 2026-11-05 窄批批准 2 个治理测试计数/声明派生文件（见卡内「DSH 裁决」）
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结范围 → 实施）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE；C-04b `:99`/C-09 `:110-129` 明文要求"实现前独立字节修订 Task"；DSH 2026-11-05 释放；DSH 2026-11-05 窄批批准 2 个治理测试计数/声明派生文件（见卡内「DSH 裁决」）；r1 Review changes_requested（P1=1/P2=1/P3=4）→ r2 最小返修
 suggested_owner: dsh（dsh-agent-team teammate `fea12-prereq-impl`）
-owner: dsh-agent-team teammate `fea12-prereq-impl`（claimed 2026-11-05）
-reviewer: 独立上下文 fresh subagent（未参与实现；会话 id 记录在 Review 报告）
+owner: dsh-agent-team teammate `fea12-prereq-impl`（claimed 2026-11-05；r2 返修续作）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-PREREQ-1-r1.md`，reviewer session `68898595-4d2b-46a7-8a72-0d4b6ba05db8`；未参与实现）
 depends_on: []
 base_commit: 035468a81e43e8d70fb711536824cdf613a7a0c4
 branch: null
@@ -73,11 +73,19 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [x] **AC1 M2-C1 rev 2.13 additive 文本**：§5/§5.11/§5.12/§11/§12/revision history 按 Scope 1–9 完整登记；`git diff` 证明只追加、不改既有条款字节（逐段 diff 证据）；文档 rev=2.13，默认 `PROTOCOL_MINOR` 不变。 <<MET>>
+- [ ] **AC1 M2-C1 rev 2.13 additive 文本**：§5/§5.11/§5.12/§11/§12/revision history 按 Scope 1–9 完整登记；`git diff` 证明只追加、不改既有条款字节（逐段 diff 证据）；文档 rev=2.13，默认 `PROTOCOL_MINOR` 不变。 <<PARTIAL: r1 Review R-001：9 项登记点 8/9，§5.11.3 表缺 BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE 行（契约内部二义）；其余 additive/无越权已核>>
 - [x] **AC2 Host 投影 additive**：registry/dispatcher/client 新命令与 capability 注册；既有命令 wire/映射零语义改动；`CommandParityContractTests` 等治理测试同步且全绿。 <<MET>>
 - [x] **AC3 负向对照**：在改动前 head 上复现"新码被降级 `category=unknown` 且 code 不改写 / 旧 Core 不识别新命令 fail-closed"，日志与命令入 `verification/FEA-12-PREREQ-1/`；证明 M2-C1 修订是必要前置。 <<MET>>
 - [x] **AC4 治理门禁**：`verify_pins.ps1` **18/18**；`check.ps1` PASS；全量 .NET 实测（passed/failed/skipped 分列，首跑 flaky 需复跑并记录）；pytest 全量基线不变（本卡无 Python 改动，记录实测数字）。 <<MET>>
 - [x] **AC5 交付件**：Task/Handoff、`verification/FEA-12-PREREQ-1/`（diff 证据、负向对照日志、门禁日志）、Canonical Evidence 表；不含未跑项冒充实测。 <<MET>>
+
+## r1 Review 处置计划（DSH，2026-11-05；Review = changes_requested）
+
+- Review：`doc/reviews/FEA-12-PREREQ-1-r1.md`（fresh subagent session `68898595-4d2b-46a7-8a72-0d4b6ba05db8`；reviewed_head `5a7c7e028`；P0=0/P1=1/P2=1/P3=4；AC1 PARTIAL，AC2–AC5 MET）。
+- **R-001（P1，必须修）**：`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` §5.11.3 表缺 `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` 行（C-04b §2.4 `:97` 要求追加两行），导致表/白名单二义。修复：additive 追加一行（`unavailable` / `retryable=true`，零副作用、可显式重试、不得降级软删）+ `verification/FEA-12-PREREQ-1/tools/rev213-diff-audit.ps1` 增加「§5.11.3 表 code 集合 ⊇ 两个 ErrorView code 集合（含 5 个新码）」判别性断言（在 `5a7c7e028` 上必失败、修复后必通过）+ 重跑 AC-MATRIX/gates 记录。
+- **R-002（P2，defer 到 CORE）**：`CORE_CAPABILITY_MISSING` 未进 delete/trash 白名单。本卡 DSH 裁决已明确运行时 probe 归 CORE；在 Handoff「风险」与 `FEA-12-CORE` 卡登记二选一集成要求（加入白名单或绕开 `ProjectDeleteTrashError`）+ 判别性测试。不在本卡改白名单。
+- **R-003/R-004/R-005/R-006（P3，随 P1 同批修措辞/日志）**：check 警告数 4 vs 3 的 closeout 说明；§5.11.1a「Core closed shape 拒收 + Host legacy 透传」措辞澄清；B1/B2 负向对照注释改为「reconstructed pre-registration allow-list（新投影器减 5 码）」；基线日志 `existing=l` 笔误修正/标注。
+- **复审**：r2 交付后另派 fresh subagent 复审（只审新 head；R-001 修复后 AC2–AC5 结论可延用除非实现变动）。
 
 ## 允许修改范围
 
