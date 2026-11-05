@@ -3,21 +3,21 @@ id: FEA-12-CORE
 title: FEA-12 删除线首版实现（A 软删/恢复 + C 彻底删除 + 统一 ProtectionPolicy + Host 命令桥）
 kind: implementation
 governance_version: 3
-status: in_review
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + **r2 最小返修交付 in_review（R-001 + R-004/005/007/008/009/010/011/012 处置；AC4 PARTIAL 待 Lead 复审定稿；AC11 由 Lead 定稿 MET）**
+status: done
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + r2 最小返修 → **r2 Review approved（P0/P1/P2=0，P3=10 非阻断）→ DSH 集成 closeout**
 suggested_owner: dsh（dsh-agent-team teammates 分片，Lead 集成）
 owner: fea12-core-py（分片 A）+ fea12-core-host（分片 B），Lead 集成
-reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-CORE-r1.md` session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；未参与实现）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-CORE-r1.md` session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；r2 `doc/reviews/FEA-12-CORE-r2.md` session `113ad38d-f601-4e30-b2c7-0721a95ae384`；均未参与实现）
 depends_on:
   - FEA-12-PREREQ-1
   - FEA-11-LINEAGE-1
 base_commit: e47fd47e41add3edeb7f67e578eefeb48eddce50   # 2026-11-05 释放点 main head
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3da210518
+delivery_head: 3da210518
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-CORE
 allowed_paths:
   - doc/tasks/FEA-12-CORE.md
@@ -70,8 +70,8 @@ out_of_scope:
 - [x] **AC1 软删（MoveToTrash）**：逐项 `moved/skipped`；书架不再含、回收站含；DB 除 `books.deleted_at` 外内容行/保护行/current/pin/进度/binding 全不变；受管文件字节哈希前后一致。 <<MET>>
 - [x] **AC2 恢复（RestoreFromTrash）**：恢复后书架可见；current/pin/进度/人工数据/binding 与删除前逐字段相等；不存在静默解锁/改 current；不存在条目 → 逐项冲突不整批失败。 <<MET>>
 - [x] **AC3 回收站读取面不回归**：`ListRecycleBinBooks` 保持冻结投影（`page_count` `None` 通道、空数组≠失败）；`ListTrash` 映射按 PREREQ-1 冻结形状。 <<MET>>
-- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<PARTIAL: r2 已修复 r1 R-001——deletedFiles/deletedBytes 现计入 catalog preview/page-original 派生文件（与 managed 去重）并有判别测试+golden 向量；证据齐备，待 Lead 复审定稿恢复 MET>>
-- [x] **AC5 专门确认绑定（PD-02/PD-04）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW`；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化 → 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删。 <<MET>>
+- [x] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<MET>>
+- [x] **AC5 专门确认绑定（PD-02/PD-04；retry 限定见 R-008）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW`；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化 → 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删；**PD-07 retry 混合批次**：集合级 digest 仅形状校验、逐书对存活目标强校验（R-008 DSH 限定）。 <<MET>>
 - [x] **AC6 单事务与失败回滚（PD-05/PD-06）**：显式 `BEGIN IMMEDIATE`；成功路径内容行按白名单消失、Pipeline 历史脱离保留、清理清单同事务持久化；事务最后一条 DELETE 前注入异常 → 内容行/保护行/v7-v8 行/文件集合与事务前逐项相等、`foreign_key_check` 空、不开始文件清理。 <<MET>>
 - [x] **AC7 保护披露与删除边界**：含锁/人工/pin/current/draft 的书预览披露计数准确；删除成功后受保护行确实删除（披露≠阻断）；事务前无顺手解锁/取消 pin/改 current；非终态 Run/Task/Export → `BOOK_BUSY` 零副作用。 <<MET>>
 - [x] **AC8 共享引用与原文件边界（PD-08）**：可安全拆分共享引用 → 删除成功、原文件字节与其他项目绑定不变；不可拆分/关系图不一致/未列明目标外引用 → `BOOK_DELETE_CONFLICT` 零副作用；用户源文件/源目录逐文件哈希与集合前后不变；零 Windows 回收站 API（静态 grep + 运行时哨兵）。 <<MET>>
@@ -92,10 +92,10 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。共享�
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1–AC12 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q`（逐 AC 断言） | 隔离 fixture；真实 v1…v8 迁移 | NOT_RUN | verification/FEA-12-CORE/logs/ |
-| 全量回归 | `C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根；基线由本卡首日实测记录 | NOT_RUN | logs/gates.log |
-| 治理 | `pwsh -NoProfile -File tools/governance/check.ps1`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`（18/18） | 仓库根 | NOT_RUN | logs/gates.log |
-| FK/回滚 | 故障注入：事务最后 DELETE 前抛错；probe 案例复跑（binding/lineage/publication） | 隔离 v8 fixture | NOT_RUN | logs/ac6-*, logs/ac9-* |
+| AC1–AC12 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q`（逐 AC 断言） | 隔离 fixture；真实 v1…v8 迁移 | **PASS 1104 passed**（r2 head 3da210518，EXIT 0） | `verification/FEA-12-CORE/logs/core-py-pytest-related.log`、`gates-core-py.log` |
+| 全量回归 | `pytest tests -q -p no:warnings --tb=no`；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根；基线 3093/10 | **pytest 3152 passed/10 skipped EXIT 0；.NET 1405 passed/0 failed/80 skipped EXIT 0**（集成 head 85db8354f；r2 零 .NET diff） | `logs/core-py-pytest-full.log`、`logs/gates-integration.log` |
+| 治理 | `check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`（18/18） | 仓库根 | **check PASS（3 warnings，均既有全仓告警）；pins 18/18 PASS** | `logs/core-py-check.log`、`logs/core-py-pins.log`、`logs/gates-integration.log` |
+| FK/回滚 | 故障注入：事务最后 DELETE 前抛错；probe 案例复跑（binding/lineage/publication） | 隔离 v8 fixture | **PASS**：AC6 回滚零残留、AC9 probe FK 由失败转成功（变异实验判别成立） | `logs/core-py-ac6-transaction-rollback.log`、`logs/core-py-ac9-c17-x1.log`、`doc/reviews/FEA-12-CORE-r2.md` |
 
 ## 依赖、风险与阻塞
 
@@ -110,7 +110,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。共享�
 - 实际测试（分片 A **r2** 实跑，命令/EXIT/head 见 `verification/FEA-12-CORE/logs/gates-core-py.log`）：
   - `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1104 passed**（相关组；r1 1096 + r2 新增 8）。
   - `pytest tests -q -p no:warnings --tb=no`：**3152 passed / 10 skipped**（基线 3093/10；测试增量口径 **CORE +51 / DSIM-1 +8**，其中 r2 新增 8 条 CORE 测试，无失败）。
-  - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`：PASS（4 warnings，均既有/分片 B 证据待 Lead 合并登记）。
+  - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`：PASS（3 warnings，均既有全仓告警）。
   - `pwsh -NoProfile -File tools/governance/verify_pins.ps1`：18/18 PASS。
   - 证据探针（r2 重新生成）：`scripts/core_py_inventory_digest.py`（含 R-001 derived 向量）与 `scripts/core_py_isolation_scan.py`（R-004 修复后）均 EXIT=0。
   - 全量 .NET：属分片 B/Lead 集成门禁；分片 A 零 .NET 改动（集成记录 1405/0/80）。
@@ -138,7 +138,7 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 
 ## r1 Review 处置计划（DSH，2026-11-05；Review = changes_requested）
 
-> 依据：`doc/reviews/FEA-12-CORE-r1.md`（fresh subagent session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；reviewed_head `85db8354f`，observed `388f5476e`；P0/P1=0，P2=3，P3=8）。代码主体质量获认可（独立复跑 pytest 3144/10、.NET 1405/0/80、pins 18/18、3 个变异实验判别成立）。
+> 依据：`doc/reviews/FEA-12-CORE-r1.md`（fresh subagent session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；reviewed_head `85db8354f`，observed `388f5476e`；P0/P1=0，P2=3，P3=9（reviewer 最终版））。代码主体质量获认可（独立复跑 pytest 3144/10、.NET 1405/0/80、pins 18/18、3 个变异实验判别成立）。
 
 - **R-001（P2，必须修）**：AC4 `deletedFiles/deletedBytes` 漏计 catalog preview/page-original 派生文件（`cleanup_book_files` 会删除但不披露）。**DSH 裁决：按冻结语义修复**——预览 inventory 必须计入实际会被清理的派生文件与字节（与 managed 内容文件去重），并补判别测试 + golden 更新；不接受"实现登记为排除"但 AC 仍 MET。修复后 AC4 恢复 MET。
 - **R-002（P2，Lead 已处置）**：AC11 已由 Lead 定稿为 `<<MET>>`（分片 B 的 capability gate/R-002(b)/旧 Core/旧 Host 负向证据已并入本卡 Evidence）；`integration_commit`/`delivery_head` 在 closeout 填写。
@@ -164,9 +164,12 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
   - R-011 **已修**：`currentRevisionId == "rr1"` 钉住顺序。
   - R-012 **已补测**：批量 cleanup-pending → 显式 retry → 幂等重放；混合 live+retry 逐项状态（deleted/cleanup_pending/not_started）。
   - R-002/R-003/R-006：Lead 处置（AC11 MET/allowed_paths 窄批/测试表与指针 closeout）；分片 A 仅更正 Handoff 表述。
-  - **r2 门禁**：相关组 1104 passed；全量 pytest 3152 passed/10 skipped；check PASS（4 warnings）；pins 18/18；probes EXIT=0（见 gates log）。
+  - **r2 门禁**：相关组 1104 passed；全量 pytest 3152 passed/10 skipped；check PASS（3 warnings）；pins 18/18；probes EXIT=0（见 gates log）。
 - **复审**：r2 交付后另派 fresh subagent 复审（reviewed_head = r2 交付 head；只审新 head；R-001 修复 + R-004/R-005/R-007/R-008/R-009/R-010/R-011 处置）。
 - **closeout 前置**：AC4 恢复 MET、AC11 已 MET、测试表/指针/证据表定稿、`check.ps1 -TaskPath` PASS。
+
+- **r2 Review 结果（2026-11-05）**：**approved（P0/P1/P2=0，P3=10 非阻断）**。R-001 派生文件披露真实修复（catalog 同源查询 + managed 去重 + catalog 失败 typed UNAVAILABLE；golden derived 向量 3 files/46 bytes；变异去除→测试精确失败）；R-008/R-009/R-010/R-011/R-012/R-004/R-005/R-007 逐项核销；独立复跑相关组 1104、全量 pytest 3152/10、pins 18/18、check PASS(3 warnings)、golden/isolation 探针一致；报告 `doc/reviews/FEA-12-CORE-r2.md`（session `113ad38d-f601-4e30-b2c7-0721a95ae384`）。AC4 恢复 MET、AC11 维持 MET（Lead 定稿）。
+- **r2 Review P3 残留（如实保留，不阻断）**：check 警告数/`gates-core-py.log` purge 11→10 等过程记录口径、`EV-A-HANDOFF` pin 已更新为终稿 `3da210518`、Handoff "19→3" 笔误；1 条 catalog 失败→UNAVAILABLE 的仓库测试为可选补充（行为已由 Reviewer 探针验证）。上述不改写已 review 的代码/证据字节。
 
 ## Canonical Evidence
 
@@ -194,7 +197,7 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 | EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 60dd4d563 | null | CANONICAL |
 | EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 60dd4d563 | null | SOURCE_PIN |
 | EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 60dd4d563 | null | SOURCE_PIN |
-| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪（终稿） | doc/handoffs/FEA-12-CORE-core-py.md | 3da210518 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_CAPABILITY_PRO | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-capability-probe.json | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_IMPLEMENTATION | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-implementation-record.md | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_OLD_CORE_NEGAT | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-old-core-negative-control.json | fc7125586 | null | CANONICAL |
@@ -207,19 +210,24 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 | EV-FEA12CORE-B-CORE_HOST_PINS | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-pins.log | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-GATES_CORE_HOST | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/gates-core-host.log | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-INTEGRATION | Gate 集成门禁（Lead 实跑：pytest 3144/10、.NET 1405/0/80、check、pins） | verification/FEA-12-CORE/logs/gates-integration.log | - | 302e18a06207e54307e4b0b4d54fd3cf836c449ae51fbe75709014148c06d7d7 | CANONICAL |
+| EV-FEA12CORE-R2-REVIEW | Gate/Review（r2 独立复审 approved） | doc/reviews/FEA-12-CORE-r2.md | - | b1c340b52b6a24750701094e199bf231d3259731a20e8568cae8c777f6feef8d | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| agent-output | `G:\CODEX\New Manga.workspace\agent-output\*\FEA-12-CORE\` | PRESERVE_REFERENCED | 同上 | 待交付时填写 | 重复执行日志；判别力证据入 verification |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-12\integration\`、`review-core\`、`review-core-r2\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-12` | verification/FEA-12-CORE/logs/gates-integration.log | Lead 集成门禁/独立 Reviewer 日志与报告输入；判别力证据以仓内 verification/FEA-12-CORE/** 为准；不清理 |
 | worktree | NOT_APPLICABLE（main 工作树，DSH 集成） | NOT_APPLICABLE | — | — | — |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\` | DELETE_SAFE（交付后） | — | 待交付时填写 | 仅隔离 fixture 临时根 |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\` | DELETE_SAFE | — | verification/FEA-12-CORE/logs/gates-integration.log | 隔离 fixture 临时根；**DSH 2026-11-05 closeout 已删除**：53 files / 475,640 bytes（删除后不存在；无独有内容，证据已入仓） |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：待关闭时填写。
+- Closeout date / DSH：2026-11-05 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；integration_commit / delivery_head = `3da210518`（r2 交付 head；main 线性集成，无 merge commit）。
+- Review 链：r1 changes_requested（P0/P1=0，P2=3/P3=9）→ r2 最小返修 → **r2 approved（P0/P1/P2=0，P3=10 非阻断）**；Reviewer 均为独立上下文 fresh subagent（session 见 frontmatter/报告）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- AC 定稿：AC1–AC12 全部 MET（AC4 由 Lead 按 r2 复审定稿恢复；AC11 由 Lead 定稿合并 Python+Host 两侧）。
+- 残余风险/限定（如实保留）：①`activeRunIds` 不含 active export（wire 冻结无字段；export 仍 BOOK_BUSY 阻断）；②PD-07 retry 混合批次集合级 digest 仅形状校验（R-008 DSH 限定；逐书强校验）；③大书预览有 catalog lookup/stat 成本；④catalog 读失败 fail-closed retryable（`BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`）；⑤真实 Windows 回收站 D 流程 NOT_RUN（范围冻结，属 DSIM-1/后续授权）；⑥`PurgeTrash` 首版不实现（typed unsupported）；⑦r2 Review P3 10 项为文档/证据精度与 1 条可选补充测试（不影响契约行为）。
+- 删除、迁移、归档数量/字节数：temp 目录 DELETE_SAFE 已删除（53 files / 475,640 B）；无迁移/归档。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。
+- 用户/Lead 裁决引用：ADJ-2026-11-05-FEA-12-SCOPE（D1 X1、D2、D3 PD-08、D4 M2-C1 rev 2.13、D5 D 模拟、D6 写域）；R-001 派生披露按冻结语义修复（C-04b/PD-01）。

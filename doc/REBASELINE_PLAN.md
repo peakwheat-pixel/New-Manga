@@ -10,14 +10,14 @@
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
-|FEA-11-SCAN-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-1 定时/watcher 承接）|
+|FEA-11-SCAN-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-1 定时/watcher 承接）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
-|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**in_review**（Team 分片交付完成；Lead 集成/独立 Review 中；base `e47fd47e`）||
+|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**done**（r2 approved；delivery `3da210518`；AC1–AC12 全 MET；残余风险见卡）||
 |FEA-12-DSIM-1|—|**done**（r2 approved；delivery `beee351bb`；模拟切片，真实 D NOT_RUN）；FEA-12-UI 待 scope||
-|FEA-11-MATCH-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-3 承接）||
-|FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-4 承接）||
+|FEA-11-MATCH-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-3 承接）||
+|FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-4 承接）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
