@@ -24,8 +24,8 @@
 |---|---|
 | 最后一次独立复核（v1.0） | r3 approved（FEA-GOV-5-c04b-r3） |
 | 复核后到 v1.0 冻结的改动 | 仅状态行 + 变更记录 |
-| **v1.1 UNFREEZE 复核** | 五轮 fresh subagent 复核（全部 CHANGES 迭代，无 P0 残留）：r1 `...\unfreeze-review\CONTRACT-UNFREEZE-2026-11-05-review.md`（P0-1/P0-2）；r2 `...\unfreeze-review-r2\...-review-r2.md`（P0-2/minor/manifest）；r3 最终字节 `...\unfreeze-final-review\...final-review.md`（2×P0；session `d3c34714…`；快照 `snapshot-2139`）；r4 新字节 `...\unfreeze-final-review-r2\...final-review-r4.md`（0×P0+5×P1+10×P2；session `79b03393…`；报告 sha256 `b6bd2693…`）；r5 新字节 `...\unfreeze-final-review-r3\...final-review-r5.md`（0×P0+2×P1+10×P2；session `6a22e682…`；报告 sha256 `02b30b52…`）；r6 `...\unfreeze-final-review-r4\...final-review-r6.md`（0×P0+1×P1（记录真实性）+8×P2；session `1ece323d…`；报告 sha256 `924847b9…`）。**路径 A 处置**：C-04b/M2-C1 字节保持 r6 被审字节不变；仅修正本记录/载体的不实断言为如实 residual（8 项 P2 转后续卡、不阻断），r7 窄面确认后重冻。**r7 APPROVE 前不得作为最终 pin** |
-| **v1.1 冻结处置** | r6 判 CHANGES（仅 P1-E 记录真实性 + 8×P2）；按路径 A：C-04b/M2-C1 字节不再改，本记录/载体改为如实登记 residual；**r7 窄面确认后重冻**。本节与 §4B 在 r7 通过后补记 reviewer/session/hash 与最终 sha |
+| **v1.1 UNFREEZE 复核** | 七轮 fresh subagent 复核（r1–r6 为 CHANGES 迭代、r7 窄面 APPROVE；无 P0 残留）：r1 `...\unfreeze-review\CONTRACT-UNFREEZE-2026-11-05-review.md`（P0-1/P0-2）；r2 `...\unfreeze-review-r2\...-review-r2.md`（P0-2/minor/manifest）；r3 最终字节 `...\unfreeze-final-review\...final-review.md`（2×P0；session `d3c34714…`；快照 `snapshot-2139`）；r4 新字节 `...\unfreeze-final-review-r2\...final-review-r4.md`（0×P0+5×P1+10×P2；session `79b03393…`；报告 sha256 `b6bd2693…`）；r5 新字节 `...\unfreeze-final-review-r3\...final-review-r5.md`（0×P0+2×P1+10×P2；session `6a22e682…`；报告 sha256 `02b30b52…`）；r6 `...\unfreeze-final-review-r4\...final-review-r6.md`（0×P0+1×P1（记录真实性）+8×P2；session `1ece323d…`；报告 sha256 `924847b9…`）；**r7 窄面 `...\unfreeze-final-review-r5\...final-review-r7.md`（0×P0+0×P1，2×P2 记录精度不阻断；session `14e8baef…`；报告 sha256 `8af2d4f1…`）→ APPROVE**。**结论：C-04b `acc8f0e0…` 与 M2-C1 `701093b5…` 为最终冻结字节；8 项 P2 residual 转后续文档卡；UNFREEZE commit `fc9833479`。** |
+| **v1.1 冻结处置** | r6 判 CHANGES（仅 P1-E 记录真实性 + 8×P2）→ 路径 A：C-04b/M2-C1 字节不变，本记录/载体改为如实 residual → **r7 窄面 APPROVE（session `14e8baef…`，报告 sha256 `8af2d4f1…`）→ 已重冻（UNFREEZE commit `fc9833479`）**；本节与 §4B 已补记 r7 reviewer/session/hash 与最终 sha。 |
 
 > **注意**：若 v1.1 最终字节复核未通过，本记录的 sha 行必须回退，不得以未复核字节作为 v1.1 pin。
 
@@ -35,7 +35,7 @@
 
 | # | C-04b §5 条件 | 状态 | 证据 |
 |---|---|---|---|
-| 1 | 独立复核通过 | ⏳ | v1.0：r1→r2→r3 approved；**v1.1：r1/r2/r3/r4/r5/r6 均 CHANGES 迭代（P0 已清；r6：0×P0+1×P1+8×P2，报告 sha256 `924847b9…`）；路径 A 记录修正 + r7 窄面确认中**；r7 APPROVE 后 ✅ |
+| 1 | 独立复核通过 | ✅ | v1.0：r1→r2→r3 approved；**v1.1：r1–r6 CHANGES 迭代（P0 已清；r6：0×P0+1×P1+8×P2，报告 sha256 `924847b9…`）→ 路径 A 记录修正 → r7 窄面 APPROVE（0×P0+0×P1，报告 sha256 `8af2d4f1…`，session `14e8baef…`）→ ✅** |
 | 2 | C-01b 已冻结（语义先行） | ✅ | [FEA-CONTRACT-FROZEN-C01b](FEA-CONTRACT-FROZEN-C01b.md) |
 | 3 | `G-DELETE-CONTRACT` **不阻塞本单** | ✅ | [裁定 v2](GATE-CLOSURE-RULING-2026-11-01.md) R-1′：Gate 保持 OPEN；本单只承载 D07 |
 | 4 | DSH 批准协议 minor `2.11` | ✅ | 裁定 R-3（新增 1 命令 + 2 码；兼容性**依赖旧端 fail-closed**，不依赖旧端接受新码） |
@@ -72,7 +72,7 @@
   - P1-4：失败分类单一映射（r4 指出载体仍相反 → 本轮统一）：字段缺失/格式/`inventory_digests` 缺 key 或多 key → `INVALID_REQUEST`；键集合/顺序/子集/值/集合 digest/manifest 缺失损坏/重算不一致 → `BOOK_DELETE_STALE_PREVIEW`；无 Book 行且无 manifest → `BOOK_NOT_FOUND`。
   - P1-5：`inventory_inputs` 定义为 A2 canonical v2 自包含 14 键可复算对象；retry 时从 inputs 重算逐书 digest 与持久化值比对，不一致即篡改 → fail-closed；`batch_id`=uuidv4；retry 不得改写批次字段。
   - P1-6：载体 B4 与 §4 统一为「Host generic passthrough 不补 null；缺省=unknown；UI fail-closed」（r4/r5 复核确认）。
-- **r5 复核对象 sha**：C-04b `acc8f0e0…`、M2-C1 `51fa041f…`（r5 报告 `02b30b52…` 记录）。**r5 修复后字节（本轮最终候选）**：4 文件 sha 见 `G:\CODEX\New Manga.workspace\FEA-12\unfreeze-final-review-r3\FINAL-SHA-r6.txt` 与 r6 报告；**r6 APPROVE 前不得 commit**。
+- **r7 最终字节 sha（冻结字节）**：C-04b `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f`、M2-C1 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f`（r7 报告 `8af2d4f1…` 与 `FINAL-SHA-r7.txt` 记录；r6 报告 `924847b9…` 为上一轮）。**r7 APPROVE 已重冻（UNFREEZE commit `fc9833479`）**；CORE r3 返修代码另起 commit。
 - **附带影响**：ADJ-2026-11-05 §2.2 OUT「不改 C-04b 正文」由本 UNFREEZE 例外覆盖，性质为**推定**（依据：用户 2026-11-05「裁决交给 codex 或 zcode」+ Codex 裁决要求正式 UNFREEZE）。**回问条件**：若用户后续明确表示 UNFREEZE 不属其授权范围，本 v1.1 立即回退到 v1.0 字节（pin `694ce5bc…`），删除线保护缺陷回退为已知 limitation（PD-04 不满足），CORE 返修代码/证据不得合入。18 pins 数量不变，M2-C1 同提交 rev 2.14。
 
 ## 4A. 已知限制（冻结后发现）
@@ -89,7 +89,7 @@
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |
-| 2026-11-05 | **v1.1 UNFREEZE 重冻**：current 全量披露/绑定（canonical v2）、retry 保序 pending 子集 + manifest + 两级强校验 + mixed 拒绝；单条/批量形状分支（r3 P0-1/P0-2）；§3.2/§5/§11/§12 同步；sha 与最终字节一致（见 §1/§1B；r6 通过后补 `r6-sha`）；依据 Codex 裁决 OVERTURN 与用户授权（ADJ 例外，见 §4B） | DSH |
+| 2026-11-05 | **v1.1 UNFREEZE 重冻（r7 APPROVE）**：current 全量披露/绑定（canonical v2）、retry 保序 pending 子集 + manifest + 两级强校验 + mixed 拒绝；单条/批量形状分支（r3 P0-1/P0-2）；§3.2/§5/§11/§12 同步；sha 与最终字节一致（§1 v1.1 行 = C-04b `acc8f0e0…`；r7 报告 `8af2d4f1…`；UNFREEZE commit `fc9833479`）；依据 Codex 裁决 OVERTURN 与用户授权（ADJ 例外，见 §4B） | DSH |
 
 ## 6. Errata 注记（2026-11-01 追加；**原文保留**）
 
