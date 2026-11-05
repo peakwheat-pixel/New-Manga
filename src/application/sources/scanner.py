@@ -619,7 +619,9 @@ def _params_digest(entry: dict) -> str | None:
             value = json.loads(value)
         except (TypeError, ValueError):
             return None
-    if value is None:
+    if value is None or not isinstance(value, dict):
+        # C8: decoder params are a JSON object; anything else cannot be
+        # compared as a profile (never disguised as ``{}``).
         return None
     try:
         canonical = json.dumps(

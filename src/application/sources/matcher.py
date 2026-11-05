@@ -56,6 +56,10 @@ def _canonical_params(value) -> str | None:
             value = json.loads(value)
         except (TypeError, ValueError):
             return None
+    if not isinstance(value, dict):
+        # C8: params are a canonical JSON object; a scalar/array is not a
+        # profile and must never compare equal by accident.
+        return None
     try:
         return json.dumps(
             value,

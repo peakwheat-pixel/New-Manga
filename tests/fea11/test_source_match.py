@@ -560,6 +560,11 @@ def test_unparseable_params_are_incomparable_never_disguised_as_empty() -> None:
     evidence = _entry_evidence(entry)
     assert evidence["pixel"] is None
     assert evidence["reason"] == "incomparable"
+    # valid JSON that is not an OBJECT is not a profile either (C8)
+    for non_object in ("0", "[]", "null", "true"):
+        entry["decoder_params_json"] = non_object
+        assert _params_digest(entry) is None, non_object
+        assert _entry_evidence(entry)["reason"] == "incomparable", non_object
 
     # key order/whitespace equivalence still yields the same digest (C8)
     canonical = canonical_pixel_params_json()
