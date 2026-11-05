@@ -7,7 +7,7 @@ cmd: C:/Python314/python.exe -m pytest tests/fea11 -q -p no:warnings --tb=no
 40 passed in 3.11s
 EXIT=0
 # 2) full pytest (recorded from the r5 full run; code unchanged since 9f80fd5c except test additions verified by fea11 + Host.Tests below)
-reference: pytest tests => 3051 passed, 10 skipped, EXIT=0 (r5 full run at head 37987f946)
+reference: pytest tests => 3051 passed, 10 skipped, EXIT=0 (full run executed at HEAD 0b7e5e03b / committed evidence 37987f946; NOT rerun at this head)
 # 3) Host.Tests full assembly
 cmd: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build
 已通过! - 失败:     0，通过:   105，已跳过:    49，总计:   154，持续时间: 4 s - NewManga.Host.Tests.dll (net9.0)
@@ -23,4 +23,4 @@ EXIT=0
 Governance check: PASS (2 warnings)
 PIN AUDIT: PASS (all 18)
 # 7) worktree
-post_restore_git_status=dirty
+post_restore_git_status=dirty (residual path: M verification/FEA-11-HOST-AUTH-1/logs/gates.log — this log file itself; no other residue)

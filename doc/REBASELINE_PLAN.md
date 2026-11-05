@@ -11,7 +11,7 @@
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
 |FEA-11-SCAN-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-1 定时/watcher 承接）|
-|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**in_progress**（2026-11-05 用户授权；P0-1/L-1 承接；DSH 实施；r1–r3 返修中）||
+|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**in_progress**（2026-11-05 用户授权；P0-1/L-1 承接；DSH 实施；r1–r6 复审返修中）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；R-009/L-2 承接；完成前禁止 UI/读路径消费同步 binding）||
 |FEA-11-MATCH-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-3 承接）||
 |FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-4 承接）||

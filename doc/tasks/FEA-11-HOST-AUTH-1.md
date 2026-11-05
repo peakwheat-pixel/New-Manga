@@ -7,7 +7,7 @@ status: in_progress
 approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记
 suggested_owner: codex
 owner: dsh（2026-11-05 用户授权启动）
-reviewer: 独立上下文 fresh subagent（r1/r2/r3；报告 doc/reviews/FEA-11-HOST-AUTH-1-r1.md…-r3.md）
+reviewer: 独立上下文 fresh subagent（r1–r6；报告 doc/reviews/FEA-11-HOST-AUTH-1-r1.md…-r6.md）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 7ab9eea87
@@ -27,6 +27,8 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/HostAuthorizationMinterTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
   - doc/TASK_LEDGER.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
   - doc/tasks/FEA-11-HOST-AUTH-1.md
   - doc/reviews/FEA-11-HOST-AUTH-1-*.md
   - doc/handoffs/FEA-11-HOST-AUTH-1-*.md
@@ -53,9 +55,9 @@ allowed_paths:
 
 - AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 5/5（含 non-BMP）（跨实现向量：request/authorization/mixed/escapes + non-BMP code-point 排序；sha256 由 Python Core 生成）。
 - AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 6/6（含固定 id 外部向量）；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
-- AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现且符合 §3.2 行 163**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 19/19（14 方法）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
-- AC4 PARTIAL（路径层依据已具备）：`doc/reviews/FEA-11-r3.md` 第 38 行「HOST-AUTH-1 可接受（有条件，并接受为 P0-1 闭合路径）」；P0-1 的实际闭合取决于 AC1–AC3，待本卡复审（r5）判定。
-- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 首跑全绿 / 重跑 1390/0/78、IPC 3/3（Core 直连；命令/env 见 gates.log）、check PASS、pins 18/18；含 flaky 说明）。
+- AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现（Host 侧四项守卫：kind/request_digest/state/CommitDigest/Retryable；plan 有效性由 Core `take_confirmed` 在 apply 事务内复核）**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 22/22（17 方法）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
+- AC4 PARTIAL（路径层依据已具备）：`doc/reviews/FEA-11-r3.md` 第 38 行「HOST-AUTH-1 可接受（有条件，并接受为 P0-1 闭合路径）」；P0-1 的实际闭合取决于 AC1–AC3，待 r6 复审判定。
+- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 首跑全绿 / 重跑 1390/0/78（r5 全量运行 head 0b7e5e03b；r6 复跑 Host.Tests 105/0/49）、IPC 3/3（Core 直连；命令/env 见 gates.log）、check PASS、pins 18/18；含 flaky 说明）。
 - 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）；dispatcher 无冻结 retry 命令（retry 为 Host 编排 API）；receipt 核对/canonical 重算与 registry scope 精度登记 deferral。
 
 ## Deferral 登记表（r5 收口）
@@ -66,6 +68,7 @@ allowed_paths:
 | R4-P2-02 | Registry scope/多 registry 原子性/`Begin` 与 `Authorize` 顺序（C-17 §3.2:156-157 崩溃窗口） | DSH | 与 FEA-11-HOST-AUTH-1 后续或 FEA-12 前置一并处置 |
 | R4-P2-03 | receipt 核对（operation_id/request_digest/state）与 canonical CommitReceipt 重算 | DSH | ACK/recovery 消费 receipt 前补齐 |
 | R4-P2-07 | 分类精度：黑名单含未产出码、typed 歧义分支用例 | DSH | 随命令面稳定性收敛时补测 |
+| R6-P2-01 | Host 侧 plan 有效性预检（C-17 §3.2:163 守卫列）；需冻结 plan-read 命令，当前由 Core `take_confirmed` 事务内 fail-closed 复核 | DSH | C-17 若新增冻结 plan-read 命令再做 Host 预检 |
 | R4-P2-06 | 证据卫生：gates.log 的 worktree_clean/TRX 表述 | 已修（r5 门禁重写） | — |
 | R4-P2-08 | non-BMP canonical 向量 | 已修（5/5） | — |
 

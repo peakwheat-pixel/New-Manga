@@ -421,9 +421,10 @@ public sealed class Fea11HostAuthTests : IDisposable
         // Apply used the same orchestrator: with a failing gate it cannot have
         // journaled anything, so the retry itself must also fail on the gate.
         Assert.False(Directory.Exists(Path.Combine(_root, "host", "source-operations")));
-        await Assert.ThrowsAsync<CoreOperationException>(() =>
+        var retryError = await Assert.ThrowsAsync<CoreOperationException>(() =>
             orchestrator.RetryAsync("source_resync", "op-00000000000000000000000000000000", payload,
                 (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
                 CancellationToken.None));
+        Assert.Equal("CORE_CAPABILITY_MISSING", retryError.Code);
     }
 }
