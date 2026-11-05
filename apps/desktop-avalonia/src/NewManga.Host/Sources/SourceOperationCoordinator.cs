@@ -58,6 +58,8 @@ public sealed class SourceOperationCoordinator
         string? HostReceiptId,
         string? CommitDigest,
         string? CommitReceiptJson,
+        string? ErrorCode,
+        bool? Retryable,
         string? AcknowledgedAt,
         string CreatedAt,
         string UpdatedAt);
@@ -92,6 +94,8 @@ public sealed class SourceOperationCoordinator
             AuthorizationJson: null,
             GrantIds: grantIds is null ? null : string.Join(",", grantIds),
             CommitReceiptJson: null,
+            ErrorCode: null,
+            Retryable: null,
             HostReceiptId: null,
             CommitDigest: null,
             AcknowledgedAt: null,
@@ -299,7 +303,8 @@ public sealed class SourceOperationCoordinator
     }
 
     /// <summary>FEA-11: terminal failure record (never a silent drop).</summary>
-    public JournalEntry MarkFailed(string operationId)
+    public JournalEntry MarkFailed(
+        string operationId, string? errorCode = null, bool retryable = true)
     {
         RequireEnabled();
         lock (gate)
@@ -309,7 +314,15 @@ public sealed class SourceOperationCoordinator
             // r3 P1-03: acknowledged/recovered are terminal; failed must never
             // regress them (C-17 §3.2).
             RequireState(entry, "started", "host-authorized", "core-committed");
-            var next = entry with { State = "failed", UpdatedAt = UtcNow() };
+            // C-17 §3.2: a pre-commit failure is durable with its error_code and
+            // retryable flag, so a retry/recovery entry can find it later.
+            var next = entry with
+            {
+                State = "failed",
+                ErrorCode = errorCode,
+                Retryable = retryable,
+                UpdatedAt = UtcNow(),
+            };
             Write(next);
             return next;
         }

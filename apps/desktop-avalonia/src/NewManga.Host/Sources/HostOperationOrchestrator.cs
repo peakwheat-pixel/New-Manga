@@ -31,6 +31,11 @@ public sealed class HostOperationOrchestrator
         _lookup = lookup;
     }
 
+    private static bool IsPreCommitRejection(string code) => code is
+        "SOURCE_ACCESS_DENIED" or "SOURCE_PLAN_STALE" or "SOURCE_SYNC_STATE_CONFLICT"
+        or "SOURCE_OPERATION_CONFLICT" or "SOURCE_GRANT_REVOKED" or "INVALID_REQUEST"
+        or "REF_SIGNATURE_INVALID" or "SOURCE_REGISTRY_UNAVAILABLE";
+
     public async Task<(string OperationId, JsonElement Result)> ApplyAsync(
         string hostCommandName,
         JsonElement payload,
@@ -44,8 +49,14 @@ public sealed class HostOperationOrchestrator
             && value.ValueKind == JsonValueKind.String
                 ? value.GetString() : null;
 
-        var planId = StringField(payload, "plan_id") ?? string.Empty;
-        var planDigest = StringField(payload, "plan_digest") ?? new string('0', 64);
+        var planId = StringField(payload, "plan_id");
+        var planDigest = StringField(payload, "plan_digest");
+        if (string.IsNullOrWhiteSpace(planId) || planDigest is null)
+        {
+            throw new CoreOperationException(
+                "INVALID_REQUEST", "validation", false,
+                "apply request lacks a plan id or plan digest", null);
+        }
         var kind = hostCommandName switch
         {
             "source_relink" => "relink",
@@ -59,11 +70,14 @@ public sealed class HostOperationOrchestrator
         {
             foreach (var grant in grantArray.EnumerateArray())
             {
-                if (grant.ValueKind == JsonValueKind.String
-                    && grant.GetString() is { Length: > 0 } grantId)
+                if (grant.ValueKind != JsonValueKind.String
+                    || string.IsNullOrWhiteSpace(grant.GetString()))
                 {
-                    grantIds.Add(grantId);
+                    throw new CoreOperationException(
+                        "INVALID_REQUEST", "validation", false,
+                        "grant_ids must be non-empty strings", null);
                 }
+                grantIds.Add(grant.GetString()!);
             }
         }
 
@@ -78,10 +92,14 @@ public sealed class HostOperationOrchestrator
             {
                 var registryId = StringField(item, "registry_id");
                 var identityDigest = StringField(item, "identity_digest");
-                var generation = item.ValueKind == JsonValueKind.Object
+                var generation = 0;
+                if (item.ValueKind == JsonValueKind.Object
                     && item.TryGetProperty("generation", out var generationValue)
                     && generationValue.ValueKind == JsonValueKind.Number
-                        ? generationValue.GetInt32() : 0;
+                    && generationValue.TryGetInt32(out var parsedGeneration))
+                {
+                    generation = parsedGeneration;
+                }
                 if (string.IsNullOrWhiteSpace(registryId)
                     || string.IsNullOrWhiteSpace(identityDigest) || generation < 1)
                 {
@@ -150,7 +168,28 @@ public sealed class HostOperationOrchestrator
         injected["authorization"] = minted.Authorization;
         var finalPayload = JsonSerializer.SerializeToElement(injected);
 
-        var response = await call(finalPayload, token).ConfigureAwait(false);
+        CoreResponse response;
+        try
+        {
+            response = await call(finalPayload, token).ConfigureAwait(false);
+        }
+        catch (CoreOperationException error) when (IsPreCommitRejection(error.Code))
+        {
+            // C-17 §3.2: a typed pre-commit rejection is durable on the Host as
+            // failed + error_code/retryable (the Core wrote nothing).
+            _operations.MarkFailed(minted.OperationId, error.Code, retryable: false);
+            throw;
+        }
+        catch (Exception)
+        {
+            // Ambiguous (transport/cancel): keep host-authorized so recovery can
+            // re-read the Core receipt; the operation id stays reachable via the
+            // journal and the thrown exception message.
+            throw new CoreOperationException(
+                "CORE_UNAVAILABLE", "unavailable", true,
+                "source operation " + minted.OperationId
+                + " is host-authorized; recover or retry it", null);
+        }
         var result = response.Result ?? default;
         var operationRow = await _lookup(minted.OperationId, token).ConfigureAwait(false);
         var commitDigest = operationRow.ValueKind == JsonValueKind.Object

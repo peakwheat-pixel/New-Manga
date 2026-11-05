@@ -62,6 +62,12 @@ public static class HostAuthorizationMinter
         var seenRegistries = new HashSet<string>(StringComparer.Ordinal);
         foreach (var item in ordered)
         {
+            if (item["identity_digest"] is not string identityDigest || !IsLowerHex64(identityDigest))
+            {
+                throw new CoreOperationException(
+                    "INVALID_REQUEST", "validation", false,
+                    "authorization identity digest is not a lowercase sha256", null);
+            }
             if (!seenRegistries.Add((string)item["registry_id"]!))
             {
                 throw new CoreOperationException(
@@ -81,7 +87,7 @@ public static class HostAuthorizationMinter
             ["kind"] = kind,
         });
         var authorizationDigest = CanonicalJson.Sha256Hex(ordered);
-        var authorizedAt = (now ?? DateTimeOffset.UtcNow).ToString(
+        var authorizedAt = (now ?? DateTimeOffset.UtcNow).ToUniversalTime().ToString(
             "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
         var authorization = new Dictionary<string, object?>
         {

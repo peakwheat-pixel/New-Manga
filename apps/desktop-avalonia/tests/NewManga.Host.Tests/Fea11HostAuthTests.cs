@@ -99,22 +99,87 @@ public sealed class Fea11HostAuthTests : IDisposable
     }
 
     [Fact]
-    public async Task Apply_KeepsHostAuthorizedStateWhenTheCoreCallFails()
+    public async Task Apply_TypedPreCommitRejection_IsDurablyFailedWithErrorCode()
     {
         var orchestrator = NewOrchestrator();
         var payload = CallerPayload();
 
-        await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
             "source_resync", payload,
             (_, _) => throw new CoreOperationException(
                 "SOURCE_ACCESS_DENIED", "protocol", false, "denied", null),
             CancellationToken.None));
+        Assert.Equal("SOURCE_ACCESS_DENIED", error.Code);
 
         var entries = Directory.GetFiles(Path.Combine(_root, "host", "source-operations"), "*.dat");
         Assert.Single(entries);
         var operationId = Path.GetFileName(entries[0])
             .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
+        var journaled = _operations.Get(operationId)!;
+        Assert.Equal("failed", journaled.State);
+        Assert.Equal("SOURCE_ACCESS_DENIED", journaled.ErrorCode);
+        Assert.False(journaled.Retryable);
+    }
+
+    [Fact]
+    public async Task Apply_AmbiguousCoreFailure_KeepsHostAuthorizedAndExposesTheOperationId()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new IOException("transport lost"),
+            CancellationToken.None));
+
+        Assert.Equal("CORE_UNAVAILABLE", error.Code);
+        Assert.Contains("op-", error.Message);
+        var entries = Directory.GetFiles(Path.Combine(_root, "host", "source-operations"), "*.dat");
+        var operationId = Path.GetFileName(entries.Single())
+            .Replace(".v1.dat", string.Empty, StringComparison.Ordinal);
         Assert.Equal("host-authorized", _operations.Get(operationId)!.State);
+    }
+
+    [Fact]
+    public async Task Apply_AuthorizesTheRegistryBeforeTheCoreCall()
+    {
+        // LastUsedAt is only advanced by SourceAccessRegistry.Authorize; if the
+        // orchestrator skipped Authorize, the probe below would stay at the
+        // registration timestamp and fail (r2 P2-01: the old probe was vacuous).
+        var before = _registry.List().Single().LastUsedAt;
+        await Task.Delay(5);
+        string? duringCall = null;
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+
+        await orchestrator.ApplyAsync("source_resync", payload, (_, _) =>
+        {
+            duringCall = _registry.List().Single().LastUsedAt;
+            return Task.FromResult(new CoreResponse(
+                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
+        }, CancellationToken.None);
+
+        Assert.NotNull(duringCall);
+        Assert.NotEqual(before, duringCall);
+    }
+
+    [Fact]
+    public async Task Apply_RejectsAMissingPlanDigestWithoutJournal()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["plan_id"] = "pl-1",
+            ["grant_ids"] = Array.Empty<string>(),
+            ["authorization"] = new { authorizations = Array.Empty<object>() },
+        });
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new InvalidOperationException("must not reach Core"),
+            CancellationToken.None));
+        Assert.Equal("INVALID_REQUEST", error.Code);
+        Assert.False(Directory.Exists(Path.Combine(_root, "host", "source-operations")));
     }
 
     [Fact]
@@ -131,25 +196,6 @@ public sealed class Fea11HostAuthTests : IDisposable
 
         var journalDir = Path.Combine(_root, "host", "source-operations");
         Assert.False(Directory.Exists(journalDir) && Directory.GetFiles(journalDir).Length > 0);
-    }
-
-    [Fact]
-    public async Task Apply_AuthorizesTheRegistryBeforeTheCoreCall()
-    {
-        // The registry persists LastUsedAt inside Authorize; running the Core
-        // call must therefore observe an already-authorized registry (C-17 §3.2).
-        string? observedLastUsed = null;
-        var orchestrator = NewOrchestrator();
-        var payload = CallerPayload();
-
-        await orchestrator.ApplyAsync("source_resync", payload, (_, _) =>
-        {
-            observedLastUsed = _registry.List().Single().LastUsedAt;
-            return Task.FromResult(new CoreResponse(
-                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
-        }, CancellationToken.None);
-
-        Assert.False(string.IsNullOrWhiteSpace(observedLastUsed));
     }
 
     [Fact]
