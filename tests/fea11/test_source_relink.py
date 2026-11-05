@@ -51,6 +51,13 @@ def _seed(conn, scratch_dir):
         volume_serial=facts["volume_serial"],
         file_id=facts["file_id"],
     )
+    # DSH 2026-11-06 窄批 W1b: the repoint/changed device needs a genuinely
+    # complete old pixel profile (AC-M4 makes W/H-only evidence missing_old).
+    from tests.fea11.test_source_sync import _seed_complete_pixel_profiles
+
+    _seed_complete_pixel_profiles(
+        conn, "sv1", {"001.png": page1, "002.png": page2}
+    )
     add_referenced_page(
         conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",
         entry_id="e1", digest=_digest(page1),

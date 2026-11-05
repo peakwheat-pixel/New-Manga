@@ -37,6 +37,62 @@ def _digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _pixel_profile(png: bytes) -> tuple[str, int, int]:
+    """Frozen ``pixel-digest/1`` profile of one PNG's decoded raster."""
+    import io
+
+    from PIL import Image, ImageOps
+
+    with Image.open(io.BytesIO(png)) as image:
+        normalised = ImageOps.exif_transpose(image)
+        if normalised.mode != "RGB":
+            normalised = normalised.convert("RGB")
+        width, height = normalised.size
+        pixels = normalised.tobytes()
+    return (
+        hashlib.sha256(
+            f"{width}x{height}".encode("ascii") + b"\x00" + pixels
+        ).hexdigest(),
+        width,
+        height,
+    )
+
+
+def _seed_complete_pixel_profiles(
+    conn, version_id: str, pixels: dict[str, bytes]
+) -> None:
+    """DSH 2026-11-06 窄批 W1b: give an old fixture a genuinely complete
+    pixel profile (FEA-11-MATCH-1 AC-M2/M4).
+
+    The pre-existing ``changed/bind`` devices seeded ``legacy_v7_evidence=
+    False`` and treated width/height as complete evidence; under AC-M4 a
+    W/H-only old row must degrade to ``missing_old``, so the fixtures must
+    carry the real profile instead of relaxing the assertions.
+    """
+    from application.sources.scanner import (
+        PIXEL_DECODER_NAME,
+        PIXEL_DECODER_VERSION,
+        PIXEL_PROFILE_ALGORITHM,
+        canonical_pixel_params_json,
+    )
+
+    params = canonical_pixel_params_json()
+    for locator, png in pixels.items():
+        digest, width, height = _pixel_profile(png)
+        conn.execute(
+            "UPDATE source_entries SET pixel_digest = ?,"
+            " pixel_digest_algorithm = ?, width = ?, height = ?,"
+            " orientation = 1, decoder_name = ?, decoder_version = ?,"
+            " decoder_params_json = ? WHERE version_id = ? AND locator = ?",
+            (
+                digest, PIXEL_PROFILE_ALGORITHM, width, height,
+                PIXEL_DECODER_NAME, PIXEL_DECODER_VERSION, params,
+                version_id, locator,
+            ),
+        )
+    conn.commit()
+
+
 def _seed_two_page_source(conn, scratch_dir, *, legacy_v7_evidence=True):
     page1, page2 = png_bytes(color=(255, 0, 0)), png_bytes(color=(0, 255, 0))
     zip_path = write_zip(
@@ -54,6 +110,10 @@ def _seed_two_page_source(conn, scratch_dir, *, legacy_v7_evidence=True):
         ],
         legacy_v7_evidence=legacy_v7_evidence,
     )
+    if not legacy_v7_evidence:
+        _seed_complete_pixel_profiles(
+            conn, "sv1", {"001.png": page1, "002.png": page2}
+        )
     add_referenced_page(
         conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",
         entry_id="e1", digest=_digest(page1),

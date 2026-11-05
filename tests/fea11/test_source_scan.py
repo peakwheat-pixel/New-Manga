@@ -128,8 +128,10 @@ def test_scan_changed_container_diff_classifications(
 def test_scan_same_mtime_size_bytes_changed_discovered(
     conn, registry, stack, book_chapter, scratch_dir
 ):
-    """AC11-1: same mtime/size but different bytes must be discovered (the
-    strong verification is a digest, never a stat hint)."""
+    """AC11-1/AC-M4: same mtime/size but different bytes must be discovered
+    (the strong verification is a digest, never a stat hint).  The old row
+    carries width/height but no pixel profile (v7 shape), so the honest
+    classification is ambiguous/missing_old — never changed/direct."""
     page1 = png_bytes(color=(255, 0, 0))
     zip_path = write_zip(scratch_dir / "same.zip", [("001.png", page1)])
     container_digest = _digest(zip_path.read_bytes())
@@ -157,8 +159,10 @@ def test_scan_same_mtime_size_bytes_changed_discovered(
         }
     )
     assert scan["source"]["content_digest"] != container_digest
-    assert scan["totals"]["changed"] == 1
+    assert scan["totals"]["changed"] == 0
     assert scan["totals"]["unchanged"] == 0
+    assert scan["totals"]["ambiguous"] == 1
+    assert scan["diff"][0]["evidence"] == "missing_old"
 
 
 def test_scan_expired_grant_typed_refusal(conn, registry, stack, book_chapter, scratch_dir):
