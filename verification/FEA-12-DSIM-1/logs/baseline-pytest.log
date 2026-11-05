@@ -1,3 +1,11 @@
+# FEA-12-DSIM-1 raw evidence log (header added per Review r1 R-009)
+# command: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+# shell: pwsh 7 (Tee-Object capture); python: C:/Python314/python.exe (Python 3.14.6)
+# head: 37f84bb89 (r1 implementation-day baseline, clean tree)
+# captured: 2026-11-05 (Asia/Shanghai)
+# EXIT: 0
+# summary: 3073 passed, 10 skipped in 240.02s
+# ---- raw output follows ----
 ........................................................................ [  2%]
 ........................................................................ [  4%]
 ........................................................................ [  7%]

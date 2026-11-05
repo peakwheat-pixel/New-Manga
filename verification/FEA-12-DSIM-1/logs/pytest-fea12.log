@@ -1,2 +1,10 @@
-.............                                                            [100%]
-13 passed in 6.33s
+# FEA-12-DSIM-1 raw evidence log (header added per Review r1 R-009)
+# command: C:/Python314/python.exe -m pytest tests/fea12 -q -p no:warnings --tb=no
+# shell: cmd.exe + pwsh 7 harness; python: C:/Python314/python.exe (Python 3.14.6)
+# head: d5925957b (r2 R-001 hardening)
+# captured: 2026-11-05 (Asia/Shanghai)
+# EXIT: 0
+# summary: 21 passed
+# ---- raw output follows ----
+.....................                                                    [100%]
+21 passed in 0.64s

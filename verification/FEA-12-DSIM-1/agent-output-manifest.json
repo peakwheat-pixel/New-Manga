@@ -1,0 +1,25 @@
+{
+  "format": "fea12-agent-output-manifest/1",
+  "task_id": "FEA-12-DSIM-1",
+  "generated_at": "2026-11-05 (Asia/Shanghai)",
+  "disposition": "PRESERVE_REFERENCED",
+  "source_root": "G:\\CODEX\\New Manga.workspace\\agent-output\\fea12-dsim-impl\\FEA-12-DSIM-1",
+  "files": [
+    {
+      "name": "gates.log",
+      "bytes": 6005,
+      "sha256": "92ce5a7b949c5dce79da36b5193d2dfd4c4c9794a688284b4e8a950ed927a2f5"
+    },
+    {
+      "name": "check-final.log",
+      "bytes": 412,
+      "sha256": "0891942d77f993ff4828115861047c362d5bd4171c60e70715f9c7b8f6ae05d6"
+    },
+    {
+      "name": "check-final-r1.log",
+      "bytes": 563,
+      "sha256": "3c5d6d3c6c4eadb8803afa7f316334e01987117981ee3b77af7ace1e8a44b539"
+    }
+  ],
+  "note": "R-002 处置：gates.log/check-final.log 为过程日志，迁出 evidence_dir 后在此登记 bytes/sha256；判别力证据仍以仓库内 verification/FEA-12-DSIM-1/** 为准。"
+}

@@ -1,3 +1,11 @@
+# FEA-12-DSIM-1 raw evidence log (header added per Review r1 R-009)
+# command: pwsh -NoProfile -File verification/FEA-12-DSIM-1/tools/static-scan.ps1
+# shell: pwsh 7; python: n/a (pure PowerShell)
+# head: d5925957b
+# captured: 2026-11-05 (Asia/Shanghai)
+# EXIT: 0
+# summary: PASS - 766 files / 0 Windows recycle API hits; tests/fea12 2 files / 0 real-path literals; 2 D-flow modules 1020 lines / 0 delete-DB fallbacks
+# ---- raw output follows ----
 == AC4 / AC1: Windows recycle-bin API scan (src/** + apps/**) ==
 command: Select-String -Pattern '<tokens>' over .py,.cs,.csproj,.props,.targets,.xaml,.ps1 files
 tokens : shfileoperation|shfileopstruct|ifileoperation|ifileoperationprogresssink|shell32|microsoft.visualbasic|windows.storage|send2trash|winshell|win32com|shell.application|fof_allowundo
@@ -16,6 +24,6 @@ command: Select-String -SimpleMatch patterns over the two D-flow modules
 patterns: rmtree(, unlink(, os.remove(, os.unlink(, os.rmdir(, remove_managed(, purge_pages(, permanently_delete(, sqlite, subprocess, ctypes, winreg, os.system(
 checked src/application/maintenance/recycle_gateway.py
 checked src/infrastructure/filesystem/simulated_recycle_bin.py
-TOTAL modules = 2; total lines = 876; fallback hits = 0
+TOTAL modules = 2; total lines = 1020; fallback hits = 0
 
 static scan: PASS (0 API hits, 0 real-path literals, 0 delete/DB fallbacks)

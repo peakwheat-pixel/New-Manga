@@ -1,3 +1,10 @@
+# FEA-12-DSIM-1 raw evidence log (header added per Review r1 R-009)
+# command: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
+# shell: cmd.exe; dotnet SDK: 10.0.401; head: 3d0d325f7 (r1)
+# captured: 2026-11-05 (Asia/Shanghai)
+# EXIT: 0
+# summary: r1 stable-tree run - 0 failed / 1403 passed / 79 skipped (8 assemblies)
+# ---- raw output follows ----
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行

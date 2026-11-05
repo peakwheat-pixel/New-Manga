@@ -14,7 +14,7 @@ base_commit: 37f84bb895c9ef9b64e3865f3a92b245f2e28a7c   # 释放时由 Lead 固�
 branch: main
 worktree: G:\CODEX\New Manga（main 主工作树；未新建分支/worktree）
 integration_commit: null
-delivery_head: 3d0d325f7
+delivery_head: d5925957b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-12-DSIM-1
@@ -55,7 +55,7 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 协议与生产默认实现**：`OriginalFileRecycleGateway` 协议 + typed 结果；生产默认实现 fail-closed、零文件操作；无 Host/UI 接线。 <<MET>>
-- [x] **AC2 模拟实现**：`SimulatedRecycleBin` 全部操作限制在隔离根；manifest 可审计；不调用任何 Windows API。 <<MET>>
+- [x] **AC2 模拟实现（r2 收窄表述）**：`SimulatedRecycleBin` 全部操作限制在**调用者提供的干净隔离根**内；自身写目标（bin/manifest/journal）构造期与每次读写前拒绝 junction/symlink/hardlink（typed 安全错误、零写入）；manifest 可审计；不调用任何 Windows API。**不再声称"任何情况下全部写入都在隔离根内"**：校验与写入之间的并发重植窗口（TOCTOU）未消除，属单写者测试替身残余风险。 <<MET>>
 - [x] **AC3 失败语义**：失败注入下原文件字节/集合不变、结果逐项 typed、零永久删除/零 DB 删除；"D 失败不得降级 C"有测试。 <<MET>>
 - [x] **AC4 隔离与禁令**：静态扫描 0 处 Windows 回收站 API；运行时哨兵证明隔离根外零变化；测试无 `%APPDATA%`/真实盘符/真实回收站路径。 <<MET>>
 - [x] **AC5 交付件与门禁**：Task/Handoff/`verification/FEA-12-DSIM-1/`（隔离与扫描日志）；`check.ps1` PASS、`verify_pins.ps1` 18/18、pytest 全量与 .NET 基线记录（无 Python 生产路径接线，.NET 应零差异）。 <<MET>>
@@ -72,8 +72,8 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。本卡�
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1–AC4 | `C:/Python314/python.exe -m pytest tests/fea12 -q -p no:warnings --tb=no`；`pwsh -NoProfile -File verification/FEA-12-DSIM-1/tools/static-scan.ps1`；`C:/Python314/python.exe verification/FEA-12-DSIM-1/tools/sentinel-probe.py` | 隔离 `tmp_path` + `tempfile.TemporaryDirectory()`；Python 3.14.6 | **PASS**：fea12 **13 passed**（EXIT 0）；静态扫描 766 files / **0** Windows 回收站 API、2 test files / **0** 真实路径字面量、2 modules / **0** 删除/DB 回退（EXIT 0）；运行时哨兵 `PASS: runtime sentinel outside the isolated root unchanged`（EXIT 0） | `verification/FEA-12-DSIM-1/logs/pytest-fea12.log`、`logs/static-scan.log`、`logs/sentinel-probe.log`、`ISOLATION-EVIDENCE.md`、`AC-MATRIX.md` |
-| AC5 | 全量 pytest（基线 + 交付 head）；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-DSIM-1.md` | 仓库根；共享工作树（并发改动见下） | **PASS（含已归因 flaky）**：基线 clean tree `3073 passed / 10 skipped`（EXIT 0）→ 交付 head `3093 passed / 10 skipped`（EXIT 0；+20 = 本卡 13 + 并发已提交 LINEAGE-1 r3 7）；全量 .NET 首跑/二次各 **1 failed / 670 passed / 7 skipped（App.Tests）**、稳定树复跑 **失败 0 / 通过 1403 / 跳过 79**（8 assemblies）；pins **18/18 PASS**；`check.ps1` 结果见 `logs/check-final.log` | `logs/baseline-pytest.log`、`logs/pytest-full.log`、`logs/dotnet-full-1.log`、`logs/dotnet-full-2.log`、`logs/dotnet-full-3.log`、`logs/verify-pins.log`、`logs/gates.log` |
+| AC1–AC4 | `C:/Python314/python.exe -m pytest tests/fea12 -q -p no:warnings --tb=no`；`pwsh -NoProfile -File verification/FEA-12-DSIM-1/tools/static-scan.ps1`；`C:/Python314/python.exe verification/FEA-12-DSIM-1/tools/sentinel-probe.py` | 隔离 `tmp_path`（含真实 junction/hardlink fixture）+ `tempfile.TemporaryDirectory()`；Python 3.14.6 | **PASS**：fea12 **21 passed**（r1 13 + r2 新增 8，EXIT 0）；静态扫描 766 files / **0** Windows 回收站 API、2 test files / **0** 真实路径字面量、2 modules **1020 lines** / **0** 删除/DB 回退（EXIT 0）；运行时哨兵 `PASS: runtime sentinel outside the isolated root unchanged`（EXIT 0） | `verification/FEA-12-DSIM-1/logs/pytest-fea12.log`、`logs/static-scan.log`、`logs/sentinel-probe.log`、`ISOLATION-EVIDENCE.md`、`AC-MATRIX.md` |
+| AC5 | 全量 pytest（基线 + r2 head）；`dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-DSIM-1.md` | 仓库根；共享工作树（含并发 CORE 未提交改动，见 ENVIRONMENT） | **PASS（含已归因 flaky）**：基线（r1 交付 head）`3093 / 10 skipped` → **r2 head `3101 passed / 10 skipped`**（EXIT 0；+8 = 本卡 r2 新测试）；全量 .NET r2 尝试 **1 failed / 670 passed / 7 skipped（App.Tests）**（已知 `FluentResidual2VisualEvidenceTests` verification git-status 断言窗口，日志 `dotnet-r2-1.log`），**r2 无 .NET 改动 → 引用 r1 稳定树绿跑 失败 0 / 通过 1403 / 跳过 79**（`dotnet-full-3.log`）；pins **18/18 PASS**；`check.ps1` PASS **3 warnings、无 evidence_dir 告警**（warnings 均为预存/Lead-owned：13 非终态 Task、STATUS 80% 预算、PLAN 80% 预算；`gates.log`/`check-final.log` 已迁 agent-output 并在 `agent-output-manifest.json` 登记，EXIT 0） | `logs/baseline-pytest.log`、`logs/pytest-full.log`、`logs/dotnet-r2-1.log`、`logs/dotnet-full-3.log`、`logs/verify-pins.log`、`agent-output-manifest.json`、`G:\CODEX\New Manga.workspace\agent-output\fea12-dsim-impl\FEA-12-DSIM-1\gates.log`（仓外） |
 
 ## 依赖、风险与阻塞
 
@@ -83,41 +83,44 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。本卡�
 
 ## 交付与运行记录
 
-- Handoff：[FEA-12-DSIM-1-3d0d325f7](../handoffs/FEA-12-DSIM-1-3d0d325f7.md)（实现 commits `94a12e93f` + `3d0d325f7`；交付 docs commit 其后相邻提交）。
-- Review：待 Lead 派**独立上下文 fresh subagent**（实现者 `fea12-dsim-impl` 未自审）。
-- 实际测试：见「测试要求」表与 `verification/FEA-12-DSIM-1/logs/gates.log`；关键数字：pytest fea12 13 passed；全量 pytest 3093 passed / 10 skipped（基线 3073/10）；全量 .NET 稳定树复跑 0 failed / 1403 passed / 79 skipped；pins 18/18；静态扫描 766 files / 0 Windows 回收站 API；运行时哨兵 PASS；`check.ps1` 见 `logs/check-final.log`。
+- Handoff（r2）：[FEA-12-DSIM-1-d5925957b](../handoffs/FEA-12-DSIM-1-d5925957b.md)（实现 commits `94a12e93f` + `3d0d325f7` + `d5925957b`；交付 docs commit 其后相邻提交）。
+- Review：r1 独立 Review `approved`（P0=0/P1=0/P2=2/P3=7，`doc/reviews/FEA-12-DSIM-1-r1.md`）；r2 处置后待 Lead 派 fresh subagent 复审（实现者 `fea12-dsim-impl` 未自审）。
+- 实际测试：见「测试要求」表与仓外 `gates.log`；关键数字：pytest fea12 **21 passed**；全量 pytest **3101 passed / 10 skipped**（r1 基线 3093/10，+8）；全量 .NET r2 尝试 flaky 已归因、引用 r1 稳定树 **0 failed / 1403 passed / 79 skipped**；pins **18/18**；静态扫描 766 files / 0 Windows 回收站 API；运行时哨兵 PASS；`check.ps1` PASS（3 warnings、无 evidence_dir 告警）。
 - **边界声明（不得误读）**：本卡只交付 **D 流程模拟切片**——application 端口 + 生产 typed 不可用默认实现 + `SimulatedRecycleBin` 测试替身 + 隔离/哨兵测试。**真实 Windows 回收站行为未实现、未验证（`NOT_RUN`）**，需用户另行专门授权；不得据此声称 D 流程完成；无 Host/UI 生产接线、无 DB/schema/依赖改动、无 push。
-- 并发工作树：交付时共享工作树含 FEA-11-LINEAGE-1 r3 已提交改动（+7 tests）与并发 `verification/**` 写入；全量 .NET 首跑 flaky 归因见 `logs/gates.log` G3（本卡未改 .NET）。
+- r2 处置（Review r1）：R-001 已修复（自身写目标 realpath containment + junction/symlink/hardlink 拒绝，构造期 + 每次读写前，typed `RecycleSafetyError` 零写入；8 项新判别测试）；R-002 已修复（过程日志迁 agent-output + `agent-output-manifest.json` 登记，check 无 evidence_dir 告警）；R-003…R-009 逐项处置见 `AC-MATRIX.md`「r2 处置」表。
+- 并发工作树：r2 期间共享工作树含 FEA-12-CORE 分片 A/B 未提交改动；本卡只改自己的 6 类路径（见 ENVIRONMENT per-commit scope）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1 | src/application/maintenance/recycle_gateway.py | 3d0d325f7 | - | CANONICAL |
-| EV-02 | AC2 | src/infrastructure/filesystem/simulated_recycle_bin.py | 3d0d325f7 | - | CANONICAL |
-| EV-03 | AC1/AC2/AC3/AC4 | tests/fea12/test_recycle_gateway_sim.py | 3d0d325f7 | - | CANONICAL |
-| EV-04 | AC1 | src/application/maintenance/__init__.py | 3d0d325f7 | - | CANONICAL |
-| EV-05 | AC1–AC4 | verification/FEA-12-DSIM-1/logs/pytest-fea12.log | - | 568017b8a1eba253ba35733a2d056f767adfb5dfe95bd754e9ff650d2c8093b3 | CANONICAL |
-| EV-06 | AC5 | verification/FEA-12-DSIM-1/logs/pytest-full.log | - | 26ad4e0407d37c30fb2b6e71e3dd1b0f23d3f478b3a0cad6aa1c06093cb2387e | CANONICAL |
-| EV-07 | AC5（基线） | verification/FEA-12-DSIM-1/logs/baseline-pytest.log | - | 7ef4c572d8941791a1ec9a4e4a601dfe92f893ce8af1c2fe4179dd63cbc67cbe | CANONICAL |
-| EV-08 | AC5（.NET 稳定树复跑） | verification/FEA-12-DSIM-1/logs/dotnet-full-3.log | - | a93443eaba8d0fa63b67582367d3059e536b2d3a96ff220ae6d692222f29e8e2 | CANONICAL |
-| EV-09 | AC5（.NET 首跑 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-full-1.log | - | 7d3a69becd58d2e0b5245d0fa4ccc51333f1ba71aa96284e78681d9a1856a442 | SOURCE_PIN |
-| EV-10 | AC5（.NET 二次 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-full-2.log | - | 59f5c720ea5c0af6ccd2e561c6bdb6fbf23efb4cfb9be7d6784e0c457ba5fd97 | SOURCE_PIN |
-| EV-11 | AC4（静态扫描） | verification/FEA-12-DSIM-1/logs/static-scan.log | - | 79f518d1f50c7d145e76bb6293cd686a1ad648a4d1bb05793717d4ede9f2d08f | CANONICAL |
-| EV-12 | AC4（运行时哨兵） | verification/FEA-12-DSIM-1/logs/sentinel-probe.log | - | 80cd617edd03a328a480c51bbd14e53a525d6303d90c7bfbfca1b96e358b7269 | CANONICAL |
-| EV-13 | AC5（pins） | verification/FEA-12-DSIM-1/logs/verify-pins.log | - | 991a8cbb25a884e4063157042dbaca2b04ab53866247c4e5b9e19b154cd83c13 | CANONICAL |
-| EV-14 | AC2/AC4（隔离证明） | verification/FEA-12-DSIM-1/ISOLATION-EVIDENCE.md | - | 13d052d8eeda6e295a9bd27930ff5c3f50bb7f7b573f6ad11cf151a0e65336e5 | CANONICAL |
-| EV-15 | AC5（AC 矩阵） | verification/FEA-12-DSIM-1/AC-MATRIX.md | - | f409ecf29bd8aea6d2c8e9c23809315dcdecc447b7578c2f15703b4b32d692cd | CANONICAL |
-| EV-16 | AC5（环境） | verification/FEA-12-DSIM-1/ENVIRONMENT.md | - | b84a35d29eb5964d44a97ddabd27e53670b4000ff5980d39bb78e43467089b6a | CANONICAL |
+| EV-01 | AC1 | src/application/maintenance/recycle_gateway.py | d5925957b | - | CANONICAL |
+| EV-02 | AC2 | src/infrastructure/filesystem/simulated_recycle_bin.py | d5925957b | - | CANONICAL |
+| EV-03 | AC1/AC2/AC3/AC4 | tests/fea12/test_recycle_gateway_sim.py | d5925957b | - | CANONICAL |
+| EV-04 | AC1 | src/application/maintenance/__init__.py | d5925957b | - | CANONICAL |
+| EV-05 | AC1–AC4 | verification/FEA-12-DSIM-1/logs/pytest-fea12.log | - | b4e14d28da5cf97520e57be54d2a761e94f18cd9e6f5fd3f0a1cf7715120a603 | CANONICAL |
+| EV-06 | AC5 | verification/FEA-12-DSIM-1/logs/pytest-full.log | - | 64667fbd2cc058b5f2d14440b27c363f2287cb742a031d652f7b0e189bba2430 | CANONICAL |
+| EV-07 | AC5（基线） | verification/FEA-12-DSIM-1/logs/baseline-pytest.log | - | e49df1798ce269e630fbfd2249f2a6dfa3eb866fa2051ef8d4722583fc749731 | CANONICAL |
+| EV-08 | AC5（.NET 稳定树绿跑，r1） | verification/FEA-12-DSIM-1/logs/dotnet-full-3.log | - | 5ffeee7b817ecd728d338c8ffbc6a92656ca64dc1a967c80217319580336d7a6 | CANONICAL |
+| EV-09 | AC5（.NET 首跑 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-full-1.log | - | 6b90736058321715f6108f4bb3eb63f4675871e58015f61b0869e4a257b106be | SOURCE_PIN |
+| EV-10 | AC5（.NET 二次 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-full-2.log | - | 7b1d1ccc739eea08ca4db5b24de1cfa823f3617bda2a818e25e01f5aaf5bc458 | SOURCE_PIN |
+| EV-11 | AC4（静态扫描） | verification/FEA-12-DSIM-1/logs/static-scan.log | - | 5339b85a248e8214c31083f62bb46d38978ad476babd5c35d675cee34444d08d | CANONICAL |
+| EV-12 | AC4（运行时哨兵） | verification/FEA-12-DSIM-1/logs/sentinel-probe.log | - | c642f1cbcd4780c963fa9bb17c8d5b1932d265733ffac80ec79ddf92145f5175 | CANONICAL |
+| EV-13 | AC5（pins） | verification/FEA-12-DSIM-1/logs/verify-pins.log | - | 8b5b4fbe88ba558c65bc2db6823d5c1277a94139151aa0d0625bb0310b510ffa | CANONICAL |
+| EV-14 | AC2/AC4（隔离证明，r2） | verification/FEA-12-DSIM-1/ISOLATION-EVIDENCE.md | - | f1cc4c49e126bbab5d1c5064ea7cb2f6f2fcbc5f47c031faa361b88dd94c3058 | CANONICAL |
+| EV-15 | AC5（AC 矩阵，r2） | verification/FEA-12-DSIM-1/AC-MATRIX.md | - | d385caa20b73d7b6ac4d17232c78009b7cdb9f7caea0411f353f51ca1ea9d83e | CANONICAL |
+| EV-16 | AC5（环境，r2） | verification/FEA-12-DSIM-1/ENVIRONMENT.md | - | 980bf99e280e3f7c8c6582b26407d8b0b9caae8933f5b66449eb12a632c1a89c | CANONICAL |
 | EV-17 | AC4（扫描脚本） | verification/FEA-12-DSIM-1/tools/static-scan.ps1 | - | 7855217f100451ed155243accffc350ba8cdfe2a93d3045af0803c640e5a70ea | SOURCE_PIN |
 | EV-18 | AC4（哨兵探针） | verification/FEA-12-DSIM-1/tools/sentinel-probe.py | - | b27f8b5b44ace71293e3f64fc95bbf689dce802659ffa4b2da0550ce12942be8 | SOURCE_PIN |
+| EV-19 | AC5（R-002 处置/仓外过程日志 manifest） | verification/FEA-12-DSIM-1/agent-output-manifest.json | - | 925a2a6147633784a239943ec97ef21ff2cb09f88b4a5c5b4fafa7f7a5694c14 | SOURCE_PIN |
+| EV-20 | AC5（.NET r2 尝试 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-r2-1.log | - | 01538fa854aab411d94c89bc9a7068c70373d6d9ac477b24085cac7a78891b53 | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| temp | — | NOT_APPLICABLE | — | — | 未创建 workspace temp：全部 scratch 在 pytest `tmp_path` 与 `tempfile.TemporaryDirectory()`（自清理）内；无残留资源需处置。 |
-| agent-output | — | NOT_APPLICABLE | — | — | 未创建仓外 agent-output；判别力证据全部直接入库内 `verification/FEA-12-DSIM-1/**`（见 Canonical Evidence），无需迁移。 |
+| temp | — | NOT_APPLICABLE | — | — | 未创建 workspace temp：全部 scratch 在 pytest `tmp_path` 与 `tempfile.TemporaryDirectory()`（自清理）内；R-001 junction/hardlink fixture 也在 `tmp_path` 内并由测试 `finally` 解除；无残留资源需处置。 |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea12-dsim-impl\FEA-12-DSIM-1\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea12-dsim-impl\FEA-12-DSIM-1\` | verification/FEA-12-DSIM-1/agent-output-manifest.json | R-002 处置：`gates.log`（r2 门禁汇总）、`check-final.log`（r2 `check.ps1` 最终输出）、`check-final-r1.log`（r1 历史）迁出证据目录；逐文件 bytes/sha256 见所引 manifest；判别力证据仍以仓内 `verification/FEA-12-DSIM-1/**` 为准；无需迁移。 |
 
 ## Closeout Record
 
