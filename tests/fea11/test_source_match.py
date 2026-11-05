@@ -235,23 +235,20 @@ def _source_rows(conn, version_id: str) -> list[sqlite3.Row]:
     )
 
 
-#: Tables the read-only snapshot covers (same set as the scanner tests).
-_SNAPSHOT_TABLES = (
-    "sources", "source_locations", "source_versions", "source_entries",
-    "page_bindings", "pages", "books", "chapters", "regions",
-    "region_revisions", "artifact_revisions", "pipeline_runs",
-    "pipeline_tasks", "source_sync_plans", "source_operations",
-    "source_binding_publications", "source_revision_lineage",
-)
-
-
+#: The read-only snapshot covers **every** user table in the database
+#: (enumerated from ``sqlite_master``, R1-05) so "scan writes nothing" cannot
+#: silently miss a table; the schema currently has 40 of them.
 def _snapshot(conn) -> dict:
+    tables = [
+        row[0]
+        for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table'"
+            " AND name NOT LIKE 'sqlite_%' ORDER BY name"
+        )
+    ]
     snapshot = {}
-    for table in _SNAPSHOT_TABLES:
-        try:
-            rows = list(conn.execute(f"SELECT * FROM {table}"))
-        except sqlite3.OperationalError:
-            continue
+    for table in tables:
+        rows = list(conn.execute(f"SELECT * FROM {table}"))
         snapshot[table] = [
             tuple(sorted((key, repr(value)) for key, value in dict(row).items()))
             for row in rows
@@ -386,9 +383,16 @@ def test_unique_pixel_requires_single_occurrence_on_both_sides() -> None:
 
 
 def test_byte_identity_does_not_bypass_a_duplicate_pixel_group() -> None:
-    """AC-M3: the unique-content branch must still freeze pixel duplicates."""
+    """AC-M3/R1-02: the unique-byte branch still freezes a pixel repeat.
+
+    The old row is a v7 shape (no profile) so the earlier duplicate pass cannot
+    absorb it; the byte-identical new member carries a pixel occurrence that is
+    repeated on the new side.  The byte branch must therefore emit
+    ``ambiguous/duplicate_group`` — a mutation that drops that guard makes the
+    pair ``unchanged/unique_pixel`` and this test red.
+    """
     pixel = "d" * 64
-    old = _row("old1", "001.png", 0, pixel_digest=pixel)
+    old = _row("old1", "001.png", 0, pixel_digest=None, width=4, height=3)
     same_bytes = _row(
         "new1", "001.png", 0,
         content_digest=old["content_digest"], pixel_digest=pixel,
@@ -400,6 +404,49 @@ def test_byte_identity_does_not_bypass_a_duplicate_pixel_group() -> None:
         "ambiguous", "duplicate_group",
     )
     assert pair.new_entry is not None
+    # the remaining repeated occurrence has no counterpart → honest add
+    assert result.totals == {
+        "unchanged": 0, "added": 1, "missing": 0, "changed": 0,
+        "ambiguous": 1,
+    }
+
+
+def test_renamed_incomparable_counterpart_is_ambiguous_not_missing_added() -> None:
+    """R1-01/AC-M4: same pixel, incomparable profile, different locator.
+
+    Renaming/repacking the container together with a Pillow/decoder/params
+    upgrade must degrade the pair to needs_confirmation (``ambiguous/
+    incomparable``), not to ``missing``+``added`` — otherwise the user cannot
+    bind and keep the PageId.  No evidence may be forged either.
+    """
+    pixel = "f" * 64
+    old = _row("old1", "001.png", 0, pixel_digest=pixel)
+    params = canonical_pixel_params_json().replace('"frame":0', '"frame":1')
+    variants = {
+        "orientation": _row(
+            "new1", "002.png", 0, pixel_digest=pixel, orientation=6
+        ),
+        "params": _row("new1", "002.png", 0, pixel_digest=pixel, params=params),
+        "decoder_version": _row(
+            "new1", "002.png", 0, pixel_digest=pixel, decoder_version="2"
+        ),
+    }
+    for dimension, new in variants.items():
+        result = _match([old], [new])
+        pair = [item for item in result.items if item.old_entry is not None][0]
+        assert (pair.classification, pair.evidence) == (
+            "ambiguous", "incomparable",
+        ), dimension
+        assert pair.old_entry is not None and pair.new_entry is not None
+        assert result.totals == {
+            "unchanged": 0, "added": 0, "missing": 0, "changed": 0,
+            "ambiguous": 1,
+        }, dimension
+        # degraded honestly: no unique_pixel continuation, never `changed`
+        assert all(
+            item.evidence not in ("unique_pixel", "direct")
+            for item in result.items
+        )
 
 
 def test_counterpart_less_duplicate_members_are_missing_and_added() -> None:
@@ -913,14 +960,29 @@ def test_apply_with_a_lost_scan_commits_no_content_binding_or_profile(
     right = build_source_sync_stack(
         store=stack["store"], access=registry, repository=None
     )
+    operations_before = conn.execute(
+        "SELECT COUNT(*) FROM source_operations"
+    ).fetchone()[0]
+    publications_before = conn.execute(
+        "SELECT COUNT(*) FROM source_binding_publications"
+    ).fetchone()[0]
     before = _snapshot(conn)
     with pytest.raises(Exception) as caught:
         right["service"].apply("ResyncSource", payload)
-    assert getattr(caught.value, "code", ""), "apply must fail typed"
+    # R1-07: the typed reason is frozen (SOURCE_PLAN_STALE, cause=expired),
+    # not merely "some error with a code".
+    assert caught.value.code == "SOURCE_PLAN_STALE"
+    assert caught.value.details.get("cause") == "expired"
     after = _snapshot(conn)
     assert before == after, (
         "a lost scan must commit no content, binding or profile row"
     )
+    assert conn.execute(
+        "SELECT COUNT(*) FROM source_operations"
+    ).fetchone()[0] == operations_before
+    assert conn.execute(
+        "SELECT COUNT(*) FROM source_binding_publications"
+    ).fetchone()[0] == publications_before
 
 
 # ---------------------------------------------------------------------------

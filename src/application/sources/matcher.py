@@ -21,15 +21,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
-#: Evidence completeness for a v7-era entry row: the import runtime wrote
-#: pixel/orientation None, so width/height presence is the observable proof
-#: the entry was ever decode-verified (C-17 §7.3 note on _entry_row).
-def _old_evidence_complete(entry: dict) -> bool:
-    width = entry.get("width") or 0
-    height = entry.get("height") or 0
-    return int(width) > 0 and int(height) > 0
-
-
 def _pixel_present(entry: dict) -> bool:
     return bool(entry.get("pixel_digest")) and bool(
         entry.get("pixel_digest_algorithm")
@@ -344,6 +335,29 @@ def match_entries(
                     new_entry=new,
                 )
             )
+        elif len(candidates) == 1 and not comparable:
+            # R1-01 (AC-M4 first sentence; C-17 §7.3 row 4): the same pixel
+            # occurrence exists on the other side but the profiles cannot be
+            # compared (e.g. container repacked/renamed together with a
+            # Pillow/decoder/params upgrade so every old profile is
+            # incomparable).  This is "unverifiable", not "old page gone":
+            # degrade the corresponding pair to needs_confirmation so the
+            # user can still bind and keep the PageId instead of being forced
+            # into missing(tombstone/defer)+added(add).  Duplicate groups were
+            # already absorbed by the earlier pass, so exactly one candidate
+            # here is the whole (unpaired) occurrence.
+            new = candidates[0]
+            paired_old_ids.add(old["entry_id"])
+            paired_new_ids.add(new["entry_id"])
+            result.items.append(
+                MatchItem(
+                    item_id="",
+                    classification="ambiguous",
+                    evidence="incomparable",
+                    old_entry=old,
+                    new_entry=new,
+                )
+            )
 
     # --- locator-unique correspondence with different content (C-17 §7.3 row
     # 4).  ``changed`` is only a deterministic assertion when BOTH sides carry
@@ -375,6 +389,13 @@ def match_entries(
             classification, evidence = "ambiguous", "incomparable"
         elif not _profiles_comparable(old, new):
             classification, evidence = "ambiguous", "incomparable"
+        elif old.get("pixel_digest") == new.get("pixel_digest"):
+            # R1-08 defensive guard: identical pixels with different bytes are
+            # an occurrence-identity question (duplicate_group), never a
+            # deterministic content change.  Pass ordering currently pairs
+            # this case earlier, so this branch is unreachable by construction
+            # but keeps ``changed`` honest if the passes are ever reordered.
+            classification, evidence = "ambiguous", "duplicate_group"
         else:
             classification, evidence = "changed", "direct"
         result.items.append(
