@@ -70,8 +70,8 @@ out_of_scope:
 - [x] **AC1 软删（MoveToTrash）**：逐项 `moved/skipped`；书架不再含、回收站含；DB 除 `books.deleted_at` 外内容行/保护行/current/pin/进度/binding 全不变；受管文件字节哈希前后一致。 <<MET>>
 - [x] **AC2 恢复（RestoreFromTrash）**：恢复后书架可见；current/pin/进度/人工数据/binding 与删除前逐字段相等；不存在静默解锁/改 current；不存在条目 → 逐项冲突不整批失败。 <<MET>>
 - [x] **AC3 回收站读取面不回归**：`ListRecycleBinBooks` 保持冻结投影（`page_count` `None` 通道、空数组≠失败）；`ListTrash` 映射按 PREREQ-1 冻结形状。 <<MET>>
-- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/**currentRegionRevisionIds（全部 region current，含隐藏）**/**currentArtifactRevisionIds（全部 artifact current）**/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest **v2** golden 向量可复算。 <<PARTIAL: r3 已按 C-04b v1.1 修复（current 全量绑定 + 判别测试：非首个/隐藏 region current、artifact current 增删改 → 旧 digest STALE 零副作用；golden v2）——待 r3 Review/Lead 定稿恢复 MET>>
-- [ ] **AC5 专门确认绑定（PD-02/PD-04；C-04b v1.1 §2.2）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配/重排/换目标 → `BOOK_DELETE_STALE_PREVIEW` 零副作用；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化（含非首个/隐藏 current、artifact current）→ 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删；**PD-07 retry（纯 pending 与混合）**：首次删除事务在 manifest 持久化原预览有序集合/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + **集合级始终校验**（不再形状校验）。 <<PARTIAL: r3 已按 C-04b v1.1 §2.2/A3 修复（FAKE_DIGEST/重排/换目标/缺项/篡改全部拒绝；manifest 缺失 fail-closed）——待 r3 Review/Lead 定稿恢复 MET>>
+- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/**currentRegionRevisionIds（全部 region current，含隐藏）**/**currentArtifactRevisionIds（全部 artifact current）**/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest **v2** golden 向量可复算（字面量已钉死）。 <<PARTIAL: r3/r4 已按 C-04b v1.1 修复；r4 补齐冻结载体 §5-1 的 hidden current 变化判别测试（`test_preview_hidden_region_current_change_is_stale`：旧 digest STALE 零副作用、新 digest 成功）——待 r4 窄面复核/Lead 定稿恢复 MET>>
+- [ ] **AC5 专门确认绑定（PD-02/PD-04；C-04b v1.1 §2.2）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配/重排/换目标 → `BOOK_DELETE_STALE_PREVIEW` 零副作用；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化（含非首个/隐藏 current、artifact current）→ 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删；**PD-07 retry（纯 pending 与混合）**：首次删除事务在 manifest 持久化原预览有序集合/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + **集合级始终校验**（不再形状校验）；corrupt manifest JSON→`BOOK_DELETE_STALE_PREVIEW`（单条/批量）、行缺失→`BOOK_NOT_FOUND`。 <<PARTIAL: r3/r4 已按 C-04b v1.1 §2.2/A3 修复（FAKE/重排/换目标/缺项/篡改/corrupt 全部 STALE；missing=NOT_FOUND；manifest 缺失 fail-closed）——待 r4 窄面复核/Lead 定稿恢复 MET>>
 - [x] **AC6 单事务与失败回滚（PD-05/PD-06）**：显式 `BEGIN IMMEDIATE`；成功路径内容行按白名单消失、Pipeline 历史脱离保留、清理清单同事务持久化；事务最后一条 DELETE 前注入异常 → 内容行/保护行/v7-v8 行/文件集合与事务前逐项相等、`foreign_key_check` 空、不开始文件清理。 <<MET>>
 - [x] **AC7 保护披露与删除边界**：含锁/人工/pin/current/draft 的书预览披露计数准确；删除成功后受保护行确实删除（披露≠阻断）；事务前无顺手解锁/取消 pin/改 current；非终态 Run/Task/Export → `BOOK_BUSY` 零副作用。 <<MET>>
 - [x] **AC8 共享引用与原文件边界（PD-08）**：可安全拆分共享引用 → 删除成功、原文件字节与其他项目绑定不变；不可拆分/关系图不一致/未列明目标外引用 → `BOOK_DELETE_CONFLICT` 零副作用；用户源文件/源目录逐文件哈希与集合前后不变；零 Windows 回收站 API（静态 grep + 运行时哨兵）。 <<MET>>
@@ -92,8 +92,8 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。共享�
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1–AC12 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q`（逐 AC 断言） | 隔离 fixture；真实 v1…v8 迁移 | **PASS 1114 passed**（r3 工作树，EXIT 0） | `verification/FEA-12-CORE/logs/core-py-pytest-related.log`、`gates-core-py.log` |
-| 全量回归 | `pytest tests -q -p no:warnings --tb=no`；apps 零 diff（.NET 引用集成记录） | 仓库根；基线 3093/10 | **pytest 3162 passed/10 skipped EXIT 0**；集成全量 .NET 1405/0/80 | `logs/core-py-pytest-full.log`、`logs/gates-integration.log` |
+| AC1–AC12 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q`（逐 AC 断言） | 隔离 fixture；真实 v1…v8 迁移 | **PASS 1116 passed**（r4 工作树，EXIT 0） | `verification/FEA-12-CORE/logs/core-py-pytest-related.log`、`gates-core-py.log` |
+| 全量回归 | `pytest tests -q -p no:warnings --tb=no`；apps 零 diff（.NET 引用集成记录） | 仓库根；基线 3093/10 | **pytest 3164 passed/10 skipped EXIT 0**；集成全量 .NET 1405/0/80 | `logs/core-py-pytest-full.log`、`logs/gates-integration.log` |
 | 治理 | `check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`（18/18） | 仓库根；契约重冻后 | **check PASS（warnings 均既有全仓告警）；pins 18/18 PASS** | `logs/core-py-check.log`、`logs/core-py-pins.log`、`logs/gates-integration.log` |
 | FK/回滚 | 故障注入：事务最后 DELETE 前抛错；probe 案例复跑（binding/lineage/publication） | 隔离 v8 fixture | **PASS**：AC6 回滚零残留、AC9 probe FK 由失败转成功（变异实验判别成立） | `logs/core-py-ac6-transaction-rollback.log`、`logs/core-py-ac9-c17-x1.log`、`doc/reviews/FEA-12-CORE-r2.md` |
 
@@ -108,8 +108,8 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。共享�
 - Handoff：`doc/handoffs/FEA-12-CORE-core-py.md`（分片 A：Python Core；commit 列表见 Handoff 与 `verification/FEA-12-CORE/logs/gates-core-py.log`）。
 - Review：r1 changes_requested → r2 返修 → r2 approved（`doc/reviews/FEA-12-CORE-r2.md`）→ r2 closeout；2026-11-05 Codex 独立裁决 OVERTURN 3a/4 `doc/reviews/DSH-DECISIONS-2026-11-05-codex.md` → 本卡重开 → r3 返修（待 fresh r3 Review）。
 - 实际测试（分片 A **r3** 实跑，命令/EXIT/head 见 `verification/FEA-12-CORE/logs/gates-core-py.log`）：
-  - `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1114 passed**（相关组；r2 1104 + r3 新增 10）。
-  - `pytest tests -q -p no:warnings --tb=no`：**3162 passed / 10 skipped**（基线 3093/10；测试增量口径 **CORE +61 / DSIM-1 +8** = +69，r3 新增 10 条 CORE 测试，无失败）。
+  - `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1116 passed**（相关组；r2 1104 + r3 10 + r4 2）。
+  - `pytest tests -q -p no:warnings --tb=no`：**3164 passed / 10 skipped**（基线 3093/10；测试增量口径 **CORE +63 / DSIM-1 +8** = +71，r4 新增 2 条 CORE 测试，无失败）。
   - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`：重冻后 PASS（warnings 均既有全仓告警）。
   - `pwsh -NoProfile -File tools/governance/verify_pins.ps1`：重冻后 18/18 PASS。
   - 证据探针（r3 重新生成）：`scripts/core_py_inventory_digest.py`（digest v2 + current 数组 + R-001 derived 向量）与 `scripts/core_py_isolation_scan.py`（R-004 修复后）均 EXIT=0。
@@ -190,13 +190,21 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 > 依据：`doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`（Codex 独立裁决，3a/4 OVERTURN、2 措辞更正、b/c CONFIRM）与 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`（经 r5/r7 复核）。**已重冻**：UNFREEZE commit `fc9833479`；C-04b v1.1 sha256 `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f`、M2-C1 rev 2.14 sha256 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f`；pins 18/18。实现者 `fea12-core-py`。
 
 - **3a（current 全量绑定）已修**：`protection` 增 `currentRegionRevisionIds`（**全部** region current，含 lineage-hidden/separate/detached，不按可见性裁剪；字典序排序去重）与 `currentArtifactRevisionIds`（全部 artifact current，字典序排序去重）；`currentRevisionId` 仅代表展示值并**移出 digest v2**；canonical v2（UNFREEZE §A2 字段表）、golden v2；preview wire minor **保持 11（不 bump，新增字段 additive optional）**。
-  - 判别测试：`test_preview_binds_non_first_region_current`（Codex 反例直接回归：改非首个 current → 旧 digest STALE 零副作用；代表值不变也拒绝）、`test_preview_current_revision_uses_lineage_visibility`（hidden current=rr1 仍入绑定集、代表值 null）、`test_preview_binds_artifact_current_set`（artifact current 增/改/删）、`test_preview_binds_region_current_add_and_remove`（集合增删）。
+  - 判别测试：`test_preview_binds_non_first_region_current`（改非首个 current → 旧 digest STALE 零副作用；代表值不变也拒绝）、`test_preview_current_revision_uses_lineage_visibility`（hidden current=rr1 仍入绑定集、代表值 null）、**`test_preview_hidden_region_current_change_is_stale`（r4 P1-1：hidden current 变化 → 旧 digest STALE、全表/文件零副作用；新 digest 成功）**、`test_preview_binds_artifact_current_set`（artifact current 增/改/删）、`test_preview_binds_region_current_add_and_remove`（集合增删）。
 - **4（retry 集合级 digest）已修**：首次删除事务在 `book_cleanup_manifests.targets_json` **JSON additive**（无 DDL）按行持久化 `batch_id`/`original_book_ids`（原预览有序全量）/`original_collection_digest`/`book_id`/`inventory_digest`/`inventory_inputs`（canonical v2 输入快照），批次字段逐行复制、同事务写。**形状分支（最终字节）**：单条命令的 `inventory_digest` = 该书**逐书 digest**（首次=当前重算；retry=manifest 逐书值，不接受集合级值）；批量首次=`live` 重算**集合级**值，retry=manifest `original_collection_digest` **原样回传**；`inventory_digests` key 必须恰好覆盖请求 `book_ids`（缺/多 key → `INVALID_REQUEST`）。retry 校验：`book_ids` 为原预览有序集合的**保序 pending 子集**；逐书等于 manifest 值（并用 `inventory_inputs` 重算检测篡改）；**mixed live+retry 一律拒绝**（STALE 零副作用，须重新预览）；**retry 不受“一次预览→一次确认”时效限制**（PD-07，以 manifest 值校验、不重跑预览）。FAKE、重排、换目标、缺项、key 覆盖错、manifest 缺失/篡改全部拒绝且零副作用；纯 pending 正确路径幂等。
-  - 判别测试：`test_delete_books_retry_collection_digest_is_always_validated`、`test_delete_books_retry_order_must_follow_original_preview`、`test_delete_books_retry_manifest_tamper_or_missing_is_stale`、`test_delete_book_cleanup_pending_retry_requires_manifest_digest`；原 r2“FAKE_DIGEST 通过”断言已改为 STALE 断言。
+  - 判别测试：`test_delete_books_retry_collection_digest_is_always_validated`、`test_delete_books_retry_order_must_follow_original_preview`、`test_delete_books_retry_manifest_tamper_is_stale_and_missing_is_book_not_found`、`test_delete_book_cleanup_pending_retry_requires_manifest_digest`、**`test_retry_corrupt_manifest_is_stale_both_shapes`（r4 P2-1：corrupt JSON→STALE 单条/批量、零副作用）**；原 r2“FAKE_DIGEST 通过”断言已改为 STALE 断言。
 - **措辞更正（裁决 2）**：M2-C1 rev 2.13 实为 **166 insertions / 2 deletions**（版本状态行 + §11 policy 行授权替换），非“纯 additive/既有行零变化”；卡/记录/Handoff 已同步。
 - **Host / apps**：按最终契约 preview minor **保持 11**，**apps/.NET 零 diff**（先前按草案批准的 11→12 窄批已全部回退；Host 对新增 additive optional 响应字段无需改动）。
-- **门禁（r3 工作树）**：相关组 **1114 passed**；全量 pytest **3162 passed / 10 skipped**；apps 零 diff（不跑 .NET 窄批；全量 .NET 引用集成 1405/0/80）；golden v2 / isolation probes EXIT=0；契约重冻后 `check.ps1 -TaskPath` 与 `verify_pins.ps1`（18/18）复跑并记入 gates log。
+- **门禁（r4 工作树）**：相关组 **1116 passed**；全量 pytest **3164 passed / 10 skipped**；apps 零 diff（不跑 .NET 窄批；全量 .NET 引用集成 1405/0/80）；golden v2 / isolation probes EXIT=0；契约重冻后 `check.ps1 -TaskPath` 与 `verify_pins.ps1`（18/18）复跑并记入 gates log。
 - **状态**：保持 `in_review`；AC4/AC5 由 Lead 在 r3 Review 后定稿，不自行改回 MET。
+
+## r4 最小返修结果（r3 Review changes_requested：P0=0/P1=1/P2=1/P3=6）
+
+- **P1-1（证据缺口）已修**：新增 `test_preview_hidden_region_current_change_is_stale`（hidden region current rr1→rr2，代表值仍 null；旧 digest 单条确认 → `BOOK_DELETE_STALE_PREVIEW`，全表快照与受管文件字节零变化；新 digest 成功删除）；卡 AC4/AC5、实施记录 §2.8/§8、Handoff §3 已如实引用，不再声称旧测试覆盖该反例。
+- **P2-1（corrupt manifest 分类）已修**：repository 新增 `get_cleanup_manifest_state` 区分 `missing`/`corrupt`/`ok`；`_delete_target_state` 增 `corrupt` 态；单条 corrupt→`BOOK_DELETE_STALE_PREVIEW`、批量 corrupt→顶层 STALE + items 标注；行缺失仍 `BOOK_NOT_FOUND`。补 `test_retry_corrupt_manifest_is_stale_both_shapes`（单条/批量、零副作用、修复 payload 后可重试）。
+- **P3 同批**：记录/卡 `preview minor 12`→11；旧 mixed 测试名与“tamper_or_missing”测试名更正；manifest 表述改为顶层 6 键；retry 表述改“原集合 digest 原样回传”；gates “tests 3 文件”→“2 文件”；Handoff 从 r3 commit 列表移除未改动的 `tests/fea12`；preview golden 钉死 v2 字面量；EV-A-GATES pin 改为 r4 主提交并注明“evidence commit pin（head 行在后续 head-pin 提交追加，不改证据字节）”；冻结记录 r7/STATUS/Plan 由 Lead 收口。
+- **AC 状态**：AC1–AC3、AC6–AC10、AC11、AC12 = MET；**AC4 待 Lead 恢复 MET**；**AC5 保持 PARTIAL 待 r4 窄面复核/Lead 定稿**。
+
 
 - **r2 Review 结果（2026-11-05）**：**approved（P0/P1/P2=0，P3=10 非阻断）**。R-001 派生文件披露真实修复（catalog 同源查询 + managed 去重 + catalog 失败 typed UNAVAILABLE；golden derived 向量 3 files/46 bytes；变异去除→测试精确失败）；R-008/R-009/R-010/R-011/R-012/R-004/R-005/R-007 逐项核销；独立复跑相关组 1104、全量 pytest 3152/10、pins 18/18、check PASS(3 warnings)、golden/isolation 探针一致；报告 `doc/reviews/FEA-12-CORE-r2.md`（session `113ad38d-f601-4e30-b2c7-0721a95ae384`）。AC4 恢复 MET、AC11 维持 MET（Lead 定稿）。
 - **r2 Review P3 残留（如实保留，不阻断）**：check 警告数/`gates-core-py.log` purge 11→10 等过程记录口径、`EV-A-HANDOFF` pin 已更新为终稿 `3da210518`、Handoff "19→3" 笔误；1 条 catalog 失败→UNAVAILABLE 的仓库测试为可选补充（行为已由 Reviewer 探针验证）。上述不改写已 review 的代码/证据字节。
@@ -216,28 +224,28 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总 | verification/FEA-12-CORE/logs/gates-core-py.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 41703da92 | null | CANONICAL |
-| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 41703da92 | null | SOURCE_PIN |
-| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 41703da92 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总（evidence commit pin；最终 head 行只在后续 docs/head-pin 提交追加，不改证据字节） | verification/FEA-12-CORE/logs/gates-core-py.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 44718d3c9 | null | CANONICAL |
+| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 44718d3c9 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 44718d3c9 | null | SOURCE_PIN |
 | EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪（终稿） | doc/handoffs/FEA-12-CORE-core-py.md | 659c679be | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_CAPABILITY_PRO | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-capability-probe.json | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_IMPLEMENTATION | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-implementation-record.md | fc7125586 | null | CANONICAL |

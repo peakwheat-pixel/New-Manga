@@ -23,14 +23,27 @@
 >    `src/bootstrap/core_service.py`（current 数组/ A3 retry 校验）、
 >    `src/infrastructure/sqlite/library.py`（manifest JSON additive：`batch_id`/`original_book_ids`/
 >    `original_collection_digest`/`book_id`/`inventory_digest`/`inventory_inputs`）；
->    测试 `tests/core/test_core_delete_preview_commands.py`、`tests/core/test_core_delete_commands.py`、
->    `tests/fea12/test_core_delete_protection.py`（preview minor 保持 11）；
+>    （r3 实际只改 2 个测试文件：`tests/core/test_core_delete_preview_commands.py`、
+>    `tests/core/test_core_delete_commands.py`；`tests/fea12/**` r3 零改动）；
 >    `verification/FEA-12-CORE/**` r3 证据/日志/golden v2/探针/实施记录。
 > 8. **r3 docs 提交**：任务卡（in_review + r3 结果 + evidence pin）+ 本 Handoff。
+>
+> **r4 最小返修（r3 Review changes_requested）**：
+> 9. **`44718d3c9`** `fix(fea-12-core): r4 最小返修——hidden-current 判别测试 + corrupt manifest 分类 + 口径更正`
+>    — 源码 3 文件、测试 2 文件、`verification/FEA-12-CORE/**` r4 证据（Canonical Evidence A 分片行 pin 指向本 commit）。
+> 10. **r4 docs 提交**：任务卡（r4 结果 + evidence pin 44718d3c9）+ 本 Handoff（SHA 见 `git log`）；
+>    后续 head-pin 提交只更新卡片 Handoff 行 pin，不改证据字节。
 >
 > 只 add 了本卡 allowed_paths 内文件。未 commit：`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、
 > `doc/TASK_LEDGER.md`、`doc/reviews/**`（Lead-owned，含 UNFREEZE 提案/裁决记录）、DSIM-1 文件；
 > **apps/.NET 零 diff**（已核对 `git diff --name-only`）。
+
+## 1b. r4 最小返修（r3 Review changes_requested → 本次窄面返修）
+
+- **P1-1**：新增仓库判别测试 `test_preview_hidden_region_current_change_is_stale`（hidden current 变化 → 旧 digest STALE、books/文件/其他行零副作用；新 digest 成功）；卡/记录/Handoff 已如实引用（先前“已覆盖”表述为不实，已更正）。
+- **P2-1**：`get_cleanup_manifest_state` 区分 missing/corrupt/ok；corrupt JSON → `BOOK_DELETE_STALE_PREVIEW`（单条与批量 items），行缺失仍 `BOOK_NOT_FOUND`；补 `test_retry_corrupt_manifest_is_stale_both_shapes`。
+- **P3 同批**：minor 11 表述、测试更名、manifest 顶层键、原集合 digest 原样回传、gates 测试文件数、Handoff r3 文件清单、golden 字面量、EV-A-GATES pin（r4 主提交 + 说明）均已更正；冻结记录 r7/STATUS/Plan 由 Lead 收口。
+- r4 主提交 `44718d3c9`（源码/测试/证据）；docs/head-pin 提交见 `git log`。
 
 ## 2. 交付摘要（r3 更新）
 
@@ -76,15 +89,15 @@
 | AC | 状态 | 依据 |
 |---|---|---|
 | AC1–AC3、AC6–AC10、AC11、AC12 | **MET** | 实施记录 §4 + `logs/core-py-ac*.log`（r3 重新生成）；AC11 由 Lead 定稿（含 Host 侧证据） |
-| AC4 | **PARTIAL（r3 已修复，证据齐备，待 r3 Review/Lead 定稿）** | current 全量绑定 + golden v2 + 判别测试（非首个/隐藏 current、artifact current 增删改）；`logs/core-py-ac4-preview.log`、`evidence/core-py-inventory-digest-golden.json` |
-| AC5 | **PARTIAL（r3 已修复，证据齐备，待 r3 Review/Lead 定稿）** | 单条逐书/批量集合级形状分支 + 保序 pending 子集 + 原集合 digest 原样回传 + mixed 拒绝 + manifest 篡改检测；`logs/core-py-ac5-digest-binding.log` |
+| AC4 | **PARTIAL（r3/r4 已修复，证据齐备，待 r4 窄面复核/Lead 定稿）** | current 全量绑定 + golden v2（字面量钉死）+ 判别测试（非首个 current、**hidden current 变化→旧 digest STALE 零副作用、新 digest 成功**、artifact current 增删改）；`logs/core-py-ac4-preview.log`、`evidence/core-py-inventory-digest-golden.json` |
+| AC5 | **PARTIAL（r3/r4 已修复，证据齐备，待 r4 窄面复核/Lead 定稿）** | 单条逐书/批量集合级形状分支 + 保序 pending 子集 + 原集合 digest 原样回传 + mixed 拒绝 + manifest 篡改检测 + **corrupt manifest→STALE（行缺失才 NOT_FOUND）**；`logs/core-py-ac5-digest-binding.log` |
 
 ## 4. 门禁实跑（r3；命令/EXIT/数字见 `logs/gates-core-py.log`）
 
 | 门禁 | 命令 | EXIT | 结果 |
 |---|---|---|---|
-| 相关组 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings` | 0 | **1114 passed**（r2 1104 + r3 新增 10） |
-| 全量 pytest | `C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no` | 0 | **3162 passed / 10 skipped**（基线 3093/10；增量 **CORE +61 / DSIM-1 +8**） |
+| 相关组 | `C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings` | 0 | **1116 passed**（r2 1104 + r3 10 + r4 2） |
+| 全量 pytest | `C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no` | 0 | **3164 passed / 10 skipped**（基线 3093/10；增量 **CORE +63 / DSIM-1 +8**） |
 | .NET / apps | apps/.NET **零 diff**（v1.1 preview minor 保持 11，无需改动）；全量 .NET 引用集成记录 1405/0/80 | — | — |
 | pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 0 | **18/18 PASS**（契约重冻后复跑） |
 | 治理 check | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md` | 0 | **PASS（warnings 均既有全仓告警）**；最终复跑见 §7 |
