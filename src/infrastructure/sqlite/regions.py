@@ -14,9 +14,9 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
-from typing import Sequence
+from typing import Mapping, Sequence
 
 from application.editing.ports import (
     RegionCommitResult,
@@ -41,6 +41,18 @@ _REGION_COLUMNS = (
     " style_json, sfx_policy, region_locked, translation_locked, inpaint_locked,"
     " current_revision_id, created_at, updated_at, deleted_at"
 )
+
+
+@dataclass(frozen=True, slots=True)
+class RevisionLineage:
+    """Native lineage committed together with a region revision (FEA-11-LINEAGE-1,
+    C-17 §7.1). ``binding_id`` is the source binding the revision's coordinates
+    were captured against; ``provenance`` is the frozen lineage value."""
+
+    binding_id: str | None
+    provenance: str
+    from_revision_id: str | None = None
+    operation_id: str | None = None
 
 
 class SqliteRegionRepository:
@@ -203,6 +215,7 @@ class SqliteRegionRepository:
         *,
         expected_current_revision_id: str | None = None,
         lock_snapshot: RegionLockSnapshot | None = None,
+        lineage: RevisionLineage | None = None,
     ) -> RegionCommitResult:
         conn = self._conn
         # TASK-060 Q-002: BEGIN IMMEDIATE sits inside the try so a lock or
@@ -263,7 +276,7 @@ class SqliteRegionRepository:
                 ).fetchone()["next_no"]
             )
             stored_revision = replace(revision, revision_no=revision_no)
-            self._insert_revision(stored_revision)
+            self._insert_revision(stored_revision, lineage)
 
             # Revision-owned state is synced from the snapshot contract only.
             values = self._region_write_values(region)
@@ -303,6 +316,7 @@ class SqliteRegionRepository:
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
         page_region_limit: tuple[str, int] | None = None,
+        lineage_by_region: Mapping[str, RevisionLineage] | None = None,
     ) -> RegionCommitResult:
         """Existing composite write API; its signature remains stable."""
         return self._commit_region_batch(
@@ -312,6 +326,7 @@ class SqliteRegionRepository:
             revision_pins=revision_pins,
             expected_current_checks=expected_current_checks,
             page_region_limit=page_region_limit,
+            lineage_by_region=lineage_by_region,
         )
 
     def commit_region_batch_guarded(
@@ -319,10 +334,12 @@ class SqliteRegionRepository:
         *,
         updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]",
         protection_guards: "Sequence[RegionProtectionGuard]",
+        lineage_by_region: Mapping[str, RevisionLineage] | None = None,
     ) -> RegionCommitResult:
         """Draft apply variant with pointer and protection checks in-transaction."""
         return self._commit_region_batch(
-            updated_regions=updated_regions, protection_guards=protection_guards
+            updated_regions=updated_regions, protection_guards=protection_guards,
+            lineage_by_region=lineage_by_region
         )
 
     def _commit_region_batch(
@@ -335,6 +352,7 @@ class SqliteRegionRepository:
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
         page_region_limit: tuple[str, int] | None = None,
         protection_guards: "Sequence[RegionProtectionGuard]" = (),
+        lineage_by_region: Mapping[str, RevisionLineage] | None = None,
     ) -> RegionCommitResult:
         """ALL-OR-NOTHING composite Region write (see the ports protocol).
 
@@ -449,7 +467,10 @@ class SqliteRegionRepository:
                 self._insert_region_row(
                     conn, region, stored_revision.region_revision_id
                 )
-                self._insert_revision(stored_revision)
+                self._insert_revision(
+                    stored_revision,
+                    lineage_by_region.get(region.region_id) if lineage_by_region else None,
+                )
                 applied.append((region, stored_revision.region_revision_id))
 
             # 4. updated regions: append the next immutable revision and sync
@@ -461,7 +482,10 @@ class SqliteRegionRepository:
                     (region.region_id,),
                 ).fetchone()["next_no"]
                 stored_revision = replace(revision, revision_no=revision_no)
-                self._insert_revision(stored_revision)
+                self._insert_revision(
+                    stored_revision,
+                    lineage_by_region.get(region.region_id) if lineage_by_region else None,
+                )
                 values = self._region_write_values(region)
                 conn.execute(
                     "UPDATE regions SET page_id = ?, region_type = ?,"
@@ -572,7 +596,9 @@ class SqliteRegionRepository:
             )
         return cursor.rowcount
 
-    def _insert_revision(self, revision: RegionRevision) -> None:
+    def _insert_revision(
+        self, revision: RegionRevision, lineage: RevisionLineage | None = None
+    ) -> None:
         self._conn.execute(
             "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
             " snapshot_json, origin, review_state, is_pinned, source_run_id,"
@@ -588,6 +614,19 @@ class SqliteRegionRepository:
                 revision.created_at,
             ),
         )
+        if lineage is not None:
+            # FEA-11-LINEAGE-1 AC1: native lineage is written inside the SAME
+            # transaction as the revision, so a rollback leaves no orphan row.
+            self._conn.execute(
+                "INSERT INTO source_revision_lineage (revision_id, region_id,"
+                " binding_id, provenance, from_revision_id, operation_id, created_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    revision.region_revision_id, revision.region_id,
+                    lineage.binding_id, lineage.provenance,
+                    lineage.from_revision_id, lineage.operation_id, _utc_now(),
+                ),
+            )
 
 
 # ----------------------------------------------------------------------
