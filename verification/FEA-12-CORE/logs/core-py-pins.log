@@ -1,4 +1,4 @@
-# FEA-12-CORE shard A evidence (r3; post-freeze fc9833479)
+# FEA-12-CORE shard A evidence (r4; post-freeze fc9833479)
 # command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 # EXIT: 0
 # ----------------------------------------------------------------------

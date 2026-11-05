@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r3)
-# command: pytest tests/core/test_core_delete_commands.py -k "stale_preview or two_level or requires_well_formed or mixed_retry or retry or manifest_tamper or retry_order or cleanup_pending_retry_requires or mixed_live_retry or per_book_digest or key_set or first_confirm"
+# FEA-12-CORE shard A evidence (r4)
+# command: pytest tests/core/test_core_delete_commands.py -k "stale_preview or two_level or requires_well_formed or mixed_retry or retry or manifest_tamper or retry_order or cleanup_pending_retry_requires or mixed_live_retry or per_book_digest or key_set or first_confirm or corrupt_manifest or hidden_region_current"
 # EXIT: 0
 #----------------------------------------------------------------------
-..............                                                           [100%]
-14 passed, 26 deselected in 1.79s
+...............                                                          [100%]
+15 passed, 26 deselected in 1.41s
 

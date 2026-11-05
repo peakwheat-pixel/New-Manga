@@ -264,19 +264,19 @@ def test_preview_reports_full_pd01_disclosure(server: CoreServiceServer) -> None
     assert item["sharedFileRefs"] == []
 
 
-def test_preview_current_revision_uses_lineage_visibility(
-    server: CoreServiceServer,
-) -> None:
-    """Lead ruling: the disclosure follows the released FEA-11 read semantics —
-    a region hidden by a ``changed`` publication edge is not "visible", so it
-    cannot become the reported current revision."""
+def _seed_lineage_hidden_region(server: CoreServiceServer) -> str:
+    """Book b1 / page p1 / region rg1 whose current rr1 is lineage-hidden.
+
+    Builds the FK-complete v7 binding chain (superseded ``bind-old`` +
+    ``changed`` publication) used by the released FEA-11 read semantics so
+    ``LineageIsolationGuard.is_region_readable`` reports rr1 as not visible.
+    """
     core = server._core
     _seed_book(server, "b1")
-    _seed_page_with_region(
+    rel_path = _seed_page_with_region(
         server, book_id="b1", chapter_id="c1", page_id="p1", region_id="rg1",
         revision_id="rr1",
     )
-    # FK-complete source graph for a v7 binding chain.
     with core.conn:
         core.conn.execute(
             "INSERT INTO sources (source_id, source_kind, display_name, created_at, updated_at)"
@@ -331,6 +331,16 @@ def test_preview_current_revision_uses_lineage_visibility(
             " VALUES ('rr1', 'rg1', 'bind-old', 'captured_v7', ?)",
             (NOW,),
         )
+    return rel_path
+
+
+def test_preview_current_revision_uses_lineage_visibility(
+    server: CoreServiceServer,
+) -> None:
+    """Lead ruling: the disclosure follows the released FEA-11 read semantics —
+    a region hidden by a ``changed`` publication edge is not "visible", so it
+    cannot become the reported current revision (its current is still bound)."""
+    _seed_lineage_hidden_region(server)
     item = _preview(server, ["b1"])["items"][0]
     assert item["protection"]["currentRevisionId"] is None
     # C-04b v1.1 / Lead A1: a lineage-hidden current is NOT shown as the
@@ -339,7 +349,83 @@ def test_preview_current_revision_uses_lineage_visibility(
     assert item["protection"]["currentRegionRevisionIds"] == ["rr1"]
 
 
-# --- Read-only guarantee (PD-03) --------------------------------------
+def test_preview_hidden_region_current_change_is_stale(
+    server: CoreServiceServer,
+) -> None:
+    """P1-1 / frozen carrier §5-1: changing a *hidden* region current must
+    invalidate the old digest (Codex OVERTURN 3a counterexample), with zero
+    side effects; the re-previewed digest then succeeds."""
+    core = server._core
+    rel_path = _seed_lineage_hidden_region(server)
+    managed_file = Path(core.storage.absolute_path(rel_path))
+
+    first = _preview(server, ["b1"])
+    first_item = first["items"][0]
+    assert first_item["protection"]["currentRevisionId"] is None
+    assert first_item["protection"]["currentRegionRevisionIds"] == ["rr1"]
+    old_digest = first["inventoryDigests"]["b1"]
+
+    # Change the HIDDEN region current rr1 -> rr2 (rr2 is hidden too: same
+    # superseded binding lineage), so the representative stays null.
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, is_pinned, created_at)"
+            " VALUES ('rr2', 'rg1', 2, '{}', 'user', 'confirmed', 0, ?)",
+            (NOW,),
+        )
+        core.conn.execute(
+            "INSERT INTO source_revision_lineage (revision_id, region_id, binding_id,"
+            " provenance, created_at)"
+            " VALUES ('rr2', 'rg1', 'bind-old', 'captured_v7', ?)",
+            (NOW,),
+        )
+        core.conn.execute(
+            "UPDATE regions SET current_revision_id = 'rr2' WHERE region_id = 'rg1'"
+        )
+    second = _preview(server, ["b1"])
+    second_item = second["items"][0]
+    assert second_item["protection"]["currentRevisionId"] is None
+    assert second_item["protection"]["currentRegionRevisionIds"] == ["rr2"]
+    new_digest = second["inventoryDigests"]["b1"]
+    assert new_digest != old_digest
+
+    # Old digest confirmation => STALE with genuinely zero side effects.
+    rows_before = _table_rows(core.conn)
+    file_before = managed_file.read_bytes()
+    stale = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": "b1",
+            "confirm_permanent_delete": True,
+            "inventory_digest": old_digest,
+        },
+        minor=10,
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert _table_rows(core.conn) == rows_before
+    assert managed_file.read_bytes() == file_before
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+
+    # The re-previewed digest deletes successfully.
+    accepted = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": "b1",
+            "confirm_permanent_delete": True,
+            "inventory_digest": new_digest,
+        },
+        minor=10,
+    )
+    assert accepted["error"] is None, accepted["error"]
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 0
+    assert not managed_file.exists()
 
 
 def test_preview_is_read_only(server: CoreServiceServer) -> None:
@@ -420,9 +506,17 @@ def test_preview_digest_golden_vector_and_title_independence(
     item = result["items"][0]
     expected = _expected_digest(item)
     assert result["inventoryDigests"]["b1"] == expected
+    # P3-2: pin the frozen v2 golden literals so canonical drift fails in CI
+    # even if the independent recomputation above were changed in lockstep.
+    assert expected == (
+        "sha256:19b2ad3fede758694a31db631072954f38be46901c05f7d48991aa889aa05d72"
+    )
     # Collection digest = sha256 of the concatenated per-book hex, in order.
     assert result["inventoryDigest"] == collection_inventory_digest(
         ["b1"], {"b1": expected}
+    )
+    assert result["inventoryDigest"] == (
+        "sha256:1ecf951b0366c0580c5f03dc032285fa77eaa5bccaf14c6e775592312b5aeaf0"
     )
     # ``title`` is display-only (C-04b §2.1): renaming must not invalidate it.
     with core.conn:

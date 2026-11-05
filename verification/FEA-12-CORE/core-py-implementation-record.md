@@ -137,8 +137,8 @@
 | AC1 软删 | MET | `logs/core-py-ac1-move-to-trash.log`；`tests/core/test_core_trash_commands.py` move 组（仅 deleted_at 变更、全表快照、受管文件哈希不变、逐项原子） |
 | AC2 恢复 | MET | `logs/core-py-ac2-restore.log`；恢复后全表快照与删除前逐项相等（books 仅 deleted_at/updated_at 变化）、current/pin/进度/manual/binding 不变、逐项冲突 |
 | AC3 读取面不回归 | MET | `logs/core-py-ac3-recycle-read.log`；`ListRecycleBinBooks` 冻结投影/`page_count=None`/空数组≠失败；`ListTrash` 形状/分页/排序 |
-| AC4 只读预览 | r3 修复后证据齐备（待 r3 Review/Lead 定稿；r2 后因 Codex 3a 重开为 PARTIAL） | `logs/core-py-ac4-preview.log`；预览前后全表+文件 hash/mtime 不变；PD-01 三强制项；无路径/明文/堆栈；golden digest 独立复算一致；**r2 R-001**：派生 preview/page-original 文件计入 `deletedFiles/deletedBytes` 且与 cleanup 实际删除一致（判别测试 `test_preview_counts_catalog_derived_files_and_delete_removes_them`，golden 向量含 derived 记录） |
-| AC5 专门确认绑定 | r3 修复后证据齐备（待 r3 Review/Lead 定稿；Codex 4 重开为 PARTIAL） | `logs/core-py-ac5-digest-binding.log`；缺失/格式→INVALID_REQUEST；集合级+逐书两级；重排→STALE；预览后加锁→STALE 零副作用；重预览后可删；**r3**：集合级 digest 始终校验（纯 pending 与混合均不跳过）；manifest 持久化原预览有序集/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + 集合级重拼接；FAKE_DIGEST 判别测试转红 |
+| AC4 只读预览 | r4 修复后证据齐备（待 r4 窄面复核/Lead 定稿） | `logs/core-py-ac4-preview.log`；预览前后全表+文件 hash/mtime 不变；PD-01 三强制项；无路径/明文/堆栈；golden digest 独立复算一致；**r2 R-001**：派生 preview/page-original 文件计入 `deletedFiles/deletedBytes` 且与 cleanup 实际删除一致（判别测试 `test_preview_counts_catalog_derived_files_and_delete_removes_them`，golden 向量含 derived 记录；**r4 P1-1**：hidden region current 变化 → 旧 digest STALE、books/文件/其他行零副作用、新 digest 成功（`test_preview_hidden_region_current_change_is_stale`）；golden 字面量已钉死（`sha256:19b2ad3f…`/`sha256:1ecf951b…`） |
+| AC5 专门确认绑定 | r3 修复后证据齐备（待 r3 Review/Lead 定稿；Codex 4 重开为 PARTIAL） | `logs/core-py-ac5-digest-binding.log`；缺失/格式→INVALID_REQUEST；集合级+逐书两级；重排→STALE；预览后加锁→STALE 零副作用；重预览后可删；**r3**：集合级 digest 始终校验（纯 pending 与混合均不跳过）；manifest 持久化原预览有序集/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + **原集合 digest 原样回传**；FAKE_DIGEST 判别测试转红；**r4 P2-1**：manifest 行存在但 JSON 损坏 → `BOOK_DELETE_STALE_PREVIEW`（单条与批量 items，零副作用），行缺失才 `BOOK_NOT_FOUND`（`test_retry_corrupt_manifest_is_stale_both_shapes`） |
 | AC6 单事务/回滚 | MET | `logs/core-py-ac6-transaction-rollback.log`；`BEGIN IMMEDIATE` 实跑记录；最后一条 DELETE 前注入异常→全表快照相等、文件保留、无 manifest、FK check 空、未开始清理；单条 pending 重试成功；**r2 R-012**：批量 partial cleanup→`BOOK_DELETE_BATCH_CLEANUP_PENDING`、逐项 states、显式重试、幂等重放直接测试 |
 | AC7 保护披露/边界 | MET | `logs/core-py-ac7-protection-boundary.log`；含锁+人工+pin+draft 的书披露计数准确、删除后保护行确实删除（披露≠阻断）；非终态 Run → BOOK_BUSY 零副作用；事务前无顺手解锁/改 current |
 | AC8 共享引用/原文件 | MET | `logs/core-py-ac8-pd08-shared.log`；共享 managed/artifact 拆分成功且共享文件保留；不可拆分→CONFLICT 零副作用；原文件/源目录零触碰（隔离 + 静态扫描）；零 Windows 回收站 API |
@@ -149,8 +149,8 @@
 
 ## 5. 真实测量与门禁（r3 复跑，交付 head 见 Handoff）
 
-* `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1114 passed**（相关组；r2 1104 + r3 新增 10）。
-* `pytest tests -q -p no:warnings --tb=no`：**3162 passed / 10 skipped**（基线 3093/10；测试增量口径：**CORE +61 / DSIM-1 +8** = +69；r3 新增 10 条 CORE 测试）。
+* `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1116 passed**（相关组；r2 1104 + r3 新增 10 + r4 新增 2）。
+* `pytest tests -q -p no:warnings --tb=no`：**3164 passed / 10 skipped**（基线 3093/10；测试增量口径：**CORE +63 / DSIM-1 +8** = +71；r4 新增 2 条 CORE 测试）。
 * `check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`、`verify_pins.ps1`：见 `logs/gates-core-py.log`（重冻后 r3 复跑）。
 * .NET：**apps 零 diff**（C-04b v1.1 明确 preview minor 保持 11，Host 无需改动；此前批准的窄批已按最终契约回退）。全量 .NET 引用 Lead 集成记录 1405/0/80。
 * 证据探针（可复跑，r3 重新生成）：
@@ -175,8 +175,11 @@
 6. **C-04b v1.1 digest v2 为值变化（不是 wire 版本变化）**：preview minor 保持 11；未发布、
    无迁移，预览→确认在同一 Core 版本内自洽。新 Core MUST 返回两个 current 数组（additive
    optional）；旧 Host/UI 缺省时按 unknown fail-closed（Host 无需代码改动，apps 零 diff）。
-7. **manifest 绑定元数据为 JSON additive**（`book_cleanup_manifests.targets_json` 内新增
-   `preview` 键），无 DDL/新表；manifest 缺失/篡改 fail-closed，不 shape-only 重试。
+7. **manifest 绑定元数据为 JSON additive**（`book_cleanup_manifests.targets_json` 顶层新增
+   `batch_id`/`original_book_ids`/`original_collection_digest`/`book_id`/`inventory_digest`/
+   `inventory_inputs` 键，批次字段逐行复制），无 DDL/新表；manifest **缺失** → `BOOK_NOT_FOUND`
+   （无 Book 行时）/批量预检 NOT_FOUND，manifest **损坏或篡改** → `BOOK_DELETE_STALE_PREVIEW`；
+   不 shape-only 重试。
 8. 真实 Windows 回收站（D 流程）NOT_RUN：首版按范围冻结零实现、零 OS API。
 
 ## 7. r1 Review findings r2 处置（changes_requested → 本次返修）
@@ -187,7 +190,7 @@
 | R-004 隔离探针 | P3 | **已修**：`data_root.is_relative_to(WORK_ROOT)` 并纳入 `runtime.pass`；DRIVE_PATH 实际用于扫描删除模块+证据脚本并纳入 static pass；重生成 JSON | `evidence/core-py-isolation-scan.json`（`drive_path_hits: []`、`data_root_under_workspace_temp: true`） |
 | R-005 测试计数口径/保护计数 | P3 | **已修**：卡/记录/Handoff 改为「CORE +51 / DSIM-1 +8」；gates log protection 计 11（policy 用例 11 条） | 本记录 §5、Handoff §4、`logs/gates-core-py.log` G3 |
 | R-007 Book.restore 未接线 | P3 | **已修**：`restore_book_from_trash` 经 domain `Book.restore()` 产生值 + guarded UPDATE；补 domain 单测 | `test_book_restore_domain_helper_clears_only_the_marker` |
-| R-008 混合 retry digest 限定 | P3 | **已裁定并补测/限定**：集合级仅形状校验（存在 retry 目标时），逐书对存活目标强校验；记录 §2.8 限定 | `test_delete_books_mixed_retry_batch_validates_live_per_book_digest`（a 失配 STALE / b 重试成功） |
+| R-008 混合 retry digest 限定 | P3 | **已裁定并补测/限定**（r3 起该限定被 C-04b v1.1 冻结语义取代：保序 pending 子集 + 原集合 digest + mixed 拒绝） | 原测试已改名为 `test_delete_books_mixed_live_retry_is_rejected_and_pure_paths_work`；记录 §2.8 为最终语义 |
 | R-009 批量写边界错误码 | P3 | **已修**：`PermanentDeleteBlockedError` 携带 `book_id`；批量顶层 `BOOK_BUSY`、items 归因；竞态注入测试 | `test_delete_books_write_boundary_race_projects_busy_item` |
 | R-010 第五预检盲点 | P3 | **已修**：目标外 binding previous→目标 binding → BOOK_DELETE_CONFLICT；判别测试直接构造该图 | `test_delete_book_unsafe_binding_previous_reference_conflicts` |
 | R-011 currentRevisionId 弱断言 | P3 | **已修**：断言钉住 `== "rr1"`（首个可见 region），rr2 仅 pinned | `test_preview_reports_full_pd01_disclosure` |
@@ -199,7 +202,17 @@
 
 | 缺陷 | 处置 | 判别证据 |
 |---|---|---|
-| 3a：current 只绑定代表值，非首个 current 变化后旧 digest 仍删除成功 | **已修**：`currentRegionRevisionIds`（**全部** region current，含 hidden/separate/detached，不按可见性裁剪）+ `currentArtifactRevisionIds`（全部 artifact current）；`currentRevisionId` 仅展示值并移出 digest v2；canonical v2 + golden v2；preview minor 12 | `test_preview_binds_non_first_region_current`（Codex 反例回归：改非首个→旧 digest STALE 零副作用）、`test_preview_current_revision_uses_lineage_visibility`（hidden current=rr1 仍入绑定集、代表值 null）、`test_preview_binds_artifact_current_set`、`test_preview_binds_region_current_add_and_remove`、golden v2 |
-| 4：混合 live+retry 跳过集合级 digest | **已修**：首次删除事务在 manifest 持久化原预览有序 `book_ids`/逐书 digest/集合级 digest/每书 canonical 绑定输入；retry 校验保序 pending 子集 + 逐书 manifest 值（重算检测篡改）+ 集合级始终校验；FAKE_DIGEST/重排/换目标/缺项/篡改全部拒绝零副作用 | `test_delete_books_retry_collection_digest_is_always_validated`、`test_delete_books_retry_order_must_follow_original_preview`、`test_delete_books_retry_manifest_tamper_or_missing_is_stale`、`test_delete_book_cleanup_pending_retry_requires_manifest_digest`；`test_delete_books_mixed_retry_batch_validates_live_per_book_digest` 中原“shape-only 通过”断言已转红 |
+| 3a：current 只绑定代表值，非首个 current 变化后旧 digest 仍删除成功 | **已修**：`currentRegionRevisionIds`（**全部** region current，含 hidden/separate/detached，不按可见性裁剪）+ `currentArtifactRevisionIds`（全部 artifact current）；`currentRevisionId` 仅展示值并移出 digest v2；canonical v2 + golden v2；preview minor **11** | `test_preview_binds_non_first_region_current`（Codex 反例回归：改非首个→旧 digest STALE 零副作用）、`test_preview_current_revision_uses_lineage_visibility`（hidden current=rr1 仍入绑定集、代表值 null）、`test_preview_hidden_region_current_change_is_stale`（**r4 P1-1**：hidden current 变化→旧 digest STALE 零副作用、新 digest 成功）、`test_preview_binds_artifact_current_set`、`test_preview_binds_region_current_add_and_remove`、golden v2（字面量已钉死） |
+| 4：混合 live+retry 跳过集合级 digest | **已修**：首次删除事务在 manifest 持久化原预览有序 `book_ids`/逐书 digest/集合级 digest/每书 canonical 绑定输入；retry 校验保序 pending 子集 + 逐书 manifest 值（重算检测篡改）+ 集合级始终校验；FAKE_DIGEST/重排/换目标/缺项/篡改全部拒绝零副作用 | `test_delete_books_retry_collection_digest_is_always_validated`、`test_delete_books_retry_order_must_follow_original_preview`、`test_delete_books_retry_manifest_tamper_is_stale_and_missing_is_book_not_found`（r4 更名；missing=NOT_FOUND、corrupt/tamper=STALE）、`test_delete_book_cleanup_pending_retry_requires_manifest_digest`、`test_retry_corrupt_manifest_is_stale_both_shapes`（**r4 P2-1**）；原“shape-only 通过”断言已转红 |
 | 裁决 2 措辞：M2-C1 rev 2.13 非纯 additive | **已更正**：卡/记录措辞为 “166 insertions / 2 deletions（版本状态行 + §11 policy 行授权替换）” | 卡「Codex 裁决与返修计划」、本记录 §2/§8 |
 | b/c 确认 | pinned 并集、deletedFiles/Bytes 含派生文件口径不变 | AC4/AC7 既有测试保持 |
+
+## 9. r3 Review findings r4 处置（changes_requested：P1=1/P2=1/P3=6 → 最小 r4）
+
+| Finding | 级别 | r4 处置 | 判别证据 |
+|---|---|---|---|
+| P1-1 hidden region current 变化缺仓库判别测试、卡面/记录不实声称覆盖 | P1 | **已修**：新增 `test_preview_hidden_region_current_change_is_stale`（hidden current rr1→rr2，代表值仍 null；旧 digest 单条确认→STALE 零副作用（全表快照+文件字节不变）；新 digest 成功删除）；卡 AC4/AC5、记录 §2.8/§8、Handoff §3 已改为如实引用该测试 | `tests/core/test_core_delete_preview_commands.py::test_preview_hidden_region_current_change_is_stale` |
+| P2-1 corrupt `targets_json` 被分类为 BOOK_NOT_FOUND 而非 STALE | P2 | **已修**：repository 新增 `get_cleanup_manifest_state` 区分 `missing`/`corrupt`/`ok`；`_delete_target_state` 增 `corrupt` 态；单条 corrupt→STALE、批量 corrupt→顶层 STALE + items 标注；行缺失仍 NOT_FOUND。补 single/batch 判别测试（零副作用、修复 payload 后可重试） | `test_retry_corrupt_manifest_is_stale_both_shapes`；`tests/core/test_core_delete_commands.py` |
+| P3-1 记录口径（minor 12 / 旧测试名 / preview 键 / 重拼接 / tests 3 文件 / Handoff fea12 / docstring reading-order） | P3 | **已修**：记录/卡/Handoff/gates log 全部更正；`service.py`/`core_service.py` docstring 改为“全部 region（含 hidden）+ 字典序；代表值才用可见性/阅读序” | 本记录 §2/§4/§6/§8、卡、Handoff、gates log |
+| P3-2 golden 测试自指 | P3 | **已修**：preview golden 测试钉死 v2 字面量 `sha256:19b2ad3f…`（单书）与 `sha256:1ecf951b…`（集合），canonical/字段漂移会直接失败 | `test_preview_digest_golden_vector_and_title_independence` |
+| P3-3/4/5/6 其余 | P3 | P3-3：r4 将 EV-A-GATES pin 改为 r4 主提交并注明“evidence commit pin；head 行后续追加”；P3-4/P3-5 由 Lead 更新冻结记录 r7/STATUS/Plan；P3-6：测试已更名并在名中区分 missing=NOT_FOUND / corrupt/tamper=STALE | 卡 Canonical Evidence、Lead 文档收口 |

@@ -15,7 +15,7 @@
     "a_move": {
       "moved": [
         {
-          "book_id": "97e1952f26f74c238318de958d0dc80a"
+          "book_id": "8fc5596ea6a44544a541e21c1ba3a079"
         }
       ],
       "skipped": []
@@ -23,23 +23,23 @@
     "a_list": {
       "items": [
         {
-          "bookId": "97e1952f26f74c238318de958d0dc80a",
+          "bookId": "8fc5596ea6a44544a541e21c1ba3a079",
           "title": "Isolation Probe",
-          "deletedAt": "2026-11-05T13:42:03.844+00:00"
+          "deletedAt": "2026-11-05T15:09:54.593+00:00"
         }
       ]
     },
     "a_restore": {
       "restored": [
         {
-          "book_id": "97e1952f26f74c238318de958d0dc80a"
+          "book_id": "8fc5596ea6a44544a541e21c1ba3a079"
         }
       ],
       "conflicts": []
     },
     "c_preview_error": null,
     "c_delete": {
-      "book_id": "97e1952f26f74c238318de958d0dc80a",
+      "book_id": "8fc5596ea6a44544a541e21c1ba3a079",
       "deleted": true
     },
     "purge_trash_error": "UNKNOWN_COMMAND",

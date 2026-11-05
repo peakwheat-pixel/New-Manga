@@ -1728,16 +1728,23 @@ class CoreServiceServer:
         """``(state, raw_inventory)`` for one target.
 
         ``book`` — a live Book row exists; ``retry`` — the Book row is gone but
-        a committed delete left its cleanup manifest (PD-07 retry, no new
-        preview is possible); ``missing`` — neither (BOOK_NOT_FOUND).
+        a committed delete left a readable cleanup manifest (PD-07 retry, no
+        new preview is possible); ``corrupt`` — the Book row is gone and the
+        manifest row exists but its JSON payload is unreadable (fail closed as
+        STALE per C-04b v1.1 §2.2); ``missing`` — neither (BOOK_NOT_FOUND).
         """
         inventory = self._core.repository.book_delete_inventory(
             book_id, target_book_ids, storage=self._core.storage
         )
         if inventory is not None:
             return "book", inventory
-        if self._core.repository.get_cleanup_manifest_data(book_id) is not None:
+        manifest_status, _ = self._core.repository.get_cleanup_manifest_state(
+            book_id
+        )
+        if manifest_status == "ok":
             return "retry", None
+        if manifest_status == "corrupt":
+            return "corrupt", None
         return "missing", None
 
     def _derived_cleanup_entries(self, book_id: str) -> list[dict[str, str]]:
@@ -1812,9 +1819,10 @@ class CoreServiceServer:
           ``currentRegionRevisionIds`` (**every** region current, including
           lineage-hidden/separate/detached history; Codex ruling: "lineage
           invisible != this historical protection cannot be deleted") and
-          ``currentArtifactRevisionIds`` (every artifact current), both in
-          reading order, de-duplicated.  ``currentRevisionId`` stays only as a
-          representative display value and is NOT part of digest v2.
+          ``currentArtifactRevisionIds`` (every artifact current); both are
+          lexicographically sorted + de-duplicated.  ``currentRevisionId``
+          stays only as a representative display value (reading order +
+          lineage visibility) and is NOT part of digest v2.
         """
         inventory = dict(raw)
         repository = self._core.repository
@@ -2361,6 +2369,13 @@ class CoreServiceServer:
                 )
             if state == "missing":
                 return None, self._delete_error("BOOK_NOT_FOUND", "not_found")
+            if state == "corrupt":
+                # C-04b v1.1 §2.2: manifest missing/corrupt/tampered =>
+                # BOOK_DELETE_STALE_PREVIEW (zero side effects), never a
+                # BOOK_NOT_FOUND masquerade.
+                return None, self._delete_error(
+                    "BOOK_DELETE_STALE_PREVIEW", "conflict"
+                )
             if state == "book":
                 try:
                     inventory = self._finalize_delete_inventory(raw_inventory or {})
@@ -2481,6 +2496,9 @@ class CoreServiceServer:
                     "unavailable",
                     True,
                 )
+            corrupt = [book_id for book_id in book_ids if states[book_id] == "corrupt"]
+            if corrupt:
+                return None, self._stale_preview_error(book_ids, corrupt)
             missing = [book_id for book_id in book_ids if states[book_id] == "missing"]
             if missing:
                 items = [

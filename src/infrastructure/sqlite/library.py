@@ -1007,54 +1007,69 @@ class SqliteLibraryRepository:
     # P09-AC3-DELETE-1: Project-level permanent deletion
     # ------------------------------------------------------------------
 
-    def get_cleanup_manifest_data(self, book_id: str) -> dict[str, Any] | None:
+    def get_cleanup_manifest_state(
+        self, book_id: str
+    ) -> tuple[str, dict[str, Any] | None]:
+        """``(status, data)`` for the cleanup manifest row.
+
+        C-04b v1.1 §2.2 distinguishes *row absent* from *row present but
+        unreadable*: the delete retry path maps "missing" to ``BOOK_NOT_FOUND``
+        semantics while a corrupt JSON payload must be fail-closed as
+        ``BOOK_DELETE_STALE_PREVIEW`` (a damaged manifest can no longer prove
+        the original binding).  ``status`` is one of ``"missing"`` /
+        ``"corrupt"`` / ``"ok"``.
+        """
         row = self._conn.execute(
             "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = ?",
             (book_id,),
         ).fetchone()
         if row is None:
-            return None
+            return "missing", None
         try:
             val = json.loads(row["targets_json"])
-            if isinstance(val, dict):
-                return {
-                    "managed_targets": list(val.get("managed_targets", [])),
-                    "page_ids": list(val.get("page_ids", [])),
-                    "preview_resource_ids": list(val.get("preview_resource_ids", [])),
-                    # R2 Finding 3: distinguish "written with no previews" from "written
-                    # before this field existed".  The first is a complete answer; the
-                    # second is an unknown, and treating an unknown as zero let a legacy
-                    # manifest report success, delete itself, and strand its previews.
-                    "preview_ids_known": "preview_resource_ids" in val,
-                    # C-04b v1.1 §2.2: a PD-07 retry target has no Book row
-                    # to re-preview, so the confirmed digest and the original
-                    # batch binding are persisted here (JSON additive, no DDL;
-                    # None for a pre-v1.1 manifest — the caller fails closed).
-                    "batch_id": val.get("batch_id"),
-                    "original_book_ids": list(val.get("original_book_ids", [])),
-                    "original_collection_digest": val.get(
-                        "original_collection_digest"
-                    ),
-                    "book_id": val.get("book_id"),
-                    "inventory_digest": val.get("inventory_digest"),
-                    "inventory_inputs": val.get("inventory_inputs"),
-                }
-            if isinstance(val, list):
-                return {
-                    "managed_targets": list(val),
-                    "page_ids": [],
-                    "preview_resource_ids": [],
-                    "preview_ids_known": False,   # bare-list legacy format
-                    "batch_id": None,
-                    "original_book_ids": [],
-                    "original_collection_digest": None,
-                    "book_id": book_id,
-                    "inventory_digest": None,
-                    "inventory_inputs": None,
-                }
-            return None
         except (json.JSONDecodeError, TypeError):
-            return None
+            return "corrupt", None
+        if isinstance(val, dict):
+            return "ok", {
+                "managed_targets": list(val.get("managed_targets", [])),
+                "page_ids": list(val.get("page_ids", [])),
+                "preview_resource_ids": list(val.get("preview_resource_ids", [])),
+                # R2 Finding 3: distinguish "written with no previews" from "written
+                # before this field existed".  The first is a complete answer; the
+                # second is an unknown, and treating an unknown as zero let a legacy
+                # manifest report success, delete itself, and strand its previews.
+                "preview_ids_known": "preview_resource_ids" in val,
+                # C-04b v1.1 §2.2: a PD-07 retry target has no Book row
+                # to re-preview, so the confirmed digest and the original
+                # batch binding are persisted here (JSON additive, no DDL;
+                # None for a pre-v1.1 manifest — the caller fails closed).
+                "batch_id": val.get("batch_id"),
+                "original_book_ids": list(val.get("original_book_ids", [])),
+                "original_collection_digest": val.get(
+                    "original_collection_digest"
+                ),
+                "book_id": val.get("book_id"),
+                "inventory_digest": val.get("inventory_digest"),
+                "inventory_inputs": val.get("inventory_inputs"),
+            }
+        if isinstance(val, list):
+            return "ok", {
+                "managed_targets": list(val),
+                "page_ids": [],
+                "preview_resource_ids": [],
+                "preview_ids_known": False,   # bare-list legacy format
+                "batch_id": None,
+                "original_book_ids": [],
+                "original_collection_digest": None,
+                "book_id": book_id,
+                "inventory_digest": None,
+                "inventory_inputs": None,
+            }
+        return "corrupt", None
+
+    def get_cleanup_manifest_data(self, book_id: str) -> dict[str, Any] | None:
+        status, data = self.get_cleanup_manifest_state(book_id)
+        return data if status == "ok" else None
 
     def get_cleanup_manifest(self, book_id: str) -> list[str] | None:
         data = self.get_cleanup_manifest_data(book_id)

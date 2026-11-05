@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r3)
+# FEA-12-CORE shard A evidence (r4)
 # command: pytest tests/core/test_core_trash_commands.py tests/core/test_core_delete_preview_commands.py -k "capabilities or purge or version or closed_shape"
 # EXIT: 0
 #----------------------------------------------------------------------
 .....                                                                    [100%]
-5 passed, 24 deselected in 0.70s
+5 passed, 25 deselected in 0.60s
 

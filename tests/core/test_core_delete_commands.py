@@ -1660,7 +1660,7 @@ def test_delete_books_retry_order_must_follow_original_preview(
     assert not Path(server._core.storage.absolute_path(rel_p2)).exists()
 
 
-def test_delete_books_retry_manifest_tamper_or_missing_is_stale(
+def test_delete_books_retry_manifest_tamper_is_stale_and_missing_is_book_not_found(
     server: CoreServiceServer, monkeypatch,
 ) -> None:
     """C-04b v1.1 §2.2: a tampered (or missing) manifest binding is fail-closed;
@@ -1822,3 +1822,72 @@ def test_batch_first_confirm_binds_collection_digest(
 
     accepted = _delete_batch(server, ["b1", "b2"], collection, digests)
     assert accepted["error"] is None, accepted["error"]
+
+# --- r4 P2-1: corrupt manifest JSON => STALE (both command shapes) ---------
+
+
+def test_retry_corrupt_manifest_is_stale_both_shapes(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """C-04b v1.1 §2.2: a manifest row whose ``targets_json`` is corrupt must
+    be typed ``BOOK_DELETE_STALE_PREVIEW`` (single and batch), not
+    ``BOOK_NOT_FOUND``; zero side effects.  Restoring the payload allows the
+    retry again."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")  # keeps the whole-library guard off
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    collection, digests = _batch_digests(server, ["b1"])
+    per_book = digests["b1"]
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_single(server, "b1", per_book)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+    managed_file = Path(server._core.storage.absolute_path(rel_p1))
+    assert managed_file.is_file()
+    good_json = server._core.conn.execute(
+        "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = 'b1'"
+    ).fetchone()[0]
+
+    with server._core.conn:
+        server._core.conn.execute(
+            "UPDATE book_cleanup_manifests SET targets_json = '{corrupt-json'"
+            " WHERE book_id = 'b1'"
+        )
+    # (1) single shape: corrupt manifest => STALE, zero side effects.
+    single = _delete_single(server, "b1", per_book)
+    assert single["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert single["error"]["category"] == "conflict"
+    assert managed_file.is_file()
+    assert repository.get_cleanup_manifest_state("b1")[0] == "corrupt"
+
+    # (2) batch shape: corrupt manifest => top-level STALE + item marking.
+    batch = _delete_batch(server, ["b1"], collection, {"b1": per_book})
+    assert batch["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert batch["error"]["details"]["items"] == [
+        {
+            "book_id": "b1",
+            "status": "not_started",
+            "error_code": "BOOK_DELETE_STALE_PREVIEW",
+        }
+    ]
+    assert managed_file.is_file()
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM book_cleanup_manifests WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+
+    # (3) restoring the payload makes the retry valid again.
+    with server._core.conn:
+        server._core.conn.execute(
+            "UPDATE book_cleanup_manifests SET targets_json = ? WHERE book_id = 'b1'",
+            (good_json,),
+        )
+    retry = _delete_batch(server, ["b1"], collection, {"b1": per_book})
+    assert retry["error"] is None, retry["error"]
+    assert not managed_file.exists()

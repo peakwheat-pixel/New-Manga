@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r3)
+# FEA-12-CORE shard A evidence (r4)
 # command: pytest tests/core/test_core_trash_commands.py -k "move_to_trash"
 # EXIT: 0
 #----------------------------------------------------------------------
 ....                                                                     [100%]
-4 passed, 11 deselected in 2.63s
+4 passed, 11 deselected in 3.04s
 

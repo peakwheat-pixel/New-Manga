@@ -1,12 +1,12 @@
-# FEA-12-CORE 分片 A（Python Core）门禁日志（r3 返修）
+# FEA-12-CORE 分片 A（Python Core）门禁日志（r4 最小返修）
 
-- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review；分片 A r3）
+- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review；分片 A r4）
 - Owner: `fea12-core-py`（DSH Agent Teams；Lead 集成）
-- 审查基线：Codex 独立裁决 `doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`（OVERTURN 3a/4；
-  r2 approved/closeout 后重开）；契约修订 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`
-  （C-04b **v1.1** + M2-C1 **rev 2.14**；Lead 重冻）。
+- 审查基线：r3 Review `doc/reviews/FEA-12-CORE-r3.md`（changes_requested：P0=0/P1=1/P2=1/P3=6）；
+  r4 只做最小返修（P1-1 hidden-current 判别测试、P2-1 corrupt manifest 分类、P3 文档口径）。
+  裁决/契约：Codex OVERTURN 3a/4；UNFREEZE C-04b **v1.1** + M2-C1 **rev 2.14**（`fc9833479`）。
 - 契约重冻：UNFREEZE commit **`fc9833479`**（C-04b v1.1 sha256 `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f`；M2-C1 rev 2.14 sha256 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f`；冻结记录 pin 按实际 sha；r7 窄面 APPROVE）。
-- 交付 head：r2 delivery head `3da210518` → **r3 主提交 `41703da92`** + **r3 docs 提交 `659c679be`**（本文件随 `41703da92` 入库；证据 pin 指向 `41703da92`，Handoff 行 pin 指向 `659c679be`）。
+- 交付 head：r2 delivery head `3da210518` → r3 主提交 `41703da92`/docs `659c679be`/head pin `32ef1dc31` → **r4 主提交 + docs/head-pin 提交（SHA 见 Handoff §1 与 r4 交付报告）**。
   本分片不 push。
 - 环境：Windows / `C:/Python314/python.exe` / pytest；隔离 DataRoot 仅用 pytest `tmp_path` 与
   `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\`（无真实用户数据/AppData/外部卷/回收站操作）。
@@ -40,13 +40,13 @@ NOTE:    Lead 的 UNFREEZE 复核/重冻在 r3 交付 commit 前完成；AC4/AC5
 ```text
 COMMAND: C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings
 EXIT:    0
-RESULT:  1114 passed in 90.89s（r2 1104 + r3 新增 10）
+RESULT:  1116 passed in 83.86s（r2 1104 + r3 10 + r4 2）
 LOG:     verification/FEA-12-CORE/logs/core-py-pytest-related.log
-测试文件（r3 计数）：tests/core/test_core_delete_commands.py 40；
-          tests/core/test_core_delete_preview_commands.py 14；
+测试文件（r3 计数）：tests/core/test_core_delete_commands.py 41；
+          tests/core/test_core_delete_preview_commands.py 15；
           tests/core/test_core_trash_commands.py 15；
           tests/fea12/test_core_delete_protection.py 11；tests/storage/test_purge_integrity.py 11
-r3 新增/强化：non-first region current、hidden region current 绑定、artifact current 增删改
+r4 新增：hidden region current 变化→旧 digest STALE 零副作用（P1-1）、corrupt manifest→STALE 单条/批量（P2-1）；r3：non-first region current、hidden region current 绑定、artifact current 增删改
           （字典序数组）、retry 保序 pending 子集、原集合 digest 原样回传、mixed 拒绝、
           manifest 篡改/缺失 fail-closed、单条逐书/批量集合级形状分支与 key 覆盖（共 10 条新增 + 既有断言收紧）。
 ```
@@ -56,8 +56,8 @@ r3 新增/强化：non-first region current、hidden region current 绑定、art
 ```text
 COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
 EXIT:    0
-RESULT:  3162 passed, 10 skipped in 273.69s
-基线：   3093 passed / 10 skipped；增量 +69 条 = **CORE +61 / DSIM-1 +8**（r1 51 + r2 8 + r3 10），
+RESULT:  3164 passed, 10 skipped in 247.43s
+基线：   3093 passed / 10 skipped；增量 +71 条 = **CORE +63 / DSIM-1 +8**（r1 51 + r2 8 + r3 10 + r4 2），
          无失败、无新增 skip。
 LOG:     verification/FEA-12-CORE/logs/core-py-pytest-full.log
 ```
@@ -94,11 +94,14 @@ cleanup-pending→retry；AC8 第 5 条预检；AC9 写边界竞态；AC11 Pytho
 5. **r3 / 3a**：`protection` additive 两个 current 数组（region 数组含 lineage-hidden/separate/
    detached，**不按可见性裁剪**，字典序排序去重；artifact 全部 current）；digest canonical v2
    （`currentRevisionId` 移出绑定）；非首个/隐藏 current、artifact current 增删改 → 旧 digest STALE。
+   **r4 P1-1**：hidden current 变化的仓库判别测试（旧 digest STALE、零副作用、新 digest 成功）已补。
    preview wire minor **保持 11（不 bump）**。
 6. **r3 / 4**：retry = 原预览有序集合的**保序 pending 子集** + `inventory_digest` **原样回传**
    manifest 的 `original_collection_digest` + 逐书 manifest 值校验 + **mixed live+retry 一律拒绝**；
    manifest JSON additive 持久化 `batch_id`/`original_book_ids`/`original_collection_digest`/
    `book_id`/`inventory_digest`/`inventory_inputs`（批次字段逐行复制）；取消 r2 R-008「仅形状校验」限定。
+   **r4 P2-1**：manifest 行存在但 JSON 损坏 → `BOOK_DELETE_STALE_PREVIEW`（单条/批量 items，零副作用）；
+   行缺失才 `BOOK_NOT_FOUND`（repository 区分 missing/corrupt）。
 7. **apps/.NET 零 diff**（草案阶段的 preview minor 11→12 窄批已按最终契约回退）。
 
 ## G8 全量 .NET
@@ -111,5 +114,5 @@ cleanup-pending→retry；AC8 第 5 条预检；AC9 写边界竞态；AC11 Pytho
 ## G9 副作用/证据卫生
 
 - 全量 pytest 后 `git status` 仅本分片 allowed_paths 文件；`verification/FEA-09/**` 无 tracked 重写。
-- r3 修改域：src 3 文件、tests 3 文件、verification/FEA-12-CORE/**、卡、Handoff；**apps 零 diff**；
+- r3/r4 修改域：src 3 文件、tests 2 文件（`test_core_delete_commands.py`、`test_core_delete_preview_commands.py`）、verification/FEA-12-CORE/**、卡、Handoff；**apps 零 diff**；
   未改 schema/依赖/Lead-owned 文档；未 push。

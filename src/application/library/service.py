@@ -283,8 +283,11 @@ def canonical_inventory_payload(inventory: dict) -> dict:
     v1.1 (CONTRACT-UNFREEZE-2026-11-05 §A2) replaces the single
     ``currentRevisionId`` binding value with the *complete* current sets:
 
-    * ``currentRegionRevisionIds`` — every lineage-visible region current;
-    * ``currentArtifactRevisionIds`` — every artifact current.
+    * ``currentRegionRevisionIds`` — every region current, **including**
+      lineage-hidden / separate / detached history (no visibility filtering;
+      sorting/dedupe is lexicographic);
+    * ``currentArtifactRevisionIds`` — every artifact current
+      (lexicographic, de-duplicated).
 
     The DTO keeps ``currentRevisionId`` as a representative display value, but
     it is deliberately **not** part of the digest (it does not bind anything).

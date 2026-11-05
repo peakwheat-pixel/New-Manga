@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r3)
+# FEA-12-CORE shard A evidence (r4)
 # command: pytest tests/core/test_core_delete_commands.py -k "pd08 or internal_shared or unsafe_binding_previous"
 # EXIT: 0
 #----------------------------------------------------------------------
 .....                                                                    [100%]
-5 passed, 35 deselected in 0.75s
+5 passed, 36 deselected in 0.62s
 
