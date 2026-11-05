@@ -70,6 +70,20 @@ _RENDERED = "rendered"
 _SKIPPED = "skipped"
 
 
+class LineageBindingMismatch(RuntimeError):
+    """FEA-11-LINEAGE-1 AC2: a region revision's native lineage binding does
+    not match the page's current binding, so its coordinates belong to a
+    different source image and must not be rendered."""
+
+    def __init__(self, page_id: str, region_id: str) -> None:
+        super().__init__(
+            f"region {region_id!r} on page {page_id!r} belongs to a different "
+            "source binding (lineage mismatch)"
+        )
+        self.page_id = page_id
+        self.region_id = region_id
+
+
 class RenderStatus:
     COMMITTED = "committed"
     BLOCKED = "blocked"
@@ -118,6 +132,8 @@ class RenderService:
         font_catalog: FontCatalog,
         content_decoder: Callable[[str, bytes], bytes] | None = None,
         original_page_reader: Callable[[str], bytes | None] | None = None,
+        lineage_binding: Callable[[str], str | None] | None = None,
+        lineage_of_revision: Callable[[str], str | None] | None = None,
     ) -> None:
         """``content_decoder`` is a TASK-033 assembly bridge, opt-in and
         behaviour-preserving: pipeline artifact revisions are stored in the
@@ -139,6 +155,11 @@ class RenderService:
         self._font_catalog = font_catalog
         self._content_decoder = content_decoder
         self._original_page_reader = original_page_reader
+        # FEA-11-LINEAGE-1 AC2: optional read guard. When both providers are
+        # supplied, every region rendered must have native lineage on the
+        # page's current binding (C-17 §7.1); a mismatch is a typed refusal.
+        self._lineage_binding = lineage_binding
+        self._lineage_of_revision = lineage_of_revision
 
     # ------------------------------------------------------------------
     # page rerender (D06 §41)
@@ -437,6 +458,16 @@ class RenderService:
             for region in self._region_repo.list_regions(page_id)
             if not region.deleted
         ]
+        if self._lineage_binding is not None and self._lineage_of_revision is not None:
+            current_binding = self._lineage_binding(page_id)
+            if current_binding is not None:
+                for region in regions:
+                    revision_id = region.current_revision_id
+                    if revision_id is None:
+                        continue
+                    revision_binding = self._lineage_of_revision(revision_id)
+                    if revision_binding != current_binding:
+                        raise LineageBindingMismatch(page_id, region.region_id)
         return sorted(regions, key=lambda region: region.reading_order)
 
     def _extract_source_style(self, page_id: str):

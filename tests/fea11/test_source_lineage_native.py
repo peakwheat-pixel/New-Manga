@@ -9,6 +9,7 @@ import sqlite3
 import pytest
 
 from application.editing.service import RegionEditingService
+from application.rendering.service import LineageBindingMismatch, RenderService
 from domain.regions.entities import (
     BBox,
     Region,
@@ -178,3 +179,55 @@ def test_editing_service_without_binding_provider_keeps_no_lineage(conn, page):
     service.create_region("p1", RegionGeometry(bbox=BBox(x=0, y=0, width=1, height=1)))
 
     assert _lineage_rows(conn) == []
+
+class _RegionRepo:
+    def __init__(self, regions):
+        self._regions = regions
+
+    def list_regions(self, page_id):
+        return list(self._regions)
+
+
+def _render_service(repo, *, page_binding, revision_bindings):
+    service = RenderService.__new__(RenderService)
+    service._region_repo = repo
+    service._lineage_binding = lambda page_id: page_binding
+    service._lineage_of_revision = revision_bindings.get
+    return service
+
+
+def test_render_guard_refuses_a_region_whose_lineage_binding_differs():
+    region = Region(region_id="rg1", page_id="p1")
+    region.current_revision_id = "rev-1"
+    service = _render_service(
+        _RegionRepo([region]),
+        page_binding="b2",
+        revision_bindings={"rev-1": "b1"},
+    )
+
+    with pytest.raises(LineageBindingMismatch) as error:
+        service._active_regions("p1")
+    assert error.value.region_id == "rg1"
+
+
+def test_render_guard_allows_a_matching_lineage_binding():
+    region = Region(region_id="rg1", page_id="p1")
+    region.current_revision_id = "rev-1"
+    service = _render_service(
+        _RegionRepo([region]),
+        page_binding="b2",
+        revision_bindings={"rev-1": "b2"},
+    )
+
+    assert [r.region_id for r in service._active_regions("p1")] == ["rg1"]
+
+
+def test_render_guard_is_inactive_without_providers():
+    region = Region(region_id="rg1", page_id="p1")
+    region.current_revision_id = "rev-1"
+    service = RenderService.__new__(RenderService)
+    service._region_repo = _RegionRepo([region])
+    service._lineage_binding = None
+    service._lineage_of_revision = None
+
+    assert [r.region_id for r in service._active_regions("p1")] == ["rg1"]
