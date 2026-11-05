@@ -4,8 +4,8 @@
 - 任务卡：`doc/tasks/FEA-12-CORE.md`（AC11 Host 命令桥 + 「前置事实」R-002 二选一）。
 - 冻结 wire：`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` §5.13/§5.14（rev 2.13 by FEA-12-PREREQ-1，delivery `3e37c595b`）。
 - 分片范围：**只碰 `apps/**` 的 .NET 文件 + `verification/FEA-12-CORE/**`**；不改 Python/src/**、冻结契约、schema/依赖、真实数据/回收站；不 push；不分片 A 的 `doc/tasks/FEA-12-CORE.md`（单写者规则：本记录由 Lead 集成时并入卡，**本分片不改 AC 标记**）。
-- 基线：卡 base `e47fd47e`、CORE 释放 commit `c8d9adc8d`；实跑 HEAD `d5925957b`（其上其他 commit 为 DSH/DSIM 文档与 DSIM r2 修复）。
-- 本分片实现 commit / 交付 head：见交付报告与 `git log`（作者 `fea12-core-host` 的 commit；本记录不写自指 hash）。
+- 基线：卡 base `e47fd47e`、CORE 释放 commit `c8d9adc8d`；门禁实跑时工作树 HEAD `d5925957b`，其后 `beee351bb` 仅 DSIM 文档/证据 commit（`apps/**` 零变动）。
+- 本分片交付 commit：`9ebb812b0`（父提交 `beee351bb`；15 文件 = 4 个 .NET 文件 + 11 个 `verification/FEA-12-CORE/core-host-*` 证据）。门禁结果对应同一源码状态（.NET/测试文件在实跑后至提交前零改动）。
 
 ## 1. R-002 处置：选择 **(b) probe 错误在 Host 层抛出、绕开 `ProjectDeleteTrashError`**
 
@@ -109,7 +109,7 @@
 
 ## 9. Review 就绪声明
 
-- 本分片实现完成，门禁 G1–G6 全绿，证据已按 `core-host-` 前缀落库并附 sha256。
+- 本分片实现完成，门禁 G1–G6 全绿，证据已按 `core-host-` 前缀落库并附 sha256；交付 commit `9ebb812b0`（证据 provenance 标注见本文件头与 gates log 头）。
 - 作者身份：`fea12-core-host`（DSH Agent Teams 分片 B）。**本分片未自审、未 commit Lead-owned 文档、未 push**。
 - 请 Lead 安排**上下文独立**的 Reviewer（非本分片实现者）审查交付 commit 的 .NET diff 与上述证据；Review 重点建议：§3 行为变更是否可接受、§8 残余风险 1/3、以及 `RequiredCapabilities` 与冻结 wire 的一致性。
 - 卡内 AC 标记由 Lead/分片 A 维护；本记录供 Lead 集成并入 `doc/tasks/FEA-12-CORE.md` 使用。

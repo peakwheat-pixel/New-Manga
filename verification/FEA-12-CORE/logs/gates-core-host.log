@@ -2,7 +2,9 @@
 
 > Owner：`fea12-core-host`（DSH Agent Teams 分片 B，共享任务 task-7；卡 `doc/tasks/FEA-12-CORE.md`）。
 > 仓库 `G:\CODEX\New Manga`（main）；卡 base / 释放点 `e47fd47e`，CORE 释放 commit `c8d9adc8d`。
-> 实跑 HEAD：`d5925957b`（该 HEAD 上的其他 commit 为 DSH/DSIM 文档与 DSIM r2 修复，非本分片改动）。
+> 门禁实跑时工作树 HEAD：`d5925957b`（其后 `beee351bb` 仅 DSIM 文档/证据 commit，`apps/**` 零变动 → 与本分片交付 commit
+> `9ebb812b0` 的 .NET/测试内容逐字节等价；交付 commit 父提交 `beee351bb`）。因此本文件全部门禁结果对应交付 commit
+> `9ebb812b0` 的源码状态。
 > 本分片只改 `apps/**` .NET 4 个文件 + `verification/FEA-12-CORE/**`；未碰 Python/src/**、冻结契约、schema/依赖、真实数据/回收站；未 push。
 > 已知既有 flaky（PREREQ-1 G3）：`FluentResidual2VisualEvidenceTests` 与 `WireLogSourceRedactionTests` 跨程序集证据写竞争。本轮两次全量均 PASS、flaky 未触发；仍按「首跑 + 复跑」记录，**不据此宣称稳定 PASS**。
 > 所有命令均在主工作树实跑；日志为本文件同目录的 `core-host-*.log`。
