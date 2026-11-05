@@ -8,7 +8,7 @@ import hashlib
 import json
 import threading
 import uuid
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from application.editing.errors import DraftError
 from application.editing.ports import (
@@ -16,8 +16,10 @@ from application.editing.ports import (
     RegionProtectionGuard,
     RegionRepository,
     RegionRevisionCommitter,
+    RevisionLineage,
 )
 from application.editing.region_canvas import RegionCanvasError, page_geometry_to_normalized
+from application.sources.lineage import LineageVerificationError
 from domain.drafts.entities import Draft, DraftLease, DraftStatus, EditToken, RegionCandidate
 from domain.regions.entities import (
     Region,
@@ -61,11 +63,16 @@ class DraftProtectionService:
         *,
         debounce_seconds: float = 0.4,
         token_ttl_seconds: int = 900,
+        lineage_binding: Callable[[str], str | None] | None = None,
     ) -> None:
         self._repository = repository
         self._committer = committer
         self._connection = connection
         self._journal = journal
+        # FEA-11-LINEAGE-1 AC1 (r1 P0-1c): drafts apply is a revision write
+        # path; every applied revision registers native lineage in the same
+        # transaction as the draft's atomic region batch (C-17 §7.1).
+        self._lineage_binding = lineage_binding
         self.debounce_seconds = debounce_seconds
         self.token_ttl_seconds = token_ttl_seconds
         self._lock = threading.RLock()
@@ -466,6 +473,7 @@ class DraftProtectionService:
             try:
                 updates = []
                 guards = []
+                lineage_by_region: dict[str, RevisionLineage] = {}
                 for item in candidate_data:
                     region_id = item.candidate.region_id
                     staged = deepcopy(item.staged_region)
@@ -484,9 +492,20 @@ class DraftProtectionService:
                         base_revision_id=item.candidate.base_revision_id,
                         protection_digest=item.protection_digest,
                     ))
-                result = self._committer.commit_region_batch_guarded(
-                    updated_regions=updates, protection_guards=guards
-                )
+                    lineage = self._lineage_for(staged.page_id)
+                    if lineage is not None:
+                        lineage_by_region[region_id] = lineage
+                try:
+                    result = self._committer.commit_region_batch_guarded(
+                        updated_regions=updates,
+                        protection_guards=guards,
+                        lineage_by_region=lineage_by_region or None,
+                    )
+                except LineageVerificationError as error:
+                    # FEA-11-LINEAGE-1: C-17 §7.1 typed refusal — a draft
+                    # captured against a stale/other binding must never flush
+                    # old coordinates into the current binding. Zero write.
+                    raise DraftError(error.code, error.detail) from error
                 if result.status is RegionCommitStatus.STALE_BASE_REVISION:
                     raise DraftError("STALE_BASE_REVISION", "BaseRevisionId changed before apply")
                 if result.status is RegionCommitStatus.LOCK_CHANGED:
@@ -593,6 +612,16 @@ class DraftProtectionService:
         if region is None or region.deleted:
             raise DraftError("TARGET_NOT_FOUND", "Region does not exist")
         return protection_digest(region)
+
+    def _lineage_for(self, page_id: str) -> RevisionLineage | None:
+        """FEA-11-LINEAGE-1 AC1: the native lineage row of an applied draft
+        revision (resolved from the page's current binding at apply time)."""
+        if self._lineage_binding is None:
+            return None
+        binding_id = self._lineage_binding(page_id)
+        if not binding_id:
+            return None
+        return RevisionLineage(binding_id=binding_id, provenance="native")
 
     def _apply_candidate_patch(self, region: Region, patch: Mapping[str, Any]) -> None:
         geometry = patch.get("geometry")

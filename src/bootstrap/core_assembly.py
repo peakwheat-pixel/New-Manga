@@ -798,6 +798,10 @@ class CoreServices:
     #: constructions valid; the sync wire face then fails closed with
     #: CORE_CAPABILITY_MISSING and core.ping hides the source.sync caps.
     source_sync: object = None
+    #: FEA-11-LINEAGE-1: the C-17 §7.1 lineage isolation guard every read/write
+    #: path shares (render/edit/draft/Run/export read filters). Provenance
+    #: object only; ``None`` keeps old unit constructions valid.
+    lineage_guard: object = None
     provider_profile_store: object = None
     network_profile_store: object = None
     provider_binding_store: object = None
@@ -1128,7 +1132,26 @@ def assemble_core_services(
         # real handle, so a later re-resolution cannot move it.
         managed_root_trust = ManagedRootTrust.capture(managed_root)
         library = LibraryService(repository)
-        regions = SqliteRegionRepository(conn)
+        # FEA-11-LINEAGE-1 (C-17 §7.1): the lineage gateway + isolation guard
+        # are assembled BEFORE the region repository so every revision write
+        # path shares ONE facts object over the live connection. The guard is
+        # never optional in production: a missing wiring would let old-binding
+        # coordinates be read/written as if they belonged to the current image.
+        from application.sources.lineage import LineageIsolationGuard
+        from infrastructure.sqlite.source_sync import (
+            SourceSyncLineageFacts,
+            SourceSyncStore,
+        )
+
+        source_sync_store = SourceSyncStore(conn)
+        lineage_guard = LineageIsolationGuard(SourceSyncLineageFacts(conn))
+
+        def lineage_binding_of_page(page_id: str) -> str | None:
+            """page_id -> current source binding (native lineage provenance)."""
+            binding = source_sync_store.current_binding_of_page(page_id)
+            return binding["binding_id"] if binding is not None else None
+
+        regions = SqliteRegionRepository(conn, lineage_guard=lineage_guard)
 
         def book_id_for_chapter(chapter_id: str) -> str:
             # Real Chapter→Book lookup for the D03 §18 managed layout; an
@@ -1164,15 +1187,21 @@ def assemble_core_services(
         # registry and the v8 storage gateway. The stack shares the import
         # face's grant session (one host-control session, one registry).
         from application.sources.ports import build_source_sync_stack
-        from infrastructure.sqlite.source_sync import SourceSyncStore
 
-        source_sync_store = SourceSyncStore(conn)
         source_sync = build_source_sync_stack(
             store=source_sync_store,
             access=source_read_refs,
             repository=repository,
             pdf_open=referenced_pdf_open,
         )
+        # FEA-11-LINEAGE-1 stock backfill (C-17 §7.1, r1 P0-1): revisions that
+        # predate lineage registration on ALREADY switched pages become
+        # legacy_unverified — never a guessed captured_v7/native row. The
+        # function is idempotent; running it at every assembly is safe. Pages
+        # that have NOT switched yet are deliberately untouched so the first
+        # switch can still capture their current revision (captured_v7).
+        with conn:
+            source_sync_store.backfill_legacy_unverified_lineage()
 
         def _project_of_chapter(chapter_id: str):
             chapter = repository.get_chapter(chapter_id)
@@ -1414,12 +1443,9 @@ def assemble_core_services(
         # arrive through the injection seam above; the Legacy Qt assembly
         # constructs them and needs a QGuiApplication instance, which the
         # entry creates before calling this.
-        # FEA-11-LINEAGE-1 AC2 wiring is DEFERRED (r1 P0-1): the guard must
-        # only be enabled once every revision write path registers lineage
-        # (save_translation/confirm/locks/restore/draft/Run/add_revision).
-        # Until then the read paths keep the pre-LINEAGE-1 behaviour, which is
-        # exactly the r7-acceptance hard constraint (do not consume the sync
-        # binding before LINEAGE-1 completes).
+        # FEA-11-LINEAGE-1 AC2 (r1 P1-4): the C-17 §7.1 isolation guard is
+        # ALWAYS wired in production — page renders exclude/disclose regions
+        # whose coordinates are not proven for the page's current binding.
         render_service = RenderService(
             region_repo=regions,
             locator=SqlitePageArtifactLocator(conn),
@@ -1434,19 +1460,25 @@ def assemble_core_services(
                 else _render_content_decoder
             ),
             original_page_reader=original_page_reader,
+            lineage_guard=lineage_guard,
         )
         # TASK-049 AC ②: the one application-layer Region write path —
         # ``RegionEditingService.create_region`` (first revision + pointer in
         # one atomic commit, TASK-002 §2.1) — is also what the ``detect``
         # step's candidates flow through; the handler never writes Regions
         # itself and no second write path is invented.
-        editing = RegionEditingService(regions)
+        editing = RegionEditingService(
+            regions,
+            lineage_binding=lineage_binding_of_page,
+            lineage_guard=lineage_guard,
+        )
         draft_journal = DraftJournal(Path(db_path).parent / "drafts")
         drafts = DraftProtectionService(
             repository=regions,
             committer=regions,
             connection=conn,
             journal=draft_journal,
+            lineage_binding=lineage_binding_of_page,
         )
 
         def _create_detected_region(
@@ -1547,6 +1579,13 @@ def assemble_core_services(
             context_policy=defaults["context_policy"] or None,
             snapshot_transform=provider_runtime.registry.freeze_run_snapshots,
         )
+        # FEA-11-LINEAGE-1 (C-17 §7.1): the Run target catalog shares the SAME
+        # guard/providers as the edit/render paths — page targets exclude
+        # unverifiable regions, region-scope targets are refused typed, and a
+        # committed region candidate registers native lineage in its own
+        # commit transaction.
+        pipeline._catalog.lineage_guard = lineage_guard
+        pipeline._catalog.lineage_binding = lineage_binding_of_page
         # FEA-10: guard data is derived from existing bindings/drafts, never a second store.
         def run_guard_value(page_id):
             binding = repository.get_page_binding(page_id)
@@ -1709,6 +1748,7 @@ def assemble_core_services(
             referenced_planner=referenced_planner,
             referenced_import=referenced_import,
             source_sync=source_sync,
+            lineage_guard=lineage_guard,
             provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
             network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
             provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),

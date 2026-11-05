@@ -49,6 +49,8 @@ from domain.tasks.models import (
     freeze_snapshot,
 )
 from application.tasks.store import snapshot_digest
+from application.sources.lineage import LineageVerificationError
+from infrastructure.sqlite.source_sync import SourceSyncStore
 
 
 def _now() -> str:
@@ -772,6 +774,15 @@ class SqliteTargetCatalog(TargetCatalog):
         self._conn = conn
         self._storage = storage
         self.orphaned_paths: list[str] = []
+        # FEA-11-LINEAGE-1: C-17 §7.1 Run-path isolation. The bootstrap wires
+        # both attributes on the production catalog (assembly-level test
+        # asserts they are present); leaving them at None keeps every
+        # existing unit construction valid.
+        #: page_id -> current source binding id (native lineage registration).
+        self.lineage_binding = None
+        #: LineageIsolationGuard for the Run read path (page expand + region
+        #: scope) and the in-transaction revision candidate write.
+        self.lineage_guard = None
 
     def expand(self, scope: PipelineScope) -> tuple[TargetSnapshot, ...]:
         kind = scope.scope_type.value
@@ -1015,6 +1026,13 @@ class SqliteTargetCatalog(TargetCatalog):
                     published_paths.append(relative_path)
             self._conn.commit()
             return CatalogCommit("applied")
+        except LineageVerificationError as error:
+            # FEA-11-LINEAGE-1: C-17 §7.1 typed refusal mapped onto the
+            # existing Run conflict reason; the candidate commit wrote nothing.
+            return self._reject_prepared(
+                "input_revision_changed", error.code, candidates.values(),
+                published_paths=published_paths,
+            )
         except Exception as error:
             return self._reject_prepared(
                 "db_failed", repr(error), candidates.values(), published_paths=published_paths
@@ -1028,6 +1046,22 @@ class SqliteTargetCatalog(TargetCatalog):
         region_id = current.region_id
         if not region_id:
             raise RuntimeError("region candidate target has no region id")
+        # FEA-11-LINEAGE-1 AC1 (r1 P0-1d): the Run pipeline's direct revision
+        # write registers native lineage in the SAME commit transaction, and
+        # the current revision must be proven for the page's current binding
+        # first (C-17 §7.1). A typed guard refusal aborts the whole candidate
+        # commit with zero write.
+        guard = self.lineage_guard
+        if guard is not None:
+            guard.ensure_writable(
+                page_id=current.page_id,
+                region_id=region_id,
+                revision_id=candidate["base_revision_id"],
+            )
+        binding_reader = self.lineage_binding
+        binding_id = (
+            binding_reader(current.page_id) if callable(binding_reader) else None
+        )
         revision_no = self._conn.execute(
             "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
             " FROM region_revisions WHERE region_id = ?",
@@ -1045,6 +1079,14 @@ class SqliteTargetCatalog(TargetCatalog):
                 payload["created_at"],
             ),
         )
+        if binding_id is not None:
+            SourceSyncStore(self._conn).insert_lineage(
+                revision_id=candidate["candidate_id"],
+                region_id=region_id,
+                binding_id=binding_id,
+                provenance="native",
+                now=payload["created_at"],
+            )
         cursor = self._conn.execute(
             "UPDATE regions SET text_json = ?, current_revision_id = ?, updated_at = ?"
             " WHERE region_id = ? AND current_revision_id IS ? AND deleted_at IS NULL",
@@ -1368,6 +1410,12 @@ class SqliteTargetCatalog(TargetCatalog):
                 " ORDER BY reading_order, region_id", (page_id,)
             ).fetchall()
         )
+        # FEA-11-LINEAGE-1 (C-17 §7.1): the new image's region set excludes
+        # regions whose current revision cannot be proven for the current
+        # binding (changed/cut or unverified). Page-scope Runs process ONLY the
+        # verifiable set; a region-scope target on a hidden region is a typed
+        # refusal in ``_region_or_error``.
+        regions = self._lineage_visible_regions(page_id, regions)
         return TargetSnapshot(
             target_id=page_id,
             page_id=page_id,
@@ -1402,6 +1450,12 @@ class SqliteTargetCatalog(TargetCatalog):
         if row["deleted_at"] is not None or self._page_deleted(row["page_id"]):
             raise PipelineError("TARGET_DELETED", region_id)
         region = self._region_from_id(region_id)
+        # FEA-11-LINEAGE-1 (C-17 §7.1): a region-scope Run target whose current
+        # revision is not proven for the page's current binding is a typed
+        # refusal (no old-coordinate work, no laundering into native lineage).
+        self._ensure_lineage_readable(
+            row["page_id"], region_id, region.current_revisions.get("region")
+        )
         return TargetSnapshot(
             target_id=region_id,
             page_id=row["page_id"],
@@ -1453,6 +1507,41 @@ class SqliteTargetCatalog(TargetCatalog):
     def _commit_guard_value(self, page_id: str) -> Mapping[str, Any]:
         reader = getattr(self, "guard_reader", None)
         return reader(page_id) if callable(reader) else {}
+
+    def _lineage_visible_regions(
+        self, page_id: str, regions: tuple[RegionSnapshot, ...]
+    ) -> tuple[RegionSnapshot, ...]:
+        """C-17 §7.1: drop regions that are not readable on the current binding."""
+        guard = self.lineage_guard
+        if guard is None or not regions:
+            return regions
+        verdict = guard.page_verdict(
+            page_id,
+            [
+                (region.region_id, region.current_revisions.get("region"))
+                for region in regions
+            ],
+        )
+        if not verdict.hidden:
+            return regions
+        hidden = verdict.hidden_region_ids
+        return tuple(
+            region for region in regions if region.region_id not in hidden
+        )
+
+    def _ensure_lineage_readable(
+        self, page_id: str, region_id: str, revision_id: str | None
+    ) -> None:
+        """Typed C-17 §7.1 refusal mapped onto the frozen Run error family."""
+        guard = self.lineage_guard
+        if guard is None:
+            return
+        try:
+            guard.ensure_readable(
+                page_id=page_id, region_id=region_id, revision_id=revision_id
+            )
+        except LineageVerificationError as error:
+            raise PipelineError(error.code, error.detail) from error
 
     def freeze_context(self, targets: tuple[TargetSnapshot, ...], window: int) -> tuple[TargetSnapshot, ...]:
         pinned = []

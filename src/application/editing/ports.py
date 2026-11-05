@@ -3,14 +3,20 @@
 Consumer-side protocol (TASK-008 allowance excludes src/ports and
 src/infrastructure); the SQLite adapter lands in a later slice. Fakes in
 tests exercise the contract, including simulated restarts.
+
+FEA-11-LINEAGE-1 (r1 P2-1/P2-3): the lineage keyword is part of the FROZEN
+port surface -- a revision write that forgets it is a contract error, not a
+silent omission. The atomic writers register the lineage row in the SAME
+transaction as the revision (C-17 §7.1).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Protocol, Sequence
+from typing import Mapping, Protocol, Sequence
 
+from application.sources.lineage import LineageProvenance
 from domain.regions.entities import Region, RegionRevision
 
 
@@ -25,7 +31,9 @@ class RegionRepository(Protocol):
 
     def soft_delete_region(self, region_id: str) -> None: ...
 
-    def add_revision(self, revision: RegionRevision) -> None: ...
+    def add_revision(
+        self, revision: RegionRevision, lineage: RevisionLineage | None = None
+    ) -> None: ...
 
     def list_revisions(self, region_id: str) -> list[RegionRevision]: ...
 
@@ -91,6 +99,7 @@ class RegionRevisionCommitter(Protocol):
         *,
         expected_current_revision_id: str | None = None,
         lock_snapshot: RegionLockSnapshot | None = None,
+        lineage: "RevisionLineage | None" = None,
     ) -> RegionCommitResult: ...
 
     def commit_region_batch(
@@ -102,6 +111,7 @@ class RegionRevisionCommitter(Protocol):
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
         page_region_limit: tuple[str, int] | None = None,
+        lineage_by_region: "Mapping[str, RevisionLineage] | None" = None,
     ) -> RegionCommitResult:
         """Existing composite write contract; its signature stays stable."""
         ...
@@ -111,15 +121,23 @@ class RegionRevisionCommitter(Protocol):
         *,
         updated_regions: "Sequence[tuple[Region, RegionRevision, str | None]]",
         protection_guards: "Sequence[RegionProtectionGuard]",
+        lineage_by_region: "Mapping[str, RevisionLineage] | None" = None,
     ) -> RegionCommitResult: ...
+
 
 @dataclass(frozen=True, slots=True)
 class RevisionLineage:
-    """FEA-11-LINEAGE-1 AC1: native lineage committed with a region revision
+    """FEA-11-LINEAGE-1 AC1: lineage committed with a region revision
     (C-17 §7.1). ``binding_id`` is the source binding the revision was captured
-    against; ``provenance`` is the frozen lineage value."""
+    against; ``provenance`` is a frozen lineage value (see
+    :data:`application.sources.lineage.LineageProvenance`).
+
+    ``from_revision_id``/``operation_id`` are NULL for daily ``native`` writes
+    and set by the sync apply face for ``migrated`` copies (§7.1 ownership:
+    captured_v7 rows carry the switching operation, native rows do not).
+    """
 
     binding_id: str | None
-    provenance: str
+    provenance: LineageProvenance
     from_revision_id: str | None = None
     operation_id: str | None = None

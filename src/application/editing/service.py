@@ -62,6 +62,7 @@ from application.editing.region_canvas import (
     MAX_SPLIT_PARTS,
     page_geometry_to_normalized,
 )
+from application.sources.lineage import LineageIsolationGuard
 from domain.regions.entities import (
     Region,
     RegionGeometry,
@@ -377,12 +378,17 @@ class RegionEditingService:
         committer: RegionRevisionCommitter | None = None,
         *,
         lineage_binding: Callable[[str], str | None] | None = None,
+        lineage_guard: LineageIsolationGuard | None = None,
     ) -> None:
         self._repo = repository
         # FEA-11-LINEAGE-1 AC1: page_id -> current source binding. Every region
         # revision written by this service is registered as native lineage in
         # the same transaction (C-17 §7.1).
         self._lineage_binding = lineage_binding
+        # FEA-11-LINEAGE-1 AC2: C-17 §7.1 read isolation for the region list
+        # read channels (regions whose current revision cannot be proven for
+        # the page's current binding are not returned).
+        self._lineage_guard = lineage_guard
         if committer is not None:
             self._committer = committer
         elif hasattr(repository, "commit_region_revision"):
@@ -468,22 +474,31 @@ class RegionEditingService:
 
         return RevisionLineage(binding_id=binding_id, provenance="native")
 
-    def _lineage_by_region(self, batch: dict[str, object]):
+    def _lineage_by_region(
+        self,
+        new_regions: Sequence[tuple[Region, RegionRevision]],
+        updated_regions: Sequence[tuple[Region, RegionRevision, str | None]],
+    ):
         if self._lineage_binding is None:
             return None
-        regions: list[object] = []
-        regions.extend(region for region, _revision in batch.get("new_regions") or [])
-        regions.extend(
-            region for region, _revision, _expected in batch.get("updated_regions") or []
-        )
         result = {}
-        for region in regions:
+        for region in (*[item[0] for item in new_regions],
+                       *[item[0] for item in updated_regions]):
             lineage = self._lineage_for(region.page_id)
             if lineage is not None:
                 result[region.region_id] = lineage
         return result or None
 
-    def _commit_batch_or_raise(self, **batch: object) -> None:
+    def _commit_batch_or_raise(
+        self,
+        *,
+        new_regions: Sequence[tuple[Region, RegionRevision]] = (),
+        updated_regions: Sequence[tuple[Region, RegionRevision, str | None]] = (),
+        soft_delete_region_ids: Sequence[tuple[str, str | None]] = (),
+        revision_pins: Sequence[tuple[str, int, bool]] = (),
+        expected_current_checks: Sequence[tuple[str, str]] = (),
+        page_region_limit: tuple[str, int] | None = None,
+    ) -> None:
         """V11R-F0-1 I1/I2: the ALL-OR-NOTHING composite seam used by
         create/merge/split/reorder/delete/pin.
 
@@ -494,11 +509,22 @@ class RegionEditingService:
         write; any persistence failure rolls the whole batch back and surfaces
         as ``RuntimeError`` (wire UNKNOWN, same convention as the
         single-region user writes).
+
+        FEA-11-LINEAGE-1 (r1 P2-1): the batch is assembled explicitly against
+        the frozen committer protocol — no ``**dict`` spread and no
+        ``type: ignore`` hides a missing lineage keyword.
         """
-        lineage_by_region = self._lineage_by_region(batch)
-        if lineage_by_region:
-            batch["lineage_by_region"] = lineage_by_region
-        result = self._committer.commit_region_batch(**batch)  # type: ignore[arg-type]
+        result = self._committer.commit_region_batch(
+            new_regions=new_regions,
+            updated_regions=updated_regions,
+            soft_delete_region_ids=soft_delete_region_ids,
+            revision_pins=revision_pins,
+            expected_current_checks=expected_current_checks,
+            page_region_limit=page_region_limit,
+            lineage_by_region=self._lineage_by_region(
+                new_regions, updated_regions
+            ),
+        )
         if result.status is RegionCommitStatus.APPLIED:
             return
         if result.status is RegionCommitStatus.INPUT_REVISION_CHANGED:
@@ -536,6 +562,9 @@ class RegionEditingService:
             staged,
             revision,
             expected_current_revision_id=expected_current_revision_id,
+            # FEA-11-LINEAGE-1 AC1 (r1 P0-1a): user saves/confirmation/locks
+            # register native lineage in the SAME transaction as the revision.
+            lineage=self._lineage_for(staged.page_id),
         )
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
@@ -551,6 +580,29 @@ class RegionEditingService:
         ):
             raise RegionRevisionChanged()
         raise RuntimeError(f"region revision commit failed: {result.detail}")
+
+    # ------------------------------------------------------------------
+    # read isolation (FEA-11-LINEAGE-1 AC2)
+    # ------------------------------------------------------------------
+
+    def _visible_regions(self, page_id: str, regions: Sequence[Region]) -> list[Region]:
+        """Drop regions whose current revision cannot be proven for the page's
+        current source binding (C-17 §7.1 isolation).
+
+        One page-level verdict (single binding lookup + one batch lineage
+        lookup) — never a per-region query fan-out. A page outside the sync
+        scope (no binding / no publication history) keeps every region.
+        """
+        if self._lineage_guard is None:
+            return list(regions)
+        verdict = self._lineage_guard.page_verdict(
+            page_id,
+            [(region.region_id, region.current_revision_id) for region in regions],
+        )
+        if not verdict.hidden:
+            return list(regions)
+        hidden = verdict.hidden_region_ids
+        return [region for region in regions if region.region_id not in hidden]
 
     # ------------------------------------------------------------------
     # optimistic-guard helpers (V11R-F0-1)
@@ -800,7 +852,7 @@ class RegionEditingService:
         it keeps the frozen five-field shape verbatim -- strictly additive,
         pre-existing callers are untouched."""
         summaries: list[dict[str, object]] = []
-        for region in self.list_regions(page_id):
+        for region in self._visible_regions(page_id, self.list_regions(page_id)):
             current = next(
                 (
                     rev
@@ -863,7 +915,7 @@ class RegionEditingService:
         ``list_region_summaries``).
         """
         details: list[dict[str, object]] = []
-        for region in self.list_regions(page_id):
+        for region in self._visible_regions(page_id, self.list_regions(page_id)):
             revisions = self._repo.list_revisions(region.region_id)
             current = next(
                 (
@@ -1447,6 +1499,9 @@ class RegionEditingService:
                 translation_locked=region.translation_locked,
                 inpaint_locked=region.inpaint_locked,
             ),
+            # FEA-11-LINEAGE-1 AC1 (r1 P0-1b): restore writes a NEW revision,
+            # so it registers native lineage in the same transaction too.
+            lineage=self._lineage_for(staged.page_id),
         )
         if result.status in (
             RegionCommitStatus.INPUT_REVISION_CHANGED,

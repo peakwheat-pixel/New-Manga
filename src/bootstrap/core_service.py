@@ -197,6 +197,11 @@ from application.editing.region_canvas import (
     page_geometry_to_normalized,
 )
 from application.editing.service import effective_sfx_policy, region_text_state
+from application.sources.lineage import (
+    LINEAGE_BINDING_CHANGED,
+    LINEAGE_UNVERIFIED,
+    LineageVerificationError,
+)
 from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
@@ -868,6 +873,10 @@ _DRAFT_ERROR_CATEGORY: dict[str, str] = {
     "DRAFT_JOURNAL_UNWRITABLE": "unavailable",
     "PAGE_SIZE_UNAVAILABLE": "unavailable",
     "DRAFT_APPLY_FAILED": "internal",
+    # FEA-11-LINEAGE-1: a draft applied over a stale/other source binding is a
+    # typed C-17 §7.1 conflict, never an internal failure.
+    LINEAGE_BINDING_CHANGED: "conflict",
+    LINEAGE_UNVERIFIED: "conflict",
     "INTERNAL": "internal",
     "UNKNOWN": "validation",
 }
@@ -889,6 +898,24 @@ def _draft_error_envelope(error: "DraftError") -> dict[str, Any]:
         message=str(error) or code,
         retryable=code in _DRAFT_RETRYABLE,
         details=details,
+    )
+
+
+def _lineage_error_envelope(error: "LineageVerificationError") -> dict[str, Any]:
+    """FEA-11-LINEAGE-1: typed C-17 §7.1 isolation refusal.
+
+    ``LINEAGE_BINDING_CHANGED`` / ``LINEAGE_UNVERIFIED`` are application-level
+    codes raised on the OLD command faces (list_regions / render / edit / Run /
+    export). They are deliberately NOT added to the frozen C-17 §8 closed set:
+    that table projects C-17 commands only and the old command face is not
+    remapped (DSH ruling recorded in the task card). The envelope carries the
+    fixed safe phrase; no path, coordinate or raw exception text rides it.
+    """
+    return make_error_envelope(
+        getattr(error, "code", LINEAGE_UNVERIFIED),
+        getattr(error, "category", "conflict"),
+        getattr(error, "safe_message", "source lineage verification failed"),
+        retryable=False,
     )
 
 
@@ -3233,7 +3260,13 @@ class CoreServiceServer:
             # M2-CATEGORY-CLARIFY-1 (RC4-10): required-input missing is an
             # AVAILABILITY failure (data not there), not a "target does not
             # exist" one -- §8 taxonomy, category never frozen before.
-            category = "conflict" if code == E_INPUT_REVISION_CHANGED else (
+            # FEA-11-LINEAGE-1: the C-17 §7.1 isolation refusals are typed
+            # conflicts; their fixed safe phrase never includes coordinates or
+            # the raw exception text.
+            lineage_code = code in (LINEAGE_BINDING_CHANGED, LINEAGE_UNVERIFIED)
+            category = "conflict" if (
+                code == E_INPUT_REVISION_CHANGED or lineage_code
+            ) else (
                 "not_found" if code == E_TARGET_NOT_FOUND else (
                     "unavailable" if code == "MISSING_REQUIRED_INPUT" else "internal"
                 )
@@ -3243,6 +3276,12 @@ class CoreServiceServer:
                 E_TARGET_NOT_FOUND: "page not found",
                 E_INPUT_REVISION_CHANGED: "render input changed; retry the operation",
                 "ARTIFACT_WRITE_FAILED": "render output could not be saved",
+                LINEAGE_BINDING_CHANGED: (
+                    "region coordinates belong to a previous source binding"
+                ),
+                LINEAGE_UNVERIFIED: (
+                    "region coordinates are not verified for the current source"
+                ),
             }.get(code, "page rerender failed")
             print(
                 f"[core.rerender_page] code={code} detail={outcome.detail or ''}",
@@ -4605,12 +4644,30 @@ class CoreServiceServer:
 
     def _export_regions(self, page_id: str) -> list[dict]:
         rows = self._core.conn.execute(
-            "SELECT region_id, reading_order, geometry_json, text_json FROM regions"
+            "SELECT region_id, reading_order, geometry_json, text_json,"
+            " current_revision_id FROM regions"
             " WHERE page_id = ? AND deleted_at IS NULL ORDER BY reading_order, region_id",
             (page_id,),
         ).fetchall()
+        # FEA-11-LINEAGE-1 (C-17 §7.1): the export text face is an ordinary
+        # read path — regions whose current revision is not proven for the
+        # page's current binding are excluded (old coordinates/text never ride
+        # the new image's export).
+        guard = getattr(self._core, "lineage_guard", None)
+        hidden: frozenset[str] = frozenset()
+        if guard is not None and rows:
+            verdict = guard.page_verdict(
+                page_id,
+                [
+                    (row["region_id"], row["current_revision_id"])
+                    for row in rows
+                ],
+            )
+            hidden = verdict.hidden_region_ids
         result = []
         for row in rows:
+            if row["region_id"] in hidden:
+                continue
             geometry, text = json.loads(row["geometry_json"]), json.loads(row["text_json"])
             result.append({
                 "region_id": row["region_id"], "reading_order": row["reading_order"],
@@ -4970,12 +5027,22 @@ class CoreServiceServer:
                 "RUN_STALE_PREVIEW": "conflict",
                 "RUN_PREVIEW_EXPIRED": "conflict",
                 "RUN_SNAPSHOT_INCOMPLETE": "unavailable",
+                # FEA-11-LINEAGE-1 (C-17 §7.1): a Run whose target region is
+                # not proven for the current binding is refused typed.
+                LINEAGE_BINDING_CHANGED: "conflict",
+                LINEAGE_UNVERIFIED: "conflict",
             }.get(code, "validation")
             message = {
                 "INVALID_REQUEST": "Run request is invalid",
                 "TARGET_NOT_FOUND": "Requested Run or target was not found",
                 "IDEMPOTENCY_KEY_REUSED": "Idempotency key was used for a different request",
                 "INVALID_RUN_TRANSITION": "Run operation is not valid in the current state",
+                LINEAGE_BINDING_CHANGED: (
+                    "region coordinates belong to a previous source binding"
+                ),
+                LINEAGE_UNVERIFIED: (
+                    "region coordinates are not verified for the current source"
+                ),
             }.get(code, "Run request could not be accepted")
             response = {
                 "protocol": PROTOCOL_NAME,
@@ -5890,6 +5957,17 @@ class CoreServiceServer:
                     },
                     False,
                 )
+            except LineageVerificationError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": _lineage_error_envelope(error),
+                    },
+                    False,
+                )
             except Exception:
                 return (
                     {
@@ -6029,6 +6107,20 @@ class CoreServiceServer:
                             message="region not found",
                             retryable=False,
                         ),
+                    },
+                    False,
+                )
+            except LineageVerificationError as error:
+                # FEA-11-LINEAGE-1 (C-17 §7.1): a user edit must never launder
+                # old-binding coordinates into a native revision on the
+                # current binding — typed refusal with zero write.
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": _lineage_error_envelope(error),
                     },
                     False,
                 )

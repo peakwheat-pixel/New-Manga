@@ -35,6 +35,11 @@ from typing import Sequence
 
 from application.editing.ports import RegionRepository
 from application.rendering.layout import resolve_direction
+from application.sources.lineage import (
+    HiddenRegion,
+    LineageIsolationGuard,
+    LineageVerificationError,
+)
 from application.rendering.style import (
     FontSizeResolution,
     RenderTextStyle,
@@ -68,20 +73,6 @@ from ports.rendering.direction import TextDirection
 
 _RENDERED = "rendered"
 _SKIPPED = "skipped"
-
-
-class LineageBindingMismatch(RuntimeError):
-    """FEA-11-LINEAGE-1 AC2: a region revision's native lineage binding does
-    not match the page's current binding, so its coordinates belong to a
-    different source image and must not be rendered."""
-
-    def __init__(self, page_id: str, region_id: str) -> None:
-        super().__init__(
-            f"region {region_id!r} on page {page_id!r} belongs to a different "
-            "source binding (lineage mismatch)"
-        )
-        self.page_id = page_id
-        self.region_id = region_id
 
 
 class RenderStatus:
@@ -132,8 +123,7 @@ class RenderService:
         font_catalog: FontCatalog,
         content_decoder: Callable[[str, bytes], bytes] | None = None,
         original_page_reader: Callable[[str], bytes | None] | None = None,
-        lineage_binding: Callable[[str], str | None] | None = None,
-        lineage_of_revision: Callable[[str], str | None] | None = None,
+        lineage_guard: LineageIsolationGuard | None = None,
     ) -> None:
         """``content_decoder`` is a TASK-033 assembly bridge, opt-in and
         behaviour-preserving: pipeline artifact revisions are stored in the
@@ -155,11 +145,13 @@ class RenderService:
         self._font_catalog = font_catalog
         self._content_decoder = content_decoder
         self._original_page_reader = original_page_reader
-        # FEA-11-LINEAGE-1 AC2: optional read guard. When both providers are
-        # supplied, every region rendered must have native lineage on the
-        # page's current binding (C-17 §7.1); a mismatch is a typed refusal.
-        self._lineage_binding = lineage_binding
-        self._lineage_of_revision = lineage_of_revision
+        # FEA-11-LINEAGE-1 AC2 (C-17 §7.1): the C-17 read isolation guard.
+        # A region whose current revision cannot be proven for the page's
+        # current source binding is NEVER rendered: batch page renders skip it
+        # (with a typed skip report), single-region renders return a typed
+        # BLOCKED outcome. ``None`` keeps unit constructions valid; the
+        # production assembly always injects the guard (assembly test).
+        self._lineage_guard = lineage_guard
 
     # ------------------------------------------------------------------
     # page rerender (D06 §41)
@@ -212,7 +204,20 @@ class RenderService:
         reports: list[RegionRenderReport] = []
         ops: list[RenderOp] = []
         skipped_sfx = []
-        for region in self._active_regions(page_id):
+        active_regions, hidden_regions = self._active_regions(page_id)
+        # FEA-11-LINEAGE-1 (C-17 §7.1): old-binding regions are never composed
+        # onto the current image; the exclusion is visible in the reports (the
+        # caller/UI can see WHY the region set shrank instead of receiving old
+        # coordinates silently).
+        for hidden in hidden_regions:
+            reports.append(
+                RegionRenderReport(
+                    region_id=hidden.region_id,
+                    status=_SKIPPED,
+                    skip_reason=hidden.code,
+                )
+            )
+        for region in active_regions:
             prepared = self._prepare_region(
                 region,
                 source_style_result,
@@ -334,6 +339,20 @@ class RenderService:
             return _blocked("LOCK_CHANGED", "region_locked: rendering is blocked")
         page_id = stored.page_id
         snapshot_revision_id = stored.current_revision_id
+        # FEA-11-LINEAGE-1 AC2 (C-17 §7.1): a single-region rerender of a
+        # region whose current revision is not proven for the page's current
+        # binding is a typed BLOCKED outcome — never a silent old-coordinate
+        # render (r1 P1-2: no bare RuntimeError → UNKNOWN).
+        guard = self._lineage_guard
+        if guard is not None:
+            try:
+                guard.ensure_readable(
+                    page_id=page_id,
+                    region_id=region_id,
+                    revision_id=snapshot_revision_id,
+                )
+            except LineageVerificationError as error:
+                return _blocked(error.code, error.detail)
 
         clean = self._locate_clean(page_id)
         if clean is None:
@@ -452,23 +471,36 @@ class RenderService:
             return self._content_decoder(relative_path, data)
         return data
 
-    def _active_regions(self, page_id: str) -> Sequence:
+    def _active_regions(
+        self, page_id: str
+    ) -> tuple[list, tuple[HiddenRegion, ...]]:
+        """Renderable regions of one page + the lineage-hidden ones.
+
+        FEA-11-LINEAGE-1 AC2 (C-17 §7.1): a region whose current revision is
+        not proven for the page's current binding is excluded from the render
+        (its coordinates belong to another image); the caller reports the
+        exclusion instead of silently returning old coordinates.
+        """
         regions = [
             region
             for region in self._region_repo.list_regions(page_id)
             if not region.deleted
         ]
-        if self._lineage_binding is not None and self._lineage_of_revision is not None:
-            current_binding = self._lineage_binding(page_id)
-            if current_binding is not None:
-                for region in regions:
-                    revision_id = region.current_revision_id
-                    if revision_id is None:
-                        continue
-                    revision_binding = self._lineage_of_revision(revision_id)
-                    if revision_binding != current_binding:
-                        raise LineageBindingMismatch(page_id, region.region_id)
-        return sorted(regions, key=lambda region: region.reading_order)
+        regions.sort(key=lambda region: region.reading_order)
+        guard = self._lineage_guard
+        if guard is None:
+            return regions, ()
+        verdict = guard.page_verdict(
+            page_id,
+            [(region.region_id, region.current_revision_id) for region in regions],
+        )
+        if not verdict.hidden:
+            return regions, ()
+        hidden_ids = verdict.hidden_region_ids
+        return (
+            [region for region in regions if region.region_id not in hidden_ids],
+            verdict.hidden,
+        )
 
     def _extract_source_style(self, page_id: str):
         original = self._locator.locate_current(page_id, ArtifactType.ORIGINAL)

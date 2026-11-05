@@ -25,6 +25,8 @@ from application.editing.ports import (
     RegionLockSnapshot,
     RegionProtectionGuard,
 )
+from application.sources.lineage import LineageVerificationError
+from infrastructure.sqlite.source_sync import SourceSyncStore
 from domain.regions.entities import (
     Region,
     RegionGeometry,
@@ -45,8 +47,16 @@ _REGION_COLUMNS = (
 
 
 class SqliteRegionRepository:
-    def __init__(self, conn: sqlite3.Connection) -> None:
+    def __init__(self, conn: sqlite3.Connection, *, lineage_guard=None) -> None:
         self._conn = conn
+        # FEA-11-LINEAGE-1: C-17 §7.1 write-side isolation. When supplied, a
+        # revision write that registers ``native`` lineage is refused unless
+        # the region's CURRENT revision is proven to belong to the page's
+        # current binding (or is reachable along same_content edges). The
+        # check runs INSIDE the same BEGIN IMMEDIATE transaction that writes
+        # the revision + lineage row, so a concurrent sync switch can never
+        # slip between the proof and the write.
+        self._lineage_guard = lineage_guard
 
     # ------------------------------------------------------------------
     # row mapping
@@ -153,10 +163,28 @@ class SqliteRegionRepository:
                 (_utc_now(), region_id),
             )
 
-    def add_revision(self, revision: RegionRevision) -> None:
-        """Explicit new-history insert only; never touches the pointer."""
+    def add_revision(
+        self, revision: RegionRevision, lineage: RevisionLineage | None = None
+    ) -> None:
+        """Explicit new-history insert only; never touches the pointer.
+
+        FEA-11-LINEAGE-1 AC1 (r1 P0-1e): the optional lineage row is written
+        in the SAME transaction as the revision. The write is guarded exactly
+        like the atomic seam's revision writes."""
         with self._conn:
-            self._insert_revision(revision)
+            stored = revision
+            row = self._conn.execute(
+                "SELECT r.current_revision_id AS current_revision_id,"
+                " r.page_id AS page_id FROM regions r WHERE r.region_id = ?",
+                (revision.region_id,),
+            ).fetchone()
+            if row is not None:
+                self._ensure_lineage_writable(
+                    region_id=revision.region_id,
+                    page_id=row["page_id"],
+                    current_revision_id=row["current_revision_id"],
+                )
+            self._insert_revision(stored, lineage)
 
     def list_revisions(self, region_id: str) -> list[RegionRevision]:
         rows = self._conn.execute(
@@ -264,6 +292,14 @@ class SqliteRegionRepository:
                     (region.region_id,),
                 ).fetchone()["next_no"]
             )
+            # FEA-11-LINEAGE-1: the current revision must be proven for the
+            # page's current binding BEFORE the new revision (and its native
+            # lineage row) is written in this same transaction.
+            self._ensure_lineage_writable(
+                region_id=region.region_id,
+                page_id=region.page_id,
+                current_revision_id=current,
+            )
             stored_revision = replace(revision, revision_no=revision_no)
             self._insert_revision(stored_revision, lineage)
 
@@ -278,6 +314,11 @@ class SqliteRegionRepository:
                  region.region_id),
             )
             conn.commit()
+        except LineageVerificationError:
+            # C-17 §7.1 typed refusal: the write is denied with ZERO write;
+            # the guard error (not DB_FAILED/UNKNOWN) reaches the caller.
+            conn.rollback()
+            raise
         except Exception as error:
             # F-02: non-sqlite3 failures (e.g. serialization) must also
             # release the IMMEDIATE transaction before surfacing.
@@ -374,9 +415,10 @@ class SqliteRegionRepository:
                 existing_ids[region.region_id] = expected
             for region_id, _revision_no, _pinned in revision_pins:
                 existing_ids.setdefault(region_id, None)
+            stored_rows: dict[str, sqlite3.Row] = {}
             for region_id, expected in existing_ids.items():
                 row = conn.execute(
-                    "SELECT current_revision_id, deleted_at FROM regions"
+                    "SELECT current_revision_id, deleted_at, page_id FROM regions"
                     " WHERE region_id = ?",
                     (region_id,),
                 ).fetchone()
@@ -395,6 +437,7 @@ class SqliteRegionRepository:
                             f" stored current {row['current_revision_id']!r}"
                         ),
                     )
+                stored_rows[region_id] = row
 
             # Draft/token path: BaseRevisionId and the protection digest are
             # re-read in this same IMMEDIATE transaction before any write.
@@ -448,6 +491,34 @@ class SqliteRegionRepository:
                         RegionCommitStatus.REGION_LIMIT_EXCEEDED,
                         detail=f"page {page_id} already has {limit} live regions",
                     )
+
+            # 2.5 FEA-11-LINEAGE-1 (C-17 §7.1): every updated region must have
+            #     its CURRENT revision proven against the page's current
+            #     binding inside THIS transaction before the new revision (and
+            #     its native lineage row) is written. A merge/split batch that
+            #     consumes source regions into NEW regions is guarded too --
+            #     verifiable sources first, otherwise old coordinates would be
+            #     laundered into the new region's native lineage.
+            if self._lineage_guard is not None:
+                for region, _revision, _expected in updated_regions:
+                    row = stored_rows.get(region.region_id)
+                    self._lineage_guard.ensure_writable(
+                        page_id=region.page_id,
+                        region_id=region.region_id,
+                        revision_id=(
+                            row["current_revision_id"] if row is not None else None
+                        ),
+                    )
+                if new_regions:
+                    for region_id, _expected in soft_delete_region_ids:
+                        source_row = stored_rows.get(region_id)
+                        if source_row is None:
+                            continue
+                        self._lineage_guard.ensure_writable(
+                            page_id=source_row["page_id"],
+                            region_id=region_id,
+                            revision_id=source_row["current_revision_id"],
+                        )
 
             # 3. new regions: the row, its first revision and the current
             #    pointer appear together or not at all.
@@ -523,6 +594,11 @@ class SqliteRegionRepository:
                     )
 
             conn.commit()
+        except LineageVerificationError:
+            # C-17 §7.1 typed refusal: the whole batch is rolled back with
+            # ZERO write and the typed guard error reaches the caller.
+            conn.rollback()
+            raise
         except Exception as error:
             conn.rollback()
             return RegionCommitResult(
@@ -585,6 +661,28 @@ class SqliteRegionRepository:
             )
         return cursor.rowcount
 
+    def _ensure_lineage_writable(
+        self,
+        *,
+        region_id: str,
+        page_id: str,
+        current_revision_id: str | None,
+    ) -> None:
+        """C-17 §7.1 write-side proof; must be called inside the write txn.
+
+        Provenance-agnostic: the guard proves the CURRENT state of the region,
+        so a native revision can only be written when the coordinates already
+        on the region are valid for the page's current binding.
+        """
+        guard = self._lineage_guard
+        if guard is None:
+            return
+        guard.ensure_writable(
+            page_id=page_id,
+            region_id=region_id,
+            revision_id=current_revision_id,
+        )
+
     def _insert_revision(
         self, revision: RegionRevision, lineage: RevisionLineage | None = None
     ) -> None:
@@ -606,15 +704,16 @@ class SqliteRegionRepository:
         if lineage is not None:
             # FEA-11-LINEAGE-1 AC1: native lineage is written inside the SAME
             # transaction as the revision, so a rollback leaves no orphan row.
-            self._conn.execute(
-                "INSERT INTO source_revision_lineage (revision_id, region_id,"
-                " binding_id, provenance, from_revision_id, operation_id, created_at)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (
-                    revision.region_revision_id, revision.region_id,
-                    lineage.binding_id, lineage.provenance,
-                    lineage.from_revision_id, lineage.operation_id, _utc_now(),
-                ),
+            # The frozen writer is reused (r1 P2-3): one INSERT definition for
+            # sync capture/migration and daily native writes.
+            SourceSyncStore(self._conn).insert_lineage(
+                revision_id=revision.region_revision_id,
+                region_id=revision.region_id,
+                binding_id=lineage.binding_id,
+                provenance=lineage.provenance,
+                from_revision_id=lineage.from_revision_id,
+                operation_id=lineage.operation_id,
+                now=_utc_now(),
             )
 
 

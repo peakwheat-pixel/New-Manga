@@ -20,6 +20,7 @@ import json
 import sqlite3
 from typing import Any, Iterable, Sequence
 
+from application.sources.lineage import RevisionLineageStanding
 from application.sources.model import (
     digest_of,
     manual_digest_of,
@@ -363,6 +364,64 @@ class SourceSyncStore:
             )
         )
         return {row["region_id"] for row in rows}
+
+    def sync_managed_page_ids(self) -> list[str]:
+        """Pages whose binding chain carries a sync publication (C-17 §7.1
+        "本卡涉及的同步页"). The first sync switch creates the publication
+        row; imported-but-never-synced pages have none."""
+        return [
+            row["page_id"]
+            for row in _rows(
+                self._conn.execute(
+                    "SELECT DISTINCT b.page_id AS page_id FROM page_bindings b"
+                    " JOIN source_binding_publications p"
+                    " ON p.binding_id = b.binding_id"
+                    " ORDER BY b.page_id"
+                )
+            )
+        ]
+
+    #: FEA-11-LINEAGE-1: chunk bound for the backfill IN-list.
+    _BACKFILL_CHUNK = 500
+
+    def backfill_legacy_unverified_lineage(self, *, now: str | None = None) -> int:
+        """Stock backfill: every revision WITHOUT a lineage row on an
+        already-synced page becomes ``legacy_unverified`` (binding NULL).
+
+        Rules (C-17 §7.1 / r1 P0-1):
+        * never guesses an attribution — no ``captured_v7``/``native`` is
+          fabricated, only the honest "unverified" row;
+        * no-op for the same rows on every call (idempotent);
+        * limited to pages that already carry publication history: a page
+          that has NOT been switched yet must keep its missing rows so the
+          first switch can still capture its current revision as
+          ``captured_v7`` inside that switch transaction.
+
+        Runs inside the caller's transaction; returns the inserted row count.
+        """
+        page_ids = self.sync_managed_page_ids()
+        if not page_ids:
+            return 0
+        created_at = now or now_millis()
+        inserted = 0
+        for start in range(0, len(page_ids), self._BACKFILL_CHUNK):
+            chunk = page_ids[start : start + self._BACKFILL_CHUNK]
+            marks = ",".join("?" for _ in chunk)
+            cursor = self._conn.execute(
+                "INSERT INTO source_revision_lineage (revision_id, region_id,"
+                " binding_id, provenance, from_revision_id, operation_id,"
+                " created_at)"
+                " SELECT rr.region_revision_id, rr.region_id, NULL,"
+                " 'legacy_unverified', NULL, NULL, ?"
+                " FROM region_revisions rr"
+                " JOIN regions r ON r.region_id = rr.region_id"
+                f" WHERE r.page_id IN ({marks})"
+                " AND NOT EXISTS (SELECT 1 FROM source_revision_lineage l"
+                " WHERE l.revision_id = rr.region_revision_id)",
+                (created_at, *chunk),
+            )
+            inserted += cursor.rowcount
+        return inserted
 
     # -------------------------------------------- reference projections
     def list_source_references(
@@ -816,6 +875,97 @@ class SourceSyncStore:
                 " WHERE b.source_id = ? AND b.status = 'missing'"
                 f" AND b.project_id IN ({marks})",
                 [source_id, *project_ids],
+            )
+        )
+
+
+class SourceSyncLineageFacts:
+    """FEA-11-LINEAGE-1: the C-17 §7.1 facts the isolation guard consumes.
+
+    One instance wraps one live connection; every query is read-only and
+    observes the caller's open transaction, so the guard can run INSIDE the
+    revision commit transaction (a concurrent sync switch cannot slip
+    between the check and the lineage write).
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def page_binding(self, page_id: str) -> str | None:
+        row = _row(
+            self._conn.execute(
+                "SELECT binding_id FROM page_bindings WHERE page_id = ?"
+                " AND status <> 'superseded'",
+                (page_id,),
+            )
+        )
+        return row["binding_id"] if row is not None else None
+
+    def page_is_sync_managed(self, page_id: str) -> bool:
+        """True when any binding of the page's own chain has a publication."""
+        binding_id = self.page_binding(page_id)
+        seen: set[str] = set()
+        while binding_id is not None and binding_id not in seen:
+            seen.add(binding_id)
+            if self._publication_of(binding_id) is not None:
+                return True
+            row = _row(
+                self._conn.execute(
+                    "SELECT previous_binding_id FROM page_bindings"
+                    " WHERE binding_id = ?",
+                    (binding_id,),
+                )
+            )
+            binding_id = row["previous_binding_id"] if row is not None else None
+        return False
+
+    def revision_lineages(
+        self, revision_ids: Sequence[str]
+    ) -> dict[str, RevisionLineageStanding]:
+        ids = list(dict.fromkeys(revision_id for revision_id in revision_ids if revision_id))
+        if not ids:
+            return {}
+        marks = ",".join("?" for _ in ids)
+        rows = _rows(
+            self._conn.execute(
+                "SELECT revision_id, binding_id, provenance"
+                " FROM source_revision_lineage"
+                f" WHERE revision_id IN ({marks})",
+                ids,
+            )
+        )
+        return {
+            row["revision_id"]: RevisionLineageStanding(
+                binding_id=row["binding_id"], provenance=row["provenance"]
+            )
+            for row in rows
+        }
+
+    def same_content_reachable(
+        self, current_binding_id: str, ancestor_binding_id: str
+    ) -> bool:
+        """Walk ``publication.previous`` crossing ``same_content`` edges only.
+
+        ``changed`` / ``repoint`` / ``missing`` cut the walk (C-17 §7.1).
+        """
+        binding_id: str | None = current_binding_id
+        seen: set[str] = set()
+        while binding_id is not None and binding_id not in seen:
+            if binding_id == ancestor_binding_id:
+                return True
+            seen.add(binding_id)
+            publication = self._publication_of(binding_id)
+            if publication is None or publication["relation"] != "same_content":
+                return False
+            binding_id = publication["previous_binding_id"]
+        return False
+
+    def _publication_of(self, binding_id: str) -> dict[str, Any] | None:
+        return _row(
+            self._conn.execute(
+                "SELECT binding_id, previous_binding_id, relation"
+                " FROM source_binding_publications WHERE binding_id = ?",
+                (binding_id,),
             )
         )
 
