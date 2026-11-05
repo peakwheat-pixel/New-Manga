@@ -1,114 +1,120 @@
-# FEA-11-SCAN-1 gates (2026-11-06, Asia/Shanghai)
+# FEA-11-SCAN-1 gates (r2, 2026-11-06, Asia/Shanghai)
 
-> Owner: fea12-core-host (DSH Agent Teams); repo G:\CODEX\New Manga (main); card base e0c370870.
-> Gate runs were executed on the working tree whose .NET sources are byte-identical to delivery
-> commit(s) recorded in the Handoff; HEAD during the runs: 869b6d5d5
-> (no apps/desktop-avalonia commits exist between base e0c370870 and this HEAD before this card).
-> All commands ran in the main worktree; logs are the core-* files next to this file.
+> Owner: fea12-core-host; repo G:\CODEX\New Manga (main); card base e0c370870; r1 delivery 73d01fd2b
+> (reviewed_head a684c511d; r1 Review = changes_requested P1=1/P2=5/P3=4, doc/reviews/FEA-11-SCAN-1-r1.md).
+> This file records the r2 fix gates, re-run after the interrupted session on the retained WIP tree
+> (HEAD b48c60a7e, no upstream .NET change since the r1 gate run).
+> Known flaky (cross-test git-status evidence-write race) triggered once; recorded honestly below,
+> never claimed as stable PASS.
 
-## G1 Scheduler + App-registration unit tests (fake clock / fake core; no sidecar, no sleep)
+## G1 Scheduler + App-registration unit tests (fake clock / fake core; no sidecar, zero sleep)
 
 COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~SourceScanScheduler|FullyQualifiedName~Fea11ScanRegistration"
-RESULT:  通过 32 / 失败 0 / 跳过 0 / 总计 32
+RESULT:  通过 37 / 失败 0 / 跳过 0 / 总计 37   (r1: 32; +5 r2: denied-backoff, concurrent snapshot, ProbeBudget, registry exact-match, Disabled semantics)
 EXIT:    0
 LOG:     logs/dotnet-host-scheduler.log
 
-## G2 Real IPC full scan chain (real Python Core + real v8 DB + real zip + isolated DataRoot)
+## G2 App VM-level Completed-only registration test (r1 P2-4)
+
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~Fea11ScanRegistrationVm"
+RESULT:  通过 5 / 失败 0 / 跳过 0 / 总计 5   (Completed registers once; Failed/Cancelled/blank-book register nothing; book captured at confirm time)
+EXIT:    0
+LOG:     logs/dotnet-app-vm-scan-registration.log
+
+## G3 Real IPC full scan chain (real Python Core + real v8 DB + real zip + isolated DataRoot) — r2 sequence
 
 ENV:     NEWMANGA_FEA11_IPC=1
 COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~Fea11ScanIpcTests"
-RESULT:  通过 1 / 失败 0 / 跳过 0 / 总计 1
-EXIT:    0
-EVIDENCE: real-ipc.json / real-ipc.txt (fixture isolated root under
-          G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-*; the frozen seed script only allows that
-          FEA-11 fixtures root, so the card's planned FEA-11-SCAN-1 fixture root is replaced by the
-          seed-compatible root; no real user data touched)
-          steps: unchanged -> missing -> restored -> changed; ScanSourceSync only on the write-free path;
-          wire commands = {core.ping, OpenHostSession, RegisterSourceReadGrant, ScanSourceSync};
-          db_snapshot_unchanged = true.
+RESULT:  通过 1 / 失败 0 / 跳过 0 / 总计 1; EXIT 0
+SEQUENCE: unchanged(ok) -> changed(changed) -> changed-deleted(**missing**) -> restored(ok) -> changed-again(changed)
+          the changed -> deleted -> missing step is the r1 P1-1 discriminator (identity baseline is not
+          overwritten by changed observations).
+WIRE:     exact set {OpenHostSession, RegisterSourceReadGrant, ScanSourceSync, core.ping} (no plan/apply/write)
+ZERO WRITE: page_bindings/source_versions/source_entries/source_locations snapshot equal before/after
+EVIDENCE: real-ipc.json, real-ipc.txt
 LOG:     logs/fea11-scan-ipc.log
 
-## G3 Status/log redaction assertions (AC-S5)
+## G4 Mutation check for the r1 P1-1 fix (discriminating evidence)
 
-COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~StatusAndLogs_AreRedacted"
-RESULT:  通过 1 / 失败 0 / 跳过 0 / 总计 1
-EXIT:    0
-LOG:     logs/status-redaction.log
+MUTATION: temporarily reverted the cache condition to the r1 pre-fix form (identity cached for every ok
+          status, including changed), rebuilt, re-ran the real-IPC test -> FAIL:
+          Expected: "missing" / Actual: "error" (SOURCE_PLAN_STALE path), exactly the review finding.
+RESTORE:  fix re-applied; real-IPC test green again (G3).
+LOG:     logs/mutation-p1-changed-identity.log (mutation run, expected FAIL) + G3 (restored run)
 
-## G4 Full .NET (first run + rerun; per-assembly passed/failed/skipped)
+## G5 Full .NET (three runs; per-assembly passed/failed/skipped; known flaky recorded honestly)
 
 COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
-RUN 1:   失败 0 / 通过 1437 / 跳过 81 / 总计 1518; EXIT 0
-RUN 2:   失败 0 / 通过 1437 / 跳过 81 / 总计 1518; EXIT 0
-分程序集 (RUN 1 = RUN 2):
-  Appearance              21 / 0 / 0  (21)
-  Presentation.Avalonia   38 / 0 / 0  (38)
-  ThemeEngine            253 / 0 / 0  (253)
-  DesignSystem           117 / 0 / 0  (117)
-  ApplicationCore         31 / 0 / 0  (31)
-  Host                   139 / 0 / 50 (189)
-  CoreClient             167 / 0 / 24 (191)
-  App                    671 / 0 / 7  (678)
-BEFORE (release-state baseline; same .NET sources): 1405 / 0 / 80 / 1485
-  provenance: verification/FEA-12-CORE/logs/core-host-dotnet-full-2.log (commit 9ebb812b0);
-  git diff --name-only e0c370870..HEAD -- apps/desktop-avalonia is empty, so the before run and this
-  run differ only by this card's .NET changes (+32 passed Host tests, +1 skipped real-IPC test).
-FLAKY:   the known cross-assembly evidence-write flake (FluentResidual2VisualEvidenceTests vs
-         WireLogSourceRedactionTests) did not trigger in either run; recorded honestly, not claimed
-         as a stable PASS.
-RESTORE: after both runs git checkout -- verification/FEA-09 (WireLogSourceRedactionTests rewrites
+RUN 1:   失败 0 / 通过 1447 / 跳过 81 / 总计 1528; EXIT 0
+RUN 2:   失败 1 / 通过 1446 / 跳过 81 / 总计 1528; EXIT 1   <-- KNOWN FLAKY, see below
+RUN 3:   失败 0 / 通过 1447 / 跳过 81 / 总计 1528; EXIT 0   <-- rerun after the flaky failure
+分程序集 RUN 1 / RUN 3 (identical): Appearance 21/0/0(21); Presentation.Avalonia 38/0/0(38);
+  ThemeEngine 253/0/0(253); DesignSystem 117/0/0(117); Host 144/0/50(194); ApplicationCore 31/0/0(31);
+  CoreClient 167/0/24(191); App 676/0/7(683).
+RUN 2 failure: NewManga.App.Tests.FluentResidual2VisualEvidenceTests
+  .Captures_Residual2_Visual_Inventory_Only_When_Opted_In (App assembly 675/1/7/683).
+  Cause: the pre-existing cross-test git-status evidence-write race (same test flaked before this card;
+  see FEA-12-PREREQ-1 / FEA-12-CORE flaky L-1 records). The failure message compared the concurrent
+  "M verification/FEA-09/logs/wire-redacted.*" line against this card's WIP evidence line — an
+  evidence-write race, not a product regression.
+  RERUN: isolated `--filter FullyQualifiedName~FluentResidual2VisualEvidenceTests` -> PASS 1/0/0
+  (logs/flaky-fluent-residual2.log); full RUN 3 -> PASS. Recorded as flaky, not claimed stable.
+DELTA vs r1: +10 passed (Host +5 r2 unit tests, App +5 VM tests); failed stayed 0 on the clean runs.
+RESTORE: after each full run `git checkout -- verification/FEA-09` (WireLogSourceRedactionTests rewrites
          that tracked evidence); the path is clean afterwards.
-LOG:     logs/dotnet-full-1.log, logs/dotnet-full-2.log
+LOG:     logs/dotnet-full-1.log, logs/dotnet-full-2.log (flaky run), logs/dotnet-full-3.log,
+         logs/flaky-fluent-residual2.log
 
-## G5 Full pytest (no Python change in this card; run for an honest current baseline)
+## G6 Full pytest (no Python change in this card; r1 baseline referenced)
 
-COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
-RESULT:  3203 passed, 10 skipped in 240.51s; EXIT 0
-         (matches the FEA-11-MATCH-1 baseline 3203/10; this card changes no Python file)
-LOG:     logs/pytest-full.log
+REFERENCE: 3203 passed, 10 skipped, EXIT 0 (r1 run; logs/pytest-full.log) — r2 changes no Python file,
+           so the baseline is unchanged and no re-run is claimed.
+COMMAND (r1): C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
 
-## G6 Governance check (card in_review + evidence)
+## G7 Governance check (card in_review + evidence)
 
 COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-SCAN-1.md
-RESULT:  Governance check: PASS (3 warnings: 非终态 Task 数 / STATUS 80% / REBASELINE_PLAN 80%, all pre-existing)
+RESULT:  PASS (3 pre-existing global warnings: 非终态 Task 数 / STATUS 80% / REBASELINE_PLAN 80%)
 EXIT:    0
-LOG:     不在 evidence_dir 内落日志（避免 check 日志自指告警，FEA-12-PREREQ-1 R-003 先例）：
-         pre-update 运行 logs=G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\check-pre.log；
-         最终 in_review + 提交后复跑记录见 Handoff 与 workspace agent-output\fea11-scan-1\FEA-11-SCAN-1\check-final.log
+LOG:     不在 evidence_dir 内落日志（避免 check 日志自指，FEA-12-PREREQ-1 R-003 先例）；记录见
+         Handoff 与 workspace agent-output\fea11-scan-1\FEA-11-SCAN-1\check-r2-*.log
 
-## G7 Frozen pins
+## G8 Frozen pins
 
 COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
-RESULT:  PIN AUDIT: PASS (all 18)
-EXIT:    0
+RESULT:  PIN AUDIT: PASS (all 18); EXIT 0
 LOG:     logs/pins.log
 
-## G8 C-07 API inventory
+## G9 C-07 API inventory
 
 COMMAND: C:/Python314/python.exe tools/generate_api_inventory.py --check
-RESULT:  PASS (EXIT 0); IHostController frozen face unchanged (the scan registration rides the separate
+RESULT:  PASS (EXIT 0); frozen C-07 IHostController unchanged (scan registration rides
          ISourceImportController / HostRuntime in-process seam)
 LOG:     logs/api-inventory.log
 
-## G9 Scope / frozen-byte validation
+## G10 Scope / frozen-byte validation
 
-COMMAND: see logs/scope-validation.log
-RESULT:  this card's files are apps/**, doc/tasks/FEA-11-SCAN-1.md, doc/handoffs/FEA-11-SCAN-1-*.md and
-         verification/FEA-11-SCAN-1/** only; the single whole-range code path
-         (src/application/sources/matcher.py) belongs to FEA-11-MATCH-1 r2 (e8b0b2db8), not this card;
-         no doc/plan, doc/contracts, schema, migration or dependency change.
+COMMAND: see logs/scope-validation.log and changed-files.txt
+RESULT:  r2 changes are apps/** .NET + verification + card/handoff only; no .NET change landed upstream
+         between the r1 gate run and this rerun; whole-range code path remains
+         src/application/sources/matcher.py (FEA-11-MATCH-1 r2 e8b0b2db8, not this card); no
+         doc/plan, doc/contracts, schema, migration or dependency change.
 LOG:     logs/scope-validation.log
 
 ## Summary
 
 | Gate | Result | EXIT |
 |---|---|---|
-| G1 scheduler/registration unit | 32 / 0 / 0 | 0 |
-| G2 real IPC scan | 1 / 0 / 0 (ok->missing->ok->changed; zero DB write) | 0 |
-| G3 redaction | 1 / 0 / 0 | 0 |
-| G4 full .NET run1/run2 | 1437 / 0 / 81 / 1518 both runs | 0 / 0 |
-| G5 full pytest | 3203 passed / 10 skipped | 0 |
-| G6 check | PASS (3 pre-existing warnings) | 0 |
-| G7 pins | PASS 18/18 | 0 |
-| G8 API inventory | PASS | 0 |
-| G9 scope | 0 out-of-scope files from this card | — |
+| G1 scheduler/registration unit | 37 / 0 / 0 | 0 |
+| G2 App VM Completed-only | 5 / 0 / 0 | 0 |
+| G3 real IPC scan | 1 / 0 / 0 (ok->changed->missing->ok->changed; zero write) | 0 |
+| G4 P1 mutation | pre-fix => FAIL (missing vs error); restored => PASS | 1 (mutation) / 0 |
+| G5 full .NET run1 | 1447 / 0 / 81 / 1528 | 0 |
+| G5 full .NET run2 | 1446 / 1 / 81 / 1528 — known flaky FluentResidual2 | 1 |
+| G5 full .NET run3 (rerun) | 1447 / 0 / 81 / 1528 | 0 |
+| G5 isolated flaky rerun | 1 / 0 / 0 | 0 |
+| G6 full pytest | 3203 passed / 10 skipped (r1 reference; no Python change) | 0 |
+| G7 check | PASS (3 pre-existing warnings) | 0 |
+| G8 pins | PASS 18/18 | 0 |
+| G9 API inventory | PASS | 0 |
+| G10 scope | 0 out-of-scope files from this card | — |

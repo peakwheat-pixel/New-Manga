@@ -1,3 +1,4 @@
+OK: rendered counts match FEA-C07 doc
 | 接口 | 方法数 | 属性/事件/字段数 |
 |---|---|---|
 | IReaderProgressSink | 1 | 0 |
@@ -26,7 +27,6 @@
 | 9 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
 | 10 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
 | 11 | `ReadPageImageAsync` | `Task<byte[]?>` |
-OK: rendered counts match FEA-C07 doc
 | 12 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
 | 13 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
 | 14 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |

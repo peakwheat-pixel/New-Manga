@@ -38,6 +38,9 @@ public sealed class ImportDockViewModel : ObservableObject
     // FEA-09-UI-1 referenced-import state.
     private SourcePlanPreview? _activePlan;
     private IReadOnlyList<ReferenceImportSource>? _referenceSources;
+    // r1 P3-1: the book that owned the confirmed import, captured when the import STARTS so a later
+    // selection switch cannot re-label the completed import's scan targets with a different book.
+    private string? _referenceBookId;
     private string? _activeOperationId;
     private bool _isReferenceRunning;
     private string _referencePassword = string.Empty;
@@ -293,6 +296,9 @@ public sealed class ImportDockViewModel : ObservableObject
         }
 
         _referenceSources = sources;
+        // A fresh plan starts a fresh import context: the previous completed import's captured book
+        // must not leak into the next registration (r1 P3-1).
+        _referenceBookId = null;
         IsOpen = true;
         var plan = await _sourceImport.PlanReferencedImportAsync(chapterId, sources).ConfigureAwait(true);
         if (plan is null)
@@ -322,6 +328,9 @@ public sealed class ImportDockViewModel : ObservableObject
         }
 
         IsReferenceRunning = true;
+        // r1 P3-1: capture the owning book at confirm time (not at receipt time) so a selection
+        // switch during the import cannot re-label the registered scan targets.
+        _referenceBookId = _bookId();
         try
         {
             var result = await sourceImport.StartReferencedImportAsync(plan, password).ConfigureAwait(true);
@@ -455,7 +464,9 @@ public sealed class ImportDockViewModel : ObservableObject
             return;
         }
 
-        var bookId = _bookId();
+        // r1 P3-1: use the book captured at confirm/start; only fall back to the live selection when
+        // no import was started in this dock session.
+        var bookId = _referenceBookId ?? _bookId();
         if (string.IsNullOrWhiteSpace(bookId))
         {
             return;

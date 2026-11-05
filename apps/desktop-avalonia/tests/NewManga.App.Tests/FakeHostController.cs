@@ -1,5 +1,6 @@
 using System.Globalization;
 using NewManga.App.Services;
+using NewManga.App.ViewModels.V2.Library;
 using NewManga.CoreClient;
 
 namespace NewManga.App.Tests;
@@ -1677,4 +1678,132 @@ public sealed class FakeProgressStore
     }
 
     private static string Key(string chapterId, string mode) => chapterId + "|" + mode;
+}
+
+/// <summary>
+/// FEA-11-SCAN-1 (I-2 / r1 P2-4): VM-level proof that ONLY a completed referenced import registers
+/// periodic scan targets. Failed/cancelled receipts register nothing, a blank book id registers
+/// nothing, and (r1 P3-1) the owning book is captured at confirm time so a later library selection
+/// switch cannot re-label the completed import's project_ids.
+/// </summary>
+public sealed class Fea11ScanRegistrationVmTests
+{
+    private static ImportDockViewModel Create(FakeHostController host, Func<string?> bookId) =>
+        new(
+            host,
+            picker: null,
+            notify: (_, _) => { },
+            chapterId: () => "ch-1",
+            chapterTitle: () => "第 1 章",
+            afterImport: () => Task.CompletedTask,
+            requestCreateChapter: () => { },
+            referencePollDelay: () => Task.CompletedTask,
+            bookId: bookId);
+
+    private static SourcePlanPreview Plan() => new(
+        "ch-1",
+        "skip",
+        "plan-1",
+        "digest-1",
+        new[] { "grant-1" },
+        new[] { new SourcePlanItemView(0, "page.png", "image", "ok", 1, null, false) },
+        new SourcePlanTotals(1, 0, 0, 0));
+
+    private static SourceImportReceipt Receipt(SourceImportOperationState state) => new(
+        "op-1",
+        "ch-1",
+        state,
+        false,
+        state == SourceImportOperationState.Completed ? 1 : 0,
+        new[]
+        {
+            new SourceImportReceiptItem(
+                0,
+                "page.png",
+                "image",
+                state == SourceImportOperationState.Failed ? "failed" : "imported",
+                state == SourceImportOperationState.Failed ? "SOURCE_PASSWORD_INVALID" : null,
+                1,
+                0,
+                new SourceImportCounts(ImportedPages: 1)),
+        },
+        new SourceImportCounts(ImportedPages: 1));
+
+    private static async Task RunAsync(
+        FakeHostController host, ImportDockViewModel viewModel, SourceImportOperationState state)
+    {
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        host.ScriptedReferenceStarts.Enqueue(SourceImportStartResult.Accepted("op-1"));
+        host.ScriptedReferenceReceipts.Enqueue(Receipt(state));
+        await viewModel.PlanReferenceImportAsync(
+            new[] { new ReferenceImportSource(@"C:\manga\page.png", IsFolder: false) });
+        await viewModel.ConfirmReferenceImportAsync();
+    }
+
+    [Fact]
+    public async Task CompletedReceipt_RegistersExactlyOnce_WithConfirmedBookId()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        var viewModel = Create(host, () => "book-1");
+
+        await RunAsync(host, viewModel, SourceImportOperationState.Completed);
+
+        var registration = Assert.Single(host.ScanTargetRegistrations);
+        Assert.Equal("book-1", registration.BookId);
+        var source = Assert.Single(registration.Sources);
+        Assert.Equal(Path.GetFullPath(@"C:\manga\page.png"), source.Path);
+        Assert.False(source.IsFolder);
+    }
+
+    [Theory]
+    [InlineData(SourceImportOperationState.Failed)]
+    [InlineData(SourceImportOperationState.Cancelled)]
+    public async Task NonCompletedReceipt_DoesNotRegister(SourceImportOperationState state)
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        var viewModel = Create(host, () => "book-1");
+
+        await RunAsync(host, viewModel, state);
+
+        Assert.Empty(host.ScanTargetRegistrations);
+    }
+
+    [Fact]
+    public async Task BlankBookId_DoesNotRegister()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        var viewModel = Create(host, () => null);
+
+        await RunAsync(host, viewModel, SourceImportOperationState.Completed);
+
+        Assert.Empty(host.ScanTargetRegistrations);
+    }
+
+    [Fact]
+    public async Task ConfirmCapturesBookId_BeforeALaterSelectionSwitch()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        var currentBook = "book-1";
+        var viewModel = Create(host, () => currentBook);
+        var receiptGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.ReferenceReceiptOverride = async () =>
+        {
+            await receiptGate.Task;
+            return Receipt(SourceImportOperationState.Completed);
+        };
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        host.ScriptedReferenceStarts.Enqueue(SourceImportStartResult.Accepted("op-1"));
+
+        await viewModel.PlanReferenceImportAsync(
+            new[] { new ReferenceImportSource(@"C:\manga\page.png", IsFolder: false) });
+        var confirm = viewModel.ConfirmReferenceImportAsync();
+        // The import is in flight; the user switches the library selection. The registration must
+        // keep the book captured when the import started (r1 P3-1).
+        currentBook = "book-2";
+        receiptGate.TrySetResult(true);
+        await confirm;
+
+        var registration = Assert.Single(host.ScanTargetRegistrations);
+        Assert.Equal("book-1", registration.BookId);
+    }
 }

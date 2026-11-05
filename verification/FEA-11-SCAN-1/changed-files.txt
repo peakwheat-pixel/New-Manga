@@ -1,0 +1,27 @@
+# FEA-11-SCAN-1 changed files (delivery = r1 73d01fd2b + r2 fix commit)
+
+## r2 (review fix) — modified
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+verification/FEA-11-SCAN-1/**（r2 证据重签 + logs/mutation-p1-changed-identity.log + logs/dotnet-app-vm-scan-registration.log + 本文件）
+doc/tasks/FEA-11-SCAN-1.md
+doc/handoffs/FEA-11-SCAN-1-e0c370870.md
+
+## r1 (implementation) — new/modified (unchanged in r2 unless listed above)
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs（new）
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs（new）
+apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs（new）
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs（new）
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+verification/FEA-11-SCAN-1/**（canonical evidence）

@@ -318,7 +318,13 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 if (cancellationToken.IsCancellationRequested) break;
                 var pair = ordered[index];
                 var state = pair.Value;
-                if (state.BackoffUntil is { } until && until > now)
+                DateTimeOffset? backoffUntil;
+                lock (_gate)
+                {
+                    backoffUntil = state.BackoffUntil;
+                }
+
+                if (backoffUntil is { } until && until > now)
                 {
                     continue;
                 }
@@ -340,11 +346,14 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             // failure, never a scan result). Backed-off targets are not budget-deferred.
             if (attempted >= _options.MaxTargetsPerTick)
             {
-                for (var index = lastAttemptedIndex + 1; index < targetCount; index++)
+                lock (_gate)
                 {
-                    var state = ordered[index].Value;
-                    if (state.BackoffUntil is { } until && until > now) continue;
-                    state.Deferred = true;
+                    for (var index = lastAttemptedIndex + 1; index < targetCount; index++)
+                    {
+                        var state = ordered[index].Value;
+                        if (state.BackoffUntil is { } until && until > now) continue;
+                        state.Deferred = true;
+                    }
                 }
             }
 
@@ -525,50 +534,79 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         return DeniedCodes.Contains(code) ? SourceScanOutcome.Denied(code) : SourceScanOutcome.Error(code);
     }
 
-    /// <summary>Applies one outcome; returns true when it is a real (non-deferred) scan result.</summary>
+    /// <summary>
+    /// Applies one outcome under <see cref="_gate"/> (P2-2: Snapshot copies the same state under the
+    /// same lock, so the reads never race a write). Log callbacks run OUTSIDE the lock.
+    /// Returns true when the outcome is a real (non-deferred) scan result.
+    /// </summary>
     private bool ApplyOutcome(TargetState state, SourceScanOutcome outcome, DateTimeOffset now)
     {
-        switch (outcome.Kind)
+        string? warnCode = null;
+        var backoffSeconds = 0;
+        string result;
+        lock (_gate)
         {
-            case SourceScanOutcomeKind.Deferred:
-                state.Deferred = true;
-                return false;
-            case SourceScanOutcomeKind.Ok:
-            case SourceScanOutcomeKind.Changed:
-            case SourceScanOutcomeKind.Missing:
-            case SourceScanOutcomeKind.Unsupported:
-            case SourceScanOutcomeKind.Denied:
-                state.Failures = 0;
-                state.BackoffUntil = null;
-                break;
-            case SourceScanOutcomeKind.Error:
-            default:
-                state.Failures = Math.Min(state.Failures + 1, 32);
-                state.BackoffUntil = now.AddSeconds(BackoffSeconds(state.Failures));
-                _warn?.Invoke("source scan source=" + state.Target.SourceId + " code="
-                    + (outcome.ErrorCode ?? "UNKNOWN") + " backoff=" + BackoffSeconds(state.Failures));
-                break;
-        }
-
-        state.LastScanAt = now;
-        state.LastResult = ResultOf(outcome.Kind);
-        state.Counts = outcome.Counts;
-        state.Deferred = false;
-
-        // AC-S4: an unchanged scan produces no new "recent" record (dedup/noise control).
-        if (state.LastResult != SourceScanResults.Ok)
-        {
-            _recent.Add(new SourceScanRecentEntry(
-                state.Target.SourceId, now, state.LastResult, outcome.Counts, outcome.ErrorCode));
-            while (_recent.Count > SourceScanResults.MaxRecentEntries)
+            if (_disposed)
             {
-                _recent.RemoveAt(0);
+                return false;
+            }
+
+            switch (outcome.Kind)
+            {
+                case SourceScanOutcomeKind.Deferred:
+                    state.Deferred = true;
+                    return false;
+                case SourceScanOutcomeKind.Ok:
+                case SourceScanOutcomeKind.Changed:
+                case SourceScanOutcomeKind.Missing:
+                case SourceScanOutcomeKind.Unsupported:
+                    state.Failures = 0;
+                    state.BackoffUntil = null;
+                    break;
+                case SourceScanOutcomeKind.Denied:
+                    // r1 P2-1: an authorization refusal is a typed failure for backoff purposes (the
+                    // DeniedCodes comment always said "diagnostic, backoff"); it stays result=denied.
+                    state.Failures = Math.Min(state.Failures + 1, 32);
+                    backoffSeconds = BackoffSeconds(state.Failures);
+                    state.BackoffUntil = now.AddSeconds(backoffSeconds);
+                    warnCode = outcome.ErrorCode ?? "SOURCE_ACCESS_DENIED";
+                    break;
+                case SourceScanOutcomeKind.Error:
+                default:
+                    state.Failures = Math.Min(state.Failures + 1, 32);
+                    backoffSeconds = BackoffSeconds(state.Failures);
+                    state.BackoffUntil = now.AddSeconds(backoffSeconds);
+                    warnCode = outcome.ErrorCode ?? "UNKNOWN";
+                    break;
+            }
+
+            state.LastScanAt = now;
+            state.LastResult = ResultOf(outcome.Kind);
+            state.Counts = outcome.Counts;
+            state.Deferred = false;
+            result = state.LastResult;
+
+            // AC-S4: an unchanged scan produces no new "recent" record (dedup/noise control).
+            if (result != SourceScanResults.Ok)
+            {
+                _recent.Add(new SourceScanRecentEntry(
+                    state.Target.SourceId, now, result, outcome.Counts, outcome.ErrorCode));
+                while (_recent.Count > SourceScanResults.MaxRecentEntries)
+                {
+                    _recent.RemoveAt(0);
+                }
             }
         }
 
-        if (_info is not null && state.LastResult != SourceScanResults.Ok)
+        if (warnCode is not null)
         {
-            _info?.Invoke("source scan source=" + state.Target.SourceId + " result=" + state.LastResult);
+            _warn?.Invoke("source scan source=" + state.Target.SourceId + " code=" + warnCode
+                + " backoff=" + backoffSeconds);
+        }
+
+        if (_info is not null && result != SourceScanResults.Ok)
+        {
+            _info?.Invoke("source scan source=" + state.Target.SourceId + " result=" + result);
         }
 
         return true;
@@ -617,7 +655,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
 ///  3. mints one short-lived read grant via the existing <see cref="SourceReadCoordinator"/>;
 ///  4. sends exactly ONE <c>ScanSourceSync</c> (full re-enumeration; no hill-climbing, no hints);
 ///  5. projects the Core <c>Totals</c> and the frozen source status; on a missing source it sends
-///     the C-17 §5.3 <c>MissingObservation</c> (no grant) using the last verified identity digest.
+///     the C-17 §5.3 <c>MissingObservation</c> (no grant) using the last unchanged recorded identity.
 ///
 /// The executor never plans/applies/deletes and never writes Core state.
 /// </summary>
@@ -635,10 +673,12 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     private readonly SourceReadCoordinator _sources;
     private readonly SourceScanOptions _options;
     private readonly TimeProvider _timeProvider;
-    // source_id → last verified identity digest observed in a successful scan (never persisted);
-    // only used to build the C-17 §5.3 MissingObservation. Registry entries carry no per-source
-    // identity facts today, so a source that is missing before its first successful tick fails
-    // closed with a typed error instead of fabricating an identity.
+    // source_id → the recorded-location identity digest of the last UNCHANGED (ok) observation
+    // (never persisted); only used to build the C-17 §5.3 MissingObservation. A changed observation
+    // carries candidate content the Core has NOT recorded, so it never overwrites this baseline
+    // (r1 P1-1). Registry entries carry no per-source identity facts today, so a source that is
+    // missing before its first ok/unchanged tick fails closed with a typed error instead of
+    // fabricating an identity.
     private readonly ConcurrentDictionary<string, string> _identityDigests = new(StringComparer.Ordinal);
 
     public HostSourceScanExecutor(
@@ -804,13 +844,21 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
                        && sourceIdValue.ValueKind == JsonValueKind.String
             ? sourceIdValue.GetString()
             : null;
-        if (sourceId is not null && identityDigest is not null && IsLowerHex64(identityDigest))
+        var changed = counts is { HasChange: true };
+        // r1 P1-1: the cached identity is the C-17 §5.3 *recorded location* baseline used to prove a
+        // later absence. A changed observation carries the NEW candidate content identity, which the
+        // Core has NOT recorded (this slice never applies), so it must never overwrite the baseline —
+        // otherwise a subsequent delete would send an identity the Core rejects (SOURCE_PLAN_STALE).
+        // Only an unchanged/ok observation refreshes the baseline; a changed source keeps the last ok
+        // identity until a future apply/re-import updates the Core location row.
+        if (!changed && status == "ok" && sourceId is not null && identityDigest is not null
+            && IsLowerHex64(identityDigest))
         {
             _identityDigests[sourceId] = identityDigest;
         }
 
-        return counts is { HasChange: true }
-            ? SourceScanOutcome.Changed(counts)
+        return changed
+            ? SourceScanOutcome.Changed(counts!)
             : SourceScanOutcome.Ok(counts ?? SourceScanCounts.Zero);
     }
 
@@ -835,10 +883,45 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
             ? parsed
             : 0;
 
-    private SourceAuthorization? ResolveRegistryEntry(string path)
+    private SourceAuthorization? ResolveRegistryEntry(string path) =>
+        ResolveRegistryEntry(_sources.Registry.List(), path);
+
+    /// <summary>
+    /// r1 P2-5 / card I-2: resolves <c>(registry_id, generation)</c> by EXACT match first — the
+    /// target path must equal an entry locator or one of its registered roots (case-insensitive).
+    /// A revoked entry that matches exactly is a typed failure, never a silent fall-through to an
+    /// ancestor entry. Only when no entry matches exactly (the real-IPC fixture registers the shared
+    /// parent directory as the root) the resolver falls back to the most specific CONTAINING root;
+    /// that fallback is documented here and covered by a unit test. Public for that unit test only —
+    /// it is a pure function of the registry snapshot.
+    /// </summary>
+    public static SourceAuthorization? ResolveRegistryEntry(
+        IReadOnlyList<SourceAuthorization> entries, string path)
     {
         if (!TryNormalize(path, out var normalized)) return null;
-        return _sources.Registry.List()
+
+        SourceAuthorization? exact = null;
+        foreach (var entry in entries)
+        {
+            var locatorMatches = TryNormalize(entry.Locator, out var locator)
+                                 && string.Equals(locator, normalized, StringComparison.OrdinalIgnoreCase);
+            var rootMatches = entry.Roots.Any(root => root.Readable &&
+                TryNormalize(root.Root, out var candidate) &&
+                string.Equals(candidate, normalized, StringComparison.OrdinalIgnoreCase));
+            if (!locatorMatches && !rootMatches) continue;
+            if (entry.RevokedAt is not null)
+            {
+                // The target's own registry entry was revoked: fail closed at resolution time.
+                return null;
+            }
+
+            exact ??= entry;
+        }
+
+        if (exact is not null) return exact;
+
+        // Controlled containment fallback (fixture/pre-existing parent-directory registrations).
+        return entries
             .Where(entry => entry.RevokedAt is null)
             .Select(entry => new
             {

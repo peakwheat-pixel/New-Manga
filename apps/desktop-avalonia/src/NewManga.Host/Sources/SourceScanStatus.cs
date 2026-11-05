@@ -18,9 +18,14 @@ public sealed record SourceScanStatus(
     IReadOnlyList<SourceScanTargetStatus> Targets,
     IReadOnlyList<SourceScanRecentEntry> Recent)
 {
-    /// <summary>The honest "no scheduler" state (Host not ready, referenced import disabled, ...).</summary>
+    /// <summary>
+    /// The honest "no scheduler" state (Host not ready, referenced import disabled, ...).
+    /// <c>enabled=false</c> already says "not running"; <c>paused</c> is deliberately false so a
+    /// caller cannot confuse "disabled for this host" with "an active scheduler paused by a verdict"
+    /// (r1 P3-4).
+    /// </summary>
     public static SourceScanStatus Disabled(int intervalSeconds) =>
-        new(false, intervalSeconds, true, null, null, Array.Empty<SourceScanTargetStatus>(),
+        new(false, intervalSeconds, false, null, null, Array.Empty<SourceScanTargetStatus>(),
             Array.Empty<SourceScanRecentEntry>());
 }
 

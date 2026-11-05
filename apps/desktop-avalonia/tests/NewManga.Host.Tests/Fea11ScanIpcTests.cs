@@ -97,31 +97,39 @@ public sealed class Fea11ScanIpcTests
         var unchanged = await TickAsync("unchanged");
         Assert.Equal(SourceScanResults.Ok, unchanged.LastResult);
 
-        // 2) Source deleted → the Host stats first, sends the MissingObservation (no grant) and the
-        //    Core cross-checks it → missing (never a tombstone, never a delete).
-        File.Delete(oldZip);
-        var missing = await TickAsync("deleted");
-        Assert.Equal(SourceScanResults.Missing, missing.LastResult);
-
-        // 3) Source restored → full re-enumeration reports ok again (no stale cached state is used).
-        await File.WriteAllBytesAsync(oldZip, oldBytes);
-        var restored = await TickAsync("restored");
-        Assert.Equal(SourceScanResults.Ok, restored.LastResult);
-
-        // 4) Same name, same size, different bytes → changed (full re-enumeration; no hints).
+        // 2) Same name, same size, different bytes → changed (full re-enumeration; no hints).
         await File.WriteAllBytesAsync(oldZip, newBytes);
         Assert.Equal(oldBytes.Length, new FileInfo(oldZip).Length);
         var changed = await TickAsync("changed");
         Assert.Equal(SourceScanResults.Changed, changed.LastResult);
         Assert.True(changed.Counts!.Changed >= 1, "changed scan must report totals.changed >= 1");
 
+        // 3) r1 P1-1: a changed observation must NOT overwrite the recorded missing baseline
+        //    identity; the last unchanged/ok observation (1) is the Core-recorded location. A source
+        //    deleted right after a changed tick therefore still reports the Contract's missing
+        //    observation instead of a SOURCE_PLAN_STALE error (this is the r1 P1 sequence).
+        File.Delete(oldZip);
+        var changedThenDeleted = await TickAsync("changed-deleted");
+        Assert.Equal(SourceScanResults.Missing, changedThenDeleted.LastResult);
+
+        // 4) Source restored → full re-enumeration reports ok again (no stale cached state is used
+        //    for the content verdict; the recorded location identity is not re-attested).
+        await File.WriteAllBytesAsync(oldZip, oldBytes);
+        var restored = await TickAsync("restored");
+        Assert.Equal(SourceScanResults.Ok, restored.LastResult);
+
+        // 5) A second same-size rewrite is still observed as changed (full re-enumeration).
+        await File.WriteAllBytesAsync(oldZip, newBytes);
+        var changedAgain = await TickAsync("changed-again");
+        Assert.Equal(SourceScanResults.Changed, changedAgain.LastResult);
+
         // Zero Core writes: the SQLite page/binding/version/entry snapshot is byte-for-byte equal.
         var bindingsAfter = QuerySnapshot(python, dbPath);
         Assert.Equal(bindingsBefore, bindingsAfter);
         Assert.Equal(SourceScanResults.Changed, scheduler.Snapshot().Targets.Single().LastResult);
 
-        // Only the read face was used on the wire: ScanSourceSync (+ the grant/ping/session frames),
-        // never a write command.
+        // Only the read face was used on the wire: exactly the four frozen commands (ScanSourceSync +
+        // the ping / host-session / grant frames), never a plan/apply/write command.
         var wireCommands = client.Wire.Frames
             .Select(frame => RequestCommand(frame.RequestLine))
             .Where(command => command is not null)
@@ -135,7 +143,9 @@ public sealed class Fea11ScanIpcTests
             "RelinkSource", "RepointSource", "ResyncSource", "AcknowledgeSourceOperation",
             "CompleteSourceOperationRecovery", "RecordSourceOperationFailure",
         };
-        Assert.Contains("ScanSourceSync", wireCommands);
+        Assert.Equal(
+            new[] { "OpenHostSession", "RegisterSourceReadGrant", "ScanSourceSync", "core.ping" },
+            wireCommands);
         Assert.All(forbidden, command => Assert.DoesNotContain(command, wireCommands));
 
         var evidence = new
@@ -147,6 +157,7 @@ public sealed class Fea11ScanIpcTests
             registry_generation = registered.Generation,
             same_size_rewrite = new { size = oldBytes.Length, old_sha256 = Sha256(oldBytes), new_sha256 = Sha256(newBytes) },
             steps,
+            identity_baseline_kept_after_changed = true,
             db_snapshot_unchanged = true,
             wire_commands = wireCommands,
             forbidden_write_commands_absent = true,
@@ -163,10 +174,11 @@ public sealed class Fea11ScanIpcTests
             JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
         await File.WriteAllTextAsync(
             Path.Combine(root, "real-ipc.txt"),
-            "FEA-11-SCAN-1 AC-S4 real IPC\n"
+            "FEA-11-SCAN-1 AC-S4 real IPC (r2: changed->deleted->missing included)\n"
             + "DataRoot=" + root + "\n"
             + "steps=" + string.Join(",", steps.Select(step => step.GetType().GetProperty("step")!.GetValue(step))) + "\n"
-            + "results=" + string.Join(",", scheduler.Snapshot().Targets.Select(target => target.LastResult)) + "\n"
+            + "results=" + string.Join(",", steps.Select(step => step.GetType().GetProperty("result")!.GetValue(step))) + "\n"
+            + "identity_baseline_kept_after_changed=true\n"
             + "db_snapshot_unchanged=true\nwire_commands=" + string.Join(",", wireCommands) + "\nPASS\n");
     }
 

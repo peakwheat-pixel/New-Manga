@@ -684,4 +684,174 @@ public sealed class SourceScanSchedulerTests
 
         await scheduler.DisposeAsync();
     }
+
+    // ---------------------------------------------------------------------------------------
+    // r2 fixes: denied backoff (P2-1), locked snapshot (P2-2), registry exact match (P2-5),
+    // ProbeBudget (P3-2), Disabled semantics (P3-4).
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task DeniedResult_IsBackedOff_AndKeepsDeniedResult()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor
+        {
+            Script = _ => SourceScanOutcome.Denied("SOURCE_ACCESS_DENIED"),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log);
+        scheduler.RegisterTarget(Target("s1"));
+
+        await scheduler.TickAsync();
+        Assert.Equal(1, executor.ScanCalls);
+        Assert.Equal(SourceScanResults.Denied, scheduler.Snapshot().Targets.Single().LastResult);
+        Assert.False(scheduler.Paused); // denied is a per-target failure, not a scheduler pause
+        Assert.Contains(log.Warn, line => line.Contains("SOURCE_ACCESS_DENIED", StringComparison.Ordinal)
+            && line.Contains("backoff=60", StringComparison.Ordinal));
+
+        clock.Advance(TimeSpan.FromSeconds(59));
+        await scheduler.TickAsync();
+        Assert.Equal(1, executor.ScanCalls); // denied now backs off like any typed failure
+        clock.Advance(TimeSpan.FromSeconds(1));
+        await scheduler.TickAsync();
+        Assert.Equal(2, executor.ScanCalls);
+        Assert.Contains(log.Warn, line => line.Contains("backoff=120", StringComparison.Ordinal));
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task ConcurrentSnapshotDuringTicks_DoesNotRaceOrThrow()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor
+        {
+            Script = _ => SourceScanOutcome.Changed(new SourceScanCounts(0, 1, 0, 0, 0)),
+        };
+        var scheduler = NewScheduler(executor, clock);
+        for (var index = 0; index < 6; index++)
+        {
+            scheduler.RegisterTarget(Target("s" + index));
+        }
+
+        var failures = new List<Exception>();
+        var stop = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var readers = Enumerable.Range(0, 4).Select(_ => Task.Run(async () =>
+        {
+            try
+            {
+                while (!stop.Task.IsCompleted)
+                {
+                    var snapshot = scheduler.Snapshot();
+                    if (snapshot.Targets.Count != 6) throw new InvalidOperationException("target count torn");
+                    if (snapshot.Recent.Count > SourceScanResults.MaxRecentEntries)
+                        throw new InvalidOperationException("recent overflow");
+                    await Task.Yield();
+                }
+            }
+            catch (Exception error)
+            {
+                lock (failures) failures.Add(error);
+            }
+        })).ToArray();
+
+        for (var index = 0; index < 40; index++)
+        {
+            clock.Advance(TimeSpan.FromSeconds(1));
+            await scheduler.TickAsync();
+        }
+
+        stop.TrySetResult(true);
+        await Task.WhenAll(readers).WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Empty(failures);
+        Assert.Equal(240, executor.ScanCalls); // 40 ticks × 6 targets
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public void DisabledStatus_IsNotPaused()
+    {
+        var status = SourceScanStatus.Disabled(900);
+        Assert.False(status.Enabled);
+        Assert.False(status.Paused); // r1 P3-4: disabled != paused
+        Assert.Equal(900, status.IntervalSeconds);
+        Assert.Empty(status.Targets);
+        Assert.Empty(status.Recent);
+    }
+
+    [Fact]
+    public void ProbeBudget_UsesRealFileSizeAndFolderMemberLimits()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "fea11-scan-budget-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var file = Path.Combine(root, "book.zip");
+            File.WriteAllBytes(file, new byte[64]);
+            var folder = Path.Combine(root, "folder");
+            Directory.CreateDirectory(folder);
+            for (var index = 0; index < 3; index++)
+            {
+                File.WriteAllBytes(Path.Combine(folder, "p" + index + ".png"), new byte[4]);
+            }
+
+            var executor = new HostSourceScanExecutor(null!, null!, new SourceScanOptions
+            {
+                MaxBytesPerSource = 64,
+                MaxEntriesPerSource = 3,
+            });
+
+            var fileBudget = executor.ProbeBudget(new SourceScanTarget("s1", file, new[] { "b1" }, "1"));
+            Assert.NotNull(fileBudget);
+            Assert.False(fileBudget!.Exceeded);
+            Assert.Equal(64, fileBudget.Metric);
+            Assert.Equal(64, fileBudget.Limit);
+
+            var folderBudget = executor.ProbeBudget(new SourceScanTarget("s2", folder, new[] { "b1" }, "1"));
+            Assert.NotNull(folderBudget);
+            Assert.Equal(3, folderBudget!.Metric);
+            Assert.False(folderBudget.Exceeded);
+
+            var missing = executor.ProbeBudget(
+                new SourceScanTarget("s3", Path.Combine(root, "gone.zip"), new[] { "b1" }, "1"));
+            Assert.Null(missing); // stat fails -> no budget verdict (missing path decides)
+        }
+        finally
+        {
+            try { Directory.Delete(root, recursive: true); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException) { }
+        }
+    }
+
+    [Fact]
+    public void RegistryResolution_PrefersExactMatch_AndFailsClosedOnRevokedExactEntry()
+    {
+        const string fixtureRoot = @"C:\fixtures";
+        const string exactFile = @"C:\fixtures\book.zip";
+        static SourceRoot Root(string path) => new(path, 1, 1, "2026-11-06T00:00:00Z", true);
+        static SourceAuthorization Entry(string id, string locator, params string[] roots) =>
+            new(id, locator, 1, "2026-11-06T00:00:00Z", "2026-11-06T00:00:00Z", null,
+                roots.Select(Root).ToArray());
+
+        var parent = Entry("reg-parent", fixtureRoot, fixtureRoot);
+        var exact = Entry("reg-exact", exactFile, exactFile);
+
+        // Exact root/locator match wins over the containing parent entry.
+        var resolved = HostSourceScanExecutor.ResolveRegistryEntry(new[] { parent, exact }, exactFile);
+        Assert.NotNull(resolved);
+        Assert.Equal("reg-exact", resolved!.RegistryId);
+
+        // No exact entry -> controlled containment fallback to the parent (real-IPC fixture shape).
+        var fallback = HostSourceScanExecutor.ResolveRegistryEntry(new[] { parent }, exactFile);
+        Assert.NotNull(fallback);
+        Assert.Equal("reg-parent", fallback!.RegistryId);
+
+        // A revoked entry that matches exactly is a typed failure, never a fall-through to parent.
+        var revoked = exact with { RevokedAt = "2026-11-06T00:00:01Z" };
+        Assert.Null(HostSourceScanExecutor.ResolveRegistryEntry(new[] { parent, revoked }, exactFile));
+
+        // Nothing matches at all -> null (typed failure downstream).
+        Assert.Null(HostSourceScanExecutor.ResolveRegistryEntry(new[] { parent }, @"D:\other\book.zip"));
+    }
 }

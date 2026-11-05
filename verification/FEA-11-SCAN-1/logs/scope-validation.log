@@ -1,4 +1,4 @@
-# FEA-11-SCAN-1 scope validation (base e0c370870)
+# FEA-11-SCAN-1 r2 scope validation (base e0c370870; r1 delivery 73d01fd2b; current HEAD b48c60a7e)
 
 ## 1) Whole-range diff on code/contract paths (card gate command)
 COMMAND: git diff --name-only e0c370870..HEAD -- doc/plan doc/contracts src/
@@ -6,30 +6,36 @@ OUTPUT:
   src/application/sources/matcher.py
 ATTRIBUTION:
   e8b0b2db8 fix(fea11-match-1): r2 R1-01/R1-02/R1-04/R1-05/R1-08 minimal rework
-NOTE: the only code-path entry is src/application/sources/matcher.py from FEA-11-MATCH-1 r2
-      (e8b0b2db8, delivered after this card base) - NOT this card. This card's delivery commits
-      change apps/**, doc/tasks/FEA-11-SCAN-1.md, doc/handoffs/FEA-11-SCAN-1-*.md and
-      verification/FEA-11-SCAN-1/** only.
+NOTE: the only code-path entry is src/application/sources/matcher.py from FEA-11-MATCH-1 r2,
+      delivered after this card base and NOT part of this card.
 
-## 2) .NET surface unchanged between base and HEAD (before this card)
-COMMAND: git diff --name-only e0c370870..HEAD -- apps/desktop-avalonia
-  (empty)  # no .NET changes between base and HEAD
+## 2) No .NET change landed upstream between the r1 delivery and this r2 run
+COMMAND: git diff --name-only 6e5e210a5..HEAD -- apps/desktop-avalonia
+OUTPUT: (empty)
 
-## 3) This card working-tree change scope
-COMMAND: git status --porcelain (pre-commit)
-   M apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
-   M apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
-   M apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+## 3) This r2 working-tree change scope (pre-commit; HEAD=b48c60a7e)
+COMMAND: git status --porcelain
    M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
-   M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
-   M apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
-   M apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+   M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+   M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
    M apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
-  ?? apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
-  ?? apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
-  ?? apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
-  ?? apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
-  ?? verification/FEA-11-SCAN-1/
+   M apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+   M apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+   M doc/handoffs/FEA-11-SCAN-1-e0c370870.md
+   M doc/tasks/FEA-11-SCAN-1.md
+   M verification/FEA-11-SCAN-1/logs/api-inventory.log
+   M verification/FEA-11-SCAN-1/logs/dotnet-full-1.log
+   M verification/FEA-11-SCAN-1/logs/dotnet-full-2.log
+   M verification/FEA-11-SCAN-1/logs/dotnet-host-scheduler.log
+   M verification/FEA-11-SCAN-1/logs/gates.log
+   M verification/FEA-11-SCAN-1/logs/scope-validation.log
+   M verification/FEA-11-SCAN-1/real-ipc.json
+   M verification/FEA-11-SCAN-1/real-ipc.txt
+  ?? verification/FEA-11-SCAN-1/changed-files.txt
+  ?? verification/FEA-11-SCAN-1/logs/dotnet-app-vm-scan-registration.log
+  ?? verification/FEA-11-SCAN-1/logs/dotnet-full-3.log
+  ?? verification/FEA-11-SCAN-1/logs/flaky-fluent-residual2.log
+  ?? verification/FEA-11-SCAN-1/logs/mutation-p1-changed-identity.log
 
 ## 4) Frozen contracts / pins
 COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
@@ -39,7 +45,8 @@ RESULT: PIN AUDIT: PASS (all 18); EXIT 0; LOG=logs/pins.log
 COMMAND: C:/Python314/python.exe tools/generate_api_inventory.py --check
 RESULT: EXIT 0 (PASS); LOG=logs/api-inventory.log
 
-## 6) Schema / dependency / core-write boundary
-- No schema/migration/dependency file touched: changed paths are apps/** .NET + docs + verification only.
-- No Core command/capability/DTO/wire added: the scan reuses frozen ScanSourceSync + source.sync.scan/1.
-- No Core DB write: real-IPC evidence real-ipc.json carries db_snapshot_unchanged=true.
+## 6) Schema / dependency / Core-write boundary
+- No schema/migration/dependency file touched: r2 paths are apps/** .NET tests/source + verification only.
+- No Core command/capability/DTO/wire added: the scan still reuses frozen ScanSourceSync + source.sync.scan/1.
+- No Core DB write: real-IPC evidence real-ipc.json db_snapshot_unchanged=true (r2 sequence included).
+- No Python change in this card (pytest 3203/10 baseline referenced from r1, logs/pytest-full.log).

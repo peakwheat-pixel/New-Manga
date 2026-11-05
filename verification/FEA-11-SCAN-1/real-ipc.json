@@ -6,8 +6,8 @@
   "registry_generation": 1,
   "same_size_rewrite": {
     "size": 358,
-    "old_sha256": "868f2a0ce000dd33155bb41cd3a5c18a6e0c6e4a23dc99b453a603f1f7de38b9",
-    "new_sha256": "aef326a84236dc1aa1c57145754881e9af2716b634118a01887f9d22afc6c79c"
+    "old_sha256": "8816f24093a503905b93d5cccddfa5fd39737d2c70214b363be6b4e9a9f07160",
+    "new_sha256": "2d9f619724584c5fed129bccb24fd98dc060b3b2d606874da59e70b69092d118"
   },
   "steps": [
     {
@@ -20,7 +20,16 @@
       "deferred": false
     },
     {
-      "step": "deleted",
+      "step": "changed",
+      "result": "changed",
+      "unchanged": 0,
+      "added": 0,
+      "missing": 0,
+      "changed": 1,
+      "deferred": false
+    },
+    {
+      "step": "changed-deleted",
       "result": "missing",
       "unchanged": 0,
       "added": 0,
@@ -38,7 +47,7 @@
       "deferred": false
     },
     {
-      "step": "changed",
+      "step": "changed-again",
       "result": "changed",
       "unchanged": 0,
       "added": 0,
@@ -47,6 +56,7 @@
       "deferred": false
     }
   ],
+  "identity_baseline_kept_after_changed": true,
   "db_snapshot_unchanged": true,
   "wire_commands": [
     "OpenHostSession",
@@ -59,6 +69,6 @@
     "enabled": true,
     "paused": false,
     "interval_seconds": 60,
-    "recent": 2
+    "recent": 3
   }
 }
