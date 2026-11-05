@@ -14,7 +14,7 @@ base_commit: e0c370870   # 释放点 main head（MATCH-1 交付后）
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 73d01fd2b   # 实现+证据 commit；后续 docs-only commit 见 Handoff
+delivery_head: 7080167e1   # r2 返修 commit（含证据重签/卡/Handoff）；r1 实现 73d01fd2b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-SCAN-1
