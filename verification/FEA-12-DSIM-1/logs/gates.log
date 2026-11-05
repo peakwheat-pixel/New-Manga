@@ -1,0 +1,118 @@
+# FEA-12-DSIM-1 — 门禁实跑记录（command / EXIT / head）
+
+- 时间：2026-11-05（Asia/Shanghai）；仓库 `G:\CODEX\New Manga`（`main`）
+- base_commit：`37f84bb895c9ef9b64e3865f3a92b245f2e28a7c`；实现 commits：`94a12e93f`、`3d0d325f7`
+- 说明：本卡无 Python 生产路径接线、无 .NET 改动；全量 pytest/.NET 数字在**共享工作树**实测（含并发 teammate 已提交改动，见 G2/G3），不合并成"稳定 PASS"的地方已逐条分列。
+
+---
+
+## G1 pytest tests/fea12（本卡新增测试）
+
+```
+command: C:/Python314/python.exe -m pytest tests/fea12 -q -p no:warnings --tb=no
+EXIT: 0
+head: 3d0d325f7（工作树 = 该 commit + 未提交 evidence/文档）
+result: 13 passed
+log: logs/pytest-fea12.log
+```
+
+## G2 pytest 全量（基线 + 交付 head）
+
+```
+command: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+
+① 基线（实施首日，clean tree @37f84bb89，git status 为空）
+EXIT: 0
+result: 3073 passed, 10 skipped in 240.02s
+log: logs/baseline-pytest.log
+
+② 交付 head（共享工作树 = 3d0d325f7 + 并发已提交 FEA-11-LINEAGE-1 r3 的 7 tests）
+EXIT: 0
+result: 3093 passed, 10 skipped in 276.43s
+delta: +20 = 本卡 tests/fea12 13 + FEA-11-LINEAGE-1 r3 7（均非既有测试修改）
+log: logs/pytest-full.log
+
+附：中途一次全量运行（并发 teammate 正在改 core_assembly 等 src 时）出现
+1 failed = tests/core/test_bootstrap.py::test_production_clean_probe_gates_render_only_planning；
+该测试单独复跑 1 passed（2.18s），且本卡未触 bootstrap/assembly，归因为并发工作树时序，
+未计入交付数字。
+```
+
+## G3 .NET 全量（首跑 / 二次 / 稳定树复跑；本卡未改 .NET）
+
+```
+command: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
+env: .NET SDK 10.0.401；Windows 11 10.0.26300
+
+① 首跑（与我的全量 pytest 并发，后者正在写 verification/FEA-12-DSIM-1/logs/）
+EXIT: 1
+result: NewManga.App.Tests 失败 1 / 通过 670 / 跳过 7（678）；其余 7 个 assembly 全绿
+failed: NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In
+归因: 该测试断言"运行期间 git status --porcelain -- verification 不变"；既有
+      NewManga.CoreClient.Tests.WireLogSourceRedactionTests 会重写 tracked 证据
+      verification/FEA-09/logs/wire-redacted.ndjson（既有行为），且当时我的 pytest
+      正在写 verification/FEA-12-DSIM-1/logs/，命中其断言窗口。
+log: logs/dotnet-full-1.log
+
+② 二次复跑（无并发 pytest）
+EXIT: 1
+result: 同一测试 失败 1 / 通过 670 / 跳过 7（678）；其余 7 个 assembly 全绿
+断言差异（实测原文）:
+  Expected: "?? verification/FEA-12-DSIM-1/"
+  Actual:   ···"? verification/FEA-11-LINEAGE-1/logs/gate"···
+归因: 并发 teammate（lineage-impl）在运行期间写入 verification/FEA-11-LINEAGE-1/logs/**，
+      新 untracked 路径在断言 before/after 之间出现；本卡未改 .NET，与本卡实现无关。
+log: logs/dotnet-full-2.log
+
+③ 稳定树复跑（工作树仅剩本卡 untracked evidence，无并发写入）
+EXIT: 0
+result: 失败 0 / 通过 1403 / 跳过 79（8 assemblies）
+  21 + 38 + 253 + 117 + 107 + 31 + 165 + 671 = 1403 passed；49 + 23 + 7 = 79 skipped
+log: logs/dotnet-full-3.log
+
+恢复: 运行后 tracked 证据 verification/FEA-09/logs/wire-redacted.ndjson 被测试重写，
+      git checkout -- verification/FEA-09（EXIT 0）；`git status -- verification/FEA-09` 为空。
+```
+
+## G4 check.ps1（Task 卡治理检查）
+
+```
+command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-DSIM-1.md
+EXIT: 0
+result: Governance check: PASS (3 warnings)
+        warnings = ①存在 15 个非终态 Task（预存/Lead-owned）
+                   ②doc/REBASELINE_PLAN.md 达到预算 80%（Lead-owned）
+                   ③evidence_dir 未登记过程文件：logs/gates.log、logs/check-final.log
+                     （过程/汇总文件；DONE 前由 DSH 移入 workspace 或补列 SOURCE_PIN）
+log: logs/check-final.log
+```
+
+## G5 verify_pins
+
+```
+command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+EXIT: 0
+result: PIN AUDIT: PASS (all 18)
+log: logs/verify-pins.log
+```
+
+## G6 静态扫描（Windows 回收站 API / 真实路径字面量 / 删除回退）
+
+```
+command: pwsh -NoProfile -File verification/FEA-12-DSIM-1/tools/static-scan.ps1
+EXIT: 0
+result: src 256 + apps 510 = 766 files / 0 API hits；
+        tests/fea12 2 files / 0 真实路径字面量；
+        2 个 D 模块 876 lines / 0 删除/DB/进程回退
+log: logs/static-scan.log
+```
+
+## G7 运行时哨兵探针（隔离根外零变化）
+
+```
+command: C:/Python314/python.exe verification/FEA-12-DSIM-1/tools/sentinel-probe.py
+EXIT: 0
+result: PASS: runtime sentinel outside the isolated root unchanged
+        （成功模拟 / 注入拒绝 / 生产默认三次运行后，隔离根外逐文件 SHA-256 不变，outside changes: []）
+log: logs/sentinel-probe.log
+```

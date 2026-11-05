@@ -1,0 +1,21 @@
+== AC4 / AC1: Windows recycle-bin API scan (src/** + apps/**) ==
+command: Select-String -Pattern '<tokens>' over .py,.cs,.csproj,.props,.targets,.xaml,.ps1 files
+tokens : shfileoperation|shfileopstruct|ifileoperation|ifileoperationprogresssink|shell32|microsoft.visualbasic|windows.storage|send2trash|winshell|win32com|shell.application|fof_allowundo
+excluded dirs: bin,obj,target,dist,build,__pycache__,.git,.vs,node_modules,testresults,.pytest_cache,.venv,site-packages
+scanned src   files=256  hits=0
+scanned apps  files=510  hits=0
+TOTAL scanned files = 766; API hits = 0
+
+== AC4: test-source real-path-literal scan (tests/fea12/**) ==
+command: Select-String -SimpleMatch each pattern + regex drive-path over tests/fea12/*.py
+files  : conftest.py, test_recycle_gateway_sim.py
+TOTAL test files = 2; literal hits = 0
+
+== AC3: D-flow modules contain no permanent-delete / DB / process fallback ==
+command: Select-String -SimpleMatch patterns over the two D-flow modules
+patterns: rmtree(, unlink(, os.remove(, os.unlink(, os.rmdir(, remove_managed(, purge_pages(, permanently_delete(, sqlite, subprocess, ctypes, winreg, os.system(
+checked src/application/maintenance/recycle_gateway.py
+checked src/infrastructure/filesystem/simulated_recycle_bin.py
+TOTAL modules = 2; total lines = 876; fallback hits = 0
+
+static scan: PASS (0 API hits, 0 real-path literals, 0 delete/DB fallbacks)

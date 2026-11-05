@@ -1,0 +1,11 @@
+scratch root          : C:\Users\49745\AppData\Local\Temp\fea12-dsim-sentinel-jg5cp_pd
+isolated root         : C:\Users\49745\AppData\Local\Temp\fea12-dsim-sentinel-jg5cp_pd\isolated-root
+outside sentinel tree : C:\Users\49745\AppData\Local\Temp\fea12-dsim-sentinel-jg5cp_pd\outside-sentinel
+sentinel before       : {"chapter-01.png": "d80b3f61ad04c22374a1207cb3f80db0d485cf5e8cde7a010d1001ae3bc24122", "notes.txt": "b512f8b8d6da8e2ea2c490084b4225834cfc95341cc2dd7aaf8b953977c840d6"}
+run 1 (success)       : {"gateway": "simulated", "operation_id": "567c54c0902a4158b2cd9201bf763a8f", "moved": 1, "failed": 0, "not_started": 0, "items": [{"request_id": "req-1", "status": "moved", "reason": ""}]}
+run 2 (refused)       : {"gateway": "simulated", "operation_id": "0b051f35696f40f7b7651d45f73bd293", "moved": 0, "failed": 1, "not_started": 0, "items": [{"request_id": "req-2", "status": "failed", "reason": "in_use"}]}
+run 3 (unavailable)   : {"gateway": "unavailable", "operation_id": "", "moved": 0, "failed": 0, "not_started": 1, "items": [{"request_id": "req-3", "status": "not_started", "reason": "gateway_unavailable"}]}
+sentinel after        : {"chapter-01.png": "d80b3f61ad04c22374a1207cb3f80db0d485cf5e8cde7a010d1001ae3bc24122", "notes.txt": "b512f8b8d6da8e2ea2c490084b4225834cfc95341cc2dd7aaf8b953977c840d6"}
+outside changes       : []
+isolated-root entries : ["recyclebin-journal.jsonl", "simulated-recyclebin", "simulated-recyclebin/04883e5d-page-01.png", "simulated-recyclebin/recyclebin-manifest.json", "user-sources", "user-sources/default.png", "user-sources/locked.png"]
+PASS: runtime sentinel outside the isolated root unchanged
