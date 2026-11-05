@@ -1562,6 +1562,10 @@ def assemble_core_services(
             render_service=render_service,
             detector=detector,
             region_creator=_create_detected_region,
+            # FEA-11-LINEAGE-1 r3 (C-17 §7.1): detect reuses only the page's
+            # lineage-VISIBLE regions — the page_id-only repository read must
+            # not become a bypass (r2 Review R2-01).
+            lineage_guard=lineage_guard,
         )
         # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
         # production planner. The probe reuses the same read-only page

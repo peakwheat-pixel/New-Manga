@@ -50,8 +50,19 @@ from domain.tasks.models import (
     freeze_snapshot,
 )
 from application.tasks.store import snapshot_digest
-from application.sources.lineage import LineageVerificationError
+from application.sources.lineage import (
+    LINEAGE_BINDING_CHANGED,
+    LINEAGE_UNVERIFIED,
+    LineageVerificationError,
+)
 from infrastructure.sqlite.source_sync import SourceSyncStore
+
+
+#: FEA-11-LINEAGE-1 r3 (C-17 §7.1): the application-level lineage refusal
+#: codes. A prepared candidate whose target became unverifiable between
+#: prepare and commit is the EXISTING "input revision changed" conflict (its
+#: result is preserved as a candidate), never DB_FAILED.
+_LINEAGE_PIPELINE_CODES = frozenset({LINEAGE_BINDING_CHANGED, LINEAGE_UNVERIFIED})
 
 
 def _now() -> str:
@@ -1034,6 +1045,23 @@ class SqliteTargetCatalog(TargetCatalog):
                 "input_revision_changed", error.code, candidates.values(),
                 published_paths=published_paths,
             )
+        except PipelineError as error:
+            # FEA-11-LINEAGE-1 r3 (R2-02): ``current()`` wraps the guard refusal
+            # as PipelineError(LINEAGE_*), which used to fall into the broad
+            # ``except Exception`` below and surface as DB_FAILED. Route it to
+            # the EXISTING input-revision-changed conflict projection instead:
+            # the prepared candidate's result is preserved as a candidate, the
+            # old command face keeps its conflict semantics (C-17 §8 is not
+            # remapped), and the business writes stay rolled back.
+            if error.code in _LINEAGE_PIPELINE_CODES:
+                return self._reject_prepared(
+                    "input_revision_changed", error.code, candidates.values(),
+                    published_paths=published_paths,
+                )
+            return self._reject_prepared(
+                "db_failed", repr(error), candidates.values(),
+                published_paths=published_paths,
+            )
         except Exception as error:
             return self._reject_prepared(
                 "db_failed", repr(error), candidates.values(), published_paths=published_paths
@@ -1415,8 +1443,11 @@ class SqliteTargetCatalog(TargetCatalog):
         # regions whose current revision cannot be proven for the current
         # binding (changed/cut or unverified). Page-scope Runs process ONLY the
         # verifiable set; a region-scope target on a hidden region is a typed
-        # refusal in ``_region_or_error``.
-        regions = self._lineage_visible_regions(page_id, regions)
+        # refusal in ``_region_or_error``. The hidden count rides metadata so
+        # the planner distinguishes an all-hidden page (clean no-op for
+        # render/inpaint) from a genuinely regionless one (TASK-040 probe
+        # semantics preserved).
+        regions, lineage_hidden = self._lineage_visible_regions(page_id, regions)
         return TargetSnapshot(
             target_id=page_id,
             page_id=page_id,
@@ -1432,6 +1463,7 @@ class SqliteTargetCatalog(TargetCatalog):
                 "source_filename": row["source_filename"],
                 "managed_original_ref": row["managed_original_ref"],
                 "source_hash": row["source_hash"],
+                "lineage_hidden_regions": lineage_hidden,
                 "commit_guard": self._commit_guard_value(page_id),
             },
         )
@@ -1511,11 +1543,18 @@ class SqliteTargetCatalog(TargetCatalog):
 
     def _lineage_visible_regions(
         self, page_id: str, regions: tuple[RegionSnapshot, ...]
-    ) -> tuple[RegionSnapshot, ...]:
-        """C-17 §7.1: drop regions that are not readable on the current binding."""
+    ) -> tuple[tuple[RegionSnapshot, ...], int]:
+        """C-17 §7.1: drop regions unreadable on the current binding.
+
+        Returns ``(visible_regions, hidden_count)``; the count rides the page
+        snapshot metadata so the planner can distinguish "this page has no
+        Regions at all" (pre-LINEAGE-1 semantics preserved, e.g. the TASK-040
+        Clean-availability probe) from "all Regions are old-coordinate
+        leftovers" (r3 R2-01: a clean terminal no-op, not a page-level unit).
+        """
         guard = self.lineage_guard
         if guard is None or not regions:
-            return regions
+            return regions, 0
         verdict = guard.page_verdict(
             page_id,
             [
@@ -1524,7 +1563,7 @@ class SqliteTargetCatalog(TargetCatalog):
             ],
         )
         if not verdict.hidden:
-            return regions
+            return regions, 0
         hidden = verdict.hidden_region_ids
         # FEA-11-LINEAGE-1 (r2): page-scope Run targets report how many
         # old-coordinate regions were excluded, so the filtering is never a
@@ -1533,8 +1572,11 @@ class SqliteTargetCatalog(TargetCatalog):
             f"[pipeline.lineage] page={page_id} lineage_hidden={len(hidden)}",
             file=sys.stderr,
         )
-        return tuple(
-            region for region in regions if region.region_id not in hidden
+        return (
+            tuple(
+                region for region in regions if region.region_id not in hidden
+            ),
+            len(hidden),
         )
 
     def _ensure_lineage_readable(

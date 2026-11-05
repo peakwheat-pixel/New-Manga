@@ -164,18 +164,45 @@ class RenderService:
         style_defaults: RenderTextStyle | None = None,
         expected_translated_revision_id: str | None = None,
     ) -> RenderOutcome:
+        # FEA-11-LINEAGE-1 r3 (C-17 §7.1): resolve the lineage-visible region
+        # set BEFORE any artifact work. Old-binding regions are never composed
+        # onto the current image; the exclusion is visible in the outcome
+        # reports (never a silent loss), and a page whose live regions are ALL
+        # hidden is a typed refusal instead of a "render" that would overwrite
+        # the translated artifact with an empty composition.
+        active_regions, hidden_regions = self._active_regions(page_id)
+        hidden_reports = tuple(
+            RegionRenderReport(
+                region_id=hidden.region_id,
+                status=_SKIPPED,
+                skip_reason=hidden.code,
+            )
+            for hidden in hidden_regions
+        )
+        if hidden_regions and not active_regions:
+            return _blocked(
+                hidden_regions[0].code,
+                "page has no lineage-verifiable region for the current"
+                " source binding",
+                reports=hidden_reports,
+            )
         clean = self._locate_clean(page_id)
         if clean is None:
             return _blocked(
                 "MISSING_REQUIRED_INPUT",
                 "rerender requires a current clean artifact "
                 "(missing_clean_artifact); run inpaint first",
+                reports=hidden_reports,
             )
         clean_record, clean_revision = clean
         try:
             clean_bytes = self._read_managed(clean_revision.managed_path)
         except (OSError, ValueError) as error:
-            return _blocked("MISSING_REQUIRED_INPUT", f"clean artifact could not be read: {error}")
+            return _blocked(
+                "MISSING_REQUIRED_INPUT",
+                f"clean artifact could not be read: {error}",
+                reports=hidden_reports,
+            )
 
         # §8.2: snapshot the composition base when the step starts; the
         # commit compares against this expectation, so anything committed
@@ -201,22 +228,9 @@ class RenderService:
             )
 
         source_style_result = self._extract_source_style(page_id)
-        reports: list[RegionRenderReport] = []
+        reports: list[RegionRenderReport] = list(hidden_reports)
         ops: list[RenderOp] = []
         skipped_sfx = []
-        active_regions, hidden_regions = self._active_regions(page_id)
-        # FEA-11-LINEAGE-1 (C-17 §7.1): old-binding regions are never composed
-        # onto the current image; the exclusion is visible in the reports (the
-        # caller/UI can see WHY the region set shrank instead of receiving old
-        # coordinates silently).
-        for hidden in hidden_regions:
-            reports.append(
-                RegionRenderReport(
-                    region_id=hidden.region_id,
-                    status=_SKIPPED,
-                    skip_reason=hidden.code,
-                )
-            )
         for region in active_regions:
             prepared = self._prepare_region(
                 region,

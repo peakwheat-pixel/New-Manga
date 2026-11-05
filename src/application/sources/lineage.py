@@ -52,10 +52,18 @@ _EVIDENCE_PROVENANCES = frozenset({"native", "migrated", "captured_v7"})
 
 @dataclass(frozen=True, slots=True)
 class RevisionLineageStanding:
-    """The lineage facts of one immutable revision (read projection)."""
+    """The lineage facts of one immutable revision (read projection).
+
+    FEA-11-LINEAGE-1 r3 (R2-05): ``region_id`` carries the lineage row's own
+    region attribution so the guard can verify C-17 §7.1's "region/revision/page
+    归属" requirement; a row that names another region is corrupt data and is
+    refused as unverifiable (defense in depth — every production caller reads
+    the revision id from the same region row today).
+    """
 
     binding_id: str | None
     provenance: str
+    region_id: str | None = None
 
     @property
     def is_coordinate_evidence(self) -> bool:
@@ -170,6 +178,10 @@ def _code_for(
         # only and must never present itself as a new-image editable region.
         return LINEAGE_UNVERIFIED
     if standing is None:
+        return LINEAGE_UNVERIFIED
+    # C-17 §7.1 "并验证 region/revision/page 归属" (r3 R2-05): a lineage row
+    # that names another region is corrupt data — never coordinate evidence.
+    if standing.region_id is not None and standing.region_id != region_id:
         return LINEAGE_UNVERIFIED
     if not standing.is_coordinate_evidence:
         return LINEAGE_UNVERIFIED

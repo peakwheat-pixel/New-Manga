@@ -928,7 +928,7 @@ class SourceSyncLineageFacts:
         marks = ",".join("?" for _ in ids)
         rows = _rows(
             self._conn.execute(
-                "SELECT revision_id, binding_id, provenance"
+                "SELECT revision_id, region_id, binding_id, provenance"
                 " FROM source_revision_lineage"
                 f" WHERE revision_id IN ({marks})",
                 ids,
@@ -936,7 +936,10 @@ class SourceSyncLineageFacts:
         )
         return {
             row["revision_id"]: RevisionLineageStanding(
-                binding_id=row["binding_id"], provenance=row["provenance"]
+                binding_id=row["binding_id"],
+                provenance=row["provenance"],
+                # FEA-11-LINEAGE-1 r3 (R2-05): the row's own region attribution.
+                region_id=row["region_id"],
             )
             for row in rows
         }

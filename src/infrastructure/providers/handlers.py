@@ -33,6 +33,7 @@ from typing import Any, Protocol
 from application.editing.ports import RegionRepository
 from application.rendering.service import RenderService, RenderStatus
 from application.rendering.style import RenderTextStyle
+from application.sources.lineage import LineageIsolationGuard
 from application.translation.color.service import SourceStyleService
 from application.translation.inpaint.mask import (
     DEFAULT_MASK_PARAMS,
@@ -197,6 +198,12 @@ class HandlerDependencies:
     # RegionType.SFX (contract zero-change: RegionCandidate keeps its slots).
     plugins: Any = None
     region_creator: Any = None  # (page_id, polygon, reading_order, provenance, provider_label) -> region_id
+    #: FEA-11-LINEAGE-1 r3 (C-17 §7.1): the SAME isolation guard the Run target
+    #: catalog uses. ``handle_detect`` must reuse only the page's
+    #: lineage-VISIBLE regions — a page_id-only repository read would resurrect
+    #: old-binding coordinates as detect output. ``None`` keeps every unit
+    #: construction valid (the production assembly always injects it).
+    lineage_guard: LineageIsolationGuard | None = None
 
 
 class ProductionHandlers:
@@ -341,11 +348,7 @@ class ProductionHandlers:
                 "no detection provider / region writer is wired at assembly",
                 stage=STEP_DETECT,
             )
-        live = [
-            region
-            for region in self.deps.regions.list_regions(unit.page_id)
-            if not region.deleted
-        ]
+        live = self._lineage_visible_live_regions(unit.page_id)
         if live:
             region_ids = tuple(
                 region.region_id
@@ -439,6 +442,41 @@ class ProductionHandlers:
             outputs={"region_ids": region_ids, "detection": provenance},
             output_target_ids=(unit.target_id,),
         )
+
+    def _lineage_visible_live_regions(self, page_id: str) -> list:
+        """C-17 §7.1: the live Regions a Run may reuse on the CURRENT image.
+
+        A page_id-only repository read would resurrect old-binding Regions as
+        detect output (r2 Review R2-01: the execution chain then failed with
+        DB_FAILED). The isolation guard removes them and the count is logged so
+        the filtering is diagnosable; an all-hidden page falls through to a
+        genuine detection on the new image (its Regions are created natively
+        against the current binding by the injected ``region_creator``).
+        """
+        live = [
+            region
+            for region in self.deps.regions.list_regions(page_id)
+            if not region.deleted
+        ]
+        guard = self.deps.lineage_guard
+        if guard is None or not live:
+            return live
+        verdict = guard.page_verdict(
+            page_id,
+            [
+                (region.region_id, region.current_revision_id)
+                for region in live
+            ],
+        )
+        if not verdict.hidden:
+            return live
+        hidden = verdict.hidden_region_ids
+        print(
+            f"[providers.detect] page={page_id}"
+            f" lineage_hidden={len(hidden)}",
+            file=sys.stderr,
+        )
+        return [region for region in live if region.region_id not in hidden]
 
     # ------------------------------------------------------------------
     # OCR (D06 §7, AC-OCR-001/004)
@@ -1456,6 +1494,7 @@ def build_production_handlers(
     detector: Any = None,
     region_creator: Any = None,
     plugins: Any = None,
+    lineage_guard: LineageIsolationGuard | None = None,
 ) -> dict[str, Any]:
     """Convenience wrapper used by ``bootstrap.app``.
 
@@ -1485,6 +1524,8 @@ def build_production_handlers(
             render_service=render_service,
             detector=detector,
             region_creator=region_creator,
+            # FEA-11-LINEAGE-1 r3: detect reuses only lineage-visible Regions.
+            lineage_guard=lineage_guard,
         )
     ).as_mapping()
 

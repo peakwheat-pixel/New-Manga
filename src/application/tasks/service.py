@@ -26,6 +26,10 @@ from application.tasks.store import (
     validate_prepared_snapshots,
     validate_prepared_overrides,
 )
+from application.sources.lineage import (
+    LINEAGE_BINDING_CHANGED,
+    LINEAGE_UNVERIFIED,
+)
 from application.translation.context.gate import (
     SFX_SKIP_REASON,
     decide_sfx_translation,
@@ -566,6 +570,22 @@ class PipelineService:
         if target.target_type is TargetType.PAGE and not target.regions:
             region_views = ()
         if not region_views:
+            steps = _COMMAND_STEPS[run.command_type]
+            lineage_hidden = int(
+                (target.metadata or {}).get("lineage_hidden_regions") or 0
+            )
+            if lineage_hidden and "ocr" not in steps:
+                # FEA-11-LINEAGE-1 r3 (R2-01 / DSH r2 裁决 ③): the page's
+                # lineage-VISIBLE region set is empty because ALL live regions
+                # are old-coordinate leftovers. A page-scope render/inpaint
+                # command has nothing to act on for the current image: clean
+                # terminal no-op (never a page-level unit that fails "requires
+                # a Region target" or a DB_FAILED step). Chains that start from
+                # ``ocr`` still grow the leading ``detect`` unit and run real
+                # detection on the new image. A genuinely regionless page
+                # (hidden count 0) keeps the pre-LINEAGE-1 planning, including
+                # the TASK-040 Clean-availability probe semantics.
+                return []
             units.extend(self._plan_region(run, task, target, None))
         else:
             for region in region_views:
@@ -1438,7 +1458,15 @@ class PipelineService:
                 # M2-DETECTION-HYGIENE (BACKFILL r2 N1)：收窄到跳过语义实际
                 # 覆盖的两个码——其他 PipelineError 不再被静默吞掉（否则该
                 # 调用路径未来新增任何错误码都会无声丢 region）。
-                if error.code not in {"TARGET_DELETED", "TARGET_NOT_FOUND"}:
+                # FEA-11-LINEAGE-1 r3 (R2-01)：detect 输出若在 commit 窗口内被
+                # lineage 隔离隐藏（并发同步切换），按「目标已不可读」跳过——
+                # 下一次（重）规划只会读到当前 binding 的可证 regions。
+                if error.code not in {
+                    "TARGET_DELETED",
+                    "TARGET_NOT_FOUND",
+                    LINEAGE_BINDING_CHANGED,
+                    LINEAGE_UNVERIFIED,
+                }:
                     raise
                 # 规划期读取窗口内该 Region 已不可读（并发删除或
                 # _region_or_error 前置不满足），按 TARGET_DELETED 语义跳过
