@@ -108,7 +108,10 @@ allowed_paths:
 | EV-R8-REVIEW | 最终独立复审 | doc/reviews/FEA-11-HOST-AUTH-1-r8.md | 81c28d30 | - | CANONICAL |
 | EV-CODEX-ADJ | 终态裁决 | doc/reviews/FEA-11-HOST-AUTH-1-codex-adjudication-2026-11-05.md | pending | 009770a3dcdc903c49786eafedd2257c139a2f68a4f221807ae93295a71fbb3a | CANONICAL |
 | EV-GATES | 门禁 | verification/FEA-11-HOST-AUTH-1/logs/gates.log | pending | 2a46007165fc95fead9711ae3aaa4dbebe63360bfe19eafcc554039026446479 | CANONICAL |
-| EV-CHANGED | 交付清单 | verification/FEA-11-HOST-AUTH-1/changed-files.txt | pending | f9133156ef45f4ebeb2c413a5c6cdceb6fd092e3a84b4724f975bb5f42e74015 | CANONICAL |
+| EV-CHANGED | 交付清单 | verification/FEA-11-HOST-AUTH-1/changed-files.txt | pending | f9133156ef45f4ebeb2c413a5c6cdceb6fd092e3a84b4724f975bb5f
+| SOURCE-PIN-EV | closeout 证据 | verification/FEA-11-HOST-AUTH-1/EV.md | - | ac8a7842bf868bf99768f4bcdb231bb268ece24075da71463c5a5ab08487e83d | SOURCE_PIN |
+| SOURCE-PIN-RESOURCE-MANIFEST | closeout 证据 | verification/FEA-11-HOST-AUTH-1/RESOURCE-MANIFEST.md | - | 4848039bc444e30c26db0c47c026e41a5302de3f408670d8e701f69907ac1fd1 | SOURCE_PIN |
+| SOURCE-PIN-DELIVERY-MANIFEST | closeout 证据 | verification/FEA-11-HOST-AUTH-1/DELIVERY-MANIFEST.md | - | 0fc1139b73f9da4c2fd17676a7c1d6ea35f7f5ed0ab8d70e1e1a0f157de15cb9 | SOURCE_PIN |42e74015 | CANONICAL |
 
 > 证据索引与口径：`verification/FEA-11-HOST-AUTH-1/EV.md`；交付清单 23 files；`RESOURCE-MANIFEST.md`、`DELIVERY-MANIFEST.md` 同目录。
 
