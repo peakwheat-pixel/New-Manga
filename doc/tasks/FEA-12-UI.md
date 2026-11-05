@@ -3,15 +3,15 @@ id: FEA-12-UI
 title: FEA-12 回收站 UI 切片（V2 单本彻底删除 + 软删/恢复 + Fluent 文案诚实化）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；整卡释放前置 = FEA-12-CORE 返修闭环 + 正式契约重冻/重新 closeout；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
+status: ready
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：整卡释放前置 = FEA-12-CORE 返修闭环 + 正式契约重冻/重新 closeout；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: zcode
 owner: null
 reviewer: null
 depends_on:
   - FEA-12-PREREQ-1
   - FEA-12-CORE
-base_commit: null
+base_commit: 9daa94a25   # 释放点 main head（SCAN-1 r2 交付后）
 branch: null
 worktree: null
 integration_commit: null
