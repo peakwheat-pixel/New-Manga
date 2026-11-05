@@ -12,10 +12,10 @@
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
 |FEA-11-SCAN-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-1 定时/watcher 承接）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
-|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**in_review**（r2 返修完成；fresh Reviewer 审查中；完成前禁止 UI/读路径消费同步 binding）||
-|FEA-12-PREREQ-1|—|**ready**（scope 冻结 ADJ-2026-11-05；M2-C1 rev 2.13 + Host 投影）||
-|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**proposed**（A 软删/恢复 + C 彻底删除；AC 随 PREREQ-1 冻结）||
-|FEA-12-DSIM-1|—|**ready**（D 仅模拟切片，无真实 OS API；2026-11-05 释放）；FEA-12-UI 待 scope||
+|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**in_review**（r3 处置完成；r4 确认复核中；完成前禁止 UI/读路径消费同步 binding）||
+|FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
+|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**proposed**（A 软删/恢复 + C 彻底删除；待 LINEAGE-1 closeout 后释放）||
+|FEA-12-DSIM-1|—|**in_review**（D 仅模拟切片，无真实 OS API；复审中）；FEA-12-UI 待 scope||
 |FEA-11-MATCH-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-3 承接）||
 |FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-4 承接）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|

@@ -3,20 +3,20 @@ id: FEA-12-PREREQ-1
 title: FEA-12 删除/回收站 wire 契约注册（M2-C1 rev 2.13 + Host 投影/白名单 + 负向对照）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结范围 → 实施）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE；C-04b `:99`/C-09 `:110-129` 明文要求"实现前独立字节修订 Task"；DSH 2026-11-05 释放；DSH 2026-11-05 窄批批准 2 个治理测试计数/声明派生文件（见卡内「DSH 裁决」）；r1 Review changes_requested（P1=1/P2=1/P3=4）→ r2 最小返修
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结范围 → 实施）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE；C-04b `:99`/C-09 `:110-129` 明文要求"实现前独立字节修订 Task"；DSH 2026-11-05 释放；r1 changes_requested → r2 返修；**r2 Review approved（P0/P1/P2=0，P3=4 不阻塞）→ DSH 集成 closeout**
 suggested_owner: dsh（dsh-agent-team teammate `fea12-prereq-impl`）
 owner: dsh-agent-team teammate `fea12-prereq-impl`（claimed 2026-11-05；r2 返修续作）
-reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-PREREQ-1-r1.md`，reviewer session `68898595-4d2b-46a7-8a72-0d4b6ba05db8`；未参与实现）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-PREREQ-1-r1.md` session `68898595-4d2b-46a7-8a72-0d4b6ba05db8`；r2 `doc/reviews/FEA-12-PREREQ-1-r2.md` session `adb50e70-11a7-401d-9d49-a3f02fd4ac5b`）
 depends_on: []
 base_commit: 035468a81e43e8d70fb711536824cdf613a7a0c4
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3e37c595b
+delivery_head: 3e37c595b
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-12-PREREQ-1.md
@@ -203,8 +203,13 @@ frontmatter `allowed_paths` 为准；`evidence_dir` 已显式列入。**共享�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：STATUS / Plan / Task 导航已更新后填写。
+- Closeout date / DSH：2026-11-05 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；integration_commit / delivery_head = `3e37c595b`（main 线性集成，无 merge commit）。
+- Review：r1 changes_requested（R-001 P1）→ r2 修复（`26775dfef`）→ **r2 Review approved**（P0/P1/P2=0；P3=4 不阻塞；`doc/reviews/FEA-12-PREREQ-1-r2.md`）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- **R2 P3 残留（如实保留、不阻塞 done，不在 closeout 改动已 review 的契约/证据字节）**：
+  1. R-004 残留句：M2-C1 §5.11.1a 末条「未知键由 Core closed-shape 校验拒绝」措辞仍不够精确（Host 既有 delete 路径实际是**不转发未知键**；Core 只校验转发后的字段）。修正属 M2-C1 下一次 additive 修订（`rev 2.14` 候选）；本轮不改已批准字节，避免 review-head 失效。
+  2. EV-01 日志 provenance（`worktree_head=94a12e93f` vs Handoff `26775dfef`）与 audit `DeliveryCommits` 未含 r2 修复 commit：属证据标注/脚本常量，判别逻辑不受影响；下一次 PREREQ 修订或证据重生成时一并修正。
+  3. gates G1 只记 r1 head、check 警告数随并发文档变化：以各轮实测记录为准，closeout 不再改写日志字节。
+- 未关闭项及保留原因：无功能未关闭项。基线 worktree `G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81` 按 PRESERVE_REFERENCED 保留（clean、detached `035468a81`、无独有提交）；删除需 DSH 另行普通 `git worktree remove`，本轮不删。`R-002 CORE_CAPABILITY_MISSING` 二选一已登记并移交 `FEA-12-CORE`（见 CORE 卡）。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。

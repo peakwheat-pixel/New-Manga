@@ -7,25 +7,25 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 515 |
-| terminal | 499 |
-| non-terminal | 15 |
-| non-terminal named in the plan | 8 |
+| terminal | 500 |
+| non-terminal | 14 |
+| non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 7 |
 | task files tracked by git | 515 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 15 |
+| non-terminal tracked by git | 14 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 416 | yes |
+| `done` | 417 | yes |
 | `closed_with_limitations` | 46 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `in_review` | 5 | no |
 | `proposed` | 5 | no |
+| `in_review` | 4 | no |
 | `in_progress` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
@@ -42,7 +42,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-GOV-11` | `in_progress` | no |
 | `FEA-11-LINEAGE-1` | `in_review` | own row |
 | `FEA-12-DSIM-1` | `in_review` | own row |
-| `FEA-12-PREREQ-1` | `in_review` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-11-AC4-GAPS-1` | `proposed` | own row |

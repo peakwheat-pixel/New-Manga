@@ -62,6 +62,7 @@ out_of_scope:
 - 来源：`doc/reviews/ADJ-2026-11-05-FEA-12-SCOPE.md`（D1–D8）；`doc/contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md` PD-01…PD-10；`doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md`；`doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md` SC-B04/SC-B04a/SC-B06；`doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md:147`；`doc/plan/FEA-C13_*`；`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md` §2/§7.1；`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` §5.11/§5.12（rev 2.13 by PREREQ-1）。
 - 目标：让用户**在应用内**可安全软删/恢复/查看回收站，并可对目标书执行"只读预览 → 保护披露 → inventory_digest 专门确认 → 同一事务彻底删除 → 失败整体回滚 → cleanup_pending 显式重试"的完整 C 流程；**永不触碰用户原文件**；引用源书籍（v7/v8 行）可删除（按 D1 X1）；共享引用按 PD-08 可安全拆分不阻断。
 - 关键实测事实：当前 C 流程对含 `page_bindings`/C-17 lineage 的书 FK 失败（`workspace\FEA-12\evidence\probe_delete_fk_interaction.json`）；本卡必须修复并有回归。
+- **前置事实（FEA-12-PREREQ-1 已 done，delivery/integration `3e37c595b`）**：M2-C1 rev 2.13 已登记 preview/trash wire（目标 minor 11/13；既有 delete minor 10 不变）、2 删除新码 + 3 `TRASH_*` 码、capability 名 `library.delete.preview/1`/`library.trash.read/1`/`library.trash.write/1`；`PurgeTrash` 首版**不实现**（只登记命令面，digest 绑定待后续 additive 裁决）。**R-002 二选一（本卡必须处置）**：`CORE_CAPABILITY_MISSING` 不在 delete/trash 白名单——(a) 把它 additive 加入 `AllowedDeleteTrashErrorCodes` + .NET 投影判别测试，或 (b) 让 probe 错误在 `HostRuntime` 层抛出、绕开 `ProjectDeleteTrashError` + 判别测试；任选其一并在 AC11 证据中说明。
 
 ## Acceptance Criteria（release 时按 PREREQ-1 冻结 wire 最终确认；下列为冻结候选）
 
@@ -75,7 +76,7 @@ out_of_scope:
 - [ ] **AC8 共享引用与原文件边界（PD-08）**：可安全拆分共享引用 → 删除成功、原文件字节与其他项目绑定不变；不可拆分/关系图不一致/未列明目标外引用 → `BOOK_DELETE_CONFLICT` 零副作用；用户源文件/源目录逐文件哈希与集合前后不变；零 Windows 回收站 API（静态 grep + 运行时哨兵）。
 - [ ] **AC9 C-17 子图（D1 X1）**：含 `page_bindings` + `source_binding_publications` + `source_revision_lineage` 的书按 X1 同事务删除成功、`foreign_key_check` 空；非终态 source operation → `BOOK_BUSY` 零副作用；`source_sync_plans`/`source_operations` 保留可查询；probe FK 案例变为成功并被测试覆盖。
 - [ ] **AC10 统一 ProtectionPolicy**：A/C 共用同一判定函数（同名 scope 判定一致）；有锁+有草稿：软删通过、彻底删除先披露后可执行；非终态 Run 彻底删除 `BOOK_BUSY`；cache 清理不命中受保护对象（回归）。
-- [ ] **AC11 Host 命令桥（按 PREREQ-1 wire）**：新命令在 registry/dispatcher/client 注册且与 Core shape 一致；capability 缺失 → `CORE_CAPABILITY_MISSING`；旧 Core/旧 Host fail-closed；负向对照按 PREREQ-1 结果。
+- [ ] **AC11 Host 命令桥（按 PREREQ-1 wire）**：新命令在 registry/dispatcher/client 注册且与 Core shape 一致；capability 缺失 → `CORE_CAPABILITY_MISSING`（并按「前置事实」R-002 二选一处置其投影，附判别测试）；旧 Core/旧 Host fail-closed；负向对照按 PREREQ-1 结果；`PurgeTrash` 不实现（只按冻结 wire 登记，禁止偷偷实现）。
 - [ ] **AC12 隔离与禁令（元 AC）**：全部删除/回收站测试使用隔离 DataRoot（`tmp_path`/workspace 临时根）；代码/脚本 0 处真实 `%APPDATA%`/真实盘符/真实回收站路径；运行时哨兵证明隔离根外零变化；真实 Windows API 0 调用；真实用户数据零触碰。
 
 ## 允许修改范围
