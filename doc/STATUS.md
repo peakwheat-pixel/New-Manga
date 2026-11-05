@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `in_progress`（用户 2026-11-05 授权启动；DSH 实施；P0-1 闭合路径；r1–r6 复审返修中）。
+- 当前 Task：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `in_progress`（用户 2026-11-05 授权启动；DSH 实施；P0-1 闭合路径；r1–r8 复审已 approved（待用户裁决 closed_with_limitations））。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)。
 - 下一步：FEA-11-HOST-AUTH-1 实施（canonical 摘要 + 自签授权 + Registry durable + ACK 重发/崩溃点测试）→ 独立 Review → 集成；与 FEA-11-LINEAGE-1 并行；FEA-12 已获「隔离模拟回收站」验证口径，可进入 scope review。
