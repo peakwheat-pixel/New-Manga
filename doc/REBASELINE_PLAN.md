@@ -14,7 +14,7 @@
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
-|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**changes_requested**（Codex 裁决 OVERTURN 2 项：current 保护全量绑定 + 混合 retry 集合 digest；UNFREEZE C-04b v1.1/M2-C1 rev 2.14；返修中）||
+|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**changes_requested**（Codex OVERTURN 返修；UNFREEZE 重冻 `fc9833479`（C-04b v1.1 + M2-C1 rev 2.14，r7 APPROVE）；r3 实现/复审中）||
 |FEA-12-DSIM-1|—|**done**（r2 approved；delivery `beee351bb`；模拟切片，真实 D NOT_RUN）；FEA-12-UI 待 scope||
 |FEA-11-MATCH-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-3 承接）||
 |FEA-11-AC4-GAPS-1|FEA-11-PREREQ-1|**proposed**（2026-11-05 用户授权；待 DSH 释放；AC11-4 承接）||

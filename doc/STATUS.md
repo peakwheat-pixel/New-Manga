@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-12-CORE](tasks/FEA-12-CORE.md) `changes_requested`（Codex 裁决 OVERTURN 2 项：current 保护全量绑定 + 混合 retry 集合 digest；UNFREEZE C-04b v1.1 返修中）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`（`3e37c595b`，口径已按 Codex 更正）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`（`90a8c8218`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`（`beee351bb`，真实 D NOT_RUN）。
+- 当前 Task：[FEA-12-CORE](tasks/FEA-12-CORE.md) `changes_requested`（Codex 裁决 OVERTURN 2 项返修中；**UNFREEZE 已重冻 `fc9833479`**（C-04b v1.1 + M2-C1 rev 2.14；r7 APPROVE；pins 18/18）；r3 实现提交/复审中）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`（`3e37c595b`）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`（`90a8c8218`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`（`beee351bb`，真实 D NOT_RUN）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：CORE 返修与 r3 复审（UNFREEZE 复核 + 契约重冻）；随后冻结/释放 FEA-11-SCAN-1、MATCH-1、AC4-GAPS-1、FEA-12-UI（scope review 已产出，Codex 裁决中）。
+- 下一步：CORE r3 提交→fresh r3 Review→重新 closeout；随后按 ZCode 裁决释放 FEA-11-AC4-GAPS-1、MATCH-1、SCAN-1、FEA-12-UI（卡已冻结 proposed）。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
