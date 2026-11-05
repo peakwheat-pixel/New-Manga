@@ -38,7 +38,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import replace
-from typing import Sequence
+from typing import Callable, Mapping, Sequence
 
 from application.editing.errors import (
     GuardStatus,
@@ -210,7 +210,9 @@ class InMemoryRegionCommitter:
         *,
         expected_current_revision_id: str | None = None,
         lock_snapshot: RegionLockSnapshot | None = None,
+        lineage: object | None = None,
     ) -> RegionCommitResult:
+        del lineage  # the in-memory twin has no lineage table (SQLite only)
         stored = self._repo.get_region(region.region_id)
         if stored is None or stored.deleted:
             # I3/P1: same typed outcome as the SQLite seam's in-transaction
@@ -273,6 +275,7 @@ class InMemoryRegionCommitter:
         revision_pins: "Sequence[tuple[str, int, bool]]" = (),
         expected_current_checks: "Sequence[tuple[str, str]]" = (),
         page_region_limit: tuple[str, int] | None = None,
+        lineage_by_region: "Mapping[str, object] | None" = None,
     ) -> RegionCommitResult:
         """In-memory twin of the SQLite composite seam (contract-faithful).
 
@@ -280,6 +283,7 @@ class InMemoryRegionCommitter:
         no transaction to roll back, so it mirrors the production order and
         never mutates caller objects before all steps succeeded.
         """
+        del lineage_by_region  # the in-memory twin has no lineage table
         repo = self._repo
         existing_ids: dict[str, str | None] = {}
         for region_id, expected in soft_delete_region_ids:
@@ -371,8 +375,14 @@ class RegionEditingService:
         self,
         repository: RegionRepository,
         committer: RegionRevisionCommitter | None = None,
+        *,
+        lineage_binding: Callable[[str], str | None] | None = None,
     ) -> None:
         self._repo = repository
+        # FEA-11-LINEAGE-1 AC1: page_id -> current source binding. Every region
+        # revision written by this service is registered as native lineage in
+        # the same transaction (C-17 §7.1).
+        self._lineage_binding = lineage_binding
         if committer is not None:
             self._committer = committer
         elif hasattr(repository, "commit_region_revision"):
@@ -432,17 +442,45 @@ class RegionEditingService:
         soft-deleted after the service pre-check is the typed
         :class:`RegionNotFound` (wire TARGET_NOT_FOUND) with ZERO write.
         """
+        lineage = self._lineage_for(staged.page_id)
         result = self._committer.commit_region_revision(
             staged,
             revision,
             expected_current_revision_id=expected_current_revision_id,
             lock_snapshot=lock_snapshot,
+            lineage=lineage,
         )
         if result.status is RegionCommitStatus.APPLIED:
             _sync_region_state(region, staged)
         elif result.status is RegionCommitStatus.TARGET_NOT_FOUND:
             raise RegionNotFound(result.detail or region.region_id)
         return result
+
+    def _lineage_for(self, page_id: str):
+        """FEA-11-LINEAGE-1 AC1: the native lineage row for a new revision."""
+        if self._lineage_binding is None:
+            return None
+        binding_id = self._lineage_binding(page_id)
+        if not binding_id:
+            return None
+        from infrastructure.sqlite.regions import RevisionLineage
+
+        return RevisionLineage(binding_id=binding_id, provenance="native")
+
+    def _lineage_by_region(self, batch: dict[str, object]):
+        if self._lineage_binding is None:
+            return None
+        regions: list[object] = []
+        regions.extend(region for region, _revision in batch.get("new_regions") or [])
+        regions.extend(
+            region for region, _revision, _expected in batch.get("updated_regions") or []
+        )
+        result = {}
+        for region in regions:
+            lineage = self._lineage_for(region.page_id)
+            if lineage is not None:
+                result[region.region_id] = lineage
+        return result or None
 
     def _commit_batch_or_raise(self, **batch: object) -> None:
         """V11R-F0-1 I1/I2: the ALL-OR-NOTHING composite seam used by
@@ -456,6 +494,9 @@ class RegionEditingService:
         as ``RuntimeError`` (wire UNKNOWN, same convention as the
         single-region user writes).
         """
+        lineage_by_region = self._lineage_by_region(batch)
+        if lineage_by_region:
+            batch["lineage_by_region"] = lineage_by_region
         result = self._committer.commit_region_batch(**batch)  # type: ignore[arg-type]
         if result.status is RegionCommitStatus.APPLIED:
             return

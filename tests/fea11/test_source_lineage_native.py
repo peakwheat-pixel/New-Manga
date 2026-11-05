@@ -8,7 +8,15 @@ import sqlite3
 
 import pytest
 
-from domain.regions.entities import Region, RegionOrigin, RegionRevision, ReviewState
+from application.editing.service import RegionEditingService
+from domain.regions.entities import (
+    BBox,
+    Region,
+    RegionGeometry,
+    RegionOrigin,
+    RegionRevision,
+    ReviewState,
+)
 from infrastructure.sqlite.regions import RevisionLineage, SqliteRegionRepository
 from tests.fea11.conftest import add_source_tree
 
@@ -145,4 +153,28 @@ def test_rolled_back_commit_leaves_no_orphan_lineage(conn, page):
     )
 
     assert result.status.value == "input_revision_changed"
+    assert _lineage_rows(conn) == []
+
+def test_editing_service_writes_native_lineage_for_new_regions(conn, page):
+    repo = SqliteRegionRepository(conn)
+    _seed_binding(conn)
+    service = RegionEditingService(
+        repo, lineage_binding=lambda page_id: "b1" if page_id == "p1" else None
+    )
+
+    region = service.create_region("p1", RegionGeometry(bbox=BBox(x=0, y=0, width=1, height=1)))
+
+    rows = _lineage_rows(conn)
+    assert len(rows) == 1
+    assert rows[0]["region_id"] == region.region_id
+    assert rows[0]["binding_id"] == "b1"
+    assert rows[0]["provenance"] == "native"
+
+
+def test_editing_service_without_binding_provider_keeps_no_lineage(conn, page):
+    repo = SqliteRegionRepository(conn)
+    service = RegionEditingService(repo)
+
+    service.create_region("p1", RegionGeometry(bbox=BBox(x=0, y=0, width=1, height=1)))
+
     assert _lineage_rows(conn) == []
