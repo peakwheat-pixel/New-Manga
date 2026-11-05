@@ -1197,11 +1197,28 @@ def assemble_core_services(
         # FEA-11-LINEAGE-1 stock backfill (C-17 §7.1, r1 P0-1): revisions that
         # predate lineage registration on ALREADY switched pages become
         # legacy_unverified — never a guessed captured_v7/native row. The
-        # function is idempotent; running it at every assembly is safe. Pages
-        # that have NOT switched yet are deliberately untouched so the first
-        # switch can still capture their current revision (captured_v7).
-        with conn:
-            source_sync_store.backfill_legacy_unverified_lineage()
+        # function selects the missing rows with an anti-join and inserts them
+        # in ONE transaction (idempotent: a rerun inserts zero); it is called
+        # once per assembly. Pages that have NOT switched yet are deliberately
+        # untouched so the first switch can still capture their current
+        # revision (captured_v7). A backfill failure is recorded and does not
+        # crash the assembly (the read guard stays fail-closed for the still
+        # unverified rows; DSH r2 ruling).
+        try:
+            with conn:
+                backfilled = source_sync_store.backfill_legacy_unverified_lineage()
+            if backfilled:
+                print(
+                    f"[core.lineage] legacy lineage backfill:"
+                    f" {backfilled} revision(s) registered as legacy_unverified",
+                    file=sys.stderr,
+                )
+        except Exception as error:  # noqa: BLE001 - startup must not crash (r2)
+            print(
+                f"[core.lineage] legacy lineage backfill failed and was"
+                f" skipped: {error!r}",
+                file=sys.stderr,
+            )
 
         def _project_of_chapter(chapter_id: str):
             chapter = repository.get_chapter(chapter_id)

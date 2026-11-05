@@ -911,8 +911,17 @@ def _lineage_error_envelope(error: "LineageVerificationError") -> dict[str, Any]
     remapped (DSH ruling recorded in the task card). The envelope carries the
     fixed safe phrase; no path, coordinate or raw exception text rides it.
     """
+    code = getattr(error, "code", LINEAGE_UNVERIFIED)
+    # Diagnosable refusal (r2): one bounded stderr line names the code and the
+    # opaque ids only — never coordinates, text or paths.
+    print(
+        f"[core.lineage] refused: code={code}"
+        f" page={getattr(error, 'page_id', '') or ''}"
+        f" region={getattr(error, 'region_id', '') or ''}",
+        file=sys.stderr,
+    )
     return make_error_envelope(
-        getattr(error, "code", LINEAGE_UNVERIFIED),
+        code,
         getattr(error, "category", "conflict"),
         getattr(error, "safe_message", "source lineage verification failed"),
         retryable=False,
@@ -2373,6 +2382,9 @@ class CoreServiceServer:
         page_size = (
             {"width": page.width, "height": page.height} if page else None
         )
+        # FEA-11-LINEAGE-1: the filtered count is reported (never a silent
+        # loss); the region list itself already comes from the guarded service.
+        self._log_lineage_hidden("list_regions", page_id)
         return {
             "regions": self._core.editing.list_region_summaries(
                 page_id,
@@ -2446,6 +2458,7 @@ class CoreServiceServer:
         page_size = (
             {"width": page.width, "height": page.height} if page else None
         )
+        self._log_lineage_hidden("list_page_region_texts", page_id)
         details = self._core.editing.list_region_details(
             page_id,
             page_size=(page.width, page.height) if page else None,
@@ -3289,6 +3302,24 @@ class CoreServiceServer:
             )
             raise RenderCommandError(code, category, message)
 
+        # FEA-11-LINEAGE-1 (r2): the page render reports every excluded region
+        # in ``reports``; the aggregate count is logged too so the filtering is
+        # diagnosable without reading the whole report array.
+        lineage_hidden = sum(
+            1
+            for report in outcome.reports
+            if report.skip_reason in (
+                LINEAGE_BINDING_CHANGED,
+                LINEAGE_UNVERIFIED,
+            )
+        )
+        if lineage_hidden:
+            print(
+                f"[core.rerender_page] page={page_id}"
+                f" lineage_hidden={lineage_hidden}",
+                file=sys.stderr,
+            )
+
         preview = None
         preview_error = None
         try:
@@ -4082,6 +4113,38 @@ class CoreServiceServer:
             conn.commit()
         return result
 
+    def _lineage_hidden_region_ids(self, page_id: str) -> frozenset[str]:
+        """FEA-11-LINEAGE-1 (C-17 §7.1): the page's live regions that the
+        lineage isolation guard excludes from ordinary read faces.
+
+        Used ONLY for diagnostics (r2 requirement: filtering must be visible,
+        never a silent loss); the actual filtering happens inside the
+        application/render/export services through the SAME guard.
+        """
+        guard = getattr(self._core, "lineage_guard", None)
+        if guard is None:
+            return frozenset()
+        rows = self._core.conn.execute(
+            "SELECT region_id, current_revision_id FROM regions"
+            " WHERE page_id = ? AND deleted_at IS NULL",
+            (page_id,),
+        ).fetchall()
+        if not rows:
+            return frozenset()
+        verdict = guard.page_verdict(
+            page_id,
+            [(row["region_id"], row["current_revision_id"]) for row in rows],
+        )
+        return verdict.hidden_region_ids
+
+    def _log_lineage_hidden(self, command: str, page_id: str) -> None:
+        hidden = self._lineage_hidden_region_ids(page_id)
+        if hidden:
+            print(
+                f"[core.{command}] page={page_id} lineage_hidden={len(hidden)}",
+                file=sys.stderr,
+            )
+
     def _assert_source_sync_gate(self, page_id: str) -> None:
         """FEA-11 (C-17 §3.3): refuse reads/writes through a binding whose
         publication gate is still pending (SOURCE_ACCESS_DENIED). Legacy v7
@@ -4674,6 +4737,13 @@ class CoreServiceServer:
                 "geometry": geometry, "ocr_text": text.get("ocr_text", ""),
                 "translated_text": text.get("final_translation") or text.get("machine_translation", ""),
             })
+        if hidden:
+            # r2: the export text face reports the filtered count instead of
+            # silently returning a shorter page.
+            print(
+                f"[core.export_text] page={page_id} lineage_hidden={len(hidden)}",
+                file=sys.stderr,
+            )
         return result
 
     def _text_export_bytes(self, fmt: str, options: dict, pages: list[dict]) -> bytes:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -1525,6 +1526,13 @@ class SqliteTargetCatalog(TargetCatalog):
         if not verdict.hidden:
             return regions
         hidden = verdict.hidden_region_ids
+        # FEA-11-LINEAGE-1 (r2): page-scope Run targets report how many
+        # old-coordinate regions were excluded, so the filtering is never a
+        # silent loss.
+        print(
+            f"[pipeline.lineage] page={page_id} lineage_hidden={len(hidden)}",
+            file=sys.stderr,
+        )
         return tuple(
             region for region in regions if region.region_id not in hidden
         )
