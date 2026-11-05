@@ -986,11 +986,12 @@ public sealed class HostRuntime : IAsyncDisposable
                             && codeValue.ValueKind == System.Text.Json.JsonValueKind.String
                                 ? codeValue.GetString()
                                 : null;
-                        if (string.IsNullOrWhiteSpace(code))
+                        if (string.IsNullOrWhiteSpace(code)
+                            || !HostErrorCodes.IsKnown(code))
                         {
                             throw new CoreOperationException(
                                 "INVALID_REQUEST", "validation", false,
-                                "failure code is required", null);
+                                "failure code is required and must be a C-17 §8 code", null);
                         }
                         try
                         {
@@ -1014,7 +1015,8 @@ public sealed class HostRuntime : IAsyncDisposable
                             // The Core row may already be terminal/gone; the
                             // Host journal still records the failure.
                         }
-                        var failedEntry = operations.MarkFailed(operationId!, code);
+                        var failedEntry = operations.MarkFailed(
+                            operationId!, code, retryable: HostErrorCodes.RetryableOf(code));
                         return System.Text.Json.JsonSerializer.SerializeToElement(failedEntry);
                     }
                 }

@@ -330,4 +330,35 @@ public sealed class Fea11HostAuthTests : IDisposable
                 (_, _) => Task.FromResult(new CoreResponse(null, default, null)),
                 CancellationToken.None));
     }
+
+    [Fact]
+    public async Task Apply_RejectsCommaInGrantIds()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["plan_id"] = "pl-1",
+            ["plan_digest"] = new string('a', 64),
+            ["grant_ids"] = new[] { "g-1,g-2" },
+            ["authorization"] = new { authorizations = Array.Empty<object>() },
+        });
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new InvalidOperationException("must not reach Core"),
+            CancellationToken.None));
+        Assert.Equal("INVALID_REQUEST", error.Code);
+    }
+
+    [Theory]
+    [InlineData("SOURCE_PLAN_STALE", true)]
+    [InlineData("SOURCE_GRANT_EXPIRED", true)]
+    [InlineData("SOURCE_ACCESS_DENIED", false)]
+    [InlineData("SOURCE_SYNC_STATE_CONFLICT", false)]
+    public void HostErrorCodes_ProjectTheC17RetryableColumn(string code, bool retryable)
+    {
+        Assert.True(HostErrorCodes.IsKnown(code));
+        Assert.Equal(retryable, HostErrorCodes.RetryableOf(code));
+        Assert.False(HostErrorCodes.IsKnown("NOT_A_C17_CODE"));
+    }
 }

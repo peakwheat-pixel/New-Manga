@@ -199,11 +199,12 @@ public sealed class HostOperationOrchestrator
             foreach (var grant in grantArray.EnumerateArray())
             {
                 if (grant.ValueKind != JsonValueKind.String
-                    || string.IsNullOrWhiteSpace(grant.GetString()))
+                    || string.IsNullOrWhiteSpace(grant.GetString())
+                    || grant.GetString()!.Contains(','))
                 {
                     throw new CoreOperationException(
                         "INVALID_REQUEST", "validation", false,
-                        "grant_ids must be non-empty strings", null);
+                        "grant_ids must be non-empty strings without commas", null);
                 }
                 grantIds.Add(grant.GetString()!);
             }

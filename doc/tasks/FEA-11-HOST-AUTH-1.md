@@ -50,12 +50,12 @@ allowed_paths:
 
 ## 实施证据与 AC 状态（DSH，2026-11-05）
 
-- AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 4/4（与 Core canonical_bytes 逐字节一致的跨实现向量）。
-- AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 3/3；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
+- AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 5/5（跨实现向量：request/authorization/mixed/escapes + non-BMP code-point 排序；sha256 由 Python Core 生成）。
+- AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 6/6（含固定 id 外部向量）；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
 - AC3 PARTIAL（r4 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现且符合 §3.2 行 163**：`RetryAsync` 锁后重读 Registry → `Authorize` durable → **重新 mint 新 HostAuthorization 并原子落盘**（AuthorizationJson/Digest/HostReceiptId 更新）→ dispatch；typed 拒绝再落 failed；已提交 failed 拒绝 retry（走 recover）；non-retryable 拒绝。`Fea11HostAuthTests` 14/14。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线；retry 目前是 Host 编排 API，dispatcher 无冻结 retry 命令）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
-- AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡复审（r2）判定。
-- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 1370/0、IPC 复跑 3/3、check PASS、pins 18/18；含 IPC flaky 说明）。
-- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）。
+- AC4 PARTIAL（路径层依据已具备）：`doc/reviews/FEA-11-r3.md` 第 38 行「HOST-AUTH-1 可接受（有条件，并接受为 P0-1 闭合路径）」；P0-1 的实际闭合取决于 AC1–AC3，待本卡复审（r5）判定。
+- 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 首跑 App.Tests 0 failed / 重跑 1381/0/78、IPC 复跑 3/3（含失败名与 TRX 说明）、check PASS、pins 18/18；含 flaky 说明）。
+- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）；dispatcher 无冻结 retry 命令（retry 为 Host 编排 API）；receipt 核对/canonical 重算与 registry scope 精度登记 deferral。
 
 ## DSH 裁决与 limitation 登记（r1 处置后）
 

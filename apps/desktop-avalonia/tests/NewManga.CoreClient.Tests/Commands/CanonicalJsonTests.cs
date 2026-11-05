@@ -84,4 +84,23 @@ public sealed class CanonicalJsonTests
             "5142422fb010957a6db829bff842295a956f0eebe9d2c0b5940e2fa960d9d340",
             CanonicalJson.Sha256Hex(value));
     }
+
+    [Fact]
+    public void NonBmpKeys_AreOrderedByCodePoint_MatchesCoreVector()
+    {
+        // U+FFFD (65533) sorts before U+1D11E (119070) by code point; UTF-16
+        // ordinal order would put the surrogate pair first (r4 P2-08).
+        var value = new Dictionary<string, object?>
+        {
+            ["𝄞"] = "g-clef",
+            ["�"] = "replacement",
+        };
+
+        Assert.Equal(
+            "{\"\uFFFD\":\"replacement\",\"\U0001D11E\":\"g-clef\"}",
+            CanonicalJson.Text(value));
+        Assert.Equal(
+            "dc00aaa5c52b095c2a302d7bb5d5b68b8d500253a0d4949ddf049e6dc26248c5",
+            CanonicalJson.Sha256Hex(value));
+    }
 }
