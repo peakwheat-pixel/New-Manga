@@ -56,6 +56,47 @@ public static class CanonicalJson
         }
     }
 
+    /// <summary>canonical-json/1 orders object keys by Unicode code point, which
+    /// is not UTF-16 ordinal order for non-BMP keys (surrogate pairs).</summary>
+    private sealed class UnicodeCodePointComparer : IComparer<string>
+    {
+        public static readonly UnicodeCodePointComparer Instance = new();
+
+        public int Compare(string? left, string? right)
+        {
+            if (ReferenceEquals(left, right)) return 0;
+            if (left is null) return -1;
+            if (right is null) return 1;
+            var leftIndex = 0;
+            var rightIndex = 0;
+            while (leftIndex < left.Length && rightIndex < right.Length)
+            {
+                var leftCodePoint = NextCodePoint(left, ref leftIndex);
+                var rightCodePoint = NextCodePoint(right, ref rightIndex);
+                if (leftCodePoint != rightCodePoint)
+                {
+                    return leftCodePoint < rightCodePoint ? -1 : 1;
+                }
+            }
+            return (left.Length - leftIndex).CompareTo(right.Length - rightIndex);
+        }
+
+        private static int NextCodePoint(string value, ref int index)
+        {
+            var current = value[index];
+            if (char.IsHighSurrogate(current)
+                && index + 1 < value.Length
+                && char.IsLowSurrogate(value[index + 1]))
+            {
+                var codePoint = char.ConvertToUtf32(current, value[index + 1]);
+                index += 2;
+                return codePoint;
+            }
+            index += 1;
+            return current;
+        }
+    }
+
     private static void WriteObject(StringBuilder builder, System.Collections.IDictionary dictionary)
     {
         var keys = new List<string>();
@@ -67,7 +108,7 @@ public static class CanonicalJson
             }
             keys.Add(name);
         }
-        keys.Sort(StringComparer.Ordinal);
+        keys.Sort(UnicodeCodePointComparer.Instance);
         builder.Append('{');
         for (var index = 0; index < keys.Count; index++)
         {

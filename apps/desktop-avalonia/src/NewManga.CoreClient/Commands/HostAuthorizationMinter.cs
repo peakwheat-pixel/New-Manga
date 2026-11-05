@@ -21,13 +21,28 @@ public static class HostAuthorizationMinter
         string AuthorizedAt,
         Dictionary<string, object?> Authorization);
 
+    private static bool IsLowerHex64(string? value) =>
+        value is { Length: 64 } && value.All(ch => ch is >= '0' and <= '9' or >= 'a' and <= 'f');
+
     public static Minted Mint(
         string planId,
         string planDigest,
         string kind,
         IEnumerable<Dictionary<string, object?>> authorizations,
-        DateTimeOffset? now = null)
+        DateTimeOffset? now = null,
+        string? operationId = null,
+        string? hostReceiptId = null)
     {
+        if (string.IsNullOrWhiteSpace(planId))
+        {
+            throw new CoreOperationException(
+                "INVALID_REQUEST", "validation", false, "plan id is required", null);
+        }
+        if (!IsLowerHex64(planDigest))
+        {
+            throw new CoreOperationException(
+                "INVALID_REQUEST", "validation", false, "plan digest is not a lowercase sha256", null);
+        }
         var ordered = authorizations
             .Select(item => new Dictionary<string, object?>
             {
@@ -44,9 +59,19 @@ public static class HostAuthorizationMinter
                 "apply request carries no registry authorizations", null);
         }
 
-        var operationId = "op-" + Convert.ToHexString(
+        var seenRegistries = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in ordered)
+        {
+            if (!seenRegistries.Add((string)item["registry_id"]!))
+            {
+                throw new CoreOperationException(
+                    "INVALID_REQUEST", "validation", false,
+                    "authorization repeats a registry id", null);
+            }
+        }
+        operationId ??= "op-" + Convert.ToHexString(
             RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
-        var hostReceiptId = "hr-" + Convert.ToHexString(
+        hostReceiptId ??= "hr-" + Convert.ToHexString(
             RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
         var requestDigest = CanonicalJson.Sha256Hex(new Dictionary<string, object?>
         {

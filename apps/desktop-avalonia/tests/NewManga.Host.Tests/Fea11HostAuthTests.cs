@@ -29,13 +29,13 @@ public sealed class Fea11HostAuthTests : IDisposable
         try { Directory.Delete(_root, recursive: true); } catch { /* best effort */ }
     }
 
-    private JsonElement CallerPayload()
+    private JsonElement CallerPayload(string? planDigest = null)
     {
         var known = _registry.List().Single();
         return JsonSerializer.SerializeToElement(new Dictionary<string, object?>
         {
             ["plan_id"] = "pl-1",
-            ["plan_digest"] = new string('a', 64),
+            ["plan_digest"] = planDigest ?? new string('a', 64),
             ["operation_id"] = "op-CALLER-CONTROLLED",
             ["grant_ids"] = new[] { "g-1" },
             ["authorization"] = new Dictionary<string, object?>
@@ -131,5 +131,39 @@ public sealed class Fea11HostAuthTests : IDisposable
 
         var journalDir = Path.Combine(_root, "host", "source-operations");
         Assert.False(Directory.Exists(journalDir) && Directory.GetFiles(journalDir).Length > 0);
+    }
+
+    [Fact]
+    public async Task Apply_AuthorizesTheRegistryBeforeTheCoreCall()
+    {
+        // The registry persists LastUsedAt inside Authorize; running the Core
+        // call must therefore observe an already-authorized registry (C-17 §3.2).
+        string? observedLastUsed = null;
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload();
+
+        await orchestrator.ApplyAsync("source_resync", payload, (_, _) =>
+        {
+            observedLastUsed = _registry.List().Single().LastUsedAt;
+            return Task.FromResult(new CoreResponse(
+                null, JsonSerializer.SerializeToElement(new { state = "core-committed" }), null));
+        }, CancellationToken.None);
+
+        Assert.False(string.IsNullOrWhiteSpace(observedLastUsed));
+    }
+
+    [Fact]
+    public async Task Apply_RejectsAMalformedPlanDigestWithoutJournal()
+    {
+        var orchestrator = NewOrchestrator();
+        var payload = CallerPayload(planDigest: "not-a-digest");
+
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() => orchestrator.ApplyAsync(
+            "source_resync", payload,
+            (_, _) => throw new InvalidOperationException("must not reach Core"),
+            CancellationToken.None));
+
+        Assert.Equal("INVALID_REQUEST", error.Code);
+        Assert.False(Directory.Exists(Path.Combine(_root, "host", "source-operations")));
     }
 }

@@ -4,13 +4,13 @@ title: FEA-11 Host durable authorization 自签与编排（C-17 §5.2 续）
 kind: implementation
 governance_version: 3
 status: in_progress
-approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；待 scope review
+approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记
 suggested_owner: codex
-owner: null
-reviewer: null
+owner: dsh（2026-11-05 用户授权启动）
+reviewer: 独立上下文 fresh subagent（doc/reviews/FEA-11-HOST-AUTH-1-r1.md）
 depends_on:
   - FEA-11-PREREQ-1
-base_commit: null
+base_commit: 7ab9eea87
 branch: null
 worktree: null
 integration_commit: null
@@ -19,6 +19,13 @@ canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-HOST-AUTH-1
 allowed_paths:
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/CanonicalJson.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CanonicalJsonTests.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/HostAuthorizationMinterTests.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
+  - doc/TASK_LEDGER.md
   - doc/tasks/FEA-11-HOST-AUTH-1.md
   - doc/reviews/FEA-11-HOST-AUTH-1-*.md
   - doc/handoffs/FEA-11-HOST-AUTH-1-*.md
@@ -45,10 +52,10 @@ allowed_paths:
 
 - AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 4/4（与 Core canonical_bytes 逐字节一致的跨实现向量）。
 - AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 3/3；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
-- AC3 PARTIAL：`HostOperationOrchestrator` 顺序（Mint→Registry.Authorize(roots)→journal→Core→MarkCommitted）+ `Fea11HostAuthTests` 3/3（注入/失败留 host-authorized/capability 门先于 journal）；**完整 HostRuntime→Core 端到端与 ACK 重发无自动化测试**（IPC 测试为 Core 直连）。
-- AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡独立 Review 判定。
+- AC3 PARTIAL：`HostOperationOrchestrator` 顺序（Mint→Registry.Authorize(roots)→journal→Core→MarkCommitted）+ `Fea11HostAuthTests` 5/5（注入/失败留 host-authorized/capability 门先于 journal/**顺序探针（Core 调用时 registry 已授权）**/**非法 plan_digest 零 journal**）；**完整 HostRuntime→Core 端到端与 ACK 重发无自动化测试**（IPC 测试为 Core 直连）。
+- AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡复审（r2）判定。
 - 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 1370/0、IPC 复跑 3/3、check PASS、pins 18/18；含 IPC flaky 说明）。
-- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）。
+- 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）。
 
 ## Acceptance Criteria
 
