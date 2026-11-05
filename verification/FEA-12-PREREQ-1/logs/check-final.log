@@ -1,0 +1,6 @@
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-12-PREREQ-1.md
+WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6629 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\agent-output-manifest.json, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\logs\baseline-governance.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\logs\dotnet-full-1.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\test-evidence\logs\commands-fea12-old-core\core_service.stderr.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\test-evidence\logs\commands-fea12-old-core\host_bridge.stderr.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\test-evidence\logs\commands-ns-b1\core_service.stderr.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\test-evidence\logs\commands-ns-b1\host_bridge.stderr.log, G:\CODEX\New Manga\verification\FEA-12-PREREQ-1\test-evidence\logs\commands-ns-b2\core_service.stderr.log
+Governance check: PASS (3 warnings)
