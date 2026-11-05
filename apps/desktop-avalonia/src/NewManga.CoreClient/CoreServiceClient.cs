@@ -452,6 +452,48 @@ public sealed class CoreServiceClient : IAsyncDisposable
     }
 
     /// <summary>
+    /// FEA-12-CORE / M2-C1 §5.13/§5.14: fail-closed capability probe. A Host that is about to
+    /// dispatch a capability-gated command calls this BEFORE the command frame is built; a Core
+    /// that does not advertise every required capability -- or a probe that cannot produce the
+    /// capability list at all -- yields the frozen contract verdict <c>CORE_CAPABILITY_MISSING</c>
+    /// (<c>protocol</c> / <c>retryable=false</c>). Sending the command itself and inspecting
+    /// <c>UNKNOWN_COMMAND</c> is NOT a legal probe channel (M2-C1 §5.13/§5.14).
+    /// </summary>
+    public async Task RequireCapabilitiesAsync(
+        IReadOnlyCollection<string> required,
+        CancellationToken cancellationToken = default)
+    {
+        CorePing ping;
+        try
+        {
+            ping = await PingAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is CoreOperationException or SidecarException)
+        {
+            // A probe that cannot report capabilities is treated exactly like a missing
+            // capability: fail closed, never "assume supported".
+            throw new CoreOperationException(
+                "CORE_CAPABILITY_MISSING", "protocol", false, "capability probe failed", null);
+        }
+
+        if (required.Count == 0)
+        {
+            return;
+        }
+
+        var advertised = new HashSet<string>(ping.Capabilities, StringComparer.Ordinal);
+        foreach (var capability in required)
+        {
+            if (!advertised.Contains(capability))
+            {
+                throw new CoreOperationException(
+                    "CORE_CAPABILITY_MISSING", "protocol", false,
+                    "the Core does not advertise " + capability, null);
+            }
+        }
+    }
+
+    /// <summary>
     /// GRANT-ISSUER-1: opens the HOST-ISSUER-1 host-control session. The credential is a
     /// 32-byte random token (base64url), the signing key is a separate 32-byte random key used by
     /// <see cref="HostIssuer"/>; the Core echoes its own session id, which every later host-control

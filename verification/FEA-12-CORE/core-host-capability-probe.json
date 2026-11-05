@@ -1,0 +1,120 @@
+{
+  "ac": "AC11",
+  "sidecar": "frozen core_service (AC11 unlabelled copy)",
+  "frozen_core_capabilities": "library.list_books",
+  "probe_is_core_ping_only": true,
+  "unknown_command_probing": false,
+  "positive_control_passed": true,
+  "results": [
+    {
+      "path": "direct_probe",
+      "command": "library_preview_permanent_delete_books",
+      "required_capabilities": "library.delete.preview/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "not applicable"
+    },
+    {
+      "path": "direct_probe",
+      "command": "library_move_to_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "not applicable"
+    },
+    {
+      "path": "direct_probe",
+      "command": "library_restore_from_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "not applicable"
+    },
+    {
+      "path": "direct_probe",
+      "command": "library_list_trash",
+      "required_capabilities": "library.trash.read/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "not applicable"
+    },
+    {
+      "path": "direct_probe",
+      "command": "library_purge_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "not applicable"
+    },
+    {
+      "path": "dispatcher_fallback_probe",
+      "command": "library_preview_permanent_delete_books",
+      "required_capabilities": "library.delete.preview/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "path": "dispatcher_fallback_probe",
+      "command": "library_move_to_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "path": "dispatcher_fallback_probe",
+      "command": "library_restore_from_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "path": "dispatcher_fallback_probe",
+      "command": "library_list_trash",
+      "required_capabilities": "library.trash.read/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "path": "dispatcher_fallback_probe",
+      "command": "library_purge_trash",
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "path": "stub_gate_passes_dispatch_control",
+      "command": "library_list_trash",
+      "required_capabilities": "library.trash.read/1",
+      "error_code": "UNKNOWN_COMMAND",
+      "category": "validation",
+      "retryable": "false",
+      "probe_ping_frames": 0,
+      "command_frame": "present (dispatched; frozen Core rejects it)"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "ac": "AC3/AC11",
+  "sidecar": "frozen core_service (AC11 unlabelled copy)",
+  "frozen_core_capabilities": "library.list_books",
+  "rev_2_13_wire": "preview minor 11; trash family minor 13; delete stays 10",
+  "capability_probe_first": true,
+  "unknown_command_probing": false,
+  "typed_failure": true,
+  "silent_drop": false,
+  "soft_delete_fallback": false,
+  "results": [
+    {
+      "command": "library_preview_permanent_delete_books",
+      "core_command": "PreviewPermanentDeleteBooks",
+      "core_minor": 11,
+      "required_capabilities": "library.delete.preview/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "command": "library_move_to_trash",
+      "core_command": "MoveToTrash",
+      "core_minor": 13,
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "command": "library_list_trash",
+      "core_command": "ListTrash",
+      "core_minor": 13,
+      "required_capabilities": "library.trash.read/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "command": "library_purge_trash",
+      "core_command": "PurgeTrash",
+      "core_minor": 13,
+      "required_capabilities": "library.trash.write/1",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "category": "protocol",
+      "retryable": "false",
+      "probe_ping_frames": 1,
+      "command_frame": "absent (never used as a capability probe)"
+    },
+    {
+      "command": "library_delete_book_permanently(inventory_digest)",
+      "core_command": "PermanentlyDeleteBook",
+      "core_minor": 10,
+      "required_capabilities": "(none: legacy minor 10 keeps its wire)",
+      "error_code": "INVALID_REQUEST",
+      "category": "validation",
+      "retryable": "false",
+      "probe_ping_frames": 0,
+      "command_frame": "present (minor 10 dispatched; inventory_digest forwarded; old Core rejects it)"
+    }
+  ]
+}

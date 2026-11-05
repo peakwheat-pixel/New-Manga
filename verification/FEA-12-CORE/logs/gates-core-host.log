@@ -1,0 +1,121 @@
+# FEA-12-CORE 分片 B（.NET Host 桥：capability probe + R-002 + 回归）— gates（2026-11-05，Asia/Shanghai）
+
+> Owner：`fea12-core-host`（DSH Agent Teams 分片 B，共享任务 task-7；卡 `doc/tasks/FEA-12-CORE.md`）。
+> 仓库 `G:\CODEX\New Manga`（main）；卡 base / 释放点 `e47fd47e`，CORE 释放 commit `c8d9adc8d`。
+> 实跑 HEAD：`d5925957b`（该 HEAD 上的其他 commit 为 DSH/DSIM 文档与 DSIM r2 修复，非本分片改动）。
+> 本分片只改 `apps/**` .NET 4 个文件 + `verification/FEA-12-CORE/**`；未碰 Python/src/**、冻结契约、schema/依赖、真实数据/回收站；未 push。
+> 已知既有 flaky（PREREQ-1 G3）：`FluentResidual2VisualEvidenceTests` 与 `WireLogSourceRedactionTests` 跨程序集证据写竞争。本轮两次全量均 PASS、flaky 未触发；仍按「首跑 + 复跑」记录，**不据此宣称稳定 PASS**。
+> 所有命令均在主工作树实跑；日志为本文件同目录的 `core-host-*.log`。
+
+## G1 CoreClient 命令治理过滤（无 sidecar 环境；首跑 + 复跑一致）
+
+```text
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
+         -c Release --no-build --nologo --filter "FullyQualifiedName~Command"
+RESULT:  通过 137 / 失败 0 / 跳过 16 / 总计 153（首跑与复跑一致）
+对比基线: FEA-12-PREREQ-1 G5 = 135/0/15/150；本分片 +2 新 Fact（Fea12Core_*），
+          +1 新 SidecarFact skip（无 sidecar 环境显式 Skip），-0 removed
+EXIT:    0
+LOG:     logs/core-host-dotnet-command-filter.log
+```
+
+## G2 冻结旧 Core 负向对照 + capability probe（sidecar 环境；两次独立运行一致）
+
+```text
+ENV:     NEWMANGA_CORECLIENT_SIDECAR_DIR=G:\CODEX\New Manga.workspace\task-envs\HOST-CORECLIENT-1\sidecar-copy
+         （冻结旧 Core；core.ping 实测 capabilities=["library.list_books"]，不含任何 rev 2.13 capability）
+         NEWMANGA_EVIDENCE_DIR=<仓外 workspace temp>（测试证据不写 tracked 路径，按 core-host- 前缀入仓）
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
+         -c Release --no-build --nologo
+         --filter "FullyQualifiedName~Fea12Core|FullyQualifiedName~Fea12NewCommands|FullyQualifiedName~B1Commands_ExecuteAgainstFrozenCore|FullyQualifiedName~B2Commands_ExecuteAgainstFrozenCore"
+RESULT:  通过 6 / 失败 0 / 跳过 0 / 总计 6（两次一致）
+EXIT:    0
+日志:    logs/core-host-dotnet-sidecar-negative.log
+判别证据: core-host-capability-probe.json（sha256 20fd4695…，两次运行 byte-identical）
+          core-host-old-core-negative-control.json（sha256 61c1f004…，两次运行 byte-identical）
+          → 证据确定性成立（无时间戳/随机 ID；请求 id 等易变字段不入证据）
+```
+
+关键负向结果（均来自冻结旧 Core 实测）：
+
+- 3 个 capability 缺失各一例：`library.delete.preview/1`（preview）、`library.trash.read/1`（ListTrash）、`library.trash.write/1`（Move/Restore/Purge）→ 全部 `CORE_CAPABILITY_MISSING`（`category=protocol`、`retryable=false`）。
+- probe 只发 `core.ping`：每次调用恰好 +1 个 `core.ping` frame，**零 command frame**（不以 `UNKNOWN_COMMAND` 探测能力）。
+- 正向对照：冻结旧 Core 确实广播的 `library.list_books` 通过同一 probe（不误报缺失）。
+- 正常 dispatch 判别（stub gate 放行）：同一 `library_list_trash` 被真正发到旧 Core，收到 Core 自身 typed `UNKNOWN_COMMAND` 且 command frame 存在 → 失败关闭来自 gate，而非命令不可用。
+- 旧行为对照（更新后的 PREREQ-1 负向对照测试）：rev 2.13 命令不再"先发命令再被 `UNKNOWN_COMMAND` 拒绝"；additive `inventory_digest` 仍随 minor 10 命令发到旧 Core 并得到 `INVALID_REQUEST`（回归保留）。
+
+## G3 全量 .NET（首跑 + 复跑；分列 passed / failed / skipped）
+
+```text
+COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
+RUN 1:   失败 0 / 通过 1405 / 跳过 80 / 总计 1485；EXIT 0
+RUN 2:   失败 0 / 通过 1405 / 跳过 80 / 总计 1485；EXIT 0
+分程序集（RUN 1 = RUN 2）:
+  Appearance              21 / 0 / 0   (21)
+  Presentation.Avalonia   38 / 0 / 0   (38)
+  ThemeEngine            253 / 0 / 0   (253)
+  DesignSystem           117 / 0 / 0   (117)
+  ApplicationCore         31 / 0 / 0   (31)
+  Host                   107 / 0 / 49  (156)
+  CoreClient             167 / 0 / 24  (191)
+  App                    671 / 0 / 7   (678)
+FLAKY:   已知既有 flaky（FluentResidual2VisualEvidenceTests vs WireLogSourceRedactionTests）
+         本次两次均未触发；按首跑+复跑记录，不作为稳定 PASS 的证明。
+LOG:     logs/core-host-dotnet-full-1.log、logs/core-host-dotnet-full-2.log
+RESTORE: 两次全量后均执行 `git checkout -- verification/FEA-09`（WireLogSourceRedactionTests 重写
+         tracked 证据 verification/FEA-09/logs/wire-redacted.ndjson 的既有副作用）；恢复后该路径 clean。
+```
+
+## G4 治理 check
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md
+RESULT:  Governance check: PASS (3 warnings)
+WARN:    非终态 Task 13 / doc/STATUS.md 80% / doc/REBASELINE_PLAN.md 80%（均既有全仓告警，非本分片引入）
+EXIT:    0
+LOG:     logs/core-host-check.log
+```
+
+## G5 冻结 pins
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+RESULT:  PIN AUDIT: PASS (all 18)
+EXIT:    0
+LOG:     logs/core-host-pins.log
+```
+
+## G6 旧 Host 负向对照回归（PREREQ-1 负向对照不回归；旧 Host + 冻结旧 Core，CORE head 复跑）
+
+```text
+COMMAND: pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/baseline-negative-control.ps1
+         -RepoRoot   G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81
+         -AssemblyPath <该 worktree>\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+RESULT:  BASELINE_NEGATIVE_CONTROL=CAPTURED；EXIT 0
+  - 旧 registry 106 命令；5 个 rev 2.13 命令 absent → Get() typed HostCommandUnknownException / UNKNOWN_COMMAND；
+  - AllowedRunErrorCodes=19；5 个新码 not registered → category=unknown 且 code 原文保留（不重写）；
+  - 冻结旧 Core：PreviewPermanentDeleteBooks(minor 11) / MoveToTrash(minor 13) → typed UNKNOWN_COMMAND
+    error envelope（非静默丢弃）；
+  - 结论与 verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log 一致 → 不回归。
+LOG:     logs/core-host-baseline-negative-control-oldhost.log
+```
+
+## G7 全量 pytest（引用交付基线）
+
+```text
+引用（本分片零 Python 改动）：FEA-12-PREREQ-1 G4 = 3073 passed / 10 skipped / EXIT 0
+未跑理由：工作树存在分片 A（Python Core）与 DSIM 的未提交写入，此时重跑不能代表本分片交付状态；
+         分片 B 交付不含任何 Python/src/** 改动（见交付 commit 文件清单）。
+```
+
+## 汇总
+
+| Gate | 结果 | EXIT |
+|---|---|---|
+| G1 命令治理过滤 | 137 passed / 0 failed / 16 skipped / 153 total（两次一致） | 0 |
+| G2 冻结旧 Core probe + 负向对照 | 6 passed / 0 failed / 0 skipped（两次一致） | 0 |
+| G3 全量 .NET | RUN1 & RUN2：1405 passed / 0 failed / 80 skipped / 1485 total | 0 / 0 |
+| G4 治理 check | PASS (3 warnings) | 0 |
+| G5 pins | PASS (all 18) | 0 |
+| G6 旧 Host 负向对照 | CAPTURED（结论与基线一致，不回归） | 0 |
+| G7 全量 pytest | 引用基线 3073 passed / 10 skipped | — |

@@ -93,6 +93,35 @@ public sealed class HostCommandDispatcher
         }
 
         var payload = args.ValueKind == JsonValueKind.Object ? args : EmptyObject();
+
+        // FEA-12-CORE / M2-C1 §5.13/§5.14 + R-002 option (b): capability-gated commands are probed
+        // BEFORE the dispatch try-block. A missing capability is a Host protocol verdict, not a Core
+        // application error, so it must bypass ProjectDeleteTrashError (which would degrade it to
+        // category=unknown and hide the protocol taxonomy from the UI). The probe is the injected
+        // Host gate (HostRuntime) or, when the Host did not inject one, the CoreClient's own
+        // core.ping probe -- never the command itself (UNKNOWN_COMMAND is not a probe channel).
+        var requiredCapabilities = HostCommandRegistry.RequiredCapabilities(descriptor.Name);
+        if (requiredCapabilities.Count > 0)
+        {
+            if (_capabilityGate is { } capabilityGate)
+            {
+                await capabilityGate(descriptor.Name, cancellationToken).ConfigureAwait(false);
+            }
+            else if (_core is { } probeCore)
+            {
+                await probeCore.RequireCapabilitiesAsync(requiredCapabilities, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                // Fail closed: without a Core channel there is no legal way to verify the
+                // capabilities, so the command must not be dispatched unprobed.
+                throw new CoreOperationException(
+                    "CORE_CAPABILITY_MISSING", "protocol", false,
+                    "no Core channel available to probe required capabilities", null);
+            }
+        }
+
         try
         {
             return descriptor.Channel switch

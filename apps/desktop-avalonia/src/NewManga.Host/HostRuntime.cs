@@ -888,6 +888,20 @@ public sealed class HostRuntime : IAsyncDisposable
             }
 
 
+            // FEA-12-CORE / M2-C1 §5.13/§5.14 (R-002 option (b)): the delete/trash capability probe.
+            // It runs BEFORE dispatch -- the dispatcher invokes the injected gate outside its error
+            // projection try-block -- so a missing capability is thrown HERE (Host layer) and keeps
+            // the frozen protocol/false taxonomy instead of being degraded to category=unknown by
+            // ProjectDeleteTrashError. The probe is core.ping only: a command is never used as a
+            // capability probe (UNKNOWN_COMMAND probing is forbidden).
+            async Task DeleteTrashCapabilityAsync(string name, CancellationToken token)
+            {
+                await CoreService.RequireCapabilitiesAsync(
+                        HostCommandRegistry.RequiredCapabilities(name), token)
+                    .ConfigureAwait(false);
+            }
+
+
             async Task<object[]> RunCapabilityProbeAsync()
             {
                 var advertised = new HashSet<string>(StringComparer.Ordinal);
@@ -1043,11 +1057,27 @@ public sealed class HostRuntime : IAsyncDisposable
                 { _log.Warn("source registry unavailable"); }
                 Commands = new HostCommandDispatcher(
                     CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
-                    SourceOperationCompletionAsync, SourceSyncCapabilityAsync);
+                    SourceOperationCompletionAsync,
+                    // FEA-12-CORE / M2-C1 §5.13/§5.14: the single capability gate covers both
+                    // families -- the FEA-12 delete/trash probe and the unchanged FEA-11 source-sync
+                    // gate. Both run BEFORE dispatch; a probe verdict is never routed through the
+                    // delete/run error projections (R-002 option (b)).
+                    async (name, token) =>
+                    {
+                        if (HostCommandRegistry.RequiredCapabilities(name).Count > 0)
+                        {
+                            await DeleteTrashCapabilityAsync(name, token).ConfigureAwait(false);
+                            return;
+                        }
+
+                        await SourceSyncCapabilityAsync(name, token).ConfigureAwait(false);
+                    });
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {
                 _log.Warn($"host-control session unavailable: {ex.Message}");
+                // No host session: the dispatcher still probes delete/trash capabilities through its
+                // own CoreServiceClient probe (never dispatches a capability-gated command unprobed).
                 Commands = new HostCommandDispatcher(CoreService, HostBridge, HostLocalAsync);
             }
 
