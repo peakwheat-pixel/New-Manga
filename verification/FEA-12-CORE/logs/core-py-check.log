@@ -1,0 +1,12 @@
+# FEA-12-CORE shard A evidence
+# command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md
+# EXIT: 0
+# ----------------------------------------------------------------------
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-12-CORE.md
+WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2765 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6680 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-12-CORE\core-host-capability-probe.json, G:\CODEX\New Manga\verification\FEA-12-CORE\core-host-implementation-record.md, G:\CODEX\New Manga\verification\FEA-12-CORE\core-host-old-core-negative-control.json, G:\CODEX\New Manga\verification\FEA-12-CORE\logs\core-host-baseline-negative-control-oldhost.log, G:\CODEX\New Manga\verification\FEA-12-CORE\logs\core-host-check.log, G:\CODEX\New Manga\verification\FEA-12-CORE\logs\core-host-dotnet-command-filter.log, G:\CODEX\New Manga\verification\FEA-12-CORE\logs\core-host-dotnet-full-1.log, G:\CODEX\New Manga\verification\FEA-12-CORE\logs\core-host-dotnet-full-2.log
+Governance check: PASS (4 warnings)
+

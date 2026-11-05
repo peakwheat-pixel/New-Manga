@@ -1,0 +1,52 @@
+{
+  "ac": "AC12 (isolation & prohibitions) + AC8 zero-recycle-API sentinel",
+  "static_scan": {
+    "src_python_files_scanned": 256,
+    "windows_recycle_api_hits": [],
+    "delete_module_real_root_hits": [],
+    "pass": true
+  },
+  "runtime_isolation": {
+    "data_root": "G:\\CODEX\\New Manga.workspace\\temp\\FEA-12-CORE\\evidence-isolation\\data",
+    "data_root_under_workspace_temp": false,
+    "a_move": {
+      "moved": [
+        {
+          "book_id": "8021c2d8584944f49a623b238b000aed"
+        }
+      ],
+      "skipped": []
+    },
+    "a_list": {
+      "items": [
+        {
+          "bookId": "8021c2d8584944f49a623b238b000aed",
+          "title": "Isolation Probe",
+          "deletedAt": "2026-11-05T08:44:24.052+00:00"
+        }
+      ]
+    },
+    "a_restore": {
+      "restored": [
+        {
+          "book_id": "8021c2d8584944f49a623b238b000aed"
+        }
+      ],
+      "conflicts": []
+    },
+    "c_preview_error": null,
+    "c_delete": {
+      "book_id": "8021c2d8584944f49a623b238b000aed",
+      "deleted": true
+    },
+    "purge_trash_error": "UNKNOWN_COMMAND",
+    "managed_file_removed": true,
+    "sentinel_unchanged": true,
+    "sentinel_files": [
+      "notes.txt",
+      "user-sources\\chapter-01.png"
+    ],
+    "pass": true
+  },
+  "pass": true
+}

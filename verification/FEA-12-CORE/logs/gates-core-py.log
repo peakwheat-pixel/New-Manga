@@ -1,0 +1,105 @@
+# FEA-12-CORE 分片 A（Python Core）门禁日志
+
+- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review，分片 A）
+- Owner: `fea12-core-py`（DSH Agent Teams；Lead 集成）
+- 交付 head（门禁实跑工作树）：`564bc0760`（Lead plan/status 收口后）+ 本分片未提交改动；本分片 commit 列表见 Handoff。
+- 环境：Windows / `C:/Python314/python.exe` / pytest；隔离 DataRoot 仅用 pytest `tmp_path` 与
+  `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\`（无真实用户数据/AppData/外部卷/回收站操作）。
+- 说明：本日志只记录分片 A 实跑；全量 .NET 属分片 B/Lead 集成门禁（引用
+  `logs/core-host-dotnet-full-1.log` / `core-host-dotnet-full-2.log`，本分片零 .NET 改动）。
+  本文件不进入自身的证据 pin 闭环；最终一次 check 复跑记录写入
+  `doc/handoffs/FEA-12-CORE-core-py.md`（避免 check 日志自指，沿用 PREREQ-1 先例）。
+
+## G1 冻结 pins（18/18）
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+EXIT:    0
+RESULT:  PIN AUDIT: PASS (all 18)
+LOG:     verification/FEA-12-CORE/logs/core-py-pins.log
+         head: OK C01..C17 + FEA01（见日志全文）
+```
+
+## G2 治理 check（TaskPath）
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md
+EXIT:    0
+RESULT:  Governance check: PASS (4 warnings)
+WARN:    非终态 Task 计数（既有全仓告警）
+WARN:    doc/STATUS.md / doc/REBASELINE_PLAN.md 预算 80%（既有全仓告警）
+WARN:    evidence_dir 含未登记过程文件（分片 B 的 core-host-* 证书：归 task-7 登记，Lead 集成时合并）
+LOG:     verification/FEA-12-CORE/logs/core-py-check.log
+NOTE:    Lead 已于 commit `564bc0760` 清空 READY 节点并把 FEA-12-CORE 标 in_review；
+         此前（分片 A 交付排期时）该检查曾因 `READY DAG 只允许 status: ready` FAIL，
+         Lead 处置后 PASS。最终一次交付前复跑见 Handoff。
+```
+
+## G3 相关测试组（core/storage/maintenance/fea12）
+
+```text
+COMMAND: C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings
+EXIT:    0
+RESULT:  1096 passed in 83.26s
+LOG:     verification/FEA-12-CORE/logs/core-py-pytest-related.log
+新增/改写：tests/core/test_core_delete_commands.py（重写 28 用例）、
+          tests/core/test_core_delete_preview_commands.py（9）、
+          tests/core/test_core_trash_commands.py（14）、
+          tests/fea12/test_core_delete_protection.py（8）、
+          tests/storage/test_purge_integrity.py（v7/v8 fixture，10）、
+          tests/core/test_core_service.py（新增 3 capability 断言）
+```
+
+## G4 全量 pytest
+
+```text
+COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+EXIT:    0
+RESULT:  3144 passed, 10 skipped in 236.32s（基线 3093 passed / 10 skipped；
+         新增 51 条均为本卡测试，无失败/无新增 skip）
+LOG:     verification/FEA-12-CORE/logs/core-py-pytest-full.log
+```
+
+## G5 AC 证据探针（可复跑，隔离根；EXIT=0）
+
+```text
+COMMAND: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_inventory_digest.py
+EXIT:    0
+RESULT:  {"all_match": true}；golden 向量/集合级有序 digest/重排敏感性全部与独立复算一致
+EVIDENCE: verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json
+
+COMMAND: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_isolation_scan.py
+EXIT:    0
+RESULT:  {"pass": true}；src 全量零 Windows 回收站 API；删除模块零真实用户根；
+         运行时哨兵（隔离根外 user-source 树）前后逐字节一致
+EVIDENCE: verification/FEA-12-CORE/evidence/core-py-isolation-scan.json
+```
+
+## G6 AC 逐条断言日志（pytest 选取，EXIT=0）
+
+`verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log` … `core-py-ac12-isolation.log`
+（AC1–AC12 逐条命令/EXIT/断言结果；AC11 仅 Python Core 侧，Host 桥归 task-7）。
+
+## G7 预期行为变更（Review 不判回归）
+
+1. delete 命令 `inventory_digest`/`inventory_digests` 变为**必填**（M2-C1 rev 2.13 §5.11.1a）：
+   既有 delete 测试改为"先 Preview 再回传 digest"；旧 Host 不传 → `INVALID_REQUEST` fail-closed。
+2. PD-08：可安全拆分的共享引用不阻断（原 `test_core_delete_commands.py:323,378` 期望按 ADJ D3 更新）；
+   共享物理文件/其他项目 binding 保留、跨项目 provenance 置 NULL；仅不可拆分才 `BOOK_DELETE_CONFLICT`。
+3. page 级 purge 补 C-17 v7/v8 子图（fixture 补行后仍全绿；D1 X1 同语义）。
+4. `core.ping` 在生产装配下新增 3 capability；最小手搭 Core 不公告（`tests/fea09` 断言不变）。
+
+## G8 全量 .NET
+
+```text
+分片 A 未运行（零 .NET 改动）；引用分片 B 已实跑日志：
+  verification/FEA-12-CORE/logs/core-host-dotnet-full-1.log
+  verification/FEA-12-CORE/logs/core-host-dotnet-full-2.log
+集成时由 Lead 统一复跑全量 .NET。
+```
+
+## G9 副作用/证据卫生
+
+- 全量 pytest 后 `git status` 仅本分片 allowed_paths 文件；`verification/FEA-09/**` 无 tracked 重写
+  （DSIM-1 closeout 已恢复；若后续出现，`git checkout -- verification/FEA-09` 恢复并在 Handoff 注明）。
+- 临时根 `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\` 仅用于隔离 fixture/日志中转，交付后可 DELETE_SAFE。

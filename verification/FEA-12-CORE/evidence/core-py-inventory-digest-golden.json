@@ -1,0 +1,88 @@
+{
+  "capability": "library.delete.preview/1",
+  "command": "PreviewPermanentDeleteBooks",
+  "contract": "doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md §2.1; M2-C1 §5.13",
+  "canonical_form": "json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False); sha256 hex lowercase; collection = sha256(concat(per-book hex, request order))",
+  "vectors": [
+    {
+      "name": "single-book-full-protection",
+      "request": {
+        "bookIds": [
+          "book-golden"
+        ]
+      },
+      "preview_item": {
+        "bookId": "book-golden",
+        "title": "Golden Book",
+        "protection": {
+          "lockCount": 1,
+          "currentRevisionId": "rev-golden",
+          "pinnedRevisionIds": [
+            "artifact-rev-golden",
+            "rev-golden"
+          ],
+          "activeRunIds": [],
+          "draftPageCount": 1,
+          "manualRegionCount": 1
+        },
+        "contentSummary": {
+          "chapters": 1,
+          "pages": 1,
+          "artifacts": 1,
+          "deletedFiles": 2,
+          "deletedBytes": 32
+        },
+        "sharedFileRefs": []
+      },
+      "canonical_payload": {
+        "bookId": "book-golden",
+        "lockCount": 1,
+        "currentRevisionId": "rev-golden",
+        "pinnedRevisionIds": [
+          "artifact-rev-golden",
+          "rev-golden"
+        ],
+        "activeRunIds": [],
+        "draftPageCount": 1,
+        "manualRegionCount": 1,
+        "chapters": 1,
+        "pages": 1,
+        "artifacts": 1,
+        "deletedFiles": 2,
+        "deletedBytes": 32,
+        "sharedFileRefs": []
+      },
+      "expected_inventoryDigest": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+      "actual_inventoryDigest": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+      "match": true
+    },
+    {
+      "name": "ordered-collection-two-books",
+      "request": {
+        "bookIds": [
+          "book-golden",
+          "book-empty"
+        ]
+      },
+      "expected_inventoryDigests": {
+        "book-golden": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+        "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
+      },
+      "actual_inventoryDigests": {
+        "book-golden": "sha256:3f4675b9dc022e5666ecc411c85e4ef54df41c637e44a83eeebde9b3f56a9f87",
+        "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
+      },
+      "expected_inventoryDigest": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
+      "actual_inventoryDigest": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
+      "match": true
+    }
+  ],
+  "all_match": true,
+  "order_sensitivity": {
+    "forward": "sha256:f6dcc4ae0f742c9f305993e7112a45f63022939190b8fdebc9cec45a0a96d086",
+    "reordered": "sha256:1725a6a3b6ebd9262d8461a3a966088dd115c45d18e011bb9210b9e21eda6060",
+    "per_book_digests_stable": true,
+    "collection_differs": true
+  },
+  "computedAt": "2026-11-05T08:44:23.424+00:00"
+}
