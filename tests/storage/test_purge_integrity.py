@@ -102,6 +102,53 @@ def purge_world(tmp_path: Path):
             " VALUES ('chapter-1','book-1','Chapter',?,?)",
             (NOW, NOW),
         )
+        # FEA-12: the v7 source graph + one applied v8 plan/operation so the
+        # page dependencies can include page_bindings/publications/lineage
+        # (D1 X1 closure).  The plan/operation rows are audit history and must
+        # survive the purge.
+        conn.execute(
+            "INSERT INTO sources (source_id, source_kind, display_name, created_at, updated_at)"
+            " VALUES ('src-1','folder','src',?,?)",
+            (NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO source_locations (location_id, source_id, registry_id,"
+            " authorization_generation, content_digest, volume_serial, file_id,"
+            " size_bytes, observed_at, is_current, created_at)"
+            " VALUES ('loc-1','src-1','reg-1',1,?,0,0,10,?,1,?)",
+            ("b" * 64, NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO source_versions (version_id, source_id, location_id,"
+            " content_digest, size_bytes, observed_at, created_at)"
+            " VALUES ('ver-1','src-1','loc-1',?,10,?,?)",
+            ("b" * 64, NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO source_entries (source_id, version_id, entry_id, locator,"
+            " ordinal, stable_sort_key, content_digest_kind, content_digest,"
+            " size_bytes, created_at)"
+            " VALUES ('src-1','ver-1','entry-1','img/1.png',0,'0',"
+            " 'page-identity',?,10,?)",
+            ("c" * 64, NOW),
+        )
+        conn.execute(
+            "INSERT INTO source_sync_plans (plan_id, source_id, kind, state,"
+            " plan_digest, body_json, created_at, expires_at, previewed_at,"
+            " confirmed_at, applied_at)"
+            " VALUES ('plan-1','src-1','relink','applied',?, '{}', ?, ?, ?, ?, ?)",
+            ("d" * 64, NOW, NOW, NOW, NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO source_operations (operation_id, plan_id, plan_digest,"
+            " kind, request_digest, state, authorization_digest,"
+            " authorization_json, host_receipt_id, commit_receipt_json,"
+            " commit_digest, retryable, created_at, updated_at, committed_at,"
+            " acknowledged_at)"
+            " VALUES ('op-1','plan-1',?, 'relink', ?, 'acknowledged', ?, '{}',"
+            " 'host-1', '{}', ?, 0, ?, ?, ?, ?)",
+            ("d" * 64, "e" * 64, "f" * 64, "f" * 64, NOW, NOW, NOW, NOW),
+        )
 
     def add_page(page_id: str, source_order: int = 1) -> dict:
         relative = f"books/book-1/chapters/chapter-1/original/{page_id}.png"
@@ -237,12 +284,67 @@ def purge_world(tmp_path: Path):
                 " status, updated_at) VALUES ('region', ?, 'translate', 'done', ?)",
                 (region_id, NOW),
             )
+            # FEA-12 / D1 X1: the v7 binding + v8 publication + lineage rows
+            # that reference this page/region/revision.  The page-level purge
+            # must remove that child-first subgraph or the FK check rolls the
+            # whole transaction back.  Each page gets its own version/entry so
+            # the ``UNIQUE(project_id, entry_id)`` live-binding rule holds.
+            binding_id = f"bind-{page_id}"
+            version_id = f"ver-{page_id}"
+            entry_id = f"entry-{page_id}"
+            conn.execute(
+                "INSERT INTO source_versions (version_id, source_id, location_id,"
+                " content_digest, size_bytes, observed_at, created_at)"
+                " VALUES (?, 'src-1', 'loc-1', ?, 10, ?, ?)",
+                (
+                    version_id,
+                    hashlib.sha256(f"version-{page_id}".encode()).hexdigest(),
+                    NOW,
+                    NOW,
+                ),
+            )
+            conn.execute(
+                "INSERT INTO source_entries (source_id, version_id, entry_id,"
+                " locator, ordinal, stable_sort_key, content_digest_kind,"
+                " content_digest, size_bytes, created_at)"
+                " VALUES ('src-1', ?, ?, ?, 0, ?, 'page-identity', ?, 10, ?)",
+                (version_id, entry_id, f"img/{page_id}.png", page_id, "c" * 64, NOW),
+            )
+            conn.execute(
+                "INSERT INTO page_bindings (binding_id, page_id, project_id,"
+                " binding_version, source_id, entry_id, accepted_source_version,"
+                " status, authorization_generation, authorized_at,"
+                " verified_digest, created_at, updated_at)"
+                " VALUES (?, ?, 'book-1', 1, 'src-1', ?, ?,"
+                " 'healthy', 1, ?, ?, ?, ?)",
+                (binding_id, page_id, entry_id, version_id, NOW, "a" * 64, NOW, NOW),
+            )
+            conn.execute(
+                "INSERT INTO source_binding_publications (binding_id,"
+                " operation_id, previous_binding_id, relation, read_gate,"
+                " opened_at) VALUES (?, 'op-1', NULL, 'added', 'open', ?)",
+                (binding_id, NOW),
+            )
+            conn.execute(
+                "INSERT INTO source_revision_lineage (revision_id, region_id,"
+                " binding_id, provenance, created_at)"
+                " VALUES (?, ?, ?, 'captured_v7', ?)",
+                (f"rr1-{page_id}", region_id, binding_id, NOW),
+            )
+            # rr2 derives from rr1 (self-FK inside the same purge transaction).
+            conn.execute(
+                "INSERT INTO source_revision_lineage (revision_id, region_id,"
+                " binding_id, provenance, from_revision_id, created_at)"
+                " VALUES (?, ?, ?, 'migrated', ?, ?)",
+                (f"rr2-{page_id}", region_id, binding_id, f"rr1-{page_id}", NOW),
+            )
         return {
             "artifact_id": artifact.artifact_id,
             "revisions": (rev1.artifact_revision_id, rev2.artifact_revision_id),
             "revision_paths": (rev1.managed_path, rev2.managed_path),
             "region_id": region_id,
             "run_id": run_id,
+            "binding_id": binding_id,
         }
 
     manifest_path = storage_root / "trash-manifest.json"
@@ -280,6 +382,7 @@ def test_fixture_populates_every_table_that_references_pages(purge_world) -> Non
     all_dependent_tables = [
         "media_artifacts",
         "regions",
+        "page_bindings",
         "pipeline_run_targets",
         "pipeline_tasks",
         "step_runs",
@@ -295,6 +398,11 @@ def test_fixture_populates_every_table_that_references_pages(purge_world) -> Non
     assert conn.execute("SELECT COUNT(*) FROM region_revisions").fetchone()[0] == 2
     assert conn.execute("SELECT COUNT(*) FROM step_run_output_refs").fetchone()[0] == 1
     assert conn.execute("SELECT COUNT(*) FROM pipeline_stage_states").fetchone()[0] == 2
+    # FEA-12 v7/v8 rows: binding, publication and both lineage rows exist.
+    assert conn.execute("SELECT COUNT(*) FROM source_binding_publications").fetchone()[0] == 1
+    assert conn.execute("SELECT COUNT(*) FROM source_revision_lineage").fetchone()[0] == 2
+    assert conn.execute("SELECT COUNT(*) FROM source_sync_plans").fetchone()[0] == 1
+    assert conn.execute("SELECT COUNT(*) FROM source_operations").fetchone()[0] == 1
     assert _fk_violations(conn) == []
 
 
@@ -335,6 +443,34 @@ def test_purge_batch_removes_every_row_referencing_the_page(purge_world) -> None
     )
     assert _fk_violations(conn) == []
     assert purge_world["service"].list_batches() == []
+
+
+def test_purge_removes_v7_v8_subgraph_and_keeps_operations(purge_world) -> None:
+    """FEA-12 / D1 X1 for the page-level purge: the page's ``page_bindings``,
+    ``source_binding_publications`` and ``source_revision_lineage`` rows are
+    removed child-first in the purge transaction while ``source_sync_plans`` /
+    ``source_operations`` (audit history) survive."""
+    conn = purge_world["conn"]
+    purge_world["add_page"]("p1")
+    dependents = purge_world["add_dependents"]("p1")
+    batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+
+    purge_world["service"].purge_batch(batch.batch_id)
+
+    assert conn.execute(
+        "SELECT COUNT(*) FROM page_bindings WHERE page_id = 'p1'"
+    ).fetchone()[0] == 0
+    assert conn.execute(
+        "SELECT COUNT(*) FROM source_binding_publications WHERE binding_id = ?",
+        (dependents["binding_id"],),
+    ).fetchone()[0] == 0
+    assert conn.execute(
+        "SELECT COUNT(*) FROM source_revision_lineage"
+        " WHERE revision_id IN ('rr1-p1', 'rr2-p1')"
+    ).fetchone()[0] == 0
+    assert conn.execute("SELECT COUNT(*) FROM source_sync_plans").fetchone()[0] == 1
+    assert conn.execute("SELECT COUNT(*) FROM source_operations").fetchone()[0] == 1
+    assert _fk_violations(conn) == []
 
 
 def test_purge_cannot_be_restored_into_a_dangling_page(purge_world) -> None:

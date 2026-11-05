@@ -97,6 +97,17 @@ class Book:
         self.deleted_at = utc_now()
         self.updated_at = self.deleted_at
 
+    def restore(self) -> None:
+        """FEA-12 A flow (C-09 SC-B06 / C-01b SC-30): restore is *only* the
+        removal of the soft-delete marker.
+
+        Every other field — current/pinned revision pointers, locks, reading
+        progress, manual edits and source bindings — stays exactly as it was
+        while trashed; restore never re-derives, unlocks or rewrites them.
+        """
+        self.deleted_at = None
+        self.updated_at = utc_now()
+
     @property
     def deleted(self) -> bool:
         return self.deleted_at is not None

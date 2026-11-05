@@ -41,6 +41,21 @@ class SourceProjectMismatch(RuntimeError):
     wire layer maps this to ``SOURCE_PROJECT_MISMATCH``."""
 
 
+class PermanentDeleteBlockedError(RuntimeError):
+    """FEA-12: typed refusal raised *inside* the permanent-delete transaction.
+
+    The transaction has already been rolled back when this escapes, so the
+    caller can project the code (``BOOK_BUSY``) with zero side effects.  It is
+    raised for the state checks that must be re-read at the write boundary
+    (D1 X1 non-terminal source operation; recovery of the transaction is the
+    ``with`` block's job).
+    """
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
 class SqliteLibraryRepository:
     def __init__(self, conn: sqlite3.Connection) -> None:
         self._conn = conn
@@ -833,10 +848,40 @@ class SqliteLibraryRepository:
         page_regions = (
             f"SELECT region_id FROM regions WHERE page_id IN ({placeholders})"
         )
+        # FEA-12 / D1 X1: the C-17 v8 subgraph that references the purged
+        # pages/regions/revisions.  The page-level purge predates C-17, so
+        # without this the first page that carries a v7 binding or v8 lineage
+        # row would fail the FK check and roll the purge back.  Rows are
+        # deleted child-first (publications → lineage → bindings), matching
+        # the book-level path and the no-CASCADE declaration in C-17 §2.
+        page_bindings = (
+            "SELECT b.binding_id FROM page_bindings b"
+            f" WHERE b.page_id IN ({placeholders})"
+        )
+        page_region_revisions = (
+            "SELECT rr.region_revision_id FROM region_revisions rr"
+            f" WHERE rr.region_id IN ({page_regions})"
+        )
         with self._conn:
             self._conn.execute(
                 "UPDATE artifact_revisions SET source_artifact_revision_id = NULL"
                 f" WHERE source_artifact_revision_id IN ({purged_revisions})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM source_binding_publications"
+                f" WHERE binding_id IN ({page_bindings})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM source_revision_lineage"
+                f" WHERE revision_id IN ({page_region_revisions})"
+                f" OR region_id IN ({page_regions})"
+                f" OR binding_id IN ({page_bindings})",
+                params * 3,
+            )
+            self._conn.execute(
+                f"DELETE FROM page_bindings WHERE page_id IN ({placeholders})",
                 params,
             )
             self._conn.execute(
@@ -884,6 +929,60 @@ class SqliteLibraryRepository:
             self._conn.execute(
                 f"DELETE FROM pages WHERE page_id IN ({placeholders})", params
             )
+
+    # ------------------------------------------------------------------
+    # FEA-12 A flow (C-09 SC-B04 / SC-B06): book-level trash
+    # ------------------------------------------------------------------
+    #
+    # Soft delete / restore only ever flip ``books.deleted_at``; every other
+    # row (content, protection, current/pinned pointers, progress, source
+    # bindings) is untouched by construction (ADJ-001 §3 A).  Both faces are
+    # per-item atomic: one statement per entry, so one item's failure or a
+    # not-in-trash entry never rolls back the rest of the batch.
+
+    def move_book_to_trash(self, book_id: str) -> bool:
+        """Soft-delete one live book; ``False`` when it is missing or already
+        trashed (the caller reports it as a per-item skip)."""
+        now = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        cursor = self._conn.execute(
+            "UPDATE books SET deleted_at = ?, updated_at = ?"
+            " WHERE book_id = ? AND deleted_at IS NULL",
+            (now, now, book_id),
+        )
+        return cursor.rowcount == 1
+
+    def restore_book_from_trash(self, book_id: str) -> bool:
+        """Clear ``deleted_at`` only; ``False`` when the entry is not in the
+        trash (a per-item conflict, never a batch failure)."""
+        now = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        cursor = self._conn.execute(
+            "UPDATE books SET deleted_at = NULL, updated_at = ?"
+            " WHERE book_id = ? AND deleted_at IS NOT NULL",
+            (now, book_id),
+        )
+        return cursor.rowcount == 1
+
+    def list_trash_entries(
+        self, *, after: tuple[str, str] | None, limit: int
+    ) -> list[dict[str, Any]]:
+        """One page of the recycle bin, newest first (``deleted_at DESC``,
+        then ``book_id ASC``).  ``after`` is the opaque ``(deleted_at,
+        book_id)`` key of the last item already returned.  Returns at most
+        ``limit + 1`` rows so the caller can tell whether a next page exists
+        without a second COUNT."""
+        sql = (
+            "SELECT book_id, title, deleted_at FROM books"
+            " WHERE deleted_at IS NOT NULL"
+        )
+        params: list[Any] = []
+        if after is not None:
+            after_deleted_at, after_book_id = after
+            sql += " AND (deleted_at < ? OR (deleted_at = ? AND book_id > ?))"
+            params.extend((after_deleted_at, after_deleted_at, after_book_id))
+        sql += " ORDER BY deleted_at DESC, book_id ASC LIMIT ?"
+        params.append(int(limit) + 1)
+        rows = self._conn.execute(sql, tuple(params)).fetchall()
+        return [dict(row) for row in rows]
 
     # ------------------------------------------------------------------
     # P09-AC3-DELETE-1: Project-level permanent deletion
@@ -973,149 +1072,499 @@ class SqliteLibraryRepository:
             return False
         return set(book_ids) == all_book_ids
 
+    # ------------------------------------------------------------------
+    # FEA-12 C flow: authoritative delete inventory + preflight
+    # ------------------------------------------------------------------
+    #
+    # ADJ-001 PD-01/PD-03: the inventory is computed by Core from the same
+    # rows the delete transaction will remove; it is strictly read-only (no
+    # UPDATE/INSERT, no file mutation, no caching).  PD-08: shared references
+    # that can be split safely are *not* a conflict — only out-of-target rows
+    # that a delete would have to corrupt (schema CHECK forbids detaching
+    # them) fail closed.  D1 X1: a non-terminal source operation is the
+    # BOOK_BUSY blocker for the C-17 subgraph.
+
+    _BOOK_BINDINGS_SUBQUERY = (
+        "SELECT b.binding_id FROM page_bindings b WHERE b.project_id = ?"
+    )
+    _BOOK_REGION_REVISIONS_SUBQUERY = (
+        "SELECT rr.region_revision_id FROM region_revisions rr"
+        " JOIN regions r ON r.region_id = rr.region_id"
+        " JOIN pages p ON p.page_id = r.page_id"
+        " JOIN chapters c ON c.chapter_id = p.chapter_id WHERE c.book_id = ?"
+    )
+    _BOOK_REGION_IDS_SUBQUERY = (
+        "SELECT r.region_id FROM regions r"
+        " JOIN pages p ON p.page_id = r.page_id"
+        " JOIN chapters c ON c.chapter_id = p.chapter_id WHERE c.book_id = ?"
+    )
+
+    def _count(self, sql: str, params: tuple) -> int:
+        row = self._conn.execute(sql, params).fetchone()
+        return int(row[0]) if row is not None and row[0] is not None else 0
+
+    def list_book_region_current_pointers(self, book_id: str) -> list[dict[str, Any]]:
+        """Every region of the book with its current revision, stable order.
+
+        The caller picks the first *lineage-visible* pointer for the PD-01
+        ``currentRevisionId`` disclosure (Lead ruling: the disclosure must
+        follow the released FEA-11 read semantics, so the visible filter
+        lives in the application/guard layer, not here).
+        """
+        rows = self._conn.execute(
+            "SELECT p.page_id, r.region_id, r.current_revision_id"
+            " FROM regions r"
+            " JOIN pages p ON p.page_id = r.page_id"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ?"
+            " ORDER BY c.sort_order, c.import_order, c.chapter_id,"
+            "          p.sort_order, p.page_id, r.reading_order, r.region_id",
+            (book_id,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def list_book_artifact_current_pointers(self, book_id: str) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            "SELECT p.page_id, ma.artifact_id, ma.artifact_type,"
+            "       ma.current_revision_id"
+            " FROM media_artifacts ma"
+            " JOIN pages p ON p.page_id = ma.page_id"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ? AND ma.current_revision_id IS NOT NULL"
+            " ORDER BY c.sort_order, c.import_order, c.chapter_id,"
+            "          p.sort_order, p.page_id, ma.artifact_type, ma.artifact_id",
+            (book_id,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def list_book_region_ids(self, book_id: str) -> list[str]:
+        rows = self._conn.execute(self._BOOK_REGION_IDS_SUBQUERY, (book_id,)).fetchall()
+        return [row[0] for row in rows]
+
+    def list_book_region_revision_ids(self, book_id: str) -> list[str]:
+        rows = self._conn.execute(
+            self._BOOK_REGION_REVISIONS_SUBQUERY, (book_id,)
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def list_book_binding_ids(self, book_id: str) -> list[str]:
+        """The book's page bindings: ``project_id`` is the authority, plus the
+        bindings of the book's own pages (a corrupt row naming another
+        project is a preflight conflict, but the delete still needs the
+        foreign-key closure to be complete)."""
+        rows = self._conn.execute(
+            "SELECT binding_id FROM page_bindings WHERE project_id = ?"
+            " UNION"
+            " SELECT b.binding_id FROM page_bindings b"
+            " JOIN pages p ON p.page_id = b.page_id"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ?",
+            (book_id, book_id),
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def list_book_artifact_revision_ids(self, book_id: str) -> list[str]:
+        rows = self._conn.execute(
+            "SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+            " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+            " WHERE ma.book_id = ?",
+            (book_id,),
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def list_book_pinned_revision_ids(self, book_id: str) -> list[str]:
+        """PD-01 pinned revisions: region revisions (C-01b current/pin) *and*
+        artifact revisions carry ``is_pinned``; both are protected content the
+        delete removes, so both are disclosed (Lead ruling, 2026-11-05)."""
+        rows = self._conn.execute(
+            "SELECT rr.region_revision_id AS revision_id FROM region_revisions rr"
+            " JOIN regions r ON r.region_id = rr.region_id"
+            " JOIN pages p ON p.page_id = r.page_id"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ? AND rr.is_pinned = 1"
+            " UNION"
+            " SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+            " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+            " WHERE ma.book_id = ? AND ar.is_pinned = 1",
+            (book_id, book_id),
+        ).fetchall()
+        return sorted({row["revision_id"] for row in rows})
+
+    def list_book_active_run_ids(self, book_id: str) -> list[str]:
+        """Non-terminal Pipeline Run/Task ids touching the book (PD-01
+        disclosure + the BOOK_BUSY blocker)."""
+        rows = self._conn.execute(
+            "SELECT DISTINCT pr.run_id FROM pipeline_runs pr"
+            " WHERE pr.status NOT IN"
+            "       ('completed', 'completed_with_failures', 'failed', 'cancelled')"
+            " AND (json_extract(pr.run_json, '$.scope.book_id') = ?"
+            "   OR EXISTS ("
+            "     SELECT 1 FROM pipeline_run_targets prt"
+            "     JOIN pages p ON p.page_id = prt.page_id"
+            "     JOIN chapters c ON c.chapter_id = p.chapter_id"
+            "     WHERE prt.pipeline_run_id = pr.run_id AND c.book_id = ?"
+            "   ))"
+            " UNION"
+            " SELECT DISTINCT pt.pipeline_run_id FROM pipeline_tasks pt"
+            " JOIN pages p ON p.page_id = pt.page_id"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ?"
+            "   AND pt.status NOT IN ('completed', 'failed', 'cancelled')",
+            (book_id, book_id, book_id),
+        ).fetchall()
+        return sorted({row[0] for row in rows if row[0]})
+
+    def list_book_active_export_ids(self, book_id: str) -> list[str]:
+        rows = self._conn.execute(
+            "SELECT export_id FROM export_history"
+            " WHERE book_id = ?"
+            "   AND status NOT IN ('completed', 'skipped', 'cancelled', 'failed')"
+            " ORDER BY export_id",
+            (book_id,),
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def list_book_source_busy_operation_ids(self, book_id: str) -> list[str]:
+        """D1 X1: non-terminal source operations bound to the book's bindings
+        or lineage (started / host-authorized / core-committed-awaiting-ACK).
+        These stay *kept* (plans/operations are audit history) but they block
+        the delete with BOOK_BUSY while non-terminal."""
+        rows = self._conn.execute(
+            "SELECT DISTINCT op.operation_id FROM source_operations op"
+            " WHERE op.state IN ('started', 'host-authorized', 'core-committed')"
+            " AND (op.operation_id IN ("
+            "        SELECT pub.operation_id FROM source_binding_publications pub"
+            "        WHERE pub.binding_id IN (" + self._BOOK_BINDINGS_SUBQUERY + "))"
+            "   OR op.operation_id IN ("
+            "        SELECT lin.operation_id FROM source_revision_lineage lin"
+            "        WHERE lin.operation_id IS NOT NULL"
+            "          AND (lin.region_id IN (" + self._BOOK_REGION_IDS_SUBQUERY + ")"
+            "            OR lin.binding_id IN (" + self._BOOK_BINDINGS_SUBQUERY + "))))"
+            " ORDER BY op.operation_id",
+            (book_id, book_id, book_id),
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def has_unsafe_source_references(self, book_id: str) -> bool:
+        """PD-08 fail-closed half: out-of-target source rows the delete cannot
+        detach without violating a schema CHECK (or an inconsistent graph).
+
+        Safely splittable sharing (shared managed files, shared artifact
+        paths, out-of-target ``source_artifact_revision_id`` provenance) is
+        NOT a conflict and is handled by the delete transaction itself.
+        """
+        bindings = self._BOOK_BINDINGS_SUBQUERY
+        revisions = self._BOOK_REGION_REVISIONS_SUBQUERY
+        regions = self._BOOK_REGION_IDS_SUBQUERY
+        checks = (
+            # A binding of the book's page that names another project.
+            (
+                "SELECT 1 FROM page_bindings b"
+                " JOIN pages p ON p.page_id = b.page_id"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ? AND b.project_id != ? LIMIT 1",
+                (book_id, book_id),
+            ),
+            # A binding of the book whose page belongs to another book.
+            (
+                "SELECT 1 FROM page_bindings b WHERE b.project_id = ?"
+                " AND b.page_id NOT IN ("
+                "   SELECT p.page_id FROM pages p"
+                "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                "   WHERE c.book_id = ?) LIMIT 1",
+                (book_id, book_id),
+            ),
+            # An out-of-target publication whose previous binding is the
+            # book's: ``previous_binding_id`` cannot be detached for a
+            # non-'added' relation (schema CHECK), so the row cannot survive.
+            (
+                "SELECT 1 FROM source_binding_publications pub"
+                " WHERE pub.previous_binding_id IN (" + bindings + ")"
+                "   AND pub.binding_id NOT IN (" + bindings + ") LIMIT 1",
+                (book_id, book_id),
+            ),
+            # An out-of-target lineage row that names the book's rows.
+            (
+                "SELECT 1 FROM source_revision_lineage lin"
+                " WHERE lin.revision_id NOT IN (" + revisions + ")"
+                "   AND (lin.binding_id IN (" + bindings + ")"
+                "     OR lin.from_revision_id IN (" + revisions + ")"
+                "     OR lin.region_id IN (" + regions + ")) LIMIT 1",
+                (book_id, book_id, book_id, book_id),
+            ),
+        )
+        for sql, params in checks:
+            if self._conn.execute(sql, params).fetchone() is not None:
+                return True
+        return False
+
+    def shared_managed_targets(
+        self, book_id: str, target_book_ids: Sequence[str]
+    ) -> dict[str, int]:
+        """Managed paths of this book that out-of-target books still
+        reference, with the number of distinct other books.
+
+        PD-08: those physical files are shared and must be *preserved*; the
+        delete removes only the book's own rows, never the shared file.
+        """
+        targets = list(dict.fromkeys(target_book_ids))
+        placeholders = ",".join("?" * len(targets))
+        own_refs: set[str] = set()
+        for sql in (
+            "SELECT p.managed_original_ref AS ref FROM pages p"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ? AND p.managed_original_ref IS NOT NULL"
+            " AND p.managed_original_ref != ''",
+            "SELECT ar.managed_path AS ref FROM artifact_revisions ar"
+            " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+            " WHERE ma.book_id = ? AND ar.managed_path IS NOT NULL"
+            " AND ar.managed_path != ''",
+        ):
+            own_refs.update(row["ref"] for row in self._conn.execute(sql, (book_id,)))
+        own_refs.discard("")
+        if not own_refs:
+            return {}
+        ref_placeholders = ",".join("?" * len(own_refs))
+        ordered_refs = sorted(own_refs)
+        counts: dict[str, int] = {}
+        page_rows = self._conn.execute(
+            "SELECT p2.managed_original_ref AS ref,"
+            "       COUNT(DISTINCT c2.book_id) AS n"
+            " FROM pages p2"
+            " JOIN chapters c2 ON c2.chapter_id = p2.chapter_id"
+            f" WHERE c2.book_id NOT IN ({placeholders})"
+            f"   AND p2.managed_original_ref IN ({ref_placeholders})"
+            " GROUP BY p2.managed_original_ref",
+            (*targets, *ordered_refs),
+        ).fetchall()
+        for row in page_rows:
+            counts[row["ref"]] = max(counts.get(row["ref"], 0), int(row["n"]))
+        artifact_rows = self._conn.execute(
+            "SELECT ar2.managed_path AS ref, COUNT(DISTINCT ma2.book_id) AS n"
+            " FROM artifact_revisions ar2"
+            " JOIN media_artifacts ma2 ON ma2.artifact_id = ar2.artifact_id"
+            f" WHERE ma2.book_id NOT IN ({placeholders})"
+            f"   AND ar2.managed_path IN ({ref_placeholders})"
+            " GROUP BY ar2.managed_path",
+            (*targets, *ordered_refs),
+        ).fetchall()
+        for row in artifact_rows:
+            counts[row["ref"]] = max(counts.get(row["ref"], 0), int(row["n"]))
+        return counts
+
+    def shared_source_entries(
+        self, book_id: str, target_book_ids: Sequence[str]
+    ) -> dict[str, int]:
+        """Referenced-source entries this book shares with out-of-target books
+        (PD-01 "other projects referencing the source" / PD-08 preserve)."""
+        targets = list(dict.fromkeys(target_book_ids))
+        own_entries = {
+            row[0]
+            for row in self._conn.execute(
+                "SELECT DISTINCT entry_id FROM page_bindings WHERE project_id = ?",
+                (book_id,),
+            )
+        }
+        if not own_entries:
+            return {}
+        placeholders = ",".join("?" * len(targets))
+        ref_placeholders = ",".join("?" * len(own_entries))
+        rows = self._conn.execute(
+            "SELECT entry_id, COUNT(DISTINCT project_id) AS n FROM page_bindings"
+            f" WHERE entry_id IN ({ref_placeholders})"
+            f"   AND project_id NOT IN ({placeholders})"
+            " GROUP BY entry_id",
+            (*sorted(own_entries), *targets),
+        ).fetchall()
+        return {row["entry_id"]: int(row["n"]) for row in rows}
+
+    def cleanup_targets_for_delete(
+        self, book_ids: Sequence[str]
+    ) -> dict[str, list[str]]:
+        """Own managed files per book, with safely-split shared files removed
+        from the sweep list (the shared physical file is preserved; only the
+        rows go away)."""
+        target_ids = list(dict.fromkeys(book_ids))
+        shared = {
+            book_id: self.shared_managed_targets(book_id, target_ids)
+            for book_id in target_ids
+        }
+        return {
+            book_id: [
+                path
+                for path in self.list_book_cleanup_targets(book_id)
+                if path not in shared[book_id]
+            ]
+            for book_id in target_ids
+        }
+
+    @staticmethod
+    def _managed_target_size(storage: Any, relative_path: str) -> int:
+        if storage is None:
+            return 0
+        try:
+            return int(Path(storage.absolute_path(relative_path)).stat().st_size)
+        except Exception:
+            return 0
+
+    def book_delete_inventory(
+        self,
+        book_id: str,
+        target_book_ids: Sequence[str],
+        storage: Any = None,
+    ) -> dict[str, Any] | None:
+        """The read-only PD-01 inventory of one book (``None`` = no Book row).
+
+        Shared files are excluded from the sweep list *and* from
+        ``deletedFiles``/``deletedBytes`` — they will not be deleted.
+        """
+        row = self._conn.execute(
+            "SELECT book_id, title FROM books WHERE book_id = ?", (book_id,)
+        ).fetchone()
+        if row is None:
+            return None
+        targets = self.cleanup_targets_for_delete([book_id, *target_book_ids])[book_id]
+        deleted_bytes = sum(
+            self._managed_target_size(storage, path) for path in targets
+        )
+        return {
+            "book_id": book_id,
+            "title": row["title"],
+            "lock_count": self._count(
+                "SELECT COUNT(*) FROM regions r"
+                " JOIN pages p ON p.page_id = r.page_id"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ? AND ("
+                "   r.region_locked = 1 OR r.translation_locked = 1"
+                "   OR r.inpaint_locked = 1"
+                "   OR COALESCE(json_extract(r.text_json,"
+                "        '$.translation_locked'), 0) = 1)",
+                (book_id,),
+            ),
+            "manual_region_count": self._count(
+                "SELECT COUNT(*) FROM regions r"
+                " JOIN pages p ON p.page_id = r.page_id"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ?"
+                "   AND COALESCE(json_extract(r.text_json, '$.manual_edited'), 0) = 1",
+                (book_id,),
+            ),
+            "region_current_pointers": self.list_book_region_current_pointers(book_id),
+            "artifact_current_pointers": self.list_book_artifact_current_pointers(
+                book_id
+            ),
+            "pinned_revision_ids": self.list_book_pinned_revision_ids(book_id),
+            "active_run_ids": self.list_book_active_run_ids(book_id),
+            "active_export_ids": self.list_book_active_export_ids(book_id),
+            "source_busy_operation_ids": self.list_book_source_busy_operation_ids(
+                book_id
+            ),
+            "chapters": self._count(
+                "SELECT COUNT(*) FROM chapters WHERE book_id = ?", (book_id,)
+            ),
+            "pages": self._count(
+                "SELECT COUNT(*) FROM pages p"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ?",
+                (book_id,),
+            ),
+            "artifacts": self._count(
+                "SELECT COUNT(*) FROM media_artifacts WHERE book_id = ?", (book_id,)
+            ),
+            "cleanup_targets": targets,
+            "deleted_files": len(targets),
+            "deleted_bytes": deleted_bytes,
+            "shared_managed_targets": self.shared_managed_targets(
+                book_id, [book_id, *target_book_ids]
+            ),
+            "shared_source_entries": self.shared_source_entries(
+                book_id, [book_id, *target_book_ids]
+            ),
+            "source_graph_conflict": self.has_unsafe_source_references(book_id),
+            "retry_manifest": self.get_cleanup_manifest_data(book_id) is not None,
+        }
+
     def preflight_permanent_delete(
         self, book_ids: Sequence[str], storage: Any = None, export_runtime: Any = None
     ) -> tuple[bool, list[dict[str, Any]]]:
+        """PD-08-aligned preflight: one authoritative inventory per book.
+
+        A failure is *not* "sharing exists"; it is an inconsistent graph,
+        unsplittable out-of-target state (BOOK_DELETE_CONFLICT), an active
+        Run/Task/Export or a non-terminal source operation (BOOK_BUSY), or a
+        target that has neither a Book row nor a pending cleanup manifest
+        (BOOK_NOT_FOUND).
+        """
         all_ok = True
         items: list[dict[str, Any]] = []
-        target_ids_set = set(book_ids)
+        target_book_ids = list(book_ids)
         for book_id in book_ids:
+            inventory = self.book_delete_inventory(
+                book_id, target_book_ids, storage=storage
+            )
+            if inventory is None:
+                if self.get_cleanup_manifest_data(book_id) is None:
+                    all_ok = False
+                    items.append(
+                        {
+                            "book_id": book_id,
+                            "status": "not_started",
+                            "error_code": "BOOK_NOT_FOUND",
+                        }
+                    )
+                else:
+                    # PD-07: a committed delete whose file manifest survived
+                    # is retryable and has no Book row to re-inspect.
+                    items.append(
+                        {"book_id": book_id, "status": "not_started", "error_code": None}
+                    )
+                continue
             item_error: str | None = None
-            book_row = self._conn.execute(
-                "SELECT book_id FROM books WHERE book_id = ?", (book_id,)
-            ).fetchone()
-            manifest_row = self._conn.execute(
-                "SELECT 1 FROM book_cleanup_manifests WHERE book_id = ?", (book_id,)
-            ).fetchone()
-            if book_row is None and manifest_row is None:
-                item_error = "BOOK_NOT_FOUND"
-            elif book_row is not None:
-                # 1. R-001: Active pipeline runs
-                busy_runs = self._conn.execute(
-                    "SELECT 1 FROM pipeline_runs pr"
-                    " WHERE pr.status NOT IN ('completed', 'completed_with_failures', 'failed', 'cancelled')"
-                    " AND ("
-                    "   json_extract(pr.run_json, '$.scope.book_id') = ?"
-                    "   OR EXISTS ("
-                    "     SELECT 1 FROM pipeline_run_targets prt"
-                    "     JOIN pages p ON p.page_id = prt.page_id"
-                    "     JOIN chapters c ON c.chapter_id = p.chapter_id"
-                    "     WHERE prt.pipeline_run_id = pr.run_id AND c.book_id = ?"
-                    "   )"
-                    " )",
-                    (book_id, book_id),
-                ).fetchone()
-                if busy_runs is not None:
+            if inventory["active_run_ids"] or inventory["active_export_ids"]:
+                item_error = "BOOK_BUSY"
+            elif export_runtime is not None:
+                try:
+                    if export_runtime.has_active_exports_for_book(book_id):
+                        item_error = "BOOK_BUSY"
+                except Exception:
                     item_error = "BOOK_BUSY"
-
-                if item_error is None:
-                    # 2. R-001: Active pipeline tasks
-                    busy_tasks = self._conn.execute(
-                        "SELECT 1 FROM pipeline_tasks pt"
-                        " JOIN pages p ON p.page_id = pt.page_id"
-                        " JOIN chapters c ON c.chapter_id = p.chapter_id"
-                        " WHERE c.book_id = ? AND pt.status NOT IN ('completed', 'failed', 'cancelled')",
-                        (book_id,),
-                    ).fetchone()
-                    if busy_tasks is not None:
-                        item_error = "BOOK_BUSY"
-
-                if item_error is None:
-                    # 3. R-001: Active export history & export runtime
-                    busy_exports = self._conn.execute(
-                        "SELECT 1 FROM export_history"
-                        " WHERE book_id = ? AND status NOT IN ('completed', 'skipped', 'cancelled', 'failed')",
-                        (book_id,),
-                    ).fetchone()
-                    if busy_exports is not None:
-                        item_error = "BOOK_BUSY"
-                    elif export_runtime is not None:
+            if item_error is None and inventory["source_busy_operation_ids"]:
+                item_error = "BOOK_BUSY"
+            if item_error is None and inventory["source_graph_conflict"]:
+                item_error = "BOOK_DELETE_CONFLICT"
+            if item_error is None:
+                # Managed path lexical/containment preflight of the actual
+                # sweep list (shared files are preserved and skipped).
+                for target in inventory["cleanup_targets"]:
+                    segments = target.replace("\\", "/").split("/")
+                    if (
+                        ".." in segments
+                        or "." in segments
+                        or Path(target).is_absolute()
+                        or any(segment == "" for segment in segments[1:])
+                    ):
+                        item_error = "BOOK_DELETE_CONFLICT"
+                        break
+                    if storage is not None:
                         try:
-                            if export_runtime.has_active_exports_for_book(book_id):
-                                item_error = "BOOK_BUSY"
+                            absolute_path = Path(
+                                storage.absolute_path(target)
+                            ).resolve()
+                            # R5 P1: the baseline must not be resolved.
+                            root = Path(os.path.abspath(str(storage.root)))
+                            absolute_path.relative_to(root)
                         except Exception:
-                            item_error = "BOOK_BUSY"
-
-                if item_error is None:
-                    # 4. R-002: Shared Managed Copy (external to the requested batch)
-                    placeholders = ",".join("?" * len(target_ids_set))
-                    shared_page = self._conn.execute(
-                        f"SELECT 1 FROM pages p2"
-                        f" JOIN chapters c2 ON c2.chapter_id = p2.chapter_id"
-                        f" WHERE c2.book_id NOT IN ({placeholders})"
-                        f" AND p2.managed_original_ref IN ("
-                        f"   SELECT p.managed_original_ref FROM pages p"
-                        f"   JOIN chapters c ON c.chapter_id = p.chapter_id"
-                        f"   WHERE c.book_id = ? AND p.managed_original_ref IS NOT NULL AND p.managed_original_ref != ''"
-                        f" )",
-                        (*target_ids_set, book_id),
-                    ).fetchone()
-                    if shared_page is not None:
-                        item_error = "BOOK_DELETE_CONFLICT"
-
-                    if item_error is None:
-                        shared_artifact = self._conn.execute(
-                            f"SELECT 1 FROM artifact_revisions ar2"
-                            f" JOIN media_artifacts ma2 ON ma2.artifact_id = ar2.artifact_id"
-                            f" WHERE ma2.book_id NOT IN ({placeholders})"
-                            f" AND ar2.managed_path IN ("
-                            f"   SELECT ar.managed_path FROM artifact_revisions ar"
-                            f"   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
-                            f"   WHERE ma.book_id = ? AND ar.managed_path IS NOT NULL AND ar.managed_path != ''"
-                            f" )",
-                            (*target_ids_set, book_id),
-                        ).fetchone()
-                        if shared_artifact is not None:
-                            item_error = "BOOK_DELETE_CONFLICT"
-
-                if item_error is None:
-                    # 5. R-002: Cross-project Revision references
-                    cross_ref = self._conn.execute(
-                        f"SELECT 1 FROM artifact_revisions ar2"
-                        f" JOIN media_artifacts ma2 ON ma2.artifact_id = ar2.artifact_id"
-                        f" WHERE ma2.book_id NOT IN ({placeholders})"
-                        f" AND ar2.source_artifact_revision_id IN ("
-                        f"   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
-                        f"   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
-                        f"   WHERE ma.book_id = ?"
-                        f" )",
-                        (*target_ids_set, book_id),
-                    ).fetchone()
-                    if cross_ref is not None:
-                        item_error = "BOOK_DELETE_CONFLICT"
-
-                if item_error is None:
-                    # 6. Lexical and containment preflight of cleanup targets
-                    targets = self.list_book_cleanup_targets(book_id)
-                    for t in targets:
-                        segments = t.replace("\\", "/").split("/")
-                        if (
-                            ".." in segments
-                            or "." in segments
-                            or Path(t).is_absolute()
-                            or any(s == "" for s in segments[1:])
-                        ):
                             item_error = "BOOK_DELETE_CONFLICT"
                             break
-                        if storage is not None:
-                            try:
-                                abs_p = Path(storage.absolute_path(t)).resolve()
-                                # R5 P1: baseline must not be resolved.  resolve() follows junctions, so a
-                                # link ABOVE the root drifts the baseline along with the candidate and
-                                # containment passes.  The candidate keeps resolve(), which is what makes an
-                                # escape visible.  Same defect class as N-004.
-                                root = Path(os.path.abspath(str(storage.root)))
-                                abs_p.relative_to(root)
-                            except Exception:
-                                item_error = "BOOK_DELETE_CONFLICT"
-                                break
             if item_error is not None:
                 all_ok = False
-            items.append({
-                "book_id": book_id,
-                "status": "not_started",
-                "error_code": item_error,
-            })
+            items.append(
+                {
+                    "book_id": book_id,
+                    "status": "not_started",
+                    "error_code": item_error,
+                }
+            )
         return all_ok, items
 
     def execute_permanent_delete_db(
@@ -1124,9 +1573,42 @@ class SqliteLibraryRepository:
         book_page_ids_map: dict[str, list[str]] | None = None,
         book_preview_ids_map: dict[str, list[str]] | None = None,
     ) -> None:
+        """Remove every content row of the target books in ONE transaction.
+
+        ADJ-001 PD-05/PD-06: the transaction is opened explicitly with
+        ``BEGIN IMMEDIATE`` so the read-checked preflight state cannot change
+        under the delete, and any failure rolls the whole batch back — the
+        caller only starts file cleanup after this returns.
+
+        ADJ-001 PD-08: safely splittable shared references are removed from
+        this book's side only; the shared physical file and the other
+        projects' bindings are preserved.  Out-of-target
+        ``source_artifact_revision_id`` provenance that would dangle is
+        detached (the same rule the page-level purge already applies), while
+        the target rows are deleted.
+
+        D1 X1: the book's ``page_bindings`` / ``source_binding_publications``
+        / ``source_revision_lineage`` rows are deleted in this same
+        transaction; ``source_sync_plans`` / ``source_operations`` are audit
+        history without a ``book_id`` column and stay queryable.  A
+        non-terminal source operation is re-checked at the write boundary and
+        raises ``BOOK_BUSY`` (zero side effects).
+        """
         now_iso = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
-        with self._conn:
+        target_book_ids = list(book_targets_map.keys())
+        shared_targets = {
+            book_id: self.shared_managed_targets(book_id, target_book_ids)
+            for book_id in target_book_ids
+        }
+        conn = self._conn
+        if not conn.in_transaction:
+            conn.execute("BEGIN IMMEDIATE")
+        with conn:
             for book_id, targets in book_targets_map.items():
+                # PD-08: never sweep a physical file another (out-of-batch)
+                # project still references; removing this book's rows is the
+                # safe split, the shared file itself is preserved.
+                targets = [t for t in targets if t not in shared_targets[book_id]]
                 book_row = self._conn.execute(
                     "SELECT title FROM books WHERE book_id = ?", (book_id,)
                 ).fetchone()
@@ -1307,6 +1789,18 @@ class SqliteLibraryRepository:
                     (book_id, book_id),
                 )
 
+                # D1 X1 (FEA-12-CORE): the C-17 §7.1 subgraph the book owns is
+                # deleted in this same transaction — publications first (they
+                # reference bindings), then lineage (it references revisions,
+                # regions and bindings), then the page bindings themselves.
+                # ``source_sync_plans`` / ``source_operations`` are NOT deleted:
+                # they carry no book_id and remain the audit/operation history.
+                # A non-terminal operation is re-read at this write boundary so
+                # a race with source-sync cannot slip past the preflight.
+                if self.list_book_source_busy_operation_ids(book_id):
+                    raise PermanentDeleteBlockedError("BOOK_BUSY")
+                self._delete_book_source_graph(book_id)
+
                 exp_rows = self._conn.execute(
                     "SELECT export_id, scope_snapshot_json FROM export_history WHERE book_id = ?",
                     (book_id,),
@@ -1326,16 +1820,19 @@ class SqliteLibraryRepository:
                         (json.dumps(sanitized_scope, ensure_ascii=False), exp["export_id"]),
                     )
 
+                # PD-08 safely-splittable provenance: an out-of-target
+                # revision may derive from a target revision.  Detach the
+                # pointer on the surviving row instead of refusing the delete
+                # (the same rule the page-level purge already applies); the
+                # target's own rows are removed below anyway.
                 self._conn.execute(
                     "UPDATE artifact_revisions SET source_artifact_revision_id = NULL"
                     " WHERE source_artifact_revision_id IN ("
                     "   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
                     "   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
                     "   WHERE ma.book_id = ?"
-                    " ) AND artifact_id IN ("
-                    "   SELECT artifact_id FROM media_artifacts WHERE book_id = ?"
                     " )",
-                    (book_id, book_id),
+                    (book_id,),
                 )
                 self._conn.execute(
                     "DELETE FROM artifact_revisions WHERE artifact_id IN ("
@@ -1371,6 +1868,75 @@ class SqliteLibraryRepository:
                 self._conn.execute("DELETE FROM chapters WHERE book_id = ?", (book_id,))
                 self._conn.execute("DELETE FROM book_tags WHERE book_id = ?", (book_id,))
                 self._conn.execute("DELETE FROM books WHERE book_id = ?", (book_id,))
+
+    # ------------------------------------------------------------------
+    # FEA-12 C flow: D1 X1 source-graph cleanup (same transaction)
+    # ------------------------------------------------------------------
+
+    def _delete_book_source_graph(self, book_id: str) -> None:
+        """Delete the book's C-17 subgraph: publications → lineage → bindings.
+
+        D1 X1 (ADJ-2026-11-05-FEA-12-SCOPE): the C-17 draft §2 :30 explicitly
+        defers this cleanup to a separate contract; this is that cleanup.  The
+        child rows are deleted before their parents because C-17 declares no
+        ``ON DELETE CASCADE``:
+
+        * ``source_binding_publications`` reference ``page_bindings`` on both
+          the new and the previous side;
+        * ``source_revision_lineage`` references ``region_revisions``,
+          ``regions`` and ``page_bindings``;
+        * ``page_bindings`` reference ``pages`` and ``books``.
+
+        Everything runs inside the caller's ``BEGIN IMMEDIATE`` transaction, so
+        a failure leaves no orphan row behind.  Tables kept: ``sources``,
+        ``source_locations``, ``source_versions``, ``source_entries``,
+        ``source_sync_plans`` and ``source_operations`` (audit/operation
+        history without a ``book_id`` column).
+        """
+        binding_ids = self.list_book_binding_ids(book_id)
+        region_ids = self.list_book_region_ids(book_id)
+        revision_ids = self.list_book_region_revision_ids(book_id)
+
+        def _placeholders(values: Sequence[str]) -> tuple[str, tuple]:
+            ordered = sorted(set(values))
+            if not ordered:
+                return "", ()
+            return ",".join("?" for _ in ordered), tuple(ordered)
+
+        binding_sql, binding_params = _placeholders(binding_ids)
+        if binding_sql:
+            self._conn.execute(
+                "DELETE FROM source_binding_publications"
+                f" WHERE binding_id IN ({binding_sql})",
+                binding_params,
+            )
+        lineage_sql, lineage_params = _placeholders(
+            [*revision_ids, *region_ids, *binding_ids]
+        )
+        if lineage_sql:
+            revision_sql, revision_params = _placeholders(revision_ids)
+            region_sql, region_params = _placeholders(region_ids)
+            conditions = []
+            params: list = []
+            if revision_sql:
+                conditions.append(f"revision_id IN ({revision_sql})")
+                params.extend(revision_params)
+            if region_sql:
+                conditions.append(f"region_id IN ({region_sql})")
+                params.extend(region_params)
+            if binding_sql:
+                conditions.append(f"binding_id IN ({binding_sql})")
+                params.extend(binding_params)
+            self._conn.execute(
+                "DELETE FROM source_revision_lineage"
+                f" WHERE {' OR '.join(conditions)}",
+                tuple(params),
+            )
+        if binding_sql:
+            self._conn.execute(
+                f"DELETE FROM page_bindings WHERE binding_id IN ({binding_sql})",
+                binding_params,
+            )
 
     def list_page_artifact_ids(self, page_ids: Sequence[str]) -> list[str]:
         """AC4: artifact_ids of these pages, read from library.db.

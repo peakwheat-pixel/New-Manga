@@ -7,6 +7,9 @@ only; books survive (AC-LIB-002, D04 §6).
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import json
 import uuid
 
 from application.library.errors import (
@@ -244,3 +247,161 @@ class LibraryService:
         if tag is None:
             raise TagNotFound(tag_id)
         return tag
+
+
+# ----------------------------------------------------------------------
+# FEA-12 (C-04b §2.1 / M2-C1 §5.13): deletion-preview inventory digest
+# ----------------------------------------------------------------------
+#
+# The digest must be computed by Core from its own authoritative inventory
+# and re-computed at confirmation time (ADJ-001 PD-02/PD-04).  The canonical
+# form below is the one frozen for this implementation task: object keys are
+# recursively sorted, UTF-8, no whitespace; the collection digest is the
+# SHA-256 of the concatenated *lowercase hex* per-book digests in request
+# order.  ``title`` is deliberately excluded (display-only per C-04b).
+
+INVENTORY_DIGEST_PREFIX = "sha256:"
+_SHA256_HEX_LENGTH = 64
+_MAX_TRASH_ENTRIES = 200
+
+
+def is_inventory_digest(value: object) -> bool:
+    """``sha256:<64 lowercase hex>`` only; anything else is INVALID_REQUEST."""
+    if not isinstance(value, str):
+        return False
+    if not value.startswith(INVENTORY_DIGEST_PREFIX):
+        return False
+    hex_part = value[len(INVENTORY_DIGEST_PREFIX):]
+    return len(hex_part) == _SHA256_HEX_LENGTH and all(
+        character in "0123456789abcdef" for character in hex_part
+    )
+
+
+def canonical_inventory_payload(inventory: dict) -> dict:
+    """The frozen canonical payload for one book (C-04b §2.1 field list)."""
+    return {
+        "bookId": inventory["book_id"],
+        "lockCount": inventory["lock_count"],
+        "currentRevisionId": inventory["current_revision_id"],
+        "pinnedRevisionIds": sorted(inventory["pinned_revision_ids"]),
+        "activeRunIds": sorted(inventory["active_run_ids"]),
+        "draftPageCount": inventory["draft_page_count"],
+        "manualRegionCount": inventory["manual_region_count"],
+        "chapters": inventory["chapters"],
+        "pages": inventory["pages"],
+        "artifacts": inventory["artifacts"],
+        "deletedFiles": inventory["deleted_files"],
+        "deletedBytes": inventory["deleted_bytes"],
+        "sharedFileRefs": [
+            {
+                "fileId": ref["fileId"],
+                "otherProjectCount": ref["otherProjectCount"],
+            }
+            for ref in sorted(inventory["shared_file_refs"], key=lambda item: item["fileId"])
+        ],
+    }
+
+
+def inventory_digest(inventory: dict) -> str:
+    """``sha256:`` + SHA-256 of the canonical JSON of one book inventory."""
+    canonical = json.dumps(
+        canonical_inventory_payload(inventory),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    return INVENTORY_DIGEST_PREFIX + hashlib.sha256(
+        canonical.encode("utf-8")
+    ).hexdigest()
+
+
+def collection_inventory_digest(book_ids: list[str], digests: dict[str, str]) -> str:
+    """SHA-256 over the per-book digest hex strings concatenated in order."""
+    parts = []
+    for book_id in book_ids:
+        digest = digests[book_id]
+        parts.append(digest[len(INVENTORY_DIGEST_PREFIX):].lower())
+    return INVENTORY_DIGEST_PREFIX + hashlib.sha256(
+        "".join(parts).encode("ascii")
+    ).hexdigest()
+
+
+def shared_file_refs(
+    shared_managed: dict[str, int] | None = None,
+    shared_source_entries: dict[str, int] | None = None,
+) -> list[dict]:
+    """Build the frozen ``sharedFileRefs`` projection (PD-01/PD-08).
+
+    * managed physical files shared with other books get an opaque, stable,
+      path-free id: ``managed:`` + the first 16 hex of SHA-256 over the
+      managed relative path (the actual path never reaches the wire);
+    * referenced-source files use the stable ``source_entries.entry_id``;
+    * ``otherProjectCount`` is the number of *other* books still referencing
+      the file/entry (0 is never emitted — a 0 reference is not shared).
+    """
+    refs: list[dict] = []
+    for relative_path, other_count in (shared_managed or {}).items():
+        count = int(other_count)
+        if count <= 0:
+            continue
+        path_digest = hashlib.sha256(relative_path.encode("utf-8")).hexdigest()[:16]
+        refs.append({"fileId": "managed:" + path_digest, "otherProjectCount": count})
+    for entry_id, other_count in (shared_source_entries or {}).items():
+        count = int(other_count)
+        if count <= 0:
+            continue
+        refs.append({"fileId": entry_id, "otherProjectCount": count})
+    refs.sort(key=lambda item: item["fileId"])
+    return refs
+
+
+def normalize_trash_entries(raw_entries: object) -> tuple[list[str] | None, str | None]:
+    """Closed-shape validation for ``TrashEntryRef[1..N]``.
+
+    Returns ``(book_ids, error_code)``.  Order is preserved and never
+    deduplicated (the caller reports per entry, in order, and a duplicate is
+    request validation like the delete commands' duplicate-ID rule).
+    """
+    if not isinstance(raw_entries, list) or not raw_entries:
+        return None, "INVALID_REQUEST"
+    if len(raw_entries) > _MAX_TRASH_ENTRIES:
+        return None, "INVALID_REQUEST"
+    book_ids: list[str] = []
+    for entry in raw_entries:
+        if not isinstance(entry, dict) or set(entry) != {"book_id"}:
+            return None, "INVALID_REQUEST"
+        book_id = entry.get("book_id")
+        if not isinstance(book_id, str) or not book_id.strip():
+            return None, "INVALID_REQUEST"
+        book_ids.append(book_id)
+    if len(book_ids) != len(set(book_ids)):
+        return None, "INVALID_REQUEST"
+    return book_ids, None
+
+
+def is_valid_idempotency_key(value: object) -> bool:
+    return isinstance(value, str) and 1 <= len(value) <= 128
+
+
+def encode_trash_cursor(deleted_at: str, book_id: str) -> str:
+    """Opaque, path-free, order-preserving pagination cursor (base64url JSON)."""
+    raw = json.dumps([deleted_at, book_id], separators=(",", ":")).encode("utf-8")
+    return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+
+def decode_trash_cursor(cursor: str) -> tuple[str, str] | None:
+    if not isinstance(cursor, str) or not cursor:
+        return None
+    padding = "=" * (-len(cursor) % 4)
+    try:
+        raw = base64.urlsafe_b64decode((cursor + padding).encode("ascii"))
+        decoded = json.loads(raw.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError, TypeError):
+        return None
+    if (
+        not isinstance(decoded, list)
+        or len(decoded) != 2
+        or not all(isinstance(item, str) and item for item in decoded)
+    ):
+        return None
+    return decoded[0], decoded[1]

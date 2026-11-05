@@ -206,7 +206,22 @@ from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
 from application.library.errors import BookNotFound
+from application.library.service import (
+    collection_inventory_digest,
+    decode_trash_cursor,
+    encode_trash_cursor,
+    inventory_digest,
+    is_inventory_digest,
+    is_valid_idempotency_key,
+    normalize_trash_entries,
+    shared_file_refs,
+)
 from application.maintenance.cleanup import CleanupOutcome, CleanupService
+from application.maintenance.ports import (
+    ProtectionFacts,
+    ProtectionPolicy,
+    ProtectionScope,
+)
 from application.resource_channel.dto import (
     E_IDENTITY_CHANGED,
     E_NOT_FOUND,
@@ -259,6 +274,7 @@ from infrastructure.resource_channel.render_preview import (
 )
 from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
+from infrastructure.sqlite.library import PermanentDeleteBlockedError
 from infrastructure.sqlite.nmbak import NmbakBackupError
 from infrastructure.sqlite.upgrade_legacy_layout import (
     LegacyLayoutError,
@@ -303,8 +319,29 @@ PROTOCOL_MINOR = 3
 _P15_PROTOCOL_MINOR = 7
 _CREATE_PROTOCOL_MINOR = 8
 _DELETE_PROTOCOL_MINOR = 10
+#: C-04b §2.1 / M2-C1 §5.13: the read-only deletion-preview command family
+#: targets wire minor 11 (frozen by FEA-12-PREREQ-1 rev 2.13).
+_PREVIEW_PROTOCOL_MINOR = 11
+#: C-09 SC-B06 / M2-C1 §5.14: the recycle-bin command family is an
+#: independent family at wire minor 13.
+_TRASH_PROTOCOL_MINOR = 13
 _CREATE_COMMANDS = frozenset({"CreateBook", "CreateChapter"})
 _DELETE_COMMANDS = frozenset({"PermanentlyDeleteBook", "PermanentlyDeleteBooks"})
+_PREVIEW_COMMANDS = frozenset({"PreviewPermanentDeleteBooks"})
+_TRASH_COMMANDS = frozenset({"MoveToTrash", "RestoreFromTrash", "ListTrash", "PurgeTrash"})
+#: M2-C1 §5.14: ``PurgeTrash`` is registered on the frozen wire but the first
+#: CORE release does NOT implement it (digest binding needs a separate DSH
+#: additive ruling).  It must fail closed with a typed error and never be
+#: silently implemented or partially executed.
+_UNIMPLEMENTED_COMMANDS = frozenset({"PurgeTrash"})
+#: M2-C1 §5.13/§5.14 capability names (host probes ``core.ping`` first).
+_FEA12_CAPABILITIES = (
+    "library.delete.preview/1",
+    "library.trash.read/1",
+    "library.trash.write/1",
+)
+_TRASH_DEFAULT_LIMIT = 50
+_TRASH_MAX_LIMIT = 200
 _CREATE_FIELDS = {
     "CreateBook": (("title", True),),
     "CreateChapter": (("book_id", True), ("title", True), ("chapter_number", False)),
@@ -1543,6 +1580,21 @@ class CoreServiceServer:
         capabilities = [
             "library.list_books", "source.read/1", "source.resolve-secret/1",
         ]
+        # FEA-12 (M2-C1 rev 2.13 §5.13/§5.14): the delete/trash runtime is
+        # assembled with the production library repository + managed storage,
+        # so the three frozen capability names are advertised only when that
+        # stack exists (the same conditional pattern as the source.sync caps;
+        # a minimal hand-built Core must not claim faces it cannot serve).
+        # The host MUST probe these before dispatch (missing ->
+        # CORE_CAPABILITY_MISSING) instead of probing with the command itself.
+        # ``library.trash.write/1`` covers MoveToTrash and RestoreFromTrash
+        # only -- PurgeTrash stays unimplemented in this release and fails
+        # closed with a typed UNKNOWN_COMMAND.
+        if (
+            getattr(self._core, "repository", None) is not None
+            and getattr(self._core, "storage", None) is not None
+        ):
+            capabilities.extend(_FEA12_CAPABILITIES)
         # FEA-11 (C-17 §4): the seven source.sync capabilities are advertised
         # only when the sync stack is actually assembled; the Host probes
         # them before any sync dispatch (CORE_CAPABILITY_MISSING otherwise).
@@ -1646,196 +1698,783 @@ class CoreServiceServer:
             "sort_order": chapter.sort_order,
         }
 
+    # ------------------------------------------------------------------
+    # FEA-12: delete preview (PD-01/PD-03) + C flow permanent delete
+    # (PD-02/PD-04/PD-05/PD-06/PD-07/PD-08/PD-09) + A flow trash commands
+    # ------------------------------------------------------------------
+
+    def _delete_error(
+        self,
+        code: str,
+        category: str,
+        retryable: bool | str = False,
+        details: dict | None = None,
+    ) -> dict[str, Any]:
+        error: dict[str, Any] = {
+            "code": code,
+            "category": category,
+            "retryable": retryable,
+        }
+        if details is not None:
+            error["details"] = details
+        return error
+
+    def _delete_target_state(
+        self, book_id: str, target_book_ids: list[str]
+    ) -> tuple[str, dict[str, Any] | None]:
+        """``(state, raw_inventory)`` for one target.
+
+        ``book`` — a live Book row exists; ``retry`` — the Book row is gone but
+        a committed delete left its cleanup manifest (PD-07 retry, no new
+        preview is possible); ``missing`` — neither (BOOK_NOT_FOUND).
+        """
+        inventory = self._core.repository.book_delete_inventory(
+            book_id, target_book_ids, storage=self._core.storage
+        )
+        if inventory is not None:
+            return "book", inventory
+        if self._core.repository.get_cleanup_manifest_data(book_id) is not None:
+            return "retry", None
+        return "missing", None
+
+    def _finalize_delete_inventory(self, raw: dict[str, Any]) -> dict[str, Any]:
+        """Complete the PD-01 inventory with Core-only facts.
+
+        * ``currentRevisionId``: Lead ruling 2026-11-05 — the first
+          *lineage-visible* region current revision in reading order (the
+          released FEA-11 read semantics; hidden regions are not "visible"),
+          falling back to the first artifact current pointer, else null.
+        * ``draftPageCount``: active C-13 drafts over the book's pages.
+        * active export runtime probes are folded into the ``BOOK_BUSY``
+          facts (an in-flight export has no persistent row yet).
+        * ``sharedFileRefs``: managed shared files (opaque hashed id) plus
+          shared referenced-source entries.
+        """
+        inventory = dict(raw)
+        repository = self._core.repository
+        current_revision_id: str | None = None
+        guard = getattr(self._core, "lineage_guard", None)
+        for pointer in raw["region_current_pointers"]:
+            revision_id = pointer["current_revision_id"]
+            if revision_id is None:
+                continue
+            if guard is not None:
+                try:
+                    readable = guard.is_region_readable(
+                        page_id=pointer["page_id"],
+                        region_id=pointer["region_id"],
+                        revision_id=revision_id,
+                    )
+                except Exception:
+                    readable = False
+                if not readable:
+                    continue
+            current_revision_id = revision_id
+            break
+        if current_revision_id is None:
+            for pointer in raw["artifact_current_pointers"]:
+                current_revision_id = pointer["current_revision_id"]
+                break
+        inventory["current_revision_id"] = current_revision_id
+        inventory["current_revision_count"] = len(
+            raw["region_current_pointers"]
+        ) + len(raw["artifact_current_pointers"])
+        inventory["pinned_revision_count"] = len(raw["pinned_revision_ids"])
+        inventory["active_run_count"] = len(raw["active_run_ids"])
+        active_export_count = len(raw["active_export_ids"])
+        if self._exports is not None:
+            try:
+                if self._exports.has_active_exports_for_book(raw["book_id"]):
+                    active_export_count += 1
+            except Exception:
+                active_export_count += 1
+        inventory["active_export_count"] = active_export_count
+        draft_page_count = 0
+        drafts = getattr(self._core, "drafts", None)
+        if drafts is not None:
+            try:
+                page_ids = set(repository.list_book_page_ids(raw["book_id"]))
+                draft_page_count = len(
+                    {
+                        draft.page_id
+                        for draft in drafts.list_drafts()
+                        if getattr(draft, "status", None) is not None
+                        and getattr(draft.status, "value", draft.status) == "active"
+                        and getattr(draft, "page_id", None) in page_ids
+                    }
+                )
+            except Exception:
+                draft_page_count = 0
+        inventory["draft_page_count"] = draft_page_count
+        inventory["shared_file_refs"] = shared_file_refs(
+            raw["shared_managed_targets"], raw["shared_source_entries"]
+        )
+        inventory["unsafe_shared_ref_count"] = (
+            1 if raw["source_graph_conflict"] else 0
+        )
+        return inventory
+
+    @staticmethod
+    def _protection_facts(inventory: dict[str, Any]) -> ProtectionFacts:
+        return ProtectionFacts(
+            lock_count=inventory["lock_count"],
+            manual_region_count=inventory["manual_region_count"],
+            current_revision_count=inventory.get("current_revision_count", 0),
+            pinned_revision_count=inventory.get("pinned_revision_count", 0),
+            draft_page_count=inventory.get("draft_page_count", 0),
+            active_run_count=inventory.get("active_run_count", 0),
+            active_export_count=inventory.get("active_export_count", 0),
+            unsafe_shared_ref_count=inventory.get("unsafe_shared_ref_count", 0),
+        )
+
+    def _permanent_delete_policy_error(
+        self, inventory: dict[str, Any]
+    ) -> dict[str, Any] | None:
+        """Translate the shared ``ProtectionPolicy`` verdict into the delete
+        command's typed error (ADJ-001 PD-01 / PD-08).  Disclosure-only
+        facts are not blocks: the digest confirmation above already bound the
+        disclosure (PD-02)."""
+        verdict = ProtectionPolicy.evaluate(
+            ProtectionScope.PERMANENT_DELETE, self._protection_facts(inventory)
+        )
+        if not verdict.blocked:
+            return None
+        if verdict.reasons and verdict.reasons[0] == "BOOK_BUSY":
+            return self._delete_error("BOOK_BUSY", "conflict")
+        return self._delete_error("BOOK_DELETE_CONFLICT", "conflict")
+
+    @staticmethod
+    def _preview_item_dto(inventory: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "bookId": inventory["book_id"],
+            "title": inventory["title"],
+            "protection": {
+                "lockCount": inventory["lock_count"],
+                "currentRevisionId": inventory["current_revision_id"],
+                "pinnedRevisionIds": list(inventory["pinned_revision_ids"]),
+                "activeRunIds": list(inventory["active_run_ids"]),
+                "draftPageCount": inventory["draft_page_count"],
+                "manualRegionCount": inventory["manual_region_count"],
+            },
+            "contentSummary": {
+                "chapters": inventory["chapters"],
+                "pages": inventory["pages"],
+                "artifacts": inventory["artifacts"],
+                "deletedFiles": inventory["deleted_files"],
+                "deletedBytes": inventory["deleted_bytes"],
+            },
+            "sharedFileRefs": [
+                {
+                    "fileId": ref["fileId"],
+                    "otherProjectCount": ref["otherProjectCount"],
+                }
+                for ref in inventory["shared_file_refs"]
+            ],
+        }
+
+    def handle_preview_permanent_delete_books(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        """§5.13 read-only deletion preview: zero side effects (PD-03).
+
+        Rows are only SELECTed; nothing is written, no file is touched and no
+        protection state is pre-cleared.  Any DB failure is the typed
+        ``BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`` (zero side effects),
+        never an empty/fabricated inventory.
+        """
+        if not isinstance(raw_payload, dict) or set(raw_payload) != {"bookIds"}:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        book_ids = raw_payload.get("bookIds")
+        if (
+            not isinstance(book_ids, list)
+            or not book_ids
+            or len(book_ids) > 20
+            or len(book_ids) != len(set(book_ids))
+            or not all(isinstance(book_id, str) and book_id.strip() for book_id in book_ids)
+        ):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        try:
+            items: list[dict[str, Any]] = []
+            for book_id in book_ids:
+                state, raw_inventory = self._delete_target_state(book_id, book_ids)
+                if state == "missing":
+                    return None, self._delete_error("BOOK_NOT_FOUND", "not_found")
+                if state == "retry":
+                    # §5.13: a target with no Book row is BOOK_NOT_FOUND; the
+                    # PD-07 cleanup retry does not re-run the preview.
+                    return None, self._delete_error("BOOK_NOT_FOUND", "not_found")
+                items.append(self._finalize_delete_inventory(raw_inventory or {}))
+        except Exception:
+            return None, self._delete_error(
+                "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE", "unavailable", True
+            )
+        digests = {
+            inventory["book_id"]: inventory_digest(inventory)
+            for inventory in items
+        }
+        return (
+            {
+                "inventoryDigest": collection_inventory_digest(book_ids, digests),
+                "inventoryDigests": digests,
+                "computedAt": datetime.now(timezone.utc).isoformat(
+                    timespec="milliseconds"
+                ),
+                "items": [self._preview_item_dto(inventory) for inventory in items],
+            },
+            None,
+        )
+
+    # -- A flow: recycle-bin command surface (C-09 SC-B06) ---------------
+
+    def _validate_trash_write_payload(
+        self, raw_payload: Any
+    ) -> tuple[list[str] | None, dict[str, Any] | None]:
+        if not isinstance(raw_payload, dict) or set(raw_payload) != {
+            "entries",
+            "idempotency_key",
+        }:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        book_ids, error_code = normalize_trash_entries(raw_payload.get("entries"))
+        if error_code is not None or book_ids is None:
+            return None, self._delete_error(error_code or "INVALID_REQUEST", "validation")
+        if not is_valid_idempotency_key(raw_payload.get("idempotency_key")):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        # Task-level idempotency semantics (M2-C1 §5.14 leaves it to the
+        # implementing task): the key is required and validated, and a replay
+        # is naturally per-item idempotent — an already-moved entry is
+        # reported as skipped and an already-restored entry as a conflict,
+        # with zero additional side effects.  No hidden cross-process retry
+        # cache exists in the first release.
+        return book_ids, None
+
+    def handle_move_to_trash(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        book_ids, error = self._validate_trash_write_payload(raw_payload)
+        if error is not None:
+            return None, error
+        moved: list[dict[str, Any]] = []
+        skipped: list[dict[str, Any]] = []
+        for book_id in book_ids or []:
+            try:
+                inventory = self._core.repository.book_delete_inventory(
+                    book_id, [book_id]
+                )
+            except Exception:
+                inventory = None
+            if inventory is not None:
+                # C-09 SC-B04a: the SAME ProtectionPolicy decides all three
+                # paths; for soft delete no protection fact blocks (the data
+                # is preserved verbatim and restore clears only deleted_at).
+                verdict = ProtectionPolicy.evaluate(
+                    ProtectionScope.SOFT_DELETE,
+                    self._protection_facts(
+                        {
+                            **inventory,
+                            "current_revision_count": 0,
+                            "pinned_revision_count": len(
+                                inventory["pinned_revision_ids"]
+                            ),
+                            "active_run_count": len(inventory["active_run_ids"]),
+                            "active_export_count": len(inventory["active_export_ids"]),
+                            "draft_page_count": 0,
+                            "unsafe_shared_ref_count": 0,
+                        }
+                    ),
+                )
+                if not verdict.blocked:
+                    try:
+                        if self._core.repository.move_book_to_trash(book_id):
+                            moved.append({"book_id": book_id})
+                            continue
+                    except sqlite3.Error:
+                        pass
+            skipped.append(
+                {"ref": {"book_id": book_id}, "reason": "TRASH_ENTRY_NOT_FOUND"}
+            )
+        return {"moved": moved, "skipped": skipped}, None
+
+    def handle_restore_from_trash(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        book_ids, error = self._validate_trash_write_payload(raw_payload)
+        if error is not None:
+            return None, error
+        restored: list[dict[str, Any]] = []
+        conflicts: list[dict[str, Any]] = []
+        for book_id in book_ids or []:
+            try:
+                ok = self._core.repository.restore_book_from_trash(book_id)
+            except sqlite3.Error:
+                ok = False
+            if ok:
+                restored.append({"book_id": book_id})
+            else:
+                conflicts.append(
+                    {"ref": {"book_id": book_id}, "reason": "TRASH_ENTRY_NOT_FOUND"}
+                )
+        return {"restored": restored, "conflicts": conflicts}, None
+
+    def handle_list_trash(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        if not isinstance(raw_payload, dict) or set(raw_payload) - {"cursor", "limit"}:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        after: tuple[str, str] | None = None
+        cursor = raw_payload.get("cursor")
+        if cursor is not None:
+            after = decode_trash_cursor(cursor)
+            if after is None:
+                return None, self._delete_error("INVALID_REQUEST", "validation")
+        limit = raw_payload.get("limit", _TRASH_DEFAULT_LIMIT)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or limit < 1
+            or limit > _TRASH_MAX_LIMIT
+        ):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        rows = self._core.repository.list_trash_entries(after=after, limit=limit)
+        has_next = len(rows) > limit
+        page_rows = rows[:limit]
+        result: dict[str, Any] = {
+            "items": [
+                {
+                    "bookId": row["book_id"],
+                    "title": row["title"],
+                    "deletedAt": row["deleted_at"],
+                }
+                for row in page_rows
+            ]
+        }
+        if has_next and page_rows:
+            last = page_rows[-1]
+            result["nextCursor"] = encode_trash_cursor(
+                last["deleted_at"], last["book_id"]
+            )
+        return result, None
+
+    def handle_purge_trash(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        """M2-C1 §5.14: registered on the frozen wire, NOT implemented in the
+        first CORE release (digest binding needs a separate DSH additive
+        ruling).  Fail closed with the typed unsupported face; never fall
+        through to an implicit permanent delete and never a silent success."""
+        del raw_payload
+        return None, self._delete_error("UNKNOWN_COMMAND", "validation")
+
+    # -- C flow: permanent delete commands --------------------------------
+
+    def _validate_single_delete_payload(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        if not isinstance(raw_payload, dict) or set(raw_payload) != {
+            "book_id",
+            "confirm_permanent_delete",
+            "inventory_digest",
+        }:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        book_id = raw_payload.get("book_id")
+        if not isinstance(book_id, str) or not book_id.strip():
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if raw_payload.get("confirm_permanent_delete") is not True:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if not is_inventory_digest(raw_payload.get("inventory_digest")):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        return raw_payload, None
+
+    def _validate_batch_delete_payload(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        expected_keys = {
+            "book_ids",
+            "confirmed_book_ids",
+            "confirm_count",
+            "confirm_permanent_delete",
+            "inventory_digest",
+            "inventory_digests",
+        }
+        if not isinstance(raw_payload, dict) or set(raw_payload) != expected_keys:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        book_ids = raw_payload.get("book_ids")
+        confirmed_book_ids = raw_payload.get("confirmed_book_ids")
+        confirm_count = raw_payload.get("confirm_count")
+        if not isinstance(book_ids, list) or not isinstance(confirmed_book_ids, list):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if not all(isinstance(book_id, str) and book_id.strip() for book_id in book_ids):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if len(book_ids) == 0:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if len(book_ids) > 20:
+            return None, self._delete_error(
+                "BOOK_DELETE_BATCH_LIMIT_EXCEEDED", "validation"
+            )
+        if len(book_ids) != len(set(book_ids)):
+            return None, self._delete_error("DUPLICATE_BOOK_ID", "validation")
+        if type(confirm_count) is not int or confirm_count != len(book_ids):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if confirmed_book_ids != book_ids:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if raw_payload.get("confirm_permanent_delete") is not True:
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        if not is_inventory_digest(raw_payload.get("inventory_digest")):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        digests = raw_payload.get("inventory_digests")
+        if not isinstance(digests, dict) or not all(
+            isinstance(key, str) and is_inventory_digest(value)
+            for key, value in digests.items()
+        ):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
+        return raw_payload, None
+
+    def _collect_delete_targets(
+        self, book_ids: list[str]
+    ) -> tuple[dict[str, list[str]], dict[str, list[str]], dict[str, list[str]]]:
+        """(targets, page_ids, preview_resource_ids) maps for the delete."""
+        repository = self._core.repository
+        targets_map = repository.cleanup_targets_for_delete(book_ids)
+        page_ids_map: dict[str, list[str]] = {}
+        for book_id in book_ids:
+            page_ids = repository.list_book_page_ids(book_id)
+            if not page_ids:
+                manifest = repository.get_cleanup_manifest_data(book_id)
+                if manifest:
+                    page_ids = manifest.get("page_ids", [])
+            page_ids_map[book_id] = list(page_ids)
+        preview_ids_map: dict[str, list[str]] = {}
+        preview_catalog = getattr(self._render_previews, "_catalog", None)
+        if preview_catalog is not None:
+            for book_id, page_ids in page_ids_map.items():
+                preview_ids_map[book_id] = (
+                    preview_catalog.preview_resource_ids_for_artifacts(
+                        repository.list_page_artifact_ids(page_ids)
+                    )
+                )
+        return targets_map, page_ids_map, preview_ids_map
+
+    def _cleanup_after_delete(
+        self,
+        book_ids: list[str],
+        targets_map: dict[str, list[str]],
+        page_ids_map: dict[str, list[str]],
+        preview_ids_map: dict[str, list[str]],
+    ) -> tuple[list[dict[str, Any]], bool]:
+        repository = self._core.repository
+        storage = self._core.storage
+        items: list[dict[str, Any]] = []
+        has_pending = False
+        for book_id in book_ids:
+            cleaned = repository.cleanup_book_files(
+                book_id,
+                targets_map.get(book_id, []),
+                storage,
+                render_previews=self._render_previews,
+                page_ids=page_ids_map.get(book_id, []),
+                preview_resource_ids=preview_ids_map.get(book_id, []),
+            )
+            if cleaned:
+                items.append(
+                    {"book_id": book_id, "status": "deleted", "error_code": None}
+                )
+            else:
+                has_pending = True
+                items.append(
+                    {
+                        "book_id": book_id,
+                        "status": "cleanup_pending",
+                        "error_code": None,
+                    }
+                )
+        return items, has_pending
+
     def handle_permanently_delete_book(
         self, raw_payload: Any
     ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
-        if not isinstance(raw_payload, dict):
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if set(raw_payload.keys()) != {"book_id", "confirm_permanent_delete"}:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        book_id = raw_payload.get("book_id")
-        if not isinstance(book_id, str) or not book_id.strip():
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if raw_payload.get("confirm_permanent_delete") is not True:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        """§5.11.1 + §5.11.1a single permanent delete.
 
-        repo = self._core.repository
+        Confirmation is bound to the Core-computed per-book inventory digest
+        (PD-02/PD-04); the delete itself is one explicit ``BEGIN IMMEDIATE``
+        transaction (PD-05) whose failure leaves everything unchanged
+        (PD-06); file cleanup runs only after the DB commit and a refused
+        cleanup is retryable via the persisted manifest (PD-07).
+        """
+        validated, error = self._validate_single_delete_payload(raw_payload)
+        if error is not None:
+            return None, error
+        assert validated is not None
+        book_id = validated["book_id"]
+        supplied_digest = validated["inventory_digest"]
+        repository = self._core.repository
         storage = self._core.storage
-
         with self._write_lock:
-            all_ok, items = repo.preflight_permanent_delete(
-                [book_id], storage=storage, export_runtime=self._exports
-            )
-            if not all_ok:
-                code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
-                cat = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
-                return None, {"code": code, "category": cat, "retryable": False}
-
-            page_ids = repo.list_book_page_ids(book_id)
-            if not page_ids:
-                manifest_data = repo.get_cleanup_manifest_data(book_id)
-                if manifest_data:
-                    page_ids = manifest_data.get("page_ids", [])
-            targets = repo.list_book_cleanup_targets(book_id)
-            # AC4 (P09-PREVIEW-LIFECYCLE-RECLAIM-1): snapshot publish-style preview
-            # keys while the artifact mapping still exists.  Measured in R189: the
-            # publish key is preview-<uuid4> with rel_path previews/<key>.png, so it
-            # cannot be found by name during cleanup, and preview_lifecycle is only
-            # reachable via artifact_id, which the delete below removes.
-            # Two databases, two halves (measured R189): media_artifacts is in
-            # library.db, preview_lifecycle is in the catalog DB.  Querying the
-            # latter from library.db raises "no such table".
-            preview_resource_ids: list[str] = []
-            preview_catalog = getattr(self._render_previews, "_catalog", None)
-            if preview_catalog is not None:
-                artifact_ids = repo.list_page_artifact_ids(page_ids)
-                preview_resource_ids = preview_catalog.preview_resource_ids_for_artifacts(
-                    artifact_ids
-                )
             try:
-                repo.execute_permanent_delete_db(
-                    {book_id: targets},
-                    {book_id: page_ids},
-                    {book_id: preview_resource_ids},
-                )
+                state, raw_inventory = self._delete_target_state(book_id, [book_id])
             except Exception:
-                return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
-
-            cleaned = repo.cleanup_book_files(
-                book_id,
-                targets,
-                storage,
-                render_previews=self._render_previews,
-                page_ids=page_ids,
-                preview_resource_ids=preview_resource_ids,
+                return None, self._delete_error(
+                    "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE",
+                    "unavailable",
+                    True,
+                )
+            if state == "missing":
+                return None, self._delete_error("BOOK_NOT_FOUND", "not_found")
+            if state == "book":
+                try:
+                    inventory = self._finalize_delete_inventory(raw_inventory or {})
+                except Exception:
+                    return None, self._delete_error(
+                        "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE",
+                        "unavailable",
+                        True,
+                    )
+                if supplied_digest != inventory_digest(inventory):
+                    return None, self._delete_error(
+                        "BOOK_DELETE_STALE_PREVIEW", "conflict"
+                    )
+                policy_error = self._permanent_delete_policy_error(inventory)
+                if policy_error is not None:
+                    return None, policy_error
+                all_ok, items = repository.preflight_permanent_delete(
+                    [book_id], storage=storage, export_runtime=self._exports
+                )
+                if not all_ok:
+                    code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
+                    category = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
+                    return None, self._delete_error(code, category)
+            # PD-07: a retry has no Book row to preview; the digest is only
+            # shape-validated (the first preview bound it before the commit).
+            targets_map, page_ids_map, preview_ids_map = self._collect_delete_targets(
+                [book_id]
             )
-            if cleaned:
-                return {"book_id": book_id, "deleted": True}, None
-            return None, {"code": "BOOK_DELETE_CLEANUP_PENDING", "category": "internal", "retryable": True}
+            try:
+                repository.execute_permanent_delete_db(
+                    {book_id: targets_map[book_id]},
+                    {book_id: page_ids_map.get(book_id, [])},
+                    {book_id: preview_ids_map.get(book_id, [])},
+                )
+            except PermanentDeleteBlockedError as caught:
+                return None, self._delete_error(caught.code, "conflict")
+            except Exception:
+                return None, self._delete_error(
+                    "BOOK_DELETE_FAILED", "internal", "unknown"
+                )
+            result_items, has_pending = self._cleanup_after_delete(
+                [book_id], targets_map, page_ids_map, preview_ids_map
+            )
+            if has_pending:
+                return None, self._delete_error(
+                    "BOOK_DELETE_CLEANUP_PENDING", "internal", True
+                )
+            return {"book_id": book_id, "deleted": True}, None
 
     def handle_permanently_delete_books(
         self, raw_payload: Any
     ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
-        if not isinstance(raw_payload, dict):
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        expected_keys = {"book_ids", "confirmed_book_ids", "confirm_count", "confirm_permanent_delete"}
-        if set(raw_payload.keys()) != expected_keys:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        """§5.11.1 + §5.11.1a batch permanent delete (two-level digest).
 
-        book_ids = raw_payload.get("book_ids")
-        confirmed_book_ids = raw_payload.get("confirmed_book_ids")
-        confirm_count = raw_payload.get("confirm_count")
-        confirm_permanent = raw_payload.get("confirm_permanent_delete")
-
-        if not isinstance(book_ids, list) or not isinstance(confirmed_book_ids, list):
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if not all(isinstance(bid, str) and bid.strip() for bid in book_ids):
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if len(book_ids) == 0:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if len(book_ids) > 20:
-            return None, {"code": "BOOK_DELETE_BATCH_LIMIT_EXCEEDED", "category": "validation", "retryable": False}
-        if len(book_ids) != len(set(book_ids)):
-            return None, {"code": "DUPLICATE_BOOK_ID", "category": "validation", "retryable": False}
-
-        if type(confirm_count) is not int or confirm_count != len(book_ids):
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if confirmed_book_ids != book_ids:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-        if confirm_permanent is not True:
-            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
-
-        repo = self._core.repository
+        DB deletion is all-or-nothing in one transaction; the post-commit file
+        cleanup reports per book (PD-09) and a refused cleanup stays
+        retryable (PD-07)."""
+        validated, error = self._validate_batch_delete_payload(raw_payload)
+        if error is not None:
+            return None, error
+        assert validated is not None
+        book_ids: list[str] = list(validated["book_ids"])
+        supplied_collection_digest = validated["inventory_digest"]
+        supplied_digests: dict[str, str] = dict(validated["inventory_digests"])
+        repository = self._core.repository
         storage = self._core.storage
-
         with self._write_lock:
-            if repo.is_whole_library(book_ids):
-                return None, {"code": "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "category": "conflict", "retryable": False}
-
-            all_ok, items = repo.preflight_permanent_delete(
-                book_ids, storage=storage, export_runtime=self._exports
-            )
-            if not all_ok:
-                return None, {
-                    "code": "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
-                    "category": "conflict",
-                    "retryable": False,
-                    "details": {
+            if repository.is_whole_library(book_ids):
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "conflict"
+                )
+            try:
+                states: dict[str, str] = {}
+                inventories: dict[str, dict[str, Any]] = {}
+                for book_id in book_ids:
+                    state, raw_inventory = self._delete_target_state(book_id, book_ids)
+                    states[book_id] = state
+                    if state == "book":
+                        inventories[book_id] = self._finalize_delete_inventory(
+                            raw_inventory or {}
+                        )
+            except Exception:
+                return None, self._delete_error(
+                    "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE",
+                    "unavailable",
+                    True,
+                )
+            missing = [book_id for book_id in book_ids if states[book_id] == "missing"]
+            if missing:
+                items = [
+                    {
+                        "book_id": book_id,
+                        "status": "not_started",
+                        "error_code": (
+                            "BOOK_NOT_FOUND" if states[book_id] == "missing" else None
+                        ),
+                    }
+                    for book_id in book_ids
+                ]
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    "conflict",
+                    details={
                         "phase": "preflight",
                         "requested_count": len(book_ids),
                         "completed_count": 0,
                         "items": items,
                     },
-                }
-
-            book_page_ids_map = {}
-            for bid in book_ids:
-                pids = repo.list_book_page_ids(bid)
-                if not pids:
-                    mdata = repo.get_cleanup_manifest_data(bid)
-                    if mdata:
-                        pids = mdata.get("page_ids", [])
-                book_page_ids_map[bid] = pids
-            book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
-            # AC4: same snapshot as the single-book path, and for the same reason -
-            # preview_lifecycle is reached through artifact_id, and the delete below
-            # removes media_artifacts.  Measured: without this, the batch path leaks
-            # exactly as the single path did.
-            preview_ids_map: dict[str, list[str]] = {}
-            preview_catalog = getattr(self._render_previews, "_catalog", None)
-            if preview_catalog is not None:
-                for bid, pids in book_page_ids_map.items():
-                    preview_ids_map[bid] = (
-                        preview_catalog.preview_resource_ids_for_artifacts(
-                            repo.list_page_artifact_ids(pids)
-                        )
-                    )
+                )
+            retry_ids = [book_id for book_id in book_ids if states[book_id] == "retry"]
+            # Two-level confirmation binding (PD-02/PD-04): collection level
+            # first, then the per-book map.  A PD-07 retry has no Book row to
+            # preview, so a batch that contains retry targets validates the
+            # per-book digests of the live books only (the retry path never
+            # re-runs the preview, §5.11.1a).
+            if set(supplied_digests) != set(book_ids):
+                return None, self._stale_preview_error(book_ids, book_ids)
+            expected_digests = {
+                book_id: inventory_digest(inventory)
+                for book_id, inventory in inventories.items()
+            }
+            mismatched = [
+                book_id
+                for book_id, digest in expected_digests.items()
+                if supplied_digests[book_id] != digest
+            ]
+            collection_mismatch = False
+            if not retry_ids:
+                expected_collection = collection_inventory_digest(
+                    book_ids, expected_digests
+                )
+                collection_mismatch = supplied_collection_digest != expected_collection
+            if mismatched or collection_mismatch:
+                return None, self._stale_preview_error(book_ids, mismatched)
+            policy_errors: dict[str, str] = {}
+            for book_id, inventory in inventories.items():
+                policy_error = self._permanent_delete_policy_error(inventory)
+                if policy_error is not None:
+                    policy_errors[book_id] = policy_error["code"]
+            if policy_errors:
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    "conflict",
+                    details={
+                        "phase": "preflight",
+                        "requested_count": len(book_ids),
+                        "completed_count": 0,
+                        "items": [
+                            {
+                                "book_id": book_id,
+                                "status": "not_started",
+                                "error_code": policy_errors.get(book_id),
+                            }
+                            for book_id in book_ids
+                        ],
+                    },
+                )
+            all_ok, items = repository.preflight_permanent_delete(
+                book_ids, storage=storage, export_runtime=self._exports
+            )
+            if not all_ok:
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    "conflict",
+                    details={
+                        "phase": "preflight",
+                        "requested_count": len(book_ids),
+                        "completed_count": 0,
+                        "items": items,
+                    },
+                )
+            targets_map, page_ids_map, preview_ids_map = self._collect_delete_targets(
+                book_ids
+            )
             try:
-                repo.execute_permanent_delete_db(
-                    book_targets_map, book_page_ids_map, preview_ids_map
+                repository.execute_permanent_delete_db(
+                    {book_id: targets_map[book_id] for book_id in book_ids},
+                    {book_id: page_ids_map.get(book_id, []) for book_id in book_ids},
+                    {
+                        book_id: preview_ids_map.get(book_id, [])
+                        for book_id in book_ids
+                    },
+                )
+            except PermanentDeleteBlockedError as caught:
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    "conflict",
+                    details={
+                        "phase": "preflight",
+                        "requested_count": len(book_ids),
+                        "completed_count": 0,
+                        "items": [
+                            {
+                                "book_id": book_id,
+                                "status": "not_started",
+                                "error_code": None,
+                            }
+                            for book_id in book_ids
+                        ],
+                    },
                 )
             except Exception:
-                return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
-
-            result_items: list[dict[str, Any]] = []
-            completed_count = 0
-            has_pending = False
-            for bid in book_ids:
-                targets = book_targets_map[bid]
-                pids = book_page_ids_map.get(bid, [])
-                cleaned = repo.cleanup_book_files(
-                    bid,
-                    targets,
-                    storage,
-                    render_previews=self._render_previews,
-                    page_ids=pids,
-                    preview_resource_ids=preview_ids_map.get(bid, []),
+                return None, self._delete_error(
+                    "BOOK_DELETE_FAILED", "internal", "unknown"
                 )
-                if cleaned:
-                    completed_count += 1
-                    result_items.append({"book_id": bid, "status": "deleted", "error_code": None})
-                else:
-                    has_pending = True
-                    result_items.append({"book_id": bid, "status": "cleanup_pending", "error_code": None})
+            result_items, has_pending = self._cleanup_after_delete(
+                book_ids, targets_map, page_ids_map, preview_ids_map
+            )
+            completed_count = sum(
+                1 for item in result_items if item["status"] == "deleted"
+            )
+            if has_pending:
+                return None, self._delete_error(
+                    "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+                    "internal",
+                    True,
+                    details={
+                        "phase": "cleanup",
+                        "requested_count": len(book_ids),
+                        "completed_count": completed_count,
+                        "items": result_items,
+                    },
+                )
+            return {
+                "requested_count": len(book_ids),
+                "completed_count": completed_count,
+                "items": result_items,
+            }, None
 
-            if not has_pending:
-                return {
-                    "requested_count": len(book_ids),
-                    "completed_count": completed_count,
-                    "items": result_items,
-                }, None
+    @staticmethod
+    def _stale_preview_error(
+        book_ids: list[str], mismatched: list[str]
+    ) -> dict[str, Any]:
+        mismatch = set(mismatched)
+        return {
+            "code": "BOOK_DELETE_STALE_PREVIEW",
+            "category": "conflict",
+            "retryable": False,
+            "details": {
+                "phase": "preflight",
+                "requested_count": len(book_ids),
+                "completed_count": 0,
+                "items": [
+                    {
+                        "book_id": book_id,
+                        "status": "not_started",
+                        "error_code": (
+                            "BOOK_DELETE_STALE_PREVIEW"
+                            if (not mismatch or book_id in mismatch)
+                            else None
+                        ),
+                    }
+                    for book_id in book_ids
+                ],
+            },
+        }
 
-            return None, {
-                "code": "BOOK_DELETE_BATCH_CLEANUP_PENDING",
-                "category": "internal",
-                "retryable": True,
-                "details": {
-                    "phase": "cleanup",
-                    "requested_count": len(book_ids),
-                    "completed_count": completed_count,
-                    "items": result_items,
-                },
-            }
 
     def _fetch_page_counts(self) -> dict[str, int]:
         """Read-only query calculating valid non-deleted page counts per book."""
@@ -5300,6 +5939,56 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
+        if command in _PREVIEW_COMMANDS or command in _TRASH_COMMANDS:
+            # FEA-12 (C-04b §2.1 / C-09 SC-B06): the delete-preview family is
+            # frozen at wire minor 11 and the recycle-bin family at wire minor
+            # 13; both are independent per-command families (the envelope's
+            # default minor 3 is untouched by them).
+            expected_minor = (
+                _PREVIEW_PROTOCOL_MINOR
+                if command in _PREVIEW_COMMANDS
+                else _TRASH_PROTOCOL_MINOR
+            )
+            result = None
+            error = None
+            if protocol != PROTOCOL_NAME or not is_valid_version:
+                error = {
+                    "code": "PROTOCOL_VERSION_UNSUPPORTED",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            elif (
+                type(version.get("minor")) is not int
+                or version["minor"] != expected_minor
+            ):
+                error = {
+                    "code": "INVALID_REQUEST",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            elif command == "PreviewPermanentDeleteBooks":
+                result, error = self.handle_preview_permanent_delete_books(raw_payload)
+            elif command == "MoveToTrash":
+                result, error = self.handle_move_to_trash(raw_payload)
+            elif command == "RestoreFromTrash":
+                result, error = self.handle_restore_from_trash(raw_payload)
+            elif command == "ListTrash":
+                result, error = self.handle_list_trash(raw_payload)
+            else:
+                # PurgeTrash: frozen wire registration only; the first release
+                # fails closed with a typed unsupported error (see handler).
+                result, error = self.handle_purge_trash(raw_payload)
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": expected_minor},
+                    "request_id": request_id if isinstance(request_id, str) else None,
+                    "result": result,
+                    "error": error,
+                },
+                False,
+            )
+
         if protocol != PROTOCOL_NAME or not is_valid_version:
             return (
                 {
@@ -6489,6 +7178,10 @@ class CoreServiceServer:
             response_minor = _CREATE_PROTOCOL_MINOR
         elif command in _DELETE_COMMANDS:
             response_minor = _DELETE_PROTOCOL_MINOR
+        elif command in _PREVIEW_COMMANDS:
+            response_minor = _PREVIEW_PROTOCOL_MINOR
+        elif command in _TRASH_COMMANDS:
+            response_minor = _TRASH_PROTOCOL_MINOR
         elif command in _P15_SETTINGS_COMMANDS or requested_minor == _P15_PROTOCOL_MINOR:
             response_minor = _P15_PROTOCOL_MINOR
         else:
