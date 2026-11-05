@@ -3,11 +3,11 @@ id: FEA-11-LINEAGE-1
 title: FEA-11 lineage native 写入与读路径隔离（C-17 §7.1 续）
 kind: implementation
 governance_version: 3
-status: changes_requested
-approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 返修范围与口径由 DSH（Lead）2026-11-05 裁决确认（4 点，见 r2 DSH 裁决节）；r2 Review changes_requested（P1=1/P2=3/P3=5）→ r3 最小返修（见 r2 Review 处置计划）
+status: in_review
+approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；r2 返修范围与口径由 DSH（Lead）2026-11-05 裁决确认（4 点，见 r2 DSH 裁决节）；r2 Review changes_requested（P1=1/P2=3/P3=5）→ r3 最小返修（R2-01/R2-02/R2-03/R2-05，见 r3 实施记录）；r3 交付 `in_review` 待 fresh 复审
 suggested_owner: codex
-owner: lineage-impl（r2 返修，DSH 派发 Team teammate；r3 返修继续由该 Owner）
-reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-LINEAGE-1-r1.md`；r2 `doc/reviews/FEA-11-LINEAGE-1-r2.md`，reviewer session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`）
+owner: lineage-impl（r2/r3 返修，DSH 派发 Team teammate）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-LINEAGE-1-r1.md`；r2 `doc/reviews/FEA-11-LINEAGE-1-r2.md`，reviewer session `96e81d3c-b09d-4652-b3fe-270b91dc1c1a`；r3 待派）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 81c28d305
@@ -89,7 +89,18 @@ allowed_paths:
 - **未变**：C-17/ADJ-001/FEA-01 等冻结契约零 diff（pins 18/18）；未新增依赖；未 push；未改 `doc/STATUS.md`/`REBASELINE_PLAN`/`TASK_LEDGER`/`doc/reviews/**`。
 - **commit 列表**：`501fe80c8`（实现）、`7cc963065`（测试）、`436fe97f6`（诊断可见性/backfill 容错）、`966f7762e`（混合库矩阵测试）、证据/卡面 commit 见最终报告。
 
-## 读路径行为矩阵（r2 证据摘要；完整矩阵见 gates-r2.log gate 2）
+## r3 实施记录与 R2 finding 逐条处置（2026-11-05）
+
+- **基线**：被审对象 r2 head `3c40f7020`；r3 起点为 Lead 处置后的 main；r3 修复 commit `d8ed04e13`、r3 测试 commit `6c0ab6594`、r3 证据 commit `280bb7bd0`。
+- **R2-01（P1，已修）page-scope Run 执行链**：`HandlerDependencies` 新增 `lineage_guard` 并由 `build_production_handlers`/`core_assembly` 注入与目标 catalog 同一个 guard；`handle_detect` 复用 region 前改为 `_lineage_visible_live_regions(page_id)`（guard 过滤 + `[providers.detect] lineage_hidden=N` 诊断），**全 hidden 时在 new image 上执行检测**，新 region 由 `region_creator` 以 native lineage 写入当前 binding。`_backfill_detected_regions` 对 detect 输出在 commit 窗口内被隔离隐藏的 region 按「不可读跳过」处理（LINEAGE_* 码加入既有 skip 集，下一次 replan 只读可证集合）。page target 的 `lineage_hidden_regions` 计数进入 `TargetSnapshot.metadata`：当可见集为空且命令链不含 `ocr`（RERENDER_*/REINPAINT_*）时 planner 返回空 unit（task SKIPPED、run COMPLETED 的干净终态），**真正无 region 的页面保持 TASK-040 clean-probe 既有规划语义不变**。判别性测试：cut 页 + hidden region + stub detector 跑 `REOCR_ALL` → hidden id 不在 detect 输出、新图检出 2 个 region、OCR 跑通、run COMPLETED、hidden 无新 revision/lineage；`RERENDER_ALL` → COMPLETED + task SKIPPED + 零 step。
+- **R2-02（P2，已修）candidate 提交 typed 投影**：`commit_step` 新增 `except PipelineError` 分支，`LINEAGE_*` 码路由到既有 `input_revision_changed` 冲突投影（prepared token 按既有语义 abandoned、结果 payload 保留为 reason=`INPUT_REVISION_CHANGED` 的候选行且非 abandoned、零业务写），不再是 DB_FAILED；其他 PipelineError 仍按原 DB_FAILED 语义。判别性测试：prepare OCR candidate → changed 切换 → commit，断言 `outcome.status=candidate`、`error_code=INPUT_REVISION_CHANGED`、detail 含 `LINEAGE_BINDING_CHANGED`、无新 revision/lineage、候选行保留。
+- **R2-03（P2，已修）4 个判别性测试**：(a) draft apply 在 cut binding 上 `DraftError(code=LINEAGE_BINDING_CHANGED)` + 零写；(b) reorder/merge 写入侧拒绝（`LineageBindingChanged`，零 revision/lineage/新 region）；(c) backfill 失败不阻断装配（monkeypatch 抛错 → `assemble_core_services` 成功、guard 接线仍在、stderr 有 `legacy lineage backfill failed` 告警）；(d) page render 的 skip reports（`skip_reason=LINEAGE_BINDING_CHANGED`、status=skipped）与 `handle_rerender_page` 的 LINEAGE 映射（`RenderCommandError` code/category）。
+- **R2-04（P2，已由 Lead 处置于卡文本）**：`doc/TASK_LEDGER.md` 由 Lead 维护、不计入 allowed_paths；本卡 r2/r3 commit 均未再改该文件。
+- **R2-05（P3，已修）region 归属校验**：`RevisionLineageStanding` 增加 `region_id`（facts 查询同取），`_code_for` 在 `standing.region_id != region_id` 时按 `LINEAGE_UNVERIFIED` 拒绝（损坏数据防御）；测试构造 FK 合法但归属错误的 lineage 行（binding 经 same_content 可达，仅归属检查能否决）并断言 typed 拒绝。
+- **R2-06/R2-07/R2-08（P3）登记为已知限制/集成限制**（见下 limitation 修订），本轮不扩大范围；**R2-09** 证据卫生：gates-r3.log 已补 shell/解释器/sqlite/venv/OS 头与 worktree 快照，EV-0/EV-1/EV-2 补 sha256 或 commit pin；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
+- **r3 门禁**：fea11 69 passed（基线 62，+7）；全量 pytest 3093 passed / 10 skipped（基线 3073/10；差额含其他 Agent 并发新增测试）；check.ps1 PASS（默认与 `-TaskPath` 本卡均 PASS）；verify_pins 18/18 PASS；本卡 r3 commit 范围内冻结契约/FEA-09/apps 零 diff（gates-r3.log gate 7）；未 push。全量 pytest 后已恢复 tracked `verification/FEA-09` 原字节。
+
+## 读路径行为矩阵（r2/r3 证据摘要；完整矩阵见 gates-r2.log gate 2 / gates-r3.log gate 2）
 
 库形态（升级后的真实混合库）：
 
@@ -97,39 +108,47 @@ allowed_paths:
 |---|---|---|---|---|---|---|
 | managed 页（无 binding） | 跳过 | 全部可见 | 允许（无 lineage） | 放行（进入原渲染路径） | 允许 | 保持预 LINEAGE-1 行为 |
 | referenced 页从未同步切换 | 跳过 | 全部可见 | 允许，登记 native(当前唯一 binding) | 放行 | 允许 | P0 回归保护；不因缺 lineage 拒绝 |
-| 同步页 changed 切断 | 启用 | 过滤旧 region（计数可见） | 拒绝 `LINEAGE_BINDING_CHANGED` | `BLOCKED` 同 code | region-scope 拒绝同 code；page-scope 过滤 | 旧坐标对新图不可见 |
+| 同步页 changed 切断 | 启用 | 过滤旧 region（计数可见） | 拒绝 `LINEAGE_BINDING_CHANGED` | `BLOCKED` 同 code | region-scope 拒绝同 code；page-scope 过滤，执行链 detect 只复用可见集合、全 hidden 时在新图检测（R2-01） | 旧坐标对新图不可见 |
 | 同步页 same_content（可多跳） | 启用 | 可见（沿等价边） | 允许，新 revision native 当前 binding | 放行 | 允许 | 坐标等价，C-17 §7.1 允许 |
 | 同步页缺 lineage 行 / `legacy_unverified` | 启用 | 过滤（计数可见） | 拒绝 `LINEAGE_UNVERIFIED` | `BLOCKED` 同 code | region-scope 拒绝同 code | 不可验证即 fail-closed |
+| 同步页全 hidden + page-scope RERENDER_*/REINPAINT_* | 启用 | 过滤 | n/a | n/a | planner 干净终态（task SKIPPED、run COMPLETED，R2-01） | 无页级 unit → 不会 DB_FAILED/INVALID_INPUT |
 
-错误码投影（旧命令面，非 C-17 §8 重映射）：`LINEAGE_BINDING_CHANGED` / `LINEAGE_UNVERIFIED` → `category=conflict`、`retryable=false`、固定安全文本；命令映射：`list_regions`/`list_page_region_texts`/`list_region_revisions`/`set_region_type`/`restore_region_revision`/`_REGION_WRITE_COMMANDS` 的 dispatch 统一经 `_lineage_error_envelope`；`rerender_page` 经 `RenderCommandError`；Run 命令经 `_dispatch_run_command` 的 `PipelineError` 映射；`drafts_apply` 经 `_DRAFT_ERROR_CATEGORY`；export 文本面因为过滤（不是拒绝）不产生错误码。
+错误码投影（旧命令面，非 C-17 §8 重映射）：`LINEAGE_BINDING_CHANGED` / `LINEAGE_UNVERIFIED` → `category=conflict`、`retryable=false`、固定安全文本；实际会抛 lineage 错误的命令映射：`list_regions`/`list_page_region_texts`（过滤面，显式 region_ids 命中 hidden → `TARGET_NOT_FOUND` + stderr 计数）/`set_region_type`/`restore_region_revision`/`_REGION_WRITE_COMMANDS` 的 dispatch 统一经 `_lineage_error_envelope`；`rerender_page` 经 `RenderCommandError`；Run 命令经 `_dispatch_run_command` 的 `PipelineError` 映射（candidate 提交窗口路由既有 `INPUT_REVISION_CHANGED`）；`drafts_apply` 经 `_DRAFT_ERROR_CATEGORY`；export 文本面为过滤（不产生错误码，有计数日志）。`list_region_revisions` 不读取 lineage、不会抛 lineage 错误（r2 Review P3 指出的表述过宽已更正）。
 
 ## Acceptance Criteria
 
 - [x] **AC1**：region/draft 写路径同事务登记 native lineage（C-17 §7.1）；B1/R1→B2、same_content 边、changed 切断有测试。 <<MET>>
-- [ ] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝；same_content 等价边放行；过滤结果带诊断计数）。 <<PARTIAL: r2 Review：各读面守卫/计数存在且有测试，但 page-scope Run 执行链在 changed/unverified 同步页复用 hidden region → DB_FAILED（R2-01）；draft/batch/render reports 判别性测试缺失（R2-03）；r3 修复后恢复 MET>>
+- [x] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝；same_content 等价边放行；过滤结果带诊断计数）。 <<MET>>
 - [x] **AC3**：AC11-5 隔离证据（旧坐标对新图不可见）与回归测试。 <<MET>>
 
-## limitation 修订（r2）
+## limitation 修订（r2/r3）
 
-- **L1（导出/Run/ListRegions/单区域渲染守卫）**：**部分闭环（r2 Review 判定）**——ListRegions/文本读过滤、export 文本面过滤、单 region rerender typed `BLOCKED`、page render 过滤+reports、Run region-scope 已有实现与证据；但 **page-scope Run 执行链**（R2-01）使「Run 过滤旧坐标 region」只在 expand 层成立、执行层 DB_FAILED；r3 修复后改回「已闭环」。
-- **L2（AC11-5 集成测试）**：**已闭环**——真实 SQLite 仓储 + 装配级集成测试覆盖 native 写入→changed 拒绝 / same_content 放行（多跳）/ 无 lineage typed 诊断 / 回滚无孤儿行 / draft/Run/restore/批量登记。
+- **L1（导出/Run/ListRegions/单区域渲染守卫）**：**已闭环（r3）**——r2 已实现 ListRegions/文本读过滤、export 文本面过滤、单 region rerender typed `BLOCKED`、page render 过滤+reports、Run region-scope 守卫；r3 修复 page-scope Run 执行链（R2-01）：detect 复用只取 lineage 可见集合、全 hidden 在新图检测、全 hidden 的 render/inpaint page 步骤为干净终态、candidate 提交窗口 typed 投影为既有 conflict。无 deferral。
+- **L2（AC11-5 集成测试）**：**已闭环**——真实 SQLite 仓储 + 装配级集成测试覆盖 native 写入→changed 拒绝 / same_content 放行（多跳）/ 无 lineage typed 诊断 / 回滚无孤儿行 / draft/Run/restore/批量登记；r3 补 page-scope Run 执行链判别性测试。
 - **L3（same_content 读边）**：**已闭环**——`SourceSyncLineageFacts.same_content_reachable` 沿 `publication.previous` 只经 `same_content` 边多跳；changed/repoint/missing 切断，测试覆盖。
-- **残余（供 r2 Review 裁决）**：
-  1. reader 投影（`handle_get_reader_projection`）只消费 translated artifact，不读 region 坐标；旧渲染 artifact 的 stale 判定沿用 FEA-11 既有 `rendered_from_revision_id`/`current_source_revision_id` 逻辑，未纳入本卡范围。若 Review 认为 r7 硬约束解除需覆盖 reader 投影，建议另开卡（不阻塞本卡 AC）。
-  2. 非同步页面的「缺 lineage 不拒绝」是按 C-17 §7.1 字面范围的 DSH 裁决结果（见上）；r2 Review 应以此裁决为准复核，而不是据此判 PARTIAL。
-  3. `run_source_guard`（lease/gate）与 lineage guard 是两层独立守卫；本卡只新增 lineage 层。
+- **L4（已知限制，r3 登记，R2-06）**：mixed 页（visible + hidden 并存）的 `reorder_regions` 仍要求 `ordered_region_ids` 等于**全部** live id（含 hidden），UI 不可见 hidden id 时无法重排；`create_region` 的 page cap 也计入 hidden；`list_page_region_texts` 显式 region_ids 命中 hidden 时返回 `TARGET_NOT_FOUND`（与未知/已删不可区分，stderr 有计数）。均非数据安全问题，建议后续卡把 reorder/merge 校验改到可见集合或返回显式 typed 诊断码。
+- **L5（已知限制，r3 登记，R2-07）**：`SqliteTargetCatalog.freeze_context` 仍直接读相邻页全部 region 的 `ocr_text` 作为翻译上下文，未过 lineage guard；仅文本上下文、无坐标产物、不构成 AC11-5 坐标泄漏。建议后续卡按 guard 过滤 context 页或由 DSH 明确 context 不属于「当前区域读」。
+- **L6（集成限制，r3 登记，R2-08）**：Host（`apps/desktop-avalonia/.../HostCommandRegistry.cs` 的 `AllowedRunErrorCodes`）未注册 `LINEAGE_BINDING_CHANGED`/`LINEAGE_UNVERIFIED`，桌面端会把新码投影为 `category=unknown` + generic message（仍 fail-closed、不崩溃），Core 侧 typed 已产生。`apps/**` 不在本卡 allowed_paths；建议后续 Host 窄批登记两码并补 .NET 投影测试（本卡未跑 .NET，见门禁说明）。
+- **L7（残余，r2 保留）**：reader 投影（`handle_get_reader_projection`）只消费 translated artifact，不读 region 坐标；旧渲染 artifact 的 stale 判定沿用 FEA-11 既有 `rendered_from_revision_id`/`current_source_revision_id` 逻辑，未纳入本卡范围。
+- **L8（裁决依据，不是限制）**：非同步页（managed 页 / 从未切换的 referenced 页）缺 lineage 不拒绝，是 DSH r2 裁决 ① 按 C-17 §7.1「本卡涉及的同步页」字面范围的结果；同步页内仍严格 fail-closed。判别证据：`test_mixed_library_scope_matrix_is_diagnosable`（gates-r3.log gate 2）。
+- **L9（分层说明）**：`run_source_guard`（lease/gate）与 lineage guard 是两层独立守卫；本卡只新增 lineage 层。
 
 ## Canonical Evidence
 
 | evidence_id | 内容 | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-0 | r1 门禁日志（r1 head 的 fea11 49/native 9/9/全量 3060/0/10/.NET 见日志；保留原字节） | verification/FEA-11-LINEAGE-1/logs/gates.log | acd3f2263 | - | CANONICAL |
-| EV-1 | r2 门禁日志（fea11/全量 pytest/check/pins/grep/诊断矩阵，含命令/EXIT/head） | verification/FEA-11-LINEAGE-1/logs/gates-r2.log | 791cfef28 | - | CANONICAL |
+| EV-0 | r1 门禁日志（r1 head 的 fea11 49/native 9/9/全量 3060/0/10/.NET 见日志；保留原字节） | verification/FEA-11-LINEAGE-1/logs/gates.log | acd3f2263 | e4861691e820aaf37e8ca6bba9c18a8548ae76d065112ec555ba2f076abdabf9 | CANONICAL |
+| EV-1 | r2 门禁日志（fea11/全量 pytest/check/pins/grep/诊断矩阵，含命令/EXIT/head） | verification/FEA-11-LINEAGE-1/logs/gates-r2.log | 791cfef28 | a2b2aa86d2290890ba8f9ad25bdf36e07483d67202569250c9f79480cb95dfff | CANONICAL |
+| EV-2 | r3 门禁日志（fea11 69/全量 3093/10/check/pins/R2-01/R2-02 判别性输出、shell 头、冻结契约零 diff、worktree 快照） | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 280bb7bd0 | 729ed81edf28f5f618146c7e8517bafcd8b8b56c84ac870b097cd8dd2fa5d4ad | CANONICAL |
 
-## r2 就绪声明
+## r2 / r3 就绪声明
 
-- r2 返修范围（r1 P0-1 写入覆盖 + 存量 backfill、P1-1 same_content 读边、P1-2 typed/入口覆盖、P1-5 真实仓储/装配测试、P2 快速项）已全部实现并有实体证据；AC1/AC2/AC3 均为 MET。
-- **r2 Review 结果（2026-11-05，续）**：changes_requested（P1=1/P2=3/P3=5；AC1/AC3 MET，AC2 改判 PARTIAL）。处置见上「r2 Review 处置计划」；r3 返修完成后需 fresh subagent 复审，之后才可判 done。
+- r2 返修范围（r1 P0-1 写入覆盖 + 存量 backfill、P1-1 same_content 读边、P1-2 typed/入口覆盖、P1-5 真实仓储/装配测试、P2 快速项）已全部实现并有实体证据；r3 后 AC1/AC2/AC3 均为 MET。
+- **r2 Review 结果**：changes_requested（P1=1/P2=3/P3=5；AC1/AC3 MET，AC2 改判 PARTIAL）。
+- **r3 处置声明（2026-11-05）**：R2-01（P1）、R2-02、R2-03 的 4 个判别性测试、R2-05 已在 commit `d8ed04e13`/`6c0ab6594` 修复并有真实 SQLite/装配级证据；R2-04 由 Lead 处置于卡文本；R2-06/R2-07/R2-08/R2-09 按处置计划登记为已知限制/集成限制/closeout 项（见 limitation 修订）；AC2 恢复 MET。
+- **r3 门禁（Python-only，head `6c0ab6594`；日志 EV-2）**：`pytest tests/fea11` 69 passed；`pytest tests` 3093 passed / 10 skipped；`check.ps1`（默认与本卡 `-TaskPath`）PASS；`verify_pins.ps1` 18/18 PASS；本卡 r3 commit 范围冻结契约/FEA-09/apps 零 diff；未 push；全量 pytest 后已恢复 tracked `verification/FEA-09` 原字节。
+- **r3 复审就绪**：请 Lead 指派独立上下文 fresh subagent 做 r3 Review（被审 head：r3 修复 `d8ed04e13` + 测试 `6c0ab6594` + 证据 `280bb7bd0` + 本卡 commit；重点：R2-01 执行链/空集终态、R2-02 candidate 投影语义与「结果留 candidate」判定、R2-03 四测试判别力、R2-05 归属校验、L4-L7 已知限制登记是否充分）。
+- 本实现者**不自审**；`delivery_head`/`canonical_evidence_status` 按集成生命周期由 Lead closeout 填写。
 - 门禁（Python-only）：`pytest tests/fea11` 62 passed；`pytest tests` 3073 passed / 10 skipped（基线 3060/10，新增 13）；`check.ps1` PASS；`verify_pins.ps1` 18/18 PASS；冻结契约零 diff；未 push。
 - 本实现者**不自审**：请求 Lead 指派独立上下文 fresh reviewer 按本卡 + `doc/reviews/FEA-11-LINEAGE-1-r1.md` + r2 DSH 裁决做 r2 Review（重点：P0-1 六条写路径、守卫作用域裁决、typed 入口覆盖、backfill 幂等/不抢占 captured_v7、真实混合库矩阵证据）。
 - 交付 head 与 commit 列表以最终报告为准（本卡 frontmatter `delivery_head` 由 Lead 集成时填写）。
