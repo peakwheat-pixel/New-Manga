@@ -1,0 +1,26 @@
+# FEA-11-HOST-AUTH-1 delivery changed files (base 7ab9eea87..delivery cbd561b4)
+# generated 2026-11-05 by DSH: git diff --name-status 7ab9eea87..cbd561b4
+
+A	apps/desktop-avalonia/src/NewManga.CoreClient/Commands/CanonicalJson.cs
+A	apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs
+M	apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+A	apps/desktop-avalonia/src/NewManga.Host/Sources/HostErrorCodes.cs
+A	apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
+A	apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CanonicalJsonTests.cs
+A	apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/HostAuthorizationMinterTests.cs
+A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceOperationTests.cs
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+M	doc/TASK_LEDGER.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r1.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r2.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r3.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r4.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r5.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r6.md
+A	doc/reviews/FEA-11-HOST-AUTH-1-r7.md
+M	doc/tasks/FEA-11-HOST-AUTH-1.md
+A	verification/FEA-11-HOST-AUTH-1/logs/gates.log

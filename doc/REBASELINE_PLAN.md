@@ -11,8 +11,8 @@
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
 |FEA-11-SCAN-1|FEA-11-PREREQ-1|**ready**（2026-11-05 用户授权；AC11-1 定时/watcher 承接）|
-|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**in_progress**（r8 approved；用户 2026-11-05 交 Codex 终态裁决，待 closeout）||
-|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**in_review**（r1 changes→r2 返修中；完成前禁止 UI/读路径消费同步 binding）||
+|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
+|FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**in_review**（r2 返修完成；fresh Reviewer 审查中；完成前禁止 UI/读路径消费同步 binding）||
 |FEA-12-PREREQ-1|—|**ready**（scope 冻结 ADJ-2026-11-05；M2-C1 rev 2.13 + Host 投影）||
 |FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**proposed**（A 软删/恢复 + C 彻底删除；AC 随 PREREQ-1 冻结）||
 |FEA-12-DSIM-1|—|**proposed**（D 仅模拟切片，无真实 OS API）；FEA-12-UI 待 scope||
@@ -46,9 +46,9 @@
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
 本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
 
-READY 节点：FEA-12-PREREQ-1
+READY 节点：无
 
-完成：FEA-10 done；FEA-11-PREREQ-1 done（C-17 FROZEN）；FEA-11 closed_with_limitations（2026-11-05）；FEA-12 scope 冻结（ADJ-2026-11-05）。
+完成：FEA-10 done；FEA-11-PREREQ-1 done（C-17 FROZEN）；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 scope 冻结（ADJ-2026-11-05）。
 
 当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（ready）→ FEA-12-PREREQ-1（ready）→ FEA-12-CORE/DSIM-1（proposed）
 

@@ -3,20 +3,20 @@ id: FEA-11-HOST-AUTH-1
 title: FEA-11 Host durable authorization 自签与编排（C-17 §5.2 续）
 kind: implementation
 governance_version: 3
-status: in_progress
-approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记
+status: closed_with_limitations
+approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记；终态由用户 2026-11-05 委托 Codex 裁决（DECISION A）
 suggested_owner: codex
-owner: dsh（2026-11-05 用户授权启动）
-reviewer: 独立上下文 fresh subagent（r1–r8；报告 doc/reviews/FEA-11-HOST-AUTH-1-r1.md…-r8.md）
+owner: dsh（2026-11-05 用户授权启动；实施 DSH/Team）
+reviewer: 独立上下文 fresh subagent（r1–r8；报告 doc/reviews/FEA-11-HOST-AUTH-1-r1.md…-r8.md）；终态裁决 Codex（`doc/reviews/FEA-11-HOST-AUTH-1-codex-adjudication-2026-11-05.md`）
 depends_on:
   - FEA-11-PREREQ-1
 base_commit: 7ab9eea87
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: cbd561b432f73bce3308d68366f79f408cee000a
+delivery_head: cbd561b432f73bce3308d68366f79f408cee000a
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-HOST-AUTH-1
 allowed_paths:
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/CanonicalJson.cs
@@ -85,4 +85,50 @@ allowed_paths:
 - [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 5/5，含 non-BMP）。 <<MET>>
 - [x] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest（`HostAuthorizationMinter` + 单测 6/6：六字段/排序/canonical digest/唯一性/固定向量/格式拒绝；注入在 HostRuntime 实现）。 <<MET>>
 - [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序+失败语义+retry 由 HostOperationOrchestrator 保证，`Fea11HostAuthTests` 24/24（19 方法）（顺序探针/typed 失败/failed+error_code/歧义/retry fresh auth/kind 守卫/capability 门）；完整 HostRuntime→Core e2e 与 ACK 重发/崩溃点矩阵待补（FEA-11 L-8/L-9 limitation）>>
-- [ ] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<PARTIAL: `doc/reviews/FEA-11-r3.md:38` 已接受本卡为 P0-1 闭合路径；P0-1 实际闭合取决于 AC1–AC3，r7 changes_requested；r8 approved（待用户裁决 closed_with_limitations）>>
+- [x] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<MET>>
+  - r8 窄口径：`doc/reviews/FEA-11-r3.md:38` 已接受本卡为 P0-1 闭合路径，故按「MET（路径层）」记录；这不宣称 P0-1 的全部技术工作完成（AC3 仍 PARTIAL，见 r8 与 10 项 limitation）。
+
+## 终态裁决（Codex，2026-11-05；用户当日委托）
+
+- **DECISION: A — 接受 `closed_with_limitations` 收口**；不宣称技术完成，不进入 READY DAG。裁决原文（原字节）：`doc/reviews/FEA-11-HOST-AUTH-1-codex-adjudication-2026-11-05.md`。
+- 依据：r8 approved（P0/P1/P2=0）；AC3 PARTIAL、AC4 MET（路径层）；`doc/09_COLLABORATION.md:79` 要求用户明确裁决（用户 2026-11-05 委托 Codex 裁决）。
+- **保留 r8 十项 limitation 原文与顺序，不改写为 PASS**；AC3 保持 `PARTIAL`。
+- **附注（Codex 要求，不改写原十项）**：ACK/recovery 当前从 journal 读取原 authorization（`SourceOperationCoordinator.cs` 的 ACK/recovery 路径），C-17 要求 ACK/recovery 使用 fresh grant/authorization；Core 侧 `_verify_fresh` 仍有摘要/基线/identity/live grants 校验，未见 P0/P1 绕过。该行为缺口**映射到 limitation 1/2/5/10**（Host 流程完整性/矩阵缺失/receipt 核对/证据残留）；真正闭合需新授权卡。
+- R8-P3 逐项复核：R8-P3-01/02/05 已在 `81c28d30` 修正（卡面历史状态、reviewer r1–r8、STATUS/PLAN 指针、矛盾句）；R8-P3-04（R7-P2-01 用例 2 判别力）保留为 limitation 10；R8-P3-03（gates.log 计数/命令/EXIT/provenance）已在 `verification/FEA-11-HOST-AUTH-1/EV.md` 与 gates.log closure 记录中区分 r6=105 与 r8=107、全量 .NET 1395 来源、IPC 首跑 2/3 flake 与复跑。
+- 与 `Deferral 登记表`/`已知限制` 的关系：原 P2-7 类内部限制（ACK fresh 授权等）与 r8 的 P2=0 分开记录，不互相删除或改写。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-AC1-CANON | AC1 | apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CanonicalJsonTests.cs | cbd561b4 | - | CANONICAL |
+| EV-AC2-MINTER | AC2 | apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/HostAuthorizationMinterTests.cs | cbd561b4 | - | CANONICAL |
+| EV-AC3-HOSTAUTH | AC3 | apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs | cbd561b4 | - | CANONICAL |
+| EV-AC4-R3 | AC4 | doc/reviews/FEA-11-r3.md | cbd561b4 | - | CANONICAL |
+| EV-R8-REVIEW | 最终独立复审 | doc/reviews/FEA-11-HOST-AUTH-1-r8.md | 81c28d30 | - | CANONICAL |
+| EV-CODEX-ADJ | 终态裁决 | doc/reviews/FEA-11-HOST-AUTH-1-codex-adjudication-2026-11-05.md | pending | 009770a3dcdc903c49786eafedd2257c139a2f68a4f221807ae93295a71fbb3a | CANONICAL |
+| EV-GATES | 门禁 | verification/FEA-11-HOST-AUTH-1/logs/gates.log | pending | 2a46007165fc95fead9711ae3aaa4dbebe63360bfe19eafcc554039026446479 | CANONICAL |
+| EV-CHANGED | 交付清单 | verification/FEA-11-HOST-AUTH-1/changed-files.txt | pending | f9133156ef45f4ebeb2c413a5c6cdceb6fd092e3a84b4724f975bb5f42e74015 | CANONICAL |
+
+> 证据索引与口径：`verification/FEA-11-HOST-AUTH-1/EV.md`；交付清单 23 files；`RESOURCE-MANIFEST.md`、`DELIVERY-MANIFEST.md` 同目录。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| evidence | verification/FEA-11-HOST-AUTH-1 | PRESERVE_REFERENCED | verification/FEA-11-HOST-AUTH-1 | verification/FEA-11-HOST-AUTH-1/EV.md | 当前 Task/EV/DELIVERY 引用；原位保留不清理 |
+| 代码/测试 | apps/desktop-avalonia | PRESERVE_REFERENCED | apps/desktop-avalonia | verification/FEA-11-HOST-AUTH-1/changed-files.txt | 已集成 main（delivery `cbd561b4`）；不回滚 |
+| worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 无 worktree 删除/prune |
+| artifact/temp/agent-output/exchange/dataset | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无本任务专属资源；无仓外临时 DB/fixture |
+
+## Closeout Record
+
+- Closeout date / DSH：2026-11-05 / DSH（Lead/Architect/Integrator）。
+- 终态：`closed_with_limitations`（裁决人 Codex；用户 2026-11-05 委托；DECISION A）。
+- 替代依据：r8 approved（P0/P1/P2=0，P3=5）+ 10 项 limitation + AC3 PARTIAL；`doc/09_COLLABORATION.md:79`；裁决文件见上。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- 证据定稿：`EV.md`、`RESOURCE-MANIFEST.md`、`DELIVERY-MANIFEST.md`、`changed-files.txt`、`logs/gates.log`（含 closure 记录与 provenance）。
+- 未完成 AC/Finding 原始状态：AC3 `PARTIAL`（不改为 PASS）；limitation 10 项原文保留；Deferral 表原样保留。
+- 删除、迁移、归档数量/字节数：0（无 DELETE_SAFE）。
+- 当前指针清理：STATUS/Plan/TASK_LEDGER 已更新；本卡为终态、不得进入 READY DAG；worker worktree 无（main 实施）。
+- 后续：ACK/recovery fresh authorization、HostRuntime e2e、ACK 重发/崩溃点矩阵等仅在**新授权**下另开卡。
