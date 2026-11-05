@@ -3,20 +3,20 @@ id: FEA-12-DSIM-1
 title: FEA-12 D 流程模拟切片（可注入原文件回收适配器 + SimulatedRecycleBin，无真实 OS API）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 
-approval: 用户 2026-11-05 口径（隔离 fixture + 模拟回收站路径，不触碰真实回收站）；ADJ-2026-11-05-FEA-12-SCOPE D5；DSH 2026-11-05 释放
+approval: 用户 2026-11-05 口径（隔离 fixture + 模拟回收站路径，不触碰真实回收站）；ADJ-2026-11-05-FEA-12-SCOPE D5；DSH 2026-11-05 释放；r1 approved（P0/P1=0，P2=2）→ r2 返修 → **r2 Review approved（P0/P1/P2=0，P3=3 非阻断）→ DSH 集成 closeout**
 suggested_owner: dsh（dsh-agent-team teammate）
 owner: dsh-agent-team teammate `fea12-dsim-impl`
-reviewer: 独立上下文 fresh subagent（未参与实现；会话 id 记录在 Review 报告）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-DSIM-1-r1.md` session `fc7ffec8-b24b-418a-82f7-dcc99cb2a7dc`；r2 `doc/reviews/FEA-12-DSIM-1-r2.md` session `a39295f9-012b-401d-b35e-864c4c481d00`）
 depends_on: []
 base_commit: 37f84bb895c9ef9b64e3865f3a92b245f2e28a7c   # 释放时由 Lead 固定
 branch: main
 worktree: G:\CODEX\New Manga（main 主工作树；未新建分支/worktree）
-integration_commit: null
-delivery_head: d5925957b
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: beee351bb
+delivery_head: beee351bb
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-DSIM-1
 allowed_paths:
   - doc/tasks/FEA-12-DSIM-1.md
@@ -55,10 +55,10 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 协议与生产默认实现**：`OriginalFileRecycleGateway` 协议 + typed 结果；生产默认实现 fail-closed、零文件操作；无 Host/UI 接线。 <<MET>>
-- [x] **AC2 模拟实现（r2 收窄表述）**：`SimulatedRecycleBin` 全部操作限制在**调用者提供的干净隔离根**内；自身写目标（bin/manifest/journal）构造期与每次读写前拒绝 junction/symlink/hardlink（typed 安全错误、零写入）；manifest 可审计；不调用任何 Windows API。**不再声称"任何情况下全部写入都在隔离根内"**：校验与写入之间的并发重植窗口（TOCTOU）未消除，属单写者测试替身残余风险。 <<MET>>
+- [x] **AC2 模拟实现（r2 收窄表述；P3 措辞修正）**：`SimulatedRecycleBin` 全部操作限制在**调用者提供的干净隔离根**内；自身写目标（bin/manifest/journal）构造期与每次读写前拒绝 junction/symlink/hardlink（typed 安全错误，**根外零写入**；拒绝前可能已在根内写 1 条 journal attempt——r2 Review P3① 实证，不涉及根外）；manifest 可审计；不调用任何 Windows API。**不再声称"任何情况下全部写入都在隔离根内"**：校验与写入之间的并发重植窗口（TOCTOU）未消除，属单写者测试替身残余风险。 <<MET>>
 - [x] **AC3 失败语义**：失败注入下原文件字节/集合不变、结果逐项 typed、零永久删除/零 DB 删除；"D 失败不得降级 C"有测试。 <<MET>>
 - [x] **AC4 隔离与禁令**：静态扫描 0 处 Windows 回收站 API；运行时哨兵证明隔离根外零变化；测试无 `%APPDATA%`/真实盘符/真实回收站路径。 <<MET>>
-- [x] **AC5 交付件与门禁**：Task/Handoff/`verification/FEA-12-DSIM-1/`（隔离与扫描日志）；`check.ps1` PASS、`verify_pins.ps1` 18/18、pytest 全量与 .NET 基线记录（无 Python 生产路径接线，.NET 应零差异）。 <<MET>>
+- [x] **AC5 交付件与门禁（基线口径 r2 Review 澄清）**：Task/Handoff/`verification/FEA-12-DSIM-1/`（隔离与扫描日志）；`check.ps1` PASS、`verify_pins.ps1` 18/18；**全量 pytest 基线**：r1 交付时点 3093/10、r2 复跑 **3101/10**（+8 r2 测试）；**全量 .NET**：稳定树 **1403/0/79**（r1 交付），r2 尝试 1 failed/670/7 已按实测 diff 归因（并发 verification 写入窗口）；.NET 对 DSIM 业务代码零差异。 <<MET>>
 
 ## 允许修改范围
 
@@ -114,6 +114,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。本卡�
 | EV-18 | AC4（哨兵探针） | verification/FEA-12-DSIM-1/tools/sentinel-probe.py | - | b27f8b5b44ace71293e3f64fc95bbf689dce802659ffa4b2da0550ce12942be8 | SOURCE_PIN |
 | EV-19 | AC5（R-002 处置/仓外过程日志 manifest） | verification/FEA-12-DSIM-1/agent-output-manifest.json | - | 925a2a6147633784a239943ec97ef21ff2cb09f88b4a5c5b4fafa7f7a5694c14 | SOURCE_PIN |
 | EV-20 | AC5（.NET r2 尝试 flaky 归因） | verification/FEA-12-DSIM-1/logs/dotnet-r2-1.log | - | 01538fa854aab411d94c89bc9a7068c70373d6d9ac477b24085cac7a78891b53 | SOURCE_PIN |
+| EV-21 | Gate/Review（r2 独立复审 approved） | doc/reviews/FEA-12-DSIM-1-r2.md | - | 5b54947b8a9aafa30920275aedb04cdc79ea9904e05281d941fa4055c2c79f0e | CANONICAL |
 
 ## Resource Manifest
 
@@ -124,8 +125,13 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。本卡�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 未关闭项及保留原因：真实 D 流程（OS 回收站）NOT_RUN，待用户专门授权。
-- 当前指针清理：待关闭时填写。
+- Closeout date / DSH：2026-11-05 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；integration_commit / delivery_head = `beee351bb`（r2 docs head，含 `d5925957b` 修复；main 线性集成，无 merge commit）。
+- Review 链：r1 approved（P0/P1=0；P2=2/P3=7）→ r2 最小返修 → **r2 approved（P0/P1/P2=0，P3=3 非阻断）**；Reviewer 均为独立上下文 fresh subagent（session 见 frontmatter/报告）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`。
+- AC 定稿：AC1 MET、AC2 MET（限定：调用者干净隔离根 + 自身写目标拒绝 reparse/hardlink；TOCTOU 未消除）、AC3 MET、AC4 MET、AC5 MET。
+- 残余风险（已登记）：①真实 D 流程（Windows 回收站桥）**NOT_RUN**，生产默认 typed 不可用，需用户另行专门授权；②TOCTOU 并发重植窗口未消除（单写者测试替身；真实桥需绑定句柄）；③manifest 写失败/崩溃恢复未实现（属真实桥）；④manifest 写失败/损坏、journal 目录/符号链接等残余用例未覆盖；⑤.NET 全量首跑 flaky 为既有 verification 并发写窗口债务（本卡未改 .NET）。
+- r2 Review P3 处置：AC2「零写入」措辞已改为「根外零写入 + 根内 journal attempt 说明」；AC5 基线/复跑口径已澄清；Handoff 中旧门禁数字（2 warnings/15 Task、--tb=no）为历史快照，以本卡 Closeout 与 `verification/FEA-12-DSIM-1/` 证据为准（不改写 Handoff 原字节）。
+- 删除、迁移、归档数量/字节数：r2 将 `gates.log`/`check-final.log` 从 evidence_dir 迁至 workspace agent-output（3 files，manifest 见 EV-19）；无仓外 temp 残留。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。
+- 后续：真实 D 流程需用户专门授权后另开卡；模拟件作为 test double 保留。
