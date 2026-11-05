@@ -15,13 +15,17 @@
 
 # M2-C1 — Typed IPC Contract
 
+> **rev 2.13（2026-11-05，FEA-12-PREREQ-1 / 删除与回收站 wire 注册）**：按 C-04b `:99` 与 C-09 `:110-129` 的「实现前独立字节修订」要求，**additive** 登记删除影响清单只读预览 `PreviewPermanentDeleteBooks`（目标 wire minor **11**）、单/批量永久删除的 `inventory_digest`/`inventory_digests` 两级确认绑定（既有命令 per-command minor 保持 **10**）、回收站命令面 `MoveToTrash`/`RestoreFromTrash`/`ListTrash`/`PurgeTrash`（目标 wire minor **13**，独立 family）、5 个新错误码及 Host 投影白名单、3 个 capability 名，以及 §11 对账与 §12 释放边界。**本卡只做文档注册与 Host 投影/白名单/负向对照**：不改变 Core `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、不改变既有命令 per-command minor、不实现任何 Core handler/runtime、不授予 `src/**` 实现；既有命令、结果、错误、状态与事件语义零改动。C-04b/C-09/C-13/C-14/C-17/ADJ-001 字节与 18 pins 全部不变。
+
 > **rev 2.12（2026-11-04，FEA-10-PREREQ-1 / C-08 块②）**：仅增量登记 §5.5 `PrepareRun` / `AcceptRun` 请求与结果、三个 C-08 错误码、§8 Proposed（未观察）与证据/taxonomy 例外，以及 Host `allowedRunErrorCodes` 投影。C-08 §3 已批准新命令目标 wire **2.12**（major 2 / minor 12）；文档 rev 与 Core 运行常量分离，**本卡不提升 `PROTOCOL_MINOR` 或客户端默认 minor，不实现新命令**。既有命令、结果、错误、状态与事件语义零改动。
 
 **前次修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
 
-状态：文档 rev `2.12`；**Core protocol 仍为 major `2` / minor `3`**（本修订未提升协议版本）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
+状态：文档 rev `2.13`；**Core protocol 仍为 major `2` / minor `3`**（本修订未提升协议版本；rev 2.13 只 additive 登记删除预览/回收站命令面与 5 个新码的目标 wire）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 
 ## Revision history
+
+- `2.13`（FEA-12-PREREQ-1，2026-11-05）：按 C-04b `:99` / C-09 `:110-129` 的实现前置要求，additive 登记删除影响清单只读预览 `PreviewPermanentDeleteBooks`（目标 wire 2.11）、单/批量永久删除的 `inventory_digest`/`inventory_digests` 两级确认绑定（既有命令 per-command minor 保持 10）、回收站命令面 `MoveToTrash`/`RestoreFromTrash`/`ListTrash`/`PurgeTrash`（目标 wire 2.13）、5 个新错误码（`BOOK_DELETE_STALE_PREVIEW`、`BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`、`TRASH_ENTRY_NOT_FOUND`、`TRASH_RESTORE_CONFLICT`、`TRASH_RESTORE_LAYER_MISMATCH`）与 Host 投影白名单、3 个 capability 名、§11 对账、§12 释放边界。**只做契约注册与 Host 投影**：不实现 Core handler、不提升 `PROTOCOL_MINOR`（仍 3）、不改既有命令/结果/错误/状态/事件语义；运行实现由 FEA-12-CORE 后续释放。
 
 - `2.12`（FEA-10-PREREQ-1，2026-11-04）：按 C-08 冻结记录 §3 登记目标 wire 2.12、§5.5 两命令与 PreparedRun DTO、三错误码、§8 未观察与两个局部例外；Host 白名单与负向对照属本卡。Core dispatch、候选存储、接受事务及运行兼容验证归 FEA-10；不改变运行协议版本或既有 wire。
 
@@ -125,6 +129,8 @@ Event<T> = {
 
 - FEA-10-PREREQ-1 / C-08 块②登记 `PrepareRun` / `AcceptRun` 的目标 **wire 2.12（major 2 / minor 12，DSH 已批准）**，仅 additive 命令与错误字符串。文档 rev 2.12 不等于 Core `PROTOCOL_MINOR=12`：本卡不改变当前 Core `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`，不改变客户端 `CoreProtocol.DefaultMinor=3`、既有命令 per-command minor 或发送行为；新增命令尚无可执行 registry 路由。运行版本启用、Core dispatch 与配对兼容回归须由 DSH 在 FEA-10 明确释放。
 
+- FEA-12-PREREQ-1 / C-04b + C-09 块登记删除/回收站目标 wire：只读预览 `PreviewPermanentDeleteBooks` 目标 **minor 11**（C-04b `:47`）；回收站命令面 `MoveToTrash` / `RestoreFromTrash` / `ListTrash` / `PurgeTrash` 目标 **minor 13**（独立 family，C-09 SC-B06）；既有 `PermanentlyDeleteBook` / `PermanentlyDeleteBooks` 的 per-command minor 保持 **10**（`inventory_digest` / `inventory_digests` 为 additive 字段，见 §5.11.1a；旧 Host 不传时由新 Core fail-closed `INVALID_REQUEST`，不得忽略 digest 继续删除或降级软删）。文档 rev 2.13 不等于 Core 运行常量：本卡不改变 `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、不改变客户端默认 minor 或既有命令发送行为；新增命令尚无可执行 Core handler/registry 路由，运行版本启用由 DSH 在 FEA-12-CORE 释放。冻结（旧）Core 对未知命令返回 typed `UNKNOWN_COMMAND`（属 §5.11.3 允许的 fail-closed 面），不得静默丢弃。
+
 - `major` 不同必须在执行命令前拒绝，返回 `PROTOCOL_VERSION_UNSUPPORTED`；不得猜测兼容。
 - 同 major 下 minor 可向前增加可选字段和新 command/event；接收端忽略未知可选字段，但未知 command/event/status 必须显式返回/保留 `UNKNOWN`，不能重解释成其他状态。
 - 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。**例外**：经授权 Task 在 Revision history 登记的 nullability widening（`T → T | null`）不升 major，现仅有 §5 `ListBooks` 的 `BookSummary.page_count`（`1.2` 修订，[M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)）；1.1 版消费者遇 `null` 属该登记修订的授权破坏面。
@@ -154,6 +160,11 @@ Event<T> = {
 |---|---|---|
 | `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
 | `ListRecycleBinBooks` | `{}` → `BookSummary[]` | **2.11 FROZEN**：只返回 `deleted_at IS NOT NULL` 的软删除作品；结果与 `ListBooks` 使用相同的冻结 `BookSummary` 投影。production-only Tauri command 为 `library_list_recycle_bin_books`；查询语义、错误及消费端约束见 §5.12。 |
+| `PreviewPermanentDeleteBooks` | `{bookIds: BookId[1..20]}` → `{inventoryDigest: string, inventoryDigests: {[bookId]: string}, computedAt: Timestamp, items: DeletePreviewItem[]}` | **2.13 REGISTERED（目标 wire minor 11，运行未实现）**：删除影响清单只读预览（PD-01/PD-03），零副作用；请求字段 `bookIds` 的 camelCase 是 C-04b `:41` 冻结字节（见 §5.13）。DTO 与 digest 算法见 §5.13。 |
+| `MoveToTrash` | `{entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey}` → `{moved: TrashEntryRef[], skipped: TrashSkipItem[]}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：作品级软删命令面（C-09 SC-B06）；只改 `deleted_at`，不触文件；见 §5.14。 |
+| `RestoreFromTrash` | `{entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey}` → `{restored: TrashEntryRef[], conflicts: TrashConflictItem[]}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：只清 `deleted_at`，逐项冲突不整批失败；见 §5.14。 |
+| `ListTrash` | `{cursor?: OpaqueId, limit?: integer}` → `{items: TrashEntryInfo[], nextCursor?: OpaqueId}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：回收站条目读取面；与 rev 2.11 冻结的 `ListRecycleBinBooks` 并存，不冲突；见 §5.14。 |
+| `PurgeTrash` | `{entries: TrashEntryRef[1..N], confirm: true, idempotency_key: IdempotencyKey}` → 委托 C-04b 永久删除结果 | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：**不是新删除路径**，委托 `PreviewPermanentDeleteBooks` + `PermanentlyDeleteBooks`；首版 CORE 不实现（digest 绑定方式待 DSH additive 裁决）；见 §5.14。 |
 | `CreateBook` | `{title: string}` → `BookSummary` | **2.8 FROZEN**：Core wire、校验、错误、当前书架归属与安全投影见 §5.10；Tauri `library_create_book` production-only。原 proposal 的 `original_title?` 不属于冻结请求。 |
 | `DeleteBook` | `{book_id}` → `Unit` | 仍为 PROPOSAL；删除需 Core 检查关联和保留规则。 |
 | `PermanentlyDeleteBook` | `{book_id: BookId, confirm_permanent_delete: true}` → `{book_id: BookId, deleted: true}` | **2.10 FROZEN（rev 2.9 单条请求原样保留）**：项目级不可逆删除；请求、活动任务冲突、源文件隔离、managed cleanup 与安全错误投影见 §5.11。不得解释为 `DeleteBook` / `delete_book` 的软删除，也不得通过既有命令模拟。 |
@@ -771,6 +782,35 @@ PermanentlyDeleteBooks Request = {
 
 UI 入口只在回收站提供，书架不显示该操作。用户先勾选目标，再查看包含作品身份、数量、删除范围、导出文件保留以及“不会清理全库历史备份（旧备份可能保留删除前数据）”的第二次确认；必须勾选明确的不可逆确认后才能提交。host 将勾选后的同一有序 ID 列表同时写入 `book_ids` 与 `confirmed_book_ids`，并填写相同数量，防止确认后目标集合或数量被替换。确认字段是 Core 硬门，按钮状态不能替代。协议不接收路径、表名、删除策略或用户输入文件名；结果不返回路径、磁盘位置或 Core 领域对象。
 
+#### 5.11.1a rev 2.13 additive：`inventory_digest` 专门确认绑定（文档登记，运行未实现）
+
+§5.11.1 的请求形状、字段语义与既有 per-command wire minor（10）**保持原样**；rev 2.13 只在其上**追加**（additive）下列字段与两级校验（依据 ADJ-001 PD-02/PD-04、C-04b §2.0/§2.2）：
+
+```text
+PermanentlyDeleteBookPayload（rev 2.13 追加） = {
+  book_id: BookId,
+  confirm_permanent_delete: true,
+  inventory_digest: string             # sha256:<64 lowercase hex>；必填
+}
+
+PermanentlyDeleteBooksPayload（rev 2.13 追加） = {
+  book_ids: BookId[1..20],
+  confirmed_book_ids: BookId[1..20],
+  confirm_count: integer,
+  confirm_permanent_delete: true,
+  inventory_digest: string,                    # 集合级：绑定有序 book_ids（PD-02）
+  inventory_digests: { [book_id]: string }     # 逐书 map；与集合级字段都必填、都校验
+}
+```
+
+- **来源**：digest 只能由 §5.13 `PreviewPermanentDeleteBooks` 的 Core 权威结果取得；单条命令回传该 `book_id` 的**逐书 digest**，批量命令同时回传**集合级 digest**与**逐书 map**。UI 不得自行估算、拼接或缓存替代；不得用单一 `inventory_digest` 字段同时服务两种命令形状。
+- **校验顺序（两级，零副作用）**：① **集合级**——`inventory_digests` 的键集合与顺序必须与预览时的 `book_ids` 完全一致；② **逐书**——每个 `book_id` 的逐书 digest 必须与预览值匹配。任一失败 → `BOOK_DELETE_STALE_PREVIEW`（`conflict`/`retryable=false`），批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 在 items 中标注），DB/文件零改动。
+- **缺失/类型错/格式错**：任一 digest 字段缺失、非字符串或非 `sha256:<64 lowercase hex>` → `INVALID_REQUEST`（`validation`/`retryable=false`），不进入预检。
+- **单条命令**继续拒收 `book_ids` / `confirmed_book_ids` / `confirm_count` / `inventory_digests`（closed shape 不变）；`confirm_permanent_delete: true` 语义不变。
+- **有效期**：一次预览 → 一次确认之间有效；目标集合、保护集合或文件清单任一变化即失效，须重新预览（PD-04）。`*_CLEANUP_PENDING` 的显式重试（§5.11.2 第 4 步）只针对 pending IDs/manifest，不要求重跑预览。
+- **兼容**：digest 是追加**必填**字段；旧 Host 不传 → 新 Core `INVALID_REQUEST`（fail-closed），**不得**忽略 digest 继续删除、不得回退软删除。反向（新 Host → 旧 Core）时，旧 Core 对追加字段的 closed-shape 校验会返回 `INVALID_REQUEST`（fail-closed，不会忽略 digest 继续删除）；实测见 `verification/FEA-12-PREREQ-1/logs/`。
+- **Host 投影归属（本卡）**：Host 只做 additive 透传——调用方提供 `inventory_digest` / `inventory_digests` 时按类型校验后原样转发，不生成、不补全、不替代 Core 校验；既有 delete 命令的 dispatch 路径不重写。
+
 #### 5.11.2 校验、预检、原子性与重试
 
 `ErrorEnvelope` 继续使用 §8 的字段结构；新增 `code` 均是 string 字面值，不建立全局 enum。失败时 `result=null`。所有错误不得含本地路径、源文件名、Secret、异常栈、任意 SQLite 详情或原始 Core stderr。
@@ -803,8 +843,12 @@ UI 入口只在回收站提供，书架不显示该操作。用户先勾选目�
 | 批量 DB 已提交但一个或多个 Book 文件仍待清理 | `BOOK_DELETE_BATCH_CLEANUP_PENDING` / `internal` / `retryable=true` | 逐项报告完成/待清理；错误无路径；仅可显式重试 pending IDs。 |
 | protocol major 不受支持 / 旧 Core 不识别相应 command | `PROTOCOL_VERSION_UNSUPPORTED` / `validation` / `retryable=false`；或 `UNKNOWN` / `unknown` / `retryable=unknown` | dispatch 前拒绝或 fail-closed；无副作用；不得回退软删除。 |
 | Tauri ACL 拒绝 / Core channel 不可用 | Tauri framework rejection；或既有 host-level `CORE_UNAVAILABLE` | handler/Core 不执行或无副作用；不得回退软删除。 |
+| 删除确认的 digest 缺失、非字符串或 `sha256:` 格式错（§5.11.1a） | `INVALID_REQUEST` / `validation` / `retryable=false` | dispatch/预检前拒绝；无 DB/文件改动；不得降级软删除。 |
+| 删除确认的 digest 与当前预览不匹配（目标/保护集合/文件清单已变化；§5.11.1a） | `BOOK_DELETE_STALE_PREVIEW` / `conflict` / `retryable=false` | 两级校验任一失败即零副作用；须重新调用 §5.13 预览。批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 标注）。 |
 
 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED` 安全详情只包含 `{phase: "preflight", requested_count, completed_count: 0, items: BookDeleteBatchItem[]}`；`BOOK_DELETE_BATCH_CLEANUP_PENDING` 只包含 `{phase: "cleanup", requested_count, completed_count, items: BookDeleteBatchItem[]}`。除这些白名单字段外，Tauri 不转发 Core `message/details`、路径或原始 stderr。每个 `item.error_code` 只接受上表列出的稳定码。
+
+**rev 2.13 additive**：`items[].error_code` 白名单同步包含 `BOOK_DELETE_STALE_PREVIEW` 与 `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`（Tauri/host 投影只重构造 §5.11.3 表内稳定码，不转发任意 `code`/`message`/`details`；未注册码在 Host 投影层降级为 `category=unknown` 且保留原 `code` 原文，见 §5.13 客户端归属）。
 
 #### 5.11.4 删除与保留的数据/文件边界
 
@@ -827,6 +871,7 @@ PermanentlyDeleteBookErrorView = {
   code: INVALID_REQUEST | BOOK_NOT_FOUND | BOOK_BUSY | UNKNOWN |
         BOOK_DELETE_CONFLICT | BOOK_DELETE_FAILED |
         BOOK_DELETE_CLEANUP_PENDING | PROTOCOL_VERSION_UNSUPPORTED |
+        BOOK_DELETE_STALE_PREVIEW | BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE |
         CORE_UNAVAILABLE,
   category: validation | not_found | conflict | unavailable | internal,
   retryable: true | false | unknown
@@ -836,6 +881,7 @@ PermanentlyDeleteBooksErrorView = {
   code: INVALID_REQUEST | DUPLICATE_BOOK_ID |
         BOOK_DELETE_BATCH_LIMIT_EXCEEDED | BOOK_DELETE_BATCH_WHOLE_LIBRARY |
         BOOK_DELETE_BATCH_PREFLIGHT_FAILED | BOOK_DELETE_BATCH_CLEANUP_PENDING |
+        BOOK_DELETE_STALE_PREVIEW | BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE |
         BOOK_DELETE_FAILED | UNKNOWN | PROTOCOL_VERSION_UNSUPPORTED | CORE_UNAVAILABLE,
   category: validation | conflict | unavailable | internal | unknown,
   retryable: true | false | unknown,
@@ -861,6 +907,120 @@ PermanentlyDeleteBooksErrorView = {
 - **生产注册：** `library_list_recycle_bin_books` 必须同步出现在 `PRODUCTION_COMMANDS`、`generate_handler!` 与命令名白名单中。
 - **消费端语义：** 成功返回 `[]` 表示没有软删除作品；查询失败仍是失败。消费方必须区分这两种状态，不得把失败静默显示为空回收站。
 - **边界：** 此命令只读，不改变软删除写入语义；request/result 不包含文件路径。
+
+
+### 5.13 `PreviewPermanentDeleteBooks` — 删除影响清单只读预览（C-04b §2.1，rev 2.13，目标 wire 2.11）
+
+本节 additive 登记 C-04b `:36-:47` 已冻结的只读预览协议；**只登记 wire，不实现 Core handler**（运行实现归 FEA-12-CORE）。目标 wire **minor 11**（C-04b `:47`）；文档 rev 2.13 与运行常量分离（本卡不改 `PROTOCOL_MINOR=3`）。
+
+- **Core command**：`PreviewPermanentDeleteBooks`，Host → Core，只读。
+- **生产 host command 名（本卡 additive 注册，runtime 未实现）**：`library_preview_permanent_delete_books`。
+- **请求（closed shape；未知字段 fail-closed）**：
+
+```text
+PreviewPermanentDeleteBooksPayload = {
+  bookIds: BookId[1..20]     # 非空、去重、上限 20；camelCase 为 C-04b :41 冻结字节
+}
+```
+
+  `bookIds` 使用 camelCase **不是笔误**：C-04b `:41` 的冻结入参就是 `bookIds`（其 §2.0 的删除命令请求仍是 snake_case `book_id` / `book_ids`）；本条按冻结来源登记，后续任务不得"统一"改回 snake_case。非空、去重、上限 20；重复/空/超限/ID 非字符串 → `INVALID_REQUEST`（`validation`/`false`），零副作用。
+- **结果（closed shape，camelCase）**：
+
+```text
+PreviewPermanentDeleteBooksResult = {
+  inventoryDigest: string,                    # 集合级 digest
+  inventoryDigests: { [bookId]: string },     # 逐书 digest
+  computedAt: Timestamp,
+  items: DeletePreviewItem[]
+}
+
+DeletePreviewItem = {
+  bookId: BookId,
+  title: string,                              # 仅展示用；不参与 digest 计算或确认校验
+  protection: {
+    lockCount: integer,                       # PD-01
+    currentRevisionId: OpaqueId | null,
+    pinnedRevisionIds: OpaqueId[],
+    activeRunIds: OpaqueId[],                 # PD-01：非终态 Run/Task 同时是 BOOK_BUSY 阻断项
+    draftPageCount: integer,                  # PD-01（C-13 活动草稿）
+    manualRegionCount: integer                # PD-01（人工修改区域数）
+  },
+  contentSummary: {
+    chapters: integer, pages: integer, artifacts: integer,
+    deletedFiles: integer, deletedBytes: integer   # PD-01
+  },
+  sharedFileRefs: { fileId: OpaqueId, otherProjectCount: integer }[]
+}
+```
+
+  **PD-01 三项强制**：`protection.manualRegionCount`、`protection.draftPageCount`、`contentSummary.deletedFiles` + `deletedBytes` 必须逐项返回，缺失即实现缺陷。`title` 不参与 digest 计算或确认校验。结果不返回路径、原始文件名、异常栈或 SQLite 详情。
+- **只读语义（PD-03）**：零副作用、不写 DB、不缓存、不预解锁、不取消 pin、不改 current、不触原文件。
+- **digest 算法（C-04b `:46`）**：逐书 digest = `sha256:` + 对 canonical JSON（对象键递归排序、UTF-8、无空白）`{bookId, lockCount, currentRevisionId, pinnedRevisionIds(sorted), activeRunIds(sorted), draftPageCount, manualRegionCount, chapters, pages, artifacts, deletedFiles, deletedBytes, sharedFileRefs(sorted by fileId，含 otherProjectCount)}` 计算的 SHA-256 小写 hex；集合级 digest = 按调用方 `bookIds` **顺序**拼接各逐书 digest（去掉 `sha256:` 前缀、小写 hex）再整体 SHA-256，同为 `sha256:<64 lowercase hex>`。canonical 形式由 FEA-12-CORE 固化并给测试向量。
+- **错误**：
+
+| code | category | retryable | 触发 |
+|---|---|---|---|
+| `INVALID_REQUEST` | `validation` | `false` | closed shape / ID 格式 / 空 / 重复 / 超限 |
+| `BOOK_NOT_FOUND` | `not_found` | `false` | 任一目标 Book 不存在；零副作用 |
+| `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` | `unavailable` | `true` | 清单计算失败（DB 错/临时故障）；零副作用 |
+| `CORE_UNAVAILABLE` | `unavailable` | `false` | host 级：Core channel 不可用 |
+| `PROTOCOL_VERSION_UNSUPPORTED` / `UNKNOWN_COMMAND` | `validation` | `false` | 旧 Core 不识别该 command（fail-closed）；实测冻结 Core 返回 `UNKNOWN_COMMAND`（见 `verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log`） |
+
+- **capability**：`library.delete.preview/1`。Host 必须先 probe（`core.ping` 的 `capabilities`）；缺失/探测异常 → `CORE_CAPABILITY_MISSING`（`protocol`/`false`），**不得**以发送命令后看 `UNKNOWN_COMMAND` 的方式探测能力。**运行时 probe 接线归 FEA-12-CORE**；本卡只注册能力名与命令→能力映射。
+- **Host 投影负向对照（本卡 AC3）**：未扩 M2-C1 的基线上，2 个删除新码经 Host 白名单投影降级 `category=unknown` 且 `code` 原文不改写；新命令在旧 registry 中 typed `UNKNOWN_COMMAND`，旧 Core 拒绝。证据见 `verification/FEA-12-PREREQ-1/`。
+
+
+### 5.14 回收站命令面：`MoveToTrash` / `RestoreFromTrash` / `ListTrash` / `PurgeTrash`（C-09 SC-B06，rev 2.13，目标 wire 2.13）
+
+本节 additive 登记 C-09 `:99-:129` 已冻结的回收站命令面；只登记 wire，运行实现归 FEA-12-CORE。目标 wire **minor 13**（独立 family；不改默认 `PROTOCOL_MINOR=3`，不与 delete=10 / source-sync 族冲突）。首版范围 = **作品级回收站条目**（A 流程 = 软删 Book）；不定义页级/章节级 ref。
+
+**侧别惯例**：请求侧 snake_case（`book_id` / `idempotency_key`）；条目信息投影 `TrashEntryInfo` 为结果侧 camelCase（`bookId` / `deletedAt`）。`TrashEntryRef` 是请求/结果共用的 ref 形状（C-09 表在结果数组中同样写作 `TrashEntryRef[]`），保持 `book_id` 键。
+
+```text
+TrashEntryRef = { book_id: BookId }
+
+TrashEntryInfo = {                              # 结果侧 camel，ListTrash 条目投影
+  bookId: BookId,
+  title: string,
+  deletedAt: Timestamp
+}
+
+TrashSkipItem     = { ref: TrashEntryRef, reason: string }   # reason = 固定安全短码，无路径/明文
+TrashConflictItem = { ref: TrashEntryRef, reason: string }
+
+MoveToTrash      payload = { entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey }
+MoveToTrash      result  = { moved: TrashEntryRef[], skipped: TrashSkipItem[] }
+
+RestoreFromTrash payload = { entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey }
+RestoreFromTrash result  = { restored: TrashEntryRef[], conflicts: TrashConflictItem[] }
+
+ListTrash        payload = { cursor?: OpaqueId, limit?: integer }
+ListTrash        result  = { items: TrashEntryInfo[], nextCursor?: OpaqueId }
+
+PurgeTrash       payload = { entries: TrashEntryRef[1..N], confirm: true, idempotency_key: IdempotencyKey }
+PurgeTrash       result  = 委托 C-04b PermanentlyDeleteBooksResult（§5.11.1）
+```
+
+- **生产 host command 名（本卡 additive 注册，runtime 未实现）**：`library_move_to_trash`、`library_restore_from_trash`、`library_list_trash`、`library_purge_trash`。
+- **不变量**：`MoveToTrash` / `RestoreFromTrash` **只改 `deleted_at` / 归属，不触任何文件**（SC-B04 第一层；恢复 = 只清 `deleted_at`，C-01b SC-30 / ADJ-001 A 流程）。批量操作是**逐项原子**：一项失败不影响其他项，逐项进入 `skipped` / `conflicts`，不整批回滚；结果按 `entries` 顺序报告、不排序。
+- **`ListTrash` 与冻结 `ListRecycleBinBooks` 的关系**：`ListRecycleBinBooks`（rev 2.11，§5.12）保持**原字节**；`ListTrash` 是条目级/分页通用面，两者**并存、不冲突**。`ListRecycleBinBooks` 是否改为内部调用 `ListTrash`、还是并存，由 **FEA-12-CORE 实现时确认**（C-09 `:118`）；本卡不单方面改 §5.12。
+- **`PurgeTrash` 委托语义**：`PurgeTrash` **不是新删除路径**，委托 C-04b 的 `PreviewPermanentDeleteBooks` + `PermanentlyDeleteBooks`（含 PD-01 披露与专门确认），不得绕过。**首版 FEA-12-CORE 不实现 `PurgeTrash`（仅登记命令面）**；实现前必须由 DSH 就 digest 绑定方式（内联 `inventory_digest` / `inventory_digests` vs Core 内部映射为 `PermanentlyDeleteBooks` 调用）另行做出 additive 修订/裁决。本卡**不**擅自给该命令追加 digest 字段。
+- **幂等**：`idempotency_key` 是调用方生成的不透明 string（§3.1），三命令必填（`PurgeTrash` 亦必填）；同键重放/冲突语义须在 FEA-12-CORE 按其冻结实现登记为任务级语义，本卡不新增全局幂等规则。
+- **错误表**：
+
+| code | category | retryable | 触发 |
+|---|---|---|---|
+| `INVALID_REQUEST` | `validation` | `false` | closed shape / 类型 / `confirm` 非 `true` / 幂等键缺失 |
+| `TRASH_ENTRY_NOT_FOUND` | `not_found` | `false` | 目标条目不在回收站；逐项返回，不整批失败 |
+| `TRASH_RESTORE_CONFLICT` | `conflict` | `false` | 恢复目标冲突；逐项返回 |
+| `TRASH_RESTORE_LAYER_MISMATCH` | `conflict` | `false` | 备份/条目来自不同数据层或 `DatabaseId` 不匹配 |
+| `BOOK_BUSY` | `conflict` | `false` | `PurgeTrash` 目标含非终态 Run/Task；零副作用 |
+| `CORE_UNAVAILABLE` | `unavailable` | `false` | host 级：Core channel 不可用 |
+| `PROTOCOL_VERSION_UNSUPPORTED` / `UNKNOWN_COMMAND` | `validation` | `false` | 旧 Core 不识别该 command（fail-closed） |
+
+  `items[].error_code` 白名单只接受本表与 §5.11.3 表内稳定码；不得转发任意 `code`/`message`/`details`。
+- **capability**：`library.trash.read/1`（`ListTrash`）；`library.trash.write/1`（`MoveToTrash` / `RestoreFromTrash` / `PurgeTrash`）。Host 必须先 probe；缺失/探测异常 → `CORE_CAPABILITY_MISSING`（`protocol`/`false`），不得以 `UNKNOWN_COMMAND` 探测。**运行时 probe 接线归 FEA-12-CORE**；本卡只注册能力名与命令→能力映射。
+- **Host 投影负向对照（本卡 AC3）**：未扩 M2-C1 的基线上，3 个 `TRASH_*` 码经 Host 白名单投影降级 `category=unknown` 且 `code` 原文不改写（与 C-08 `allowedRunErrorCodes` 同一模式）；新命令在旧 registry 中 typed `UNKNOWN_COMMAND`，旧 Core 拒绝。
 
 ## 6. Typed projections 与 events
 
@@ -1276,12 +1436,13 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Export host commands and safe WebView projection | `FROZEN`（EXPORT-IPC-1 rev 2.5，§5.9） | `library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history` 冻结去路径安全投影（`ExportProgressSnapshotView` 与 `ExportHistoryEntryView`），`output_path` 严格排除。 |
 | Book/chapter creation Core and Tauri command names | `FROZEN`（FEAT-CREATE-1 rev 2.8，§5.10） | Core `CreateBook` / `CreateChapter` 与 Tauri `library_create_book` / `create_chapter` 的 wire、字段校验、typed error 和 `LibrarySurfaceError` 封闭投影已冻结；runtime 未实现。 |
 | Project-level permanent book deletion commands | `FROZEN`（P09-AC3-DELETE-1 AC1 rev 2.10，§5.11） | 单条 Core `PermanentlyDeleteBook` / Tauri `library_delete_book_permanently` 保持 rev 2.9 请求形状；批量 Core `PermanentlyDeleteBooks` / Tauri `library_delete_books_permanently` 为独立 additive command。批量有序唯一 ID 上限 20、双重目标确认、全量预检、DB 全有/全无及提交后逐本 cleanup；retention、错误投影及 ACL name 已冻结。runtime/Schema/生成 ACL/UI 尚未授权。 |
-| Permanent-delete user policy | `PARTIALLY FROZEN / USER_DECISION_REQUIRED`（P09-AC3-DELETE-1） | 已裁决：入口仅回收站、勾选后第二次确认、支持批量、保留 Pipeline Run/Task 历史、不删用户导出目录文件、不处理全库历史备份。仍待裁决：`export_history` DB 行的留存/脱离；保留的 Pipeline 历史是否保存已删除 Book 的名称快照。UI 必须提示旧全库备份可能仍含删除前快照。未决项裁决前不得释放实现。 |
+| Permanent-delete user policy | `FROZEN`（用户 2026-10-18 裁决；证据 `doc/tasks/P09-AC3-DELETE-1.md:84/87/106-109`；rev 2.13 对账，ADJ-2026-11-05-FEA-12-SCOPE §D2） | 已裁决：入口仅回收站、勾选后第二次确认、支持批量、保留 Pipeline Run/Task 历史、不删用户导出目录文件、不处理全库历史备份。**已裁决（2026-10-18，用户）**：`export_history` DB 行**保留**并脱离已删 Book；保留的 Pipeline 历史**保留 Book 名称快照**（不采用“已删除作品”占位）。UI 必须提示旧全库备份可能仍含删除前快照。本行由此 FROZEN，不再阻塞实现释放（释放边界见 §12）。 |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
 
 | Recycle-bin book listing command | `FROZEN`（P09-AC3-DELETE-HARDEN-1 AC1，文档 rev 2.11，§5.12；协议版本不变，`minor=3`） | 冻结 Core `ListRecycleBinBooks` 与 production-only Tauri `library_list_recycle_bin_books`；查询范围、`BookSummary` 投影、错误及空结果与失败的区分见 §5.12。本条不改变永久删除策略中仍待裁决的事项。 |
+| Delete-preview and trash command surface (M2-C1 rev 2.13) | `FROZEN`（wire 登记）/ `NOT_IMPLEMENTED`（runtime） | `PreviewPermanentDeleteBooks`（目标 wire 2.11）、`MoveToTrash` / `RestoreFromTrash` / `ListTrash` / `PurgeTrash`（目标 wire 2.13）、5 个新码与 3 个 capability 已 additive 登记于 §5.11.1a / §5.11.3 / §5.11.5 / §5.13 / §5.14；Core handler、Host 运行时 capability probe 与 ACL/生成物由 FEA-12-CORE 释放后实现。`ListRecycleBinBooks` rev 2.11 字节不变，与 `ListTrash` 并存。 |
 
 ## 12. Release boundary
 
@@ -1304,3 +1465,5 @@ FEAT-CREATE-1 rev 2.8 **仅冻结契约，不授权任何 runtime 实现**。Cor
 P09-AC3-DELETE-1 AC1 rev 2.10 **仅冻结项目级单条与批量永久删除 IPC 契约，不授权本轮 runtime 实现**。Core/Tauri/React、Schema/migration、依赖、capability、生成权限/schema 与测试实现仍须等 Task 剩余产品裁决和 Codex 的实施范围释放。rev 2.10 保持单条 `PermanentlyDeleteBook` payload 不变，并新增独立 `PermanentlyDeleteBooks`；不得改动前序 58 条命令的 wire 或 ACL。`export_history` 行处置与 Pipeline 历史名称快照仍待用户裁决。释放后才可按 §5.11 同步生产 handler、app manifest、capability 和生成物。
 
 > P09-AC3-DELETE-HARDEN-1 AC1 **rev 2.11 记录用户裁决：采纳 AC1 明文措辞即授权回收站读取面实现**。授权仅限该读取调用链：Core `ListRecycleBinBooks` handler 与 dispatcher 分支、既有 stdio library channel 中对应的 round-trip，以及 Tauri production command `library_list_recycle_bin_books` 和其在 `PRODUCTION_COMMANDS`、`generate_handler!`、命令名白名单中的注册。此授权不扩展到其他 IPC 命令，不授权 Schema/migration、依赖、生成 permission/schema 或 capabilities 改动、React/WebView 实现或页面 UI 改动，也不改变 rev 2.10 永久删除命令与待裁决的数据保留政策。消费端仍须遵守 §5.12 对空数组和查询失败的区分要求。
+
+> **FEA-12-PREREQ-1 rev 2.13 释放边界（additive；不改变以上任何既有授权范围）**：本修订只授权 (a) M2-C1 契约字节的 additive 登记，以及 (b) `NewManga.CoreClient` Host 投影/白名单/负向对照的 additive 注册（`HostCommandRegistry` / `HostCommandDispatcher` / `CoreServiceClient` 的命令与 capability 映射、closed-shape 透传、错误码白名单投影）与本卡 Task/verification 证据。**不授权**任何 Python Core runtime/handler、`src/**` 改动、Schema/migration、依赖、Host 运行时 capability probe 接线（`NewManga.Host/**`）或 UI 实现——这些由 `FEA-12-CORE`（及后续 `FEA-12-DSIM-1` / `FEA-12-UI`）在自己冻结的 Task 中另行释放。本修订不改变 `PROTOCOL_MINOR`（仍 3）、客户端默认 minor 与既有命令 per-command minor（delete 仍 10）。

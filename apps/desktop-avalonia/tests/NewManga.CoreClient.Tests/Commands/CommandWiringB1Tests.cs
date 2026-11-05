@@ -322,4 +322,147 @@ public sealed class CommandWiringB1Tests
             writer.WriteEndObject();
         });
     }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the read-only delete preview + the single-delete digest
+    // additive fields. Registration only -- the Core runtime does not implement the command yet.
+    // The negative control proves that, BEFORE registration, an unknown rev 2.13 code degrades to
+    // category=unknown WITHOUT rewriting the code, and the new command is rejected as unknown.
+    // ---------------------------------------------------------------------------------------
+
+    private const string DigestA =
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+    private static string WritePayload(string command, string argsJson)
+    {
+        return NewManga.CoreClient.Wire.WireJson.Write(
+            writer => HostCommandDispatcher.WriteCorePayload(command, Args(argsJson), writer));
+    }
+
+    private static void AssertInvalidPayload(string command, string argsJson)
+    {
+        var error = Assert.Throws<HostCommandInvalidArgumentsException>(
+            () => WritePayload(command, argsJson));
+        Assert.Equal("INVALID_ARGUMENTS", error.Code);
+    }
+
+    [Fact]
+    public void Fea12_Registry_RegistersDeletePreviewAtTargetWire11_AndKeepsDeleteMinor10()
+    {
+        var preview = HostCommandRegistry.Get("library_preview_permanent_delete_books");
+        Assert.True(preview.IsImplemented);
+        Assert.Equal(HostCommandChannel.CoreService, preview.Channel);
+        Assert.Equal("PreviewPermanentDeleteBooks", preview.CoreCommand);
+        Assert.Equal(11, preview.CoreMinor);
+        Assert.Equal(DeleteTrashWireTargets.PreviewPermanentDeleteBooksMinor, preview.CoreMinor);
+        Assert.Contains("library_preview_permanent_delete_books", HostCommandRegistry.DeleteTrashCommandNames);
+        Assert.Contains("library_preview_permanent_delete_books", HostCommandRegistry.V11RAdditiveCommandNames);
+        Assert.True(HostCommandRegistry.IsDeleteTrashCommand("library_preview_permanent_delete_books"));
+
+        // The existing single-delete command keeps its frozen per-command wire minor (10).
+        var single = HostCommandRegistry.Get("library_delete_book_permanently");
+        Assert.Equal("PermanentlyDeleteBook", single.CoreCommand);
+        Assert.Equal(10, single.CoreMinor);
+
+        // Capability registration (contract metadata): the runtime probe belongs to FEA-12-CORE.
+        Assert.Equal(
+            new[] { DeleteTrashWireTargets.DeletePreviewCapability },
+            HostCommandRegistry.RequiredCapabilities("library_preview_permanent_delete_books"));
+        Assert.Equal(
+            new[]
+            {
+                "library.delete.preview/1",
+                "library.trash.read/1",
+                "library.trash.write/1",
+            },
+            HostCommandRegistry.DeleteTrashCapabilities.OrderBy(capability => capability, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void Fea12_PreviewPayload_WritesFrozenCamelBookIds_AndRejectsOpenShape()
+    {
+        // The camelCase bookIds key is the frozen C-04b :41 literal and must NOT be normalized.
+        var line = WritePayload(
+            "library_preview_permanent_delete_books",
+            "{\"bookIds\":[\"book-1\",\"book-2\"]}");
+        Assert.Contains("\"bookIds\":[\"book-1\",\"book-2\"]", line, StringComparison.Ordinal);
+        Assert.DoesNotContain("book_ids", line, StringComparison.Ordinal);
+
+        AssertInvalidPayload("library_preview_permanent_delete_books", "{}");
+        AssertInvalidPayload("library_preview_permanent_delete_books", "{\"bookIds\":[]}");
+        AssertInvalidPayload("library_preview_permanent_delete_books", "{\"bookIds\":[\"b\",\"b\"]}");
+        AssertInvalidPayload("library_preview_permanent_delete_books", "{\"bookIds\":[1]}");
+        AssertInvalidPayload(
+            "library_preview_permanent_delete_books", "{\"bookIds\":[\"b\"],\"extra\":1}");
+        // A snake_case caller is a closed-shape violation, not a silent alias.
+        AssertInvalidPayload(
+            "library_preview_permanent_delete_books", "{\"book_ids\":[\"b\"]}");
+        var tooMany = string.Join(",", Enumerable.Range(0, 21).Select(index => $"\"book-{index}\""));
+        AssertInvalidPayload(
+            "library_preview_permanent_delete_books", $"{{\"bookIds\":[{tooMany}]}}");
+    }
+
+    [Fact]
+    public void Fea12_SingleDelete_ForwardsInventoryDigestAdditively_AndNeverSynthesizesIt()
+    {
+        var withDigest = WritePayload(
+            "library_delete_book_permanently",
+            $"{{\"payload\":{{\"book_id\":\"book-1\",\"confirm_permanent_delete\":true," +
+            $"\"inventory_digest\":\"{DigestA}\"}}}}");
+        Assert.Contains(
+            $"\"inventory_digest\":\"{DigestA}\"", withDigest, StringComparison.Ordinal);
+
+        // A legacy caller that does not send the additive field is still forwarded unchanged
+        // (the new Core fail-closes; the Host must not synthesize a digest).
+        var legacy = WritePayload(
+            "library_delete_book_permanently",
+            "{\"payload\":{\"book_id\":\"book-1\",\"confirm_permanent_delete\":true}}");
+        Assert.DoesNotContain("inventory_digest", legacy, StringComparison.Ordinal);
+
+        AssertInvalidPayload(
+            "library_delete_book_permanently",
+            "{\"book_id\":\"book-1\",\"confirm_permanent_delete\":true,\"inventory_digest\":5}");
+    }
+
+    [Fact]
+    public void Fea12_DeleteErrorProjection_NegativeControl_UnknownDegradesButCodeIsPreserved()
+    {
+        // Reconstruct the pre-registration allow-list: exactly what the Host projected BEFORE
+        // M2-C1 rev 2.13 was registered. This is the AC3 negative control.
+        var preRegistration = HostCommandRegistry.AllowedDeleteTrashErrorCodes
+            .Where(code => !HostCommandRegistry.Fea12DeleteTrashErrorCodes.Contains(code))
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.DoesNotContain("BOOK_DELETE_STALE_PREVIEW", preRegistration);
+        Assert.DoesNotContain("BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE", preRegistration);
+
+        var expected = new[]
+        {
+            ("BOOK_DELETE_STALE_PREVIEW", "conflict", false),
+            ("BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE", "unavailable", true),
+        };
+        foreach (var (code, category, retryable) in expected)
+        {
+            // Source taxonomy is deliberately wrong: registration, not the source, is normative.
+            var source = new CoreOperationException(code, "internal", false, "raw core message", "req-1");
+
+            var baseline = HostCommandDispatcher.ProjectDeleteTrashError(source, preRegistration);
+            Assert.Equal(code, baseline.Code); // the code is NEVER rewritten
+            Assert.Equal("unknown", baseline.Category);
+            Assert.False(baseline.Retryable);
+
+            var registered = HostCommandDispatcher.ProjectDeleteTrashError(
+                source, HostCommandRegistry.AllowedDeleteTrashErrorCodes);
+            Assert.Equal(code, registered.Code);
+            Assert.Equal(category, registered.Category);
+            Assert.Equal(retryable, registered.Retryable);
+        }
+
+        // Every existing registered delete code keeps its command-level projection unchanged.
+        var existing = new CoreOperationException(
+            "BOOK_DELETE_CONFLICT", "conflict", false, "conflict", "req-2");
+        Assert.Same(
+            existing,
+            HostCommandDispatcher.ProjectDeleteTrashError(
+                existing, HostCommandRegistry.AllowedDeleteTrashErrorCodes));
+    }
 }

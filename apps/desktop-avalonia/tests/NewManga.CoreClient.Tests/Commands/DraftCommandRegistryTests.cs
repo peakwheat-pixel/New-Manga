@@ -38,14 +38,18 @@ public sealed class DraftCommandRegistryTests
     [Fact]
     public void Additive_Set_IsTheUnionOfTheDeclaredFamilies()
     {
+        // FEA-12-PREREQ-1 (DSH 2026-11-05 narrow batch): M2-C1 rev 2.13 appends the delete-preview
+        // + trash family to the additive set. The expected union and the count are DERIVED from
+        // the declared families -- there is still no hardcoded total, and the equality stays strict.
         var expected = HostCommandRegistry.RegionWriteCommandNames
             .Concat(HostCommandRegistry.RegionReadCommandNames)
             .Concat(HostCommandRegistry.DraftsCommandNames)
             .Concat(HostCommandRegistry.SourceCommandNames)
             .Concat(HostCommandRegistry.SourceSyncCommandNames)
+            .Concat(HostCommandRegistry.DeleteTrashCommandNames)
             .ToHashSet(System.StringComparer.Ordinal);
 
-        Assert.Equal(40, HostCommandRegistry.V11RAdditiveCommandNames.Count);
+        Assert.Equal(expected.Count, HostCommandRegistry.V11RAdditiveCommandNames.Count);
         Assert.Equal(expected, HostCommandRegistry.V11RAdditiveCommandNames.ToHashSet(System.StringComparer.Ordinal));
     }
 

@@ -1,0 +1,63 @@
+{
+  "task_id": "FEA-12-PREREQ-1",
+  "generated_at": "2026-11-05T15:18:20+08:00",
+  "source_root": "G:\\CODEX\\New Manga.workspace\\agent-output\\fea12-prereq-impl\\FEA-12-PREREQ-1",
+  "purpose": "FEA-12-PREREQ-1 重复执行日志与探针脚本（判别力证据入 verification/FEA-12-PREREQ-1）",
+  "files": [
+    {
+      "name": "baseline-governance.log",
+      "bytes": 1893,
+      "sha256": "97b0ae0c511d4121bbaf290b3bec6cdf7dd09c1abcd5f777b32044bbfa2f187a"
+    },
+    {
+      "name": "baseline-negative-control-base-035468a81.log",
+      "bytes": 5033,
+      "sha256": "9801667cb089ba98728e3c4813b7a24dd201fb0865bb43b26a70ba4fa628b015"
+    },
+    {
+      "name": "baseline-negative-control.log",
+      "bytes": 4905,
+      "sha256": "a342ca71b5ad519916a8ed70b0b7c75ba48515ccced5c766a8feee819ce6128e"
+    },
+    {
+      "name": "baseline-negative-control.ps1",
+      "bytes": 6857,
+      "sha256": "541719a31a5fbc397845ef368b45dd0cbb549f4d27f547566973205fc7fcd0df"
+    },
+    {
+      "name": "dotnet-full-1.log",
+      "bytes": 23498,
+      "sha256": "53397b9bb20e88a55d566d820c8ca9cd440747a6c2579f16c32a5b7e278a6943"
+    },
+    {
+      "name": "dotnet-full-2.log",
+      "bytes": 22828,
+      "sha256": "8c50b6ca0c96f567fffc762e83064d2a620388ff4194ee3b78073cf616ec36aa"
+    },
+    {
+      "name": "gates.log",
+      "bytes": 5815,
+      "sha256": "59fefefa34299abd76da7edbc36e0edfceba2506754fcdecbf21d9e6188e597b"
+    },
+    {
+      "name": "narrow-batch-before.log",
+      "bytes": 6024,
+      "sha256": "c9fa27919f3134c509f74b6c0224f79ba63bbc28b2ee2d2ccf332f943938611e"
+    },
+    {
+      "name": "pytest-full.log",
+      "bytes": 10014,
+      "sha256": "bd9b762ddfaeac2d46c0dae91e73dcac5ccb4a83f5cc959f8bfcdc0df8a6fabb"
+    },
+    {
+      "name": "rev213-diff-audit.log",
+      "bytes": 12208,
+      "sha256": "f5a5e6abd5876dc95716bee8862a83d4702974d753a8cc2f099081e607ecbded"
+    },
+    {
+      "name": "rev213-diff-audit.ps1",
+      "bytes": 3729,
+      "sha256": "e4faa0baa832e2029f4f0d8d8a4027c04d261259a17045dd859d38d8c0bef446"
+    }
+  ]
+}

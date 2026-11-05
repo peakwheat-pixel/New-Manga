@@ -1684,3 +1684,28 @@ public static class ReaderStartPosition
     /// <summary>Starts at the first page / offset 0 without touching saved progress.</summary>
     public const string Beginning = "beginning";
 }
+
+/// <summary>
+/// FEA-12-PREREQ-1 / M2-C1 rev 2.13: the delete-preview + trash wire contract constants.
+/// These are REGISTRATION-ONLY values: the frozen Core runtime does not implement the commands
+/// yet. <c>PermanentlyDeleteBook</c>/<c>PermanentlyDeleteBooks</c> keep their per-command wire
+/// minor 10 (the <c>inventory_digest</c> fields are additive). The runtime capability probe
+/// (<c>core.ping</c> missing -&gt; <c>CORE_CAPABILITY_MISSING</c>) belongs to FEA-12-CORE.
+/// </summary>
+public static class DeleteTrashWireTargets
+{
+    /// <summary>C-04b `:47`: <c>PreviewPermanentDeleteBooks</c> target wire minor.</summary>
+    public const int PreviewPermanentDeleteBooksMinor = 11;
+
+    /// <summary>C-09 SC-B06: the trash command family target wire minor (independent family).</summary>
+    public const int TrashCommandsMinor = 13;
+
+    /// <summary>C-04b §2.4 / M2-C1 rev 2.13 capability of the read-only delete preview.</summary>
+    public const string DeletePreviewCapability = "library.delete.preview/1";
+
+    /// <summary>C-09 SC-B06 capability of the trash read face (<c>ListTrash</c>).</summary>
+    public const string TrashReadCapability = "library.trash.read/1";
+
+    /// <summary>C-09 SC-B06 capability of the trash write face (<c>MoveToTrash</c>/<c>RestoreFromTrash</c>/<c>PurgeTrash</c>).</summary>
+    public const string TrashWriteCapability = "library.trash.write/1";
+}

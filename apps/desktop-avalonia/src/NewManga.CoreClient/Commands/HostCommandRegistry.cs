@@ -42,6 +42,71 @@ public static class HostCommandRegistry
         "library_start_run" or "library_control_run" or "library_resume_blocked_run" or
         "library_get_run_snapshot" or "library_get_task_projection" or "library_retry_failed_targets";
 
+    // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the delete/trash error allow-list. This is the C-08
+    // AllowedRunErrorCodes pattern extended to the delete family: a code outside the list keeps
+    // its ORIGINAL string and is projected as category=unknown with retryable=false, so an
+    // unregistered code can never select a UI branch, retry or recovery action.
+    public static IReadOnlySet<string> AllowedDeleteTrashErrorCodes { get; } = new[]
+    {
+        // M2-C1 §5.11.3 stable codes (rev 2.10). Existing command-level mappings stay unchanged.
+        "INVALID_REQUEST", "DUPLICATE_BOOK_ID", "BOOK_DELETE_BATCH_LIMIT_EXCEEDED",
+        "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "BOOK_NOT_FOUND", "BOOK_BUSY",
+        "BOOK_DELETE_CONFLICT", "BOOK_DELETE_FAILED", "BOOK_DELETE_CLEANUP_PENDING",
+        "BOOK_DELETE_BATCH_PREFLIGHT_FAILED", "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+        "PROTOCOL_VERSION_UNSUPPORTED", "UNKNOWN_COMMAND", "CORE_UNAVAILABLE", "UNKNOWN",
+        // M2-C1 rev 2.13 registration (C-04b / C-09 frozen category+retryable; runtime not implemented).
+        "BOOK_DELETE_STALE_PREVIEW",
+        "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE",
+        "TRASH_ENTRY_NOT_FOUND",
+        "TRASH_RESTORE_CONFLICT",
+        "TRASH_RESTORE_LAYER_MISMATCH",
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// FEA-12-PREREQ-1: the five codes ADDED by M2-C1 rev 2.13. Exposed so the negative-control
+    /// test can reconstruct the pre-registration allow-list and prove the unknown degradation.
+    /// </summary>
+    public static IReadOnlySet<string> Fea12DeleteTrashErrorCodes { get; } = new[]
+    {
+        "BOOK_DELETE_STALE_PREVIEW",
+        "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE",
+        "TRASH_ENTRY_NOT_FOUND",
+        "TRASH_RESTORE_CONFLICT",
+        "TRASH_RESTORE_LAYER_MISMATCH",
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// FEA-12-PREREQ-1: capability names registered by M2-C1 rev 2.13. Registration only -- the
+    /// runtime <c>core.ping</c> probe (missing -&gt; CORE_CAPABILITY_MISSING) is wired by
+    /// FEA-12-CORE in NewManga.Host, never by probing with an unknown command.
+    /// </summary>
+    public static IReadOnlySet<string> DeleteTrashCapabilities { get; } = new[]
+    {
+        DeleteTrashWireTargets.DeletePreviewCapability,
+        DeleteTrashWireTargets.TrashReadCapability,
+        DeleteTrashWireTargets.TrashWriteCapability,
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// FEA-12-PREREQ-1: the capability each rev 2.13 command requires. The dispatcher does not
+    /// probe yet (registration only); FEA-12-CORE owns the fail-closed runtime gate.
+    /// </summary>
+    public static IReadOnlyList<string> RequiredCapabilities(string name) => name switch
+    {
+        "library_preview_permanent_delete_books" => new[] { DeleteTrashWireTargets.DeletePreviewCapability },
+        "library_list_trash" => new[] { DeleteTrashWireTargets.TrashReadCapability },
+        "library_move_to_trash" or "library_restore_from_trash" or "library_purge_trash" =>
+            new[] { DeleteTrashWireTargets.TrashWriteCapability },
+        _ => Array.Empty<string>(),
+    };
+
+    /// <summary>FEA-12-PREREQ-1: the delete family whose Core errors are projected through
+    /// <see cref="AllowedDeleteTrashErrorCodes"/>.</summary>
+    public static bool IsDeleteTrashCommand(string name) => name is
+        "library_delete_book_permanently" or "library_delete_books_permanently" or
+        "library_preview_permanent_delete_books" or "library_move_to_trash" or
+        "library_restore_from_trash" or "library_list_trash" or "library_purge_trash";
+
     private static readonly string[] SettingsNames =
     {
         "settings_get",
@@ -91,6 +156,13 @@ public static class HostCommandRegistry
         "library_import_folder",
         "library_delete_book_permanently",
         "library_delete_books_permanently",
+        // FEA-12-PREREQ-1 / M2-C1 rev 2.13: delete preview + trash surface (registration only;
+        // Core handlers and the runtime capability probe belong to FEA-12-CORE).
+        "library_preview_permanent_delete_books",
+        "library_move_to_trash",
+        "library_restore_from_trash",
+        "library_list_trash",
+        "library_purge_trash",
     };
 
     private static readonly string[] RegionNames =
@@ -283,6 +355,15 @@ public static class HostCommandRegistry
         ["pin_revision"] = new("pin_revision", 3),
         // V11R-F0-2: the page-scoped Region text read projection (same minor).
         ["list_page_region_texts"] = new("list_page_region_texts", 3),
+        // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the read-only delete preview targets wire minor 11
+        // (C-04b :47) and the trash command family targets wire minor 13 (C-09 SC-B06, an
+        // independent family). Registration only: the frozen Core has no handler for them yet.
+        ["library_preview_permanent_delete_books"] =
+            new("PreviewPermanentDeleteBooks", DeleteTrashWireTargets.PreviewPermanentDeleteBooksMinor),
+        ["library_move_to_trash"] = new("MoveToTrash", DeleteTrashWireTargets.TrashCommandsMinor),
+        ["library_restore_from_trash"] = new("RestoreFromTrash", DeleteTrashWireTargets.TrashCommandsMinor),
+        ["library_list_trash"] = new("ListTrash", DeleteTrashWireTargets.TrashCommandsMinor),
+        ["library_purge_trash"] = new("PurgeTrash", DeleteTrashWireTargets.TrashCommandsMinor),
     };
 
     private static readonly HashSet<string> BridgeBindings = new(StringComparer.Ordinal)
@@ -431,10 +512,24 @@ public static class HostCommandRegistry
         "source_record_operation_failure", "source_get_sync_capabilities",
     };
 
+    /// <summary>FEA-12-PREREQ-1 / M2-C1 rev 2.13: the delete preview + trash commands ADDED on top
+    /// of the frozen 66-command snapshot. The registry parity test derives the additive set from
+    /// the union below, so the frozen legacy surface keeps its own independent gate.</summary>
+    public static IReadOnlySet<string> DeleteTrashCommandNames { get; } =
+        new HashSet<string>(StringComparer.Ordinal)
+        {
+            "library_preview_permanent_delete_books",
+            "library_move_to_trash",
+            "library_restore_from_trash",
+            "library_list_trash",
+            "library_purge_trash",
+        };
+
     public static IReadOnlySet<string> V11RAdditiveCommandNames { get; } =
         new HashSet<string>(
             RegionWriteCommandNames.Concat(RegionReadCommandNames).Concat(DraftsCommandNames)
-                .Concat(SourceCommandNames).Concat(SourceSyncCommandNames),
+                .Concat(SourceCommandNames).Concat(SourceSyncCommandNames)
+                .Concat(DeleteTrashCommandNames),
             StringComparer.Ordinal);
 
     public static HostCommandDescriptor Get(string name) =>

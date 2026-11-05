@@ -454,4 +454,109 @@ public sealed class CommandIntegrationTests
             writer.WriteEndObject();
         });
     }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1 / AC3: the frozen (old) Core does not implement the M2-C1 rev 2.13 commands,
+    /// so a Host that already registered them must fail closed with a TYPED error -- never a silent
+    /// drop, never a fallback soft delete. It also proves the additive <c>inventory_digest</c> field
+    /// is rejected by the old Core's closed shape (INVALID_REQUEST) instead of being ignored.
+    /// </summary>
+    [SidecarFact]
+    public async Task Fea12NewCommands_FrozenCoreFailsClosedWithTypedError()
+    {
+        await using var context = await CommandTestContext.StartAsync("commands-fea12-old-core");
+        var results = new List<object>();
+
+        async Task ExpectTypedFailure(string hostCommand, string argsJson)
+        {
+            var error = await Assert.ThrowsAsync<CoreOperationException>(
+                () => context.Dispatcher.InvokeAsync(hostCommand, Args(argsJson)));
+            Assert.False(string.IsNullOrEmpty(error.Code));
+            Assert.Contains(
+                error.Code,
+                new[] { "UNKNOWN_COMMAND", "PROTOCOL_VERSION_UNSUPPORTED", "UNKNOWN" });
+            var coreCommand = HostCommandRegistry.Get(hostCommand).CoreCommand!;
+            var frame = context.Core.Wire.Frames.LastOrDefault(
+                candidate => candidate.RequestLine.Contains(
+                    $"\"command\":\"{coreCommand}\"", StringComparison.Ordinal));
+            Assert.NotNull(frame);
+            results.Add(new
+            {
+                command = hostCommand,
+                core_command = coreCommand,
+                core_minor = HostCommandRegistry.Get(hostCommand).CoreMinor,
+                error_code = error.Code,
+                category = error.Category ?? string.Empty,
+                request_line = frame!.RequestLine,
+                response_line = frame.ResponseLine,
+            });
+        }
+
+        await ExpectTypedFailure(
+            "library_preview_permanent_delete_books", "{\"bookIds\":[\"book-baseline\"]}");
+        await ExpectTypedFailure(
+            "library_move_to_trash",
+            "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"idempotency_key\":\"fea12-key-1\"}");
+        await ExpectTypedFailure("library_list_trash", "{}");
+        await ExpectTypedFailure(
+            "library_purge_trash",
+            "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"confirm\":true,\"idempotency_key\":\"fea12-key-2\"}");
+
+        // Additive digest on an existing command: the old Core's closed-shape validation rejects
+        // the unknown field with INVALID_REQUEST -- fail-closed, not "ignore the digest and delete".
+        var digest = "sha256:" + new string('a', 64);
+        var digestError = await Assert.ThrowsAsync<CoreOperationException>(
+            () => context.Dispatcher.InvokeAsync(
+                "library_delete_book_permanently",
+                Args($"{{\"payload\":{{\"book_id\":\"book-missing\",\"confirm_permanent_delete\":true," +
+                     $"\"inventory_digest\":\"{digest}\"}}}}")));
+        Assert.Equal("INVALID_REQUEST", digestError.Code);
+        var deleteFrame = context.Core.Wire.Frames.LastOrDefault(
+            candidate => candidate.RequestLine.Contains(
+                "\"command\":\"PermanentlyDeleteBook\"", StringComparison.Ordinal));
+        Assert.NotNull(deleteFrame);
+        Assert.Contains("inventory_digest", deleteFrame!.RequestLine, StringComparison.Ordinal);
+        results.Add(new
+        {
+            command = "library_delete_book_permanently+inventory_digest",
+            core_command = "PermanentlyDeleteBook",
+            core_minor = 10,
+            error_code = digestError.Code,
+            category = digestError.Category ?? string.Empty,
+            request_line = deleteFrame.RequestLine,
+            response_line = deleteFrame.ResponseLine,
+        });
+
+        SidecarFixture.WriteEvidenceJson("commands/fea12-old-core-negative-control.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "AC3");
+            writer.WriteString("sidecar", "frozen core_service (AC11 unlabelled copy)");
+            writer.WriteString("rev_2_13_wire", "preview minor 11; trash family minor 13; delete stays 10");
+            writer.WriteBoolean("typed_failure", true);
+            writer.WriteBoolean("silent_drop", false);
+            writer.WriteStartArray("results");
+            foreach (var row in results)
+            {
+                writer.WriteStartObject();
+                foreach (var property in row.GetType().GetProperties())
+                {
+                    var value = property.GetValue(row);
+                    if (value is int number)
+                    {
+                        writer.WriteNumber(property.Name, number);
+                    }
+                    else
+                    {
+                        writer.WriteString(property.Name, value?.ToString() ?? string.Empty);
+                    }
+                }
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+            writer.WriteEndObject();
+        });
+    }
 }

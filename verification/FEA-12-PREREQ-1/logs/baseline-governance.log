@@ -1,0 +1,64 @@
+# FEA-12-PREREQ-1 baseline governance capture (pre-change)
+
+- captured_at: 2026-11-05 (Asia/Shanghai), before any FEA-12-PREREQ-1 file edit
+- repo: G:\CODEX\New Manga (main)
+- head_at_capture: 966f7762e736660d11c3a43eea095f692bd7cd07
+  (contains only FEA-11-LINEAGE-1 r2 commits; no FEA-12 change)
+- card base_commit: 035468a81e43e8d70fb711536824cdf613a7a0c4
+- negative-control baseline against the exact base commit worktree:
+  `logs/baseline-negative-control-base-035468a81.log`
+
+## Baseline gate 1 - pins
+
+```text
+pwsh -NoProfile -File tools/governance/verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 694ce5bc8c8b
+OK C05 f6e6f3cb1fe1
+OK C06 8faa8cd139f2
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 d8c0a3bcfc21
+OK C16 0b9511a55ea1
+OK C17 86b89ff83c9a
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+PIN_EXIT=0
+```
+
+## Baseline gate 2 - governance check
+
+```text
+pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-HOST-AUTH-1.md
+WARN: 存在 16 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6506 bytes / 63 lines
+Governance check: PASS (2 warnings)
+CHECK_EXIT=0
+```
+
+## Baseline build
+
+```text
+dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo -v m
+...
+已成功生成。
+    0 个警告
+    0 个错误
+BUILD_EXIT=0
+```
+
+## Baseline .NET tests and pytest
+
+- full .NET baseline is captured in the final `logs/gates.log` run (the card changes no existing
+  behavior; the pre-change solution build above is the baseline build).
+- pytest full baseline: `logs/pytest-full.log` (this card has no Python change).

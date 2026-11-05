@@ -1,0 +1,54 @@
+{
+  "ac": "AC3",
+  "sidecar": "frozen core_service (AC11 unlabelled copy)",
+  "rev_2_13_wire": "preview minor 11; trash family minor 13; delete stays 10",
+  "typed_failure": true,
+  "silent_drop": false,
+  "results": [
+    {
+      "command": "library_preview_permanent_delete_books",
+      "core_command": "PreviewPermanentDeleteBooks",
+      "core_minor": 11,
+      "error_code": "UNKNOWN_COMMAND",
+      "category": "validation",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:11},\u0022request_id\u0022:\u0022req-2\u0022,\u0022command\u0022:\u0022PreviewPermanentDeleteBooks\u0022,\u0022payload\u0022:{\u0022bookIds\u0022:[\u0022book-baseline\u0022]}}",
+      "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-2\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022UNKNOWN_COMMAND\u0022,\u0022category\u0022:\u0022validation\u0022,\u0022message\u0022:\u0022Unknown command: \u0027PreviewPermanentDeleteBooks\u0027\u0022,\u0022retryable\u0022:false}}"
+    },
+    {
+      "command": "library_move_to_trash",
+      "core_command": "MoveToTrash",
+      "core_minor": 13,
+      "error_code": "UNKNOWN_COMMAND",
+      "category": "validation",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:13},\u0022request_id\u0022:\u0022req-3\u0022,\u0022command\u0022:\u0022MoveToTrash\u0022,\u0022payload\u0022:{\u0022entries\u0022:[{\u0022book_id\u0022:\u0022book-baseline\u0022}],\u0022idempotency_key\u0022:\u0022fea12-key-1\u0022}}",
+      "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-3\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022UNKNOWN_COMMAND\u0022,\u0022category\u0022:\u0022validation\u0022,\u0022message\u0022:\u0022Unknown command: \u0027MoveToTrash\u0027\u0022,\u0022retryable\u0022:false}}"
+    },
+    {
+      "command": "library_list_trash",
+      "core_command": "ListTrash",
+      "core_minor": 13,
+      "error_code": "UNKNOWN_COMMAND",
+      "category": "validation",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:13},\u0022request_id\u0022:\u0022req-4\u0022,\u0022command\u0022:\u0022ListTrash\u0022,\u0022payload\u0022:{}}",
+      "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-4\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022UNKNOWN_COMMAND\u0022,\u0022category\u0022:\u0022validation\u0022,\u0022message\u0022:\u0022Unknown command: \u0027ListTrash\u0027\u0022,\u0022retryable\u0022:false}}"
+    },
+    {
+      "command": "library_purge_trash",
+      "core_command": "PurgeTrash",
+      "core_minor": 13,
+      "error_code": "UNKNOWN_COMMAND",
+      "category": "validation",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:13},\u0022request_id\u0022:\u0022req-5\u0022,\u0022command\u0022:\u0022PurgeTrash\u0022,\u0022payload\u0022:{\u0022entries\u0022:[{\u0022book_id\u0022:\u0022book-baseline\u0022}],\u0022confirm\u0022:true,\u0022idempotency_key\u0022:\u0022fea12-key-2\u0022}}",
+      "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:3},\u0022request_id\u0022:\u0022req-5\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022UNKNOWN_COMMAND\u0022,\u0022category\u0022:\u0022validation\u0022,\u0022message\u0022:\u0022Unknown command: \u0027PurgeTrash\u0027\u0022,\u0022retryable\u0022:false}}"
+    },
+    {
+      "command": "library_delete_book_permanently\u002Binventory_digest",
+      "core_command": "PermanentlyDeleteBook",
+      "core_minor": 10,
+      "error_code": "INVALID_REQUEST",
+      "category": "validation",
+      "request_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:10},\u0022request_id\u0022:\u0022req-6\u0022,\u0022command\u0022:\u0022PermanentlyDeleteBook\u0022,\u0022payload\u0022:{\u0022book_id\u0022:\u0022book-missing\u0022,\u0022confirm_permanent_delete\u0022:true,\u0022inventory_digest\u0022:\u0022sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u0022}}",
+      "response_line": "{\u0022protocol\u0022:\u0022new-manga.core\u0022,\u0022version\u0022:{\u0022major\u0022:2,\u0022minor\u0022:10},\u0022request_id\u0022:\u0022req-6\u0022,\u0022result\u0022:null,\u0022error\u0022:{\u0022code\u0022:\u0022INVALID_REQUEST\u0022,\u0022category\u0022:\u0022validation\u0022,\u0022retryable\u0022:false}}"
+    }
+  ]
+}

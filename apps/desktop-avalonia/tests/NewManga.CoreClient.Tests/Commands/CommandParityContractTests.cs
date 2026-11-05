@@ -215,11 +215,11 @@ public sealed class CommandParityContractTests
                 domain = descriptor.Domain.ToString().ToLowerInvariant(),
                 rust_handler = fromSnapshot
                     ? handler.GetProperty("file").GetString() + ":" + handler.GetProperty("line").GetInt32()
-                    : "n/a (V11R-F0-1 additive command)",
+                    : "n/a (additive command)",
                 rust_params = fromSnapshot ? snapshotCommand.GetProperty("params").GetArrayLength() : 0,
                 rust_returns = fromSnapshot
                     ? snapshotCommand.GetProperty("returns").GetString()
-                    : "n/a (V11R-F0-1 additive command)",
+                    : "n/a (additive command)",
                 status = descriptor.Status.ToString(),
                 channel = descriptor.Channel.ToString(),
                 core_command = descriptor.CoreCommand,

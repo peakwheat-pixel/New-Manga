@@ -35,6 +35,10 @@ public sealed class HostCommandDispatcher
     private const int MaxSplitParts = 64;
     private const int MaxGeometryPoints = 512;
 
+    // FEA-12-PREREQ-1 / M2-C1 §5.13: the read-only delete preview accepts 1..20 book ids,
+    // exactly like the frozen batch delete limit (§5.11.2).
+    private const int MaxBookDeleteBatchSize = 20;
+
     private readonly CoreServiceClient? _core;
     private readonly HostBridgeClient? _bridge;
     private readonly Func<string, JsonElement, CancellationToken, Task<HostCommandResult>>? _hostLocal;
@@ -110,6 +114,10 @@ public sealed class HostCommandDispatcher
         {
             throw ProjectRunError(error, HostCommandRegistry.AllowedRunErrorCodes);
         }
+        catch (CoreOperationException error) when (HostCommandRegistry.IsDeleteTrashCommand(name))
+        {
+            throw ProjectDeleteTrashError(error, HostCommandRegistry.AllowedDeleteTrashErrorCodes);
+        }
     }
 
     /// <summary>Host projection only. Unknown codes are diagnostic, never UI action selectors.
@@ -133,6 +141,39 @@ public sealed class HostCommandDispatcher
                 "Run preview expired; prepare again", error.RequestId),
             "RUN_SNAPSHOT_INCOMPLETE" => new(error.Code, "unavailable", true,
                 "Run snapshot is incomplete", error.RequestId),
+            _ => error, // Existing registered command-level mappings remain unchanged.
+        };
+    }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1 / M2-C1 rev 2.13: Host projection for the delete/trash family. This is the
+    /// C-08 <c>AllowedRunErrorCodes</c> pattern extended to delete: a code outside the allow-list
+    /// keeps its ORIGINAL <c>code</c> string and is projected as <c>category=unknown</c> /
+    /// <c>retryable=false</c> — diagnostic only, never a UI branch, retry or recovery selector.
+    /// Registered rev 2.13 codes take the frozen C-04b/C-09 category+retryable. Every other
+    /// registered code keeps its existing command-level projection unchanged.
+    /// </summary>
+    public static CoreOperationException ProjectDeleteTrashError(
+        CoreOperationException error, IReadOnlySet<string> allowedDeleteTrashErrorCodes)
+    {
+        if (!allowedDeleteTrashErrorCodes.Contains(error.Code))
+        {
+            return new CoreOperationException(
+                error.Code, "unknown", false, "Delete operation failed", error.RequestId);
+        }
+
+        return error.Code switch
+        {
+            "BOOK_DELETE_STALE_PREVIEW" => new(error.Code, "conflict", false,
+                "Permanent-delete preview is stale; preview again", error.RequestId),
+            "BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE" => new(error.Code, "unavailable", true,
+                "Protection inventory is unavailable", error.RequestId),
+            "TRASH_ENTRY_NOT_FOUND" => new(error.Code, "not_found", false,
+                "Trash entry was not found", error.RequestId),
+            "TRASH_RESTORE_CONFLICT" => new(error.Code, "conflict", false,
+                "Trash restore conflict", error.RequestId),
+            "TRASH_RESTORE_LAYER_MISMATCH" => new(error.Code, "conflict", false,
+                "Trash restore layer mismatch", error.RequestId),
             _ => error, // Existing registered command-level mappings remain unchanged.
         };
     }
@@ -423,6 +464,11 @@ public sealed class HostCommandDispatcher
                 writer.WriteBoolean(
                     "confirm_permanent_delete",
                     RequireBool(name, deletePayload, "confirm_permanent_delete"));
+                // FEA-12-PREREQ-1 / M2-C1 rev 2.13 §5.11.1a: additive digest passthrough only --
+                // never synthesized or enforced here (the Core stays the semantic authority), and
+                // the per-command wire minor stays 10. Optional: a legacy caller that omits it is
+                // still forwarded unchanged (the new Core fail-closes with INVALID_REQUEST).
+                WriteOptionalString(writer, name, deletePayload, "inventory_digest");
                 break;
             }
 
@@ -449,8 +495,47 @@ public sealed class HostCommandDispatcher
                 writer.WriteBoolean(
                     "confirm_permanent_delete",
                     RequireBool(name, deleteBooksPayload, "confirm_permanent_delete"));
+                // FEA-12-PREREQ-1 / M2-C1 rev 2.13 §5.11.1a: additive set-level + per-book digest
+                // passthrough (two-level binding is Core's job; the wire minor stays 10).
+                WriteOptionalString(writer, name, deleteBooksPayload, "inventory_digest");
+                WriteOptionalDigestMap(writer, name, deleteBooksPayload, "inventory_digests");
                 break;
             }
+
+            // FEA-12-PREREQ-1 / M2-C1 rev 2.13 (§5.13/§5.14): the delete preview and the trash
+            // command family. These are NEW commands, so the dispatcher enforces a strict closed
+            // shape (unknown keys fail before any Core frame). Registration only: the frozen Core
+            // has no handler for them yet and the runtime capability probe belongs to FEA-12-CORE.
+            case "library_preview_permanent_delete_books":
+                RejectUnknownKeys(name, payload, "bookIds");
+                writer.WritePropertyName("bookIds");
+                WriteBookIdArray(writer, name, payload, "bookIds");
+                break;
+            case "library_move_to_trash":
+            case "library_restore_from_trash":
+                RejectUnknownKeys(name, payload, "entries", "idempotency_key");
+                writer.WritePropertyName("entries");
+                WriteTrashEntries(writer, name, payload);
+                writer.WriteString("idempotency_key", RequireString(name, payload, "idempotency_key"));
+                break;
+            case "library_list_trash":
+                RejectUnknownKeys(name, payload, "cursor", "limit");
+                WriteOptionalString(writer, name, payload, "cursor");
+                WriteOptionalPositiveInt64(writer, name, payload, "limit");
+                break;
+            case "library_purge_trash":
+                RejectUnknownKeys(name, payload, "entries", "confirm", "idempotency_key");
+                if (!RequireBool(name, payload, "confirm"))
+                {
+                    throw new HostCommandInvalidArgumentsException(
+                        name, "argument 'confirm' must be true (PurgeTrash is not a soft delete)");
+                }
+
+                writer.WritePropertyName("entries");
+                WriteTrashEntries(writer, name, payload);
+                writer.WriteBoolean("confirm", true);
+                writer.WriteString("idempotency_key", RequireString(name, payload, "idempotency_key"));
+                break;
 
             case "settings_network_profile_default_set":
                 writer.WriteString("network_profile_id", RequireString(name, payload, "network_profile_id"));
@@ -729,6 +814,143 @@ public sealed class HostCommandDispatcher
         }
 
         writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1: strict closed-shape guard for the NEW M2-C1 rev 2.13 commands only. The
+    /// existing legacy commands keep their historical pass-through behavior (the Core remains the
+    /// semantic authority); a new command must reject unknown keys before any Core frame.
+    /// </summary>
+    private static void RejectUnknownKeys(string command, JsonElement payload, params string[] allowed)
+    {
+        if (payload.ValueKind != JsonValueKind.Object)
+        {
+            throw new HostCommandInvalidArgumentsException(command, "payload must be an object");
+        }
+
+        foreach (var property in payload.EnumerateObject())
+        {
+            var known = false;
+            foreach (var name in allowed)
+            {
+                if (string.Equals(property.Name, name, StringComparison.Ordinal))
+                {
+                    known = true;
+                    break;
+                }
+            }
+
+            if (!known)
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"unexpected argument '{property.Name}' (closed shape)");
+            }
+        }
+    }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1 / M2-C1 §5.13: the preview's <c>bookIds</c> (non-empty distinct strings,
+    /// 1..20). The key keeps the frozen C-04b camelCase literal.
+    /// </summary>
+    private static void WriteBookIdArray(
+        Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind != JsonValueKind.Array)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"missing required string[] argument '{property}'");
+        }
+
+        if (value.GetArrayLength() < 1 || value.GetArrayLength() > MaxBookDeleteBatchSize)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' requires 1..{MaxBookDeleteBatchSize} entries");
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        writer.WriteStartArray();
+        foreach (var element in value.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.String ||
+                string.IsNullOrEmpty(element.GetString()) ||
+                !seen.Add(element.GetString()!))
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{property}' must contain distinct non-empty strings");
+            }
+
+            writer.WriteStringValue(element.GetString());
+        }
+
+        writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1 / M2-C1 §5.14: <c>TrashEntryRef[1..N]</c> where each ref is the closed
+    /// shape exactly <c>{book_id}</c> (request-side snake_case per C-09 SC-B06).
+    /// </summary>
+    private static void WriteTrashEntries(Utf8JsonWriter writer, string command, JsonElement args)
+    {
+        if (!args.TryGetProperty("entries", out var entries) ||
+            entries.ValueKind != JsonValueKind.Array ||
+            entries.GetArrayLength() < 1)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, "missing required non-empty object[] argument 'entries'");
+        }
+
+        writer.WriteStartArray();
+        foreach (var entry in entries.EnumerateArray())
+        {
+            if (entry.ValueKind != JsonValueKind.Object)
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, "argument 'entries' must contain objects");
+            }
+
+            RejectUnknownKeys(command, entry, "book_id");
+            writer.WriteStartObject();
+            writer.WriteString("book_id", RequireString(command, entry, "book_id"));
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndArray();
+    }
+
+    /// <summary>
+    /// FEA-12-PREREQ-1 / M2-C1 §5.11.1a: additive per-book digest map for the batch delete.
+    /// Type/shape only -- the Core validates the sha256 format and the two-level binding.
+    /// </summary>
+    private static void WriteOptionalDigestMap(
+        Utf8JsonWriter writer, string command, JsonElement args, string property)
+    {
+        if (!args.TryGetProperty(property, out var value) || value.ValueKind == JsonValueKind.Null)
+        {
+            return;
+        }
+
+        if (value.ValueKind != JsonValueKind.Object)
+        {
+            throw new HostCommandInvalidArgumentsException(
+                command, $"argument '{property}' must be an object");
+        }
+
+        writer.WritePropertyName(property);
+        writer.WriteStartObject();
+        foreach (var entry in value.EnumerateObject())
+        {
+            if (string.IsNullOrEmpty(entry.Name) ||
+                entry.Value.ValueKind != JsonValueKind.String ||
+                string.IsNullOrEmpty(entry.Value.GetString()))
+            {
+                throw new HostCommandInvalidArgumentsException(
+                    command, $"argument '{property}' must map non-empty book ids to non-empty digest strings");
+            }
+
+            writer.WriteString(entry.Name, entry.Value.GetString());
+        }
+
+        writer.WriteEndObject();
     }
 
     /// <summary>

@@ -522,4 +522,181 @@ public sealed class CommandWiringB2Tests
             writer.WriteEndObject();
         });
     }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the batch-delete digest additive fields and the trash
+    // command family (target wire 13). Registration only -- Core handlers and the runtime
+    // capability probe belong to FEA-12-CORE. The negative control proves that, BEFORE
+    // registration, an unknown TRASH_* code degrades to category=unknown without rewriting the
+    // code, and the new commands are rejected as unknown.
+    // ---------------------------------------------------------------------------------------
+
+    private const string DigestA =
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    private const string DigestB =
+        "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+    private static string WritePayload(string command, string argsJson)
+    {
+        return NewManga.CoreClient.Wire.WireJson.Write(
+            writer => HostCommandDispatcher.WriteCorePayload(command, Args(argsJson), writer));
+    }
+
+    private static void AssertInvalidPayload(string command, string argsJson)
+    {
+        var error = Assert.Throws<HostCommandInvalidArgumentsException>(
+            () => WritePayload(command, argsJson));
+        Assert.Equal("INVALID_ARGUMENTS", error.Code);
+    }
+
+    [Fact]
+    public void Fea12_TrashRegistry_RegistersTargetWire13_WithReadWriteCaps()
+    {
+        var expected = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["library_move_to_trash"] = "MoveToTrash",
+            ["library_restore_from_trash"] = "RestoreFromTrash",
+            ["library_list_trash"] = "ListTrash",
+            ["library_purge_trash"] = "PurgeTrash",
+        };
+        foreach (var (name, coreCommand) in expected)
+        {
+            var descriptor = HostCommandRegistry.Get(name);
+            Assert.True(descriptor.IsImplemented, $"{name} must be registered after rev 2.13");
+            Assert.Equal(HostCommandChannel.CoreService, descriptor.Channel);
+            Assert.Equal(coreCommand, descriptor.CoreCommand);
+            Assert.Equal(13, descriptor.CoreMinor);
+            Assert.Equal(DeleteTrashWireTargets.TrashCommandsMinor, descriptor.CoreMinor);
+            Assert.Contains(name, HostCommandRegistry.DeleteTrashCommandNames);
+            Assert.Contains(name, HostCommandRegistry.V11RAdditiveCommandNames);
+            Assert.True(HostCommandRegistry.IsDeleteTrashCommand(name));
+            Assert.NotEmpty(HostCommandRegistry.RequiredCapabilities(name));
+        }
+
+        Assert.Equal(
+            new[] { "library.trash.read/1" },
+            HostCommandRegistry.RequiredCapabilities("library_list_trash"));
+        Assert.Equal(
+            new[] { "library.trash.write/1" },
+            HostCommandRegistry.RequiredCapabilities("library_move_to_trash"));
+        Assert.Equal(
+            new[] { "library.trash.write/1" },
+            HostCommandRegistry.RequiredCapabilities("library_purge_trash"));
+        Assert.Equal(
+            new[]
+            {
+                "library.delete.preview/1",
+                "library.trash.read/1",
+                "library.trash.write/1",
+            }.OrderBy(capability => capability, StringComparer.Ordinal),
+            HostCommandRegistry.DeleteTrashCapabilities.OrderBy(capability => capability, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void Fea12_BatchDelete_ForwardsInventoryDigestsAdditively_AndNeverSynthesizesThem()
+    {
+        var withDigests = WritePayload(
+            "library_delete_books_permanently",
+            "{\"book_ids\":[\"book-1\",\"book-2\"],\"confirmed_book_ids\":[\"book-1\",\"book-2\"]," +
+            $"\"confirm_count\":2,\"confirm_permanent_delete\":true,\"inventory_digest\":\"{DigestA}\"," +
+            $"\"inventory_digests\":{{\"book-1\":\"{DigestA}\",\"book-2\":\"{DigestB}\"}}}}");
+        Assert.Contains($"\"inventory_digest\":\"{DigestA}\"", withDigests, StringComparison.Ordinal);
+        Assert.Contains($"\"inventory_digests\":{{\"book-1\":\"{DigestA}\",\"book-2\":\"{DigestB}\"}}",
+            withDigests, StringComparison.Ordinal);
+
+        // Legacy callers are forwarded unchanged: no synthesis, no fallback soft delete.
+        var legacy = WritePayload(
+            "library_delete_books_permanently",
+            "{\"book_ids\":[\"book-1\"],\"confirmed_book_ids\":[\"book-1\"]," +
+            "\"confirm_count\":1,\"confirm_permanent_delete\":true}");
+        Assert.DoesNotContain("inventory_digest", legacy, StringComparison.Ordinal);
+
+        AssertInvalidPayload(
+            "library_delete_books_permanently",
+            "{\"book_ids\":[\"b\"],\"confirmed_book_ids\":[\"b\"],\"confirm_count\":1," +
+            "\"confirm_permanent_delete\":true,\"inventory_digest\":5}");
+        AssertInvalidPayload(
+            "library_delete_books_permanently",
+            "{\"book_ids\":[\"b\"],\"confirmed_book_ids\":[\"b\"],\"confirm_count\":1," +
+            "\"confirm_permanent_delete\":true,\"inventory_digests\":[1]}");
+        AssertInvalidPayload(
+            "library_delete_books_permanently",
+            "{\"book_ids\":[\"b\"],\"confirmed_book_ids\":[\"b\"],\"confirm_count\":1," +
+            "\"confirm_permanent_delete\":true,\"inventory_digests\":{\"b\":5}}");
+    }
+
+    [Fact]
+    public void Fea12_TrashPayloads_WriteClosedShape_AndRejectUnknownKeys()
+    {
+        var move = WritePayload(
+            "library_move_to_trash",
+            "{\"entries\":[{\"book_id\":\"book-1\"}],\"idempotency_key\":\"trash-key-1\"}");
+        Assert.Contains("\"entries\":[{\"book_id\":\"book-1\"}]", move, StringComparison.Ordinal);
+        Assert.Contains("\"idempotency_key\":\"trash-key-1\"", move, StringComparison.Ordinal);
+
+        var restore = WritePayload(
+            "library_restore_from_trash",
+            "{\"entries\":[{\"book_id\":\"book-1\"}],\"idempotency_key\":\"trash-key-2\"}");
+        Assert.Contains("\"book_id\":\"book-1\"", restore, StringComparison.Ordinal);
+
+        var list = WritePayload("library_list_trash", "{\"cursor\":\"cursor-1\",\"limit\":25}");
+        Assert.Contains("\"cursor\":\"cursor-1\"", list, StringComparison.Ordinal);
+        Assert.Contains("\"limit\":25", list, StringComparison.Ordinal);
+        Assert.Equal("{}", WritePayload("library_list_trash", "{}"));
+
+        var purge = WritePayload(
+            "library_purge_trash",
+            "{\"entries\":[{\"book_id\":\"book-1\"}],\"confirm\":true,\"idempotency_key\":\"trash-key-3\"}");
+        Assert.Contains("\"confirm\":true", purge, StringComparison.Ordinal);
+
+        // Closed shape / required field / confirm / cursor+limit validation, all before any frame.
+        AssertInvalidPayload("library_move_to_trash", "{}");
+        AssertInvalidPayload("library_move_to_trash", "{\"entries\":[],\"idempotency_key\":\"k\"}");
+        AssertInvalidPayload("library_move_to_trash", "{\"entries\":[{\"book_id\":\"b\"}]}");
+        AssertInvalidPayload(
+            "library_move_to_trash", "{\"entries\":[{\"book_id\":\"b\"}],\"idempotency_key\":\"k\",\"extra\":1}");
+        AssertInvalidPayload(
+            "library_move_to_trash", "{\"entries\":[{\"book_id\":\"b\",\"page_id\":\"p\"}],\"idempotency_key\":\"k\"}");
+        AssertInvalidPayload(
+            "library_purge_trash", "{\"entries\":[{\"book_id\":\"b\"}],\"confirm\":false,\"idempotency_key\":\"k\"}");
+        AssertInvalidPayload(
+            "library_purge_trash", "{\"entries\":[{\"book_id\":\"b\"}],\"confirm\":\"true\",\"idempotency_key\":\"k\"}");
+        AssertInvalidPayload("library_list_trash", "{\"limit\":0}");
+        AssertInvalidPayload("library_list_trash", "{\"cursor\":1}");
+        AssertInvalidPayload("library_list_trash", "{\"unknown\":true}");
+    }
+
+    [Fact]
+    public void Fea12_TrashErrorProjection_NegativeControl_UnknownDegradesButCodeIsPreserved()
+    {
+        // Pre-registration allow-list == what the Host projected BEFORE M2-C1 rev 2.13. AC3.
+        var preRegistration = HostCommandRegistry.AllowedDeleteTrashErrorCodes
+            .Where(code => !HostCommandRegistry.Fea12DeleteTrashErrorCodes.Contains(code))
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.DoesNotContain("TRASH_ENTRY_NOT_FOUND", preRegistration);
+        Assert.DoesNotContain("TRASH_RESTORE_CONFLICT", preRegistration);
+        Assert.DoesNotContain("TRASH_RESTORE_LAYER_MISMATCH", preRegistration);
+
+        var expected = new[]
+        {
+            ("TRASH_ENTRY_NOT_FOUND", "not_found", false),
+            ("TRASH_RESTORE_CONFLICT", "conflict", false),
+            ("TRASH_RESTORE_LAYER_MISMATCH", "conflict", false),
+        };
+        foreach (var (code, category, retryable) in expected)
+        {
+            var source = new CoreOperationException(code, "conflict", true, "raw core message", "req-3");
+
+            var baseline = HostCommandDispatcher.ProjectDeleteTrashError(source, preRegistration);
+            Assert.Equal(code, baseline.Code); // code kept verbatim, never rewritten
+            Assert.Equal("unknown", baseline.Category);
+            Assert.False(baseline.Retryable);
+
+            var registered = HostCommandDispatcher.ProjectDeleteTrashError(
+                source, HostCommandRegistry.AllowedDeleteTrashErrorCodes);
+            Assert.Equal(code, registered.Code);
+            Assert.Equal(category, registered.Category);
+            Assert.Equal(retryable, registered.Retryable);
+        }
+    }
 }

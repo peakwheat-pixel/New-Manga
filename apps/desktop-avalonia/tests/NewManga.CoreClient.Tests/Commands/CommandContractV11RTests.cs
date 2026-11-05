@@ -67,10 +67,15 @@ public sealed class CommandContractV11RTests
     [Fact]
     public void RegistrySurface_IsFullyDeclared_WithoutHardcodingTheTotal()
     {
+        // FEA-12-PREREQ-1 (DSH 2026-11-05 narrow batch): the delete-preview + trash commands
+        // registered by M2-C1 rev 2.13 are declared by M2-C1 itself, not by the V11R command
+        // contract. The strict rule stays: every registered command must be declared by one of
+        // the authoritative declarations below -- nothing becomes silently undeclared.
         var declared = Document.Value.BaselineRows.Select(row => row.Command)
             .Concat(Document.Value.PendingCommandNames)
             .Concat(HostCommandRegistry.SourceCommandNames)
             .Concat(HostCommandRegistry.SourceSyncCommandNames)
+            .Concat(HostCommandRegistry.DeleteTrashCommandNames)
             .ToHashSet(StringComparer.Ordinal);
 
         var undeclared = HostCommandRegistry.All.Keys

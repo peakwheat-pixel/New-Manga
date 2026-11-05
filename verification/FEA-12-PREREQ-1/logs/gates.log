@@ -1,0 +1,115 @@
+# FEA-12-PREREQ-1 — gates（2026-11-05，Asia/Shanghai）
+
+> 所有门禁均在主工作树 `G:\CODEX\New Manga`（main）实跑；每条记录含命令、EXIT、结果摘要与日志路径。
+> 实现 head / 交付 commit：见 `doc/handoffs/FEA-12-PREREQ-1-035468a81.md`（Handoff 记录 commit 列表）。
+> 本文档中的 sha256/日志为提交前实跑结果；最终 `check.ps1` 在 in_review 卡 + 提交后复跑，结果写入 Handoff。
+
+## G1 冻结 pins（18/18）
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+RESULT:  PIN AUDIT: PASS (all 18)
+EXIT:    0
+HEAD:    c2b40c9f3b65be0ad5f60b401d9ed5d3845882a1
+LOG:     verification/FEA-12-PREREQ-1/logs/baseline-governance.log（基线 18/18）+ 本次输出
+```
+
+## G2 治理 check（in_progress 卡阶段；in_review 最终复跑见 Handoff）
+
+```text
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-PREREQ-1.md
+RESULT:  Governance check: PASS (2 warnings)
+WARN:    存在 15 个非终态 Task（见 TASK_LEDGER）
+WARN:    doc/REBASELINE_PLAN.md 已达到预算的 80%
+EXIT:    0
+```
+
+## G3 全量 .NET（首跑 flaky + 复跑绿）
+
+```text
+COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
+RUN 1:   失败 1 / 通过 1402 / 跳过 79 / 总计 1482（NewManga.App.Tests 1 fail）
+         FAIL: FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In
+         LOG:  verification/FEA-12-PREREQ-1/logs/dotnet-full-1.log
+FLAKY 说明（非本卡改动引起，跨测试程序集证据写竞争）：
+         - 该测试断言运行前后 `git status --porcelain -- verification` 完全相同；
+         - 同一 solution 运行中 `NewManga.CoreClient.Tests.WireLogSourceRedactionTests` 会重写
+           tracked 证据 `verification/FEA-09/logs/wire-redacted.ndjson`（既有行为，task 说明中亦提醒事后恢复）；
+         - 两个测试程序集并行时该写入发生在断言窗口内 → 视图测试失败；单独复跑该测试 1/1 通过（EXIT 0）。
+         - 处置：`git checkout -- verification/FEA-09`（仅该路径）恢复 tracked 证据后复跑。
+RUN 2:   失败 0 / 通过 1403 / 跳过 79 / 总计 1482  → PASS
+         分程序集: Appearance 21/0/0; Presentation.Avalonia 38/0/0; ThemeEngine 253/0/0;
+                   DesignSystem 117/0/0; ApplicationCore 31/0/0; Host 107/0/49;
+                   CoreClient 165/0/23; App 671/0/7
+         LOG:  verification/FEA-12-PREREQ-1/logs/dotnet-full-2.log
+EXIT:    0
+```
+
+## G4 全量 pytest（本卡无 Python 产品改动，记录基线）
+
+```text
+COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+RESULT:  3073 passed, 10 skipped in 288.40s
+EXIT:    0
+LOG:     verification/FEA-12-PREREQ-1/logs/pytest-full.log
+```
+
+## G5 CoreClient 命令治理测试（无 sidecar 环境，纯单测）
+
+```text
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
+         -c Release --no-build --filter "FullyQualifiedName~Command"
+RESULT:  通过 135 / 失败 0 / 跳过 15 / 总计 150
+EXIT:    0
+（覆盖 CommandWiringB1/B2（含 FEA-12 新单测）、CommandParityContract、CommandContractV11R、
+  DraftCommandRegistry、CommandIntegration 的非 sidecar 用例）
+```
+
+## G6 真实冻结 Core 负向对照 + delete 族回归（sidecar 环境）
+
+```text
+ENV:     NEWMANGA_CORECLIENT_SIDECAR_DIR=G:\CODEX\New Manga.workspace\task-envs\HOST-CORECLIENT-1\sidecar-copy
+         NEWMANGA_EVIDENCE_DIR=verification/FEA-12-PREREQ-1/test-evidence
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
+         -c Release --no-build --filter "FullyQualifiedName~Fea12NewCommands|FullyQualifiedName~B1Commands_ExecuteAgainstFrozenCore|FullyQualifiedName~B2Commands_ExecuteAgainstFrozenCore"
+RESULT:  通过 3 / 失败 0 / 跳过 0 / 总计 3
+EXIT:    0
+EVIDENCE:test-evidence/commands/fea12-old-core-negative-control.json
+         test-evidence/commands/ns-b1-integration.json
+         test-evidence/commands/ns-b2-integration.json
+```
+
+## G7 tracked 证据恢复（全量 .NET 的已知副作用）
+
+```text
+COMMAND: git checkout -- verification/FEA-09
+RESULT:  verification/FEA-09 无 dirty（WireLogSourceRedactionTests 重写 tracked wire-redacted.ndjson 属既有行为）
+EXIT:    0
+```
+
+## G8 M2-C1 rev 2.13 additive 审计
+
+```text
+COMMAND: pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/rev213-diff-audit.ps1
+RESULT:  ADDITIVE_AUDIT=PASS
+         - 165 insertions / 2 removed lines；removed 仅：文档状态行（rev 2.12→2.13）与 §11 policy 行（ADJ §D2）
+         - src_touched_count=0（无 Python 改动）
+         - pinned_contracts_changed=0（18 pins 冻结契约零字节改动）
+         - doc_status_line=2.13；core_service.py PROTOCOL_MINOR 仍为 3
+EXIT:    0
+LOG:     verification/FEA-12-PREREQ-1/logs/rev213-diff-audit.log
+```
+
+## G9 基线负向对照（改动前）
+
+```text
+COMMAND: pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/baseline-negative-control.ps1
+         -RepoRoot <workspace>/task-envs/FEA-12-PREREQ-1/baseline-worktree-035468a81
+         -AssemblyPath <worktree>/.../NewManga.CoreClient.dll
+RESULT:  BASELINE_NEGATIVE_CONTROL=CAPTURED
+         - registry 106 命令；5 个新命令不存在，Get() → typed UNKNOWN_COMMAND
+         - 5 个新码不在白名单 → 投影 category=unknown 且 code 原文保留
+         - 冻结旧 Core：PreviewPermanentDeleteBooks(2.11)/MoveToTrash(2.13) → typed UNKNOWN_COMMAND
+LOG:     verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log
+         verification/FEA-12-PREREQ-1/logs/baseline-negative-control.log（改动前主工作树 head 版本）
+```
