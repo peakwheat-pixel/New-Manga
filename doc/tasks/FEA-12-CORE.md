@@ -162,6 +162,18 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 | EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 27dfd7514 | null | SOURCE_PIN |
 | EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 27dfd7514 | null | SOURCE_PIN |
 | EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_CAPABILITY_PRO | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-capability-probe.json | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_IMPLEMENTATION | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-implementation-record.md | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_OLD_CORE_NEGAT | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-old-core-negative-control.json | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_BASELINE_NEGAT | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-baseline-negative-control-oldhost.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_CHECK | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-check.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_DOTNET_COMMAND | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-dotnet-command-filter.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_DOTNET_FULL_1 | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-dotnet-full-1.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_DOTNET_FULL_2 | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-dotnet-full-2.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_DOTNET_SIDECAR | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-dotnet-sidecar-negative.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-CORE_HOST_PINS | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/core-host-pins.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-B-GATES_CORE_HOST | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/logs/gates-core-host.log | fc7125586 | null | CANONICAL |
+| EV-FEA12CORE-INTEGRATION | Gate 集成门禁（Lead 实跑：pytest 3144/10、.NET 1405/0/80、check、pins） | verification/FEA-12-CORE/logs/gates-integration.log | - | 302e18a06207e54307e4b0b4d54fd3cf836c449ae51fbe75709014148c06d7d7 | CANONICAL |
 
 ## Resource Manifest
 
