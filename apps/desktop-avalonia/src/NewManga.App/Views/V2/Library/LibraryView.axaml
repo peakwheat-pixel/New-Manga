@@ -217,13 +217,37 @@
         </Grid>
 
         <lv:RecycleBinView IsVisible="{Binding IsRecycleBinView}" />
+
+        <!-- FEA-12-UI IN-3/Q6: local success bar for "move to recycle bin" with an explicit undo
+             (RestoreFromTrash). The bar is shelf-only and disappears after undo or a new move. -->
+        <Border Classes="raised"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Margin="{DynamicResource Nm.Padding.Panel}"
+                Padding="{DynamicResource Nm.Padding.ControlSm}"
+                Panel.ZIndex="{DynamicResource Nm.ZIndex.Drawer}"
+                IsVisible="{Binding UndoBarVisible}">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
+            <TextBlock Classes="label" Text="已移入回收站" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Classes="meta"
+                       Text="{Binding UndoBarText}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center" />
+            <Button Grid.Column="2"
+                    Classes="secondary sm"
+                    Content="撤销"
+                    Command="{Binding UndoMoveToTrashCommand}" />
+          </Grid>
+        </Border>
       </Grid>
 
       <!-- 驻留详情面板（作品元信息 / 章节账本 / 页 / 进度 / 操作）。R-18：<1280 改为覆盖式抽屉，
-           >=1280 作为右侧驻留列；两种形态共用同一 ViewModel，切换空间不丢失状态。 -->
+           >=1280 作为右侧驻留列；两种形态共用同一 ViewModel，切换空间不丢失状态。
+           FEA-12-UI Q4：进入回收站时隐藏两种详情形态（避免幽灵上下文）。 -->
       <lv:BookDetailPanel Grid.Column="1"
                           Width="{Binding DetailPanelWidth}"
-                          IsVisible="{Binding IsSideDetailVisible}" />
+                          IsVisible="{Binding ShowSideDetail}" />
 
       <Border Grid.Column="0"
               Classes="raised"
@@ -231,16 +255,16 @@
               HorizontalAlignment="Right"
               VerticalAlignment="Stretch"
               Panel.ZIndex="{DynamicResource Nm.ZIndex.Drawer}"
-              IsVisible="{Binding IsOverlayDetailVisible}">
+              IsVisible="{Binding ShowOverlayDetail}">
         <lv:BookDetailPanel />
       </Border>
     </Grid>
 
-    <!-- ── Multi-select batch bar（作用域常驻） ──────────────────────────────────── -->
+    <!-- ── Multi-select batch bar（作用域常驻；FEA-12-UI Q4：回收站视图隐藏页面批量条） ── -->
     <Border Grid.Row="2"
             Classes="raised"
             Padding="{DynamicResource Nm.Padding.ControlSm}"
-            IsVisible="{Binding IsMultiSelectActive}">
+            IsVisible="{Binding ShowPageBulkBar}">
       <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
         <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}" VerticalAlignment="Center">
           <ctrl:StatusBadge Status="Queued" ShowLabel="False" VerticalAlignment="Center" />

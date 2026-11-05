@@ -14,7 +14,7 @@ namespace NewManga.App.Services;
 /// FEA-09-UI-1: also implements <see cref="ISourceImportController"/> — a SEPARATE face, so the
 /// frozen C-07 <see cref="IHostController"/> inventory (54 members) stays byte-identical.
 /// </summary>
-public sealed class HostController : IHostController, ISourceImportController, IPreparedRunController
+public sealed class HostController : IHostController, ISourceImportController, IPreparedRunController, ITrashController
 {
     private readonly HostOptions _options;
     private readonly object _startLock = new();
@@ -2680,5 +2680,519 @@ public sealed class HostController : IHostController, ISourceImportController, I
 
     private static Dictionary<string, object?> DraftPatchJson(DraftPatchRequest patch) =>
         patch.Patch.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+
+    // =====================================================================================
+    // FEA-12-UI: the trash/permanent-delete face (ITrashController). Deliberately OUTSIDE the
+    // frozen C-07 IHostController inventory (see Services/TrashModels.cs). Each method maps to
+    // exactly one Host command frame (the capability probe reads core.ping only); results are
+    // typed and honest — a missing command/capability or an unparsable response is a typed
+    // failure, never fabricated data and never a fake success.
+    // =====================================================================================
+
+    public async Task<TrashCapabilityState> ProbeTrashCapabilitiesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return TrashCapabilityState.Unavailable(
+                TrashErrorCodes.CoreUnavailable, "Host 未就绪：无法探测回收站能力");
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(TrashWireCommands.CapabilityProbe, default, cancellationToken)
+                .ConfigureAwait(false);
+            var advertised = new HashSet<string>(StringComparer.Ordinal);
+            if (response.Value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                !response.Value.TryGetProperty("capabilities", out var capabilities) ||
+                capabilities.ValueKind != System.Text.Json.JsonValueKind.Array)
+            {
+                // Old Core that cannot describe its capabilities is NOT treated as "all present".
+                return new TrashCapabilityState(
+                    true, false, false, false,
+                    TrashErrorCodes.CapabilityMissing,
+                    "Core 未公布回收站能力（旧 Core？），回收站已按能力缺失禁用");
+            }
+
+            foreach (var capability in capabilities.EnumerateArray())
+            {
+                if (capability.ValueKind == System.Text.Json.JsonValueKind.String &&
+                    capability.GetString() is { Length: > 0 } value)
+                {
+                    advertised.Add(value);
+                }
+            }
+
+            return new TrashCapabilityState(
+                true,
+                advertised.Contains(TrashCapabilities.Read),
+                advertised.Contains(TrashCapabilities.Write),
+                advertised.Contains(TrashCapabilities.Preview),
+                advertised.Contains(TrashCapabilities.Read) &&
+                advertised.Contains(TrashCapabilities.Write) &&
+                advertised.Contains(TrashCapabilities.Preview)
+                    ? null
+                    : TrashErrorCodes.CapabilityMissing,
+                advertised.Contains(TrashCapabilities.Read) &&
+                advertised.Contains(TrashCapabilities.Write) &&
+                advertised.Contains(TrashCapabilities.Preview)
+                    ? null
+                    : "当前 Core 未公布全部回收站能力（读/写/预览），相关操作已禁用");
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return TrashCapabilityState.Unavailable(ErrorCodeOf(ex), "回收站能力探测失败：" + UserMessageOf(ex));
+        }
+    }
+
+    public async Task<TrashListResult> ListTrashAsync(
+        string? cursor = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return TrashListResult.Failure(TrashErrorCodes.CoreUnavailable, "Host 未就绪，无法读取回收站");
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(TrashWireCommands.ListTrash, TrashPayloads.ListTrash(cursor), cancellationToken)
+                .ConfigureAwait(false);
+            if (response.Value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                !response.Value.TryGetProperty("items", out var items) ||
+                items.ValueKind != System.Text.Json.JsonValueKind.Array)
+            {
+                // An unparsable list is a typed failure, never an empty recycle bin.
+                return TrashListResult.Failure(
+                    TrashErrorCodes.Unknown, "回收站响应缺少 items 列表（实现缺陷，未渲染空列表）");
+            }
+
+            var rows = new List<TrashEntry>();
+            foreach (var item in items.EnumerateArray())
+            {
+                if (item.ValueKind != System.Text.Json.JsonValueKind.Object)
+                {
+                    return TrashListResult.Failure(
+                        TrashErrorCodes.Unknown, "回收站条目形状无效（实现缺陷，未渲染空列表）");
+                }
+
+                var bookId = TrashString(item, "bookId");
+                if (string.IsNullOrWhiteSpace(bookId))
+                {
+                    return TrashListResult.Failure(
+                        TrashErrorCodes.Unknown, "回收站条目缺少 bookId（实现缺陷，未渲染空列表）");
+                }
+
+                rows.Add(new TrashEntry(
+                    bookId!,
+                    TrashString(item, "title") ?? string.Empty,
+                    TrashString(item, "deletedAt") ?? string.Empty));
+            }
+
+            var nextCursor = TrashString(response.Value, "nextCursor");
+            SetLastError(null);
+            return new TrashListResult(true, null, null, rows, string.IsNullOrEmpty(nextCursor) ? null : nextCursor);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return TrashListResult.Failure(ErrorCodeOf(ex), "读取回收站失败：" + UserMessageOf(ex));
+        }
+    }
+
+    public Task<TrashWriteResult> MoveToTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        WriteTrashAsync(TrashWireCommands.MoveToTrash, bookIds, idempotencyKey, cancellationToken);
+
+    public Task<TrashWriteResult> RestoreFromTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        WriteTrashAsync(TrashWireCommands.RestoreFromTrash, bookIds, idempotencyKey, cancellationToken);
+
+    private async Task<TrashWriteResult> WriteTrashAsync(
+        string command,
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        if (bookIds.Count == 0 || string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            return TrashWriteResult.Failure(TrashErrorCodes.InvalidRequest, "目标为空或缺少幂等键，未发送任何写入");
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return TrashWriteResult.Failure(TrashErrorCodes.CoreUnavailable, "Host 未就绪，写入被拒绝");
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError(TrashErrorCodes.ReadOnly);
+            return TrashWriteResult.Failure(TrashErrorCodes.ReadOnly, "Host 处于只读模式，写入被拒绝");
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(command, TrashPayloads.MoveOrRestore(bookIds, idempotencyKey), cancellationToken)
+                .ConfigureAwait(false);
+            var isRestore = string.Equals(command, TrashWireCommands.RestoreFromTrash, StringComparison.Ordinal);
+            var succeeded = new List<string>();
+            var issues = new List<TrashItemIssue>();
+
+            if (response.Value.ValueKind == System.Text.Json.JsonValueKind.Object)
+            {
+                var successProperty = isRestore ? "restored" : "moved";
+                var failureProperty = isRestore ? "conflicts" : "skipped";
+                if (response.Value.TryGetProperty(successProperty, out var successArray) &&
+                    successArray.ValueKind == System.Text.Json.JsonValueKind.Array)
+                {
+                    foreach (var entry in successArray.EnumerateArray())
+                    {
+                        if (TrashRefBookId(entry) is { Length: > 0 } bookId)
+                        {
+                            succeeded.Add(bookId);
+                        }
+                    }
+                }
+
+                if (response.Value.TryGetProperty(failureProperty, out var failureArray) &&
+                    failureArray.ValueKind == System.Text.Json.JsonValueKind.Array)
+                {
+                    foreach (var entry in failureArray.EnumerateArray())
+                    {
+                        var bookId = TrashRefBookId(entry) ?? string.Empty;
+                        var reason = TrashString(entry, "reason");
+                        issues.Add(new TrashItemIssue(
+                            bookId,
+                            reason,
+                            isRestore ? TrashCopy.RestoreReason(reason) : TrashCopy.MoveSkipReason(reason)));
+                    }
+                }
+
+                if (succeeded.Count == 0 && issues.Count == 0 &&
+                    response.Value.EnumerateObject().Any())
+                {
+                    // Known command, but neither per-item array: treat as implementation defect.
+                    return TrashWriteResult.Failure(
+                        TrashErrorCodes.Unknown, "命令响应缺少逐项结果（实现缺陷，未伪报成功）");
+                }
+            }
+
+            var ok = succeeded.Count > 0 || (!isRestore && issues.Count == 0 && response.Value.ValueKind == System.Text.Json.JsonValueKind.Object);
+            SetLastError(ok ? null : TrashErrorCodes.Unknown);
+            return new TrashWriteResult(ok, ok ? null : TrashErrorCodes.Unknown,
+                ok ? null : "部分或全部条目未处理，详见逐项结果", succeeded, issues);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return TrashWriteResult.Failure(ErrorCodeOf(ex), UserMessageOf(ex));
+        }
+    }
+
+    public async Task<TrashPreviewResult> PreviewPermanentDeleteAsync(
+        IReadOnlyList<string> bookIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (bookIds.Count == 0)
+        {
+            return TrashPreviewResult.Failure(TrashErrorCodes.InvalidRequest, "缺少预览目标，未发送任何帧");
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return TrashPreviewResult.Failure(TrashErrorCodes.CoreUnavailable, "Host 未就绪，无法预览删除影响");
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(
+                    TrashWireCommands.PreviewPermanentDelete,
+                    TrashPayloads.Preview(bookIds),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var digest = response.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                ? TrashString(response.Value, "inventoryDigest")
+                : null;
+            if (string.IsNullOrWhiteSpace(digest) ||
+                !response.Value.TryGetProperty("items", out var items) ||
+                items.ValueKind != System.Text.Json.JsonValueKind.Array)
+            {
+                return TrashPreviewResult.Failure(
+                    TrashErrorCodes.Unknown, "删除预览响应缺少 digest 或清单（实现缺陷，已禁用确认）");
+            }
+
+            // §5.13: per-book digests bind the (future) single delete; a missing map means the
+            // preview cannot bind anything → typed failure, never a collection-digest fallback.
+            var perBookDigests = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (!response.Value.TryGetProperty("inventoryDigests", out var digestMap) ||
+                digestMap.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return TrashPreviewResult.Failure(
+                    TrashErrorCodes.Unknown, "删除预览响应缺少 inventoryDigests 逐书 digest（实现缺陷，已禁用确认）");
+            }
+
+            foreach (var property in digestMap.EnumerateObject())
+            {
+                if (property.Value.ValueKind == System.Text.Json.JsonValueKind.String &&
+                    property.Value.GetString() is { Length: > 0 } perBook)
+                {
+                    perBookDigests[property.Name] = perBook;
+                }
+            }
+
+            var disclosure = new List<TrashPreviewItem>();
+            foreach (var item in items.EnumerateArray())
+            {
+                if (item.ValueKind != System.Text.Json.JsonValueKind.Object)
+                {
+                    return TrashPreviewResult.Failure(
+                        TrashErrorCodes.Unknown, "删除预览条目形状无效（实现缺陷，已禁用确认）");
+                }
+
+                var bookId = TrashString(item, "bookId");
+                if (string.IsNullOrWhiteSpace(bookId))
+                {
+                    return TrashPreviewResult.Failure(
+                        TrashErrorCodes.Unknown, "删除预览条目缺少 bookId（实现缺陷，已禁用确认）");
+                }
+
+                var protection = item.TryGetProperty("protection", out var protectionValue) &&
+                                 protectionValue.ValueKind == System.Text.Json.JsonValueKind.Object
+                    ? protectionValue
+                    : default;
+                var content = item.TryGetProperty("contentSummary", out var contentValue) &&
+                              contentValue.ValueKind == System.Text.Json.JsonValueKind.Object
+                    ? contentValue
+                    : default;
+                // PD-01: a missing mandatory disclosure item is a typed failure, not zeros.
+                if (protection.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                    protection.TryGetProperty("lockCount", out _) is false ||
+                    protection.TryGetProperty("manualRegionCount", out _) is false ||
+                    protection.TryGetProperty("draftPageCount", out _) is false ||
+                    protection.TryGetProperty("activeRunIds", out var activeRunIds) is false ||
+                    activeRunIds.ValueKind != System.Text.Json.JsonValueKind.Array ||
+                    content.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                    content.TryGetProperty("deletedFiles", out _) is false ||
+                    content.TryGetProperty("deletedBytes", out _) is false)
+                {
+                    return TrashPreviewResult.Failure(
+                        TrashErrorCodes.Unknown, "删除预览缺少 PD-01 强制披露项（实现缺陷，已禁用确认）");
+                }
+
+                disclosure.Add(new TrashPreviewItem(
+                    bookId!,
+                    TrashString(item, "title") ?? string.Empty,
+                    new TrashProtection(
+                        TrashInt(protection, "lockCount"),
+                        TrashString(protection, "currentRevisionId"),
+                        TrashStringArrayOrUnknown(protection, "currentRegionRevisionIds"),
+                        TrashStringArrayOrUnknown(protection, "currentArtifactRevisionIds"),
+                        TrashStringArray(protection, "pinnedRevisionIds"),
+                        TrashStringArray(protection, "activeRunIds"),
+                        TrashInt(protection, "draftPageCount"),
+                        TrashInt(protection, "manualRegionCount")),
+                    new TrashContentSummary(
+                        TrashInt(content, "chapters"),
+                        TrashInt(content, "pages"),
+                        TrashInt(content, "artifacts"),
+                        TrashInt(content, "deletedFiles"),
+                        TrashLong(content, "deletedBytes")),
+                    TrashSharedRefs(item)));
+            }
+
+            SetLastError(null);
+            return new TrashPreviewResult(true, null, null, digest, disclosure, perBookDigests);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            return TrashPreviewResult.Failure(ErrorCodeOf(ex), "读取删除影响清单失败：" + UserMessageOf(ex));
+        }
+    }
+
+    public async Task<TrashDeleteResult> DeletePermanentlyAsync(
+        string bookId,
+        string inventoryDigest,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(inventoryDigest))
+        {
+            return TrashDeleteResult.Failure(
+                TrashDeleteOutcome.InvalidRequest, TrashErrorCodes.InvalidRequest,
+                "缺少 bookId 或 digest，未发送任何删除帧");
+        }
+
+        if (_runtime?.Commands is not { } commands || !_runtime.Result.IsReady)
+        {
+            return TrashDeleteResult.Failure(
+                TrashDeleteOutcome.Unavailable, TrashErrorCodes.CoreUnavailable, "Host 未就绪，删除被拒绝");
+        }
+
+        if (!_runtime.Policy.WritesAllowed)
+        {
+            SetLastError(TrashErrorCodes.ReadOnly);
+            return TrashDeleteResult.Failure(
+                TrashDeleteOutcome.ReadOnly, TrashErrorCodes.ReadOnly, "Host 处于只读模式，删除被拒绝");
+        }
+
+        try
+        {
+            var response = await commands
+                .InvokeAsync(
+                    TrashWireCommands.DeletePermanently,
+                    TrashPayloads.DeletePermanently(bookId, inventoryDigest),
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var deleted = response.Value.ValueKind == System.Text.Json.JsonValueKind.Object &&
+                          response.Value.TryGetProperty("deleted", out var deletedValue) &&
+                          deletedValue.ValueKind == System.Text.Json.JsonValueKind.True;
+            if (!deleted)
+            {
+                return TrashDeleteResult.Failure(
+                    TrashDeleteOutcome.Unknown, TrashErrorCodes.Unknown,
+                    "删除响应未确认 deleted（实现缺陷，未伪报成功）");
+            }
+
+            SetLastError(null);
+            return new TrashDeleteResult(TrashDeleteOutcome.Deleted, null, null);
+        }
+        catch (CoreOperationException core)
+        {
+            SetLastError(core.Code);
+            var outcome = core.Code switch
+            {
+                TrashErrorCodes.CleanupPending => TrashDeleteOutcome.CleanupPending,
+                TrashErrorCodes.StalePreview => TrashDeleteOutcome.Stale,
+                TrashErrorCodes.Busy => TrashDeleteOutcome.Busy,
+                TrashErrorCodes.BookNotFound => TrashDeleteOutcome.NotFound,
+                TrashErrorCodes.Conflict => TrashDeleteOutcome.Conflict,
+                TrashErrorCodes.Failed or TrashErrorCodes.InventoryUnavailable => TrashDeleteOutcome.Failed,
+                TrashErrorCodes.InvalidRequest => TrashDeleteOutcome.InvalidRequest,
+                TrashErrorCodes.CapabilityMissing => TrashDeleteOutcome.CapabilityMissing,
+                TrashErrorCodes.ReadOnly => TrashDeleteOutcome.ReadOnly,
+                TrashErrorCodes.CoreUnavailable or "SIDECAR_PROCESS_EXITED" => TrashDeleteOutcome.Unavailable,
+                _ => TrashDeleteOutcome.Unknown,
+            };
+            return new TrashDeleteResult(outcome, core.Code, core.Message);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            SetLastError(ErrorCodeOf(ex));
+            var code = ErrorCodeOf(ex);
+            return new TrashDeleteResult(
+                string.Equals(code, TrashErrorCodes.ReadOnly, StringComparison.Ordinal)
+                    ? TrashDeleteOutcome.ReadOnly
+                    : TrashDeleteOutcome.Unavailable,
+                code,
+                UserMessageOf(ex));
+        }
+    }
+
+    private static string? TrashRefBookId(System.Text.Json.JsonElement entry)
+    {
+        if (entry.ValueKind != System.Text.Json.JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        if (entry.TryGetProperty("ref", out var reference) &&
+            reference.ValueKind == System.Text.Json.JsonValueKind.Object)
+        {
+            return TrashString(reference, "book_id");
+        }
+
+        return TrashString(entry, "book_id");
+    }
+
+    private static string? TrashString(System.Text.Json.JsonElement value, string property) =>
+        value.ValueKind == System.Text.Json.JsonValueKind.Object &&
+        value.TryGetProperty(property, out var found) &&
+        found.ValueKind == System.Text.Json.JsonValueKind.String
+            ? found.GetString()
+            : null;
+
+    private static int TrashInt(System.Text.Json.JsonElement value, string property) =>
+        value.ValueKind == System.Text.Json.JsonValueKind.Object &&
+        value.TryGetProperty(property, out var found) &&
+        found.ValueKind == System.Text.Json.JsonValueKind.Number &&
+        found.TryGetInt32(out var number)
+            ? number
+            : 0;
+
+    private static long TrashLong(System.Text.Json.JsonElement value, string property) =>
+        value.ValueKind == System.Text.Json.JsonValueKind.Object &&
+        value.TryGetProperty(property, out var found) &&
+        found.ValueKind == System.Text.Json.JsonValueKind.Number &&
+        found.TryGetInt64(out var number)
+            ? number
+            : 0L;
+
+    /// <summary>Required array; a missing/invalid array collapses to an empty display list.</summary>
+    private static IReadOnlyList<string> TrashStringArray(System.Text.Json.JsonElement value, string property) =>
+        TrashStringArrayOrUnknown(value, property) ?? Array.Empty<string>();
+
+    /// <summary>
+    /// rev 2.14 / AC4: <c>null</c> means UNKNOWN (field absent or JSON null) — the UI must fail
+    /// closed; only a real array (even <c>[]</c>) is a known complete set.
+    /// </summary>
+    private static IReadOnlyList<string>? TrashStringArrayOrUnknown(
+        System.Text.Json.JsonElement value,
+        string property)
+    {
+        if (value.ValueKind != System.Text.Json.JsonValueKind.Object ||
+            !value.TryGetProperty(property, out var found) ||
+            found.ValueKind == System.Text.Json.JsonValueKind.Null)
+        {
+            return null;
+        }
+
+        if (found.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return null;
+        }
+
+        var result = new List<string>();
+        foreach (var element in found.EnumerateArray())
+        {
+            if (element.ValueKind == System.Text.Json.JsonValueKind.String &&
+                element.GetString() is { } text)
+            {
+                result.Add(text);
+            }
+        }
+
+        return result;
+    }
+
+    private static IReadOnlyList<TrashSharedFileRef> TrashSharedRefs(System.Text.Json.JsonElement item)
+    {
+        if (!item.TryGetProperty("sharedFileRefs", out var refs) ||
+            refs.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return Array.Empty<TrashSharedFileRef>();
+        }
+
+        var result = new List<TrashSharedFileRef>();
+        foreach (var reference in refs.EnumerateArray())
+        {
+            var fileId = TrashString(reference, "fileId");
+            if (string.IsNullOrEmpty(fileId))
+            {
+                continue;
+            }
+
+            result.Add(new TrashSharedFileRef(fileId, TrashInt(reference, "otherProjectCount")));
+        }
+
+        return result;
+    }
 }
 

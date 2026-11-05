@@ -1,0 +1,12 @@
+{
+  "core": "real core_service over stdio",
+  "bookId": "c8e88dc3c9be4f3a92fe3e5faf4cc2a3",
+  "collectionDigest": "sha256:0f18a1e52969445712752f554584d8110f9912b5687a2e747d5e1fcfff5bc8c2",
+  "perBookDigest": "sha256:4ff86e80bc30842907eb5d6d85c8e312ba73295cbc7b738710c6b803552bfb45",
+  "wire_frames": 27,
+  "purge_frames": false,
+  "batch_permanent_delete_frames": false,
+  "dataRootOutsideRepo": true,
+  "sentinelUnchanged": true,
+  "sentinelFingerprint": "cb20e32646b2fe9da63931a5d113d7b63246e3e23a340e309468a81784eaf7ef"
+}

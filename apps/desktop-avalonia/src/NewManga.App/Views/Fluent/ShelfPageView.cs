@@ -118,7 +118,8 @@ public sealed class ShelfPageView : UserControl
         _recycleDrawer = new Drawer { IsOpen = false, Header = "回收站", Classes = { "fluent-drawer" } };
         _recycleDrawer.Content = FluentUi.Stack("fluent-page-layout");
         ((StackPanel)_recycleDrawer.Content).Children.Add(FluentUi.Text(
-            "回收站入口已保留。当前 IHostController 未发布回收站读写端口，因此这里不显示虚构记录，也不会执行删除。"));
+            "Fluent 前端暂未接入回收站数据。回收站浏览、恢复与单本彻底删除在 V2 前端（Library 空间 → 回收站）提供；" +
+            "这里不显示虚构记录，也不会执行删除。"));
 
         _dialogInput = FluentUi.Input("名称", "输入作品或章节名称");
         _dialog = new FluentDialog { IsOpen = false };
@@ -220,7 +221,7 @@ public sealed class ShelfPageView : UserControl
         toolbar.Children.Add(_importFilesButton);
         _importFolderButton = FluentUi.Button("导入文件夹", "fluent-secondary", () => _ = PickAndImportFolderAsync(), "导入文件夹");
         toolbar.Children.Add(_importFolderButton);
-        toolbar.Children.Add(FluentUi.Button("回收站", "fluent-secondary", () => _recycleDrawer.IsOpen = true, "打开回收站"));
+        toolbar.Children.Add(FluentUi.Button("回收站", "fluent-secondary", () => _recycleDrawer.IsOpen = true, "打开回收站（Fluent 前端仅提示；真实回收站在 V2 前端）"));
         toolbar.Children.Add(FluentUi.Button("刷新", "fluent-icon", () => _ = _viewModel.RefreshAsync(), "刷新书架"));
         // I-2：详情栏折叠/展开入口（Enter/Space 激活；折叠后按钮仍在工具栏保持可达）。
         toolbar.Children.Add(_detailToggle);
@@ -441,8 +442,8 @@ public sealed class ShelfPageView : UserControl
 
     private ContextMenu BuildContextMenu(BookSummary book)
     {
-        var delete = new MenuItem { Header = "移入回收站", IsEnabled = false };
-        ToolTip.SetTip(delete, "当前 IHostController 未发布回收站写端口。");
+        var delete = new MenuItem { Header = "移入回收站（V2 前端）", IsEnabled = false };
+        ToolTip.SetTip(delete, "Fluent 前端暂未接入软删；请在 V2 前端书架使用「移入回收站」（可撤销，不删除原文件）。");
         var open = new MenuItem { Header = "打开作品" };
         open.Click += async (_, _) => await _viewModel.SelectBookAsync(book);
         var import = new MenuItem { Header = "导入到所选章节", IsEnabled = !_viewModel.IsReadOnly && _viewModel.SelectedChapter is not null };

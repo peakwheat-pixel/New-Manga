@@ -53,7 +53,12 @@
             <Button Classes="primary sm" Content="阅读" Command="{Binding OpenReaderCommand}" />
             <Button Classes="ghost sm" Content="新建章节" Command="{Binding ShowCreateChapterCommand}" />
             <Button Classes="ghost sm" Content="导入文件" Command="{Binding ImportFilesCommand}" />
-            <Button Classes="ghost sm" Content="回收站" Command="{Binding ShowRecycleBinCommand}" />
+            <!-- FEA-12-UI IN-3/Q4: shelf-side soft delete (danger confirm; revertible; never deletes原文件). -->
+            <Button Classes="danger sm"
+                    Content="移入回收站"
+                    IsEnabled="{Binding CanMoveToTrash}"
+                    Command="{Binding MoveToTrashCommand}" />
+            <Button Classes="ghost sm" Content="回收站" Command="{Binding OpenTrashCommand}" />
           </StackPanel>
 
           <!-- 新建章节（就地表单，真实 Core 命令） -->

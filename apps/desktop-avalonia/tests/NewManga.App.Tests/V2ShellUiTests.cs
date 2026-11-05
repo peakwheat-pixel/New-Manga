@@ -563,34 +563,87 @@ public sealed class V2ShellUiTests
     }
 
     [AvaloniaFact]
-    public async Task RecycleBin_DangerConfirm_IsCancelable_AndBlockedConfirmWritesNothing()
+    public async Task RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames()
     {
         var controller = V2Fixture.Create();
+        controller.DefaultTrashEntries = new[]
+        {
+            new TrashEntry("book-0", "夜光列车", "2026-11-01T10:00:00Z"),
+            new TrashEntry("book-1", "雨の停車場", "2026-11-01T09:00:00Z"),
+        };
         var (window, shell) = await HostReadyAsync(controller);
         var library = shell.ViewModel.Library;
 
         library.ShowRecycleBinCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
         Assert.True(library.IsRecycleBinView);
-        library.RecyclePurgeCommand.Execute(null);
+        Assert.False(library.ShowSideDetail);
+        Assert.Equal(1, controller.TrashFrames.Count(frame => frame == TrashWireCommands.ListTrash));
+        Assert.Equal(2, library.Trash.Items.Count);
+        Capture(window, "07-recycle-list", "FEA-12-UI");
 
-        var viewModel = shell.ViewModel;
-        Assert.True(viewModel.IsConfirmOpen);
-        Assert.Contains("能力待接入", viewModel.ConfirmBlockedReason, StringComparison.Ordinal);
-        Assert.False(viewModel.ConfirmCanConfirm);
-        Capture(window, "07-recycle-danger-confirm");
+        // IN-6: the row action opens the read-only disclosure panel first (no delete frame).
+        await library.Trash.BeginPermanentDeleteAsync(library.Trash.Items[0]);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(library.Trash.IsPreviewOpen);
+        Assert.False(library.Trash.CanConfirmDelete);
+        Assert.DoesNotContain(TrashWireCommands.DeletePermanently, controller.TrashFrames);
+        Capture(window, "08-recycle-delete-preview", "FEA-12-UI");
 
-        // Confirm is blocked: it must NOT execute anything destructive or pretend success.
-        viewModel.ConfirmCommand.Execute(null);
-        Assert.Contains("能力待接入", viewModel.NoticeText, StringComparison.Ordinal);
+        // Default focus must be 取消 (DESIGN_SYSTEM §6.2), never the destructive button.
+        var cancel = window.GetVisualDescendants().OfType<Button>()
+            .FirstOrDefault(button => button.Name == "PreviewCancelButton");
+        Assert.NotNull(cancel);
+        Assert.True(cancel!.IsFocused);
+        var confirm = window.GetVisualDescendants().OfType<Button>()
+            .FirstOrDefault(button => button.Name == "PreviewConfirmButton");
+        Assert.NotNull(confirm);
+        Assert.False(confirm!.IsEnabled);
 
-        // Esc cancels the modal (level-by-level exit).
-        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
-        Assert.False(viewModel.IsConfirmOpen);
+        // Esc closes the disclosure step without any delete frame.
+        var recycleView = window.GetVisualDescendants().OfType<NewManga.App.Views.V2.Library.RecycleBinView>().First();
+        Assert.True(recycleView.HandleKeyForTest(Key.Escape));
+        Assert.False(library.Trash.IsPreviewOpen);
+        Assert.DoesNotContain(TrashWireCommands.DeletePermanently, controller.TrashFrames);
 
-        // Escape on the recycle view returns to the bookshelf.
+        // Another Esc returns to the shelf.
         Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
         Assert.False(library.IsRecycleBinView);
-        Assert.True(viewModel.State.CurrentSpace == SpaceId.Library);
+        Assert.Equal(SpaceId.Library, shell.ViewModel.State.CurrentSpace);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves()
+    {
+        var controller = V2Fixture.Create();
+        controller.DefaultTrashEntries = new[] { new TrashEntry("book-0", "夜光列车", "2026-11-01T10:00:00Z") };
+        var (window, shell) = await HostReadyAsync(controller);
+        var library = shell.ViewModel.Library;
+        await library.SelectBookAsync(library.AllBooks[0]);
+        Dispatcher.UIThread.RunJobs();
+
+        library.MoveToTrashCommand.Execute(null);
+        var viewModel = shell.ViewModel;
+        Assert.True(viewModel.IsConfirmOpen);
+        Assert.True(viewModel.ConfirmCanConfirm);
+        Capture(window, "09-move-to-trash-danger-confirm", "FEA-12-UI");
+
+        // Esc cancels; the soft delete is not sent.
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Assert.False(viewModel.IsConfirmOpen);
+        Assert.DoesNotContain(TrashWireCommands.MoveToTrash, controller.TrashFrames);
+
+        // Enter on the modal does not confirm (default focus is 取消; no implicit submit).
+        library.MoveToTrashCommand.Execute(null);
+        shell.HandleKeyForTest(Key.Enter, KeyModifiers.None);
+        Assert.DoesNotContain(TrashWireCommands.MoveToTrash, controller.TrashFrames);
+
+        // The explicit confirm path performs exactly one soft-delete frame and exposes undo.
+        viewModel.ConfirmCommand.Execute(null);
+        Assert.Equal(1, controller.TrashFrames.Count(frame => frame == TrashWireCommands.MoveToTrash));
+        Assert.True(library.UndoBarVisible);
+        Capture(window, "10-move-to-trash-undobar", "FEA-12-UI");
         window.Close();
     }
 

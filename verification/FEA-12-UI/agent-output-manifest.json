@@ -1,0 +1,117 @@
+{
+  "task": "FEA-12-UI",
+  "generated_at": "2026-11-06T07:53:55.9706701+08:00",
+  "base_commit": "9daa94a25",
+  "evidence_dir": "verification/FEA-12-UI",
+  "files": [
+    {
+      "path": "verification/FEA-12-UI/AC-MATRIX.md",
+      "sha256": "94004d5261cb62460e5b565038d87af305ccad86ecd33108de6310019c36ecfa",
+      "bytes": 9967,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/ENVIRONMENT.md",
+      "sha256": "2ac5cc0287d066b8f668b875de7a3852669cf9038f19fc967497cd9e5f725fb4",
+      "bytes": 3418,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/fea12-trash-ui-ipc.json",
+      "sha256": "525c123fa6ae078ce9fc15c15aae3757c8d4baccd9786965ce462674ab4e3d65",
+      "bytes": 535,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/api-inventory.log",
+      "sha256": "451b1ef20871821116d8c0f7e6ca8e3b94e3f0262874756432c268e50a557597",
+      "bytes": 4385,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/dotnet-full-solution.log",
+      "sha256": "193dcc2ff6de2e9e1a8b23167b39389f433ba056e7c1affbb8e10d40f0d02e42",
+      "bytes": 23676,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/gates.log",
+      "sha256": "c2372f99b7f13ed5fe2ef11cc1ce03b2ffbb4b353ac7b0e678029477205c88dd",
+      "bytes": 3296,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/ipc-tests-curated.log",
+      "sha256": "2acc069e1ff2d27c2106e1f930f22d3deb882fc15fa4a4f801ba88e237f3818b",
+      "bytes": 344,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/pins.log",
+      "sha256": "2ebcc2c24b9075f939b9beb027ed2decd273323581327db12b6097adb37c4d94",
+      "bytes": 408,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/logs/ui-tests-curated.log",
+      "sha256": "a03c6e5c6767fb8be3c012c3363ecabfc8f7ca93987438b81b7ee53fe04a69fa",
+      "bytes": 339,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--09-move-to-trash-danger-confirm.png",
+      "sha256": "b5fb2dc85fe631f8573a3923dd55ac8e2863bace62b275c470c699ba986ad2db",
+      "bytes": 61609,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--10-move-to-trash-undobar.png",
+      "sha256": "80fdf4901de498f36a42ba30bd83ceab2731926060bf8250f542db15f791e517",
+      "bytes": 54120,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--07-recycle-list.png",
+      "sha256": "30cd7f35b91f0b0ff36f24256fc38fc586ece6bb8a8170cadf0aec5fefc6ec2c",
+      "bytes": 43421,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--08-recycle-delete-preview.png",
+      "sha256": "8c17136f52ccbe0a4b97ef6b2709963ae0c8c0bb29a3208f7278406dd566930f",
+      "bytes": 66327,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    }
+  ],
+  "workspace": {
+    "temp": {
+      "path": "G:\\CODEX\\New Manga.workspace\\temp\\FEA-12-UI",
+      "disposition": "DELETE_SAFE",
+      "note": "测试运行日志副本；Canonical 日志已固化到 evidence_dir"
+    },
+    "ipc_roots": {
+      "pattern": "G:\\CODEX\\New Manga.workspace\\FEA-12-UI\\ipc-*",
+      "disposition": "PRESERVE_REFERENCED",
+      "note": "真实 IPC 隔离 DataRoot/sidecars/wire；Review/集成后可删"
+    },
+    "archived_spill": {
+      "path": "G:\\CODEX\\New Manga.workspace\\archive\\FEA-12-UI-spill-2026-11-06",
+      "disposition": "ARCHIVED",
+      "note": "evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档（spill-tree + moved-tree）；不属 Canonical Evidence"
+    }
+  },
+  "worktree": "NOT_APPLICABLE"
+}

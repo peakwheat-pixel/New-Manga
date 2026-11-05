@@ -17,9 +17,14 @@ public sealed class LibraryViewModel : ObservableObject
     private const string SortPages = "pages";
 
     private readonly IHostController _controller;
+    private readonly ITrashController? _trashController;
     private readonly ShellState _state;
     private readonly Action<string, NmStatus> _notify;
     private readonly Action<ConfirmRequest> _requestConfirm;
+    private IReadOnlyList<string> _lastMovedToTrashBookIds = Array.Empty<string>();
+    private string _lastMovedToTrashTitle = string.Empty;
+    private bool _undoBarVisible;
+    private bool _isMovingToTrash;
     private readonly List<BookRowViewModel> _allBooks = new();
     private readonly IReadOnlyList<LibrarySortOption> _sortOptions = new[]
     {
@@ -58,9 +63,11 @@ public sealed class LibraryViewModel : ObservableObject
         IFilePickerGateway? picker = null)
     {
         _controller = controller;
+        _trashController = controller as ITrashController;
         _state = state;
         _notify = notify;
         _requestConfirm = requestConfirm;
+        Trash = new TrashViewModel(_trashController, () => _controller.Snapshot.WritesAllowed, notify);
 
         ImportDock = new ImportDockViewModel(
             controller,
@@ -96,8 +103,8 @@ public sealed class LibraryViewModel : ObservableObject
         OpenReaderCommand = new RelayCommand(() => _ = OpenReaderAsync());
         ClearSelectionCommand = new RelayCommand(() => _state.ClearMultiPage());
         ClearFiltersCommand = new RelayCommand(ClearFilters);
-        RecycleRestoreCommand = new RelayCommand(() => RequestRecycleAction("恢复"));
-        RecyclePurgeCommand = new RelayCommand(() => RequestRecycleAction("永久删除"));
+        RecycleRestoreCommand = new RelayCommand(() => _ = Trash.RestoreSelectedAsync());
+        RecyclePurgeCommand = new RelayCommand(() => BeginPermanentDeleteForSelection());
         ExportSelectionCommand = new RelayCommand(() => _notify(
             "导出：能力待接入（导出预检归 V11R-B-5，旧版导出流程未迁移到 V2）",
             NmStatus.Blocked));
@@ -105,8 +112,12 @@ public sealed class LibraryViewModel : ObservableObject
             "标记：能力待接入（Host 未暴露页/书目标记命令）",
             NmStatus.Blocked));
         DeleteSelectionCommand = new RelayCommand(() => _notify(
-            "删除：能力待接入（Host 未暴露页/书删除命令，不能用假成功代替）",
+            "页面级删除无命令：当前只提供作品级「移入回收站」与回收站内的单本彻底删除；" +
+            "页面级/批量删除契约尚未发布，未执行任何删除。",
             NmStatus.Blocked));
+        MoveToTrashCommand = new RelayCommand(() => RequestMoveSelectedToTrash());
+        UndoMoveToTrashCommand = new RelayCommand(() => _ = UndoMoveSelectedToTrashAsync());
+        OpenTrashCommand = new RelayCommand(ShowRecycleBin);
 
         _state.SelectionChanged += OnSelectionChanged;
         _state.SpaceChanged += (_, _) => ImportDock.NotifyChapterContextChanged();
@@ -127,6 +138,9 @@ public sealed class LibraryViewModel : ObservableObject
     public ImportDockViewModel ImportDock { get; }
 
     public ReaderOverlayViewModel Reader { get; }
+
+    /// <summary>FEA-12-UI: the recycle-bin slice (separate port; shelf stays on the frozen IHostController).</summary>
+    public TrashViewModel Trash { get; }
 
     public RelayCommand RefreshCommand { get; }
 
@@ -168,6 +182,43 @@ public sealed class LibraryViewModel : ObservableObject
 
     public RelayCommand DeleteSelectionCommand { get; }
 
+    /// <summary>IN-3/Q4: shelf-side "move to recycle bin" (danger confirm; only after Q4 approval).</summary>
+    public RelayCommand MoveToTrashCommand { get; }
+
+    /// <summary>IN-3/Q6: undo the just-performed soft delete through RestoreFromTrash.</summary>
+    public RelayCommand UndoMoveToTrashCommand { get; }
+
+    public RelayCommand OpenTrashCommand { get; }
+
+    public bool HasTrashPort => _trashController is not null;
+
+    public bool IsMovingToTrash
+    {
+        get => _isMovingToTrash;
+        private set
+        {
+            if (Set(ref _isMovingToTrash, value))
+            {
+                OnPropertyChanged(nameof(CanMoveToTrash));
+            }
+        }
+    }
+
+    /// <summary>Enable only when a book is selected, the port exists, the host is writable and no move is in flight.</summary>
+    public bool CanMoveToTrash =>
+        HasTrashPort && SelectedBook is not null && !IsMovingToTrash && _controller.Snapshot.WritesAllowed;
+
+    /// <summary>IN-3/Q6: local success bar with an explicit undo action (no fake removal).</summary>
+    public bool UndoBarVisible
+    {
+        get => _undoBarVisible;
+        private set => Set(ref _undoBarVisible, value);
+    }
+
+    public string UndoBarText => _lastMovedToTrashTitle.Length > 0
+        ? $"《{_lastMovedToTrashTitle}》已移入回收站（未删除原文件）"
+        : "已移入回收站（未删除原文件）";
+
     // ── Shell-facing state (read from ShellState, never duplicated) ─────────────────────────
 
     public BookRowViewModel? SelectedBook =>
@@ -190,7 +241,6 @@ public sealed class LibraryViewModel : ObservableObject
     public bool IsMultiSelectActive => _state.Selection.MultiPageCount > 0;
 
     public int SelectionCount => _state.Selection.MultiPageCount;
-
     public string SelectionSummary => IsMultiSelectActive
         ? $"已选 {SelectionCount} 页 · 作用域：{SelectedChapter?.Title ?? "本章"}"
         : "未选择页面";
@@ -374,18 +424,32 @@ public sealed class LibraryViewModel : ObservableObject
         {
             if (Set(ref _isRecycleBinView, value))
             {
-                OnPropertyChanged(nameof(ShowGrid));
+                OnPropertyChanged(
+                    nameof(ShowGrid),
+                    nameof(ShowSideDetail),
+                    nameof(ShowOverlayDetail),
+                    nameof(ShowPageBulkBar),
+                    nameof(ShowBooksGrid));
             }
         }
     }
 
     public bool ShowGrid => !IsRecycleBinView;
 
+    /// <summary>Q4: entering the recycle bin hides the resident/overlay detail to avoid ghost context.</summary>
+    public bool ShowSideDetail => IsSideDetailVisible && !IsRecycleBinView;
+
+    public bool ShowOverlayDetail => IsOverlayDetailVisible && !IsRecycleBinView;
+
+    /// <summary>Q4: the page multi-select batch bar is a shelf-only surface.</summary>
+    public bool ShowPageBulkBar => IsMultiSelectActive && !IsRecycleBinView;
+
     /// <summary>Book grid is hidden while the initial Host read is in flight (skeleton takes its place).</summary>
     /// <summary>Book grid is visible only when exactly one data/state block applies (never under a state).</summary>
     public bool ShowBooksGrid => ShowGrid && !ShowHostNotReadyState && !ShowLoadingState && !ShowErrorState
         && !ShowEmptyLibraryState && !ShowNoResultsState;
 
+    /// <summary>Q3/L4: the recycle bin never shows a total count (the wire cannot provide one).</summary>
     public string RecycleCountText => "—";
 
     public bool IsCreateBookOpen
@@ -802,13 +866,169 @@ public sealed class LibraryViewModel : ObservableObject
         await LoadProgressAsync().ConfigureAwait(true);
     }
 
+    /// <summary>
+    /// IN-2/Q4: entering the recycle bin hides the shelf detail/selection, probes capabilities once
+    /// and then sends exactly one <c>ListTrash</c> frame (the old "capability not wired" copy is gone).
+    /// </summary>
     public void ShowRecycleBin()
     {
+        if (IsRecycleBinView)
+        {
+            return;
+        }
+
         IsRecycleBinView = true;
-        _notify(
-            "回收站：能力待接入（Host 未暴露 list_recycle_bin / restore / purge 方法，不能伪造列表）",
-            NmStatus.Blocked);
+        // Q4: drop the shelf selection so the hidden detail panel cannot become ghost context.
+        _state.SetSelection(ShellSelection.Empty);
+        OnSelectionChanged(this, EventArgs.Empty);
+        UndoBarVisible = false;
+        _ = Trash.EnterAsync();
     }
+
+    public void CloseRecycleBin()
+    {
+        if (!IsRecycleBinView)
+        {
+            return;
+        }
+
+        IsRecycleBinView = false;
+        Trash.Exit();
+    }
+
+    /// <summary>IN-6/AC1: disclose first — the row action opens the read-only preview panel, never a delete frame.</summary>
+    private void BeginPermanentDeleteForSelection()
+    {
+        if (!IsRecycleBinView)
+        {
+            _notify("彻底删除入口只在回收站内；书架只提供「移入回收站」", NmStatus.Blocked);
+            return;
+        }
+
+        var row = Trash.Items.FirstOrDefault(candidate => candidate.IsSelected) ?? Trash.Items.FirstOrDefault();
+        if (row is null)
+        {
+            _notify("请先在回收站列表中选择一本作品", NmStatus.Blocked);
+            return;
+        }
+
+        _ = Trash.BeginPermanentDeleteAsync(row);
+    }
+
+    // ── shelf-side soft delete + undo (IN-3 / Q4 / Q6) ─────────────────────────────────────
+
+    private void RequestMoveSelectedToTrash()
+    {
+        if (_trashController is null)
+        {
+            _notify("移入回收站：当前宿主未提供回收站写能力（能力缺失，未执行任何写入）", NmStatus.Blocked);
+            return;
+        }
+
+        if (SelectedBook is not { } book)
+        {
+            _notify("移入回收站需要先选择一本作品", NmStatus.Blocked);
+            return;
+        }
+
+        if (IsMovingToTrash)
+        {
+            return;
+        }
+
+        if (!_controller.Snapshot.WritesAllowed)
+        {
+            _notify("移入回收站被拒绝：Host 处于只读模式（未执行任何写入）", NmStatus.Blocked);
+            return;
+        }
+
+        // IN-3 danger confirm: default focus is Cancel (shell modal contract §6.2), Esc closes,
+        // Enter only activates the focused button — the action itself needs an explicit confirm.
+        _requestConfirm(new ConfirmRequest(
+            $"将《{book.Title}》移入回收站",
+            "作品会从书架移到回收站，可随时恢复；不会删除原文件，也不会进入 Windows 回收站。" +
+            "若作品有进行中的任务，Core 会以 typed 错误拒绝。",
+            "移入回收站",
+            IsDanger: true,
+            OnConfirm: () => _ = MoveSelectedBookToTrashAsync(book.BookId, book.Title)));
+    }
+
+    private async Task MoveSelectedBookToTrashAsync(string bookId, string title)
+    {
+        if (_trashController is null || IsMovingToTrash)
+        {
+            return;
+        }
+
+        IsMovingToTrash = true;
+        try
+        {
+            var result = await _trashController
+                .MoveToTrashAsync(new[] { bookId }, TrashIdempotency.NewKey())
+                .ConfigureAwait(true);
+            if (!result.Ok && result.SucceededIds.Count == 0)
+            {
+                var reason = result.FailedItems.Count > 0
+                    ? result.FailedItems[0].ReasonText
+                    : result.Message ?? "未执行任何写入";
+                _notify($"移入回收站失败（{result.Code ?? TrashErrorCodes.Unknown}）：{reason}", NmStatus.Failed);
+                return;
+            }
+
+            _lastMovedToTrashBookIds = result.SucceededIds.Count > 0 ? result.SucceededIds : new[] { bookId };
+            _lastMovedToTrashTitle = title;
+            UndoBarVisible = true;
+            // Q4: only after success do we refresh the shelf and then clear the selection (the shelf
+            // refresh auto-falls back to the first book otherwise, which would keep a ghost selection).
+            await RefreshAsync().ConfigureAwait(true);
+            _state.SetSelection(ShellSelection.Empty);
+            OnSelectionChanged(this, EventArgs.Empty);
+            if (IsRecycleBinView)
+            {
+                await Trash.RefreshAsync().ConfigureAwait(true);
+            }
+
+            _notify($"《{title}》已移入回收站（可用「撤销」恢复；未删除原文件）", NmStatus.Done);
+            OnPropertyChanged(nameof(UndoBarText), nameof(UndoBarVisible), nameof(CanMoveToTrash));
+        }
+        finally
+        {
+            IsMovingToTrash = false;
+        }
+    }
+
+    /// <summary>Q6: undo uses the restore action's own idempotency key; a failure keeps the bar and is reported.</summary>
+    private async Task UndoMoveSelectedToTrashAsync()
+    {
+        if (_trashController is null || _lastMovedToTrashBookIds.Count == 0)
+        {
+            return;
+        }
+
+        var targets = _lastMovedToTrashBookIds.ToArray();
+        var result = await _trashController
+            .RestoreFromTrashAsync(targets, TrashIdempotency.NewKey())
+            .ConfigureAwait(true);
+        if (result.SucceededIds.Count == 0)
+        {
+            _notify($"撤销失败（{result.Code ?? TrashErrorCodes.Unknown}）：{result.FailedItems.FirstOrDefault()?.ReasonText ?? result.Message ?? "未恢复任何条目"}",
+                NmStatus.Failed);
+            return;
+        }
+
+        _lastMovedToTrashBookIds = Array.Empty<string>();
+        _lastMovedToTrashTitle = string.Empty;
+        UndoBarVisible = false;
+        await RefreshAsync().ConfigureAwait(true);
+        if (IsRecycleBinView)
+        {
+            await Trash.RefreshAsync().ConfigureAwait(true);
+        }
+
+        _notify("已撤销：作品回到书架", NmStatus.Done);
+        OnPropertyChanged(nameof(UndoBarText), nameof(UndoBarVisible));
+    }
+
 
     /// <summary>Clears the Library search/filter/sort context (also resets the per-space view state).</summary>
     public void ClearFilters()
@@ -825,7 +1045,10 @@ public sealed class LibraryViewModel : ObservableObject
         RebuildBooks();
     }
 
-    public void CloseRecycleBin() => IsRecycleBinView = false;
+    public void CloseRecycleBinLegacyPlaceholderRemoved()
+    {
+        // Replaced by CloseRecycleBin in FEA-12-UI; kept out of the public surface intentionally.
+    }
 
     public void ShowCreateBook()
     {
@@ -1236,7 +1459,9 @@ public sealed class LibraryViewModel : ObservableObject
             nameof(DetailProgressText),
             nameof(IsMultiSelectActive),
             nameof(SelectionCount),
-            nameof(SelectionSummary));
+            nameof(SelectionSummary),
+            nameof(CanMoveToTrash),
+            nameof(ShowPageBulkBar));
         ImportDock.NotifyChapterContextChanged();
     }
 
@@ -1266,18 +1491,6 @@ public sealed class LibraryViewModel : ObservableObject
 
         RefreshPageSelection();
         RaiseDetailStates();
-    }
-
-    private void RequestRecycleAction(string verb)
-    {
-        _requestConfirm(new ConfirmRequest(
-            $"{verb}回收站作品",
-            "注意：回收站读取与恢复/永久删除命令尚未在 IHostController 暴露（能力待接入），" +
-            "此处只能确认操作意图，不会执行任何写入，也不会伪造成功。",
-            $"{verb}（能力待接入）",
-            IsDanger: verb.Contains("永久", StringComparison.Ordinal),
-            OnConfirm: () => _notify($"{verb}：能力待接入（Host 未暴露回收站命令，未执行任何写入）", NmStatus.Blocked),
-            CanConfirm: false,
-            BlockedReason: "能力待接入：Host 未暴露回收站读取 / 恢复 / 永久删除方法"));
+        OnPropertyChanged(nameof(CanMoveToTrash), nameof(ShowPageBulkBar));
     }
 }

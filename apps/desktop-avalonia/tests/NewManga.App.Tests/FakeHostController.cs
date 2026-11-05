@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using NewManga.App.Services;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.CoreClient;
@@ -10,8 +11,10 @@ namespace NewManga.App.Tests;
 /// FEA-09-UI-1: also implements <see cref="ISourceImportController"/> (the scriptable
 /// referenced-import face) — that face is deliberately OUTSIDE the frozen C-07
 /// <see cref="IHostController"/> inventory; see Services/SourceImportModels.cs.
+/// FEA-12-UI: also implements <see cref="ITrashController"/> (the separate recycle-bin face), so
+/// headless tests can script list/preview/delete frames and assert the exact frame log.
 /// </summary>
-public sealed class FakeHostController : IHostController, ISourceImportController
+public sealed class FakeHostController : IHostController, ISourceImportController, ITrashController
 {
     public FakeHostController(HostViewSnapshot snapshot)
     {
@@ -1607,6 +1610,192 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public Task DiscardDraftAsync(string draftId, string sessionId,
         CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    // ── FEA-12-UI: scriptable trash face (separate from the frozen IHostController) ──────────
+
+    /// <summary>Capability probe result (<c>core_ping</c>); default = all three capabilities present.</summary>
+    public TrashCapabilityState TrashCapabilities { get; set; } = new(true, true, true, true, null, null);
+
+    /// <summary>Every "frame" the UI asked the controller for, in order (method→command proxy).</summary>
+    public List<string> TrashFrames { get; } = new();
+
+    /// <summary>Payloads of the write/preview frames, in order (assert closed shapes + digest binding).</summary>
+    public List<JsonElement> TrashFramePayloads { get; } = new();
+
+    public List<string?> TrashListCursors { get; } = new();
+
+    public Queue<TrashListResult> ScriptedTrashPages { get; } = new();
+
+    public Queue<TrashPreviewResult> ScriptedTrashPreviews { get; } = new();
+
+    public Queue<TrashDeleteResult> ScriptedTrashDeletes { get; } = new();
+
+    public Queue<TrashWriteResult> ScriptedMoves { get; } = new();
+
+    public Queue<TrashWriteResult> ScriptedRestores { get; } = new();
+
+    /// <summary>Default list page returned when no scripted page is queued.</summary>
+    public IReadOnlyList<TrashEntry> DefaultTrashEntries { get; set; } = Array.Empty<TrashEntry>();
+
+    public string? DefaultTrashCursor { get; set; }
+
+    /// <summary>AC1 late-response isolation: when set, ListTrashAsync awaits it before returning.</summary>
+    public Task? TrashListGate { get; set; }
+
+    public TaskCompletionSource<bool> TrashListGateStarted { get; } =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public int TrashProbeGolden { get; private set; }
+
+    public Task<TrashCapabilityState> ProbeTrashCapabilitiesAsync(CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.CapabilityProbe);
+        TrashProbeGolden++;
+        return Task.FromResult(TrashCapabilities);
+    }
+
+    public async Task<TrashListResult> ListTrashAsync(string? cursor = null, CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.ListTrash);
+        TrashListCursors.Add(cursor);
+        if (TrashListGate is { } gate)
+        {
+            TrashListGateStarted.TrySetResult(true);
+            await gate.ConfigureAwait(false);
+        }
+
+        if (ScriptedTrashPages.Count > 0)
+        {
+            return ScriptedTrashPages.Dequeue();
+        }
+
+        return new TrashListResult(true, null, null, DefaultTrashEntries, DefaultTrashCursor);
+    }
+
+    public Task<TrashWriteResult> MoveToTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.MoveToTrash);
+        TrashFramePayloads.Add(TrashPayloads.MoveOrRestore(bookIds, idempotencyKey));
+        if (ScriptedMoves.Count > 0)
+        {
+            return Task.FromResult(ScriptedMoves.Dequeue());
+        }
+
+        return Task.FromResult(new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>()));
+    }
+
+    public Task<TrashWriteResult> RestoreFromTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.RestoreFromTrash);
+        TrashFramePayloads.Add(TrashPayloads.MoveOrRestore(bookIds, idempotencyKey));
+        if (ScriptedRestores.Count > 0)
+        {
+            return Task.FromResult(ScriptedRestores.Dequeue());
+        }
+
+        return Task.FromResult(new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>()));
+    }
+
+    public Task<TrashPreviewResult> PreviewPermanentDeleteAsync(
+        IReadOnlyList<string> bookIds,
+        CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.PreviewPermanentDelete);
+        TrashFramePayloads.Add(TrashPayloads.Preview(bookIds));
+        if (ScriptedTrashPreviews.Count > 0)
+        {
+            return Task.FromResult(ScriptedTrashPreviews.Dequeue());
+        }
+
+        return Task.FromResult(DefaultPreview(bookIds[0]));
+    }
+
+    public Task<TrashDeleteResult> DeletePermanentlyAsync(
+        string bookId,
+        string inventoryDigest,
+        CancellationToken cancellationToken = default)
+    {
+        TrashFrames.Add(TrashWireCommands.DeletePermanently);
+        TrashFramePayloads.Add(TrashPayloads.DeletePermanently(bookId, inventoryDigest));
+        if (ScriptedTrashDeletes.Count > 0)
+        {
+            return Task.FromResult(ScriptedTrashDeletes.Dequeue());
+        }
+
+        return Task.FromResult(new TrashDeleteResult(TrashDeleteOutcome.Deleted, null, null));
+    }
+
+    /// <summary>Fixture-shaped PD-01 disclosure with KNOWN (empty) current sets and no blockers.</summary>
+    public static TrashPreviewResult DefaultPreview(string bookId) =>
+        new(true, null, null, "sha256:" + new string('a', 64),
+            new[]
+            {
+                new TrashPreviewItem(
+                    bookId,
+                    "夜光列车",
+                    new TrashProtection(
+                        2,
+                        "rev-current-1",
+                        Array.Empty<string>(),
+                        Array.Empty<string>(),
+                        new[] { "rev-pinned-1" },
+                        Array.Empty<string>(),
+                        1,
+                        3),
+                    new TrashContentSummary(2, 12, 3, 4, 2048),
+                    new[] { new TrashSharedFileRef("file-1", 1) }),
+            },
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('a', 64) });
+
+    /// <summary>Old-Core fixture: the rev 2.14 current arrays are unknown (absent/null) → fail-closed.</summary>
+    public static TrashPreviewResult OldCorePreview(string bookId) =>
+        new(true, null, null, "sha256:" + new string('b', 64),
+            new[]
+            {
+                new TrashPreviewItem(
+                    bookId,
+                    "旧 Core 作品",
+                    new TrashProtection(
+                        0,
+                        null,
+                        null,
+                        null,
+                        Array.Empty<string>(),
+                        Array.Empty<string>(),
+                        0,
+                        0),
+                    new TrashContentSummary(1, 1, 0, 0, 0),
+                    Array.Empty<TrashSharedFileRef>()),
+            },
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('b', 64) });
+
+    /// <summary>Busy fixture: a non-terminal run/task is disclosed (BOOK_BUSY pre-block).</summary>
+    public static TrashPreviewResult BusyPreview(string bookId) =>
+        new(true, null, null, "sha256:" + new string('c', 64),
+            new[]
+            {
+                new TrashPreviewItem(
+                    bookId,
+                    "忙作品",
+                    new TrashProtection(
+                        0,
+                        null,
+                        Array.Empty<string>(),
+                        Array.Empty<string>(),
+                        Array.Empty<string>(),
+                        new[] { "run-active-1" },
+                        0,
+                        0),
+                    new TrashContentSummary(1, 2, 0, 0, 0),
+                    Array.Empty<TrashSharedFileRef>()),
+            },
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('c', 64) });
 
 }
 

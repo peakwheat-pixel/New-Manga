@@ -1,0 +1,25 @@
+# FEA-12-UI 门禁记录（本卡实测；命令 → 结果）
+
+日期：2026-11-06（Asia/Shanghai）；仓库 `G:\CODEX\New Manga`（main）；base `9daa94a25`。
+
+| # | 命令 | 结果 | 说明 |
+|---|---|---|---|
+| G1 | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo` | EXIT 0 | 8 项目全绿 |
+| G2 | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo` | EXIT 0 | **1474 passed / 0 failed / 82 skipped**；App.Tests 703/0/7、Host.Tests 144/0/51、CoreClient 167/0/24、ThemeEngine 253、DesignSystem 117、Presentation 38、ApplicationCore 31、Appearance 21（日志：`logs/dotnet-full-solution.log`） |
+| G3 | `dotnet test NewManga.App.Tests --filter "FullyQualifiedName~TrashUiTests\|NoDbOsAccessTests\|V2ShellUiTests.RecycleBin\|V2ShellUiTests.MoveToTrash"`（curated：`NEWMANGA_EVIDENCE_DIR=verification/FEA-12-UI`） | EXIT 0 | **28/28 passed**；同步 4 张真实窗口截图（`screens/`）；日志 `logs/ui-tests-curated.log` |
+| G4 | `NEWMANGA_FEA12_UI_IPC=1 dotnet test NewManga.Host.Tests --filter FullyQualifiedName~Fea12TrashUiIpcTests`（curated 同上） | EXIT 0 | **1/1 passed**；真实 `src/bootstrap/core_service.py` stdio；wire 27 帧、0 purge、0 batch；DataRoot 仓外、哨兵指纹前后相等；产物 `fea12-trash-ui-ipc.json`、日志 `logs/ipc-tests-curated.log` |
+| G5 | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | EXIT 0 | PIN AUDIT: PASS (all 18)（`logs/pins.log`） |
+| G6 | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | EXIT 0 | `IHostController.cs` 零改动；`ITrashController` 不在 C-07 解析清单（`logs/api-inventory.log`） |
+| G7 | `git diff --name-only 9daa94a25..HEAD -- doc/plan doc/contracts src/` | 空 | 零契约/计划/Python 改动；18 pins 不受影响 |
+| G8 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-UI.md` | 见交付后复跑 | 卡转 `in_review` 后运行；证据表/Resource Manifest 完整 |
+| G9 | 全量运行后 `git checkout -- verification/FEA-09` | clean | 全量 solution 会重写既有 tracked 证据（历史行为），跑后恢复；提交前该文件干净 |
+| G10 | 既有 flaky 说明 | — | `FluentResidual2VisualEvidenceTests`/`FluentR2ReworkTests` 曾在并行首跑抖动（与本卡写域无关）；本卡最终全量首跑 0 失败，无需复跑 |
+
+## 关键判别性断言（汇总）
+
+- 进入回收站：`core_ping` 探测 1 次 + `library_list_trash` 恰好 1 帧；分页 cursor 原样回传、不持久化；无“总数”文案。
+- 预览：一次 preview 帧；删除确认前 0 删除帧；旧 Core 缺 current 数组 → fail-closed（0 删除帧）。
+- 删除：`library_delete_book_permanently` 恰好 1 帧，payload 键集恰 `{book_id, confirm_permanent_delete, inventory_digest}`；digest = 本次预览的逐书 digest（真实 IPC 证明集合 digest ≠ 逐书 digest）。
+- STALE：清确认 + 自动重预览，**不重发删除**；CLEANUP_PENDING：同 digest 重试、无新 preview；BOOK_NOT_FOUND：刷新列表。
+- 能力缺失：0 list 帧、不渲染空列表；Host 只读：可浏览、0 写帧。
+- 全流程 0 帧 `library_purge_trash`、0 帧 `library_delete_books_permanently`；`ITrashController` 无 purge/batch 成员。

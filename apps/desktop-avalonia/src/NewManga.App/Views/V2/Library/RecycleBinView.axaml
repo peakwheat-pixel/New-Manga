@@ -4,38 +4,186 @@
              xmlns:ctrl="using:NewManga.App.Views.V2.Shell.Controls"
              x:Class="NewManga.App.Views.V2.Library.RecycleBinView"
              x:DataType="vm:LibraryViewModel">
-  <!-- 回收站（独立筛选视图）：真实数据需要 list_recycle_bin / restore / purge 命令，Host 目前未暴露；
-       因此这里只呈现「能力待接入」+ 危险动作的二次确认（确认默认在取消、不伪造删除成功）。 -->
+  <!-- 回收站（FEA-12-UI）：单一数据源 ListTrash；不显示总数、无缩略图/内容预览（L2）；
+       cursor 只在内存中回传。彻底删除 = 只读披露 → 硬勾选 + digest 绑定 → 单帧删除。
+       能力缺失/只读/旧 Core 缺 current 保护集时 fail-closed，不伪造列表或成功。 -->
   <Border Background="{DynamicResource Nm.Color.Bg.Canvas}" Padding="{DynamicResource Nm.Padding.Section}">
     <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource Nm.Space.3}">
       <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.3}">
         <TextBlock Classes="title" Text="回收站" VerticalAlignment="Center" />
         <TextBlock Grid.Column="1"
                    Classes="meta"
-                   Text="独立筛选视图 · 恢复 / 永久删除需二次确认（数量 + 书名清单）"
+                   Text="仅作品级 · 恢复或彻底删除都会先确认；列表只显示已加载条目"
                    VerticalAlignment="Center" />
-        <Button Grid.Column="2"
-                Classes="ghost sm"
-                Content="返回书架"
-                Command="{Binding CloseRecycleBinCommand}" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+          <Button x:Name="TrashRefreshButton"
+                  Classes="ghost sm"
+                  Content="刷新"
+                  Command="{Binding Trash.RefreshCommand}" />
+          <Button Classes="ghost sm"
+                  Content="返回书架"
+                  Command="{Binding CloseRecycleBinCommand}" />
+        </StackPanel>
       </Grid>
 
-      <StackPanel Grid.Row="1" Spacing="{DynamicResource Nm.Space.3}">
-        <ctrl:AlertBanner Severity="Blocked"
-                          Message="能力待接入：Host 未暴露 list_recycle_bin / restore / purge 方法，回收站列表与恢复/永久删除不可用；不会伪造任何回收站条目。" />
-        <ctrl:EmptyState Title="回收站暂不可用"
-                         Hint="命令接入后这里会显示真实作品清单、所在原章节数与删除时间；恢复与永久删除都会先要求确认。"
-                         ActionText="返回书架"
-                         ActionCommand="{Binding CloseRecycleBinCommand}" />
-        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
-          <Button Classes="secondary sm"
-                  Content="恢复选中"
-                  Command="{Binding RecycleRestoreCommand}" />
-          <Button Classes="danger sm"
-                  Content="永久删除选中"
-                  Command="{Binding RecyclePurgeCommand}" />
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="{DynamicResource Nm.Space.3}">
+
+          <!-- 能力缺失（fail-closed：不渲染任何伪造条目） -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowCapabilityState}">
+            <ctrl:AlertBanner Severity="Blocked"
+                              Message="{Binding Trash.CapabilityMessage}" />
+            <ctrl:EmptyState Title="回收站暂不可用"
+                             Hint="当前 Core/宿主未公布回收站能力（library.trash.read/write/preview）。不会伪造列表，也不会执行任何写入。"
+                             ActionText="返回书架"
+                             ActionCommand="{Binding CloseRecycleBinCommand}" />
+          </StackPanel>
+
+          <!-- 列表失败态（保留 typed code，不当作空回收站） -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowErrorState}">
+            <ctrl:AlertBanner Severity="Failed"
+                              Message="{Binding Trash.ErrorMessage}" />
+            <Button Classes="secondary sm"
+                    Content="重试读取"
+                    Command="{Binding Trash.RefreshCommand}" />
+          </StackPanel>
+
+          <!-- 加载态 -->
+          <TextBlock Classes="meta"
+                     IsVisible="{Binding Trash.IsLoading}"
+                     Text="正在读取回收站…" />
+
+          <!-- 空态：没有任何条目；不显示总数承诺 -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowEmptyState}">
+            <ctrl:EmptyState Title="回收站是空的"
+                             Hint="书架上的「移入回收站」会出现在这里；恢复或彻底删除都需显式确认。"
+                             ActionText="返回书架"
+                             ActionCommand="{Binding CloseRecycleBinCommand}" />
+          </StackPanel>
+
+          <!-- 只读提示（读取可用，写入禁用） -->
+          <ctrl:AlertBanner Severity="Blocked"
+                            IsVisible="{Binding Trash.IsHostReadOnly}"
+                            Message="Host 处于只读模式：回收站可浏览，但恢复与彻底删除已禁用（不会执行任何写入）。" />
+
+          <!-- 列表条目 -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowList}">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+              <CheckBox IsChecked="False" IsVisible="False" />
+              <TextBlock Grid.Column="1" Classes="meta" Text="{Binding Trash.LoadedCountText}" VerticalAlignment="Center" />
+              <Button Grid.Column="2"
+                      Classes="ghost sm"
+                      Content="加载更多"
+                      IsVisible="{Binding Trash.HasMore}"
+                      Command="{Binding Trash.LoadMoreCommand}" />
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Trash.Items}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TrashItemRowViewModel">
+                  <Border Classes="card" Padding="{DynamicResource Nm.Padding.Card}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
+                      <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="1" Spacing="{DynamicResource Nm.Space.1}">
+                        <TextBlock Classes="label" Text="{Binding Title}" TextWrapping="Wrap" />
+                        <TextBlock Classes="meta" Text="{Binding DeletedAtText}" />
+                        <TextBlock Classes="meta"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource Nm.Color.Status.Failed}"
+                                   IsVisible="{Binding HasConflict}"
+                                   Text="{Binding ConflictReasonText}" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+              <Button Classes="secondary sm"
+                      Content="恢复选中"
+                      IsEnabled="{Binding Trash.CanRestore}"
+                      Command="{Binding Trash.RestoreCommand}" />
+              <Button Classes="danger sm"
+                      Content="彻底删除选中（单本）"
+                      Command="{Binding RecyclePurgeCommand}" />
+              <TextBlock Classes="meta" Text="{Binding Trash.SelectionSummary}" VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBlock Classes="meta"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding Trash.HasStatus}"
+                       Text="{Binding Trash.StatusMessage}" />
+          </StackPanel>
+
+          <!-- ── 删除影响披露面板（PD-01；只读、零副作用） ──────────────────────── -->
+          <Border Classes="raised"
+                  Padding="{DynamicResource Nm.Padding.Card}"
+                  IsVisible="{Binding Trash.IsPreviewOpen}">
+            <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+              <TextBlock Classes="section-title" Text="{Binding Trash.PreviewTitle}" TextWrapping="Wrap" />
+              <TextBlock Classes="meta"
+                         TextWrapping="Wrap"
+                         IsVisible="{Binding Trash.IsPreviewLoading}"
+                         Text="正在以只读方式计算删除影响清单（不写库、不动文件）…" />
+              <StackPanel Spacing="{DynamicResource Nm.Space.1}" IsVisible="{Binding !Trash.IsPreviewLoading}">
+                <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.PreviewProtectionText}" />
+                <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.PreviewCurrentText}" />
+                <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.PreviewContentText}" />
+                <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.PreviewSharedRefsText}" />
+                <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.PreviewDigestShortText}" />
+                <!-- AC4 保留项声明：只陈述既有语义，不声称原文件被删除。 -->
+                <TextBlock Classes="meta"
+                           TextWrapping="Wrap"
+                           Text="保留项：导出文件保留；用户源文件/源目录永不移动或删除；Pipeline 历史保留；全库历史备份不清理。" />
+              </StackPanel>
+
+              <ctrl:AlertBanner Severity="Blocked"
+                                IsVisible="{Binding Trash.IsPreviewBlocked}"
+                                Message="{Binding Trash.PreviewBlockedReason}" />
+              <ctrl:AlertBanner Severity="Failed"
+                                IsVisible="{Binding Trash.HasPreviewError}"
+                                Message="{Binding Trash.PreviewErrorMessage}" />
+              <!-- AC4 typed failure 就地错误 + 重新预览（新预览帧，不缓存 digest）。 -->
+              <Button Classes="secondary sm"
+                      Content="重新预览"
+                      IsVisible="{Binding Trash.HasPreviewError}"
+                      Command="{Binding Trash.RetryPreviewCommand}" />
+
+              <CheckBox Content="我理解：彻底删除后无法恢复，且应用内删除不会删除原文件"
+                        IsChecked="{Binding Trash.UnderstandIrrecoverable}"
+                        IsVisible="{Binding !Trash.IsPreviewLoading}" />
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
+                <Button x:Name="PreviewConfirmButton"
+                        Classes="danger sm"
+                        Content="彻底删除"
+                        IsEnabled="{Binding Trash.CanConfirmDelete}"
+                        Command="{Binding Trash.ConfirmDeleteCommand}" />
+                <Button x:Name="PreviewCancelButton"
+                        Classes="ghost sm"
+                        Content="取消"
+                        Command="{Binding Trash.CancelPreviewCommand}" />
+                <TextBlock Classes="meta"
+                           VerticalAlignment="Center"
+                           Text="{Binding Trash.DeleteResultTitle}" />
+              </StackPanel>
+              <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding Trash.DeleteOutcomeText}" />
+              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}"
+                          IsVisible="{Binding Trash.CanRetryCleanup}">
+                <Button Classes="secondary sm"
+                        Content="重试清理（同一 digest）"
+                        Command="{Binding Trash.RetryCleanupCommand}" />
+                <TextBlock Classes="meta"
+                           VerticalAlignment="Center"
+                           Text="重试只重发清理帧，不重新预览，也不产生新的确认。" />
+              </StackPanel>
+              <Button Classes="ghost sm"
+                      Content="关闭结果"
+                      IsVisible="{Binding Trash.HasDeleteResult}"
+                      Command="{Binding Trash.CloseResultCommand}" />
+            </StackPanel>
+          </Border>
         </StackPanel>
-      </StackPanel>
+      </ScrollViewer>
     </Grid>
   </Border>
 </UserControl>

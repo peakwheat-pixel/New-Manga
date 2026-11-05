@@ -9,7 +9,7 @@ namespace NewManga.App.Services;
 /// <see cref="ISourceImportController"/> — a SEPARATE face, so the frozen C-07
 /// <see cref="IHostController"/> inventory (54 members) stays byte-identical.
 /// </summary>
-public sealed class NullHostController : IHostController, ISourceImportController, IPreparedRunController
+public sealed class NullHostController : IHostController, ISourceImportController, IPreparedRunController, ITrashController
 {
     public static NullHostController Instance { get; } = new();
 
@@ -605,4 +605,38 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
 
     public Task DiscardDraftAsync(string draftId, string sessionId,
         CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    // FEA-12-UI: the inert controller still implements the separate trash face (Q1: HostController /
+    // NullHostController / fake each implement it). Every call is a typed "unavailable" — the VM
+    // renders the capability-missing state; no data is fabricated and nothing is written.
+    public Task<TrashCapabilityState> ProbeTrashCapabilitiesAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashCapabilityState.Unavailable(
+            TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，回收站不可用"));
+
+    public Task<TrashListResult> ListTrashAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashListResult.Failure(TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，回收站不可用"));
+
+    public Task<TrashWriteResult> MoveToTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashWriteResult.Failure(TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，写入被拒绝"));
+
+    public Task<TrashWriteResult> RestoreFromTrashAsync(
+        IReadOnlyList<string> bookIds,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashWriteResult.Failure(TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，写入被拒绝"));
+
+    public Task<TrashPreviewResult> PreviewPermanentDeleteAsync(
+        IReadOnlyList<string> bookIds,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashPreviewResult.Failure(TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，无法预览"));
+
+    public Task<TrashDeleteResult> DeletePermanentlyAsync(
+        string bookId,
+        string inventoryDigest,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(TrashDeleteResult.Failure(
+            TrashDeleteOutcome.Unavailable, TrashErrorCodes.CoreUnavailable, "设计时占位：没有 Host，删除被拒绝"));
 }
