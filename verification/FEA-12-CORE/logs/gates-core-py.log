@@ -6,7 +6,7 @@
   r2 approved/closeout 后重开）；契约修订 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`
   （C-04b **v1.1** + M2-C1 **rev 2.14**；Lead 重冻）。
 - 契约重冻：UNFREEZE commit **`fc9833479`**（C-04b v1.1 sha256 `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f`；M2-C1 rev 2.14 sha256 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f`；冻结记录 pin 按实际 sha；r7 窄面 APPROVE）。
-- 交付 head：r2 delivery head `3da210518` → r3 主提交 + docs 提交（SHA 见 Handoff §1）。
+- 交付 head：r2 delivery head `3da210518` → **r3 主提交 `41703da92`** + **r3 docs 提交 `659c679be`**（本文件随 `41703da92` 入库；证据 pin 指向 `41703da92`，Handoff 行 pin 指向 `659c679be`）。
   本分片不 push。
 - 环境：Windows / `C:/Python314/python.exe` / pytest；隔离 DataRoot 仅用 pytest `tmp_path` 与
   `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\`（无真实用户数据/AppData/外部卷/回收站操作）。

@@ -238,7 +238,7 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 | EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 41703da92 | null | CANONICAL |
 | EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 41703da92 | null | SOURCE_PIN |
 | EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 41703da92 | null | SOURCE_PIN |
-| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪（终稿） | doc/handoffs/FEA-12-CORE-core-py.md | 3da210518 | null | CANONICAL |
+| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪（终稿） | doc/handoffs/FEA-12-CORE-core-py.md | 659c679be | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_CAPABILITY_PRO | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-capability-probe.json | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_IMPLEMENTATION | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-implementation-record.md | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_OLD_CORE_NEGAT | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-old-core-negative-control.json | fc7125586 | null | CANONICAL |
