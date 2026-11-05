@@ -1,17 +1,19 @@
 
 ==== BASELINE ====
 base_commit=035468a81e43e8d70fb711536824cdf613a7a0c4
-worktree_head=c2b40c9f3b65be0ad5f60b401d9ed5d3845882a1
+worktree_head=94a12e93fdfad756bfe6f0fdd72a25de2bbd688b
 audited_file=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
-worktree_file_sha256=0dcfcfe81badc3496b1b5a0c8eb91a00f201b257233b3778067e8252342260c7
+audited_doc_source=G:\CODEX\New Manga\doc\contracts\M2-C1_TYPED_IPC_CONTRACT.md
+worktree_file_sha256=e5c29a29b3aa02a5c747e98ee5731a472c211ed49dddf606eb52249d3f9ba49d
+audited_doc_sha256=e5c29a29b3aa02a5c747e98ee5731a472c211ed49dddf606eb52249d3f9ba49d
 base_blob_sha256=d8e334f744857d5c12532f4aa052c20b4f35f18e
 
 ==== NUMSTAT / STAT ====
 warning: in the working copy of 'doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md', LF will be replaced by CRLF the next time Git touches it
-165	2	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+166	2	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
 warning: in the working copy of 'doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md', LF will be replaced by CRLF the next time Git touches it
- doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md | 167 +++++++++++++++++++++++++++++-
- 1 file changed, 165 insertions(+), 2 deletions(-)
+ doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md | 168 +++++++++++++++++++++++++++++-
+ 1 file changed, 166 insertions(+), 2 deletions(-)
 
 ==== REMOVED LINES (existing bytes changed by this card) ====
 warning: in the working copy of 'doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md', LF will be replaced by CRLF the next time Git touches it
@@ -43,29 +45,43 @@ warning: in the working copy of 'doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md', LF 
 +> **FEA-12-PREREQ-1 rev 2.13 释放边界（additive；不改变以上任何既有授权范围）**：本修订只授权 (a) M2-C1 契约字节的 additive 登记，以及 (b) `NewManga.CoreClient` Host 投影/白名单/负向对照的 additive 注册（`HostCommandRegistry` / `HostCommandDispatcher` / `CoreServiceClient` 的命令与 capability 映射、closed-shape 透传、错误码白名单投影）与本卡 Task/verification 证据。**不授权**任何 Python Core runtime/handler、`src/**` 改动、Schema/migration、依赖、Host 运行时 capability probe 接线（`NewManga.Host/**`）或 UI 实现——这些由 `FEA-12-CORE`（及后续 `FEA-12-DSIM-1` / `FEA-12-UI`）在自己冻结的 Task 中另行释放。本修订不改变 `PROTOCOL_MINOR`（仍 3）、客户端默认 minor 与既有命令 per-command minor（delete 仍 10）。
 
 ==== CARD SCOPE / NO-BYTES-CHANGED GUARDS ====
-working_tree_entries:
- M apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
- M apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
- M apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandContractV11RTests.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandParityContractTests.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandWiringB1Tests.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandWiringB2Tests.cs
- M apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs
+working_tree_entries_informational (may include other tasks):
  M doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
- M doc/tasks/FEA-12-CORE.md
- M doc/tasks/FEA-12-PREREQ-1.md
+ M src/application/rendering/service.py
+ M src/application/sources/lineage.py
+ M src/application/tasks/service.py
+ M src/bootstrap/core_assembly.py
+ M src/infrastructure/providers/handlers.py
+ M src/infrastructure/sqlite/pipeline.py
+ M src/infrastructure/sqlite/source_sync.py
+ M tests/fea11/conftest.py
+ M tests/fea11/test_source_lineage_assembly.py
+ M tests/fea11/test_source_lineage_native.py
  M verification/FEA-09/logs/wire-redacted.ndjson
-?? verification/FEA-12-PREREQ-1/
+ M verification/FEA-12-PREREQ-1/logs/rev213-diff-audit.log
+ M verification/FEA-12-PREREQ-1/tools/rev213-diff-audit.ps1
+?? tests/fea11/test_source_lineage_run.py
+?? verification/FEA-12-DSIM-1/
+?? verification/FEA-12-PREREQ-1/logs/rev213-diff-audit-r2-before.log
 
-src_touched_count=0  (must be 0: this card changes no Python)
+delivery_commits=08b359251,5a7c7e028
+delivery_src_changed_count=0  (must be 0: this card changes no Python)
 
-pinned_contracts_changed=0  (must be 0: 18 pins stay untouched)
+pinned_contracts_changed_since_base=0  (must be 0: 18 pins stay untouched)
+delivery_pinned_contract_count=0  (must be 0)
 
 ==== DOC REV / PROTOCOL CONSTANT ====
 doc_status_line=状态：文档 rev `2.13`；**Core protocol 仍为 major `2` / minor `3`**（本修订未提升协议版本；rev 2.13 只 additive 登记删除预览/回收站命令面与 5 个新码的目标 wire）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 core_protocol_minor=src/bootstrap/core_service.py:302:PROTOCOL_MINOR = 3  (unchanged: rev 2.13 is a doc revision only)
 
+==== R-001 CONSISTENCY: §5.11.3 table superset of both ErrorView code unions + 5 rev 2.13 codes registered ====
+s531_table_code_count=16
+single_error_view_code_count=11
+batch_error_view_code_count=12
+missing_from_s531_table=0  (must be 0: every ErrorView code must be in the §5.11.3 table)
+rev213_code_count=5
+rev213_codes_missing_from_error_tables=0  (must be 0)
+
 ==== RESULT ====
+removed_line_count=2 (expected 2: document status line + §11 policy row)
 ADDITIVE_AUDIT=PASS

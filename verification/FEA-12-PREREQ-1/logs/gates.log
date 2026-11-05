@@ -1,8 +1,10 @@
-# FEA-12-PREREQ-1 — gates（2026-11-05，Asia/Shanghai）
+# FEA-12-PREREQ-1 — gates（2026-11-05，Asia/Shanghai；r1 首交 + r2 返修）
 
 > 所有门禁均在主工作树 `G:\CODEX\New Manga`（main）实跑；每条记录含命令、EXIT、结果摘要与日志路径。
-> 实现 head / 交付 commit：见 `doc/handoffs/FEA-12-PREREQ-1-035468a81.md`（Handoff 记录 commit 列表）。
-> 本文档中的 sha256/日志为提交前实跑结果；最终 `check.ps1` 在 in_review 卡 + 提交后复跑，结果写入 Handoff。
+> 实现 commit / 交付 head：见 `doc/handoffs/FEA-12-PREREQ-1-035468a81.md`（Handoff 记录 commit 列表）。
+> r2 返修（R-001 P1 + 4×P3）：只改 M2-C1 一行、测试注释、审计脚本与证据整理；**不改产品代码/既有测试断言**，
+> 故全量 .NET / pytest 沿用 r1 实测（见 G3/G4，理由见 G10）；pins/check/命令治理/负向对照在 r2 复跑（G1/G5/G6/G8）。
+> 最终 `check.ps1` 在 in_review 卡 + 提交后复跑，命令与结果写入 Handoff（避免 check 日志自指）。
 
 ## G1 冻结 pins（18/18）
 
@@ -10,32 +12,31 @@
 COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 RESULT:  PIN AUDIT: PASS (all 18)
 EXIT:    0
-HEAD:    c2b40c9f3b65be0ad5f60b401d9ed5d3845882a1
-LOG:     verification/FEA-12-PREREQ-1/logs/baseline-governance.log（基线 18/18）+ 本次输出
+R1 HEAD: c2b40c9f3b65be0ad5f60b401d9ed5d3845882a1
+LOG:     verification/FEA-12-PREREQ-1/logs/baseline-governance.log（基线 18/18）+ 本文件 G1
 ```
 
-## G2 治理 check（in_progress 卡阶段；in_review 最终复跑见 Handoff）
+## G2 治理 check（最终复跑在 Handoff，见文件头说明）
 
 ```text
 COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-PREREQ-1.md
-RESULT:  Governance check: PASS (2 warnings)
-WARN:    存在 15 个非终态 Task（见 TASK_LEDGER）
-WARN:    doc/REBASELINE_PLAN.md 已达到预算的 80%
+RESULT:  Governance check: PASS（警告见 Handoff 最终复跑记录）
+WARN:    非终态 Task 计数 / REBASELINE_PLAN 预算 80%（均为既有全仓告警）
 EXIT:    0
 ```
 
-## G3 全量 .NET（首跑 flaky + 复跑绿）
+## G3 全量 .NET（r1 实测；r2 无产品代码改动 → 不重跑，理由见 G10）
 
 ```text
 COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
 RUN 1:   失败 1 / 通过 1402 / 跳过 79 / 总计 1482（NewManga.App.Tests 1 fail）
          FAIL: FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In
          LOG:  verification/FEA-12-PREREQ-1/logs/dotnet-full-1.log
-FLAKY 说明（非本卡改动引起，跨测试程序集证据写竞争）：
+FLAKY 说明（既有测试债务，非本卡改动引起）：
          - 该测试断言运行前后 `git status --porcelain -- verification` 完全相同；
          - 同一 solution 运行中 `NewManga.CoreClient.Tests.WireLogSourceRedactionTests` 会重写
-           tracked 证据 `verification/FEA-09/logs/wire-redacted.ndjson`（既有行为，task 说明中亦提醒事后恢复）；
-         - 两个测试程序集并行时该写入发生在断言窗口内 → 视图测试失败；单独复跑该测试 1/1 通过（EXIT 0）。
+           tracked 证据 `verification/FEA-09/logs/wire-redacted.ndjson`（既有行为）；
+         - 两测试程序集并行时该写入发生在断言窗口内 → 视图测试失败；单独复跑 1/1 通过。
          - 处置：`git checkout -- verification/FEA-09`（仅该路径）恢复 tracked 证据后复跑。
 RUN 2:   失败 0 / 通过 1403 / 跳过 79 / 总计 1482  → PASS
          分程序集: Appearance 21/0/0; Presentation.Avalonia 38/0/0; ThemeEngine 253/0/0;
@@ -45,7 +46,7 @@ RUN 2:   失败 0 / 通过 1403 / 跳过 79 / 总计 1482  → PASS
 EXIT:    0
 ```
 
-## G4 全量 pytest（本卡无 Python 产品改动，记录基线）
+## G4 全量 pytest（r1 实测；本卡无 Python 产品改动 → 不重跑）
 
 ```text
 COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
@@ -54,62 +55,84 @@ EXIT:    0
 LOG:     verification/FEA-12-PREREQ-1/logs/pytest-full.log
 ```
 
-## G5 CoreClient 命令治理测试（无 sidecar 环境，纯单测）
+## G5 CoreClient 命令治理测试（无 sidecar 环境；r2 复跑）
 
 ```text
 COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
          -c Release --no-build --filter "FullyQualifiedName~Command"
-RESULT:  通过 135 / 失败 0 / 跳过 15 / 总计 150
+R1 RESULT: 通过 135 / 失败 0 / 跳过 15 / 总计 150
+R2 RESULT: 通过 135 / 失败 0 / 跳过 15 / 总计 150（r2 仅改测试注释，断言未变）
 EXIT:    0
-（覆盖 CommandWiringB1/B2（含 FEA-12 新单测）、CommandParityContract、CommandContractV11R、
-  DraftCommandRegistry、CommandIntegration 的非 sidecar 用例）
 ```
 
-## G6 真实冻结 Core 负向对照 + delete 族回归（sidecar 环境）
+## G6 真实冻结 Core 负向对照 + delete 族回归（sidecar 环境；r2 复跑）
 
 ```text
 ENV:     NEWMANGA_CORECLIENT_SIDECAR_DIR=G:\CODEX\New Manga.workspace\task-envs\HOST-CORECLIENT-1\sidecar-copy
-         NEWMANGA_EVIDENCE_DIR=verification/FEA-12-PREREQ-1/test-evidence
 COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
          -c Release --no-build --filter "FullyQualifiedName~Fea12NewCommands|FullyQualifiedName~B1Commands_ExecuteAgainstFrozenCore|FullyQualifiedName~B2Commands_ExecuteAgainstFrozenCore"
-RESULT:  通过 3 / 失败 0 / 跳过 0 / 总计 3
+R1 RESULT: 通过 3 / 失败 0 / 跳过 0 / 总计 3
+R2 RESULT: 通过 3 / 失败 0 / 跳过 0 / 总计 3（回归不失败）
 EXIT:    0
-EVIDENCE:test-evidence/commands/fea12-old-core-negative-control.json
-         test-evidence/commands/ns-b1-integration.json
-         test-evidence/commands/ns-b2-integration.json
+EVIDENCE: verification/FEA-12-PREREQ-1/test-evidence/commands/fea12-old-core-negative-control.json
+          verification/FEA-12-PREREQ-1/test-evidence/commands/ns-b1-integration.json
+          verification/FEA-12-PREREQ-1/test-evidence/commands/ns-b2-integration.json
 ```
 
-## G7 tracked 证据恢复（全量 .NET 的已知副作用）
+## G7 tracked 证据恢复（全量/定向 .NET 的已知副作用）
 
 ```text
 COMMAND: git checkout -- verification/FEA-09
-RESULT:  verification/FEA-09 无 dirty（WireLogSourceRedactionTests 重写 tracked wire-redacted.ndjson 属既有行为）
+RESULT:  verification/FEA-09 无 dirty（WireLogSourceRedactionTests 重写 tracked wire-redacted.ndjson 属既有行为；
+         r1 全量后、r2 定向 sidecar 后各恢复一次）
 EXIT:    0
 ```
 
-## G8 M2-C1 rev 2.13 additive 审计
+## G8 M2-C1 rev 2.13 additive 审计 + R-001 判别性断言
 
 ```text
 COMMAND: pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/rev213-diff-audit.ps1
-RESULT:  ADDITIVE_AUDIT=PASS
-         - 165 insertions / 2 removed lines；removed 仅：文档状态行（rev 2.12→2.13）与 §11 policy 行（ADJ §D2）
-         - src_touched_count=0（无 Python 改动）
-         - pinned_contracts_changed=0（18 pins 冻结契约零字节改动）
+RESULT:  r2 修复后 ADDITIVE_AUDIT=PASS（EXIT 0），LOG=logs/rev213-diff-audit.log
+         - 166 insertions / 2 removed lines（r2 +1 行 = R-001 补的 §5.11.3 表行；既有权 2 处不变：
+           文档状态行 rev 2.12→2.13、§11 policy 行 ADJ §D2）
+         - delivery_src_changed_count=0（本卡交付 commit 无 Python 改动）
+         - pinned_contracts_changed_since_base=0 / delivery_pinned_contract_count=0（18 pins 零改动）
          - doc_status_line=2.13；core_service.py PROTOCOL_MINOR 仍为 3
-EXIT:    0
-LOG:     verification/FEA-12-PREREQ-1/logs/rev213-diff-audit.log
+         - R-001 断言：§5.11.3 表 code 集合 ⊇ 两个 ErrorView code 集合 → missing_from_s531_table=0；
+           5 个 rev 2.13 码在 §5.11.3 表 ∪ §5.14 表中齐备 → missing=0
+
+R-001 判别性（同一脚本对旧 head 文档副本运行）：
+COMMAND: git show 5a7c7e028:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md > <workspace temp>/m2c1-at-5a7c7e028.md
+         pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/rev213-diff-audit.ps1 -DocFile <该副本>
+RESULT:  ADDITIVE_AUDIT=FAIL（EXIT 1）
+         - missing_from_s531_table=1 → BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE
+         - rev213_codes_missing_from_error_tables=1 → 同一码
+         LOG=logs/rev213-diff-audit-r2-before.log
 ```
 
-## G9 基线负向对照（改动前）
+## G9 基线负向对照（改动前；r1 采集，r2 未改逻辑）
 
 ```text
 COMMAND: pwsh -NoProfile -File verification/FEA-12-PREREQ-1/tools/baseline-negative-control.ps1
          -RepoRoot <workspace>/task-envs/FEA-12-PREREQ-1/baseline-worktree-035468a81
          -AssemblyPath <worktree>/.../NewManga.CoreClient.dll
-RESULT:  BASELINE_NEGATIVE_CONTROL=CAPTURED
+RESULT:  BASELINE_NEGATIVE_CONTROL=CAPTURED（EXIT 0）
          - registry 106 命令；5 个新命令不存在，Get() → typed UNKNOWN_COMMAND
          - 5 个新码不在白名单 → 投影 category=unknown 且 code 原文保留
          - 冻结旧 Core：PreviewPermanentDeleteBooks(2.11)/MoveToTrash(2.13) → typed UNKNOWN_COMMAND
-LOG:     verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log
-         verification/FEA-12-PREREQ-1/logs/baseline-negative-control.log（改动前主工作树 head 版本）
+LOG:     logs/baseline-negative-control-base-035468a81.log（精确 base worktree）
+         logs/baseline-negative-control.log（改动前主工作树 head 版本）
+NOTE(R-006)：脚本标签已由 `existing=l` 修正为 `existing=single`；已提交的 r1 日志保持原字节，
+         其中 `existing=l` 仅为脚本标签（l=legacy 单条），无判别含义（cosmetic，已在 Handoff 注明）。
 ```
+
+## G10 r1 Review findings 处置（r2）
+
+| Finding | 级别 | r2 处置 | 证据 |
+|---|---|---|---|
+| R-001 §5.11.3 表缺 `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` 行 | P1 | **已修**：additive 追加一行（`unavailable`/`retryable=true`，零副作用/可显式重试/不得降级软删）；审计脚本新增「表 ⊇ 两 ErrorView 码 + 5 新码齐备」判别性断言（旧 head FAIL → 修复后 PASS） | logs/rev213-diff-audit-r2-before.log（FAIL）、logs/rev213-diff-audit.log（PASS） |
+| R-002 `CORE_CAPABILITY_MISSING` 未进 delete/trash 白名单 | P2 | **defer CORE**（本卡不改白名单）：Handoff「风险」+ 卡内登记 CORE 集成二选一（加入白名单+投影测试 / probe 在 HostRuntime 层抛出并加判别性测试） | Handoff「风险与遗留」、Task 卡 r2 记录 |
+| R-003 check 警告数 4 vs 3（check-final.log 自指） | P3 | **已修**：check-final.log 移出 evidence_dir（副本入 workspace agent-output `check-final-r1.log`）；同时把原始 sidecar stderr/wire 日志移出 evidence_dir（保留判别力 JSON 证据）；最终警告数见 Handoff | 本目录文件清单 + agent-output-manifest.json |
+| R-004 §5.11.1a「拒收」措辞可能误读 Host 行为 | P3 | **已修**：改为「**Core closed shape** 继续拒收…；**Host 既有 delete 路径保持 legacy 透传**（只取已知键、不新增未知键拒绝），未知键由 Core 校验拒绝」 | M2-C1 §5.11.1a |
+| R-005 B1/B2 负向对照注释过度声明 | P3 | **已修**：注释改为「reconstructed pre-registration allow-list（新投影器减 5 码）」并注明真实基线 delete 族无白名单、AC3 结论不变 | B1/B2 测试注释 |
+| R-006 基线日志 `existing=l` 笔误 | P3 | **已修（脚本）/已注明（日志）**：脚本标签更正；已提交日志保持原字节，Handoff 注明 cosmetic | tools/baseline-negative-control.ps1、G9 NOTE |

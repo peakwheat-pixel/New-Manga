@@ -326,8 +326,10 @@ public sealed class CommandWiringB1Tests
     // ---------------------------------------------------------------------------------------
     // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the read-only delete preview + the single-delete digest
     // additive fields. Registration only -- the Core runtime does not implement the command yet.
-    // The negative control proves that, BEFORE registration, an unknown rev 2.13 code degrades to
-    // category=unknown WITHOUT rewriting the code, and the new command is rejected as unknown.
+    // The negative control SIMULATES the pre-registration behaviour by removing the 5 rev 2.13
+    // codes from the NEW projector's allow-list: they degrade to category=unknown WITHOUT the code
+    // being rewritten. (The TRUE baseline had no delete-family allow-list at all -- see
+    // verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log.)
     // ---------------------------------------------------------------------------------------
 
     private const string DigestA =
@@ -427,8 +429,11 @@ public sealed class CommandWiringB1Tests
     [Fact]
     public void Fea12_DeleteErrorProjection_NegativeControl_UnknownDegradesButCodeIsPreserved()
     {
-        // Reconstruct the pre-registration allow-list: exactly what the Host projected BEFORE
-        // M2-C1 rev 2.13 was registered. This is the AC3 negative control.
+        // Reconstructed pre-registration allow-list = the NEW projector minus the 5 rev 2.13 codes.
+        // NOTE: the true baseline delete family had NO allow-list projection at all (Core errors
+        // passed through unchanged); the recorded baseline probe demonstrates the real degradation
+        // path with the existing ProjectRunError + its 19-code run allow-list. AC3 conclusion is
+        // unchanged (baseline script + frozen-Core live probe are both real).
         var preRegistration = HostCommandRegistry.AllowedDeleteTrashErrorCodes
             .Where(code => !HostCommandRegistry.Fea12DeleteTrashErrorCodes.Contains(code))
             .ToHashSet(StringComparer.Ordinal);

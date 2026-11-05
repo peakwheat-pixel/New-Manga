@@ -76,7 +76,7 @@ foreach ($name in $newCommands) {
 }
 $single = $registry::Get('library_delete_book_permanently')
 $batch = $registry::Get('library_delete_books_permanently')
-Write-Output "existing=l library_delete_book_permanently core=$($single.CoreCommand) minor=$($single.CoreMinor)"
+Write-Output "existing=single library_delete_book_permanently core=$($single.CoreCommand) minor=$($single.CoreMinor)"
 Write-Output "existing=batch library_delete_books_permanently core=$($batch.CoreCommand) minor=$($batch.CoreMinor)"
 
 Write-Section 'A2 baseline error projection degrades unknown new codes (code preserved)'

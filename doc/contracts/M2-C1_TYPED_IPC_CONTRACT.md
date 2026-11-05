@@ -806,7 +806,7 @@ PermanentlyDeleteBooksPayload（rev 2.13 追加） = {
 - **来源**：digest 只能由 §5.13 `PreviewPermanentDeleteBooks` 的 Core 权威结果取得；单条命令回传该 `book_id` 的**逐书 digest**，批量命令同时回传**集合级 digest**与**逐书 map**。UI 不得自行估算、拼接或缓存替代；不得用单一 `inventory_digest` 字段同时服务两种命令形状。
 - **校验顺序（两级，零副作用）**：① **集合级**——`inventory_digests` 的键集合与顺序必须与预览时的 `book_ids` 完全一致；② **逐书**——每个 `book_id` 的逐书 digest 必须与预览值匹配。任一失败 → `BOOK_DELETE_STALE_PREVIEW`（`conflict`/`retryable=false`），批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 在 items 中标注），DB/文件零改动。
 - **缺失/类型错/格式错**：任一 digest 字段缺失、非字符串或非 `sha256:<64 lowercase hex>` → `INVALID_REQUEST`（`validation`/`retryable=false`），不进入预检。
-- **单条命令**继续拒收 `book_ids` / `confirmed_book_ids` / `confirm_count` / `inventory_digests`（closed shape 不变）；`confirm_permanent_delete: true` 语义不变。
+- **Core closed shape**：单条命令继续拒收 `book_ids` / `confirmed_book_ids` / `confirm_count` / `inventory_digests`（closed shape 不变）；`confirm_permanent_delete: true` 语义不变。**Host 既有 delete 路径保持 legacy 透传**（只取已知键、不新增未知键拒绝），未知键由 Core 的 closed-shape 校验拒绝（见 §5.11.1a 末条 Host 投影归属）。
 - **有效期**：一次预览 → 一次确认之间有效；目标集合、保护集合或文件清单任一变化即失效，须重新预览（PD-04）。`*_CLEANUP_PENDING` 的显式重试（§5.11.2 第 4 步）只针对 pending IDs/manifest，不要求重跑预览。
 - **兼容**：digest 是追加**必填**字段；旧 Host 不传 → 新 Core `INVALID_REQUEST`（fail-closed），**不得**忽略 digest 继续删除、不得回退软删除。反向（新 Host → 旧 Core）时，旧 Core 对追加字段的 closed-shape 校验会返回 `INVALID_REQUEST`（fail-closed，不会忽略 digest 继续删除）；实测见 `verification/FEA-12-PREREQ-1/logs/`。
 - **Host 投影归属（本卡）**：Host 只做 additive 透传——调用方提供 `inventory_digest` / `inventory_digests` 时按类型校验后原样转发，不生成、不补全、不替代 Core 校验；既有 delete 命令的 dispatch 路径不重写。
@@ -845,6 +845,7 @@ PermanentlyDeleteBooksPayload（rev 2.13 追加） = {
 | Tauri ACL 拒绝 / Core channel 不可用 | Tauri framework rejection；或既有 host-level `CORE_UNAVAILABLE` | handler/Core 不执行或无副作用；不得回退软删除。 |
 | 删除确认的 digest 缺失、非字符串或 `sha256:` 格式错（§5.11.1a） | `INVALID_REQUEST` / `validation` / `retryable=false` | dispatch/预检前拒绝；无 DB/文件改动；不得降级软删除。 |
 | 删除确认的 digest 与当前预览不匹配（目标/保护集合/文件清单已变化；§5.11.1a） | `BOOK_DELETE_STALE_PREVIEW` / `conflict` / `retryable=false` | 两级校验任一失败即零副作用；须重新调用 §5.13 预览。批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 标注）。 |
+| 删除影响清单计算失败（DB 错/临时故障；§5.11.1a/§5.13） | `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` / `unavailable` / `retryable=true` | 清单未生成即失败，零副作用（内容行/保护状态/DB/文件均不变）；可显式重试；不得降级软删除，不得伪报为空清单。 |
 
 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED` 安全详情只包含 `{phase: "preflight", requested_count, completed_count: 0, items: BookDeleteBatchItem[]}`；`BOOK_DELETE_BATCH_CLEANUP_PENDING` 只包含 `{phase: "cleanup", requested_count, completed_count, items: BookDeleteBatchItem[]}`。除这些白名单字段外，Tauri 不转发 Core `message/details`、路径或原始 stderr。每个 `item.error_code` 只接受上表列出的稳定码。
 

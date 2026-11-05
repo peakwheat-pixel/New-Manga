@@ -526,9 +526,10 @@ public sealed class CommandWiringB2Tests
     // ---------------------------------------------------------------------------------------
     // FEA-12-PREREQ-1 / M2-C1 rev 2.13: the batch-delete digest additive fields and the trash
     // command family (target wire 13). Registration only -- Core handlers and the runtime
-    // capability probe belong to FEA-12-CORE. The negative control proves that, BEFORE
-    // registration, an unknown TRASH_* code degrades to category=unknown without rewriting the
-    // code, and the new commands are rejected as unknown.
+    // capability probe belong to FEA-12-CORE. The negative control SIMULATES the pre-registration
+    // behaviour by removing the 5 rev 2.13 codes from the NEW projector's allow-list: they degrade
+    // to category=unknown without rewriting the code. (The TRUE baseline had no delete-family
+    // allow-list at all -- see verification/FEA-12-PREREQ-1/logs/baseline-negative-control-base-035468a81.log.)
     // ---------------------------------------------------------------------------------------
 
     private const string DigestA =
@@ -669,7 +670,10 @@ public sealed class CommandWiringB2Tests
     [Fact]
     public void Fea12_TrashErrorProjection_NegativeControl_UnknownDegradesButCodeIsPreserved()
     {
-        // Pre-registration allow-list == what the Host projected BEFORE M2-C1 rev 2.13. AC3.
+        // Reconstructed pre-registration allow-list = the NEW projector minus the 5 rev 2.13 codes.
+        // NOTE: the true baseline delete family had NO allow-list projection at all; the recorded
+        // baseline probe demonstrates the real degradation path via ProjectRunError. AC3 conclusion
+        // is unchanged (baseline script + frozen-Core live probe are both real).
         var preRegistration = HostCommandRegistry.AllowedDeleteTrashErrorCodes
             .Where(code => !HostCommandRegistry.Fea12DeleteTrashErrorCodes.Contains(code))
             .ToHashSet(StringComparer.Ordinal);
