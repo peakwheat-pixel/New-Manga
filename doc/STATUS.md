@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-12-CORE](tasks/FEA-12-CORE.md) `ready`（删除线首版实现，Team 分片实施中；base `e47fd47e`）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A，2026-11-05）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`（r2 approved，delivery `3e37c595b`）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`（r4 approved，delivery `90a8c8218`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`（r2 approved，delivery `beee351bb`；模拟切片，真实 D NOT_RUN）。
+- 当前 Task：[FEA-12-CORE](tasks/FEA-12-CORE.md) `in_review`（删除线首版，Team 分片交付完成；Lead 集成→fresh subagent Review；base `e47fd47e`）。已闭环：[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A，2026-11-05）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`（r2 approved，delivery `3e37c595b`）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`（r4 approved，delivery `90a8c8218`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`（r2 approved，delivery `beee351bb`；模拟切片，真实 D NOT_RUN）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
 - 下一步：FEA-12-CORE 分片 A/B 交付→Lead 集成→fresh subagent 集成 Review→closeout。
