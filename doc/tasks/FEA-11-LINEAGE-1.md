@@ -58,5 +58,5 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [ ] **AC1**：region/draft 写路径同事务登记 native lineage（C-17 §7.1）；B1/R1→B2、same_content 边、changed 切断有测试。 <<PARTIAL: 写入路径已完成（RevisionLineage 值对象在 application.editing.ports；regions.py 同事务 INSERT；RegionEditingService 注入 lineage_binding 写 native；测试 6/6）；B1/R1→B2、same_content、changed 边测试待补>>
-- [ ] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝）。 <<PARTIAL: 渲染入口已实现（RenderService._active_regions + LineageBindingMismatch + 3 测试，provider 由 assembly 注入，默认不启用）；ListRegions/导出/Run/编辑入口与 core_service 接线待补>>
+- [ ] **AC2**：ListRegions/渲染/导出/Run/编辑入口的 lineage 读守卫（region 当前 revision 的 binding 必须等于当前 binding，否则 typed 拒绝）。 <<PARTIAL: 渲染入口已实现并接线（RenderService._active_regions + LineageBindingMismatch + 3 测试；core_assembly 从 SourceSyncStore 注入只读 providers）；编辑入口写入 native lineage 已接线；**导出/Run/ListRegions 守卫待补**（导出 `_export_regions` 的守卫实现因影响面回退，需单独窄批）>>
 - [ ] **AC3**：AC11-5 隔离证据（旧坐标对新图不可见）与回归测试；FEA-11 r3 复审接受。 <<PARTIAL: 待实施>>
