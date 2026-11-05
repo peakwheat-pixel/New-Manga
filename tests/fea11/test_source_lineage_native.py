@@ -41,6 +41,7 @@ from application.sources.lineage import (
     LineageBindingChanged,
     LineageIsolationGuard,
     LineageUnverified,
+    LineageVerificationError,
 )
 from domain.regions.entities import BBox, Region, RegionGeometry
 from domain.tasks.models import (
@@ -101,6 +102,9 @@ def seed_source(conn) -> None:
         entries=[
             ("e1", "001.png", DIGEST),
             ("e2", "002.png", "c" * 64),
+            ("e3", "003.png", "d" * 64),
+            ("e4", "004.png", "e" * 64),
+            ("e5", "005.png", "f" * 64),
         ],
         legacy_v7_evidence=False,
     )
@@ -704,3 +708,165 @@ def test_backfill_marks_only_already_synced_pages_legacy_unverified(
     # current revision as captured_v7.
     assert store.backfill_legacy_unverified_lineage(now=NOW) == 0
     assert "rv2" not in {row["revision_id"] for row in lineage_rows(conn)}
+
+
+# ---------------------------------------------------------------------------
+# r2 scope matrix (DSH ruling on the guard scope): what an upgraded REAL user
+# library can still read and what it must refuse, for a mixed library that
+# contains managed pages, referenced-not-synced pages and switched pages.
+# The matrix is printed so `pytest -s` captures it as evidence.
+# ---------------------------------------------------------------------------
+
+
+def test_mixed_library_scope_matrix_is_diagnosable(conn, book_chapter):
+    # 1) managed page: no binding at all, old region without lineage.
+    seed_page(conn, book_chapter, "p-managed")
+    seed_region(conn, "p-managed", region_id="rg-managed",
+                revision_id="rv-managed")
+    # 2) referenced page that never went through a sync switch.
+    seed_page(conn, book_chapter, "p-ref")
+    seed_source(conn)
+    seed_binding(conn, "p-ref", "pb-ref", entry_id="e2")
+    seed_region(conn, "p-ref", region_id="rg-ref", revision_id="rv-ref")
+    # 3) switched page with a CUT (changed) relation.
+    seed_page(conn, book_chapter, "p-cut")
+    seed_binding(conn, "p-cut", "pb-cut", entry_id="e3")
+    seed_region(conn, "p-cut", region_id="rg-cut", revision_id="rv-cut",
+                lineage=("pb-cut", "captured_v7"))
+    add_sync_switch(
+        conn, page_id="p-cut", old_binding_id="pb-cut",
+        new_binding_id="pb-cut-b2", relation="changed", seq=11,
+    )
+    # 4) switched page with a two-hop same_content relation.
+    seed_page(conn, book_chapter, "p-same")
+    seed_binding(conn, "p-same", "pb-same", entry_id="e4")
+    seed_region(conn, "p-same", region_id="rg-same", revision_id="rv-same",
+                lineage=("pb-same", "captured_v7"))
+    b2 = add_sync_switch(
+        conn, page_id="p-same", old_binding_id="pb-same",
+        new_binding_id="pb-same-b2", relation="same_content", seq=12,
+    )
+    add_sync_switch(
+        conn, page_id="p-same", old_binding_id=b2,
+        new_binding_id="pb-same-b3", relation="same_content", seq=13,
+    )
+    # 5) switched page whose region revision lost its lineage row (pre-fix
+    #    writer): the start-up backfill must register it unverified.
+    seed_page(conn, book_chapter, "p-stock")
+    seed_binding(conn, "p-stock", "pb-stock", entry_id="e5")
+    seed_region(conn, "p-stock", region_id="rg-stock",
+                revision_id="rv-stock")
+    add_sync_switch(
+        conn, page_id="p-stock", old_binding_id="pb-stock",
+        new_binding_id="pb-stock-b2", relation="same_content", seq=14,
+    )
+
+    store = SourceSyncStore(conn)
+    first = store.backfill_legacy_unverified_lineage(now=NOW)
+    second = store.backfill_legacy_unverified_lineage(now=NOW)
+    assert (first, second) == (1, 0)
+
+    guard = make_guard(conn)
+    bindings = {
+        "p-managed": None,
+        "p-ref": "pb-ref",
+        "p-cut": "pb-cut-b2",
+        "p-same": "pb-same-b3",
+        "p-stock": "pb-stock-b2",
+    }
+    repo = SqliteRegionRepository(conn, lineage_guard=guard)
+    editing = RegionEditingService(
+        repo, lineage_binding=bindings.get, lineage_guard=guard
+    )
+    render = _render_service(conn, guard)
+    pipeline = build_production_pipeline(conn, provider_bindings={})
+    pipeline._catalog.lineage_guard = guard
+    pipeline._catalog.lineage_binding = bindings.get
+
+    cases = [
+        ("p-managed", "rg-managed", "rv-managed"),
+        ("p-ref", "rg-ref", "rv-ref"),
+        ("p-cut", "rg-cut", "rv-cut"),
+        ("p-same", "rg-same", "rv-same"),
+        ("p-stock", "rg-stock", "rv-stock"),
+    ]
+    print("lineage-matrix: page scope lineage guarded hidden_code visible edit")
+    rows = []
+    for page_id, region_id, revision_id in cases:
+        standing = store.lineage_of_revision(revision_id)
+        lineage_label = (
+            "none" if standing is None
+            else f"{standing['provenance']}:{standing['binding_id'] or '-'}"
+        )
+        verdict = guard.page_verdict(page_id, [(region_id, revision_id)])
+        visible = [
+            row["region_id"]
+            for row in editing.list_region_summaries(page_id)
+        ]
+        try:
+            editing.save_manual_translation(region_id, "scope probe")
+            edit = "allowed"
+        except LineageVerificationError as error:
+            edit = error.code
+        hidden_code = verdict.hidden[0].code if verdict.hidden else "-"
+        rows.append(
+            (page_id, lineage_label, verdict.guarded, hidden_code, visible, edit)
+        )
+        print(
+            f"lineage-matrix: {page_id} lineage={lineage_label}"
+            f" guarded={verdict.guarded} hidden={hidden_code}"
+            f" visible={len(visible)} edit={edit}"
+        )
+
+    by_page = {row[0]: row for row in rows}
+    managed, referenced = by_page["p-managed"], by_page["p-ref"]
+    cut, same, stock = by_page["p-cut"], by_page["p-same"], by_page["p-stock"]
+
+    # Managed + referenced-not-synced pages: outside the C-17 §7.1 sync scope,
+    # their missing lineage is NOT a refusal (P0 regression guard).
+    assert managed[2] is False and managed[4] == ["rg-managed"]
+    assert managed[5] == "allowed"
+    assert referenced[2] is False and referenced[4] == ["rg-ref"]
+    assert referenced[5] == "allowed"
+    # The allowed edit on the referenced page registered native lineage on the
+    # only binding that page ever had.
+    ref_native = [
+        row for row in lineage_rows(conn)
+        if row["revision_id"] not in {"rv-managed", "rv-ref"}
+        and row["binding_id"] == "pb-ref"
+    ]
+    assert [row["provenance"] for row in ref_native] == ["native"]
+
+    # Switched pages: fail-closed and typed.
+    assert cut[3] == LINEAGE_BINDING_CHANGED and cut[4] == []
+    assert cut[5] == LINEAGE_BINDING_CHANGED
+    assert stock[3] == LINEAGE_UNVERIFIED and stock[4] == []
+    assert stock[5] == LINEAGE_UNVERIFIED
+    assert same[3] == "-" and same[4] == ["rg-same"]
+    assert same[5] == "allowed"
+
+    # Render entry: hidden pages are typed BLOCKED; the same_content page is
+    # readable through the two-hop edge.
+    assert render.rerender_region("rg-cut").error_code == LINEAGE_BINDING_CHANGED
+    assert render.rerender_region("rg-stock").error_code == LINEAGE_UNVERIFIED
+    assert render._active_regions("p-same")[0][0].region_id == "rg-same"
+
+    # Run entry: a switched cut page is refused typed at plan time; the
+    # same_content page plans normally. A page-scope target is FILTERED (the
+    # new image's region set excludes the old coordinates) and the catalog
+    # logs the filtered count.
+    page_scope = pipeline._catalog.expand(
+        PipelineScope(ScopeType.PAGE, selected_ids=("p-cut",))
+    )
+    assert page_scope[0].regions == ()
+    with pytest.raises(Exception) as refused:
+        pipeline.create_run(
+            CommandType.OCR_REGION,
+            PipelineScope(ScopeType.REGION, selected_ids=("rg-cut",)),
+        )
+    assert getattr(refused.value, "code", None) == LINEAGE_BINDING_CHANGED
+    allowed_run = pipeline.create_run(
+        CommandType.OCR_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("rg-same",)),
+    )
+    assert allowed_run.run_id
