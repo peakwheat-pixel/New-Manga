@@ -3,10 +3,10 @@ id: FEA-11-SCAN-1
 title: FEA-11 源后台定时扫描（Host 进程内只读周期触发切片）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-1 的「定时扫描生产者」延期项（L-3 半边）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: codex
-owner: null
+owner: fea12-core-host
 reviewer: null
 depends_on:
   - FEA-11
@@ -48,9 +48,9 @@ out_of_scope:
 
 # FEA-11-SCAN-1：源后台定时扫描（Host 进程内只读周期触发切片）
 
-> **状态：`proposed`。本卡 scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；释放前不得实施、不得改卡面语义。**
+> **状态：`in_review`（2026-11-06 实施完成）。本卡 scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结；方案 A = Host 侧只读周期触发切片（不做 Core 定时器、不做 watcher、不做通知持久化、不做自动 plan/apply）。**
 >
-> 冻结方案：**方案 A = Host 侧只读周期触发切片**（不做 Core 定时器、不做 watcher、不做通知持久化、不做自动 plan/apply）。范围事实基线：`main@604a2d343`。
+> 范围事实基线：`main@e0c370870`（释放点）；实施完成时 HEAD `869b6d5d5`（其间无 `apps/desktop-avalonia` 改动，见 `verification/FEA-11-SCAN-1/logs/scope-validation.log`）。实现/证据 commit 见交付记录与 Handoff。
 
 ## 来源与目标
 
@@ -108,38 +108,38 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC-S1 调度器生命周期与配置（Host）**：
+- [x] **AC-S1 调度器生命周期与配置（Host）** <<MET>>
   - `SourceScanScheduler` 在 Host 内单实例；`Start` 幂等（重复调用不产生第二个循环）；`Stop`/`Dispose` 后不再 tick，`Stop` 可重入。
   - `Pause`/`Resume` 生效：暂停期间 tick 不产生 Core 调用，恢复后从下一 tick 继续；状态快照可见 `paused`。
   - 间隔默认 900s，由 `HostOptions` + env `NEWMANGA_SOURCE_SCAN_INTERVAL_SECONDS` 覆盖；合法范围 `[60, 86400]`；非法值 → 回落 900s + WARN（不使 Host 启动失败）；默认 enabled=true。
   - 时钟与 tick 可注入：测试用固定 `now` 调用 `TickAsync()`，**零 `Task.Delay`/`Sleep`**；生产循环用 `Task.Delay(interval, timeProvider, token)`。
   - Core 会话失效（`HOST_SESSION_INVALID`/`CORE_SESSION_MISMATCH`/sidecar exit）→ `paused`，不自行重开 host session。
   - 判别测试：fake clock + fake core；`Start×2 → 1 循环`；`TickAsync×3` 按注入 now 精确断言 `next_tick`；`Pause` 后 tick 0 调用；`Stop` 后 tick 0 调用；边界/非法配置；会话失效注入。
-- [ ] **AC-S2 目标注册、单飞与“只扫不写”**：
+- [x] **AC-S2 目标注册、单飞与“只扫不写”** <<MET>>
   - App 在引用导入终态 `Completed` 成功后注册 `(source_id, path, kind='resync', project_ids=[bookId], version)`；重复注册按 `source_id` 覆盖（目标数不增长）；失败/取消不注册。
   - 同一 `source_id` 在飞期间再次触发 → 合并/跳过，不产生第二个 `ScanSourceSync`；不同 `source_id` 可顺序处理。
   - 一次 tick 中调度器只发送 `ScanSourceSync`；fake core 收到的命令集合**精确等于** `{ScanSourceSync}`（逐 tick 命令序列留证）。
   - 扫描失败不写任何 Core 状态（Core 侧 `scan()` 零写）；Host 侧只更新内存状态。
   - 后台检测 `kind` 固定 `resync`（`scanner.scan()` 只校验、不使用 kind）；不得据扫描结果创建 plan 或推断用户意图。
   - 判别测试：`TaskCompletionSource` 卡住第一次 scan → 再 tick → 该 source 仅 1 次调用；注册 2 源 → 1 tick 2 次调用；重复注册仍 1 次；命令集合断言无写命令。
-- [ ] **AC-S3 预算与退避**：
+- [x] **AC-S3 预算与退避** <<MET>>
   - 每 tick 目标数上限（默认 8）与每源大小上限（默认 256 MiB；folder 成员数上限）可注入；超限目标**顺延**下一 tick 并记 `deferred`，不算失败。
   - 连续 typed 失败 → 指数退避 `min(60×2^n, 3600)` 秒；成功清零；退避期内该目标跳过。
   - 可停用错误（`CORE_CAPABILITY_MISSING`、`HOST_ONLY_REQUIRED`、`INVALID_REQUEST`）→ 调度器 `paused`/`disabled`，不重试。
   - 前台隔离：慢 scan 在独立 Task；同一时刻 Host 的其他命令（fake 命令）仍能完成（断言并发完成时间 < scan 阻塞时间；不得 sleep 硬等）。
   - 判别测试：10 目标 budget=4 → 4/4/2 分三 tick；连续失败 4 次 → 退避序列 60/120/240/480（注入 clock）；成功后清零；注入 `CORE_CAPABILITY_MISSING` → disabled，后续 tick 0 调用。
-- [ ] **AC-S4 全量重枚举（真实链路）**：
+- [x] **AC-S4 全量重枚举（真实链路）** <<MET>>
   - 每 tick 对目标执行完整 `ScanSourceSync`，不依赖任何 hint/缓存。
   - 真实 zip 在两次 tick 之间被重写（**同文件名、同大小、不同字节**）→ 下一次 tick 的 Scan 返回 `totals.changed ≥ 1` 且 `source.content_digest` 变化；状态记录 `result=changed`。
   - 无变化时状态不产生新记录（幂等/去噪）。
   - 源被删除 → Host 先 stat 失败，构造 `MissingObservation`（`registry_id/generation/expected_identity_digest` 来自 registry `identity_facts`，C-17 §5.3）再调用 `ScanSourceSync`；状态 `result=missing`；**不** tombstone、不删页、不把缺失说成“已删除”。
   - 真实 IPC 测试隔离：真实 Python Core + 真实 v8 库 + 真实 zip + 隔离 DataRoot（`G:/CODEX/New Manga.workspace/FEA-11-SCAN-1/`）；断言 `page_bindings` 前后快照未变（零写）。
-- [ ] **AC-S5 状态快照与诊断脱敏（in-process，无新 wire）**：
+- [x] **AC-S5 状态快照与诊断脱敏（in-process，无新 wire）** <<MET>>
   - `HostRuntime.SourceScanStatus` 返回 closed record：`{enabled, interval_seconds, paused, last_tick_at?, next_tick_at?, targets:[{source_id, last_scan_at?, last_result?, counts?, deferred?}], recent[≤50]}`；`last_result ∈ {ok, changed, missing, unsupported, denied, error}`；`deferred` 只表示本 tick 因预算顺延。
   - 快照**不含**绝对路径、grant、session、异常原文、凭据；日志同口径（只 `source_id`/计数/code）。
   - 重启后 `recent` 与 `targets` 为空（L-A/L-C），配置仍从 `HostOptions` 恢复。
   - 判别测试：fake clock 驱动 3 tick → 字段/顺序/上限 50 断言；`InMemoryLog` 捕获日志，断言不含隔离根路径子串、不含 `"source-"` grant id、不含 `host_session`。
-- [ ] **AC-S6 范围、冻结、回归与证据**：
+- [x] **AC-S6 范围、冻结、回归与证据** <<MET>>
   - 不修改任何冻结契约字节（C-17/C-16/C-15/C-09/C-14/M2-C1/ADJ-001/FEA-01）；`verify_pins.ps1` **18/18 PASS**；`generate_api_inventory.py --check` PASS（C-07 未变）。
   - 不改 `src/**` Core 实现、schema/migration、依赖；若实施中发现必须改 → **停下报 DSH**（窄批）。
   - `dotnet test` 全量不减少（记录 before/after passed/failed/skipped 与 skip 原因；不得以历史数字代替实跑）。
@@ -169,16 +169,16 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC-S1/S2/S3/S5 | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --filter "FullyQualifiedName~SourceScanScheduler"` | fake clock/fake core；隔离；零 sleep | NOT_RUN（待释放） | `verification/FEA-11-SCAN-1/logs/dotnet-host-scheduler.log`（计划） |
-| AC-S4 真实链路 | `$env:NEWMANGA_FEA11_SCAN_IPC=1; dotnet test ... --filter "FullyQualifiedName~Fea11ScanIpcTests"`（真实 Python Core + 真实 zip + 隔离 DataRoot） | 隔离根；真实 IPC；DB 前后快照 | NOT_RUN | `verification/FEA-11-SCAN-1/logs/fea11-scan-ipc.log`、`real-ipc.txt` |
-| AC-S5 脱敏 | 同 AC-S1 测试集内 `InMemoryLog` 断言 | fake core | NOT_RUN | `logs/status-redaction.log` |
-| AC-S6 回归 | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release`（全量，释放日基线 before/after 分列）；`check.ps1`；`verify_pins.ps1`；`python tools/generate_api_inventory.py --check` | 仓库根 | NOT_RUN | `logs/dotnet-full.log`、`pins.log`、`check.log`、`scope-validation.log` |
+| AC-S1/S2/S3/S5 | `dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~SourceScanScheduler\|FullyQualifiedName~Fea11ScanRegistration"` | fake clock（手写 TimeProvider，可 Advance）/fake core；零 sleep | **PASS：通过 32 / 失败 0 / 跳过 0**，EXIT 0 | `logs/dotnet-host-scheduler.log` |
+| AC-S4 真实链路 | `$env:NEWMANGA_FEA11_IPC=1; dotnet test ... --filter "FullyQualifiedName~Fea11ScanIpcTests"`（真实 Python Core + 真实 v8 库 + 真实 zip + 隔离 DataRoot） | 隔离根 `G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-*`（seed 脚本冻结的隔离守卫）；真实 IPC；DB 前后快照 | **PASS：通过 1 / 失败 0**，EXIT 0；`ok → missing → ok → changed`，wire 仅 `{core.ping, OpenHostSession, RegisterSourceReadGrant, ScanSourceSync}`，DB 快照前后相同 | `logs/fea11-scan-ipc.log`、`real-ipc.json`、`real-ipc.txt` |
+| AC-S5 脱敏 | `dotnet test ... --filter "FullyQualifiedName~StatusAndLogs_AreRedacted"`（InMemory 断言：路径/`source-` grant id/`host_session`/异常原文零命中） | fake core | **PASS：通过 1 / 失败 0**，EXIT 0 | `logs/status-redaction.log` |
+| AC-S6 回归 | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo`（首跑+复跑）；`pytest tests -q`；`check.ps1 -TaskPath`；`verify_pins.ps1`；`python tools/generate_api_inventory.py --check` | 仓库根 | 全 .NET 两次 **1437 passed / 0 failed / 81 skipped / 1518**，EXIT 0；pytest **3203 passed / 10 skipped**，EXIT 0；check PASS（3 既有警告）；pins 18/18；API inventory PASS | `logs/gates.log`、`logs/dotnet-full-1.log`、`logs/dotnet-full-2.log`、`logs/pytest-full.log`、`logs/pins.log`、`logs/api-inventory.log`、`logs/scope-validation.log` |
 
 ## 预期行为变更（Review 不判回归）
 
-1. **App 导入接线**：`ISourceImportController`/`HostController`/`NullHostController`/`ImportDockViewModel` 可能新增目标注册所需上下文（`bookId`/注册调用）；`FakeHostController` 同步实现。属 App 内部非 C-07 接口变化，`generate_api_inventory.py --check` 必须仍 PASS。
-2. **Host 新增后台循环**：`HostRuntime` 生命周期新增调度器 start/stop；Test 装配若未启用 `ReferencedImportEnabled` 则不运行，既有测试不应观察到命令差异。
-3. **无用户可见变化**：本卡不新增 UI/通知/wire 命令；Review 不得以“没有用户可见功能”判实现不足（按冻结范围判定）。
+1. **App 导入接线**：`ISourceImportController` 新增 `RegisterCompletedImportScanTargets(bookId, sources)`（独立于冻结 C-07 `IHostController`），`HostController`/`NullHostController`/`FakeHostController` 实现；`ImportDockViewModel` 新增**可选** `bookId` 构造参数（既有构造不变），仅在引用导入终态 `Completed` 时注册。`generate_api_inventory.py --check` 实测 PASS（18 pins 不变）。
+2. **Host 新增后台循环**：`HostRuntime` Ready 后启动 `SourceScanScheduler`，`DisposeAsync`/`StopSidecarsAsync` 停止并 join；默认 enabled=true、900s，首次 tick 在一个间隔之后（冷启动不枚举）。既有测试未观察到 command 差异（全量 .NET 两次 PASS；Host.Tests 139/0/50）。
+3. **无用户可见变化**：不新增 UI/通知/wire 命令；Review 不得以“没有用户可见功能”判实现不足（按冻结范围判定）。
 
 ## 依赖、风险与阻塞
 
@@ -193,7 +193,9 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
   - R-6 共享源多项目 → 只注册一个 project → `scope=current` 的 bases 只覆盖该项目；源级 diff 仍是全量（`scanner.py:219-229`），状态计数可信；如需全项目 bases → SCAN-2（L-F）。
   - R-7 用户误以为“已同步” → 卡/文案禁止“已修复/已同步”；呈现由 UI 切片负责（L-D）。
   - R-8 日志/状态泄露路径 → 脱敏断言（AC-S5）。
-- 阻塞解除标准：scope 已冻结 → Lead 释放（固定 base/Owner/Reviewer；并确认 SC-B08 窄裁定与本卡的接口路径说明）→ 实施 → 证据齐备 → 独立 Review → DSH 集成 closeout。
+  - R-9（实施新增）C-17 §5.3 missing 观察需要 Core 侧 location identity 与 Host 最后验证 identity 一致：生产上二者来自同一真实文件；隔离 seed fixture 使用合成 7/8/100 占位，real-IPC 测试在 fixture 内以真实 file identity + Host registry id 对齐（fixture-only，注释/证据已写明）。若首次 tick 前源已消失且本会话无已验证 identity，executor fail-closed 记 `error`（`SOURCE_ENTRY_MISSING`）而非伪造 `missing`。
+  - R-10（实施新增）Host 只在 App 导入完成后注册目标，测试/无 UI 场景不会自动产生目标（L-A 一致）。
+- 阻塞解除标准：scope 已冻结 → Lead 释放 → 实施 → 证据齐备 → 独立 Review → DSH 集成 closeout。
 
 ## 残余 limitation（预登记 L-A…L-F）
 
@@ -203,28 +205,41 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 - **L-D 无用户可见呈现**：无 UI/通知；用户看不到“源已变化”。
 - **L-E 成本未实测**：默认 900s/8 目标/256 MiB 未在真实大库标定。
 - **L-F 共享源 bases 单项目**：见 R-6。
+- **L-G（实施新增）missing 观察依赖会话内首次成功扫描**：隔离 seed fixture 无持久 identity_facts，故首次 tick 前源已消失时 fail-closed 为 `error`；生产导入会话内正常路径由首个 ok tick 缓存 identity。完整冷启动 missing 语义随 SCAN-2（持久 identity）解决。
 
 ## 交付与运行记录
 
-- Handoff：尚无（待释放/实施后新增 `doc/handoffs/FEA-11-SCAN-1-*.md`）。
+- Handoff：`doc/handoffs/FEA-11-SCAN-1-e0c370870.md`（实施 commit、门禁、残余风险、下一步）。
 - Review：尚无（独立上下文 Reviewer，须记录 session ID 与来源；作者不得自审）。
-- 实际测试：尚无（当前 `status: proposed`，未实施、未跑本卡测试）。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 DSH 填写 `integration_commit` 并改 done。
+- 实际测试（2026-11-06，主工作树 G:\CODEX\New Manga，HEAD 869b6d5d5 + 本卡未提交变更）：G1 scheduler/registration 32/0/0；G2 real IPC 1/0/0；G3 redaction 1/0/0；G4 全量 .NET 两次 1437/0/81/1518；G5 pytest 3203/10；G6 check PASS（3 既有 warning）；G7 pins 18/18；G8 API inventory PASS；G9 scope 0 域外。详见 `logs/gates.log`。
+- 实施 commit：见 frontmatter `delivery_head`（本卡与 Handoff 的文档提交中记录）。
+- 后续由 DSH 填写 `integration_commit` 并改 done。
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项登记唯一当前证据；本卡尚未实施，表格为空。
-
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-01 | G1/AC-S1,S2,S3,S5 | `verification/FEA-11-SCAN-1/logs/dotnet-host-scheduler.log` | null | `84dd749afd5bf07e10a097691aef3552b9ed7cb83aa90b27520dba6f26896d2d` | CANONICAL |
+| EV-02 | G2/AC-S4 | `verification/FEA-11-SCAN-1/logs/fea11-scan-ipc.log` | null | `c6afc880f63345554d6fd26cafc33e8ee81ad583445a9857351b95f2833153a2` | CANONICAL |
+| EV-03 | G2/AC-S4 | `verification/FEA-11-SCAN-1/real-ipc.json` | null | `789336b7c1cfaf882e32f29d49ab780b2db86bccd71252e11202c450b2af22f1` | CANONICAL |
+| EV-04 | G2/AC-S4 | `verification/FEA-11-SCAN-1/real-ipc.txt` | null | `ddc3d73f3b226c8e4c44908708a2a7d05e44335b12401b91870e66f7621d1266` | CANONICAL |
+| EV-05 | G3/AC-S5 | `verification/FEA-11-SCAN-1/logs/status-redaction.log` | null | `f5da210e610afa1d91d7bfcf6abbc1033b2c3ed2be732beda8cbe0e23806b689` | CANONICAL |
+| EV-06 | G4/AC-S6 | `verification/FEA-11-SCAN-1/logs/dotnet-full-1.log` | null | `7338b774b579d240c36be5d1524c29746d8ea5052ceabcbc8ace7aff6c867e22` | CANONICAL |
+| EV-07 | G4/AC-S6 | `verification/FEA-11-SCAN-1/logs/dotnet-full-2.log` | null | `3ff2b32c081e0eb56dc353fc421c01959f5637d740bdab44e5c0699f0703320f` | CANONICAL |
+| EV-08 | G5/AC-S6 | `verification/FEA-11-SCAN-1/logs/pytest-full.log` | null | `69aa9605ad864ff138aa55d0586c342b40ed51b1a3d970a89a3a523604606345` | CANONICAL |
+| EV-09 | G7/AC-S6 | `verification/FEA-11-SCAN-1/logs/pins.log` | null | `2ebcc2c24b9075f939b9beb027ed2decd273323581327db12b6097adb37c4d94` | CANONICAL |
+| EV-10 | G8/AC-S6 | `verification/FEA-11-SCAN-1/logs/api-inventory.log` | null | `6d1e41178756c82c9500e141743fe5783c00f75d4ca09b4c6206323efb02e4b7` | CANONICAL |
+| EV-11 | G9/AC-S6 | `verification/FEA-11-SCAN-1/logs/scope-validation.log` | null | `59f769c175fd815281069316fae568bcfc1b135220b2fadd273cf2e3531c69a0` | CANONICAL |
+| EV-12 | Gate 记录 | `verification/FEA-11-SCAN-1/logs/gates.log` | null | `ae7bc562ec4a8bd35ed38ac3f0ef5eee7dc6ebf57a5fdf951ea26369e8de2648` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main 工作树；释放时由 DSH 固定） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\`（预计隔离 fixture 根） | DELETE_SAFE（预计） | — | — | 未创建；实施后按实际登记 |
-| agent-output | — | NOT_APPLICABLE | — | — | 本卡尚未产生 |
+| worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\`（门禁/测试原始日志） | PRESERVE_REFERENCED | 同上 | 交付后由 DSH closeout 时登记 manifest | 原始日志为仓内 `logs/` 证据的上游副本；仓内证据已按 sha256 pin |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-*`（隔离 IPC fixture，含真实 zip/v8 DB） | DELETE_SAFE（交付后） | — | — | 隔离根由冻结 seed 脚本守卫（只允许 FEA-11 fixtures 下 library.db）；无真实用户数据；DSH closeout 时删除 |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\`（check 日志等过程输出） | PRESERVE_REFERENCED | 同上 | 交付后由 DSH closeout 时登记 | check 日志避免仓内自指（FEA-12-PREREQ-1 R-003 先例） |
 
 ## Closeout Record
 

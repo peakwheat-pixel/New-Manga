@@ -265,6 +265,15 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
         CancellationToken cancellationToken = default) =>
         Task.FromResult(SourceImportCancelResult.Failed("HOST_NOT_READY"));
 
+    // FEA-11-SCAN-1 (I-2): the inert shell owns no HostRuntime, so there is no in-process scan
+    // scheduler to register targets with. The import face still reports its typed outcome; the scan
+    // slice is a Host-only observability capability and is simply absent here.
+    public void RegisterCompletedImportScanTargets(
+        string bookId,
+        IReadOnlyList<ReferenceImportSource> sources)
+    {
+    }
+
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
         CancellationToken cancellationToken = default) =>

@@ -1,0 +1,64 @@
+{
+  "case": "AC-S4",
+  "core": "real volatile python core (stdio IPC)",
+  "schema_version": 8,
+  "source_id": "s1",
+  "registry_generation": 1,
+  "same_size_rewrite": {
+    "size": 358,
+    "old_sha256": "868f2a0ce000dd33155bb41cd3a5c18a6e0c6e4a23dc99b453a603f1f7de38b9",
+    "new_sha256": "aef326a84236dc1aa1c57145754881e9af2716b634118a01887f9d22afc6c79c"
+  },
+  "steps": [
+    {
+      "step": "unchanged",
+      "result": "ok",
+      "unchanged": 1,
+      "added": 0,
+      "missing": 0,
+      "changed": 0,
+      "deferred": false
+    },
+    {
+      "step": "deleted",
+      "result": "missing",
+      "unchanged": 0,
+      "added": 0,
+      "missing": 1,
+      "changed": 0,
+      "deferred": false
+    },
+    {
+      "step": "restored",
+      "result": "ok",
+      "unchanged": 1,
+      "added": 0,
+      "missing": 0,
+      "changed": 0,
+      "deferred": false
+    },
+    {
+      "step": "changed",
+      "result": "changed",
+      "unchanged": 0,
+      "added": 0,
+      "missing": 0,
+      "changed": 1,
+      "deferred": false
+    }
+  ],
+  "db_snapshot_unchanged": true,
+  "wire_commands": [
+    "OpenHostSession",
+    "RegisterSourceReadGrant",
+    "ScanSourceSync",
+    "core.ping"
+  ],
+  "forbidden_write_commands_absent": true,
+  "scheduler_status": {
+    "enabled": true,
+    "paused": false,
+    "interval_seconds": 60,
+    "recent": 2
+  }
+}

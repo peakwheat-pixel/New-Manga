@@ -69,7 +69,9 @@ public sealed class LibraryViewModel : ObservableObject
             chapterId: () => SelectedChapter?.ChapterId,
             chapterTitle: () => SelectedChapter?.Title,
             afterImport: ReloadAfterImportAsync,
-            requestCreateChapter: ShowCreateChapter);
+            requestCreateChapter: ShowCreateChapter,
+            // FEA-11-SCAN-1 (I-2): project_ids=[bookId] for a completed import's scan target.
+            bookId: () => SelectedBook?.BookId);
         Reader = new ReaderOverlayViewModel(controller, notify, OnReaderProgressSavedAsync);
 
         FilterChips = new ObservableCollection<FilterChipItem>

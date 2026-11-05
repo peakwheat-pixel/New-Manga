@@ -27,6 +27,7 @@ public sealed class ImportDockViewModel : ObservableObject
     private readonly Action<string, NmStatus> _notify;
     private readonly Func<string?> _chapterId;
     private readonly Func<string?> _chapterTitle;
+    private readonly Func<string?> _bookId;
     private readonly Func<Task> _afterImport;
     private readonly Action _requestCreateChapter;
     private readonly Func<Task> _referencePollDelay;
@@ -52,7 +53,10 @@ public sealed class ImportDockViewModel : ObservableObject
         Func<string?> chapterTitle,
         Func<Task> afterImport,
         Action requestCreateChapter,
-        Func<Task>? referencePollDelay = null)
+        Func<Task>? referencePollDelay = null,
+        // FEA-11-SCAN-1 (I-2): the owning book id for completed-import scan-target registration;
+        // optional so every existing construction (LibraryViewModel and fakes) keeps compiling.
+        Func<string?>? bookId = null)
     {
         _controller = controller;
         // FEA-09-UI-1: the referenced-import face is an OPTIONAL capability next to the frozen
@@ -64,6 +68,7 @@ public sealed class ImportDockViewModel : ObservableObject
         _notify = notify;
         _chapterId = chapterId;
         _chapterTitle = chapterTitle;
+        _bookId = bookId ?? (() => null);
         _afterImport = afterImport;
         _requestCreateChapter = requestCreateChapter;
         _referencePollDelay = referencePollDelay ?? (() => Task.Delay(300));
@@ -419,12 +424,66 @@ public sealed class ImportDockViewModel : ObservableObject
             ApplyReceipt(receipt);
             if (receipt.IsTerminal)
             {
+                // FEA-11-SCAN-1 (I-2 / AC-S2): ONLY a completed (successful) referenced import
+                // registers periodic scan targets; cancelled/failed imports register nothing.
+                if (receipt.State == SourceImportOperationState.Completed)
+                {
+                    RegisterCompletedScanTargets(sourceImport, receipt);
+                }
+
                 _activeOperationId = null;
                 break;
             }
         }
 
         await _afterImport().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// FEA-11-SCAN-1 (I-2 / AC-S2): after a COMPLETED referenced import, hand the imported sources to
+    /// the Host's in-memory scan-target registry (book id from the library selection). Sources whose
+    /// receipt item was unsupported/failed are not referenced content and are not registered; a
+    /// missing receipt item is treated defensively as "referenceable". Registration is best-effort
+    /// observability and never changes the import result or the dock state.
+    /// </summary>
+    private void RegisterCompletedScanTargets(
+        ISourceImportController sourceImport,
+        SourceImportReceipt receipt)
+    {
+        if (_referenceSources is not { Count: > 0 } sources)
+        {
+            return;
+        }
+
+        var bookId = _bookId();
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            return;
+        }
+
+        var eligible = new List<ReferenceImportSource>();
+        for (var index = 0; index < sources.Count; index++)
+        {
+            var item = receipt.Items.FirstOrDefault(row => row.SourceIndex == index);
+            if (item is null || item.Outcome is "imported" or "skipped")
+            {
+                eligible.Add(sources[index]);
+            }
+        }
+
+        if (eligible.Count == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            sourceImport.RegisterCompletedImportScanTargets(bookId, eligible);
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            // Observability only: the import result stands, the scan target is simply absent.
+        }
     }
 
     private void ApplyPlan(SourcePlanPreview plan)

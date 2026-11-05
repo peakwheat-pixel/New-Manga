@@ -83,4 +83,30 @@ public sealed class HostOptions
     public bool ReferencedImportEnabled { get; init; } = true;
 
     public bool EnableWireEvidence { get; init; } = true;
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-SCAN-1 (I-1/I-4 / AC-S1/S3): the Host-side read-only periodic source scan.
+    // Defaults are frozen by the card: enabled=true, interval=900s, 8 targets/tick, 256 MiB per
+    // source. NEWMANGA_SOURCE_SCAN_INTERVAL_SECONDS overrides the interval inside [60, 86400] (an
+    // illegal value falls back to 900s + a WARN in HostRuntime — never a startup failure) and there
+    // is deliberately NO settings section for these values (P15 key space is frozen).
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>Master switch; the scheduler only starts when referenced import is enabled too.</summary>
+    public bool SourceScanEnabled { get; init; } = true;
+
+    /// <summary>Configured interval in seconds (environment override applies at Host start).</summary>
+    public int SourceScanIntervalSeconds { get; init; } = 900;
+
+    /// <summary>AC-S3: at most this many targets are attempted per tick; the rest are deferred.</summary>
+    public int SourceScanMaxTargetsPerTick { get; init; } = 8;
+
+    /// <summary>AC-S3: per-source byte budget (files) — over-budget targets are deferred.</summary>
+    public long SourceScanMaxBytesPerSource { get; init; } = 256L * 1024 * 1024;
+
+    /// <summary>AC-S3: per-folder member budget — over-budget targets are deferred.</summary>
+    public int SourceScanMaxEntriesPerSource { get; init; } = 10000;
+
+    /// <summary>TimeProvider seam: the scheduler loop and every status timestamp use this clock.</summary>
+    public TimeProvider SourceScanTimeProvider { get; init; } = TimeProvider.System;
 }

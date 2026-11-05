@@ -8,6 +8,7 @@ using NewManga.CoreClient.Transport;
 using NewManga.Host.Resources;
 using NewManga.Host.Sources;
 using System.Text;
+using ScanStatus = NewManga.Host.Sources.SourceScanStatus;
 
 namespace NewManga.Host;
 
@@ -73,6 +74,44 @@ public sealed class HostRuntime : IAsyncDisposable
 
     /// <summary>GRANT-ISSUER-1: the production command dispatcher, including the Host-local commands.</summary>
     public HostCommandDispatcher? Commands { get; private set; }
+
+    /// <summary>
+    /// FEA-11-SCAN-1 (I-1/I-7): the Host-side read-only periodic source scan scheduler. Created only
+    /// after the Host is ready; null when referenced import is disabled or the Host never became
+    /// ready. It is the ONLY producer of <see cref="SourceScanStatus"/> and never writes Core state.
+    /// </summary>
+    public SourceScanScheduler? ScanScheduler { get; private set; }
+
+    /// <summary>
+    /// FEA-11-SCAN-1 (I-6 / AC-S5): the closed in-process scan status snapshot — the slice's only
+    /// observable surface (no wire command, no DB row, no file). Contains typed source ids, result
+    /// enums, counts and stable codes only; never absolute paths, grants, sessions or exception text.
+    /// </summary>
+    public ScanStatus SourceScanStatus =>
+        ScanScheduler?.Snapshot() ?? ScanStatus.Disabled(ResolvedSourceScanIntervalSeconds());
+
+    /// <summary>
+    /// FEA-11-SCAN-1 (I-2 / AC-S2): registers a source of a completed referenced import as a periodic
+    /// scan target. In-memory only (L-A/L-C); re-registering the same <paramref name="sourceId"/>
+    /// overwrites it so the target set never grows on repeated imports. Returns false when the Host
+    /// is not accepting targets (not ready / referenced import disabled / invalid identity).
+    /// </summary>
+    public bool RegisterSourceScanTarget(
+        string sourceId,
+        string path,
+        IReadOnlyList<string> projectIds,
+        string version = "1")
+    {
+        var scheduler = ScanScheduler;
+        if (scheduler is null || !_options.ReferencedImportEnabled
+            || string.IsNullOrWhiteSpace(sourceId) || string.IsNullOrWhiteSpace(path)
+            || projectIds.Count == 0)
+        {
+            return false;
+        }
+
+        return scheduler.RegisterTarget(new SourceScanTarget(sourceId, path, projectIds, version));
+    }
 
     public HostLog Log => _log;
 
@@ -642,6 +681,7 @@ public sealed class HostRuntime : IAsyncDisposable
         }
 
         _disposed = true;
+        await StopSourceScanSchedulerAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
             await HostBridge.DisposeAsync().ConfigureAwait(false);
@@ -1101,6 +1141,12 @@ public sealed class HostRuntime : IAsyncDisposable
             {
                 Result = HostStartResult.Ready(decision.Mode);
             }
+
+            // FEA-11-SCAN-1 (I-7): start the read-only periodic scan only after the Host is ready
+            // (host-control session + Sources resolved + Result.IsReady). Cold start enumerates no
+            // sources (L-A): the first tick happens after one interval and only over App-registered
+            // targets.
+            StartSourceScanScheduler();
         }
         catch (SidecarException ex)
         {
@@ -1133,6 +1179,9 @@ public sealed class HostRuntime : IAsyncDisposable
 
     private async Task StopSidecarsAsync()
     {
+        // FEA-11-SCAN-1 (I-7): stop and join the scan loop BEFORE the Core/host-control session goes
+        // away; the scheduler never reopens a session itself.
+        await StopSourceScanSchedulerAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
             await HostBridge.DisposeAsync().ConfigureAwait(false);
@@ -1144,6 +1193,83 @@ public sealed class HostRuntime : IAsyncDisposable
             await CoreService.DisposeAsync().ConfigureAwait(false);
             CoreService = null;
         }
+    }
+
+    /// <summary>
+    /// FEA-11-SCAN-1 (I-1/I-7 / AC-S1): resolves the interval from the option + environment override
+    /// (illegal values fall back to 900s with a WARN — never a startup failure), builds the
+    /// production executor and starts the single loop.
+    /// </summary>
+    private void StartSourceScanScheduler()
+    {
+        if (ScanScheduler is not null || Result.Status != HostStatus.Ready
+            || !_options.ReferencedImportEnabled || !_options.SourceScanEnabled
+            || Sources is not { } sources || CoreService is not { } core)
+        {
+            return;
+        }
+
+        var environment = Environment.GetEnvironmentVariable(SourceScanScheduler.IntervalEnvironmentVariable);
+        var interval = SourceScanScheduler.ResolveIntervalSeconds(
+            _options.SourceScanIntervalSeconds, environment, out var usedFallback);
+        if (usedFallback)
+        {
+            _log.Warn(
+                $"source scan: invalid {SourceScanScheduler.IntervalEnvironmentVariable}; falling back to "
+                + SourceScanScheduler.DefaultIntervalSeconds + "s");
+        }
+
+        var scanOptions = new SourceScanOptions
+        {
+            Enabled = true,
+            IntervalSeconds = interval,
+            MaxTargetsPerTick = _options.SourceScanMaxTargetsPerTick,
+            MaxBytesPerSource = _options.SourceScanMaxBytesPerSource,
+            MaxEntriesPerSource = _options.SourceScanMaxEntriesPerSource,
+        };
+        var executor = new HostSourceScanExecutor(core, sources, scanOptions, _options.SourceScanTimeProvider);
+        ScanScheduler = new SourceScanScheduler(
+            scanOptions,
+            executor,
+            _options.SourceScanTimeProvider,
+            infoLog: _log.Info,
+            warnLog: _log.Warn,
+            errorLog: _log.Error);
+        ScanScheduler.Start();
+        _log.Info(
+            "source scan scheduler started interval=" + interval
+            + "s max_targets=" + scanOptions.MaxTargetsPerTick
+            + " max_bytes=" + scanOptions.MaxBytesPerSource);
+    }
+
+    /// <summary>FEA-11-SCAN-1: stops and joins the scan loop; idempotent and safe before/after stop.</summary>
+    private async Task StopSourceScanSchedulerAsync()
+    {
+        var scheduler = ScanScheduler;
+        ScanScheduler = null;
+        if (scheduler is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await scheduler.DisposeAsync().ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is ObjectDisposedException or InvalidOperationException)
+        {
+            _log.Warn("source scan scheduler stop failed: " + error.GetType().Name);
+        }
+    }
+
+    /// <summary>The guarded option value used when no scheduler exists (env override not yet applied).</summary>
+    private int ResolvedSourceScanIntervalSeconds()
+    {
+        var configured = _options.SourceScanIntervalSeconds;
+        return configured is >= SourceScanScheduler.MinimumIntervalSeconds
+            and <= SourceScanScheduler.MaximumIntervalSeconds
+            ? configured
+            : SourceScanScheduler.DefaultIntervalSeconds;
     }
 
     private static SidecarException NotReady() =>

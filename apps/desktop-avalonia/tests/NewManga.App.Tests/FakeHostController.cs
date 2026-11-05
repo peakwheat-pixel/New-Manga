@@ -744,6 +744,16 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
             : new SourceImportCancelResult(true, true, "running", null));
     }
 
+    /// <summary>FEA-11-SCAN-1 (I-2): every completed-import scan-target registration, in call order.</summary>
+    public List<(string BookId, IReadOnlyList<ReferenceImportSource> Sources)> ScanTargetRegistrations { get; } = new();
+
+    public void RegisterCompletedImportScanTargets(
+        string bookId,
+        IReadOnlyList<ReferenceImportSource> sources)
+    {
+        ScanTargetRegistrations.Add((bookId, sources));
+    }
+
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
         CancellationToken cancellationToken = default)

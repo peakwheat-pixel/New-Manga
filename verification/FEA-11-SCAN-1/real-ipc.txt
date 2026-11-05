@@ -1,0 +1,7 @@
+FEA-11-SCAN-1 AC-S4 real IPC
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-09c00608d8bc4480b13d8c7869b5c105
+steps=unchanged,deleted,restored,changed
+results=changed
+db_snapshot_unchanged=true
+wire_commands=OpenHostSession,RegisterSourceReadGrant,ScanSourceSync,core.ping
+PASS

@@ -1,0 +1,114 @@
+# FEA-11-SCAN-1 gates (2026-11-06, Asia/Shanghai)
+
+> Owner: fea12-core-host (DSH Agent Teams); repo G:\CODEX\New Manga (main); card base e0c370870.
+> Gate runs were executed on the working tree whose .NET sources are byte-identical to delivery
+> commit(s) recorded in the Handoff; HEAD during the runs: 869b6d5d5
+> (no apps/desktop-avalonia commits exist between base e0c370870 and this HEAD before this card).
+> All commands ran in the main worktree; logs are the core-* files next to this file.
+
+## G1 Scheduler + App-registration unit tests (fake clock / fake core; no sidecar, no sleep)
+
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~SourceScanScheduler|FullyQualifiedName~Fea11ScanRegistration"
+RESULT:  通过 32 / 失败 0 / 跳过 0 / 总计 32
+EXIT:    0
+LOG:     logs/dotnet-host-scheduler.log
+
+## G2 Real IPC full scan chain (real Python Core + real v8 DB + real zip + isolated DataRoot)
+
+ENV:     NEWMANGA_FEA11_IPC=1
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~Fea11ScanIpcTests"
+RESULT:  通过 1 / 失败 0 / 跳过 0 / 总计 1
+EXIT:    0
+EVIDENCE: real-ipc.json / real-ipc.txt (fixture isolated root under
+          G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-*; the frozen seed script only allows that
+          FEA-11 fixtures root, so the card's planned FEA-11-SCAN-1 fixture root is replaced by the
+          seed-compatible root; no real user data touched)
+          steps: unchanged -> missing -> restored -> changed; ScanSourceSync only on the write-free path;
+          wire commands = {core.ping, OpenHostSession, RegisterSourceReadGrant, ScanSourceSync};
+          db_snapshot_unchanged = true.
+LOG:     logs/fea11-scan-ipc.log
+
+## G3 Status/log redaction assertions (AC-S5)
+
+COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build --nologo --filter "FullyQualifiedName~StatusAndLogs_AreRedacted"
+RESULT:  通过 1 / 失败 0 / 跳过 0 / 总计 1
+EXIT:    0
+LOG:     logs/status-redaction.log
+
+## G4 Full .NET (first run + rerun; per-assembly passed/failed/skipped)
+
+COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build --nologo
+RUN 1:   失败 0 / 通过 1437 / 跳过 81 / 总计 1518; EXIT 0
+RUN 2:   失败 0 / 通过 1437 / 跳过 81 / 总计 1518; EXIT 0
+分程序集 (RUN 1 = RUN 2):
+  Appearance              21 / 0 / 0  (21)
+  Presentation.Avalonia   38 / 0 / 0  (38)
+  ThemeEngine            253 / 0 / 0  (253)
+  DesignSystem           117 / 0 / 0  (117)
+  ApplicationCore         31 / 0 / 0  (31)
+  Host                   139 / 0 / 50 (189)
+  CoreClient             167 / 0 / 24 (191)
+  App                    671 / 0 / 7  (678)
+BEFORE (release-state baseline; same .NET sources): 1405 / 0 / 80 / 1485
+  provenance: verification/FEA-12-CORE/logs/core-host-dotnet-full-2.log (commit 9ebb812b0);
+  git diff --name-only e0c370870..HEAD -- apps/desktop-avalonia is empty, so the before run and this
+  run differ only by this card's .NET changes (+32 passed Host tests, +1 skipped real-IPC test).
+FLAKY:   the known cross-assembly evidence-write flake (FluentResidual2VisualEvidenceTests vs
+         WireLogSourceRedactionTests) did not trigger in either run; recorded honestly, not claimed
+         as a stable PASS.
+RESTORE: after both runs git checkout -- verification/FEA-09 (WireLogSourceRedactionTests rewrites
+         that tracked evidence); the path is clean afterwards.
+LOG:     logs/dotnet-full-1.log, logs/dotnet-full-2.log
+
+## G5 Full pytest (no Python change in this card; run for an honest current baseline)
+
+COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+RESULT:  3203 passed, 10 skipped in 240.51s; EXIT 0
+         (matches the FEA-11-MATCH-1 baseline 3203/10; this card changes no Python file)
+LOG:     logs/pytest-full.log
+
+## G6 Governance check (card in_review + evidence)
+
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-SCAN-1.md
+RESULT:  Governance check: PASS (3 warnings: 非终态 Task 数 / STATUS 80% / REBASELINE_PLAN 80%, all pre-existing)
+EXIT:    0
+LOG:     不在 evidence_dir 内落日志（避免 check 日志自指告警，FEA-12-PREREQ-1 R-003 先例）：
+         pre-update 运行 logs=G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\check-pre.log；
+         最终 in_review + 提交后复跑记录见 Handoff 与 workspace agent-output\fea11-scan-1\FEA-11-SCAN-1\check-final.log
+
+## G7 Frozen pins
+
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+RESULT:  PIN AUDIT: PASS (all 18)
+EXIT:    0
+LOG:     logs/pins.log
+
+## G8 C-07 API inventory
+
+COMMAND: C:/Python314/python.exe tools/generate_api_inventory.py --check
+RESULT:  PASS (EXIT 0); IHostController frozen face unchanged (the scan registration rides the separate
+         ISourceImportController / HostRuntime in-process seam)
+LOG:     logs/api-inventory.log
+
+## G9 Scope / frozen-byte validation
+
+COMMAND: see logs/scope-validation.log
+RESULT:  this card's files are apps/**, doc/tasks/FEA-11-SCAN-1.md, doc/handoffs/FEA-11-SCAN-1-*.md and
+         verification/FEA-11-SCAN-1/** only; the single whole-range code path
+         (src/application/sources/matcher.py) belongs to FEA-11-MATCH-1 r2 (e8b0b2db8), not this card;
+         no doc/plan, doc/contracts, schema, migration or dependency change.
+LOG:     logs/scope-validation.log
+
+## Summary
+
+| Gate | Result | EXIT |
+|---|---|---|
+| G1 scheduler/registration unit | 32 / 0 / 0 | 0 |
+| G2 real IPC scan | 1 / 0 / 0 (ok->missing->ok->changed; zero DB write) | 0 |
+| G3 redaction | 1 / 0 / 0 | 0 |
+| G4 full .NET run1/run2 | 1437 / 0 / 81 / 1518 both runs | 0 / 0 |
+| G5 full pytest | 3203 passed / 10 skipped | 0 |
+| G6 check | PASS (3 pre-existing warnings) | 0 |
+| G7 pins | PASS 18/18 | 0 |
+| G8 API inventory | PASS | 0 |
+| G9 scope | 0 out-of-scope files from this card | — |
