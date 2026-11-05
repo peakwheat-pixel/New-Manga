@@ -211,6 +211,31 @@ def test_startup_backfill_runs_and_marks_legacy_unverified(tmp_path):
         core.close()
 
 
+def test_backfill_failure_is_logged_and_does_not_block_assembly(
+    tmp_path, monkeypatch, capsys
+):
+    """r3 R2-03(c): a stock-backfill failure is recorded and the assembly
+    still succeeds (DSH r2 裁决 ④: 失败不得让装配崩溃，记录并继续)."""
+    from infrastructure.sqlite.source_sync import SourceSyncStore
+
+    def _explode(self, *, now=None):
+        raise RuntimeError("injected stock-backfill failure")
+
+    monkeypatch.setattr(
+        SourceSyncStore, "backfill_legacy_unverified_lineage", _explode
+    )
+    core = _assemble(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert core.lineage_guard is not None
+        assert core.editing._lineage_guard is core.lineage_guard
+        assert core.render._lineage_guard is core.lineage_guard
+    finally:
+        core.close()
+    captured = capsys.readouterr()
+    assert "legacy lineage backfill failed" in captured.err
+    assert "injected stock-backfill failure" in captured.err
+
+
 def test_wire_faces_refuse_a_changed_binding_typed(tmp_path):
     core = _assemble(tmp_path / "library.db", tmp_path / "managed")
     try:
@@ -298,6 +323,28 @@ def test_wire_faces_refuse_a_changed_binding_typed(tmp_path):
         assert refused["error"]["code"] == "LINEAGE_BINDING_CHANGED"
         assert refused["error"]["category"] == "conflict"
         assert refused["error"]["retryable"] is False
+
+        # r3 R2-03(d): page render exposes the lineage exclusion in its
+        # reports (typed skip code, not a silent short list) and refuses the
+        # page typed when EVERY live region is hidden ...
+        render_outcome = core.render.rerender_page("p2")
+        assert render_outcome.status == "blocked"
+        assert render_outcome.error_code == "LINEAGE_BINDING_CHANGED"
+        skipped = [
+            report
+            for report in render_outcome.reports
+            if report.skip_reason == "LINEAGE_BINDING_CHANGED"
+        ]
+        assert [report.region_id for report in skipped] == [region.region_id]
+        assert [report.status for report in skipped] == ["skipped"]
+        # ... and the wire face projects it as the typed conflict envelope.
+        from bootstrap.core_service import RenderCommandError
+
+        with pytest.raises(RenderCommandError) as raised:
+            server.handle_rerender_page({"page_id": "p2"})
+        assert raised.value.code == "LINEAGE_BINDING_CHANGED"
+        assert raised.value.category == "conflict"
+
         # Zero write: the current revision is still the one created above.
         current = connection.execute(
             "SELECT current_revision_id FROM regions WHERE region_id = ?",

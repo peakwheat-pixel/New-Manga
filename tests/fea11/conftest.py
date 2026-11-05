@@ -399,6 +399,18 @@ def add_sync_switch(
         " FROM page_bindings WHERE binding_id = ?",
         (old_binding_id,),
     ).fetchone()
+    # The C-15 visibility witness compares the binding's verified_digest with
+    # the ENTRY content digest (not the container/version digest): seed the new
+    # generation with exactly that value so the switched page stays visible to
+    # the library projections (repository.get_page/list_pages).
+    entry_row = conn.execute(
+        "SELECT content_digest FROM source_entries WHERE source_id = ?"
+        " AND version_id = ? AND entry_id = ?",
+        (old["source_id"], old["accepted_source_version"], old["entry_id"]),
+    ).fetchone()
+    verified_digest = (
+        entry_row["content_digest"] if entry_row is not None else None
+    )
     conn.execute(
         "UPDATE page_bindings SET status = 'superseded', updated_at = ?"
         " WHERE binding_id = ?",
@@ -409,15 +421,13 @@ def add_sync_switch(
         " binding_version, source_id, entry_id, accepted_source_version,"
         " status, previous_binding_id, authorization_generation,"
         " authorized_at, verified_digest, created_at, updated_at)"
-        " VALUES (?, ?, ?, ?, ?, ?, ?, 'healthy', ?, ?, ?,"
-        " (SELECT content_digest FROM source_versions WHERE version_id = ?),"
-        " ?, ?)",
+        " VALUES (?, ?, ?, ?, ?, ?, ?, 'healthy', ?, ?, ?, ?, ?, ?)",
         (
             new_binding_id, page_id, old["project_id"],
             int(old["binding_version"]) + 1, old["source_id"],
             old["entry_id"], old["accepted_source_version"],
             old_binding_id, int(old["authorization_generation"]),
-            now, old["accepted_source_version"], now, now,
+            now, verified_digest, now, now,
         ),
     )
     conn.execute(

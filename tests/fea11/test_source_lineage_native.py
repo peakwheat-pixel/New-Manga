@@ -33,6 +33,7 @@ import json
 import pytest
 
 from application.editing.drafts import DraftProtectionService
+from application.editing.errors import DraftError
 from application.editing.service import RegionEditingService
 from application.rendering.service import RenderService
 from application.sources.lineage import (
@@ -870,3 +871,143 @@ def test_mixed_library_scope_matrix_is_diagnosable(conn, book_chapter):
         PipelineScope(ScopeType.REGION, selected_ids=("rg-same",)),
     )
     assert allowed_run.run_id
+
+
+# ---------------------------------------------------------------------------
+# r3 R2-03: draft / batch write-side refusals are typed, zero-write and
+# backed by repository tests (not only the reviewer's out-of-repo probe).
+# ---------------------------------------------------------------------------
+
+
+def test_draft_apply_on_cut_binding_refused_typed_with_zero_write(
+    conn, book_chapter, tmp_path
+):
+    page_id, binding_id = seed_referenced_page(conn, book_chapter)
+    guard = make_guard(conn)
+    repo, editing = make_editing(conn, guard, {page_id: binding_id})
+    region = editing.create_region(
+        page_id, RegionGeometry(bbox=BBox(0, 0, 4, 3))
+    )
+    journal = DraftJournal(tmp_path / "drafts")
+    try:
+        drafts = DraftProtectionService(
+            repository=repo,
+            committer=repo,
+            connection=conn,
+            journal=journal,
+            lineage_binding=lambda target_page: (
+                "pb-p1-b2" if target_page == page_id else None
+            ),
+        )
+        lease = drafts.open_draft(
+            "session-cut", page_id, None,
+            base_revision_id=None, page_binding_version=1,
+        )
+        candidate = drafts.prepare_candidate(
+            region.region_id,
+            {"text": {"edited_translation": "cut 草稿"}},
+            origin="user",
+            draft_id=lease.draft.draft_id,
+        )
+        revisions_before = revision_count(conn, region.region_id)
+        lineage_before = len(lineage_rows(conn))
+        current_before = conn.execute(
+            "SELECT current_revision_id FROM regions WHERE region_id = ?",
+            (region.region_id,),
+        ).fetchone()["current_revision_id"]
+
+        add_sync_switch(
+            conn, page_id=page_id, old_binding_id=binding_id,
+            new_binding_id="pb-p1-b2", relation="changed", seq=1,
+        )
+
+        with pytest.raises(DraftError) as error:
+            drafts.apply_candidates(lease.token, [candidate.candidate_id])
+    finally:
+        journal.close()
+
+    assert error.value.code == LINEAGE_BINDING_CHANGED
+    assert revision_count(conn, region.region_id) == revisions_before
+    assert len(lineage_rows(conn)) == lineage_before
+    assert conn.execute(
+        "SELECT current_revision_id FROM regions WHERE region_id = ?",
+        (region.region_id,),
+    ).fetchone()["current_revision_id"] == current_before
+
+
+def test_reorder_and_merge_refuse_hidden_coordinates_with_zero_write(
+    conn, book_chapter
+):
+    page_id, binding_id = seed_referenced_page(conn, book_chapter)
+    seed_region(
+        conn, page_id, region_id="rg1", revision_id="rv1",
+        lineage=(binding_id, "native"), reading_order=1,
+    )
+    seed_region(
+        conn, page_id, region_id="rg2", revision_id="rv2",
+        lineage=(binding_id, "native"), reading_order=2,
+    )
+    add_sync_switch(
+        conn, page_id=page_id, old_binding_id=binding_id,
+        new_binding_id="pb-p1-b2", relation="changed", seq=1,
+    )
+    guard = make_guard(conn)
+    repo, editing = make_editing(conn, guard, {page_id: "pb-p1-b2"})
+    revisions_before = (
+        revision_count(conn, "rg1"),
+        revision_count(conn, "rg2"),
+    )
+    lineage_before = len(lineage_rows(conn))
+    live_before = len(repo.list_regions(page_id))
+
+    # Reorder writes one user revision per moved region → the repository seam
+    # refuses because both current revisions belong to the cut old binding.
+    with pytest.raises(LineageBindingChanged):
+        editing.reorder_regions(page_id, ["rg2", "rg1"])
+    # Merge consumes BOTH hidden source regions into a NEW region: the source
+    # geometry must be verifiable before it can become native lineage.
+    with pytest.raises(LineageBindingChanged):
+        editing.merge_regions(page_id, ["rg1", "rg2"])
+
+    assert (
+        revision_count(conn, "rg1"),
+        revision_count(conn, "rg2"),
+    ) == revisions_before
+    assert len(lineage_rows(conn)) == lineage_before
+    assert len(repo.list_regions(page_id)) == live_before
+
+
+# ---------------------------------------------------------------------------
+# r3 R2-05: corrupt lineage attribution (region/revision ownership) is
+# refused as unverifiable — C-17 §7.1 "验证 region/revision/page 归属".
+# ---------------------------------------------------------------------------
+
+
+def test_corrupt_lineage_region_attribution_is_unverified(conn, book_chapter):
+    page_id, binding_id = seed_referenced_page(conn, book_chapter)
+    seed_region(conn, page_id, region_id="rg1", revision_id="rv1")
+    seed_region(
+        conn, page_id, region_id="rg2", revision_id="rv2", reading_order=2
+    )
+    # FK-valid but semantically wrong: rv1's lineage row claims region rg2.
+    # The binding itself stays REACHABLE through the same_content edge, so
+    # ONLY the attribution check can refuse this row.
+    SourceSyncStore(conn).insert_lineage(
+        revision_id="rv1",
+        region_id="rg2",
+        binding_id=binding_id,
+        provenance="captured_v7",
+        now=NOW,
+    )
+    add_sync_switch(
+        conn, page_id=page_id, old_binding_id=binding_id,
+        new_binding_id="pb-p1-b2", relation="same_content", seq=1,
+    )
+    guard = make_guard(conn)
+
+    verdict = guard.page_verdict(page_id, [("rg1", "rv1")])
+    assert [(item.region_id, item.code) for item in verdict.hidden] == [
+        ("rg1", LINEAGE_UNVERIFIED)
+    ]
+    with pytest.raises(LineageUnverified):
+        guard.ensure_readable(page_id=page_id, region_id="rg1", revision_id="rv1")
