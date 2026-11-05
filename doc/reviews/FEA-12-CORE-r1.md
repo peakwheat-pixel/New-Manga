@@ -6,7 +6,7 @@ review_session_id: b2e5e275-122b-44d4-98bc-c86fec7bfbc1
 parent_agent_id: session-8db9dae5-49df-4d09-ac62-696f0805a95c
 base_commit: e47fd47e41add3edeb7f67e578eefeb48eddce50
 reviewed_head: 85db8354f5d62a93db0a76a784899ddbfe8a405b
-observed_head: 388f5476ef39043e8f946026649c5bb629d9fc20
+observed_head: 6b985c14bcc5951d8b4cc17d8d2a003671395611
 decision: changes_requested
 ---
 
@@ -14,11 +14,11 @@ decision: changes_requested
 
 > 审查身份：独立上下文 fresh subagent，未参与本任务的实现、返修或分片设计；会话 `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`，父会话 `session-8db9dae5-49df-4d09-ac62-696f0805a95c`。
 > 审查范围：`base_commit=e47fd47e` → `reviewed_head=85db8354f`；`.NET` 与 Python 源码、测试、任务卡、证据、冻结契约、Git 历史。
-> 审查方式：只读仓库；所有测试日志、探针输出、变异实验和本报告均写在仓外 `G:\CODEX\New Manga.workspace\FEA-12\review-core\`；未 commit、未 push、未修改任何仓库文件。仅一次 `git checkout -- verification/FEA-09` 用于回滚我运行全量 .NET 测试造成的既有证据重写（测试副作用，非他人改动），回滚后工作树 clean。
+> 审查方式：只读仓库；所有测试日志、探针输出、变异实验和本报告均写在仓外 `G:\CODEX\New Manga.workspace\FEA-12\review-core\`；未 commit、未 push；除按任务指令 `git checkout -- verification/FEA-09` 回滚测试副作用外，未留下任何仓库文件改动（当前工作树 clean）。
 
 ## 0. 结论摘要
 
-**P0=0，P1=0，P2=3，P3=8。decision: changes_requested。**
+**P0=0，P1=0，P2=3，P3=9。decision: changes_requested。**
 
 代码主体质量高：A/C 流程、digest 两级绑定、显式 `BEGIN IMMEDIATE`、失败整体回滚、D1 X1 同事务删除、PD-08 安全拆分、PD-07 显式重试、typed `PurgeTrash`、Host capability probe/R-002(b) 都真实实现并有判别测试。我独立复跑：相关组 **1096 passed**、定向组 **72 passed**、全量 pytest **3144 passed / 10 skipped / EXIT 0**、全量 .NET **1405 passed / 0 failed / 80 skipped / EXIT 0**、pins **18/18**、check **PASS (3 warnings)**、旧 Core 侧车 **6 passed / 0 failed / 0 skipped**。三个变异实验（去掉 X1 删除、去掉 digest 比较、去掉 PD-08 置 NULL）都精确复现失败，证明测试不是空转。
 
@@ -28,14 +28,14 @@ decision: changes_requested
 2. **AC11 未合并定稿**：在 `85db8354f` 与审查期间出现的 `388f5476e` 上，AC11 仍是 `<<PARTIAL...>>`；`388f5476e` 只把分片 B 证据加入 Canonical Evidence 表，没有把 AC11 改成最终口径。分片 B 的代码与证据已实际集成并有独立实测，但 AC 状态需 Lead 定稿。
 3. **分片 A 改了 allowed_paths 外的 `tests/core/test_core_service.py`**：`5fb300fd2` 的 6 个测试文件含该文件（capability 列表断言，属预期行为变更 #4），但 `doc/tasks/FEA-12-CORE.md:22-49` 的 allowed_paths 未列它；Handoff `:27` 明确列了它、`:120` 却称“已入 allowed_paths”，与实际不符。
 
-此外有 8 个 P3（证据/文档精度、死代码、批量 retry 契约边角、竞态错误码、预检盲点、测试弱断言），均不改变“无 P0/P1、无数据丢失或安全越界”的结论。
+此外有 9 个 P3（证据/文档精度、死代码、批量 retry 契约边角、竞态错误码、预检盲点、测试弱断言/缺口），均不改变“无 P0/P1、无数据丢失或安全越界”的结论。
 
 ## 1. 审查对象与 HEAD 变化
 
 - 开始审查时：`HEAD=85db8354f`，工作树有 1 个 untracked 文件 `verification/FEA-12-CORE/logs/gates-integration.log`（Lead 集成日志当时尚未入仓）。
-- 审查期间 Lead 提交 `388f5476e`（17:08）：仅新增该集成日志与 12 行 Canonical Evidence 表（分片 B/集成证据），**`src`/`tests`/`apps` 零 diff**。`git diff 85db8354f..388f5476e -- src tests apps` 为空。
-- 因此本报告对 `85db8354f` 的代码结论同样适用于当前 head；运行门禁均在 `388f5476e`（源码等价）实跑。当前工作树 clean，`HEAD=388f5476e`。
-- `origin/main=b1c1f5a5...` 不包含 `85db8354f`/`388f5476e`，未发现 push；`main` 领先 origin 是本地集成提交。
+- 审查期间 Lead 先提交 `388f5476e`（17:08）：仅新增集成日志与 12 行 Canonical Evidence 表（分片 B/集成证据），**`src`/`tests`/`apps` 零 diff**；随后提交 `6b985c14b`（本 Review 的仓内早期副本 + 任务卡处置：status `changes_requested`、AC11→MET、AC4→PARTIAL、allowed_paths 补 `tests/core/test_core_service.py`、处置计划），`git diff 388f5476e..6b985c14b -- src tests apps` 仍为空。
+- 因此本报告对 `85db8354f` 的代码结论同样适用于当前 head；运行门禁均在 `388f5476e`（源码等价）实跑。仓内 `doc/reviews/FEA-12-CORE-r1.md` 是 Lead 落盘的 **186 行早期副本**（缺本报告新增的 R-012 与 P3=9 的最终计数），以本仓外报告（190 行）为准；我未写入/修改该仓内文件。
+- `origin/main=b1c1f5a5...` 不包含 `85db8354f`/`388f5476e`/`6b985c14b`，未发现 push；`main` 领先 origin 是本地集成提交。
 
 ## 2. Findings
 
@@ -59,6 +59,7 @@ decision: changes_requested
 | R-009 | P3 | `src/bootstrap/core_service.py:2404-2421` | 批量 `execute_permanent_delete_db` 在写边界抛 `PermanentDeleteBlockedError` 时，返回的 `items[].error_code` 全为 `None`，没有使用 `caught.code`（单条路径正确地返回 `BOOK_BUSY`）。正常预检已覆盖，此分支只在“预检→事务之间状态变化”的竞态出现；仍是错误分类缺陷。 | 代码对比单条 `:2255-2256` 与批量 `:2404-2421`。 | 用 `caught.code` 回填对应 item（若可定位到具体书）或至少顶层 `BOOK_BUSY`；补一个在预检后、事务前把 source operation 置非终态的注入测试。 |
 | R-010 | P3 | `src/infrastructure/sqlite/library.py:708,1248-1299` | `has_unsafe_source_references` 未检查“目标外 `page_bindings.previous_binding_id` 指向目标 binding”的不一致图；schema 有该自 FK。此类图会让事务 FK 失败并返回 `BOOK_DELETE_FAILED`（已回滚），而不是契约要求的 `BOOK_DELETE_CONFLICT` 预检失败。 | schema `page_bindings.previous_binding_id REFERENCES page_bindings(binding_id)`；四条 preflight checks 未覆盖该列。 | 增加第五条 preflight check（目标外 binding 的 previous 指向目标 binding → `BOOK_DELETE_CONFLICT`），并补一个直接构造该图的判别测试；或在记录中登记为“fail-closed internal”限定并说明不可由应用层产生。 |
 | R-011 | P3 | `tests/core/test_core_delete_preview_commands.py:248` | PD-01 测试对 `currentRevisionId` 只断言 `in {"rr1","rr2"}`，没有固定 Lead 裁决的“首个可见 region”顺序；隐藏 region 测试只证明“隐藏不选”，不能防止“选最后一个可见 region”的回归。 | 该测试 rg1/rg2 均可见，正确值应为 rr1；实现 SQL 排序正确，但测试未钉住。 | 改为 `== "rr1"`（保留 rr2 仅作 pinned 断言），或在 golden 向量里钉住顺序。 |
+| R-012 | P3 | `src/bootstrap/core_service.py:2270-2448`；`tests/core/test_core_delete_commands.py:966-1014` | **批量 cleanup_pending/retry 路径无直接测试/证据**：只有单条 retry 测试；`BOOK_DELETE_BATCH_CLEANUP_PENDING`、混合“存活+retry”批量、批量逐项 partial cleanup 都没有判别测试。代码路径存在，但属“含批量逐项”的验证缺口。 | 检索 `tests/` 无 `BOOK_DELETE_BATCH_CLEANUP_PENDING`/批量 retry 用例；AC6 证据只选 `cleanup_pending` 单条。 | 增补批量 cleanup-pending → retry 测试（至少一条书 cleanup 失败、其余成功、逐项状态，再重试成功），并覆盖混合 live+retry 的 digest 口径（与 R-008 一起定）。 |
 
 ## 3. AC1–AC12 判定
 
@@ -115,6 +116,7 @@ decision: changes_requested
 | digest 探针 | 仓外补丁版 `core_py_inventory_digest.py` | **all_match=true**；逐书 digest/canonical 与追踪证据稳定一致 | `review-digest-golden.json` |
 | 隔离探针 | 仓外补丁版 `core_py_isolation_scan.py` | `pass=true`；但 `data_root_under_workspace_temp=false`（R-004） | `review-isolation-scan.json` |
 | 派生文件探针 | `derived_disclosure_probe.py` | `deletedFiles=1, deletedBytes=13`，同时派生文件 13 bytes 存在 | `derived-disclosure-probe.log` |
+| 批量 cleanup/retry | 静态检索 + 现有定向测试 | **NOT_RUN（无直接测试）**：`BOOK_DELETE_BATCH_CLEANUP_PENDING`/混合 live+retry 无用例 | R-012；建议补测 |
 
 ### 6.1 判别性变异（仓外 85db 副本，未改仓库）
 
@@ -150,19 +152,20 @@ decision: changes_requested
 - `verification/FEA-09/**`：range 零 diff；全量 .NET 的测试副作用已 `git checkout -- verification/FEA-09` 恢复，当前 clean。
 - 真实数据/AppData/外部卷/回收站：所有新测试 `tmp_path`/workspace 临时根；删除实现模块静态扫描零 Windows 回收站 API；隔离 sentinel 零变化；真实 Windows 回收站 D 流程 **NOT_RUN**（首版 OUT）。
 - push：`origin/main` 不含 reviewed head；未发现 push。
-- 工作树：开始审查时 `?? verification/FEA-12-CORE/logs/gates-integration.log`（Lead 在审期间提交为 `388f5476e`）；当前 clean。
+- 工作树：开始审查时 `?? verification/FEA-12-CORE/logs/gates-integration.log`（Lead 在审期间提交为 `388f5476e`）；随后 Lead 提交 `6b985c14b`（仓内早期 Review + 任务卡处置）。最终工作树 clean；本 Reviewer 未写入这些文件。
 
 ## 8. 残余风险 / limitation
 
 1. **派生文件披露口径**（R-001）：在 Lead 裁决前，预览的 `deletedFiles/deletedBytes` 不能视为完整“将被删除文件”披露。数据安全无影响（派生可重建），但用户会低估清理范围。
 2. **批量 retry 集合级 digest**（R-008）：混合 pending+live 时集合级 digest 未校验；逐书 live digest 仍校验。需要契约口径或测试。
-3. **预检→事务竞态错误码**（R-009）：source operation 在两步之间变为非终态时，批量返回 item code None；单条正确。
-4. **目标外 page_bindings.previous 自 FK**（R-010）：不一致图会以 `BOOK_DELETE_FAILED`（已回滚）而不是 `BOOK_DELETE_CONFLICT` 预检失败；应用层正常路径不产生。
-5. **HostRuntime 接线无 Host.Tests**：B record §8.1 已登记；dispatcher 层有 Fact/侧车，HostRuntime 分支只做按命令分流，风险低但未单测。
-6. **全量 .NET 的 80 skips** 含 24 个 CoreClient 侧车测试；我另跑 6 个定向 sidecar 全过，但全量门禁本身不覆盖这些环境依赖测试。
-7. **`activeRunIds` 无 export 字段**：wire 冻结缺口，已登记；UI 只能通过 `BOOK_BUSY` 得知 export 阻断。
-8. **真实 D 流程/真实 Windows 回收站**：NOT_RUN；本卡按范围零实现，不能声称 D 流程完成。
-9. **测试数字/卡面**：R-005/R-006；不影响代码，但影响审计可追溯性。
+3. **批量 cleanup/retry 无直接测试**（R-012）：`BOOK_DELETE_BATCH_CLEANUP_PENDING`、批量逐项 partial cleanup 与混合 live+retry 未验证；单条 retry 仅覆盖一部分。
+4. **预检→事务竞态错误码**（R-009）：source operation 在两步之间变为非终态时，批量返回 item code None；单条正确。
+5. **目标外 page_bindings.previous 自 FK**（R-010）：不一致图会以 `BOOK_DELETE_FAILED`（已回滚）而不是 `BOOK_DELETE_CONFLICT` 预检失败；应用层正常路径不产生。
+6. **HostRuntime 接线无 Host.Tests**：B record §8.1 已登记；dispatcher 层有 Fact/侧车，HostRuntime 分支只做按命令分流，风险低但未单测。
+7. **全量 .NET 的 80 skips** 含 24 个 CoreClient 侧车测试；我另跑 6 个定向 sidecar 全过，但全量门禁本身不覆盖这些环境依赖测试。
+8. **`activeRunIds` 无 export 字段**：wire 冻结缺口，已登记；UI 只能通过 `BOOK_BUSY` 得知 export 阻断。
+9. **真实 D 流程/真实 Windows 回收站**：NOT_RUN；本卡按范围零实现，不能声称 D 流程完成。
+10. **测试数字/卡面**：R-005/R-006；不影响代码，但影响审计可追溯性。
 
 ## 9. done vs closed_with_limitations 意见
 
@@ -176,11 +179,11 @@ decision: changes_requested
 - 我未参与 FEA-12-CORE 的实现、返修、分片设计或任务卡编写；本会话为新启动的独立上下文。
 - 只读仓库：未修改、未 commit、未 push、未 stash/reset；仓外仅写日志/报告/探针脚本/临时 85db 副本，临时副本与 tar 已删除。
 - 未触碰真实用户数据、AppData、外部卷、真实回收站；测试全部使用 `tmp_path`/workspace 临时根；旧 Host 负向脚本只读 baseline worktree，临时数据在 workspace temp。
-- 全量 .NET 运行造成 `verification/FEA-09/logs/wire-redacted.ndjson` 的既有测试副作用，已按任务指令 `git checkout -- verification/FEA-09` 恢复，当前 `git status` clean。
+- 全量 .NET 运行造成 `verification/FEA-09/logs/wire-redacted.ndjson` 的既有测试副作用，已按任务指令 `git checkout -- verification/FEA-09` 恢复。随后 Lead 将本 Review 的 186 行早期副本与任务卡处置提交为 `6b985c14b`（非本 Reviewer 写入）；本报告新增的 R-012/P3=9 未进入该副本，最终以本仓外报告为准。
 - 以上结论基于 Git 对象、文件原文、实际测试/探针/变异输出，不基于聊天记录。
 
 ## 最终决定
 
-**decision: changes_requested（P0=0，P1=0，P2=3，P3=8）。**
+**decision: changes_requested（P0=0，P1=0，P2=3，P3=9）。**
 
-代码主体与 AC1–AC3、AC5–AC10、AC12 的行为实现通过独立复跑与三个判别性变异；AC11 的 .NET 侧也通过独立 sidecar 复跑（6/6，证据 byte-identical）。阻断点是：AC4 的派生文件披露与冻结 PD-01/C-04b 不一致（P2）、AC11 未由 Lead 合并定稿（P2）、分片 A 的 `tests/core/test_core_service.py` 超出 allowed_paths（P2）；另有 8 个不阻断的 P3。若 Lead 选择将派生文件排除作为正式 additive 限定并完成 AC11/范围文档定稿，可转为 approved/closed_with_limitations；否则应先修 R-001 的最小披露口径与判别测试。
+代码主体与 AC1–AC3、AC5–AC10、AC12 的行为实现通过独立复跑与三个判别性变异；AC11 的 .NET 侧也通过独立 sidecar 复跑（6/6，证据 byte-identical）。阻断点是：AC4 的派生文件披露与冻结 PD-01/C-04b 不一致（P2）、AC11 未由 Lead 合并定稿（P2）、分片 A 的 `tests/core/test_core_service.py` 超出 allowed_paths（P2）；另有 9 个不阻断的 P3。若 Lead 选择将派生文件排除作为正式 additive 限定并完成 AC11/范围文档定稿，可转为 approved/closed_with_limitations；否则应先修 R-001 的最小披露口径与判别测试。
