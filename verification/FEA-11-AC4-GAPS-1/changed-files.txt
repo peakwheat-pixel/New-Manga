@@ -1,0 +1,43 @@
+# FEA-11-AC4-GAPS-1 · changed files
+
+基线 `51e139eff`；实现 commit `95815ff7a`；main head（释放时）`d8049fe6e`。
+本清单在证据落盘时点采集（证据目录当时为 untracked，随证据提交入库）。
+
+## 1. 零产品/契约 diff（硬门禁）
+
+命令：`git diff --name-only 51e139eff..HEAD -- src/ doc/plan doc/contracts apps`
+结果：**空（EXIT 0）**
+日志：`logs/scope-diff.log`
+
+## 2. 本卡变更（相对基线）
+
+### 2.1 实现（commit 95815ff7a，tests only）
+
+- `M tests/fea11/test_source_sync.py`（+18 用例 + 本地装置 `_full_snapshot`/`_routed_file_stack`/`_file_db_stack`/`_materialize_target_version`/`_seed_three_regions`/`_seed_pipeline_run` 等）
+- `A tests/fea11/test_source_sync_storage.py`（AC2-c wire 级 typed 证据，1 用例）
+
+### 2.2 文档与证据（证据提交）
+
+- `M doc/tasks/FEA-11-AC4-GAPS-1.md`（status → in_review；AC 标记；Canonical Evidence；交付/运行记录；Resource Manifest）
+- `A doc/handoffs/FEA-11-AC4-GAPS-1-handoff.md`
+- `A verification/FEA-11-AC4-GAPS-1/AC-MATRIX.md`
+- `A verification/FEA-11-AC4-GAPS-1/EV.md`
+- `A verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json`
+- `A verification/FEA-11-AC4-GAPS-1/DELIVERY-MANIFEST.json`
+- `A verification/FEA-11-AC4-GAPS-1/changed-files.txt`
+- `A verification/FEA-11-AC4-GAPS-1/logs/baseline-full-pytest.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/fea11-tests.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/fea11-gaps1-tests.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/full-pytest.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/mutation-probes.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/scope-diff.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/gates.log`
+- `A verification/FEA-11-AC4-GAPS-1/logs/dotnet-not-run.md`
+
+### 2.3 删除
+
+无。
+
+## 3. 明确未触碰
+
+`src/**`、`doc/plan/**`、`doc/contracts/**`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/reviews/**`、`tests/fea11/conftest.py`、`tests/core/**`、`apps/**`、`verification/FEA-11*/**`（既有 tracked 证据与 pin）。

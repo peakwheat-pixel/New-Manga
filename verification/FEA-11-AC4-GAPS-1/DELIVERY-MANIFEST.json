@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-AC4-GAPS-1",
+  "kind": "test-only",
+  "generated_at": "2026-11-05",
+  "generated_by": "scanner-gaps-impl (DSH Agent Teams; Owner)",
+  "base_commit": "51e139eff",
+  "base_note": "释放点 main head（CORE closeout 后 main head 为 d8049fe6e）",
+  "test_commit": "95815ff7a",
+  "evidence_commit": "SELF（本文件所在提交；仅 verification/FEA-11-AC4-GAPS-1/** + 卡面 + Handoff）",
+  "delivery_head": "95815ff7a",
+  "delivery_head_note": "实现交付 head = 95815ff7a（tests only）；证据/卡面/Handoff 随后续提交落盘，由 DSH 在集成时填 integration_commit。",
+  "changed_files": {
+    "added": [
+      "tests/fea11/test_source_sync_storage.py",
+      "verification/FEA-11-AC4-GAPS-1/AC-MATRIX.md",
+      "verification/FEA-11-AC4-GAPS-1/EV.md",
+      "verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json",
+      "verification/FEA-11-AC4-GAPS-1/DELIVERY-MANIFEST.json",
+      "verification/FEA-11-AC4-GAPS-1/changed-files.txt",
+      "verification/FEA-11-AC4-GAPS-1/logs/baseline-full-pytest.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/fea11-tests.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/fea11-gaps1-tests.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/full-pytest.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/mutation-probes.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/scope-diff.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/gates.log",
+      "verification/FEA-11-AC4-GAPS-1/logs/dotnet-not-run.md",
+      "doc/handoffs/FEA-11-AC4-GAPS-1-handoff.md"
+    ],
+    "modified": [
+      "tests/fea11/test_source_sync.py",
+      "doc/tasks/FEA-11-AC4-GAPS-1.md"
+    ],
+    "deleted": []
+  },
+  "out_of_scope_diff_check": {
+    "command": "git diff --name-only 51e139eff..HEAD -- src/ doc/plan doc/contracts apps",
+    "result": "EMPTY (exit 0)",
+    "log": "verification/FEA-11-AC4-GAPS-1/logs/scope-diff.log"
+  },
+  "tests": {
+    "fea11_group": {"command": "python -m pytest tests/fea11 -q -p no:cacheprovider", "result": "88 passed", "baseline": "69 passed"},
+    "full_suite": {"command": "python -m pytest tests -q -p no:warnings --tb=no", "result": "3183 passed, 10 skipped", "baseline": "3164 passed, 10 skipped"},
+    "new_tests": 19,
+    "new_test_files": ["tests/fea11/test_source_sync_storage.py"],
+    "new_tests_by_ac": {"AC1": 3, "AC2": 3, "AC3": 2, "AC4": 11}
+  },
+  "gates": {
+    "check_taskpath": {"command": "pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-AC4-GAPS-1.md", "result": "PASS"},
+    "check_default": {"command": "pwsh -NoProfile -File tools/governance/check.ps1", "result": "PASS"},
+    "verify_pins": {"command": "pwsh -NoProfile -File tools/governance/verify_pins.ps1", "result": "PASS (18/18)"},
+    "dotnet": {"result": "NOT_RUN", "reason": "0 C# file changes, pure Python tests; PASS forbidden"}
+  },
+  "ac_status": {"AC1": "MET", "AC2": "MET", "AC3": "MET", "AC4": "MET", "AC5": "PARTIAL (独立上下文 Review/负向探针待执行)"},
+  "limitations": ["L1", "L2", "L3", "L4"],
+  "git_push": "NOT_PERFORMED (卡内禁止)"
+}

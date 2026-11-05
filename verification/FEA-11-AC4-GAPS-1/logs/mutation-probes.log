@@ -1,0 +1,16 @@
+FEA-11-AC4-GAPS-1 negative probes (self-check, non-authoritative)
+
+[probe_conflict_precheck_bypass]
+loser errors = ['SourceSyncError:SOURCE_PLAN_STALE']  -> MASKED: the plan-state CAS still protects the transaction
+
+[probe_replay_removed]
+errors = ['SourceSyncError:SOURCE_PLAN_STALE']  -> the committed test asserts two accepted=true receipts: RED as expected
+
+[probe_double_guard_removed]
+  -> probe produced no sqlite error: ['SourceSyncError:SOURCE_PLAN_STALE']
+
+[probe_per_item_commit]
+error=['STALE_BASE_REVISION'] regions=5 region_revisions=6  -> the committed test asserts 3/4 rows plus a byte-identical snapshot: RED as expected
+
+[probe_manual_cas_removed]
+error code = STALE_BASE_REVISION  -> expected SOURCE_PLAN_STALE(manual); the regressed path would raise STALE_BASE_REVISION: RED as expected

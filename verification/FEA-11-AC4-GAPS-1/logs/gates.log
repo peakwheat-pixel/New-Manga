@@ -1,0 +1,68 @@
+# FEA-11-AC4-GAPS-1 gates (command / EXIT / head)
+# repo: G:\CODEX\New Manga  base: 51e139eff  head: 95815ff7a  date: 2026-11-05
+
+=== [2026-11-06T00:10:21+08:00] check.ps1 -TaskPath ===
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-AC4-GAPS-1.md
+EXIT: 0
+--- head ---
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-AC4-GAPS-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2757 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6778 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-11-AC4-GAPS-1\logs\gates.log
+Governance check: PASS (4 warnings)
+
+=== [2026-11-06T00:10:22+08:00] check.ps1 (default) ===
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1
+EXIT: 0
+--- head ---
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-AC4-GAPS-1.md
+WARN: 存在 14 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2757 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6778 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-11-AC4-GAPS-1\logs\gates.log
+Governance check: PASS (4 warnings)
+
+=== [2026-11-06T00:10:22+08:00] verify_pins.ps1 ===
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+EXIT: 0
+--- head ---
+OK C14 05056cbf65f9
+OK C15 d8c0a3bcfc21
+OK C16 0b9511a55ea1
+OK C17 86b89ff83c9a
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+
+=== [2026-11-06T00:10:22+08:00] zero out-of-scope diff ===
+COMMAND: git diff --name-only 51e139eff..HEAD -- src/ doc/plan doc/contracts apps
+EXIT: 0
+--- head ---
+(empty output above = zero out-of-scope diff)
+
+=== [2026-11-06T00:10:22+08:00] pytest tests/fea11 (log: logs/fea11-tests.log) ===
+COMMAND: python -m pytest tests/fea11 -q -p no:cacheprovider
+EXIT: 0
+--- head ---
+88 passed, 8 warnings in 2.37s
+
+=== [2026-11-06T00:10:22+08:00] pytest tests/fea11 gaps1 files (log: logs/fea11-gaps1-tests.log) ===
+COMMAND: python -m pytest tests/fea11/test_source_sync.py tests/fea11/test_source_sync_storage.py -q -p no:cacheprovider
+EXIT: 0
+--- head ---
+28 passed in 1.07s
+
+=== [2026-11-06T00:10:22+08:00] pytest tests full (log: logs/full-pytest.log) ===
+COMMAND: python -m pytest tests -q -p no:warnings --tb=no
+EXIT: 0
+--- head ---
+3183 passed, 10 skipped in 236.23s (0:03:56)
+
+=== [2026-11-06T00:10:22+08:00] .NET ===
+COMMAND: dotnet test (NOT RUN)
+EXIT: 0
+--- head ---
+NOT_RUN: 0 C# file changes, pure Python tests; PASS forbidden. See logs/dotnet-not-run.md.
+

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-AC4-GAPS-1",
+  "generated_at": "2026-11-05",
+  "generated_by": "scanner-gaps-impl (DSH Agent Teams; Owner FEA-11-AC4-GAPS-1)",
+  "note": "test-only task: no new worktree, no product build artifacts. The isolated fixture/probe root lives under the approved workspace boundary G:/CODEX/New Manga.workspace/FEA-11-AC4-GAPS-1/ and is referenced (not deleted) by EV.md; tracked evidence lives in verification/FEA-11-AC4-GAPS-1/. No delete/move/migrate/archive was performed by the Owner.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main 工作树；base 51e139eff，main head d8049fe6e）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree；实施只在 main 工作树的 tests/fea11 与 verification/ 内进行；git worktree list 无本卡新增项"
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-AC4-GAPS-1\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location (G:\\CODEX\\New Manga.workspace\\FEA-11-AC4-GAPS-1\\)",
+      "sha256": "e4b9bc068bdfe9d5969a12119c0d64769f9650ea8901315823b3cf526fc71770",
+      "process_check": "仓外隔离根（Appointment/工作区治理）。仅含 probes/mutation_probe.py 与 logs/；无进程持有；产品代码/测试不引用该路径（EV.md §4 仅作证据索引，仓内副本为 verification/FEA-11-AC4-GAPS-1/logs/mutation-probes.log）。closeout 时可保留或删除，删除前须先确认 EV.md 引用已归档。"
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "本卡未产生独立 agent-output 目录；实现/证据直接写入仓库 tests/fea11 与 verification/FEA-11-AC4-GAPS-1/。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；临时根保留给 Review 复核（仓外，不随仓库分发）。"
+}

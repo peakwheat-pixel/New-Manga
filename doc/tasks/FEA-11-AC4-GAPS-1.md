@@ -3,19 +3,19 @@ id: FEA-11-AC4-GAPS-1
 title: FEA-11 AC11-4 证据收口（并发 apply / DB 失败 / 第三区域 / 漂移矩阵与全表零写）
 kind: implementation
 governance_version: 3
-status: ready
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 r7-acceptance L-5 与 AC11-4 证据缺口；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**DSH 2026-11-05 释放（ready）**：ZCode SCOPE-ADJ 裁决已冻结范围；Owner 待派发；test-only
+status: in_review
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 r7-acceptance L-5 与 AC11-4 证据缺口；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**DSH 2026-11-05 释放（ready）**：ZCode SCOPE-ADJ 裁决已冻结范围；Owner 待派发；test-only；**2026-11-05 实施交付（in_review）**：Owner=`scanner-gaps-impl`（DSH Agent Teams），交付 head `95815ff7a`，AC1–AC4 MET、AC5 PARTIAL（独立 Review/负向探针待执行）；Reviewer 待 Review Appointment
 suggested_owner: codex
-owner: null
-reviewer: null
+owner: scanner-gaps-impl（DSH Agent Teams 成员；Lead `lead`）
+reviewer: null   # 待 DSH Review Appointment：独立上下文 fresh subagent，未参与实现
 depends_on:
   - FEA-11
 base_commit: 51e139eff   # 释放点 main head（CORE closeout 后）
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 95815ff7a
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-AC4-GAPS-1
 allowed_paths:
@@ -36,9 +36,9 @@ out_of_scope:
 
 # FEA-11-AC4-GAPS-1：AC11-4 证据收口
 
-> **状态：`proposed`。本卡 scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；释放前不得实施、不得改卡面语义。**
+> **状态：`in_review`（2026-11-05 交付，Owner=`scanner-gaps-impl`，交付 head `95815ff7a`）。** 本卡 **test-only**：零 `src/**`、契约、schema 变更。AC1–AC4 已 MET（19 个新增用例 + 16 表零写比较集 + 门禁日志），AC5 PARTIAL（独立上下文 Review 与负向探针待 Reviewer 执行；`.NET` NOT_RUN）。AC11-4 是否 MET 由 Lead/Review 判定，本卡不自行宣告。
 >
-> 边界：本卡 **test-only**（只写测试与证据，不改 `src/**`、契约、schema）。范围事实基线：`main@604a2d343`（scope review 基线）。
+> 边界：本卡 **test-only**（只写测试与证据，不改 `src/**`、契约、schema）。范围事实基线：`main@604a2d343`（scope review 基线）；交付基线 `51e139eff`（main head `d8049fe6e`）。
 
 ## 来源与目标
 
@@ -77,21 +77,21 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 并发 apply**：
+- [x] **AC1 并发 apply**：同实例 same-op replay、different-op typed 冲突、两独立 stack/连接同一文件 DB 三条并发证据 <<MET>>
   - **AC1-a same operation（同 service 实例两线程）**：两线程都返回；`source_operations` 对 `plan_id` 恰 1 行、`page_bindings` 只增一代、`source_binding_publications` 恰 1 套、`source_sync_plans.state='applied'` 恰一次；第二个响应 `operation_id`/`request_digest` 与第一个相同、`state='core-committed'`、`accepted=true`；全表快照中无第二次代次。判别力：允许两次提交则计数 >1；第二个被错误拒绝则 `accepted` 断言失败。
   - **AC1-b different operation（同实例两线程）**：一个成功；另一个 typed ∈ `{SOURCE_OPERATION_CONFLICT, SOURCE_PLAN_STALE}`；失败方以失败前快照为基线零业务写；不得出现未包装的 `sqlite3.*` 异常。判别力：若第二事务在 `take_confirmed` 前未检查 `existing_plan_op`，会撞 UNIQUE 抛未包装 `IntegrityError`。
   - **AC1-c 两独立 stack/两连接（文件 DB）**：`tmp_path` 文件 DB + `MigrationRunner` + `PRAGMA foreign_keys/journal_mode=WAL/busy_timeout`；两个 `SourceSyncStore`（各自连接）、两个 `SourceReadGrantRegistry`、两个 `build_source_sync_stack`；两 registry 以相同 `registry_id/generation/identity` 注册等价 grant；恰好一次业务提交；失败方 typed ∈ `{SOURCE_PLAN_STALE, SOURCE_OPERATION_CONFLICT}`；零业务写；不得 `database is locked`（出现即失败，不放宽断言）。该装置是 **service seam 防御性证据**，不是生产 IPC 并发（L1）。
   - **AC1-d（Out，不写断言）**：跨实例 same-op 并发可能返回 `SOURCE_PLAN_STALE` 而非 replay（replay 检查在 `BEGIN` 之前，`service.py:87` vs `:239`）。把 replay 检查移入事务属行为变更，Out；生产串行路径（单实例 RLock / registry commit_guard / 单线程 IPC）已满足 C-17 §6.2。
-- [ ] **AC2 DB 失败注入**：
+- [x] **AC2 DB 失败注入**：事务中途 + 最后一步整批回滚，以及 wire 级 SOURCE_SYNC_STORAGE_FAILED 证据 <<MET>>
   - **AC2-a 事务中途失败**：`CREATE TRIGGER ... BEFORE INSERT ON page_bindings WHEN NEW.page_id='p2' BEGIN SELECT RAISE(ABORT,'injected'); END;`（真实 SQLite 错误，`finally` 中 DROP）。apply 抛错；`_full_snapshot` 与失败前完全相等；plan 仍 `confirmed`、`applied_at IS NULL`；无 operation 行、无 publication/gate；移除 trigger 后同一 plan 重试（新 `operation_id`）成功。
   - **AC2-b 最后一步失败**：`CREATE TRIGGER ... BEFORE UPDATE ON source_operations WHEN OLD.state='host-authorized' BEGIN SELECT RAISE(ABORT,'injected'); END;`（命中 `commit_operation`，`source_sync.py:186-207`）。整批回滚（成功页数=0）；plan 仍 confirmed；重试成功。
   - **AC2-c wire 级 typed 证据**：经 host-control dispatch 的同一失败投影为 `SOURCE_SYNC_STORAGE_FAILED`（`internal`/`retryable=true`），不泄露异常原文（映射事实见 `src/bootstrap/core_service.py:1509-1516`、`:6189-6194`；测试落 `tests/fea11/test_source_sync_storage.py`）。须证明：失败发生在事务内 → 零业务写；错误 envelope 的 `code/category/retryable` 正确；不回显注入异常文本。
   - 禁止项：不得在 `_bind_operation_grant`（post-commit）注入并声称回滚（L3）；不得接受未包装 sqlite 异常作为“通过”。
-- [ ] **AC3 第三区域 BaseRevisionId（双分支）**：
+- [x] **AC3 第三区域 BaseRevisionId（双分支）**：STALE_BASE_REVISION 防御分支 + 现实漂移 SOURCE_PLAN_STALE(cause=manual) <<MET>>
   - **AC3-a（plan 自带过期 revision）**：changed 页 + 3 个 region 各有 current revision（R1/R2/R3），另为 region3 建历史 revision `R3old`；plan decision=`bind` 且 `migrate_revision_ids=[R1,R2,R3old]`。期望 `STALE_BASE_REVISION`（C-17 §7.1/§8）；前两项迁移 + 新 binding + captured_v7 lineage 全部回滚；`_full_snapshot` 相等；`regions/region_revisions` 行数与内容不变（“其余区域不变”）。判别力：逐项提交会多出前两项新行；错误码为 `INVALID_REQUEST` 则失败。
   - **AC3-b（现实漂移）**：plan 确认后把 region3 `current_revision_id` 改为新 revision（同 region 新 revision 行，满足复合 FK）。期望 `SOURCE_PLAN_STALE(cause='manual')`；零写；记录**不会**到达 `_migrate_revisions` 的 `STALE_BASE_REVISION` 分支（`manual_digest` 覆盖 current）。
   - **AC3-c 口径登记**：AC3-a 是“非 conforming Host 可能产生的过期 plan”的防御证据；现实并发漂移由 AC3-b 的 CAS 路径覆盖。若 Lead 认为 `STALE_BASE_REVISION` 必须由现实漂移触发，需另案补 plan-time 校验（Out），本卡不扩。
-- [ ] **AC4 漂移矩阵 + 全表零写（G4–G11）**：
+- [x] **AC4 漂移矩阵 + 全表零写（G4–G11）**：G4–G10 逐项测试 + 16 表快照比较集 G11 <<MET>>
 
   | 子项 | 装置 | 期望 typed 结果 | 测试（建议名） |
   |---|---|---|---|
@@ -109,7 +109,7 @@ out_of_scope:
   | G11 比较集 | `_full_snapshot` 16 表（见冻结口径 4） | 所有测试共用；失败时打印逐表差异 | 全部测试 |
 
   共同断言：所有拒绝路径 `_full_snapshot` 前后逐行相等；无未包装 `sqlite3.*` 异常；错误码/`details.cause` 精确匹配上表；不得把“plan 状态被提前提交”作为通过。
-- [ ] **AC5 证据、范围与门禁**：
+- [ ] **AC5 证据、范围与门禁**：门禁/范围/日志已交付；独立上下文 Review 与负向探针待 Reviewer <<PARTIAL: 证据门禁项已齐（pytest 3183 passed/10 skipped、check.ps1 默认与 TaskPath 均 PASS、verify_pins 18/18、0 域外 diff、.NET NOT_RUN 已登记）；独立上下文 Review 与至少一次负向/变异探针尚未执行，按 AC5 现状只算 NOT_RUN>>
   - `pytest tests/fea11 -q` 全绿；`pytest tests -q -p no:warnings --tb=no` 全量通过，passed 数不低于释放日实测基线，不得新增 skip/failure；新增测试计数逐项记录（不引用旧卡数字代替实跑）。
   - `check.ps1`（默认与 `-TaskPath`）PASS；`verify_pins.ps1` 18/18；0 域外 diff；无新依赖；无 schema/migration 改动。
   - 证据：`verification/FEA-11-AC4-GAPS-1/{AC-MATRIX.md,EV.md,RESOURCE-MANIFEST.json,DELIVERY-MANIFEST.json,changed-files.txt,logs/*.log}`；隔离根 `G:/CODEX/New Manga.workspace/FEA-11-AC4-GAPS-1/`（不复用/不复写 FEA-11 tracked 证据）。
@@ -139,14 +139,14 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 并发 same-op / different-op | `<python> -m pytest tests/fea11/test_source_sync.py -q -p no:cacheprovider -k "concurrent"` | `:memory:`/文件 DB 隔离 fixture | NOT_RUN（待释放） | `verification/FEA-11-AC4-GAPS-1/logs/*.log`（计划） |
-| AC1-c 双连接 | 同上（新增 `_file_db_stack`，两独立 registry/storage） | `tmp_path` 文件 DB；WAL/busy_timeout | NOT_RUN | 同上 |
-| AC2 DB 失败注入 + 重试 | 同上（trigger 注入 2 例） | 隔离 v8 fixture | NOT_RUN | 同上 |
-| AC2-c wire typed | `pytest tests/fea11/test_source_sync_storage.py -q` | 新文件本地 fixture；host-control dispatch | NOT_RUN | 同上 |
-| AC3 两分支 | 同上（3 region + 过期 migrate revision / 现实漂移） | 隔离 fixture | NOT_RUN | 同上 |
-| AC4 G4–G11 | 同上（漂移矩阵 + `_full_snapshot`） | 隔离 fixture | NOT_RUN | 同上 |
-| AC5 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --stat` 范围核对 | 仓库根；释放日基线实跑 | NOT_RUN | `verification/FEA-11-AC4-GAPS-1/{EV.md,changed-files.txt,logs/*.log}` |
-| AC5 `.NET` | **NOT_RUN**（0 C# diff，纯 Python 测试；不得写 PASS） | — | NOT_RUN | `logs/dotnet-not-run.md`（说明） |
+| AC1 并发 same-op / different-op | `python -m pytest tests/fea11/test_source_sync.py -q -p no:cacheprovider -k "concurrent"` | 生产 `ThreadRoutedConnection` facade + 隔离文件 DB（`:memory:` 单连接跨线程非安全） | **PASS**（`test_concurrent_same_operation_returns_the_original_receipt_once`、`..._different_operations_...`） | `logs/fea11-gaps1-tests.log`、`logs/fea11-tests.log` |
+| AC1-c 双连接 | 同上（`_file_db_stack`，两独立 registry/store/stack） | `tmp_path` 文件 DB；FK/WAL/busy_timeout=5000 | **PASS**（`test_two_connection_stacks_commit_exactly_once_on_one_file_db`；无 `database is locked`） | 同上 |
+| AC2 DB 失败注入 + 重试 | 同上（`RAISE(ABORT)` trigger 注入 2 例 + 重试） | 隔离 v8 fixture | **PASS**（`..._mid_transaction_...`、`..._final_step_...`） | 同上 |
+| AC2-c wire typed | `python -m pytest tests/fea11/test_source_sync_storage.py -q -p no:cacheprovider` | 生产装配 `assemble_production_core`；host-control dispatch | **PASS**（`test_storage_failure_is_a_typed_wire_error_with_zero_business_writes`） | `logs/fea11-gaps1-tests.log` |
+| AC3 两分支 | 同上（3 region + 过期 migrate revision / 现实漂移） | 隔离 fixture | **PASS**（`..._stale_migrate_revision_...`、`..._live_drift_is_plan_stale_manual`） | `logs/fea11-gaps1-tests.log` |
+| AC4 G4–G11 | 同上（漂移矩阵 + `_full_snapshot` 16 表） | 隔离 fixture | **PASS**（11 个 `test_drift_*/test_multi_project_*` 用例） | `logs/fea11-gaps1-tests.log`；矩阵见 `AC-MATRIX.md` |
+| AC5 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --name-only` 范围核对 | 仓库根；释放日基线实跑 | **88 passed**；**3183 passed/10 skipped**（基线 3164/10）；check ×2 **PASS**；pins **18/18**；0 域外 diff | `verification/FEA-11-AC4-GAPS-1/{EV.md,changed-files.txt,logs/*.log}` |
+| AC5 `.NET` | **NOT_RUN**（0 C# diff，纯 Python 测试；不得写 PASS） | — | **NOT_RUN** | `logs/dotnet-not-run.md`（说明） |
 
 ## 预期行为变更（Review 不判回归）
 
@@ -181,31 +181,56 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 ## 交付与运行记录
 
-- Handoff：尚无（待释放/实施后新增 `doc/handoffs/FEA-11-AC4-GAPS-1-*.md`）。
+- **交付（2026-11-05，Owner=`scanner-gaps-impl`，DSH Agent Teams；Lead=`lead`）**
+  - 实现 commit：`95815ff7a`（`tests/fea11/test_source_sync.py` +18 用例；新增 `tests/fea11/test_source_sync_storage.py` +1 用例）——**test-only**，零 `src/**`/契约/schema 变更。
+  - 交付 head（实现）：`95815ff7a`；证据/卡面/Handoff 随后续文档提交落盘。
+  - 基线：`pytest tests` 3164 passed/10 skipped；`pytest tests/fea11` 69 passed。
+  - 交付后：`pytest tests` **3183 passed/10 skipped**（+19，无新增 skip/failure）；`pytest tests/fea11` **88 passed**。
+  - 门禁：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins.ps1` **18/18**；`git diff --name-only 51e139eff..HEAD -- src/ doc/plan doc/contracts apps` **空**。
+  - 指针更新（Lead 执行，2026-11-05）：`doc/REBASELINE_PLAN.md` DAG 行 → `in_review`、`READY 节点：无`；`doc/STATUS.md` 当前 Task → `in_review`、下一步「独立 Review → closeout」；`TASK_LEDGER` 已刷新。Owner 只读于此（未改 STATUS/PLAN/LEDGER）。
+  - 门禁记录说明：`logs/gates.log` 的一次运行先于「gates.log 自身登记进 Canonical Evidence」发生（当时 4 warnings，含该未登记项），登记后最终复核为 **PASS（3 warnings：14 个非终态 Task / STATUS 预算 80% / REBASELINE_PLAN 预算 80%，均为既有基线项）**；最终复核输出不重写 gates.log，故其 sha256 pin 与工作树字节一致。
+  - `.NET`：**NOT_RUN**（0 C# 文件变更、纯 Python 测试；不得写 PASS）。
+  - 证据：`verification/FEA-11-AC4-GAPS-1/`（`AC-MATRIX.md`、`EV.md`、`RESOURCE-MANIFEST.json`、`DELIVERY-MANIFEST.json`、`changed-files.txt`、`logs/`）；隔离根 `G:/CODEX/New Manga.workspace/FEA-11-AC4-GAPS-1/`（probes/logs）。
+  - 实现者负向/变异探针自检（**非权威**，独立 Review 须自行复做）：3 项变异验证为 RED（replay 移除 / 逐项 commit / manual+protection CAS 移除），2 项被更强 CAS 遮蔽并如实登记 → `logs/mutation-probes.log`。
+- Handoff：`doc/handoffs/FEA-11-AC4-GAPS-1-handoff.md`（待与本卡同批提交）。
 - Review：尚无（独立上下文 Reviewer，须记录 session ID 与来源；作者不得自审）。
-- 实际测试：尚无（当前 `status: proposed`，未实施、未跑本卡测试）。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 DSH 填写 `integration_commit` 并改 done。
+- 后续：独立 Review（实际运行新增测试 + 至少一次负向探针）→ DSH 集成 closeout（填写 `integration_commit` 并改 done / closed_with_limitations）。
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项登记唯一当前证据；本卡尚未实施，表格为空。
+进入 `in_review` 时逐项登记唯一当前证据（实现 `95815ff7a`；证据/日志按 sha256 pin，工作树原始字节）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-FEA11GAPS1-TESTS-SYNC | AC1–AC4 用例（18） | tests/fea11/test_source_sync.py | 95815ff7a | - | CANONICAL |
+| EV-FEA11GAPS1-TESTS-STORAGE | AC2-c wire typed 用例（1） | tests/fea11/test_source_sync_storage.py | 95815ff7a | - | CANONICAL |
+| EV-FEA11GAPS1-MATRIX | AC1–AC5 证据矩阵 | verification/FEA-11-AC4-GAPS-1/AC-MATRIX.md | - | 561ab55a14300c354766534019ce17512fb150e91bd45749fdca61c64bd33f4f | CANONICAL |
+| EV-FEA11GAPS1-EV | 命令/结果/limitation 索引 | verification/FEA-11-AC4-GAPS-1/EV.md | - | 816739437e1ebb63c2768023745cbbc131939c77fc981036ba917345ac4da0df | CANONICAL |
+| EV-FEA11GAPS1-RESOURCE | 资源清单 | verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json | - | 77b2d1a54d908145723788bfc879c30dea6375cc2a383b80fa20a9456644b1e5 | CANONICAL |
+| EV-FEA11GAPS1-DELIVERY | 交付清单/门禁结果 | verification/FEA-11-AC4-GAPS-1/DELIVERY-MANIFEST.json | - | ab6340e982e7baaffc219068b86418623a23172d191619a9f7376991be050f18 | CANONICAL |
+| EV-FEA11GAPS1-CHANGED | 变更文件与 0 域外 diff | verification/FEA-11-AC4-GAPS-1/changed-files.txt | - | 69c2598672791707baf9ac5025ab03cf24e436c981e3d006b6815721673b7141 | CANONICAL |
+| EV-FEA11GAPS1-BASELINE | AC5 释放日基线（改前全量） | verification/FEA-11-AC4-GAPS-1/logs/baseline-full-pytest.log | - | 2dab2d10e0b7f23d767bf4c8cfb532035f1b0bfb3d62a4c6209038ca399b6af8 | SOURCE_PIN |
+| EV-FEA11GAPS1-FEA11 | AC5 相关组 pytest | verification/FEA-11-AC4-GAPS-1/logs/fea11-tests.log | - | 3a86b1178e42829a7a5a4e1238f4c3e7bc0c551cb26cf5ee093652b0ad36c790 | CANONICAL |
+| EV-FEA11GAPS1-GAPS1 | AC1–AC4 新增用例日志 | verification/FEA-11-AC4-GAPS-1/logs/fea11-gaps1-tests.log | - | a2e8c94142d8d318b889471e9c63fb27ca11c336f381673202202cfbe213eebf | CANONICAL |
+| EV-FEA11GAPS1-FULL | AC5 全量 pytest（3183/10） | verification/FEA-11-AC4-GAPS-1/logs/full-pytest.log | - | b33fa00ac02211e6a060b4e315c093fb1b55904e5e0d489d87cb8f2bb3d04ce6 | CANONICAL |
+| EV-FEA11GAPS1-PROBE | 负向/变异探针自检（非权威） | verification/FEA-11-AC4-GAPS-1/logs/mutation-probes.log | - | 9e0d43b965ee44ea3fdad88351b0c0100d8c7c15b3a33175c97f0ebbfb24d30c | SOURCE_PIN |
+| EV-FEA11GAPS1-SCOPE | 0 产品/契约 diff | verification/FEA-11-AC4-GAPS-1/logs/scope-diff.log | - | 903e65ac3da4674dc6474f68fd0bb6cfedc4eeaa93de1de7c193ccf4ff59101a | CANONICAL |
+| EV-FEA11GAPS1-DOTNET | `.NET` NOT_RUN 口径 | verification/FEA-11-AC4-GAPS-1/logs/dotnet-not-run.md | - | b2f2242858fcc88b0cd95bb29c3532c336a6e00a253fafa8af84deec8b2f9328 | CANONICAL |
+| EV-FEA11GAPS1-GATES | AC5 门禁（command/EXIT/head） | verification/FEA-11-AC4-GAPS-1/logs/gates.log | - | 1178e95ecf82cf0d47d67aa983f24618496b0d647a1ca5e1050b44517fa3c97d | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main 工作树；释放时由 DSH 固定） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11-AC4-GAPS-1\`（预计隔离 fixture 根） | DELETE_SAFE（预计） | — | — | 未创建；实施后按实际登记 |
-| agent-output | — | NOT_APPLICABLE | — | — | 本卡尚未产生 |
+| worktree | NOT_APPLICABLE（main 工作树；base `51e139eff`，main head `d8049fe6e`） | NOT_APPLICABLE | — | — | 未创建 linked worktree；实施只在 main 工作树 `tests/fea11/` 与 `verification/` 内 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11-AC4-GAPS-1\`（仓外隔离根：`probes/`、`logs/`） | PRESERVE_REFERENCED | Same source location（仓外，不随仓库分发） | `verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json` | 无进程持有；产品代码/测试不引用该路径；`EV.md §4` 仅作探针脚本索引，仓内副本为 `logs/mutation-probes.log`；closeout 后可保留或删除 |
+| agent-output | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 本卡未产生独立 agent-output；实现/证据直接写入仓库 `tests/fea11/` 与 `verification/FEA-11-AC4-GAPS-1/` |
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
+- canonical_evidence_status：`complete`（本卡实现的 canonical evidence 已逐项登记；Review/集成证据由 DSH closeout 补登）。
+- resource_closeout_status：`pending`（Owner 未执行删除/迁移/归档；仓外隔离根保留供 Review 复核）。
+- 删除、迁移、归档数量/字节数：0（Owner 无操作）。
 - 未关闭项及保留原因：L1–L4（见上）；G12 非缺口。
 - 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
