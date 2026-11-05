@@ -347,6 +347,89 @@ def authorization_for(grant_facts: dict, *, registry_id: str = "reg-1",
     }
 
 
+#: Valid 64-hex digests for the hand-seeded switch rows below (the frozen v8
+#: CHECK constraints require lowercase hex for every digest column).
+_SYNC_HEX = "a" * 64
+
+
+def add_sync_switch(
+    conn: sqlite3.Connection,
+    *,
+    page_id: str,
+    old_binding_id: str,
+    new_binding_id: str,
+    relation: str,
+    seq: int = 1,
+    now: str = NOW,
+) -> str:
+    """Seed ONE applied sync switch (the real v8 row set, not a fake).
+
+    Inserts the ``source_sync_plans`` + ``source_operations`` rows the
+    publication FK demands, supersedes the old binding, inserts the new
+    binding generation and its ``source_binding_publications`` row with the
+    given relation and an OPEN read gate. Returns the new binding id.
+
+    FEA-11-LINEAGE-1 tests use this to build a C-17 §7.1 binding/publication
+    chain on REAL SQLite without staging a whole grant/lease/scan cycle.
+    """
+    plan_id = f"plan-switch-{seq}"
+    operation_id = f"op-switch-{seq}"
+    conn.execute(
+        "INSERT INTO source_sync_plans (plan_id, source_id, kind, state,"
+        " plan_digest, body_json, created_at, expires_at, previewed_at,"
+        " confirmed_at, applied_at) VALUES (?, 's1', 'resync', 'applied', ?,"
+        " '{}', ?, ?, ?, ?, ?)",
+        (plan_id, _SYNC_HEX, now, now, now, now, now),
+    )
+    conn.execute(
+        "INSERT INTO source_operations (operation_id, plan_id, plan_digest,"
+        " kind, request_digest, state, authorization_digest,"
+        " authorization_json, host_receipt_id, commit_receipt_json,"
+        " commit_digest, created_at, updated_at, committed_at)"
+        " VALUES (?, ?, ?, 'resync', ?, 'core-committed', ?, '{}', ?, '{}',"
+        " ?, ?, ?, ?)",
+        (
+            operation_id, plan_id, _SYNC_HEX, _SYNC_HEX, _SYNC_HEX,
+            f"host-{seq}", _SYNC_HEX, now, now, now,
+        ),
+    )
+    old = conn.execute(
+        "SELECT project_id, binding_version, source_id, entry_id,"
+        " accepted_source_version, authorization_generation"
+        " FROM page_bindings WHERE binding_id = ?",
+        (old_binding_id,),
+    ).fetchone()
+    conn.execute(
+        "UPDATE page_bindings SET status = 'superseded', updated_at = ?"
+        " WHERE binding_id = ?",
+        (now, old_binding_id),
+    )
+    conn.execute(
+        "INSERT INTO page_bindings (binding_id, page_id, project_id,"
+        " binding_version, source_id, entry_id, accepted_source_version,"
+        " status, previous_binding_id, authorization_generation,"
+        " authorized_at, verified_digest, created_at, updated_at)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?, 'healthy', ?, ?, ?,"
+        " (SELECT content_digest FROM source_versions WHERE version_id = ?),"
+        " ?, ?)",
+        (
+            new_binding_id, page_id, old["project_id"],
+            int(old["binding_version"]) + 1, old["source_id"],
+            old["entry_id"], old["accepted_source_version"],
+            old_binding_id, int(old["authorization_generation"]),
+            now, old["accepted_source_version"], now, now,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO source_binding_publications (binding_id, operation_id,"
+        " previous_binding_id, relation, read_gate, opened_at)"
+        " VALUES (?, ?, ?, ?, 'open', ?)",
+        (new_binding_id, operation_id, old_binding_id, relation, now),
+    )
+    conn.commit()
+    return new_binding_id
+
+
 def host_authorization(
     *, operation_id: str, request_digest: str, authorizations: list[dict]
 ) -> dict:
