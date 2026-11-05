@@ -3,10 +3,10 @@ id: FEA-11-MATCH-1
 title: FEA-11 页匹配 pixel profile 提取与旧库 fixture（C-17 §7.3 续）
 kind: implementation
 governance_version: 3
-status: ready
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
+status: in_review
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：承接 FEA-11 AC11-3 的 L-4 缺口（r1 R-012 / r7-acceptance L-4）；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**2026-11-06 实施交付（in_review）**：Owner=`fea12-dsim-impl`（DSH Agent Teams，Lead `lead`），交付 head `b4ad109da`，AC-M1…AC-M6 MET（`.NET` NOT_RUN），check.ps1 PASS；待独立上下文 Review
 suggested_owner: codex
-owner: null
+owner: fea12-dsim-impl（DSH Agent Teams 成员；Lead `lead`）
 reviewer: null
 depends_on:
   - FEA-11-PREREQ-1
@@ -14,8 +14,8 @@ base_commit: 2d9a4a219   # 释放点 main head（AC4-GAPS-1 closeout 后）
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: b4ad109da   # 实现+测试交付 head（实现 7bd8efe47 / 测试 2d61e43c3 / C8 修正 b4ad109da；docs/证据/Handoff 为紧随其后的文档提交）
+canonical_evidence_status: pinned
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-MATCH-1
 allowed_paths:
@@ -27,6 +27,9 @@ allowed_paths:
   - src/application/sources/model.py
   - tests/fea11/test_source_match.py
   - tests/fea11/test_source_scan.py（仅 W1 窄批：该用例期望值 + docstring，约 1–2 行）
+  - tests/fea11/test_source_sync.py（仅 DSH 2026-11-06 窄批 **W1b**：本地 `_seed_two_page_source(legacy_v7_evidence=False)` 路径补真实 pixel profile，不改断言）
+  - tests/fea11/test_source_relink.py（仅 **W1b**：本地 `_seed` 补真实 pixel profile，不改断言）
+  - tests/fea11/test_source_sync_storage.py（仅 **W1b** 授权范围；实际经 `test_source_sync` 共享 helper，未改行）
   - tests/fea11/fixtures/**
   - verification/FEA-11-MATCH-1/**
 out_of_scope:
@@ -41,9 +44,7 @@ out_of_scope:
 
 # FEA-11-MATCH-1：页匹配 pixel profile 提取与旧库 fixture
 
-> **状态：`proposed`。本卡 scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；释放前不得实施、不得改卡面语义。**
->
-> 范围事实基线：`main@604a2d343`（scope review 基线）；当前 `main` 已前移至 `f4882077a` 且 FEA-12-CORE 返修工作树 dirty。释放时由 DSH 重新固定 `base_commit`；实施者不得覆盖其他 Task 的未提交工作。
+> **状态：`in_review`（2026-11-06 交付，Owner=`fea12-dsim-impl`，交付 head `b4ad109da`）。** 本卡已按冻结 scope 实施：`scanner.py` 生产 `pixel-digest/1` profile（AC-M1）、`matcher.py` 7 维可比性/重复组/降级（AC-M2–M4）、`tests/fea11/test_source_match.py` 19 用例 + 真实 v7 导入 fixture（AC-M5）；AC-M6 门禁全绿：pins 18/18、`check.ps1` PASS、全量 pytest **3202 passed / 10 skipped**（基线 3183/10）、`doc/plan`/`doc/contracts`/`apps`/schema/依赖零 diff；`.NET` NOT_RUN（`apps/**` 零 diff）。W1/W1b 窄批已按 DSH 2026-11-06 裁决登记于「预期行为变更」。待 Lead 派发独立上下文 Review（作者不得自审），`integration_commit` 由 DSH 集成时填写。
 
 ## 来源与目标
 
@@ -63,7 +64,7 @@ out_of_scope:
 | I3 | 重复 pixel occurrence → 整组 `ambiguous/duplicate_group`；禁 ordinal/locator 自动锚定 | `matcher.py` |
 | I4 | 旧证据缺失/不可比的降级（`missing_old`/`incomparable`）+ counterpart-less 重复成员修正（旧侧无新对应→`missing/none`；新侧无旧对应→`added/none`）；保证每条 DiffItem 满足 C-17 §5.3 非空约束 | `matcher.py`、`model.py`（仅既有字段/组合守卫） |
 | I5 | 生产 v7 fixture + 独立 match 测试：`migrations[:7]` 建 v7 → 真实 FEA-09 导入 → 迁 v8 → scan/match；`tests/fea11/test_source_match.py` | `tests/fea11/**` |
-| I6 | 门禁与证据：pins 18/18、`check.ps1`、全量 pytest 基线 3152/10、冻结契约零 diff、无新依赖、`apps/**` 零 diff | `verification/FEA-11-MATCH-1/**` |
+| I6 | 门禁与证据：pins 18/18、`check.ps1`、全量 pytest 基线 **3183 passed / 10 skipped**（DSH 2026-11-06 实跑定界；卡内旧数 3152 作废）、冻结契约零 diff、无新依赖、`apps/**` 零 diff | `verification/FEA-11-MATCH-1/**` |
 
 ### Out（明确排除，登记为 limitation）
 
@@ -81,45 +82,45 @@ PDF pixel profile（无 raster seam，L-M1）；导入路径写 profile（L-M2�
 | C6 | RGB 归一 | 8-bit RGB、逐行、无行 padding；非 RGB/RGBA 先按 renderer 同源规则转 RGB；含**非全不透明** alpha（RGBA 或调色板透明度）首版不产 profile → `pixel=None` + `reason=unsupported`（L-M7） |
 | C7 | `pixel_digest` | `sha256(ASCII(f"{W}x{H}") + b"\x00" + RGB_bytes)`，小写 hex；禁止哈希 PNG/JPEG 编码字节；禁止交换 W/H 而不变换像素 |
 | C8 | `params` canonical | `decoder_params_json` 必须是 canonical JSON 对象字符串：`json.dumps(obj, sort_keys=True, separators=(",",":"), ensure_ascii=False, allow_nan=False)`；比对时先解析为对象再 canonical 比较（`_profiles_comparable` 不得比较原始字符串字面量）；`params_digest = sha256(canonical_json.encode("utf-8")).hexdigest()`；**修复 `scanner.py:545-555` 的 JSON 字符串双重编码**。冻结 params 对象：`{"alpha":"opaque-only","color_management":"none","exif_transpose":true,"frame":0,"mode":"RGB","pillow_version":"12.3.0","profile":"fea11-match-rgb/1"}`（Pillow pin 见 `requirements.txt:12`）；升级 Pillow 必须改 decoder 侧常量，不得静默沿用旧 digest 判可比 |
-| C9 | decoder 标识 | `decoder="referenced-import/1"`、`decoder_version="1"`（与既有 `scanner.py:523-524` 默认值一致） |
+| C9 | decoder 标识 | `decoder="referenced-import"`、`decoder_version="1"`（**DSH 2026-11-06 裁决修正**：原卡值 `referenced-import/1` 含 `/`，违反冻结 C-17 §5.2 `PixelProfile.decoder! ID` 与 §5 类型表「ID=非空不含路径/控制字符 string(1..128)」；`model.py::_ID_RE` 实测拒绝。改为「解码器名 + 版本」两个合法 ID；属**卡级常量更正，不改冻结契约字节**） |
 | C10 | `EntryEvidence.reason` 映射 | 闭集沿用 C-17 §5.2（`encrypted｜unsupported｜missing_evidence｜incomparable`，`model.py:440-445`），不新增 `budget` 枚举。生产映射：确认加密→`encrypted`；不支持格式/损坏解码/非法 EXIF/不可表示的透明 profile→`unsupported`；解码预算超限→`unsupported`；`content_digest` 缺失→`missing_evidence`。`reason` 与 `DiffItem.evidence`、`SourceObservation.reason_code` 是不同层，不得混填 |
 | C11 | 降级边界 | 仅 **profile 提取**失败允许有限诊断；grant/lease/identity/digest 校验失败、容器扫描失败继续 typed 拒绝，**禁止 catch-all 吞掉授权/完整性错误**；不完整目标不得凭 add/bind 确认内容变更（C-17 `:274`） |
 | C12 | 提取范围 | 只在**容器已变化**（`same_container=False`）路径对 new candidate entries 提取；同容器路径复用已提交行、不重解码；PDF 不在提取范围 |
 
 ## Acceptance Criteria
 
-- [ ] **AC-M1 生产 profile 提取、持久化与降级**：
-  - 变更容器路径下每个可解码 entry 产出完整 `PixelProfile`：`algorithm='pixel-digest/1'`、`decoder='referenced-import/1'`、`decoder_version='1'`、`params_digest=sha256(canonical params JSON)`、`width/height>0`、`orientation=1`、`pixel_digest=sha256("WxH\0"+RGB)`；字段集合与 C-17 §5.2 `PixelProfile`（`:241`）逐项一致。
+- [x] **AC-M1 生产 profile 提取、持久化与降级** <<MET>>
+  - 变更容器路径下每个可解码 entry 产出完整 `PixelProfile`：`algorithm='pixel-digest/1'`、`decoder='referenced-import'`、`decoder_version='1'`、`params_digest=sha256(canonical params JSON)`、`width/height>0`、`orientation=1`、`pixel_digest=sha256("WxH\0"+RGB)`；字段集合与 C-17 §5.2 `PixelProfile`（`:241`）逐项一致。
   - 独立复算：测试独立用 Pillow 按 C1–C7 复算同一约定下的 `sha256("WxH\0"+RGB)` 并比对，另加 1 个硬编码 golden；使用**非方形、非对称**图（如 4×3 / 5×2）覆盖 EXIF 无 tag/1–8/9；镜像 2/4/5/7 必须真正镜像，不得仅旋转或丢 tag。
   - `params` canonical：对象键序/空白等价输入得到同一 digest；非法/未知 params 不得伪装成 `{}`；修复双重编码后 golden 从“字符串字面量哈希”变为“canonical 对象哈希”。
   - 持久化：完整 apply 后 `source_entries` 行带非空 `pixel_digest/pixel_digest_algorithm/width/height/orientation/decoder_name/decoder_version/decoder_params_json`（列已存在，`schema.py:667-695`），且 `decoder_params_json` 与 live candidate 的 canonical params 一致。
   - 降级：解码失败/预算超限/加密/缺失 `content_digest` → 该 entry `pixel=None` + C10 合法 `reason`；scan 不抛异常，totals 仍等于明细；scan 零 DB 写（前后全表快照相等）。
   - 负测：有限诊断成功 ≠ 可发布 healthy——不完整目标不得凭 add/bind 确认内容变更（C-17 `:274`）。
-- [ ] **AC-M2 可比性（C-17 §7.3 第 2 行）**：
+- [x] **AC-M2 可比性（C-17 §7.3 第 2 行）** <<MET>>
   - `_profiles_comparable` 扩展为 7 维全等（algorithm/decoder/decoder_version/canonical params/width/height/orientation）；
   - `unique_pixel` 仅在「该像素证据在两侧各恰好 1 次」且 7 维可比时成立；否则不得保续；
   - `same_content` 关系成立条件在测试中断言（字节同一，或 profile 全等且坐标等价）；`_publication_relation` 的两条分支（真 pixel 路径 geometry 相等、唯一字节路径 `old_geometry=(None,None)` 兜底）都必须断言 relation 值。
   - 判别力：构造同 `pixel_digest`、同 W/H、但 `orientation` 不同（或 `decoder_version`/params/algorithm/decoder 不同）的旧行 → 改前判 `unique_pixel`，改后必须 `ambiguous/incomparable`。
-- [ ] **AC-M3 重复 pixel occurrence → 整组待确认（C-17 §7.3 第 3 行）**：
+- [x] **AC-M3 重复 pixel occurrence → 整组待确认（C-17 §7.3 第 3 行）** <<MET>>
   - occurrence 统计纳入 `pixel_digest`（与 `content_digest`/`locator` 同口径、按侧独立）；任一侧 ≥2 即整组 `ambiguous/duplicate_group`；禁止 ordinal/locator 自动锚定；唯一字节分支也不得绕过重复 pixel 组。
   - 组内成员不得自动 keep/bind；决策只允许 `bind`/`defer`；`defer` 不发布新 binding，旧 binding 保持 `needs_confirmation`；PageId/人工 revision/Lock/进度/保护零变化（ADJ-001 §4、C-17 §5.3 `:270`）。
   - 覆盖 1:2、2:1、重名与同像素交叠、每个 occurrence 保留；所有输出通过 plan 校验；totals=最终 diff（含 scanner 对未绑定旧项的过滤）。
-- [ ] **AC-M4 旧证据缺失/不可比降级 + counterpart-less 修正（C-17 §7.3 第 4 行）**：
+- [x] **AC-M4 旧证据缺失/不可比降级 + counterpart-less 修正（C-17 §7.3 第 4 行）** <<MET>>
   - 旧行无 profile（含 v7 形态）或 profile 不可比 → `ambiguous` + `missing_old`/`incomparable`；不得 `unique_pixel`；无完整可比证据时不得输出 `changed/direct`（`changed` 是“两侧完整可比且像素不同”的确定性断言）。
   - 唯一允许的“无需重算等价”：唯一 `content_digest` 相等（字节同一 ⇒ 像素同一）→ `unique_pixel`；且必须先排除重复组并验证坐标关系。
   - **counterpart-less 修正**：真正无跨侧候选时，旧侧重复成员→`missing/none`、新侧重复成员→`added/none`；不得保留 `duplicate_group` evidence 配单侧空（validator 要求其 classification=ambiguous，而 ambiguous 必须双侧非空）；“贪心配对后未占用”不等于“无对应”，1:N/N:1/交叠重复组仍整组待确认。
   - 禁止从新图伪造旧证据：不写旧版本行、不补旧 profile、不把 `missing_old` 提升为 `unchanged`。
   - 判别力：真实 v7 行（首个 bound entry 有 W/H、`pixel=NULL`；其余 entry 皆 NULL）在新容器字节已变 → 改前对带 W/H 那条判 `changed/direct`，改后必须 `ambiguous/missing_old`；字节同一成员仍 `unique_pixel`（防回归）；PDF 容器变化不得自动 `unique_pixel`/按 ordinal 保续。
   - totals 语义变化显式登记（见「预期行为变更」）。
-- [ ] **AC-M5 生产 v7 真实导入 fixture + 独立 match 测试**：
+- [x] **AC-M5 生产 v7 真实导入 fixture + 独立 match 测试** <<MET>>
   - fixture 由**生产路径**生成：`MigrationRunner(conn, default_migrations()[:7])` 建 v7 → 真实 `ReferencedImportPlanner`/`ReferencedImportRuntime` 导入真实 zip → 迁 v8 → scan/match；不得用 `conftest.add_source_tree` 手写行替代“真实导入”。
   - 断言旧行形态诚实：`pixel_digest IS NULL`、`pixel_digest_algorithm IS NULL`、非首个导入页 entry 的 `width/height IS NULL`；bound entry 会写 `DECODER_NAME`（`runtime.py:864`）——**不得断言所有 `decoder_name` 为空**。
   - `tests/fea11/test_source_match.py` 至少含：①纯 matcher 单测（rows in / classified pairs out，无 DB/无文件）；②scan 级集成（真实 zip + 真实 HMAC grant + 真实严格读）；③scan 只读（scan 前后 DB 全表快照相等）；④两代 resync（导入后第二代起像素匹配可达）；⑤真实 apply 从 live candidate 保留非空 canonical params，以及 scan 过期/丢失时 apply 无内容/绑定/profile 提交（允许既有失败审计）。
   - fixture 落隔离根 `G:/CODEX/New Manga.workspace/FEA-11-MATCH-1/`（或 conftest 既有隔离根），不提交二进制 DB，不复写 tracked `verification/FEA-09/**`。
-- [ ] **AC-M6 契约/门禁零漂移**：
+- [x] **AC-M6 契约/门禁零漂移** <<MET>>
   - 无新命令/错误码/能力/DTO 字段；M2-C1 rev 2.13 NO_INCREMENT（不改 `PROTOCOL_MAJOR/MINOR`）。
   - C-17/C-15/C-08/ADJ-001 字节零 diff；`verify_pins.ps1` **18/18**；`check.ps1`（默认与 `-TaskPath`）PASS。
-  - pytest 全量不低于 **3152 passed / 10 skipped**（FEA-12-CORE closeout 基线；释放日实跑复核定界，不得以旧卡数字代替实跑；不得新增 skip）。
+  - pytest 全量不低于 **3183 passed / 10 skipped**（DSH 2026-11-06 于 base head `71e4b42b4` 实跑定界：`3183 passed, 10 skipped`，EXIT 0；卡内旧数 3152 作废；不得以旧卡数字代替实跑）；不得新增 skip。
   - `apps/**` 零 diff；无新依赖（Pillow `12.3.0` 已 pin）；冻结契约/`schema.py`/`apps` 的 `git diff --name-only` 为空。
   - 证据落 `verification/FEA-11-MATCH-1/`（EV/MATRIX/日志/命令 EXIT）。
 
@@ -146,12 +147,12 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC-M1 profile 提取/持久化/降级 | `<python> -m pytest tests/fea11/test_source_match.py -q -p no:cacheprovider`（独立复算 + golden + apply 持久化 + 降级） | 隔离 fixture；Pillow 12.3.0 | NOT_RUN（待释放） | `verification/FEA-11-MATCH-1/logs/*.log`（计划） |
-| AC-M2 可比性 | 同上（参数化 7 维 + scan 级 1 例 + relation 断言） | 纯单测 + 真实 zip | NOT_RUN | 同上 |
-| AC-M3 重复组 | 同上（1:2/2:1/重名/同像素交叠 + scan→plan 全链） | 隔离 fixture | NOT_RUN | 同上 |
-| AC-M4 降级/counterpart-less | 同上（真实 v7 fixture 全链 + 单测矩阵） | 生产 v7 + 真实导入 | NOT_RUN | 同上 |
-| AC-M5 真实 v7 fixture/只读 | 同上（旧行形态查询 + DB 全表快照） | 隔离根 `workspace/FEA-11-MATCH-1/` | NOT_RUN | 同上 |
-| AC-M6 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --name-only <base>..<head> -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps` | 仓库根；释放日基线实跑 | NOT_RUN | `verification/FEA-11-MATCH-1/{EV.md,changed-files.txt,logs/*.log}` |
+| AC-M1 profile 提取/持久化/降级 | `C:/Python314/python.exe -m pytest tests/fea11/test_source_match.py -q -p no:cacheprovider`（独立复算 + golden + apply 持久化 + 降级） | 隔离 fixture；Pillow 12.3.0 | **PASS**（19 passed，EXIT 0） | `verification/FEA-11-MATCH-1/{AC-MATRIX.md,EV.md,logs/pytest-match.log}` |
+| AC-M2 可比性 | 同上（参数化 7 维 + scan 级 1 例 + relation 断言） | 纯单测 + 真实 zip | **PASS** | `logs/pytest-match.log`、`AC-MATRIX.md` |
+| AC-M3 重复组 | 同上（1:2/2:1/重名/同像素交叠 + scan→plan 全链） | 隔离 fixture | **PASS** | `logs/pytest-match.log`、`AC-MATRIX.md` |
+| AC-M4 降级/counterpart-less | 同上（真实 v7 fixture 全链 + 单测矩阵） | 生产 v7 + 真实导入 | **PASS** | `logs/pytest-match.log`、`AC-MATRIX.md` |
+| AC-M5 真实 v7 fixture/只读 | 同上（旧行形态查询 + DB 全表快照 + 两代 resync + scan 丢失零提交） | 隔离 root（conftest 既有 `workspace/FEA-11/fixtures`）；生产 v7 | **PASS** | `logs/pytest-match.log`、`logs/pytest-fea11.log`（107 passed） |
+| AC-M6 门禁 | `pytest tests/fea11 -q`；`pytest tests -q -p no:warnings --tb=no`；`check.ps1`（含 `-TaskPath`）；`verify_pins.ps1`；`git diff --name-only <base>..<head> -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps` | 仓库根；释放日基线实跑 | **PASS**：fea11 107 passed；全量 **3202 passed / 10 skipped**；check 见 `logs/gates.log`；pins 18/18；零 diff | `verification/FEA-11-MATCH-1/{EV.md,changed-files.txt,logs/*.log}` |
 
 ## 预期行为变更（Review 不判回归）
 
@@ -159,6 +160,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 2. **totals 语义**：A2（旧 pixel 缺失但 W/H 存在）由 `changed` 改判 `missing_old`；A5（counterpart-less 重复成员）由非法 ambiguous 改判 `missing`/`added`。两处改变用户可见 totals，按 C-17 §5.3 收敛，Review 不判回归。
 3. **首次 resync 仍降级（L-M2）**：导入路径不写 profile，字节改变且缺旧 profile 的**首次** resync 不能自动像素匹配；pixel 匹配自第二代起可达。卡面不得宣称“旧库也可自动匹配”。
 4. **PDF 不承接**：不得宣称承接 AC11-3 的“PDF 插页”或“PDF 必然全 missing + 全 added”；PDF 容器变化按诚实待确认处理（L-M1）。
+5. **AC-M4 收紧的夹具影响（DSH 2026-11-06 窄批 W1b）**：真实 **W/H-only 旧 entry**（v7 形态，`pixel=NULL`）由 `changed/direct` 改判 `ambiguous/missing_old`——这是生产语义变化，仅影响真实 W/H-only 旧证据。既有测试夹具（`tests/fea11/test_source_sync.py::_seed_two_page_source(legacy_v7_evidence=False)`、`test_source_relink.py::_seed`）原先把 W/H 近似为“完整证据”属**夹具事实错误**；W1b 只在各自本地 seed helper 内为旧 entry 补**真实完整 pixel profile**（同一 png 字节按冻结参数算 W/H/digest/decoder/params canonical，`UPDATE source_entries`），**不再有生产语义变化**、**未放宽任何断言**；`test_source_sync_storage.py` 经共享 helper 自动恢复。`tests/fea11/test_source_scan.py` 的 W1 用例则是真实 W/H-only 场景，期望按 AC-M4 改为 `ambiguous/missing_old`。
 
 ## 依赖、风险与阻塞
 
@@ -188,25 +190,41 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 ## 交付与运行记录
 
-- Handoff：尚无（待释放/实施后新增 `doc/handoffs/FEA-11-MATCH-1-*.md`）。
-- Review：尚无（独立上下文 Reviewer，须记录 session ID 与来源；作者不得自审）。
-- 实际测试：尚无（当前 `status: proposed`，未实施、未跑本卡测试）。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 DSH 填写 `integration_commit` 并改 done。
+- 交付日期：2026-11-06（Asia/Shanghai）；Owner=`fea12-dsim-impl`（DSH Agent Teams，Lead `lead`）；**未 push**。
+- 实现 commit：`7bd8efe47`（`src/application/sources/scanner.py`、`matcher.py`）；测试 commit：`2d61e43c3`（新增 `tests/fea11/test_source_match.py` 19 用例 + W1/W1b 窄批）；C8 收紧 commit：`b4ad109da`（decoder params 必须是 canonical JSON 对象；非对象/非法 JSON → `incomparable`，绝不伪装 `{}` + 回归用例）；交付 head `b4ad109da`；docs/证据/Handoff 为紧随其后的文档提交。
+- Handoff：`doc/handoffs/FEA-11-MATCH-1-handoff.md`。
+- Review：尚无（待 Lead 派发独立上下文 Reviewer，须记录 session ID 与来源；作者不得自审）。
+- 实际测试（2026-11-06，tree=`b4ad109da`）：`tests/fea11` **107 passed**；`test_source_match.py` **19 passed**；全量 `pytest tests` **3202 passed / 10 skipped**（基线 3183/10，+19 新增，0 回归/0 新增 skip）；`verify_pins.ps1` **PASS 18/18**；`check.ps1 -TaskPath` **PASS**；`doc/plan`/`doc/contracts`/`apps`/`schema.py`/`migrator.py`/`requirements.txt`/`pyproject.toml` 零 diff；`.NET` **NOT_RUN**（`apps/**` 零 diff）。
+- 环境：Windows 11 / Python 3.14.6 / Pillow 12.3.0（既有 pin）/ SQLite v8。
+- 遗留项：L-M1…L-M7（本卡不改变）；R8 未发生（全量 pytest 后 `git status` 仅本卡文件）。
+- 最终由 DSH 填写 `integration_commit` 并改 done。
 
 ## Canonical Evidence
 
-进入 `in_review` 前逐项登记唯一当前证据；本卡尚未实施，表格为空。
+唯一当前证据（sha256 pin；文件均随本文档提交进入 Git）：
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-M1 | AC-M1/M2/M3/M4/M5 | `verification/FEA-11-MATCH-1/EV.md` | - | `b042404fe229e67633441e718813b7728ee00d285d0110b2ef4d1bfd4358997d` | CANONICAL |
+| EV-M2 | AC-M1…M6 矩阵 | `verification/FEA-11-MATCH-1/AC-MATRIX.md` | - | `294a7d1941e446682ad7914f885f5a4b73305eef4f33b0cbf9d5fbdadf891034` | CANONICAL |
+| EV-M3 | 隔离测试 107 passed | `verification/FEA-11-MATCH-1/logs/pytest-fea11.log` | - | `23cc3be7d397dcc65b1fae44e731500143a491b81dfd0a1ba76178ad2fb0b339` | CANONICAL |
+| EV-M4 | 本卡 19 passed | `verification/FEA-11-MATCH-1/logs/pytest-match.log` | - | `ae2459c20a91a2abbaeaa644dce74e0761a3072d93bd5bee7fdf2ec5f1920f1e` | CANONICAL |
+| EV-M5 | 全量 3202/10 | `verification/FEA-11-MATCH-1/logs/pytest-full.log` | - | `424face1e52782db24293975bd9306868d5583b7912e5297512f5efdf7ac6b46` | CANONICAL |
+| EV-M6 | 基线 3183/10 | `verification/FEA-11-MATCH-1/logs/pytest-baseline.log` | - | `4b9766da52dc44a68046ce384cd525831309d8ed49c602d8757f1bae9ffec37f` | CANONICAL |
+| EV-M7 | pins 18/18 | `verification/FEA-11-MATCH-1/logs/verify-pins.log` | - | `556d632d482aa148bd5e25e81f02424c331b05dd54b6652b0f11a3724fa7eb30` | CANONICAL |
+| EV-M8 | 零漂移 | `verification/FEA-11-MATCH-1/logs/static-diff.log` | - | `0bc430068a53754a432d1ac80d2fb2579c4bd84b15f982cc24c23ac822cc61d2` | CANONICAL |
+| EV-M9 | 变更清单 | `verification/FEA-11-MATCH-1/changed-files.txt` | - | `536bb422934eae9e205e54e89184a7390659f96af77385ea66c96a44c6e0c646` | CANONICAL |
+| EV-M10 | check.ps1 PASS（最终复跑） | `verification/FEA-11-MATCH-1/logs/gates.log` | - | `68f0f4f404d78d26d11a133a840de24db3dda41cb6fd7aa99e98574f1283f460` | SOURCE_PIN |
+
+check.ps1 运行结果与门禁摘录见 `verification/FEA-11-MATCH-1/logs/gates.log`（命令/EXIT/输出；已以 `SOURCE_PIN` 登记在 EV-M10）。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main 工作树；释放时由 DSH 固定） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11-MATCH-1\`（预计隔离 fixture 根） | DELETE_SAFE（预计） | — | — | 未创建；实施后按实际登记 |
-| agent-output | — | NOT_APPLICABLE | — | — | 本卡尚未产生 |
+| worktree | NOT_APPLICABLE（main 工作树；本卡在 `main` 上层提交，未新建 worktree） | NOT_APPLICABLE | — | — | 未创建 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures`（pytest `tmp_path` + conftest 既有隔离根） | DELETE_SAFE（pytest 自清理；无提交二进制） | — | — | 已用于真实 zip/v7 导入 fixture；无 tracked 文件写入 |
+| agent-output | `verification/FEA-11-MATCH-1/**`（仓库内证据，非 workspace agent-output） | KEEP（canonical evidence） | — | 见 Canonical Evidence | 已登记 |
 
 ## Closeout Record
 

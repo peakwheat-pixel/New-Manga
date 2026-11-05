@@ -1,0 +1,58 @@
+# FEA-11-MATCH-1 zero-drift evidence
+# cwd: G:\CODEX\New Manga
+# base: 2d9a4a219  head: b4ad109dabb9fb99ab2193e9d83c703b72d27438
+# recorded_at: 2026-11-06T01:54:00+08:00
+# exit: 0
+
+$ git rev-parse HEAD
+EXIT=0
+b4ad109dabb9fb99ab2193e9d83c703b72d27438
+$ git log --format='%h %s' -5
+EXIT=0
+b4ad109da fix(fea11-match-1): decoder params must be a canonical JSON object (C8)
+a85874186 docs(fea-11-match-1): 指针转 in_review（清 READY 节点；STATUS/PLAN/ledger 对齐）
+2d61e43c3 test(fea11-match-1): AC-M1..M5 evidence matrix + W1/W1b fixture fixes
+7bd8efe47 feat(fea11-match-1): pixel-digest/1 profile extraction + 7-dim honest matching (AC-M1..M4)
+9bf3fcb42 docs(fea-11): closeout 补充——AC11-4 由 FEA-11-AC4-GAPS-1 闭环(MET)；AC11-3/AC11-1 承接状态回填
+$ git diff --name-only 2d9a4a219..HEAD -- doc/plan doc/contracts apps
+EXIT=0
+
+$ git diff --name-only 2d9a4a219..HEAD -- src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt pyproject.toml
+EXIT=0
+
+$ git diff --stat 2d9a4a219..HEAD
+EXIT=0
+ doc/REBASELINE_PLAN.md              |    4 +-
+ doc/STATUS.md                       |    4 +-
+ doc/TASK_LEDGER.md                  |   15 +-
+ doc/reviews/FEA-11-AC4-GAPS-1-r1.md |  145 +++++
+ doc/tasks/FEA-11-AC4-GAPS-1.md      |   32 +-
+ doc/tasks/FEA-11-MATCH-1.md         |    6 +-
+ doc/tasks/FEA-11.md                 |    7 +
+ src/application/sources/matcher.py  |  377 +++++++-----
+ src/application/sources/scanner.py  |  354 +++++++++--
+ tests/fea11/test_source_match.py    | 1112 +++++++++++++++++++++++++++++++++++
+ tests/fea11/test_source_relink.py   |    7 +
+ tests/fea11/test_source_scan.py     |   10 +-
+ tests/fea11/test_source_sync.py     |   60 ++
+ 13 files changed, 1908 insertions(+), 225 deletions(-)
+$ git diff --name-only 2d9a4a219..HEAD
+EXIT=0
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
+doc/reviews/FEA-11-AC4-GAPS-1-r1.md
+doc/tasks/FEA-11-AC4-GAPS-1.md
+doc/tasks/FEA-11-MATCH-1.md
+doc/tasks/FEA-11.md
+src/application/sources/matcher.py
+src/application/sources/scanner.py
+tests/fea11/test_source_match.py
+tests/fea11/test_source_relink.py
+tests/fea11/test_source_scan.py
+tests/fea11/test_source_sync.py
+$ git status --porcelain
+EXIT=0
+ M doc/tasks/FEA-11-MATCH-1.md
+?? doc/handoffs/FEA-11-MATCH-1-handoff.md
+?? verification/FEA-11-MATCH-1/

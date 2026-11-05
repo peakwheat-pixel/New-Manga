@@ -1,0 +1,24 @@
+# FEA-11-MATCH-1 changed files
+# base: 2d9a4a219
+# delivery head (implementation+tests): b4ad109dabb9fb99ab2193e9d83c703b72d27438
+# commits: 7bd8efe47 (src), 2d61e43c3 (tests), b4ad109da (C8 strict params); docs/evidence in the follow-up commit.
+
+## committed vs base
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
+doc/reviews/FEA-11-AC4-GAPS-1-r1.md
+doc/tasks/FEA-11-AC4-GAPS-1.md
+doc/tasks/FEA-11-MATCH-1.md
+doc/tasks/FEA-11.md
+src/application/sources/matcher.py
+src/application/sources/scanner.py
+tests/fea11/test_source_match.py
+tests/fea11/test_source_relink.py
+tests/fea11/test_source_scan.py
+tests/fea11/test_source_sync.py
+
+## still uncommitted at recording time (docs/evidence + handoff)
+ M doc/tasks/FEA-11-MATCH-1.md
+?? doc/handoffs/FEA-11-MATCH-1-handoff.md
+?? verification/FEA-11-MATCH-1/

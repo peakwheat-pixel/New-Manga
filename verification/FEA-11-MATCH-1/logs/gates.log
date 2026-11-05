@@ -1,0 +1,66 @@
+# FEA-11-MATCH-1 gates（命令 / EXIT / 结果摘录）
+# base: 2d9a4a219  delivery head (implementation+tests): b4ad109dabb9fb99ab2193e9d83c703b72d27438
+# commits: 7bd8efe47 (src) / 2d61e43c3 (tests) / b4ad109da (C8 strict params fix)
+# recorded_at: 2026-11-06T01:56:00+08:00
+
+[GATE] pytest-tests-fea11
+command: C:/Python314/python.exe -m pytest tests/fea11 -q -p no:cacheprovider
+exit: 0
+result: 107 passed, 8 warnings in 2.89s
+
+[GATE] pytest-test-source-match
+command: C:/Python314/python.exe -m pytest tests/fea11/test_source_match.py -q -p no:cacheprovider
+exit: 0
+result: 19 passed in 0.42s
+
+[GATE] pytest-full
+command: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
+exit: 0
+result: 3202 passed, 10 skipped in 237.79s
+baseline: 3183 passed, 10 skipped, EXIT 0 at release head 71e4b42b4 (logs/pytest-baseline.log)
+
+[GATE] verify-pins
+command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+exit: 0
+result: PIN AUDIT: PASS (all 18)
+
+[GATE] zero-drift
+command: git diff --name-only 2d9a4a219..HEAD -- doc/plan doc/contracts apps
+exit: 0
+result: (empty)
+command: git diff --name-only 2d9a4a219..HEAD -- src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/migrator.py requirements.txt pyproject.toml
+exit: 0
+result: (empty)
+
+[GATE] dotnet
+command: NOT_RUN
+result: apps/** zero diff; no C# change (ZScope C7: do not claim PASS)
+
+[GATE] check-taskpath
+command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-MATCH-1.md
+result: 见下（本次交付最终复跑）
+exit: 1
+result: Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-MATCH-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2820 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6819 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-11-MATCH-1\logs\gates.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/pytest-fea11.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/pytest-match.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/pytest-full.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/pytest-baseline.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/verify-pins.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/logs/static-diff.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-11-MATCH-1/changed-files.txt
+Governance check: FAIL (7 errors, 4 warnings)
+
+exit: 0
+result: 见上（check 复跑输出如下）
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-MATCH-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2820 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6819 bytes / 63 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-11-MATCH-1\logs\gates.log
+Governance check: PASS (4 warnings)
