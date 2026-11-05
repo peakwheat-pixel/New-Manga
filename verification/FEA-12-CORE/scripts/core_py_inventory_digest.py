@@ -43,11 +43,16 @@ DERIVED_REL_PATH = "previews/derived-golden.png"
 
 
 def _canonical_payload(book_id: str, item: dict) -> dict:
-    """The frozen C-04b §2.1 canonical object (keys are sorted at dump time)."""
+    """The frozen C-04b v1.1 §2.1 canonical object (digest v2)."""
     return {
         "bookId": book_id,
         "lockCount": item["protection"]["lockCount"],
-        "currentRevisionId": item["protection"]["currentRevisionId"],
+        "currentRegionRevisionIds": sorted(
+            item["protection"]["currentRegionRevisionIds"]
+        ),
+        "currentArtifactRevisionIds": sorted(
+            item["protection"]["currentArtifactRevisionIds"]
+        ),
         "pinnedRevisionIds": sorted(item["protection"]["pinnedRevisionIds"]),
         "activeRunIds": sorted(item["protection"]["activeRunIds"]),
         "draftPageCount": item["protection"]["draftPageCount"],
@@ -148,6 +153,11 @@ def _seed(core, storage_root: Path) -> None:
             " 'image/png', 15, 1, ?)",
             (artifact_relative, hashlib.sha256(b"golden-artifact").hexdigest(), NOW),
         )
+        # v1.1 golden: an artifact current participates in currentArtifactRevisionIds.
+        conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = 'artifact-rev-golden'"
+            " WHERE artifact_id = 'artifact-golden'"
+        )
     core.drafts.open_draft(
         "golden-session", "page-golden", "region-golden",
         base_revision_id="rev-golden", page_binding_version=0,
@@ -229,6 +239,15 @@ def main() -> int:
             "name": "single-book-full-protection",
             "request": {"bookIds": ["book-golden"]},
             "preview_item": single_item,
+            "current_sets": {
+                "currentRevisionId": single_item["protection"]["currentRevisionId"],
+                "currentRegionRevisionIds": single_item["protection"][
+                    "currentRegionRevisionIds"
+                ],
+                "currentArtifactRevisionIds": single_item["protection"][
+                    "currentArtifactRevisionIds"
+                ],
+            },
             "canonical_payload": _canonical_payload("book-golden", single_item),
             "expected_inventoryDigest": expected_single,
             "actual_inventoryDigest": single["inventoryDigests"]["book-golden"],

@@ -38,6 +38,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from bootstrap.core_service import CoreServiceServer, assemble_production_core
+from application.library.service import collection_inventory_digest
 from infrastructure.resource_channel.catalog_store import (
     ResourceCatalogStore,
     initialize_namespace,
@@ -666,9 +667,11 @@ def test_delete_books_two_level_digest_binding(server: CoreServiceServer) -> Non
     assert res["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
     assert server._core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0] == 3
 
-    # Key-set mismatch between the map and book_ids => stale, zero side effect.
+    # Key-set mismatch between the map and book_ids is a request-shape error
+    # (C-04b v1.1 §2.2: missing/extra keys -> INVALID_REQUEST), zero side effect.
     res = _delete_batch(server, ["b1", "b2"], collection, {"b1": digests["b1"]})
-    assert res["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert res["error"]["code"] == "INVALID_REQUEST"
+    assert res["error"]["category"] == "validation"
 
     res = _delete_batch(server, ["b1", "b2"], collection, digests)
     assert res["error"] is None
@@ -1308,12 +1311,13 @@ def test_delete_book_unsafe_binding_previous_reference_conflicts(
 # --- r1 R-008: mixed live + PD-07 retry batch (documented limitation) ---
 
 
-def test_delete_books_mixed_retry_batch_validates_live_per_book_digest(
+def test_delete_books_mixed_live_retry_is_rejected_and_pure_paths_work(
     server: CoreServiceServer, monkeypatch,
 ) -> None:
-    """R-008 limitation: a batch containing a PD-07 retry target skips the
-    *collection-level* digest comparison (no Book row to re-preview), but the
-    per-book digest of every live target is still strictly validated."""
+    """C-04b v1.1 §2.2 (Codex OVERTURN 4): a mixed live+retry batch is NOT
+    allowed (the caller must re-preview); pure live and pure pending retry
+    paths remain valid, and the pending retry passes the manifest's original
+    collection digest through verbatim (never recomputes it for the subset)."""
     _seed_book(server, "b1", "Book 1")
     _seed_book(server, "b2", "Book 2")
     _seed_book(server, "b3", "Book 3")  # keeps the library "whole" check false
@@ -1331,49 +1335,52 @@ def test_delete_books_mixed_retry_batch_validates_live_per_book_digest(
     first = _delete_single(server, "b1", digests["b1"])
     monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
     assert first["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
-    assert repository.get_cleanup_manifest_data("b1") is not None
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
+    assert manifest["inventory_digest"] == digests["b1"]
+    assert manifest["original_book_ids"] == ["b1"]
+    assert manifest["original_collection_digest"] == collection_inventory_digest(
+        ["b1"], {"b1": digests["b1"]}
+    )
 
-    # (a) live per-book digest mismatch inside a mixed retry batch => stale,
-    # zero side effects (the collection digest is only shape-checked).
-    res = _delete_batch(server, ["b1", "b2"], FAKE_DIGEST, {"b1": digests["b1"], "b2": FAKE_DIGEST})
-    assert res["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
-    items = res["error"]["details"]["items"]
-    assert next(it for it in items if it["book_id"] == "b2")["error_code"] == "BOOK_DELETE_STALE_PREVIEW"
+    live_digest = _single_digest(server, "b2")
+    # (a) mixed live+retry => rejected (STALE), zero side effects.
+    mixed = _delete_batch(
+        server, ["b1", "b2"], FAKE_DIGEST, {"b1": digests["b1"], "b2": live_digest}
+    )
+    assert mixed["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
     assert server._core.conn.execute(
         "SELECT COUNT(*) FROM books WHERE book_id = 'b2'"
     ).fetchone()[0] == 1
+    assert repository.get_cleanup_manifest_data("b1") is not None
 
-    # (b) correct live digest + shape-valid collection digest => the retry is
-    # allowed (PD-07 does not re-run the preview) and the live book is deleted.
-    res = _delete_batch(
-        server, ["b1", "b2"], FAKE_DIGEST, {"b1": digests["b1"], "b2": digests["b2"]}
+    # (b) pure pending retry: the original collection digest is passed through
+    # verbatim (even though the subset is shorter), and only b1 is retried.
+    retry = _delete_batch(
+        server, ["b1"], manifest["original_collection_digest"],
+        {"b1": digests["b1"]},
     )
-    assert res["error"] is None, res["error"]
-    assert res["result"]["items"] == [
-        {"book_id": "b1", "status": "deleted", "error_code": None},
-        {"book_id": "b2", "status": "deleted", "error_code": None},
+    assert retry["error"] is None, retry["error"]
+    assert retry["result"]["items"] == [
+        {"book_id": "b1", "status": "deleted", "error_code": None}
     ]
     assert repository.get_cleanup_manifest_data("b1") is None
-    assert server._core.conn.execute(
-        "SELECT COUNT(*) FROM books WHERE book_id = 'b2'"
-    ).fetchone()[0] == 0
 
-
-# --- r1 R-012: batch cleanup-pending -> explicit retry (direct evidence) ---
+    # (c) pure live batch still works with its own preview collection digest.
+    collection2, digests2 = _batch_digests(server, ["b2"])
+    live = _delete_batch(server, ["b2"], collection2, digests2)
+    assert live["error"] is None, live["error"]
+    assert live["result"]["items"] == [
+        {"book_id": "b2", "status": "deleted", "error_code": None}
+    ]
 
 
 def test_delete_books_batch_cleanup_pending_then_explicit_retry(
     server: CoreServiceServer, monkeypatch,
 ) -> None:
-    """R-012: the batch path of PD-07 has direct evidence.
-
-    One item's file cleanup is refused after the DB commit -> the batch
-    reports ``BOOK_DELETE_BATCH_CLEANUP_PENDING`` with per-item statuses
-    (``cleanup_pending`` vs ``deleted``); an explicit retry that only carries
-    the pending ID re-runs the cleanup without a new preview (PD-07 §5.11.1a)
-    and then reports the item deleted; a second replay is a zero-side-effect
-    ``BOOK_NOT_FOUND`` (idempotent, no hidden retry).
-    """
+    """R-012 + C-04b v1.1 §2.2: batch partial cleanup reports per-item states;
+    the explicit retry is a pending subset that passes the original collection
+    digest through verbatim (no preview re-run), and replay is idempotent."""
     _seed_book(server, "b1", "Book 1")
     _seed_book(server, "b2", "Book 2")
     _seed_book(server, "b3", "Book 3")
@@ -1401,18 +1408,24 @@ def test_delete_books_batch_cleanup_pending_then_explicit_retry(
         {"book_id": "b1", "status": "cleanup_pending", "error_code": None},
         {"book_id": "b2", "status": "deleted", "error_code": None},
     ]
-    # The DB commit is durable; only b1's file manifest is pending.
     assert server._core.conn.execute(
         "SELECT COUNT(*) FROM books WHERE book_id IN ('b1','b2')"
     ).fetchone()[0] == 0
-    assert repository.get_cleanup_manifest_data("b1") is not None
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
+    assert manifest["original_collection_digest"] == collection
     assert Path(server._core.storage.absolute_path(rel_p1)).is_file()
     assert not Path(server._core.storage.absolute_path(rel_p2)).exists()
-    assert repository.get_cleanup_manifest_data("b2") is None
 
-    # Explicit retry with only the pending ID; the collection digest is only
-    # shape-checked because there is no Book row to re-preview (PD-07).
-    retry = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    # (a) wrong / missing collection digest => rejected, pending remains.
+    stale = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    missing = _delete_batch(server, ["b1"], "", {"b1": digests["b1"]})
+    assert missing["error"]["code"] == "INVALID_REQUEST"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+
+    # (b) explicit retry with the ORIGINAL collection digest (verbatim).
+    retry = _delete_batch(server, ["b1"], collection, {"b1": digests["b1"]})
     assert retry["error"] is None, retry["error"]
     assert retry["result"]["requested_count"] == 1
     assert retry["result"]["completed_count"] == 1
@@ -1422,9 +1435,8 @@ def test_delete_books_batch_cleanup_pending_then_explicit_retry(
     assert not Path(server._core.storage.absolute_path(rel_p1)).exists()
     assert repository.get_cleanup_manifest_data("b1") is None
 
-    # Idempotent replay: nothing is pending any more -> typed preflight
-    # failure, zero side effects, no silent disappearance of a live book.
-    replay = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    # (c) idempotent replay: nothing pending => typed preflight failure.
+    replay = _delete_batch(server, ["b1"], collection, {"b1": digests["b1"]})
     assert replay["error"]["code"] == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
     assert replay["error"]["details"]["items"] == [
         {"book_id": "b1", "status": "not_started", "error_code": "BOOK_NOT_FOUND"}
@@ -1434,9 +1446,9 @@ def test_delete_books_batch_cleanup_pending_then_explicit_retry(
 def test_delete_books_batch_cleanup_pending_mixed_retry_items(
     server: CoreServiceServer, monkeypatch,
 ) -> None:
-    """R-008/R-012 together: a mixed live+retry batch keeps the per-item
-    status vocabulary across all three states (deleted / cleanup_pending /
-    not_started) and validates the live book's per-book digest strongly."""
+    """C-04b v1.1: mixed live+retry is rejected with per-item STALE and zero
+    side effects; the pending target is then retried from its manifest, and a
+    separate live target still deletes via the normal two-level path."""
     _seed_book(server, "b1", "Book 1")
     _seed_book(server, "b2", "Book 2")
     _seed_book(server, "b3", "Book 3")
@@ -1456,28 +1468,357 @@ def test_delete_books_batch_cleanup_pending_mixed_retry_items(
     first = _delete_batch(server, ["b1", "b2"], collection, digests)
     monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
     assert first["error"]["code"] == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
 
-    # Live b4 + pending b1: wrong per-book digest for the live target must
-    # still be a hard STALE (collection-level is only shape-checked).
     _seed_book(server, "b4", "Book 4")
     _seed_chapter_and_page(server, "b4", "c4", "p4")
+    live_digest = _single_digest(server, "b4")
+    mixed = _delete_batch(
+        server, ["b1", "b4"], manifest["original_collection_digest"],
+        {"b1": digests["b1"], "b4": live_digest},
+    )
+    assert mixed["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert all(
+        it["error_code"] == "BOOK_DELETE_STALE_PREVIEW"
+        for it in mixed["error"]["details"]["items"]
+    )
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b4'"
+    ).fetchone()[0] == 1
+    assert repository.get_cleanup_manifest_data("b1") is not None
+
+    # Pending retry (original collection digest verbatim) succeeds.
+    retry = _delete_batch(
+        server, ["b1"], manifest["original_collection_digest"],
+        {"b1": digests["b1"]},
+    )
+    assert retry["error"] is None, retry["error"]
+    assert repository.get_cleanup_manifest_data("b1") is None
+
+    # Live b4 deletes through the ordinary two-level path.
+    collection4, digests4 = _batch_digests(server, ["b4"])
+    live = _delete_batch(server, ["b4"], collection4, digests4)
+    assert live["error"] is None, live["error"]
+
+
+def test_delete_books_retry_collection_digest_is_always_validated(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """C-04b v1.1 §2.2: a pure-pending retry binds the manifest's ORIGINAL
+    collection digest verbatim; wrong/missing/reordered/swapped values are all
+    rejected with zero side effects (Codex OVERTURN 4, no shape-only pass)."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    _seed_book(server, "b4", "Book 4")
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_batch(server, ["b1", "b2"], collection, digests)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
+    assert manifest["original_book_ids"] == ["b1", "b2"]
+    assert manifest["original_collection_digest"] == collection
+
+    # (1) arbitrary well-formed value => STALE.
+    stale = _delete_batch(server, ["b1"], FAKE_DIGEST, {"b1": digests["b1"]})
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    # (2) missing => INVALID_REQUEST.
+    missing = _delete_batch(server, ["b1"], "", {"b1": digests["b1"]})
+    assert missing["error"]["code"] == "INVALID_REQUEST"
+    # (3) reordered pending subset (["b2","b1"]) is not order-preserving.
+    reordered = _delete_batch(
+        server, ["b2", "b1"], collection, {"b2": digests["b2"], "b1": digests["b1"]}
+    )
+    assert reordered["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    # (4) swapped per-book map with the original collection => per-book STALE.
+    swapped = _delete_batch(
+        server, ["b1"], collection, {"b1": digests["b2"]}
+    )
+    assert swapped["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+    assert repository.get_cleanup_manifest_data("b2") is not None
+    assert Path(server._core.storage.absolute_path(rel_p1)).is_file()
+
+    # (5) correct pure-pending retry with the original collection digest.
+    retry = _delete_batch(
+        server, ["b1", "b2"], collection,
+        {"b1": digests["b1"], "b2": digests["b2"]},
+    )
+    assert retry["error"] is None, retry["error"]
+    assert [it["status"] for it in retry["result"]["items"]] == [
+        "deleted", "deleted"
+    ]
+    assert repository.get_cleanup_manifest_data("b1") is None
+    assert repository.get_cleanup_manifest_data("b2") is None
+    # (6) b4 (never requested) is untouched.
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b4'"
+    ).fetchone()[0] == 1
+
+
+def test_delete_book_cleanup_pending_retry_requires_manifest_digest(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """C-04b v1.1 §2.2: a single PD-07 retry validates the supplied digest
+    against the digest persisted in the manifest; a wrong digest is STALE with
+    zero side effects (previously only shape-checked)."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    digest = _single_digest(server, "b1")
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_single(server, "b1", digest)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
+    assert manifest["inventory_digest"] == digest
+
+    wrong = "sha256:" + "a" * 64
+    stale = _delete_single(server, "b1", wrong)
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+
+    retry = _delete_single(server, "b1", digest)
+    assert retry["error"] is None, retry["error"]
+    assert retry["result"] == {"book_id": "b1", "deleted": True}
+    assert repository.get_cleanup_manifest_data("b1") is None
+
+
+
+# --- r3 A3: retry order / manifest tamper --------------------------------
+
+
+def test_delete_books_retry_order_must_follow_original_preview(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """C-04b v1.1 §2.2: the retry IDs must be an order-preserving pending
+    subset of the original preview; reordering is STALE and the original
+    collection digest (not a subset recomputation) must be passed back."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    rel_p1 = _seed_chapter_and_page(server, "b1", "c1", "p1")
+    rel_p2 = _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_batch(server, ["b1", "b2"], collection, digests)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+
+    manifest = repository.get_cleanup_manifest_data("b1")
+    assert manifest is not None
+    assert manifest["batch_id"]
+    assert manifest["original_book_ids"] == ["b1", "b2"]
+    assert manifest["original_collection_digest"] == collection
+    assert manifest["book_id"] == "b1"
+    assert manifest["inventory_digest"] == digests["b1"]
+    assert isinstance(manifest["inventory_inputs"], dict)
+
+    # Reordered pending set is not an order-preserving subset => STALE.
     stale = _delete_batch(
-        server, ["b1", "b4"], FAKE_DIGEST, {"b1": digests["b1"], "b4": FAKE_DIGEST}
+        server, ["b2", "b1"], collection,
+        {"b2": digests["b2"], "b1": digests["b1"]},
     )
     assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
-    assert next(
-        it for it in stale["error"]["details"]["items"] if it["book_id"] == "b4"
-    )["error_code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+    assert repository.get_cleanup_manifest_data("b2") is not None
 
-    # Correct live digest + pending b1: the retry proceeds and both items end
-    # ``deleted`` (b1's pending cleanup + b4's delete), in request order.
-    live_digest = _single_digest(server, "b4")
-    retry = _delete_batch(
-        server, ["b1", "b4"], FAKE_DIGEST, {"b1": digests["b1"], "b4": live_digest}
-    )
+    # Correct order + the original collection digest => retry succeeds.
+    retry = _delete_batch(server, ["b1", "b2"], collection, digests)
     assert retry["error"] is None, retry["error"]
     assert retry["result"]["items"] == [
         {"book_id": "b1", "status": "deleted", "error_code": None},
-        {"book_id": "b4", "status": "deleted", "error_code": None},
+        {"book_id": "b2", "status": "deleted", "error_code": None},
     ]
-    assert repository.get_cleanup_manifest_data("b1") is None
+    assert not Path(server._core.storage.absolute_path(rel_p1)).exists()
+    assert not Path(server._core.storage.absolute_path(rel_p2)).exists()
+
+
+def test_delete_books_retry_manifest_tamper_or_missing_is_stale(
+    server: CoreServiceServer, monkeypatch,
+) -> None:
+    """C-04b v1.1 §2.2: a tampered (or missing) manifest binding is fail-closed;
+    the supplied values must match the persisted ones, never shape-only."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    collection, digests = _batch_digests(server, ["b1"])
+    original_digest = digests["b1"]
+    assert collection == collection_inventory_digest(["b1"], {"b1": original_digest})
+
+    repository = server._core.repository
+    real_cleanup = repository.cleanup_book_files
+
+    def refusing_cleanup(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr(repository, "cleanup_book_files", refusing_cleanup)
+    first = _delete_single(server, "b1", original_digest)
+    monkeypatch.setattr(repository, "cleanup_book_files", real_cleanup)
+    assert first["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+    good_json = server._core.conn.execute(
+        "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = 'b1'"
+    ).fetchone()[0]
+
+    def _write(payload: dict) -> None:
+        with server._core.conn:
+            server._core.conn.execute(
+                "UPDATE book_cleanup_manifests SET targets_json = ? WHERE book_id = 'b1'",
+                (json.dumps(payload, ensure_ascii=False),),
+            )
+
+    # (1) tampered inventory_inputs no longer hash to the stored digest.
+    tampered_inputs = json.loads(good_json)
+    tampered_inputs["inventory_inputs"]["chapters"] = 999
+    _write(tampered_inputs)
+    stale = _delete_batch(
+        server, ["b1"], collection, {"b1": original_digest}
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+
+    # (2) tampered original collection digest (supplied value is the real one).
+    tampered_collection = json.loads(good_json)
+    tampered_collection["original_collection_digest"] = "sha256:" + "a" * 64
+    _write(tampered_collection)
+    stale = _delete_batch(server, ["b1"], collection, {"b1": original_digest})
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+
+    # (3) tampered per-book digest (supplied tampered value self-consistent
+    # with a recomputed collection still fails the input re-verification).
+    tampered_digest = json.loads(good_json)
+    tampered_digest["inventory_digest"] = "sha256:" + "a" * 64
+    _write(tampered_digest)
+    stale = _delete_batch(
+        server, ["b1"], collection, {"b1": "sha256:" + "a" * 64}
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert repository.get_cleanup_manifest_data("b1") is not None
+
+    # (4) restored good manifest => retry succeeds.
+    _write(json.loads(good_json))
+    retry = _delete_batch(server, ["b1"], collection, {"b1": original_digest})
+    assert retry["error"] is None, retry["error"]
+
+    # (5) missing manifest (no Book row, no manifest) => typed BOOK_NOT_FOUND.
+    missing = _delete_batch(server, ["b1"], collection, {"b1": original_digest})
+    assert missing["error"]["code"] == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
+    assert missing["error"]["details"]["items"] == [
+        {"book_id": "b1", "status": "not_started", "error_code": "BOOK_NOT_FOUND"}
+    ]
+
+
+
+
+
+# --- r5 口径: digest shape branches (single per-book vs batch collection) ---
+
+
+def test_single_delete_binds_per_book_digest_not_collection_digest(
+    server: CoreServiceServer,
+) -> None:
+    """C-04b v1.1 §2.2 / M2-C1 §5.11.1a: the single command's
+    ``inventory_digest`` is that book's PER-BOOK digest; a collection-level
+    digest (sha256(hex(per-book))) must be rejected as stale."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    preview = _preview(server, ["b1"])
+    per_book = preview["inventoryDigests"]["b1"]
+    collection = preview["inventoryDigest"]
+    assert collection == collection_inventory_digest(["b1"], {"b1": per_book})
+    assert collection != per_book
+
+    stale = _delete_single(server, "b1", collection)
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+
+    accepted = _delete_single(server, "b1", per_book)
+    assert accepted["error"] is None, accepted["error"]
+
+
+def test_batch_inventory_digests_key_set_must_be_exact(
+    server: CoreServiceServer,
+) -> None:
+    """C-04b v1.1 §2.2: the per-book map keys must be exactly the request
+    book_ids — missing/extra keys are INVALID_REQUEST (shape), not STALE; the
+    batch collection digest is the collection-level value."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+    assert collection == collection_inventory_digest(["b1", "b2"], digests)
+    assert collection != digests["b1"]
+
+    missing = _delete_batch(
+        server, ["b1", "b2"], collection, {"b1": digests["b1"]}
+    )
+    assert missing["error"]["code"] == "INVALID_REQUEST"
+    extra = _delete_batch(
+        server, ["b1", "b2"], collection,
+        {"b1": digests["b1"], "b2": digests["b2"], "b3": digests["b1"]},
+    )
+    assert extra["error"]["code"] == "INVALID_REQUEST"
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id IN ('b1','b2')"
+    ).fetchone()[0] == 2
+
+    accepted = _delete_batch(server, ["b1", "b2"], collection, digests)
+    assert accepted["error"] is None, accepted["error"]
+
+
+def test_batch_first_confirm_binds_collection_digest(
+    server: CoreServiceServer,
+) -> None:
+    """C-04b v1.1 §2.2: the batch first confirmation uses the COLLECTION-level
+    digest; passing a per-book digest (or a reordered collection) is stale."""
+    _seed_book(server, "b1", "Book 1")
+    _seed_book(server, "b2", "Book 2")
+    _seed_book(server, "b3", "Book 3")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b2", "c2", "p2")
+    collection, digests = _batch_digests(server, ["b1", "b2"])
+
+    per_book_as_collection = _delete_batch(
+        server, ["b1", "b2"], digests["b1"], digests
+    )
+    assert per_book_as_collection["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    reordered = _delete_batch(
+        server, ["b2", "b1"], collection,
+        {"b1": digests["b1"], "b2": digests["b2"]},
+    )
+    assert reordered["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert server._core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id IN ('b1','b2')"
+    ).fetchone()[0] == 2
+
+    accepted = _delete_batch(server, ["b1", "b2"], collection, digests)
+    assert accepted["error"] is None, accepted["error"]

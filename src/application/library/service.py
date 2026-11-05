@@ -278,11 +278,26 @@ def is_inventory_digest(value: object) -> bool:
 
 
 def canonical_inventory_payload(inventory: dict) -> dict:
-    """The frozen canonical payload for one book (C-04b §2.1 field list)."""
+    """The frozen canonical payload for one book (C-04b **v1.1** §2.1).
+
+    v1.1 (CONTRACT-UNFREEZE-2026-11-05 §A2) replaces the single
+    ``currentRevisionId`` binding value with the *complete* current sets:
+
+    * ``currentRegionRevisionIds`` — every lineage-visible region current;
+    * ``currentArtifactRevisionIds`` — every artifact current.
+
+    The DTO keeps ``currentRevisionId`` as a representative display value, but
+    it is deliberately **not** part of the digest (it does not bind anything).
+    Arrays are lexicographically sorted inside the canonical form so the digest
+    is independent of the DTO reading order.
+    """
     return {
         "bookId": inventory["book_id"],
         "lockCount": inventory["lock_count"],
-        "currentRevisionId": inventory["current_revision_id"],
+        "currentRegionRevisionIds": sorted(inventory["current_region_revision_ids"]),
+        "currentArtifactRevisionIds": sorted(
+            inventory["current_artifact_revision_ids"]
+        ),
         "pinnedRevisionIds": sorted(inventory["pinned_revision_ids"]),
         "activeRunIds": sorted(inventory["active_run_ids"]),
         "draftPageCount": inventory["draft_page_count"],
@@ -302,17 +317,22 @@ def canonical_inventory_payload(inventory: dict) -> dict:
     }
 
 
+def canonical_payload_digest(canonical: dict) -> str:
+    """``sha256:`` + SHA-256 over an already-canonical payload object.
+
+    Used both by ``inventory_digest`` (building the canonical object from the
+    inventory) and by the PD-07 retry path to re-verify a digest persisted in
+    the cleanup manifest from the persisted binding inputs (tamper detection).
+    """
+    encoded = json.dumps(
+        canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    return INVENTORY_DIGEST_PREFIX + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
 def inventory_digest(inventory: dict) -> str:
     """``sha256:`` + SHA-256 of the canonical JSON of one book inventory."""
-    canonical = json.dumps(
-        canonical_inventory_payload(inventory),
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-    )
-    return INVENTORY_DIGEST_PREFIX + hashlib.sha256(
-        canonical.encode("utf-8")
-    ).hexdigest()
+    return canonical_payload_digest(canonical_inventory_payload(inventory))
 
 
 def collection_inventory_digest(book_ids: list[str], digests: dict[str, str]) -> str:

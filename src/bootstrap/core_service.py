@@ -207,6 +207,8 @@ from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
 from application.library.errors import BookNotFound
 from application.library.service import (
+    canonical_inventory_payload,
+    canonical_payload_digest,
     collection_inventory_digest,
     decode_trash_cursor,
     encode_trash_cursor,
@@ -319,8 +321,9 @@ PROTOCOL_MINOR = 3
 _P15_PROTOCOL_MINOR = 7
 _CREATE_PROTOCOL_MINOR = 8
 _DELETE_PROTOCOL_MINOR = 10
-#: C-04b §2.1 / M2-C1 §5.13: the read-only deletion-preview command family
-#: targets wire minor 11 (frozen by FEA-12-PREREQ-1 rev 2.13).
+#: C-04b v1.1 / M2-C1 rev 2.14 §5.13: the read-only deletion-preview command
+#: family keeps wire minor 11 (v1.1 only adds response fields; the contract
+#: explicitly does NOT bump the target minor).
 _PREVIEW_PROTOCOL_MINOR = 11
 #: C-09 SC-B06 / M2-C1 §5.14: the recycle-bin command family is an
 #: independent family at wire minor 13.
@@ -1803,9 +1806,45 @@ class CoreServiceServer:
         * ``deletedFiles``/``deletedBytes``: the managed sweep list **plus the
           catalog preview / page-original derived files** the cleanup removes
           (r1 R-001), de-duplicated by absolute path.
+
+        * C-04b **v1.1** (Codex OVERTURN 3a / CONTRACT-UNFREEZE §A1): the
+          *binding* values are the complete current sets —
+          ``currentRegionRevisionIds`` (**every** region current, including
+          lineage-hidden/separate/detached history; Codex ruling: "lineage
+          invisible != this historical protection cannot be deleted") and
+          ``currentArtifactRevisionIds`` (every artifact current), both in
+          reading order, de-duplicated.  ``currentRevisionId`` stays only as a
+          representative display value and is NOT part of digest v2.
         """
         inventory = dict(raw)
         repository = self._core.repository
+        current_region_revision_ids: list[str] = []
+        seen_region_revisions: set[str] = set()
+        for pointer in raw["region_current_pointers"]:
+            revision_id = pointer["current_revision_id"]
+            if revision_id is None or revision_id in seen_region_revisions:
+                continue
+            seen_region_revisions.add(revision_id)
+            current_region_revision_ids.append(revision_id)
+        current_artifact_revision_ids: list[str] = []
+        seen_artifact_revisions: set[str] = set()
+        for pointer in raw["artifact_current_pointers"]:
+            revision_id = pointer["current_revision_id"]
+            if revision_id is None or revision_id in seen_artifact_revisions:
+                continue
+            seen_artifact_revisions.add(revision_id)
+            current_artifact_revision_ids.append(revision_id)
+        # Contract v1.1 wording is "排序去重": deterministic lexicographic order
+        # (the canonical digest sorts the same arrays, so DTO/canonical agree).
+        inventory["current_region_revision_ids"] = sorted(
+            set(current_region_revision_ids)
+        )
+        inventory["current_artifact_revision_ids"] = sorted(
+            set(current_artifact_revision_ids)
+        )
+        # Representative display value only (no binding responsibility): the
+        # first lineage-visible region current, else the first artifact
+        # current, else null (Lead ruling 2026-11-05).
         current_revision_id: str | None = None
         guard = getattr(self._core, "lineage_guard", None)
         for pointer in raw["region_current_pointers"]:
@@ -1825,10 +1864,8 @@ class CoreServiceServer:
                     continue
             current_revision_id = revision_id
             break
-        if current_revision_id is None:
-            for pointer in raw["artifact_current_pointers"]:
-                current_revision_id = pointer["current_revision_id"]
-                break
+        if current_revision_id is None and current_artifact_revision_ids:
+            current_revision_id = current_artifact_revision_ids[0]
         inventory["current_revision_id"] = current_revision_id
         inventory["current_revision_count"] = len(
             raw["region_current_pointers"]
@@ -1939,7 +1976,15 @@ class CoreServiceServer:
             "title": inventory["title"],
             "protection": {
                 "lockCount": inventory["lock_count"],
+                # C-04b v1.1: complete current sets carry the binding; the
+                # single value below is display-only.
                 "currentRevisionId": inventory["current_revision_id"],
+                "currentRegionRevisionIds": list(
+                    inventory["current_region_revision_ids"]
+                ),
+                "currentArtifactRevisionIds": list(
+                    inventory["current_artifact_revision_ids"]
+                ),
                 "pinnedRevisionIds": list(inventory["pinned_revision_ids"]),
                 "activeRunIds": list(inventory["active_run_ids"]),
                 "draftPageCount": inventory["draft_page_count"],
@@ -2215,6 +2260,11 @@ class CoreServiceServer:
             for key, value in digests.items()
         ):
             return None, self._delete_error("INVALID_REQUEST", "validation")
+        # C-04b v1.1 §2.2: the per-book map's key set must be exactly the
+        # request's book_ids; missing/extra keys are a request-shape error
+        # (INVALID_REQUEST), not a stale-preview value mismatch.
+        if set(digests) != set(book_ids):
+            return None, self._delete_error("INVALID_REQUEST", "validation")
         return raw_payload, None
 
     def _collect_delete_targets(
@@ -2296,6 +2346,10 @@ class CoreServiceServer:
         supplied_digest = validated["inventory_digest"]
         repository = self._core.repository
         storage = self._core.storage
+        batch_id: str | None = None
+        original_book_ids: list[str] = []
+        original_collection_digest: str | None = None
+        book_inputs: dict[str, Any] = {}
         with self._write_lock:
             try:
                 state, raw_inventory = self._delete_target_state(book_id, [book_id])
@@ -2316,10 +2370,20 @@ class CoreServiceServer:
                         "unavailable",
                         True,
                     )
-                if supplied_digest != inventory_digest(inventory):
+                expected_digest = inventory_digest(inventory)
+                if supplied_digest != expected_digest:
                     return None, self._delete_error(
                         "BOOK_DELETE_STALE_PREVIEW", "conflict"
                     )
+                # C-04b v1.1 §2.2: persist the original batch binding in the
+                # manifest (JSON additive) so a later PD-07 retry can validate
+                # the original collection digest verbatim.
+                batch_id = uuid.uuid4().hex
+                original_book_ids = [book_id]
+                original_collection_digest = collection_inventory_digest(
+                    [book_id], {book_id: expected_digest}
+                )
+                book_inputs = {book_id: canonical_inventory_payload(inventory)}
                 policy_error = self._permanent_delete_policy_error(inventory)
                 if policy_error is not None:
                     return None, policy_error
@@ -2330,8 +2394,26 @@ class CoreServiceServer:
                     code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
                     category = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
                     return None, self._delete_error(code, category)
-            # PD-07: a retry has no Book row to preview; the digest is only
-            # shape-validated (the first preview bound it before the commit).
+            else:
+                # C-04b v1.1 §2.2: a PD-07 retry target has no Book row to
+                # re-preview.  The per-book digest confirmed before the commit
+                # is persisted in its manifest, re-verified against the
+                # persisted canonical binding inputs (tamper detection), and
+                # must match the request exactly — never a shape-only pass
+                # (Codex OVERTURN 4).
+                manifest = repository.get_cleanup_manifest_data(book_id) or {}
+                expected_digest = manifest.get("inventory_digest")
+                stored_inputs = manifest.get("inventory_inputs")
+                if (
+                    not is_inventory_digest(expected_digest)
+                    or supplied_digest != expected_digest
+                    or not isinstance(stored_inputs, dict)
+                    or manifest.get("book_id") != book_id
+                    or canonical_payload_digest(stored_inputs) != expected_digest
+                ):
+                    return None, self._delete_error(
+                        "BOOK_DELETE_STALE_PREVIEW", "conflict"
+                    )
             targets_map, page_ids_map, preview_ids_map = self._collect_delete_targets(
                 [book_id]
             )
@@ -2340,6 +2422,11 @@ class CoreServiceServer:
                     {book_id: targets_map[book_id]},
                     {book_id: page_ids_map.get(book_id, [])},
                     {book_id: preview_ids_map.get(book_id, [])},
+                    {book_id: expected_digest},
+                    batch_id if state == "book" else None,
+                    original_book_ids if state == "book" else None,
+                    original_collection_digest if state == "book" else None,
+                    book_inputs if state == "book" else None,
                 )
             except PermanentDeleteBlockedError as caught:
                 return None, self._delete_error(caught.code, "conflict")
@@ -2417,30 +2504,76 @@ class CoreServiceServer:
                     },
                 )
             retry_ids = [book_id for book_id in book_ids if states[book_id] == "retry"]
-            # Two-level confirmation binding (PD-02/PD-04): collection level
-            # first, then the per-book map.  A PD-07 retry has no Book row to
-            # preview, so a batch that contains retry targets validates the
-            # per-book digests of the live books only (the retry path never
-            # re-runs the preview, §5.11.1a).
-            if set(supplied_digests) != set(book_ids):
+            live_ids = [book_id for book_id in book_ids if states[book_id] == "book"]
+            # C-04b v1.1 §2.2 (Codex OVERTURN 4): retry is only a pending
+            # subset of the original preview; **mixed live+retry is NOT
+            # allowed** (the caller must re-preview).  A pure retry passes the
+            # manifest's original collection digest through verbatim (never
+            # recomputed for the subset); a pure live batch recomputes the
+            # per-book digests and the collection digest over the request.
+            if retry_ids and live_ids:
                 return None, self._stale_preview_error(book_ids, book_ids)
-            expected_digests = {
-                book_id: inventory_digest(inventory)
-                for book_id, inventory in inventories.items()
-            }
-            mismatched = [
-                book_id
-                for book_id, digest in expected_digests.items()
-                if supplied_digests[book_id] != digest
-            ]
-            collection_mismatch = False
-            if not retry_ids:
+            expected_digests: dict[str, str] = {}
+            if retry_ids:
+                manifests: dict[str, Any] = {}
+                for book_id in retry_ids:
+                    manifest = repository.get_cleanup_manifest_data(book_id)
+                    if not isinstance(manifest, dict):
+                        return None, self._stale_preview_error([book_id], [book_id])
+                    manifests[book_id] = manifest
+                first = manifests[retry_ids[0]]
+                batch_id = first.get("batch_id")
+                original_ids = first.get("original_book_ids")
+                original_collection = first.get("original_collection_digest")
+                if (
+                    not isinstance(batch_id, str)
+                    or not batch_id
+                    or not isinstance(original_ids, list)
+                    or not is_inventory_digest(original_collection)
+                ):
+                    return None, self._stale_preview_error(book_ids, retry_ids)
+                pending_set = set(retry_ids)
+                ordered_subset = [
+                    item for item in original_ids if item in pending_set
+                ]
+                if ordered_subset != retry_ids or len(original_ids) < len(retry_ids):
+                    return None, self._stale_preview_error(book_ids, retry_ids)
+                if supplied_collection_digest != original_collection:
+                    return None, self._stale_preview_error(book_ids, book_ids)
+                for book_id in retry_ids:
+                    manifest = manifests[book_id]
+                    stored = manifest.get("inventory_digest")
+                    inputs = manifest.get("inventory_inputs")
+                    if (
+                        manifest.get("batch_id") != batch_id
+                        or manifest.get("original_book_ids") != original_ids
+                        or manifest.get("original_collection_digest")
+                        != original_collection
+                        or manifest.get("book_id") != book_id
+                        or not is_inventory_digest(stored)
+                        or supplied_digests[book_id] != stored
+                        or not isinstance(inputs, dict)
+                        or canonical_payload_digest(inputs) != stored
+                    ):
+                        return None, self._stale_preview_error(
+                            [book_id], [book_id]
+                        )
+                    expected_digests[book_id] = stored
+            else:
+                expected_digests = {
+                    book_id: inventory_digest(inventories[book_id])
+                    for book_id in book_ids
+                }
+                mismatched = [
+                    book_id
+                    for book_id in book_ids
+                    if supplied_digests[book_id] != expected_digests[book_id]
+                ]
                 expected_collection = collection_inventory_digest(
                     book_ids, expected_digests
                 )
-                collection_mismatch = supplied_collection_digest != expected_collection
-            if mismatched or collection_mismatch:
-                return None, self._stale_preview_error(book_ids, mismatched)
+                if mismatched or supplied_collection_digest != expected_collection:
+                    return None, self._stale_preview_error(book_ids, mismatched)
             policy_errors: dict[str, str] = {}
             for book_id, inventory in inventories.items():
                 policy_error = self._permanent_delete_policy_error(inventory)
@@ -2481,6 +2614,20 @@ class CoreServiceServer:
             targets_map, page_ids_map, preview_ids_map = self._collect_delete_targets(
                 book_ids
             )
+            live_batch_id: str | None = None
+            live_original_ids: list[str] = []
+            live_collection: str | None = None
+            live_inputs: dict[str, Any] = {}
+            if not retry_ids:
+                live_batch_id = uuid.uuid4().hex
+                live_original_ids = list(book_ids)
+                live_collection = collection_inventory_digest(
+                    book_ids, expected_digests
+                )
+                live_inputs = {
+                    book_id: canonical_inventory_payload(inventory)
+                    for book_id, inventory in inventories.items()
+                }
             try:
                 repository.execute_permanent_delete_db(
                     {book_id: targets_map[book_id] for book_id in book_ids},
@@ -2489,6 +2636,11 @@ class CoreServiceServer:
                         book_id: preview_ids_map.get(book_id, [])
                         for book_id in book_ids
                     },
+                    {book_id: expected_digests[book_id] for book_id in book_ids},
+                    live_batch_id,
+                    live_original_ids,
+                    live_collection,
+                    live_inputs,
                 )
             except PermanentDeleteBlockedError as caught:
                 # r1 R-009: use the code/attribution carried by the write

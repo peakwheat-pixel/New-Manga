@@ -1007,7 +1007,7 @@ class SqliteLibraryRepository:
     # P09-AC3-DELETE-1: Project-level permanent deletion
     # ------------------------------------------------------------------
 
-    def get_cleanup_manifest_data(self, book_id: str) -> dict[str, list[str]] | None:
+    def get_cleanup_manifest_data(self, book_id: str) -> dict[str, Any] | None:
         row = self._conn.execute(
             "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = ?",
             (book_id,),
@@ -1026,6 +1026,18 @@ class SqliteLibraryRepository:
                     # second is an unknown, and treating an unknown as zero let a legacy
                     # manifest report success, delete itself, and strand its previews.
                     "preview_ids_known": "preview_resource_ids" in val,
+                    # C-04b v1.1 §2.2: a PD-07 retry target has no Book row
+                    # to re-preview, so the confirmed digest and the original
+                    # batch binding are persisted here (JSON additive, no DDL;
+                    # None for a pre-v1.1 manifest — the caller fails closed).
+                    "batch_id": val.get("batch_id"),
+                    "original_book_ids": list(val.get("original_book_ids", [])),
+                    "original_collection_digest": val.get(
+                        "original_collection_digest"
+                    ),
+                    "book_id": val.get("book_id"),
+                    "inventory_digest": val.get("inventory_digest"),
+                    "inventory_inputs": val.get("inventory_inputs"),
                 }
             if isinstance(val, list):
                 return {
@@ -1033,6 +1045,12 @@ class SqliteLibraryRepository:
                     "page_ids": [],
                     "preview_resource_ids": [],
                     "preview_ids_known": False,   # bare-list legacy format
+                    "batch_id": None,
+                    "original_book_ids": [],
+                    "original_collection_digest": None,
+                    "book_id": book_id,
+                    "inventory_digest": None,
+                    "inventory_inputs": None,
                 }
             return None
         except (json.JSONDecodeError, TypeError):
@@ -1603,6 +1621,11 @@ class SqliteLibraryRepository:
         book_targets_map: dict[str, list[str]],
         book_page_ids_map: dict[str, list[str]] | None = None,
         book_preview_ids_map: dict[str, list[str]] | None = None,
+        book_digests_map: dict[str, str] | None = None,
+        batch_id: str | None = None,
+        original_book_ids: list[str] | None = None,
+        original_collection_digest: str | None = None,
+        book_inputs_map: dict[str, Any] | None = None,
     ) -> None:
         """Remove every content row of the target books in ONE transaction.
 
@@ -1661,12 +1684,26 @@ class SqliteLibraryRepository:
                 # Persist them with the rest of the manifest.
                 prior_preview = (existing_manifest or {}).get("preview_resource_ids", [])
                 supplied_preview = (book_preview_ids_map or {}).get(book_id)
+                # C-04b v1.1 / A3: persist the confirmed per-book inventory
+                # digest and the original batch binding with the manifest so a
+                # PD-07 retry can validate the request without re-running the
+                # preview.  JSON additive only (no DDL); batch fields are
+                # copied into every row of the batch.
+                manifest_digest = (book_digests_map or {}).get(book_id)
+                if not manifest_digest:
+                    manifest_digest = (existing_manifest or {}).get("inventory_digest")
                 manifest_payload = {
                     "managed_targets": list(targets),
                     "page_ids": list(pids),
                     "preview_resource_ids": list(
                         supplied_preview if supplied_preview else prior_preview
                     ),
+                    "batch_id": batch_id,
+                    "original_book_ids": list(original_book_ids or []),
+                    "original_collection_digest": original_collection_digest,
+                    "book_id": book_id,
+                    "inventory_digest": manifest_digest,
+                    "inventory_inputs": (book_inputs_map or {}).get(book_id),
                 }
 
                 self._conn.execute(

@@ -1,16 +1,17 @@
-# FEA-12-CORE 分片 A（Python Core）门禁日志（r2 返修）
+# FEA-12-CORE 分片 A（Python Core）门禁日志（r3 返修）
 
-- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review；分片 A r2）
+- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review；分片 A r3）
 - Owner: `fea12-core-py`（DSH Agent Teams；Lead 集成）
-- 审查基线：r1 Review `doc/reviews/FEA-12-CORE-r1.md`（changes_requested；P0/P1=0，P2=3，P3=9——
-  含 Lead 补充 R-012）；r2 返修范围 = R-001 + R-004/R-005/R-007/R-008/R-009/R-010/R-011/R-012。
-- 交付 head：r1 head `85db8354f` → r2 主提交 + card/Handoff 提交（SHA 见 Handoff §1）。
-  门禁在 r2 工作树实跑；本分片不 push。
+- 审查基线：Codex 独立裁决 `doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`（OVERTURN 3a/4；
+  r2 approved/closeout 后重开）；契约修订 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`
+  （C-04b **v1.1** + M2-C1 **rev 2.14**；Lead 重冻）。
+- 契约重冻：UNFREEZE commit **`fc9833479`**（C-04b v1.1 sha256 `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f`；M2-C1 rev 2.14 sha256 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f`；冻结记录 pin 按实际 sha；r7 窄面 APPROVE）。
+- 交付 head：r2 delivery head `3da210518` → r3 主提交 + docs 提交（SHA 见 Handoff §1）。
+  本分片不 push。
 - 环境：Windows / `C:/Python314/python.exe` / pytest；隔离 DataRoot 仅用 pytest `tmp_path` 与
   `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\`（无真实用户数据/AppData/外部卷/回收站操作）。
-- 说明：全量 .NET 属分片 B/Lead 集成门禁（引用集成记录 1405 passed / 0 failed / 80 skipped 与
-  `logs/core-host-dotnet-full-*.log`）；本分片零 .NET 改动。本文件不进入自身 pin 闭环；最终一次
-  check 复跑记录写入 `doc/handoffs/FEA-12-CORE-core-py.md`。
+- 说明：**apps/.NET 零 diff**（v1.1 明确 preview minor 保持 11，Host 无需改动；本分片只引用
+  Lead 集成的全量 .NET 记录 1405 passed / 0 failed / 80 skipped）。
 
 ## G1 冻结 pins（18/18）
 
@@ -19,9 +20,10 @@ COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 EXIT:    0
 RESULT:  PIN AUDIT: PASS (all 18)
 LOG:     verification/FEA-12-CORE/logs/core-py-pins.log
+NOTE:    C-04b v1.1 重冻后 pin 更新（冻结记录 sha256 由 Lead 重冻时更新）；本分片不改契约字节。
 ```
 
-## G2 治理 check（TaskPath，r2 卡 status: in_review）
+## G2 治理 check（TaskPath，r3 卡 status: in_review）
 
 ```text
 COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md
@@ -30,84 +32,84 @@ RESULT:  Governance check: PASS (3 warnings)
 WARN:    非终态 Task 计数（既有全仓告警）
 WARN:    doc/STATUS.md / doc/REBASELINE_PLAN.md 预算 80%（既有全仓告警）
 LOG:     verification/FEA-12-CORE/logs/core-py-check.log
-NOTE:    Lead 已于 `564bc0760`/`6b985c14b` 处置 READY DAG/STATUS/ledger 与 AC11/allowed_paths；
-         分片 B 证据已并入 Canonical Evidence，r2 检查无 evidence_dir 未登记 warning。
+NOTE:    Lead 的 UNFREEZE 复核/重冻在 r3 交付 commit 前完成；AC4/AC5 保持 PARTIAL 待 r3 Review。
 ```
 
-## G3 相关测试组（core/storage/maintenance/fea12；r2 复跑）
+## G3 相关测试组（core/storage/maintenance/fea12；r3 复跑）
 
 ```text
 COMMAND: C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings
 EXIT:    0
-RESULT:  1104 passed in 85.13s（r1 1096 + r2 新增 8）
+RESULT:  1114 passed in 90.89s（r2 1104 + r3 新增 10）
 LOG:     verification/FEA-12-CORE/logs/core-py-pytest-related.log
-测试文件（r2 计数）：tests/core/test_core_delete_commands.py 33；
-          tests/core/test_core_delete_preview_commands.py 11；
+测试文件（r3 计数）：tests/core/test_core_delete_commands.py 40；
+          tests/core/test_core_delete_preview_commands.py 14；
           tests/core/test_core_trash_commands.py 15；
-          tests/fea12/test_core_delete_protection.py 11（policy 子集 8 + wire/隔离 3）；
-          tests/storage/test_purge_integrity.py 11；tests/core/test_core_service.py（capability 断言同步）
-r2 新增/强化：preview derived 披露 2、delete 批量 cleanup/retry 2 + 竞态 1 + R-010 1 + 混合 retry 1、
-          trash domain restore 单测 1（共 8 新增 + 既有断言钉住 R-011）。
+          tests/fea12/test_core_delete_protection.py 11；tests/storage/test_purge_integrity.py 11
+r3 新增/强化：non-first region current、hidden region current 绑定、artifact current 增删改
+          （字典序数组）、retry 保序 pending 子集、原集合 digest 原样回传、mixed 拒绝、
+          manifest 篡改/缺失 fail-closed、单条逐书/批量集合级形状分支与 key 覆盖（共 10 条新增 + 既有断言收紧）。
 ```
 
-## G4 全量 pytest（r2 复跑）
+## G4 全量 pytest（r3 复跑）
 
 ```text
 COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
 EXIT:    0
-RESULT:  3152 passed, 10 skipped in 239.05s
-基线：   3093 passed / 10 skipped；增量 +59 条 = **CORE +51 / DSIM-1 +8**（不把 DSIM-1 的 8 条
-         计入本卡），无失败、无新增 skip。
+RESULT:  3162 passed, 10 skipped in 273.69s
+基线：   3093 passed / 10 skipped；增量 +69 条 = **CORE +61 / DSIM-1 +8**（r1 51 + r2 8 + r3 10），
+         无失败、无新增 skip。
 LOG:     verification/FEA-12-CORE/logs/core-py-pytest-full.log
 ```
 
-## G5 AC 证据探针（r2 重新生成；隔离根；EXIT=0）
+## G5 AC 证据探针（r3 重新生成；隔离根；EXIT=0）
 
 ```text
 COMMAND: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_inventory_digest.py
 EXIT:    0
-RESULT:  {"all_match": true}；R-001：deletedFiles=3 / deletedBytes=46（page 17 + artifact 15 +
-         derived preview 14）；canonical/集合级/重排敏感性全部与独立复算一致
+RESULT:  {"all_match": true}；**digest v2**：canonical 含 currentRegionRevisionIds /
+         currentArtifactRevisionIds（字典序排序去重；`currentRevisionId` 移出绑定）；
+         R-001 derived 披露 deletedFiles=3 / deletedBytes=46；单书/集合/重排向量独立复算一致（current 两个数组均非空）
 EVIDENCE: verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json
 
 COMMAND: C:/Python314/python.exe verification/FEA-12-CORE/scripts/core_py_isolation_scan.py
 EXIT:    0
-RESULT:  {"pass": true}；R-004：data_root_under_workspace_temp=true（Path.is_relative_to，纳入 pass）、
-         static drive_path_hits=[]（检测器实际扫描删除模块+证据脚本）；src 256 文件零 Windows
-         回收站 API；运行时哨兵（隔离根外 user-source 树）前后逐字节一致
+RESULT:  {"pass": true}；data_root_under_workspace_temp=true、static drive_path_hits=[]、
+         src 256 文件零 Windows 回收站 API；运行时哨兵前后一致（R-004 修复保持）
 EVIDENCE: verification/FEA-12-CORE/evidence/core-py-isolation-scan.json
 ```
 
-## G6 AC 逐条断言日志（EXIT=0）
+## G6 AC 逐条断言日志（EXIT=0；r3 重新生成）
 
 `verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log` … `core-py-ac12-isolation.log`
-（r2 重新生成：AC4 含 derived 披露；AC5 含混合 retry 限定；AC6 含批量 cleanup-pending/retry；
-AC8 含第 5 条预检；AC9 含写边界竞态；AC11 Python 侧）。
+（AC4 覆盖 v1.1 current 数组/golden v2；AC5 覆盖保序子集/原集合 digest/mixed 拒绝；AC6 覆盖批量
+cleanup-pending→retry；AC8 第 5 条预检；AC9 写边界竞态；AC11 Python 侧）。
 
-## G7 预期行为变更 / r2 修复语义（Review 不判回归）
+## G7 预期行为变更 / r3 修复语义（Review 不判回归）
 
-1. delete 命令 `inventory_digest`/`inventory_digests` 必填（§5.11.1a）：旧 Host 不传 → `INVALID_REQUEST`。
-2. PD-08：可安全拆分的共享引用不阻断；跨项目 provenance 置 NULL；不可拆分/关系图不一致（含 R-010
-   目标外 binding previous→目标 binding）→ `BOOK_DELETE_CONFLICT`。
-3. page 级 purge 补 C-17 v7/v8 子图（D1 X1 同语义）。
+1. delete 命令 digest 必填（§5.11.1a）；旧 Host 不传 → `INVALID_REQUEST`。
+2. PD-08 可安全拆分不阻断；不可拆分（含 R-010 previous 边）→ `BOOK_DELETE_CONFLICT`。
+3. page 级 purge 补 C-17 v7/v8 子图。
 4. `core.ping` 生产装配新增 3 capability；最小手搭 Core 不公告。
-5. **r2/R-001**：`deletedFiles`/`deletedBytes` 计入 catalog preview/page-original 派生文件
-   （与 managed 去重）；同一本书的 digest 随派生文件集/字节变化——PD-04 预期，golden 向量已更新
-   （`deletedFiles=3/deletedBytes=46`）。
-6. **r2/R-008**：混合 live+retry 批次集合级 digest 仅形状校验；逐书 digest 对存活目标强校验。
-7. **r2/R-009**：批量写边界竞态顶层 `BOOK_BUSY` + items 归因具体 book。
-8. **r2/R-012**：批量 cleanup-pending → 显式 retry 逐项状态/幂等有直接测试。
+5. **r3 / 3a**：`protection` additive 两个 current 数组（region 数组含 lineage-hidden/separate/
+   detached，**不按可见性裁剪**，字典序排序去重；artifact 全部 current）；digest canonical v2
+   （`currentRevisionId` 移出绑定）；非首个/隐藏 current、artifact current 增删改 → 旧 digest STALE。
+   preview wire minor **保持 11（不 bump）**。
+6. **r3 / 4**：retry = 原预览有序集合的**保序 pending 子集** + `inventory_digest` **原样回传**
+   manifest 的 `original_collection_digest` + 逐书 manifest 值校验 + **mixed live+retry 一律拒绝**；
+   manifest JSON additive 持久化 `batch_id`/`original_book_ids`/`original_collection_digest`/
+   `book_id`/`inventory_digest`/`inventory_inputs`（批次字段逐行复制）；取消 r2 R-008「仅形状校验」限定。
+7. **apps/.NET 零 diff**（草案阶段的 preview minor 11→12 窄批已按最终契约回退）。
 
 ## G8 全量 .NET
 
 ```text
-分片 A 未运行（零 .NET 改动）；引用 Lead/分片 B 集成实跑：1405 passed / 0 failed / 80 skipped；
+分片 A 未运行（apps/.NET 零 diff）；引用 Lead/分片 B 集成实跑：1405 passed / 0 failed / 80 skipped；
 日志 verification/FEA-12-CORE/logs/core-host-dotnet-full-1.log / -2.log。
 ```
 
 ## G9 副作用/证据卫生
 
-- 全量 pytest 后 `git status` 仅本分片 allowed_paths 文件；`verification/FEA-09/**` 无 tracked 重写
-  （若出现：`git checkout -- verification/FEA-09` 恢复并注明）。
-- r2 只修改本分片 allowed_paths：src（core_service.py、infrastructure/sqlite/library.py）、
-  tests 4 文件、verification/FEA-12-CORE/**、卡、Handoff；未 commit Lead-owned 文档/.NET/DSIM 文件。
+- 全量 pytest 后 `git status` 仅本分片 allowed_paths 文件；`verification/FEA-09/**` 无 tracked 重写。
+- r3 修改域：src 3 文件、tests 3 文件、verification/FEA-12-CORE/**、卡、Handoff；**apps 零 diff**；
+  未改 schema/依赖/Lead-owned 文档；未 push。

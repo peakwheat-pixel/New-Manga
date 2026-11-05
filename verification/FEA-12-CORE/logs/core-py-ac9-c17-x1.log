@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r2)
+# FEA-12-CORE shard A evidence (r3)
 # command: pytest tests/core/test_core_delete_commands.py tests/storage/test_purge_integrity.py -k "v7_v8 or nonterminal_source or subgraph or write_boundary_race"
 # EXIT: 0
 #----------------------------------------------------------------------
 ....                                                                     [100%]
-4 passed, 39 deselected in 0.60s
+4 passed, 46 deselected in 0.69s
 

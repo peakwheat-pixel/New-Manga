@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r2)
+# FEA-12-CORE shard A evidence (r3)
 # command: pytest tests/fea12/test_core_delete_protection.py -k "a_flow or permanent_delete_discloses or blocks_nonterminal or passes"
 # EXIT: 0
 #----------------------------------------------------------------------
 ...                                                                      [100%]
-3 passed, 8 deselected in 0.45s
+3 passed, 8 deselected in 0.55s
 

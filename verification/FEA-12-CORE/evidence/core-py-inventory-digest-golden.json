@@ -17,6 +17,12 @@
         "protection": {
           "lockCount": 1,
           "currentRevisionId": "rev-golden",
+          "currentRegionRevisionIds": [
+            "rev-golden"
+          ],
+          "currentArtifactRevisionIds": [
+            "artifact-rev-golden"
+          ],
           "pinnedRevisionIds": [
             "artifact-rev-golden",
             "rev-golden"
@@ -34,10 +40,24 @@
         },
         "sharedFileRefs": []
       },
+      "current_sets": {
+        "currentRevisionId": "rev-golden",
+        "currentRegionRevisionIds": [
+          "rev-golden"
+        ],
+        "currentArtifactRevisionIds": [
+          "artifact-rev-golden"
+        ]
+      },
       "canonical_payload": {
         "bookId": "book-golden",
         "lockCount": 1,
-        "currentRevisionId": "rev-golden",
+        "currentRegionRevisionIds": [
+          "rev-golden"
+        ],
+        "currentArtifactRevisionIds": [
+          "artifact-rev-golden"
+        ],
         "pinnedRevisionIds": [
           "artifact-rev-golden",
           "rev-golden"
@@ -52,8 +72,8 @@
         "deletedBytes": 46,
         "sharedFileRefs": []
       },
-      "expected_inventoryDigest": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
-      "actual_inventoryDigest": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
+      "expected_inventoryDigest": "sha256:bb0005fd4c300c809a56e814f4d418771e79222822ce6068b0ada7e857688d4e",
+      "actual_inventoryDigest": "sha256:bb0005fd4c300c809a56e814f4d418771e79222822ce6068b0ada7e857688d4e",
       "match": true
     },
     {
@@ -65,15 +85,15 @@
         ]
       },
       "expected_inventoryDigests": {
-        "book-golden": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
-        "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
+        "book-golden": "sha256:bb0005fd4c300c809a56e814f4d418771e79222822ce6068b0ada7e857688d4e",
+        "book-empty": "sha256:acf170f8874ef702b1b1966c6d1c6441b02f9442a785441e8fa0a39ee1eeb8af"
       },
       "actual_inventoryDigests": {
-        "book-golden": "sha256:e566b707c44baf856f0c78cc0ab47cdfde3fe7d711d0e965c7298fc4ff56bb5f",
-        "book-empty": "sha256:f99bb9b131c5269bda7fc52bc44a7503a6d66c1bc54893e0ea21d8bb8beaf952"
+        "book-golden": "sha256:bb0005fd4c300c809a56e814f4d418771e79222822ce6068b0ada7e857688d4e",
+        "book-empty": "sha256:acf170f8874ef702b1b1966c6d1c6441b02f9442a785441e8fa0a39ee1eeb8af"
       },
-      "expected_inventoryDigest": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
-      "actual_inventoryDigest": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
+      "expected_inventoryDigest": "sha256:c1029be8a21209f10e103d1f536c446afaf6113f09680bfb6095e80911cd94f1",
+      "actual_inventoryDigest": "sha256:c1029be8a21209f10e103d1f536c446afaf6113f09680bfb6095e80911cd94f1",
       "match": true
     }
   ],
@@ -87,10 +107,10 @@
     "expected_deletedBytes": 46
   },
   "order_sensitivity": {
-    "forward": "sha256:a7f7d102150b05d8118580d1851e031bfc97da6f003f7f63128445d1501ab1f6",
-    "reordered": "sha256:f3c57764d8b753d6368ef419e2ba9d5f26627650dcdf9ee9756472479fa06db6",
+    "forward": "sha256:c1029be8a21209f10e103d1f536c446afaf6113f09680bfb6095e80911cd94f1",
+    "reordered": "sha256:78d2f14cef6c5b6ca695f600e73a095d3d66e4972cb929436419c048ff751e09",
     "per_book_digests_stable": true,
     "collection_differs": true
   },
-  "computedAt": "2026-11-05T09:35:17.023+00:00"
+  "computedAt": "2026-11-05T13:45:02.232+00:00"
 }

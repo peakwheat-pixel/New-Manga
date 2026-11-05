@@ -1,11 +1,11 @@
-# FEA-12-CORE shard A evidence (r2)
+# FEA-12-CORE shard A evidence (r3; post-freeze fc9833479)
 # command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md
 # EXIT: 0
 # ----------------------------------------------------------------------
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-12-CORE.md
-WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：2765 bytes / 26 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6680 bytes / 63 lines
+WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2811 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6794 bytes / 63 lines
 Governance check: PASS (3 warnings)
 

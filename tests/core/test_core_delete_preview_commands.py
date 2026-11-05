@@ -248,6 +248,9 @@ def test_preview_reports_full_pd01_disclosure(server: CoreServiceServer) -> None
     # r1 R-011: pin the Lead-ruled order — "first lineage-visible region in
     # reading order" is rg1/rr1 here; rr2 is only the pinned-revision case.
     assert protection["currentRevisionId"] == "rr1"
+    # C-04b v1.1: the complete current sets are disclosed and bound.
+    assert protection["currentRegionRevisionIds"] == ["rr1", "rr2"]
+    assert protection["currentArtifactRevisionIds"] == []
     assert protection["pinnedRevisionIds"] == ["ar1", "rr2"]
     assert protection["activeRunIds"] == []
     assert protection["draftPageCount"] == 1
@@ -330,6 +333,10 @@ def test_preview_current_revision_uses_lineage_visibility(
         )
     item = _preview(server, ["b1"])["items"][0]
     assert item["protection"]["currentRevisionId"] is None
+    # C-04b v1.1 / Lead A1: a lineage-hidden current is NOT shown as the
+    # representative value, but it IS part of the bound current set (Codex:
+    # "lineage invisible" does not mean the history cannot be purged).
+    assert item["protection"]["currentRegionRevisionIds"] == ["rr1"]
 
 
 # --- Read-only guarantee (PD-03) --------------------------------------
@@ -376,7 +383,12 @@ def _expected_digest(item: dict) -> str:
     canonical = canonical_inventory_payload({
         "book_id": item["bookId"],
         "lock_count": item["protection"]["lockCount"],
-        "current_revision_id": item["protection"]["currentRevisionId"],
+        # C-04b v1.1 digest v2: complete current sets bind, the single
+        # representative value does not.
+        "current_region_revision_ids": item["protection"]["currentRegionRevisionIds"],
+        "current_artifact_revision_ids": item["protection"][
+            "currentArtifactRevisionIds"
+        ],
         "pinned_revision_ids": item["protection"]["pinnedRevisionIds"],
         "active_run_ids": item["protection"]["activeRunIds"],
         "draft_page_count": item["protection"]["draftPageCount"],
@@ -550,3 +562,212 @@ def test_preview_derived_disclosure_requires_a_preview_publisher(
     item = _preview(server, ["b1"])["items"][0]
     assert item["contentSummary"]["deletedFiles"] == 1
     assert item["contentSummary"]["deletedBytes"] == len(b"only-managed")
+def _add_page_region(
+    server: CoreServiceServer,
+    *,
+    page_id: str,
+    region_id: str,
+    revision_id: str,
+) -> None:
+    core = server._core
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO regions (region_id, page_id, region_type, geometry_json,"
+            " text_json, style_json, created_at, updated_at)"
+            " VALUES (?, ?, 'speech', '{}', '{}', '{}', ?, ?)",
+            (region_id, page_id, NOW, NOW),
+        )
+        core.conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, is_pinned, created_at)"
+            " VALUES (?, ?, 1, '{}', 'user', 'confirmed', 0, ?)",
+            (revision_id, region_id, NOW),
+        )
+        core.conn.execute(
+            "UPDATE regions SET current_revision_id = ? WHERE region_id = ?",
+            (revision_id, region_id),
+        )
+
+
+def test_preview_binds_non_first_region_current(server: CoreServiceServer) -> None:
+    """Codex OVERTURN 3(a) regression: changing a NON-first region current must
+    invalidate the old digest (the single representative value alone would keep
+    deleting successfully)."""
+    core = server._core
+    _seed_book(server, "b1")
+    _seed_page_with_region(
+        server, book_id="b1", chapter_id="c1", page_id="p1", region_id="rg1",
+        revision_id="rr1",
+    )
+    _add_page_region(server, page_id="p1", region_id="rg2", revision_id="rr2")
+
+    first = _preview(server, ["b1"])
+    first_item = first["items"][0]
+    assert first_item["protection"]["currentRevisionId"] == "rr1"
+    assert first_item["protection"]["currentRegionRevisionIds"] == ["rr1", "rr2"]
+    old_digest = first["inventoryDigests"]["b1"]
+
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, is_pinned, created_at)"
+            " VALUES ('rr2b', 'rg2', 2, '{}', 'user', 'confirmed', 0, ?)",
+            (NOW,),
+        )
+        core.conn.execute(
+            "UPDATE regions SET current_revision_id = 'rr2b' WHERE region_id = 'rg2'"
+        )
+    second = _preview(server, ["b1"])
+    second_item = second["items"][0]
+    assert second_item["protection"]["currentRevisionId"] == "rr1"
+    assert second_item["protection"]["currentRegionRevisionIds"] == ["rr1", "rr2b"]
+    assert second["inventoryDigests"]["b1"] != old_digest
+
+    stale = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": "b1",
+            "confirm_permanent_delete": True,
+            "inventory_digest": old_digest,
+        },
+        minor=10,
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+
+    accepted = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": "b1",
+            "confirm_permanent_delete": True,
+            "inventory_digest": second["inventoryDigests"]["b1"],
+        },
+        minor=10,
+    )
+    assert accepted["error"] is None, accepted["error"]
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 0
+
+
+def test_preview_binds_artifact_current_set(server: CoreServiceServer) -> None:
+    """C-04b v1.1: every artifact current is bound; adding/changing/removing an
+    artifact current changes the digest even when the representative region
+    current stays the same."""
+    core = server._core
+    _seed_book(server, "b1")
+    _seed_page_with_region(
+        server, book_id="b1", chapter_id="c1", page_id="p1", region_id="rg1",
+        revision_id="rr1",
+    )
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+            " artifact_type, created_at, updated_at)"
+            " VALUES ('ma1', 'b1', 'c1', 'p1', 'translated', ?, ?)",
+            (NOW, NOW),
+        )
+        core.conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+            " revision_no, managed_path, file_hash, mime_type, size_bytes, is_pinned,"
+            " created_at) VALUES ('ar1', 'ma1', 1, 'b1/artifacts/a1.png', ?, 'image/png', 1, 0, ?)",
+            ("1" * 64, NOW),
+        )
+
+    empty_digest = _preview(server, ["b1"])["inventoryDigests"]["b1"]
+    assert _preview(server, ["b1"])["items"][0]["protection"][
+        "currentArtifactRevisionIds"
+    ] == []
+
+    with core.conn:
+        core.conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = 'ar1'"
+            " WHERE artifact_id = 'ma1'"
+        )
+    with_current = _preview(server, ["b1"])
+    item = with_current["items"][0]
+    assert item["protection"]["currentArtifactRevisionIds"] == ["ar1"]
+    assert item["protection"]["currentRevisionId"] == "rr1"  # representative
+    with_current_digest = with_current["inventoryDigests"]["b1"]
+    assert with_current_digest != empty_digest
+
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+            " revision_no, managed_path, file_hash, mime_type, size_bytes, is_pinned,"
+            " created_at) VALUES ('ar2', 'ma1', 2, 'b1/artifacts/a2.png', ?, 'image/png', 1, 0, ?)",
+            ("2" * 64, NOW),
+        )
+        core.conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = 'ar2'"
+            " WHERE artifact_id = 'ma1'"
+        )
+    changed = _preview(server, ["b1"])
+    changed_item = changed["items"][0]
+    assert changed_item["protection"]["currentArtifactRevisionIds"] == ["ar2"]
+    assert changed_item["protection"]["currentRevisionId"] == "rr1"
+    assert changed["inventoryDigests"]["b1"] != with_current_digest
+
+    # Removing the artifact current (schema forbids clearing it in place, so
+    # remove the artifact and its revisions child-first) changes the set back.
+    with core.conn:
+        core.conn.execute(
+            "DELETE FROM artifact_revisions WHERE artifact_id = 'ma1'"
+        )
+        core.conn.execute("DELETE FROM media_artifacts WHERE artifact_id = 'ma1'")
+    removed = _preview(server, ["b1"])
+    assert removed["items"][0]["protection"]["currentArtifactRevisionIds"] == []
+    # Content count also dropped (artifact gone), so the digest only has to
+    # differ from the current-set state.
+    assert removed["inventoryDigests"]["b1"] != changed["inventoryDigests"]["b1"]
+
+    stale = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": "b1",
+            "confirm_permanent_delete": True,
+            "inventory_digest": changed["inventoryDigests"]["b1"],
+        },
+        minor=10,
+    )
+    assert stale["error"]["code"] == "BOOK_DELETE_STALE_PREVIEW"
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+    ).fetchone()[0] == 1
+
+
+def test_preview_binds_region_current_add_and_remove(server: CoreServiceServer) -> None:
+    """Adding/removing a region current changes the digest while the
+    representative value may stay the same."""
+    core = server._core
+    _seed_book(server, "b1")
+    _seed_page_with_region(
+        server, book_id="b1", chapter_id="c1", page_id="p1", region_id="rg1",
+        revision_id="rr1",
+    )
+    base = _preview(server, ["b1"])
+    base_digest = base["inventoryDigests"]["b1"]
+    assert base["items"][0]["protection"]["currentRegionRevisionIds"] == ["rr1"]
+
+    _add_page_region(server, page_id="p1", region_id="rg2", revision_id="rr2")
+    added = _preview(server, ["b1"])
+    assert added["items"][0]["protection"]["currentRevisionId"] == "rr1"
+    assert added["items"][0]["protection"]["currentRegionRevisionIds"] == ["rr1", "rr2"]
+    assert added["inventoryDigests"]["b1"] != base_digest
+
+    # Removing the region current (schema forbids clearing it in place, so
+    # delete the region and its revisions child-first) restores the base set.
+    with core.conn:
+        core.conn.execute(
+            "DELETE FROM region_revisions WHERE region_id = 'rg2'"
+        )
+        core.conn.execute("DELETE FROM regions WHERE region_id = 'rg2'")
+    removed = _preview(server, ["b1"])
+    assert removed["items"][0]["protection"]["currentRegionRevisionIds"] == ["rr1"]
+    assert removed["inventoryDigests"]["b1"] == base_digest
+    assert removed["inventoryDigests"]["b1"] != added["inventoryDigests"]["b1"]

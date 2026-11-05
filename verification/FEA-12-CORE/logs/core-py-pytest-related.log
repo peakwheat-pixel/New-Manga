@@ -1,38 +1,24 @@
-# FEA-12-CORE shard A evidence (r2)
+# FEA-12-CORE shard A evidence (r3)
 # command: C:/Python314/python.exe -m pytest tests/core tests/storage tests/maintenance tests/fea12 -q -p no:warnings
 # EXIT: 0
 # ----------------------------------------------------------------------
 ........................................................................ [  6%]
-........................................................................ [ 13%]
+........................................................................ [ 12%]
 ........................................................................ [ 19%]
-........................................................................ [ 26%]
+........................................................................ [ 25%]
 ........................................................................ [ 32%]
-........................................................................ [ 39%]
+........................................................................ [ 38%]
 ........................................................................ [ 45%]
-........................................................................ [ 52%]
+........................................................................ [ 51%]
 ........................................................................ [ 58%]
-........................................................................ [ 65%]
+........................................................................ [ 64%]
 ........................................................................ [ 71%]
-........................................................................ [ 78%]
+........................................................................ [ 77%]
 ........................................................................ [ 84%]
-........................................................................ [ 91%]
-........................................................................ [ 97%]
-........................                                                 [100%]
-1104 passed in 85.13s (0:01:25)
-file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+........................................................................ [ 90%]
+........................................................................ [ 96%]
+..................................                                       [100%]
+1114 passed in 90.89s (0:01:30)
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
@@ -64,4 +50,18 @@ file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeEr
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 

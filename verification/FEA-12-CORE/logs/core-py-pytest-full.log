@@ -1,4 +1,4 @@
-# FEA-12-CORE shard A evidence (r2)
+# FEA-12-CORE shard A evidence (r3)
 # command: C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no
 # EXIT: 0
 # ----------------------------------------------------------------------
@@ -12,32 +12,32 @@
 ........................................................................ [ 18%]
 ........................................................................ [ 20%]
 ........................................................................ [ 22%]
-........................................................................ [ 25%]
+........................................................................ [ 24%]
 ........................................................................ [ 27%]
 ........................................................................ [ 29%]
 ........................................................................ [ 31%]
 ........................................................................ [ 34%]
 ........................................................................ [ 36%]
 ........................................................................ [ 38%]
-........................................................................ [ 41%]
+........................................................................ [ 40%]
 ........................................................................ [ 43%]
 ........................................................................ [ 45%]
 ........................................................................ [ 47%]
-........................................................................ [ 50%]
+........................................................................ [ 49%]
 ........................................................................ [ 52%]
 ........................................................................ [ 54%]
 ........................................................................ [ 56%]
-...............................s........................................ [ 59%]
-.......................................................sssss............ [ 61%]
+.........................................s.............................. [ 59%]
+.................................................................sssss.. [ 61%]
 ........................................................................ [ 63%]
-........................................................................ [ 66%]
+........................................................................ [ 65%]
 ........................................................................ [ 68%]
 ........................................................................ [ 70%]
 ........................................................................ [ 72%]
-........................................................................ [ 75%]
+........................................................................ [ 74%]
 ........................................................................ [ 77%]
 ........................................................................ [ 79%]
-.s...................................................................... [ 82%]
+...........s............................................................ [ 81%]
 ........................................................................ [ 84%]
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
@@ -48,12 +48,13 @@ file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cann
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 ........................................................................ [ 86%]
 ........................................................................ [ 88%]
-........................................................................ [ 91%]
+........................................................................ [ 90%]
 ........................................................................ [ 93%]
 ........................................................................ [ 95%]
-........................................................................ [ 98%]
-...............................................................          [100%]
-3152 passed, 10 skipped in 239.05s (0:03:59)
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+3162 passed, 10 skipped in 273.69s (0:04:33)
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
@@ -83,6 +84,7 @@ file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeEr
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
@@ -97,6 +99,5 @@ file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeEr
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 

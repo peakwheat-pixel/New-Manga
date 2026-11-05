@@ -1,7 +1,7 @@
-# FEA-12-CORE shard A evidence (r2)
-# command: pytest tests/core/test_core_delete_preview_commands.py -k "pd01 or read_only or golden or no_paths or version or closed_shape or lineage_visibility or unavailable or derived"
+# FEA-12-CORE shard A evidence (r3)
+# command: pytest tests/core/test_core_delete_preview_commands.py -q
 # EXIT: 0
 #----------------------------------------------------------------------
-..........                                                               [100%]
-10 passed, 1 deselected in 0.91s
+..............                                                           [100%]
+14 passed in 1.26s
 
