@@ -35,6 +35,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs（capability probe：core.ping 缺失→CORE_CAPABILITY_MISSING）
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/HostErrorCodes.cs（新错误码投影/白名单，若需要）
   - tests/core/test_core_delete_commands.py
   - tests/core/test_core_delete_preview_commands.py（新增）
   - tests/core/test_core_trash_commands.py（新增）
