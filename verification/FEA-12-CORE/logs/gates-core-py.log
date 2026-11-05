@@ -2,7 +2,9 @@
 
 - Task: `doc/tasks/FEA-12-CORE.md`（status: in_review，分片 A）
 - Owner: `fea12-core-py`（DSH Agent Teams；Lead 集成）
-- 交付 head（门禁实跑工作树）：`564bc0760`（Lead plan/status 收口后）+ 本分片未提交改动；本分片 commit 列表见 Handoff。
+- 交付 head（本分片提交后最终）：`2a8c6cf83`；本分片 commit：`5fb300fd2`（源码+测试）、
+  `27dfd7514`（证据/卡/Handoff）、`2a8c6cf83`（证据表 commit pin + Handoff 终稿）。
+  门禁实跑时工作树 = 该内容（见 Handoff §1/§7）；本分片不 push。
 - 环境：Windows / `C:/Python314/python.exe` / pytest；隔离 DataRoot 仅用 pytest `tmp_path` 与
   `G:\CODEX\New Manga.workspace\temp\FEA-12-CORE\`（无真实用户数据/AppData/外部卷/回收站操作）。
 - 说明：本日志只记录分片 A 实跑；全量 .NET 属分片 B/Lead 集成门禁（引用

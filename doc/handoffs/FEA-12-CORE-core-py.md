@@ -15,9 +15,11 @@
 >    — 源码（5 个文件）+ 测试（6 个文件，含 3 个新增）。
 > 2. **`27dfd7514`** `docs(fea-12-core): 分片 A 实施记录/AC 证据/门禁日志/任务卡/Handoff（in_review）`
 >    — 任务卡 + Handoff + `verification/FEA-12-CORE/**` 本分片证据（25 个文件）。
-> 3. （本 commit）`docs(fea-12-core): 证据表改用 evidence commit pin（行尾无关）+ Handoff commit 终稿`
+> 3. **`2a8c6cf83`** `docs(fea-12-core): 证据表改用 evidence commit pin（行尾无关）+ Handoff commit 终稿`
 >    — 只改任务卡 Canonical Evidence 表（`commit=27dfd7514`、`sha256=null`，避免 CRLF/LF 行尾差异
 >    使证据 pin 在另一次 checkout 失效）与本节 commit 列表；不新增/修改证据字节。
+> 4. 门禁日志补充分片 A 交付 head 与 commit 列表（仅 `logs/gates-core-py.log` 头部行；随本文件所在
+>    docs 提交合入）。最终 head 以 `git log --oneline -1` 为准。
 >
 > 只 add 了：`src/application/library/service.py`、`src/application/maintenance/ports.py`、
 > `src/domain/books/entities.py`、`src/infrastructure/sqlite/library.py`、`src/bootstrap/core_service.py`、
