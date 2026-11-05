@@ -3,14 +3,14 @@ id: FEA-11-AC4-GAPS-1
 title: FEA-11 AC11-4 证据收口（并发 apply / DB 失败 / 第三区域 / 漂移矩阵与全表零写）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 r7-acceptance L-5 与 AC11-4 证据缺口；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
+status: ready
+approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，待 Lead（DSH）释放；承接 FEA-11 r7-acceptance L-5 与 AC11-4 证据缺口；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer；**DSH 2026-11-05 释放（ready）**：ZCode SCOPE-ADJ 裁决已冻结范围；Owner 待派发；test-only
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
   - FEA-11
-base_commit: null
+base_commit: 51e139eff   # 释放点 main head（CORE closeout 后）
 branch: null
 worktree: null
 integration_commit: null

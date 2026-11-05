@@ -138,7 +138,7 @@
 | AC2 恢复 | MET | `logs/core-py-ac2-restore.log`；恢复后全表快照与删除前逐项相等（books 仅 deleted_at/updated_at 变化）、current/pin/进度/manual/binding 不变、逐项冲突 |
 | AC3 读取面不回归 | MET | `logs/core-py-ac3-recycle-read.log`；`ListRecycleBinBooks` 冻结投影/`page_count=None`/空数组≠失败；`ListTrash` 形状/分页/排序 |
 | AC4 只读预览 | r4 修复后证据齐备（待 r4 窄面复核/Lead 定稿） | `logs/core-py-ac4-preview.log`；预览前后全表+文件 hash/mtime 不变；PD-01 三强制项；无路径/明文/堆栈；golden digest 独立复算一致；**r2 R-001**：派生 preview/page-original 文件计入 `deletedFiles/deletedBytes` 且与 cleanup 实际删除一致（判别测试 `test_preview_counts_catalog_derived_files_and_delete_removes_them`，golden 向量含 derived 记录；**r4 P1-1**：hidden region current 变化 → 旧 digest STALE、books/文件/其他行零副作用、新 digest 成功（`test_preview_hidden_region_current_change_is_stale`）；golden 字面量已钉死（`sha256:19b2ad3f…`/`sha256:1ecf951b…`） |
-| AC5 专门确认绑定 | r3 修复后证据齐备（待 r3 Review/Lead 定稿；Codex 4 重开为 PARTIAL） | `logs/core-py-ac5-digest-binding.log`；缺失/格式→INVALID_REQUEST；集合级+逐书两级；重排→STALE；预览后加锁→STALE 零副作用；重预览后可删；**r3**：集合级 digest 始终校验（纯 pending 与混合均不跳过）；manifest 持久化原预览有序集/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + **原集合 digest 原样回传**；FAKE_DIGEST 判别测试转红；**r4 P2-1**：manifest 行存在但 JSON 损坏 → `BOOK_DELETE_STALE_PREVIEW`（单条与批量 items，零副作用），行缺失才 `BOOK_NOT_FOUND`（`test_retry_corrupt_manifest_is_stale_both_shapes`） |
+| AC5 专门确认绑定 | r4 修复后证据齐备（r4 窄面 Review approved；Lead closeout 恢复 MET） | `logs/core-py-ac5-digest-binding.log`；缺失/格式→INVALID_REQUEST；集合级+逐书两级；重排→STALE；预览后加锁→STALE 零副作用；重预览后可删；**r3**：集合级 digest 始终校验（纯 pending 与混合均不跳过）；manifest 持久化原预览有序集/逐书 digest/集合 digest/绑定输入，retry 校验保序 pending 子集 + 逐书 manifest 值 + **原集合 digest 原样回传**；FAKE_DIGEST 判别测试转红；**r4 P2-1**：manifest 行存在但 JSON 损坏 → `BOOK_DELETE_STALE_PREVIEW`（单条与批量 items，零副作用），行缺失才 `BOOK_NOT_FOUND`（`test_retry_corrupt_manifest_is_stale_both_shapes`） |
 | AC6 单事务/回滚 | MET | `logs/core-py-ac6-transaction-rollback.log`；`BEGIN IMMEDIATE` 实跑记录；最后一条 DELETE 前注入异常→全表快照相等、文件保留、无 manifest、FK check 空、未开始清理；单条 pending 重试成功；**r2 R-012**：批量 partial cleanup→`BOOK_DELETE_BATCH_CLEANUP_PENDING`、逐项 states、显式重试、幂等重放直接测试 |
 | AC7 保护披露/边界 | MET | `logs/core-py-ac7-protection-boundary.log`；含锁+人工+pin+draft 的书披露计数准确、删除后保护行确实删除（披露≠阻断）；非终态 Run → BOOK_BUSY 零副作用；事务前无顺手解锁/改 current |
 | AC8 共享引用/原文件 | MET | `logs/core-py-ac8-pd08-shared.log`；共享 managed/artifact 拆分成功且共享文件保留；不可拆分→CONFLICT 零副作用；原文件/源目录零触碰（隔离 + 静态扫描）；零 Windows 回收站 API |
@@ -147,7 +147,7 @@
 | AC11 Host 命令桥 | PARTIAL（Python 侧 MET） | `logs/core-py-ac11-python-wire.log`；Core capability 公告 + preview/trash dispatch/closed shape/typed unsupported；.NET registry/dispatcher/client 注册与 R-002 白名单归 `task-7`（fea12-core-host），Lead 集成时合并定稿 |
 | AC12 隔离与禁令 | MET | `logs/core-py-ac12-isolation.log` + `evidence/core-py-isolation-scan.json`；全部 fixture 用 `tmp_path`/workspace 临时根；静态扫描 src 零 Windows 回收站 API、删除模块零真实用户根；运行时哨兵证明隔离根外零变化 |
 
-## 5. 真实测量与门禁（r3 复跑，交付 head 见 Handoff）
+## 5. 真实测量与门禁（r4 复跑，交付 head 见 Handoff）
 
 * `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1116 passed**（相关组；r2 1104 + r3 新增 10 + r4 新增 2）。
 * `pytest tests -q -p no:warnings --tb=no`：**3164 passed / 10 skipped**（基线 3093/10；测试增量口径：**CORE +63 / DSIM-1 +8** = +71；r4 新增 2 条 CORE 测试）。

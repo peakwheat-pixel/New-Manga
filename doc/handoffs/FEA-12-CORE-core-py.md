@@ -1,9 +1,9 @@
 # Handoff — FEA-12-CORE 分片 A（Python Core）
 
-- Task: `doc/tasks/FEA-12-CORE.md`（status: in_review；分片 A **r3**；Lead 集成）
+- Task: `doc/tasks/FEA-12-CORE.md`（status: done（closeout）；分片 A **r4**；Lead 集成）
 - Owner: `fea12-core-py`（DSH Agent Teams teammate）
 - 交付日期：2026-11-05（Asia/Shanghai）；r1 交付 → r1 Review changes_requested → r2 返修 →
-  r2 approved/closeout → **Codex 独立裁决 OVERTURN 3a/4 重开 → r3 返修交付**
+  r2 approved/closeout → **Codex 独立裁决 OVERTURN 3a/4 重开 → r3/r4 返修交付 → r4 窄面 approved**
 - 释放 base：`e47fd47e4`（释放 commit `c8d9adc8d`）；r3 门禁基于 r2 delivery head `3da210518`
   + r3 工作树；**契约重冻 commit `fc9833479`**（C-04b v1.1 sha256 `acc8f0e03d42fd57…`、
   M2-C1 rev 2.14 sha256 `701093b5282228fd…`；r5/r7 复核 APPROVE，pins 18/18）
