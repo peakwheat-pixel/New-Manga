@@ -231,6 +231,13 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 - 集成：DSH 集成验证（pytest 全量 3051/0/10、.NET 1360/0/78、IPC 3/3、check PASS、pins 18/18；FEA-09 证据零 diff）；integration_commit 见 front matter；未 push。
 - 承接卡（用户已授权启动）：FEA-11-HOST-AUTH-1、FEA-11-LINEAGE-1、FEA-11-AC4-GAPS-1、FEA-11-MATCH-1、FEA-11-SCAN-1。
 
+## Closeout 补充（DSH，2026-11-06；承接卡回填，不改历史字节）
+
+- **AC11-4（CAS/原子性/零写）缺口已闭环**：承接卡 `FEA-11-AC4-GAPS-1` **done**（r1 独立复审 approved P0/P1=0；delivery `2d9a4a219`；AC1–AC5 全 MET）；本卡验收口径注明 AC11-4 可判定 MET（G4–G11 漂移矩阵 + 16 表零写比较集；G12 按 C-17 §6.2 非缺口，非缺口不补）。L-5 由该卡承接关闭；L1–L4 转入该卡 limitation。
+- **AC11-3（旧库 fixture/独立 match 测试）**：承接卡 `FEA-11-MATCH-1` 已 ready（2026-11-06，base `2d9a4a219`），AC11-3 待其 closeout 后回填。
+- **AC11-1（定时扫描/watcher）**：`FEA-11-SCAN-1` 冻结为 Host 侧只读周期扫描切片（AC11-1 仍 PARTIAL，仅闭合定时扫描半边）；watcher/冷启动全源枚举登记 `FEA-11-WATCH-1`/`FEA-11-SCAN-2`，不得静默缺失。
+- 本补充不改变本卡 `closed_with_limitations` 终态、历史证据字节或 delivery_head。
+
 ## Closeout Record
 
 - 实施完成（DSH 接手；Phase A/B/C1/C2/C3/C4/C5），Task → `in_review`（2026-11-05）。
