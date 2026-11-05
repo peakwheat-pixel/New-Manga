@@ -29,6 +29,7 @@ import inspect
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -43,12 +44,14 @@ from application.maintenance.recycle_gateway import (  # noqa: E402
     FAILURE_REASONS,
     ITEM_STATUSES,
     OriginalFileRecycleGateway,
+    REASON_ALREADY_IN_BIN,
     REASON_GATEWAY_UNAVAILABLE,
     REASON_INVALID_REQUEST,
     REASON_IN_USE,
     REASON_OUTSIDE_ISOLATED_ROOT,
     REASON_PATH_NOT_FOUND,
     REASON_RECYCLE_REJECTED,
+    REASON_VERIFY_FAILED,
     STATUS_FAILED,
     STATUS_MOVED,
     STATUS_NOT_STARTED,
@@ -56,7 +59,11 @@ from application.maintenance.recycle_gateway import (  # noqa: E402
     RecycleItemOutcome,
     RecycleJournal,
     RecycleOutcome,
+    RecycleSafetyError,
     UnavailableOriginalFileRecycleGateway,
+)
+from infrastructure.filesystem import (  # noqa: E402
+    simulated_recycle_bin as simulated_module,
 )
 from infrastructure.filesystem.simulated_recycle_bin import (  # noqa: E402
     BIN_DIR_NAME,
@@ -724,3 +731,194 @@ def test_test_sources_reference_no_real_path_literals() -> None:
     for label, needle in needles.items():
         assert any(needle in sample for sample in samples), label
     assert drive_path.search(samples[-1])
+
+
+# ---------------------------------------------------------------------------
+# R-001 — the gateway's *own* write targets must not be redirectable
+# ---------------------------------------------------------------------------
+
+
+def _make_directory_junction(link: Path, target: Path) -> bool:
+    """Create a Windows directory junction (no admin required). False = skip."""
+    try:
+        completed = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(target)],
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return False
+    return completed.returncode == 0
+
+
+def _remove_directory_junction(link: Path) -> None:
+    """Remove the junction itself (never the target)."""
+    try:
+        os.rmdir(link)
+    except OSError:
+        pass
+
+
+def _make_hardlink(link: Path, target: Path) -> bool:
+    """Create a hard link to an existing file; False = skip (unsupported FS)."""
+    try:
+        os.link(target, link)
+    except OSError:
+        return False
+    return True
+
+
+def test_filesystem_root_is_refused(tmp_path: Path) -> None:
+    """R-007: the fs-root refusal branch is covered (not just code)."""
+    with pytest.raises(UnsafeIsolatedRootError, match="filesystem root"):
+        SimulatedRecycleBin(Path(tmp_path.anchor))
+
+
+def test_root_reached_through_a_junction_is_refused(tmp_path: Path) -> None:
+    real_root = tmp_path / "real-root"
+    real_root.mkdir()
+    linked_root = tmp_path / "linked-root"
+    if not _make_directory_junction(linked_root, real_root):
+        pytest.skip("directory junctions are not permitted in this environment")
+    try:
+        with pytest.raises(UnsafeIsolatedRootError, match="junction/symlink"):
+            SimulatedRecycleBin(linked_root)
+    finally:
+        _remove_directory_junction(linked_root)
+
+
+def test_preplanted_bin_dir_junction_is_refused_without_outside_writes(
+    isolated_root: Path, tmp_path: Path
+) -> None:
+    """R-001: a junction pre-planted at the simulated bin directory would
+    redirect the move/manifest write outside the root — refuse at construction,
+    with zero outside writes."""
+    outside_bin = tmp_path / "outside-bin"
+    _write(outside_bin / "sentinel.txt", b"KEEP OUTSIDE")
+    outside_before = _tree_snapshot(outside_bin)
+    junction = isolated_root / BIN_DIR_NAME
+    if not _make_directory_junction(junction, outside_bin):
+        pytest.skip("directory junctions are not permitted in this environment")
+    try:
+        with pytest.raises(RecycleSafetyError, match="junction/symlink"):
+            SimulatedRecycleBin(isolated_root)
+        assert _tree_snapshot(outside_bin) == outside_before
+    finally:
+        _remove_directory_junction(junction)
+
+
+def test_preplanted_journal_hardlink_is_refused_without_outside_writes(
+    isolated_root: Path, tmp_path: Path
+) -> None:
+    """R-001: a hard link pre-planted as the journal would make every append
+    write a file outside the root — refuse at construction, zero writes."""
+    outside_journal = _write(tmp_path / "outside-journal.txt", b"OUTSIDE")
+    hardlink = isolated_root / JOURNAL_NAME
+    if not _make_hardlink(hardlink, outside_journal):
+        pytest.skip("hard links are not supported by this filesystem")
+    try:
+        with pytest.raises(RecycleSafetyError, match="hard-linked"):
+            JsonLinesRecycleJournal(isolated_root)
+        with pytest.raises(RecycleSafetyError, match="hard-linked"):
+            SimulatedRecycleBin(isolated_root)  # gateway validates it too
+        assert outside_journal.read_bytes() == b"OUTSIDE"
+    finally:
+        os.unlink(hardlink)
+
+
+def test_replanted_bin_dir_junction_is_refused_at_write_time(
+    isolated_root: Path, tmp_path: Path
+) -> None:
+    """R-001: the check is repeated before each write — a target re-planted
+    after a clean construction is still refused with zero outside writes."""
+    journal = JsonLinesRecycleJournal(isolated_root)
+    simulated = SimulatedRecycleBin(isolated_root)
+    target = _write(isolated_root / "sources" / "page.png", b"PAGE BYTES")
+    outside_bin = tmp_path / "outside-bin"
+    _write(outside_bin / "sentinel.txt", b"KEEP OUTSIDE")
+    outside_before = _tree_snapshot(outside_bin)
+    junction = isolated_root / BIN_DIR_NAME
+    if not _make_directory_junction(junction, outside_bin):
+        pytest.skip("directory junctions are not permitted in this environment")
+    try:
+        with pytest.raises(RecycleSafetyError, match="junction/symlink"):
+            simulated.move_to_recyclebin(
+                [RecycleEntry("req-1", str(target))], journal=journal
+            )
+        assert _tree_snapshot(outside_bin) == outside_before
+        assert target.read_bytes() == b"PAGE BYTES"
+    finally:
+        _remove_directory_junction(junction)
+
+
+def test_replanted_journal_hardlink_is_refused_at_write_time(
+    isolated_root: Path, tmp_path: Path
+) -> None:
+    """R-001: journal appends re-check their own path — a hard link planted
+    after construction is refused and the outside file is untouched."""
+    journal = JsonLinesRecycleJournal(isolated_root)
+    simulated = SimulatedRecycleBin(isolated_root)
+    outside_journal = _write(tmp_path / "outside-journal.txt", b"OUTSIDE")
+    hardlink = isolated_root / JOURNAL_NAME
+    if not _make_hardlink(hardlink, outside_journal):
+        pytest.skip("hard links are not supported by this filesystem")
+    try:
+        with pytest.raises(RecycleSafetyError, match="hard-linked"):
+            simulated.move_to_recyclebin([], journal=journal)
+        assert outside_journal.read_bytes() == b"OUTSIDE"
+        with pytest.raises(RecycleSafetyError, match="hard-linked"):
+            journal.read_records()
+    finally:
+        os.unlink(hardlink)
+
+
+# ---------------------------------------------------------------------------
+# R-007 — rollback / already-in-bin coverage (previously probe-only)
+# ---------------------------------------------------------------------------
+
+
+def test_verify_failed_rolls_back_to_the_original(
+    isolated_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A post-move verification failure restores the original file and reports
+    typed ``failed/verify_failed``; nothing enters the manifest."""
+    source = _write(isolated_root / "sources" / "page.png", b"ORIGINAL BYTES")
+    simulated = SimulatedRecycleBin(isolated_root)
+    journal = JsonLinesRecycleJournal(isolated_root)
+    original_fingerprint = simulated_module._fingerprint
+
+    def corrupting_fingerprint(path: Path):
+        if _same_path(path.parent, simulated.bin_dir):
+            return ("file", 0, "0" * 64)  # pretend the moved copy changed
+        return original_fingerprint(path)
+
+    monkeypatch.setattr(
+        simulated_module, "_fingerprint", corrupting_fingerprint
+    )
+    outcome = simulated.move_to_recyclebin(
+        [RecycleEntry("req-1", str(source))], journal=journal
+    )
+    item = outcome.items[0]
+    assert (item.status, item.reason) == (
+        STATUS_FAILED,
+        REASON_VERIFY_FAILED,
+    )
+    assert source.read_bytes() == b"ORIGINAL BYTES"
+    assert simulated.list_entries() == ()
+
+
+def test_entry_inside_the_simulated_bin_is_already_in_bin(
+    isolated_root: Path,
+) -> None:
+    simulated = SimulatedRecycleBin(isolated_root)
+    stray = _write(isolated_root / BIN_DIR_NAME / "stray.png", b"STRAY")
+    journal = JsonLinesRecycleJournal(isolated_root)
+    outcome = simulated.move_to_recyclebin(
+        [RecycleEntry("req-1", str(stray))], journal=journal
+    )
+    item = outcome.items[0]
+    assert (item.status, item.reason) == (
+        STATUS_FAILED,
+        REASON_ALREADY_IN_BIN,
+    )
+    assert stray.read_bytes() == b"STRAY"

@@ -11,12 +11,18 @@ Production must never construct it — the production default is
 Safety rules enforced structurally, not by convention:
 
 - the configured root must already exist, must be an ordinary directory, must
-  not be a filesystem root and must not be the real Windows recycle-bin
-  folder;
+  not be a filesystem root, must not be (or be reached through) a
+  junction/symlink, and must not be the real Windows recycle-bin folder;
 - every source path must resolve inside that root: relative paths, ``..``/
   ``.``/empty path components, paths escaping the root, and any junction or
   symlink on the walk are typed ``failed`` items with **zero** filesystem
   effect;
+- the gateway's **own** write targets (the simulated bin directory, the
+  manifest and the journal) are validated at construction and again before
+  every write/read: they must resolve inside the caller's root, must not
+  cross a junction/symlink, and an existing manifest/journal file must not be
+  hard-linked outside — otherwise a typed :class:`RecycleSafetyError` is
+  raised with zero writes;
 - the move is ``os.replace`` inside the same root (same volume, atomic per
   item) and is verified afterwards by kind/size/SHA-256; a verification
   failure rolls the item back and reports ``failed`` — ``failed`` always means
@@ -25,6 +31,13 @@ Safety rules enforced structurally, not by convention:
 - the only mutating calls are ``os.replace`` and the manifest/journal writes,
   all inside the isolated root.  No recycle-bin API, no process spawn, no
   database, no unlink/rmtree: deleting an original is never a fallback here.
+
+Residual risk (why this is still **test infrastructure**, not a hardened
+production adapter): the write-target checks and the writes are separate
+filesystem calls, so a concurrent re-plant is a TOCTOU window; the slice is
+single-writer by construction.  The real OS bridge must bind handles and keep
+the SSD/journal single-writer discipline.  The AC2 wording is limited
+accordingly (see Task card / `verification/FEA-12-DSIM-1/ISOLATION-EVIDENCE.md`).
 
 The manifest (``simulated-recyclebin/recyclebin-manifest.json``) is the audit
 catalogue of what the simulated bin holds; the journal
@@ -153,7 +166,96 @@ def _assert_isolated_root(root: Path) -> Path:
         raise UnsafeIsolatedRootError(
             "the real Windows recycle-bin folder is not an isolated scratch root"
         )
+    # R-001: a root reached through a junction/symlink would move the write
+    # containment baseline; refuse it instead of silently writing elsewhere.
+    _assert_plain_component_walk(
+        resolved, UnsafeIsolatedRootError, "isolated scratch root"
+    )
     return resolved
+
+
+def _assert_plain_component_walk(
+    path: Path, error_type: type[Exception], what: str
+) -> None:
+    """Every existing component of ``path`` must be a plain entry (no reparse).
+
+    Walks from the filesystem anchor down; a junction/symlink anywhere on the
+    path means the lexical and the real path disagree, which is exactly the
+    condition a containment check must refuse rather than resolve.
+    """
+    absolute = Path(os.path.abspath(str(path)))
+    probe = Path(absolute.anchor)
+    for part in absolute.parts[1:]:
+        probe = probe / part
+        try:
+            probe_stat = probe.lstat()
+        except OSError:
+            break  # nothing there to traverse through
+        if _is_reparse_point(probe_stat):
+            raise error_type(f"{what} must not cross a junction/symlink: {probe}")
+
+
+def _assert_write_target(
+    root: Path, target: Path, what: str, *, expect_dir: bool = False
+) -> None:
+    """R-001: a gateway-owned write target must stay inside the caller root.
+
+    Called at construction **and before every write/read** of the simulated
+    bin's own paths (bin directory, manifest, journal): a junction or hard
+    link pre-planted in the scratch root would otherwise redirect a manifest
+    or journal write — or the recycle move itself — outside the isolated root.
+    Anything suspicious is a typed ``RecycleSafetyError`` with zero writes.
+
+    Residual risk (documented, not fixed): the check and the write are
+    separate filesystem calls, so a concurrent re-plant is a TOCTOU window;
+    the simulated slice is single-writer test infrastructure, the real OS
+    bridge must bind handles (see module docstring).
+    """
+    root_absolute = Path(os.path.abspath(str(root)))
+    target_absolute = Path(os.path.abspath(str(target)))
+    try:
+        relative = target_absolute.relative_to(root_absolute)
+    except ValueError:
+        raise RecycleSafetyError(
+            f"{what} escapes the isolated root"
+        ) from None
+    probe = root_absolute
+    for segment in relative.parts:
+        probe = probe / segment
+        try:
+            probe_stat = probe.lstat()
+        except OSError:
+            break  # nothing there yet
+        if _is_reparse_point(probe_stat):
+            raise RecycleSafetyError(
+                f"{what} crosses a junction/symlink: {probe}"
+            )
+    resolved_root = Path(os.path.realpath(str(root)))
+    resolved_target = Path(os.path.realpath(str(target)))
+    if not _is_within(resolved_target, resolved_root):
+        raise RecycleSafetyError(
+            f"{what} resolves outside the isolated root"
+        )
+    try:
+        target_stat = target_absolute.lstat()
+    except OSError:
+        return  # does not exist yet: containment/reparse checks are enough
+    if expect_dir:
+        if not stat.S_ISDIR(target_stat.st_mode):
+            raise RecycleSafetyError(
+                f"{what} is not a plain directory inside the isolated root"
+            )
+        return
+    if not stat.S_ISREG(target_stat.st_mode):
+        raise RecycleSafetyError(
+            f"{what} is not a plain file inside the isolated root"
+        )
+    if target_stat.st_nlink > 1:
+        # a pre-planted hard link would make an append write a file the
+        # gateway does not own (and that lives outside the root)
+        raise RecycleSafetyError(
+            f"{what} is hard-linked outside the isolated root"
+        )
 
 
 def _sha256_file(path: Path) -> str:
@@ -266,6 +368,10 @@ class SimulatedRecycleBin:
         self._manifest_path = self._bin_dir / MANIFEST_NAME
         self._failure_injector = failure_injector
         self._clock = clock or utc_now
+        # R-001: the gateway's *own* write targets are validated too — a
+        # junction/hard link pre-planted in the caller's scratch root must be
+        # refused at construction, not silently followed by the first move.
+        self._assert_write_targets()
 
     # -- read faces (tests / audit) ----------------------------------------
 
@@ -281,8 +387,27 @@ class SimulatedRecycleBin:
     def manifest_path(self) -> Path:
         return self._manifest_path
 
+    def _assert_write_targets(self) -> None:
+        """R-001: validate every gateway-owned write/read target.
+
+        Re-run before each write/read (not just at construction) so a target
+        re-planted between operations is still refused.  A typed
+        ``RecycleSafetyError`` means zero filesystem writes were performed for
+        the operation.
+        """
+        _assert_write_target(
+            self._root, self._bin_dir, "simulated bin directory", expect_dir=True
+        )
+        _assert_write_target(
+            self._root, self._manifest_path, "simulated bin manifest"
+        )
+        _assert_write_target(
+            self._root, self._root / JOURNAL_NAME, "simulated bin journal"
+        )
+
     def read_manifest(self) -> dict:
         """The raw manifest (``{"format": ..., "entries": [...]}``)."""
+        self._assert_write_targets()
         if not self._manifest_path.is_file():
             return {"format": MANIFEST_FORMAT, "entries": []}
         try:
@@ -377,12 +502,17 @@ class SimulatedRecycleBin:
             return _failed(entry, REASON_PATH_NOT_FOUND)
         except OSError:
             return _failed(entry, REASON_ACCESS_DENIED)
+        # R-001: re-check the gateway's own targets right before the move.
+        self._assert_write_targets()
         try:
             self._bin_dir.mkdir(parents=True, exist_ok=True)
         except OSError:
             # The bin lives inside the isolated root; if it cannot be created
             # the environment is broken, not the user's file: surface it.
             raise
+        # A freshly created bin is plain; this also catches a pre-planted one
+        # that appeared between the two checks (still a narrow TOCTOU window).
+        self._assert_write_targets()
         stored = self._bin_dir / f"{uuid.uuid4().hex[:8]}-{source.name}"
         try:
             os.replace(str(source), str(stored))
@@ -484,7 +614,11 @@ class SimulatedRecycleBin:
         delete call of any kind, not even for its own scratch files — the
         isolated root is disposable, so a failed write may leave a temp file
         behind while the previous manifest stays intact.
+
+        R-001: targets are re-validated immediately before the write so a
+        manifest/bin path re-planted after construction is refused.
         """
+        self._assert_write_targets()
         self._bin_dir.mkdir(parents=True, exist_ok=True)
         payload = json.dumps(manifest, ensure_ascii=False, indent=2)
         temp_path = self._manifest_path.with_name(
@@ -510,12 +644,18 @@ class JsonLinesRecycleJournal:
     """
 
     def __init__(self, isolated_root: str | Path) -> None:
-        root = _assert_isolated_root(Path(isolated_root))
-        self._path = root / JOURNAL_NAME
+        self._root = _assert_isolated_root(Path(isolated_root))
+        self._path = self._root / JOURNAL_NAME
+        # R-001: a pre-planted hard link/symlink would make every append write
+        # a file outside the isolated root; refuse at construction.
+        self._assert_safe()
 
     @property
     def path(self) -> Path:
         return self._path
+
+    def _assert_safe(self) -> None:
+        _assert_write_target(self._root, self._path, "simulated bin journal")
 
     def record_attempt(self, attempt: RecycleAttempt) -> None:
         self._append({"record_type": "attempt", **attempt.to_dict()})
@@ -524,6 +664,7 @@ class JsonLinesRecycleJournal:
         self._append({"record_type": "receipt", **receipt.to_dict()})
 
     def read_records(self) -> tuple[dict, ...]:
+        self._assert_safe()
         if not self._path.is_file():
             return ()
         records: list[dict] = []
@@ -534,6 +675,9 @@ class JsonLinesRecycleJournal:
         return tuple(records)
 
     def _append(self, record: dict) -> None:
+        # Re-check before every append (R-001): a journal path re-planted
+        # between construction and the write must not be followed.
+        self._assert_safe()
         line = json.dumps(record, ensure_ascii=False)
         with open(self._path, "a", encoding="utf-8", newline="\n") as handle:
             handle.write(line + "\n")
