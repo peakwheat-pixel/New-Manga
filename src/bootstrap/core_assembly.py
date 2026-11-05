@@ -1414,18 +1414,12 @@ def assemble_core_services(
         # arrive through the injection seam above; the Legacy Qt assembly
         # constructs them and needs a QGuiApplication instance, which the
         # entry creates before calling this.
-        # FEA-11-LINEAGE-1 AC2: the render read path refuses a region whose
-        # native lineage belongs to a different source binding (C-17 §7.1).
-        # The providers are read-only lookups; an unbound page keeps the
-        # historical behaviour.
-        def _lineage_binding_of_page(page_id: str) -> str | None:
-            row = source_sync_store.current_binding_of_page(page_id)
-            return row["binding_id"] if row else None
-
-        def _lineage_binding_of_revision(revision_id: str) -> str | None:
-            row = source_sync_store.lineage_of_revision(revision_id)
-            return row["binding_id"] if row else None
-
+        # FEA-11-LINEAGE-1 AC2 wiring is DEFERRED (r1 P0-1): the guard must
+        # only be enabled once every revision write path registers lineage
+        # (save_translation/confirm/locks/restore/draft/Run/add_revision).
+        # Until then the read paths keep the pre-LINEAGE-1 behaviour, which is
+        # exactly the r7-acceptance hard constraint (do not consume the sync
+        # binding before LINEAGE-1 completes).
         render_service = RenderService(
             region_repo=regions,
             locator=SqlitePageArtifactLocator(conn),
@@ -1440,17 +1434,13 @@ def assemble_core_services(
                 else _render_content_decoder
             ),
             original_page_reader=original_page_reader,
-            lineage_binding=_lineage_binding_of_page,
-            lineage_of_revision=_lineage_binding_of_revision,
         )
         # TASK-049 AC ②: the one application-layer Region write path —
         # ``RegionEditingService.create_region`` (first revision + pointer in
         # one atomic commit, TASK-002 §2.1) — is also what the ``detect``
         # step's candidates flow through; the handler never writes Regions
         # itself and no second write path is invented.
-        editing = RegionEditingService(
-            regions, lineage_binding=_lineage_binding_of_page
-        )
+        editing = RegionEditingService(regions)
         draft_journal = DraftJournal(Path(db_path).parent / "drafts")
         drafts = DraftProtectionService(
             repository=regions,
