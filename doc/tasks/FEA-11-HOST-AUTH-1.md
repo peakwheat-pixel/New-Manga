@@ -52,7 +52,7 @@ allowed_paths:
 
 - AC1 MET：`CanonicalJson.cs` + `CanonicalJsonTests` 4/4（与 Core canonical_bytes 逐字节一致的跨实现向量）。
 - AC2 MET：`HostAuthorizationMinter`（六字段/排序/canonical digest）+ `HostAuthorizationMinterTests` 3/3；HostRuntime 注入 ApplyRequest（`Fea11HostAuthTests.Apply_InjectsTheHostMintedAuthorizationNotTheCallers`）。
-- AC3 PARTIAL（r2 返修后）：typed 预提交拒绝 → journal **failed + error_code/retryable**（durable）；歧义/传输失败 → 保持 host-authorized 且异常携带 operation_id 供恢复；`Fea11HostAuthTests` 7/7（注入/typed 失败/歧义失败/顺序探针（LastUsedAt 变化）/capability 门/缺 plan_digest 零 journal/固定向量）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）；③「同 operation/request digest 重试」尚未实现（C-17 §3.2 行 163 与「新 op id 重试」差异登记，待后续/Review 裁决）。
+- AC3 PARTIAL（r3 返修后）：typed 业务拒绝（歧义集合外）→ journal **failed + error_code/retryable**（durable，retryable 取 Core 值）；歧义/传输失败 → host-authorized + `requestId=operation_id` 供恢复；**同 operation/request digest 重试已实现**（`RetryAsync` + `RetryFailed`，C-17 §3.2 行 163）；`Fea11HostAuthTests` 11/11（注入/typed 失败×3 retryable/歧义失败/retry round-trip/顺序探针/capability 门/缺 plan_digest/固定向量）。**剩余 limitation**：①完整 HostRuntime→Core 端到端（真实 sidecar + dispatcher 接线）；②ACK 重发/崩溃点矩阵自动化（FEA-11 L-8）。
 - AC4 PARTIAL：用户已接受 Core-only limitation（FEA-11 `closed_with_limitations`）；本卡完成 P0-1 实际闭合，待本卡复审（r2）判定。
 - 门禁：`verification/FEA-11-HOST-AUTH-1/logs/gates.log`（pytest 3051/0/10、.NET 1370/0、IPC 复跑 3/3、check PASS、pins 18/18；含 IPC flaky 说明）。
 - 已知限制：HostRuntime 级端到端（真实 sidecar + UI 命令面）未自动化；ACK 重发/崩溃点矩阵未自动化；`source.read/1` 缺失时 capability item 的 reason 语义待收口（FEA-11 r6 P2-4 遗留）；IPC 套件为 Core 直连（P2-9）。
