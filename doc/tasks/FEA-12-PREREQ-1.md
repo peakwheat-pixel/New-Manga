@@ -47,12 +47,12 @@ out_of_scope:
 ## 来源与目标
 
 - 来源：`doc/reviews/ADJ-2026-11-05-FEA-12-SCOPE.md`（范围冻结与 D1–D8 裁决）；`doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md` §2.0–§2.4；`doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md` SC-B06；`doc/plan/FEA-C14_SOURCE_RELOCATION_DRAFT.md` SC-S08；`doc/contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md` PD-01…PD-10；`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` §5.11/§5.12/§11/§12。
-- 目标：在**不写业务实现**的前提下，把 C-04b/C-09 已冻结、但尚未登记进 M2-C1 的 remove/trash wire 一次性 additive 登记，并同步 Host 投影/白名单，附负向对照。完成后 `FEA-12-CORE` 才能按冻结 wire 实现。
+- 目标：在**不写业务实现**的前提下，把 C-04b/C-09 已冻结、但尚未登记进 M2-C1 的 remove/trash wire 一次性修订登记（协议增量 + 2 处已授权文本替换），并同步 Host 投影/白名单，附负向对照。完成后 `FEA-12-CORE` 才能按冻结 wire 实现。
 - 先例：`FEA-10-PREREQ-1`（M2-C1 rev 2.12，Codex 实现 / DSH 集成，`728c8bb0`）。
 
 ## Scope（冻结，见 ADJ §2.1/§D4）
 
-### 1. M2-C1 rev 2.13（additive；只追加，不重写既有条款）
+### 1. M2-C1 rev 2.13（协议增量；166 insertions / 2 deletions——版本状态行与 §11 policy 行为 D2/既有用户裁决支撑的授权替换，其余为追加）
 
 1. **§5 新只读命令** `PreviewPermanentDeleteBooks`：入参 `{ bookIds: BookId[1..20] }`（非空/去重/上限 20）；出参 `{ inventoryDigest, inventoryDigests{bookId→digest}, computedAt, items: DeletePreviewItem[] }`；`DeletePreviewItem` 按 C-04b `:43`（含 PD-01 三项强制：`protection.manualRegionCount`、`protection.draftPageCount`、`contentSummary.deletedFiles`+`deletedBytes`）；零副作用语义。**目标 wire minor = 11**（C-04b `:47`；文档 rev 2.13 ≠ wire minor）。
 2. **删除命令 digest 扩展**：单条 `PermanentlyDeleteBook` 追加 `inventory_digest: string`；批量 `PermanentlyDeleteBooks` 追加集合级 `inventory_digest` + 逐书 `inventory_digests`；两级校验顺序 = 集合级（键集合与顺序）→ 逐书；缺失/格式错 → `INVALID_REQUEST`，不匹配 → `BOOK_DELETE_STALE_PREVIEW`；既有命令 wire minor 保持 10（additive 字段，旧 Host 不传即 fail-closed，不降级软删）。
@@ -73,7 +73,7 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [x] **AC1 M2-C1 rev 2.13 additive 文本**：§5/§5.11/§5.12/§11/§12/revision history 按 Scope 1–9 完整登记；`git diff` 证明只追加、不改既有条款字节（逐段 diff 证据）；文档 rev=2.13，默认 `PROTOCOL_MINOR` 不变。 <<MET>>
+- [x] **AC1 M2-C1 rev 2.13 修订文本（Codex 复核后更正口径）**：§5/§5.11/§5.12/§11/§12/revision history 按 Scope 1–9 登记；`git diff --numstat` 实测 **166 insertions / 2 deletions**：2 deletions = 文档版本状态行 + §11 policy 行（D2 对账与既有用户裁决支撑的授权替换），其余为追加；不再表述为"纯 additive/既有行零变化"。文档 rev=2.13，默认 `PROTOCOL_MINOR` 不变。 <<MET>>
 - [x] **AC2 Host 投影 additive**：registry/dispatcher/client 新命令与 capability 注册；既有命令 wire/映射零语义改动；`CommandParityContractTests` 等治理测试同步且全绿。 <<MET>>
 - [x] **AC3 负向对照**：在改动前 head 上复现"新码被降级 `category=unknown` 且 code 不改写 / 旧 Core 不识别新命令 fail-closed"，日志与命令入 `verification/FEA-12-PREREQ-1/`；证明 M2-C1 修订是必要前置。 <<MET>>
 - [x] **AC4 治理门禁**：`verify_pins.ps1` **18/18**；`check.ps1` PASS；全量 .NET 实测（passed/failed/skipped 分列，首跑 flaky 需复跑并记录）；pytest 全量基线不变（本卡无 Python 改动，记录实测数字）。 <<MET>>
@@ -200,6 +200,11 @@ frontmatter `allowed_paths` 为准；`evidence_dir` 已显式列入。**共享�
 | agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea12-prereq-impl\FEA-12-PREREQ-1\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea12-prereq-impl\FEA-12-PREREQ-1\` | verification/FEA-12-PREREQ-1/agent-output-manifest.json | 逐文件 bytes+sha256 见 manifest（11 files：运行日志副本 + 探针脚本）；判别力证据以仓内 `verification/FEA-12-PREREQ-1/**` 为准；无需迁移。 |
 | worktree | `G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81` | verification/FEA-12-PREREQ-1/agent-output-manifest.json | detached HEAD `035468a81`，用于 AC3 基线复现；**保留不删**（Lead 2026-11-05 指示）。处置建议：Review/集成完成后由 DSH 用普通 `git worktree remove`（工作树 clean、无独有提交）或归档；关闭前不得删除。 |
 | temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-PREREQ-1\` | DELETE_SAFE | — | verification/FEA-12-PREREQ-1/agent-output-manifest.json | 仅基线 live Core 隔离数据根（`baseline-live-core`）与日志副本；无独有内容（日志副本已入 agent-output/manifest 引用）。**DSH 2026-11-05 closeout 已删除**：26 files / 685,120 bytes；删除后路径不存在（Resolve-Path 校验通过），仓内无临时文件。 |
+
+## Codex 复核更正（2026-11-05）
+
+- Codex 独立裁决（`doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`，裁决 2=CONFIRM 但指出 diff 表述不准确）：M2-C1 rev 2.13 实为 **166 insertions / 2 deletions**（文档版本状态行 + §11 policy 行被替换），不得表述为「纯 additive、既有行零变化」；本卡 Scope/AC1 已按实测更正。
+- 其他结论不变：C-04b `:99`/C-09 `:110-129` 依据成立；18/18 pins PASS、18 份契约与 ADJ-001 相对 `035468a81` 零 diff；`PurgeTrash` 首版延期登记成立。
 
 ## Closeout Record
 

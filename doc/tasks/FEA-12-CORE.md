@@ -3,8 +3,8 @@ id: FEA-12-CORE
 title: FEA-12 删除线首版实现（A 软删/恢复 + C 彻底删除 + 统一 ProtectionPolicy + Host 命令桥）
 kind: implementation
 governance_version: 3
-status: done
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + r2 最小返修 → **r2 Review approved（P0/P1/P2=0，P3=10 非阻断）→ DSH 集成 closeout**
+status: changes_requested
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + r2 返修 → r2 approved（P0/P1/P2=0）→ closeout；**Codex 独立裁决（2026-11-05）OVERTURN 2 项（current 保护绑定不完整、混合 retry 绕过集合 digest）→ 重新打开返修（UNFREEZE C-04b v1.1 + M2-C1 rev 2.14）**
 suggested_owner: dsh（dsh-agent-team teammates 分片，Lead 集成）
 owner: fea12-core-py（分片 A）+ fea12-core-host（分片 B），Lead 集成
 reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-CORE-r1.md` session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；r2 `doc/reviews/FEA-12-CORE-r2.md` session `113ad38d-f601-4e30-b2c7-0721a95ae384`；均未参与实现）
@@ -16,8 +16,8 @@ branch: null
 worktree: null
 integration_commit: 3da210518
 delivery_head: 3da210518
-canonical_evidence_status: complete
-resource_closeout_status: complete
+canonical_evidence_status: pending
+resource_closeout_status: pending
 evidence_dir: verification/FEA-12-CORE
 allowed_paths:
   - doc/tasks/FEA-12-CORE.md
@@ -70,8 +70,8 @@ out_of_scope:
 - [x] **AC1 软删（MoveToTrash）**：逐项 `moved/skipped`；书架不再含、回收站含；DB 除 `books.deleted_at` 外内容行/保护行/current/pin/进度/binding 全不变；受管文件字节哈希前后一致。 <<MET>>
 - [x] **AC2 恢复（RestoreFromTrash）**：恢复后书架可见；current/pin/进度/人工数据/binding 与删除前逐字段相等；不存在静默解锁/改 current；不存在条目 → 逐项冲突不整批失败。 <<MET>>
 - [x] **AC3 回收站读取面不回归**：`ListRecycleBinBooks` 保持冻结投影（`page_count` `None` 通道、空数组≠失败）；`ListTrash` 映射按 PREREQ-1 冻结形状。 <<MET>>
-- [x] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<MET>>
-- [x] **AC5 专门确认绑定（PD-02/PD-04；retry 限定见 R-008）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW`；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化 → 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删；**PD-07 retry 混合批次**：集合级 digest 仅形状校验、逐书对存活目标强校验（R-008 DSH 限定）。 <<MET>>
+- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<PARTIAL: Codex 裁决 OVERTURN 3(a)——current 保护仅绑定代表值，非首个 current 变化不使旧 digest 失效；UNFREEZE/重冻 C-04b v1.1 后返修>>
+- [ ] **AC5 专门确认绑定（PD-02/PD-04；retry 限定见 R-008）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW`；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化 → 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删；**PD-07 retry 混合批次**：集合级 digest 仅形状校验、逐书对存活目标强校验（R-008 DSH 限定）。 <<PARTIAL: Codex 裁决 OVERTURN 4——混合 live+retry 批次跳过集合级 digest；按 C-04b v1.1 §2.2 强化后返修>>
 - [x] **AC6 单事务与失败回滚（PD-05/PD-06）**：显式 `BEGIN IMMEDIATE`；成功路径内容行按白名单消失、Pipeline 历史脱离保留、清理清单同事务持久化；事务最后一条 DELETE 前注入异常 → 内容行/保护行/v7-v8 行/文件集合与事务前逐项相等、`foreign_key_check` 空、不开始文件清理。 <<MET>>
 - [x] **AC7 保护披露与删除边界**：含锁/人工/pin/current/draft 的书预览披露计数准确；删除成功后受保护行确实删除（披露≠阻断）；事务前无顺手解锁/取消 pin/改 current；非终态 Run/Task/Export → `BOOK_BUSY` 零副作用。 <<MET>>
 - [x] **AC8 共享引用与原文件边界（PD-08）**：可安全拆分共享引用 → 删除成功、原文件字节与其他项目绑定不变；不可拆分/关系图不一致/未列明目标外引用 → `BOOK_DELETE_CONFLICT` 零副作用；用户源文件/源目录逐文件哈希与集合前后不变；零 Windows 回收站 API（静态 grep + 运行时哨兵）。 <<MET>>
@@ -170,6 +170,17 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 
 - **r2 Review 结果（2026-11-05）**：**approved（P0/P1/P2=0，P3=10 非阻断）**。R-001 派生文件披露真实修复（catalog 同源查询 + managed 去重 + catalog 失败 typed UNAVAILABLE；golden derived 向量 3 files/46 bytes；变异去除→测试精确失败）；R-008/R-009/R-010/R-011/R-012/R-004/R-005/R-007 逐项核销；独立复跑相关组 1104、全量 pytest 3152/10、pins 18/18、check PASS(3 warnings)、golden/isolation 探针一致；报告 `doc/reviews/FEA-12-CORE-r2.md`（session `113ad38d-f601-4e30-b2c7-0721a95ae384`）。AC4 恢复 MET、AC11 维持 MET（Lead 定稿）。
 - **r2 Review P3 残留（如实保留，不阻断）**：check 警告数/`gates-core-py.log` purge 11→10 等过程记录口径、`EV-A-HANDOFF` pin 已更新为终稿 `3da210518`、Handoff "19→3" 笔误；1 条 catalog 失败→UNAVAILABLE 的仓库测试为可选补充（行为已由 Reviewer 探针验证）。上述不改写已 review 的代码/证据字节。
+
+## Codex 裁决与返修计划（2026-11-05，重新打开）
+
+> 裁决记录：`doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`（Codex 只读独立核验，基线 `604a2d343`；4 项 DSH 裁决：1=CONFIRM、2=CONFIRM（非纯新增行）、3=OVERTURN(a)、4=OVERTURN）。UNFREEZE 提案：`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`。
+
+- **缺陷 1（OVERTURN 3a）**：`protection.currentRevisionId` 只绑定一个代表 current；Codex 复现：第二个 region 的 current 从 `rr2` 改为 `rr2-new` 后 digest 不变，旧摘要删除成功（`run-43e38c334dbb48439f82519792fbb34e/current-pointer-probe.json`）。违反 ADJ-001 PD-04「保护集合变化即失效」。**处置**：UNFREEZE C-04b v1.1——预览 DTO 增 `currentRegionRevisionIds[]`/`currentArtifactRevisionIds[]`（完整披露），digest canonical v2 绑定全部 current；非首个 current 变化必须 STALE 零副作用。
+- **缺陷 2（OVERTURN 4）**：混合 live+retry 批次跳过集合级 digest（`core_service.py:2437`），`test_core_delete_commands.py:1348` 以 `FAKE_DIGEST` 删除存活书成功。违反 C-04b §2.2 两级都校验。**处置**：集合级 digest 始终绑定完整有序目标集（纯 pending 与混合都一样）；逐书 live 强校验 / pending 按 manifest；错误/重排/换目标/缺失全部拒绝且零副作用。
+- **裁决 2 措辞更正（Codex）**：M2-C1 rev 2.13 实为 166 insertions / 2 deletions（版本状态行 + §11 policy 行授权替换），不得表述为"纯 additive/既有行零变化"；相关卡/记录同步更正。
+- **b/c 确认**：pinnedRevisionIds 两类并集、deletedFiles/Bytes 含 catalog 派生文件口径不变。
+- **返修流程**：①UNFREEZE 提案 fresh subagent 复核；②Lead 执行契约修订 + 重冻 + pins 18/18；③返修实现（fixed 目标：current 全量绑定 + 混合 retry 集合 digest + tests/golden）；④fresh r3 Review；⑤重新 closeout（delivery head 更新）。
+- **返修写入域**：`src/bootstrap/core_service.py`、`src/application/library/service.py`、`src/infrastructure/sqlite/library.py`、`tests/core/test_core_delete_commands.py`、`tests/core/test_core_delete_preview_commands.py`、`tests/storage/test_purge_integrity.py`、`verification/FEA-12-CORE/**`；Host 投影新字段 additive 透传归 .NET 窄批（若需要）。不改 schema/依赖/apps 其余部分。
 
 ## Canonical Evidence
 
