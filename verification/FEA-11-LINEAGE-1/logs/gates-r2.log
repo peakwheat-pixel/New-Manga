@@ -1,0 +1,75 @@
+# FEA-11-LINEAGE-1 r2 gates
+
+- 日期: 2026-11-05T14:50:35+08:00
+- gate head: 966f7762e736660d11c3a43eea095f692bd7cd07 (main, 工作树 clean at start)
+- 解释器: C:/Python314/python.exe (Python 3.14.6)
+- 基线: r1 时点 fea11 49 passed / 全量 pytest 3060 passed, 10 skipped
+- 说明: 本任务 Python-only，未改 .NET 代码，故未跑 dotnet test。
+
+## gate 1: pytest tests/fea11
+$ C:/Python314/python.exe -m pytest tests/fea11 -q -p no:warnings --tb=no
+EXIT=0
+62 passed in 1.60s
+
+## gate 2: lineage 诊断/作用域矩阵 + backfill 幂等（pytest -s 捕获 stderr 诊断）
+$ C:/Python314/python.exe -m pytest tests/fea11/test_source_lineage_native.py::test_mixed_library_scope_matrix_is_diagnosable tests/fea11/test_source_lineage_assembly.py -q -p no:warnings -s
+EXIT=0
+[pipeline.lineage] page=p-cut lineage_hidden=1
+lineage-matrix: page scope lineage guarded hidden_code visible edit
+lineage-matrix: p-managed lineage=none guarded=False hidden=- visible=1 edit=allowed
+lineage-matrix: p-ref lineage=none guarded=False hidden=- visible=1 edit=allowed
+lineage-matrix: p-cut lineage=captured_v7:pb-cut guarded=True hidden=LINEAGE_BINDING_CHANGED visible=0 edit=LINEAGE_BINDING_CHANGED
+lineage-matrix: p-same lineage=captured_v7:pb-same guarded=True hidden=- visible=1 edit=allowed
+lineage-matrix: p-stock lineage=legacy_unverified:- guarded=True hidden=LINEAGE_UNVERIFIED visible=0 edit=LINEAGE_UNVERIFIED
+[core.lineage] legacy lineage backfill: 1 revision(s) registered as legacy_unverified
+[core.export_text] page=p2 lineage_hidden=1
+[core.list_regions] page=p2 lineage_hidden=1
+[core.list_page_region_texts] page=p2 lineage_hidden=1
+[core.lineage] refused: code=LINEAGE_BINDING_CHANGED page=p2 region=3d40d333105d476e83cbaac5ed9bf613
+4 passed in 0.53s
+- backfill 幂等复跑: assembly 测试覆盖两次装配（第二次 0 行新增，原行不被改写）+ native 测试 backfill 断言 (first,second)=(1,0)；本 gate 输出 [core.lineage] legacy lineage backfill: 1 revision(s) registered as legacy_unverified。
+
+## gate 3: pytest tests（全量；stderr 为测试内 QML 噪声，已单独写入 workspace）
+$ C:/Python314/python.exe -m pytest tests -q -p no:warnings --tb=no 2> G:/CODEX/New Manga.workspace/FEA-11/pytest-full-stderr-r2.log
+EXIT=0
+3073 passed, 10 skipped in 230.00s (0:03:49)
+
+## gate 4: pwsh -NoProfile -File tools/governance/check.ps1
+EXIT=0
+Governance check: PASS (2 warnings)
+
+## gate 5: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+EXIT=0
+OK C14 05056cbf65f9
+OK C15 d8c0a3bcfc21
+OK C16 0b9511a55ea1
+OK C17 86b89ff83c9a
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+
+## gate 6: revision 写路径覆盖 grep（r1 P0-1f 无其他旁路）
+$ git grep -n "INSERT INTO region_revisions" -- src
+src/infrastructure/sqlite/pipeline.py:1072:            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+src/infrastructure/sqlite/regions.py:690:            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+src/infrastructure/sqlite/source_sync.py:846:            "INSERT INTO region_revisions (region_revision_id, region_id,"
+
+$ git grep -n "UPDATE regions SET" -- src/infrastructure/sqlite
+src/infrastructure/sqlite/pipeline.py:1092:            "UPDATE regions SET text_json = ?, current_revision_id = ?, updated_at = ?"
+src/infrastructure/sqlite/regions.py:155:                "UPDATE regions SET deleted_at = ?, updated_at = ? WHERE region_id = ?",
+src/infrastructure/sqlite/regions.py:162:                "UPDATE regions SET deleted_at = ? WHERE region_id = ?",
+src/infrastructure/sqlite/regions.py:309:                "UPDATE regions SET page_id = ?, region_type = ?, reading_order = ?,"
+src/infrastructure/sqlite/regions.py:551:                    "UPDATE regions SET page_id = ?, region_type = ?,"
+src/infrastructure/sqlite/regions.py:651:                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+src/infrastructure/sqlite/regions.py:657:                "UPDATE regions SET deleted_at = ?, updated_at = ?"
+src/infrastructure/sqlite/source_sync.py:856:            "UPDATE regions SET current_revision_id = ?, updated_at = ?"
+
+$ git grep -n "insert_lineage(" -- src
+src/application/sources/service.py:811:                        self._store.insert_lineage(
+src/application/sources/service.py:822:                self._store.insert_lineage(
+src/application/sources/service.py:859:                self._store.insert_lineage(
+src/application/sources/service.py:889:            self._store.insert_lineage(
+src/infrastructure/sqlite/pipeline.py:1084:            SourceSyncStore(self._conn).insert_lineage(
+src/infrastructure/sqlite/regions.py:709:            SourceSyncStore(self._conn).insert_lineage(
+src/infrastructure/sqlite/source_sync.py:314:    def insert_lineage(
+
+## gate head 复核: before=966f7762e736660d11c3a43eea095f692bd7cd07 after=966f7762e736660d11c3a43eea095f692bd7cd07
