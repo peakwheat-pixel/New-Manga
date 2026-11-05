@@ -3,8 +3,8 @@ id: FEA-12-CORE
 title: FEA-12 删除线首版实现（A 软删/恢复 + C 彻底删除 + 统一 ProtectionPolicy + Host 命令桥）
 kind: implementation
 governance_version: 3
-status: changes_requested
-approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；**CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + r2 最小返修**
+status: in_review
+approval: 用户 2026-11-05 指令（FEA-12 scope review → 冻结 → 实施 → 独立 Review）；范围冻结 ADJ-2026-11-05-FEA-12-SCOPE（D1–D8）；G-DELETE-IMPL 首版释放（隔离 fixture + 模拟回收站路径）；FEA-12-PREREQ-1 done（wire 冻结，`3e37c595b`）、FEA-11-LINEAGE-1 done（`90a8c8218`）；分片 A/B 已交付；CORE r1 Review changes_requested（P0/P1=0，P2=3，P3=8）→ Lead 处置 + **r2 最小返修交付 in_review（R-001 + R-004/005/007/008/009/010/011/012 处置；AC4 PARTIAL 待 Lead 复审定稿；AC11 由 Lead 定稿 MET）**
 suggested_owner: dsh（dsh-agent-team teammates 分片，Lead 集成）
 owner: fea12-core-py（分片 A）+ fea12-core-host（分片 B），Lead 集成
 reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-CORE-r1.md` session `b2e5e275-122b-44d4-98bc-c86fec7bfbc1`；未参与实现）
@@ -70,7 +70,7 @@ out_of_scope:
 - [x] **AC1 软删（MoveToTrash）**：逐项 `moved/skipped`；书架不再含、回收站含；DB 除 `books.deleted_at` 外内容行/保护行/current/pin/进度/binding 全不变；受管文件字节哈希前后一致。 <<MET>>
 - [x] **AC2 恢复（RestoreFromTrash）**：恢复后书架可见；current/pin/进度/人工数据/binding 与删除前逐字段相等；不存在静默解锁/改 current；不存在条目 → 逐项冲突不整批失败。 <<MET>>
 - [x] **AC3 回收站读取面不回归**：`ListRecycleBinBooks` 保持冻结投影（`page_count` `None` 通道、空数组≠失败）；`ListTrash` 映射按 PREREQ-1 冻结形状。 <<MET>>
-- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<PARTIAL: r1 Review R-001（P2）：deletedFiles/deletedBytes 漏计 catalog preview/page-original 派生文件（清理会删除但未披露）；r2 修复后恢复 MET>>
+- [ ] **AC4 只读预览（PD-01/PD-03）**：预览前后 DB 逐表快照相等、文件 mtime/hash 不变；逐项返回 manualRegionCount/lockCount（三锁 ∪ text_json.translation_locked 并集）/currentRevisionId/pinnedRevisionIds/activeRunIds/draftPageCount/deletedFiles/deletedBytes/sharedFileRefs；无路径/明文/堆栈；digest golden 向量可复算。 <<PARTIAL: r2 已修复 r1 R-001——deletedFiles/deletedBytes 现计入 catalog preview/page-original 派生文件（与 managed 去重）并有判别测试+golden 向量；证据齐备，待 Lead 复审定稿恢复 MET>>
 - [x] **AC5 专门确认绑定（PD-02/PD-04）**：单/批量 `inventory_digest` 缺失/格式错 → `INVALID_REQUEST`；不匹配 → `BOOK_DELETE_STALE_PREVIEW`；集合级与逐书两级校验；单条拒收 `book_ids`；预览→确认间任何保护变化 → 拒绝并重预览；旧 Host 不传 digest fail-closed 不降级软删。 <<MET>>
 - [x] **AC6 单事务与失败回滚（PD-05/PD-06）**：显式 `BEGIN IMMEDIATE`；成功路径内容行按白名单消失、Pipeline 历史脱离保留、清理清单同事务持久化；事务最后一条 DELETE 前注入异常 → 内容行/保护行/v7-v8 行/文件集合与事务前逐项相等、`foreign_key_check` 空、不开始文件清理。 <<MET>>
 - [x] **AC7 保护披露与删除边界**：含锁/人工/pin/current/draft 的书预览披露计数准确；删除成功后受保护行确实删除（披露≠阻断）；事务前无顺手解锁/取消 pin/改 current；非终态 Run/Task/Export → `BOOK_BUSY` 零副作用。 <<MET>>
@@ -107,14 +107,14 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）。共享�
 
 - Handoff：`doc/handoffs/FEA-12-CORE-core-py.md`（分片 A：Python Core；commit 列表见 Handoff 与 `verification/FEA-12-CORE/logs/gates-core-py.log`）。
 - Review：尚无（Lead 指派上下文独立 Reviewer；实现者交付后不参与 Review）。
-- 实际测试（分片 A 2026-11-05 实跑，命令/EXIT/head 见 `verification/FEA-12-CORE/logs/gates-core-py.log`）：
-  - `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1096 passed**（相关组，含新增/改写测试）。
-  - `pytest tests -q -p no:warnings --tb=no`：**3144 passed / 10 skipped**（基线 3093/10；本卡新增测试 51 条，无失败）。
-  - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`：PASS。
-  - `pwsh -NoProfile -File tools/governance/verify_pins.ps1`：18/18。
-  - 证据探针：`scripts/core_py_inventory_digest.py`（golden 向量）与 `scripts/core_py_isolation_scan.py`（AC12 静态+运行时哨兵）均 EXIT=0。
-  - 全量 .NET：属分片 B/Lead 集成门禁；分片 A 零 .NET 改动。
-- 提交：仅本卡 allowed_paths 文件（`src/application/library/service.py`、`src/application/maintenance/ports.py`、`src/domain/books/entities.py`、`src/infrastructure/sqlite/library.py`、`src/bootstrap/core_service.py`、`tests/core/*`（3 个）、`tests/storage/test_purge_integrity.py`、`tests/fea12/test_core_delete_protection.py`、`verification/FEA-12-CORE/**`、本卡、Handoff）。
+- 实际测试（分片 A **r2** 实跑，命令/EXIT/head 见 `verification/FEA-12-CORE/logs/gates-core-py.log`）：
+  - `pytest tests/core tests/storage tests/maintenance tests/fea12 -q`：**1104 passed**（相关组；r1 1096 + r2 新增 8）。
+  - `pytest tests -q -p no:warnings --tb=no`：**3152 passed / 10 skipped**（基线 3093/10；测试增量口径 **CORE +51 / DSIM-1 +8**，其中 r2 新增 8 条 CORE 测试，无失败）。
+  - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-CORE.md`：PASS（4 warnings，均既有/分片 B 证据待 Lead 合并登记）。
+  - `pwsh -NoProfile -File tools/governance/verify_pins.ps1`：18/18 PASS。
+  - 证据探针（r2 重新生成）：`scripts/core_py_inventory_digest.py`（含 R-001 derived 向量）与 `scripts/core_py_isolation_scan.py`（R-004 修复后）均 EXIT=0。
+  - 全量 .NET：属分片 B/Lead 集成门禁；分片 A 零 .NET 改动（集成记录 1405/0/80）。
+- 提交（r2）：仅本卡 allowed_paths 文件；commit 列表见 Handoff §1（r1 `5fb300fd2`/`27dfd7514`/`2a8c6cf83`/`85db8354f` + r2 源码/测试/证据 commit + card/Handoff commit）。
 
 ## DSH 裁决/实现语义（分片 A 固化，2026-11-05）
 
@@ -152,6 +152,19 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
   - R-009（P3，实现者修）：批量 `execute_permanent_delete_db` 写边界抛 `PermanentDeleteBlockedError` 时 `items[].error_code` 应为 `caught.code`（至少顶层 BOOK_BUSY），补预检→事务间竞态注入测试。
   - R-010（P3，实现者修）：`has_unsafe_source_references` 增加第五条 preflight：目标外 `page_bindings.previous_binding_id` 指向目标 binding → `BOOK_DELETE_CONFLICT`（+判别测试）；若认为应用层不可产生，须在记录中明确"fail-closed internal"限定并给出不可产生论证。
   - R-011（P3，实现者修）：`test_core_delete_preview_commands.py:248` 的 `currentRevisionId` 断言改 `== "rr1"`（钉住 Lead 裁决的"首个可见 region"顺序），并同步 golden。
+  - R-012（P3，实现者修，Lead 补充）：批量 cleanup_pending/retry 路径缺直接判别测试——补批量 partial cleanup → `BOOK_DELETE_BATCH_CLEANUP_PENDING` 逐项状态 → 显式重试（只重试 pending、不重跑预览、幂等）、混合 live+retry 的 items/digest 口径断言。
+- **r2 处置结果（2026-11-05，实现者 `fea12-core-py`）**：
+  - R-001 **已修**：`_derived_cleanup_entries` 按与 cleanup 相同的 catalog 查询把 preview/page-original 派生文件计入 `deletedFiles/deletedBytes`（绝对路径去重），catalog 读失败 → `BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE`；判别测试 2 条 + golden 向量 derived 记录。
+  - R-004 **已修**：`is_relative_to` 真包含检查并纳入 `runtime["pass"]`；DRIVE_PATH 实际扫描删除模块+证据脚本并纳入 static pass；evidence JSON 重生成（`drive_path_hits=[]`、`data_root_under_workspace_temp=true`）。
+  - R-005 **已修**：卡/记录/Handoff 计数改「CORE +51 / DSIM-1 +8」；gates log protection 计数改 11。
+  - R-007 **已修（接线）**：`restore_book_from_trash` 经 domain `Book.restore()` 产生值 + `deleted_at IS NOT NULL` guarded UPDATE；补 domain 单测。
+  - R-008 **已裁定并补测/限定**：混合 live+retry 批次集合级 digest 仅形状校验；逐书对存活目标强校验；记录 §2.8 与 AC5 写明限定。
+  - R-009 **已修**：`PermanentDeleteBlockedError` 携带 `book_id`；批量顶层 `BOOK_BUSY`、items 归因；预检→事务竞态注入测试。
+  - R-010 **已修**：第 5 条预检（目标外 binding previous→目标 binding → `BOOK_DELETE_CONFLICT`）+ 判别测试。
+  - R-011 **已修**：`currentRevisionId == "rr1"` 钉住顺序。
+  - R-012 **已补测**：批量 cleanup-pending → 显式 retry → 幂等重放；混合 live+retry 逐项状态（deleted/cleanup_pending/not_started）。
+  - R-002/R-003/R-006：Lead 处置（AC11 MET/allowed_paths 窄批/测试表与指针 closeout）；分片 A 仅更正 Handoff 表述。
+  - **r2 门禁**：相关组 1104 passed；全量 pytest 3152 passed/10 skipped；check PASS（4 warnings）；pins 18/18；probes EXIT=0（见 gates log）。
 - **复审**：r2 交付后另派 fresh subagent 复审（reviewed_head = r2 交付 head；只审新 head；R-001 修复 + R-004/R-005/R-007/R-008/R-009/R-010/R-011 处置）。
 - **closeout 前置**：AC4 恢复 MET、AC11 已 MET、测试表/指针/证据表定稿、`check.ps1 -TaskPath` PASS。
 
@@ -159,29 +172,29 @@ Lead 已裁决以下 8 点；完整依据、canonical 形式与证据见 `verifi
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总 | verification/FEA-12-CORE/logs/gates-core-py.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 27dfd7514 | null | CANONICAL |
-| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 27dfd7514 | null | SOURCE_PIN |
-| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 27dfd7514 | null | SOURCE_PIN |
-| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | 27dfd7514 | null | CANONICAL |
+| EV-FEA12CORE-A-RECORD | AC1–AC12 实施记录/证据索引 | verification/FEA-12-CORE/core-py-implementation-record.md | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-DIGEST | AC4/AC5 golden 向量 | verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-ISOLATION | AC8/AC12 静态+运行时哨兵 | verification/FEA-12-CORE/evidence/core-py-isolation-scan.json | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC1 | AC1 软删 | verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC2 | AC2 恢复 | verification/FEA-12-CORE/logs/core-py-ac2-restore.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC3 | AC3 读取面 | verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC4 | AC4 只读预览 | verification/FEA-12-CORE/logs/core-py-ac4-preview.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC5 | AC5 专门确认 | verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC6 | AC6 单事务/回滚 | verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC7 | AC7 保护披露/边界 | verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC8 | AC8 PD-08/原文件边界 | verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC9 | AC9 C-17 X1 子图 | verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC10 | AC10 统一 ProtectionPolicy | verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC11 | AC11 Python 侧（PARTIAL） | verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-AC12 | AC12 隔离与禁令 | verification/FEA-12-CORE/logs/core-py-ac12-isolation.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-GATES | Gate G1–G9 门禁汇总 | verification/FEA-12-CORE/logs/gates-core-py.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-REL | Gate G3 相关组 | verification/FEA-12-CORE/logs/core-py-pytest-related.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-PYTEST-FULL | Gate G4 全量 pytest | verification/FEA-12-CORE/logs/core-py-pytest-full.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-PINS | Gate G1 pins 18/18 | verification/FEA-12-CORE/logs/core-py-pins.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-CHECK | Gate G2 治理 check | verification/FEA-12-CORE/logs/core-py-check.log | 60dd4d563 | null | CANONICAL |
+| EV-FEA12CORE-A-PROBE-DIGEST | AC4/AC5 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_inventory_digest.py | 60dd4d563 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-PROBE-ISO | AC12 可复跑探针 | verification/FEA-12-CORE/scripts/core_py_isolation_scan.py | 60dd4d563 | null | SOURCE_PIN |
+| EV-FEA12CORE-A-HANDOFF | 分片 A 交付/Review 就绪 | doc/handoffs/FEA-12-CORE-core-py.md | 60dd4d563 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_CAPABILITY_PRO | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-capability-probe.json | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_IMPLEMENTATION | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-implementation-record.md | fc7125586 | null | CANONICAL |
 | EV-FEA12CORE-B-CORE_HOST_OLD_CORE_NEGAT | 分片 B（Host 桥/R-002/capability gate）证据 | verification/FEA-12-CORE/core-host-old-core-negative-control.json | fc7125586 | null | CANONICAL |
