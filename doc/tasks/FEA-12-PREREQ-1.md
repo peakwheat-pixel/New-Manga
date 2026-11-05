@@ -199,7 +199,7 @@ frontmatter `allowed_paths` 为准；`evidence_dir` 已显式列入。**共享�
 |---|---|---|---|---|---|
 | agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea12-prereq-impl\FEA-12-PREREQ-1\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea12-prereq-impl\FEA-12-PREREQ-1\` | verification/FEA-12-PREREQ-1/agent-output-manifest.json | 逐文件 bytes+sha256 见 manifest（11 files：运行日志副本 + 探针脚本）；判别力证据以仓内 `verification/FEA-12-PREREQ-1/**` 为准；无需迁移。 |
 | worktree | `G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\task-envs\FEA-12-PREREQ-1\baseline-worktree-035468a81` | verification/FEA-12-PREREQ-1/agent-output-manifest.json | detached HEAD `035468a81`，用于 AC3 基线复现；**保留不删**（Lead 2026-11-05 指示）。处置建议：Review/集成完成后由 DSH 用普通 `git worktree remove`（工作树 clean、无独有提交）或归档；关闭前不得删除。 |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-PREREQ-1\` | DELETE_SAFE（交付后） | — | verification/FEA-12-PREREQ-1/agent-output-manifest.json | 仅基线 live Core 隔离数据根（`baseline-live-core`）与日志副本；仓内无临时文件。DSH closeout 时可直接删除。 |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-PREREQ-1\` | DELETE_SAFE | — | verification/FEA-12-PREREQ-1/agent-output-manifest.json | 仅基线 live Core 隔离数据根（`baseline-live-core`）与日志副本；无独有内容（日志副本已入 agent-output/manifest 引用）。**DSH 2026-11-05 closeout 已删除**：26 files / 685,120 bytes；删除后路径不存在（Resolve-Path 校验通过），仓内无临时文件。 |
 
 ## Closeout Record
 
