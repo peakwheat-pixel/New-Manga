@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `ready`（页匹配 pixel profile + 旧库 fixture；ZCode SCOPE-ADJ 已冻结；待实施派发）。已闭环：[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（r1 approved；delivery `2d9a4a219`；AC11-4 可判 MET）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（r4 approved；`51e139eff`；AC1–AC12 全 MET）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`（`beee351bb`）；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`（`3e37c595b`）；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`（`90a8c8218`）；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`（Codex 裁决 A）。
+- 当前 Task：[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `in_review`（pixel profile/可比性/重复组/降级/v7 fixture 实施完成；fea11 107、全量 3202/10；Lead 集成/独立 Review 中）。已闭环：[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（r1 approved；`2d9a4a219`；AC11-4 可判 MET）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`；AC1–AC12 全 MET）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md) `done`；[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md) `done`；[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：FEA-11-MATCH-1 实施（pixel profile/可比性/重复组/降级/v7 fixture；W1 窄批 tests/fea11/test_source_scan.py）→ fresh Review → closeout；随后 SCAN-1、FEA-12-UI。
+- 下一步：FEA-11-MATCH-1 独立 Review → closeout；随后释放 FEA-11-SCAN-1（Host scheduler）、FEA-12-UI。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
