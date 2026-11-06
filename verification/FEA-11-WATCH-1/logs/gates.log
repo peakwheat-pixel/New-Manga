@@ -1,14 +1,13 @@
-# FEA-11-WATCH-1 gates
+# FEA-11-WATCH-1 gates（r2 更新）
 
-Repo: G:\CODEX\New Manga（main，base 919c9aa1e，不 push）。
-日期：2026-11-06（Asia/Shanghai）。
+Repo: G:\CODEX\New Manga（main，base 919c9aa1e，不 push）。日期：2026-11-06（Asia/Shanghai）。
 
-## 1) Host 单测（含新增 watcher/scheduler 用例）
+## 1) Host 单测（含 r2 回归）
 COMMAND: dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --no-build
-RESULT: 已通过! - 失败: 0，通过: 179，已跳过: 55，总计: 234（基线 158/54 → +21 passed、+1 gated skip）
+RESULT: 已通过! - 失败: 0，通过: 185，已跳过: 55，总计: 240（r1 179/55；r2 +6 回归）
 LOG: logs/watcher-unit.log
 
-## 2) gated HostRuntime watcher 用例（真实 sidecar）
+## 2) gated HostRuntime watcher（真实 sidecar）
 COMMAND: NEWMANGA_CORECLIENT_SIDECAR_DIR=apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar;
          NEWMANGA_EVIDENCE_DIR=<workspace>/evidence;
          dotnet test ... --filter "FullyQualifiedName~Fea11WatchHostRuntimeTests"
@@ -16,25 +15,23 @@ RESULT: 通过 1 / 0 / 0，EXIT 0
 LOG: logs/watcher-runtime.log；EVIDENCE: host-watch-runtime.json
 
 ## 3) 全量 .NET
-COMMAND: dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build
-RUN1: 1521 passed / 0 failed / 86 skipped（EXIT 0）LOG logs/dotnet-full-1.log
-RUN2: 1521 passed / 0 failed / 86 skipped（EXIT 0）LOG logs/dotnet-full-2.log
-基线 1500/0/85（SCAN-2 closeout）；+21 passed=新增测试，+1 skipped=新增 gated 用例。
-每次跑后：git checkout -- verification/FEA-09（status 干净）。
+RUN1: 1527 passed / 0 failed / 86 skipped（EXIT 0）LOG logs/dotnet-full-1.log
+RUN2: 1527 passed / 0 failed / 86 skipped（EXIT 0）LOG logs/dotnet-full-2.log
+r1 基线 1521/0/86；r2 +6 passed=新增回归测试。每次跑后 git checkout -- verification/FEA-09（干净）。
 
-## 4) 全量 pytest（引用基线，仍实跑）
+## 4) 全量 pytest（实跑并保留 summary）
 COMMAND: C:/Python314/python.exe -m pytest tests -q -p no:cacheprovider
-RESULT: 3212 passed, 10 skipped, 10 warnings（EXIT 0；与引用基线 3212/10 一致；本卡零 Python 改动）
+RESULT: 3212 passed, 10 skipped, 10 warnings（EXIT 0；summary 另存 logs/pytest-summary.txt）
 LOG: logs/pytest-full.log
 
-## 5) 判别变异（实现后临时改坏 → 红 → 恢复）
-M1 去抖/合并移除：Debounce_MergesManyEventsIntoOneHint_AndOneFullRescan 红；LOG logs/mutation-m1-debounce.log
-M2 overflow 全量 due 移除：Overflow_HintsAllTargets_Degrades_AndNeverCrashes 红；LOG logs/mutation-m2-overflow.log
-M3 hinted 优先排序移除：HintedTarget_IsScannedFirst_WithinTheSameBudget 红；LOG logs/mutation-m3-priority.log
-恢复后重跑：scheduler 57/0/0；watcher 15/0/0（logs/watcher-unit.log）。
+## 5) r1 判别变异（保留，修复后仍绿）
+M1 去抖/合并移除 → merge 用例红（logs/mutation-m1-debounce.log）
+M2 overflow 全量 due 移除 → overflow 用例红（logs/mutation-m2-overflow.log）
+M3 hinted 优先移除 → 优先用例红（logs/mutation-m3-priority.log）
+r2 新增判别用例：HintAfterPriorRotation（P1 修复前红）、RevokedTargetAfterSuccessfulRefresh（P2 修复前红）。
 
 ## 6) 治理门禁
 check.ps1 -TaskPath doc/tasks/FEA-11-WATCH-1.md: PASS（3 既有 warnings）LOG logs/check.log
-verify_pins.ps1: PIN AUDIT: PASS (all 18)，EXIT 0 LOG logs/pins.log
-generate_api_inventory.py --check: PASS（C-07 未变），EXIT 0 LOG logs/api-inventory.log
+verify_pins.ps1: PIN AUDIT: PASS (all 18) LOG logs/pins.log
+generate_api_inventory.py --check: PASS（C-07 未变）LOG logs/api-inventory.log
 scope diff (919c9aa1e..HEAD -- doc/plan doc/contracts src/): 空（0 行）scope-validation.log

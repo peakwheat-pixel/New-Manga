@@ -211,9 +211,22 @@ public sealed class SourceWatcherTests
         public List<string> Warn { get; } = new();
     }
 
+    private sealed class FakeTargetEnumerator : ISourceScanTargetEnumerator
+    {
+        public SourceScanEnumerationResult? Result { get; set; } = SourceScanEnumerationResult.Completed(
+            Array.Empty<SourceScanTarget>(), 0);
+
+        public Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(Result ?? SourceScanEnumerationResult.Unavailable("TEST"));
+    }
+
     private sealed class Fixture : IDisposable
     {
-        public Fixture(string name, SourceWatchOptions? options = null, SourceScanOptions? scanOptions = null)
+        public Fixture(
+            string name,
+            SourceWatchOptions? options = null,
+            SourceScanOptions? scanOptions = null,
+            ISourceScanTargetEnumerator? enumerator = null)
         {
             Root = Path.Combine(Path.GetTempPath(), "fea11-watch-" + name + "-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(Root);
@@ -228,7 +241,8 @@ public sealed class SourceWatcherTests
                 Executor,
                 Clock,
                 infoLog: line => Log.Info.Add(line),
-                warnLog: line => Log.Warn.Add(line));
+                warnLog: line => Log.Warn.Add(line),
+                enumerator: enumerator);
             Options = options ?? new SourceWatchOptions { DebounceMilliseconds = 2000, MaxWatches = 16 };
         }
 
@@ -473,12 +487,21 @@ public sealed class SourceWatcherTests
 
         var statusJson = JsonSerializer.Serialize(watcher.Status());
         var schedulerJson = JsonSerializer.Serialize(fixture.Scheduler.Snapshot());
-        var logs = string.Join("\n", fixture.Log.Info.Concat(fixture.Log.Warn));
+        // r2 P3-4: the redaction contract covers WATCH-1-produced status and watcher/scheduler log lines
+        // only. Pre-existing Host lines (e.g. gated host.log `host_session ...`) are outside this scope.
+        var watchLines = fixture.Log.Info.Concat(fixture.Log.Warn)
+            .Where(line => line.StartsWith("source watch", StringComparison.Ordinal)
+                || line.StartsWith("source scan", StringComparison.Ordinal))
+            .ToList();
+        Assert.NotEmpty(watchLines);
         foreach (var sensitive in new[] { fixture.Root, "private-source", "C:\\", "host_session", "source-" })
         {
             Assert.DoesNotContain(sensitive, statusJson, StringComparison.Ordinal);
             Assert.DoesNotContain(sensitive, schedulerJson, StringComparison.Ordinal);
-            Assert.DoesNotContain(sensitive, logs, StringComparison.Ordinal);
+            foreach (var line in watchLines)
+            {
+                Assert.DoesNotContain(sensitive, line, StringComparison.Ordinal);
+            }
         }
 
         // A hint only marks due; the result comes from the full scan (unchanged -> ok, never changed).
@@ -558,6 +581,7 @@ public sealed class SourceWatcherTests
         }
 
         Assert.Equal(10, fixture.Executor.ScannedSourceIds.Distinct().Count());
+        Assert.False(fixture.Scheduler.HintPending); // r2 P3-3: no due bit left behind
     }
 
     [Fact]
@@ -671,5 +695,95 @@ public sealed class SourceWatcherTests
         await fixture.Scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
         Assert.True(watcher.Status().DebouncedEvents >= 1);
         Assert.True(fixture.Executor.ScanCalls >= 1);
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // r2 (P2/P3): revocation-after-refresh, generation drift, buffer injection, Stop race.
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task RevokedTargetAfterSuccessfulRefresh_IsDisarmed_AndStaleHandleCannotHint()
+    {
+        var enumerator = new FakeTargetEnumerator();
+        using var fixture = new Fixture("revoke-refresh", new SourceWatchOptions { DebounceMilliseconds = 250 },
+            enumerator: enumerator);
+        var file = fixture.CreateFile("book.zip");
+        var registered = fixture.Registry.Register("exact-root", new[] { file });
+        fixture.Scheduler.RegisterTarget(new SourceScanTarget(
+            "s1", file, new[] { "b1" }, "1", registered.RegistryId, registered.Generation, "zip"));
+        using var watcher = fixture.CreateWatcher();
+        watcher.Start();
+        Assert.Equal(1, watcher.Status().Active);
+
+        // r2 P2 (AC-W1/L-W3): a SUCCESSFUL refresh with an empty enumeration (the revoked source is
+        // skipped by the enumerator, so added=updated=0) must still trigger watcher coverage re-check.
+        fixture.Registry.Revoke(registered.RegistryId);
+        Assert.True(await fixture.Scheduler.RefreshTargetsAsync());
+        Assert.Equal(0, watcher.Status().Active);
+        Assert.True(watcher.Status().Uncovered >= 1);
+
+        // A late event from the now-disarmed handle is inert (no hint/no scan).
+        fixture.Factory.Created[0].RaiseFileEvent(file);
+        fixture.Clock.Advance(TimeSpan.FromSeconds(5));
+        await fixture.Scheduler.HintIdleAsync();
+        Assert.Equal(0, watcher.Status().HintCount);
+        Assert.Equal(0, fixture.Executor.ScanCalls);
+    }
+
+    [Fact]
+    public void GenerationDrift_IsUncovered_NotArmed()
+    {
+        using var fixture = new Fixture("drift");
+        var file = fixture.CreateFile("book.zip");
+        var registered = fixture.Registry.Register("exact-root", new[] { file });
+        // Enumerated target claims generation+1: the watcher must NOT arm on a drifted authorization.
+        fixture.Scheduler.RegisterTarget(new SourceScanTarget(
+            "s1", file, new[] { "b1" }, "1", registered.RegistryId, registered.Generation + 1, "zip"));
+
+        using var watcher = fixture.CreateWatcher();
+        watcher.Start();
+
+        Assert.Empty(fixture.Factory.Created);
+        Assert.True(watcher.Status().Uncovered >= 1);
+    }
+
+    [Fact]
+    public void InternalBufferBytes_IsPassedToTheWatchFactory()
+    {
+        using var fixture = new Fixture(
+            "buffer-inject", new SourceWatchOptions { DebounceMilliseconds = 250, InternalBufferBytes = 8192 });
+        var file = fixture.CreateFile("book.zip");
+        fixture.Registry.Register("fixture-root", new[] { fixture.Root });
+        fixture.Scheduler.RegisterTarget(FileTarget("s1", file));
+
+        using var watcher = fixture.CreateWatcher();
+        watcher.Start();
+
+        var handle = Assert.Single(fixture.Factory.Created);
+        Assert.Equal(8192, handle.InternalBufferSize);
+    }
+
+    [Fact]
+    public async Task Stop_WithPendingDebounceTimer_ProducesNoHints()
+    {
+        using var fixture = new Fixture("stop-race", new SourceWatchOptions { DebounceMilliseconds = 2000 });
+        var file = fixture.CreateFile("book.zip");
+        fixture.Registry.Register("fixture-root", new[] { fixture.Root });
+        fixture.Scheduler.RegisterTarget(FileTarget("s1", file));
+        var watcher = fixture.CreateWatcher();
+        watcher.Start();
+
+        // An event schedules the debounce timer; Stop immediately afterwards must cancel it (r2 P3-1:
+        // timer callback cannot slip a hint in after Stop returns because Stop holds the same gate).
+        fixture.Factory.Created[0].RaiseFileEvent(file);
+        Assert.Equal(1, watcher.Status().PendingHints);
+        watcher.Stop();
+        fixture.Clock.Advance(TimeSpan.FromSeconds(5));
+        await fixture.Scheduler.HintIdleAsync();
+
+        Assert.Equal(0, watcher.Status().PendingHints);
+        Assert.Equal(0, watcher.Status().HintCount);
+        Assert.Equal(0, fixture.Executor.ScanCalls);
+        watcher.Dispose();
     }
 }

@@ -43,11 +43,11 @@
 
 | AC | 判定 | 关键证据 |
 |---|---|---|
-| AC-W1 生命周期与范围 | MET | `SourceWatcherTests.Start_ArmsFileAndFolderTargets_WithFrozenScopeRules` / `RepeatedRegistration_DoesNotGrowWatchers` / `RegistryRevokedOrMissing_IsUncovered_NotArmed` / `DeclaredFileTargetOnDirectory_IsUncovered_AndNeverGuessesFileName` / `StartTwice_StopTwice_IsIdempotent_AndStopProducesZeroHints`；gated `Fea11WatchHostRuntimeTests`（Ready→arm→Active=1→hint→Dispose disarm） |
-| AC-W2 hint 语义与去抖 | MET | `Debounce_MergesManyEventsIntoOneHint_AndOneFullRescan`（5 事件→1 hint→1 scan；窗口后第 2 次）、`HintIsNotAChangedVerdict_AndStatusIsRedacted`（`last_result=ok`、状态/日志无路径）、`EventForOtherFile_Name_IsIgnored_ForFileKindWatches`、`HintForUnknownSource_IsIgnored_AndNothingIsScanned`；真实文件树 `RealFileSystemWatcher_DetectsIsolatedFileChange` |
+| AC-W1 生命周期与范围 | MET | `SourceWatcherTests.Start_ArmsFileAndFolderTargets_WithFrozenScopeRules` / `RepeatedRegistration_DoesNotGrowWatchers` / `RegistryRevokedOrMissing_IsUncovered_NotArmed` / `DeclaredFileTargetOnDirectory_IsUncovered_AndNeverGuessesFileName` / `StartTwice_StopTwice_IsIdempotent_AndStopProducesZeroHints`；gated `Fea11WatchHostRuntimeTests`（Ready→arm→Active=1→hint→Dispose disarm）；**r2 P2**：成功 refresh（含空枚举）后撤销 target 被拆除（`RevokedTargetAfterSuccessfulRefresh_IsDisarmed_AndStaleHandleCannotHint`）；generation drift 不 arm（`GenerationDrift_IsUncovered_NotArmed`） |
+| AC-W2 hint 语义与去抖 | MET | `Debounce_MergesManyEventsIntoOneHint_AndOneFullRescan`（5 事件→1 hint→1 scan；窗口后第 2 次）、`HintIsNotAChangedVerdict_AndStatusIsRedacted`（`last_result=ok`、状态/日志无路径）、`EventForOtherFile_Name_IsIgnored_ForFileKindWatches`、`HintForUnknownSource_IsIgnored_AndNothingIsScanned`；真实文件树 `RealFileSystemWatcher_DetectsIsolatedFileChange`；**r2 P1**：rotation 游标非 0 后 hint 仍在同一 pass 被扫（`HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`） |
 | AC-W3 overflow/根删除/降级 | MET | `Overflow_HintsAllTargets_Degrades_AndNeverCrashes`、`Overflow_RespectsBudget_AndCompletesAcrossTicks`（10 目标/预算 4→跨 tick，pending 清零）、`RootLost_IsDegraded_AndReArmsOrCountsUncovered`、`MaxWatchesCap_LeavesUncovered_AndSchedulerStillScansEverything`、`OptionsNormalization_ClampsBoundaries_AndFallsBackOnIllegalValues` |
-| AC-W4 与 SCAN-1 协同 | MET | `SourceScanSchedulerTests.HintedTarget_IsScannedFirst_WithinTheSameBudget` / `HintDuringInFlightTick_IsMerged_AndReplayedAtMostOnce`（单飞、每 source ≤2 次、无并发）/ `HintedBackoffTarget_IsNotScannedEarly_ThenScannedAfterBackoff` / `HintedPausedScheduler_ScansNothing_AndResumeScans` / `HintTriggeredPass_UsesOnlyScanSourceSync_AndNeverMarksChanged` |
-| AC-W5 资源/隐私/门禁 | MET | `OptionsNormalization...`；状态/日志脱敏断言；全量 .NET 1521/0/86（基线 1500/0/85 不降）；pytest 3212/10（与引用基线一致，零 Python 改动）；pins 18/18、API PASS、check PASS、scope diff 空 |
+| AC-W4 与 SCAN-1 协同 | MET | `SourceScanSchedulerTests.HintedTarget_IsScannedFirst_WithinTheSameBudget` / `HintDuringInFlightTick_IsMerged_AndReplayedAtMostOnce`（单飞、每 source ≤2 次、无并发）/ `HintedBackoffTarget_IsNotScannedEarly_ThenScannedAfterBackoff` / `HintedPausedScheduler_ScansNothing_AndResumeScans` / `HintTriggeredPass_UsesOnlyScanSourceSync_AndNeverMarksChanged` / **r2 P1** `HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`（start=0，预算仍 ≤4，pending 清空） |
+| AC-W5 资源/隐私/门禁 | MET | `OptionsNormalization...` + `InternalBufferBytes_IsPassedToTheWatchFactory`；脱敏断言（**限定 WATCH-1 产生的 status 与 watcher/scheduler 日志行**；既有 host.log `host_session` 行不在本卡范围）；全量 .NET **1527/0/86**（基线 1521/0/86 不降）；pytest **3212 passed / 10 skipped**（实跑，summary 见 `logs/pytest-summary.txt`，零 Python 改动）；pins 18/18、API PASS、check PASS、scope diff 空 |
 
 ### 2.1 判别变异（AC 要求“删掉实现必须变红”，实跑后恢复）
 
@@ -70,8 +70,8 @@
 
 | Gate | 结果 | 证据 |
 |---|---|---|
-| `pytest tests -q -p no:cacheprovider` | **3212 passed / 10 skipped**，EXIT 0（与引用基线一致；本卡零 Python 改动，仍实跑记录） | `logs/pytest-full.log` |
-| 全量 .NET RUN1/RUN2 | **1521 passed / 0 failed / 86 skipped / 1607**，EXIT 0（基线 1500/0/85；+21 passed=新增测试，+1 skip=gated runtime） | `logs/dotnet-full-1.log`、`logs/dotnet-full-2.log` |
+| `pytest tests -q -p no:cacheprovider` | **3212 passed / 10 skipped**，EXIT 0（与引用基线一致；本卡零 Python 改动，仍实跑记录；结束 summary 另存 `logs/pytest-summary.txt`） | `logs/pytest-full.log` |
+| 全量 .NET RUN1/RUN2 | **1527 passed / 0 failed / 86 skipped / 1613**，EXIT 0（r1 基线 1521/0/86；r2 +6 passed=新增回归测试） | `logs/dotnet-full-1.log`、`logs/dotnet-full-2.log` |
 | `check.ps1 -TaskPath doc/tasks/FEA-11-WATCH-1.md` | **PASS**（3 既有 warnings：非终态 Task 数 / STATUS 80% / REBASELINE_PLAN 80%） | `logs/check.log` |
 | `verify_pins.ps1` | **18/18 PASS** | `logs/pins.log` |
 | `generate_api_inventory.py --check` | **PASS**（C-07 未变） | `logs/api-inventory.log` |
@@ -84,17 +84,19 @@
 | file | sha256 |
 |---|---|
 | `host-watch-runtime.json` | `25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6` |
-| `logs/watcher-unit.log` | `ed4145da78fa92b3e548812c235c628ac2ac410e4f042301d3ea88a01d82fd47` |
+| `logs/watcher-unit.log` | `be9d1f711d69d8662892a13b17defc0dd1d1f28c5e421c8eb8521809f6ae0f46` |
 | `logs/watcher-runtime.log` | `d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699` |
-| `logs/dotnet-full-1.log` | `915f78a28237abae830c913aa1d9c841a96083af7aa7d14dd2326a9becf8e6fb` |
-| `logs/dotnet-full-2.log` | `7a53f0b9d45ae685dd25cf751ff61a7f6b24f34e3a1a3a979e3910a1321516eb` |
-| `logs/pytest-full.log` | `da630cafd6368946e3e9ddb8b8f4b5dbe6620b8bcaa299e5bb16d3d76e029125` |
+| `logs/dotnet-full-1.log` | `aa645ea264519329488cc692612bfe574caed2b4bbf2800d061c377d25f92ff1` |
+| `logs/dotnet-full-2.log` | `0efca82dc84b7e05b77510a820272e1f2b4faa4ea3c5273740159fe88c40ffed` |
+| `logs/pytest-full.log` | `db330f47621dea6279c67dd34c7fee3a15e72074d9aae5a17bf09d05e0fdca9e` |
+| `logs/pytest-summary.txt` | `57d272daf80a9a56714bf383494800ed650af9fb09727a54372be35e1c8eb7de` |
 | `logs/mutation-m1-debounce.log` | `5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355` |
 | `logs/mutation-m2-overflow.log` | `8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52` |
 | `logs/mutation-m3-priority.log` | `d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324` |
-| `logs/check.log` | `495afa593898d7c6175829fe709bc17d284d1f62dcc69d4b5cdc82e3659779e7` |
+| `logs/check.log` | `db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112` |
 | `logs/pins.log` | `f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db` |
 | `logs/api-inventory.log` | `b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47` |
+| `logs/gates.log` | `b797987ae00d3160b876f0cda5f414582cfba48d1ef76f7a6cf055f8882c9de7` |
 
 全部日志文件与 sha 见 `logs/gates.log`（同目录）；`changed-files.txt`、`scope-validation.log` 在 evidence 根。
 
@@ -106,3 +108,43 @@
 4. **HostRuntime seam 无 fake Core/注入时钟**：gated 用例证明生产 wiring/真实 OS 事件；确定性去抖/overflow/预算断言在组件级。
 5. **AC11-1 不回填**：本卡不做启动全量扫描；AC11-1 终态由 DSH 后续裁决。
 6. **测试时序**：watcher 真实树测试依赖 OS 事件（gated/上限轮询 10–20s），理论上可能 flaky；本轮两次全量均 0 failed。
+## 7. r2 返修（r1 Review CHANGES 处置）
+
+r1 Review：`doc/reviews/FEA-11-WATCH-1-r1.md`（P0=0 / **P1=1** / P2=1 / P3=6）。r2 最小修复如下。
+
+### 7.1 P1（阻断，AC-W2/W4）：hint pass 被非零预算游标跳过
+
+- 根因：`TickCoreAsync` 虽把 hinted target 排到 `ordered` 最前，但仍 `start = _budgetCursor % targetCount`；rotation 先跑过 s0..s3 后 cursor=4，hint s9 的 pass 从 index 4 起 → 扫 s3..s6、s9 未扫，`HintPending=true` 直至下一周期（900s）。
+- 修复：`var start = hasHints ? 0 : (_budgetCursor % targetCount);`（`hasHints` 在 `_gate` 内由 `hinted.Count > 0` 计算）。普通 tick 的 rotation 顺序/预算不变。
+- 判别测试：`SourceScanSchedulerTests.HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`——先普通 tick（s0..s3，cursor=4），再 `HintSource("s9")` → 断言 hint pass 含 s9、本 pass ≤4、`HintPending=false`（修复前该用例红）。
+- 预算/去重/优先语义：原有 57 例全绿（含 `HintedTarget_IsScannedFirst...`、`HintDuringInFlightTick...`）。
+
+### 7.2 P2（AC-W1/L-W3）：撤销后成功 refresh（空枚举）不拆除 watcher
+
+- 根因：`RefreshTargetsAsync` 仅 `added + updated > 0` 才 `NotifyTargetSetChanged()`；撤销 target 被枚举器跳过时 added=updated=0 → watcher 不复核，`Active` 仍=1。
+- 修复：成功 refresh（`result.Ok`）**总是**通知 target-set 变化，watcher 重新 arm 复核（撤销/漂移 → 拆 watcher，`Active=0`、`Uncovered≥1`）。
+- 判别测试：`SourceWatcherTests.RevokedTargetAfterSuccessfulRefresh_IsDisarmed_AndStaleHandleCannotHint`——arm 后 revoke，成功空 refresh → Active=0；随后旧 handle 的迟到事件被 slot 有效性检查拦截（零 hint/零 scan）。
+- 附带加固：`OnFileEvent` 在 `_gate` 内校验 slot 仍是当前 armed slot；`OnDebounceElapsed` 在 `_gate` 内、`_started` 为真时发出 hint（`HintAllIfStarted` 同理），修复 P3-1 的 Stop 后窄竞态。
+
+### 7.3 P3 同批处置
+
+| P3 | 处置 | 证据/说明 |
+|---|---|---|
+| P3-1 Stop/Dispose 后零 hint 窄竞态 | **已修**：hint/HintAll 在 watcher `_gate` 内且 `_started` 为真时发出；Stop 持有同一 gate → Stop 返回后不可能再有在飞 timer callback 发出 hint；`OnFileEvent` 增加 slot 有效性校验 | `Stop_WithPendingDebounceTimer_ProducesNoHints`（Stop 时有 pending debounce → 推进时钟后 0 hint/0 scan） |
+| P3-2 canonical pytest 日志缺 summary | **已修**：重跑全量 pytest 并保留完整日志；summary 另存 `logs/pytest-summary.txt`（`3212 passed, 10 skipped`） | `logs/pytest-full.log`、`logs/pytest-summary.txt` |
+| P3-3 RootLost 恒真断言 / 缺测试 | **已修**：RootLost 断言改为 `Active==0 && Uncovered>=1`；新增 generation-drift、buffer 注入、hint-after-rotation、revoke-after-refresh 用例；overflow 用例补 `HintPending=false` | `SourceWatcherTests`（19 例）、`SourceScanSchedulerTests`（59 例） |
+| P3-4 redaction 口径过宽 | **已收窄**：卡面/记录改述为「WATCH-1 产生的 status 与 watcher/scheduler 日志行」；测试只断言 `source watch*` / `source scan*` 行；gated `host.log` 既有 `host_session` 行不属于本卡 | `HintIsNotAChangedVerdict_AndStatusIsRedacted` |
+| P3-5 Sync Intersect+Union | **已简化**：改为 `Clear()+UnionWith(desired)`（desired 为权威集合，移除不再需要的 source id） | `SourceWatcher.Sync` |
+| P3-6 DisposeAsync 不 join 在飞 hint task | **已修**：dispose 前 `await _hintTask.WaitAsync(2s)`（超时/取消吞掉，不崩）；新增用例验证不抛不挂 | `DisposeAsync_WithInFlightHintPass_CompletesWithoutThrowing` |
+
+### 7.4 r2 门禁（HEAD 含本返修）
+
+| Gate | 结果 | 证据 |
+|---|---|---|
+| Host 单测全量 | **185 / 0 / 55**（r1 179/55；+6 回归） | `logs/watcher-unit.log` |
+| gated HostRuntime watcher | **1 / 0 / 0** | `logs/watcher-runtime.log` |
+| 全量 .NET RUN1/RUN2 | **1527 / 0 / 86** 两轮（r1 基线 1521/0/86 不降） | `logs/dotnet-full-1.log`、`logs/dotnet-full-2.log` |
+| 全量 pytest | **3212 passed / 10 skipped**（实跑；summary 已存） | `logs/pytest-full.log`、`logs/pytest-summary.txt` |
+| check / pins / API / scope | PASS（3 既有 warnings）/ 18/18 / PASS / 0 行 | `logs/check.log`、`logs/pins.log`、`logs/api-inventory.log`、`scope-validation.log` |
+
+每轮全量后均 `git checkout -- verification/FEA-09`；两轮 0 failed（未触发 flaky）。

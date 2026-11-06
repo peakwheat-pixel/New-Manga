@@ -616,13 +616,11 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 (added, updated) = MergeTargetsLocked(result.Targets);
             }
 
-            if (added + updated > 0)
-            {
-                NotifyTargetSetChanged();
-            }
-
             if (result.Ok)
             {
+                // r2 P2 (AC-W1/L-W3): a SUCCESSFUL refresh re-evaluates watcher coverage even when the
+                // merge added/updated nothing — a revoked source enumerated as empty must be disarmed.
+                NotifyTargetSetChanged();
                 _info?.Invoke("source scan refresh targets=" + result.Targets.Count
                     + " skipped=" + result.Skipped + " added=" + added + " updated=" + updated);
             }
@@ -767,6 +765,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     {
         var now = _timeProvider.GetUtcNow();
             List<KeyValuePair<string, TargetState>> ordered;
+            var hasHints = false;
             lock (_gate)
             {
                 if (_disposed || !_options.Enabled)
@@ -786,6 +785,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 ordered = hinted.Concat(remaining)
                     .Select(key => new KeyValuePair<string, TargetState>(key, _targets[key]))
                     .ToList();
+                hasHints = hinted.Count > 0;
             }
 
             if (Paused || ordered.Count == 0)
@@ -798,7 +798,10 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             var attempted = 0;
             var lastAttemptedIndex = -1;
             var targetCount = ordered.Count;
-            var start = _budgetCursor % targetCount;
+            // r2 P1 (AC-W2/W4): a hint pass MUST begin at index 0 — hinted targets are ordered first, so
+            // a non-zero rotation cursor would skip them entirely (the hint then only waited for the next
+            // 900s tick). Rotation order/budget are unchanged for normal (hint-free) ticks.
+            var start = hasHints ? 0 : _budgetCursor % targetCount;
             // Budget selection never wraps inside one tick (AC-S3: 10 targets / budget 4 → 4+4+2);
             // the cursor wraps only after the tail of the list was reached.
             for (var index = start; index < targetCount && attempted < _options.MaxTargetsPerTick; index++)
@@ -902,6 +905,17 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         {
             try { await loop.ConfigureAwait(false); }
             catch (Exception error) when (error is OperationCanceledException or ObjectDisposedException) { }
+        }
+
+        // r2 P3-6: observe/join an in-flight hint-triggered pass (bounded) before tearing the gate down
+        // so Release cannot race the dispose; a hung pass is abandoned (it catches ObjectDisposedException).
+        Task? hintTask;
+        lock (_gate) hintTask = _hintTask;
+        if (hintTask is not null)
+        {
+            try { await hintTask.WaitAsync(TimeSpan.FromSeconds(2)).ConfigureAwait(false); }
+            catch (Exception error) when (error is TimeoutException or OperationCanceledException
+                or ObjectDisposedException) { }
         }
 
         _tickGate.Dispose();

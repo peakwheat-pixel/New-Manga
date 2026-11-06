@@ -1455,4 +1455,57 @@ public sealed class SourceScanSchedulerTests
         Assert.Equal(1, executor.ScanCalls); // only the periodic pass for s1, never a hint-driven one
         await scheduler.DisposeAsync();
     }
+
+    // ---------------------------------------------------------------------------------------
+    // r2 (P1/P3): hint-after-prior-rotation must not be skipped by a non-zero budget cursor.
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var scheduler = NewScheduler(
+            executor,
+            clock,
+            options: new SourceScanOptions { IntervalSeconds = 900, MaxTargetsPerTick = 4 });
+        for (var index = 0; index < 10; index++)
+        {
+            scheduler.RegisterTarget(Target("s" + index));
+        }
+
+        // First pass is a normal rotation tick: scans s0..s3 and leaves the cursor at 4 (the r1 P1 probe).
+        Assert.True(await scheduler.TickAsync());
+        Assert.Equal(new[] { "s0", "s1", "s2", "s3" }, executor.ScannedSourceIds);
+        var beforeHint = executor.ScanCalls;
+
+        Assert.True(scheduler.HintSource("s9"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        // r2 P1: the hint pass starts at index 0, so the hinted source is scanned in THIS pass even
+        // though the rotation cursor is non-zero; budget is still respected and the due bit is consumed.
+        Assert.Contains("s9", executor.ScannedSourceIds.Skip(beforeHint));
+        Assert.True(executor.ScanCalls - beforeHint <= 4);
+        Assert.False(scheduler.HintPending);
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_WithInFlightHintPass_CompletesWithoutThrowing()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor
+        {
+            Block = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously),
+        };
+        var scheduler = NewScheduler(executor, clock);
+        scheduler.RegisterTarget(Target("s1"));
+
+        Assert.True(scheduler.HintSource("s1"));
+        await executor.WaitForScanCountAsync(1).WaitAsync(TimeSpan.FromSeconds(10));
+
+        var dispose = scheduler.DisposeAsync().AsTask();
+        executor.Block!.TrySetResult(true);
+        await dispose.WaitAsync(TimeSpan.FromSeconds(10)); // r2 P3-6: joins the in-flight hint pass
+    }
 }

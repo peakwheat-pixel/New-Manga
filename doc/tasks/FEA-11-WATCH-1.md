@@ -75,10 +75,10 @@ Host 侧新增只读目录 watcher，作为**检测延迟优化**与 AC11-1「�
 ## Acceptance Criteria
 
 - [ ] **AC-W1 生命周期与范围**：Ready 后对已注册目标 arm；file target 仅精确文件、folder 递归；registry 复核失败/撤销/不可读 → typed skip；Stop 后零 hint；重启幂等。 证据：`SourceWatcherTests` 15 例 + gated `Fea11WatchHostRuntimeTests`（Ready→armed→Active=1→真实事件 hint→Dispose 后 watcher/scheduler 均 null）；`logs/watcher-unit.log`、`logs/watcher-runtime.log` <<PARTIAL: r1 P2 撤销后 refresh 未拆除 watcher；修复后恢复>>
-- [ ] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id） <<PARTIAL: r1 P1 hint pass 从预算游标起步会跳过被 hint 源；修复后恢复>>
+- [ ] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id；r2 P1：rotation 游标非 0 后 hint 仍在本 pass 被扫且 pending 清空） <<PARTIAL: r1 P1 hint pass 从预算游标起步会跳过被 hint 源；修复后恢复>>
 - [x] **AC-W3 overflow/根删除**：overflow、根删除/替换、buffer 满 → 不崩、全部 target due + 下一 tick 重枚举、watcher re-arm 或 typed 降级；上限（watches 256/buffer 64 KiB）可注入并验证。 （证据：overflow/根删除/上限/边界值用例；10 targets/budget=4 跨 tick 完成；`OverflowCount/Degraded/Uncovered` 计数；M2 变异红） <<MET>>
-- [x] **AC-W4 与 SCAN-1 协同**：同 source 至多一扫描（单飞合并）、hinted 优先、backoff/pause 生效、命令集合精确 `{ScanSourceSync}`、零 Core 业务写、不建 plan/apply/journal。 （证据：hinted 优先/在飞合并 replay≤1/每 source≤2 次/无并发/backoff 不提前/pause 0 次；命令集合仅 `ScanSourceSync`；M1/M3 变异红） <<MET>>
-- [x] **AC-W5 资源/隐私/门禁**：日志/状态无路径/secret/grant/session；无新依赖；无 schema/契约/pins 改动（`verify_pins.ps1` **18/18**）；全量 .NET 不降（基线 **1500/0/85**；flaky 复跑记录；跑后恢复 `verification/FEA-09`）；全量 pytest 引用基线 **3212/10**（本卡零 Python）；`check.ps1 -TaskPath` PASS；范围 diff 仅本卡 allowed_paths；AC11-1 仍 PARTIAL、L10 不解决。 （证据：全量 .NET **1521/0/86**（RUN1/RUN2）；pytest **3212/10** 实跑一致；pins 18/18、API PASS、check PASS、scope diff 空；脱敏断言；无新依赖） <<MET>>
+- [x] **AC-W4 与 SCAN-1 协同**：同 source 至多一扫描（单飞合并）、hinted 优先、backoff/pause 生效、命令集合精确 `{ScanSourceSync}`、零 Core 业务写、不建 plan/apply/journal。 （证据：hinted 优先/在飞合并 replay≤1/每 source≤2 次/无并发/backoff 不提前/pause 0 次；命令集合仅 `ScanSourceSync`；M1/M3 变异红；r2 P1：hint pass 起点 0（`HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`）） <<MET>>
+- [x] **AC-W5 资源/隐私/门禁**：日志/状态无路径/secret/grant/session；无新依赖；无 schema/契约/pins 改动（`verify_pins.ps1` **18/18**）；全量 .NET 不降（基线 **1500/0/85**；flaky 复跑记录；跑后恢复 `verification/FEA-09`）；全量 pytest 引用基线 **3212/10**（本卡零 Python）；`check.ps1 -TaskPath` PASS；范围 diff 仅本卡 allowed_paths；AC11-1 仍 PARTIAL、L10 不解决。 （证据：r2 实跑全量 .NET **1527/0/86**（RUN1/RUN2，r1 基线 1521/0/86 不降）；pytest **3212 passed/10 skipped** 实跑（summary 见 `logs/pytest-summary.txt`）；pins 18/18、API PASS、check PASS、scope diff 空；脱敏断言限定 WATCH-1 status 与 watcher/scheduler 日志行（gated `host.log` 既有 `host_session` 行不在本卡范围）；无新依赖） <<MET>>
 
 ## 预期行为变更（Review 不判回归）
 
@@ -167,7 +167,7 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - 变异判别：M1 去抖/合并移除、M2 overflow 全量 due 移除、M3 hinted 优先移除 → 分别转红后恢复（`logs/mutation-m*.log`）。
 - limitation：漏事件/设备差异依赖周期扫描兜底（非正确性依赖）；folder 内任意事件视为该 source due（无增量 diff，受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake Core/注入时钟（成功路径由组件级覆盖）；AC11-1 仍 PARTIAL、L10 不解决。
 - Handoff：`doc/handoffs/FEA-11-WATCH-1-delivery.md`。
-- 实现 commit：`e60105cf9`（未 push；交付后由 DSH 更新 REBASELINE_PLAN/把卡置 in_review 并集成推送）。
+- 实现 commit：`e60105cf9` + r2 返修 commit（见 git log；未 push；交付后由 DSH 更新 REBASELINE_PLAN/把卡置 in_review 并集成推送）。\n- **r2 返修（Review r1 CHANGES 处置）**：P1（hint pass 预算起点 0，修复 rotation 游标非 0 时 hinted source 被跳过）+ P2（成功 refresh 含空枚举也通知 watcher 复核，撤销后 Active→0）+ P3-1..P3-6（Stop 窄竞态、pytest summary 重抓、RootLost/新测试、redaction 收窄、Sync 简化、DisposeAsync join in-flight hint）。r2 门禁：Host 单测 **185/0/55**、gated 1/0/0、全量 .NET **1527/0/86**×2、pytest **3212/10**、pins 18/18、API PASS、check PASS、scope diff 0。
 
 ## Closeout Record
 

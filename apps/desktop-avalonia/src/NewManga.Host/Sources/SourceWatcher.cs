@@ -368,7 +368,9 @@ public sealed class SourceWatcher : IDisposable
                 }
                 else
                 {
-                    pair.Value.SourceIds.IntersectWith(plan.SourceIds);
+                    // r2 P3-5: the desired set is authoritative — drop removed source ids instead of
+                    // intersecting and then re-unioning (which kept stale ids forever).
+                    pair.Value.SourceIds.Clear();
                     pair.Value.SourceIds.UnionWith(plan.SourceIds);
                 }
             }
@@ -629,11 +631,17 @@ public sealed class SourceWatcher : IDisposable
 
     private void OnFileEvent(WatchSlot slot, string fullPath, bool rootLost)
     {
-        bool started;
-        lock (_gate) started = _started;
-        if (!started)
+        List<string> sourceIds;
+        lock (_gate)
         {
-            return;
+            // r2 P3-1/revoke: only a CURRENT slot of an armed watcher may produce a hint; a handle that
+            // was disarmed/removed (registry revoke, Stop, re-arm) is inert even if a late event arrives.
+            if (!_started || !_slots.TryGetValue(slot.Key, out var current) || !ReferenceEquals(current, slot))
+            {
+                return;
+            }
+
+            sourceIds = slot.SourceIds.ToList();
         }
 
         string normalized;
@@ -665,8 +673,6 @@ public sealed class SourceWatcher : IDisposable
             }
         }
 
-        List<string> sourceIds;
-        lock (_gate) sourceIds = slot.SourceIds.ToList();
         foreach (var sourceId in sourceIds)
         {
             QueueHint(sourceId);
@@ -692,7 +698,7 @@ public sealed class SourceWatcher : IDisposable
 
         _warn?.Invoke("source watch overflow code=" + CodeOverflow);
         RemoveSlot(slot, countUncovered: false);
-        _scheduler.HintAllTargets(CodeOverflow);
+        HintAllIfStarted(CodeOverflow);
         PublishStatus();
         try
         {
@@ -709,7 +715,7 @@ public sealed class SourceWatcher : IDisposable
         lock (_gate) _degraded = true;
         _warn?.Invoke("source watch root lost code=" + CodeRootLost);
         RemoveSlot(slot, countUncovered: true);
-        _scheduler.HintAllTargets(CodeRootLost);
+        HintAllIfStarted(CodeRootLost);
         PublishStatus();
         try
         {
@@ -804,17 +810,34 @@ public sealed class SourceWatcher : IDisposable
         {
             if (!_started || !_debounce.TryGetValue(sourceId, out var current) || !ReferenceEquals(current, state))
             {
+                state.Timer.Dispose();
                 return;
             }
 
             _debounce.Remove(sourceId);
             _hintCount++;
             _lastHintAt = _timeProvider.GetUtcNow();
+            state.Timer.Dispose();
+            // r2 P3-1: the hint is issued while the watcher gate is held. Stop() takes the same gate,
+            // so once Stop() returns no timer callback can still be between "started check" and hint.
+            _scheduler.HintSource(sourceId);
         }
 
-        state.Timer.Dispose();
-        _scheduler.HintSource(sourceId);
         PublishStatus();
+    }
+
+    /// <summary>r2 P3-1: all-target hint only while armed; same gate discipline as a single hint.</summary>
+    private void HintAllIfStarted(string reasonCode)
+    {
+        lock (_gate)
+        {
+            if (!_started)
+            {
+                return;
+            }
+
+            _scheduler.HintAllTargets(reasonCode);
+        }
     }
 
     private void PublishStatus() => _scheduler.SetWatcherStatus(Status());

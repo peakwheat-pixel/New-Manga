@@ -17,3 +17,9 @@ doc/handoffs/FEA-11-WATCH-1-delivery.md                                  # Hando
 
 ## Not touched
 App/UI/Core/contracts/schema/deps/STATUS/PLAN/LEDGER/reviews/18 pins/真实用户数据；未 push。
+
+## r2 追加
+- verification/FEA-11-WATCH-1/logs/**（重抓 watcher-unit/dotnet-full-1/2/pytest-full/check/pins/api + 新增 pytest-summary.txt、gates.log 更新）
+- verification/FEA-11-WATCH-1/record.md（§2 证据映射 r2 备注 + §7 r2 返修 + §5 sha 更新）
+- doc/tasks/FEA-11-WATCH-1.md、doc/handoffs/FEA-11-WATCH-1-delivery.md（r2 返修记录）
+

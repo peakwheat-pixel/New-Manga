@@ -88,3 +88,12 @@ git diff --name-only 919c9aa1e..HEAD -- doc/plan doc/contracts src/   # 期望�
   4. AC-W4：单飞 replay≤1、hinted 优先、backoff/pause 不绕过、命令集合；
   5. AC-W5：门禁数字与证据 sha、scope diff、无新依赖。
 - 实现者未自审；未 push（DSH 负责集成/推送）。
+'
+
+## 8. r2 返修（r1 Review CHANGES 处置）
+
+- **P1（阻断，AC-W2/W4）**：`TickCoreAsync` 的 hint pass 起点改为 `hasHints ? 0 : _budgetCursor % targetCount`；rotation 游标非 0 后 hint 的 source 仍在本 pass 被扫、`HintPending=false`、预算 ≤4。判别测试 `HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`（修复前红）。
+- **P2（AC-W1/L-W3）**：`RefreshTargetsAsync` 成功（`result.Ok`）即通知 `TargetSetChanged`（含空枚举/added=updated=0），watcher 重新 arm 复核；撤销后 `Active→0`、`Uncovered≥1`，旧 handle 迟到事件被 slot 校验拦截。测试 `RevokedTargetAfterSuccessfulRefresh_IsDisarmed_AndStaleHandleCannotHint`。
+- **P3 同批**：P3-1 Stop 窄竞态（hint 在 watcher gate 内、`_started` 为真时发出；OnFileEvent slot 校验；`Stop_WithPendingDebounceTimer_ProducesNoHints`）；P3-2 pytest 全量重跑保留 summary（`logs/pytest-summary.txt`）；P3-3 RootLost 严格断言（Active=0 && Uncovered≥1）、新增 generation-drift/buffer 注入/hint-after-rotation/revoke-after-refresh 用例、overflow 补 `HintPending=false`；P3-4 redaction 口径收窄到 WATCH-1 status + watcher/scheduler 行；P3-5 Sync 改 `Clear()+UnionWith`；P3-6 `DisposeAsync` await 在飞 hint task（2s 上限，`DisposeAsync_WithInFlightHintPass_CompletesWithoutThrowing`）。
+- **r2 门禁**：Host 单测 **185/0/55**；gated **1/0/0**；全量 .NET **1527/0/86**×2；pytest **3212/10**（summary 保留）；pins 18/18、API PASS、check PASS（3 既有 warnings）、scope diff 0；每轮后恢复 `verification/FEA-09`。
+'

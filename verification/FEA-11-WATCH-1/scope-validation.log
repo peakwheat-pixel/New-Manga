@@ -1,4 +1,4 @@
-# FEA-11-WATCH-1 scope validation
+# FEA-11-WATCH-1 scope validation（r2 更新）
 
 BASE (card): 919c9aa1e.  Branch: main (no push).  Worktree: main 工作树（未创建 linked worktree）。
 
@@ -6,29 +6,34 @@ BASE (card): 919c9aa1e.  Branch: main (no push).  Worktree: main 工作树（未
 COMMAND: git diff --name-only 919c9aa1e..HEAD -- doc/plan doc/contracts src/
 RESULT: <空>（0 行）——契约/计划/Core 零 diff；本卡零 Python 改动。
 
-## 2) 本卡改动范围（pre-commit）
-   M apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
-   M apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+## 2) r2 改动范围（pre-commit）
    M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
-   M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
+   M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs
    M apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+   M apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceWatcherTests.cs
+   M doc/handoffs/FEA-11-WATCH-1-delivery.md
    M doc/tasks/FEA-11-WATCH-1.md
-  ?? apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs
-  ?? apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11WatchHostRuntimeTests.cs
-  ?? apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceWatcherTests.cs
-  ?? doc/handoffs/FEA-11-WATCH-1-delivery.md
-  ?? verification/FEA-11-WATCH-1/
+   M verification/FEA-11-WATCH-1/changed-files.txt
+   M verification/FEA-11-WATCH-1/logs/check.log
+   M verification/FEA-11-WATCH-1/logs/dotnet-full-1.log
+   M verification/FEA-11-WATCH-1/logs/dotnet-full-2.log
+   M verification/FEA-11-WATCH-1/logs/gates.log
+   M verification/FEA-11-WATCH-1/logs/pytest-full.log
+   M verification/FEA-11-WATCH-1/logs/watcher-unit.log
+   M verification/FEA-11-WATCH-1/record.md
+  ?? verification/FEA-11-WATCH-1/logs/pytest-summary.txt
 
 ## 3) allowed_paths 对照
-- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs（新增，卡列明）
+- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs（卡列明新增）
 - apps/desktop-avalonia/src/NewManga.Host/Sources/{SourceScanScheduler,SourceScanStatus}.cs（卡列明）
 - apps/desktop-avalonia/src/NewManga.Host/{HostOptions,HostRuntime}.cs（卡列明）
 - apps/desktop-avalonia/tests/NewManga.Host.Tests/**（卡列明）
 - doc/tasks/FEA-11-WATCH-1.md、doc/handoffs/FEA-11-WATCH-1-*.md、verification/FEA-11-WATCH-1/**（卡列明）
 无 App/UI 改动；无 allowlist 例外。
 
-## 4) 门禁
-- .NET 全量：RUN1 1521/0/86、RUN2 1521/0/86（基线 1500/0/85；+21 passed / +1 gated skip）
-- pytest 全量：3212 passed / 10 skipped（与引用基线一致；零 Python 改动）
+## 4) 门禁（r2）
+- .NET 全量：RUN1/RUN2 1527/0/86（r1 基线 1521/0/86 不降）
+- Host 单测：185/0/55；gated HostRuntime watcher：1/0/0
+- pytest 全量：3212 passed / 10 skipped（summary 保留）
 - pins 18/18 PASS；check.ps1 -TaskPath PASS（3 既有 warnings）；API inventory PASS
-- 每次全量后恢复 `verification/FEA-09`（git status 检查干净）
+- 每次全量后恢复 `verification/FEA-09`（status 干净）
