@@ -205,11 +205,11 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树；base `4360fbcdb`） | NOT_APPLICABLE | — | — | 未创建 linked worktree；`git worktree list` 无本卡新增 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1\` | PRESERVE_REFERENCED | 同源路径 | 聚合 `448272d64059f26444bf2bcd9e4e8f99ce6eb58c989192cf01438895e5aceca8`（10 文件，R1-04 重算） | 仓外隔离根，agent 脚本 + 判别日志 + `final-scope-validation.log`；无进程持有；产品/测试不引用；仓内 canonical 副本 `logs/discrimination.log` 与 `logs/final-scope-validation.log`（EV-6/EV-10） |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1\` | `448272d64059f26444bf2bcd9e4e8f99ce6eb58c989192cf01438895e5aceca8` | 仓外隔离根，agent 脚本 + 判别日志 + `final-scope-validation.log`；无进程持有；产品/测试不引用；仓内 canonical 副本 `logs/discrimination.log` 与 `logs/final-scope-validation.log`（EV-6/EV-10） |
 | test-fixture | `tests/fea11/test_source_rendition_*.py`（`tmp_path` 运行时生成真实 PNG/zip） | NOT_APPLICABLE | — | — | 仓库不提交二进制 fixture；不使用 conftest 的硬编码工作区根 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未读写真实用户数据/AppData/外部卷/回收站 |
 | build-artifact | NOT_APPLICABLE（本卡零 C# 改动） | NOT_APPLICABLE | — | — | `dotnet test` 的 obj/bin 在既有 build 目录，未纳入交付 |
-| integration-log | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1-closeout\`（Lead 集成门禁原始日志 3 文件） | PRESERVE_REFERENCED | 同源路径 | 聚合 `98b8bda775a4d946aac5108529b85868c4004082aaf096e6a73901cc5d5d57a5`（3 文件） | 仓外；无进程持有；产品/证据不引用；不删除（集成验证原始输出） |
+| integration-log | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1-closeout\`（Lead 集成门禁原始日志 3 文件） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11-RENDITION-1-closeout\` | `98b8bda775a4d946aac5108529b85868c4004082aaf096e6a73901cc5d5d57a5` | 仓外；无进程持有；产品/证据不引用；不删除（集成验证原始输出） |
 
 ## Closeout Record
 
