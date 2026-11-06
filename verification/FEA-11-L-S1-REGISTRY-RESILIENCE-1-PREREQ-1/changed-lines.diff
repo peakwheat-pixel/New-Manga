@@ -1,0 +1,39 @@
+diff --git a/doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md b/doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md
+index a0286bac0..b0360cc97 100644
+--- a/doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md
++++ b/doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md
+@@ -1,7 +1,7 @@
+ # FEA-C15 Source 存储契约（草案 v5，处置契约复核 r4）
+ 
+-状态：**FROZEN v1.1（2026-11-04 重冻；v1.0 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-04](../reviews/CONTRACT-UNFREEZE-2026-11-04.md)；冻结记录 [FEA-CONTRACT-FROZEN-C15](FEA-CONTRACT-FROZEN-C15.md)；UNFREEZE r15 approved + 已提交字节独立复核 approved（P0=0/P1=0））
+-日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
++状态：**FROZEN v1.5（2026-11-07 重冻；v1.0 2026-11-03、v1.1 2026-11-04 历史）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md)；冻结记录 [FEA-CONTRACT-FROZEN-C15](FEA-CONTRACT-FROZEN-C15.md)；v1.5 独立 byte-level 复核见载体；v1.1 UNFREEZE r15 approved 见冻结记录）
++日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-07（v1.5 UNFREEZE）
+ 作者：DSH（Lead / Architect / Integrator）
+ 依据：[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.4/§3.5/§3.6/§4；[G-CONTRACT 关闭裁定](../plan/GATE-CONTRACT-CLOSURE-2026-11-01.md) §3.3；C-01b/C-05 v1.2/C-06/C-14 冻结/修订契约；`src/infrastructure/sqlite/{schema,migrator,library}.py`、`domain/pages/entities.py`、`src/infrastructure/importing.py`、`apps/.../NewManga.Host/**` 代码事实；[FEA-09 scope-r1](../reviews/FEA-09-scope-r1.md)、[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-001…R1-013）；v1.1 依据实现 Review r1 R1-I001 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
+ 
+@@ -309,8 +309,9 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
+   4. 写：同目录临时文件 → `FileStream.Flush(true)` → `File.Replace`/`File.Move` 原子替换 → 释放文件句柄 → 释放互斥；写失败不更新内存快照。
+ - **状态机（R1-011）**：
+   - **文件缺失** = 合法空 Registry（首次运行）：允许 `source_register_root` 创建；不视为损坏。
+-  - **magic/version/长度/DPAPI/JSON/roots identity 任一不合法** = 损坏：**fail-closed**，不创建空文件、不覆盖；所有 source 操作 `SOURCE_REGISTRY_UNAVAILABLE`；把原文件原字节保留为 `registry.v1.dat.corrupt-<utc>`（复制，不移动）供诊断。
+-  - **恢复**：显式命令 `source_reset_registry {confirm:true}` 把损坏文件移入 `host/source-access/quarantine/` 后创建新空 Registry（**用户显式操作**，UI-1 接线；FEA-09 实现 Host handler）；不得自动重建。
++  - **文件级损坏**（magic/version/长度/DPAPI/JSON **任一不合法**）= 损坏：**fail-closed**，不创建空文件、不覆盖；所有 source 操作 `SOURCE_REGISTRY_UNAVAILABLE`；把原文件原字节保留为 `registry.v1.dat.corrupt-<utc>`（复制，不移动）供诊断。
++  - **根身份当前不可用/不匹配**（v1.5 拆分；根不存在、路径不可读、卷/文件 identity 与登记不符）**不再判定为文件损坏**：registry 文件本身仍合法可读；该根的条目以「当前不可用」状态参与读取（`List` 可用、其余根不受影响）；**授权期逐请求校验**——`Authorize` 对请求路径所属根重新核验 identity，不可用/不匹配 → 该请求 typed 拒绝（沿用既有 `SOURCE_REGISTRY_UNAVAILABLE`，**零新错误码**），零写；**缺失根永不等于「无授权」**；不得自动重建 identity、不得自动重授权/自动恢复。
++  - **恢复**：文件级损坏仍由显式命令 `source_reset_registry {confirm:true}` 把损坏文件移入 `host/source-access/quarantine/` 后创建新空 Registry（**用户显式操作**）；根级恢复（重新授权/重定位）由显式用户操作完成，不得自动、不得因根缺失而静默重建。
+   - **撤销**：generation+1 并持久化 `revoked_at`；发布 `RevokeSourceReadGrant`（C-16）并等待 Core ACK 后才向调用方返回 `revoked:true`；ACK 失败 → 返回失败但持久化状态已撤销（读取面 fail-closed）。
+ - **ACL/加密边界**：`host/` 目录要求当前用户独占写（创建时校验；失败拒绝创建）；文件总是 DPAPI 包装；DPAPI 原生往返测试只能在 Windows 交互用户环境执行，测试以 `ISecretProtector` 接缝注入 fake；**未取得原生证据时标 LIMITED，不得写 PASS**。
+ - **备份交接（FEA-13）**：Registry 文件/DPAPI 边界/备份包加密需求作为设计输入；跨机恢复因 DPAPI CurrentUser 不自动继承授权（binding 需重新确认），不以“DPAPI 失败”作为唯一跨机判据。
+@@ -343,10 +344,11 @@ CREATE INDEX idx_rendition_cache_source ON rendition_cache(source_id, version_id
+ 
+ ## 9. 冻结条件与变更记录
+ 
+-冻结条件：①C-05/C-06/C-16 UNFREEZE 与本契约同批独立复核 approved（P0/P1=0）；②DDL 内存实测与迁移失败注入证据；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 口径与 §1B 复核字节。
++冻结条件：①C-05/C-06/C-16 UNFREEZE 与本契约同批独立复核 approved（P0/P1=0）；②DDL 内存实测与迁移失败注入证据；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 口径与 §1B 复核字节；⑤v1.5：Registry 文件级损坏与根身份当前不可用拆分经独立 byte-level 复核 approved（P0/P1=0），C-16/C-17 与其余 17 pins 零改动，错误码闭集/TTL/撤销/ACL/加密边界零改动。
+ 
+ | 日期 | 变更 | 记录 |
+ |---|---|---|
+ | 2026-11-03 | v1 草案：v7 DDL、Host Registry 约束、跨存储次序 | FEA-09 scope-r1 |
+ | 2026-11-03 | **v5（处置契约复核 r4）**：迁移第 3 条限定为半写/placeholder 保持 incomplete，旧 complete 不可见行保持 complete 且不可见；PDF 重复 occurrence 禁止位置锚定自动保续，跨版本 pixel 证据要求可比 profile/一对一唯一匹配；修正 §3.3→§3.2 节号 | `doc/reviews/FEA-09-PREREQ-1-r4.md` R4-001/R4-002/R4-004 |
+ | 2026-11-04 | **v1.1 UNFREEZE**：§1 断言 1/2/3/5 改为正尺寸基线 + V_artifact∪copy 并集守恒（同事务连接、固定 t、三路径核验、非空禁跳 verifier、破坏必失败）；§4.1 V=C-05 v1.2；§4.2 五读路径（V 行不丢、managed 资源选择/不可变、reader wire 不变与恢复语义）；§4.3 澄清 incomplete+合格 artifact witness 可见；新增 §4.4 只读投影最小集；§0 依赖更新。依据 R1-I001 + UNFREEZE r15 approved；已提交字节复核后重冻并重算 pin | DSH；`doc/reviews/FEA-09-UNFREEZE-r15-review.md` |
++| 2026-11-07 | **v1.5 UNFREEZE**：§5 Registry 状态机拆分「文件级损坏」（保持整库 fail-closed/`SOURCE_REGISTRY_UNAVAILABLE`/corrupt 复制）与「根身份当前不可用/不匹配」（registry 仍可读、List 可用、其余根不受影响；Authorize 逐请求校验该根 identity，不可用 → 该请求 typed 拒绝且零写；缺失根 ≠ 无授权；不自动重建/重授权）；恢复/撤销语义不变；**C-16/C-17/错误码/wire/schema 零改动**。载体 [CONTRACT-UNFREEZE-2026-11-07-C15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1 |

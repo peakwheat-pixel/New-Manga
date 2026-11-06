@@ -1,7 +1,7 @@
 # C15 Source 存储契约 · 冻结记录
 
 **契约**：`doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md`
-**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）
+**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）/ 2026-11-07（v1.5）
 **冻结人**：DSH（Lead / Architect / Integrator）
 **授权**：FEA-09-PREREQ-1；独立复核 r7 **approved**（[FEA-09-PREREQ-1-r7](../reviews/FEA-09-PREREQ-1-r7.md)，reviewed_head `220979ba81f37e857f241049535caef7246c97b1`）；冻结自草案 v5
 
@@ -12,10 +12,10 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md` |
-| 冻结版本 | **v1.1**（2026-11-04 UNFREEZE 重冻；v1.0 历史） |
-| sha256（v1.1 冻结后最终字节，verify_pins 口径） | `d8c0a3bcfc21229bff8f6feb6853866cdea7dc902b76f1ae45b0d374ce6579d6` |
-| git hash-object（v1.1 blob id） | `a0286bac06aa89587a6a7cbcf08461aae8add865` |
-| blob 内容 sha256（LF 原始字节） | `6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc` |
+| 冻结版本 | **v1.5**（2026-11-07 UNFREEZE 重冻；v1.0 2026-11-03、v1.1 2026-11-04 历史） |
+| sha256（v1.5 冻结后最终字节，verify_pins 口径） | `f9e376a0ed4ce2aaf87c5c698798b0f7a802a3b87a0de9845bc96c3f9bfff4d6` |
+| git hash-object（v1.5 blob id） | `b0360cc975d361c3f1431b4c7e644bc1735981ab` |
+| blob 内容 sha256（LF 原始字节） | `f9e376a0ed4ce2aaf87c5c698798b0f7a802a3b87a0de9845bc96c3f9bfff4d6` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
@@ -33,6 +33,7 @@
 | 冻结字节（工作树 SHA-256） | `6da686178f4d2e739906938e2bbcfbb57c9d59f3836e17c80c8764b477cd91bc` |
 | 差异 | **仅状态行**（草案 v5 → FROZEN v1.0）与冻结记录链接；**条款字节 = 复核字节** |
 | 处置 | 符合冻结纪律（最后元数据编辑在复核后、冻结提交不含条款修改） |
+| v1.5 复核字节（工作树 SHA-256） | `f9e376a0ed4ce2aaf87c5c698798b0f7a802a3b87a0de9845bc96c3f9bfff4d6`（= v1.5 冻结字节；r1 changes_requested（P0=0/P1=2）→ 处置 → r2 approved，见 §7） |
 
 ## 2. 冻结条件逐条核验
 
@@ -42,6 +43,7 @@
 | 2 | v7 DDL/迁移/回退/旧写者门禁内存实测 | ✅ | `verification/FEA-09-PREREQ-1/logs/ddl-validation.log` |
 | 3 | `check.ps1` PASS、`verify_pins.ps1` **17/17** | ✅ | `verification/FEA-09-PREREQ-1/logs/check.log`、`pins.log` |
 | 4 | 冻结记录含 §1A pin 口径与 §1B 复核字节差异 | ✅ | 本记录 |
+| 5 | v1.5：Registry 文件损坏/根身份当前不可用拆分经独立 byte-level 复核 approved（P0/P1=0）；C-16/C-17 与其余 17 pins 零改动；错误码/TTL/撤销/ACL/加密边界零改动；`verify_pins` 18/18 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md` §6；`verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/logs/pins.log` |
 
 ## 3. 依赖与后果
 
@@ -69,3 +71,15 @@
 | 冻结字节 sha256 | `d8c0a3bcfc21229bff8f6feb6853866cdea7dc902b76f1ae45b0d374ce6579d6`（**仅状态行**差异） |
 | 历史 pin（保留） | v1.0 `6da686178f4d…` |
 | 修订内容 | 正尺寸迁移基线、union 守恒断言、V 行可观察、§4.4 只读投影、reader 恢复算法与 M2-C1 §6.3 offset 引用 |
+
+## 7. v1.5 UNFREEZE 重冻（2026-11-07）
+
+| 项 | 值 |
+|---|---|
+| 载体 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md` |
+| 触发/授权 | 用户 2026-11-06 全授权；`FEA-11-L-S1-REGISTRY-RESILIENCE-1` 权威 scope review **READY-WITH-UNFREEZE**（仅 C-15 §5，1 pin）；Codex 不可用 → ZCode 故障转移裁决输入；DSH 裁决 D-1…D-9 |
+| 修订内容 | §5 拆分「文件级损坏」（保持整库 fail-closed/`SOURCE_REGISTRY_UNAVAILABLE`/corrupt 复制）与「根身份当前不可用/不匹配」（registry 仍可读、List 可用、其余根不受影响；Authorize 逐请求校验该根 identity，不可用 → 该请求 typed 拒绝且零写；缺失根 ≠ 无授权；不自动重建/重授权）；恢复/撤销语义不变；**C-16/C-17/错误码/wire/schema 零改动** |
+| 独立复核 | 载体 §6：r1 `changes_requested`（P0=0/P1=2/P2=5/P3=9；矩阵/门禁簿记）→ 处置 → **r2 `approved`（P0=0/P1=0/P2=0/P3=15 非阻断；session `ccdae3ad-…`）** |
+| 冻结字节 sha256 | `f9e376a0ed4ce2aaf87c5c698798b0f7a802a3b87a0de9845bc96c3f9bfff4d6` |
+| 历史 pin（保留） | v1.1 `d8c0a3bcfc21…`；v1.0 `6da686178f4d…` |
+| 其他 17 pins | 逐字节不变（复核断言见载体 §6） |

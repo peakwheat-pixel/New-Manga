@@ -65,7 +65,7 @@ out_of_scope:
   - **根身份当前不可用 / 不匹配**（根不存在、路径不可读、卷/文件 identity 与登记不符）**不再判定为文件损坏**：registry 文件仍合法可读；该根的条目以「不可用」状态参与读取（`List` 可用、其余根不受影响）；**授权期逐请求校验**（`Authorize` 对请求路径所属根重新核验 identity）：不可用/不匹配 → 该请求 typed 拒绝（沿用 `SOURCE_REGISTRY_UNAVAILABLE`，零新码），零写；**缺失根永不等于「无授权」**；不得自动重建 identity/自动重授权。
   - 恢复：仍由 `source_reset_registry {confirm:true}` 处理**文件级损坏**；根级恢复（重授权/重定位）由显式用户操作（B 卡接线），不得自动。
   - 撤销：不变（generation+1、持久化 `revoked_at`、C-16 ACK 语义不变）。
-- §10 冻结条件追加 v1.5 条；变更记录追加 v1.5 行。
+- §9 冻结条件追加 v1.5 条；变更记录追加 v1.5 行。
 
 ### I-3 冻结记录与矩阵
 - `doc/plan/FEA-CONTRACT-FROZEN-C15.md`：pin → v1.5 最终字节 sha256；v1.5 重冻记录（历史 pin 保留）。
@@ -81,10 +81,10 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-T1 契约增量最小**：C-15 v1.5 仅含 I-2 拆分（文件级损坏 vs 根级不可用 + 授权期校验 + 恢复/撤销不变）；C-16/C-17 及其余 17 契约逐字节不变；无新错误码/wire/能力/schema。
-- [ ] **AC-T2 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、语义无放宽、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。
-- [ ] **AC-T3 重冻与 pins**：FROZEN-C15 更新；矩阵更新；`verify_pins` **18/18**（C15 新值、其余 17 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。
-- [ ] **AC-T4 载体与不夸大**：载体含触发/授权/变更点/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 Run wire/schema/依赖。
+- [x] **AC-T1 契约增量最小**：C-15 v1.5 仅含 I-2 拆分（文件级损坏 vs 根级不可用 + 授权期校验 + 恢复/撤销不变）；C-16/C-17 及其余 17 契约逐字节不变；无新错误码/wire/能力/schema。 <<MET>>
+- [x] **AC-T2 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、语义无放宽、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。 <<MET>>
+- [x] **AC-T3 重冻与 pins**：FROZEN-C15 更新；矩阵更新；`verify_pins` **18/18**（C15 新值、其余 17 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。 <<MET>>
+- [x] **AC-T4 载体与不夸大**：载体含触发/授权/变更点/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 Run wire/schema/依赖。 <<MET>>
 
 ## 独立复核要求（byte-level）
 
@@ -94,4 +94,4 @@ out_of_scope:
 
 ## ZCode 裁决记录
 
-- 状态：pending（故障转移裁决输入；返回后 append 记录；若不可用则 DSH 直接裁决并注明）。
+- **已记录（ZCode，2026-11-07，subagent_zcode 只读）**：对 D-1…D-9 **全部无异议、无翻案**；确认 C-15 §5 必须 UNFREEZE（1 份/1 pin）、C-16/C-17 零改动、零契约折中不存在；错误码保持现状（D-2）成立；同意 A/B/C 拆分（A 本轮、B 依赖 L-S4、C limitation）；补充 limitation 应同时引用 C-16 :174 与 C-06 :44 的码义不自洽。建议 A 的 Owner 可为 ZCode（Host 单文件窄改）；本卡经 DSH 裁决采用既有 Host 实现 Owner。
