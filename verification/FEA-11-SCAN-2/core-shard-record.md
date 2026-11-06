@@ -27,6 +27,7 @@
 5. **typed skip（不伪造、不截断、不回退 current）**：
    - 当前 `source_locations` 缺失或 location facts 不完整/损坏 → 跳过并计数 `missing_location_facts`；
    - `source_kind` 不在五值冻结集合 → 跳过并计数 `unknown_source_kind`（fail-closed，不猜测）；
+   - `project_ids` 去重后为 **空** → 跳过并计数 `project_ids_empty`（C-17 §5/§5.2 规定 1..20；**r2 P2-2 修复**，不再返回空数组 target）；
    - `project_ids` 去重数 > 20 → 该 target 不进入 `targets`，计数 `project_ids_over_limit`（不截断、不回退 current）；
    - skip 计数写 stderr 结构化行 `[core.source_list_scan_targets] skipped …`；DTO 保持冻结 `{targets:[]}` 形状（契约无 skip 字段，不自行扩 DTO）。
 6. **预算**：`targets` 超过 10000 或紧凑 JSON 超过 8MiB → `SOURCE_BUDGET_EXCEEDED`（validation、retryable=false），绝不静默截断。
@@ -35,7 +36,7 @@
 
 ## 3. 测试与判别证据
 
-新增 `tests/core/test_core_scan_target_commands.py`（8 条，全部通过）：
+新增 `tests/core/test_core_scan_target_commands.py`（9 条，全部通过；r2 新增 1 条）：
 
 | 测试 | 覆盖 / 判别对象 |
 |---|---|
@@ -46,9 +47,10 @@
 | `test_enumeration_closed_shape_rejects_unknown_keys` | 未知键与非对象 payload → `INVALID_REQUEST`/validation/非重试；零写 |
 | `test_typed_skips_missing_facts_unknown_kind_and_project_limit` | 缺 location、`future-kind`（schema CHECK 绕过注入）、21 books 共享源 → 三者均 skip 且 stderr 计数各 1；健康源仍返回；不伪造/不截断 |
 | `test_budget_limits_are_typed_and_never_truncate` | 10001 目标 → `SOURCE_BUDGET_EXCEEDED`（typed，无部分 DTO）；字节预算小值覆盖 → 同码 |
+| `test_source_without_bindings_is_typed_skipped`（r2 新增） | 无绑定源 → 不进入 targets（`project_ids_empty` 计数）；有绑定源仍返回；返回项恒满足 1..20（去掉 skip 变异转红） |
 | `test_duplicate_candidates_are_deduped_and_sorted` | fake store 重复/乱序候选 → 唯一 + 升序（去重/去排序判别） |
 
-**变异判别**（隔离临时 `src` 副本，仓内源码不变；`logs/core-mutation.log`）：去排序、去去重、放宽 10000 上限、伪造 identity 四种变异均使目标测试转红（`MUTATION_SUMMARY: PASS (all 4 mutations discriminated)`）。
+**变异判别**（隔离临时 `src` 副本，仓内源码不变）：去排序、去去重、放宽 10000 上限、伪造 identity 四种变异（r1，`logs/core-mutation.log`），以及 **r2 新增「去掉空 project_ids skip」变异**（`logs/core-r2-mutation.log`）均使目标测试转红；r2 合计 `MUTATION_SUMMARY: PASS (all 5 mutations discriminated)`。
 
 ## 4. AC 映射（本分片证据）
 
@@ -82,9 +84,19 @@
 
 ## 6. 残余风险与待 Review 点
 
-1. **软删源排除**：`sources.deleted_at IS NOT NULL` 不进入 targets（§2.8 fail-safe 解释）；若契约意图是“仅注册即可扫描”，需裁决。
+1. **软删源排除**：`sources.deleted_at IS NOT NULL` 不进入 targets（§2.8 fail-safe 解释）；若契约意图是“仅注册即可扫描”，需裁决。r2：无绑定/空 project_ids 源同样不进入（`project_ids_empty`），与 Host 侧 `TryMap` 的 `<1`/`>20` 拒绝一致。
 2. **skip 可见性**：typed skip 计数仅写 stderr（契约 DTO 无 skip 字段，未扩形状）；Host 无法通过 DTO 感知被跳过原因；若需可观测，须另走 additive 契约。
 3. **预算计数语义**：10000 上限按“已接受 targets”计数，被 skip 的候选不计入；8MiB 按紧凑 JSON 估算（`separators=(",",":")`），非 wire 转义后字节。
 4. **location facts 损坏注入**：schema CHECK 使常规路径无法产生未知 kind/坏 facts，测试通过 `PRAGMA ignore_check_constraints` 注入；运行时防御为 fail-closed skip。
 5. **Host 侧 AC**（AC-S2-1 真实 IPC、AC-S2-2/4/5/7、`tests/fea11`、全量 .NET）不在本分片，未在本记录宣称通过。
 6. **pre-existing**：`core.ping.capabilities` 精确列表被本分片 additive 扩 1 项（8 项 source.sync 串）；Host §5.2 `Capabilities` DTO 仍固定 7 项（契约 v1.1 明确），Host 侧适配由 B 验证。
+
+## 7. r1 Review P2-2 处置（r2 最小返修，分片 A）
+
+r1 Review（`doc/reviews/FEA-11-SCAN-2-r1.md`，decision=changes_requested，P0=0/P1=1/P2=5）指出：Core `source_list_scan_targets` 会返回 `project_ids: []` 的 target，违反 C-17 v1.1 §5/§5.2 的 `project_ids` 1..20；分片 A 只修 **P2-2**（其余 P1-1/P2-1/P2-3/P2-4/P2-5 属 Host/集成或 Lead）。
+
+- **实现**：`list_scan_targets` 对 `project_ids` 去重后为空 → `skipped["project_ids_empty"] += 1` 并跳过（不进入 targets、不伪造、不截断）；stderr 计数行增加 `project_ids_empty`。
+- **测试**：新增 `test_source_without_bindings_is_typed_skipped`（无绑定源不出现、有绑定源仍出现、`project_ids_empty=1`、返回项恒 1..20）；`test_typed_skips_…` 增加无绑定源样例并同步断言；fake-store 候选默认带 1 个 project 以保持预算/去重用例语义；identity 重算用例补绑定。
+- **判别**：r2 变异「去掉空 project_ids skip」→ 上述两条测试转红；`logs/core-r2-mutation.log` 记录 5/5 变异均被判别。
+- **门禁（r2 工作树）**：tests/core **957 passed**、tests/fea09 **142 passed**、组合 **1099 passed**、全量 **3212 passed / 10 skipped**（r1 基线 3211/10，+1 新测试，0 回归）；check PASS(3 warnings)、pins 18/18、API inventory PASS、scope diff 空。证据 `logs/core-r2-*.log`。
+- **AC 影响**：AC-S2-6 的 0 形状问题消除（Core 侧）；AC-S2-1/8 Core 侧证据同步更新；Host 侧 P1-1（共享源 scope）仍属分片 B。

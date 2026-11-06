@@ -324,6 +324,13 @@ def test_identity_and_facts_are_recomputed_from_current_location(core, server) -
     with conn:
         _seed_source(conn, source_id)
         _seed_location(conn, source_id, generation=1)
+        _seed_version_entry(conn, source_id)
+        _seed_book_page(conn, "book-identity", page_id="page-identity",
+                        chapter_id="ch-identity")
+        _seed_binding(
+            conn, binding_id="bind-identity", page_id="page-identity",
+            project_id="book-identity", source_id=source_id,
+        )
     first = _enumerate(server)["targets"][0]
     assert first["generation"] == 1
     assert first["identity_digest"] == identity_digest_of(DIGEST_A, 1, 2, 10)
@@ -374,6 +381,7 @@ def test_typed_skips_missing_facts_unknown_kind_and_project_limit(
     missing_source = "src-55555555-5555-5555-5555-555555555555"
     unknown_source = "src-77777777-7777-7777-7777-777777777777"
     shared_source = "src-88888888-8888-8888-8888-888888888888"
+    empty_project_source = "src-99999999-9999-9999-9999-999999999999"
     with conn:
         # (1) no current location facts at all -> typed skip, never fabricated.
         _seed_source(conn, missing_source)
@@ -400,20 +408,75 @@ def test_typed_skips_missing_facts_unknown_kind_and_project_limit(
                 project_id=book_id, source_id=shared_source,
                 entry_id="entry-shared", version_id="ver-shared",
             )
-        # (4) a healthy source that must still be returned.
+        # (4) a source with no live binding: project_ids would be [] -> skip
+        # (C-17 §5 requires 1..20; r2 P2-2: never a healthy empty target).
+        _seed_source(conn, empty_project_source)
+        _seed_location(conn, empty_project_source,
+                       registry_id="registry-empty")
+        # (5) a healthy bound source that must still be returned.
         _seed_source(conn, ok_source)
         _seed_location(conn, ok_source, registry_id="registry-ok")
+        _seed_version_entry(conn, ok_source, version_id="ver-ok",
+                            entry_id="entry-ok")
+        _seed_book_page(conn, "book-ok", page_id="page-ok",
+                        chapter_id="ch-ok")
+        _seed_binding(
+            conn, binding_id="bind-ok", page_id="page-ok",
+            project_id="book-ok", source_id=ok_source,
+            entry_id="entry-ok", version_id="ver-ok",
+        )
 
     result = _enumerate(server)
     targets = result["targets"]
     assert [t["source_id"] for t in targets] == [ok_source]
+    assert targets[0]["project_ids"] == ["book-ok"]
     stderr = capsys.readouterr().err
     assert "missing_location_facts=1" in stderr
     assert "unknown_source_kind=1" in stderr
+    assert "project_ids_empty=1" in stderr
     assert "project_ids_over_limit=1" in stderr
     # The skipped targets are absent without being replaced by a current/guess.
-    assert all(t["source_id"] != shared_source for t in targets)
-    assert all(t["source_id"] != unknown_source for t in targets)
+    for skipped_source in (
+        shared_source, unknown_source, empty_project_source,
+    ):
+        assert all(t["source_id"] != skipped_source for t in targets)
+    # Contract invariant: every returned ScanTarget has 1..20 project_ids.
+    assert all(1 <= len(t["project_ids"]) <= 20 for t in targets)
+
+
+# --- r2 P2-2: project_ids 1..20; an unbound source is a typed skip ---------
+
+
+def test_source_without_bindings_is_typed_skipped(core, server, capsys) -> None:
+    """C-17 v1.1 §5/§5.2: ``project_ids`` is 1..20 — a source with an empty
+    (deduped) project set must not appear as a healthy target with ``[]``.
+
+    Discriminator: deleting the empty-project skip makes the unbound source
+    reappear with ``project_ids: []`` and this test goes red.
+    """
+    conn = core.conn
+    bound_source = "src-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    unbound_source = "src-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    with conn:
+        for source_id in (bound_source, unbound_source):
+            _seed_source(conn, source_id)
+            _seed_location(conn, source_id, registry_id=f"registry-{source_id}")
+        _seed_version_entry(conn, bound_source)
+        _seed_book_page(conn, "book-bound", page_id="page-bound",
+                        chapter_id="ch-bound")
+        _seed_binding(
+            conn, binding_id="bind-bound", page_id="page-bound",
+            project_id="book-bound", source_id=bound_source,
+        )
+
+    result = _enumerate(server)
+    targets = result["targets"]
+    # The bound source is still enumerated; the unbound one is absent.
+    assert [t["source_id"] for t in targets] == [bound_source]
+    assert targets[0]["project_ids"] == ["book-bound"]
+    assert all(t["project_ids"] for t in targets)
+    stderr = capsys.readouterr().err
+    assert "project_ids_empty=1" in stderr
 
 
 # --- AC-S2-1/§5.3 budget: typed error, never silent truncation -------------
@@ -427,7 +490,10 @@ class _FakeStore:
         return list(self._candidates)
 
 
-def _candidate(source_id: str, *, registry_id: str = "reg") -> dict:
+def _candidate(
+    source_id: str, *, registry_id: str = "reg",
+    project_ids: list[str] | None = None,
+) -> dict:
     return {
         "source_id": source_id,
         "source_kind": "folder",
@@ -437,7 +503,7 @@ def _candidate(source_id: str, *, registry_id: str = "reg") -> dict:
         "volume_serial": 1,
         "file_id": 2,
         "size_bytes": 10,
-        "project_ids": [],
+        "project_ids": ["book-x"] if project_ids is None else list(project_ids),
     }
 
 

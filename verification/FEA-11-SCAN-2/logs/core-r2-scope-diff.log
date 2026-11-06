@@ -1,0 +1,5 @@
+# FEA-11-SCAN-2 shard A r2: scope diff (frozen contracts + schema bytes)
+# command: git diff --name-only 703d9eb12 -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py
+# EXIT: 0 (0 files)
+# ----------------------------------------------------------------------
+

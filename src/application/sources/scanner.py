@@ -110,6 +110,7 @@ def list_scan_targets(
 
     * missing/invalid current location facts -> skip (never invent identity);
     * unknown ``source_kind`` -> fail-closed skip (never guess);
+    * ``project_ids`` distinct count 0 -> skip (C-17 §5 requires 1..20);
     * ``project_ids`` distinct count > 20 -> skip (never truncate/current);
     * target count > 10000 or projected JSON > 8MiB -> typed
       ``SOURCE_BUDGET_EXCEEDED`` (never silently truncate).
@@ -120,6 +121,7 @@ def list_scan_targets(
     skipped = {
         "missing_location_facts": 0,
         "unknown_source_kind": 0,
+        "project_ids_empty": 0,
         "project_ids_over_limit": 0,
     }
     targets: dict[str, dict] = {}
@@ -142,6 +144,12 @@ def list_scan_targets(
                 if isinstance(project_id, str) and project_id
             }
         )
+        if not project_ids:
+            # C-17 v1.1 §5/§5.2: ScanTarget.project_ids is 1..20 — a source with
+            # no live binding cannot be scanned and must NOT be returned as a
+            # healthy target with an empty array (r2 P2-2).  Typed skip.
+            skipped["project_ids_empty"] += 1
+            continue
         if len(project_ids) > SCAN_TARGETS_MAX_PROJECT_IDS:
             skipped["project_ids_over_limit"] += 1
             continue
@@ -167,15 +175,12 @@ def list_scan_targets(
             "project_ids": project_ids,
         }
     ordered = [targets[source_id] for source_id in sorted(targets)]
-    if (
-        skipped["missing_location_facts"]
-        or skipped["unknown_source_kind"]
-        or skipped["project_ids_over_limit"]
-    ):
+    if any(skipped.values()):
         print(
             "[core.source_list_scan_targets] skipped"
             f" missing_location_facts={skipped['missing_location_facts']}"
             f" unknown_source_kind={skipped['unknown_source_kind']}"
+            f" project_ids_empty={skipped['project_ids_empty']}"
             f" project_ids_over_limit={skipped['project_ids_over_limit']}",
             file=_sys.stderr,
         )
