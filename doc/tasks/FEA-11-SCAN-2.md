@@ -3,21 +3,21 @@ id: FEA-11-SCAN-2
 title: FEA-11 冷启动全源扫描目标枚举（B1：Core 只读枚举 + Host registry 核验/铸 grant）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: 用户 2026-11-06「让 Codex 判断下一部任务，由 DSH 执行」→ Codex `NEXT-TASK=FEA-11-SCAN-2`（先独立 scope review、优先 B1）；scope review `doc/reviews/FEA-11-SCAN-2-scope-r1.md` = **READY-WITH-UNFREEZE/B1**；DSH 裁决 B1 采纳 / S-1 选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣 missing，L-G 保留）/ S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新）/ S-4 登记 limitation；前置契约 **C-17 v1.1 已重冻**（`FEA-11-SCAN-2-PREREQ-1` done，delivery `7451bfaaa`，pins 18/18）；DSH 2026-11-06 冻结本卡并释放
 suggested_owner: dsh（Agent Teams 分片：Core Python + Host/App .NET；Lead 集成）
 owner: fea12-core-py（Core 分片）、fea12-core-host（Host/App 分片）；Lead 集成
-reviewer: 独立上下文 fresh subagent（r1 session `32e815ef-4423-4c77-8be9-1f100d6479de`；报告 `doc/reviews/FEA-11-SCAN-2-r1.md`；CHANGES P0=0/P1=1/P2=5/P3=6；未参与实现）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-SCAN-2-r1.md` session `32e815ef-…` CHANGES P1=1；r2 窄面 `doc/reviews/FEA-11-SCAN-2-r2.md` session `d023c675-8ef1-4ae5-8e93-d61eb550a372` **APPROVE P0/P1/P2=0**；均未参与实现）
 depends_on:
   - FEA-11-SCAN-1
   - FEA-11-SCAN-2-PREREQ-1
 base_commit: 703d9eb12   # PREREQ-1 closeout 后 main head（释放点）
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 555f57b8d
+delivery_head: 555f57b8d   # Lead r2 集成提交；实现链 0cb5177ca/6c8b4cb2b/20faf062a/196793e01
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-SCAN-2
 allowed_paths:
   - doc/tasks/FEA-11-SCAN-2.md
@@ -90,15 +90,15 @@ Host 冷启动后**无需用户再次导入**即可获得可扫描目标集：Co
 
 ## Acceptance Criteria
 
-- [x] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<MET>>
+- [x] **AC-S2-1 冷启动枚举（真实重启；限定：HostRuntime 运行级成功枚举未证明，组件级真实 Core E2E 补足，见 r2）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<MET>>
 - [x] **AC-S2-2 与会话导入合并/去重**：App 导入 Completed 触发 Refresh；枚举结果与 SCAN-1 内存目标按 `source_id` 合并去重；重复 Refresh 幂等、targets 不增长。 <<MET>>
 - [x] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<MET>>
 - [x] **AC-S2-4 registry 授权核验**：target 的 `registry_id/generation` 与 Host 持久 registry 匹配才铸 grant；registry 缺失/撤销/代次漂移 → typed skip（不扫描、不自动重新授权、不泄露路径）；撤销后同 target 不再扫描。 <<MET>>
 - [x] **AC-S2-5 启动前缺失/删除（S-1②）**：生产 file-root 缺失/替换 → typed `SOURCE_REGISTRY_UNAVAILABLE` fail-closed，**不是** `missing`；该轮不产生 `ScanSourceSync` 帧；L-G 口径保留。 <<MET>>
 - [x] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<MET>>
 - [x] **AC-S2-7 预算/单飞/退避/取消**：首轮枚举+扫描受 SCAN-1 预算（8 目标/256MiB）且不阻塞 Host Ready；枚举与 tick 单飞不重叠；停机取消在安全检查点；可注入时钟（零 sleep）。 <<MET>>
-- [x] **AC-S2-8 零写/脱敏**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<MET>>
-- [x] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<MET>>
+- [x] **AC-S2-8 零写/脱敏（限定：wirelog 的 grant/session ID 按 C-16 §7 属授权面；14/15 表口径见 r2）**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<MET>>
+- [x] **AC-S2-9 门禁与回归（含已记录 allowlist 例外：`LibraryViewModel.cs`）**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<MET>>
 
 ## 预期行为变更（Review 不判回归）
 
@@ -121,8 +121,8 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 |---|---|---|---|---|
 | Core 枚举单测 | `pytest tests/core -q -p no:cacheprovider` | 隔离 DB | PASS（closed shape/只读/排序/去重/上限/unknown kind fail-closed） | `verification/FEA-11-SCAN-2/logs/pytest-core.log` |
 | 真实重启 IPC | 新 Host 进程 + 真实 Core + 隔离 DataRoot（无 App 注册） | 隔离 | PASS（命令白名单、14 表零写、typed 缺失） | `verification/FEA-11-SCAN-2/logs/restart-ipc.log` |
-| 全量 Python | `pytest tests -q -p no:warnings --tb=no` | 仓库根 | **PASS 3212 passed/10 skipped**（r2 集成；基线 3203/10，+9 新增，0 回归） | `logs/core-pytest-full.log`、`logs/gates-integration.log` |
-| 全量 .NET | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根 | **PASS 1500 passed/0 failed/85 skipped**（r2 集成复跑；分片侧 RUN1/2/3 与 flaky 记录见 host-r2-dotnet-full-*.log、host-r2-flaky-*.log） | `logs/gates-integration.log`、`logs/host-dotnet-full-3.log` |
+| 全量 Python | `pytest tests -q -p no:warnings --tb=no` | 仓库根 | **PASS 3212 passed/10 skipped**（r2 集成；基线 3203/10，+9 新增，0 回归） | `logs/core-r2-pytest-full.log`、`logs/gates-r2-integration.log` |
+| 全量 .NET | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根 | **PASS 1500 passed/0 failed/85 skipped**（r2 集成复跑；分片侧 RUN1/2/3 与 flaky 记录见 host-r2-dotnet-full-*.log、host-r2-flaky-*.log） | `logs/gates-r2-integration.log`、`logs/host-r2-dotnet-full-3.log` |
 | API inventory / pins / check | `python tools/generate_api_inventory.py --check`；`verify_pins.ps1`；`check.ps1 -TaskPath` | 仓库根 | PASS；18/18；PASS | `logs/gates.log` |
 | 范围 diff | `git diff --name-only 703d9eb12..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py` | 仓库根 | 空 | `logs/scope-diff.log` |
 
@@ -149,9 +149,9 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 - **P1-1 已修**（`196793e01`）：`ResolveScanScope(target)` 按 `ProjectIds.Count` 选 `current`(1)/`all`(>1)，scan 与 missing 帧统一 payload builder；单测 3 例 + 真实共享源 IPC 判别（同一 PNG 导入两 book：单 book 帧 `scope=current`、共享源帧 `scope=all` 且 project_ids 恰两 book）。
 - **P2-1 已修**：`_refreshPending` coalesce + Tick 后重放；竞争窗口测试证明 tick 中 Refresh 不丢、新 target 随后被扫描。
 - **P2-2 已修**（Core `20faf062a`）：空 `project_ids` → typed skip（不进入 targets、计数日志），与 C-17 1..20 一致；变异转红。
-- **P2-3 已修**：gated 真实导入→枚举 E2E（真实 Core + 生产 `SourceImportCoordinator`，真实 PNG 导入 book1/book2）：Core 真实 `src-b1e32669…` == target.source_id 且 ≠ StableSourceId `src-d902593b…`；两 book 集合一致、Refresh 幂等、15 表零写。
+- **P2-3 已修**：gated 真实导入→枚举 E2E（真实 Core + 生产 `SourceImportCoordinator`，真实 PNG 导入 book1/book2）：target.source_id == Core `sources.source_id` 且 ≠ StableSourceId（本卡 canonical 证据 EV-07/08：`src-073de0ab…` / `src-21a8ffeb…`；卡面不再引用一次性随机 ID）；两 book 集合一致、Refresh 幂等、15 表零写。
 - **P2-4 已记录**：`LibraryViewModel.cs` 为编译必需连带修改（allowlist 例外），shard record/changed-files 已明示。
-- **P2-5 已处置**：gated HostRuntime Ready→后台枚举（真实 sidecar）：Ready 非阻塞、枚举状态/typed fail-closed/Refresh/tick 正常；limitation 已登记（无 fake-Core/时钟 seam；成功枚举由组件级真实 Core E2E 补足）。
+- **P2-5 已处置**：gated HostRuntime Ready→后台枚举（真实 sidecar）：Ready 非阻塞、枚举状态/typed fail-closed/Refresh/tick 正常；limitation 已登记（**时钟 seam 存在**：`HostOptions.SourceScanTimeProvider`；缺的是 fake-Core seam；成功枚举由组件级真实 Core E2E 补足）。
 - P3 同批：HostRuntime 注释、generation-drift retryable 注释、VM 测试名清理。
 - r2 集成门禁（HEAD `196793e01`，日志 `verification/FEA-11-SCAN-2/logs/gates-r2-integration.log`）：全量 pytest **3212/10**（EXIT 0）、`tests/fea11` **108**、全量 .NET **1500/0/85**（EXIT 0；分片 RUN1/2 各 1 次已知/环境 flaky，隔离复跑 PASS，RUN3 1500/0/85 PASS）、check/check-TaskPath PASS、pins **18/18**、API inventory PASS、scope diff 空。
 - AC 恢复：AC-S2-1/3/6/9 → MET（r2 证据）。
@@ -182,7 +182,7 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 | EV-06 | AC-S2-1 | verification/FEA-11-SCAN-2/host-r2-cold-start.txt | - | 9b7b241c7fc869af4bfdc5b19b0ff43bbf1c9de9d4112623c7a58c07b1c06ac2 | CANONICAL |
 | EV-07 | AC-S2-3 | verification/FEA-11-SCAN-2/host-r2-import-e2e.json | - | 29672d5f7110162f1209d8d5dbb9c0bdd1ca579ef613abe29ac3ec3d0fe72378 | CANONICAL |
 | EV-08 | AC-S2-3 | verification/FEA-11-SCAN-2/host-r2-import-e2e.txt | - | bc489cfe6c598bba9986b51c87a4ce55ad0a4fcffd76dfb32621810b519fdf81 | CANONICAL |
-| EV-09 | AC-S2-5 | verification/FEA-11-SCAN-2/host-r2-runtime-enumeration.json | - | fc692a69c304c4522445163e76e24f2263b72f5278273b966ae0cc1032135cec | CANONICAL |
+| EV-09 | AC-S2-1 | verification/FEA-11-SCAN-2/host-r2-runtime-enumeration.json | - | fc692a69c304c4522445163e76e24f2263b72f5278273b966ae0cc1032135cec | CANONICAL |
 | EV-10 | Gate | verification/FEA-11-SCAN-2/host-r2-scope-validation.log | - | 45138c709e0c0e0bbd1e6969a905c943dd36f7ab5497a43da5e88a97866fc413 | CANONICAL |
 | EV-11 | Gate | verification/FEA-11-SCAN-2/host-scope-validation.log | - | cdd72d4f67d8880f264e8b5d11657c2bcdd509195313601f778ed842709211f2 | CANONICAL |
 | EV-12 | AC-S2-1/2/4/5/7 | verification/FEA-11-SCAN-2/host-shard-record.md | - | 7578442cd56f24c5c9e9a6722488a3cf5254f34ef7db44784fed97adb5a6963e | CANONICAL |
@@ -238,14 +238,17 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-11-SCAN-2\` | DELETE_SAFE | — | verification/FEA-11-SCAN-2/logs/gates.log | 仅隔离 IPC/测试临时根；closeout 删除并记录字节数 |
-| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2` | verification/FEA-11-SCAN-2/logs/gates.log | 过程日志副本；保留不清理 |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-11-SCAN-2\` | DELETE_SAFE | — | verification/FEA-11-SCAN-2/logs/gates-r2-integration.log | 仅隔离 IPC/测试临时根；closeout 核实无独有产物（删除 0 文件 0 字节） |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2` | G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\gates-r2-integration.log | 过程日志副本；保留不清理 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：L-S1/L-S4、L-A/L-G、AC11-1 仍 PARTIAL、L10 不解决。
-- 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
+- Closeout date / DSH：2026-11-06 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；delivery_head / integration_commit = **`555f57b8d`**（Lead r2 集成提交；实现链 `0cb5177ca`（Core）+ `6c8b4cb2b`（Host/App）+ `20faf062a`（Core r2）+ `196793e01`（Host r2））。
+- Review 链：r1 **CHANGES**（P0=0/P1=1/P2=5/P3=6，session `32e815ef…`）→ r2 返修（Core P2-2 + Host P1-1/P2-1/P2-3/P2-5 + P2-4 记录）→ r2 窄面 **APPROVE**（P0/P1/P2=0/P3=14，session `d023c675…`）。
+- AC 定稿：**AC-S2-1…AC-S2-9 全 MET**（AC-S2-1 限定 HostRuntime 运行级成功枚举未证明/组件级 E2E 补足；AC-S2-8 限定 wirelog grant/session 属授权面、14/15 表口径；AC-S2-9 含已记录 allowlist 例外 `LibraryViewModel.cs`）。
+- 门禁：全量 pytest **3212 passed/10 skipped**、tests/fea11 **108**、全量 .NET **1500 passed/0 failed/85 skipped**（r2 集成复跑；分片 RUN1/2 各 1 次已知/环境 flaky 隔离复跑 PASS，RUN3 1500/0/85 PASS）、check/check-TaskPath PASS、pins **18/18**、API inventory PASS、scope diff 空、EV **58/58 MATCH**。
+- 证据：`verification/FEA-11-SCAN-2/**`（58 文件，EV-01…EV-58）；Resource Manifest：temp `workspace\temp\FEA-11-SCAN-2` 未有独有产物（DELETE_SAFE 无操作）、agent-output 保留。
+- 残余风险/limitation：**L-S1**（file-root 缺失/替换使持久 registry 整库不可读 → typed fail-closed；韧性另立缺陷卡）；**L-S4**（`refresh_source_location_auth` 死代码，撤销/重注册后 Core location auth 不更新）；L-A/L-G 承接；RH-1 Refresh 在途时 pending 延迟到下一次 tick；RH-2 Refresh 不绑停机 token；RH-3 targets 只增不减（Core 软删源排除，但 Host 侧不主动清理）；RH-4 14/15 表并集口径；RH-5 HostRuntime 非阻塞证据强度（无 fake-Core seam；时钟 seam `HostOptions.SourceScanTimeProvider` 存在）；大库冷启动预算未标定；单文件 PNG 导入 E2E 覆盖（folder/encrypted 未覆盖，同 SCAN-1 口径）；**AC11-1 仍 PARTIAL**（watcher/访问前策略未承接；WATCH-1 未释放）；**L10 不解决**（referenced 图源/rendition 另卡）。
+- 删除、迁移、归档数量/字节数：0（temp 无独有产物）。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡终态。

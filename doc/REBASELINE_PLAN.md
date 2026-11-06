@@ -51,7 +51,7 @@ READY 节点：无
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 四卡（PREREQ-1/CORE/DSIM-1/UI）done；FEA-11 AC4-GAPS-1/MATCH-1/SCAN-1 done（AC11-4/AC11-3 MET/带 limitation；AC11-1 仍 PARTIAL）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12-PREREQ-1/CORE/DSIM-1/UI（done）→ FEA-11-SCAN-2-PREREQ-1（done `7451bfaaa`；C-17 v1.1，pins 18/18）→ FEA-11-SCAN-2（in_review；分片 A 0cb5177ca + B 6c8b4cb2b 已集成；pytest 3211/10、.NET 1496/0/83；独立 Review 中）
+当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12-PREREQ-1/CORE/DSIM-1/UI（done）→ FEA-11-SCAN-2-PREREQ-1（done；C-17 v1.1）→ FEA-11-SCAN-2（done `555f57b8d`；r2 APPROVE；pytest 3212/10、.NET 1500/0/85；AC-S2-1…9 MET）→ FEA-11-WATCH-1（proposed）
 
 ## 历史快照（终态节点，非当前 DAG）
 
