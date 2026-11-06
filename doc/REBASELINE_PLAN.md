@@ -9,12 +9,12 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
-|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 用户裁决；L-1…L-11 见 `reviews/FEA-11-r7-acceptance.md`；r1–r7）||
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（用户裁决；L-1…L-11；r1–r7）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 仍 PARTIAL）|
-|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（2026-11-05 Codex 裁决 A（用户委托）；r8 approved；AC3 PARTIAL + 10 limitations；delivery `cbd561b4`）||
+|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（Codex 裁决 A；r8 approved；AC3 PARTIAL+10 limitation；`cbd561b4`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
-|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**done**（r4 窄面 approved；UNFREEZE 重冻 `fc9833479`；delivery `51e139eff`；AC1–AC12 全 MET；残余见卡）||
+|FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**done**（r4 approved；UNFREEZE `fc9833479`；`51e139eff`；AC1–AC12 MET）||
 |FEA-12-DSIM-1|—|**done**（r2 approved；delivery `beee351bb`；模拟切片，真实 D NOT_RUN）||
 |FEA-12-UI|FEA-12-PREREQ-1、FEA-12-CORE|**done**（r2 approved；delivery `a46d4d5c7`；AC1–AC10 全 MET；L3 NOT_RUN）||
 |FEA-11-MATCH-1|FEA-11|**done**（r2 窄面 approved；delivery `869b6d5d5`；AC-M1…M6 全 MET；AC11-3 回填 MET 带 L-M1/L-M4 limitation）||
@@ -23,13 +23,13 @@
 |FEA-02-CORE|FEA-01-FREEZE-1|**done**（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|**done**（集成 `aec780362`；评估文档 v2 + R1 approved）|
 |FEA-00A-IMPL-1|FEA-00A-PREP-1|**done**（集成 `e0ba29eba`；delivery `007094517`；实现复核 r1 approved P0/P1=0；AC7b 限制登记）|
-|FEA-03|FEA-00A-IMPL-1、FEA-01-FREEZE-1|**done**（集成 `76d947923`；实现复核 r5 approved P0/P1=0；范围 v6 + C-13 v6 UNFREEZE approved；AC11b V19 组合 deferral）|
+|FEA-03|FEA-00A-IMPL-1、FEA-01-FREEZE-1|**done**（集成 `76d947923`；r5 approved；范围 v6 + C-13 v6 UNFREEZE；AC11b deferral）|
 |FEA-04|FEA-02-CORE、FEA-03|**done**（集成 `f4d8a32ec`；实现复核 r3 approved P0/P1=0；sln 931/0/60；AC11b 无）|
 |FEA-04b|FEA-01|**done**（设计基线 `fluent-v1.0.0` FROZEN；r5 approved；AC5 用户确认由 DSH 裁决替代）|
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
-|FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；scope-r3 + impl-r2 approved；全量 **1034/0/57**；AC8–AC10 MET，AC1–AC7 residual 转 FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；scope-r2 + impl-r12 approved；全量 **1138/0/57**；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1；residual 见 Task 卡；AC5 原生矩阵待硬件/waiver）|
+|FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；impl-r2 approved；全量 1034/0/57；AC8–AC10 MET；AC1–AC7 residual→FEA-06-RESIDUAL-1）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**closed_with_limitations**（集成 `aedc7251c`；impl-r12 approved；全量 1138/0/57；AC7 MET、AC1–AC4/AC6/AC8 PARTIAL、AC5 BLOCKED/D-1）|
 |FEA-06-RESIDUAL-2|FEA-06-RESIDUAL-1|**closed_with_limitations**（impl-r4 approved P0=0/P1=0/P2=3，172 图 172 PASS/0 REJECT；交付 `832103393`；集成 `d1df8035a`；全量 **1289/0/57**；AC1–AC4 MET；BLOCKED=原生 DPI/a11y、OUT=loading/危险加载/新增组件状态）|
 |D-14-STATUS-COLOR-FIX|FEA-06-RESIDUAL-2|**done**（D-14 裁决 A 实施 `5ecc1e4c6`+证据补正 `075dc1682`；impl-r3 approved（ZCode，P0=0/P1=0/P2=2）；集成 `e36a7442b`；全量 **1292/0/57**）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
@@ -49,9 +49,9 @@
 
 READY 节点：无
 
-完成：FEA-10 done；FEA-11-PREREQ-1 done（C-17 FROZEN）；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 scope 冻结（ADJ-2026-11-05）。
+完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 四卡（PREREQ-1/CORE/DSIM-1/UI）done；FEA-11 AC4-GAPS-1/MATCH-1/SCAN-1 done（AC11-4/AC11-3 MET/带 limitation；AC11-1 仍 PARTIAL）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（ready）→ FEA-12-PREREQ-1（ready）→ FEA-12-CORE/DSIM-1（proposed）
+当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12-PREREQ-1/CORE/DSIM-1/UI（done）→ FEA-11-SCAN-2（proposed；Codex 2026-11-06 裁决为下一任务，先独立 scope review，优先 B1；checkpoint 摘要滞后于 2026-11-06 状态）
 
 ## 历史快照（终态节点，非当前 DAG）
 

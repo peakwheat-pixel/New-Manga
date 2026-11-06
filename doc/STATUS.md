@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：无活动 Task（下一候选：[FEA-11-WATCH-1](tasks/FEA-11-WATCH-1.md) / [FEA-11-SCAN-2](tasks/FEA-11-SCAN-2.md)，proposed，需先 scope review 后释放）。已闭环：[FEA-12-UI](tasks/FEA-12-UI.md) `done`（r2 approved；delivery `a46d4d5c7`；AC1–AC10 全 MET；L3 NOT_RUN）；[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（`7080167e1`；AC11-1 仍 PARTIAL）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
+- 当前 Task：[FEA-11-SCAN-2](tasks/FEA-11-SCAN-2.md) `proposed`（Codex 裁决下一任务：冷启动全源扫描目标枚举；独立 scope review 中，优先核 B1；未释放实施）。已闭环：[FEA-12-UI](tasks/FEA-12-UI.md) `done`（`a46d4d5c7`；AC1–AC10 MET；L3 NOT_RUN）；[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（`7080167e1`；AC11-1 仍 PARTIAL）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：FEA-12 线四卡已全部 done；如需继续，先对 FEA-11-WATCH-1/SCAN-2 做独立 scope review 再释放（AC11-1 仍 PARTIAL）。
+- 下一步：FEA-11-SCAN-2 独立 scope review（Codex 裁决：优先 B1；WATCH-1 只核边界不释放）→ DSH 裁决方案→必要时 C-17 v1.1 UNFREEZE/重冻→冻结卡→释放实现。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 

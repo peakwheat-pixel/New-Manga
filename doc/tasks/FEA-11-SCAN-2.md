@@ -4,7 +4,7 @@ title: FEA-11 冷启动全源扫描目标枚举（proposed 占位；方案 B，�
 kind: design
 governance_version: 3
 status: proposed
-approval: 占位卡：scope 尚未冻结，不得释放实施；来源为 ZCode SCOPE-ADJ-2026-11-05 对 FEA-11-SCAN-1 的显式后续登记（冷启动全源枚举另立 SCAN-2）。需 Lead（DSH）先裁决方案与契约/架构边界。
+approval: **Codex 2026-11-06 裁决：下一任务 = FEA-11-SCAN-2（冷启动全源扫描目标枚举），先独立 scope review（优先核 B1：Core 业务目标事实 + Host 持久 registry 核验授权/铸新会话 grant），DSH 裁决后再冻结并释放实施**；占位卡：scope 尚未冻结，不得释放实施；来源为 ZCode SCOPE-ADJ-2026-11-05 对 FEA-11-SCAN-1 的显式后续登记（冷启动全源枚举另立 SCAN-2）。需 Lead（DSH）先裁决方案与契约/架构边界。
 suggested_owner: null
 owner: null
 reviewer: null
@@ -20,6 +20,8 @@ resource_closeout_status: pending
 evidence_dir: verification/FEA-11-SCAN-2
 allowed_paths:
   - doc/tasks/FEA-11-SCAN-2.md
+  - doc/reviews/FEA-11-SCAN-2-*.md
+  - doc/handoffs/FEA-11-SCAN-2-*.md
   - verification/FEA-11-SCAN-2/**
 out_of_scope:
   - 周期扫描执行本体、grant 铸造、预算/退避/单飞（FEA-11-SCAN-1）
