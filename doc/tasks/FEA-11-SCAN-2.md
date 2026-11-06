@@ -238,7 +238,7 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-11-SCAN-2\` | DELETE_SAFE | — | verification/FEA-11-SCAN-2/logs/gates-r2-integration.log | 仅隔离 IPC/测试临时根；closeout 核实无独有产物（删除 0 文件 0 字节） |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-11-SCAN-2\` | DELETE_SAFE | — | verification/FEA-11-SCAN-2/logs/gates-r2-integration.log | 仅隔离 IPC/测试临时根；closeout 已删除：7712 files / 109,225,926 B（隔离 IPC/测试临时根，无 tracked 产物） |
 | agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2` | G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\gates-r2-integration.log | 过程日志副本；保留不清理 |
 
 ## Closeout Record
@@ -250,5 +250,5 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 - 门禁：全量 pytest **3212 passed/10 skipped**、tests/fea11 **108**、全量 .NET **1500 passed/0 failed/85 skipped**（r2 集成复跑；分片 RUN1/2 各 1 次已知/环境 flaky 隔离复跑 PASS，RUN3 1500/0/85 PASS）、check/check-TaskPath PASS、pins **18/18**、API inventory PASS、scope diff 空、EV **58/58 MATCH**。
 - 证据：`verification/FEA-11-SCAN-2/**`（58 文件，EV-01…EV-58）；Resource Manifest：temp `workspace\temp\FEA-11-SCAN-2` 未有独有产物（DELETE_SAFE 无操作）、agent-output 保留。
 - 残余风险/limitation：**L-S1**（file-root 缺失/替换使持久 registry 整库不可读 → typed fail-closed；韧性另立缺陷卡）；**L-S4**（`refresh_source_location_auth` 死代码，撤销/重注册后 Core location auth 不更新）；L-A/L-G 承接；RH-1 Refresh 在途时 pending 延迟到下一次 tick；RH-2 Refresh 不绑停机 token；RH-3 targets 只增不减（Core 软删源排除，但 Host 侧不主动清理）；RH-4 14/15 表并集口径；RH-5 HostRuntime 非阻塞证据强度（无 fake-Core seam；时钟 seam `HostOptions.SourceScanTimeProvider` 存在）；大库冷启动预算未标定；单文件 PNG 导入 E2E 覆盖（folder/encrypted 未覆盖，同 SCAN-1 口径）；**AC11-1 仍 PARTIAL**（watcher/访问前策略未承接；WATCH-1 未释放）；**L10 不解决**（referenced 图源/rendition 另卡）。
-- 删除、迁移、归档数量/字节数：0（temp 无独有产物）。
+- 删除、迁移、归档数量/字节数：temp 删除 7712 files / 109,225,926 B（隔离 IPC/测试临时根，无 tracked/独有证据）；仓内无删除。
 - 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡终态。
