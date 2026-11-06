@@ -3,7 +3,7 @@ task_id: FEA-12-UI
 title: FEA-12 回收站 UI 切片（V2 单本彻底删除 + 软删/恢复 + 文案诚实化）
 status: in_review
 owner: dsh-agent-team teammate `fea12-prereq-impl`
-reviewer: null   # 待 DSH 派独立上下文 fresh subagent；实现者不自审
+reviewer: 独立上下文 fresh subagent —— r1 session `1dfbb1cf…`（changes_requested）；r2 session `762aa9dd…`（approved；交叉 `e46b8835…`）；实现者不自审
 base_commit: 9daa94a25
 delivery_head: a46d4d5c7
 evidence_dir: verification/FEA-12-UI
@@ -71,7 +71,7 @@ integration_commit: null
 
 1. **L1–L10 全部保留**（见卡）：批量删除无 UI、无缩略图/内容预览、cleanup 重试仅会话内、无总数/逐项 busy、restore reason 首版恒 `TRASH_ENTRY_NOT_FOUND`、导出占用仅删除时 `BOOK_BUSY`、Fluent 回收站未接线、D 流程 NOT_RUN、无保留期限承诺、L3 真机 NOT_RUN。**L3 在 r2 收窄为“结果面板保留期间可重试；关闭后 UI 明示不可重试”**。
 2. **R12 digest 语义**：已按真实 Core 修正并断言；若后续 Core 调整 digest v2 记录/集合口径，需同步扩展。
-3. **R13 证据卫生**：`verification/FEA-12-UI/` 内非本卡未跟踪历史/意外同步证据已整体归档到 `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（`spill-tree`/`moved-tree`），本目录只保留本卡 14 个证据文件；归档不参与 Canonical Evidence。
+3. **R13 证据卫生**：`verification/FEA-12-UI/` 内非本卡未跟踪历史/意外同步证据已整体归档到 `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（`spill-tree`/`moved-tree`），本目录只保留本卡 16 个证据文件；归档不参与 Canonical Evidence。
 4. **既有 flaky**：Fluent 视觉/交互测试在全量并行首跑曾抖动（与本卡写域无关）；本卡最终全量首跑 0 失败。若复跑遇到，请保留首跑/复跑日志，不归因本卡。
 5. **未跑项**：pytest 未重跑（本卡零 Python 改动，引用基线 **3203 passed / 10 skipped**）；L3 真机 NOT_RUN。
 6. **未 push**；未提交他人文件；`verification/FEA-09` 在全量运行后已 `git checkout --` 恢复。

@@ -3,21 +3,21 @@ id: FEA-12-UI
 title: FEA-12 回收站 UI 切片（V2 单本彻底删除 + 软删/恢复 + Fluent 文案诚实化）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: scope 已按 ZCode SCOPE-ADJ-2026-11-05 冻结，**DSH 2026-11-06 释放（ready）**：整卡释放前置 = FEA-12-CORE 返修闭环 + 正式契约重冻/重新 closeout；释放时由 DSH 固定 base_commit、Owner 与上下文独立 Reviewer
 suggested_owner: zcode
 owner: dsh-agent-team teammate `fea12-prereq-impl`（claimed 2026-11-06）
-reviewer: 独立上下文 fresh subagent（待 DSH 派发；实现者不自审）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-12-UI-r1.md` session `1dfbb1cf-2234-44a6-8f13-a91653dc7788`（changes_requested P1=1）；r2 窄面 `doc/reviews/FEA-12-UI-r2.md` session `762aa9dd-43f3-4c50-8846-9e14492e7873`（approved P0/P1/P2=0；另一并发复审 session `e46b8835…` 亦 APPROVE，其 reviewed_head 为 amend 前悬空 head，仅作交叉验证）；均未参与实现）
 depends_on:
   - FEA-12-PREREQ-1
   - FEA-12-CORE
 base_commit: 9daa94a25   # 释放点 main head（SCAN-1 r2 交付后）
 branch: null
 worktree: null
-integration_commit: null   # DSH 集成后填写
+integration_commit: a46d4d5c7
 delivery_head: a46d4d5c7
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-UI
 allowed_paths:
   - doc/tasks/FEA-12-UI.md
@@ -261,28 +261,31 @@ r1 Review：`doc/reviews/FEA-12-UI-r1.md`（独立 fresh subagent；reviewed_hea
 | EV-09 | AC2 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--09-move-to-trash-danger-confirm.png | - | ea15b96d42cd3abbdf89284d37f4400452894dba8738c253f703b5f96fc80771 | CANONICAL |
 | EV-10 | AC2/AC3 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--10-move-to-trash-undobar.png | - | 802fb895a60c8358dd2ea7401062595fdf7339825525e793ae847d765cd563c5 | CANONICAL |
 | EV-11 | AC10 | verification/FEA-12-UI/logs/gates.log | - | 5a26ea60b13eb0579f5329c5b41ef0283c7f599bc504f825350aecda5d2400b9 | CANONICAL |
-| EV-12 | AC4/AC5/AC7（r2 判别） | verification/FEA-12-UI/logs/r2-mutations.log | - | cc9ecef9eb68131652e0a32faa0d436a7ed9811a440189b49692ccc4af729c1b | CANONICAL |
-| EV-13 | AC1–AC10 | verification/FEA-12-UI/AC-MATRIX.md | - | 80abc6f81ae3e932a30fd450da831d332a2288f83402d97a684ed149947664b7 | CANONICAL |
+| EV-12 | AC4/AC5/AC7（r2 判别） | verification/FEA-12-UI/logs/r2-mutations.log | - | 255fc60c9bdb53a297e98174da2c1f0ba527a745414e195d89091c005c8e3c95 | CANONICAL |
+| EV-13 | AC1–AC10 | verification/FEA-12-UI/AC-MATRIX.md | - | 671ecf3811b7183aea6c6f578611f683d18525ea1e89518e3fad5e83938df01f | CANONICAL |
 | EV-14 | AC10 | verification/FEA-12-UI/ENVIRONMENT.md | - | 2ac5cc0287d066b8f668b875de7a3852669cf9038f19fc967497cd9e5f725fb4 | CANONICAL |
 | EV-15 | AC8 | apps/desktop-avalonia/tests/NewManga.App.Tests/NoDbOsAccessTests.cs | - | 2eee151ed21a440dc1aca7129769f4b1f1c376bf73be5e276516115ce1da6fa0 | SOURCE_PIN |
 | EV-16 | AC10 | apps/desktop-avalonia/tests/NewManga.Host.Tests/Support/Fea12ProductionFixture.cs | - | d635a995a5f58763a3fc3e4b71afd5156a5756115eb5b2dfa7435ea0912253b7 | SOURCE_PIN |
 | EV-17 | AC10（r2 门禁） | verification/FEA-12-UI/logs/check.log | - | 4adddd01338271e8a3cc91f78ac2c546daaa30a7911372207ba2e53a7a18c686 | CANONICAL |
-| EV-18 | AC10 | verification/FEA-12-UI/agent-output-manifest.json | - | 54ce1006712ac1c0b499fd5748100dca9727034e8a2c23509a73945da5c72cc6 | CANONICAL |
+| EV-18 | AC10 | verification/FEA-12-UI/agent-output-manifest.json | - | 2f32c12a6bc8560f8fcbf4ede053a068b32277a87d36a40437363c8a9cc779f7 | CANONICAL |
 
 ## Resource Manifest
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-UI\` | DELETE_SAFE | — | — | 测试日志副本；Canonical 日志已固化到 evidence_dir |
-| agent-output | `G:\CODEX\New Manga.workspace\FEA-12-UI\ipc-*`（真实 IPC 隔离 DataRoot/sidecars/wire） | PRESERVE_REFERENCED | 原路径 | 见 `agent-output-manifest.json` | Review/集成后可删；不删除真实用户数据 |
-| agent-output | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档） | ARCHIVED | 原路径 | 322 files；tree sha256 `80dcf7494a4181e4354456b033a3c68495be01de010d0f0fd5fd5f34aadc7db3`（manifest 另有登记） | 非本卡证据，不参与 Canonical Evidence；provenance 与整树指纹已登记 |
-| agent-output | `G:\CODEX\New Manga.workspace\FEA-12\scope-review\`（既有 scope review，只读输入） | PRESERVE_REFERENCED | 原路径 | — | 上游审查输入，不清理 |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-UI\` | DELETE_SAFE | — | verification/FEA-12-UI/agent-output-manifest.json | 测试日志副本；Canonical 日志已固化到 evidence_dir；**DSH 2026-11-06 closeout 已删除**：11 files / 376,596 B |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-12-UI\ipc-*`（真实 IPC 隔离 DataRoot/sidecars/wire） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-12-UI` | G:\CODEX\New Manga.workspace\FEA-12-UI\ipc-0806d21900a640d9bc2589726fa2f69f\data\library.db | IPC 隔离根；不删除真实用户数据；Review/集成后可清理 |
+| agent-output | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06` | G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\moved-tree\ENVIRONMENT.md | 322 files；tree sha256 `80dcf7494a4181e4354456b033a3c68495be01de010d0f0fd5fd5f34aadc7db3`（manifest 另有登记） | 非本卡证据，不参与 Canonical Evidence；provenance 与整树指纹已登记 |
+| agent-output | `G:\CODEX\New Manga.workspace\FEA-12\scope-review\`（既有 scope review，只读输入） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-12\scope-review` | G:\CODEX\New Manga.workspace\FEA-12\scope-review\FEA-12-UI-scope.md | 上游审查输入，不清理 |
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：L1–L10（见上）；CORE 侧事实（restore reason 收窄、active export 未披露）不在本卡修。
-- 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
+- Closeout date / DSH：2026-11-06 / DSH（Lead/Architect/Integrator）。
+- 终态：`done`；delivery_head / integration_commit = **`a46d4d5c7`**（r2 fix）；docs head `233d73f21`；r1 实现 `d976aceec`/`c841b9a0b`。
+- Review 链：r1 changes_requested（P1=1：AC7 三态混同；P2×3/P3×8）→ r2 最小返修 → **r2 窄面 approved（P0/P1/P2=0；P3×6）**，两路独立复审均 APPROVE（权威 session `762aa9dd…`；交叉 `e46b8835…`）。
+- AC 定稿：**AC1…AC10 全 MET**（AC4/AC7 带已登记 P3 边）；C-07/`IHostController`/18 pins 零变更；`generate_api_inventory.py --check` PASS。
+- 证据：EV-01…EV-18（18 行 sha）；manifest `agent-output-manifest.json` 的 check.log 条目与 `reviewed_head` 已按 P2-4 修正（manifest sha 已重签 EV-18，见上）；`verification/FEA-12-UI` 共 16 文件 + spill 归档 322 文件（仓外 `archive/FEA-12-UI-spill-2026-11-06/`，非 Canonical）。
+- closeout P3 处置：**P2-4 已修**（manifest check.log sha/bytes=实际 `EV-17` 值、reviewed_head=233d73f21、EV-18 重签）；**P3 文档**：Handoff 证据文件数更正、r2-mutations 口径改 40/40（AC-MATRIX L3 口径保持原字节以不破坏 EV pin，登记为 residual）（“48/48”不可复现）、spill tree sha 无法按公式复算改为 322 文件清单口径、reviewer 字段回填。**登记 follow-up（不改代码、不重跑功能测试）**：①delete-time `CORE_CAPABILITY_MISSING` 仍置页级 missing 的防御边（当前 Host/Core 不可达、无测试）；②preview `BOOK_NOT_FOUND` 未自动 `ReloadAsync`（AC4 “提示并刷新”的手动路径可用）；③AC6 第二次 cleanup retry→BOOK_NOT_FOUND 有实现无测试；④Host 只读+能力缺口时真实 HOST_READ_ONLY banner 被抑制的文案取舍。
+- 残余风险/limitation：L1（批量 OUT）、L2（无总数/无缩略图）、L3 真机走查 **NOT_RUN**（面板保留期间可重试；关闭后不可重试）、L4（旧 Core 缺 current 数组 fail-closed）、L5–L10（CORE 事实：restore reason 收窄/active export 未披露不在本卡修；其它见卡）。
+- 删除、迁移、归档数量/字节数：spill 322 文件归档至仓外 archive（非 Canonical、已登记）；仓内无删除。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新；本卡为终态，不进入 READY DAG。

@@ -16,7 +16,7 @@
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
 |FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**done**（r4 窄面 approved；UNFREEZE 重冻 `fc9833479`；delivery `51e139eff`；AC1–AC12 全 MET；残余见卡）||
 |FEA-12-DSIM-1|—|**done**（r2 approved；delivery `beee351bb`；模拟切片，真实 D NOT_RUN）||
-|FEA-12-UI|FEA-12-PREREQ-1、FEA-12-CORE|**in_review**（实施完成：单本删除链/软删/回收站/文案诚实化；Lead 集成/独立 Review 中；base `9daa94a25`）||
+|FEA-12-UI|FEA-12-PREREQ-1、FEA-12-CORE|**done**（r2 approved；delivery `a46d4d5c7`；AC1–AC10 全 MET；L3 NOT_RUN）||
 |FEA-11-MATCH-1|FEA-11|**done**（r2 窄面 approved；delivery `869b6d5d5`；AC-M1…M6 全 MET；AC11-3 回填 MET 带 L-M1/L-M4 limitation）||
 |FEA-11-AC4-GAPS-1|FEA-11|**done**（r1 approved；delivery `2d9a4a219`；AC11-4 可判 MET；test-only）||
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|**done**（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
