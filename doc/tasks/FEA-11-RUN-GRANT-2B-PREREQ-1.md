@@ -42,7 +42,7 @@ out_of_scope:
 
 | # | 裁决 | 内容 |
 |---|---|---|
-| T-1 | **UNFREEZE 面** | **只改 `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`（v1.4）**；C-17/C-06 及其他 16 份契约零字节；18 pins 中**恰好 1 项**（C16）重签。 |
+| T-1 | **UNFREEZE 面** | **只改 `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`（v1.4）**；C-17/C-06 在内的其余 17 份契约零字节（C-16 除外）；18 pins 中**恰好 1 项**（C16）重签。 |
 | T-2 | **语义扩展（最小）** | 容器源（zip/cbz/pdf）的 `RegisterSourceReadGrant` 的 `scope.entries[]` 允许 **1..N**：每项 `path` = 容器绝对路径、`locator`/`ordinal` = 成员身份、`facts` = **容器**物理身份（四键同一）；Core 注册时逐项校验（locator 安全、ordinal ≥0 且唯一、facts 与容器身份一致、path 在同一容器）；匹配时按既有 `entry_key OR locator OR ordinal` + facts 逐项匹配；**任一不匹配 → 整体 typed 零绑定写入**；不得路径回退；不得放宽 `max_entries`/64 grant 上限（超限 typed）。 |
 | T-3 | **不改项** | grant 四维 scope 形状、TTL ≤300s、撤销/失联、错误闭集（无新码）、§7 脱敏、Run wire/§2.4 命令、`source.read.run/1` 能力、folder 语义（已支持逐成员）零改动；`<DataRoot>`/路径规则不变。 |
 | T-4 | **禁止** | 不得借机放宽 facts/identity/撤销校验；不得新增命令/字段（除 entries 数量与容器项约束的明文澄清）；不得改 pins 数。 |
@@ -101,17 +101,17 @@ out_of_scope:
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-T1/T2/T4 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md | d8dcfc07a | c061286c91c2362e07fb1af6f7e97b86b2b98ec7bbb5f909aa0b569a59cd06d2 | CANONICAL |
+| EV-01 | AC-T1/T2/T4 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md | 29365bf3c | a8c19037b3b6cb09461ec3fb81756a09f49604267bda31e8c94d8df4fb44093c | CANONICAL |
 | EV-02 | AC-T2 | doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r1.md | d8dcfc07a | f4a618ed78a9421011626078a34981c5a2258421c2565747f1b1182eb7b84d2c | CANONICAL |
-| EV-03 | AC-T2 | doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r2.md | d8dcfc07a | cf7bb3cd5d173af6bab5b0daa419511377b7202f05ab28cc8dc7d79a85b5b06b | CANONICAL |
+| EV-03 | AC-T2 | doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r2.md | 29365bf3c | 0873f34f5530cf88a2b22aea52500839999c7931d8cff224ce699aef79e8a582 | CANONICAL |
 | EV-04 | AC-T1/T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/pre-post.sha256 | d8dcfc07a | bea56b406804039020fa5124fce234d9e0f73af7cb7b7a1ca5687b8d005c034d | CANONICAL |
 | EV-05 | AC-T1 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/changed-lines.diff | d8dcfc07a | 349b588bb10b186842cb8be1e3ace4d737d64a51a1de8de773f414dd7f209469 | CANONICAL |
 | EV-06 | AC-T1/T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/other-17-pins.txt | d8dcfc07a | 209913522539644e2551991ac9e2d879bc23990aad0d782285d8654e4bb77f12 | CANONICAL |
 | EV-07 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/pins.log | d8dcfc07a | 6755ba3d4ebeb4c2f98d427bdf207abbfccfeca0643ff46b1880e77c9dcadb78 | CANONICAL |
-| EV-08 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check.log | d8dcfc07a | 63073b8cf17201c2b9b75c05a6047b5936dbb8e81150bc5be6cb82d2d3d52cb1 | CANONICAL |
-| EV-09 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check-taskpath.log | d8dcfc07a | 04e0aca26d7c76413ab398c2bffc624b4672f390966b7a4da62cf2ae31898efe | CANONICAL |
-| EV-10 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/carrier.md | d8dcfc07a | c061286c91c2362e07fb1af6f7e97b86b2b98ec7bbb5f909aa0b569a59cd06d2 | CANONICAL |
-| EV-11 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/EV.md | d8dcfc07a | 1dea4888b96e648243ab9411438c9a4a15ebbe673867181889796165674a3147 | CANONICAL |
+| EV-08 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check.log | 29365bf3c | c80329401f51dd245ee48649cf6ac8f19346265050c51a77dbf0fbadba9d6c1d | CANONICAL |
+| EV-09 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check-taskpath.log | 29365bf3c | da3e5b72cb1144f0897a3ae0da1ff207769f1059c1421c4e3d92ac8253041ca1 | CANONICAL |
+| EV-10 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/carrier.md | 29365bf3c | a8c19037b3b6cb09461ec3fb81756a09f49604267bda31e8c94d8df4fb44093c | CANONICAL |
+| EV-11 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/EV.md | 29365bf3c | 1531bae5e731fce865b162f3b272655d8895dd24d81588e8b1510945c10e7c86 | CANONICAL |
 
 ## Resource Manifest
 
@@ -129,3 +129,11 @@ out_of_scope:
 - **Resource Manifest**：0 删除/0 移动/0 归档；工作区 tmp blob 副本保留（无独有数据）。
 - **指针清理**：STATUS 当前 Task → FEA-11-RUN-GRANT-2A（2A 进行中）；PLAN 本节点 done；TASK_LEDGER 重生成。
 - **push**：本轮 push 见后续 closeout/STATUS 记录（Lead 统一 push；PRE/POST hash 记录）。
+
+## Closeout 补充（2026-11-07；记录修正，append-only）
+
+- **A-1（r2 复核后 P3）**：载体 §2.B 已改为与冻结 `FEA-C16:68` 一致（超预算 → `SOURCE_BUDGET_EXCEEDED`；其余项 → `SOURCE_ACCESS_DENIED`），并刷新 `verification/.../carrier.md` 与 EV。
+- **A-2（r2 复核后 P3）**：`FEA-CONTRACT-FROZEN-C16.md` §1B 改「r2 approved（session e032ed9a…/reviewed_head a0bafc89e）」、§2 条件 6 改 ✅，与 §8 一致。
+- **A-3（r2 复核后 P3）**：卡 T-1「其他 16」改为「其余 17（C-16 除外）」。
+- **A-5（r2 复核后 P3）**：`logs/check*.log` 已按 closeout 后 checker 输入重跑（仍 PASS(3 warnings)），EV 行 commit 重签为 `29365bf3c`；A-4 的 r2 Addendum 已纳入该提交并重签 EV-03。
+- **不改**：C-16 v1.4 冻结字节、pin `ad25fb3c…`、18/18；本补充不改变 AC-T1…T4 判定与 r2 approved 结论。
