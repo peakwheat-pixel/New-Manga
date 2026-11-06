@@ -107,11 +107,26 @@ out_of_scope:
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-J1…J4 | verification/FEA-11-RUN-GRANT-2/EV.md | 2d69d0624 | 9c5a2d2579fd4ad56f7d21e090317dae5cd968d7925a323f0d6beb44334d432f | CANONICAL |
+| EV-01 | AC-J1…J4 | verification/FEA-11-RUN-GRANT-2/EV.md | 2d69d0624| 0e3d82e62dcc8302a4fbb02bff018d99a0d81fd4f48c9ffd4ce97a060375e26e | CANONICAL |
 | EV-02 | AC-J1…J4 | doc/reviews/FEA-11-RUN-GRANT-2-r1.md | 2d69d0624 | 89e6bf16002d3ef0c287393af02662a1c92d25bf04a36be5904cb06215abfee5 | CANONICAL |
 | EV-03 | AC-J4 | doc/handoffs/FEA-11-RUN-GRANT-2-018008989.md | 3dc822b77 | 92027aa8f61e17f111157f59fba3d98af7c128f8589bf1961c906a6fbe72c892 | CANONICAL |
+| EV-04 | AC-J4 | verification/FEA-11-RUN-GRANT-2/changed-files.txt | 8e1883655 | 29257dc05a669990f19550cc951bd125a08dfa61ce855cecbe05ddb035423769 | CANONICAL |
+| EV-05 | AC-J4 | verification/FEA-11-RUN-GRANT-2/scope-validation.log | 8e1883655 | 5ed7ff212effa39ee304fa1b56d65acf855643a65ec77d7c6aa666d9430a1b9c | CANONICAL |
+| EV-06 | AC-J1 | verification/FEA-11-RUN-GRANT-2/logs/build.log | 8e1883655 | 20c2998b1b24965e29d5eeaca506c20dca793e1ecca0b3b3206bb0214557c4de | CANONICAL |
+| EV-07 | AC-J1…J3 | verification/FEA-11-RUN-GRANT-2/logs/discrimination.log | 8e1883655 | a6e62b7f6bdd335d013679b1287680b1eb5ea3fe76e6446d599de2cf0789bd5c | CANONICAL |
+| EV-08 | AC-J1 | verification/FEA-11-RUN-GRANT-2/logs/feature.log | 8e1883655 | fb7b0da3f4a96d4e643530d3f7a05c7ff7a37cb6c353d37acf6f54ef41b03076 | CANONICAL |
+| EV-09 | AC-J4 | verification/FEA-11-RUN-GRANT-2/logs/full-dotnet.log | 8e1883655 | ead164532dba267df87abec6d6cbfb4c1c925dde983d427499e2b62ce2b8cbef | CANONICAL |
+| EV-10 | AC-J4 | verification/FEA-11-RUN-GRANT-2/logs/full-pytest.log | 8e1883655 | 32ae890b605934588f2b4b5164eeacec738e986a9e29b47e94768cea4bbf41e2 | CANONICAL |
+| EV-11 | AC-J4 | verification/FEA-11-RUN-GRANT-2/logs/gates.log | 8e1883655 | a65776f5231ef4843d8b3d6236e3596bf20c4b98f3fcde4a753920b00e998a0b | CANONICAL |
+| EV-12 | AC-J1…J3 | verification/FEA-11-RUN-GRANT-2/logs/host-ipc.log | 8e1883655 | e500514d29659e254b7f40b4a9d847cc1e0c508ed5625183c0dd250b45b4c63e | CANONICAL |
+| EV-13 | AC-J4 | verification/FEA-11-RUN-GRANT-2/logs/host-unit.log | 8e1883655 | 11162ad349a438d92cc50e68dabe72144efb2477ed21ad1956eaf25ed4a29304 | CANONICAL |
+| EV-14 | AC-J2/J3 | verification/FEA-11-RUN-GRANT-2/tools/discrimination.py | 8e1883655 | 39d18b652d722b58d6a5468ec798e44b4e9e75e808f37ecce5ae44a551aded1a | CANONICAL |
+| EV-15 | AC-J4 | verification/FEA-11-RUN-GRANT-2/tools/gen_ev.py | 8e1883655 | 0b73461c5f33c5c66f9baa09b36ab7e7ba4649275d1bb45ae5c02b7e5f7b16d7 | CANONICAL |
+| EV-16 | AC-J4 | verification/FEA-11-RUN-GRANT-2/tools/gen_manifest.py | 8e1883655 | 188d1bb9820d1abc3b055e899b8567ad4a50f7067728c4b179e32fccb063baa9 | CANONICAL |
+| EV-17 | AC-J4 | verification/FEA-11-RUN-GRANT-2/tools/scope_validation.py | 8e1883655 | b1ba8fad787e1e053bc9949e5bcf09617162d56849e1cc72c881f22f792c22cb | CANONICAL |
+| EV-18 | AC-J4 | verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json | 8e1883655 | 35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2 | CANONICAL |
 
-> 证据树其余 15 个文件（logs 8、tools 4、Manifest、changed-files、scope-validation.log）逐文件 sha256 见 EV §5（15/15 与工作树一致，Review r1 独立复算）；本表只列 closeout 层新增/重签项。
+> 证据树逐文件 sha256 以本表（EV-04…EV-18）与 EV §5 双重列出（15/15 与工作树一致，Review r1 独立复算）；commit 列 `8e1883655` 为证据快照提交，closeout 后 `EV.md`/`RESOURCE-MANIFEST.json` 有 P3 修正，按工作树终值复算（以 sha256 列为准）。
 
 ## Resource Manifest
 

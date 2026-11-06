@@ -100,7 +100,7 @@ sha256，最后重新 build 恢复二进制并对恢复后的树补跑定向套�
 | `logs/gates.log` | `a65776f5231ef4843d8b3d6236e3596bf20c4b98f3fcde4a753920b00e998a0b` |
 | `logs/host-ipc.log` | `e500514d29659e254b7f40b4a9d847cc1e0c508ed5625183c0dd250b45b4c63e` |
 | `logs/host-unit.log` | `11162ad349a438d92cc50e68dabe72144efb2477ed21ad1956eaf25ed4a29304` |
-| `RESOURCE-MANIFEST.json` | `a7bc608224ee842759e6e9f04c65ebdd2516bf57f4dcbcca8e1269eae989c41b` |
+| `RESOURCE-MANIFEST.json` | `35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2` |
 | `scope-validation.log` | `5ed7ff212effa39ee304fa1b56d65acf855643a65ec77d7c6aa666d9430a1b9c` |
 | `tools/discrimination.py` | `39d18b652d722b58d6a5468ec798e44b4e9e75e808f37ecce5ae44a551aded1a` |
 | `tools/gen_ev.py` | `0b73461c5f33c5c66f9baa09b36ab7e7ba4649275d1bb45ae5c02b7e5f7b16d7` |

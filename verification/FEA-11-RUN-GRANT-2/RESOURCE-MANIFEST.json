@@ -1384,13 +1384,14 @@
           "name": "integration/",
           "reason": "Lead 集成门禁输出，不属于本交付；生成时点可能仍在写入，故不纳入快照。"
         }
-      ]
+      ],
+      "process_check": "仓外隔离根（IPC 夹具/门禁日志/复核备份）；保留，不删除，无独有产品数据。"
     },
     {
       "resource_type": "evidence",
       "source_path": "verification/FEA-11-RUN-GRANT-2/",
       "disposition": "PRESERVE_REFERENCED",
-      "destination_path": "Same repository path（docs commit）",
+      "destination_path": "-",
       "file_count": 14,
       "note": "EV.md 与 RESOURCE-MANIFEST.json 互相引用，故各自排除自身与对方；EV.md 记录 manifest 的 sha256。",
       "files": [
@@ -1450,14 +1451,15 @@
           "name": "tools/scope_validation.py",
           "sha256": "b1ba8fad787e1e053bc9949e5bcf09617162d56849e1cc72c881f22f792c22cb"
         }
-      ]
+      ],
+      "process_check": "仓内证据树（EV/Manifest/logs/tools/scope-validation），随 docs 提交入库；未删除/移动。"
     },
     {
       "resource_type": "repository_files",
-      "source_path": "src/**, tests/**, apps/desktop-avalonia/**（allowed_paths 内）",
+      "source_path": "-",
       "disposition": "PRESERVE_REFERENCED",
-      "destination_path": "Same repository paths",
-      "process_check": "无删除/移动/归档；仅修改 7 个 allowed_paths 文件（3 实现 + 4 测试）。"
+      "destination_path": "-",
+      "process_check": "本卡仅修改 7 个 allowed_paths 内文件（3 实现 + 4 测试），未删除/移动/归档任何文件。"
     },
     {
       "resource_type": "user_data",
@@ -1468,10 +1470,16 @@
     },
     {
       "resource_type": "contract_bytes",
-      "source_path": "doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md（v1.4 FROZEN）",
+      "source_path": "doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md",
       "disposition": "PRESERVE_REFERENCED",
-      "destination_path": "Unchanged",
-      "process_check": "本卡零契约字节变更；verify_pins 18/18 PASS 为独立证明（logs/gates.log）。"
+      "destination_path": "-",
+      "process_check": "契约字节未由本卡修改；C-16 v1.4 由 PREREQ 卡冻结，verify_pins 18/18 PASS 为机械验证（logs/gates.log）。"
     }
-  ]
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
 }
