@@ -905,7 +905,7 @@ public sealed class LibraryViewModel : ObservableObject
             return;
         }
 
-        var row = Trash.Items.FirstOrDefault(candidate => candidate.IsSelected) ?? Trash.Items.FirstOrDefault();
+        var row = Trash.Items.FirstOrDefault(candidate => candidate.IsSelected);
         if (row is null)
         {
             _notify("请先在回收站列表中选择一本作品", NmStatus.Blocked);
@@ -1045,10 +1045,6 @@ public sealed class LibraryViewModel : ObservableObject
         RebuildBooks();
     }
 
-    public void CloseRecycleBinLegacyPlaceholderRemoved()
-    {
-        // Replaced by CloseRecycleBin in FEA-12-UI; kept out of the public surface intentionally.
-    }
 
     public void ShowCreateBook()
     {

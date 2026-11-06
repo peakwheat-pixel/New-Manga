@@ -13,7 +13,7 @@
         <TextBlock Classes="title" Text="回收站" VerticalAlignment="Center" />
         <TextBlock Grid.Column="1"
                    Classes="meta"
-                   Text="仅作品级 · 恢复或彻底删除都会先确认；列表只显示已加载条目"
+                   Text="仅作品级 · 恢复直接执行；彻底删除需先披露并确认；列表只显示已加载条目"
                    VerticalAlignment="Center" />
         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Nm.Space.2}">
           <Button x:Name="TrashRefreshButton"
@@ -34,7 +34,7 @@
             <ctrl:AlertBanner Severity="Blocked"
                               Message="{Binding Trash.CapabilityMessage}" />
             <ctrl:EmptyState Title="回收站暂不可用"
-                             Hint="当前 Core/宿主未公布回收站能力（library.trash.read/write/preview）。不会伪造列表，也不会执行任何写入。"
+                             Hint="Core/宿主未公布回收站读取能力（library.trash.read/1）。不会伪造列表，也不会执行任何写入。"
                              ActionText="返回书架"
                              ActionCommand="{Binding CloseRecycleBinCommand}" />
           </StackPanel>
@@ -56,15 +56,29 @@
           <!-- 空态：没有任何条目；不显示总数承诺 -->
           <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowEmptyState}">
             <ctrl:EmptyState Title="回收站是空的"
-                             Hint="书架上的「移入回收站」会出现在这里；恢复或彻底删除都需显式确认。"
+                             Hint="书架上的「移入回收站」会出现在这里；恢复直接执行，彻底删除需先披露并确认。"
                              ActionText="返回书架"
                              ActionCommand="{Binding CloseRecycleBinCommand}" />
           </StackPanel>
 
-          <!-- 只读提示（读取可用，写入禁用） -->
+          <!-- Host 只读（仅 Host 写闸；能力缺失时绝不显示此假 banner） -->
           <ctrl:AlertBanner Severity="Blocked"
-                            IsVisible="{Binding Trash.IsHostReadOnly}"
-                            Message="Host 处于只读模式：回收站可浏览，但恢复与彻底删除已禁用（不会执行任何写入）。" />
+                            IsVisible="{Binding Trash.ShowHostReadOnlyBanner}"
+                            Message="{Binding Trash.HostReadOnlyBannerText}" />
+
+          <!-- 探测失败（CORE_UNAVAILABLE 等；独立失败态 + 重试，不冒充能力缺失） -->
+          <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowProbeErrorState}">
+            <ctrl:AlertBanner Severity="Failed"
+                              Message="{Binding Trash.ProbeErrorMessage}" />
+            <Button Classes="secondary sm"
+                    Content="重试探测"
+                    Command="{Binding Trash.RefreshCommand}" />
+          </StackPanel>
+
+          <!-- 部分能力缺失（如只缺 write/preview）：列表保持真实，附 typed 降级横幅 -->
+          <ctrl:AlertBanner Severity="Blocked"
+                            IsVisible="{Binding Trash.ShowCapabilityDegraded}"
+                            Message="{Binding Trash.CapabilityGapMessage}" />
 
           <!-- 列表条目 -->
           <StackPanel Spacing="{DynamicResource Nm.Space.2}" IsVisible="{Binding Trash.ShowList}">
@@ -106,6 +120,7 @@
                       Command="{Binding Trash.RestoreCommand}" />
               <Button Classes="danger sm"
                       Content="彻底删除选中（单本）"
+                      IsEnabled="{Binding Trash.HasSelection}"
                       Command="{Binding RecyclePurgeCommand}" />
               <TextBlock Classes="meta" Text="{Binding Trash.SelectionSummary}" VerticalAlignment="Center" />
             </StackPanel>

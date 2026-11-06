@@ -2842,52 +2842,9 @@ public sealed class HostController : IHostController, ISourceImportController, I
                 .InvokeAsync(command, TrashPayloads.MoveOrRestore(bookIds, idempotencyKey), cancellationToken)
                 .ConfigureAwait(false);
             var isRestore = string.Equals(command, TrashWireCommands.RestoreFromTrash, StringComparison.Ordinal);
-            var succeeded = new List<string>();
-            var issues = new List<TrashItemIssue>();
-
-            if (response.Value.ValueKind == System.Text.Json.JsonValueKind.Object)
-            {
-                var successProperty = isRestore ? "restored" : "moved";
-                var failureProperty = isRestore ? "conflicts" : "skipped";
-                if (response.Value.TryGetProperty(successProperty, out var successArray) &&
-                    successArray.ValueKind == System.Text.Json.JsonValueKind.Array)
-                {
-                    foreach (var entry in successArray.EnumerateArray())
-                    {
-                        if (TrashRefBookId(entry) is { Length: > 0 } bookId)
-                        {
-                            succeeded.Add(bookId);
-                        }
-                    }
-                }
-
-                if (response.Value.TryGetProperty(failureProperty, out var failureArray) &&
-                    failureArray.ValueKind == System.Text.Json.JsonValueKind.Array)
-                {
-                    foreach (var entry in failureArray.EnumerateArray())
-                    {
-                        var bookId = TrashRefBookId(entry) ?? string.Empty;
-                        var reason = TrashString(entry, "reason");
-                        issues.Add(new TrashItemIssue(
-                            bookId,
-                            reason,
-                            isRestore ? TrashCopy.RestoreReason(reason) : TrashCopy.MoveSkipReason(reason)));
-                    }
-                }
-
-                if (succeeded.Count == 0 && issues.Count == 0 &&
-                    response.Value.EnumerateObject().Any())
-                {
-                    // Known command, but neither per-item array: treat as implementation defect.
-                    return TrashWriteResult.Failure(
-                        TrashErrorCodes.Unknown, "命令响应缺少逐项结果（实现缺陷，未伪报成功）");
-                }
-            }
-
-            var ok = succeeded.Count > 0 || (!isRestore && issues.Count == 0 && response.Value.ValueKind == System.Text.Json.JsonValueKind.Object);
-            SetLastError(ok ? null : TrashErrorCodes.Unknown);
-            return new TrashWriteResult(ok, ok ? null : TrashErrorCodes.Unknown,
-                ok ? null : "部分或全部条目未处理，详见逐项结果", succeeded, issues);
+            var result = ProjectTrashWriteResult(isRestore, response.Value);
+            SetLastError(result.Ok ? null : result.Code);
+            return result;
         }
         catch (Exception ex) when (IsUiFacingFailure(ex))
         {
@@ -2896,6 +2853,60 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    /// <summary>
+    /// r1 P2-2b / P3-5: projects one MoveToTrash/RestoreFromTrash response. The response MUST carry
+    /// the per-item <c>moved</c>/<c>restored</c> array; an object without it (e.g. <c>{}</c>) is a
+    /// typed failure, never a silent success. Only real success items make the call ok.
+    /// </summary>
+    internal static TrashWriteResult ProjectTrashWriteResult(bool isRestore, System.Text.Json.JsonElement response)
+    {
+        if (response.ValueKind != System.Text.Json.JsonValueKind.Object)
+        {
+            return TrashWriteResult.Failure(
+                TrashErrorCodes.Unknown, "命令响应形状无效（实现缺陷，未伪报成功）");
+        }
+
+        var successProperty = isRestore ? "restored" : "moved";
+        var failureProperty = isRestore ? "conflicts" : "skipped";
+        if (!response.TryGetProperty(successProperty, out var successArray) ||
+            successArray.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return TrashWriteResult.Failure(
+                TrashErrorCodes.Unknown, "命令响应缺少 " + successProperty + " 逐项结果（实现缺陷，未伪报成功）");
+        }
+
+        var succeeded = new List<string>();
+        foreach (var entry in successArray.EnumerateArray())
+        {
+            if (TrashRefBookId(entry) is { Length: > 0 } bookId)
+            {
+                succeeded.Add(bookId);
+            }
+        }
+
+        var issues = new List<TrashItemIssue>();
+        if (response.TryGetProperty(failureProperty, out var failureArray) &&
+            failureArray.ValueKind == System.Text.Json.JsonValueKind.Array)
+        {
+            foreach (var entry in failureArray.EnumerateArray())
+            {
+                var bookId = TrashRefBookId(entry) ?? string.Empty;
+                var reason = TrashString(entry, "reason");
+                issues.Add(new TrashItemIssue(
+                    bookId,
+                    reason,
+                    isRestore ? TrashCopy.RestoreReason(reason) : TrashCopy.MoveSkipReason(reason)));
+            }
+        }
+
+        var ok = succeeded.Count > 0;
+        return new TrashWriteResult(
+            ok,
+            ok ? null : TrashErrorCodes.Unknown,
+            ok ? null : "没有任何条目成功处理，详见逐项结果（未伪报成功）",
+            succeeded,
+            issues);
+    }
     public async Task<TrashPreviewResult> PreviewPermanentDeleteAsync(
         IReadOnlyList<string> bookIds,
         CancellationToken cancellationToken = default)
@@ -2918,98 +2929,13 @@ public sealed class HostController : IHostController, ISourceImportController, I
                     TrashPayloads.Preview(bookIds),
                     cancellationToken)
                 .ConfigureAwait(false);
-            var digest = response.Value.ValueKind == System.Text.Json.JsonValueKind.Object
-                ? TrashString(response.Value, "inventoryDigest")
-                : null;
-            if (string.IsNullOrWhiteSpace(digest) ||
-                !response.Value.TryGetProperty("items", out var items) ||
-                items.ValueKind != System.Text.Json.JsonValueKind.Array)
+            var result = ProjectPreviewResponse(response.Value);
+            if (result.Ok)
             {
-                return TrashPreviewResult.Failure(
-                    TrashErrorCodes.Unknown, "删除预览响应缺少 digest 或清单（实现缺陷，已禁用确认）");
+                SetLastError(null);
             }
 
-            // §5.13: per-book digests bind the (future) single delete; a missing map means the
-            // preview cannot bind anything → typed failure, never a collection-digest fallback.
-            var perBookDigests = new Dictionary<string, string>(StringComparer.Ordinal);
-            if (!response.Value.TryGetProperty("inventoryDigests", out var digestMap) ||
-                digestMap.ValueKind != System.Text.Json.JsonValueKind.Object)
-            {
-                return TrashPreviewResult.Failure(
-                    TrashErrorCodes.Unknown, "删除预览响应缺少 inventoryDigests 逐书 digest（实现缺陷，已禁用确认）");
-            }
-
-            foreach (var property in digestMap.EnumerateObject())
-            {
-                if (property.Value.ValueKind == System.Text.Json.JsonValueKind.String &&
-                    property.Value.GetString() is { Length: > 0 } perBook)
-                {
-                    perBookDigests[property.Name] = perBook;
-                }
-            }
-
-            var disclosure = new List<TrashPreviewItem>();
-            foreach (var item in items.EnumerateArray())
-            {
-                if (item.ValueKind != System.Text.Json.JsonValueKind.Object)
-                {
-                    return TrashPreviewResult.Failure(
-                        TrashErrorCodes.Unknown, "删除预览条目形状无效（实现缺陷，已禁用确认）");
-                }
-
-                var bookId = TrashString(item, "bookId");
-                if (string.IsNullOrWhiteSpace(bookId))
-                {
-                    return TrashPreviewResult.Failure(
-                        TrashErrorCodes.Unknown, "删除预览条目缺少 bookId（实现缺陷，已禁用确认）");
-                }
-
-                var protection = item.TryGetProperty("protection", out var protectionValue) &&
-                                 protectionValue.ValueKind == System.Text.Json.JsonValueKind.Object
-                    ? protectionValue
-                    : default;
-                var content = item.TryGetProperty("contentSummary", out var contentValue) &&
-                              contentValue.ValueKind == System.Text.Json.JsonValueKind.Object
-                    ? contentValue
-                    : default;
-                // PD-01: a missing mandatory disclosure item is a typed failure, not zeros.
-                if (protection.ValueKind != System.Text.Json.JsonValueKind.Object ||
-                    protection.TryGetProperty("lockCount", out _) is false ||
-                    protection.TryGetProperty("manualRegionCount", out _) is false ||
-                    protection.TryGetProperty("draftPageCount", out _) is false ||
-                    protection.TryGetProperty("activeRunIds", out var activeRunIds) is false ||
-                    activeRunIds.ValueKind != System.Text.Json.JsonValueKind.Array ||
-                    content.ValueKind != System.Text.Json.JsonValueKind.Object ||
-                    content.TryGetProperty("deletedFiles", out _) is false ||
-                    content.TryGetProperty("deletedBytes", out _) is false)
-                {
-                    return TrashPreviewResult.Failure(
-                        TrashErrorCodes.Unknown, "删除预览缺少 PD-01 强制披露项（实现缺陷，已禁用确认）");
-                }
-
-                disclosure.Add(new TrashPreviewItem(
-                    bookId!,
-                    TrashString(item, "title") ?? string.Empty,
-                    new TrashProtection(
-                        TrashInt(protection, "lockCount"),
-                        TrashString(protection, "currentRevisionId"),
-                        TrashStringArrayOrUnknown(protection, "currentRegionRevisionIds"),
-                        TrashStringArrayOrUnknown(protection, "currentArtifactRevisionIds"),
-                        TrashStringArray(protection, "pinnedRevisionIds"),
-                        TrashStringArray(protection, "activeRunIds"),
-                        TrashInt(protection, "draftPageCount"),
-                        TrashInt(protection, "manualRegionCount")),
-                    new TrashContentSummary(
-                        TrashInt(content, "chapters"),
-                        TrashInt(content, "pages"),
-                        TrashInt(content, "artifacts"),
-                        TrashInt(content, "deletedFiles"),
-                        TrashLong(content, "deletedBytes")),
-                    TrashSharedRefs(item)));
-            }
-
-            SetLastError(null);
-            return new TrashPreviewResult(true, null, null, digest, disclosure, perBookDigests);
+            return result;
         }
         catch (Exception ex) when (IsUiFacingFailure(ex))
         {
@@ -3018,6 +2944,106 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    /// <summary>
+    /// r1 P2-2b: projects one PreviewPermanentDeleteBooks response. rev 2.14: an ABSENT or null
+    /// <c>currentRegionRevisionIds</c>/<c>currentArtifactRevisionIds</c> means UNKNOWN (fail-closed
+    /// in the VM), while a real array — including <c>[]</c> — is a known complete set. Malformed
+    /// shapes are typed failures (never fabricated zeros).
+    /// </summary>
+    internal static TrashPreviewResult ProjectPreviewResponse(System.Text.Json.JsonElement response)
+    {
+        var digest = response.ValueKind == System.Text.Json.JsonValueKind.Object
+            ? TrashString(response, "inventoryDigest")
+            : null;
+        if (string.IsNullOrWhiteSpace(digest) ||
+            !response.TryGetProperty("items", out var items) ||
+            items.ValueKind != System.Text.Json.JsonValueKind.Array)
+        {
+            return TrashPreviewResult.Failure(
+                TrashErrorCodes.Unknown, "删除预览响应缺少 digest 或清单（实现缺陷，已禁用确认）");
+        }
+
+        // §5.13: per-book digests bind the single delete; a missing map means the preview
+        // cannot bind anything → typed failure, never a collection-digest fallback.
+        var perBookDigests = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (!response.TryGetProperty("inventoryDigests", out var digestMap) ||
+            digestMap.ValueKind != System.Text.Json.JsonValueKind.Object)
+        {
+            return TrashPreviewResult.Failure(
+                TrashErrorCodes.Unknown, "删除预览响应缺少 inventoryDigests 逐书 digest（实现缺陷，已禁用确认）");
+        }
+
+        foreach (var property in digestMap.EnumerateObject())
+        {
+            if (property.Value.ValueKind == System.Text.Json.JsonValueKind.String &&
+                property.Value.GetString() is { Length: > 0 } perBook)
+            {
+                perBookDigests[property.Name] = perBook;
+            }
+        }
+
+        var disclosure = new List<TrashPreviewItem>();
+        foreach (var item in items.EnumerateArray())
+        {
+            if (item.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return TrashPreviewResult.Failure(
+                    TrashErrorCodes.Unknown, "删除预览条目形状无效（实现缺陷，已禁用确认）");
+            }
+
+            var bookId = TrashString(item, "bookId");
+            if (string.IsNullOrWhiteSpace(bookId))
+            {
+                return TrashPreviewResult.Failure(
+                    TrashErrorCodes.Unknown, "删除预览条目缺少 bookId（实现缺陷，已禁用确认）");
+            }
+
+            var protection = item.TryGetProperty("protection", out var protectionValue) &&
+                             protectionValue.ValueKind == System.Text.Json.JsonValueKind.Object
+                ? protectionValue
+                : default;
+            var content = item.TryGetProperty("contentSummary", out var contentValue) &&
+                          contentValue.ValueKind == System.Text.Json.JsonValueKind.Object
+                ? contentValue
+                : default;
+            // PD-01: a missing mandatory disclosure item is a typed failure, not zeros.
+            if (protection.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                protection.TryGetProperty("lockCount", out _) is false ||
+                protection.TryGetProperty("manualRegionCount", out _) is false ||
+                protection.TryGetProperty("draftPageCount", out _) is false ||
+                protection.TryGetProperty("activeRunIds", out var activeRunIds) is false ||
+                activeRunIds.ValueKind != System.Text.Json.JsonValueKind.Array ||
+                content.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                content.TryGetProperty("deletedFiles", out _) is false ||
+                content.TryGetProperty("deletedBytes", out _) is false)
+            {
+                return TrashPreviewResult.Failure(
+                    TrashErrorCodes.Unknown, "删除预览缺少 PD-01 强制披露项（实现缺陷，已禁用确认）");
+            }
+
+            disclosure.Add(new TrashPreviewItem(
+                bookId!,
+                TrashString(item, "title") ?? string.Empty,
+                new TrashProtection(
+                    TrashInt(protection, "lockCount"),
+                    TrashString(protection, "currentRevisionId"),
+                    TrashStringArrayOrUnknown(protection, "currentRegionRevisionIds"),
+                    TrashStringArrayOrUnknown(protection, "currentArtifactRevisionIds"),
+                    TrashStringArray(protection, "pinnedRevisionIds"),
+                    TrashStringArray(protection, "activeRunIds"),
+                    TrashInt(protection, "draftPageCount"),
+                    TrashInt(protection, "manualRegionCount")),
+                new TrashContentSummary(
+                    TrashInt(content, "chapters"),
+                    TrashInt(content, "pages"),
+                    TrashInt(content, "artifacts"),
+                    TrashInt(content, "deletedFiles"),
+                    TrashLong(content, "deletedBytes")),
+                TrashSharedRefs(item)));
+        }
+
+        return new TrashPreviewResult(true, null, null, digest, disclosure, perBookDigests);
+    }
     public async Task<TrashDeleteResult> DeletePermanentlyAsync(
         string bookId,
         string inventoryDigest,

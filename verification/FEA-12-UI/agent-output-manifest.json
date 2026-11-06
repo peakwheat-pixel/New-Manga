@@ -1,13 +1,15 @@
 {
   "task": "FEA-12-UI",
-  "generated_at": "2026-11-06T07:53:55.9706701+08:00",
+  "round": "r2 (r1 review repairs)",
+  "generated_at": "2026-11-06T08:23:16.8209595+08:00",
   "base_commit": "9daa94a25",
+  "reviewed_head": "c841b9a0b",
   "evidence_dir": "verification/FEA-12-UI",
   "files": [
     {
       "path": "verification/FEA-12-UI/AC-MATRIX.md",
-      "sha256": "94004d5261cb62460e5b565038d87af305ccad86ecd33108de6310019c36ecfa",
-      "bytes": 9967,
+      "sha256": "80abc6f81ae3e932a30fd450da831d332a2288f83402d97a684ed149947664b7",
+      "bytes": 12737,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
@@ -20,35 +22,42 @@
     },
     {
       "path": "verification/FEA-12-UI/fea12-trash-ui-ipc.json",
-      "sha256": "525c123fa6ae078ce9fc15c15aae3757c8d4baccd9786965ce462674ab4e3d65",
+      "sha256": "32938251915ffb0b84f66e378ac2032a0ddbdf4b17e0683d70006a6d33658630",
       "bytes": 535,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/logs/api-inventory.log",
-      "sha256": "451b1ef20871821116d8c0f7e6ca8e3b94e3f0262874756432c268e50a557597",
+      "sha256": "3e966c845fcb935ab58adb3805c792227a7d2073e963200268f54f36f1007c68",
       "bytes": 4385,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
+      "path": "verification/FEA-12-UI/logs/check.log",
+      "sha256": "ad6c20d905abdf01039e9da76d0d7744cfa78eac04729763b04182043763cbb0",
+      "bytes": 625,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
       "path": "verification/FEA-12-UI/logs/dotnet-full-solution.log",
-      "sha256": "193dcc2ff6de2e9e1a8b23167b39389f433ba056e7c1affbb8e10d40f0d02e42",
+      "sha256": "e188a295a467f5f886aa584760826aa9274e6e10f033da75f75354be8b65a341",
       "bytes": 23676,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/logs/gates.log",
-      "sha256": "c2372f99b7f13ed5fe2ef11cc1ce03b2ffbb4b353ac7b0e678029477205c88dd",
-      "bytes": 3296,
+      "sha256": "5a26ea60b13eb0579f5329c5b41ef0283c7f599bc504f825350aecda5d2400b9",
+      "bytes": 5201,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/logs/ipc-tests-curated.log",
-      "sha256": "2acc069e1ff2d27c2106e1f930f22d3deb882fc15fa4a4f801ba88e237f3818b",
+      "sha256": "fe407fd2e0e597650c158af9aa4220cb7b25e185f85fb7028e5a6990bc82cccf",
       "bytes": 344,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
@@ -61,37 +70,44 @@
       "disposition": "PRESERVE_REFERENCED"
     },
     {
+      "path": "verification/FEA-12-UI/logs/r2-mutations.log",
+      "sha256": "cc9ecef9eb68131652e0a32faa0d436a7ed9811a440189b49692ccc4af729c1b",
+      "bytes": 2458,
+      "class": "CANONICAL",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
       "path": "verification/FEA-12-UI/logs/ui-tests-curated.log",
-      "sha256": "a03c6e5c6767fb8be3c012c3363ecabfc8f7ca93987438b81b7ee53fe04a69fa",
+      "sha256": "9d6496194db7b28151a85387386a01dd762d95eba2b190fd0f739e5ef0dd2ccb",
       "bytes": 339,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--09-move-to-trash-danger-confirm.png",
-      "sha256": "b5fb2dc85fe631f8573a3923dd55ac8e2863bace62b275c470c699ba986ad2db",
-      "bytes": 61609,
+      "sha256": "ea15b96d42cd3abbdf89284d37f4400452894dba8738c253f703b5f96fc80771",
+      "bytes": 25075,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--10-move-to-trash-undobar.png",
-      "sha256": "80fdf4901de498f36a42ba30bd83ceab2731926060bf8250f542db15f791e517",
-      "bytes": 54120,
+      "sha256": "802fb895a60c8358dd2ea7401062595fdf7339825525e793ae847d765cd563c5",
+      "bytes": 52512,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--07-recycle-list.png",
-      "sha256": "30cd7f35b91f0b0ff36f24256fc38fc586ece6bb8a8170cadf0aec5fefc6ec2c",
-      "bytes": 43421,
+      "sha256": "0de986c44f85afcb234f459144f2dd4d8d0b9458835acfbd30c56a5e90e18305",
+      "bytes": 43891,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     },
     {
       "path": "verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--08-recycle-delete-preview.png",
-      "sha256": "8c17136f52ccbe0a4b97ef6b2709963ae0c8c0bb29a3208f7278406dd566930f",
-      "bytes": 66327,
+      "sha256": "fa41f366954e753886153d6685ed22158bc08449462c6481fa8f6b50654096bb",
+      "bytes": 67143,
       "class": "CANONICAL",
       "disposition": "PRESERVE_REFERENCED"
     }
@@ -100,17 +116,19 @@
     "temp": {
       "path": "G:\\CODEX\\New Manga.workspace\\temp\\FEA-12-UI",
       "disposition": "DELETE_SAFE",
-      "note": "测试运行日志副本；Canonical 日志已固化到 evidence_dir"
+      "note": "测试运行日志副本与变异备份；Canonical 日志已固化到 evidence_dir"
     },
     "ipc_roots": {
       "pattern": "G:\\CODEX\\New Manga.workspace\\FEA-12-UI\\ipc-*",
       "disposition": "PRESERVE_REFERENCED",
-      "note": "真实 IPC 隔离 DataRoot/sidecars/wire；Review/集成后可删"
+      "note": "真实 IPC 隔离 DataRoot/sidecars/wire/哨兵；Review/集成后可删"
     },
     "archived_spill": {
       "path": "G:\\CODEX\\New Manga.workspace\\archive\\FEA-12-UI-spill-2026-11-06",
       "disposition": "ARCHIVED",
-      "note": "evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档（spill-tree + moved-tree）；不属 Canonical Evidence"
+      "file_count": 322,
+      "tree_sha256": "80dcf7494a4181e4354456b033a3c68495be01de010d0f0fd5fd5f34aadc7db3",
+      "note": "evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档（spill-tree/moved-tree）；tree sha256 按 (相对路径|文件 sha256) 排序拼接后整体 SHA-256；不属 Canonical Evidence"
     }
   },
   "worktree": "NOT_APPLICABLE"

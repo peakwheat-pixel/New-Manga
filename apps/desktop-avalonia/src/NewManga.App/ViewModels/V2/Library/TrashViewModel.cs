@@ -31,9 +31,15 @@ public sealed class TrashViewModel : ObservableObject
     private string? _errorCode;
     private string? _errorMessage;
     private bool _capabilityProbed;
-    private bool _capabilityMissing;
-    private string? _capabilityMessage;
-    private bool _writesAvailable = true;
+    private bool _capabilityMissing;   // READ face only: the list cannot be shown without it
+    private string _capabilityMessage = string.Empty;
+    private bool _readAvailable;
+    private bool _writeAvailable;
+    private bool _previewAvailable;
+    private bool _hostReadOnly;        // Host policy only -- never derived from a capability
+    private bool _probeFailed;
+    private string? _probeErrorCode;
+    private string? _probeErrorMessage;
     private string _statusMessage = string.Empty;
     private string _loadedCountText = "已加载 0 项";
 
@@ -92,9 +98,10 @@ public sealed class TrashViewModel : ObservableObject
 
         if (_trash is null)
         {
+            _capabilityProbed = true;
             _capabilityMissing = true;
-            _capabilityMessage = "当前宿主未提供回收站能力（CORE_CAPABILITY_MISSING：无 ITrashController）";
-            _writesAvailable = false;
+            _capabilityMessage = "回收站能力缺失（CORE_CAPABILITY_MISSING）：当前宿主未提供 ITrashController";
+            _hostReadOnly = !_writesAllowed();
         }
     }
 
@@ -139,30 +146,84 @@ public sealed class TrashViewModel : ObservableObject
 
     public string ErrorMessage => _errorMessage ?? string.Empty;
 
+    /// <summary>READ face missing (or no controller): the list/empty states must not render.</summary>
     public bool IsCapabilityMissing => _capabilityMissing;
 
-    public string CapabilityMessage => _capabilityMessage ?? string.Empty;
+    /// <summary>Typed capability gap message for the READ face (list replacement state).</summary>
+    public string CapabilityMessage => _capabilityMessage;
 
     public bool CapabilityProbed => _capabilityProbed;
 
-    /// <summary>Host-level read-only: reading is allowed, writing is disabled and explained.</summary>
-    public bool IsHostReadOnly => !_writesAvailable;
+    /// <summary>Any of the three faces missing while reading is still possible (degraded mode).</summary>
+    public bool HasCapabilityGap =>
+        _capabilityProbed && (!_readAvailable || !_writeAvailable || !_previewAvailable);
 
-    public bool CanWrite => _writesAvailable && !_capabilityMissing && _trash is not null;
+    /// <summary>Typed degraded banner: names exactly which capability is missing (CORE_CAPABILITY_MISSING).</summary>
+    public string CapabilityGapMessage
+    {
+        get
+        {
+            if (!HasCapabilityGap)
+            {
+                return string.Empty;
+            }
 
-    public bool IsEmpty => !IsLoading && !HasError && !_capabilityMissing && Items.Count == 0;
+            var missing = new List<string>();
+            if (!_readAvailable) missing.Add("library.trash.read/1");
+            if (!_writeAvailable) missing.Add("library.trash.write/1");
+            if (!_previewAvailable) missing.Add("library.delete.preview/1");
+            var impact = (!_writeAvailable, !_previewAvailable) switch
+            {
+                (true, true) => "软删/恢复/彻底删除已禁用",
+                (true, false) => "软删/恢复/彻底删除已禁用（列表只读可用）",
+                (false, true) => "彻底删除已禁用（恢复仍可用）",
+                _ => "回收站部分能力不可用",
+            };
+            return $"能力受限（CORE_CAPABILITY_MISSING）：Core 未公布 {string.Join(" / ", missing)}；{impact}";
+        }
+    }
+
+    /// <summary>Host policy read-only: only the Host write gate, NEVER a capability result.</summary>
+    public bool IsHostReadOnly => _hostReadOnly;
+
+    /// <summary>Show the read-only banner only when the Host is really read-only (no capability gap).</summary>
+    public bool ShowHostReadOnlyBanner => _hostReadOnly && !HasCapabilityGap;
+
+    /// <summary>Typed Host read-only banner text (the literal HOST_READ_ONLY stays visible).</summary>
+    public string HostReadOnlyBannerText =>
+        "Host 处于只读模式（HOST_READ_ONLY）：回收站可浏览，但软删/恢复/彻底删除已禁用（不会执行任何写入）。";
+
+    /// <summary>Independent failure state for a failed capability probe (CORE_UNAVAILABLE etc.).</summary>
+    public bool IsProbeFailed => _probeFailed;
+
+    public bool ShowProbeErrorState => !IsLoading && _probeFailed && !_capabilityMissing;
+
+    public string? ProbeErrorCode => _probeErrorCode;
+
+    public string ProbeErrorMessage => _probeErrorMessage ?? string.Empty;
+
+    /// <summary>Probe failed: list data is unknowable, so the empty state must not claim "回收站是空的".</summary>
+    public bool CanWrite => _writeAvailable && !_hostReadOnly && _trash is not null;
+
+    public bool CanPreview => _previewAvailable && _trash is not null;
+
+    public bool IsEmpty => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed && Items.Count == 0;
 
     public string LoadedCountText => _loadedCountText;
 
     public bool HasMore => _nextCursor is not null;
 
-    public bool ShowList => !IsLoading && !HasError && !_capabilityMissing && Items.Count > 0;
+    public bool ShowList => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed && Items.Count > 0;
 
     public bool ShowEmptyState => IsEmpty;
 
     public bool ShowErrorState => !IsLoading && HasError;
 
+    /// <summary>READ capability missing: the whole page is replaced by the typed capability state.</summary>
     public bool ShowCapabilityState => !IsLoading && _capabilityMissing;
+
+    /// <summary>Partial capability gap: the list stays visible plus a typed degraded banner.</summary>
+    public bool ShowCapabilityDegraded => !IsLoading && HasCapabilityGap && !_capabilityMissing && !_probeFailed;
 
     public string StatusMessage => _statusMessage;
 
@@ -172,6 +233,7 @@ public sealed class TrashViewModel : ObservableObject
 
     public bool HasSelection => _selectionOrder.Count > 0;
 
+    /// <summary>AC7⑤: restore is gated by WRITE only (a missing preview must not disable restore).</summary>
     public bool CanRestore => HasSelection && CanWrite && !IsBusy;
 
     public string SelectionSummary => HasSelection
@@ -254,7 +316,8 @@ public sealed class TrashViewModel : ObservableObject
     /// </summary>
     public bool CanConfirmDelete =>
         IsPreviewOpen && !IsPreviewLoading && !IsDeleting && _understood &&
-        !IsPreviewBlocked && !HasPreviewError && _activeDigest is { Length: > 0 } && CanWrite;
+        !IsPreviewBlocked && !HasPreviewError && _activeDigest is { Length: > 0 } &&
+        CanWrite && CanPreview;
 
     public bool IsCleanupPending => _cleanupPendingVisible;
 
@@ -266,7 +329,11 @@ public sealed class TrashViewModel : ObservableObject
 
     public string? DeleteOutcomeCode => _deleteOutcomeCode;
 
-    /// <summary>L3: the cleanup retry exists only in this session (no pending-list command).</summary>
+    /// <summary>
+    /// L3 narrowed per r1 P2-1: the cleanup retry stays reachable only while the result panel is
+    /// kept open; the close path states explicitly that closing loses the retry (no pending list
+    /// command exists, and a re-preview of a cleanup-pending book is BOOK_NOT_FOUND on the Core).
+    /// </summary>
     public bool CanRetryCleanup => _cleanupPendingVisible && CanWrite && _activeBookId is not null && _activeDigest is not null;
 
     // ── list flow ──────────────────────────────────────────────────────────────────────
@@ -309,7 +376,16 @@ public sealed class TrashViewModel : ObservableObject
 
     public Task RefreshAsync() => ReloadAsync();
 
-    public Task LoadMoreAsync() => LoadAsync(_nextCursor, append: true);
+    public Task LoadMoreAsync()
+    {
+        // r1 P3: re-entry guard - a double click must not send two frames with the same cursor.
+        if (IsLoading || IsLoadingMore || _nextCursor is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        return LoadAsync(_nextCursor, append: true);
+    }
 
     private async Task ReloadAsync()
     {
@@ -325,10 +401,17 @@ public sealed class TrashViewModel : ObservableObject
 
     private async Task ProbeAndLoadAsync(int generation, bool reset)
     {
+        // r1 P1-1: Host read-only, capability gaps and probe failure are THREE independent states.
+        _hostReadOnly = !_writesAllowed();
+        _probeFailed = false;
+        _probeErrorCode = null;
+        _probeErrorMessage = null;
+
         if (_trash is null)
         {
             _capabilityProbed = true;
             _capabilityMissing = true;
+            _capabilityMessage = "回收站能力缺失（CORE_CAPABILITY_MISSING）：当前宿主未提供 ITrashController";
             IsLoading = false;
             RaiseStates();
             return;
@@ -341,16 +424,29 @@ public sealed class TrashViewModel : ObservableObject
         }
 
         _capabilityProbed = probe.Probed;
-        _capabilityMissing = !probe.Probed || !probe.ReadAvailable;
-        _capabilityMessage = probe.Message ??
-            (probe.Probed && probe.ReadAvailable
-                ? string.Empty
-                : "回收站能力缺失（CORE_CAPABILITY_MISSING）：当前 Core 未公布 library.trash.read/1");
-        _writesAvailable = _writesAllowed() && probe.WriteAvailable && probe.PreviewAvailable;
-        if (probe.Probed && !probe.WriteAvailable)
+        if (!probe.Probed)
         {
-            _capabilityMessage = "回收站可读，但当前 Core 未公布写能力（CORE_CAPABILITY_MISSING：library.trash.write/1）：软删/恢复/删除已禁用";
+            // Not a capability verdict: the probe itself failed (CORE_UNAVAILABLE / channel error).
+            _probeFailed = true;
+            _probeErrorCode = probe.Code ?? TrashErrorCodes.CoreUnavailable;
+            _probeErrorMessage = "回收站能力探测失败（" + _probeErrorCode + "）：" +
+                (probe.Message ?? "Core/通道不可用，未发送任何回收站命令") + "；可重试。";
+            _readAvailable = false;
+            _writeAvailable = false;
+            _previewAvailable = false;
+            _capabilityMissing = false;
+            IsLoading = false;
+            RaiseStates();
+            return;
         }
+
+        _readAvailable = probe.ReadAvailable;
+        _writeAvailable = probe.WriteAvailable;
+        _previewAvailable = probe.PreviewAvailable;
+        _capabilityMissing = !_readAvailable;
+        _capabilityMessage = _capabilityMissing
+            ? "回收站能力缺失（CORE_CAPABILITY_MISSING）：Core 未公布 library.trash.read/1，回收站列表不可用"
+            : string.Empty;
 
         if (_capabilityMissing)
         {
@@ -502,6 +598,22 @@ public sealed class TrashViewModel : ObservableObject
     {
         if (_trash is null)
         {
+            return;
+        }
+
+        // AC7⑤: permanent delete is gated by WRITE + PREVIEW separately from restore/write-only.
+        if (!CanPreview)
+        {
+            _notify("彻底删除不可用（CORE_CAPABILITY_MISSING：缺少 library.delete.preview/1）；未发送任何帧", NmStatus.Blocked);
+            return;
+        }
+
+        if (!CanWrite)
+        {
+            _notify(_hostReadOnly
+                    ? "彻底删除被拒绝：Host 处于只读模式（HOST_READ_ONLY）"
+                    : "彻底删除不可用（CORE_CAPABILITY_MISSING：缺少 library.trash.write/1）",
+                NmStatus.Blocked);
             return;
         }
 
@@ -728,8 +840,10 @@ public sealed class TrashViewModel : ObservableObject
 
         if (_cleanupPendingVisible && HasDeleteResult)
         {
-            // Cleanup pending keeps the typed state until the user retries or closes this session.
-            _notify("已记录待清理状态：本会话内仍可重试清理", NmStatus.Queued);
+            // r1 P2-1: closing really loses the retry (no pending-list command; a re-preview of a
+            // cleanup-pending book is BOOK_NOT_FOUND on the Core). Say exactly that.
+            _notify("关闭结果后本会话内将无法再重试清理（wire 无 pending 清单；重新预览会 BOOK_NOT_FOUND）；如需重试请先点「重试清理」。",
+                NmStatus.Blocked);
         }
 
         ResetPreview();
@@ -768,9 +882,7 @@ public sealed class TrashViewModel : ObservableObject
 
     private void ResetPreviewKeepTarget(string bookId)
     {
-        var generation = _generation;
         ResetPreview();
-        _generation = generation;
         _activeBookId = bookId;
         IsPreviewOpen = true;
         IsPreviewLoading = true;
@@ -825,12 +937,15 @@ public sealed class TrashViewModel : ObservableObject
 
     private void RaiseStates() =>
         OnPropertyChanged(
-            nameof(IsLoading), nameof(HasError), nameof(ErrorCode), nameof(ErrorMessage),
+            nameof(IsLoading), nameof(IsLoadingMore), nameof(HasError), nameof(ErrorCode), nameof(ErrorMessage),
             nameof(IsCapabilityMissing), nameof(CapabilityMessage), nameof(CapabilityProbed),
-            nameof(IsHostReadOnly), nameof(CanWrite), nameof(IsEmpty), nameof(LoadedCountText),
+            nameof(HasCapabilityGap), nameof(CapabilityGapMessage),
+            nameof(IsHostReadOnly), nameof(ShowHostReadOnlyBanner), nameof(HostReadOnlyBannerText),
+            nameof(IsProbeFailed), nameof(ShowProbeErrorState), nameof(ProbeErrorCode), nameof(ProbeErrorMessage),
+            nameof(CanWrite), nameof(CanPreview), nameof(IsEmpty), nameof(LoadedCountText),
             nameof(HasMore), nameof(ShowList), nameof(ShowEmptyState), nameof(ShowErrorState),
-            nameof(ShowCapabilityState), nameof(StatusMessage), nameof(HasStatus),
-            nameof(CanRestore), nameof(CanConfirmDelete));
+            nameof(ShowCapabilityState), nameof(ShowCapabilityDegraded),
+            nameof(StatusMessage), nameof(HasStatus), nameof(CanRestore), nameof(CanConfirmDelete));
 
     private string? BuildBlockedReason(TrashPreviewItem item, out string? notifyCode)
     {
@@ -847,9 +962,14 @@ public sealed class TrashViewModel : ObservableObject
             return $"存在 {item.Protection.ActiveRunIds.Count} 个进行中的任务（BOOK_BUSY）：先结束任务再删除";
         }
 
-        if (!_writesAllowed())
+        if (_hostReadOnly)
         {
-            return "Host 处于只读模式：彻底删除已禁用";
+            return "Host 处于只读模式（HOST_READ_ONLY）：彻底删除已禁用";
+        }
+
+        if (!CanPreview || !CanWrite)
+        {
+            return "能力受限（CORE_CAPABILITY_MISSING）：彻底删除所需的 write/preview 能力缺失";
         }
 
         return null;
@@ -858,7 +978,7 @@ public sealed class TrashViewModel : ObservableObject
     private static string BuildProtectionText(TrashProtection protection, TrashContentSummary content) =>
         $"锁定 {protection.LockCount} 项 · 人工修改区域 {protection.ManualRegionCount} 处 · " +
         $"活动草稿页 {protection.DraftPageCount} 页 · 进行中任务 {protection.ActiveRunIds.Count} 个 · " +
-        $"pinned revision {protection.PinnedRevisionIds.Count} 个 · 删除文件 {content.DeletedFiles} 个（{TrashCopy.BytesText(content.DeletedBytes)}）";
+        $"固定版本 {protection.PinnedRevisionIds.Count} 个 · 删除文件 {content.DeletedFiles} 个（{TrashCopy.BytesText(content.DeletedBytes)}）";
 
     private static string BuildCurrentText(TrashProtection protection) =>
         protection.CurrentSetKnown

@@ -1628,6 +1628,10 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public Queue<TrashPreviewResult> ScriptedTrashPreviews { get; } = new();
 
+    /// <summary>r2 P2-2b: optional projection factory (e.g. HostController.ProjectPreviewResponse over
+    /// an old-Core JSON shape) so the adapter fail-closed path is testable through the VM.</summary>
+    public Func<IReadOnlyList<string>, TrashPreviewResult>? TrashPreviewFactory { get; set; }
+
     public Queue<TrashDeleteResult> ScriptedTrashDeletes { get; } = new();
 
     public Queue<TrashWriteResult> ScriptedMoves { get; } = new();
@@ -1679,12 +1683,22 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         TrashFrames.Add(TrashWireCommands.MoveToTrash);
         TrashFramePayloads.Add(TrashPayloads.MoveOrRestore(bookIds, idempotencyKey));
-        if (ScriptedMoves.Count > 0)
+        var result = ScriptedMoves.Count > 0
+            ? ScriptedMoves.Dequeue()
+            : new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>());
+
+        // r2 P3-9 (AC2): a successful soft delete really removes the book from the shelf snapshot,
+        // so "书架不再含该书" is assertable instead of only Selection.HasBook=false.
+        if (result.SucceededIds.Count > 0)
         {
-            return Task.FromResult(ScriptedMoves.Dequeue());
+            var removed = new HashSet<string>(result.SucceededIds, StringComparer.Ordinal);
+            Snapshot = Snapshot with
+            {
+                Books = Snapshot.Books.Where(book => !removed.Contains(book.BookId)).ToArray(),
+            };
         }
 
-        return Task.FromResult(new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>()));
+        return Task.FromResult(result);
     }
 
     public Task<TrashWriteResult> RestoreFromTrashAsync(
@@ -1708,6 +1722,11 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         TrashFrames.Add(TrashWireCommands.PreviewPermanentDelete);
         TrashFramePayloads.Add(TrashPayloads.Preview(bookIds));
+        if (TrashPreviewFactory is { } factory)
+        {
+            return Task.FromResult(factory(bookIds));
+        }
+
         if (ScriptedTrashPreviews.Count > 0)
         {
             return Task.FromResult(ScriptedTrashPreviews.Dequeue());
@@ -1751,7 +1770,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
                     new TrashContentSummary(2, 12, 3, 4, 2048),
                     new[] { new TrashSharedFileRef("file-1", 1) }),
             },
-            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('a', 64) });
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('d', 64) });
 
     /// <summary>Old-Core fixture: the rev 2.14 current arrays are unknown (absent/null) → fail-closed.</summary>
     public static TrashPreviewResult OldCorePreview(string bookId) =>
@@ -1773,7 +1792,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
                     new TrashContentSummary(1, 1, 0, 0, 0),
                     Array.Empty<TrashSharedFileRef>()),
             },
-            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('b', 64) });
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('e', 64) });
 
     /// <summary>Busy fixture: a non-terminal run/task is disclosed (BOOK_BUSY pre-block).</summary>
     public static TrashPreviewResult BusyPreview(string bookId) =>
@@ -1795,7 +1814,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
                     new TrashContentSummary(1, 2, 0, 0, 0),
                     Array.Empty<TrashSharedFileRef>()),
             },
-            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('c', 64) });
+            new Dictionary<string, string>(StringComparer.Ordinal) { [bookId] = "sha256:" + new string('f', 64) });
 
 }
 

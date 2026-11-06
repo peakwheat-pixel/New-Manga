@@ -147,11 +147,15 @@ public sealed class TrashUiTests
     public async Task OldCoreWithoutCapabilityList_IsTreatedAsMissing_NotAsComplete()
     {
         var (trash, fake, _) = NewTrash();
-        fake.TrashCapabilities = TrashCapabilityState.Unavailable(TrashErrorCodes.CapabilityMissing, "Core 未公布能力");
+        // Old Core that cannot describe capabilities: probe succeeded but READ is not advertised,
+        // so it is a capability verdict (not the independent probe-failure state).
+        fake.TrashCapabilities = new TrashCapabilityState(
+            true, false, false, false, TrashErrorCodes.CapabilityMissing, "Core 未公布能力");
 
         await trash.EnterAsync();
 
         Assert.True(trash.IsCapabilityMissing);
+        Assert.False(trash.IsProbeFailed);
         Assert.DoesNotContain(TrashWireCommands.ListTrash, fake.TrashFrames);
     }
 
@@ -167,7 +171,13 @@ public sealed class TrashUiTests
         trash.Items[0].IsSelected = true;
         await trash.RestoreSelectedAsync();
 
+        // r2 P1: Host read-only is its own state (never derived from a capability) and the typed
+        // HOST_READ_ONLY literal is visible; no capability gap is claimed.
         Assert.True(trash.IsHostReadOnly);
+        Assert.True(trash.ShowHostReadOnlyBanner);
+        Assert.Contains("HOST_READ_ONLY", trash.HostReadOnlyBannerText, StringComparison.Ordinal);
+        Assert.False(trash.HasCapabilityGap);
+        Assert.False(trash.ShowCapabilityDegraded);
         Assert.False(trash.CanWrite);
         Assert.Contains(TrashWireCommands.ListTrash, fake.TrashFrames);
         Assert.DoesNotContain(TrashWireCommands.RestoreFromTrash, fake.TrashFrames);
@@ -247,7 +257,10 @@ public sealed class TrashUiTests
             PayloadKeys(deletePayload).OrderBy(key => key, StringComparer.Ordinal));
         Assert.Equal("book-0", deletePayload.GetProperty("book_id").GetString());
         Assert.True(deletePayload.GetProperty("confirm_permanent_delete").GetBoolean());
-        Assert.Equal("sha256:" + new string('a', 64), deletePayload.GetProperty("inventory_digest").GetString());
+        // r2 P2-2a: the fake now returns DIFFERENT collection vs per-book digests, so this asserts the
+        // binding choice (inventoryDigests[bookId]) instead of a value both digests happen to share.
+        Assert.Equal("sha256:" + new string('d', 64), deletePayload.GetProperty("inventory_digest").GetString());
+        Assert.NotEqual("sha256:" + new string('a', 64), deletePayload.GetProperty("inventory_digest").GetString());
         Assert.DoesNotContain("bookIds", PayloadKeys(deletePayload));
         Assert.DoesNotContain(TrashWireCommands.BatchDeletePermanently, fake.TrashFrames);
         Assert.DoesNotContain(TrashWireCommands.PurgeTrash, fake.TrashFrames);
@@ -457,6 +470,8 @@ public sealed class TrashUiTests
         Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.MoveToTrash));
         Assert.True(library.UndoBarVisible);
         Assert.False(state.Selection.HasBook);
+        // r2 P3-9: the successful soft delete really removed the book from the refreshed shelf.
+        Assert.DoesNotContain(library.AllBooks, book => book.BookId == "book-0");
         Assert.Contains(notices, notice => notice.Contains("已移入回收站", StringComparison.Ordinal));
     }
 
@@ -493,5 +508,222 @@ public sealed class TrashUiTests
         Assert.Contains("页面级删除无命令", notices[^1], StringComparison.Ordinal);
         Assert.Contains("作品级", notices[^1], StringComparison.Ordinal);
         Assert.Empty(fake.TrashFrames);
+    }
+    // ── r2 P1: capability / Host-read-only / probe-failure are three independent states ───────
+
+    [Fact]
+    public async Task ReadCapabilityMissing_ShowsTypedGap_FailsClosed_NoReadOnlyBanner()
+    {
+        var (trash, fake, _) = NewTrash(f =>
+            f.TrashCapabilities = new TrashCapabilityState(true, false, true, true,
+                TrashErrorCodes.CapabilityMissing, "缺 library.trash.read/1"));
+
+        await trash.EnterAsync();
+
+        Assert.True(trash.ShowCapabilityState);
+        Assert.True(trash.IsCapabilityMissing);
+        Assert.Contains("CORE_CAPABILITY_MISSING", trash.CapabilityMessage, StringComparison.Ordinal);
+        Assert.Contains("library.trash.read/1", trash.CapabilityMessage, StringComparison.Ordinal);
+        Assert.DoesNotContain(TrashWireCommands.ListTrash, fake.TrashFrames);
+        // r2 P1: a missing READ capability is not a Host read-only state and must not fake its banner.
+        Assert.False(trash.IsHostReadOnly);
+        Assert.False(trash.ShowHostReadOnlyBanner);
+        Assert.False(trash.ShowCapabilityDegraded);
+        Assert.False(trash.ShowEmptyState);
+    }
+
+    [Fact]
+    public async Task WriteCapabilityMissing_ListsForReal_RestoreAndDeleteDisabled_TypedDegraded()
+    {
+        var (trash, fake, notices) = NewTrash(f =>
+            f.TrashCapabilities = new TrashCapabilityState(true, true, false, true,
+                TrashErrorCodes.CapabilityMissing, "缺 library.trash.write/1"));
+
+        await trash.EnterAsync();
+        trash.Items[0].IsSelected = true;
+        await trash.RestoreSelectedAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+
+        // Read still works and the list is real (AC7⑤: per-operation gating, not all-or-nothing).
+        Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.ListTrash));
+        Assert.Equal(2, trash.Items.Count);
+        Assert.True(trash.ShowCapabilityDegraded);
+        Assert.Contains("library.trash.write/1", trash.CapabilityGapMessage, StringComparison.Ordinal);
+        Assert.Contains("CORE_CAPABILITY_MISSING", trash.CapabilityGapMessage, StringComparison.Ordinal);
+        Assert.False(trash.IsHostReadOnly);
+        Assert.False(trash.ShowHostReadOnlyBanner);
+        Assert.False(trash.CanRestore);
+        Assert.DoesNotContain(TrashWireCommands.RestoreFromTrash, fake.TrashFrames);
+        Assert.DoesNotContain(TrashWireCommands.PreviewPermanentDelete, fake.TrashFrames);
+        Assert.Contains(notices, notice => notice.Contains("CORE_CAPABILITY_MISSING", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task PreviewCapabilityMissing_RestoreStillAllowed_DeleteBlocked()
+    {
+        var (trash, fake, notices) = NewTrash(f =>
+            f.TrashCapabilities = new TrashCapabilityState(true, true, true, false,
+                TrashErrorCodes.CapabilityMissing, "缺 library.delete.preview/1"));
+
+        await trash.EnterAsync();
+        trash.Items[0].IsSelected = true;
+        await trash.RestoreSelectedAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+
+        // AC7⑤: a missing PREVIEW face must not disable restore (write is available).
+        Assert.Contains(TrashWireCommands.RestoreFromTrash, fake.TrashFrames);
+        Assert.False(trash.IsCapabilityMissing);
+        Assert.True(trash.ShowCapabilityDegraded);
+        Assert.Contains("library.delete.preview/1", trash.CapabilityGapMessage, StringComparison.Ordinal);
+        Assert.False(trash.IsHostReadOnly);
+        Assert.False(trash.ShowHostReadOnlyBanner);
+        Assert.DoesNotContain(TrashWireCommands.PreviewPermanentDelete, fake.TrashFrames);
+        Assert.DoesNotContain(TrashWireCommands.DeletePermanently, fake.TrashFrames);
+        Assert.Contains(notices, notice => notice.Contains("library.delete.preview/1", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ProbeFailure_CoreUnavailable_IsIndependentFailureState_NotCapabilityMissing()
+    {
+        var (trash, fake, _) = NewTrash(f =>
+            f.TrashCapabilities = TrashCapabilityState.Unavailable(TrashErrorCodes.CoreUnavailable, "Core 通道不可用"));
+
+        await trash.EnterAsync();
+
+        Assert.True(trash.IsProbeFailed);
+        Assert.True(trash.ShowProbeErrorState);
+        Assert.Equal(TrashErrorCodes.CoreUnavailable, trash.ProbeErrorCode);
+        Assert.Contains("CORE_UNAVAILABLE", trash.ProbeErrorMessage, StringComparison.Ordinal);
+        Assert.False(trash.ShowCapabilityState);
+        Assert.False(trash.ShowEmptyState);
+        Assert.False(trash.IsHostReadOnly);
+        Assert.False(trash.ShowHostReadOnlyBanner);
+        Assert.DoesNotContain(TrashWireCommands.ListTrash, fake.TrashFrames);
+    }
+
+    // ── r2 P2-1: closing a cleanup-pending result states the truth (retry is lost) ───────────
+
+    [Fact]
+    public async Task CloseResult_AfterCleanupPending_SaysRetryIsLost_AndDisablesRetry()
+    {
+        var (trash, fake, notices) = NewTrash();
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+        trash.UnderstandIrrecoverable = true;
+        fake.ScriptedTrashDeletes.Enqueue(new TrashDeleteResult(
+            TrashDeleteOutcome.CleanupPending, TrashErrorCodes.CleanupPending, "pending"));
+        trash.ConfirmDeleteCommand.Execute(null);
+        Assert.True(trash.CanRetryCleanup);
+
+        trash.CloseResultCommand.Execute(null);
+
+        Assert.False(trash.CanRetryCleanup);
+        Assert.False(trash.IsCleanupPending);
+        Assert.False(trash.IsPreviewOpen);
+        Assert.Contains(notices, notice => notice.Contains("无法再重试清理", StringComparison.Ordinal));
+    }
+
+    // ── r2 P2-2: discriminating projections (mutations "per-book -> collection digest" and
+    // "missing current arrays -> empty/fail-open" now turn red) ────────────────────────────────
+
+    private static System.Text.Json.JsonElement PreviewJson(string extraProtection)
+    {
+        var json = "{\"inventoryDigest\":\"sha256:" + new string('a', 64) + "\"," +
+                   "\"inventoryDigests\":{\"book-0\":\"sha256:" + new string('d', 64) + "\"}," +
+                   "\"items\":[{\"bookId\":\"book-0\",\"title\":\"旧 Core 作品\"," +
+                   "\"protection\":{\"lockCount\":0,\"currentRevisionId\":null," +
+                   "\"pinnedRevisionIds\":[],\"activeRunIds\":[],\"draftPageCount\":0,\"manualRegionCount\":0" +
+                   extraProtection + "}," +
+                   "\"contentSummary\":{\"chapters\":1,\"pages\":1,\"artifacts\":0,\"deletedFiles\":0,\"deletedBytes\":0}," +
+                   "\"sharedFileRefs\":[]}]}";
+        return System.Text.Json.JsonDocument.Parse(json).RootElement.Clone();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(",\"currentRegionRevisionIds\":null,\"currentArtifactRevisionIds\":null")]
+    [InlineData(",\"currentRegionRevisionIds\":\"not-an-array\",\"currentArtifactRevisionIds\":[]")]
+    public async Task OldCoreProjection_UnknownCurrentSet_FailsClosed_ZeroDeleteFrames(string extraProtection)
+    {
+        var (trash, fake, _) = NewTrash();
+        fake.TrashPreviewFactory = _ => HostController.ProjectPreviewResponse(PreviewJson(extraProtection));
+
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+        trash.UnderstandIrrecoverable = true;
+        trash.ConfirmDeleteCommand.Execute(null);
+
+        Assert.True(trash.IsPreviewBlocked);
+        Assert.Contains("currentRegionRevisionIds", trash.PreviewBlockedReason, StringComparison.Ordinal);
+        Assert.False(trash.CanConfirmDelete);
+        Assert.DoesNotContain(TrashWireCommands.DeletePermanently, fake.TrashFrames);
+    }
+
+    [Fact]
+    public async Task OldCoreProjection_EmptyCurrentArrays_AreKnown_AndAllowExactlyOneDelete()
+    {
+        var (trash, fake, _) = NewTrash();
+        fake.TrashPreviewFactory = _ => HostController.ProjectPreviewResponse(
+            PreviewJson(",\"currentRegionRevisionIds\":[],\"currentArtifactRevisionIds\":[]"));
+
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+        trash.UnderstandIrrecoverable = true;
+        trash.ConfirmDeleteCommand.Execute(null);
+
+        Assert.False(trash.IsPreviewBlocked);
+        Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.DeletePermanently));
+        Assert.Equal(
+            "sha256:" + new string('d', 64),
+            fake.TrashFramePayloads[^1].GetProperty("inventory_digest").GetString());
+    }
+
+    [Fact]
+    public void TrashWriteProjection_EmptyObject_IsTypedFailure_NotSilentSuccess()
+    {
+        var empty = HostController.ProjectTrashWriteResult(false, System.Text.Json.JsonDocument.Parse("{}").RootElement);
+        Assert.False(empty.Ok);
+        Assert.Equal(TrashErrorCodes.Unknown, empty.Code);
+        Assert.Contains("moved", empty.Message, StringComparison.Ordinal);
+
+        var skippedOnly = HostController.ProjectTrashWriteResult(false, System.Text.Json.JsonDocument.Parse(
+            "{\"moved\":[],\"skipped\":[{\"ref\":{\"book_id\":\"b1\"},\"reason\":\"TRASH_ENTRY_NOT_FOUND\"}]}").RootElement);
+        Assert.False(skippedOnly.Ok);
+        Assert.Single(skippedOnly.FailedItems);
+
+        var ok = HostController.ProjectTrashWriteResult(false, System.Text.Json.JsonDocument.Parse(
+            "{\"moved\":[{\"book_id\":\"b1\"}],\"skipped\":[]}").RootElement);
+        Assert.True(ok.Ok);
+        Assert.Contains("b1", ok.SucceededIds);
+    }
+
+    // ── r2 P3: copy / path-leak / move-refresh assertions ────────────────────────────────────
+
+    [Fact]
+    public async Task PreviewText_ContainsNoPathsOrSourceFileNames()
+    {
+        var (trash, _, _) = NewTrash();
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+
+        foreach (var text in new[]
+                 {
+                     trash.PreviewTitle, trash.PreviewProtectionText, trash.PreviewCurrentText,
+                     trash.PreviewContentText, trash.PreviewSharedRefsText, trash.PreviewDigestShortText,
+                 })
+        {
+            Assert.DoesNotContain(":\\", text, StringComparison.Ordinal);
+            Assert.DoesNotContain(":/", text, StringComparison.Ordinal);
+            Assert.DoesNotMatch(@"[A-Za-z]:[\\/]|/(Users|home|mnt|tmp|var)/", text);
+            Assert.DoesNotContain("%APPDATA%", text, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain(".png", text, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    [Fact]
+    public void RestoreReason_UnknownAndNull_UseUnclassifiedConflictWording()
+    {
+        Assert.Contains("恢复冲突（未分类）", TrashCopy.RestoreReason(null), StringComparison.Ordinal);
+        Assert.Contains("恢复冲突（未分类：WEIRD_CODE）", TrashCopy.RestoreReason("WEIRD_CODE"), StringComparison.Ordinal);
     }
 }

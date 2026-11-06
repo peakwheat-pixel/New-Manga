@@ -1,0 +1,42 @@
+# FEA-12-UI r2 变异判别记录（r1 Review P2-2 证据）
+
+日期：2026-11-06；仓库 main；被测实现：r2 返修后工作树（delivery commit 见 Handoff）。
+方法：把 r1 Review §5 的两个变异重新施加到 r2 代码上，运行 `TrashUiTests`，确认**变红**后按字节还原。
+
+## M1：逐书 digest 绑定 → 集合 digest（AC5/R12）
+
+变异：`TrashViewModel.BeginPermanentDeleteAsync` 中 `_activeDigest = boundDigest;` → `_activeDigest = preview.InventoryDigest;`
+
+预期：逐书/集合 digest 已改为不同值，绑定选择错误必须被测试发现。
+
+实测（变异后重建 + `dotnet test --filter FullyQualifiedName~TrashUiTests`）：
+
+```text
+[xUnit.net] NewManga.App.Tests.TrashUiTests.Delete_SendsExactlyOneFrame_WithExactlyTheFrozenPayloadKeys [FAIL]
+[xUnit.net] NewManga.App.Tests.TrashUiTests.OldCoreProjection_EmptyCurrentArrays_AreKnown_AndAllowExactlyOneDelete [FAIL]
+失败! - 失败: 2，通过: 33，已跳过: 0，总计: 35
+```
+
+结论：**判别有效（变红）**。还原后 35/35 绿（本地定向复跑口径见 `ui-tests-curated.log` 的 40/40 含 3 个静态/2 个窗口测试）。
+
+## M3：旧 Core current 数组 fail-open（AC4/AC7）
+
+变异：`HostController.ProjectPreviewResponse` 中 `TrashStringArrayOrUnknown(...currentRegionRevisionIds/currentArtifactRevisionIds)` → `TrashStringArray(...)`（缺字段/null → 空数组，即 fail-open）。
+
+预期：缺字段/null/非法形状必须仍判 unknown 并 0 删除帧。
+
+实测（变异后重建 + `dotnet test --filter FullyQualifiedName~TrashUiTests`）：
+
+```text
+OldCoreProjection_UnknownCurrentSet_FailsClosed_ZeroDeleteFrames(extraProtection: "") [FAIL]
+OldCoreProjection_UnknownCurrentSet_FailsClosed_ZeroDeleteFrames(extraProtection: ",\"currentRegionRevisionIds\":null,...") [FAIL]
+OldCoreProjection_UnknownCurrentSet_FailsClosed_ZeroDeleteFrames(extraProtection: ",\"currentRegionRevisionIds\":\"not-an-array\",...") [FAIL]
+失败! - 失败: 3，通过: 32，已跳过: 0，总计: 35
+```
+
+结论：**判别有效（变红）**；`[]` 用例（`OldCoreProjection_EmptyCurrentArrays_AreKnown_AndAllowExactlyOneDelete`）仍绿，证明“只有 unknown 阻断、空数组可确认”。
+
+## 还原核验
+
+- 变异前备份与还原后文件逐字节一致（`dotnet build` 0 error；定向复跑 48/48 绿，curated 40/40）。
+- 还原后 `git status` 仅含本卡 r2 预期改动；未触碰他人写域。

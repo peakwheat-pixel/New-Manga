@@ -1,8 +1,8 @@
 {
   "core": "real core_service over stdio",
-  "bookId": "c8e88dc3c9be4f3a92fe3e5faf4cc2a3",
-  "collectionDigest": "sha256:0f18a1e52969445712752f554584d8110f9912b5687a2e747d5e1fcfff5bc8c2",
-  "perBookDigest": "sha256:4ff86e80bc30842907eb5d6d85c8e312ba73295cbc7b738710c6b803552bfb45",
+  "bookId": "ec060a1c35384bc8914cd264b27e9f1a",
+  "collectionDigest": "sha256:0eb0f3d2f9bfa7b50ce895786784762d7613b14d2bed2dc9b4aeb13bcc57124e",
+  "perBookDigest": "sha256:c402a1ad2cd1a5e3f580d1c4c51d747fd81803ae63503177f8adb810836e1785",
   "wire_frames": 27,
   "purge_frames": false,
   "batch_permanent_delete_frames": false,

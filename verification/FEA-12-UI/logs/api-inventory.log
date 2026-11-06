@@ -40,7 +40,6 @@
 | 23 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
 | 24 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
 | 25 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
-OK: rendered counts match FEA-C07 doc
 | 26 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
 | 27 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
 | 28 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
@@ -58,6 +57,7 @@ OK: rendered counts match FEA-C07 doc
 | 40 | `DeleteBackupAsync` | `Task<bool>` |
 | 41 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
 | 42 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+OK: rendered counts match FEA-C07 doc
 | 43 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
 | 44 | `SetPluginEnabledAsync` | `Task<bool?>` |
 | 45 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |

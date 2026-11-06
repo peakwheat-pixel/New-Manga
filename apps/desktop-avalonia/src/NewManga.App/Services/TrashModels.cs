@@ -270,8 +270,8 @@ public static class TrashCopy
         "TRASH_ENTRY_NOT_FOUND" => "条目不在回收站（可能已恢复或曾被清理）",
         "TRASH_RESTORE_CONFLICT" => "恢复冲突（目标状态不允许恢复）",
         "TRASH_RESTORE_LAYER_MISMATCH" => "恢复冲突（该条目来自不同数据层）",
-        null or "" => "未分类冲突",
-        _ => $"未分类冲突（{reasonCode}）",
+        null or "" => "恢复冲突（未分类）",
+        _ => $"恢复冲突（未分类：{reasonCode}）",
     };
 
     public static string MoveSkipReason(string? reasonCode) => reasonCode switch
