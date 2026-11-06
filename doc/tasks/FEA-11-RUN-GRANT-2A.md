@@ -127,7 +127,7 @@ out_of_scope:
 | EV-13 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_ev.py | 53dc38bd4 | 65f14609f6209da6506eb5418dd8d308063476e16423db41ce92255f46382b3c | CANONICAL |
 | EV-14 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_manifest.py | 53dc38bd4 | c1cde06b4fab1f705d45046af05700222ea9ef4c19a651d00632f88adc3fdbc3 | CANONICAL |
 | EV-15 | AC-G7 | verification/FEA-11-RUN-GRANT-2A/tools/scope_validation.py | 53dc38bd4 | 0560f0d0b5698929a80c3803244a273778b61f382768429708b60e8191d09c7e | CANONICAL |
-| EV-16 | AC-G1…G8 | doc/reviews/FEA-11-RUN-GRANT-2A-r1.md | 5e4a572ab | 540f9f3c6eb29a866ad7fc69bc5e694fb4fffe88109fe59b647d028d0d966708 | CANONICAL |
+| EV-16 | AC-G1…G8 | doc/reviews/FEA-11-RUN-GRANT-2A-r1.md | 5e4a572ab | b010891cf0c154e950e9850474efd701b302c493a2b56df51c5ca662337fd426 | CANONICAL |
 | EV-17 | AC-G8 | doc/handoffs/FEA-11-RUN-GRANT-2A-a0bafc89e.md | 53dc38bd4 | 03d3ec815fc2b04b8b3fb9217ce189d1e594d37c7b4aad2ec5252f012a2a4549 | CANONICAL |
 
 ## Resource Manifest
