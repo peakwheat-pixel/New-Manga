@@ -3,11 +3,11 @@ id: FEA-11-WATCH-1
 title: FEA-11 目录 watcher 生产者/消费者（hint → 全量重枚举；Host-only）
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: 用户 2026-11-06「同意继续让 Codex/ZCode 决定下一项」→ Codex 首轮超时 → **ZCode 裁决 NEXT-TASK=FEA-11-WATCH-1**（AC11-1 唯一承接；须先独立 scope review 并裁决 watcher 必要性）；scope review `doc/reviews/FEA-11-WATCH-1-scope-r1.md` = **NECESSARY**（AC11-1 逐字含目录 watcher 生产者/消费者与丢 hint/overflow 全量重枚举；C-01b SC-25 FROZEN 把 watcher hint 列入检测组合；C-17 v1.1:18 声明四路检测为实现责任）；DSH 2026-11-06 接受并冻结释放（Owner 由 DSH 指定为 `fea12-core-host`，scope review 建议 ZCode 作独立 Review 备选）
 suggested_owner: zcode（scope review 建议）；实际 Owner：fea12-core-host（DSH Agent Teams，Host .NET 分片）
 owner: fea12-core-host
-reviewer: 独立上下文 fresh subagent（实现完成后派；未参与实现；session 记录于报告）
+reviewer: 独立上下文 fresh subagent（r1 session `48af6d93-b456-4c17-9478-a694fb7bbb10`；报告 `doc/reviews/FEA-11-WATCH-1-r1.md`；CHANGES P0=0/P1=1/P2=1/P3=6；未参与实现）
 depends_on:
   - FEA-11
   - FEA-11-SCAN-1
@@ -74,8 +74,8 @@ Host 侧新增只读目录 watcher，作为**检测延迟优化**与 AC11-1「�
 
 ## Acceptance Criteria
 
-- [x] **AC-W1 生命周期与范围**：Ready 后对已注册目标 arm；file target 仅精确文件、folder 递归；registry 复核失败/撤销/不可读 → typed skip；Stop 后零 hint；重启幂等。 证据：`SourceWatcherTests` 15 例 + gated `Fea11WatchHostRuntimeTests`（Ready→armed→Active=1→真实事件 hint→Dispose 后 watcher/scheduler 均 null）；`logs/watcher-unit.log`、`logs/watcher-runtime.log` <<MET>>
-- [x] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id） <<MET>>
+- [ ] **AC-W1 生命周期与范围**：Ready 后对已注册目标 arm；file target 仅精确文件、folder 递归；registry 复核失败/撤销/不可读 → typed skip；Stop 后零 hint；重启幂等。 证据：`SourceWatcherTests` 15 例 + gated `Fea11WatchHostRuntimeTests`（Ready→armed→Active=1→真实事件 hint→Dispose 后 watcher/scheduler 均 null）；`logs/watcher-unit.log`、`logs/watcher-runtime.log` <<PARTIAL: r1 P2 撤销后 refresh 未拆除 watcher；修复后恢复>>
+- [ ] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id） <<PARTIAL: r1 P1 hint pass 从预算游标起步会跳过被 hint 源；修复后恢复>>
 - [x] **AC-W3 overflow/根删除**：overflow、根删除/替换、buffer 满 → 不崩、全部 target due + 下一 tick 重枚举、watcher re-arm 或 typed 降级；上限（watches 256/buffer 64 KiB）可注入并验证。 （证据：overflow/根删除/上限/边界值用例；10 targets/budget=4 跨 tick 完成；`OverflowCount/Degraded/Uncovered` 计数；M2 变异红） <<MET>>
 - [x] **AC-W4 与 SCAN-1 协同**：同 source 至多一扫描（单飞合并）、hinted 优先、backoff/pause 生效、命令集合精确 `{ScanSourceSync}`、零 Core 业务写、不建 plan/apply/journal。 （证据：hinted 优先/在飞合并 replay≤1/每 source≤2 次/无并发/backoff 不提前/pause 0 次；命令集合仅 `ScanSourceSync`；M1/M3 变异红） <<MET>>
 - [x] **AC-W5 资源/隐私/门禁**：日志/状态无路径/secret/grant/session；无新依赖；无 schema/契约/pins 改动（`verify_pins.ps1` **18/18**）；全量 .NET 不降（基线 **1500/0/85**；flaky 复跑记录；跑后恢复 `verification/FEA-09`）；全量 pytest 引用基线 **3212/10**（本卡零 Python）；`check.ps1 -TaskPath` PASS；范围 diff 仅本卡 allowed_paths；AC11-1 仍 PARTIAL、L10 不解决。 （证据：全量 .NET **1521/0/86**（RUN1/RUN2）；pytest **3212/10** 实跑一致；pins 18/18、API PASS、check PASS、scope diff 空；脱敏断言；无新依赖） <<MET>>
@@ -110,6 +110,14 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - 依赖：FEA-11（AC11-1 PARTIAL）；SCAN-1 done；SCAN-2 done；C-01b SC-25 冻结条款；scope review NECESSARY。
 - 风险/limitation：漏事件（周期扫描兜底，非正确性依赖）；卷类型/网络盘行为差异；句柄/资源泄漏；IO 放大；路径隐私（脱敏）；测试时序不稳定（flaky）；root 过宽（只 arm 已注册目标）；授权漂移（registry 复核）；无 UI 消费者；SCAN-2 RH-3 targets 只增不减不修；**AC11-1 不回填 MET**。
 - 阻塞：无（scope 已冻结）。
+
+## r1 Review 处置（DSH，2026-11-06）
+
+- 结论：**CHANGES**（P0=0 / **P1=1** / P2=1 / P3=6；报告 `doc/reviews/FEA-11-WATCH-1-r1.md`，session `48af6d93…`）。
+- **P1（阻断，AC-W2/AC-W4）**：`SourceScanScheduler.TickCoreAsync` 先把 hinted target 排到最前，但仍从 `start = _budgetCursor % targetCount` 开始取预算；Reviewer 仓外探针（10 targets/budget 4：先扫 s0..s3，再 hint s9）复现 hint pass 实际扫 s3..s6、s9 未扫（HintPending=true，需等 900s）。最小修复：`start = _hintedSources.Count > 0 ? 0 : (_budgetCursor % targetCount)`；补「先跑 rotation 再 hint」判别测试。
+- **P2（AC-W1/L-W3）**：`RefreshTargetsAsync` 仅在 `added+updated>0` 时 `NotifyTargetSetChanged()`；撤销后成功 refresh（空枚举）不通知，watcher Active 仍=1。修：refresh 成功后也通知（使 watcher 复核/拆除）；补 revoke-after-refresh 测试。
+- P3×6：Stop 后零 hint 的 timer/callback 窄竞态；canonical `pytest-full.log` 无结束 summary（需重抓完整日志）；`RootLost` 断言 `|| Active>=0` 恒真；缺 generation-drift/buffer 注入/hint-after-rotation/revoke-after-refresh 测试；redaction 口径限定 watcher/scheduler 行；`DisposeAsync` 未 await 在飞 hint task；`Sync` 的 `IntersectWith+UnionWith` 可简化为 Union。按最小修复或登记 limitation。
+- 派发：`fea12-core-host`（r2 最小返修）→ Lead 集成复跑 → r2 窄面复审 → closeout；AC11-1 仍 PARTIAL、不回填。
 
 ## 交付与运行记录（2026-11-06）
 
