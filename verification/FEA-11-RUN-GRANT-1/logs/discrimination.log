@@ -1,0 +1,45 @@
+# FEA-11-RUN-GRANT-1 discrimination log
+
+generated_at_utc=2026-11-06T16:35:21+00:00
+repo_head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+
+Each break is applied to the shipped bytes, ONE target test is run, the test
+MUST turn red (exit != 0), then the file is restored and its sha256 is re-checked.
+
+[B1] break=写绑定被删除（成功路径不再产生 grant->binding 映射）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    target=tests/fea11/test_source_run_grant.py::test_real_assembly_bound_grant_opens_the_run_target_provider_and_guard
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=tests\fea11\test_source_run_grant.py:474: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_real_assembly_bound_grant_opens_the_run_target_provi
+    restore=RESTORED sha256=c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a
+
+[B2] break=facts 核验被删除（容器源不再比对 source_locations 物理身份）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    target=tests/fea11/test_source_run_grant.py::test_scope_and_facts_mismatch_is_refused
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=tests\fea11\test_source_run_grant.py:670: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_scope_and_facts_mismatch_is_refused | 1 failed in 0.
+    restore=RESTORED sha256=c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a
+
+[B3] break=原子性被删除（有 refused 页仍返回成功/部分绑定）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    target=tests/fea11/test_source_run_grant.py::test_authorization_is_entry_granular_and_refuses_other_pages
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=tests\fea11\test_source_run_grant.py:528: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_authorization_is_entry_granular_and_refuses_other_pa
+    restore=RESTORED sha256=c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a
+
+[B4] break=command 取值域校验被删除（越域命令不再是 INVALID_REQUEST）
+    file=src/bootstrap/core_service.py
+    target=tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=tests\fea11\test_source_run_grant.py:671: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests | 1 faile
+    restore=RESTORED sha256=9afc9d6d4281b024946f3d67b382effc8a0fe81b683b220f6fb6ff471b77a2c6
+
+[B5] break=Host Run 前置授权钩子被删除（Run 命令未授权直接 dispatch）
+    file=apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+    target=FullyQualifiedName~RunAuthorizationHookBlocksDispatchAndIsNotCalledForReadOnlyRuns
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=--- End of stack trace from previous location --- | ----- Inner Stack Trace ----- |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeCoreAsync(HostCommandDescriptor descriptor, JsonElement args, CancellationToken cancellationToken) |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeAsync(String name, JsonElement args, CancellationToken cancellationToken) |  | 失败!  - 失败:
+    restore=RESTORED sha256=bde169fc931d53b9deb1666b5b25a08b4b7508ae6fd465c290093c7189efdd47
+
+result=PASS breaks=5 all_red_then_restored
+final_rebuild exit_code=0

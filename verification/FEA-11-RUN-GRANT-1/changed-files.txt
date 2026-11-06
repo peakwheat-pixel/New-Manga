@@ -1,0 +1,12 @@
+M	apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+M	doc/tasks/FEA-11-RUN-GRANT-1.md
+M	src/bootstrap/core_service.py
+M	src/infrastructure/resource_channel/source_read_refs.py
+M	tests/core/test_core_service.py
+M	tests/core/test_host_control.py
+M	tests/fea09/test_referenced_wire.py
+A	tests/fea11/test_source_run_grant.py

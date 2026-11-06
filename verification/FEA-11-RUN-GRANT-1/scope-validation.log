@@ -1,0 +1,55 @@
+# FEA-11-RUN-GRANT-1 scope validation
+generated_at_utc=2026-11-06T16:46:35+00:00
+base_commit=a94052ba7
+delivery_head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+
+## allowed_paths (card frontmatter)
+- doc/tasks/FEA-11-RUN-GRANT-1.md
+- doc/reviews/FEA-11-RUN-GRANT-1-r*.md
+- doc/handoffs/FEA-11-RUN-GRANT-1-*.md
+- verification/FEA-11-RUN-GRANT-1/**
+- src/infrastructure/resource_channel/source_read_refs.py
+- src/bootstrap/core_service.py
+- tests/core/test_host_control.py
+- tests/core/test_core_service.py
+- tests/fea09/test_referenced_wire.py
+- tests/fea11/test_source_run_grant.py
+- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+- apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+- apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+
+## changed files in range
+M	apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs	ALLOWED
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs	ALLOWED
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs	ALLOWED
+A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs	ALLOWED
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs	ALLOWED
+M	doc/tasks/FEA-11-RUN-GRANT-1.md	ALLOWED
+M	src/bootstrap/core_service.py	ALLOWED
+M	src/infrastructure/resource_channel/source_read_refs.py	ALLOWED
+M	tests/core/test_core_service.py	ALLOWED
+M	tests/core/test_host_control.py	ALLOWED
+M	tests/fea09/test_referenced_wire.py	ALLOWED
+A	tests/fea11/test_source_run_grant.py	ALLOWED
+
+## zero-drift surfaces
+doc/plan/**: ZERO_DIFF
+doc/contracts/**: ZERO_DIFF
+src/infrastructure/sqlite/schema.py: ZERO_DIFF
+migrations: ZERO_DIFF
+dependencies (pyproject/requirements/*.csproj): ZERO_DIFF
+src/bootstrap/core_assembly.py: ZERO_DIFF
+NewManga.App/**: ZERO_DIFF
+apps/** beyond allowed_paths: ZERO_DIFF
+protocol_minor=3 kept: YES
+
+result=PASS changed=12 out_of_scope=[]
+
+## R-12 approved scope extension (Lead, commit 218775bca)
+reason: the frozen C-16 v1.3 §0 capability ``source.read.run/1`` is an additive ping advertisement, but two pre-existing tests asserted the capability list by exact equality; they had to gain the one string.
+- tests/core/test_core_service.py: +"source.read.run/1" in two exact expectations only
+- tests/fea09/test_referenced_wire.py: +"source.read.run/1" in one exact expectation only
+no existing assertion was deleted/weakened and no skip was added (diff reviewed: additive lines only).
+docs commit (card / handoff / verification evidence) follows the delivery head; it is within allowed_paths by construction.

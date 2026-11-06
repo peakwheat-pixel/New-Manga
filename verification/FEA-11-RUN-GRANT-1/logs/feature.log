@@ -1,0 +1,7 @@
+# FEA-11-RUN-GRANT-1 feature evidence
+generated_at_utc=2026-11-06T16:36:03.7249605Z
+cmd=C:/Python314/python.exe -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q
+head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+---
+.................................................                        [100%]
+49 passed in 7.92s

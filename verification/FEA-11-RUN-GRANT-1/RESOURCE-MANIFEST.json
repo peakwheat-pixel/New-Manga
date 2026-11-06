@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-RUN-GRANT-1",
+  "generated_at": "2026-11-06T16:49:54+00:00",
+  "generated_by": "run-grant-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "note": "Core (C-16 v1.3 §2.4 AuthorizeSourceReadForRun) + Host mint/bind wiring delivery. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-1/ holds runtime test fixtures, gate logs, discrimination backups and helper scripts; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-1/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 7ff49f1cc）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内。"
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RUN-GRANT-1\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "sha256": "c339d252df9d9bd9dba69be0b3723315955dae434688cc3e0075a11d55a2cebb",
+      "file_count": 500,
+      "children": [
+        {
+          "name": "baseline/",
+          "kind": "directory",
+          "file_count": 5,
+          "aggregate_sha256": "4a576845065925367fa8af1e44dc61f5c4ccce831aaa096de625760df17fb7fa",
+          "files": [
+            {
+              "name": "dotnet-baseline.exit",
+              "sha256": "bf03f07f4d7cc54b16f60f2867e4e759f806ec32efc8167e514fe0e45ee20ea6"
+            },
+            {
+              "name": "dotnet-baseline.log",
+              "sha256": "4d1ef1d77e94c402cb90463734ccf3697bdfcca0be81484bcee5c5d494200cf7"
+            },
+            {
+              "name": "dotnet-flaky-isolated.log",
+              "sha256": "c495919163fd274fba54aac1968a0d8af40a61a7175689c3d4489a9292508436"
+            },
+            {
+              "name": "pytest-baseline.exit",
+              "sha256": "cc258d839e50d5e0cf220528399d5c29a6bcc5c3a9ee2616a915627e0363d91d"
+            },
+            {
+              "name": "pytest-baseline.log",
+              "sha256": "84e14a25b508ce1997b45de2f4083d833c7360e8cef64cb7af8b9773a7d78043"
+            }
+          ]
+        },
+        {
+          "name": "check_ev.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "26f2bb4c9ba6e5e0c55eb4dc9b1e3155bfafe20b8be0572f7b91c374357df4c0"
+        },
+        {
+          "name": "discrimination/",
+          "kind": "directory",
+          "file_count": 5,
+          "aggregate_sha256": "7ce12da12d88e3e4ffbcfbce2d030c2b7ccf67180461561e087998c1483997eb",
+          "files": [
+            {
+              "name": "B1-source_read_refs.py.orig",
+              "sha256": "c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a"
+            },
+            {
+              "name": "B2-source_read_refs.py.orig",
+              "sha256": "c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a"
+            },
+            {
+              "name": "B3-source_read_refs.py.orig",
+              "sha256": "c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a"
+            },
+            {
+              "name": "B4-core_service.py.orig",
+              "sha256": "9afc9d6d4281b024946f3d67b382effc8a0fe81b683b220f6fb6ff471b77a2c6"
+            },
+            {
+              "name": "B5-HostCommandDispatcher.cs.orig",
+              "sha256": "bde169fc931d53b9deb1666b5b25a08b4b7508ae6fd465c290093c7189efdd47"
+            }
+          ]
+        },
+        {
+          "name": "fixtures/",
+          "kind": "directory",
+          "file_count": 482,
+          "aggregate_sha256": "0f256a8d459f49efea28dc965b2d0f86c84033e3390099a481f932e7a9dd3e6a",
+          "files": [
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/backups/b9dd5382eb9e416a812b2d77c7dd8d90.nmbak",
+              "sha256": "55256573a5041b3d3ee9d17ad53b83df3b3a16f7f004a956248f324d0c2e6ca0"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/catalog.sqlite",
+              "sha256": "19be13e07dfd8a36a77aeff53fa5ded0f6d33018cec58e5cc2e193ce81a7b35a"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/core.stderr.log",
+              "sha256": "fdc4c9803c907264c4f7b2c3e9f14768c41c775e880218b83bd52f9a726a8bfa"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/derived/.preview-lifecycle.lock",
+              "sha256": "47d645f5496a7290d35c2a28093a4815b55d031b11d386ba4c98589f5b074b3a"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/ipc-run-grant-receipt.json",
+              "sha256": "c34dce9adcf473c4097e383d44266b07bae6d40e8630bc8c37d3337163054477"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/library.db",
+              "sha256": "6652bc79bf33e70b73c8f1c6d4e5dc6168cbd2e2f3128309f4b66432d9cd411f"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/library.db.run-owner.lock",
+              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/source-v1.zip",
+              "sha256": "1846afd2b0e28f833ac9f6a13c2e52a8217c839983dbf0d4d74e16578a69984a"
+            },
+            {
+              "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/wire.ndjson",
+              "sha256": "78cc1ac6a7ad88fe92f0e6d92d518ea703a2cf564c7891316d94c50393e49e26"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/backups/1ad6dfdc01e24a389ccd4618eada7262.nmbak",
+              "sha256": "5a0187b81bfe96dbb057db3c97e46ac33fcad2a10f3fd4a5a90064fd0eb8e4ca"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/catalog.sqlite",
+              "sha256": "64c61feb3777e2b781ef0a06ea99e30f4fe6dad6d32e5eb63e92142744336cae"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/core.stderr.log",
+              "sha256": "f26b6cc183d4c57fe6b1c8583e51a136a0711e5a4c2adb30be1b8a150b258c3d"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/.preview-lifecycle.lock",
+              "sha256": "2c0e68842c9868679a9fc290869a5ca26e59a12765bed0003be501e25c0d59e3"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/pages/page-rendition-v2-4819662dd0145ec3c75f8a32fc65535048078de0116826282aff617670f1d9ee.png",
+              "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/source-renditions/23d157af3f1bc9c4043a0f17c3588a825d8bc957ddddc3cf6ca341b6fc604081.bin",
+              "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/host/source-access/registry.v1.dat",
+              "sha256": "687245aa4f9e1e80f1790a7ef8841c1657bc88d7b1f15fa7fcdf4061388f8cdb"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/host/source-access/registry.v1.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/ipc-run-grant-receipt.json",
+              "sha256": "43c4ca5ea37252ac1f25b76dca5f43e1b7448f06e1f0d954a1b679c5b3196051"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/library.db",
+              "sha256": "c1b19cea476fabf2ce8dffed64e4d294793e72d5c8f94bc79fc0e1ab4de6dd2f"
+            },
+            {
+              "name": "ipc-482cd24f8cb4447691005c25995860cf/library.db.run-owner.lock",
+              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+            },
+            {
+              "name": "... (462 more files, aggregate above)",
+              "sha256": ""
+            }
+          ]
+        },
+        {
+          "name": "logs/",
+          "kind": "directory",
+          "file_count": 5,
+          "aggregate_sha256": "b6334a2b3d3cd829ee36f267727cb91798171fa60004d3ac8b15111d8c0cad89",
+          "files": [
+            {
+              "name": "discrimination-console.log",
+              "sha256": "fb9c1436a076c08ca396ef9c97994fed2f7dd1ea8ec454ff3f0c516bd25ef230"
+            },
+            {
+              "name": "dotnet-full-r12.log",
+              "sha256": "e8af77e75dba41f2dad372102e2f034228616a831569a169e947dc748c23d069"
+            },
+            {
+              "name": "dotnet-full.log",
+              "sha256": "3179ad289fa05af61cf0ae7f433b108cc4e5fd512bdbc263945c374e7e52d039"
+            },
+            {
+              "name": "pytest-full-r12.log",
+              "sha256": "2c6699e84aa70b62ccaf54c87c50afe0c2e1b17f6cba0ce3040f910da526977c"
+            },
+            {
+              "name": "pytest-full.log",
+              "sha256": "1580fa1f02587c40b390eca753eec66b3aecd9145504b6ccd4f62f1968cc1a17"
+            }
+          ]
+        },
+        {
+          "name": "patch_card.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "a943e92d02574c53803660bb2ca52c18dbec7cd25215e86456da6f792a37eb91"
+        },
+        {
+          "name": "patch_r12.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "88d8d6714e54622b359820b441510390ea6ccf2164dbf334804986dae5339b2a"
+        }
+      ],
+      "process_check": "仓外隔离根（工作区治理边界）。仅含 agent 运行夹具/门禁原始日志/判别备份/辅助脚本；产品代码与测试通过路径常量/tmp_path 引用，不依赖其内容。closeout 保留（PRESERVE_REFERENCED），不删除。"
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "tests/fea11/test_source_run_grant.py / tests/core/test_host_control.py（运行时真实 zip/PNG/DB）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "真实 zip/PNG/迁移库/真实签名 grant 全部在测试运行时生成；fea11 runner 写入隔离根 fixtures/ 子目录（上述 temp 资源内），core/host-control 用例写入 pytest tmp_path；仓库不提交二进制 fixture。"
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未读写真实用户数据/AppData/外部卷/回收站；.NET IPC 用例使用隔离 fixture 根。"
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "dotnet build/test 的 obj/bin 在既有 build 目录内，未纳入交付；未新建仓内 artifact 目录。"
+    },
+    {
+      "resource_type": "repo-deletion",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "仓内零删除/移动/迁移/归档（changed-files.txt 仅 A/M）。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外隔离根保留供 Review 复核（不随仓库分发）。全量 pytest / .NET 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-governance.log 尾注）。"
+}

@@ -15,7 +15,7 @@ base_commit: 2067789ea
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 7ff49f1cc21346be0b4867304499ee17f7ffb84e
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-RUN-GRANT-1
@@ -121,13 +121,13 @@ out_of_scope:
 
 ## Acceptance Criteria（v3；每条须有判别性测试）
 
-- [ ] **AC-R1 授权建立命令协议面**：host-only（普通面 → `HOST_ONLY_REQUIRED`）、session/credential 校验、closed shape/未知键/空或超限 grant_ids → `INVALID_REQUEST`、缺失 grant → `SOURCE_ACCESS_DENIED`、过期 → `SOURCE_GRANT_EXPIRED`、撤销 → `SOURCE_GRANT_REVOKED`；**全部零 DB 写**（业务表逐表快照相等）；幂等（同请求重复调用同结果）；能力 `source.read.run/1` 公告。证据：`pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` 参数化用例。
-- [ ] **AC-R2 真实装配 Run 端到端（判别核心）**：真实 production migrations 库 + 真实 zip/PNG + 真实 grant + `assemble_core_services`；经新命令绑定后 `create_run(page-scope)` 的 provider `page_frame` 像素/尺寸 = 当前 binding 的图（非 managed 旧图），`source_commit_guard` 通过，提交后 region/revision/lineage 行数符合预期；**判别性**：删「写绑定」→ provider `INVALID_INPUT`/commit typed 失败；绑定指错 entry → 仍 fail-closed。证据：`tests/fea11/test_source_run_grant.py` + `logs/discrimination.log`。
-- [ ] **AC-R3 fail-closed 全覆盖**：①无 grant ②grant 过期（注入 clock）③撤销 ④scope/facts 不匹配 ⑤gate pending ⑥Run 中途 binding 被 sync 切换 → 全部 typed（Run 面既有 `DB_FAILED`/`PROVIDER_FAILED`/`TARGET_NOT_FOUND` 投影，不新增码）、**零业务写**（region/revision/lineage/保护/进度表不变，`read_entry_bytes`/`source_lease` spy 0 次）、不崩溃。证据：参数化 6 例。
-- [ ] **AC-R4 Host 接线与生命周期**：`library_start_run`/`AcceptRun`/`ControlRun`(continue/restart)/`ResumeBlockedRun`/`RetryFailedTargets` 前置授权被调用；授权失败**不 dispatch** 且返回该 typed code（不新增 Run 面码）；能力缺失 → 跳过授权按现状 dispatch；`_payloads`/`_grants` 剪枝上界测试；真实 IPC（opt-in）铸造→绑定→resolve 成功、撤销后 typed、wire 无路径泄漏。证据：`Fea11RunGrantIpcTests.cs`（`NEWMANGA_FEA11_IPC=1` 实跑并记录）、`SourceRegistryTests.cs`。
-- [ ] **AC-R5 managed 零回归**：managed-only Run 不调用新命令/不触碰 grant registry（探针 0 次）；`TargetSnapshot.metadata` 键集合不变；`pytest tests/fea11 tests/providers` 不减少（基线 fea11 145 + providers 559/4）。证据：探针用例 + 定向日志。
-- [ ] **AC-R6 零漂移与门禁**：scope diff ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`schema.py`/依赖/`apps/**`（超出 3 个 Host 文件）/`core_assembly.py` 零 diff；Run wire 请求/响应键集快照不变（`StartRun`/`PrepareRun`/`AcceptRun`）；`CORE_PROTOCOL_MINOR` 仍 3；全量 `pytest tests` **3249/10 不降**（跑后 `git checkout -- verification/FEA-09`）；全量 .NET **1532/0/86 不降**（跑后恢复 FEA-09；已知 flaky 首跑如实记录 + 隔离复跑）；`verify_pins.ps1` **18/18**；`check.ps1`（默认 + `-TaskPath`）PASS；`generate_api_inventory.py --check` PASS。证据：`logs/gates.log`、`scope-validation.log`、`changed-files.txt`。
-- [ ] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10 与未宣称项；独立 Review approved（P0/P1=0 或 findings 已处置）；卡面未写「全场景可用/  L-R1 全修」。
+- [x] **AC-R1 授权建立命令协议面**：host-only（普通面 → `HOST_ONLY_REQUIRED`）、session/credential 校验、closed shape/未知键/空或超限 grant_ids → `INVALID_REQUEST`、缺失 grant → `SOURCE_ACCESS_DENIED`、过期 → `SOURCE_GRANT_EXPIRED`、撤销 → `SOURCE_GRANT_REVOKED`；**全部零 DB 写**（业务表逐表快照相等）；幂等（同请求重复调用同结果）；能力 `source.read.run/1` 公告。证据：`pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` 参数化用例。 <<MET>>
+- [x] **AC-R2 真实装配 Run 端到端（判别核心）**：真实 production migrations 库 + 真实 zip/PNG + 真实 grant + `assemble_core_services`；经新命令绑定后 `create_run(page-scope)` 的 provider `page_frame` 像素/尺寸 = 当前 binding 的图（非 managed 旧图），`source_commit_guard` 通过，提交后 region/revision/lineage 行数符合预期；**判别性**：删「写绑定」→ provider `INVALID_INPUT`/commit typed 失败；绑定指错 entry → 仍 fail-closed。证据：`tests/fea11/test_source_run_grant.py` + `logs/discrimination.log`。 <<MET>>
+- [x] **AC-R3 fail-closed 全覆盖**：①无 grant ②grant 过期（注入 clock）③撤销 ④scope/facts 不匹配 ⑤gate pending ⑥Run 中途 binding 被 sync 切换 → 全部 typed（Run 面既有 `DB_FAILED`/`PROVIDER_FAILED`/`TARGET_NOT_FOUND` 投影，不新增码）、**零业务写**（region/revision/lineage/保护/进度表不变，`read_entry_bytes`/`source_lease` spy 0 次）、不崩溃。证据：参数化 6 例。 <<MET>>
+- [x] **AC-R4 Host 接线与生命周期**：`library_start_run`/`AcceptRun`/`ControlRun`(continue/restart)/`ResumeBlockedRun`/`RetryFailedTargets` 前置授权被调用；授权失败**不 dispatch** 且返回该 typed code（不新增 Run 面码）；能力缺失 → 跳过授权按现状 dispatch；`_payloads`/`_grants` 剪枝上界测试；真实 IPC（opt-in）铸造→绑定→resolve 成功、撤销后 typed、wire 无路径泄漏。证据：`Fea11RunGrantIpcTests.cs`（`NEWMANGA_FEA11_IPC=1` 实跑并记录）、`SourceRegistryTests.cs`。 <<MET>>
+- [x] **AC-R5 managed 零回归**：managed-only Run 不调用新命令/不触碰 grant registry（探针 0 次）；`TargetSnapshot.metadata` 键集合不变；`pytest tests/fea11 tests/providers` 不减少（基线 fea11 145 + providers 559/4）。证据：探针用例 + 定向日志。 <<MET>>
+- [x] **AC-R6 零漂移与门禁**：scope diff ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`schema.py`/依赖/`apps/**`（超出 3 个 Host 文件）/`core_assembly.py` 零 diff；Run wire 请求/响应键集快照不变（`StartRun`/`PrepareRun`/`AcceptRun`）；`CORE_PROTOCOL_MINOR` 仍 3；全量 `pytest tests` **3249/10 不降**（跑后 `git checkout -- verification/FEA-09`）；全量 .NET **1532/0/86 不降**（跑后恢复 FEA-09；已知 flaky 首跑如实记录 + 隔离复跑）；`verify_pins.ps1` **18/18**；`check.ps1`（默认 + `-TaskPath`）PASS；`generate_api_inventory.py --check` PASS。证据：`logs/gates.log`、`scope-validation.log`、`changed-files.txt`。 <<MET>>
+- [x] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10 与未宣称项；独立 Review approved（P0/P1=0 或 findings 已处置）；卡面未写「全场景可用/  L-R1 全修」。 <<MET>>
 
 ## 已知 limitation（预登记，closeout 必须保留）
 
@@ -139,6 +139,7 @@ out_of_scope:
 - **L-G9**：Core 重启后 `_bindings`/grants 丢失，referenced Run 不可续跑（typed fail，用户重发）。
 - **L-G10**：L-R11（assembly `read_gate` 与 resolve 面 `_assert_source_sync_gate` 的「无 publication 行」判定不一致）另立 follow-up；本卡不碰该 gate 语义。
 - **L-G11**：binding 解析必须在 Core（Host 不提供 page→binding 映射）；Host 只传 `grant_ids + command + scope`。
+- **L-G12（本卡实测新增，待 DSH 裁决/立项 follow-up）**：Host 侧没有“Core source_id/version”通道——`source_list_scan_targets` DTO 不含 `version_id`，寒启动枚举的 `SourceScanTarget.Version` 固定为 `"1"`；而 C-16 v1.3 §2.4 的 Core 匹配要求 `scope.version == binding.accepted_source_version`（Core 生成的 `sv-…`）。因此生产 Host 用既有 `IssueAsync` 铸出的容器 grant 通常与真实 binding version 不匹配 → 授权 typed `SOURCE_ACCESS_DENIED`、Host 不 dispatch（fail-closed，非静默放行；比 L-R1 的“跑到步骤才失败”更早更明确）。本卡证据证明 **Core 级机制完整可用**，Host 接线在 Host 已知源携带正确 version 时可用（.NET IPC 用冻结 fixture `s1`/`sv1` 实跑成功）；生产可用性受该 version 通道缺口限制。缓解候选（另卡）：①App/枚举路径传入 Core version；②Host 从 `ScanSourceSync` 结果缓存 `source.version_id`；③契约层允许 facts-only 匹配（需 UNFREEZE）。
 - **L-G13**：已知 flaky（`library.db-shm` 锁、`test_sandbox_job_kills_grandchildren`）——首跑失败如实记录 + 隔离复跑，不静默重试。
 - **未解决**：L-R1 在本卡后仅「窗口内可用」；不得表述为产品级全场景修复。
 
@@ -150,3 +151,15 @@ out_of_scope:
 | AC-R4 .NET IPC | `$env:NEWMANGA_FEA11_IPC=1; dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --filter "FullyQualifiedName~Fea11RunGrant"` | 真实 Python Core | 铸造→绑定→resolve 成功；撤销后 typed | `logs/host-ipc.log` |
 | AC-R4 单测 | `dotnet test ... --filter "FullyQualifiedName~SourceRegistry"` | 无 | 剪枝/钩子断言通过 | `logs/host-unit.log` |
 | AC-R6 | `pytest tests`、`dotnet test NewManga.sln -c Release`、pins、check、API inventory、scope diff | 仓库根 | 不降/不漂移 | `logs/gates.log` 等 |
+
+## 交付记录（Owner 回填；未改 `status`）
+
+- **实现/测试 commit 链**（显式 pathspec，未 push；均在 `main`）：
+  - `85eace738` — `feat(fea-11-run-grant-1)`: Core（`core_service.py` + `source_read_refs.py`）+ Host（`SourceReadCoordinator.cs` / `HostRuntime.cs` / `HostCommandDispatcher.cs`）
+  - `7ff49f1cc` — `test(fea-11-run-grant-1)`: Python（`tests/core/test_host_control.py` 增补、`tests/fea11/test_source_run_grant.py` 新增）+ .NET（`Fea11RunGrantIpcTests.cs` 新增、`SourceRegistryTests.cs` 增补）+ R-12 的 2 个 capabilities 期望；**`delivery_head`**
+  - 证据/卡面/Handoff 同批文档提交（`verification/FEA-11-RUN-GRANT-1/**`、本卡、`doc/handoffs/FEA-11-RUN-GRANT-1-7ff49f1cc.md`）
+- **R-12 扩域（Lead 批准，`218775bca`）**：`tests/core/test_core_service.py`、`tests/fea09/test_referenced_wire.py` 仅把 `source.read.run/1` additive 加入既有 capabilities 精确期望；未删除/弱化任何断言、未新增 skip。
+- **门禁实测（`7ff49f1cc`）**：定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` → **49 passed**；全量 `pytest tests` → **3280 passed / 10 skipped**（卡基线 3249/10）；全量 `dotnet test NewManga.sln -c Release` → **1535 / 0 / 88**（卡基线 1532/0/86）；`NEWMANGA_FEA11_IPC=1` 的 `Fea11RunGrant` → **2 passed**；`verify_pins.ps1` **18/18 PASS**；`check.ps1`（默认 + `-TaskPath`）**PASS**；`generate_api_inventory.py --check` **EXIT=0**；scope diff ⊆ `allowed_paths`（禁止面全空、`CORE_PROTOCOL_MINOR` 仍 3）；判别性 **5/5 破坏点变红 + 字节级恢复**。
+- **未运行项**：无（上述门禁全部实跑）；已知 flaky/环境交互：全量 .NET 首跑 1 例 `FluentResidual2VisualEvidenceTests` 因运行时 `verification/` 工作树快照变化失败，恢复 FEA-09 tracked 字节 + 证据目录稳定后隔离复跑全绿（非产品缺陷，详见 Handoff §2）。
+- **证据索引**：`verification/FEA-11-RUN-GRANT-1/EV.md`（每文件 sha256 + AC 矩阵）、`logs/feature.log`、`logs/host-ipc.log`、`logs/host-unit.log`、`logs/full-pytest.log`、`logs/full-dotnet.log`、`logs/gates-governance.log`、`logs/discrimination.log`、`scope-validation.log`、`changed-files.txt`、`RESOURCE-MANIFEST.json`。
+- **不夸大**：本卡交付「窗口内可用 + Host 源范围/version 已知时可用」；**不得**表述为「referenced Run 全场景可用」或「L-R1 全修」；L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/**L-G12** 保留。独立 Review 由 Lead 指派（非实现者/非本会话）。
