@@ -72,6 +72,8 @@
 | EV-10 | AC-R5 Resource Manifest（仓外隔离根 10 文件聚合 + 资源处置） | `verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json` | `1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7` |
 | EV-11 | AC-R5 变更清单（base..证据 head，逐文件） | `verification/FEA-12-UI-RESIDUAL-1/changed-files.txt` | `1e0ba244e5bec73c900b45c221a7c3aeeb4da1d74b1879024835d473096f4b50` |
 
+> **EV-12 自引用说明（Review F3）**：`EV-12` = 本文件（Evidence 索引）。文件无法在自身字节内嵌自身 sha256；其 sha256 由卡面 `Canonical Evidence` 表登记（pin 到包含本文件的证据提交）。本索引表因此只列 EV-1…EV-11，EV-12 以卡面为准（不改变任何 evidence 字节口径）。
+
 ## 4. AC → 实现 → 测试 → 证据
 
 | AC | 判定 | 实现（`TrashViewModel.cs`，commit `8e3bd03d6`） | 判别性测试（`TrashUiTests.cs`） | 证据 |
@@ -86,7 +88,7 @@
 
 - **L-R1（I-1 生产不可达）**：本卡只钉“删除返回能力缺失不得污染页级 read 能力态”的防御不变量；Host 当前不对 `library_delete_book_permanently` 做能力门、Core 不返回 `CORE_CAPABILITY_MISSING`，故该分支**生产不可达**；不得写成“已修复用户可见 bug”。
 - **L-R2（R-002 旧债）**：`CORE_CAPABILITY_MISSING` 不在 `AllowedDeleteTrashErrorCodes`，Host 投影会把 category 降为 `unknown`（code 保留）；属 Host/Core，本卡不改。
-- **L-R3（I-2 刷新失败）**：`BOOK_NOT_FOUND` 后 `ReloadAsync` 自身失败只显示列表错误态，不自动重试（有意，不引入循环）。
+- **L-R3（I-2 刷新失败；Review F1 补充）**：`BOOK_NOT_FOUND` 后 `ReloadAsync` 自身失败只显示列表错误态，不自动重试（有意，不引入循环）；「已刷新回收站列表」通知在 `await ReloadAsync()` **之前**发出（文案由 scope review 冻结，且既有 delete-NotFound 分支同模式），刷新失败时通知与列表错误态可能并存——已知 P3 文案时序限制，不改代码。
 - **L-R4（I-3 面板关闭）**：cleanup retry NotFound 后关闭结果面板，typed 提示仅通过 `_notify` 传递；若产品要求保留面板需另冻结文案规则。
 - **L-R5（I-4 视觉冗余）**：组合态两条 banner 同时出现，接受冗余以不丢原因；合并文案需重新冻结。
 - **L-R6（证据层级）**：四项均为 VM 级 fake 测试，不新增真实 Host/Core IPC；cleanup retry NotFound 无 L2 IPC 证据。
@@ -99,3 +101,12 @@
 - 仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-12-UI-RESIDUAL-1\`（agent 脚本 + 原始门禁日志 + pristine 备份）**PRESERVE_REFERENCED**，聚合 sha256 `97fdbd1e5bb0fc8d15eb44f42cd88580e76eb43b25b0fa086222abb792d28428`（10 文件，逐文件 sha 见 `RESOURCE-MANIFEST.json`）。
 - 未触碰真实用户数据 / AppData / 外部卷 / 真实回收站 / 原文件；未创建 linked worktree；无删除/移动/迁移/归档（`closeout_counts` 全 0）。
 - 全量 .NET 的 FEA-09 tracked 字节副作用已恢复（`git checkout -- verification/FEA-09`）。
+
+## 7. Review r1 处置（DSH，2026-11-06）
+
+- 独立 Review：`doc/reviews/FEA-12-UI-RESIDUAL-1-r1.md`（fresh subagent，未参与实现/返修）→ **approved（P0=0/P1=0/P2=0/P3=4）**；无代码返修。
+- **F1（P3，通知先于刷新）**：维持 scope review 冻结文案；已在 L-R3 补记「通知在 `await ReloadAsync()` 之前发出；刷新失败时通知与列表错误态可并存」，不宣称强一致。
+- **F2（P3，其它 preview 失败码无回归测试）**：AC-R2 的「其它失败码行为不变」只在结构上成立（仅精确 `BOOK_NOT_FOUND` 分支前置，通用分支 diff 未改），**未单独回归测试**；卡面 AC-R2 与本节按此如实限定，登记 follow-up（不阻塞）。
+- **F3（P3，EV.md 自索引缺 EV-12）**：本文件 §3 增补「EV-12 自引用说明」；EV-12 的 sha256 由卡面 Canonical Evidence 登记（自引用文件无法内嵌自身哈希）。
+- **F4（P3，`ITrashController is null` + 只读组合未测）**：防御路径；生产两实现均非空（`LibraryViewModel.cs:66-70`），登记 follow-up（不阻塞）。
+- Review 独立复跑：定向 `TrashUiTests` 40/0/0；全量 .NET 1532/0/86；`pytest tests` 3249/10（隔离复跑 EXIT=0；如实记录一次与 .NET 并行时的中断/单 F，不归因本卡）；pins 18/18；check PASS(3 warnings)；API inventory PASS；另做 3 处独立破坏（3/3 变红，恢复后 blob 一致）。
