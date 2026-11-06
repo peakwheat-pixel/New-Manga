@@ -29,7 +29,7 @@ allowed_paths:
   - verification/FEA-11-RUN-GRANT-2B-PREREQ-1/**
 out_of_scope:
   - 生产代码/测试（src/**、tests/**、apps/**）——2B 实现卡（`FEA-11-RUN-GRANT-2`）另起
-  - C-06/C-17/C-15/C-07/C-08/M2-C1/ADJ-001 与其余 16 份冻结契约字节
+  - C-06/C-17/C-15/C-07/C-08/M2-C1/ADJ-001 等其余 17 份冻结契约字节（C-16 除外）
   - Run wire/`CORE_PROTOCOL_MINOR`/新错误码/schema/迁移/依赖；UI/扫描策略；真实用户数据；push
 ---
 
@@ -80,7 +80,7 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-T1 契约增量最小且可复核**：C-16 v1.4 只含 I-2 登记增量（容器 entries 1..N 语义 + 校验矩阵 + §10 记录）；既有 grant scope 形状/TTL/撤销/失联/§6 闭集/§7 脱敏/§2.4 命令/Run wire 零改动；C-06/C-17 与其余 16 契约逐字节不变。
+- [ ] **AC-T1 契约增量最小且可复核**：C-16 v1.4 只含 I-2 登记增量（容器 entries 1..N 语义 + 校验矩阵 + §10 记录）；既有 grant scope 形状/TTL/撤销/失联/§6 闭集/§7 脱敏/§2.4 命令/Run wire 零改动；C-06/C-17 在内的其余 17 契约逐字节不变。
 - [ ] **AC-T2 独立 byte-level 复核 approved**：fresh subagent 对最终字节复核（diff 逐行、无新错误码、无 wire/minor 变更、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。
 - [ ] **AC-T3 重冻与 pins**：FROZEN-C16 更新（新 sha、v1.4 记录、历史 pin 保留）；矩阵更新；`verify_pins` **18/18**（C16 新值、其余 17 项原值）；`check.ps1`（默认 + `-TaskPath`）PASS。
 - [ ] **AC-T4 载体与不夸大**：载体含触发/授权/变更点/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 Run wire/schema/依赖。
@@ -88,7 +88,7 @@ out_of_scope:
 ## 独立复核要求（byte-level）
 
 - Reviewer：未参与起草/前轮复核的 fresh subagent；只读最终工作树字节；记录 session/reviewed_head。
-- 核对：①I-2 各项精确落地；②C-06/C-17 及其余 16 契约零字节；③无新错误码/无 wire/minor/schema/依赖变化；④pin 可复算、18/18；⑤载体/卡不夸大。
+- 核对：①I-2 各项精确落地；②C-06/C-17 在内的其余 17 契约零字节；③无新错误码/无 wire/minor/schema/依赖变化；④pin 可复算、18/18；⑤载体/卡不夸大。
 - 通过标准：approved（可含非阻断 P3）；随后 DSH 提交 UNFREEZE 提交并重跑 pins；未通过 → 返修后窄面复审。
 
 ## 已知 limitation / follow-up

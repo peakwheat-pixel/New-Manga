@@ -1,6 +1,6 @@
 # FEA 契约冻结准备总表（冻结矩阵）
 
-状态：**ACTIVE**（**18 个冻结对象**：17 份既有 + C-17 v1.1；C-05 v1.2/C-15 v1.1/C-16 v1.3 于 2026-11-04/2026-11-06 UNFREEZE 重冻，C-06 为 v1.2；C-16 v1.3 新增 §2.4 `AuthorizeSourceReadForRun` + `source.read.run/1`）
+状态：**ACTIVE**（**18 个冻结对象**：17 份既有 + C-17 v1.1；C-05 v1.2/C-15 v1.1/C-16 v1.4 于 2026-11-04/2026-11-06/2026-11-07 UNFREEZE 重冻，C-06 为 v1.2；C-16 v1.3 新增 §2.4 `AuthorizeSourceReadForRun` + `source.read.run/1`，v1.4 增容器多成员 entry 语义）
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、各草案的「冻结条件」节、[FEA-CONTRACT_FREEZE_PACKAGE](FEA-CONTRACT_FREEZE_PACKAGE.md)
@@ -34,7 +34,7 @@
 
 
 | 15 | **C-15** Source 存储契约（DDL/迁移/完整性-可见性/Registry/跨存储次序） | **`FROZEN v1.1`** 2026-11-04（UNFREEZE 重冻；v1.0 2026-11-03） | ①r7 approved（P0/P1=0）②C-05/C-06 v1.1 UNFREEZE 同批冻结 ③`verify_pins` 17/17 ④`check.ps1` PASS | C-01b/C-05 v1.1/C-06 v1.1/C-14 | 无（实现释放归 FEA-09 scope-r2） |
-| 16 | **C-16** Source 读取/导入 wire v1.3（四维 scope/撤销/密码引用/fresh-grant resolve/异步 receipt/Run 授权建立命令） | **`FROZEN v1.3`** 2026-11-06（UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04） | ①v1.3 独立 byte-level 复核（载体 CONTRACT-UNFREEZE-2026-11-06-C06-C16）②C-06 v1.2 同批 ③18/18 ④PASS | C-06 v1.2/C-15 v1.1 | 无（Run 接线归 FEA-11-RUN-GRANT-1） |
+| 16 | **C-16** Source 读取/导入 wire v1.4（四维 scope/撤销/密码引用/fresh-grant resolve/异步 receipt/Run 授权建立命令/容器多成员 entry） | **`FROZEN v1.4`** 2026-11-07（UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04 / v1.3 2026-11-06） | ①v1.4 独立 byte-level 复核（载体 CONTRACT-UNFREEZE-2026-11-07-C16）②C-06/C-17 零改动 ③18/18 ④PASS | C-06 v1.2/C-15 v1.1 | 无（容器成员 entry 实现归 FEA-11-RUN-GRANT-2） |
 
 | — | **C-17** Source 同步契约（v1.1） | **`FROZEN v1.1`**（2026-11-06 UNFREEZE 重冻；v1.0 2026-11-04） | ①契约最终字节独立 Review ②DSH 冻结记录/三指纹/pin 18 ③M2-C1 增量或无增量决定 | C-14/C-15/C-16（语义基座） | 无（实现释放归 FEA-11-SCAN-2） |
 
