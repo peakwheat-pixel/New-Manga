@@ -106,16 +106,25 @@ out_of_scope:
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-T1/T2/T4 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md | ae8c2de07 | 见载体字节 | CANONICAL |
-| EV-02 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r1.md | ae8c2de07 | 见文件字节 | CANONICAL |
-| EV-03 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r2.md | ae8c2de07 | 见文件字节 | CANONICAL |
-| EV-04 | AC-T3 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/EV.md | ae8c2de07 | 0e157cadb74c4530f9b1489e15bdcea999765329c04feabf5f44ffc1f217653d | CANONICAL |
+| EV-01 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/carrier.md | ae8c2de07 | 080cb6c9dfea0ba0eb39254a3af5b09c872b954dc7390696bbaae97293e4bd78 | CANONICAL |
+| EV-02 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/changed-lines.diff | ae8c2de07 | a872d7d1f96978b54254ca077cc47fbe8c00fce330d78becdb4aaefebee4690f | CANONICAL |
+| EV-03 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/EV.md | ae8c2de07 | 0e157cadb74c4530f9b1489e15bdcea999765329c04feabf5f44ffc1f217653d | CANONICAL |
+| EV-04 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/logs/check-taskpath.log | ae8c2de07 | 046d00987d38cc32e3b52c8d992d0f746c133ff04b4241dbb4eebf2f4c18dc42 | CANONICAL |
+| EV-05 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/logs/check.log | ae8c2de07 | 27430a9761cfc512af676a0678f3ea88c1dcb487ebc6a1d0ef2b28e9469510c0 | CANONICAL |
+| EV-06 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/logs/pins.log | ae8c2de07 | 584e7ad029873e0b7bdce5a1d5884725f1a93537b5a49e872c9b9eba6408323e | CANONICAL |
+| EV-07 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/other-17-pins.txt | ae8c2de07 | 01c4d04358f466b3683c999e9b1424d259924c2b84fef8ad34ed22a11004dc57 | CANONICAL |
+| EV-08 | AC-T3/T4 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/pre-post.sha256 | ae8c2de07 | 80c72a4f0c3b22b013d68ac67e10c3310ab7b94791fafd3c0848d3804b27e46b | CANONICAL |
+| EV-09 | AC-T2 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md | ae8c2de07 | 080cb6c9dfea0ba0eb39254a3af5b09c872b954dc7390696bbaae97293e4bd78 | CANONICAL |
+| EV-10 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r1.md | ae8c2de07 | e12b46c822b03f619741321ba6c07b9dadd7ff2b98960cc1dc026e1200853fbb | CANONICAL |
+| EV-11 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r2.md | ae8c2de07 | dfa041ea222f2a482866b94dc08cec5dde33afe98ad7548641aaa199aee02304 | CANONICAL |
 
 > 证据树其余文件（changed-lines.diff、other-17-pins.txt、pre-post.sha256、carrier.md、logs 3）的逐文件 sha256 见 EV.md；本表只列 closeout 层关键项。
 
 ## Resource Manifest
 
-`verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/EV.md`（含逐文件 sha256）；仓内删除/移动/归档 0；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S1-REGISTRY-RESILIENCE-1/`（C-15 blob 副本/日志，无独有产品数据）→ `PRESERVE_REFERENCED`。
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改契约/冻结记录/矩阵/载体/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S1-REGISTRY-RESILIENCE-1/` 保留（无独有产品数据） |
 
 ## Closeout Record（2026-11-07）
 
