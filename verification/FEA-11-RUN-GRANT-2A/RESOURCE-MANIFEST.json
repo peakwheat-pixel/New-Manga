@@ -183,6 +183,6 @@
     "migrated": 0,
     "archived": 0
   },
-  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外隔离根保留供 Review 复核（不随仓库分发）。全量 pytest / .NET 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-governance.log 尾注）。",
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓内 tracked 文件零删除。全量 pytest/.NET 会重写 tracked verification/FEA-09/logs/wire-redacted.ndjson，跑后均 git checkout -- verification/FEA-09 恢复；恢复事实见卡 Closeout Record 与 logs/gates-governance.log（该日志在 closeout 重写时丢失原分节头/尾注，已登记为已知证据瑕疵）。",
   "repo_head_at_generation": "923ce00fd52c3bd15e3ea588853d4c2152a73ea2"
 }

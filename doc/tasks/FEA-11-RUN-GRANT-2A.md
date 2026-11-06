@@ -112,7 +112,7 @@ out_of_scope:
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-G1 | verification/FEA-11-RUN-GRANT-2A/EV.md | 53dc38bd4 | 2c87dbe3540e5d09470cd6ebafb0b56cde8d80e803d20e291314152c25d47651 | CANONICAL |
+| EV-01 | AC-G1 | verification/FEA-11-RUN-GRANT-2A/EV.md | 53dc38bd4| c016854c9e45e11a8bf15346ce3ecb1df5c05dc870ef65b9f75d7521a04c2813 | CANONICAL |
 | EV-02 | AC-G7 | verification/FEA-11-RUN-GRANT-2A/changed-files.txt | 53dc38bd4 | 2ad94f2c4b8c4eae7eacfa8dc8b7c6fd09724d7f6e23fee130142c818daffbb4 | CANONICAL |
 | EV-03 | AC-G7 | verification/FEA-11-RUN-GRANT-2A/scope-validation.log | 53dc38bd4 | 5b5398153451a55e4d9fb7757aa2faea1bdfd6d9127280a646e803163fb01e63 | CANONICAL |
 | EV-04 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/logs/full-pytest.log | 53dc38bd4 | f55e9282738d366d5879ec2916762fb1eb74bac6b4bd0f16379de0397861e0b4 | CANONICAL |
@@ -122,7 +122,7 @@ out_of_scope:
 | EV-08 | AC-G5/AC-G6 | verification/FEA-11-RUN-GRANT-2A/logs/host-unit.log | 53dc38bd4 | e69daf14fbad2ee6399bc6cf6248c745d3858ad345a7fb9db77bf06d3755afd2 | CANONICAL |
 | EV-09 | AC-G1 | verification/FEA-11-RUN-GRANT-2A/logs/feature.log | 53dc38bd4 | c0b655315f2b858a305e4a8efae88418de7adf91971f52034e0853d0b7857e7c | CANONICAL |
 | EV-10 | AC-G7 | verification/FEA-11-RUN-GRANT-2A/logs/gates-governance.log | 53dc38bd4 | c30f4c56a50e3f2f2f17f881fd40efb59fe01eb46a5dbae8f2d2a398ab29da97 | CANONICAL |
-| EV-11 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/RESOURCE-MANIFEST.json | 53dc38bd4 | 3fe6ed57c47ac1d55460b5e406d9d8171293ee6211a51d85f5ee7c7cb2af2911 | CANONICAL |
+| EV-11 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/RESOURCE-MANIFEST.json | 53dc38bd4| 2328720a09a969304135fb8481db1d6fd6ac5a065e13d5ef599e07400b642d49 | CANONICAL |
 | EV-12 | AC-G1…G6 | verification/FEA-11-RUN-GRANT-2A/tools/discrimination.py | 53dc38bd4 | 71d20b4091bd03891fccb732448da2b6b85083c2eade5c7f1db9c48e4457ce3f | CANONICAL |
 | EV-13 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_ev.py | 53dc38bd4 | 65f14609f6209da6506eb5418dd8d308063476e16423db41ce92255f46382b3c | CANONICAL |
 | EV-14 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_manifest.py | 53dc38bd4 | c1cde06b4fab1f705d45046af05700222ea9ef4c19a651d00632f88adc3fdbc3 | CANONICAL |
@@ -148,3 +148,7 @@ out_of_scope:
 ### Closeout 补充（2026-11-07；记录修正）
 
 - 独立 Review r1 在提交后对边界说明补一句事实澄清（工作树并发文件归属），文件 sha256 由 2e2079cd… 变为 540f9f3c…；卡 EV-16 已重签到 5e4a572ab 提交。**不改变** AC-G1…G8 判定、reviewed_head 0bafc89e、approved 结论与任何实现/测试/证据字节。
+
+### Closeout 补充（2026-11-07；证据格式登记）
+
+- Reviewer 复核后观察（P3，不影响 AC/approved）：`logs/gates-governance.log` 在 closeout 曾被就地重写，丢失原分节头/`EXIT=`/恢复尾注（内容仍为真实检查输出；Manifest `closeout_note` 原引用悬空已改写）；EV §5 表两行 sha 为生成时快照、终值见卡 EV-10/EV-17。已登记为**已知证据格式瑕疵**，不做重写（如需重写须重钉 EV-10 与日志字节）。

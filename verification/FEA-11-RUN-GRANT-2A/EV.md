@@ -170,3 +170,5 @@ C:/Python314/python.exe verification/FEA-11-RUN-GRANT-2A/tools/discrimination.py
 - delivery_head=a0bafc89ec74be08e3d6d721105639df01a140a7
 - repo_head_at_generation=923ce00fd52c3bd15e3ea588853d4c2152a73ea2
 - generator=`verification/FEA-11-RUN-GRANT-2A/tools/gen_ev.py`（sha256 由本地文件实时计算）
+
+> closeout 复核后注（2026-11-07）：§5 表内 `logs/gates-governance.log` 与 `Handoff` 两行 sha 为**生成时快照**（`a0bafc89e` 时点）；closeout 重记日志与 Handoff 补充后的终值分别为 `c30f4c56…`、`03d3ec81…`，卡面 Canonical Evidence EV-10/EV-17 按终值钉住。`logs/gates-governance.log` 在 closeout 曾被就地重写（分节头/EXIT/恢复注记在重写中丢失，内容仍为当时的真实检查输出）；该格式损失登记为已知证据瑕疵（不影响检查结论、AC 判定与 approved）。
