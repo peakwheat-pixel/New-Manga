@@ -6,10 +6,10 @@
 
 | 项 | 值 |
 |---|---|
-| HEAD | `44965532f`（main，origin 同步，AHEAD=0；2A 待 closeout） |
-| 本轮已完成 | `FEA-11-RUN-GRANT-1-PREREQ-1` done（`116a711ba`）；`FEA-11-RUN-GRANT-1` done（`a11ded0d3`）；`FEA-11-RUN-GRANT-2B-PREREQ-1` done（`d8dcfc07a`；C-16 v1.4 UNFREEZE，r1 changes→r2 approved，pins 18/18；记录修正 `29365bf3c`/`44965532f`）；`FEA-11-RUN-GRANT-2A` 实现交付（`a0bafc89e`；AC-G1…G8 已勾，独立 Review 进行中） |
+| HEAD | `5397be149`（main，origin 同步；2A done，2B ready 实现中） |
+| 本轮已完成 | `FEA-11-RUN-GRANT-1-PREREQ-1` done（`116a711ba`）；`FEA-11-RUN-GRANT-1` done（`a11ded0d3`）；`FEA-11-RUN-GRANT-2B-PREREQ-1` done（`d8dcfc07a`；C-16 v1.4，r2 approved，pins 18/18；记录修正 `29365bf3c`/`44965532f`）；`FEA-11-RUN-GRANT-2A` **done**（`a0bafc89e`；AC-G1…G8 MET；独立 r1 approved P0=0/P1=0；P2 处置；L-G15 修、L-G16 登记） |
 | 基线（2A 交付实测） | 全量 pytest 3281/10；全量 .NET **1559/0/90**；定向 50；SourceRegistry 29；IPC 4；pins 18/18；check PASS(3w) |
-| 下一队列 | ①2A closeout（Review 后）；②`FEA-11-RUN-GRANT-2` 2B 实现（C-16 v1.4 已冻，待释放）；③L-S1 registry resilience；④L-S4 死代码；⑤L-R11 两读面 gate 统一；⑥C-04b 文档 residual；⑦SCAN-2 RH-1…RH-5；⑧UI P3/L3/L4 |
+| 下一队列 | ①`FEA-11-RUN-GRANT-2`（2B）实现（ready；Owner `run-grant-2b-impl` 已启动）；②L-S1 registry resilience；③L-S4 死代码；④L-R11 两读面 gate 统一；⑤C-04b 文档 residual；⑥SCAN-2 RH-1…RH-5；⑦UI P3/L3/L4 |
 
 ## 2. 待裁决（需用户产品取舍的候选；DSH 已附推荐并直接交 Codex/DSH 裁决，不阻塞）
 
