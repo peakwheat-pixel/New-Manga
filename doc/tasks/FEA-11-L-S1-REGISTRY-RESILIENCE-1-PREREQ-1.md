@@ -3,20 +3,20 @@ id: FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1
 title: C-15 v1.5 UNFREEZE（Registry 文件损坏与「根身份当前不可用」分离）
 kind: contract
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；`FEA-11-L-S1-REGISTRY-RESILIENCE-1` 权威 scope review `doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-scope-r1.md`（fresh subagent `976c9d16-…`，**READY-WITH-UNFREEZE**：仅 C-15 §5 单条，1 pin；C-16/C-17 零改）；Codex 裁决输入因额度不可用 → 按用户授权故障转移 ZCode（结果见卡「裁决依据」）；DSH 裁决 D-1…D-9（见下）
 suggested_owner: dsh
 owner: dsh
-reviewer: 独立上下文 fresh subagent（byte-level；不得参与本 UNFREEZE 起草；session 见 `doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r1.md` 与载体）
+reviewer: 独立上下文 fresh subagent（byte-level；未参与起草）：r1 `94eab07b-7235-422e-b1f0-569c603e4cf7`（changes_requested P0=0/P1=2/P2=5/P3=9）/ r2 `ccdae3ad-6ff7-4236-b59c-0b46b7ef9043`（**approved** P0=0/P1=0/P2=0/P3=15 非阻断）；报告 `…-PREREQ-1-r1/r2.md`；载体 §6
 depends_on:
   - FEA-11-RUN-GRANT-2B-PREREQ-1
 base_commit: d782c52a4
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: ae8c2de07
+delivery_head: ae8c2de07
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md
@@ -95,3 +95,33 @@ out_of_scope:
 ## ZCode 裁决记录
 
 - **已记录（ZCode，2026-11-07，subagent_zcode 只读）**：对 D-1…D-9 **全部无异议、无翻案**；确认 C-15 §5 必须 UNFREEZE（1 份/1 pin）、C-16/C-17 零改动、零契约折中不存在；错误码保持现状（D-2）成立；同意 A/B/C 拆分（A 本轮、B 依赖 L-S4、C limitation）；补充 limitation 应同时引用 C-16 :174 与 C-06 :44 的码义不自洽。建议 A 的 Owner 可为 ZCode（Host 单文件窄改）；本卡经 DSH 裁决采用既有 Host 实现 Owner。
+
+## Review 处置（DSH，2026-11-07；append-only）
+
+- r1 `changes_requested`（P0=0/P1=2/P2=5/P3=9）：P1-A 矩阵行、P1-B check 台账/DAG；DSH 处置：矩阵 C-15 行 → FROZEN v1.5、台账重建（529/11）、PLAN READY/DAG 登记、EV.md/日志刷新、错误码跨契约语义登记 limitation、派生状态不新增契约字段、AC-T4 措辞补齐。
+- **r2 `approved`（P0=0/P1=0/P2=0/P3=15 非阻断；session `ccdae3ad-…`，reviewed_head `821b309a0`）**：P1 全关闭；C-15 字节未变（`f9e376a0…`）；pins 18/18、其余 17 零 diff、EV 7/7、diff 归一化一致、无安全放宽。
+- 剩余 P3 登记接受（记录/引用/措辞级；C-15 字节不再改动以保持 pin）。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-T1/T2/T4 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C15.md | ae8c2de07 | 见载体字节 | CANONICAL |
+| EV-02 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r1.md | ae8c2de07 | 见文件字节 | CANONICAL |
+| EV-03 | AC-T2 | doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1-r2.md | ae8c2de07 | 见文件字节 | CANONICAL |
+| EV-04 | AC-T3 | verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/EV.md | ae8c2de07 | 0e157cadb74c4530f9b1489e15bdcea999765329c04feabf5f44ffc1f217653d | CANONICAL |
+
+> 证据树其余文件（changed-lines.diff、other-17-pins.txt、pre-post.sha256、carrier.md、logs 3）的逐文件 sha256 见 EV.md；本表只列 closeout 层关键项。
+
+## Resource Manifest
+
+`verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1/EV.md`（含逐文件 sha256）；仓内删除/移动/归档 0；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S1-REGISTRY-RESILIENCE-1/`（C-15 blob 副本/日志，无独有产品数据）→ `PRESERVE_REFERENCED`。
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；delivery/integration = `ae8c2de07`（C-15 v1.5 + FROZEN-C15 + 矩阵 + 载体 + r1/r2 报告 + 证据 + PREREQ 卡）。
+- **AC 判定**：AC-T1…AC-T4 **全 MET**。
+- **Review 处置**：r1 changes_requested → 处置 → **r2 approved（P0=0/P1=0/P2=0/P3=15 非阻断）**。
+- **门禁数字（before → after）**：pins **18/18 → 18/18**（C15 `d8c0a3bc…`→`f9e376a0…`；其余 17 项实测 UNCHANGED）；`check.ps1`（默认 + `-TaskPath`）PASS(3 warnings)；C-15 变更 +7/−4 行（§5 拆分 + §9 记录）；C-16/C-17 零字节；全量 pytest/.NET **NOT_RUN**（契约-only；由 A/L-S4 实现卡门禁实跑）。
+- **limitations / follow-up**：A（读取韧性）与 B（恢复/重授权）实现未交付；错误码复用 `SOURCE_REGISTRY_UNAVAILABLE` 的跨契约码义不自洽登记 limitation；`.corrupt-*` 无界复制（C）登记；契约就绪 ≠ 实现/产品可用。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
