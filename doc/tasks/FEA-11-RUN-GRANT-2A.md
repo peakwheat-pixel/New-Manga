@@ -127,7 +127,7 @@ out_of_scope:
 | EV-13 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_ev.py | 53dc38bd4 | 65f14609f6209da6506eb5418dd8d308063476e16423db41ce92255f46382b3c | CANONICAL |
 | EV-14 | AC-G8 | verification/FEA-11-RUN-GRANT-2A/tools/gen_manifest.py | 53dc38bd4 | c1cde06b4fab1f705d45046af05700222ea9ef4c19a651d00632f88adc3fdbc3 | CANONICAL |
 | EV-15 | AC-G7 | verification/FEA-11-RUN-GRANT-2A/tools/scope_validation.py | 53dc38bd4 | 0560f0d0b5698929a80c3803244a273778b61f382768429708b60e8191d09c7e | CANONICAL |
-| EV-16 | AC-G1…G8 | doc/reviews/FEA-11-RUN-GRANT-2A-r1.md | 53dc38bd4 | 2e2079cd944da74327dc84ee2aa1554c7797be2a82da9d3b3ed38c969bc55804 | CANONICAL |
+| EV-16 | AC-G1…G8 | doc/reviews/FEA-11-RUN-GRANT-2A-r1.md | 5e4a572ab | 540f9f3c6eb29a866ad7fc69bc5e694fb4fffe88109fe59b647d028d0d966708 | CANONICAL |
 | EV-17 | AC-G8 | doc/handoffs/FEA-11-RUN-GRANT-2A-a0bafc89e.md | 53dc38bd4 | 03d3ec815fc2b04b8b3fb9217ce189d1e594d37c7b4aad2ec5252f012a2a4549 | CANONICAL |
 
 ## Resource Manifest
@@ -144,3 +144,7 @@ out_of_scope:
 - **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2A\`（IPC 夹具/门禁日志/复核备份，无独有产品数据）→ `PRESERVE_REFERENCED`；Manifest 已修 `delivery_head`。
 - **指针清理**：STATUS 当前 Task → `FEA-11-RUN-GRANT-2`（2B 实现 ready）；PLAN 本节点 done；TASK_LEDGER 重生成。
 - **push**：Lead 统一 push（PRE/POST/AHEAD 见后续 push 记录）。
+
+### Closeout 补充（2026-11-07；记录修正）
+
+- 独立 Review r1 在提交后对边界说明补一句事实澄清（工作树并发文件归属），文件 sha256 由 2e2079cd… 变为 540f9f3c…；卡 EV-16 已重签到 5e4a572ab 提交。**不改变** AC-G1…G8 判定、reviewed_head 0bafc89e、approved 结论与任何实现/测试/证据字节。

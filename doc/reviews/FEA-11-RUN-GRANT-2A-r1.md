@@ -30,7 +30,7 @@ verdict: approved
 
 ## 0. 复核对象、方法与边界
 
-- 仓库 `G:\CODEX\New Manga`，`main`；复核开始 `HEAD=44965532f49ed3a1d325c88488c906607396efd8`（`git rev-parse` 实测），工作树仅有并发会话的 `doc/handoffs/DSH-PROGRESS-2026-11-07.md` 变更（非本卡面；我未触碰）。
+- 仓库 `G:\CODEX\New Manga`，`main`；复核开始 `HEAD=44965532f49ed3a1d325c88488c906607396efd8`（`git rev-parse` 实测），工作树仅有并发会话的 `doc/handoffs/DSH-PROGRESS-2026-11-07.md` 变更（非本卡面；我未触碰）。**说明**：任务下发时被并发修改的 `doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r2.md` 在复核开始前已被该会话提交（`29365bf3c`/`44965532f`），工作树转而出现 `DSH-PROGRESS` 的未提交变更；两者都不属于本卡面，且 2A 的 5 个被审文件在整个复核期间保持干净。
 - **只读事实以 `a0bafc89ec74be08e3d6d721105639df01a140a7` 的实现/测试字节为准**：复核前后两次 `git diff --stat a0bafc89e -- <5 个 scope 文件>` 均为空；sha256 与 `EV.md §5.1` 一致（`HostRuntime.cs 51dcd654…`、`SourceReadCoordinator.cs fb48aa2f…`、`SourceScanScheduler.cs c450b7c8…`、`Fea11RunGrantIpcTests.cs 4cb7238e…`、`SourceRegistryTests.cs 2b7ba4ba…`）。
 - **本卡 scope 按自有 commit 链 `1b6152112..a0bafc89e` 计算**（`aa0a5562b` + `a0bafc89e`）；共享工作树同期落地的 `d8dcfc07a`（C-16 v1.4 UNFREEZE）/`923ce00fd`（其 closeout）/`29365bf3c`/`44965532f` **不属于本卡**，未计入、未修改、未引用为 2A 证据。
 - 本 Review **未参与**该卡实现、返修、证据生成或 Handoff 编写；未 `git add`/`commit`/`push`；未修改实现/测试/证据/卡/契约；唯一仓库写入为本文件。
@@ -265,3 +265,15 @@ verdict: approved
 - 运行副作用：仓外 workspace 的新增 IPC 夹具目录与本次复核的备份/核对脚本；未改写任何 tracked 证据；未运行会重写 `logs/discrimination.log` 的全脚本。
 - 未重跑全量 pytest/.NET（按任务约定由 Lead 实跑并在文中明确）；全量数字来自日志尾行/逐程序集求和与 Handoff/EV 的交叉核对，未以静态判断冒充实测。
 - 本报告所有「实测」均有命令与结果记录；未执行项（B2/B6 复现、全量套件、discrimination.py 全脚本）已明确标注。
+
+---
+
+## 10. 复核后观察（append-only；不属于被审 head，不改变 §8 verdict）
+
+- 本报告在 2026-11-07 06:13 由 Lead 的处置提交 `53dc38bd4`（"Review r1 处置证据 + r1 报告入库"）连同 R2A-01/R2A-02 处置一并入库；入库的是本报告当时的快照，工作树里另有我对 §0「并发工作树说明」的一行补充（不改变任何判定，可由 Lead 在 closeout 一并提交或丢弃）。
+- **R2A-01 已关闭**：`RESOURCE-MANIFEST.json` 的 `delivery_head` 已改为 `a0bafc89e…`，原值保留为 `repo_head_at_generation=923ce00fd…`；worktree `source_path` 同步。
+- **R2A-02 以文档边界关闭**：`>4096` 成员 folder 源不缓存、每 Run 重扫且不铸造（fail-closed）登记为 **L-G16**（EV §7.1、Handoff §7）；未改实现/测试字节（`a0bafc89e` 未变），也未宣称 folder 全量可用。
+- **但该处置提交引入了新的证据不一致（建议 closeout 修正）**：
+  1. `verification/FEA-11-RUN-GRANT-2A/logs/gates-governance.log` 被**就地改写**：丢失 `=== verify_pins.ps1 ===` / `=== check.ps1 (default) ===` / `=== check.ps1 -TaskPath … ===` / `=== generate_api_inventory.py --check ===` 分节头与 API 后的 `EXIT=0`，并删除了尾注「恢复注记」；而 `RESOURCE-MANIFEST.json` 的 `closeout_note` 仍引用「见 logs/gates-governance.log 尾注」→ **引用悬空**。证据纪律要求每次运行保留命令/EXIT 头；建议重跑并以新文件（或 append 段）记录，而不是覆盖既有日志。
+  2. **EV 签名失配 2 行**：`EV.md:98` 的 gates 日志仍写 `2c2ff57b…`（实际 `c30f4c56…`）；`EV.md:113` 的 Handoff 仍写 `61e70856…`（实际 `03d3ec81…`，因 §7 处置补充追加）。我以脚本对**当前**工作树复算 EV：**19/21 OK、2 MISMATCH**（本报告 §5 的 21/21 对应被审快照 `5c95d96f2`，二者不矛盾）。
+- 上述观察不影响 AC-G1…G8 的 MET 判定与 `approved` 结论（被审字节未变）；但 closeout 前应修正 EV 两行签名并恢复/重建带分节头与 EXIT 的门禁日志，否则证据链自相矛盾。
