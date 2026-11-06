@@ -3,11 +3,11 @@ id: FEA-11-RENDITION-1
 title: FEA-11 referenced rendition 图源承接（Core 侧 Run/provider 消费当前 binding 真实 rendition）
 kind: implementation
 governance_version: 3
-status: ready
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-11-RENDITION-1-scope-r1.md`（fresh subagent，verdict **READY-TO-FREEZE**，契约零字节）；DSH 2026-11-06 裁决（见「Scope Review 裁决」）：接受 **Core-only** 范围，F1（Run 无 source-read grant 通道）登记 limitation **L-R1** 并另立后续候选 `FEA-11-RUN-GRANT-1`，**I-5（commit guard 投影改造）出域**；释放为 ready、base `cdba15742`、Owner=`rendition-impl`（DSH Agent Teams）
+status: in_review
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-11-RENDITION-1-scope-r1.md`（fresh subagent，verdict **READY-TO-FREEZE**，契约零字节）；DSH 2026-11-06 裁决（见「Scope Review 裁决」）：接受 **Core-only** 范围，F1（Run 无 source-read grant 通道）登记 limitation **L-R1** 并另立后续候选 `FEA-11-RUN-GRANT-1`，**I-5（commit guard 投影改造）出域**；释放为 ready、base `cdba15742`、Owner=`rendition-impl`（DSH Agent Teams）。实施交付 head `a05a419f7`（`693ab469b` + `a05a419f7`；证据/卡/Handoff `75dace4c2`）；DSH 核验后 2026-11-06 转 `in_review`，I-1 混合页取舍按「实施取舍裁决」接受；Review 由独立上下文 fresh subagent 执行
 suggested_owner: codex
 owner: rendition-impl
-reviewer: 独立上下文 fresh subagent（不得由实现会话/实例自审；报告须记录 reviewer 与会话 ID）
+reviewer: 独立上下文 fresh subagent（r1 已指派；不得由实现会话/实例自审；session 与来源见 `doc/reviews/FEA-11-RENDITION-1-r1.md`）
 depends_on:
   - FEA-11-LINEAGE-1
   - FEA-09
@@ -41,7 +41,7 @@ out_of_scope:
 
 # FEA-11-RENDITION-1：referenced rendition 图源承接（Core 侧）
 
-> **状态：`ready`（scope 已冻结；Owner=`rendition-impl`；base `cdba15742`）。**
+> **状态：`in_review`（交付 head `a05a419f7`；Owner=`rendition-impl`；base `cdba15742`）。**
 > 承接 `FEA-11-LINEAGE-1` **L10**（Run/provider 消费 `managed_original_ref` 旧图，真实 referenced 图源/rendition 未承接）。
 > **本卡只交付 Core 侧能力**：目标可进入 Run + provider 像素来自当前 binding 的真实 rendition + typed 拒绝 + 真实新旧图判别测试。**生产级端到端 Run 仍受 L-R1 限制**（Run 无 source-read grant 通道，Host/App 切片另卡）。
 
@@ -64,6 +64,14 @@ out_of_scope:
 | U1/U2 契约文本追加（delta 建议） | delta 判 READY-WITH-UNFREEZE（仅文本层） | **不采纳 UNFREEZE**：C-17 §7.2「实际资源读取」+ C-15 §4.1 `R(p,t)` + §4.2 发布面已覆盖本卡读法；改以本卡「实现语义」段写死同一读法（DSH 认账）；零契约字节 |
 | §3.3 pending 码投影（delta D-A） | 需显式裁决 | **按既有 family 投影**：Run 目标展开/`StartRun` pending → `TARGET_NOT_FOUND`；provider 读图 → `PROVIDER_FAILED`/`INVALID_INPUT`（detail 记 source 语义）；C-17 §8:352「旧命令不重映射」，不新增 `SOURCE_*`（L-R8） |
 | `prepared["cache_key"]` vs `RenditionCache.rendition_key`（delta D-B） | provider 若接缓存必须用 `acquire` 同参 | **本卡 provider 不接 `rendition_cache`**（Out/L-R7）；卡面实现语义与 AC-R5 增加禁止性断言（不得用 `prepared["cache_key"]` 作缓存键） |
+
+## 实施取舍裁决（DSH，2026-11-06；交付后核验）
+
+| # | 实现取舍 | **DSH 裁决** |
+|---|---|---|
+| A-1 | **I-1 混合页准入**：Owner 实现为「**纯 referenced 页**（`managed_original_ref IS NULL`）走 V+gate 新准入；**遗留混合页**（referenced + `managed_original_ref` 非空）在 Run **目标进入层**保持既有门槛」；provider 层混合页仍按 binding 图（L-R5） | **接受**。理由：①纯 referenced 是 AD-003/C-15 的产品形态，必须走冻结 V+gate；②混合页是历史/测试/损坏形态，改其准入会扩大与本卡目标无关的既有行为面，且可能在无 binding 的遗留行上引入新失败；③provider 读取仍 fail-closed：混合页若 binding 不可用 → `ProviderInputError`（`PROVIDER_FAILED`）typed 拒绝，绝不回退旧 managed 原图（L-R5）。该不对称已写入 L-R5，**Review 不得据此判 AC-R1 未满足**（AC-R1 的 V 假反向断言在纯 referenced 页上成立）。 |
+| A-2 | `delivery_head` 指向实现+测试 head `a05a419f7`（证据/卡/Handoff 提交 `75dace4c2` 在其后） | **接受**：`delivery_head` = 实现+测试 head；证据提交由 `integration_commit`/证据 commit 字段反映（沿既往卡惯例）。 |
+| A-3 | 判别性自检由实现者完成（4/4 破坏变红） | **接受但不采信为最终证据**：独立 Review 必须自行破坏至少一条分支复跑（Handoff §5 已要求）；实现者自检仅作辅助。 |
 
 ## 目标（可观察交付）
 
@@ -108,13 +116,13 @@ out_of_scope:
 
 > 每条 AC 必须有「删掉实现/改坏关键分支必须变红」的判别性测试；像素断言**禁止 stub**；真实文件放隔离根/`tmp_path`。
 
-- [x] **AC-R1 目标进入（page/chapter/region）**：V 为真、binding healthy、gate open 的 referenced 页在 page-scope 与 chapter-scope（含 managed+referenced 混合章节）`expand` 成功且 `current(page_id)` 可返回快照；region-scope 在 `width/height` 非空且 lineage 可读时成功；反向：`integrity_status≠complete` 或 `verified_digest≠entry.content_digest` 的页仍 `TARGET_NOT_FOUND`；region-scope 在 `width/height` 为 NULL 时仍 `TARGET_NOT_FOUND` 且 message/retryable 稳定。 <<MET>> 证据：`tests/fea11/test_source_rendition_run.py`（5 用例）+ `tests/fea11/test_source_rendition_gates.py::test_pending_gate_blocks_the_real_run_target_and_opens_when_acknowledged`（真实装配）；`verification/FEA-11-RENDITION-1/logs/gates-feature.log`。
-- [x] **AC-R2 像素来自当前 binding 的真实 rendition（判别核心）**：两套/三套真实不同图（A=30×20 managed copy、B=12×7 当前 binding entry、C=20×9 旧 entry），断言 `page_frame`/`page_png`/`region_crop` 的像素与尺寸只匹配 B；混合页 managed 路径**零调用**（`ManagedRootTrust.read_bytes` 哨兵）；真实 production pipeline + `run_source_guard` 接线 + 记录型 detector/OCR 断言像素来自 B 且 detect 产出的 native lineage 绑定当前 binding；重指 binding 后像素随 binding 变化。 <<MET>> 证据：`test_source_rendition_source.py`（8 用例）+ `test_source_rendition_run.py`（2 用例）+ `gates.py::test_real_assembly_provider_reads_the_binding_rendition_end_to_end`；判别性 case B（删掉 referenced 分支 → 4 failed）。
-- [x] **AC-R3 managed 零回归**：managed 页 `TargetSnapshot.metadata` 键集合不变（基础 5 键 + 既有 `context_pages` 投影）；`page_frame/region_crop/page_png` 与既有实现一致；managed 分支**从不**调用 grant/gate（`_ForbiddenAccess` + `_forbidden_gate` 探针）；既有 `tests/providers`（559 passed/4 skipped）与 `tests/fea11` 基线全绿。 <<MET>> 证据：`test_source_rendition_source.py::test_managed_page_reads_the_managed_copy_and_never_touches_grant_or_gate` 等 + `gates-feature.log`。
-- [x] **AC-R4 typed 拒绝与零写**：①prepare→accept 之间 binding 变化 → `RUN_STALE_PREVIEW`；②accept→commit 之间变化 → step FAILED（`INPUT_REVISION_CHANGED`，I-4），零业务写；③无 grant/revoked：读图前拒绝（`INVALID_INPUT`，detail 含 `SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`），`read_entry_bytes` spy 0 次；④gate pending/unavailable：目标展开 `TARGET_NOT_FOUND`，零解码；⑤读图后、写 region 前 binding 变化 → `INPUT_REVISION_CHANGED`，region/revision/lineage 行数不变；⑥entry 消失/损坏/预算超限：typed ProviderError。 <<MET>> 证据：`test_source_rendition_source.py`（10 用例）+ `test_source_rendition_run.py::test_binding_change_*` + `test_source_rendition_gates.py`（I-4 handler 级 4 用例 + 真实 commit guard 用例）；判别性 case C/D。
-- [x] **AC-R5 不建第二套选择规则**：spy `prepare_referenced_rendition` → provider 与 resolve 的选择元组逐字段一致且只调用一次；`RenditionCache.acquire` 探针 0 次；`media_artifacts`/`rendition_cache` 零发布；provider 源码不含 `"cache_key"` 字面（L-R7 禁令）。 <<MET>> 证据：`test_source_rendition_source.py::test_provider_reuses_the_single_selection_function_and_never_caches`；`gates.py::test_real_assembly_wires_one_gate_object_into_every_consumer`。
-- [x] **AC-R6 零契约/schema/依赖/wire 漂移**：`git diff 4360fbcdb..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps/` 为空；`verify_pins.ps1` 18/18 PASS；`generate_api_inventory.py --check` PASS；依赖文件零 diff；无 `SOURCE_*` 进入 Run 面（静态用例）。 <<MET>> 证据：`logs/gates-governance.log`、`logs/scope-validation.log`。
-- [x] **AC-R7 门禁、证据与「不夸大」约束**：`pytest tests` **3249 passed / 10 skipped**（基线 3212/10，差额 37 = 本卡新增；跑后已恢复 `verification/FEA-09` 字节）；`pytest tests/fea11` **145 passed**（基线 108）；全量 .NET **1527/0/86**（基线一致）；`check.ps1` PASS(3 warnings)；scope diff ⊆ allowed_paths；EV/Resource Manifest/Handoff 完整；**含 L-R1 负向用例**（`test_run_without_a_live_source_grant_is_typed_and_writes_nothing`）；Handoff 写明 L-R1/L-R2 且未宣称产品级可用/未回填 FEA-11 AC。 <<MET>> 证据：`verification/FEA-11-RENDITION-1/**`。
+- [x] **AC-R1 目标进入（page/chapter/region）**：V 为真、binding healthy、gate open 的 referenced 页在 page-scope 与 chapter-scope（含 managed+referenced 混合章节）`expand` 成功且 `current(page_id)` 可返回快照；region-scope 在 `width/height` 非空且 lineage 可读时成功；反向：`integrity_status≠complete` 或 `verified_digest≠entry.content_digest` 的页仍 `TARGET_NOT_FOUND`；region-scope 在 `width/height` 为 NULL 时仍 `TARGET_NOT_FOUND` 且 message/retryable 稳定。 证据：`tests/fea11/test_source_rendition_run.py`（5 用例）+ `tests/fea11/test_source_rendition_gates.py::test_pending_gate_blocks_the_real_run_target_and_opens_when_acknowledged`（真实装配）；`verification/FEA-11-RENDITION-1/logs/gates-feature.log`。 <<MET>>
+- [x] **AC-R2 像素来自当前 binding 的真实 rendition（判别核心）**：两套/三套真实不同图（A=30×20 managed copy、B=12×7 当前 binding entry、C=20×9 旧 entry），断言 `page_frame`/`page_png`/`region_crop` 的像素与尺寸只匹配 B；混合页 managed 路径**零调用**（`ManagedRootTrust.read_bytes` 哨兵）；真实 production pipeline + `run_source_guard` 接线 + 记录型 detector/OCR 断言像素来自 B 且 detect 产出的 native lineage 绑定当前 binding；重指 binding 后像素随 binding 变化。 证据：`test_source_rendition_source.py`（8 用例）+ `test_source_rendition_run.py`（2 用例）+ `gates.py::test_real_assembly_provider_reads_the_binding_rendition_end_to_end`；判别性 case B（删掉 referenced 分支 → 4 failed）。 <<MET>>
+- [x] **AC-R3 managed 零回归**：managed 页 `TargetSnapshot.metadata` 键集合不变（基础 5 键 + 既有 `context_pages` 投影）；`page_frame/region_crop/page_png` 与既有实现一致；managed 分支**从不**调用 grant/gate（`_ForbiddenAccess` + `_forbidden_gate` 探针）；既有 `tests/providers`（559 passed/4 skipped）与 `tests/fea11` 基线全绿。 证据：`test_source_rendition_source.py::test_managed_page_reads_the_managed_copy_and_never_touches_grant_or_gate` 等 + `gates-feature.log`。 <<MET>>
+- [x] **AC-R4 typed 拒绝与零写**：①prepare→accept 之间 binding 变化 → `RUN_STALE_PREVIEW`；②accept→commit 之间变化 → step FAILED（`INPUT_REVISION_CHANGED`，I-4），零业务写；③无 grant/revoked：读图前拒绝（`INVALID_INPUT`，detail 含 `SOURCE_ACCESS_DENIED`/`SOURCE_GRANT_REVOKED`），`read_entry_bytes` spy 0 次；④gate pending/unavailable：目标展开 `TARGET_NOT_FOUND`，零解码；⑤读图后、写 region 前 binding 变化 → `INPUT_REVISION_CHANGED`，region/revision/lineage 行数不变；⑥entry 消失/损坏/预算超限：typed ProviderError。 证据：`test_source_rendition_source.py`（10 用例）+ `test_source_rendition_run.py::test_binding_change_*` + `test_source_rendition_gates.py`（I-4 handler 级 4 用例 + 真实 commit guard 用例）；判别性 case C/D。 <<MET>>
+- [x] **AC-R5 不建第二套选择规则**：spy `prepare_referenced_rendition` → provider 与 resolve 的选择元组逐字段一致且只调用一次；`RenditionCache.acquire` 探针 0 次；`media_artifacts`/`rendition_cache` 零发布；provider 源码不含 `"cache_key"` 字面（L-R7 禁令）。 证据：`test_source_rendition_source.py::test_provider_reuses_the_single_selection_function_and_never_caches`；`gates.py::test_real_assembly_wires_one_gate_object_into_every_consumer`。 <<MET>>
+- [x] **AC-R6 零契约/schema/依赖/wire 漂移**：`git diff 4360fbcdb..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps/` 为空；`verify_pins.ps1` 18/18 PASS；`generate_api_inventory.py --check` PASS；依赖文件零 diff；无 `SOURCE_*` 进入 Run 面（静态用例）。 证据：`logs/gates-governance.log`、`logs/scope-validation.log`。 <<MET>>
+- [x] **AC-R7 门禁、证据与「不夸大」约束**：`pytest tests` **3249 passed / 10 skipped**（基线 3212/10，差额 37 = 本卡新增；跑后已恢复 `verification/FEA-09` 字节）；`pytest tests/fea11` **145 passed**（基线 108）；全量 .NET **1527/0/86**（基线一致）；`check.ps1` PASS(3 warnings)；scope diff ⊆ allowed_paths；EV/Resource Manifest/Handoff 完整；**含 L-R1 负向用例**（`test_run_without_a_live_source_grant_is_typed_and_writes_nothing`）；Handoff 写明 L-R1/L-R2 且未宣称产品级可用/未回填 FEA-11 AC。 证据：`verification/FEA-11-RENDITION-1/**`。 <<MET>>
 
 ## 实施记录（Owner `rendition-impl`，2026-11-06）
 
@@ -142,7 +150,7 @@ out_of_scope:
 - **L-R2**：加密 referenced 源无法 Run（无 Secret-G 通道）→ typed `SOURCE_PASSWORD_REQUIRED`，不崩溃。
 - **L-R3**：chapter/book-scope 行为变化（F2）：含 referenced 页的章节/书从「整批失败」变为「包含 referenced 页」；成本/产物范围变化。
 - **L-R4**：EXIF 方向不一致（F6）：frame 尺寸=rendition（exif_transpose 后）；旧 region geometry 在方向源上可能错位；本卡不统一方向。
-- **L-R5**：混合页（referenced + `managed_original_ref` 非空）从此按 binding 图，旧 managed 副本被忽略；不做数据迁移。
+- **L-R5**：混合页（referenced + `managed_original_ref` 非空）provider 从此按 binding 图，旧 managed 副本被忽略；**Run 目标进入层对混合页保持既有门槛**（不查 V/gate，见「实施取舍裁决」A-1）；混合页若 binding 不可用 → provider 处 typed 拒绝；不做数据迁移。
 - **L-R6**：detect 的 region 写在 step commit 之外（既有形态）；I-4 只缩小竞态窗口，不提供事务回滚。
 - **L-R7**：provider 不走 rendition_cache（有意）：重复解码；预算按 grant `max_decode_bytes`；后续复用需另卡。
 - **L-R8**：Run 面错误码沿用既有 family（`PROVIDER_FAILED`/`INVALID_INPUT`/`TARGET_NOT_FOUND`/`DB_FAILED`/`INPUT_REVISION_CHANGED`），不新增 `SOURCE_*` 投影；commit 期 guard 失败仍为 `DB_FAILED`（I-5 出域）。
@@ -179,15 +187,15 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-1 | AC-R1…R5/R7 判别性（fea11 145 / 三文件 37） | `verification/FEA-11-RENDITION-1/logs/gates-feature.log` | `a05a419f7` | `dff05bcfc9459412465e22b604bdc1cdca9009202d9157a7f929ea19bc31b403` | CANONICAL |
-| EV-2 | AC-R7 全量 pytest（3249/10；含 FEA-09 恢复） | `verification/FEA-11-RENDITION-1/logs/gates-full-pytest.log` | `a05a419f7` | `9afbe6a9375a4cba7db6a51589326b914553854ce92503df044797ff35dc99eb` | CANONICAL |
-| EV-3 | AC-R7 全量 .NET（1527/0/86） | `verification/FEA-11-RENDITION-1/logs/gates-dotnet.log` | `a05a419f7` | `ddf6593612cc702ba608846eef06632a3ffd038add0e6e6c1790564e2571d244` | CANONICAL |
-| EV-4 | AC-R6/R7 pins 18/18 + check PASS(3 w) + API inventory PASS | `verification/FEA-11-RENDITION-1/logs/gates-governance.log` | `a05a419f7` | `b9e87be18819ba2ba13a4fc062ed7527a26241da713d7057fc94b1a5724277ec` | CANONICAL |
-| EV-5 | AC-R6 scope diff ⊆ allowed_paths / 禁止面零 diff | `verification/FEA-11-RENDITION-1/logs/scope-validation.log` | `a05a419f7` | `4294f8ce24ce1e06eb91ed141b6dc06288dea7d92a28a4daf91772a950e0a484` | CANONICAL |
-| EV-6 | 判别性（4/4 破坏变红） | `verification/FEA-11-RENDITION-1/logs/discrimination.log` | `a05a419f7` | `c2e961cde3905e8d04e5bf0494b2fdc3935cf9b7d1126b1af68cd964c0e35f7d` | CANONICAL |
-| EV-7 | Resource Manifest | `verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json` | 证据 commit | `37b7f8680e4f8eb8cda3ddf9ae2416c5fb52bfce99a3097933c4d7f0540a5190` | CANONICAL |
-| EV-8 | 变更清单 | `verification/FEA-11-RENDITION-1/changed-files.txt` | 证据 commit | `36e3a73cfb0dd719df093f25464a55b07997853e0df6dfd819c9e4a017291bc9` | CANONICAL |
-| EV-9 | Evidence 索引 | `verification/FEA-11-RENDITION-1/EV.md` | 证据 commit | 见 Handoff | CANONICAL |
+| EV-1 | AC-R1…R5/R7 判别性（fea11 145 / 三文件 37） | `verification/FEA-11-RENDITION-1/logs/gates-feature.log` | `75dace4c2` | `dff05bcfc9459412465e22b604bdc1cdca9009202d9157a7f929ea19bc31b403` | CANONICAL |
+| EV-2 | AC-R7 全量 pytest（3249/10；含 FEA-09 恢复） | `verification/FEA-11-RENDITION-1/logs/gates-full-pytest.log` | `75dace4c2` | `9afbe6a9375a4cba7db6a51589326b914553854ce92503df044797ff35dc99eb` | CANONICAL |
+| EV-3 | AC-R7 全量 .NET（1527/0/86） | `verification/FEA-11-RENDITION-1/logs/gates-dotnet.log` | `75dace4c2` | `ddf6593612cc702ba608846eef06632a3ffd038add0e6e6c1790564e2571d244` | CANONICAL |
+| EV-4 | AC-R6/R7 pins 18/18 + check PASS(3 w) + API inventory PASS | `verification/FEA-11-RENDITION-1/logs/gates-governance.log` | `75dace4c2` | `b9e87be18819ba2ba13a4fc062ed7527a26241da713d7057fc94b1a5724277ec` | CANONICAL |
+| EV-5 | AC-R6 scope diff ⊆ allowed_paths / 禁止面零 diff | `verification/FEA-11-RENDITION-1/logs/scope-validation.log` | `75dace4c2` | `4294f8ce24ce1e06eb91ed141b6dc06288dea7d92a28a4daf91772a950e0a484` | CANONICAL |
+| EV-6 | 判别性（4/4 破坏变红） | `verification/FEA-11-RENDITION-1/logs/discrimination.log` | `75dace4c2` | `c2e961cde3905e8d04e5bf0494b2fdc3935cf9b7d1126b1af68cd964c0e35f7d` | CANONICAL |
+| EV-7 | Resource Manifest | `verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json` | `75dace4c2` | `37b7f8680e4f8eb8cda3ddf9ae2416c5fb52bfce99a3097933c4d7f0540a5190` | CANONICAL |
+| EV-8 | 变更清单 | `verification/FEA-11-RENDITION-1/changed-files.txt` | `75dace4c2` | `36e3a73cfb0dd719df093f25464a55b07997853e0df6dfd819c9e4a017291bc9` | CANONICAL |
+| EV-9 | Evidence 索引 | `verification/FEA-11-RENDITION-1/EV.md` | `75dace4c2` | `5dab7f50ffdfcc193eadbaea9710d7c4051c817a2ce14eb57d24781afe585289` | CANONICAL |
 
 ## Resource Manifest
 
