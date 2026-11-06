@@ -3,7 +3,7 @@ id: FEA-11-SCAN-2
 title: FEA-11 冷启动全源扫描目标枚举（B1：Core 只读枚举 + Host registry 核验/铸 grant）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: 用户 2026-11-06「让 Codex 判断下一部任务，由 DSH 执行」→ Codex `NEXT-TASK=FEA-11-SCAN-2`（先独立 scope review、优先 B1）；scope review `doc/reviews/FEA-11-SCAN-2-scope-r1.md` = **READY-WITH-UNFREEZE/B1**；DSH 裁决 B1 采纳 / S-1 选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣 missing，L-G 保留）/ S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新）/ S-4 登记 limitation；前置契约 **C-17 v1.1 已重冻**（`FEA-11-SCAN-2-PREREQ-1` done，delivery `7451bfaaa`，pins 18/18）；DSH 2026-11-06 冻结本卡并释放
 suggested_owner: dsh（Agent Teams 分片：Core Python + Host/App .NET；Lead 集成）
 owner: fea12-core-py（Core 分片）、fea12-core-host（Host/App 分片）；Lead 集成
@@ -90,15 +90,15 @@ Host 冷启动后**无需用户再次导入**即可获得可扫描目标集：Co
 
 ## Acceptance Criteria
 
-- [ ] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-2 与会话导入合并/去重**：App 导入 Completed 触发 Refresh；枚举结果与 SCAN-1 内存目标按 `source_id` 合并去重；重复 Refresh 幂等、targets 不增长。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-4 registry 授权核验**：target 的 `registry_id/generation` 与 Host 持久 registry 匹配才铸 grant；registry 缺失/撤销/代次漂移 → typed skip（不扫描、不自动重新授权、不泄露路径）；撤销后同 target 不再扫描。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-5 启动前缺失/删除（S-1②）**：生产 file-root 缺失/替换 → typed `SOURCE_REGISTRY_UNAVAILABLE` fail-closed，**不是** `missing`；该轮不产生 `ScanSourceSync` 帧；L-G 口径保留。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-7 预算/单飞/退避/取消**：首轮枚举+扫描受 SCAN-1 预算（8 目标/256MiB）且不阻塞 Host Ready；枚举与 tick 单飞不重叠；停机取消在安全检查点；可注入时钟（零 sleep）。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-8 零写/脱敏**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<NOT_APPLICABLE: 待实施>>
-- [ ] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<NOT_APPLICABLE: 待实施>>
+- [x] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<MET>>
+- [x] **AC-S2-2 与会话导入合并/去重**：App 导入 Completed 触发 Refresh；枚举结果与 SCAN-1 内存目标按 `source_id` 合并去重；重复 Refresh 幂等、targets 不增长。 <<MET>>
+- [x] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<MET>>
+- [x] **AC-S2-4 registry 授权核验**：target 的 `registry_id/generation` 与 Host 持久 registry 匹配才铸 grant；registry 缺失/撤销/代次漂移 → typed skip（不扫描、不自动重新授权、不泄露路径）；撤销后同 target 不再扫描。 <<MET>>
+- [x] **AC-S2-5 启动前缺失/删除（S-1②）**：生产 file-root 缺失/替换 → typed `SOURCE_REGISTRY_UNAVAILABLE` fail-closed，**不是** `missing`；该轮不产生 `ScanSourceSync` 帧；L-G 口径保留。 <<MET>>
+- [x] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<MET>>
+- [x] **AC-S2-7 预算/单飞/退避/取消**：首轮枚举+扫描受 SCAN-1 预算（8 目标/256MiB）且不阻塞 Host Ready；枚举与 tick 单飞不重叠；停机取消在安全检查点；可注入时钟（零 sleep）。 <<MET>>
+- [x] **AC-S2-8 零写/脱敏**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<MET>>
+- [x] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<MET>>
 
 ## 预期行为变更（Review 不判回归）
 
@@ -121,8 +121,8 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 |---|---|---|---|---|
 | Core 枚举单测 | `pytest tests/core -q -p no:cacheprovider` | 隔离 DB | PASS（closed shape/只读/排序/去重/上限/unknown kind fail-closed） | `verification/FEA-11-SCAN-2/logs/pytest-core.log` |
 | 真实重启 IPC | 新 Host 进程 + 真实 Core + 隔离 DataRoot（无 App 注册） | 隔离 | PASS（命令白名单、14 表零写、typed 缺失） | `verification/FEA-11-SCAN-2/logs/restart-ipc.log` |
-| 全量 Python | `pytest tests -q -p no:warnings --tb=no` | 仓库根 | **≥3203/10**，0 回归 | `logs/pytest-full.log` |
-| 全量 .NET | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根 | **≥1486/0/82**；flaky 复跑并记录；跑后恢复 FEA-09 | `logs/dotnet-full-*.log` |
+| 全量 Python | `pytest tests -q -p no:warnings --tb=no` | 仓库根 | **PASS 3211 passed/10 skipped**（基线 3203/10，+8 Core 新增，0 回归） | `logs/core-pytest-full.log`、`logs/gates-integration.log` |
+| 全量 .NET | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根 | **PASS 1496 passed/0 failed/83 skipped**（集成复跑；分片侧 RUN1/2/3 与 flaky 记录见 host-dotnet-full-*.log、host-flaky-*.log） | `logs/gates-integration.log`、`logs/host-dotnet-full-3.log` |
 | API inventory / pins / check | `python tools/generate_api_inventory.py --check`；`verify_pins.ps1`；`check.ps1 -TaskPath` | 仓库根 | PASS；18/18；PASS | `logs/gates.log` |
 | 范围 diff | `git diff --name-only 703d9eb12..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py` | 仓库根 | 空 | `logs/scope-diff.log` |
 
@@ -132,10 +132,52 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 - 风险/limitation：**L-S1** registry resilience（file-root 缺失整库 `SOURCE_REGISTRY_UNAVAILABLE`，另立缺陷卡）；**L-S4** `refresh_source_location_auth` 死代码（撤销/重注册后 Core location auth 不更新，只读切片无法恢复）；L-A/L-G 承接；大库 IO/冷启动预算未标定；枚举只读但不解决 L10 referenced 图源；**AC11-1 仍 PARTIAL**（watcher/访问前策略未承接；WATCH-1 不同时释放）。
 - 阻塞：无（契约已重冻、scope 已冻结）。
 
+## 交付与运行记录（Lead 集成，2026-11-06）
+
+- 分片 A（Core Python）：`0cb5177ca`；`scanner.list_scan_targets`、`SourceSyncStore.list_scan_target_candidates`、`core_service` 命令路由与 capability；8 条新测试 + 4 变异判别。
+- 分片 B（Host/App .NET）：`6c8b4cb2b`（+ docs `3e6e35b19`）；`RefreshTargetsAsync`/`HostSourceScanTargetEnumerator`/registry 核验/typed skip/`SOURCE_REGISTRY_UNAVAILABLE` fail-closed/App Completed→Refresh（无参，去除 StableSourceId 权威）/CoreClient `ListSourceScanTargetsAsync`。
+- 集成门禁（HEAD `3e6e35b19`，日志 `verification/FEA-11-SCAN-2/logs/gates-integration.log`）：
+  - 全量 pytest **3211 passed / 10 skipped**（EXIT 0；基线 3203/10）
+  - `pytest tests/fea11` **108 passed**（EXIT 0）
+  - 全量 .NET **1496 passed / 0 failed / 83 skipped**（EXIT 0；分片侧 RUN1 1495/1/83、RUN2 1494/2/83 flaky、RUN3 1496/0/83 PASS 均如实记录）
+  - `check.ps1 -TaskPath` PASS、`check.ps1` PASS（3 warnings）、`verify_pins.ps1` **18/18 PASS**、`python tools/generate_api_inventory.py --check` PASS
+  - `git diff 703d9eb12..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py` **空**
+- 跨分片判别证据：真实重启 IPC（`host-cold-start.json/txt`）：无 App 注册、真实 Core+DB；`target.source_id == Core sources.source_id`（"s1"）且 ≠ StableSourceId；wire 精确五命令；**15 表快照逐行相等**；脱敏。
+- 未运行/保留：App 真实导入→枚举 E2E（Host 侧判别已覆盖，seed source_id 为合成 "s1"）；HostRuntime Ready/Dispose 级单测（代码审查 + 组件级真实 IPC）；**AC11-1 仍 PARTIAL**；L10 不解决；L-S1 registry resilience、L-S4 死代码保留。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-01 | AC-S2-1/3/6/8 | verification/FEA-11-SCAN-2/core-shard-record.md | - | a020a05d6fb3b065a7cea5c0788b5b0b49fc7cb9881fb1399290df68ae90a4c6 | CANONICAL |
+| EV-02 | AC-S2-9 | verification/FEA-11-SCAN-2/host-changed-files.txt | - | bb409150138a2ada3f413816796e97452baa4db7616f62095854081a003b71b4 | CANONICAL |
+| EV-03 | AC-S2-1/3/8 | verification/FEA-11-SCAN-2/host-cold-start.json | - | b1c1ae4dc5d77c4b39b3f5a0f17a08ff7230a9085afc849f75539a6616f07d37 | CANONICAL |
+| EV-04 | AC-S2-1/3/8 | verification/FEA-11-SCAN-2/host-cold-start.txt | - | d6d316f1a1dc05cd025b642e33dad141dce3aa6855551715683ee3d1e503e739 | CANONICAL |
+| EV-05 | AC-S2-9 | verification/FEA-11-SCAN-2/host-scope-validation.log | - | cdd72d4f67d8880f264e8b5d11657c2bcdd509195313601f778ed842709211f2 | CANONICAL |
+| EV-06 | AC-S2-1/2/4/5/7 | verification/FEA-11-SCAN-2/host-shard-record.md | - | 4f65a62c57e2c42551bba19d9a5430aaec4e3dcc321d029ba4ba656ed266b3da | CANONICAL |
+| EV-07 | Gate | verification/FEA-11-SCAN-2/logs/core-api-inventory.log | - | 4a5cf7c48f8da2e1540c1cbe0e61a5d6d57a24f98ead4fc887ebacbf6883cec2 | CANONICAL |
+| EV-08 | Gate | verification/FEA-11-SCAN-2/logs/core-check.log | - | 6e28f045cfc97a2d4146db9f5543aa206d5d256b409befa20397aa5d809574c4 | CANONICAL |
+| EV-09 | Gate | verification/FEA-11-SCAN-2/logs/core-mutation.log | - | ff57b0b3573e8ab1fe0dba23ea6ba73338e8daddca92469afc75e0e881e74a68 | CANONICAL |
+| EV-10 | Gate | verification/FEA-11-SCAN-2/logs/core-pins.log | - | 5163d4739e181e5a372fa7685d11b6b41ebb174d8cc180ac0bb929fac79564bb | CANONICAL |
+| EV-11 | Gate | verification/FEA-11-SCAN-2/logs/core-pytest-core-fea09.log | - | 79df1826b70ad3990c2db61694e4a7a1e77cee1e41d9c22b329d7ef33ac14cbc | CANONICAL |
+| EV-12 | Gate | verification/FEA-11-SCAN-2/logs/core-pytest-core.log | - | 3f63c84162354aca53b6a0b6954816f4289810168a95ff63bd304097c43a9982 | CANONICAL |
+| EV-13 | Gate | verification/FEA-11-SCAN-2/logs/core-pytest-fea09.log | - | 7f71def53c6929c0e87875816910febbb9a7fbe96eabb83b6c30b8a8c6ee68da | CANONICAL |
+| EV-14 | Gate | verification/FEA-11-SCAN-2/logs/core-pytest-full.log | - | 66fae3a65d9c8f75e5998e38a035929107405b0d7736cea6f815db95e0e46155 | CANONICAL |
+| EV-15 | Gate | verification/FEA-11-SCAN-2/logs/core-scope-diff.log | - | 4d14dce6a0fe4891583098678b95359b3a461b78e971bc0eece302f71a6dc028 | CANONICAL |
+| EV-16 | Gate | verification/FEA-11-SCAN-2/logs/gates-integration.log | - | 8436f3c631e35f01b55e0a554b57597bbc8e0e09dc880292b0808e5f015ace1b | CANONICAL |
+| EV-17 | Gate | verification/FEA-11-SCAN-2/logs/host-api-inventory.log | - | b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47 | CANONICAL |
+| EV-18 | Gate | verification/FEA-11-SCAN-2/logs/host-app-refresh.log | - | 32c67251abf8c233ee055d601a17b4163c8e02c34bde3d029f908ff273c121b0 | CANONICAL |
+| EV-19 | Gate | verification/FEA-11-SCAN-2/logs/host-check.log | - | b7822e3c851d010f7a0bc1a57a1ef270ede87595fd7d6d6056e0d4393365a3f4 | CANONICAL |
+| EV-20 | Gate | verification/FEA-11-SCAN-2/logs/host-dotnet-baseline.log | - | 438d1adc838a4c9e18e67163046c295831daa3514aad493cb989fa9eeb4c8eec | CANONICAL |
+| EV-21 | Gate | verification/FEA-11-SCAN-2/logs/host-dotnet-full-1.log | - | 522b4b55400aa2f7e15bc38a0b6a6420eefed6e67e5bb3f2b73140bedc85f1ba | CANONICAL |
+| EV-22 | Gate | verification/FEA-11-SCAN-2/logs/host-dotnet-full-2.log | - | 6d8c9861f2849d355a4bf4192d32f147b12a5a1825b1faaf418ac8c4622e0f39 | CANONICAL |
+| EV-23 | Gate | verification/FEA-11-SCAN-2/logs/host-dotnet-full-3.log | - | 9b032c03f5c2f9a11d8865487d79f90087add06c5e6d6895c9c423dc7de450c5 | CANONICAL |
+| EV-24 | Gate | verification/FEA-11-SCAN-2/logs/host-flaky-fluent-rerun.log | - | dc9bd907d80b5aa5fb858a5c1579928336fe92b010fda751316a4f25323c2668 | CANONICAL |
+| EV-25 | Gate | verification/FEA-11-SCAN-2/logs/host-flaky-fluent-rerun2.log | - | 25ea1a387b9b87a34e4f4d19024a4ebcc2b0c2d0a4ac08c0a20e7d70c9fb5214 | CANONICAL |
+| EV-26 | Gate | verification/FEA-11-SCAN-2/logs/host-flaky-tilechannel-rerun.log | - | 0e440494feb268bbb8a94b89fc447aea731186471ebec58ad95cb968241d0346 | CANONICAL |
+| EV-27 | Gate | verification/FEA-11-SCAN-2/logs/host-pins.log | - | f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db | CANONICAL |
+| EV-28 | Gate | verification/FEA-11-SCAN-2/logs/host-restart-ipc.log | - | f34eb3a52608fe31ba3cd5fde09e6b45f96cbbcab1846ee8f60005cb65f48b48 | CANONICAL |
+| EV-29 | Gate | verification/FEA-11-SCAN-2/logs/host-unit.log | - | ec1c5eb450b9540fa770ac17158e36e272b04c5cfd4ad2e45c53653d7cff7950 | CANONICAL |
 
 ## Resource Manifest
 
