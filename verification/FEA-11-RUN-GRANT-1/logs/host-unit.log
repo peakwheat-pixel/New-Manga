@@ -1,9 +1,8 @@
-# FEA-11-RUN-GRANT-1 Host unit evidence
-generated_at_utc=2026-11-06T16:36:33.0927118Z
-cmd=dotnet test tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --filter "FullyQualifiedName~SourceRegistry"
-head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+# FEA-11-RUN-GRANT-1 Host unit evidence (Review r1 rework)
+head=3ffabeb8134b355076a9e964305de895e7c5b9d1
+cmd=dotnet test ... --filter FullyQualifiedName~SourceRegistry
 ---
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
 
-已通过! - 失败:     0，通过:     5，已跳过:     0，总计:     5，持续时间: 108 ms - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    17，已跳过:     0，总计:    17，持续时间: 166 ms - NewManga.Host.Tests.dll (net9.0)

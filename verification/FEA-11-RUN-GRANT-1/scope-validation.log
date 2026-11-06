@@ -1,7 +1,7 @@
 # FEA-11-RUN-GRANT-1 scope validation
-generated_at_utc=2026-11-06T16:46:35+00:00
+generated_at_utc=2026-11-06T17:43:01+00:00
 base_commit=a94052ba7
-delivery_head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+delivery_head=3ffabeb8134b355076a9e964305de895e7c5b9d1
 
 ## allowed_paths (card frontmatter)
 - doc/tasks/FEA-11-RUN-GRANT-1.md
@@ -26,6 +26,8 @@ M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs	ALLOWED
 M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs	ALLOWED
 A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs	ALLOWED
 M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs	ALLOWED
+A	doc/handoffs/FEA-11-RUN-GRANT-1-7ff49f1cc.md	ALLOWED
+A	doc/reviews/FEA-11-RUN-GRANT-1-r1.md	ALLOWED
 M	doc/tasks/FEA-11-RUN-GRANT-1.md	ALLOWED
 M	src/bootstrap/core_service.py	ALLOWED
 M	src/infrastructure/resource_channel/source_read_refs.py	ALLOWED
@@ -33,6 +35,21 @@ M	tests/core/test_core_service.py	ALLOWED
 M	tests/core/test_host_control.py	ALLOWED
 M	tests/fea09/test_referenced_wire.py	ALLOWED
 A	tests/fea11/test_source_run_grant.py	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/EV.md	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/RESOURCE-MANIFEST.json	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/changed-files.txt	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/discrimination.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/feature.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/full-dotnet.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/full-pytest.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/gates-governance.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/host-ipc.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/logs/host-unit.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/scope-validation.log	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/tools/discrimination.py	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/tools/gen_ev.py	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/tools/gen_manifest.py	ALLOWED
+A	verification/FEA-11-RUN-GRANT-1/tools/scope_validation.py	ALLOWED
 
 ## zero-drift surfaces
 doc/plan/**: ZERO_DIFF
@@ -45,7 +62,7 @@ NewManga.App/**: ZERO_DIFF
 apps/** beyond allowed_paths: ZERO_DIFF
 protocol_minor=3 kept: YES
 
-result=PASS changed=12 out_of_scope=[]
+result=PASS changed=29 out_of_scope=[]
 
 ## R-12 approved scope extension (Lead, commit 218775bca)
 reason: the frozen C-16 v1.3 §0 capability ``source.read.run/1`` is an additive ping advertisement, but two pre-existing tests asserted the capability list by exact equality; they had to gain the one string.

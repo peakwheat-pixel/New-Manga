@@ -72,6 +72,21 @@ BREAKS = [
         "target": f"{PYTHON_TESTS}::test_forged_shape_requests_are_invalid_requests",
     },
     {
+        "id": "B6",
+        "what": "Host 预授权 best-effort 被删除（mint 失败重新阻断 Run）",
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "old": (
+            "        catch (Exception error) when (error is not OperationCanceledException)\n"
+            "        {\n"
+            "            // R1-01: any other pre-authorization failure is a best-effort skip.\n"
+            "            _warn(\"run source-read authorization skipped code=\" + CodeOf(error));\n"
+            "        }\n"
+        ),
+        "new": "        // DISCRIMINATION BREAK B6: the best-effort skip was removed.\n",
+        "runner": "dotnet",
+        "target": "FullyQualifiedName~RunAuthorizationBestEffortSkipReachesDispatch",
+    },
+    {
         "id": "B5",
         "what": "Host Run 前置授权钩子被删除（Run 命令未授权直接 dispatch）",
         "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",

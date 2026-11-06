@@ -3,6 +3,8 @@ M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
 M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
 A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
 M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+A	doc/handoffs/FEA-11-RUN-GRANT-1-7ff49f1cc.md
+A	doc/reviews/FEA-11-RUN-GRANT-1-r1.md
 M	doc/tasks/FEA-11-RUN-GRANT-1.md
 M	src/bootstrap/core_service.py
 M	src/infrastructure/resource_channel/source_read_refs.py
@@ -10,3 +12,18 @@ M	tests/core/test_core_service.py
 M	tests/core/test_host_control.py
 M	tests/fea09/test_referenced_wire.py
 A	tests/fea11/test_source_run_grant.py
+A	verification/FEA-11-RUN-GRANT-1/EV.md
+A	verification/FEA-11-RUN-GRANT-1/RESOURCE-MANIFEST.json
+A	verification/FEA-11-RUN-GRANT-1/changed-files.txt
+A	verification/FEA-11-RUN-GRANT-1/logs/discrimination.log
+A	verification/FEA-11-RUN-GRANT-1/logs/feature.log
+A	verification/FEA-11-RUN-GRANT-1/logs/full-dotnet.log
+A	verification/FEA-11-RUN-GRANT-1/logs/full-pytest.log
+A	verification/FEA-11-RUN-GRANT-1/logs/gates-governance.log
+A	verification/FEA-11-RUN-GRANT-1/logs/host-ipc.log
+A	verification/FEA-11-RUN-GRANT-1/logs/host-unit.log
+A	verification/FEA-11-RUN-GRANT-1/scope-validation.log
+A	verification/FEA-11-RUN-GRANT-1/tools/discrimination.py
+A	verification/FEA-11-RUN-GRANT-1/tools/gen_ev.py
+A	verification/FEA-11-RUN-GRANT-1/tools/gen_manifest.py
+A	verification/FEA-11-RUN-GRANT-1/tools/scope_validation.py

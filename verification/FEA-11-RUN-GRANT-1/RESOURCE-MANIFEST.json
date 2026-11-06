@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-RUN-GRANT-1",
-  "generated_at": "2026-11-06T16:49:54+00:00",
+  "generated_at": "2026-11-06T17:44:23+00:00",
   "generated_by": "run-grant-impl (DSH Agent Teams teammate; Lead `lead`)",
   "note": "Core (C-16 v1.3 §2.4 AuthorizeSourceReadForRun) + Host mint/bind wiring delivery. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-1/ holds runtime test fixtures, gate logs, discrimination backups and helper scripts; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-1/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
   "resources": [
@@ -17,8 +17,8 @@
       "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RUN-GRANT-1\\",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "sha256": "c339d252df9d9bd9dba69be0b3723315955dae434688cc3e0075a11d55a2cebb",
-      "file_count": 500,
+      "sha256": "5a479609ddfbfd33e04250f58db58d6a941ceb8d6a5e77495d9ec3b1e3192210",
+      "file_count": 973,
       "children": [
         {
           "name": "baseline/",
@@ -57,8 +57,8 @@
         {
           "name": "discrimination/",
           "kind": "directory",
-          "file_count": 5,
-          "aggregate_sha256": "7ce12da12d88e3e4ffbcfbce2d030c2b7ccf67180461561e087998c1483997eb",
+          "file_count": 6,
+          "aggregate_sha256": "3908f029bb22b1178f3075d4e382a2970d96c4483d0d7877909bbf62cf662fdc",
           "files": [
             {
               "name": "B1-source_read_refs.py.orig",
@@ -79,14 +79,18 @@
             {
               "name": "B5-HostCommandDispatcher.cs.orig",
               "sha256": "bde169fc931d53b9deb1666b5b25a08b4b7508ae6fd465c290093c7189efdd47"
+            },
+            {
+              "name": "B6-HostRuntime.cs.orig",
+              "sha256": "0114b580aa6080ea151bfcb3ad8ac5641b473363bd81e3568c86d2ada97bc2c2"
             }
           ]
         },
         {
           "name": "fixtures/",
           "kind": "directory",
-          "file_count": 482,
-          "aggregate_sha256": "0f256a8d459f49efea28dc965b2d0f86c84033e3390099a481f932e7a9dd3e6a",
+          "file_count": 934,
+          "aggregate_sha256": "1b8835faf463236348f3330bfb60e4bd5c15aa3a8962adc64630a0ee1817efcd",
           "files": [
             {
               "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/backups/b9dd5382eb9e416a812b2d77c7dd8d90.nmbak",
@@ -125,64 +129,124 @@
               "sha256": "78cc1ac6a7ad88fe92f0e6d92d518ea703a2cf564c7891316d94c50393e49e26"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/backups/1ad6dfdc01e24a389ccd4618eada7262.nmbak",
-              "sha256": "5a0187b81bfe96dbb057db3c97e46ac33fcad2a10f3fd4a5a90064fd0eb8e4ca"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/backups/f1e5dde301ea450a97cf8a3cfc264c8b.nmbak",
+              "sha256": "d4f63dd7cff476dbd8308adcafa5a29fb3bad6e1ef6fd2ab39511ed612a6e2b1"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/catalog.sqlite",
-              "sha256": "64c61feb3777e2b781ef0a06ea99e30f4fe6dad6d32e5eb63e92142744336cae"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/catalog.sqlite",
+              "sha256": "c631748bde6baad64296e4928742380638e528ff375fbe8acd529b7e0031949f"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/core.stderr.log",
-              "sha256": "f26b6cc183d4c57fe6b1c8583e51a136a0711e5a4c2adb30be1b8a150b258c3d"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/core.stderr.log",
+              "sha256": "6370f7408fab98273e564f062494c38bbf1e8dc64bc17e1f94f478d850ad23a8"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/.preview-lifecycle.lock",
-              "sha256": "2c0e68842c9868679a9fc290869a5ca26e59a12765bed0003be501e25c0d59e3"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/.preview-lifecycle.lock",
+              "sha256": "6cdf3986aae0dcaf33d2f8765541dd73a8fbae5fb42ef2edc54f11b5103ade63"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/pages/page-rendition-v2-4819662dd0145ec3c75f8a32fc65535048078de0116826282aff617670f1d9ee.png",
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/pages/page-rendition-v2-4819662dd0145ec3c75f8a32fc65535048078de0116826282aff617670f1d9ee.png",
               "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/derived/source-renditions/23d157af3f1bc9c4043a0f17c3588a825d8bc957ddddc3cf6ca341b6fc604081.bin",
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/source-renditions/23d157af3f1bc9c4043a0f17c3588a825d8bc957ddddc3cf6ca341b6fc604081.bin",
               "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/host/source-access/registry.v1.dat",
-              "sha256": "687245aa4f9e1e80f1790a7ef8841c1657bc88d7b1f15fa7fcdf4061388f8cdb"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/host/source-access/registry.v1.dat",
+              "sha256": "00aa91a9a27c1ba1dddbf7d1ced24ceb7c70f7e54587b36c6c65084709d13a51"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/host/source-access/registry.v1.lock",
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/host/source-access/registry.v1.lock",
               "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/ipc-run-grant-receipt.json",
-              "sha256": "43c4ca5ea37252ac1f25b76dca5f43e1b7448f06e1f0d954a1b679c5b3196051"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/ipc-run-grant-receipt.json",
+              "sha256": "ddc56a1e1292f55ae7254348664365ce8d3d79d31d26508f7fd68e62cba170fc"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/library.db",
-              "sha256": "c1b19cea476fabf2ce8dffed64e4d294793e72d5c8f94bc79fc0e1ab4de6dd2f"
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/library.db",
+              "sha256": "a9a485b43e324c7390a4f52f1f8a77df5df16306729aaf750f3789988976184a"
             },
             {
-              "name": "ipc-482cd24f8cb4447691005c25995860cf/library.db.run-owner.lock",
+              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/library.db.run-owner.lock",
               "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
             },
             {
-              "name": "... (462 more files, aggregate above)",
+              "name": "... (914 more files, aggregate above)",
               "sha256": ""
+            }
+          ]
+        },
+        {
+          "name": "integration/",
+          "kind": "directory",
+          "file_count": 10,
+          "aggregate_sha256": "af3b0e4541fbf89588ada98099cd1a6dd43c78bf1dc9d6a1844ffeb8bc76f12a",
+          "files": [
+            {
+              "name": "api.log",
+              "sha256": "b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47"
+            },
+            {
+              "name": "check-taskpath.log",
+              "sha256": "771429c0bc7fff5ea50a5f9c5e97be002b394032316fadd5bfd2b9cdec12c2e3"
+            },
+            {
+              "name": "check.log",
+              "sha256": "771429c0bc7fff5ea50a5f9c5e97be002b394032316fadd5bfd2b9cdec12c2e3"
+            },
+            {
+              "name": "dotnet-restore.exit",
+              "sha256": "95afa5cbae7ecacde4ba3c875d76fed5585303e8735f651bfa743543af16d6e5"
+            },
+            {
+              "name": "dotnet.exit",
+              "sha256": "ed8aea9ba859faa9bb65b9fe4bd4963da8b1b8f4f7999eec68743ab4deb4131f"
+            },
+            {
+              "name": "dotnet.log",
+              "sha256": "f35533f3289dcdb09cf4e212c8429e8f90cf36c9dd2277afe7095a68299e2e76"
+            },
+            {
+              "name": "pytest-restore.exit",
+              "sha256": "e01d3555f1a4bc03b86830c986d4b716d41d484d788a955128310371f124866b"
+            },
+            {
+              "name": "pytest.exit",
+              "sha256": "82603b8688c709542cbc00f036b5c7a7bf7bcf8f99f708df2150e234a619c5d2"
+            },
+            {
+              "name": "pytest.log",
+              "sha256": "7aed9006ae9fa36932746694d816fc5ba73e5960a843de3d9a6380d2ed387526"
+            },
+            {
+              "name": "scope-diff.txt",
+              "sha256": "50cbae7f8efafadd86df6e8c01b81937cf8e765d65e37440a75ee5567a0fd8ca"
             }
           ]
         },
         {
           "name": "logs/",
           "kind": "directory",
-          "file_count": 5,
-          "aggregate_sha256": "b6334a2b3d3cd829ee36f267727cb91798171fa60004d3ac8b15111d8c0cad89",
+          "file_count": 9,
+          "aggregate_sha256": "1b2f353f78bfbb714b3f3b65b14304ce1baacb5bd72f3137f163fb06a0f2c453",
           "files": [
+            {
+              "name": "discrimination-console-r1.log",
+              "sha256": "1298b6e44b11c282305c8e66551fc0338f2cc7dcb8a36d5b30468125dd4e2438"
+            },
+            {
+              "name": "discrimination-console-r1b.log",
+              "sha256": "4ec68de68afcd249ed4519b533f6cebc250d79ff6d331a28f6991da92bdf3659"
+            },
             {
               "name": "discrimination-console.log",
               "sha256": "fb9c1436a076c08ca396ef9c97994fed2f7dd1ea8ec454ff3f0c516bd25ef230"
+            },
+            {
+              "name": "dotnet-full-r1.log",
+              "sha256": "e98947765f18cced1cd47ec6304cde8a80facdb9b59509a683b628c52b893db1"
             },
             {
               "name": "dotnet-full-r12.log",
@@ -191,6 +255,10 @@
             {
               "name": "dotnet-full.log",
               "sha256": "3179ad289fa05af61cf0ae7f433b108cc4e5fd512bdbc263945c374e7e52d039"
+            },
+            {
+              "name": "pytest-full-r1.log",
+              "sha256": "1d51a13fff2a75f1ef0cdab86a5618907854c1b2f9af7086b37851b3aa1ede9f"
             },
             {
               "name": "pytest-full-r12.log",
@@ -207,6 +275,42 @@
           "kind": "file",
           "file_count": 1,
           "sha256": "a943e92d02574c53803660bb2ca52c18dbec7cd25215e86456da6f792a37eb91"
+        },
+        {
+          "name": "patch_comments_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "a2bc4cce805d1770eb4c64e9f5955a02f6be5850e0cbb9ada1e1c1eff77970eb"
+        },
+        {
+          "name": "patch_discrimination_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "f6c152512f4a9adb876670ac89af532d5f1049eca1b75918116233d7ecae6bb1"
+        },
+        {
+          "name": "patch_docs_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "9aa25bf9921eef07cb2bfca53584a0b6db9c9d5a60d5d98a4f31ab37dd1b1863"
+        },
+        {
+          "name": "patch_hostruntime_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "a1b1d79e887b2f31fcb39741f175a95d7470b2a5ce9b0781ab43b1b6620a7fa0"
+        },
+        {
+          "name": "patch_python_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "7a7be07d8d2c94ddd391c2e5ff75b0a48289a580f3bc4cfcb2b7fca774b8cc28"
+        },
+        {
+          "name": "patch_python_r1b.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "3671c5fbdbbb68e07a6510a60ae1e253131b399c5137f9b24fd833adfcfe9a0f"
         },
         {
           "name": "patch_r12.py",

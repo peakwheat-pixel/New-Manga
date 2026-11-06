@@ -1,177 +1,48 @@
-# FEA-11-RUN-GRANT-1 gates / governance evidence
-generated_at_utc=2026-11-06T16:36:45.0373371Z
-head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+# FEA-11-RUN-GRANT-1 gates / governance evidence (Review r1 rework)
+generated_at_utc=2026-11-06T17:42:51.4019604Z
+head=3ffabeb8134b355076a9e964305de895e7c5b9d1
 
-== dotnet build apps/desktop-avalonia/NewManga.sln -c Release ==
-
+== dotnet build NewManga.sln -c Release ==
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:01.18
+已用时间 00:00:01.03
 
 == verify_pins.ps1 ==
-OK C01b 3c9f5af7d74f
-OK C02 bb365ca891a7
-OK C03 b77e7968a00b
-OK C04b acc8f0e03d42
-OK C05 f6e6f3cb1fe1
-OK C06 99831a20ffd6
-OK C07 3fdb44e49afe
-OK C08 453f993c1a16
-OK C09 dc51226b336c
-OK C10 ec8fd862f95f
-OK C11 44f4273f7ad1
-OK C12 f49835860143
-OK C13 8faf1e805eac
-OK C14 05056cbf65f9
-OK C15 d8c0a3bcfc21
-OK C16 7c355ccb8f82
 OK C17 aefa0fa5b17e
 OK FEA01 0370c18932b1
 PIN AUDIT: PASS (all 18)
-exit=0
 
 == check.ps1 (default) ==
-Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-RUN-GRANT-1.md
 WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：2913 bytes / 27 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6976 bytes / 63 lines
 Governance check: PASS (3 warnings)
-exit=0
 
 == check.ps1 -TaskPath doc/tasks/FEA-11-RUN-GRANT-1.md ==
-Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-RUN-GRANT-1.md
 WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：2913 bytes / 27 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6976 bytes / 63 lines
 Governance check: PASS (3 warnings)
-exit=0
 
 == generate_api_inventory.py --check ==
-OK: rendered counts match FEA-C07 doc
-| 接口 | 方法数 | 属性/事件/字段数 |
-|---|---|---|
-| IReaderProgressSink | 1 | 0 |
-| IHostController | 54 | 4 |
-| IRunController | 6 | 0 |
-| **合计** | **61** | — |
-
-## IReaderProgressSink
-
-| # | 成员 | 返回类型 |
-|---|---|---|
-| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
-
-## IHostController
-
-| # | 成员 | 返回类型 |
-|---|---|---|
-| 1 | `StartAsync` | `Task` |
-| 2 | `RefreshBooksAsync` | `Task` |
-| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
-| 4 | `TryCreateBookAsync` | `Task<bool>` |
-| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
-| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
-| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
-| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
-| 9 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
-| 10 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
-| 11 | `ReadPageImageAsync` | `Task<byte[]?>` |
-| 12 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
-| 13 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
-| 14 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
-| 15 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
-| 16 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
-| 17 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
-| 18 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
-| 19 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
-| 20 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
-| 21 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
-| 22 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
-| 23 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
-| 24 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
-| 25 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
-| 26 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
-| 27 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
-| 28 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
-| 29 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
-| 30 | `ImportFilesAsync` | `Task<ImportOutcome>` |
-| 31 | `ImportFolderAsync` | `Task<ImportOutcome>` |
-| 32 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
-| 33 | `StartExportAsync` | `Task<ExportStartInfo?>` |
-| 34 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
-| 35 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
-| 36 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
-| 37 | `RevealExportFolderAsync` | `Task<bool>` |
-| 38 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
-| 39 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
-| 40 | `DeleteBackupAsync` | `Task<bool>` |
-| 41 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
-| 42 | `ListPluginsAsync` | `Task<PluginListInfo>` |
-| 43 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
-| 44 | `SetPluginEnabledAsync` | `Task<bool?>` |
-| 45 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
-| 46 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
-| 47 | `OpenDraftAsync` | `Task<DraftLease?>` |
-| 48 | `PatchDraftAsync` | `Task<Draft?>` |
-| 49 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
-| 50 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
-| 51 | `GetDraftAsync` | `Task<Draft?>` |
-| 52 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
-| 53 | `DiscardDraftAsync` | `Task` |
-| 54 | `RestoreBackupAsync` | `Task<string?>` |
-| — | `Snapshot`（属性） | `HostViewSnapshot` |
-| — | `StartRequests`（属性） | `int` |
-| — | `ExportDirectorySuggestion`（属性） | `string` |
-| — | `Changed`（事件） | `EventHandler?` |
-
-## IRunController
-
-| # | 成员 | 返回类型 |
-|---|---|---|
-| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
-| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
-| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
-| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
-| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
 | 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
 
 exit=0
 
-== full pytest (after R-12) ==
-cmd=C:/Python314/python.exe -m pytest tests -q
-3280 passed, 10 skipped, 10 warnings in 240.92s (0:04:00)
-note=after the run: git checkout -- verification/FEA-09 (tracked evidence regenerated by the suite)
-
-== full dotnet test NewManga.sln -c Release (after R-12, clean tree) ==
-cmd=dotnet test NewManga.sln -c Release --no-build
-已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 101 ms - NewManga.Appearance.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 289 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 961 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+== full pytest ==
+3281 passed, 10 skipped, 10 warnings in 240.15s (0:04:00)
+==
+== full dotnet (aggregate 21+38+253+117+31+200+167+720) ==
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 95 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 307 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 937 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   188，已跳过:    57，总计:   245，持续时间: 8 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   200，已跳过:    57，总计:   257，持续时间: 8 s - NewManga.Host.Tests.dll (net9.0)
 已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
-已通过! - 失败:     0，通过:   720，已跳过:     7，总计:   727，持续时间: 2 m 54 s - NewManga.App.Tests.dll (net9.0)
-aggregate=1535 passed / 0 failed / 88 skipped (8 assemblies; baseline card 1532/0/86)
-note=after the run: git checkout -- verification/FEA-09
-
-== post-delivery-record check.ps1 (default) ==
-Governance scope: 15 current documents; no historical directory scan.
-Task: doc\tasks\FEA-11-RUN-GRANT-1.md
-WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：2913 bytes / 27 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6976 bytes / 63 lines
-Governance check: PASS (3 warnings)
-exit=0
-== post-delivery-record check.ps1 -TaskPath ==
-Governance scope: 15 current documents; no historical directory scan.
-Task: doc\tasks\FEA-11-RUN-GRANT-1.md
-WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：2913 bytes / 27 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6976 bytes / 63 lines
-Governance check: PASS (3 warnings)
-exit=0
+已通过! - 失败:     0，通过:   720，已跳过:     7，总计:   727，持续时间: 2 m 57 s - NewManga.App.Tests.dll (net9.0)
+aggregate=1547 passed / 0 failed / 88 skipped

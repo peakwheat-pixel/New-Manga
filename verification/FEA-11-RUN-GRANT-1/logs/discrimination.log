@@ -1,7 +1,7 @@
 # FEA-11-RUN-GRANT-1 discrimination log
 
-generated_at_utc=2026-11-06T16:35:21+00:00
-repo_head=7ff49f1cc21346be0b4867304499ee17f7ffb84e
+generated_at_utc=2026-11-06T17:42:28+00:00
+repo_head=3ffabeb8134b355076a9e964305de895e7c5b9d1
 
 Each break is applied to the shipped bytes, ONE target test is run, the test
 MUST turn red (exit != 0), then the file is restored and its sha256 is re-checked.
@@ -17,22 +17,29 @@ MUST turn red (exit != 0), then the file is restored and its sha256 is re-checke
     file=src/infrastructure/resource_channel/source_read_refs.py
     target=tests/fea11/test_source_run_grant.py::test_scope_and_facts_mismatch_is_refused
     exit_code=1 verdict=RED_AS_EXPECTED
-    output_tail=tests\fea11\test_source_run_grant.py:670: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_scope_and_facts_mismatch_is_refused | 1 failed in 0.
+    output_tail=tests\fea11\test_source_run_grant.py:679: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_scope_and_facts_mismatch_is_refused | 1 failed in 0.
     restore=RESTORED sha256=c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a
 
 [B3] break=原子性被删除（有 refused 页仍返回成功/部分绑定）
     file=src/infrastructure/resource_channel/source_read_refs.py
     target=tests/fea11/test_source_run_grant.py::test_authorization_is_entry_granular_and_refuses_other_pages
     exit_code=1 verdict=RED_AS_EXPECTED
-    output_tail=tests\fea11\test_source_run_grant.py:528: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_authorization_is_entry_granular_and_refuses_other_pa
+    output_tail=tests\fea11\test_source_run_grant.py:537: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_authorization_is_entry_granular_and_refuses_other_pa
     restore=RESTORED sha256=c2680a09eef6e6b83d46a7740de797a90ef932a5b667f4752d68a92b3308d45a
 
 [B4] break=command 取值域校验被删除（越域命令不再是 INVALID_REQUEST）
     file=src/bootstrap/core_service.py
     target=tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests
     exit_code=1 verdict=RED_AS_EXPECTED
-    output_tail=tests\fea11\test_source_run_grant.py:671: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests | 1 faile
+    output_tail=tests\fea11\test_source_run_grant.py:680: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests | 1 faile
     restore=RESTORED sha256=9afc9d6d4281b024946f3d67b382effc8a0fe81b683b220f6fb6ff471b77a2c6
+
+[B6] break=Host 预授权 best-effort 被删除（mint 失败重新阻断 Run）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~RunAuthorizationBestEffortSkipReachesDispatch
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   at NewManga.Host.Tests.SourceRegistryTests.<>c.<RunAuthorizationBestEffortSkipReachesDispatch_CoreRefusalDoesNot>b__21_0(IReadOnlyList`1 _, String _, JsonElement _, CancellationToken _) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeSliceAsync(String command, JsonElement scope, CancellationToken token) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeForCommandAsync(String commandName, Js
+    restore=RESTORED sha256=0114b580aa6080ea151bfcb3ad8ac5641b473363bd81e3568c86d2ada97bc2c2
 
 [B5] break=Host Run 前置授权钩子被删除（Run 命令未授权直接 dispatch）
     file=apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
@@ -41,5 +48,5 @@ MUST turn red (exit != 0), then the file is restored and its sha256 is re-checke
     output_tail=--- End of stack trace from previous location --- | ----- Inner Stack Trace ----- |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeCoreAsync(HostCommandDescriptor descriptor, JsonElement args, CancellationToken cancellationToken) |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeAsync(String name, JsonElement args, CancellationToken cancellationToken) |  | 失败!  - 失败:
     restore=RESTORED sha256=bde169fc931d53b9deb1666b5b25a08b4b7508ae6fd465c290093c7189efdd47
 
-result=PASS breaks=5 all_red_then_restored
+result=PASS breaks=6 all_red_then_restored
 final_rebuild exit_code=0
