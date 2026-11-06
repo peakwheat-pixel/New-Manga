@@ -726,4 +726,187 @@ public sealed class TrashUiTests
         Assert.Contains("恢复冲突（未分类）", TrashCopy.RestoreReason(null), StringComparison.Ordinal);
         Assert.Contains("恢复冲突（未分类：WEIRD_CODE）", TrashCopy.RestoreReason("WEIRD_CODE"), StringComparison.Ordinal);
     }
+
+    // ── FEA-12-UI-RESIDUAL-1: P3 residual edges (defensive invariant / refresh / cleanup retry /
+    //    two independent causes) ────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// AC-R1 / I-1 (defensive invariant only): a delete-time <c>CORE_CAPABILITY_MISSING</c> result is
+    /// NOT a page-level READ capability verdict. The already-loaded list must stay real and the result
+    /// panel must carry the typed code; no new probe, no success notice, no extra frame. The branch is
+    /// production-unreachable today (the Host does not gate <c>library_delete_book_permanently</c>);
+    /// this test pins the invariant, it does not claim a fixed user-visible defect.
+    /// </summary>
+    [Fact]
+    public async Task Delete_CapabilityMissing_DoesNotTurnThePageIntoReadCapabilityMissing()
+    {
+        var (trash, fake, notices) = NewTrash();
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+        trash.UnderstandIrrecoverable = true;
+        Assert.True(trash.CanConfirmDelete);
+        fake.ScriptedTrashDeletes.Enqueue(new TrashDeleteResult(
+            TrashDeleteOutcome.CapabilityMissing, TrashErrorCodes.CapabilityMissing, "delete is not advertised"));
+
+        trash.ConfirmDeleteCommand.Execute(null);
+
+        // Exactly the one confirm frame; the list stays real and the page-level READ state is untouched.
+        Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.DeletePermanently));
+        Assert.Equal(1, fake.TrashProbeGolden); // no re-probe
+        Assert.Equal(2, trash.Items.Count);
+        Assert.True(trash.ShowList);
+        Assert.False(trash.IsCapabilityMissing);
+        Assert.False(trash.ShowCapabilityState);
+        Assert.True(trash.CanWrite);   // capability booleans unchanged (no inference)
+        Assert.True(trash.CanPreview);
+        Assert.False(trash.HasCapabilityGap);
+        // Typed result stays visible; the same preview can never be confirmed again.
+        Assert.Equal("CORE_CAPABILITY_MISSING", trash.DeleteOutcomeCode);
+        Assert.Equal("删除被拒绝", trash.DeleteResultTitle);
+        Assert.Contains("CORE_CAPABILITY_MISSING", trash.DeleteOutcomeText, StringComparison.Ordinal);
+        Assert.Contains("未删除任何内容", trash.DeleteOutcomeText, StringComparison.Ordinal);
+        Assert.True(trash.IsPreviewOpen);
+        Assert.False(trash.CanConfirmDelete);
+        Assert.False(trash.IsCleanupPending);
+        Assert.DoesNotContain(notices, notice =>
+            notice.Contains("已彻底删除", StringComparison.Ordinal) ||
+            notice.Contains("清理重试成功", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// AC-R2 / I-2: a preview-time <c>BOOK_NOT_FOUND</c> (the row is gone, no longer returned by the
+    /// list) must notify, close the disclosure panel and reload exactly once: two list frames (initial
+    /// + refresh), zero delete frames, a second probe from the reload, and no ghost row.
+    /// </summary>
+    [Fact]
+    public async Task Preview_BookNotFound_ClosesPanel_AndReloadsTheList()
+    {
+        var (trash, fake, notices) = NewTrash();
+        await trash.EnterAsync();
+        Assert.Equal(2, trash.Items.Count);
+        // The refreshed page no longer contains book-0 (the ghost row).
+        fake.ScriptedTrashPages.Enqueue(new TrashListResult(true, null, null, new[] { TrashBook1 }, null));
+        fake.ScriptedTrashPreviews.Enqueue(TrashPreviewResult.Failure(TrashErrorCodes.BookNotFound, "gone"));
+
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+
+        Assert.Equal(2, fake.TrashFrames.Count(frame => frame == TrashWireCommands.ListTrash));
+        Assert.Equal(2, fake.TrashProbeGolden); // initial probe + ReloadAsync probe
+        Assert.Equal(0, fake.TrashFrames.Count(frame => frame == TrashWireCommands.DeletePermanently));
+        Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.PreviewPermanentDelete));
+        Assert.Single(trash.Items);
+        Assert.Equal("book-1", trash.Items[0].BookId);
+        Assert.True(trash.ShowList);
+        Assert.False(trash.IsPreviewOpen);
+        Assert.False(trash.HasPreviewError);
+        Assert.Contains(notices, notice =>
+            notice.Contains("BOOK_NOT_FOUND", StringComparison.Ordinal) &&
+            notice.Contains("已刷新", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// AC-R3 / I-3: preview → cleanup-pending → retry → retry → <c>BOOK_NOT_FOUND</c>. All three
+    /// delete frames carry the FIRST per-book digest byte-for-byte, there is only one preview frame,
+    /// and the not-found notice actually reaches the user (the old implementation set result text that
+    /// <c>ResetPreview</c> then cleared, so it was invisible), while the list is reloaded.
+    /// </summary>
+    [Fact]
+    public async Task CleanupRetry_SecondRetryBookNotFound_NotifiesAndRefreshes_WithSameDigest()
+    {
+        var (trash, fake, notices) = NewTrash();
+        await trash.EnterAsync();
+        await trash.BeginPermanentDeleteAsync(trash.Items[0]);
+        trash.UnderstandIrrecoverable = true;
+        fake.ScriptedTrashDeletes.Enqueue(new TrashDeleteResult(
+            TrashDeleteOutcome.CleanupPending, TrashErrorCodes.CleanupPending, "pending"));
+        fake.ScriptedTrashDeletes.Enqueue(new TrashDeleteResult(
+            TrashDeleteOutcome.CleanupPending, TrashErrorCodes.CleanupPending, "still pending"));
+        fake.ScriptedTrashDeletes.Enqueue(new TrashDeleteResult(
+            TrashDeleteOutcome.NotFound, TrashErrorCodes.BookNotFound, "gone"));
+
+        trash.ConfirmDeleteCommand.Execute(null);
+        Assert.True(trash.CanRetryCleanup);
+        trash.RetryCleanupCommand.Execute(null);
+        Assert.True(trash.CanRetryCleanup);
+        trash.RetryCleanupCommand.Execute(null);
+
+        var digestPayloads = fake.TrashFramePayloads
+            .Where(payload => payload.TryGetProperty("inventory_digest", out _))
+            .ToArray();
+        Assert.Equal(3, digestPayloads.Length);
+        var firstDigest = digestPayloads[0].GetProperty("inventory_digest").GetString();
+        Assert.False(string.IsNullOrEmpty(firstDigest));
+        Assert.Equal(firstDigest, digestPayloads[1].GetProperty("inventory_digest").GetString());
+        Assert.Equal(firstDigest, digestPayloads[2].GetProperty("inventory_digest").GetString());
+        Assert.Equal(1, fake.TrashFrames.Count(frame => frame == TrashWireCommands.PreviewPermanentDelete));
+        Assert.Equal(2, fake.TrashFrames.Count(frame => frame == TrashWireCommands.ListTrash));
+        Assert.Contains(notices, notice =>
+            notice.Contains("BOOK_NOT_FOUND", StringComparison.Ordinal) &&
+            notice.Contains("已不存在", StringComparison.Ordinal));
+        Assert.False(trash.IsCleanupPending);
+        Assert.False(trash.CanRetryCleanup);
+        Assert.False(trash.IsPreviewOpen);
+        Assert.DoesNotContain(notices, notice =>
+            notice.Contains("清理重试成功", StringComparison.Ordinal) ||
+            notice.Contains("已彻底删除", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// AC-R4 / I-4 (a): Host read-only and a write/preview capability gap are two INDEPENDENT causes.
+    /// Both banners are visible and neither text impersonates the other's typed code.
+    /// </summary>
+    [Fact]
+    public async Task HostReadOnly_PlusWriteCapabilityGap_ShowsBothIndependentCauses()
+    {
+        var (trash, fake, _) = NewTrash(f =>
+        {
+            f.TrashCapabilities = new TrashCapabilityState(true, true, false, true,
+                TrashErrorCodes.CapabilityMissing, "缺 library.trash.write/1");
+            f.Snapshot = f.Snapshot with { WritesAllowed = false };
+        });
+
+        await trash.EnterAsync();
+
+        Assert.True(trash.IsHostReadOnly);
+        Assert.True(trash.ShowHostReadOnlyBanner);
+        Assert.True(trash.ShowCapabilityDegraded);
+        Assert.True(trash.ShowList);
+        Assert.Equal(2, trash.Items.Count);
+        Assert.False(trash.CanWrite);
+        Assert.Contains(TrashWireCommands.ListTrash, fake.TrashFrames); // the list is real
+        Assert.Contains("HOST_READ_ONLY", trash.HostReadOnlyBannerText, StringComparison.Ordinal);
+        Assert.DoesNotContain("CORE_CAPABILITY_MISSING", trash.HostReadOnlyBannerText, StringComparison.Ordinal);
+        Assert.Contains("CORE_CAPABILITY_MISSING", trash.CapabilityGapMessage, StringComparison.Ordinal);
+        Assert.Contains("library.trash.write/1", trash.CapabilityGapMessage, StringComparison.Ordinal);
+        Assert.DoesNotContain("HOST_READ_ONLY", trash.CapabilityGapMessage, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// AC-R4 / I-4 (b): Host read-only + READ capability missing. The capability state replaces the
+    /// list, and the REAL read-only reason is still shown independently — but its copy must not claim
+    /// the recycle bin is browsable while reading is provably unavailable.
+    /// </summary>
+    [Fact]
+    public async Task HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason()
+    {
+        var (trash, _, _) = NewTrash(f =>
+        {
+            f.TrashCapabilities = new TrashCapabilityState(true, false, true, true,
+                TrashErrorCodes.CapabilityMissing, "缺 library.trash.read/1");
+            f.Snapshot = f.Snapshot with { WritesAllowed = false };
+        });
+
+        await trash.EnterAsync();
+
+        Assert.True(trash.ShowCapabilityState);
+        Assert.True(trash.IsCapabilityMissing);
+        Assert.True(trash.ShowHostReadOnlyBanner);
+        Assert.Contains("HOST_READ_ONLY", trash.HostReadOnlyBannerText, StringComparison.Ordinal);
+        Assert.DoesNotContain("可浏览", trash.HostReadOnlyBannerText, StringComparison.Ordinal);
+        Assert.Contains("library.trash.read/1", trash.CapabilityMessage, StringComparison.Ordinal);
+        Assert.Contains("CORE_CAPABILITY_MISSING", trash.CapabilityMessage, StringComparison.Ordinal);
+        Assert.DoesNotContain("HOST_READ_ONLY", trash.CapabilityMessage, StringComparison.Ordinal);
+        Assert.False(trash.ShowList);
+        Assert.False(trash.ShowEmptyState);
+    }
 }

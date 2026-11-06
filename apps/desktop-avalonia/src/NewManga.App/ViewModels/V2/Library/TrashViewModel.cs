@@ -186,12 +186,18 @@ public sealed class TrashViewModel : ObservableObject
     /// <summary>Host policy read-only: only the Host write gate, NEVER a capability result.</summary>
     public bool IsHostReadOnly => _hostReadOnly;
 
-    /// <summary>Show the read-only banner only when the Host is really read-only (no capability gap).</summary>
-    public bool ShowHostReadOnlyBanner => _hostReadOnly && !HasCapabilityGap;
+    /// <summary>
+    /// I-4: the Host read-only policy and a Core capability gap are two INDEPENDENT causes; whenever the
+    /// Host is really read-only its banner is shown (it is never suppressed by a capability gap).
+    /// </summary>
+    public bool ShowHostReadOnlyBanner => _hostReadOnly;
 
-    /// <summary>Typed Host read-only banner text (the literal HOST_READ_ONLY stays visible).</summary>
+    /// <summary>
+    /// Typed Host read-only banner text (the literal HOST_READ_ONLY stays visible). It must not claim the
+    /// recycle bin is browsable: the READ capability can be missing at the same time (I-4 / L-R7).
+    /// </summary>
     public string HostReadOnlyBannerText =>
-        "Host 处于只读模式（HOST_READ_ONLY）：回收站可浏览，但软删/恢复/彻底删除已禁用（不会执行任何写入）。";
+        "Host 处于只读模式（HOST_READ_ONLY）：不会执行任何写入；软删/恢复/彻底删除已禁用。";
 
     /// <summary>Independent failure state for a failed capability probe (CORE_UNAVAILABLE etc.).</summary>
     public bool IsProbeFailed => _probeFailed;
@@ -640,6 +646,17 @@ public sealed class TrashViewModel : ObservableObject
         }
 
         IsPreviewLoading = false;
+        if (!preview.Ok && string.Equals(preview.Code, TrashErrorCodes.BookNotFound, StringComparison.Ordinal))
+        {
+            // I-2 (AC4 "提示并刷新"): the book is gone (no longer returned by the list). Keep no ghost
+            // disclosure panel, tell the user and refresh ONCE; never re-preview or send a delete frame.
+            _notify("作品已不存在（BOOK_NOT_FOUND）：已刷新回收站列表", NmStatus.Failed);
+            ResetPreview();
+            RaisePreviewStates();
+            await ReloadAsync().ConfigureAwait(true);
+            return;
+        }
+
         if (!preview.Ok || preview.Items.Count == 0 || string.IsNullOrEmpty(preview.InventoryDigest))
         {
             _previewErrorCode = preview.Code ?? TrashErrorCodes.Unknown;
@@ -767,11 +784,15 @@ public sealed class TrashViewModel : ObservableObject
                 return;
 
             case TrashDeleteOutcome.CapabilityMissing:
-                _capabilityMissing = true;
-                _capabilityMessage = "Core 未公布删除能力（CORE_CAPABILITY_MISSING）：彻底删除已禁用";
-                _deleteOutcomeCode = result.Code;
-                _deleteOutcomeText = "删除被拒绝：能力缺失（未删除任何内容）";
+                // I-1 defensive invariant only (production-unreachable today): a delete-time result is
+                // NOT a page-level READ capability verdict, so the real list stays and no probe is
+                // re-run. The typed result is shown and the same stale preview cannot be confirmed again.
+                _deleteOutcomeCode = result.Code ?? TrashErrorCodes.CapabilityMissing;
+                _deleteOutcomeText =
+                    "删除被拒绝：Core 未公布删除能力（CORE_CAPABILITY_MISSING，未删除任何内容）；" +
+                    "可点「刷新」重新探测能力。";
                 _deleteResultTitle = "删除被拒绝";
+                _previewBlockedReason = "删除返回能力缺失（CORE_CAPABILITY_MISSING）：本预览不可再确认，可刷新重新探测";
                 RaisePreviewStates();
                 RaiseStates();
                 return;
@@ -824,6 +845,9 @@ public sealed class TrashViewModel : ObservableObject
             : $"清理重试未完成（{_deleteOutcomeCode}），未伪报完成";
         if (result.Outcome == TrashDeleteOutcome.NotFound)
         {
+            // I-3: the result text set above is cleared by ResetPreview right below, so the user would
+            // never see it -- the typed notice must go through _notify. Refresh ONCE, never auto-retry.
+            _notify("作品已不存在（BOOK_NOT_FOUND）：已刷新回收站列表", NmStatus.Failed);
             ResetPreview();
             await ReloadAsync().ConfigureAwait(true);
         }
