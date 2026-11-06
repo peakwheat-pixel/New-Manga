@@ -13,6 +13,14 @@ Signed-field shape (both sides must byte-match): the payload minus
 wire JSON shape. The ``scope.rendition.decoder`` value carries the five-kind
 source classification (image|folder|zip|cbz|pdf — the C-16 §2 four-dimension
 scope's rendition dimension applied to imports).
+
+C-16 v1.4 §2 container member entries: ``zip``/``cbz``/``pdf`` grants carry
+1..N entries whose ``locator``/``ordinal`` are member identities of the ONE
+container named by every ``path`` and whose ``facts`` are that container's
+physical identity. ``image`` stays the single-entry shape and ``folder`` keeps
+one entry per member with its own path. Any per-entry violation refuses the
+whole grant typed (zero partial acceptance); the entry-count budget is typed and
+never truncated.
 """
 
 from __future__ import annotations
@@ -44,6 +52,11 @@ from application.resource_channel.dto import USER_SOURCE_SCOPE
 
 _ID = re.compile(r"^[A-Za-z0-9_.:-]{8,128}$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
+#: P3-6/N-4: the implementation's own hard cap on the entries of ONE grant.
+#: The configurable ``budget.max_entries`` limit is checked first (C-16 §2);
+#: this stricter cap only exists so a hostile/malformed grant can never make
+#: the registry parse an unbounded list. Over the cap is typed, never truncated.
+_MAX_SCOPE_ENTRIES = 10000
 #: Rendition decoder values the import face accepts (five source kinds).
 _KINDS = frozenset({"image", "folder", "zip", "cbz", "pdf"})
 _ENVELOPE_FIELDS = {
@@ -595,19 +608,32 @@ class SourceReadGrantRegistry(SourceReadAccess):
             return self._folder_scope_covers(
                 raw_entries, entry, location, version_entries
             )
-        # Container kinds (image/zip/cbz/pdf): the frozen registry carries ONE
-        # entry whose facts are the container's physical identity.
-        if len(raw_entries) != 1 or not isinstance(raw_entries[0], dict):
-            return False
-        raw = raw_entries[0]
+        # Container kinds (image/zip/cbz/pdf). C-16 v1.4 §2: a container grant
+        # carries 1..N member identities (locator/ordinal are the Core's
+        # authoritative version rows) and EVERY entry's facts are the CONTAINER's
+        # physical identity. The facts reference point is therefore the single
+        # ``container_facts`` compared against ``source_locations`` — never a
+        # member's own digest and never a path fallback. The binding's own entry
+        # row is covered when any grant entry matches by
+        # ``entry_key``/``locator``/``ordinal`` (the frozen OR clause); an entry
+        # that names a member which is not part of this version (e.g. an ordinal
+        # out of the version's range) simply never matches.
         facts = grant.container_facts
         if facts is None or not self._location_matches(location, facts):
             return False
-        return (
-            raw.get("entry_key") == entry.get("entry_id")
-            or raw.get("locator") == entry.get("locator")
-            or raw.get("ordinal") == entry.get("ordinal")
-        )
+        entry_id = entry.get("entry_id")
+        locator = entry.get("locator")
+        ordinal = entry.get("ordinal")
+        for raw in raw_entries:
+            if not isinstance(raw, dict):
+                return False
+            if (
+                raw.get("entry_key") == entry_id
+                or raw.get("locator") == locator
+                or raw.get("ordinal") == ordinal
+            ):
+                return True
+        return False
 
     @staticmethod
     def _location_matches(location: dict, facts: GrantFacts) -> bool:
@@ -899,11 +925,16 @@ class SourceReadGrantRegistry(SourceReadAccess):
             raise SourceImportError(
                 "SOURCE_ACCESS_DENIED", "source-read grant entries are malformed"
             )
-        if len(entries) > 10000:
+        if len(entries) > _MAX_SCOPE_ENTRIES:
             raise SourceImportError(
                 "SOURCE_BUDGET_EXCEEDED", "source-read grant entry budget exceeded"
             )
-        parsed: list[tuple[str, GrantFacts]] = []
+        # C-16 v1.4 §2: a container source (zip/cbz/pdf) carries 1..N member
+        # identities; every one of them names the SAME container path and the
+        # CONTAINER's physical identity facts (never a member's digest). The
+        # shared container path is inspected once (no per-entry re-stat walk).
+        parsed: list[tuple[str, str, int, GrantFacts]] = []
+        inspected: dict[str, str] = {}
         for item in entries:
             if not isinstance(item, dict) or not {
                 "entry_key", "locator", "ordinal", "path", "facts"
@@ -932,31 +963,36 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 raise SourceImportError(
                     "SOURCE_ACCESS_DENIED", "granted path escapes its root"
                 )
-            self._reject_reparse(Path(path))
-            try:
-                info = os.stat(path)
-            except OSError as error:
-                raise SourceImportError(
-                    "SOURCE_ENTRY_MISSING", "granted source file is missing"
-                ) from error
-            if not stat.S_ISREG(info.st_mode):
-                raise SourceImportError(
-                    "SOURCE_ACCESS_DENIED", "granted path is not a file"
-                )
-            facts = self._facts(item["facts"])
-            parsed.append((path, facts))
+            key = os.path.normcase(os.path.normpath(path))
+            if key not in inspected:
+                self._reject_reparse(Path(path))
+                try:
+                    info = os.stat(path)
+                except OSError as error:
+                    raise SourceImportError(
+                        "SOURCE_ENTRY_MISSING", "granted source file is missing"
+                    ) from error
+                if not stat.S_ISREG(info.st_mode):
+                    raise SourceImportError(
+                        "SOURCE_ACCESS_DENIED", "granted path is not a file"
+                    )
+                inspected[key] = path
+            else:
+                # Identical container path: one inspection covers every entry.
+                path = inspected[key]
+            parsed.append((path, locator, ordinal, self._facts(item["facts"])))
         if kind == "folder":
             # The folder root is the common parent of the granted members
             # (the Host enumerates an authorized root's direct files; the
             # envelope carries member paths, not the root itself).
             try:
                 candidates = []
-                for item in entries:
-                    validate_locator(item["locator"])
-                    candidate = Path(item["path"])
-                    for _ in item["locator"].split("/"):
+                for path, locator, _ordinal, _facts in parsed:
+                    validate_locator(locator)
+                    candidate = Path(path)
+                    for _ in locator.split("/"):
                         candidate = candidate.parent
-                    if os.path.normcase(str(candidate.joinpath(*item["locator"].split("/")))) != os.path.normcase(item["path"]):
+                    if os.path.normcase(str(candidate.joinpath(*locator.split("/")))) != os.path.normcase(path):
                         raise ValueError("folder locator mismatch")
                     candidates.append(str(candidate))
                 if len(set(os.path.normcase(p) for p in candidates)) != 1:
@@ -968,7 +1004,7 @@ class SourceReadGrantRegistry(SourceReadAccess):
                 ) from error
             root_norm = os.path.normcase(os.path.normpath(root))
             members: list[tuple[str, GrantFacts]] = []
-            for path, facts in parsed:
+            for path, _locator, _ordinal, facts in parsed:
                 target_norm = os.path.normcase(os.path.normpath(path))
                 if not target_norm.startswith(root_norm.rstrip("\\/") + os.sep):
                     raise SourceImportError(
@@ -983,11 +1019,43 @@ class SourceReadGrantRegistry(SourceReadAccess):
                     ) from error
                 members.append((path, facts))
             return kind, None, None, root, tuple(members)
-        if len(parsed) != 1:
+        # Container kinds (image/zip/cbz/pdf). C-16 v1.4 §2: ``folder`` keeps
+        # per-member paths, ``image`` keeps the single-entry shape and
+        # ``zip``/``cbz``/``pdf`` accept 1..N member identities. Every entry is
+        # validated individually (locator safety, ordinal >= 0 and unique, same
+        # container path, identical container facts); ANY violation refuses the
+        # whole grant typed with ZERO partial acceptance. The entry-count budget
+        # was already enforced by ``register`` (``budget.max_entries``) and by
+        # the hard cap above, always typed and never truncated.
+        if kind == "image" and len(parsed) != 1:
             raise SourceImportError(
-                "SOURCE_ACCESS_DENIED", "container grant must carry one entry"
+                "SOURCE_ACCESS_DENIED", "image grant must carry one entry"
             )
-        return kind, parsed[0][0], parsed[0][1], None, ()
+        container_path, container_facts = parsed[0][0], parsed[0][3]
+        container_norm = os.path.normcase(os.path.normpath(container_path))
+        ordinals: set[int] = set()
+        for path, locator, ordinal, facts in parsed:
+            try:
+                validate_locator(locator)
+            except ValueError as error:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "granted entry locator is unsafe"
+                ) from error
+            if ordinal in ordinals:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "granted entry ordinals must be unique"
+                )
+            ordinals.add(ordinal)
+            if os.path.normcase(os.path.normpath(path)) != container_norm:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED", "container grant entries span containers"
+                )
+            if facts != container_facts:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "container grant entries must share the container identity",
+                )
+        return kind, container_path, container_facts, None, ()
 
     @staticmethod
     def _facts(raw) -> GrantFacts:

@@ -11,14 +11,21 @@ namespace NewManga.Host.Sources;
 
 /// <summary>One Host-known source to mint a Run-scoped read grant for
 /// (FEA-11-RUN-GRANT-1 / C-16 v1.3 §2.4). The absolute path is Host-only and
-/// never crosses the wire.</summary>
+/// never crosses the wire.
+///
+/// FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2): a container source (zip/cbz/pdf) also
+/// carries the Core-authoritative member identities from the scan response
+/// (<see cref="ContainerEntries"/>); the Host never infers, renumbers or guesses a
+/// locator/ordinal itself. <see langword="null"/> keeps the frozen single-entry
+/// shape (image) or the folder enumeration.</summary>
 public sealed record RunSourceScope(
     string RegistryId,
     int Generation,
     string Path,
     string Kind,
     string SourceId,
-    string Version)
+    string Version,
+    IReadOnlyList<SourceIdentityEntry>? ContainerEntries = null)
 {
     public override string ToString() => "RunSourceScope(" + SourceId + ")";
 }
@@ -163,6 +170,7 @@ public sealed class SourceReadCoordinator(
                     grantIds.Add(await IssueLockedAsync(
                         source.RegistryId, source.Generation, source.Path, source.Kind,
                         source.SourceId, source.Version, rendition,
+                        containerEntries: source.ContainerEntries,
                         cancellationToken: cancellationToken).ConfigureAwait(false));
                 }
                 catch (Exception error) when (
@@ -220,6 +228,50 @@ public sealed class SourceReadCoordinator(
         ArgumentException or NotSupportedException => new SourceAccessException("SOURCE_ACCESS_DENIED"),
         _ => new SourceAccessException("SOURCE_ENTRY_MISSING"),
     };
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2): the ONE container's physical identity facts,
+    /// collected exactly once per grant (one handle, identity before/after the digest; byte
+    /// budget and identity drift stay typed). Every member entry of the grant carries these
+    /// facts — never a member digest, which the Core refuses typed.
+    /// </summary>
+    private static JsonObject DescribeContainer(string path, long maxBytes)
+    {
+        SourceSecurity.RejectReparseAncestors(path);
+        FileStream stream;
+        try
+        {
+            stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            throw MapMintFailure(error);
+        }
+        using (stream)
+        {
+            (ulong Volume, ulong Id, long Size) before;
+            string digest;
+            (ulong Volume, ulong Id, long Size) after;
+            try
+            {
+                before = SourceSecurity.Identity(stream.SafeFileHandle);
+                if (before.Size > maxBytes) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
+                digest = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+                after = SourceSecurity.Identity(stream.SafeFileHandle);
+            }
+            catch (Exception error) when (
+                error is not SourceAccessException and not OutOfMemoryException)
+            {
+                throw MapMintFailure(error);
+            }
+            if (after != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
+            return new JsonObject
+            {
+                ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
+                ["size"] = before.Size, ["sha256"] = digest,
+            };
+        }
+    }
 
     /// <summary>
     /// R-8/L-G7: record one tracked grant id/expiry. Every issuance path calls
@@ -286,6 +338,7 @@ public sealed class SourceReadCoordinator(
         string sourceId, string version, JsonElement rendition, long maxBytes = 268435456,
         long maxDecodeBytes = 268435456, int maxEntries = 10000,
         string? secretToken = null, string? secretPath = null, double? secretExpiresAt = null,
+        IReadOnlyList<SourceIdentityEntry>? containerEntries = null,
         CancellationToken cancellationToken = default)
     {
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -295,17 +348,41 @@ public sealed class SourceReadCoordinator(
             return await IssueLockedAsync(
                 registryId, generation, sourcePath, sourceKind, sourceId, version,
                 rendition, maxBytes, maxDecodeBytes, maxEntries,
-                secretToken, secretPath, secretExpiresAt, cancellationToken)
+                secretToken, secretPath, secretExpiresAt, containerEntries,
+                cancellationToken)
                 .ConfigureAwait(false);
         }
         finally { _gate.Release(); }
     }
 
-    /// <summary>Issuance body: the caller owns ``_gate`` and the capability probe.</summary>
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2 / card S-5): the container-entry plan for ONE
+    /// mint. Only the container kinds (zip/cbz/pdf) carry member entries, and only from the
+    /// Core-authoritative scan identity — the Host NEVER infers, renumbers or guesses a
+    /// locator/ordinal (the list is used verbatim). ``image`` keeps the frozen single-entry
+    /// shape and ``folder`` keeps its per-member enumeration, so both return null.
+    ///
+    /// An entry list over the grant's ``max_entries`` budget is a typed
+    /// <c>SOURCE_BUDGET_EXCEEDED</c>: the Host NEVER truncates the member list.
+    /// </summary>
+    public static IReadOnlyList<SourceIdentityEntry>? ContainerEntryPlan(
+        string sourceKind, IReadOnlyList<SourceIdentityEntry>? authoritative, int maxEntries)
+    {
+        if (sourceKind is not ("zip" or "cbz" or "pdf")) return null;
+        if (authoritative is null || authoritative.Count == 0) return null;
+        if (authoritative.Count > maxEntries)
+        {
+            throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
+        }
+        return authoritative;
+    }
+
+    /// <summary>The issuance body: the caller owns ``_gate`` and the capability probe.</summary>
     private async Task<string> IssueLockedAsync(string registryId, int generation, string sourcePath, string sourceKind,
         string sourceId, string version, JsonElement rendition, long maxBytes = 268435456,
         long maxDecodeBytes = 268435456, int maxEntries = 10000,
         string? secretToken = null, string? secretPath = null, double? secretExpiresAt = null,
+        IReadOnlyList<SourceIdentityEntry>? containerEntries = null,
         CancellationToken cancellationToken = default)
     {
             var session = core.HostSession ?? throw new SourceAccessException("SOURCE_ACCESS_DENIED");
@@ -316,6 +393,9 @@ public sealed class SourceReadCoordinator(
                 || sourceKind is not ("image" or "folder" or "zip" or "cbz" or "pdf")
                 || maxBytes <= 0 || maxDecodeBytes <= 0 || maxEntries <= 0 || maxEntries > 10000)
                 throw new SourceAccessException("INVALID_REQUEST");
+            // FEA-11-RUN-GRANT-2 (2B): the container member plan is resolved BEFORE any file I/O so an
+            // over-budget member list is typed without touching the source (never truncated).
+            var containerPlan = ContainerEntryPlan(sourceKind, containerEntries, maxEntries);
             var path = SourceSecurity.Normalize(sourcePath);
             Registry.Authorize(registryId, generation, [path]);
             var paths = sourceKind == "folder" ? EnumerateFolder(path, maxEntries).OrderBy(NaturalKey, StringComparer.Ordinal).ThenBy(p => p, StringComparer.Ordinal).ToArray() : new[] { path };
@@ -323,45 +403,64 @@ public sealed class SourceReadCoordinator(
             Registry.Authorize(registryId, generation, paths);
             var entries = new JsonArray();
             var ordinal = 0;
-            foreach (var member in paths)
+            if (containerPlan is not null)
             {
-                SourceSecurity.RejectReparseAncestors(member);
-                FileStream stream;
-                try
+                // ONE container file: fingerprint it exactly once (never once per member) and give every
+                // entry the SAME container path + the CONTAINER's physical identity facts (C-16 v1.4 §2;
+                // a member digest as container facts is refused typed by the Core).
+                var facts = DescribeContainer(path, maxBytes);
+                foreach (var member in containerPlan)
                 {
-                    stream = new FileStream(member, FileMode.Open, FileAccess.Read, FileShare.Read);
-                }
-                catch (Exception error) when (error is not OutOfMemoryException)
-                {
-                    // R1-04: never leak a bare I/O exception out of the mint path.
-                    throw MapMintFailure(error);
-                }
-                using (stream)
-                {
-                    (ulong Volume, ulong Id, long Size) before;
-                    string digest;
-                    (ulong Volume, ulong Id, long Size) after;
-                    try
-                    {
-                        before = SourceSecurity.Identity(stream.SafeFileHandle);
-                        if (before.Size > maxBytes) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
-                        digest = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
-                        after = SourceSecurity.Identity(stream.SafeFileHandle);
-                    }
-                    catch (Exception error) when (
-                        error is not SourceAccessException and not OutOfMemoryException)
-                    {
-                        throw MapMintFailure(error);
-                    }
-                    if (after != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
                     entries.Add(new JsonObject
                     {
-                        ["entry_key"] = "entry-" + ordinal, ["entry_id"] = null,
-                        ["locator"] = sourceKind == "folder" ? Path.GetRelativePath(path, member).Replace('\\', '/') : Path.GetFileName(member),
-                        ["ordinal"] = ordinal++, ["path"] = member,
-                        ["facts"] = new JsonObject { ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
-                            ["size"] = before.Size, ["sha256"] = digest }
+                        ["entry_key"] = "entry-" + ordinal++, ["entry_id"] = null,
+                        ["locator"] = member.Locator, ["ordinal"] = member.Ordinal,
+                        ["path"] = path, ["facts"] = facts.DeepClone(),
                     });
+                }
+            }
+            else
+            {
+                foreach (var member in paths)
+                {
+                    SourceSecurity.RejectReparseAncestors(member);
+                    FileStream stream;
+                    try
+                    {
+                        stream = new FileStream(member, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    }
+                    catch (Exception error) when (error is not OutOfMemoryException)
+                    {
+                        // R1-04: never leak a bare I/O exception out of the mint path.
+                        throw MapMintFailure(error);
+                    }
+                    using (stream)
+                    {
+                        (ulong Volume, ulong Id, long Size) before;
+                        string digest;
+                        (ulong Volume, ulong Id, long Size) after;
+                        try
+                        {
+                            before = SourceSecurity.Identity(stream.SafeFileHandle);
+                            if (before.Size > maxBytes) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
+                            digest = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+                            after = SourceSecurity.Identity(stream.SafeFileHandle);
+                        }
+                        catch (Exception error) when (
+                            error is not SourceAccessException and not OutOfMemoryException)
+                        {
+                            throw MapMintFailure(error);
+                        }
+                        if (after != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
+                        entries.Add(new JsonObject
+                        {
+                            ["entry_key"] = "entry-" + ordinal, ["entry_id"] = null,
+                            ["locator"] = sourceKind == "folder" ? Path.GetRelativePath(path, member).Replace('\\', '/') : Path.GetFileName(member),
+                            ["ordinal"] = ordinal++, ["path"] = member,
+                            ["facts"] = new JsonObject { ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
+                                ["size"] = before.Size, ["sha256"] = digest }
+                        });
+                    }
                 }
             }
             // Re-check root identities/generation and durable last-use after collection.

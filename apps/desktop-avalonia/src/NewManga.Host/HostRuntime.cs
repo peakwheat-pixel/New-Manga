@@ -1792,10 +1792,17 @@ public static class RunSourceRange
                 cold.Add(target);
                 continue;
             }
+            var sourceKind = KindOfSource(target, normalized);
             scopes.Add(new RunSourceScope(
-                entry.RegistryId, entry.Generation, normalized,
-                KindOfSource(target, normalized),
-                target.SourceId, identity.VersionId));
+                entry.RegistryId, entry.Generation, normalized, sourceKind,
+                target.SourceId, identity.VersionId,
+                // FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2): a container source also carries the
+                // Core-authoritative member identities (locator/ordinal) from that same scan response;
+                // the Host passes them VERBATIM (never inferred, never renumbered). ``image`` keeps the
+                // single-entry shape and ``folder`` its per-member enumeration, so both keep null here.
+                sourceKind is "zip" or "cbz" or "pdf" && identity.Entries.Count > 0
+                    ? identity.Entries
+                    : null));
         }
         return new RunSourceRangeResolution(scopes, unresolved, cold);
     }
