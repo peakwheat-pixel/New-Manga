@@ -93,3 +93,15 @@ status: in_review
 - 可直接转发给 Agent 的指令：
 
   > 对 `FEA-11-RENDITION-1` 做**独立上下文** Review（只读，不实现）：被审对象 `G:\CODEX\New Manga` `main` 的 `4360fbcdb..a05a419f7`（实现 `693ab469b` + 测试 `a05a419f7`；证据/卡面/Handoff 见 `verification/FEA-11-RENDITION-1/**` 与 `doc/tasks/FEA-11-RENDITION-1.md`）。按 `doc/reviews/FEA-11-RENDITION-1-scope-r1.md` 的 AC-R1…R7 与 I-1…I-5 逐条核验，重点检查：①`pipeline.py` 纯 referenced 准入是否真的复用 C-15 §4.1 V（未手写第三份）且 managed/混合页零回归；②`core_assembly._ManagedPageImageSource` referenced 分支是否只用 `prepare_referenced_rendition`、未发布/未写 cache/未用 `prepared["cache_key"]`、错误文本无路径；③`read_gate` 是否确实只有一份并被三处共用；④I-4 是否在 `region_creator` 之前复核且零写；⑤像素判别测试是否真实（非 stub）、判别性是否成立（自行破坏一条分支复跑）；⑥limitation L-R1/L-R2/L-R5/L-R7/L-R10 登记是否充分、是否有夸大声明。独立复跑：`pytest tests/fea11 -q`（期望 145）、三新文件（37）、`pytest tests -q`（3249/10，跑后 `git checkout -- verification/FEA-09`）、`dotnet test apps/desktop-avalonia/NewManga.sln -c Release`（1527/0/86）、`verify_pins.ps1`（18/18）、`check.ps1`（PASS）、`generate_api_inventory.py --check`。报告写入 `doc/reviews/FEA-11-RENDITION-1-r1.md`，记录 reviewer session/来源与 P0/P1/P2/P3 findings。
+
+## 6. Errata（DSH closeout，2026-11-06；Review r1 处置，不改历史交付字节）
+
+> 独立 Review `doc/reviews/FEA-11-RENDITION-1-r1.md`：**approved（P0=0/P1=0/P2=1/P3=8）**，无代码返修。以下为本 Handoff 与证据的更正/补充（详细处置见 `EV.md` §7 与卡面 Closeout Record）：
+
+1. **R1-01（P2，更正 §3 L-R10 表述）**：本 Handoff §1 AC 行与 §3 中「`width/height` NULL 的 referenced 页 page-scope 可能可进入（像素由解码得出）」**不成立**。事实：纯 referenced 页 `width/height` NULL ⇒ V 为假 ⇒ page-scope 与 region-scope 均 `TARGET_NOT_FOUND`；**遗留混合页**（referenced + `managed_original_ref` 非空）可进入目标层（A-1 旧门槛），但 provider 因 V 读返回 None 而 typed 拒绝（`INVALID_INPUT`，detail 沿用 "has no managed original"），**像素不解码**、不产生错误像素/lineage。
+2. **R1-02/R1-03（P3，证据归因与日志元数据）**：`verification/FEA-09/logs/wire-redacted.ndjson` 的 tracked 字节改写来自**全量 .NET** 的 `WireLogSourceRedactionTests`，不是全量 pytest；恢复与最终 clean 证明见 `verification/FEA-11-RENDITION-1/logs/final-scope-validation.log`（EV-9）。`gates-full-pytest.log`/`gates-dotnet.log` 是原始运行输出、无 shell/EXIT 头部；命令/基线/退出结果以本 Handoff §2/§4 与 EV.md §1 为准。
+3. **R1-04（P3）**：仓外隔离根现有 **10** 个文件（新增 `final-scope-validation.log`），`RESOURCE-MANIFEST.json` 已登记并重算聚合 sha256 `448272d6…`；该文件已复制为 canonical 证据（卡面 EV-10 / EV.md EV-9）。
+4. **R1-05（P3）**：卡面 AC-R2/AC-R4 的「source.py 8/10 用例」计数更正为 **5/8**（另列 run/gates 文件，勿重复计数）；「retryable 稳定」改为「message 稳定」（`PipelineError` 只有 `code`/`detail`）。
+5. **R1-06（P3）**：新 `read_gate` 与 resolve 面 `core_service._assert_source_sync_gate` 在「healthy binding 但无 publication 行」的损坏形态下语义分歧 → 新登记 limitation **L-R11**；本卡 Out 不碰 `core_service.py`，后续卡统一。
+6. **R1-07/R1-08（P3）**：`page_png` docstring 过时、V 假诊断文本「has no managed original」语义误导、run 级 `run_source_guard` 为行为等价复刻（真实装配 identity/guard 由 `gates.py` 覆盖）——本卡不改代码，登记 follow-up；卡面/EV 已注明证据边界。
+7. **R1-09（P3）**：既有 flaky `tests/infrastructure/test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren`（测试内已注 `FLAKY-PYTEST-1`）；非本卡回归，集成验证按首跑/复跑记录。

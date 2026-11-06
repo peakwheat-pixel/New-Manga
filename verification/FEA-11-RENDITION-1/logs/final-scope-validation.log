@@ -1,0 +1,25 @@
+=== FINAL scope validation 2026-11-06T19:41:46.7732243+08:00 ===
+base=4360fbcdb HEAD=75dace4c2eefb5f22ab3e33113ea16db8c51e22e
+
+--- diff --name-only base..HEAD ---
+doc/handoffs/FEA-11-RENDITION-1-a05a419f7.md
+doc/tasks/FEA-11-RENDITION-1.md
+src/bootstrap/core_assembly.py
+src/infrastructure/providers/handlers.py
+src/infrastructure/sqlite/pipeline.py
+tests/fea11/test_source_rendition_gates.py
+tests/fea11/test_source_rendition_run.py
+tests/fea11/test_source_rendition_source.py
+verification/FEA-11-RENDITION-1/EV.md
+verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json
+verification/FEA-11-RENDITION-1/changed-files.txt
+verification/FEA-11-RENDITION-1/logs/discrimination.log
+verification/FEA-11-RENDITION-1/logs/gates-dotnet.log
+verification/FEA-11-RENDITION-1/logs/gates-feature.log
+verification/FEA-11-RENDITION-1/logs/gates-full-pytest.log
+verification/FEA-11-RENDITION-1/logs/gates-governance.log
+verification/FEA-11-RENDITION-1/logs/scope-validation.log
+--- forbidden surfaces (must be empty) ---
+--- dependency files (must be empty) ---
+--- core_service/conftest/frozen-test (must be empty) ---
+--- worktree status ---

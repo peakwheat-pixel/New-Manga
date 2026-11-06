@@ -17,8 +17,8 @@
       "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RENDITION-1\\\\",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location (G:\\CODEX\\New Manga.workspace\\FEA-11-RENDITION-1\\\\)",
-      "sha256": "c925f360c99e5fd985ff079bf3801fb33bd2063281a07a10642bbb43b7ff40b0",
-      "file_count": 9,
+      "sha256": "448272d64059f26444bf2bcd9e4e8f99ce6eb58c989192cf01438895e5aceca8",
+      "file_count": 10,
       "files": [
         {
           "name": "baseline-pytest.log",
@@ -31,6 +31,10 @@
         {
           "name": "discrimination.log",
           "sha256": "c2e961cde3905e8d04e5bf0494b2fdc3935cf9b7d1126b1af68cd964c0e35f7d"
+        },
+        {
+          "name": "final-scope-validation.log",
+          "sha256": "507cdec26046222f139105701fd6cbae1fca4937ee1eb0d6b74add4faec53d12"
         },
         {
           "name": "fix_log_header.py",
@@ -57,7 +61,7 @@
           "sha256": "c60f4604b0233bee2d7e53c4285211db704aca69512422ad88bcfbbde905eeaf"
         }
       ],
-      "process_check": "仓外隔离根（工作区治理边界）。仅含 agent 辅助脚本（reapply_impl.py、discriminate.py、patch_gates*.py、fix_log_header.py）与 discrimination.log；无进程持有；产品代码/测试不引用该路径；仓内 canonical 副本为 verification/FEA-11-RENDITION-1/logs/discrimination.log。closeout 时可保留或删除，删除前须确认 EV.md 引用已归档。"
+      "process_check": "仓外隔离根（工作区治理边界）。仅含 agent 辅助脚本、判别日志与最终范围证明 final-scope-validation.log（第 10 个文件，HEAD=75dace4c2、worktree 空）；无进程持有；产品代码/测试不引用该路径；仓内 canonical 副本为 verification/FEA-11-RENDITION-1/logs/discrimination.log 与 verification/FEA-11-RENDITION-1/logs/final-scope-validation.log。closeout 保留（PRESERVE_REFERENCED），不删除。"
     },
     {
       "resource_type": "test-fixture",
@@ -87,5 +91,15 @@
     "migrated": 0,
     "archived": 0
   },
-  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外临时根保留给 Review 复核（不随仓库分发）。全量 pytest 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-full-pytest.log 尾注）。"
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外临时根保留给 Review 复核（不随仓库分发）。全量 pytest 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-full-pytest.log 尾注）。",
+  "closeout": {
+    "date": "2026-11-06",
+    "by": "DSH（Lead / Architect / Integrator）",
+    "review": "doc/reviews/FEA-11-RENDITION-1-r1.md（approved P0=0/P1=0/P2=1/P3=8）",
+    "updates": [
+      "R1-04：登记仓外隔离根第 10 个文件 final-scope-validation.log，重算聚合 sha256（本对象）。",
+      "R1-02/R1-03：FEA-09 tracked 字节实际由 .NET WireLogSourceRedactionTests 重写（非全量 pytest），恢复/最终 clean 证明见 verification/FEA-11-RENDITION-1/logs/final-scope-validation.log；原始门禁日志无 header/EXIT 的事实已在 EV.md 注明。",
+      "final-scope-validation.log 已复制为仓内 canonical 证据（card EV-10）。"
+    ]
+  }
 }
