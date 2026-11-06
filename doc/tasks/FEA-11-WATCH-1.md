@@ -3,7 +3,7 @@ id: FEA-11-WATCH-1
 title: FEA-11 目录 watcher 生产者/消费者（hint → 全量重枚举；Host-only）
 kind: implementation
 governance_version: 3
-status: changes_requested
+status: in_review
 approval: 用户 2026-11-06「同意继续让 Codex/ZCode 决定下一项」→ Codex 首轮超时 → **ZCode 裁决 NEXT-TASK=FEA-11-WATCH-1**（AC11-1 唯一承接；须先独立 scope review 并裁决 watcher 必要性）；scope review `doc/reviews/FEA-11-WATCH-1-scope-r1.md` = **NECESSARY**（AC11-1 逐字含目录 watcher 生产者/消费者与丢 hint/overflow 全量重枚举；C-01b SC-25 FROZEN 把 watcher hint 列入检测组合；C-17 v1.1:18 声明四路检测为实现责任）；DSH 2026-11-06 接受并冻结释放（Owner 由 DSH 指定为 `fea12-core-host`，scope review 建议 ZCode 作独立 Review 备选）
 suggested_owner: zcode（scope review 建议）；实际 Owner：fea12-core-host（DSH Agent Teams，Host .NET 分片）
 owner: fea12-core-host
@@ -74,8 +74,8 @@ Host 侧新增只读目录 watcher，作为**检测延迟优化**与 AC11-1「�
 
 ## Acceptance Criteria
 
-- [ ] **AC-W1 生命周期与范围**：Ready 后对已注册目标 arm；file target 仅精确文件、folder 递归；registry 复核失败/撤销/不可读 → typed skip；Stop 后零 hint；重启幂等。 证据：`SourceWatcherTests` 15 例 + gated `Fea11WatchHostRuntimeTests`（Ready→armed→Active=1→真实事件 hint→Dispose 后 watcher/scheduler 均 null）；`logs/watcher-unit.log`、`logs/watcher-runtime.log` <<PARTIAL: r1 P2 撤销后 refresh 未拆除 watcher；修复后恢复>>
-- [ ] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id；r2 P1：rotation 游标非 0 后 hint 仍在本 pass 被扫且 pending 清空） <<PARTIAL: r1 P1 hint pass 从预算游标起步会跳过被 hint 源；修复后恢复>>
+- [x] **AC-W1 生命周期与范围**：Ready 后对已注册目标 arm；file target 仅精确文件、folder 递归；registry 复核失败/撤销/不可读 → typed skip；Stop 后零 hint；重启幂等。 证据：`SourceWatcherTests` 15 例 + gated `Fea11WatchHostRuntimeTests`（Ready→armed→Active=1→真实事件 hint→Dispose 后 watcher/scheduler 均 null）；`logs/watcher-unit.log`、`logs/watcher-runtime.log` <<MET>>
+- [x] **AC-W2 hint 语义与去抖**：N 事件 → 恰好 1 次 `ScanSourceSync`（可注入时钟，零 sleep）；hint 不写 changed/deleted；丢 hint（队列满/模拟 overflow）后周期扫描可兜底检测；hint 去抖合并可注入窗口。 （证据：5 事件→1 hint→1 scan，窗口后第 2 次；`last_result=ok` 非 changed；真实文件树 smoke；`hint` 仅按 source_id；r2 P1：rotation 游标非 0 后 hint 仍在本 pass 被扫且 pending 清空） <<MET>>
 - [x] **AC-W3 overflow/根删除**：overflow、根删除/替换、buffer 满 → 不崩、全部 target due + 下一 tick 重枚举、watcher re-arm 或 typed 降级；上限（watches 256/buffer 64 KiB）可注入并验证。 （证据：overflow/根删除/上限/边界值用例；10 targets/budget=4 跨 tick 完成；`OverflowCount/Degraded/Uncovered` 计数；M2 变异红） <<MET>>
 - [x] **AC-W4 与 SCAN-1 协同**：同 source 至多一扫描（单飞合并）、hinted 优先、backoff/pause 生效、命令集合精确 `{ScanSourceSync}`、零 Core 业务写、不建 plan/apply/journal。 （证据：hinted 优先/在飞合并 replay≤1/每 source≤2 次/无并发/backoff 不提前/pause 0 次；命令集合仅 `ScanSourceSync`；M1/M3 变异红；r2 P1：hint pass 起点 0（`HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`）） <<MET>>
 - [x] **AC-W5 资源/隐私/门禁**：日志/状态无路径/secret/grant/session；无新依赖；无 schema/契约/pins 改动（`verify_pins.ps1` **18/18**）；全量 .NET 不降（基线 **1500/0/85**；flaky 复跑记录；跑后恢复 `verification/FEA-09`）；全量 pytest 引用基线 **3212/10**（本卡零 Python）；`check.ps1 -TaskPath` PASS；范围 diff 仅本卡 allowed_paths；AC11-1 仍 PARTIAL、L10 不解决。 （证据：r2 实跑全量 .NET **1527/0/86**（RUN1/RUN2，r1 基线 1521/0/86 不降）；pytest **3212 passed/10 skipped** 实跑（summary 见 `logs/pytest-summary.txt`）；pins 18/18、API PASS、check PASS、scope diff 空；脱敏断言限定 WATCH-1 status 与 watcher/scheduler 日志行（gated `host.log` 既有 `host_session` 行不在本卡范围）；无新依赖） <<MET>>
@@ -128,27 +128,37 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - AC-W1…AC-W5 全 MET（逐条证据见 `verification/FEA-11-WATCH-1/record.md` §2）。
 - 限制：漏事件/设备差异依赖 SCAN-1 周期兜底（非正确性依赖）；folder 内任意事件=该 source due（无增量 diff、受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake-Core/注入时钟（成功路径组件级覆盖）；真实树事件测试理论可能 flaky（本轮两轮全绿）；**AC11-1 仍 PARTIAL（本卡不回填）**；L10 不解决。
 
+## r2 返修（2026-11-06）
+
+- 交付 `19a2af7f3`（fix）+ `579e44350`（docs 回填）；r2 交付 head 见 frontmatter。
+- **P1 已修**：hint pass 起点改为 `hasHints ? 0 : (_budgetCursor % targetCount)`（`hasHints` 在 `_gate` 内计算）；普通 rotation/预算语义不变。新增 `HintAfterPriorRotation_IsScannedInTheSamePass_AndPendingClears`（10 targets/budget 4：先普通 tick s0..s3，再 hint s9 → hint pass 含 s9、≤4、`HintPending=false`）。
+- **P2 已修**：`RefreshTargetsAsync` 在 `result.Ok`（含空枚举/added=updated=0）即 `NotifyTargetSetChanged()`，watcher 重新 arm 复核。新增 `RevokedTargetAfterSuccessfulRefresh_IsDisarmed_AndStaleHandleCannotHint`（arm→Active=1；revoke；空 refresh → Active=0、Uncovered≥1；旧 handle 迟到事件被拦截 0 hint/0 scan）。
+- P3 同批全部处置：Stop 持同一 gate（窄竞态）+ `Stop_WithPendingDebounceTimer_ProducesNoHints`；全量 pytest 重跑并保留 `logs/pytest-summary.txt`（3212/10）；`RootLost` 严格断言 `Active==0 && Uncovered>=1` + generation-drift/buffer 注入用例；redaction 口径限定 watcher/scheduler 行（gated host.log 既有 host_session 行明确排除）；`Sync` 改 `Clear()+UnionWith(desired)`；`DisposeAsync` 在 dispose gate 前 `await _hintTask.WaitAsync(2s)` + 用例。
+- 门禁（实跑）：Host 单测 **185/0/55**；gated HostRuntime watcher **1/0/0**；全量 .NET **RUN1/RUN2 1527/0/86**（r1 基线 1521/0/86 不降；两轮 0 failed、未触发 flaky；每轮后恢复 `verification/FEA-09`）；全量 pytest **3212/10**（实跑，summary 保留）；pins **18/18**；API inventory PASS；check -TaskPath PASS；scope diff 0。
+- 残余 limitation：watcher 漏事件依赖周期兜底（非正确性依赖）；folder 事件=该 source due（无增量 diff、受预算/单飞约束）；SCAN-2 RH-3 target 只增不减不修；AC11-1 仍 PARTIAL（本卡不回填）；L10 不解决。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-W5 | verification/FEA-11-WATCH-1/changed-files.txt | - | 046c059fac152a409a83d2f44c2e939b8a7bd8f2745fa292367aeb17b4a78678 | CANONICAL |
+| EV-01 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/changed-files.txt | - | cb72f8671aedd1fb6c724a3d6c50406f00e9c7d3491d34dfe50a202fb43a47a1 | CANONICAL |
 | EV-02 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/host-watch-runtime.json | - | 25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6 | CANONICAL |
-| EV-03 | AC-W5 | verification/FEA-11-WATCH-1/logs/api-inventory.log | - | b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47 | CANONICAL |
-| EV-04 | AC-W5 | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | 495afa593898d7c6175829fe709bc17d284d1f62dcc69d4b5cdc82e3659779e7 | CANONICAL |
-| EV-05 | AC-W5 | verification/FEA-11-WATCH-1/logs/check.log | - | 495afa593898d7c6175829fe709bc17d284d1f62dcc69d4b5cdc82e3659779e7 | CANONICAL |
-| EV-06 | AC-W5 | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | - | 915f78a28237abae830c913aa1d9c841a96083af7aa7d14dd2326a9becf8e6fb | CANONICAL |
-| EV-07 | AC-W5 | verification/FEA-11-WATCH-1/logs/dotnet-full-2.log | - | 7a53f0b9d45ae685dd25cf751ff61a7f6b24f34e3a1a3a979e3910a1321516eb | CANONICAL |
-| EV-08 | AC-W5 | verification/FEA-11-WATCH-1/logs/gates.log | - | e5285a48a2c477411126054e4edf68ed5fb7fda56b31a3b33774004d0c79f4ce | CANONICAL |
-| EV-09 | AC-W5 | verification/FEA-11-WATCH-1/logs/mutation-m1-debounce.log | - | 5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355 | CANONICAL |
-| EV-10 | AC-W5 | verification/FEA-11-WATCH-1/logs/mutation-m2-overflow.log | - | 8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52 | CANONICAL |
-| EV-11 | AC-W5 | verification/FEA-11-WATCH-1/logs/mutation-m3-priority.log | - | d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324 | CANONICAL |
-| EV-12 | AC-W5 | verification/FEA-11-WATCH-1/logs/pins.log | - | f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db | CANONICAL |
-| EV-13 | AC-W5 | verification/FEA-11-WATCH-1/logs/pytest-full.log | - | da630cafd6368946e3e9ddb8b8f4b5dbe6620b8bcaa299e5bb16d3d76e029125 | CANONICAL |
-| EV-14 | AC-W5 | verification/FEA-11-WATCH-1/logs/watcher-runtime.log | - | d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699 | CANONICAL |
-| EV-15 | AC-W5 | verification/FEA-11-WATCH-1/logs/watcher-unit.log | - | ed4145da78fa92b3e548812c235c628ac2ac410e4f042301d3ea88a01d82fd47 | CANONICAL |
-| EV-16 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/record.md | - | db90ab3461188b6782065e3e66eb8c969fef2127f32ddad693576711d47b465a | CANONICAL |
-| EV-17 | AC-W5 | verification/FEA-11-WATCH-1/scope-validation.log | - | 55a367bf87df4c1a606e261a8ef44eb8212b4e99068b57dc3fd4cd2941b910a9 | CANONICAL |
+| EV-03 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/api-inventory.log | - | b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47 | CANONICAL |
+| EV-04 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
+| EV-05 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/check.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
+| EV-06 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | - | aa645ea264519329488cc692612bfe574caed2b4bbf2800d061c377d25f92ff1 | CANONICAL |
+| EV-07 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/dotnet-full-2.log | - | 0efca82dc84b7e05b77510a820272e1f2b4faa4ea3c5273740159fe88c40ffed | CANONICAL |
+| EV-08 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/gates.log | - | b797987ae00d3160b876f0cda5f414582cfba48d1ef76f7a6cf055f8882c9de7 | CANONICAL |
+| EV-09 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m1-debounce.log | - | 5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355 | CANONICAL |
+| EV-10 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m2-overflow.log | - | 8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52 | CANONICAL |
+| EV-11 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m3-priority.log | - | d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324 | CANONICAL |
+| EV-12 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pins.log | - | f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db | CANONICAL |
+| EV-13 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pytest-full.log | - | db330f47621dea6279c67dd34c7fee3a15e72074d9aae5a17bf09d05e0fdca9e | CANONICAL |
+| EV-14 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pytest-summary.txt | - | 57d272daf80a9a56714bf383494800ed650af9fb09727a54372be35e1c8eb7de | CANONICAL |
+| EV-15 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/watcher-runtime.log | - | d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699 | CANONICAL |
+| EV-16 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/watcher-unit.log | - | be9d1f711d69d8662892a13b17defc0dd1d1f28c5e421c8eb8521809f6ae0f46 | CANONICAL |
+| EV-17 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/record.md | - | b21f5ce7e220bd227eb8ed5935641b0c5d476d5b70ac9ea4208168ae46298691 | CANONICAL |
+| EV-18 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/scope-validation.log | - | 3168f2450581421f4aa59188dddd1dac0e88e1ce10aeb41d46912cd9b45a8894 | CANONICAL |
 
 ## Resource Manifest
 
