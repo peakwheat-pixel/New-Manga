@@ -149,18 +149,18 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-1 | AC-R1…AC-R4 定向基线（35/0/0） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-before.log` | `8e3bd03d6` | `ea544fedda4828a02a5652b33ac7ce69ce741c0282eaf86c2ff1b1ab6672d31e` | CANONICAL |
-| EV-2 | AC-R1…AC-R5 定向 after（40/0/0，新增 5） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-after.log` | `8e3bd03d6` | `3128e92f44ffea5f4dd1b7d074d95d37d2e22195369a4755739fea95165626f0` | CANONICAL |
-| EV-3 | AC-R5 全量 .NET before（1527/0/86） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-before.log` | `8e3bd03d6` | `baab20fdfc22b9c9ffc479496e5e487dcb9ae624bd36b12de7363f31fe040a88` | CANONICAL |
-| EV-4 | AC-R5 全量 .NET after（1532/0/86） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-after.log` | `8e3bd03d6` | `3fbf0840f9d4d5f07d053a132a846e9b701938298abb8d8d92f112b1f5180c20` | CANONICAL |
-| EV-5 | AC-R5 全量 pytest（3249/10，零 Python diff） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-pytest.log` | `8e3bd03d6` | `69beb5ca4c805327d2fc47e3290a88eaf700a824b384bb0e1b114af19753704d` | CANONICAL |
-| EV-6 | AC-R5 pins 18/18 + check PASS(3 warnings) + API inventory PASS | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-governance.log` | `8e3bd03d6` | `2b83261984c08eaf48a8380c122217143fb379d0c0701d6e1db28e4fbb512d76` | CANONICAL |
-| EV-7 | AC-R5 scope diff ⊆ allowed_paths；禁止面/依赖/API 零 diff | `verification/FEA-12-UI-RESIDUAL-1/logs/scope-validation.log` | `8e3bd03d6` | `a21eede24ea5f701b3ed56f9fe37eb3b941f6973bb2dcc5c3c3a4566319b2894` | CANONICAL |
-| EV-8 | AC-R1…AC-R4 判别性（9/9 变红，逐字节恢复） | `verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log` | `8e3bd03d6` | `f95d41527212d65005c12a2df3f7c0129ad24455dc4ecee5e1529f11762892de` | CANONICAL |
-| EV-9 | AC-R5 门禁汇总（before/after、skip 原因、L3 NOT_RUN） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates.log` | `8e3bd03d6` | `d0ad14579d3904b363adbbbd74fc3e416ac488b8bdb519faed142e6b1c79f353` | CANONICAL |
-| EV-10 | AC-R5 Resource Manifest（仓外隔离根 10 文件聚合 + 资源处置） | `verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json` | `8e3bd03d6` | `1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7` | CANONICAL |
-| EV-11 | AC-R5 变更清单（base..证据 head，逐文件） | `verification/FEA-12-UI-RESIDUAL-1/changed-files.txt` | `8e3bd03d6` | `1e0ba244e5bec73c900b45c221a7c3aeeb4da1d74b1879024835d473096f4b50` | CANONICAL |
-| EV-12 | AC-R1…AC-R5 证据索引（AC→实现→测试→证据映射、limitation、过程说明） | `verification/FEA-12-UI-RESIDUAL-1/EV.md` | `8e3bd03d6` | `ec71f55a11eacd679d873b625ae98d0b28d4fb60e01ee799cadc67049cf7109e` | CANONICAL |
+| EV-1 | AC-R1…AC-R4 定向基线（35/0/0） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-before.log` | `323001fec` | `ea544fedda4828a02a5652b33ac7ce69ce741c0282eaf86c2ff1b1ab6672d31e` | CANONICAL |
+| EV-2 | AC-R1…AC-R5 定向 after（40/0/0，新增 5） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-after.log` | `323001fec` | `3128e92f44ffea5f4dd1b7d074d95d37d2e22195369a4755739fea95165626f0` | CANONICAL |
+| EV-3 | AC-R5 全量 .NET before（1527/0/86） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-before.log` | `323001fec` | `baab20fdfc22b9c9ffc479496e5e487dcb9ae624bd36b12de7363f31fe040a88` | CANONICAL |
+| EV-4 | AC-R5 全量 .NET after（1532/0/86） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-after.log` | `323001fec` | `3fbf0840f9d4d5f07d053a132a846e9b701938298abb8d8d92f112b1f5180c20` | CANONICAL |
+| EV-5 | AC-R5 全量 pytest（3249/10，零 Python diff） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-pytest.log` | `323001fec` | `69beb5ca4c805327d2fc47e3290a88eaf700a824b384bb0e1b114af19753704d` | CANONICAL |
+| EV-6 | AC-R5 pins 18/18 + check PASS(3 warnings) + API inventory PASS | `verification/FEA-12-UI-RESIDUAL-1/logs/gates-governance.log` | `323001fec` | `2b83261984c08eaf48a8380c122217143fb379d0c0701d6e1db28e4fbb512d76` | CANONICAL |
+| EV-7 | AC-R5 scope diff ⊆ allowed_paths；禁止面/依赖/API 零 diff | `verification/FEA-12-UI-RESIDUAL-1/logs/scope-validation.log` | `323001fec` | `a21eede24ea5f701b3ed56f9fe37eb3b941f6973bb2dcc5c3c3a4566319b2894` | CANONICAL |
+| EV-8 | AC-R1…AC-R4 判别性（9/9 变红，逐字节恢复） | `verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log` | `323001fec` | `f95d41527212d65005c12a2df3f7c0129ad24455dc4ecee5e1529f11762892de` | CANONICAL |
+| EV-9 | AC-R5 门禁汇总（before/after、skip 原因、L3 NOT_RUN） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates.log` | `323001fec` | `d0ad14579d3904b363adbbbd74fc3e416ac488b8bdb519faed142e6b1c79f353` | CANONICAL |
+| EV-10 | AC-R5 Resource Manifest（仓外隔离根 10 文件聚合 + 资源处置） | `verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json` | `323001fec` | `1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7` | CANONICAL |
+| EV-11 | AC-R5 变更清单（base..证据 head，逐文件） | `verification/FEA-12-UI-RESIDUAL-1/changed-files.txt` | `323001fec` | `1e0ba244e5bec73c900b45c221a7c3aeeb4da1d74b1879024835d473096f4b50` | CANONICAL |
+| EV-12 | AC-R1…AC-R5 证据索引（AC→实现→测试→证据映射、limitation、过程说明） | `verification/FEA-12-UI-RESIDUAL-1/EV.md` | `323001fec` | `ec71f55a11eacd679d873b625ae98d0b28d4fb60e01ee799cadc67049cf7109e` | CANONICAL |
 
 ## Resource Manifest
 
