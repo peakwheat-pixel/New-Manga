@@ -11,7 +11,7 @@ reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付
 depends_on:
   - FEA-11-RUN-GRANT-2A
   - FEA-11-RUN-GRANT-2B-PREREQ-1
-base_commit: 53dc38bd4
+base_commit: 97812958d
 branch: null
 worktree: null
 integration_commit: null
