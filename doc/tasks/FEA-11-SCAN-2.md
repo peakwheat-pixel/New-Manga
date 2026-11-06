@@ -3,11 +3,11 @@ id: FEA-11-SCAN-2
 title: FEA-11 冷启动全源扫描目标枚举（B1：Core 只读枚举 + Host registry 核验/铸 grant）
 kind: implementation
 governance_version: 3
-status: in_review
+status: changes_requested
 approval: 用户 2026-11-06「让 Codex 判断下一部任务，由 DSH 执行」→ Codex `NEXT-TASK=FEA-11-SCAN-2`（先独立 scope review、优先 B1）；scope review `doc/reviews/FEA-11-SCAN-2-scope-r1.md` = **READY-WITH-UNFREEZE/B1**；DSH 裁决 B1 采纳 / S-1 选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣 missing，L-G 保留）/ S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新）/ S-4 登记 limitation；前置契约 **C-17 v1.1 已重冻**（`FEA-11-SCAN-2-PREREQ-1` done，delivery `7451bfaaa`，pins 18/18）；DSH 2026-11-06 冻结本卡并释放
 suggested_owner: dsh（Agent Teams 分片：Core Python + Host/App .NET；Lead 集成）
 owner: fea12-core-py（Core 分片）、fea12-core-host（Host/App 分片）；Lead 集成
-reviewer: 独立上下文 fresh subagent（实现完成后派；未参与实现；session 记录于报告）
+reviewer: 独立上下文 fresh subagent（r1 session `32e815ef-4423-4c77-8be9-1f100d6479de`；报告 `doc/reviews/FEA-11-SCAN-2-r1.md`；CHANGES P0=0/P1=1/P2=5/P3=6；未参与实现）
 depends_on:
   - FEA-11-SCAN-1
   - FEA-11-SCAN-2-PREREQ-1
@@ -90,15 +90,15 @@ Host 冷启动后**无需用户再次导入**即可获得可扫描目标集：Co
 
 ## Acceptance Criteria
 
-- [x] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<MET>>
+- [ ] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<PARTIAL: r1 P2-5 HostRuntime Ready→后台枚举仅代码审查；补 gated 用例后恢复>>
 - [x] **AC-S2-2 与会话导入合并/去重**：App 导入 Completed 触发 Refresh；枚举结果与 SCAN-1 内存目标按 `source_id` 合并去重；重复 Refresh 幂等、targets 不增长。 <<MET>>
-- [x] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<MET>>
+- [x] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<PARTIAL: r1 P2-3 真实 App 导入→枚举 E2E 未跑（seed 合成 s1）；补 E2E 后恢复>>
 - [x] **AC-S2-4 registry 授权核验**：target 的 `registry_id/generation` 与 Host 持久 registry 匹配才铸 grant；registry 缺失/撤销/代次漂移 → typed skip（不扫描、不自动重新授权、不泄露路径）；撤销后同 target 不再扫描。 <<MET>>
 - [x] **AC-S2-5 启动前缺失/删除（S-1②）**：生产 file-root 缺失/替换 → typed `SOURCE_REGISTRY_UNAVAILABLE` fail-closed，**不是** `missing`；该轮不产生 `ScanSourceSync` 帧；L-G 口径保留。 <<MET>>
-- [x] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<MET>>
+- [x] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<PARTIAL: r1 P2-2 Core 枚举可能产出 project_ids=[]；修复后恢复>>
 - [x] **AC-S2-7 预算/单飞/退避/取消**：首轮枚举+扫描受 SCAN-1 预算（8 目标/256MiB）且不阻塞 Host Ready；枚举与 tick 单飞不重叠；停机取消在安全检查点；可注入时钟（零 sleep）。 <<MET>>
 - [x] **AC-S2-8 零写/脱敏**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<MET>>
-- [x] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<MET>>
+- [x] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<PARTIAL: r1 P2-4 LibraryViewModel.cs allowlist 例外待记录；修复后恢复>>
 
 ## 预期行为变更（Review 不判回归）
 
@@ -131,6 +131,18 @@ frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host
 - 依赖：SCAN-1 done（`7080167e1`）；PREREQ-1 done（C-17 v1.1，`7451bfaaa`，pins 18/18）；真实 registry/grant 能力。
 - 风险/limitation：**L-S1** registry resilience（file-root 缺失整库 `SOURCE_REGISTRY_UNAVAILABLE`，另立缺陷卡）；**L-S4** `refresh_source_location_auth` 死代码（撤销/重注册后 Core location auth 不更新，只读切片无法恢复）；L-A/L-G 承接；大库 IO/冷启动预算未标定；枚举只读但不解决 L10 referenced 图源；**AC11-1 仍 PARTIAL**（watcher/访问前策略未承接；WATCH-1 不同时释放）。
 - 阻塞：无（契约已重冻、scope 已冻结）。
+
+## r1 Review 处置（DSH，2026-11-06）
+
+- 结论：**CHANGES**（P0=0 / **P1=1** / P2=5 / P3=6；报告 `doc/reviews/FEA-11-SCAN-2-r1.md`，session `32e815ef…`）。
+- **P1-1（阻断，必修）**：`HostSourceScanExecutor.ScanAsync/ScanMissingAsync` 硬编码 `scope="current"` 并携带全部 `target.ProjectIds`；C-17/Core 规定 scope=current 恰好 1 个 project（`scanner.py:267-269`），多 book 共享源 target 永远 `INVALID_REQUEST` → 每轮 error/退避。修复：按 `ProjectIds.Count` 选 `current`/`all` + frame 级判别测试（2-book→all、1-book→current）+ 真实 IPC 共享源用例。
+- **P2-1**：tick 运行中 App Refresh 被 `WaitAsync(0)` 直接丢弃 → 导入新源本会话不再枚举。修：pending/coalesce 重放（或在 tick 结束后补一次枚举）。
+- **P2-2**：Core 枚举产出 `project_ids=[]` 的 target（C-17 §5 规定 1..20）；Core 侧应 skipped/不产出 + 测试。
+- **P2-3**：AC-S2-3 真实导入 E2E 未跑（seed 合成 "s1"）；补 gated 真实导入链 E2E，或降级受限 MET；本卡先降 **PARTIAL**，修复后恢复。
+- **P2-4（Lead 记录）**：`6c8b4cb2b` 修改 `apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs` 不在冻结 `allowed_paths`（编译必需连带修改）。**DSH 记录为 allowlist 例外，不回退代码**；shard record 中“均在 allowed_paths”表述由实现者更正。AC-S2-9 修复后恢复。
+- **P2-5**：AC-S2-1 “新 Host 进程 Ready”仅组件级；补 gated HostRuntime 冷启动用例，或降级限定 MET。本卡先降 **PARTIAL**。
+- P3×6：记录于报告，按最小修复/登记 limitation 处置。
+- 派发：Core 分片（fea12-core-py）修 P2-2；Host/App 分片（fea12-core-host）修 P1-1/P2-1/P2-3/P2-5；完成后 r2 窄面复审。
 
 ## 交付与运行记录（Lead 集成，2026-11-06）
 
