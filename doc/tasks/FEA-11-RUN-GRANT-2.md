@@ -3,21 +3,21 @@ id: FEA-11-RUN-GRANT-2
 title: 容器成员 entry 授权通道（C-16 v1.4 + Core 多 entry 注册/匹配 + Host 铸 N 项；proposed，待依赖）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`（2B READY-WITH-UNFREEZE）；依赖 `FEA-11-RUN-GRANT-2A`（done，a0bafc89e）+ `FEA-11-RUN-GRANT-2B-PREREQ-1`（done，C-16 v1.4 d8dcfc07a）均已完成；DSH 2026-11-07 释放为 ready（base 见 frontmatter）；Owner=`run-grant-impl` 复用）
 suggested_owner: codex
-owner: run-grant-impl
-reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-RUN-GRANT-2-r1.md`）
+owner: run-grant-2b-impl
+reviewer: 独立上下文 fresh subagent（未参与实现/返修）：r1 `35d102d4-e845-4047-8d61-58c709b9c204`（**approved** P0=0/P1=0/P2=0/P3=4；reviewed_head `018008989`）；报告 `doc/reviews/FEA-11-RUN-GRANT-2-r1.md`
 depends_on:
   - FEA-11-RUN-GRANT-2A
   - FEA-11-RUN-GRANT-2B-PREREQ-1
 base_commit: 97812958d
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 0180089894b2286d8ff6a94289b84dd318871d18
+delivery_head: 0180089894b2286d8ff6a94289b84dd318871d18
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-RUN-GRANT-2
 allowed_paths:
   - doc/tasks/FEA-11-RUN-GRANT-2.md
@@ -94,3 +94,36 @@ out_of_scope:
 - **证据索引**：`verification/FEA-11-RUN-GRANT-2/EV.md`（结论/AC 矩阵/逐文件 sha256）、`logs/`（8 个日志）、`scope-validation.log`、`changed-files.txt`、`RESOURCE-MANIFEST.json`（仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2\` 聚合 sha256 + `delivery_head`）、`tools/`（4 个可复现脚本）。
 - **不夸大**：本卡只闭环「容器成员 entry 授权通道」（L-G12② 在**缓存可用的容器源**上闭环）；folder **>4096 成员不入缓存**（L-G16）、长 Run（L-G1）、加密源（L-G2）、Core 重启（L-G9）、L-R11（L-G10）**均不解决**；**L-R1 未全修**；不得表述为「referenced Run 全场景可用」。`status` 未改，等待 Lead 指派独立 Review 与集成门禁。
 
+## Review r1 处置（DSH，2026-11-07；append-only）
+
+- 独立 Review r1 `doc/reviews/FEA-11-RUN-GRANT-2-r1.md`（fresh subagent `35d102d4-…`；reviewed_head `018008989`）：**approved，P0=0/P1=0/P2=0/P3=4**；AC-J1…J4 全 MET；自选 2 个破坏点（Host 重编号 ordinal / 删除 image 单 entry 守卫）独立 RED + 逐字节恢复；C-16 v1.4 §2 逐条 PASS。
+- **P3-01（口径）**：容器 facts 约束分两层——注册期仅证明 N 项 facts 彼此相同（registry 无 DB 句柄），**逐页授权期**由 `_location_matches` 与 Core `source_locations` 权威比对；成员 digest 冒充容器 facts 的 grant 可注册但永不能授权（typed、零映射）。已在 EV 与本节登记「注册=同一性；授权=权威性」。
+- **P3-02（EV 措辞，已修）**：改为「全量 .NET 重写并恢复；全量 pytest 未命中（`unchanged`）」。
+- **P3-03（owner 署名，已修）**：卡面 `owner` 由 `run-grant-impl` 统一为实际实现者 `run-grant-2b-impl`。
+- **P3-04（可选加固，follow-up）**：容器重名成员 + 冻结 OR 匹配的「同名子集 grant」窄角；生产 Host 总铸全量权威列表（产品路径无暴露），IPC 负例用不同 locator 未覆盖；**不改冻结语义**；建议另立小卡（Host 用 Core `EntryId` 作 `entry_key` + 同名子集判别用例）。
+- **不改变** AC-J1…J4 MET 判定、实现/测试字节（`018008989`）与 r1 approved 结论。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-J1…J4 | verification/FEA-11-RUN-GRANT-2/EV.md | 2d69d0624 | 9c5a2d2579fd4ad56f7d21e090317dae5cd968d7925a323f0d6beb44334d432f | CANONICAL |
+| EV-02 | AC-J1…J4 | doc/reviews/FEA-11-RUN-GRANT-2-r1.md | 2d69d0624 | 89e6bf16002d3ef0c287393af02662a1c92d25bf04a36be5904cb06215abfee5 | CANONICAL |
+| EV-03 | AC-J4 | doc/handoffs/FEA-11-RUN-GRANT-2-018008989.md | 3dc822b77 | 92027aa8f61e17f111157f59fba3d98af7c128f8589bf1961c906a6fbe72c892 | CANONICAL |
+
+> 证据树其余 15 个文件（logs 8、tools 4、Manifest、changed-files、scope-validation.log）逐文件 sha256 见 EV §5（15/15 与工作树一致，Review r1 独立复算）；本表只列 closeout 层新增/重签项。
+
+## Resource Manifest
+
+`verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json`
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；`delivery_head`/`integration_commit` = `0180089894b2286d8ff6a94289b84dd318871d18`（实现 `7466cb99d` + 测试 `018008989`；证据/卡/Handoff 文档提交 `3dc822b77`/`8e1883655`）。
+- **AC 判定**：AC-J1…AC-J4 **全 MET**；无 PARTIAL/BLOCKED。
+- **Review 处置**：独立 r1 **approved（P0=0/P1=0/P2=0/P3=4）**；P3-01 口径登记、P3-02 已修、P3-03 已统一、P3-04 登记 follow-up。
+- **门禁数字（before → after；Lead 实测）**：全量 pytest **3281/10 → 3305/10**；全量 .NET **1559/0/90 → 1562/0/91**；定向 python **50 → 74**；SourceRegistry **29 → 32**；真实 IPC **4 → 5**；pins **18/18**；check（默认 + `-TaskPath`）PASS(3w)；API inventory PASS；scope **changed=7 全 ALLOWED**，zero-drift 全空，`CORE_PROTOCOL_MINOR=3`；判别性 **8/8**；跑后 `git checkout -- verification/FEA-09`。
+- **limitations（保留）**：L-G16、L-G1、L-G2、L-G8、L-G9、L-G10、L-G11、L-G13、L-G14；L-G12② 的容器成员面已闭环（≤4096 成员缓存可用容器源），但 **L-R1 未全修**；P3-04 同名成员子集语义为冻结 OR 匹配固有行为（另卡可选加固）。
+- **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/`（IPC 夹具/门禁日志/复核备份，无独有产品数据）→ `PRESERVE_REFERENCED`；Manifest 已披露 generation-time snapshot 与 integration/ 排除。
+- **指针清理**：STATUS 当前 Task → 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件/后续回填）。
