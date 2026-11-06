@@ -128,3 +128,5 @@ sha256，最后重新 build 恢复二进制并对恢复后的树补跑定向套�
 - IPC 夹具/`discrimination` 备份在仓外隔离根；仓内证据为 `verification/FEA-11-RUN-GRANT-2/**`。
 - 2A 的 IPC 用例在本卡中被**扩展**（归档第二成员由「typed 拒绝」改为「可用」，测试名相应更新）；2A 的历史 canonical 证据仍按 commit `a0bafc89e` 的字节保留，不受本卡影响。
 - 独立 Review 由 Lead 指派（本会话不自审）；集成门禁由 Lead 重跑。
+
+> **P3-01 口径（Review r1）**：契约对容器 facts 的约束在本实现中分两层——**注册期**只证明「N 项 facts 彼此相同」（Core registry 无 DB 句柄），**逐页授权期**由 `_location_matches` 与 Core `source_locations` 四键权威比对；持成员 digest 冒充容器 facts 的 grant 可注册但永不能授权（typed、零映射）。「注册=同一性；授权=权威性」为冻结语义的落地口径，不构成本卡返修项。
