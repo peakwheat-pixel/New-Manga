@@ -3,11 +3,11 @@ id: FEA-12-UI-RESIDUAL-1
 title: FEA-12-UI 残余 P3 收尾（delete-time capability 防御边 / preview BOOK_NOT_FOUND 刷新 / cleanup retry 提示 / 只读与能力缺失文案）
 kind: implementation
 governance_version: 3
-status: ready
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-12-UI-RESIDUAL-1-scope-r1.md`（fresh subagent `bfb8f132…`，verdict **READY-TO-FREEZE**）；DSH 2026-11-06 裁决（见「Scope Review 裁决」）：接受 **App-only** 范围与四个冻结口径（① defensive invariant only；③ 含最小 `_notify` 修复；④ 双原因文案规则；写域仅 `TrashViewModel.cs` + `TrashUiTests.cs`）；释放为 ready、base `690c77eb0`、Owner=`ui-residual-impl`（DSH Agent Teams）
+status: in_review
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-12-UI-RESIDUAL-1-scope-r1.md`（fresh subagent `bfb8f132…`，verdict **READY-TO-FREEZE**）；DSH 2026-11-06 裁决（见「Scope Review 裁决」）：接受 **App-only** 范围与四个冻结口径（① defensive invariant only；③ 含最小 `_notify` 修复；④ 双原因文案规则；写域仅 `TrashViewModel.cs` + `TrashUiTests.cs`）；释放为 ready、base `690c77eb0`、Owner=`ui-residual-impl`（DSH Agent Teams）。实施交付 head `8e3bd03d6`（`8e3bd03d6` 实现+测试；卡/Handoff/证据 `323001fec`）；DSH 核验后 2026-11-06 转 `in_review`，Review 由独立上下文 fresh subagent 执行
 suggested_owner: zcode
 owner: ui-residual-impl
-reviewer: 独立上下文 fresh subagent（r1 待指派；不得由实现会话/实例自审；报告须记录 reviewer 与 session）
+reviewer: 独立上下文 fresh subagent（r1 已指派；不得由实现会话/实例自审；session 与来源见 `doc/reviews/FEA-12-UI-RESIDUAL-1-r1.md`）
 depends_on:
   - FEA-12-UI
 base_commit: 690c77eb0
@@ -35,7 +35,7 @@ out_of_scope:
 
 # FEA-12-UI-RESIDUAL-1：FEA-12-UI 残余 P3 收尾（App-only）
 
-> **状态：`ready`（scope 已冻结；Owner=`ui-residual-impl`；base `690c77eb0`）。**
+> **状态：`in_review`（交付 head `8e3bd03d6`；Owner=`ui-residual-impl`；base `690c77eb0`）。**
 > 来源：`FEA-12-UI` closeout（`doc/tasks/FEA-12-UI.md`，`a46d4d5c7`）P3 follow-up ①–④；独立 scope review：`doc/reviews/FEA-12-UI-RESIDUAL-1-scope-r1.md`（**READY-TO-FREEZE**）。
 > **本卡只做 App 侧（`TrashViewModel.cs` + `TrashUiTests.cs`）四项行为/文案/测试收口**；不改 Host/Core/契约/wire/schema/依赖；**不回填** FEA-12-UI 历史 AC；L3/L4 仍 `NOT_RUN`。
 
@@ -86,11 +86,11 @@ out_of_scope:
 
 > Owner 实施完成后逐项勾选并附证据指针（`delivery_head=8e3bd03d6`，2026-11-06）；**终判（MET/PARTIAL）以独立 Review + DSH 集成验证为准**，本节不代替审查。
 
-- [x] **AC-R1 delete-time capability 防御边**：`TrashDeleteOutcome.CapabilityMissing` 时不设页级 `_capabilityMissing/_capabilityMessage`；列表保持（`ShowList=true`、`ShowCapabilityState=false`、`Items` 数不变）；结果面板 typed `CORE_CAPABILITY_MISSING`、`DeleteResultTitle="删除被拒绝"`、`CanConfirmDelete=false`；零成功提示、零 restore/preview 副作用；能力布尔不变。证据：`Delete_CapabilityMissing_DoesNotTurnThePageIntoReadCapabilityMissing`（`TrashUiTests.cs`）+ 变异 M1（`verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log`）；EV-2/EV-8。**defensive invariant only（L-R1）**。
-- [x] **AC-R2 preview `BOOK_NOT_FOUND` 自动刷新**：`_notify` + 关面板 + `ReloadAsync`；恰 2 个 `library_list_trash` 帧（初始+刷新）、0 delete 帧、probe 2 次；刷新后幽灵行清除；不自动重试 preview；其它失败码行为不变。证据：`Preview_BookNotFound_ClosesPanel_AndReloadsTheList` + 变异 M2/M3/M4；EV-2/EV-8。
-- [x] **AC-R3 cleanup retry `BOOK_NOT_FOUND`**：3 个 delete 帧、三次 `inventory_digest` 与首次逐字节相等、仅 1 preview 帧；NotFound 时用户可见「作品已不存在（`BOOK_NOT_FOUND`）/已刷新」typed 提示；列表刷新（2 list 帧）；`IsCleanupPending=false`、`CanRetryCleanup=false`、面板关闭；不伪报成功、不自动重试、不为 NotFound 重新 preview。证据：`CleanupRetry_SecondRetryBookNotFound_NotifiesAndRefreshes_WithSameDigest` + 变异 M5/M6/M7；EV-2/EV-8。
-- [x] **AC-R4 只读/能力缺口双原因文案**：`ShowHostReadOnlyBanner` 仅由 `_hostReadOnly` 决定；Host 只读 + write/preview 缺口 → 两 banner 同时可见、两个 code 分别出现；Host 只读 + read 缺失 → `ShowCapabilityState=true` 且只读 banner 可见、只读文案不含「可浏览」、能力文案不含 `HOST_READ_ONLY`；单一原因仍单 banner；不改 XAML。证据：`HostReadOnly_PlusWriteCapabilityGap_ShowsBothIndependentCauses`、`HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason` + 变异 M8/M9；EV-2/EV-8。
-- [x] **AC-R5 写域/门禁/证据**：`git diff --name-only <base>..HEAD` ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`src/**`/Host/CoreClient/DesignSystem/`RecycleBinView.axaml` 零 diff；无新依赖；定向 `TrashUiTests` 40/0（基线 35 + 新增 5）；全量 .NET **1532/0/86**（before 1527/0/86；8 项目分列）；pytest 全量 **3249/10 不降**（实测，零 Python diff）；pins 18/18；API inventory PASS；check PASS(3 warnings)；证据含 changed-files/scope-validation/gates/mutations/计数；L3/L4 `NOT_RUN`。证据：`verification/FEA-12-UI-RESIDUAL-1/**`（EV-1…EV-12）。
+- [x] **AC-R1 delete-time capability 防御边**：`TrashDeleteOutcome.CapabilityMissing` 时不设页级 `_capabilityMissing/_capabilityMessage`；列表保持（`ShowList=true`、`ShowCapabilityState=false`、`Items` 数不变）；结果面板 typed `CORE_CAPABILITY_MISSING`、`DeleteResultTitle="删除被拒绝"`、`CanConfirmDelete=false`；零成功提示、零 restore/preview 副作用；能力布尔不变。证据：`Delete_CapabilityMissing_DoesNotTurnThePageIntoReadCapabilityMissing`（`TrashUiTests.cs`）+ 变异 M1（`verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log`）；EV-2/EV-8。**defensive invariant only（L-R1）**。 <<MET>>
+- [x] **AC-R2 preview `BOOK_NOT_FOUND` 自动刷新**：`_notify` + 关面板 + `ReloadAsync`；恰 2 个 `library_list_trash` 帧（初始+刷新）、0 delete 帧、probe 2 次；刷新后幽灵行清除；不自动重试 preview；其它失败码行为不变。证据：`Preview_BookNotFound_ClosesPanel_AndReloadsTheList` + 变异 M2/M3/M4；EV-2/EV-8。 <<MET>>
+- [x] **AC-R3 cleanup retry `BOOK_NOT_FOUND`**：3 个 delete 帧、三次 `inventory_digest` 与首次逐字节相等、仅 1 preview 帧；NotFound 时用户可见「作品已不存在（`BOOK_NOT_FOUND`）/已刷新」typed 提示；列表刷新（2 list 帧）；`IsCleanupPending=false`、`CanRetryCleanup=false`、面板关闭；不伪报成功、不自动重试、不为 NotFound 重新 preview。证据：`CleanupRetry_SecondRetryBookNotFound_NotifiesAndRefreshes_WithSameDigest` + 变异 M5/M6/M7；EV-2/EV-8。 <<MET>>
+- [x] **AC-R4 只读/能力缺口双原因文案**：`ShowHostReadOnlyBanner` 仅由 `_hostReadOnly` 决定；Host 只读 + write/preview 缺口 → 两 banner 同时可见、两个 code 分别出现；Host 只读 + read 缺失 → `ShowCapabilityState=true` 且只读 banner 可见、只读文案不含「可浏览」、能力文案不含 `HOST_READ_ONLY`；单一原因仍单 banner；不改 XAML。证据：`HostReadOnly_PlusWriteCapabilityGap_ShowsBothIndependentCauses`、`HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason` + 变异 M8/M9；EV-2/EV-8。 <<MET>>
+- [x] **AC-R5 写域/门禁/证据**：`git diff --name-only <base>..HEAD` ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`src/**`/Host/CoreClient/DesignSystem/`RecycleBinView.axaml` 零 diff；无新依赖；定向 `TrashUiTests` 40/0（基线 35 + 新增 5）；全量 .NET **1532/0/86**（before 1527/0/86；8 项目分列）；pytest 全量 **3249/10 不降**（实测，零 Python diff）；pins 18/18；API inventory PASS；check PASS(3 warnings)；证据含 changed-files/scope-validation/gates/mutations/计数；L3/L4 `NOT_RUN`。证据：`verification/FEA-12-UI-RESIDUAL-1/**`（EV-1…EV-12）。 <<MET>>
 
 ## 测试与证据要求
 

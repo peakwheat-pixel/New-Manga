@@ -46,11 +46,11 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-12-UI-RESIDUAL-1
+READY 节点：无
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 AC4-GAPS-1/MATCH-1/SCAN-1/SCAN-2/WATCH-1 done（AC11-4/AC11-3 终态见各卡；AC11-1 2026-11-06 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-11-PREREQ-1→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12 四卡 done → SCAN-2-PREREQ-1/SCAN-2/WATCH-1 done → FEA-11-RENDITION-1（done，delivery a05a419f7；Core-only + L-R1…L-R11）→ FEA-12-UI-RESIDUAL-1（ready，App-only，scope review READY-TO-FREEZE）
+当前 DAG：FEA-11-PREREQ-1→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12 四卡 done → SCAN-2-PREREQ-1/SCAN-2/WATCH-1 done → FEA-11-RENDITION-1（done，delivery a05a419f7；Core-only + L-R1…L-R11）→ FEA-12-UI-RESIDUAL-1（in_review，delivery 8e3bd03d6；App-only）
 
 ## 历史快照（终态节点，非当前 DAG）
 
