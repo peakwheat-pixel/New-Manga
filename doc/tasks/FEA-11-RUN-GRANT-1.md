@@ -287,5 +287,5 @@ out_of_scope:
 - **follow-up**：`FEA-11-RUN-GRANT-2`（proposed 候选，**未建卡/未释放**）：Host→Core source-id/version 通道 + 容器成员 locator/ordinal 通道 + 长 Run 定期重铸/重绑 + R3-02 委托行覆盖。L-R1 **未全修**（只交付窗口内 + L-G12 边界内可用）。
 - **Resource Manifest / 资源处置**：仓内删除/移动/归档 **0**（`deleted=0 moved=0 migrated=0 archived=0`）；仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\`（500+ 文件，测试夹具/门禁日志/判别备份，无独有产品数据）→ `PRESERVE_REFERENCED`；未清理其它任务。详见 Manifest。
 - **指针清理**：STATUS 当前 Task → 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
-- **push**：见状态文件 push 行（Lead 统一 push；PRE/POST hash 记录）。
+- **push**：**已执行**（2026-11-07，门禁全过后）：`git push origin main` → `2067789ea..d7374ce34`（PRE_HEAD `d7374ce34`、PRE_ORIGIN `2067789ea`、AHEAD **17**、PUSH_EXIT=0、POST_ORIGIN `d7374ce34`、AHEAD=0；含 PREREQ-1/L-G12/证据/closeout/handoff 提交）。
 

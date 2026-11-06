@@ -93,5 +93,5 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **基线（本轮末实测）**：pytest **3281 passed / 10 skipped**；全量 .NET **1551 / 0 / 89**；pins **18/18**；check PASS(3w)；API inventory PASS；scope diff ⊆ allowed_paths（31 文件，禁止面零 diff）。
 - **当前状态**：无活动 Task；`doc/tasks/FEA-11-RUN-GRANT-2.md` **proposed 占位**（Host→Core source version/容器成员 locator 通道 + 长 Run 续期 + R3-02 委托行覆盖；**须先独立 scope review，未释放**）。
 - **下一候选顺序建议**：①`FEA-11-RUN-GRANT-2`（scope review → 冻结/释放；若需 UNFREEZE 走正式载体）；②其他小项（L-S1 registry resilience、L-S4 死代码、L-R11 gate 统一、C-04b 文档 residual、SCAN-2 RH-1…RH-5、UI P3）——均须先建卡 + scope review。
-- **push**：本轮已 `git push origin main`（`91d224b88..01269ab5d` 区间内两次 push：PREREQ closeout、RUN-GRANT-1 closeout；PRE/POST/AHEAD 记录见各卡 Closeout 与下一次提交的 push 记录）；origin/main 与本地同步（AHEAD=0）。
+- **push**：本轮已 `git push origin main` → `2067789ea..d7374ce34`（PRE_HEAD `d7374ce34`、PRE_ORIGIN `2067789ea`、AHEAD 17→0、PUSH_EXIT=0、POST_ORIGIN `d7374ce34`；含 PREREQ-1/RUN-GRANT-1 closeout 与 handoff）；origin/main 与本地同步（AHEAD=0）。
 - **工作区资源**：`G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\`（500+ 测试夹具/日志/判别备份）→ `PRESERVE_REFERENCED`；`FEA-11-RUN-GRANT-1-PREREQ-1\tmp` 保留；未删除任何仓内文件。
