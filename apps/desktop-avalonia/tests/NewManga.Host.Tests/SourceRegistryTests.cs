@@ -296,15 +296,129 @@ public sealed class SourceRegistryTests
     [Fact]
     public async Task RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting()
     {
+        // Review r2 R2-02 (discriminating): a REAL known source set means the
+        // capability gate is the only thing that can prevent the mint — removing
+        // the gate makes `minted` become 1 and this test red.
+        var root = NewSourceDirectory(out var file);
         var minted = 0;
         var authorizer = Authorizer(
-            probe: false, known: [], entries: [],
-            authorize: (_, _, _, _) => { minted++; return Task.FromResult(new RunAuthorizationResult(0, 0, 0, [])); });
-        await authorizer.AuthorizeForCommandAsync(
-            "library_start_run",
-            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            probe: false,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => { minted++; return Task.FromResult(new RunAuthorizationResult(1, 1, 0, [])); });
+        await authorizer.AuthorizeSliceAsync(
+            "reocr_all",
+            Json("""{"kind":"page","page_id":"p1"}"""),
             CancellationToken.None);
         Assert.Equal(0, minted);
+    }
+
+    [Fact]
+    public async Task RunAuthorizerCapabilityMissingStillReachesDispatch()
+    {
+        // R2-02/R2-01: with a known source present, a missing capability must
+        // SKIP the authorization and let the Run command reach dispatch (no
+        // Core is wired -> SidecarException proves the dispatch was attempted).
+        var root = NewSourceDirectory(out var file);
+        var authorizer = Authorizer(
+            probe: false,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new InvalidOperationException("must not mint"));
+        var dispatcher = new HostCommandDispatcher(
+            runAuthorize: (name, payload, token) =>
+                authorizer.AuthorizeForCommandAsync(name, payload, token));
+        var dispatched = await Assert.ThrowsAsync<SidecarException>(() => dispatcher.InvokeAsync(
+            "library_start_run",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"},"idempotency_key":"k"}""")));
+        Assert.Equal(SidecarErrorCode.ProcessExited, dispatched.Code);
+    }
+
+    [Fact]
+    public void RunSourceRangeKindDetectsFolderSources()
+    {
+        // R2-01: the extension-only guess classified every folder as "image"
+        // (mint then opened the directory as a file and skipped the source).
+        var folder = NewSourceDirectory(out var insideFile);
+        var fileDir = NewSourceDirectory(out var archive);
+        _ = insideFile;
+        Assert.Equal("folder", RunSourceRange.KindOfSource(
+            ScanTarget("f1", folder, "b1"), folder));
+        // A declared folder kind wins even for a path that looks like a file.
+        var declaredFolder = ScanTarget("f2", archive, "b1") with { SourceKind = "folder" };
+        Assert.Equal("folder", RunSourceRange.KindOfSource(declaredFolder, archive));
+        // Container / image kinds keep their frozen names.
+        Assert.Equal("zip", RunSourceRange.KindOfSource(ScanTarget("s1", archive, "b1"), archive));
+        var image = Path.Combine(fileDir, "page.png");
+        File.WriteAllBytes(image, [0x89, 0x50, 0x4e, 0x47]);
+        Assert.Equal("image", RunSourceRange.KindOfSource(ScanTarget("i1", image, "b1"), image));
+        // Declared kind is authoritative when the caller already knows it.
+        Assert.Equal("zip", RunSourceRange.KindOfSource(
+            ScanTarget("s2", archive, "b1") with { SourceKind = "zip" }, archive));
+    }
+
+    [Fact]
+    public async Task AcceptRunAuthorizationSeamUsesTheFrozenSlice()
+    {
+        // R2-03: the production HostRuntime.AcceptRunAsync delegates to this
+        // seam; deleting the authorizer call makes this test red.
+        var root = NewSourceDirectory(out var file);
+        var calls = new List<(string Command, string PageId)>();
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, command, scope, _) =>
+            {
+                calls.Add((command, scope.GetProperty("page_id").GetString()!));
+                return Task.FromResult(new RunAuthorizationResult(1, 1, 0, []));
+            });
+        var now = DateTimeOffset.Parse("2026-11-07T00:00:00+00:00");
+        var slices = new PreparedRunSlices(() => now);
+        Assert.True(slices.Remember(
+            "prepared-accept",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            now.AddMinutes(5)));
+        await HostRuntime.AuthorizePreparedRunForAcceptAsync(
+            slices, authorizer, "prepared-accept", CancellationToken.None);
+        Assert.Equal(("reocr_all", "p1"), Assert.Single(calls));
+    }
+
+    [Fact]
+    public async Task AcceptRunAuthorizationSeamIsTypedWithoutAUsableSlice()
+    {
+        var root = NewSourceDirectory(out var file);
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new InvalidOperationException("must not authorize"));
+        var now = DateTimeOffset.Parse("2026-11-07T00:00:00+00:00");
+        var slices = new PreparedRunSlices(() => now);
+
+        // Missing prepared run (never prepared in this Host process).
+        var missing = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            HostRuntime.AuthorizePreparedRunForAcceptAsync(
+                slices, authorizer, "prepared-unknown", CancellationToken.None));
+        Assert.Equal("RUN_STALE_PREVIEW", missing.Code);
+
+        // Expired prepared run.
+        Assert.True(slices.Remember(
+            "prepared-expired",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            now.AddSeconds(30)));
+        now = now.AddSeconds(31);
+        var expired = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            HostRuntime.AuthorizePreparedRunForAcceptAsync(
+                slices, authorizer, "prepared-expired", CancellationToken.None));
+        Assert.Equal("RUN_STALE_PREVIEW", expired.Code);
+
+        // The slice ledger is consulted even when no authorizer exists (the
+        // pre-R1-11 direct pass-through is intentionally gone).
+        var noAuthorizer = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            HostRuntime.AuthorizePreparedRunForAcceptAsync(
+                slices, null, "prepared-missing", CancellationToken.None));
+        Assert.Equal("RUN_STALE_PREVIEW", noAuthorizer.Code);
     }
 
     [Fact]

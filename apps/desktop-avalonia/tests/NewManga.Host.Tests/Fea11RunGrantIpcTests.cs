@@ -246,6 +246,95 @@ public sealed class Fea11RunGrantIpcTests
             + $"application_channel={application.Code}\nPASS\n");
     }
 
+    [Fea11RunGrantIpcFact]
+    public async Task FolderSourceMintsABindableGrantThroughTheProductionRange()
+    {
+        // Review r2 R2-01: the folder kind detection used to be extension-only,
+        // so a DIRECTORY was classified as "image", the mint opened the
+        // directory as a file and the whole folder source was skipped. This test
+        // is the discriminating folder evidence: the Host production range
+        // resolver classifies the directory as "folder", the real mint succeeds,
+        // and the real Core binds the folder member entry.
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        var repo = directory?.FullName ?? throw new InvalidOperationException("repository not found");
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(repo + ".workspace", "FEA-11-RUN-GRANT-1", "fixtures",
+            "ipc-folder-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var receipt = await SeedFolderAsync(repo, python, root);
+        var folderPath = receipt.GetProperty("folder").GetString()!;
+        var options = new CoreServiceOptions
+        {
+            ExecutablePath = python,
+            AdditionalArguments =
+            [
+                "-X", "utf8", "-c",
+                $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+                + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+            ],
+            DataRoot = root,
+            DerivedRoot = Path.Combine(root, "derived"),
+            CatalogDbPath = Path.Combine(root, "catalog.sqlite"),
+            StderrLogPath = Path.Combine(root, "core.stderr.log"),
+            WireLogPath = Path.Combine(root, "wire.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(90),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+        var evidence = new List<string>();
+        await using (var client = await CoreServiceClient.StartAsync(options))
+        {
+            await client.OpenHostSessionAsync();
+            var registry = new SourceAccessRegistry(root);
+            var authorized = registry.Register("fea11-run-grant-folder", [root]);
+            var coordinator = new SourceReadCoordinator(client, registry, () => true);
+            Assert.True(await coordinator.SupportsRunAuthorizationAsync(CancellationToken.None));
+
+            // No declared SourceKind: the filesystem must decide "folder".
+            var target = new SourceScanTarget(
+                "f1", folderPath, ["b1"], receipt.GetProperty("version_id").GetString()!);
+            Assert.Equal("folder", RunSourceRange.KindOfSource(target, folderPath));
+            var (targets, unresolved) = RunSourceRange.Resolve(
+                [target],
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "pf1" }),
+                registry.List());
+            Assert.Single(targets);
+            Assert.Equal("folder", targets[0].Kind);
+            Assert.Equal(0, unresolved);
+            evidence.Add("RunSourceRange folder -> kind=folder, targets=1, unresolved=0");
+
+            var bound = await coordinator.AuthorizeRunAsync(
+                targets, "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "pf1" }));
+            Assert.Equal(1, bound.BoundPages);
+            Assert.Equal(1, bound.MintedGrants);
+            Assert.False(bound.Skipped);
+            evidence.Add("folder mint+bind -> bound_pages=1 minted=1");
+
+            var resolved = await client.SendAsync(
+                "resolve_page_resource", 3,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("page_id", "pf1");
+                    writer.WriteEndObject();
+                }, TimeSpan.FromSeconds(60));
+            Assert.NotNull(resolved.Result);
+            evidence.Add("resolve_page_resource(folder member) -> OK");
+        }
+        var wire = File.Exists(Path.Combine(root, "wire.ndjson"))
+            ? await File.ReadAllTextAsync(Path.Combine(root, "wire.ndjson"))
+            : string.Empty;
+        Assert.DoesNotContain(root, wire, StringComparison.OrdinalIgnoreCase);
+        evidence.Add("wire path leak -> 0");
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "run-grant-ipc-folder.txt"),
+            $"DataRoot={root}\n" + string.Join("\n", evidence) + "\nPASS\n");
+    }
+
     private static async Task<JsonElement> SeedAsync(string repo, string python, string root)
     {
         var script = $$"""
@@ -334,6 +423,130 @@ print("FEA11_RUN_GRANT_SEED_OK")
         Assert.True(process.ExitCode == 0, await stdout + await stderr);
         using var document = JsonDocument.Parse(
             await File.ReadAllTextAsync(Path.Combine(root, "ipc-run-grant-receipt.json")));
+        return document.RootElement.Clone();
+    }
+
+    private static async Task<JsonElement> SeedFolderAsync(string repo, string python, string root)
+    {
+        var script = $$"""
+import hashlib
+import io
+import json
+import sqlite3
+import sys
+from pathlib import Path
+
+repo = Path(r"{{repo}}")
+root = Path(r"{{root}}")
+sys.path[:0] = [str(repo), str(repo / "src"), str(repo / "tests" / "fea11")]
+
+from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.schema import default_migrations
+from application.importing.referenced.model import folder_manifest_digest
+import conftest as fixture
+from PIL import Image
+
+
+def png(color):
+    buffer = io.BytesIO()
+    Image.new("RGB", (8, 6), color).save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
+root.mkdir(parents=True, exist_ok=True)
+db = root / "library.db"
+folder = root / "folder-source"
+folder.mkdir(parents=True, exist_ok=True)
+first, second = png((255, 0, 0)), png((0, 0, 255))
+(folder / "001.png").write_bytes(first)
+(folder / "002.png").write_bytes(second)
+first_facts = fixture.file_facts(folder / "001.png")
+first_digest = hashlib.sha256(first).hexdigest()
+second_digest = hashlib.sha256(second).hexdigest()
+manifest_digest = folder_manifest_digest([
+    {"rel_path": "001.png", "size_bytes": len(first), "sha256": first_digest},
+    {"rel_path": "002.png", "size_bytes": len(second), "sha256": second_digest},
+])
+total_size = len(first) + len(second)
+conn = sqlite3.connect(db, isolation_level=None)
+conn.row_factory = sqlite3.Row
+conn.execute("PRAGMA foreign_keys = ON")
+MigrationRunner(conn, default_migrations()).apply_pending()
+conn.execute(
+    "INSERT INTO books (book_id,title,created_at,updated_at) VALUES ('b1','IPC',?,?)",
+    (fixture.NOW, fixture.NOW))
+conn.execute(
+    "INSERT INTO chapters (chapter_id,book_id,title,created_at,updated_at)"
+    " VALUES ('c1','b1','Ch',?,?)", (fixture.NOW, fixture.NOW))
+conn.commit()
+conn.execute(
+    "INSERT INTO sources (source_id, source_kind, display_name, created_at, updated_at)"
+    " VALUES ('f1','folder','folder-source',?,?)", (fixture.NOW, fixture.NOW))
+conn.execute(
+    "INSERT INTO source_locations (location_id, source_id, registry_id,"
+    " authorization_generation, content_digest, volume_serial, file_id,"
+    " size_bytes, observed_at, created_at)"
+    " VALUES ('sl-f1','f1','fea11-run-grant-folder',1,?,?,?,?,?,?)",
+    (manifest_digest, first_facts["volume_serial"], first_facts["file_id"],
+     total_size, fixture.NOW, fixture.NOW))
+conn.execute(
+    "INSERT INTO source_versions (version_id, source_id, location_id,"
+    " content_digest, size_bytes, observed_at, created_at)"
+    " VALUES ('svf1','f1','sl-f1',?,?,?,?)",
+    (manifest_digest, total_size, fixture.NOW, fixture.NOW))
+for ordinal, (entry_id, locator, digest, size) in enumerate([
+        ("se-101", "001.png", first_digest, len(first)),
+        ("se-102", "002.png", second_digest, len(second)),
+]):
+    conn.execute(
+        "INSERT INTO source_entries (source_id, version_id, entry_id, locator,"
+        " ordinal, stable_sort_key, content_digest_kind, content_digest,"
+        " encoded_digest, size_bytes, width, height, decoder_name,"
+        " decoder_version, created_at)"
+        " VALUES ('f1','svf1',?,?,?,?,'encoded',?,?,?,8,6,'folder','1.0',?)",
+        (entry_id, locator, ordinal, f"{ordinal:08d}", digest, digest, size,
+         fixture.NOW))
+conn.execute(
+    "INSERT INTO pages (page_id, chapter_id, sort_order, created_at, updated_at,"
+    " source_filename, source_order, source_hash, source_size_bytes, width,"
+    " height, managed_original_ref, source_mode, integrity_status)"
+    " VALUES ('pf1','c1',1,?,?, '001.png', 1, ?, ?, 8, 6, NULL, 'referenced',"
+    " 'complete')",
+    (fixture.NOW, fixture.NOW, first_digest, len(first)))
+conn.execute(
+    "INSERT INTO page_bindings (binding_id, page_id, project_id, binding_version,"
+    " source_id, entry_id, accepted_source_version, status,"
+    " authorization_generation, authorized_at, verified_digest, created_at,"
+    " updated_at)"
+    " VALUES ('pb-pf1','pf1','b1',1,'f1','se-101','svf1','healthy',1,?,?,?,?)",
+    (fixture.NOW, first_digest, fixture.NOW, fixture.NOW))
+conn.commit()
+conn.close()
+receipt = {
+    "root": str(root), "db": str(db), "folder": str(folder),
+    "source_id": "f1", "version_id": "svf1", "entry_id": "se-101",
+}
+(root / "ipc-run-grant-folder-receipt.json").write_text(
+    json.dumps(receipt), encoding="utf-8")
+print("FEA11_RUN_GRANT_FOLDER_SEED_OK")
+""";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            WorkingDirectory = repo,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(script);
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEndAsync();
+        var stderr = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+        Assert.True(process.ExitCode == 0, await stdout + await stderr);
+        using var document = JsonDocument.Parse(
+            await File.ReadAllTextAsync(Path.Combine(root, "ipc-run-grant-folder-receipt.json")));
         return document.RootElement.Clone();
     }
 
