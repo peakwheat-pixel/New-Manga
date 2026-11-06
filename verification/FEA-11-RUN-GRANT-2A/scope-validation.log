@@ -1,0 +1,45 @@
+# FEA-11-RUN-GRANT-2A scope validation
+generated_at_utc=2026-11-06T21:46:38+00:00
+delivery_base=1b6152112
+delivery_commits=aa0a5562b,a0bafc89e
+repo_head=923ce00fd52c3bd15e3ea588853d4c2152a73ea2
+
+## allowed_paths (card frontmatter)
+- doc/tasks/FEA-11-RUN-GRANT-2A.md
+- doc/reviews/FEA-11-RUN-GRANT-2A-*.md
+- doc/handoffs/FEA-11-RUN-GRANT-2A-*.md
+- verification/FEA-11-RUN-GRANT-2A/**
+- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+- apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+
+## changed files (this ticket's commits only)
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs	ALLOWED
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs	ALLOWED
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs	ALLOWED
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs	ALLOWED
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs	ALLOWED
+
+## zero-drift surfaces
+doc/plan/**: ZERO_DIFF
+doc/contracts/**: ZERO_DIFF
+src/infrastructure/sqlite/schema.py: ZERO_DIFF
+migrations: ZERO_DIFF
+src/**: ZERO_DIFF
+tests/** (Python Core tests): ZERO_DIFF
+dependencies (pyproject/requirements/*.csproj): ZERO_DIFF
+src/bootstrap/core_assembly.py: ZERO_DIFF
+NewManga.App/**: ZERO_DIFF
+STATUS/PLAN/TASK_LEDGER: ZERO_DIFF
+apps/** beyond allowed_paths: ZERO_DIFF
+protocol_minor=3 kept: YES
+
+result=PASS changed=5 out_of_scope=[]
+
+## shared-worktree note (honest disclosure)
+The same main working tree is being used concurrently by the FEA-11-RUN-GRANT-2B-PREREQ-1 session (C-16 v1.4 UNFREEZE + doc/plan/FEA-C16* + verification/FEA-11-RUN-GRANT-2B-PREREQ-1/**).
+Those files are NOT part of this delivery; they are excluded here because the changed-file set is computed from this ticket's own commits (aa0a5562b, a0bafc89e), not from a base..HEAD range.
+No file of that session was modified, staged or committed by this ticket.
+docs commit (card / handoff / verification evidence) follows the delivery commits; it is within allowed_paths by construction.

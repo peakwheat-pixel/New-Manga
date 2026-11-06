@@ -1,0 +1,5 @@
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs

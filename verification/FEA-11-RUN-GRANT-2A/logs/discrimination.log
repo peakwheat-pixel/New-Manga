@@ -1,0 +1,52 @@
+# FEA-11-RUN-GRANT-2A discrimination log
+
+generated_at_utc=2026-11-06T21:34:35+00:00
+repo_head=a0bafc89ec74be08e3d6d721105639df01a140a7
+
+Each break is applied to the shipped bytes, ONE target test is run, the test
+MUST turn red (exit != 0), then the file is restored and its sha256 is re-checked.
+
+[B1] break=Run 铸造版本回退常量 "1"（生产版本通道被绕过，Core typed 拒绝）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   at NewManga.Host.RunSourceAuthorizer.AuthorizeSliceAsync(String command, JsonElement scope, CancellationToken token) |    at NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember() |    at NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (
+    restore=RESTORED sha256=51dcd654c981ca36a8e532268c894555c8af7c8ea1f245a92ac2a638ee805b31
+
+[B2] break=changed/status 新鲜度门被删除（候选版本可覆盖缓存，AC-G2 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+    target=FullyQualifiedName~SourceScanResponseRefreshesTheCacheOnlyWhenUnchangedAndOk
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=  堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.SourceScanResponseRefreshesTheCacheOnlyWhenUnchangedAndOk() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 6 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.18]     NewManga.Host.Tests.SourceRegistr
+    restore=RESTORED sha256=c450b7c855efde89568c6c155f25085dfa9248e9779ed150f0e748242ca55d19
+
+[B3] break=冷缓存跳过被删除（用占位常量铸造；删 sk 即 managed Run 被阻断，AC-G3 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~RunAuthorizerSkipsColdCacheSourcesAndStillReachesDispatch
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=     at NewManga.Host.Tests.SourceRegistryTests.RunAuthorizerSkipsColdCacheSourcesAndStillReachesDispatch() | --- End of stack trace from previous location --- | ----- Inner Stack Trace ----- |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeAsync(String name, JsonElement args, CancellationToken cancellationToken) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 15 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.SourceRegistryTe
+    restore=RESTORED sha256=51dcd654c981ca36a8e532268c894555c8af7c8ea1f245a92ac2a638ee805b31
+
+[B4] break=有界 on-demand 冷缓存扫描被删除（AC-G3 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~RunAuthorizerPerformsOneBoundedOnDemandScanPerColdSource
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=Actual:   [] |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.RunAuthorizerPerformsOneBoundedOnDemandScanPerColdSource() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 14 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceRegistryTests.RunAuthorizerPerformsOneBoundedOnDemandScanPerColdSource [FAIL]
+    restore=RESTORED sha256=51dcd654c981ca36a8e532268c894555c8af7c8ea1f245a92ac2a638ee805b31
+
+[B5] break=AcceptRunAsync 的冻结 slice 授权委托行被删除（R3-02/AC-G6 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~AcceptRunAsyncDelegatesToTheAuthorizationSeam
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   at NewManga.Host.Tests.SourceRegistryTests.AcceptRunAsyncDelegatesToTheAuthorizationSeam() | --- End of stack trace from previous location --- | ----- Inner Stack Trace ----- |    at NewManga.Host.HostRuntime.AcceptRunAsync(String preparedRunId, Int32 generation, String idempotencyKey, CancellationToken ct) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 22 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceRegistryTests.AcceptRunAsyncD
+    restore=RESTORED sha256=51dcd654c981ca36a8e532268c894555c8af7c8ea1f245a92ac2a638ee805b31
+
+[B6] break=ScanSourceSync 响应不再写入身份缓存（生产路径断链，AC-G1 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+    target=FullyQualifiedName~ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=  堆栈跟踪: |      at NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember() |    at NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:01.45]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChanne
+    restore=RESTORED sha256=c450b7c855efde89568c6c155f25085dfa9248e9779ed150f0e748242ca55d19
+
+result=PASS breaks=6 all_red_then_restored
+final_rebuild exit_code=0
