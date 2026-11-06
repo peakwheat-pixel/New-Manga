@@ -3,15 +3,15 @@ id: FEA-11-RUN-GRANT-2
 title: 容器成员 entry 授权通道（C-16 v1.4 + Core 多 entry 注册/匹配 + Host 铸 N 项；proposed，待依赖）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md` 已评估 2B（READY-WITH-UNFREEZE，仅 C-16 v1.4）；DSH 裁决：与 2A 拆分、契约先行（`FEA-11-RUN-GRANT-2B-PREREQ-1`）；**依赖 2A + PREREQ done 后才释放实现**；本卡当前为 proposed（scope 已评估、未冻结实施）
+status: ready
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`（2B READY-WITH-UNFREEZE）；依赖 `FEA-11-RUN-GRANT-2A`（done，a0bafc89e）+ `FEA-11-RUN-GRANT-2B-PREREQ-1`（done，C-16 v1.4 d8dcfc07a）均已完成；DSH 2026-11-07 释放为 ready（base 见 frontmatter）；Owner=`run-grant-impl` 复用）
 suggested_owner: codex
-owner: null
-reviewer: null
+owner: run-grant-impl
+reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-RUN-GRANT-2-r1.md`）
 depends_on:
   - FEA-11-RUN-GRANT-2A
   - FEA-11-RUN-GRANT-2B-PREREQ-1
-base_commit: null
+base_commit: 53dc38bd4
 branch: null
 worktree: null
 integration_commit: null
@@ -41,7 +41,7 @@ out_of_scope:
 
 # FEA-11-RUN-GRANT-2：容器成员 entry 授权通道（proposed，待 2A + PREREQ）
 
-> **状态：`proposed`（scope 已由 review 评估；实施释放依赖 `FEA-11-RUN-GRANT-2A` done + `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4）done）。** 当前不得开工。
+> **状态：`ready`（依赖已全部完成：2A `a0bafc89e` + C-16 v1.4 `d8dcfc07a`；base `53dc38bd4`）。** 按冻结 In/AC 实施。
 
 ## 来源
 
