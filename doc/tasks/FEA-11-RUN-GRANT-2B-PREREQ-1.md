@@ -10,7 +10,7 @@ owner: dsh
 reviewer: 独立上下文 fresh subagent（byte-level；不得参与本 UNFREEZE 起草；session 见 `doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r1.md` 与载体）
 depends_on:
   - FEA-11-RUN-GRANT-1-PREREQ-1
-base_commit: 5823bac40
+base_commit: 9ec4826d6
 branch: null
 worktree: null
 integration_commit: null
@@ -96,3 +96,4 @@ out_of_scope:
 - L-P1′：M2-C1 §5.7 HostControl 枚举滞后（既有，随 L-P1 保留）。
 - L-P2′：2B 实现仍需 2A 的版本通道（依赖顺序）；长 Run/加密/重启不因本契约解决。
 - L-P3′：契约就绪不构成实现授权。
+

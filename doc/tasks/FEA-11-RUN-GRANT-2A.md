@@ -10,7 +10,7 @@ owner: run-grant-impl
 reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-RUN-GRANT-2A-r1.md`）
 depends_on:
   - FEA-11-RUN-GRANT-1
-base_commit: null
+base_commit: 9ec4826d6
 branch: null
 worktree: null
 integration_commit: null
@@ -90,3 +90,4 @@ out_of_scope:
 ## 交付记录（Owner 回填；不改 status）
 
 - 待实施。
+
