@@ -288,4 +288,8 @@ out_of_scope:
 - **Resource Manifest / 资源处置**：仓内删除/移动/归档 **0**（`deleted=0 moved=0 migrated=0 archived=0`）；仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\`（500+ 文件，测试夹具/门禁日志/判别备份，无独有产品数据）→ `PRESERVE_REFERENCED`；未清理其它任务。详见 Manifest。
 - **指针清理**：STATUS 当前 Task → 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
 - **push**：**已执行**（2026-11-07，门禁全过后）：`git push origin main` → `2067789ea..d7374ce34`（PRE_HEAD `d7374ce34`、PRE_ORIGIN `2067789ea`、AHEAD **17**、PUSH_EXIT=0、POST_ORIGIN `d7374ce34`、AHEAD=0；含 PREREQ-1/L-G12/证据/closeout/handoff 提交）。
+## Closeout 补充（DSH，2026-11-07；append-only，不改上文历史字节）
 
+- **L-G12① 措辞纠正（P0，来源 `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md` D-1）**：生产 Host 的 `scope.version` **恒为 `"1"`**（`SourceScanScheduler.cs:1894-1895` 枚举硬编码 + `HostRuntime.cs:154-169` 默认），而 Core binding version 恒为 `sv-…`（`referenced/runtime.py:471,785`）；C-16 §2.4 严格相等（`source_read_refs.py:566-570`）→ **referenced Run 在 dispatch 前 100% typed 拒绝（Run 不启动）**。此前「可用边界=image/folder/归档首成员」只在**测试**内手工传 version 时成立（既有 IPC 传 `"sv1"`，r3 已注明），**不是生产可用边界**。本纠正不改变 AC-R1…R7 的 MET 判定（测试/机制真实），但**生产口径以本补充为准**。
+- **新登记 L-G15（生产版本常量阻断）**：由 `FEA-11-RUN-GRANT-2A` 修复（Host 从 `ScanSourceSync` 响应缓存 Core 权威 version）；修复前不得宣称生产 referenced Run 可用。
+- **follow-up 拆分**：`FEA-11-RUN-GRANT-2` → 2A（Host 版本通道，零契约）+ `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4 容器多成员 entry）+ 2B 实现卡（proposed）；2C（长 Run 续期）另卡。依据 scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md` 与 Codex 裁决输入（`196dede9…`）。

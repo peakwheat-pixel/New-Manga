@@ -1,15 +1,16 @@
 ---
 id: FEA-11-RUN-GRANT-2
-title: Host→Core source 身份通道（version + 容器成员 locator/ordinal）与长 Run 授权续期（proposed 占位）
+title: 容器成员 entry 授权通道（C-16 v1.4 + Core 多 entry 注册/匹配 + Host 铸 N 项；proposed，待依赖）
 kind: implementation
 governance_version: 3
 status: proposed
-approval: 占位卡：scope 尚未冻结，不得释放实施；来源 `FEA-11-RUN-GRANT-1` closeout L-G12（version 通道 + 多成员容器仅首成员可授权）与 r3 R3-02（AcceptRun→seam 委托行覆盖残差）；须先独立 scope review（是否需 UNFREEZE C-16/C-17），由 DSH 裁决
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md` 已评估 2B（READY-WITH-UNFREEZE，仅 C-16 v1.4）；DSH 裁决：与 2A 拆分、契约先行（`FEA-11-RUN-GRANT-2B-PREREQ-1`）；**依赖 2A + PREREQ done 后才释放实现**；本卡当前为 proposed（scope 已评估、未冻结实施）
 suggested_owner: codex
 owner: null
 reviewer: null
 depends_on:
-  - FEA-11-RUN-GRANT-1
+  - FEA-11-RUN-GRANT-2A
+  - FEA-11-RUN-GRANT-2B-PREREQ-1
 base_commit: null
 branch: null
 worktree: null
@@ -23,29 +24,51 @@ allowed_paths:
   - doc/reviews/FEA-11-RUN-GRANT-2-*.md
   - doc/handoffs/FEA-11-RUN-GRANT-2-*.md
   - verification/FEA-11-RUN-GRANT-2/**
+  - src/infrastructure/resource_channel/source_read_refs.py
+  - src/bootstrap/core_service.py
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  - tests/core/test_host_control.py
+  - tests/fea11/test_source_run_grant.py
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
 out_of_scope:
-  - 生产实现/Host/Core/App 代码、契约/schema/依赖字节、真实用户数据、push —— 本卡为占位，未冻结
+  - 2A（Host 版本通道）与 2C（长 Run 续期）；L-G1/L-G2/L-G9/L-G10（另卡/保留）
+  - C-17/C-06/M2-C1 及其他 16 份契约字节（仅 PREREQ 的 C-16 v1.4）
+  - Run wire/`CORE_PROTOCOL_MINOR`/新错误码/schema/依赖；UI/App；真实用户数据；push
 ---
 
-# FEA-11-RUN-GRANT-2：Host→Core source 身份通道（占位）
+# FEA-11-RUN-GRANT-2：容器成员 entry 授权通道（proposed，待 2A + PREREQ）
 
-> **状态：`proposed` 占位卡；scope 未冻结，不得实施。** 由 DSH 在 `FEA-11-RUN-GRANT-1` closeout 时登记为候选（L-G12 / R3-02）。
+> **状态：`proposed`（scope 已由 review 评估；实施释放依赖 `FEA-11-RUN-GRANT-2A` done + `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4）done）。** 当前不得开工。
 
-## 来源与目标（草案）
+## 来源
 
-- **来源 1（L-G12① version 通道）**：`source_list_scan_targets` DTO 无 `version_id`，冷启动 `SourceScanTarget.Version` 固定 `"1"`；而 C-16 v1.3 §2.4 要求 `scope.version == binding.accepted_source_version` → 生产 Host 铸出的 grant 通常 version 不匹配 → 授权 typed `SOURCE_ACCESS_DENIED`、不 dispatch（fail-closed）。
-- **来源 2（L-G12② 容器成员 entry 通道）**：Host 对 zip/cbz/pdf 只铸容器单 entry（locator=容器名、ordinal=0），Core 按成员 `source_entries` 匹配 → 多成员归档仅 `ordinal=0` 页可授权。
-- **来源 3（R3-02）**：`HostRuntime.AcceptRunAsync` → `AuthorizePreparedRunForAcceptAsync` 的委托行本身未被判别性测试覆盖（seam 逻辑已覆盖）。
-- **来源 4（L-G1）**：单 grant ≤300s；长 Run 需定期重铸/重绑（本卡候选）。
-- **目标（草案）**：为 Host 提供 Core 权威的 source/version/entry 身份通道，使生产 referenced Run 在窗口内对 image/folder/多成员容器均可用；并评估长 Run 续期方案（或继续明示 limitation）。
+- `FEA-11-RUN-GRANT-1` L-G12②：Host 对 zip/cbz/pdf 只铸容器单 entry（locator=容器名、ordinal=0），Core 按成员 `source_entries` 匹配 → 多成员容器仅首成员可授权。
+- scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`：2B 需 **C-16 v1.4 UNFREEZE**（容器 entries 1..N）+ Core 注册/匹配实现 + Host 按 Core 权威 locator/ordinal 铸 N 项；≥3 成员真实 zip/cbz IPC；`max_entries`/64 上限 typed。
 
-## 候选 Scope（待 scope review 冻结）
+## In（草案，待释放时按卡冻结）
 
-- In（草案）：Host 源身份缓存（如从 `ScanSourceSync` 结果/枚举扩展获取 `version_id` 与成员 locator/ordinal）、Core 侧对应只读通道（可能需 C-17 DTO 扩展或 C-16 命令扩展 → 评估 UNFREEZE）、Host/Core 测试与 L-G12 边界扩展。
-- Out（草案）：UI/通知/扫描实现重写/删除/GC；真实用户数据；push；未评估 UNFREEZE 前不得改契约字节。
+| # | 项 | 要点 |
+|---|---|---|
+| J-1 | Core 注册/匹配 | `_parse_scope` 接受容器 1..N（逐项校验：locator 安全、ordinal 唯一、path 同一容器、facts=容器身份、预算上限）；匹配沿用 `entry_key OR locator OR ordinal` + facts；任一不匹配整体 typed 零写；`_bindings` 语义不变 |
+| J-2 | Host 铸 N 项 | 成员 locator/ordinal 必须来自 Core 权威扫描响应（2A 缓存）；容器保持容器 path/facts；超 `max_entries`/64 grant 上限 → typed，不截断 |
+| J-3 | 测试/证据 | ≥3 成员真实 zip/cbz：每成员页 authorize+resolve；删/错一项 typed `SOURCE_ACCESS_DENIED`；零越权；判别性破坏点；EV/Manifest |
+| J-4 | 门禁 | 全量 pytest/.NET 不降；pins 18/18（C16 v1.4）；check/API/scope；全量跑后恢复 FEA-09 |
+
+## Out
+
+- 2A 版本通道（已完成的前提）；长 Run 续期；加密源；Core 重启；L-R11 gate；UI/App；契约（PREREQ 已冻结）；schema/依赖；真实用户数据；push。
+
+## Acceptance Criteria（草案，释放时冻结）
+
+- AC-J1 容器 ≥3 成员真实 IPC：每个成员页均可 `AuthorizeSourceReadForRun` 绑定并 `resolve_page_resource`；不可读到未授权成员。
+- AC-J2 fail-closed：N 项中任一项 locator/facts/ordinal 不符或 entry 不在 version → 整体 typed、零映射写入；容器替换/generation 漂移/撤销/过期 typed。
+- AC-J3 上限：超过 `max_entries` 或 64 grant 上限 → typed，不截断；≥65 成员容器有明确用例。
+- AC-J4 managed/旧路径零回归；零漂移（pins 18/18、Run wire/minor/schema/依赖零改动）；全量门禁不降；EV/Handoff 不夸大。
 
 ## 依赖与下一步
 
-- 依赖：`FEA-11-RUN-GRANT-1`（done，`a11ded0d3`）。
-- **必须先做独立 scope review**（核验 C-17 §5.2 DTO / C-16 v1.3 §2.4 / C-06 是否足够；是否需 UNFREEZE；最小写域与 AC 草案），由 DSH 裁决后冻结释放。
-- 若 scope review 判 BLOCKED（需 UNFREEZE 或 Host 通道不可行），登记 limitation 并回退候选。
+1. 先完成 `FEA-11-RUN-GRANT-2A`（Host 版本通道）与 `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4）。
+2. 两者 done 后由 DSH 复核本卡 scope 是否仍成立（如 Core/Host 形状变化），再冻结/释放实施。
