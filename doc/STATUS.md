@@ -4,10 +4,10 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-11-SCAN-2-PREREQ-1](tasks/FEA-11-SCAN-2-PREREQ-1.md) `ready`（C-17 v1.1 UNFREEZE：冷启动扫描目标枚举命令层；Codex 裁决 SCAN-2 → scope review READY-WITH-UNFREEZE/B1 采纳；独立 byte-level 复核待派）。已闭环：[FEA-12-UI](tasks/FEA-12-UI.md) `done`（`a46d4d5c7`）；[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（`7080167e1`；AC11-1 仍 PARTIAL）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
+- 当前 Task：[FEA-11-SCAN-2](tasks/FEA-11-SCAN-2.md) `proposed`（scope 已冻结：READY-WITH-UNFREEZE/B1；前置 C-17 v1.1 UNFREEZE 已 done `7451bfaaa`；待 DSH 冻结实现卡并释放）。已闭环：[FEA-11-SCAN-2-PREREQ-1](tasks/FEA-11-SCAN-2-PREREQ-1.md) `done`（C-17 v1.1，pins 18/18）；[FEA-12-UI](tasks/FEA-12-UI.md) `done`（`a46d4d5c7`）；[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（`7080167e1`；AC11-1 仍 PARTIAL）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：SCAN-2-PREREQ-1 写 C-17 v1.1 UNFREEZE 提案 → 独立 byte-level 复核 → 重冻/pins 18/18 → 冻结并释放 FEA-11-SCAN-2 实现卡（WATCH-1 不同时释放）。
+- 下一步：冻结 FEA-11-SCAN-2 实现卡（kind/AC-S2-1…9/allowed_paths/owner/base）→ READY→派 Owner→实现→独立 Review→closeout（AC11-1 仍 PARTIAL；WATCH-1 不同时释放）。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
