@@ -789,3 +789,210 @@ def test_authorize_source_read_for_run_reuses_the_frozen_grant_error_codes(
         assert core.source_read_refs._bindings == {}
     finally:
         _close(core, server)
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RUN-GRANT-2 (2B): container member entries on the host-control face
+# (C-16 v1.4 §2: zip/cbz/pdf carry 1..N entries over ONE container; image stays
+# single-entry; per-entry violations are typed with zero partial acceptance and
+# the entry budget is typed, never truncated).
+# ---------------------------------------------------------------------------
+
+
+def _container_source_read_grant_payload(
+    tmp_path: Path,
+    *,
+    entries: list[dict],
+    kind: str = "zip",
+    grant_id: str | None = None,
+    budget: dict | None = None,
+) -> dict:
+    """One signed container grant with an EXPLICIT entry list (real temp file).
+
+    A real Host mints every entry from Core-authoritative scan data; this
+    protocol-face helper signs the exact shapes the registry must classify.
+    """
+    container = tmp_path / f"granted-container.{kind}"
+    if not container.exists():
+        container.write_bytes(b"PK\x05\x06" + b"\x00" * 18)
+    facts = {
+        "volume_serial": 1,
+        "file_id": 2,
+        "size": container.stat().st_size,
+        "sha256": hashlib.sha256(container.read_bytes()).hexdigest(),
+    }
+    items = [
+        {
+            "entry_key": f"entry-{index}",
+            "entry_id": None,
+            "locator": entry["locator"],
+            "ordinal": entry["ordinal"],
+            "path": entry.get("path", str(container.absolute())),
+            "facts": entry.get("facts", facts),
+        }
+        for index, entry in enumerate(entries)
+    ]
+    grant_id = grant_id or uuid.uuid4().hex
+    expires_at = time.time() + 120
+    payload = {
+        "grant_id": grant_id,
+        "session_id": HOST_SESSION_ID,
+        "operation": "source-read",
+        "scope_class": "user-source",
+        "registry_id": "reg-run-grant",
+        "generation": 1,
+        "expires_at": expires_at,
+        "budget": budget
+        or {
+            "max_bytes": 8 * 1024 * 1024,
+            "max_decode_bytes": 8 * 1024 * 1024,
+            "max_entries": 10000,
+        },
+        "scope": {
+            "source_id": "s1",
+            "version": "sv1",
+            "rendition": {
+                "decoder": kind,
+                "scale": 1.0,
+                "params_digest": "0" * 64,
+            },
+            "entries": items,
+        },
+    }
+    signed = dict(payload)
+    signed["expires_at"] = f"{expires_at:.6f}"
+    payload["signing_key"] = base64.urlsafe_b64encode(
+        SOURCE_READ_SIGNING_KEY
+    ).decode().rstrip("=")
+    payload["signature"] = _sign_source_read(SOURCE_READ_SIGNING_KEY, signed)
+    return payload
+
+
+@pytest.mark.parametrize("kind", ["zip", "cbz", "pdf"])
+def test_container_member_entries_register_on_the_host_control_face(
+    tmp_path: Path, kind: str,
+) -> None:
+    """C-16 v1.4 §2: 1..N container entries are accepted (zip/cbz/pdf)."""
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        entries = [
+            {"locator": "001.png", "ordinal": 0},
+            {"locator": "002.png", "ordinal": 1},
+            {"locator": "003.png", "ordinal": 2},
+        ]
+        grant = _container_source_read_grant_payload(tmp_path, entries=entries, kind=kind)
+        response = _request(server, core_session_id, "RegisterSourceReadGrant", grant)
+        assert response["error"] is None, response["error"]
+        assert response["result"]["registered"] is True
+        registered = core.source_read_refs._grants[grant["grant_id"]]
+        assert registered.source_kind == kind
+        assert len(registered.scope["entries"]) == 3
+        assert registered.container_path is not None
+        assert registered.container_facts.sha256 == hashlib.sha256(
+            (tmp_path / f"granted-container.{kind}").read_bytes()
+        ).hexdigest()
+
+        # Regression: the SAME container kind with ONE entry stays valid.
+        single = _container_source_read_grant_payload(
+            tmp_path, entries=[{"locator": "001.png", "ordinal": 0}], kind=kind
+        )
+        assert _request(
+            server, core_session_id, "RegisterSourceReadGrant", single
+        )["error"] is None
+    finally:
+        _close(core, server)
+
+
+def test_image_grant_keeps_the_single_entry_shape(tmp_path: Path) -> None:
+    """C-16 v1.4 §2 keeps ``image`` single-entry (only zip/cbz/pdf are 1..N)."""
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        before = _business_table_snapshot(core)
+        grant = _container_source_read_grant_payload(
+            tmp_path,
+            kind="image",
+            entries=[
+                {"locator": "001.png", "ordinal": 0},
+                {"locator": "002.png", "ordinal": 1},
+            ],
+        )
+        response = _request(server, core_session_id, "RegisterSourceReadGrant", grant)
+        assert response["result"] is None
+        assert response["error"]["code"] == "SOURCE_ACCESS_DENIED"
+        assert grant["grant_id"] not in core.source_read_refs._grants
+        assert _business_table_snapshot(core) == before
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "unsafe_locator", "absolute_locator", "negative_ordinal",
+        "duplicate_ordinal", "other_container", "facts_differ", "over_budget",
+    ],
+)
+def test_container_grant_violations_are_typed_with_zero_partial_acceptance(
+    tmp_path: Path, case: str,
+) -> None:
+    """Every per-entry violation refuses the WHOLE grant (typed §6 code)."""
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        entries = [
+            {"locator": "001.png", "ordinal": 0},
+            {"locator": "002.png", "ordinal": 1},
+            {"locator": "003.png", "ordinal": 2},
+        ]
+        budget = None
+        if case == "unsafe_locator":
+            entries[1] = {"locator": "../escape.png", "ordinal": 1}
+        elif case == "absolute_locator":
+            entries[1] = {"locator": "C:/escape.png", "ordinal": 1}
+        elif case == "negative_ordinal":
+            entries[2] = {"locator": "003.png", "ordinal": -1}
+        elif case == "duplicate_ordinal":
+            entries[2] = {"locator": "003.png", "ordinal": 1}
+        elif case == "other_container":
+            other = tmp_path / "other-container.zip"
+            other.write_bytes(b"PK\x05\x06" + b"\x00" * 18)
+            entries[1] = {
+                "locator": "002.png",
+                "ordinal": 1,
+                "path": str(other.absolute()),
+            }
+        elif case == "facts_differ":
+            entries[1] = {
+                "locator": "002.png",
+                "ordinal": 1,
+                "facts": {
+                    "volume_serial": 1,
+                    "file_id": 2,
+                    "size": 12345,
+                    "sha256": "a" * 64,
+                },
+            }
+        elif case == "over_budget":
+            budget = {
+                "max_bytes": 8 * 1024 * 1024,
+                "max_decode_bytes": 8 * 1024 * 1024,
+                "max_entries": 2,
+            }
+        grant = _container_source_read_grant_payload(
+            tmp_path, entries=entries, budget=budget
+        )
+        before = _business_table_snapshot(core)
+        response = _request(server, core_session_id, "RegisterSourceReadGrant", grant)
+        assert response["result"] is None
+        expected = "SOURCE_BUDGET_EXCEEDED" if case == "over_budget" else "SOURCE_ACCESS_DENIED"
+        assert response["error"]["code"] == expected, response["error"]
+        # Zero partial acceptance: nothing of the grant survives, no business row.
+        assert grant["grant_id"] not in core.source_read_refs._grants
+        assert core.source_read_refs._bindings == {}
+        assert _business_table_snapshot(core) == before
+        # §7: the refusal never echoes the granted path.
+        assert str(tmp_path) not in json.dumps(response["error"])
+    finally:
+        _close(core, server)

@@ -359,12 +359,14 @@ public sealed class Fea11RunGrantIpcTests
     /// Core-authoritative version replaced the constant (L-G15).
     ///
     /// Coverage: image single-entry source (COLD cache → exactly one bounded
-    /// on-demand scan, AC-G3), folder source (scheduled scan path), archive first
-    /// member (scheduled scan path). The archive's second member stays typed
-    /// fail-closed (L-G12② / 2B boundary, NOT fixed here).
+    /// on-demand scan, AC-G3), folder source (scheduled scan path), and EVERY
+    /// archive member (FEA-11-RUN-GRANT-2 / 2B: the archive scope now carries the
+    /// Core-authoritative member identities, so the second member is authorized
+    /// too — the 2A note "second member stays typed fail-closed (L-G12②)" is
+    /// closed by 2B; the remaining limits are the ones listed in the Handoff).
     /// </summary>
     [Fea11RunGrantIpcFact]
-    public async Task ProductionScanVersionChannelDrivesImageFolderAndArchiveFirstMember()
+    public async Task ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
@@ -507,15 +509,17 @@ public sealed class Fea11RunGrantIpcTests
             await ResolvePageAsync(client, "p1");
             evidence.Add("resolve_page_resource(archive first member, production version) -> OK");
 
-            // (5) L-G12② boundary unchanged: the archive's SECOND member is still refused typed
-            // (2A only fixes the version channel; container member entries need 2B).
-            var refused = await Assert.ThrowsAsync<CoreOperationException>(() =>
-                authorizer.AuthorizeSliceAsync(
-                    "reocr_all",
-                    JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p2" }),
-                    CancellationToken.None));
-            Assert.Equal("SOURCE_ACCESS_DENIED", refused.Code);
-            evidence.Add("archive second member -> L-G12 boundary kept: " + refused.Code);
+            // (5) FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2): the archive's SECOND member is covered by
+            // the same Run grant because the scope now carries the Core-authoritative member
+            // identities (locator/ordinal from the scan response) — L-G12② is closed for containers
+            // whose member identities are cached.
+            await authorizer.AuthorizeSliceAsync(
+                "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p2" }),
+                CancellationToken.None);
+            Assert.Contains(log, message => message.Contains("bound_pages=1", StringComparison.Ordinal));
+            await ResolvePageAsync(client, "p2");
+            evidence.Add("resolve_page_resource(archive second member, production version) -> OK");
         }
 
         // C-16 §7: neither the wire frame log nor the Core stderr may carry the fixture path.
@@ -532,6 +536,217 @@ public sealed class Fea11RunGrantIpcTests
 
         await File.WriteAllTextAsync(
             Path.Combine(root, "run-grant-2a-version-channel.txt"),
+            $"DataRoot={root}\n" + string.Join("\n", evidence) + "\nPASS\n");
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2) real stdio IPC evidence: container member entries.
+    ///
+    /// A real zip and a real cbz with three real PNG members are scanned through the PRODUCTION
+    /// <c>ScanSourceSync</c> path; the Core-authoritative member identities (locator/ordinal) reach the
+    /// mint through <see cref="SourceIdentityCache"/>, so ONE grant covers every member and each member
+    /// page can be authorized + resolved. The fail-closed half: a scope that omits a member, a scope
+    /// that names a member which does not exist, and a member list over the grant budget are all typed
+    /// (the Host never truncates and never over-authorizes). The ≥65-member container (66 members) is
+    /// covered by ONE grant — the old 64-grant-per-command limit is a grant-count limit, not a member
+    /// limit — and the LAST member (ordinal 65) is the no-truncation witness.
+    /// </summary>
+    [Fea11RunGrantIpcFact]
+    public async Task ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        var repo = directory?.FullName ?? throw new InvalidOperationException("repository not found");
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(repo + ".workspace", "FEA-11-RUN-GRANT-2", "fixtures",
+            "ipc-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var receipt = await SeedContainerMembersAsync(repo, python, root);
+        var archive = receipt.GetProperty("zip").GetString()!;
+        var cbz = receipt.GetProperty("cbz").GetString()!;
+        var many = receipt.GetProperty("many").GetString()!;
+        var zipVersion = receipt.GetProperty("zip_version").GetString()!;
+        var cbzVersion = receipt.GetProperty("cbz_version").GetString()!;
+        var manyVersion = receipt.GetProperty("many_version").GetString()!;
+        var dbPath = Path.Combine(root, "library.db");
+        var evidence = new List<string>();
+
+        var options = new CoreServiceOptions
+        {
+            ExecutablePath = python,
+            AdditionalArguments =
+            [
+                "-X", "utf8", "-c",
+                $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+                + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+            ],
+            DataRoot = root,
+            DerivedRoot = Path.Combine(root, "derived"),
+            CatalogDbPath = Path.Combine(root, "catalog.sqlite"),
+            StderrLogPath = Path.Combine(root, "core.stderr.log"),
+            WireLogPath = Path.Combine(root, "wire.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(90),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+
+        await using (var client = await CoreServiceClient.StartAsync(options))
+        {
+            Assert.Contains("source.read.run/1", (await client.PingAsync()).Capabilities);
+            await client.OpenHostSessionAsync();
+            var registry = new SourceAccessRegistry(root);
+            var authorized = registry.Register("fea11-run-grant-2b", [root]);
+            await AlignRegistryAsync(python, dbPath, authorized.RegistryId);
+            var coordinator = new SourceReadCoordinator(client, registry, () => true);
+            Assert.True(await coordinator.SupportsRunAuthorizationAsync(CancellationToken.None));
+
+            var identities = new SourceIdentityCache();
+            var scanOptions = new SourceScanOptions
+            {
+                Enabled = true,
+                IntervalSeconds = 60,
+                MaxTargetsPerTick = 8,
+                MaxBytesPerSource = 256L * 1024 * 1024,
+                MaxEntriesPerSource = 10000,
+            };
+            var executor = new HostSourceScanExecutor(
+                client, coordinator, scanOptions, identities: identities);
+            // Production scan targets: the Host runtime's pre-2A placeholder version "1" is what a
+            // cold target carries; the authority for BOTH version and member identities is the real
+            // ScanSourceSync response.
+            var targets = new[]
+            {
+                new SourceScanTarget("s1", archive, ["b1"], "1"),
+                new SourceScanTarget("s2", cbz, ["b1"], "1"),
+                new SourceScanTarget("s3", many, ["b1"], "1"),
+            };
+            foreach (var target in targets)
+            {
+                var outcome = await executor.ScanAsync(target, CancellationToken.None);
+                Assert.Equal(SourceScanOutcomeKind.Ok, outcome.Kind);
+            }
+            Assert.True(identities.TryGet("s1", out var zipIdentity));
+            Assert.Equal(zipVersion, zipIdentity.VersionId);
+            Assert.Equal(["001.png", "002.png", "003.png"], zipIdentity.Entries.Select(entry => entry.Locator));
+            Assert.True(identities.TryGet("s2", out var cbzIdentity));
+            Assert.Equal(cbzVersion, cbzIdentity.VersionId);
+            Assert.Equal(3, cbzIdentity.Entries.Count);
+            Assert.True(identities.TryGet("s3", out var manyIdentity));
+            Assert.Equal(manyVersion, manyIdentity.VersionId);
+            Assert.Equal(66, manyIdentity.Entries.Count);
+            Assert.Equal(Enumerable.Range(0, 66), manyIdentity.Entries.Select(entry => entry.Ordinal));
+            evidence.Add("scan -> cache: s1 entries=3 s2 entries=3 s3 entries=66");
+
+            // (1) Production range: every container scope carries its Core-authoritative member plan.
+            var scopeJson = JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" });
+            var resolution = RunSourceRange.Resolve(targets, scopeJson, registry.List(), identities);
+            Assert.Equal(3, resolution.Targets.Count);
+            Assert.All(resolution.Targets, target => Assert.NotNull(target.ContainerEntries));
+            Assert.Equal(3, resolution.Targets.Single(t => t.SourceId == "s1").ContainerEntries!.Count);
+            Assert.Equal(66, resolution.Targets.Single(t => t.SourceId == "s3").ContainerEntries!.Count);
+            var zipScope = resolution.Targets.Single(target => target.SourceId == "s1");
+            var cbzScope = resolution.Targets.Single(target => target.SourceId == "s2");
+            var manyScope = resolution.Targets.Single(target => target.SourceId == "s3");
+            evidence.Add("RunSourceRange -> container member plans 3/3/66");
+
+            // (2) FAIL-CLOSED: a scope that OMITS the last member cannot authorize it, and the page
+            // stays unreadable (zero over-authorization; L-G12② must never become a silent widen).
+            var omitted = manyScope with { ContainerEntries = manyScope.ContainerEntries!.Take(65).ToArray() };
+            var omittedRefusal = await Assert.ThrowsAsync<CoreOperationException>(() =>
+                coordinator.AuthorizeRunAsync(
+                    [omitted], "reocr_all",
+                    JsonSerializer.SerializeToElement(new { kind = "page", page_id = "r66" })));
+            Assert.Equal("SOURCE_ACCESS_DENIED", omittedRefusal.Code);
+            var unreadable = await Assert.ThrowsAsync<CoreOperationException>(() =>
+                client.SendAsync("resolve_page_resource", 3, writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("page_id", "r66");
+                    writer.WriteEndObject();
+                }, TimeSpan.FromSeconds(60)));
+            Assert.Equal("SOURCE_ACCESS_DENIED", unreadable.Code);
+            evidence.Add("omitted member -> " + omittedRefusal.Code + " and resolve -> " + unreadable.Code);
+
+            // (3) FAIL-CLOSED: a scope naming a member that is NOT in the version never matches.
+            var bogus = manyScope with
+            {
+                ContainerEntries = [new SourceIdentityEntry(null, "999-missing.png", 999)],
+            };
+            var bogusRefusal = await Assert.ThrowsAsync<CoreOperationException>(() =>
+                coordinator.AuthorizeRunAsync(
+                    [bogus], "reocr_all",
+                    JsonSerializer.SerializeToElement(new { kind = "page", page_id = "r1" })));
+            Assert.Equal("SOURCE_ACCESS_DENIED", bogusRefusal.Code);
+            evidence.Add("out-of-range ordinal -> " + bogusRefusal.Code);
+
+            // (4) The Host mint itself is typed (never truncated) when the member list exceeds the
+            // grant budget: the same 66 entries with max_entries=65 must be refused, not cut to 65.
+            var rendition = JsonSerializer.SerializeToElement(
+                new { decoder = "zip", scale = 1.0, params_digest = new string('0', 64) });
+            var budgetRefusal = await Assert.ThrowsAsync<SourceAccessException>(() =>
+                coordinator.IssueAsync(
+                    zipScope.RegistryId, zipScope.Generation, many, "zip", "s3", manyVersion,
+                    rendition, maxEntries: 65, containerEntries: manyIdentity.Entries,
+                    cancellationToken: CancellationToken.None));
+            Assert.Equal("SOURCE_BUDGET_EXCEEDED", budgetRefusal.Code);
+            evidence.Add("mint over max_entries=65 -> " + budgetRefusal.Code + " (not truncated)");
+
+            // (5) The ≥65-member container: ONE grant (not 64 grants), and the LAST member binds — the
+            // no-truncation witness for the whole chain (cache -> range -> mint -> Core match).
+            var manyBound = await coordinator.AuthorizeRunAsync(
+                [manyScope], "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "r66" }));
+            Assert.Equal(1, manyBound.BoundPages);
+            Assert.Equal(1, manyBound.MintedGrants); // one grant, not one per member
+            Assert.False(manyBound.Skipped);
+            await ResolvePageAsync(client, "r66");
+            var firstBound = await coordinator.AuthorizeRunAsync(
+                [manyScope], "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "r1" }));
+            Assert.Equal(1, firstBound.BoundPages);
+            await ResolvePageAsync(client, "r1");
+            evidence.Add("66-member container: minted=1 bound_pages=1 for the LAST (ordinal 65) + first member");
+
+            // (6) Real zip: EVERY member page authorizes and resolves through the same grant.
+            for (var index = 1; index <= 3; index++)
+            {
+                var bound = await coordinator.AuthorizeRunAsync(
+                    [zipScope], "reocr_all",
+                    JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p" + index }));
+                Assert.Equal(1, bound.BoundPages);
+                Assert.Equal(1, bound.MintedGrants);
+                await ResolvePageAsync(client, "p" + index);
+            }
+            evidence.Add("zip members p1..p3 -> authorize + resolve OK");
+
+            // (7) Real cbz: same frozen container semantics.
+            for (var index = 1; index <= 3; index++)
+            {
+                var bound = await coordinator.AuthorizeRunAsync(
+                    [cbzScope], "reocr_all",
+                    JsonSerializer.SerializeToElement(new { kind = "page", page_id = "q" + index }));
+                Assert.Equal(1, bound.BoundPages);
+                await ResolvePageAsync(client, "q" + index);
+            }
+            evidence.Add("cbz members q1..q3 -> authorize + resolve OK");
+        }
+
+        // C-16 §7: neither the wire frame log nor the Core stderr may carry the fixture path.
+        var wire = File.Exists(Path.Combine(root, "wire.ndjson"))
+            ? await File.ReadAllTextAsync(Path.Combine(root, "wire.ndjson"))
+            : string.Empty;
+        var stderr = File.Exists(Path.Combine(root, "core.stderr.log"))
+            ? await File.ReadAllTextAsync(Path.Combine(root, "core.stderr.log"))
+            : string.Empty;
+        Assert.DoesNotContain(root, wire, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(root, stderr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(archive, wire, StringComparison.OrdinalIgnoreCase);
+        evidence.Add("wire/stderr path leak -> 0");
+
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "run-grant-2b-container-members.txt"),
             $"DataRoot={root}\n" + string.Join("\n", evidence) + "\nPASS\n");
     }
 
@@ -725,6 +940,141 @@ print("FEA11_RUN_GRANT_2A_SEED_OK")
         Assert.True(process.ExitCode == 0, await stdout + await stderr);
         using var document = JsonDocument.Parse(
             await File.ReadAllTextAsync(Path.Combine(root, "ipc-run-grant-2a-receipt.json")));
+        return document.RootElement.Clone();
+    }
+
+    private static async Task<JsonElement> SeedContainerMembersAsync(string repo, string python, string root)
+    {
+        var script = $$"""
+import hashlib
+import io
+import json
+import sqlite3
+import sys
+import zipfile
+from pathlib import Path
+
+repo = Path(r"{{repo}}")
+root = Path(r"{{root}}")
+sys.path[:0] = [str(repo), str(repo / "src"), str(repo / "tests" / "fea11")]
+
+from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.schema import default_migrations
+import conftest as fixture
+from PIL import Image
+
+
+def png(width, height, color):
+    buffer = io.BytesIO()
+    Image.new("RGB", (width, height), color).save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
+def members(count, *, cbz=False):
+    # (locator, bytes, sha256) for ``count`` real PNG members.
+    rows = []
+    for index in range(count):
+        color = ((index * 37) % 256, 40 + (index % 200), 220 - (index % 210))
+        if cbz:
+            color = (230 - (index % 210), 30 + (index % 200), (index * 11) % 256)
+        data = png(10 + (index % 5), 7 + (index % 4), color)
+        rows.append((f"{index + 1:03d}.png", data, hashlib.sha256(data).hexdigest()))
+    return rows
+
+
+def write_container(path, rows):
+    with zipfile.ZipFile(path, "w") as archive_file:
+        for locator, data, _digest in rows:
+            archive_file.writestr(locator, data)
+    return fixture.file_facts(path)
+
+
+root.mkdir(parents=True, exist_ok=True)
+db = root / "library.db"
+conn = sqlite3.connect(db, isolation_level=None)
+conn.row_factory = sqlite3.Row
+conn.execute("PRAGMA foreign_keys = ON")
+MigrationRunner(conn, default_migrations()).apply_pending()
+conn.execute(
+    "INSERT INTO books (book_id,title,created_at,updated_at) VALUES ('b1','IPC2B',?,?)",
+    (fixture.NOW, fixture.NOW))
+conn.execute(
+    "INSERT INTO chapters (chapter_id,book_id,title,created_at,updated_at)"
+    " VALUES ('c1','b1','Ch',?,?)", (fixture.NOW, fixture.NOW))
+conn.commit()
+
+
+def seed_source(source_id, version_id, kind, path, rows):
+    facts = write_container(path, rows)
+    fixture.add_source_tree(
+        conn, source_id=source_id, version_id=version_id, digest=facts["sha256"],
+        entries=[
+            (f"se-{source_id}-{index}", locator, digest)
+            for index, (locator, _data, digest) in enumerate(rows)
+        ],
+        volume_serial=facts["volume_serial"], file_id=facts["file_id"],
+        legacy_v7_evidence=False)
+    conn.execute("UPDATE source_locations SET size_bytes=? WHERE source_id=?",
+                 (facts["size"], source_id))
+    conn.execute("UPDATE source_versions SET size_bytes=? WHERE version_id=?",
+                 (facts["size"], version_id))
+    conn.execute("UPDATE sources SET source_kind=? WHERE source_id=?", (kind, source_id))
+    conn.commit()
+    return rows, facts
+
+
+zip_rows, zip_facts = seed_source("s1", "sv-zip", "zip", root / "multi.zip", members(3))
+cbz_rows, cbz_facts = seed_source("s2", "sv-cbz", "cbz", root / "multi.cbz", members(3, cbz=True))
+many_rows, many_facts = seed_source("s3", "sv-many", "zip", root / "many.zip", members(66))
+
+
+def page(page_id, order, source_id, version_id, entry_id, digest, width, height):
+    fixture.add_referenced_page(
+        conn, page_id, "c1", "b1", order=order, source_id=source_id,
+        version_id=version_id, entry_id=entry_id, digest=digest,
+        width=width, height=height)
+
+
+for index, (_locator, data, digest) in enumerate(zip_rows):
+    page(f"p{index + 1}", 1 + index, "s1", "sv-zip", f"se-s1-{index}", digest,
+         10 + (index % 5), 7 + (index % 4))
+for index, (_locator, data, digest) in enumerate(cbz_rows):
+    page(f"q{index + 1}", 10 + index, "s2", "sv-cbz", f"se-s2-{index}", digest,
+         10 + (index % 5), 7 + (index % 4))
+for index, (_locator, data, digest) in enumerate(many_rows):
+    page(f"r{index + 1}", 100 + index, "s3", "sv-many", f"se-s3-{index}", digest,
+         10 + (index % 5), 7 + (index % 4))
+conn.commit()
+conn.close()
+
+receipt = {
+    "root": str(root), "db": str(db),
+    "zip": str(root / "multi.zip"), "cbz": str(root / "multi.cbz"),
+    "many": str(root / "many.zip"),
+    "zip_version": "sv-zip", "cbz_version": "sv-cbz", "many_version": "sv-many",
+    "zip_members": 3, "cbz_members": 3, "many_members": 66,
+}
+(root / "ipc-run-grant-2b-receipt.json").write_text(
+    json.dumps(receipt), encoding="utf-8")
+print("FEA11_RUN_GRANT_2B_SEED_OK")
+""";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            WorkingDirectory = repo,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(script);
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEndAsync();
+        var stderr = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+        Assert.True(process.ExitCode == 0, await stdout + await stderr);
+        using var document = JsonDocument.Parse(
+            await File.ReadAllTextAsync(Path.Combine(root, "ipc-run-grant-2b-receipt.json")));
         return document.RootElement.Clone();
     }
 

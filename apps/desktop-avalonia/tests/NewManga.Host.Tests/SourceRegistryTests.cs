@@ -939,6 +939,126 @@ public sealed class SourceRegistryTests
         Assert.Equal(["reocr_all"], requested);
     }
 
+    // ==================================================================
+    // FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2): container member entries
+    // ==================================================================
+
+    private static SourceIdentityCache WarmContainerCache(
+        string sourceId, string version, params (string Locator, int Ordinal)[] members)
+    {
+        var cache = new SourceIdentityCache();
+        Assert.True(cache.Remember(
+            sourceId, version,
+            members.Select(item => new SourceIdentityEntry(null, item.Locator, item.Ordinal)).ToArray()));
+        return cache;
+    }
+
+    [Fact]
+    public void RunSourceRangeCarriesContainerMemberIdentitiesVerbatim()
+    {
+        // AC-H3 / card S-5: only zip/cbz/pdf scopes carry member identities, and they are the CACHED
+        // Core values VERBATIM (never inferred from the container, never renumbered to 0..N-1);
+        // image and folder keep their frozen shapes.
+        var root = NewSourceDirectory(out var file);
+        var entries = new[] { RegistryEntry("reg-1", root) };
+        var scope = Json("""{"kind":"page","page_id":"p1"}""");
+        var imagePath = Path.Combine(root, "page.png");
+        File.WriteAllBytes(imagePath, [0x89, 0x50, 0x4e, 0x47]);
+        var cache = new SourceIdentityCache();
+        Assert.True(cache.Remember("s1", "sv-core",
+            [new SourceIdentityEntry(null, "001.png", 0), new SourceIdentityEntry(null, "002.png", 5),
+             new SourceIdentityEntry(null, "003.png", 9)]));
+        Assert.True(cache.Remember("i1", "sv-img", [new SourceIdentityEntry(null, "page.png", 0)]));
+        var resolution = RunSourceRange.Resolve(
+            [ScanTarget("s1", file, "b1"), ScanTarget("i1", imagePath, "b1")], scope, entries, cache);
+        var archive = resolution.Targets.Single(target => target.SourceId == "s1");
+        Assert.NotNull(archive.ContainerEntries);
+        Assert.Equal(["001.png", "002.png", "003.png"], archive.ContainerEntries!.Select(m => m.Locator));
+        Assert.Equal([0, 5, 9], archive.ContainerEntries!.Select(m => m.Ordinal));
+        Assert.Null(resolution.Targets.Single(target => target.SourceId == "i1").ContainerEntries);
+
+        // cbz/pdf share the frozen container semantics.
+        foreach (var kind in new[] { "cbz", "pdf" })
+        {
+            var containerPath = Path.Combine(root, "book." + kind);
+            File.WriteAllBytes(containerPath, [1, 2, 3]);
+            var target = ScanTarget("c-" + kind, containerPath, "b1") with { SourceKind = kind };
+            Assert.True(cache.Remember(target.SourceId, "sv-" + kind,
+                [new SourceIdentityEntry(null, "1", 0), new SourceIdentityEntry(null, "2", 1)]));
+            var resolved = RunSourceRange.Resolve([target], scope, entries, cache).Targets.Single();
+            Assert.Equal(kind, resolved.Kind);
+            Assert.Equal(2, resolved.ContainerEntries!.Count);
+            Assert.Equal([0, 1], resolved.ContainerEntries!.Select(m => m.Ordinal));
+        }
+
+        // A folder source keeps its per-member enumeration (no container member plan).
+        var folderPath = Path.Combine(root, "folder");
+        Directory.CreateDirectory(folderPath);
+        File.WriteAllBytes(Path.Combine(folderPath, "001.png"), [1]);
+        Assert.True(cache.Remember("f1", "sv-folder", [new SourceIdentityEntry(null, "001.png", 0)]));
+        Assert.Null(RunSourceRange.Resolve(
+            [ScanTarget("f1", folderPath, "b1")], scope, entries, cache).Targets.Single().ContainerEntries);
+    }
+
+    [Fact]
+    public void ContainerEntryPlanIsVerbatimAndTypedOverTheBudget()
+    {
+        // AC-H3/AC-J3: the container member plan is the Core list verbatim; a list over the grant
+        // ``max_entries`` budget is a typed SOURCE_BUDGET_EXCEEDED and NEVER truncated; image/folder/
+        // undefined keep their frozen shapes (single entry / per-member enumeration).
+        var members = new[]
+        {
+            new SourceIdentityEntry(null, "001.png", 0),
+            new SourceIdentityEntry(null, "002.png", 1),
+            new SourceIdentityEntry(null, "003.png", 2),
+        };
+        Assert.Same(members, SourceReadCoordinator.ContainerEntryPlan("zip", members, 10000));
+        Assert.Same(members, SourceReadCoordinator.ContainerEntryPlan("cbz", members, 3));
+        Assert.Same(members, SourceReadCoordinator.ContainerEntryPlan("pdf", members, 10000));
+        Assert.Null(SourceReadCoordinator.ContainerEntryPlan("image", members, 10000));
+        Assert.Null(SourceReadCoordinator.ContainerEntryPlan("folder", members, 10000));
+        Assert.Null(SourceReadCoordinator.ContainerEntryPlan("zip", [], 10000));
+        Assert.Null(SourceReadCoordinator.ContainerEntryPlan("zip", null, 10000));
+
+        var over = new[]
+        {
+            new SourceIdentityEntry(null, "001.png", 0),
+            new SourceIdentityEntry(null, "002.png", 1),
+            new SourceIdentityEntry(null, "003.png", 2),
+            new SourceIdentityEntry(null, "004.png", 3),
+        };
+        var refused = Assert.Throws<SourceAccessException>(
+            () => SourceReadCoordinator.ContainerEntryPlan("zip", over, 3));
+        Assert.Equal("SOURCE_BUDGET_EXCEEDED", refused.Code);
+        // Boundary: exactly the budget is still accepted (no off-by-one truncation).
+        Assert.Same(over, SourceReadCoordinator.ContainerEntryPlan("zip", over, 4));
+    }
+
+    [Fact]
+    public async Task RunAuthorizerForwardsTheContainerMemberPlanToTheMint()
+    {
+        // AC-H3: the authorizer hands the Core-authoritative member identities to the mint. Without
+        // this the container grant would carry one entry again (the 2A L-G12② boundary).
+        var root = NewSourceDirectory(out var file);
+        var seen = new List<RunSourceScope>();
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (scopes, _, _, _) =>
+            {
+                seen.AddRange(scopes);
+                return Task.FromResult(new RunAuthorizationResult(3, scopes.Count, 0, []));
+            },
+            identities: WarmContainerCache("s1", "sv-core", ("001.png", 0), ("002.png", 1), ("003.png", 2)));
+        await authorizer.AuthorizeSliceAsync(
+            "reocr_all", Json("""{"kind":"page","page_id":"p1"}"""), CancellationToken.None);
+        var scope = Assert.Single(seen);
+        Assert.NotNull(scope.ContainerEntries);
+        Assert.Equal(["001.png", "002.png", "003.png"], scope.ContainerEntries!.Select(member => member.Locator));
+        Assert.Equal([0, 1, 2], scope.ContainerEntries!.Select(member => member.Ordinal));
+    }
+
     private static string FindRepository()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

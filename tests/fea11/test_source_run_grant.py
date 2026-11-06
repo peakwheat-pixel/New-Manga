@@ -56,6 +56,7 @@ from tests.fea11.conftest import (
     add_referenced_page,
     add_source_tree,
     file_facts,
+    png_bytes,
     write_zip,
 )
 from tests.fea11.test_source_rendition_gates import (
@@ -1012,3 +1013,546 @@ def test_forged_shape_requests_are_invalid_requests(real_core) -> None:
         _assert_refused(response, "INVALID_REQUEST")
     assert _table_snapshot(core) == before
     assert _bindings(core.source_read_refs) == {}
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RUN-GRANT-2 (2B): container member entries (C-16 v1.4 §2)
+#
+# A container source (zip/cbz/pdf) may carry 1..N entries: every entry names the
+# SAME container path with the CONTAINER's physical identity facts, and its
+# locator/ordinal are Core-authoritative member identities. Registration
+# validates each entry (locator safety, ordinal >= 0 and unique, one container,
+# identical facts) and refuses the whole grant typed on ANY violation with zero
+# partial acceptance; the entry budget is typed and never truncated. Matching
+# keeps the frozen ``entry_key OR locator OR ordinal`` clause + the container
+# facts against ``source_locations`` (no path fallback, never a member digest).
+# ---------------------------------------------------------------------------
+
+WORKSPACE_ROOT_2B = Path("G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2")
+
+
+@pytest.fixture()
+def run_root_2b(request) -> Path:
+    root = WORKSPACE_ROOT_2B / "fixtures" / f"{request.node.name}-{uuid.uuid4().hex[:8]}"
+    root.mkdir(parents=True, exist_ok=True)
+    return root
+
+
+def _member_bytes(index: int) -> bytes:
+    """A real PNG member with a per-index pixel size (proves WHICH member read)."""
+    return png_bytes(12 + index, 7 + index, ((index * 53) % 256, 40 + index, 200 - index))
+
+
+def _seed_container_library(
+    db_path: Path, managed_root: Path, *, members: int = 3, kind: str = "zip",
+    duplicate_names: bool = False,
+) -> dict:
+    """A real v8 library with ``members`` referenced pages over ONE real container."""
+    conn = sqlite3.connect(str(db_path), check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    MigrationRunner(conn, default_migrations()).apply_pending()
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b1', 'Book', ?, ?)",
+        (NOW, NOW),
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+        " VALUES ('c1', 'b1', 'Ch', ?, ?)",
+        (NOW, NOW),
+    )
+    blobs = [_member_bytes(index) for index in range(members)]
+    locators = [
+        ("same.png" if duplicate_names else f"{index + 1:03d}.png")
+        for index in range(members)
+    ]
+    digest_of = [hashlib.sha256(blob).hexdigest() for blob in blobs]
+    suffix = {"zip": ".zip", "cbz": ".cbz"}[kind]
+    archive = write_zip(
+        db_path.parent / f"container{suffix}",
+        list(zip(locators, blobs)),
+    )
+    facts = file_facts(archive)
+    add_source_tree(
+        conn,
+        source_id="s1",
+        version_id="sv1",
+        digest=facts["sha256"],
+        entries=[
+            (f"se{index + 1}", locators[index], digest_of[index])
+            for index in range(members)
+        ],
+        volume_serial=facts["volume_serial"],
+        file_id=facts["file_id"],
+        legacy_v7_evidence=False,
+    )
+    # The seed writes a placeholder size; the frozen facts check reads the REAL
+    # container identity from source_locations (no path fallback).
+    conn.execute(
+        "UPDATE source_locations SET size_bytes = ? WHERE source_id = 's1'",
+        (facts["size"],),
+    )
+    conn.execute(
+        "UPDATE source_versions SET size_bytes = ? WHERE version_id = 'sv1'",
+        (facts["size"],),
+    )
+    if kind != "zip":
+        conn.execute("UPDATE sources SET source_kind = ? WHERE source_id = 's1'", (kind,))
+    for index in range(members):
+        add_referenced_page(
+            conn,
+            f"p{index + 1}",
+            "c1",
+            "b1",
+            order=index + 1,
+            source_id="s1",
+            version_id="sv1",
+            entry_id=f"se{index + 1}",
+            digest=digest_of[index],
+            width=12 + index,
+            height=7 + index,
+        )
+    (managed_root / "legacy").mkdir(parents=True, exist_ok=True)
+    (managed_root / "legacy" / "pm.png").write_bytes(_member_bytes(0))
+    conn.execute(
+        "INSERT INTO pages (page_id, chapter_id, sort_order, created_at,"
+        " updated_at, source_filename, source_order, source_hash,"
+        " source_size_bytes, width, height, managed_original_ref,"
+        " source_mode, integrity_status)"
+        " VALUES ('pm', 'c1', 99, ?, ?, 'pm.png', 99, ?, 10, 12, 7,"
+        " 'legacy/pm.png', 'managed', 'complete')",
+        (NOW, NOW, "b" * 64),
+    )
+    conn.commit()
+    conn.close()
+    return {
+        "archive": archive,
+        "facts": facts,
+        "locators": locators,
+        "digests": digest_of,
+        "members": members,
+    }
+
+
+def _container_grant_payload(
+    seeded: dict,
+    *,
+    entries: list[dict],
+    kind: str = "zip",
+    source_id: str = "s1",
+    version: str = "sv1",
+    grant_id: str | None = None,
+    budget: dict | None = None,
+) -> dict:
+    """One real HMAC-signed container grant with an EXPLICIT entry list.
+
+    ``entries`` items are ``{"locator", "ordinal"}`` with optional
+    ``"facts"``/``"path"`` overrides so the fail-closed matrix can sign exactly
+    the malformed shapes it needs (a real Host can never mint them).
+    """
+    archive = Path(seeded["archive"]).resolve()
+    container = str(archive)
+    default_facts = dict(seeded["facts"])
+    items = []
+    for index, entry in enumerate(entries):
+        items.append(
+            {
+                "entry_key": f"entry-{index}",
+                "entry_id": None,
+                "locator": entry["locator"],
+                "ordinal": entry["ordinal"],
+                "path": entry.get("path", container),
+                "facts": entry.get("facts", default_facts),
+            }
+        )
+    grant_id = grant_id or ("source-" + uuid.uuid4().hex)
+    expires = time.time() + 290.0
+    payload = {
+        "grant_id": grant_id,
+        "session_id": HOST_SESSION_ID,
+        "operation": "source-read",
+        "scope_class": "user-source",
+        "registry_id": "reg-1",
+        "generation": 1,
+        "expires_at": expires,
+        "budget": budget
+        or {
+            "max_bytes": 8 * 1024 * 1024,
+            "max_decode_bytes": 8 * 1024 * 1024,
+            "max_entries": 10000,
+        },
+        "scope": {
+            "source_id": source_id,
+            "version": version,
+            "rendition": {
+                "decoder": kind,
+                "scale": 1.0,
+                "params_digest": "0" * 64,
+            },
+            "entries": items,
+        },
+    }
+    signed = dict(payload)
+    signed["expires_at"] = f"{expires:.6f}"
+    payload["signing_key"] = (
+        base64.urlsafe_b64encode(SIGNING_KEY).decode().rstrip("=")
+    )
+    payload["signature"] = _sign(SIGNING_KEY, signed)
+    return payload
+
+
+def _member_entry(seeded: dict, index: int) -> dict:
+    return {"locator": seeded["locators"][index], "ordinal": index}
+
+
+@pytest.fixture()
+def container_core(run_root_2b: Path):
+    """Real assembled Core over a real 3-member container source."""
+    db_path = run_root_2b / "core" / "library.db"
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    managed_root = run_root_2b / "core" / "managed"
+    managed_root.mkdir(parents=True, exist_ok=True)
+    seeded = _seed_container_library(db_path, managed_root)
+    core = _assemble(db_path, managed_root)
+    server = CoreServiceServer(core, stdin=io.StringIO(), stdout=io.StringIO())
+    core.pipeline.set_scheduler_owner(True)
+    try:
+        yield core, server, seeded
+    finally:
+        core.conn.close()
+
+
+@pytest.mark.parametrize("kind", ["zip", "cbz"])
+def test_container_members_are_entry_granular_on_every_authorized_member(
+    run_root_2b: Path, kind: str,
+) -> None:
+    """AC-J1 (Core half): N=3 container grant -> every member authorizes + reads.
+
+    Real assembled Core, real container, real HMAC grants, real provider reads:
+    after one 3-entry grant every member page binds and the provider reads the
+    CURRENT member's pixels (distinct per-member sizes prove the right member,
+    not the first one). ``zip`` and ``cbz`` share the frozen member semantics.
+    """
+    db_path = run_root_2b / "core" / "library.db"
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    managed_root = run_root_2b / "core" / "managed"
+    managed_root.mkdir(parents=True, exist_ok=True)
+    seeded = _seed_container_library(db_path, managed_root, kind=kind)
+    core = _assemble(db_path, managed_root)
+    server = CoreServiceServer(core, stdin=io.StringIO(), stdout=io.StringIO())
+    core.pipeline.set_scheduler_owner(True)
+    try:
+        core_session = _open(server)
+        grant = _container_grant_payload(
+            seeded, kind=kind, entries=[_member_entry(seeded, i) for i in range(3)]
+        )
+        assert _register(server, core_session, grant)["error"] is None
+
+        images = _handler_bound(core).__self__.deps.images
+        for index in range(3):
+            page_id = f"p{index + 1}"
+            authorized = _authorize(
+                server, core_session, [grant["grant_id"]],
+                scope={"kind": "page", "page_id": page_id},
+            )
+            assert authorized["error"] is None, authorized["error"]
+            assert authorized["result"] == {"bound_pages": 1}
+            # The Run commit guard opens for THIS member only.
+            with core.pipeline._catalog.source_commit_guard(page_id):
+                pass
+            frame = images.page_frame(page_id)
+            assert (frame.width, frame.height) == (12 + index, 7 + index)
+
+        # ONE grant covers all three members (no grant-per-member inflation).
+        assert _bindings(core.source_read_refs) == {
+            grant["grant_id"]: {
+                "source_id": "s1",
+                "version_id": "sv1",
+                "entry_ids": {"se1", "se2", "se3"},
+            }
+        }
+        # The managed page stays on the Managed Copy (zero regression).
+        managed = images.page_frame("pm")
+        assert (managed.width, managed.height) == (12, 7)
+    finally:
+        core.conn.close()
+
+
+def test_container_member_outside_the_signed_entries_cannot_be_read(
+    container_core,
+) -> None:
+    """AC-J2/AC-H4: a member the signed scope does not cover stays unreadable."""
+    core, server, seeded = container_core
+    core_session = _open(server)
+    grant = _container_grant_payload(
+        seeded, entries=[_member_entry(seeded, 0), _member_entry(seeded, 1)]
+    )
+    assert _register(server, core_session, grant)["error"] is None
+
+    before = _table_snapshot(core)
+    error = _assert_refused(
+        _authorize(
+            server, core_session, [grant["grant_id"]],
+            scope={"kind": "page", "page_id": "p3"},
+        ),
+        "SOURCE_ACCESS_DENIED",
+    )
+    assert error["details"][0] == {"refused_pages": 1}
+    assert _table_snapshot(core) == before
+    assert _bindings(core.source_read_refs) == {}
+
+    # Zero over-authorization: neither the commit guard nor the provider reads p3.
+    with pytest.raises(SourceImportError) as guard:
+        with core.pipeline._catalog.source_commit_guard("p3"):
+            pytest.fail("an uncovered member must never open the commit window")
+    assert guard.value.code == "SOURCE_ACCESS_DENIED"
+    from ports.providers.errors import ProviderInputError
+
+    images = _handler_bound(core).__self__.deps.images
+    with pytest.raises(ProviderInputError):
+        images.page_frame("p3")
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "unsafe_locator", "absolute_locator", "negative_ordinal",
+        "duplicate_ordinal", "other_container", "facts_differ",
+    ],
+)
+def test_container_grant_any_bad_entry_refuses_the_whole_grant(
+    container_core, case: str,
+) -> None:
+    """AC-J2 (registration half): per-entry violation -> typed, zero acceptance.
+
+    Every malformed shape is signed by the same real HMAC key (a real Host could
+    never mint it); the registry must refuse the WHOLE grant and keep zero
+    partial state.
+    """
+    core, server, seeded = container_core
+    core_session = _open(server)
+    entries = [_member_entry(seeded, index) for index in range(3)]
+    if case == "unsafe_locator":
+        entries[1] = {"locator": "../escape.png", "ordinal": 1}
+    elif case == "absolute_locator":
+        entries[1] = {"locator": "C:/Windows/escape.png", "ordinal": 1}
+    elif case == "negative_ordinal":
+        entries[2] = {"locator": seeded["locators"][2], "ordinal": -1}
+    elif case == "duplicate_ordinal":
+        entries[2] = {"locator": seeded["locators"][2], "ordinal": 1}
+    elif case == "other_container":
+        other = Path(seeded["archive"]).parent / "other.zip"
+        write_zip(other, [("001.png", _member_bytes(9))])
+        entries[1] = {
+            "locator": seeded["locators"][1],
+            "ordinal": 1,
+            "path": str(other.resolve()),
+        }
+    elif case == "facts_differ":
+        member_facts = file_facts(Path(seeded["archive"]))
+        entries[1] = {
+            "locator": seeded["locators"][1],
+            "ordinal": 1,
+            "facts": {**member_facts, "size": member_facts["size"] + 1},
+        }
+    grant = _container_grant_payload(seeded, entries=entries)
+    before = _table_snapshot(core)
+    refused = _register(server, core_session, grant)
+    _assert_refused(refused, "SOURCE_ACCESS_DENIED")
+    assert grant["grant_id"] not in core.source_read_refs._grants
+    assert _bindings(core.source_read_refs) == {}
+    assert _table_snapshot(core) == before
+
+
+def test_container_grant_entry_budget_is_typed_and_never_truncated(
+    container_core,
+) -> None:
+    """AC-J3 (Core half): over ``budget.max_entries`` -> typed, no truncation."""
+    core, server, seeded = container_core
+    core_session = _open(server)
+    entries = [_member_entry(seeded, index) for index in range(3)]
+    tight = {
+        "max_bytes": 8 * 1024 * 1024,
+        "max_decode_bytes": 8 * 1024 * 1024,
+        "max_entries": 3,
+    }
+    # Boundary: exactly the budget is accepted and really covers all 3 members.
+    boundary = _container_grant_payload(seeded, entries=entries, budget=tight)
+    assert _register(server, core_session, boundary)["error"] is None
+    for index in range(3):
+        authorized = _authorize(
+            server, core_session, [boundary["grant_id"]],
+            scope={"kind": "page", "page_id": f"p{index + 1}"},
+        )
+        assert authorized["error"] is None, authorized["error"]
+        assert authorized["result"] == {"bound_pages": 1}
+
+    # One entry over the budget: typed SOURCE_BUDGET_EXCEEDED, zero acceptance.
+    over = _container_grant_payload(
+        seeded,
+        entries=[*entries, {"locator": "004.png", "ordinal": 3}],
+        budget=tight,
+    )
+    _assert_refused(_register(server, core_session, over), "SOURCE_BUDGET_EXCEEDED")
+    assert over["grant_id"] not in core.source_read_refs._grants
+
+    # P3-6/N-4: the implementation's own hard cap (10_000) is stricter than a
+    # large configured budget and is also typed, never truncated.
+    hard = _container_grant_payload(
+        seeded,
+        entries=[
+            {"locator": f"m{index:05d}.png", "ordinal": index}
+            for index in range(10001)
+        ],
+        budget={
+            "max_bytes": 8 * 1024 * 1024,
+            "max_decode_bytes": 8 * 1024 * 1024,
+            "max_entries": 20000,
+        },
+    )
+    _assert_refused(_register(server, core_session, hard), "SOURCE_BUDGET_EXCEEDED")
+    assert hard["grant_id"] not in core.source_read_refs._grants
+
+
+def test_container_grant_facts_reference_point_is_the_container_identity(
+    container_core,
+) -> None:
+    """P3-4: member facts as "container facts" -> typed refusal at match time.
+
+    Registration can only prove the four facts are IDENTICAL across entries; the
+    authoritative reference point is ``source_locations`` (Core), compared at
+    every per-page authorization. A grant that carries a member's own digest/size
+    as the container identity therefore never matches — and the very same grant
+    shape with the real container facts does.
+    """
+    core, server, seeded = container_core
+    core_session = _open(server)
+    member_facts = file_facts(Path(seeded["archive"]).parent / "container.zip")
+    # A container-identity-shaped grant whose facts are a MEMBER's facts.
+    member_blob = _member_bytes(1)
+    fake_member_facts = dict(seeded["facts"])
+    fake_member_facts["sha256"] = hashlib.sha256(member_blob).hexdigest()
+    fake_member_facts["size"] = len(member_blob)
+    assert fake_member_facts != dict(seeded["facts"])
+    assert member_facts["sha256"] == seeded["facts"]["sha256"]  # sanity: real facts
+    wrong = _container_grant_payload(
+        seeded,
+        entries=[
+            {
+                "locator": seeded["locators"][index],
+                "ordinal": index,
+                "facts": fake_member_facts,
+            }
+            for index in range(3)
+        ],
+    )
+    assert _register(server, core_session, wrong)["error"] is None  # shape-only
+    before = _table_snapshot(core)
+    error = _assert_refused(
+        _authorize(
+            server, core_session, [wrong["grant_id"]],
+            scope={"kind": "page", "page_id": "p1"},
+        ),
+        "SOURCE_ACCESS_DENIED",
+    )
+    assert error["details"][0] == {"refused_pages": 1}
+    assert _table_snapshot(core) == before
+    assert _bindings(core.source_read_refs) == {}
+
+    # Control: the SAME entry shape with the real container identity binds.
+    right = _container_grant_payload(
+        seeded, entries=[_member_entry(seeded, index) for index in range(3)]
+    )
+    assert _register(server, core_session, right)["error"] is None
+    authorized = _authorize(
+        server, core_session, [right["grant_id"]],
+        scope={"kind": "page", "page_id": "p1"},
+    )
+    assert authorized["error"] is None, authorized["error"]
+    assert authorized["result"] == {"bound_pages": 1}
+
+
+def test_container_grant_out_of_range_ordinal_never_matches(container_core) -> None:
+    """P3-5: an entry naming a member that is not in the version never matches."""
+    core, server, seeded = container_core
+    core_session = _open(server)
+    # The signed scope adds an entry whose ordinal is far beyond this version's
+    # source_entries; it must not authorize any page by itself.
+    bogus = _container_grant_payload(
+        seeded,
+        entries=[
+            _member_entry(seeded, 0),
+            {"locator": "999-missing.png", "ordinal": 999},
+        ],
+    )
+    assert _register(server, core_session, bogus)["error"] is None
+    before = _table_snapshot(core)
+    _assert_refused(
+        _authorize(
+            server, core_session, [bogus["grant_id"]],
+            scope={"kind": "page", "page_id": "p2"},
+        ),
+        "SOURCE_ACCESS_DENIED",
+    )
+    _assert_refused(
+        _authorize(
+            server, core_session, [bogus["grant_id"]],
+            scope={"kind": "page", "page_id": "p3"},
+        ),
+        "SOURCE_ACCESS_DENIED",
+    )
+    assert _table_snapshot(core) == before
+    assert _bindings(core.source_read_refs) == {}
+    # The in-range member the bogus scope DOES name still binds (fail-closed is
+    # per page, never a silent widening).
+    authorized = _authorize(
+        server, core_session, [bogus["grant_id"]],
+        scope={"kind": "page", "page_id": "p1"},
+    )
+    assert authorized["error"] is None, authorized["error"]
+    assert authorized["result"] == {"bound_pages": 1}
+
+
+def test_container_grant_duplicate_member_locators_are_legitimate(
+    run_root_2b: Path,
+) -> None:
+    """C-15 §3.2: duplicate member names stay independent entries (ordinal unique).
+
+    Duplicate LOCATORS are legal for a container (occurrences keep separate
+    ordinals); duplicate ORDINALS are not (covered by the registration matrix).
+    The grant covers both occurrences and each page reads its own member.
+    """
+    db_path = run_root_2b / "core" / "library.db"
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    managed_root = run_root_2b / "core" / "managed"
+    managed_root.mkdir(parents=True, exist_ok=True)
+    seeded = _seed_container_library(
+        db_path, managed_root, members=2, duplicate_names=True
+    )
+    core = _assemble(db_path, managed_root)
+    server = CoreServiceServer(core, stdin=io.StringIO(), stdout=io.StringIO())
+    core.pipeline.set_scheduler_owner(True)
+    try:
+        core_session = _open(server)
+        grant = _container_grant_payload(
+            seeded,
+            entries=[
+                {"locator": "same.png", "ordinal": 0},
+                {"locator": "same.png", "ordinal": 1},
+            ],
+        )
+        assert _register(server, core_session, grant)["error"] is None
+        images = _handler_bound(core).__self__.deps.images
+        for index in range(2):
+            page_id = f"p{index + 1}"
+            authorized = _authorize(
+                server, core_session, [grant["grant_id"]],
+                scope={"kind": "page", "page_id": page_id},
+            )
+            assert authorized["error"] is None, authorized["error"]
+            assert authorized["result"] == {"bound_pages": 1}
+            frame = images.page_frame(page_id)
+            assert (frame.width, frame.height) == (12 + index, 7 + index)
+    finally:
+        core.conn.close()
