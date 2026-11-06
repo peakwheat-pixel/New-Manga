@@ -77,13 +77,18 @@ public sealed class Fea11RunGrantIpcTests
             var renditionScope = new RunSourceScope(
                 registryId, generation, archive, "zip", "s1", "sv1");
 
-            // (1) page p1 is bound to archive member 001.png (ordinal 0) — the
-            // Host-minted container grant covers that member's entry.
+            // (1) R1-03 boundary: page p1 is bound to the archive's FIRST member
+            // (001.png, source_entries.ordinal = 0). The Host-minted CONTAINER
+            // grant has one entry (locator = container name, ordinal = 0), so it
+            // only matches via the ordinal-0 clause — this is the archive
+            // first-member boundary of L-G12, NOT generic entry granularity.
             var bound = await coordinator.AuthorizeRunAsync(
                 [renditionScope], "reocr_all",
                 JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" }));
-            Assert.Equal(1, bound);
-            evidence.Add("AuthorizeSourceReadForRun(p1) -> bound_pages=1");
+            Assert.Equal(1, bound.BoundPages);
+            Assert.Equal(1, bound.MintedGrants);
+            Assert.False(bound.Skipped);
+            evidence.Add("AuthorizeSourceReadForRun(p1=first member) -> bound_pages=1");
 
             var resolved = await client.SendAsync(
                 "resolve_page_resource", 3,
@@ -96,17 +101,52 @@ public sealed class Fea11RunGrantIpcTests
             Assert.NotNull(resolved.Result);
             Assert.True(resolved.Result!.Value.ValueKind == JsonValueKind.Object,
                 "resolve_page_resource returned no object");
-            evidence.Add("resolve_page_resource(p1) -> OK");
+            evidence.Add("resolve_page_resource(first member) -> OK");
 
-            // (2) page p2 is bound to member 002.png (ordinal 1): the same
-            // container grant does NOT cover that entry -> whole request typed,
-            // no partial binding.
+            // (2) R1-03 boundary: page p2 is bound to member 002.png
+            // (source_entries.ordinal = 1). The container grant cannot carry a
+            // member entry identity, so the Core refuses the whole request typed
+            // (L-G12 second half; fail-closed, no partial binding, not an
+            // authorization bypass).
             var refused = await Assert.ThrowsAsync<CoreOperationException>(() =>
                 coordinator.AuthorizeRunAsync(
                     [renditionScope], "reocr_all",
                     JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p2" })));
             Assert.Equal("SOURCE_ACCESS_DENIED", refused.Code);
-            evidence.Add("AuthorizeSourceReadForRun(p2) -> " + refused.Code);
+            evidence.Add("AuthorizeSourceReadForRun(p2=second member) -> L-G12 " + refused.Code);
+
+            // (2b) R1-01/R1-04: a Host-side mint failure (missing file) is a
+            // BEST-EFFORT SKIP with a frozen §6 code — no exception, no Core
+            // call, and a managed/unrelated Run is never blocked by it.
+            var missingArchive = Path.Combine(
+                root, "missing-" + Guid.NewGuid().ToString("N") + ".zip");
+            var skippedMint = await coordinator.AuthorizeRunAsync(
+                [new RunSourceScope(registryId, generation, missingArchive, "zip", "s1", "sv1")],
+                "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" }));
+            Assert.True(skippedMint.Skipped);
+            Assert.Equal(0, skippedMint.BoundPages);
+            Assert.Equal(0, skippedMint.MintedGrants);
+            Assert.Equal(1, skippedMint.SkippedSources);
+            Assert.Contains(
+                skippedMint.SkippedCodes.Single(),
+                new[] { "SOURCE_ENTRY_MISSING", "SOURCE_ACCESS_DENIED" });
+            evidence.Add("mint failure (missing file) -> best-effort skip "
+                         + skippedMint.SkippedCodes.Single());
+
+            // (2c) partial source failure: the resolvable source is still
+            // minted/bound; only the broken one is skipped.
+            var mixed = await coordinator.AuthorizeRunAsync(
+                [
+                    renditionScope,
+                    new RunSourceScope(registryId, generation, missingArchive, "zip", "s1", "sv1"),
+                ],
+                "reocr_all",
+                JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" }));
+            Assert.Equal(1, mixed.BoundPages);
+            Assert.Equal(1, mixed.MintedGrants);
+            Assert.Equal(1, mixed.SkippedSources);
+            evidence.Add("partial mint failure -> minted=1 bound_pages=1 skipped=1");
 
             // (3) revoking the root kills the page read typed (no silent read)
             // and prunes the Host ledger (R-8/L-G7).

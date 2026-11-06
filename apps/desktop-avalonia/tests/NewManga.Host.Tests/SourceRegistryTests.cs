@@ -163,6 +163,330 @@ public sealed class SourceRegistryTests
         Assert.Empty(reopened.List());
     }
 
+    // ==================================================================
+    // Review r1 rework (R1-01 / R1-02 / R1-04): the Run pre-authorization
+    // orchestration is a standalone, best-effort, unit-testable seam.
+    // ==================================================================
+
+    private static SourceScanTarget ScanTarget(string sourceId, string path, params string[] projectIds) =>
+        new(sourceId, path, projectIds, "1");
+
+    private static SourceAuthorization RegistryEntry(string registryId, string root, int generation = 1) =>
+        new(registryId, root, generation, "t", "t", null,
+            [new SourceRoot(root, 0, 0, "t", true)]);
+
+    private static System.Text.Json.JsonElement Json(string raw) =>
+        System.Text.Json.JsonDocument.Parse(raw).RootElement.Clone();
+
+    private static string NewSourceDirectory(out string file)
+    {
+        var directory = Path.Combine(
+            Path.GetTempPath(), "newmanga-run-grant-" + Guid.NewGuid().ToString("N")[..12]);
+        Directory.CreateDirectory(directory);
+        file = Path.Combine(directory, "source.zip");
+        File.WriteAllBytes(file, [0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        return directory;
+    }
+
+    private static RunSourceAuthorizer Authorizer(
+        bool probe,
+        IReadOnlyList<SourceScanTarget>? known,
+        IReadOnlyList<SourceAuthorization>? entries,
+        Func<IReadOnlyList<RunSourceScope>, string, System.Text.Json.JsonElement, CancellationToken, Task<RunAuthorizationResult>> authorize,
+        Func<string, CancellationToken, Task<(string Command, System.Text.Json.JsonElement Scope)>>? resolve = null,
+        List<string>? warnings = null) =>
+        new(true,
+            () => known ?? Array.Empty<SourceScanTarget>(),
+            () => entries ?? Array.Empty<SourceAuthorization>(),
+            _ => Task.FromResult(probe),
+            authorize,
+            resolve ?? ((_, _) => throw new InvalidOperationException("no run slice expected")),
+            _ => { },
+            message => warnings?.Add(message));
+
+    [Fact]
+    public void RunCommandPolicyAuthorizesOnlyStepTriggeringCommands()
+    {
+        var empty = Json("{}");
+        foreach (var name in new[]
+                 {
+                     "library_start_run", "library_resume_blocked_run",
+                     "library_retry_failed_targets",
+                 })
+        {
+            Assert.True(RunCommandPolicy.TriggersStepExecution(name, empty), name);
+        }
+        Assert.True(RunCommandPolicy.TriggersStepExecution(
+            "library_control_run", Json("""{"action":"continue"}""")));
+        Assert.True(RunCommandPolicy.TriggersStepExecution(
+            "library_control_run", Json("""{"action":"restart"}""")));
+        foreach (var action in new[] { "pause", "stop", "abandon" })
+        {
+            Assert.False(RunCommandPolicy.TriggersStepExecution(
+                "library_control_run", Json($$"""{"action":"{{action}}"}""")), action);
+        }
+        Assert.False(RunCommandPolicy.TriggersStepExecution(
+            "library_control_run", Json("{}")));
+        foreach (var readOnly in new[]
+                 {
+                     "library_get_run_snapshot", "library_get_task_projection",
+                     "library_list_books",
+                 })
+        {
+            Assert.False(RunCommandPolicy.TriggersStepExecution(readOnly, empty), readOnly);
+        }
+    }
+
+    [Fact]
+    public void RunSourceRangePrefersTheRunProjectAndSkipsUnresolvedSources()
+    {
+        var root = NewSourceDirectory(out var file);
+        var outside = NewSourceDirectory(out var outsideFile);
+        var entries = new[] { RegistryEntry("reg-1", root) };
+        var known = new[]
+        {
+            ScanTarget("s1", file, "b1"),
+            ScanTarget("s2", file, "b2"),
+            // Inside the authorized root but the file is gone: it resolves to a
+            // scope here and the MINT is what fails (best-effort skip).
+            ScanTarget("s3", Path.Combine(root, "missing.zip"), "b1"),
+            // Outside every authorized root: unresolvable at range resolution.
+            ScanTarget("s4", outsideFile, "b1"),
+        };
+
+        var (targets, unresolved) = RunSourceRange.Resolve(
+            known, Json("""{"kind":"book","book_id":"b1"}"""), entries);
+        Assert.Equal(["s1", "s3"], targets.Select(target => target.SourceId));
+        Assert.Equal(1, unresolved); // s4 outside the authorized root
+        _ = outside;
+
+        var all = RunSourceRange.Resolve(known, Json("""{"kind":"page","page_id":"p1"}"""), entries);
+        Assert.Equal(["s1", "s2", "s3"], all.Targets.Select(target => target.SourceId));
+        Assert.Equal(1, all.Unresolved);
+
+        Assert.Empty(RunSourceRange.Resolve(
+            Array.Empty<SourceScanTarget>(),
+            Json("""{"kind":"page","page_id":"p1"}"""), entries).Targets);
+        Assert.Empty(RunSourceRange.Resolve(
+            known, Json("""{"kind":"book","book_id":"b9"}"""), entries).Targets);
+    }
+
+    [Fact]
+    public async Task RunAuthorizerSkipsWhenTheRegistryCannotBeRead()
+    {
+        var root = NewSourceDirectory(out var file);
+        var warnings = new List<string>();
+        // A registry that cannot list its entries is a skip (no throw): the
+        // caller keeps dispatching (R1-01).
+        var failing = new RunSourceAuthorizer(
+            true, () => [ScanTarget("s1", file, "b1")],
+            () => throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE"),
+            _ => Task.FromResult(true),
+            (_, _, _, _) => throw new InvalidOperationException("must not mint"),
+            (_, _) => throw new InvalidOperationException("must not resolve"),
+            _ => { }, message => warnings.Add(message));
+        await failing.AuthorizeForCommandAsync(
+            "library_start_run",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            CancellationToken.None);
+        Assert.Contains(warnings, message => message.Contains("skipped", StringComparison.Ordinal));
+        _ = root;
+    }
+
+    [Fact]
+    public async Task RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting()
+    {
+        var minted = 0;
+        var authorizer = Authorizer(
+            probe: false, known: [], entries: [],
+            authorize: (_, _, _, _) => { minted++; return Task.FromResult(new RunAuthorizationResult(0, 0, 0, [])); });
+        await authorizer.AuthorizeForCommandAsync(
+            "library_start_run",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            CancellationToken.None);
+        Assert.Equal(0, minted);
+    }
+
+    [Fact]
+    public async Task RunAuthorizerTreatsMintFailuresAsBestEffortSkips()
+    {
+        var root = NewSourceDirectory(out var file);
+        var warnings = new List<string>();
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new SourceAccessException("SOURCE_ENTRY_MISSING"),
+            warnings: warnings);
+        // No exception: the dispatch must continue (R1-01).
+        await authorizer.AuthorizeForCommandAsync(
+            "library_start_run",
+            Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+            CancellationToken.None);
+        Assert.Contains(warnings, message => message.Contains("skipped", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task RunAuthorizerPropagatesOnlyACoreTypedPageRefusal()
+    {
+        var root = NewSourceDirectory(out var file);
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new CoreOperationException(
+                "SOURCE_ACCESS_DENIED", "authorization", false, "denied", null));
+        var error = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            authorizer.AuthorizeForCommandAsync(
+                "library_start_run",
+                Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}"""),
+                CancellationToken.None));
+        Assert.Equal("SOURCE_ACCESS_DENIED", error.Code);
+    }
+
+    [Fact]
+    public async Task RunAuthorizerControlActionsPauseStopDoNotAuthorize()
+    {
+        var minted = 0;
+        var resolved = 0;
+        var authorizer = Authorizer(
+            probe: true, known: [], entries: [],
+            authorize: (_, _, _, _) => { minted++; return Task.FromResult(new RunAuthorizationResult(0, 0, 0, [])); },
+            resolve: (_, _) => { resolved++; return Task.FromResult(("reocr_all", Json("{}"))); });
+        foreach (var action in new[] { "pause", "stop", "abandon" })
+        {
+            await authorizer.AuthorizeForCommandAsync(
+                "library_control_run", Json($$"""{"action":"{{action}}","run_id":"r1"}"""),
+                CancellationToken.None);
+        }
+        Assert.Equal(0, minted);
+        Assert.Equal(0, resolved);
+    }
+
+    [Fact]
+    public async Task RunAuthorizerControlContinueResolvesTheFrozenSliceAndAuthorizes()
+    {
+        var root = NewSourceDirectory(out var file);
+        var seen = new List<(string Command, string Scope)>();
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (scopes, command, scope, _) =>
+            {
+                seen.Add((command, scope.GetProperty("page_id").GetString()!));
+                return Task.FromResult(new RunAuthorizationResult(1, scopes.Count, 0, []));
+            },
+            resolve: (runId, _) => Task.FromResult((
+                "reocr_all",
+                Json("""{"kind":"page","page_id":"p1"}"""))));
+        await authorizer.AuthorizeForCommandAsync(
+            "library_control_run", Json("""{"action":"continue","run_id":"run-1"}"""),
+            CancellationToken.None);
+        Assert.Equal(("reocr_all", "p1"), Assert.Single(seen));
+    }
+
+    [Fact]
+    public async Task RunAuthorizerAcceptSeamUsesThePreparedSliceCommandAndScope()
+    {
+        var root = NewSourceDirectory(out var file);
+        var seen = new List<string>();
+        var authorizer = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, command, _, _) =>
+            {
+                seen.Add(command);
+                return Task.FromResult(new RunAuthorizationResult(1, 1, 0, []));
+            });
+        await authorizer.AuthorizePreparedRunAsync(
+            "reocr_all", Json("""{"kind":"page","page_id":"p1"}"""), CancellationToken.None);
+        Assert.Equal(["reocr_all"], seen);
+        // The AcceptRun path in HostRuntime takes the command/scope from the
+        // prepared-run slice ledger and feeds exactly this seam.
+    }
+
+    [Fact]
+    public void PreparedRunSlicesTakeRequiresASameProcessPreparedRun()
+    {
+        var now = DateTimeOffset.Parse("2026-11-07T00:00:00+00:00");
+        var slices = new PreparedRunSlices(() => now);
+        var request = Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"}}""");
+        Assert.True(slices.Remember("prepared-1", request, now.AddMinutes(5)));
+        var (command, scope) = slices.Take("prepared-1");
+        Assert.Equal("reocr_all", command);
+        Assert.Equal("p1", scope.GetProperty("page_id").GetString());
+
+        // Missing slice -> the frozen host-side typed refusal (R1-11).
+        var missing = Assert.Throws<CoreOperationException>(() => slices.Take("prepared-unknown"));
+        Assert.Equal("RUN_STALE_PREVIEW", missing.Code);
+
+        // Expired slice is no longer usable.
+        Assert.True(slices.Remember("prepared-2", request, now.AddSeconds(30)));
+        now = now.AddSeconds(31);
+        var expired = Assert.Throws<CoreOperationException>(() => slices.Take("prepared-2"));
+        Assert.Equal("RUN_STALE_PREVIEW", expired.Code);
+
+        // Malformed requests are not remembered; the ledger stays bounded.
+        Assert.False(slices.Remember("prepared-bad", Json("""{"command":"reocr_all"}"""), now.AddMinutes(5)));
+        for (var index = 0; index < PreparedRunSlices.MaxEntries * 2; index++)
+        {
+            slices.Remember("prepared-" + index, request, now.AddMinutes(10));
+        }
+        Assert.Equal(PreparedRunSlices.MaxEntries, slices.Count);
+    }
+
+    [Fact]
+    public void RunSourceAuthorizerMapsMintIoFailuresToFrozenCodes()
+    {
+        Assert.Equal("SOURCE_ENTRY_MISSING",
+            SourceReadCoordinator.MapMintFailure(new FileNotFoundException()).Code);
+        Assert.Equal("SOURCE_ENTRY_MISSING",
+            SourceReadCoordinator.MapMintFailure(new UnauthorizedAccessException()).Code);
+        Assert.Equal("FILE_IDENTITY_CHANGED",
+            SourceReadCoordinator.MapMintFailure(new IOException()).Code);
+        Assert.Equal("SOURCE_ACCESS_DENIED",
+            SourceReadCoordinator.MapMintFailure(new ArgumentException()).Code);
+    }
+
+    [Fact]
+    public async Task RunAuthorizationBestEffortSkipReachesDispatch_CoreRefusalDoesNot()
+    {
+        var root = NewSourceDirectory(out var file);
+        var request = Json("""{"command":"reocr_all","scope":{"kind":"page","page_id":"p1"},"idempotency_key":"k"}""");
+
+        // (a) Host-side mint failure -> the Run command reaches dispatch (no Core
+        // is wired, so dispatch itself fails typed: proof it was NOT blocked by
+        // the pre-authorization).
+        var skipping = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new SourceAccessException("SOURCE_ENTRY_MISSING"));
+        var dispatching = new HostCommandDispatcher(
+            runAuthorize: (name, payload, token) =>
+                skipping.AuthorizeForCommandAsync(name, payload, token));
+        var dispatched = await Assert.ThrowsAsync<SidecarException>(() =>
+            dispatching.InvokeAsync("library_start_run", request));
+        Assert.Equal(SidecarErrorCode.ProcessExited, dispatched.Code);
+
+        // (b) Core typed page refusal -> the Run command is NOT dispatched and
+        // the authorization code is returned unchanged.
+        var refusing = Authorizer(
+            probe: true,
+            known: [ScanTarget("s1", file, "b1")],
+            entries: [RegistryEntry("reg-1", root)],
+            authorize: (_, _, _, _) => throw new CoreOperationException(
+                "SOURCE_ACCESS_DENIED", "authorization", false, "denied", null));
+        var blocked = new HostCommandDispatcher(
+            runAuthorize: (name, payload, token) =>
+                refusing.AuthorizeForCommandAsync(name, payload, token));
+        var refusal = await Assert.ThrowsAsync<CoreOperationException>(() =>
+            blocked.InvokeAsync("library_start_run", request));
+        Assert.Equal("SOURCE_ACCESS_DENIED", refusal.Code);
+    }
+
     private static string FindRepository()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

@@ -512,6 +512,15 @@ def test_real_assembly_bound_grant_opens_the_run_target_provider_and_guard(
 
 
 def test_authorization_is_entry_granular_and_refuses_other_pages(real_core) -> None:
+    """The Core matches the binding's own entry inside the signed scope.
+
+    R1-03 boundary: this test signs a member-shaped entry
+    (``locator=002-current.png``, ``ordinal=1``) because that is the only shape
+    that can name an archive member; the production Host cannot mint it for a
+    container (it mints ONE container entry — see L-G12). The assertion here
+    proves the Core-side entry matching, NOT that a Host container grant covers
+    arbitrary members.
+    """
     core, server, facts = real_core
     core_session = _open(server)
     # The grant covers the CURRENT entry (002-current.png / se2).
@@ -825,25 +834,104 @@ def test_binding_switched_mid_run_is_typed_and_writes_nothing(real_core) -> None
     assert _lineage_rows(conn) == lineage_before
 
 
-def test_authorization_never_leases_the_source(real_core, monkeypatch) -> None:
-    """The authorization face reads NO source bytes: zero source leases."""
+def test_per_page_gate_refusal_uses_the_shared_gate_predicate(real_core) -> None:
+    """R1-07: the per-page ``gate != open`` refusal inside
+    ``authorize_run_bindings`` is reachable through a MIXED page (a pure
+    referenced page is refused earlier by the Run target expander). It must be a
+    whole-request typed ``SOURCE_ACCESS_DENIED`` with
+    ``details={"refused_pages": 1}``, no mapping and no business write."""
+    core, server, facts = real_core
+    core_session = _open(server)
+    from tests.fea11.test_source_rendition_gates import _insert_publication
+
+    # Mixed page: referenced binding + a (stale) managed original -> the Run
+    # target expander admits it; the per-page publication gate then refuses.
+    conn = core.conn
+    # A separate project/book keeps the frozen (project_id, entry_id) uniqueness
+    # of the existing p1/p2 bindings intact.
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b2', 'Book 2', ?, ?)",
+        (NOW, NOW),
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+        " VALUES ('c2', 'b2', 'Ch 2', ?, ?)",
+        (NOW, NOW),
+    )
+    conn.commit()
+    (core.data_root / "managed" / "legacy").mkdir(parents=True, exist_ok=True)
+    (core.data_root / "managed" / "legacy" / "p3.png").write_bytes(png_of(OLD_A))
+    add_referenced_page(
+        conn,
+        "p3",
+        "c2",
+        "b2",
+        order=1,
+        source_id="s1",
+        version_id="sv1",
+        entry_id="se2",
+        digest=facts["current_digest"],
+        width=NEW_B["width"],
+        height=NEW_B["height"],
+    )
+    conn.execute(
+        "UPDATE pages SET managed_original_ref = 'legacy/p3.png'"
+        " WHERE page_id = 'p3'"
+    )
+    conn.commit()
+    _insert_publication(conn, "pb-p3", "pending")
+
+    grant = _grant_payload(facts["archive"])
+    assert _register(server, core_session, grant)["error"] is None
+    before = _table_snapshot(core)
+    error = _assert_refused(
+        _authorize(
+            server,
+            core_session,
+            [grant["grant_id"]],
+            scope={"kind": "page", "page_id": "p3"},
+        ),
+        "SOURCE_ACCESS_DENIED",
+    )
+    assert error["details"][0] == {"refused_pages": 1}
+    assert _table_snapshot(core) == before
+    assert _bindings(core.source_read_refs) == {}
+
+
+def test_authorization_never_leases_or_reads_the_source(real_core, monkeypatch) -> None:
+    """R1-07: the authorization face reads NO source bytes.
+
+    Two spies: ``source_lease`` (the strict-read lease every granted byte read
+    goes through) and ``read_entry_bytes`` (the decode entry point). Both must
+    stay at zero for the authorization command.
+    """
     core, server, facts = real_core
     core_session = _open(server)
     grant = _grant_payload(facts["archive"])
     assert _register(server, core_session, grant)["error"] is None
     leases: list[str] = []
+    reads: list[tuple] = []
     import infrastructure.resource_channel.source_strict_read as strict
+    from application.importing.referenced import reader as referenced_reader
 
-    original = strict.source_lease
+    original_lease = strict.source_lease
+    original_read = referenced_reader.read_entry_bytes
 
-    def spy(path, facts, max_bytes):
+    def lease_spy(path, facts, max_bytes):
         leases.append(str(path))
-        return original(path, facts, max_bytes)
+        return original_lease(path, facts, max_bytes)
 
-    monkeypatch.setattr(strict, "source_lease", spy)
+    def read_spy(*args, **kwargs):
+        reads.append((args, kwargs))
+        return original_read(*args, **kwargs)
+
+    monkeypatch.setattr(strict, "source_lease", lease_spy)
+    monkeypatch.setattr(referenced_reader, "read_entry_bytes", read_spy)
     authorized = _authorize(server, core_session, [grant["grant_id"]])
     assert authorized["error"] is None, authorized["error"]
-    assert leases == [], "AuthorizeSourceReadForRun must not read source bytes"
+    assert leases == [], "AuthorizeSourceReadForRun must not lease source bytes"
+    assert reads == [], "AuthorizeSourceReadForRun must not read entry bytes"
 
 
 # ---------------------------------------------------------------------------

@@ -648,7 +648,10 @@ def test_authorize_source_read_for_run_is_host_only_and_session_gated(
         assert _request(server, core_session_id, "CloseHostSession", {})["result"] == {
             "closed": True
         }
+    # R1-08: zero-write evidence is the per-table snapshot (the same contract
+    # as the AC-R1 shape/grant cases) plus the raw change counter.
     db_before = core.conn.total_changes
+    snapshot_before = _business_table_snapshot(core)
     if case == "ordinary_json_rpc":
         request = {
             "protocol": "new-manga.core",
@@ -681,6 +684,7 @@ def test_authorize_source_read_for_run_is_host_only_and_session_gated(
         assert response["result"] is None
         assert response["error"]["code"] == expected
         assert core.conn.total_changes == db_before
+        assert _business_table_snapshot(core) == snapshot_before
         assert core.source_read_refs._bindings == {}
     finally:
         _close(core, server)
@@ -710,6 +714,9 @@ def test_authorize_source_read_for_run_rejects_non_closed_shapes(
         elif case == "too_many_ids":
             payload["grant_ids"] = [f"source-{index:032x}" for index in range(65)]
         elif case == "duplicate_ids":
+            # R1-06 (DSH ruling): the request shape is "1..64 UNIQUE ids"; the
+            # frozen §2.4 "去重" is read as "the caller must deduplicate", so a
+            # duplicate id is a closed-shape violation -> INVALID_REQUEST.
             payload["grant_ids"] = [grant["grant_id"], grant["grant_id"]]
         elif case == "non_string_id":
             payload["grant_ids"] = [123]
