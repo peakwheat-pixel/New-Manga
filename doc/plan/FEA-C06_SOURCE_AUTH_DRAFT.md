@@ -1,7 +1,7 @@
 # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
 
-状态：**FROZEN v1.1（2026-11-03 重冻；v1.0 于 2026-11-01 冻结）**（载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；独立复核 r7 approved）
-日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）
+状态：**FROZEN v1.2（2026-11-06 重冻；v1.0 于 2026-11-01 冻结、v1.1 于 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；v1.2 独立 byte-level 复核见载体；v1.1 复核 r7 approved 见冻结记录）
+日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）；2026-11-06（v1.2 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）
 
@@ -40,6 +40,7 @@
 | 有效期 | **短期**（≤ 单次操作，≤300 秒）；**不得**作为长期通行证复用 |
 | 与旧 grant 的关系 | 旧 `ImportPages` 一次性 grant **保持原语义**（≤300 秒、直属成员、进程内）；`source-read` 是**独立**的新 grant 类型，不复用旧类型 |
 | 撤销/失联（v1.1） | 用户撤销 → Host 持久化 generation+1 → 推送 `RevokeSourceReadGrant`（Host→Core）→ Core 立即废止 grant、下一提交边界停止并 ACK → Host 收到 ACK 后才向调用方返回成功；Core 检测 stdin EOF/transport 失败 → 全部 grant 立即失效（fail-closed）。**不得以 300 秒 TTL 代替即时撤销** |
+| 授权建立（v1.2，第三生产者） | `source-read` grant→page binding 的**读授权**可由 Core 的 host-control 授权建立命令（C-16 v1.3 §2.4 `AuthorizeSourceReadForRun`）在 Run dispatch 前建立：Core 用与 Run 相同的 scope 展开器解析目标页，按签名 grant 的 `source_id/version/entry(locator\|ordinal\|entry_key)` 与 facts 校验当前 healthy binding 后，写入与导入/同步同构的**进程内** grant→binding 映射（零 DB 写）。该建立**不延长 ≤300s 有效期**、不改变撤销/失联语义、不得以路径回退；同一 binding 允许多份 grant，读时选择沿用既有 `find_bound_for_source`（live、最高 generation/`grant_id`）；建立失败必须 typed 且零业务写 |
 | 失败 | registry 不存在/过期/generation 不匹配/identity 变化 → `SOURCE_ACCESS_DENIED`（fail-closed，不降级读取） |
 
 ### 2.3 命令/字段（协议增量，候选）
@@ -52,6 +53,7 @@
 | `RequestSourceRead` | Host 铸造（操作 dispatch 前） | 语义请求：`{ registryId, generation, scope{ sourceId, version, entry[], rendition }, budget{ maxBytes, maxDecodeBytes, maxEntries } }`（v1.1 四维 scope） | `{ grantId, expiresAt }`；Host 是唯一授予方，无 Core→Host RPC |
 | `VerifySourceRead` | 双侧（v1.1） | Host 铸造时：`{ grantId, scope, facts }` → 解析 scope→授权根并拒绝越根；Core 读取前/commit 前：签名/session/expiry/generation/identity facts 校验 | Host：`{ ok, reason? }`；Core：本地 typed 拒绝（不回 Host） |
 | `RevokeSourceReadGrant`（v1.1 新增） | Host→Core（host-control） | `{ registryId, generation, grantIds[] }` | `{ revoked:true, grantsRevoked:n }` ACK；Host 收到 ACK 后才返回撤销成功 |
+| `AuthorizeSourceReadForRun`（v1.2 新增） | Host→Core（host-control） | `{ grant_ids[]（1..64，closed shape）, command, scope }`：Run dispatch 前为本次 Run 建立 grant→binding 读授权；不携带路径；`command` 限定为可由 scope 展开的 Run 起始命令 | `{ bound_pages }`（成功）；任一目标页不可授权 → **整体 typed `SOURCE_ACCESS_DENIED`**、零绑定写入、Host 不得 dispatch（C-16 v1.3 §2.4） |
 
 新增命令按 **minor** 递增（当前资源控制面 wire v1 → 本组命令 v1.1；**不改 major**）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。**读取面**：`RequestSourceRead` 的 `scope` 必须按 `SourceId/version/entry/rendition` 表达并带预算，**不接受** `paths[]` 形式。
 
@@ -91,3 +93,4 @@
 |---|---|---|
 | 2026-11-01 | 建立草案：现状表、SourceAccessRegistry 条目、source-read grant、4 条命令、5 条安全约束、与三份契约接口、冻结条件 | DSH |
 | 2026-11-03 | **v1.1 UNFREEZE**：§2.2 明确 Host 铸造型发放与逐根 identity；grant 增加四维 scope/entries/budget/secretRef/signature 与撤销/失联线性化；§2.3 `RequestSourceRead`/`VerifySourceRead` 双侧归属修订 + 新增 `RevokeSourceReadGrant`；§3 增加约束 10/11。载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；待独立复核后重冻并重算 pin | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-002/R1-003 |
+| 2026-11-06 | **v1.2 UNFREEZE**：§2.2 增「授权建立（第三生产者）」行；§2.3 增 `AuthorizeSourceReadForRun` 行；仅新增条目，既有 grant 形状/TTL≤300s/撤销/失联/错误闭集零改动。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |

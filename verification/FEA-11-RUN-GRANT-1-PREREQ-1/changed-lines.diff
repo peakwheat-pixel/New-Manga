@@ -1,0 +1,102 @@
+diff --git a/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md b/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+index 93a339097..9bbd93a01 100644
+--- a/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
++++ b/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+@@ -1,7 +1,7 @@
+ # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
+ 
+-状态：**FROZEN v1.1（2026-11-03 重冻；v1.0 于 2026-11-01 冻结）**（载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；独立复核 r7 approved）
+-日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）
++状态：**FROZEN v1.2（2026-11-06 重冻；v1.0 于 2026-11-01 冻结、v1.1 于 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；v1.2 独立 byte-level 复核见载体；v1.1 复核 r7 approved 见冻结记录）
++日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）；2026-11-06（v1.2 UNFREEZE）
+ 作者：DSH（Lead / Architect / Integrator）
+ 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）
+ 
+@@ -40,6 +40,7 @@
+ | 有效期 | **短期**（≤ 单次操作，≤300 秒）；**不得**作为长期通行证复用 |
+ | 与旧 grant 的关系 | 旧 `ImportPages` 一次性 grant **保持原语义**（≤300 秒、直属成员、进程内）；`source-read` 是**独立**的新 grant 类型，不复用旧类型 |
+ | 撤销/失联（v1.1） | 用户撤销 → Host 持久化 generation+1 → 推送 `RevokeSourceReadGrant`（Host→Core）→ Core 立即废止 grant、下一提交边界停止并 ACK → Host 收到 ACK 后才向调用方返回成功；Core 检测 stdin EOF/transport 失败 → 全部 grant 立即失效（fail-closed）。**不得以 300 秒 TTL 代替即时撤销** |
++| 授权建立（v1.2，第三生产者） | `source-read` grant→page binding 的**读授权**可由 Core 的 host-control 授权建立命令（C-16 v1.3 §2.4 `AuthorizeSourceReadForRun`）在 Run dispatch 前建立：Core 用与 Run 相同的 scope 展开器解析目标页，按签名 grant 的 `source_id/version/entry(locator\|ordinal\|entry_key)` 与 facts 校验当前 healthy binding 后，写入与导入/同步同构的**进程内** grant→binding 映射（零 DB 写）。该建立**不延长 ≤300s 有效期**、不改变撤销/失联语义、不得以路径回退；同一 binding 允许多份 grant，读时选择沿用既有 `find_bound_for_source`（live、最高 generation/`grant_id`）；建立失败必须 typed 且零业务写 |
+ | 失败 | registry 不存在/过期/generation 不匹配/identity 变化 → `SOURCE_ACCESS_DENIED`（fail-closed，不降级读取） |
+ 
+ ### 2.3 命令/字段（协议增量，候选）
+@@ -52,6 +53,7 @@
+ | `RequestSourceRead` | Host 铸造（操作 dispatch 前） | 语义请求：`{ registryId, generation, scope{ sourceId, version, entry[], rendition }, budget{ maxBytes, maxDecodeBytes, maxEntries } }`（v1.1 四维 scope） | `{ grantId, expiresAt }`；Host 是唯一授予方，无 Core→Host RPC |
+ | `VerifySourceRead` | 双侧（v1.1） | Host 铸造时：`{ grantId, scope, facts }` → 解析 scope→授权根并拒绝越根；Core 读取前/commit 前：签名/session/expiry/generation/identity facts 校验 | Host：`{ ok, reason? }`；Core：本地 typed 拒绝（不回 Host） |
+ | `RevokeSourceReadGrant`（v1.1 新增） | Host→Core（host-control） | `{ registryId, generation, grantIds[] }` | `{ revoked:true, grantsRevoked:n }` ACK；Host 收到 ACK 后才返回撤销成功 |
++| `AuthorizeSourceReadForRun`（v1.2 新增） | Host→Core（host-control） | `{ grant_ids[]（1..64，closed shape）, command, scope }`：Run dispatch 前为本次 Run 建立 grant→binding 读授权；不携带路径；`command` 限定为可由 scope 展开的 Run 起始命令 | `{ bound_pages }`（成功）；任一目标页不可授权 → **整体 typed `SOURCE_ACCESS_DENIED`**、零绑定写入、Host 不得 dispatch（C-16 v1.3 §2.4） |
+ 
+ 新增命令按 **minor** 递增（当前资源控制面 wire v1 → 本组命令 v1.1；**不改 major**）；旧 Host 不识别 → `PROTOCOL_VERSION_UNSUPPORTED`。**读取面**：`RequestSourceRead` 的 `scope` 必须按 `SourceId/version/entry/rendition` 表达并带预算，**不接受** `paths[]` 形式。
+ 
+@@ -91,3 +93,4 @@
+ |---|---|---|
+ | 2026-11-01 | 建立草案：现状表、SourceAccessRegistry 条目、source-read grant、4 条命令、5 条安全约束、与三份契约接口、冻结条件 | DSH |
+ | 2026-11-03 | **v1.1 UNFREEZE**：§2.2 明确 Host 铸造型发放与逐根 identity；grant 增加四维 scope/entries/budget/secretRef/signature 与撤销/失联线性化；§2.3 `RequestSourceRead`/`VerifySourceRead` 双侧归属修订 + 新增 `RevokeSourceReadGrant`；§3 增加约束 10/11。载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；待独立复核后重冻并重算 pin | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-002/R1-003 |
++| 2026-11-06 | **v1.2 UNFREEZE**：§2.2 增「授权建立（第三生产者）」行；§2.3 增 `AuthorizeSourceReadForRun` 行；仅新增条目，既有 grant 形状/TTL≤300s/撤销/失联/错误闭集零改动。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |
+diff --git a/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md b/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+index bd36fc19c..a5143d5e1 100644
+--- a/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
++++ b/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+@@ -1,7 +1,7 @@
+ # FEA-C16 Source 读取与导入 wire 协议（草案 v7，处置契约复核 r6）
+ 
+-状态：**FROZEN v1.1（2026-11-04 重冻；v1.0 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-04](../reviews/CONTRACT-UNFREEZE-2026-11-04.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；UNFREEZE r15 approved + 已提交字节独立复核 approved（P0=0/P1=0））
+-日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）
++状态：**FROZEN v1.3（2026-11-06 重冻；v1.0 2026-11-03、v1.1 2026-11-04）**（载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；v1.3 独立 byte-level 复核见载体；v1.1 UNFREEZE r15 approved + 已提交字节独立复核 approved 见冻结记录）
++日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-06（v1.3 UNFREEZE）
+ 作者：DSH（Lead / Architect / Integrator）
+ 依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15（同批）、C-01b/C-05/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）；v1.1 依据实现 Review r1 R1-I005 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
+ 
+@@ -14,11 +14,12 @@
+ | 版本面 | 值 | 处置 |
+ |---|---|---|
+ | Core stdio 协议 | `new-manga.core` 2.3（`PROTOCOL_MAJOR=2/PROTOCOL_MINOR=3`） | **不 bump**；新命令 additive（M2-C1 §3.2、Draft 族零 bump 先例）；新命令按默认面 minor=3，旧 Core 无 handler → 现有 `UNKNOWN_COMMAND`/`INVALID_REQUEST` fail-closed |
+-| source-access wire | v1（C-06 语义） | 本契约 **source-access-wire/1.1**；方向/Verify 归属修订由 **C-06 v1.1 UNFREEZE** 承载（不是本契约单方面改写） |
++| source-access wire | v1（C-06 语义） | 本契约 **source-access-wire/1.2**（v1.3 仅为 additive：§2.4 新命令 + `source.read.run/1`）；方向/Verify 归属/授权建立语义由 C-06 v1.2 UNFREEZE 承载（不是本契约单方面改写） |
+ 
+ - **方向裁决（C-06 v1.1）**：现有传输只有 Host→Core 请求/应答，不存在 Core→Host RPC。C-06「Core 申请、Host 授予」落地为：Core 的操作请求由 Host 承载；**Host 在 dispatch 前按 Registry 铸造 source-read grant**（Host 是唯一授予方并完成 scope→授权根解析）；Core 侧执行本地 `VerifySourceRead`（签名/scope/identity/expiry/generation）后才读取。该落地写进 C-06 v1.1 §2.2/§2.3，并经独立复核；本契约引用之，不构成对 C-06 的暗改。
+ - **能力协商**：Core `core.ping.capabilities` 追加 `source.read/1`（保留 `library.list_books`）。**按操作检查**：Host dispatch 任何 source 命令前校验该能力，缺失 → `CORE_CAPABILITY_MISSING`（拒绝该操作；**不**沿用 `StartupSelfCheck` 的 Degraded-but-writable 放行）。旧 Host 不认识新命令 → 不发送；旧 Core → fail-closed。
+ - **v1.1 能力追加**：`source.resolve-secret/1`——加密 referenced 页 resolve 的 fresh-grant 密码通道（§3.1）。Host 在创建 secret 文件前探测；缺失/探测异常 → `CORE_CAPABILITY_MISSING`，**不创建**文件、不发送；旧 Core 无该能力 → Host 拒绝加密 resolve（加密页读 typed `SOURCE_PASSWORD_REQUIRED`）。能力缺失不得靠“发送后看结果”判断。
++- **v1.3 能力追加**：`source.read.run/1`——Run dispatch 前的授权建立命令（§2.4）。Host 在铸造 Run 用 grant 前探测；缺失 → **不铸造、不绑定**，按现状 dispatch（旧 Core 行为不变；referenced Run 仍 typed 失败）。能力缺失不得靠“发送后看结果”判断。
+ - **即时撤销通道**：Host 可向其已连接的 Core 推送 **`RevokeSourceReadGrant`**（Host→Core 的新增 host-control 命令）；Host 只有在收到 Core ACK 后才向调用方返回撤销成功。Core 检测 stdin EOF/transport 失败 → 全部 source grant 立即无效（fail-closed）。
+ 
+ ## 1. Registry 命令（UI→Host；FEA-09 实现 Host handler，UI 接线归 FEA-09-UI-1）
+@@ -69,6 +70,25 @@
+ - `secret_ref`：仅加密源使用；wire 中**只允许 opaque token/path/expiry 元数据**（path 不是秘密）；**不得**出现密码明文或任何可逆编码；`signing_key`/`secret_ref` 在进入 `WireLog.Frames`/NDJSON 与 Host 日志前必须被脱敏（§7）。
+ - 失败码与优先级：`REF_SIGNATURE_INVALID` → `SOURCE_GRANT_EXPIRED` → `SOURCE_GRANT_REVOKED` → `SOURCE_ACCESS_DENIED`（registry/generation/root/identity）→ `FILE_IDENTITY_CHANGED`（读取期 identity 漂移）→ `SOURCE_BUDGET_EXCEEDED`。
+ 
++### 2.4 `AuthorizeSourceReadForRun`（Host→Core，host-control envelope；v1.3 新增）
++
++- **用途（冻结）**：Run dispatch 前，把 Host 已铸造并注册的 source-read grant 建立为**本次 Run 目标页 page binding 的读授权**，补 `_bindings` 的第三生产者（import / sync apply / 本命令）。本命令**不改变** grant 四维 scope、≤300s TTL、撤销/失联语义与 `find_bound_for_source` 选择规则。
++- **请求（closed shape）**：
++
++```json
++{"grant_ids": ["<source-read grant id>", "..."], "command": "<PipelineCommand>", "scope": {"kind": "book|chapter|page|region|page_selection", "...": "<id 或 ids>"}}
++```
++
++  - `grant_ids`：1..64 个、去重、非空 string；同一个 host-control session 下已注册的 source-read grant。
++  - `command`/`scope`：`command` 限定为 `COMMAND_CATALOG` 中**可由 scope 展开的 Run 起始命令**（`StartRun` 面语义；只读/控制/恢复类命令不得使用本命令）；与对应 Run 命令**同一**取值域与同一 scope 展开器；未知或越域 → `INVALID_REQUEST`。
++  - 未知键、缺键、类型错误 → `INVALID_REQUEST`。
++- **响应（成功）**：`{"bound_pages": <int>}`，为本次建立映射的 referenced 页数。**不使用「成功响应 + refused 列表」形态**：任一目标页不可授权 → 整体 typed 失败（见下）。`details` 只允许计数/ID（`{bound_pages}`、`{refused_pages}`），无路径/entry 名/签名材料。
++- **校验顺序（冻结）**：①host-only（普通 application 面 → `HOST_ONLY_REQUIRED`；session/credential → `HOST_SESSION_INVALID`/`CORE_SESSION_MISMATCH`）②请求形状（`INVALID_REQUEST`）③每个 `grant_id` 必须已注册且 live/未撤销/未过期（缺失/会话不符 → `SOURCE_ACCESS_DENIED`；过期 → `SOURCE_GRANT_EXPIRED`；撤销 → `SOURCE_GRANT_REVOKED`）④用与 Run 相同的 scope 展开器解析目标页（失败 → `INVALID_REQUEST`，不建任何映射）。
++- **per-page 授权匹配（冻结）**：目标页无 binding（managed）→ 跳过；binding 非 healthy 或 publication gate 非 open（沿用 Run 目标/commit guard 的**同一** gate 谓词，C-17 §3.3；无 publication 行按既有 open 处理）→ 不可授权；否则必须在 `grant_ids` 中存在 live grant，其**签名 scope** 满足：`scope.source_id == binding.source_id`、`scope.version == binding.accepted_source_version`，且 `scope.entries[]` 中某项满足 `entry_key == binding.entry_id` 或 `locator == source_entries.locator` 或 `ordinal == source_entries.ordinal`，并核验该 entry 的 **facts**（`volume_serial`/`file_id`/`size`/`sha256`）与 `source_locations` 当前物理身份一致（`source_entries`/`source_locations` 逐项核对，**无路径回退**）→ 待绑定；否则不可授权。
++- **原子性与副作用（冻结）**：任一目标页不可授权 → **整体 typed `SOURCE_ACCESS_DENIED`**（`details={"refused_pages": n}`）且**零映射写入**（不返回部分成功、`bound_pages` 不适用）；全部可授权 → 写入与 `bind_imported_entry` 同构的**进程内**映射 `grant_id → {source_id, version_id, entry_ids}` 并返回 `bound_pages`。**零 DB 写、不建 plan/apply/journal、不发布资源、不延长 TTL、不撤销/复活 grant**。幂等：同请求重复执行返回同一结果（集合语义）。
++- **错误码**：复用 §6 闭集，不新增；脱敏沿用 §7。
++- **兼容**：旧 Core 无本命令 → `core.ping` 无 `source.read.run/1`；Host 不铸造、不发送。本命令**不改** Run 命令请求/响应字节、`PROTOCOL_MINOR`、schema/迁移/依赖。publication gate 的两读面既有差异（L-R11，`core_assembly.read_gate` vs resolve 面 `_assert_source_sync_gate`）不属于本命令语义，本命令不引入第三套 gate 判定。
++
+ ## 3. 密码短期安全引用（加密源）
+ 
+ - **Plan 阶段不消费密码（加密源为有限预览）**：`PlanImportReferences` 只检测“是否加密/是否支持”（ZIP 读 general-purpose flag / PDF 读加密标记），**不请求密码、不解密、不创建 secret 文件**。加密源在 plan 中的 `status="encrypted"`、`will_import=null`、**不提供成员/页级 content digest**；plan_digest 只绑定容器级 digest（加密归档/PDF 原始字节 sha256）+ 可读结构元数据（ZIP 成员名/ordinal；PDF 页数若不可得则为 `unknown`）。确认（`StartImportReferences`）时先重验容器级 digest + registry generation，再凭密码解密并在导入中计算逐 entry digest；加密源不承诺“预览即可见明文摘要”，也不得为凑摘要而提前解密。
+@@ -201,10 +221,11 @@
+ 
+ ## 10. 冻结条件与变更记录
+ 
+-冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节。
++冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节；⑤v1.3：C-06 v1.2 与本契约 v1.3 同批独立 byte-level 复核 approved（P0/P1=0），Run wire/错误闭集/其他 16 pins 零改动。
+ 
+ | 日期 | 变更 | 记录 |
+ |---|---|---|
+ | 2026-11-03 | v1 草案 | FEA-09 scope-r1 |
+ | 2026-11-03 | **v7（处置契约复核 r6）**：`planned_pages` 改为按页口径（排除已引用/策略跳过；整 source 跳过 planned=0），补 `skipped_pages` 字段与整源跳过/部分已引用两个实例，四类既有示例给完整 counts/remaining/outcome | `doc/reviews/FEA-09-PREREQ-1-r6.md` R6-001 |
+ | 2026-11-04 | **v1.1 UNFREEZE**：§0 增 `source.resolve-secret/1` 能力门禁；§3.1 增 resolve 加密源 fresh-grant 密码通道（**resolve 请求字节不变**；一次性/路径/清理/零泄漏/撤销码映射）；§6 补错误码复用说明。依据 R1-I005 + UNFREEZE r15 approved；已提交字节复核后重冻并重算 pin | DSH；`doc/reviews/FEA-09-UNFREEZE-r15-review.md` |
++| 2026-11-06 | **v1.3 UNFREEZE**：§0 增 `source.read.run/1` 能力；新增 §2.4 `AuthorizeSourceReadForRun`（Run 前建立 grant→binding 读授权；closed shape；fail-closed；零 DB 写；幂等）；**Run wire/错误闭集/TTL/撤销语义零改动**。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |
