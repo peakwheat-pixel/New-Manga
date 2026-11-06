@@ -23,7 +23,7 @@
 | 解释器/环境 | CPython 3.14.6 / PowerShell 7 / .NET SDK（net9.0 测试目标）/ Windows 11 |
 | 契约字节 | **本卡零变更**：C-16 v1.4 已冻结（`doc/plan/**`、`doc/contracts/**` 本卡零 diff；`verify_pins` 18/18）；wire 字段/命令集/`CORE_PROTOCOL_MINOR=3`/错误闭集零改动 |
 | 依赖 | **零新增** |
-| 证据生成 | `verification/FEA-11-RUN-GRANT-2/tools/gen_ev.py`（`repo_head_at_generation=0180089894b2286d8ff6a94289b84dd318871d18`） |
+| 证据生成 | `verification/FEA-11-RUN-GRANT-2/tools/gen_ev.py`（`repo_head_at_generation=3dc822b777c726905e36aa7cd83e7391adf602ba`） |
 
 ## 1. 交付 commit 链（起点 `5397be149` → delivery_head `0180089894b2286d8ff6a94289b84dd318871d18`）
 
@@ -100,12 +100,12 @@ sha256，最后重新 build 恢复二进制并对恢复后的树补跑定向套�
 | `logs/gates.log` | `a65776f5231ef4843d8b3d6236e3596bf20c4b98f3fcde4a753920b00e998a0b` |
 | `logs/host-ipc.log` | `e500514d29659e254b7f40b4a9d847cc1e0c508ed5625183c0dd250b45b4c63e` |
 | `logs/host-unit.log` | `11162ad349a438d92cc50e68dabe72144efb2477ed21ad1956eaf25ed4a29304` |
-| `RESOURCE-MANIFEST.json` | `5ef2df720e81b01d16b0456245a4fc9965e660bd2372eb401521394bf3b3d408` |
-| `scope-validation.log` | `f21a29b18bef149fbaab256bf1bc7a8e0bddd8fb08232a49877985a9d679211b` |
+| `RESOURCE-MANIFEST.json` | `a7bc608224ee842759e6e9f04c65ebdd2516bf57f4dcbcca8e1269eae989c41b` |
+| `scope-validation.log` | `5ed7ff212effa39ee304fa1b56d65acf855643a65ec77d7c6aa666d9430a1b9c` |
 | `tools/discrimination.py` | `39d18b652d722b58d6a5468ec798e44b4e9e75e808f37ecce5ae44a551aded1a` |
 | `tools/gen_ev.py` | `0b73461c5f33c5c66f9baa09b36ab7e7ba4649275d1bb45ae5c02b7e5f7b16d7` |
-| `tools/gen_manifest.py` | `5c16d12e0cc9fdecaf6979acdea3aa8f38e35241adfbd3b1b6690c42544d02c9` |
-| `tools/scope_validation.py` | `dab360903bf8e54eb6536669ec2b897d4e6024c891f0393f74d16c13d88ad9e4` |
+| `tools/gen_manifest.py` | `188d1bb9820d1abc3b055e899b8567ad4a50f7067728c4b179e32fccb063baa9` |
+| `tools/scope_validation.py` | `b1ba8fad787e1e053bc9949e5bcf09617162d56849e1cc72c881f22f792c22cb` |
 
 > sha256 为**工作树字节**（检出配置 `core.autocrlf=true`；与 RUN-GRANT-1/2A 证据同口径）。
 > `RESOURCE-MANIFEST.json` 记录仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2\`

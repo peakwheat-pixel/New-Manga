@@ -184,6 +184,27 @@ def main() -> int:
         "The changed-file set is computed from this ticket's own commits "
         f"({', '.join(DELIVERY_COMMITS)}), never from a base..HEAD range."
     )
+    first_parent = _git("rev-parse", DELIVERY_COMMITS[0] + "^").strip()
+    foreign = [
+        line for line in _git(
+            "log", "--oneline", f"{DELIVERY_BASE}..{first_parent}"
+        ).splitlines() if line.strip()
+    ]
+    log.append(
+        f"The implementation start head was {DELIVERY_BASE}; this ticket's first delivery "
+        f"commit parents on {first_parent[:9]}."
+    )
+    if foreign:
+        log.append(
+            "The shared main worktree meanwhile carries commits that are NOT part of this "
+            "ticket (Lead-side documentation of the previous card):"
+        )
+        for line in foreign:
+            log.append(f"  foreign_commit: {line.strip()}")
+        log.append(
+            "They are excluded here by construction (own-commit set) and were not modified, "
+            "staged or committed by this ticket."
+        )
     log.append(
         "The docs commit (card delivery record / Handoff / this verification tree) "
         "follows the delivery commits and is inside allowed_paths by construction."
@@ -191,6 +212,12 @@ def main() -> int:
     log.append(
         "The frozen C-16 v1.4 contract bytes are NOT touched by this ticket: the "
         "pin audit (logs/gates.log PIN AUDIT) is the separate proof."
+    )
+    log.append(
+        "The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/ may receive "
+        "additional integration logs from the Lead's integration gate after this evidence "
+        "snapshot; RESOURCE-MANIFEST.json therefore documents the workspace at generation time "
+        "(per-file sha256 + aggregate), not a frozen final state."
     )
     (EVIDENCE / "changed-files.txt").write_text(
         "".join(f"{status}\t{path}\n" for status, path in rows),

@@ -30,16 +30,19 @@ WORKSPACE = Path("G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2")
 OUT = EVIDENCE / "RESOURCE-MANIFEST.json"
 
 DELIVERY_COMMITS = ["7466cb99d", "018008989"]
-DELIVERY_HEAD = "018008989"
+DELIVERY_HEAD = "0180089894b2286d8ff6a94289b84dd318871d18"
 NOTE = (
     "FEA-11-RUN-GRANT-2 (2B) delivery: container member entry authorization channel "
     "(C-16 v1.4 §2 Core registry/match + Host N-entry Run mint + tests/evidence). "
     "The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/ holds the real "
     "Core IPC fixtures, gate logs and discrimination byte backups; no tracked repository file "
     "lives there. Canonical copies of the gate logs are committed under "
-    "verification/FEA-11-RUN-GRANT-2/logs/. No user data, AppData, external volume or "
-    "recycle bin was touched; no repository delete/move/migrate/archive was performed; the "
-    "frozen C-16 v1.4 bytes were NOT modified (pin audit is the proof)."
+    "verification/FEA-11-RUN-GRANT-2/logs/. The workspace listing below is a GENERATION-TIME "
+    "snapshot: the Lead's integration gate may later append integration/ logs to the same "
+    "isolated root, so the aggregate is not presented as a frozen final state. "
+    "No user data, AppData, external volume or recycle bin was touched; no repository "
+    "delete/move/migrate/archive was performed; the frozen C-16 v1.4 bytes were NOT modified "
+    "(pin audit is the proof)."
 )
 
 
@@ -72,8 +75,19 @@ def main() -> int:
         text=True, encoding="utf-8",
     ).stdout.strip()
     children = []
+    excluded_children = []
     if WORKSPACE.exists():
         for child in sorted(WORKSPACE.iterdir()):
+            # ``integration/`` is the Lead's integration-gate output for this task: it is
+            # created/updated after this delivery and is NOT part of this ticket's evidence,
+            # so it is excluded from the snapshot (documented instead of silently hashed
+            # while another process is still writing it).
+            if child.name == "integration":
+                excluded_children.append({
+                    "name": child.name + "/",
+                    "reason": "Lead 集成门禁输出，不属于本交付；生成时点可能仍在写入，故不纳入快照。",
+                })
+                continue
             if child.is_dir():
                 tree = _tree(child)
                 children.append({
@@ -122,6 +136,7 @@ def main() -> int:
                 "sha256": aggregate,
                 "file_count": total,
                 "children": children,
+                "excluded_children": excluded_children,
             },
             {
                 "resource_type": "evidence",

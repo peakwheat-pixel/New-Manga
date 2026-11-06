@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-RUN-GRANT-2",
-  "generated_at": "2026-11-06T22:46:45+00:00",
+  "generated_at": "2026-11-06T22:49:25+00:00",
   "generated_by": "run-grant-2b-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "018008989",
+  "delivery_head": "0180089894b2286d8ff6a94289b84dd318871d18",
   "delivery_commits": [
     "7466cb99d",
     "018008989"
   ],
-  "repo_head_at_generation": "0180089894b2286d8ff6a94289b84dd318871d18",
-  "note": "FEA-11-RUN-GRANT-2 (2B) delivery: container member entry authorization channel (C-16 v1.4 §2 Core registry/match + Host N-entry Run mint + tests/evidence). The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/ holds the real Core IPC fixtures, gate logs and discrimination byte backups; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-2/logs/. No user data, AppData, external volume or recycle bin was touched; no repository delete/move/migrate/archive was performed; the frozen C-16 v1.4 bytes were NOT modified (pin audit is the proof).",
+  "repo_head_at_generation": "3dc822b777c726905e36aa7cd83e7391adf602ba",
+  "note": "FEA-11-RUN-GRANT-2 (2B) delivery: container member entry authorization channel (C-16 v1.4 §2 Core registry/match + Host N-entry Run mint + tests/evidence). The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/ holds the real Core IPC fixtures, gate logs and discrimination byte backups; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-2/logs/. The workspace listing below is a GENERATION-TIME snapshot: the Lead's integration gate may later append integration/ logs to the same isolated root, so the aggregate is not presented as a frozen final state. No user data, AppData, external volume or recycle bin was touched; no repository delete/move/migrate/archive was performed; the frozen C-16 v1.4 bytes were NOT modified (pin audit is the proof).",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 018008989）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 0180089894b2286d8ff6a94289b84dd318871d18）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/apps/tests/verification/doc 内，未 push。"
@@ -1378,6 +1378,12 @@
             }
           ]
         }
+      ],
+      "excluded_children": [
+        {
+          "name": "integration/",
+          "reason": "Lead 集成门禁输出，不属于本交付；生成时点可能仍在写入，故不纳入快照。"
+        }
       ]
     },
     {
@@ -1426,7 +1432,7 @@
         },
         {
           "name": "scope-validation.log",
-          "sha256": "f21a29b18bef149fbaab256bf1bc7a8e0bddd8fb08232a49877985a9d679211b"
+          "sha256": "5ed7ff212effa39ee304fa1b56d65acf855643a65ec77d7c6aa666d9430a1b9c"
         },
         {
           "name": "tools/discrimination.py",
@@ -1438,11 +1444,11 @@
         },
         {
           "name": "tools/gen_manifest.py",
-          "sha256": "5c16d12e0cc9fdecaf6979acdea3aa8f38e35241adfbd3b1b6690c42544d02c9"
+          "sha256": "188d1bb9820d1abc3b055e899b8567ad4a50f7067728c4b179e32fccb063baa9"
         },
         {
           "name": "tools/scope_validation.py",
-          "sha256": "dab360903bf8e54eb6536669ec2b897d4e6024c891f0393f74d16c13d88ad9e4"
+          "sha256": "b1ba8fad787e1e053bc9949e5bcf09617162d56849e1cc72c881f22f792c22cb"
         }
       ]
     },
