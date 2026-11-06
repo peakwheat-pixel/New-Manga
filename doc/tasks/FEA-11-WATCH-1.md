@@ -164,7 +164,7 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 | EV-01 | AC-W5 | verification/FEA-11-WATCH-1/changed-files.txt | - | bec9d2112206410bb82de0a4927b753b11f4a73890f2059faa2b0fcf17259267 | CANONICAL |
 | EV-02 | AC-W1/2 | verification/FEA-11-WATCH-1/host-watch-runtime.json | - | 25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6 | CANONICAL |
 | EV-03 | AC-W5 | verification/FEA-11-WATCH-1/logs/api-inventory.log | - | b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47 | CANONICAL |
-| EV-04 | AC-W5 | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
+| EV-04 | AC-W5 | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | c5268ce992b38f8445b4c2819602a6ee3f180d79af74e62d959c0470886eb6c6 | CANONICAL |
 | EV-05 | AC-W5 | verification/FEA-11-WATCH-1/logs/check.log | - | b71f9a775e30f5466c871f426498ad64b5241562f4be03a0719e1148e4774bdf | CANONICAL |
 | EV-06 | AC-W5 | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | - | c465cf513543bbe68037fb82be6416565d38047c0f7f84cae778b66c146cd4a0 | CANONICAL |
 | EV-07 | AC-W5 | verification/FEA-11-WATCH-1/logs/dotnet-full-2.log | - | 55d157671b724fab4e5b11af1243255d95e48ba79e2d7f1292e57d65c6164faf | CANONICAL |
