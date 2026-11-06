@@ -72,19 +72,37 @@ public sealed class HostRuntime : IAsyncDisposable
         string idempotencyKey, CancellationToken ct = default)
     {
         if (!Policy.WritesAllowed) throw new InvalidOperationException("Host is read-only");
-        // FEA-11-RUN-GRANT-1 (R-4/R1-02③): AcceptRun triggers step execution, so
-        // the Run's source reads are authorized first from the frozen
-        // command/scope pair captured by PrepareRun. A missing/expired slice is
-        // typed RUN_STALE_PREVIEW (R1-11: this API now requires the same-process
-        // PrepareRunAsync; documented in the Handoff limitations).
-        var slice = _preparedSlices.Take(preparedRunId);
-        if (_runAuthorizer is { } authorizer)
-        {
-            await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, ct)
-                .ConfigureAwait(false);
-        }
+        // FEA-11-RUN-GRANT-1 (R-4/R1-02③/R2-03): AcceptRun triggers step
+        // execution, so the Run's source reads are authorized first from the
+        // frozen command/scope pair captured by PrepareRun. A missing/expired
+        // slice is typed RUN_STALE_PREVIEW (R1-11: this API now requires the
+        // same-process PrepareRunAsync; documented in the Handoff limitations).
+        await AuthorizePreparedRunForAcceptAsync(
+            _preparedSlices, _runAuthorizer, preparedRunId, ct).ConfigureAwait(false);
         return await (CoreService ?? throw new InvalidOperationException("Core unavailable"))
             .AcceptRunAsync(preparedRunId, generation, idempotencyKey, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Review r2 R2-03: the exact AcceptRun source-authorization wiring as a
+    /// testable seam (the production ``AcceptRunAsync`` above delegates here).
+    /// Takes the frozen ``{command, scope}`` from the prepared-slice ledger
+    /// (missing/expired -&gt; typed ``RUN_STALE_PREVIEW``) and runs the same
+    /// best-effort authorizer the dispatcher hook uses.
+    /// </summary>
+    public static async Task AuthorizePreparedRunForAcceptAsync(
+        PreparedRunSlices slices,
+        RunSourceAuthorizer? authorizer,
+        string preparedRunId,
+        CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(slices);
+        var slice = slices.Take(preparedRunId);
+        if (authorizer is not null)
+        {
+            await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, token)
+                .ConfigureAwait(false);
+        }
     }
 
     public HostBridgeClient? HostBridge { get; private set; }
@@ -1697,7 +1715,8 @@ public static class RunSourceRange
                 continue;
             }
             scopes.Add(new RunSourceScope(
-                entry.RegistryId, entry.Generation, normalized, KindOf(normalized),
+                entry.RegistryId, entry.Generation, normalized,
+                KindOfSource(target, normalized),
                 target.SourceId, target.Version));
         }
         return (scopes, unresolved);
@@ -1710,6 +1729,24 @@ public static class RunSourceRange
         ".pdf" => "pdf",
         _ => "image",
     };
+
+    /// <summary>
+    /// Review r2 R2-01: the kind of ONE Host scan target. The cold-start
+    /// enumeration carries the Core-recorded ``SourceKind`` (authoritative);
+    /// when it is absent the filesystem decides — a DIRECTORY is a ``folder``
+    /// source. The old extension-only guess classified every folder as
+    /// ``image``, so the mint opened the directory as a file and the whole
+    /// source was skipped (folder Run pre-authorization was never usable).
+    /// </summary>
+    public static string KindOfSource(SourceScanTarget target, string normalizedPath)
+    {
+        var declared = target.SourceKind;
+        if (declared is "image" or "folder" or "zip" or "cbz" or "pdf")
+        {
+            return declared;
+        }
+        return Directory.Exists(normalizedPath) ? "folder" : KindOf(normalizedPath);
+    }
 }
 
 /// <summary>FEA-11-RUN-GRANT-1 (R1-01/R1-04): the Run pre-dispatch authorization
