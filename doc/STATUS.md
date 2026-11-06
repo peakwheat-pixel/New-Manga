@@ -4,19 +4,20 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：无活动 Task（下一候选：[FEA-11-RENDITION-1](tasks/FEA-11-RENDITION-1.md) `proposed`，承接 L10，需先 scope review）。已闭环：[FEA-11-WATCH-1](tasks/FEA-11-WATCH-1.md) `done`（r3 APPROVE；`00083a977`；AC-W1…W5 MET；AC11-1 仍 PARTIAL）；[FEA-11-SCAN-2](tasks/FEA-11-SCAN-2.md) `done`（`555f57b8d`）；[FEA-11-SCAN-2-PREREQ-1](tasks/FEA-11-SCAN-2-PREREQ-1.md) `done`（C-17 v1.1）；[FEA-12-UI](tasks/FEA-12-UI.md) `done`（`a46d4d5c7`）；[FEA-11-SCAN-1](tasks/FEA-11-SCAN-1.md) `done`（`7080167e1`）；[FEA-11-MATCH-1](tasks/FEA-11-MATCH-1.md) `done`（`869b6d5d5`）；[FEA-11-AC4-GAPS-1](tasks/FEA-11-AC4-GAPS-1.md) `done`（`2d9a4a219`）；[FEA-12-CORE](tasks/FEA-12-CORE.md) `done`（`51e139eff`）；[FEA-12-DSIM-1](tasks/FEA-12-DSIM-1.md)/[FEA-12-PREREQ-1](tasks/FEA-12-PREREQ-1.md)/[FEA-11-LINEAGE-1](tasks/FEA-11-LINEAGE-1.md) `done`；[FEA-11-HOST-AUTH-1](tasks/FEA-11-HOST-AUTH-1.md) `closed_with_limitations`。
+- 当前 Task：`FEA-11-RENDITION-1` `proposed`（[卡](tasks/FEA-11-RENDITION-1.md)；承接 L10：Run/provider 消费当前 binding 的真实 referenced rendition；须先 scope review 再冻结释放）。
+- FEA-11 线已闭环：WATCH-1 `done`（`00083a977`）、SCAN-2 `done`（`555f57b8d`）、SCAN-1 `done`（`7080167e1`）、MATCH-1 `done`（`869b6d5d5`）、AC4-GAPS-1 `done`（`2d9a4a219`）、LINEAGE-1 `done`（`90a8c8218`）、HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡（PREREQ-1/CORE/DSIM-1/UI）`done`。
+- **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
-- **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（2026-11-01，[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)；FEA-12 scope 冻结 [ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
-- 下一步：WATCH-1 done（1527/0/86、pytest 3212/10、pins 18/18）；如需继续，先对 RENDITION-1 做 scope review（AC11-1 仍 PARTIAL）。
-- **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；14 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
+- **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)、[ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
+- **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；17 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结（18 pins）；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
 ## 近期完成
-- **FEA-10** `done`（2026-11-04；delivery `d1972f0f`；P0/P1=0；.NET 1345/0/75、pytest 1058、IPC 1；债务 R-005…R-016/F5-01…03）。
-- **FEA-09-UI-1** `done`（`b14e04da`；AC-1…AC-5 MET）；**FEA-09** `done`（`87ca5070`；AC-1…AC-10 MET）。
+- **FEA-10** `done`（`d1972f0f`；P0/P1=0）；**FEA-09-UI-1** `done`（`b14e04da`）；**FEA-09** `done`（`87ca5070`）。
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
+- 测试基线：pytest 3212/10、.NET 1527/0/86（2026-11-06 实测）；FEA-11 线 limitation 见各卡（L10 由 RENDITION-1 承接）。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；main 未推。

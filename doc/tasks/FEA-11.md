@@ -238,6 +238,14 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 - **AC11-1（定时扫描/watcher）仍 PARTIAL（不回填 MET）**：`FEA-11-SCAN-1` **done**（r2 窄面 approved；delivery `7080167e1`），仅闭合「Host 定时扫描生产者」半边；watcher 与启动扫描未承接，登记 `FEA-11-WATCH-1`/`FEA-11-SCAN-2`（proposed，未释放），不得静默缺失。
 - 本补充不改变本卡 `closed_with_limitations` 终态、历史证据字节或 delivery_head。
 
+## Closeout 补充（DSH，2026-11-06；AC11-1 终态裁决）
+
+- **AC11-1 终态：MET（带 limitation）**。裁决记录：[FEA-11-AC11-1-adjudication-2026-11-06](../reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)；独立裁决输入：[AC11-1-ADJUDICATION-INPUT-2026-11-06](../reviews/AC11-1-ADJUDICATION-INPUT-2026-11-06.md)。
+- **解释口径（AC11-1 终态权威）**：「启动/访问前检查」= 启动期冷启动目标枚举 + registry/root 可用性/授权核验（`FEA-11-SCAN-2`）+ 每次访问/读取/操作前 live grant + stable lease + digest 强验证；**不要求**应用启动时对全部已注册源执行全量内容扫描（依据 AD-003 §3.6、C-01b SC-25 FROZEN v5、C-17 v1.1:18）。
+- **四路闭合**：访问前/操作前强验证（FEA-11/FEA-09 既有实现与测试：`source_strict_read.py`、`source_read_refs.py` commit guard）、定时扫描（`FEA-11-SCAN-1` `done` `7080167e1`）、watcher hint/overflow（`FEA-11-WATCH-1` `done` `00083a977`）、冷启动枚举（`FEA-11-SCAN-2` `done` `555f57b8d`）。丢 hint/overflow 后全量重枚举、同 mtime/size 字节变可发现、lease+digest 不被缓存替代、Dirty 阻断新写均有实现/测试。
+- **Limitation `AC11-1-L-STARTUP`**：启动不做全量内容扫描；外部变化最迟在默认 900s（`NEWMANGA_SOURCE_SCAN_INTERVAL_SECONDS`，可配 [60,86400]）的下一周期或下一次访问/操作时被发现；访问时检测为 typed 阻断（`FILE_IDENTITY_CHANGED`/`SOURCE_GRANT_REVOKED` 等），后台 changed 观察由周期/watcher 产生；不承诺应用启动即发现。若产品要求更低延迟，另立可选卡（非 AC11-1 前置）。
+- **历史字节**：本卡 `:103` 的 `- [ ]` 与双 `<<PARTIAL>>` 按字节保留不改；其中「待 scope-r2 冻结」「watcher 承接 SCAN-1」「WATCH-1/SCAN-2 proposed 未释放」等表述已被本补充取代（scope-r2 已 approved；WATCH-1/SCAN-1/SCAN-2 均 done）。本补充不改变本卡 `closed_with_limitations` 终态、`delivery_head`、Canonical Evidence 或 18 pins。
+
 ## Closeout Record
 
 - 实施完成（DSH 接手；Phase A/B/C1/C2/C3/C4/C5），Task → `in_review`（2026-11-05）。

@@ -10,7 +10,7 @@
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（用户裁决；L-1…L-11；r1–r7）||
-|FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 仍 PARTIAL）|
+|FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（Codex 裁决 A；r8 approved；AC3 PARTIAL+10 limitation；`cbd561b4`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
@@ -44,14 +44,13 @@
 
 ## 当前活动程序（2026-10-30 起）
 
-**V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为当前**唯一活动任务 DAG**（V1.1 整改 + 全新 Avalonia UI/UX + Theme Studio 重建）；共享接口契约：[V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；冻结设计基线：`doc/design/redesign-v1/40-fusion/`。
-本 Plan 的历史节点全部保持原状（证据/署名/字节不变），仅"READY 节点"由 V11R 程序接管。
+**V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
 READY 节点：无
 
-完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 closed_with_limitations（2026-11-05）；FEA-11-HOST-AUTH-1 closed_with_limitations（Codex 裁决 A）；FEA-12 四卡（PREREQ-1/CORE/DSIM-1/UI）done；FEA-11 AC4-GAPS-1/MATCH-1/SCAN-1 done（AC11-4/AC11-3 MET/带 limitation；AC11-1 仍 PARTIAL）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
+完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 AC4-GAPS-1/MATCH-1/SCAN-1/SCAN-2/WATCH-1 done（AC11-4/AC11-3 终态见各卡；AC11-1 2026-11-06 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-08→…→FEA-11-PREREQ-1（done）→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12-PREREQ-1/CORE/DSIM-1/UI（done）→ SCAN-2-PREREQ-1（done）→ FEA-11-SCAN-2（done `555f57b8d`；r2 APPROVE；pytest 3212/10、.NET 1500/0/85；AC-S2-1…9 MET）→ FEA-11-WATCH-1（done）→ FEA-11-RENDITION-1（proposed）
+当前 DAG：FEA-11-PREREQ-1→FEA-11（closed_with_limitations）→ 承接卡（AC4-GAPS-1/MATCH-1/SCAN-1 done）→ FEA-12 四卡 done → SCAN-2-PREREQ-1/SCAN-2/WATCH-1 done → FEA-11-RENDITION-1（proposed，待 scope review）
 
 ## 历史快照（终态节点，非当前 DAG）
 
