@@ -1,17 +1,17 @@
 ---
 id: FEA-11-SCAN-2
-title: FEA-11 冷启动全源扫描目标枚举（proposed 占位；方案 B，待裁决）
-kind: design
+title: FEA-11 冷启动全源扫描目标枚举（B1：Core 只读枚举 + Host registry 核验/铸 grant）
+kind: implementation
 governance_version: 3
-status: proposed
-approval: **Codex 2026-11-06 裁决：下一任务 = FEA-11-SCAN-2（冷启动全源扫描目标枚举），先独立 scope review（优先核 B1：Core 业务目标事实 + Host 持久 registry 核验授权/铸新会话 grant），DSH 裁决后再冻结并释放实施**；占位卡：scope 尚未冻结，不得释放实施；来源为 ZCode SCOPE-ADJ-2026-11-05 对 FEA-11-SCAN-1 的显式后续登记（冷启动全源枚举另立 SCAN-2）。需 Lead（DSH）先裁决方案与契约/架构边界。
-suggested_owner: null
-owner: null
-reviewer: null
+status: ready
+approval: 用户 2026-11-06「让 Codex 判断下一部任务，由 DSH 执行」→ Codex `NEXT-TASK=FEA-11-SCAN-2`（先独立 scope review、优先 B1）；scope review `doc/reviews/FEA-11-SCAN-2-scope-r1.md` = **READY-WITH-UNFREEZE/B1**；DSH 裁决 B1 采纳 / S-1 选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣 missing，L-G 保留）/ S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新）/ S-4 登记 limitation；前置契约 **C-17 v1.1 已重冻**（`FEA-11-SCAN-2-PREREQ-1` done，delivery `7451bfaaa`，pins 18/18）；DSH 2026-11-06 冻结本卡并释放
+suggested_owner: dsh（Agent Teams 分片：Core Python + Host/App .NET；Lead 集成）
+owner: fea12-core-py（Core 分片）、fea12-core-host（Host/App 分片）；Lead 集成
+reviewer: 独立上下文 fresh subagent（实现完成后派；未参与实现；session 记录于报告）
 depends_on:
   - FEA-11-SCAN-1
   - FEA-11-SCAN-2-PREREQ-1
-base_commit: null
+base_commit: 703d9eb12   # PREREQ-1 closeout 后 main head（释放点）
 branch: null
 worktree: null
 integration_commit: null
@@ -24,60 +24,113 @@ allowed_paths:
   - doc/reviews/FEA-11-SCAN-2-*.md
   - doc/handoffs/FEA-11-SCAN-2-*.md
   - verification/FEA-11-SCAN-2/**
+  - src/application/sources/scanner.py
+  - src/application/sources/ports.py
+  - src/application/sources/__init__.py
+  - src/infrastructure/sqlite/source_sync.py
+  - src/infrastructure/sqlite/source_read_refs.py
+  - src/bootstrap/core_service.py
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+  - apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+  - apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - tests/core/**
+  - tests/fea09/**
+  - tests/fea11/**
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/**
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/**
 out_of_scope:
-  - 周期扫描执行本体、grant 铸造、预算/退避/单飞（FEA-11-SCAN-1）
-  - watcher 生产者/消费者（FEA-11-WATCH-1）
-  - 通知/attention/UI/持久化扫描结果；自动 plan/apply/删除
-  - 在 DSH 裁决前修改 C-17/C-16/C-15/M2-C1 字节、新增 Core 命令/capability/DTO、修改 18 pins
-  - 真实用户数据/AppData/外部卷/回收站；push；新依赖
+  - C-17 v1.1 / C-16 / C-15 / C-06 / M2-C1 / ADJ-001 冻结字节（已重冻；只读引用）
+  - SQLite schema/migration/索引；新依赖
+  - watcher、扫描算法重写、plan/apply/删除/GC、通知/attention/UI 页面
+  - Host 直连 Core DB 或建立第二套 Book/Page 数据库；自动重新授权
+  - 真实用户数据/AppData/外部卷/回收站；push
 ---
 
-# FEA-11-SCAN-2：冷启动全源扫描目标枚举（占位）
+# FEA-11-SCAN-2：冷启动全源扫描目标枚举（B1 实现）
 
-> **状态：`proposed` 占位卡。scope 尚未冻结，本卡不构成实施授权；不得释放实施。**
->
-> 来源：`FEA-11-SCAN-1` scope review §2.4（方案 B）与 Q-1/Q-6；ZCode SCOPE-ADJ-2026-11-05 裁决把“冷启动全源枚举”显式登记到 `FEA-11-SCAN-2`，不塞进 SCAN-1。`FEA-11-SCAN-1` 的 L-A 明确：重启后目标集为空，直到用户再次导入。
+> **状态：`ready`（scope 已冻结；C-17 v1.1 已重冻 `7451bfaaa`；待 Owner 认领实施）。**
+> 承接 `FEA-11-SCAN-1`（done，`7080167e1`）的 L-A（重启后目标集为空）与 L-G（首次成功扫描前 missing fail-closed）；**不解决** L10（真实 referenced 图源/rendition），**不**把 AC11-1 整体标 MET。
 
-## scope review 结果与 DSH 裁决（2026-11-06）
+## 来源与依据
 
-- 独立 scope review：`doc/reviews/FEA-11-SCAN-2-scope-r1.md` → **READY-WITH-UNFREEZE**；推荐 **B1**；B2 不推荐。
-- DSH 裁决：B1 采纳；S-1 取选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣称 missing，L-G 保留）；S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新，加真实导入判别测试）；S-4 登记 limitation。
-- 实现前置：`FEA-11-SCAN-2-PREREQ-1` 完成 C-17 v1.1 UNFREEZE/重冻/pins 后，由 DSH 冻结本卡 kind/allowed_paths/AC/owner/base 并释放；**当前仍为 proposed 占位，不得实施**。
+1. Codex 裁决：`G:\CODEX\New Manga.workspace\FEA-12\codex-next-task.md`（NEXT-TASK=SCAN-2；先 scope review、优先 B1）。
+2. Scope review：`doc/reviews/FEA-11-SCAN-2-scope-r1.md`（fresh subagent；READY-WITH-UNFREEZE；B1 可行；B2 不推荐；S-1/S-2/S-4）。
+3. 契约：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md` v1.1（`aefa0fa5…`；命令 `source_list_scan_targets`、DTO `ScanTarget/ScanTargets`、capability `source.sync.enumerate/1` 只进 `core.ping.capabilities`）；冻结记录 `doc/plan/FEA-CONTRACT-FROZEN-C17.md`；UNFREEZE 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-06-C17.md`。
+4. 现状：SCAN-1 `SourceScanScheduler`/`HostSourceScanExecutor`（`apps/desktop-avalonia/src/NewManga.Host/Sources/`）、Host `SourceAccessRegistry`（持久化 registry/generation/roots/locator）、Core `sources/source_locations/page_bindings`。
 
-## 目标（草案，待裁决）
+## 目标
 
-在不依赖“用户再次导入”的情况下，使 Host 在冷启动后能够得到可扫描的源目标集，并沿用 `FEA-11-SCAN-1` 的只读周期触发切片（仅调用 `ScanSourceSync`、零写、不建 plan/apply）。目标枚举必须来自**单一权威来源**，不得猜路径、不得成为第二套 Book/Page 数据库。
+Host 冷启动后**无需用户再次导入**即可获得可扫描目标集：Core 只读枚举权威目标（B1），Host 核验持久 registry 授权并铸造新会话 grant，沿用 SCAN-1 的只读周期触发（仅 `ScanSourceSync`、零 Core 业务写、不建 plan/apply）。
 
-候选方案（二者必须先由 DSH 裁决，不得并行实现）：
+## Scope（冻结）
 
-1. **方案 B1：Core 新只读命令**（示例 `ListSourceScanTargets` → `{source_id, registry_id, generation, identity_facts, project_ids[]}`）→ 需 C-17 v1.1：新命令 + capability + DTO + 错误闭集 + 冻结记录 + pin #18 重算（不是新增第 19 pin）+ DSH 批准。
-2. **方案 B2：Host 持久目标索引**（新 Host 私有文件，DPAPI/ACL，存 `registry_id/project_ids/kind/version`，路径从既有 registry `locator` 派生）→ 需按 FEA-00 §8.2 / C-15 §5 审查“Host 不得成为第二套 Book/Page 数据库”，并解决目标与 Core 真实状态的核对/失效。
+### In
+1. **Core**：新增只读命令 `source_list_scan_targets`（wire 见 C-17 v1.1 §5.1/§5.2；application 面、closed shape、零写）；capability `source.sync.enumerate/1` 仅进 `core.ping.capabilities`。
+2. **Host**：Ready 后异步调用枚举（先 probe capability；缺失 → typed fail-closed，不阻塞启动）；`ScanTargets` 与 SCAN-1 内存目标按 `source_id` 合并/去重；对每 target 用持久 `SourceAccessRegistry` 核验 `registry_id/generation/revoked` 并铸造 live grant，再交既有 `ScanSourceSync`；首轮受预算限制、单飞/退避/停机取消沿用 SCAN-1。
+3. **App**：只有「引用导入 Completed」触发一次 Host Refresh；**不再**用 `StableSourceId`/folder `registry_id` 作为扫描目标权威（S-2）；不新增 UI 页面。
+4. **测试/证据**：真实重启 Host/Core（无 App 注册）+ 真实 IPC；wire 命令白名单、零写快照、脱敏、注入时钟零 sleep。
 
-## Scope（草案，待裁决后冻结）
+### Out
+- watcher（WATCH-1）、扫描算法重写、plan/apply/删除/GC、通知/UI 页面、Host 直连 Core DB、第二套书库、自动重新授权、真实用户数据、新依赖。
 
-- In（倾向）：冷启动目标枚举 + 与 `FEA-11-SCAN-1` 内存目标表的安全合并；枚举失败 typed 降级（不阻塞 Host 启动）；目标来源/授权/隐私边界；真实 IPC 与回归证据。
-- Out：扫描执行本体（SCAN-1）、watcher（WATCH-1）、通知/UI、自动 plan/apply/删除、真实用户数据、push、新依赖。
-- 明确不做：不把枚举结果持久化为第二套书库；不在 Host 直连 Core DB；不以“扫描到源”代替用户确认。
+## 实现语义（DSH 冻结）
 
-## Acceptance Criteria（草案骨架，未冻结）
+- **B1 权威**：`source_id` 唯一来自 Core `sources`（`src-<uuid>`）；`source_kind`/`registry_id`/`generation`/`identity_digest`/`project_ids` 来自 Core 只读枚举；Host 只对既有 registry 做**授权核验**，不自行发明 target。
+- **S-2**：App 的导入完成只触发 Host 刷新；禁止用 `StableSourceId`/folder registry_id 冒充 target；实现必须含「真实导入 → 枚举 → target.source_id == Core sources.source_id」判别测试。
+- **S-1 选项②**：生产 file-root 缺失/替换导致 `SOURCE_REGISTRY_UNAVAILABLE` → 该轮枚举/扫描 fail-closed（typed），**不得**输出 `missing`；L-G 保持。
+- **P3-3 决策（C-17 不改字节）**：`source_kind` 在 v1.1 DTO 为 ID；实现必须对未知 kind **fail-closed**（typed skip + 计数），不得猜测；如需五值枚举，另走 additive。
+- **P3-4 决策（C-17 不改字节）**：`project_ids` 沿用 C-17 §5 的 1..20；共享源 book 去重数 >20 时该 target **不进入 targets**（typed skip + 计数日志），**不静默截断、不回退 current 语义**；AC-S2-6 按此冻结。
+- **零写**：枚举与扫描均不写 Core 业务表（14 表快照）；不建 plan/apply/operation/receipt/grant/journal（Host grant 为会话内存/既有持久授权核验）。
 
-- [ ] **AC-S2-1 方案与契约/架构裁决**：方案 B1（C-17 v1.1 只读命令）或 B2（Host 持久索引）二选一，附独立 Review 与 DSH 冻结记录；未裁决前不得实施。
-- [ ] **AC-S2-2 冷启动枚举**：Host 重启后，在无用户交互的情况下恢复可扫描目标集；目标集来自单一权威；重复启动幂等、去重；枚举结果与 `FEA-11-SCAN-1` 目标表合并（按 `source_id` 覆盖）。
-- [ ] **AC-S2-3 授权与隐私**：只枚举仍有效、未被撤销的 registry/roots；不输出/落盘明文路径（若 B2，索引加密 + ACL）；越权/失效目标 typed 跳过并记录 `source_id`/code，不泄露路径。
-- [ ] **AC-S2-4 与 SCAN-1 集成**：枚举不改变扫描零写/单飞/预算/退避语义；枚举失败不阻塞 Host 启动；枚举与首次 tick 的时序确定（测试可注入时钟）。
-- [ ] **AC-S2-5 门禁/证据**：契约变更（若 B1）完成正式 UNFREEZE/重冻；pins 18/18（pin 重算）；`check.ps1` PASS；`dotnet test` 全量不减少；真实 IPC（隔离 DataRoot）；0 域外 diff；无新依赖。
+## Acceptance Criteria
+
+- [ ] **AC-S2-1 冷启动枚举（真实重启）**：新 Host 进程 Ready 后（无 App 注册、无用户交互）调用 `source_list_scan_targets` 并得到 targets；wire 命令白名单恰含 `{core.ping, OpenHostSession, source_list_scan_targets, RegisterSourceReadGrant, ScanSourceSync}`（顺序不敏感）；无 plan/apply/删除命令帧。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-2 与会话导入合并/去重**：App 导入 Completed 触发 Refresh；枚举结果与 SCAN-1 内存目标按 `source_id` 合并去重；重复 Refresh 幂等、targets 不增长。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-3 Core source_id 权威（S-2 判别）**：真实导入一本书 → 枚举 → `target.source_id == Core sources.source_id`（`src-<uuid>`），且 ≠ `StableSourceId`；判别测试必须能在 App 误用 StableSourceId 时转红。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-4 registry 授权核验**：target 的 `registry_id/generation` 与 Host 持久 registry 匹配才铸 grant；registry 缺失/撤销/代次漂移 → typed skip（不扫描、不自动重新授权、不泄露路径）；撤销后同 target 不再扫描。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-5 启动前缺失/删除（S-1②）**：生产 file-root 缺失/替换 → typed `SOURCE_REGISTRY_UNAVAILABLE` fail-closed，**不是** `missing`；该轮不产生 `ScanSourceSync` 帧；L-G 口径保留。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-6 共享源 project_ids 边界（P3-4）**：共享源 `project_ids` 去重数 ≤20 时正常进 targets；>20 时该 target 不进入且 typed skip 计数，不静默截断/不回退 current。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-7 预算/单飞/退避/取消**：首轮枚举+扫描受 SCAN-1 预算（8 目标/256MiB）且不阻塞 Host Ready；枚举与 tick 单飞不重叠；停机取消在安全检查点；可注入时钟（零 sleep）。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-8 零写/脱敏**：枚举与扫描前后 14 表快照逐行相等（Core 业务库零写）；wire/日志/错误无路径、无 secret、无 grant/session 原文；缺 location facts → typed skip 不伪造 identity。 <<NOT_APPLICABLE: 待实施>>
+- [ ] **AC-S2-9 门禁与回归**：`pytest tests/core tests/fea09 tests/fea11`、全量 pytest（基线 **3203/10** 不降）、全量 .NET（基线 **1486/0/82** 不降；首跑 flaky 复跑并记录；跑后 `git checkout -- verification/FEA-09`）、`python tools/generate_api_inventory.py --check` PASS、`verify_pins.ps1` **18/18**、`check.ps1 -TaskPath` PASS、scope diff 仅本卡 allowed_paths（C-17/C-16/C-15/C-06/M2-C1/ADJ-001 零 diff）、AC11-1 仍 PARTIAL、L10 不解决。 <<NOT_APPLICABLE: 待实施>>
+
+## 预期行为变更（Review 不判回归）
+
+1. 冷启动后（原 SCAN-1 目标集为空）现在会自动扫描已注册且仍授权的旧源；本卡目标行为。
+2. App 的扫描目标注册语义改为「Completed 后触发 Host Refresh」，不再以 App 计算 id 作为权威（S-2）；SCAN-1 既有单测中依赖 App 注册 id 的断言需按新语义调整。
+3. 生产 file-root 缺失/替换从「未覆盖」变为 typed `SOURCE_REGISTRY_UNAVAILABLE`（S-1②）；不产生 missing。
+4. 共享源 >20 books 的 target 不进枚举结果（typed skip），不截断、不回退 current。
+
+## 允许修改范围
+
+frontmatter `allowed_paths` 为准；分片 A（Core Python）与分片 B（Host/App .NET）写域互不相交；Lead 保留 STATUS/PLAN/LEDGER/reviews/契约/冻结记录。
+
+## 禁止范围
+
+不改已重冻的 C-17 v1.1 与其他 17 冻结契约/ADJ-001 字节；不改 schema/migration/依赖；不碰真实数据/回收站；不建第二套 Book/Page 库；不自动重新授权；不 push；实现者不得自审。
+
+## 测试要求
+
+| 计划测试 | 命令/方法 | 环境 | 期望 | 证据路径 |
+|---|---|---|---|---|
+| Core 枚举单测 | `pytest tests/core -q -p no:cacheprovider` | 隔离 DB | PASS（closed shape/只读/排序/去重/上限/unknown kind fail-closed） | `verification/FEA-11-SCAN-2/logs/pytest-core.log` |
+| 真实重启 IPC | 新 Host 进程 + 真实 Core + 隔离 DataRoot（无 App 注册） | 隔离 | PASS（命令白名单、14 表零写、typed 缺失） | `verification/FEA-11-SCAN-2/logs/restart-ipc.log` |
+| 全量 Python | `pytest tests -q -p no:warnings --tb=no` | 仓库根 | **≥3203/10**，0 回归 | `logs/pytest-full.log` |
+| 全量 .NET | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --no-build` | 仓库根 | **≥1486/0/82**；flaky 复跑并记录；跑后恢复 FEA-09 | `logs/dotnet-full-*.log` |
+| API inventory / pins / check | `python tools/generate_api_inventory.py --check`；`verify_pins.ps1`；`check.ps1 -TaskPath` | 仓库根 | PASS；18/18；PASS | `logs/gates.log` |
+| 范围 diff | `git diff --name-only 703d9eb12..HEAD -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py` | 仓库根 | 空 | `logs/scope-diff.log` |
 
 ## 依赖、风险与阻塞
 
-- 依赖：`FEA-11-SCAN-1`（必须完成后才有目标表/调度器可接）；DSH 对 B1/B2 的架构裁决；B1 还需契约冻结流程。
-- 风险：①跨契约变更面约为 SCAN-1 的 2–3 倍；②Host 持久索引可能违反“Host 不成为第二套数据库”；③冷启动枚举与真实状态漂移（Core 已删除/替换源）需要核对策略；④隐私/路径泄露；⑤范围蔓延到通知/UI。
-- 阻塞解除标准：DSH 裁决方案 + （若 B1）契约重冻 + 独立 Review。
-
-## 交付与运行记录
-
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无（占位；未实施）。
+- 依赖：SCAN-1 done（`7080167e1`）；PREREQ-1 done（C-17 v1.1，`7451bfaaa`，pins 18/18）；真实 registry/grant 能力。
+- 风险/limitation：**L-S1** registry resilience（file-root 缺失整库 `SOURCE_REGISTRY_UNAVAILABLE`，另立缺陷卡）；**L-S4** `refresh_source_location_auth` 死代码（撤销/重注册后 Core location auth 不更新，只读切片无法恢复）；L-A/L-G 承接；大库 IO/冷启动预算未标定；枚举只读但不解决 L10 referenced 图源；**AC11-1 仍 PARTIAL**（watcher/访问前策略未承接；WATCH-1 不同时释放）。
+- 阻塞：无（契约已重冻、scope 已冻结）。
 
 ## Canonical Evidence
 
@@ -88,14 +141,15 @@ out_of_scope:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（未创建） | NOT_APPLICABLE | — | — | — |
-| temp | — | NOT_APPLICABLE | — | — | 尚未产生 |
+| worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-11-SCAN-2\` | DELETE_SAFE | — | verification/FEA-11-SCAN-2/logs/gates.log | 仅隔离 IPC/测试临时根；closeout 删除并记录字节数 |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2\` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-2` | verification/FEA-11-SCAN-2/logs/gates.log | 过程日志副本；保留不清理 |
 
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：0（尚无操作）。
-- 未关闭项及保留原因：整个 scope 未冻结，等待 DSH 裁决。
-- 当前指针清理：无需更新（占位卡）。
+- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
+- 未关闭项及保留原因：L-S1/L-S4、L-A/L-G、AC11-1 仍 PARTIAL、L10 不解决。
+- 当前指针清理：待 DSH closeout 时更新 STATUS / Plan / TASK_LEDGER 或说明无需更新。
