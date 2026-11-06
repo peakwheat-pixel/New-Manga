@@ -80,7 +80,7 @@ out_of_scope:
 | 项 | 内容 |
 |---|---|
 | 落点 | `src/bootstrap/core_service.py`（host-control 命令注册/分发、能力公告、handler）与 `src/infrastructure/resource_channel/source_read_refs.py`（`authorize_run_bindings` 等，复用 `_grants`/`_bindings`/`_checked`） |
-| 命令 | `AuthorizeSourceReadForRun`（host-control envelope；请求 `{grant_ids, command, scope}` closed shape；响应 `{bound_pages, refused}`） |
+| 命令 | `AuthorizeSourceReadForRun`（host-control envelope；请求 `{grant_ids, command, scope}` closed shape；成功响应 `{bound_pages}`；任一目标页不可授权 → 整体 typed `SOURCE_ACCESS_DENIED`（details `{refused_pages}`），**不采用 `{bound_pages, refused}` 形态**） |
 | 语义 | 按 C-16 v1.3 §2.4 冻结：校验 grant live/expiry/revoked/session；用**与 Run 相同的 scope 展开器**解析目标页；对每个 healthy binding 按签名 scope 的 `source_id/version/entry(locator\|ordinal\|entry_key)` + facts 校验当前 binding/entry（`source_entries`/`source_locations`，**无路径回退**）；gate open 检查（C-17 §3.3）；refused 非空 → **零绑定写入**整体 typed 失败；成功 → 写进程内 grant→binding 映射（与 `bind_imported_entry` 同构） |
 | 零副作用 | 零 DB 写、不建 plan/apply/journal、不发布资源、不延长 TTL、不撤销/复活 grant；幂等（重复调用同结果） |
 | 能力 | `core.ping` capabilities 增加 `source.read.run/1`（additive；缺失不探测） |
@@ -125,9 +125,9 @@ out_of_scope:
 - [x] **AC-R2 真实装配 Run 端到端（判别核心）**：真实 production migrations 库 + 真实 zip/PNG + 真实 grant + `assemble_core_services`；经新命令绑定后 `create_run(page-scope)` 的 provider `page_frame` 像素/尺寸 = 当前 binding 的图（非 managed 旧图），`source_commit_guard` 通过，提交后 region/revision/lineage 行数符合预期；**判别性**：删「写绑定」→ provider `INVALID_INPUT`/commit typed 失败；绑定指错 entry → 仍 fail-closed。证据：`tests/fea11/test_source_run_grant.py` + `logs/discrimination.log`。 <<MET>>
 - [x] **AC-R3 fail-closed 全覆盖**：①无 grant ②grant 过期（注入 clock）③撤销 ④scope/facts 不匹配 ⑤gate pending ⑥Run 中途 binding 被 sync 切换 → 全部 typed（Run 面既有 `DB_FAILED`/`PROVIDER_FAILED`/`TARGET_NOT_FOUND` 投影，不新增码）、**零业务写**（region/revision/lineage/保护/进度表不变，`read_entry_bytes`/`source_lease` spy 0 次）、不崩溃。证据：参数化 6 例。 <<MET>>
 - [x] **AC-R4 Host 接线与生命周期**：`library_start_run`/`AcceptRun`/`ControlRun`(continue/restart)/`ResumeBlockedRun`/`RetryFailedTargets` 前置授权被调用；授权失败**不 dispatch** 且返回该 typed code（不新增 Run 面码）；能力缺失 → 跳过授权按现状 dispatch；`_payloads`/`_grants` 剪枝上界测试；真实 IPC（opt-in）铸造→绑定→resolve 成功、撤销后 typed、wire 无路径泄漏。证据：`Fea11RunGrantIpcTests.cs`（`NEWMANGA_FEA11_IPC=1` 实跑并记录）、`SourceRegistryTests.cs`。 <<MET>>
-- [x] **AC-R5 managed 零回归**：managed-only Run 不调用新命令/不触碰 grant registry（探针 0 次）；`TargetSnapshot.metadata` 键集合不变；`pytest tests/fea11 tests/providers` 不减少（基线 fea11 145 + providers 559/4）。证据：探针用例 + 定向日志。 <<MET>>
-- [x] **AC-R6 零漂移与门禁**：scope diff ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`schema.py`/依赖/`apps/**`（超出 3 个 Host 文件）/`core_assembly.py` 零 diff；Run wire 请求/响应键集快照不变（`StartRun`/`PrepareRun`/`AcceptRun`）；`CORE_PROTOCOL_MINOR` 仍 3；全量 `pytest tests` **3249/10 不降**（跑后 `git checkout -- verification/FEA-09`）；全量 .NET **1532/0/86 不降**（跑后恢复 FEA-09；已知 flaky 首跑如实记录 + 隔离复跑）；`verify_pins.ps1` **18/18**；`check.ps1`（默认 + `-TaskPath`）PASS；`generate_api_inventory.py --check` PASS。证据：`logs/gates.log`、`scope-validation.log`、`changed-files.txt`。 <<MET>>
-- [x] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10 与未宣称项；独立 Review approved（P0/P1=0 或 findings 已处置）；卡面未写「全场景可用/  L-R1 全修」。 <<MET>>
+- [ ] **AC-R5 managed 零回归（Review r1 修订口径，见「Review r1 处置」）**：①**Core 授权面**：managed 页被跳过（`bound_pages=0`、零映射、零 DB 写）；②**Host 预授权为 best-effort**：mint I/O 失败/能力缺失/无相关源 → **跳过该源或整体跳过，不得阻断 Core 本可接受的 Run**（managed-only Run 必须到达 dispatch，零行为变化；判别性测试覆盖「mint 失败仍 dispatch」）；③managed 页 provider 仍读 Managed Copy、`TargetSnapshot.metadata` 键集合不变；④全量套件不减少。证据：Core managed 用例 + Host best-effort 判别性测试 + 全量门禁。 <<PARTIAL: 待 r1 findings 返修 + r2 窄面复审>>
+- [ ] **AC-R6 零漂移与门禁**：scope diff ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`schema.py`/依赖/`apps/**`（超出 3 个 Host 文件）/`core_assembly.py` 零 diff；Run wire 请求/响应键集快照不变（`StartRun`/`PrepareRun`/`AcceptRun`）；`CORE_PROTOCOL_MINOR` 仍 3；全量 `pytest tests` **3249/10 不降**（跑后 `git checkout -- verification/FEA-09`）；全量 .NET **1532/0/86 不降**（跑后恢复 FEA-09；已知 flaky 首跑如实记录 + 隔离复跑）；`verify_pins.ps1` **18/18**；`check.ps1`（默认 + `-TaskPath`）PASS；`generate_api_inventory.py --check` PASS。证据：`logs/gates.log`、`scope-validation.log`、`changed-files.txt`。 <<MET>>
+- [x] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10/L-G12（含容器成员 entry 通道）与未宣称项；独立 Review **r1 changes_requested → findings 处置 → r2 窄面复审**（不得以 r1 未批准状态关闭）；卡面未写「全场景可用/ L-R1 全修」。 <<PARTIAL: 待 r2 窄面复审>>
 
 ## 已知 limitation（预登记，closeout 必须保留）
 
@@ -139,9 +139,30 @@ out_of_scope:
 - **L-G9**：Core 重启后 `_bindings`/grants 丢失，referenced Run 不可续跑（typed fail，用户重发）。
 - **L-G10**：L-R11（assembly `read_gate` 与 resolve 面 `_assert_source_sync_gate` 的「无 publication 行」判定不一致）另立 follow-up；本卡不碰该 gate 语义。
 - **L-G11**：binding 解析必须在 Core（Host 不提供 page→binding 映射）；Host 只传 `grant_ids + command + scope`。
-- **L-G12（本卡实测新增，待 DSH 裁决/立项 follow-up）**：Host 侧没有“Core source_id/version”通道——`source_list_scan_targets` DTO 不含 `version_id`，寒启动枚举的 `SourceScanTarget.Version` 固定为 `"1"`；而 C-16 v1.3 §2.4 的 Core 匹配要求 `scope.version == binding.accepted_source_version`（Core 生成的 `sv-…`）。因此生产 Host 用既有 `IssueAsync` 铸出的容器 grant 通常与真实 binding version 不匹配 → 授权 typed `SOURCE_ACCESS_DENIED`、Host 不 dispatch（fail-closed，非静默放行；比 L-R1 的“跑到步骤才失败”更早更明确）。本卡证据证明 **Core 级机制完整可用**，Host 接线在 Host 已知源携带正确 version 时可用（.NET IPC 用冻结 fixture `s1`/`sv1` 实跑成功）；生产可用性受该 version 通道缺口限制。缓解候选（另卡）：①App/枚举路径传入 Core version；②Host 从 `ScanSourceSync` 结果缓存 `source.version_id`；③契约层允许 facts-only 匹配（需 UNFREEZE）。
+- **L-G12（本卡实测新增；Review r1 扩写，2026-11-07）Host→Core 源身份通道缺失**：①**version 通道**：`source_list_scan_targets` DTO 不含 `version_id`，寒启动枚举 `SourceScanTarget.Version` 固定 `"1"`，而 C-16 v1.3 §2.4 要求 `scope.version == binding.accepted_source_version`（Core `sv-…`）→ 生产 Host 铸出的容器 grant 通常 version 不匹配 → 授权 typed `SOURCE_ACCESS_DENIED`、Host 不 dispatch（fail-closed）。②**容器成员 entry 身份通道**：Host 对 zip/cbz/pdf 只铸**容器单 entry**（`locator=容器文件名`、`ordinal=0`），Core 按成员 `source_entries` 匹配 → **多成员归档只有 Core `ordinal=0` 那页可被授权**（.NET IPC p1 成功/p2 typed 拒绝即实证；该拒绝是 fail-closed、非越权）。因此可用边界必须收窄为「**image/folder 单 entry 源 + 归档首成员**」；「version 已知时可用」对多成员容器不成立。缓解候选（另卡 `FEA-11-RUN-GRANT-2`，proposed）：①App/枚举路径传入 Core version；②Host 从 `ScanSourceSync` 结果缓存 `source.version_id`；③容器成员 locator/ordinal 通道；④契约层 facts-only 匹配（需 UNFREEZE）。**不得**表述为「referenced Run 全场景可用」。
 - **L-G13**：已知 flaky（`library.db-shm` 锁、`test_sandbox_job_kills_grandchildren`）——首跑失败如实记录 + 隔离复跑，不静默重试。
 - **未解决**：L-R1 在本卡后仅「窗口内可用」；不得表述为产品级全场景修复。
+
+## Review r1 处置（DSH 裁决，2026-11-07）
+
+> Review=r1 `doc/reviews/FEA-11-RUN-GRANT-1-r1.md`（独立 fresh subagent `62c6bf16…`；changes_requested P0=0/P1=1/P2=3/P3=7；reviewed_head `7ff49f1cc`）。处置决定：**P1/P2 返修 + AC 口径修订；P3 随返修/文档处置**；修后 r2 窄面复审，r2 approved 前不得 closeout。
+
+| Finding | 裁决 | 执行项（Owner） |
+|---|---|---|
+| **R1-01（P1）** AC-R5 Host 层 managed 零回归不成立 | **接受**：AC-R5 按「Core 授权面 + Host best-effort 不阻断」修订（见 AC-R5）；实现改为 **mint/能力/无源失败时跳过授权、不阻断 Run**（仅 Core 对目标页的 typed 拒绝才阻断，R-5）；补 Host 层「mint 失败仍 dispatch / managed-only Run 零行为变化」判别性测试 | 代码 + 测试 + AC-R5 证据 |
+| **R1-02（P2）** AC-R4 证据覆盖不足 | **接受**：补 ①`library_control_run` pause/stop 不触发 ②能力缺失 → 跳过授权并 dispatch ③`AcceptRun` 前置授权（prepared slice） ④`RunSourceTargets` book 过滤/known=0/unresolved 分支；如某分支无可行判别性测试，登记 limitation 由 DSH 在 r2 裁决 | 测试 + 证据 |
+| **R1-03（P2）** L-G12 不完整/口径过大 | **接受**：L-G12 扩写为「version 通道 + 容器成员 entry 身份通道」，可用边界收窄为 image/folder 单 entry + 归档首成员；修正 .NET IPC 测试注释/断言语义；register follow-up 候选 `FEA-11-RUN-GRANT-2`（proposed，不释放） | 文档 + 测试注释 + 卡面 |
+| **R1-04（P2）** 预授权错误面不完整 | **接受**：mint I/O 异常映射为 §6 typed（`SOURCE_ENTRY_MISSING`/`FILE_IDENTITY_CHANGED`）；partial unresolved 语义与 R-7 一致（无法解析 → 视为该源不可授权；若 Run 含其 referenced 页则 Core 拒绝并阻断，否则跳过不阻断）+ 测试 | 代码 + 测试 |
+| R1-05（P3）卡 I-1 响应形态 | 已修：成功 `{bound_pages}`、整体 typed 失败（本卡 I-1） | 卡面 |
+| R1-06（P3）grant_ids 重复语义 | 裁决：重复 id **判 `INVALID_REQUEST`**（请求封闭形状：1..64 唯一）；契约「去重」按「调用方必须去重」解释，测试保持 | 卡面/测试注释 |
+| R1-07（P3）`read_entry_bytes` spy / per-page gate 分支 | 补 `read_entry_bytes` spy（可行则补；否则在 EV 说明 `source_lease` 覆盖读取面）；per-page gate refused 分支用 mixed/legacy binding 覆盖（可行则补，否则登记 limitation） | 测试/证据 |
+| R1-08（P3）host-only 零写口径 | AC-R1 证据口径改为「`total_changes` + 关键表逐表快照」并在测试注释说明；不弱化断言 | 测试注释/卡面 |
+| R1-09（P3）EV 装配描述 | 修 EV 措辞（commit 行数用例为 RENDITION-1 同构 harness，非 `assemble_core_services`） | 证据 |
+| R1-10（P3）Handoff「能力缺失有单测」不实 | 返修补测试或删表述；以实际为准 | Handoff |
+| R1-11（P3）AcceptRun prepared-slice 行为变化 | 在 Handoff limitations 登记：`AcceptRunAsync` 需先同进程 `PrepareRunAsync`（否则 `RUN_STALE_PREVIEW`）；仓内 App 无调用点 | Handoff |
+
+- **AC 修订记录**：AC-R5 由「managed-only Run 不调用新命令」修订为「Core 授权面 managed 跳过 + Host best-effort 不阻断（判别性测试）+ managed 读/metadata 零回归」；AC-R7 增加「r1→r2 复审链」与 L-G12 容器边界。其余 AC 不变。
+- **不得**：以 r1 未批准状态 closeout；不得删/弱化既有断言；不得把 `SOURCE_*` 新增进 Run 面错误码。
 
 ## 测试要求
 
@@ -162,4 +183,4 @@ out_of_scope:
 - **门禁实测（`7ff49f1cc`）**：定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` → **49 passed**；全量 `pytest tests` → **3280 passed / 10 skipped**（卡基线 3249/10）；全量 `dotnet test NewManga.sln -c Release` → **1535 / 0 / 88**（卡基线 1532/0/86）；`NEWMANGA_FEA11_IPC=1` 的 `Fea11RunGrant` → **2 passed**；`verify_pins.ps1` **18/18 PASS**；`check.ps1`（默认 + `-TaskPath`）**PASS**；`generate_api_inventory.py --check` **EXIT=0**；scope diff ⊆ `allowed_paths`（禁止面全空、`CORE_PROTOCOL_MINOR` 仍 3）；判别性 **5/5 破坏点变红 + 字节级恢复**。
 - **未运行项**：无（上述门禁全部实跑）；已知 flaky/环境交互：全量 .NET 首跑 1 例 `FluentResidual2VisualEvidenceTests` 因运行时 `verification/` 工作树快照变化失败，恢复 FEA-09 tracked 字节 + 证据目录稳定后隔离复跑全绿（非产品缺陷，详见 Handoff §2）。
 - **证据索引**：`verification/FEA-11-RUN-GRANT-1/EV.md`（每文件 sha256 + AC 矩阵）、`logs/feature.log`、`logs/host-ipc.log`、`logs/host-unit.log`、`logs/full-pytest.log`、`logs/full-dotnet.log`、`logs/gates-governance.log`、`logs/discrimination.log`、`scope-validation.log`、`changed-files.txt`、`RESOURCE-MANIFEST.json`。
-- **不夸大**：本卡交付「窗口内可用 + Host 源范围/version 已知时可用」；**不得**表述为「referenced Run 全场景可用」或「L-R1 全修」；L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/**L-G12** 保留。独立 Review 由 Lead 指派（非实现者/非本会话）。
+- **不夸大**：本卡交付「窗口内可用 + **image/folder 单 entry 源与归档首成员**（L-G12 边界）」；**不得**表述为「referenced Run 全场景可用」或「L-R1 全修」；L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/**L-G12** 保留。独立 Review 由 Lead 指派（非实现者/非本会话）。
