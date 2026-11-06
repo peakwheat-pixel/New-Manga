@@ -148,7 +148,7 @@ out_of_scope:
 - **limitations / follow-up**：L-P1（M2-C1 §5.7 HostControl 枚举滞后；follow-up 文档一致性，非协议变更）；L-P2（L-G1 300s / L-G2 加密 / L-G9 重启 / L-G10 gate 不一致由实现卡处置）；L-P3（契约就绪 ≠ 实现/产品可用）；r3 P3 残余（§2.4 结构位置、错误码措辞、folder facts 映射、carrier.md 副本性质、v1.1 pin 重复）已在载体 §6 登记，非契约语义。
 - **Resource Manifest**：删除/移动/归档仓内文件 **0**（`NOT_APPLICABLE`）；工作区 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1-PREREQ-1\tmp\` 含 3 个只读 blob 副本（无独有数据，内容=已提交字节），保留 `PRESERVE_REFERENCED`；`G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\baseline\` 为 Lead 基线日志（保留）。未清理其它任务。
 - **指针清理**：STATUS 当前 Task → `FEA-11-RUN-GRANT-1`（ready，本卡 done）；PLAN 本节点 done；TASK_LEDGER 重生成。
-- **push**：本卡单独 push 前需门禁 PASS（pins/check 已 PASS）；本轮 push 记录在 `FEA-11-RUN-GRANT-1` closeout 或本卡后续提交（见 STATUS push 行）。
+- **push**：**已执行**（2026-11-06，门禁 pins 18/18 + check PASS）：`git push origin main` → `91d224b88..2067789ea`（PRE_HEAD `2067789ea`、PRE_ORIGIN `91d224b88`、AHEAD 3→0、PUSH_EXIT=0、POST_ORIGIN `2067789ea`、AHEAD=0）。
 
 ## 独立复核要求（byte-level）
 
