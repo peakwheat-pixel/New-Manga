@@ -22,7 +22,7 @@
   - 每项 `path` 必须为**同一容器**的绝对路径；
   - `locator`/`ordinal` 为容器内成员身份，**以 Core 权威扫描结果为准，Host 不得自行推断**；
   - 每项 `facts` 必须等于**容器**物理身份（`volume_serial`/`file_id`/`size`/`sha256` 四键同一）。
-- **注册校验（逐项）**：locator 安全（不得 `.`/`..`/绝对）、`ordinal ≥ 0` 且唯一、`path` 一致、facts 与容器身份一致、条目数 ≤ `budget.max_entries`；任一项不满足 → **整 grant typed 拒绝**（`SOURCE_ACCESS_DENIED`，不截断、不部分接受）。
+- **注册校验（逐项）**：locator 安全（不得 `.`/`..`/绝对）、`ordinal ≥ 0` 且唯一、`path` 一致、facts 与容器身份一致、条目数超 `budget.max_entries` → `SOURCE_BUDGET_EXCEEDED`（不截断）；其余任一项不满足 → **整 grant typed 拒绝**（`SOURCE_ACCESS_DENIED`，不部分接受）。
 - **读取/匹配**：沿用既有 `entry_key == entry_id OR locator == source_entries.locator OR ordinal == source_entries.ordinal` + facts 与容器身份比对；**无路径回退**；`find_bound_for_source`/`commit_guard` 语义不变。
 - `folder`（逐成员、路径各自独立）与 `image`（单 entry）语义不变。
 
@@ -58,7 +58,7 @@
 - **r1（`doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r1.md`）**：`changes_requested`，**P0=0 / P1=2 / P2=4 / P3=9**；安全语义逐条通过（无授权放宽）。两 P1：①契约把「条目数 > `budget.max_entries`」也归入 `SOURCE_ACCESS_DENIED`，与既有 `SOURCE_BUDGET_EXCEEDED` 冲突；②复核期间 2A 并发改动进入工作树导致「src/apps 零 diff」在最终工作树不成立（提交面问题）。
 - **处置（2026-11-07）**：①错误码拆分——**条目数超预算 → `SOURCE_BUDGET_EXCEEDED`（不截断）**，其余项不满足 → 整 grant `SOURCE_ACCESS_DENIED`；②§2 示例 decoder 枚举改为 `zip|cbz|pdf|image|folder`；③计数修正（C-16 §10⑥/变更记录、载体 §3 均为「其余 **17** 项不变」）；④冻结记录清理（删除残留旧行、补 v1.4 冻结时间）；⑤C-16 规范化 LF 并重算 pin（`ad25fb3c…`；blob `b9be0acf…`）；⑥提交隔离：UNFREEZE 提交只含本 UNFREEZE 面，2A 改动走其自身提交。
 - **r2 窄面复核（`doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r2.md`，reviewed_head `a0bafc89e`，C-16 字节 `ad25fb3c…`）**：**`approved`，P0=0 / P1=0 / P2=0 / P3=11（非阻断）**；A/B/C/D/E/F 全 PASS；安全语义逐条通过（容器多成员 entry 无授权放宽）；pin 18/18 与其余 17 项不变可复算；`verify_pins`/check/EV 证据一致。
-- **r2 P3 处置（登记，不阻断）**：**N-1** 载体 §6 现按 P3 逐项登记（本条）；**N-2** 载体 §2.B 已改为「超预算 → `SOURCE_BUDGET_EXCEEDED`；其余项不满足 → `SOURCE_ACCESS_DENIED`」（与冻结字节一致）；**N-3** 卡面「其余 16」在本次 closeout 统一为「其余 17（含 C-06/C-17）」；**N-4** 实现侧硬上限 10000 与 `max_entries` 的差异接受为更严 fail-closed，记入 2B 实现卡；**N-5** UNFREEZE 提交按显式 pathspec 只 stage 本 UNFREEZE 面（经 DSH 执行，工作树 `verification/FEA-09` 与 2A 证据均不进入）；**P3-2**（wire 1.3 追溯登记）接受为非阻断；**P3-3** 载体 §4 措辞已修（64 是单次命令 `grant_ids` 上限，不是成员数）；**P3-4**（facts 参考点）/ **P3-5**（ordinal 越界显式拒绝）转入 2B 实现卡作为实现/测试要求；**P3-6** `other-17-pins.txt` 已改为完整 64 hex；**P3-9** 「C-06/C-17 与其余 17」冗余语序接受为非阻断（数字正确，不改冻结字节）。
+- **r2 P3 处置（登记，不阻断）**：**N-1** 载体 §6 现按 P3 逐项登记（本条）；**N-2** 载体 §2.B 已改为「超预算 → `SOURCE_BUDGET_EXCEEDED`；其余项不满足 → `SOURCE_ACCESS_DENIED`」（与冻结字节一致，2026-11-07 修正）；**N-3** 卡面「其余 16」在本次 closeout 统一为「其余 17（含 C-06/C-17）」；**N-4** 实现侧硬上限 10000 与 `max_entries` 的差异接受为更严 fail-closed，记入 2B 实现卡；**N-5** UNFREEZE 提交按显式 pathspec 只 stage 本 UNFREEZE 面（经 DSH 执行，工作树 `verification/FEA-09` 与 2A 证据均不进入）；**P3-2**（wire 1.3 追溯登记）接受为非阻断；**P3-3** 载体 §4 措辞已修（64 是单次命令 `grant_ids` 上限，不是成员数）；**P3-4**（facts 参考点）/ **P3-5**（ordinal 越界显式拒绝）转入 2B 实现卡作为实现/测试要求；**P3-6** `other-17-pins.txt` 已改为完整 64 hex；**P3-9** 「C-06/C-17 与其余 17」冗余语序接受为非阻断（数字正确，不改冻结字节）。
 - **结论**：C-16 v1.4 通过独立 byte-level 复核（r1 changes_requested → 处置 → r2 approved，P0=0/P1=0/P2=0），pins 18/18；可提交 UNFREEZE 并重冻。
 
 ## 7. 证据

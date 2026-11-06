@@ -1,6 +1,6 @@
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-RUN-GRANT-2A.md
-WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：3132 bytes / 27 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6944 bytes / 64 lines
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3126 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6920 bytes / 62 lines
 Governance check: PASS (3 warnings)

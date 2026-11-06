@@ -311,3 +311,49 @@ verdict: approved
 - **未跑项（NOT_RUN）**：全量 `pytest tests`、全量 `dotnet test NewManga.sln`、`NEWMANGA_FEA11_IPC=1` 真实 IPC、`generate_api_inventory.py --check`、`scope_validation.py`；UNFREEZE **提交**及其提交后 diff/pins 复核（提交尚未创建）。已实跑项（`verify_pins`、`check.ps1`×2、sha256/`hash-object`/`git cat-file`、diff 逐行比对、证据哈希复算）均在正文给出命令与结果。
 - **session**：`e032ed9a-ed9d-4282-bfc8-1a1fbe51ea29`（`$DSH_SESSION_ID` 实测）；parent `session-5f1e719c-f1f3-4193-8393-caf4d0936e4a`。
 - 本报告不构成实现授权、不构成产品可用声明，不替代 DSH 的 findings 处置、提交与集成验证。
+
+---
+
+## Addendum（2026-11-07 05:45–05:53，复核后状态；按最终字节补测）
+
+> 正文（§0–§verdict）定稿于 `05:42`、reviewed_head `a0bafc89e`。其后 DSH 创建 UNFREEZE 提交 `d8dcfc07a` 并完成 closeout（`923ce00fd`、`5c95d96f2`），同时对载体 §3/§4③/§6、冻结记录 §7/§8、卡面与证据做了编辑。本节按**最终工作树字节**（HEAD `5c95d96f2`，worktree clean）补测并登记复核后出现的记录一致性问题；**对 C-16 v1.4 冻结字节与 pins 的认定不变**。
+
+### 1. 提交与最终字节实测
+
+| 项 | 实测 |
+|---|---|
+| commits | `d8dcfc07a`（UNFREEZE：15 文件 = 3 个 doc/plan + 载体 + r1 + r2 + 卡 + 9 个证据文件；**不含** `verification/FEA-09/**` 与 `verification/FEA-11-RUN-GRANT-2A/**`）、`923ce00fd`（closeout：PLAN/STATUS/LEDGER/2A/2B 卡）、`5c95d96f2`（2A evidence/card/handoff）；当前 worktree clean |
+| C-16 提交内 blob | `b9be0acfa232154510d8453133ef8803b6b8fbbe`（= 冻结记录 §1 blob id）；工作树 SHA-256 `ad25fb3c…`；提交前后字节未变 |
+| `verify_pins.ps1` @ HEAD | `PIN AUDIT: PASS (all 18)`（C16 `ad25fb3c89bb`） |
+| 提交隔离（N-5 关闭） | `git show --name-only d8dcfc07a` 不含 FEA-09 wire 日志与 2A 证据；复核期间被并发追加的 `verification/FEA-09/logs/wire-redacted.ndjson` 已被回退（`git diff HEAD` 为空） |
+| 最终证据哈希 | 载体/`verification/.../carrier.md` = `c061286c…`（8 541 bytes，二者逐字节相同）；`EV.md` = `1dea4888…`（1 176）；`other-17-pins.txt` = `20991352…`（2 747，**完整 64 hex**，@ `a0bafc89e`，17/17 `UNCHANGED`）；`changed-lines.diff` `349b588b…`、`pre-post.sha256` `bea56b40…`、`pins.log` `6755ba3d…`、`check.log` `63073b8c…`、`check-taskpath.log` `04e0aca2…` 均未变；r1 `f4a618ed…` |
+| 卡面 EV 抽查 | EV-01/EV-10 `c061286c` ✓；EV-02 `f4a618ed` ✓；EV-03 `cf7bb3cd` = 本报告已提交版本 ✓；EV-04 `bea56b40`、EV-05 `349b588b`、EV-06 `20991352`、EV-07 `6755ba3d`、EV-08 `63073b8c`、EV-09 `04e0aca2`、EV-11 `1dea4888` 均与实测一致 ✓ |
+
+### 2. 复核后新增/更新的记录一致性项（不影响 C-16 字节与 pins）
+
+| ID | 严重度 | 事实（最终字节） | 建议 |
+|---|---|---|---|
+| A-1 | P3（建议随后续记录提交修正） | 载体 §6:61 称「**N-2** 载体 §2.B **已改为**「超预算 → `SOURCE_BUDGET_EXCEEDED`…」」，但载体 §2.B:25 仍为旧句「…条目数 ≤ `budget.max_entries`；任一项不满足 → 整 grant typed 拒绝（`SOURCE_ACCESS_DENIED`…）」——「已改为」不成立，且与冻结 `FEA-C16:68` 冲突 | 二选一：①按 §6 所述改 §2.B:25；②把 §6:61 改为「待改/接受为非阻断」。载体非冻结对象；改后刷新 `EV.md`/`verification/.../carrier.md` 哈希与卡面 EV-01/EV-10 即可，**不改 C-16 pins、无需重冻** |
+| A-2 | P3（建议随后续记录提交修正） | 冻结记录 `§1B:37` 仍写「r2 窄面复核 **pending**，见 §8」、`§2:48` 条件 6 仍 `⏳`，而 `§8:96` 已写「**r2 approved**…」——同一记录自相矛盾（closeout `923ce00fd` 未改 FROZEN） | 将 `§1B:37`/`§2:48` 统一为 r2 approved / ✅；不改 pin |
+| A-3 | P3 | 卡 `T-1`（`:45`）仍写「C-17/C-06 及其他 **16** 份契约零字节」；其余位置已统一为「其余 17（含 C-06/C-17）」（`:32`、`:71`、`:83`、`:91`）。按 18−C-16−C-06−C-17 应为 15，或写「其余 17（含）」 | 下次卡面编辑统一 |
+| A-4 | P3（过程） | 本 Addendum 追加后，本报告 sha256 由 `cf7bb3cd…`（卡面 EV-03 的 pin）变化；若纳入提交，需刷新卡面 EV-03 及引用 | DSH 决定是否提交本 Addendum；若提交，同批刷新 EV-03 |
+| A-5 | P3（观察，证据口径） | `logs/check.log`/`check-taskpath.log` 对 `d8dcfc07a` 树可复现（生成于 `05:44`），但 closeout `923ce00fd`（卡 done + STATUS/PLAN/LEDGER）改变了 checker 输入：当前实跑为 `10 个非终态 Task`、STATUS `3126 bytes/27 lines`、PLAN `6920 bytes/62 lines`，与 log 的 `11 / 3132 / 6944` 不同；卡面 EV-07/08/09 以 `d8dcfc07a` 为 commit 口径 | 若门禁要求 log 对 HEAD 可复现，在记录修正提交中重跑 `check.ps1` 并刷新 log/EV；否则在 EV 中明示 log 为 `d8dcfc07a` 时点证据 |
+| A-6 | P3（观察，范围外卡片） | 2B 实现卡（`923ce00fd`）P3-2 备注称「C-16 §0 wire 版本行保留历史追溯说明（v1.3 当时登记 1.2、后更正 1.3）」，但 `FEA-C16:17` 现文并无「当时登记 1.2」字样（只写 v1.3 additive §2.4 + `source.read.run/1`） | 属 2B 卡表述；实现时以冻结字节为准，或下次卡面编辑改为「C-16 §0 未保留 1.2 追溯句，P3-2 接受为非阻断」 |
+
+### 3. 复核后状态变化（对正文的更正）
+
+- **N-1**：**CLOSED**——载体 §6:61 已按 P3 逐项登记处置（但含 A-1 的不实措辞）。
+- **N-2**：由 **A-1** 取代（声称已修、实际未修）。
+- **N-3**：主要已修（`:32`/`:71`/`:83`/`:91` 为 17），残留 `T-1:45` 的「16」→ **A-3**。
+- **N-4**：**CLOSED（接受）**——已在 2B 实现卡登记「max_entries 限制单 grant 条目数、64 限制单次命令 `grant_ids` 数；实现硬上限 10000 为更严 fail-closed」。
+- **N-5**：**CLOSED**——UNFREEZE 提交实测未含 FEA-09/2A 产物；并发追加已回退。
+- **P3-2**：**ACCEPTED（非阻断）**——2B 卡已登记（表述瑕疵见 A-6）；`FEA-C16:17` 字节未改。
+- **P3-3**：**CLOSED**——载体 §4③ 已改为「`max_entries` 限制单 grant 条目数、64 限制单次命令 `grant_ids` 数；二者都不是容器成员数上限」。
+- **P3-4 / P3-5**：**ACCEPTED（转入 2B 卡）**——2B 卡已增「实现注意」：facts 参考点锁定 Core `source_locations` 四键 + 判别用例；ordinal 越界 → 不命中、整 grant typed。
+- **P3-6**：**CLOSED**——`other-17-pins.txt` 已升级为完整 64 hex。
+- **P3-9**：载体 §3/FROZEN §8 已改为「C-06/C-17 在内的其余 17」；C-16 §10⑥/变更记录字节未改（接受为非阻断）。
+- **P2-1 的 P3-Note**：**CLOSED**——FROZEN §7 表尾已恢复「其他 16 pins …（v1.3 阶段断言）」。
+
+### 4. 复核后 verdict
+
+**不变：`approved`（C-16 v1.4 冻结字节与 pins）。** P0=0 / P1=0 / P2=0。复核后仅新增记录文本项：**A-1、A-2 为建议修正**（记录自洽性，P3，非阻断冻结字节），A-3…A-6 为 P3 建议/观察。A-1/A-2 不改变冻结字节、pin、安全语义与 AC-T1…T4，但为避免审计记录自相矛盾，建议 DSH 在下一个记录提交中一并修正（无需重冻、无需再次 byte-level 复审）；若 DSH 不打算再提交，至少应在 EV/卡面注明该两处为已知文本瑕疵。
