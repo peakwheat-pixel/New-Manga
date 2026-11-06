@@ -6,10 +6,10 @@
 
 | 项 | 值 |
 |---|---|
-| HEAD | `5397be149`（main，origin 同步；2A done，2B ready 实现中） |
+| HEAD | `416b1692a`（main，origin 同步，AHEAD=0；2A/2B done） |
 | 本轮已完成 | `FEA-11-RUN-GRANT-1-PREREQ-1` done（`116a711ba`）；`FEA-11-RUN-GRANT-1` done（`a11ded0d3`）；`FEA-11-RUN-GRANT-2B-PREREQ-1` done（`d8dcfc07a`；C-16 v1.4，r2 approved，pins 18/18；记录修正 `29365bf3c`/`44965532f`）；`FEA-11-RUN-GRANT-2A` **done**（`a0bafc89e`；AC-G1…G8 MET；独立 r1 approved P0=0/P1=0；P2 处置；L-G15 修、L-G16 登记） |
 | 基线（2A 交付实测） | 全量 pytest 3281/10；全量 .NET **1559/0/90**；定向 50；SourceRegistry 29；IPC 4；pins 18/18；check PASS(3w) |
-| 下一队列 | ①`FEA-11-RUN-GRANT-2`（2B）实现（ready；Owner `run-grant-2b-impl` 已启动）；②L-S1 registry resilience；③L-S4 死代码；④L-R11 两读面 gate 统一；⑤C-04b 文档 residual；⑥SCAN-2 RH-1…RH-5；⑦UI P3/L3/L4 |
+| 下一队列 | ①`FEA-11-L-S1-REGISTRY-RESILIENCE-1`（proposed，需 scope review）；②2C 长 Run 授权续期（L-G1，另卡）；③L-S4 死代码；④L-R11 gate 统一；⑤C-04b 文档 residual；⑥SCAN-2 RH；⑦UI P3/L3/L4；⑧2B P3-04 可选加固 |
 
 ## 2. 待裁决（需用户产品取舍的候选；DSH 已附推荐并直接交 Codex/DSH 裁决，不阻塞）
 

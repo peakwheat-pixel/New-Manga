@@ -95,3 +95,15 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **下一候选顺序建议**：①`FEA-11-RUN-GRANT-2`（scope review → 冻结/释放；若需 UNFREEZE 走正式载体）；②其他小项（L-S1 registry resilience、L-S4 死代码、L-R11 gate 统一、C-04b 文档 residual、SCAN-2 RH-1…RH-5、UI P3）——均须先建卡 + scope review。
 - **push**：本轮已 `git push origin main` → `2067789ea..d7374ce34`（PRE_HEAD `d7374ce34`、PRE_ORIGIN `2067789ea`、AHEAD 17→0、PUSH_EXIT=0、POST_ORIGIN `d7374ce34`；含 PREREQ-1/RUN-GRANT-1 closeout 与 handoff）；origin/main 与本地同步（AHEAD=0）。
 - **工作区资源**：`G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\`（500+ 测试夹具/日志/判别备份）→ `PRESERVE_REFERENCED`；`FEA-11-RUN-GRANT-1-PREREQ-1\tmp` 保留；未删除任何仓内文件。
+
+## 9. 续接补充（2026-11-07 深夜轮次：RUN-GRANT-2A / 2B）
+
+> 本轮完成 2A + 2B 两卡并 push；下一会话只读本文件 + STATUS/PLAN/LEDGER 即可恢复。
+
+- **FEA-11-RUN-GRANT-2B-PREREQ-1 `done`**（`d8dcfc07a`）：**C-16 v1.4 UNFREEZE**（容器源 entries 1..N；逐项校验/整 grant typed 零部分接受/超预算 `SOURCE_BUDGET_EXCEEDED`；1/18 pin 重签，其余 17 不变）；独立 byte-level r1 changes → **r2 approved（P0/P1/P2=0）**；pins 18/18（C16 `ad25fb3c…`）；记录修正 `29365bf3c`/`44965532f`。
+- **FEA-11-RUN-GRANT-2A `done`**（`a0bafc89e`）：**Host 生产版本通道**（`SourceIdentityCache` 取 Core `ScanSourceSync` 权威 version + entries；冷缓存有界 on-demand；禁 `"1"` 回退；R3-02）；独立 r1 **approved（P0=0/P1=0/P2=2/P3=6）**；AC-G1…G8 MET；L-G15 修复；L-G16 登记（>4096 成员 folder 不入缓存）。
+- **FEA-11-RUN-GRANT-2 `done`**（`018008989`；docs `3dc822b77`/`8e1883655`）：**2B 容器成员 entry 授权通道**（Core `_parse_scope` 1..N + `_scope_covers_entry`；Host 铸 N 项；3 成员 zip/cbz 真实 IPC；66 成员单 grant 末成员可授权；8/8 判别性）；独立 r1 **approved（P0=0/P1=0/P2=0/P3=4）**；AC-J1…J4 MET；P3-01/02/03 处置，P3-04 同名成员子集 follow-up。
+- **基线（2B 交付实测）**：全量 pytest **3305 / 10**；全量 .NET **1562 / 0 / 91**；定向 python 74；SourceRegistry 32；真实 IPC 5；pins 18/18；check PASS(3w)；API PASS；scope changed=7 全 ALLOWED。
+- **当前状态**：无活动 Task；`FEA-11-L-S1-REGISTRY-RESILIENCE-1` **proposed**（需 scope review）；排队：2C 长 Run 授权续期（L-G1，另卡）、L-S4 死代码、L-R11 gate 统一、C-04b 文档 residual、SCAN-2 RH-1…RH-5、UI P3/L3/L4。
+- **limitations 不变**：L-R1 未全修；L-G12② 仅「缓存可用（≤4096 成员）容器源」面闭环；L-G16/L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/L-G13/L-G14 保留；P3-04 可选加固。
+- **push**：本轮 `git push origin main` → `61b7eb249..416b1692a`（PRE_HEAD `416b1692a`、PRE_ORIGIN `61b7eb249`、AHEAD 7→0、PUSH_EXIT=0、POST_ORIGIN `416b1692a`）；origin 同步（AHEAD=0）。
