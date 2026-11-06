@@ -23,3 +23,8 @@ App/UI/Core/contracts/schema/deps/STATUS/PLAN/LEDGER/reviews/18 pins/真实用�
 - verification/FEA-11-WATCH-1/record.md（§2 证据映射 r2 备注 + §7 r2 返修 + §5 sha 更新）
 - doc/tasks/FEA-11-WATCH-1.md、doc/handoffs/FEA-11-WATCH-1-delivery.md（r2 返修记录）
 
+## r2b 追加
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceWatcherTests.cs（RootLost 严格断言 + HintIdleAsync 排空）
+- verification/FEA-11-WATCH-1/logs/**（watcher-unit/dotnet-full-1/2/check/pins/api/gates 重签 + 新增 r2b-rootlost-isolated.log）
+- verification/FEA-11-WATCH-1/record.md（§7.3 更正 + §7.5 r2b + §5 sha）
+

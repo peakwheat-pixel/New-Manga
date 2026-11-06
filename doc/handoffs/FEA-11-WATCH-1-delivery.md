@@ -97,3 +97,9 @@ git diff --name-only 919c9aa1e..HEAD -- doc/plan doc/contracts src/   # 期望�
 - **P3 同批**：P3-1 Stop 窄竞态（hint 在 watcher gate 内、`_started` 为真时发出；OnFileEvent slot 校验；`Stop_WithPendingDebounceTimer_ProducesNoHints`）；P3-2 pytest 全量重跑保留 summary（`logs/pytest-summary.txt`）；P3-3 RootLost 严格断言（Active=0 && Uncovered≥1）、新增 generation-drift/buffer 注入/hint-after-rotation/revoke-after-refresh 用例、overflow 补 `HintPending=false`；P3-4 redaction 口径收窄到 WATCH-1 status + watcher/scheduler 行；P3-5 Sync 改 `Clear()+UnionWith`；P3-6 `DisposeAsync` await 在飞 hint task（2s 上限，`DisposeAsync_WithInFlightHintPass_CompletesWithoutThrowing`）。
 - **r2 门禁**：Host 单测 **185/0/55**；gated **1/0/0**；全量 .NET **1527/0/86**×2；pytest **3212/10**（summary 保留）；pins 18/18、API PASS、check PASS（3 既有 warnings）、scope diff 0；每轮后恢复 `verification/FEA-09`。
 '
+## 9. r2b 返修（r2 窄面复审 P2 测试真实性）
+
+- **P2-1**：`RootLost_IsDegraded_AndReArmsOrCountsUncovered` 的 `Uncovered>=1 || Active>=0` 恒真断言已改为 `Assert.Equal(0, status.Active); Assert.True(status.Uncovered >= 1);`（r2 的 commit message/record 曾误称已改，record §7.5 已显式更正）。
+- **P2-2**：同一用例末行前加 `await fixture.Scheduler.HintIdleAsync();`，排空根删除触发的全目标 hint pass（其占用单飞 gate 使 `TickAsync` 合法返回 false）；隔离重跑 **5/5 全绿**（`logs/r2b-rootlost-isolated.log`）。
+- P3-3 严格断言随 P2-1 落地；P3-1/P3-6 登记为 smoke（已有用例，非确定性 race 复现）。
+- r2b 门禁：Host 单测 185/0/55；全量 .NET 1527/0/86 ×2；check/pins/API/scope 全 PASS；每轮后恢复 `verification/FEA-09`。

@@ -1,0 +1,10 @@
+=== run 1 ===
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 55 ms - NewManga.Host.Tests.dll (net9.0)
+=== run 2 ===
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 54 ms - NewManga.Host.Tests.dll (net9.0)
+=== run 3 ===
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 54 ms - NewManga.Host.Tests.dll (net9.0)
+=== run 4 ===
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 57 ms - NewManga.Host.Tests.dll (net9.0)
+=== run 5 ===
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 56 ms - NewManga.Host.Tests.dll (net9.0)

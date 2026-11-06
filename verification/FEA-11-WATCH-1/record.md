@@ -84,19 +84,20 @@
 | file | sha256 |
 |---|---|
 | `host-watch-runtime.json` | `25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6` |
-| `logs/watcher-unit.log` | `be9d1f711d69d8662892a13b17defc0dd1d1f28c5e421c8eb8521809f6ae0f46` |
+| `logs/watcher-unit.log` | `b8115d599b34b39a70c95cb04748c65a9f7282b527727767d1c1bbce187f7a1c` |
 | `logs/watcher-runtime.log` | `d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699` |
-| `logs/dotnet-full-1.log` | `aa645ea264519329488cc692612bfe574caed2b4bbf2800d061c377d25f92ff1` |
-| `logs/dotnet-full-2.log` | `0efca82dc84b7e05b77510a820272e1f2b4faa4ea3c5273740159fe88c40ffed` |
+| `logs/dotnet-full-1.log` | `c465cf513543bbe68037fb82be6416565d38047c0f7f84cae778b66c146cd4a0` |
+| `logs/dotnet-full-2.log` | `55d157671b724fab4e5b11af1243255d95e48ba79e2d7f1292e57d65c6164faf` |
 | `logs/pytest-full.log` | `db330f47621dea6279c67dd34c7fee3a15e72074d9aae5a17bf09d05e0fdca9e` |
 | `logs/pytest-summary.txt` | `57d272daf80a9a56714bf383494800ed650af9fb09727a54372be35e1c8eb7de` |
+| `logs/r2b-rootlost-isolated.log` | `3d17ea5007724239a2a41a3fba8b3c5c9599dd4ff31d117daede038d7d387049` |
 | `logs/mutation-m1-debounce.log` | `5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355` |
 | `logs/mutation-m2-overflow.log` | `8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52` |
 | `logs/mutation-m3-priority.log` | `d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324` |
-| `logs/check.log` | `db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112` |
+| `logs/check.log` | `2afe8d249b29eadcd4a931fb9da6ca58bc0b66b5cd5faabeb02824c5f7a66fab` |
 | `logs/pins.log` | `f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db` |
 | `logs/api-inventory.log` | `b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47` |
-| `logs/gates.log` | `b797987ae00d3160b876f0cda5f414582cfba48d1ef76f7a6cf055f8882c9de7` |
+| `logs/gates.log` | `4bbb3da7f436a0fb2be7f10204fc1cbfdd3690a51642083762058d36b2a8ebb9` |
 
 全部日志文件与 sha 见 `logs/gates.log`（同目录）；`changed-files.txt`、`scope-validation.log` 在 evidence 根。
 
@@ -132,7 +133,7 @@ r1 Review：`doc/reviews/FEA-11-WATCH-1-r1.md`（P0=0 / **P1=1** / P2=1 / P3=6�
 |---|---|---|
 | P3-1 Stop/Dispose 后零 hint 窄竞态 | **已修**：hint/HintAll 在 watcher `_gate` 内且 `_started` 为真时发出；Stop 持有同一 gate → Stop 返回后不可能再有在飞 timer callback 发出 hint；`OnFileEvent` 增加 slot 有效性校验 | `Stop_WithPendingDebounceTimer_ProducesNoHints`（Stop 时有 pending debounce → 推进时钟后 0 hint/0 scan） |
 | P3-2 canonical pytest 日志缺 summary | **已修**：重跑全量 pytest 并保留完整日志；summary 另存 `logs/pytest-summary.txt`（`3212 passed, 10 skipped`） | `logs/pytest-full.log`、`logs/pytest-summary.txt` |
-| P3-3 RootLost 恒真断言 / 缺测试 | **已修**：RootLost 断言改为 `Active==0 && Uncovered>=1`；新增 generation-drift、buffer 注入、hint-after-rotation、revoke-after-refresh 用例；overflow 用例补 `HintPending=false` | `SourceWatcherTests`（19 例）、`SourceScanSchedulerTests`（59 例） |
+| P3-3 RootLost 恒真断言 / 缺测试 | **r2b 才落地**（r2 commit message 曾误称已修，实际该行仍是恒真断言）：RootLost 断言改为 `Assert.Equal(0, status.Active); Assert.True(status.Uncovered >= 1);`，并在末行 Tick 前 `await HintIdleAsync()` 排空 root-lost hint pass（见 §7.5）；generation-drift、buffer 注入、hint-after-rotation、revoke-after-refresh 用例已在 r2 落地；overflow 用例补 `HintPending=false` | `SourceWatcherTests`、`SourceScanSchedulerTests`；`logs/r2b-rootlost-isolated.log` |
 | P3-4 redaction 口径过宽 | **已收窄**：卡面/记录改述为「WATCH-1 产生的 status 与 watcher/scheduler 日志行」；测试只断言 `source watch*` / `source scan*` 行；gated `host.log` 既有 `host_session` 行不属于本卡 | `HintIsNotAChangedVerdict_AndStatusIsRedacted` |
 | P3-5 Sync Intersect+Union | **已简化**：改为 `Clear()+UnionWith(desired)`（desired 为权威集合，移除不再需要的 source id） | `SourceWatcher.Sync` |
 | P3-6 DisposeAsync 不 join 在飞 hint task | **已修**：dispose 前 `await _hintTask.WaitAsync(2s)`（超时/取消吞掉，不崩）；新增用例验证不抛不挂 | `DisposeAsync_WithInFlightHintPass_CompletesWithoutThrowing` |
@@ -148,3 +149,12 @@ r1 Review：`doc/reviews/FEA-11-WATCH-1-r1.md`（P0=0 / **P1=1** / P2=1 / P3=6�
 | check / pins / API / scope | PASS（3 既有 warnings）/ 18/18 / PASS / 0 行 | `logs/check.log`、`logs/pins.log`、`logs/api-inventory.log`、`scope-validation.log` |
 
 每轮全量后均 `git checkout -- verification/FEA-09`；两轮 0 failed（未触发 flaky）。
+
+### 7.5 r2b 返修（r2 窄面复审 P2：测试真实性）
+
+r2 窄面复审报告：`doc/reviews/FEA-11-WATCH-1-r2.md`（P0=0/P1=0/P2×2；产品代码 P1/P2 已被独立探针证实真修）。r2b 仅改测试与证据：
+
+- **P2-1**：`SourceWatcherTests.RootLost_IsDegraded_AndReArmsOrCountsUncovered` 原断言 `Uncovered>=1 || Active>=0` 恒真（r2 commit message/record/卡面/Handoff 四处曾误称已改）。r2b 改为严格断言：`Assert.Equal(0, status.Active); Assert.True(status.Uncovered >= 1);`——根删除后 watcher 拆除且计入 uncovered，re-arm 不可能（目录已不存在）。
+- **P2-2**：同一用例隔离运行稳定红（5/5），根因是根删除后 `HintAllIfStarted` 的 hint pass 占住单飞 gate，末行 `Assert.True(await TickAsync())` 合法返回 false（产品语义正确）。r2b 在末行前加 `await fixture.Scheduler.HintIdleAsync();`（与 overflow 用例一致），再断言周期 Tick 仍可运行。
+- **P3**：P3-3 严格断言随 P2-1 落地；record/卡面/Handoff 的“已修”表述已与实际字节对齐（r2 commit message 中的误述无法改写，故在此显式更正）；P3-1/P3-6 登记为 smoke（Stop 窄竞态与 DisposeAsync join 已有用例，但非确定性 race 复现）。
+- **r2b 验证**：①该用例隔离重跑 **5/5 全绿**（`logs/r2b-rootlost-isolated.log`）；②Host 全量 **185/0/55**；③全量 .NET RUN1/RUN2 **1527/0/86** 各（两轮 0 failed；每轮后恢复 `verification/FEA-09`）；④check PASS（3 既有 warnings）、pins 18/18、API PASS、scope diff 0。

@@ -1,6 +1,7 @@
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-WATCH-1.md
 WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：3118 bytes / 26 lines
+WARN: doc/STATUS.md 已达到预算的 80%：3054 bytes / 26 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6987 bytes / 64 lines
-Governance check: PASS (3 warnings)
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-11-WATCH-1\logs\check-post-commit.log
+Governance check: PASS (4 warnings)

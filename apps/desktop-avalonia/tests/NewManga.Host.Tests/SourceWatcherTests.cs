@@ -602,9 +602,15 @@ public sealed class SourceWatcherTests
 
         var status = watcher.Status();
         Assert.True(status.Degraded);
-        Assert.True(status.Uncovered >= 1 || status.Active >= 0);
+        // r2b P2-1: strict discriminator (the previous `|| Active >= 0` was always true). The lost root
+        // is disarmed AND counted uncovered; a real re-arm is impossible because the directory is gone.
+        Assert.Equal(0, status.Active);
+        Assert.True(status.Uncovered >= 1);
         Assert.NotNull(fixture.Scheduler.Snapshot().Watcher);
-        // No crash and the periodic path still runs.
+        // r2b P2-2: the root-lost all-target hint pass occupies the single-flight gate, so a manual
+        // TickAsync right after would legitimately merge (false). Drain it first (same as overflow test),
+        // then the periodic path is verified to still run.
+        await fixture.Scheduler.HintIdleAsync();
         Assert.True(await fixture.Scheduler.TickAsync());
     }
 

@@ -150,24 +150,25 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/changed-files.txt | - | cb72f8671aedd1fb6c724a3d6c50406f00e9c7d3491d34dfe50a202fb43a47a1 | CANONICAL |
+| EV-01 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/changed-files.txt | - | bec9d2112206410bb82de0a4927b753b11f4a73890f2059faa2b0fcf17259267 | CANONICAL |
 | EV-02 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/host-watch-runtime.json | - | 25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6 | CANONICAL |
 | EV-03 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/api-inventory.log | - | b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47 | CANONICAL |
-| EV-04 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
-| EV-05 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/check.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
-| EV-06 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | - | aa645ea264519329488cc692612bfe574caed2b4bbf2800d061c377d25f92ff1 | CANONICAL |
-| EV-07 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/dotnet-full-2.log | - | 0efca82dc84b7e05b77510a820272e1f2b4faa4ea3c5273740159fe88c40ffed | CANONICAL |
-| EV-08 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/gates.log | - | b797987ae00d3160b876f0cda5f414582cfba48d1ef76f7a6cf055f8882c9de7 | CANONICAL |
-| EV-09 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m1-debounce.log | - | 5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355 | CANONICAL |
-| EV-10 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m2-overflow.log | - | 8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52 | CANONICAL |
-| EV-11 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/mutation-m3-priority.log | - | d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324 | CANONICAL |
-| EV-12 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pins.log | - | f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db | CANONICAL |
-| EV-13 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pytest-full.log | - | db330f47621dea6279c67dd34c7fee3a15e72074d9aae5a17bf09d05e0fdca9e | CANONICAL |
-| EV-14 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/pytest-summary.txt | - | 57d272daf80a9a56714bf383494800ed650af9fb09727a54372be35e1c8eb7de | CANONICAL |
-| EV-15 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/watcher-runtime.log | - | d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699 | CANONICAL |
-| EV-16 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/watcher-unit.log | - | be9d1f711d69d8662892a13b17defc0dd1d1f28c5e421c8eb8521809f6ae0f46 | CANONICAL |
-| EV-17 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/record.md | - | b21f5ce7e220bd227eb8ed5935641b0c5d476d5b70ac9ea4208168ae46298691 | CANONICAL |
-| EV-18 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/scope-validation.log | - | 3168f2450581421f4aa59188dddd1dac0e88e1ce10aeb41d46912cd9b45a8894 | CANONICAL |
+| EV-04 | AC-W1/2/3/4 | verification/FEA-11-WATCH-1/logs/check.log | - | ed28ade75e02e4c31b27c710ebad9f86cca4c06c55540d7ce0bfa7f4b6d27cbb | CANONICAL |
+| EV-05 | AC-W5（全量 .NET） | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | - | c465cf513543bbe68037fb82be6416565d38047c0f7f84cae778b66c146cd4a0 | CANONICAL |
+| EV-06 | AC-W5（全量 .NET） | verification/FEA-11-WATCH-1/logs/dotnet-full-2.log | - | 55d157671b724fab4e5b11af1243255d95e48ba79e2d7f1292e57d65c6164faf | CANONICAL |
+| EV-07 | AC-W5（门禁/判别） | verification/FEA-11-WATCH-1/logs/gates.log | - | 4bbb3da7f436a0fb2be7f10204fc1cbfdd3690a51642083762058d36b2a8ebb9 | CANONICAL |
+| EV-08 | AC-W2（变异） | verification/FEA-11-WATCH-1/logs/mutation-m1-debounce.log | - | 5f4560d20c9fc43d2492fa578e63a650a4449d30b4dfc371a6d001e15fd62355 | CANONICAL |
+| EV-09 | AC-W3（变异） | verification/FEA-11-WATCH-1/logs/mutation-m2-overflow.log | - | 8d7336cd899a74fcdc43137d6bc34fd97b81ff65a1d73a7d081ff445e3837f52 | CANONICAL |
+| EV-10 | AC-W4（变异） | verification/FEA-11-WATCH-1/logs/mutation-m3-priority.log | - | d045f86351fb7668bcb3dd272486a0ec4993b6687ab3fe7792a4e96245197324 | CANONICAL |
+| EV-11 | AC-W5（pins） | verification/FEA-11-WATCH-1/logs/pins.log | - | f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db | CANONICAL |
+| EV-12 | AC-W5（pytest） | verification/FEA-11-WATCH-1/logs/pytest-full.log | - | db330f47621dea6279c67dd34c7fee3a15e72074d9aae5a17bf09d05e0fdca9e | CANONICAL |
+| EV-13 | AC-W5（pytest summary） | verification/FEA-11-WATCH-1/logs/pytest-summary.txt | - | 57d272daf80a9a56714bf383494800ed650af9fb09727a54372be35e1c8eb7de | CANONICAL |
+| EV-14 | AC-W1（gated） | verification/FEA-11-WATCH-1/logs/watcher-runtime.log | - | d6fe979a8bd84967865b02f96672f2d5405037bbd816fff4457cd1c6b3071699 | CANONICAL |
+| EV-15 | AC-W1/W2/W4（Host 单测） | verification/FEA-11-WATCH-1/logs/watcher-unit.log | - | b8115d599b34b39a70c95cb04748c65a9f7282b527727767d1c1bbce187f7a1c | CANONICAL |
+| EV-16 | AC-W1…W5（实现/返修记录） | verification/FEA-11-WATCH-1/record.md | - | b99b26752790b51c44fca54860a2a4d8089379d595c733aca31826519f40c67a | CANONICAL |
+| EV-17 | AC-W3（r2b 隔离 5/5） | verification/FEA-11-WATCH-1/logs/r2b-rootlost-isolated.log | - | 3d17ea5007724239a2a41a3fba8b3c5c9599dd4ff31d117daede038d7d387049 | CANONICAL |
+| EV-18 | AC-W5（范围） | verification/FEA-11-WATCH-1/scope-validation.log | - | efb88360cf81e317621b514c25a23e9c5b62ef0b8eda7742418fd77f0ec0431a | CANONICAL |
+| EV-19 | 提交后门禁（r2/r2b） | verification/FEA-11-WATCH-1/logs/check-post-commit.log | - | db8a4a5268994f03989d17200fae603bd2d35a06a2b58a46b3c3f8e01bcb3112 | CANONICAL |
 
 ## Resource Manifest
 
@@ -187,7 +188,7 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - limitation：漏事件/设备差异依赖周期扫描兜底（非正确性依赖）；folder 内任意事件视为该 source due（无增量 diff，受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake Core/注入时钟（成功路径由组件级覆盖）；AC11-1 仍 PARTIAL、L10 不解决。
 - Handoff：`doc/handoffs/FEA-11-WATCH-1-delivery.md`。
 - 实现 commit：`e60105cf9`（r1 实现）→ `19a2af7f3`（r2 返修，见 git log；未 push；交付后由 DSH 更新 REBASELINE_PLAN/把卡置 in_review 并集成推送）。
-- **r2 返修（Review r1 CHANGES 处置）**：P1（hint pass 预算起点 0，修复 rotation 游标非 0 时 hinted source 被跳过）+ P2（成功 refresh 含空枚举也通知 watcher 复核，撤销后 Active→0）+ P3-1..P3-6（Stop 窄竞态、pytest summary 重抓、RootLost/新测试、redaction 收窄、Sync 简化、DisposeAsync join in-flight hint）。r2 门禁：Host 单测 **185/0/55**、gated 1/0/0、全量 .NET **1527/0/86**×2、pytest **3212/10**、pins 18/18、API PASS、check PASS、scope diff 0。
+- **r2b 返修（r2 窄面复审 P2 测试真实性处置）**：RootLost 用例改为严格断言 `Active==0 && Uncovered>=1`，并在末行 Tick 前 `await HintIdleAsync()` 排空 root-lost hint pass（隔离 5/5 绿）；record §7.5 记录并更正 r2 commit message 的误述；P3-1/P3-6 登记为 smoke。r2b 门禁：Host 单测 185/0/55、全量 .NET 1527/0/86×2、pins 18/18、API PASS、check PASS、scope diff 0。\n- **r2 返修（Review r1 CHANGES 处置）**：P1（hint pass 预算起点 0，修复 rotation 游标非 0 时 hinted source 被跳过）+ P2（成功 refresh 含空枚举也通知 watcher 复核，撤销后 Active→0）+ P3-1..P3-6（Stop 窄竞态、pytest summary 重抓、RootLost/新测试、redaction 收窄、Sync 简化、DisposeAsync join in-flight hint）。r2 门禁：Host 单测 **185/0/55**、gated 1/0/0、全量 .NET **1527/0/86**×2、pytest **3212/10**、pins 18/18、API PASS、check PASS、scope diff 0。
 
 ## Closeout Record
 

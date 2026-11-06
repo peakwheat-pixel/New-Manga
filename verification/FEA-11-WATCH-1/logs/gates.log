@@ -35,3 +35,10 @@ check.ps1 -TaskPath doc/tasks/FEA-11-WATCH-1.md: PASS（3 既有 warnings）LOG 
 verify_pins.ps1: PIN AUDIT: PASS (all 18) LOG logs/pins.log
 generate_api_inventory.py --check: PASS（C-07 未变）LOG logs/api-inventory.log
 scope diff (919c9aa1e..HEAD -- doc/plan doc/contracts src/): 空（0 行）scope-validation.log
+
+## 7) r2b（r2 窄面复审 P2 测试真实性）
+COMMAND: dotnet test ... --filter "FullyQualifiedName~RootLost_IsDegraded"（隔离，5 次）
+RESULT: 5/5 PASS（logs/r2b-rootlost-isolated.log）
+Host 单测全量：185/0/55（EXIT 0，logs/watcher-unit.log）
+全量 .NET RUN1/RUN2：1527/0/86 各（EXIT 0；两轮 0 failed；每轮后恢复 verification/FEA-09）
+check/pins/API/scope：PASS / 18/18 / PASS / 0 行
