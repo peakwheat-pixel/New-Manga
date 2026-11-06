@@ -33,7 +33,32 @@ public sealed record SourceScanStatus(
     /// refresh was attempted. Counts only — never the skipped target paths/ids from the Host side.
     /// </summary>
     public SourceScanEnumerationStatus? Enumeration { get; init; }
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (AC-W1/W3/W5): the directory-watcher hint status. Counts/typed codes only — the
+    /// snapshot must never carry absolute paths, root names, file names, grants or session material.
+    /// Null when this Host has no watcher attached.
+    /// </summary>
+    public SourceScanWatcherStatus? Watcher { get; init; }
 }
+
+/// <summary>
+/// FEA-11-WATCH-1 (AC-W1/W3/W5): closed, path-free watcher status. <see cref="Armed"/> is false after
+/// Stop/Dispose; <see cref="Uncovered"/> counts targets that cannot be watched (registry/unreadable/
+/// cap/degraded); <see cref="OverflowCount"/> counts OS overflow/invalidation events; a hint only marks
+/// a source due for one full rescan — it is never a changed/deleted fact.
+/// </summary>
+public sealed record SourceScanWatcherStatus(
+    bool Enabled,
+    bool Armed,
+    int Active,
+    int Uncovered,
+    int OverflowCount,
+    bool Degraded,
+    DateTimeOffset? LastHintAt,
+    int HintCount,
+    int DebouncedEvents,
+    int PendingHints);
 
 /// <summary>
 /// FEA-11-SCAN-2 (B1): typed cold-start enumeration state. <see cref="Available"/> is false when the

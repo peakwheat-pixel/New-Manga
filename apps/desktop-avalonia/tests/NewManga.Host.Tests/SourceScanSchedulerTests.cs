@@ -145,6 +145,9 @@ public sealed class SourceScanSchedulerTests
 
         public int ScanCalls => ScannedSourceIds.Count;
 
+        public int ActiveScans;
+        public int MaxConcurrentScans;
+
         public SourceScanBudget? ProbeBudget(SourceScanTarget target) => Budget;
 
         public async Task<SourceScanOutcome> ScanAsync(SourceScanTarget target, CancellationToken cancellationToken)
@@ -154,6 +157,8 @@ public sealed class SourceScanSchedulerTests
             {
                 ScannedSourceIds.Add(target.SourceId);
                 IssuedCommands.Add("ScanSourceSync");
+                ActiveScans++;
+                if (ActiveScans > MaxConcurrentScans) MaxConcurrentScans = ActiveScans;
                 signals = _scanWaiters.Where(waiter => waiter.Count <= ScannedSourceIds.Count)
                     .Select(waiter => waiter.Signal).ToList();
                 _scanWaiters.RemoveAll(waiter => waiter.Count <= ScannedSourceIds.Count);
@@ -162,7 +167,9 @@ public sealed class SourceScanSchedulerTests
             foreach (var signal in signals) signal.TrySetResult(true);
             if (Block is { } block) await block.Task.ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            return Script?.Invoke(target) ?? SourceScanOutcome.Ok(SourceScanCounts.Zero);
+            var outcome = Script?.Invoke(target) ?? SourceScanOutcome.Ok(SourceScanCounts.Zero);
+            lock (_gate) ActiveScans--;
+            return outcome;
         }
 
         public Task WaitForScanCountAsync(int count)
@@ -1314,6 +1321,138 @@ public sealed class SourceScanSchedulerTests
         Assert.True(await scheduler.TickAsync());
         Assert.Contains("s2", executor.ScannedSourceIds);
 
+        await scheduler.DisposeAsync();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-WATCH-1 (AC-W2/W4): watcher hints reuse the existing single-flight/budget/backoff
+    // machinery; a hint is only a due bit, never a changed/deleted verdict.
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task HintedTarget_IsScannedFirst_WithinTheSameBudget()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var scheduler = NewScheduler(executor, clock);
+        for (var index = 0; index < 10; index++)
+        {
+            scheduler.RegisterTarget(Target("s" + index));
+        }
+
+        Assert.True(scheduler.HintSource("s9"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.Equal("s9", executor.ScannedSourceIds[0]);
+        Assert.True(executor.ScanCalls <= 8); // the default budget still applies
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task HintDuringInFlightTick_IsMerged_AndReplayedAtMostOnce()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor
+        {
+            Block = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously),
+        };
+        var scheduler = NewScheduler(executor, clock);
+        scheduler.RegisterTarget(Target("s1"));
+        scheduler.RegisterTarget(Target("s2"));
+
+        var inFlight = scheduler.TickAsync();
+        await executor.WaitForScanCountAsync(1).WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.True(scheduler.HintSource("s2"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.False(await scheduler.TickAsync()); // single-flight: merged, never queued/unbounded
+
+        executor.Block!.TrySetResult(true);
+        Assert.True(await inFlight.WaitAsync(TimeSpan.FromSeconds(10)));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The in-flight pass scanned s1+s2; the single replay pass re-scanned them hinted-first.
+        // AC-W4: each source is scanned at most twice (in-flight + one replay) and never concurrently.
+        Assert.Equal(1, executor.MaxConcurrentScans);
+        Assert.All(
+            executor.ScannedSourceIds.GroupBy(id => id, StringComparer.Ordinal),
+            group => Assert.InRange(group.Count(), 1, 2));
+        Assert.Contains("s2", executor.ScannedSourceIds); // the hinted source is covered by the replay
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task HintedBackoffTarget_IsNotScannedEarly_ThenScannedAfterBackoff()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor { Script = _ => SourceScanOutcome.Error("SOURCE_SYNC_FAILED") };
+        var scheduler = NewScheduler(executor, clock);
+        scheduler.RegisterTarget(Target("s1"));
+        Assert.True(await scheduler.TickAsync());
+        Assert.Equal(1, executor.ScanCalls); // error -> backoff
+
+        Assert.True(scheduler.HintSource("s1"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(1, executor.ScanCalls); // backoff is not bypassed by a hint
+
+        clock.Advance(TimeSpan.FromSeconds(61));
+        Assert.True(scheduler.HintSource("s1"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(2, executor.ScanCalls); // due bit preserved until the backoff expires
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task HintedPausedScheduler_ScansNothing_AndResumeScans()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var scheduler = NewScheduler(executor, clock);
+        scheduler.RegisterTarget(Target("s1"));
+        scheduler.Pause("TEST");
+
+        Assert.True(scheduler.HintSource("s1"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(0, executor.ScanCalls);
+
+        scheduler.Resume();
+        Assert.True(scheduler.HintSource("s1"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(1, executor.ScanCalls);
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task HintTriggeredPass_UsesOnlyScanSourceSync_AndNeverMarksChanged()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log);
+        scheduler.RegisterTarget(Target("s1"));
+
+        Assert.True(scheduler.HintSource("s1"));
+        await scheduler.HintIdleAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.NotEmpty(executor.IssuedCommands);
+        Assert.All(executor.IssuedCommands, command => Assert.Equal("ScanSourceSync", command));
+        var target = Assert.Single(scheduler.Snapshot().Targets);
+        Assert.Equal(SourceScanResults.Ok, target.LastResult);
+        Assert.NotEqual(SourceScanResults.Changed, target.LastResult);
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task HintForUnknownSource_IsIgnored_AndNothingIsScanned()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var scheduler = NewScheduler(executor, clock);
+        scheduler.RegisterTarget(Target("s1"));
+
+        Assert.False(scheduler.HintSource("not-registered"));
+        Assert.True(await scheduler.TickAsync());
+        Assert.Equal(1, executor.ScanCalls); // only the periodic pass for s1, never a hint-driven one
         await scheduler.DisposeAsync();
     }
 }

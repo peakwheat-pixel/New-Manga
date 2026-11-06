@@ -1,4 +1,5 @@
 using NewManga.CoreClient;
+using NewManga.Host.Sources;
 
 namespace NewManga.Host;
 
@@ -116,4 +117,20 @@ public sealed class HostOptions
     /// blocks startup; a missing capability is a typed fail-closed snapshot state.
     /// </summary>
     public bool SourceScanColdStartEnumeration { get; init; } = true;
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (AC-W1/W5): enable the Host-only read-only directory watcher that turns file
+    /// events into per-source due hints for the existing full re-enumeration. Disabled/illegal values
+    /// degrade to the periodic scan only (never a startup failure).
+    /// </summary>
+    public bool SourceWatchEnabled { get; init; } = true;
+
+    /// <summary>AC-W5: maximum armed watches (1..4096, default 256); beyond the cap targets are uncovered.</summary>
+    public int SourceWatchMaxWatches { get; init; } = SourceWatchOptions.DefaultMaxWatches;
+
+    /// <summary>AC-W5: FileSystemWatcher internal buffer (clamped to [4 KiB, 64 KiB]).</summary>
+    public int SourceWatchInternalBufferBytes { get; init; } = SourceWatchOptions.DefaultInternalBufferBytes;
+
+    /// <summary>AC-W2/W5: per-source debounce window in ms (250..60000, default 2000).</summary>
+    public int SourceWatchDebounceMilliseconds { get; init; } = SourceWatchOptions.DefaultDebounceMilliseconds;
 }

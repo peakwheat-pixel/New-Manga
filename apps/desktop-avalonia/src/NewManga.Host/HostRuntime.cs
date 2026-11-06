@@ -83,6 +83,13 @@ public sealed class HostRuntime : IAsyncDisposable
     public SourceScanScheduler? ScanScheduler { get; private set; }
 
     /// <summary>
+    /// FEA-11-WATCH-1 (AC-W1): the Host-only read-only directory watcher. Armed after Ready over the
+    /// scheduler's registered targets only; disarmed (zero future hints) before the scheduler stops.
+    /// Null when watchers are disabled or the Host never became ready.
+    /// </summary>
+    public SourceWatcher? Watcher { get; private set; }
+
+    /// <summary>
     /// FEA-11-SCAN-1 (I-6 / AC-S5): the closed in-process scan status snapshot — the slice's only
     /// observable surface (no wire command, no DB row, no file). Contains typed source ids, result
     /// enums, counts and stable codes only; never absolute paths, grants, sessions or exception text.
@@ -717,6 +724,7 @@ public sealed class HostRuntime : IAsyncDisposable
         }
 
         _disposed = true;
+        StopSourceWatcher();
         await StopSourceScanSchedulerAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
@@ -1216,8 +1224,10 @@ public sealed class HostRuntime : IAsyncDisposable
 
     private async Task StopSidecarsAsync()
     {
-        // FEA-11-SCAN-1 (I-7): stop and join the scan loop BEFORE the Core/host-control session goes
-        // away; the scheduler never reopens a session itself.
+        // FEA-11-WATCH-1 (AC-W1): disarmed first so it cannot produce hints after the scheduler stops;
+        // then stop and join the scan loop BEFORE the Core/host-control session goes away (SCAN-1 I-7:
+        // the scheduler never reopens a session itself).
+        StopSourceWatcher();
         await StopSourceScanSchedulerAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
@@ -1286,11 +1296,58 @@ public sealed class HostRuntime : IAsyncDisposable
             + "s max_targets=" + scanOptions.MaxTargetsPerTick
             + " max_bytes=" + scanOptions.MaxBytesPerSource
             + " cold_start_enumeration=" + (enumerator is not null));
+        // FEA-11-WATCH-1 (AC-W1): arm the watcher AFTER the scheduler exists and BEFORE the cold-start
+        // enumeration so the merge callback re-arms new targets; arming is read-only and never blocks.
+        if (_options.SourceWatchEnabled && sources.Registry is { } watchRegistry)
+        {
+            var watchOptions = new SourceWatchOptions
+            {
+                Enabled = true,
+                MaxWatches = _options.SourceWatchMaxWatches,
+                InternalBufferBytes = _options.SourceWatchInternalBufferBytes,
+                DebounceMilliseconds = _options.SourceWatchDebounceMilliseconds,
+            };
+            Watcher = new SourceWatcher(
+                ScanScheduler,
+                watchRegistry,
+                watchOptions,
+                _options.SourceScanTimeProvider,
+                infoLog: _log.Info,
+                warnLog: _log.Warn);
+            Watcher.Start();
+            _log.Info("source watcher armed enabled=true max_watches=" + watchOptions.MaxWatches
+                + " debounce_ms=" + watchOptions.DebounceMilliseconds);
+        }
+        else
+        {
+            _log.Info("source watcher disabled");
+        }
+
         if (enumerator is not null)
         {
             // AC-S2-1: enumerate in the background after Ready — never block startup and never retry
             // in a storm; a missing capability is a typed snapshot state until an explicit refresh.
             _ = RefreshSourceScanTargetsAsync(ScanScheduler);
+        }
+    }
+
+    /// <summary>FEA-11-WATCH-1: idempotent, synchronous disarm before the scheduler/Core go away.</summary>
+    private void StopSourceWatcher()
+    {
+        var watcher = Watcher;
+        Watcher = null;
+        if (watcher is null)
+        {
+            return;
+        }
+
+        try
+        {
+            watcher.Dispose();
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            _log.Warn("source watcher stop failed: " + error.GetType().Name);
         }
     }
 

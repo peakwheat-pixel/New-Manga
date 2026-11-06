@@ -1,0 +1,10 @@
+{
+  "case": "AC-W1 gated HostRuntime Ready-\u003Earm-\u003Ehint-\u003Edispose",
+  "ready": true,
+  "watcher_attached": true,
+  "armed": true,
+  "active_watches": 1,
+  "hint_count": 1,
+  "overflow_count": 0,
+  "redacted": true
+}

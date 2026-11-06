@@ -206,6 +206,15 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     // r2 P2-1: an App Refresh requested while a tick/refresh holds the single-flight gate is
     // coalesced here and replayed once the in-flight pass finishes (never silently lost).
     private bool _refreshPending;
+
+    // FEA-11-WATCH-1 (AC-W1/W2/W4): watcher hints. A hint is only a per-source "due" bit consumed by
+    // one full ScanSourceSync; hinted targets are ordered first within the same budget. A hint that
+    // arrives while a pass is in flight is coalesced (never queued unboundedly) and replayed at most
+    // once after the in-flight pass, mirroring the refresh rule.
+    private readonly HashSet<string> _hintedSources = new(StringComparer.Ordinal);
+    private bool _hintReplayPending;
+    private Task? _hintTask;
+    private SourceScanWatcherStatus? _watcherStatus;
     private bool _disposed;
     private DateTimeOffset? _lastTickAt;
     private DateTimeOffset? _nextTickAt;
@@ -325,7 +334,191 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         }
 
         _info?.Invoke("source scan target registered source=" + target.SourceId);
+        NotifyTargetSetChanged();
         return true;
+    }
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (I-1): raised OUTSIDE the scheduler lock whenever the target set changed in a
+    /// way that can affect watcher coverage (registration/merge/update). The watcher re-arms in
+    /// response; handlers must be non-throwing and must not call blocking scheduler APIs.
+    /// </summary>
+    public event Action? TargetSetChanged;
+
+    /// <summary>FEA-11-WATCH-1 (I-1): immutable copy of the current targets (path included; Host-only).</summary>
+    public IReadOnlyList<SourceScanTarget> TargetSnapshot()
+    {
+        lock (_gate)
+        {
+            return _targets.Values.Select(state => state.Target).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (AC-W2/W4): marks one registered source as due. The hint carries only the
+    /// source id (never a path/change type) and triggers, after the watcher debounce, one full
+    /// <c>ScanSourceSync</c> pass subject to single-flight/budget/backoff/pause.
+    /// </summary>
+    public bool HintSource(string sourceId)
+    {
+        if (string.IsNullOrWhiteSpace(sourceId))
+        {
+            return false;
+        }
+
+        lock (_gate)
+        {
+            if (_disposed || !_options.Enabled || !_targets.ContainsKey(sourceId))
+            {
+                return false;
+            }
+
+            _hintedSources.Add(sourceId);
+        }
+
+        _info?.Invoke("source scan hint source=" + sourceId);
+        ScheduleHintedTick();
+        return true;
+    }
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (AC-W3): marks EVERY current target due (watcher overflow / root lost). The
+    /// following pass still observes budget/backoff/pause; it may take several ticks and never claims
+    /// a single-tick completion.
+    /// </summary>
+    public bool HintAllTargets(string reasonCode)
+    {
+        var count = 0;
+        lock (_gate)
+        {
+            if (_disposed || !_options.Enabled)
+            {
+                return false;
+            }
+
+            foreach (var sourceId in _targets.Keys)
+            {
+                if (_hintedSources.Add(sourceId))
+                {
+                    count++;
+                }
+            }
+        }
+
+        if (count == 0)
+        {
+            return false;
+        }
+
+        _warn?.Invoke("source scan hints all targets=" + count + " code=" + (reasonCode ?? "UNKNOWN"));
+        ScheduleHintedTick();
+        return true;
+    }
+
+    /// <summary>FEA-11-WATCH-1 (AC-W4): true when a hint-triggered pass is in flight or replayed once.</summary>
+    public bool HintPending
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _hintedSources.Count > 0 || _hintReplayPending
+                    || (_hintTask is { IsCompleted: false });
+            }
+        }
+    }
+
+    /// <summary>Test seam: completes when the currently scheduled hint-triggered pass (if any) is done.</summary>
+    public Task HintIdleAsync()
+    {
+        Task? task;
+        lock (_gate) task = _hintTask;
+        return task ?? Task.CompletedTask;
+    }
+
+    /// <summary>FEA-11-WATCH-1 (I-5): the watcher publishes its closed status here (path-free).</summary>
+    public void SetWatcherStatus(SourceScanWatcherStatus? status)
+    {
+        lock (_gate)
+        {
+            _watcherStatus = status;
+        }
+    }
+
+    private void ScheduleHintedTick()
+    {
+        lock (_gate)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (_hintTask is { IsCompleted: false })
+            {
+                // AC-W4: a hint during an in-flight pass is coalesced; the pass replays at most once.
+                _hintReplayPending = true;
+                return;
+            }
+
+            _hintTask = Task.Run(HintedTickAsync);
+        }
+    }
+
+    private async Task HintedTickAsync()
+    {
+        try
+        {
+            var ran = await TickAsync(CancellationToken.None).ConfigureAwait(false);
+            if (!ran)
+            {
+                lock (_gate) _hintReplayPending = true;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            _error?.Invoke("SOURCE_SCAN_HINT", error.GetType().Name);
+        }
+        finally
+        {
+            lock (_gate) _hintTask = null;
+        }
+    }
+
+    private async Task ReplayPendingHintAsync(CancellationToken cancellationToken)
+    {
+        bool pending;
+        lock (_gate)
+        {
+            pending = _hintReplayPending;
+            _hintReplayPending = false;
+        }
+
+        if (!pending)
+        {
+            return;
+        }
+
+        try
+        {
+            await HintedTickAsync().ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            _error?.Invoke("SOURCE_SCAN_HINT", error.GetType().Name);
+        }
     }
 
     /// <summary>
@@ -423,6 +616,11 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 (added, updated) = MergeTargetsLocked(result.Targets);
             }
 
+            if (added + updated > 0)
+            {
+                NotifyTargetSetChanged();
+            }
+
             if (result.Ok)
             {
                 _info?.Invoke("source scan refresh targets=" + result.Targets.Count
@@ -463,6 +661,31 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         }
 
         return (added, updated);
+    }
+
+    /// <summary>
+    /// FEA-11-WATCH-1 (I-1): raises <see cref="TargetSetChanged"/> outside the lock with per-handler
+    /// isolation so a watcher bug can never break target registration/enumeration.
+    /// </summary>
+    private void NotifyTargetSetChanged()
+    {
+        var handlers = TargetSetChanged;
+        if (handlers is null)
+        {
+            return;
+        }
+
+        foreach (var subscription in handlers.GetInvocationList())
+        {
+            try
+            {
+                ((Action)subscription)();
+            }
+            catch (Exception error) when (error is not OutOfMemoryException)
+            {
+                _warn?.Invoke("source scan target-set handler failed code=" + error.GetType().Name);
+            }
+        }
     }
 
     /// <summary>
@@ -534,6 +757,9 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         // r2 P2-1: a Refresh requested while this tick held the single-flight gate was coalesced
         // into _refreshPending (never lost); replay it now that the tick is complete.
         await ReplayPendingRefreshAsync(cancellationToken).ConfigureAwait(false);
+        // FEA-11-WATCH-1 (AC-W4): a hint that arrived during this pass replays at most once, never
+        // unboundedly, and never concurrently with the pass that just finished.
+        await ReplayPendingHintAsync(cancellationToken).ConfigureAwait(false);
         return ran;
     }
 
@@ -551,7 +777,15 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 _lastTickAt = now;
                 _nextTickAt = now.AddSeconds(EffectiveIntervalSeconds());
                 foreach (var state in _targets.Values) state.Deferred = false;
-                ordered = _targets.OrderBy(pair => pair.Key, StringComparer.Ordinal).ToList();
+                // AC-W4: hinted targets are ordered first within the SAME budget; the untouched
+                // rotation order is preserved for everything else (AC-S3 semantics unchanged).
+                var hinted = _targets.Keys.Where(_hintedSources.Contains)
+                    .OrderBy(key => key, StringComparer.Ordinal).ToList();
+                var remaining = _targets.Keys.Except(hinted)
+                    .OrderBy(key => key, StringComparer.Ordinal).ToList();
+                ordered = hinted.Concat(remaining)
+                    .Select(key => new KeyValuePair<string, TargetState>(key, _targets[key]))
+                    .ToList();
             }
 
             if (Paused || ordered.Count == 0)
@@ -591,6 +825,9 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 if (ApplyOutcome(state, outcome, now))
                 {
                     processed++;
+                    // AC-W2/W4: the hint is consumed only by an ACTUAL scan attempt result. A
+                    // backoff/budget-deferred target keeps its due bit for a later pass.
+                    lock (_gate) _hintedSources.Remove(state.Target.SourceId);
                 }
 
                 if (Paused) break;
@@ -644,6 +881,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 recent)
             {
                 Enumeration = enumeration,
+                Watcher = _watcherStatus,
             };
         }
     }
