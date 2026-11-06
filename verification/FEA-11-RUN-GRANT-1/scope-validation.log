@@ -1,7 +1,7 @@
 # FEA-11-RUN-GRANT-1 scope validation
-generated_at_utc=2026-11-06T17:43:01+00:00
+generated_at_utc=2026-11-06T18:34:22+00:00
 base_commit=a94052ba7
-delivery_head=3ffabeb8134b355076a9e964305de895e7c5b9d1
+delivery_head=a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853
 
 ## allowed_paths (card frontmatter)
 - doc/tasks/FEA-11-RUN-GRANT-1.md
@@ -26,8 +26,10 @@ M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs	ALLOWED
 M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs	ALLOWED
 A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs	ALLOWED
 M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs	ALLOWED
+A	doc/handoffs/FEA-11-RUN-GRANT-1-3ffabeb81.md	ALLOWED
 A	doc/handoffs/FEA-11-RUN-GRANT-1-7ff49f1cc.md	ALLOWED
 A	doc/reviews/FEA-11-RUN-GRANT-1-r1.md	ALLOWED
+A	doc/reviews/FEA-11-RUN-GRANT-1-r2.md	ALLOWED
 M	doc/tasks/FEA-11-RUN-GRANT-1.md	ALLOWED
 M	src/bootstrap/core_service.py	ALLOWED
 M	src/infrastructure/resource_channel/source_read_refs.py	ALLOWED
@@ -62,7 +64,7 @@ NewManga.App/**: ZERO_DIFF
 apps/** beyond allowed_paths: ZERO_DIFF
 protocol_minor=3 kept: YES
 
-result=PASS changed=29 out_of_scope=[]
+result=PASS changed=31 out_of_scope=[]
 
 ## R-12 approved scope extension (Lead, commit 218775bca)
 reason: the frozen C-16 v1.3 §0 capability ``source.read.run/1`` is an additive ping advertisement, but two pre-existing tests asserted the capability list by exact equality; they had to gain the one string.

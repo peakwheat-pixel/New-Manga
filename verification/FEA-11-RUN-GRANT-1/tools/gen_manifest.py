@@ -26,6 +26,15 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _git_head() -> str:
+    import subprocess
+
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=str(REPO), capture_output=True,
+        text=True, encoding="utf-8", errors="replace", check=True,
+    ).stdout.strip()
+
+
 def _aggregate(entries: list[tuple[str, str]]) -> str:
     payload = "\n".join(f"{rel}\t{digest}" for rel, digest in sorted(entries))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -73,9 +82,10 @@ def main() -> int:
         "task_id": "FEA-11-RUN-GRANT-1",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "generated_by": "run-grant-impl (DSH Agent Teams teammate; Lead `lead`)",
+        "delivery_head": _git_head(),
         "note": (
             "Core (C-16 v1.3 §2.4 AuthorizeSourceReadForRun) + Host mint/bind "
-            "wiring delivery. The isolated task root "
+            "wiring delivery (Review r1/r2 rework included). The isolated task root "
             "G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-1/ holds runtime test "
             "fixtures, gate logs, discrimination backups and helper scripts; no "
             "tracked repository file lives there. Canonical copies of the gate "
@@ -86,7 +96,7 @@ def main() -> int:
         "resources": [
             {
                 "resource_type": "worktree",
-                "source_path": "NOT_APPLICABLE（main worktree; delivery head 7ff49f1cc）",
+                "source_path": f"NOT_APPLICABLE（main worktree; delivery head {_git_head()[:9]}）",
                 "disposition": "NOT_APPLICABLE",
                 "destination_path": "NOT_APPLICABLE",
                 "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内。",

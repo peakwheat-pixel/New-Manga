@@ -3,8 +3,10 @@ M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
 M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
 A	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
 M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+A	doc/handoffs/FEA-11-RUN-GRANT-1-3ffabeb81.md
 A	doc/handoffs/FEA-11-RUN-GRANT-1-7ff49f1cc.md
 A	doc/reviews/FEA-11-RUN-GRANT-1-r1.md
+A	doc/reviews/FEA-11-RUN-GRANT-1-r2.md
 M	doc/tasks/FEA-11-RUN-GRANT-1.md
 M	src/bootstrap/core_service.py
 M	src/infrastructure/resource_channel/source_read_refs.py

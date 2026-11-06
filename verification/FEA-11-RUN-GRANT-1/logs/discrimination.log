@@ -1,7 +1,7 @@
 # FEA-11-RUN-GRANT-1 discrimination log
 
-generated_at_utc=2026-11-06T17:42:28+00:00
-repo_head=3ffabeb8134b355076a9e964305de895e7c5b9d1
+generated_at_utc=2026-11-06T18:26:53+00:00
+repo_head=a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853
 
 Each break is applied to the shipped bytes, ONE target test is run, the test
 MUST turn red (exit != 0), then the file is restored and its sha256 is re-checked.
@@ -34,12 +34,33 @@ MUST turn red (exit != 0), then the file is restored and its sha256 is re-checke
     output_tail=tests\fea11\test_source_run_grant.py:680: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_forged_shape_requests_are_invalid_requests | 1 faile
     restore=RESTORED sha256=9afc9d6d4281b024946f3d67b382effc8a0fe81b683b220f6fb6ff471b77a2c6
 
+[B7] break=能力门被删除（能力缺失仍 mint，R2-02 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=Actual:   1 |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 8 ms - NewManga.Host.Tests.dll (net9.0)
+    restore=RESTORED sha256=6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802
+
+[B8] break=AcceptRun 接线被删除（R2-03 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~AcceptRunAuthorizationSeamUsesTheFrozenSlice
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   Assert.Single() Failure: The collection was empty |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.AcceptRunAuthorizationSeamUsesTheFrozenSlice() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 63 ms - NewManga.Host.Tests.dll (net9.0)
+    restore=RESTORED sha256=6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802
+
+[B9] break=folder kind 检测被删除（目录重新被误判 image，R2-01 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    target=FullyQualifiedName~RunSourceRangeKindDetectsFolderSources
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=  堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.RunSourceRangeKindDetectsFolderSources() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 3 ms - NewManga.Host.Test
+    restore=RESTORED sha256=6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802
+
 [B6] break=Host 预授权 best-effort 被删除（mint 失败重新阻断 Run）
     file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
     target=FullyQualifiedName~RunAuthorizationBestEffortSkipReachesDispatch
     exit_code=1 verdict=RED_AS_EXPECTED
-    output_tail=   at NewManga.Host.Tests.SourceRegistryTests.<>c.<RunAuthorizationBestEffortSkipReachesDispatch_CoreRefusalDoesNot>b__21_0(IReadOnlyList`1 _, String _, JsonElement _, CancellationToken _) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeSliceAsync(String command, JsonElement scope, CancellationToken token) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeForCommandAsync(String commandName, Js
-    restore=RESTORED sha256=0114b580aa6080ea151bfcb3ad8ac5641b473363bd81e3568c86d2ada97bc2c2
+    output_tail=   at NewManga.Host.Tests.SourceRegistryTests.<>c.<RunAuthorizationBestEffortSkipReachesDispatch_CoreRefusalDoesNot>b__25_0(IReadOnlyList`1 _, String _, JsonElement _, CancellationToken _) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeSliceAsync(String command, JsonElement scope, CancellationToken token) |    at NewManga.Host.RunSourceAuthorizer.AuthorizeForCommandAsync(String commandName, Js
+    restore=RESTORED sha256=6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802
 
 [B5] break=Host Run 前置授权钩子被删除（Run 命令未授权直接 dispatch）
     file=apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
@@ -48,5 +69,5 @@ MUST turn red (exit != 0), then the file is restored and its sha256 is re-checke
     output_tail=--- End of stack trace from previous location --- | ----- Inner Stack Trace ----- |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeCoreAsync(HostCommandDescriptor descriptor, JsonElement args, CancellationToken cancellationToken) |    at NewManga.CoreClient.Commands.HostCommandDispatcher.InvokeAsync(String name, JsonElement args, CancellationToken cancellationToken) |  | 失败!  - 失败:
     restore=RESTORED sha256=bde169fc931d53b9deb1666b5b25a08b4b7508ae6fd465c290093c7189efdd47
 
-result=PASS breaks=6 all_red_then_restored
+result=PASS breaks=9 all_red_then_restored
 final_rebuild exit_code=0

@@ -72,6 +72,52 @@ BREAKS = [
         "target": f"{PYTHON_TESTS}::test_forged_shape_requests_are_invalid_requests",
     },
     {
+        "id": "B7",
+        "what": "能力门被删除（能力缺失仍 mint，R2-02 判别）",
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "old": (
+            "        if (!_enabled || !await ProbeAsync(token).ConfigureAwait(false))\n"
+            "        {\n"
+            "            return;\n"
+            "        }\n"
+        ),
+        "new": "        if (!_enabled) { return; }  // DISCRIMINATION BREAK B7: capability gate removed.\n",
+        "runner": "dotnet",
+        "target": "FullyQualifiedName~RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting",
+    },
+    {
+        "id": "B8",
+        "what": "AcceptRun 接线被删除（R2-03 判别）",
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "old": (
+            "        var slice = slices.Take(preparedRunId);\n"
+            "        if (authorizer is not null)\n"
+            "        {\n"
+            "            await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, token)\n"
+            "                .ConfigureAwait(false);\n"
+            "        }\n"
+        ),
+        "new": "        _ = slices.Take(preparedRunId);  // DISCRIMINATION BREAK B8: AcceptRun authorization call removed.\n",
+        "runner": "dotnet",
+        "target": "FullyQualifiedName~AcceptRunAuthorizationSeamUsesTheFrozenSlice",
+    },
+    {
+        "id": "B9",
+        "what": "folder kind 检测被删除（目录重新被误判 image，R2-01 判别）",
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "old": (
+            "        var declared = target.SourceKind;\n"
+            "        if (declared is \"image\" or \"folder\" or \"zip\" or \"cbz\" or \"pdf\")\n"
+            "        {\n"
+            "            return declared;\n"
+            "        }\n"
+            "        return Directory.Exists(normalizedPath) ? \"folder\" : KindOf(normalizedPath);\n"
+        ),
+        "new": "        return KindOf(normalizedPath);  // DISCRIMINATION BREAK B9: folder detection removed.\n",
+        "runner": "dotnet",
+        "target": "FullyQualifiedName~RunSourceRangeKindDetectsFolderSources",
+    },
+    {
         "id": "B6",
         "what": "Host 预授权 best-effort 被删除（mint 失败重新阻断 Run）",
         "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",

@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-RUN-GRANT-1",
-  "generated_at": "2026-11-06T17:44:23+00:00",
+  "generated_at": "2026-11-06T18:34:30+00:00",
   "generated_by": "run-grant-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "note": "Core (C-16 v1.3 §2.4 AuthorizeSourceReadForRun) + Host mint/bind wiring delivery. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-1/ holds runtime test fixtures, gate logs, discrimination backups and helper scripts; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-1/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
+  "delivery_head": "a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853",
+  "note": "Core (C-16 v1.3 §2.4 AuthorizeSourceReadForRun) + Host mint/bind wiring delivery (Review r1/r2 rework included). The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-1/ holds runtime test fixtures, gate logs, discrimination backups and helper scripts; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-1/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 7ff49f1cc）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head a11ded0d3）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内。"
@@ -17,8 +18,8 @@
       "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RUN-GRANT-1\\",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "sha256": "5a479609ddfbfd33e04250f58db58d6a941ceb8d6a5e77495d9ec3b1e3192210",
-      "file_count": 973,
+      "sha256": "b222021bd97cd8f46f7d46b554fb32a1d2500b10d5872279eaf9548759d25ff4",
+      "file_count": 1455,
       "children": [
         {
           "name": "baseline/",
@@ -57,8 +58,8 @@
         {
           "name": "discrimination/",
           "kind": "directory",
-          "file_count": 6,
-          "aggregate_sha256": "3908f029bb22b1178f3075d4e382a2970d96c4483d0d7877909bbf62cf662fdc",
+          "file_count": 9,
+          "aggregate_sha256": "12567f4a91d986c05fb3e6f12040e770f076a500aa32a8040d9ddcc8ddd148a3",
           "files": [
             {
               "name": "B1-source_read_refs.py.orig",
@@ -82,15 +83,27 @@
             },
             {
               "name": "B6-HostRuntime.cs.orig",
-              "sha256": "0114b580aa6080ea151bfcb3ad8ac5641b473363bd81e3568c86d2ada97bc2c2"
+              "sha256": "6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802"
+            },
+            {
+              "name": "B7-HostRuntime.cs.orig",
+              "sha256": "6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802"
+            },
+            {
+              "name": "B8-HostRuntime.cs.orig",
+              "sha256": "6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802"
+            },
+            {
+              "name": "B9-HostRuntime.cs.orig",
+              "sha256": "6184a0f0b7bca202c1eaa832103a7265de1e94d09969c3b62d580d20cf201802"
             }
           ]
         },
         {
           "name": "fixtures/",
           "kind": "directory",
-          "file_count": 934,
-          "aggregate_sha256": "1b8835faf463236348f3330bfb60e4bd5c15aa3a8962adc64630a0ee1817efcd",
+          "file_count": 1399,
+          "aggregate_sha256": "252734f5f38abad31de432eebc9784f58a9bf48c3487045532adf3e059bbabc3",
           "files": [
             {
               "name": "ipc-0d5b53e652b0423e9f1487be59b9064c/backups/b9dd5382eb9e416a812b2d77c7dd8d90.nmbak",
@@ -129,51 +142,51 @@
               "sha256": "78cc1ac6a7ad88fe92f0e6d92d518ea703a2cf564c7891316d94c50393e49e26"
             },
             {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/backups/141b911f70a54d3b81af1103eea2c044.nmbak",
+              "sha256": "669302c488010231108455424dcbee37330b3e8fdc515f98af4b71dc7cb6752a"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/catalog.sqlite",
+              "sha256": "8acbf6d6f2099db82f6b5e6476510b4a28a8692574d2309f7f852e778ad283a6"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/core.stderr.log",
+              "sha256": "1f6825a348775e0d74bba3eac7935c7aec8950dd5af0df36e15ba0604c8f9283"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/derived/.preview-lifecycle.lock",
+              "sha256": "7cc36431da063449031e256a5b395b8b7bbe6e49f508aeb9d36d44e7570b5c55"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/ipc-run-grant-receipt.json",
+              "sha256": "a34e77e768b373ee95a08cca6005eb94f74983985b65ee32adbe0704e2ebeb4f"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/library.db",
+              "sha256": "db0defb79977f47f8888d3af038441b55d59e306724b453c1244c82d2c0a0cf8"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/library.db.run-owner.lock",
+              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/run-grant-ipc-capability.txt",
+              "sha256": "67d866f4eda63257bfca038fde183ff23a7a992a97fbf4768648759250d56c2e"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/source-v1.zip",
+              "sha256": "bf2f9f0fcaa400d122247f3c0186c2ebcbb9404a2ddd9f2245b4e8284c73e902"
+            },
+            {
+              "name": "ipc-213b005a03074db2991dd28f0cd96149/wire.ndjson",
+              "sha256": "1bc1b30df56ed8e6e5804c41bff7843a8a364b6fe8806d190555fb78ef1ef951"
+            },
+            {
               "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/backups/f1e5dde301ea450a97cf8a3cfc264c8b.nmbak",
               "sha256": "d4f63dd7cff476dbd8308adcafa5a29fb3bad6e1ef6fd2ab39511ed612a6e2b1"
             },
             {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/catalog.sqlite",
-              "sha256": "c631748bde6baad64296e4928742380638e528ff375fbe8acd529b7e0031949f"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/core.stderr.log",
-              "sha256": "6370f7408fab98273e564f062494c38bbf1e8dc64bc17e1f94f478d850ad23a8"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/.preview-lifecycle.lock",
-              "sha256": "6cdf3986aae0dcaf33d2f8765541dd73a8fbae5fb42ef2edc54f11b5103ade63"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/pages/page-rendition-v2-4819662dd0145ec3c75f8a32fc65535048078de0116826282aff617670f1d9ee.png",
-              "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/derived/source-renditions/23d157af3f1bc9c4043a0f17c3588a825d8bc957ddddc3cf6ca341b6fc604081.bin",
-              "sha256": "b33685e3149fff757e2bda226500fe616aad8ffa2342aa53ea9ef6653637c593"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/host/source-access/registry.v1.dat",
-              "sha256": "00aa91a9a27c1ba1dddbf7d1ced24ceb7c70f7e54587b36c6c65084709d13a51"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/host/source-access/registry.v1.lock",
-              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/ipc-run-grant-receipt.json",
-              "sha256": "ddc56a1e1292f55ae7254348664365ce8d3d79d31d26508f7fd68e62cba170fc"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/library.db",
-              "sha256": "a9a485b43e324c7390a4f52f1f8a77df5df16306729aaf750f3789988976184a"
-            },
-            {
-              "name": "ipc-247aa1678f164b02bcc0f2d44c0fe04b/library.db.run-owner.lock",
-              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
-            },
-            {
-              "name": "... (914 more files, aggregate above)",
+              "name": "... (1379 more files, aggregate above)",
               "sha256": ""
             }
           ]
@@ -227,10 +240,50 @@
           ]
         },
         {
+          "name": "integration2/",
+          "kind": "directory",
+          "file_count": 8,
+          "aggregate_sha256": "354a61f1cafcfc7d27888a6dc44b36a80e0517ac816bfb45781142a4270c1100",
+          "files": [
+            {
+              "name": "api.log",
+              "sha256": "b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47"
+            },
+            {
+              "name": "check-task.log",
+              "sha256": "771429c0bc7fff5ea50a5f9c5e97be002b394032316fadd5bfd2b9cdec12c2e3"
+            },
+            {
+              "name": "check.log",
+              "sha256": "771429c0bc7fff5ea50a5f9c5e97be002b394032316fadd5bfd2b9cdec12c2e3"
+            },
+            {
+              "name": "dotnet.exit",
+              "sha256": "ed8aea9ba859faa9bb65b9fe4bd4963da8b1b8f4f7999eec68743ab4deb4131f"
+            },
+            {
+              "name": "dotnet.log",
+              "sha256": "bd614700c594cbd76edc6fd10a17c696ac4802939677ed3d9efdaeff507e52f1"
+            },
+            {
+              "name": "pytest.exit",
+              "sha256": "82603b8688c709542cbc00f036b5c7a7bf7bcf8f99f708df2150e234a619c5d2"
+            },
+            {
+              "name": "pytest.log",
+              "sha256": "ce04cd507b747374d8672024f77f06edf96be4beee4a2bb3b483532b85b662ce"
+            },
+            {
+              "name": "scope-diff.txt",
+              "sha256": "8df8ea434a09364b67bc770aa26ca9015877b3dfb61c33aa82f32c26ff6446b1"
+            }
+          ]
+        },
+        {
           "name": "logs/",
           "kind": "directory",
-          "file_count": 9,
-          "aggregate_sha256": "1b2f353f78bfbb714b3f3b65b14304ce1baacb5bd72f3137f163fb06a0f2c453",
+          "file_count": 12,
+          "aggregate_sha256": "dc8369364d5d0a73bb6e37e61beb604f0355d7ff499ed6e31ea0c75aee484f60",
           "files": [
             {
               "name": "discrimination-console-r1.log",
@@ -239,6 +292,10 @@
             {
               "name": "discrimination-console-r1b.log",
               "sha256": "4ec68de68afcd249ed4519b533f6cebc250d79ff6d331a28f6991da92bdf3659"
+            },
+            {
+              "name": "discrimination-console-r2.log",
+              "sha256": "36579b246f5adff825b92986c89fc009325ed7aae18082312e33d9355d01c01d"
             },
             {
               "name": "discrimination-console.log",
@@ -253,6 +310,10 @@
               "sha256": "e8af77e75dba41f2dad372102e2f034228616a831569a169e947dc748c23d069"
             },
             {
+              "name": "dotnet-full-r2.log",
+              "sha256": "a19eb94884b31273b90e4c9a39edca1fb7c93736807e6a5db90e3d2b1d3a518b"
+            },
+            {
               "name": "dotnet-full.log",
               "sha256": "3179ad289fa05af61cf0ae7f433b108cc4e5fd512bdbc263945c374e7e52d039"
             },
@@ -263,6 +324,10 @@
             {
               "name": "pytest-full-r12.log",
               "sha256": "2c6699e84aa70b62ccaf54c87c50afe0c2e1b17f6cba0ce3040f910da526977c"
+            },
+            {
+              "name": "pytest-full-r2.log",
+              "sha256": "9b6a79a6369e0da485bdf9a97834ce1869b184e01f37e3cea919ea8462c232de"
             },
             {
               "name": "pytest-full.log",
@@ -289,6 +354,12 @@
           "sha256": "f6c152512f4a9adb876670ac89af532d5f1049eca1b75918116233d7ecae6bb1"
         },
         {
+          "name": "patch_discrimination_r2.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "4135d45f635fbb3091b3bd1fbb5e81ab90faaa3e669c4803b072dd07d7095b00"
+        },
+        {
           "name": "patch_docs_r1.py",
           "kind": "file",
           "file_count": 1,
@@ -299,6 +370,12 @@
           "kind": "file",
           "file_count": 1,
           "sha256": "a1b1d79e887b2f31fcb39741f175a95d7470b2a5ce9b0781ab43b1b6620a7fa0"
+        },
+        {
+          "name": "patch_ipc_folder_r2.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "19bc6fc298201ba954a10987676d46bc4b291795bd9d4f4684e1653445d21859"
         },
         {
           "name": "patch_python_r1.py",
@@ -317,6 +394,12 @@
           "kind": "file",
           "file_count": 1,
           "sha256": "88d8d6714e54622b359820b441510390ea6ccf2164dbf334804986dae5339b2a"
+        },
+        {
+          "name": "patch_tests_r2.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "d1088d5324e151f08842f7ce6b24a19ca2a20496c8b430d71e128f2b424c3af5"
         }
       ],
       "process_check": "仓外隔离根（工作区治理边界）。仅含 agent 运行夹具/门禁原始日志/判别备份/辅助脚本；产品代码与测试通过路径常量/tmp_path 引用，不依赖其内容。closeout 保留（PRESERVE_REFERENCED），不删除。"
