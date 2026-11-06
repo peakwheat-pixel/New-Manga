@@ -155,7 +155,9 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # FEA-12 (M2-C1 rev 2.13): the delete-preview / trash capability names
         # join the advertised set between the base face and the sync face.
         assert res["result"]["capabilities"] == [
+            # R-12 (approved additive widening): C-16 v1.3 §0 capability.
             "library.list_books", "source.read/1", "source.resolve-secret/1",
+            "source.read.run/1",
             "library.delete.preview/1", "library.trash.read/1",
             "library.trash.write/1",
             "source.sync.scan/1", "source.sync.plan/1", "source.sync.apply/1",
@@ -249,7 +251,9 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
         assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 3}
         assert ping_resp["result"]["capabilities"] == [
+            # R-12 (approved additive widening): C-16 v1.3 §0 capability.
             "library.list_books", "source.read/1", "source.resolve-secret/1",
+            "source.read.run/1",
             "library.delete.preview/1", "library.trash.read/1",
             "library.trash.write/1",
             "source.sync.scan/1", "source.sync.plan/1",

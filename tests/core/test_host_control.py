@@ -319,6 +319,7 @@ def test_three_host_only_rejections_do_not_call_seams_or_mutate_data(
 @pytest.mark.parametrize("command", sorted({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
     "RegisterExportTarget", "RevokeExportTarget", "CloseHostSession",
+    "AuthorizeSourceReadForRun",
 }))
 def test_host_only_commands_are_not_in_the_json_rpc_dispatcher(tmp_path: Path, command: str) -> None:
     core, server = _server(tmp_path)
@@ -506,5 +507,278 @@ def test_host_control_rejects_unknown_envelope_fields_without_routing(tmp_path: 
         assert response["error"]["code"] == "INVALID_REQUEST"
         assert response["result"] is None
         assert calls == []
+    finally:
+        _close(core, server)
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): AuthorizeSourceReadForRun protocol face
+# ---------------------------------------------------------------------------
+
+SOURCE_READ_SIGNING_KEY = bytes(range(32))
+
+
+def _sign_source_read(key: bytes, fields: dict) -> str:
+    encoded = json.dumps(
+        fields, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return base64.urlsafe_b64encode(
+        hmac.new(key, encoded, hashlib.sha256).digest()
+    ).decode().rstrip("=")
+
+
+def _source_read_grant_payload(
+    tmp_path: Path,
+    *,
+    grant_id: str | None = None,
+    session_id: str = HOST_SESSION_ID,
+    registry_id: str = "reg-run-grant",
+    generation: int = 1,
+) -> dict:
+    """One signed source-read grant over a real temp file (protocol-only use)."""
+    source = tmp_path / "granted-source.png"
+    if not source.exists():
+        source.write_bytes(b"run-grant protocol fixture")
+    facts = {
+        "volume_serial": 1,
+        "file_id": 2,
+        "size": source.stat().st_size,
+        "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+    }
+    grant_id = grant_id or uuid.uuid4().hex
+    expires_at = time.time() + 120
+    payload = {
+        "grant_id": grant_id,
+        "session_id": session_id,
+        "operation": "source-read",
+        "scope_class": "user-source",
+        "registry_id": registry_id,
+        "generation": generation,
+        "expires_at": expires_at,
+        "budget": {
+            "max_bytes": 8 * 1024 * 1024,
+            "max_decode_bytes": 8 * 1024 * 1024,
+            "max_entries": 10000,
+        },
+        "scope": {
+            "source_id": "s1",
+            "version": "sv1",
+            "rendition": {
+                "decoder": "image",
+                "scale": 1.0,
+                "params_digest": "0" * 64,
+            },
+            "entries": [{
+                "entry_key": "entry-0",
+                "locator": source.name,
+                "ordinal": 0,
+                "path": str(source.absolute()),
+                "facts": facts,
+            }],
+        },
+    }
+    signed = dict(payload)
+    signed["expires_at"] = f"{expires_at:.6f}"
+    payload["signing_key"] = base64.urlsafe_b64encode(
+        SOURCE_READ_SIGNING_KEY
+    ).decode().rstrip("=")
+    payload["signature"] = _sign_source_read(SOURCE_READ_SIGNING_KEY, signed)
+    return payload
+
+
+def _business_table_snapshot(core) -> dict[str, str]:
+    """Per-table row hash for every business table (zero-write evidence)."""
+    names = [
+        row[0]
+        for row in core.conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table'"
+            " AND name NOT LIKE 'sqlite_%' ORDER BY name"
+        ).fetchall()
+    ]
+    snapshot: dict[str, str] = {}
+    for name in names:
+        rows = core.conn.execute(f'SELECT * FROM "{name}"').fetchall()
+        payload = repr(sorted(repr(tuple(row)) for row in rows))
+        snapshot[name] = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return snapshot
+
+
+def _authorize_wire(grant_ids, *, command: str = "reocr_all", scope=None) -> dict:
+    return {
+        "grant_ids": grant_ids,
+        "command": command,
+        "scope": scope or {"kind": "page", "page_id": "p-missing"},
+    }
+
+
+def test_ping_announces_the_run_authorization_capability(tmp_path: Path) -> None:
+    core, server = _server(tmp_path)
+    try:
+        response, _ = server.dispatch_request(json.dumps({
+            "protocol": "new-manga.core",
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": "ping-capabilities",
+            "command": "core.ping",
+            "payload": {},
+        }))
+        assert response["error"] is None
+        capabilities = response["result"]["capabilities"]
+        assert "source.read.run/1" in capabilities
+        # Additive only: the pre-existing capabilities and the minor are kept.
+        assert {"library.list_books", "source.read/1", "source.resolve-secret/1"} <= set(
+            capabilities
+        )
+        assert response["result"]["protocol_version"]["minor"] == 3
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", [
+    "ordinary_json_rpc", "credential_missing", "credential_wrong",
+    "session_closed", "core_session_mismatch",
+])
+def test_authorize_source_read_for_run_is_host_only_and_session_gated(
+    tmp_path: Path, case: str,
+) -> None:
+    core, server = _server(tmp_path)
+    core_session_id = server._core_session_id
+    if case != "ordinary_json_rpc":
+        core_session_id = _open(server)
+    if case == "session_closed":
+        assert _request(server, core_session_id, "CloseHostSession", {})["result"] == {
+            "closed": True
+        }
+    db_before = core.conn.total_changes
+    if case == "ordinary_json_rpc":
+        request = {
+            "protocol": "new-manga.core",
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": "ordinary-run-authorize",
+            "command": "AuthorizeSourceReadForRun",
+            "payload": _authorize_wire(["source-0123456789abcdef"]),
+        }
+        expected = "HOST_ONLY_REQUIRED"
+    else:
+        request = _wire(
+            "AuthorizeSourceReadForRun",
+            _authorize_wire(["source-0123456789abcdef"]),
+        )
+        request.update({
+            "core_session_id": core_session_id,
+            "host_session_id": HOST_SESSION_ID,
+            "host_session_credential": HOST_CREDENTIAL,
+        })
+        expected = "HOST_SESSION_INVALID"
+        if case == "credential_missing":
+            request.pop("host_session_credential")
+        elif case == "credential_wrong":
+            request["host_session_credential"] = "wrong credential"
+        elif case == "core_session_mismatch":
+            request["core_session_id"] = "another-core-process"
+            expected = "CORE_SESSION_MISMATCH"
+    try:
+        response, _ = server.dispatch_request(json.dumps(request))
+        assert response["result"] is None
+        assert response["error"]["code"] == expected
+        assert core.conn.total_changes == db_before
+        assert core.source_read_refs._bindings == {}
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", [
+    "missing_key", "unknown_key", "empty_ids", "too_many_ids",
+    "duplicate_ids", "non_string_id", "non_string_command", "non_object_scope",
+])
+def test_authorize_source_read_for_run_rejects_non_closed_shapes(
+    tmp_path: Path, case: str,
+) -> None:
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        grant = _source_read_grant_payload(tmp_path)
+        assert _request(server, core_session_id, "RegisterSourceReadGrant", grant)[
+            "error"
+        ] is None
+        payload = _authorize_wire([grant["grant_id"]])
+        if case == "missing_key":
+            payload.pop("command")
+        elif case == "unknown_key":
+            payload["unexpected"] = 1
+        elif case == "empty_ids":
+            payload["grant_ids"] = []
+        elif case == "too_many_ids":
+            payload["grant_ids"] = [f"source-{index:032x}" for index in range(65)]
+        elif case == "duplicate_ids":
+            payload["grant_ids"] = [grant["grant_id"], grant["grant_id"]]
+        elif case == "non_string_id":
+            payload["grant_ids"] = [123]
+        elif case == "non_string_command":
+            payload["command"] = 5
+        elif case == "non_object_scope":
+            payload["scope"] = "page:p1"
+        before = _business_table_snapshot(core)
+        response = _request(server, core_session_id, "AuthorizeSourceReadForRun", payload)
+        assert response["result"] is None
+        assert response["error"]["code"] == "INVALID_REQUEST", response["error"]
+        assert response["error"]["category"] == "validation"
+        assert _business_table_snapshot(core) == before
+        assert core.source_read_refs._bindings == {}
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", ["missing", "expired", "revoked"])
+def test_authorize_source_read_for_run_reuses_the_frozen_grant_error_codes(
+    tmp_path: Path, case: str, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        if case == "missing":
+            grant_ids = ["source-" + "0" * 32]
+            expected = "SOURCE_ACCESS_DENIED"
+        else:
+            grant = _source_read_grant_payload(tmp_path)
+            registered = _request(
+                server, core_session_id, "RegisterSourceReadGrant", grant
+            )
+            assert registered["error"] is None
+            grant_ids = [grant["grant_id"]]
+            if case == "expired":
+                monkeypatch.setattr(
+                    core.source_read_refs, "_clock", lambda: time.time() + 301
+                )
+                expected = "SOURCE_GRANT_EXPIRED"
+            else:
+                revoked = _request(
+                    server,
+                    core_session_id,
+                    "RevokeSourceReadGrant",
+                    {
+                        "registry_id": grant["registry_id"],
+                        "generation": grant["generation"] + 1,
+                        "grant_ids": grant_ids,
+                    },
+                )
+                assert revoked["error"] is None
+                expected = "SOURCE_GRANT_REVOKED"
+        before = _business_table_snapshot(core)
+        response = _request(
+            server,
+            core_session_id,
+            "AuthorizeSourceReadForRun",
+            _authorize_wire(grant_ids),
+        )
+        assert response["result"] is None
+        assert response["error"]["code"] == expected, response["error"]
+        assert response["error"]["category"] == "authorization"
+        # §7: no absolute path / entry name / signing material in the error.
+        serialized = json.dumps(response["error"])
+        assert str(tmp_path) not in serialized
+        assert "granted-source.png" not in serialized
+        assert HOST_CREDENTIAL not in serialized
+        assert _business_table_snapshot(core) == before
+        assert core.source_read_refs._bindings == {}
     finally:
         _close(core, server)
