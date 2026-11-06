@@ -59,5 +59,5 @@ READY 节点：无
 - WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 项受保护资源；不得清理/GC/prune。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
-- 当前治理主线 `main`；远端仅允许用户授权的新分支快照 push，不 push main。
+- 当前治理主线 `main`；2026-11-06 用户「全部授权」后，门禁全过时 `git push origin main` 已执行（`b1c1f5a5→57f62b3f`），后续 push 仍以门禁全过与用户授权为前提。
 

@@ -20,7 +20,7 @@
 - 测试基线：pytest 3212/10、.NET 1527/0/86（2026-11-06 实测）；FEA-11 线 limitation 见各卡（L10 由 RENDITION-1 承接）。
 
 ## Gate 与保留项
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；main 未推。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-06 push 至 `57f62b3fe`（origin 同步，AHEAD=0）**。
 
 ## 当前权威指针
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。
