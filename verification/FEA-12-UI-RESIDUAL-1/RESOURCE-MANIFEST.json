@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-12-UI-RESIDUAL-1",
+  "generated_at": "2026-11-06T21:12:00+08:00",
+  "generated_by": "ui-residual-impl (DSH Agent Teams; Owner FEA-12-UI-RESIDUAL-1)",
+  "note": "App-only four P3 residuals: one production VM file (TrashViewModel.cs) + one test file (TrashUiTests.cs) + this evidence directory. No user data, AppData, external volume, real recycle bin or original file was touched; no delete/move/migrate/archive was performed; no push. The isolated scratch root G:/CODEX/New Manga.workspace/FEA-12-UI-RESIDUAL-1/ holds only agent helper scripts, pristine file backup and the raw gate logs; it is referenced (PRESERVE_REFERENCED), not deleted. The tracked file verification/FEA-09/logs/wire-redacted.ndjson is rewritten by the pre-existing WireLogSourceRedactionTests whenever the full .NET suite runs; it was restored with `git checkout -- verification/FEA-09` after each full run (final worktree contains only this card's changes).",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE (main worktree; base 9c6ba2da1, implementation+tests head 8e3bd03d6)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No linked worktree created; work happened only in the main worktree; `git worktree list` has no new entry for this card."
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-12-UI-RESIDUAL-1\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location (G:\\CODEX\\New Manga.workspace\\FEA-12-UI-RESIDUAL-1\\)",
+      "sha256": "97fdbd1e5bb0fc8d15eb44f42cd88580e76eb43b25b0fa086222abb792d28428",
+      "sha256_scope": "aggregate over sorted 'relative/path|sha256(file)' lines joined by \\n, UTF-8, 10 files",
+      "file_count": 10,
+      "files": [
+        { "name": "logs/after-dotnet.log", "sha256": "3fbf0840f9d4d5f07d053a132a846e9b701938298abb8d8d92f112b1f5180c20" },
+        { "name": "logs/baseline-dotnet.log", "sha256": "baab20fdfc22b9c9ffc479496e5e487dcb9ae624bd36b12de7363f31fe040a88" },
+        { "name": "logs/baseline-trashui.log", "sha256": "ea544fedda4828a02a5652b33ac7ce69ce741c0282eaf86c2ff1b1ab6672d31e" },
+        { "name": "logs/governance.log", "sha256": "2b83261984c08eaf48a8380c122217143fb379d0c0701d6e1db28e4fbb512d76" },
+        { "name": "logs/pytest.log", "sha256": "69beb5ca4c805327d2fc47e3290a88eaf700a824b384bb0e1b114af19753704d" },
+        { "name": "logs/scope-mutations.log", "sha256": "f95d41527212d65005c12a2df3f7c0129ad24455dc4ecee5e1529f11762892de" },
+        { "name": "logs/targeted-after.log", "sha256": "3128e92f44ffea5f4dd1b7d074d95d37d2e22195369a4755739fea95165626f0" },
+        { "name": "temp/new-tests-draft.cs", "sha256": "f2f257786e1cc334e4f9abc5f1c16c3bd120669b7da79348a87512fc3711a855" },
+        { "name": "temp/run-mutations.ps1", "sha256": "ccbc54a9207ee1f98bcae705e1634b451bbf7f88c96baaad21e4314e66ff7a75" },
+        { "name": "temp/TrashViewModel.pristine.cs", "sha256": "e0f0dd262ae0526aed6f42327a43988d9541503fe585d06086c6d4f3426f9269" }
+      ],
+      "process_check": "Out-of-repo isolated workspace root (workspace governance boundary). Contains only agent helper scripts, raw gate logs and the byte-identical pristine VM backup; no process holds it; product code/tests do not reference it; canonical copies live in verification/FEA-12-UI-RESIDUAL-1/logs/ (EV-1..EV-9). Kept for review, not deleted."
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs (in-memory fake controller, no binary fixture)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "All 5 new tests use the existing in-memory FakeHostController (scripted trash results); no Avalonia window, no sleep, no real IPC; no binary fixture added to the repo."
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No real user data / AppData / external volume / recycle bin / original file was read or written; tests are pure VM-level with fakes."
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "apps/desktop-avalonia/**/bin/Release, **/obj (pre-existing build directories)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "dotnet test artifacts stay in the existing build directories; nothing is added to the delivery."
+    },
+    {
+      "resource_type": "tracked-side-effect",
+      "source_path": "verification/FEA-09/logs/wire-redacted.ndjson (pre-existing WireLogSourceRedactionTests side effect)",
+      "disposition": "RESTORED_IN_PLACE",
+      "destination_path": "verification/FEA-09/logs/wire-redacted.ndjson",
+      "process_check": "Every full .NET run rewrote this tracked file (pre-existing behaviour documented by FEA-11-RENDITION-1); restored with `git checkout -- verification/FEA-09` (EXIT=0) after both full runs; final `git status --short` contains only this card's 2 code/test files + evidence directory."
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Owner performed no delete/move/migrate/archive. The out-of-repo scratch root is preserved for review. L3/L4 real-device walkthrough is NOT_RUN for this card; the evidence level is VM-level fake-controller only."
+}

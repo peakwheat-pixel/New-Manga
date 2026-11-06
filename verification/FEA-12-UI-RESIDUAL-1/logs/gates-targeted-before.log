@@ -1,0 +1,34 @@
+=== baseline targeted TrashUiTests 2026-11-06T20:52:18.5018875+08:00 HEAD=9c6ba2da1ae8f27055f16bc7fa004ac0b71dd87f ===
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll
+
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll
+
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+No test matches the given testcase filter `FullyQualifiedName~TrashUiTests` in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll
+
+
+
+
+
+
+已通过! - 失败:     0，通过:    35，已跳过:     0，总计:    35，持续时间: 82 ms - NewManga.App.Tests.dll (net9.0)
+EXIT=0

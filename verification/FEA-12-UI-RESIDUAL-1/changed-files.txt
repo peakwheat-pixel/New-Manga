@@ -1,0 +1,17 @@
+# FEA-12-UI-RESIDUAL-1 changed files (base 9c6ba2da1 .. evidence head; implementation+tests commit 8e3bd03d6)
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs
+doc/handoffs/FEA-12-UI-RESIDUAL-1-8e3bd03d6.md
+doc/tasks/FEA-12-UI-RESIDUAL-1.md
+verification/FEA-12-UI-RESIDUAL-1/EV.md
+verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json
+verification/FEA-12-UI-RESIDUAL-1/changed-files.txt
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-after.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-dotnet-before.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-governance.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-pytest.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-after.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates-targeted-before.log
+verification/FEA-12-UI-RESIDUAL-1/logs/gates.log
+verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log
+verification/FEA-12-UI-RESIDUAL-1/logs/scope-validation.log

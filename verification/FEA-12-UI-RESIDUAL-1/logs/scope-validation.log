@@ -1,0 +1,33 @@
+=== FEA-12-UI-RESIDUAL-1 scope validation 2026-11-06T21:08:31.0122187+08:00 ===
+repo: G:\CODEX\New Manga ; branch: main
+base: 9c6ba2da1 ; HEAD: 8e3bd03d6c98fc6d3f6d352517f22553abceb895
+
+--- 1) git diff --name-only 9c6ba2da1..HEAD (implementation commit) ---
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs
+
+--- 2) allowed_paths (frozen card) ---
+doc/tasks/FEA-12-UI-RESIDUAL-1.md
+doc/reviews/FEA-12-UI-RESIDUAL-1-*.md
+doc/handoffs/FEA-12-UI-RESIDUAL-1-*.md
+verification/FEA-12-UI-RESIDUAL-1/**
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs
+
+--- 3) forbidden-surface diff (must be empty) ---
+EMPTY (zero diff on all listed forbidden surfaces)
+
+--- 4) dependency files diff (must be empty) ---
+EMPTY (no dependency/project-file change)
+
+--- 5) API surface (IHostController / RunContracts / TrashModels / HostController / LibraryViewModel / NullHostController) diff ---
+EMPTY (zero diff)
+
+--- 6) working tree at recording time (git status --short) ---
+?? verification/FEA-12-UI-RESIDUAL-1/
+
+--- note ---
+This log is recorded at the implementation+tests commit 8e3bd03d6 (base 9c6ba2da1).
+The following evidence/card/Handoff commit only adds files inside the frozen allowed_paths
+(doc/tasks/FEA-12-UI-RESIDUAL-1.md, doc/handoffs/FEA-12-UI-RESIDUAL-1-*.md, verification/FEA-12-UI-RESIDUAL-1/**);
+the final base..HEAD check after that commit is reported in the Handoff and in EV.md.
