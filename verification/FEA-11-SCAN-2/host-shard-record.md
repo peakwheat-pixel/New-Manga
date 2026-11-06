@@ -4,7 +4,8 @@
 - 分片：**B = Host/App .NET**；Core 分片 A = `0cb5177ca`
 - 仓库：`G:\CODEX\New Manga`（main；不 push）；卡 base `703d9eb12`
 - 实施者：`fea12-core-host`（DSH Agent Teams）；未自审
-- 交付 commit：本记录所在 commit（`feat(fea-11-scan-2): Host 冷启动枚举接线`）
+- 交付 commit：**`6c8b4cb2b`**（`feat(fea-11-scan-2): Host/App 冷启动枚举接线（分片 B）`；apps/** + host-* 证据）
+- 提交后复核：`check.ps1 -TaskPath doc/tasks/FEA-11-SCAN-2.md` → **PASS（3 既有全局 warnings）**，EXIT 0；日志 `G:\CODEX\New Manga.workspace\FEA-11-SCAN-2\logs\host-check-postcommit.log`（仓外，避免 evidence 自指）
 
 ## 1. 实现摘要（本分片改动，均在卡 allowed_paths）
 
