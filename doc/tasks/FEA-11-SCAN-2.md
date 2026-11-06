@@ -10,6 +10,7 @@ owner: null
 reviewer: null
 depends_on:
   - FEA-11-SCAN-1
+  - FEA-11-SCAN-2-PREREQ-1
 base_commit: null
 branch: null
 worktree: null
@@ -36,6 +37,12 @@ out_of_scope:
 > **状态：`proposed` 占位卡。scope 尚未冻结，本卡不构成实施授权；不得释放实施。**
 >
 > 来源：`FEA-11-SCAN-1` scope review §2.4（方案 B）与 Q-1/Q-6；ZCode SCOPE-ADJ-2026-11-05 裁决把“冷启动全源枚举”显式登记到 `FEA-11-SCAN-2`，不塞进 SCAN-1。`FEA-11-SCAN-1` 的 L-A 明确：重启后目标集为空，直到用户再次导入。
+
+## scope review 结果与 DSH 裁决（2026-11-06）
+
+- 独立 scope review：`doc/reviews/FEA-11-SCAN-2-scope-r1.md` → **READY-WITH-UNFREEZE**；推荐 **B1**；B2 不推荐。
+- DSH 裁决：B1 采纳；S-1 取选项②（file-root 缺失 typed `SOURCE_REGISTRY_UNAVAILABLE`，不宣称 missing，L-G 保留）；S-2 采纳（Core 枚举 source_id 为唯一权威，App 只触发刷新，加真实导入判别测试）；S-4 登记 limitation。
+- 实现前置：`FEA-11-SCAN-2-PREREQ-1` 完成 C-17 v1.1 UNFREEZE/重冻/pins 后，由 DSH 冻结本卡 kind/allowed_paths/AC/owner/base 并释放；**当前仍为 proposed 占位，不得实施**。
 
 ## 目标（草案，待裁决）
 
