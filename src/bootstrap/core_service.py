@@ -368,6 +368,11 @@ _SOURCE_SYNC_APP_COMMANDS = frozenset({
     "source_plan_sync", "source_preview_sync_plan", "source_confirm_sync_plan",
     "source_invalidate_sync_plan", "source_get_operation",
     "source_cancel_operation",
+    # FEA-11-SCAN-2 (C-17 v1.1 §5.1): the cold-start read-only target
+    # enumeration is an ordinary application-face command (not host-control)
+    # with the closed shape ``{}``; it never writes and never registers in the
+    # Host C-07 registry.
+    "source_list_scan_targets",
 })
 #: FEA-09 async import face (C-16 §4): ordinary application-channel
 #: commands; the protocol minor stays 3 (additive widening precedent).
@@ -1598,16 +1603,18 @@ class CoreServiceServer:
             and getattr(self._core, "storage", None) is not None
         ):
             capabilities.extend(_FEA12_CAPABILITIES)
-        # FEA-11 (C-17 §4): the seven source.sync capabilities are advertised
-        # only when the sync stack is actually assembled; the Host probes
-        # them before any sync dispatch (CORE_CAPABILITY_MISSING otherwise).
+        # FEA-11 (C-17 §4): the source.sync capabilities are advertised only
+        # when the sync stack is actually assembled; the Host probes them
+        # before any sync dispatch (CORE_CAPABILITY_MISSING otherwise).
+        # C-17 v1.1: ``source.sync.enumerate/1`` joins the ping list ONLY —
+        # the Host-side §5.2 Capabilities DTO keeps its frozen 7 items.
         if getattr(self._core, "source_sync", None) is not None:
             capabilities.extend(
                 (
                     "source.sync.scan/1", "source.sync.plan/1",
                     "source.sync.apply/1", "source.sync.relink/1",
                     "source.sync.repoint/1", "source.sync.resync/1",
-                    "source.sync.operation/1",
+                    "source.sync.operation/1", "source.sync.enumerate/1",
                 )
             )
         return {
@@ -4997,6 +5004,17 @@ class CoreServiceServer:
             raise SourceImportError(
                 "CORE_CAPABILITY_MISSING", "source sync is unavailable"
             )
+        if command == "source_list_scan_targets":
+            # C-17 v1.1 §5.1/§5.2: closed shape ``{}``; single SELECT-level
+            # projection, zero DB writes, no plan/apply/operation/receipt/
+            # grant/journal.  Unknown keys are INVALID_REQUEST.
+            if payload != {}:
+                raise SourceImportError(
+                    "INVALID_REQUEST", "scan target request is invalid"
+                )
+            from application.sources.scanner import list_scan_targets
+
+            return list_scan_targets(stack["store"])
         if command == "source_plan_sync":
             return self._commit_source_sync(stack["planner"].create(payload))
         if command == "source_preview_sync_plan":

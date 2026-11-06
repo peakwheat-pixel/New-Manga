@@ -1,0 +1,37 @@
+# FEA-11-SCAN-2 shard A: mutation discrimination (isolated temp src copy; repo untouched)
+# EXIT: 0
+# ----------------------------------------------------------------------
+# FEA-11-SCAN-2 shard A: mutation discrimination evidence (isolated temp copy)
+# base_src = repository src copy under workspace temp; repo untouched
+
+## mutation: no-sort
+# expected failing test(s): ('test_enumeration_is_sorted_unique_and_computes_identity', 'test_duplicate_candidates_are_deduped_and_sorted')
+# exit: 1
+# result: 1 failed, 7 passed in 1.68s
+FAILED tests/core/test_core_scan_target_commands.py::test_duplicate_candidates_are_deduped_and_sorted
+# discriminated: True
+
+## mutation: no-dedupe
+# expected failing test(s): ('test_duplicate_candidates_are_deduped_and_sorted',)
+# exit: 1
+# result: 1 failed, 7 passed in 1.65s
+FAILED tests/core/test_core_scan_target_commands.py::test_duplicate_candidates_are_deduped_and_sorted
+# discriminated: True
+
+## mutation: cap-widened
+# expected failing test(s): ('test_budget_limits_are_typed_and_never_truncate',)
+# exit: 1
+# result: 1 failed, 7 passed in 1.66s
+FAILED tests/core/test_core_scan_target_commands.py::test_budget_limits_are_typed_and_never_truncate
+# discriminated: True
+
+## mutation: fabricated-identity
+# expected failing test(s): ('test_identity_and_facts_are_recomputed_from_current_location', 'test_enumeration_is_sorted_unique_and_computes_identity')
+# exit: 1
+# result: 2 failed, 6 passed in 1.61s
+FAILED tests/core/test_core_scan_target_commands.py::test_enumeration_is_sorted_unique_and_computes_identity
+FAILED tests/core/test_core_scan_target_commands.py::test_identity_and_facts_are_recomputed_from_current_location
+# discriminated: True
+
+MUTATION_SUMMARY: PASS (all 4 mutations discriminated)
+

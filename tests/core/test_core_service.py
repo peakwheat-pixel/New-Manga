@@ -161,6 +161,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
             "source.sync.scan/1", "source.sync.plan/1", "source.sync.apply/1",
             "source.sync.relink/1", "source.sync.repoint/1",
             "source.sync.resync/1", "source.sync.operation/1",
+            "source.sync.enumerate/1",
         ]
 
         # 6. ListBooks on empty repository
@@ -254,7 +255,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
             "source.sync.scan/1", "source.sync.plan/1",
             "source.sync.apply/1", "source.sync.relink/1",
             "source.sync.repoint/1", "source.sync.resync/1",
-            "source.sync.operation/1",
+            "source.sync.operation/1", "source.sync.enumerate/1",
         ]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):

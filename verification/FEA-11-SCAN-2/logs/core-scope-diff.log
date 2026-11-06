@@ -1,0 +1,5 @@
+# FEA-11-SCAN-2 shard A: scope diff (C-17/C-16/C-15/C-06/M2-C1/ADJ-001 + schema bytes)
+# command: git diff --name-only 703d9eb12 -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py
+# EXIT: 0 (0 files)
+# ----------------------------------------------------------------------
+

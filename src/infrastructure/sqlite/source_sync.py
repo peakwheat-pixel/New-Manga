@@ -64,6 +64,53 @@ class SourceSyncStore:
             (plan_id, source_id, kind, plan_digest, body_json, created_at, expires_at),
         )
 
+    # ------------------------------------------------------------------
+    # FEA-11-SCAN-2 (C-17 v1.1 §5.1/§5.2): read-only scan-target projection
+    # ------------------------------------------------------------------
+
+    def list_scan_target_candidates(self) -> list[dict[str, Any]]:
+        """One SELECT-level projection of every live source + current location.
+
+        FEA-11-SCAN-2 B1: ``source_id`` is authoritative from ``sources``;
+        ``registry_id``/``generation``/location facts come from the current
+        ``source_locations`` row (a missing current row is returned as None
+        facts so the application can type-skip instead of fabricating an
+        identity); ``project_ids`` are the distinct non-superseded bindings of
+        that source.  Zero writes: the caller must not commit anything and no
+        plan/apply/operation/receipt/grant/journal is created here.
+        """
+        source_rows = self._conn.execute(
+            "SELECT s.source_id AS source_id, s.source_kind AS source_kind,"
+            "       l.registry_id AS registry_id,"
+            "       l.authorization_generation AS generation,"
+            "       l.content_digest AS content_digest,"
+            "       l.volume_serial AS volume_serial,"
+            "       l.file_id AS file_id, l.size_bytes AS size_bytes"
+            "  FROM sources s"
+            "  LEFT JOIN source_locations l"
+            "    ON l.source_id = s.source_id AND l.is_current = 1"
+            " WHERE s.deleted_at IS NULL"
+            " ORDER BY s.source_id ASC"
+        ).fetchall()
+        project_rows = self._conn.execute(
+            "SELECT b.source_id AS source_id, b.project_id AS project_id"
+            "  FROM page_bindings b"
+            " WHERE b.status <> 'superseded'"
+            " GROUP BY b.source_id, b.project_id"
+            " ORDER BY b.source_id ASC, b.project_id ASC"
+        ).fetchall()
+        projects: dict[str, list[str]] = {}
+        for row in project_rows:
+            projects.setdefault(row["source_id"], []).append(row["project_id"])
+        candidates: list[dict[str, Any]] = []
+        for row in source_rows:
+            candidate = dict(row)
+            candidate["project_ids"] = list(
+                projects.get(str(candidate["source_id"]), [])
+            )
+            candidates.append(candidate)
+        return candidates
+
     def get_plan(self, plan_id: str) -> dict[str, Any] | None:
         return _row(
             self._conn.execute(

@@ -53,6 +53,141 @@ PIXEL_PARAMS: dict = {
 }
 
 
+# ---------------------------------------------------------------------------
+# FEA-11-SCAN-2 B1 (C-17 v1.1 §5.1/§5.2): read-only cold-start enumeration
+# ---------------------------------------------------------------------------
+
+#: C-17 v1.1 §5.3 / §5.1 enumerate bounds: silent truncation is forbidden.
+SCAN_TARGETS_MAX = 10000
+SCAN_TARGETS_MAX_BYTES = 8 * 1024 * 1024
+#: C-17 §5 project_ids bound (P3-4): a >20-project shared source is skipped,
+#: never truncated and never "current-fallbacked".
+SCAN_TARGETS_MAX_PROJECT_IDS = 20
+#: The five frozen FEA-09 source kinds; an unknown/widened value fails closed
+#: (typed skip) instead of being guessed (P3-3).
+KNOWN_SOURCE_KINDS = frozenset({"image", "folder", "zip", "cbz", "pdf"})
+
+
+def _valid_scan_location_facts(candidate: dict) -> bool:
+    """C-17 v1.1: the complete location facts must be present and well-formed."""
+    registry_id = candidate.get("registry_id")
+    generation = candidate.get("generation")
+    content_digest = candidate.get("content_digest")
+    volume_serial = candidate.get("volume_serial")
+    file_id = candidate.get("file_id")
+    size_bytes = candidate.get("size_bytes")
+    return (
+        isinstance(registry_id, str)
+        and bool(registry_id)
+        and type(generation) is int
+        and generation >= 1
+        and isinstance(content_digest, str)
+        and len(content_digest) == 64
+        and all(ch in "0123456789abcdef" for ch in content_digest)
+        and type(volume_serial) is int
+        and volume_serial >= 0
+        and type(file_id) is int
+        and file_id >= 0
+        and type(size_bytes) is int
+        and size_bytes >= 0
+    )
+
+
+def list_scan_targets(
+    store,
+    *,
+    max_targets: int = SCAN_TARGETS_MAX,
+    max_bytes: int = SCAN_TARGETS_MAX_BYTES,
+) -> dict:
+    """C-17 v1.1 §5.1: read-only ``ScanTargets`` enumeration (zero writes).
+
+    ``store.list_scan_target_candidates()`` is a SELECT-level projection; this
+    function only validates/computes ``identity_digest`` (from the frozen
+    ``identity_digest_of`` location facts) and type-skips damaged or
+    out-of-bound targets.  Skip counts are logged (stderr) — the DTO stays the
+    frozen ``{targets: ScanTarget[]}`` shape, no fabricated identity and no
+    truncation:
+
+    * missing/invalid current location facts -> skip (never invent identity);
+    * unknown ``source_kind`` -> fail-closed skip (never guess);
+    * ``project_ids`` distinct count > 20 -> skip (never truncate/current);
+    * target count > 10000 or projected JSON > 8MiB -> typed
+      ``SOURCE_BUDGET_EXCEEDED`` (never silently truncate).
+    """
+    import json as _json
+    import sys as _sys
+
+    skipped = {
+        "missing_location_facts": 0,
+        "unknown_source_kind": 0,
+        "project_ids_over_limit": 0,
+    }
+    targets: dict[str, dict] = {}
+    for candidate in store.list_scan_target_candidates():
+        source_id = candidate.get("source_id")
+        if not isinstance(source_id, str) or not source_id:
+            skipped["missing_location_facts"] += 1
+            continue
+        source_kind = candidate.get("source_kind")
+        if source_kind not in KNOWN_SOURCE_KINDS:
+            skipped["unknown_source_kind"] += 1
+            continue
+        if not _valid_scan_location_facts(candidate):
+            skipped["missing_location_facts"] += 1
+            continue
+        project_ids = sorted(
+            {
+                project_id
+                for project_id in (candidate.get("project_ids") or [])
+                if isinstance(project_id, str) and project_id
+            }
+        )
+        if len(project_ids) > SCAN_TARGETS_MAX_PROJECT_IDS:
+            skipped["project_ids_over_limit"] += 1
+            continue
+        if len(targets) + 1 > max_targets:
+            raise SourceSyncError(
+                "SOURCE_BUDGET_EXCEEDED",
+                "scan target enumeration budget exceeded",
+            )
+        if source_id in targets:
+            # Defensive uniqueness: the first (authoritative) candidate wins.
+            continue
+        targets[source_id] = {
+            "source_id": source_id,
+            "registry_id": candidate["registry_id"],
+            "generation": candidate["generation"],
+            "source_kind": source_kind,
+            "identity_digest": identity_digest_of(
+                candidate["content_digest"],
+                candidate["volume_serial"],
+                candidate["file_id"],
+                candidate["size_bytes"],
+            ),
+            "project_ids": project_ids,
+        }
+    ordered = [targets[source_id] for source_id in sorted(targets)]
+    if (
+        skipped["missing_location_facts"]
+        or skipped["unknown_source_kind"]
+        or skipped["project_ids_over_limit"]
+    ):
+        print(
+            "[core.source_list_scan_targets] skipped"
+            f" missing_location_facts={skipped['missing_location_facts']}"
+            f" unknown_source_kind={skipped['unknown_source_kind']}"
+            f" project_ids_over_limit={skipped['project_ids_over_limit']}",
+            file=_sys.stderr,
+        )
+    result = {"targets": ordered}
+    encoded = _json.dumps(result, separators=(",", ":"), ensure_ascii=False)
+    if len(encoded.encode("utf-8")) > max_bytes:
+        raise SourceSyncError(
+            "SOURCE_BUDGET_EXCEEDED", "scan target enumeration budget exceeded"
+        )
+    return result
+
+
 def canonical_pixel_params_json() -> str:
     """The frozen decoder params as canonical JSON (C8)."""
     import json
