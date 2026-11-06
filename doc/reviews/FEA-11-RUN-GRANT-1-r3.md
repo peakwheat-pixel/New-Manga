@@ -2,13 +2,13 @@
 task: FEA-11-RUN-GRANT-1
 title: FEA-11-RUN-GRANT-1 r3 最终窄面复审（Review r2 findings 返修；R2-01…R2-04 关闭判定）
 reviewer: fresh subagent（独立上下文；未参与实现/返修/证据生成；只读被审 head）
-session: fresh subagent（Lead 记录）
+session: 19aa49d5-f5f6-4fa7-b982-a85a70a5520d（Lead 记录）
 parent_session: session-5f1e719c-f1f3-4193-8393-caf4d0936e4a
 reviewer_kind: subagent
 date: 2026-11-07
 repo: G:\CODEX\New Manga
 branch: main
-worktree: clean（本报告写入前；写入后仅本报告为 untracked）
+worktree: 复核前 clean；复核后本报告为 untracked；随后 Lead 并发 closeout 修改卡面（非本 Review 写入，见 §0 注）
 reviewed_head: a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853
 verdict: approved
 ---
@@ -43,6 +43,7 @@ verdict: approved
   - 其中一次恢复后因 `dotnet test` 增量构建用了旧 DLL 出现「恢复后仍红」，改用 `dotnet build --no-incremental` 重建后绿；这是构建缓存问题，不是代码问题（详见 §5）。
 - 未运行 `tools/discrimination.py` 全脚本（它会重写被审的 `logs/discrimination.log`）；改为静态核对 9 个破坏点 + 独立复现 B7/B8/B9（§5）。
 - 未重跑全量 pytest/.NET，理由见文首；未以静态判断冒充全量实测。
+- **复核后状态注**：本报告完成后，Lead 在共享工作树把卡 `status` 改为 `done`、`integration_commit=a11ded0d3`、AC-R7 改为 `<<MET>>` 并记录 r3 reviewer session；该修改非本 Review 写入、不在 `a11ded0d3` 被审字节内，不改变本报告的判定与结论。
 
 ### 0.1 本 Review 实跑命令与结果（全部实测）
 

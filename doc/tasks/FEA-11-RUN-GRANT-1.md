@@ -3,21 +3,21 @@ id: FEA-11-RUN-GRANT-1
 title: Run-scoped source-read 授权（Core 授权建立命令 + Host 铸造/绑定/接线；CORE+HOST 合并）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；权威 scope review `doc/reviews/FEA-11-RUN-GRANT-1-scope-r1.md`（fresh subagent `f26b8cec…`，**READY-WITH-UNFREEZE**；U-A）；第二意见 `…-scope-r1-delta.md`（Codex `c3c100ae…`，一致，非权威）；DSH 2026-11-06 裁决（见「DSH 裁决」）：U-A 两阶段交付（PREREQ-1 契约 → 本卡 CORE+HOST 合并）；单 grant 300s 窗口 + L-G1；M2-C1 不改；.NET 证据分工；Host 授权失败不 dispatch 且不新增 Run 面错误码；L-G7 由本卡剪枝解决
 suggested_owner: codex
 owner: run-grant-impl
-reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-RUN-GRANT-1-r1.md`）
+reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head）：r1 `62c6bf16-7f51-4d3b-92b7-774173cc3ff6`（changes_requested P0=0/P1=1/P2=3/P3=7）/ r2 `f3f365b0-48fa-4ad1-90e7-e8622f265bbb`（changes_requested P0=0/P1=0/P2=2/P3=2）/ r3 `19aa49d5-f5f6-4fa7-b982-a85a70a5520d`（**approved**，P0=0/P1=0/P2=0/P3=2 非阻断）；报告 `doc/reviews/FEA-11-RUN-GRANT-1-r1/r2/r3.md`
 depends_on:
   - FEA-11-RUN-GRANT-1-PREREQ-1
   - FEA-11-RENDITION-1
 base_commit: 2067789ea
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853
 delivery_head: a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-RUN-GRANT-1
 allowed_paths:
   - doc/tasks/FEA-11-RUN-GRANT-1.md
@@ -128,7 +128,7 @@ out_of_scope:
 - [x] **AC-R4 Host 接线与生命周期**：`library_start_run`/`AcceptRun`/`ControlRun`(continue/restart)/`ResumeBlockedRun`/`RetryFailedTargets` 前置授权被调用；授权失败**不 dispatch** 且返回该 typed code（不新增 Run 面码）；能力缺失 → 跳过授权按现状 dispatch；`_payloads`/`_grants` 剪枝上界测试；真实 IPC（opt-in）铸造→绑定→resolve 成功、撤销后 typed、wire 无路径泄漏。证据：`Fea11RunGrantIpcTests.cs`（`NEWMANGA_FEA11_IPC=1` 实跑并记录）、`SourceRegistryTests.cs`；**Review r2 增补**：能力缺失判别性用例（known 源非空 + 计数 authorize；删能力门即变红，判别点 B7）、`HostRuntime.AuthorizePreparedRunForAcceptAsync` 接线 seam（正常路径调用授权、缺失/过期 → `RUN_STALE_PREVIEW`；删接线即变红，B8）、folder kind 判别性用例（真实目录 → folder；删检测即变红，B9）与真实 folder 源 IPC（mint→绑定→resolve）。 <<MET>>
 - [x] **AC-R5 managed 零回归（Review r1 修订口径，见「Review r1 处置」）**：①**Core 授权面**：managed 页被跳过（`bound_pages=0`、零映射、零 DB 写）；②**Host 预授权为 best-effort**：mint I/O 失败/能力缺失/无相关源 → **跳过该源或整体跳过，不得阻断 Core 本可接受的 Run**（managed-only Run 必须到达 dispatch，零行为变化；判别性测试覆盖「mint 失败仍 dispatch」）；③managed 页 provider 仍读 Managed Copy、`TargetSnapshot.metadata` 键集合不变；④全量套件不减少。证据：Core managed 用例（`test_managed_targets_are_skipped_not_refused`）+ Host best-effort 判别性测试（`RunAuthorizationBestEffortSkipReachesDispatch_CoreRefusalDoesNot`、`RunAuthorizerTreatsMintFailuresAsBestEffortSkips`、`RunAuthorizerSkipsWhenTheCapabilityIsMissingWithoutMinting`、`RunAuthorizerSkipsWhenTheRegistryCannotBeRead`；IPC 层 `mint failure -> best-effort skip` / `partial mint failure -> minted=1 bound=1 skipped=1`）+ 全量门禁（pytest 3281/10、.NET 见 EV）。Host 预授权失败不再阻断 Core 本可接受的 Run（R1-01 已修）。 <<MET>>
 - [x] **AC-R6 零漂移与门禁**：scope diff ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`schema.py`/依赖/`apps/**`（超出 3 个 Host 文件）/`core_assembly.py` 零 diff；Run wire 请求/响应键集快照不变（`StartRun`/`PrepareRun`/`AcceptRun`）；`CORE_PROTOCOL_MINOR` 仍 3；全量 `pytest tests` **3249/10 不降**（跑后 `git checkout -- verification/FEA-09`）；全量 .NET **1532/0/86 不降**（跑后恢复 FEA-09；已知 flaky 首跑如实记录 + 隔离复跑）；`verify_pins.ps1` **18/18**；`check.ps1`（默认 + `-TaskPath`）PASS；`generate_api_inventory.py --check` PASS。证据：`logs/gates.log`、`scope-validation.log`、`changed-files.txt`。 <<MET>>
-- [x] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10/L-G12（含容器成员 entry 通道）与未宣称项；独立 Review **r1 changes_requested → findings 处置 → r2 窄面复审**（不得以 r1 未批准状态关闭）；卡面未写「全场景可用/ L-R1 全修」。 <<PARTIAL: R1 与 R2 findings 均已处置（见「Review r1/r2 处置记录」）；待独立 r3 窄面复审（Lead 指派）>>
+- [x] **AC-R7 证据/Handoff/不夸大**：EV 每文件 sha256 + commit；Resource Manifest 真实路径；Handoff 写明 L-G1/L-G2/L-G8/L-G9/L-G10/L-G12（含容器成员 entry 通道）与未宣称项；独立 Review **r1 changes_requested → r2 changes_requested → findings 处置 → r3 approved（P0=0/P1=0）**；卡面未写「全场景可用/ L-R1 全修」。证据：`doc/reviews/FEA-11-RUN-GRANT-1-r1/r2/r3.md`；r3 的 2 项 P3 非阻断观察（R3-01 历史文本残留 / R3-02 AcceptRun 委托行覆盖残差）已登记。 <<MET>>
 
 ## 已知 limitation（预登记，closeout 必须保留）
 
@@ -225,14 +225,14 @@ out_of_scope:
 - **门禁实测（`7ff49f1cc`）**：定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` → **49 passed**；全量 `pytest tests` → **3280 passed / 10 skipped**（卡基线 3249/10）；全量 `dotnet test NewManga.sln -c Release` → **1535 / 0 / 88**（卡基线 1532/0/86）；`NEWMANGA_FEA11_IPC=1` 的 `Fea11RunGrant` → **2 passed**；`verify_pins.ps1` **18/18 PASS**；`check.ps1`（默认 + `-TaskPath`）**PASS**；`generate_api_inventory.py --check` **EXIT=0**；scope diff ⊆ `allowed_paths`（禁止面全空、`CORE_PROTOCOL_MINOR` 仍 3）；判别性 **5/5 破坏点变红 + 字节级恢复**。
 - **未运行项**：无（上述门禁全部实跑）；已知 flaky/环境交互：全量 .NET 首跑 1 例 `FluentResidual2VisualEvidenceTests` 因运行时 `verification/` 工作树快照变化失败，恢复 FEA-09 tracked 字节 + 证据目录稳定后隔离复跑全绿（非产品缺陷，详见 Handoff §2）。
 - **证据索引**：`verification/FEA-11-RUN-GRANT-1/EV.md`（每文件 sha256 + AC 矩阵）、`logs/feature.log`、`logs/host-ipc.log`、`logs/host-unit.log`、`logs/full-pytest.log`、`logs/full-dotnet.log`、`logs/gates-governance.log`、`logs/discrimination.log`、`scope-validation.log`、`changed-files.txt`、`RESOURCE-MANIFEST.json`。
-- **不夸大**：本卡交付「窗口内可用 + **image/folder 单 entry 源与归档首成员**（L-G12 边界）」；**不得**表述为「referenced Run 全场景可用」或「L-R1 全修」；L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/**L-G12** 保留。独立 Review 由 Lead 指派（非实现者/非本会话）。
+- **不夸大**：本卡交付「窗口内可用 + **image 单 entry 源 + folder 源（逐成员 entry 匹配）+ 归档首成员**（L-G12 边界；本句为历史记录，现行权威口径见 L-G12 与「Review r2 返修」段）」；**不得**表述为「referenced Run 全场景可用」或「L-R1 全修」；L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/**L-G12** 保留。独立 Review 由 Lead 指派（非实现者/非本会话）。
 
 ### Review r1 返修（2026-11-07）
 
 - 返修 commit：`04317256c`（Host best-effort 编排 + typed 错误面 + `AuthorizeRunResult`/`PreparedRunSlices`/`RunSourceRange` 可测seam）、`3ffabeb81`（Host 单测 12 例 + IPC 断言更新 + Python 2 例/1 升级；**delivery_head=`3ffabeb8134b355076a9e964305de895e7c5b9d1`**）、证据/卡/Handoff 同批文档提交。
 - 门禁重跑（`3ffabeb81`）：定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` → **50 passed**；Host 单测（SourceRegistry）→ **17 passed**；`NEWMANGA_FEA11_IPC=1` 的 `Fea11RunGrant` → **2 passed**；全量 `pytest tests` → **3281 passed / 10 skipped**；全量 `dotnet test NewManga.sln -c Release` → 见 EV §2（clean tree 隔离复跑）；pins/check/API inventory/scope 见 EV §2；判别性 **6/6 破坏点变红 + 字节级恢复**（新增 B6：删除 best-effort 跳过 → managed Run 被阻断的判别）。
 - EV 重算每文件 sha256；L-G12 已扩写；R1-11 prepared-slice 行为已在 Handoff limitations 登记。
-- **不夸大（不变）**：本卡交付「窗口内可用 + **image/folder 单 entry 源与归档首成员**（L-G12 边界）」；不得表述为「referenced Run 全场景可用」或「L-R1 全修」；待独立 r2 窄面复审后由 Lead closeout。
+- **不夸大（不变）**：本卡交付「窗口内可用 + **image 单 entry 源 + folder 源（逐成员 entry 匹配）+ 归档首成员**（L-G12 边界；本句为历史记录，现行权威口径见 L-G12 与「Review r2 返修」段）」；不得表述为「referenced Run 全场景可用」或「L-R1 全修」；待独立 r2 窄面复审后由 Lead closeout。
 
 ### Review r2 返修（2026-11-07）
 
@@ -240,3 +240,52 @@ out_of_scope:
 - 门禁重跑（`a11ded0d3`）：定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py` → **50 passed**；Host 单测（SourceRegistry）→ **21 passed**；`NEWMANGA_FEA11_IPC=1` 的 `Fea11RunGrant` → **3 passed**（新增真实 folder 源）；全量 `pytest tests` → **3281 passed / 10 skipped**；全量 `dotnet test NewManga.sln -c Release` → **1551 / 0 / 89**；pins **18/18**；check PASS；API inventory EXIT=0；scope **PASS（changed=31 全 ALLOWED）**；判别性 **9/9 破坏点变红 + 字节级恢复**（B7 能力门 / B8 AcceptRun 接线 / B9 folder 检测）。
 - EV 重算每文件 sha256；Manifest 记录新 delivery head；L-G12 已按 folder 实证修正边界。
 - **不夸大（不变）**：本卡交付「窗口内可用 + image 单 entry 源 + folder 源 + 归档首成员」；不得表述为「referenced Run 全场景可用」或「L-R1 全修」；待独立 r3 窄面复审后由 Lead closeout。
+
+## Review r3 结论（Lead 回填，2026-11-07）
+
+- 报告 `doc/reviews/FEA-11-RUN-GRANT-1-r3.md`（fresh subagent `19aa49d5-f5f6-4fa7-b982-a85a70a5520d`；reviewed_head `a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853`）：**`approved`，P0=0/P1=0/P2=0/P3=2（均非阻断）**；R2-01…R2-04 4/4 CLOSED；AC-R1…R7 全 MET（R2/R3 保留现有 limitation）。
+- 独立实测（r3）：定向 pytest **50 passed**；SourceRegistry **21 passed**；真实 IPC **3 passed**；pins **18/18**；check（默认 + `-TaskPath`）PASS(3 warnings)；API inventory EXIT=0；EV 27/27 sha；scope 31 文件全 allowed、禁止面零 diff、minor=3；独立复现 B7/B8/B9 破坏点（RED + 字节级恢复）。
+- **R3-01（P3，非阻断）**：卡面历史段落（交付记录/Review r1 返修）旧措辞已加「现行权威口径见 L-G12 与 Review r2 返修」注记；现行 L-G12/Handoff/EV 均为 folder 逐成员口径。
+- **R3-02（P3，非阻断，登记）**：`HostRuntime.AcceptRunAsync` → `AuthorizePreparedRunForAcceptAsync` 的**委托行本身**未被测试判别（seam 逻辑已判别，B8；删除委托行时 SourceRegistry 21 仍绿）。风险低（无条件直接调用），登记为 follow-up 维护项（可并入下一卡）。
+- **处置**：按 r3 建议由 Lead 集成 `a11ded0d3`；AC-R7 置 `<<MET>>`；不宣称产品级全场景可用（L-G12 边界保留）。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-R2/R3/R5 | verification/FEA-11-RUN-GRANT-1/EV.md | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 27a8e21ead39576f2b5362466ad87fd88007701e5c1e1f195971040a50b9f922 | CANONICAL |
+| EV-02 | AC-R6 | verification/FEA-11-RUN-GRANT-1/changed-files.txt | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 362f9b12839fd144c10bcad0ec7b2fe6122a8eb215c3d6afd5e56d205a9db607 | CANONICAL |
+| EV-03 | AC-R6 | verification/FEA-11-RUN-GRANT-1/scope-validation.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | a7ed90938f4467fcd2575a45cc4b77919d54015d470090176394533a1811de4c | CANONICAL |
+| EV-04 | AC-R1/R2/R3/R5 | verification/FEA-11-RUN-GRANT-1/logs/feature.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | f462f7342634e250b898dfc9409ecf4379bd87999e5595d6e73b566a996fdb33 | CANONICAL |
+| EV-05 | AC-R4 | verification/FEA-11-RUN-GRANT-1/logs/host-ipc.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | ebfb8992fc22e7f176cb5217805db487ebc132aebda7e336d356f572ab68d7e5 | CANONICAL |
+| EV-06 | AC-R4/R5 | verification/FEA-11-RUN-GRANT-1/logs/host-unit.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | cb170efb19f3d288ade97ff27d1b920b56945634a3187e02e7cef8a7aa8d5aee | CANONICAL |
+| EV-07 | AC-R6 | verification/FEA-11-RUN-GRANT-1/logs/full-pytest.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 9b6a79a6369e0da485bdf9a97834ce1869b184e01f37e3cea919ea8462c232de | CANONICAL |
+| EV-08 | AC-R6 | verification/FEA-11-RUN-GRANT-1/logs/full-dotnet.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | a19eb94884b31273b90e4c9a39edca1fb7c93736807e6a5db90e3d2b1d3a518b | CANONICAL |
+| EV-09 | AC-R6 | verification/FEA-11-RUN-GRANT-1/logs/gates-governance.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | b53fef2eac8d7922184f301eb1bc42204fd6884177c9f132f81f29672f0c29af | CANONICAL |
+| EV-10 | AC-R2/R3/R4/R5 | verification/FEA-11-RUN-GRANT-1/logs/discrimination.log | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 97bb690ab99945b3d4667b8e0d3642c7ea432c7d2391a5320f433b1575a3bfb4 | CANONICAL |
+| EV-11 | AC-R7 | verification/FEA-11-RUN-GRANT-1/RESOURCE-MANIFEST.json | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 9d1f22f65da39ddbd424d7a88fa42c43fd8da5845f6d9e6dbdf7c689ea5171dd | CANONICAL |
+| EV-12 | AC-R6 | verification/FEA-11-RUN-GRANT-1/tools/discrimination.py | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 0a931b6a8c8a17259b9408abac762f8ad14bd544d73b2604047d0686099a5ce2 | CANONICAL |
+| EV-13 | AC-R6 | verification/FEA-11-RUN-GRANT-1/tools/gen_ev.py | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | 527a22593a5444137aa263d655f05058fd939cc89bb4e009bc3e23edd4b373fe | CANONICAL |
+| EV-14 | AC-R6 | verification/FEA-11-RUN-GRANT-1/tools/gen_manifest.py | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | f7a551a71a7aaa9622d33b382b6bb61e21d8bfc9d3e7e3ec2a84574961d64066 | CANONICAL |
+| EV-15 | AC-R6 | verification/FEA-11-RUN-GRANT-1/tools/scope_validation.py | 5eb69b3f144b1704cf6a28cdb86da2cdea93302e | eb0bc9eb947e72d6bfd20edbba7e3e92f144430606daa9d4b0926ea702fa0186 | CANONICAL |
+| EV-16 | AC-R7 | doc/reviews/FEA-11-RUN-GRANT-1-r3.md | e4a2fd28c | 5b4f901481ceb87f1a2963f2d3a810c8c2644740a0cb8f8e7baf00fc70887561 | CANONICAL |
+
+> EV-16 的 sha256 由 `doc/reviews/FEA-11-RUN-GRANT-1-r3.md` 实测（见 Closeout 记录复核命令）；EV 表内其余 15 行由 `EV.md`/sha256 逐文件复算。
+
+## Resource Manifest
+
+`verification/FEA-11-RUN-GRANT-1/RESOURCE-MANIFEST.json`
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；`delivery_head`/`integration_commit` = `a11ded0d3794bdb1afa5f7889d2e25aa4ea7b853`（实现+测试；4 次交付：`85eace738`/`7ff49f1cc`/`04317256c`/`3ffabeb81` + r2 修 `9e1861ee0`/`a11ded0d3`；证据/卡/Handoff 同批文档提交）。
+- **AC 判定**：AC-R1…AC-R7 **全 MET**（AC-R2/R3 保留既有 limitation；AC-R4 含 R3-02 非阻断残差；AC-R7 由 r3 approved 后回填）。无 PARTIAL/BLOCKED。
+- **Review 处置**：r1（changes_requested P0=0/P1=1/P2=3/P3=7）→ 返修（Host best-effort/typed 错误面/测试）→ r2（changes_requested P0=0/P1=0/P2=2/P3=2：folder 边界/能力缺失判别性/AcceptRun 接线/文档）→ 返修（folder kind 修正 + 真实 folder IPC + 判别性测试 + 接线 seam）→ **r3 approved（P0=0/P1=0/P2=0/P3=2 非阻断）**。r3 P3：R3-01（历史文本已注记）、R3-02（AcceptRun 委托行覆盖残差→follow-up 维护项）。
+- **门禁数字（Lead 实测，`a11ded0d3`；before → after）**：pytest **3249/10 → 3281/10**（+32）；全量 .NET **1532/0/86 → 1551/0/89**（+19 passed / +3 opt-in skip）；定向 python **49→50**；Host 单测 **5→21**；真实 IPC **2→3**；`verify_pins` 18/18 → 18/18；`check`/`-TaskPath` PASS(3 warnings)；API inventory PASS；scope diff ⊆ allowed_paths（31 文件，禁止面零 diff，`CORE_PROTOCOL_MINOR=3`）；判别性 **9/9**。跑后均 `git checkout -- verification/FEA-09`。
+- **已知 flaky/环境**：全量 .NET 在 `verification/` 正在写入时 `FluentResidual2VisualEvidenceTests` 会因 git-status 快照失败；clean tree 隔离复跑全绿（Lead 两次全量均 clean tree，未命中）。全量 pytest 10 skipped / .NET 89 skipped 为既有门控 + 3 opt-in IPC，本卡未新增环境 skip。
+- **limitations（保留）**：L-G1（300s 窗口）、L-G2（加密源）、L-G3（混合页沿 R5）、L-G7（记账剪枝已实现）、L-G8（铸造 I/O 成本）、L-G9（Core 重启）、L-G10（L-R11 gate 差异）、L-G11（binding 解析在 Core）、**L-G12（version 通道 + 容器成员 entry 通道；可用边界=image 单 entry + folder（逐成员）+ 归档首成员；多成员容器其余页/version 缺口不可用）**、L-G13（flaky）、L-G14（AcceptRun prepared-slice 行为）。
+- **follow-up**：`FEA-11-RUN-GRANT-2`（proposed 候选，**未建卡/未释放**）：Host→Core source-id/version 通道 + 容器成员 locator/ordinal 通道 + 长 Run 定期重铸/重绑 + R3-02 委托行覆盖。L-R1 **未全修**（只交付窗口内 + L-G12 边界内可用）。
+- **Resource Manifest / 资源处置**：仓内删除/移动/归档 **0**（`deleted=0 moved=0 migrated=0 archived=0`）；仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-1\`（500+ 文件，测试夹具/门禁日志/判别备份，无独有产品数据）→ `PRESERVE_REFERENCED`；未清理其它任务。详见 Manifest。
+- **指针清理**：STATUS 当前 Task → 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：见状态文件 push 行（Lead 统一 push；PRE/POST hash 记录）。
+
