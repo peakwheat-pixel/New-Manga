@@ -10,7 +10,7 @@ owner: run-grant-impl
 reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-r1.md`）
 depends_on:
   - FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1
-base_commit: null
+base_commit: 55306cb84
 branch: null
 worktree: null
 integration_commit: null
