@@ -15,7 +15,7 @@ base_commit: 9daa94a25   # 释放点 main head（SCAN-1 r2 交付后）
 branch: null
 worktree: null
 integration_commit: null   # DSH 集成后填写
-delivery_head: d976aceec
+delivery_head: a46d4d5c7
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-12-UI
@@ -135,7 +135,7 @@ out_of_scope:
 - [x] **AC4 预览披露（PD-01/PD-03）**：点「彻底删除」后先出现披露面板，且**在用户确认前只有一帧** `library_preview_permanent_delete_books`（`bookIds:[id]`）；面板逐项含 PD-01 三项强制（`manualRegionCount`/`draftPageCount`/`deletedFiles`+`deletedBytes`）以及 `lockCount`、`currentRevisionId`（仅代表展示值）、**最终重冻契约的完整 current 保护集（全部 current，不得只用单值代表；含非首个/隐藏 current）**、受保护 artifact 表达、`pinnedRevisionIds`、`activeRunIds`、`contentSummary.chapters/pages/artifacts`、`sharedFileRefs` 与保留项声明（导出文件保留、用户源文件/源目录永不移动或删除、Pipeline 历史保留、全库历史备份不清理）；面板文本**不含**盘符/路径片段与源文件名；预览零副作用；旧 Core 缺字段/null → 禁止彻底删除（不得显示 0/空数组后继续）；失败态按 typed 处理（`BOOK_DELETE_PROTECTION_INVENTORY_UNAVAILABLE` → 就地错误 +「重新预览」；`BOOK_NOT_FOUND` → 提示并刷新）。 <<MET>>
 - [x] **AC5 专门确认与 digest 绑定（PD-02/PD-04）**：未勾选「我理解不可恢复」⇒ 确认禁用且**零**删除帧；勾选后确认 ⇒ 单帧 `library_delete_book_permanently`，payload 键集恰为 `{book_id, confirm_permanent_delete, inventory_digest}`（单条拒收 `book_ids`/`confirmed_book_ids`/`confirm_count`/`inventory_digests`），`inventory_digest` 与 AC4 预览返回值**字符串逐字节相等**；确认文案含“人工修改 N / 锁定 N / 固定版本 N”具体数字 + 删除文件/字节 + 保留项声明；`inventory_digest` 只能来自本次预览，UI 不得自算/拼接/缓存替代；`title` 不参与 digest，不得以“书名变了”作为失效理由；`BOOK_DELETE_STALE_PREVIEW` → 清空确认态、提示“清单已变化，请重新预览”、自动重预览（第二帧 preview），**不重发删除**；预览 `activeRunIds` 非空 ⇒ 确认按钮禁用并说明 `BOOK_BUSY` 原因（零删除帧）。 <<MET>>
 - [x] **AC6 stale / busy / 结果处置**：①注入状态变化 ⇒ `BOOK_DELETE_STALE_PREVIEW` → 清空确认态 + 自动重预览、不重发删除；②`activeRunIds` 非空 ⇒ 预阻断 `BOOK_BUSY`、零删除帧；③注入 `BOOK_DELETE_CLEANUP_PENDING` ⇒ 显示“内容已删除/文件待清理”+「重试清理」，重试帧 digest 与首次相同且**不产生新的 preview 帧**；第二次重试 → `BOOK_NOT_FOUND` 且提示已不存在；④`BOOK_NOT_FOUND` ⇒ 提示 + 刷新列表；⑤`BOOK_DELETE_CONFLICT`/`BOOK_DELETE_FAILED` ⇒ 保留条目、按 typed 展示、不自动重试；⑥`INVALID_REQUEST` 视为实现缺陷并如实报错，不得静默吞掉。 <<MET>>
-- [x] **AC7 能力缺失 / 只读 / 不可用**：①Core 未公告 `library.trash.read/1`（或 `library.trash.write/1` / `library.delete.preview/1`）⇒ 回收站对应区域显示能力缺失态、`CORE_CAPABILITY_MISSING` 可见、**无**删除/恢复可点、**不显示空列表**；只缺写/preview 能力时允许真实只读列表，不得把已有列表清空；②Host 只读 ⇒ 写入口禁用 + `HOST_READ_ONLY` 原因，读取仍可用；③`CORE_UNAVAILABLE` ⇒ 失败态 + 重试按钮；④未注册码只作诊断展示，不得作为分支/重试/恢复选择器；⑤能力按**操作**禁用，不因一个能力缺失禁用全部。 <<MET>>
+- [x] **AC7 能力缺失 / 只读 / 不可用**：①Core 未公告 `library.trash.read/1`（或 `library.trash.write/1` / `library.delete.preview/1`）⇒ 回收站对应区域显示能力缺失态、`CORE_CAPABILITY_MISSING` 可见、**无**删除/恢复可点、**不显示空列表**；只缺写/preview 能力时允许真实只读列表，不得把已有列表清空；②Host 只读 ⇒ 写入口禁用 + `HOST_READ_ONLY` 原因，读取仍可用；③`CORE_UNAVAILABLE` ⇒ 失败态 + 重试按钮；④未注册码只作诊断展示，不得作为分支/重试/恢复选择器；⑤能力按**操作**禁用，不因一个能力缺失禁用全部。 **r2（P1-1 修复）**：`_hostReadOnly` 仅取 Host 写闸、`_capabilityMissing` 仅由 read 决定；restore 仅 write、删除 write+preview 分门控；部分缺失渲染 `CORE_CAPABILITY_MISSING` 降级横幅；`CORE_UNAVAILABLE` 独立 probe 失败态；3 个单能力缺失 + probe 失败测试。 <<MET>>
 - [x] **AC8 无 DB/OS 直连 + 隔离（元 AC）**：静态扫描 `apps/desktop-avalonia/src/NewManga.App/**`：本卡新增访问 0 处 `sqlite`/`Microsoft.Data.Sqlite`/`System.Data.SQLite`/`DllImport`/`Shell32`/`SHFileOperation`/`IFileOperation`/`File.Delete`/`Directory.Delete`/`Microsoft.VisualBasic.FileIO`；真实 IPC 测试 DataRoot 位于仓外临时根且断言 `IsRelativeTo`；测试前后对“隔离根外”哨兵文件树做 SHA-256 指纹相等断言（原文件零触碰）；路径泄露扫描针对实际路径/敏感字段，不使用“任意 `/` 字符出现即失败”的过宽规则，并区分既有合法代码与本卡新增访问。 <<MET>>
 - [x] **AC9 文案诚实性**：源码/文案断言：回收站相关不再出现“回收站…能力待接入 / Host 未暴露回收站 / 未发布回收站”类过期文案；能力缺失态使用 typed code 文案；Fluent 抽屉文案不声称能力缺失、不展示实现类名；页面级删除入口文案改为“页面级删除无命令”；任何状态不伪造成“共 N 项”、不伪造逐项 busy。 <<MET>>
 - [x] **AC10 禁令与门禁**：全流程 wire 中 **0 帧** `library_purge_trash`；0 帧 `library_delete_books_permanently`（批量）；`library_delete_book_permanently` payload 从未出现 `book_ids`/`confirmed_book_ids`/`confirm_count`/`inventory_digests`；全量 .NET 不减少（释放日实跑基线，passed/failed/skipped 分列，不引用调研/旧卡数字）；`python tools/generate_api_inventory.py --check` PASS；`verify_pins.ps1` **18/18**；`check.ps1` PASS；L2 门禁完成（控件级 headless + 真实 IPC），L3 真机 **NOT_RUN**（不得写 PASS）；证据落 `verification/FEA-12-UI/`。 <<MET>>
@@ -166,7 +166,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2/AC3/AC4/AC5/AC6/AC7/AC9 headless | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~TrashUiTests\|NoDbOsAccessTests\|V2ShellUiTests.RecycleBin\|V2ShellUiTests.MoveToTrash"`（curated 时 `NEWMANGA_EVIDENCE_DIR=verification/FEA-12-UI`） | 隔离 fake controller；真实 Avalonia 窗口（headless）；typed/故障注入 | **PASS 28/28**（`TrashUiTests` 23、`NoDbOsAccessTests` 3、2 个窗口交互测试）；4 张真实截图 | `logs/ui-tests-curated.log`、`screens/*.png` |
+| AC1/AC2/AC3/AC4/AC5/AC6/AC7/AC9 headless | `dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~TrashUiTests\|NoDbOsAccessTests\|V2ShellUiTests.RecycleBin\|V2ShellUiTests.MoveToTrash"`（curated 时 `NEWMANGA_EVIDENCE_DIR=verification/FEA-12-UI`） | 隔离 fake controller；真实 Avalonia 窗口（headless）；typed/故障注入 | **PASS 40/40**（`TrashUiTests` 35、`NoDbOsAccessTests` 3、2 个窗口交互测试）；4 张真实截图 | `logs/ui-tests-curated.log`、`screens/*.png` |
 | AC4/AC5/AC6 预览/确认/失败处置 | 同上 | fake typed 注入、故障注入 | **PASS**：preview→确认→单帧删除/STALE 重预览/CLEANUP 重试/BOOK_NOT_FOUND；旧 Core fail-closed | `logs/ui-tests-curated.log` |
 | AC1–AC6/AC8/AC10 真实 IPC/wire | `$env:NEWMANGA_FEA12_UI_IPC=1`（curated `NEWMANGA_EVIDENCE_DIR`）+ `dotnet test ... --filter "FullyQualifiedName~Fea12TrashUiIpcTests"` | 真实 `src/bootstrap/core_service.py`；隔离 DataRoot 在仓外 + 哨兵指纹 | **PASS 1/1**：27 wire 帧；0 purge/0 批量删除；逐书 digest 绑定；DataRoot 仓外、哨兵不变 | `fea12-trash-ui-ipc.json`、`logs/ipc-tests-curated.log` |
 | AC8 静态/隔离 | 上表过滤器包含 `NoDbOsAccessTests` | 静态扫描 + 哨兵 | **PASS**：本卡 9 文件 0 DB/OS 直连；全 App 0 DB 访问 | `logs/ui-tests-curated.log` |
@@ -179,7 +179,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 - **生产映射**：每个端口方法恰好映射一帧 Host 命令（`core_ping` 探测 + `library_list_trash`/`library_move_to_trash`/`library_restore_from_trash`/`library_preview_permanent_delete_books`/`library_delete_book_permanently`）；单本删除绑定**逐书 digest**（集合 digest 仅供展示），`payload` 键集恒为 `{book_id, confirm_permanent_delete, inventory_digest}`。
 - **UI 状态机**：`TrashViewModel`（probe→单帧 list、不透明 cursor 不持久化、勾选顺序恢复、披露面板、硬勾选门、STALE 自动重预览、BOOK_BUSY 预阻断、CLEANUP_PENDING 同 digest 重试、BOOK_NOT_FOUND 刷新、能力/只读/不可用 typed 态、迟到响应隔离）；`LibraryViewModel` 书架软删危险确认 + 撤销条 + 进入回收站隐藏详情/批量条；`RecycleBinView` 真实列表/披露面板/重试；`Fluent ShelfPageView` 仅文案诚实化。
 - **测试**：`TrashUiTests`（23）、`NoDbOsAccessTests`（3）、`V2ShellUiTests` 两个真实窗口交互测试（默认焦点/ Esc/Enter/帧计数）；`Fea12TrashUiIpcTests` + `Support/Fea12ProductionFixture`（真实 Python Core stdio，默认按 `NEWMANGA_FEA12_UI_IPC=1` skip）。
-- **测试基线**：全量 .NET **1474 passed / 0 failed / 82 skipped**（App.Tests 703/0/7；Host.Tests 144/0/51）；本卡零 Python 改动（pytest 引用 FEA-11 基线 3073/10，未重跑并在 Handoff 说明）。
+- **测试基线**：全量 .NET **1486 passed / 0 failed / 82 skipped**（App.Tests 715/0/7；Host.Tests 144/0/51）；本卡零 Python 改动（pytest 引用基线 **3203 passed / 10 skipped**（本卡零 Python 改动，未重跑））。
 - **未跑/边界**：L3 真机 `NOT_RUN`；pytest 未重跑（零 Python diff）。
 
 ## 预期行为变更（Review 不判回归）
@@ -188,6 +188,20 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 2. 回收站占位文案/空态被真实列表替代；Fluent 抽屉文案改为不声称能力缺失（结构不变）。
 3. `ISourceImportController` 面未改；`HostController`/`NullHostController` 以**独立** `ITrashController` 实现接线（未扩 `IHostController`），`FakeHostController` 同步实现；C-07 `--check` PASS。
 
+## r2 返修记录（2026-11-06，r1 Review CHANGES 处置）
+
+r1 Review：`doc/reviews/FEA-12-UI-r1.md`（独立 fresh subagent；reviewed_head `c841b9a0b`；P0=0/P1=1/P2=3/P3≈8）。
+
+| Finding | 级别 | 处置 | 证据 |
+|---|---|---|---|
+| P1-1 能力缺失/Host 只读/probe 失败三态混同（AC7 NOT MET） | **P1** | **已修**：`_hostReadOnly` 独立跟踪 Host 写闸；`_capabilityMissing` 仅由 read 决定；restore 仅 write、删除入口/确认 write+preview 分门控；部分缺失渲染 `CORE_CAPABILITY_MISSING` 降级横幅（列明缺失能力与影响）；`CORE_UNAVAILABLE` 独立 probe 失败态 + 重试；能力缺失时绝不显示假只读 banner；`HOST_READ_ONLY` 字面展示。新增缺 read/缺 write/缺 preview 3 个单能力缺失测试 + probe 失败测试（各断言 0 帧/正确文案/按操作启停） | `logs/ui-tests-curated.log`（40/40）、`AC-MATRIX.md` r2 节 |
+| P2-1 cleanup_pending 关闭结果“仍可重试”文案不实 | P2 | **已修**：关闭时明示“关闭后本会话内无法再重试清理（wire 无 pending 清单；重新预览会 BOOK_NOT_FOUND）”；测试断言关闭后 `CanRetryCleanup=false` 且文案一致；L3 同步收窄 | `TrashUiTests.CloseResult_AfterCleanupPending_*` |
+| P2-2a fake 集合/逐书 digest 同值，VM 绑定无判别测试 | P2 | **已修**：集合 `…a` vs 逐书 `…d` 不同值；删除帧断言 `==逐书` 且 `≠集合`；变异 M1 复验 **2 红** | `logs/r2-mutations.log` |
+| P2-2b 旧 Core 预览投影 fail-closed 无判别测试 | P2 | **已修**：`HostController.ProjectPreviewResponse` internal 投影 + 缺字段/null/非法形状/`[]` 四类测试经 VM 驱动（unknown 0 删除帧、`[]` 1 帧）；变异 M3 复验 **3 红** | `logs/r2-mutations.log` |
+| P2-3 卡/Handoff pytest 基线旧数 3073/10 | P2 | **已修**：改为 **3203 passed / 10 skipped**（引用；本卡零 Python，未重跑） | 本卡/Handoff |
+| P3 同批 | P3 | 已修：死方法删除；恢复确认文案更正（恢复直接执行）；`pinned revision`→`固定版本`；`HOST_READ_ONLY` 字面；`{}` 响应 typed failure（测试）；move payload 覆盖说明；spill 归档 322 文件 + tree sha256；check.ps1 PASS 入 `logs/check.log`；未知 restore reason 统一“恢复冲突（未分类）”；无选中时不默认第一项（按钮禁用 + 提示）；`LoadMore` 防重入；`ResetPreviewKeepTarget` 无效赋值删除；预览文本路径泄露断言 | 本卡/Handoff/`AC-MATRIX.md` |
+
+**r2 门禁**：全量 .NET **1486 passed / 0 failed / 82 skipped**（App.Tests 715/0/7；+12 新测试，无减少）；定向 UI **40/40**；真实 IPC **1/1**；pins 18/18；API check PASS；`check.ps1` PASS（3 既有 warning）；契约/计划/Python diff 空。
 ## 依赖、风险与阻塞
 
 - 硬依赖（已满足）：`FEA-12-PREREQ-1`（M2-C1 rev 2.13 wire + Host 投影/白名单，`done`）、`FEA-12-CORE`（Core handler + Host 命令桥 + capability gate；r3 Review 通过 + 正式 UNFREEZE/重冻后由 DSH 释放本卡，base `9daa94a25`）。本卡消费 M2-C1 rev 2.14 的完整 current 集合与 C-04b v1.1 digest 规则。
@@ -212,7 +226,7 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 - **L1**：批量彻底删除无 UI（Core 有能力）；单书库场景批量被 `BOOK_DELETE_BATCH_WHOLE_LIBRARY` 拦，单条可用。
 - **L2**：回收站无缩略图/内容预览（读门控边界，另卡）。
-- **L3**：`cleanup_pending` 的「重试清理」仅当前会话可用（无 pending 清单命令），重启后不可达。
+- **L3**：`cleanup_pending` 的「重试清理」仅在结果面板保留期间可用（无 pending 清单命令；关闭结果后 UI 明示不可再重试；重启后不可达）。
 - **L4**：列表无总数、无逐项 busy（wire 缺口）；只能显示“已加载 N 项”。
 - **L5**：`RestoreFromTrash` 冲突 reason 首版恒为 `TRASH_ENTRY_NOT_FOUND`（`TRASH_RESTORE_CONFLICT`/`LAYER_MISMATCH` 不可达）。
 - **L6**：导出占用只在删除时以 `BOOK_BUSY` 暴露（`activeRunIds` 不含 export）。
@@ -224,9 +238,9 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/FEA-12-UI-d976aceec.md`（delivery head `d976aceec`；含允许/禁止路径、收据核对命令、风险与下一任务建议）。
-- Review：TODO（DSH 派独立上下文 fresh subagent；须记录 reviewer 身份/session ID 与 reviewed_head；实现者不自审）。
-- 实现 commit：`d976aceec`（App 生产代码 + 测试 + `verification/FEA-12-UI/` 证据）。
-- 实际测试（2026-11-06）：全量 .NET **1474/0/82**；定向 UI **28/28**；真实 IPC **1/1**（27 wire 帧，0 purge/0 批量）；pins 18/18；API check PASS；契约/计划/Python diff 空。
+- Review：r1 `doc/reviews/FEA-12-UI-r1.md`（独立 fresh subagent；changes_requested P1=1/P2=3/P3≈8；已在 r2 处置）；r2 窄面复审待 DSH 派发（须记录 reviewer 身份/session ID 与 reviewed_head；实现者不自审）。
+- 实现 commit：`d976aceec`（r1 实施：App 生产代码 + 测试 + `verification/FEA-12-UI/` 证据）；**r2 返修 commit：`a46d4d5c7`**（能力三态拆分 + 判别测试 + 证据重签）。
+- 实际测试（2026-11-06）：全量 .NET **1486/0/82**；定向 UI **40/40**（r2 新增 12 个判别/单能力测试）；真实 IPC 1/1；check.ps1 PASS（3 warnings）；真实 IPC **1/1**（27 wire 帧，0 purge/0 批量）；pins 18/18；API check PASS；契约/计划/Python diff 空。
 - 残余：L1–L10 limitation（见上，逐项保留）；L3 真机 `NOT_RUN`；CORE 侧事实（restore reason 收窄、active export 未披露）按 L5/L6 记录。
 - 最终由 DSH 填写 `integration_commit` 并改 done；`canonical_evidence_status`/`resource_closeout_status` 待 closeout。
 
@@ -236,31 +250,32 @@ frontmatter `allowed_paths` 为准（`evidence_dir` 已显式列入）：
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC10 | verification/FEA-12-UI/logs/dotnet-full-solution.log | - | 193dcc2ff6de2e9e1a8b23167b39389f433ba056e7c1affbb8e10d40f0d02e42 | CANONICAL |
-| EV-02 | AC1–AC7/AC9 | verification/FEA-12-UI/logs/ui-tests-curated.log | - | a03c6e5c6767fb8be3c012c3363ecabfc8f7ca93987438b81b7ee53fe04a69fa | CANONICAL |
-| EV-03 | AC1–AC6/AC8/AC10 | verification/FEA-12-UI/logs/ipc-tests-curated.log | - | 2acc069e1ff2d27c2106e1f930f22d3deb882fc15fa4a4f801ba88e237f3818b | CANONICAL |
-| EV-04 | AC5/AC8/AC10 | verification/FEA-12-UI/fea12-trash-ui-ipc.json | - | 525c123fa6ae078ce9fc15c15aae3757c8d4baccd9786965ce462674ab4e3d65 | CANONICAL |
+| EV-01 | AC10 | verification/FEA-12-UI/logs/dotnet-full-solution.log | - | e188a295a467f5f886aa584760826aa9274e6e10f033da75f75354be8b65a341 | CANONICAL |
+| EV-02 | AC1–AC7/AC9 | verification/FEA-12-UI/logs/ui-tests-curated.log | - | 9d6496194db7b28151a85387386a01dd762d95eba2b190fd0f739e5ef0dd2ccb | CANONICAL |
+| EV-03 | AC1–AC6/AC8/AC10 | verification/FEA-12-UI/logs/ipc-tests-curated.log | - | fe407fd2e0e597650c158af9aa4220cb7b25e185f85fb7028e5a6990bc82cccf | CANONICAL |
+| EV-04 | AC5/AC8/AC10 | verification/FEA-12-UI/fea12-trash-ui-ipc.json | - | 32938251915ffb0b84f66e378ac2032a0ddbdf4b17e0683d70006a6d33658630 | CANONICAL |
 | EV-05 | AC10 | verification/FEA-12-UI/logs/pins.log | - | 2ebcc2c24b9075f939b9beb027ed2decd273323581327db12b6097adb37c4d94 | CANONICAL |
-| EV-06 | AC10 | verification/FEA-12-UI/logs/api-inventory.log | - | 451b1ef20871821116d8c0f7e6ca8e3b94e3f0262874756432c268e50a557597 | CANONICAL |
-| EV-07 | AC1/AC4/AC5/AC9 | verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--07-recycle-list.png | - | 30cd7f35b91f0b0ff36f24256fc38fc586ece6bb8a8170cadf0aec5fefc6ec2c | CANONICAL |
-| EV-08 | AC4/AC5 | verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--08-recycle-delete-preview.png | - | 8c17136f52ccbe0a4b97ef6b2709963ae0c8c0bb29a3208f7278406dd566930f | CANONICAL |
-| EV-09 | AC2 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--09-move-to-trash-danger-confirm.png | - | b5fb2dc85fe631f8573a3923dd55ac8e2863bace62b275c470c699ba986ad2db | CANONICAL |
-| EV-10 | AC2/AC3 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--10-move-to-trash-undobar.png | - | 80fdf4901de498f36a42ba30bd83ceab2731926060bf8250f542db15f791e517 | CANONICAL |
-| EV-11 | AC10 | verification/FEA-12-UI/logs/gates.log | - | c2372f99b7f13ed5fe2ef11cc1ce03b2ffbb4b353ac7b0e678029477205c88dd | CANONICAL |
-| EV-12 | AC1–AC10 | verification/FEA-12-UI/AC-MATRIX.md | - | 94004d5261cb62460e5b565038d87af305ccad86ecd33108de6310019c36ecfa | CANONICAL |
-| EV-13 | AC10 | verification/FEA-12-UI/ENVIRONMENT.md | - | 2ac5cc0287d066b8f668b875de7a3852669cf9038f19fc967497cd9e5f725fb4 | CANONICAL |
-| EV-14 | AC10 | verification/FEA-12-UI/agent-output-manifest.json | - | b811dcd971e01e0d58ed81c028e2f40e914ffc81c6fd6013bd59250797c62ce0 | CANONICAL |
+| EV-06 | AC10 | verification/FEA-12-UI/logs/api-inventory.log | - | 3e966c845fcb935ab58adb3805c792227a7d2073e963200268f54f36f1007c68 | CANONICAL |
+| EV-07 | AC1/AC4/AC5/AC9 | verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--07-recycle-list.png | - | 0de986c44f85afcb234f459144f2dd4d8d0b9458835acfbd30c56a5e90e18305 | CANONICAL |
+| EV-08 | AC4/AC5 | verification/FEA-12-UI/screens/RecycleBin_ListsRealEntries_PreviewStartsOnCancel_AndEscCancelsWithoutDeleteFrames--08-recycle-delete-preview.png | - | fa41f366954e753886153d6685ed22158bc08449462c6481fa8f6b50654096bb | CANONICAL |
+| EV-09 | AC2 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--09-move-to-trash-danger-confirm.png | - | ea15b96d42cd3abbdf89284d37f4400452894dba8738c253f703b5f96fc80771 | CANONICAL |
+| EV-10 | AC2/AC3 | verification/FEA-12-UI/screens/MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves--10-move-to-trash-undobar.png | - | 802fb895a60c8358dd2ea7401062595fdf7339825525e793ae847d765cd563c5 | CANONICAL |
+| EV-11 | AC10 | verification/FEA-12-UI/logs/gates.log | - | 5a26ea60b13eb0579f5329c5b41ef0283c7f599bc504f825350aecda5d2400b9 | CANONICAL |
+| EV-12 | AC4/AC5/AC7（r2 判别） | verification/FEA-12-UI/logs/r2-mutations.log | - | cc9ecef9eb68131652e0a32faa0d436a7ed9811a440189b49692ccc4af729c1b | CANONICAL |
+| EV-13 | AC1–AC10 | verification/FEA-12-UI/AC-MATRIX.md | - | 80abc6f81ae3e932a30fd450da831d332a2288f83402d97a684ed149947664b7 | CANONICAL |
+| EV-14 | AC10 | verification/FEA-12-UI/ENVIRONMENT.md | - | 2ac5cc0287d066b8f668b875de7a3852669cf9038f19fc967497cd9e5f725fb4 | CANONICAL |
 | EV-15 | AC8 | apps/desktop-avalonia/tests/NewManga.App.Tests/NoDbOsAccessTests.cs | - | 2eee151ed21a440dc1aca7129769f4b1f1c376bf73be5e276516115ce1da6fa0 | SOURCE_PIN |
 | EV-16 | AC10 | apps/desktop-avalonia/tests/NewManga.Host.Tests/Support/Fea12ProductionFixture.cs | - | d635a995a5f58763a3fc3e4b71afd5156a5756115eb5b2dfa7435ea0912253b7 | SOURCE_PIN |
+| EV-17 | AC10（r2 门禁） | verification/FEA-12-UI/logs/check.log | - | 4adddd01338271e8a3cc91f78ac2c546daaa30a7911372207ba2e53a7a18c686 | CANONICAL |
+| EV-18 | AC10 | verification/FEA-12-UI/agent-output-manifest.json | - | 54ce1006712ac1c0b499fd5748100dca9727034e8a2c23509a73945da5c72cc6 | CANONICAL |
 
 ## Resource Manifest
-
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树） | NOT_APPLICABLE | — | — | 未创建 |
 | temp | `G:\CODEX\New Manga.workspace\temp\FEA-12-UI\` | DELETE_SAFE | — | — | 测试日志副本；Canonical 日志已固化到 evidence_dir |
 | agent-output | `G:\CODEX\New Manga.workspace\FEA-12-UI\ipc-*`（真实 IPC 隔离 DataRoot/sidecars/wire） | PRESERVE_REFERENCED | 原路径 | 见 `agent-output-manifest.json` | Review/集成后可删；不删除真实用户数据 |
-| agent-output | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档） | ARCHIVED | 原路径 | 见 manifest `workspace.archived_spill` | 非本卡证据，不参与 Canonical Evidence；provenance 已登记 |
+| agent-output | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（evidence_dir 内非本卡未跟踪历史/意外同步证据整体归档） | ARCHIVED | 原路径 | 322 files；tree sha256 `80dcf7494a4181e4354456b033a3c68495be01de010d0f0fd5fd5f34aadc7db3`（manifest 另有登记） | 非本卡证据，不参与 Canonical Evidence；provenance 与整树指纹已登记 |
 | agent-output | `G:\CODEX\New Manga.workspace\FEA-12\scope-review\`（既有 scope review，只读输入） | PRESERVE_REFERENCED | 原路径 | — | 上游审查输入，不清理 |
 
 ## Closeout Record

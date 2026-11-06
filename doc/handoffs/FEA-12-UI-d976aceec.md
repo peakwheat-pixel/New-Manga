@@ -5,7 +5,7 @@ status: in_review
 owner: dsh-agent-team teammate `fea12-prereq-impl`
 reviewer: null   # 待 DSH 派独立上下文 fresh subagent；实现者不自审
 base_commit: 9daa94a25
-delivery_head: d976aceec
+delivery_head: a46d4d5c7
 evidence_dir: verification/FEA-12-UI
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -31,9 +31,11 @@ integration_commit: null
 
 | # | commit | 内容 |
 |---|---|---|
-| C1 | `d976aceec` | 实现 + 测试 + `verification/FEA-12-UI/` L2 证据（本 Handoff 提交紧随其后） |
+| C1 | `d976aceec` | r1 实施：App 生产代码 + 测试 + `verification/FEA-12-UI/` L2 证据 |
 
-> `delivery_head` 记录 C1；本 Handoff 提交在 C1 之后，构成 in_review 新 head。
+| C2 | `a46d4d5c7` | **r2 返修**：能力/只读/probe 失败三态拆分（AC7 P1）+ cleanup 关闭语义 + 两处判别测试 + 基线数字修正；证据重签（本 Handoff 提交紧随其后） |
+
+> `delivery_head` 记录 **r2 返修 commit `a46d4d5c7`**（r1 实施 `d976aceec` 保留在历史）；本 Handoff 提交在 r2 之后，构成 in_review 新 head。
 
 ## 变更文件（仅 allowed_paths）
 
@@ -47,12 +49,12 @@ integration_commit: null
 | 场景 | 命令 | 结果 |
 |---|---|---|
 | 全量 .NET | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo`；`dotnet test ... --no-build --nologo` | **PASS**：1474 passed / 0 failed / 82 skipped（App.Tests 703/0/7；Host.Tests 144/0/51；CoreClient 167/0/24；其余 4 项目全绿） |
-| 定向 UI/静态（headless + 真实窗口） | `dotnet test NewManga.App.Tests ... --filter "TrashUiTests\|NoDbOsAccessTests\|V2ShellUiTests.RecycleBin\|V2ShellUiTests.MoveToTrash"`（curated `NEWMANGA_EVIDENCE_DIR`） | **PASS 28/28**；4 张快照（`screens/`）；`TrashUiTests` 23、`NoDbOsAccessTests` 3 |
+| 定向 UI/静态（headless + 真实窗口） | `dotnet test NewManga.App.Tests ... --filter "TrashUiTests\|NoDbOsAccessTests\|V2ShellUiTests.RecycleBin\|V2ShellUiTests.MoveToTrash"`（curated `NEWMANGA_EVIDENCE_DIR`） | **PASS 40/40**；4 张快照（`screens/`）；`TrashUiTests` 35、`NoDbOsAccessTests` 3 |
 | 真实 IPC/wire | `$env:NEWMANGA_FEA12_UI_IPC=1` + curated；`Fea12TrashUiIpcTests` | **PASS 1/1**：真实 `src/bootstrap/core_service.py`，27 wire 帧；0 purge、0 批量删除；逐书 digest 绑定；DataRoot 仓外；哨兵指纹前后相等 |
 | pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PASS 18/18** |
 | API inventory / C-07 | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | **PASS**（`IHostController.cs` 零改动） |
 | 契约/计划/Python 零漂移 | `git diff --name-only 9daa94a25..HEAD -- doc/plan doc/contracts src/` | **空** |
-| check.ps1 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-UI.md` | 见交付后复跑（卡已 `in_review`；证据表/Resource Manifest 完整） |
+| check.ps1 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-12-UI.md` | **PASS（3 warnings）**（`logs/check.log`；既有 warning：非终态 Task/STATUS 80%/PLAN 80%） |
 | L3 真机 | 人工 | **NOT_RUN**（冻结 OUT/L10，不写 PASS） |
 
 证据目录：`verification/FEA-12-UI/`（`AC-MATRIX.md`、`ENVIRONMENT.md`、`logs/`、`screens/`、`fea12-trash-ui-ipc.json`、`agent-output-manifest.json`）。所有证据 sha256 已登记在卡 Canonical Evidence（worktree 实测；DSH 集成时补 commit）。
@@ -67,11 +69,11 @@ integration_commit: null
 
 ## 风险与遗留
 
-1. **L1–L10 全部保留**（见卡）：批量删除无 UI、无缩略图/内容预览、cleanup 重试仅会话内、无总数/逐项 busy、restore reason 首版恒 `TRASH_ENTRY_NOT_FOUND`、导出占用仅删除时 `BOOK_BUSY`、Fluent 回收站未接线、D 流程 NOT_RUN、无保留期限承诺、L3 真机 NOT_RUN。
+1. **L1–L10 全部保留**（见卡）：批量删除无 UI、无缩略图/内容预览、cleanup 重试仅会话内、无总数/逐项 busy、restore reason 首版恒 `TRASH_ENTRY_NOT_FOUND`、导出占用仅删除时 `BOOK_BUSY`、Fluent 回收站未接线、D 流程 NOT_RUN、无保留期限承诺、L3 真机 NOT_RUN。**L3 在 r2 收窄为“结果面板保留期间可重试；关闭后 UI 明示不可重试”**。
 2. **R12 digest 语义**：已按真实 Core 修正并断言；若后续 Core 调整 digest v2 记录/集合口径，需同步扩展。
 3. **R13 证据卫生**：`verification/FEA-12-UI/` 内非本卡未跟踪历史/意外同步证据已整体归档到 `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\`（`spill-tree`/`moved-tree`），本目录只保留本卡 14 个证据文件；归档不参与 Canonical Evidence。
 4. **既有 flaky**：Fluent 视觉/交互测试在全量并行首跑曾抖动（与本卡写域无关）；本卡最终全量首跑 0 失败。若复跑遇到，请保留首跑/复跑日志，不归因本卡。
-5. **未跑项**：pytest 未重跑（本卡零 Python 改动，引用 FEA-11 基线 3073/10）；L3 真机 NOT_RUN。
+5. **未跑项**：pytest 未重跑（本卡零 Python 改动，引用基线 **3203 passed / 10 skipped**）；L3 真机 NOT_RUN。
 6. **未 push**；未提交他人文件；`verification/FEA-09` 在全量运行后已 `git checkout --` 恢复。
 
 ## 资源处置
@@ -83,9 +85,21 @@ integration_commit: null
 | `G:\CODEX\New Manga.workspace\archive\FEA-12-UI-spill-2026-11-06\` | ARCHIVED | evidence_dir 非本卡证据整体归档 |
 | worktree | NOT_APPLICABLE | 未创建 |
 
+## r2 返修处置（r1 Review CHANGES → 最小返修）
+
+| Finding | 级别 | r2 处置 | 证据 |
+|---|---|---|---|
+| P1-1 能力缺失/Host 只读/probe 失败三态混同（AC7） | **P1** | `_hostReadOnly` 独立（仅 Host 写闸）；`_capabilityMissing` 仅由 read 决定；restore 仅 write、删除 write+preview 分门控；部分缺失渲染 `CORE_CAPABILITY_MISSING` 降级横幅；`CORE_UNAVAILABLE` 独立 probe 失败态 + 重试；能力缺失时无假只读 banner；`HOST_READ_ONLY` 字面展示；新增缺 read/缺 write/缺 preview 3 个单能力测试 + probe 失败测试 | `logs/ui-tests-curated.log`（40/40） |
+| P2-1 cleanup 关闭“仍可重试”不实 | P2 | 关闭时明示“关闭后本会话内无法再重试清理（wire 无 pending；重新预览会 BOOK_NOT_FOUND）”；测试断言 `CanRetryCleanup=false` 且文案一致；L3 收窄 | `TrashUiTests.CloseResult_AfterCleanupPending_*` |
+| P2-2a VM 逐书 digest 无判别测试 | P2 | fake 集合 digest 与逐书 digest 改为不同值；断言删除帧 `==逐书` 且 `≠集合`；变异 M1 复验 2 红 | `logs/r2-mutations.log` |
+| P2-2b 旧 Core 投影 fail-closed 无判别测试 | P2 | `HostController.ProjectPreviewResponse`/`ProjectTrashWriteResult` internal 可测投影；缺字段/null/非法形状 → unknown → 0 删除帧，`[]` → 可确认 1 帧；变异 M3 复验 3 红 | `logs/r2-mutations.log` |
+| P2-3 pytest 基线旧数 | P2 | 改为 **3203 passed / 10 skipped**（引用；零 Python 改动未重跑） | 卡/本 Handoff |
+| P3 同批 | P3 | 死方法、恢复确认文案、`固定版本` 术语、`HOST_READ_ONLY` 字面、`{}` 不伪成功、move payload 覆盖说明、spill 归档 322 文件 + tree sha256、`check.ps1` PASS 入 `logs/check.log`、未知 reason 措辞、无选中不默认第一项、`LoadMore` 防重入、无效赋值、路径泄露断言 | 卡 r2 记录、`AC-MATRIX.md` |
+
+r2 门禁：全量 .NET **1486/0/82**；定向 UI **40/40**；真实 IPC **1/1**；pins 18/18；API check PASS；check.ps1 **PASS（3 warnings）**；契约/计划/Python diff 空。证据已按 r2 重签（卡 EV-01…EV-18）。
 ## 下一任务建议
 
-- **Task ID / 标题**：`FEA-12-UI` **独立复审**（DSH 派 fresh subagent，只读 delivery head `d976aceec` + 本 Handoff 提交）。
+- **Task ID / 标题**：`FEA-12-UI` **r2 窄面复审**（DSH 派 fresh subagent，只读 r2 delivery head `a46d4d5c7` + 本 Handoff 提交；核对 r1 P1/P2 处置）。
 - **推荐 Agent / Reviewer**：Lead 派独立上下文 fresh subagent（2026-10-31 裁决：上下文独立即可；实现者不自审；ZCode/Codex 可选）。
 - **前置依赖**：无（CORE 已闭环）；Review approved 后由 DSH 集成 closeout（L3 真机另授权）。
 - **Recovery point**：仓库 `G:\CODEX\New Manga`（main）；实现 commit `d976aceec`；未 push、无分支/worktree。
@@ -95,7 +109,7 @@ integration_commit: null
 
 ```text
 你是 FEA-12-UI 的独立复审者（未参与实现）。仓库 G:\CODEX\New Manga（main）。
-只读复审 delivery head `d976aceec`（实现 commit）+ 其 Handoff 提交（doc/handoffs/FEA-12-UI-d976aceec.md）。
+只读复审 delivery head `a46d4d5c7`（r2 返修 commit；r1 实施 `d976aceec`）+ 其 Handoff 提交（doc/handoffs/FEA-12-UI-d976aceec.md）。
 对照 doc/tasks/FEA-12-UI.md（AC1–AC10 + L1–L10 + 冻结决策 Q1–Q8）、doc/reviews/SCOPE-ADJ-2026-11-05-zcode.md B 节、
 doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md rev 2.14 §5.11/§5.13/§5.14、C-04b v1.1 §2.0–2.2、C-09 SC-B06、C-07。
 重点复核：
@@ -106,12 +120,16 @@ doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md rev 2.14 §5.11/§5.13/§5.14、C-04b 
 ⑤AC10 禁令：0 帧 purge、0 帧批量删除；payload 键集恰 3 键；无伪造成功/总数；
 ⑥证据真实性：verification/FEA-12-UI/ 的日志/截图/IPC JSON 与卡 Canonical Evidence sha256 一致；
 ⑦测试未放宽（V2ShellUiTests 旧断言意图保留）；未改他人写域/pinned 契约。
+⑧r2 重点（r1 Review P1/P2 处置）：能力/只读/probe 三态是否真正独立（缺 read/write/preview 各测试、0 帧、无假只读 banner、CORE_CAPABILITY_MISSING 可见）；
+   cleanup 关闭后“不可再重试”文案与 CanRetryCleanup 是否一致；fake 集合/逐书 digest 是否不同值且删除帧绑定逐书；
+   HostController.ProjectPreviewResponse 对缺字段/null/非法形状是否 unknown→0 删除帧、[] 是否可确认；
+   lag 数字 3203/10；变异日志（M1 2 红 / M3 3 红）是否与代码一致。
 输出 doc/reviews/FEA-12-UI-r1.md（P0/P1/P2 分级 + verdict approved/changes_requested +
 reviewer 身份/session ID + reviewed_head）。不得修改实现文件；不 push。
 ```
 
 ## Review 就绪声明
 
-实现与 L2 证据已提交于 `d976aceec`；AC1–AC10 全部 `<<MET>>`（L1–L10 保留、L3 `NOT_RUN`）；
-全量 .NET 1474/0/82、定向 UI 28/28、真实 IPC 1/1、pins 18/18、API check PASS、契约/计划/Python diff 空、check.ps1 见复跑；
+r1 实施 `d976aceec` + r2 返修 `a46d4d5c7` 已提交；AC1–AC10 全部 `<<MET>>`（L1–L10 保留、L3 `NOT_RUN`）；
+全量 .NET 1486/0/82、定向 UI 40/40、真实 IPC 1/1、pins 18/18、API check PASS、check.ps1 PASS（3 warnings）、契约/计划/Python diff 空；
 **实现者不自审**，请 DSH 派独立上下文 fresh subagent 复审本 head。
