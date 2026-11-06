@@ -7,7 +7,7 @@ status: in_review
 approval: 用户 2026-11-06「同意继续让 Codex/ZCode 决定下一项」→ Codex 首轮超时 → **ZCode 裁决 NEXT-TASK=FEA-11-WATCH-1**（AC11-1 唯一承接；须先独立 scope review 并裁决 watcher 必要性）；scope review `doc/reviews/FEA-11-WATCH-1-scope-r1.md` = **NECESSARY**（AC11-1 逐字含目录 watcher 生产者/消费者与丢 hint/overflow 全量重枚举；C-01b SC-25 FROZEN 把 watcher hint 列入检测组合；C-17 v1.1:18 声明四路检测为实现责任）；DSH 2026-11-06 接受并冻结释放（Owner 由 DSH 指定为 `fea12-core-host`，scope review 建议 ZCode 作独立 Review 备选）
 suggested_owner: zcode（scope review 建议）；实际 Owner：fea12-core-host（DSH Agent Teams，Host .NET 分片）
 owner: fea12-core-host
-reviewer: 独立上下文 fresh subagent（r1 session `48af6d93-b456-4c17-9478-a694fb7bbb10`；报告 `doc/reviews/FEA-11-WATCH-1-r1.md`；CHANGES P0=0/P1=1/P2=1/P3=6；未参与实现）
+reviewer: 独立上下文 fresh subagent（r1 `doc/reviews/FEA-11-WATCH-1-r1.md` session `48af6d93-…` CHANGES P1=1/P2=1；r2 窄面 `doc/reviews/FEA-11-WATCH-1-r2.md` session `6600e84b-c4eb-497a-918e-fa64f7971d9a` **CHANGES P0/P1=0、P2×2（测试断言/时序）**；均未参与实现）
 depends_on:
   - FEA-11
   - FEA-11-SCAN-1
@@ -127,6 +127,15 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - 门禁（实跑）：Host 单测 **179/0/55**；gated HostRuntime watcher **1/0/0**；全量 .NET **RUN1/RUN2 1521/0/86**（基线 1500/0/85 不降；跑后恢复 `verification/FEA-09`；本轮未触发 flaky）；全量 pytest **3212 passed/10 skipped**（实跑一致）；pins **18/18**；API inventory PASS；`check.ps1 -TaskPath` PASS；scope diff `919c9aa1e..HEAD -- doc/plan doc/contracts src/` **0 行**。
 - AC-W1…AC-W5 全 MET（逐条证据见 `verification/FEA-11-WATCH-1/record.md` §2）。
 - 限制：漏事件/设备差异依赖 SCAN-1 周期兜底（非正确性依赖）；folder 内任意事件=该 source due（无增量 diff、受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake-Core/注入时钟（成功路径组件级覆盖）；真实树事件测试理论可能 flaky（本轮两轮全绿）；**AC11-1 仍 PARTIAL（本卡不回填）**；L10 不解决。
+
+## r2 复审处置（DSH，2026-11-06）
+
+- 结论：**CHANGES**（P0=0 / P1=0 / **P2×2** / P3×5；报告 `doc/reviews/FEA-11-WATCH-1-r2.md`，session `6600e84b…`）。
+- **r1 P1/P2 已被独立证实真修**：P1 探针 tick1=s0..s3 → hint s9 → hintPass=s9,s0,s1,s2、pending=False；变异回退旧起点后红。P2 探针 arm→revoke→空 refresh→Active=0/Uncovered≥1、旧 handle 0 hint/0 scan；变异回退后红。普通 rotation/预算/去重未变。
+- **新 P2-1（测试真实性）**：`SourceWatcherTests.cs:605` 仍为 `Uncovered>=1 || Active>=0`（恒真），但卡面/record/Handoff/commit message 四处称「已修 `Active==0 && Uncovered>=1`」。最小修复：`Assert.Equal(0, status.Active); Assert.True(status.Uncovered >= 1);`。
+- **新 P2-2（测试时序）**：同一 RootLost 用例隔离运行稳定红（仓内单用例 5/5 红）：根删除后 `HintAllIfStarted` 调度的 hint pass 占住单飞 gate，末行 `Assert.True(await TickAsync())` 返回 false（产品语义正确）。最小修复：`await fixture.Scheduler.HintIdleAsync();` 后再 assert（与 overflow 用例一致）。
+- P3：代码侧 6 项已落地；P3-3 RootLost 严格断言随 P2-1 修复；P3-1/P3-6 用例为 smoke（登记）。
+- 派发：`fea12-core-host` 最小测试返修（2 行断言 + 1 行等 hint idle）→ 重跑 Host/.NET/EV 重签 → r3 窄面复审（只核两处+门禁）→ closeout；AC11-1 仍 PARTIAL。
 
 ## r2 返修（2026-11-06）
 
