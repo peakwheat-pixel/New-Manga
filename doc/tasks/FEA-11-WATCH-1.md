@@ -16,7 +16,7 @@ base_commit: 919c9aa1e   # WATCH-1 释放点 main head（SCAN-2 closeout 后）
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 19a2af7f3   # r2 交付 head（实现链 e60105cf9 → 19a2af7f3；未 push；集成/推送由 DSH）
+delivery_head: 00083a977   # r2b 交付 head（实现链 e60105cf9 → 19a2af7f3 → 00083a977；未 push；集成/推送由 DSH）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-WATCH-1
@@ -188,7 +188,7 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - limitation：漏事件/设备差异依赖周期扫描兜底（非正确性依赖）；folder 内任意事件视为该 source due（无增量 diff，受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake Core/注入时钟（成功路径由组件级覆盖）；AC11-1 仍 PARTIAL、L10 不解决。
 - Handoff：`doc/handoffs/FEA-11-WATCH-1-delivery.md`。
 - 实现 commit：`e60105cf9`（r1 实现）→ `19a2af7f3`（r2 返修，见 git log；未 push；交付后由 DSH 更新 REBASELINE_PLAN/把卡置 in_review 并集成推送）。
-- **r2b 返修（r2 窄面复审 P2 测试真实性处置）**：RootLost 用例改为严格断言 `Active==0 && Uncovered>=1`，并在末行 Tick 前 `await HintIdleAsync()` 排空 root-lost hint pass（隔离 5/5 绿）；record §7.5 记录并更正 r2 commit message 的误述；P3-1/P3-6 登记为 smoke。r2b 门禁：Host 单测 185/0/55、全量 .NET 1527/0/86×2、pins 18/18、API PASS、check PASS、scope diff 0。\n- **r2 返修（Review r1 CHANGES 处置）**：P1（hint pass 预算起点 0，修复 rotation 游标非 0 时 hinted source 被跳过）+ P2（成功 refresh 含空枚举也通知 watcher 复核，撤销后 Active→0）+ P3-1..P3-6（Stop 窄竞态、pytest summary 重抓、RootLost/新测试、redaction 收窄、Sync 简化、DisposeAsync join in-flight hint）。r2 门禁：Host 单测 **185/0/55**、gated 1/0/0、全量 .NET **1527/0/86**×2、pytest **3212/10**、pins 18/18、API PASS、check PASS、scope diff 0。
+- **r2b 返修（r2 窄面复审 P2 测试真实性处置，commit `00083a977`）**：RootLost 用例改为严格断言 `Active==0 && Uncovered>=1`，并在末行 Tick 前 `await HintIdleAsync()` 排空 root-lost hint pass（隔离 5/5 绿）；record §7.5 记录并更正 r2 commit message 的误述；P3-1/P3-6 登记为 smoke。r2b 门禁：Host 单测 185/0/55、全量 .NET 1527/0/86×2、pins 18/18、API PASS、check PASS、scope diff 0。\n- **r2 返修（Review r1 CHANGES 处置）**：P1（hint pass 预算起点 0，修复 rotation 游标非 0 时 hinted source 被跳过）+ P2（成功 refresh 含空枚举也通知 watcher 复核，撤销后 Active→0）+ P3-1..P3-6（Stop 窄竞态、pytest summary 重抓、RootLost/新测试、redaction 收窄、Sync 简化、DisposeAsync join in-flight hint）。r2 门禁：Host 单测 **185/0/55**、gated 1/0/0、全量 .NET **1527/0/86**×2、pytest **3212/10**、pins 18/18、API PASS、check PASS、scope diff 0。
 
 ## Closeout Record
 

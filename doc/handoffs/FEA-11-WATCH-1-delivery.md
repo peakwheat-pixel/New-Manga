@@ -4,7 +4,7 @@
 - Owner：`fea12-core-host`（DSH Agent Teams）
 - Task：`doc/tasks/FEA-11-WATCH-1.md`（status → `in_review`）
 - Base：`919c9aa1e`；Branch `main`；未 push、未创建 worktree。
-- 实现 commit：`e60105cf9`（r1 实现）→ `19a2af7f3`（r2 返修；本 Handoff 已含 r2 记录；未 push）。
+- 实现 commit：`e60105cf9`（r1 实现）→ `19a2af7f3`（r2 返修）→ `00083a977`（r2b 测试真实性返修；本 Handoff 已含 r2/r2b 记录；未 push）。
 - 证据：`verification/FEA-11-WATCH-1/`（`record.md`、`logs/**`、`host-watch-runtime.json`、`scope-validation.log`、`changed-files.txt`）。
 
 ## 1. 交付内容
@@ -80,7 +80,7 @@ git diff --name-only 919c9aa1e..HEAD -- doc/plan doc/contracts src/   # 期望�
 
 ## 7. 复审就绪
 
-- reviewed_head：`19a2af7f3`（r2 返修 head；实现链 e60105cf9 → 19a2af7f3；未 push）。
+- reviewed_head：`00083a977`（r2b 返修 head；实现链 e60105cf9 → 19a2af7f3 → 00083a977；未 push）。
 - 复审重点：
   1. AC-W1：file/folder arm 规则、registry 复核、Stop 后零 hint、gated 用例断言；
   2. AC-W2：N→1 去抖、hint 非 changed、脱敏；
