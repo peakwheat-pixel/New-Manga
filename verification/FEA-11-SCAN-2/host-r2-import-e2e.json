@@ -1,0 +1,18 @@
+{
+  "case": "P2-3 real import -\u003E enumeration E2E \u002B P1-1 shared-source scope",
+  "core": "real volatile python core (stdio IPC)",
+  "app_registration_used": false,
+  "core_source_id": "src-073de0abf4ed4c7887e3ce30dac1a882",
+  "stable_source_id": "src-21a8ffebcefb3069",
+  "books": [
+    "139dedae54004e62a3dbdbc77e7d9e19",
+    "17f7f22eec1544bda9a027433d44d622"
+  ],
+  "single_book_scope": "current",
+  "shared_book_scope": "all",
+  "shared_project_ids": [
+    "139dedae54004e62a3dbdbc77e7d9e19",
+    "17f7f22eec1544bda9a027433d44d622"
+  ],
+  "db_snapshot_unchanged": true
+}

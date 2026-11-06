@@ -1,0 +1,54 @@
+# FEA-11-SCAN-2 r2 shard B scope validation
+
+BASE (card): 703d9eb12.  HEAD at r2 delivery: 20faf062a.
+Core shards A: 0cb5177ca (P2-3 enumeration command) and 20faf062a (r2 P2-2 empty project_ids fix).
+
+## 1) This shard's working-tree change scope (pre-commit)
+COMMAND: git status --porcelain -- apps/desktop-avalonia verification
+   M apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+   M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+   M apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+   M apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+   M apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+  ?? apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11Scan2HostRuntimeTests.cs
+  ?? verification/FEA-11-SCAN-2/host-r2-cold-start.json
+  ?? verification/FEA-11-SCAN-2/host-r2-cold-start.txt
+  ?? verification/FEA-11-SCAN-2/host-r2-import-e2e.json
+  ?? verification/FEA-11-SCAN-2/host-r2-import-e2e.txt
+  ?? verification/FEA-11-SCAN-2/host-r2-runtime-enumeration.json
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-api-inventory.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-app-refresh.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-check.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-dotnet-full-1.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-dotnet-full-2.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-dotnet-full-3.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-flaky-fluent-rerun.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-flaky-runbinding-rerun.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-pins.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-pytest-fea11.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-real-ipc.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-runtime-enumeration.log
+  ?? verification/FEA-11-SCAN-2/logs/host-r2-unit.log
+
+## 2) Whole-range code/contract paths (attribution)
+COMMAND: git diff --name-only 703d9eb12..HEAD -- doc/plan doc/contracts src/
+OUTPUT:
+  src/application/sources/scanner.py
+  src/bootstrap/core_service.py
+  src/infrastructure/sqlite/source_sync.py
+ATTRIBUTION: all three are the committed Core shards (0cb5177ca, 20faf062a), NOT this shard.
+             Shard B r2 adds only apps/desktop-avalonia/** (Host/App + tests) and host-r2-* evidence.
+
+## 3) Frozen contracts / pins
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+RESULT: PIN AUDIT: PASS (all 18); EXIT 0; LOG=logs/host-r2-pins.log
+
+## 4) C-07 API inventory
+COMMAND: C:/Python314/python.exe tools/generate_api_inventory.py --check
+RESULT: PASS (EXIT 0); IHostController unchanged; LOG=logs/host-r2-api-inventory.log
+
+## 5) P2-4 allowlist exception (r1 P2-4)
+pps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs was changed in
+6c8b4cb2b as the compile-required consequence of removing the ImportDock ookId parameter. It is
+NOT in the frozen allowed_paths; Lead recorded the allowlist exception in the r1 Review disposition
+(P2-4). This shard did not change it again in r2.

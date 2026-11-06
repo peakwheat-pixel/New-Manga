@@ -401,6 +401,272 @@ public sealed class Fea11ScanIpcTests
         return "src-" + Convert.ToHexString(digest).ToLowerInvariant()[..16];
     }
 
+    private const string OnePixelPngBase64 =
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+    /// <summary>
+    /// FEA-11-SCAN-2 r2 (P2-3 / P1-1): the real import -> enumeration E2E. Two books reference the SAME
+    /// real source imported through the production <see cref="SourceImportCoordinator"/>: the first
+    /// single-book tick must send `scope=current`, the shared-source tick must send `scope=all` with
+    /// both project ids (the r1 P1-1 discriminator), and `target.source_id` must be the Core
+    /// `src-<uuid>` authority (≠ the App-side StableSourceId). Scan/refresh write zero Core rows.
+    /// </summary>
+    [Fea11ScanIpcFact]
+    public async Task RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId()
+    {
+        var repo = FindRepository();
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(
+            repo + ".workspace", "FEA-11", "fixtures", "scan-import-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var dataRoot = Path.Combine(root, "data");
+        Directory.CreateDirectory(dataRoot);
+        await using var client = await CoreServiceClient.StartAsync(BuildImportOptions(repo, python, dataRoot));
+        await client.OpenHostSessionAsync();
+        var ping = await client.PingAsync();
+        Assert.Contains("source.sync.enumerate/1", ping.Capabilities);
+        Assert.Contains("source.read/1", ping.Capabilities);
+
+        var registry = new SourceAccessRegistry(Path.Combine(root, "host-data"));
+        var sources = new SourceReadCoordinator(client, registry, () => true);
+        HostCommandDispatcher dispatcher = new(
+            client,
+            bridge: null,
+            hostLocal: async (name, payload, token) => new HostCommandResult(
+                name,
+                HostCommandStatus.Implemented,
+                HostCommandChannel.HostLocal,
+                await sources.InvokeAsync(name, payload, token)));
+        await using var imports = new SourceImportCoordinator(dispatcher, sources, root);
+
+        var png = await WriteOnePixelPngAsync(root);
+        var imported = new ReferenceImportSource(png, IsFolder: false);
+        var dbPath = Path.Combine(dataRoot, "library.db");
+
+        var (book1, chapter1) = await CreateBookChapterAsync(client, "scan2-shared-1");
+        var receipt1 = await ImportAsync(imports, chapter1, imported);
+        Assert.Equal(SourceImportOperationState.Completed, receipt1.State);
+
+        var scanOptions = new SourceScanOptions
+        {
+            Enabled = true,
+            IntervalSeconds = 60,
+            MaxTargetsPerTick = 8,
+            MaxBytesPerSource = 256L * 1024 * 1024,
+            MaxEntriesPerSource = 10000,
+        };
+        var executor = new HostSourceScanExecutor(client, sources, scanOptions);
+        var enumerator = new HostSourceScanTargetEnumerator(client, registry);
+        await using var scheduler = new SourceScanScheduler(scanOptions, executor, enumerator: enumerator);
+
+        Assert.True(await scheduler.RefreshTargetsAsync());
+        var target1 = Assert.Single(scheduler.Snapshot().Targets);
+        var coreSourceId = QuerySingleSourceId(python, dbPath);
+        Assert.StartsWith("src-", coreSourceId, StringComparison.Ordinal);
+        Assert.Equal(coreSourceId, target1.SourceId);
+        Assert.NotEqual(ExpectedStableSourceId(Path.GetFullPath(png)), target1.SourceId);
+        Assert.Equal(new[] { book1 }, QueryBookIdsForSource(python, dbPath, coreSourceId));
+
+        Assert.True(await scheduler.TickAsync());
+        Assert.NotEqual(SourceScanResults.Error, scheduler.Snapshot().Targets.Single().LastResult);
+        var singlePayload = LatestScanSourceSyncPayload(client);
+        Assert.Equal("current", singlePayload.GetProperty("scope").GetString());
+        Assert.Equal(new[] { book1 }, PayloadProjectIds(singlePayload));
+
+        // The SAME real source imported into a second book: Core reuses src-<uuid> and enumeration
+        // now returns two project ids; the scan payload must switch to scope=all.
+        var (book2, chapter2) = await CreateBookChapterAsync(client, "scan2-shared-2");
+        var receipt2 = await ImportAsync(imports, chapter2, imported);
+        Assert.Equal(SourceImportOperationState.Completed, receipt2.State);
+        Assert.Equal(coreSourceId, QuerySingleSourceId(python, dbPath));
+        Assert.Equal(
+            new[] { book1, book2 }.OrderBy(id => id, StringComparer.Ordinal).ToArray(),
+            QueryBookIdsForSource(python, dbPath, coreSourceId));
+
+        var snapshotBefore = QueryScanSnapshot(python, dbPath);
+        Assert.True(await scheduler.RefreshTargetsAsync());
+        Assert.Single(scheduler.Snapshot().Targets);
+        Assert.True(await scheduler.TickAsync());
+        Assert.NotEqual(SourceScanResults.Error, scheduler.Snapshot().Targets.Single().LastResult);
+        var sharedPayload = LatestScanSourceSyncPayload(client);
+        Assert.Equal("all", sharedPayload.GetProperty("scope").GetString());
+        Assert.Equal(
+            new[] { book1, book2 }.OrderBy(id => id, StringComparer.Ordinal).ToArray(),
+            PayloadProjectIds(sharedPayload));
+
+        // Refresh + scans stay read-only; repeated Refresh is idempotent.
+        var snapshotAfter = QueryScanSnapshot(python, dbPath);
+        Assert.Equal(snapshotBefore, snapshotAfter);
+        Assert.True(await scheduler.RefreshTargetsAsync());
+        Assert.Single(scheduler.Snapshot().Targets);
+
+        var evidence = new
+        {
+            @case = "P2-3 real import -> enumeration E2E + P1-1 shared-source scope",
+            core = "real volatile python core (stdio IPC)",
+            app_registration_used = false,
+            core_source_id = coreSourceId,
+            stable_source_id = ExpectedStableSourceId(Path.GetFullPath(png)),
+            books = new[] { book1, book2 }.OrderBy(id => id, StringComparer.Ordinal).ToArray(),
+            single_book_scope = singlePayload.GetProperty("scope").GetString(),
+            shared_book_scope = sharedPayload.GetProperty("scope").GetString(),
+            shared_project_ids = PayloadProjectIds(sharedPayload),
+            db_snapshot_unchanged = true,
+        };
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "import-e2e.json"),
+            JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "import-e2e.txt"),
+            "FEA-11-SCAN-2 r2 real import -> enumeration E2E\n"
+            + "DataRoot=" + dataDirOrRoot(dataRoot) + "\n"
+            + "core_source_id=" + coreSourceId + "\n"
+            + "single_book_scope=current\n"
+            + "shared_book_scope=all\n"
+            + "db_snapshot_unchanged=true\nPASS\n");
+    }
+
+    private static string dataDirOrRoot(string dataRoot) => Path.GetDirectoryName(dataRoot) ?? dataRoot;
+
+    private static string FindRepository()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+
+        return directory?.FullName ?? throw new InvalidOperationException("repository not found");
+    }
+
+    private static CoreServiceOptions BuildImportOptions(string repo, string python, string dataRoot) => new()
+    {
+        ExecutablePath = python,
+        AdditionalArguments =
+        [
+            "-X", "utf8", "-c",
+            $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+            + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+        ],
+        DataRoot = dataRoot,
+        DerivedRoot = Path.Combine(dataRoot, "derived"),
+        CatalogDbPath = Path.Combine(dataRoot, "catalog", "catalog.sqlite"),
+        StderrLogPath = Path.Combine(dataRoot, "..", "core.stderr.log"),
+        WireLogPath = Path.Combine(dataRoot, "..", "wire.ndjson"),
+        StartupTimeout = TimeSpan.FromSeconds(90),
+        RequestTimeout = TimeSpan.FromSeconds(90),
+    };
+
+    private static async Task<string> WriteOnePixelPngAsync(string root)
+    {
+        var directory = Path.Combine(root, "source");
+        Directory.CreateDirectory(directory);
+        var path = Path.Combine(directory, "page.png");
+        await File.WriteAllBytesAsync(path, Convert.FromBase64String(OnePixelPngBase64));
+        return path;
+    }
+
+    private static async Task<(string BookId, string ChapterId)> CreateBookChapterAsync(
+        CoreServiceClient client, string title)
+    {
+        var book = await client.CreateBookAsync("FEA-11-SCAN-2 " + title);
+        var chapter = await client.SendAsync(
+            "CreateChapter", 8,
+            writer =>
+            {
+                writer.WriteStartObject();
+                writer.WriteString("book_id", book.BookId);
+                writer.WriteString("title", title);
+                writer.WriteEndObject();
+            },
+            TimeSpan.FromSeconds(30));
+        return (book.BookId, chapter.Result!.Value.GetProperty("chapter_id").GetString()!);
+    }
+
+    private static async Task<SourceImportReceipt> ImportAsync(
+        SourceImportCoordinator imports, string chapterId, ReferenceImportSource source)
+    {
+        var plan = await imports.PlanAsync(chapterId, new[] { source }, "skip", CancellationToken.None);
+        Assert.NotNull(plan);
+        var start = await imports.StartAsync(plan!, null, CancellationToken.None);
+        Assert.True(start.Ok, start.ErrorCode);
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(90);
+        while (DateTime.UtcNow < deadline)
+        {
+            var receipt = await imports.GetReceiptAsync(start.OperationId!, CancellationToken.None);
+            if (receipt is { IsTerminal: true })
+            {
+                return receipt;
+            }
+
+            await Task.Delay(100);
+        }
+
+        throw new TimeoutException("import did not reach a terminal state");
+    }
+
+    private static string QuerySingleSourceId(string python, string dbPath)
+    {
+        var ids = QueryLines(python, dbPath, "SELECT source_id FROM sources ORDER BY source_id");
+        Assert.True(ids.Length == 1, "expected exactly one real Core source, got: " + string.Join(",", ids));
+        return ids[0];
+    }
+
+    private static string[] QueryBookIdsForSource(string python, string dbPath, string sourceId)
+    {
+        var safe = sourceId.Replace("'", "''", StringComparison.Ordinal);
+        return QueryLines(python, dbPath,
+            "SELECT DISTINCT c.book_id FROM page_bindings pb"
+            + " JOIN pages p ON p.page_id=pb.page_id JOIN chapters c ON c.chapter_id=p.chapter_id"
+            + " WHERE pb.source_id='" + safe + "' ORDER BY c.book_id");
+    }
+
+    private static string[] QueryLines(string python, string dbPath, string sql)
+    {
+        var startInfo = new ProcessStartInfo(python)
+        {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(
+            "import sqlite3,sys\n"
+            + "c=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True)\n"
+            + "print('\\n'.join(str(row[0]) for row in c.execute(sys.argv[2])))\n"
+            + "c.close()\n");
+        startInfo.ArgumentList.Add(dbPath);
+        startInfo.ArgumentList.Add(sql);
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, stdout + stderr);
+        return stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    private static JsonElement LatestScanSourceSyncPayload(CoreServiceClient client)
+    {
+        for (var index = client.Wire.Frames.Count - 1; index >= 0; index--)
+        {
+            using var document = JsonDocument.Parse(client.Wire.Frames[index].RequestLine);
+            var root = document.RootElement;
+            if (root.TryGetProperty("command", out var command)
+                && command.ValueKind == JsonValueKind.String
+                && command.GetString() == "ScanSourceSync"
+                && root.TryGetProperty("payload", out var payload))
+            {
+                return payload.Clone();
+            }
+        }
+
+        throw new InvalidOperationException("no ScanSourceSync frame was sent");
+    }
+
+    private static string[] PayloadProjectIds(JsonElement payload) =>
+        payload.GetProperty("project_ids").EnumerateArray().Select(value => value.GetString()!).ToArray();
+
     // ---------------------------------------------------------------------------------------
     // Fixture plumbing (isolated workspace root; no real user data).
     // ---------------------------------------------------------------------------------------

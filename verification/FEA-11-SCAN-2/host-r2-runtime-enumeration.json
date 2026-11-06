@@ -1,0 +1,12 @@
+{
+  "case": "P2-5 HostRuntime Ready -\u003E background enumeration (non-blocking)",
+  "ready": true,
+  "start_elapsed_ms": 460,
+  "enumeration_present_immediately_after_start": true,
+  "enumeration_resolved": true,
+  "enumeration_available": false,
+  "enumeration_last_result": "error",
+  "enumeration_error_code": "CORE_CAPABILITY_MISSING",
+  "scheduler_started": true,
+  "redacted": true
+}

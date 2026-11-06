@@ -1,27 +1,29 @@
-# FEA-11-SCAN-2 shard B changed files (Host/App)
+# FEA-11-SCAN-2 shard B changed files (r2 additions/changes on top of r1 6c8b4cb2b)
 
-## Modified apps (13)
-apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
-apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
-apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
-apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
-apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
-apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
-apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
-apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
-apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
-apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
-apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
-apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
-apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+## r2 modified apps
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs   # P1-1 scope current/all + payload builders; P2-1 coalesced refresh replay
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs                   # P3-3 stale comment correction
+apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs  # P1-1 payload tests + P2-1 replay test (+4)
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs     # P2-3 real import -> enumeration E2E + P1-1 shared-source scope (gated)
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs     # P3-4 VM test name/comment (no behaviour change)
 
-## Evidence (host- prefix)
-verification/FEA-11-SCAN-2/host-cold-start.json
-verification/FEA-11-SCAN-2/host-cold-start.txt
-verification/FEA-11-SCAN-2/host-changed-files.txt
-verification/FEA-11-SCAN-2/host-shard-record.md
-verification/FEA-11-SCAN-2/host-scope-validation.log
-verification/FEA-11-SCAN-2/logs/host-*.log
+## r2 new apps
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11Scan2HostRuntimeTests.cs  # P2-5 gated HostRuntime Ready -> background enumeration
+
+## r2 evidence (host-r2-*)
+verification/FEA-11-SCAN-2/host-r2-cold-start.json
+verification/FEA-11-SCAN-2/host-r2-cold-start.txt
+verification/FEA-11-SCAN-2/host-r2-import-e2e.json
+verification/FEA-11-SCAN-2/host-r2-import-e2e.txt
+verification/FEA-11-SCAN-2/host-r2-runtime-enumeration.json
+verification/FEA-11-SCAN-2/host-r2-scope-validation.log
+verification/FEA-11-SCAN-2/logs/host-r2-*.log
+verification/FEA-11-SCAN-2/host-shard-record.md（r2 章节 + P2-4 措辞更正）
+
+## Allowlist exception (r1 P2-4, recorded by Lead)
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs — compile-required
+consequence of removing the ImportDock bookId parameter; NOT in frozen allowed_paths; changed in r1
+commit 6c8b4cb2b, unchanged by r2.
 
 ## Not touched by this shard
-src/** (Core shard A 0cb5177ca), tests/core/** (Core shard), doc/** (Lead/DSH), STATUS/PLAN/LEDGER.
+src/** (Core shards), tests/core/**, doc/** (Lead/DSH), STATUS/PLAN/LEDGER/reviews/card.

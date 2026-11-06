@@ -1,0 +1,7 @@
+FEA-11-SCAN-2 r2 real import -> enumeration E2E
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-import-6157ee45ef6d43b493456fe0adad919b
+core_source_id=src-073de0abf4ed4c7887e3ce30dac1a882
+single_book_scope=current
+shared_book_scope=all
+db_snapshot_unchanged=true
+PASS

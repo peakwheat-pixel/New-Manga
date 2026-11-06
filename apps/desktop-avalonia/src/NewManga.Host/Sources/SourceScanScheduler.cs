@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Text;
 using System.Security.Cryptography;
 using System.Text.Json;
 using NewManga.CoreClient;
@@ -201,6 +202,10 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     private readonly ISourceScanTargetEnumerator? _enumerator;
     private int _budgetCursor;
     private bool _paused;
+
+    // r2 P2-1: an App Refresh requested while a tick/refresh holds the single-flight gate is
+    // coalesced here and replayed once the in-flight pass finishes (never silently lost).
+    private bool _refreshPending;
     private bool _disposed;
     private DateTimeOffset? _lastTickAt;
     private DateTimeOffset? _nextTickAt;
@@ -348,7 +353,17 @@ public sealed class SourceScanScheduler : IAsyncDisposable
 
         if (!await _tickGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
         {
-            _info?.Invoke("source scan refresh merged");
+            // r2 P2-1: do not drop the request — coalesce it and let the in-flight tick/refresh
+            // replay it when it finishes.
+            lock (_gate)
+            {
+                if (!_disposed && _options.Enabled)
+                {
+                    _refreshPending = true;
+                }
+            }
+
+            _info?.Invoke("source scan refresh queued (in-flight pass)");
             return false;
         }
 
@@ -450,6 +465,40 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         return (added, updated);
     }
 
+    /// <summary>
+    /// r2 P2-1: replays one coalesced Refresh request. Called after a tick (or a refresh) releases
+    /// the single-flight gate; never throws into the caller (typed log only).
+    /// </summary>
+    private async Task ReplayPendingRefreshAsync(CancellationToken cancellationToken)
+    {
+        bool pending;
+        lock (_gate)
+        {
+            pending = _refreshPending;
+            _refreshPending = false;
+        }
+
+        if (!pending)
+        {
+            return;
+        }
+
+        try
+        {
+            await RefreshTargetsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            _error?.Invoke("SOURCE_SCAN_REFRESH", error.GetType().Name);
+        }
+    }
+
     private void RecordEnumerationLocked(SourceScanEnumerationResult result, DateTimeOffset now)
     {
         _lastEnumerationAt = now;
@@ -472,9 +521,25 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             return false;
         }
 
+        bool ran;
         try
         {
-            var now = _timeProvider.GetUtcNow();
+            ran = await TickCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _tickGate.Release();
+        }
+
+        // r2 P2-1: a Refresh requested while this tick held the single-flight gate was coalesced
+        // into _refreshPending (never lost); replay it now that the tick is complete.
+        await ReplayPendingRefreshAsync(cancellationToken).ConfigureAwait(false);
+        return ran;
+    }
+
+    private async Task<bool> TickCoreAsync(CancellationToken cancellationToken)
+    {
+        var now = _timeProvider.GetUtcNow();
             List<KeyValuePair<string, TargetState>> ordered;
             lock (_gate)
             {
@@ -546,14 +611,9 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 }
             }
 
-            _info?.Invoke("source scan tick targets=" + ordered.Count + " attempted=" + attempted
-                + " processed=" + processed + " paused=" + Paused);
-            return true;
-        }
-        finally
-        {
-            _tickGate.Release();
-        }
+        _info?.Invoke("source scan tick targets=" + ordered.Count + " attempted=" + attempted
+            + " processed=" + processed + " paused=" + Paused);
+        return true;
     }
 
     /// <summary>AC-S5: defensive in-process snapshot (no path/grant/session/message ever copied).</summary>
@@ -874,6 +934,99 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     private const string ScopeCurrent = "current";
     private const string KindResync = "resync";
 
+    /// <summary>
+    /// FEA-11-SCAN-2 r2 (P1-1): C-17 §5.1 <c>scope=all</c> — every book that references the source
+    /// (the frozen reference set). <c>scope=current</c> is legal only with exactly ONE project, so a
+    /// source shared by 2..20 books MUST be scanned with <c>all</c>; otherwise the Core rejects every
+    /// frame with <c>INVALID_REQUEST</c> and the shared source is never scanned.
+    /// </summary>
+    private const string ScopeAll = "all";
+
+    /// <summary>
+    /// The C-17 §5.1 scope for one target: <c>current</c> for a single-project target,
+    /// <c>all</c> for a shared source (2..20 books). Both scan and missing frames use this.
+    /// </summary>
+    public static string ResolveScanScope(SourceScanTarget target) =>
+        target.ProjectIds.Count == 1 ? ScopeCurrent : ScopeAll;
+
+    /// <summary>
+    /// The exact production <c>ScanSourceSync</c> payload (also used by frame-level tests): scope by
+    /// project count, the enumerated project ids, one live grant id and no missing observation.
+    /// </summary>
+    public static string BuildScanSourceSyncPayload(SourceScanTarget target, string grantId)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+        {
+            writer.WriteStartObject();
+            WriteScanSyncFields(writer, target, grantId);
+            writer.WriteEndObject();
+        }
+
+        return Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    /// <summary>The exact production C-17 §5.3 missing payload (frame-level testable).</summary>
+    public static string BuildScanMissingPayload(
+        SourceScanTarget target,
+        string registryId,
+        int generation,
+        string observedAt,
+        string identityDigest)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+        {
+            writer.WriteStartObject();
+            WriteScanMissingFields(writer, target, registryId, generation, observedAt, identityDigest);
+            writer.WriteEndObject();
+        }
+
+        return Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    private static void WriteScanSyncFields(Utf8JsonWriter writer, SourceScanTarget target, string grantId)
+    {
+        writer.WriteString("source_id", target.SourceId);
+        writer.WriteStartArray("project_ids");
+        foreach (var projectId in target.ProjectIds) writer.WriteStringValue(projectId);
+        writer.WriteEndArray();
+        writer.WriteString("scope", ResolveScanScope(target));
+        writer.WriteString("kind", KindResync);
+        writer.WriteStartArray("grant_ids");
+        writer.WriteStringValue(grantId);
+        writer.WriteEndArray();
+        writer.WriteStartArray("missing");
+        writer.WriteEndArray();
+    }
+
+    private static void WriteScanMissingFields(
+        Utf8JsonWriter writer,
+        SourceScanTarget target,
+        string registryId,
+        int generation,
+        string observedAt,
+        string identityDigest)
+    {
+        writer.WriteString("source_id", target.SourceId);
+        writer.WriteStartArray("project_ids");
+        foreach (var projectId in target.ProjectIds) writer.WriteStringValue(projectId);
+        writer.WriteEndArray();
+        writer.WriteString("scope", ResolveScanScope(target));
+        writer.WriteString("kind", KindResync);
+        writer.WriteStartArray("grant_ids");
+        writer.WriteEndArray();
+        writer.WriteStartArray("missing");
+        writer.WriteStartObject();
+        writer.WriteString("source_id", target.SourceId);
+        writer.WriteString("registry_id", registryId);
+        writer.WriteNumber("generation", generation);
+        writer.WriteString("expected_identity_digest", identityDigest);
+        writer.WriteString("observed_at", observedAt);
+        writer.WriteEndObject();
+        writer.WriteEndArray();
+    }
+
     /// <summary>Stable opaque rendition key (the scan never decodes; identity checks use grant facts).</summary>
     private static readonly string ScanRenditionParamsDigest = Convert.ToHexString(
         SHA256.HashData("fea11-scan-1-rendition-v1"u8.ToArray())).ToLowerInvariant();
@@ -976,20 +1129,10 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
             return SourceScanOutcome.Deferred();
         }
 
-        var response = await _core.SendHostControlAsync(ScanCommand, writer =>
-        {
-            writer.WriteString("source_id", target.SourceId);
-            writer.WriteStartArray("project_ids");
-            foreach (var projectId in target.ProjectIds) writer.WriteStringValue(projectId);
-            writer.WriteEndArray();
-            writer.WriteString("scope", ScopeCurrent);
-            writer.WriteString("kind", KindResync);
-            writer.WriteStartArray("grant_ids");
-            writer.WriteStringValue(grantId);
-            writer.WriteEndArray();
-            writer.WriteStartArray("missing");
-            writer.WriteEndArray();
-        }, cancellationToken).ConfigureAwait(false);
+        var response = await _core.SendHostControlAsync(
+            ScanCommand,
+            writer => WriteScanSyncFields(writer, target, grantId),
+            cancellationToken).ConfigureAwait(false);
 
         return ProjectScanResult(response.Result);
     }
@@ -1034,6 +1177,8 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         {
             // Generation drift: the persisted authorization moved on since enumeration; only a new
             // import/authorization can re-attest it (the scan slice never re-authorizes itself).
+            // SOURCE_REGISTRY_BUSY is reused from the frozen §8 set; its retryable projection does NOT
+            // mean this slice may auto re-authorize — it is a typed skip until a user action.
             return SourceScanOutcome.Skipped("SOURCE_REGISTRY_BUSY");
         }
 
@@ -1105,26 +1250,11 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
 
         var observedAt = _timeProvider.GetUtcNow()
             .ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
-        var response = await _core.SendHostControlAsync(ScanCommand, writer =>
-        {
-            writer.WriteString("source_id", target.SourceId);
-            writer.WriteStartArray("project_ids");
-            foreach (var projectId in target.ProjectIds) writer.WriteStringValue(projectId);
-            writer.WriteEndArray();
-            writer.WriteString("scope", ScopeCurrent);
-            writer.WriteString("kind", KindResync);
-            writer.WriteStartArray("grant_ids");
-            writer.WriteEndArray();
-            writer.WriteStartArray("missing");
-            writer.WriteStartObject();
-            writer.WriteString("source_id", target.SourceId);
-            writer.WriteString("registry_id", entry.RegistryId);
-            writer.WriteNumber("generation", entry.Generation);
-            writer.WriteString("expected_identity_digest", identityDigest);
-            writer.WriteString("observed_at", observedAt);
-            writer.WriteEndObject();
-            writer.WriteEndArray();
-        }, cancellationToken).ConfigureAwait(false);
+        var response = await _core.SendHostControlAsync(
+            ScanCommand,
+            writer => WriteScanMissingFields(
+                writer, target, entry.RegistryId, entry.Generation, observedAt, identityDigest),
+            cancellationToken).ConfigureAwait(false);
 
         return ProjectScanResult(response.Result);
     }

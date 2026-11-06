@@ -1986,7 +1986,7 @@ public sealed class Fea11ScanRefreshVmTests
     }
 
     [Fact]
-    public async Task ConfirmInFlight_LaterSelectionSwitch_StillOneRefresh()
+    public async Task ConfirmInFlight_CompletesOnce_ThenExactlyOneRefresh()
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
         var viewModel = Create(host);
@@ -2002,6 +2002,8 @@ public sealed class Fea11ScanRefreshVmTests
         await viewModel.PlanReferenceImportAsync(
             new[] { new ReferenceImportSource(@"C:\manga\page.png", IsFolder: false) });
         var confirm = viewModel.ConfirmReferenceImportAsync();
+        // No book/selection state feeds the refresh request anymore (S-2): completing the import
+        // triggers exactly one refresh regardless of any selection change while it is in flight.
         receiptGate.TrySetResult(true);
         await confirm;
 

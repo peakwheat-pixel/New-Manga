@@ -1,0 +1,88 @@
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+OK: rendered counts match FEA-C07 doc
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 54 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **61** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 10 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 11 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 12 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 13 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 14 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 15 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 16 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 17 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 18 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 19 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 20 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 21 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 22 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 23 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 24 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 25 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 26 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 27 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 28 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 29 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 30 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 31 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 32 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 33 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 34 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 35 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 36 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 37 | `RevealExportFolderAsync` | `Task<bool>` |
+| 38 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 39 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 40 | `DeleteBackupAsync` | `Task<bool>` |
+| 41 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 42 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 43 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 44 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 45 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 46 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 47 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 48 | `PatchDraftAsync` | `Task<Draft?>` |
+| 49 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 50 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 51 | `GetDraftAsync` | `Task<Draft?>` |
+| 52 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 53 | `DiscardDraftAsync` | `Task` |
+| 54 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+

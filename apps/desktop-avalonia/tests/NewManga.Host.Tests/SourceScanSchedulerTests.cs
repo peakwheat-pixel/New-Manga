@@ -1223,4 +1223,97 @@ public sealed class SourceScanSchedulerTests
             // isolated temp fixture expires with the OS temp directory
         }
     }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-SCAN-2 r2 (P1-1): scope selection + exact ScanSourceSync payload.
+    // ---------------------------------------------------------------------------------------
+
+    private static JsonElement ParsePayload(string payload) => JsonDocument.Parse(payload).RootElement.Clone();
+
+    private static string[] ProjectIdsOf(JsonElement payload) =>
+        payload.GetProperty("project_ids").EnumerateArray().Select(value => value.GetString()!).ToArray();
+
+    [Fact]
+    public void ScanPayload_SingleProject_UsesCurrentScope()
+    {
+        var target = EnumeratedTarget("src-1", projectIds: new[] { "book-1" });
+
+        var payload = ParsePayload(HostSourceScanExecutor.BuildScanSourceSyncPayload(target, "grant-1"));
+
+        Assert.Equal("current", payload.GetProperty("scope").GetString());
+        Assert.Equal(new[] { "book-1" }, ProjectIdsOf(payload));
+        Assert.Equal("resync", payload.GetProperty("kind").GetString());
+        Assert.Equal("grant-1", payload.GetProperty("grant_ids").EnumerateArray().Single().GetString());
+        Assert.Empty(payload.GetProperty("missing").EnumerateArray());
+    }
+
+    [Fact]
+    public void ScanPayload_SharedSource_UsesAllScope_AndAllProjectIds()
+    {
+        var target = EnumeratedTarget("src-1", projectIds: new[] { "book-1", "book-2" });
+
+        var payload = ParsePayload(HostSourceScanExecutor.BuildScanSourceSyncPayload(target, "grant-1"));
+
+        // P1-1 discriminator: scope=current with 2 projects is rejected by the Core
+        // (scanner.py "scope=current needs exactly one project"); a shared source must use "all".
+        Assert.Equal("all", payload.GetProperty("scope").GetString());
+        Assert.Equal(new[] { "book-1", "book-2" }, ProjectIdsOf(payload));
+        Assert.Equal("grant-1", payload.GetProperty("grant_ids").EnumerateArray().Single().GetString());
+    }
+
+    [Fact]
+    public void MissingPayload_UsesSameScopeSelection_AndCarriesObservation()
+    {
+        var single = EnumeratedTarget("src-1", projectIds: new[] { "book-1" });
+        var shared = EnumeratedTarget("src-2", projectIds: new[] { "book-1", "book-2" });
+
+        var singlePayload = ParsePayload(HostSourceScanExecutor.BuildScanMissingPayload(
+            single, "reg-1", 1, "2026-11-06T00:00:00.000Z", new string('a', 64)));
+        var sharedPayload = ParsePayload(HostSourceScanExecutor.BuildScanMissingPayload(
+            shared, "reg-2", 3, "2026-11-06T00:00:00.000Z", new string('b', 64)));
+
+        Assert.Equal("current", singlePayload.GetProperty("scope").GetString());
+        Assert.Equal("all", sharedPayload.GetProperty("scope").GetString());
+        Assert.Empty(singlePayload.GetProperty("grant_ids").EnumerateArray());
+        var missing = singlePayload.GetProperty("missing").EnumerateArray().Single();
+        Assert.Equal("reg-1", missing.GetProperty("registry_id").GetString());
+        Assert.Equal(1, missing.GetProperty("generation").GetInt32());
+        Assert.Equal(new string('a', 64), missing.GetProperty("expected_identity_digest").GetString());
+        Assert.Equal("2026-11-06T00:00:00.000Z", missing.GetProperty("observed_at").GetString());
+    }
+
+    [Fact]
+    public async Task RefreshRequestedDuringTick_IsReplayedAfterTickCompletes()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor { Block = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously) };
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = _ => SourceScanEnumerationResult.Completed(new[] { EnumeratedTarget("s2") }, 0),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+        scheduler.RegisterTarget(Target("s1"));
+
+        var tick = scheduler.TickAsync();
+        await executor.WaitForScanCountAsync(1).WaitAsync(TimeSpan.FromSeconds(10)); // tick holds the gate
+
+        // P2-1: a Refresh during the tick is coalesced, not silently dropped.
+        Assert.False(await scheduler.RefreshTargetsAsync());
+        Assert.Contains(log.Info, line => line.Contains("refresh queued", StringComparison.Ordinal));
+
+        executor.Block!.TrySetResult(true);
+        Assert.True(await tick.WaitAsync(TimeSpan.FromSeconds(10)));
+
+        // The tick wrapper replayed the pending refresh before returning: the new target exists.
+        Assert.Equal(1, enumerator.Calls);
+        Assert.Contains(scheduler.Snapshot().Targets, target => target.SourceId == "s2");
+
+        // And it is scanned on the next tick (not lost for the session).
+        executor.Block = null;
+        Assert.True(await scheduler.TickAsync());
+        Assert.Contains("s2", executor.ScannedSourceIds);
+
+        await scheduler.DisposeAsync();
+    }
 }

@@ -7,7 +7,7 @@
 - 交付 commit：**`6c8b4cb2b`**（`feat(fea-11-scan-2): Host/App 冷启动枚举接线（分片 B）`；apps/** + host-* 证据）
 - 提交后复核：`check.ps1 -TaskPath doc/tasks/FEA-11-SCAN-2.md` → **PASS（3 既有全局 warnings）**，EXIT 0；日志 `G:\CODEX\New Manga.workspace\FEA-11-SCAN-2\logs\host-check-postcommit.log`（仓外，避免 evidence 自指）
 
-## 1. 实现摘要（本分片改动，均在卡 allowed_paths）
+## 1. 实现摘要（本分片改动；含 1 个编译必需连带文件，见 §2 P2-4 例外）
 
 ### Host（`apps/desktop-avalonia/src/NewManga.Host/`）
 
@@ -148,7 +148,99 @@ pwsh -NoProfile -File tools/governance/verify_pins.ps1
 C:/Python314/python.exe tools/generate_api_inventory.py --check
 ```
 
-## 9. 交给 Lead 的收口提示
+## 9. r2 返修（SCAN-2 r1 Review CHANGES：P1-1 / P2-1 / P2-3 / P2-5 + P2-4 措辞）
+
+r1 Review：`doc/reviews/FEA-11-SCAN-2-r1.md`（reviewed_head `fa38c47ef`；CHANGES，P0=0/P1=1/P2=5/P3=6）。
+本节对应 r2 返修 commit（见 §10.6）。
+
+### 10.1 P1-1（阻断）：共享源 scope=current → all
+
+- 根因：`HostSourceScanExecutor` 的 scan/missing 两处硬编码 `scope="current"` 且携带全部 project_ids；Core 对 `scope=current` 强制恰好 1 个 project（`scanner.py`），多 book 共享源每轮 `INVALID_REQUEST` → 永不被扫描。
+- 修复：`ResolveScanScope(target)` 按 `ProjectIds.Count` 选 `current`(1)/`all`(>1)；scan 与 missing 帧统一走 `WriteScanSyncFields` / `WriteScanMissingFields`，并公开 `BuildScanSourceSyncPayload` / `BuildScanMissingPayload` 供 frame 级测试。
+- 单元判别（`SourceScanSchedulerTests`，+3）：`ScanPayload_SingleProject_UsesCurrentScope`、`ScanPayload_SharedSource_UsesAllScope_AndAllProjectIds`、`MissingPayload_UsesSameScopeSelection_AndCarriesObservation`（解析真实 payload JSON 断言 scope/project_ids/grant_ids/missing 形状）。
+- 真实 IPC 判别：新增 `RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId`（见 §10.3）——同一真实源导入两个 book 后，第二 tick 的 `ScanSourceSync` 帧 `scope=all` 且 project_ids 恰为两个 book；单 book tick 为 `scope=current`。`host-r2-import-e2e.json`。
+
+### 10.2 P2-1：tick 期间 Refresh 丢失 → pending/coalesce + tick 后重放
+
+- 根因：`RefreshTargetsAsync` 在 `_tickGate.WaitAsync(0)` 失败时只返回 false，无 pending 标志；tick 结束也不补跑 → Completed 导入恰逢 tick 时新源本会话不再枚举。
+- 修复：新增 `_refreshPending`（gate 竞争失败时置位，日志 “refresh queued”）；`TickAsync` 拆为 wrapper + `TickCoreAsync`，wrapper 在释放 gate 后 `ReplayPendingRefreshAsync`（一次、防重入、异常仅 typed 日志）；`Dispose`/取消安全。
+- 单元判别：`RefreshRequestedDuringTick_IsReplayedAfterTickCompletes`——tick 阻塞期间请求 Refresh 返回 false 且入队，tick 完成后一次重放使新 target 出现在快照，下一 tick 实际扫描该 target。
+
+### 10.3 P2-3：真实导入 → 枚举 E2E（gated）
+
+- 新测试：`Fea11ScanIpcTests.RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId`（`NEWMANGA_FEA11_IPC=1`）。
+- 装置：真实 Python Core（当前 src）+ 全新隔离 DataRoot + 生产 `SourceImportCoordinator`（与 FEA-09 真实 IPC 相同的 Host-local 路由）；真实导入一个 PNG 到 book1，再导入同一物理源到 book2。
+- 断言：`sources.source_id`（真实 `src-<uuid>`，本 fixture 为 `src-b1e32669881c4022a70c075b6f18c624`）== `target.source_id` 且 ≠ `StableSourceId`（`src-d902593b57fa0f4a`）；`page_bindings` 派生 book 集合恰为两本；两次 Refresh 幂等（仍 1 个 target）；Refresh/扫描前后 15 表逐行相等；wire 单 book `scope=current`、共享 `scope=all`。
+- **AC-S2-3 由此从 PARTIAL 升为完整 E2E 证据**（此前仅合成 `s1`）。
+
+### 10.4 P2-5：HostRuntime Ready → 后台枚举（gated）
+
+- 新测试：`Fea11Scan2HostRuntimeTests.Ready_StartsBackgroundEnumeration_WithoutBlocking`（`[HostSidecarFact]`，需要 `NEWMANGA_CORECLIENT_SIDECAR_DIR`；本仓库 build/sidecar 包可满足）。
+- 断言：真实 `HostRuntime.StartAsync` 返回 Ready（evidence：start_elapsed_ms≈460）；`ScanScheduler` 已启动；Ready 后后台枚举状态出现（`Enumeration` 非 null），当前仓库 sidecar 包为 C-17 v1.1 之前构建 → typed `CORE_CAPABILITY_MISSING`（fail-closed，不阻塞）；`RequestSourceScanRefresh()` 被接受；refresh 结束后仍可执行 Tick；状态 JSON 无绝对路径。
+- **限制（明确登记）**：HostRuntime 的 sidecar 装配没有 fake-Core/注入时钟 seam（不重构生产不可注入），因此“Ready→后台枚举且不阻塞”由本 gated 用例证明，“成功枚举”由 §10.3 组件级真实 Core E2E 证明；仓库 sidecar 包未含新 Core 命令（重建 sidecar 不在本卡授权范围），故本用例在 Available=true 分支为前向兼容断言。
+- 证据：`host-r2-runtime-enumeration.json`（`enumeration_error_code=CORE_CAPABILITY_MISSING`，`redacted=true`）。
+
+### 10.5 P2-4：allowlist 例外措辞更正（不改代码）
+
+- `host-shard-record.md` §1 原写“本分片改动，均在卡 allowed_paths”不准确；已改为“含 1 个编译必需连带文件”。
+- 明确：`apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs` 为删除 ImportDock `bookId` 形参的编译必需连带修改，**不在**冻结 allowed_paths；Lead 已在 r1 Review 处置记录 allowlist 例外（P2-4）；本片 r2 未再次修改该文件。`host-changed-files.txt` 同步标注。
+
+### 10.6 P3 同批小修（非阻断）
+
+- `HostRuntime.cs` 过期注释（“Cold start enumerates no sources (L-A)…only over App-registered targets”）改为 SCAN-2 语义（Ready 后后台枚举）。
+- `SourceScanScheduler.VerifyEnumeratedTarget` generation-drift 注释补充：`SOURCE_REGISTRY_BUSY` 的 retryable 投影不代表本切片自动重新授权。
+- App VM 测试名/注释更正（`ConfirmInFlight_CompletesOnce_ThenExactlyOneRefresh`；S-2 下选择切换不参与刷新请求）。
+
+### 10.7 r2 门禁（2026-11-06；HEAD 含 Core r2 `20faf062a`）
+
+| Gate | 命令 | 结果 | 证据 |
+|---|---|---|---|
+| Host 单测 | `--filter FullyQualifiedName~SourceScanScheduler` | **51 / 0 / 0**，EXIT 0（r1 47 + P1-1/P2-1 的 4 例） | `logs/host-r2-unit.log` |
+| App VM | `--filter FullyQualifiedName~Fea11ScanRefreshVm` | **5 / 0 / 0**，EXIT 0 | `logs/host-r2-app-refresh.log` |
+| 真实 IPC（含共享源/真实导入 E2E） | `$env:NEWMANGA_FEA11_IPC=1; --filter Fea11ScanIpcTests` | **3 / 0 / 0**，EXIT 0 | `logs/host-r2-real-ipc.log`、`host-r2-import-e2e.json/.txt`、`host-r2-cold-start.json/.txt` |
+| HostRuntime gated | `$env:NEWMANGA_CORECLIENT_SIDECAR_DIR=<repo build sidecar>; --filter Fea11Scan2HostRuntimeTests` | **1 / 0 / 0**，EXIT 0 | `logs/host-r2-runtime-enumeration.log`、`host-r2-runtime-enumeration.json` |
+| pytest tests/fea11（按需） | `python -m pytest tests/fea11 -q -p no:cacheprovider` | **108 passed**，EXIT 0 | `logs/host-r2-pytest-fea11.log` |
+| 全量 .NET RUN1 | `dotnet test …NewManga.sln -c Release --no-build` | 1499 / **1 failed** / 85 skipped；失败 = CoreClient `RunBindingFixTests…OcrNoLongerProviderNotConfigured`（`library.db-shm` 文件锁竞态；隔离复跑 PASS） | `logs/host-r2-dotnet-full-1.log`、`logs/host-r2-flaky-runbinding-rerun.log` |
+| 全量 .NET RUN2 | 同上 | 1499 / **1 failed** / 85 skipped；失败 = 已知 flaky `FluentResidual2VisualEvidenceTests`（git-status 写竞态；隔离复跑 PASS） | `logs/host-r2-dotnet-full-2.log`、`logs/host-r2-flaky-fluent-rerun.log` |
+| 全量 .NET RUN3（复跑） | 同上 | **1500 passed / 0 failed / 85 skipped / 1585**，EXIT 0 | `logs/host-r2-dotnet-full-3.log` |
+| check | `check.ps1 -TaskPath doc/tasks/FEA-11-SCAN-2.md` | **PASS（3 既有 warnings）**，EXIT 0 | `logs/host-r2-check.log` |
+| pins | `verify_pins.ps1` | **PASS 18/18**，EXIT 0 | `logs/host-r2-pins.log` |
+| API inventory | `generate_api_inventory.py --check` | **PASS**（C-07 未变），EXIT 0 | `logs/host-r2-api-inventory.log` |
+
+全量 .NET 口径：r1 集成基线 **1496/0/83**（Lead `fa38c47ef`）→ r2 **1500/0/85**（+4 passed = 新增单测；+2 skipped = 新增 2 个 gated 测试：真实导入 E2E + HostRuntime gated）。每次全量后 `git checkout -- verification/FEA-09`。
+
+### 10.8 r2 证据 sha256
+
+| file | sha256 |
+|---|---|
+| `host-r2-import-e2e.json` | `29672d5f7110162f1209d8d5dbb9c0bdd1ca579ef613abe29ac3ec3d0fe72378` |
+| `host-r2-import-e2e.txt` | `bc489cfe6c598bba9986b51c87a4ce55ad0a4fcffd76dfb32621810b519fdf81` |
+| `host-r2-cold-start.json` | `b1c1ae4dc5d77c4b39b3f5a0f17a08ff7230a9085afc849f75539a6616f07d37` |
+| `host-r2-cold-start.txt` | `9b7b241c7fc869af4bfdc5b19b0ff43bbf1c9de9d4112623c7a58c07b1c06ac2` |
+| `host-r2-runtime-enumeration.json` | `fc692a69c304c4522445163e76e24f2263b72f5278273b966ae0cc1032135cec` |
+| `host-r2-scope-validation.log` | `45138c709e0c0e0bbd1e6969a905c943dd36f7ab5497a43da5e88a97866fc413` |
+| `logs/host-r2-unit.log` | `247c870678ef152f96dd36cf7a18e3903877a8f8e35c72cf431efcc990ac43b3` |
+| `logs/host-r2-app-refresh.log` | `9e1d385bb978299dba9f90a3ba2d69dd4160d188044efaf7403e38265279ac2f` |
+| `logs/host-r2-real-ipc.log` | `471442c12c67bafd36b1200eb23d3c840485fe7a091ade4c5707c136378ba9c0` |
+| `logs/host-r2-runtime-enumeration.log` | `f1a42bacf6507e19b570638e55e24d587cfb8b0ff1d36871cc222381115cf0e7` |
+| `logs/host-r2-dotnet-full-1.log` | `297626c1fbbbd29430c9569c432ec716832e3c2ac9b64223f05391ad23b1c794` |
+| `logs/host-r2-dotnet-full-2.log` | `2f5483099e8a5424af3e7595dd08f65beeaa917801d07a3dc223450e22cf6d61` |
+| `logs/host-r2-dotnet-full-3.log` | `8bd2cc10a7ea7d7ad29f9c260641d1c7b103fc4b6f6425c78777f7e95da98ee6` |
+| `logs/host-r2-flaky-runbinding-rerun.log` | `20f8ba2824fe3e1165524a4d8f5f129f6c6534d80a298d09adbff6d1e93efdcb` |
+| `logs/host-r2-flaky-fluent-rerun.log` | `25ea1a387b9b87a34e4f4d19024a4ebcc2b0c2d0a4ac08c0a20e7d70c9fb5214` |
+| `logs/host-r2-pytest-fea11.log` | `da2fa25e398c7d5a3357a7b536963ee88477278f3e2ac4a26f0e3f6ee619c6a0` |
+| `logs/host-r2-check.log` | `f46f843311c6f817f96a28792f48a75374ffe56a47b408b7c35def2c1d0a3fbb` |
+| `logs/host-r2-pins.log` | `f198eda409309d359a700135e0ecb1d56c6b3df8f0bed0cfcef6f7427a7336db` |
+| `logs/host-r2-api-inventory.log` | `b60105ac624c7e4d681a36cb45129471c16a4ed72e7751076bed4bbe818ba758` |
+
+### 10.9 r2 残余 limitation
+
+- **L-S1（不变）**：生产 file-root 缺失/替换使持久 registry 整库不可读 → 全目标 typed fail-closed；registry 韧性另立缺陷卡。
+- **P2-5 限定**：HostRuntime 成功枚举路径受 sidecar 版本限制（仓库包早于 C-17 v1.1），由组件级真实 Core E2E 补足；HostRuntime 无 fake Core/注入时钟 seam，登记 limitation。
+- **P2-3 之后的 AC-S2-3**：真实导入→枚举 E2E 已通过（AC-S2-3 可完整 MET）；但仅覆盖单文件 PNG 导入，未覆盖 folder/encrypted 源（同 SCAN-1 口径）。
+- 其余 L-A/L-G/L-S4/L10/AC11-1 PARTIAL 不变。
+
+## 10. 交给 Lead 的收口提示
 
 - 本片只提交 apps/** 与 `verification/FEA-11-SCAN-2/host-*`；**未改卡面/STATUS/PLAN/LEDGER/reviews**，AC 标记与 Handoff 收口由 Lead/DSH 执行。
 - 与 Core 分片 `0cb5177ca` 合并后建议：真实重启 IPC 复跑（已在本工作树通过）、App 真实导入 → 枚举 E2E 补测（AC-S2-3 完整口径）、registry 韧性（L-S1）另立缺陷卡。

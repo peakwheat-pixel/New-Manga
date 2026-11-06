@@ -1,0 +1,40 @@
+{
+  "case": "AC-S2-1/S2-2/S2-4/S2-5/S2-8",
+  "core": "real volatile python core (stdio IPC)",
+  "app_registration_used": false,
+  "core_source_id": "s1",
+  "target_source_id": "s1",
+  "target_source_kind": "zip",
+  "enumeration": {
+    "available": true,
+    "last_result": "ok",
+    "skipped": 0
+  },
+  "scan_result": "ok",
+  "db_snapshot_unchanged": true,
+  "db_tables": [
+    "sources",
+    "source_locations",
+    "source_versions",
+    "source_entries",
+    "books",
+    "chapters",
+    "pages",
+    "page_bindings",
+    "regions",
+    "region_revisions",
+    "source_sync_plans",
+    "source_operations",
+    "source_binding_publications",
+    "source_revision_lineage",
+    "rendition_cache"
+  ],
+  "db_table_count": 15,
+  "wire_commands": [
+    "OpenHostSession",
+    "RegisterSourceReadGrant",
+    "ScanSourceSync",
+    "core.ping",
+    "source_list_scan_targets"
+  ]
+}

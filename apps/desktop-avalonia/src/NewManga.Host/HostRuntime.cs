@@ -1178,10 +1178,11 @@ public sealed class HostRuntime : IAsyncDisposable
                 Result = HostStartResult.Ready(decision.Mode);
             }
 
-            // FEA-11-SCAN-1 (I-7): start the read-only periodic scan only after the Host is ready
-            // (host-control session + Sources resolved + Result.IsReady). Cold start enumerates no
-            // sources (L-A): the first tick happens after one interval and only over App-registered
-            // targets.
+            // FEA-11-SCAN-1/2 (I-7 / B1): start the read-only periodic scan only after the Host is
+            // ready (host-control session + Sources resolved + Result.IsReady). From FEA-11-SCAN-2 on,
+            // a background read-only enumeration of the Core's authoritative scan targets runs after
+            // Ready (never blocking the start path); the first periodic tick still happens after one
+            // interval, over the merged/verified target set.
             StartSourceScanScheduler();
         }
         catch (SidecarException ex)
