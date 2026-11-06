@@ -103,3 +103,5 @@ git diff --name-only 919c9aa1e..HEAD -- doc/plan doc/contracts src/   # 期望�
 - **P2-2**：同一用例末行前加 `await fixture.Scheduler.HintIdleAsync();`，排空根删除触发的全目标 hint pass（其占用单飞 gate 使 `TickAsync` 合法返回 false）；隔离重跑 **5/5 全绿**（`logs/r2b-rootlost-isolated.log`）。
 - P3-3 严格断言随 P2-1 落地；P3-1/P3-6 登记为 smoke（已有用例，非确定性 race 复现）。
 - r2b 门禁：Host 单测 185/0/55；全量 .NET 1527/0/86 ×2；check/pins/API/scope 全 PASS；每轮后恢复 `verification/FEA-09`。
+
+> **Erratum（2026-11-06）**：本 Handoff 早期称“r2 已修 RootLost 严格断言”不实；严格断言与 `HintIdleAsync` 排空在 r2b `00083a977` 才落地。
