@@ -113,6 +113,163 @@ public sealed record SourceScanBudget(long Metric, long Limit)
 }
 
 /// <summary>
+/// FEA-11-RUN-GRANT-2A (card S-2/S-5): one Core-authoritative member identity of a source version, as
+/// carried by an unchanged <c>ScanSourceSync</c> observation (<c>source.entries[]</c>). The Host must
+/// never infer a locator/ordinal itself (S-5); this record is the only shape it caches.
+/// </summary>
+public sealed record SourceIdentityEntry(string? EntryId, string Locator, int Ordinal);
+
+/// <summary>
+/// FEA-11-RUN-GRANT-2A (card S-2/S-4): the Core-authoritative identity of one Host-known source,
+/// captured from an unchanged <c>ScanSourceSync</c> response:
+/// <see cref="VersionId"/> is the Core committed <c>source.version_id</c> (the value a Run page
+/// binding's <c>accepted_source_version</c> refers to) and <see cref="Entries"/> are the Core
+/// member identities (locator/ordinal/entry_id — reserved for the follow-up container-entry channel;
+/// 2A still mints the container single entry). In memory only: never persisted and never logged.
+/// </summary>
+public sealed record SourceIdentity(
+    string SourceId,
+    string VersionId,
+    IReadOnlyList<SourceIdentityEntry> Entries,
+    double CapturedAt)
+{
+    public override string ToString() => "SourceIdentity(" + SourceId + ")";
+}
+
+/// <summary>
+/// FEA-11-RUN-GRANT-2A (card S-4): the bounded, in-memory cache of Core-authoritative source
+/// identities (<c>source_id → version_id + entries[]</c>) that replaces the old constant
+/// <c>scope.version = "1"</c> production bug (L-G15).
+///
+/// Freshness/source rules (all fail-closed):
+/// * ONLY a <c>status=ok</c> observation whose totals report no change may refresh an entry;
+/// * a <c>changed</c>/<c>encrypted</c>/<c>unsupported</c>/<c>missing</c>/malformed observation
+///   <see cref="Forget">invalidates</see> the entry, so a Run can never mint a version the Host
+///   cannot prove is the Core's committed one (no constant, no guess, no placeholder);
+/// * bounded: at most <see cref="MaxEntries"/> sources, at most <see cref="MaxEntriesPerIdentity"/>
+///   entries per source, and every entry expires after <see cref="TtlSeconds"/> seconds
+///   (<see cref="PruneExpired"/> runs on every write and on every read).
+/// </summary>
+public sealed class SourceIdentityCache
+{
+    /// <summary>Upper bound on cached sources (L-G12/2A bounded accounting; assertable).</summary>
+    public const int MaxEntries = 1024;
+
+    /// <summary>Upper bound on cached member identities per source (never truncated: over-bound is a
+    /// fail-closed "do not cache" verdict).</summary>
+    public const int MaxEntriesPerIdentity = 4096;
+
+    /// <summary>Default time-to-live of one captured identity (seconds).</summary>
+    public const double DefaultTtlSeconds = 3600;
+
+    private readonly Dictionary<string, SourceIdentity> _identities = new(StringComparer.Ordinal);
+    private readonly object _gate = new();
+    private readonly Func<double> _clock;
+    private readonly double _ttlSeconds;
+
+    public SourceIdentityCache(Func<double>? clock = null, double ttlSeconds = DefaultTtlSeconds)
+    {
+        _clock = clock ?? (() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0);
+        _ttlSeconds = ttlSeconds > 0 ? ttlSeconds : DefaultTtlSeconds;
+    }
+
+    /// <summary>Build a cache driven by a Host <see cref="TimeProvider"/> seam.</summary>
+    public static SourceIdentityCache FromTimeProvider(
+        TimeProvider provider, double ttlSeconds = DefaultTtlSeconds) =>
+        new(() => provider.GetUtcNow().ToUnixTimeMilliseconds() / 1000.0, ttlSeconds);
+
+    public double TtlSeconds => _ttlSeconds;
+
+    /// <summary>How many live identities the cache currently keeps (R-8 style upper-bound probe).</summary>
+    public int Count
+    {
+        get { lock (_gate) return _identities.Count; }
+    }
+
+    /// <summary>Record one Core-authoritative identity. Only called for an unchanged ok observation;
+    /// returns false when the identity is malformed or over the per-source entry bound.</summary>
+    public bool Remember(string sourceId, string versionId, IReadOnlyList<SourceIdentityEntry> entries)
+    {
+        if (string.IsNullOrWhiteSpace(sourceId) || string.IsNullOrWhiteSpace(versionId)
+            || entries is null || entries.Count > MaxEntriesPerIdentity)
+        {
+            return false;
+        }
+
+        var capturedAt = _clock();
+        lock (_gate)
+        {
+            PruneExpiredLocked(capturedAt);
+            if (!_identities.ContainsKey(sourceId) && _identities.Count >= MaxEntries)
+            {
+                var oldest = _identities.Values
+                    .OrderBy(identity => identity.CapturedAt)
+                    .Select(identity => identity.SourceId)
+                    .FirstOrDefault();
+                if (oldest is not null) _identities.Remove(oldest);
+            }
+
+            _identities[sourceId] = new SourceIdentity(sourceId, versionId, entries, capturedAt);
+        }
+
+        return true;
+    }
+
+    /// <summary>Drop one source identity (a non-authoritative observation never overwrites it with a
+    /// candidate value; it invalidates it instead).</summary>
+    public bool Forget(string sourceId)
+    {
+        if (string.IsNullOrWhiteSpace(sourceId)) return false;
+        lock (_gate) return _identities.Remove(sourceId);
+    }
+
+    /// <summary>Look up a LIVE identity (expired entries are dropped and report false).</summary>
+    public bool TryGet(string sourceId, out SourceIdentity identity)
+    {
+        identity = null!;
+        if (string.IsNullOrWhiteSpace(sourceId)) return false;
+        var now = _clock();
+        lock (_gate)
+        {
+            PruneExpiredLocked(now);
+            return _identities.TryGetValue(sourceId, out identity!);
+        }
+    }
+
+    /// <summary>R-8 style bound probe: drop expired identities; returns how many were dropped.</summary>
+    public int PruneExpired()
+    {
+        var now = _clock();
+        lock (_gate) return PruneExpiredLocked(now);
+    }
+
+    private int PruneExpiredLocked(double now)
+    {
+        var expired = _identities
+            .Where(pair => pair.Value.CapturedAt + _ttlSeconds <= now)
+            .Select(pair => pair.Key)
+            .ToArray();
+        foreach (var sourceId in expired) _identities.Remove(sourceId);
+        return expired.Length;
+    }
+}
+
+/// <summary>
+/// FEA-11-RUN-GRANT-2A (card S-4): the only <c>ScanSourceSync</c> observation shapes that may refresh
+/// <see cref="SourceIdentityCache"/>. A rejected verdict invalidates the cached entry (fail-closed):
+/// the Run path then has no version to mint and skips the source instead of guessing one.
+/// </summary>
+public sealed record SourceScanIdentityVerdict(
+    bool Cacheable,
+    string? VersionId,
+    IReadOnlyList<SourceIdentityEntry> Entries,
+    string Reason)
+{
+    public static SourceScanIdentityVerdict Reject(string reason) =>
+        new(false, null, Array.Empty<SourceIdentityEntry>(), reason);
+}
+
+/// <summary>
 /// FEA-11-SCAN-1 (I-3/AC-S2): the only operation the scheduler may perform. Production implements
 /// it with the real grant chain + <c>ScanSourceSync</c>; tests script it (fake core).
 /// </summary>
@@ -1287,6 +1444,9 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     private readonly SourceReadCoordinator _sources;
     private readonly SourceScanOptions _options;
     private readonly TimeProvider _timeProvider;
+    // FEA-11-RUN-GRANT-2A (S-2/S-4): the Core-authoritative identity sink. Null keeps the pre-2A
+    // behaviour (no cache, no version channel) for callers that only need scan observability.
+    private readonly SourceIdentityCache? _identities;
     // source_id → the recorded-location identity digest of the last UNCHANGED (ok) observation
     // (never persisted); only used to build the C-17 §5.3 MissingObservation. A changed observation
     // carries candidate content the Core has NOT recorded, so it never overwrites this baseline
@@ -1304,12 +1464,14 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         CoreServiceClient core,
         SourceReadCoordinator sources,
         SourceScanOptions options,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        SourceIdentityCache? identities = null)
     {
         _core = core;
         _sources = sources;
         _options = options;
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _identities = identities;
     }
 
     public SourceScanBudget? ProbeBudget(SourceScanTarget target)
@@ -1386,7 +1548,7 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
             writer => WriteScanSyncFields(writer, target, grantId),
             cancellationToken).ConfigureAwait(false);
 
-        return ProjectScanResult(response.Result);
+        return ProjectScanResult(response.Result, target.SourceId);
     }
 
     /// <summary>
@@ -1508,18 +1670,20 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
                 writer, target, entry.RegistryId, entry.Generation, observedAt, identityDigest),
             cancellationToken).ConfigureAwait(false);
 
-        return ProjectScanResult(response.Result);
+        return ProjectScanResult(response.Result, target.SourceId);
     }
 
-    private SourceScanOutcome ProjectScanResult(JsonElement? result)
+    private SourceScanOutcome ProjectScanResult(JsonElement? result, string expectedSourceId)
     {
         if (result is not { ValueKind: JsonValueKind.Object } value)
         {
+            _identities?.Forget(expectedSourceId);
             return SourceScanOutcome.Error("UNKNOWN");
         }
 
         if (!value.TryGetProperty("source", out var source) || source.ValueKind != JsonValueKind.Object)
         {
+            _identities?.Forget(expectedSourceId);
             return SourceScanOutcome.Error("UNKNOWN");
         }
 
@@ -1528,6 +1692,14 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
             ? statusValue.GetString()
             : null;
         var counts = ParseTotals(value);
+
+        // FEA-11-RUN-GRANT-2A (S-4): the Core identity cache only accepts the one authoritative shape
+        // (status=ok and no change totals). Every other verdict INVALIDATES the entry so the Run path
+        // can never mint an unprovable version (never a constant fallback).
+        if (_identities is not null)
+        {
+            ApplySourceIdentity(_identities, expectedSourceId, result);
+        }
 
         if (status == "missing")
         {
@@ -1563,6 +1735,118 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         return changed
             ? SourceScanOutcome.Changed(counts!)
             : SourceScanOutcome.Ok(counts ?? SourceScanCounts.Zero);
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2A (card S-4/S-5): the ONLY <c>ScanSourceSync</c> observation → identity cache
+    /// decision, exposed as a pure function so the freshness matrix is unit-testable without a Core.
+    ///
+    /// Cacheable: <c>status="ok"</c>, the response source id equals the scanned target, the totals carry
+    /// no change, <c>source.version_id</c> is a non-empty string and <c>source.entries[]</c> is an array
+    /// of Core member identities (locator + ordinal, optional entry_id) within the entry bound. Anything
+    /// else is a rejection, and the only application of a rejection is INVALIDATION (never a partial
+    /// write, never a constant placeholder).
+    /// </summary>
+    public static SourceScanIdentityVerdict ReadSourceIdentity(
+        JsonElement? result, string expectedSourceId)
+    {
+        if (result is not { ValueKind: JsonValueKind.Object } value
+            || !value.TryGetProperty("source", out var source)
+            || source.ValueKind != JsonValueKind.Object)
+        {
+            return SourceScanIdentityVerdict.Reject("malformed_result");
+        }
+
+        var sourceId = source.TryGetProperty("source_id", out var sourceIdValue)
+                       && sourceIdValue.ValueKind == JsonValueKind.String
+            ? sourceIdValue.GetString()
+            : null;
+        if (sourceId is null || !string.Equals(sourceId, expectedSourceId, StringComparison.Ordinal))
+        {
+            return SourceScanIdentityVerdict.Reject("source_id_mismatch");
+        }
+
+        var status = source.TryGetProperty("status", out var statusValue)
+                     && statusValue.ValueKind == JsonValueKind.String
+            ? statusValue.GetString()
+            : null;
+        if (status != "ok")
+        {
+            return SourceScanIdentityVerdict.Reject("status_" + (status ?? "unknown"));
+        }
+
+        if (ParseTotals(value) is { HasChange: true })
+        {
+            return SourceScanIdentityVerdict.Reject("changed");
+        }
+
+        var versionId = source.TryGetProperty("version_id", out var versionValue)
+                        && versionValue.ValueKind == JsonValueKind.String
+            ? versionValue.GetString()
+            : null;
+        if (string.IsNullOrWhiteSpace(versionId))
+        {
+            return SourceScanIdentityVerdict.Reject("version_missing");
+        }
+
+        if (!source.TryGetProperty("entries", out var entries) || entries.ValueKind != JsonValueKind.Array)
+        {
+            return SourceScanIdentityVerdict.Reject("entries_missing");
+        }
+
+        var parsed = new List<SourceIdentityEntry>(entries.GetArrayLength());
+        foreach (var item in entries.EnumerateArray())
+        {
+            if (item.ValueKind != JsonValueKind.Object)
+            {
+                return SourceScanIdentityVerdict.Reject("entry_malformed");
+            }
+
+            var locator = item.TryGetProperty("locator", out var locatorValue)
+                          && locatorValue.ValueKind == JsonValueKind.String
+                ? locatorValue.GetString()
+                : null;
+            if (string.IsNullOrWhiteSpace(locator)
+                || !item.TryGetProperty("ordinal", out var ordinalValue)
+                || ordinalValue.ValueKind != JsonValueKind.Number
+                || !ordinalValue.TryGetInt32(out var ordinal)
+                || ordinal < 0)
+            {
+                return SourceScanIdentityVerdict.Reject("entry_malformed");
+            }
+
+            var entryId = item.TryGetProperty("entry_id", out var entryIdValue)
+                          && entryIdValue.ValueKind == JsonValueKind.String
+                ? entryIdValue.GetString()
+                : null;
+            parsed.Add(new SourceIdentityEntry(entryId, locator!, ordinal));
+        }
+
+        if (parsed.Count > SourceIdentityCache.MaxEntriesPerIdentity)
+        {
+            return SourceScanIdentityVerdict.Reject("entries_over_bound");
+        }
+
+        return new SourceScanIdentityVerdict(true, versionId, parsed, "ok_unchanged");
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2A (S-4): apply one observation to the identity cache. Cacheable → remember the
+    /// Core-authoritative version/entries; anything else → invalidate the source's entry.
+    /// </summary>
+    public static void ApplySourceIdentity(
+        SourceIdentityCache identities, string expectedSourceId, JsonElement? result)
+    {
+        ArgumentNullException.ThrowIfNull(identities);
+        var verdict = ReadSourceIdentity(result, expectedSourceId);
+        if (verdict.Cacheable)
+        {
+            identities.Remember(expectedSourceId, verdict.VersionId!, verdict.Entries);
+        }
+        else
+        {
+            identities.Forget(expectedSourceId);
+        }
     }
 
     private static SourceScanCounts? ParseTotals(JsonElement scan)

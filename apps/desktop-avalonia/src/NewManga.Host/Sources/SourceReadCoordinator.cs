@@ -309,7 +309,11 @@ public sealed class SourceReadCoordinator(
         CancellationToken cancellationToken = default)
     {
             var session = core.HostSession ?? throw new SourceAccessException("SOURCE_ACCESS_DENIED");
-            if (sourceKind is not ("image" or "folder" or "zip" or "cbz" or "pdf")
+            // FEA-11-RUN-GRANT-2A (S-5): the four-dimension scope must carry a real Core identity. An
+            // empty source/version is rejected here instead of silently minting a placeholder grant:
+            // the Run path takes the version from the Core-authoritative scan cache only (never "1").
+            if (string.IsNullOrWhiteSpace(sourceId) || string.IsNullOrWhiteSpace(version)
+                || sourceKind is not ("image" or "folder" or "zip" or "cbz" or "pdf")
                 || maxBytes <= 0 || maxDecodeBytes <= 0 || maxEntries <= 0 || maxEntries > 10000)
                 throw new SourceAccessException("INVALID_REQUEST");
             var path = SourceSecurity.Normalize(sourcePath);

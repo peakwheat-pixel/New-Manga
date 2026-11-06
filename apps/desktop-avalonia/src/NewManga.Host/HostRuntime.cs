@@ -25,6 +25,11 @@ public sealed class HostRuntime : IAsyncDisposable
     private DataRootPolicy? _policy;
     private bool _disposed;
 
+    // FEA-11-RUN-GRANT-2A (card S-2/S-4): the in-memory cache of Core-authoritative source identities
+    // (source_id → version_id + entries[]), learned ONLY from unchanged ScanSourceSync responses. The
+    // Run minting path reads its version from here and never falls back to the old constant "1" (L-G15).
+    private readonly SourceIdentityCache _sourceIdentities;
+
     // The host_bridge/core_service pipes are request/response only: page reads are serialized.
     private readonly SemaphoreSlim _readerIoGate = new(1, 1);
 
@@ -32,6 +37,9 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         _options = options;
         _log = log;
+        // FEA-11-RUN-GRANT-2A (S-4): bounded identity cache driven by the same clock seam as the scan
+        // slice; it is created before both producers (scan executor) and consumers (Run authorizer).
+        _sourceIdentities = SourceIdentityCache.FromTimeProvider(options.SourceScanTimeProvider);
         // V11R-A-5: conservative pre-start gate (closed until StartInternalAsync decides). The real
         // policy is derived from CoexistenceRules (legacy shell / explicit --parity=false).
         _policy = DataRootPolicy.For(options.DataRoot, HostMode.ReadOnlyUntilParity);
@@ -129,6 +137,13 @@ public sealed class HostRuntime : IAsyncDisposable
     /// ready. It is the ONLY producer of <see cref="SourceScanStatus"/> and never writes Core state.
     /// </summary>
     public SourceScanScheduler? ScanScheduler { get; private set; }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2A (S-3): the production scan executor, kept so the Run path can perform at
+    /// most ONE bounded on-demand <c>ScanSourceSync</c> per cold source (never a retry loop). Null until
+    /// the scan slice starts and again after it stops.
+    /// </summary>
+    private HostSourceScanExecutor? _scanExecutor;
 
     /// <summary>
     /// FEA-11-WATCH-1 (AC-W1): the Host-only read-only directory watcher. Armed after Ready over the
@@ -1329,7 +1344,9 @@ public sealed class HostRuntime : IAsyncDisposable
             MaxBytesPerSource = _options.SourceScanMaxBytesPerSource,
             MaxEntriesPerSource = _options.SourceScanMaxEntriesPerSource,
         };
-        var executor = new HostSourceScanExecutor(core, sources, scanOptions, _options.SourceScanTimeProvider);
+        var executor = new HostSourceScanExecutor(
+            core, sources, scanOptions, _options.SourceScanTimeProvider, _sourceIdentities);
+        _scanExecutor = executor;
         // FEA-11-SCAN-2 (B1): the cold-start enumerator reads the Core's authoritative scan targets
         // and re-verifies the Host's persistent registry; null keeps the SCAN-1 snapshot-only mode
         // (no enumeration command is ever sent).
@@ -1411,6 +1428,8 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         var scheduler = ScanScheduler;
         ScanScheduler = null;
+        // FEA-11-RUN-GRANT-2A: no on-demand scan may run once the scheduler is gone.
+        _scanExecutor = null;
         if (scheduler is null)
         {
             return;
@@ -1513,7 +1532,41 @@ public sealed class HostRuntime : IAsyncDisposable
             authorize: coordinator.AuthorizeRunAsync,
             resolveRunSlice: ResolveRunSliceAsync,
             info: message => _log.Info(message),
-            warn: message => _log.Warn(message));
+            warn: message => _log.Warn(message),
+            // FEA-11-RUN-GRANT-2A (S-2/S-3): the Run minting version comes from this cache (never the
+            // constant "1"); a cold source gets ONE bounded on-demand scan and is skipped on failure.
+            identities: _sourceIdentities,
+            onDemandScan: ScanSourceOnDemandAsync);
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2A (card S-3): the single bounded on-demand <c>ScanSourceSync</c> primitive used
+    /// only when the identity cache has no live entry for a source. It performs exactly one scan attempt
+    /// (cancellation/timeout and the per-slice budget live in <see cref="RunSourceAuthorizer"/>), records
+    /// the identity through the production executor path and never throws: failure is a best-effort skip
+    /// that must not block a managed-only Run. Null executor (scan slice off) is a silent skip.
+    /// </summary>
+    private async Task ScanSourceOnDemandAsync(SourceScanTarget target, CancellationToken token)
+    {
+        var executor = _scanExecutor;
+        if (executor is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await executor.ScanAsync(target, token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw; // the authorizer classifies its own timeout vs. the caller's cancellation
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            // Counts/typed code only (never a path): L-G8/§7 redaction.
+            _log.Warn("run source-read on-demand scan failed code=" + error.GetType().Name);
+        }
     }
 }
 
@@ -1660,21 +1713,36 @@ public static class RunCommandPolicy
             : null;
 }
 
-/// <summary>FEA-11-RUN-GRANT-1 (R-7/R1-02④/R1-04): pure Host-known source-range
-/// resolution. Prefer the Run's project when the scope names a book, else every
-/// known source. Sources that cannot be resolved (registry entry missing,
-/// unsafe path) are counted and SKIPPED — the Core stays the fail-closed
-/// authority for the target pages (no silent allow, no Host-side block).</summary>
+/// <summary>FEA-11-RUN-GRANT-2A (S-2/S-4): the pure Host-known source-range resolution plus the cold
+/// sources that still need their Core-authoritative identity (version) before they can be minted.
+/// <see cref="Unresolved"/> counts sources that cannot be resolved at all (registry/path/safety);
+/// <see cref="ColdSources"/> counts sources whose identity cache entry is missing or expired — they are
+/// SKIPPED, never minted with a placeholder version.</summary>
+public sealed record RunSourceRangeResolution(
+    IReadOnlyList<RunSourceScope> Targets,
+    int Unresolved,
+    IReadOnlyList<SourceScanTarget> ColdSources);
+
+/// <summary>FEA-11-RUN-GRANT-1 (R-7/R1-02④/R1-04) + FEA-11-RUN-GRANT-2A (S-2/S-5): pure Host-known
+/// source-range resolution. Prefer the Run's project when the scope names a book, else every known
+/// source. Sources that cannot be resolved (registry entry missing, unsafe path) are counted and
+/// SKIPPED — the Core stays the fail-closed authority for the target pages (no silent allow, no Host
+/// side block). From 2A on the minting version is the Core-authoritative
+/// <c>ScanSourceSync</c> version held by <see cref="SourceIdentityCache"/>; a source without a live
+/// identity is returned as COLD and is never minted with the old constant "1" (L-G15).</summary>
 public static class RunSourceRange
 {
-    public static (IReadOnlyList<RunSourceScope> Targets, int Unresolved) Resolve(
+    public static RunSourceRangeResolution Resolve(
         IReadOnlyList<SourceScanTarget> known,
         System.Text.Json.JsonElement scope,
-        IReadOnlyList<SourceAuthorization> registryEntries)
+        IReadOnlyList<SourceAuthorization> registryEntries,
+        SourceIdentityCache identities)
     {
+        ArgumentNullException.ThrowIfNull(identities);
         if (known.Count == 0)
         {
-            return (Array.Empty<RunSourceScope>(), 0);
+            return new RunSourceRangeResolution(
+                Array.Empty<RunSourceScope>(), 0, Array.Empty<SourceScanTarget>());
         }
         IReadOnlyList<SourceScanTarget> filtered = known;
         var kind = RunCommandPolicy.ReadString(scope, "kind");
@@ -1687,13 +1755,15 @@ public static class RunSourceRange
         }
         if (filtered.Count == 0)
         {
-            return (Array.Empty<RunSourceScope>(), 0);
+            return new RunSourceRangeResolution(
+                Array.Empty<RunSourceScope>(), 0, Array.Empty<SourceScanTarget>());
         }
         var scopes = new List<RunSourceScope>(filtered.Count);
+        var cold = new List<SourceScanTarget>();
         var unresolved = 0;
         foreach (var target in filtered)
         {
-            if (scopes.Count >= SourceReadCoordinator.MaxRunGrants)
+            if (scopes.Count + cold.Count >= SourceReadCoordinator.MaxRunGrants)
             {
                 unresolved++;
                 continue;
@@ -1714,12 +1784,20 @@ public static class RunSourceRange
                 unresolved++;
                 continue;
             }
+            // S-2/S-5: the version MUST come from the Core-authoritative scan response. The scan target
+            // only carries the pre-2A placeholder (production default "1"); it is never used here.
+            if (!identities.TryGet(target.SourceId, out var identity)
+                || string.IsNullOrWhiteSpace(identity.VersionId))
+            {
+                cold.Add(target);
+                continue;
+            }
             scopes.Add(new RunSourceScope(
                 entry.RegistryId, entry.Generation, normalized,
                 KindOfSource(target, normalized),
-                target.SourceId, target.Version));
+                target.SourceId, identity.VersionId));
         }
-        return (scopes, unresolved);
+        return new RunSourceRangeResolution(scopes, unresolved, cold);
     }
 
     public static string KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
@@ -1760,6 +1838,16 @@ public static class RunSourceRange
 /// </summary>
 public sealed class RunSourceAuthorizer
 {
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2A (card S-3, AC-G3): explicit budget — one Run slice performs at most this
+    /// many on-demand <c>ScanSourceSync</c> fills for COLD sources. The remaining cold sources are
+    /// skipped (best-effort) and the Core stays the fail-closed authority for their pages.
+    /// </summary>
+    public const int MaxOnDemandScansPerSlice = 8;
+
+    /// <summary>FEA-11-RUN-GRANT-2A (card S-3): explicit per-source on-demand scan timeout.</summary>
+    public static readonly TimeSpan OnDemandScanTimeout = TimeSpan.FromSeconds(30);
+
     private readonly bool _enabled;
     private readonly Func<IReadOnlyList<SourceScanTarget>> _knownTargets;
     private readonly Func<IReadOnlyList<SourceAuthorization>> _registryEntries;
@@ -1772,6 +1860,11 @@ public sealed class RunSourceAuthorizer
         Task<(string Command, System.Text.Json.JsonElement Scope)>> _resolveRunSlice;
     private readonly Action<string> _info;
     private readonly Action<string> _warn;
+    private readonly SourceIdentityCache _identities;
+    private readonly Func<SourceScanTarget, CancellationToken, Task>? _onDemandScan;
+    // S-3: serializes the bounded cold-cache fills so concurrent Run commands cannot scan the same
+    // source twice (the second slice finds the cache warm) and the on-demand budget stays explicit.
+    private readonly SemaphoreSlim _onDemandGate = new(1, 1);
 
     public RunSourceAuthorizer(
         bool enabled,
@@ -1785,7 +1878,9 @@ public sealed class RunSourceAuthorizer
             string, CancellationToken,
             Task<(string Command, System.Text.Json.JsonElement Scope)>> resolveRunSlice,
         Action<string> info,
-        Action<string> warn)
+        Action<string> warn,
+        SourceIdentityCache identities,
+        Func<SourceScanTarget, CancellationToken, Task>? onDemandScan = null)
     {
         _enabled = enabled;
         _knownTargets = knownTargets;
@@ -1795,6 +1890,8 @@ public sealed class RunSourceAuthorizer
         _resolveRunSlice = resolveRunSlice;
         _info = info;
         _warn = warn;
+        _identities = identities ?? throw new ArgumentNullException(nameof(identities));
+        _onDemandScan = onDemandScan;
     }
 
     public bool Enabled => _enabled;
@@ -1882,12 +1979,21 @@ public sealed class RunSourceAuthorizer
             _warn("run source-read authorization skipped registry code=" + CodeOf(error));
             return;
         }
-        var (targets, unresolved) = RunSourceRange.Resolve(known, scope, entries);
-        if (unresolved > 0)
+        var resolution = await ResolveWithColdCacheAsync(known, entries, scope, token)
+            .ConfigureAwait(false);
+        if (resolution.Resolution.Unresolved > 0)
         {
             // Counts only (never a path / source id): L-G12 boundary evidence.
-            _warn($"run source-read authorization unresolved_sources={unresolved}");
+            _warn($"run source-read authorization unresolved_sources={resolution.Resolution.Unresolved}");
         }
+        if (resolution.ColdSources > 0)
+        {
+            // AC-G3: a cold source without a Core-proven version is SKIPPED, never minted with a
+            // placeholder; the Run continues (best-effort) and the Core owns the fail-closed verdict.
+            _warn($"run source-read authorization cold_sources={resolution.ColdSources}"
+                  + $" on_demand_attempts={resolution.OnDemandAttempts}");
+        }
+        var targets = resolution.Resolution.Targets;
         if (targets.Count == 0)
         {
             return; // no Host-known source can hold this Run's referenced pages
@@ -1919,6 +2025,63 @@ public sealed class RunSourceAuthorizer
             _warn("run source-read authorization skipped code=" + CodeOf(error));
         }
     }
+
+    /// <summary>FEA-11-RUN-GRANT-2A (S-3): resolve the range, fill cold sources with at most ONE
+    /// bounded on-demand scan each (explicit budget + timeout), then resolve again. Failures, timeouts
+    /// and exhausted budgets are skips: the method never throws for Host-side reasons.</summary>
+    private async Task<ColdCacheResolution> ResolveWithColdCacheAsync(
+        IReadOnlyList<SourceScanTarget> known,
+        IReadOnlyList<SourceAuthorization> entries,
+        System.Text.Json.JsonElement scope,
+        CancellationToken token)
+    {
+        var resolution = RunSourceRange.Resolve(known, scope, entries, _identities);
+        if (resolution.ColdSources.Count == 0 || _onDemandScan is null)
+        {
+            return new ColdCacheResolution(resolution, resolution.ColdSources.Count, 0);
+        }
+        var budget = Math.Min(resolution.ColdSources.Count, MaxOnDemandScansPerSlice);
+        if (resolution.ColdSources.Count > budget)
+        {
+            _warn($"run source-read authorization on_demand_budget_exhausted={resolution.ColdSources.Count - budget}");
+        }
+        var attempts = 0;
+        await _onDemandGate.WaitAsync(token).ConfigureAwait(false);
+        try
+        {
+            foreach (var cold in resolution.ColdSources.Take(budget))
+            {
+                if (_identities.TryGet(cold.SourceId, out _))
+                {
+                    continue; // already filled (a concurrent slice or the periodic tick won)
+                }
+                attempts++;
+                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
+                timeout.CancelAfter(OnDemandScanTimeout);
+                try
+                {
+                    await _onDemandScan(cold, timeout.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (!token.IsCancellationRequested)
+                {
+                    _warn("run source-read authorization on_demand_scan timed out");
+                }
+                catch (Exception error) when (error is not OperationCanceledException)
+                {
+                    _warn("run source-read authorization on_demand_scan skipped code=" + CodeOf(error));
+                }
+            }
+        }
+        finally
+        {
+            _onDemandGate.Release();
+        }
+        var refreshed = RunSourceRange.Resolve(known, scope, entries, _identities);
+        return new ColdCacheResolution(refreshed, refreshed.ColdSources.Count, attempts);
+    }
+
+    private sealed record ColdCacheResolution(
+        RunSourceRangeResolution Resolution, int ColdSources, int OnDemandAttempts);
 
     public static System.Text.Json.JsonElement ExtractScope(
         System.Text.Json.JsonElement payload) =>
