@@ -1,4 +1,3 @@
-=== verify_pins.ps1 ===
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7
 OK C03 b77e7968a00b
@@ -19,23 +18,19 @@ OK C17 aefa0fa5b17e
 OK FEA01 0370c18932b1
 PIN AUDIT: PASS (all 18)
 
-=== check.ps1 (default) ===
+=== closeout rerun (2026-11-07) ===
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-RUN-GRANT-2A.md
 WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：3126 bytes / 27 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6920 bytes / 62 lines
 Governance check: PASS (3 warnings)
-
-=== check.ps1 -TaskPath doc/tasks/FEA-11-RUN-GRANT-2A.md ===
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-11-RUN-GRANT-2A.md
 WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：3126 bytes / 27 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6920 bytes / 62 lines
 Governance check: PASS (3 warnings)
-
-=== generate_api_inventory.py --check ===
 OK: rendered counts match FEA-C07 doc
 | 接口 | 方法数 | 属性/事件/字段数 |
 |---|---|---|
@@ -124,7 +119,3 @@ OK: rendered counts match FEA-C07 doc
 | 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
 | 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
 
-EXIT=0
-
-=== 恢复注记 ===
-全量 pytest / 全量 .NET 后均执行 git checkout -- verification/FEA-09（见 logs/full-pytest.log、logs/full-dotnet.log 的 EXIT 行；事后 git status 复查无 FEA-09 残留）。

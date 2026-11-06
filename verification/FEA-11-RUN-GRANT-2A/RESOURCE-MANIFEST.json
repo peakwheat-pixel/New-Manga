@@ -3,12 +3,12 @@
   "task_id": "FEA-11-RUN-GRANT-2A",
   "generated_at": "2026-11-06T21:46:38+00:00",
   "generated_by": "run-grant-2a-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "923ce00fd52c3bd15e3ea588853d4c2152a73ea2",
+  "delivery_head": "a0bafc89ec74be08e3d6d721105639df01a140a7",
   "note": "Host Run source version channel delivery (ScanSourceSync response -> SourceIdentityCache -> Run grant mint; bounded on-demand cold-cache scan; R3-02 AcceptRun delegation test). The isolated task root G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2A/ holds runtime IPC fixtures, gate logs and discrimination backups; no tracked repository file lives there. Canonical copies of the gate logs are committed under verification/FEA-11-RUN-GRANT-2A/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 923ce00fd）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head a0bafc89e）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 apps/src/tests/verification/doc 内。"
@@ -183,5 +183,6 @@
     "migrated": 0,
     "archived": 0
   },
-  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外隔离根保留供 Review 复核（不随仓库分发）。全量 pytest / .NET 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-governance.log 尾注）。"
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外隔离根保留供 Review 复核（不随仓库分发）。全量 pytest / .NET 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-governance.log 尾注）。",
+  "repo_head_at_generation": "923ce00fd52c3bd15e3ea588853d4c2152a73ea2"
 }

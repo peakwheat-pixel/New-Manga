@@ -79,3 +79,11 @@ supersedes_handoff: null
 
 - **无释放**（本卡 Review/集成前不释放后续实现卡）。可并行/顺序候选：`FEA-11-RUN-GRANT-2B`（容器成员 entry 通道；其 C-16 v1.4 冻结前置 `FEA-11-RUN-GRANT-2B-PREREQ-1` 已由另一会话提交 `d8dcfc07a`，由 Lead 判定是否释放）、L-S1（registry resilience）、L-G1（长 Run 续期设计卡）。均由 Lead 决定。
 - Reviewer：由 DSH 指派**独立上下文**（非本实现会话；fresh subagent 或未参与实现的 ZCode/Codex）。
+
+## 7. Review r1 处置补充（DSH，2026-11-07）
+
+- 独立 Review r1：`doc/reviews/FEA-11-RUN-GRANT-2A-r1.md`（approved；P0=0/P1=0/P2=2/P3=6；AC-G1…G8 MET；4 个破坏点独立 RED+RESTORED）。
+- R2A-01 已修（Manifest `delivery_head` → `a0bafc89e…`；原 repo HEAD 保留 `repo_head_at_generation`）。
+- R2A-02 以**文档边界**关闭：`>4096` 成员的 folder 源不缓存、每 Run 重扫且不铸造（fail-closed）→ **L-G16**；不宣称 folder 全量可用。
+- R2A-03…R2A-08 登记接受/后续（详见 EV §7.1）；不改变实现/测试字节与 AC 判定。
+- 保留：L-G12②（多成员容器）、L-R1 未全修、L-G1/L-G2/L-G8/L-G9/L-G10/L-G13/L-G14；本卡只修 L-G15（生产版本常量）。

@@ -98,7 +98,7 @@ aa0a5562b feat(fea-11-run-grant-2a): Core-authoritative scan version cache drive
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/logs/gates-governance.log` | `2c2ff57b6084491dde12870e417e95ab3807165fd01356f6eaca83769d480b63` |
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/logs/host-ipc.log` | `7ca56da55593952ba7169283d74d656d69cf1a1abe6aaa6e14764df1a5ef3974` |
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/logs/host-unit.log` | `e69daf14fbad2ee6399bc6cf6248c745d3858ad345a7fb9db77bf06d3755afd2` |
-| 证据 | `verification/FEA-11-RUN-GRANT-2A/RESOURCE-MANIFEST.json` | `087cb2baffaa92e4c5b44e92e7e72c93d8992125c424f3162fd5287ebd5082a0` |
+| 证据 | `verification/FEA-11-RUN-GRANT-2A/RESOURCE-MANIFEST.json` | `3fe6ed57c47ac1d55460b5e406d9d8171293ee6211a51d85f5ee7c7cb2af2911` |
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/scope-validation.log` | `5b5398153451a55e4d9fb7757aa2faea1bdfd6d9127280a646e803163fb01e63` |
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/tools/discrimination.py` | `71d20b4091bd03891fccb732448da2b6b85083c2eade5c7f1db9c48e4457ce3f` |
 | 证据 | `verification/FEA-11-RUN-GRANT-2A/tools/gen_ev.py` | `65f14609f6209da6506eb5418dd8d308063476e16423db41ce92255f46382b3c` |
@@ -150,6 +150,19 @@ C:/Python314/python.exe verification/FEA-11-RUN-GRANT-2A/tools/discrimination.py
 - **L-G13**：已知 flaky 按「如实记录 + 隔离复跑」处理。
 - **L-G14**：`AcceptRunAsync` 需同进程先 `PrepareRunAsync`（`RUN_STALE_PREVIEW`）。
 - **未宣称**：不写「referenced Run 全场景可用」「L-R1 全修」；只交付「生产版本通道修复 + image 单 entry + folder 逐成员 + 归档首成员（L-G12② 边界之外仍 fail-closed）」；FEA-11 AC11-5/AC11-9 未回填；独立 Review 由 Lead 指派。
+
+## 7.1 Review r1 处置（DSH，2026-11-07；append-only）
+
+- 独立 Review r1（`doc/reviews/FEA-11-RUN-GRANT-2A-r1.md`，session 61403414-…，reviewed_head `a0bafc89e`）：**approved，P0=0/P1=0/P2=2/P3=6**；AC-G1…AC-G8 全 MET；4 个破坏点（B1/B3/B4/B5）独立复现 RED + 字节级恢复。
+- **R2A-01（P2）已修**：`RESOURCE-MANIFEST.json` 的 `delivery_head` 由生成时 repo HEAD（`923ce00fd…`，实为 2B-PREREQ-1 closeout）改为本卡 `a0bafc89e…`；原值保留为 `repo_head_at_generation`；worktree `source_path` 文本同步。
+- **R2A-02（P2）处置：文档登记（不新增 head）**：`SourceIdentityCache.MaxEntriesPerIdentity=4096` < `DefaultMaxEntriesPerSource=10000`；**>4096 成员的 folder 源永不入缓存**（每次 Run 触发 on-demand 全量扫描但不铸造；fail-closed、无错误授权）。登记为 **L-G16**，不宣称 folder 全量可用；如需调大常量须新 head + 复审（本卡不做）。
+- R2A-03（P3，`totals` 缺失被当无变更）：Core 违反 C-17 才可达、仍然 fail-closed；登记接受，后续可在 2B/维护卡加 `totals_missing` 分支。
+- R2A-04（P3，30s 协作式截止非硬上界；Host 端铸造哈希不可取消）：L-G8 措辞改为「每切片 8 源；每源 30s 协作式截止，铸造哈希不受其约束」。
+- R2A-05（P3，生产扫描 grant 的 `scope.version` 仍为占位 `"1"`，pre-2A 遗留）：不属 Run mint；登记接受（若 Core 未来校验扫描 grant version 需另卡）。
+- R2A-06（P3，缓存陈旧窗口：apply/import 后到下一轮扫描前为旧 version → Core typed 拒绝）：fail-closed；登记为 L-G16 残差/后续可加 `Forget` 钩子。
+- R2A-07（P3，生产 authorizer 接线/超时/唯一性无判别测试）：登记接受，后续维护卡补。
+- R2A-08（P3，缓存 entries[] 暂无消费方、内存上界）：为 2B 预留；L-G8/L-G16 注明内存上界。
+- **不改变** AC-G1…G8 MET 判定与 r1 approved 结论；不改变实现/测试字节（`a0bafc89e`）。
 
 ## 8. 生成信息
 
