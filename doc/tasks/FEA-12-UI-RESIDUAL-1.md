@@ -3,7 +3,7 @@ id: FEA-12-UI-RESIDUAL-1
 title: FEA-12-UI 残余 P3 收尾（delete-time capability 防御边 / preview BOOK_NOT_FOUND 刷新 / cleanup retry 提示 / 只读与能力缺失文案）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-12-UI-RESIDUAL-1-scope-r1.md`（fresh subagent `bfb8f132…`，verdict **READY-TO-FREEZE**）；DSH 2026-11-06 裁决（见「Scope Review 裁决」）：接受 **App-only** 范围与四个冻结口径（① defensive invariant only；③ 含最小 `_notify` 修复；④ 双原因文案规则；写域仅 `TrashViewModel.cs` + `TrashUiTests.cs`）；释放为 ready、base `690c77eb0`、Owner=`ui-residual-impl`（DSH Agent Teams）。实施交付 head `8e3bd03d6`（`8e3bd03d6` 实现+测试；卡/Handoff/证据 `323001fec`）；DSH 核验后 2026-11-06 转 `in_review`，Review 由独立上下文 fresh subagent 执行
 suggested_owner: zcode
 owner: ui-residual-impl
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 690c77eb0
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 8e3bd03d6
 delivery_head: 8e3bd03d6
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-UI-RESIDUAL-1
 allowed_paths:
   - doc/tasks/FEA-12-UI-RESIDUAL-1.md
@@ -35,7 +35,7 @@ out_of_scope:
 
 # FEA-12-UI-RESIDUAL-1：FEA-12-UI 残余 P3 收尾（App-only）
 
-> **状态：`in_review`（交付 head `8e3bd03d6`；Owner=`ui-residual-impl`；base `690c77eb0`）。**
+> **状态：`done`（r1 approved P0/P1/P2=0/P3=4；交付 head `8e3bd03d6`；Owner=`ui-residual-impl`；base `690c77eb0`）。**
 > 来源：`FEA-12-UI` closeout（`doc/tasks/FEA-12-UI.md`，`a46d4d5c7`）P3 follow-up ①–④；独立 scope review：`doc/reviews/FEA-12-UI-RESIDUAL-1-scope-r1.md`（**READY-TO-FREEZE**）。
 > **本卡只做 App 侧（`TrashViewModel.cs` + `TrashUiTests.cs`）四项行为/文案/测试收口**；不改 Host/Core/契约/wire/schema/依赖；**不回填** FEA-12-UI 历史 AC；L3/L4 仍 `NOT_RUN`。
 
@@ -87,7 +87,7 @@ out_of_scope:
 > Owner 实施完成后逐项勾选并附证据指针（`delivery_head=8e3bd03d6`，2026-11-06）；**终判（MET/PARTIAL）以独立 Review + DSH 集成验证为准**，本节不代替审查。
 
 - [x] **AC-R1 delete-time capability 防御边**：`TrashDeleteOutcome.CapabilityMissing` 时不设页级 `_capabilityMissing/_capabilityMessage`；列表保持（`ShowList=true`、`ShowCapabilityState=false`、`Items` 数不变）；结果面板 typed `CORE_CAPABILITY_MISSING`、`DeleteResultTitle="删除被拒绝"`、`CanConfirmDelete=false`；零成功提示、零 restore/preview 副作用；能力布尔不变。证据：`Delete_CapabilityMissing_DoesNotTurnThePageIntoReadCapabilityMissing`（`TrashUiTests.cs`）+ 变异 M1（`verification/FEA-12-UI-RESIDUAL-1/logs/scope-mutations.log`）；EV-2/EV-8。**defensive invariant only（L-R1）**。 <<MET>>
-- [x] **AC-R2 preview `BOOK_NOT_FOUND` 自动刷新**：`_notify` + 关面板 + `ReloadAsync`；恰 2 个 `library_list_trash` 帧（初始+刷新）、0 delete 帧、probe 2 次；刷新后幽灵行清除；不自动重试 preview；其它失败码行为不变。证据：`Preview_BookNotFound_ClosesPanel_AndReloadsTheList` + 变异 M2/M3/M4；EV-2/EV-8。 <<MET>>
+- [x] **AC-R2 preview `BOOK_NOT_FOUND` 自动刷新**：`_notify` + 关面板 + `ReloadAsync`；恰 2 个 `library_list_trash` 帧（初始+刷新）、0 delete 帧、probe 2 次；刷新后幽灵行清除；不自动重试 preview；其它失败码行为不变。证据：`Preview_BookNotFound_ClosesPanel_AndReloadsTheList` + 变异 M2/M3/M4；EV-2/EV-8。**「其它失败码行为不变」仅结构未变（仅精确 `BOOK_NOT_FOUND` 分支前置，通用分支 diff 未改），未单独回归测试（Review F2，follow-up）**。 <<MET>>
 - [x] **AC-R3 cleanup retry `BOOK_NOT_FOUND`**：3 个 delete 帧、三次 `inventory_digest` 与首次逐字节相等、仅 1 preview 帧；NotFound 时用户可见「作品已不存在（`BOOK_NOT_FOUND`）/已刷新」typed 提示；列表刷新（2 list 帧）；`IsCleanupPending=false`、`CanRetryCleanup=false`、面板关闭；不伪报成功、不自动重试、不为 NotFound 重新 preview。证据：`CleanupRetry_SecondRetryBookNotFound_NotifiesAndRefreshes_WithSameDigest` + 变异 M5/M6/M7；EV-2/EV-8。 <<MET>>
 - [x] **AC-R4 只读/能力缺口双原因文案**：`ShowHostReadOnlyBanner` 仅由 `_hostReadOnly` 决定；Host 只读 + write/preview 缺口 → 两 banner 同时可见、两个 code 分别出现；Host 只读 + read 缺失 → `ShowCapabilityState=true` 且只读 banner 可见、只读文案不含「可浏览」、能力文案不含 `HOST_READ_ONLY`；单一原因仍单 banner；不改 XAML。证据：`HostReadOnly_PlusWriteCapabilityGap_ShowsBothIndependentCauses`、`HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason` + 变异 M8/M9；EV-2/EV-8。 <<MET>>
 - [x] **AC-R5 写域/门禁/证据**：`git diff --name-only <base>..HEAD` ⊆ allowed_paths；`doc/plan`/`doc/contracts`/`src/**`/Host/CoreClient/DesignSystem/`RecycleBinView.axaml` 零 diff；无新依赖；定向 `TrashUiTests` 40/0（基线 35 + 新增 5）；全量 .NET **1532/0/86**（before 1527/0/86；8 项目分列）；pytest 全量 **3249/10 不降**（实测，零 Python diff）；pins 18/18；API inventory PASS；check PASS(3 warnings)；证据含 changed-files/scope-validation/gates/mutations/计数；L3/L4 `NOT_RUN`。证据：`verification/FEA-12-UI-RESIDUAL-1/**`（EV-1…EV-12）。 <<MET>>
@@ -133,7 +133,7 @@ out_of_scope:
 - 实施 Owner：`ui-residual-impl`（DSH Agent Teams teammate）。
 - 实测基线：`git rev-parse HEAD=9c6ba2da1`（较卡面 `base_commit 690c77eb0` 多 1 个 docs-only 提交，代码/测试树等价；工作树 clean）。实现+测试 commit **`8e3bd03d6`**（2 files changed, 215 insertions, 8 deletions；`delivery_head`）。**未 push、未创建 worktree。**
 - Handoff：`doc/handoffs/FEA-12-UI-RESIDUAL-1-8e3bd03d6.md`。
-- Review：独立上下文 fresh subagent（待 DSH 指派；不得由实现会话自审）。
+- Review：独立上下文 fresh subagent `doc/reviews/FEA-12-UI-RESIDUAL-1-r1.md`（session `b135fbb8-d81a-4cf6-aeb4-ce2aa7168deb`）→ **approved（P0=0/P1=0/P2=0/P3=4）**；F1–F4 处置见 Closeout Record 与 `EV.md` §7。
 - 实际测试（2026-11-06 实测）：
   - 定向 `dotnet test apps/desktop-avalonia/NewManga.sln -c Release --filter FullyQualifiedName~TrashUiTests`：**before 35 passed / 0 failed / 0 skipped → after 40 passed / 0 failed / 0 skipped**（+5 = 新增判别测试）。
   - 全量 `dotnet test apps/desktop-avalonia/NewManga.sln -c Release`：**before 1527 passed / 0 failed / 86 skipped → after 1532 passed / 0 failed / 86 skipped**；8 项目分列 before=21+38+253+117+31+185+167+715、after=21+38+253+117+31+185+167+720；skip=86 为既有环境门控（Host 55 / CoreClient 24 / App 7），本卡未新增或改变 skip 条件。
@@ -160,7 +160,7 @@ out_of_scope:
 | EV-9 | AC-R5 门禁汇总（before/after、skip 原因、L3 NOT_RUN） | `verification/FEA-12-UI-RESIDUAL-1/logs/gates.log` | `323001fec` | `d0ad14579d3904b363adbbbd74fc3e416ac488b8bdb519faed142e6b1c79f353` | CANONICAL |
 | EV-10 | AC-R5 Resource Manifest（仓外隔离根 10 文件聚合 + 资源处置） | `verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json` | `323001fec` | `1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7` | CANONICAL |
 | EV-11 | AC-R5 变更清单（base..证据 head，逐文件） | `verification/FEA-12-UI-RESIDUAL-1/changed-files.txt` | `323001fec` | `1e0ba244e5bec73c900b45c221a7c3aeeb4da1d74b1879024835d473096f4b50` | CANONICAL |
-| EV-12 | AC-R1…AC-R5 证据索引（AC→实现→测试→证据映射、limitation、过程说明） | `verification/FEA-12-UI-RESIDUAL-1/EV.md` | `323001fec` | `ec71f55a11eacd679d873b625ae98d0b28d4fb60e01ee799cadc67049cf7109e` | CANONICAL |
+| EV-12 | AC-R1…AC-R5 证据索引（AC→实现→测试→证据映射、limitation、过程说明；Review F1/F3 处置后） | `verification/FEA-12-UI-RESIDUAL-1/EV.md` | `a70d54c75` | `3a3f1c46a29f78ddc110218ea1f925927092628206d77049b3774b6efb99f304` | CANONICAL |
 
 ## Resource Manifest
 
@@ -169,13 +169,21 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树；base `9c6ba2da1`） | NOT_APPLICABLE | — | — | 未创建 linked worktree；`git worktree list` 无本卡新增 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-12-UI-RESIDUAL-1\`（agent 脚本 + 原始门禁日志 + pristine 备份） | PRESERVE_REFERENCED | 同源路径 | `97fdbd1e5bb0fc8d15eb44f42cd88580e76eb43b25b0fa086222abb792d28428`（10 文件聚合；逐文件 sha 见 `RESOURCE-MANIFEST.json`） | 仓外隔离根；无进程持有；产品/测试不引用；仓内 canonical 副本 `verification/FEA-12-UI-RESIDUAL-1/logs/**`（EV-1…EV-9）；保留供 Review |
+| temp | `G:\CODEX\New Manga.workspace\FEA-12-UI-RESIDUAL-1\`（agent 脚本 + 原始门禁日志 + pristine 备份） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-12-UI-RESIDUAL-1\` | `97fdbd1e5bb0fc8d15eb44f42cd88580e76eb43b25b0fa086222abb792d28428` | 仓外隔离根（10 文件聚合；逐文件 sha 见 `RESOURCE-MANIFEST.json`）；无进程持有；产品/测试不引用；仓内 canonical 副本 `verification/FEA-12-UI-RESIDUAL-1/logs/**`（EV-1…EV-9）；保留供 Review |
 | test-fixture | `TrashUiTests.cs` 内存 fake controller（无二进制 fixture） | NOT_APPLICABLE | — | — | 5 个新测试全部 VM 级 + fake；无 Avalonia 窗口、无 sleep、无真实 IPC |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未读写真实用户数据/AppData/外部卷/真实回收站/原文件 |
 | build-artifact | NOT_APPLICABLE | NOT_APPLICABLE | — | — | `dotnet test` obj/bin 在既有 build 目录，未纳入交付 |
-| tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson`（既有 `WireLogSourceRedactionTests` 副作用） | RESTORED_IN_PLACE | 同路径 | — | 每次全量 .NET 后重写；已 `git checkout -- verification/FEA-09`（EXIT=0）恢复，最终 worktree 仅本卡改动 |
+| tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson`（既有 `WireLogSourceRedactionTests` 副作用） | NOT_APPLICABLE | — | — | 每次全量 .NET 后重写；每次均 `git checkout -- verification/FEA-09`（EXIT=0）恢复，最终 worktree clean（非本卡资源处置项） |
 
 ## Closeout Record
 
-- **Owner 交付记录（2026-11-06，待独立 Review + DSH 集成/closeout）**：`delivery_head=8e3bd03d6`；base 实测 `9c6ba2da1`；仅改 `TrashViewModel.cs` + `TrashUiTests.cs` 与卡/Handoff/证据；门禁数字见上「交付与运行记录」；变异 9/9 红；未 push；未创建 worktree；未删/移动/归档任何资源（`closeout_counts` 全 0）。**不宣称** ① 生产可达、AC 已回填、L3/L4 通过。
-- **待 DSH 填写**：独立 Review 报告与 findings 处置、`integration_commit`、`canonical_evidence_status`/`resource_closeout_status`、最终 AC 判定与 STATUS/PLAN/LEDGER 指针清理。
+- **Closeout date / DSH**：2026-11-06；DSH（Lead / Architect / Integrator）。
+- **交付/集成**：`base_commit=690c77eb0`（实施实测起点 `9c6ba2da1`，仅 docs 差异）；实现+测试 `8e3bd03d6`（`delivery_head` / `integration_commit`）；卡/Handoff/证据 `323001fec`；Review 处置证据 `a70d54c75`（EV.md 重钉，无代码改动）。卡/STATUS/PLAN/LEDGER closeout 提交见本提交。
+- **AC 判定**：**AC-R1…AC-R5 全部 MET**（逐项见 `EV.md` §4 与 Canonical Evidence EV-1…EV-12）；无 PARTIAL/BLOCKED。
+- **独立 Review**：`doc/reviews/FEA-12-UI-RESIDUAL-1-r1.md`（fresh subagent `b135fbb8-d81a-4cf6-aeb4-ce2aa7168deb`，未参与实现/返修）→ **approved（P0=0 / P1=0 / P2=0 / P3=4）**；无代码返修。处置：**F1** 通知先于 `await ReloadAsync()` → 维持冻结文案并在 L-R3 补记（P3 时序限制）；**F2** AC-R2「其它 preview 失败码不变」仅结构未变、未单独回归测试 → 已按此限定并登记 follow-up；**F3** EV.md 自索引缺 EV-12 → §3 增补自引用说明（自引用文件无法内嵌自身 sha；卡面登记）；**F4** `ITrashController is null` + 只读组合未测 → 防御路径、生产两实现非空，登记 follow-up。
+- **DSH 集成验证（Lead 实测，HEAD=`a70d54c75`，2026-11-06）**：全量 `pytest tests` 首跑 **3248 passed / 1 failed / 10 skipped**，唯一失败为既有 flaky `tests/infrastructure/test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren`（测试内注 `FLAKY-PYTEST-1`，与本卡零 Python 改动无关）；隔离复跑 **3/3 passed**；全量复跑 **3249 passed / 10 skipped（EXIT=0）**。全量 `dotnet test apps/desktop-avalonia/NewManga.sln -c Release` **1532 passed / 0 failed / 86 skipped（EXIT=0）**（8 项目 21+38+253+117+31+185+167+720；skip=86 全为既有环境门控）。`verify_pins.ps1` **18/18 PASS**；`check.ps1` **PASS(3 warnings)**；`generate_api_inventory.py --check` PASS；scope diff = 2 个 allowed App 文件，禁止面/依赖/API 零 diff。每次全量后 `git checkout -- verification/FEA-09`（restore=0），最终 worktree clean。原始日志：`G:\CODEX\New Manga.workspace\FEA-12-UI-RESIDUAL-1-closeout\`（PRESERVE_REFERENCED）。
+- **canonical_evidence_status**：`complete`（EV-1…EV-12；EV-1…EV-11 在 `323001fec`，EV-12 在 `a70d54c75`）。**resource_closeout_status**：`complete`。
+- **删除/迁移/归档**：0 文件、0 字节（`PRESERVE_REFERENCED`/`NOT_APPLICABLE`；未删除/移动/归档任何资源；`closeout_counts` 全 0）。
+- **未关闭项（如实保留）**：L-R1（I-1 生产不可达，仅 defensive invariant）、L-R2（`CORE_CAPABILITY_MISSING` 不在 `AllowedDeleteTrashErrorCodes`，Host/Core 旧债）、L-R3…L-R7（含 Review F1 通知时序）、F2/F4 follow-up；**L3/L4 真机走查 `NOT_RUN`**；**FEA-12-UI 历史 AC 未回填**。不得宣称 ① 生产可达或 L3/L4 通过。
+- **指针清理**：STATUS 当前 Task → 无活动 Task（下一候选待定）；PLAN 本节点 in_review→done 事实；TASK_LEDGER 重生成；本卡不再是 READY 节点。
+- **push**：门禁全过后按用户 2026-11-06 授权执行（pre/post hash 记录见最终答复与 `G:\CODEX\New Manga.workspace\temp\push-record-ui.log`）。
