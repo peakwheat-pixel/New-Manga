@@ -46,23 +46,25 @@ public sealed class HostRuntime : IAsyncDisposable
     public CoreServiceClient? CoreService { get; private set; }
 
     /// <summary>
-    /// FEA-11-RUN-GRANT-1: the bounded prepared-Run slice map (prepared id ->
-    /// the frozen ``{command, scope}`` pair the Run will accept). The Core
-    /// client owns the preparedRun object itself; AcceptRun only has the id,
-    /// so the Host remembers the two frozen fields here to run the Run
-    /// pre-authorization (R-4). Bounded like every Host-side ledger (R-8).
+    /// FEA-11-RUN-GRANT-1: the bounded prepared-Run slice ledger (prepared id
+    /// -> the frozen ``{command, scope}`` pair the Run will accept). The Core
+    /// client owns the preparedRun object itself; AcceptRun only has the id, so
+    /// the Host remembers the two frozen fields here to run the Run
+    /// pre-authorization (R-4/R1-02③). Extracted as a standalone class so the
+    /// AcceptRun lookup/expiry behaviour is unit-testable without sidecars.
     /// </summary>
-    private readonly Dictionary<string, System.Text.Json.JsonElement> _preparedSlices = new();
-    private readonly Dictionary<string, DateTimeOffset> _preparedSliceExpiry = new();
-    private readonly object _preparedSliceLock = new();
-    private const int MaxPreparedSlices = 32;
+    private readonly PreparedRunSlices _preparedSlices = new();
+
+    /// <summary>The production Run pre-dispatch authorization orchestration
+    /// (R-4/R-6/R-7/R1-01/R1-04). Null until the source-read stack exists.</summary>
+    private RunSourceAuthorizer? _runAuthorizer;
 
     public async Task<PreparedRunPreview> PrepareRunAsync(System.Text.Json.JsonElement request,
         CancellationToken ct = default)
     {
         var core = CoreService ?? throw new InvalidOperationException("Core unavailable");
         var preview = await core.PrepareRunAsync(request, ct).ConfigureAwait(false);
-        RememberPreparedRunSlice(preview.PreparedRunId, request, preview.ExpiresAt);
+        _preparedSlices.Remember(preview.PreparedRunId, request, preview.ExpiresAt);
         return preview;
     }
 
@@ -70,71 +72,19 @@ public sealed class HostRuntime : IAsyncDisposable
         string idempotencyKey, CancellationToken ct = default)
     {
         if (!Policy.WritesAllowed) throw new InvalidOperationException("Host is read-only");
-        // FEA-11-RUN-GRANT-1 (R-4): AcceptRun triggers step execution, so the
-        // Run's source reads must be authorized first. The frozen command/scope
-        // pair is the one PrepareRun captured; never re-derive from the wire.
-        var slice = TakePreparedRunSlice(preparedRunId, generation);
-        await AuthorizeRunSliceAsync(slice.Command, slice.Scope, ct).ConfigureAwait(false);
+        // FEA-11-RUN-GRANT-1 (R-4/R1-02③): AcceptRun triggers step execution, so
+        // the Run's source reads are authorized first from the frozen
+        // command/scope pair captured by PrepareRun. A missing/expired slice is
+        // typed RUN_STALE_PREVIEW (R1-11: this API now requires the same-process
+        // PrepareRunAsync; documented in the Handoff limitations).
+        var slice = _preparedSlices.Take(preparedRunId);
+        if (_runAuthorizer is { } authorizer)
+        {
+            await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, ct)
+                .ConfigureAwait(false);
+        }
         return await (CoreService ?? throw new InvalidOperationException("Core unavailable"))
             .AcceptRunAsync(preparedRunId, generation, idempotencyKey, ct).ConfigureAwait(false);
-    }
-
-    private void RememberPreparedRunSlice(
-        string preparedRunId, System.Text.Json.JsonElement request, DateTimeOffset expiresAt)
-    {
-        if (request.ValueKind != System.Text.Json.JsonValueKind.Object
-            || !request.TryGetProperty("command", out var command)
-            || command.ValueKind != System.Text.Json.JsonValueKind.String
-            || !request.TryGetProperty("scope", out var scope)
-            || scope.ValueKind != System.Text.Json.JsonValueKind.Object)
-        {
-            return;
-        }
-        lock (_preparedSliceLock)
-        {
-            var now = DateTimeOffset.UtcNow;
-            foreach (var expired in _preparedSliceExpiry
-                         .Where(pair => pair.Value <= now)
-                         .Select(pair => pair.Key)
-                         .ToArray())
-            {
-                _preparedSlices.Remove(expired);
-                _preparedSliceExpiry.Remove(expired);
-            }
-            if (_preparedSlices.Count >= MaxPreparedSlices)
-            {
-                var oldest = _preparedSliceExpiry
-                    .OrderBy(pair => pair.Value)
-                    .Select(pair => pair.Key)
-                    .FirstOrDefault();
-                if (oldest is not null)
-                {
-                    _preparedSlices.Remove(oldest);
-                    _preparedSliceExpiry.Remove(oldest);
-                }
-            }
-            _preparedSlices[preparedRunId] = System.Text.Json.JsonSerializer.SerializeToElement(
-                new { command = command.GetString(), scope = scope.Clone() });
-            _preparedSliceExpiry[preparedRunId] = expiresAt;
-        }
-    }
-
-    private (string Command, System.Text.Json.JsonElement Scope) TakePreparedRunSlice(
-        string preparedRunId, int generation)
-    {
-        System.Text.Json.JsonElement slice;
-        lock (_preparedSliceLock)
-        {
-            if (!_preparedSlices.TryGetValue(preparedRunId, out slice)
-                || _preparedSliceExpiry.TryGetValue(preparedRunId, out var expiresAt) && expiresAt <= DateTimeOffset.UtcNow)
-            {
-                throw new CoreOperationException(
-                    "RUN_STALE_PREVIEW", "conflict", false,
-                    "Run preview is stale", null);
-            }
-        }
-        var command = slice.GetProperty("command").GetString()!;
-        return (command, slice.GetProperty("scope").Clone());
     }
 
     public HostBridgeClient? HostBridge { get; private set; }
@@ -1219,6 +1169,10 @@ public sealed class HostRuntime : IAsyncDisposable
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
+                // FEA-11-RUN-GRANT-1 (R1-01): the best-effort Run pre-authorization
+                // orchestration over the source-read stack above. Null when the
+                // stack is off/absent -> the hook is a no-op (old behaviour).
+                _runAuthorizer = CreateRunSourceAuthorizer();
                 Commands = new HostCommandDispatcher(
                     CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
                     SourceOperationCompletionAsync,
@@ -1469,75 +1423,29 @@ public sealed class HostRuntime : IAsyncDisposable
 
     // ------------------------------------------------------------------
     // FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): Run pre-dispatch source-read
-    // authorization. Every path is fail-closed: a missing capability skips
-    // (old Core keeps its old behaviour, C-16 v1.3 §0); a typed authorization
-    // failure aborts BEFORE the Run command is dispatched (R-5) and never
-    // invents a Run-face code.
+    // authorization. R1-01/R1-04 (Review r1): Host-side pre-authorization
+    // failures (capability probe, mint I/O, unusable registry, unresolvable
+    // known sources) are BEST-EFFORT SKIPS — they must never block a Run the
+    // Core could accept. Only a Core typed refusal of the Run target pages
+    // propagates (R-5) and prevents the dispatch. The orchestration lives in
+    // the standalone ``RunSourceAuthorizer`` so it is unit-testable without
+    // sidecars; this class only wires the production dependencies.
     // ------------------------------------------------------------------
 
     /// <summary>The dispatcher hook for the Run commands that trigger step
-    /// execution (R-4). Read-only commands never reach it.</summary>
-    private async Task RunAuthorizeAsync(
-        string name, System.Text.Json.JsonElement payload, CancellationToken token)
-    {
-        var coordinator = Sources;
-        if (coordinator is null || !_options.ReferencedImportEnabled)
-        {
-            return; // no source-read stack: dispatch exactly as before
-        }
-        if (!await coordinator.SupportsRunAuthorizationAsync(token).ConfigureAwait(false))
-        {
-            return; // R-6: the Core has no source.read.run/1 -> no mint, no bind
-        }
+    /// execution (R-4). Never throws for Host-side failures (R1-01).</summary>
+    private Task RunAuthorizeAsync(
+        string name, System.Text.Json.JsonElement payload, CancellationToken token) =>
+        _runAuthorizer is { } authorizer
+            ? authorizer.AuthorizeForCommandAsync(name, payload, token)
+            : Task.CompletedTask;
 
-        switch (name)
-        {
-            case "library_start_run":
-            {
-                var command = ReadString(payload, "command");
-                var scope = payload.ValueKind == System.Text.Json.JsonValueKind.Object
-                            && payload.TryGetProperty("scope", out var rawScope)
-                    ? rawScope.Clone()
-                    : default;
-                if (command is null
-                    || scope.ValueKind != System.Text.Json.JsonValueKind.Object)
-                {
-                    throw new CoreOperationException(
-                        "INVALID_REQUEST", "validation", false, "Run request is invalid", null);
-                }
-                await AuthorizeRunSliceAsync(command, scope, token).ConfigureAwait(false);
-                return;
-            }
-            case "library_control_run":
-            {
-                // R-4: only continue/restart trigger step execution.
-                var action = ReadString(payload, "action");
-                if (action is not ("continue" or "restart"))
-                {
-                    return;
-                }
-                await AuthorizeRunFromSnapshotAsync(payload, token).ConfigureAwait(false);
-                return;
-            }
-            default:
-                // library_resume_blocked_run / library_retry_failed_targets.
-                await AuthorizeRunFromSnapshotAsync(payload, token).ConfigureAwait(false);
-                return;
-        }
-    }
-
-    /// <summary>Resolve the frozen ``{command, scope}`` pair from the Run
-    /// snapshot (control/resume/retry carry only the run id). An unresolvable
-    /// Run is typed — never a silent pass (R-7).</summary>
-    private async Task AuthorizeRunFromSnapshotAsync(
-        System.Text.Json.JsonElement payload, CancellationToken token)
+    /// <summary>R1-02③/R1-07: the Core read used to resolve a Run's frozen
+    /// ``{command, scope}`` for control/resume/retry. Its failure is handled by
+    /// the caller as a best-effort skip (R1-01).</summary>
+    private async Task<(string Command, System.Text.Json.JsonElement Scope)> ResolveRunSliceAsync(
+        string runId, CancellationToken token)
     {
-        var runId = ReadString(payload, "run_id");
-        if (string.IsNullOrWhiteSpace(runId))
-        {
-            throw new CoreOperationException(
-                "INVALID_REQUEST", "validation", false, "run_id is required", null);
-        }
         var core = CoreService ?? throw new CoreOperationException(
             "CORE_UNAVAILABLE", "unavailable", false, "Core unavailable", null);
         var response = await core.SendAsync(
@@ -1554,7 +1462,7 @@ public sealed class HostRuntime : IAsyncDisposable
                        ?? throw new CoreOperationException(
                            "RUN_SNAPSHOT_INCOMPLETE", "unavailable", true,
                            "Run snapshot is incomplete", null);
-        var command = ReadString(snapshot, "command");
+        var command = RunCommandPolicy.ReadString(snapshot, "command");
         var scope = snapshot.ValueKind == System.Text.Json.JsonValueKind.Object
                     && snapshot.TryGetProperty("scope", out var rawScope)
             ? rawScope.Clone()
@@ -1566,66 +1474,193 @@ public sealed class HostRuntime : IAsyncDisposable
                 "RUN_SNAPSHOT_INCOMPLETE", "unavailable", true,
                 "Run snapshot is incomplete", null);
         }
-        await AuthorizeRunSliceAsync(command, scope, token).ConfigureAwait(false);
+        return (command, scope);
     }
 
-    /// <summary>Mint the Run-scoped grants for the Host-known source range and
-    /// let the Core bind them to the Run target page bindings.</summary>
-    private async Task AuthorizeRunSliceAsync(
-        string command, System.Text.Json.JsonElement scope, CancellationToken token)
+    /// <summary>Wire the production Run pre-authorization orchestrator. Null
+    /// when the source-read stack is off/absent (old behaviour, R-6).</summary>
+    private RunSourceAuthorizer? CreateRunSourceAuthorizer()
     {
         var coordinator = Sources;
-        if (coordinator is null || !_options.ReferencedImportEnabled)
+        var registry = Registry;
+        if (coordinator is null || registry is null || !_options.ReferencedImportEnabled)
         {
-            return;
+            return null;
         }
-        if (!await coordinator.SupportsRunAuthorizationAsync(token).ConfigureAwait(false))
+        return new RunSourceAuthorizer(
+            enabled: true,
+            knownTargets: () => ScanScheduler?.TargetSnapshot() ?? Array.Empty<SourceScanTarget>(),
+            registryEntries: registry.List,
+            capabilityProbe: coordinator.SupportsRunAuthorizationAsync,
+            authorize: coordinator.AuthorizeRunAsync,
+            resolveRunSlice: ResolveRunSliceAsync,
+            info: message => _log.Info(message),
+            warn: message => _log.Warn(message));
+    }
+}
+
+
+/// <summary>FEA-11-RUN-GRANT-1 (R1-02③ / R1-11): bounded prepared-Run
+/// ``{command, scope}`` ledger. The Core client owns the preparedRun object;
+/// AcceptRun only has the id, so the Host must have captured the two frozen
+/// fields in the same process (a missing/expired slice is typed
+/// ``RUN_STALE_PREVIEW``). Standalone so the behaviour is unit-testable.</summary>
+public sealed class PreparedRunSlices
+{
+    /// <summary>Host-side bound; the ledger never grows with the Run count.</summary>
+    public const int MaxEntries = 32;
+
+    private readonly Dictionary<string, System.Text.Json.JsonElement> _slices = new();
+    private readonly Dictionary<string, DateTimeOffset> _expiry = new();
+    private readonly object _lock = new();
+    private readonly Func<DateTimeOffset> _clock;
+
+    public PreparedRunSlices(Func<DateTimeOffset>? clock = null) =>
+        _clock = clock ?? (() => DateTimeOffset.UtcNow);
+
+    public int Count
+    {
+        get { lock (_lock) return _slices.Count; }
+    }
+
+    /// <summary>Record the frozen ``{command, scope}`` pair of one prepared Run.
+    /// Returns false (no record) when the request does not carry them.</summary>
+    public bool Remember(
+        string preparedRunId,
+        System.Text.Json.JsonElement request,
+        DateTimeOffset expiresAt)
+    {
+        if (string.IsNullOrWhiteSpace(preparedRunId)
+            || request.ValueKind != System.Text.Json.JsonValueKind.Object
+            || !request.TryGetProperty("command", out var command)
+            || command.ValueKind != System.Text.Json.JsonValueKind.String
+            || !request.TryGetProperty("scope", out var scope)
+            || scope.ValueKind != System.Text.Json.JsonValueKind.Object)
         {
-            return;
+            return false;
         }
-        var (targets, unresolved) = RunSourceTargets(scope);
-        if (targets.Count == 0)
+        lock (_lock)
         {
-            if (unresolved > 0)
+            var now = _clock();
+            foreach (var expired in _expiry
+                         .Where(pair => pair.Value <= now)
+                         .Select(pair => pair.Key)
+                         .ToArray())
             {
-                // R-7: known Run sources that cannot be resolved are a typed
-                // refusal, never a silent pass.
-                throw new CoreOperationException(
-                    "SOURCE_ACCESS_DENIED", "authorization", false,
-                    "the Run source range cannot be resolved", null);
+                _slices.Remove(expired);
+                _expiry.Remove(expired);
             }
-            return; // no Host-known source holds a referenced page for this Run
-        }
-        try
-        {
-            var bound = await coordinator
-                .AuthorizeRunAsync(targets, command, scope, token)
-                .ConfigureAwait(false);
-            // L-G8: the mint cost is a source-size bound; only counts are logged.
-            _log.Info($"run source-read authorization sources={targets.Count} bound_pages={bound}");
-        }
-        catch (SourceAccessException error)
-        {
-            throw ProjectSourceAuthorization(error);
+            if (_slices.Count >= MaxEntries)
+            {
+                var oldest = _expiry
+                    .OrderBy(pair => pair.Value)
+                    .Select(pair => pair.Key)
+                    .FirstOrDefault();
+                if (oldest is not null)
+                {
+                    _slices.Remove(oldest);
+                    _expiry.Remove(oldest);
+                }
+            }
+            _slices[preparedRunId] = System.Text.Json.JsonSerializer.SerializeToElement(
+                new { command = command.GetString(), scope = scope.Clone() });
+            _expiry[preparedRunId] = expiresAt;
+            return true;
         }
     }
 
-    /// <summary>The Host-known source range for one Run (R-7): filter by the
-    /// Run's project when the scope names a book, else every known source.
-    /// Returns the mintable scopes plus the count of known-but-unresolvable
-    /// sources (a typed refusal condition when nothing else is mintable).</summary>
-    private (List<RunSourceScope> Targets, int Unresolved) RunSourceTargets(
-        System.Text.Json.JsonElement scope)
+    /// <summary>Look up a live slice without throwing.</summary>
+    public bool TryTake(
+        string preparedRunId,
+        out string command,
+        out System.Text.Json.JsonElement scope)
     {
-        var known = ScanScheduler?.TargetSnapshot()
-                    ?? (IReadOnlyList<SourceScanTarget>)Array.Empty<SourceScanTarget>();
+        command = string.Empty;
+        scope = default;
+        System.Text.Json.JsonElement slice;
+        lock (_lock)
+        {
+            if (!_slices.TryGetValue(preparedRunId, out slice))
+            {
+                return false;
+            }
+            if (_expiry.TryGetValue(preparedRunId, out var expiresAt)
+                && expiresAt <= _clock())
+            {
+                _slices.Remove(preparedRunId);
+                _expiry.Remove(preparedRunId);
+                return false;
+            }
+        }
+        var name = slice.TryGetProperty("command", out var commandValue)
+                   && commandValue.ValueKind == System.Text.Json.JsonValueKind.String
+            ? commandValue.GetString()
+            : null;
+        if (name is null || !slice.TryGetProperty("scope", out var scopeValue))
+        {
+            return false;
+        }
+        command = name;
+        scope = scopeValue.Clone();
+        return true;
+    }
+
+    /// <summary>The frozen AcceptRun lookup: a missing/expired slice is typed
+    /// ``RUN_STALE_PREVIEW`` (preserves the pre-rework behaviour, R1-11).</summary>
+    public (string Command, System.Text.Json.JsonElement Scope) Take(string preparedRunId)
+    {
+        if (TryTake(preparedRunId, out var command, out var scope))
+        {
+            return (command, scope);
+        }
+        throw new CoreOperationException(
+            "RUN_STALE_PREVIEW", "conflict", false, "Run preview is stale", null);
+    }
+}
+
+/// <summary>FEA-11-RUN-GRANT-1 (R-4/R1-02①/R1-02③): pure Run command policy.
+/// Only the Run commands that trigger step execution are pre-authorized;
+/// read-only commands and non-executing control actions (pause/stop/abandon)
+/// never touch the source-read face.</summary>
+public static class RunCommandPolicy
+{
+    public static bool TriggersStepExecution(
+        string commandName, System.Text.Json.JsonElement payload) => commandName switch
+    {
+        "library_start_run" => true,
+        "library_control_run" => ReadString(payload, "action") is "continue" or "restart",
+        "library_resume_blocked_run" or "library_retry_failed_targets" => true,
+        _ => false,
+    };
+
+    internal static string? ReadString(
+        System.Text.Json.JsonElement element, string name) =>
+        element.ValueKind == System.Text.Json.JsonValueKind.Object
+        && element.TryGetProperty(name, out var value)
+        && value.ValueKind == System.Text.Json.JsonValueKind.String
+            ? value.GetString()
+            : null;
+}
+
+/// <summary>FEA-11-RUN-GRANT-1 (R-7/R1-02④/R1-04): pure Host-known source-range
+/// resolution. Prefer the Run's project when the scope names a book, else every
+/// known source. Sources that cannot be resolved (registry entry missing,
+/// unsafe path) are counted and SKIPPED — the Core stays the fail-closed
+/// authority for the target pages (no silent allow, no Host-side block).</summary>
+public static class RunSourceRange
+{
+    public static (IReadOnlyList<RunSourceScope> Targets, int Unresolved) Resolve(
+        IReadOnlyList<SourceScanTarget> known,
+        System.Text.Json.JsonElement scope,
+        IReadOnlyList<SourceAuthorization> registryEntries)
+    {
         if (known.Count == 0)
         {
-            return ([], 0);
+            return (Array.Empty<RunSourceScope>(), 0);
         }
         IReadOnlyList<SourceScanTarget> filtered = known;
-        var kind = ReadString(scope, "kind");
-        var project = ReadString(scope, "book_id");
+        var kind = RunCommandPolicy.ReadString(scope, "kind");
+        var project = RunCommandPolicy.ReadString(scope, "book_id");
         if (kind == "book" && project is not null)
         {
             filtered = known
@@ -1634,15 +1669,17 @@ public sealed class HostRuntime : IAsyncDisposable
         }
         if (filtered.Count == 0)
         {
-            return ([], 0);
+            return (Array.Empty<RunSourceScope>(), 0);
         }
-        var registry = Registry ?? throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
-        var entries = registry.List();
         var scopes = new List<RunSourceScope>(filtered.Count);
         var unresolved = 0;
         foreach (var target in filtered)
         {
-            var entry = HostSourceScanExecutor.ResolveRegistryEntry(entries, target.Path);
+            if (scopes.Count >= SourceReadCoordinator.MaxRunGrants)
+            {
+                unresolved++;
+                continue;
+            }
             string normalized;
             try
             {
@@ -1653,6 +1690,7 @@ public sealed class HostRuntime : IAsyncDisposable
                 unresolved++;
                 continue;
             }
+            var entry = HostSourceScanExecutor.ResolveRegistryEntry(registryEntries, target.Path);
             if (entry is null)
             {
                 unresolved++;
@@ -1661,55 +1699,216 @@ public sealed class HostRuntime : IAsyncDisposable
             scopes.Add(new RunSourceScope(
                 entry.RegistryId, entry.Generation, normalized, KindOf(normalized),
                 target.SourceId, target.Version));
-            if (scopes.Count > SourceReadCoordinator.MaxRunGrants)
-            {
-                throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
-            }
-        }
-        if (scopes.Count == 0 && unresolved > 0)
-        {
-            return ([], unresolved);
         }
         return (scopes, unresolved);
     }
 
-    private static string KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    public static string KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {
         ".zip" => "zip",
         ".cbz" => "cbz",
         ".pdf" => "pdf",
         _ => "image",
     };
+}
 
-    private static string? ReadString(
-        System.Text.Json.JsonElement element, string name) =>
-        element.ValueKind == System.Text.Json.JsonValueKind.Object
-        && element.TryGetProperty(name, out var value)
-        && value.ValueKind == System.Text.Json.JsonValueKind.String
-            ? value.GetString()
-            : null;
+/// <summary>FEA-11-RUN-GRANT-1 (R1-01/R1-04): the Run pre-dispatch authorization
+/// orchestration. Best-effort by contract:
+///
+/// * capability missing / probe error / no known source / registry unusable /
+///   every mint failed -&gt; skip and let the dispatch proceed unchanged;
+/// * a Core typed refusal of the request (``CoreOperationException``) -&gt;
+///   propagate so the Run command is NOT dispatched and the typed code is
+///   returned unchanged (R-5). No new Run-face code is invented.
+/// </summary>
+public sealed class RunSourceAuthorizer
+{
+    private readonly bool _enabled;
+    private readonly Func<IReadOnlyList<SourceScanTarget>> _knownTargets;
+    private readonly Func<IReadOnlyList<SourceAuthorization>> _registryEntries;
+    private readonly Func<CancellationToken, Task<bool>> _capabilityProbe;
+    private readonly Func<
+        IReadOnlyList<RunSourceScope>, string, System.Text.Json.JsonElement,
+        CancellationToken, Task<RunAuthorizationResult>> _authorize;
+    private readonly Func<
+        string, CancellationToken,
+        Task<(string Command, System.Text.Json.JsonElement Scope)>> _resolveRunSlice;
+    private readonly Action<string> _info;
+    private readonly Action<string> _warn;
 
-    /// <summary>Map a Host-side source refusal onto the frozen C-16 §6
-    /// code/category/retryable triple. The Code is returned unchanged (R-5:
-    /// no Run-face code is invented; the Run projection keeps its own
-    /// unknown-code degradation).</summary>
-    private static CoreOperationException ProjectSourceAuthorization(SourceAccessException error)
+    public RunSourceAuthorizer(
+        bool enabled,
+        Func<IReadOnlyList<SourceScanTarget>> knownTargets,
+        Func<IReadOnlyList<SourceAuthorization>> registryEntries,
+        Func<CancellationToken, Task<bool>> capabilityProbe,
+        Func<
+            IReadOnlyList<RunSourceScope>, string, System.Text.Json.JsonElement,
+            CancellationToken, Task<RunAuthorizationResult>> authorize,
+        Func<
+            string, CancellationToken,
+            Task<(string Command, System.Text.Json.JsonElement Scope)>> resolveRunSlice,
+        Action<string> info,
+        Action<string> warn)
     {
-        var (category, retryable) = error.Code switch
-        {
-            "SOURCE_ACCESS_DENIED" => ("authorization", false),
-            "SOURCE_GRANT_EXPIRED" => ("authorization", true),
-            "SOURCE_GRANT_REVOKED" => ("authorization", false),
-            "SOURCE_REGISTRY_UNAVAILABLE" or "SOURCE_REGISTRY_BUSY" => ("internal", true),
-            "SOURCE_ENTRY_MISSING" => ("not_found", false),
-            "SOURCE_BUDGET_EXCEEDED" or "INVALID_REQUEST" => ("validation", false),
-            "CORE_CAPABILITY_MISSING" => ("protocol", false),
-            "FILE_IDENTITY_CHANGED" => ("conflict", true),
-            _ => ("unknown", false),
-        };
-        return new CoreOperationException(
-            error.Code, category, retryable, "source-read authorization failed", null);
+        _enabled = enabled;
+        _knownTargets = knownTargets;
+        _registryEntries = registryEntries;
+        _capabilityProbe = capabilityProbe;
+        _authorize = authorize;
+        _resolveRunSlice = resolveRunSlice;
+        _info = info;
+        _warn = warn;
     }
+
+    public bool Enabled => _enabled;
+
+    /// <summary>The dispatcher hook (R-4). Best-effort: it never throws for
+    /// Host-side failures; only a Core typed page refusal propagates (R-5).</summary>
+    public async Task AuthorizeForCommandAsync(
+        string commandName,
+        System.Text.Json.JsonElement payload,
+        CancellationToken token)
+    {
+        if (!_enabled || !RunCommandPolicy.TriggersStepExecution(commandName, payload))
+        {
+            return; // read-only command or a non-executing control action
+        }
+        if (!await ProbeAsync(token).ConfigureAwait(false))
+        {
+            return; // R-6: no source.read.run/1 (or probe failed) -> old behaviour
+        }
+        if (commandName == "library_start_run")
+        {
+            var command = RunCommandPolicy.ReadString(payload, "command");
+            var scope = ExtractScope(payload);
+            if (command is null
+                || scope.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                // The Core dispatch will produce the authoritative
+                // INVALID_REQUEST; the pre-authorization stays out of the way.
+                _warn("run source-read authorization skipped code=INVALID_REQUEST");
+                return;
+            }
+            await AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false);
+            return;
+        }
+        var runId = RunCommandPolicy.ReadString(payload, "run_id");
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            _warn("run source-read authorization skipped code=INVALID_REQUEST");
+            return;
+        }
+        (string Command, System.Text.Json.JsonElement Scope) slice;
+        try
+        {
+            slice = await _resolveRunSlice(runId!, token).ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            // R1-01: a snapshot lookup failure is not a target-page refusal; the
+            // Run dispatch keeps its own typed error.
+            _warn("run source-read authorization skipped run_id code=" + CodeOf(error));
+            return;
+        }
+        await AuthorizeSliceAsync(slice.Command, slice.Scope, token).ConfigureAwait(false);
+    }
+
+    /// <summary>R1-02③: the AcceptRun seam (the frozen prepared slice already
+    /// supplied command/scope; authorization is the same best-effort slice).</summary>
+    public Task AuthorizePreparedRunAsync(
+        string command,
+        System.Text.Json.JsonElement scope,
+        CancellationToken token) =>
+        _enabled
+            ? AuthorizeSliceAsync(command, scope, token)
+            : Task.CompletedTask;
+
+    /// <summary>Best-effort mint+bind for one Run slice.</summary>
+    public async Task AuthorizeSliceAsync(
+        string command,
+        System.Text.Json.JsonElement scope,
+        CancellationToken token)
+    {
+        if (!_enabled || !await ProbeAsync(token).ConfigureAwait(false))
+        {
+            return;
+        }
+        IReadOnlyList<SourceScanTarget> known;
+        IReadOnlyList<SourceAuthorization> entries;
+        try
+        {
+            known = _knownTargets();
+            entries = _registryEntries();
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            _warn("run source-read authorization skipped registry code=" + CodeOf(error));
+            return;
+        }
+        var (targets, unresolved) = RunSourceRange.Resolve(known, scope, entries);
+        if (unresolved > 0)
+        {
+            // Counts only (never a path / source id): L-G12 boundary evidence.
+            _warn($"run source-read authorization unresolved_sources={unresolved}");
+        }
+        if (targets.Count == 0)
+        {
+            return; // no Host-known source can hold this Run's referenced pages
+        }
+        try
+        {
+            var result = await _authorize(targets, command, scope, token)
+                .ConfigureAwait(false);
+            if (result.Skipped)
+            {
+                _warn("run source-read authorization skipped all_sources"
+                      + " mint=" + result.SkippedSources);
+                return;
+            }
+            // L-G8: the mint cost is a source-size bound; only counts are logged.
+            _info($"run source-read authorization sources={targets.Count}"
+                  + $" minted={result.MintedGrants} bound_pages={result.BoundPages}"
+                  + $" skipped={result.SkippedSources}");
+        }
+        catch (CoreOperationException)
+        {
+            // R-5: the Core refused the target pages (typed) -> block the
+            // dispatch and return that exact code unchanged.
+            throw;
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            // R1-01: any other pre-authorization failure is a best-effort skip.
+            _warn("run source-read authorization skipped code=" + CodeOf(error));
+        }
+    }
+
+    public static System.Text.Json.JsonElement ExtractScope(
+        System.Text.Json.JsonElement payload) =>
+        payload.ValueKind == System.Text.Json.JsonValueKind.Object
+        && payload.TryGetProperty("scope", out var scope)
+            ? scope.Clone()
+            : default;
+
+    private async Task<bool> ProbeAsync(CancellationToken token)
+    {
+        try
+        {
+            return await _capabilityProbe(token).ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            _warn("run source-read authorization skipped probe code=" + CodeOf(error));
+            return false;
+        }
+    }
+
+    private static string CodeOf(Exception error) => error switch
+    {
+        CoreOperationException core => core.Code,
+        SourceAccessException source => source.Code,
+        _ => error.GetType().Name,
+    };
 }
 
 public sealed record ChineseRoundTripResult(string Expected, string Received, bool ExactMatch);

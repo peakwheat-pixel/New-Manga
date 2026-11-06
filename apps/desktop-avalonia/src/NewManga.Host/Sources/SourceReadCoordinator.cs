@@ -23,6 +23,22 @@ public sealed record RunSourceScope(
     public override string ToString() => "RunSourceScope(" + SourceId + ")";
 }
 
+/// <summary>
+/// FEA-11-RUN-GRANT-1 / Review r1 R1-01: the best-effort Run grant issuance
+/// outcome. Host-side mint failures are SKIPPED (never block a Run the Core
+/// could accept); only a Core typed refusal of the target pages propagates as
+/// <see cref="CoreOperationException"/> (R-5).
+/// </summary>
+public sealed record RunAuthorizationResult(
+    int BoundPages,
+    int MintedGrants,
+    int SkippedSources,
+    IReadOnlyList<string> SkippedCodes)
+{
+    /// <summary>True when no Core authorization command was sent (all mint attempts failed).</summary>
+    public bool Skipped => MintedGrants == 0;
+}
+
 /// <summary>Host authority for source-read issuance, capability gating and revoke ACK.</summary>
 public sealed class SourceReadCoordinator(
     CoreServiceClient core,
@@ -109,9 +125,15 @@ public sealed class SourceReadCoordinator(
     /// page bindings (``AuthorizeSourceReadForRun``). A Core typed refusal
     /// propagates as <see cref="CoreOperationException"/> so the caller can
     /// return that exact code and NOT dispatch the Run command (R-5).
-    /// Returns the Core-reported ``bound_pages``.
+    ///
+    /// Review r1 R1-01/R1-04 (best-effort): a Host-side MINT failure (missing
+    /// file, identity drift, unusable registry, unparsable path) never throws —
+    /// that source is skipped with its frozen C-16 §6 code and the remaining
+    /// sources are still minted. When every mint fails no command is sent at
+    /// all (`Skipped=true`), so a Run the Core could accept is never blocked by
+    /// an unrelated source.
     /// </summary>
-    public async Task<int> AuthorizeRunAsync(
+    public async Task<RunAuthorizationResult> AuthorizeRunAsync(
         IReadOnlyList<RunSourceScope> sources,
         string command,
         JsonElement scope,
@@ -124,15 +146,41 @@ public sealed class SourceReadCoordinator(
             if (!await SupportsRunAuthorizationAsync(cancellationToken).ConfigureAwait(false))
                 throw new SourceAccessException("CORE_CAPABILITY_MISSING");
             if (sources.Count == 0) throw new SourceAccessException("INVALID_REQUEST");
-            if (sources.Count > MaxRunGrants) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
-            var grantIds = new List<string>(sources.Count);
+            var grantIds = new List<string>(Math.Min(sources.Count, MaxRunGrants));
+            var skippedCodes = new List<string>();
+            var skipped = 0;
             foreach (var source in sources)
             {
-                var rendition = RenditionFor(source.Kind);
-                grantIds.Add(await IssueLockedAsync(
-                    source.RegistryId, source.Generation, source.Path, source.Kind,
-                    source.SourceId, source.Version, rendition,
-                    cancellationToken: cancellationToken).ConfigureAwait(false));
+                if (grantIds.Count >= MaxRunGrants)
+                {
+                    skipped++;
+                    skippedCodes.Add("SOURCE_BUDGET_EXCEEDED");
+                    continue;
+                }
+                try
+                {
+                    var rendition = RenditionFor(source.Kind);
+                    grantIds.Add(await IssueLockedAsync(
+                        source.RegistryId, source.Generation, source.Path, source.Kind,
+                        source.SourceId, source.Version, rendition,
+                        cancellationToken: cancellationToken).ConfigureAwait(false));
+                }
+                catch (Exception error) when (
+                    error is not OperationCanceledException and not OutOfMemoryException)
+                {
+                    // R1-04: typed §6 code, but a Host-side failure is a SKIP,
+                    // never a Run blocker (R1-01).
+                    skipped++;
+                    skippedCodes.Add(
+                        error is SourceAccessException typed
+                            ? typed.Code
+                            : MapMintFailure(error).Code);
+                }
+            }
+            if (grantIds.Count == 0)
+            {
+                // Nothing to authorize: dispatch exactly as before (best-effort).
+                return new RunAuthorizationResult(0, 0, skipped, skippedCodes);
             }
             var response = await core.SendHostControlAsync("AuthorizeSourceReadForRun", writer =>
             {
@@ -156,10 +204,22 @@ public sealed class SourceReadCoordinator(
                 foreach (var grantId in grantIds) _boundRunGrants.Add(grantId);
             }
             PruneExpired();
-            return boundPages;
+            return new RunAuthorizationResult(
+                boundPages, grantIds.Count, skipped, skippedCodes);
         }
         finally { _gate.Release(); }
     }
+
+    /// <summary>R1-04: map a Host-side mint I/O failure onto the frozen C-16 §6
+    /// vocabulary (never a bare IOException).</summary>
+    public static SourceAccessException MapMintFailure(Exception error) => error switch
+    {
+        FileNotFoundException or DirectoryNotFoundException or UnauthorizedAccessException =>
+            new SourceAccessException("SOURCE_ENTRY_MISSING"),
+        IOException => new SourceAccessException("FILE_IDENTITY_CHANGED"),
+        ArgumentException or NotSupportedException => new SourceAccessException("SOURCE_ACCESS_DENIED"),
+        _ => new SourceAccessException("SOURCE_ENTRY_MISSING"),
+    };
 
     /// <summary>
     /// R-8/L-G7: record one tracked grant id/expiry. Every issuance path calls
@@ -262,19 +322,43 @@ public sealed class SourceReadCoordinator(
             foreach (var member in paths)
             {
                 SourceSecurity.RejectReparseAncestors(member);
-                using var stream = new FileStream(member, FileMode.Open, FileAccess.Read, FileShare.Read);
-                var before = SourceSecurity.Identity(stream.SafeFileHandle);
-                if (before.Size > maxBytes) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
-                var digest = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
-                if (SourceSecurity.Identity(stream.SafeFileHandle) != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
-                entries.Add(new JsonObject
+                FileStream stream;
+                try
                 {
-                    ["entry_key"] = "entry-" + ordinal, ["entry_id"] = null,
-                    ["locator"] = sourceKind == "folder" ? Path.GetRelativePath(path, member).Replace('\\', '/') : Path.GetFileName(member),
-                    ["ordinal"] = ordinal++, ["path"] = member,
-                    ["facts"] = new JsonObject { ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
-                        ["size"] = before.Size, ["sha256"] = digest }
-                });
+                    stream = new FileStream(member, FileMode.Open, FileAccess.Read, FileShare.Read);
+                }
+                catch (Exception error) when (error is not OutOfMemoryException)
+                {
+                    // R1-04: never leak a bare I/O exception out of the mint path.
+                    throw MapMintFailure(error);
+                }
+                using (stream)
+                {
+                    (ulong Volume, ulong Id, long Size) before;
+                    string digest;
+                    (ulong Volume, ulong Id, long Size) after;
+                    try
+                    {
+                        before = SourceSecurity.Identity(stream.SafeFileHandle);
+                        if (before.Size > maxBytes) throw new SourceAccessException("SOURCE_BUDGET_EXCEEDED");
+                        digest = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+                        after = SourceSecurity.Identity(stream.SafeFileHandle);
+                    }
+                    catch (Exception error) when (
+                        error is not SourceAccessException and not OutOfMemoryException)
+                    {
+                        throw MapMintFailure(error);
+                    }
+                    if (after != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
+                    entries.Add(new JsonObject
+                    {
+                        ["entry_key"] = "entry-" + ordinal, ["entry_id"] = null,
+                        ["locator"] = sourceKind == "folder" ? Path.GetRelativePath(path, member).Replace('\\', '/') : Path.GetFileName(member),
+                        ["ordinal"] = ordinal++, ["path"] = member,
+                        ["facts"] = new JsonObject { ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
+                            ["size"] = before.Size, ["sha256"] = digest }
+                    });
+                }
             }
             // Re-check root identities/generation and durable last-use after collection.
             Registry.Authorize(registryId, generation, paths);
