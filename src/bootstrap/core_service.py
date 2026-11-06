@@ -356,6 +356,9 @@ _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
     "RegisterExportTarget", "RevokeExportTarget", "CloseHostSession",
     "RegisterSourceReadGrant", "RevokeSourceReadGrant",
+    # FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): the Run dispatch-time
+    # grant->page-binding authorization command (third ``_bindings`` producer).
+    "AuthorizeSourceReadForRun",
     # FEA-11 (C-17 §4): scan/apply/relink/repoint/resync plus the
     # ACK/recovery/failure pair ride the host-control private session.
     "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
@@ -1492,6 +1495,21 @@ class CoreServiceServer:
             ):
                 self._host_grants[payload["grant_id"]] = "source-read"
             return self._host_control_response(request_id, result, None)
+        if command == "AuthorizeSourceReadForRun":
+            # FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): host-control only; the
+            # session/credential were verified above. Typed refusals reuse the
+            # frozen C-16 §6 closed set through the SourceImportError envelope.
+            try:
+                result = self._authorize_source_read_for_run(payload)
+            except SourceImportError as caught:
+                return self._host_control_response(
+                    request_id, None, _source_import_error_envelope(caught)
+                )
+            except Exception:
+                return self._reject_host_control(
+                    request_id, "UNKNOWN", "internal", "Host control operation failed"
+                )
+            return self._host_control_response(request_id, result, None)
         if command in (
             "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource",
             "RepointSource", "ResyncSource", "AcknowledgeSourceOperation",
@@ -1587,6 +1605,10 @@ class CoreServiceServer:
         del payload
         capabilities = [
             "library.list_books", "source.read/1", "source.resolve-secret/1",
+            # FEA-11-RUN-GRANT-1 (C-16 v1.3 §0): the Run pre-dispatch
+            # authorization face. Additive only -- a missing capability makes
+            # the Host skip mint/bind and dispatch exactly as before.
+            "source.read.run/1",
         ]
         # FEA-12 (M2-C1 rev 2.13 §5.13/§5.14): the delete/trash runtime is
         # assembled with the production library repository + managed storage,
@@ -4914,6 +4936,112 @@ class CoreServiceServer:
             payload["registry_id"], payload["generation"], payload["grant_ids"]
         )
         return {"revoked": True, "grants_revoked": revoked}
+
+    def _authorize_source_read_for_run(self, payload: object) -> dict[str, Any]:
+        """FEA-11-RUN-GRANT-1: C-16 v1.3 §2.4 ``AuthorizeSourceReadForRun``.
+
+        Establish the Run dispatch-time grant->page-binding read authorization
+        for the SAME target pages the Run command expands to. This is the third
+        ``_bindings`` producer (import / sync apply / this command); it changes
+        no grant scope, TTL, revoke semantics or ``find_bound_for_source``
+        selection rule.
+
+        Frozen order: shape -> grant liveness (§6 priority) -> scope expansion
+        with the Run's own expander -> per-page match. ANY unusable target page
+        refuses the whole request typed (zero mapping writes, no partial
+        success). Zero DB writes, no plan/apply/journal, no publication, no TTL
+        extension, no revoke/revive; repeated calls are idempotent.
+        """
+        registry = getattr(self._core, "source_read_refs", None)
+        stack = getattr(self._core, "source_sync", None)
+        pipeline = getattr(self._core, "pipeline", None)
+        catalog = getattr(pipeline, "_catalog", None)
+        if registry is None or not isinstance(stack, dict) or catalog is None:
+            raise SourceImportError(
+                "SOURCE_REGISTRY_UNAVAILABLE", "source-read grants are unavailable"
+            )
+        if (
+            not isinstance(payload, dict)
+            or set(payload) != {"grant_ids", "command", "scope"}
+        ):
+            raise SourceImportError(
+                "INVALID_REQUEST", "Run authorization request is invalid"
+            )
+        grant_ids = payload["grant_ids"]
+        if (
+            not isinstance(grant_ids, list)
+            or not grant_ids
+            or len(grant_ids) > registry.RUN_GRANT_LIMIT
+            or any(not isinstance(item, str) or not item for item in grant_ids)
+            or len(set(grant_ids)) != len(grant_ids)
+        ):
+            raise SourceImportError(
+                "INVALID_REQUEST", "grant_ids must be 1..64 unique ids"
+            )
+        raw_command = payload["command"]
+        if (
+            not isinstance(raw_command, str)
+            or raw_command not in COMMAND_CATALOG
+            or not isinstance(payload["scope"], dict)
+        ):
+            raise SourceImportError(
+                "INVALID_REQUEST", "command/scope are not a frozen Run request"
+            )
+        # ③ every grant must be registered and live BEFORE any expansion work.
+        grant_scopes = registry.live_grant_scopes(grant_ids)
+        # ④ same command domain + same scope parser + same target expander as
+        # the Run command itself; a failure writes nothing.
+        try:
+            scope = self._parse_run_scope(payload["scope"])
+            validator = getattr(pipeline, "_validate_command_scope", None)
+            if callable(validator):
+                validator(CommandType(raw_command), scope)
+            targets = catalog.expand(scope)
+        except PipelineError as error:
+            raise SourceImportError(
+                "INVALID_REQUEST", "Run scope cannot be expanded"
+            ) from error
+        store = stack["store"]
+        gate_reader = getattr(catalog, "source_gate_reader", None)
+        pages: list[dict[str, Any]] = []
+        for target in targets:
+            page_id = getattr(target, "page_id", None)
+            if not isinstance(page_id, str) or not page_id:
+                raise SourceImportError(
+                    "INVALID_REQUEST", "Run scope cannot be expanded"
+                )
+            binding = store.current_binding_of_page(page_id)
+            entry: dict | None = None
+            location: dict | None = None
+            entries: list[dict] = []
+            if binding is not None:
+                entries = store.list_entries_of_version(
+                    binding["accepted_source_version"]
+                )
+                entry = next(
+                    (
+                        row
+                        for row in entries
+                        if row.get("entry_id") == binding["entry_id"]
+                    ),
+                    None,
+                )
+                location = store.get_source_location_current(
+                    binding["source_id"]
+                )
+            gate = gate_reader(page_id) if callable(gate_reader) else None
+            pages.append(
+                {
+                    "page_id": page_id,
+                    "binding": binding,
+                    "gate": gate,
+                    "entry": entry,
+                    "location": location,
+                    "entries": entries,
+                }
+            )
+        bound_pages = registry.authorize_run_bindings(grant_scopes, pages)
+        return {"bound_pages": bound_pages}
 
     def _dispatch_referenced_import(
         self, command: str, raw_payload: object

@@ -37,6 +37,7 @@ from application.importing.referenced.model import (
     GrantFacts,
     ResolvedSourceRead,
     SourceReadBudget,
+    folder_manifest_digest,
     validate_locator,
 )
 from application.resource_channel.dto import USER_SOURCE_SCOPE
@@ -438,6 +439,275 @@ class SourceReadGrantRegistry(SourceReadAccess):
                     "SOURCE_ACCESS_DENIED", "import binding conflicts with the grant"
                 )
             binding["entry_ids"].add(entry_id)
+
+    # ------------------------------------------------- Run authorization
+    #: C-16 v1.3 §2.4: ``AuthorizeSourceReadForRun`` carries 1..64 unique ids.
+    RUN_GRANT_LIMIT = 64
+
+    def live_grant_scopes(self, grant_ids: list[str]) -> tuple[tuple[str, dict], ...]:
+        """C-16 v1.3 §2.4 step ③: every id must be a registered, live grant.
+
+        The frozen §6 priority is preserved by ``_checked``: unknown/session
+        mismatch -> ``SOURCE_ACCESS_DENIED``, expiry -> ``SOURCE_GRANT_EXPIRED``,
+        revocation -> ``SOURCE_GRANT_REVOKED``. Returns ``(grant_id, scope)``
+        snapshots so the caller can match the CURRENT page bindings before any
+        mapping is written; nothing is mutated here.
+        """
+        if (
+            not isinstance(grant_ids, list)
+            or not grant_ids
+            or len(grant_ids) > self.RUN_GRANT_LIMIT
+            or any(not isinstance(item, str) or not item for item in grant_ids)
+        ):
+            raise SourceImportError(
+                "INVALID_REQUEST", "grant_ids must be 1..64 unique ids"
+            )
+        with self._lock:
+            grants = [self._checked(grant_id) for grant_id in grant_ids]
+            return tuple(
+                (grant.grant_id, json.loads(json.dumps(grant.scope)))
+                for grant in grants
+            )
+
+    def authorize_run_bindings(
+        self, grant_scopes: tuple[tuple[str, dict], ...], pages: list[dict]
+    ) -> int:
+        """C-16 v1.3 §2.4: authorize Run target page bindings for live grants.
+
+        ``pages`` items are produced by the Core from the SAME Run scope
+        expander the Run command uses:
+
+        ``{"page_id", "binding"|None, "gate": str|None, "entry"|None,
+           "location"|None, "entries": [source_entries rows]}``
+
+        - no binding (managed page) -> skipped (never counted, never refused);
+        - unhealthy binding or a publication gate that is not open -> refused;
+        - otherwise a live grant's SIGNED scope must cover the binding's
+          source/version and its entry (``entry_key``/``locator``/``ordinal``)
+          and the entry facts must match ``source_locations`` (container: the
+          single grant entry vs the container identity) or ``source_entries``
+          (folder: every member) with NO path fallback.
+
+        ANY refused page refuses the whole request typed ``SOURCE_ACCESS_DENIED``
+        (``details={"refused_pages": n}``) and writes ZERO mappings; the frozen
+        contract has no partial success. Success writes the same in-process
+        mapping shape ``bind_imported_entry`` writes and returns the number of
+        bound pages. Zero DB writes, no TTL extension, no revoke/revive, and a
+        repeated call returns the same set (idempotent).
+        """
+        pending: list[tuple[str, str, str, str]] = []
+        refused = 0
+        with self._lock:
+            live: dict[str, tuple[_SourceReadGrant, dict]] = {}
+            for grant_id, scope in grant_scopes:
+                live[grant_id] = (self._checked(grant_id), scope)
+            for page in pages:
+                binding = page.get("binding")
+                if binding is None:
+                    continue
+                if (
+                    page.get("gate") != "open"
+                    or binding.get("status") != "healthy"
+                ):
+                    refused += 1
+                    continue
+                match = self._run_grant_for_binding(live, binding, page)
+                if match is None:
+                    refused += 1
+                    continue
+                pending.append(match)
+            if refused:
+                raise SourceImportError(
+                    "SOURCE_ACCESS_DENIED",
+                    "Run source-read authorization was refused",
+                    details={"refused_pages": refused},
+                )
+            for grant_id, source_id, version_id, entry_id in pending:
+                mapping = self._bindings.setdefault(
+                    grant_id,
+                    {
+                        "source_id": source_id,
+                        "version_id": version_id,
+                        "entry_ids": set(),
+                    },
+                )
+                if (
+                    mapping["source_id"] != source_id
+                    or mapping["version_id"] != version_id
+                ):
+                    raise SourceImportError(
+                        "SOURCE_ACCESS_DENIED",
+                        "Run authorization conflicts with the grant",
+                    )
+                mapping["entry_ids"].add(entry_id)
+        return len(pending)
+
+    def _run_grant_for_binding(
+        self,
+        live: dict[str, tuple[_SourceReadGrant, dict]],
+        binding: dict,
+        page: dict,
+    ) -> tuple[str, str, str, str] | None:
+        """The single frozen per-page match (highest generation/grant id)."""
+        source_id = binding.get("source_id")
+        version_id = binding.get("accepted_source_version")
+        entry_id = binding.get("entry_id")
+        if not all(
+            isinstance(value, str) and value
+            for value in (source_id, version_id, entry_id)
+        ):
+            return None
+        entry = page.get("entry")
+        location = page.get("location")
+        if not isinstance(entry, dict) or not isinstance(location, dict):
+            return None
+        matches: list[tuple[_SourceReadGrant, str, dict]] = []
+        for grant_id, (grant, scope) in live.items():
+            if (
+                scope.get("source_id") != source_id
+                or scope.get("version") != version_id
+            ):
+                continue
+            if not self._scope_covers_entry(
+                grant, scope, entry, location, page.get("entries") or ()
+            ):
+                continue
+            matches.append((grant, grant_id, scope))
+        if not matches:
+            return None
+        _grant, chosen_id, _scope = max(
+            matches, key=lambda item: (item[0].generation, item[0].grant_id)
+        )
+        return chosen_id, source_id, version_id, entry_id
+
+    def _scope_covers_entry(
+        self,
+        grant: _SourceReadGrant,
+        scope: dict,
+        entry: dict,
+        location: dict,
+        version_entries: tuple[dict, ...] | list[dict],
+    ) -> bool:
+        raw_entries = scope.get("entries")
+        if not isinstance(raw_entries, list) or not raw_entries:
+            return False
+        if grant.source_kind == "folder":
+            return self._folder_scope_covers(
+                raw_entries, entry, location, version_entries
+            )
+        # Container kinds (image/zip/cbz/pdf): the frozen registry carries ONE
+        # entry whose facts are the container's physical identity.
+        if len(raw_entries) != 1 or not isinstance(raw_entries[0], dict):
+            return False
+        raw = raw_entries[0]
+        facts = grant.container_facts
+        if facts is None or not self._location_matches(location, facts):
+            return False
+        return (
+            raw.get("entry_key") == entry.get("entry_id")
+            or raw.get("locator") == entry.get("locator")
+            or raw.get("ordinal") == entry.get("ordinal")
+        )
+
+    @staticmethod
+    def _location_matches(location: dict, facts: GrantFacts) -> bool:
+        """The container identity check against ``source_locations``.
+
+        Every frozen fact is compared; a missing/typed-wrong column is a
+        refusal (never a path fallback, never a size/mtime guess).
+        """
+        numbers = (
+            location.get("volume_serial"),
+            location.get("file_id"),
+            location.get("size_bytes"),
+        )
+        if any(isinstance(value, bool) or not isinstance(value, int) for value in numbers):
+            return False
+        return (
+            numbers[0] == facts.volume_serial
+            and numbers[1] == facts.file_id
+            and numbers[2] == facts.size
+            and location.get("content_digest") == facts.sha256
+        )
+
+    def _folder_scope_covers(
+        self,
+        raw_entries: list,
+        entry: dict,
+        location: dict,
+        version_entries,
+    ) -> bool:
+        """Folder sources: every grant member must prove one source entry.
+
+        The grant entries are the Host's live enumeration; each one is matched
+        to a ``source_entries`` row by ``locator`` (or ``ordinal``) and its
+        ``sha256``/``size`` facts must equal that row's encoded digest/size.
+        The manifest digest recomputed from the signed facts must equal the
+        current ``source_locations.content_digest`` and the summed member sizes
+        must equal ``source_locations.size_bytes`` — no path is ever consulted.
+        """
+        rows: list[dict] = [row for row in version_entries if isinstance(row, dict)]
+        if not rows or len(raw_entries) != len(rows):
+            return False
+        by_locator = {row.get("locator"): row for row in rows}
+        by_ordinal = {row.get("ordinal"): row for row in rows}
+        matched: list[dict] = []
+        total = 0
+        manifest: list[dict] = []
+        for raw in raw_entries:
+            if not isinstance(raw, dict):
+                return False
+            facts = raw.get("facts")
+            if not isinstance(facts, dict):
+                return False
+            row = by_locator.get(raw.get("locator")) or by_ordinal.get(
+                raw.get("ordinal")
+            )
+            if row is None or row in matched:
+                return False
+            size = facts.get("size")
+            digest = facts.get("sha256")
+            if (
+                isinstance(size, bool)
+                or not isinstance(size, int)
+                or size != row.get("size_bytes")
+                or not isinstance(digest, str)
+                or digest != row.get("content_digest")
+            ):
+                return False
+            matched.append(row)
+            total += size
+            manifest.append(
+                {
+                    "rel_path": row.get("locator"),
+                    "size_bytes": size,
+                    "sha256": digest,
+                }
+            )
+        if len(matched) != len(rows):
+            return False
+        # The binding's own entry must be one of the proven members: the
+        # grant entry covering it has to match by entry_key/locator/ordinal.
+        binding_entry_id = entry.get("entry_id")
+        binding_locator = entry.get("locator")
+        binding_ordinal = entry.get("ordinal")
+        covered = False
+        for raw, row in zip(raw_entries, matched):
+            if (
+                raw.get("entry_key") == binding_entry_id
+                or raw.get("locator") == binding_locator
+                or raw.get("ordinal") == binding_ordinal
+            ) and row.get("entry_id") == binding_entry_id:
+                covered = True
+                break
+        if not covered:
+            return False
+        size_bytes = location.get("size_bytes")
+        if isinstance(size_bytes, bool) or not isinstance(size_bytes, int):
+            return False
+        if size_bytes != total:
+            return False
+        return location.get("content_digest") == folder_manifest_digest(manifest)
 
     def find_bound_for_source(
         self, source_id: str, version_id: str, entry_id: str

@@ -62,6 +62,26 @@ public sealed class HostCommandDispatcher
     /// (scan). Missing capabilities must fail closed, never UNKNOWN_COMMAND.</summary>
     private readonly Func<string, CancellationToken, Task>? _capabilityGate;
 
+    /// <summary>
+    /// FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4 / R-4): the Run pre-dispatch
+    /// source-read authorization hook. It runs before the Core dispatch for
+    /// every Run command that triggers step execution; a typed authorization
+    /// failure (or a Host-side source refusal) means the Run command is NEVER
+    /// dispatched and that exact typed code reaches the caller (R-5).
+    /// </summary>
+    private readonly Func<string, JsonElement, CancellationToken, Task>? _runAuthorize;
+
+    /// <summary>The Run commands that trigger step execution (R-4). Read-only
+    /// Run commands (get snapshot/projection) are deliberately absent.</summary>
+    public static IReadOnlySet<string> RunAuthorizationCommands { get; } = new HashSet<string>(
+        StringComparer.Ordinal)
+    {
+        "library_start_run",
+        "library_control_run",
+        "library_resume_blocked_run",
+        "library_retry_failed_targets",
+    };
+
     public HostCommandDispatcher(
         CoreServiceClient? core = null,
         HostBridgeClient? bridge = null,
@@ -69,7 +89,8 @@ public sealed class HostCommandDispatcher
         Func<string, JsonElement, Func<JsonElement, CancellationToken, Task<CoreResponse>>, CancellationToken,
             Task<(string OperationId, JsonElement Result)>>? journal = null,
         Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null,
-        Func<string, CancellationToken, Task>? capabilityGate = null)
+        Func<string, CancellationToken, Task>? capabilityGate = null,
+        Func<string, JsonElement, CancellationToken, Task>? runAuthorize = null)
     {
         _core = core;
         _bridge = bridge;
@@ -77,6 +98,7 @@ public sealed class HostCommandDispatcher
         _journal = journal;
         _operationJournal = operationJournal;
         _capabilityGate = capabilityGate;
+        _runAuthorize = runAuthorize;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -124,6 +146,17 @@ public sealed class HostCommandDispatcher
 
         try
         {
+            // FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4 / R-4/R-5): authorize the
+            // Run's source reads BEFORE any dispatch. A typed authorization
+            // failure propagates out of this try-block (the Run projection
+            // keeps its code; no new Run-face code is introduced) and the Core
+            // Run command is never sent.
+            if (_runAuthorize is { } runAuthorize && RunAuthorizationCommands.Contains(descriptor.Name))
+            {
+                await runAuthorize(descriptor.Name, payload, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
             return descriptor.Channel switch
             {
                 HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
