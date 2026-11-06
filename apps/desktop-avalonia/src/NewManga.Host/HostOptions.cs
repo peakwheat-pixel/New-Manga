@@ -109,4 +109,11 @@ public sealed class HostOptions
 
     /// <summary>TimeProvider seam: the scheduler loop and every status timestamp use this clock.</summary>
     public TimeProvider SourceScanTimeProvider { get; init; } = TimeProvider.System;
+
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1): run the read-only cold-start target enumeration
+    /// (<c>source_list_scan_targets</c>) in the background after the Host becomes ready. It never
+    /// blocks startup; a missing capability is a typed fail-closed snapshot state.
+    /// </summary>
+    public bool SourceScanColdStartEnumeration { get; init; } = true;
 }

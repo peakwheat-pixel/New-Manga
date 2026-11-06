@@ -1415,23 +1415,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
             return _sourceImports ??= new SourceImportCoordinator(
                 commands,
                 sources,
-                _options.DataRoot,
-                // FEA-11-SCAN-1 (I-2): a COMPLETED referenced import registers its sources with the
-                // Host's in-memory read-only scan scheduler. Registration is observability only and
-                // must never change the import outcome (best-effort, typed errors swallowed here).
-                registration =>
-                {
-                    try
-                    {
-                        _runtime?.RegisterSourceScanTarget(
-                            registration.SourceId, registration.Path, registration.ProjectIds,
-                            registration.Version);
-                    }
-                    catch (Exception error) when (error is not OutOfMemoryException)
-                    {
-                        // The Host is shutting down / not ready: the scan target is simply absent.
-                    }
-                });
+                _options.DataRoot);
         }
     }
 
@@ -1571,33 +1555,27 @@ public sealed class HostController : IHostController, ISourceImportController, I
     }
 
     /// <summary>
-    /// FEA-11-SCAN-1 (I-2 / AC-S2): a COMPLETED referenced import hands its sources to the Host's
-    /// in-process read-only scan target registry. This is deliberately NOT a wire command: the Host
-    /// runs in this process, so the registration is a direct HostRuntime call. Cancel/failure paths
-    /// never reach here; registration is observability only and cannot fail the import.
+    /// FEA-11-SCAN-2 (B1 / AC-S2-2 / S-2): a COMPLETED referenced import only ASKS the Host to refresh
+    /// its scan targets. The App never computes/registers authoritative target ids anymore — the Host
+    /// enumerates <c>source_list_scan_targets</c> from the Core and re-verifies its own persistent
+    /// registry. This is deliberately NOT a wire command (the Host runs in this process) and it is
+    /// best-effort: a missing refresh can never change the import outcome.
     /// </summary>
-    public void RegisterCompletedImportScanTargets(
-        string bookId,
-        IReadOnlyList<ReferenceImportSource> sources)
+    public void RequestSourceScanRefresh()
     {
-        if (string.IsNullOrWhiteSpace(bookId) || sources.Count == 0)
-        {
-            return;
-        }
-
-        var imports = SourceImports;
-        if (imports is null)
+        var runtime = _runtime;
+        if (runtime is null)
         {
             return;
         }
 
         try
         {
-            imports.RegisterCompletedScanTargets(bookId, sources);
+            runtime.RequestSourceScanRefresh();
         }
         catch (Exception error) when (error is not OutOfMemoryException)
         {
-            // Best-effort: the import result stands; a missing scan target is not an import failure.
+            // Host shutting down / not ready: no refresh is scheduled; the import result stands.
         }
     }
 

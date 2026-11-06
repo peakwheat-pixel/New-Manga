@@ -748,15 +748,13 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
             : new SourceImportCancelResult(true, true, "running", null));
     }
 
-    /// <summary>FEA-11-SCAN-1 (I-2): every completed-import scan-target registration, in call order.</summary>
-    public List<(string BookId, IReadOnlyList<ReferenceImportSource> Sources)> ScanTargetRegistrations { get; } = new();
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-2 / S-2): how many times the dock asked the Host to refresh its scan
+    /// targets. The App passes NO target ids anymore — the Core enumeration is the sole authority.
+    /// </summary>
+    public int SourceScanRefreshRequests { get; private set; }
 
-    public void RegisterCompletedImportScanTargets(
-        string bookId,
-        IReadOnlyList<ReferenceImportSource> sources)
-    {
-        ScanTargetRegistrations.Add((bookId, sources));
-    }
+    public void RequestSourceScanRefresh() => SourceScanRefreshRequests++;
 
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
@@ -1889,14 +1887,15 @@ public sealed class FakeProgressStore
 }
 
 /// <summary>
-/// FEA-11-SCAN-1 (I-2 / r1 P2-4): VM-level proof that ONLY a completed referenced import registers
-/// periodic scan targets. Failed/cancelled receipts register nothing, a blank book id registers
-/// nothing, and (r1 P3-1) the owning book is captured at confirm time so a later library selection
-/// switch cannot re-label the completed import's project_ids.
+/// FEA-11-SCAN-2 (B1 / AC-S2-2 / S-2): VM-level proof that ONLY a completed referenced import asks
+/// the Host to refresh its scan targets (exactly once) and that the App contributes NO target
+/// identity of its own — the Core enumeration is the sole target authority. Failed/cancelled
+/// receipts ask for no refresh, and a library selection switch during the import cannot add or
+/// re-label a refresh request.
 /// </summary>
-public sealed class Fea11ScanRegistrationVmTests
+public sealed class Fea11ScanRefreshVmTests
 {
-    private static ImportDockViewModel Create(FakeHostController host, Func<string?> bookId) =>
+    private static ImportDockViewModel Create(FakeHostController host) =>
         new(
             host,
             picker: null,
@@ -1905,8 +1904,7 @@ public sealed class Fea11ScanRegistrationVmTests
             chapterTitle: () => "第 1 章",
             afterImport: () => Task.CompletedTask,
             requestCreateChapter: () => { },
-            referencePollDelay: () => Task.CompletedTask,
-            bookId: bookId);
+            referencePollDelay: () => Task.CompletedTask);
 
     private static SourcePlanPreview Plan() => new(
         "ch-1",
@@ -1949,50 +1947,49 @@ public sealed class Fea11ScanRegistrationVmTests
     }
 
     [Fact]
-    public async Task CompletedReceipt_RegistersExactlyOnce_WithConfirmedBookId()
+    public async Task CompletedReceipt_RequestsExactlyOneRefresh()
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
-        var viewModel = Create(host, () => "book-1");
+        var viewModel = Create(host);
 
         await RunAsync(host, viewModel, SourceImportOperationState.Completed);
 
-        var registration = Assert.Single(host.ScanTargetRegistrations);
-        Assert.Equal("book-1", registration.BookId);
-        var source = Assert.Single(registration.Sources);
-        Assert.Equal(Path.GetFullPath(@"C:\manga\page.png"), source.Path);
-        Assert.False(source.IsFolder);
+        Assert.Equal(1, host.SourceScanRefreshRequests);
     }
 
     [Theory]
     [InlineData(SourceImportOperationState.Failed)]
     [InlineData(SourceImportOperationState.Cancelled)]
-    public async Task NonCompletedReceipt_DoesNotRegister(SourceImportOperationState state)
+    public async Task NonCompletedReceipt_RequestsNoRefresh(SourceImportOperationState state)
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
-        var viewModel = Create(host, () => "book-1");
+        var viewModel = Create(host);
 
         await RunAsync(host, viewModel, state);
 
-        Assert.Empty(host.ScanTargetRegistrations);
+        Assert.Equal(0, host.SourceScanRefreshRequests);
     }
 
     [Fact]
-    public async Task BlankBookId_DoesNotRegister()
+    public async Task RefreshRequest_CarriesNoAppComputedTargetIdentity()
     {
+        // S-2 discriminator (VM seam): the only App -> Host scan interface takes no id/path argument,
+        // so a completed import can never smuggle a StableSourceId/folder registry_id into the Host.
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
-        var viewModel = Create(host, () => null);
-
+        var viewModel = Create(host);
         await RunAsync(host, viewModel, SourceImportOperationState.Completed);
 
-        Assert.Empty(host.ScanTargetRegistrations);
+        Assert.Equal(1, host.SourceScanRefreshRequests);
+        var method = typeof(ISourceImportController).GetMethod(nameof(ISourceImportController.RequestSourceScanRefresh));
+        Assert.NotNull(method);
+        Assert.Empty(method!.GetParameters());
     }
 
     [Fact]
-    public async Task ConfirmCapturesBookId_BeforeALaterSelectionSwitch()
+    public async Task ConfirmInFlight_LaterSelectionSwitch_StillOneRefresh()
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot());
-        var currentBook = "book-1";
-        var viewModel = Create(host, () => currentBook);
+        var viewModel = Create(host);
         var receiptGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         host.ReferenceReceiptOverride = async () =>
         {
@@ -2005,13 +2002,9 @@ public sealed class Fea11ScanRegistrationVmTests
         await viewModel.PlanReferenceImportAsync(
             new[] { new ReferenceImportSource(@"C:\manga\page.png", IsFolder: false) });
         var confirm = viewModel.ConfirmReferenceImportAsync();
-        // The import is in flight; the user switches the library selection. The registration must
-        // keep the book captured when the import started (r1 P3-1).
-        currentBook = "book-2";
         receiptGate.TrySetResult(true);
         await confirm;
 
-        var registration = Assert.Single(host.ScanTargetRegistrations);
-        Assert.Equal("book-1", registration.BookId);
+        Assert.Equal(1, host.SourceScanRefreshRequests);
     }
 }

@@ -1,0 +1,27 @@
+# FEA-11-SCAN-2 shard B changed files (Host/App)
+
+## Modified apps (13)
+apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+
+## Evidence (host- prefix)
+verification/FEA-11-SCAN-2/host-cold-start.json
+verification/FEA-11-SCAN-2/host-cold-start.txt
+verification/FEA-11-SCAN-2/host-changed-files.txt
+verification/FEA-11-SCAN-2/host-shard-record.md
+verification/FEA-11-SCAN-2/host-scope-validation.log
+verification/FEA-11-SCAN-2/logs/host-*.log
+
+## Not touched by this shard
+src/** (Core shard A 0cb5177ca), tests/core/** (Core shard), doc/** (Lead/DSH), STATUS/PLAN/LEDGER.

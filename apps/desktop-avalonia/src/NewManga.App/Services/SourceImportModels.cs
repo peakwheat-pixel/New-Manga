@@ -56,26 +56,15 @@ public interface ISourceImportController
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// FEA-11-SCAN-1 (I-2 / AC-S2): after a referenced import reaches the terminal
-    /// <see cref="SourceImportOperationState.Completed"/> state, register its sources as Host-side
-    /// periodic read-only scan targets (in-process only: no wire command, no persistence). The Host
-    /// overwrites a target by <c>source_id</c>, so repeated imports never grow the set. A null
-    /// implementation is a no-op; registration failures never change the import result.
+    /// FEA-11-SCAN-2 (B1 / AC-S2-2 / S-2): after a referenced import reaches the terminal
+    /// <see cref="SourceImportOperationState.Completed"/> state, ask the Host to refresh its scan
+    /// targets ONCE (in-process only: no wire command, no persistence). The App deliberately does
+    /// NOT compute or register target ids — the Core enumeration is the only authority; the Host
+    /// re-verifies its persistent registry. A null implementation is a no-op; a refresh failure can
+    /// never change the import result.
     /// </summary>
-    void RegisterCompletedImportScanTargets(
-        string bookId,
-        IReadOnlyList<ReferenceImportSource> sources);
+    void RequestSourceScanRefresh();
 }
-
-/// <summary>
-/// FEA-11-SCAN-1 (I-2): one completed-import source handed to the Host scan registry. The path is
-/// needed by the Host to mint read grants; it never leaves the in-process registration call.
-/// </summary>
-public sealed record SourceScanTargetRegistration(
-    string SourceId,
-    string Path,
-    IReadOnlyList<string> ProjectIds,
-    string Version);
 
 /// <summary>
 /// FEA-09-UI-1: one user-picked referenced import source. <see cref="Path"/> stays inside the
@@ -558,20 +547,18 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
     private readonly HostCommandDispatcher _commands;
     private readonly SourceReadCoordinator _sources;
     private readonly string _dataRoot;
-    private readonly Action<SourceScanTargetRegistration>? _registerScanTarget;
+
 
     private (string Token, string Path)? _activeSecret;
 
     public SourceImportCoordinator(
         HostCommandDispatcher commands,
         SourceReadCoordinator sources,
-        string dataRoot,
-        Action<SourceScanTargetRegistration>? registerScanTarget = null)
+        string dataRoot)
     {
         _commands = commands;
         _sources = sources;
         _dataRoot = dataRoot;
-        _registerScanTarget = registerScanTarget;
     }
 
     /// <summary>
@@ -749,57 +736,6 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync() => await CleanupSecretAsync().ConfigureAwait(false);
-
-    /// <summary>
-    /// FEA-11-SCAN-1 (I-2 / AC-S2): derives the C-16 identity of each completed-import source and
-    /// hands it to the Host scan registry. Only the App knows the user-picked paths; the Host never
-    /// guesses an id. A folder import's lease source id IS its registry id (see
-    /// <see cref="IssueGrantsAsync"/>), so the exact registry entry is looked up by root path; a file
-    /// import reuses the deterministic <see cref="StableSourceId"/>. Unresolvable sources are skipped
-    /// (no id → no target), never guessed.
-    /// </summary>
-    public void RegisterCompletedScanTargets(string bookId, IReadOnlyList<ReferenceImportSource> sources)
-    {
-        var register = _registerScanTarget;
-        if (register is null || string.IsNullOrWhiteSpace(bookId) || sources.Count == 0)
-        {
-            return;
-        }
-
-        // Re-registration overwrites by source_id (AC-S2), so a repeated import stays one target.
-        var targets = new Dictionary<string, SourceScanTargetRegistration>(StringComparer.Ordinal);
-        foreach (var source in sources)
-        {
-            var path = Path.GetFullPath(source.Path);
-            string? sourceId;
-            if (source.IsFolder)
-            {
-                sourceId = _sources.Registry.List()
-                    .Where(entry => entry.RevokedAt is null
-                        && entry.Roots.Length == 1
-                        && string.Equals(entry.Roots[0].Root, path, StringComparison.OrdinalIgnoreCase))
-                    .Select(entry => entry.RegistryId)
-                    .FirstOrDefault();
-            }
-            else
-            {
-                sourceId = StableSourceId(path);
-            }
-
-            if (string.IsNullOrWhiteSpace(sourceId))
-            {
-                continue;
-            }
-
-            targets[sourceId] = new SourceScanTargetRegistration(
-                sourceId, path, new[] { bookId }, "1");
-        }
-
-        foreach (var target in targets.Values)
-        {
-            register(target);
-        }
-    }
 
     /// <summary>Pass the selected path and kind to Host; only Host enumerates and authorizes folders.</summary>
     private async Task<IReadOnlyList<string>> IssueGrantsAsync(ReferenceImportSource source, CancellationToken cancellationToken)

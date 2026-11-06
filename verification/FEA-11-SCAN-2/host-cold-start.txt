@@ -1,0 +1,9 @@
+FEA-11-SCAN-2 AC-S2 cold-start IPC
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-27f71c935ba94da7a7d07848197918b9
+app_registration_used=false
+core_source_id=s1
+target_source_id=s1
+scan_result=ok
+db_snapshot_unchanged=true (15 tables)
+wire_commands=OpenHostSession,RegisterSourceReadGrant,ScanSourceSync,core.ping,source_list_scan_targets
+PASS

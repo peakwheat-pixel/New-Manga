@@ -113,6 +113,42 @@ public sealed class HostRuntime : IAsyncDisposable
         return scheduler.RegisterTarget(new SourceScanTarget(sourceId, path, projectIds, version));
     }
 
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-2 / S-2): App-triggered scan-target refresh. Only a completed
+    /// referenced import calls this — the App never computes authoritative target ids; the Host
+    /// enumerates the Core's read-only targets and re-verifies its own persistent registry. The
+    /// refresh runs in the background (never blocks the caller or Host start). Returns false when
+    /// the scan slice is not active on this Host.
+    /// </summary>
+    public bool RequestSourceScanRefresh()
+    {
+        var scheduler = ScanScheduler;
+        if (scheduler is null || !_options.SourceScanColdStartEnumeration)
+        {
+            return false;
+        }
+
+        _ = RefreshSourceScanTargetsAsync(scheduler);
+        return true;
+    }
+
+    private async Task RefreshSourceScanTargetsAsync(SourceScanScheduler scheduler)
+    {
+        try
+        {
+            await scheduler.RefreshTargetsAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            // Enumeration is observability-only for the Host start path; the typed verdict is already
+            // on SourceScanStatus. Never let a refresh fault escape as an unobserved task exception.
+            _log.Warn("source scan refresh failed: " + error.GetType().Name);
+        }
+    }
+
     public HostLog Log => _log;
 
     public HostOptions Options => _options;
@@ -1228,18 +1264,33 @@ public sealed class HostRuntime : IAsyncDisposable
             MaxEntriesPerSource = _options.SourceScanMaxEntriesPerSource,
         };
         var executor = new HostSourceScanExecutor(core, sources, scanOptions, _options.SourceScanTimeProvider);
+        // FEA-11-SCAN-2 (B1): the cold-start enumerator reads the Core's authoritative scan targets
+        // and re-verifies the Host's persistent registry; null keeps the SCAN-1 snapshot-only mode
+        // (no enumeration command is ever sent).
+        ISourceScanTargetEnumerator? enumerator = _options.SourceScanColdStartEnumeration
+            && sources.Registry is { } registry
+                ? new HostSourceScanTargetEnumerator(core, registry)
+                : null;
         ScanScheduler = new SourceScanScheduler(
             scanOptions,
             executor,
             _options.SourceScanTimeProvider,
             infoLog: _log.Info,
             warnLog: _log.Warn,
-            errorLog: _log.Error);
+            errorLog: _log.Error,
+            enumerator: enumerator);
         ScanScheduler.Start();
         _log.Info(
             "source scan scheduler started interval=" + interval
             + "s max_targets=" + scanOptions.MaxTargetsPerTick
-            + " max_bytes=" + scanOptions.MaxBytesPerSource);
+            + " max_bytes=" + scanOptions.MaxBytesPerSource
+            + " cold_start_enumeration=" + (enumerator is not null));
+        if (enumerator is not null)
+        {
+            // AC-S2-1: enumerate in the background after Ready — never block startup and never retry
+            // in a storm; a missing capability is a typed snapshot state until an explicit refresh.
+            _ = RefreshSourceScanTargetsAsync(ScanScheduler);
+        }
     }
 
     /// <summary>FEA-11-SCAN-1: stops and joins the scan loop; idempotent and safe before/after stop.</summary>

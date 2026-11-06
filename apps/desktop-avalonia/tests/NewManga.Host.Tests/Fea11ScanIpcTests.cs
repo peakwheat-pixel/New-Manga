@@ -182,6 +182,225 @@ public sealed class Fea11ScanIpcTests
             + "db_snapshot_unchanged=true\nwire_commands=" + string.Join(",", wireCommands) + "\nPASS\n");
     }
 
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1/2/4/5/8): the cold-start chain. A fresh Host-side object graph (NO
+    /// App registration, no in-memory targets) enumerates the Core's authoritative scan targets,
+    /// re-verifies the persistent Host registry, mints a grant and scans exactly like SCAN-1. When the
+    /// Core shard is not merged yet (no source.sync.enumerate/1 capability) the attempt records a
+    /// typed NOT_RUN evidence line and returns: it never pretends the enumeration happened.
+    /// </summary>
+    [Fea11ScanIpcFact]
+    public async Task ColdStartEnumeration_WithoutAppRegistration_IsReadOnly()
+    {
+        var (repo, python, root, receipt) = await SeedAsync();
+        var dbPath = Path.Combine(root, "library.db");
+        var oldZip = receipt.GetProperty("old_zip").GetString()!;
+        var options = BuildOptions(repo, python, root);
+        await using var client = await CoreServiceClient.StartAsync(options);
+        await client.OpenHostSessionAsync();
+        var ping = await client.PingAsync();
+        if (!ping.Capabilities.Contains("source.sync.enumerate/1"))
+        {
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "cold-start.txt"),
+                "FEA-11-SCAN-2 cold-start IPC: NOT_RUN (Core does not advertise source.sync.enumerate/1; "
+                + "Core shard pending). Core capabilities=" + string.Join(",", ping.Capabilities) + "\n");
+            return;
+        }
+
+        var registry = new SourceAccessRegistry(root);
+        var registered = registry.Register("fea11-scan-2", new[] { oldZip });
+        var facts = ReadFileIdentity(oldZip);
+        UpdateLocationGenerationRow(python, dbPath, registered.RegistryId, registered.Generation, facts);
+        var coreSourceId = QuerySourceId(python, dbPath);
+        var snapshotBefore = QueryScanSnapshot(python, dbPath);
+
+        var scanOptions = new SourceScanOptions
+        {
+            Enabled = true,
+            IntervalSeconds = 60,
+            MaxTargetsPerTick = 8,
+            MaxBytesPerSource = 256L * 1024 * 1024,
+            MaxEntriesPerSource = 10000,
+        };
+        var sources = new SourceReadCoordinator(client, registry, () => true);
+        var executor = new HostSourceScanExecutor(client, sources, scanOptions);
+        var enumerator = new HostSourceScanTargetEnumerator(client, registry);
+        await using var scheduler = new SourceScanScheduler(
+            scanOptions, executor, enumerator: enumerator);
+
+        Assert.True(await scheduler.RefreshTargetsAsync(), "cold-start enumeration must succeed");
+        var status = scheduler.Snapshot();
+        Assert.NotNull(status.Enumeration);
+        Assert.True(status.Enumeration!.Available);
+        var target = Assert.Single(status.Targets);
+        // S-2 discriminator: the authoritative id is the Core sources.source_id, never the App-side
+        // StableSourceId used by SCAN-1.
+        Assert.Equal(coreSourceId, target.SourceId);
+        Assert.NotEqual(ExpectedStableSourceId(Path.GetFullPath(oldZip)), target.SourceId);
+
+        Assert.True(await scheduler.TickAsync());
+        var scanned = scheduler.Snapshot().Targets.Single();
+        Assert.NotEqual(SourceScanResults.Error, scanned.LastResult);
+
+        var snapshotAfter = QueryScanSnapshot(python, dbPath);
+        Assert.Equal(snapshotBefore, snapshotAfter);
+        var wireCommands = client.Wire.Frames
+            .Select(frame => RequestCommand(frame.RequestLine))
+            .Where(command => command is not null)
+            .Select(command => command!)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(command => command, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(
+            new[]
+            {
+                "OpenHostSession", "RegisterSourceReadGrant", "ScanSourceSync", "core.ping",
+                "source_list_scan_targets",
+            },
+            wireCommands);
+
+        var evidence = new
+        {
+            @case = "AC-S2-1/S2-2/S2-4/S2-5/S2-8",
+            core = "real volatile python core (stdio IPC)",
+            app_registration_used = false,
+            core_source_id = coreSourceId,
+            target_source_id = target.SourceId,
+            target_source_kind = "zip",
+            enumeration = new { available = status.Enumeration!.Available, last_result = status.Enumeration.LastResult, skipped = status.Enumeration.SkippedTargets },
+            scan_result = scanned.LastResult,
+            db_snapshot_unchanged = true,
+            db_tables = QueryScanTables,
+            db_table_count = QueryScanTables.Length,
+            wire_commands = wireCommands,
+        };
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "cold-start.json"),
+            JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "cold-start.txt"),
+            "FEA-11-SCAN-2 AC-S2 cold-start IPC\n"
+            + "DataRoot=" + root + "\n"
+            + "app_registration_used=false\n"
+            + "core_source_id=" + coreSourceId + "\n"
+            + "target_source_id=" + target.SourceId + "\n"
+            + "scan_result=" + scanned.LastResult + "\n"
+            + "db_snapshot_unchanged=true (15 tables)\n"
+            + "wire_commands=" + string.Join(",", wireCommands) + "\nPASS\n");
+    }
+
+    /// <summary>Aligns the isolated fixture's C-17 location row with real file + Host registry facts.</summary>
+    private static void UpdateLocationGenerationRow(
+        string python, string dbPath, string registryId, int generation, FileIdentity facts)
+    {
+        var code =
+            "import sqlite3,sys\n" +
+            "c=sqlite3.connect(sys.argv[1])\n" +
+            "c.execute('UPDATE source_locations SET registry_id=?, authorization_generation=?, volume_serial=?, file_id=?, size_bytes=? WHERE location_id=?'," +
+            "(sys.argv[2],int(sys.argv[3]),int(sys.argv[4]),int(sys.argv[5]),int(sys.argv[6]),'sl-s1'))\n" +
+            "c.commit()\n" +
+            "c.close()\n" +
+            "print('LOCATION_GENERATION_UPDATED')\n";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(code);
+        startInfo.ArgumentList.Add(dbPath);
+        startInfo.ArgumentList.Add(registryId);
+        startInfo.ArgumentList.Add(generation.ToString());
+        startInfo.ArgumentList.Add(facts.Volume.ToString());
+        startInfo.ArgumentList.Add(facts.FileId.ToString());
+        startInfo.ArgumentList.Add(facts.Size.ToString());
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, stdout + stderr);
+    }
+
+    /// <summary>Reads the Core-authoritative source id straight from the isolated fixture DB.</summary>
+    private static string QuerySourceId(string python, string dbPath)
+    {
+        const string code =
+            "import sqlite3,sys\n" +
+            "c=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True)\n" +
+            "row=c.execute('SELECT source_id FROM sources ORDER BY source_id LIMIT 1').fetchone()\n" +
+            "c.close()\n" +
+            "print('' if row is None else row[0])\n";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(code);
+        startInfo.ArgumentList.Add(dbPath);
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, stdout + stderr);
+        return stdout.Trim();
+    }
+
+    /// <summary>
+    /// FEA-11-SCAN-2 AC-S2-8: the C-17 v1.1 scan-relevant table snapshot (sources, locations,
+    /// versions, entries, books, chapters, pages, bindings, regions, revisions, plans, operations,
+    /// publications, lineage, rendition cache). The enumeration + scan must leave every row equal.
+    /// </summary>
+    private static readonly string[] QueryScanTables =
+    [
+        "sources", "source_locations", "source_versions", "source_entries", "books", "chapters",
+        "pages", "page_bindings", "regions", "region_revisions", "source_sync_plans",
+        "source_operations", "source_binding_publications", "source_revision_lineage",
+        "rendition_cache",
+    ];
+
+    private static string QueryScanSnapshot(string python, string dbPath)
+    {
+        const string code =
+            "import sqlite3,sys,json\n" +
+            "tables=sys.argv[2].split(',')\n" +
+            "c=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True)\n" +
+            "c.row_factory=sqlite3.Row\n" +
+            "snap={t:[dict(row) for row in c.execute('SELECT * FROM '+t)] for t in tables}\n" +
+            "c.close()\n" +
+            "print(json.dumps(snap,sort_keys=True))\n";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(code);
+        startInfo.ArgumentList.Add(dbPath);
+        startInfo.ArgumentList.Add(string.Join(",", QueryScanTables));
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, stdout + stderr);
+        return stdout.Trim();
+    }
+
+    /// <summary>Mirrors the production file identity derivation (sha256 of the upper path, first 16 hex).</summary>
+    private static string ExpectedStableSourceId(string normalizedPath)
+    {
+        var digest = System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(normalizedPath.ToUpperInvariant()));
+        return "src-" + Convert.ToHexString(digest).ToLowerInvariant()[..16];
+    }
+
     // ---------------------------------------------------------------------------------------
     // Fixture plumbing (isolated workspace root; no real user data).
     // ---------------------------------------------------------------------------------------
@@ -437,99 +656,5 @@ public sealed class Fea11ScanIpcTests
                 Skip = "set NEWMANGA_FEA11_IPC=1 for the real isolated Python Core scan IPC test";
             }
         }
-    }
-}
-
-/// <summary>
-/// FEA-11-SCAN-1 (I-2 / AC-S2): the App-side registration bridge. A completed referenced import is the
-/// only producer of scan targets; the App derives the C-16 identity itself (deterministic file source
-/// id, folder registry id) and never guesses. No IPC is involved — the Host runs in-process.
-/// </summary>
-public sealed class Fea11ScanRegistrationTests
-{
-    [Fact]
-    public void CompletedImport_RegistersFileSources_WithStableSourceIdAndProjectIds()
-    {
-        var root = CreateIsolatedRoot();
-        try
-        {
-            var registry = new SourceAccessRegistry(root);
-            var sources = new SourceReadCoordinator(null!, registry, () => true);
-            var registrations = new List<SourceScanTargetRegistration>();
-            var coordinator = new SourceImportCoordinator(
-                new NewManga.CoreClient.Commands.HostCommandDispatcher(), sources, root, registrations.Add);
-            var first = new ReferenceImportSource(Path.Combine(root, "book-a.zip"), false);
-            var second = new ReferenceImportSource(Path.Combine(root, "book-b.cbz"), false);
-
-            coordinator.RegisterCompletedScanTargets("book-1", new[] { first, second });
-
-            Assert.Equal(2, registrations.Count);
-            Assert.All(registrations, registration => Assert.Equal("book-1", registration.ProjectIds.Single()));
-            Assert.All(registrations, registration => Assert.Equal("1", registration.Version));
-            Assert.Equal(ExpectedStableSourceId(Path.GetFullPath(first.Path)), registrations[0].SourceId);
-            Assert.Equal(Path.GetFullPath(second.Path), registrations[1].Path);
-
-            // Re-registration overwrites by source_id (the Host target set never grows).
-            coordinator.RegisterCompletedScanTargets("book-1", new[] { first });
-            Assert.Equal(3, registrations.Count);
-            Assert.Equal(registrations[0].SourceId, registrations[2].SourceId);
-        }
-        finally
-        {
-            TryDelete(root);
-        }
-    }
-
-    [Fact]
-    public void CompletedImport_SkipsBlankBookId_AndUnresolvableFolder()
-    {
-        var root = CreateIsolatedRoot();
-        try
-        {
-            var registry = new SourceAccessRegistry(root);
-            var sources = new SourceReadCoordinator(null!, registry, () => true);
-            var registrations = new List<SourceScanTargetRegistration>();
-            var coordinator = new SourceImportCoordinator(
-                new NewManga.CoreClient.Commands.HostCommandDispatcher(), sources, root, registrations.Add);
-
-            var file = new ReferenceImportSource(Path.Combine(root, "book.zip"), false);
-            var folder = new ReferenceImportSource(Path.Combine(root, "not-registered-folder"), true);
-            coordinator.RegisterCompletedScanTargets(string.Empty, new[] { file });
-            coordinator.RegisterCompletedScanTargets("book-1", new[] { folder });
-
-            Assert.Empty(registrations); // no book id / no registry entry → no guessed target
-        }
-        finally
-        {
-            TryDelete(root);
-        }
-    }
-
-    private static string CreateIsolatedRoot()
-    {
-        var root = Path.Combine(
-            Path.GetTempPath(), "fea11-scan-registration-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(root);
-        return root;
-    }
-
-    private static void TryDelete(string root)
-    {
-        try
-        {
-            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
-        }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-        {
-            // best effort: the isolated temp fixture expires with the OS temp directory
-        }
-    }
-
-    /// <summary>Mirrors the production file identity derivation (sha256 of the upper path, first 16 hex).</summary>
-    private static string ExpectedStableSourceId(string normalizedPath)
-    {
-        var digest = System.Security.Cryptography.SHA256.HashData(
-            System.Text.Encoding.UTF8.GetBytes(normalizedPath.ToUpperInvariant()));
-        return "src-" + Convert.ToHexString(digest).ToLowerInvariant()[..16];
     }
 }

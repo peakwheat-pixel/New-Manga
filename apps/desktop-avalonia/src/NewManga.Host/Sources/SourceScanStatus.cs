@@ -27,7 +27,25 @@ public sealed record SourceScanStatus(
     public static SourceScanStatus Disabled(int intervalSeconds) =>
         new(false, intervalSeconds, false, null, null, Array.Empty<SourceScanTargetStatus>(),
             Array.Empty<SourceScanRecentEntry>());
+
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1..S2-4): the cold-start enumeration verdict; null until the first
+    /// refresh was attempted. Counts only — never the skipped target paths/ids from the Host side.
+    /// </summary>
+    public SourceScanEnumerationStatus? Enumeration { get; init; }
 }
+
+/// <summary>
+/// FEA-11-SCAN-2 (B1): typed cold-start enumeration state. <see cref="Available"/> is false when the
+/// Core did not advertise <c>source.sync.enumerate/1</c> or the enumeration failed; the Host then
+/// fails closed without blocking startup (no retry storm — only an explicit refresh retries).
+/// </summary>
+public sealed record SourceScanEnumerationStatus(
+    bool? Available,
+    DateTimeOffset? LastRefreshAt,
+    string LastResult,
+    string? LastErrorCode,
+    int SkippedTargets);
 
 /// <summary>One registered scan target, projected without any path or grant material.</summary>
 public sealed record SourceScanTargetStatus(
@@ -78,6 +96,10 @@ public static class SourceScanResults
     public const string Missing = "missing";
     public const string Unsupported = "unsupported";
     public const string Denied = "denied";
+
+    /// <summary>FEA-11-SCAN-2 / AC-S2-4: registry authorization could not be proven; no scan frame.</summary>
+    public const string Skipped = "skipped";
+
     public const string Error = "error";
 
     /// <summary>I-6: <c>recent</c> keeps at most 50 entries.</summary>
@@ -85,6 +107,6 @@ public static class SourceScanResults
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
-        Ok, Changed, Missing, Unsupported, Denied, Error,
+        Ok, Changed, Missing, Unsupported, Denied, Skipped, Error,
     };
 }

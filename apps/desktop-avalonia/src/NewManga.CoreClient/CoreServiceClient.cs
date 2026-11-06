@@ -1537,6 +1537,37 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return response;
     }
 
+    /// <summary>
+    /// FEA-11-SCAN-2 (C-17 v1.1 / B1): the read-only cold-start scan-target enumeration command
+    /// (<c>source_list_scan_targets</c>, application channel, closed empty request object). It is
+    /// Host-internal: deliberately NOT registered on the Host command dispatcher / C-07 and it has
+    /// no UI face; the Host calls it directly before the first periodic scan tick.
+    /// </summary>
+    public const string SourceListScanTargetsCommand = "source_list_scan_targets";
+
+    /// <summary>FEA-11-SCAN-2 (C-17 v1.1): the additive capability that gates the enumeration command.</summary>
+    public const string SourceEnumerateCapability = "source.sync.enumerate/1";
+
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1): enumerates the Core's authoritative scan targets. Capability is
+    /// probed first (C-17 §5 / M2-C1 §5.13 fail-closed rule: never probe by dispatching the command and
+    /// interpreting <c>UNKNOWN_COMMAND</c>); a missing capability surfaces as typed
+    /// <c>CORE_CAPABILITY_MISSING</c> from <see cref="RequireCapabilitiesAsync"/>.
+    /// </summary>
+    public async Task<JsonElement> ListSourceScanTargetsAsync(CancellationToken cancellationToken = default)
+    {
+        await RequireCapabilitiesAsync(new[] { SourceEnumerateCapability }, cancellationToken)
+            .ConfigureAwait(false);
+        var response = await SendAsync(
+                SourceListScanTargetsCommand,
+                CoreProtocol.DefaultMinor,
+                WireJson.EmptyObject,
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return RequireResult(response, SourceListScanTargetsCommand);
+    }
+
     public async Task ShutdownAsync(CancellationToken cancellationToken = default)
     {
         if (_disposed)

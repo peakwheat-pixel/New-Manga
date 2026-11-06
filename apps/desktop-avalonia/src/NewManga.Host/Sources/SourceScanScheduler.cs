@@ -9,18 +9,58 @@ using NewManga.CoreClient.Wire;
 namespace NewManga.Host.Sources;
 
 /// <summary>
-/// FEA-11-SCAN-1 (I-4 / AC-S1): one registered Host-side scan target. Registered by the App after a
-/// referenced import reaches <c>Completed</c> (I-2); held in memory only (L-A/L-C). The absolute
-/// path is required to mint the read grant but is deliberately excluded from logs, status and
-/// exception text (see <see cref="ToString"/>).
+/// FEA-11-SCAN-1 (I-4 / AC-S1): one registered Host-side scan target. FEA-11-SCAN-2 (B1) adds the
+/// enumerated form: a cold-start target comes from the Core's <c>source_list_scan_targets</c> and
+/// carries the registry identity the Host must re-verify (registry id / generation / recorded
+/// identity digest); the path is resolved locally from the persistent Host registry, never from the
+/// wire. The absolute path is required to mint the read grant but is deliberately excluded from
+/// logs, status and exception text (see <see cref="ToString"/>).
 /// </summary>
 public sealed record SourceScanTarget(
     string SourceId,
     string Path,
     IReadOnlyList<string> ProjectIds,
-    string Version)
+    string Version,
+    string? RegistryId = null,
+    int Generation = 0,
+    string? SourceKind = null,
+    string? IdentityDigest = null)
 {
+    /// <summary>True when the target was enumerated from the Core (B1 cold-start form).</summary>
+    public bool IsEnumerated => !string.IsNullOrEmpty(RegistryId);
+
     public override string ToString() => "SourceScanTarget(" + SourceId + ")";
+}
+
+/// <summary>
+/// FEA-11-SCAN-2 (B1 / AC-S2-1..S2-4): one enumeration attempt over the Core's read-only
+/// <c>source_list_scan_targets</c>. <see cref="Ok"/> is false for a typed fail-closed verdict
+/// (capability missing, transport/storage error); <see cref="Skipped"/> counts Core targets the Host
+/// refused to turn into scan targets (unknown source kind, &gt;20 project ids, registry
+/// missing/revoked/generation drift, unreadable root). Skipped details are counted only — the path
+/// never leaves the Host.
+/// </summary>
+public sealed record SourceScanEnumerationResult(
+    bool Ok,
+    string? ErrorCode,
+    IReadOnlyList<SourceScanTarget> Targets,
+    int Skipped)
+{
+    public static SourceScanEnumerationResult Unavailable(string code) =>
+        new(false, code, Array.Empty<SourceScanTarget>(), 0);
+
+    public static SourceScanEnumerationResult Completed(
+        IReadOnlyList<SourceScanTarget> targets, int skipped) =>
+        new(true, null, targets, skipped);
+}
+
+/// <summary>
+/// FEA-11-SCAN-2 (B1): the only operation the scheduler may perform for cold-start target discovery.
+/// Production talks to the real Core; tests script it (fake core, zero sleep).
+/// </summary>
+public interface ISourceScanTargetEnumerator
+{
+    Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken);
 }
 
 /// <summary>The closed <c>last_result</c> enum plus the internal <see cref="Deferred"/> marker.
@@ -35,6 +75,9 @@ public enum SourceScanOutcomeKind
     Denied,
     Error,
     Deferred,
+    /// <summary>FEA-11-SCAN-2 / AC-S2-4: registry authorization could not be proven; the target
+    /// was NOT scanned and NO <c>ScanSourceSync</c> frame was sent (typed code in ErrorCode).</summary>
+    Skipped,
 }
 
 /// <summary>One target's scan verdict. <see cref="ErrorCode"/> is a typed code only.</summary>
@@ -56,6 +99,8 @@ public sealed record SourceScanOutcome(
     public static SourceScanOutcome Denied(string code) => new(SourceScanOutcomeKind.Denied, null, code);
 
     public static SourceScanOutcome Error(string? code = null) => new(SourceScanOutcomeKind.Error, null, code);
+
+    public static SourceScanOutcome Skipped(string code) => new(SourceScanOutcomeKind.Skipped, null, code);
 
     public static SourceScanOutcome Deferred() => new(SourceScanOutcomeKind.Deferred);
 }
@@ -153,11 +198,17 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     private readonly Dictionary<string, TargetState> _targets = new(StringComparer.Ordinal);
     private readonly SemaphoreSlim _tickGate = new(1, 1);
     private readonly List<SourceScanRecentEntry> _recent = new();
+    private readonly ISourceScanTargetEnumerator? _enumerator;
     private int _budgetCursor;
     private bool _paused;
     private bool _disposed;
     private DateTimeOffset? _lastTickAt;
     private DateTimeOffset? _nextTickAt;
+    private DateTimeOffset? _lastEnumerationAt;
+    private bool? _enumerationAvailable;
+    private string? _lastEnumerationResult;
+    private string? _lastEnumerationErrorCode;
+    private int _enumerationSkipped;
     private CancellationTokenSource? _loopCts;
     private Task? _loopTask;
 
@@ -167,7 +218,8 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         TimeProvider? timeProvider = null,
         Action<string>? infoLog = null,
         Action<string>? warnLog = null,
-        Action<string, string>? errorLog = null)
+        Action<string, string>? errorLog = null,
+        ISourceScanTargetEnumerator? enumerator = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(executor);
@@ -177,6 +229,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         _info = infoLog;
         _warn = warnLog;
         _error = errorLog;
+        _enumerator = enumerator;
     }
 
     public bool Enabled => _options.Enabled;
@@ -268,6 +321,142 @@ public sealed class SourceScanScheduler : IAsyncDisposable
 
         _info?.Invoke("source scan target registered source=" + target.SourceId);
         return true;
+    }
+
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1/2/7): cold-start or App-triggered refresh. Runs the injected
+    /// <see cref="ISourceScanTargetEnumerator"/>, merges the enumerated targets into the in-memory
+    /// target set by <c>source_id</c> (add/update only — repeated refreshes are idempotent) and
+    /// records the typed enumeration verdict on the snapshot. Single-flight with <see cref="TickAsync"/>
+    /// (a refresh never overlaps a tick; an overlapping request is merged, never queued) and never
+    /// blocks the Host start path (the caller runs it in the background).
+    /// </summary>
+    public async Task<bool> RefreshTargetsAsync(CancellationToken cancellationToken = default)
+    {
+        var enumerator = _enumerator;
+        if (enumerator is null)
+        {
+            lock (_gate)
+            {
+                RecordEnumerationLocked(SourceScanEnumerationResult.Unavailable("CORE_CAPABILITY_MISSING"),
+                    _timeProvider.GetUtcNow());
+            }
+
+            _warn?.Invoke("source scan refresh unavailable code=CORE_CAPABILITY_MISSING");
+            return false;
+        }
+
+        if (!await _tickGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        {
+            _info?.Invoke("source scan refresh merged");
+            return false;
+        }
+
+        try
+        {
+            DateTimeOffset now;
+            SourceScanEnumerationResult result;
+            lock (_gate)
+            {
+                if (_disposed || !_options.Enabled)
+                {
+                    return false;
+                }
+
+                now = _timeProvider.GetUtcNow();
+            }
+
+            try
+            {
+                result = await enumerator.EnumerateAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (CoreOperationException error)
+            {
+                result = SourceScanEnumerationResult.Unavailable(error.Code);
+            }
+            catch (SourceAccessException error)
+            {
+                result = SourceScanEnumerationResult.Unavailable(error.Code);
+            }
+            catch (SidecarException)
+            {
+                result = SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                result = SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
+            }
+            catch (Exception error) when (error is not OutOfMemoryException)
+            {
+                result = SourceScanEnumerationResult.Unavailable("UNKNOWN");
+            }
+
+            int added;
+            int updated;
+            lock (_gate)
+            {
+                if (_disposed)
+                {
+                    return false;
+                }
+
+                RecordEnumerationLocked(result, now);
+                (added, updated) = MergeTargetsLocked(result.Targets);
+            }
+
+            if (result.Ok)
+            {
+                _info?.Invoke("source scan refresh targets=" + result.Targets.Count
+                    + " skipped=" + result.Skipped + " added=" + added + " updated=" + updated);
+            }
+            else
+            {
+                _warn?.Invoke("source scan refresh unavailable code=" + (result.ErrorCode ?? "UNKNOWN"));
+            }
+
+            return result.Ok;
+        }
+        finally
+        {
+            _tickGate.Release();
+        }
+    }
+
+    private (int Added, int Updated) MergeTargetsLocked(IReadOnlyList<SourceScanTarget> targets)
+    {
+        var added = 0;
+        var updated = 0;
+        foreach (var target in targets)
+        {
+            if (string.IsNullOrWhiteSpace(target.SourceId)) continue;
+            if (_targets.TryGetValue(target.SourceId, out var existing))
+            {
+                // Enumeration is authoritative for the Core-derived fields; the in-memory
+                // registration path never overwrites an enumerated target with a guessed id (S-2).
+                existing.Target = target;
+                updated++;
+            }
+            else
+            {
+                _targets[target.SourceId] = new TargetState(target);
+                added++;
+            }
+        }
+
+        return (added, updated);
+    }
+
+    private void RecordEnumerationLocked(SourceScanEnumerationResult result, DateTimeOffset now)
+    {
+        _lastEnumerationAt = now;
+        _enumerationAvailable = result.Ok;
+        _lastEnumerationResult = result.Ok ? SourceScanResults.Ok : SourceScanResults.Error;
+        _lastEnumerationErrorCode = result.Ok ? null : (result.ErrorCode ?? "UNKNOWN");
+        _enumerationSkipped = result.Skipped;
     }
 
     /// <summary>
@@ -377,6 +566,14 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                     pair.Key, pair.Value.LastScanAt, pair.Value.LastResult, pair.Value.Counts, pair.Value.Deferred))
                 .ToArray();
             var recent = _recent.ToArray();
+            var enumeration = _lastEnumerationAt is null
+                ? null
+                : new SourceScanEnumerationStatus(
+                    _enumerationAvailable,
+                    _lastEnumerationAt,
+                    _lastEnumerationResult ?? SourceScanResults.Ok,
+                    _lastEnumerationErrorCode,
+                    _enumerationSkipped);
             return new SourceScanStatus(
                 _options.Enabled,
                 EffectiveIntervalSeconds(),
@@ -384,7 +581,10 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 _lastTickAt,
                 _nextTickAt,
                 targets,
-                recent);
+                recent)
+            {
+                Enumeration = enumeration,
+            };
         }
     }
 
@@ -571,6 +771,14 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                     state.BackoffUntil = now.AddSeconds(backoffSeconds);
                     warnCode = outcome.ErrorCode ?? "SOURCE_ACCESS_DENIED";
                     break;
+                case SourceScanOutcomeKind.Skipped:
+                    // FEA-11-SCAN-2 / AC-S2-4: registry authorization could not be proven; the
+                    // target was not scanned and no grant/ScanSourceSync frame was created. This is
+                    // neither a success nor an error to back off from: re-verify on the next tick.
+                    state.Failures = 0;
+                    state.BackoffUntil = null;
+                    warnCode = null;
+                    break;
                 case SourceScanOutcomeKind.Error:
                 default:
                     state.Failures = Math.Min(state.Failures + 1, 32);
@@ -627,12 +835,13 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         SourceScanOutcomeKind.Missing => SourceScanResults.Missing,
         SourceScanOutcomeKind.Unsupported => SourceScanResults.Unsupported,
         SourceScanOutcomeKind.Denied => SourceScanResults.Denied,
+        SourceScanOutcomeKind.Skipped => SourceScanResults.Skipped,
         _ => SourceScanResults.Error,
     };
 
     private sealed class TargetState(SourceScanTarget target)
     {
-        public SourceScanTarget Target { get; } = target;
+        public SourceScanTarget Target { get; set; } = target;
 
         public DateTimeOffset? LastScanAt { get; set; }
 
@@ -681,6 +890,11 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     // fabricating an identity.
     private readonly ConcurrentDictionary<string, string> _identityDigests = new(StringComparer.Ordinal);
 
+    // FEA-11-SCAN-2 (B1): source ids whose enumerated registry file-root was verified in THIS
+    // session. A later disappearance is a C-17 §5.3 missing candidate; an unverified cold-start
+    // absence stays fail-closed SOURCE_REGISTRY_UNAVAILABLE (S-1②).
+    private readonly ConcurrentDictionary<string, bool> _verifiedEnumeratedRoots = new(StringComparer.Ordinal);
+
     public HostSourceScanExecutor(
         CoreServiceClient core,
         SourceReadCoordinator sources,
@@ -716,6 +930,20 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
 
     public async Task<SourceScanOutcome> ScanAsync(SourceScanTarget target, CancellationToken cancellationToken)
     {
+        // FEA-11-SCAN-2 (B1 / AC-S2-4/5): a cold-start enumerated target carries the Core-recorded
+        // registry identity. The Host re-verifies it against its OWN persistent registry before any
+        // grant or ScanSourceSync frame: missing/revoked/drifted registry -> typed skip; a missing or
+        // replaced production file-root -> SOURCE_REGISTRY_UNAVAILABLE fail-closed (S-1 option ②),
+        // never a fabricated "missing".
+        if (target.IsEnumerated)
+        {
+            var verdict = VerifyEnumeratedTarget(target);
+            if (verdict is not null)
+            {
+                return verdict;
+            }
+        }
+
         var entry = ResolveRegistryEntry(target.Path);
         if (entry is null)
         {
@@ -764,6 +992,99 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         }, cancellationToken).ConfigureAwait(false);
 
         return ProjectScanResult(response.Result);
+    }
+
+    /// <summary>
+    /// FEA-11-SCAN-2 (B1 / AC-S2-4/5): verifies the enumerated target against the Host's own
+    /// persistent registry. Returns null when the target may proceed to the normal scan path; a typed
+    /// <see cref="SourceScanOutcome.Skipped"/> when the registry authorization cannot be proven; a
+    /// typed <see cref="SourceScanOutcome.Error"/> SOURCE_REGISTRY_UNAVAILABLE for a production
+    /// file-root that is missing (before this session ever verified it) or was replaced.
+    /// </summary>
+    private SourceScanOutcome? VerifyEnumeratedTarget(SourceScanTarget target)
+    {
+        SourceAuthorization[] entries;
+        try
+        {
+            entries = _sources.Registry.List();
+        }
+        catch (SourceAccessException error)
+        {
+            // L-S1 / S-1②: a missing or replaced production file-root makes the persistent registry
+            // unreadable as a whole; the scan MUST fail closed as SOURCE_REGISTRY_UNAVAILABLE and
+            // never emit a missing observation or a ScanSourceSync frame for it.
+            return error.Code == "SOURCE_REGISTRY_BUSY"
+                ? SourceScanOutcome.Skipped(error.Code)
+                : SourceScanOutcome.Error("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        var entry = entries
+            .SingleOrDefault(candidate => string.Equals(candidate.RegistryId, target.RegistryId, StringComparison.Ordinal));
+        if (entry is null)
+        {
+            return SourceScanOutcome.Skipped("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        if (entry.RevokedAt is not null)
+        {
+            return SourceScanOutcome.Skipped("SOURCE_GRANT_REVOKED");
+        }
+
+        if (entry.Generation != target.Generation)
+        {
+            // Generation drift: the persisted authorization moved on since enumeration; only a new
+            // import/authorization can re-attest it (the scan slice never re-authorizes itself).
+            return SourceScanOutcome.Skipped("SOURCE_REGISTRY_BUSY");
+        }
+
+        SourceRoot? root = null;
+        if (TryNormalize(target.Path, out var normalizedPath))
+        {
+            root = entry.Roots.FirstOrDefault(candidate =>
+                candidate.Readable && TryNormalize(candidate.Root, out var rootPath)
+                && string.Equals(rootPath, normalizedPath, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (root is null || !root.Readable)
+        {
+            return SourceScanOutcome.Skipped("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        (ulong Volume, ulong Id, long Size) identity;
+        try
+        {
+            identity = SourceSecurity.Identity(root.Root);
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or SourceAccessException)
+        {
+            // The production file-root vanished. Before the first successful verification this is a
+            // cold-start fail-closed verdict (S-1②); afterwards it is a genuine C-17 §5.3 missing
+            // observation candidate and falls through to the normal (stabilized) missing path.
+            return _verifiedEnumeratedRoots.ContainsKey(target.SourceId)
+                ? null
+                : SourceScanOutcome.Error("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        if (identity.Volume != root.VolumeSerial || identity.Id != root.FileId)
+        {
+            // Same path, different physical file: fail closed; never scan a replacement as the same
+            // source and never emit a missing observation for it.
+            return SourceScanOutcome.Error("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        _verifiedEnumeratedRoots[target.SourceId] = true;
+        if (target.IdentityDigest is { } digest && IsLowerHex64(digest))
+        {
+            // The Core-recorded identity from the enumeration is the authoritative missing baseline
+            // (C-17 §5.3 identity_digest_of(location facts)); an ok/changed observation refreshes it
+            // only per the SCAN-1 r1 P1-1 rule.
+            if (!_identityDigests.TryGetValue(target.SourceId, out var cached) || cached == digest)
+            {
+                _identityDigests[target.SourceId] = digest;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -1007,6 +1328,196 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         using var document = JsonDocument.Parse(stream.ToArray());
         return document.RootElement.Clone();
     }
+
+    private static bool IsLowerHex64(string? value)
+    {
+        if (value is not { Length: 64 }) return false;
+        foreach (var character in value)
+        {
+            if (character is not (>= '0' and <= '9') and not (>= 'a' and <= 'f')) return false;
+        }
+
+        return true;
+    }
+}
+
+/// <summary>
+/// FEA-11-SCAN-2 (B1 / AC-S2-1/2/4/6): the production cold-start enumerator. Calls the frozen
+/// read-only <c>source_list_scan_targets</c> (application channel, Host-internal — not a C-07
+/// command), maps each Core <c>ScanTarget</c> onto a Host scan target ONLY after re-verifying the
+/// persistent Host registry (registry id / generation / revocation / readable root), and counts
+/// typed skips (unknown source kind, &gt;20 project ids, registry missing/revoked/generation drift,
+/// malformed fields). The Core never returns paths: the local path comes from the Host registry
+/// only. The enumerator never plans, authorizes, reads content or writes any state.
+/// </summary>
+public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
+{
+    /// <summary>C-17 §5 / P3-4: a shared source may map to at most this many books (1..20).</summary>
+    public const int MaximumProjectIds = 20;
+
+    /// <summary>P3-3: the only source kinds the scan slice can enumerate; unknown kinds fail closed.</summary>
+    public static readonly IReadOnlySet<string> KnownSourceKinds = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "image", "folder", "zip", "cbz", "pdf",
+    };
+
+    private const int MaximumTargets = 10000;
+
+    private readonly CoreServiceClient _core;
+    private readonly SourceAccessRegistry _registry;
+
+    public HostSourceScanTargetEnumerator(CoreServiceClient core, SourceAccessRegistry registry)
+    {
+        _core = core;
+        _registry = registry;
+    }
+
+    public async Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken)
+    {
+        JsonElement result;
+        try
+        {
+            result = await _core.ListSourceScanTargetsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (CoreOperationException error)
+        {
+            // Capability missing / Core typed refusal: fail closed, never probe by dispatch.
+            return SourceScanEnumerationResult.Unavailable(error.Code);
+        }
+        catch (SidecarException)
+        {
+            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            return SourceScanEnumerationResult.Unavailable("UNKNOWN");
+        }
+
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("targets", out var targets)
+            || targets.ValueKind != JsonValueKind.Array)
+        {
+            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
+        }
+
+        if (targets.GetArrayLength() > MaximumTargets)
+        {
+            // Contract upper bound: never silently truncate an oversized enumeration.
+            return SourceScanEnumerationResult.Unavailable("SOURCE_BUDGET_EXCEEDED");
+        }
+
+        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal);
+        foreach (var entry in _registry.List())
+        {
+            entries[entry.RegistryId] = entry;
+        }
+
+        var mapped = new Dictionary<string, SourceScanTarget>(StringComparer.Ordinal);
+        var skipped = 0;
+        foreach (var element in targets.EnumerateArray())
+        {
+            if (!TryMap(element, entries, out var target) || mapped.ContainsKey(target.SourceId))
+            {
+                skipped++;
+                continue;
+            }
+
+            mapped[target.SourceId] = target;
+        }
+
+        var ordered = mapped.Values.OrderBy(target => target.SourceId, StringComparer.Ordinal).ToArray();
+        return SourceScanEnumerationResult.Completed(ordered, skipped);
+    }
+
+    /// <summary>
+    /// Pure mapping step (unit-testable, zero I/O): closed Core <c>ScanTarget</c> -> Host scan target,
+    /// with every fail-closed skip rule applied. Returns false when the target must be typed-skipped.
+    /// </summary>
+    public static bool TryMap(
+        JsonElement element,
+        IReadOnlyDictionary<string, SourceAuthorization> entries,
+        out SourceScanTarget target)
+    {
+        target = null!;
+        if (element.ValueKind != JsonValueKind.Object)
+        {
+            return false;
+        }
+
+        var sourceId = ReadString(element, "source_id");
+        var registryId = ReadString(element, "registry_id");
+        var kind = ReadString(element, "source_kind");
+        var identityDigest = ReadString(element, "identity_digest");
+        if (string.IsNullOrWhiteSpace(sourceId) || string.IsNullOrWhiteSpace(registryId)
+            || kind is null || !KnownSourceKinds.Contains(kind)
+            || identityDigest is null || !IsLowerHex64(identityDigest))
+        {
+            return false;
+        }
+
+        if (!element.TryGetProperty("generation", out var generationElement)
+            || generationElement.ValueKind != JsonValueKind.Number
+            || !generationElement.TryGetInt32(out var generation) || generation < 1)
+        {
+            return false;
+        }
+
+        if (!element.TryGetProperty("project_ids", out var projectElements)
+            || projectElements.ValueKind != JsonValueKind.Array)
+        {
+            return false;
+        }
+
+        var projectIds = new List<string>();
+        foreach (var project in projectElements.EnumerateArray())
+        {
+            if (project.ValueKind != JsonValueKind.String || project.GetString() is not { Length: > 0 } projectId)
+            {
+                return false;
+            }
+
+            if (!projectIds.Contains(projectId, StringComparer.Ordinal))
+            {
+                projectIds.Add(projectId);
+            }
+        }
+
+        // P3-4: 1..20 unique books; more than 20 is a typed skip (never truncate, never fall back to
+        // "current" semantics).
+        if (projectIds.Count is < 1 or > MaximumProjectIds)
+        {
+            return false;
+        }
+
+        // Host-side authorization verification: the persisted registry must still know this target
+        // and its exact generation; revoked entries are skipped (never auto re-authorized).
+        if (!entries.TryGetValue(registryId!, out var entry)
+            || entry.RevokedAt is not null
+            || entry.Generation != generation)
+        {
+            return false;
+        }
+
+        var root = entry.Roots.FirstOrDefault(candidate =>
+            candidate.Readable && !string.IsNullOrWhiteSpace(candidate.Root));
+        if (root is null)
+        {
+            return false;
+        }
+
+        target = new SourceScanTarget(
+            sourceId!, root.Root, projectIds, "1", registryId!, generation, kind, identityDigest!);
+        return true;
+    }
+
+    private static string? ReadString(JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
 
     private static bool IsLowerHex64(string? value)
     {

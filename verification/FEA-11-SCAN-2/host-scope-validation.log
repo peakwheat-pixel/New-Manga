@@ -1,0 +1,43 @@
+# FEA-11-SCAN-2 shard B (Host/App) scope validation
+
+BASE: 703d9eb12 (card base). Core shard A commit: 0cb5177ca (src/** enumeration command).
+HEAD at delivery: see host-shard-record.md.
+
+## 1) This shard's changed files (git status --porcelain -- apps/desktop-avalonia)
+ M apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+ M apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+ M apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+ M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+ M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
+ M apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+ M apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+ M apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+ M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+ M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanStatus.cs
+ M apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+ M apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+ M apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
+
+## 2) Code/contract paths in the whole base..HEAD range
+COMMAND: git diff --name-only 703d9eb12..HEAD -- doc/plan doc/contracts src/
+OUTPUT:
+  src/application/sources/scanner.py
+  src/bootstrap/core_service.py
+  src/infrastructure/sqlite/source_sync.py
+ATTRIBUTION: all three are the committed Core shard A (0cb5177ca feat(fea-11-scan-2) 分片 A),
+             NOT this shard. Shard B adds only apps/desktop-avalonia/** and the host-* evidence.
+
+## 3) Frozen contracts / pins
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1 -> PIN AUDIT: PASS (all 18); EXIT 0
+         logs/host-pins.log
+
+## 4) C-07 API inventory
+COMMAND: C:/Python314/python.exe tools/generate_api_inventory.py --check -> PASS (EXIT 0)
+         IHostController unchanged; the new CoreClient.ListSourceScanTargetsAsync is a Core-channel
+         call, not a C-07 UI command. logs/host-api-inventory.log
+
+## 5) Schema / dependency / core-write boundary
+- No schema/migration/dependency file touched by this shard.
+- No new Core command/schema/wire authored here: shard B consumes the frozen C-17 v1.1
+  source_list_scan_targets and source.sync.enumerate/1.
+- No Core business-DB write: host-cold-start.json db_snapshot_unchanged=true (15 tables).

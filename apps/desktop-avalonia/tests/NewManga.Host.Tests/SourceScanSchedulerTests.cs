@@ -177,6 +177,49 @@ public sealed class SourceScanSchedulerTests
         }
     }
 
+    private sealed class FakeTargetEnumerator : ISourceScanTargetEnumerator
+    {
+        public int Calls { get; private set; }
+
+        public Func<int, SourceScanEnumerationResult>? Script { get; set; }
+
+        public TaskCompletionSource<bool>? Block { get; set; }
+
+        public Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken)
+        {
+            Calls++;
+            if (Block is { } block) return EnumerateBlockedAsync(block, cancellationToken);
+            return Task.FromResult(Script?.Invoke(Calls) ?? SourceScanEnumerationResult.Completed(
+                Array.Empty<SourceScanTarget>(), 0));
+        }
+
+        private async Task<SourceScanEnumerationResult> EnumerateBlockedAsync(
+            TaskCompletionSource<bool> block, CancellationToken cancellationToken)
+        {
+            await block.Task.ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            return Script?.Invoke(Calls) ?? SourceScanEnumerationResult.Completed(
+                Array.Empty<SourceScanTarget>(), 0);
+        }
+    }
+
+    private static SourceScanTarget EnumeratedTarget(
+        string sourceId,
+        string? path = null,
+        string registryId = "reg-1",
+        int generation = 1,
+        string? identityDigest = null,
+        IReadOnlyList<string>? projectIds = null) =>
+        new(
+            sourceId,
+            path ?? ("C:\\fixtures\\" + sourceId + ".zip"),
+            projectIds ?? new[] { "b1" },
+            "1",
+            registryId,
+            generation,
+            "zip",
+            identityDigest ?? new string('a', 64));
+
     private sealed class CapturedLog
     {
         public List<string> Info { get; } = new();
@@ -198,7 +241,8 @@ public sealed class SourceScanSchedulerTests
         SourceScanOptions? options = null,
         Action<string>? info = null,
         Action<string>? warn = null,
-        Action<string, string>? error = null)
+        Action<string, string>? error = null,
+        ISourceScanTargetEnumerator? enumerator = null)
     {
         Action<string>? infoLog = info;
         Action<string>? warnLog = warn;
@@ -216,7 +260,8 @@ public sealed class SourceScanSchedulerTests
             clock,
             infoLog,
             warnLog,
-            errorLog);
+            errorLog,
+            enumerator);
     }
 
     // ---------------------------------------------------------------------------------------
@@ -853,5 +898,329 @@ public sealed class SourceScanSchedulerTests
 
         // Nothing matches at all -> null (typed failure downstream).
         Assert.Null(HostSourceScanExecutor.ResolveRegistryEntry(new[] { parent }, @"D:\other\book.zip"));
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-SCAN-2 (B1): cold-start enumeration, registry re-verification, typed skips.
+    // ---------------------------------------------------------------------------------------
+
+    private static readonly string ValidDigest = new string('a', 64);
+
+    [Fact]
+    public async Task Refresh_MergesAndDeduplicatesTargets_AndIsIdempotent()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = _ => SourceScanEnumerationResult.Completed(
+                new[] { EnumeratedTarget("s1"), EnumeratedTarget("s2") }, 2),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+
+        Assert.True(await scheduler.RefreshTargetsAsync());
+        Assert.True(await scheduler.RefreshTargetsAsync());
+        var snapshot = scheduler.Snapshot();
+        Assert.Equal(2, snapshot.Targets.Count);
+        Assert.NotNull(snapshot.Enumeration);
+        Assert.True(snapshot.Enumeration!.Available);
+        Assert.Equal(2, snapshot.Enumeration.SkippedTargets);
+        Assert.Equal(2, enumerator.Calls);
+        Assert.Contains(log.Info, line => line.Contains("source scan refresh targets=2", StringComparison.Ordinal));
+
+        // A SCAN-1 style registration with the same source_id is merged, not duplicated.
+        scheduler.RegisterTarget(Target("s1"));
+        var after = scheduler.Snapshot();
+        Assert.Equal(2, after.Targets.Count);
+        Assert.Single(after.Targets, target => target.SourceId == "s1");
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task Refresh_Unavailable_IsTypedFailClosed_DoesNotBlockTicks_AndDoesNotRetryStorm()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = _ => SourceScanEnumerationResult.Unavailable("CORE_CAPABILITY_MISSING"),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+        scheduler.RegisterTarget(Target("s1"));
+
+        Assert.False(await scheduler.RefreshTargetsAsync());
+        var snapshot = scheduler.Snapshot();
+        Assert.NotNull(snapshot.Enumeration);
+        Assert.False(snapshot.Enumeration!.Available);
+        Assert.Equal("CORE_CAPABILITY_MISSING", snapshot.Enumeration.LastErrorCode);
+        Assert.Contains(log.Warn, line => line.Contains("code=CORE_CAPABILITY_MISSING", StringComparison.Ordinal));
+
+        // The scheduler still ticks; enumeration is NOT retried automatically (no retry storm).
+        await scheduler.TickAsync();
+        await scheduler.TickAsync();
+        Assert.Equal(2, executor.ScanCalls);
+        Assert.Equal(1, enumerator.Calls);
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task Refresh_IsSingleFlightWithTicks()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var enumerator = new FakeTargetEnumerator { Block = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously) };
+        var scheduler = NewScheduler(executor, clock, enumerator: enumerator);
+        scheduler.RegisterTarget(Target("s1"));
+
+        var refresh = scheduler.RefreshTargetsAsync();
+        await Task.Yield();
+        // A tick started while the refresh holds the single-flight gate is merged, not queued.
+        Assert.False(await scheduler.TickAsync());
+        Assert.Equal(0, executor.ScanCalls);
+        enumerator.Block!.TrySetResult(true);
+        Assert.True(await refresh.WaitAsync(TimeSpan.FromSeconds(10)));
+        Assert.Equal(1, enumerator.Calls);
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task SkippedOutcome_IsRecorded_AndDoesNotPauseScheduler()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor
+        {
+            Script = _ => SourceScanOutcome.Skipped("SOURCE_GRANT_REVOKED"),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log);
+        scheduler.RegisterTarget(Target("s1"));
+
+        await scheduler.TickAsync();
+        var snapshot = scheduler.Snapshot();
+        Assert.Equal(SourceScanResults.Skipped, snapshot.Targets.Single().LastResult);
+        Assert.False(snapshot.Paused);
+        Assert.Contains(snapshot.Recent, entry => entry.Result == SourceScanResults.Skipped
+            && entry.ErrorCode == "SOURCE_GRANT_REVOKED");
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task EnumerationStatus_IsRedacted_NoPathOrSecret()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = _ => SourceScanEnumerationResult.Completed(
+                new[] { EnumeratedTarget("s1", @"C:\secret-root\private-source.zip") }, 1),
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+
+        await scheduler.RefreshTargetsAsync();
+        var statusJson = JsonSerializer.Serialize(scheduler.Snapshot());
+        var allLogs = string.Join("\n", log.Info.Concat(log.Warn).Concat(log.Error));
+        foreach (var sensitive in new[] { "secret-root", "private-source", "C:\\", "source-", "host_session" })
+        {
+            Assert.DoesNotContain(sensitive, statusJson, StringComparison.Ordinal);
+            Assert.DoesNotContain(sensitive, allLogs, StringComparison.Ordinal);
+        }
+
+        await scheduler.DisposeAsync();
+    }
+
+    private static JsonElement EnumeratedJson(
+        string sourceId = "src-1",
+        string registryId = "reg-1",
+        int generation = 1,
+        string sourceKind = "zip",
+        string? identityDigest = null,
+        string[]? projectIds = null) =>
+        JsonDocument.Parse(
+            "{\"source_id\":\"" + sourceId + "\",\"registry_id\":\"" + registryId
+            + "\",\"generation\":" + generation + ",\"source_kind\":\"" + sourceKind
+            + "\",\"identity_digest\":\"" + (identityDigest ?? ValidDigest) + "\",\"project_ids\":["
+            + string.Join(",", (projectIds ?? new[] { "b1" }).Select(id => "\"" + id + "\""))
+            + "]}").RootElement.Clone();
+
+    private static SourceAuthorization RegistryEntry(
+        string registryId = "reg-1",
+        int generation = 1,
+        string root = @"C:\fixtures\src-1.zip",
+        string? revokedAt = null) =>
+        new(registryId, root, generation, "2026-11-06T00:00:00Z", "2026-11-06T00:00:00Z", revokedAt,
+            new[] { new SourceRoot(root, 1, 1, "2026-11-06T00:00:00Z", true) });
+
+    [Fact]
+    public void EnumeratorMapping_MapsValidTargetFromRegistryRoot()
+    {
+        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal)
+        {
+            ["reg-1"] = RegistryEntry(),
+        };
+
+        Assert.True(HostSourceScanTargetEnumerator.TryMap(EnumeratedJson(), entries, out var target));
+        Assert.Equal("src-1", target.SourceId);
+        Assert.Equal("reg-1", target.RegistryId);
+        Assert.Equal(1, target.Generation);
+        Assert.Equal("zip", target.SourceKind);
+        Assert.Equal(ValidDigest, target.IdentityDigest);
+        Assert.Equal(@"C:\fixtures\src-1.zip", target.Path);
+        Assert.True(target.IsEnumerated);
+        Assert.Equal(new[] { "b1" }, target.ProjectIds);
+    }
+
+    [Fact]
+    public void EnumeratorMapping_SkipsUnknownKindMalformedDigestAndTooManyProjectIds()
+    {
+        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal)
+        {
+            ["reg-1"] = RegistryEntry(),
+        };
+        var tooMany = Enumerable.Range(0, 21).Select(index => "b" + index).ToArray();
+
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(
+            EnumeratedJson(sourceKind: "video"), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(
+            EnumeratedJson(identityDigest: "not-a-digest"), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(
+            EnumeratedJson(projectIds: tooMany), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(
+            EnumeratedJson(generation: 0), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(
+            EnumeratedJson(projectIds: Array.Empty<string>()), entries, out _));
+    }
+
+    [Fact]
+    public void EnumeratorMapping_SkipsMissingRevokedAndGenerationDriftedRegistry()
+    {
+        var revoked = RegistryEntry(revokedAt: "2026-11-06T00:00:01Z");
+        var drifted = RegistryEntry(generation: 2);
+        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal)
+        {
+            ["reg-1"] = revoked,
+            ["reg-2"] = drifted,
+        };
+
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(EnumeratedJson(), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(EnumeratedJson(registryId: "reg-2"), entries, out _));
+        Assert.False(HostSourceScanTargetEnumerator.TryMap(EnumeratedJson(registryId: "reg-missing"), entries, out _));
+    }
+
+    private static (HostSourceScanExecutor Executor, SourceAccessRegistry Registry, string Root)
+        ExecutorWithFileRegistry()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "fea11-scan-2-exec-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var registry = new SourceAccessRegistry(root);
+        var sources = new SourceReadCoordinator(null!, registry, () => true);
+        var executor = new HostSourceScanExecutor(null!, sources, new SourceScanOptions());
+        return (executor, registry, root);
+    }
+
+    [Fact]
+    public async Task Executor_EnumeratedTarget_RevokedRegistry_IsSkipped_NoScan()
+    {
+        var (executor, registry, root) = ExecutorWithFileRegistry();
+        try
+        {
+            var file = Path.Combine(root, "book.zip");
+            await File.WriteAllBytesAsync(file, new byte[4]);
+            var entry = registry.Register("fixture", new[] { file });
+            registry.Revoke(entry.RegistryId);
+            var target = EnumeratedTarget("src-1", file, entry.RegistryId, entry.Generation, ValidDigest);
+
+            var outcome = await executor.ScanAsync(target, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Skipped, outcome.Kind);
+            Assert.Equal("SOURCE_GRANT_REVOKED", outcome.ErrorCode);
+        }
+        finally
+        {
+            TryDeleteDirectory(root);
+        }
+    }
+
+    [Fact]
+    public async Task Executor_EnumeratedTarget_GenerationDrift_IsSkipped()
+    {
+        var (executor, registry, root) = ExecutorWithFileRegistry();
+        try
+        {
+            var file = Path.Combine(root, "book.zip");
+            await File.WriteAllBytesAsync(file, new byte[4]);
+            var entry = registry.Register("fixture", new[] { file });
+            var target = EnumeratedTarget("src-1", file, entry.RegistryId, entry.Generation + 7, ValidDigest);
+
+            var outcome = await executor.ScanAsync(target, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Skipped, outcome.Kind);
+            Assert.Equal("SOURCE_REGISTRY_BUSY", outcome.ErrorCode);
+        }
+        finally
+        {
+            TryDeleteDirectory(root);
+        }
+    }
+
+    [Fact]
+    public async Task Executor_EnumeratedTarget_ColdStartMissingRoot_IsRegistryUnavailable()
+    {
+        var (executor, registry, root) = ExecutorWithFileRegistry();
+        try
+        {
+            var file = Path.Combine(root, "book.zip");
+            await File.WriteAllBytesAsync(file, new byte[4]);
+            var entry = registry.Register("fixture", new[] { file });
+            File.Delete(file); // cold start: the production file-root vanished before any verification
+            var target = EnumeratedTarget("src-1", file, entry.RegistryId, entry.Generation, ValidDigest);
+
+            var outcome = await executor.ScanAsync(target, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Error, outcome.Kind);
+            Assert.Equal("SOURCE_REGISTRY_UNAVAILABLE", outcome.ErrorCode);
+        }
+        finally
+        {
+            TryDeleteDirectory(root);
+        }
+    }
+
+    [Fact]
+    public async Task Executor_EnumeratedTarget_ReplacedRoot_IsRegistryUnavailable()
+    {
+        var (executor, registry, root) = ExecutorWithFileRegistry();
+        try
+        {
+            var file = Path.Combine(root, "book.zip");
+            await File.WriteAllBytesAsync(file, new byte[4]);
+            var entry = registry.Register("fixture", new[] { file });
+            File.Delete(file);
+            await File.WriteAllBytesAsync(file, new byte[4]); // same path, new physical file
+            var target = EnumeratedTarget("src-1", file, entry.RegistryId, entry.Generation, ValidDigest);
+
+            var outcome = await executor.ScanAsync(target, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Error, outcome.Kind);
+            Assert.Equal("SOURCE_REGISTRY_UNAVAILABLE", outcome.ErrorCode);
+        }
+        finally
+        {
+            TryDeleteDirectory(root);
+        }
+    }
+
+    private static void TryDeleteDirectory(string root)
+    {
+        try
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            // isolated temp fixture expires with the OS temp directory
+        }
     }
 }
