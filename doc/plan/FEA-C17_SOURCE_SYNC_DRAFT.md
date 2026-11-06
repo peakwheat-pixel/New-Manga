@@ -1,6 +1,6 @@
 # C-17 Source 同步契约提案
 
-状态：**DRAFT v0.1 / 未冻结**。日期：2026-11-04。Owner：Codex（本次新实现上下文）。
+状态：**FROZEN v1.1 / 2026-11-06 UNFREEZE 重冻**（v1.0 冻结于 2026-11-04；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-06-C17.md`）。日期：2026-11-04（v1.0）/2026-11-06（v1.1）。Owner：Codex（v1.0）；DSH（v1.1 UNFREEZE）。
 授权：[FEA-11-PREREQ-1](../tasks/FEA-11-PREREQ-1.md)、[Appointment](../reviews/FEA-11-PREREQ-1-appointment.md)。最终 ID、版本分配及冻结由 DSH 决定。
 
 ## 0. 权威、版本与边界
@@ -9,13 +9,13 @@
 
 | 版本面 | 本提案决定 | 生效条件 |
 |---|---|---|
-| 文档 | C-17 v0.1；候选冻结版本 v1.0 | 最终字节独立 Review + DSH 冻结 |
+| 文档 | C-17 v1.1（v1.0 已冻结 2026-11-04）；v1.1 走 UNFREEZE 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-06-C17.md` | 最终字节独立 Review + DSH 重新冻结 |
 | Schema | `v8__source_sync`，版本号 **8 候选，不预占** | DSH 确认当前迁移链未被其他 Task 占用；若改号，只改新增登记与证据并复核 |
 | 新命令 per-command wire | `new-manga.core` major=2、minor=3，additive | C-16 默认面 minor=3 先例；强制 capability 门禁，不能仅凭 minor 判断支持 |
 | 全局默认 | Core `PROTOCOL_MINOR=3`、客户端 DefaultMinor=3 均无增量 | 不改旧命令（含 PrepareRun/AcceptRun 的专属 minor=12） |
 | M2-C1 | **命令面由 C-17 承载，M2-C1 无增量** | 不改 envelope/旧命令/全局 taxonomy；新命令与局部错误闭集在此登记 |
 
-没有生产代码、生产迁移或产品测试实现授权。UI、删除/GC/回收、备份/跨机迁移、依赖变更均不在本卡。FEA-11 实施仍须 PREREQ done → scope-r2 approved → DSH ready/Appointment。四路检测（启动/访问前、操作前、定时扫描、watcher）是 FEA-11 的实现责任；本契约定义 scan 接口，不替其延期或判定完成。
+没有生产代码、生产迁移或产品测试实现授权。UI、删除/GC/回收、备份/跨机迁移、依赖变更均不在本卡。FEA-11 实施仍须 PREREQ done → scope-r2 approved → DSH ready/Appointment。四路检测（启动/访问前、操作前、定时扫描、watcher）是 FEA-11 的实现责任；本契约定义 scan 接口，不替其延期或判定完成。**v1.1 仅新增冷启动扫描目标枚举只读命令 `source_list_scan_targets` 及其 DTO；不改变既有命令/守卫/错误闭集/§6 CAS/§7 lineage。**
 
 ## 1. 身份、计划与摘要
 
@@ -191,7 +191,7 @@ Core 业务提交时新 binding 可以 healthy/complete（C-15 不改），但�
 
 均 Host→Core，沿用现有 stdio envelope。ScanSourceSync（含Host缺失观察）、ApplySourceSyncPlan/RelinkSource/RepointSource/ResyncSource 以及 ACK/recovery/failure **必须走 host-control 私有会话**，普通 application 面返回 HOST_ONLY_REQUIRED；其余新Core命令沿Request/Response。不新增反向 RPC。每次新请求 request_id 可以不同，operation_id 不变。
 
-`core.ping.capabilities` additive 字符串：`source.sync.scan/1`、`source.sync.plan/1`、`source.sync.apply/1`、`source.sync.relink/1`、`source.sync.repoint/1`、`source.sync.resync/1`、`source.sync.operation/1`。Host 先 probe，再结合本地 Registry/lease/schema/feature 状态输出 §5 Capability DTO。任一 probe 异常/缺能力 → CORE_CAPABILITY_MISSING；不创建 journal/secret、不 dispatch。写操作同时要求 source.read/1 + plan/apply/operation + 对应 kind 能力。不以 UNKNOWN_COMMAND 探测能力，不默认 Degraded-but-writable 放行。
+`core.ping.capabilities` additive 字符串：`source.sync.scan/1`、`source.sync.plan/1`、`source.sync.apply/1`、`source.sync.relink/1`、`source.sync.repoint/1`、`source.sync.resync/1`、`source.sync.operation/1`、`source.sync.enumerate/1`。Host 先 probe，再结合本地 Registry/lease/schema/feature 状态输出 §5 Capability DTO。任一 probe 异常/缺能力 → CORE_CAPABILITY_MISSING；不创建 journal/secret、不 dispatch。写操作同时要求 source.read/1 + plan/apply/operation + 对应 kind 能力。不以 UNKNOWN_COMMAND 探测能力，不默认 Degraded-but-writable 放行。**v1.1：`source.sync.enumerate/1` 只出现在 `core.ping.capabilities`；§5.2 `Capabilities` DTO 仍恰好 7 项，不新增第 8 项；枚举命令走 application 面（非 host-control），Host 内部直连，不登记 HostCommandRegistry/C-07，不新增 UI 命令面。**
 
 | Host × Core | 旧 Core（无 C-17） | 新 Core（C-17 启用） |
 |---|---|---|
@@ -225,6 +225,7 @@ Core 业务提交时新 binding 可以 healthy/complete（C-15 不改），但�
 | CompleteSourceOperationRecovery / Host内部 | CompletionRequest | Operation | host-control；只恢复已提交operation，不重复业务SQL |
 | RecordSourceOperationFailure / Host内部 | operation_id! ID; request_digest! H; code! FailureCode | Operation | 显式记录已提交但尚未确认的失败；不属stale Apply拒绝路径 |
 | GetSourceSyncCapabilities / source_get_sync_capabilities | {} | Capabilities | Host本地聚合ping+Registry；不是Core新RPC；无写；**Core 不注册该名**，向 Core 发送按 M2-C1 既有未知命令语义拒绝（UNKNOWN_COMMAND） |
+| ListScanTargets / source_list_scan_targets | `{}`（closed shape；未知键拒绝） | `ScanTargets` | 只读枚举；零 DB 写、不建 plan/apply、不铸 grant；失败按 §8 闭集 |
 
 Dispatch 是接受响应，不是全部完成；Core 后台只允许一个 SQLite 写者，串行处理提交与cancel，不能长期阻塞stdio无法查询/撤销。提交前取消只改Host journal，Core业务事务回滚；完成查询可observed origin=host failed(code=SOURCE_SYNC_CANCELLED)。提交已赢得竞争则cancel返回accepted=false，继续确认/恢复。Apply可先返回accepted；业务前每个守卫失败由查询返回Host失败，Core receipt不存在；同步阶段直接发现stale则直接错误且Core零写。Host不能把accepted展示成成功。
 
@@ -257,6 +258,8 @@ Dispatch 是接受响应，不是全部完成；Core 后台只允许一个 SQLit
 | CompletionRequest | operation_id! ID; request_digest! H; commit_digest! H; host_receipt_id! ID; authorization! HostAuthorization; grant_ids! ID[] |
 | CancelResult | operation_id! ID; accepted! boolean; state! OperationState |
 | HostJournal | format! source-operation/1; authorization? HostAuthorization; operation! Operation; updated_at! T |
+| ScanTarget | source_id! ID; registry_id! ID; generation! G; source_kind! ID; identity_digest! H; project_ids! ID[] |
+| ScanTargets | targets! ScanTarget[]（按 source_id 升序、唯一；空数组合法） |
 
 OperationState 六值与 §3.2 相同；StaleReason 八值与 SQL 相同；ExistingSourceCode/FailureCode 见 §8（FailureCode=该表全部code，存储error_code也只允许此闭集，成功为null）。HostAuthorization 不是可自签授权令牌：Core 必须在 live host-control 所属会话下验证既有 source-read grants 的 registry/generation/identity 与其 authorizations 一致、request_digest与operation一致、重新计算authorization_digest；application面不能凭自填json越权。authorization_digest=sha256(canonical(authorizations按registry_id排序))；identity_digest=sha256(canonical({content_digest,volume_serial,file_id,size_bytes}))，完整facts来自签名grant，不从调用方任意json读取。
 
@@ -273,6 +276,7 @@ commit_digest=sha256(canonical(CommitReceipt))。Host journal 用本DTO完整保
 - 缺失源不能伪造有效source-read grant。新增C-17 Host-only `MissingObservation`只证明Host在当前Registry授权根内、按既有opaque locator观察到期望源缺失；Core与已有source location的registry/generation/identity逐项核对。missing数组按source_id排序、唯一，与缺失的SourceBase集合完全对应；其余源必须有精确live grant覆盖，grant_ids不可重复。整源缺失且仅tombstone/defer时可grant_ids=[]，不能读取/发布新原图或转healthy；非缺失源不能为空。apply前Host再次核对durable授权与缺失观察（源已恢复/被替换→stale）。这是新命令的无读缺失证明，不修改C-16 grant形状/校验；文件随后恢复不撤回tombstone，后续scan可重新预览恢复。缺失无需持有不存在文件的lease；其安全性来自不发布新内容、不删除任何旧数据。授权撤销/Registry丢失只诊断，不凭旧快照自动apply。ACK同理，仅missing binding开门也不使R成立。
 - encrypted/unsupported或缺目标内容digest/profile无法完整验证时，只能有限scan诊断/草案；不能确认内容变更。missing只允许所有该源差异均tombstone/defer的确认，Core只沿已有source/version/entry建立missing代次，禁止无证据healthy。加密强扫描由用户发起，Host复用C-16一次性secret grant；本面没有secret_ref字段、不在后台请求密码。有限结果要求新的完整scan/new plan再确认，不把确认后解密出来的未知mapping直接apply。旧导入的加密有限预览/逐页提交仍按C-16不变。
 - `Confirmation`须与body.kind/project_ids/reference_set_digest完全一致，重复确认不得更改resync_content；repoint若内容变必须true；纯relink需物理同一且内容未变，跨卷重新强验证，无法证明同一则转repoint预览。同bytes不同物理源不同source/entry；resync新条目按C-15保续，不能拿ordinal偷换身份。
+- **v1.1 枚举只读守卫**：`source_list_scan_targets` 只做单次 SELECT 级投影，零写；不产生 scan/plan/operation/receipt/grant/journal。`targets` 按 `source_id` 升序、唯一；`source_id` 必须来自 Core `sources`（`src-<uuid>`），禁止 Host 用 `StableSourceId`/folder registry_id 冒充（S-2）。每 target 的 `identity_digest = identity_digest_of(location facts)`（`model.py:255-268`）；location facts 缺失/损坏 → 该 target typed skip（不伪造 identity）；超过数组上限 10000 或 8MiB → `SOURCE_BUDGET_EXCEEDED`（不静默截断）。registry 缺失/撤销/代次不可核验由 Host fail-closed；Core 不返回路径/secret/grant。生产 file-root 缺失/替换导致 `SOURCE_REGISTRY_UNAVAILABLE` 属 fail-closed（S-1 选项②：不声称“启动前缺失 → missing”，L-G 保留）。
 
 ## 6. CAS、事务与失败原子性
 
@@ -380,6 +384,8 @@ stale Apply 零写以此前合法持久化confirmed plan为基线：pages/bindin
 
 runtime错误优先级沿C-16签名→过期→撤销→授权→identity→预算；其次请求/plan基线与CAS错误。检测到stale/人工基线漂移统一SOURCE_PLAN_STALE(cause=...)，只有显式人工迁移live apply的BaseRevisionId冲突沿STALE_BASE_REVISION；不在旧命令中新塞C-17错误。未知异常安全投影SOURCE_SYNC_STORAGE_FAILED，不返回异常原文。RecordSourceOperationFailure不能接受任意字符串。
 
+**v1.1 注**：`source_list_scan_targets` **不新增错误码**，复用上表既有闭集（如 `INVALID_REQUEST`、`SOURCE_BUDGET_EXCEEDED`、`CORE_CAPABILITY_MISSING`、`SOURCE_REGISTRY_UNAVAILABLE`）；本表行数与既有语义不变。
+
 ## 9. 冻结可执行清单与下游验证
 
 隔离脚本和日志在`verification/FEA-11-PREREQ-1/`，只用`:memory:`。COMMAND/EXIT/解释器/SQLite/基线在日志头；不是生产升级或真实IPC证据。
@@ -394,6 +400,8 @@ runtime错误优先级沿C-16签名→过期→撤销→授权→identity→预�
 | P6 | §7.2选择函数与旧键D0/新键D2、密码/grant/gate无旁路 | examples.log确定性选择对照；真实resolve/issue字节NOT_RUN，归FEA-11 |
 | P7 | 最终字节独立Review approved、冻结记录、三指纹、pin18 | 本卡仅候选指纹；DSH固定语义commit/reviewed_head并复算最终字节、追加pin18；当前17/17不是18项完成 |
 | P8 | allowed_paths范围、旧17冻结契约/旧迁移/FEA08/09/10证据零diff、无生产实现/依赖/用户数据 | scope-validation.log + baseline.json + governance/pins日志；DSH复核实际diff含untracked |
+
+**v1.1 适用声明**：枚举命令按 P3（§4/§5/§8 命令/DTO/错误闭集与 unknown 字段负例）、P7（最终字节独立 Review/冻结记录/三指纹/pin18）、P8（allowed_paths 与旧 17 契约零 diff）执行；不改变 P1/P2/P4/P5/P6 既有断言。
 
 冻结记录必须填写：最终语义commit、实际reviewed_head、Reviewer身份/来源、该head blob ID/blob SHA-256、工作树SHA-256、最终冻结字节三指纹与复核字节差异。只允许经明确记录的状态行/冻结链接元数据差异；任何条款/SQL/DTO变动都需新head复核。最后编辑后重新计算，工作树pin与LF blob摘要可能不同，不能混用。DSH单点给verify_pins追加`C17=FEA-C17_SOURCE_SYNC_DRAFT.md`，missing-record/no-pin/mismatch继续失败；不得为了草稿把新pin做成跳过。
 
