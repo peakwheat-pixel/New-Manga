@@ -16,7 +16,7 @@ base_commit: 919c9aa1e   # WATCH-1 释放点 main head（SCAN-2 closeout 后）
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: e60105cf9   # 实现交付 commit（未 push；集成/推送由 DSH）
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-WATCH-1
@@ -115,11 +115,11 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-W1/W2/W3/W5 | verification/FEA-11-WATCH-1/record.md | pending | db90ab3461188b6782065e3e66eb8c969fef2127f32ddad693576711d47b465a | CANONICAL |
-| EV-02 | AC-W1/W4（Host 单测） | verification/FEA-11-WATCH-1/logs/watcher-unit.log | pending | ed4145da78fa92b3e548812c235c628ac2ac410e4f042301d3ea88a01d82fd47 | CANONICAL |
-| EV-03 | AC-W1（gated HostRuntime） | verification/FEA-11-WATCH-1/host-watch-runtime.json | pending | 25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6 | CANONICAL |
-| EV-04 | AC-W5（全量 .NET/pytest） | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | pending | 915f78a28237abae830c913aa1d9c841a96083af7aa7d14dd2326a9becf8e6fb | CANONICAL |
-| EV-05 | AC-W5（变异判别） | verification/FEA-11-WATCH-1/logs/gates.log | pending | e5285a48a2c477411126054e4edf68ed5fb7fda56b31a3b33774004d0c79f4ce | CANONICAL |
+| EV-01 | AC-W1/W2/W3/W5 | verification/FEA-11-WATCH-1/record.md | e60105cf9 | db90ab3461188b6782065e3e66eb8c969fef2127f32ddad693576711d47b465a | CANONICAL |
+| EV-02 | AC-W1/W4（Host 单测） | verification/FEA-11-WATCH-1/logs/watcher-unit.log | e60105cf9 | ed4145da78fa92b3e548812c235c628ac2ac410e4f042301d3ea88a01d82fd47 | CANONICAL |
+| EV-03 | AC-W1（gated HostRuntime） | verification/FEA-11-WATCH-1/host-watch-runtime.json | e60105cf9 | 25baaac0fa55785a1d6062f6f7c28dcd20566ac0103a0bb45a330e99d323dfb6 | CANONICAL |
+| EV-04 | AC-W5（全量 .NET/pytest） | verification/FEA-11-WATCH-1/logs/dotnet-full-1.log | e60105cf9 | 915f78a28237abae830c913aa1d9c841a96083af7aa7d14dd2326a9becf8e6fb | CANONICAL |
+| EV-05 | AC-W5（变异判别） | verification/FEA-11-WATCH-1/logs/gates.log | e60105cf9 | e5285a48a2c477411126054e4edf68ed5fb7fda56b31a3b33774004d0c79f4ce | CANONICAL |
 
 ## Resource Manifest
 
@@ -138,7 +138,7 @@ frontmatter `allowed_paths` 为准（Host src/tests + 卡/Handoff/verification�
 - 变异判别：M1 去抖/合并移除、M2 overflow 全量 due 移除、M3 hinted 优先移除 → 分别转红后恢复（`logs/mutation-m*.log`）。
 - limitation：漏事件/设备差异依赖周期扫描兜底（非正确性依赖）；folder 内任意事件视为该 source due（无增量 diff，受预算约束）；SCAN-2 RH-3 target 只增不减不修；HostRuntime seam 无 fake Core/注入时钟（成功路径由组件级覆盖）；AC11-1 仍 PARTIAL、L10 不解决。
 - Handoff：`doc/handoffs/FEA-11-WATCH-1-delivery.md`。
-- 实现 commit：见 Handoff 与 §Closeout 回填（`delivery_head`）。
+- 实现 commit：`e60105cf9`（未 push；交付后由 DSH 更新 REBASELINE_PLAN/把卡置 in_review 并集成推送）。
 
 ## Closeout Record
 

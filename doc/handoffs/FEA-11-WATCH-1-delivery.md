@@ -4,7 +4,7 @@
 - Owner：`fea12-core-host`（DSH Agent Teams）
 - Task：`doc/tasks/FEA-11-WATCH-1.md`（status → `in_review`）
 - Base：`919c9aa1e`；Branch `main`；未 push、未创建 worktree。
-- 实现 commit：`DELIVERY_COMMIT_PENDING`（本 Handoff 与实现同 commit；见 `git log` 首条）。
+- 实现 commit：`e60105cf9`（本 Handoff 随实现同 commit 交付；未 push）。
 - 证据：`verification/FEA-11-WATCH-1/`（`record.md`、`logs/**`、`host-watch-runtime.json`、`scope-validation.log`、`changed-files.txt`）。
 
 ## 1. 交付内容
