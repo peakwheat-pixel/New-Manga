@@ -68,6 +68,13 @@ out_of_scope:
 - AC-J3 上限：超过 `max_entries` 或 64 grant 上限 → typed，不截断；≥65 成员容器有明确用例。
 - AC-J4 managed/旧路径零回归；零漂移（pins 18/18、Run wire/minor/schema/依赖零改动）；全量门禁不降；EV/Handoff 不夸大。
 
+## 实现注意（来自 C-16 v1.4 复核 P3，必须在本卡收口）
+
+- **P3-4（facts 参考点）**：注册期「facts = 容器身份」的参考点必须锁定为 Core 权威 source_locations 的四键（volume_serial/file_id/size/sha256），不得由成员内容 digest 或 Host 推断；实现需有判别用例（成员 digest 充当容器 facts → typed 拒绝）。
+- **P3-5（ordinal 越界）**：除 ordinal ≥ 0 且唯一外，需判别「ordinal 越界（超出该 version 的 source_entries）」→ 不命中、整 grant typed；Host 不得用越界 ordinal 探测。
+- **P3-6/N-4（上限口径）**：max_entries 限制单 grant 条目数、64 限制单次命令 grant_ids 数；实现侧既有硬上限 10000 为更严 fail-closed，须在卡/证据注明，不得表述为「容器成员数上限」。
+- **P3-2（wire 追溯）**：C-16 §0 wire 版本行保留历史追溯说明（v1.3 当时登记 1.2、后更正 1.3），实现不改 wire 字段/命令集。
+
 ## 依赖与下一步
 
 1. 先完成 `FEA-11-RUN-GRANT-2A`（Host 版本通道）与 `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4）。

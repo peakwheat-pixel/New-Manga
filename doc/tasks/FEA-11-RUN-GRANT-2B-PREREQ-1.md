@@ -3,7 +3,7 @@ id: FEA-11-RUN-GRANT-2B-PREREQ-1
 title: C-16 v1.4 UNFREEZE（容器多成员 entry 授权接受面语义）
 kind: contract
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；`FEA-11-RUN-GRANT-2` 权威 scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`（**READY-WITH-UNFREEZE**：2B 仅需 C-16 v1.4，1 pin）；Codex 裁决输入（`196dede9…`）同意容器多 entry 需 C-16 修订；DSH 裁决：只改 C-16（1/18 pins），C-17/C-06 零字节；先契约后实现
 suggested_owner: dsh
 owner: dsh
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 9ec4826d6
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: d8dcfc07a
+delivery_head: d8dcfc07a
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-RUN-GRANT-2B-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md
@@ -80,10 +80,10 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-T1 契约增量最小且可复核**：C-16 v1.4 只含 I-2 登记增量（容器 entries 1..N 语义 + 校验矩阵 + §10 记录）；既有 grant scope 形状/TTL/撤销/失联/§6 闭集/§7 脱敏/§2.4 命令/Run wire 零改动；C-06/C-17 在内的其余 17 契约逐字节不变。
-- [ ] **AC-T2 独立 byte-level 复核 approved**：fresh subagent 对最终字节复核（diff 逐行、无新错误码、无 wire/minor 变更、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。
-- [ ] **AC-T3 重冻与 pins**：FROZEN-C16 更新（新 sha、v1.4 记录、历史 pin 保留）；矩阵更新；`verify_pins` **18/18**（C16 新值、其余 17 项原值）；`check.ps1`（默认 + `-TaskPath`）PASS。
-- [ ] **AC-T4 载体与不夸大**：载体含触发/授权/变更点/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 Run wire/schema/依赖。
+- [x] **AC-T1 契约增量最小且可复核**：C-16 v1.4 只含 I-2 登记增量（容器 entries 1..N 语义 + 校验矩阵 + §10 记录）；既有 grant scope 形状/TTL/撤销/失联/§6 闭集/§7 脱敏/§2.4 命令/Run wire 零改动；C-06/C-17 在内的其余 17 契约逐字节不变（r2 实测 17/17 UNCHANGED）。 <<MET>>
+- [x] **AC-T2 独立 byte-level 复核 approved**：fresh subagent 对最终字节复核（diff 逐行、无新错误码、无 wire/minor 变更、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体（r1 46c5cfef…/1b6152112 → r2 e032ed9a…/a0bafc89e）。 <<MET>>
+- [x] **AC-T3 重冻与 pins**：FROZEN-C16 更新（新 sha、v1.4 记录、历史 pin 保留）；矩阵更新；`verify_pins` **18/18**（C16 新值、其余 17 项原值）；`check.ps1`（默认 + `-TaskPath`）PASS。 <<MET>>
+- [x] **AC-T4 载体与不夸大**：载体含触发/授权/变更点/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 Run wire/schema/依赖。 <<MET>>
 
 ## 独立复核要求（byte-level）
 
@@ -96,4 +96,36 @@ out_of_scope:
 - L-P1′：M2-C1 §5.7 HostControl 枚举滞后（既有，随 L-P1 保留）。
 - L-P2′：2B 实现仍需 2A 的版本通道（依赖顺序）；长 Run/加密/重启不因本契约解决。
 - L-P3′：契约就绪不构成实现授权。
+ 
+## Canonical Evidence
 
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-T1/T2/T4 | doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md | d8dcfc07a | c061286c91c2362e07fb1af6f7e97b86b2b98ec7bbb5f909aa0b569a59cd06d2 | CANONICAL |
+| EV-02 | AC-T2 | doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r1.md | d8dcfc07a | f4a618ed78a9421011626078a34981c5a2258421c2565747f1b1182eb7b84d2c | CANONICAL |
+| EV-03 | AC-T2 | doc/reviews/FEA-11-RUN-GRANT-2B-PREREQ-1-r2.md | d8dcfc07a | cf7bb3cd5d173af6bab5b0daa419511377b7202f05ab28cc8dc7d79a85b5b06b | CANONICAL |
+| EV-04 | AC-T1/T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/pre-post.sha256 | d8dcfc07a | bea56b406804039020fa5124fce234d9e0f73af7cb7b7a1ca5687b8d005c034d | CANONICAL |
+| EV-05 | AC-T1 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/changed-lines.diff | d8dcfc07a | 349b588bb10b186842cb8be1e3ace4d737d64a51a1de8de773f414dd7f209469 | CANONICAL |
+| EV-06 | AC-T1/T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/other-17-pins.txt | d8dcfc07a | 209913522539644e2551991ac9e2d879bc23990aad0d782285d8654e4bb77f12 | CANONICAL |
+| EV-07 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/pins.log | d8dcfc07a | 6755ba3d4ebeb4c2f98d427bdf207abbfccfeca0643ff46b1880e77c9dcadb78 | CANONICAL |
+| EV-08 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check.log | d8dcfc07a | 63073b8cf17201c2b9b75c05a6047b5936dbb8e81150bc5be6cb82d2d3d52cb1 | CANONICAL |
+| EV-09 | AC-T3 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/check-taskpath.log | d8dcfc07a | 04e0aca26d7c76413ab398c2bffc624b4672f390966b7a4da62cf2ae31898efe | CANONICAL |
+| EV-10 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/carrier.md | d8dcfc07a | c061286c91c2362e07fb1af6f7e97b86b2b98ec7bbb5f909aa0b569a59cd06d2 | CANONICAL |
+| EV-11 | AC-T4 | verification/FEA-11-RUN-GRANT-2B-PREREQ-1/EV.md | d8dcfc07a | 1dea4888b96e648243ab9411438c9a4a15ebbe673867181889796165674a3147 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改契约/冻结记录/矩阵/载体/证据；仓内 0 删除/0 移动/0 归档；2A 证据与 erification/FEA-09 并发改动均未进入本卡提交（显式 pathspec）；工作区 tmp blob 副本无独有数据，保留 |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：done；delivery/integration = d8dcfc07a（UNFREEZE 提交：C-16 v1.4 + FROZEN-C16 + 矩阵 + 载体 + r1/r2 报告 + 证据 + 卡面计数修正）。
+- **AC 判定**：AC-T1…AC-T4 **全 MET**。无 PARTIAL/BLOCKED。
+- **Review 处置**：r1 changes_requested（P0=0/P1=2/P2=4/P3=9；P1-1 预算错误码、P1-2 提交隔离）→ DSH 处置（错误码拆分、示例枚举、计数、冻结记录清理、LF 规范化、pin 重算 ad25fb3c…）→ **r2 approved（P0=0/P1=0/P2=0/P3=11 非阻断）**；r2 P3 逐项登记（N-1…N-5、P3-2/3/4/5/6/9；P3-4/P3-5 转入 2B 实现卡）。
+- **门禁数字（before → after）**：pins **18/18 → 18/18**（C16 7c355ccb…→ad25fb3c…；其余 17 项实测 UNCHANGED）；check.ps1/-TaskPath PASS(3 warnings)；C-16 变更 6 行新增/4 行修改（容器多成员 entry 明文 + §0/§10 记录）；doc/contracts/src/apps/tools/tests 零 diff（UNFREEZE 提交仅 5 类文档 + 卡 + 证据）。全量 pytest/.NET **NOT_RUN**（契约-only；由 2A/2B 集成门禁实跑）。
+- **limitations / follow-up**：容器多成员 entry **实现**未做（2B 实现卡，proposed）；max_entries 实现硬上限 10000 更严（N-4，记入 2B 卡）；长 Run/加密/重启/L-R11 均未解决（沿 RUN-GRANT-1）；契约就绪 ≠ 实现/产品可用。
+- **Resource Manifest**：0 删除/0 移动/0 归档；工作区 tmp blob 副本保留（无独有数据）。
+- **指针清理**：STATUS 当前 Task → FEA-11-RUN-GRANT-2A（2A 进行中）；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：本轮 push 见后续 closeout/STATUS 记录（Lead 统一 push；PRE/POST hash 记录）。

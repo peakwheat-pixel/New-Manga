@@ -46,11 +46,11 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：`FEA-11-RUN-GRANT-2A`、`FEA-11-RUN-GRANT-2B-PREREQ-1`
+READY 节点：`FEA-11-RUN-GRANT-2A`
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-11-PREREQ-1→FEA-11（closed_with_limitations）→ 承接卡 done → FEA-12 四卡 done → SCAN 线 done → RENDITION-1（done，`a05a419f7`）→ UI-RESIDUAL-1（done，`8e3bd03d6`）→ RUN-GRANT-1-PREREQ-1（done，`116a711ba`）→ RUN-GRANT-1（done，`a11ded0d3`；L-G12）→ RUN-GRANT-2A（ready）/ RUN-GRANT-2B-PREREQ-1（ready）/ RUN-GRANT-2（proposed）
+当前 DAG：FEA-11-PREREQ-1→FEA-11（closed_with_limitations）→ 承接卡 done → FEA-12 四卡 done → SCAN 线 done → RENDITION-1（done，`a05a419f7`）→ UI-RESIDUAL-1（done，`8e3bd03d6`）→ RUN-GRANT-1-PREREQ-1（done，`116a711ba`）→ RUN-GRANT-1（done，`a11ded0d3`；L-G12）→ RUN-GRANT-2A（ready）/ RUN-GRANT-2B-PREREQ-1（done，`d8dcfc07a`）/ RUN-GRANT-2（proposed）
 
 ## 历史快照（终态节点，非当前 DAG）
 
@@ -60,5 +60,3 @@ READY 节点：`FEA-11-RUN-GRANT-2A`、`FEA-11-RUN-GRANT-2B-PREREQ-1`
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
 - 当前治理主线 `main`；2026-11-06 用户「全部授权」后，门禁全过时 `git push origin main` 已执行（`b1c1f5a5→57f62b3f`），后续 push 仍以门禁全过与用户授权为前提。
-
-

@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`FEA-11-RUN-GRANT-2A` `ready`（Host 版本通道；无 UNFREEZE；[卡](tasks/FEA-11-RUN-GRANT-2A.md)）；队列 `FEA-11-RUN-GRANT-2B-PREREQ-1` `ready`（C-16 v1.4，1 pin；[卡](tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md)）。已闭环：`FEA-11-RUN-GRANT-1`/`-PREREQ-1` `done`（`a11ded0d3`/`116a711ba`；L-G15 修）；`FEA-12-UI-RESIDUAL-1` `done`；`FEA-11-RENDITION-1` `done`。scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`（READY-WITH-UNFREEZE；2A 零契约）；`FEA-11-RUN-GRANT-2` `proposed`（2B 实现，依赖 2A+PREREQ）。
+- 当前 Task：`FEA-11-RUN-GRANT-2A` `ready`（Host 版本通道；实现交付中；无 UNFREEZE；[卡](tasks/FEA-11-RUN-GRANT-2A.md)）。已闭环：`FEA-11-RUN-GRANT-2B-PREREQ-1` `done`（`d8dcfc07a`；C-16 v1.4，r2 approved P0/P1/P2=0）；`FEA-11-RUN-GRANT-1`/`-PREREQ-1` `done`（`a11ded0d3`/`116a711ba`；L-G15 修）；`FEA-12-UI-RESIDUAL-1` `done`；`FEA-11-RENDITION-1` `done`。scope review `doc/reviews/FEA-11-RUN-GRANT-2-scope-r1.md`（READY-WITH-UNFREEZE）；`FEA-11-RUN-GRANT-2` `proposed`（2B 实现，依赖 2A+PREREQ done 后释放）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
