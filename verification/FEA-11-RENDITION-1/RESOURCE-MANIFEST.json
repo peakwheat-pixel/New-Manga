@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-RENDITION-1",
+  "generated_at": "2026-11-06T19:39:40+08:00",
+  "generated_by": "rendition-impl (DSH Agent Teams; Owner FEA-11-RENDITION-1)",
+  "note": "Core-only referenced rendition slicing: production code (3 files) + 3 new test files + this evidence directory. All pixel fixtures are generated at test time in tmp_path (real Pillow PNGs + a real zip) and are NOT committed as binaries. The isolated scratch root G:/CODEX/New Manga.workspace/FEA-11-RENDITION-1/ holds only the agent helper scripts and the discrimination log; it is referenced (not deleted/moved) by EV.md. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main 工作树；base 4360fbcdb，evidence head a05a419f7f6c6023786b61d9f11d8f6cdd0eb800）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree；实施只在 main 工作树的 src/tests/verification 内进行；`git worktree list` 无本卡新增项"
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RENDITION-1\\\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location (G:\\CODEX\\New Manga.workspace\\FEA-11-RENDITION-1\\\\)",
+      "sha256": "c925f360c99e5fd985ff079bf3801fb33bd2063281a07a10642bbb43b7ff40b0",
+      "file_count": 9,
+      "files": [
+        {
+          "name": "baseline-pytest.log",
+          "sha256": "2f807eba4301ffb9b2bbd17f8b47fa94c72392a7b0e47285c7227bfbf19f10a6"
+        },
+        {
+          "name": "discriminate.py",
+          "sha256": "4fe7a68c14dc09727ada37825f0654141ac4e372ada1495dee71e63f3514aa84"
+        },
+        {
+          "name": "discrimination.log",
+          "sha256": "c2e961cde3905e8d04e5bf0494b2fdc3935cf9b7d1126b1af68cd964c0e35f7d"
+        },
+        {
+          "name": "fix_log_header.py",
+          "sha256": "8a6d475574710a5b0bfeefda41592309ec349e5032834ecf409a934b3fc8274c"
+        },
+        {
+          "name": "gen_evidence.py",
+          "sha256": "65af6c0827f7a8925ebb9e1b3ecb1a1c5b50cb47b4573249a36a901bdf5f5c10"
+        },
+        {
+          "name": "patch_gates.py",
+          "sha256": "870003420a428f6d94fbe88b7228b1dc42bfe452236607e8f8895c121a32b203"
+        },
+        {
+          "name": "patch_gates2.py",
+          "sha256": "8732ec4847109ab4cbba999c6242bdf8ecb392546c03c28998b9f4e3c82c5af6"
+        },
+        {
+          "name": "reapply_impl.py",
+          "sha256": "0b6583c0d4651001dafc99a4fc95fd10b73cefb45d2e26ee080b3433fcf6ec2e"
+        },
+        {
+          "name": "scope-r1-snapshot.md",
+          "sha256": "c60f4604b0233bee2d7e53c4285211db704aca69512422ad88bcfbbde905eeaf"
+        }
+      ],
+      "process_check": "仓外隔离根（工作区治理边界）。仅含 agent 辅助脚本（reapply_impl.py、discriminate.py、patch_gates*.py、fix_log_header.py）与 discrimination.log；无进程持有；产品代码/测试不引用该路径；仓内 canonical 副本为 verification/FEA-11-RENDITION-1/logs/discrimination.log。closeout 时可保留或删除，删除前须确认 EV.md 引用已归档。"
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "tests/fea11/test_source_rendition_*.py（tmp_path 运行时生成）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "真实 PNG/zip/grant 全部在 pytest 的 tmp_path 内运行时生成并随测试目录销毁；仓库不提交二进制 fixture；不使用 tests/fea11/conftest.py 的硬编码工作区根。"
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未读写真实用户数据/AppData/外部卷/回收站；全部使用 tmp_path 隔离库。"
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "本卡零 C# 改动；dotnet test 的 obj/bin 产物在既有 build 目录内，未纳入交付。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外临时根保留给 Review 复核（不随仓库分发）。全量 pytest 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-full-pytest.log 尾注）。"
+}

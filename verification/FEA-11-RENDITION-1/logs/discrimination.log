@@ -1,0 +1,17 @@
+CASE A: drop the referenced Run-target admission (I-1): EXIT 1
+  FAILED tests/fea11/test_source_rendition_run.py::test_mixed_chapter_scope_expands_to_managed_and_referenced_pages
+  FAILED tests/fea11/test_source_rendition_run.py::test_unverifiable_referenced_pages_stay_target_not_found
+  3 failed, 1 passed, 7 deselected in 0.35s
+CASE B: drop the provider referenced branch (I-2): EXIT 1
+  FAILED tests/fea11/test_source_rendition_source.py::test_region_crop_is_taken_in_the_rendition_coordinate_system
+  FAILED tests/fea11/test_source_rendition_source.py::test_repointing_the_binding_changes_the_pixels
+  4 failed, 12 deselected in 0.36s
+CASE C: drop the I-4 detect guard re-check: EXIT 1
+  FAILED tests/fea11/test_source_rendition_run.py::test_binding_change_between_decode_and_region_write_is_input_revision_changed
+  FAILED tests/fea11/test_source_rendition_gates.py::test_detect_refuses_before_any_region_write_when_the_guard_digest_differs
+  2 failed, 19 deselected in 0.38s
+CASE D: make the one read_gate always open (I-3): EXIT 1
+  FAILED tests/fea11/test_source_rendition_gates.py::test_pending_gate_blocks_the_real_run_target_and_opens_when_acknowledged
+  FAILED tests/fea11/test_source_rendition_gates.py::test_real_run_commit_guard_refuses_pending_gate_and_missing_grant
+  3 failed, 1 passed, 17 deselected in 0.70s
+DISCRIMINATION SUMMARY: 4/4 cases turned RED

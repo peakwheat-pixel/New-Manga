@@ -1,0 +1,13 @@
+=== scope validation (2026-11-06T19:33:51.8022047+08:00) base=4360fbcdb HEAD=a05a419f7f6c6023786b61d9f11d8f6cdd0eb800 ===
+--- diff --name-only base..HEAD ---
+src/bootstrap/core_assembly.py
+src/infrastructure/providers/handlers.py
+src/infrastructure/sqlite/pipeline.py
+tests/fea11/test_source_rendition_gates.py
+tests/fea11/test_source_rendition_run.py
+tests/fea11/test_source_rendition_source.py
+--- forbidden surfaces diff (must be empty) ---
+--- dependency files diff (must be empty) ---
+--- core_service/conftest/frozen-test diff (must be empty) ---
+--- status ---
+?? verification/FEA-11-RENDITION-1/
