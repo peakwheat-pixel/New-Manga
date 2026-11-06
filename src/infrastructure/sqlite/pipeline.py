@@ -795,6 +795,18 @@ class SqliteTargetCatalog(TargetCatalog):
         #: LineageIsolationGuard for the Run read path (page expand + region
         #: scope) and the in-transaction revision candidate write.
         self.lineage_guard = None
+        # FEA-11-RENDITION-1 (I-1, C-17 §3.3): the ONE publication-gate
+        # predicate, injected by the assembly (pipeline must not grow a second
+        # implementation). ``None`` keeps every pre-RENDITION-1 unit
+        # construction valid: a referenced page is then refused exactly as
+        # before this task.
+        #: page_id -> "unavailable" | "pending" | "open".
+        self.source_gate_reader = None
+        #: C-15 §4.1 ``V(p,t)`` predicate for referenced targets. The assembly
+        #: injects the repository's own visibility read (``get_page``), so the
+        #: Run target gate reuses the FROZEN predicate instead of hand-writing
+        #: a third copy of it. ``None`` = pre-RENDITION-1 refusal.
+        self.page_visibility = None
 
     def expand(self, scope: PipelineScope) -> tuple[TargetSnapshot, ...]:
         kind = scope.scope_type.value
@@ -1420,7 +1432,8 @@ class SqliteTargetCatalog(TargetCatalog):
     def _page_or_error(self, page_id: str) -> TargetSnapshot:
         row = self._conn.execute(
             "SELECT p.page_id, p.chapter_id, p.sort_order, p.page_locked, p.deleted_at,"
-            " p.source_filename, p.source_hash, p.managed_original_ref, c.book_id"
+            " p.source_filename, p.source_hash, p.managed_original_ref, p.source_mode,"
+            " c.book_id"
             " FROM pages p JOIN chapters c ON c.chapter_id = p.chapter_id"
             " JOIN books b ON b.book_id = c.book_id WHERE p.page_id = ?"
             " AND c.deleted_at IS NULL AND b.deleted_at IS NULL",
@@ -1430,7 +1443,22 @@ class SqliteTargetCatalog(TargetCatalog):
             raise PipelineError("TARGET_NOT_FOUND", page_id)
         if row["deleted_at"] is not None:
             raise PipelineError("TARGET_DELETED", page_id)
-        if row["source_hash"] is None or row["managed_original_ref"] is None:
+        # FEA-11-RENDITION-1 (I-1): a PURE referenced page (no managed original)
+        # carries no Managed Copy to read; its Run-target admission is the
+        # FROZEN referenced witness (C-15 §4.1 V) plus the C-17 §3.3
+        # publication gate. A managed page — and a legacy MIXED page, which
+        # still has a managed original (L-R5) — keeps the historical gate byte
+        # for byte, so pre-RENDITION-1 behaviour cannot regress.
+        if (
+            (row["source_mode"] or "managed") == "referenced"
+            and row["managed_original_ref"] is None
+        ):
+            self._ensure_referenced_target_readable(
+                page_id,
+                row["source_hash"],
+                unavailable_detail=f"page {page_id} has no managed original",
+            )
+        elif row["source_hash"] is None or row["managed_original_ref"] is None:
             raise PipelineError("TARGET_NOT_FOUND", f"page {page_id} has no managed original")
         regions = tuple(
             self._region_from_id(item["region_id"])
@@ -1471,17 +1499,31 @@ class SqliteTargetCatalog(TargetCatalog):
     def _region_or_error(self, region_id: str) -> TargetSnapshot:
         row = self._conn.execute(
             "SELECT r.region_id, r.page_id, r.deleted_at, p.chapter_id, p.sort_order,"
-            " p.page_locked, c.book_id FROM regions r JOIN pages p ON p.page_id = r.page_id"
+            " p.page_locked, p.source_mode, p.source_hash, p.managed_original_ref,"
+            " c.book_id"
+            " FROM regions r JOIN pages p ON p.page_id = r.page_id"
             " JOIN chapters c ON c.chapter_id = p.chapter_id JOIN books b ON b.book_id = c.book_id"
             " WHERE r.region_id = ? AND p.deleted_at IS NULL AND c.deleted_at IS NULL"
             " AND b.deleted_at IS NULL AND p.source_hash IS NOT NULL"
-            " AND p.managed_original_ref IS NOT NULL AND p.width IS NOT NULL AND p.height IS NOT NULL",
+            " AND (p.managed_original_ref IS NOT NULL OR p.source_mode = 'referenced')"
+            " AND p.width IS NOT NULL AND p.height IS NOT NULL",
             (region_id,),
         ).fetchone()
         if row is None:
             raise PipelineError("TARGET_NOT_FOUND", region_id)
         if row["deleted_at"] is not None or self._page_deleted(row["page_id"]):
             raise PipelineError("TARGET_DELETED", region_id)
+        # FEA-11-RENDITION-1 (I-1): the PURE referenced page needs the same V +
+        # gate admission as page scope; the width/height SQL above is kept so a
+        # NULL-geometry page stays a stable ``TARGET_NOT_FOUND`` on the region
+        # id (L-R10). Mixed/managed pages keep the historical gate.
+        if (
+            (row["source_mode"] or "managed") == "referenced"
+            and row["managed_original_ref"] is None
+        ):
+            self._ensure_referenced_target_readable(
+                row["page_id"], row["source_hash"], unavailable_detail=region_id
+            )
         region = self._region_from_id(region_id)
         # FEA-11-LINEAGE-1 (C-17 §7.1): a region-scope Run target whose current
         # revision is not proven for the page's current binding is a typed
@@ -1540,6 +1582,26 @@ class SqliteTargetCatalog(TargetCatalog):
     def _commit_guard_value(self, page_id: str) -> Mapping[str, Any]:
         reader = getattr(self, "guard_reader", None)
         return reader(page_id) if callable(reader) else {}
+
+    def _ensure_referenced_target_readable(
+        self, page_id: str, source_hash: str | None, *, unavailable_detail: str
+    ) -> None:
+        """C-15 §4.1 V + C-17 §3.3 gate admission for a referenced Run target.
+
+        Fail-closed: when the assembly did not wire BOTH predicates (every
+        pre-RENDITION-1 construction), the referenced page is refused with the
+        historical detail, so no unit-level caller can admit one by accident.
+        The refusal stays in the EXISTING Run error family (C-17 §8:352: old
+        commands are not remapped; no ``SOURCE_*`` code enters the Run face).
+        """
+        visibility = self.page_visibility
+        gate = self.source_gate_reader
+        if not callable(visibility) or not callable(gate) or not source_hash:
+            raise PipelineError("TARGET_NOT_FOUND", unavailable_detail)
+        if not visibility(page_id):
+            raise PipelineError("TARGET_NOT_FOUND", f"page {page_id} has no readable source")
+        if gate(page_id) != "open":
+            raise PipelineError("TARGET_NOT_FOUND", f"page {page_id} has no readable source")
 
     def _lineage_visible_regions(
         self, page_id: str, regions: tuple[RegionSnapshot, ...]

@@ -351,14 +351,27 @@ class _ManagedPageCatalog:
 class _ManagedPageImageSource:
     """Pixel access for provider steps (D06 §6/§7 input, D07 §37).
 
-    Only the immutable Managed Copy is read; a missing or undecodable file is a
-    typed provider-input failure, never an empty image.
+    Managed pages keep reading only the immutable Managed Copy; a missing or
+    undecodable file is a typed provider-input failure, never an empty image.
 
-    P09-MANAGED-READ-ROOT-TRUST-1: the pixels come from bytes read through a
-    ``ManagedRootTrust``-verified handle (``QImage.fromData``), so the file that
-    was identity/canonical-path verified is the file Qt decodes -- the previous
-    ``QImage(str(path))`` re-resolved the name after the check.
+    FEA-11-RENDITION-1 (I-2, C-17 §7.2): a ``source_mode='referenced'`` page
+    reads the CURRENT page binding's source entry instead -- through the SAME
+    single selection entry point the resolve face uses
+    (``prepare_referenced_rendition``) and the SAME grant/identity/budget read
+    channel. The rendition is re-encoded PNG pixels only: nothing is published
+    to the catalog, nothing is written to ``rendition_cache`` and no
+    ``rendition_kind``/key is invented. Every ``SourceImportError`` becomes a
+    fixed, path-free ``ProviderInputError`` (C-17 §8:352: the old Run command
+    face keeps the existing provider error family).
+
+    P09-MANAGED-READ-ROOT-TRUST-1: the managed pixels come from bytes read
+    through a ``ManagedRootTrust``-verified handle (``QImage.fromData``), so
+    the file that was identity/canonical-path verified is the file Qt decodes
+    -- the previous ``QImage(str(path))`` re-resolved the name after the check.
     """
+
+    #: Fixed safe detail: never a path, locator or entry name.
+    _REFERENCED_REFUSAL = "referenced page source is not readable"
 
     def __init__(
         self,
@@ -367,17 +380,30 @@ class _ManagedPageImageSource:
         regions: SqliteRegionRepository,
         *,
         root_trust: ManagedRootTrust | None = None,
+        source_access: object | None = None,
+        read_gate: Callable[[str], str] | None = None,
+        image_decoder: ImageDecoder | None = None,
+        document_raster: object | None = None,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._regions = regions
         self._root_trust = root_trust
+        #: FEA-11-RENDITION-1: the SAME grant registry the resolve face uses.
+        self._source_access = source_access
+        #: The ONE C-17 §3.3 publication-gate predicate from the assembly.
+        self._read_gate = read_gate
+        self._image_decoder = image_decoder
+        self._document_raster = document_raster
 
     def _trust(self) -> ManagedRootTrust:
         return _root_trust_for(self)
 
     def _page_image(self, page_id: str):
-        """The page's Managed Copy original as a loaded Pillow image.
+        """The page's current image as a loaded Pillow image.
+
+        Managed pages: the Managed Copy original (unchanged). Referenced pages:
+        the rendition of the CURRENT binding's source entry (I-2).
 
         CORE-SLIM-1: Pillow replaced ``QImage.fromData``; the containment and
         error semantics are unchanged (same typed ``ProviderInputError`` sites).
@@ -385,11 +411,16 @@ class _ManagedPageImageSource:
         from PIL import Image
 
         page = self._repository.get_page(page_id)
-        if page is None or not page.managed_original_ref:
+        # FEA-11-RENDITION-1 (F7): a referenced page that V cannot construct as
+        # ``Page`` arrives as ``PageView`` (no managed_original_ref); the mode
+        # dispatch must not touch that attribute before the branch is chosen.
+        if page is not None and getattr(page, "source_mode", "managed") == "referenced":
+            return self._referenced_page_image(page_id)
+        ref = getattr(page, "managed_original_ref", None) if page is not None else None
+        if not ref:
             raise ProviderInputError(
                 f"page {page_id!r} has no managed original", stage="image-source"
             )
-        ref = page.managed_original_ref
         try:
             data = self._trust().read_bytes(ref)
         except TypedResourceChannelError as error:
@@ -407,6 +438,65 @@ class _ManagedPageImageSource:
         except Exception as error:  # noqa: BLE001 - every decode failure is typed
             raise ProviderInputError(
                 f"managed original is not decodable: {ref}", stage="image-source"
+            ) from error
+        return image
+
+    def _referenced_page_image(self, page_id: str):
+        """Decode the CURRENT binding's rendition as a loaded Pillow image.
+
+        C-17 §3.3 gate first (never read the source while pending), then the
+        ONE selection entry point, then the grant-bound decode. No catalog
+        publication, no ``rendition_cache`` write, and the prepared cache-key
+        field is deliberately unused (it is a different derivation than
+        ``RenditionCache.rendition_key``; L-R7).
+        """
+        from PIL import Image
+
+        from application.importing.referenced.errors import SourceImportError
+        from application.importing.referenced.resolve import (
+            prepare_referenced_rendition,
+            render_prepared_rendition,
+        )
+
+        if not callable(self._read_gate) or self._source_access is None:
+            raise ProviderInputError(self._REFERENCED_REFUSAL, stage="image-source")
+        gate = self._read_gate(page_id)
+        if gate != "open":
+            raise ProviderInputError(
+                f"{self._REFERENCED_REFUSAL} (read gate: {gate})",
+                stage="image-source",
+            )
+        try:
+            prepared = prepare_referenced_rendition(
+                page_id, repository=self._repository, access=self._source_access
+            )
+            # C-16 v1.1 §3.1: an encrypted source needs the one-shot Secret-G;
+            # without a live secret-bearing grant this is ``None`` and the
+            # decoder refuses typed ``SOURCE_PASSWORD_REQUIRED`` (L-R2).
+            password = self._source_access.claim_secret_for_binding(
+                prepared["source_id"],
+                prepared["version_id"],
+                prepared["entry_id"],
+                locator=prepared["entry"].locator,
+                ordinal=prepared["entry"].ordinal,
+            )
+            png, _width, _height = render_prepared_rendition(
+                prepared,
+                image_decoder=self._image_decoder,
+                document_raster=self._document_raster,
+                password=password,
+            )
+        except SourceImportError as error:
+            raise ProviderInputError(
+                f"{self._REFERENCED_REFUSAL} ({error.code})", stage="image-source"
+            ) from error
+        try:
+            image = Image.open(io.BytesIO(png))
+            image.load()
+        except Exception as error:  # noqa: BLE001 - typed refusal, never a crash
+            raise ProviderInputError(
+                f"referenced rendition for page {page_id!r} is not decodable",
+                stage="image-source",
             ) from error
         return image
 
@@ -1151,6 +1241,25 @@ def assemble_core_services(
             binding = source_sync_store.current_binding_of_page(page_id)
             return binding["binding_id"] if binding is not None else None
 
+        def read_gate(page_id: str) -> str:
+            """The ONE C-17 §3.3 publication-gate predicate (RENDITION-1 I-3).
+
+            Returns ``unavailable`` (no usable current binding), ``pending``
+            (the binding's publication gate is not open yet) or ``open``. It is
+            the single definition shared by the Run commit guard, the provider
+            image source and the Run target catalog — no third gate predicate
+            exists in the assembly (F4/F5). A binding without a publication row
+            is ``open`` exactly as the pre-existing commit guard treated it, so
+            legacy bindings keep working byte for byte.
+            """
+            binding = source_sync_store.current_binding_of_page(page_id)
+            if binding is None or binding["status"] != "healthy":
+                return "unavailable"
+            gate = source_sync_store.gate_of_binding(binding["binding_id"])
+            if gate is None:
+                return "open"
+            return "open" if gate["read_gate"] == "open" else "pending"
+
         regions = SqliteRegionRepository(conn, lineage_guard=lineage_guard)
 
         def book_id_for_chapter(chapter_id: str) -> str:
@@ -1498,6 +1607,19 @@ def assemble_core_services(
             lineage_binding=lineage_binding_of_page,
         )
 
+        # FEA-10: guard data is derived from existing bindings/drafts, never a
+        # second store. Defined BEFORE the handler table so the detect step can
+        # reuse the SAME reader (FEA-11-RENDITION-1 I-4: re-check the guard
+        # digest before the first Region write).
+        def run_guard_value(page_id):
+            binding = repository.get_page_binding(page_id)
+            return {
+                "binding": binding,
+                "drafts": sorted((draft.draft_id, draft.draft_sequence, draft.status.value)
+                                 for draft in drafts.list_drafts()
+                                 if draft.page_id == page_id and draft.status.value == "active"),
+            }
+
         def _create_detected_region(
             page_id: str,
             polygon: tuple[tuple[float, float], ...],
@@ -1551,7 +1673,17 @@ def assemble_core_services(
             region_writer=RegionStepWriter(conn, regions),
             artifacts=ArtifactStepWriter(conn, storage),
             images=_ManagedPageImageSource(
-                repository, storage, regions, root_trust=managed_root_trust
+                repository,
+                storage,
+                regions,
+                root_trust=managed_root_trust,
+                # FEA-11-RENDITION-1 (I-2/I-3): referenced pages read the
+                # CURRENT binding's rendition through the same grant registry
+                # and the SAME single publication-gate predicate.
+                source_access=source_read_refs,
+                read_gate=read_gate,
+                image_decoder=image_decoder,
+                document_raster=document_raster,
             ),
             geometry=_RegionGeometrySource(regions),
             retry_policy=provider_runtime.retry_policy,
@@ -1566,6 +1698,11 @@ def assemble_core_services(
             # lineage-VISIBLE regions — the page_id-only repository read must
             # not become a bypass (r2 Review R2-01).
             lineage_guard=lineage_guard,
+            # FEA-11-RENDITION-1 I-4 (F3): re-check the commit guard BEFORE the
+            # first Region write, so a binding change between decoding the
+            # image and writing coordinates is a typed refusal, never B1
+            # pixels stamped as native B2 lineage.
+            commit_guard=run_guard_value,
         )
         # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
         # production planner. The probe reuses the same read-only page
@@ -1607,15 +1744,13 @@ def assemble_core_services(
         # commit transaction.
         pipeline._catalog.lineage_guard = lineage_guard
         pipeline._catalog.lineage_binding = lineage_binding_of_page
-        # FEA-10: guard data is derived from existing bindings/drafts, never a second store.
-        def run_guard_value(page_id):
-            binding = repository.get_page_binding(page_id)
-            return {
-                "binding": binding,
-                "drafts": sorted((draft.draft_id, draft.draft_sequence, draft.status.value)
-                                 for draft in drafts.list_drafts()
-                                 if draft.page_id == page_id and draft.status.value == "active"),
-            }
+        # FEA-11-RENDITION-1 (I-1/I-3): referenced Run targets are admitted by
+        # the FROZEN C-15 §4.1 visibility read (the repository's own V, not a
+        # third hand-written predicate) plus the ONE read_gate defined above.
+        pipeline._catalog.source_gate_reader = read_gate
+        pipeline._catalog.page_visibility = (
+            lambda page_id: repository.get_page(page_id) is not None
+        )
 
         from contextlib import contextmanager
 
@@ -1625,16 +1760,16 @@ def assemble_core_services(
             if binding is None:
                 yield
                 return
-            if binding["status"] != "healthy":
+            # FEA-11-RENDITION-1 (I-3): the SAME read_gate the provider and the
+            # target catalog use — no third copy of the C-17 §3.3 predicate.
+            # C-17 §8:352: the old Run command face keeps its existing codes.
+            state = read_gate(page_id)
+            if state == "unavailable":
                 raise PipelineError("TARGET_NOT_FOUND", "source binding is unavailable")
-            # FEA-11 (C-17 §3.3): run inputs refuse a binding whose
-            # publication gate is still pending (pre-ACK sync).
-            if source_sync_store is not None:
-                gate = source_sync_store.gate_of_binding(binding["binding_id"])
-                if gate is not None and gate["read_gate"] != "open":
-                    raise PipelineError(
-                        "TARGET_NOT_FOUND", "source binding is pending acknowledgement"
-                    )
+            if state == "pending":
+                raise PipelineError(
+                    "TARGET_NOT_FOUND", "source binding is pending acknowledgement"
+                )
             grant_id, _ = source_read_refs.find_bound_for_source(
                 binding["source_id"], binding["accepted_source_version"], binding["entry_id"])
             with source_read_refs.commit_guard(grant_id):

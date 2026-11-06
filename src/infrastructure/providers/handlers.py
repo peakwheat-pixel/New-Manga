@@ -204,6 +204,13 @@ class HandlerDependencies:
     #: old-binding coordinates as detect output. ``None`` keeps every unit
     #: construction valid (the production assembly always injects it).
     lineage_guard: LineageIsolationGuard | None = None
+    #: FEA-11-RENDITION-1 I-4 (F3): the SAME commit-guard reader the Run target
+    #: catalog uses (``page_id -> {"binding": ..., "drafts": [...]}``).
+    #: ``handle_detect`` re-checks its digest BEFORE the first Region write: a
+    #: binding that changed between decoding the image and writing coordinates
+    #: must not stamp B1 pixels with B2 native lineage. ``None`` = skip (every
+    #: pre-RENDITION-1 construction keeps working).
+    commit_guard: Any = None
 
 
 class ProductionHandlers:
@@ -394,6 +401,12 @@ class ProductionHandlers:
             self._log_empty_detection(unit.page_id, policy)
             return self._detect_result(unit, (), provenance)
         provenance = detection.provenance()
+        # FEA-11-RENDITION-1 I-4 (F3): the decoded frame above belongs to the
+        # binding that was current when ``page_frame`` ran. Re-check the commit
+        # guard digest at the LAST moment before the first Region is written, so
+        # a binding change in that window is a typed refusal with ZERO Region /
+        # revision / lineage rows instead of B1 coordinates stamped as native B2.
+        self._ensure_input_guard(step_run, unit)
         region_ids = tuple(
             self.deps.region_creator(
                 unit.page_id,
@@ -441,6 +454,30 @@ class ProductionHandlers:
             step_type=STEP_DETECT,
             outputs={"region_ids": region_ids, "detection": provenance},
             output_target_ids=(unit.target_id,),
+        )
+
+    def _ensure_input_guard(self, step_run: StepRun, unit: PlanUnit) -> None:
+        """FEA-11-RENDITION-1 I-4: refuse a binding change before writing.
+
+        The expected digest rides ``step_run.input_refs["__fea10_guard__"]``
+        (recorded when the attempt started); the current value comes from the
+        SAME commit-guard reader the Run target catalog uses. A missing ref
+        (every step attempt recorded before this task, and every unit test that
+        builds a ``StepRun`` by hand) keeps the historical behaviour.
+        """
+        expected = (
+            (step_run.input_refs or {}).get("__fea10_guard__")
+            if step_run is not None
+            else None
+        )
+        reader = self.deps.commit_guard
+        if expected is None or not callable(reader):
+            return
+        if snapshot_digest(reader(unit.page_id)) == expected:
+            return
+        raise StepExecutionError(
+            "INPUT_REVISION_CHANGED",
+            f"page {unit.page_id!r} changed after its image was decoded",
         )
 
     def _lineage_visible_live_regions(self, page_id: str) -> list:
@@ -1495,6 +1532,7 @@ def build_production_handlers(
     region_creator: Any = None,
     plugins: Any = None,
     lineage_guard: LineageIsolationGuard | None = None,
+    commit_guard: Any = None,
 ) -> dict[str, Any]:
     """Convenience wrapper used by ``bootstrap.app``.
 
@@ -1526,6 +1564,8 @@ def build_production_handlers(
             region_creator=region_creator,
             # FEA-11-LINEAGE-1 r3: detect reuses only lineage-visible Regions.
             lineage_guard=lineage_guard,
+            # FEA-11-RENDITION-1 I-4: pre-write commit-guard re-check.
+            commit_guard=commit_guard,
         )
     ).as_mapping()
 
