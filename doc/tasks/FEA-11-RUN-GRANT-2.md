@@ -63,10 +63,10 @@ out_of_scope:
 
 ## Acceptance Criteria（草案，释放时冻结）
 
-- AC-J1 容器 ≥3 成员真实 IPC：每个成员页均可 `AuthorizeSourceReadForRun` 绑定并 `resolve_page_resource`；不可读到未授权成员。
-- AC-J2 fail-closed：N 项中任一项 locator/facts/ordinal 不符或 entry 不在 version → 整体 typed、零映射写入；容器替换/generation 漂移/撤销/过期 typed。
-- AC-J3 上限：超过 `max_entries` 或 64 grant 上限 → typed，不截断；≥65 成员容器有明确用例。
-- AC-J4 managed/旧路径零回归；零漂移（pins 18/18、Run wire/minor/schema/依赖零改动）；全量门禁不降；EV/Handoff 不夸大。
+- [x] **AC-J1 容器 ≥3 成员真实 IPC：每个成员页均可 `AuthorizeSourceReadForRun` 绑定并 `resolve_page_resource`；不可读到未授权成员。** 证据：真实 IPC `Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc`（真实 `multi.zip` / `multi.cbz` 各 3 成员，经生产 scan→cache→range→mint 路径：每个成员页 `authorize → bound_pages=1 → resolve_page_resource` OK；`minted=1` 即一个 grant 覆盖全部成员）；Core 真实装配 `test_container_members_are_entry_granular_on_every_authorized_member[zip|cbz]`（provider 读到**该成员自己的像素尺寸**）；未授权面 `test_container_member_outside_the_signed_entries_cannot_be_read`（scope 少一项 → typed、`commit_guard` 不开、provider 拒绝）+ IPC 的「省略最后成员 → typed 且 resolve typed」。日志 `verification/FEA-11-RUN-GRANT-2/logs/host-ipc.log`、`logs/feature.log`；见证 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2\fixtures\ipc-*\run-grant-2b-container-members.txt`。 <<MET>>
+- [x] **AC-J2 fail-closed：N 项中任一项 locator/facts/ordinal 不符或 entry 不在 version → 整体 typed、零映射写入；容器替换/generation 漂移/撤销/过期 typed。** 证据：Core 注册矩阵 `test_container_grant_any_bad_entry_refuses_the_whole_grant[unsafe_locator|absolute_locator|negative_ordinal|duplicate_ordinal|other_container|facts_differ]`（全部 typed `SOURCE_ACCESS_DENIED`，grant 未注册、`_bindings` 空、业务表快照不变）+ 协议面 `test_container_grant_violations_are_typed_with_zero_partial_acceptance[...]`；**P3-4** `test_container_grant_facts_reference_point_is_the_container_identity`（成员 digest 冒充容器 facts → typed 拒绝；同形状真容器 facts → 成功）；**P3-5** `test_container_grant_out_of_range_ordinal_never_matches`（越界 ordinal 不命中、整 grant typed）；既有容器替换/撤销/过期用例（RUN-GRANT-1 50 例）全绿。判别性 B1/B2/B4/B5/B6 全 RED 后按字节恢复（`logs/discrimination.log`）。 <<MET>>
+- [x] **AC-J3 上限：超过 `max_entries` 或 64 grant 上限 → typed，不截断；≥65 成员容器有明确用例。** 证据：Core `test_container_grant_entry_budget_is_typed_and_never_truncated`（`max_entries=3` 边界接受全部 3 成员；+1 项 → `SOURCE_BUDGET_EXCEEDED` 且未注册；配置预算 20000 时命中实现硬上限 10,000 → 同样 typed）；Host `ContainerEntryPlanIsVerbatimAndTypedOverTheBudget`；真实 IPC：Host mint `max_entries=65` + 66 项 → typed `SOURCE_BUDGET_EXCEEDED`（**不截断**），且 **66 成员容器由 1 个 grant 覆盖、`ordinal=65` 的最后一个成员可授权/可读**（64 = 单次命令 `grant_ids` 上限，**不是**成员数上限，见 P3-6/N-4）。判别性 B3/B8 全 RED。 <<MET>>
+- [x] **AC-J4 managed/旧路径零回归；零漂移（pins 18/18、Run wire/minor/schema/依赖零改动）；全量门禁不降；EV/Handoff 不夸大。** 证据：`verification/FEA-11-RUN-GRANT-2/scope-validation.log`（changed=7 全 ALLOWED；`doc/plan`/`doc/contracts`/`schema.py`/迁移/依赖/`NewManga.App`/STATUS/PLAN/LEDGER 全 ZERO_DIFF；`CORE_PROTOCOL_MINOR=3`、Run 授权命令保留）；`logs/gates.log`（PIN AUDIT 18/18 PASS、check 默认 + `-TaskPath` PASS(3 warnings)、API inventory EXIT=0）；全量 pytest 3281/10 → **3305/10**、全量 .NET 1559/0/90 → **1562/0/91**（+3 单测、+1 opt-in IPC skip，不降）；定向 50 → **74**；`logs/full-pytest.log`、`logs/full-dotnet.log`、`logs/feature.log`；Handoff/EV 保留 L-G16/L-G1/L-G2/L-G9/L-G10 等 limitation 与未宣称项。 <<MET>>
 
 ## 实现注意（来自 C-16 v1.4 复核 P3，必须在本卡收口）
 
@@ -79,3 +79,18 @@ out_of_scope:
 
 1. 先完成 `FEA-11-RUN-GRANT-2A`（Host 版本通道）与 `FEA-11-RUN-GRANT-2B-PREREQ-1`（C-16 v1.4）。
 2. 两者 done 后由 DSH 复核本卡 scope 是否仍成立（如 Core/Host 形状变化），再冻结/释放实施。
+
+## 交付记录（Owner 回填；不改 status）
+
+- **Owner**：`run-grant-2b-impl`（DSH Agent Teams teammate；Lead `lead`）。
+- **交付基线**：卡 `base_commit=97812958d`；实现起点 `5397be149`（`main`，工作树 clean，实测）。
+- **实现/测试 commit 链**（显式 pathspec，未 push；均在 `main`）：
+  - `7466cb99d` — `feat(fea-11-run-grant-2)`：Core `_parse_scope` 容器 1..N 成员条目（逐项校验 + 零部分接受 + 预算 typed 不截断）+ `_scope_covers_entry` 多 entry 匹配（容器 facts vs `source_locations`、无路径回退）；Host `RunSourceScope.ContainerEntries` + `RunSourceRange` 只对 zip/cbz/pdf 传 Core 权威成员身份 + `SourceReadCoordinator.ContainerEntryPlan`（纯函数、超预算 typed 不截断）+ `IssueLockedAsync` 容器只指纹一次并铸 N 项。
+  - `018008989` — `test(fea-11-run-grant-2)`：Core 真实装配多成员矩阵（1..N、facts 参考点、越界 ordinal、重复 locator、预算）、协议面注册矩阵、Host 单测（range 原样传递/plan 预算/authorizer 转发）、真实 IPC（3 成员 zip+cbz、省略/错项 typed、66 成员单 grant 不截断）；**`delivery_head`**。
+  - 证据/卡/Handoff 同批文档提交（`verification/FEA-11-RUN-GRANT-2/**`、本卡、`doc/handoffs/FEA-11-RUN-GRANT-2-018008989.md`）。
+- **实现落点**：`src/infrastructure/resource_channel/source_read_refs.py`（`_MAX_SCOPE_ENTRIES`、`_parse_scope` 容器分支、`_scope_covers_entry`）；`apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs`（`RunSourceScope.ContainerEntries`、`ContainerEntryPlan`、`DescribeContainer`、`IssueLockedAsync` 容器分支、`IssueAsync` 透传）；`apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs`（`RunSourceRange.Resolve` 传成员身份）。**`src/bootstrap/core_service.py` 零改动**（Run 授权 handler 的 `pages` 已携带 `entry`/`entries`，多 entry 语义只需匹配侧改动）。
+- **门禁实测**（`delivery_head=018008989`；均真跑，日志在 `verification/FEA-11-RUN-GRANT-2/logs/`）：`dotnet build NewManga.sln -c Release` **成功 0 warning/0 error**（`build.log`）；定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q` → **74 passed**（基线 50，+24；`feature.log`）；`--filter SourceRegistry` → **32 passed**（基线 29；`host-unit.log`）；`NEWMANGA_FEA11_IPC=1 --filter Fea11RunGrant` → **5 passed**（基线 4；`host-ipc.log`）；全量 `pytest tests` → **3305 passed / 10 skipped**（基线 3281/10；`full-pytest.log`）；全量 `dotnet test NewManga.sln -c Release` → **1562 / 0 / 91**（基线 1559/0/90；`full-dotnet.log`）；`verify_pins` **18/18 PASS**、`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)**、`generate_api_inventory.py --check` **EXIT=0**（`gates.log`）；scope **PASS（changed=7 全 ALLOWED；zero-drift 全空；minor=3）**（`scope-validation.log`、`changed-files.txt`）；判别性 **8/8 破坏点 RED_AS_EXPECTED + 8/8 字节级 RESTORED + final rebuild EXIT=0 + 恢复后定向套件绿**（`discrimination.log`）。跑后均 `git checkout -- verification/FEA-09`（全量 .NET 命中重写，已恢复；全量 pytest 未命中）。
+- **未运行项**：无（上述门禁全部实跑）。**已知 flaky 未命中**：`FluentResidual2VisualEvidenceTests`（证据目录同时写入时的 git-status 快照竞态）本次全量 .NET 未触发。
+- **证据索引**：`verification/FEA-11-RUN-GRANT-2/EV.md`（结论/AC 矩阵/逐文件 sha256）、`logs/`（8 个日志）、`scope-validation.log`、`changed-files.txt`、`RESOURCE-MANIFEST.json`（仓外隔离根 `G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2\` 聚合 sha256 + `delivery_head`）、`tools/`（4 个可复现脚本）。
+- **不夸大**：本卡只闭环「容器成员 entry 授权通道」（L-G12② 在**缓存可用的容器源**上闭环）；folder **>4096 成员不入缓存**（L-G16）、长 Run（L-G1）、加密源（L-G2）、Core 重启（L-G9）、L-R11（L-G10）**均不解决**；**L-R1 未全修**；不得表述为「referenced Run 全场景可用」。`status` 未改，等待 Lead 指派独立 Review 与集成门禁。
+

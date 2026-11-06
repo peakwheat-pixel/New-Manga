@@ -1,0 +1,68 @@
+# FEA-11-RUN-GRANT-2 (2B) discrimination log
+
+generated_at_utc=2026-11-06T22:33:18+00:00
+repo_head=0180089894b2286d8ff6a94289b84dd318871d18
+
+Each break is applied to the shipped bytes, ONE target test is run, the test
+MUST turn red (exit != 0), then the file is restored and its sha256 re-checked.
+
+[B1] break=Core 容器基数回退为 2B 前「恰好 1 entry」（多成员通道被禁用）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/fea11/test_source_run_grant.py::test_container_members_are_entry_granular_on_every_authorized_member[zip]
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\fea11\test_source_run_grant.py:1250: AssertionError | ---------------------------- Captured stderr call ----------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_container_members_are_entry_granular_on_every_authorized_member[zip] | 1 failed in 0.47s | 
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B2] break=Core 容器 facts 参考点不再与 source_locations 比对（成员 digest 可冒充容器身份）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/fea11/test_source_run_grant.py::test_container_grant_facts_reference_point_is_the_container_identity
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\fea11\test_source_run_grant.py:680: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_container_grant_facts_reference_point_is_the_container_identity | 1 failed in 0.46s | 
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B3] break=Core 单 grant 条目预算检查被删除（超 max_entries 不再 typed，AC-J3 判别）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/fea11/test_source_run_grant.py::test_container_grant_entry_budget_is_typed_and_never_truncated
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\fea11\test_source_run_grant.py:680: AssertionError | ---------------------------- Captured stderr setup ---------------------------- | [core.schema] schema v8 already current; this session performed no write | =========================== short test summary info =========================== | FAILED tests/fea11/test_source_run_grant.py::test_container_grant_entry_budget_is_typed_and_never_truncated | 1 failed in 0.46s | 
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B4] break=Core 容器 ordinal 唯一性校验被删除（重复 ordinal 被接受）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[duplicate_ordinal]
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\core\test_host_control.py:988: AssertionError | ---------------------------- Captured stderr call ----------------------------- | [core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified) | =========================== short test summary info =========================== | FAILED tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[du
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B5] break=Core 容器「同一容器路径」校验被删除（跨容器条目被接受）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[other_container]
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\core\test_host_control.py:988: AssertionError | ---------------------------- Captured stderr call ----------------------------- | [core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified) | =========================== short test summary info =========================== | FAILED tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[ot
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B6] break=Core 容器成员 locator 安全校验被删除（`../` locator 被接受）
+    file=src/infrastructure/resource_channel/source_read_refs.py
+    runner=pytest target=tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[unsafe_locator]
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail= | tests\core\test_host_control.py:988: AssertionError | ---------------------------- Captured stderr call ----------------------------- | [core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified) | =========================== short test summary info =========================== | FAILED tests/core/test_host_control.py::test_container_grant_violations_are_typed_with_zero_partial_acceptance[un
+    restore=RESTORED sha256=713be364b0d04727a9c6252cce30257a012834c54507c46f2ae98d8616211382
+
+[B7] break=Host Run range 不再传递 Core 权威成员身份（回到容器单 entry，AC-H3/IPC 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+    runner=ipc target=FullyQualifiedName~ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=  堆栈跟踪: |      at NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc() |    at NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc() | --- End of stack trace from previous location --- |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 2 s - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:02.84]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc
+    restore=RESTORED sha256=efc362bbb9ec97ef19a76b7e79d14955dd3cd9eeabcae982721e51dc27805ecb
+
+[B8] break=Host 超额成员列表被静默截断（不再 typed SOURCE_BUDGET_EXCEEDED，AC-J3 判别）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+    runner=unit target=FullyQualifiedName~ContainerEntryPlanIsVerbatimAndTypedOverTheBudget
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=  堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryTests.ContainerEntryPlanIsVerbatimAndTypedOverTheBudget() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 2 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.18]     NewManga.Host.Tests.SourceRegistryTests.C
+    restore=RESTORED sha256=926da435b88c0bf5bb322afc77480075f006a2b2a2c5a4057fa0f4d4e0b2ba2c
+
+result=PASS breaks=8 all_red_then_restored
+final_rebuild exit_code=0
+restored_python_suite exit_code=0 tail=============================== warnings summary =============================== | tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate |   C:\Python314\L
+restored_host_unit_suite exit_code=0 tail=G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行 | 总共 1 个测试文件与指定模式相匹配。 |  | 已通过! - 失败:     0，通过:    32，已跳过:

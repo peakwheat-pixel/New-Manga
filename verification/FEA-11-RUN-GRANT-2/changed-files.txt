@@ -1,0 +1,7 @@
+M	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+M	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+M	src/infrastructure/resource_channel/source_read_refs.py
+M	tests/core/test_host_control.py
+M	tests/fea11/test_source_run_grant.py
