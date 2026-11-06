@@ -186,4 +186,4 @@ out_of_scope:
 - **删除/迁移/归档**：0 文件、0 字节（`PRESERVE_REFERENCED`/`NOT_APPLICABLE`；未删除/移动/归档任何资源；`closeout_counts` 全 0）。
 - **未关闭项（如实保留）**：L-R1（I-1 生产不可达，仅 defensive invariant）、L-R2（`CORE_CAPABILITY_MISSING` 不在 `AllowedDeleteTrashErrorCodes`，Host/Core 旧债）、L-R3…L-R7（含 Review F1 通知时序）、F2/F4 follow-up；**L3/L4 真机走查 `NOT_RUN`**；**FEA-12-UI 历史 AC 未回填**。不得宣称 ① 生产可达或 L3/L4 通过。
 - **指针清理**：STATUS 当前 Task → 无活动 Task（下一候选待定）；PLAN 本节点 in_review→done 事实；TASK_LEDGER 重生成；本卡不再是 READY 节点。
-- **push**：门禁全过后按用户 2026-11-06 授权执行（pre/post hash 记录见最终答复与 `G:\CODEX\New Manga.workspace\temp\push-record-ui.log`）。
+- **push**：**已执行**（2026-11-06，用户「全部授权」覆盖不 push 限制且门禁全过）：`git push origin main` → `690c77eb0..fe44d067b`（PRE_HEAD `fe44d067b`、POST_ORIGIN `fe44d067b`、PUSH_EXIT=0、AHEAD 7→0）；记录 `G:\CODEX\New Manga.workspace\temp\push-record-ui.log`。
