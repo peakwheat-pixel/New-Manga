@@ -27,6 +27,8 @@ allowed_paths:
   - src/infrastructure/resource_channel/source_read_refs.py
   - src/bootstrap/core_service.py
   - tests/core/test_host_control.py
+  - tests/core/test_core_service.py
+  - tests/fea09/test_referenced_wire.py
   - tests/fea11/test_source_run_grant.py
   - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
   - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
@@ -69,6 +71,7 @@ out_of_scope:
 | R-9 | **.NET 证据** | 接受分工：Python 真实装配覆盖 Run 级像素/提交（AC-R2/R3/R5），.NET 真实 IPC 覆盖「铸造→绑定→resolve 同授权面」（AC-R4/AC-R6）；不要求 .NET Run 级 E2E。 |
 | R-10 | **L-G9** | Core 重启后 referenced Run 不可续跑：登记 limitation；不在本卡解决。 |
 | R-11 | **不夸大** | 卡面/Handoff/STATUS 不得写「referenced Run 全场景可用」「L-R1 全修」；只写窗口内可用 + limitations。 |
+| R-12 | **允许扩域（2026-11-07，DSH 裁决）** | 能力 `source.read.run/1` 为冻结契约要求；`tests/core/test_core_service.py` 与 `tests/fea09/test_referenced_wire.py` 含 capabilities **精确等值**断言，必须把新能力加入期望列表（**additive，不删除/不弱化既有断言、不新增 skip**）。仅此 2 文件扩入 allowed_paths；其余扩域仍须停下报 DSH。 |
 
 ## In（冻结）
 
