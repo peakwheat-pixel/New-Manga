@@ -107,3 +107,15 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **当前状态**：无活动 Task；`FEA-11-L-S1-REGISTRY-RESILIENCE-1` **proposed**（需 scope review）；排队：2C 长 Run 授权续期（L-G1，另卡）、L-S4 死代码、L-R11 gate 统一、C-04b 文档 residual、SCAN-2 RH-1…RH-5、UI P3/L3/L4。
 - **limitations 不变**：L-R1 未全修；L-G12② 仅「缓存可用（≤4096 成员）容器源」面闭环；L-G16/L-G1/L-G2/L-G8/L-G9/L-G10/L-G11/L-G13/L-G14 保留；P3-04 可选加固。
 - **push**：本轮 `git push origin main` → `61b7eb249..416b1692a`（PRE_HEAD `416b1692a`、PRE_ORIGIN `61b7eb249`、AHEAD 7→0、PUSH_EXIT=0、POST_ORIGIN `416b1692a`）；origin 同步（AHEAD=0）。
+
+## 10. 续接补充（2026-11-07 第 2 轮：C-15 v1.5 / L-S1 A / L-S4 A）
+
+> 本轮完成 1 张契约卡 + 2 张实现卡并 push；下一会话只读本文件 + STATUS/PLAN/LEDGER 即可恢复。
+
+- **FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1 `done`**（`ae8c2de07`）：**C-15 v1.5 UNFREEZE**（Registry 文件级损坏与「根身份当前不可用」分离；1/18 pin 重签；C-16/C-17 零字节；错误码零新增）；独立 byte-level r1 changes → **r2 approved（P0/P1/P2=0）**；pins 18/18（C15 `f9e376a0…`）。
+- **FEA-11-L-S1-REGISTRY-RESILIENCE-1（A）`done`**（`b56c5a0e6`）：`SourceAccessRegistry.Load` 只做文件级校验；`Authorize` 逐请求重核验请求路径所属根 identity（不可用 → typed `SOURCE_REGISTRY_UNAVAILABLE` 零写；缺失根≠无授权；不自动重建/重授权/恢复）；`List` 全部条目；文件级损坏路径一字未改；混合 registry 单测 + gated 真机 IPC + 5/5 判别性。独立 r1 **approved（P0=0/P1=0/P2=0/P3=7）**；AC-L1…L8 MET。
+- **FEA-11-L-S4-LOCATION-AUTH-REFRESH-1（A）`done`**（`0ebb234bf`）：`refresh_source_location_auth` 单点原地刷新（合并死代码 + 替换内联 UPDATE）；接线 import 复用/页单元 + sync apply（含 D-2 整源 skip 一次条件刷新）；撤销/identity 不符零写；重注册→刷新→枚举闭环；7/7 判别性。独立 r1 **approved（P0=0/P1=0/P2=0/P3=7）**；AC-LS4-1…8 MET。
+- **基线（本轮实测）**：全量 pytest **3317 / 10**；全量 .NET **1570 / 0 / 92**（Lead combined 全量 .NET 曾命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；pins **18/18**（C15 v1.5）；check PASS(3w)；API PASS。
+- **当前状态**：无活动 Task；`FEA-11-L-S1-B-RECOVERY-REAUTH-1` **proposed**（恢复/重授权入口；需 C-16 v1.5 UNFREEZE + scope review）；排队：L-S4-B（零交互自动恢复枚举，需 C-16 v1.5）、2C 长 Run 续期（L-G1）、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
+- **limitations 保留**：L-S1 B（恢复/重授权入口不存在）、C（`.corrupt-*` 无界复制）、`SOURCE_REGISTRY_UNAVAILABLE` 码义收窄、D-6 调度器投影；**L-S4-1**（缺触发器，零交互恢复需 B）、**L-S4-2**（folder 身份键）；**L-R1 未全修**；A 卡只兑现「单根不可用不再整库不可读/刷新事实」，**不宣称恢复已可用**。
+- **push**：本轮 `git push origin main` → `d782c52a4..db12dc5e5`（PREREQ 线）与 `db12dc5e5..e3f1ff99a`（L-S1/L-S4 closeout）；PRE_HEAD `e3f1ff99a`、POST_ORIGIN `e3f1ff99a`、AHEAD=0、PUSH_EXIT=0。
