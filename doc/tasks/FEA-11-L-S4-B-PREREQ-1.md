@@ -97,4 +97,6 @@ out_of_scope:
 
 ## ZCode 裁决记录
 
-- 状态：pending（故障转移裁决输入；返回后 append；若不可用则 DSH 直接裁决并注明）。
+- **已记录（ZCode，2026-11-07，`subagent_zcode` 只读）**：**维持 BLOCKED 按旧卡面；接受推荐形状 b3**（C-16 v1.5 = `source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available`，**恰 1 pin**；C-17/C-07/M2-C1 零字节）；确认 b1/b2 否决正确；B2 字段随 v1.5 冻结、实现延后；背书条件写安全性（Host 签名 grant 作同一 source+四键身份证明；请求无路径；只写三列；复用 A 卡唯一 SQL；拒绝路径零写；幂等单调；校验顺序 host-only→shape→grant live→source_id→identity→条件 UPDATE）。
+- **C-15 零字节的条件性（ZCode 补充）**：依赖 D-6 解释背书（B1 点击=显式操作、reattest=事实传播非新恢复动作）；DSH 已在 D-6 显式背书；若后续 Review 不背书则升为 2 pins（C-16+C-15），不得把解释当既定事实。
+- **ZCode 补充 AC**：① 每轮 refresh 每 target 至多一次 reattest、无重试风暴 → 已入 L-S4-B 卡 AC-LS4B-9；②「零交互」限定为 B1 显式动作之后的传播、禁止「自动恢复/自愈」字样 → 已入 AC-LS4B-10。

@@ -4,7 +4,7 @@ title: 重授权后的零交互恢复（L-S4-B：reattest 条件写 + Host 触�
 kind: implementation
 governance_version: 3
 status: ready
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/C16-V15-BATCH-scope-r1.md`（fresh subagent `6f75eb58-…`，**BLOCKED 按旧卡面**；推荐形状 = C-16 v1.5 `source.reattest/1` + `ReattestSourceLocation` 条件写 + `roots_available` 字段，1/18 pins）；Codex 不可用 → ZCode 故障转移裁决（见 PREREQ 卡）；DSH 裁决 D-1…D-8（见下）；依赖 PREREQ（C-16 v1.5 UNFREEZE）
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/C16-V15-BATCH-scope-r1.md`（fresh subagent `6f75eb58-…`，**BLOCKED 按旧卡面**；推荐形状 = C-16 v1.5 `source.reattest/1` + `ReattestSourceLocation` 条件写 + `roots_available` 字段，1/18 pins）；Codex 不可用 → ZCode 故障转移裁决（见 PREREQ 卡）；DSH 裁决 D-1…D-8（见下）；依赖 PREREQ（C-16 v1.5 UNFREEZE）；ZCode 裁决：接受 b3 形状（1 pin），补充 AC-LS4B-9/10
 suggested_owner: codex
 owner: null
 reviewer: null
@@ -73,6 +73,8 @@ out_of_scope:
 - [ ] **AC-LS4B-5 无授权/无 identity 重建/不扩面**：Core 不创建/复活 grant；Host Registry 不新增/撤销/改 roots/identity/generation（仅既有 `last_used_at`）；不新增 source/version/entry；无新错误码/能力（除冻结的 `source.reattest/1`）/wire minor/schema/依赖。
 - [ ] **AC-LS4B-6 触发与恢复**：B1 重授权成功后（App 成功分支）触发 reattest → 冷启动/下一次 refresh 枚举不再丢该 source（真实 IPC 闭环）；失败 typed 且不自动重试成自动恢复。
 - [ ] **AC-LS4B-7 零漂移/门禁**：pins 18/18（C16 v1.5）；check（默认+`-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3317/10、1617/0/93**）；跑后恢复 `verification/FEA-09`。
+- [ ] **AC-LS4B-9 每轮至多一次 reattest**：同一 refresh 轮中每个 target 至多一次 `ReattestSourceLocation`，无重试风暴；失败 typed 即止（不循环重试成自动恢复）。
+- [ ] **AC-LS4B-10 措辞红线**：「零交互」严格限定为「B1 显式动作之后的传播」；卡/Handoff/EV/UI 禁止出现「自动恢复/自愈/自动重新授权」承诺。
 - [ ] **AC-LS4B-8 不夸大**：只承诺「B1 显式重授权后无需重导入/apply，扫描枚举恢复」；不承诺撤销后自动恢复、不承诺自动重新授权、不承诺 folder；`source_reset_registry` 后无旧条目可桥接 → limitation；L-R1 未全修。
 
 ## 已知 limitation（本卡）
