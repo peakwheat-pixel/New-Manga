@@ -51,6 +51,12 @@ public sealed class SourceAccessRegistry
         return entry;
     });
 
+    /// <summary>
+    /// C-15 v1.5 §5: every entry is returned, including entries whose root is currently
+    /// unavailable/replaced. Unavailability is DERIVED at use time (per-request verification in
+    /// <see cref="Authorize"/>); it is never persisted and never drops/rewrites an entry, so this
+    /// projection stays byte-compatible with the frozen format (no new field, same order).
+    /// </summary>
     public SourceAuthorization[] List() => Locked(() => Load().Entries);
 
     public SourceAuthorization Authorize(string registryId, int expectedGeneration, IReadOnlyList<string> paths) => Locked(() =>
@@ -60,12 +66,30 @@ public sealed class SourceAccessRegistry
             ?? throw new SourceAccessException("SOURCE_ACCESS_DENIED");
         if (entry.RevokedAt is not null) throw new SourceAccessException("SOURCE_GRANT_REVOKED");
         if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOURCE_REGISTRY_BUSY");
+        // C-15 v1.5 §5 (security core): the registered ROOT identity is re-verified PER REQUEST,
+        // inside the same lock and after the fresh read of the registry file. It is never cached
+        // across calls, never written back and never used to re-authorize/recover a root.
+        //
+        // * containment is decided on the REGISTERED root only: a root that is currently missing or
+        //   replaced never falls back to "no root", to a parent directory or to another root (a
+        //   missing root is never "no authorization" that silently admits the request);
+        // * a root that no longer exists / is unreadable / carries a different volume+file identity is
+        //   THIS request's typed refusal (the frozen SOURCE_REGISTRY_UNAVAILABLE, zero new codes) with
+        //   ZERO persistence — the loop runs before any Save, so the registry bytes stay untouched;
+        // * requests whose paths belong to a healthy root are unaffected by an unavailable sibling
+        //   root (each covered root is probed at most once per call, no cross-call cache);
+        // * the reparse/traversal rejection is unchanged and still fail-closed: it runs once the
+        //   covering root is verified, so a healthy root keeps returning SOURCE_ACCESS_DENIED for a
+        //   reparse ancestor or a vanished requested path (ordering only changes the code reported for
+        //   an UNAVAILABLE root, whose paths can no longer be stat'ed at all).
+        var verified = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var raw in paths)
         {
             var path = SourceSecurity.Normalize(raw);
+            var root = entry.Roots.FirstOrDefault(r => r.Readable && SourceSecurity.Contains(r.Root, path))
+                ?? throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            if (verified.Add(root.Root)) VerifyRootIdentity(root);
             SourceSecurity.RejectReparseAncestors(path);
-            if (!entry.Roots.Any(r => r.Readable && SourceSecurity.Contains(r.Root, path)))
-                throw new SourceAccessException("SOURCE_ACCESS_DENIED");
         }
         var used = entry with { LastUsedAt = DateTimeOffset.UtcNow.ToString("O") };
         // Persistence is part of authorization: no grant may escape after a failed write.
@@ -95,6 +119,34 @@ public sealed class SourceAccessRegistry
         return quarantine;
     });
 
+    /// <summary>
+    /// C-15 v1.5 §5: re-verifies ONE registered root against the current file system. This is the
+    /// per-request replacement for the eager probe <see cref="Load"/> used to run over every root.
+    /// The root must still exist, be readable and carry the registered volume/file identity; any
+    /// failure is the request's typed <c>SOURCE_REGISTRY_UNAVAILABLE</c> (zero new error codes).
+    /// The probe result is NEVER cached, NEVER persisted and NEVER used to rebuild the identity or
+    /// re-authorize the root: recovery stays an explicit user action (`source_reset_registry` for
+    /// file-level corruption; re-authorization is out of this card).
+    /// </summary>
+    private static void VerifyRootIdentity(SourceRoot root)
+    {
+        (ulong Volume, ulong Id, long Size) identity;
+        try { identity = SourceSecurity.Identity(root.Root); }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        { throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE"); }
+        if (identity.Volume != root.VolumeSerial || identity.Id != root.FileId)
+            throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+    }
+
+    /// <summary>
+    /// C-15 v1.5 §5: FILE-LEVEL validation only. magic/version/length/DPAPI/JSON and the persisted
+    /// entry STRUCTURE (unique id, generation, normalized+readable roots) decide whether the file is
+    /// trustworthy; a root whose CURRENT physical identity is unavailable/mismatched is NOT file
+    /// corruption (it is derived per request in <see cref="Authorize"/>), so one deleted/moved source
+    /// no longer makes every other entry unreadable. The file-level failure path below is unchanged:
+    /// fail-closed <c>SOURCE_REGISTRY_UNAVAILABLE</c>, best-effort <c>.corrupt-&lt;utc&gt;</c> copy of
+    /// the original bytes, no empty registry created and the original file never overwritten.
+    /// </summary>
     private RegistrySnapshot Load()
     {
         if (!File.Exists(RegistryPath)) return new RegistrySnapshot(1, DateTimeOffset.UtcNow.ToString("O"), []);
@@ -122,9 +174,9 @@ public sealed class SourceAccessRegistry
                     throw new InvalidDataException();
                 foreach (var root in entry.Roots)
                 {
+                    // Persisted ROOT SHAPE only (a file-format invariant); the root's live identity is
+                    // deliberately NOT probed here — see VerifyRootIdentity / C-15 v1.5 §5.
                     if (root.Root != SourceSecurity.Normalize(root.Root) || !root.Readable) throw new InvalidDataException();
-                    var identity = SourceSecurity.Identity(root.Root);
-                    if (identity.Volume != root.VolumeSerial || identity.Id != root.FileId) throw new InvalidDataException();
                 }
             }
             return snapshot;
