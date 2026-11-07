@@ -123,8 +123,9 @@ ORDER BY c.sort_order, c.import_order, c.chapter_id,
 | 治理 check（默认） | `pwsh -NoProfile -File tools/governance/check.ps1` | PASS (3 warnings) | **PASS (3 warnings)**，EXIT 0 | 无变化 | `logs/check-default.txt` |
 | 治理 check（-TaskPath） | `... check.ps1 -TaskPath doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md` | PASS | **PASS (3 warnings)**，EXIT 0 | 无变化 | `logs/check-taskpath.txt` |
 | API inventory | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | EXIT 0 | **EXIT 0** | 无变化 | `logs/api-inventory.txt` |
-| scope | `git diff 4c42e11b8 --name-only` | — | 仅 `src/infrastructure/sqlite/library.py`、`tests/core/test_core_delete_preview_commands.py` ⊆ allowed_paths | PASS | `logs/scope.txt` |
-| 零漂移 | `git diff --name-only 26aa0ca4a -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps pyproject.toml requirements*.txt uv.lock` | — | **空** | PASS | `logs/scope.txt` |
+| scope（实现/测试 diff） | `git diff 4c42e11b8 --name-only` | — | 仅 `src/infrastructure/sqlite/library.py`、`tests/core/test_core_delete_preview_commands.py` ⊆ allowed_paths | PASS | `logs/scope.txt` |
+| scope（提交后完整交付 diff） | 同上（tree `6e20d5d28`，`git status` clean） | — | 19 个文件（2 实现/测试 + 卡面 + Handoff + EV/Manifest + 13 日志；全部 ⊆ allowed_paths） | PASS | `logs/scope-post-commit.txt` |
+| 零漂移 | `git diff --name-only 26aa0ca4a -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps pyproject.toml requirements*.txt uv.lock` | — | **空** | PASS | `logs/scope.txt`、`logs/scope-post-commit.txt` |
 | 文件指纹 | `Get-FileHash` / `git hash-object` | — | 见 `logs/sha256-files.txt` | — | `logs/sha256-files.txt` |
 
 - **pins 18/18 的契约 sha 对照**：C-04b `4b304c0c315fe8ec4ae86544590919329c27234ead2b3ad9357b2e99a2d54e52`、

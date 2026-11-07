@@ -49,8 +49,8 @@
   "artifacts": [
     {
       "rel": "EV.md",
-      "bytes": 12774,
-      "sha256": "0aa29933be0361dbee2f7ee243720919262f2a73c20f8dc8fecf74ce36809aef"
+      "bytes": 13075,
+      "sha256": "821d9f4da5ee7e1b1b2a2fb05cf422548dbd2fb2d61140654feaa72596ab4c29"
     },
     {
       "rel": "logs/api-inventory.txt",
@@ -96,6 +96,11 @@
       "rel": "logs/red-before-fix.txt",
       "bytes": 6829,
       "sha256": "1ab79ac8e8249b7ee79f848f3fd8b552666e2118742c5cdd8c9bc093df8c4c08"
+    },
+    {
+      "rel": "logs/scope-post-commit.txt",
+      "bytes": 1851,
+      "sha256": "c3f8e2b4a65e8fbaa6c57f5ab75ad2173ccc0f44b4644e628c8906e139cdcc83"
     },
     {
       "rel": "logs/scope.txt",

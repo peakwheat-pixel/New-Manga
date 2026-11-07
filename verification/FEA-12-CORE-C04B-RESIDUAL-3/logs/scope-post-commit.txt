@@ -1,0 +1,37 @@
+# Post-commit scope verification (tree = 6e20d5d28 docs/evidence commit; working tree clean)
+
+## git status --porcelain (empty = clean)
+?? verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/scope-post-commit.txt
+
+## git diff 4c42e11b8 --name-only (full delivery diff; all paths must be within allowed_paths)
+doc/handoffs/FEA-12-CORE-C04B-RESIDUAL-3-25dc1523c.md
+doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md
+src/infrastructure/sqlite/library.py
+tests/core/test_core_delete_preview_commands.py
+verification/FEA-12-CORE-C04B-RESIDUAL-3/EV.md
+verification/FEA-12-CORE-C04B-RESIDUAL-3/RESOURCE-MANIFEST.json
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/api-inventory.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/check-default.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/check-taskpath.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/discriminate-green-after-restore.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/discriminate-red.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/discriminative-sha-chain.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/full-after.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/pins.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/red-before-fix.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/scope.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/sha256-files.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/targeted-after.txt
+verification/FEA-12-CORE-C04B-RESIDUAL-3/logs/targeted-before.txt
+
+## zero-drift: contracts/schema/apps/deps (empty = no drift)
+
+## post-commit gate rerun
+pins: PASS (all 18), exit 0
+check default: PASS (3 warnings), exit 0
+check -TaskPath: PASS (3 warnings), exit 0
+api inventory --check: exit 0
+
+## commit chain
+25dc1523c implementation+tests (delivery_head)
+6e20d5d28 docs/evidence (card delivery record + Handoff + EV/manifest/logs)
