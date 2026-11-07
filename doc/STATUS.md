@@ -17,7 +17,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线：pytest **3317/10**、.NET **1570/0/92**（2026-11-07 L-S4 A closeout 实测；Lead combined 全量 .NET 曾命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；FEA-11 线 limitation 见各卡。
+- 测试基线：pytest **3317/10**、.NET **1617/0/93**（2026-11-07 L-S1-B1 closeout 实测；基线 1570/0/92 +47 本卡 App 测试、+1 opt-in skip）；FEA-11 线 limitation 见各卡。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-06 push 至 `57f62b3fe`（origin 同步，AHEAD=0）**。
