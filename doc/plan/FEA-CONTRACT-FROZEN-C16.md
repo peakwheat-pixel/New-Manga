@@ -48,7 +48,7 @@
 | 5 | v1.3：C-06 v1.2 与本契约同批独立 byte-level 复核 **r3 approved（P0=0/P1=0）**；`verify_pins` **18/18**（C16 新值、其余 16 项不变）；Run wire/错误闭集/schema/依赖零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md` §6；`verification/FEA-11-RUN-GRANT-1-PREREQ-1/logs/pins.log` |
 | 6 | v1.4：容器多成员 entry 语义经独立 byte-level 复核 r1 changes_requested → r2 **approved（P0=0/P1=0/P2=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；wire 字段/命令集/TTL/撤销/错误闭集/Run wire 零改动；C-06/C-17 零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md` §6；`verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/pins.log` |
 | 7 | v1.5：`source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 **r8 approved（P0=0/P1=0/P2=0/P3=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；C-15/C-17/C-06/C-07/M2-C1 零改动；无新错误码/wire minor/schema/依赖 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md` §6；`verification/FEA-11-L-S4-B-PREREQ-1/logs/pins.log` |
-| 8 | v1.6：§2.4 mid-run 重复调用语义经独立 byte-level 复核 **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）**；`verify_pins` **18/18**（C16 新值、C-06 v1.3 同批、其余 16 不变）；wire/TTL/撤销/错误闭集/能力/`PROTOCOL_MINOR=3` 零改动 | ⏳ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md` §6 |
+| 8 | v1.6：§2.4 mid-run 重复调用语义经独立 byte-level 复核 **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）**；`verify_pins` **18/18**（C16 新值、C-06 v1.3 同批、其余 16 不变）；wire/TTL/撤销/错误闭集/能力/`PROTOCOL_MINOR=3` 零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md` §6 |
 
 | v1.6 复核字节（工作树 SHA-256） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0`（= v1.6 冻结字节；r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）） |
 
