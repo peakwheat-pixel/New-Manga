@@ -46,11 +46,13 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：`FEA-11-RUN-GRANT-2C`
+READY 节点：FEA-11-L-R11-GATE-UNIFY-PREREQ-1
+
+（2C done；本卡为 C-16 v1.7 UNFREEZE，`FEA-11-L-R11-GATE-UNIFY-1` proposed 待其 done）
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1 线 done → RUN-GRANT-2A/2B done → L-S1-PREREQ-1（done，`ae8c2de07`）→ L-S1-A（done，`b56c5a0e6`）/ L-S4-A（done，`0ebb234bf`）；→ L-S1-B（done，`80d2799de`）→ L-S4-B-PREREQ（done，`3a475b5b9`）/ L-S4-B（done，`30bdeb4ce`）→ L-S4-B-1（ready）/ B2（proposed）/ 2C（Long Run）/ B2（proposed，字段已冻结、实现延后）/ 2C（长 Run）
+当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1 线 done → RUN-GRANT-2A/2B done → L-S1-PREREQ-1/L-S1-A/L-S4-A done → L-S1-B/L-S4-B-PREREQ/L-S4-B done → L-S4-B-1/B-2 done → 2C-PREREQ-1/2C done（`7c95bb3c4`）→ 下一候选：L-R11 gate 统一（scope review `recommended`，1 pin UNFREEZE）/ C-04b residual / SCAN-RH / UI P3；B2 延后（无消费者）。
 
 ## 历史快照（终态节点，非当前 DAG）
 

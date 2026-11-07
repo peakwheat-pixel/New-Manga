@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`FEA-11-RUN-GRANT-2C` `ready`（2C 长 Run 续期实现：Host 周期重铸 + 重发 AuthorizeSourceReadForRun；依赖 PREREQ done；[卡](tasks/FEA-11-RUN-GRANT-2C.md)）。已闭环：`FEA-11-RUN-GRANT-2C-PREREQ-1` `done`（C-06 v1.3 + C-16 v1.6，`7317837d5`；r6 approved P0/P1/P2=0）；L-S4-B 线三卡 done；C-16 v1.5；L-S1-B1/L-S4-A/L-S1-A done。下一候选：B2（proposed，延后）、L-R11、C-04b、SCAN-RH、UI P3。
+- 当前 Task：`FEA-11-L-R11-GATE-UNIFY-PREREQ-1` `ready`（L-R11 gate 统一契约前置：C-16 v1.7 §2.4「无 publication 行」口径澄清，1/18 pin；[卡](tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md)）。已闭环：`FEA-11-RUN-GRANT-2C` done（`7c95bb3c4`；r2 approved P0/P1=0）；2C-PREREQ-1 done（C-06 v1.3+C-16 v1.6）；L-S4-B 线三卡 done。下一候选：L-R11 实现（proposed，待 PREREQ）、C-04b、SCAN-RH、UI P3；B2 延后。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -17,7 +17,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线：pytest **3363/10**、.NET **1674/0/96**（2026-11-07 2C 实现后 Lead 实跑；closeout 前待 r2 复核；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过）。
+- 测试基线：pytest **3363/10**、.NET **1680/0/96**（2026-11-07 2C closeout Lead 实跑 + 独立 r2 复核；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过；跑后 `verification/FEA-09` 已恢复）。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-06 push 至 `57f62b3fe`（origin 同步，AHEAD=0）**。

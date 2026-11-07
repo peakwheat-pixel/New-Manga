@@ -59,7 +59,7 @@
 | 治理 check | `check.ps1`（默认）与 `-TaskPath doc/tasks/FEA-11-RUN-GRANT-2C.md` | **PASS (3 warnings) ×2 / EXIT=0** | `logs/gates.log` |
 | API inventory | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | **EXIT=0**（61 不变） | `logs/gates.log` |
 | scope | `python verification/FEA-11-RUN-GRANT-2C/tools/scope_validation.py` | **PASS**（delivery 32 文件全 ALLOWED；`src/**` 与禁止面零 diff；C06/C16 pin 命中、C15/C17 blob 零漂移；`PROTOCOL_MINOR=3`；卡 status 未改） | `scope-validation.log`、`changed-files.txt` |
-| 判别性 | `python verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py` | **7/7 RED_AS_EXPECTED + 逐例 sha256 复原 + 复绿** | `logs/discrimination.log` |
+| 判别性 | `python verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py` | **9/9 RED_AS_EXPECTED + 逐例 sha256 复原 + 复绿** | `logs/discrimination.log` |
 
 - **跑后恢复**：全量 .NET 后 `git checkout -- verification/FEA-09`（实跑时 tracked 的 `wire-redacted.ndjson` 会被重写；已恢复）。
 - **证据容器**：`scope-validation.log` / `changed-files.txt` 的 delivery 列表（32）在 `RESOURCE-MANIFEST.json` 生成**之前**采集，故不含 manifest 自身（manifest 是容器、不自我哈希）。
@@ -123,15 +123,15 @@
 2. **续期失败**：Core typed 拒绝 / 全 source mint skip / Host 能力缺失 / 探测未知 → 停止续期（不重试、不 reattest、不自动重新授权）；Run 余下页由 Core fail-closed。
 3. **加密源（L-G2）**、**Core 重启（L-G9）**、**viewer 无活跃 Run 时读引用页（L-R1 残余）**、**>4096 成员（L-G16）**：本卡不修。
 4. **多 Run 排队**：续期只在 dispatch 后启动；**尚未 dispatch 的 pending Run 不在本卡范围**（其 grant 尚未铸造）。
-5. **成本**：每轮重新 mint（容器整文件 sha256 / folder 逐成员）——L-G8 成本按 240s 周期放大；单轮超过 50s 预算即 typed 停止（不长期占用 mint gate）。
+5. **成本**：每轮重新 mint（容器整文件 sha256 / folder 逐成员）——L-G8 成本按 240s 周期放大；单轮超过 50s 预算 → **typed skip + 计数 + 保留跟踪**（不是续期成功、不是 Run 失败；真实 mint 照计）。**R2-06 限定**：预算窗口只计 `_renew`（cold fills + bind），未计每轮 liveness probe 与 mint 请求自身超时；最坏 `probe + round > 60s` 时新 grant 可能晚于旧 grant 的 300s TTL（连续性缺口，Core fail-closed 兜底），故不得表述为「不长期占用 mint gate」。
 6. **mint 期间撤销/漂移**：续期与用户撤销竞态由每轮 `Registry.Authorize` + Core per-page 原子匹配兜底；失败即停，绝不放行。
-7. `SourceIdentityCache` TTL=3600s > 240s×12≈48min；超过 1h 的 Run 可能触发 bounded on-demand 扫描（≤8/轮、30s/源），本轮超预算即停止（AC-2C-5）。
+7. `SourceIdentityCache` TTL=3600s > 240s×12≈48min；超过 1h 的 Run 可能触发 bounded on-demand 扫描（≤8/轮、30s/源），本轮超预算即 skip（保留跟踪，下一 interval 再试；AC-2C-5）。
 
 ## 6. 真实性声明
 
 1. **实跑**：§2 所有 PASS 数字均来自本 EV 记录命令的现场执行；未跑项见 §5/本条。
 2. **NOT_RUN**：真实 300s 墙钟等待（**不做**；时间维用 in-process fake clock）；真实用户数据/回收站/AppData；`git push`；linked worktree；契约 byte-level 复核（本卡零契约改动，pins/blob 比对即为证明）；完整 gated Core 时钟前推（真子进程 Core 无法 monkeypatch —— 已由 Python in-process 测试承担）。
-3. **判别力**：§3 的 7 个破坏点均实际造成对应用例非 0 退出，且逐例原字节复原后复绿。
+3. **判别力**：§3 的 **9** 个破坏点均实际造成对应用例非 0 退出，且逐例原字节复原后复绿。
 4. **未夸大**：本卡不宣称「L-G1 关闭 / 任意长 Run 可用 / Run 全面恢复 / 自动恢复/自愈/自动重新授权/撤销后放行」；只承诺「多步长 Run 在续期窗口内可持续（Host 周期重铸同一冻结 scope 的 grant + 重发既有授权命令）」。
 5. **证据归因**：数字属于 `delivery_head=7c95bb3c4`（返修后）的代码/测试树；初版 `e5e9c4c52` 的数字保留在历史证据中，返修后全部重跑并覆盖本 EV；随后同批 docs/evidence 提交不含实现字节。
 6. **外部依赖**：gated 真 IPC 使用真实 Python Core（`C:/Python314/python.exe`）与仓外 fixture 根
@@ -156,3 +156,11 @@ C:/Python314/python.exe verification/FEA-11-RUN-GRANT-2C/tools/scope_validation.
 C:/Python314/python.exe verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py
 git checkout -- verification/FEA-09
 ```
+
+## 8. Lead 集成复核（2026-11-07；closeout）
+
+- **独立 Review r2**：`doc/reviews/FEA-11-RUN-GRANT-2C-r2.md` — **approved（P0=0 / P1=0 / P2=1 / P3=7）**；reviewer = fresh subagent（session `a4410d0a…`，独立上下文，未参与实现/返修/scope review）。r1 P1-01（Host 接线判别）与 P2-01（轮前预算）**关闭**；P3-01…P3-05 处置确认。
+- **Lead 实跑门禁（repo root，2026-11-07）**：build **0 warning/0 error**；Host `--filter "FullyQualifiedName~HostWiring|FullyQualifiedName~RunGrantRenewal"` **19/0/0**；**Probe-C** `probe-c-apply.py` → 全量 Host **281 passed / 2 failed / 65 skipped**（2 failed 恰为 `HostWiring_DispatchThenProductionTick_RenewsTheSameFrozenScope` + `HostWiring_ManagedOnlyRun_StartsNoRenewal`）→ `probe-c-restore.py` → sha256 `bae563e1…` MATCH、git blob `0098ff5f…` → 重建 → 复跑 **19/0/0**；gated 真 IPC **7/0/0**；fake clock **3 passed / 27 deselected**；全量 pytest **3363 passed / 10 skipped EXIT=0**；全量 .NET **1680 passed / 0 failed / 96 skipped EXIT=0**；pins **18/18**；check（默认 + `-TaskPath`）**PASS(3 warnings)**；API **EXIT=0**；scope **PASS changed=32 全 ALLOWED、`out_of_scope=[]`、`forbidden=[]`、`src/**` 零 diff**；跑后 `git checkout -- verification/FEA-09` 恢复（工作树 clean）。
+- **R2-01（P2）处置 = limitation + follow-up，不重开实现**：3 条 HostWiring 用例驱动 `HostRuntime` 生产方法（`RunAuthorizeWithResultAsync`/`RunDispatchedAsync`/`TickAsync`，renew=真实 `RenewRunGrantsAsync`），但未穿过 `StartInternalAsync` 安装调用点、dispatcher 的 `runDispatched:` 参数、`AcceptRunAsync` 启动调用点；r2 附加删除这 3 处后全量 Host 仍 283/0/65 全绿。**当前代码行为正确**（功能方法与安装行已由 Probe-C 判别），风险是未来误删生产调用点不会被测试发现 → 登记 **L-2C-01**（调用点级判别 follow-up）。**不得**据此宣称「接线已被完整判别」。
+- **P3 处置**：R2-05 文档口径滞后（7/7→9/9、`typed 停止`→`typed skip`、`delivery_head`、STATUS 基线 1674→1680）本次 closeout 清理；R2-02（生产 `ProbeRunLivenessAsync` 无测试）、R2-03（预算事后守护窄窗口可吞 typed stop code）、R2-04（全 skip 折叠丢失 `SOURCE_GRANT_REVOKED` 等 code）、R2-06（预算窗口未计 probe/mint 超时）、R2-07（manifest 历史提交行 sha 用最终快照口径）、R2-08（测试 seam public / `Untrack` 死代码）**保留为 P3 非阻断 limitation**，不伪造已修。
+- **结论**：AC-2C-1…8 **全 MET**（AC-2C-1/6 附 R2-01 P2 证据缺口 limitation）；卡 `status: done`、`integration_commit=delivery_head=7c95bb3c4`；本 EV 为最终证据（21 文件 sha 见 `RESOURCE-MANIFEST.json`）。
