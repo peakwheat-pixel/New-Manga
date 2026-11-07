@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
-  "generated_at": "2026-11-07T00:21:00+00:00",
+  "generated_at": "2026-11-07T00:21:38+00:00",
   "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
   "delivery_head": "9ef295b74",
   "delivery_commits": [
@@ -9,7 +9,7 @@
     "0ebb234bf",
     "9ef295b74"
   ],
-  "repo_head_at_generation": "9ef295b741bc79be799834c1b3a58958741d8ec2",
+  "repo_head_at_generation": "8050a62ae4de1eb2c1300786fbb82d9c5d326680",
   "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree.",
   "resources": [
     {
@@ -86,7 +86,7 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json",
-          "sha256": "f0309607f951bc290216d8aa39c0c218f4b3ff415095c2503c852b57e8fb18f3"
+          "sha256": "42a564039b3c19ec6a78a3b3081612369be598b69cea32e83b53d37878b6aa88"
         },
         {
           "commit": "9ef295b74",
@@ -116,7 +116,7 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log",
-          "sha256": "6d81ffb03ef86598ddfc012fb6920acbf4328ecfec9914d1b185b1cc868289b2"
+          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
         },
         {
           "commit": "9ef295b74",
@@ -173,7 +173,7 @@
         },
         {
           "path": "logs/gates.log",
-          "sha256": "6d81ffb03ef86598ddfc012fb6920acbf4328ecfec9914d1b185b1cc868289b2"
+          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
         },
         {
           "path": "scope-validation.log",
