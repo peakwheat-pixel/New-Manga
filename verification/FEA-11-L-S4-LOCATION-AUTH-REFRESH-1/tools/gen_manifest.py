@@ -38,10 +38,17 @@ def _sha256(path: Path) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--commits", required=True)
+    parser.add_argument(
+        "--delivery-head",
+        default=None,
+        help="implementation/test delivery head (defaults to the last commit)",
+    )
     args = parser.parse_args()
     commits = [item.strip() for item in args.commits.split(",") if item.strip()]
+    delivery_head = args.delivery_head or commits[-1]
     head = _git("rev-parse", "HEAD").strip()
 
+    manifest_relative = "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json"
     changed: list[dict] = []
     for commit in commits:
         names = [
@@ -51,6 +58,9 @@ def main() -> int:
             if name.strip()
         ]
         for name in names:
+            if name == manifest_relative:
+                # The manifest cannot hash itself; it is the container.
+                continue
             path = REPO / name
             changed.append(
                 {
@@ -74,7 +84,7 @@ def main() -> int:
         "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
-        "delivery_head": commits[-1],
+        "delivery_head": delivery_head,
         "delivery_commits": commits,
         "repo_head_at_generation": head,
         "note": (
@@ -85,7 +95,8 @@ def main() -> int:
             "No linked worktree, no push, no user data, no schema/migration/"
             "dependency change; the frozen contract bytes were NOT modified "
             "(pin audit is the proof). This is a GENERATION-TIME snapshot of "
-            "the tracked delivery tree."
+            "the tracked delivery tree; the manifest itself is the container "
+            "and is deliberately NOT hashed inside its own file list."
         ),
         "resources": [
             {

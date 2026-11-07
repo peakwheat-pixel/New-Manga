@@ -1,20 +1,22 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
-  "generated_at": "2026-11-07T00:21:38+00:00",
+  "generated_at": "2026-11-07T00:22:38+00:00",
   "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "9ef295b74",
+  "delivery_head": "0ebb234bf",
   "delivery_commits": [
     "6dd36aad7",
     "0ebb234bf",
-    "9ef295b74"
+    "9ef295b74",
+    "8050a62ae",
+    "54ed1b5f5"
   ],
-  "repo_head_at_generation": "8050a62ae4de1eb2c1300786fbb82d9c5d326680",
-  "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree.",
+  "repo_head_at_generation": "54ed1b5f51c7789b042f204b1e520911a4c65e9c",
+  "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 9ef295b74）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 54ed1b5f5）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内，未 push。"
@@ -31,7 +33,7 @@
       "source_path": "G:\\CODEX\\New Manga (main)",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 21,
+      "file_count": 23,
       "changed_files": [
         {
           "commit": "6dd36aad7",
@@ -71,7 +73,7 @@
         {
           "commit": "9ef295b74",
           "path": "doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md",
-          "sha256": "01ecc55beea940ef39610b818a2f893ae840c244a93c92933c1d221d4dd9e451"
+          "sha256": "0657f4aba8a8db4317bf25385ef333650bd1fded366cae2b54dfeb92754e2d58"
         },
         {
           "commit": "9ef295b74",
@@ -81,12 +83,7 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md",
-          "sha256": "d0a08932b2dbd68c669b44f46038d9d71ae44eb0936a2bc4874374a6c25dc437"
-        },
-        {
-          "commit": "9ef295b74",
-          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json",
-          "sha256": "42a564039b3c19ec6a78a3b3081612369be598b69cea32e83b53d37878b6aa88"
+          "sha256": "db12eb842509e8178e1682871f052325f65b2cd0f662bfaf2b433dcac738591b"
         },
         {
           "commit": "9ef295b74",
@@ -121,7 +118,7 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log",
-          "sha256": "c6bfe62d8403305ee56a35b5396e52c992bbe10f7ddf39e66e9a875b845b7e39"
+          "sha256": "f624c0021cd2a1c05920f043be5c4962c338b5322b50f83e821360a93e0315c1"
         },
         {
           "commit": "9ef295b74",
@@ -131,12 +128,27 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py",
-          "sha256": "febcfc85cd4194841811cd22741b00f64c030062d2a5157a6beaadbb3ce5a36f"
+          "sha256": "20a107801e094826773a848629aa18c00d855e7a6114f12a04c3d971f534297d"
         },
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py",
           "sha256": "f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5"
+        },
+        {
+          "commit": "8050a62ae",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/changed-files.txt",
+          "sha256": "0f4b55dd0fac464f617be575c6eec8a5d6fc97144388dd852c97bf89ee1133a7"
+        },
+        {
+          "commit": "8050a62ae",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log",
+          "sha256": "f624c0021cd2a1c05920f043be5c4962c338b5322b50f83e821360a93e0315c1"
+        },
+        {
+          "commit": "54ed1b5f5",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log",
+          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
         }
       ]
     },
@@ -153,7 +165,7 @@
         },
         {
           "path": "EV.md",
-          "sha256": "d0a08932b2dbd68c669b44f46038d9d71ae44eb0936a2bc4874374a6c25dc437"
+          "sha256": "db12eb842509e8178e1682871f052325f65b2cd0f662bfaf2b433dcac738591b"
         },
         {
           "path": "logs/discrimination.log",
@@ -177,7 +189,7 @@
         },
         {
           "path": "scope-validation.log",
-          "sha256": "c6bfe62d8403305ee56a35b5396e52c992bbe10f7ddf39e66e9a875b845b7e39"
+          "sha256": "f624c0021cd2a1c05920f043be5c4962c338b5322b50f83e821360a93e0315c1"
         },
         {
           "path": "tools/discrimination.py",
@@ -185,7 +197,7 @@
         },
         {
           "path": "tools/gen_manifest.py",
-          "sha256": "febcfc85cd4194841811cd22741b00f64c030062d2a5157a6beaadbb3ce5a36f"
+          "sha256": "20a107801e094826773a848629aa18c00d855e7a6114f12a04c3d971f534297d"
         },
         {
           "path": "tools/scope_validation.py",

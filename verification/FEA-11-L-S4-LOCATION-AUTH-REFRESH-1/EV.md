@@ -69,7 +69,7 @@ tests/fea09/test_source_sync_operations.py   (新文件；卡 allowed_paths 指�
 | 治理 pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PIN AUDIT: PASS (all 18)** | `logs/gates.log` |
 | 治理 check | `pwsh -NoProfile -File tools/governance/check.ps1`（默认 + `-TaskPath doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md`） | **PASS (3 warnings) ×2** | `logs/gates.log` |
 | API inventory | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | **OK: rendered counts match FEA-C07 doc, EXIT 0** | `logs/gates.log` |
-| 范围 | `C:/Python314/python.exe verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py --commits <delivery commits>` | **PASS：changed=7 全 ALLOWED；`out_of_scope=[]`；`zero_drift_violations=[]`；`PROTOCOL_MINOR=3`；卡 `status` 未改** | `scope-validation.log`、`changed-files.txt` |
+| 范围 | `C:/Python314/python.exe verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py --commits 6dd36aad7,0ebb234bf,9ef295b74,8050a62ae,54ed1b5f5` | **PASS：changed=21 全 ALLOWED**（7 代码/测试 + 14 文档/证据；仅实现+测试两提交时为 changed=7）；`out_of_scope=[]`；`zero_drift_violations=[]`；`PROTOCOL_MINOR=3`；卡 `status` 未改 | `scope-validation.log`、`changed-files.txt` |
 | 判别性 | `C:/Python314/python.exe verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py` | **result=PASS breaks=7 全部 RED_AS_EXPECTED + 字节级恢复 + 恢复后目标用例绿 + `restored_tree_git_status=CLEAN`** | `logs/discrimination.log` |
 
 **归因与并发披露（如实）：**

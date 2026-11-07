@@ -1,6 +1,6 @@
-[2026-11-07T00:21:00.326+00:00] FEA-11-L-S4 (A) scope validation
+[2026-11-07T00:22:22.426+00:00] FEA-11-L-S4 (A) scope validation
 card=doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md base=55306cb84
-delivery_commits=6dd36aad7,0ebb234bf,9ef295b74
+delivery_commits=6dd36aad7,0ebb234bf,9ef295b74,8050a62ae,54ed1b5f5
 changed=21
   CHANGED doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md
   CHANGED doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md

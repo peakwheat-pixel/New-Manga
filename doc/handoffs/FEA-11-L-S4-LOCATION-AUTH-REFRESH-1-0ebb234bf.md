@@ -39,7 +39,7 @@ supersedes_handoff: null
 | 全量 Python | `C:/Python314/python.exe -m pytest tests -q` | `repo_head=0ebb234bf` | **PASS 3317 passed / 10 skipped / 11 warnings in 245.79s**（基线 3305/10，不降） | `logs/full-pytest.log` |
 | 全量 .NET | `dotnet test NewManga.sln -c Release`（cwd `apps/desktop-avalonia`） | `repo_head=89757f193`（并发 L-S1 **docs-only** 提交；`git diff --stat 0ebb234bf..89757f193 -- apps/` **为空**） | **PASS 1570 / 0 / 92（8 程序集）**（基线 1562/0/91；+8/+1 归属并发 L-S1 Host 测试，**不归属本卡**） | `logs/full-dotnet.log` |
 | 治理 | `verify_pins.ps1` / `check.ps1`（默认 + `-TaskPath`）/ `generate_api_inventory.py --check` | delivery tree | **PIN AUDIT PASS (all 18)** / **PASS(3 warnings) ×2** / **EXIT=0** | `logs/gates.log` |
-| 范围 | `python verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py --commits 6dd36aad7,0ebb234bf` | 自有 commit 链 | **PASS changed=7 全 ALLOWED；zero-drift=[]；out_of_scope=[]；PROTOCOL_MINOR=3；卡 status 未改** | `scope-validation.log`、`changed-files.txt` |
+| 范围 | `python verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py --commits 6dd36aad7,0ebb234bf,9ef295b74,8050a62ae,54ed1b5f5` | 自有 commit 链 | **PASS changed=21 全 ALLOWED（7 代码/测试 + 14 文档/证据；仅实现+测试两提交时为 changed=7）；zero-drift=[]；out_of_scope=[]；PROTOCOL_MINOR=3；卡 status 未改** | `scope-validation.log`、`changed-files.txt` |
 | 判别性 | `python verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py` | delivery tree | **PASS 7/7 RED_AS_EXPECTED + 7/7 字节级恢复（sha256 MATCH）+ 恢复后复绿 + tree CLEAN** | `logs/discrimination.log` |
 
 - **跑后恢复**：全量 .NET 重写 tracked `verification/FEA-09/logs/wire-redacted.ndjson` → 已 `git checkout -- verification/FEA-09`
