@@ -1,0 +1,2 @@
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+A	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryResilienceTests.cs

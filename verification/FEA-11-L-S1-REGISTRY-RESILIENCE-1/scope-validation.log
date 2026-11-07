@@ -1,0 +1,39 @@
+# FEA-11-L-S1-REGISTRY-RESILIENCE-1 scope validation
+generated_at_utc=2026-11-07T00:11:32+00:00
+delivery_base=db12dc5e5
+delivery_commits=1ac8cc0b7,b56c5a0e6
+repo_head=0ebb234bfd505ed72a351395b56c9a63303d5274
+
+## allowed_paths (card frontmatter)
+- doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md
+- doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-*.md
+- doc/handoffs/FEA-11-L-S1-REGISTRY-RESILIENCE-1-*.md
+- verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/**
+- apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryResilienceTests.cs
+- apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
+
+## changed files (this ticket's commits only)
+M	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs	ALLOWED
+A	apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryResilienceTests.cs	ALLOWED
+
+## zero-drift surfaces
+doc/plan/**: ZERO_DIFF
+doc/contracts/**: ZERO_DIFF
+src/infrastructure/sqlite/schema.py: ZERO_DIFF
+migrations: ZERO_DIFF
+src/** (Python Core): ZERO_DIFF
+tests/** (Python Core tests): ZERO_DIFF
+dependencies (pyproject/requirements/*.csproj): ZERO_DIFF
+NewManga.App/**: ZERO_DIFF
+NewManga.CoreClient/**: ZERO_DIFF
+STATUS/PLAN/TASK_LEDGER: ZERO_DIFF
+apps/** beyond allowed_paths: ZERO_DIFF
+
+result=PASS changed=2 out_of_scope=[]
+
+## shared-worktree note (honest disclosure)
+The same main working tree is being used concurrently by the FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 session (Python src/** + tests/**).
+Those files are NOT part of this delivery; the changed-file set is computed from this ticket's own commits (1ac8cc0b7, b56c5a0e6), not from a base..HEAD range.
+No file of that session was modified, staged or committed by this ticket; the tree-level git status at evidence time is recorded in logs/gates-governance.log.
+The docs commit (card / handoff / verification evidence) follows the delivery commits; it is within allowed_paths by construction.

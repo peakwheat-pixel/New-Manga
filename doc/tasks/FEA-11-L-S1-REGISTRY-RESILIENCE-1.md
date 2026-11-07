@@ -14,7 +14,7 @@ base_commit: 55306cb84
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: b56c5a0e6adf6f4cba31f1b3b1d8ee950c7bb84b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1
@@ -57,14 +57,14 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-L1 文件级损坏仍整库 fail-closed**：magic/version/长度/DPAPI/JSON 任一不合法 → `SOURCE_REGISTRY_UNAVAILABLE`、corrupt 复制、不创建空文件/不覆盖（判别性：放宽该路径 → RED）。
-- [ ] **AC-L2 根级不可用不再整库不可读**：有效根 + 缺失/被替换根的混合 registry：`List` 可用、有效根相关操作/授权正常；缺失根相关请求 typed 拒绝且零写；其余根不受影响（判别性）。
-- [ ] **AC-L3 授权期逐请求校验（安全核心）**：`Authorize` 对路径所属根重新核验 identity；只删 `Load` 校验不补 `Authorize` → 目标用例 RED（被替换根不得重新获得授权）；缺失根 ≠ 无授权。
-- [ ] **AC-L4 不自动重建/恢复/重授权**：代码与测试证明不存在自动重建 identity、自动恢复、自动重授权路径；恢复仍仅显式 `source_reset_registry`（文件级损坏）。
-- [ ] **AC-L5 错误码/语义零新**：沿用既有 `SOURCE_REGISTRY_UNAVAILABLE`；无新码、无 wire/schema/依赖/C-16/C-17 变化；撤销/ACL/加密边界不变。
-- [ ] **AC-L6 测试/证据**：混合 registry 单测 + 1 条 gated 真机 IPC（D-7）；判别性 ≥3 破坏点 RED + 字节级恢复；EV 每文件 sha256 + Handoff。
-- [ ] **AC-L7 零漂移/门禁**：pins 18/18（C15 v1.5）；check（默认 + `-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3305/10 / 1562/0/91**）；跑后恢复 `verification/FEA-09`。
-- [ ] **AC-L8 不夸大**：不得把本卡写成「恢复已可用/根级问题全解」；B/C limitation 保留；不得宣称自动恢复。
+- [x] **AC-L1 文件级损坏仍整库 fail-closed**：magic/version/长度/DPAPI/JSON 任一不合法 → `SOURCE_REGISTRY_UNAVAILABLE`、corrupt 复制、不创建空文件/不覆盖（判别性：放宽该路径 → RED）。 证据：`SourceAccessRegistry.Load()` 的 magic/长度/DPAPI/JSON/结构校验与「`.corrupt-<utc>` 复制 + 不覆盖 + 不建空文件 + typed」路径保持原字节；`SourceRegistryResilienceTests.FileLevelCorruptionStaysWholeFileFailClosed` 12 例矩阵（短文件/截断/magic/length/JSON/format_version/重复 id/generation 0/空 roots/非规范 root/readable=false/**真实 DPAPI 篡改**）逐例断言原字节保留 + corrupt 副本 + `List`/`Authorize` typed；既有 `SourceRegistryTests.EncryptedPersistenceGenerationCorruptionAndExplicitReset` 保持绿；判别性 B4（放宽为「空 registry」→ RED）见 `verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/discrimination.log`。 <<MET>>
+- [x] **AC-L2 根级不可用不再整库不可读**：有效根 + 缺失/被替换根的混合 registry：`List` 可用、有效根相关操作/授权正常；缺失根相关请求 typed 拒绝且零写；其余根不受影响（判别性）。 证据：`MixedRegistry_ListReturnsEveryEntryIncludingTheUnavailableOne`（2 条全返回、root/generation 不变、`List` 零字节写、新 `Register` 成功）、`MixedRegistry_HealthyRootAuthorizeSucceedsAndOnlyPersistsItsLastUse`（有效根成功且只持久化自身 `last_used_at`）、`MissingRoot_AuthorizeIsTypedAndWritesNothing`（typed + 字节不变 + 无 `.corrupt-*`）、gated 真机 IPC `Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped`（真实 Core：`source_list_roots`=2、有效根铸造成功、缺失根 typed 零写、`source_register_root` 成功、`List`=3）；判别性 B1（恢复 Load 预探针 → RED）见 `logs/discrimination.log`。 <<MET>>
+- [x] **AC-L3 授权期逐请求校验（安全核心）**：`Authorize` 对路径所属根重新核验 identity；只删 `Load` 校验不补 `Authorize` → 目标用例 RED（被替换根不得重新获得授权）；缺失根 ≠ 无授权。 证据：`Authorize` 在同一 `Locked()` 内、读盘后按请求路径所属注册根调 `VerifyRootIdentity`（存在/可读/volume+file id），失败 → `SOURCE_REGISTRY_UNAVAILABLE` 且循环先于任何 `Save`（零写）；不跨调用缓存（`RootIdentityIsReProbedOnEveryAuthorize`）；被替换根不获授权（`ReplacedRoot_AuthorizeIsTypedAndPersistsNoNewIdentity`，且持久化 identity 保持原值）；缺失根不回退（`MissingRoot_NeverAuthorizesAnyPathAndContainmentStaysExact`：根外/前缀兄弟/`..`/相对路径仍 `SOURCE_ACCESS_DENIED`）；判别性 B2（删除逐请求补位 → 被替换根重新授权 RED）、B3（缺失根当无授权 → RED）、B5（根外回退 → RED）。 <<MET>>
+- [x] **AC-L4 不自动重建/恢复/重授权**：代码与测试证明不存在自动重建 identity、自动恢复、自动重授权路径；恢复仍仅显式 `source_reset_registry`（文件级损坏）。 证据：`VerifyRootIdentity` 只读探针、不写回，`Authorize` 失败路径零 `Save`；`ReplacedRoot_*` 断言不匹配后 registry 字节不变且持久化 volume/file id 仍为原（错误）值；`RevokeAndExplicitResetAreUnaffectedByAnUnavailableRoot`（`Revoke` generation+1/`revoked_at` 不变；`Reset(false)`→`INVALID_REQUEST`、`Reset(true)`→quarantine+空库）；无自动重注册代码路径。 <<MET>>
+- [x] **AC-L5 错误码/语义零新**：沿用既有 `SOURCE_REGISTRY_UNAVAILABLE`；无新码、无 wire/schema/依赖/C-16/C-17 变化；撤销/ACL/加密边界不变。 证据：`scope-validation.log`（`doc/plan`/`doc/contracts`/`schema.py`/migrations/依赖/`NewManga.App/**`/`NewManga.CoreClient/**` 全 `ZERO_DIFF`；changed=2 全 ALLOWED）；`logs/gates-governance.log`（pins 18/18 含 C15 `f9e376a0ed4c`、C16 `ad25fb3c89bb`、C17 `aefa0fa5b17e` 未变；API inventory EXIT=0）；测试断言错误码文本等于 `SOURCE_REGISTRY_UNAVAILABLE`（无新码）。 <<MET>>
+- [x] **AC-L6 测试/证据**：混合 registry 单测 + 1 条 gated 真机 IPC（D-7）；判别性 ≥3 破坏点 RED + 字节级恢复；EV 每文件 sha256 + Handoff。 证据：`SourceRegistryResilienceTests`（8 单测 + 1 gated IPC）；`logs/host-unit.log`（40 passed / 1 skipped）、`logs/host-ipc.log`（1 passed + 隔离 receipt）、`logs/discrimination.log`（5/5 RED_AS_EXPECTED + 5/5 字节级 RESTORED + final rebuild EXIT=0）；`EV.md` 逐文件 sha256；`doc/handoffs/FEA-11-L-S1-REGISTRY-RESILIENCE-1-b56c5a0e6.md`。 <<MET>>
+- [x] **AC-L7 零漂移/门禁**：pins 18/18（C15 v1.5）；check（默认 + `-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3305/10 / 1562/0/91**）；跑后恢复 `verification/FEA-09`。 证据：`logs/gates-governance.log`（PIN AUDIT PASS 18/18；Governance PASS(3 warnings) ×2；API inventory EXIT=0；`FEA09_STATUS=CLEAN`）；`scope-validation.log`（changed=2 全 ALLOWED、zero-drift 全空）、`changed-files.txt`；`logs/full-pytest.log`（3317 passed / 10 skipped——其中 +12 来自同期 L-S4 已提交测试，不归属本卡）、`logs/full-dotnet.log`（1570 / 0 / 92；基线 1562/0/91：+8 单测 +1 opt-in IPC skip）；build 0 warning/0 error（`logs/build.log`）。 <<MET>>
+- [x] **AC-L8 不夸大**：不得把本卡写成「恢复已可用/根级问题全解」；B/C limitation 保留；不得宣称自动恢复。 证据：本卡「已知 limitation」与 Handoff §3 保留 B（恢复/重授权入口不存在）、C（`.corrupt-*` 无界复制）、码义收窄、D-6 投影/过时注释；明写「不宣称恢复已可用/根级问题全解/L-R1 全修/调度器级混合矩阵已覆盖」。 <<MET>>
 
 ## 已知 limitation（本卡）
 
@@ -84,4 +84,12 @@ out_of_scope:
 
 ## 交付记录（Owner 回填；不改 status）
 
-- 待实施。
+- **实现 commit 链**（起点 `db12dc5e5`（工作树 clean，实测）；卡 `base_commit=55306cb84`）：
+  - `1ac8cc0b7` — `feat(fea-11-l-s1)`: `SourceAccessRegistry.Load` 拆分为「文件级损坏」与「根身份当前不可用」；`Authorize` 逐请求重核验请求路径所属根的 identity（同一 `Locked()` 内、读盘后、零写、无跨调用缓存、不自动重建/重授权/恢复）；`List` 保留全部条目。
+  - `b56c5a0e6` — `test(fea-11-l-s1)`: `SourceRegistryResilienceTests`（8 单测 + 1 条 gated 真机 IPC）；**`delivery_head`**。
+  - 证据/卡/Handoff 同批文档提交（`verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/**`、本卡、`doc/handoffs/FEA-11-L-S1-REGISTRY-RESILIENCE-1-b56c5a0e6.md`）。
+- **门禁实测**（`delivery_head=b56c5a0e6`；均真跑）：`dotnet build NewManga.sln -c Release` **0 warning / 0 error**；`SourceRegistry` → **40 passed / 0 failed / 1 skipped**；gated `Ipc_MixedRegistry` → **1 passed**（含隔离 receipt）；定向 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q` → **74 passed**；全量 `pytest tests` → **3317 passed / 10 skipped**；全量 `dotnet test NewManga.sln -c Release` → **1570 / 0 / 92**（基线 1562/0/91：+8 单测、+1 opt-in IPC skip）；`verify_pins` **18/18**；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)**；API inventory **EXIT=0**；scope **PASS（changed=2 全 ALLOWED；zero-drift 全空）**；判别性 **5/5 破坏点 RED_AS_EXPECTED + 5/5 字节级 RESTORED + final rebuild EXIT=0**。跑后均 `git checkout -- verification/FEA-09`（`FEA09_STATUS=CLEAN`）。
+- **未运行/限定**：调度器级 mixed-registry 用例未新增（`SourceScanSchedulerTests.cs` 不在本卡 frozen write domain，D-6）→ 以「registry 级混合单测 + 既有单目标 scheduler 用例保持绿（缺失/替换根仍 `Error(SOURCE_REGISTRY_UNAVAILABLE)`）+ 真实 IPC 混合」组合证据替代，**不**宣称调度器级混合矩阵已覆盖；被替换根采用「注册侧 identity 与当前不匹配」确定性夹具（NTFS FileId 复用 flaky 风险，scope review R4）。
+- **共享工作树披露**：同期 `FEA-11-L-S4-LOCATION-AUTH-REFRESH-1` 的 commit `6dd36aad7`/`0ebb234bf`（Python `src/**`+`tests/**`）落在本卡 head **之后**，**不属于本交付**；本卡零 Python/契约/STATUS/PLAN/LEDGER diff，未暂存/提交其任何文件（全量 pytest 的 +12 passed 归属该会话）。
+- **limitation（保留）**：B（恢复/重授权入口不存在）、C（`.corrupt-*` 无界复制）、`SOURCE_REGISTRY_UNAVAILABLE` 码义收窄（整库 vs 单根）、D-6 可用性投影与 `SourceScanScheduler.cs:1570-1571` 过时注释。
+- **独立 Review**：待 Lead 指派（本会话不自审；`status`/closeout 字段由 Lead 维护）。

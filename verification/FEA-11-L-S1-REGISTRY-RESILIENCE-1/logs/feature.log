@@ -1,0 +1,14 @@
+# FEA-11-L-S1-REGISTRY-RESILIENCE-1 directed Core regression log (card AC-L7)
+generated_at_utc=2026-11-07T00:02:52Z
+repo_head=b56c5a0e6adf6f4cba31f1b3b1d8ee950c7bb84b
+command=C:/Python314/python.exe -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q
+........................................................................ [ 97%]
+..                                                                       [100%]
+============================== warnings summary ===============================
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+74 passed, 1 warning in 7.80s
+EXIT_CODE=0

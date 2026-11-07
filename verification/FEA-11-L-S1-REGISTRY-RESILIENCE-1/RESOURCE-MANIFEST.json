@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-L-S1-REGISTRY-RESILIENCE-1",
+  "generated_at": "2026-11-07T00:13:57+00:00",
+  "generated_by": "l-s1-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "delivery_head": "b56c5a0e6adf6f4cba31f1b3b1d8ee950c7bb84b",
+  "repo_head_at_generation": "0ebb234bfd505ed72a351395b56c9a63303d5274",
+  "note": "Registry read resilience delivery (C-15 v1.5 §5): Load validates the file only, Authorize re-verifies the requested root identity per request, List keeps every entry; the file-level corruption path is unchanged. delivery_head is THIS ticket's implementation/test head; repo_head_at_generation is the shared main working tree head at generation time and may already contain the concurrent FEA-11-L-S4 commits (Python only), which are NOT part of this delivery. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-L-S1-REGISTRY-RESILIENCE-1/ holds the mixed-registry IPC fixture, gate logs and discrimination backups; no tracked repository file lives there. It ALSO still holds the earlier PREREQ session's scratch scripts (closeout_prereq.py / edit_c15.py / fix_*.py / frozen_c15.py / ptr3.py / r2_fix.py) and tmp/c15.blob — those files pre-date this delivery, were not created or modified by it, and are preserved as-is. Canonical copies of the gate logs are committed under verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/. No user data, AppData, external volume or recycle bin was touched; no delete/move/migrate/archive was performed on repository content.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head b56c5a0e6）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 apps/desktop-avalonia/{src,tests} 与 verification/doc 内。"
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-S1-REGISTRY-RESILIENCE-1\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "sha256": "c3a46705cb0cd2678c02394971d04f2c37065b99a929b5d64e3ff27f174515e2",
+      "file_count": 33,
+      "children": [
+        {
+          "name": "closeout_prereq.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "78f8795d1e4acbf3e70b747f4939437d96a2bc47bc8895e822546e37cc29344a"
+        },
+        {
+          "name": "discrimination/",
+          "kind": "directory",
+          "file_count": 5,
+          "aggregate_sha256": "a1aa8d949b1bc862611202bbbcd6d78797b189f47f2e5a767fde3e445b9a3f5e",
+          "files": [
+            {
+              "name": "B1-SourceAccessRegistry.cs.orig",
+              "sha256": "0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3"
+            },
+            {
+              "name": "B2-SourceAccessRegistry.cs.orig",
+              "sha256": "0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3"
+            },
+            {
+              "name": "B3-SourceAccessRegistry.cs.orig",
+              "sha256": "0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3"
+            },
+            {
+              "name": "B4-SourceAccessRegistry.cs.orig",
+              "sha256": "0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3"
+            },
+            {
+              "name": "B5-SourceAccessRegistry.cs.orig",
+              "sha256": "0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3"
+            }
+          ]
+        },
+        {
+          "name": "edit_c15.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "124171f745ca9c2743179c0c67bced6998357ce57a00f1ab08e43cd79ce65f0f"
+        },
+        {
+          "name": "fix_closeout.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "73b819a59d5b82f5c2f09635e39475f145fadc9e1542b3d0ad91b945ec7efe99"
+        },
+        {
+          "name": "fix_r1.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "4fc8a3755e7319c2beede7110a69e48dec3e2491440ff55300adad9a9d1febc3"
+        },
+        {
+          "name": "fixtures/",
+          "kind": "directory",
+          "file_count": 20,
+          "aggregate_sha256": "e211a2d130529ec160923bbd531ddf116bb0e3cfd57dac64eb30229dd185c8f7",
+          "files": [
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/catalog.sqlite",
+              "sha256": "09155c29adc1d412f40154a9982471f8698654a4a8909f1b9b2a11e3e431aa9b"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/core.stderr.log",
+              "sha256": "90c20fe36cbc5284e8be06ca265c124dfe903bb6acc00d4f46019913662264a5"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/derived/.preview-lifecycle.lock",
+              "sha256": "6122c08972f0d6a6656eb281e5311532e6af5c3f7736658ba090ad7a320acf5e"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/healthy/book.png",
+              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/host/source-access/registry.v1.dat",
+              "sha256": "825a5afab0fa2600c2425d10b96285b3a51f796f9eaa2b9e35e2fe914d46e188"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/host/source-access/registry.v1.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/library.db",
+              "sha256": "87a197d90b0de42ce9412799d31a15a9ecf02f1f0eeed92f4e4868443721050a"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/library.db.run-owner.lock",
+              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/ls1-ipc-receipt.txt",
+              "sha256": "3b8d46cb6acbf423c96c0b8e9f34075c0cd78a0467d6512664e1f7806d404be6"
+            },
+            {
+              "name": "ipc-26eb37ca65d948c6bb2658d15995839f/wire.ndjson",
+              "sha256": "9fcc132c996a3dbdd5dfbbfc02038183414cc024eee3e0ec5ed35158d31a134e"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/catalog.sqlite",
+              "sha256": "2cee16c4a4c8a4f4902b7a5ad54d8ea0641bb348d1049135791be7d345723927"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/core.stderr.log",
+              "sha256": "90c20fe36cbc5284e8be06ca265c124dfe903bb6acc00d4f46019913662264a5"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/derived/.preview-lifecycle.lock",
+              "sha256": "f02215b4caea1753e341483d3aeaf232e842fb7dd329b10e1868e3b7de0f72f3"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/healthy/book.png",
+              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/host/source-access/registry.v1.dat",
+              "sha256": "b93dc109e70437d81fe3da56f8454d5f8bc56f6926bac13d38b869c80ed13bef"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/host/source-access/registry.v1.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/library.db",
+              "sha256": "13c7c60b220619b0b7de4496aceec369011f0e584f5fc0e164b7f5847ebf07e1"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/library.db.run-owner.lock",
+              "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/ls1-ipc-receipt.txt",
+              "sha256": "3b8d46cb6acbf423c96c0b8e9f34075c0cd78a0467d6512664e1f7806d404be6"
+            },
+            {
+              "name": "ipc-d87731ba0de44261aaab9149669b6ff8/wire.ndjson",
+              "sha256": "3a01042b2cef625216f8ec8504c55f35feae320c7964a6dc3d2fb84ac9804b40"
+            }
+          ]
+        },
+        {
+          "name": "frozen_c15.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "145425e8e1097be6e8c0e9aa280756b742d9711907b1a3e82a4b758757a1a039"
+        },
+        {
+          "name": "ptr3.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "dfcbc3002c3e24ea68328a4e26cad4f157f97872d609ef457907ef952587f0c4"
+        },
+        {
+          "name": "r2_fix.py",
+          "kind": "file",
+          "file_count": 1,
+          "sha256": "753f3258c6ea7fa9cf47c2857d9bd1f38dce217982b5134aca3acd734f823e32"
+        },
+        {
+          "name": "tmp/",
+          "kind": "directory",
+          "file_count": 1,
+          "aggregate_sha256": "645256a6663ae848546e88df2cba75144876b9027c82a77110c02a3585f3eb6c",
+          "files": [
+            {
+              "name": "c15.blob",
+              "sha256": "f9e376a0ed4ce2aaf87c5c698798b0f7a802a3b87a0de9845bc96c3f9bfff4d6"
+            }
+          ]
+        }
+      ],
+      "process_check": "仓外隔离根（工作区治理边界）。本交付仅新增 fixtures/ipc-*/ 与 discrimination/；PREREQ 会话遗留脚本与 tmp/c15.blob 原样保留，未改未删（见 note）。closeout 保留（PRESERVE_REFERENCED），不删除。"
+    },
+    {
+      "resource_type": "canonical-evidence",
+      "source_path": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "files": [
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/changed-files.txt",
+          "sha256": "517690346ac8d5c41d7f417fd80eff0b17c8564c53c910ce4ec40b6f841fb7e0"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/EV.md",
+          "sha256": "293a93b0c0a8acac1e0ec95b6bf90630e88ed2761e8ba00a2fa1a67feee04a83"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/build.log",
+          "sha256": "7cee7cf2649f9cfb2b3cdce6a65caf3301b8d27a849dfcaf0f6b29527f44edfc"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/discrimination.log",
+          "sha256": "93ddc335db6d7179e321ff57908c36869c9cdb4d3abd61cff0b703380bdb9082"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/feature.log",
+          "sha256": "6e97cf0521897ed97d97ad0c017edab9fb0811d23bf625accbf10b43df12e4cc"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/full-dotnet.log",
+          "sha256": "0465c582e3661a9c659b6a368057e18ef052189939336cd221b3eccdf3cc2ace"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/full-pytest.log",
+          "sha256": "6ba6fe09025c475076b0656e2d077d36dfa935627215fd692284caf8804267e3"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/gates-governance.log",
+          "sha256": "42a7f77b97bb6f5a7f133ac5740c2c28eb071839131072bcda80f4f2d4092ea0"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/host-ipc.log",
+          "sha256": "eb1c9eb223bc1e124a1ec9ac85cc9b9c2201da6538e1aa7390554101c29eefdb"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/logs/host-unit.log",
+          "sha256": "41a00278b8e38c8d222cdac8c2fcc5f6d4d2e2ab519a72b0071d726d917d7140"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/scope-validation.log",
+          "sha256": "beba8426139e3bc5ffb9b3228d6bb916de6192d4f2bc35d0341532ddbda89b75"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/tools/discrimination.py",
+          "sha256": "7d6074657c5b1263d9a033fce3d4c21a1bf5dbc499e9a62b1b3a2170a9bf4573"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/tools/gen_manifest.py",
+          "sha256": "91897243fa2c51297e3bc75201649747607bd43b192769a65ea942dbd7e6de31"
+        },
+        {
+          "name": "verification/FEA-11-L-S1-REGISTRY-RESILIENCE-1/tools/scope_validation.py",
+          "sha256": "7886534e67c7040b747d9ffc8b3c9556b5f6467f2d87410021205d9c9a83b503"
+        }
+      ],
+      "process_check": "仓内 canonical 证据：EV.md / changed-files.txt / scope-validation.log / RESOURCE-MANIFEST.json / logs/* / tools/*。全部由本交付生成并随 docs commit 提交。"
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryResilienceTests.cs（运行时临时根 / 真实 DPAPI / 真实 Core）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "单测夹具在 %TEMP%/newmanga-ls1-* 内创建并自清理；gated IPC 夹具写入上述隔离根 fixtures/ipc-*/；仓库不提交任何二进制夹具。未写 verification/FEA-09/native-registry/**。"
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未读写真实用户数据/AppData/外部卷/回收站；IPC 用例使用隔离 fixture 根。"
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "dotnet build/test 的 obj/bin 在既有 build 目录内，未纳入交付；未新建仓内 artifact 目录。"
+    },
+    {
+      "resource_type": "repo-deletion",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "仓内零删除/移动/迁移/归档（changed-files.txt 仅 A/M）。"
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Owner 未执行删除/移动/迁移/归档；仓外隔离根保留供 Review 复核（不随仓库分发）。全量 pytest / .NET 对 tracked verification/FEA-09 的已知字节副作用已用 `git checkout -- verification/FEA-09` 恢复（见 logs/gates-governance.log 尾注）。"
+}

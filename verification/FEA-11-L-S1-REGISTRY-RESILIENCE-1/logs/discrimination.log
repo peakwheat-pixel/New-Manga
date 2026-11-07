@@ -1,0 +1,46 @@
+# FEA-11-L-S1-REGISTRY-RESILIENCE-1 discrimination log
+
+generated_at_utc=2026-11-07T00:01:59+00:00
+repo_head=b56c5a0e6adf6f4cba31f1b3b1d8ee950c7bb84b
+
+Each break is applied to the shipped bytes of the implementation, the Host test project is
+rebuilt, ONE target test is run and MUST turn red (exit != 0); the file is then restored and
+its sha256 is re-checked byte-for-byte. The restored tree is rebuilt at the end.
+
+[B1] break=Load 恢复逐根 identity 预探针（单根缺失再次判整库损坏）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+    target=FullyQualifiedName~MixedRegistry_ListReturnsEveryEntryIncludingTheUnavailableOne
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   at NewManga.Host.Sources.SourceAccessRegistry.<List>b__9_0() |    at NewManga.Host.Sources.SourceAccessRegistry.Locked[T](Func`1 action) |    at NewManga.Host.Sources.SourceAccessRegistry.List() |    at NewManga.Host.Tests.SourceRegistryResilienceTests.MixedRegistry_ListReturnsEveryEntryIncludingTheUnavailableOne() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 57 m
+    restore=RESTORED sha256=0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3
+
+[B2] break=删除 Authorize 的逐请求根身份重核验（被替换根重新获得授权）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+    target=FullyQualifiedName~ReplacedRoot_AuthorizeIsTypedAndPersistsNoNewIdentity
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   Assert.Throws() Failure: No exception was thrown | Expected: typeof(NewManga.Host.Sources.SourceAccessException) |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryResilienceTests.ReplacedRoot_AuthorizeIsTypedAndPersistsNoNewIdentity() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 69 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.24]     NewManga
+    restore=RESTORED sha256=0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3
+
+[B3] break=缺失根被当作「无授权」（探针失败静默跳过，不再是 typed 拒绝）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+    target=FullyQualifiedName~MissingRoot_AuthorizeIsTypedAndWritesNothing
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=Actual:   "SOURCE_ACCESS_DENIED" |                   ↑ (pos 7) |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryResilienceTests.MissingRoot_AuthorizeIsTypedAndWritesNothing() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 56 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.22]     NewManga.Host.Tests.SourceRegistryResilienceTests.MissingRoot_Authoriz
+    restore=RESTORED sha256=0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3
+
+[B4] break=文件级损坏被放宽为「空 registry」（fail-closed 被移除）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+    target=FullyQualifiedName~FileLevelCorruptionStaysWholeFileFailClosed
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=Expected: typeof(NewManga.Host.Sources.SourceAccessException) |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryResilienceTests.AssertFileLevelCorruption(String label, Action`2 corrupt, Boolean passthrough) |    at NewManga.Host.Tests.SourceRegistryResilienceTests.FileLevelCorruptionStaysWholeFileFailClosed() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 41 ms - N
+    restore=RESTORED sha256=0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3
+
+[B5] break=根外路径回退为「只做 reparse 检查」（containment 回退/缺失根放行）
+    file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+    target=FullyQualifiedName~MissingRoot_NeverAuthorizesAnyPathAndContainmentStaysExact
+    exit_code=1 verdict=RED_AS_EXPECTED
+    output_tail=   Assert.Throws() Failure: No exception was thrown | Expected: typeof(NewManga.Host.Sources.SourceAccessException) |   堆栈跟踪: |      at NewManga.Host.Tests.SourceRegistryResilienceTests.MissingRoot_NeverAuthorizesAnyPathAndContainmentStaysExact() |    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor) |    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr) |  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 65 ms - NewManga.Host.Tests.dll (net9.0) |  | [xUnit.net 00:00:00.23]     New
+    restore=RESTORED sha256=0b0d524ae52cfdc13f5622defd118fe922fd91a041e3cef21cd241044f1b4de3
+
+result=PASS breaks=5 all_red_then_restored
+final_rebuild exit_code=0

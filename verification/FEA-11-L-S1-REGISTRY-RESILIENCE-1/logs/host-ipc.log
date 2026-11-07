@@ -1,0 +1,18 @@
+# FEA-11-L-S1-REGISTRY-RESILIENCE-1 gated real-stdio IPC log (card AC-L2/L6, D-7: mixed registry)
+generated_at_utc=2026-11-07T00:02:46Z
+repo_head=b56c5a0e6adf6f4cba31f1b3b1d8ee950c7bb84b
+env=NEWMANGA_FEA11_IPC=1
+command=dotnet test tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Release --filter "FullyQualifiedName~Ipc_MixedRegistry"
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 594 ms - NewManga.Host.Tests.dll (net9.0)
+EXIT_CODE=0
+## latest isolated IPC receipt (workspace, not tracked): G:\CODEX\New Manga.workspace\FEA-11-L-S1-REGISTRY-RESILIENCE-1\fixtures\ipc-26eb37ca65d948c6bb2658d15995839f\ls1-ipc-receipt.txt
+FEA-11-L-S1-REGISTRY-RESILIENCE-1 mixed-registry real stdio IPC
+source_list_roots (mixed registry) -> entries=2
+IssueAsync(healthy root) -> grant minted
+IssueAsync(missing root) -> SOURCE_REGISTRY_UNAVAILABLE zero_write=1 no_corrupt_copy=1
+source_register_root (mixed registry) -> registered
+registry.List() -> entries=3 (unavailable entry kept)
+PASS
