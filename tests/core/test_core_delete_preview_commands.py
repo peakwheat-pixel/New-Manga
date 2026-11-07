@@ -9,6 +9,7 @@ and never leak paths, plaintext or exception stacks.
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 from pathlib import Path
 import sys
@@ -24,6 +25,7 @@ from application.library.service import (  # noqa: E402
     collection_inventory_digest,
 )
 from bootstrap.core_service import CoreServiceServer, assemble_production_core  # noqa: E402
+from infrastructure.sqlite.library import SqliteLibraryRepository  # noqa: E402
 
 NOW = "2026-11-05T00:00:00+00:00"
 SERVER = "server"
@@ -865,3 +867,224 @@ def test_preview_binds_region_current_add_and_remove(server: CoreServiceServer) 
     assert removed["items"][0]["protection"]["currentRegionRevisionIds"] == ["rr1"]
     assert removed["inventoryDigests"]["b1"] == base_digest
     assert removed["inventoryDigests"]["b1"] != added["inventoryDigests"]["b1"]
+
+
+# --- Artifact membership predicate (C-04b v1.2 §0 第 1 条 / R-1) ------
+
+
+def _seed_plain_page(
+    server: CoreServiceServer,
+    *,
+    book_id: str,
+    chapter_id: str,
+    page_id: str,
+    chapter_sort_order: int = 0,
+    page_sort_order: int = 0,
+) -> None:
+    """Chapter + page without a region tree: artifact membership and the
+    artifact representative pointer stay observable in isolation."""
+    conn = server._core.conn
+    with conn:
+        conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, sort_order,"
+            " created_at, updated_at) VALUES (?, ?, 'Ch', ?, ?, ?)",
+            (chapter_id, book_id, chapter_sort_order, NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, sort_order, created_at,"
+            " updated_at) VALUES (?, ?, ?, ?, ?)",
+            (page_id, chapter_id, page_sort_order, NOW, NOW),
+        )
+
+
+def _seed_current_artifact(
+    server: CoreServiceServer,
+    *,
+    artifact_id: str,
+    book_id: str,
+    chapter_id: str,
+    page_id: str,
+    artifact_type: str,
+    revision_id: str,
+) -> None:
+    """Insert one artifact with a current revision.
+
+    ``book_id`` and the ``chapter_id``/``page_id`` tree are passed
+    independently on purpose: the corrupt-data tests make them disagree.
+    """
+    conn = server._core.conn
+    with conn:
+        conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id,"
+            " page_id, artifact_type, created_at, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (artifact_id, book_id, chapter_id, page_id, artifact_type, NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+            " revision_no, managed_path, file_hash, mime_type, size_bytes,"
+            " created_at) VALUES (?, ?, 1, ?, ?, 'image/png', 1, ?)",
+            (revision_id, artifact_id, f"artifacts/{artifact_id}.png", "a" * 64, NOW),
+        )
+        conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = ?"
+            " WHERE artifact_id = ?",
+            (revision_id, artifact_id),
+        )
+
+
+def _delete_single_book(server: CoreServiceServer, book_id: str) -> dict:
+    digest = _preview(server, [book_id])["inventoryDigests"][book_id]
+    return _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {
+            "book_id": book_id,
+            "confirm_permanent_delete": True,
+            "inventory_digest": digest,
+        },
+        minor=10,
+    )
+
+
+def _all_artifact_revision_ids(server: CoreServiceServer) -> set[str]:
+    rows = server._core.conn.execute(
+        "SELECT artifact_revision_id FROM artifact_revisions"
+    ).fetchall()
+    return {row[0] for row in rows}
+
+
+def test_artifact_membership_predicate_matches_delete_surface() -> None:
+    """AC-1 (static): the preview-side artifact membership predicate is
+    ``media_artifacts.book_id = ?`` — the same predicate the delete
+    transaction and the artifact-revision inventory use (C-04b v1.2 §0 第 1
+    条; M2-C1 rev 2.15 §5.13).  The page/chapter join may stay for the
+    reading-order sort, but it must not decide membership."""
+    preview_source = inspect.getsource(
+        SqliteLibraryRepository.list_book_artifact_current_pointers
+    )
+    assert (
+        "WHERE ma.book_id = ? AND ma.current_revision_id IS NOT NULL"
+        in preview_source
+    )
+    assert "c.book_id = ?" not in preview_source
+    # The reading-order sort is preserved (C-04b §0 第 1 条 pointer order).
+    assert "ORDER BY c.sort_order, c.import_order, c.chapter_id" in preview_source
+    assert "ma.artifact_type, ma.artifact_id" in preview_source
+    # Delete surface + revision-id inventory: the same membership predicate.
+    assert "ma.book_id = ?" in inspect.getsource(
+        SqliteLibraryRepository.list_book_artifact_revision_ids
+    )
+    assert "DELETE FROM media_artifacts WHERE book_id = ?" in inspect.getsource(
+        SqliteLibraryRepository.execute_permanent_delete_db
+    )
+
+
+def test_preview_artifact_membership_follows_book_id_not_page_owner(
+    server: CoreServiceServer,
+) -> None:
+    """AC-2/AC-3: consistent rows keep their exact values (control), while a
+    corrupt artifact naming book A but hanging off book B's page tree binds to
+    A — the book whose delete transaction removes it — and not to B."""
+    core = server._core
+    _seed_book(server, "book-a", "A")
+    _seed_book(server, "book-b", "B")
+    _seed_plain_page(server, book_id="book-a", chapter_id="ch-a", page_id="pg-a")
+    _seed_plain_page(server, book_id="book-b", chapter_id="ch-b", page_id="pg-b")
+    _seed_current_artifact(
+        server, artifact_id="ma-a", book_id="book-a", chapter_id="ch-a",
+        page_id="pg-a", artifact_type="translated", revision_id="ar-a",
+    )
+    _seed_current_artifact(
+        server, artifact_id="ma-b", book_id="book-b", chapter_id="ch-b",
+        page_id="pg-b", artifact_type="translated", revision_id="ar-b",
+    )
+
+    # AC-2 control — consistent data is unchanged by the predicate fix.
+    normal = {
+        item["bookId"]: item
+        for item in _preview(server, ["book-a", "book-b"])["items"]
+    }
+    assert normal["book-a"]["protection"]["currentArtifactRevisionIds"] == ["ar-a"]
+    assert normal["book-b"]["protection"]["currentArtifactRevisionIds"] == ["ar-b"]
+    # Representative artifact fallback keeps the pointer order (only one
+    # artifact here, so this also pins the existing value for normal data).
+    assert normal["book-a"]["protection"]["currentRevisionId"] == "ar-a"
+    assert normal["book-b"]["protection"]["currentRevisionId"] == "ar-b"
+
+    # AC-3 corrupt row: ``book_id`` names A while the page tree is B's.
+    _seed_current_artifact(
+        server, artifact_id="ma-x", book_id="book-a", chapter_id="ch-b",
+        page_id="pg-b", artifact_type="thumbnail", revision_id="arv-x",
+    )
+    corrupt_result = _preview(server, ["book-a", "book-b"])
+    corrupt = {item["bookId"]: item for item in corrupt_result["items"]}
+    a_ids = corrupt["book-a"]["protection"]["currentArtifactRevisionIds"]
+    b_ids = corrupt["book-b"]["protection"]["currentArtifactRevisionIds"]
+    assert a_ids == ["ar-a", "arv-x"]
+    assert b_ids == ["ar-b"]
+    # The digest binds the corrected A-side set (the page/chapter join would
+    # have bound it to B instead).
+    assert corrupt_result["inventoryDigests"]["book-a"] == _expected_digest(
+        corrupt["book-a"]
+    )
+    assert corrupt_result["inventoryDigests"]["book-b"] == _expected_digest(
+        corrupt["book-b"]
+    )
+
+    # "Same as the delete set": the corrupt row belongs to book A's delete
+    # membership, so deleting A removes it while B's artifact stays.
+    response = _delete_single_book(server, "book-a")
+    assert response["error"] is None, response["error"]
+    remaining = _all_artifact_revision_ids(server)
+    assert "arv-x" not in remaining
+    assert "ar-a" not in remaining
+    assert "ar-b" in remaining
+    assert core.conn.execute(
+        "SELECT COUNT(*) FROM media_artifacts WHERE book_id = 'book-b'"
+    ).fetchone()[0] == 1
+    assert _preview(server, ["book-b"])["items"][0]["protection"][
+        "currentArtifactRevisionIds"
+    ] == ["ar-b"]
+
+
+def test_preview_artifact_membership_reverse_corrupt_row(
+    server: CoreServiceServer,
+) -> None:
+    """AC-3 reverse direction: a corrupt artifact naming book B but hanging off
+    book A's page tree binds to B and is removed by B's delete; A's preview
+    never sees it."""
+    _seed_book(server, "book-a", "A")
+    _seed_book(server, "book-b", "B")
+    _seed_plain_page(server, book_id="book-a", chapter_id="ch-a", page_id="pg-a")
+    _seed_plain_page(server, book_id="book-b", chapter_id="ch-b", page_id="pg-b")
+    _seed_current_artifact(
+        server, artifact_id="ma-a", book_id="book-a", chapter_id="ch-a",
+        page_id="pg-a", artifact_type="translated", revision_id="ar-a",
+    )
+    _seed_current_artifact(
+        server, artifact_id="ma-b", book_id="book-b", chapter_id="ch-b",
+        page_id="pg-b", artifact_type="translated", revision_id="ar-b",
+    )
+    # ``book_id`` = B, page tree = A.
+    _seed_current_artifact(
+        server, artifact_id="ma-y", book_id="book-b", chapter_id="ch-a",
+        page_id="pg-a", artifact_type="mask", revision_id="arv-y",
+    )
+    items = {
+        item["bookId"]: item
+        for item in _preview(server, ["book-a", "book-b"])["items"]
+    }
+    assert items["book-a"]["protection"]["currentArtifactRevisionIds"] == ["ar-a"]
+    assert items["book-b"]["protection"]["currentArtifactRevisionIds"] == [
+        "ar-b",
+        "arv-y",
+    ]
+    response = _delete_single_book(server, "book-b")
+    assert response["error"] is None, response["error"]
+    remaining = _all_artifact_revision_ids(server)
+    assert "arv-y" not in remaining
+    assert "ar-a" in remaining
+    assert _preview(server, ["book-a"])["items"][0]["protection"][
+        "currentArtifactRevisionIds"
+    ] == ["ar-a"]

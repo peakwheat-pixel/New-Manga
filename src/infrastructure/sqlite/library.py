@@ -1176,13 +1176,27 @@ class SqliteLibraryRepository:
         return [dict(row) for row in rows]
 
     def list_book_artifact_current_pointers(self, book_id: str) -> list[dict[str, Any]]:
+        """Every artifact of the book with its current revision, reading order.
+
+        C-04b v1.2 §0 第 1 条 / M2-C1 rev 2.15 §5.13: the membership predicate
+        is ``media_artifacts.book_id = ?`` — the same one the delete
+        transaction's ``DELETE FROM media_artifacts WHERE book_id = ?`` and
+        ``list_book_artifact_revision_ids`` use; ``current_revision_id IS NOT
+        NULL`` keeps the current-only shape and visibility is not filtered.
+
+        The page/chapter joins are kept for the reading-order sort and the
+        ``page_id`` projection only.  They are ``LEFT JOIN``s and never decide
+        membership, so a corrupt row whose ``book_id`` disagrees with its page
+        owner stays bound to its own book (and cannot silently drop out of the
+        membership when its page/chapter chain is broken).
+        """
         rows = self._conn.execute(
-            "SELECT p.page_id, ma.artifact_id, ma.artifact_type,"
+            "SELECT ma.page_id, ma.artifact_id, ma.artifact_type,"
             "       ma.current_revision_id"
             " FROM media_artifacts ma"
-            " JOIN pages p ON p.page_id = ma.page_id"
-            " JOIN chapters c ON c.chapter_id = p.chapter_id"
-            " WHERE c.book_id = ? AND ma.current_revision_id IS NOT NULL"
+            " LEFT JOIN pages p ON p.page_id = ma.page_id"
+            " LEFT JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE ma.book_id = ? AND ma.current_revision_id IS NOT NULL"
             " ORDER BY c.sort_order, c.import_order, c.chapter_id,"
             "          p.sort_order, p.page_id, ma.artifact_type, ma.artifact_id",
             (book_id,),
