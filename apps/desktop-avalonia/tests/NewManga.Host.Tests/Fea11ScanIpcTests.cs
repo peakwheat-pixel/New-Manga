@@ -540,10 +540,12 @@ public sealed class Fea11ScanIpcTests
     /// phase B proves exactly ONE <c>ReattestSourceLocation</c> frame (ids only, no path) and the
     /// recovered target carrying the LIVE registry/generation.
     ///
-    /// Registered limitation (not claimed fixed): the target's execution face still goes through
-    /// the pre-existing path-exact <c>ResolveRegistryEntry</c> revoked-row fail-closed guard, so
-    /// this card promises ENUMERATION recovery only (the frozen AC-LS4B-6 wording); the tick verdict
-    /// is recorded in the evidence, not asserted as a scan success.
+    /// FEA-11-L-S4-B-1 (AC-SER-1): the recovered target's EXECUTION face is asserted too — the
+    /// following tick authorizes the scan with the target's OWN live <c>(registry_id, generation)</c>
+    /// entry and sends exactly ONE <c>ScanSourceSync</c> (no path on the wire), so the tick result is
+    /// <c>ok</c> instead of the pre-fix <c>error</c>/<c>SOURCE_ACCESS_DENIED</c> (the L-S4-B baseline
+    /// evidence recorded that error; no backoff applies here because this phase-B scheduler never
+    /// ticked before).
     /// </summary>
     [Fea11ScanIpcFact]
     public async Task ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport()
@@ -670,14 +672,26 @@ public sealed class Fea11ScanIpcTests
             }
         }
 
-        // Disclosed limitation witness (NOT a card claim): the execution face still resolves by
-        // the pre-existing path-exact revoked-row guard, so this target's tick stays typed.
+        // FEA-11-L-S4-B-1 (AC-SER-1): the recovered target's EXECUTION face is recovered too. The tick
+        // authorizes the scan with the target's OWN live (registry_id, generation) entry (verified from
+        // the same snapshot, never re-resolved by path) and sends exactly ONE ScanSourceSync. Before
+        // this card the same tick was Error(SOURCE_ACCESS_DENIED): the path-exact resolver met the
+        // sibling REVOKED row first, even though the live exact row existed.
         Assert.True(await scheduler.TickAsync());
         var tickVerdict = scheduler.Snapshot().Targets.Single();
+        Assert.Equal(SourceScanResults.Ok, tickVerdict.LastResult);
+        var scanLines = RequestLines(client, "ScanSourceSync");
+        Assert.Single(scanLines);
+        Assert.DoesNotContain(oldZip, scanLines[0], StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(root, scanLines[0], StringComparison.OrdinalIgnoreCase);
+        // The EXECUTION face did not touch the Host registry either: the scan reuses the verified live
+        // entry and the mint's pre-existing last_used_at audit is excluded from the structure check.
+        Assert.Equal(entriesBefore, DescribeRegistryEntries(registry.List()));
 
         var evidence = new
         {
-            @case = "AC-LS4B-6 (real IPC closed loop: B1 -> reattest -> enumeration recovery)",
+            @case = "AC-LS4B-6 + FEA-11-L-S4-B-1 AC-SER-1 (real IPC closed loop: B1 -> reattest -> "
+                + "enumeration recovery -> scan execution recovery)",
             core = "real volatile python core (stdio IPC)",
             app_registration_used = false,
             core_source_id = coreSourceId,
@@ -706,8 +720,10 @@ public sealed class Fea11ScanIpcTests
             tick_verdict = new
             {
                 last_result = tickVerdict.LastResult,
-                limitation = "pre-existing ResolveRegistryEntry revoked-exact-match fail-closed; "
-                    + "this card delivers ENUMERATION recovery only (no scan success claim)",
+                scan_frames = scanLines.Length,
+                counts = tickVerdict.Counts,
+                execution_face_recovered = true,
+                path_hits = 0,
             },
             reimport_or_apply = false,
         };
@@ -716,7 +732,8 @@ public sealed class Fea11ScanIpcTests
             JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
         await File.WriteAllTextAsync(
             Path.Combine(root, "reattest-ipc.txt"),
-            "FEA-11-L-S4-B AC-LS4B-6 real IPC (B1 explicit re-auth -> reattest -> enumeration)\n"
+            "FEA-11-L-S4-B AC-LS4B-6 + FEA-11-L-S4-B-1 AC-SER-1 real IPC "
+            + "(B1 explicit re-auth -> reattest -> enumeration -> scan execution)\n"
             + "DataRoot=" + root + "\n"
             + "phase_a_targets=0 phase_a_skipped=1\n"
             + "reattest_frames=" + reattestLines.Length + " payload=ids-only path_hits=0\n"
@@ -724,8 +741,9 @@ public sealed class Fea11ScanIpcTests
             + "live_registry_id=" + liveEntry.RegistryId + " generation=" + liveEntry.Generation + "\n"
             + "location_auth_columns_only=true last_verified_at_unchanged=true\n"
             + "host_registry_unchanged=true other_tables_unchanged=true reimport_or_apply=false\n"
-            + "tick_last_result=" + tickVerdict.LastResult + " (registered limitation: "
-            + "execution-face resolved by the pre-existing revoked-row guard; enumeration only)\nPASS\n");
+            + "tick_last_result=" + tickVerdict.LastResult + " scan_frames=" + scanLines.Length
+            + " wire_path_hits=0 (execution face recovered with the target's own live registry pair)\n"
+            + "PASS\n");
     }
 
     private static JsonElement QueryLocationRow(string python, string dbPath)
