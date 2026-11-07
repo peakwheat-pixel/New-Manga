@@ -33,6 +33,8 @@ allowed_paths:
   - tests/core/test_host_control.py
   - tests/fea11/test_source_reattest.py
   - tests/core/test_core_scan_target_commands.py
+  - tests/core/test_core_service.py
+  - tests/fea09/test_referenced_wire.py
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceReattestTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
@@ -83,6 +85,13 @@ out_of_scope:
 - folder 排除（L-S4-2）；`source_reset_registry` 后无旧条目可桥接（需重导入）。
 - 周期 loop 只 tick 不重枚举 → 恢复依赖冷启动/下一次 refresh（措辞不得写「tick 自动恢复」）。
 - 不自动重新授权/不自动重建 identity；撤销后不放行。
+- **扫描执行面限制（DSH 裁决补充）**：reattest 后枚举 target 恢复成立，但扫描执行仍会被既有 `ResolveRegistryEntry` 的「同路径 revoked 旧条目 fail-closed」拦住（tick typed error）；本卡按冻结 AC 只承诺**枚举恢复**，不宣称扫描执行成功；该限制登记为 **L-S4-B-1**，后续另卡（与 B2/roots 管理一同设计）。
+
+## DSH 裁决补充（2026-11-07；scope 扩域）
+
+- **批准扩域（仅断言预期，不改行为）**：C-16 v1.5 §0 新增能力 `source.reattest/1` 使既有「精确 capability 列表」断言失败（`tests/core/test_core_service.py`、`tests/fea09/test_referenced_wire.py`）。参照 v1.3 `source.read.run/1` 先例，**允许**在上述 2 个既有测试文件中仅追加 `"source.reattest/1",` 预期；不得改任何产品行为/契约/其它断言。
+- **.NET 侧同类扩域预先批准（同一模式）**：若全量 .NET 出现精确 capability 列表断言需 +1 行（如 CoreClient 能力解析测试），允许在**对应既有测试文件**中仅追加预期；实施者须在交付中逐文件列出。
+- **扫描执行面 limitation（L-S4-B-1）**：枚举恢复成立；扫描执行仍被 `ResolveRegistryEntry` 对同路径 revoked 旧条目的 fail-closed 拦住 → tick typed error；本卡不宣称扫描执行成功，后续另卡。
 
 ## 测试要求
 
