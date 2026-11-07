@@ -1,0 +1,20 @@
+=== dotnet test --filter 'SourceRegistryTests|Fea11RunGrantIpc' (no gated env) (2026-11-07T19:26:31.2281718+08:00) ===
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [SKIP]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [SKIP]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [SKIP]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [1 ms]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [SKIP]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [SKIP]
+[xUnit.net 00:00:00.33]     NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [1 ms]
+
+已通过! - 失败:     0，通过:    32，已跳过:     7，总计:    39，持续时间: 222 ms - NewManga.Host.Tests.dll (net9.0)
+REGRESSION_EXIT=0

@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-RUN-GRANT-2C",
+  "generated_at": "2026-11-07T11:32:04+00:00",
+  "generated_by": "l-s4b1-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "delivery_head": "e5e9c4c52",
+  "delivery_commits": [
+    "c40489b5d",
+    "e5e9c4c52"
+  ],
+  "repo_head_at_generation": "6d3db3b0488eb31b5458b63b9154ee8b8f5db31f",
+  "note": "FEA-11-RUN-GRANT-2C delivery: the Host-only long-Run renewal. While a dispatched Run is NOT terminal the Host re-mints a NEW grant set for the SAME frozen {command, scope} and calls AuthorizeSourceReadForRun again (C-06 v1.3 §2.2 / C-16 v1.6 §2.4), so a multi-step Run stays authorized past the original ≤300 s window. Every round reuses the same best-effort mint+bind path (Registry.Authorize + physical facts re-checked per source); a typed refusal / revocation / generation drift / lost root / capability loss / round-budget breach / terminal Run stops the renewal with no retry and no re-attest, and no grant is ever extended, no scope widened and no identity rebuilt. Zero Core/Python change, zero Run-wire change, zero new command/capability/error code, zero App change; the ONE Python edit is the allowed in-process fake-clock test file. The frozen C-06 v1.3 and C-16 v1.6 bytes are unchanged (pins 18/18). L-G1 is DOWNGRADED (renewal exists) but NOT closed: single steps >300 s, renewal failure, L-G2/L-G9/L-R1/L-G16 remain. This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head e5e9c4c52）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 apps/tests/verification/doc 内，未 push。"
+    },
+    {
+      "resource_type": "temp_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-RUN-GRANT-2C",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "任务隔离根：gated 真 IPC 的 fixture/证据位于 G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2C/fixtures/ipc-*/；Python in-process fake-clock 测试位于 .../fixtures/test_*（仓外派生产物，无 tracked 副作用）。未清理。"
+    },
+    {
+      "resource_type": "repository",
+      "source_path": "G:\\CODEX\\New Manga (main)",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 8,
+      "changed_files": [
+        {
+          "commit": "c40489b5d",
+          "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+          "sha256": "df44a9f6f0aa2626f736b0edfdee51e51a0bdbd831580438285d53956470efa0"
+        },
+        {
+          "commit": "c40489b5d",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs",
+          "sha256": "eb2de39f9504dbec9da59b293c45491303e45e89c72f4b4bda4498064b33a4d8"
+        },
+        {
+          "commit": "c40489b5d",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+          "sha256": "fce654b8e023d8e466842e4c8661883bdde157aacf12f2b57939f337aa4240f4"
+        },
+        {
+          "commit": "c40489b5d",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs",
+          "sha256": "63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1"
+        },
+        {
+          "commit": "c40489b5d",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+          "sha256": "9b64519a4044d513bc5190ad1225add4e16031fcb72ce2773488d4fb209f9716"
+        },
+        {
+          "commit": "e5e9c4c52",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs",
+          "sha256": "aefbd88b7832122dfd4d01be680cbccebf494191486b5d247d687ebbdcf08cab"
+        },
+        {
+          "commit": "e5e9c4c52",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/RunGrantRenewalTests.cs",
+          "sha256": "33486176f27b486bb2dac8badec2f7f57cfabed095212f35964297e12e1d0e87"
+        },
+        {
+          "commit": "e5e9c4c52",
+          "path": "tests/fea11/test_source_run_grant.py",
+          "sha256": "131667e9407ba91be5f507fad0a1a497e483e50381159cac3f4bada2062e40f8"
+        }
+      ]
+    },
+    {
+      "resource_type": "evidence_tree",
+      "source_path": "verification/FEA-11-RUN-GRANT-2C",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 19,
+      "files": [
+        {
+          "path": "changed-files.txt",
+          "sha256": "556840cc563508e0e7ba2e60fd08d837a9e9eb1e92a53d4bf5915937b0c8f6c7"
+        },
+        {
+          "path": "EV.md",
+          "sha256": "e24f53afa1b698a4bf40eddf8aec77089c590e5ca5175344275af92060528c0e"
+        },
+        {
+          "path": "logs/build.log",
+          "sha256": "caa88e42512aefd5dffba014d13dfed763c06e1bd05c47053a804e8f87c3238a"
+        },
+        {
+          "path": "logs/discrimination.log",
+          "sha256": "556d110fdfbb969ceec598771c4b5b71044dae3b1256adf57efbc2717d4e7d83"
+        },
+        {
+          "path": "logs/full-dotnet.log",
+          "sha256": "2051a6adb69e359594728544bc256a4a72c327701d60e196cc1b8353424af8a1"
+        },
+        {
+          "path": "logs/full-pytest.log",
+          "sha256": "e71fc911b382535cd528e5d4f0ae92e7324596584a6aee091482d33e28ef8518"
+        },
+        {
+          "path": "logs/gates.log",
+          "sha256": "df274a145478f8dd051e0f8cf298fdd8d261d4bff0743f8a1adea546ee7f6684"
+        },
+        {
+          "path": "logs/host-ipc.log",
+          "sha256": "a3488af5cf2f7965e26aa1a4f5b25c805be8b8c0fcc6f56e70bfa010cd61ddf9"
+        },
+        {
+          "path": "logs/host-unit.log",
+          "sha256": "3f9075e1f76914c4fedcedc94d371dfd6f8d8728e8744823be11bd31593c253c"
+        },
+        {
+          "path": "logs/ipc-fixture.txt",
+          "sha256": "20fc0a1153035eb0e73c29e9f562e2bf74af6ce7e029895014eb50a505dab83b"
+        },
+        {
+          "path": "logs/regression-74.log",
+          "sha256": "4c23641ab7cd8dc16d6712b5f0ec9c749a9314ac80b0b4e1a357740d0b3b8cf5"
+        },
+        {
+          "path": "logs/regression.log",
+          "sha256": "0db35d2bf934eb5937e100554deeef0df11e6e7010ed45b3efa7eeed1efe8c1d"
+        },
+        {
+          "path": "logs/renewal-ipc.json",
+          "sha256": "0bde5be43ae78cd153eecf551dc4b77715c5853c3118c63cc2e982a5ace1d01e"
+        },
+        {
+          "path": "logs/renewal-ipc.txt",
+          "sha256": "98d7ef5dfce10b25c90352bf60c675f77b1e7e02ca78051aa6308215277a0392"
+        },
+        {
+          "path": "scope-validation.log",
+          "sha256": "fefa83c93136cfdaad1a517962404532ea0480f75fdb6869396f2470fbada610"
+        },
+        {
+          "path": "tools/__pycache__/discrimination.cpython-314.pyc",
+          "sha256": "90500bc7a37be9b7c0a86a7b497168f4e6fd2788ca541a2fe4ac5bdcbe9b3d97"
+        },
+        {
+          "path": "tools/discrimination.py",
+          "sha256": "7fa1f35cece5247d58bacfd35d5721ebfea2d2e251144ac951783a4527f1d636"
+        },
+        {
+          "path": "tools/gen_manifest.py",
+          "sha256": "5b058b8ac28607871b20a14332486d3933f618eb7a01dbe5b13d30e8ee32b016"
+        },
+        {
+          "path": "tools/scope_validation.py",
+          "sha256": "57b1cae7e0c906965415fc23d36e2056cfeaab4ba6baa2a4ef75b4a7a54b5a11"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+2C renewal IPC fixture root: G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2C\fixtures\ipc-cd60ce9d97f04363bcba2cbad8f4cdb7
+renewal-ipc.json sha256: 0BDE5BE43AE78CD153EECF551DC4B77715C5853C3118C63CC2E982A5ACE1D01E
+captured_at: 2026-11-07T19:26:57.8483994+08:00
+evidence copies: logs/renewal-ipc.json / .txt (test-written, unmodified)

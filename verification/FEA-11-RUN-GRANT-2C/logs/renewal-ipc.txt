@@ -1,0 +1,8 @@
+FEA-11-RUN-GRANT-2C real IPC (same frozen scope authorized twice == renewal round)
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11-RUN-GRANT-2C\fixtures\ipc-cd60ce9d97f04363bcba2cbad8f4cdb7
+rounds=2 register_frames=2 authorize_frames=2
+new_grant_id=True same_command_scope=true
+bound_pages=1 minted=1 resolve_p1_after_renewal=ok
+reattest_frames=0 host_registry_unchanged=true wire_path_hits=0
+time_dimension=in-process fake clock (tests/fea11/test_source_run_grant.py)
+PASS

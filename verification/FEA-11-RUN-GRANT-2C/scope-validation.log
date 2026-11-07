@@ -1,0 +1,54 @@
+[2026-11-07T11:31:31.227+00:00] FEA-11-RUN-GRANT-2C scope validation (delivery diff vs c5f1b416f)
+card=doc/tasks/FEA-11-RUN-GRANT-2C.md card_base_commit=fdd170039 implementation_start=c5f1b416f
+release_range_files=7 non_docs=[]
+changed_count=28 delivery=28 concurrent_non_delivery=0
+allowed_paths=12
+  ALLOWED doc/tasks/FEA-11-RUN-GRANT-2C.md
+  ALLOWED doc/reviews/FEA-11-RUN-GRANT-2C-*.md
+  ALLOWED doc/handoffs/FEA-11-RUN-GRANT-2C-*.md
+  ALLOWED verification/FEA-11-RUN-GRANT-2C/**
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/RunGrantRenewalTests.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+  ALLOWED tests/fea11/test_source_run_grant.py
+ALLOWED  apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/RunGrantRenewalTests.cs
+ALLOWED  doc/handoffs/FEA-11-RUN-GRANT-2C-e5e9c4c52.md
+ALLOWED  doc/tasks/FEA-11-RUN-GRANT-2C.md
+ALLOWED  tests/fea11/test_source_run_grant.py
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/EV.md
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/changed-files.txt
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/build.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/discrimination.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/full-dotnet.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/full-pytest.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/gates.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/host-ipc.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/host-unit.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/ipc-fixture.txt
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/regression-74.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/regression.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.json
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.txt
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/scope-validation.log
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/gen_manifest.py
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/scope_validation.py
+card_status_unchanged=True
+PROTOCOL_MINOR=3
+C06_SHA256=75f8e2b4eb808a7b33f503ae64e6455a390587a552a2689df9ce2ae133341c84 PIN_MATCH=True
+C16_SHA256=b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0 PIN_MATCH=True
+BLOB doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md base=b0360cc975d3 head=b0360cc975d3 ZERO_DRIFT=True
+BLOB doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md base=f767e158a436 head=f767e158a436 ZERO_DRIFT=True
+zero_drift_violations=[]
+out_of_scope=[]
+result=PASS changed=28 out_of_scope=[] forbidden=[] minor=3 pins_ok=True blobs_ok=True
