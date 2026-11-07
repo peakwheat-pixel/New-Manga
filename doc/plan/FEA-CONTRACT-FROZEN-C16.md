@@ -1,7 +1,7 @@
 # C16 Source 读取与导入 wire 协议 · 冻结记录
 
 **契约**：`doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`
-**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）/ 2026-11-06（v1.3）/ 2026-11-07（v1.4）/ 2026-11-07（v1.5）
+**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）/ 2026-11-06（v1.3）/ 2026-11-07（v1.4）/ 2026-11-07（v1.5）/ 2026-11-07（v1.6）
 **冻结人**：DSH（Lead / Architect / Integrator）
 **授权**：FEA-09-PREREQ-1；独立复核 r7 **approved**（[FEA-09-PREREQ-1-r7](../reviews/FEA-09-PREREQ-1-r7.md)，reviewed_head `220979ba81f37e857f241049535caef7246c97b1`）；冻结自草案 v7
 
@@ -12,10 +12,10 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md` |
-| 冻结版本 | **v1.5**（2026-11-07 UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04 / v1.3 2026-11-06 / v1.4 2026-11-07 历史） |
-| sha256（v1.5 冻结后最终字节，verify_pins 口径） | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d` |
-| git hash-object（v1.5 blob id） | `67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8` |
-| blob 内容 sha256（LF 原始字节） | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d` |
+| 冻结版本 | **v1.6**（2026-11-07 UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04 / v1.3 2026-11-06 / v1.4 2026-11-07 / v1.5 2026-11-07 历史） |
+| sha256（v1.6 冻结后最终字节，verify_pins 口径） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
+| git hash-object（v1.6 blob id） | `f8f31f55ca29aea1ceb8cb7d7ab73b7123630211` |
+| blob 内容 sha256（LF 原始字节） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体 + 重新独立复核 + 重新冻结。
 
@@ -48,6 +48,9 @@
 | 5 | v1.3：C-06 v1.2 与本契约同批独立 byte-level 复核 **r3 approved（P0=0/P1=0）**；`verify_pins` **18/18**（C16 新值、其余 16 项不变）；Run wire/错误闭集/schema/依赖零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md` §6；`verification/FEA-11-RUN-GRANT-1-PREREQ-1/logs/pins.log` |
 | 6 | v1.4：容器多成员 entry 语义经独立 byte-level 复核 r1 changes_requested → r2 **approved（P0=0/P1=0/P2=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；wire 字段/命令集/TTL/撤销/错误闭集/Run wire 零改动；C-06/C-17 零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md` §6；`verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/pins.log` |
 | 7 | v1.5：`source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 **r8 approved（P0=0/P1=0/P2=0/P3=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；C-15/C-17/C-06/C-07/M2-C1 零改动；无新错误码/wire minor/schema/依赖 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md` §6；`verification/FEA-11-L-S4-B-PREREQ-1/logs/pins.log` |
+| 8 | v1.6：§2.4 mid-run 重复调用语义经独立 byte-level 复核 **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）**；`verify_pins` **18/18**（C16 新值、C-06 v1.3 同批、其余 16 不变）；wire/TTL/撤销/错误闭集/能力/`PROTOCOL_MINOR=3` 零改动 | ⏳ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md` §6 |
+
+| v1.6 复核字节（工作树 SHA-256） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0`（= v1.6 冻结字节；r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）） |
 
 ## 3. 依赖与后果
 
@@ -111,3 +114,15 @@
 | 冻结字节 sha256 | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d` |
 | 历史 pin（保留） | v1.4 `ad25fb3c89bb…`；v1.3 `7c355ccb8f82…`；v1.1 `0b9511a55ea1…`；v1.0 `6e7f8d3d7a81…` |
 | 其他 17 pins | 逐字节不变（复核断言见载体 §6） |
+
+## 10. v1.6 UNFREEZE 重冻（2026-11-07）
+
+| 项 | 值 |
+|---|---|
+| 载体 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md` |
+| 触发/授权 | 用户 2026-11-06 全授权；`2C-LONG-RUN-RENEWAL-scope-r1` READY-WITH-UNFREEZE（2 pins）；ZCode APPROVE；DSH D-1…D-10 |
+| 修订内容 | §2.4「用途（冻结）」追加 mid-run 重复调用语义（Run 非终态期间对同一 `{command, scope}` 可重复调用；每次只绑定当次 live grants；不延长任何 TTL、不改 scope、不绕过撤销；任一页不可授权整请求 typed 拒绝零映射写入）；**wire/能力/错误闭集/TTL/撤销/`PROTOCOL_MINOR=3` 零改动**；C-06 v1.3 同批 |
+| 独立复核 | 载体 §6：r1→r2→r3→r4→r5 changes_requested → 处置 → **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断；session `308751b9-…`）** |
+| 冻结字节 sha256 | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
+| 历史 pin（保留） | v1.5 `a7f57ebd…`；v1.4 `ad25fb3c…`；v1.3 `7c355ccb…`；v1.1 `0b9511a5…`；v1.0 `6e7f8d3d…` |
+| 其他 16 pins | 逐字节不变 |

@@ -1,0 +1,75 @@
+diff --git a/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md b/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+index 9bbd93a01..b537e76da 100644
+--- a/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
++++ b/doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md
+@@ -1,7 +1,7 @@
+ # FEA-C06 授权面（SourceAccessRegistry ⇄ source-read grant）草案
+ 
+-状态：**FROZEN v1.2（2026-11-06 重冻；v1.0 于 2026-11-01 冻结、v1.1 于 2026-11-03）**（载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；v1.2 独立 byte-level 复核见载体；v1.1 复核 r7 approved 见冻结记录）
+-日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）；2026-11-06（v1.2 UNFREEZE）
++状态：**FROZEN v1.3（2026-11-07 重冻；v1.0 于 2026-11-01 冻结、v1.1 于 2026-11-03、v1.2 于 2026-11-06）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL](../reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md)；冻结记录 [FEA-CONTRACT-FROZEN-C06](FEA-CONTRACT-FROZEN-C06.md)；v1.3 独立 byte-level 复核见载体；v1.2/v1.1 历史复核见冻结记录）
++日期：2026-11-01（v1.0）；2026-11-03（v1.1 UNFREEZE）；2026-11-06（v1.2 UNFREEZE）；2026-11-07（v1.3 UNFREEZE）
+ 作者：DSH（Lead / Architect / Integrator）
+ 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md) 的 C-06、[AD-003](../AD-003_REFERENCED_SOURCE_ARCHITECTURE.md) §3.2/§3.5、[ADJ-001](../contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) PD-05/PD-06、代码现状（`src/application/importing/import_source_refs.py`、`src/application/resource_channel/`）
+ 
+@@ -40,7 +40,7 @@
+ | 有效期 | **短期**（≤ 单次操作，≤300 秒）；**不得**作为长期通行证复用 |
+ | 与旧 grant 的关系 | 旧 `ImportPages` 一次性 grant **保持原语义**（≤300 秒、直属成员、进程内）；`source-read` 是**独立**的新 grant 类型，不复用旧类型 |
+ | 撤销/失联（v1.1） | 用户撤销 → Host 持久化 generation+1 → 推送 `RevokeSourceReadGrant`（Host→Core）→ Core 立即废止 grant、下一提交边界停止并 ACK → Host 收到 ACK 后才向调用方返回成功；Core 检测 stdin EOF/transport 失败 → 全部 grant 立即失效（fail-closed）。**不得以 300 秒 TTL 代替即时撤销** |
+-| 授权建立（v1.2，第三生产者） | `source-read` grant→page binding 的**读授权**可由 Core 的 host-control 授权建立命令（C-16 v1.3 §2.4 `AuthorizeSourceReadForRun`）在 Run dispatch 前建立：Core 用与 Run 相同的 scope 展开器解析目标页，按签名 grant 的 `source_id/version/entry(locator\|ordinal\|entry_key)` 与 facts 校验当前 healthy binding 后，写入与导入/同步同构的**进程内** grant→binding 映射（零 DB 写）。该建立**不延长 ≤300s 有效期**、不改变撤销/失联语义、不得以路径回退；同一 binding 允许多份 grant，读时选择沿用既有 `find_bound_for_source`（live、最高 generation/`grant_id`）；建立失败必须 typed 且零业务写 |
++| 授权建立（v1.2，第三生产者） | `source-read` grant→page binding 的**读授权**可由 Core 的 host-control 授权建立命令（C-16 v1.3 §2.4 `AuthorizeSourceReadForRun`）在 Run dispatch 前建立：Core 用与 Run 相同的 scope 展开器解析目标页，按签名 grant 的 `source_id/version/entry(locator\|ordinal\|entry_key)` 与 facts 校验当前 healthy binding 后，写入与导入/同步同构的**进程内** grant→binding 映射（零 DB 写）。该建立**不延长 ≤300s 有效期**、不改变撤销/失联语义、不得以路径回退；同一 binding 允许多份 grant，读时选择沿用既有 `find_bound_for_source`（live、最高 generation/`grant_id`）；建立失败必须 typed 且零业务写。**v1.3 追加（mid-run 重复建立）**：Run 非终态期间，Host 可对同一冻结 `{command, scope}` 重复执行该建立——每次必须**重新铸造新 grant**（各自 ≤300s、按当时 facts 顺序重新核验）；**不得**延长既有 grant 的 `expires_at`、不得扩大 scope、不得在撤销后重建、不得改选 command/scope；任一页不可授权仍**整请求 typed 拒绝、零映射写入**。 |
+ | 失败 | registry 不存在/过期/generation 不匹配/identity 变化 → `SOURCE_ACCESS_DENIED`（fail-closed，不降级读取） |
+ 
+ ### 2.3 命令/字段（协议增量，候选）
+@@ -85,7 +85,8 @@
+ 2. **C-01b 已冻结**（SC-21/SC-22 由本草案落地）；
+ 3. `G-CONTRACT` **对 C-06 不再构成阻塞**（本单承载 D05 的授权面子集：registry + source-read grant + 4 命令 + 9 条安全约束。**lease** 由 C-01b SC-25/29/31 承载；本单只含**per-request 解码预算**（`budget{maxBytes,maxDecodeBytes}`）；**D05 的缓存边界（策略/淘汰/持久化）仍由 C-01b/C-09 分担**；**重定位/同步、容器页映射** 目前**无承载条款**，仍属 D05 未覆盖项——Gate 保持 OPEN。见 [Gate 阻塞口径裁定](GATE-CLOSURE-RULING-2026-11-01.md) R-1′）；
+ 4. **wire 版本由 DSH 批准**（v1.1 minor 增量）；
+-5. `check.ps1` PASS。
++5. `check.ps1` PASS；
++6. **v1.3**：mid-run 重复建立语义经独立 byte-level 复核 approved（P0/P1=0），C-16 v1.6 同批；其余 16 pins 零改动。
+ 
+ ## 6. 变更记录
+ 
+@@ -94,3 +95,4 @@
+ | 2026-11-01 | 建立草案：现状表、SourceAccessRegistry 条目、source-read grant、4 条命令、5 条安全约束、与三份契约接口、冻结条件 | DSH |
+ | 2026-11-03 | **v1.1 UNFREEZE**：§2.2 明确 Host 铸造型发放与逐根 identity；grant 增加四维 scope/entries/budget/secretRef/signature 与撤销/失联线性化；§2.3 `RequestSourceRead`/`VerifySourceRead` 双侧归属修订 + 新增 `RevokeSourceReadGrant`；§3 增加约束 10/11。载体 [CONTRACT-UNFREEZE-2026-11-03](../reviews/CONTRACT-UNFREEZE-2026-11-03.md)；待独立复核后重冻并重算 pin | DSH；FEA-09-PREREQ-1 契约复核 r1 R1-002/R1-003 |
+ | 2026-11-06 | **v1.2 UNFREEZE**：§2.2 增「授权建立（第三生产者）」行；§2.3 增 `AuthorizeSourceReadForRun` 行；仅新增条目，既有 grant 形状/TTL≤300s/撤销/失联/错误闭集零改动。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |
++| 2026-11-07 | **v1.3 UNFREEZE**：§2.2「授权建立（第三生产者）」行追加 mid-run 重复建立语义（Run 非终态期间对同一冻结 `{command, scope}` 重复建立；每次新铸新 grant、各自 ≤300s、顺序重验 facts；不延长既有 grant、不扩 scope、不撤销后重建、不改选 command/scope；任一项不可授权整请求 typed 拒绝零映射写入）；**grant 形状/TTL≤300s/撤销/失联/错误闭集零改动**。载体 [CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL](../reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-2C-PREREQ-1 |
+diff --git a/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md b/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+index 67c741d3b..f8f31f55c 100644
+--- a/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
++++ b/doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md
+@@ -1,7 +1,7 @@
+ # FEA-C16 Source 读取与导入 wire 协议（草案 v7，处置契约复核 r6）
+ 
+-状态：**FROZEN v1.5（2026-11-07 重冻；v1.0 2026-11-03、v1.1 2026-11-04、v1.3 2026-11-06、v1.4 2026-11-07）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C16-V15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；v1.4 独立 byte-level 复核见载体；v1.1/v1.3 历史复核见冻结记录）
+-日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-06（v1.3 UNFREEZE）；2026-11-07（v1.4 UNFREEZE）；2026-11-07（v1.5 UNFREEZE）
++状态：**FROZEN v1.6（2026-11-07 重冻；v1.0 2026-11-03、v1.1 2026-11-04、v1.3 2026-11-06、v1.4 2026-11-07、v1.5 2026-11-07）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL](../reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；v1.6 独立 byte-level 复核见载体；v1.4/v1.5 历史复核见冻结记录）
++日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-06（v1.3 UNFREEZE）；2026-11-07（v1.4 UNFREEZE）；2026-11-07（v1.5 UNFREEZE）；2026-11-07（v1.6 UNFREEZE）
+ 作者：DSH（Lead / Architect / Integrator）
+ 依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15（同批）、C-01b/C-05/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）；v1.1 依据实现 Review r1 R1-I005 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
+ 
+@@ -75,7 +75,7 @@
+ 
+ ### 2.4 `AuthorizeSourceReadForRun`（Host→Core，host-control envelope；v1.3 新增）
+ 
+-- **用途（冻结）**：Run dispatch 前，把 Host 已铸造并注册的 source-read grant 建立为**本次 Run 目标页 page binding 的读授权**，补 `_bindings` 的第三生产者（import / sync apply / 本命令）。本命令**不改变** grant 四维 scope、≤300s TTL、撤销/失联语义与 `find_bound_for_source` 选择规则。
++- **用途（冻结）**：Run dispatch 前，把 Host 已铸造并注册的 source-read grant 建立为**本次 Run 目标页 page binding 的读授权**，补 `_bindings` 的第三生产者（import / sync apply / 本命令）。本命令**不改变** grant 四维 scope、≤300s TTL、撤销/失联语义与 `find_bound_for_source` 选择规则。 **v1.6 追加（mid-run 重复调用）**：可在该 Run **非终态期间**对同一 `{command, scope}` 重复调用——每次只绑定当次 live grants；**不延长任何 TTL**、不改 scope、不绕过撤销；任一页不可授权仍整请求 typed 拒绝、**零映射写入**。
+ - **请求（closed shape）**：
+ 
+ ```json
+@@ -241,7 +241,7 @@
+ 
+ ## 10. 冻结条件与变更记录
+ 
+-冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节；⑤v1.3：C-06 v1.2 与本契约 v1.3 同批独立 byte-level 复核 approved（P0/P1=0），Run wire/错误闭集/其他 16 pins 零改动；⑥v1.4：容器多成员 entry 语义（§2）经独立 byte-level 复核 approved（P0/P1=0），C-06/C-17 与其余 17 pins 零改动，wire 字段/命令集/TTL/撤销语义零改动。⑦v1.5：§0 能力 `source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 approved（P0/P1=0），C-15/C-17/C-06/C-07/M2-C1 与其余 17 pins 零改动，无新错误码/无 wire minor/无 schema/依赖变更。
++冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节；⑤v1.3：C-06 v1.2 与本契约 v1.3 同批独立 byte-level 复核 approved（P0/P1=0），Run wire/错误闭集/其他 16 pins 零改动；⑥v1.4：容器多成员 entry 语义（§2）经独立 byte-level 复核 approved（P0/P1=0），C-06/C-17 与其余 17 pins 零改动，wire 字段/命令集/TTL/撤销语义零改动。⑦v1.5：§0 能力 `source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 approved（P0/P1=0），C-15/C-17/C-06/C-07/M2-C1 与其余 17 pins 零改动，无新错误码/无 wire minor/无 schema/依赖变更；⑧v1.6：§2.4 mid-run 重复调用语义经独立 byte-level 复核 approved（P0/P1=0），C-06 v1.3 同批；wire 字段/命令集/能力/错误闭集/TTL/撤销/`PROTOCOL_MINOR=3` 零改动，其余 16 pins 零改动。
+ 
+ | 日期 | 变更 | 记录 |
+ |---|---|---|
+@@ -251,3 +251,4 @@
+ | 2026-11-06 | **v1.3 UNFREEZE**：§0 增 `source.read.run/1` 能力；新增 §2.4 `AuthorizeSourceReadForRun`（Run 前建立 grant→binding 读授权；closed shape；fail-closed；零 DB 写；幂等）；**Run wire/错误闭集/TTL/撤销语义零改动**。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |
+ | 2026-11-07 | **v1.4 UNFREEZE**：§2 增「容器源多成员 entry」明文（zip/cbz/pdf 的 `entries[]` 1..N；同容器 path、成员 locator/ordinal 来自 Core 权威、facts=容器身份；逐项校验、任一项不符整 grant typed 拒绝、不截断；匹配 OR+facts、无路径回退）；**wire 字段/命令集/TTL/撤销/错误闭集/Run wire 零改动**；C-06/C-17 与其余 17 pins 零改动。载体 [CONTRACT-UNFREEZE-2026-11-07-C16](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-2B-PREREQ-1 |
+ | 2026-11-07 | **v1.5 UNFREEZE**：§0 增 `source.reattest/1`；新增 §2.5 `ReattestSourceLocation`（条件单行 re-attest；请求 `{source_id, grant_id}`；live grant 证明同一 source+四键身份；只写 `registry_id/authorization_generation` 两列、`last_verified_at` 保持原值、复用 A 卡唯一 SQL；拒绝/无匹配零写；幂等/单调；folder 排除）；§1 `source_list_roots` 增 `roots_available[]` additive（只读投影；实现延后）；**C-15/C-17/C-06/C-07/M2-C1 零字节；无新错误码/wire minor/schema/依赖**。载体 [CONTRACT-UNFREEZE-2026-11-07-C16-V15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-L-S4-B-PREREQ-1 |
++| 2026-11-07 | **v1.6 UNFREEZE**：§2.4「用途（冻结）」追加 mid-run 重复调用语义（Run 非终态期间对同一 `{command, scope}` 可重复调用；每次只绑定当次 live grants；不延长任何 TTL、不改 scope、不绕过撤销；任一页不可授权整请求 typed 拒绝零映射写入）；**wire 字段/命令集/能力/错误闭集/TTL/撤销/`PROTOCOL_MINOR=3` 零改动**；C-06 v1.3 同批。载体 [CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL](../reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-2C-PREREQ-1 |
