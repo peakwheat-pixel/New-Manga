@@ -46,10 +46,12 @@
     "core.ping",
     "source_list_scan_targets"
   ],
+  "wire_frame_count": 77,
   "sanitization": {
     "recovery_texts_path_free": true,
     "wire_quarantine_hits": 0,
-    "wire_path_frames_only_register_grant": true,
+    "wire_path_hits": 0,
+    "wire_redacted_frames": 7,
     "stderr_path_hits": 0
   },
   "pass": true

@@ -15,7 +15,7 @@ base_commit: 3d97e3b18
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 0fdde2de8953ffcfd847471fdf8c6d82bf507257
+delivery_head: e9e1132a55d8a04617b7e69e9f93f043e08f450b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1
@@ -75,13 +75,13 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [x] **AC-LSB-1 入口仅显式**：预览以 `SOURCE_REGISTRY_UNAVAILABLE` 失败时，只暴露「重新授权此来源」/「重置源授权存储」两个显式动作；未点击前 revoke/register/reset 调用计数均为 **0**。 证据：VM 例 `FailedPreview_ExplicitReauthorize_OnlyOffersThatOneAction_AndWritesNothingYet`（失败后仅 1 次只读探针；`SourceReauthorizeCalls=0`、`SourceResetCalls=0`、`SourceResetConfirms` 空）；真实 IPC `registry_unchanged_after_failure=true`；判别性 B1（把恢复挂进失败分支 → RED）`logs/app-unit.log`/`logs/discrimination.log`/`logs/ipc-closed-loop.json`。 <<MET>>
-- [x] **AC-LSB-2 分流正确**：只读 `source_list_roots` 探针——探测抛 `SOURCE_REGISTRY_UNAVAILABLE` → 只给「重置」；探测成功 + 铸造失败 → 只给「重授权」；探测抛其它码 → 不给任何恢复动作，只显示该码。 证据：`FileLevelProbeFailure_OffersResetOnly_AndWritesNothing`、`OtherProbeCode_OffersNoRecoveryAction_AndDisplaysOnlyThatCode`（实跑 `CORE_CAPABILITY_MISSING`/`SOURCE_REGISTRY_BUSY`）、`CoreSideFailureOrAnotherPreviewCode_OffersNothing_AndNeverProbes`、`ReadableStorageWithStaleEntries_OffersReauthorizeOnly_*`、`ReadableStorageWithoutAnyStaleEntry_OffersNothing`、VM `FailedPreview_FileLevel_*`/`FailedPreview_OtherTypedCode_*`（探测码被显示、动作数 0）、`Reset_RequiresConfirmation_*`。 <<MET>>
+- [x] **AC-LSB-1 入口仅显式**：预览以 `SOURCE_REGISTRY_UNAVAILABLE` 失败时，只暴露「重新授权此来源」/「重置源授权存储」两个显式动作；未点击前 revoke/register/reset 调用计数均为 **0**。 证据：VM 例 `FailedPreview_ExplicitReauthorize_OnlyOffersThatOneAction_AndWritesNothingYet`（失败后仅 1 次只读探针；`SourceReauthorizeCalls=0`、`SourceResetCalls=0`、`SourceResetConfirms` 空）；真实 IPC `registry_unchanged_after_failure=true`；r1 P2-01：批量/歧义**不发探针、不给动作**（`MultiSelectionBlocked_*`）；判别性 B1/B5（恢复挂进失败分支 / 改回批量 → RED）`logs/app-unit.log`/`logs/discrimination.log`/`logs/ipc-closed-loop.json`。 <<MET>>
+- [x] **AC-LSB-2 分流正确**：只读 `source_list_roots` 探针——探测抛 `SOURCE_REGISTRY_UNAVAILABLE` → 只给「重置」；探测成功 + 铸造失败 → 只给「重授权」；探测抛其它码 → 不给任何恢复动作，只显示该码。 证据：`FileLevelProbeFailure_OffersResetOnly_AndWritesNothing`、`OtherProbeCode_OffersNoRecoveryAction_AndDisplaysOnlyThatCode`（实跑 `CORE_CAPABILITY_MISSING`/`SOURCE_REGISTRY_BUSY`）、`CoreSideFailureOrAnotherPreviewCode_OffersNothing_AndNeverProbes`、`ReadableStorageWithStaleEntries_OffersReauthorizeOnly_*`、`ReadableStorageWithoutAnyStaleEntry_OffersNothing`、VM `FailedPreview_FileLevel_*`/`FailedPreview_OtherTypedCode_*`（探测码被显示、动作数 0）、`Reset_RequiresConfirmation_*`；r1 P2-01 批量/歧义 → `MultipleSources` 无动作且不探针；r1 P3-04 folder → `FolderSource` 无动作（`FolderTarget_OffersNoAction_AndTheActionRefuses`）。 <<MET>>
 - [x] **AC-LSB-3 撤销→注册顺序与幂等**：同一路径 2 条 stale 非撤销条目都被撤销（generation+1、`revoked_at` 非空），随后只新增 1 条非撤销条目；重复执行不产生重复条目。 证据：`Reauthorize_RevokesEverySamePathEntryFirst_ThenRegistersExactlyOnce`（帧序 `source_list_roots→source_revoke_root×2→source_register_root`；两条均 generation+1/revoked；恰 1 条 active；无关路径不动）、`Reauthorize_RepeatedExecution_KeepsExactlyOneActiveEntry`、`Reauthorize_UsesTheRegisteredRootString_NotTheCallerSpelling`；判别性 B2（只撤首条→RED）/B3（先注册后撤销→RED）`logs/discrimination.log`。 <<MET>>
 - [x] **AC-LSB-4 部分失败 fail-closed**：撤销成功但注册失败 → 明确「已撤销、未重新授权」+ typed 码；不得显示成功、不得隐式回滚 `revoked_at`；可重试。 证据：`Reauthorize_RegisterFailure_ReportsRevokedNotReauthorized_WithNoRollback`（`RevokedButNotRegistered`、消息含「已撤销…未重新授权（SOURCE_ACCESS_DENIED）」、旧条目仍 revoked、无回滚、清除故障后重试成功）、`Reauthorize_PartialOutcomeRetry_FinishesTheRegisterLegFromTheRevokedRoot`、`Reauthorize_RevokeFailure_AbortsBeforeAnyRegistration`（撤销失败即中止、零注册）、VM `PartialFailure_ShowsRevokedNotReauthorized_AndStaysRetryable`。 <<MET>>
-- [x] **AC-LSB-5 不自动重授权（安全核心）**：铸造失败后不自动注册/不自动换候选；`FindOrRegisterRootAsync` 复用选择器语义不变（首个非 revoked 匹配）。 证据：`PlanAndMintPath_NeverInvokesARecoveryCommand_OnlyTheExplicitActionDoes`（`SourceImportModels.cs` 中 `source_register_root`/`source_list_roots` 各 1 处、revoke/reset 0 处）、`ReuseSelector_StillSkipsRevokedEntries_AndNeverFallsBackOnAFailedMint`（选择器抽出为纯函数、语义逐字不变）、`Reauthorize_WithNothingToRevoke_WritesNothing`、`Reauthorize_ReadOnlyHost_WritesNothing`；真实 IPC「typed 失败后 registry 长度不变、条目仍非 revoked」；判别性 B1 `logs/discrimination.log`。 <<MET>>
+- [x] **AC-LSB-5 不自动重授权（安全核心）**：铸造失败后不自动注册/不自动换候选；`FindOrRegisterRootAsync` 复用选择器语义不变（首个非 revoked 匹配）。 证据：`PlanAndMintPath_NeverInvokesARecoveryCommand_OnlyTheExplicitActionDoes`（`SourceImportModels.cs` 中 `source_register_root`/`source_list_roots` 各 1 处、revoke/reset 0 处）、`ReuseSelector_StillSkipsRevokedEntries_AndNeverFallsBackOnAFailedMint`（选择器抽出为纯函数、语义逐字不变）、`Reauthorize_WithNothingToRevoke_WritesNothing`、`Reauthorize_ReadOnlyHost_WritesNothing`；真实 IPC「typed 失败后 registry 长度不变、条目仍非 revoked」；r1 P2-01：`LastPlanFailureSource` + `AttributeFailedSource` 只指向唯一失败源，批量在任何 wire 调用前被拒、健康源零撤销/零注册（`AttributedFailure_LeavesTheHealthySiblingCompletelyUntouched`）；判别性 B1/B5 `logs/discrimination.log`。 <<MET>>
 - [x] **AC-LSB-6 授权面不扩大**：重授权只使用条目已登记 `roots[0]`；恢复成员**无**任意路径入参；`HostCommandRegistry.All` 数量不变；恢复成员不在 `IHostController` 上（C-07 pin 不变）。 证据：`RecoveryMembers_LiveOnTheSeparatePort_AndNeverOnTheFrozenHostController`、`RecoveryMembers_AcceptNoPathOrOpaqueSourceArgument`（参数仅 `bool`/`CancellationToken`）、`RecoverySurface_AddsNoWireCommand_AndKeepsTheFrozenCommandCount`（`HostCommandRegistry.All.Count == 111` 冻结、无 recover/reauthor 命令、4 条既有 root 命令不变）、`Reauthorize_UsesTheRegisteredRootString_NotTheCallerSpelling`；`generate_api_inventory.py --check` EXIT=0；`logs/gates-governance.log`。 <<MET>>
-- [x] **AC-LSB-7 脱敏**：恢复文案/通知/日志只含叶子名/typed 码/计数；不含绝对路径/`quarantine_path`；gated IPC 断言 wire/stderr 中 fixture 根路径 0 命中。 证据：VM 全量 `AllVisibleText` 断言 `C:\manga` 0 命中 + `quarantine` 0 命中（含失败/成功/重置三态）；`Reset_RequiresConfirmation_AndNeverSurfacesTheQuarantinePath`（脚本 Host 响应**故意带** `quarantine_path` 也不得泄漏）；真实 IPC：`wire_quarantine_hits=0`、含路径的 wire 帧仅既有 `RegisterSourceReadGrant`（基线，显式断言）、`stderr_path_hits=0`、恢复文案 path-free；判别性 B4（渲染 quarantine_path → RED）。 <<MET>>
+- [x] **AC-LSB-7 脱敏**：恢复文案/通知/日志只含叶子名/typed 码/计数；不含绝对路径/`quarantine_path`；gated IPC 断言 wire/stderr 中 fixture 根路径 0 命中。 证据：VM 全量 `AllVisibleText` 断言 `C:\manga` 0 命中 + `quarantine` 0 命中（含失败/成功/重置三态）；`Reset_RequiresConfirmation_AndNeverSurfacesTheQuarantinePath`（脚本 Host 响应**故意带** `quarantine_path` 也不得泄漏）；真实 IPC（r1 P2-02 修正为可观测断言）：wire **77 帧** fixture 根路径 **0 命中**、`[REDACTED]` 帧 **7**（证明脱敏实际发生）、`wire_quarantine_hits=0`、`stderr_path_hits=0`、恢复文案 path-free；判别性 B4（渲染 quarantine_path → RED）。 <<MET>>
 - [x] **AC-LSB-8 零漂移/门禁**：Host/CoreClient/doc-plan/src 零 diff；API inventory PASS；pins 18/18；check（默认+`-TaskPath`）PASS；全量 pytest/.NET 不降（基线 **3317/10、1570/0/92**）。 证据：`logs/build.log`（0/0）、`logs/app-unit.log`（34/0/0）、`logs/host-ipc.log`（1/0/0）、`logs/feature.log`（74 passed）、`logs/full-pytest.log`（**3317 passed / 10 skipped** = 基线）、`logs/full-dotnet.log`（**1604 / 0 / 93** = 基线 1570/0/92 +34 本卡测试 +1 新增 opt-in skip）、`logs/gates-governance.log`（pins 18/18、check PASS(3w)×2、API EXIT=0）、`scope-validation.log`（changed=12 全 ALLOWED、forbidden=0、禁止面 11 项 ZERO_DIFF；1 项并发非交付（ac528828b）显式标注、`CORE_PROTOCOL_MINOR=3`）；跑后 `git checkout -- verification/FEA-09` → CLEAN。 <<MET>>
 - [x] **AC-LSB-9 闭环证据（gated 真实 IPC 1 条）**：注册→同路径替换→预览 typed 失败→显式重授权→再预览成功→重新导入后 `source_locations.registry_id/generation` 原地刷新（L-S4 A）→ `source_list_scan_targets` 返回新代次。 证据：`logs/host-ipc.log`（`NEWMANGA_FEA11_IPC=1`，PASS 1/0/0）+ `logs/ipc-closed-loop.json`/`.txt`：phase A 真实**同路径替换**（typed 失败 → 显式重授权 revoked=1/registered=1 → 再预览成功 → 重新导入 Completed → 枚举返回新 registry/gen；替换=新物理身份 → 新 source，旧行留在只读投影由 Host fail-closed 丢弃）；phase B 同物理身份 + 新 registry 的 **L-S4-A 原地刷新**（同一 `location_id`、`registry_id` 换新、`last_verified_at` 非空、枚举 gen=1）。 <<MET>>
 - [x] **AC-LSB-10 边界/不夸大**：只承诺 **file-source 同路径恢复**；folder 变体受 L-S4-2、重定位走新源；L-S4-1 零交互恢复仍开放；不得写「零交互自愈/根级问题全解」。 证据：EV.md §5/§6、Handoff §3、本卡「已知 limitation」原文；明写「只承诺 file-source 同路径恢复」「L-S4-1/L-S4-2/B2/B3 保留」「C-17 journal 撤销撕裂仅登记」；未出现「零交互自愈/根级问题全解/自动恢复」承诺。 <<MET>>
@@ -95,6 +95,11 @@ out_of_scope:
 - `source_reset_registry` 的 `quarantine_path` 不展示（C-16 §7.3 冲突，未来随 UNFREEZE 澄清）。
 - **同路径替换后的 Core 侧语义（如实登记）**：替换改变物理身份 → 重新导入会写**新的** `source_locations` 行（旧物理身份行仍在只读 Core 投影里，Host 调度器按撤销 registry fail-closed 丢弃）；L-S4-A 的**原地刷新**只在「同物理身份 + 新 registry」成立（gated IPC phase B 实测同一 `location_id` 刷新）。**不宣称**替换场景也算「原地刷新」。
 - **C-17 journal 撤销撕裂（仅登记，不处理）**：B1 给了用户第一个撤销入口；撤销后，绑定旧 `registry_id` 的 C-17 apply/journal 重试会永久失败（锚 `HostOperationOrchestrator.cs:112-133`；scope review `:87/:249/:263`）。B1 不修复该影响面（需 B2/L-S4-B 批量设计），文案不得承诺「重试自动恢复」。
+- **多选/歧义不给恢复（r1 P2-01）**：恢复面只针对**唯一失败来源**（`LastPlanFailureSource`）；一批选择若无法唯一归因，不提供动作、不探针、不写注册表，只在 UI 提示「请只选择一个来源重新预览」。
+- **folder 源不给恢复（r1 P3-04）**：folder 根进入恢复面时被拒绝并给出说明（本卡只承诺 file-source；folder 身份键 L-S4-2 另案）。
+- **重复显式恢复累积 revoked 行（r1 P3-03）**：registry 只置位不删除（Host 既有行为）；每次重复恢复新增一条 revoked 行 + 一条 active，**active 恒 1**（「幂等」= 恰 1 条 active，不是无副作用）。
+- **revoke ACK 失败的计数口径（r1 P3-11）**：Host 先持久化撤销再等 Core ACK；ACK 失败时计数只含已确认成功的条目（文案写「已确认 N 条（实际可能多一条）」）；无回滚。
+- **真实 `HostController` 恢复接缝无端到端测试（r1 P3-05，接受）**：HostController 需可启动 HostRuntime/sidecars；以生产代码级归因单测（`LastPlanFailureSource`/`AttributeFailedSource`）+ 真实 IPC 预览失败链路覆盖，pin 生命周期剩余部分由静态审查覆盖。
 
 
 ## 测试要求
@@ -114,28 +119,39 @@ out_of_scope:
   - `0fdde2de8` — `test(fea-11-l-s1b)`：判别性恢复测试（编排级 + VM/View 级 + 冻结命令域守卫）与 1 条 gated 真实 IPC 闭环；**`delivery_head`**。
   - 文档提交（本卡 / `doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-0fdde2de8.md` / `verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/**`）随后同批提交，均在 `allowed_paths` 内。
 - **共享工作树披露**：`main` 同期由 Lead 写入 `ac528828b`（`doc/handoffs/DSH-PROGRESS-2026-11-07.md`，docs-only，非本卡字节）；本卡 scope 按**自有 commit 链**计算，禁止面零 diff。
-- **门禁实测**（`delivery_head=0fdde2de8`；均真跑）：`dotnet build NewManga.sln -c Release` **成功 0 warning / 0 error**；定向 `FullyQualifiedName~SourceRecovery` **34 passed / 0 failed / 0 skipped**；gated `NEWMANGA_FEA11_IPC=1 ...~SourceRecoveryIpc` **1 passed / 0 / 0**；定向 Core 回归 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q` **74 passed**（基线 74）；全量 `pytest tests -q` **3317 passed / 10 skipped**（= 基线）；全量 `dotnet test NewManga.sln -c Release` **1604 / 0 / 93**（基线 1570/0/92：+34 本卡测试、+1 新增 opt-in IPC skip；已知 flaky `FluentResidual2VisualEvidenceTests` 未命中）；`verify_pins` **18/18 PASS**；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)** ×2；API inventory **EXIT=0**；scope **PASS**（changed=12 全 ALLOWED、forbidden=0、禁止面 11 项 ZERO_DIFF；1 项并发非交付（ac528828b）显式标注、`CORE_PROTOCOL_MINOR=3`）；判别性 **4/4 RED_AS_EXPECTED + 4/4 字节级 RESTORED + final rebuild EXIT 0**；跑后 `git checkout -- verification/FEA-09`（CLEAN）。
+- **门禁实测**（`delivery_head=0fdde2de8`；均真跑）：`dotnet build apps/desktop-avalonia/NewManga.sln -c Release` **成功 0 warning / 0 error**；定向 `FullyQualifiedName~SourceRecovery` **34 passed / 0 failed / 0 skipped**；gated `NEWMANGA_FEA11_IPC=1 ...~SourceRecoveryIpc` **1 passed / 0 / 0**；定向 Core 回归 `pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q` **74 passed**（基线 74）；全量 `pytest tests -q` **3317 passed / 10 skipped**（= 基线）；全量 `dotnet test NewManga.sln -c Release` **1604 / 0 / 93**（基线 1570/0/92：+34 本卡测试、+1 新增 opt-in IPC skip；已知 flaky `FluentResidual2VisualEvidenceTests` 未命中）；`verify_pins` **18/18 PASS**；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)** ×2；API inventory **EXIT=0**；scope **PASS**（changed=12 全 ALLOWED、forbidden=0、禁止面 11 项 ZERO_DIFF；1 项并发非交付（ac528828b）显式标注、`CORE_PROTOCOL_MINOR=3`）；判别性 **4/4 RED_AS_EXPECTED + 4/4 字节级 RESTORED + final rebuild EXIT 0**；跑后 `git checkout -- verification/FEA-09`（CLEAN）。
 - **limitation（保留）**：见下「已知 limitation」——B2/B3 未做；**L-S4-1**（零交互恢复）仍开放、**L-S4-2**（folder 身份键）未修；只承诺 **file-source 同路径恢复**；`quarantine_path` 不展示；**C-17 journal 撤销撕裂仅登记不处理**。
 - **未解决/未宣称**：不写「零交互自愈」「根级问题全解」「自动恢复/撤销后自动放行」；替换场景不称作「原地刷新」（phase B 才是 L-S4-A 原地刷新）。
+
+
+## Review r1 返修记录（Owner 回填；不改 status）
+
+- 依据：独立上下文 r1 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md`（**approved，P0=0/P1=0/P2=2/P3=11**）。
+- 新 commit 链（在首轮 `710e749a9` 之上；仅本卡字节，未 push、未建 worktree）：
+  - `019feeb6e` — `fix(fea-11-l-s1b)`：**P2-01** 单源归因（`LastPlanFailureSource` + `AttributeFailedSource`；批量/歧义在任何 wire 调用前拒绝，健康源零撤销/零注册）+ **P3-04** folder 拒绝 + **P3-07** 新预览清 outcome + **P3-11** revoke ACK 文案。
+  - `e9e1132a5` — `test(fea-11-l-s1b)`：P2-01 多选/归因/健康源/folder/生产 pin 归因测试；P2-02 真实 wire 断言（0 命中 + `[REDACTED]` 帧）；P3-06 仅按钮命令驱动的 View 测试；P3-10 夹具 gate 关闭不启 Core；**`delivery_head`**。
+  - r1 卡/Handoff（`doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-e9e1132a5.md`，supersedes `…-0fdde2de8.md`）/证据为同批文档提交。
+- **门禁实测（r1 head，均真跑）**：build **0/0**；定向 `~SourceRecovery` **43 / 0 / 0**；gated IPC **1 / 0 / 0**（`wire_frame_count=77 wire_path_hits=0 wire_redacted_frames=7`）；定向 pytest **74**；全量 pytest **3317 / 10**（= 基线）；全量 .NET **1613 / 0 / 93**（基线 1570/0/92：+43 本卡、+1 新增 opt-in skip）；pins **18/18**；check **PASS(3w)×2**；API **EXIT=0**；scope **PASS**（禁止面 11 项 ZERO_DIFF、`CORE_PROTOCOL_MINOR=3`）；判别性 **5/5 RED_AS_EXPECTED + 5/5 RESTORED + final rebuild EXIT 0**（新增 **B5** 批量归因回归点）；跑后 `git checkout -- verification/FEA-09` CLEAN。
+- **P3 处置**：P3-01/02/08 修正证据数字、scope 快照口径与卡面构建命令；P3-03/11 登记 limitation（revoked 行累积、ACK 计数口径）；P3-04/06/07/10 FIXED；P3-05 部分修复（生产 pin 归因单测）并登记接受；P3-09 discrimination 日志改为一次干净重跑并标注早期探索性失败。
 
 ## Canonical Evidence
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/EV.md | 0fdde2de8 | 8d41ea51ed0aaf76a061f69215b4e191a026d651308b174790a54fad8712520d | CANONICAL |
-| EV-02 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.json | 0fdde2de8 | 7dd15bd1dc10330e1370adc40197553169ccc9e3eff3d6b0424ee426800e1330 | CANONICAL |
-| EV-03 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.txt | 0fdde2de8 | edfae3e84624268fb60da0b01e7eed948a91dce86dfae7ecc546a6cc4e885d37 | CANONICAL |
-| EV-04 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/build.log | 0fdde2de8 | fc162b065e31a18d5fb50408183fcc51c237450b3699251e37234ff0e03483ee | CANONICAL |
-| EV-05 | AC-LSB-1/2/3/4/5/6/7 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/app-unit.log | 0fdde2de8 | c32e58df0082c1552c3e5fba89244c06e80f355790f65d7d1f256e4ded1bc054 | CANONICAL |
-| EV-06 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/host-ipc.log | 0fdde2de8 | 68e2148fb74cd7d5307913c8c147dda414d4fdd03c1076cf9a6d807b290eb89a | CANONICAL |
-| EV-07 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/feature.log | 0fdde2de8 | 3ff92a94ec46c8b9940b7f82b99a8ebb578c4ed597c993c774f7a86d9ea7ba84 | CANONICAL |
-| EV-08 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-pytest.log | 0fdde2de8 | 5baa9dde17fbccc44ad103c93c157b99e6c96abf9134811cc005cafc056211aa | CANONICAL |
-| EV-09 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-dotnet.log | 0fdde2de8 | c57a3df110f16aceb0dc48884254ba2dc93356cbb7182be5c7a33a1146e98204 | CANONICAL |
-| EV-10 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/gates-governance.log | 0fdde2de8 | dde96fffe39beef4aa1f4fe80d16fd05b8847c4546fa3478939ec54590ee1855 | CANONICAL |
-| EV-11 | AC-LSB-1/3/5/7 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/discrimination.log | 0fdde2de8 | e75b479286df4e0afa903e6d5382cf8c2d6e0aad4aed88a8dd7f81dc29ed0830 | CANONICAL |
-| EV-12 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/scope-validation.log | 0fdde2de8 | de0fdf85ba6062d4f713cbd6ab7842cd0ae9c24644c9559c4efb1818dc0440db | CANONICAL |
-| EV-13 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/changed-files.txt | 0fdde2de8 | 2a42faac036cf717b4ee4f653b38f208e3b400df4548cdbcda4ebc184afc76d7 | CANONICAL |
-| EV-14 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/RESOURCE-MANIFEST.json | 0fdde2de8 | b74a38daabbeb81c61fa83b6ac77667aa8edace5e45ce0eb4e19cdc2f0da8637 | CANONICAL |
+| EV-01 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/EV.md | e9e1132a5 | 0b4d1a9b819cecadc9293360050b3ca4ac05c2ee97731a9c1dca9b69ca0deb47 | CANONICAL |
+| EV-02 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.json | e9e1132a5 | 95288edeb73bc292525d7a43f6f2701eda11c21123adead144fd694c11e6a7b4 | CANONICAL |
+| EV-03 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.txt | e9e1132a5 | 406f68d7f76030446f4af3bd1d7edadfc5d2e4c00acf1356e4f62c8112f25a6b | CANONICAL |
+| EV-04 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/build.log | e9e1132a5 | 07761dc5bd3692b0ff0935c6a460484df7904ed1f40bd8537a131e865722ca28 | CANONICAL |
+| EV-05 | AC-LSB-1/2/3/4/5/6/7 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/app-unit.log | e9e1132a5 | 637b37ab706380b1b444632914ab3e3e02b29f17838f1025b02dcce170d6eb05 | CANONICAL |
+| EV-06 | AC-LSB-9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/host-ipc.log | e9e1132a5 | c6afc880f63345554d6fd26cafc33e8ee81ad583445a9857351b95f2833153a2 | CANONICAL |
+| EV-07 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/feature.log | e9e1132a5 | ba5ea9cfbaf48391307f98c586cdd7bcf01fd4261c492d9b10e1dfc8c5a2c97e | CANONICAL |
+| EV-08 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-pytest.log | e9e1132a5 | e39aceef2695a83898d3241bb23e5b8d8691105ed481d80497d6354015a0da5b | CANONICAL |
+| EV-09 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-dotnet.log | e9e1132a5 | 73edce96dce3f488f1aa2bf55441cf66997cefefd05d9ee726981de74d4cfa36 | CANONICAL |
+| EV-10 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/gates-governance.log | e9e1132a5 | 8e17edc67655393c562dda52fcc8031dcab5e64fd16edeeb0e6662d561f52909 | CANONICAL |
+| EV-11 | AC-LSB-1/3/5/7 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/discrimination.log | e9e1132a5 | ee9c7b36decea885359ac0d04cf2c2d7e056d5e9b5885f44d1988bdb0fd68c82 | CANONICAL |
+| EV-12 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/scope-validation.log | e9e1132a5 | deaeac42f39ff7447d7a1eee422ce99f5ccf56cf2ac961eb989526e93d32d946 | CANONICAL |
+| EV-13 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/changed-files.txt | e9e1132a5 | 33087a9ca5f2f83521f4caafc77b97566cf186b988f04e538534cf89880d5b39 | CANONICAL |
+| EV-14 | AC-LSB-8 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/RESOURCE-MANIFEST.json | e9e1132a5 | 1c8d5bbf6501527d70f0845cf223e795c8714cdac5f530bd9b13d0edc4716b9a | CANONICAL |
 
 > 证据树逐文件 sha256 以本表为准；`logs/` 中 `.txt`/`.json`/`.log` 均为实跑原始输出。
 

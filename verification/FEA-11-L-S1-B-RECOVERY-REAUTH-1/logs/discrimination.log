@@ -1,54 +1,25 @@
+# FEA-11-L-S1-B-RECOVERY-REAUTH-1 discrimination (final clean run; 5 destructive cases)
+# Each case: mutate delivered bytes -> build -> ONE targeted test must FAIL -> restore bytes -> sha256 verify.
+# Early exploratory B4 injections built with unreachable code (INVALID_BUILD_FAILED) and were discarded; see header of this script.
 === B1 recovery wired into the preview failure branch (automatic re-authorization)
-file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=2134897F3D1737DF2327A513EB192E184D8F9D199CA43AD1E5EA1FEB7D2ED54E
 RESULT=B1 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+restore=RESTORED sha256_after=2134897F3D1737DF2327A513EB192E184D8F9D199CA43AD1E5EA1FEB7D2ED54E
 === B2 revoke only the first stale entry (second stays active)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 RESULT=B2 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+restore=RESTORED sha256_after=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 === B3 register before revoke (order swap)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 RESULT=B3 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+restore=RESTORED sha256_after=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 === B4 render the response quarantine_path (absolute path leak)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-RESULT=B4 INVALID_BUILD_FAILED
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-final_rebuild exit_code=0
-SUMMARY cases=4 failures=1
-=== B1 recovery wired into the preview failure branch (automatic re-authorization)
-file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
-RESULT=B1 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
-=== B2 revoke only the first stale entry (second stays active)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-RESULT=B2 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-=== B3 register before revoke (order swap)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-RESULT=B3 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
-=== B4 render the response quarantine_path (absolute path leak)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 RESULT=B4 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+restore=RESTORED sha256_after=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
+=== B5 act on a batch instead of the attributed single source (r1 P2-01 regression)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
+RESULT=B5 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=14243C77AE6EB838992AF268D43C8E7E4E387F493C6D7DEA7530BDAE1D9919BA
 final_rebuild exit_code=0
-SUMMARY cases=4 failures=0
-=== B1 recovery wired into the preview failure branch (automatic re-authorization)
-file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
-RESULT=B1 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
-=== B2 revoke only the first stale entry (second stays active)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-RESULT=B2 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-=== B3 register before revoke (order swap)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-RESULT=B3 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-=== B4 render the response quarantine_path (absolute path leak)
-file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-RESULT=B4 RED_AS_EXPECTED test_failed=1
-restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
-final_rebuild exit_code=0
-SUMMARY cases=4 failures=0
+SUMMARY cases=5 failures=0

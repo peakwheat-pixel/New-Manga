@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-L-S1-B-RECOVERY-REAUTH-1",
-  "generated_at": "2026-11-07T01:47:43+00:00",
+  "generated_at": "2026-11-07T03:00:16+00:00",
   "generated_by": "l-s1b-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "0fdde2de8953ffcfd847471fdf8c6d82bf507257",
-  "repo_head_at_generation": "0fdde2de8953ffcfd847471fdf8c6d82bf507257",
-  "note": "B1 App explicit source recovery/re-authorization delivery (App-only, ZERO contract change, 0/18 pins). No repository file was deleted, moved, migrated or archived; the ONLY repository additions are the App sources/tests and verification/** evidence. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-L-S1-B-RECOVERY-REAUTH-1/ holds the gated real-IPC fixture (fixtures/ipc-*), the discrimination byte backups (tmp/discrimination/) and the raw full-suite logs; canonical copies of the gate logs are committed under verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/. The IPC fixture writes nowhere outside that root (never verification/FEA-09/**). No user data, AppData, external volume or recycle bin was touched. Base head at implementation start was e0b37622b; the concurrent docs-only commit ac528828b (doc/handoffs/DSH-PROGRESS-2026-11-07.md) is NOT part of this delivery.",
+  "delivery_head": "e9e1132a55d8a04617b7e69e9f93f043e08f450b",
+  "repo_head_at_generation": "52b16bbd6",
+  "note": "B1 App explicit source recovery/re-authorization delivery (App-only, ZERO contract change, 0/18 pins), including the r1 fix round (per-source attribution + real wire assertion + P3 dispositions). Delivery diff vs implementation start e0b37622b: 3 NEW files (SourceRecoveryModels.cs / SourceRecoveryUiTests.cs / SourceRecoveryIpcTests.cs) + 6 MODIFIED (SourceImportModels.cs / HostController.cs / NullHostController.cs / ImportDockViewModel.cs / ImportDockView.axaml / FakeHostController.cs) + card/Handoff/review/evidence; repository deletes/moves/archives = 0/0/0. The isolated task root G:/CODEX/New Manga.workspace/FEA-11-L-S1-B-RECOVERY-REAUTH-1/ holds the gated real-IPC fixture (fixtures/ipc-*), the discrimination byte backups (tmp/discrimination/) and the raw full-suite logs; canonical copies of the gate logs are committed under verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/. The IPC fixture writes nowhere outside that root (never verification/FEA-09/**). No user data, AppData, external volume or recycle bin was touched. The concurrent docs-only commit ac528828b (doc/handoffs/DSH-PROGRESS-2026-11-07.md) is NOT part of this delivery.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 0fdde2de8）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head e9e1132a5）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；未 push；实施全部在 main 工作树的 apps/desktop-avalonia/** 与 verification/doc 内。"
@@ -19,8 +19,8 @@
       "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-S1-B-RECOVERY-REAUTH-1",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 53,
-      "total_bytes": 3732311.0,
+      "file_count": 127,
+      "total_bytes": 8773274.0,
       "children": [
         {
           "name": "fixtures/",
@@ -30,7 +30,7 @@
         {
           "name": "tmp/discrimination/",
           "kind": "directory",
-          "note": "4 个破坏点的原字节备份（B1..B4）"
+          "note": "5 个破坏点的原字节备份（B1..B5）"
         },
         {
           "name": "logs/",
@@ -40,7 +40,7 @@
         {
           "name": "tools/discrimination.ps1",
           "kind": "file",
-          "sha256": "f76cb8ca0344ff1919e4e746f9c734c82f44caf88a46e38be53d805ce9867577"
+          "sha256": "ba39721e6328bdb9e9898f32a14968a54973f14a53a34a5e5e17eccc39d052e3"
         }
       ]
     },
@@ -49,7 +49,7 @@
       "source_path": "apps/desktop-avalonia/{src/NewManga.App/**, tests/NewManga.App.Tests/**, tests/NewManga.Host.Tests/**}",
       "disposition": "MODIFIED_IN_PLACE",
       "destination_path": "Same source location",
-      "note": "仅本卡 allowed_paths 内 9 个文件（2 新增生产/测试文件 + 7 修改）；仓内 0 删除、0 移动、0 归档。"
+      "note": "仅本卡 allowed_paths 内 9 个代码/测试文件（3 新增 + 6 修改）；仓内 0 删除、0 移动、0 归档。"
     }
   ]
 }

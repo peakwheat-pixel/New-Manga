@@ -1,5 +1,5 @@
 # FEA-11-L-S1-B-RECOVERY-REAUTH-1 scope validation (delivery diff vs implementation start e0b37622b)
-# generated 2026-11-07T10:00:25.7244686+08:00
+# generated 2026-11-07T10:59:20.8392135+08:00
 ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
 ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
 ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
@@ -11,8 +11,24 @@ ALLOWED  apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
 ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRecoveryIpcTests.cs
 CONCURRENT_NON_DELIVERY doc/handoffs/DSH-PROGRESS-2026-11-07.md (ac528828b: Lead docs-only progress handoff; not this delivery)
 ALLOWED  doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-0fdde2de8.md
-ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/
-changed_count=11 concurrent_non_delivery=1 forbidden_count=0
+ALLOWED  doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-e9e1132a5.md
+ALLOWED  doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md
+ALLOWED  doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/changed-files.txt
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/EV.md
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/app-unit.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/build.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/discrimination.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/feature.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-dotnet.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-pytest.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/gates-governance.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/host-ipc.log
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.json
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.txt
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/RESOURCE-MANIFEST.json
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/scope-validation.log
+changed_count=27 concurrent_non_delivery=1 forbidden_count=0
 --- zero-drift surfaces (must be empty) ---
 ZERO_DIFF apps/desktop-avalonia/src/NewManga.Host/
 ZERO_DIFF apps/desktop-avalonia/src/NewManga.CoreClient/
