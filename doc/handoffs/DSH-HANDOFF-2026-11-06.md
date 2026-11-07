@@ -286,3 +286,13 @@ eady，Owner **l-r11-impl**，base 2175238ab；Core-only 0 pin；allowed：sourc
 - **limitation 保留**：R-1 代码**未改** → 契约与实现当前不一致、**L-3 仍有效**（归 RESIDUAL-3）；R-6 已闭合；R-7 已由 rev 2.15 落地；P3-1（M2-C1 `:140` 仍写「文档 rev 2.14」）**保留不改**（历史段落，改字节需新一轮独立复核）。**不得**写「8 项 residual 全部关闭 / R-1 已修复」。
 - **push**：`d91d9b6cc..857354751`（PUSH_EXIT=0；含 UNFREEZE 提交 `26aa0ca4a` 与 closeout `857354751`）。HEAD=origin=`857354751`，AHEAD=0。
 - **下一轮**：`FEA-12-CORE-C04B-RESIDUAL-3` 实现（R-1 代码 + 判别测试）→ 独立 Review → 门禁（pytest 3369/10 不降、pins 18/18、check、API、scope）→ closeout（并更新 L-3 为「已修」）→ push；之后时间/契约债务队列见 `REBASELINE_PLAN`。
+
+## 25. 续接补充（2026-11-08 第 17 轮：RESIDUAL-3 R-1 代码修复 done）
+
+- **`FEA-12-CORE-C04B-RESIDUAL-3` `done`**（integration **`25dc1523c`**；docs/evidence `6e20d5d28`+`2babb0c78`）：`library.py` 的 `list_book_artifact_current_pointers` 成员谓词 `WHERE c.book_id = ?` → **`WHERE ma.book_id = ?`**（保留 `current_revision_id IS NOT NULL`、不过滤可见性），pages/chapters 改 **`LEFT JOIN`**（仅阅读序排序 + `page_id` 投影），阅读序 7 键逐项保留；与删除面 `DELETE FROM media_artifacts WHERE book_id = ?`、`list_book_artifact_revision_ids` 同源；`core_service.py`/representative/删除事务 **零改动**。**R-1 代码与 C-04b v1.2 谓词现已一致，L-3 关闭（保留为历史）**。
+- **Review**：fresh subagent **r1 `approved`（P0=0/P1=0/P2=2/P3=4；session `a4b5d82e-…`）**；reviewer 独立复跑判别性（回退谓词 → 3 failed → 复原 `da07ccdb…` MATCH + touch → 3 passed）、pins 18/18、check×2、API、manifest 15/15 MATCH。
+- **Lead 集成门禁**：全量 pytest **3372 passed / 10 skipped**（起点 3369/10 → +3）；定向 **59 passed**（起点 56）；pins **18/18**（契约零改动）；check（默认 + `-TaskPath`）PASS；API EXIT=0；实现 diff 仅 `library.py` + 测试 2 文件，契约/schema/apps/依赖零 diff。
+- **P2/P3 处置**：R3-001（卡面 AC-3 方向笔误「A 不含/B 含」应为「A 含/B 不含」）→ **closeout 已更正**（实现与测试自始按正确方向落地并双向覆盖）；**R3-002**（`media_artifacts.book_id` 无索引 → `SCAN ma`；60k artifacts 实测 0.26→5.32 ms/书）→ 登记冻结记录 §4A **L-4**（建议后续独立 schema 卡加 `idx_media_artifacts_book(book_id)`；本卡 AC-4 要求 schema 零 diff 故未改）；**R3-003**（损坏数据下 `currentRevisionId` 展示值可能随成员/排序键变化；规则未改、不进 digest）→ closeout limitation 已含；**R3-004**（`preview_lifecycle` 清理枚举按 page 归属，损坏行可能漏清；pre-existing）→ 登记 **L-5**；**R3-005**（`reviewed_head=25dc1523c` vs evidence HEAD=`2babb0c78`、20 文件）→ closeout 已写明；**R3-006**（静态断言 `inspect.getsource` 白空格脆性）→ follow-up 登记。
+- **口径**：R-1～R-8 均已处置（R-6 闭合、R-7 由 rev 2.15 落地、R-1/R-2/R-3/R-4/R-5/R-8 契约文字由 RESIDUAL-2 修正、**R-1 代码由本卡修复并与契约一致**）；但 **L-1/L-2/L-4/L-5 运行限制仍在**；**不得**写「8 项 residual 全部关闭」。
+- **push**：`4c42e11b8..a88b1780a`（PUSH_EXIT=0；含 RESIDUAL-3 交付/closeout）。HEAD=origin=`a88b1780a`，AHEAD=0。
+- **队列状态**：`READY 节点：无`；`STATUS：无活动 Task`（指针指向 proposed B2 以满足 checker）。**下一候选**：`media_artifacts.book_id` 索引入卡（L-4 / R3-002）——**需先 scope review 判定**：`schema.py` 加索引是否触及 C-15 冻结 DDL（若需 UNFREEZE 则 1 pin），以及 migration 形状/兼容/回滚；B2 延后（无消费者）；RH-3 根治（C-17 additive）成本更高，排后。
