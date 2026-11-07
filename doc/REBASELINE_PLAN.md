@@ -46,9 +46,9 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-11-L-R11-GATE-UNIFY-1
+READY 节点：FEA-11-SCAN-RH-1
 
-（C-04b residual docs-only done `698ac9524`；L-R11 实现 Owner `l-r11-impl`）
+（L-R11 gate 统一 done `86cd1d124`；SCAN-RH-1 Host-only 0 pin，Owner `scan-rh-impl`）
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 

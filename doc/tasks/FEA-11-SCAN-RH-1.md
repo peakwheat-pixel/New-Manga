@@ -3,10 +3,10 @@ id: FEA-11-SCAN-RH-1
 title: SCAN-2 复核残余收口：refresh pending 重放 + refresh 生命周期绑定（Host-only，0 pin）；RH-3/RH-4/RH-5 口径登记
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-11-SCAN-RH-scope-r1.md`（fresh subagent session `c50bc2b0…`；verdict **recommended**：一张 Host-only 小卡，0 pin）；**DSH 裁决（2026-11-07）**：采纳 D-1 重放修复 / D-2 允许 SCAN-2 卡 append-only limitation 订正 / D-3 单卡 `FEA-11-SCAN-RH-1` / D-4 RH-3/RH-5 仅登记；**待 L-R11 实现收口后释放**
+status: ready
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/FEA-11-SCAN-RH-scope-r1.md`（fresh subagent session `c50bc2b0…`；verdict **recommended**：一张 Host-only 小卡，0 pin）；**DSH 裁决（2026-11-07）**：采纳 D-1 重放修复 / D-2 允许 SCAN-2 卡 append-only limitation 订正 / D-3 单卡 `FEA-11-SCAN-RH-1` / D-4 RH-3/RH-5 仅登记；**已于 2026-11-08 释放（L-R11 收口后）**
 suggested_owner: zcode
-owner: null
+owner: scan-rh-impl
 reviewer: null
 depends_on:
   - FEA-11-SCAN-2
