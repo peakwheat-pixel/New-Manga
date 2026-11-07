@@ -17,7 +17,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线：pytest **3360/10**、.NET **1660/0/95**（2026-11-07 L-S4-B-2 closeout 实测；既有 flaky FluentR2ReworkTests.R3001_* 隔离复跑通过）；FEA-11 线 limitation 见各卡。
+- 测试基线：pytest **3363/10**、.NET **1674/0/96**（2026-11-07 2C 实现后 Lead 实跑；closeout 前待 r2 复核；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过）。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-06 push 至 `57f62b3fe`（origin 同步，AHEAD=0）**。

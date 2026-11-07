@@ -6,10 +6,10 @@
 
 | 项 | 值 |
 |---|---|
-| HEAD | `313f88905`（main，origin 同步；L-S4-B 线三卡 done，无活动 Task） |
+| HEAD | `6bc9dc449`（main，origin 同步；2C 实现返修中） |
 | 本轮已完成 | C-15 v1.5；L-S1 A；L-S4 A；L-S1-B1；C-16 v1.5；L-S4-B（`30bdeb4ce`）；L-S4-B-1（`bcc88e4a2`）；**L-S4-B-2 done（`fad1ec776`；r1 approved；Run 范围解析恢复；L-S4-B 线三卡收尾）** |
 | 基线（本轮实测） | 全量 pytest **3317/10**；全量 .NET **1570/0/92**（Lead combined 全量 .NET 命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；pins 18/18；check PASS(3w) |
-| 下一队列 | ①B2 roots 可用性（proposed，延后至 roots UI 立项）；②2C 长 Run；③L-R11；④C-04b；⑤SCAN-RH；⑥UI P3 |
+| 下一队列 | ①2C 续期返修→r2→closeout（当前）；②L-R11；③C-04b；④SCAN-RH；⑤UI P3；B2 延后 |
 
 ## 2. 待裁决（需用户产品取舍的候选；DSH 已附推荐并直接交 Codex/DSH 裁决，不阻塞）
 

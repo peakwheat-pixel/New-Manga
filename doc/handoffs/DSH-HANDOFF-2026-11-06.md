@@ -168,3 +168,33 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - 当前：HEAD `313f88905`（origin 同步，AHEAD=0）；无活动 Task。下一候选：B2 `roots_available`（proposed，**延后至 roots UI/消费者立项**）、2C 长 Run 续期（L-G1）、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
 - 其他 limitation：folder（L-S4-2）、L-S4-1、L-R1、多根 first-root；gated Core 行由测试侧 `AlignRegistryAsync` 对齐（本卡不发 reattest）。
 - **push**：`7be65026e..313f88905`（L-S4-B-2 交付 + closeout + B2 proposed）；PUSH_EXIT=0，AHEAD=0。
+
+## 16. 续接补充（2026-11-07 第 8 轮：2C 续期实现返修中，收尾交接）
+
+> **新会话从这里读起**：本文件 + `doc/STATUS.md` + `doc/REBASELINE_PLAN.md` + `doc/TASK_LEDGER.md` 即可恢复。
+
+### 当前恢复点
+- 仓库 `G:\CODEX\New Manga`，main，**HEAD `6bc9dc449`（origin 同步，AHEAD=0）**；check PASS(3 warnings)；pins **18/18**（C06 v1.3 `75f8e2b4…`、C16 v1.6 `b8f46fb1…`）。
+- **工作树含 Owner `l-s4b1-impl` 的未提交返修**（`HostOptions.cs`/`HostRuntime.cs`/`RunGrantRenewal.cs`/`RunGrantRenewalTests.cs` + `verification/FEA-11-RUN-GRANT-2C/logs/*`）——属返修中间态，**不得丢弃/强推**；未提交内容归原作者所有。
+
+### 已完成（本轮）
+- C-16 v1.5 批量 UNFREEZE（L-S4-B 线）：`3a475b5b9`（r8/r9 approved）。
+- L-S4-B 线三卡 done：B `30bdeb4ce`、B-1 `bcc88e4a2`、B-2 `fad1ec776`。
+- 2C 契约前置 done：`FEA-11-RUN-GRANT-2C-PREREQ-1`（C-06 v1.3 + C-16 v1.6，2 pins；`7317837d5`；r6 approved P0/P1/P2=0；closeout `fdd170039`）。
+- 2C 实现已交付：delivery `e5e9c4c52`（`c40489b5d` 引擎+接线 → `e5e9c4c52` 测试 → `7c979f18d` evidence；**已在 main/已 push**）。
+- 独立 Review r1：**changes_requested（P0=0/P1=1/P2=1/P3=5）**，报告 `doc/reviews/FEA-11-RUN-GRANT-2C-r1.md`：
+  - **P1-01**：HostRuntime 续期接线无测试（Probe-C：`_runGrantRenewal=null` 后全量 Host 277/0/65、gated 7/0/0 全绿）→ 需 HostRuntime/dispatcher 级判别用例；
+  - **P2-01**：`RoundBudget` 事后检查，单轮可含 8×30s on-demand 扫描 + mint → 可能越 300s 窗口/长占 `_gate` → 需单轮前预算约束；
+  - P3×5：EV/Handoff `TBD-*`、manifest pyc/孤儿 head、LedgerStatus 死代码、预算停止吞 typed code/少计等。
+- 已退回 Owner 返修（含 P3 同批修）；Owner 正在改，尚未重新交付。
+
+### 下一步（新会话按序）
+1. 等待/确认 `l-s4b1-impl` 返修交付（新 delivery_head）；若 Owner 不可用，Lead 可按 r1 报告自行完成 P1/P2/P3 修复（实现者与审查者需不同上下文）。
+2. Lead 复跑门禁：全量 pytest/.NET（**当前新基线 3363/10、1674/0/96**；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离）、Host 续期 13、gated IPC、fake clock、pins 18/18、check、API、scope（29 文件、`src/**` 零 diff）。
+3. 派**独立 r2 Review**（复跑 Probe-C 判别 + 预算用例 + fake clock/gated）→ approved 后 closeout（卡 done/EV/Manifest/Closeout）→ STATUS/PLAN/LEDGER → push（记录 PRE/POST/AHEAD）。
+4. 队列：L-R11、C-04b、SCAN-RH、UI P3；B2 `roots_available` 延后（无消费者）。
+
+### 保留 limitation（不得夸大）
+- **L-G1 只降级不关闭**：单步 >300s／续期失败（typed 停止、不重试、不 reattest、不自动重新授权）／L-G2 加密源／L-G9 Core 重启／L-R1 viewer 残余／L-G16 >4096 成员／未 dispatch 的 pending Run 不在范围／240s 重 mint 的 L-G8 成本放大（单轮 >50s 即停）。
+- 2C 只承诺「有续期 + 子限制」，**不得**写任意长 Run 可用/L-G1 关闭/Run 全面恢复/自动恢复/自愈/自动重新授权/撤销后放行。
+- B2 无消费者延后；folder（L-S4-2）、L-S4-1、L-R1、多根 first-root 保留。
