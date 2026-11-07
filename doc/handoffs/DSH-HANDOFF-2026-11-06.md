@@ -296,3 +296,22 @@ eady，Owner **l-r11-impl**，base 2175238ab；Core-only 0 pin；allowed：sourc
 - **口径**：R-1～R-8 均已处置（R-6 闭合、R-7 由 rev 2.15 落地、R-1/R-2/R-3/R-4/R-5/R-8 契约文字由 RESIDUAL-2 修正、**R-1 代码由本卡修复并与契约一致**）；但 **L-1/L-2/L-4/L-5 运行限制仍在**；**不得**写「8 项 residual 全部关闭」。
 - **push**：`4c42e11b8..a88b1780a`（PUSH_EXIT=0；含 RESIDUAL-3 交付/closeout）。HEAD=origin=`a88b1780a`，AHEAD=0。
 - **队列状态**：`READY 节点：无`；`STATUS：无活动 Task`（指针指向 proposed B2 以满足 checker）。**下一候选**：`media_artifacts.book_id` 索引入卡（L-4 / R3-002）——**需先 scope review 判定**：`schema.py` 加索引是否触及 C-15 冻结 DDL（若需 UNFREEZE 则 1 pin），以及 migration 形状/兼容/回滚；B2 延后（无消费者）；RH-3 根治（C-17 additive）成本更高，排后。
+
+## 26. 续接补充（2026-11-08 第 18 轮：INDEX-L4-1 done（v9 索引）+ 可推进项判定）
+
+- **`FEA-12-CORE-C04B-INDEX-L4-1` `done`**（integration **`e593cc9d7`**；docs/evidence `9618056f2`；closeout **`ffa243905`**）：`schema.py` **+22/−0**——`SCHEMA_VERSION_V9=9`、`MIGRATION_V9_NAME="v9__media_artifacts_book_index"`、单条**裸** `CREATE INDEX idx_media_artifacts_book ON media_artifacts(book_id);`、+1 元组项；**v1–v8 迁移字节零改**（新测试 checksum 硬校验 + reviewer 8/8 逐字节比对）。**0 pin、无 UNFREEZE**（scope review 判定 C-15 冻结字节是 v7 规范 DDL、不含 `media_artifacts`；18 pin 不含 `schema.py`）。
+- **效果**：`EXPLAIN` 由 `SCAN ma` → **`SEARCH ma USING INDEX idx_media_artifacts_book`**；COUNT/DELETE 走覆盖索引；60k 厚数据集 8.90→**4.36 ms/书**（旧谓词实测 2.85，仍 **1.53×**，如实登记）；preview/删除面结果逐值等价。
+- **Review**：fresh subagent **r1 `approved`（P0=0/P1=0/P2=0/P3=6；session `231cd1fe-…`）**；判别性（v9 SQL 改 `SELECT 1;` → 13 failed → 复原 `5fe87b69…` MATCH → 33 passed）；风险探针：同名索引已存在 → `OperationalError`、停 v8、DROP 后重试到 9（fail-closed）。
+- **DSH 扩域裁决**：实现中发现册外派生断言 `tests/storage/test_upgrade_schema_data.py`（`MIGRATIONS[:-1]` 派生 + `assert new_tables`，v9 纯索引迁移必然 `new_tables=[]`）→ 授权扩 allowed_paths，做**不放宽方向**最小修复（新增表**或**新增索引 + v8 起点显式断言索引出现）。
+- **Lead 集成门禁**：build 0/0；定向 **109 passed**；全量 pytest **3390/10 EXIT=0**（起点 3372/10 → +18）；全量 .NET **1683/0/96 EXIT=0**（不降）；pins **18/18**；check×2 PASS；API EXIT=0；scope 29 文件全 ⊆ allowed_paths；跑后 `verification/FEA-09` 恢复。
+- **P3 处置**：R4-001（limitation「5.81」→ 实测 **2.85**）已更正；R4-006（「5 处」→ **6 处**：test_v7 ×4 + test_source_gate_unify ×1 + C# ×1）已更正；R4-005 已在 closeout 补正 manifest `tmp/` 措辞；**R4-003**（`ipc_seed.py` docstring 过时）**不改**（连锁改 sha/manifest，成本>收益）、**R4-002**（storage `or` 断言兜底 v1–v7「新增表」方向）、**R4-004**（唯一 .NET 断言在 opt-in skipped 测试）均登记 P3。
+- **L-4 关闭**（冻结记录 §4A 更新为「已修（本卡）」）。
+- **push**：`d7823a0e0..ffa243905`（PUSH_EXIT=0）。HEAD=origin=`ffa243905`，AHEAD=0。
+- **可推进项判定（DSH 裁决，依据 AUTORUN §2）**：
+  - (a) 用户可见价值且无需解冻：**无**（剩余均为内部质量/诊断）；
+  - (b) 契约债务清偿：**已清**（`R-1…R-8` 全处置：R-6 闭合、R-7 由 rev 2.15 落地、6 项文字由 RESIDUAL-2 修正、R-1 代码由 RESIDUAL-3 修复；`L-4` 由本卡修复）；
+  - (c) 需改核心协议才有运行时收益：**RH-3 根治**（需 C-17 additive UNFREEZE + Host 删除 API）——SCAN-RH scope review 与历史裁决均判「不值得」，且「软删源」当前无生产者 → **不立项**，保持 `FEA-11-SCAN-2.md:252` + SCAN-RH 卡 limitation 登记；
+  - (d) B2 `roots_available`：无消费者 → **不做**（STATUS/PLAN 已记延后）；
+  - (e) UI L3 真机：仅真机可验 → **不做**（`FEA-12-UI` 卡已记 NOT_RUN limitation）；
+  - 其余已登记 P3（SCAN-RH P3-1/P3-3、2C R2-02…08、L-R11 P3、C-04b R4-002/003/004/005、RESIDUAL-1 P3）均**非阻塞、已留痕**，不再逐项开卡。
+  - **结论：可推进项耗尽（停止条件①）**；后续仅在出现新需求/新证据（如 roots UI 立项、真机环境、RH-3 有真实生产者）时再开卡。
