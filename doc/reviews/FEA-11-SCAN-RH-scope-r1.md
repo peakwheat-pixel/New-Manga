@@ -64,7 +64,7 @@ verdict_scope: 推荐**一张** Host-only 小卡（implementation，0 pin）：R
 - gated 真 IPC 能补足**语义**（真实 Core 上枚举成功、五命令白名单、15 表零写、`source_id` 权威），但补不了**两个**东西：① 默认门禁覆盖（opt-in + fixture 环境，canonical 日志里 SKIP）；② 「Ready 非阻塞」的判别力（现有断言在 StartAsync 返回后立刻取状态，实测枚举已解析，无法区分阻塞/非阻塞；要判别必须注入一个可控延迟的枚举器——正是缺的那个 seam）。
 
 **RH-4：14/15 表并集口径具体指什么？是否已记录？需文档更正还是实现变更？**
-- 不是 wirelog，也不是 grant 表。是**同一个 Core 业务库的两套零写快照表集**：Core 分片与 Host 分片各自挑了不同子集断言「前后逐行相等」。并集 17 表；与 `test_source_sync.py` 的 16 表 C-17 §6.2 派生基线也不同。
+- 不是 wirelog，也不是 grant 表。是**同一个 Core 业务库的两套零写快照表集**：Core 分片与 Host 分片各自挑了不同子集断言「前后逐行相等」。并集 17 表；与 `tests/fea11/test_source_sync.py:588` 注释所称的 "C-17 §6.2 zero-write comparison set（card frozen rule 4: 16 tables）" 也不同——即项目里同时存在 **14 / 15 / 16** 三套零写表集口径。
 - 已记录但不可操作：卡 `:100` 有「14/15 表口径见 r2」，r2 `:179`/`:192`/`:221`/`:223` 说「并集覆盖、非同一口径」，但全项目没有任何一处列出两套集合的具体差异、并集规模与 16 表基线的关系。
 - **只需文档更正**，不需要实现变更：枚举是单条 SELECT（`source_sync.py:82-112`）；扫描的写入只发生在既有的 `ScanSourceSync` 通道（source 系表），与快照表集口径无关；把表集口径写清即可。**不要**为了统一表集去改实现或改 C-17 字节（后者要 UNFREEZE，收益为零）。
 
@@ -183,7 +183,7 @@ out_of_scope:
 | 顺位 | 项 | 状态/依据 | 建议 |
 |---|---|---|---|
 | ① | **FEA-11-L-R11-GATE-UNIFY-1**（Core-only，0 pin） | `status: ready`（`doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md:6`）；评审期间 `src/bootstrap/core_assembly.py`、`core_service.py`、`src/infrastructure/sqlite/source_sync.py` 有**未提交改动**（属该卡 allowed_paths），说明实现正在进行 | **不打断**；SCAN-RH 不得抢占其门禁/审查窗口 |
-| ② | **FEA-12-CORE-C04B-RESIDUAL-1**（docs-only，0 pin） | **已完成**：评审期间以 `698ac9524` 提交，卡 `status: done`、`delivery_head=698ac9524`、独立 r1 approved | 已不占队列（但 PLAN `:49` 的 READY 行与 `STATUS.md` 的「待冻结」文字仍是旧口径，见 §7.4） |
+| ② | **FEA-12-CORE-C04B-RESIDUAL-1**（docs-only，0 pin） | **已完成**：`698ac9524` delivery + `63b95abda` closeout；卡 `status: done`、独立 r1 approved | 已不占队列（PLAN `:49` READY 行与 `STATUS.md:7` 已同步更新） |
 | ③ | **FEA-11-SCAN-RH-1**（本推荐） | 本报告 | **可穿插，当前队列里下一个可实现的候选**：与 L-R11 文件面零冲突（Host vs Core），建议在 L-R11 收口后释放，避免同窗口两线并审 |
 | ④ | **UI P3** | `FEA-12-UI-RESIDUAL-1` done（`REBASELINE_PLAN.md:55` 当前 DAG 行） | 已收口，无排队项 |
 | ⑤ | B2（roots UI） | `REBASELINE_PLAN.md:55`「B2 延后（无消费者）」 | 维持延后 |
@@ -203,7 +203,7 @@ out_of_scope:
 | 5 | `C:/Python314/python.exe -m pytest tests/fea11 -q -k 'scan or scheduler'` | **14 passed, 192 deselected, 8 warnings, 0.75 s，EXIT=0** | `workspace\SCAN-RH\scope-review\pytest-fea11-scan.log` |
 | 6 | `dotnet test tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj --no-build -c Release --filter 'FullyQualifiedName~SourceScan'` | **68 passed / 0 failed / 0 skipped，310 ms，EXIT=0** | `workspace\SCAN-RH\scope-review\dotnet-host-sourcescan.log` |
 | 7 | 同上 `--filter 'FullyQualifiedName~SourceWatcher'` | **19 passed / 0 / 0，521 ms，EXIT=0** | `workspace\SCAN-RH\scope-review\dotnet-host-sourcewatcher.log` |
-| 8 | `git status --porcelain` / `git rev-list --count origin/main..HEAD` | 我零改动；工作树含**其他 Agent** 的未提交改动（`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/plan/...C04b.md`、`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`、`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py`）；期间 C-04b residual 以 `698ac9524` 提交（docs-only），HEAD 从 `28a2826af` 前进到 `698ac9524`，`origin/main..HEAD` = 1 | 终端记录 |
+| 8 | `git status --porcelain` / `git rev-list --count origin/main..HEAD` | 我零改动；工作树含**其他 Agent** 的未提交改动（`doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`、`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py`）；期间 C-04b residual 两次提交（`698ac9524`／`63b95abda`，docs-only），HEAD 从 `28a2826af` 前进到 `63b95abda`，`origin/main..HEAD` = 2 | 终端记录 |
 
 **构建有效性说明**：`.NET` 用 `--no-build` 跑既有 Release 产物；`tests\...\NewManga.Host.Tests.dll`（21:29:42）与 `src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll`（21:33:50）均晚于 `SourceScanScheduler.cs`（15:55:35）的最后修改，故对当前 Host 代码有效；Core Python 的并发未提交改动不影响该过滤（Host 单测不加载 Python）。
 
@@ -221,17 +221,15 @@ out_of_scope:
 ### 7.3 登记检索（RH 关键词）
 
 - `RH-1…RH-5` 只在 `doc/tasks/FEA-11-SCAN-2.md:252`（残余风险/limitation）与 `doc/reviews/FEA-11-SCAN-2-r2.md:199/:221/:223`、`doc/reviews/FEA-11-WATCH-1-r2.md:210/:269/:279`、`doc/reviews/FEA-11-WATCH-1-r3.md:186/:252/:269`、`doc/tasks/FEA-11-WATCH-1.md:111/:129/:149/:199/:213`、`doc/handoffs/DSH-HANDOFF-2026-11-06.md:42/:75/:95/:107/:227/:239`、`doc/handoffs/DSH-PROGRESS-2026-11-07.md:12/:19` 出现；`doc/TASK_LEDGER.md` **无** SCAN-RH 条目（即：尚未建卡）。`doc/tasks/FEA-11-SCAN-2.md:252` 已登记 RH-1…RH-5，因此「仅登记」路径**无需新写**登记，只需订正措辞（RH-4/RH-5）。
-- `doc/REBASELINE_PLAN.md`（HEAD `698ac9524`）`:49` READY 行同时列 `FEA-11-L-R11-GATE-UNIFY-1` 与 `FEA-12-CORE-C04B-RESIDUAL-1`，但后者在同一 commit 已 `done`（`doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md` `status: done`、`delivery_head=698ac9524`），即该行是过期口径。
+- `doc/REBASELINE_PLAN.md`（HEAD `63b95abda`）`:49` READY 行现只列 `FEA-11-L-R11-GATE-UNIFY-1`（C-04b 已 done 并移出）；`doc/STATUS.md:7` 已把「下一候选」改为 **SCAN-RH（scope review 中）**，与本报告的排队建议一致。
 
 ### 7.4 观测到的仓库状态偏差（只报告，不裁决）
 
-- `doc/STATUS.md:23` 写「main 已于 2026-11-07 push 至 `07a7d746a`、AHEAD=0」，而当时 HEAD 已是 `28a2826af` 并前进到 `698ac9524`（`07a7d746a` 是 HEAD 祖先）、`origin/main..HEAD`=1（C-04b 提交未 push）。属 STATUS 指针滞后。
-- `doc/STATUS.md:7` 仍把 C-04b residual 列为「下一候选……待冻结」，而该卡已 `done`；`doc/REBASELINE_PLAN.md:49` 也仍把它列在 READY 行。两处为同一指针滞后。
-- 以上均建议 Lead 在 L-R11 closeout 时顺手订正；不影响本报告的 RH 事实与建议。
+- `doc/STATUS.md:23` 写「main 已于 2026-11-07 push 至 `07a7d746a`、AHEAD=0」，而当前 HEAD 是 `63b95abda`（`07a7d746a` 是 HEAD 祖先）、`origin/main..HEAD`=2（C-04b 两次 docs-only 提交未 push）。属 STATUS 指针滞后，建议 Lead 在 L-R11 closeout 时顺手订正；不影响本报告的 RH 事实与建议。
 
 ## 8. 真实性声明
 
-- **写入范围**：本次唯一写入仓库的文件是本报告 `doc/reviews/FEA-11-SCAN-RH-scope-r1.md`；仓外临时/日志仅写入 `G:\CODEX\New Manga.workspace\SCAN-RH\scope-review\`（3 个运行日志）。未修改任何生产代码、测试、契约、任务卡、`verification/**`；未 `git add`/`commit`/`push`；未触碰工作树中其他 Agent 的未提交改动（评审期间亲眼见其变化：`src/bootstrap/core_assembly.py`、`core_service.py`、`src/infrastructure/sqlite/source_sync.py`、C-04b 卡/证据，HEAD 前进到 `698ac9524`）。
-- **独立性**：我是 fresh subagent（session `c50bc2b0-52e4-4d23-a60e-22115ea29a3a`），未参与 SCAN-1/SCAN-2/WATCH-1 的实现、返修或复核；本报告只读 reviewed_head `28a2826af`（+ 已核对 `698ac9524` 为 docs-only 前进）。
+- **写入范围**：本次唯一写入仓库的文件是本报告 `doc/reviews/FEA-11-SCAN-RH-scope-r1.md`；仓外临时/日志仅写入 `G:\CODEX\New Manga.workspace\SCAN-RH\scope-review\`（3 个运行日志）。未修改任何生产代码、测试、契约、任务卡、`verification/**`；未 `git add`/`commit`/`push`；未触碰工作树中其他 Agent 的未提交改动（评审期间亲眼见其变化：`src/bootstrap/core_assembly.py`、`core_service.py`、`src/infrastructure/sqlite/source_sync.py`、C-04b 卡/证据，HEAD 从 `28a2826af` 前进到 `63b95abda`）。
+- **独立性**：我是 fresh subagent（session `c50bc2b0-52e4-4d23-a60e-22115ea29a3a`），未参与 SCAN-1/SCAN-2/WATCH-1 的实现、返修或复核；本报告只读 reviewed_head `28a2826af`（+ 已核对 `698ac9524`/`63b95abda` 均为 docs-only 前进）。
 - **不夸大**：本报告**不声称任何 RH 项已修复或已解决**；RH-3/RH-5 建议不修，RH-1/RH-2 的建议修复尚未实现、尚无判别测试；所有成本/风险为估算而非实测。文中标注「静态推断」的结论（RH-2 的 `ObjectDisposedException` 路径、RH-3 的预算稀释倍数）未经运行验证。
 - **未跑项**见 §7.2；**实测数字**见 §7.1（均带 EXIT 与日志路径）。若后续实现卡落地，本报告自动降为历史记录。

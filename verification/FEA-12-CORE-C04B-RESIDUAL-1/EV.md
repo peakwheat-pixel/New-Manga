@@ -62,7 +62,9 @@
   C-04b/M2-C1 字节零 diff；pins 18/18；check PASS×2；本卡产物对 `src/**`/`apps/**`/`tests/**` 零 diff。
 - **P3 处置（open 6 项，均非阻断）**：P3-2 §1C 路径为 workspace 相对 + r4–r7 `...` 缩写（保留，sha 已给全）；
   P3-3 r4–r7 session 前缀（保留，报告内已有完整 id）；P3-4/P3-5/P3-6 卡面/EV 措辞已按 closeout 修正；
-  P3-8（`698ac9524` 内卡仍 ready、EV r1「结论待回填」）由 closeout 提交闭合。**不声称 P3 全部修完**。
+  P3-8（closeout 期记录一致性：`698ac9524` 内卡仍 ready、EV r1 待回填）**已按 closeout 提交链处理**
+  （`63b95abda` 卡 done + `423efa200` EV 回填），但**报告按提交时点保守计为 open**（故 open=6 而非 5）。
+  **不声称 P3 全部修完**。
 
 ## 5. 不构成什么
 

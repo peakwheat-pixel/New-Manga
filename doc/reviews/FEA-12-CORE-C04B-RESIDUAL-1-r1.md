@@ -31,11 +31,11 @@ post_review_commit: 698ac9524
 2. **AC-1…AC-6 全部在实质上 MET**：8 项 residual 表与 scope review §2 逐项一致；行号在 `28a2826af` 工作树逐点命中；§1C 的 r1–r7 + 辅助报告 **sha256 与大小全部实测 MATCH**；载体 §5F **只追加**（`+14/−0`，HEAD 112 行为当前文件前缀）；C-04b/M2-C1 **契约字节零 diff**；`verify_pins.ps1` **18/18**、`check.ps1`（默认 + `-TaskPath`）**PASS**；**本卡产物**对 `src/**`/`apps/**`/`tests/**` 零 diff（审查开始时整树亦为零；审查期间并行 L-R11 实现新增 3 个 `src/**` 修改，见 P3-7，非本卡/非本审查）；未出现肯定性的「8 项全部关闭/契约已修复」断言。
 3. **⑥/R-6 确实闭合**：§1C 给出 r1–r7 完整 sha256（r4–r7 与 §1B 的 8 位前缀一致），r2 子会话 id 未暴露已如实说明；§1B 原文（第 21–32 行）逐行未改，闭合落在新增 §1C。
 4. **未修复的事实保留**：R-1/R-2/R-3/R-4/R-5/R-7/R-8 的规范修复均未做（契约正文仍为 `acc8f0e0…`/`701093b5…`），R-1 的代码偏差登记为 L-3「未修」，修复需另卡 UNFREEZE + 实现卡；本报告不声称任何 residual 已修复。
-5. **P3 摘要**：P3-1（EV diff stat `+41/−2`）已在 Lead 提交 `698ac9524` 的 EV 中修为 `+39/−2`，**fixed**；P3-2（§1C 路径非字面绝对、r4–r7 用 `...` 缩写）、P3-3（r4–r7 session 只记前缀）、P3-4（卡面 AC-2 写 §1B、落地在 §1C）、P3-5（§4B 相邻修正未在卡面显式标注）、P3-6（EV §2 AC-6 的 closeout 前瞻表述）仍 **open**；P3-7（并行 L-R11 的 3 个 src 修改）已由 `698ac9524` 的 docs-only 提交**缓解**（src 未入提交），仅剩工作树未提交注记；P3-8（`698ac9524` 内任务卡仍 `ready`、EV r1 仍「结论待回填」、committed 报告为中间版本而工作树卡已 `done` 未提交）为 **open** 的 closeout 记录一致性问题。详见 §4 与 §3.5。
+5. **P3 摘要**：P3-1（EV diff stat `+41/−2`）已在 `698ac9524` 的 EV 中修为 `+39/−2`，**fixed**；P3-2（§1C 路径非字面绝对、r4–r7 用 `...` 缩写）、P3-3（r4–r7 session 只记前缀）、P3-4（卡面 AC-2 写 §1B、落地在 §1C）、P3-5（§4B 相邻修正未在卡面显式标注）、P3-6（EV §2 AC-6 的 closeout 前瞻表述）仍 **open**；P3-7（并行 L-R11 的 3 个 src 修改）已由 `698ac9524` 的 docs-only 提交**缓解**；P3-8 的原始事实（`698ac9524` 内任务卡仍 `ready`、EV r1 仍「结论待回填」、committed 报告为中间版本）已由 `63b95abda`/`423efa200`/`3c4f62dbf` 修正，但最终 EV/卡面称 **P3-8 已由 closeout 闭合**且仍计 **open=6**，与「8 = 1 fixed + 1 mitigated + 6 open」的算术不一致；若 P3-8 确已闭合，open 应为 5。该计数口径仍 **open**（详见 §3.5/§4）。
 
 ## 1. 基线与只读事实
 
-- 仓库/分支：`G:\CODEX\New Manga`、`main`。审查基线 `28a2826afdba0fbd3262d109dcd3afa86997afb6`（已 push；`base_commit` 与审查基线相同）；审查后 Lead 于 2026-11-07 23:57:55 提交 `698ac9524e7d86dbbc46d0063eec44c6f99e8cab`（docs-only；见下）。
+- 仓库/分支：`G:\CODEX\New Manga`、`main`。审查基线 `28a2826afdba0fbd3262d109dcd3afa86997afb6`（已 push；`base_commit` 与审查基线相同）；审查后 Lead 于 2026-11-07 23:57:55 提交 `698ac9524e7d86dbbc46d0063eec44c6f99e8cab`（docs-only 集成），随后 `63b95abda`（closeout done）、`423efa200`（EV r1 回填 + 本报告修正版入库）、`3c4f62dbf`（卡面 Canonical Evidence EV-01 指向 EV 最终版 `423efa200`）。此后 Lead 又提交 `a969f405f`（handoff §20）与 `a4cc8a9b7`（SCAN-RH 冻结）；当前 HEAD `a4cc8a9b7`，这些后续提交不改变 C-04b docs 字节。
 - 审查开始时 `git status --porcelain=v1`：
   - ` M doc/REBASELINE_PLAN.md`
   - ` M doc/TASK_LEDGER.md`
@@ -45,7 +45,7 @@ post_review_commit: 698ac9524
   - `?? verification/FEA-12-CORE-C04B-RESIDUAL-1/`
 - **审查期间并行变化（非本审查产生）**：约 23:51–23:52，工作树新增 3 个 `src/**` 修改：`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py`（内容为 FEA-11/L-R11 publication gate 实现，`172 insertions(+) / 63 deletions(-)`）。它们不是本卡 allowed_paths 的产物，也不是本审查写入；我未触碰、未回滚它们。因此 23:37 的「零 code diff」是当时的真实状态，**提交前整树 `git diff` 已不再是零 `src/**`**；本报告的零代码结论只对**本卡产物**成立（见 AC-6 与 P3-7）。
 - 提交前（约 23:56）`git status --porcelain=v1`：4 个 docs `M` + 3 个 `src` `M` + `?? doc/tasks/...` + `?? verification/...` + 本报告 `?? doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`。
-- **审查后 Lead 提交 `698ac9524`（23:57:55）**：提交含被审 4 个 docs 文件（`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/plan/FEA-CONTRACT-FROZEN-C04b.md`、`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`）+ 本报告（当时中间版本）+ 任务卡（`status: ready`）+ `verification/FEA-12-CORE-C04B-RESIDUAL-1/**`；**不含** 3 个并行 `src/**`（docs-only）。提交后工作树：任务卡更新为 `status: done`、`integration_commit: 698ac9524`、`delivery_head: 698ac9524`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`（未提交）；本报告在提交后继续修正为当前版本（未提交）；3 个并行 `src/**` 仍未提交。`git diff` 对冻结记录/载体为零（已在提交中），C-04b/M2-C1 sha 不变。
+- **审查后 Lead 提交链**：`698ac9524`（23:57:55；docs-only 集成：4 docs + 本报告当时版本 + 任务卡 `ready` + evidence，未含 src）→ `63b95abda`（closeout done：任务卡 `done`/`integration_commit=698ac9524`/`complete`；STATUS/PLAN/LEDGER 更新）→ `423efa200`（EV r1 回填 + 本报告修正版入库；并入库并行 SCAN-RH scope review r1）→ `3c4f62dbf`（卡面 Canonical Evidence EV-01 指向 EV 最终版 `423efa200`；P3 口径 `open=6/fixed=1/mitigated=1`；称 P3-8 由 closeout 闭合）。当前工作树：本报告再次修正（P3-8 计数口径注记，`M`）、3 个并行 `src/**` `M`、并行 `doc/reviews/FEA-11-SCAN-RH-scope-r1.md` `M`；任务卡/EV/冻结记录/载体均在 HEAD、无 diff。`git diff` 对冻结记录/载体为零；C-04b/M2-C1 sha 不变。
 - 被审对象是审查时工作树最终字节（`28a2826af` 基线）；`698ac9524` 中的 docs 字节与之一致；C-04b/M2-C1 两个契约文件零 diff，`git diff --quiet HEAD -- <两契约>` 退出 0。
 - 卡面在审查开始时 `status: ready`、`base_commit: 28a2826af`、`owner: dsh`、`reviewer` 指向本报告路径；AC-1…AC-6 在审查时仍为 `<<PENDING>>`。审查后 Lead 在工作树把卡面改为 `done`/`integration_commit=698ac9524`/`complete`（未提交）；committed 卡面仍是 `ready`（P3-8）。
 - `doc/REBASELINE_PLAN.md` 与 `doc/TASK_LEDGER.md` 是 Lead 维护的指针（卡面 `out_of_scope` 明确 `STATUS/PLAN/LEDGER（Lead 维护）`）；本次 diff 仅将它们计入「Lead 指针」，不作为本卡 Owner 的 allowed_paths 内改动。
@@ -139,7 +139,7 @@ post_review_commit: 698ac9524
 - `verify_pins.ps1`：`PIN AUDIT: PASS (all 18)`，C04b `acc8f0e03d42`，exit 0；`check.ps1` 默认与 `-TaskPath doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md` 均为 `PASS (3 warnings)`，exit 0（并行 src 改动不影响这两项治理检查）。
 - 审查开始时 `git diff --name-only -- src apps tests` 为空；提交前为 3 个 `src/**`（并行 L-R11）；`698ac9524` 本身为 docs-only、未含 src，**本卡集成提交零代码**。工作树仍保留 3 个并行 src `M`（P3-7 mitigated：提交干净，工作树注记保留）。`git diff --check` 仍 exit 0。
 - 不夸大：卡面、EV、冻结记录、载体均未出现「8 项全部关闭/契约已修复」的肯定断言；EV §5 明写「8 项中仅 ⑥ 完全闭合，其余规范修复待 UNFREEZE（另卡，未建立）」，冻结记录 §4A 前言写「仅 R-6 完全闭合；R-3/R-4 的 0 pin 部分已登记；其余契约正文未改」。
-- P3：P3-1 已在 `698ac9524` 的 EV 中修为 `+39/−2`（**fixed**）；P3-2/P3-3/P3-4/P3-5/P3-6 仍 open；P3-7 已由 docs-only 提交缓解；P3-8 为 `698ac9524` 内任务卡仍 `ready`、EV r1 仍「结论待回填」、committed 报告为中间版本而工作树卡已 `done` 未提交（open）。
+- P3：P3-1 已在 `698ac9524` 的 EV 中修为 `+39/−2`（**fixed**）；P3-2/P3-3/P3-4/P3-5/P3-6 仍 open；P3-7 已由 docs-only 提交缓解；P3-8 的原始卡面/EV/报告不一致已由 `63b95abda`/`423efa200`/`3c4f62dbf` 修复，但最终 EV/卡面称 P3-8「由 closeout 闭合」且仍写 `open=6`（8 = fixed 1 + mitigated 1 + open 6），committed 报告 `p3: 6` 也把 P3-8 计为 open；若接受 P3-8 闭合，open 应为 5（计数口径 open）。
 
 **结论：MET（就本卡产物与 `698ac9524` 的 docs-only 集成提交而言；closeout 记录一致性见 P3-8）。**
 
@@ -156,8 +156,8 @@ post_review_commit: 698ac9524
 | 检查 | 命令/对象 | 实测 | 判定 |
 |---|---|---|---|
 | HEAD | `git rev-parse HEAD` | `28a2826afdba0fbd3262d109dcd3afa86997afb6` | — |
-| 分支/状态 | `git branch --show-current`; `git status --porcelain=v1` | `main`；审查开始 4 M + 2 ??；提交前 7 M + 3 ??；提交后 5 M + 0 ??（本报告/任务卡/3 个并行 src；见 §3.5） | — |
-| tracked diff | `git diff --name-only` | 审查开始：`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/plan/FEA-CONTRACT-FROZEN-C04b.md`、`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`；提交前：+ 3 个并行 `src/**`；提交后：这两个 docs 已入 `698ac9524`，工作树仅本报告/任务卡/3 src 为 M | 本卡 2 allowed + 2 Lead；src 为并行 |
+| 分支/状态 | `git branch --show-current`; `git status --porcelain=v1` | `main`；审查开始 4 M + 2 ??；提交前 7 M + 3 ??；最终 5 M + 1 ??（本报告/SCAN-RH scope review/3 个并行 src；`tests/fea11/test_source_gate_unify.py` 为 `??`；见 §3.5） | — |
+| tracked diff | `git diff --name-only` | 审查开始：`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/plan/FEA-CONTRACT-FROZEN-C04b.md`、`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`；提交前：+ 3 个并行 `src/**`；提交后：C-04b 4 docs 已入 `698ac9524`，工作树仅本报告/并行 SCAN-RH/3 src 为 M | 本卡 2 allowed + 2 Lead；src/SCAN-RH 为并行 |
 | staged | `git diff --cached --name-only` | 空 | — |
 | diff stat | `git diff --numstat` | docs-only：frozen `39/2`、carrier `14/0`、total `61/9`；提交前整树另加 src `172/63`（total `233/72`）；提交后冻结记录/载体已入提交、工作树 docs diff 为 0 | carrier 与 EV 一致；frozen 已 fixed（P3-1）；src 见 P3-7 |
 | C-04b sha256 | `Get-FileHash -Algorithm SHA256` | `acc8f0e03d42fd574837cc556e9fa546ba355d7f45a5eefc7bd7b9fe8c16968f` | 与 pin 一致 |
@@ -224,17 +224,20 @@ post_review_commit: 698ac9524
 | §1B 未改 | `git diff --unified=0`；HEAD 第 21–32 行 vs 当前 | hunk 从原始第 33 行开始；21–32 行 `IDENTICAL` | PASS |
 | 冻结记录 hunk | `git diff --unified=0` | `-33,0 +34,21`（§1C）、`-61 +82`（§4B）、`-80 +101,15`（§4A 表）、`-83,0 +119`（L-3）、`-92,0 +129`（§5） | 与预期一致 |
 
-### 3.5 Post-review commit `698ac9524`（Lead，2026-11-07 23:57:55）
+### 3.5 Post-review 提交链（Lead）
 
 | 项 | 实测 | 判定 |
 |---|---|---|
-| commit | `698ac9524e7d86dbbc46d0063eec44c6f99e8cab`；`docs(fea-12-core-c04b-residual): residual 8 项记录收口（docs-only 0 pin；...）+ 独立 r1 approved P0/P1/P2=0/P3=6` | docs-only |
-| 提交文件 | `doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/plan/FEA-CONTRACT-FROZEN-C04b.md`、`doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`、本报告、任务卡、`verification/FEA-12-CORE-C04B-RESIDUAL-1/**`；**无 `src/**`** | 符合 pathspec，未混入并行 src |
+| HEAD | C-04b closeout 链末 `3c4f62dbfa479a22a82abfbc2daa9ffd72b6b242`（链：`698ac9524` → `63b95abda` → `423efa200` → `3c4f62dbf`）；当前 HEAD `a4cc8a9b7` 为后续 handoff/SCAN-RH 提交 | — |
+| 集成 commit | `698ac9524e7d86dbbc46d0063eec44c6f99e8cab`；docs-only 0 pin；含 4 docs + 本报告 + 任务卡 + `verification/**`；**无 `src/**`** | docs-only 集成，未混入并行 src |
+| closeout | `63b95abda`：任务卡 `done`/`integration_commit=698ac9524`/`delivery_head=698ac9524`/canonical+resource `complete`；STATUS/PLAN/LEDGER 同步 | closeout done |
+| EV/报告入库 | `423efa200`：EV r1 回填 `approved`/P0/P1/P2=0/`open=6/fixed=1/mitigated=1`；本报告修正版入库；并行 SCAN-RH scope review r1 入库 | EV r1 已回填 |
+| Canonical Evidence | `3c4f62dbf`：卡面 `Canonical Evidence EV-01` 指向 EV 最终版 `423efa200`；称 **P3-8 由 closeout 闭合** | 与 `open=6` 的算术冲突（见下） |
 | 被审 docs 字节 | 提交后 `git diff --name-only -- doc/plan/FEA-CONTRACT-FROZEN-C04b.md doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md` 为空；C-04b/M2-C1 sha 仍 `acc8f0e0…`/`701093b5…` | `698ac9524` 中的 docs 字节 = 被审字节 |
-| 任务卡 | committed：`status: ready`、`integration_commit: null`、canonical/resource `pending`；工作树：`status: done`、`integration_commit/delivery_head=698ac9524`、canonical/resource `complete`（未提交） | **P3-8 open**：committed 卡面与工作树 closeout 字段不一致 |
-| EV | committed/working：P3-1 已修为 `+39/−2`；§4 r1 仍写「结论待回填」 | P3-1 **fixed**；r1 回填仍缺（P3-8） |
-| 本报告 | committed 版本是中间版本：frontmatter `p3: 7`、§0 P3=7，但 findings 只有 6 条、§5 仍 `P3=6`；当前工作树版本是修正版（P3-1 fixed、P3-7 mitigated、P3-8、P3-2…P3-6 open 6） | **P3-8 open**：committed 报告内部不一致；当前报告 `M` 未提交 |
-| 并行 src | 3 个 `src/**` 仍为工作树 `M`，未入 `698ac9524` | P3-7 **mitigated**（提交本身干净），工作树注记保留 |
+| 任务卡 | committed：`status: done`、`integration_commit/delivery_head=698ac9524`、canonical/resource `complete`、Canonical Evidence `EV-01` → `423efa200` | 原始 P3-8（卡面 ready/pending）已 fixed；计数口径仍 open |
+| EV | final `423efa200`：r1 `approved`；总数 8，`fixed=1`（P3-1）、`mitigated=1`（P3-7）、`open=6`；正文称 P3-8「由 closeout 提交闭合」 | 若 P3-8 闭合，8 = 1 fixed + 1 mitigated + 6 open 中不能再含 P3-8；open 应为 5。**算术不一致** |
+| 本报告 | committed `423efa200`：`p3: 6`、P3-8 open（P3-2…P3-6 + P3-8）；当前工作树 `M` 为本轮 P3-8 计数注记 | P3-8 open（计数口径） |
+| 并行 src/测试 | 3 个 `src/**` 仍为工作树 `M`，另 `tests/fea11/test_source_gate_unify.py` 为 `??`（L-R11）；均未入任何上述 commit | P3-7 **mitigated**（提交干净），工作树注记保留 |
 
 ## 4. Findings
 
@@ -246,23 +249,23 @@ post_review_commit: 698ac9524
 | P3-4 | P3 | `doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md:54-55`；`FROZEN:34-38`；`EV.md:33` | 卡面 AC-2 仍写「§1B 补 r1–r3…」，实际落地为新增 §1C（§1B 原文保留）；EV 也把 AC-2 指向 §1C。影响：AC 文本与证据落点表述不一致，未来读者可能误以为 §1B 被修改。 | `git diff --unified=0` 显示 §1B 第 21–32 行未改；§1C 新增于第 34 行起 | closeout 时在卡面注明「AC-2 落地为新增 §1C，§1B 原文保留」，或由 Lead 更新 AC-2 措辞 | open |
 | P3-5 | P3 | `FROZEN:82`；`EV.md:15`；`FROZEN:129`；卡面 AC-1…AC-6 | §4B 的「五轮→r1–r6 CHANGES + r7 APPROVE」是 8 项之外的相邻精度修正；EV 与冻结记录 §5 都写「相邻精度项，不计入 8 项 AC」，但卡面 AC/目标没有这句话。影响：scope 文档不够显式；修正本身与 §1B/§1C 一致、无契约字节变化。 | `git diff` 的 `-61 +82` hunk；§5 `:129`；EV §1 `:15` | 在卡面/closeout 补一句「§4B 为 R-6 证据链的相邻精度修正，不计入 8 项 AC」，按 scope review §3.4 明确范围 | open |
 | P3-6 | P3 | `verification/FEA-12-CORE-C04B-RESIDUAL-1/EV.md`（§2 AC-6） | EV §2 AC-6 写「closeout 明确『仅 ⑥ 完全闭合；③/④ 的 0 pin 部分已登记；其余契约文本未改』」，但当前 EV/卡面尚无该 closeout 文本；EV §5 只写了「8 项中仅 ⑥ 完全闭合」。影响：属 closeout 前的前瞻表述，不属于已落地声明；closeout 时必须把三句写入。 | EV §2 AC-6 与 EV §5；冻结记录 §4A 前言已有等价三句 | 改为「closeout 须明确…」，或在 closeout 时补齐三句并回填 EV | open |
-| P3-7 | P3 | `src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py`（审查期间并行 L-R11） | 23:51–23:52 工作树新增 3 个 `src/**` 修改（`172/63`），非本卡 allowed_paths 产物、非本审查写入；审查开始时为零。Lead 的 `698ac9524` 为 docs-only、未含 src，集成提交干净；工作树仍有 3 个 src `M`（并行 L-R11）。影响：仅剩工作树/未来提交需保持 pathspec；不会由本卡引入代码。 | `git show --name-only 698ac9524` 无 `src/`；`git diff --numstat -- src` → `19/14`、`26/24`、`127/25`；文件时间戳 `2026-11-07T23:51:02`–`23:52:26` | 保持显式 pathspec；并行 L-R11 自行提交；不得把 src 改动归入本卡 | mitigated (698ac9524) |
-| P3-8 | P3 | `698ac9524`（任务卡/EV/报告）；工作树任务卡 | `698ac9524` 内任务卡仍 `status: ready`、`integration_commit: null`、canonical/resource `pending`；EV §4 r1 仍写「结论待回填」；committed 报告是中间版本（frontmatter `p3: 7`、§0 P3=7，但 findings 6 条、§5 仍 `P3=6`）。工作树任务卡已改为 `status: done`/`integration_commit=698ac9524`/`delivery_head=698ac9524`/canonical+resource `complete`（未提交），当前报告为修正版（未提交）。影响：closeout 记录不一致——读 `698ac9524` 看到 `ready`/pending，读工作树看到 `done`/complete。 | `git show 698ac9524:doc/tasks/...`；`git show 698ac9524:verification/.../EV.md`；`git diff -- doc/tasks/...`；committed vs working report | Lead 提交任务卡 closeout 字段、回填 EV r1（`approved`、P0/P1/P2=0、P3 计数与处置）、提交修正版报告；必要时在 closeout 注记 P3 计数口径（P3-1 fixed、P3-7 mitigated、6 open） | open |
+| P3-7 | P3 | `src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py`（审查期间并行 L-R11） | 23:51–23:52 工作树新增 3 个 `src/**` 修改（`172/63`），非本卡 allowed_paths 产物、非本审查写入；审查开始时为零。Lead 的 `698ac9524` 为 docs-only、未含 src，集成提交干净；工作树仍有 3 个 src `M` + `tests/fea11/test_source_gate_unify.py`（`??`，L-R11 测试）。影响：仅剩工作树/未来提交需保持 pathspec；不会由本卡引入代码。 | `git show --name-only 698ac9524` 无 `src/`；`git diff --numstat -- src` → `19/14`、`26/24`、`127/25`；`git status` 显示测试文件 `??`；文件时间戳 `2026-11-07T23:51:02`–`23:52:26` | 保持显式 pathspec；并行 L-R11 自行提交；不得把 src/测试改动归入本卡 | mitigated (698ac9524) |
+| P3-8 | P3 | `423efa200`（EV/报告）；`3c4f62dbf`（任务卡 Canonical Evidence） | **原始事实已 fixed**：`63b95abda` 把任务卡改为 `done`/`integration_commit=698ac9524`/complete；`423efa200` 回填 EV r1（`approved`/P0/P1/P2=0）并入库本报告修正版；`3c4f62dbf` 把 Canonical Evidence EV-01 指向 EV 最终版 `423efa200`。**剩余 open**：EV/任务卡称 P3-8「由 closeout 闭合」，但 EV 仍计 `open=6`（8 = fixed 1 + mitigated 1 + open 6），committed 报告 `p3: 6` 也把 P3-8 计为 open；若 P3-8 闭合，open 应为 5。影响：P3 计数口径不一致，不涉及代码/契约字节。 | `git show 423efa200:verification/.../EV.md`（open=6 + P3-8 closed）；`git show 3c4f62dbf:doc/tasks/...`；`git show HEAD:doc/reviews/...-r1.md`（p3:6, P3-8 open） | Lead 统一口径：P3-8 标 closed 且 open=5，或保留 open=6 且不称 P3-8 闭合；同步 report/EV/task card/commit message | open（原始卡面/EV 不一致已 fixed；计数口径待统一） |
 
-**P0/P1/P2：0。** 8 项总计：P3-1 **fixed**（`698ac9524`）、P3-7 **mitigated**（`698ac9524` docs-only）、P3-2…P3-6 + P3-8 共 **6 项 open**；均非阻断。
+**P0/P1/P2：0。** 8 项总计：P3-1 **fixed**（`698ac9524`）、P3-7 **mitigated**（`698ac9524` docs-only）、P3-2…P3-6 + P3-8 共 **6 项 open**；均非阻断。口径说明：EV/任务卡称 P3-8 已闭合但仍写 `open=6`；若接受 P3-8 闭合，open 应为 **5**。本报告暂按「P3-8 open（计数口径待统一）」计 6，Lead 可在 closeout 记录中二选一。
 
 ## 5. 结论与复审
 
 - **verdict: `approved`**。P0=0、P1=0、P2=0、**P3=6 open**（8 项总计：P3-1 fixed、P3-7 mitigated；P3-2…P3-6 + P3-8 open）；AC-1…AC-6 实质 MET（AC-6 就本卡产物与 `698ac9524` 的 docs-only 集成提交而言）。
-- **closeout 已发生（`698ac9524`）**：Lead 的提交为 docs-only（4 docs + 本报告 + 任务卡 + evidence，未含 src），被审 docs 字节与提交一致，C-04b/M2-C1 未变。剩余 P3-2…P3-6 是记录/路径/措辞精度，P3-8 是 closeout 记录不一致（committed 卡面 `ready`、EV r1「结论待回填」、committed 报告中间版本；工作树卡面已 `done`/complete 但未提交）；建议 Lead 在后续 closeout 补提交中一并处理。
+- **closeout 已发生（`698ac9524` → `63b95abda` → `423efa200` → `3c4f62dbf`）**：集成提交为 docs-only（4 docs + 本报告 + 任务卡 + evidence，未含 src），被审 docs 字节与提交一致，C-04b/M2-C1 未变；任务卡已 `done`/`integration_commit=698ac9524`/complete，EV r1 已回填 `approved`/P0/P1/P2=0，本报告修正版已入库。**剩余不一致**：EV/任务卡称 P3-8「由 closeout 闭合」，但 EV 仍写 `open=6`（8 = fixed 1 + mitigated 1 + open 6），committed 报告 `p3: 6` 也把 P3-8 计为 open；若 P3-8 闭合，open 应为 5。建议 Lead 二选一统一（P3-8 closed + open=5，或 open=6 + 不称 P3-8 闭合），并同步 report/EV/task card/commit message。
 - **并发注记**：`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py`、`src/infrastructure/sqlite/source_sync.py` 的 3 个修改是审查期间并行 L-R11 的 publication gate 实现（C-17 §3.3），**不是本卡产物**；`698ac9524` 已用 docs-only 提交排除它们（P3-7 mitigated），工作树仍有 3 个 src `M`，应由 L-R11 自行提交，不得归入本卡。
 - **剩余风险**：本卡只登记 residual，不修复契约措辞/① 代码；R-1 的损坏行保护集合偏差仍在（L-3），R-2/R-5/R-7/R-8 的规范修复待 UNFREEZE，R-3/R-4 的契约措辞待 UNFREEZE；这些均为已登记、未修，不是本卡引入的新风险。
 - **不得**据本报告宣称「8 项全部关闭」或「契约已修复」；准确的表述是「8 项中仅 R-6 完全闭合；其余为已登记、未修，规范修复待 UNFREEZE；C-04b/M2-C1 字节未改」。
 
 ## 6. 真实性声明
 
-- **写入范围**：本报告是本次**由审查者**唯一写入仓库的文件（`doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`）。Lead 已在 `698ac9524` 中提交了本报告的中间版本；当前工作树版本是我在提交后补充 P3-1 fixed/P3-7 mitigated/P3-8 的修正版（未提交）。未修改任务卡（工作树的 `status: done`/`integration_commit`/`complete` 字段是 Lead 的 closeout 改动，非本审查）、冻结记录、载体、C-04b/M2-C1、`src/**`、`apps/**`、`tests/**`、EV 或任何证据日志；未 `git add`/`commit`/`push`/`stash`/`reset`/`checkout`；仓内未创建临时文件。审查期间并行 Agent 对 3 个 `src/**` 文件的修改不是本审查产生，我未触碰、未回滚。
+- **写入范围**：本报告是本次**由审查者**唯一写入仓库的文件（`doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`）。Lead 已在 `423efa200` 中提交本报告的修正版；当前工作树版本是进一步的 P3-8 计数口径注记（未提交）。未修改任务卡（`status: done`/`integration_commit`/`complete` 与 Canonical Evidence 字段是 Lead 的 closeout 改动，非本审查）、冻结记录、载体、C-04b/M2-C1、`src/**`、`apps/**`、`tests/**`、EV 或任何证据日志；未 `git add`/`commit`/`push`/`stash`/`reset`/`checkout`；仓内未创建临时文件。审查期间并行 Agent 对 3 个 `src/**` 文件、`tests/fea11/test_source_gate_unify.py` 与 `doc/reviews/FEA-11-SCAN-RH-scope-r1.md` 的修改不是本审查产生，我未触碰、未回滚。
 - **独立性**：我是 fresh subagent（会话 `c66cd50f-35fc-4564-afbc-2f90cf266e48`；父会话 `session-3ac1953a-094e-4339-889a-284df2b7b34d`），未参与本卡起草、C-04b/CORE 实现或返修、此前 scope review；只读被审工作树最终字节与 `reviewed_head=28a2826af`。
-- **实测与未跑**：实测项见 §3（HEAD/status/diff、两契约 sha 与 blob、7+1 报告 sha/大小、逐点行号、§1B/载体前缀、pins、check、`698ac9524` 的提交内容/卡面/EV/报告状态）。**未跑**：全量 `pytest`、全量 .NET、GUI/e2e、真实 Windows 回收站 D 流程；本卡 docs-only、本卡产物零 `src/**`/`tests/**`/`apps/**` 改动，审查期间并行 L-R11 的 src 改动非本卡，上述未跑项不作为本报告的正面证据，也不宣称其通过。
-- **口径**：`git hash-object` 是 blob SHA-1，只用于证明「工作树字节=HEAD 字节」；与冻结 pin 的 SHA-256 不是同一算法，不能互相替代。`verify_pins` 18/18 只证明 pin 行与当前文件自洽，不替代语义复核。行号以 `28a2826af` 工作树为准；C-04b/M2-C1 与 HEAD 字节相同，故行号在两侧一致。P3 计数口径：`p3: 6` = open；总 findings 8（P3-1 fixed、P3-7 mitigated、P3-2…P3-6 + P3-8 open）。
-- **工作树**：审查后最终状态 = 本报告 `M`（提交后修正版）+ 任务卡 `M`（Lead closeout：`done`/`698ac9524`/complete）+ 3 个并行 `src/**` `M`（L-R11）；被审的 4 个 docs 文件已在 `698ac9524` 中、工作树无 diff；C-04b/M2-C1 sha 未变。未触碰、未回滚 Lead 指针、任务卡 closeout 字段或任何并行文件。
+- **实测与未跑**：实测项见 §3（HEAD/status/diff、两契约 sha 与 blob、7+1 报告 sha/大小、逐点行号、§1B/载体前缀、pins、check、`698ac9524`/`63b95abda`/`423efa200`/`3c4f62dbf` 的提交内容/卡面/EV/报告状态）。**未跑**：全量 `pytest`、全量 .NET、GUI/e2e、真实 Windows 回收站 D 流程；本卡 docs-only、本卡产物零 `src/**`/`tests/**`/`apps/**` 改动，审查期间并行 L-R11 的 src 改动非本卡，上述未跑项不作为本报告的正面证据，也不宣称其通过。
+- **口径**：`git hash-object` 是 blob SHA-1，只用于证明「工作树字节=HEAD 字节」；与冻结 pin 的 SHA-256 不是同一算法，不能互相替代。`verify_pins` 18/18 只证明 pin 行与当前文件自洽，不替代语义复核。行号以 `28a2826af` 工作树为准；C-04b/M2-C1 与 HEAD 字节相同，故行号在两侧一致。P3 计数口径：`p3: 6` = open；总 findings 8（P3-1 fixed、P3-7 mitigated、P3-2…P3-6 + P3-8 open；若接受 P3-8 闭合则 open=5）。
+- **工作树**：审查后最终状态 = 本报告 `M`（P3-8 计数注记）+ 3 个并行 `src/**` `M`（L-R11）+ `tests/fea11/test_source_gate_unify.py`（`??`，L-R11）+ 并行 `doc/reviews/FEA-11-SCAN-RH-scope-r1.md` `M`；任务卡/EV/冻结记录/载体/`REBASELINE_PLAN`/`TASK_LEDGER`/`STATUS` 均已入 HEAD、无 diff；C-04b/M2-C1 sha 未变。未触碰、未回滚 Lead 指针、任务卡 closeout 字段或任何并行文件。
