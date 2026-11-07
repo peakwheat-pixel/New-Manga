@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`FEA-11-L-S4-B-AUTO-RECOVERY-1` `ready`（L-S4-B 实现：Core `ReattestSourceLocation` + Host reattest 触发 + App 成功分支；依赖 PREREQ done；[卡](tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md)）。已闭环：`FEA-11-L-S4-B-PREREQ-1` `done`（C-16 v1.5，`3a475b5b9`；r8 approved P0/P1/P2=0）；L-S1-B1、L-S4-A、L-S1-A done。下一候选（排队）：2C 长 Run 续期、L-R11、B2 实现（无消费者前延后）。
+- 当前 Task：无活动 Task。已闭环：`FEA-11-L-S4-B-AUTO-RECOVERY-1` `done`（`30bdeb4ce`；AC-LS4B MET；r1 approved P0/P1/P2=0；L-S4-B-1 保留）；`FEA-11-L-S4-B-PREREQ-1` `done`（C-16 v1.5 `3a475b5b9`）；`FEA-11-L-S1-B1` `done`（`80d2799de`）；`FEA-11-L-S4-A`/`L-S1-A` done。下一候选：`FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1` `proposed`（[卡](tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md)；扫描执行面恢复，需 scope review/C-17 判定）；另 2C 长 Run、L-R11、B2 排队。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
