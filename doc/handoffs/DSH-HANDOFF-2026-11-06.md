@@ -138,3 +138,13 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **当前状态**：HEAD `2c5d0a9d9`（origin 同步，AHEAD=0）；check PASS(3w)；pins 18/18。
 - **limitations 保留**：B2 字段冻结、实现延后（无消费者）；L-S4-1（零交互恢复仅指 B1 显式动作之后）；L-S4-2（folder 身份键）；「零交互」不得写成自动恢复；C-15 零字节解释条件性（D-6）；L-R1 未全修。
 - **push**：`59ba5189f..c6ca1aa3c`（UNFREEZE + closeout + base）、`c6ca1aa3c..2c5d0a9d9`（r8/r9 报告）；PUSH_EXIT=0，AHEAD=0。
+
+## 13. 续接补充（2026-11-07 第 5 轮：L-S4-B 完成）
+
+- **FEA-11-L-S4-B-AUTO-RECOVERY-1 `done`**（delivery `30bdeb4ce`；docs `9dda04b75`）：B1 显式重授权后的**枚举恢复**——Core `ReattestSourceLocation`（C-16 v1.5 §2.5：恰 2 键、host-only→shape→grant live/scope→四键身份→条件写 `registry_id/authorization_generation` 两列、`last_verified_at` 原值、拒绝零写、幂等/单调）+ Host 能力探测/`SourceRootReattestPlanner`/枚举 pre-pass（每轮每源一次、成功后重枚举一次）+ App B1 成功分支触发既有 refresh；gated 真实 IPC 闭环（B1→reattest→枚举恢复）4/0/0。
+- 独立 r1 **approved（P0=0/P1=0/P2=0/P3=5 非阻断）**；AC-LS4B-1…10 全 MET；扩域仅 DSH 批准的 2 文件 3 行能力断言；.NET 预批未消耗。
+- **基线（本轮实测）**：全量 pytest **3360/10**；全量 .NET **1644/0/94**；pins 18/18（C16 `a7f57ebd…`）；check PASS(3w)；API PASS；scope 35 文件全 ALLOWED。
+- **L-S4-B-1 保留（重要）**：枚举恢复成立，但**扫描执行面仍被既有 `ResolveRegistryEntry` 同路径 revoked 旧条目 fail-closed 拦住（tick typed error）**；本卡只承诺枚举恢复，**不得**写「扫描恢复/自愈/自动恢复」。已登记后续卡 `FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1`（proposed，需 scope review / C-17 判定）。
+- 当前：HEAD `69913d892`（origin 同步，AHEAD=0）；无活动 Task。下一队列：L-S4-B-1（proposed）、B2（proposed，roots 可用性实现延后）、2C 长 Run 续期、L-R11、C-04b、SCAN-RH、UI P3。
+- 其他 limitation：B2 延后、folder（L-S4-2）、`source_reset_registry` 后无旧条目、L-S4-1、L-R1 未全修。
+- **push**：`4e9ab8d90..69913d892`（L-S4-B 交付 + closeout + proposed 登记）；PUSH_EXIT=0，AHEAD=0。

@@ -6,10 +6,10 @@
 
 | 项 | 值 |
 |---|---|
-| HEAD | `2c5d0a9d9`（main，origin 同步；L-S4-B 实现中） |
-| 本轮已完成 | C-15 v1.5（`ae8c2de07`）；L-S1 A（`b56c5a0e6`）；L-S4 A（`0ebb234bf`）；L-S1-B1 done（`80d2799de`）；**C-16 v1.5 批量 UNFREEZE done（`3a475b5b9`；r8+r9 approved；pins 18/18）** |
+| HEAD | `69913d892`（main，origin 同步；L-S4-B done，无活动 Task） |
+| 本轮已完成 | C-15 v1.5；L-S1 A；L-S4 A；L-S1-B1；C-16 v1.5（`3a475b5b9`；r8+r9 approved）；**L-S4-B done（`30bdeb4ce`；r1 approved；枚举恢复；L-S4-B-1 保留）** |
 | 基线（本轮实测） | 全量 pytest **3317/10**；全量 .NET **1570/0/92**（Lead combined 全量 .NET 命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；pins 18/18；check PASS(3w) |
-| 下一队列 | ①L-S4-B 实现（ready，base `c6ca1aa3c`；Owner=`l-s4b-impl`）；②B2 实现延后；③2C 长 Run；④L-R11；⑤C-04b；⑥SCAN-RH；⑦UI P3 |
+| 下一队列 | ①L-S4-B-1 扫描执行面（proposed，需 scope review/C-17 判定）；②B2 实现延后；③2C 长 Run；④L-R11；⑤C-04b；⑥SCAN-RH；⑦UI P3 |
 
 ## 2. 待裁决（需用户产品取舍的候选；DSH 已附推荐并直接交 Codex/DSH 裁决，不阻塞）
 
