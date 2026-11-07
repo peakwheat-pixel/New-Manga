@@ -15,6 +15,8 @@
 
 # M2-C1 — Typed IPC Contract
 
+> **rev 2.15（2026-11-08，C-04b v1.2 同步 / 契约债务清偿，UNFREEZE）**：只同步 C-04b v1.2 的**措辞与谓词文字**，规则与 rev 2.14 完全一致——§5.13 预览 `currentArtifactRevisionIds` 的成员谓词明确为 `media_artifacts.book_id = 本书` 且 `current_revision_id` 非空、不按可见性过滤（不再出现无定义术语 `separate/detached`；representative 规则见 C-04b v1.2 §0 第 1 条、仅展示、不进 digest）；§5.11.1a「首次确认」的比对对象明确为**请求** `book_ids`（预览零副作用不缓存），单条 digest 来源明确为预览返回的 `inventoryDigests[bookId]`；§5.11.1a retry 规则明确**仅批量**适用集合级规则，单条 retry 只校验 manifest 逐书 digest。**不新增**命令/字段/错误码/capability，不改 §5.11 家族语义、`PROTOCOL_MINOR` 与 wire minor。依据 C-04b v1.2（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-08-C04B-RESIDUAL.md`）。
+
 > **rev 2.14（2026-11-05，FEA-12-CORE 返修 / 删除保护完整性，UNFREEZE 重冻）**：按 `doc/reviews/DSH-DECISIONS-2026-11-05-codex.md` 的 OVERTURN 与 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`，additive 修订 §5.13 预览 `protection`：增加 `currentRegionRevisionIds`（**全部 region，含 lineage-hidden** 的 current）与 `currentArtifactRevisionIds`（全部 artifact current）；逐书 digest canonical 升级 **v2**（用两个数组替换单值 `currentRevisionId`，`currentRevisionId` 仅代表展示）；§5.11.1a 增补 retry 规则（集合级 digest 始终校验；retry 为原预览有序集合的保序 pending 子集、`inventory_digest` 原样回传原集合 digest；mixed live+retry 不允许；manifest JSON 持久化、无 DDL）。**preview 目标 wire minor 保持 11**（新增响应字段 additive optional；不提升 `PROTOCOL_MINOR`）；不新增命令/错误码/capability；不实现 `PurgeTrash`。依据 C-04b v1.1；18 pins 仍 18 份（C-04b/M2-C1 重冻更新 pin）。
 
 > **rev 2.13（2026-11-05，FEA-12-PREREQ-1 / 删除与回收站 wire 注册）**：按 C-04b v1.0 §2.4（历史引用） 与 C-09 `:110-129` 的「实现前独立字节修订」要求，**additive** 登记删除影响清单只读预览 `PreviewPermanentDeleteBooks`（目标 wire minor **11**）、单/批量永久删除的 `inventory_digest`/`inventory_digests` 两级确认绑定（既有命令 per-command minor 保持 **10**）、回收站命令面 `MoveToTrash`/`RestoreFromTrash`/`ListTrash`/`PurgeTrash`（目标 wire minor **13**，独立 family）、5 个新错误码及 Host 投影白名单、3 个 capability 名，以及 §11 对账与 §12 释放边界。**本卡只做文档注册与 Host 投影/白名单/负向对照**：不改变 Core `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、不改变既有命令 per-command minor、不实现任何 Core handler/runtime、不授予 `src/**` 实现；既有命令、结果、错误、状态与事件语义零改动。C-04b/C-09/C-13/C-14/C-17/ADJ-001 字节与 18 pins 全部不变。
@@ -23,9 +25,11 @@
 
 **前次修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
 
-状态：文档 rev `2.14`；**Core protocol 仍为 major `2` / minor `3`**（rev 2.14 未提升协议版本；只 additive 登记删除预览的保护完整性字段与 digest v2/retry 规则，preview 目标 minor 保持 11）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
+状态：文档 rev `2.15`；**Core protocol 仍为 major `2` / minor `3`**（rev 2.14 未提升协议版本；只 additive 登记删除预览的保护完整性字段与 digest v2/retry 规则，preview 目标 minor 保持 11；rev 2.15 只同步 C-04b v1.2 措辞与谓词文字）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 
 ## Revision history
+
+- `2.15`（C-04b v1.2 同步 / 契约债务清偿，2026-11-08，UNFREEZE）：**只同步措辞与谓词文字**，规则同 2.14——§5.13 `currentArtifactRevisionIds[]` 成员谓词明确为 `media_artifacts.book_id = 本书` 且 `current_revision_id` 非空、不按可见性过滤（删除无定义术语 `separate/detached`；representative 规则见 C-04b v1.2 §0 第 1 条、仅展示、不进 digest）；§5.11.1a 首次确认比对对象明确为**请求** `book_ids`（预览不缓存），单条 digest 来源明确为预览返回的 `inventoryDigests[bookId]`；retry 集合级规则明确**仅批量**。不新增命令/字段/错误码/capability；`PROTOCOL_MINOR` 不变（仍 3）；wire minor 不变。依据 C-04b v1.2（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-08-C04B-RESIDUAL.md`）。
 
 - `2.14`（FEA-12-CORE 返修，2026-11-05，UNFREEZE 重冻）：按 Codex 裁决 OVERTURN（`doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`）与 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`，additive 修订 §5.13：`protection.currentRegionRevisionIds[]`（全部 region 含 lineage-hidden current）与 `currentArtifactRevisionIds[]`（全部 artifact current）；逐书 digest canonical v2（数组替换单值 currentRevisionId；代表值仅展示）；§5.11.1a 增补 retry 规则（集合级始终校验；retry=原预览有序集合保序 pending 子集、`inventory_digest` 原样回传原集合 digest、mixed 拒绝、manifest JSON 持久化、无 DDL、fail-closed）。preview 目标 minor 保持 11；`PROTOCOL_MINOR` 不变（仍 3）。依据 C-04b v1.1。
 
@@ -133,7 +137,7 @@ Event<T> = {
 
 - FEA-10-PREREQ-1 / C-08 块②登记 `PrepareRun` / `AcceptRun` 的目标 **wire 2.12（major 2 / minor 12，DSH 已批准）**，仅 additive 命令与错误字符串。文档 rev 2.12 不等于 Core `PROTOCOL_MINOR=12`：本卡不改变当前 Core `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`，不改变客户端 `CoreProtocol.DefaultMinor=3`、既有命令 per-command minor 或发送行为；新增命令尚无可执行 registry 路由。运行版本启用、Core dispatch 与配对兼容回归须由 DSH 在 FEA-10 明确释放。
 
-- FEA-12-PREREQ-1 / C-04b + C-09 块登记删除/回收站目标 wire：只读预览 `PreviewPermanentDeleteBooks` 目标 **minor 11**（C-04b v1.1 §2.1）；回收站命令面 `MoveToTrash` / `RestoreFromTrash` / `ListTrash` / `PurgeTrash` 目标 **minor 13**（独立 family，C-09 SC-B06）；既有 `PermanentlyDeleteBook` / `PermanentlyDeleteBooks` 的 per-command minor 保持 **10**（`inventory_digest` / `inventory_digests` 为 additive 字段，见 §5.11.1a；旧 Host 不传时由新 Core fail-closed `INVALID_REQUEST`，不得忽略 digest 继续删除或降级软删）。文档 rev 2.14（§5.13 rev 2.14 保护完整性）不等于 Core 运行常量：本卡不改变 `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、不改变客户端默认 minor 或既有命令发送行为；新增命令尚无可执行 Core handler/registry 路由，运行版本启用由 DSH 在 FEA-12-CORE 释放。冻结（旧）Core 对未知命令返回 typed `UNKNOWN_COMMAND`（属 §5.11.3 允许的 fail-closed 面），不得静默丢弃。
+- FEA-12-PREREQ-1 / C-04b + C-09 块登记删除/回收站目标 wire：只读预览 `PreviewPermanentDeleteBooks` 目标 **minor 11**（C-04b v1.2 §2.1）；回收站命令面 `MoveToTrash` / `RestoreFromTrash` / `ListTrash` / `PurgeTrash` 目标 **minor 13**（独立 family，C-09 SC-B06）；既有 `PermanentlyDeleteBook` / `PermanentlyDeleteBooks` 的 per-command minor 保持 **10**（`inventory_digest` / `inventory_digests` 为 additive 字段，见 §5.11.1a；旧 Host 不传时由新 Core fail-closed `INVALID_REQUEST`，不得忽略 digest 继续删除或降级软删）。文档 rev 2.14（§5.13 rev 2.14 保护完整性）不等于 Core 运行常量：本卡不改变 `PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、不改变客户端默认 minor 或既有命令发送行为；新增命令尚无可执行 Core handler/registry 路由，运行版本启用由 DSH 在 FEA-12-CORE 释放。冻结（旧）Core 对未知命令返回 typed `UNKNOWN_COMMAND`（属 §5.11.3 允许的 fail-closed 面），不得静默丢弃。
 
 - **FEA-12-CORE 返修 rev 2.14（UNFREEZE 重冻）**：§5.13 预览响应 `protection` additive 增加 `currentRegionRevisionIds` / `currentArtifactRevisionIds`（wire optional；新 Core MUST 返回；缺省=unknown，UI fail-closed 阻止确认；`[]` 才表示无 current），逐书 digest canonical 升级 **v2**；§5.11.1a 增补首次确认/retry 形状分支。**preview 目标 wire minor 保持 11**（不提升）；`PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3`、客户端默认 minor 与既有命令 per-command minor 均不变。
 
@@ -166,7 +170,7 @@ Event<T> = {
 |---|---|---|
 | `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
 | `ListRecycleBinBooks` | `{}` → `BookSummary[]` | **2.11 FROZEN**：只返回 `deleted_at IS NOT NULL` 的软删除作品；结果与 `ListBooks` 使用相同的冻结 `BookSummary` 投影。production-only Tauri command 为 `library_list_recycle_bin_books`；查询语义、错误及消费端约束见 §5.12。 |
-| `PreviewPermanentDeleteBooks` | `{bookIds: BookId[1..20]}` → `{inventoryDigest: string, inventoryDigests: {[bookId]: string}, computedAt: Timestamp, items: DeletePreviewItem[]}` | **2.13 REGISTERED + 2.14 PROTECTION FIELDS ADDITIVE（目标 wire minor 11 不变，运行未实现）**：删除影响清单只读预览（PD-01/PD-03），零副作用；请求字段 `bookIds` 的 camelCase 是 C-04b v1.1 §2.1 冻结字节（行号随 §0 插入不再稳定，引用节名）；rev 2.14 增加 `protection.currentRegionRevisionIds` / `currentArtifactRevisionIds` 与 digest canonical v2。DTO 与 digest 算法见 §5.13。 |
+| `PreviewPermanentDeleteBooks` | `{bookIds: BookId[1..20]}` → `{inventoryDigest: string, inventoryDigests: {[bookId]: string}, computedAt: Timestamp, items: DeletePreviewItem[]}` | **2.13 REGISTERED + 2.14 PROTECTION FIELDS ADDITIVE（目标 wire minor 11 不变，运行未实现）**：删除影响清单只读预览（PD-01/PD-03），零副作用；请求字段 `bookIds` 的 camelCase 是 C-04b v1.2 §2.1 冻结字节（行号随 §0 插入不再稳定，引用节名）；rev 2.14 增加 `protection.currentRegionRevisionIds` / `currentArtifactRevisionIds` 与 digest canonical v2。DTO 与 digest 算法见 §5.13。 |
 | `MoveToTrash` | `{entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey}` → `{moved: TrashEntryRef[], skipped: TrashSkipItem[]}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：作品级软删命令面（C-09 SC-B06）；只改 `deleted_at`，不触文件；见 §5.14。 |
 | `RestoreFromTrash` | `{entries: TrashEntryRef[1..N], idempotency_key: IdempotencyKey}` → `{restored: TrashEntryRef[], conflicts: TrashConflictItem[]}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：只清 `deleted_at`，逐项冲突不整批失败；见 §5.14。 |
 | `ListTrash` | `{cursor?: OpaqueId, limit?: integer}` → `{items: TrashEntryInfo[], nextCursor?: OpaqueId}` | **2.13 REGISTERED（目标 wire minor 13，运行未实现）**：回收站条目读取面；与 rev 2.11 冻结的 `ListRecycleBinBooks` 并存，不冲突；见 §5.14。 |
@@ -788,9 +792,9 @@ PermanentlyDeleteBooks Request = {
 
 UI 入口只在回收站提供，书架不显示该操作。用户先勾选目标，再查看包含作品身份、数量、删除范围、导出文件保留以及“不会清理全库历史备份（旧备份可能保留删除前数据）”的第二次确认；必须勾选明确的不可逆确认后才能提交。host 将勾选后的同一有序 ID 列表同时写入 `book_ids` 与 `confirmed_book_ids`，并填写相同数量，防止确认后目标集合或数量被替换。确认字段是 Core 硬门，按钮状态不能替代。协议不接收路径、表名、删除策略或用户输入文件名；结果不返回路径、磁盘位置或 Core 领域对象。
 
-#### 5.11.1a rev 2.14：`inventory_digest` 专门确认绑定（rev 2.13 additive 登记 + rev 2.14 形状/retry 分支；运行未实现）
+#### 5.11.1a rev 2.14/2.15：`inventory_digest` 专门确认绑定（rev 2.13 additive 登记 + rev 2.14 形状/retry 分支 + rev 2.15 措辞/谓词同步；运行未实现）
 
-> rev 2.13 历史记录保留；本节现行规则以 rev 2.14（形状分支/retry/manifest）为准。
+> rev 2.13 历史记录保留；本节现行规则以 rev 2.14（形状分支/retry/manifest）与 rev 2.15（措辞/谓词同步）为准。
 
 §5.11.1 的请求形状、字段语义与既有 per-command wire minor（10）**保持原样**；rev 2.13 只在其上**追加**（additive）下列字段与两级校验（依据 ADJ-001 PD-02/PD-04、C-04b §2.0/§2.2）：
 
@@ -811,12 +815,12 @@ PermanentlyDeleteBooksPayload（rev 2.13 追加） = {
 }
 ```
 
-- **来源**：digest 只能由 §5.13 `PreviewPermanentDeleteBooks` 的 Core 权威结果取得；单条命令回传该 `book_id` 的**逐书 digest**，批量命令同时回传**集合级 digest**与**逐书 map**。UI 不得自行估算、拼接或缓存替代；单条与批量不得混用 digest 语义（单条=逐书值；批量=集合值+逐书 map）；两种形状分别绑定。
-- **校验顺序（两级，rev 2.14 按形状/重试分支；零副作用）**：**单条**：`inventory_digest` 即该 book 的逐书 digest（不是集合值），校验=当前重算或 retry 的 manifest 原值。**批量**：① 集合级——首次确认键集合与顺序必须与预览 `book_ids` 完全一致且值=当前重算集合值；retry 的 `book_ids` 必须是原集合**保序 pending 子集**且值=manifest 原集合值；② 逐书——首次=当前重算值、retry=manifest 值；`inventory_digests` 的 key 必须恰好覆盖请求 `book_ids`（缺/多 key → `INVALID_REQUEST`，先判结构）。**语义失败**（键集合/顺序/子集/值/集合 digest/manifest 缺失损坏/重算不一致）→ `BOOK_DELETE_STALE_PREVIEW`（`conflict`/`retryable=false`），批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 在 items 中标注），DB/文件零改动。
+- **来源**：digest 只能由 §5.13 `PreviewPermanentDeleteBooks` 的 Core 权威结果取得；单条命令回传该 `book_id` 的**逐书 digest**（rev 2.15：取自预览返回的 `inventoryDigests[bookId]`；集合级 `inventoryDigest` 不得用于单条），批量命令同时回传**集合级 digest**与**逐书 map**。UI 不得自行估算、拼接或缓存替代；单条与批量不得混用 digest 语义（单条=逐书值；批量=集合值+逐书 map）；两种形状分别绑定。
+- **校验顺序（两级，rev 2.14 按形状/重试分支；零副作用）**：**单条**：`inventory_digest` 即该 book 的逐书 digest（不是集合值），校验=当前重算或 retry 的 manifest 原值。**批量**：① 集合级——首次确认时 **`inventory_digests` 的键集合与顺序**必须与**同一请求的 `book_ids`** 完全一致（rev 2.15：预览零副作用不缓存，故比对对象为请求侧；digest 绑定保证与预览时一致）且值=当前重算集合值；retry 的 `book_ids` 必须是原集合**保序 pending 子集**且值=manifest 原集合值；② 逐书——首次=当前重算值、retry=manifest 值；`inventory_digests` 的 key 必须恰好覆盖请求 `book_ids`（缺/多 key → `INVALID_REQUEST`，先判结构）。**语义失败**（键集合/顺序/子集/值/集合 digest/manifest 缺失损坏/重算不一致）→ `BOOK_DELETE_STALE_PREVIEW`（`conflict`/`retryable=false`），批量返回顶层该码 + `phase:"preflight"` + 逐项 `items[]`（失配 book 在 items 中标注），DB/文件零改动。
 - **缺失/类型错/格式错**：任一 digest 字段缺失、非字符串或非 `sha256:<64 lowercase hex>` → `INVALID_REQUEST`（`validation`/`retryable=false`），不进入预检。
 - **Core closed shape**：单条命令继续拒收 `book_ids` / `confirmed_book_ids` / `confirm_count` / `inventory_digests`（closed shape 不变）；`confirm_permanent_delete: true` 语义不变。**Host 既有 delete 路径保持 legacy 透传**（只取已知键、不新增未知键拒绝），未知键由 Core 的 closed-shape 校验拒绝（见 §5.11.1a 末条 Host 投影归属）。
 - **有效期**：**首次确认**——一次预览 → 一次确认之间有效；目标集合、保护集合或文件清单任一变化即失效，须重新预览（PD-04）。**retry 不适用**：PD-07 显式重试以 manifest 持久化值校验，不重跑预览。
-- **retry 规则（rev 2.14）**：`*_CLEANUP_PENDING` 的显式重试只针对 pending IDs/manifest，不重跑预览；**单条** retry `inventory_digest`=manifest 中该书逐书 digest；**批量** retry `book_ids`=原预览有序集合的**保序 pending 子集**、`inventory_digest` **原样回传** manifest 的 `original_collection_digest`（不得按子集重算/拼接）、`inventory_digests` 逐项等于 manifest 值且 key 恰好覆盖请求 book_ids；**mixed live+retry 不允许**（须重新预览）；manifest 缺失/损坏/`inventory_inputs` 重算不一致（篡改）或任一不匹配 → `BOOK_DELETE_STALE_PREVIEW`（零副作用）；`batch_id` 为每次首次确认生成的 uuidv4；`inventory_inputs` 为自包含 A2 canonical 14 键对象，retry 不得改写批次字段。**首次确认（非 retry）**：校验时 manifest 尚未写入；单条 digest=当前重算逐书值，批量 digest=**当前 live inventory 重算**的集合值；校验通过后同一事务写 manifest。缺失/格式错/缺 key 或多 key → `INVALID_REQUEST`；目标 Book 不存在且无 manifest → `BOOK_NOT_FOUND`。
+- **retry 规则（rev 2.14；rev 2.15 明确集合级规则仅批量）**：`*_CLEANUP_PENDING` 的显式重试只针对 pending IDs/manifest，不重跑预览；**单条** retry `inventory_digest`=manifest 中该书逐书 digest（不校验集合级值）；**批量** retry `book_ids`=原预览有序集合的**保序 pending 子集**、`inventory_digest` **原样回传** manifest 的 `original_collection_digest`（不得按子集重算/拼接）、`inventory_digests` 逐项等于 manifest 值且 key 恰好覆盖请求 book_ids；**mixed live+retry 不允许**（须重新预览）；manifest 缺失/损坏/`inventory_inputs` 重算不一致（篡改）或任一不匹配 → `BOOK_DELETE_STALE_PREVIEW`（零副作用）；`batch_id` 为每次首次确认生成的 uuidv4；`inventory_inputs` 为自包含 A2 canonical 14 键对象，retry 不得改写批次字段。**首次确认（非 retry）**：校验时 manifest 尚未写入；单条 digest=当前重算逐书值，批量 digest=**当前 live inventory 重算**的集合值；校验通过后同一事务写 manifest。缺失/格式错/缺 key 或多 key → `INVALID_REQUEST`；目标 Book 不存在且无 manifest → `BOOK_NOT_FOUND`。
 - **兼容**：digest 是追加**必填**字段；旧 Host 不传 → 新 Core `INVALID_REQUEST`（fail-closed），**不得**忽略 digest 继续删除、不得回退软删除。反向（新 Host → 旧 Core）时，旧 Core 对追加字段的 closed-shape 校验会返回 `INVALID_REQUEST`（fail-closed，不会忽略 digest 继续删除）；实测见 `verification/FEA-12-PREREQ-1/logs/`。
 - **Host 投影归属（本卡）**：Host 只做 additive 透传——调用方提供 `inventory_digest` / `inventory_digests` 时按类型校验后原样转发，不生成、不补全、不替代 Core 校验；既有 delete 命令的 dispatch 路径不重写。
 
@@ -919,9 +923,9 @@ PermanentlyDeleteBooksErrorView = {
 - **边界：** 此命令只读，不改变软删除写入语义；request/result 不包含文件路径。
 
 
-### 5.13 `PreviewPermanentDeleteBooks` — 删除影响清单只读预览（C-04b v1.1 §2.1，rev 2.14，目标 wire 2.11）
+### 5.13 `PreviewPermanentDeleteBooks` — 删除影响清单只读预览（C-04b v1.2 §2.1，rev 2.14/2.15，目标 wire 2.11）
 
-本节 additive 登记 C-04b v1.1 §2.0–§2.2 已冻结的只读预览协议；**只登记 wire，不实现 Core handler**（运行实现归 FEA-12-CORE）。目标 wire **minor 11**（C-04b v1.1 §2.1）；文档 rev 2.14 与运行常量分离（本卡不改 `PROTOCOL_MINOR=3`）。
+本节 additive 登记 C-04b v1.2 §2.0–§2.2 已冻结的只读预览协议；**只登记 wire，不实现 Core handler**（运行实现归 FEA-12-CORE）。目标 wire **minor 11**（C-04b v1.2 §2.1）；文档 rev 2.15 与运行常量分离（本卡不改 `PROTOCOL_MINOR=3`）。
 
 - **Core command**：`PreviewPermanentDeleteBooks`，Host → Core，只读。
 - **生产 host command 名（本卡 additive 注册，runtime 未实现）**：`library_preview_permanent_delete_books`。
@@ -929,11 +933,11 @@ PermanentlyDeleteBooksErrorView = {
 
 ```text
 PreviewPermanentDeleteBooksPayload = {
-  bookIds: BookId[1..20]     # 非空、去重、上限 20；camelCase 为 C-04b v1.1 §2.1 冻结字节
+  bookIds: BookId[1..20]     # 非空、去重、上限 20；camelCase 为 C-04b v1.2 §2.1 冻结字节
 }
 ```
 
-  `bookIds` 使用 camelCase **不是笔误**：C-04b v1.1 §2.1 的冻结入参就是 `bookIds`（其 §2.0 的删除命令请求仍是 snake_case `book_id` / `book_ids`）；本条按冻结来源登记，后续任务不得"统一"改回 snake_case。非空、去重、上限 20；重复/空/超限/ID 非字符串 → `INVALID_REQUEST`（`validation`/`false`），零副作用。
+  `bookIds` 使用 camelCase **不是笔误**：C-04b v1.2 §2.1 的冻结入参就是 `bookIds`（其 §2.0 的删除命令请求仍是 snake_case `book_id` / `book_ids`）；本条按冻结来源登记，后续任务不得"统一"改回 snake_case。非空、去重、上限 20；重复/空/超限/ID 非字符串 → `INVALID_REQUEST`（`validation`/`false`），零副作用。
 - **结果（closed shape，camelCase）**：
 
 ```text
@@ -950,8 +954,8 @@ DeletePreviewItem = {
   protection: {
     lockCount: integer,                       # PD-01
     currentRevisionId: OpaqueId | null,       # rev 2.14：代表展示值，不承担绑定职责
-    currentRegionRevisionIds: OpaqueId[],     # rev 2.14（新 Core MUST 返回；additive optional）：全部 region（含 lineage-hidden 与历史 separate/detached）current，字典序排序去重
-    currentArtifactRevisionIds: OpaqueId[],   # rev 2.14（新 Core MUST 返回；additive optional）：全部 artifact 的 current（谓词=current_revision_id 非空，不过滤可见性），字典序排序去重
+    currentRegionRevisionIds: OpaqueId[],     # rev 2.15（同步 C-04b v1.2）：全部 region（含 lineage-hidden）current，字典序排序去重
+    currentArtifactRevisionIds: OpaqueId[],   # rev 2.15（同步 C-04b v1.2）：本书全部 artifact 的 current（成员谓词=media_artifacts.book_id = 本书 且 current_revision_id 非空，不过滤可见性），字典序排序去重；representative 取值规则见 C-04b v1.2 §0 第 1 条（阅读序首个 lineage-visible region current，否则首个 artifact current pointer；仅展示、不进 digest）
     pinnedRevisionIds: OpaqueId[],
     activeRunIds: OpaqueId[],                 # PD-01：非终态 Run/Task 同时是 BOOK_BUSY 阻断项
     draftPageCount: integer,                  # PD-01（C-13 活动草稿）
@@ -965,9 +969,9 @@ DeletePreviewItem = {
 }
 ```
 
-  **PD-01 三项强制**：`protection.manualRegionCount`、`protection.draftPageCount`、`contentSummary.deletedFiles` + `deletedBytes` 必须逐项返回，缺失即实现缺陷。`title` 不参与 digest 计算或确认校验。结果不返回路径、原始文件名、异常栈或 SQLite 详情。**rev 2.14 追加**：`currentRegionRevisionIds`/`currentArtifactRevisionIds` 由新 Core MUST 返回；旧 Core 缺省（含 null/缺字段）=**unknown**，Host/UI 必须**阻止确认删除**（fail-closed），不得把 unknown 当作空数组；只有 `[]` 才表示该侧**无 current**。artifact 谓词=`current_revision_id` 非空、不按可见性过滤；受保护 artifact 表达=数组长度。
+  **PD-01 三项强制**：`protection.manualRegionCount`、`protection.draftPageCount`、`contentSummary.deletedFiles` + `deletedBytes` 必须逐项返回，缺失即实现缺陷。`title` 不参与 digest 计算或确认校验。结果不返回路径、原始文件名、异常栈或 SQLite 详情。**rev 2.14 追加 / rev 2.15 同步**：`currentRegionRevisionIds`/`currentArtifactRevisionIds` 由新 Core MUST 返回；旧 Core 缺省（含 null/缺字段）=**unknown**，Host/UI 必须**阻止确认删除**（fail-closed），不得把 unknown 当作空数组；只有 `[]` 才表示该侧**无 current**。artifact 成员谓词=**`media_artifacts.book_id = 本书`** 且 `current_revision_id` 非空、不按可见性过滤（rev 2.15 补）；受保护 artifact 表达=数组长度。representative `currentRevisionId` 取值规则见 C-04b v1.2 §0 第 1 条（阅读序首个 lineage-visible region current，否则**首个 artifact current pointer**；仅展示、不进 digest）。
 - **只读语义（PD-03）**：零副作用、不写 DB、不缓存、不预解锁、不取消 pin、不改 current、不触原文件。
-- **digest 算法（C-04b v1.1 §2.1，canonical v2；C-04b 行号因 §0 插入不再稳定，引用节名）**：逐书 digest = `sha256:` + 对 canonical JSON（对象键递归排序、UTF-8、无空白）`{bookId, lockCount, currentRegionRevisionIds(sorted), currentArtifactRevisionIds(sorted), pinnedRevisionIds(sorted), activeRunIds(sorted), draftPageCount, manualRegionCount, chapters, pages, artifacts, deletedFiles, deletedBytes, sharedFileRefs(sorted by fileId，含 otherProjectCount)}` 计算的 SHA-256 小写 hex；集合级 digest = 按调用方 `bookIds` **顺序**拼接各逐书 digest（去掉 `sha256:` 前缀、小写 hex）再整体 SHA-256，同为 `sha256:<64 lowercase hex>`。canonical 形式由 FEA-12-CORE 固化并给测试向量。
+- **digest 算法（C-04b v1.2 §2.1，canonical v2；C-04b 行号因 §0 插入不再稳定，引用节名）**：逐书 digest = `sha256:` + 对 canonical JSON（对象键递归排序、UTF-8、无空白）`{bookId, lockCount, currentRegionRevisionIds(sorted), currentArtifactRevisionIds(sorted), pinnedRevisionIds(sorted), activeRunIds(sorted), draftPageCount, manualRegionCount, chapters, pages, artifacts, deletedFiles, deletedBytes, sharedFileRefs(sorted by fileId，含 otherProjectCount)}` 计算的 SHA-256 小写 hex；集合级 digest = 按调用方 `bookIds` **顺序**拼接各逐书 digest（去掉 `sha256:` 前缀、小写 hex）再整体 SHA-256，同为 `sha256:<64 lowercase hex>`。canonical 形式由 FEA-12-CORE 固化并给测试向量。
 - **错误**：
 
 | code | category | retryable | 触发 |

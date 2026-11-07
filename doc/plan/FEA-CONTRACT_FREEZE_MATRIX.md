@@ -1,6 +1,6 @@
 # FEA 契约冻结准备总表（冻结矩阵）
 
-状态：**ACTIVE**（**18 个冻结对象**：17 份既有 + C-17 v1.1；C-05 v1.2/C-15 v1.5/C-16 v1.7/C-06 v1.3 于 2026-11-04/2026-11-07/2026-11-07/2026-11-07 UNFREEZE 重冻；C-16 v1.3 新增 §2.4；v1.4 增容器多成员 entry 语义；v1.5 增 `source.reattest/1` + §2.5 条件写 + `roots_available`；v1.6 增 §2.4 mid-run 重复调用语义；v1.7 澄清 §2.4「无 publication 行」口径（legacy open / 新同步链缺行 fail-closed））
+状态：**ACTIVE**（**18 个冻结对象**：17 份既有 + C-17 v1.1；C-05 v1.2/C-15 v1.5/C-16 v1.7/C-06 v1.3 于 2026-11-04/2026-11-07/2026-11-07/2026-11-07 UNFREEZE 重冻；C-16 v1.3 新增 §2.4；v1.4 增容器多成员 entry 语义；v1.5 增 `source.reattest/1` + §2.5 条件写 + `roots_available`；v1.6 增 §2.4 mid-run 重复调用语义；v1.7 澄清 §2.4「无 publication 行」口径（legacy open / 新同步链缺行 fail-closed）；C-04b v1.2 于 2026-11-08 UNFREEZE 重冻（R-1/R-2/R-3/R-4/R-5/R-8 措辞与谓词文字 + M2-C1 rev 2.15 同步））
 日期：2026-11-01
 作者：DSH（Lead / Architect / Integrator）
 依据：[FEA-01 契约清单](FEA-01_CONTRACT_DRAFT.md)、各草案的「冻结条件」节、[FEA-CONTRACT_FREEZE_PACKAGE](FEA-CONTRACT_FREEZE_PACKAGE.md)
@@ -19,7 +19,7 @@
 | 1 | **C-01b** 存储契约 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅（r5 approved）②AD-003 `G-REVIEW` 收口 ✅（SATISFIED）+ ADJ-001 依赖注明（`G-DELETE-CONTRACT` OPEN）③用户确认 AD-002 责任表/哨兵口径（**`R`**）④`check.ps1` PASS | 无（语义基座） | ③（用户 `R`） |
 | 2 | **C-02** V11R 修订 | **`FROZEN`** 2026-11-01 | ①**U-04** 用户裁决 | 无（与 C-01b 独立） | U-04 |
 | 3 | **C-03** 外观持久化 | **`FROZEN`** 2026-11-01 | ①**U-05a/U-05b** ②C-02 先冻结 | C-02 | U-05a/b |
-| 4 | **C-04b** 删除协议 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b 冻结 ✅ ③`G-DELETE-CONTRACT` **不阻塞**（裁定 R-1′）④DSH 批准 2.11 ✅ ⑤M2-C1 扩展为释放前置（R-2′） | C-01b | 5 项全未满足 |
+| 4 | **C-04b** 删除协议 | **`FROZEN v1.2`** 2026-11-08（v1.0 2026-11-01 / v1.1 2026-11-05 / **v1.2 2026-11-08 UNFREEZE**） | ①v1.2 独立 byte-level 复核 **r3 approved**（P0=0/P1=0/P2=3/P3=4；载体 `CONTRACT-UNFREEZE-2026-11-08-C04B-RESIDUAL`）②C-01b 冻结 ✅ ③`G-DELETE-CONTRACT` **不阻塞**（裁定 R-1′）④DSH 批准 2.11 ✅ ⑤M2-C1 **rev 2.15** 已同步（0/18 机械 pin，记录登记）⑥18/18 PASS | C-01b | v1.2 仅 R-1/R-2/R-3/R-4/R-5/R-8 措辞与谓词文字；R-1 **代码**归 `FEA-12-CORE-C04B-RESIDUAL-3` |
 | 5 | **C-05** 页可见性 | **`FROZEN v1.2`** 2026-11-04（v1.2 UNFREEZE 重冻；v1.1 2026-11-03、v1.0 2026-11-01） | ①`VISIBLE_TYPES`/`active_runs` 经 C-01b/ADJ-001 确认（C-01b 冻结后即可） | C-01b（口径确认） | 无硬阻塞 |
 | 6 | **C-06** 授权面 v1.3（mid-run 重复建立） | **`FROZEN v1.3`** 2026-11-07（UNFREEZE 重冻；v1.0 2026-11-01 / v1.1 2026-11-03 / v1.2 2026-11-06） | ①v1.3 独立 byte-level 复核 **r6 approved**（P0=0/P1=0/P2=0/P3=1 非阻断；载体 CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL）②C-01b 冻结 ✅ ③`G-CONTRACT` **不阻塞**（裁定 R-1′）④C-16 v1.6 同批 ⑤18/18 | C-01b/C-16 v1.6 | `G-CONTRACT: OPEN` |
 | 7 | **C-07** API inventory | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
