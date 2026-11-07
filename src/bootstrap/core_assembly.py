@@ -1229,6 +1229,8 @@ def assemble_core_services(
         # coordinates be read/written as if they belonged to the current image.
         from application.sources.lineage import LineageIsolationGuard
         from infrastructure.sqlite.source_sync import (
+            PUBLICATION_GATE_CORRUPT_CHAIN,
+            PUBLICATION_GATE_UNAVAILABLE,
             SourceSyncLineageFacts,
             SourceSyncStore,
         )
@@ -1242,23 +1244,26 @@ def assemble_core_services(
             return binding["binding_id"] if binding is not None else None
 
         def read_gate(page_id: str) -> str:
-            """The ONE C-17 §3.3 publication-gate predicate (RENDITION-1 I-3).
+            """The ONE C-17 §3.3 publication-gate view (RENDITION-1 I-3; L-R11).
 
             Returns ``unavailable`` (no usable current binding), ``pending``
-            (the binding's publication gate is not open yet) or ``open``. It is
-            the single definition shared by the Run commit guard, the provider
-            image source and the Run target catalog — no third gate predicate
-            exists in the assembly (F4/F5). A binding without a publication row
-            is ``open`` exactly as the pre-existing commit guard treated it, so
-            legacy bindings keep working byte for byte.
+            (the binding's publication gate is not open yet) or ``open``. The
+            verdict is NOT decided here: it is the single Core predicate
+            ``SourceSyncStore.publication_gate_of_page`` shared with the
+            resolve/reader face and ``AuthorizeSourceReadForRun``. This
+            function only maps the predicate's ``corrupt_chain`` state onto the
+            frozen three-state consumer contract: a new sync chain whose
+            publication row is missing is NEVER treated as legacy — it fails
+            closed exactly like ``unavailable`` (C-17 §3.3; L-R11). A binding
+            whose whole previous chain never published stays ``open`` (C-16
+            v1.7 §2.4 legacy / C-16-imported shape), byte for byte as before.
             """
-            binding = source_sync_store.current_binding_of_page(page_id)
-            if binding is None or binding["status"] != "healthy":
-                return "unavailable"
-            gate = source_sync_store.gate_of_binding(binding["binding_id"])
-            if gate is None:
-                return "open"
-            return "open" if gate["read_gate"] == "open" else "pending"
+            verdict = source_sync_store.publication_gate_of_page(page_id)
+            return (
+                PUBLICATION_GATE_UNAVAILABLE
+                if verdict == PUBLICATION_GATE_CORRUPT_CHAIN
+                else verdict
+            )
 
         regions = SqliteRegionRepository(conn, lineage_guard=lineage_guard)
 

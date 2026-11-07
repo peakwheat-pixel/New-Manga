@@ -5301,36 +5301,38 @@ class CoreServiceServer:
             )
 
     def _assert_source_sync_gate(self, page_id: str) -> None:
-        """FEA-11 (C-17 §3.3): refuse reads/writes through a binding whose
-        publication gate is still pending (SOURCE_ACCESS_DENIED). Legacy v7
-        bindings without a publication row keep the old rules; a *new sync*
-        binding without one is corruption and fails closed."""
+        """FEA-11 (C-17 §3.3; L-R11): consume the ONE publication-gate predicate.
+
+        The verdict comes from ``SourceSyncStore.publication_gate_of_page`` —
+        the same single predicate the Run target admission, commit guard,
+        provider and ``AuthorizeSourceReadForRun`` consume. This helper owns no
+        gate judgement of its own (no one-hop ``previous_binding_id`` heuristic
+        any more):
+
+        * ``pending`` → the frozen ``SOURCE_ACCESS_DENIED`` (Host ACK missing);
+        * ``corrupt_chain`` → a new sync binding whose publication row is
+          missing (a previous-chain publication proves it was sync managed):
+          fail closed with the existing code, never treated as legacy;
+        * ``unavailable`` → this is not a publication verdict (no current
+          binding / unhealthy binding). The resolve face's own binding
+          readiness check refuses it with the same existing code, so this
+          helper leaves it to that check: zero behaviour drift for those
+          pre-existing shapes;
+        * ``open`` → readable (legacy no-row chains included, C-16 v1.7 §2.4).
+        """
         stack = getattr(self._core, "source_sync", None)
         if stack is None:
             return
-        store = stack["store"]
-        binding = store.current_binding_of_page(page_id)
-        if binding is None:
-            return
-        gate = store.gate_of_binding(binding["binding_id"])
-        if gate is None:
-            # No publication row: a pre-v8 (legacy) binding. Only bindings
-            # created after v8 always carry one — check lineage provenance
-            # markers by looking for any publication referencing the page's
-            # binding chain (fail-closed for fresh sync bindings).
-            previous = store.gate_of_binding(
-                binding["previous_binding_id"]
-            ) if binding.get("previous_binding_id") else None
-            if previous is not None:
-                raise SourceImportError(
-                    "SOURCE_ACCESS_DENIED",
-                    "page binding has no read gate",
-                )
-            return
-        if gate["read_gate"] != "open":
+        gate = stack["store"].publication_gate_of_page(page_id)
+        if gate == "pending":
             raise SourceImportError(
                 "SOURCE_ACCESS_DENIED",
                 "page binding is pending acknowledgement",
+            )
+        if gate == "corrupt_chain":
+            raise SourceImportError(
+                "SOURCE_ACCESS_DENIED",
+                "page binding has no read gate",
             )
 
     def _assert_source_sync_gates(self, page_ids: list[str]) -> None:

@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from typing import Any, Iterable, Sequence
+from typing import Any, Iterable, Iterator, Sequence
 
 from application.sources.lineage import RevisionLineageStanding
 from application.sources.model import (
@@ -37,6 +37,114 @@ def _rows(cursor: sqlite3.Cursor) -> list[dict[str, Any]]:
 def _row(cursor: sqlite3.Cursor) -> dict[str, Any] | None:
     row = cursor.fetchone()
     return dict(row) if row is not None else None
+
+
+# ---------------------------------------------------------------------------
+# C-17 §3.3 publication gate (L-R11: the ONE Core predicate)
+# ---------------------------------------------------------------------------
+#
+# Every Core read face — Run target admission, Run commit guard, provider
+# image source, resolve/reader, and ``AuthorizeSourceReadForRun`` — must answer
+# "may this page's current binding be read?" with the SAME verdict from the
+# SAME code. The gate distinguishes four states:
+#
+# * ``open``          — readable. Either the current binding's publication gate
+#                       is open, or the binding's whole previous chain never
+#                       published: the pre-v8 legacy / C-16-imported shape that
+#                       keeps the old rules (C-16 v1.7 §2.4).
+# * ``pending``       — the current binding's publication gate has not opened
+#                       yet (C-17 §3.3: apply committed, Host ACK missing).
+# * ``unavailable``   — no current binding, or the current binding is not
+#                       healthy. This is the pre-L-R11 "not readable" state;
+#                       consumers keep their existing codes for it.
+# * ``corrupt_chain`` — the current binding has NO publication row but its
+#                       previous chain DID publish somewhere: a new sync chain
+#                       with a missing row. C-17 §3.3 defines that as
+#                       corruption: fail-closed, never legacy (L-R11).
+#
+# The check is a WHOLE-chain walk (any publication anywhere in
+# ``page_bindings.previous_binding_id`` means "sync managed"), never a one-hop
+# check — a two-hop chain ``B3(no row) -> B2(no row) -> B1(row)`` must fail
+# closed exactly like the one-hop shape.
+#
+# Consumers that only speak the frozen three-state contract map
+# ``corrupt_chain`` onto ``unavailable``; the resolve face raises its existing
+# ``SOURCE_ACCESS_DENIED`` family. No new error code, wire field, command,
+# capability, schema or dependency is introduced.
+
+PUBLICATION_GATE_OPEN = "open"
+PUBLICATION_GATE_PENDING = "pending"
+PUBLICATION_GATE_UNAVAILABLE = "unavailable"
+PUBLICATION_GATE_CORRUPT_CHAIN = "corrupt_chain"
+
+
+def _binding_chain_ids(
+    conn: sqlite3.Connection, binding_id: str | None
+) -> Iterator[str]:
+    """Walk ``page_bindings.previous_binding_id`` from one binding.
+
+    The ONE bindings-chain walk: the C-17 §3.3 gate predicate and the §7.1
+    lineage ``page_is_sync_managed`` fact both consume it. Cycle-safe (a
+    corrupted previous pointer can never loop forever).
+    """
+    seen: set[str] = set()
+    while binding_id is not None and binding_id not in seen:
+        seen.add(binding_id)
+        yield binding_id
+        row = _row(
+            conn.execute(
+                "SELECT previous_binding_id FROM page_bindings"
+                " WHERE binding_id = ?",
+                (binding_id,),
+            )
+        )
+        binding_id = row["previous_binding_id"] if row is not None else None
+
+
+def _publication_row(
+    conn: sqlite3.Connection, binding_id: str
+) -> dict[str, Any] | None:
+    return _row(
+        conn.execute(
+            "SELECT binding_id, previous_binding_id, relation, read_gate,"
+            " opened_at FROM source_binding_publications WHERE binding_id = ?",
+            (binding_id,),
+        )
+    )
+
+
+def _publication_gate_verdict(conn: sqlite3.Connection, page_id: str) -> str:
+    """The ONE C-17 §3.3 publication-gate verdict for one page (L-R11).
+
+    This function owns the only publication-gate judgement in Core; every
+    consumer goes through :meth:`SourceSyncStore.publication_gate_of_page`.
+    """
+    binding = _row(
+        conn.execute(
+            "SELECT binding_id, status, previous_binding_id FROM page_bindings"
+            " WHERE page_id = ? AND status <> 'superseded'",
+            (page_id,),
+        )
+    )
+    if binding is None or binding["status"] != "healthy":
+        return PUBLICATION_GATE_UNAVAILABLE
+    gate = _publication_row(conn, binding["binding_id"])
+    if gate is not None:
+        return (
+            PUBLICATION_GATE_OPEN
+            if gate["read_gate"] == "open"
+            else PUBLICATION_GATE_PENDING
+        )
+    # No publication row on the current binding. Only a chain that never
+    # published is the legacy/imported shape (open, C-16 v1.7 §2.4). A
+    # publication anywhere in the previous chain proves the chain is sync
+    # managed, so a missing row here is corruption: fail-closed (C-17 §3.3).
+    for ancestor_binding_id in _binding_chain_ids(
+        conn, binding["previous_binding_id"]
+    ):
+        if _publication_row(conn, ancestor_binding_id) is not None:
+            return PUBLICATION_GATE_CORRUPT_CHAIN
+    return PUBLICATION_GATE_OPEN
 
 
 class SourceSyncStore:
@@ -338,6 +446,19 @@ class SourceSyncStore:
                 (binding_id,),
             )
         )
+
+    def publication_gate_of_page(self, page_id: str) -> str:
+        """The ONE C-17 §3.3 publication-gate verdict for one page (L-R11).
+
+        Returns ``open`` / ``pending`` / ``unavailable`` / ``corrupt_chain``
+        exactly as :func:`_publication_gate_verdict` defines them. This is the
+        single predicate consumed by ``core_assembly.read_gate`` (Run target
+        admission, commit guard, provider image source) and by the resolve /
+        reader face and ``AuthorizeSourceReadForRun`` (through
+        ``pipeline._catalog.source_gate_reader``), so the two read faces can
+        never drift again.
+        """
+        return _publication_gate_verdict(self._conn, page_id)
 
     def pending_gate_pages(self, page_ids: Iterable[str]) -> set[str]:
         """Pages whose current binding still has a pending read gate."""
@@ -951,20 +1072,10 @@ class SourceSyncLineageFacts:
     def page_is_sync_managed(self, page_id: str) -> bool:
         """True when any binding of the page's own chain has a publication."""
         binding_id = self.page_binding(page_id)
-        seen: set[str] = set()
-        while binding_id is not None and binding_id not in seen:
-            seen.add(binding_id)
-            if self._publication_of(binding_id) is not None:
-                return True
-            row = _row(
-                self._conn.execute(
-                    "SELECT previous_binding_id FROM page_bindings"
-                    " WHERE binding_id = ?",
-                    (binding_id,),
-                )
-            )
-            binding_id = row["previous_binding_id"] if row is not None else None
-        return False
+        return any(
+            _publication_row(self._conn, chain_binding_id) is not None
+            for chain_binding_id in _binding_chain_ids(self._conn, binding_id)
+        )
 
     def revision_lineages(
         self, revision_ids: Sequence[str]
@@ -1004,20 +1115,11 @@ class SourceSyncLineageFacts:
             if binding_id == ancestor_binding_id:
                 return True
             seen.add(binding_id)
-            publication = self._publication_of(binding_id)
+            publication = _publication_row(self._conn, binding_id)
             if publication is None or publication["relation"] != "same_content":
                 return False
             binding_id = publication["previous_binding_id"]
         return False
-
-    def _publication_of(self, binding_id: str) -> dict[str, Any] | None:
-        return _row(
-            self._conn.execute(
-                "SELECT binding_id, previous_binding_id, relation"
-                " FROM source_binding_publications WHERE binding_id = ?",
-                (binding_id,),
-            )
-        )
 
 
 def decode_json(text: str) -> Any:
