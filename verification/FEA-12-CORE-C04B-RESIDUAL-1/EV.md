@@ -55,10 +55,14 @@
 
 ## 4. 独立 docs-only Review
 
-- **r1**：`doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`（reviewer = fresh subagent，独立上下文，未参与本卡起草；
-  审工作树被审字节）→ 结论待回填（approved/changes_requested 与 P0/P1/P2/P3 见该报告）。
-- 复核要求：8 项表与 scope review 一致；§1C sha 实测可复算；L-3 措辞如实（未修）；载体 §5F 不改正文；零字节
-  （C-04b/M2-C1 sha 不变、pins 18/18）；不夸大。
+- **r1 `approved`（P0=0 / P1=0 / P2=0；P3：8 项总计，**open=6**、fixed=1（P3-1 EV diff stat，已在 `698ac9524` 修）、
+  mitigated=1（P3-7 并发 L-R11 `src/**`，docs-only 提交已隔离））**：`doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`
+  （reviewer = fresh subagent，独立上下文，未参与本卡起草；session `c66cd50f-…`；reviewed_head `28a2826af`）。
+  核对：8 项表与 scope review §2 一致；§1C r1–r7 + 辅助报告 sha256/大小全 MATCH；载体 §5F 只追加（`+14/−0`）；
+  C-04b/M2-C1 字节零 diff；pins 18/18；check PASS×2；本卡产物对 `src/**`/`apps/**`/`tests/**` 零 diff。
+- **P3 处置（open 6 项，均非阻断）**：P3-2 §1C 路径为 workspace 相对 + r4–r7 `...` 缩写（保留，sha 已给全）；
+  P3-3 r4–r7 session 前缀（保留，报告内已有完整 id）；P3-4/P3-5/P3-6 卡面/EV 措辞已按 closeout 修正；
+  P3-8（`698ac9524` 内卡仍 ready、EV r1「结论待回填」）由 closeout 提交闭合。**不声称 P3 全部修完**。
 
 ## 5. 不构成什么
 
