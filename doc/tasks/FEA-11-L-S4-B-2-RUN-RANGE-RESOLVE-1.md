@@ -6,7 +6,7 @@ governance_version: 3
 status: ready
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-scope-r1.md`（fresh subagent `0f28cb0d-…`，**READY-TO-FREEZE**；推荐 Host-only：`RunSourceRange.Resolve` 对枚举 target 复用 L-S4-B-1 的 `SelectEnumeratedEntry`，非枚举保持 `ResolveRegistryEntry`；**0 UNFREEZE / 18 pins**）；Codex 不可用 → ZCode 故障转移裁决（见卡）；DSH 裁决 R-1…R-7（见下）
 suggested_owner: codex
-owner: l-s4b2-impl
+owner: l-s4b1-impl
 reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review；只读交付 head；session 见 `doc/reviews/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-r1.md`）
 depends_on:
   - FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1
