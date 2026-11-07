@@ -130,3 +130,11 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **当前状态**：无活动 Task；`FEA-11-L-S4-B-AUTO-RECOVERY-1` **proposed**（零交互自动恢复枚举 + B2 roots 投影；**C-16 v1.5 批量载体**，1 pin；需 scope review）；排队：2C 长 Run 续期、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
 - **limitations 保留**：B2/B3 未做；L-S4-1（零交互恢复）/L-S4-2（folder 身份键）；C-17 journal 撤销撕裂（仅登记）；`quarantine_path` 不展示；重复恢复累积 revoked 行（active 恒 1）；revoke ACK 计数口径；只承诺 file-source 同路径恢复；L-R1 未全修；不宣称自动恢复。
 - **push**：`ac528828b..47a5b5167`（PUSH_EXIT=0；PRE_HEAD/POST_ORIGIN `47a5b5167`，AHEAD=0）。
+
+## 12. 续接补充（2026-11-07 第 4 轮：C-16 v1.5 / L-S4-B）
+
+- **FEA-11-L-S4-B-PREREQ-1 `done`**（`3a475b5b9`）：**C-16 v1.5 UNFREEZE**（`source.reattest/1` + §2.5 `ReattestSourceLocation` 条件单行 re-attest + §1 `roots_available` additive；只写 `registry_id/authorization_generation` 两列、`last_verified_at` 保持原值；Host 前置义务分离；拒绝/无匹配零写；幂等/单调；1/18 pins 重签，其余 17 零改动）。独立 byte-level 复核 r1–r7 `changes_requested`（记录/字节逐轮收敛）→ **r8 `approved`（P0=0/P1=0/P2=0/P3=0）**；另有 r9 独立字节复核 **approved**（仅判 C-16 字节）；pins **18/18**（C16 `a7f57ebd…`）。
+- **FEA-11-L-S4-B-AUTO-RECOVERY-1** `ready`（base `c6ca1aa3c`）：实现中，Owner=`l-s4b-impl`；交付后需独立 Review → 集成门禁（pytest 3317/10、.NET 1617/0/93 基线）→ closeout → push。
+- **当前状态**：HEAD `2c5d0a9d9`（origin 同步，AHEAD=0）；check PASS(3w)；pins 18/18。
+- **limitations 保留**：B2 字段冻结、实现延后（无消费者）；L-S4-1（零交互恢复仅指 B1 显式动作之后）；L-S4-2（folder 身份键）；「零交互」不得写成自动恢复；C-15 零字节解释条件性（D-6）；L-R1 未全修。
+- **push**：`59ba5189f..c6ca1aa3c`（UNFREEZE + closeout + base）、`c6ca1aa3c..2c5d0a9d9`（r8/r9 报告）；PUSH_EXIT=0，AHEAD=0。
