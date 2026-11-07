@@ -109,7 +109,7 @@ verdict: approved
 - **scope diff ⊆ allowed_paths（35 文件）**：`changed-files.txt` 35 行；`scope-validation.log` `changed_count=39 delivery=35 concurrent_non_delivery=4`、`result=PASS`、`PROTOCOL_MINOR=3`、C16 pin match、`COMMAND_REGISTRY_HAS_REATTEST=False`。独立复核见 §2 D。
 - **禁止面零 diff**：`doc/plan/**`、`doc/contracts/**`、`src/infrastructure/sqlite/library.py`、schema/migrator、requirements/pyproject/package、`HostCommandRegistry.cs`、C-07 registry 均零 diff；全 `src/**` 唯一 SQL 留在 `library.py`。
 - **数字一致**：`feature.log` 100、`regression-74.log` 89、`host-unit.log` 24、`app-unit.log` 18、`host-ipc.log` 4、`full-pytest.log` 3360/10、`full-dotnet.log` 1644/0/94、`gates.log` 18/18 + PASS(3) + EXIT=0 + API EXIT=0；与 Handoff/EV 一致。唯一措辞差异是 EV 的「16 表快照」与实测动态快照 36 张表（更强）不符，见 P3 R1-P3-04。
-- **跑后恢复**：Review 的 gated IPC/定向测试未改 tracked 证据；全量 pytest 后 `git status --porcelain` 为空；未执行全量 .NET，故未触碰 `verification/FEA-09`（现状 clean）。
+- **跑后恢复**：Review 的 gated IPC/定向测试未改 tracked 证据；全量 pytest 后 `git status` 无 tracked 变更；未执行全量 .NET，故未触碰 `verification/FEA-09`（现状 clean）。
 
 ### G. 不夸大 — **PASS**
 
@@ -134,7 +134,7 @@ verdict: approved
 
 ## 4. 破坏性复跑记录（自选 2 点）
 
-> 备份与恢复均在 `G:\CODEX\New Manga.workspace\FEA-11-L-S4-B-AUTO-RECOVERY-1\review\backup\`；恢复后 `git status --porcelain` 为空，`verification/FEA-09` 零 status。
+> 备份与恢复均在 `G:\CODEX\New Manga.workspace\FEA-11-L-S4-B-AUTO-RECOVERY-1\review\backup\`；恢复后无 tracked 变更，`verification/FEA-09` 零 status。
 
 ### 4.1 Core：删除四键身份校验（B1 同类破坏点）
 
@@ -178,5 +178,5 @@ verdict: approved
 
 - 本报告只写 `doc/reviews/FEA-11-L-S4-B-AUTO-RECOVERY-1-r1.md`；未修改实现/测试/证据/卡/契约，未 `git add/commit/push`，未运行真实用户数据，未创建 linked worktree。
 - 所有实跑数字来自本 Review 的实际命令（§2 D/§4）；未跑项明确为 `NOT_RUN`（全量 .NET 未重跑；以 `logs/full-dotnet.log` 交叉核对）。
-- 破坏性复跑前已备份原字节、结束后逐字节恢复并以 sha256 复核；仓库最终 `git status --porcelain` 为空，`verification/FEA-09` 零 status。
+- 破坏性复跑前已备份原字节、结束后逐字节恢复并以 sha256 复核；本 Review 未产生 tracked 变更，`verification/FEA-09` 零 status。`git status` 中的 `doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md` 为并发出现的 `proposed` 占位卡（非本 Review 写入，未触碰）；本报告自身是唯一 Review 写入。
 - gated IPC 复跑沿用测试既有 `.workspace/FEA-11/fixtures/scan-*` 根（未写 `verification/FEA-09`）；本卡定向/破坏性 fixture 均在 `.workspace/FEA-11-L-S4-B-AUTO-RECOVERY-1/` 下。
