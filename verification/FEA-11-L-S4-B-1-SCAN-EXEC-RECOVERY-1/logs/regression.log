@@ -1,0 +1,8 @@
+=== dotnet test --filter 'SourceRegistry|SourceReattest|SourceScanSchedulerTests' (2026-11-07T15:48:39.5037415+08:00) ===
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.76]     NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [SKIP]
+  已跳过 NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [1 ms]
+
+已通过! - 失败:     0，通过:   123，已跳过:     1，总计:   124，持续时间: 961 ms - NewManga.Host.Tests.dll (net9.0)
+REGRESSION_EXIT=0

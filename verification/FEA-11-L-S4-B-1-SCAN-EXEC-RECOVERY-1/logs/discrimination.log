@@ -1,0 +1,94 @@
+[2026-11-07T07:54:43.756+00:00] FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1 discrimination (break -> RED -> byte-restore -> GREEN)
+target_file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+original_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c newline='\r\n'
+
+=== B1 枚举分支改回按路径 ResolveRegistryEntry（执行面恢复被撤销） ===
+filter=FullyQualifiedName~ScanAsync_RecoveredEnumeratedTarget env={}
+B1 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 73 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.25]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.ScanAsync_RecoveredEnumeratedTarget_PassesTheAuthorizationGate_InsteadOfBeingDenied [FAIL]
+B1 restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B1 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 85 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B1b 同一破坏点在 gated 真 IPC 闭环上（reattest 后 tick 回到 error） ===
+filter=FullyQualifiedName~ReauthorizedSource_IsReattested env={'NEWMANGA_FEA11_IPC': '1'}
+B1b break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:01.76]     NewManga.Host.Tests.Fea11ScanIpcTests.ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport [FAIL]
+B1b restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B1b restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (net9.0)
+
+=== B2 SelectEnumeratedEntry 撤销检查被删除（撤销后自动放行） ===
+filter=FullyQualifiedName~SourceScanExecutionRecovery env={}
+B2 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     2，通过:     6，已跳过:     0，总计:     8，持续时间: 187 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.SelectEnumeratedEntry_NeverFallsBackToALiveSibling_WhenTheTargetsOwnEntryIsRevoked [FAIL]
+  | [xUnit.net 00:00:00.36]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.ScanAsync_EnumeratedTarget_OwnRegistryRevokedMissingOrDrifted_IsTypedSkip [FAIL]
+B2 restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B2 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     8，已跳过:     0，总计:     8，持续时间: 187 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B3 SelectEnumeratedEntry 代次漂移检查被删除 ===
+filter=FullyQualifiedName~SourceScanExecutionRecovery env={}
+B3 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     2，通过:     6，已跳过:     0，总计:     8，持续时间: 190 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.SelectEnumeratedEntry_IsTypedOnMissingRegistryAndGenerationDrift [FAIL]
+  | [xUnit.net 00:00:00.36]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.ScanAsync_EnumeratedTarget_OwnRegistryRevokedMissingOrDrifted_IsTypedSkip [FAIL]
+B3 restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B3 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     8，已跳过:     0，总计:     8，持续时间: 188 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B4 注册根 identity（volume/file）比较被删除（可把替换文件当同一源扫描） ===
+filter=FullyQualifiedName~ScanAsync_EnumeratedTarget_MissingOrReplacedRoot env={}
+B4 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 63 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.24]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.ScanAsync_EnumeratedTarget_MissingOrReplacedRoot_IsRegistryUnavailable [FAIL]
+B4 restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B4 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 62 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B5 target 自身条目缺失时回落任意 live 条目（扩授权面） ===
+filter=FullyQualifiedName~SourceScanExecutionRecovery env={}
+B5 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     2，通过:     6，已跳过:     0，总计:     8，持续时间: 189 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.38]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.SelectEnumeratedEntry_IsTypedOnMissingRegistryAndGenerationDrift [FAIL]
+  | [xUnit.net 00:00:00.46]     NewManga.Host.Tests.SourceScanExecutionRecoveryTests.ScanAsync_EnumeratedTarget_OwnRegistryRevokedMissingOrDrifted_IsTypedSkip [FAIL]
+B5 restore_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+B5 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     8，已跳过:     0，总计:     8，持续时间: 184 ms - NewManga.Host.Tests.dll (net9.0)
+
+final_sha256=a528e8daac7dd1c36ef2305ba4b3ed0e40a740942ca939d74403ad77ef3e3f6c MATCH=True
+RESULT 6/6 RED_AS_EXPECTED + GREEN_AFTER_RESTORE
+PASS

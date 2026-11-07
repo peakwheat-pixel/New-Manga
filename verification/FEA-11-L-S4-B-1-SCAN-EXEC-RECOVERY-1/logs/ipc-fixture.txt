@@ -1,0 +1,4 @@
+IPС fixture root: G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-49d81853692f427c96e8ef1f27e37e05
+reattest-ipc.json sha256: 1F91DF56A86E2976E3B0FBB87C357211799F58DDAD0FD69CB53B996D784FDB4B
+captured_at: 2026-11-07T15:49:07.9473211+08:00
+evidence copies: logs/ipc-closed-loop.json / .txt (unmodified test-written files)
