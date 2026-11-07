@@ -1,0 +1,39 @@
+# scope evidence — FEA-12-CORE-C04B-INDEX-L4-1
+# work start head: d7823a0e0 ; card base_commit: 02c1a26d1 ; delivery_head: e593cc9d7
+
+## git diff d7823a0e0 --name-only (this card's implementation diff, before docs/evidence)
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs
+doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md
+src/infrastructure/sqlite/schema.py
+tests/core/test_v9_migration.py
+tests/fea09/test_v7_migration.py
+tests/fea11/test_source_gate_unify.py
+tests/storage/test_upgrade_schema_data.py
+
+## git status --porcelain (at evidence-authoring time)
+ M doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md
+?? doc/handoffs/FEA-12-CORE-C04B-INDEX-L4-1-e593cc9d7.md
+?? verification/FEA-12-CORE-C04B-INDEX-L4-1/
+
+## git diff 02c1a26d1 --name-only (card base; includes Lead release commit d7823a0e0)
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
+doc/reviews/FEA-12-CORE-C04B-INDEX-L4-scope-r1.md
+doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md
+src/infrastructure/sqlite/schema.py
+tests/core/test_v9_migration.py
+tests/fea09/test_v7_migration.py
+tests/fea11/test_source_gate_unify.py
+tests/storage/test_upgrade_schema_data.py
+
+## zero-drift: doc/plan, doc/contracts, deps (expect empty)
+
+
+## apps/** (expect only the allowed Fea11SourceIpcTests.cs)
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs
+
+## git diff --check (expect empty)
+EXIT=0 output=[]
+

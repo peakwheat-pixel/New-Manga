@@ -1,0 +1,14 @@
+# scope after the implementation commit e593cc9d7 (docs/evidence not yet committed)
+# (files below are the docs/evidence payload of the immediately following commit)
+
+## git diff e593cc9d7 --name-only (tracked changes)
+doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md
+
+## untracked
+?? doc/handoffs/FEA-12-CORE-C04B-INDEX-L4-1-e593cc9d7.md
+?? verification/FEA-12-CORE-C04B-INDEX-L4-1/
+
+## git diff e593cc9d7 --stat
+ doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+

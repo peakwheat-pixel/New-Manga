@@ -1,0 +1,159 @@
+{
+  "task": "FEA-12-CORE-C04B-INDEX-L4-1",
+  "title": "media_artifacts.book_id 索引（v9 迁移；消 preview/删除面 SCAN 放大，0 pin）",
+  "delivery_head": "e593cc9d70be3b2568569aea43f313b0bc28c413",
+  "delivery_head_short": "e593cc9d7",
+  "start_head": "d7823a0e0",
+  "base_commit": "02c1a26d1",
+  "disposition": "PRESERVE_REFERENCED",
+  "written_in_repo": {
+    "production": [
+      "src/infrastructure/sqlite/schema.py"
+    ],
+    "tests": [
+      "tests/core/test_v9_migration.py",
+      "tests/fea09/test_v7_migration.py",
+      "tests/fea11/test_source_gate_unify.py",
+      "tests/storage/test_upgrade_schema_data.py（DSH 扩域批准）",
+      "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs"
+    ],
+    "docs": [
+      "doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md",
+      "doc/handoffs/FEA-12-CORE-C04B-INDEX-L4-1-e593cc9d7.md"
+    ],
+    "evidence": "verification/FEA-12-CORE-C04B-INDEX-L4-1/**（本目录）"
+  },
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/index-l4/**（evidence_runner.py、EXPLAIN/迁移报告/判别性日志、sha256 链、临时 SQLite 库 tmp/；保留引用，未入仓）",
+  "consumed": [
+    {
+      "source": "doc/reviews/FEA-12-CORE-C04B-INDEX-L4-scope-r1.md",
+      "used_as": "§2 契约/0 pin 判定、§2.4 迁移形状、§3 基准、§7 卡面草案；只读，零改动"
+    },
+    {
+      "source": "doc/plan/FEA-CONTRACT-FROZEN-C04b.md",
+      "used_as": "§4A L-4（本卡立项依据）；只读，零改动"
+    },
+    {
+      "source": "src/infrastructure/sqlite/library.py",
+      "used_as": "读取 preview/删除面生产 SQL（EXPLAIN 与结果等价性）；只读，零改动"
+    },
+    {
+      "source": "src/infrastructure/sqlite/schema.py",
+      "used_as": "追加 v9（SCHEMA_VERSION_V9/MIGRATION_V9_*/default_migrations）；v1–v8 零改"
+    }
+  ],
+  "verification": {
+    "targeted_pytest": "76 passed (4 legacy files) -> 92 passed (5 files, +16 new) ; extended 109 passed",
+    "full_pytest": "3372 passed / 10 skipped -> 3390 passed / 10 skipped / 0 failed",
+    "dotnet": "1683 passed / 0 failed / 96 skipped -> 1683 / 0 / 96 (build 0 warning 0 error)",
+    "pins": "PIN AUDIT: PASS (all 18), exit 0",
+    "check": "PASS (3 warnings) x2 (default + -TaskPath), exit 0",
+    "api_inventory": "exit 0",
+    "explain": "preview: v8 'SCAN ma' -> v9 'SEARCH ma USING INDEX idx_media_artifacts_book (book_id=?)'",
+    "delete_face": "COUNT/DELETE FROM media_artifacts WHERE book_id=? -> SEARCH USING COVERING INDEX",
+    "discriminative": "CREATE INDEX removed -> 13 failed / 20 passed (tampered sha256 3449af76…); byte restore sha256 MATCH 5fe87b69… -> 33 passed",
+    "contract_zero_diff": "verify_pins 18/18; C-04b/M2-C1 字节未触碰"
+  },
+  "artifacts": [
+    {
+      "rel": "EV.md",
+      "bytes": 18101,
+      "sha256": "a27fc91220c7883c1536d2e40e8fdf13b6a3e170126992ebe089e54772e4dc2a"
+    },
+    {
+      "rel": "logs/api-inventory.txt",
+      "bytes": 4385,
+      "sha256": "6d1e41178756c82c9500e141743fe5783c00f75d4ca09b4c6206323efb02e4b7"
+    },
+    {
+      "rel": "logs/check-default.txt",
+      "bytes": 426,
+      "sha256": "9d503f6a87d17b35b2b2ad7eb9078798c4cb3d7aefad5ff644189ec425362ec7"
+    },
+    {
+      "rel": "logs/check-taskpath.txt",
+      "bytes": 426,
+      "sha256": "9d503f6a87d17b35b2b2ad7eb9078798c4cb3d7aefad5ff644189ec425362ec7"
+    },
+    {
+      "rel": "logs/discriminative-and-explain.txt",
+      "bytes": 8783,
+      "sha256": "69e2a639db58376d63bc6483a5b2db7f95c3ee6078cdd50eaadd6f1b6b64b2d7"
+    },
+    {
+      "rel": "logs/dotnet-build-after.txt",
+      "bytes": 2896,
+      "sha256": "0b40e96882d1243653a2b4d40c13f56fdd5f9ae64d185fd0f550330e466e0096"
+    },
+    {
+      "rel": "logs/dotnet-build-before.txt",
+      "bytes": 2896,
+      "sha256": "56293050197398cff5d39f1b5cfe922e01842afaefb9146b6dac7a998b4013a5"
+    },
+    {
+      "rel": "logs/dotnet-test-after.txt",
+      "bytes": 27271,
+      "sha256": "27ea2018a05623a220e2fe44f92fe12eccfb9568fd8d87665eed3b4df80a3eae"
+    },
+    {
+      "rel": "logs/dotnet-test-before.txt",
+      "bytes": 27268,
+      "sha256": "d25368a45425c5f2ec550d971a20be30095b08acd574c32f9da765b76961cd6c"
+    },
+    {
+      "rel": "logs/eol-and-restore-note.txt",
+      "bytes": 2181,
+      "sha256": "c0b3f884f63aa4676d94fb132b09cff3f47cdc96911aec2279367119bc64925b"
+    },
+    {
+      "rel": "logs/full-after.txt",
+      "bytes": 10419,
+      "sha256": "e93d8cda6ec1687e0f2c51d8ca9540dc46e2100e2bf82c6963f7ae08dc8304e2"
+    },
+    {
+      "rel": "logs/full-before.txt",
+      "bytes": 10338,
+      "sha256": "0b188fff491f1acf97813a668573d8ce6882b623a2b741cd8606ef507e5865a5"
+    },
+    {
+      "rel": "logs/pins.txt",
+      "bytes": 408,
+      "sha256": "aedf5a6b579c255e4b1544ccc1479aaf8517d6cdd711f9e7a12018f08e6f118d"
+    },
+    {
+      "rel": "logs/scope-post-code-commit.txt",
+      "bytes": 524,
+      "sha256": "bbbf45f49e38aa52f3726c75078678a0a4dbb5d9e11a7670ae3dc0e71c566a18"
+    },
+    {
+      "rel": "logs/scope.txt",
+      "bytes": 1494,
+      "sha256": "6660d7f003e98aadae95743b43ebd6575502f75e595ed4a85f97329743fca761"
+    },
+    {
+      "rel": "logs/sha256-after-edits.txt",
+      "bytes": 442,
+      "sha256": "8457385f2ff6384f2f9baf5470d055c5aaf67ee7521d0397291f4d270e4b65f9"
+    },
+    {
+      "rel": "logs/sha256-files.txt",
+      "bytes": 990,
+      "sha256": "db69c0a57b6f5cf3f0cf9235c1fc76cacb504f8275ce94fe4e26d9456fa33b99"
+    },
+    {
+      "rel": "logs/targeted-after-extended.txt",
+      "bytes": 183,
+      "sha256": "be484d7f1bda2fecb0147ca0dda6040ed699f0e6147a7e324c9420ed8523414f"
+    },
+    {
+      "rel": "logs/targeted-after.txt",
+      "bytes": 183,
+      "sha256": "3367247f667ac9a08cbb29c6beff7af930158e010ed75288ccd89b41ee56876a"
+    },
+    {
+      "rel": "logs/targeted-before.txt",
+      "bytes": 182,
+      "sha256": "49b7b897d07a2f2d78bee7afb5135a7199092b2b709c30da4b0fef19b5d72fd2"
+    }
+  ]
+}

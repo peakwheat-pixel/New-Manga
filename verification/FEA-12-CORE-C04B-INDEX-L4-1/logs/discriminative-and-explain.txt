@@ -1,0 +1,110 @@
+==============================================================================
+1) MIGRATION REPORT — real production migrations, temp database
+==============================================================================
+v8 max(schema_migrations)          = 8
+v8 application_metadata            = 8
+v8 media_artifacts indexes         = ['idx_media_artifacts_page', 'sqlite_autoindex_media_artifacts_1']
+v8 preview SQL                     = SELECT ma.page_id, ma.artifact_id, ma.artifact_type,       ma.current_revision_id FROM media_artifacts ma LEFT JOIN pages p ON p.page_id = ma.page_id LEFT JOIN chapters c ON c.chapter_id = p.chapter_id WHERE ma.book_id = 'book-a' AND ma.current_revision_id IS NOT NULL ORDER BY c.sort_order, c.import_order, c.chapter_id,          p.sort_order, p.page_id, ma.artifact_type, ma.artifact_id
+v8 preview plan                    = SCAN ma | SEARCH p USING INDEX sqlite_autoindex_pages_1 (page_id=?) LEFT-JOIN | SEARCH c USING INDEX sqlite_autoindex_chapters_1 (chapter_id=?) LEFT-JOIN | USE TEMP B-TREE FOR ORDER BY
+v8 -> v9 applied                   = [9]
+v9 max(schema_migrations)          = 9
+v9 application_metadata            = 9
+v9 media_artifacts indexes         = ['idx_media_artifacts_book', 'idx_media_artifacts_page', 'sqlite_autoindex_media_artifacts_1']
+v9 preview SQL identical           = True
+v9 preview plan                    = SEARCH ma USING INDEX idx_media_artifacts_book (book_id=?) | SEARCH p USING INDEX sqlite_autoindex_pages_1 (page_id=?) LEFT-JOIN | SEARCH c USING INDEX sqlite_autoindex_chapters_1 (chapter_id=?) LEFT-JOIN | USE TEMP B-TREE FOR ORDER BY
+data/query equivalence             = True
+row counts (before)                = {'books': 2, 'chapters': 2, 'pages': 3, 'media_artifacts': 4, 'artifact_revisions': 3}
+row counts (after)                 = {'books': 2, 'chapters': 2, 'pages': 3, 'media_artifacts': 4, 'artifact_revisions': 3}
+
+delete-face statements (production literals, asserted against library.py):
+  inventory COUNT    = SELECT COUNT(*) FROM media_artifacts WHERE book_id = ?
+  v9 plan            = SEARCH media_artifacts USING COVERING INDEX idx_media_artifacts_book (book_id=?)
+  transaction DELETE = DELETE FROM media_artifacts WHERE book_id = ?
+  v9 plan            = SEARCH media_artifacts USING COVERING INDEX idx_media_artifacts_book (book_id=?) | SEARCH artifact_revisions USING COVERING INDEX idx_artifact_revisions_artifact (artifact_id=?)
+
+list_book_artifact_revision_ids plan (v9) = SEARCH ma USING INDEX idx_media_artifacts_book (book_id=?) | SEARCH ar USING INDEX idx_artifact_revisions_artifact (artifact_id=?)
+list_book_pinned_revision_ids plan (v9) = COMPOUND QUERY | LEFT-MOST SUBQUERY | SEARCH c USING INDEX idx_chapters_book_id (book_id=?) | SEARCH p USING INDEX idx_pages_chapter_source_order (chapter_id=?) | SEARCH r USING INDEX idx_regions_page_order (page_id=?) | SEARCH rr USING INDEX idx_region_revisions_region (region_id=?) | UNION USING TEMP B-TREE | SEARCH ma USING INDEX idx_media_artifacts_book (book_id=?) | SEARCH ar USING INDEX idx_artifact_revisions_artifact (artifact_id=?)
+second apply_pending (idempotent)  = []
+
+==============================================================================
+2) EXPLAIN before/after — preview statement on the same v8 database
+==============================================================================
+BEFORE (v8, no index) = SCAN ma | SEARCH p USING INDEX sqlite_autoindex_pages_1 (page_id=?) LEFT-JOIN | SEARCH c USING INDEX sqlite_autoindex_chapters_1 (chapter_id=?) LEFT-JOIN | USE TEMP B-TREE FOR ORDER BY
+AFTER  (v9, index)    = SEARCH ma USING INDEX idx_media_artifacts_book (book_id=?) | SEARCH p USING INDEX sqlite_autoindex_pages_1 (page_id=?) LEFT-JOIN | SEARCH c USING INDEX sqlite_autoindex_chapters_1 (chapter_id=?) LEFT-JOIN | USE TEMP B-TREE FOR ORDER BY
+
+==============================================================================
+3) DISCRIMINATIVE — remove the CREATE INDEX -> v9 tests must go RED
+==============================================================================
+schema.py sha256 (delivered)        = 5fe87b693554d5e7b1f230f73cab75e04528466105b1d9f3a8f972dd68f92ce6
+schema.py sha256 (tampered)         = 3449af76c96225ddfa1007552c01babbf49d4b4e0bc0302f70429c04fc48393f
+--- tampered run (expected RED) ---
+_use_the_book_index(tmp_path) -> None:
+        db = tmp_path / "plan-delete.db"
+        conn = _connect(db)
+        MigrationRunner(conn, V8).apply_pending()
+        _seed_v8_library(conn)
+        repo = SqliteLibraryRepository(conn)
+        revision_ids_before = repo.list_book_artifact_revision_ids("book-a")
+        pinned_before = repo.list_book_pinned_revision_ids("book-a")
+    
+        MigrationRunner(conn, MIGRATIONS).apply_pending()
+    
+        for method in ("list_book_artifact_revision_ids", "list_book_pinned_revision_ids"):
+            _, plan = _production_plan(conn, repo, method, "book-a")
+>           assert INDEX_NAME in plan, f"{method}: {plan}"
+E           AssertionError: list_book_artifact_revision_ids: SCAN ma | SEARCH ar USING INDEX idx_artifact_revisions_artifact (artifact_id=?)
+E           assert 'idx_media_artifacts_book' in 'SCAN ma | SEARCH ar USING INDEX idx_artifact_revisions_artifact (artifact_id=?)'
+
+tests\core\test_v9_migration.py:382: AssertionError
+____________ test_synthetic_legacy_data_survives_full_upgrade[v8] _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1731/test_synthetic_legacy_data_sur7')
+version = 8
+
+    @pytest.mark.parametrize("version", LEGACY_VERSIONS, ids=[f"v{v}" for v in LEGACY_VERSIONS])
+    def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: int) -> None:
+        db_path = tmp_path / f"legacy-v{version}.db"
+        connection = _build_legacy_database(db_path, version)
+        before = _table_names(connection)
+        indexes_before = _index_names(connection)
+    
+        applied = MigrationRunner(connection, MIGRATIONS).apply_pending()
+        assert [record.schema_version for record in applied] == list(
+            range(version + 1, LATEST_VERSION + 1)
+        )
+        after = _table_names(connection)
+        new_tables = [name for name in LATEST_TABLES if name not in before]
+        new_indexes = sorted(_index_names(connection) - indexes_before)
+        # Every legacy start point must gain SOMETHING: v1..v7 start points gain
+        # tables, the v8 start point gains only the v9 pure-index migration. This
+        # keeps the "an upgrade changes the schema" direction without pretending a
+        # pure-index migration adds a table.
+>       assert new_tables or new_indexes, (
+            "starting point unexpectedly already had every latest table and index"
+        )
+E       AssertionError: starting point unexpectedly already had every latest table and index
+E       assert ([] or [])
+
+tests\storage\test_upgrade_schema_data.py:759: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_v9_migration.py::test_v9_shape_and_v1_v8_bytes_are_frozen
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v1]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v2]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v3]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v4]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v5]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v6]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v7]
+FAILED tests/core/test_v9_migration.py::test_upgrade_from_legacy_version_creates_the_book_index[v8]
+FAILED tests/core/test_v9_migration.py::test_v8_upgrade_preserves_rows_and_query_results
+FAILED tests/core/test_v9_migration.py::test_preview_statement_scans_on_v8_and_searches_the_index_on_v9
+FAILED tests/core/test_v9_migration.py::test_delete_face_enumeration_and_count_use_the_book_index
+FAILED tests/storage/test_upgrade_schema_data.py::test_synthetic_legacy_data_survives_full_upgrade[v8]
+13 failed, 20 passed in 4.57s
+tampered exit code                  = 1
+schema.py sha256 (restored)         = 5fe87b693554d5e7b1f230f73cab75e04528466105b1d9f3a8f972dd68f92ce6
+sha256 MATCH (restored == delivered)= True
+--- restored run (expected GREEN) ---
+.................................                                        [100%]
+33 passed in 4.91s
+restored exit code                  = 0

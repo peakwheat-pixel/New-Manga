@@ -1,0 +1,25 @@
+# EOL / stash 往返说明（FEA-12-CORE-C04B-INDEX-L4-1）
+# 为取得 before 定向数字，曾把 4 个 tracked 文件 git stash 后跑基线，再 stash pop 复原。
+# core.autocrlf=true：仓库 index 存 LF，工作树按 CRLF 检出；stash pop 会重新按 CRLF 写出工作树。
+# 故 tests/fea11/test_source_gate_unify.py 的工作树 sha256 与 edit 后（LF 形态）不同；提交内容以 git blob（LF）为准。
+# 下列 git hash-object（工作树经 clean filter）与 HEAD blob 逐项一致，证明 stash 往返未造成内容漂移。
+
+## worktree hash-object vs HEAD blob
+src/infrastructure/sqlite/schema.py worktree=2fcd79d204c43462290ceadb302ab449b94f413e HEAD=2fcd79d204c43462290ceadb302ab449b94f413e MATCH
+tests/fea09/test_v7_migration.py worktree=61debe56b3451a8ea476ed2eb8ee68a82d3fc1eb HEAD=61debe56b3451a8ea476ed2eb8ee68a82d3fc1eb MATCH
+tests/fea11/test_source_gate_unify.py worktree=9652087b09d8681f00a1c643d2d259535962a83b HEAD=9652087b09d8681f00a1c643d2d259535962a83b MATCH
+tests/storage/test_upgrade_schema_data.py worktree=1a665e425c377db9f2c56c7158d2db8bcbb10e2a HEAD=1a665e425c377db9f2c56c7158d2db8bcbb10e2a MATCH
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs worktree=72f6e06e8db077ce2308dc796b22fffb32ab4843 HEAD=72f6e06e8db077ce2308dc796b22fffb32ab4843 MATCH
+tests/core/test_v9_migration.py worktree=223c23396994e2694ff1212b75b17fcfb440ab15 HEAD=223c23396994e2694ff1212b75b17fcfb440ab15 MATCH
+
+## git ls-files --eol
+i/lf    w/crlf  attr/                 	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs
+i/lf    w/crlf  attr/                 	src/infrastructure/sqlite/schema.py
+i/lf    w/lf    attr/                 	tests/core/test_v9_migration.py
+i/lf    w/crlf  attr/                 	tests/fea09/test_v7_migration.py
+i/lf    w/crlf  attr/                 	tests/fea11/test_source_gate_unify.py
+i/lf    w/crlf  attr/                 	tests/storage/test_upgrade_schema_data.py
+
+## 工作树 diff 仅剩交付内容（无额外漂移）：git diff HEAD --stat
+ doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
