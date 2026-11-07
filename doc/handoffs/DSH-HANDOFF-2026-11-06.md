@@ -198,3 +198,22 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **L-G1 只降级不关闭**：单步 >300s／续期失败（typed 停止、不重试、不 reattest、不自动重新授权）／L-G2 加密源／L-G9 Core 重启／L-R1 viewer 残余／L-G16 >4096 成员／未 dispatch 的 pending Run 不在范围／240s 重 mint 的 L-G8 成本放大（单轮 >50s 即停）。
 - 2C 只承诺「有续期 + 子限制」，**不得**写任意长 Run 可用/L-G1 关闭/Run 全面恢复/自动恢复/自愈/自动重新授权/撤销后放行。
 - B2 无消费者延后；folder（L-S4-2）、L-S4-1、L-R1、多根 first-root 保留。
+
+## 17. 续接补充（2026-11-07 第 9 轮：2C 返修已交付，待 r2 + closeout）
+
+- **状态更新（覆盖 §16 的「返修中」）**：Owner `l-s4b1-impl` 已完成 r1 返修并交付，**未 push**：
+  - `7c95bb3c4` fix（P1-01 Host 接线判别 + P2-01 轮前预算 + P3）×
+  - `03361fec6` docs/evidence（EV/Handoff/卡）
+  - **delivery_head=`7c95bb3c4`**；`HEAD=03361fec6`；`origin=f1c4598e8`；**AHEAD=3（不可 reset/强推）**。
+- **返修内容**：
+  - P1-01：新增 `StartRunGrantRenewal()` 唯一安装行 + Host seam + 3 个 `HostWiring_*` 用例（生产 dispatch→Track→真实 Tick→renew）；**Probe-C 现为 RED（Host 281/2/65，2 failed 正是新接线用例）**，恢复后复绿；判别性 D8。
+  - P2-01：roundBudget 进入单轮前传入 mint 路径（on-demand scan timeout=min(30s,剩余预算)），超预算 `SkippedBudget` typed skip + 计数（保留跟踪）；判别性 D9；用例断言单轮 <1.5s。
+  - P3：预算停止记录 minted/code、`LedgerStatus` 接真实日志、EV/Handoff 去 TBD 与字面 `\n`、manifest 去 pyc/head 更新（21 evidence + 12 code sha 复核）。
+- **Owner 报告门禁**：Host 续期 **19/0/0**；回归 32/0/7；gated 7/0/0；fake clock 3；定向 pytest 92；全量 pytest **3363/10**；全量 .NET **1680/0/96**；pins 18/18；check PASS×2；API 61；scope 32 文件全 ALLOWED、`src/**` 零 diff；判别性 **9/9**；Probe-C 复现/复原 sha MATCH。
+- **下一步（新会话按序）**：
+  1. Lead 复跑门禁（全量 pytest/.NET、Host `--filter HostWiring|RunGrantRenewal`、gated、fake clock、Probe-C apply/restore、pins/check/API/scope；跑后 `git checkout -- verification/FEA-09`）。
+  2. 派**独立 r2 Review**（只读 `7c95bb3c4`；复跑 Probe-C 期望 281/2/65、HostWiring、预算用例；核对 `src/**` 零 diff 与 L-G1 措辞）。
+  3. r2 approved → closeout（卡 done/EV/Manifest/Closeout→STATUS/PLAN/LEDGER）→ **push**（PRE/POST/AHEAD 记录；把 `7c95bb3c4`、`03361fec6` 与 closeout 一并推）。
+  4. 队列：L-R11、C-04b、SCAN-RH、UI P3；B2 延后。
+- **注意**：当前 AHEAD=3 的未 push 提交包含实现与证据；**不得 git reset --hard / push --force**；若中途发现需回退，先记录并交 DSH 裁决。
+- **L-G1 口径不变**：只降级不关闭（单步 >300s／续期失败／L-G2／L-G9／L-R1／L-G16／未 dispatch pending Run／L-G8 成本放大）；不得写任意长 Run/自动恢复/自动重新授权。
