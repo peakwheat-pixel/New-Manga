@@ -125,7 +125,7 @@ out_of_scope:
 | EV-16 | AC-RUN-7 | verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/discrimination.py | ca929aade | d09b00e0a152e145fa67385505f417bcd6da81804a2faf0a2b36934031f77c01 | CANONICAL |
 | EV-17 | AC-RUN-7 | verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/gen_manifest.py | ca929aade | b4a4770d9b84ec52607999dcca0935d6c5d2d11f4471fb8775ed0cc05ec5f466 | CANONICAL |
 | EV-18 | AC-RUN-7 | verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/scope_validation.py | ca929aade | 5c760b83b72d029a68190fdf5f9fa6cf02a6624b877b49fbb2d6e0597b89dcc0 | CANONICAL |
-| EV-19 | AC-RUN-7 | verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/EV.md | ca929aade | f8b80e3ba2b010fb6d735d78564a5995989d0d5f67b43991f577f0360437e678 | CANONICAL |
+| EV-19 | AC-RUN-7 | verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/EV.md | 313f88905 | f8b80e3ba2b010fb6d735d78564a5995989d0d5f67b43991f577f0360437e678 | CANONICAL |
 
 > 证据树逐文件 sha256 以本表为准；review/handoff 不在 evidence_dir，按卡面/Handoff 引用。
 
