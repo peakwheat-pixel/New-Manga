@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`FEA-11-L-S4-LOCATION-AUTH-REFRESH-1` `ready`（A：location auth 原地刷新；实现交付 `0ebb234bf`，Review 中；[卡](tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md)）。已闭环：`FEA-11-L-S1-REGISTRY-RESILIENCE-1` `done`（A `b56c5a0e6`；r1 approved P0/P1/P2=0）；`FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1` `done`（C-15 v1.5，`ae8c2de07`）；RUN-GRANT-2 线 done。
+- 当前 Task：无活动 Task。已闭环：`FEA-11-L-S4-LOCATION-AUTH-REFRESH-1` `done`（A `0ebb234bf`；AC-LS4 MET；r1 approved P0/P1/P2=0）；`FEA-11-L-S1-REGISTRY-RESILIENCE-1` `done`（A `b56c5a0e6`）；`FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1` `done`（C-15 v1.5 `ae8c2de07`）。下一候选：`FEA-11-L-S1-B-RECOVERY-REAUTH-1` `proposed`（[卡](tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md)；恢复/重授权入口；需 C-16 v1.5 + scope review）；另 2C 长 Run、L-R11 排队。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。

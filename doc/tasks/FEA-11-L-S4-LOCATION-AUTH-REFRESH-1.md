@@ -3,20 +3,20 @@ id: FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
 title: location auth 原地刷新（A：重注册/重授权路径接线；零契约）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-scope-r1.md`（fresh subagent `559226a4-…`，**READY-TO-FREEZE（仅 A 面）**：A 零契约 0/18 pins；B 面需 C-16 v1.5 另卡）；Codex 不可用 → ZCode 故障转移裁决记录（见卡）；DSH 裁决 D-1…D-6（见下）
 suggested_owner: codex
-owner: run-grant-impl
-reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-r1.md`）
+owner: l-s4-impl
+reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review）：r1 `b2276971-3e32-4310-9650-741777ad8644`（**approved** P0=0/P1=0/P2=0/P3=7 非阻断；reviewed_head `0ebb234bf`；证据 head `4e8bda6e1`）；报告 `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-r1.md`
 depends_on:
   - FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1
 base_commit: 55306cb84
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 0ebb234bfd505ed72a351395b56c9a63303d5274
 delivery_head: 0ebb234bfd505ed72a351395b56c9a63303d5274
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
 allowed_paths:
   - doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
@@ -101,3 +101,51 @@ out_of_scope:
 - **门禁实测**（`delivery_head=0ebb234bf`；均真跑）：定向（卡面命令）**26 passed**；全量 `pytest tests` → **3317 passed / 10 skipped**（基线 3305/10，+12 全为本卡测试）；全量 `dotnet test NewManga.sln -c Release` → **1570 / 0 / 92**（基线 1562/0/91；`repo_head=89757f193` 为并发 L-S1 docs-only 提交，`apps/**` 零 diff，增量不归属本卡）；`verify_pins` **18/18**；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)**；API inventory **EXIT=0**；scope **PASS（changed=7 全 ALLOWED；zero-drift 空；`PROTOCOL_MINOR=3`）**；判别性 **7/7 破坏点 RED_AS_EXPECTED + 7/7 字节级恢复 + 恢复后复绿**。跑后 `git checkout -- verification/FEA-09`（`FEA09_STATUS=CLEAN`）。
 - **limitation（保留）**：**L-S4-1** A 修完仍缺触发器——无既有写路径介入时冷启动/周期只读枚举不自动恢复，零交互恢复需 B（C-16 v1.5，1/18 pins，另卡）；**L-S4-2** folder 身份键未修；撤销后不自动放行/不自动重授权；D-2 使整源 skip 在「live grant + 同 identity」时写一次单行条件刷新（显式行为变化）。
 - **未解决/未宣称**：不宣称「只读切片已可恢复」、零交互自愈、L-R1 全修；`tests/fea09/test_import_source.py`/`test_source_sync_operations.py` 为按卡面 allowed 路径**新建**（起点不存在）。
+
+## Review r1 处置（DSH，2026-11-07；append-only）
+
+- 独立 r1 `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-r1.md`（`b2276971-…`；reviewed_head `0ebb234bf`，证据 head `4e8bda6e1`）：**approved，P0=0/P1=0/P2=0/P3=7 非阻断**；单点实现/语义/负例/独立实跑（26、3317/10、pins 18/18、7/7 破坏点）全 PASS。
+- **P3-1（D-2 路径口径）**：整源 skip 在 live grant + 同 identity 时写一次单行条件刷新（含 `import_as_new` 零页 outcome）——**DSH 确认为设计内行为**（D-2 已裁决并显式登记），不改为零页不刷新。
+- **P3-2（folder 身份键负例缺专门用例）**：L-S4-2 已登记（folder 身份键另卡），本卡只保证刷新复用同一算法；接受。
+- **P3-3（撤销 apply 用例未断言 operation 行）**：接受；typed 失败/零写/不放行已断言，operation 行为观测不到差异。
+- **P3-4（import 复用只数 current 行）**：接受；AC-LS4-2 的「不新增 location」已由行数断言覆盖。
+- **P3-5（docstring「Never raises」与 DB 异常语义不符）**：登记 follow-up（维护卡修 docstring；不改行为）。
+- **P3-6（证据清单/scope 日志簿记口径）**：以 `RESOURCE-MANIFEST.json` + EV 逐文件 sha256 为准，Handoff 数字已交叉核对。
+- **P3-7（全量 .NET 不在本卡隔离 head 上跑）**：Lead 已实跑 combined head（`1570/0/92`；一次已知 flaky 隔离复跑 1 passed），不作为本卡阻断。
+- 不改变 AC-LS4-1…8 MET 判定与 r1 approved 结论。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/changed-files.txt | 4e8bda6e1 | 0f4b55dd0fac464f617be575c6eec8a5d6fc97144388dd852c97bf89ee1133a7 | CANONICAL |
+| EV-02 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md | 4e8bda6e1 | db12eb842509e8178e1682871f052325f65b2cd0f662bfaf2b433dcac738591b | CANONICAL |
+| EV-03 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/discrimination.log | 4e8bda6e1 | f287dbe155d7da13074b1e185c36a24202719df01147cb72a841811032ac424b | CANONICAL |
+| EV-04 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/feature.log | 4e8bda6e1 | 274e3b8bc5ebcbab242e4f60d50ab33932d05b8b917da9a5e4680dcd68b203b3 | CANONICAL |
+| EV-05 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-dotnet.log | 4e8bda6e1 | cdfba8d5daa7adca1e992702462d30bf56fdbb4a921f69b0e52ccef0c4710be2 | CANONICAL |
+| EV-06 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-pytest.log | 4e8bda6e1 | ebeedde979dd85375229db622cb95fc602b171a884757d381634327db897380b | CANONICAL |
+| EV-07 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log | 4e8bda6e1 | 5ba7b13c4ed78ec4f9807fb53cc8f620c66806c64134d9c57215e1688a698553 | CANONICAL |
+| EV-08 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json | 4e8bda6e1 | 79f9db7694305581f3846b1c82aef91d68b05d3b61f6283e2e190d87a78e38b5 | CANONICAL |
+| EV-09 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log | 4e8bda6e1 | f624c0021cd2a1c05920f043be5c4962c338b5322b50f83e821360a93e0315c1 | CANONICAL |
+| EV-10 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py | 4e8bda6e1 | adaf714d23c336aff8b617b2d60b3af2db78fcd8af3e784ddcb7e43d0cefca52 | CANONICAL |
+| EV-11 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py | 4e8bda6e1 | 20a107801e094826773a848629aa18c00d855e7a6114f12a04c3d971f534297d | CANONICAL |
+| EV-12 | AC-LS4-6/7 | verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py | 4e8bda6e1 | f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5 | CANONICAL |
+
+> 证据树逐文件 sha256 以本表为准；Review r1 独立复算 11 个证据文件与 7 个交付文件一致。
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改 Core Python 源/测试 + 卡/Handoff/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/` 保留（日志/备份，无独有产品数据） |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；`delivery_head`/`integration_commit` = `0ebb234bfd505ed72a351395b56c9a63303d5274`（实现 `6dd36aad7` + 测试 `0ebb234bf`；docs/evidence `9ef295b74`/`8050a62ae`/`54ed1b5f5`/`3f37b74ee`/`4e8bda6e1`）。
+- **AC 判定**：AC-LS4-1…AC-LS4-8 **全 MET**；无 PARTIAL/BLOCKED（AC-LS4-4 folder 子项带 P3 附注）。
+- **Review 处置**：独立 r1 **approved（P0=0/P1=0/P2=0/P3=7 非阻断）**；P3 逐项登记（见上）。
+- **门禁数字（before → after；Lead 实测）**：定向 **26 passed**；全量 pytest **3317/10**（基线 3305/10，+12 本卡测试）；全量 .NET **1570/0/92**（combined head；Lead combined 曾命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；pins **18/18**（C15 v1.5）；check（默认+`-TaskPath`）PASS；API PASS；scope **changed=21（7 代码/测试）全 ALLOWED**、禁止面零 diff、`CORE_PROTOCOL_MINOR=3`；判别性 **7/7**；全量后 `git checkout -- verification/FEA-09`。
+- **limitations（保留）**：**L-S4-1**（缺触发器；零交互恢复需 B，C-16 v1.5）；**L-S4-2**（folder 身份键）；撤销后不刷新/不自动放行；**不宣称「只读切片已可恢复」**；L-R1 未全修。
+- **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根 PRESERVE_REFERENCED。
+- **指针清理**：STATUS/PLAN 更新；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
