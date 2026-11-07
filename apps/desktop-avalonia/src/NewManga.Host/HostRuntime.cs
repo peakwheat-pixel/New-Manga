@@ -1733,7 +1733,15 @@ public sealed record RunSourceRangeResolution(
 /// SKIPPED — the Core stays the fail-closed authority for the target pages (no silent allow, no Host
 /// side block). From 2A on the minting version is the Core-authoritative
 /// <c>ScanSourceSync</c> version held by <see cref="SourceIdentityCache"/>; a source without a live
-/// identity is returned as COLD and is never minted with the old constant "1" (L-G15).</summary>
+/// identity is returned as COLD and is never minted with the old constant "1" (L-G15).
+///
+/// FEA-11-L-S4-B-2 (AC-RUN-1/2/3): the authorization SOURCE of one target follows its shape. An
+/// ENUMERATED target is authorized by its own live <c>(registry_id, generation)</c> entry
+/// (<see cref="HostSourceScanExecutor.SelectEnumeratedEntry"/>); a same-path revoked sibling row is
+/// not the target's registry and never vetoes it. A non-enumerated target keeps the unchanged
+/// path-exact/containment resolver (<see cref="HostSourceScanExecutor.ResolveRegistryEntry"/>).
+/// Either way an unprovable authorization is only counted as <see cref="RunSourceRangeResolution.Unresolved"/>
+/// (best-effort; never thrown), and the mint re-verifies live/generation/root identity.</summary>
 public static class RunSourceRange
 {
     public static RunSourceRangeResolution Resolve(
@@ -1782,7 +1790,32 @@ public static class RunSourceRange
                 unresolved++;
                 continue;
             }
-            var entry = HostSourceScanExecutor.ResolveRegistryEntry(registryEntries, target.Path);
+            SourceAuthorization? entry;
+            if (target.IsEnumerated)
+            {
+                // FEA-11-L-S4-B-2 (AC-RUN-1/2/5): an enumerated target is authorized by its OWN live
+                // (registry_id, generation) entry — the exact resolution L-S4-B-1 proved for the scan
+                // execution face. A sibling REVOKED row that happens to carry the same path no longer
+                // vetoes the target's own live authorization. The verdict is deliberately discarded:
+                // the Run face has no skipped/frame vocabulary, every refusal is simply "unresolved"
+                // (best-effort; the mint re-verifies live/generation/root identity in Authorize). A
+                // Host-side resolution failure is at most "unresolved", NEVER a thrown exception into
+                // the best-effort authorizer (R-5).
+                try
+                {
+                    entry = HostSourceScanExecutor.SelectEnumeratedEntry(registryEntries, target, out _);
+                }
+                catch (Exception error) when (error is not OutOfMemoryException)
+                {
+                    entry = null;
+                }
+            }
+            else
+            {
+                // AC-RUN-3: non-enumerated (SCAN-1 in-memory) targets keep the unchanged path resolver
+                // (exact-first / revoked-exact fail-closed / containment fallback).
+                entry = HostSourceScanExecutor.ResolveRegistryEntry(registryEntries, target.Path);
+            }
             if (entry is null)
             {
                 unresolved++;
