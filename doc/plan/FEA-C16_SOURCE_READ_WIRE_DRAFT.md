@@ -1,7 +1,7 @@
 # FEA-C16 Source 读取与导入 wire 协议（草案 v7，处置契约复核 r6）
 
-状态：**FROZEN v1.4（2026-11-07 重冻；v1.0 2026-11-03、v1.1 2026-11-04、v1.3 2026-11-06）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C16](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；v1.4 独立 byte-level 复核见载体；v1.1/v1.3 历史复核见冻结记录）
-日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-06（v1.3 UNFREEZE）；2026-11-07（v1.4 UNFREEZE）
+状态：**FROZEN v1.5（2026-11-07 重冻；v1.0 2026-11-03、v1.1 2026-11-04、v1.3 2026-11-06、v1.4 2026-11-07）**（载体 [CONTRACT-UNFREEZE-2026-11-07-C16-V15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md)；冻结记录 [FEA-CONTRACT-FROZEN-C16](FEA-CONTRACT-FROZEN-C16.md)；v1.4 独立 byte-level 复核见载体；v1.1/v1.3 历史复核见冻结记录）
+日期：2026-11-03（v1.0）；2026-11-04（v1.1 UNFREEZE）；2026-11-06（v1.3 UNFREEZE）；2026-11-07（v1.4 UNFREEZE）；2026-11-07（v1.5 UNFREEZE）
 作者：DSH（Lead / Architect / Integrator）
 依据：C-06 v1.1（UNFREEZE，见 `doc/reviews/CONTRACT-UNFREEZE-2026-11-03.md`）、C-15（同批）、C-01b/C-05/C-07/C-14、AD-003、提案 §15.4/§16.4；[契约复核 r1](../reviews/FEA-09-PREREQ-1-r1.md)（R1-002/R1-003/R1-007/R1-008/R1-009/R1-013）；v1.1 依据实现 Review r1 R1-I005 + UNFREEZE r15 approved（`../reviews/FEA-09-UNFREEZE-r15-review.md`）。
 
@@ -20,6 +20,7 @@
 - **能力协商**：Core `core.ping.capabilities` 追加 `source.read/1`（保留 `library.list_books`）。**按操作检查**：Host dispatch 任何 source 命令前校验该能力，缺失 → `CORE_CAPABILITY_MISSING`（拒绝该操作；**不**沿用 `StartupSelfCheck` 的 Degraded-but-writable 放行）。旧 Host 不认识新命令 → 不发送；旧 Core → fail-closed。
 - **v1.1 能力追加**：`source.resolve-secret/1`——加密 referenced 页 resolve 的 fresh-grant 密码通道（§3.1）。Host 在创建 secret 文件前探测；缺失/探测异常 → `CORE_CAPABILITY_MISSING`，**不创建**文件、不发送；旧 Core 无该能力 → Host 拒绝加密 resolve（加密页读 typed `SOURCE_PASSWORD_REQUIRED`）。能力缺失不得靠“发送后看结果”判断。
 - **v1.3 能力追加**：`source.read.run/1`——Run dispatch 前的授权建立命令（§2.4）。Host 在铸造 Run 用 grant 前探测；缺失 → **不铸造、不绑定**，按现状 dispatch（旧 Core 行为不变；referenced Run 仍 typed 失败）。能力缺失不得靠“发送后看结果”判断。
+- **v1.5 能力追加**：`source.reattest/1`——重授权后的**条件单行 re-attest** 命令（§2.5）。Host 在 B1 显式重授权成功后探测；缺失/探测异常 → 不发送、行为与现状一致（target 仍 typed skip；不建文件、不铸 grant）。能力缺失不得靠“发送后看结果”判断。
 - **即时撤销通道**：Host 可向其已连接的 Core 推送 **`RevokeSourceReadGrant`**（Host→Core 的新增 host-control 命令）；Host 只有在收到 Core ACK 后才向调用方返回撤销成功。Core 检测 stdin EOF/transport 失败 → 全部 source grant 立即无效（fail-closed）。
 
 ## 1. Registry 命令（UI→Host；FEA-09 实现 Host handler，UI 接线归 FEA-09-UI-1）
@@ -27,10 +28,11 @@
 | 命令 | 请求 | 响应 |
 |---|---|---|
 | `source_register_root` | `{locator, roots[]}`（`roots[]` 规范化绝对路径、互不包含、存在、无 reparse 越根） | `{registry_id, generation}` |
-| `source_list_roots` | `{}` | `{entries:[{registry_id, locator, roots[], generation, created_at, last_used_at, revoked}]}` |
+| `source_list_roots` | `{}` | `{entries:[{registry_id, locator, roots[], roots_available[], generation, created_at, last_used_at, revoked}]}`（`roots_available` 为 v1.5 additive：与 `roots[]` 同序同长，仅表示该根**当前**可用性；旧读者可忽略） |
 | `source_revoke_root` | `{registry_id}` | `{revoked:true, generation}`（仅在 Host 持久化 + Core ACK 后返回成功） |
 | `source_reset_registry` | `{confirm:true}` | `{reset:true, quarantine_path}`（把损坏 Registry 移入 quarantine 后创建空 Registry；用户显式操作） |
 
+- **v1.5 additive（`roots_available`）**：`source_list_roots` 响应新增只读字段 `roots_available: [bool]`（与 `roots[]` 同序同长；缺失/不可读/身份不符/单根探测异常为 `false`（探测异常不得抛出、不得使整命令失败）；每根至多探测一次、不跨调用缓存、探测在快照后锁外进行；文件级损坏仍整命令 `SOURCE_REGISTRY_UNAVAILABLE`，不返回部分数组）；该字段**不改变**既有字段形状、不新增错误码/命令/能力，也不代表授权或恢复动作；实现可延后（无消费者前不接线），但字段随本版本冻结。
 - FEA-09 **不新增** `IHostController` 方法（C-07 冻结面不变）；UI-1 若需端口方法，走 **C-07 UNFREEZE** 载体并记录方法数/diff。
 - 错误码：`SOURCE_ACCESS_DENIED`（越根/reparse/不存在）、`SOURCE_REGISTRY_UNAVAILABLE`、`SOURCE_REGISTRY_BUSY`（retryable）、`INVALID_REQUEST`。
 
@@ -89,6 +91,21 @@
 - **原子性与副作用（冻结）**：任一目标页不可授权 → **整体 typed `SOURCE_ACCESS_DENIED`**（`details={"refused_pages": n}`）且**零映射写入**（不返回部分成功、`bound_pages` 不适用）；全部可授权 → 写入与 `bind_imported_entry` 同构的**进程内**映射 `grant_id → {source_id, version_id, entry_ids}` 并返回 `bound_pages`。**零 DB 写、不建 plan/apply/journal、不发布资源、不延长 TTL、不撤销/复活 grant**。幂等：同请求重复执行返回同一结果（集合语义）。
 - **错误码**：复用 §6 闭集，不新增；脱敏沿用 §7。
 - **兼容**：旧 Core 无本命令 → `core.ping` 无 `source.read.run/1`；Host 不铸造、不发送。本命令**不改** Run 命令请求/响应字节、`PROTOCOL_MINOR`、schema/迁移/依赖。publication gate 的两读面既有差异（L-R11，`core_assembly.read_gate` vs resolve 面 `_assert_source_sync_gate`）不属于本命令语义，本命令不引入第三套 gate 判定。
+
+### 2.5 `ReattestSourceLocation`（Host→Core，host-control envelope；v1.5 新增）
+
+- **用途（冻结）**：B1 显式「重新授权」成功后，把 Core 侧 `source_locations` 当前行的 **`registry_id/authorization_generation` 两列**（`last_verified_at` 保持原值、不刷新审计时间）**条件单行**更新为新授权条目，使冷启动/下一次 refresh 枚举重新命中该源。**本命令不是恢复动作、不是授权决定**：它只传播用户已完成显式操作的事实；不得被解释为「自动恢复/自动重新授权」。
+- **请求（closed shape，恰 2 键）**：
+  ```json
+  {"source_id": "<Core source id>", "grant_id": "<source-read grant id>"}
+  ```
+  无 `command`/`scope`（源级操作，不是页选择）；缺键/多键/类型错 → `INVALID_REQUEST`。
+- **Core 侧校验（本命令边界，顺序冻结）**：①host-control envelope（host-only session；application 面拒绝，沿用既有 host-only/session 守卫错误码，**不新增码**）；②closed shape（恰 2 键；无路径/无 registry_id/无 generation；缺失/多余/类型错 → `INVALID_REQUEST`）；③`grant_id` live、未过期、未撤销（`SOURCE_GRANT_EXPIRED`/`SOURCE_GRANT_REVOKED`），且 `grant.scope.source_id == source_id`（`SOURCE_ACCESS_DENIED`）；④Core 当前 `source_locations` 行的四键物理身份（`content_digest/volume_serial/file_id/size_bytes`）与 grant facts 逐项相等（`SOURCE_ACCESS_DENIED`）；任一不满足 → typed 拒绝、**零写**。
+- **Host 侧前置义务（本命令不校验、不依赖；由 L-S4-B 实现卡 AC 保证）**：存在**唯一** live 非撤销条目、其**恰 1 根**、其根路径 normalize 后与 Core location 指向同一物理文件、`live.CreatedAt > old.RevokedAt`、kind 非 folder、每个 grant/每轮 refresh 至多一次；任一不满足 → Host **不发送**。Core `source_locations` 无 path 列（`schema.py:629-646`），故「路径 normalize 相等」只能在 Host 侧判定。
+- **动作**：仅把 `source_locations` 当前行的 **`registry_id/authorization_generation`** 原地更新为 live grant 载荷中的稳定值（`grant.registry_id` / `grant.generation`；均已在 `RegisterSourceReadGrant` 签名载荷内，**不新增 wire 字段**）；**`last_verified_at` 保持当前行原值**（Core 在 UPDATE 前读取原值并原样回写；本命令**不刷新审计时间**、不取 `now()`、不做时钟推断）。复用与 `FEA-11-L-S4-LOCATION-AUTH-REFRESH-1` 同一单点 SQL（不得新增第二份；其 `(registry_id <> ? OR authorization_generation <= ?)` 与相等分支谓词保证：仅当 registry/generation 实际变化时更新，同值重复调用 `rowcount=0`）。**不新增 location 行**、不改 `source_id/content_digest/is_current/binding`、不改其它列。
+- **响应（closed shape）**：`{"source_id": "...", "updated": 0|1, "version": "<current source version id>"}`（`version` 为 Core 当前 source version id，只读诊断用，不参与授权/不落库）；`updated` 当且仅当 registry/generation 实际变化为 1；同 grant 重复调用 → `updated:0` 且零写（幂等）；generation 单调（同 registry 不倒退，跨 registry 允许 1）。
+- **错误**：复用 §6 既有闭集——host-only/session 守卫沿用既有码；形状错 `INVALID_REQUEST`；grant 状态 `SOURCE_GRANT_EXPIRED`/`SOURCE_GRANT_REVOKED`；身份/条目 `SOURCE_ACCESS_DENIED`；registry `SOURCE_REGISTRY_UNAVAILABLE`/`SOURCE_REGISTRY_BUSY`；**不新增错误码**；拒绝/无匹配零写。
+- **红线**：不自动重新授权/不自动重建 identity/撤销后不放行/不扩授权面；folder 源排除（L-S4-2）；`source_reset_registry` 后无旧条目可桥接（需重导入）。
 
 ## 3. 密码短期安全引用（加密源）
 
@@ -192,6 +209,8 @@
 
 消息不得含绝对路径/密码/内部结构；`details` 只允许计数/枚举/registry_id/operation_id。
 
+**v1.5 补充**：`ReattestSourceLocation`（§2.5）复用上表既有码与 category/retryable，不新增码；closed-shape 错误 `INVALID_REQUEST`、host-only/session 守卫沿用既有码、身份/条目不符 `SOURCE_ACCESS_DENIED`、grant 状态 `SOURCE_GRANT_REVOKED`/`SOURCE_GRANT_EXPIRED`、registry 状态 `SOURCE_REGISTRY_UNAVAILABLE`/`SOURCE_REGISTRY_BUSY`，零写。
+
 **v1.1 补充**：resolve 密码通道复用上表既有码与 category/retryable，不新增码；`SOURCE_PASSWORD_REQUIRED` 同时用于“无 Secret-G/secret_ref 过期/路径对象非法”，`SOURCE_PASSWORD_INVALID` 用于 DPAPI/口令错误与冷却；撤销保留 `SOURCE_GRANT_REVOKED`（不得改为 DENIED），多义/重放用 `SOURCE_ACCESS_DENIED`。
 
 ## 7. 安全与证据约束（含 WireLog 抑制位置）
@@ -222,7 +241,7 @@
 
 ## 10. 冻结条件与变更记录
 
-冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节；⑤v1.3：C-06 v1.2 与本契约 v1.3 同批独立 byte-level 复核 approved（P0/P1=0），Run wire/错误闭集/其他 16 pins 零改动；⑥v1.4：容器多成员 entry 语义（§2）经独立 byte-level 复核 approved（P0/P1=0），C-06/C-17 与其余 17 pins 零改动，wire 字段/命令集/TTL/撤销语义零改动。
+冻结条件：①C-05 v1.2/C-06 v1.1/C-15 v1.1 UNFREEZE 与本契约 v1.1 同批独立复核 approved（P0/P1=0）；②方向/撤销/密码/WireLog 抑制口径可执行；③`check.ps1`/`verify_pins` 门禁；④冻结记录含 §1A pin 与 §1B 复核字节；⑤v1.3：C-06 v1.2 与本契约 v1.3 同批独立 byte-level 复核 approved（P0/P1=0），Run wire/错误闭集/其他 16 pins 零改动；⑥v1.4：容器多成员 entry 语义（§2）经独立 byte-level 复核 approved（P0/P1=0），C-06/C-17 与其余 17 pins 零改动，wire 字段/命令集/TTL/撤销语义零改动。⑦v1.5：§0 能力 `source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 approved（P0/P1=0），C-15/C-17/C-06/C-07/M2-C1 与其余 17 pins 零改动，无新错误码/无 wire minor/无 schema/依赖变更。
 
 | 日期 | 变更 | 记录 |
 |---|---|---|
@@ -231,4 +250,4 @@
 | 2026-11-04 | **v1.1 UNFREEZE**：§0 增 `source.resolve-secret/1` 能力门禁；§3.1 增 resolve 加密源 fresh-grant 密码通道（**resolve 请求字节不变**；一次性/路径/清理/零泄漏/撤销码映射）；§6 补错误码复用说明。依据 R1-I005 + UNFREEZE r15 approved；已提交字节复核后重冻并重算 pin | DSH；`doc/reviews/FEA-09-UNFREEZE-r15-review.md` |
 | 2026-11-06 | **v1.3 UNFREEZE**：§0 增 `source.read.run/1` 能力；新增 §2.4 `AuthorizeSourceReadForRun`（Run 前建立 grant→binding 读授权；closed shape；fail-closed；零 DB 写；幂等）；**Run wire/错误闭集/TTL/撤销语义零改动**。载体 [CONTRACT-UNFREEZE-2026-11-06-C06-C16](../reviews/CONTRACT-UNFREEZE-2026-11-06-C06-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-1-PREREQ-1 |
 | 2026-11-07 | **v1.4 UNFREEZE**：§2 增「容器源多成员 entry」明文（zip/cbz/pdf 的 `entries[]` 1..N；同容器 path、成员 locator/ordinal 来自 Core 权威、facts=容器身份；逐项校验、任一项不符整 grant typed 拒绝、不截断；匹配 OR+facts、无路径回退）；**wire 字段/命令集/TTL/撤销/错误闭集/Run wire 零改动**；C-06/C-17 与其余 17 pins 零改动。载体 [CONTRACT-UNFREEZE-2026-11-07-C16](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-RUN-GRANT-2B-PREREQ-1 |
-
+| 2026-11-07 | **v1.5 UNFREEZE**：§0 增 `source.reattest/1`；新增 §2.5 `ReattestSourceLocation`（条件单行 re-attest；请求 `{source_id, grant_id}`；live grant 证明同一 source+四键身份；只写 `registry_id/authorization_generation` 两列、`last_verified_at` 保持原值、复用 A 卡唯一 SQL；拒绝/无匹配零写；幂等/单调；folder 排除）；§1 `source_list_roots` 增 `roots_available[]` additive（只读投影；实现延后）；**C-15/C-17/C-06/C-07/M2-C1 零字节；无新错误码/wire minor/schema/依赖**。载体 [CONTRACT-UNFREEZE-2026-11-07-C16-V15](../reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md)；独立 byte-level 复核后重冻并重算 pin | DSH；FEA-11-L-S4-B-PREREQ-1 |
