@@ -1,0 +1,5 @@
+ doc/REBASELINE_PLAN.md                      |  4 +--
+ doc/TASK_LEDGER.md                          | 11 ++++----
+ doc/plan/FEA-CONTRACT-FROZEN-C04b.md        | 41 +++++++++++++++++++++++++++--
+ doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md | 14 ++++++++++
+ 4 files changed, 61 insertions(+), 9 deletions(-)

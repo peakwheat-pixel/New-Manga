@@ -31,6 +31,27 @@
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
+## 1C. v1.1 UNFREEZE 复核报告完整 sha256（R-6 闭合；2026-11-07 实测）
+
+> 本表闭合 §4A **R-6**（原 §1B 只有 r1–r3 路径、r4–r7 只有 8 位前缀）。**§1B 原文保留不改**（历史行文），
+> 完整值以本表为准。路径为仓外 workspace（`G:\CODEX\New Manga.workspace\FEA-12\`），sha256 由
+> `Get-FileHash -Algorithm SHA256` 实测（base `28a2826af`）。
+
+| 轮次 | 报告（仓外路径） | 大小 | sha256 | reviewer / session |
+|---|---|---|---|---|
+| r1 | `unfreeze-review\CONTRACT-UNFREEZE-2026-11-05-review.md` | 48,399 B | `600da6aa08d4834733eef947c11913c08ed6506086456d881997529372796a44` | session `004eb6b3-b9cf-431b-8614-d6cd1858c316` |
+| r2 | `unfreeze-review-r2\CONTRACT-UNFREEZE-2026-11-05-review-r2.md` | 87,408 B | `2eae498f06ef455c5c3a1e963e3003f0ab917f863158e7dfe41767b479432388` | session 未在报告内暴露 |
+| r3 | `unfreeze-final-review\CONTRACT-UNFREEZE-2026-11-05-final-review.md` | 42,856 B | `1b2fa41ec10c8dac7e51203b4d2a1d51f69de042dbdae0296d0fb6632d6f20aa` | session `d3c34714-e1f7-478d-a06d-141a4153b1c6` |
+| r4 | `unfreeze-final-review-r2\...-final-review-r4.md` | 33,127 B | `b6bd26937b92c1c799585838f1bec6787cdcbf456a6371fc76c9f823906419d6` | session `79b03393…` |
+| r5 | `unfreeze-final-review-r3\...-final-review-r5.md` | 34,683 B | `02b30b5273ffea20da62490509b89d06efc48f1b79dd0a4cb650122ba6bc6ee4` | session `6a22e682…` |
+| r6 | `unfreeze-final-review-r4\...-final-review-r6.md` | 30,007 B | `924847b91f4d819a459c10dca9bb7daa0bafff6a7511c8128d24eef32fa7e066` | session `1ece323d…` |
+| r7 | `unfreeze-final-review-r5\...-final-review-r7.md` | 17,688 B | `8af2d4f182163215a883f6908b1b17564ced7e470dab29ef719c41131d046424` | session `14e8baef…` |
+| 辅助 | `unfreeze-final-review\FINAL-CONFIRM.md` | 1,269 B | `d687ede7c4ab326985bd52de38239a4d52807446dc1c67de910a175f2452a010` | - |
+
+- 上述 r4–r7 完整值与 §1B 已记 8 位前缀一致（`b6bd2693…`/`02b30b52…`/`924847b9…`/`8af2d4f1…`）；
+- r2 报告未暴露 reviewer session，如实标注「未在报告内暴露」，不以推测填充；
+- 报告字节未改动（只读实测）；本表不改变任何 pin（pin 行在 §1 `:15`，仍 `acc8f0e0…`）。
+
 ## 2. 冻结条件逐条核验
 
 | # | C-04b §5 条件 | 状态 | 证据 |
@@ -58,7 +79,7 @@
 
 - **修订内容**（详见 C-04b §0 与载体）：current 全量披露/绑定（`currentRegionRevisionIds`/`currentArtifactRevisionIds`，canonical v2）；retry 保序 pending 子集 + manifest JSON 持久化 + 两级强校验 + mixed 拒绝；preview minor 保持 11。
 - **触发与复现**：Codex 裁决 `doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`；复现证据 `G:\CODEX\New Manga.workspace\FEA-11\codex-adjudication\run-43e38c334dbb48439f82519792fbb34e\current-pointer-probe.json`（非首个 current 变化旧 digest 仍删除成功）与 `FAKE_DIGEST` 混合 retry 删除存活书。
-- **复核**：五轮复核均 CHANGES（r1/r2/r3/r4/r5，见 §1B），无 P0 残留。r3 P0 与 r4/r5 的 P1/P2 处置：
+- **复核**：r1–r6 均 CHANGES、r7 窄面 APPROVE（完整报告 sha 见 §1C），无 P0 残留。r3 P0 与 r4/r5 的 P1/P2 处置：
   - **P0-1（单条形状）**：C-04b/M2-C1 已按形状分支——单条 `inventory_digest` = 该 book 逐书 digest（首次=当前重算；retry=manifest 值）；批量才用集合级 digest（首次=当前重算集合；retry=manifest `original_collection_digest`）。
   - **P0-2（exact-match vs retry 子集）**：校验顺序行已重写为形状/retry 分支：首次确认批量键集合与顺序必须与预览 `book_ids` 完全一致；retry 必须为**保序 pending 子集**，两者不再冲突。
   - P1-1（r3）→ r4 指出未真正改 → r5 指出仍残留 → 本轮已逐处落实：M2-C1 `:136` rev 2.14、`:922/:930/:934` 全部改节名引用（含代码块内 `bookIds` 注释）、§5.13 标题 rev 2.14；r6 逐行验证。
@@ -77,10 +98,25 @@
 
 ## 4A. 已知限制（冻结后发现）
 
-> **v1.1 residual（r6 复核登记，不阻断重冻，转后续卡）**：①artifact 成员谓词补 `media_artifacts.book_id=本书`；②C-04b §2.0「单一字段」措辞；③载体 A1 separate/detached 与代表值排序；④C-04b §1 表 M2-C1 行号指针（v1.0 历史引用）；⑤首确认「预览 book_ids」与单条 `inventoryDigests[book_id]` 来源措辞；⑥r1–r3 报告 sha 记录；⑦M2-C1 banner/history 批量限定；⑧单条 manifest 批次字段。以上不改变 v1.1 保护语义，登记为后续文档修订。
+> **v1.1 residual 8 项（r6 复核登记，不阻断重冻）**：本表为 **docs-only 记录收口**（`FEA-12-CORE-C04B-RESIDUAL-1`，
+> 0 pin）。**C-04b / M2-C1 契约字节未改**：C-04b 仍 `acc8f0e0…`、M2-C1 仍 `701093b5…`（`verify_pins` 18/18）。
+> 位置行号以 `base_commit=28a2826af` 为准；「需 UNFREEZE」= 真正把修复写进冻结字节所需的动作（**本卡不做**）。
+> 8 项中仅 **R-6 完全闭合**（见 §1C）；R-3/R-4 的 0 pin 部分已在载体 §5F 登记；其余契约正文**未改**。
+
+| ID | residual | 位置（base `28a2826af`） | 当前文本/事实摘要 | 问题 | 性质 | 影响 | 现行权威读法 | 需 UNFREEZE |
+|---|---|---|---|---|---|---|---|---|
+| R-1 | artifact 成员谓词 | C-04b `:18`、`:53`；M2-C1 `:953-954`；代码 `library.py:1178-1190`、`:1920-1926`、`:1218-1225` | 契约「artifact 谓词=`current_revision_id` 非空」未写 `media_artifacts.book_id=本书`；preview 实现用 page/chapter join，删除路径用 `book_id` | 损坏行（`media_artifacts.book_id` 与 page 所属书不一致）下保护集合可能多/少绑定 | 契约措辞 + 代码行为 | 正常数据无影响；损坏 DB 偏差 | 见 **L-3**；**未修** | C-04b 1/18 + M2-C1 rev + 独立实现卡 |
+| R-2 | §2.0「单一字段」 | C-04b `:44` | 「**不得**用单一 `inventory_digest` 字段同时服务两种形状」 | 与 v1.1 §2.0 表 `:41`/`:42` 与 §2.2 `:64`/`:69` 的形状分支字面冲突（v1.0 遗留） | 契约正文（C-04b） | 误读 → fail-closed 拒绝，非静默数据风险 | **以 §2.2 形状分支为准**：单条=逐书值；批量=集合级值 + 逐书 map | C-04b 1/18 |
+| R-3 | A1 separate/detached + representative 排序 | 载体 `:16`、`:18`；C-04b `:18`；M2-C1 `:953`；实现 `core_service.py:1904-1930` | `separate/detached` 在契约中**无定义**；「首个 artifact current」未定义排序 | 未来实现者可能误加过滤；代表值来源不明 | 载体 0 pin + 契约正文措辞 | 纯展示字段，不进 digest | `separate/detached` **不是**本契约定义状态、现行不据此裁剪；representative = 无可见 region 时取 `currentArtifactRevisionIds` **字典序最小项**，仅展示、不进 digest | 载体 0；两契约需 C-04b 1/18 + M2-C1 rev |
+| R-4 | §1 表 M2-C1 行号指针 | C-04b `:28-32` | `M2-C1 §5.11.1 :685`、`:691-695`、`:733`、`:748`、`:745-760`、`:776-802` | 行号为 v1.0 时点；现行 M2-C1 已漂移（§5.11.1 在 `:746`、§5.11.2 `:823`、§5.11.3 `:838`、§5.11.5 `:875`） | 契约 provenance 元数据 | 审计者可能跳错章节；不影响运行 | **以节名为准**（§5.11.1/§5.11.2/§5.11.3/§5.11.5）；现行行号为 v1.0 历史 | C-04b 1/18 |
+| R-5 | 首确认「预览 book_ids」与单条来源 | C-04b `:64`、`:69`；M2-C1 `:814`、`:815`、`:819` | 「与预览 `book_ids` 完全一致」；单条 digest 来源未写；全文 `inventoryDigests[` **零命中** | 预览零副作用不缓存 → 实际校验对象是**请求** `book_ids`；单条应取预览返回的 `inventoryDigests[bookId]` | 契约正文 | 误用集合值 → `BOOK_DELETE_STALE_PREVIEW`/`INVALID_REQUEST`（fail-closed） | 首确认「预览 `book_ids`」读作 **请求 `book_ids`**（预览不缓存；digest 绑定保证一致）；单条取 `inventoryDigests[bookId]`，集合级 `inventoryDigest` 单条**不得**使用 | C-04b 1/18 + M2-C1 rev |
+| R-6 | r1–r3 报告 sha 未记 | 冻结记录 §1B（原 `:27`） | r1/r2/r3 只有路径与结论、无 sha256；r4–r7 只有 8 位前缀 | 重冻证据链不完整 | 纯记录（0 pin） | 审计可追溯性 | **已闭合**：r1–r7 完整 sha256 见 **§1C** | 否 |
+| R-7 | M2-C1 banner/history 批量限定 | M2-C1 `:18`、`:30` | banner/Revision history 写 retry 规则**未限定「批量」** | 单条读者可能误用集合级/`original_collection_digest` | M2-C1 正文（非规范段） | 误读 → fail-closed 拒绝 | banner/history 的 retry 描述仅适用于**批量**；单条以 §5.11.1a `:815`/`:819` 为准 | M2-C1 rev（**0/18 机械 pin**，需手工记录 sha） |
+| R-8 | 单条 manifest 批次字段 | C-04b `:21`、`:71`；实现 `core_service.py:2450-2454`；测试 `test_core_delete_commands.py:1341-1344` | 未区分单条/批量；单条 `original_book_ids`/`original_collection_digest` 取值未写 | 未来实现可能选 null/空数组 | 契约正文（C-04b） | 当前未发布、测试已钉住，无兼容问题 | 单条现行实现：`batch_id`=uuidv4、`original_book_ids=[book_id]`、`original_collection_digest`=对 `[book_id]` 的集合级值；单条 retry **仅校验** `inventory_digest`；契约**未写死** | C-04b 1/18 |
 
 - **L-1（v1.0 原始记录，保留）**：book 级聚合 digest 对「计数不变而分布变」（A 区加锁 + B 区解锁）不敏感；**region 级指针**不进 book 级 `currentRevisionId`。这是 `inventory_digest` 的粒度局限，**本契约冻结时已知**。C-13 的 `protectionDigest` 是**编辑层**的逐 Region 摘要，不替代本契约的 book 级 digest，也不接入删除 preflight。若删除线实现需要逐 Region 检测，须走本契约的 **UNFREEZE** + 协议扩展。
 - **L-2（v1.1 状态更新）**：v1.1 已把**全部 region/artifact 的 current 指针**纳入 canonical v2（消除 L-1 的「region 级指针不进 digest」部分），但 **lock/pin 的逐 region 分布**仍以聚合计数表达，分布变化不进 digest；若删除线需要逐 Region 锁分布绑定，须再次 UNFREEZE（逐 region lock 数组）。v1.1 不声称消除该剩余限制。
+- **L-3（2026-11-07，R-1 的 code limitation；源自 `FEA-12-CORE-r3.md:134`，scope review `FEA-12-CORE-C04B-RESIDUAL-scope-r1` 复核）**：`src/infrastructure/sqlite/library.py:1178-1190` 的 `list_book_artifact_current_pointers` 用 **page/chapter join** 取 artifact（`ma JOIN pages p ... JOIN chapters c ... WHERE c.book_id = ?`），**没有** `media_artifacts.book_id = 本书`；而删除路径（`:1920-1926`）与 `list_book_artifact_revision_ids`（`:1218-1225`）使用 `book_id`。当损坏行使 `media_artifacts.book_id` 与其 `page_id` 所属书不一致时，preview 的 current 保护集合与删除集合可能不一致（对某书**多绑定**/对另一书**少绑定**）。**正常数据无影响；未修**；修复需 C-04b+M2-C1 UNFREEZE（补成员谓词）+ 独立实现卡（代码 + 跨书损坏行测试）；**不得**在任何记录写「已对齐/已修复」。
 
 
 
@@ -90,6 +126,7 @@
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |
 | 2026-11-05 | **v1.1 UNFREEZE 重冻（r7 APPROVE）**：current 全量披露/绑定（canonical v2）、retry 保序 pending 子集 + manifest + 两级强校验 + mixed 拒绝；单条/批量形状分支（r3 P0-1/P0-2）；§3.2/§5/§11/§12 同步；sha 与最终字节一致（§1 v1.1 行 = C-04b `acc8f0e0…`；r7 报告 `8af2d4f1…`；UNFREEZE commit `fc9833479`）；依据 Codex 裁决 OVERTURN 与用户授权（ADJ 例外，见 §4B） | DSH |
+| 2026-11-07 | **docs-only residual 收口（0 pin；`FEA-12-CORE-C04B-RESIDUAL-1`）**：§4A 8 项扩为 `R-1…R-8` 表（位置/性质/影响/权威读法/是否需 UNFREEZE）+ 新增 **L-3**（R-1 artifact 成员谓词代码偏差，未修）；新增 §1C（r1–r7 完整 sha256，闭合 R-6）；§4B「五轮」→「r1–r6 CHANGES + r7 APPROVE」（相邻精度项修正，不计入 8 项 AC）；载体追加 §5F errata。**C-04b/M2-C1 契约字节未改**（`acc8f0e0…`/`701093b5…`，pins 18/18） | DSH |
 
 ## 6. Errata 注记（2026-11-01 追加；**原文保留**）
 

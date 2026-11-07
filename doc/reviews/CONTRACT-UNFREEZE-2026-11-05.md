@@ -110,3 +110,17 @@
 - `doc/plan/FEA-CONTRACT-FROZEN-C04b.md` 更新清单（按该记录实际节名）：§1 冻结字节（sha256 重算 + v1.0 历史）、§1B 冻结字节 vs 复核字节（v1.1 两轮复核 + 最终 byte-level）、§2 冻结条件（条件1 证据更新；条件4 协议 minor 2.11 批准仍有效）、§4A 已知限制（L-1 保留；新增 v1.1 相关残余）、§4B v1.1 修订与复核记录、§5 变更记录。
 - `doc/plan/FEA-CONTRACT-FROZEN-C04b.md` 与 `M2-C1` 的修订均在 UNFREEZE 提交内；`verify_pins.ps1` 输出与 sha 写入证据。
 - **风险声明**：本修订改变 C-04b 冻结字节（经 UNFREEZE 流程），但**不改** ADJ-001 语义；digest 值/normal 字段变化只影响尚未对外发布的 FEA-12 删除确认路径。
+
+## 5F. Residual 8 项 errata（2026-11-07，append-only；`FEA-12-CORE-C04B-RESIDUAL-1`）
+
+> 本附节只追加**现行权威读法**，**不改**本载体已批准正文（§1–§5E），不改 C-04b/M2-C1 字节。
+> 逐项表见冻结记录 §4A `R-1…R-8`；r1–r7 报告完整 sha256 见冻结记录 §1C。
+
+- **R-3（③）`separate/detached` 与 representative 排序**：`separate/detached` **不是** C-01b/C-04b/M2-C1 中定义的状态；本载体 A1（`:16`/`:18`）与两契约的同名表述为历史措辞。现行实现**不据此裁剪**，`currentRegionRevisionIds` 覆盖全部 region 的 current（含 lineage-hidden）。representative 现行规则：无可见 region 时取 `currentArtifactRevisionIds` 的**字典序最小项**（`core_service.py:1904-1930`：`sorted(set(...))[0]`），仅展示、不进 digest。
+- **R-4（④）C-04b §1 表 M2-C1 行号**：C-04b `:28-32` 的 `M2-C1 §5.11.x :行号` 为 **v1.0 冻结时点**布局；v1.1 后已漂移。现行定位**以节名为准**：§5.11.1（命令）/§5.11.2（上限）/§5.11.3（错误表）/§5.11.5（错误投影）；现行行号见冻结记录 §4A R-4。
+- **R-2（②）§2.0「单一字段」**：C-04b `:44` 为 v1.0 遗留措辞；现行**以 §2.2 形状分支为准**（单条 `inventory_digest`=逐书值；批量=集合级 `inventory_digest` + `inventory_digests` 逐书 map；不得混用）。
+- **R-5（⑤）首确认与单条来源**：C-04b `:64`/M2-C1 `:815` 的「预览 `book_ids`」应读作**请求 `book_ids`**（预览零副作用、不缓存；digest 绑定保证一致）；单条确认取预览返回的 `inventoryDigests[bookId]`（逐书值），集合级 `inventoryDigest` 单条**不得**使用；全文 `inventoryDigests[` 零命中，属规范句缺来源（不改字节）。
+- **R-7（⑦）M2-C1 banner/history**：M2-C1 `:18`/`:30` 的 retry 描述**仅适用于批量**；单条以 §5.11.1a `:815`/`:819` 为准（单条首确认=当前重算逐书值；retry=manifest 逐书值）。
+- **R-8（⑧）单条 manifest 批次字段**：契约未区分单条/批量。**现行实现**（`core_service.py:2450-2454`；测试 `test_core_delete_commands.py:1341-1344` 钉住）：单条 `batch_id`=uuidv4、`original_book_ids=[book_id]`、`original_collection_digest`=对 `[book_id]` 的集合级值；单条 retry **仅校验** `inventory_digest`。契约**未写死**，不声称已写死。
+- **R-1（①）artifact 成员谓词**：见冻结记录 §4A **L-3**（代码偏差；正常数据无影响；**未修**；修复需 C-04b+M2-C1 UNFREEZE + 独立实现卡）。
+- **R-6（⑥）**：**已闭合**，r1–r7 完整 sha256 见冻结记录 §1C。
