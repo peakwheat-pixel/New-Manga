@@ -119,3 +119,14 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **当前状态**：无活动 Task；`FEA-11-L-S1-B-RECOVERY-REAUTH-1` **proposed**（恢复/重授权入口；需 C-16 v1.5 UNFREEZE + scope review）；排队：L-S4-B（零交互自动恢复枚举，需 C-16 v1.5）、2C 长 Run 续期（L-G1）、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
 - **limitations 保留**：L-S1 B（恢复/重授权入口不存在）、C（`.corrupt-*` 无界复制）、`SOURCE_REGISTRY_UNAVAILABLE` 码义收窄、D-6 调度器投影；**L-S4-1**（缺触发器，零交互恢复需 B）、**L-S4-2**（folder 身份键）；**L-R1 未全修**；A 卡只兑现「单根不可用不再整库不可读/刷新事实」，**不宣称恢复已可用**。
 - **push**：本轮 `git push origin main` → `d782c52a4..db12dc5e5`（PREREQ 线）与 `db12dc5e5..e3f1ff99a`（L-S1/L-S4 closeout）；PRE_HEAD `e3f1ff99a`、POST_ORIGIN `e3f1ff99a`、AHEAD=0、PUSH_EXIT=0。
+
+## 11. 续接补充（2026-11-07 第 3 轮：L-S1-B1）
+
+> 本轮完成 1 张实现卡（3 轮 Review 收敛）并 push；下一会话只读本文件 + STATUS/PLAN/LEDGER 即可恢复。
+
+- **FEA-11-L-S1-B-RECOVERY-REAUTH-1（B1）`done`**（delivery `80d2799de`；docs `8a249538a`）：**App 显式恢复/重授权入口**（App-only 零契约 0/18 pins）——只读 `source_list_roots` 探针分流（文件级→重置 / 根级→重授权 / 其它码→无动作）；撤销全部同路径 stale 条目→按登记 `roots[0]` 再注册→重跑预览；**单源归因**（多选歧义 → `MultipleSources` + 单选提示、零 wire/零撤销）；注册失败 fail-closed「已撤销、未重新授权」不回滚；不扩 `IHostController`（命令数 111）、`quarantine_path` 不展示、wire 77 帧根路径 0 命中/`[REDACTED]` 7。
+- **Review 链**：r1 approved（P2×2：多选过宽、IPC 空转断言）→ 返修 `e9e1132a5` → r2 approved（P2×1：歧义提示不可达）→ 返修 `80d2799de` → **r3 approved（P0=0/P1=0/P2=0/P3=3 非阻断；P3 证据记数残留登记接受）**；AC-LSB-1…10 全 MET；判别性 6/6。
+- **基线（本轮实测）**：全量 pytest **3317 / 10**；全量 .NET **1617 / 0 / 93**（+47 本卡）；定向 App `SourceRecovery` **47/0/0**；gated 真实 IPC **1/0/0**；pins **18/18**；check PASS(3w)；API PASS；scope changed=29 全 ALLOWED。
+- **当前状态**：无活动 Task；`FEA-11-L-S4-B-AUTO-RECOVERY-1` **proposed**（零交互自动恢复枚举 + B2 roots 投影；**C-16 v1.5 批量载体**，1 pin；需 scope review）；排队：2C 长 Run 续期、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
+- **limitations 保留**：B2/B3 未做；L-S4-1（零交互恢复）/L-S4-2（folder 身份键）；C-17 journal 撤销撕裂（仅登记）；`quarantine_path` 不展示；重复恢复累积 revoked 行（active 恒 1）；revoke ACK 计数口径；只承诺 file-source 同路径恢复；L-R1 未全修；不宣称自动恢复。
+- **push**：`ac528828b..47a5b5167`（PUSH_EXIT=0；PRE_HEAD/POST_ORIGIN `47a5b5167`，AHEAD=0）。

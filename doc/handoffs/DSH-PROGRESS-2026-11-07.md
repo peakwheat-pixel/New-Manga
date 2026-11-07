@@ -6,10 +6,10 @@
 
 | 项 | 值 |
 |---|---|
-| HEAD | `9dc1cb0cd`（main；L-S1 线 done，L-S4 A 待 closeout） |
-| 本轮已完成 | `FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1` done（C-15 v1.5 UNFREEZE，`ae8c2de07`；r2 approved P0/P1/P2=0，pins 18/18）；`FEA-11-L-S1-REGISTRY-RESILIENCE-1`（A）done（`b56c5a0e6`；AC-L1…L8 MET；r1 approved P0/P1/P2=0；L-S4 A 已交付 `0ebb234bf` 待 closeout） |
+| HEAD | `47a5b5167`（main，origin 同步；L-S1-B1 done，无活动 Task） |
+| 本轮已完成 | C-15 v1.5（`ae8c2de07`）；L-S1 A（`b56c5a0e6`）；L-S4 A（`0ebb234bf`）；**L-S1-B1 done（`80d2799de`；r1→r2→r3 approved；AC-LSB MET；基线 pytest 3317/10、.NET 1617/0/93）** |
 | 基线（本轮实测） | 全量 pytest **3317/10**；全量 .NET **1570/0/92**（Lead combined 全量 .NET 命中已知 flaky `FluentResidual2VisualEvidenceTests`，隔离复跑 1 passed）；pins 18/18；check PASS(3w) |
-| 下一队列 | ①L-S4 A closeout（Review 中）；②L-S1 B（恢复/重授权，依赖 L-S4，需 C-16 v1.5 UNFREEZE，另卡）；③L-S4 B（零交互自动恢复枚举，C-16 v1.5）；④2C 长 Run 续期（L-G1）；⑤L-R11 gate 统一；⑥C-04b residual；⑦SCAN-RH；⑧UI P3 |
+| 下一队列 | ①L-S4-B（proposed；零交互自动恢复枚举）+ B2（roots 投影）→ **C-16 v1.5 批量 UNFREEZE**（1 pin）；②2C 长 Run 续期（L-G1）；③L-R11 gate 统一；④C-04b residual；⑤SCAN-RH；⑥UI P3 |
 
 ## 2. 待裁决（需用户产品取舍的候选；DSH 已附推荐并直接交 Codex/DSH 裁决，不阻塞）
 
