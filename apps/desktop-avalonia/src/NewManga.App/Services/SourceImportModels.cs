@@ -64,6 +64,46 @@ public interface ISourceImportController
     /// never change the import result.
     /// </summary>
     void RequestSourceScanRefresh();
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1; App-only, ZERO contract change): the EXPLICIT recovery
+    // face. It reuses only the frozen C-16 v1.4 §1 root commands (`source_list_roots`,
+    // `source_revoke_root`, `source_register_root`, `source_reset_registry`) and introduces no
+    // command/capability/field/error code. Every member here is path-free BY CONSTRUCTION: the App
+    // can never hand the Host an arbitrary path to authorize, and the re-registration always uses
+    // the entry's OWN persisted root string. None of these members lives on the frozen C-07
+    // <see cref="IHostController"/> inventory (AC-LSB-6) and none of them runs automatically
+    // (AC-LSB-1/5): they are only reached from an explicit user action.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// AC-LSB-2: after a preview failed with the frozen <c>SOURCE_REGISTRY_UNAVAILABLE</c>, run the
+    /// READ-ONLY diagnosis (a <c>source_list_roots</c> probe — no writes, no revoke/register/reset)
+    /// and report which SINGLE explicit action may be offered. File-level probe failure → reset
+    /// only; readable storage + failed mint → re-authorize only; any other probe code → no action,
+    /// the typed code is displayed only.
+    /// </summary>
+    Task<SourceRecoveryDiagnosis> DiagnoseSourceRecoveryAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// AC-LSB-3/4/5: the explicit "re-authorize this source" action. Revokes EVERY non-revoked
+    /// entry of the failed path first, then re-registers exactly one entry per used registered
+    /// root (<c>roots[0]</c> of the entry itself), then the caller re-runs the preview. A partial
+    /// outcome is reported as revoked-but-not-re-authorized (typed code, retryable) — never as
+    /// success and never with an implicit rollback of the revocation.
+    /// </summary>
+    Task<SourceRecoveryResult> ReauthorizeSourceAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// AC-LSB-2/7: the explicit "reset the source authorization storage" action. Requires the
+    /// caller-side second confirmation (<paramref name="confirm"/>); discards EVERY source
+    /// authorization. The response's <c>quarantine_path</c> is never modelled, read or displayed.
+    /// </summary>
+    Task<SourceRecoveryResult> ResetSourceRegistryAsync(
+        bool confirm,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -761,8 +801,36 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
         var response = await _commands
             .InvokeAsync("source_list_roots", default, cancellationToken)
             .ConfigureAwait(false);
-        if (response.Value.ValueKind == JsonValueKind.Object &&
-            response.Value.TryGetProperty("entries", out var entries) &&
+        if (SelectReusableRoot(response.Value, path) is { } reusable)
+        {
+            return reusable;
+        }
+
+        var registered = await _commands
+            .InvokeAsync("source_register_root", SourceImportPayloads.RegisterRoot(path), cancellationToken)
+            .ConfigureAwait(false);
+        var id = SourceImportJson.ReadString(registered.Value, "registry_id");
+        var createdGeneration = SourceImportJson.ReadInt(registered.Value, "generation");
+        if (string.IsNullOrEmpty(id) || createdGeneration is null)
+        {
+            throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+        }
+
+        return (id, createdGeneration.Value);
+    }
+
+    /// <summary>
+    /// FEA-11-L-S1-B (AC-LSB-5 / R-1): the ONE root-reuse selector — the FIRST entry whose single
+    /// registered root equals <paramref name="path"/> and which is not revoked. B1 deliberately does
+    /// NOT change these semantics: there is no "mint failed, try the next candidate / re-register"
+    /// fallback (that would be automatic re-authorization). Extracted only to be pinnable by tests.
+    /// Returns <c>null</c> when no entry is reusable — the caller then takes the explicit register
+    /// leg of a normal import.
+    /// </summary>
+    internal static (string RegistryId, int Generation)? SelectReusableRoot(JsonElement value, string path)
+    {
+        if (value.ValueKind == JsonValueKind.Object &&
+            value.TryGetProperty("entries", out var entries) &&
             entries.ValueKind == JsonValueKind.Array)
         {
             foreach (var entry in entries.EnumerateArray())
@@ -787,17 +855,7 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
             }
         }
 
-        var registered = await _commands
-            .InvokeAsync("source_register_root", SourceImportPayloads.RegisterRoot(path), cancellationToken)
-            .ConfigureAwait(false);
-        var id = SourceImportJson.ReadString(registered.Value, "registry_id");
-        var createdGeneration = SourceImportJson.ReadInt(registered.Value, "generation");
-        if (string.IsNullOrEmpty(id) || createdGeneration is null)
-        {
-            throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
-        }
-
-        return (id, createdGeneration.Value);
+        return null;
     }
 
     private async Task CleanupSecretAsync()
@@ -859,13 +917,13 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
         return "src-" + Convert.ToHexString(digest).ToLowerInvariant()[..16];
     }
 
-    private static bool IsTypedFailure(Exception ex) => ex is
+    internal static bool IsTypedFailure(Exception ex) => ex is
         CoreOperationException or SourceAccessException or SidecarException or
         NewManga.CoreClient.Bridge.BridgeException or HostCommandInvalidArgumentsException or
         IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or
         OperationCanceledException;
 
-    private static string TypedCode(Exception ex) => ex switch
+    internal static string TypedCode(Exception ex) => ex switch
     {
         CoreOperationException core => core.Code,
         SourceAccessException source => source.Message,

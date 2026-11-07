@@ -1425,6 +1425,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
         string duplicatePolicy = "skip",
         CancellationToken cancellationToken = default)
     {
+        ClearPendingSourceRecovery();
         if (string.IsNullOrWhiteSpace(chapterId) || sources.Count == 0)
         {
             SetLastError("INVALID_REQUEST");
@@ -1452,12 +1453,18 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
         catch (Exception ex) when (ex is SourceAccessException or CoreOperationException or SidecarException or HostCommandInvalidArgumentsException or IOException or InvalidOperationException or OperationCanceledException)
         {
-            SetLastError(ex is CoreOperationException core ? core.Code
+            var code = ex is CoreOperationException core ? core.Code
                 : ex is SourceAccessException source ? source.Message
                 : ex is SidecarException sidecar ? sidecar.Code.ToString()
                 : ex is HostCommandInvalidArgumentsException ? "INVALID_ARGUMENTS"
                 : ex is OperationCanceledException ? "CANCELLED"
-                : "HOST_UNAVAILABLE");
+                : "HOST_UNAVAILABLE";
+            SetLastError(code);
+            // FEA-11-L-S1-B (AC-LSB-2): remember WHICH sources failed and WHERE. The recovery face
+            // is path-free, so this is the only place the App's own selection is retained; the
+            // diagnosis is still only a READ-ONLY probe and re-authorization stays an explicit
+            // user action (AC-LSB-1/5 — nothing below registers or revokes by itself).
+            PinPendingSourceRecovery(sources, code, hostSideMintFailure: ex is SourceAccessException);
             return null;
         }
     }
@@ -1577,6 +1584,129 @@ public sealed class HostController : IHostController, ISourceImportController, I
         {
             // Host shutting down / not ready: no refresh is scheduled; the import result stands.
         }
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1; App-only, ZERO contract change, 0/18 pins): the explicit
+    // recovery face. It delegates to the production SourceRecoveryCoordinator (real
+    // HostCommandDispatcher routing onto the Host's existing source root commands); refusals are
+    // typed outcomes, never thrown into the UI. Nothing here runs automatically: the diagnosis is a
+    // READ-ONLY probe and the two actions are only reached from an explicit user command.
+    // ---------------------------------------------------------------------------------------
+
+    // The App's own failed selection + failure provenance for the CURRENT preview failure. The
+    // recovery members take NO path argument (AC-LSB-6); this is the only retention of the App's
+    // own selection and it is cleared as soon as a new preview starts.
+    private IReadOnlyList<string>? _pendingRecoveryPaths;
+    private string? _pendingRecoveryCode;
+    private bool _pendingRecoveryHostMintFailure;
+
+    private SourceRecoveryCoordinator? _sourceRecovery;
+    private HostRuntime? _sourceRecoveryRuntime;
+
+    private SourceRecoveryCoordinator? SourceRecovery
+    {
+        get
+        {
+            var runtime = _runtime;
+            if (runtime is null || !runtime.Result.IsReady || runtime.Commands is not { } commands)
+            {
+                return null;
+            }
+
+            if (!ReferenceEquals(_sourceRecoveryRuntime, runtime))
+            {
+                _sourceRecovery = null;
+                _sourceRecoveryRuntime = runtime;
+            }
+
+            return _sourceRecovery ??= new SourceRecoveryCoordinator(
+                commands,
+                () => _runtime?.Policy.WritesAllowed == true);
+        }
+    }
+
+    private void ClearPendingSourceRecovery()
+    {
+        _pendingRecoveryPaths = null;
+        _pendingRecoveryCode = null;
+        _pendingRecoveryHostMintFailure = false;
+    }
+
+    private void PinPendingSourceRecovery(
+        IReadOnlyList<ReferenceImportSource> sources,
+        string code,
+        bool hostSideMintFailure)
+    {
+        if (!string.Equals(code, SourceRecoveryCoordinator.RegistryUnavailable, StringComparison.Ordinal))
+        {
+            ClearPendingSourceRecovery();
+            return;
+        }
+
+        _pendingRecoveryPaths = sources.Select(source => source.Path).ToArray();
+        _pendingRecoveryCode = code;
+        _pendingRecoveryHostMintFailure = hostSideMintFailure;
+    }
+
+    public async Task<SourceRecoveryDiagnosis> DiagnoseSourceRecoveryAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var recovery = SourceRecovery;
+        if (recovery is null)
+        {
+            return SourceRecoveryDiagnosis.NotApplicable("HOST_NOT_READY");
+        }
+
+        return await recovery
+            .DiagnoseAsync(_pendingRecoveryPaths, _pendingRecoveryCode, _pendingRecoveryHostMintFailure, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<SourceRecoveryResult> ReauthorizeSourceAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var recovery = SourceRecovery;
+        if (recovery is null)
+        {
+            return SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady());
+        }
+
+        if (_pendingRecoveryPaths is not { Count: > 0 })
+        {
+            return SourceRecoveryResult.Failed("INVALID_REQUEST");
+        }
+
+        var result = await recovery
+            .ReauthorizeAsync(_pendingRecoveryPaths, cancellationToken)
+            .ConfigureAwait(false);
+        SetLastError(result.Ok ? null : result.ErrorCode);
+        if (result.Ok)
+        {
+            ClearPendingSourceRecovery();
+        }
+
+        return result;
+    }
+
+    public async Task<SourceRecoveryResult> ResetSourceRegistryAsync(
+        bool confirm,
+        CancellationToken cancellationToken = default)
+    {
+        var recovery = SourceRecovery;
+        if (recovery is null)
+        {
+            return SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady());
+        }
+
+        var result = await recovery.ResetRegistryAsync(confirm, cancellationToken).ConfigureAwait(false);
+        SetLastError(result.Ok ? null : result.ErrorCode);
+        if (result.Ok)
+        {
+            ClearPendingSourceRecovery();
+        }
+
+        return result;
     }
 
     public async Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(

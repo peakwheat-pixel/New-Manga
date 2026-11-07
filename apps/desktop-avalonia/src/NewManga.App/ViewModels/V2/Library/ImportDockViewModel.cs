@@ -44,6 +44,15 @@ public sealed class ImportDockViewModel : ObservableObject
     private string _referenceProgressText = string.Empty;
     private string _referenceErrorText = string.Empty;
 
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1): explicit recovery state. It is populated ONLY by a
+    // preview failure (the read-only diagnosis probe) and cleared by a successful preview, a
+    // completed recovery action, or closing the dock — never executed automatically.
+    private SourceRecoveryDiagnosis? _recoveryDiagnosis;
+    private bool _isRecovering;
+    private bool _isResetConfirmationPending;
+    private string _recoveryOfferText = string.Empty;
+    private string _recoveryOutcomeText = string.Empty;
+
     public ImportDockViewModel(
         IHostController controller,
         IFilePickerGateway? picker,
@@ -80,6 +89,10 @@ public sealed class ImportDockViewModel : ObservableObject
         ConfirmReferenceImportCommand = new RelayCommand(() => _ = ConfirmReferenceImportAsync());
         CancelReferenceImportCommand = new RelayCommand(() => _ = CancelReferenceImportAsync());
         ReplanReferenceImportCommand = new RelayCommand(() => _ = ReplanReferenceImportAsync());
+        ReauthorizeSourceCommand = new RelayCommand(() => _ = ReauthorizeSourceAsync());
+        RequestResetSourceRegistryCommand = new RelayCommand(RequestResetSourceRegistry);
+        ConfirmResetSourceRegistryCommand = new RelayCommand(() => _ = ConfirmResetSourceRegistryAsync());
+        CancelResetSourceRegistryCommand = new RelayCommand(CancelResetSourceRegistry);
     }
 
     public ObservableCollection<ImportRowViewModel> Rows { get; }
@@ -108,6 +121,17 @@ public sealed class ImportDockViewModel : ObservableObject
     public RelayCommand CancelReferenceImportCommand { get; }
 
     public RelayCommand ReplanReferenceImportCommand { get; }
+
+    // FEA-11-L-S1-B (AC-LSB-1/2): the ONLY two explicit recovery actions. Re-authorize is a single
+    // confirm; reset needs a second, separate confirmation because it discards EVERY source
+    // authorization.
+    public RelayCommand ReauthorizeSourceCommand { get; }
+
+    public RelayCommand RequestResetSourceRegistryCommand { get; }
+
+    public RelayCommand ConfirmResetSourceRegistryCommand { get; }
+
+    public RelayCommand CancelResetSourceRegistryCommand { get; }
 
     public bool IsOpen
     {
@@ -239,6 +263,83 @@ public sealed class ImportDockViewModel : ObservableObject
     /// natural keys keep already-committed pages from being duplicated).</summary>
     public bool CanReplanReference => !IsReferenceRunning && _referenceSources is { Count: > 0 };
 
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1): explicit recovery surface. Only a preview failure with
+    // the frozen SOURCE_REGISTRY_UNAVAILABLE populates it, and only the diagnosis' SINGLE branch
+    // action is offered (AC-LSB-2). Before the user clicks, the recovery command counts stay 0
+    // (AC-LSB-1). All text below is leaf-name/typed-code/counts only (AC-LSB-7): no path, no
+    // quarantine_path, no implicit "it fixed itself" claim.
+    // ---------------------------------------------------------------------------------------
+
+    public bool IsRecovering
+    {
+        get => _isRecovering;
+        private set
+        {
+            if (Set(ref _isRecovering, value))
+            {
+                RaiseRecoveryDerived();
+            }
+        }
+    }
+
+    public bool IsResetConfirmationPending
+    {
+        get => _isResetConfirmationPending;
+        private set
+        {
+            if (Set(ref _isResetConfirmationPending, value))
+            {
+                RaiseRecoveryDerived();
+            }
+        }
+    }
+
+    public bool HasSourceRecoveryAction => _recoveryDiagnosis?.HasAction == true;
+
+    public bool OffersReauthorizeSource =>
+        _recoveryDiagnosis?.Action == SourceRecoveryAction.ReauthorizeSource;
+
+    public bool OffersResetSourceRegistry =>
+        _recoveryDiagnosis?.Action == SourceRecoveryAction.ResetRegistry;
+
+    public bool CanReauthorizeSource =>
+        OffersReauthorizeSource && !IsRecovering && !IsReferenceRunning;
+
+    public bool CanResetSourceRegistry => OffersResetSourceRegistry && !IsRecovering;
+
+    public bool CanConfirmResetSourceRegistry => IsResetConfirmationPending && !IsRecovering;
+
+    /// <summary>The diagnosis disclosure (leaf name + typed code + stale-entry count only).</summary>
+    public string RecoveryOfferText
+    {
+        get => _recoveryOfferText;
+        private set
+        {
+            if (Set(ref _recoveryOfferText, value))
+            {
+                OnPropertyChanged(nameof(HasSourceRecoveryOutcome));
+            }
+        }
+    }
+
+    /// <summary>The LAST explicit action's typed outcome (counts + typed code only).</summary>
+    public string RecoveryOutcomeText
+    {
+        get => _recoveryOutcomeText;
+        private set
+        {
+            if (Set(ref _recoveryOutcomeText, value))
+            {
+                OnPropertyChanged(nameof(HasSourceRecoveryOutcome));
+            }
+        }
+    }
+
+    public bool HasSourceRecoveryOutcome => !string.IsNullOrEmpty(RecoveryOutcomeText);
+
+    public string RecoveryConfirmationText => SourceRecoveryText.ResetConfirmation();
+
     public async Task PickReferenceSourcesAsync()
     {
         if (_picker is null)
@@ -289,12 +390,16 @@ public sealed class ImportDockViewModel : ObservableObject
 
         _referenceSources = sources;
         IsOpen = true;
+        ClearSourceRecoveryState();
         var plan = await _sourceImport.PlanReferencedImportAsync(chapterId, sources).ConfigureAwait(true);
         if (plan is null)
         {
             var code = _controller.Snapshot.LastError;
             ReferenceErrorText = $"预览失败：{SourceImportText.CodeText(code)}（{code}）";
             _notify("引用导入预览失败：" + SourceImportText.CodeText(code), NmStatus.Blocked);
+            // AC-LSB-2: a READ-ONLY probe decides which single explicit action (if any) may be
+            // offered. Nothing is revoked/registered/reset here (AC-LSB-1/5).
+            await DiagnoseSourceRecoveryAsync(code).ConfigureAwait(true);
             return;
         }
 
@@ -385,6 +490,160 @@ public sealed class ImportDockViewModel : ObservableObject
 
         ReferenceErrorText = string.Empty;
         await PlanReferenceImportAsync(sources).ConfigureAwait(true);
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1): explicit recovery actions (user-triggered only).
+    // ---------------------------------------------------------------------------------------
+
+    private async Task DiagnoseSourceRecoveryAsync(string? previewCode)
+    {
+        _recoveryDiagnosis = null;
+        _recoveryOfferText = string.Empty;
+        _isResetConfirmationPending = false;
+        if (_sourceImport is { } sourceImport)
+        {
+            SourceRecoveryDiagnosis diagnosis;
+            try
+            {
+                diagnosis = await sourceImport.DiagnoseSourceRecoveryAsync().ConfigureAwait(true);
+            }
+            catch (Exception error) when (
+                error is IOException or InvalidOperationException or OperationCanceledException or
+                NewManga.CoreClient.Diagnostics.SidecarException)
+            {
+                // A failed probe proves nothing about the registry: offer no recovery action.
+                diagnosis = SourceRecoveryDiagnosis.NotApplicable("HOST_UNAVAILABLE");
+            }
+
+            _recoveryDiagnosis = diagnosis;
+            _recoveryOfferText = diagnosis.Action switch
+            {
+                SourceRecoveryAction.ReauthorizeSource =>
+                    SourceRecoveryText.ReauthorizeOffer(diagnosis.SourceLeafName, diagnosis.StaleEntryCount),
+                SourceRecoveryAction.ResetRegistry => SourceRecoveryText.ResetOffer(),
+                _ => string.Empty,
+            };
+            // AC-LSB-2 third branch: when the probe returns another typed code, THAT code is what
+            // gets displayed (no recovery action) — e.g. a missing capability must never be
+            // mis-presented as a corrupted registry.
+            if (!diagnosis.HasAction &&
+                diagnosis.ErrorCode is { Length: > 0 } probeCode &&
+                !string.Equals(probeCode, previewCode, StringComparison.Ordinal))
+            {
+                ReferenceErrorText = previewCode is { Length: > 0 }
+                    ? $"预览失败：{SourceImportText.CodeText(previewCode)}（{previewCode}）· 诊断：{SourceImportText.CodeText(probeCode)}（{probeCode}）"
+                    : $"诊断：{SourceImportText.CodeText(probeCode)}（{probeCode}）";
+            }
+        }
+
+        RaiseRecoveryDerived();
+    }
+
+    /// <summary>
+    /// AC-LSB-3/4: ONE explicit click → revoke EVERY stale entry of the failed path → re-register the
+    /// entry's own registered root → fresh preview. A partial outcome (revoked, not re-authorized)
+    /// is displayed as such with its typed code, is never shown as success and stays retryable.
+    /// </summary>
+    public async Task ReauthorizeSourceAsync()
+    {
+        if (!CanReauthorizeSource || _sourceImport is not { } sourceImport)
+        {
+            return;
+        }
+
+        IsRecovering = true;
+        try
+        {
+            RecoveryOutcomeText = string.Empty;
+            var result = await sourceImport.ReauthorizeSourceAsync().ConfigureAwait(true);
+            RecoveryOutcomeText = result.Message;
+            if (!result.Ok)
+            {
+                // AC-LSB-4 fail-closed: no success, no rollback, retry allowed.
+                ReferenceErrorText = result.Message;
+                _notify("重新授权未完成：" + result.Message, NmStatus.Blocked);
+                return;
+            }
+
+            ReferenceErrorText = string.Empty;
+            ClearSourceRecoveryState();
+            _notify(result.Message, NmStatus.Done);
+            // The flow is "explicit re-authorization → preview again": the SAME user action re-runs
+            // the preview (one click, no unattended retry loop).
+            if (_referenceSources is { Count: > 0 } sources)
+            {
+                await PlanReferenceImportAsync(sources).ConfigureAwait(true);
+            }
+        }
+        finally
+        {
+            IsRecovering = false;
+        }
+    }
+
+    /// <summary>AC-LSB-2: reset needs a SECOND explicit confirmation before anything is discarded.</summary>
+    public void RequestResetSourceRegistry()
+    {
+        if (!CanResetSourceRegistry)
+        {
+            return;
+        }
+
+        IsResetConfirmationPending = true;
+    }
+
+    public void CancelResetSourceRegistry()
+    {
+        if (!IsResetConfirmationPending)
+        {
+            return;
+        }
+
+        IsResetConfirmationPending = false;
+    }
+
+    /// <summary>
+    /// AC-LSB-2/7: the confirmed reset. It discards EVERY source authorization; the Host response's
+    /// quarantine path is never read or displayed.
+    /// </summary>
+    public async Task ConfirmResetSourceRegistryAsync()
+    {
+        if (!CanConfirmResetSourceRegistry || _sourceImport is not { } sourceImport)
+        {
+            return;
+        }
+
+        IsRecovering = true;
+        try
+        {
+            RecoveryOutcomeText = string.Empty;
+            var result = await sourceImport.ResetSourceRegistryAsync(confirm: true).ConfigureAwait(true);
+            RecoveryOutcomeText = result.Message;
+            IsResetConfirmationPending = false;
+            if (!result.Ok)
+            {
+                ReferenceErrorText = result.Message;
+                _notify("重置源授权存储失败：" + SourceRecoveryText.Code(result.ErrorCode), NmStatus.Failed);
+                return;
+            }
+
+            ReferenceErrorText = string.Empty;
+            ClearSourceRecoveryState();
+            _notify(result.Message, NmStatus.Done);
+        }
+        finally
+        {
+            IsRecovering = false;
+        }
+    }
+
+    private void ClearSourceRecoveryState()
+    {
+        _recoveryDiagnosis = null;
+        _recoveryOfferText = string.Empty;
+        _isResetConfirmationPending = false;
+        RaiseRecoveryDerived();
     }
 
     private async Task PollReferenceReceiptAsync(ISourceImportController sourceImport)
@@ -511,6 +770,20 @@ public sealed class ImportDockViewModel : ObservableObject
         nameof(CanCancelReference),
         nameof(CanReplanReference),
         nameof(HasReferenceReceipt));
+
+    private void RaiseRecoveryDerived() => OnPropertyChanged(
+        nameof(IsRecovering),
+        nameof(IsResetConfirmationPending),
+        nameof(HasSourceRecoveryAction),
+        nameof(OffersReauthorizeSource),
+        nameof(OffersResetSourceRegistry),
+        nameof(CanReauthorizeSource),
+        nameof(CanResetSourceRegistry),
+        nameof(CanConfirmResetSourceRegistry),
+        nameof(RecoveryOfferText),
+        nameof(RecoveryOutcomeText),
+        nameof(HasSourceRecoveryOutcome),
+        nameof(RecoveryConfirmationText));
 
     public async Task OpenWithFilesAsync(IReadOnlyList<string> paths)
     {
@@ -701,8 +974,16 @@ public sealed class ImportDockViewModel : ObservableObject
         ReferencePlanSummary = string.Empty;
         ReferenceProgressText = string.Empty;
         ReferenceErrorText = string.Empty;
+        // FEA-11-L-S1-B (B1): drop the explicit recovery state with the panel too (a stale offer
+        // must never survive a closed dock).
+        _recoveryDiagnosis = null;
+        _recoveryOfferText = string.Empty;
+        _recoveryOutcomeText = string.Empty;
+        _isResetConfirmationPending = false;
+        _isRecovering = false;
         RaiseDerived();
         RaiseReferenceDerived();
+        RaiseRecoveryDerived();
     }
 
     public void RequestCreateChapter()

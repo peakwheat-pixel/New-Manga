@@ -110,6 +110,54 @@
       <TextBlock x:Name="ReferenceProgressText" Classes="meta" Text="{Binding ReferenceProgressText}" TextWrapping="Wrap" />
       <TextBlock Classes="meta" Text="{Binding ReferenceErrorText}" TextWrapping="Wrap" IsVisible="{Binding HasReferenceError}" />
 
+      <!-- FEA-11-L-S1-B (B1) 显式恢复入口：仅在预览以 SOURCE_REGISTRY_UNAVAILABLE 失败、
+           且只读探针诊断出唯一分支动作后出现；未点击前不会撤销/注册/重置任何授权。
+           文案只含来源叶子名 / typed 码 / 计数：不显示路径，也不显示隔离路径（quarantine_path）。 -->
+      <Border Classes="raised"
+              Padding="{DynamicResource Nm.Padding.ControlSm}"
+              IsVisible="{Binding HasSourceRecoveryAction}">
+        <StackPanel Spacing="{DynamicResource Nm.Space.2}">
+          <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding RecoveryOfferText}" />
+          <StackPanel Orientation="Horizontal"
+                      Spacing="{DynamicResource Nm.Space.2}"
+                      IsVisible="{Binding OffersReauthorizeSource}">
+            <Button x:Name="ReauthorizeSourceButton"
+                    Classes="primary sm"
+                    Content="重新授权此来源"
+                    Command="{Binding ReauthorizeSourceCommand}"
+                    IsEnabled="{Binding CanReauthorizeSource}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal"
+                      Spacing="{DynamicResource Nm.Space.2}"
+                      IsVisible="{Binding OffersResetSourceRegistry}">
+            <Button x:Name="RequestResetSourceRegistryButton"
+                    Classes="ghost sm"
+                    Content="重置源授权存储"
+                    Command="{Binding RequestResetSourceRegistryCommand}"
+                    IsEnabled="{Binding CanResetSourceRegistry}" />
+          </StackPanel>
+          <TextBlock Classes="meta" TextWrapping="Wrap"
+                     Text="{Binding RecoveryConfirmationText}"
+                     IsVisible="{Binding IsResetConfirmationPending}" />
+          <StackPanel Orientation="Horizontal"
+                      Spacing="{DynamicResource Nm.Space.2}"
+                      IsVisible="{Binding IsResetConfirmationPending}">
+            <Button x:Name="ConfirmResetSourceRegistryButton"
+                    Classes="primary sm"
+                    Content="确认重置全部来源授权"
+                    Command="{Binding ConfirmResetSourceRegistryCommand}"
+                    IsEnabled="{Binding CanConfirmResetSourceRegistry}" />
+            <Button x:Name="CancelResetSourceRegistryButton"
+                    Classes="ghost sm"
+                    Content="取消重置"
+                    Command="{Binding CancelResetSourceRegistryCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock Classes="meta" TextWrapping="Wrap"
+                 Text="{Binding RecoveryOutcomeText}"
+                 IsVisible="{Binding HasSourceRecoveryOutcome}" />
+
       <!-- 加密源：密码只存在于输入框到单次提交之间（Host 一次性安全引用；不写入任何日志/错误文案） -->
       <TextBox x:Name="ReferencePasswordBox"
                PasswordChar="•"

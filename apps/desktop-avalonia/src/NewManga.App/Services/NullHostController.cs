@@ -272,6 +272,22 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
     {
     }
 
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1): the designer/inert shell has no Host, so the explicit
+    // recovery face can never offer or perform an action — every member reports the typed refusal
+    // instead of pretending a source could be re-authorized or reset here.
+    public Task<SourceRecoveryDiagnosis> DiagnoseSourceRecoveryAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SourceRecoveryDiagnosis.NotApplicable("HOST_NOT_READY"));
+
+    public Task<SourceRecoveryResult> ReauthorizeSourceAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady()));
+
+    public Task<SourceRecoveryResult> ResetSourceRegistryAsync(
+        bool confirm,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady()));
+
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
         CancellationToken cancellationToken = default) =>
