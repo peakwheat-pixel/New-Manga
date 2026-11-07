@@ -1,0 +1,119 @@
+FFF                                                                      [100%]
+================================== FAILURES ===================================
+__________ test_artifact_membership_predicate_matches_delete_surface __________
+
+    def test_artifact_membership_predicate_matches_delete_surface() -> None:
+        """AC-1 (static): the preview-side artifact membership predicate is
+        ``media_artifacts.book_id = ?`` �� the same predicate the delete
+        transaction and the artifact-revision inventory use (C-04b v1.2 ��0 �� 1
+        ��; M2-C1 rev 2.15 ��5.13).  The page/chapter join may stay for the
+        reading-order sort, but it must not decide membership."""
+        preview_source = inspect.getsource(
+            SqliteLibraryRepository.list_book_artifact_current_pointers
+        )
+>       assert (
+            "WHERE ma.book_id = ? AND ma.current_revision_id IS NOT NULL"
+            in preview_source
+        )
+E       assert 'WHERE ma.book_id = ? AND ma.current_revision_id IS NOT NULL' in '    def list_book_artifact_current_pointers(self, book_id: str) -> list[dict[str, Any]]:\n        """Every artifact o...ct_type, ma.artifact_id",\n            (book_id,),\n        ).fetchall()\n        return [dict(row) for row in rows]\n'
+
+tests\core\test_core_delete_preview_commands.py:966: AssertionError
+_______ test_preview_artifact_membership_follows_book_id_not_page_owner _______
+
+server = <bootstrap.core_service.CoreServiceServer object at 0x0000024B559702F0>
+
+    def test_preview_artifact_membership_follows_book_id_not_page_owner(
+        server: CoreServiceServer,
+    ) -> None:
+        """AC-2/AC-3: consistent rows keep their exact values (control), while a
+        corrupt artifact naming book A but hanging off book B's page tree binds to
+        A �� the book whose delete transaction removes it �� and not to B."""
+        core = server._core
+        _seed_book(server, "book-a", "A")
+        _seed_book(server, "book-b", "B")
+        _seed_plain_page(server, book_id="book-a", chapter_id="ch-a", page_id="pg-a")
+        _seed_plain_page(server, book_id="book-b", chapter_id="ch-b", page_id="pg-b")
+        _seed_current_artifact(
+            server, artifact_id="ma-a", book_id="book-a", chapter_id="ch-a",
+            page_id="pg-a", artifact_type="translated", revision_id="ar-a",
+        )
+        _seed_current_artifact(
+            server, artifact_id="ma-b", book_id="book-b", chapter_id="ch-b",
+            page_id="pg-b", artifact_type="translated", revision_id="ar-b",
+        )
+    
+        # AC-2 control �� consistent data is unchanged by the predicate fix.
+        normal = {
+            item["bookId"]: item
+            for item in _preview(server, ["book-a", "book-b"])["items"]
+        }
+        assert normal["book-a"]["protection"]["currentArtifactRevisionIds"] == ["ar-a"]
+        assert normal["book-b"]["protection"]["currentArtifactRevisionIds"] == ["ar-b"]
+        # Representative artifact fallback keeps the pointer order (only one
+        # artifact here, so this also pins the existing value for normal data).
+        assert normal["book-a"]["protection"]["currentRevisionId"] == "ar-a"
+        assert normal["book-b"]["protection"]["currentRevisionId"] == "ar-b"
+    
+        # AC-3 corrupt row: ``book_id`` names A while the page tree is B's.
+        _seed_current_artifact(
+            server, artifact_id="ma-x", book_id="book-a", chapter_id="ch-b",
+            page_id="pg-b", artifact_type="thumbnail", revision_id="arv-x",
+        )
+        corrupt_result = _preview(server, ["book-a", "book-b"])
+        corrupt = {item["bookId"]: item for item in corrupt_result["items"]}
+        a_ids = corrupt["book-a"]["protection"]["currentArtifactRevisionIds"]
+        b_ids = corrupt["book-b"]["protection"]["currentArtifactRevisionIds"]
+>       assert a_ids == ["ar-a", "arv-x"]
+E       AssertionError: assert ['ar-a'] == ['ar-a', 'arv-x']
+E         
+E         Right contains one more item: 'arv-x'
+E         Use -v to get more diff
+
+tests\core\test_core_delete_preview_commands.py:1024: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+____________ test_preview_artifact_membership_reverse_corrupt_row _____________
+
+server = <bootstrap.core_service.CoreServiceServer object at 0x0000024B55AA1310>
+
+    def test_preview_artifact_membership_reverse_corrupt_row(
+        server: CoreServiceServer,
+    ) -> None:
+        """AC-3 reverse direction: a corrupt artifact naming book B but hanging off
+        book A's page tree binds to B and is removed by B's delete; A's preview
+        never sees it."""
+        _seed_book(server, "book-a", "A")
+        _seed_book(server, "book-b", "B")
+        _seed_plain_page(server, book_id="book-a", chapter_id="ch-a", page_id="pg-a")
+        _seed_plain_page(server, book_id="book-b", chapter_id="ch-b", page_id="pg-b")
+        _seed_current_artifact(
+            server, artifact_id="ma-a", book_id="book-a", chapter_id="ch-a",
+            page_id="pg-a", artifact_type="translated", revision_id="ar-a",
+        )
+        _seed_current_artifact(
+            server, artifact_id="ma-b", book_id="book-b", chapter_id="ch-b",
+            page_id="pg-b", artifact_type="translated", revision_id="ar-b",
+        )
+        # ``book_id`` = B, page tree = A.
+        _seed_current_artifact(
+            server, artifact_id="ma-y", book_id="book-b", chapter_id="ch-a",
+            page_id="pg-a", artifact_type="mask", revision_id="arv-y",
+        )
+        items = {
+            item["bookId"]: item
+            for item in _preview(server, ["book-a", "book-b"])["items"]
+        }
+>       assert items["book-a"]["protection"]["currentArtifactRevisionIds"] == ["ar-a"]
+E       AssertionError: assert ['ar-a', 'arv-y'] == ['ar-a']
+E         
+E         Left contains one more item: 'arv-y'
+E         Use -v to get more diff
+
+tests\core\test_core_delete_preview_commands.py:1078: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 8 migration(s) up to v8; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_delete_preview_commands.py::test_artifact_membership_predicate_matches_delete_surface
+FAILED tests/core/test_core_delete_preview_commands.py::test_preview_artifact_membership_follows_book_id_not_page_owner
+FAILED tests/core/test_core_delete_preview_commands.py::test_preview_artifact_membership_reverse_corrupt_row
+3 failed, 15 deselected in 0.63s

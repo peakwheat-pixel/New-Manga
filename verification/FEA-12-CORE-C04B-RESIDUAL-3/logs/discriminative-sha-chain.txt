@@ -1,0 +1,29 @@
+# Discriminative experiment + baseline reproduction (sha256 chain, FINAL test revision)
+
+## A. RED on the pre-fix code (HEAD 4c42e11b8 library.py + new tests)
+- command: pytest tests/core/test_core_delete_preview_commands.py -k artifact_membership
+- result: 3 failed, 15 deselected (log: red-before-fix.txt)
+- note: run before the implementation edit; afterwards the static assertion was
+  tightened (full WHERE clause), so B below re-runs on the FINAL test revision.
+
+## B. Discriminative experiment on the FIXED code (FINAL test revision)
+- after-fix library.py sha256: da07ccdb4d0590828658c859e6c606e1c2614d7c1dde52894d3b15957b1bd792
+- FINAL tests/core/test_core_delete_preview_commands.py sha256: 5c350d3e56928e6d1611093580b8e9c3a829d4d350634de6efbe1a94afb1c48e
+- temporarily reverted predicate to page/chapter join (sha256 of regressed library.py: b3c230b559e569a901f23a21095819cdb047ebf3108fd863239b478c89f9401e)
+- command: pytest tests/core/test_core_delete_preview_commands.py -k artifact_membership
+- result: 3 failed (log: discriminate-red.txt)  == RED (discriminative)
+- restored byte-for-byte from backup:
+  expected sha256: da07ccdb4d0590828658c859e6c606e1c2614d7c1dde52894d3b15957b1bd792
+  actual   sha256: da07ccdb4d0590828658c859e6c606e1c2614d7c1dde52894d3b15957b1bd792  MATCH
+- touch + rerun: 3 passed (log: discriminate-green-after-restore.txt)
+
+## C. Targeted before/after baseline (both files)
+- before (two files replaced byte-for-byte with HEAD 4c42e11b8 versions):
+  pytest tests/core/test_core_delete_preview_commands.py tests/core/test_core_delete_commands.py -q
+  => 56 passed (log: targeted-before.txt)
+- restored fixed versions (library.py + test file sha256 MATCH), touch, rerun:
+  => 59 passed (log: targeted-after.txt)
+
+## D. Full suite (final test revision)
+- command: pytest tests -q -p no:warnings --tb=no
+- result: 3372 passed, 10 skipped (log: full-after.txt); baseline 3369 passed / 10 skipped

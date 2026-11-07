@@ -1,0 +1,121 @@
+{
+  "task": "FEA-12-CORE-C04B-RESIDUAL-3",
+  "title": "R-1 代码修复：artifact 成员谓词补 media_artifacts.book_id（0 pin）",
+  "delivery_head": "25dc1523c8afc2083a03e478dc65d4ee9c36cf5c",
+  "start_head": "4c42e11b8",
+  "base_commit": "26aa0ca4a",
+  "disposition": "PRESERVE_REFERENCED",
+  "written_in_repo": {
+    "production": [
+      "src/infrastructure/sqlite/library.py"
+    ],
+    "tests": [
+      "tests/core/test_core_delete_preview_commands.py"
+    ],
+    "docs": [
+      "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md",
+      "doc/handoffs/FEA-12-CORE-C04B-RESIDUAL-3-25dc1523c.md"
+    ],
+    "evidence": "verification/FEA-12-CORE-C04B-RESIDUAL-3/**（本目录）"
+  },
+  "written_in_workspace": "G:/CODEX/New Manga.workspace/FEA-12-CORE-C04B-RESIDUAL-3/**（library.py 原始/修复备份、判别性脚本 discriminate.py、日志副本；保留引用，未入仓）",
+  "consumed": [
+    {
+      "source": "doc/reviews/FEA-12-CORE-C04B-RESIDUAL-scope-r1.md",
+      "used_as": "§2.1 R-1 代码事实与 §3.3 末段（先契约 → 再实现卡）"
+    },
+    {
+      "source": "doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md",
+      "used_as": "v1.2 §0 第 1 条 / §2.1 成员谓词 = media_artifacts.book_id；只读，零改动"
+    },
+    {
+      "source": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "used_as": "rev 2.15 §5.13 谓词文字；只读，零改动"
+    },
+    {
+      "source": "doc/plan/FEA-CONTRACT-FROZEN-C04b.md",
+      "used_as": "§4A L-3 / R-1 行（本偏差登记）；只读，零改动"
+    }
+  ],
+  "verification": {
+    "targeted_pytest": "56 passed -> 59 passed",
+    "full_pytest": "3369 passed / 10 skipped -> 3372 passed / 10 skipped",
+    "pins": "PIN AUDIT: PASS (all 18), exit 0",
+    "check": "PASS (3 warnings) x2 (default + -TaskPath)",
+    "api_inventory": "exit 0",
+    "discriminative": "3/3 RED on page-join revert; sha256 MATCH on restore; 3/3 GREEN",
+    "contract_zero_diff": "C-04b 4b304c0c… / M2-C1 a82a7fc1… unchanged"
+  },
+  "artifacts": [
+    {
+      "rel": "EV.md",
+      "bytes": 12774,
+      "sha256": "0aa29933be0361dbee2f7ee243720919262f2a73c20f8dc8fecf74ce36809aef"
+    },
+    {
+      "rel": "logs/api-inventory.txt",
+      "bytes": 4385,
+      "sha256": "b4b9e68e1f7fce0dc4aeecfae9d887da0c0661b346a9434930ae62b3a2270c47"
+    },
+    {
+      "rel": "logs/check-default.txt",
+      "bytes": 426,
+      "sha256": "92b00387951acb14be3c7207cbc194d89a0080665624454e3f58cf1e65128a59"
+    },
+    {
+      "rel": "logs/check-taskpath.txt",
+      "bytes": 426,
+      "sha256": "92b00387951acb14be3c7207cbc194d89a0080665624454e3f58cf1e65128a59"
+    },
+    {
+      "rel": "logs/discriminate-green-after-restore.txt",
+      "bytes": 115,
+      "sha256": "84a0a163a78814956bcf8cf19344d40d1b997c43068c1d5ce2792044b45c4d7c"
+    },
+    {
+      "rel": "logs/discriminate-red.txt",
+      "bytes": 6962,
+      "sha256": "9a811c07d9a685745034fa14aa024302a4dfbe01f169602bf9a91208dbbac8a0"
+    },
+    {
+      "rel": "logs/discriminative-sha-chain.txt",
+      "bytes": 1932,
+      "sha256": "9c2ca937363ec99662ed0b5458b8158d39c9ba17d2996b7deb276b65e3e77e7b"
+    },
+    {
+      "rel": "logs/full-after.txt",
+      "bytes": 10338,
+      "sha256": "e0f54b3835e176a719b95e6ee901706a615fc02548a56f0f006278cb71c87ebf"
+    },
+    {
+      "rel": "logs/pins.txt",
+      "bytes": 408,
+      "sha256": "aedf5a6b579c255e4b1544ccc1479aaf8517d6cdd711f9e7a12018f08e6f118d"
+    },
+    {
+      "rel": "logs/red-before-fix.txt",
+      "bytes": 6829,
+      "sha256": "1ab79ac8e8249b7ee79f848f3fd8b552666e2118742c5cdd8c9bc093df8c4c08"
+    },
+    {
+      "rel": "logs/scope.txt",
+      "bytes": 1139,
+      "sha256": "ff8fc970696e41c8d8c333c94ff4527413aebac375682b735f488a323f1b1dd4"
+    },
+    {
+      "rel": "logs/sha256-files.txt",
+      "bytes": 932,
+      "sha256": "408c6686ad6b985e2e57e3ca42c7d809aa2e56b75a484f900223fc691a5ec8c8"
+    },
+    {
+      "rel": "logs/targeted-after.txt",
+      "bytes": 101,
+      "sha256": "7e59671ec44e4d1b59c87ec8427aaf0a11a26078db0deff0d2b19115db41568e"
+    },
+    {
+      "rel": "logs/targeted-before.txt",
+      "bytes": 101,
+      "sha256": "2b5a3e5222cd2ed71e51abebea47c076519dbf69ad0066aa90231ac2c7fccdce"
+    }
+  ]
+}

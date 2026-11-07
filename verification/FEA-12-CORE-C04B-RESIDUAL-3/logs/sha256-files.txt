@@ -1,0 +1,14 @@
+# source/test sha256 + git blob (fixed working tree vs HEAD 4c42e11b8)
+src/infrastructure/sqlite/library.py
+  working sha256=da07ccdb4d0590828658c859e6c606e1c2614d7c1dde52894d3b15957b1bd792
+  working blob=fcef8cc91d75c687f59ad69c0ed9fd3053df22db
+  HEAD blob=e1883bfb5ae2ecc765926468f15aa27a7d4ba370
+tests/core/test_core_delete_preview_commands.py
+  working sha256=5c350d3e56928e6d1611093580b8e9c3a829d4d350634de6efbe1a94afb1c48e
+  working blob=385d3129f7c8f0506a0904193f169272a4fb8151
+  HEAD blob=4c829c2041e53b7fa8ba19844906cb1d31937916
+
+# contract/schema sha256 unchanged (zero drift)
+doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md sha256=4b304c0c315fe8ec4ae86544590919329c27234ead2b3ad9357b2e99a2d54e52
+doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md sha256=a82a7fc1e2c8dafeda977c26b68f140e9cecd8061f88692d4624858fc5046e0e
+src/infrastructure/sqlite/schema.py sha256=8714348c1926034d38a0d87873bd327773bdb979112db5ef0785011e9d6ca0e1

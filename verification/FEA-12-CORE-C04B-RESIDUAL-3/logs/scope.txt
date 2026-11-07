@@ -1,0 +1,22 @@
+# scope @ HEAD 25dc1523c (implementation+test commit) + uncommitted docs/evidence (allowed_paths)
+
+## git diff 4c42e11b8 --name-only (tracked delivery diff)
+doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md
+src/infrastructure/sqlite/library.py
+tests/core/test_core_delete_preview_commands.py
+
+## git status --porcelain (uncommitted docs/evidence = allowed_paths)
+ M doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md
+?? doc/handoffs/FEA-12-CORE-C04B-RESIDUAL-3-25dc1523c.md
+?? verification/FEA-12-CORE-C04B-RESIDUAL-3/
+
+## zero-drift: git diff 26aa0ca4a --name-only -- doc/plan doc/contracts src/infrastructure/sqlite/schema.py apps pyproject.toml requirements.txt requirements-dev.txt uv.lock (empty = no drift)
+
+## diffstat vs 4c42e11b8
+ doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md        |  52 ++++--
+ src/infrastructure/sqlite/library.py            |  22 ++-
+ tests/core/test_core_delete_preview_commands.py | 223 ++++++++++++++++++++++++
+ 3 files changed, 283 insertions(+), 14 deletions(-)
+42	10	doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md
+18	4	src/infrastructure/sqlite/library.py
+223	0	tests/core/test_core_delete_preview_commands.py
