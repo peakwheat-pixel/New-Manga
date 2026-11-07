@@ -1,0 +1,45 @@
+FEA-11-SCAN-RH-1 判别性（把修复改回去 → 对应用例 RED → 逐字节复原 sha256 MATCH → 复绿）
+=========================================================================================
+环境：Windows 11 / PowerShell 7 / .NET SDK 10.0.401（目标 net9.0）/ 2026-11-08
+被测实现：apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+逐字节备份：G:\CODEX\New Manga.workspace\FEA-11-SCAN-RH-1\SourceScanScheduler.fixed.cs
+固定实现 sha256：6b77d9ca362681cd48020f771d251db2d1b2c8208ea19f78dbea2e801e2768a6（M0-backup.txt MATCH）
+
+重要操作口径：本仓库 .NET 走增量构建（以文件 mtime 判断）；用 Copy-Item 复原备份后，
+必须 touch 源文件 mtime 才会触发重编译。首次复原未 touch 时构建为 stale（1.15 s，DLL 仍是
+mutation 版本，该次尝试保留在 M1-restore-sha256.log / M1-restore-build.log），touch 后重编译
+（3.84 s）复绿。证据以最终 sha256 MATCH + 复绿日志为准。
+
+M0（备份固定实现）
+  - M0-backup.txt：FIXED_IMPL_SHA256=6b77d9ca362681cd48020f771d251db2d1b2c8208ea19f78dbea2e801e2768a6
+
+M1（AC-RH-1 判别：删掉 refresh 重放 = 改回修复前行为）
+  - 变异：`if (completed) { await ReplayPendingRefreshAsync(linked.Token); }` → `_ = completed;`
+  - M1-mutation.diff：相对 HEAD 的完整 diff（含变异注释）
+  - M1-build.log：dotnet build -c Release → 0 warning / 0 error
+  - M1-red-tests.log：--filter "FullyQualifiedName~RefreshDuringInFlightRefresh|FullyQualifiedName~RefreshReplay_IsBounded"
+    → 失败: 2，通过: 0，总计: 2，持续时间: 20 s（两用例均卡在第二次枚举的 10 s 等待超时）
+    → RED_AS_EXPECTED
+  - M1-restore-sha256.log：复原 sha256=6b77d9ca… MATCH=True（附 touch 前的 stale 构建说明）
+  - M1-restored-green.log：复原后同 filter → 通过: 2，失败: 0，持续时间: 20 ms
+    → GREEN_AFTER_RESTORE
+
+M2（AC-RH-2 判别：改回 caller token（测试为默认 None）+ 不取消 lifetime + 不 join 在飞 refresh）
+  - 变异（3 处）：
+    1) `RefreshTargetsPassAsync(linked.Token)` → `RefreshTargetsPassAsync(cancellationToken)`
+    2) DisposeAsync：删除 `_lifetimeCts.Cancel()`（改为 `_ = _lifetimeCts;`）
+    3) DisposeAsync：删除 refresh 有界 join（改为 `_ = refreshIdle;`）
+  - M2-mutation.diff / M2-build.log：0 warning / 0 error
+  - M2-red-tests.log：--filter "FullyQualifiedName~DisposeAsync_WithInFlightRefresh"
+    → 失败: 1，通过: 0，总计: 1，持续时间: 7 ms
+    → `Assert.True(enumerator.CancellationObserved)` False（枚举从未观察到取消 = 未 link lifetime/未 cancel）
+    → RED_AS_EXPECTED
+  - M3-final-restore-sha256.log：复原 sha256=6b77d9ca… MATCH=True
+  - M3-final-build.log：0 warning / 0 error
+  - M3-restored-green.log：3 个新用例（RH-1 两例 + RH-2 一例）→ 通过: 3，失败: 0，持续时间: 23 ms
+    → GREEN_AFTER_RESTORE
+  - 随后全 filter 复跑：~SourceScan 71 passed / ~SourceWatcher 19 passed
+    （../dotnet-targeted-sourcescan-after-final.log / ../dotnet-targeted-sourcewatcher-after-final.log）
+
+结论：AC-RH-1、AC-RH-2 的判别性成立——删掉对应修复后对应用例 RED；复原为交付字节（sha256 MATCH）后复绿；
+未为了让 mutation 通过而修改任何测试断言。

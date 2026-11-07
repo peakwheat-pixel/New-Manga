@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-SCAN-RH-1",
+  "generated_at": "2026-11-08",
+  "generated_by": "scan-rh-impl (DSH Agent Teams; Lead=lead)",
+  "note": "仓内 0 删除/0 移动/0 归档/0 迁移：仅 main 工作树实现（无 linked worktree），新增 tracked 证据 verification/FEA-11-SCAN-RH-1/**。仓外只保留判别性用的固定实现备份（被 EV §3 引用）。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main 工作树实施，未建 linked worktree）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "-",
+      "process_check": "未创建 worktree；实现/测试/证据均落在 G:/CODEX/New Manga（main）；无残留本卡进程。",
+      "deleted": false,
+      "moved": false,
+      "archived": false,
+      "migrated": false
+    },
+    {
+      "resource_type": "agent-output",
+      "source_path": "G:/CODEX/New Manga.workspace/FEA-11-SCAN-RH-1/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/FEA-11-SCAN-RH-1/SourceScanScheduler.fixed.cs",
+      "sha256": "6b77d9ca362681cd48020f771d251db2d1b2c8208ea19f78dbea2e801e2768a6",
+      "process_check": "目录只含判别性固定实现备份 SourceScanScheduler.fixed.cs（sha256 与 EV §3 / M0-backup.txt 一致，被 M1/M2 复原引用）；保留不清理，无进程引用。",
+      "deleted": false,
+      "moved": false,
+      "archived": false,
+      "migrated": false
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
+}

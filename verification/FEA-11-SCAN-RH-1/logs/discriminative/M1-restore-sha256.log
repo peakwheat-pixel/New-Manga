@@ -1,0 +1,5 @@
+RESTORED_SHA256=6b77d9ca362681cd48020f771d251db2d1b2c8208ea19f78dbea2e801e2768a6
+MATCH_FIXED_IMPL=True
+ .../NewManga.Host/Sources/SourceScanScheduler.cs   | 139 ++++++++++++++++++---
+ 1 file changed, 124 insertions(+), 15 deletions(-)
+TOUCHED_IMPL_MTIME=2026-11-08T01:21:49.1231216+08:00
