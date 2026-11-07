@@ -462,6 +462,79 @@ public sealed class SourceRecoveryOrchestrationTests
     }
 
     [Fact]
+    public async Task AmbiguousBatchWithNoTargets_StillReturnsTheSingleSelectionHint_AndNeverProbes()
+    {
+        // r2 P2-01: HostController pins ZERO targets + ambiguous=true for "multi-select that could not
+        // be attributed". The ambiguity check MUST precede the empty-target guard, otherwise the
+        // disclosed "select one source" branch is unreachable (and the UI would show nothing at all).
+        var host = Host();
+        host.AddEntry(Path);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+
+        var withNull = await recovery.DiagnoseAsync(
+            null, "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, ambiguous: true, cancellationToken: None);
+        var withEmpty = await recovery.DiagnoseAsync(
+            Array.Empty<SourceRecoveryTarget>(), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true,
+            ambiguous: true, cancellationToken: None);
+
+        foreach (var diagnosis in new[] { withNull, withEmpty })
+        {
+            Assert.False(diagnosis.HasAction);
+            Assert.True(diagnosis.IsBlocked);
+            Assert.Equal(SourceRecoveryBlockReason.MultipleSources, diagnosis.BlockReason);
+            Assert.Contains("请只选择一个来源", SourceRecoveryText.MultipleSourcesOffer());
+        }
+
+        Assert.Empty(host.Frames); // zero wire: no probe, no revoke, no register, no reset
+    }
+
+    [Fact]
+    public async Task AmbiguousFalseWithNoTargets_StaysNotApplicable()
+    {
+        // The reverse direction: an EMPTY target list that is NOT ambiguous stays a plain
+        // NotApplicable (r2 P2-01 fix must not turn every empty list into a hint).
+        var host = Host();
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+
+        var diagnosis = await recovery.DiagnoseAsync(
+            Array.Empty<SourceRecoveryTarget>(), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true,
+            cancellationToken: None);
+
+        Assert.False(diagnosis.HasAction);
+        Assert.False(diagnosis.IsBlocked);
+        Assert.Equal(SourceRecoveryBlockReason.None, diagnosis.BlockReason);
+        Assert.Empty(host.Frames);
+    }
+
+    [Fact]
+    public async Task HostControllerAmbiguityPath_YieldsTheSingleSelectionHint_WithZeroWire()
+    {
+        // Exactly the two production calls HostController makes on a multi-source preview failure
+        // (PinPendingSourceRecovery → DiagnoseSourceRecoveryAsync): an unattributed batch becomes
+        // ZERO targets + ambiguous=true, and the diagnosis must still be the disclosed hint.
+        var host = Host();
+        host.AddEntry(Path);
+        host.AddEntry(OtherPath);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+        var selected = new[]
+        {
+            new ReferenceImportSource(Path, IsFolder: false),
+            new ReferenceImportSource(OtherPath, IsFolder: false),
+        };
+
+        var attribution = SourceRecoveryCoordinator.AttributeFailedSource(selected, failed: null);
+        var diagnosis = await recovery.DiagnoseAsync(
+            attribution.Targets, "SOURCE_REGISTRY_UNAVAILABLE",
+            hostSideMintFailure: true, attribution.Ambiguous, None);
+
+        Assert.True(attribution.Ambiguous);
+        Assert.Empty(attribution.Targets);
+        Assert.False(diagnosis.HasAction);
+        Assert.Equal(SourceRecoveryBlockReason.MultipleSources, diagnosis.BlockReason);
+        Assert.Empty(host.Frames);
+    }
+
+    [Fact]
     public async Task Reauthorize_RefusesABatchBeforeAnyWireCall()
     {
         // r1 P2-01 regression guard: if the action ever reverts to "all selected sources", a healthy
@@ -1131,6 +1204,42 @@ public sealed class SourceRecoveryUiTests
 
         Assert.False(viewModel.HasSourceRecoveryAction);
         Assert.True(viewModel.HasSourceRecoveryHint); // the explanation is still shown
+        Assert.Contains("请只选择一个来源", viewModel.RecoveryOfferText);
+        Assert.Equal(0, host.SourceReauthorizeCalls);
+        Assert.Equal(0, host.SourceResetCalls);
+        Assert.DoesNotContain(@"C:\manga", string.Concat(AllVisibleText(viewModel).Concat(notices.Select(n => n.Text))));
+    }
+
+    [AvaloniaFact]
+    public async Task AmbiguousBatch_ReachesTheRealDiagnosis_ShowsTheHint_AndNeverTouchesTheRegistry()
+    {
+        // r2 P2-01 end-to-end (port + REAL orchestrator): an ambiguous multi-select pins no target,
+        // the diagnosis must still explain "select ONE source", and no wire command may run.
+        var wireCalls = new List<string>();
+        var dispatcher = new HostCommandDispatcher(core: null, hostLocal: (name, _, _) =>
+        {
+            wireCalls.Add(name);
+            return Task.FromException<HostCommandResult>(new InvalidOperationException("no wire call expected"));
+        });
+        var recovery = new SourceRecoveryCoordinator(dispatcher);
+
+        var host = new FakeHostController(ReadySnapshot());
+        host.Snapshot = host.Snapshot with { LastError = "SOURCE_REGISTRY_UNAVAILABLE" };
+        host.ScriptedReferencePlans.Enqueue(null);
+        host.RecoveryDiagnosisOverride = () => recovery.DiagnoseAsync(
+                Array.Empty<SourceRecoveryTarget>(),
+                "SOURCE_REGISTRY_UNAVAILABLE",
+                hostSideMintFailure: true,
+                ambiguous: true)
+            .GetAwaiter().GetResult();
+        var (viewModel, notices) = Create(host);
+
+        await viewModel.PlanReferenceImportAsync(
+            [new ReferenceImportSource(SourcePath, IsFolder: false), new ReferenceImportSource(@"C:\manga\other.zip", IsFolder: false)]);
+
+        Assert.Empty(wireCalls);                                   // zero probe/revoke/register/reset
+        Assert.False(viewModel.HasSourceRecoveryAction);
+        Assert.True(viewModel.HasSourceRecoveryHint);
         Assert.Contains("请只选择一个来源", viewModel.RecoveryOfferText);
         Assert.Equal(0, host.SourceReauthorizeCalls);
         Assert.Equal(0, host.SourceResetCalls);
