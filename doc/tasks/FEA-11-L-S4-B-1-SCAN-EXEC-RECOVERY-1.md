@@ -94,7 +94,7 @@ out_of_scope:
 ## Review r1 处置（DSH，2026-11-07；append-only）
 
 - 独立 r1 `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-r1.md`（`9403610b-…`；reviewed_head `bcc88e4a2`）：**approved，P0=0/P1=0/P2=0/P3=9 非阻断**；AC-SER-1…6 全 MET；独立复跑 Host 8/0/0、回归 123/0/1、gated IPC 4/0/0（before error→after ok）、pytest 89、pins 18/18、check/API 全 PASS；2 个破坏点独立 RED+恢复。
-- **P3 处置（登记接受，均非阻断）**：证据容器/文档精度/可维护性项（EV 与 Manifest 口径、discrimination 运行头信息、scope 工具有界性、表快照措辞、gated fixture 根等）→ 后续维护批可改进，不改变产品行为/AC 判定。
+- **P3 处置（登记接受，均非阻断；权威清单以 r1 报告 §5 为准）**：①Manifest 混入未跟踪 gitignored pyc；②`repo_head_at_generation=d87416514` 为 amend 前提交；③scope 23 vs 实际 24（manifest 生成晚于 scope 快照）；④`ipc-fixture.txt` 首行西里尔字符；⑤`VerifyEnumeratedTarget` out 参注释精度；⑥测试以 NRE 作「越过授权门」信号（fixture 脆弱）；⑦无独立 ZCode 裁决文件/会话 ID（仅卡面/Handoff 摘要）；⑧AC-SER-2 未区分既有「无匹配 root→Skipped」子场景；⑨EV 未复述 C-17 §5.3 主体解释（0-pin 前提）。→ 下次证据维护批规整；不改变产品行为/AC 判定。
 - **Run 面**：本卡不含（`HostRuntime.RunSourceRange` 仍按路径解析，零 diff）→ 另卡 `FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1`（proposed）。
 - 不改变实现/测试字节（`bcc88e4a2`）与 AC-SER-1…6 MET 判定。
 
