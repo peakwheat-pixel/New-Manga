@@ -1,0 +1,34 @@
+{
+  "case": "AC-LS4B-6 (real IPC closed loop: B1 -\u003E reattest -\u003E enumeration recovery)",
+  "core": "real volatile python core (stdio IPC)",
+  "app_registration_used": false,
+  "core_source_id": "s1",
+  "old_registry_id": "bc460c9e0fc54d488a92a90d5e150874",
+  "live_registry_id": "125e429fe9f84b5f9e765743b8ce3f2b",
+  "live_generation": 1,
+  "reattest_frames": 1,
+  "reattest_payload_keys": [
+    "grant_id",
+    "source_id"
+  ],
+  "enumeration_recovered": true,
+  "recovered_target": {
+    "source_id": "s1",
+    "registry_id": "125e429fe9f84b5f9e765743b8ce3f2b",
+    "generation": 1,
+    "source_kind": "zip"
+  },
+  "location_after": {
+    "registry_id": "125e429fe9f84b5f9e765743b8ce3f2b",
+    "authorization_generation": 1,
+    "identity_unchanged": true,
+    "last_verified_at_unchanged": true
+  },
+  "host_registry_unchanged": true,
+  "other_tables_unchanged": true,
+  "tick_verdict": {
+    "last_result": "error",
+    "limitation": "pre-existing ResolveRegistryEntry revoked-exact-match fail-closed; this card delivers ENUMERATION recovery only (no scan success claim)"
+  },
+  "reimport_or_apply": false
+}

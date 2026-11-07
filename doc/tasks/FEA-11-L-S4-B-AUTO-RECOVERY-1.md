@@ -14,7 +14,7 @@ base_commit: a7360839d
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 30bdeb4ce
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-L-S4-B-AUTO-RECOVERY-1
@@ -68,16 +68,16 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-LS4B-1 能力门禁/四象限**：`source.reattest/1` 缺失（旧 Core）→ Host 不发送、行为与现状一致（target 仍 typed skip）；新×新才生效；能力探测异常不发。
-- [ ] **AC-LS4B-2 Host 候选精确性**：仅「旧条目已撤销、恰 1 根、live 候选唯一且恰 1 根、路径 normalize 相等、volume/file 相等、`live.CreatedAt > old.RevokedAt`、kind 非 folder」进入候选；其余零 wire。
-- [ ] **AC-LS4B-3 Core 身份门禁与零写**：请求 closed shape；host-only/session；grant live/未过期/未撤销；`grant.scope.source_id == source_id`；grant facts 四键等于当前 location；拒绝/无匹配零写。
-- [ ] **AC-LS4B-4 单行写/幂等/单调**：成功只改 `registry_id/authorization_generation` 两列（`last_verified_at` 保持原值、不刷新审计时间）；location 行数不变；其余列逐列不变；重复调用 `updated:0` 且零写（字节不变）；同 registry 代次不倒退、跨 registry 允许 1。
-- [ ] **AC-LS4B-5 无授权/无 identity 重建/不扩面**：Core 不创建/复活 grant；Host Registry 不新增/撤销/改 roots/identity/generation（仅既有 `last_used_at`）；不新增 source/version/entry；无新错误码/能力（除冻结的 `source.reattest/1`）/wire minor/schema/依赖。
-- [ ] **AC-LS4B-6 触发与恢复**：B1 重授权成功后（App 成功分支）触发 reattest → 冷启动/下一次 refresh 枚举不再丢该 source（真实 IPC 闭环）；失败 typed 且不自动重试成自动恢复。
-- [ ] **AC-LS4B-7 零漂移/门禁**：pins 18/18（C16 v1.5）；check（默认+`-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3317/10、1617/0/93**）；跑后恢复 `verification/FEA-09`。
-- [ ] **AC-LS4B-8 不夸大**：只承诺「B1 显式重授权后无需重导入/apply，扫描枚举恢复」；不承诺撤销后自动恢复、不承诺自动重新授权、不承诺 folder；`source_reset_registry` 后无旧条目可桥接 → limitation；L-R1 未全修。
-- [ ] **AC-LS4B-9 每轮至多一次 reattest**：同一 refresh 轮中每个 target 至多一次 `ReattestSourceLocation`，无重试风暴；失败 typed 即止（不循环重试成自动恢复）。
-- [ ] **AC-LS4B-10 措辞红线**：「零交互」严格限定为「B1 显式动作之后的传播」；卡/Handoff/EV/UI 禁止出现「自动恢复/自愈/自动重新授权」承诺。
+- [x] <<MET>> **AC-LS4B-1 能力门禁/四象限**：`source.reattest/1` 缺失（旧 Core）→ Host 不发送、行为与现状一致（target 仍 typed skip）；新×新才生效；能力探测异常不发。
+- [x] <<MET>> **AC-LS4B-2 Host 候选精确性**：仅「旧条目已撤销、恰 1 根、live 候选唯一且恰 1 根、路径 normalize 相等、volume/file 相等、`live.CreatedAt > old.RevokedAt`、kind 非 folder」进入候选；其余零 wire。
+- [x] <<MET>> **AC-LS4B-3 Core 身份门禁与零写**：请求 closed shape；host-only/session；grant live/未过期/未撤销；`grant.scope.source_id == source_id`；grant facts 四键等于当前 location；拒绝/无匹配零写。
+- [x] <<MET>> **AC-LS4B-4 单行写/幂等/单调**：成功只改 `registry_id/authorization_generation` 两列（`last_verified_at` 保持原值、不刷新审计时间）；location 行数不变；其余列逐列不变；重复调用 `updated:0` 且零写（字节不变）；同 registry 代次不倒退、跨 registry 允许 1。
+- [x] <<MET>> **AC-LS4B-5 无授权/无 identity 重建/不扩面**：Core 不创建/复活 grant；Host Registry 不新增/撤销/改 roots/identity/generation（仅既有 `last_used_at`）；不新增 source/version/entry；无新错误码/能力（除冻结的 `source.reattest/1`）/wire minor/schema/依赖。
+- [x] <<MET>> **AC-LS4B-6 触发与恢复**：B1 重授权成功后（App 成功分支）触发 reattest → 冷启动/下一次 refresh 枚举不再丢该 source（真实 IPC 闭环）；失败 typed 且不自动重试成自动恢复。
+- [x] <<MET>> **AC-LS4B-7 零漂移/门禁**：pins 18/18（C16 v1.5）；check（默认+`-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3317/10、1617/0/93**）；跑后恢复 `verification/FEA-09`。
+- [x] <<MET>> **AC-LS4B-8 不夸大**：只承诺「B1 显式重授权后无需重导入/apply，扫描枚举恢复」；不承诺撤销后自动恢复、不承诺自动重新授权、不承诺 folder；`source_reset_registry` 后无旧条目可桥接 → limitation；L-R1 未全修。
+- [x] <<MET>> **AC-LS4B-9 每轮至多一次 reattest**：同一 refresh 轮中每个 target 至多一次 `ReattestSourceLocation`，无重试风暴；失败 typed 即止（不循环重试成自动恢复）。
+- [x] <<MET>> **AC-LS4B-10 措辞红线**：「零交互」严格限定为「B1 显式动作之后的传播」；卡/Handoff/EV/UI 禁止出现「自动恢复/自愈/自动重新授权」承诺。
 
 ## 已知 limitation（本卡）
 
@@ -104,4 +104,23 @@ out_of_scope:
 
 ## 交付记录（Owner 回填；不改 status）
 
-- 待实施。
+- **Owner**：`l-s4b-impl`（DSH Agent Teams；Lead `lead`）；交付日期 2026-11-07。
+- **实现起点**：`c6ca1aa3c`（`main`，工作树 clean）；卡 `base_commit=a7360839d`。
+- **delivery_head=`30bdeb4ce`**；commit 链：
+  - `ec171f0d3` Core `ReattestSourceLocation`（`src/application/sources/reattest.py` + `src/bootstrap/core_service.py`）
+  - `3ccb0509e` Host 能力探测/`SourceRootReattestPlanner`/枚举 pre-pass/`HostRuntime` 接线
+  - `f76620e39` App B1 成功分支触发既有 scan refresh
+  - `c4345a632` 测试（Core 矩阵 / Host / App / gated IPC）
+  - `30bdeb4ce` DSH 批准扩域的既有 capability 断言 +`source.reattest/1`（仅预期 1 行）
+- **AC-LS4B-1…10 全 MET**（逐项证据见 `verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/EV.md` §1 与 Handoff `doc/handoffs/FEA-11-L-S4-B-AUTO-RECOVERY-1-30bdeb4ce.md`）。
+- **实跑门禁**：Core 定向 100 passed；回归 89 passed；Host 24/0/0；App 18/0/0；gated 真 IPC 4/0/0；
+  判别性 11/11 RED_AS_EXPECTED；全量 pytest **3360/10**（基线 3317/10）；全量 .NET **1644/0/94**（基线 1617/0/93）；
+  pins **18/18（C16 `a7f57ebd…`）**；check（默认 + `-TaskPath`）**PASS(3 warnings)**；API inventory **EXIT=0**；
+  scope **PASS**（diff ⊆ allowed_paths、zero-drift=[]、`PROTOCOL_MINOR=3`、C07 registry 无新命令）；跑后 `verification/FEA-09` CLEAN。
+- **扩域（DSH 已批准）**：`tests/core/test_core_service.py`（2 处）、`tests/fea09/test_referenced_wire.py`（1 处）
+  精确 capability 列表各 +1 行 `"source.reattest/1",`；零行为改动；.NET 侧未使用预批。
+- **措辞红线**：只承诺「B1 显式重授权后无需重导入/apply，**枚举**恢复」；不写「自动恢复/自愈/自动重新授权」。
+- **登记 limitation**：**L-S4-B-1** 扫描执行面仍被既有 `ResolveRegistryEntry` revoked-exact-match 拦住（tick typed error），
+  本卡不宣称扫描执行成功；B2 `roots_available` 实现延后；folder（L-S4-2）；`source_reset_registry` 后无旧条目可桥接；L-S4-1/L-R1 未全修。
+- **证据目录**：`verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/`（`EV.md`、`RESOURCE-MANIFEST.json`、`scope-validation.log`、
+  `changed-files.txt`、`logs/**`、`tools/**`）。未 push、未建 worktree。

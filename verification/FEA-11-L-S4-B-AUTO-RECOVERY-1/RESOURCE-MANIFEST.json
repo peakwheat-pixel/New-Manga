@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-L-S4-B-AUTO-RECOVERY-1",
+  "generated_at": "2026-11-07T06:48:47+00:00",
+  "generated_by": "l-s4b-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "delivery_head": "30bdeb4ce",
+  "delivery_commits": [
+    "ec171f0d3",
+    "3ccb0509e",
+    "f76620e39",
+    "c4345a632",
+    "30bdeb4ce"
+  ],
+  "repo_head_at_generation": "30bdeb4cedfe7cfa3a42857254356af7456587d3",
+  "note": "FEA-11-L-S4-B-AUTO-RECOVERY-1 (L-S4-B) delivery: the C-16 v1.5 §2.5 conditional single-row ReattestSourceLocation fact propagation (two auth columns only, last_verified_at preserved, single reused SQL, zero write on every refusal) plus the Host capability-gated exact re-attest planner/enumerator pre-pass and the App B1 explicit-action success-branch trigger of the EXISTING scan refresh. No linked worktree, no push, no user data; no library.py/schema/dependency change; the frozen C-16 v1.5 bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 30bdeb4ce）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/apps/tests/verification/doc 内，未 push。"
+    },
+    {
+      "resource_type": "temp_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-S4-B-AUTO-RECOVERY-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "任务隔离根：pytest 的 scratch DB/zip 位于 G:/CODEX/New Manga.workspace/FEA-11-L-S4-B-AUTO-RECOVERY-1/fixtures/**；gated 真 IPC 沿用既有 FEA-11 fixtures 根 G:/CODEX/New Manga.workspace/FEA-11/fixtures/scan-*/（测试既有约定）。均为仓外派生产物，不属仓库交付；未清理。"
+    },
+    {
+      "resource_type": "repository",
+      "source_path": "G:\\CODEX\\New Manga (main)",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 15,
+      "changed_files": [
+        {
+          "commit": "ec171f0d3",
+          "path": "src/application/sources/reattest.py",
+          "sha256": "694f21725f15c5bddc94619640e3bd45be6ac2b047050d3a67ceef429fd6e699"
+        },
+        {
+          "commit": "ec171f0d3",
+          "path": "src/bootstrap/core_service.py",
+          "sha256": "aba03addb76e06b1459e912937ec875ef6def9045b9c26873bd9e41b210722f5"
+        },
+        {
+          "commit": "3ccb0509e",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+          "sha256": "83bdb5b9d4ba2286e0c9bbf582453768af26727cde6366e0e92a811ed2002b83"
+        },
+        {
+          "commit": "3ccb0509e",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+          "sha256": "8654fbb7807c307ae7a1b20314d1261b68d5a59394066ee665b5e97d463d5d81"
+        },
+        {
+          "commit": "3ccb0509e",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs",
+          "sha256": "59c3fb4ec258ff37eadd95446a6375375df4176a3c4d0376720a122305c212c7"
+        },
+        {
+          "commit": "3ccb0509e",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+          "sha256": "3583d30fbf7f676b3dad5fec1851a505a901697ff7cd9f83234bcb6504e74c32"
+        },
+        {
+          "commit": "f76620e39",
+          "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs",
+          "sha256": "758264a9fa1716c892328d1f4d0d2629e1c56315c716210f47fadefe2fb75484"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs",
+          "sha256": "fbe71646d5db5d82e66bfb32df753080f305c384f1769e1bec1a411052b9e2d1"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs",
+          "sha256": "272e9bc3689fbe49e28998d5f0f12be5b49ab4295b2cac4b79b7dc1fbb4be897"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceReattestTests.cs",
+          "sha256": "c045d6a41c68791602dfe1d0faaba0c00e6483a16f72a91dfb9adff7be903b45"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "tests/core/test_core_scan_target_commands.py",
+          "sha256": "6fa426903db9c0780eaeee15424941ad5483791c972fde8a3e2d7d30cd377c95"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "tests/core/test_host_control.py",
+          "sha256": "3e64a0144dffb4db20dd73980ece1844645194f62a92243946dd8a9d0e4a0326"
+        },
+        {
+          "commit": "c4345a632",
+          "path": "tests/fea11/test_source_reattest.py",
+          "sha256": "e99e195be1b08c373f259272f7d31f2afa53c7328a84d9fab7824c421680b5f0"
+        },
+        {
+          "commit": "30bdeb4ce",
+          "path": "tests/core/test_core_service.py",
+          "sha256": "29790300ee338677bbb2262da76970848596e367bc8b3d28084bd91304b65272"
+        },
+        {
+          "commit": "30bdeb4ce",
+          "path": "tests/fea09/test_referenced_wire.py",
+          "sha256": "c650f730f54eea5e5974cef06fbe672669ac4eef00262a3842c60452c0056de5"
+        }
+      ]
+    },
+    {
+      "resource_type": "evidence_tree",
+      "source_path": "verification/FEA-11-L-S4-B-AUTO-RECOVERY-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 17,
+      "files": [
+        {
+          "path": "changed-files.txt",
+          "sha256": "91950b0667aacbb77e84a24ac9e271bd69aaf0ac320986f2978e85441fbedb95"
+        },
+        {
+          "path": "EV.md",
+          "sha256": "21063152ed0854d00cd5870579084d325b326fd0bf528035280144c2850bf04e"
+        },
+        {
+          "path": "logs/app-unit.log",
+          "sha256": "1bccd5074c3101d2ce02d8c43746a7ae8bf28d75d2d5a9883944055cf67812b0"
+        },
+        {
+          "path": "logs/discrimination.log",
+          "sha256": "b95f9f7d7f0a0e04474a3b2d3d2b535c9d54ef6302ec13596b8a59b2e1786ffd"
+        },
+        {
+          "path": "logs/feature.log",
+          "sha256": "6c3d51d16ac3346e0a3000b36c5740185af37a3c9ca85629c76c7dcc019d9f9f"
+        },
+        {
+          "path": "logs/full-dotnet.log",
+          "sha256": "f9f8f8eefe6e05a044cfdb22129fa7dd7056a4b4b7ca90103056b168c965ad27"
+        },
+        {
+          "path": "logs/full-pytest.log",
+          "sha256": "490455e92cade6d6ed7b09da34bcd9067ff58b01456e40107cd1420b33c57650"
+        },
+        {
+          "path": "logs/gates.log",
+          "sha256": "28778864dd07179bbfd70910cb823f7074a1524584958c39929839892d1be001"
+        },
+        {
+          "path": "logs/host-ipc.log",
+          "sha256": "df0efff67e2ee229643ca1f28f0e86454e0996ca0337a7554dda9ea704d0bfea"
+        },
+        {
+          "path": "logs/host-unit.log",
+          "sha256": "0b781c5e433ae6d047caa767abaec30cdcd5c0c58ab558c527ad67a00c1ad38d"
+        },
+        {
+          "path": "logs/ipc-closed-loop.json",
+          "sha256": "ce5b4be470d3e9b1f1e760b13eae9f46ddcc4550547b5e78c94196b20ccab18c"
+        },
+        {
+          "path": "logs/ipc-closed-loop.txt",
+          "sha256": "cc38ff01b63e02c9cc59787dc87d9f43c6c407b6e433ff01d6d034e843617eab"
+        },
+        {
+          "path": "logs/regression-74.log",
+          "sha256": "057b8fcd1cd9b90e36c645457be03bcf2e9718ee9900b5eee5f78f3109495f9d"
+        },
+        {
+          "path": "scope-validation.log",
+          "sha256": "f28dd4b04fd756c40b000ff409e25f3c8159143e9ebc39e86c9375462c8d3ab5"
+        },
+        {
+          "path": "tools/discrimination.py",
+          "sha256": "8628074385f89122fa3500c27557ee5ccba54e2b653708e94981841869116593"
+        },
+        {
+          "path": "tools/gen_manifest.py",
+          "sha256": "8fa63cb69e9fd279cbcdfb85c4a972adb6b72a5e46feb9cf6fe70f6fbaa6e962"
+        },
+        {
+          "path": "tools/scope_validation.py",
+          "sha256": "c48044b2bc9df528c6a4487ba5c9f235a6bfe69bef4e044bd7495f48f6703181"
+        }
+      ]
+    }
+  ]
+}

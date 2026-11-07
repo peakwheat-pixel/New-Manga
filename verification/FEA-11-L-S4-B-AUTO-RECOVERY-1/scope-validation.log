@@ -1,0 +1,71 @@
+[2026-11-07T06:48:47.198+00:00] FEA-11-L-S4-B-AUTO-RECOVERY-1 scope validation (delivery diff vs c6ca1aa3c)
+card=doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md base=c6ca1aa3c
+changed_count=39 delivery=35 concurrent_non_delivery=4
+CONCURRENT_NON_DELIVERY doc/handoffs/DSH-HANDOFF-2026-11-06.md
+CONCURRENT_NON_DELIVERY doc/handoffs/DSH-PROGRESS-2026-11-07.md
+CONCURRENT_NON_DELIVERY doc/reviews/FEA-11-L-S4-B-PREREQ-1-r8.md
+CONCURRENT_NON_DELIVERY doc/reviews/FEA-11-L-S4-B-PREREQ-1-r9.md
+allowed_paths=19
+  ALLOWED doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md
+  ALLOWED doc/reviews/FEA-11-L-S4-B-*.md
+  ALLOWED doc/handoffs/FEA-11-L-S4-B-*.md
+  ALLOWED verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/**
+  ALLOWED src/bootstrap/core_service.py
+  ALLOWED src/application/sources/reattest.py
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  ALLOWED apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+  ALLOWED tests/core/test_host_control.py
+  ALLOWED tests/fea11/test_source_reattest.py
+  ALLOWED tests/core/test_core_scan_target_commands.py
+  ALLOWED tests/core/test_core_service.py
+  ALLOWED tests/fea09/test_referenced_wire.py
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceReattestTests.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11ScanIpcTests.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceReattestTests.cs
+ALLOWED  doc/handoffs/FEA-11-L-S4-B-AUTO-RECOVERY-1-30bdeb4ce.md
+ALLOWED  doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md
+ALLOWED  src/application/sources/reattest.py
+ALLOWED  src/bootstrap/core_service.py
+ALLOWED  tests/core/test_core_scan_target_commands.py
+ALLOWED  tests/core/test_core_service.py
+ALLOWED  tests/core/test_host_control.py
+ALLOWED  tests/fea09/test_referenced_wire.py
+ALLOWED  tests/fea11/test_source_reattest.py
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/EV.md
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/RESOURCE-MANIFEST.json
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/changed-files.txt
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/app-unit.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/discrimination.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/feature.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/full-dotnet.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/full-pytest.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/gates.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/host-ipc.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/host-unit.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/ipc-closed-loop.json
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/ipc-closed-loop.txt
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/logs/regression-74.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/scope-validation.log
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/tools/discrimination.py
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/tools/gen_manifest.py
+ALLOWED  verification/FEA-11-L-S4-B-AUTO-RECOVERY-1/tools/scope_validation.py
+card_status_unchanged=True
+PROTOCOL_MINOR=3
+C16_SHA256=a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d
+C16_PIN_MATCH=True
+CORE_HAS_REATTEST_COMMAND=True
+COMMAND_REGISTRY_BASELINE=111 COMMAND_REGISTRY_HAS_REATTEST=False COMMAND_REGISTRY_OK=True
+zero_drift_violations=[]
+out_of_scope=[]
+result=PASS changed=35 out_of_scope=[] forbidden=[] minor=3 c16_zero_drift=True command_registry_ok=True

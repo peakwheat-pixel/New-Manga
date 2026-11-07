@@ -1,0 +1,51 @@
+[2026-11-07T06:29:08.041+00:00] FEA-11-L-S4-B discrimination start (repo=G:\CODEX\New Manga)
+case=B1 what=Core 四键身份校验被删除（identity 不符也会写） file=src/application/sources/reattest.py target=tests/fea11/test_source_reattest.py -k same_physical_identity break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_requires_the_same_physical_identity[file]
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_requires_the_same_physical_identity[size]
+  break-out: 4 failed, 23 deselected in 0.84s
+case=B2 what=Core grant.scope.source_id 校验被删除 file=src/application/sources/reattest.py target=tests/fea11/test_source_reattest.py -k requires_the_grant_scope_source break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_requires_the_grant_scope_source
+  break-out: 1 failed, 26 deselected in 0.48s
+case=B3 what=Core 用新时间戳覆盖 last_verified_at（审计时间被刷新） file=src/application/sources/reattest.py target=tests/fea11/test_source_reattest.py -k updates_only_the_two_auth_columns break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_updates_only_the_two_auth_columns
+  break-out: 1 failed, 26 deselected in 0.48s
+case=B4 what=Core closed shape 两层校验同时被放宽（接受多余字段） file=src/bootstrap/core_service.py,src/application/sources/reattest.py target=tests/fea11/test_source_reattest.py -k non_closed_shapes break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_rejects_non_closed_shapes[unknown_key]
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_rejects_non_closed_shapes[three_keys]
+  break-out: 2 failed, 8 passed, 17 deselected in 1.55s
+case=B5 what=Core folder 排除被删除（folder grant 也可被 reattest） file=src/application/sources/reattest.py target=tests/fea11/test_source_reattest.py -k rejects_folder_grants break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_reattest.py::test_reattest_rejects_folder_grants
+  break-out: 1 failed, 26 deselected in 0.48s
+case=B6 what=Host 候选的生命周期序校验被删除（历史重复条目也会被当再授权） file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs target=FullyQualifiedName~Plan_HistoricalDuplicateCreatedBeforeTheRevoke_IsSkipped break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out:    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 17 ms - NewManga.Host.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceReattestTests.Plan_HistoricalDuplicateCreatedBeforeTheRevoke_IsSkipped [FAIL]
+case=B7 what=Host 多 live 条目歧义守卫被删除（任选一条） file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs target=FullyQualifiedName~Plan_TwoLiveEntries_AreAmbiguous_AndAreSkipped break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out:    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 17 ms - NewManga.Host.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.19]     NewManga.Host.Tests.SourceReattestTests.Plan_TwoLiveEntries_AreAmbiguous_AndAreSkipped [FAIL]
+case=B8 what=Host 能力门禁被删除（缺 source.reattest/1 仍 mint/send） file=apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs target=FullyQualifiedName~Enumerator_MissingCapability break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: --- End of stack trace from previous location ---
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 66 ms - NewManga.Host.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.34]     NewManga.Host.Tests.SourceReattestTests.Enumerator_MissingCapability_SendsNothing_AndKeepsTheTypedSkip [FAIL]
+case=B9 what=App 成功分支不再请求既有扫描刷新（B1 后无传播触发） file=apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs target=FullyQualifiedName~ReauthorizeSuccess_RequestsTheExistingScanRefreshExactlyOnce break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: --- End of stack trace from previous location ---
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 10 ms - NewManga.App.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.42]     NewManga.App.Tests.SourceRecoveryUiTests.ReauthorizeSuccess_RequestsTheExistingScanRefreshExactlyOnce [FAIL]
+case=B10 what=App 失败分支也请求扫描刷新（fail-closed 被破坏） file=apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs target=FullyQualifiedName~ReauthorizeFailure_RequestsNoScanRefresh break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: --- End of stack trace from previous location ---
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 9 ms - NewManga.App.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.35]     NewManga.App.Tests.SourceRecoveryUiTests.ReauthorizeFailure_RequestsNoScanRefresh [FAIL]
+case=B11 what=App 成功文案改为「自动恢复」承诺（措辞红线） file=apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs target=FullyQualifiedName~ReauthorizeSuccess_RequestsTheExistingScanRefreshExactlyOnce break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: --- End of stack trace from previous location ---
+  break-out: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 17 ms - NewManga.App.Tests.dll (net9.0)
+  break-out: [xUnit.net 00:00:00.36]     NewManga.App.Tests.SourceRecoveryUiTests.ReauthorizeSuccess_RequestsTheExistingScanRefreshExactlyOnce [FAIL]
+restored_tree_git_status=M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+ M apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
+ M src/bootstrap/core_service.py
+?? apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs
+?? src/application/sources/reattest.py
+result=PASS breaks=11 statuses=RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED

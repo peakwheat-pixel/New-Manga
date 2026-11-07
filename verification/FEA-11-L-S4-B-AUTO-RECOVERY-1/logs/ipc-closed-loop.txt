@@ -1,0 +1,10 @@
+FEA-11-L-S4-B AC-LS4B-6 real IPC (B1 explicit re-auth -> reattest -> enumeration)
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\scan-f31b0b60aea64893b237a26692806607
+phase_a_targets=0 phase_a_skipped=1
+reattest_frames=1 payload=ids-only path_hits=0
+phase_b_targets=1 core_source_id=s1
+live_registry_id=125e429fe9f84b5f9e765743b8ce3f2b generation=1
+location_auth_columns_only=true last_verified_at_unchanged=true
+host_registry_unchanged=true other_tables_unchanged=true reimport_or_apply=false
+tick_last_result=error (registered limitation: execution-face resolved by the pre-existing revoked-row guard; enumeration only)
+PASS
