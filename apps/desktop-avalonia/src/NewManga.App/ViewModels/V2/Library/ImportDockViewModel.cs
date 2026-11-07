@@ -580,6 +580,13 @@ public sealed class ImportDockViewModel : ObservableObject
             ReferenceErrorText = string.Empty;
             ClearSourceRecoveryState();
             _notify(result.Message, NmStatus.Done);
+            // FEA-11-L-S4-B (C-16 v1.5 §2.5): the explicit re-authorization just created ONE live
+            // Host entry; ask the Host for its EXISTING scan-target refresh (no new UI->Host command,
+            // no target id/path argument) so the Host can propagate that fact to the Core location
+            // row and the enumeration stops dropping the source. This is NOT an automatic recovery:
+            // only this explicit success branch requests it, the Host re-verifies its own registry
+            // and the Core capability, and a refusal keeps the target's existing typed skip.
+            RequestSourceScanRefresh(sourceImport);
             // The flow is "explicit re-authorization → preview again": the SAME user action re-runs
             // the preview (one click, no unattended retry loop). The success text is published after
             // that preview so its recovery-state reset cannot erase it (r1 P3-07).
