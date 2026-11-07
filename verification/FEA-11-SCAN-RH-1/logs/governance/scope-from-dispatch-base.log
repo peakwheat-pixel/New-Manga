@@ -1,4 +1,4 @@
-=== git diff ffcfab050..HEAD --name-only（卡 base_commit；含 Lead 释放提交 d09e91d1d） ===
+=== git diff ffcfab050..HEAD --name-only（派发说明给定基准；ffcfab050 = Lead 释放本卡的提交） ===
 apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs
 apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceScanSchedulerTests.cs
 doc/handoffs/DSH-HANDOFF-2026-11-06.md
@@ -37,6 +37,7 @@ verification/FEA-11-SCAN-RH-1/logs/governance/check.log
 verification/FEA-11-SCAN-RH-1/logs/governance/git-status.log
 verification/FEA-11-SCAN-RH-1/logs/governance/pins.log
 verification/FEA-11-SCAN-RH-1/logs/governance/postcommit-commits.log
+verification/FEA-11-SCAN-RH-1/logs/governance/scope-from-card-base.log
 verification/FEA-11-SCAN-RH-1/logs/governance/scope-name-only.log
 verification/FEA-11-SCAN-RH-1/logs/governance/scope-stat.log
 verification/FEA-11-SCAN-RH-1/logs/governance/scope-zero-drift.log
@@ -44,4 +45,4 @@ verification/FEA-11-SCAN-RH-1/logs/pytest-full-after.log
 verification/FEA-11-SCAN-RH-1/logs/pytest-full-before.log
 verification/FEA-11-SCAN-RH-1/logs/start-head.log
 
-NOTE: doc/handoffs/DSH-HANDOFF-2026-11-06.md 由 Lead 的 d09e91d1d（docs-only 释放提交）写入，不属本卡交付；本卡交付 diff 基准应取 d09e91d1d（见 scope-name-only.log）。
+NOTE: 唯一额外路径 doc/handoffs/DSH-HANDOFF-2026-11-06.md 由 Lead 的 d09e91d1d（docs-only 释放提交）写入，不属本卡交付；本卡交付 diff 基准 = d09e91d1d（见 scope-name-only.log）。卡面 front matter base_commit=a969f405f 为冻结时点（早 8 个提交），不作为 scope 基准。

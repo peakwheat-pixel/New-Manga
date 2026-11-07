@@ -99,7 +99,8 @@ out_of_scope:
   RH-1 refresh pending 重放 + RH-2 lifetime CTS/link/Dispose 有界 join；`HostRuntime.cs` **零 diff**）→ `fb74b4ef7`
   （测试 `SourceScanSchedulerTests.cs`：3 个新用例 + `FakeTargetEnumerator` 扩展）。随后同批 docs/evidence 提交
   （本卡面 / `doc/tasks/FEA-11-SCAN-2.md` append-only 一行 / Handoff / `verification/FEA-11-SCAN-RH-1/**`）。
-  实施起点实测 `d09e91d1d`（Lead 的 docs-only 释放提交；卡 `base_commit=ffcfab050`），实现/测试提交落在其上。
+  实施起点实测 `d09e91d1d`（Lead 的 docs-only 释放提交；派发说明给定交付基准 `ffcfab050`，卡面 front matter
+  `base_commit=a969f405f` 为冻结时点、早 8 个提交），实现/测试提交落在 `d09e91d1d` 之上。
 - **AC 判定**：AC-RH-1…AC-RH-5 **全 MET**（逐项行末 `<<MET>>`；证据见 `verification/FEA-11-SCAN-RH-1/EV.md`）。
 - **实跑门禁（before → after）**：Release build **0 warning / 0 error**；定向 `--filter "FullyQualifiedName~SourceScan"`
   **68/0/0 → 71/0/0**（+3 新用例）、`~SourceWatcher` **19/0/0 → 19/0/0**（不回归）；全量 .NET
@@ -107,7 +108,7 @@ out_of_scope:
   **3369 passed/10 skipped → 3369/10**（不降；Python 零改动）；`verify_pins.ps1` **18/18**；`check.ps1` 默认 +
   `-TaskPath` **PASS(3 warnings)×2**；API inventory **EXIT=0**；scope：`git diff d09e91d1d..<交付>` 仅
   `SourceScanScheduler.cs` + `SourceScanSchedulerTests.cs` + 本卡 allowed 的 docs/evidence；`HostRuntime.cs` /
-  `doc/contracts` / `src/**` / schema / 依赖 **0 字节**（详见 EV §4）。以卡 base `ffcfab050` 计，额外 1 个路径
+  `doc/contracts` / `src/**` / schema / 依赖 **0 字节**（详见 EV §4）。以派发基准 `ffcfab050` 计，额外 1 个路径
   `doc/handoffs/DSH-HANDOFF-2026-11-06.md` 属 Lead 的 `d09e91d1d`（docs-only 释放提交），**非本卡写入**。
 - **判别性**：**2/2 RED_AS_EXPECTED + 复原 sha256 2/2 MATCH + 复绿**（RH-1 删重放 → 2 用例 RED；RH-2 改回 caller
   token / 不 cancel lifetime / 不 join → Dispose 用例 RED；固定实现备份 sha256 `6b77d9ca…`，逐字节复原 MATCH 后

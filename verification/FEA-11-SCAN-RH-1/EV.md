@@ -4,8 +4,10 @@
 > join）；**RH-4** 为文档口径订正（零代码）；**RH-3/RH-5 仅登记 limitation（不实现）**。**不声称** RH-3 已清理、
 > RH-5 已补 fake-Core seam、SCAN-2 残余已全部解决；**不声称**满足 C-17 §6.2 零写基线或全库零写。
 
-- Task：`doc/tasks/FEA-11-SCAN-RH-1.md`（`base_commit=ffcfab050`；**实施起点实测 `d09e91d1d`** = Lead 的
-  docs-only 释放提交，仅改 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`；`status` 由 Lead 维护）
+- Task：`doc/tasks/FEA-11-SCAN-RH-1.md`（`status` 由 Lead 维护）。三处 head 需区分：卡面 front matter
+  `base_commit=a969f405f`（冻结时点，早于交付 8 个提交）；**派发说明给定的交付基准 `ffcfab050`**（= Lead 释放本卡的
+  提交）；**实施起点实测 `d09e91d1d`**（Lead 的 docs-only 前进 1 个提交，仅改 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`；
+  本卡交付 diff 以 `d09e91d1d` 为基准，见 §4 #10）
 - 交付 commit 链：`938d598ac`（实现）→ **`fb74b4ef7`（测试 = `delivery_head`）**；随后 docs/evidence 提交
 - 环境：Windows 11 / PowerShell 7 / .NET SDK 10.0.401（目标 `net9.0`）/ .NET runtime 9.0.308 /
   CPython 3.14.6 / pytest 9.1.1；**零新依赖**、零 schema/wire/命令/能力/错误码/`PROTOCOL_MINOR`、零契约字节、
@@ -115,7 +117,7 @@
 | 7 | check（默认） | `pwsh -NoProfile -File tools/governance/check.ps1` | — | **PASS (3 warnings)** | `logs/governance/check.log` |
 | 8 | check（`-TaskPath`） | 同上 + `-TaskPath doc/tasks/FEA-11-SCAN-RH-1.md` | — | **PASS (3 warnings)** | `logs/governance/check-taskpath.log` |
 | 9 | API inventory | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | — | **EXIT=0** | `logs/governance/api-inventory.log` |
-| 10 | scope | `git diff d09e91d1d..HEAD --name-only` / `--stat` / 零漂移路径（另见卡 base 计法） | — | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以卡 `base_commit=ffcfab050` 计仅多出 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（Lead 的 `d09e91d1d` docs-only 释放提交，**非本卡写入**） | `logs/governance/scope-name-only.log`、`scope-stat.log`、`scope-zero-drift.log`、`scope-from-card-base.log`、`git-status.log`、`postcommit-commits.log` |
+| 10 | scope | `git diff d09e91d1d..HEAD --name-only` / `--stat` / 零漂移路径（另见派发基准计法） | — | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以派发给定基准 `ffcfab050` 计仅多出 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（Lead 的 `d09e91d1d` docs-only 释放提交，**非本卡写入**） | `logs/governance/scope-name-only.log`、`scope-stat.log`、`scope-zero-drift.log`、`scope-from-dispatch-base.log`、`git-status.log`、`postcommit-commits.log` |
 
 - 全量 .NET 跑后 `verification/FEA-09/logs/wire-redacted.ndjson` 被测试写脏 → 已 `git checkout -- verification/FEA-09`
   复原（`logs/dotnet-full-after-summary.log` 记录；`git status` 见 `git-status.log`）。
@@ -171,9 +173,9 @@ git diff --name-only d09e91d1d..HEAD
   `M1-restore-sha256.log`、`M1-restore-build.log`、`M1-restored-green.log`、`M2-mutation.diff`、`M2-build.log`、
   `M2-red-tests.log`、`M3-final-restore-sha256.log`、`M3-final-build.log`、`M3-restored-green.log`
 - `logs/governance/pins.log`、`api-inventory.log`、`check.log`、`check-taskpath.log`、`scope-name-only.log`、
-  `scope-stat.log`、`scope-zero-drift.log`、`scope-from-card-base.log`、`git-status.log`、`postcommit-commits.log`
+  `scope-stat.log`、`scope-zero-drift.log`、`scope-from-dispatch-base.log`、`git-status.log`、`postcommit-commits.log`
 
 > 说明：`check.log`/`check-taskpath.log`/`scope-*.log`/`git-status.log`/`postcommit-commits.log` 在 docs/evidence
-> 提交之后于 committed 树上复跑（见 `postcommit-commits.log` 的 HEAD），以 committed 状态为准；`scope-from-card-base.log`
-> 记录以卡 `base_commit=ffcfab050` 计的路径集合（额外 1 条为 Lead 释放提交的文件，已注明非本卡写入）；其余日志产生于
+> 提交之后于 committed 树上复跑（见 `postcommit-commits.log` 的 HEAD），以 committed 状态为准；`scope-from-dispatch-base.log`
+> 记录以派发给定基准 `ffcfab050` 计的路径集合（额外 1 条为 Lead 释放提交的文件，已注明非本卡写入）；其余日志产生于
 > 提交前工作树（字节与提交一致，`git-status.log` 记录提交后 clean）。

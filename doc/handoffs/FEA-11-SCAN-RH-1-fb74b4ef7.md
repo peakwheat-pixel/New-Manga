@@ -2,7 +2,7 @@
 task_id: FEA-11-SCAN-RH-1
 author: scan-rh-impl（DSH Agent Teams 成员；Lead `lead`）
 recipient: DeepSeek Harness
-base_commit: ffcfab050
+base_commit: a969f405f
 start_head: d09e91d1d
 delivery_head: fb74b4ef7
 status: in_review
@@ -11,15 +11,17 @@ supersedes_handoff: null
 
 # Handoff — FEA-11-SCAN-RH-1（SCAN-2 复核残余收口：refresh pending 重放 + refresh 生命周期绑定，Host-only，0 pin）
 
-- Task：`doc/tasks/FEA-11-SCAN-RH-1.md`（`base_commit=ffcfab050`；`status` 由 Lead 维护，本 Handoff 不改）
+- Task：`doc/tasks/FEA-11-SCAN-RH-1.md`（`status` 由 Lead 维护，本 Handoff 不改）
 - 交付日期：2026-11-08（Asia/Shanghai）
 - 权限依据：卡面 `status: ready`（Owner=`scan-rh-impl`）+ 权威 scope review
   `doc/reviews/FEA-11-SCAN-RH-scope-r1.md`（recommended；D-1 重放修复 / D-2 SCAN-2 append-only 订正 / D-3 单卡 /
   D-4 RH-3/RH-5 仅登记）
-- 交付基线：**实施起点实测 `d09e91d1d`** = Lead 的 docs-only 释放提交（仅改
-  `doc/handoffs/DSH-HANDOFF-2026-11-06.md`；卡面 `base_commit=ffcfab050` 为其父）；实现/测试提交落在其上
+- **三处 head 区分**：卡面 front matter `base_commit=a969f405f`（冻结时点，早于交付 8 个提交）→ 派发说明给定交付基准
+  `ffcfab050`（= Lead 释放本卡的提交）→ **实施起点实测 `d09e91d1d`**（Lead 的 docs-only 前进 1 个提交，仅改
+  `doc/handoffs/DSH-HANDOFF-2026-11-06.md`）。**本卡交付 diff 以 `d09e91d1d` 为基准**；以派发基准 `ffcfab050` 计仅
+  多出 Lead 的那个文件（非本卡写入）
 - **delivery_head = `fb74b4ef7`**：实现 `938d598ac` + 测试 `fb74b4ef7`；随后同批 docs/evidence 提交
-  （EV / `RESOURCE-MANIFEST.json` / 本 Handoff / 卡面交付记录 / SCAN-2 append-only 一行）
+  （EV / `RESOURCE-MANIFEST.json` / 本 Handoff / 卡面交付记录 / SCAN-2 append-only 一行；最终树 HEAD `327b299e6`）
 - 环境：Windows 11 / PowerShell 7 / .NET SDK 10.0.401（`net9.0`）/ CPython 3.14.6 / pytest 9.1.1；未建 worktree；
   未 push；零新依赖、零 schema/迁移、零 wire/命令/能力/错误码/`PROTOCOL_MINOR`、零契约字节、零 App/UI；
   `HostRuntime.cs` **零 diff**
@@ -46,7 +48,7 @@ supersedes_handoff: null
 | pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PASS (all 18)** | `logs/governance/pins.log` |
 | check（默认 / `-TaskPath`） | `pwsh -NoProfile -File tools/governance/check.ps1` | **PASS (3 warnings) ×2** | `logs/governance/check.log`、`check-taskpath.log` |
 | API inventory | `python tools/generate_api_inventory.py --check` | **EXIT=0** | `logs/governance/api-inventory.log` |
-| scope | `git diff d09e91d1d..HEAD --name-only/--stat` + 零漂移 | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以卡 base `ffcfab050` 计仅多 Lead 的 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（`d09e91d1d` 释放提交，非本卡写入） | `logs/governance/scope-*.log`、`git-status.log`、`postcommit-commits.log` |
+| scope | `git diff d09e91d1d..HEAD --name-only/--stat` + 零漂移 | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以派发基准 `ffcfab050` 计仅多 Lead 的 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（`d09e91d1d` 释放提交，非本卡写入） | `logs/governance/scope-*.log`、`git-status.log`、`postcommit-commits.log` |
 | 判别性 | 备份 → M1/M2 变异 → build → RED → 复原 sha256 MATCH → 复绿 | **2/2 RED_AS_EXPECTED + sha256 2/2 MATCH + 复绿**（2 passed / 3 passed；`~SourceScan` 71、`~SourceWatcher` 19） | `logs/discriminative/**` |
 
 - **before/after 行为口径**：修复前——refresh 在飞时的第二次 refresh 只置 `_refreshPending`，重放只在
