@@ -76,6 +76,14 @@ verdict: approved
   `verification/FEA-09/**`；仅交叉核对 Owner 日志与合计，并独立重跑 App.Tests 程序集与 flaky 隔离）；
   未跑完整 Core reattest 往返（本卡不发送 `ReattestSourceLocation`，该环由 L-S4-B 证据覆盖）；
   未触碰真实用户数据/AppData/回收站；未 push、未建 worktree。
+- **并发披露（收尾时观察，非本 Review 写入）**：我的独立实跑完成（约 17:19）后，Lead 在共享 main
+  工作树发起 closeout 文档事务（**截至本报告收尾约 17:33 仍未提交**）：`doc/STATUS.md`、
+  `doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、本卡卡面、`verification/…/EV.md` 被修改，并新增
+  `doc/tasks/FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1.md`；卡面 `status→done`、`integration_commit→fad1ec776`、
+  新增 Canonical Evidence/Closeout 段，EV 被重写。**本报告的事实仍以 `fad1ec776` 代码/测试与
+  `ca929aade` 证据字节为准**；我没有触碰这些并发文件。该事务进行中时，默认 `check.ps1` 因 STATUS 指针
+  被改写到中间态而 **FAIL**（`STATUS 未提供可解析的当前 Task 指针`），`-TaskPath` 仍 **PASS**；我在
+  §2F 的 **PASS×2** 是在该事务开始前实测的。并发事务结束后需由 Lead 重新跑一次默认 check。
 
 ## 2. 必做核对 A–G
 
@@ -168,7 +176,7 @@ verdict: approved
 | gated 真 IPC | `NEWMANGA_FEA11_IPC=1 dotnet test … --filter "FullyQualifiedName~Fea11RunGrantIpc"` | **6 / 0 / 0**，EXIT=0，9 s | 一致；新 fixture 的 JSON 与交付 `ipc-closed-loop.json` 同形 |
 | 定向 pytest | `C:/Python314/python.exe -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q`（`PYTHONDONTWRITEBYTECODE=1`） | **89 passed / 1 warning**，EXIT=0，10.51 s | 一致 |
 | pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PASS (all 18)**，EXIT=0（C15 `f9e376a0ed4c`、C16 `a7f57ebdbd67`、C17 `aefa0fa5b17e`） | 一致 |
-| check | `check.ps1` 默认 + `-TaskPath doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md` | **PASS (3 warnings) ×2**，EXIT=0（3 warnings = 9 个非终态 Task + STATUS/PLAN 预算 80%） | 一致 |
+| check | `check.ps1` 默认 + `-TaskPath doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md` | **PASS (3 warnings) ×2**，EXIT=0（3 warnings = 9 个非终态 Task + STATUS/PLAN 预算 80%）；**收尾时 Lead 并发 closeout 使默认 check 暂时 FAIL，见 §1 并发披露** | 一致（事务前） |
 | API | `C:/Python314/python.exe tools/generate_api_inventory.py --check`（`PYTHONDONTWRITEBYTECODE=1`） | **EXIT=0**（61 不变） | 一致 |
 | 全量 Python/.NET | **未重跑**（见 §1） | 交叉核对 Owner 日志：pytest **3360/10**、.NET **1661/0/95**（8 个程序集合计 1661 passed / 95 skipped / 1756 total，`FULL_DOTNET_EXIT=0`） | 数字自洽 |
 | App.Tests 全量 | `dotnet test …/NewManga.App.Tests.csproj -c Release --no-build` | **770 passed / 0 failed / 7 skipped / 777 total**，EXIT=0，2 m 55 s | 补充 flaky 复核 |
@@ -270,12 +278,11 @@ verdict: approved
 
 ## 8. 真实性声明
 
-1. **唯一仓库写入**：本 Review 只写了
+1. **唯一仓库写入（本 Review）**：本 Review 只写了
    `doc/reviews/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-r1.md` 这一个仓库文件。**未**修改/删除/移动任何
    生产代码、测试、契约、Task 卡、STATUS、REBASELINE_PLAN、TASK_LEDGER 或证据字节；**未**执行
-   `git add`/`git commit`/`git push`。`git status --porcelain` 收尾时**只有本报告一个未跟踪新增**
-   （`?? doc/reviews/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-r1.md`），无其他修改/新增；实现/测试/证据/卡
-   均无变化。
+   `git add`/`git commit`/`git push`。收尾 `git status --porcelain` 显示本报告为未跟踪新增（`??`），
+   另有 §1 披露的 Lead 并发 closeout 文档修改（非本 Review 写入）；实现/测试/证据的已提交字节未变。
 2. **仓外派生产物**：破坏性复跑的备份/日志、独立 gated 的 fixture 与日志均写在
    `G:\CODEX\New Manga.workspace\FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1\review-r1\` 与
    `…\fixtures\`（仓外、未被 tracked）；未写 `verification/FEA-09/**`。
