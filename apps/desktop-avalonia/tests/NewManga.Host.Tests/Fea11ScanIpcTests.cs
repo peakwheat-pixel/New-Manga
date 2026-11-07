@@ -528,6 +528,246 @@ public sealed class Fea11ScanIpcTests
 
     private static string dataDirOrRoot(string dataRoot) => Path.GetDirectoryName(dataRoot) ?? dataRoot;
 
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-L-S4-B (C-16 v1.5 §2.5): B1 explicit re-authorization -> reattest -> enumeration
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// AC-LS4B-6 (real IPC closed loop): a source the user explicitly re-authorized (B1's
+    /// Registry-level revoke + re-register over the SAME file) is no longer dropped by the
+    /// cold-start/refresh enumeration once the Host re-attests the Core location row. Phase A
+    /// proves the current typed skip (the Core still records the REVOKED registry);
+    /// phase B proves exactly ONE <c>ReattestSourceLocation</c> frame (ids only, no path) and the
+    /// recovered target carrying the LIVE registry/generation.
+    ///
+    /// Registered limitation (not claimed fixed): the target's execution face still goes through
+    /// the pre-existing path-exact <c>ResolveRegistryEntry</c> revoked-row fail-closed guard, so
+    /// this card promises ENUMERATION recovery only (the frozen AC-LS4B-6 wording); the tick verdict
+    /// is recorded in the evidence, not asserted as a scan success.
+    /// </summary>
+    [Fea11ScanIpcFact]
+    public async Task ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport()
+    {
+        var (repo, python, root, receipt) = await SeedAsync();
+        var dbPath = Path.Combine(root, "library.db");
+        var oldZip = receipt.GetProperty("old_zip").GetString()!;
+        var options = BuildOptions(repo, python, root);
+        await using var client = await CoreServiceClient.StartAsync(options);
+        await client.OpenHostSessionAsync();
+        Assert.Contains("source.reattest/1", (await client.PingAsync()).Capabilities);
+
+        var registry = new SourceAccessRegistry(root);
+        var oldEntry = registry.Register("fea11-l-s4b", [oldZip]);
+        var facts = ReadFileIdentity(oldZip);
+        UpdateLocationGenerationRow(
+            python, dbPath, oldEntry.RegistryId, oldEntry.Generation, facts);
+        var coreSourceId = QuerySourceId(python, dbPath);
+
+        // The user's EXPLICIT B1 action at the Registry level: revoke the stale entry, then
+        // register ONE new entry over the SAME registered root (exactly what B1 does). The Core
+        // location row is deliberately left on the OLD (now revoked) registry pair.
+        registry.Revoke(oldEntry.RegistryId);
+        await Task.Delay(5);
+        var liveEntry = registry.Register("fea11-l-s4b-reauth", [oldZip]);
+        var entriesBefore = DescribeRegistryEntries(registry.List());
+        var locationBefore = QueryLocationRow(python, dbPath);
+
+        var scanOptions = new SourceScanOptions
+        {
+            Enabled = true,
+            IntervalSeconds = 60,
+            MaxTargetsPerTick = 8,
+            MaxBytesPerSource = 256L * 1024 * 1024,
+            MaxEntriesPerSource = 10000,
+        };
+        var sources = new SourceReadCoordinator(client, registry, () => true);
+
+        // ---- phase A: B1-only state (Core records the REVOKED registry) -> typed skip.
+        var legacyEnumerator = new HostSourceScanTargetEnumerator(client, registry);
+        await using (var legacyScheduler = new SourceScanScheduler(
+                         scanOptions,
+                         new HostSourceScanExecutor(client, sources, scanOptions),
+                         enumerator: legacyEnumerator))
+        {
+            Assert.True(await legacyScheduler.RefreshTargetsAsync());
+            Assert.Empty(legacyScheduler.Snapshot().Targets);
+            Assert.Equal(1, legacyScheduler.Snapshot().Enumeration!.SkippedTargets);
+        }
+
+        Assert.Empty(RequestLines(client, "ReattestSourceLocation"));
+        var tablesBefore = QueryScanSnapshot(python, dbPath);
+
+        // ---- phase B: the production enumerator (coordinator + options) re-attests ONCE.
+        var warnings = new List<string>();
+        var enumerator = new HostSourceScanTargetEnumerator(
+            client, registry, sources, scanOptions, warnLog: warnings.Add);
+        await using var scheduler = new SourceScanScheduler(
+            scanOptions,
+            new HostSourceScanExecutor(client, sources, scanOptions),
+            enumerator: enumerator);
+
+        Assert.True(await scheduler.RefreshTargetsAsync(), string.Join(";", warnings));
+        var status = Assert.Single(scheduler.Snapshot().Targets);
+        Assert.Equal(coreSourceId, status.SourceId);
+        Assert.Equal(0, scheduler.Snapshot().Enumeration!.SkippedTargets);
+        // The scheduler status projection is path/target-id free (frozen Host surface); the mapped
+        // target's live registry identity is verified through the same production enumerator (the
+        // Core row is already re-attested, so this second read maps WITHOUT a second re-attest).
+        var mapped = await enumerator.EnumerateAsync(CancellationToken.None);
+        Assert.True(mapped.Ok, mapped.ErrorCode);
+        var target = Assert.Single(mapped.Targets);
+        Assert.Equal(coreSourceId, target.SourceId);
+        Assert.Equal(liveEntry.RegistryId, target.RegistryId);
+        Assert.Equal(liveEntry.Generation, target.Generation);
+        Assert.Equal("zip", target.SourceKind);
+
+        // Exactly ONE re-attest frame; closed ids-only payload; no absolute path.
+        var reattestLines = RequestLines(client, "ReattestSourceLocation");
+        Assert.Single(reattestLines);
+        using (var document = JsonDocument.Parse(reattestLines[0]))
+        {
+            var payload = document.RootElement.GetProperty("payload");
+            Assert.Equal(
+                new[] { "grant_id", "source_id" },
+                payload.EnumerateObject().Select(property => property.Name)
+                    .OrderBy(name => name, StringComparer.Ordinal).ToArray());
+            Assert.Equal(coreSourceId, payload.GetProperty("source_id").GetString());
+            Assert.DoesNotContain(oldZip, reattestLines[0], StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain(root, reattestLines[0], StringComparison.OrdinalIgnoreCase);
+        }
+
+        // The Core location row moved ONLY its two auth columns; the audit time/identity stayed.
+        var locationAfter = QueryLocationRow(python, dbPath);
+        foreach (var name in new[]
+                 {
+                     "location_id", "content_digest", "volume_serial", "file_id", "size_bytes",
+                     "is_current", "observed_at", "last_verified_at",
+                 })
+        {
+            Assert.Equal(
+                locationBefore.GetProperty(name).GetRawText(),
+                locationAfter.GetProperty(name).GetRawText());
+        }
+
+        Assert.Equal(liveEntry.RegistryId, locationAfter.GetProperty("registry_id").GetString());
+        Assert.Equal(liveEntry.Generation, locationAfter.GetProperty("authorization_generation").GetInt32());
+
+        // The Host registry itself was NOT touched by the re-attest (no new/revoked entry, no
+        // roots/identity/generation change; minting keeps its pre-existing last_used_at audit).
+        Assert.Equal(entriesBefore, DescribeRegistryEntries(registry.List()));
+
+        // The scan table snapshot: only source_locations differs; every other table byte-identical.
+        var tablesAfter = QueryScanSnapshot(python, dbPath);
+        using (var before = JsonDocument.Parse(tablesBefore))
+        using (var after = JsonDocument.Parse(tablesAfter))
+        {
+            foreach (var table in before.RootElement.EnumerateObject())
+            {
+                if (table.Name == "source_locations") continue;
+                Assert.Equal(
+                    table.Value.GetRawText(),
+                    after.RootElement.GetProperty(table.Name).GetRawText());
+            }
+        }
+
+        // Disclosed limitation witness (NOT a card claim): the execution face still resolves by
+        // the pre-existing path-exact revoked-row guard, so this target's tick stays typed.
+        Assert.True(await scheduler.TickAsync());
+        var tickVerdict = scheduler.Snapshot().Targets.Single();
+
+        var evidence = new
+        {
+            @case = "AC-LS4B-6 (real IPC closed loop: B1 -> reattest -> enumeration recovery)",
+            core = "real volatile python core (stdio IPC)",
+            app_registration_used = false,
+            core_source_id = coreSourceId,
+            old_registry_id = oldEntry.RegistryId,
+            live_registry_id = liveEntry.RegistryId,
+            live_generation = liveEntry.Generation,
+            reattest_frames = reattestLines.Length,
+            reattest_payload_keys = new[] { "grant_id", "source_id" },
+            enumeration_recovered = true,
+            recovered_target = new
+            {
+                source_id = target.SourceId,
+                registry_id = target.RegistryId,
+                generation = target.Generation,
+                source_kind = target.SourceKind,
+            },
+            location_after = new
+            {
+                registry_id = locationAfter.GetProperty("registry_id").GetString(),
+                authorization_generation = locationAfter.GetProperty("authorization_generation").GetInt32(),
+                identity_unchanged = true,
+                last_verified_at_unchanged = true,
+            },
+            host_registry_unchanged = true,
+            other_tables_unchanged = true,
+            tick_verdict = new
+            {
+                last_result = tickVerdict.LastResult,
+                limitation = "pre-existing ResolveRegistryEntry revoked-exact-match fail-closed; "
+                    + "this card delivers ENUMERATION recovery only (no scan success claim)",
+            },
+            reimport_or_apply = false,
+        };
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "reattest-ipc.json"),
+            JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
+        await File.WriteAllTextAsync(
+            Path.Combine(root, "reattest-ipc.txt"),
+            "FEA-11-L-S4-B AC-LS4B-6 real IPC (B1 explicit re-auth -> reattest -> enumeration)\n"
+            + "DataRoot=" + root + "\n"
+            + "phase_a_targets=0 phase_a_skipped=1\n"
+            + "reattest_frames=" + reattestLines.Length + " payload=ids-only path_hits=0\n"
+            + "phase_b_targets=1 core_source_id=" + coreSourceId + "\n"
+            + "live_registry_id=" + liveEntry.RegistryId + " generation=" + liveEntry.Generation + "\n"
+            + "location_auth_columns_only=true last_verified_at_unchanged=true\n"
+            + "host_registry_unchanged=true other_tables_unchanged=true reimport_or_apply=false\n"
+            + "tick_last_result=" + tickVerdict.LastResult + " (registered limitation: "
+            + "execution-face resolved by the pre-existing revoked-row guard; enumeration only)\nPASS\n");
+    }
+
+    private static JsonElement QueryLocationRow(string python, string dbPath)
+    {
+        const string code =
+            "import sqlite3,sys,json\n" +
+            "c=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True)\n" +
+            "c.row_factory=sqlite3.Row\n" +
+            "row=c.execute('SELECT * FROM source_locations ORDER BY location_id LIMIT 1').fetchone()\n" +
+            "print(json.dumps(dict(row) if row is not None else {}))\n" +
+            "c.close()\n";
+        var startInfo = new ProcessStartInfo(python)
+        {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(code);
+        startInfo.ArgumentList.Add(dbPath);
+        using var process = Process.Start(startInfo)!;
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, stdout + stderr);
+        return JsonDocument.Parse(stdout.Trim()).RootElement.Clone();
+    }
+
+    private static string[] RequestLines(CoreServiceClient client, string command) =>
+        client.Wire.Frames.Select(frame => frame.RequestLine)
+            .Where(line => RequestCommand(line) == command).ToArray();
+
+    private static string[] DescribeRegistryEntries(SourceAuthorization[] entries) =>
+        entries.Select(entry =>
+                entry.RegistryId + "|" + entry.Locator + "|" + entry.Generation + "|"
+                + entry.CreatedAt + "|" + entry.RevokedAt + "|"
+                + string.Join(";", entry.Roots.Select(rootEntry =>
+                    rootEntry.Root + "|" + rootEntry.VolumeSerial + "|" + rootEntry.FileId)))
+            .ToArray();
+
+
     private static string FindRepository()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

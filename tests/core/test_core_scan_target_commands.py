@@ -597,3 +597,130 @@ def test_location_auth_refresh_is_followed_by_cold_start_enumeration(
             "2026-11-07T00:00:01.000+00:00",
         ) == 0
     assert _enumerate(server)["targets"][0]["generation"] == 4
+
+
+# --- AC-LS4B-6 (FEA-11-L-S4-B): reattest -> cold-start enumeration closure ---
+
+REATTEST_SESSION_ID = "host-session-l-s4b-scan-closure"
+REATTEST_CREDENTIAL = (
+    "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"
+)
+
+
+def _host_wire(command: str, payload: dict) -> dict:
+    import uuid as _uuid
+
+    return {
+        "protocol": "new-manga.core",
+        "version": {"major": 2, "minor": 3},
+        "request_id": _uuid.uuid4().hex,
+        "channel": "host-control",
+        "command": command,
+        "payload": payload,
+    }
+
+
+def _open_host_session(server: CoreServiceServer) -> str:
+    response, _ = server.dispatch_request(
+        json.dumps(
+            _host_wire(
+                "OpenHostSession",
+                {
+                    "host_session_id": REATTEST_SESSION_ID,
+                    "host_session_credential": REATTEST_CREDENTIAL,
+                },
+            )
+        )
+    )
+    assert response["error"] is None, response["error"]
+    return response["result"]["core_session_id"]
+
+
+def _host_request(
+    server: CoreServiceServer, core_session_id: str, command: str, payload: dict
+) -> dict:
+    request = _host_wire(command, payload)
+    request.update(
+        {
+            "core_session_id": core_session_id,
+            "host_session_id": REATTEST_SESSION_ID,
+            "host_session_credential": REATTEST_CREDENTIAL,
+        }
+    )
+    response, should_exit = server.dispatch_request(json.dumps(request))
+    assert not should_exit
+    return response
+
+
+def test_reattest_is_followed_by_cold_start_enumeration(
+    core, server, tmp_path: Path
+) -> None:
+    """The B1 explicit re-authorization propagated by ``ReattestSourceLocation``
+    is what the read-only enumeration observes: the NEW registry/generation
+    pair is returned, the physical identity/projects are unchanged, and the
+    enumeration itself stays zero-write.
+
+    Discriminator: without the re-attest the row keeps the OLD pair (the Host
+    exact-match then typed-skips the source, L-S4-B 缺口事实)."""
+    from tests.fea11.conftest import file_facts, mint_grant
+
+    conn = core.conn
+    source_id = "src-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    granted = tmp_path / "granted-container.zip"
+    granted.write_bytes(b"PK\x05\x06" + b"\x00" * 18)
+    facts = file_facts(granted)
+    with conn:
+        _seed_source(conn, source_id)
+        _seed_location(
+            conn, source_id, content_digest=facts["sha256"],
+            volume_serial=facts["volume_serial"], file_id=facts["file_id"],
+            size_bytes=facts["size"],
+        )
+        _seed_version_entry(conn, source_id)
+        _seed_book_page(conn, "book-ls4b", page_id="page-ls4b", chapter_id="ch-ls4b")
+        _seed_binding(
+            conn, binding_id="bind-ls4b", page_id="page-ls4b",
+            project_id="book-ls4b", source_id=source_id,
+        )
+    first = _enumerate(server)["targets"][0]
+    assert (first["registry_id"], first["generation"]) == ("registry-1", 1)
+
+    core_session = _open_host_session(server)
+    grant_id, _grant_facts = mint_grant(
+        core.source_read_refs,
+        source_id=source_id,
+        version="ver-1",
+        kind="zip",
+        entries=[(granted, "001.png", 0)],
+        session_id=REATTEST_SESSION_ID,
+        registry_id="registry-2",
+        generation=4,
+    )
+    before_reattest = _snapshot(conn)
+    response = _host_request(
+        server,
+        core_session,
+        "ReattestSourceLocation",
+        {"source_id": source_id, "grant_id": grant_id},
+    )
+    assert response["error"] is None, response["error"]
+    assert response["result"] == {
+        "source_id": source_id,
+        "updated": 1,
+        "version": "ver-1",
+    }
+    # Only the auth columns changed: identity keys/is_current/size are equal.
+    after_reattest = _snapshot(conn)
+    for table in SNAPSHOT_TABLES:
+        if table != "source_locations":
+            assert after_reattest[table] == before_reattest[table], table
+
+    second = _enumerate(server)["targets"][0]
+    assert (second["registry_id"], second["generation"]) == ("registry-2", 4)
+    assert second["identity_digest"] == first["identity_digest"]
+    assert second["project_ids"] == first["project_ids"]
+
+    # The enumeration remains a zero-write read face after the re-attest.
+    before = _snapshot(conn)
+    _enumerate(server)
+    assert _snapshot(conn) == before

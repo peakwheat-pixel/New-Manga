@@ -996,3 +996,179 @@ def test_container_grant_violations_are_typed_with_zero_partial_acceptance(
         assert str(tmp_path) not in json.dumps(response["error"])
     finally:
         _close(core, server)
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-L-S4-B (C-16 v1.5 §2.5): ReattestSourceLocation host-control guards.
+# The full identity/write matrix lives in tests/fea11/test_source_reattest.py on
+# the real assembly; this file pins the frozen protocol surface: capability,
+# host-only/session, closed shape and the §6 grant-liveness code priority.
+# ---------------------------------------------------------------------------
+
+
+def _reattest_wire(grant_id: str = "source-" + "0" * 32, source_id: str = "s1") -> dict:
+    return {"source_id": source_id, "grant_id": grant_id}
+
+
+def test_ping_announces_the_reattest_capability(tmp_path: Path) -> None:
+    core, server = _server(tmp_path)
+    try:
+        response, _ = server.dispatch_request(json.dumps({
+            "protocol": "new-manga.core",
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": "ping-reattest",
+            "command": "core.ping",
+            "payload": {},
+        }))
+        assert response["error"] is None
+        capabilities = response["result"]["capabilities"]
+        assert "source.reattest/1" in capabilities
+        # Additive only: the pre-existing capabilities and the minor are kept
+        # and no second reattest face is announced.
+        assert {"library.list_books", "source.read/1", "source.resolve-secret/1",
+                "source.read.run/1"} <= set(capabilities)
+        assert [name for name in capabilities if name.startswith("source.reattest")]
+        assert [
+            name for name in capabilities if name.startswith("source.reattest")
+        ] == ["source.reattest/1"]
+        assert response["result"]["protocol_version"]["minor"] == 3
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", [
+    "ordinary_json_rpc", "credential_missing", "credential_wrong",
+    "session_closed", "core_session_mismatch",
+])
+def test_reattest_is_host_only_and_session_gated(
+    tmp_path: Path, case: str,
+) -> None:
+    core, server = _server(tmp_path)
+    core_session_id = server._core_session_id
+    if case != "ordinary_json_rpc":
+        core_session_id = _open(server)
+    if case == "session_closed":
+        assert _request(server, core_session_id, "CloseHostSession", {})["result"] == {
+            "closed": True
+        }
+    db_before = core.conn.total_changes
+    snapshot_before = _business_table_snapshot(core)
+    if case == "ordinary_json_rpc":
+        request = {
+            "protocol": "new-manga.core",
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": "ordinary-reattest",
+            "command": "ReattestSourceLocation",
+            "payload": _reattest_wire(),
+        }
+        expected = "HOST_ONLY_REQUIRED"
+    else:
+        request = _wire("ReattestSourceLocation", _reattest_wire())
+        request.update({
+            "core_session_id": core_session_id,
+            "host_session_id": HOST_SESSION_ID,
+            "host_session_credential": HOST_CREDENTIAL,
+        })
+        expected = "HOST_SESSION_INVALID"
+        if case == "credential_missing":
+            request.pop("host_session_credential")
+        elif case == "credential_wrong":
+            request["host_session_credential"] = "wrong credential"
+        elif case == "core_session_mismatch":
+            request["core_session_id"] = "another-core-process"
+            expected = "CORE_SESSION_MISMATCH"
+    try:
+        response, _ = server.dispatch_request(json.dumps(request))
+        assert response["result"] is None
+        assert response["error"]["code"] == expected
+        assert core.conn.total_changes == db_before
+        assert _business_table_snapshot(core) == snapshot_before
+        assert core.source_read_refs._grants == {}
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", [
+    "missing_key", "unknown_key", "non_string", "empty", "non_object",
+    "nested_extra",
+])
+def test_reattest_rejects_non_closed_shapes(tmp_path: Path, case: str) -> None:
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        payload: object = _reattest_wire()
+        if case == "missing_key":
+            payload = {"source_id": "s1"}
+        elif case == "unknown_key":
+            payload = {**_reattest_wire(), "registry_id": "reg-1"}
+        elif case == "non_string":
+            payload = {"source_id": 1, "grant_id": 2}
+        elif case == "empty":
+            payload = {}
+        elif case == "non_object":
+            payload = ["s1", "source-" + "0" * 32]
+        elif case == "nested_extra":
+            payload = {"source_id": "s1", "grant_id": "source-" + "0" * 32,
+                       "scope": {"kind": "page"}}
+        before = _business_table_snapshot(core)
+        response = _request(server, core_session_id, "ReattestSourceLocation", payload)
+        assert response["result"] is None
+        assert response["error"]["code"] == "INVALID_REQUEST", response["error"]
+        assert response["error"]["category"] == "validation"
+        assert _business_table_snapshot(core) == before
+    finally:
+        _close(core, server)
+
+
+@pytest.mark.parametrize("case", ["missing", "expired", "revoked"])
+def test_reattest_reuses_the_frozen_grant_error_codes(
+    tmp_path: Path, case: str, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    core, server = _server(tmp_path)
+    try:
+        core_session_id = _open(server)
+        if case == "missing":
+            grant_id = "source-" + "0" * 32
+            expected = "SOURCE_ACCESS_DENIED"
+        else:
+            grant = _source_read_grant_payload(tmp_path)
+            registered = _request(
+                server, core_session_id, "RegisterSourceReadGrant", grant
+            )
+            assert registered["error"] is None
+            grant_id = grant["grant_id"]
+            if case == "expired":
+                monkeypatch.setattr(
+                    core.source_read_refs, "_clock", lambda: time.time() + 301
+                )
+                expected = "SOURCE_GRANT_EXPIRED"
+            else:
+                revoked = _request(
+                    server,
+                    core_session_id,
+                    "RevokeSourceReadGrant",
+                    {
+                        "registry_id": grant["registry_id"],
+                        "generation": grant["generation"] + 1,
+                        "grant_ids": [grant_id],
+                    },
+                )
+                assert revoked["error"] is None
+                expected = "SOURCE_GRANT_REVOKED"
+        before = _business_table_snapshot(core)
+        response = _request(
+            server,
+            core_session_id,
+            "ReattestSourceLocation",
+            _reattest_wire(grant_id, source_id="s1"),
+        )
+        assert response["result"] is None
+        assert response["error"]["code"] == expected, response["error"]
+        assert response["error"]["category"] == "authorization"
+        serialized = json.dumps(response["error"])
+        assert str(tmp_path) not in serialized
+        assert HOST_CREDENTIAL not in serialized
+        assert _business_table_snapshot(core) == before
+        assert core.source_read_refs._bindings == {}
+    finally:
+        _close(core, server)

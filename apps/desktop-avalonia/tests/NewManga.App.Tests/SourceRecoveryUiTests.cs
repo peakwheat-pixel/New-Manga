@@ -1278,5 +1278,76 @@ public sealed class SourceRecoveryUiTests
         Assert.Empty(viewModel.RecoveryOutcomeText);
         Assert.False(viewModel.HasSourceRecoveryOutcome);
     }
+
+    // ---------------------------------------------- FEA-11-L-S4-B (C-16 v1.5 §2.5)
+
+    /// <summary>
+    /// AC-LS4B-6 (App side): the explicit re-authorization SUCCESS branch requests the EXISTING
+    /// Host scan refresh exactly once (zero new UI→Host commands, no target id/path argument), so
+    /// the Host can re-attest the Core location row before the next enumeration. Nothing about the
+    /// re-attest outcome is claimed in the UI.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ReauthorizeSuccess_RequestsTheExistingScanRefreshExactlyOnce()
+    {
+        var (host, viewModel, notices) = await FailPreviewAsync(
+            SourceRecoveryDiagnosis.Reauthorize("SOURCE_REGISTRY_UNAVAILABLE", "book.zip", 2));
+        host.ScriptedReauthorizeResults.Enqueue(new SourceRecoveryResult(
+            true, null, SourceRecoveryText.ReauthorizeSucceeded(2, 1, "book.zip"), 2, 1, "book.zip"));
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        Assert.Equal(0, host.SourceScanRefreshRequests);
+
+        await viewModel.ReauthorizeSourceAsync();
+
+        Assert.Equal(1, host.SourceReauthorizeCalls);
+        Assert.Equal(1, host.SourceScanRefreshRequests);
+        // The UI never claims that the scan/enumeration recovered: the only success text is the
+        // existing "re-authorized, preview again" message (AC-LS4B-10 red line).
+        Assert.Contains("已重新授权", viewModel.RecoveryOutcomeText);
+        Assert.DoesNotContain("自动恢复", viewModel.RecoveryOutcomeText);
+        Assert.DoesNotContain("自愈", viewModel.RecoveryOutcomeText);
+        Assert.DoesNotContain("自动重新授权", viewModel.RecoveryOutcomeText);
+        // The notice channel carries the same red line (the toast is user-visible too).
+        Assert.DoesNotContain(notices, notice => notice.Text.Contains("自动恢复", StringComparison.Ordinal));
+        Assert.DoesNotContain(notices, notice => notice.Text.Contains("自愈", StringComparison.Ordinal));
+        Assert.DoesNotContain(notices, notice => notice.Text.Contains("自动重新授权", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// AC-LS4B-6/10: a FAILED explicit action requests NO refresh (fail-closed): no recovery is
+    /// attempted and no scan re-attest is triggered from a failure branch.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task ReauthorizeFailure_RequestsNoScanRefresh()
+    {
+        var (host, viewModel, _) = await FailPreviewAsync(
+            SourceRecoveryDiagnosis.Reauthorize("SOURCE_REGISTRY_UNAVAILABLE", "book.zip", 2));
+        host.ScriptedReauthorizeResults.Enqueue(new SourceRecoveryResult(
+            false, "SOURCE_ACCESS_DENIED",
+            SourceRecoveryText.RevokedNotRegistered(2, "SOURCE_ACCESS_DENIED"), 2, 0, "book.zip"));
+
+        await viewModel.ReauthorizeSourceAsync();
+
+        Assert.Equal(1, host.SourceReauthorizeCalls);
+        Assert.Equal(0, host.SourceScanRefreshRequests);
+        Assert.True(viewModel.HasSourceRecoveryAction);
+    }
+
+    /// <summary>
+    /// AC-LS4B-1/5 (App side): the trigger reuses the frozen port — no new UI→Host command and no
+    /// new argument (no App-computed target identity).
+    /// </summary>
+    [Fact]
+    public void ScanRefreshTrigger_IsTheFrozenNoArgumentPort()
+    {
+        var method = typeof(ISourceImportController).GetMethod(
+            nameof(ISourceImportController.RequestSourceScanRefresh));
+        Assert.NotNull(method);
+        Assert.Empty(method!.GetParameters());
+        Assert.Equal(typeof(void), method.ReturnType);
+        Assert.Contains(
+            nameof(ISourceImportController.RequestSourceScanRefresh),
+            typeof(ISourceImportController).GetMethods().Select(candidate => candidate.Name));
+    }
 }
 
