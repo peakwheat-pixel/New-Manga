@@ -324,8 +324,12 @@ public sealed class SourceRecoveryCoordinator
     /// AC-LSB-2: the read-only branch decision. Order matters:
     /// <list type="number">
     /// <item>the preview must have failed with the frozen <c>SOURCE_REGISTRY_UNAVAILABLE</c> on the
-    /// HOST-side mint leg for exactly ONE attributed source; any other code, a batch or an
-    /// unattributed multi-selection offers NOTHING and no probe runs (r1 P2-01);</item>
+    /// HOST-side mint leg; any other code offers NOTHING and no probe runs;</item>
+    /// <item><b>r2 P2-01</b>: an AMBIGUOUS selection (multi-select that could not be attributed) is
+    /// decided BEFORE the "no target" guard. <see cref="AttributeFailedSource"/> deliberately yields
+    /// ZERO targets for it, so checking the empty list first would make the disclosed
+    /// <see cref="SourceRecoveryBlockReason.MultipleSources"/> hint unreachable;</item>
+    /// <item>a batch of targets (defense in depth) is also blocked — never acted on;</item>
     /// <item>a FOLDER failing source offers NOTHING — this card promises file-source recovery only
     /// (r1 P3-04);</item>
     /// <item>probe <c>source_list_roots</c> (read-only, no writes). A typed
@@ -345,15 +349,22 @@ public sealed class SourceRecoveryCoordinator
         CancellationToken cancellationToken = default)
     {
         if (!string.Equals(failureCode, RegistryUnavailable, StringComparison.Ordinal) ||
-            !hostSideMintFailure ||
-            targets is not { Count: > 0 })
+            !hostSideMintFailure)
         {
             return SourceRecoveryDiagnosis.NotApplicable(failureCode);
         }
 
-        if (ambiguous || targets.Count > 1)
+        // r2 P2-01: ambiguity is checked BEFORE the empty-target guard, because an ambiguous
+        // multi-selection has NO target by construction. This is the branch that surfaces the
+        // "select ONE source" disclosure — it stays read-only and never probes/writes.
+        if (ambiguous || targets is { Count: > 1 })
         {
             return SourceRecoveryDiagnosis.MultipleSources(failureCode);
+        }
+
+        if (targets is not { Count: > 0 })
+        {
+            return SourceRecoveryDiagnosis.NotApplicable(failureCode);
         }
 
         var target = targets[0];
