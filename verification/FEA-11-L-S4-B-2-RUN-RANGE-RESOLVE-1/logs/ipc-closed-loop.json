@@ -1,0 +1,45 @@
+{
+  "case": "FEA-11-L-S4-B-2 AC-RUN-1/2/4/5/6 (real IPC: B1 live entry -\u003E Run range -\u003E cold classification -\u003E scan -\u003E mint\u002Bbind -\u003E resolve)",
+  "core": "real volatile python core (stdio IPC)",
+  "app_registration_used": false,
+  "source_id": "s1",
+  "old_registry_id": "2ef06b21004b48489dc19d18d653a545",
+  "live_registry_id": "fb4e689724904249af83d00252face72",
+  "live_generation": 1,
+  "before": {
+    "path_resolver": "null",
+    "page_read": "SOURCE_ACCESS_DENIED",
+    "authorize_frames": 0
+  },
+  "revoked_target": {
+    "targets": 0,
+    "unresolved": 1,
+    "cold_sources": 0
+  },
+  "cold_before_scan": {
+    "targets": 0,
+    "unresolved": 0,
+    "cold_sources": 1
+  },
+  "scan": {
+    "result": "Ok",
+    "version": "sv1",
+    "entries": 2
+  },
+  "after": {
+    "targets": 1,
+    "unresolved": 0,
+    "registry_id": "fb4e689724904249af83d00252face72",
+    "generation": 1,
+    "version": "sv1",
+    "container_entries": 2,
+    "bound_pages": 1,
+    "minted_grants": 1,
+    "resolve_p1": "ok"
+  },
+  "reattest_frames": 0,
+  "authorize_frames": 1,
+  "host_registry_unchanged": true,
+  "path_hits": 0,
+  "reimport_or_apply": false
+}

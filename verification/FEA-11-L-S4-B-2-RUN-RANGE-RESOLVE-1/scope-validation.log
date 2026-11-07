@@ -1,0 +1,41 @@
+[2026-11-07T09:06:17.191+00:00] FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1 scope validation (delivery diff vs e78c144bb)
+card=doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md card_base_commit=2ef3f1024 implementation_start=e78c144bb
+release_range_files=1 non_docs=[]
+changed_count=21 delivery=21 concurrent_non_delivery=0
+allowed_paths=7
+  ALLOWED doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md
+  ALLOWED doc/reviews/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-*.md
+  ALLOWED doc/handoffs/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-*.md
+  ALLOWED verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/**
+  ALLOWED apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRunRangeResolutionTests.cs
+  ALLOWED apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRunRangeResolutionTests.cs
+ALLOWED  doc/handoffs/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1-fad1ec776.md
+ALLOWED  doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/EV.md
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/build.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/discrimination.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/full-dotnet.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/full-pytest.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/gates.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/host-ipc.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/host-unit.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/ipc-closed-loop.json
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/ipc-closed-loop.txt
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/ipc-fixture.txt
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/regression-74.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/logs/regression.log
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/discrimination.py
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/gen_manifest.py
+ALLOWED  verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/tools/scope_validation.py
+card_status_unchanged=True
+PROTOCOL_MINOR=3
+C16_WORKTREE_SHA256=a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d PIN_MATCH=True
+C16_BLOB base=67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8 head=67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8 ZERO_DRIFT=True
+C17_BLOB base=f767e158a43652ea092066081e53fa0810e395fb head=f767e158a43652ea092066081e53fa0810e395fb ZERO_DRIFT=True
+zero_drift_violations=[]
+out_of_scope=[]
+result=PASS changed=21 out_of_scope=[] forbidden=[] minor=3 c16_pin_match=True

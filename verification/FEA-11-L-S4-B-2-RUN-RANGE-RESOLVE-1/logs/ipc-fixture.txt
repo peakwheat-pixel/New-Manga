@@ -1,0 +1,4 @@
+Run-range IPC fixture root: G:\CODEX\New Manga.workspace\FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1\fixtures\ipc-0cf0a5b65a144d25b8f1772ebe8258f3
+run-range-ipc.json sha256: 7F31DCCACA6345EC04CCDA500434D2B8E90722FD0D54A519830AB7387CBED160
+captured_at: 2026-11-07T17:00:45.5141174+08:00
+evidence copies: logs/ipc-closed-loop.json / .txt (test-written, unmodified)

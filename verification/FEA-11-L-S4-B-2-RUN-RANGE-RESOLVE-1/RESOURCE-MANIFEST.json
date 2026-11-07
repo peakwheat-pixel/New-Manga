@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1",
+  "generated_at": "2026-11-07T09:06:59+00:00",
+  "generated_by": "l-s4b1-impl (DSH Agent Teams teammate; Lead `lead`; 实际实施者，卡 owner 已由 Lead 对齐)",
+  "delivery_head": "fad1ec776",
+  "delivery_commits": [
+    "f6b5a761a",
+    "fad1ec776"
+  ],
+  "repo_head_at_generation": "26d43c10842ef5bf997e930cfdad0d527f1ca8e5",
+  "note": "FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1 (L-S4-B-2) delivery: the Host-only Run source-RANGE resolution recovery. An ENUMERATED Run target is now authorized with its OWN live (registry_id, generation) entry by reusing the public static SelectEnumeratedEntry that L-S4-B-1 proved for the scan face (never a second path-only ResolveRegistryEntry, which met the sibling REVOKED row first and failed closed); non-enumerated targets keep the unchanged path-exact/containment resolver. A refused/failed resolution is only counted as unresolved (best-effort, never thrown), the live-but-cold source still enters ColdSources and the existing bounded on-demand scan fills it. No linked worktree, no push, no user data; zero Core/Python change; zero contract byte change (C-16 v1.5 and C-17 v1.1 pins are the proof); the scan/registry/coordinator helpers were REUSED but not modified. This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head fad1ec776）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 apps/verification/doc 内，未 push。"
+    },
+    {
+      "resource_type": "temp_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "任务隔离根仅用于仓库外派生产物；gated 真 IPC 的 fixture/证据位于 G:/CODEX/New Manga.workspace/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1/fixtures/ipc-*/（本卡新增目录，仓外、无 tracked 副作用）。均为仓外派生产物，不属仓库交付；未清理。"
+    },
+    {
+      "resource_type": "repository",
+      "source_path": "G:\\CODEX\\New Manga (main)",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 3,
+      "changed_files": [
+        {
+          "commit": "f6b5a761a",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+          "sha256": "c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40"
+        },
+        {
+          "commit": "fad1ec776",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11RunGrantIpcTests.cs",
+          "sha256": "3365bb1855cc0e9ce05cc799296953a5207775efd16a08098adf327a770762e4"
+        },
+        {
+          "commit": "fad1ec776",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRunRangeResolutionTests.cs",
+          "sha256": "2798472477659bf7f18201e6212a64bbff3e4c9192fdc649d6e2d12fd9955d74"
+        }
+      ]
+    },
+    {
+      "resource_type": "evidence_tree",
+      "source_path": "verification/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 19,
+      "files": [
+        {
+          "path": "changed-files.txt",
+          "sha256": "a883fdcb6d2b505cfc8f85bc8b0ddeb3c60bb8355e68924c487c61e53f13f1ba"
+        },
+        {
+          "path": "EV.md",
+          "sha256": "202c6222a723bfc8cecd95a3cb21516df4a1f11d5c7b729f7f40ba73e2f11de5"
+        },
+        {
+          "path": "logs/build.log",
+          "sha256": "6bf2cce9acf80391de12367a34a80145c871cc41b70e6fa6958dfaf7b6f1705f"
+        },
+        {
+          "path": "logs/discrimination.log",
+          "sha256": "a31e00740ada711d0b276e0cdfcbd83ef88fe0dd8b4e37adb58f773cb6518248"
+        },
+        {
+          "path": "logs/full-dotnet.log",
+          "sha256": "d6b418a73a1ad0df536f4377a11f0773f4ef0aeaf37755531bd61884a82bff63"
+        },
+        {
+          "path": "logs/full-pytest.log",
+          "sha256": "1d09c6946a163c163e5aba6fe3cbead368a689ce878b6711c678a0fbff93ff26"
+        },
+        {
+          "path": "logs/gates.log",
+          "sha256": "324a7c237a9776f8d05bf5539e5cd5c708f1a52a2afbe4d5e8a7fdfc206ad2e9"
+        },
+        {
+          "path": "logs/host-ipc.log",
+          "sha256": "190d543e1dbc0b3910f803d6d5e81a1ac81890cffed4d7552736ac39f56d2750"
+        },
+        {
+          "path": "logs/host-unit.log",
+          "sha256": "c4bdc85748637be02c065cccddce7ad9d0e90b55d7ca69023ceaf0aedbdbe4b8"
+        },
+        {
+          "path": "logs/ipc-closed-loop.json",
+          "sha256": "7f31dccaca6345ec04ccda500434d2b8e90722fd0d54a519830ab7387cbed160"
+        },
+        {
+          "path": "logs/ipc-closed-loop.txt",
+          "sha256": "25ba1210169fba3149546fea2953758943a179a52a72dc507c366cddd767a20f"
+        },
+        {
+          "path": "logs/ipc-fixture.txt",
+          "sha256": "27c5559f4acbe4850ddd52b1b9d70597788b90e15325b66a1b82151088bd025e"
+        },
+        {
+          "path": "logs/regression-74.log",
+          "sha256": "73ccef2755c61b86a3322e009aab76df180f2e40c69b78efb7a68dec89c1195c"
+        },
+        {
+          "path": "logs/regression.log",
+          "sha256": "38cc1e8db4c5c6652dc4cee24594a5a0e7cffc25a1a3c582d77dde0f963e5282"
+        },
+        {
+          "path": "scope-validation.log",
+          "sha256": "732494c6fb934868388a7315fed6105c6cb519ed8e6caf021561db5fb0f35305"
+        },
+        {
+          "path": "tools/__pycache__/discrimination.cpython-314.pyc",
+          "sha256": "9159cb45238389abee8580744aaf101685eacbe09bf360ad4a620b0f010afb4b"
+        },
+        {
+          "path": "tools/discrimination.py",
+          "sha256": "d09b00e0a152e145fa67385505f417bcd6da81804a2faf0a2b36934031f77c01"
+        },
+        {
+          "path": "tools/gen_manifest.py",
+          "sha256": "b4a4770d9b84ec52607999dcca0935d6c5d2d11f4471fb8775ed0cc05ec5f466"
+        },
+        {
+          "path": "tools/scope_validation.py",
+          "sha256": "5c760b83b72d029a68190fdf5f9fa6cf02a6624b877b49fbb2d6e0597b89dcc0"
+        }
+      ]
+    }
+  ]
+}

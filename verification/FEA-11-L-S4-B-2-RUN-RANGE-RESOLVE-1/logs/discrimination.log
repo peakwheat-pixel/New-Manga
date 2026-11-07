@@ -1,0 +1,78 @@
+[2026-11-07T08:57:15.805+00:00] FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1 discrimination (break -> RED -> byte-restore -> GREEN)
+target_file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+original_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 newline='\n'
+
+=== B1 枚举分支改回按路径 ResolveRegistryEntry（Run 范围恢复被撤销） ===
+filter=FullyQualifiedName~SourceRunRangeResolution env={}
+B1 break_exit=1 RED_AS_EXPECTED=True
+  | 
+  | 失败!  - 失败:     4，通过:     5，已跳过:     0，总计:     9，持续时间: 92 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.26]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Authorizer_ResolvedEnumeratedSource_LeavesRegistryStructureUntouched [FAIL]
+  | [xUnit.net 00:00:00.27]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_DuplicateRegistryId_IsUnresolved_NotThrown [FAIL]
+  | [xUnit.net 00:00:00.27]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_EnumeratedTarget_IsUnresolved_OnMissingRegistryAndGenerationDrift [FAIL]
+  | [xUnit.net 00:00:00.27]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_EnumeratedTarget_UsesItsOwnLiveEntry_WhenARevokedSiblingSharesThePath [FAIL]
+B1 restore_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+B1 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     9，已跳过:     0，总计:     9，持续时间: 94 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B1b 同一破坏点在 gated 真 IPC 闭环上（Run 范围回到 Unresolved） ===
+filter=FullyQualifiedName~ReauthorizedLiveEntry_RunRangeResolves env={'NEWMANGA_FEA11_IPC': '1'}
+B1b break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:01.45]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [FAIL]
+B1b restore_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+B1b restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.Host.Tests.dll (net9.0)
+
+=== B2 改写为接受任意 live 条目（撤销 target 可被同路径 sibling 自动放行） ===
+filter=FullyQualifiedName~Resolve_EnumeratedTarget_NeverFallsBackToALiveSibling env={}
+B2 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 7 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.29]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_EnumeratedTarget_NeverFallsBackToALiveSibling_WhenItsOwnEntryIsRevoked [FAIL]
+B2 restore_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+B2 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 7 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B3 删掉解析异常兜底（Host 侧解析失败会抛给 best-effort authorizer） ===
+filter=FullyQualifiedName~Resolve_DuplicateRegistryId_IsUnresolved_NotThrown env={}
+B3 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 5 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_DuplicateRegistryId_IsUnresolved_NotThrown [FAIL]
+B3 restore_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+B3 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 7 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== B4 own-entry 逻辑被错误应用到所有 target（非枚举授权面被扩大） ===
+filter=FullyQualifiedName~Resolve_NonEnumeratedTarget_KeepsThePathOnlyResolver env={}
+B4 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 8 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.SourceRunRangeResolutionTests.Resolve_NonEnumeratedTarget_KeepsThePathOnlyResolver [FAIL]
+B4 restore_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+B4 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 8 ms - NewManga.Host.Tests.dll (net9.0)
+
+final_sha256=c91deee69f7785931e42ebd84642f796e6d3c7c2308a06c62bc393afbdee1f40 MATCH=True
+RESULT 5/5 RED_AS_EXPECTED + GREEN_AFTER_RESTORE
+PASS

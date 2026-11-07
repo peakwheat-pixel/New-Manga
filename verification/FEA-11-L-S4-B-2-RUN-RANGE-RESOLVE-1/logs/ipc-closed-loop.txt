@@ -1,0 +1,12 @@
+FEA-11-L-S4-B-2 AC-RUN-6 real IPC (B1 explicit re-auth -> enumerated live target -> Run range -> mint+bind -> resolve)
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1\fixtures\ipc-0cf0a5b65a144d25b8f1772ebe8258f3
+before: path_resolver=null page_read=SOURCE_ACCESS_DENIED authorize_frames=0
+revoked_target: unresolved=1 targets=0
+cold_before_scan: unresolved=0 cold_sources=1
+scan: ok version=sv1 entries=2
+after: targets=1 unresolved=0 registry_id=fb4e689724904249af83d00252face72 generation=1
+bound_pages=1 minted=1 resolve p1 OK
+host_registry_unchanged=true old_revoked_row_retained=true
+wire: authorize_frames=1 reattest_frames=0 path_hits=0
+reimport_or_apply=false
+PASS
