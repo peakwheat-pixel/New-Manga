@@ -10,7 +10,7 @@ owner: dsh
 reviewer: 独立上下文 fresh subagent（byte-level；不得参与本 UNFREEZE 起草；session 见 `doc/reviews/FEA-11-L-R11-GATE-UNIFY-PREREQ-1-r1.md`）
 depends_on:
   - FEA-11-RENDITION-1
-base_commit: 3945e1f5c
+base_commit: 07a7d746a
 branch: null
 worktree: null
 integration_commit: null
@@ -36,7 +36,9 @@ out_of_scope:
 
 # FEA-11-L-R11-GATE-UNIFY-PREREQ-1：C-16 v1.7（§2.4 无 publication 行口径澄清）
 
-> **状态：`ready`（DSH 已裁决 UNFREEZE 路径；本卡只改 C-16 §2.4 一处口径 + 冻结记录/矩阵/载体，1/18 pin）。**
+> **状态：`ready`（DSH 已裁决 UNFREEZE 路径；本卡改 C-16 §2.4 两处行文（`:90` 口径 + `:93` 陈述）+ §0 版本面行
+> + 头部状态/日期 + §10 条件 ⑨/变更记录（后三类为记录性），冻结记录/矩阵/载体，1/18 pin）。**
+> `base_commit=07a7d746a`（本卡创建/释放时 HEAD；scope review 快照为 `3945e1f5c`）。
 > 依据：`doc/reviews/L-R11-GATE-UNIFY-scope-r1.md`（独立 scope review，recommended）+ C-17 §3.3
 > （`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md:171-173`，已冻结「新同步 binding 缺 publication 行属于损坏，
 > fail-closed，不能当作 legacy 放行」）+ RENDITION-1 L-R11（`doc/tasks/FEA-11-RENDITION-1.md:159`）。
@@ -54,8 +56,9 @@ out_of_scope:
 
 ## 范围（In / Out）
 
-- **In**：`doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`（v1.6 → **v1.7**，仅 §2.4 `:90` 括注 + `:93` 陈述）；
-  `doc/plan/FEA-CONTRACT-FROZEN-C16.md`（版本/pin/§1B/§9 记录）；`doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`（C-16 行）；
+- **In**：`doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`（v1.6 → **v1.7**：§2.4 `:90` 括注 + `:93` 陈述 +
+  §0 版本面行 + 头部状态/日期 + §10 条件 ⑨/变更记录）；
+  `doc/plan/FEA-CONTRACT-FROZEN-C16.md`（版本/pin/§1B/§11 记录）；`doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md`（C-16 行）；
   载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-L-R11.md`；本卡/评审/证据。
 - **Out**：其余 17 pins（C-17 §3.3 **零字节**——它已冻结正确语义）；`src/**`、`apps/**`、`tests/**`；实现
   （`added` relation 缺行检测需 plan receipt 或新持久标记，本卡不碰）；写面/章级面；STATUS/PLAN/LEDGER；push。

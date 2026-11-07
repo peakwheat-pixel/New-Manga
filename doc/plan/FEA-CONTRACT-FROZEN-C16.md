@@ -1,7 +1,7 @@
 # C16 Source 读取与导入 wire 协议 · 冻结记录
 
 **契约**：`doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`
-**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）/ 2026-11-06（v1.3）/ 2026-11-07（v1.4）/ 2026-11-07（v1.5）/ 2026-11-07（v1.6）
+**冻结时间**：2026-11-03（v1.0）/ 2026-11-04（v1.1）/ 2026-11-06（v1.3）/ 2026-11-07（v1.4）/ 2026-11-07（v1.5）/ 2026-11-07（v1.6）/ 2026-11-07（v1.7）
 **冻结人**：DSH（Lead / Architect / Integrator）
 **授权**：FEA-09-PREREQ-1；独立复核 r7 **approved**（[FEA-09-PREREQ-1-r7](../reviews/FEA-09-PREREQ-1-r7.md)，reviewed_head `220979ba81f37e857f241049535caef7246c97b1`）；冻结自草案 v7
 
@@ -12,10 +12,10 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md` |
-| 冻结版本 | **v1.6**（2026-11-07 UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04 / v1.3 2026-11-06 / v1.4 2026-11-07 / v1.5 2026-11-07 历史） |
-| sha256（v1.6 冻结后最终字节，verify_pins 口径） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
-| git hash-object（v1.6 blob id） | `f8f31f55ca29aea1ceb8cb7d7ab73b7123630211` |
-| blob 内容 sha256（LF 原始字节） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
+| 冻结版本 | **v1.7**（2026-11-07 UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04 / v1.3 2026-11-06 / v1.4 2026-11-07 / v1.5 2026-11-07 / v1.6 2026-11-07 历史） |
+| sha256（v1.7 冻结后最终字节，verify_pins 口径） | `67286eeca8cb2109f35445c6b925b03053c483293b1bdb19e56efdc9965b657d` |
+| git hash-object（v1.7 blob id） | `3cd9d2fbf79bd37b3fc35e1895efa1c75d2fc232` |
+| blob 内容 sha256（LF 原始字节） | `67286eeca8cb2109f35445c6b925b03053c483293b1bdb19e56efdc9965b657d` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体 + 重新独立复核 + 重新冻结。
 
@@ -36,6 +36,8 @@
 | v1.3 复核字节（工作树 SHA-256） | `7c355ccb8f826879e34252750c642c8a7b5c138cd5be5b089a7a518bb56519e5`（= v1.3 冻结字节；本次先冻结最终字节再复核，无「复核后改状态行」差异） |
 | v1.4 复核字节（工作树 SHA-256） | `ad25fb3c89bb1749552c3de988369ae93b5e9e7f563ce2530a5d4c65ba2ad8dc`（= v1.4 冻结字节；r1 changes_requested → 处置 → r2 approved，见 §8） |
 | v1.5 复核字节（工作树 SHA-256） | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d`（= v1.5 冻结字节；r1→r2→r3→r4→r5→r6→r7 changes_requested → 处置 → **r8 `approved`（P0=0/P1=0/P2=0/P3=0；session `fc11c286-…`；reviewed_head `59ba5189f`）**，见 §9） |
+| v1.6 复核字节（工作树 SHA-256） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0`（= v1.6 冻结字节；r1–r5 changes_requested → 处置 → **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断；session `308751b9-…`）**，见 §10） |
+| v1.7 复核字节（工作树 SHA-256） | `67286eeca8cb2109f35445c6b925b03053c483293b1bdb19e56efdc9965b657d`（= v1.7 冻结字节；**r1 `approved`（P0=0/P1=0/P2=0/P3=7 非阻断；session `9bc4c117-…`；reviewed_head `07a7d746a`）**，见 §11 与载体 §6） |
 
 ## 2. 冻结条件逐条核验
 
@@ -49,6 +51,7 @@
 | 6 | v1.4：容器多成员 entry 语义经独立 byte-level 复核 r1 changes_requested → r2 **approved（P0=0/P1=0/P2=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；wire 字段/命令集/TTL/撤销/错误闭集/Run wire 零改动；C-06/C-17 零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16.md` §6；`verification/FEA-11-RUN-GRANT-2B-PREREQ-1/logs/pins.log` |
 | 7 | v1.5：`source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available` 经独立 byte-level 复核 **r8 approved（P0=0/P1=0/P2=0/P3=0）**；`verify_pins` **18/18**（C16 新值、其余 **17** 项不变）；C-15/C-17/C-06/C-07/M2-C1 零改动；无新错误码/wire minor/schema/依赖 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-V15.md` §6；`verification/FEA-11-L-S4-B-PREREQ-1/logs/pins.log` |
 | 8 | v1.6：§2.4 mid-run 重复调用语义经独立 byte-level 复核 **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）**；`verify_pins` **18/18**（C16 新值、C-06 v1.3 同批、其余 16 不变）；wire/TTL/撤销/错误闭集/能力/`PROTOCOL_MINOR=3` 零改动 | ✅ | 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL.md` §6 |
+| 9 | v1.7：§2.4 per-page 授权匹配「无 publication 行」口径澄清（legacy open / 新同步链缺行 fail-closed）经独立 byte-level 复核 **r1 `approved`（P0=0/P1=0/P2=0/P3=7 非阻断；session `9bc4c117-…`；reviewed_head `07a7d746a`）**；`verify_pins` **18/18**（C16 新值、其余 **17** 不变）；wire/能力/错误闭集/TTL/撤销/`PROTOCOL_MINOR=3` 零改动；C-17/C-06/C-15/C-07/M2-C1 零字节 | ✅ | 报告 `doc/reviews/FEA-11-L-R11-GATE-UNIFY-PREREQ-1-r1.md`；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-L-R11.md` §6 |
 
 | v1.6 复核字节（工作树 SHA-256） | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0`（= v1.6 冻结字节；r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）） |
 
@@ -126,3 +129,15 @@
 | 冻结字节 sha256 | `b8f46fb1feec7c85bc997516f1e7fa9d51ab46717cb4dcf982d8c6e7db1d18a0` |
 | 历史 pin（保留） | v1.5 `a7f57ebd…`；v1.4 `ad25fb3c…`；v1.3 `7c355ccb…`；v1.1 `0b9511a5…`；v1.0 `6e7f8d3d…` |
 | 其他 16 pins | 逐字节不变 |
+
+## 11. v1.7 UNFREEZE 重冻（2026-11-07）
+
+| 项 | 值 |
+|---|---|
+| 载体 | `doc/reviews/CONTRACT-UNFREEZE-2026-11-07-C16-L-R11.md` |
+| 触发/授权 | 用户 2026-11-06 全授权；`L-R11-GATE-UNIFY-scope-r1`（session 5aa2c0cf…，verdict **recommended**，方案 C，**1/18 pin**）；**DSH 裁决（2026-11-07）**：采纳 UNFREEZE 路径（先 PREREQ 后实现）；C-17 §3.3 已冻结 fail-closed **零字节** |
+| 修订内容 | §2.4 per-page 授权匹配「无 publication 行」口径澄清：**旧未参与同步且无 publication 行的 v7 binding 按既有 open；新同步 binding 缺 publication 行属于损坏，fail-closed（C-17 §3.3），不得当作 legacy 放行**；§2.4 兼容句同步改为「两读面判定由 L-R11 统一为同一谓词（本命令沿用，不引入第三套）」；**wire 字段/命令集/能力/错误闭集/TTL/撤销/`PROTOCOL_MINOR=3` 零改动**；C-17/C-06/C-15/C-07/M2-C1 与其余 17 pins 零字节 |
+| 独立复核 | 载体 §6：r1 **`approved`（P0=0/P1=0/P2=0/P3=7 非阻断；session `9bc4c117-…`；reviewed_head `07a7d746a`；worktree `67286eec…`）**；P3 处置：提交隔离、EV 措辞、卡面元数据、载体 §3 限定已落地；P3-03/P3-04（C-16 §0 `:17` 范围歧义、§10 ⑨ 完成式）留待后续 UNFREEZE（改字节会触发新 pin/复核），不阻断本次冻结 |
+| 冻结字节 sha256 | `67286eeca8cb2109f35445c6b925b03053c483293b1bdb19e56efdc9965b657d` |
+| 历史 pin（保留） | v1.6 `b8f46fb1…`；v1.5 `a7f57ebd…`；v1.4 `ad25fb3c…`；v1.3 `7c355ccb…`；v1.1 `0b9511a5…`；v1.0 `6e7f8d3d…` |
+| 其他 17 pins | 逐字节不变（复核断言见载体 §6） |

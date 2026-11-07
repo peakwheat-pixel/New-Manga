@@ -1,0 +1,4 @@
+ doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md | 13 +++++++------
+ doc/plan/FEA-CONTRACT-FROZEN-C16.md        | 25 ++++++++++++++++++++-----
+ doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md     |  4 ++--
+ 3 files changed, 29 insertions(+), 13 deletions(-)
