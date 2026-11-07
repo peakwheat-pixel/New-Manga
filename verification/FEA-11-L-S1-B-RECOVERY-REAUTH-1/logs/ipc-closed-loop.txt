@@ -1,0 +1,6 @@
+FEA-11-L-S1-B-RECOVERY-REAUTH-1 AC-LSB-9 real Host/Core stdio closed loop
+phase_a: SOURCE_REGISTRY_UNAVAILABLE -> explicit reauthorize(revoked=1,registered=1) -> reimport Completed -> scan target registry=True gen=1
+phase_b: SOURCE_REGISTRY_UNAVAILABLE -> explicit reauthorize(revoked=1,registered=1) -> reimport skipped -> location row in place=True, registry=True, gen=1
+host_local_frames=source_list_roots,source_revoke_root,source_register_root,plan_import_references,start_import_references,get_import_receipt
+wire_quarantine_hits=0 stderr_path_hits=0
+PASS

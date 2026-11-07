@@ -1,0 +1,29 @@
+# FEA-11-L-S1-B-RECOVERY-REAUTH-1 scope validation (delivery diff vs implementation start e0b37622b)
+# generated 2026-11-07T10:00:25.7244686+08:00
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/Services/SourceRecoveryModels.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+ALLOWED  apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml
+ALLOWED  apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
+ALLOWED  apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRecoveryIpcTests.cs
+CONCURRENT_NON_DELIVERY doc/handoffs/DSH-PROGRESS-2026-11-07.md (ac528828b: Lead docs-only progress handoff; not this delivery)
+ALLOWED  doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-0fdde2de8.md
+ALLOWED  verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/
+changed_count=11 concurrent_non_delivery=1 forbidden_count=0
+--- zero-drift surfaces (must be empty) ---
+ZERO_DIFF apps/desktop-avalonia/src/NewManga.Host/
+ZERO_DIFF apps/desktop-avalonia/src/NewManga.CoreClient/
+ZERO_DIFF apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs
+ZERO_DIFF src/
+ZERO_DIFF tests/
+ZERO_DIFF doc/plan/
+ZERO_DIFF doc/contracts/
+ZERO_DIFF doc/STATUS.md
+ZERO_DIFF doc/REBASELINE_PLAN.md
+ZERO_DIFF doc/TASK_LEDGER.md
+ZERO_DIFF apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml.cs
+CORE_PROTOCOL_MINOR=3
+SCOPE_VALIDATION=PASS

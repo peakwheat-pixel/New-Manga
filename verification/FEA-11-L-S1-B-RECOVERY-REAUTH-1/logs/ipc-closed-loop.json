@@ -1,0 +1,56 @@
+{
+  "case": "FEA-11-L-S1-B AC-LSB-9 closed loop (real Core stdio)",
+  "phase_a": {
+    "typed_failure": "SOURCE_REGISTRY_UNAVAILABLE",
+    "registry_unchanged_after_failure": true,
+    "diagnosis_action": "ReauthorizeSource",
+    "stale_entries": 1,
+    "revoked": 1,
+    "registered": 1,
+    "old_entry_generation": 2,
+    "new_entry_generation": 1,
+    "reimport_state": "Completed",
+    "reimport_imported_pages": 1,
+    "scan_target_registry_id_matches_new_entry": true,
+    "scan_target_generation": 1,
+    "physical_identity_changed_new_source": true
+  },
+  "phase_b": {
+    "typed_failure": "SOURCE_REGISTRY_UNAVAILABLE",
+    "diagnosis_action": "ReauthorizeSource",
+    "revoked": 1,
+    "registered": 1,
+    "reimport_outcome": "skipped",
+    "location_row_in_place": true,
+    "location_registry_id_updated": true,
+    "location_last_verified_at_set": true,
+    "scan_target_generation": 1
+  },
+  "host_local_frames": [
+    "source_list_roots",
+    "source_revoke_root",
+    "source_register_root",
+    "plan_import_references",
+    "start_import_references",
+    "get_import_receipt"
+  ],
+  "wire_commands": [
+    "CreateBook",
+    "CreateChapter",
+    "GetImportReceipt",
+    "OpenHostSession",
+    "PlanImportReferences",
+    "RegisterSourceReadGrant",
+    "RevokeSourceReadGrant",
+    "StartImportReferences",
+    "core.ping",
+    "source_list_scan_targets"
+  ],
+  "sanitization": {
+    "recovery_texts_path_free": true,
+    "wire_quarantine_hits": 0,
+    "wire_path_frames_only_register_grant": true,
+    "stderr_path_hits": 0
+  },
+  "pass": true
+}

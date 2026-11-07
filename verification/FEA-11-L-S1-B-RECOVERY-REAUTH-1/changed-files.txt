@@ -1,0 +1,11 @@
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
+apps/desktop-avalonia/src/NewManga.App/Services/SourceImportModels.cs
+apps/desktop-avalonia/src/NewManga.App/Services/SourceRecoveryModels.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/ImportDockViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ImportDockView.axaml
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRecoveryIpcTests.cs
+doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-0fdde2de8.md
+verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/

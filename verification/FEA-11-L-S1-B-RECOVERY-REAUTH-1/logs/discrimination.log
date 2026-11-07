@@ -1,0 +1,54 @@
+=== B1 recovery wired into the preview failure branch (automatic re-authorization)
+file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+RESULT=B1 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+=== B2 revoke only the first stale entry (second stays active)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B2 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+=== B3 register before revoke (order swap)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B3 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+=== B4 render the response quarantine_path (absolute path leak)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B4 INVALID_BUILD_FAILED
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+final_rebuild exit_code=0
+SUMMARY cases=4 failures=1
+=== B1 recovery wired into the preview failure branch (automatic re-authorization)
+file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+RESULT=B1 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+=== B2 revoke only the first stale entry (second stays active)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B2 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+=== B3 register before revoke (order swap)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B3 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+=== B4 render the response quarantine_path (absolute path leak)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+RESULT=B4 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=8868733093C93B2962D9FB332C50F15899C8F125DD64C2CA7ABB19E4525B07EC
+final_rebuild exit_code=0
+SUMMARY cases=4 failures=0
+=== B1 recovery wired into the preview failure branch (automatic re-authorization)
+file=apps\desktop-avalonia\src\NewManga.App\ViewModels\V2\Library\ImportDockViewModel.cs sha256_before=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+RESULT=B1 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=B222C10F4F02D5EBBF9CD72D435FD8766636F3835985F0266889EF0321073B67
+=== B2 revoke only the first stale entry (second stays active)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+RESULT=B2 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+=== B3 register before revoke (order swap)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+RESULT=B3 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+=== B4 render the response quarantine_path (absolute path leak)
+file=apps\desktop-avalonia\src\NewManga.App\Services\SourceRecoveryModels.cs sha256_before=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+RESULT=B4 RED_AS_EXPECTED test_failed=1
+restore=RESTORED sha256_after=2FA1CB98E74FF2CA1DD8AD9B622966A0EFE5ECE569269EC8D461FADB9FB841CD
+final_rebuild exit_code=0
+SUMMARY cases=4 failures=0

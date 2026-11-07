@@ -1,0 +1,9 @@
+........................................................................ [ 97%]
+..                                                                       [100%]
+============================== warnings summary ===============================
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+74 passed, 1 warning in 10.54s

@@ -1,0 +1,40 @@
+# governance gates 2026-11-07T09:58:44.9883084+08:00
+## verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b acc8f0e03d42
+OK C05 f6e6f3cb1fe1
+OK C06 99831a20ffd6
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 ad25fb3c89bb
+OK C17 aefa0fa5b17e
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+## check.ps1 (default)
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3196 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6885 bytes / 62 lines
+Governance check: PASS (3 warnings)
+## check.ps1 -TaskPath
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
+WARN: 存在 9 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3196 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6885 bytes / 62 lines
+Governance check: PASS (3 warnings)
+## generate_api_inventory.py --check
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+API_EXIT=0
