@@ -186,27 +186,91 @@ public sealed class SourceScanSchedulerTests
 
     private sealed class FakeTargetEnumerator : ISourceScanTargetEnumerator
     {
-        public int Calls { get; private set; }
+        private readonly object _gate = new();
+        private readonly List<(int Count, TaskCompletionSource<bool> Signal)> _callWaiters = new();
+        private readonly TaskCompletionSource<bool> _started =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _calls;
+
+        public int Calls
+        {
+            get
+            {
+                lock (_gate)
+                {
+                    return _calls;
+                }
+            }
+        }
 
         public Func<int, SourceScanEnumerationResult>? Script { get; set; }
 
         public TaskCompletionSource<bool>? Block { get; set; }
 
-        public Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken)
+        /// <summary>FEA-11-SCAN-RH-1: optional per-call gate awaited before the scripted result.</summary>
+        public Func<int, Task>? WaitFor { get; set; }
+
+        /// <summary>FEA-11-SCAN-RH-1 (AC-RH-2): blocks until the enumeration token is cancelled.</summary>
+        public bool BlockUntilCancelled { get; set; }
+
+        /// <summary>FEA-11-SCAN-RH-1 (AC-RH-2): true when the enumeration observed cancellation.</summary>
+        public bool CancellationObserved { get; private set; }
+
+        /// <summary>FEA-11-SCAN-RH-1: completes when the first enumeration call starts.</summary>
+        public Task Started => _started.Task;
+
+        public async Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken)
         {
-            Calls++;
-            if (Block is { } block) return EnumerateBlockedAsync(block, cancellationToken);
-            return Task.FromResult(Script?.Invoke(Calls) ?? SourceScanEnumerationResult.Completed(
-                Array.Empty<SourceScanTarget>(), 0));
+            int call;
+            List<TaskCompletionSource<bool>> signals;
+            lock (_gate)
+            {
+                call = ++_calls;
+                signals = _callWaiters.Where(waiter => waiter.Count <= call)
+                    .Select(waiter => waiter.Signal).ToList();
+                _callWaiters.RemoveAll(waiter => waiter.Count <= call);
+            }
+
+            _started.TrySetResult(true);
+            foreach (var signal in signals) signal.TrySetResult(true);
+
+            if (WaitFor is { } waitFor)
+            {
+                await waitFor(call).ConfigureAwait(false);
+            }
+
+            if (BlockUntilCancelled)
+            {
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    CancellationObserved = true;
+                    throw;
+                }
+            }
+
+            if (Block is { } block)
+            {
+                await block.Task.ConfigureAwait(false);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            return Script?.Invoke(call) ?? SourceScanEnumerationResult.Completed(
+                Array.Empty<SourceScanTarget>(), 0);
         }
 
-        private async Task<SourceScanEnumerationResult> EnumerateBlockedAsync(
-            TaskCompletionSource<bool> block, CancellationToken cancellationToken)
+        public Task WaitForCallsAsync(int count)
         {
-            await block.Task.ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
-            return Script?.Invoke(Calls) ?? SourceScanEnumerationResult.Completed(
-                Array.Empty<SourceScanTarget>(), 0);
+            lock (_gate)
+            {
+                if (_calls >= count) return Task.CompletedTask;
+                var signal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _callWaiters.Add((count, signal));
+                return signal.Task;
+            }
         }
     }
 
@@ -1507,5 +1571,137 @@ public sealed class SourceScanSchedulerTests
         var dispose = scheduler.DisposeAsync().AsTask();
         executor.Block!.TrySetResult(true);
         await dispose.WaitAsync(TimeSpan.FromSeconds(10)); // r2 P3-6: joins the in-flight hint pass
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-SCAN-RH-1 (AC-RH-1): a Refresh that arrives while another Refresh is enumerating is
+    // coalesced into _refreshPending and replayed as soon as the first pass releases the
+    // single-flight gate — without waiting for a tick (the pre-fix behavior delayed it up to 900 s).
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task RefreshDuringInFlightRefresh_IsReplayedAfterTheFirstPass_WithoutATick()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var firstGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var replayGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = call => call == 1
+                ? SourceScanEnumerationResult.Completed(new[] { EnumeratedTarget("s1") }, 0)
+                : SourceScanEnumerationResult.Completed(
+                    new[] { EnumeratedTarget("s1"), EnumeratedTarget("s2") }, 0),
+            WaitFor = call => call switch
+            {
+                1 => firstGate.Task,
+                2 => replayGate.Task,
+                _ => Task.CompletedTask,
+            },
+        };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+
+        var first = scheduler.RefreshTargetsAsync();
+        await enumerator.WaitForCallsAsync(1).WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Empty(scheduler.Snapshot().Targets); // pass 1 is still enumerating: nothing merged yet
+
+        // The second request finds the gate held: it is coalesced (returns false), never dropped.
+        Assert.False(await scheduler.RefreshTargetsAsync());
+        Assert.Equal(1, enumerator.Calls);
+        Assert.Contains(log.Info, line => line.Contains("refresh queued", StringComparison.Ordinal));
+
+        // Releasing the first pass must start the replayed enumeration immediately...
+        firstGate.TrySetResult(true);
+        await enumerator.WaitForCallsAsync(2).WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Single(scheduler.Snapshot().Targets); // only the first pass has merged so far
+        replayGate.TrySetResult(true);
+
+        // ...and the first Refresh call returns only after the replay merged the new target.
+        Assert.True(await first.WaitAsync(TimeSpan.FromSeconds(10)));
+        Assert.Equal(2, enumerator.Calls);
+        Assert.Equal(0, executor.ScanCalls); // no TickAsync was needed to apply the replay
+        var snapshot = scheduler.Snapshot();
+        Assert.Contains(snapshot.Targets, target => target.SourceId == "s1");
+        Assert.Contains(snapshot.Targets, target => target.SourceId == "s2");
+
+        await scheduler.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task RefreshReplay_IsBoundedToOncePerCompletedPass()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var firstGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var replayGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var enumerator = new FakeTargetEnumerator
+        {
+            Script = call => SourceScanEnumerationResult.Completed(
+                new[] { EnumeratedTarget("s" + Math.Min(call, 2)) }, 0),
+            WaitFor = call => call switch
+            {
+                1 => firstGate.Task,
+                2 => replayGate.Task,
+                _ => Task.CompletedTask,
+            },
+        };
+        var scheduler = NewScheduler(executor, clock, enumerator: enumerator);
+
+        var first = scheduler.RefreshTargetsAsync();
+        await enumerator.WaitForCallsAsync(1).WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.False(await scheduler.RefreshTargetsAsync()); // coalesced while pass 1 enumerates
+        firstGate.TrySetResult(true);
+        await enumerator.WaitForCallsAsync(2).WaitAsync(TimeSpan.FromSeconds(10)); // the single replay
+
+        // A request that arrives during the replay is coalesced but must NOT trigger a recursive
+        // third pass from inside the replay (bounded: one replay per completed pass).
+        Assert.False(await scheduler.RefreshTargetsAsync());
+        replayGate.TrySetResult(true);
+        Assert.True(await first.WaitAsync(TimeSpan.FromSeconds(10)));
+        Assert.Equal(2, enumerator.Calls);
+
+        // It is not lost either: the next completed pass replays it exactly once.
+        Assert.True(await scheduler.TickAsync());
+        Assert.Equal(3, enumerator.Calls);
+        Assert.Contains(scheduler.Snapshot().Targets, target => target.SourceId == "s2");
+
+        await scheduler.DisposeAsync();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-SCAN-RH-1 (AC-RH-2): the scheduler lifetime token is linked into the refresh
+    // enumeration; DisposeAsync cancels it first, then joins the in-flight refresh (bounded) before
+    // the single-flight gate is torn down — so no ObjectDisposedException can escape to the log.
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task DisposeAsync_WithInFlightRefresh_CancelsAndJoinsBeforeTeardown()
+    {
+        var clock = new ManualTimeProvider(Start);
+        var executor = new FakeScanExecutor();
+        var enumerator = new FakeTargetEnumerator { BlockUntilCancelled = true };
+        var log = new CapturedLog();
+        var scheduler = NewScheduler(executor, clock, log, enumerator: enumerator);
+
+        var refresh = scheduler.RefreshTargetsAsync();
+        await enumerator.Started.WaitAsync(TimeSpan.FromSeconds(10));
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var dispose = scheduler.DisposeAsync().AsTask();
+        await dispose.WaitAsync(TimeSpan.FromSeconds(10));
+        stopwatch.Stop();
+
+        // AC-RH-2: the in-flight enumeration observed the scheduler lifetime cancellation and the
+        // disposal joined it before returning (bounded, not abandoned).
+        Assert.True(enumerator.CancellationObserved);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => refresh);
+        Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5),
+            "DisposeAsync must be bounded, elapsed=" + stopwatch.Elapsed);
+
+        // AC-RH-2: the gate is torn down only after the refresh pass stopped using it; a disposal
+        // detail escaping into the Host log (the pre-fix warning) means the fix did not work.
+        var allLogs = string.Join("\n", log.Info.Concat(log.Warn).Concat(log.Error));
+        Assert.DoesNotContain("ObjectDisposedException", allLogs, StringComparison.Ordinal);
     }
 }
