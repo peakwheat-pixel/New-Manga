@@ -8,7 +8,7 @@ reviewer_kind: 独立 byte-level 契约复核（fresh context / read-only / 非�
 date: 2026-11-07
 repo: G:\CODEX\New Manga
 branch: main
-reviewed_head: 59ba5189f239b580897e6b6a05146f66348125ef
+reviewed_head: c6ca1aa3ccf550aa618e74493e529f248a67121b
 verdict: approved
 ---
 
@@ -16,7 +16,7 @@ verdict: approved
 
 > **结论先行：`approved`（仅就 C-16 v1.5 冻结字节）。P0=0 / P1=0 / P2=0 / P3=3（均为非阻断；三项均为既有已接受的字节层文字项，未回退）。**
 >
-> C-16 sha256=`a7f57ebdbd67…`（38912 B、LF 253 行、0 CRLF）= FROZEN pin = blob 内容 sha256；`git hash-object`=`67c741d3…`；pre=`ad25fb3c…`（HEAD v1.4 blob，32577 B）→ post=`a7f57ebd…`；`verify_pins` **18/18**；C-15/C-17/C-06/C-07/M2-C1 及其余 16 契约**零字节**；无 wire minor/schema/依赖；§2.5 的两键 closed shape、Core 校验顺序、Host 义务分离、两列条件写 + `last_verified_at` 原值、零写、幂等/单调、错误闭集与红线均未放宽。
+> C-16 sha256=`a7f57ebdbd67…`（38912 B、LF 253 行、0 CRLF）= FROZEN pin = blob 内容 sha256；`git hash-object`=`67c741d3…`；pre=`ad25fb3c…`（复核起点 HEAD v1.4 blob，32577 B）→ post=`a7f57ebd…`；`verify_pins` **18/18**；C-15/C-17/C-06/C-07/M2-C1 及其余 16 契约**零字节**；无 wire minor/schema/依赖；§2.5 的两键 closed shape、Core 校验顺序、Host 义务分离、两列条件写 + `last_verified_at` 原值、零写、幂等/单调、错误闭集与红线均未放宽。
 >
 > **范围声明（决定本报告效力的第一句）**：本报告**只判** `doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md` 的 C-16 v1.5 冻结字节，以及其与 FROZEN pin / 冻结矩阵 / 载体 §1–§4 的**语义一致性**。**不判**载体 §6 的 r1–r8 逐轮记录、EV 文案、FROZEN §9 记录链等 DSH 治理记录文本；这些记录文本中的既有 P2/P3 不作为本报告 verdict 的依据，也不因本报告 approved 而被追认通过。若记录链仍有未闭合项，由 DSH 按治理流程处理，**不改写 C-16 字节**。
 
@@ -25,11 +25,11 @@ verdict: approved
 | 项 | 值 | 来源 |
 |---|---|---|
 | 仓库 / 分支 | `G:\CODEX\New Manga` / `main` | 实测 |
-| HEAD | `59ba5189f239b580897e6b6a05146f66348125ef`（复核开始与报告写入前同值；无新提交） | `git rev-parse HEAD` |
-| 工作树改动集 | 5 个已修改 tracked：C-16 / FROZEN-C16 / 冻结矩阵 / PREREQ 卡 / AUTO-RECOVERY 卡；未跟踪：载体、r1–r8、证据目录 8 文件；本次复核唯一写入为本报告 | `git status --porcelain=v1 -uall` |
-| 生产/测试/工具 | **零改动**：`src/**`、`apps/**`、`tests/**`、`tools/**` 均不在 `git diff HEAD`；C-15/C-17/C-06/C-07/M2-C1 亦无 diff | `git diff --name-only HEAD`、`git status` |
+| HEAD（复核起点 → 完成） | 起点 `59ba5189f239b580897e6b6a05146f66348125ef`；复核期间 DSH 提交 `3a475b5b9`（UNFREEZE）、`a7360839d`（closeout）、`c6ca1aa3c`（base_commit）；完成时 `c6ca1aa3ccf550aa618e74493e529f248a67121b`。**C-16 blob 在提交前后同为 `67c741d3…`、sha 同为 `a7f57ebd…`** | `git rev-parse HEAD`、`git log --oneline -3` |
+| 工作树改动集 | 复核起点：5 个 tracked modified（C-16 / FROZEN-C16 / 冻结矩阵 / PREREQ 卡 / AUTO-RECOVERY 卡）+ 未跟踪载体、r1–r8、证据目录；复核期间 DSH 将上述被审字节提交；完成时工作树仅 `M doc/reviews/FEA-11-L-S4-B-PREREQ-1-r8.md`（记录文本，不判）与本报告 `?? …-r9.md`；C-16 已提交且未改 | `git status --porcelain=v1 -uall`、`git log` |
+| 生产/测试/工具 | **零改动**：复核起点 `git diff HEAD` 与提交范围 `59ba5189f..c6ca1aa3` 均不含 `src/**`、`apps/**`、`tests/**`、`tools/**`；C-15/C-17/C-06/C-07/M2-C1 亦无 diff | `git diff --name-only HEAD`、`git diff --name-only 59ba5189f..c6ca1aa3`、`git status` |
 | `verify_pins.ps1` | `PIN AUDIT: PASS (all 18)`，EXIT=0；C16 `a7f57ebdbd67`；重跑输出与 `logs/pins.log` **逐字节相等**（408 B，sha `07c2b60c…`） | 实测 |
-| `check.ps1`（默认 / `-TaskPath`） | PASS（3 warnings），EXIT=0；两者与 `logs/check.log`、`logs/check-taskpath.log` **逐字节相等**（各 421 B，sha `d1e251bc…`） | 实测 |
+| `check.ps1`（默认 / `-TaskPath`） | 复核基线（HEAD `59ba5189f`）两者 PASS（3 warnings）、EXIT=0，且与仓库内 `logs/check.log`/`check-taskpath.log` **逐字节相等**（各 421 B，sha `d1e251bc…`）。**时间线**：复核期间 closeout 后默认任务路由改为 AUTO-RECOVERY、非终态 Task 数与预算数字变化，当前默认重跑不再等于历史日志；这是治理状态变化，不是 C-16 字节变化 | 实测（基线 + closeout 后） |
 | 全量 `pytest` / `dotnet test` / gated IPC | **NOT_RUN**（本卡为契约 PREREQ，无实现字节；全量测试会改写 tracked `verification/FEA-09/**`，本轮不冒写入风险） | 见 §8 |
 | `ReattestSourceLocation` / `source.reattest` 运行时 | **NOT_RUN**（`src/**`、`apps/**` 尚无实现；本报告只判契约字节与只读锚点） | 见 §8 |
 | push / `git add` / `git commit` | **NOT_RUN**（只读；未执行） | 见 §8 |
@@ -52,7 +52,8 @@ verdict: approved
 | 工作树原始字节 SHA-256（`verify_pins` 口径） | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d` |
 | `git hash-object`（blob id） | `67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8` |
 | `git cat-file blob 67c741d3…` 原始字节 SHA-256 | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d`（38912 B，与工作树逐字节相同） |
-| HEAD（v1.4）blob id / 内容 SHA-256 / 大小 | `b9be0acfa232154510d8453133ef8803b6b8fbbe` / `ad25fb3c89bb1749552c3de988369ae93b5e9e7f563ce2530a5d4c65ba2ad8dc` / 32577 B |
+| 复核起点 HEAD `59ba5189f`（v1.4）blob id / 内容 SHA-256 / 大小 | `b9be0acfa232154510d8453133ef8803b6b8fbbe` / `ad25fb3c89bb1749552c3de988369ae93b5e9e7f563ce2530a5d4c65ba2ad8dc` / 32577 B |
+| 复核完成 HEAD `c6ca1aa3` 的 C-16 | blob `67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8` / 内容 sha `a7f57ebd…` / 38912 B（与工作树相同） |
 
 ## 1. A — C-16 v1.5 字节完整性：**PASS**
 
@@ -61,10 +62,11 @@ verdict: approved
 | A1 | 工作树 sha256 | `a7f57ebd…` | `a7f57ebdbd673a6bac0e148f54223301bb4117e0cbeafce008ab7adc1347b22d` | ✅ |
 | A2 | `git hash-object` | `67c741d3…` | `67c741d3b99fcf85c9b6dfd790a80a48a3c8d2b8` | ✅ |
 | A3 | FROZEN pin 一致 | `FEA-CONTRACT-FROZEN-C16.md` §1 三口径、§1A、§1B v1.5 行同值 | §1 工作树/blob 内容 = `a7f57ebd…`；§1 blob id = `67c741d3…`；§1B v1.5 复核字节 = `a7f57ebd…`（= 冻结字节） | ✅ |
-| A4 | pre-image（v1.4） | `ad25fb3c…` | HEAD blob `b9be0acf…`，`git cat-file blob` 原始 32577 B，sha `ad25fb3c…`；`pre-post.sha256:1` 同值 | ✅ |
-| A5 | post-image（v1.5） | `a7f57ebd…` | 工作树与 blob 内容均 `a7f57ebd…`；`pre-post.sha256:2` 同值 | ✅ |
-| A6 | v1.4→v1.5 diff 范围 | 仅 carrier §2.A–§2.D 所述：头部/§0 能力、§1 `roots_available`、§2.5、§6/§10 补充 | `git diff HEAD -- C-16` 共 6 个 hunk：①状态行+日期行（v1.5，历史 v1.0/v1.1/v1.3/v1.4 保留）；②§0 `source.reattest/1` 能力行；③§1 响应表 + `roots_available` additive 说明；④§2.5 全节插入；⑤§6 v1.5 补充句；⑥§10 冻结条件 ⑦ + 变更记录 v1.5 行（同 hunk 去掉文件末空行）。**无其它实质改动** | ✅ |
+| A4 | pre-image（v1.4） | `ad25fb3c…` | 复核起点 HEAD（`59ba5189f`）blob `b9be0acf…`，`git cat-file blob` 原始 32577 B，sha `ad25fb3c…`；`pre-post.sha256:1` 同值 | ✅ |
+| A5 | post-image（v1.5） | `a7f57ebd…` | 工作树、复核完成 HEAD（`c6ca1aa3`）blob 内容与提交 `3a475b5b9` 均 `a7f57ebd…`；`pre-post.sha256:2` 同值 | ✅ |
+| A6 | v1.4→v1.5 diff 范围 | 仅 carrier §2.A–§2.D 所述：头部/§0 能力、§1 `roots_available`、§2.5、§6/§10 补充 | 复核时 `git diff HEAD`（HEAD=`59ba5189f`）与提交范围 `git diff 59ba5189f..c6ca1aa3 -- C-16` 均为同一 6 个 hunk：①状态行+日期行（v1.5，历史 v1.0/v1.1/v1.3/v1.4 保留）；②§0 `source.reattest/1` 能力行；③§1 响应表 + `roots_available` additive 说明；④§2.5 全节插入；⑤§6 v1.5 补充句；⑥§10 冻结条件 ⑦ + 变更记录 v1.5 行（同 hunk 去掉文件末空行）。**无其它实质改动**；当前 `git diff HEAD -- C-16` 为空（字节已提交） | ✅ |
 | A7 | 旧版本历史 | v1.0/v1.1/v1.3/v1.4 历史保留 | 状态行、日期行、§10 变更记录、FROZEN 历史 pin 均保留；v1.4 内容只被增量取代，未被删改 | ✅ |
+| A8 | 被审字节的提交状态 | 复核期间 DSH 提交 `3a475b5b9`/`a7360839d`/`c6ca1aa3c`；C-16 字节在提交前后不变 | 起点 `git rev-parse 59ba5189f:C-16`=`b9be0acf…`（v1.4）；`3a475b5b9:C-16`=`67c741d3…`；HEAD 与工作树均 `67c741d3…`/`a7f57ebd…` | ✅ |
 
 **A 结论**：C-16 v1.5 的字节指纹、FROZEN pin、pre/post 与 diff 范围全部一致；未发现「复核后改字节」或「pin 早于最后一笔编辑」的迹象。
 
@@ -90,8 +92,8 @@ verdict: approved
 
 | # | 不变量 | 实测 | 结果 |
 |---|---|---|---|
-| C1 | C-15/C-17/C-06/C-07/M2-C1 零字节 | `git diff --name-only HEAD` 无这 5 个文件；C15/C17/C06/C07 实算 sha 与 pin 一致；M2-C1 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f` 与 `FEA-CONTRACT-FROZEN-C04b.md` 记录一致、无 diff | ✅ |
-| C2 | 其余 17 契约零字节 | `other-17-pins.txt` 17 条 `UNCHANGED`、`changed=0`、@`59ba5189f`；`verify_pins` 18/18 实测；17 个契约文件均无 `git diff` | ✅ |
+| C1 | C-15/C-17/C-06/C-07/M2-C1 零字节 | 复核起点 `git diff --name-only HEAD` 与提交范围 `git diff --name-only 59ba5189f..c6ca1aa3` 均无这 5 个文件；C15/C17/C06/C07 实算 sha 与 pin 一致；M2-C1 `701093b5282228fdc791843146bf9459338e6ac1829ce3a801c72470fc938b7f` 与 `FEA-CONTRACT-FROZEN-C04b.md` 记录一致、无 diff | ✅ |
+| C2 | 其余 17 契约零字节 | `other-17-pins.txt` 17 条 `UNCHANGED`、`changed=0`、@`59ba5189f`；`verify_pins` 18/18 实测；复核起点与提交范围 `59ba5189f..c6ca1aa3` 均无 17 个契约文件的 diff | ✅ |
 | C3 | 无 wire minor / schema / 依赖 | C-16 §0 协议面仍 `new-manga.core` 2.3（`PROTOCOL_MAJOR=2/PROTOCOL_MINOR=3`），明写不 bump；`src/**`、`apps/**`、`tests/**`、`tools/**` 零 diff；无 DDL/迁移/依赖文件变化 | ✅ |
 | C4 | `source.reattest/1` 能力门禁明确 | §0:23 明写按操作探测、缺失/异常不发送、旧 Core 行为不变；与 v1.1/v1.3 能力追加的既有模式一致；不新增错误码 | ✅ |
 | C5 | C-15 零字节的语义判断（D-6） | 见下方说明；本报告独立背书：不需要 C-15 字节变更 | ✅ |
@@ -105,13 +107,13 @@ verdict: approved
 |---|---|---|---|
 | D1 | `verify_pins` | `PIN AUDIT: PASS (all 18)`，EXIT=0；C16 新值 `a7f57ebdbd67`；其余 17 原值；重跑输出与 `logs/pins.log` 逐字节相等（408 B，sha `07c2b60c…`） | ✅ |
 | D2 | 其余 17 不变 | `other-17-pins.txt`：17 条 `UNCHANGED`、`SUMMARY: 17 contracts, changed=0`、标注 @`59ba5189f`；C15/C17/C06/C07 实算匹配；M2-C1 无 diff | ✅ |
-| D3 | `pre-post.sha256` | 178 B；pre=`ad25fb3c…`（HEAD blob 原始 32577 B 实测）、post=`a7f57ebd…`（工作树 38912 B 实测） | ✅ |
-| D4 | `changed-lines.diff` vs `git diff HEAD -- C-16` | 证据文件 15436 B（CRLF 81 行，sha `9ff9a852…`）；同命令重定向输出逐字节相等；原生 LF diff 15355 B、sha `74b94191…`；CRLF→LF 归一化后与原生 diff 逐字节相等 | ✅ |
+| D3 | `pre-post.sha256` | 178 B；pre=`ad25fb3c…`（复核起点 HEAD blob 原始 32577 B 实测）、post=`a7f57ebd…`（工作树/HEAD 38912 B 实测） | ✅ |
+| D4 | `changed-lines.diff` vs C-16 diff | 证据文件 15436 B（CRLF 81 行，sha `9ff9a852…`）= `git diff 59ba5189f..3a475b5b9 -- C-16`（亦等于复核时 `git diff HEAD`，当时 HEAD=`59ba5189f`）；原生 LF diff 15355 B、sha `74b94191…`；CRLF→LF 归一化后逐字节相等。当前 HEAD 已含该提交，`git diff HEAD -- C-16` 为空，属时间线而非字节变化 | ✅ |
 | D5 | EV 逐文件 sha | 7 项全部实测匹配：carrier `833b3276…`、changed-lines `9ff9a852…`、check-taskpath `d1e251bc…`、check `d1e251bc…`、pins `07c2b60c…`、other-17 `fee1af10…`、pre-post `57c1c2d9…` | ✅ |
-| D6 | `check` 日志可复现 | 默认与 `-TaskPath` 均 PASS（3 warnings），EXIT=0；重跑输出与两个日志逐字节相等（各 421 B，sha `d1e251bc…`） | ✅ |
-| D7 | 证据边界 | 工作树无 `git add`/`commit`/`push`；本报告写入前 HEAD 未变；`verification/FEA-09/**` 未被改写 | ✅ |
+| D6 | `check` 日志复现（基线口径） | 复核基线（HEAD `59ba5189f`）默认与 `-TaskPath` 均 PASS（3 warnings）、EXIT=0，输出与两个日志逐字节相等（各 421 B，sha `d1e251bc…`）。closeout 提交后默认任务路由/治理数字变化，当前重跑不再等于历史日志；这是治理状态变化，不是 C-16 字节变化 | ✅（基线） |
+| D7 | 证据边界/提交时间线 | 本报告作者未执行 `git add`/`commit`/`push`；复核期间 DSH 提交 `3a475b5b9`/`a7360839d`/`c6ca1aa3c`（被审 C-16 字节未变，blob 仍 `67c741d3…`）；`verification/FEA-09/**` 未被改写 | ✅ |
 
-**D 结论**：pin 可复算、其余 17 项不变、pre/post 与 diff/EV/日志全部可复现；证据目录没有陈旧或伪造迹象。**注**：`check` 日志是治理门禁证据，不是 C-16 字节语义的一部分；其 PASS 只用于佐证包内状态。
+**D 结论**：pin 可复算、其余 17 项不变、pre/post 与 diff/EV 全部可复现；证据目录没有陈旧或伪造迹象。**时间线注**：`check` 日志是复核基线（HEAD `59ba5189f`）的治理门禁快照；复核期间 closeout 改变了默认任务路由与治理数字，当前重跑与历史日志不同属预期，不是 C-16 字节或证据伪造问题。
 
 ## 5. E — 载体 §1–§4 与字节一致：**PASS**
 
@@ -147,15 +149,16 @@ verdict: approved
 
 - **verdict：`approved`（仅 C-16 v1.5 冻结字节）。**
 - **P0=0 / P1=0 / P2=0 / P3=3（非阻断）**；P3 均为既有已接受的字节层文字/实现前提项，本轮独立确认未回退，不构成 blocks。
-- **C-16 §10 ⑦ 的「独立 byte-level 复核 approved（P0/P1=0）」在字节层已满足**；记录链/EV 的最终登记与提交由 DSH 按治理流程完成，**不属本报告判定范围**。
+- **C-16 §10 ⑦ 的「独立 byte-level 复核 approved（P0/P1=0）」在字节层已满足**；复核期间 DSH 已提交 UNFREEZE/closeout（`3a475b5b9`/`a7360839d`/`c6ca1aa3c`），记录链/EV 文本不属本报告判定范围；本报告不评价这些提交、提交信息或记录链的合规性。
 - **不要求任何 C-16 字节修改**；若 DSH 决定同批修 P3 文字，应走新的 UNFREEZE，不得在本轮静默改 `a7f57ebd…`。
 
 ## 8. 真实性声明
 
 - **只判范围**：本报告**仅判 C-16 v1.5 冻结字节**（`a7f57ebd…`）及其与 FROZEN pin、冻结矩阵、载体 §1–§4 的语义一致性。**本报告不判**载体 §6 的 r1–r8 逐轮记录、EV 文案、FROZEN §9 记录链、PREREQ/AUTO 卡面记录等 DSH 治理记录文本；这些文本的 P2/P3 不作为本报告 verdict 的依据，也不因 `approved` 被追认。
 - **身份与独立性**：本报告由 fresh subagent 在独立上下文中产出（session `b0a2e9f0-2e0b-4a42-b780-3d7871f46e2c`，parent `session-5f1e719c-f1f3-4193-8393-caf4d0936e4a`）；未参与本 UNFREEZE 的起草、r1–r8 复核或任何相关实现；只读被审字节与背景材料（C-16、FROZEN、矩阵、载体、C-06/C-15/C-17、只读源码锚点）。
-- **只读与写入边界**：未执行 `git add`/`git commit`/`git push`；未修改 C-16/FROZEN/矩阵/载体/卡/证据/源码；唯一写入为 `doc/reviews/FEA-11-L-S4-B-PREREQ-1-r9.md`。字节比对临时文件只写入本机 `%TEMP%`，未进入仓库。
-- **实测命令**：`git rev-parse HEAD`、`git status --porcelain=v1 -uall`、`git diff --name-only/--stat/HEAD`、`git hash-object`、`git rev-parse HEAD:<path>`、`git cat-file blob`、`Get-FileHash -Algorithm SHA256`、.NET 原始字节/LF/CRLF 计数、`tools/governance/verify_pins.ps1`、`tools/governance/check.ps1`（默认与 `-TaskPath`）、PowerShell 重定向重跑日志与证据文件逐字节比较、`cmd` 原始管道 diff 与 CRLF/LF 归一化比较。
-- **事实优先级**：全部断言取自 `59ba5189f` 的 HEAD 与工作树最终字节、只读源码和工具输出；不以聊天记录、旧快照或 r1–r8 的结论替代实测。r1–r8 仅作为被审输入/对照，不作为事实来源。
+- **只读与写入边界**：本报告作者未执行 `git add`/`git commit`/`git push`；未修改 C-16/FROZEN/矩阵/载体/卡/证据/源码；唯一写入为 `doc/reviews/FEA-11-L-S4-B-PREREQ-1-r9.md`。复核期间 DSH 作为 Integrator 提交 `3a475b5b9`/`a7360839d`/`c6ca1aa3c`（非本报告作者操作）；被审 C-16 字节在提交前后相同。字节比对临时文件只写入本机 `%TEMP%`，未进入仓库。
+- **时间线/并发事实**：复核起点 HEAD `59ba5189f`（C-16 尚为工作树未提交修改，v1.4 blob `b9be0acf…`）；复核期间 DSH 提交 `3a475b5b9`（UNFREEZE，C-16 v1.5 blob `67c741d3…`）、`a7360839d`（closeout）、`c6ca1aa3c`（base_commit）。复核完成时 HEAD=`c6ca1aa3`，C-16 工作树/HEAD 字节与复核字节逐字节相同（`a7f57ebd…`）。本报告只判字节，不评价提交信息、closeout 或记录链。
+- **实测命令**：`git rev-parse HEAD`、`git log --oneline`、`git status --porcelain=v1 -uall`、`git diff --name-only/--stat/HEAD`、`git diff 59ba5189f..c6ca1aa3`、`git rev-parse <commit>:<path>`、`git hash-object`、`git cat-file blob`、`Get-FileHash -Algorithm SHA256`、.NET 原始字节/LF/CRLF 计数、`tools/governance/verify_pins.ps1`、`tools/governance/check.ps1`（默认与 `-TaskPath`）、PowerShell 重定向重跑日志与证据文件逐字节比较、`cmd` 原始管道 diff 与 CRLF/LF 归一化比较。
+- **事实优先级**：全部断言取自复核起点 `59ba5189f` 与完成 HEAD `c6ca1aa3` 的工作树/提交字节（C-16 在两点相同）、只读源码和工具输出；不以聊天记录、旧快照或 r1–r8 的结论替代实测。r1–r8 仅作为被审输入/对照，不作为事实来源。
 - **NOT_RUN**：全量 `pytest tests`、全量 `dotnet test NewManga.sln`、`NEWMANGA_FEA11_IPC=1` gated IPC、`ReattestSourceLocation` 运行时（仓库尚无实现）、真实用户数据/AppData/回收站、push。本报告的 PASS 不对这些未跑项作任何声明。
-- **稳定性**：C-16 `a7f57ebd…` 在本轮多次测量（写入报告前）保持不变；HEAD 未变；若本报告写入后 C-16 字节被任何一方修改，本报告的 pin/结论自动失效，须重审。
+- **稳定性**：C-16 `a7f57ebd…`（38912 B、LF 253 行、0 CRLF）在复核起点（工作树）与复核完成（HEAD `c6ca1aa3`）逐字节相同；若本报告写入后 C-16 字节被任何一方修改，本报告的 pin/结论自动失效，须重审。
