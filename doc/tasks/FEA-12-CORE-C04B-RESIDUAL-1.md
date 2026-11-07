@@ -76,7 +76,7 @@ STATUS/PLAN/LEDGER、push。
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-1..AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-1/EV.md | 423efa200 | 488f3b521d805be420235d510649462fead0669633163bc8d4d3862c8833e908 | CANONICAL |
+| EV-01 | AC-1..AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-1/EV.md | 87e270a93 | 3e22c33342271e1bf83fcd1eb2bee97c44058752a1ba59611c88b6f5b43cbc72 | CANONICAL |
 | EV-02 | AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-1/logs/check-taskpath.log | 698ac9524 | b6d8bf6f31850b15596ea074d123ede2eba50c433e0c732cca7d9d22a3124f68 | CANONICAL |
 | EV-03 | AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-1/logs/check.log | 698ac9524 | 1d53f0d1dcad5c0d2e07eb74790114615a55cc23dc0fd3830b6ae5bec759ff00 | CANONICAL |
 | EV-04 | AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-1/logs/pins.log | 698ac9524 | bbd82df4d119205b7198d08acac40ad87418d7b54dab5cd9142c02932cae7128 | CANONICAL |
@@ -94,7 +94,7 @@ STATUS/PLAN/LEDGER、push。
 
 - **状态**：`done`；`delivery_head`/`integration_commit` = **`698ac9524`**（docs-only 收口提交：FROZEN-C04b §4A/§1C/§4B/§5 + 载体 §5F + 卡 + r1 评审 + 证据）。
 - **AC 判定**：AC-1…AC-6 **全 MET**（无 PARTIAL/BLOCKED）。
-- **Review 处置**：独立上下文 fresh subagent docs-only 审查 **r1 `approved`（P0=0/P1=0/P2=0；P3 共 8 项：open=6 / fixed=1（P3-1）/ mitigated=1（P3-7），均非阻断）**；报告 `doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`（session `c66cd50f-…`；`reviewed_head=28a2826af`）。P3 处置：① EV diff stat `+41/−2`→`+39/−2`（**fixed**）；② §1C 路径为 workspace 相对路径 + r4–r7 `...` 缩写（保留：完整路径可由 `G:\CODEX\New Manga.workspace\FEA-12\unfreeze-*` 直达，sha 已给全）；③ r4–r7 session 前缀（保留：报告内已有完整 id）；④ 卡面 AC-2 措辞改指 §1C（已修）；⑤ 相邻精度项已标注「不计入 8 项 AC」（已修）；⑥ EV AC-6 措辞改为「closeout 记录须明确」（已修）；⑦ 并发 L-R11 `src/**` 改动（本卡提交已用显式 pathspec 隔离，**mitigated**，工作树注记保留）；⑧ `698ac9524` 内卡仍 ready / EV「结论待回填」（由 closeout 提交闭合）。
+- **Review 处置**：独立上下文 fresh subagent docs-only 审查 **r1 `approved`（P0=0/P1=0/P2=0；P3 共 8 项：open=6 / fixed=1（P3-1）/ mitigated=1（P3-7），均非阻断）**；报告 `doc/reviews/FEA-12-CORE-C04B-RESIDUAL-1-r1.md`（session `c66cd50f-…`；`reviewed_head=28a2826af`）。P3 处置：① EV diff stat `+41/−2`→`+39/−2`（**fixed**）；② §1C 路径为 workspace 相对路径 + r4–r7 `...` 缩写（保留：完整路径可由 `G:\CODEX\New Manga.workspace\FEA-12\unfreeze-*` 直达，sha 已给全）；③ r4–r7 session 前缀（保留：报告内已有完整 id）；④ 卡面 AC-2 措辞改指 §1C（已修）；⑤ 相邻精度项已标注「不计入 8 项 AC」（已修）；⑥ EV AC-6 措辞改为「closeout 记录须明确」（已修）；⑦ 并发 L-R11 `src/**` 改动（本卡提交已用显式 pathspec 隔离，**mitigated**，工作树注记保留）；⑧ `698ac9524` 内卡仍 ready / EV「结论待回填」——已按 closeout 提交链处理（`63b95abda` 卡 done + `423efa200` EV 回填），**报告按提交时点保守计为 open**（故 open=6）。
 - **门禁数字**：`verify_pins.ps1` **18/18 PASS**（C04b `acc8f0e0…` 仍命中）；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)**；C-04b sha256 `acc8f0e0…`、M2-C1 sha256 `701093b5…` **与冻结记录一致（零字节）**；本卡提交仅 4 个 docs 文件 + 证据 + 评审；`src/**`/`apps/**`/`tests/**` **不属本卡提交**（并发 L-R11）。全量 pytest/.NET **NOT_RUN**（docs-only）。
 - **limitations / follow-up**：**8 项中仅 R-6（⑥）完全闭合**；R-3/R-4 的 0 pin 部分已在载体 §5F 登记；**R-1/R-2/R-5/R-7/R-8 的规范修复仍待 UNFREEZE（另卡，未建立）**；**L-3**：① artifact 成员谓词代码偏差**未修**（正常数据无影响、损坏行多/少绑定；修复需 C-04b+M2-C1 UNFREEZE + 独立实现卡）。**不得**写「8 项全部关闭 / 契约已修复」。
 - **Resource Manifest**：仓内 0 删除/0 移动/0 归档；仓外复核报告只读实测未移动。
