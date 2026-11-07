@@ -107,7 +107,8 @@ out_of_scope:
   **3369 passed/10 skipped → 3369/10**（不降；Python 零改动）；`verify_pins.ps1` **18/18**；`check.ps1` 默认 +
   `-TaskPath` **PASS(3 warnings)×2**；API inventory **EXIT=0**；scope：`git diff d09e91d1d..<交付>` 仅
   `SourceScanScheduler.cs` + `SourceScanSchedulerTests.cs` + 本卡 allowed 的 docs/evidence；`HostRuntime.cs` /
-  `doc/contracts` / `src/**` / schema / 依赖 **0 字节**（详见 EV §4）。
+  `doc/contracts` / `src/**` / schema / 依赖 **0 字节**（详见 EV §4）。以卡 base `ffcfab050` 计，额外 1 个路径
+  `doc/handoffs/DSH-HANDOFF-2026-11-06.md` 属 Lead 的 `d09e91d1d`（docs-only 释放提交），**非本卡写入**。
 - **判别性**：**2/2 RED_AS_EXPECTED + 复原 sha256 2/2 MATCH + 复绿**（RH-1 删重放 → 2 用例 RED；RH-2 改回 caller
   token / 不 cancel lifetime / 不 join → Dispose 用例 RED；固定实现备份 sha256 `6b77d9ca…`，逐字节复原 MATCH 后
   3/3 复绿；`verification/FEA-11-SCAN-RH-1/logs/discriminative/**`）。

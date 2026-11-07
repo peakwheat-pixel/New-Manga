@@ -46,7 +46,7 @@ supersedes_handoff: null
 | pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PASS (all 18)** | `logs/governance/pins.log` |
 | check（默认 / `-TaskPath`） | `pwsh -NoProfile -File tools/governance/check.ps1` | **PASS (3 warnings) ×2** | `logs/governance/check.log`、`check-taskpath.log` |
 | API inventory | `python tools/generate_api_inventory.py --check` | **EXIT=0** | `logs/governance/api-inventory.log` |
-| scope | `git diff d09e91d1d..HEAD --name-only/--stat` + 零漂移 | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节** | `logs/governance/scope-*.log`、`git-status.log`、`postcommit-commits.log` |
+| scope | `git diff d09e91d1d..HEAD --name-only/--stat` + 零漂移 | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以卡 base `ffcfab050` 计仅多 Lead 的 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（`d09e91d1d` 释放提交，非本卡写入） | `logs/governance/scope-*.log`、`git-status.log`、`postcommit-commits.log` |
 | 判别性 | 备份 → M1/M2 变异 → build → RED → 复原 sha256 MATCH → 复绿 | **2/2 RED_AS_EXPECTED + sha256 2/2 MATCH + 复绿**（2 passed / 3 passed；`~SourceScan` 71、`~SourceWatcher` 19） | `logs/discriminative/**` |
 
 - **before/after 行为口径**：修复前——refresh 在飞时的第二次 refresh 只置 `_refreshPending`，重放只在

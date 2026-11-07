@@ -115,7 +115,7 @@
 | 7 | check（默认） | `pwsh -NoProfile -File tools/governance/check.ps1` | — | **PASS (3 warnings)** | `logs/governance/check.log` |
 | 8 | check（`-TaskPath`） | 同上 + `-TaskPath doc/tasks/FEA-11-SCAN-RH-1.md` | — | **PASS (3 warnings)** | `logs/governance/check-taskpath.log` |
 | 9 | API inventory | `C:/Python314/python.exe tools/generate_api_inventory.py --check` | — | **EXIT=0** | `logs/governance/api-inventory.log` |
-| 10 | scope | `git diff d09e91d1d..HEAD --name-only` / `--stat` / 零漂移路径 | — | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节** | `logs/governance/scope-name-only.log`、`scope-stat.log`、`scope-zero-drift.log`、`git-status.log`、`postcommit-commits.log` |
+| 10 | scope | `git diff d09e91d1d..HEAD --name-only` / `--stat` / 零漂移路径（另见卡 base 计法） | — | 仅 allowed_paths；`HostRuntime.cs`/`doc/contracts`/`src/**`/schema/依赖 **0 字节**；以卡 `base_commit=ffcfab050` 计仅多出 `doc/handoffs/DSH-HANDOFF-2026-11-06.md`（Lead 的 `d09e91d1d` docs-only 释放提交，**非本卡写入**） | `logs/governance/scope-name-only.log`、`scope-stat.log`、`scope-zero-drift.log`、`scope-from-card-base.log`、`git-status.log`、`postcommit-commits.log` |
 
 - 全量 .NET 跑后 `verification/FEA-09/logs/wire-redacted.ndjson` 被测试写脏 → 已 `git checkout -- verification/FEA-09`
   复原（`logs/dotnet-full-after-summary.log` 记录；`git status` 见 `git-status.log`）。
@@ -171,8 +171,9 @@ git diff --name-only d09e91d1d..HEAD
   `M1-restore-sha256.log`、`M1-restore-build.log`、`M1-restored-green.log`、`M2-mutation.diff`、`M2-build.log`、
   `M2-red-tests.log`、`M3-final-restore-sha256.log`、`M3-final-build.log`、`M3-restored-green.log`
 - `logs/governance/pins.log`、`api-inventory.log`、`check.log`、`check-taskpath.log`、`scope-name-only.log`、
-  `scope-stat.log`、`scope-zero-drift.log`、`git-status.log`、`postcommit-commits.log`
+  `scope-stat.log`、`scope-zero-drift.log`、`scope-from-card-base.log`、`git-status.log`、`postcommit-commits.log`
 
 > 说明：`check.log`/`check-taskpath.log`/`scope-*.log`/`git-status.log`/`postcommit-commits.log` 在 docs/evidence
-> 提交之后于 committed 树上复跑（见 `postcommit-commits.log` 的 HEAD），以 committed 状态为准；其余日志产生于
+> 提交之后于 committed 树上复跑（见 `postcommit-commits.log` 的 HEAD），以 committed 状态为准；`scope-from-card-base.log`
+> 记录以卡 `base_commit=ffcfab050` 计的路径集合（额外 1 条为 Lead 释放提交的文件，已注明非本卡写入）；其余日志产生于
 > 提交前工作树（字节与提交一致，`git-status.log` 记录提交后 clean）。
