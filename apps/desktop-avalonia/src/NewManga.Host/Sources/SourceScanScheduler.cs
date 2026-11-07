@@ -1502,16 +1502,26 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
         // grant or ScanSourceSync frame: missing/revoked/drifted registry -> typed skip; a missing or
         // replaced production file-root -> SOURCE_REGISTRY_UNAVAILABLE fail-closed (S-1 option ②),
         // never a fabricated "missing".
+        //
+        // FEA-11-L-S4-B-1 (AC-SER-1): the entry proved by that verification IS the enumerated target's
+        // authorization source — it is reused from the SAME registry snapshot, so a sibling REVOKED row
+        // carrying the same path can no longer veto the target's own live (registry_id, generation)
+        // authorization through a second path-only resolution. Non-enumerated (SCAN-1 in-memory)
+        // targets keep the unchanged path-exact/containment resolver (AC-SER-3).
+        SourceAuthorization? entry;
         if (target.IsEnumerated)
         {
-            var verdict = VerifyEnumeratedTarget(target);
+            var verdict = VerifyEnumeratedTarget(target, out entry);
             if (verdict is not null)
             {
                 return verdict;
             }
         }
+        else
+        {
+            entry = ResolveRegistryEntry(target.Path);
+        }
 
-        var entry = ResolveRegistryEntry(target.Path);
         if (entry is null)
         {
             // Card I-4: an unresolvable path is this target's typed failure (backoff), never a guess.
@@ -1557,9 +1567,16 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     /// <see cref="SourceScanOutcome.Skipped"/> when the registry authorization cannot be proven; a
     /// typed <see cref="SourceScanOutcome.Error"/> SOURCE_REGISTRY_UNAVAILABLE for a production
     /// file-root that is missing (before this session ever verified it) or was replaced.
+    ///
+    /// FEA-11-L-S4-B-1 (AC-SER-1/2): <paramref name="entry"/> is the target's OWN verified live entry
+    /// from the SAME registry snapshot this method read — the caller mints the scan grant from it and
+    /// never re-resolves the target by path. It stays null on every verdict returned before the
+    /// authorization could be proven.
     /// </summary>
-    private SourceScanOutcome? VerifyEnumeratedTarget(SourceScanTarget target)
+    private SourceScanOutcome? VerifyEnumeratedTarget(
+        SourceScanTarget target, out SourceAuthorization? entry)
     {
+        entry = null;
         SourceAuthorization[] entries;
         try
         {
@@ -1575,31 +1592,20 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
                 : SourceScanOutcome.Error("SOURCE_REGISTRY_UNAVAILABLE");
         }
 
-        var entry = entries
-            .SingleOrDefault(candidate => string.Equals(candidate.RegistryId, target.RegistryId, StringComparison.Ordinal));
-        if (entry is null)
+        // AC-SER-2: the target's OWN registry decides — missing / revoked / generation drift stay
+        // typed fail-closed (no fall-back to a same-path sibling, no auto re-authorization).
+        var authorized = SelectEnumeratedEntry(entries, target, out var verdict);
+        if (authorized is null)
         {
-            return SourceScanOutcome.Skipped("SOURCE_REGISTRY_UNAVAILABLE");
+            return verdict;
         }
 
-        if (entry.RevokedAt is not null)
-        {
-            return SourceScanOutcome.Skipped("SOURCE_GRANT_REVOKED");
-        }
-
-        if (entry.Generation != target.Generation)
-        {
-            // Generation drift: the persisted authorization moved on since enumeration; only a new
-            // import/authorization can re-attest it (the scan slice never re-authorizes itself).
-            // SOURCE_REGISTRY_BUSY is reused from the frozen §8 set; its retryable projection does NOT
-            // mean this slice may auto re-authorize — it is a typed skip until a user action.
-            return SourceScanOutcome.Skipped("SOURCE_REGISTRY_BUSY");
-        }
-
+        // AC-SER-1: this is the entry the scan is authorized with; it comes from the SAME snapshot.
+        entry = authorized;
         SourceRoot? root = null;
         if (TryNormalize(target.Path, out var normalizedPath))
         {
-            root = entry.Roots.FirstOrDefault(candidate =>
+            root = authorized.Roots.FirstOrDefault(candidate =>
                 candidate.Readable && TryNormalize(candidate.Root, out var rootPath)
                 && string.Equals(rootPath, normalizedPath, StringComparison.OrdinalIgnoreCase));
         }
@@ -1881,6 +1887,12 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
     /// parent directory as the root) the resolver falls back to the most specific CONTAINING root;
     /// that fallback is documented here and covered by a unit test. Public for that unit test only —
     /// it is a pure function of the registry snapshot.
+    ///
+    /// FEA-11-L-S4-B-1 (AC-SER-3): this resolver is the authorization source for NON-enumerated
+    /// (SCAN-1 in-memory) targets only; its exact-first / revoked-exact fail-closed / containment
+    /// fallback semantics are UNCHANGED. An enumerated target is authorized by its own
+    /// <c>(registry_id, generation)</c> entry (see <see cref="SelectEnumeratedEntry"/>), so a sibling
+    /// revoked row with the same path can no longer veto its live authorization.
     /// </summary>
     public static SourceAuthorization? ResolveRegistryEntry(
         IReadOnlyList<SourceAuthorization> entries, string path)
@@ -1923,6 +1935,56 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
             .OrderByDescending(candidate => candidate.Root!.Length)
             .Select(candidate => candidate.Entry)
             .FirstOrDefault();
+    }
+
+    /// <summary>
+    /// FEA-11-L-S4-B-1 (AC-SER-1/2/3): the ENUMERATED target's authorization source. An enumerated
+    /// target is authorized ONLY by its own registered identity — the entry whose <c>registry_id</c>
+    /// equals the target's and whose generation equals the target's — never by another entry that
+    /// happens to carry the same path. B1 keeps the older REVOKED rows forever, so resolving such a
+    /// target by path would find the revoked row first and fail closed even though the target's own
+    /// live entry exists.
+    ///
+    /// Returns the live entry, or null with the typed fail-closed verdict the scan reports:
+    /// missing -> <c>Skipped(SOURCE_REGISTRY_UNAVAILABLE)</c>; revoked ->
+    /// <c>Skipped(SOURCE_GRANT_REVOKED)</c>; generation drift -> <c>Skipped(SOURCE_REGISTRY_BUSY)</c>.
+    /// There is deliberately NO fall-back to another live entry, no auto re-authorization and no
+    /// identity rebuild. Pure function of ONE registry snapshot (no I/O and no registry write); public
+    /// for the pure-function unit tests only. The caller must pass an ENUMERATED target
+    /// (<see cref="SourceScanTarget.IsEnumerated"/>); non-enumerated targets use
+    /// <see cref="ResolveRegistryEntry"/>.
+    /// </summary>
+    public static SourceAuthorization? SelectEnumeratedEntry(
+        IReadOnlyList<SourceAuthorization> entries,
+        SourceScanTarget target,
+        out SourceScanOutcome? verdict)
+    {
+        verdict = null;
+        var entry = entries.SingleOrDefault(candidate =>
+            string.Equals(candidate.RegistryId, target.RegistryId, StringComparison.Ordinal));
+        if (entry is null)
+        {
+            verdict = SourceScanOutcome.Skipped("SOURCE_REGISTRY_UNAVAILABLE");
+            return null;
+        }
+
+        if (entry.RevokedAt is not null)
+        {
+            verdict = SourceScanOutcome.Skipped("SOURCE_GRANT_REVOKED");
+            return null;
+        }
+
+        if (entry.Generation != target.Generation)
+        {
+            // Generation drift: the persisted authorization moved on since enumeration; only a new
+            // import/authorization can re-attest it (the scan slice never re-authorizes itself).
+            // SOURCE_REGISTRY_BUSY is reused from the frozen §8 set; its retryable projection does NOT
+            // mean this slice may auto re-authorize — it is a typed skip until a user action.
+            verdict = SourceScanOutcome.Skipped("SOURCE_REGISTRY_BUSY");
+            return null;
+        }
+
+        return entry;
     }
 
     private static bool TryNormalize(string path, out string normalized)
